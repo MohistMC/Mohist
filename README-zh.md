@@ -35,7 +35,7 @@
   * 在Windows上构建Mohist:
   `./gradlew.bat launch4j `
 
-所有构建输出都将在 `.\build\distributions\` 
+所有构建输出都将在 `.\build\distributions\`
 Mohist-xxxxx-server.jar - 这是你应该运行的Jar
 
 插件开发
