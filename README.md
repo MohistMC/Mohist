@@ -48,7 +48,7 @@ Building
   * Build with Windows:
   `gradlew.bat launch4j`
 
-All builds will be in `.\build\distributions\` 
+All builds will be in `.\build\distributions\`
 `Mohist-xxxxx-server.jar` Is the server file that you should run
 
 Plugin development
