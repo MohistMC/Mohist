@@ -49,7 +49,7 @@ Building
   `gradlew.bat launch4j`
 
 All builds will be in `.\build\distributions\` 
-`Mohist-xxxxx-server.jar` is the server file that you should run
+`Mohist-xxxxx-server.jar` Is the server file that you should run
 
 Plugin development
 ------
@@ -59,7 +59,7 @@ Plugin development
    * Build with Windows:
    `gradlew.bat reobfToSRG`
 
-All builds will be in `.\build\mohist_srg.jar` Is the development frontend you need
+`.\build\mohist_srg.jar` Is the development frontend you need
 
 Thanks for the following project
 ------
