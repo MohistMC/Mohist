@@ -27,7 +27,7 @@
 
 ### 构建
 * 查看工程
-  * 你可以使用集成开发环境(IDE)或是从控制台克隆一份源码:
+  * 你可以使用集成开发环境(IDE)或是从控制台克隆一份源代码:
   `git clone https://github.com/Mohist-Community/Mohist.git`
 * 构建
   * 在Linux上构建Mohist:
