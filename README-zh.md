@@ -35,18 +35,18 @@
   * 在Windows上构建Mohist:
   `./gradlew.bat launch4j `
 
-所有构建都将出现在 `.\Mohist\build\distributions\` 
+所有构建输出都将在 `.\build\distributions\` 
 Mohist-xxxxx-server.jar - 这是你应该运行的Jar
 
-Plugin development
+插件开发
 ------
-* Building
-   * Build with Linux:
+* 构建
+   * 在Linux上构建:
    `bash gradlew reobfToSRG`
-   * Build with Windows:
+   * 在Windows上构建:
    `gradlew.bat reobfToSRG`
 
-All builds will be in `.\build\mohist_srg.jar` Is the development frontend you need
+`.\build\mohist_srg.jar` - 这是你开发时引用的Jar
 
 ### 感谢以下项目
 * [**Bukkit**](https://hub.spigotmc.org/stash/scm/spigot/bukkit.git) - 插件支持.
