@@ -1,0 +1,11 @@
+--- ../src-base/minecraft/net/minecraft/nbt/NBTTagShort.java
++++ ../src-work/minecraft/net/minecraft/nbt/NBTTagShort.java
+@@ -17,7 +17,7 @@
+         this.data = data;
+     }
+ 
+-    void write(DataOutput output) throws IOException
++    public void write(DataOutput output) throws IOException
+     {
+         output.writeShort(this.data);
+     }

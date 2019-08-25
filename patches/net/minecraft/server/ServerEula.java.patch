@@ -1,0 +1,61 @@
+--- ../src-base/minecraft/net/minecraft/server/ServerEula.java
++++ ../src-work/minecraft/net/minecraft/server/ServerEula.java
+@@ -1,11 +1,11 @@
+ package net.minecraft.server;
+ 
+-import java.io.File;
+-import java.io.FileInputStream;
+-import java.io.FileOutputStream;
+-import java.io.InputStream;
+-import java.io.OutputStream;
+-import java.util.Properties;
++import java.io.*;
++import java.text.SimpleDateFormat;
++import java.util.Date;
++
++import red.mohist.i18n.Message;
++import red.mohist.i18n.UTF8Properties;
+ import net.minecraftforge.fml.relauncher.Side;
+ import net.minecraftforge.fml.relauncher.SideOnly;
+ import org.apache.commons.io.IOUtils;
+@@ -32,14 +32,15 @@
+ 
+         try
+         {
+-            Properties properties = new Properties();
++            UTF8Properties properties = new UTF8Properties();
+             fileinputstream = new FileInputStream(inFile);
+-            properties.load(fileinputstream);
++            properties.load(new InputStreamReader(fileinputstream, "utf-8"));
+             flag = Boolean.parseBoolean(properties.getProperty("eula", "false"));
+         }
+         catch (Exception var8)
+         {
+-            LOG.warn("Failed to load {}", (Object)inFile);
++            Object[] p = {"{}"};
++            LOG.warn(Message.getFormatString(Message.EULA_LOAD_FAIL,p), (Object)inFile);
+             this.createEULAFile();
+         }
+         finally
+@@ -61,14 +62,17 @@
+ 
+         try
+         {
+-            Properties properties = new Properties();
++            UTF8Properties properties = new UTF8Properties();
+             fileoutputstream = new FileOutputStream(this.eulaFile);
+-            properties.setProperty("eula", "false");
+-            properties.store(fileoutputstream, "By changing the setting below to TRUE you are indicating your agreement to our EULA (https://account.mojang.com/documents/minecraft_eula).");
++            properties.put("eula", "false", new SimpleDateFormat("yyyy-MM-dd").format(new Date()).toString());
++            Object[] p = {"https://account.mojang.com/documents/minecraft_eula"};
++            properties.orderStore(new OutputStreamWriter(fileoutputstream, "utf-8"), Message.getFormatString(Message.EULA_TEXT,p));
++
+         }
+         catch (Exception exception)
+         {
+-            LOG.warn("Failed to save {}", this.eulaFile, exception);
++            Object[] p = {"{}"};
++            LOG.warn(Message.getFormatString(Message.EULA_SAVE_FAIL,p), this.eulaFile, exception);
+         }
+         finally
+         {

@@ -1,0 +1,57 @@
+--- ../src-base/minecraft/net/minecraftforge/fml/common/FMLCommonHandler.java
++++ ../src-work/minecraft/net/minecraftforge/fml/common/FMLCommonHandler.java
+@@ -58,6 +58,7 @@
+ import net.minecraft.world.storage.SaveHandler;
+ import net.minecraft.world.storage.WorldInfo;
+ import net.minecraftforge.client.model.animation.Animation;
++import net.minecraftforge.common.DimensionManager;
+ import net.minecraftforge.common.ForgeVersion;
+ import net.minecraftforge.common.MinecraftForge;
+ import net.minecraftforge.common.util.CompoundDataFixer;
+@@ -385,6 +386,10 @@
+ 
+     public void handleWorldDataSave(SaveHandler handler, WorldInfo worldInfo, NBTTagCompound tagCompound)
+     {
++        if (worldInfo.getDimension() != 0)
++        {
++            return;
++        }
+         for (ModContainer mc : Loader.instance().getModList())
+         {
+             if (mc instanceof InjectedModContainer)
+@@ -405,7 +410,7 @@
+         {
+             return;
+         }
+-        if (handlerSet.contains(handler))
++        if (handlerSet.contains(handler) || DimensionManager.getWorld(0) != null)
+         {
+             return;
+         }
+@@ -507,7 +512,7 @@
+         MinecraftServer server = getMinecraftServerInstance();
+         Loader.instance().serverStopped();
+         // FORCE the internal server to stop: hello optifine workaround!
+-        if (server!=null) ObfuscationReflectionHelper.setPrivateValue(MinecraftServer.class, server, false, "field_71316"+"_v");
++        if (server!=null) ObfuscationReflectionHelper.setPrivateValue(MinecraftServer.class, server, false, "field_71316"+"_v",  "u", "serverStopped");
+ 
+         // allow any pending exit to continue, clear exitLatch
+         CountDownLatch latch = exitLatch;
+@@ -522,16 +527,7 @@
+     public String getModName()
+     {
+         List<String> modNames = Lists.newArrayListWithExpectedSize(3);
+-        modNames.add("fml");
+-        if (!noForge)
+-        {
+-            modNames.add(ForgeVersion.MOD_ID);
+-        }
+-
+-        if (Loader.instance().getFMLBrandingProperties().containsKey("snooperbranding"))
+-        {
+-            modNames.add(Loader.instance().getFMLBrandingProperties().get("snooperbranding"));
+-        }
++        modNames.add("Mohist");
+         return Joiner.on(',').join(modNames);
+     }
+ 

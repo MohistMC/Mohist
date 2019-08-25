@@ -1,0 +1,28 @@
+--- ../src-base/minecraft/net/minecraft/tileentity/TileEntityLockableLoot.java
++++ ../src-work/minecraft/net/minecraft/tileentity/TileEntityLockableLoot.java
+@@ -1,7 +1,5 @@
+ package net.minecraft.tileentity;
+ 
+-import java.util.Random;
+-import javax.annotation.Nullable;
+ import net.minecraft.entity.player.EntityPlayer;
+ import net.minecraft.inventory.ItemStackHelper;
+ import net.minecraft.item.ItemStack;
+@@ -13,6 +11,9 @@
+ import net.minecraft.world.storage.loot.LootContext;
+ import net.minecraft.world.storage.loot.LootTable;
+ 
++import javax.annotation.Nullable;
++import java.util.Random;
++
+ public abstract class TileEntityLockableLoot extends TileEntityLockable implements ILootContainer
+ {
+     protected ResourceLocation lootTable;
+@@ -43,7 +44,6 @@
+             {
+                 compound.setLong("LootTableSeed", this.lootTableSeed);
+             }
+-
+             return true;
+         }
+         else

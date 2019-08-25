@@ -1,0 +1,24 @@
+--- ../src-base/minecraft/net/minecraftforge/fluids/BlockFluidClassic.java
++++ ../src-work/minecraft/net/minecraftforge/fluids/BlockFluidClassic.java
+@@ -166,9 +166,21 @@
+             }
+         }
+ 
++        // Cauldron start
++        org.bukkit.Server server = world.getServer();
++        org.bukkit.World bworld = world.getWorld();
++        org.bukkit.block.Block source = bworld == null ? null : bworld.getBlockAt(pos.getX(), pos.getY(), pos.getZ());
++        // Cauldron end
++
+         // Flow vertically if possible
+         if (canDisplace(world, pos.up(densityDir)))
+         {
++            // Cauldron start
++            org.bukkit.block.BlockFace face = densityDir < 0 ? org.bukkit.block.BlockFace.DOWN : org.bukkit.block.BlockFace.UP;
++            org.bukkit.event.block.BlockFromToEvent event = new org.bukkit.event.block.BlockFromToEvent(source, face);
++            if (server != null) server.getPluginManager().callEvent(event);
++            if (event.isCancelled()) return;
++            // Cauldron end
+             flowIntoBlock(world, pos.up(densityDir), 1);
+             return;
+         }

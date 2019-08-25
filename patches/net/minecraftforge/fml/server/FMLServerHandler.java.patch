@@ -1,0 +1,40 @@
+--- ../src-base/minecraft/net/minecraftforge/fml/server/FMLServerHandler.java
++++ ../src-work/minecraft/net/minecraftforge/fml/server/FMLServerHandler.java
+@@ -47,6 +47,8 @@
+ import net.minecraftforge.fml.relauncher.FMLLaunchHandler;
+ import net.minecraftforge.fml.relauncher.Side;
+ 
++import red.mohist.i18n.Message;
++
+ import com.google.common.collect.ImmutableList;
+ import org.apache.commons.io.IOUtils;
+ 
+@@ -172,8 +174,9 @@
+         else
+         {
+             String text = query.getText() +
+-                    "\n\nRun the command /fml confirm or or /fml cancel to proceed." +
+-                    "\nAlternatively start the server with -Dfml.queryResult=confirm or -Dfml.queryResult=cancel to preselect the answer.";
++                    "\n\n" + Message.getString(Message.forge_FMLServerHandler_1) +
++                    "\n" + Message.getString(Message.forge_FMLServerHandler_2);
++
+             FMLLog.log.warn(text);
+ 
+             if (!query.isSynchronous()) return; // no-op until mc does commands in another thread (if ever)
+@@ -195,14 +198,14 @@
+ 
+                         if (cmd.equals("/fml confirm"))
+                         {
+-                            FMLLog.log.info("confirmed");
++                            FMLLog.log.info(Message.getString(Message.forge_FMLServerHandler_3));
+                             query.setResult(true);
+                             done = true;
+                             it.remove();
+                         }
+                         else if (cmd.equals("/fml cancel"))
+                         {
+-                            FMLLog.log.info("cancelled");
++                            FMLLog.log.info(Message.getString(Message.forge_FMLServerHandler_4));
+                             query.setResult(false);
+                             done = true;
+                             it.remove();

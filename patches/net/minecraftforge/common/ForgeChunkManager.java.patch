@@ -1,0 +1,61 @@
+--- ../src-base/minecraft/net/minecraftforge/common/ForgeChunkManager.java
++++ ../src-work/minecraft/net/minecraftforge/common/ForgeChunkManager.java
+@@ -104,7 +104,6 @@
+ 
+     private static Map<String, LoadingCallback> callbacks = Maps.newHashMap();
+ 
+-    private static Map<World, ImmutableSetMultimap<ChunkPos,Ticket>> forcedChunks = new MapMaker().weakKeys().makeMap();
+     private static BiMap<UUID,Ticket> pendingEntities = HashBiMap.create();
+ 
+     private static Map<World,Cache<Long, ChunkEntry>> dormantChunkCache = new MapMaker().weakKeys().makeMap();
+@@ -465,7 +464,7 @@
+         ArrayListMultimap<String, Ticket> newTickets = ArrayListMultimap.create();
+         tickets.put(world, newTickets);
+ 
+-        forcedChunks.put(world, ImmutableSetMultimap.of());
++        world.setForcedChunks(ImmutableSetMultimap.of());
+ 
+         if (!(world instanceof WorldServer))
+         {
+@@ -619,7 +618,7 @@
+             return;
+         }
+ 
+-        forcedChunks.remove(world);
++        world.setForcedChunks(ImmutableSetMultimap.of());
+         if (dormantChunkCacheSize != 0) // only if in use
+         {
+             dormantChunkCache.remove(world);
+@@ -814,8 +813,8 @@
+         ticket.requestedChunks.add(chunk);
+         MinecraftForge.EVENT_BUS.post(new ForceChunkEvent(ticket, chunk));
+ 
+-        ImmutableSetMultimap<ChunkPos, Ticket> newMap = ImmutableSetMultimap.<ChunkPos,Ticket>builder().putAll(forcedChunks.get(ticket.world)).put(chunk, ticket).build();
+-        forcedChunks.put(ticket.world, newMap);
++        ImmutableSetMultimap<ChunkPos, Ticket> newMap = ImmutableSetMultimap.<ChunkPos,Ticket>builder().putAll(ticket.world.getForcedChunks()).put(chunk, ticket).build();
++        ticket.world.setForcedChunks(newMap);
+         if (ticket.maxDepth > 0 && ticket.requestedChunks.size() > ticket.maxDepth)
+         {
+             ChunkPos removed = ticket.requestedChunks.iterator().next();
+@@ -854,10 +853,10 @@
+         }
+         ticket.requestedChunks.remove(chunk);
+         MinecraftForge.EVENT_BUS.post(new UnforceChunkEvent(ticket, chunk));
+-        LinkedHashMultimap<ChunkPos, Ticket> copy = LinkedHashMultimap.create(forcedChunks.get(ticket.world));
++        LinkedHashMultimap<ChunkPos, Ticket> copy = LinkedHashMultimap.create(ticket.world.getForcedChunks());
+         copy.remove(chunk, ticket);
+         ImmutableSetMultimap<ChunkPos, Ticket> newMap = ImmutableSetMultimap.copyOf(copy);
+-        forcedChunks.put(ticket.world,newMap);
++        ticket.world.setForcedChunks(newMap);
+     }
+ 
+     static void loadConfiguration()
+@@ -888,7 +887,7 @@
+      */
+     public static ImmutableSetMultimap<ChunkPos, Ticket> getPersistentChunksFor(World world)
+     {
+-        return forcedChunks.containsKey(world) ? forcedChunks.get(world) : ImmutableSetMultimap.of();
++        return world.getForcedChunks();
+     }
+ 
+     static void saveWorld(World world)

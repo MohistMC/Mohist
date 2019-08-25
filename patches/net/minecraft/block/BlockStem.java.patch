@@ -1,0 +1,58 @@
+--- ../src-base/minecraft/net/minecraft/block/BlockStem.java
++++ ../src-work/minecraft/net/minecraft/block/BlockStem.java
+@@ -2,7 +2,7 @@
+ 
+ import java.util.Random;
+ import javax.annotation.Nullable;
+-import net.minecraft.block.material.Material;
++
+ import net.minecraft.block.properties.IProperty;
+ import net.minecraft.block.properties.PropertyDirection;
+ import net.minecraft.block.properties.PropertyInteger;
+@@ -19,6 +19,7 @@
+ import net.minecraft.util.math.MathHelper;
+ import net.minecraft.world.IBlockAccess;
+ import net.minecraft.world.World;
++import org.bukkit.craftbukkit.v1_12_R1.event.CraftEventFactory;
+ 
+ public class BlockStem extends BlockBush implements IGrowable
+ {
+@@ -67,7 +68,7 @@
+         super.updateTick(worldIn, pos, state, rand);
+ 
+         if (!worldIn.isAreaLoaded(pos, 1)) return; // Forge: prevent loading unloaded chunks when checking neighbor's light
+-        if (worldIn.getLightFromNeighbors(pos.up()) >= 9)
++        if (worldIn.isLightLevel(pos.up(), 9)) // Paper
+         {
+             float f = BlockCrops.getGrowthChance(this, worldIn, pos);
+ 
+@@ -78,7 +79,8 @@
+                 if (i < 7)
+                 {
+                     IBlockState newState = state.withProperty(AGE, Integer.valueOf(i + 1));
+-                    worldIn.setBlockState(pos, newState, 2);
++                    CraftEventFactory.handleBlockGrowEvent(worldIn, pos.getX(), pos.getY(), pos.getZ(), this, getMetaFromState(newState));
++//                    worldIn.setBlockState(pos, newState, 2);
+                 }
+                 else
+                 {
+@@ -96,7 +98,8 @@
+ 
+                     if (worldIn.isAirBlock(pos) && (block.canSustainPlant(soil, worldIn, pos.down(), EnumFacing.UP, this) || block == Blocks.DIRT || block == Blocks.GRASS))
+                     {
+-                        worldIn.setBlockState(pos, this.crop.getDefaultState());
++                        CraftEventFactory.handleBlockGrowEvent(worldIn, pos.getX(), pos.getY(), pos.getZ(), this.crop, 0);
++//                        worldIn.setBlockState(pos, this.crop.getDefaultState());
+                     }
+                 }
+                 net.minecraftforge.common.ForgeHooks.onCropsGrowPost(worldIn, pos, state, worldIn.getBlockState(pos));
+@@ -107,7 +110,8 @@
+     public void growStem(World worldIn, BlockPos pos, IBlockState state)
+     {
+         int i = ((Integer)state.getValue(AGE)).intValue() + MathHelper.getInt(worldIn.rand, 2, 5);
+-        worldIn.setBlockState(pos, state.withProperty(AGE, Integer.valueOf(Math.min(7, i))), 2);
++        CraftEventFactory.handleBlockGrowEvent(worldIn, pos.getX(), pos.getY(), pos.getZ(), this, Math.min(7, i));
++//        worldIn.setBlockState(pos, state.withProperty(AGE, Integer.valueOf(Math.min(7, i))), 2);
+     }
+ 
+     public void dropBlockAsItemWithChance(World worldIn, BlockPos pos, IBlockState state, float chance, int fortune)

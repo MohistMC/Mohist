@@ -1,0 +1,11 @@
+--- ../src-base/minecraft/net/minecraft/command/ICommandSender.java
++++ ../src-work/minecraft/net/minecraft/command/ICommandSender.java
+@@ -24,6 +24,8 @@
+ 
+     boolean canUseCommand(int permLevel, String commandName);
+ 
++    boolean canUseCommand(int permLevel, String commandName, String permissionNode);
++
+ default BlockPos getPosition()
+     {
+         return BlockPos.ORIGIN;

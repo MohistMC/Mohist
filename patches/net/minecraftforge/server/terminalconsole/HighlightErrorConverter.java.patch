@@ -1,0 +1,11 @@
+--- ../src-base/minecraft/net/minecraftforge/server/terminalconsole/HighlightErrorConverter.java
++++ ../src-work/minecraft/net/minecraftforge/server/terminalconsole/HighlightErrorConverter.java
+@@ -79,7 +79,7 @@
+     @Override
+     public void format(LogEvent event, StringBuilder toAppendTo)
+     {
+-        if (TerminalConsoleAppender.isAnsiSupported())
++        if (true)
+         {
+             Level level = event.getLevel();
+             if (level.isMoreSpecificThan(Level.ERROR))

@@ -1,0 +1,40 @@
+--- ../src-base/minecraft/net/minecraft/network/PacketBuffer.java
++++ ../src-work/minecraft/net/minecraft/network/PacketBuffer.java
+@@ -30,6 +30,7 @@
+ import net.minecraft.util.text.ITextComponent;
+ import net.minecraftforge.fml.relauncher.Side;
+ import net.minecraftforge.fml.relauncher.SideOnly;
++import org.bukkit.craftbukkit.v1_12_R1.inventory.CraftItemStack;
+ 
+ public class PacketBuffer extends ByteBuf
+ {
+@@ -287,9 +288,9 @@
+             {
+                 CompressedStreamTools.write(nbt, new ByteBufOutputStream(this));
+             }
+-            catch (IOException ioexception)
++            catch (Exception exception) // CraftBukkit - IOException -> Exception
+             {
+-                throw new EncoderException(ioexception);
++                throw new EncoderException(exception);
+             }
+         }
+ 
+@@ -323,7 +324,7 @@
+ 
+     public PacketBuffer writeItemStack(ItemStack stack)
+     {
+-        if (stack.isEmpty())
++        if (stack.isEmpty() || stack.getItem() == null) // CraftBukkit - NPE fix itemstack.getItem()
+         {
+             this.writeShort(-1);
+         }
+@@ -359,6 +360,8 @@
+             int k = this.readShort();
+             ItemStack itemstack = new ItemStack(Item.getItemById(i), j, k);
+             itemstack.getItem().readNBTShareTag(itemstack, this.readCompoundTag());
++            if (itemstack.getTagCompound() != null)
++                CraftItemStack.setItemMeta(itemstack, CraftItemStack.getItemMeta(itemstack));
+             return itemstack;
+         }
+     }

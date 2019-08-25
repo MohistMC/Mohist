@@ -1,0 +1,13 @@
+--- ../src-base/minecraft/net/minecraftforge/common/ForgeModContainer.java
++++ ../src-work/minecraft/net/minecraftforge/common/ForgeModContainer.java
+@@ -492,10 +492,6 @@
+         ForgeChunkManager.captureConfig(evt.getModConfigurationDirectory());
+         MinecraftForge.EVENT_BUS.register(this);
+ 
+-        if (!ForgeModContainer.disableVersionCheck)
+-        {
+-            ForgeVersion.startVersionCheck();
+-        }
+     }
+ 
+     @SubscribeEvent

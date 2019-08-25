@@ -1,0 +1,21 @@
+--- ../src-base/minecraft/net/minecraft/tileentity/TileEntityPiston.java
++++ ../src-work/minecraft/net/minecraft/tileentity/TileEntityPiston.java
+@@ -1,8 +1,6 @@
+ package net.minecraft.tileentity;
+ 
+ import com.google.common.collect.Lists;
+-import java.util.List;
+-import javax.annotation.Nullable;
+ import net.minecraft.block.Block;
+ import net.minecraft.block.BlockPistonBase;
+ import net.minecraft.block.BlockPistonExtension;
+@@ -22,6 +20,9 @@
+ import net.minecraftforge.fml.relauncher.Side;
+ import net.minecraftforge.fml.relauncher.SideOnly;
+ 
++import javax.annotation.Nullable;
++import java.util.List;
++
+ public class TileEntityPiston extends TileEntity implements ITickable
+ {
+     private IBlockState pistonState;

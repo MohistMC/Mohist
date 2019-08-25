@@ -1,0 +1,71 @@
+--- ../src-base/minecraft/net/minecraft/entity/projectile/EntityThrowable.java
++++ ../src-work/minecraft/net/minecraft/entity/projectile/EntityThrowable.java
+@@ -1,8 +1,5 @@
+ package net.minecraft.entity.projectile;
+ 
+-import java.util.List;
+-import java.util.UUID;
+-import javax.annotation.Nullable;
+ import net.minecraft.block.Block;
+ import net.minecraft.entity.Entity;
+ import net.minecraft.entity.EntityLivingBase;
+@@ -13,16 +10,16 @@
+ import net.minecraft.util.EnumParticleTypes;
+ import net.minecraft.util.ResourceLocation;
+ import net.minecraft.util.datafix.DataFixer;
+-import net.minecraft.util.math.AxisAlignedBB;
+-import net.minecraft.util.math.BlockPos;
+-import net.minecraft.util.math.MathHelper;
+-import net.minecraft.util.math.RayTraceResult;
+-import net.minecraft.util.math.Vec3d;
++import net.minecraft.util.math.*;
+ import net.minecraft.world.World;
+ import net.minecraft.world.WorldServer;
+ import net.minecraftforge.fml.relauncher.Side;
+ import net.minecraftforge.fml.relauncher.SideOnly;
+ 
++import javax.annotation.Nullable;
++import java.util.List;
++import java.util.UUID;
++
+ public abstract class EntityThrowable extends Entity implements IProjectile
+ {
+     private int xTile;
+@@ -31,8 +28,8 @@
+     private Block inTile;
+     protected boolean inGround;
+     public int throwableShake;
+-    protected EntityLivingBase thrower;
+-    private String throwerName;
++    public EntityLivingBase thrower;
++    public String throwerName;
+     private int ticksInGround;
+     private int ticksInAir;
+     public Entity ignoreEntity;
+@@ -57,6 +54,7 @@
+     {
+         this(worldIn, throwerIn.posX, throwerIn.posY + (double)throwerIn.getEyeHeight() - 0.10000000149011612D, throwerIn.posZ);
+         this.thrower = throwerIn;
++        this.projectileSource = (org.bukkit.entity.LivingEntity) throwerIn.getBukkitEntity();
+     }
+ 
+     protected void entityInit()
+@@ -196,7 +194,7 @@
+                 {
+                     flag = true;
+                 }
+-                else if (this.thrower != null && this.ticksExisted < 2 && this.ignoreEntity == null)
++                else if (this.thrower != null && this.ticksExisted < 2 && this.ignoreEntity == null && this.thrower == entity1) // CraftBukkit - MC-88491
+                 {
+                     this.ignoreEntity = entity1;
+                     flag = true;
+@@ -247,6 +245,9 @@
+             else if (!net.minecraftforge.event.ForgeEventFactory.onProjectileImpact(this, raytraceresult))
+             {
+                 this.onImpact(raytraceresult);
++                if (this.isDead) {
++                    org.bukkit.craftbukkit.v1_12_R1.event.CraftEventFactory.callProjectileHitEvent(this, raytraceresult);
++                }
+             }
+         }
+ 

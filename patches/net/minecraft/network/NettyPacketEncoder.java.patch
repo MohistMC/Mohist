@@ -1,0 +1,38 @@
+--- ../src-base/minecraft/net/minecraft/network/NettyPacketEncoder.java
++++ ../src-work/minecraft/net/minecraft/network/NettyPacketEncoder.java
+@@ -3,12 +3,13 @@
+ import io.netty.buffer.ByteBuf;
+ import io.netty.channel.ChannelHandlerContext;
+ import io.netty.handler.codec.MessageToByteEncoder;
+-import java.io.IOException;
+ import org.apache.logging.log4j.LogManager;
+ import org.apache.logging.log4j.Logger;
+ import org.apache.logging.log4j.Marker;
+ import org.apache.logging.log4j.MarkerManager;
+ 
++import java.io.IOException;
++
+ public class NettyPacketEncoder extends MessageToByteEncoder < Packet<? >>
+ {
+     private static final Logger LOGGER = LogManager.getLogger();
+@@ -20,7 +21,7 @@
+         this.direction = direction;
+     }
+ 
+-    protected void encode(ChannelHandlerContext p_encode_1_, Packet<?> p_encode_2_, ByteBuf p_encode_3_) throws IOException, Exception
++    protected void encode(ChannelHandlerContext p_encode_1_, Packet<?> p_encode_2_, ByteBuf p_encode_3_) throws Exception
+     {
+         EnumConnectionState enumconnectionstate = (EnumConnectionState)p_encode_1_.channel().attr(NetworkManager.PROTOCOL_ATTRIBUTE_KEY).get();
+ 
+@@ -36,7 +37,10 @@
+             {
+                 LOGGER.debug(RECEIVED_PACKET_MARKER, "OUT: [{}:{}] {}", p_encode_1_.channel().attr(NetworkManager.PROTOCOL_ATTRIBUTE_KEY).get(), integer, p_encode_2_.getClass().getName());
+             }
+-
++            if (integer == null && (integer = EnumConnectionState.LOGIN.getPacketId(this.direction, p_encode_2_)) != null)
++            {
++                LOGGER.warn("current state is {}, but send packet {}", enumconnectionstate, p_encode_2_.getClass().getSimpleName());
++            }
+             if (integer == null)
+             {
+                 throw new IOException("Can't serialize unregistered packet");

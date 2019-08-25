@@ -1,0 +1,12 @@
+--- ../src-base/minecraft/net/minecraft/block/BlockDoublePlant.java
++++ ../src-work/minecraft/net/minecraft/block/BlockDoublePlant.java
+@@ -81,6 +81,9 @@
+     {
+         if (!this.canBlockStay(worldIn, pos, state))
+         {
++            if (org.bukkit.craftbukkit.v1_12_R1.event.CraftEventFactory.callBlockPhysicsEvent(worldIn, pos).isCancelled()) {
++                return;
++            }
+             boolean flag = state.getValue(HALF) == BlockDoublePlant.EnumBlockHalf.UPPER;
+             BlockPos blockpos = flag ? pos : pos.up();
+             BlockPos blockpos1 = flag ? pos.down() : pos;

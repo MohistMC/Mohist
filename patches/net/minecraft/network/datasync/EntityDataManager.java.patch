@@ -1,0 +1,19 @@
+--- ../src-base/minecraft/net/minecraft/network/datasync/EntityDataManager.java
++++ ../src-work/minecraft/net/minecraft/network/datasync/EntityDataManager.java
+@@ -10,6 +10,7 @@
+ import java.util.concurrent.locks.ReadWriteLock;
+ import java.util.concurrent.locks.ReentrantReadWriteLock;
+ import javax.annotation.Nullable;
++import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
+ import net.minecraft.crash.CrashReport;
+ import net.minecraft.crash.CrashReportCategory;
+ import net.minecraft.entity.Entity;
+@@ -26,7 +27,7 @@
+     private static final Logger LOGGER = LogManager.getLogger();
+     private static final Map < Class <? extends Entity > , Integer > NEXT_ID_MAP = Maps. < Class <? extends Entity > , Integer > newHashMap();
+     private final Entity entity;
+-    private final Map < Integer, EntityDataManager.DataEntry<? >> entries = Maps. < Integer, EntityDataManager.DataEntry<? >> newHashMap();
++    private final Map < Integer, EntityDataManager.DataEntry<? >> entries = new Int2ObjectOpenHashMap<>(); // Paper
+     private final ReadWriteLock lock = new ReentrantReadWriteLock();
+     private boolean empty = true;
+     private boolean dirty;

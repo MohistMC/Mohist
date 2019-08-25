@@ -1,0 +1,11 @@
+--- ../src-base/minecraft/net/minecraft/nbt/NBTTagDouble.java
++++ ../src-work/minecraft/net/minecraft/nbt/NBTTagDouble.java
+@@ -18,7 +18,7 @@
+         this.data = data;
+     }
+ 
+-    void write(DataOutput output) throws IOException
++    public void write(DataOutput output) throws IOException
+     {
+         output.writeDouble(this.data);
+     }

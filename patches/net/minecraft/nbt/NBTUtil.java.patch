@@ -1,0 +1,186 @@
+--- ../src-base/minecraft/net/minecraft/nbt/NBTUtil.java
++++ ../src-work/minecraft/net/minecraft/nbt/NBTUtil.java
+@@ -5,9 +5,6 @@
+ import com.google.common.collect.UnmodifiableIterator;
+ import com.mojang.authlib.GameProfile;
+ import com.mojang.authlib.properties.Property;
+-import java.util.UUID;
+-import java.util.Map.Entry;
+-import javax.annotation.Nullable;
+ import net.minecraft.block.Block;
+ import net.minecraft.block.properties.IProperty;
+ import net.minecraft.block.state.BlockStateContainer;
+@@ -19,70 +16,66 @@
+ import org.apache.logging.log4j.LogManager;
+ import org.apache.logging.log4j.Logger;
+ 
++import javax.annotation.Nullable;
++import java.util.Map.Entry;
++import java.util.UUID;
++
+ public final class NBTUtil
+ {
+     private static final Logger LOGGER = LogManager.getLogger();
+ 
+     @Nullable
+-    public static GameProfile readGameProfileFromNBT(NBTTagCompound compound)
+-    {
++    public static GameProfile readGameProfileFromNBT(NBTTagCompound compound) {
+         String s = null;
+         String s1 = null;
+-
+-        if (compound.hasKey("Name", 8))
+         {
+-            s = compound.getString("Name");
++            NBTBase Name = compound.getTag("Name");
++            if (Name != null && Name.isString()) {
++                s = Name.getString();
++            }
+         }
+ 
+-        if (compound.hasKey("Id", 8))
+         {
+-            s1 = compound.getString("Id");
++            NBTBase Id = compound.getTag("Id");
++            if (Id != null && Id.isString()) {
++                s1 = Id.getString();
++            }
+         }
+ 
+-        try
+-        {
+-            UUID uuid;
+-
+-            try
+-            {
+-                uuid = UUID.fromString(s1);
++        try {
++            if (s1 == null) {
++                return null;
+             }
+-            catch (Throwable var12)
+-            {
+-                uuid = null;
+-            }
+-
++            UUID uuid = UUID.fromString(s1);
+             GameProfile gameprofile = new GameProfile(uuid, s);
+ 
+-            if (compound.hasKey("Properties", 10))
+-            {
+-                NBTTagCompound nbttagcompound = compound.getCompoundTag("Properties");
++            NBTBase tag = compound.getTag("Properties");
++            if (tag == null || !tag.isCompound()) {
++                return gameprofile;
++            }
+ 
+-                for (String s2 : nbttagcompound.getKeySet())
+-                {
+-                    NBTTagList nbttaglist = nbttagcompound.getTagList(s2, 10);
++            NBTTagCompound nbttagcompound = (NBTTagCompound) tag;
++            for (Entry<String, NBTBase> entry : nbttagcompound.entrySet()) {
++                String k = entry.getKey();
++                NBTBase v = entry.getValue();
++                NBTTagList nbttaglist = v.isList() ? (NBTTagList) v : new NBTTagList();
+ 
+-                    for (int i = 0; i < nbttaglist.tagCount(); ++i)
+-                    {
+-                        NBTTagCompound nbttagcompound1 = nbttaglist.getCompoundTagAt(i);
+-                        String s3 = nbttagcompound1.getString("Value");
++                int tagCount = nbttaglist.tagCount();
++                for (int i = 0; i < tagCount; ++i) {
++                    NBTTagCompound nbttagcompound1 = nbttaglist.getCompoundTagAt(i);
+ 
+-                        if (nbttagcompound1.hasKey("Signature", 8))
+-                        {
+-                            gameprofile.getProperties().put(s2, new Property(s2, s3, nbttagcompound1.getString("Signature")));
+-                        }
+-                        else
+-                        {
+-                            gameprofile.getProperties().put(s2, new Property(s2, s3));
+-                        }
++                    String Value = nbttagcompound1.getString("Value");
++                    NBTBase Signature = nbttagcompound1.getTag("Signature");
++
++                    if (Signature != null && Signature.isString()) {
++                        gameprofile.getProperties().put(k, new Property(k, Value, Signature.getString()));
++                    } else {
++                        gameprofile.getProperties().put(k, new Property(k, Value));
+                     }
+                 }
+             }
+-
+             return gameprofile;
+-        }
+-        catch (Throwable var13)
+-        {
++        } catch (Throwable var13) {
+             return null;
+         }
+     }
+@@ -102,7 +95,6 @@
+         if (!profile.getProperties().isEmpty())
+         {
+             NBTTagCompound nbttagcompound = new NBTTagCompound();
+-
+             for (String s : profile.getProperties().keySet())
+             {
+                 NBTTagList nbttaglist = new NBTTagList();
+@@ -153,16 +145,14 @@
+             NBTTagCompound nbttagcompound = (NBTTagCompound)nbt1;
+             NBTTagCompound nbttagcompound1 = (NBTTagCompound)nbt2;
+ 
+-            for (String s : nbttagcompound.getKeySet())
+-            {
++            for (Entry<String, NBTBase> entry : nbttagcompound.entrySet()) {
++                String s = entry.getKey();
+                 NBTBase nbtbase1 = nbttagcompound.getTag(s);
+-
+                 if (!areNBTEquals(nbtbase1, nbttagcompound1.getTag(s), compareTagList))
+                 {
+                     return false;
+                 }
+             }
+-
+             return true;
+         }
+         else if (nbt1 instanceof NBTTagList && compareTagList)
+@@ -176,12 +166,14 @@
+             }
+             else
+             {
+-                for (int i = 0; i < nbttaglist.tagCount(); ++i)
++                int tagCount = nbttaglist.tagCount();
++                int tagCount2 = nbttaglist1.tagCount();
++                for (int i = 0; i < tagCount; ++i)
+                 {
+                     NBTBase nbtbase = nbttaglist.get(i);
+                     boolean flag = false;
+ 
+-                    for (int j = 0; j < nbttaglist1.tagCount(); ++j)
++                    for (int j = 0; j < tagCount2; ++j)
+                     {
+                         if (areNBTEquals(nbtbase, nbttaglist1.get(j), compareTagList))
+                         {
+@@ -234,16 +226,17 @@
+ 
+     public static IBlockState readBlockState(NBTTagCompound tag)
+     {
+-        if (!tag.hasKey("Name", 8))
++        NBTTagString Name = tag.getTagIfPresent("Name", NBTTagString.class);
++        if (Name == null)
+         {
+             return Blocks.AIR.getDefaultState();
+         }
+         else
+         {
+-            Block block = Block.REGISTRY.getObject(new ResourceLocation(tag.getString("Name")));
++            Block block = Block.REGISTRY.getObject(new ResourceLocation(Name.getString()));
+             IBlockState iblockstate = block.getDefaultState();
+-
+-            if (tag.hasKey("Properties", 10))
++            NBTTagCompound Properties = tag.getTagIfPresent("Properties", NBTTagCompound.class);
++            if (Properties != null)
+             {
+                 NBTTagCompound nbttagcompound = tag.getCompoundTag("Properties");
+                 BlockStateContainer blockstatecontainer = block.getBlockState();

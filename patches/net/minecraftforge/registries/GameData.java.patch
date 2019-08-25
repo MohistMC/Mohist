@@ -1,0 +1,58 @@
+--- ../src-base/minecraft/net/minecraftforge/registries/GameData.java
++++ ../src-work/minecraft/net/minecraftforge/registries/GameData.java
+@@ -47,6 +47,7 @@
+ import net.minecraft.util.registry.RegistryNamespacedDefaultedByKey;
+ import net.minecraft.world.World;
+ import net.minecraft.world.biome.Biome;
++import net.minecraftforge.cauldron.inventory.CustomModRecipe;
+ import net.minecraftforge.common.MinecraftForge;
+ import net.minecraftforge.event.RegistryEvent;
+ import net.minecraftforge.event.RegistryEvent.MissingMappings;
+@@ -84,6 +85,7 @@
+ 
+ import org.apache.commons.lang3.Validate;
+ import org.apache.logging.log4j.Level;
++import org.bukkit.inventory.Recipe;
+ 
+ /**
+  * INTERNAL ONLY
+@@ -472,6 +474,7 @@
+         {
+             private static ItemStack result = new ItemStack(Items.DIAMOND, 64);
+             private ResourceLocation name;
++            private Recipe bukkitRecip;
+ 
+             @Override
+             public IRecipe setRegistryName(ResourceLocation name) {
+@@ -485,6 +488,8 @@
+             @Override public boolean canFit(int width, int height) { return false; }
+             @Override public ItemStack getRecipeOutput() { return result; }
+             @Override public boolean isDynamic() { return true; }
++            @Override public Recipe toBukkitRecipe() { if (bukkitRecip == null) bukkitRecip = new CustomModRecipe(this, this.getRegistryName()); return this.bukkitRecip; }
++            @Override public void setKey(ResourceLocation key) { }
+         }
+     }
+ 
+@@ -879,11 +884,11 @@
+     /**
+      * Check a name for a domain prefix, and if not present infer it from the
+      * current active mod container.
+-     * 
++     *
+      * @param name          The name or resource location
+      * @param warnOverrides If true, logs a warning if domain differs from that of
+      *                      the currently currently active mod container
+-     * 
++     *
+      * @return The {@link ResourceLocation} with given or inferred domain
+      */
+     public static ResourceLocation checkPrefix(String name, boolean warnOverrides)
+@@ -895,7 +900,7 @@
+         String prefix = mc == null || (mc instanceof InjectedModContainer && ((InjectedModContainer)mc).wrappedContainer instanceof FMLContainer) ? "minecraft" : mc.getModId().toLowerCase(Locale.ROOT);
+         if (warnOverrides && !oldPrefix.equals(prefix) && oldPrefix.length() > 0)
+         {
+-            FMLLog.log.warn("Potentially Dangerous alternative prefix `{}` for name `{}`, expected `{}`. This could be a intended override, but in most cases indicates a broken mod.", oldPrefix, name, prefix);
++            //FMLLog.log.warn("Potentially Dangerous alternative prefix `{}` for name `{}`, expected `{}`. This could be a intended override, but in most cases indicates a broken mod.", oldPrefix, name, prefix);
+             prefix = oldPrefix;
+         }
+         return new ResourceLocation(prefix, name);

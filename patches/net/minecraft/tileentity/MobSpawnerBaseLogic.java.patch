@@ -1,0 +1,91 @@
+--- ../src-base/minecraft/net/minecraft/tileentity/MobSpawnerBaseLogic.java
++++ ../src-work/minecraft/net/minecraft/tileentity/MobSpawnerBaseLogic.java
+@@ -1,18 +1,12 @@
+ package net.minecraft.tileentity;
+ 
+ import com.google.common.collect.Lists;
+-import java.util.List;
+-import javax.annotation.Nullable;
+ import net.minecraft.entity.Entity;
+ import net.minecraft.entity.EntityLiving;
+ import net.minecraft.entity.IEntityLivingData;
+ import net.minecraft.nbt.NBTTagCompound;
+ import net.minecraft.nbt.NBTTagList;
+-import net.minecraft.util.EnumParticleTypes;
+-import net.minecraft.util.ResourceLocation;
+-import net.minecraft.util.StringUtils;
+-import net.minecraft.util.WeightedRandom;
+-import net.minecraft.util.WeightedSpawnerEntity;
++import net.minecraft.util.*;
+ import net.minecraft.util.math.AxisAlignedBB;
+ import net.minecraft.util.math.BlockPos;
+ import net.minecraft.world.World;
+@@ -20,23 +14,26 @@
+ import net.minecraftforge.fml.relauncher.Side;
+ import net.minecraftforge.fml.relauncher.SideOnly;
+ 
++import javax.annotation.Nullable;
++import java.util.List;
++
+ public abstract class MobSpawnerBaseLogic
+ {
+-    private int spawnDelay = 20;
++    public int spawnDelay = 20;
+     private final List<WeightedSpawnerEntity> potentialSpawns = Lists.<WeightedSpawnerEntity>newArrayList();
+     private WeightedSpawnerEntity spawnData = new WeightedSpawnerEntity();
+     private double mobRotation;
+     private double prevMobRotation;
+-    private int minSpawnDelay = 200;
+-    private int maxSpawnDelay = 800;
+-    private int spawnCount = 4;
++    public int minSpawnDelay = 200;
++    public int maxSpawnDelay = 800;
++    public int spawnCount = 4;
+     private Entity cachedEntity;
+-    private int maxNearbyEntities = 6;
+-    private int activatingRangeFromPlayer = 16;
+-    private int spawnRange = 4;
++    public int maxNearbyEntities = 6; // CraftBukkit private -> public
++    public int activatingRangeFromPlayer = 16; // CraftBukkit private -> public
++    public int spawnRange = 4; // CraftBukkit private -> public
+ 
+     @Nullable
+-    private ResourceLocation getEntityId()
++    public ResourceLocation getEntityId()
+     {
+         String s = this.spawnData.getNbt().getString("id");
+         return StringUtils.isNullOrEmpty(s) ? null : new ResourceLocation(s);
+@@ -47,6 +44,7 @@
+         if (id != null)
+         {
+             this.spawnData.getNbt().setString("id", id.toString());
++            this.potentialSpawns.clear(); // CraftBukkit - SPIGOT-3496, MC-92282
+         }
+     }
+ 
+@@ -132,7 +130,15 @@
+                             ((EntityLiving)entity).onInitialSpawn(world.getDifficultyForLocation(new BlockPos(entity)), (IEntityLivingData)null);
+                         }
+ 
+-                        AnvilChunkLoader.spawnEntity(entity, world);
++						if (entity.world.spigotConfig.nerfSpawnerMobs) entity.fromMobSpawner = true; // Spigot Start
++
++                        flag = true; // Paper
++
++                        if (org.bukkit.craftbukkit.v1_12_R1.event.CraftEventFactory.callSpawnerSpawnEvent(entity, blockpos).isCancelled()) {
++                            continue;
++                        }
++
++                        AnvilChunkLoader.spawnEntity(entity, world, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.SPAWNER);
+                         world.playEvent(2004, blockpos, 0);
+ 
+                         if (entityliving != null)
+@@ -140,7 +146,7 @@
+                             entityliving.spawnExplosionParticle();
+                         }
+ 
+-                        flag = true;
++                        /*flag = true;*/ // Paper - moved up above cancellable event
+                     }
+                 }
+ 

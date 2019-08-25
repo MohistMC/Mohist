@@ -1,0 +1,18 @@
+--- ../src-base/minecraft/net/minecraft/server/management/UserListOps.java
++++ ../src-work/minecraft/net/minecraft/server/management/UserListOps.java
+@@ -2,6 +2,7 @@
+ 
+ import com.google.gson.JsonObject;
+ import com.mojang.authlib.GameProfile;
++
+ import java.io.File;
+ 
+ public class UserListOps extends UserList<GameProfile, UserListOpsEntry>
+@@ -43,6 +44,7 @@
+ 
+     protected String getObjectKey(GameProfile obj)
+     {
++        if (obj == null || obj.getId() == null) return "invalid"; // Cauldron - handle GameProfiles with no ID
+         return obj.getId().toString();
+     }
+ 

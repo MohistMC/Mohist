@@ -1,0 +1,41 @@
+--- ../src-base/minecraft/net/minecraft/nbt/NBTTagList.java
++++ ../src-work/minecraft/net/minecraft/nbt/NBTTagList.java
+@@ -4,6 +4,9 @@
+ import java.io.DataInput;
+ import java.io.DataOutput;
+ import java.io.IOException;
++import java.util.ArrayList;
++import java.util.Collections;
++import java.util.Comparator;
+ import java.util.List;
+ import java.util.Objects;
+ import org.apache.logging.log4j.LogManager;
+@@ -12,10 +15,16 @@
+ public class NBTTagList extends NBTBase implements java.lang.Iterable<NBTBase>
+ {
+     private static final Logger LOGGER = LogManager.getLogger();
+-    private List<NBTBase> tagList = Lists.<NBTBase>newArrayList();
++    public List<NBTBase> tagList = Lists.newArrayList(); // Paper
++    // Paper start
++    public void sort(java.util.Comparator<? extends NBTBase> comparator) {
++        //noinspection unchecked
++        java.util.Collections.sort(tagList, (java.util.Comparator<NBTBase>) comparator);
++    }
++    // Paper end
+     private byte tagType = 0;
+ 
+-    void write(DataOutput output) throws IOException
++    public void write(DataOutput output) throws IOException
+     {
+         if (this.tagList.isEmpty())
+         {
+@@ -249,7 +258,8 @@
+     {
+         NBTTagList nbttaglist = new NBTTagList();
+         nbttaglist.tagType = this.tagType;
+-
++        if ( nbttaglist.tagList instanceof ArrayList) // Thermos, ensure we dont create arrays to then delete them
++            ((ArrayList<NBTBase>)nbttaglist.tagList).ensureCapacity(this.tagList.size());
+         for (NBTBase nbtbase : this.tagList)
+         {
+             NBTBase nbtbase1 = nbtbase.copy();

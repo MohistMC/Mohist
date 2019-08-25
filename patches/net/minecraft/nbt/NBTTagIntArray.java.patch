@@ -1,0 +1,11 @@
+--- ../src-base/minecraft/net/minecraft/nbt/NBTTagIntArray.java
++++ ../src-work/minecraft/net/minecraft/nbt/NBTTagIntArray.java
+@@ -37,7 +37,7 @@
+         return aint;
+     }
+ 
+-    void write(DataOutput output) throws IOException
++    public void write(DataOutput output) throws IOException
+     {
+         output.writeInt(this.intArray.length);
+ 

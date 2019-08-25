@@ -1,0 +1,10 @@
+--- ../src-base/minecraft/net/minecraft/world/storage/SaveFormatOld.java
++++ ../src-work/minecraft/net/minecraft/world/storage/SaveFormatOld.java
+@@ -117,6 +117,7 @@
+             NBTTagCompound nbt = CompressedStreamTools.readCompressed(new FileInputStream(file));
+             WorldInfo info = new WorldInfo(fixer.process(FixTypes.LEVEL, nbt.getCompoundTag("Data")));
+             net.minecraftforge.fml.common.FMLCommonHandler.instance().handleWorldDataLoad(save, info, nbt);
++            save.initBukkitData(info); // Cauldron
+             return info;
+         }
+         catch (net.minecraftforge.fml.common.StartupQuery.AbortedException e) { throw e; }

@@ -1,0 +1,71 @@
+--- ../src-base/minecraft/net/minecraft/block/BlockBeacon.java
++++ ../src-work/minecraft/net/minecraft/block/BlockBeacon.java
+@@ -11,11 +11,7 @@
+ import net.minecraft.stats.StatList;
+ import net.minecraft.tileentity.TileEntity;
+ import net.minecraft.tileentity.TileEntityBeacon;
+-import net.minecraft.util.BlockRenderLayer;
+-import net.minecraft.util.EnumBlockRenderType;
+-import net.minecraft.util.EnumFacing;
+-import net.minecraft.util.EnumHand;
+-import net.minecraft.util.HttpUtil;
++import net.minecraft.util.*;
+ import net.minecraft.util.math.BlockPos;
+ import net.minecraft.world.World;
+ import net.minecraft.world.WorldServer;
+@@ -104,35 +100,24 @@
+         return BlockRenderLayer.CUTOUT;
+     }
+ 
+-    public static void updateColorAsync(final World worldIn, final BlockPos glassPos)
+-    {
+-        HttpUtil.DOWNLOADER_EXECUTOR.submit(new Runnable()
+-        {
+-            public void run()
+-            {
+-                Chunk chunk = worldIn.getChunkFromBlockCoords(glassPos);
+-
+-                for (int i = glassPos.getY() - 1; i >= 0; --i)
+-                {
++    public static void updateColorAsync(final World worldIn, final BlockPos glassPos) {
++        // Mohist start
++        HttpUtil.DOWNLOADER_EXECUTOR.submit((Runnable)new Runnable() {
++            @Override
++            public void run() {
++                final Chunk chunk = worldIn.getChunkFromBlockCoords(glassPos);
++                for (int i = glassPos.getY() - 1; i >= 0; --i) {
+                     final BlockPos blockpos = new BlockPos(glassPos.getX(), i, glassPos.getZ());
+-
+-                    if (!chunk.canSeeSky(blockpos))
+-                    {
++                    if (!chunk.canSeeSky(blockpos)) {
+                         break;
+                     }
+-
+                     IBlockState iblockstate = worldIn.getBlockState(blockpos);
+-
+-                    if (iblockstate.getBlock() == Blocks.BEACON)
+-                    {
+-                        ((WorldServer)worldIn).addScheduledTask(new Runnable()
+-                        {
+-                            public void run()
+-                            {
++                    if (iblockstate.getBlock() == Blocks.BEACON) {
++                        ((WorldServer)worldIn).addScheduledTask(new Runnable() {
++                            @Override
++                            public void run() {
+                                 TileEntity tileentity = worldIn.getTileEntity(blockpos);
+-
+-                                if (tileentity instanceof TileEntityBeacon)
+-                                {
++                                if (tileentity instanceof TileEntityBeacon) {
+                                     ((TileEntityBeacon)tileentity).updateBeacon();
+                                     worldIn.addBlockEvent(blockpos, Blocks.BEACON, 1, 0);
+                                 }
+@@ -142,5 +127,6 @@
+                 }
+             }
+         });
++        // Mohist end
+     }
+ }

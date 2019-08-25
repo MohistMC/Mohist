@@ -1,0 +1,23 @@
+--- ../src-base/minecraft/net/minecraft/util/EntityDamageSourceIndirect.java
++++ ../src-work/minecraft/net/minecraft/util/EntityDamageSourceIndirect.java
+@@ -16,6 +16,10 @@
+     {
+         super(damageTypeIn, source);
+         this.indirectEntity = indirectEntityIn;
++        // KCauldron start - pass projectlie source
++        if (damageSourceEntity != null && damageSourceEntity.getBukkitEntity() instanceof org.bukkit.entity.Projectile && indirectEntity != null && indirectEntity.getBukkitEntity() instanceof org.bukkit.projectiles.ProjectileSource)
++            ((org.bukkit.entity.Projectile) damageSourceEntity.getBukkitEntity()).setShooter((org.bukkit.projectiles.ProjectileSource) indirectEntity.getBukkitEntity());
++        // KCauldron end
+     }
+ 
+     @Nullable
+@@ -38,4 +42,9 @@
+         String s1 = s + ".item";
+         return !itemstack.isEmpty() && itemstack.hasDisplayName() && I18n.canTranslate(s1) ? new TextComponentTranslation(s1, new Object[] {entityLivingBaseIn.getDisplayName(), itextcomponent, itemstack.getTextComponent()}) : new TextComponentTranslation(s, new Object[] {entityLivingBaseIn.getDisplayName(), itextcomponent});
+     }
++
++    @Nullable
++    public Entity getProximateDamageSource() {
++        return super.getTrueSource();
++    }
+ }

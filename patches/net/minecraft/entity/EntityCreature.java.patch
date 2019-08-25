@@ -1,0 +1,35 @@
+--- ../src-base/minecraft/net/minecraft/entity/EntityCreature.java
++++ ../src-work/minecraft/net/minecraft/entity/EntityCreature.java
+@@ -1,13 +1,15 @@
+ package net.minecraft.entity;
+ 
+-import java.util.UUID;
+ import net.minecraft.entity.ai.attributes.AttributeModifier;
+ import net.minecraft.entity.passive.EntityTameable;
+ import net.minecraft.pathfinding.PathNodeType;
+ import net.minecraft.util.math.BlockPos;
+ import net.minecraft.util.math.Vec3d;
+ import net.minecraft.world.World;
++import org.bukkit.event.entity.EntityUnleashEvent;
+ 
++import java.util.UUID;
++
+ public abstract class EntityCreature extends EntityLiving
+ {
+     public static final UUID FLEEING_SPEED_MODIFIER_UUID = UUID.fromString("E199AD21-BA8A-4C53-8D13-6182D5C69D3A");
+@@ -93,6 +95,7 @@
+             {
+                 if (f > 10.0F)
+                 {
++                    this.world.getServer().getPluginManager().callEvent(new EntityUnleashEvent(this.getBukkitEntity(), EntityUnleashEvent.UnleashReason.DISTANCE));
+                     this.clearLeashed(true, true);
+                 }
+ 
+@@ -103,6 +106,7 @@
+ 
+             if (f > 10.0F)
+             {
++                this.world.getServer().getPluginManager().callEvent(new EntityUnleashEvent(this.getBukkitEntity(), EntityUnleashEvent.UnleashReason.DISTANCE));
+                 this.clearLeashed(true, true);
+                 this.tasks.disableControlFlag(1);
+             }

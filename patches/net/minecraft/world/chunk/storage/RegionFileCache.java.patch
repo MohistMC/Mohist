@@ -1,0 +1,233 @@
+--- ../src-base/minecraft/net/minecraft/world/chunk/storage/RegionFileCache.java
++++ ../src-work/minecraft/net/minecraft/world/chunk/storage/RegionFileCache.java
+@@ -1,15 +1,22 @@
+ package net.minecraft.world.chunk.storage;
+ 
+-import com.google.common.collect.Maps;
++import net.minecraft.nbt.CompressedStreamTools;
++import net.minecraft.nbt.NBTBase;
++import net.minecraft.nbt.NBTTagCompound;
++import net.minecraft.nbt.NBTTagList;
++
++import javax.annotation.Nullable;
+ import java.io.DataInputStream;
+ import java.io.DataOutputStream;
+ import java.io.File;
+ import java.io.IOException;
++import java.util.Iterator;
++import java.util.LinkedHashMap;
+ import java.util.Map;
+ 
+ public class RegionFileCache
+ {
+-    private static final Map<File, RegionFile> REGIONS_BY_FILE = Maps.<File, RegionFile>newHashMap();
++    public static final Map<File, RegionFile> REGIONS_BY_FILE = new LinkedHashMap(256, 0.75f, true); // Spigot - private -> public, Paper - HashMap -> LinkedHashMap
+ 
+     public static synchronized RegionFile createOrLoadRegionFile(File worldDir, int chunkX, int chunkZ)
+     {
+@@ -29,8 +36,8 @@
+             }
+ 
+             if (REGIONS_BY_FILE.size() >= 256)
+-            {
+-                clearRegionFileReferences();
++			{
++			 	trimCache(); // Paper
+             }
+ 
+             RegionFile regionfile1 = new RegionFile(file2);
+@@ -38,7 +45,154 @@
+             return regionfile1;
+         }
+     }
++    // Paper Start
++    private static synchronized void trimCache() {
++        Iterator<Map.Entry<File, RegionFile>> itr = RegionFileCache.REGIONS_BY_FILE.entrySet().iterator();
++        int count = RegionFileCache.REGIONS_BY_FILE.size() - 256;
++        while (count-- >= 0 && itr.hasNext()) {
++            try {
++                itr.next().getValue().close();
++            } catch (IOException ioexception) {
++                ioexception.printStackTrace();
++            }
++            itr.remove();
++        }
++    }
+ 
++    private static void printOversizedLog(String msg, File file, int x, int z) {
++        org.apache.logging.log4j.LogManager.getLogger().fatal(msg + " (" + file.toString().replaceAll(".+[\\\\/]", "") + " - " + x + "," + z + ") Go clean it up to remove this message. /minecraft:tp " + (x<<4)+" 128 "+(z<<4) + " - DO NOT REPORT THIS TO PAPER - You may ask for help on Discord, but do not file an issue. These error messages can not be removed.");
++    }
++
++    private static final int DEFAULT_SIZE_THRESHOLD = 1024 * 8;
++    private static final int OVERZEALOUS_TOTAL_THRESHOLD = 1024 * 64;
++    private static final int OVERZEALOUS_THRESHOLD = 1024;
++    private static int SIZE_THRESHOLD = DEFAULT_SIZE_THRESHOLD;
++    private static void resetFilterThresholds() {
++        SIZE_THRESHOLD = Math.max(1024 * 4, Integer.getInteger("Paper.FilterThreshhold", DEFAULT_SIZE_THRESHOLD));
++    }
++    static {
++        resetFilterThresholds();
++    }
++
++    static boolean isOverzealous() {
++        return SIZE_THRESHOLD == OVERZEALOUS_THRESHOLD;
++    }
++
++    private static void writeRegion(File file, int x, int z, NBTTagCompound nbttagcompound) throws IOException {
++        RegionFile regionfile = createOrLoadRegionFile(file, x, z);
++
++        DataOutputStream out = regionfile.getChunkDataOutputStream(x & 31, z & 31);
++        try {
++            CompressedStreamTools.write(nbttagcompound, out);
++            out.close();
++            regionfile.setOversized(x, z, false);
++        } catch (RegionFile.ChunkTooLargeException ignored) {
++            printOversizedLog("ChunkTooLarge! Someone is trying to duplicate.", file, x, z);
++            // Clone as we are now modifying it, don't want to corrupt the pending save state
++            nbttagcompound = (NBTTagCompound) nbttagcompound.copy();
++            // Filter out TileEntities and Entities
++            NBTTagCompound oversizedData = filterChunkData(nbttagcompound);
++            //noinspection SynchronizationOnLocalVariableOrMethodParameter
++            synchronized (regionfile) {
++                out = regionfile.getChunkDataOutputStream(x & 31, z & 31);
++                CompressedStreamTools.write(nbttagcompound, out);
++                try {
++                    out.close();
++                    // 2048 is below the min allowed, so it means we enter overzealous mode below
++                    if (SIZE_THRESHOLD == OVERZEALOUS_THRESHOLD) {
++                        resetFilterThresholds();
++                    }
++                } catch (RegionFile.ChunkTooLargeException e) {
++                    printOversizedLog("ChunkTooLarge even after reduction. Trying in overzealous mode.", file, x, z);
++                    // Eek, major fail. We have retry logic, so reduce threshholds and fall back
++                    SIZE_THRESHOLD = OVERZEALOUS_THRESHOLD;
++                    throw e;
++                }
++
++                regionfile.writeOversizedData(x, z, oversizedData);
++            }
++        } catch (Exception e) {
++            e.printStackTrace();
++            throw e;
++        }
++
++    }
++
++    private static NBTTagCompound filterChunkData(NBTTagCompound chunk) {
++        NBTTagCompound oversizedLevel = new NBTTagCompound();
++        NBTTagCompound level = chunk.getCompoundTag("Level");
++        filterChunkList(level, oversizedLevel, "Entities");
++        filterChunkList(level, oversizedLevel, "TileEntities");
++        NBTTagCompound oversized = new NBTTagCompound();
++        oversized.setTag("Level", oversizedLevel);
++        return oversized;
++    }
++
++    private static void filterChunkList(NBTTagCompound level, NBTTagCompound extra, String key) {
++        NBTTagList list = level.getTagList(key, 10);
++        NBTTagList newList = extra.getTagList(key, 10);
++        int totalSize = 0;
++        for (Iterator<NBTBase> iterator = list.tagList.iterator(); iterator.hasNext(); ) {
++            NBTBase object = iterator.next();
++            int nbtSize = getNBTSize(object);
++            if (nbtSize > SIZE_THRESHOLD || (SIZE_THRESHOLD == OVERZEALOUS_THRESHOLD && totalSize > OVERZEALOUS_TOTAL_THRESHOLD)) {
++                newList.appendTag(object);
++                iterator.remove();
++            } else  {
++                totalSize += nbtSize;
++            }
++        }
++        level.setTag(key, list);
++        extra.setTag(key, newList);
++    }
++
++
++    private static NBTTagCompound readOversizedChunk(RegionFile regionfile, int i, int j) throws IOException {
++        synchronized (regionfile) {
++            try (DataInputStream datainputstream = regionfile.getChunkDataInputStream(i & 31, j & 31)) {
++                NBTTagCompound oversizedData = regionfile.getOversizedData(i, j);
++                NBTTagCompound chunk = CompressedStreamTools.read(datainputstream);
++                if (oversizedData == null) {
++                    return chunk;
++                }
++                NBTTagCompound oversizedLevel = oversizedData.getCompoundTag("Level");
++                NBTTagCompound level = chunk.getCompoundTag("Level");
++
++                mergeChunkList(level, oversizedLevel, "Entities");
++                mergeChunkList(level, oversizedLevel, "TileEntities");
++
++                chunk.setTag("Level", level);
++
++                return chunk;
++            } catch (Throwable throwable) {
++                throwable.printStackTrace();
++                throw throwable;
++            }
++        }
++    }
++
++    private static void mergeChunkList(NBTTagCompound level, NBTTagCompound oversizedLevel, String key) {
++        NBTTagList levelList = level.getTagList(key, 10);
++        NBTTagList oversizedList = oversizedLevel.getTagList(key, 10);
++
++        if (!oversizedList.hasNoTags()) {
++            oversizedList.tagList.forEach(levelList::appendTag);
++            level.setTag(key, levelList);
++        }
++    }
++
++    private static int getNBTSize(NBTBase nbtBase) {
++        DataOutputStream test = new DataOutputStream(new org.apache.commons.io.output.NullOutputStream());
++        try {
++            nbtBase.write(test);
++            return test.size();
++        } catch (IOException e) {
++            e.printStackTrace();
++            return 0;
++        }
++    }
++    // Paper End
++
+     public static synchronized RegionFile getRegionFileIfExists(File worldDir, int chunkX, int chunkZ)
+     {
+         File file1 = new File(worldDir, "region");
+@@ -92,14 +246,38 @@
+         return regionfile.getChunkDataInputStream(chunkX & 31, chunkZ & 31);
+     }
+ 
++    @Nullable
++    public static NBTTagCompound getChunkInputStreamCB(File worldDir, int chunkX, int chunkZ) throws IOException
++    {  // Paper - remove synchronization
++        RegionFile regionfile = createOrLoadRegionFile(worldDir, chunkX, chunkZ);
++        // Paper start
++        if (regionfile.isOversized(chunkX, chunkZ)) {
++            printOversizedLog("Loading Oversized Chunk!", worldDir, chunkX, chunkZ);
++            return readOversizedChunk(regionfile, chunkX, chunkZ);
++        }
++        // Paper end
++        DataInputStream datainputstream = regionfile.getChunkDataInputStream(chunkX & 31, chunkZ & 31);
++
++        if (datainputstream == null) {
++            return null;
++        }
++
++        return CompressedStreamTools.read(datainputstream);
++    }
++
+     public static DataOutputStream getChunkOutputStream(File worldDir, int chunkX, int chunkZ)
+     {
+         RegionFile regionfile = createOrLoadRegionFile(worldDir, chunkX, chunkZ);
+         return regionfile.getChunkDataOutputStream(chunkX & 31, chunkZ & 31);
+     }
+ 
++    public static void getChunkOutputStream(File worldDir, int chunkX, int chunkZ, NBTTagCompound nbttagcompound) throws IOException
++    {   // Paper - remove synchronization
++        writeRegion(worldDir, chunkX, chunkZ, nbttagcompound); // Paper - moved to own method
++    }
++
+     public static boolean chunkExists(File worldDir, int chunkX, int chunkZ)
+-    {
++    {   // Paper - remove synchronization
+         RegionFile regionfile = getRegionFileIfExists(worldDir, chunkX, chunkZ);
+         return regionfile != null ? regionfile.isChunkSaved(chunkX & 31, chunkZ & 31) : false;
+     }

@@ -1,0 +1,70 @@
+--- ../src-base/minecraft/net/minecraft/nbt/NBTBase.java
++++ ../src-work/minecraft/net/minecraft/nbt/NBTBase.java
+@@ -8,7 +8,7 @@
+ {
+     public static final String[] NBT_TYPES = new String[] {"END", "BYTE", "SHORT", "INT", "LONG", "FLOAT", "DOUBLE", "BYTE[]", "STRING", "LIST", "COMPOUND", "INT[]", "LONG[]"};
+ 
+-    abstract void write(DataOutput output) throws IOException;
++    public abstract void write(DataOutput output) throws IOException;
+ 
+     abstract void read(DataInput input, int depth, NBTSizeTracker sizeTracker) throws IOException;
+ 
+@@ -88,6 +88,52 @@
+         }
+     }
+ 
++    public boolean isEnd() {
++        return getId() == 0;
++    }
++
++    public boolean isByte() {
++        return getId() == 1;
++    }
++
++    public boolean isShort() {
++        return getId() == 2;
++    }
++    public boolean isInt() {
++        return getId() == 3;
++    }
++    public boolean isLong() {
++        return getId() == 4;
++    }
++    public boolean isFloat() {
++        return getId() == 5;
++    }
++    public boolean isDouble() {
++        return getId() == 6;
++    }
++    public boolean isByteArray() {
++        return getId() == 7;
++    }
++    public boolean isString() {
++        return getId() == 8;
++    }
++    public boolean isList() {
++        return getId() == 9;
++    }
++    public boolean isCompound() {
++        return getId() == 10;
++    }
++    public boolean isIntArr() {
++        return getId() == 11;
++    }
++    public boolean isLongArr() {
++        return getId() == 12;
++    }
++    public boolean isNumber() {
++        int id = getId();
++        return id >= 1 && id <= 6;
++    }
++
+     public abstract NBTBase copy();
+ 
+     public boolean hasNoTags()
+@@ -109,4 +155,5 @@
+     {
+         return this.toString();
+     }
++
+ }

@@ -1,0 +1,10 @@
+--- ../src-base/minecraft/net/minecraft/util/text/translation/LanguageMap.java
++++ ../src-work/minecraft/net/minecraft/util/text/translation/LanguageMap.java
+@@ -7,6 +7,7 @@
+ import java.io.InputStream;
+ import java.nio.charset.StandardCharsets;
+ import java.util.IllegalFormatException;
++import java.util.Locale;
+ import java.util.Map;
+ import java.util.regex.Pattern;
+ import net.minecraftforge.fml.relauncher.Side;

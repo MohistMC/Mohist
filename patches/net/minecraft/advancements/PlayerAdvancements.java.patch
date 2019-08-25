@@ -1,0 +1,50 @@
+--- ../src-base/minecraft/net/minecraft/advancements/PlayerAdvancements.java
++++ ../src-work/minecraft/net/minecraft/advancements/PlayerAdvancements.java
+@@ -29,6 +29,7 @@
+ import net.minecraft.util.text.TextComponentTranslation;
+ import org.apache.logging.log4j.LogManager;
+ import org.apache.logging.log4j.Logger;
++import org.spigotmc.SpigotConfig;
+ 
+ public class PlayerAdvancements
+ {
+@@ -39,7 +40,7 @@
+     };
+     private final MinecraftServer server;
+     private final File progressFile;
+-    private final Map<Advancement, AdvancementProgress> progress = Maps.<Advancement, AdvancementProgress>newLinkedHashMap();
++    public final Map<Advancement, AdvancementProgress> progress = Maps.<Advancement, AdvancementProgress>newLinkedHashMap();
+     private final Set<Advancement> visible = Sets.<Advancement>newLinkedHashSet();
+     private final Set<Advancement> visibilityChanged = Sets.<Advancement>newLinkedHashSet();
+     private final Set<Advancement> progressChanged = Sets.<Advancement>newLinkedHashSet();
+@@ -142,7 +143,11 @@
+ 
+                     if (advancement == null)
+                     {
+-                        LOGGER.warn("Ignored advancement '" + entry.getKey() + "' in progress file " + this.progressFile + " - it doesn't exist anymore?");
++                        // CraftBukkit start
++                        if (entry.getKey().toString().equals("minecraft")) {
++                            LOGGER.warn("Ignored advancement '" + entry.getKey() + "' in progress file " + this.progressFile + " - it doesn't exist anymore?");
++                        }
++                        // CraftBukkit end
+                     }
+                     else
+                     {
+@@ -167,6 +172,9 @@
+ 
+     public void save()
+     {
++        if (SpigotConfig.disableAdvancementSaving) {
++            return;
++        }
+         Map<ResourceLocation, AdvancementProgress> map = Maps.<ResourceLocation, AdvancementProgress>newHashMap();
+ 
+         for (Entry<Advancement, AdvancementProgress> entry : this.progress.entrySet())
+@@ -211,6 +219,7 @@
+ 
+             if (!flag1 && advancementprogress.isDone())
+             {
++                this.player.world.getServer().getPluginManager().callEvent(new org.bukkit.event.player.PlayerAdvancementDoneEvent(this.player.getBukkitEntity(), p_192750_1_.bukkit)); // CraftBukkit
+                 p_192750_1_.getRewards().apply(this.player);
+ 
+                 if (p_192750_1_.getDisplay() != null && p_192750_1_.getDisplay().shouldAnnounceToChat() && this.player.world.getGameRules().getBoolean("announceAdvancements"))

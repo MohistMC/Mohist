@@ -1,0 +1,19 @@
+--- ../src-base/minecraft/net/minecraft/network/play/server/SPacketTitle.java
++++ ../src-work/minecraft/net/minecraft/network/play/server/SPacketTitle.java
+@@ -17,7 +17,6 @@
+     private int fadeInTime;
+     private int displayTime;
+     private int fadeOutTime;
+-
+     public SPacketTitle()
+     {
+     }
+@@ -64,7 +63,7 @@
+ 
+         if (this.type == SPacketTitle.Type.TITLE || this.type == SPacketTitle.Type.SUBTITLE || this.type == SPacketTitle.Type.ACTIONBAR)
+         {
+-            buf.writeTextComponent(this.message);
++        	buf.writeTextComponent(this.message);
+         }
+ 
+         if (this.type == SPacketTitle.Type.TIMES)

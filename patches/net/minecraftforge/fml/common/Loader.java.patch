@@ -1,0 +1,406 @@
+--- ../src-base/minecraft/net/minecraftforge/fml/common/Loader.java
++++ ../src-work/minecraft/net/minecraftforge/fml/common/Loader.java
+@@ -95,6 +95,8 @@
+ import com.google.gson.JsonElement;
+ import com.google.gson.JsonObject;
+ import com.google.gson.JsonParser;
++import red.mohist.api.ServerAPI;
++import red.mohist.i18n.Message;
+ 
+ import javax.annotation.Nullable;
+ 
+@@ -207,8 +209,8 @@
+         modClassLoader = new ModClassLoader(getClass().getClassLoader());
+         if (mccversion !=null && !mccversion.equals(MC_VERSION))
+         {
+-            FMLLog.log.fatal("This version of FML is built for Minecraft {}, we have detected Minecraft {} in your minecraft jar file", mccversion, MC_VERSION);
+-            throw new LoaderException(String.format("This version of FML is built for Minecraft %s, we have detected Minecraft %s in your minecraft jar file", mccversion, MC_VERSION));
++            FMLLog.log.fatal(Message.getFormatString(Message.forge_loader_1,new Object[]{mccversion, MC_VERSION}));
++            throw new LoaderException(Message.getFormatString(Message.forge_loader_2,new Object[]{mccversion, MC_VERSION}));
+         }
+ 
+         minecraft = new MinecraftDummyContainer(MC_VERSION);
+@@ -230,7 +232,7 @@
+      */
+     private void sortModList()
+     {
+-        FMLLog.log.trace("Verifying mod requirements are satisfied");
++        FMLLog.log.trace(Message.getString(Message.forge_loader_3));
+         List<WrongMinecraftVersionException> wrongMinecraftExceptions = new ArrayList<>();
+         List<MissingModsException> missingModsExceptions = new ArrayList<>();
+         try
+@@ -246,7 +248,7 @@
+             {
+                 if (!mod.acceptableMinecraftVersionRange().containsVersion(minecraft.getProcessedVersion()))
+                 {
+-                    FMLLog.log.fatal("The mod {} does not wish to run in Minecraft version {}. You will have to remove it to play.", mod.getModId(), getMCVersionString());
++                    FMLLog.log.fatal(Message.getFormatString(Message.forge_loader_4,new Object[]{mod.getModId(), getMCVersionString()}));
+                     WrongMinecraftVersionException ret = new WrongMinecraftVersionException(mod, getMCVersionString());
+                     FMLLog.log.fatal(ret.getMessage());
+                     wrongMinecraftExceptions.add(ret);
+@@ -283,7 +285,7 @@
+ 
+             if (wrongMinecraftExceptions.isEmpty() && missingModsExceptions.isEmpty())
+             {
+-                FMLLog.log.trace("All mod requirements are satisfied");
++                FMLLog.log.trace(Message.getString(Message.forge_loader_5));
+             }
+             else if (missingModsExceptions.size()==1 && wrongMinecraftExceptions.isEmpty())
+             {
+@@ -303,7 +305,7 @@
+ 
+             try
+             {
+-                FMLLog.log.trace("Sorting mods into an ordered list");
++                FMLLog.log.trace(Message.getString(Message.forge_loader_6));
+                 List<ModContainer> sortedMods = sorter.sort();
+                 // Reset active list to the sorted list
+                 modController.getActiveModList().clear();
+@@ -312,37 +314,37 @@
+                 mods.removeAll(sortedMods);
+                 sortedMods.addAll(mods);
+                 mods = sortedMods;
+-                FMLLog.log.trace("Mod sorting completed successfully");
++                FMLLog.log.trace(Message.getString(Message.forge_loader_7));
+             }
+             catch (ModSortingException sortException)
+             {
+-                FMLLog.log.fatal("A dependency cycle was detected in the input mod set so an ordering cannot be determined");
++                FMLLog.log.fatal(Message.getString(Message.forge_loader_8));
+                 SortingExceptionData<ModContainer> exceptionData = sortException.getExceptionData();
+-                FMLLog.log.fatal("The first mod in the cycle is {}", exceptionData.getFirstBadNode());
+-                FMLLog.log.fatal("The mod cycle involves");
++                FMLLog.log.fatal(Message.getFormatString(Message.forge_loader_9,new Object[]{exceptionData.getFirstBadNode()}));
++                FMLLog.log.fatal(Message.getString(Message.forge_loader_10));
+                 for (ModContainer mc : exceptionData.getVisitedNodes())
+                 {
+-                    FMLLog.log.fatal("{} : before: {}, after: {}", mc.toString(), mc.getDependants(), mc.getDependencies());
++                    FMLLog.log.fatal(Message.getFormatString(Message.forge_loader_11,new Object[]{mc.toString(), mc.getDependants(), mc.getDependencies()}));
+                 }
+-                FMLLog.log.error("The full error", sortException);
++                FMLLog.log.error(Message.getFormatString(Message.forge_loader_12,new Object[]{ sortException }));
+                 throw sortException;
+             }
+         }
+         finally
+         {
+-            FMLLog.log.debug("Mod sorting data");
++            FMLLog.log.debug(Message.getString(Message.forge_loader_13));
+             int unprintedMods = mods.size();
+             for (ModContainer mod : getActiveModList())
+             {
+                 if (!mod.isImmutable())
+                 {
+-                    FMLLog.log.debug("\t{}({}:{}): {} ({})", mod.getModId(), mod.getName(), mod.getVersion(), mod.getSource().getName(), mod.getSortingRules());
++                    FMLLog.log.debug("\t" + Message.getFormatString(Message.forge_loader_14,new Object[]{mod.getModId(), mod.getName(), mod.getVersion(), mod.getSource().getName(), mod.getSortingRules()}));
+                     unprintedMods--;
+                 }
+             }
+             if (unprintedMods == mods.size())
+             {
+-                FMLLog.log.debug("No user mods found to sort");
++                FMLLog.log.debug(Message.getString(Message.forge_loader_15));
+             }
+         }
+ 
+@@ -365,7 +367,7 @@
+     private ModDiscoverer identifyMods(List<String> additionalContainers)
+     {
+         injectedContainers.addAll(additionalContainers);
+-        FMLLog.log.debug("Building injected Mod Containers {}", injectedContainers);
++        FMLLog.log.debug(Message.getFormatString(Message.forge_loader_16,new Object[]{injectedContainers}));
+         mods.add(minecraft);
+         // Add in the MCP mod container
+         mods.add(new InjectedModContainer(mcp,new File("minecraft.jar")));
+@@ -378,7 +380,7 @@
+             }
+             catch (Exception e)
+             {
+-                FMLLog.log.error("A problem occurred instantiating the injected mod container {}", cont, e);
++                FMLLog.log.error(Message.getFormatString(Message.forge_loader_17,new Object[]{cont,e}));
+                 throw new LoaderException(e);
+             }
+             mods.add(new InjectedModContainer(mc,mc.getSource()));
+@@ -387,9 +389,9 @@
+ 
+         //if (!FMLForgePlugin.RUNTIME_DEOBF) //Only descover mods in the classpath if we're in the dev env.
+         {                                  //TODO: Move this to GradleStart? And add a specific mod canidate for Forge itself.
+-            FMLLog.log.debug("Attempting to load mods contained in the minecraft jar file and associated classes");
++            FMLLog.log.debug(Message.getString(Message.forge_loader_18));
+             discoverer.findClasspathMods(modClassLoader);
+-            FMLLog.log.debug("Minecraft jar mods loaded successfully");
++            FMLLog.log.debug(Message.getString(Message.forge_loader_19));
+         }
+ 
+         List<Artifact> maven_canidates = LibraryManager.flattenLists(minecraftDir);
+@@ -413,11 +415,11 @@
+             // skip loaded coremods
+             if (CoreModManager.getIgnoredMods().contains(mod.getName()))
+             {
+-                FMLLog.log.trace("Skipping already parsed coremod or tweaker {}", mod.getName());
++                FMLLog.log.trace(Message.getFormatString(Message.forge_loader_20,new Object[]{ mod.getName()}));
+             }
+             else
+             {
+-                FMLLog.log.debug("Found a candidate zip or jar file {}", mod.getName());
++                FMLLog.log.debug(Message.getFormatString(Message.forge_loader_21,new Object[]{ mod.getName()}));
+                 discoverer.addCandidate(new ModCandidate(mod, mod, ContainerType.JAR));
+             }
+         }
+@@ -425,7 +427,7 @@
+         mods.addAll(discoverer.identifyMods());
+         identifyDuplicates(mods);
+         namedMods = Maps.uniqueIndex(mods, ModContainer::getModId);
+-        FMLLog.log.info("Forge Mod Loader has identified {} mod{} to load", mods.size(), mods.size() != 1 ? "s" : "");
++        FMLLog.log.info(Message.getFormatString(Message.forge_loader_22,new Object[]{ mods.size(), mods.size() != 1 ? "s" : ""}));
+         return discoverer;
+     }
+ 
+@@ -455,7 +457,7 @@
+         {
+             if (e.getCount() > 1)
+             {
+-                FMLLog.log.fatal("Found a duplicate mod {} at {}", e.getElement().getModId(), dupsearch.get(e.getElement()));
++                FMLLog.log.fatal(Message.getFormatString(Message.forge_loader_23,new Object[]{e.getElement().getModId(), dupsearch.get(e.getElement())}));
+                 dupes.putAll(e.getElement(),dupsearch.get(e.getElement()));
+             }
+         }
+@@ -484,44 +486,43 @@
+         }
+         catch (IOException ioe)
+         {
+-            FMLLog.log.error("Failed to resolve loader directories: mods : {} ; config {}", canonicalModsDir.getAbsolutePath(),
+-                            configDir.getAbsolutePath(), ioe);
++            FMLLog.log.error(Message.getFormatString(Message.forge_loader_24,new Object[]{ canonicalModsDir.getAbsolutePath(),configDir.getAbsolutePath(), ioe}));
+             throw new LoaderException(ioe);
+         }
+ 
+         if (!canonicalModsDir.exists())
+         {
+-            FMLLog.log.info("No mod directory found, creating one: {}", canonicalModsPath);
++            FMLLog.log.info(Message.getFormatString(Message.forge_loader_25,new Object[]{ canonicalModsPath}));
+             boolean dirMade = canonicalModsDir.mkdir();
+             if (!dirMade)
+             {
+-                FMLLog.log.fatal("Unable to create the mod directory {}", canonicalModsPath);
+-                throw new LoaderException(String.format("Unable to create the mod directory %s", canonicalModsPath));
++                FMLLog.log.fatal(Message.getFormatString(Message.forge_loader_26,new Object[]{canonicalModsPath }));
++                throw new LoaderException(Message.getFormatString(Message.forge_loader_27,new Object[]{ canonicalModsPath}));
+             }
+-            FMLLog.log.info("Mod directory created successfully");
++            FMLLog.log.info(Message.getString(Message.forge_loader_28));
+         }
+ 
+         if (!canonicalConfigDir.exists())
+         {
+-            FMLLog.log.debug("No config directory found, creating one: {}", canonicalConfigPath);
++            FMLLog.log.debug(Message.getFormatString(Message.forge_loader_29,new Object[]{canonicalConfigPath }));
+             boolean dirMade = canonicalConfigDir.mkdir();
+             if (!dirMade)
+             {
+-                FMLLog.log.fatal("Unable to create the config directory {}", canonicalConfigPath);
++                FMLLog.log.fatal(Message.getFormatString(Message.forge_loader_30,new Object[]{ canonicalConfigPath}));
+                 throw new LoaderException();
+             }
+-            FMLLog.log.info("Config directory created successfully");
++            FMLLog.log.info(Message.getString(Message.forge_loader_31));
+         }
+ 
+         if (!canonicalModsDir.isDirectory())
+         {
+-            FMLLog.log.fatal("Attempting to load mods from {}, which is not a directory", canonicalModsPath);
++            FMLLog.log.fatal(Message.getFormatString(Message.forge_loader_32,new Object[]{canonicalModsPath }));
+             throw new LoaderException();
+         }
+ 
+         if (!configDir.isDirectory())
+         {
+-            FMLLog.log.fatal("Attempting to load configuration from {}, which is not a directory", canonicalConfigPath);
++            FMLLog.log.fatal(Message.getFormatString(Message.forge_loader_33,new Object[]{ canonicalConfigPath}));
+             throw new LoaderException();
+         }
+ 
+@@ -575,14 +576,14 @@
+         {
+             if (nonMod.isFile())
+             {
+-                FMLLog.log.info("FML has found a non-mod file {} in your mods directory. It will now be injected into your classpath. This could severe stability issues, it should be removed if possible.", nonMod.getName());
++                FMLLog.log.info(Message.getFormatString(Message.forge_loader_34,new Object[]{nonMod.getName() }));
+                 try
+                 {
+                     modClassLoader.addFile(nonMod);
+                 }
+                 catch (MalformedURLException e)
+                 {
+-                    FMLLog.log.error("Encountered a weird problem with non-mod file injection : {}", nonMod.getName(), e);
++                    FMLLog.log.error(Message.getFormatString(Message.forge_loader_35,new Object[]{  nonMod.getName(), e}));
+                 }
+             }
+         }
+@@ -592,14 +593,14 @@
+         modController.transition(LoaderState.CONSTRUCTING, false);
+         modController.distributeStateMessage(LoaderState.CONSTRUCTING, modClassLoader, discoverer.getASMTable(), reverseDependencies);
+ 
+-        FMLLog.log.debug("Mod signature data");
+-        FMLLog.log.debug(" \tValid Signatures:");
++        FMLLog.log.debug(Message.getString(Message.forge_loader_36));
++        FMLLog.log.debug(" \t" + Message.getString(Message.forge_loader_37));
+         for (ModContainer mod : getActiveModList())
+         {
+             if (mod.getSigningCertificate() != null)
+                 FMLLog.log.debug("\t\t({}) {}\t({}\t{})\t{}", CertificateHelper.getFingerprint(mod.getSigningCertificate()), mod.getModId(), mod.getName(), mod.getVersion(), mod.getSource().getName());
+         }
+-        FMLLog.log.debug(" \tMissing Signatures:");
++        FMLLog.log.debug(" \t "+ Message.getString(Message.forge_loader_38));
+         for (ModContainer mod : getActiveModList())
+         {
+             if (mod.getSigningCertificate() == null)
+@@ -607,7 +608,7 @@
+         }
+         if (getActiveModList().isEmpty())
+         {
+-            FMLLog.log.debug("No user mod signature data found");
++            FMLLog.log.debug(Message.getString(Message.forge_loader_39));
+         }
+         progressBar.step("Initializing mods Phase 1");
+         modController.transition(LoaderState.PREINITIALIZATION, false);
+@@ -617,7 +618,7 @@
+     {
+         if (!modController.isInState(LoaderState.PREINITIALIZATION))
+         {
+-            FMLLog.log.warn("There were errors previously. Not beginning mod initialization phase");
++            FMLLog.log.warn(Message.getString(Message.forge_loader_40));
+             return;
+         }
+         GameData.fireCreateRegistryEvents();
+@@ -636,31 +637,31 @@
+     private void disableRequestedMods()
+     {
+         String forcedModList = System.getProperty("fml.modStates", "");
+-        FMLLog.log.trace("Received a system property request \'{}\'",forcedModList);
++        FMLLog.log.trace(Message.getFormatString(Message.forge_loader_41, new Object[]{forcedModList}));
+         Map<String, String> sysPropertyStateList = Splitter.on(CharMatcher.anyOf(";:"))
+                 .omitEmptyStrings().trimResults().withKeyValueSeparator("=")
+                 .split(forcedModList);
+-        FMLLog.log.trace("System property request managing the state of {} mods", sysPropertyStateList.size());
++        FMLLog.log.trace(Message.getFormatString(Message.forge_loader_42, new Object[]{sysPropertyStateList.size()}));
+         Map<String, String> modStates = Maps.newHashMap();
+ 
+         forcedModFile = new File(canonicalConfigDir, "fmlModState.properties");
+         Properties forcedModListProperties = new Properties();
+         if (forcedModFile.exists() && forcedModFile.isFile())
+         {
+-            FMLLog.log.trace("Found a mod state file {}", forcedModFile.getName());
++            FMLLog.log.trace(Message.getFormatString(Message.forge_loader_43, new Object[]{forcedModFile.getName()}));
+             try
+             {
+                 forcedModListProperties.load(new InputStreamReader(new FileInputStream(forcedModFile), StandardCharsets.UTF_8));
+-                FMLLog.log.trace("Loaded states for {} mods from file", forcedModListProperties.size());
++                FMLLog.log.trace(Message.getFormatString(Message.forge_loader_44, new Object[]{forcedModListProperties.size()}));
+             }
+             catch (Exception e)
+             {
+-                FMLLog.log.info("An error occurred reading the fmlModState.properties file", e);
++                FMLLog.log.info(Message.getString(Message.forge_loader_45), e);
+             }
+         }
+         modStates.putAll(Maps.fromProperties(forcedModListProperties));
+         modStates.putAll(sysPropertyStateList);
+-        FMLLog.log.debug("After merging, found state information for {} mods", modStates.size());
++        FMLLog.log.debug(Message.getFormatString(Message.forge_loader_46, new Object[]{ modStates.size()}));
+ 
+         Map<String, Boolean> isEnabled = Maps.transformValues(modStates, Boolean::parseBoolean);
+ 
+@@ -668,7 +669,7 @@
+         {
+             if (namedMods.containsKey(entry.getKey()))
+             {
+-                FMLLog.log.info("Setting mod {} to enabled state {}", entry.getKey(), entry.getValue());
++                FMLLog.log.info(Message.getFormatString(Message.forge_loader_47, new Object[]{entry.getKey(), entry.getValue()}));
+                 namedMods.get(entry.getKey()).setEnabledState(entry.getValue());
+             }
+         }
+@@ -751,7 +752,8 @@
+         modController.transition(LoaderState.AVAILABLE, false);
+         modController.distributeStateMessage(LoaderState.AVAILABLE);
+         GameData.freezeData();
+-        FMLLog.log.info("Forge Mod Loader has successfully loaded {} mod{}", mods.size(), mods.size() == 1 ? "" : "s");
++        ServerAPI.mods.put("mods", mods.size());
++        FMLLog.log.info(Message.getFormatString(Message.forge_loader_48, new Object[]{mods.size(), mods.size() == 1 ? "" : "s"}));
+         progressBar.step("Completing Minecraft initialization");
+     }
+ 
+@@ -896,8 +898,10 @@
+             }
+         }
+ 
+-        if (difference.size() > 0)
+-            FMLLog.log.info("Attempting connection with missing mods {} at {}", difference, side);
++        if (difference.size() > 0) {
++            ServerAPI.modlists.addAll(difference);
++            FMLLog.log.info(Message.getFormatString(Message.forge_loader_49, new Object[]{difference, side}));
++        }
+         return true;
+     }
+ 
+@@ -915,17 +919,17 @@
+         Disableable disableable = mc.canBeDisabled();
+         if (disableable == Disableable.NEVER)
+         {
+-            FMLLog.log.info("Cannot disable mod {} - it is never allowed to be disabled", modId);
++            FMLLog.log.info(Message.getFormatString(Message.forge_loader_50, new Object[]{modId}));
+             return;
+         }
+         if (disableable == Disableable.DEPENDENCIES)
+         {
+-            FMLLog.log.info("Cannot disable mod {} - there are dependent mods that require its presence", modId);
++            FMLLog.log.info(Message.getFormatString(Message.forge_loader_51, new Object[]{ modId}));
+             return;
+         }
+         if (disableable == Disableable.YES)
+         {
+-            FMLLog.log.info("Runtime disabling mod {}", modId);
++            FMLLog.log.info(Message.getFormatString(Message.forge_loader_52, new Object[]{modId}));
+             modController.disableMod(mc);
+             List<ModContainer> localmods = Lists.newArrayList(mods);
+             localmods.remove(mc);
+@@ -941,7 +945,7 @@
+         }
+         catch (Exception e)
+         {
+-            FMLLog.log.info("An error occurred writing the fml mod states file, your disabled change won't persist", e);
++            FMLLog.log.info(Message.getString(Message.forge_loader_53), e);
+         }
+     }
+ 
+@@ -959,7 +963,7 @@
+         File injectedDepFile = new File(getConfigDir(),"injectedDependencies.json");
+         if (!injectedDepFile.exists())
+         {
+-            FMLLog.log.debug("File {} not found. No dependencies injected", injectedDepFile.getAbsolutePath());
++            FMLLog.log.debug(Message.getFormatString(Message.forge_loader_54, new Object[]{injectedDepFile.getAbsolutePath()}));
+             return;
+         }
+         JsonParser parser = new JsonParser();
+@@ -981,18 +985,18 @@
+                     } else if (type.equals("after")) {
+                         injectedAfter.put(modId, VersionParser.parseVersionReference(depObj.get("target").getAsString()));
+                     } else {
+-                        FMLLog.log.error("Invalid dependency type {}", type);
++                        FMLLog.log.error(Message.getFormatString(Message.forge_loader_55, new Object[]{type}));
+                         throw new RuntimeException("Unable to parse type");
+                     }
+                 }
+             }
+         } catch (Exception e)
+         {
+-            FMLLog.log.error("Unable to parse {} - skipping", injectedDepFile);
++            FMLLog.log.error(Message.getFormatString(Message.forge_loader_56, new Object[]{injectedDepFile}));
+             FMLLog.log.throwing(Level.ERROR, e);
+             return;
+         }
+-        FMLLog.log.debug("Loaded {} injected dependencies on modIds: {}", injectedBefore.size(), injectedBefore.keySet());
++        FMLLog.log.debug(Message.getFormatString(Message.forge_loader_57, new Object[]{injectedBefore.size(), injectedBefore.keySet()}));
+     }
+ 
+     List<ArtifactVersion> getInjectedBefore(String modId)

@@ -1,0 +1,33 @@
+--- ../src-base/minecraft/net/minecraft/block/BlockEndPortal.java
++++ ../src-work/minecraft/net/minecraft/block/BlockEndPortal.java
+@@ -1,8 +1,5 @@
+ package net.minecraft.block;
+ 
+-import java.util.List;
+-import java.util.Random;
+-import javax.annotation.Nullable;
+ import net.minecraft.block.material.MapColor;
+ import net.minecraft.block.material.Material;
+ import net.minecraft.block.state.BlockFaceShape;
+@@ -19,7 +16,12 @@
+ import net.minecraft.world.World;
+ import net.minecraftforge.fml.relauncher.Side;
+ import net.minecraftforge.fml.relauncher.SideOnly;
++import org.bukkit.event.entity.EntityPortalEnterEvent;
+ 
++import javax.annotation.Nullable;
++import java.util.List;
++import java.util.Random;
++
+ public class BlockEndPortal extends BlockContainer
+ {
+     protected static final AxisAlignedBB END_PORTAL_AABB = new AxisAlignedBB(0.0D, 0.0D, 0.0D, 1.0D, 0.75D, 1.0D);
+@@ -69,6 +71,8 @@
+     {
+         if (!worldIn.isRemote && !entityIn.isRiding() && !entityIn.isBeingRidden() && entityIn.isNonBoss() && entityIn.getEntityBoundingBox().intersects(state.getBoundingBox(worldIn, pos).offset(pos)))
+         {
++            EntityPortalEnterEvent event = new EntityPortalEnterEvent(entityIn.getBukkitEntity(), new org.bukkit.Location(worldIn.getWorld(), pos.getX(), pos.getY(), pos.getZ()));
++            worldIn.getServer().getPluginManager().callEvent(event);
+             entityIn.changeDimension(1);
+         }
+     }

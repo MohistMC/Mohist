@@ -1,0 +1,22 @@
+--- ../src-base/minecraft/net/minecraft/world/chunk/BlockStateContainer.java
++++ ../src-work/minecraft/net/minecraft/world/chunk/BlockStateContainer.java
+@@ -164,7 +164,18 @@
+             int l = i >> 4 & 15;
+             int i1 = blockIdExtension == null ? 0 : blockIdExtension.get(j, k, l);
+             int j1 = i1 << 12 | (blockIds[i] & 255) << 4 | data.get(j, k, l);
+-            this.set(i, Block.BLOCK_STATE_IDS.getByValue(j1));
++            IBlockState state = Block.BLOCK_STATE_IDS.getByValue(j1);
++            if (state == null) {
++                Block block = Block.getBlockById(j1 >> 4);
++                if (block != null) {
++                    try {
++                        state = block.getDefaultState();
++                    } catch (Exception ignored) {
++                        state = block.getDefaultState();
++                    }
++                }
++            }
++            this.set(i, state);
+         }
+     }
+ 

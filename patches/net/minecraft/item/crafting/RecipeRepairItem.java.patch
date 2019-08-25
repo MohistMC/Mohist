@@ -1,0 +1,49 @@
+--- ../src-base/minecraft/net/minecraft/item/crafting/RecipeRepairItem.java
++++ ../src-work/minecraft/net/minecraft/item/crafting/RecipeRepairItem.java
+@@ -2,14 +2,22 @@
+ 
+ import com.google.common.collect.Lists;
+ import java.util.List;
++
++import net.minecraft.init.Items;
+ import net.minecraft.inventory.InventoryCrafting;
+-import net.minecraft.item.Item;
+ import net.minecraft.item.ItemStack;
+ import net.minecraft.util.NonNullList;
++import net.minecraft.util.ResourceLocation;
+ import net.minecraft.world.World;
+ 
+-public class RecipeRepairItem extends net.minecraftforge.registries.IForgeRegistryEntry.Impl<IRecipe> implements IRecipe
++public class RecipeRepairItem extends ShapelessRecipes implements IRecipe
+ {
++    // CraftBukkit start - Delegate to new parent class
++    public RecipeRepairItem() {
++        super("", new ItemStack(Items.LEATHER_HELMET), NonNullList.from(Ingredient.EMPTY, Ingredient.fromItem(Items.LEATHER_HELMET)));
++    }
++    // CraftBukkit end
++
+     public boolean matches(InventoryCrafting inv, World worldIn)
+     {
+         List<ItemStack> list = Lists.<ItemStack>newArrayList();
+@@ -79,7 +87,20 @@
+                     i1 = 0;
+                 }
+ 
+-                return new ItemStack(itemstack2.getItem(), 1, i1);
++                // CraftBukkit start - Construct a dummy repair recipe
++                ItemStack result = new ItemStack(itemstack3.getItem(), 1, i1);
++                NonNullList<Ingredient> ingredients = NonNullList.create();
++                ingredients.add(Ingredient.fromStacks(new ItemStack[]{itemstack2.copy()}));
++                ingredients.add(Ingredient.fromStacks(new ItemStack[]{itemstack3.copy()}));
++                ShapelessRecipes recipe = new ShapelessRecipes("", result.copy(), ingredients);
++                recipe.key = new ResourceLocation("repairitem");
++                inv.currentRecipe = recipe;
++				if (inv.resultInventory != null && inv.eventHandler.getBukkitView() != null) {
++                	result = org.bukkit.craftbukkit.v1_12_R1.event.CraftEventFactory.callPreCraftEvent(inv, result, inv.eventHandler.getBukkitView(), true);
++                }
++				return result;
++                // return new ItemStack(itemstack2.getItem(), 1, i1);
++                // CraftBukkit end
+             }
+         }
+ 

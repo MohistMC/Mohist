@@ -1,0 +1,191 @@
+--- ../src-base/minecraft/net/minecraft/crash/CrashReport.java
++++ ../src-work/minecraft/net/minecraft/crash/CrashReport.java
+@@ -1,18 +1,6 @@
+ package net.minecraft.crash;
+ 
+ import com.google.common.collect.Lists;
+-import java.io.File;
+-import java.io.FileOutputStream;
+-import java.io.OutputStreamWriter;
+-import java.io.PrintWriter;
+-import java.io.StringWriter;
+-import java.io.Writer;
+-import java.lang.management.ManagementFactory;
+-import java.lang.management.RuntimeMXBean;
+-import java.nio.charset.StandardCharsets;
+-import java.text.SimpleDateFormat;
+-import java.util.Date;
+-import java.util.List;
+ import net.minecraft.util.ReportedException;
+ import net.minecraft.world.gen.layer.IntCache;
+ import net.minecraftforge.fml.relauncher.Side;
+@@ -21,7 +9,17 @@
+ import org.apache.commons.lang3.ArrayUtils;
+ import org.apache.logging.log4j.LogManager;
+ import org.apache.logging.log4j.Logger;
++import red.mohist.i18n.Message;
+ 
++import java.io.*;
++import java.lang.management.ManagementFactory;
++import java.lang.management.RuntimeMXBean;
++import java.nio.charset.StandardCharsets;
++import java.text.SimpleDateFormat;
++import java.util.Date;
++import java.util.List;
++
++
+ public class CrashReport
+ {
+     private static final Logger LOGGER = LogManager.getLogger();
+@@ -42,35 +40,36 @@
+ 
+     private void populateEnvironment()
+     {
+-        this.systemDetailsCategory.addDetail("Minecraft Version", new ICrashReportDetail<String>()
++        // Mohist Translate
++        this.systemDetailsCategory.addDetail(Message.getString(Message.crash_mc_version), new ICrashReportDetail<String>()
+         {
+             public String call()
+             {
+                 return "1.12.2";
+             }
+         });
+-        this.systemDetailsCategory.addDetail("Operating System", new ICrashReportDetail<String>()
++        this.systemDetailsCategory.addDetail(Message.getString(Message.crash_system), new ICrashReportDetail<String>()
+         {
+             public String call()
+             {
+-                return System.getProperty("os.name") + " (" + System.getProperty("os.arch") + ") version " + System.getProperty("os.version");
++                return System.getProperty("os.name") + " (" + System.getProperty("os.arch") + ") " + Message.getString(Message.crash_version) + " " + System.getProperty("os.version");
+             }
+         });
+-        this.systemDetailsCategory.addDetail("Java Version", new ICrashReportDetail<String>()
++        this.systemDetailsCategory.addDetail(Message.getString(Message.crash_java_version), new ICrashReportDetail<String>()
+         {
+             public String call()
+             {
+                 return System.getProperty("java.version") + ", " + System.getProperty("java.vendor");
+             }
+         });
+-        this.systemDetailsCategory.addDetail("Java VM Version", new ICrashReportDetail<String>()
++        this.systemDetailsCategory.addDetail(Message.getString(Message.crash_jvm_version), new ICrashReportDetail<String>()
+         {
+             public String call()
+             {
+                 return System.getProperty("java.vm.name") + " (" + System.getProperty("java.vm.info") + "), " + System.getProperty("java.vm.vendor");
+             }
+         });
+-        this.systemDetailsCategory.addDetail("Memory", new ICrashReportDetail<String>()
++        this.systemDetailsCategory.addDetail(Message.getString(Message.crash_Memory), new ICrashReportDetail<String>()
+         {
+             public String call()
+             {
+@@ -81,10 +80,10 @@
+                 long l = i / 1024L / 1024L;
+                 long i1 = j / 1024L / 1024L;
+                 long j1 = k / 1024L / 1024L;
+-                return k + " bytes (" + j1 + " MB) / " + j + " bytes (" + i1 + " MB) up to " + i + " bytes (" + l + " MB)";
++                return k + " " + Message.getString(Message.mohist_bytes) +" (" + j1 + " MB) / " + j + " "+ Message.getString(Message.mohist_bytes) +" (" + i1 + " MB) "+ Message.getString(Message.other_upto) +" " + i + " "+ Message.getString(Message.mohist_bytes) +" (" + l + " MB)";
+             }
+         });
+-        this.systemDetailsCategory.addDetail("JVM Flags", new ICrashReportDetail<String>()
++        this.systemDetailsCategory.addDetail(Message.getString(Message.crash_jvm_flags), new ICrashReportDetail<String>()
+         {
+             public String call()
+             {
+@@ -106,16 +105,17 @@
+                     }
+                 }
+ 
+-                return String.format("%d total; %s", i, stringbuilder.toString());
++                return String.format("%d "+Message.getString(Message.other_total)+"; %s", i, stringbuilder.toString());
+             }
+         });
+-        this.systemDetailsCategory.addDetail("IntCache", new ICrashReportDetail<String>()
++        this.systemDetailsCategory.addDetail(Message.getString(Message.other_IntCache), new ICrashReportDetail<String>()
+         {
+             public String call() throws Exception
+             {
+                 return IntCache.getCacheSizes();
+             }
+         });
++        this.systemDetailsCategory.addDetail(Message.getString(Message.crash_craftbukkit_info), (ICrashReportDetail) new org.bukkit.craftbukkit.v1_12_R1.CraftCrashReport());
+         net.minecraftforge.fml.common.FMLCommonHandler.instance().enhanceCrashReport(this, this.systemDetailsCategory);
+     }
+ 
+@@ -138,9 +138,9 @@
+ 
+         if (this.stacktrace != null && this.stacktrace.length > 0)
+         {
+-            builder.append("-- Head --\n");
+-            builder.append("Thread: ").append(Thread.currentThread().getName()).append("\n");
+-            builder.append("Stacktrace:\n");
++            builder.append("-- "+Message.getString(Message.other_head)+" --\n");
++            builder.append(Message.getString(Message.crash_thread)+": ").append(Thread.currentThread().getName()).append("\n");
++            builder.append(Message.getString(Message.crash_Stacktrace)+":\n");
+ 
+             for (StackTraceElement stacktraceelement : this.stacktrace)
+             {
+@@ -205,19 +205,17 @@
+     public String getCompleteReport()
+     {
+         StringBuilder stringbuilder = new StringBuilder();
+-        stringbuilder.append("---- Minecraft Crash Report ----\n");
++        stringbuilder.append("---- "+Message.getString(Message.crash_mc_report)+" ----\n");
+         net.minecraftforge.fml.relauncher.CoreModManager.onCrash(stringbuilder);
+-        stringbuilder.append("// ");
+-        stringbuilder.append(getWittyComment());
+         stringbuilder.append("\n\n");
+-        stringbuilder.append("Time: ");
++        stringbuilder.append(Message.getString(Message.other_time)+": ");
+         stringbuilder.append((new SimpleDateFormat()).format(new Date()));
+         stringbuilder.append("\n");
+-        stringbuilder.append("Description: ");
++        stringbuilder.append(Message.getString(Message.other_Description)+": ");
+         stringbuilder.append(this.description);
+         stringbuilder.append("\n\n");
+         stringbuilder.append(this.getCauseStackTraceOrString());
+-        stringbuilder.append("\n\nA detailed walkthrough of the error, its code path and all known details is as follows:\n");
++        stringbuilder.append("\n\n" + Message.getString(Message.crash_msg) + ":\n");
+ 
+         for (int i = 0; i < 87; ++i)
+         {
+@@ -261,7 +259,7 @@
+             }
+             catch (Throwable throwable)
+             {
+-                LOGGER.error("Could not save crash report to {}", toFile, throwable);
++                LOGGER.error(Message.getFormatString(Message.crash_save_error,new Object[]{"{}"}), toFile, throwable);
+                 flag1 = false;
+             }
+             finally
+@@ -297,7 +295,7 @@
+ 
+             if (j < 0)
+             {
+-                System.out.println("Negative index in crash report handler (" + astacktraceelement.length + "/" + i + ")");
++                System.out.println(Message.getString(Message.crash_Negative_index) + " (" + astacktraceelement.length + "/" + i + ")");
+             }
+ 
+             if (astacktraceelement != null && 0 <= j && j < astacktraceelement.length)
+@@ -332,20 +330,6 @@
+         return crashreportcategory;
+     }
+ 
+-    private static String getWittyComment()
+-    {
+-        String[] astring = new String[] {"Who set us up the TNT?", "Everything's going to plan. No, really, that was supposed to happen.", "Uh... Did I do that?", "Oops.", "Why did you do that?", "I feel sad now :(", "My bad.", "I'm sorry, Dave.", "I let you down. Sorry :(", "On the bright side, I bought you a teddy bear!", "Daisy, daisy...", "Oh - I know what I did wrong!", "Hey, that tickles! Hehehe!", "I blame Dinnerbone.", "You should try our sister game, Minceraft!", "Don't be sad. I'll do better next time, I promise!", "Don't be sad, have a hug! <3", "I just don't know what went wrong :(", "Shall we play a game?", "Quite honestly, I wouldn't worry myself about that.", "I bet Cylons wouldn't have this problem.", "Sorry :(", "Surprise! Haha. Well, this is awkward.", "Would you like a cupcake?", "Hi. I'm Minecraft, and I'm a crashaholic.", "Ooh. Shiny.", "This doesn't make any sense!", "Why is it breaking :(", "Don't do that.", "Ouch. That hurt :(", "You're mean.", "This is a token for 1 free hug. Redeem at your nearest Mojangsta: [~~HUG~~]", "There are four lights!", "But it works on my machine."};
+-
+-        try
+-        {
+-            return astring[(int)(System.nanoTime() % (long)astring.length)];
+-        }
+-        catch (Throwable var2)
+-        {
+-            return "Witty comment unavailable :(";
+-        }
+-    }
+-
+     public static CrashReport makeCrashReport(Throwable causeIn, String descriptionIn)
+     {
+         CrashReport crashreport;

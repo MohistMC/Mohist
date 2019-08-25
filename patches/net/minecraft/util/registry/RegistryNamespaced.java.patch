@@ -1,0 +1,49 @@
+--- ../src-base/minecraft/net/minecraft/util/registry/RegistryNamespaced.java
++++ ../src-work/minecraft/net/minecraft/util/registry/RegistryNamespaced.java
+@@ -5,8 +5,16 @@
+ import java.util.Iterator;
+ import java.util.Map;
+ import javax.annotation.Nullable;
++
++import net.minecraft.block.Block;
++import net.minecraft.item.Item;
+ import net.minecraft.util.IObjectIntIterable;
+ import net.minecraft.util.IntIdentityHashBiMap;
++import net.minecraftforge.fml.common.FMLLog;
++import org.bukkit.Material;
++import red.mohist.Mohist;
++import red.mohist.api.ServerAPI;
++import red.mohist.i18n.Message;
+ 
+ public class RegistryNamespaced<K, V> extends RegistrySimple<K, V> implements IObjectIntIterable<V>
+ {
+@@ -20,6 +28,29 @@
+ 
+     public void register(int id, K key, V value)
+     {
++        // Cauldron start - register item/block materials for Bukkit
++        boolean isForgeBlock = value instanceof Block && (value.getClass().getName().length() > 3 && !value.getClass().getName().startsWith("net.minecraft.block")) ? true : false;
++        String materialName = Material.normalizeName(key.toString());
++        org.bukkit.Material material;
++        if(isForgeBlock) {
++            material = org.bukkit.Material.addMaterial(id, materialName, true);
++        } else {
++            material = org.bukkit.Material.addMaterial(id, ((Item)value).getItemStackLimit(), materialName);
++        }
++        if (material != null)
++        {
++            if (isForgeBlock)
++            {
++                ServerAPI.injectblock.put(material.name(), material.getId());
++                Mohist.LOGGER.debug("Register: " + Message.getFormatString("ingected.block", new Object[]{material.name(), String.valueOf(material.getId())}));
++            }
++            else
++            {
++                ServerAPI.injectmaterials.put(material.name(), material.getId());
++                Mohist.LOGGER.debug(Message.getFormatString("ingected.item", new Object[]{material.name(), String.valueOf(material.getId())}));
++            }
++        }
++        // Cauldron end
+         this.underlyingIntegerMap.put(value, id);
+         this.putObject(key, value);
+     }

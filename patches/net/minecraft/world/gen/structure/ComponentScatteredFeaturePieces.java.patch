@@ -1,0 +1,11 @@
+--- ../src-base/minecraft/net/minecraft/world/gen/structure/ComponentScatteredFeaturePieces.java
++++ ../src-work/minecraft/net/minecraft/world/gen/structure/ComponentScatteredFeaturePieces.java
+@@ -773,7 +773,7 @@
+                             entitywitch.enablePersistence();
+                             entitywitch.setLocationAndAngles((double)l + 0.5D, (double)i1, (double)k + 0.5D, 0.0F, 0.0F);
+                             entitywitch.onInitialSpawn(worldIn.getDifficultyForLocation(new BlockPos(l, i1, k)), (IEntityLivingData)null);
+-                            worldIn.spawnEntity(entitywitch);
++                            worldIn.addEntity(entitywitch, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.CHUNK_GEN);
+                         }
+                     }
+ 

@@ -1,0 +1,21 @@
+--- ../src-base/minecraft/net/minecraft/item/ItemFirework.java
++++ ../src-work/minecraft/net/minecraft/item/ItemFirework.java
+@@ -1,8 +1,6 @@
+ package net.minecraft.item;
+ 
+ import com.google.common.collect.Lists;
+-import java.util.List;
+-import javax.annotation.Nullable;
+ import net.minecraft.client.util.ITooltipFlag;
+ import net.minecraft.entity.item.EntityFireworkRocket;
+ import net.minecraft.entity.player.EntityPlayer;
+@@ -18,6 +16,9 @@
+ import net.minecraftforge.fml.relauncher.Side;
+ import net.minecraftforge.fml.relauncher.SideOnly;
+ 
++import javax.annotation.Nullable;
++import java.util.List;
++
+ public class ItemFirework extends Item
+ {
+     public EnumActionResult onItemUse(EntityPlayer player, World worldIn, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ)

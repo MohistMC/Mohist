@@ -1,0 +1,76 @@
+--- ../src-base/minecraft/net/minecraft/item/ItemMonsterPlacer.java
++++ ../src-work/minecraft/net/minecraft/item/ItemMonsterPlacer.java
+@@ -1,17 +1,10 @@
+ package net.minecraft.item;
+ 
+-import java.util.List;
+-import java.util.UUID;
+-import javax.annotation.Nullable;
+ import net.minecraft.block.Block;
+ import net.minecraft.block.BlockLiquid;
+ import net.minecraft.block.state.IBlockState;
+ import net.minecraft.creativetab.CreativeTabs;
+-import net.minecraft.entity.Entity;
+-import net.minecraft.entity.EntityList;
+-import net.minecraft.entity.EntityLiving;
+-import net.minecraft.entity.EntityLivingBase;
+-import net.minecraft.entity.IEntityLivingData;
++import net.minecraft.entity.*;
+ import net.minecraft.entity.player.EntityPlayer;
+ import net.minecraft.init.Blocks;
+ import net.minecraft.nbt.NBTTagCompound;
+@@ -20,12 +13,7 @@
+ import net.minecraft.tileentity.MobSpawnerBaseLogic;
+ import net.minecraft.tileentity.TileEntity;
+ import net.minecraft.tileentity.TileEntityMobSpawner;
+-import net.minecraft.util.ActionResult;
+-import net.minecraft.util.EnumActionResult;
+-import net.minecraft.util.EnumFacing;
+-import net.minecraft.util.EnumHand;
+-import net.minecraft.util.NonNullList;
+-import net.minecraft.util.ResourceLocation;
++import net.minecraft.util.*;
+ import net.minecraft.util.math.AxisAlignedBB;
+ import net.minecraft.util.math.BlockPos;
+ import net.minecraft.util.math.MathHelper;
+@@ -33,6 +21,10 @@
+ import net.minecraft.util.text.translation.I18n;
+ import net.minecraft.world.World;
+ 
++import javax.annotation.Nullable;
++import java.util.List;
++import java.util.UUID;
++
+ public class ItemMonsterPlacer extends Item
+ {
+     public ItemMonsterPlacer()
+@@ -220,6 +212,11 @@
+     @Nullable
+     public static Entity spawnCreature(World worldIn, @Nullable ResourceLocation entityID, double x, double y, double z)
+     {
++        return spawnCreature(worldIn, entityID, x, y, z, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.SPAWNER_EGG);
++    }
++
++    @Nullable
++    public static Entity spawnCreature(World worldIn, @Nullable ResourceLocation entityID, double x, double y, double z, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason spawnReason) {
+         if (entityID != null && EntityList.ENTITY_EGGS.containsKey(entityID))
+         {
+             Entity entity = null;
+@@ -236,8 +233,15 @@
+                     entityliving.renderYawOffset = entityliving.rotationYaw;
+                     if (net.minecraftforge.event.ForgeEventFactory.doSpecialSpawn(entityliving, worldIn, (float) x, (float) y, (float) z, null)) return null;
+                     entityliving.onInitialSpawn(worldIn.getDifficultyForLocation(new BlockPos(entityliving)), (IEntityLivingData)null);
+-                    worldIn.spawnEntity(entity);
+-                    entityliving.playLivingSound();
++                    // worldIn.spawnEntity(entity);
++                    // entityliving.playLivingSound();
++                    // CraftBukkit start - don't return an entity when CreatureSpawnEvent is canceled
++                    if (!worldIn.addEntity(entity, spawnReason)) {
++                        entity = null;
++                    } else {
++                        entityliving.playLivingSound();
++                    }
++                    // CraftBukkit end
+                 }
+             }
+ 

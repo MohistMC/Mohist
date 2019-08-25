@@ -1,0 +1,81 @@
+--- ../src-base/minecraft/net/minecraft/block/BlockDynamicLiquid.java
++++ ../src-work/minecraft/net/minecraft/block/BlockDynamicLiquid.java
+@@ -1,15 +1,18 @@
+ package net.minecraft.block;
+ 
+-import java.util.EnumSet;
+-import java.util.Random;
+-import java.util.Set;
+ import net.minecraft.block.material.Material;
+ import net.minecraft.block.state.IBlockState;
+ import net.minecraft.init.Blocks;
+ import net.minecraft.util.EnumFacing;
+ import net.minecraft.util.math.BlockPos;
+ import net.minecraft.world.World;
++import org.bukkit.block.BlockFace;
++import org.bukkit.event.block.BlockFromToEvent;
+ 
++import java.util.EnumSet;
++import java.util.Random;
++import java.util.Set;
++
+ public class BlockDynamicLiquid extends BlockLiquid
+ {
+     int adjacentSourceBlocks;
+@@ -82,7 +85,7 @@
+                 }
+             }
+ 
+-            if (this.blockMaterial == Material.LAVA && i < 8 && i1 < 8 && i1 > i && rand.nextInt(4) != 0)
++            if (this.blockMaterial == Material.LAVA && i < 8 && i1 < 8 && i1 > i && rand.nextInt(4) != 0) // Paper
+             {
+                 k *= 4;
+             }
+@@ -113,14 +116,22 @@
+             this.placeStaticBlock(worldIn, pos, state);
+         }
+ 
++        org.bukkit.block.Block source = worldIn.getWorld().getBlockAt(pos.getX(), pos.getY(), pos.getZ());
+         IBlockState iblockstate1 = worldIn.getBlockState(pos.down());
+ 
+         if (this.canFlowInto(worldIn, pos.down(), iblockstate1))
+         {
++            BlockFromToEvent event = new BlockFromToEvent(source, BlockFace.DOWN);
++            worldIn.getServer().getPluginManager().callEvent(event);
++
++            if (event.isCancelled()) {
++                return;
++            }
+             if (this.blockMaterial == Material.LAVA && worldIn.getBlockState(pos.down()).getMaterial() == Material.WATER)
+             {
+-                worldIn.setBlockState(pos.down(), net.minecraftforge.event.ForgeEventFactory.fireFluidPlaceBlockEvent(worldIn, pos.down(), pos, Blocks.STONE.getDefaultState()));
+-                this.triggerMixEffects(worldIn, pos.down());
++                if (org.bukkit.craftbukkit.v1_12_R1.event.CraftEventFactory.handleBlockFormEvent(worldIn, pos.down(), net.minecraftforge.event.ForgeEventFactory.fireFluidPlaceBlockEvent(worldIn, pos.down(), pos, Blocks.STONE.getDefaultState()), null)) {
++					this.triggerMixEffects(worldIn, pos.down());
++                }
+                 return;
+             }
+ 
+@@ -150,14 +161,20 @@
+ 
+             for (EnumFacing enumfacing1 : set)
+             {
+-                this.tryFlowInto(worldIn, pos.offset(enumfacing1), worldIn.getBlockState(pos.offset(enumfacing1)), k1);
++                // CraftBukkit start
++                BlockFromToEvent event = new BlockFromToEvent(source, org.bukkit.craftbukkit.v1_12_R1.block.CraftBlock.notchToBlockFace(enumfacing1));
++                worldIn.getServer().getPluginManager().callEvent(event);
++
++                if (!event.isCancelled()) {
++                    this.tryFlowInto(worldIn, pos.offset(enumfacing1), worldIn.getBlockState(pos.offset(enumfacing1)), k1);
++                }
+             }
+         }
+     }
+ 
+     private void tryFlowInto(World worldIn, BlockPos pos, IBlockState state, int level)
+     {
+-        if (this.canFlowInto(worldIn, pos, state))
++        if (worldIn.isBlockLoaded(pos) && this.canFlowInto(worldIn, pos, state)) // CraftBukkit - add isLoaded check
+         {
+             if (state.getMaterial() != Material.AIR)
+             {

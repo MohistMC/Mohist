@@ -1,0 +1,26 @@
+--- ../src-base/minecraft/net/minecraft/block/BlockDaylightDetector.java
++++ ../src-work/minecraft/net/minecraft/block/BlockDaylightDetector.java
+@@ -1,6 +1,5 @@
+ package net.minecraft.block;
+ 
+-import java.util.Random;
+ import net.minecraft.block.material.Material;
+ import net.minecraft.block.properties.IProperty;
+ import net.minecraft.block.properties.PropertyInteger;
+@@ -25,6 +24,8 @@
+ import net.minecraft.world.IBlockAccess;
+ import net.minecraft.world.World;
+ 
++import java.util.Random;
++
+ public class BlockDaylightDetector extends BlockContainer
+ {
+     public static final PropertyInteger POWER = PropertyInteger.create("power", 0, 15);
+@@ -76,6 +77,7 @@
+ 
+             if (((Integer)iblockstate.getValue(POWER)).intValue() != i)
+             {
++                i = org.bukkit.craftbukkit.v1_12_R1.event.CraftEventFactory.callRedstoneChange(worldIn, pos.getX(), pos.getY(), pos.getZ(), iblockstate.getValue(POWER), i).getNewCurrent();
+                 worldIn.setBlockState(pos, iblockstate.withProperty(POWER, Integer.valueOf(i)), 3);
+             }
+         }

@@ -1,0 +1,23 @@
+--- ../src-base/minecraft/net/minecraft/command/CommandSenderWrapper.java
++++ ../src-work/minecraft/net/minecraft/command/CommandSenderWrapper.java
+@@ -11,7 +11,7 @@
+ 
+ public class CommandSenderWrapper implements ICommandSender
+ {
+-    private final ICommandSender delegate;
++    public final ICommandSender delegate;
+     @Nullable
+     private final Vec3d positionVector;
+     @Nullable
+@@ -81,6 +81,11 @@
+         return this.permissionLevel != null && this.permissionLevel.intValue() < permLevel ? false : this.delegate.canUseCommand(permLevel, commandName);
+     }
+ 
++    public boolean canUseCommand(int permLevel, String commandName, String perm)
++    {
++        return this.permissionLevel != null && this.permissionLevel.intValue() < permLevel ? false : this.delegate.canUseCommand(permLevel, commandName, perm);
++    }
++
+     public BlockPos getPosition()
+     {
+         if (this.position != null)

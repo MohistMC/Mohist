@@ -1,0 +1,41 @@
+--- ../src-base/minecraft/net/minecraft/block/BlockObserver.java
++++ ../src-work/minecraft/net/minecraft/block/BlockObserver.java
+@@ -1,6 +1,5 @@
+ package net.minecraft.block;
+ 
+-import java.util.Random;
+ import net.minecraft.block.material.Material;
+ import net.minecraft.block.properties.IProperty;
+ import net.minecraft.block.properties.PropertyBool;
+@@ -14,7 +13,10 @@
+ import net.minecraft.util.math.BlockPos;
+ import net.minecraft.world.IBlockAccess;
+ import net.minecraft.world.World;
++import org.bukkit.craftbukkit.v1_12_R1.event.CraftEventFactory;
+ 
++import java.util.Random;
++
+ public class BlockObserver extends BlockDirectional
+ {
+     public static final PropertyBool POWERED = PropertyBool.create("powered");
+@@ -45,10 +47,20 @@
+     {
+         if (((Boolean)state.getValue(POWERED)).booleanValue())
+         {
++            // Paper start
++            if (CraftEventFactory.callRedstoneChange(worldIn, pos.getX(), pos.getY(), pos.getZ(), 15, 0).getNewCurrent() != 0) {
++                return;
++            }
++            // Paper end
+             worldIn.setBlockState(pos, state.withProperty(POWERED, Boolean.valueOf(false)), 2);
+         }
+         else
+         {
++            // Paper start
++            if (CraftEventFactory.callRedstoneChange(worldIn, pos.getX(), pos.getY(), pos.getZ(), 0, 15).getNewCurrent() != 15) {
++                return;
++            }
++            // Paper end
+             worldIn.setBlockState(pos, state.withProperty(POWERED, Boolean.valueOf(true)), 2);
+             worldIn.scheduleUpdate(pos, this, 2);
+         }

@@ -1,0 +1,81 @@
+--- ../src-base/minecraft/net/minecraft/world/storage/MapStorage.java
++++ ../src-work/minecraft/net/minecraft/world/storage/MapStorage.java
+@@ -2,19 +2,16 @@
+ 
+ import com.google.common.collect.Lists;
+ import com.google.common.collect.Maps;
+-import java.io.DataInputStream;
+-import java.io.DataOutputStream;
+-import java.io.File;
+-import java.io.FileInputStream;
+-import java.io.FileOutputStream;
+-import java.util.List;
+-import java.util.Map;
+-import javax.annotation.Nullable;
+ import net.minecraft.nbt.CompressedStreamTools;
+ import net.minecraft.nbt.NBTBase;
+ import net.minecraft.nbt.NBTTagCompound;
+ import net.minecraft.nbt.NBTTagShort;
+ 
++import javax.annotation.Nullable;
++import java.io.*;
++import java.util.List;
++import java.util.Map;
++
+ public class MapStorage
+ {
+     private final ISaveHandler saveHandler;
+@@ -103,30 +100,34 @@
+         }
+     }
+ 
+-    private void saveData(WorldSavedData data)
+-    {
+-        if (this.saveHandler != null)
+-        {
+-            try
+-            {
+-                File file1 = this.saveHandler.getMapFileFromName(data.mapName);
+-
+-                if (file1 != null)
+-                {
+-                    NBTTagCompound nbttagcompound = new NBTTagCompound();
+-                    nbttagcompound.setTag("data", data.writeToNBT(new NBTTagCompound()));
+-                    FileOutputStream fileoutputstream = new FileOutputStream(file1);
+-                    CompressedStreamTools.writeCompressed(nbttagcompound, fileoutputstream);
+-                    fileoutputstream.close();
++    private void saveData(WorldSavedData data) {
++        if (this.saveHandler == null) {
++            return;
++        }
++        File file1 = this.saveHandler.getMapFileFromName(data.mapName);
++        if (file1 == null) {
++            return;
++        }
++        NBTTagCompound nbttagcompound = new NBTTagCompound();
++        nbttagcompound.setTag("data", data.writeToNBT(new NBTTagCompound()));
++//        Mohist start
++        ThreadedFileIOBase.getThreadedIOInstance().queueIO(() -> {
++            try {
++                if (!file1.exists()) {
++                    file1.createNewFile();
+                 }
+-            }
+-            catch (Exception exception)
+-            {
++                FileOutputStream fileoutputstream = new FileOutputStream(file1);
++                CompressedStreamTools.writeCompressed(nbttagcompound, fileoutputstream);
++                fileoutputstream.close();
++            } catch (Exception exception) {
+                 exception.printStackTrace();
+             }
+-        }
++            return false;
++        });
++//        Mohist end
+     }
+ 
++
+     private void loadIdCounts()
+     {
+         try

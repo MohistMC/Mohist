@@ -1,0 +1,25 @@
+--- ../src-base/minecraft/net/minecraftforge/fml/common/event/FMLServerStartingEvent.java
++++ ../src-work/minecraft/net/minecraftforge/fml/common/event/FMLServerStartingEvent.java
+@@ -19,10 +19,13 @@
+ 
+ package net.minecraftforge.fml.common.event;
+ 
++import net.minecraft.command.CommandBase;
+ import net.minecraft.command.CommandHandler;
+ import net.minecraft.command.ICommand;
+ import net.minecraft.server.MinecraftServer;
++import net.minecraftforge.fml.common.Loader;
+ import net.minecraftforge.fml.common.LoaderState.ModState;
++import org.bukkit.command.Command;
+ 
+ /**
+  * Called after {@link FMLServerAboutToStartEvent} and before {@link FMLServerStartedEvent}.
+@@ -56,6 +59,8 @@
+     public void registerServerCommand(ICommand command)
+     {
+         CommandHandler ch = (CommandHandler) getServer().getCommandManager();
++        if (command instanceof CommandBase)
++        	((CommandBase)command).permissionNode = Loader.instance().activeModContainer().getModId() +".command." + command.getName();
+         ch.registerCommand(command);
+     }
+ }

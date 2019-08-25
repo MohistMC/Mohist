@@ -1,0 +1,24 @@
+--- ../src-base/minecraft/net/minecraft/item/ItemShears.java
++++ ../src-work/minecraft/net/minecraft/item/ItemShears.java
+@@ -8,6 +8,7 @@
+ import net.minecraft.init.Blocks;
+ import net.minecraft.util.math.BlockPos;
+ import net.minecraft.world.World;
++import org.bukkit.event.player.PlayerShearEntityEvent;
+ 
+ public class ItemShears extends Item
+ {
+@@ -50,6 +51,13 @@
+             BlockPos pos = new BlockPos(entity.posX, entity.posY, entity.posZ);
+             if (target.isShearable(itemstack, entity.world, pos))
+             {
++                PlayerShearEntityEvent event = new PlayerShearEntityEvent((org.bukkit.entity.Player) player.getBukkitEntity(), entity.getBukkitEntity());
++                entity.world.getServer().getPluginManager().callEvent(event);
++
++                if (event.isCancelled()) {
++                    return false;
++                }
++
+                 java.util.List<ItemStack> drops = target.onSheared(itemstack, entity.world, pos,
+                         net.minecraft.enchantment.EnchantmentHelper.getEnchantmentLevel(net.minecraft.init.Enchantments.FORTUNE, itemstack));
+ 

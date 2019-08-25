@@ -1,0 +1,11 @@
+--- ../src-base/minecraft/net/minecraft/world/gen/structure/StructureOceanMonument.java
++++ ../src-work/minecraft/net/minecraft/world/gen/structure/StructureOceanMonument.java
+@@ -72,7 +72,7 @@
+ 
+         int k = chunkX / this.spacing;
+         int l = chunkZ / this.spacing;
+-        Random random = this.world.setRandomSeed(k, l, 10387313);
++        Random random = this.world.setRandomSeed(k, l, this.world.spigotConfig.monumentSeed);
+         k = k * this.spacing;
+         l = l * this.spacing;
+         k = k + (random.nextInt(this.spacing - this.separation) + random.nextInt(this.spacing - this.separation)) / 2;

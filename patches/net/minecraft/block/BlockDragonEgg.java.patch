@@ -1,0 +1,46 @@
+--- ../src-base/minecraft/net/minecraft/block/BlockDragonEgg.java
++++ ../src-work/minecraft/net/minecraft/block/BlockDragonEgg.java
+@@ -1,6 +1,5 @@
+ package net.minecraft.block;
+ 
+-import java.util.Random;
+ import net.minecraft.block.material.MapColor;
+ import net.minecraft.block.material.Material;
+ import net.minecraft.block.state.BlockFaceShape;
+@@ -16,7 +15,10 @@
+ import net.minecraft.world.World;
+ import net.minecraftforge.fml.relauncher.Side;
+ import net.minecraftforge.fml.relauncher.SideOnly;
++import org.bukkit.event.block.BlockFromToEvent;
+ 
++import java.util.Random;
++
+ public class BlockDragonEgg extends Block
+ {
+     protected static final AxisAlignedBB DRAGON_EGG_AABB = new AxisAlignedBB(0.0625D, 0.0D, 0.0625D, 0.9375D, 1.0D, 0.9375D);
+@@ -68,7 +70,7 @@
+ 
+                 if (blockpos.getY() > 0)
+                 {
+-                    worldIn.setBlockState(blockpos, this.getDefaultState(), 2);
++                    worldIn.setBlockState(blockpos.up(), this.getDefaultState(), 2); // Paper MC-94186 Fix dragon egg falling in lazy chunks
+                 }
+             }
+         }
+@@ -97,6 +99,16 @@
+ 
+                 if (worldIn.isAirBlock(blockpos))
+                 {
++                    org.bukkit.block.Block from = worldIn.getWorld().getBlockAt(pos.getX(), pos.getY(), pos.getZ());
++                    org.bukkit.block.Block to = worldIn.getWorld().getBlockAt(blockpos.getX(), blockpos.getY(), blockpos.getZ());
++                    BlockFromToEvent event = new BlockFromToEvent(from, to);
++                    org.bukkit.Bukkit.getPluginManager().callEvent(event);
++
++                    if (event.isCancelled()) {
++                        return;
++                    }
++
++                    blockpos = new BlockPos(event.getToBlock().getX(), event.getToBlock().getY(), event.getToBlock().getZ());
+                     if (worldIn.isRemote)
+                     {
+                         for (int j = 0; j < 128; ++j)

@@ -1,0 +1,65 @@
+--- ../src-base/minecraft/net/minecraft/item/ItemSkull.java
++++ ../src-work/minecraft/net/minecraft/item/ItemSkull.java
+@@ -1,7 +1,6 @@
+ package net.minecraft.item;
+ 
+ import com.mojang.authlib.GameProfile;
+-import java.util.UUID;
+ import net.minecraft.advancements.CriteriaTriggers;
+ import net.minecraft.block.Block;
+ import net.minecraft.block.BlockSkull;
+@@ -11,6 +10,7 @@
+ import net.minecraft.entity.player.EntityPlayerMP;
+ import net.minecraft.init.Blocks;
+ import net.minecraft.nbt.NBTTagCompound;
++import net.minecraft.nbt.NBTTagList;
+ import net.minecraft.nbt.NBTUtil;
+ import net.minecraft.tileentity.TileEntity;
+ import net.minecraft.tileentity.TileEntitySkull;
+@@ -24,6 +24,8 @@
+ import net.minecraft.world.World;
+ import org.apache.commons.lang3.StringUtils;
+ 
++import java.util.UUID;
++
+ public class ItemSkull extends Item
+ {
+     private static final String[] SKULL_TYPES = new String[] {"skeleton", "wither", "zombie", "char", "creeper", "dragon"};
+@@ -182,19 +184,34 @@
+         return super.getItemStackDisplayName(stack);
+     }
+ 
+-    public boolean updateItemStackNBT(NBTTagCompound nbt)
++    public boolean updateItemStackNBT(final NBTTagCompound nbt)
+     {
+         super.updateItemStackNBT(nbt);
+ 
+         if (nbt.hasKey("SkullOwner", 8) && !StringUtils.isBlank(nbt.getString("SkullOwner")))
+         {
+             GameProfile gameprofile = new GameProfile((UUID)null, nbt.getString("SkullOwner"));
+-            gameprofile = TileEntitySkull.updateGameprofile(gameprofile);
+-            nbt.setTag("SkullOwner", NBTUtil.writeGameProfile(new NBTTagCompound(), gameprofile));
++            // Spigot start
++            TileEntitySkull.updateGameprofile(gameprofile, new com.google.common.base.Predicate<GameProfile>() {
++
++                @Override
++                public boolean apply(GameProfile gameprofile) {
++                    nbt.setTag("SkullOwner", NBTUtil.writeGameProfile(new NBTTagCompound(), gameprofile));
++                    return false;
++                }
++            }, false);
++            // Spigot end
+             return true;
+         }
+         else
+         {
++            NBTTagList textures = nbt.getCompoundTag("SkullOwner").getCompoundTag("Properties").getTagList("textures", 10); // Safe due to method contracts
++            for (int i = 0; i < textures.tagCount(); i++) {
++                if (textures.get(i) instanceof NBTTagCompound && !((NBTTagCompound) textures.get(i)).hasKey("Signature", 8) && ((NBTTagCompound) textures.get(i)).getString("Value").trim().isEmpty()) {
++                    nbt.removeTag("SkullOwner");
++                    break;
++                }
++            }
+             return false;
+         }
+     }
