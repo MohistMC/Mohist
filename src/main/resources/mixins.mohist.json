@@ -1,0 +1,11 @@
+{
+    "required": true,
+    "minVersion": "0.7.10",
+    "package": "red.mohist_community.mohist.mixin",
+    "refmap": "mixins.mohist.refmap.json",
+    "target": "@env(DEFAULT)",
+    "compatibilityLevel": "JAVA_8",
+    "mixins": [
+        "MixinMinecraftServer"
+    ]
+}

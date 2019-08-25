@@ -30,6 +30,17 @@ dependencies {
     compile 'org.spongepowered:mixin:0.7.11-SNAPSHOT'
 }
 
+jar {
+    
+    manifest.attributes(
+        "FMLCorePluginContainsFMLMod": "true",
+        "ForceLoadAsMod": "true",
+	    "TweakClass": "org.spongepowered.asm.launch.MixinTweaker",
+        "MixinConfigs": "mixins.mohist.json",
+        "FMLCorePlugin": "red.mohist_community.mohist.MohistCoreMod"
+ 	)
+}
+
 processResources {
 
     inputs.property "version", project.version
