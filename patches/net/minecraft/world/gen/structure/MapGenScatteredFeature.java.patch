@@ -1,0 +1,11 @@
+--- ../src-base/minecraft/net/minecraft/world/gen/structure/MapGenScatteredFeature.java
++++ ../src-work/minecraft/net/minecraft/world/gen/structure/MapGenScatteredFeature.java
+@@ -63,7 +63,7 @@
+ 
+         int k = chunkX / this.maxDistanceBetweenScatteredFeatures;
+         int l = chunkZ / this.maxDistanceBetweenScatteredFeatures;
+-        Random random = this.world.setRandomSeed(k, l, 14357617);
++        Random random = this.world.setRandomSeed(k, l, this.world.spigotConfig.largeFeatureSeed);
+         k = k * this.maxDistanceBetweenScatteredFeatures;
+         l = l * this.maxDistanceBetweenScatteredFeatures;
+         k = k + random.nextInt(this.maxDistanceBetweenScatteredFeatures - 8);

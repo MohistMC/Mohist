@@ -1,0 +1,49 @@
+--- ../src-base/minecraft/net/minecraft/entity/monster/EntityZombieVillager.java
++++ ../src-work/minecraft/net/minecraft/entity/monster/EntityZombieVillager.java
+@@ -19,6 +19,7 @@
+ import net.minecraft.network.datasync.DataSerializers;
+ import net.minecraft.network.datasync.EntityDataManager;
+ import net.minecraft.potion.PotionEffect;
++import net.minecraft.server.MinecraftServer;
+ import net.minecraft.util.DamageSource;
+ import net.minecraft.util.EnumHand;
+ import net.minecraft.util.ResourceLocation;
+@@ -38,6 +39,8 @@
+     private int conversionTime;
+     private UUID converstionStarter;
+ 
++    private int lastTick = MinecraftServer.currentTick; // CraftBukkit - add field
++
+     public EntityZombieVillager(World worldIn)
+     {
+         super(worldIn);
+@@ -110,6 +113,11 @@
+         if (!this.world.isRemote && this.isConverting())
+         {
+             int i = this.getConversionProgress();
++            // CraftBukkit start - Use wall time instead of ticks for villager conversion
++            int elapsedTicks = MinecraftServer.currentTick - this.lastTick;
++            this.lastTick = MinecraftServer.currentTick;
++            i *= elapsedTicks;
++            // CraftBukkit end
+             this.conversionTime -= i;
+ 
+             if (this.conversionTime <= 0)
+@@ -145,7 +153,7 @@
+         }
+     }
+ 
+-    protected boolean canDespawn()
++    public boolean canDespawn()
+     {
+         return !this.isConverting();
+     }
+@@ -203,7 +211,7 @@
+             entityvillager.setAlwaysRenderNameTag(this.getAlwaysRenderNameTag());
+         }
+ 
+-        this.world.spawnEntity(entityvillager);
++        this.world.addEntity(entityvillager, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.CURED);
+ 
+         if (this.converstionStarter != null)
+         {

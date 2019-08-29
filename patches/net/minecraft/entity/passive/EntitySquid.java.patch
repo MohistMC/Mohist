@@ -1,0 +1,20 @@
+--- ../src-base/minecraft/net/minecraft/entity/passive/EntitySquid.java
++++ ../src-work/minecraft/net/minecraft/entity/passive/EntitySquid.java
+@@ -38,7 +38,7 @@
+     {
+         super(worldIn);
+         this.setSize(0.8F, 0.8F);
+-        this.rand.setSeed((long)(1 + this.getEntityId()));
++        this.rand.setSeed((long)(1 + this.getEntityId())); // Paper
+         this.rotationVelocity = 1.0F / (this.rand.nextFloat() + 1.0F) * 0.2F;
+     }
+ 
+@@ -191,7 +191,7 @@
+ 
+     public boolean getCanSpawnHere()
+     {
+-        return this.posY > 45.0D && this.posY < (double)this.world.getSeaLevel() && super.getCanSpawnHere();
++        return this.posY > this.world.spigotConfig.squidSpawnRangeMin && this.posY < (double)this.world.getSeaLevel() && super.getCanSpawnHere();
+     }
+ 
+     @SideOnly(Side.CLIENT)

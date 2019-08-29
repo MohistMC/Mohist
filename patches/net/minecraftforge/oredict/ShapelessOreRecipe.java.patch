@@ -1,0 +1,44 @@
+--- ../src-base/minecraft/net/minecraftforge/oredict/ShapelessOreRecipe.java
++++ ../src-work/minecraft/net/minecraftforge/oredict/ShapelessOreRecipe.java
+@@ -31,6 +31,7 @@
+ import net.minecraft.util.NonNullList;
+ import net.minecraft.util.ResourceLocation;
+ import net.minecraft.world.World;
++import net.minecraftforge.cauldron.inventory.CustomModRecipe;
+ import net.minecraftforge.common.crafting.CraftingHelper;
+ import net.minecraftforge.common.crafting.JsonContext;
+ import net.minecraftforge.common.util.RecipeMatcher;
+@@ -42,6 +43,7 @@
+ import com.google.gson.JsonElement;
+ import com.google.gson.JsonObject;
+ import com.google.gson.JsonParseException;
++import org.bukkit.inventory.Recipe;
+ 
+ public class ShapelessOreRecipe extends IForgeRegistryEntry.Impl<IRecipe> implements IRecipe
+ {
+@@ -50,6 +52,7 @@
+     protected NonNullList<Ingredient> input = NonNullList.create();
+     protected ResourceLocation group;
+     protected boolean isSimple = true;
++	private Recipe bukkitRecip;
+ 
+     public ShapelessOreRecipe(ResourceLocation group, Block result, Object... recipe){ this(group, new ItemStack(result), recipe); }
+     public ShapelessOreRecipe(ResourceLocation group, Item  result, Object... recipe){ this(group, new ItemStack(result), recipe); }
+@@ -157,4 +160,17 @@
+         ItemStack itemstack = CraftingHelper.getItemStack(JsonUtils.getJsonObject(json, "result"), context);
+         return new ShapelessOreRecipe(group.isEmpty() ? null : new ResourceLocation(group), ings, itemstack);
+     }
++
++
++    @Override
++    public Recipe toBukkitRecipe() {
++        if (bukkitRecip == null)
++            bukkitRecip = new CustomModRecipe(this, this.getRegistryName());
++        return this.bukkitRecip;
++    }
++
++    @Override
++    public void setKey(ResourceLocation key) {
++
++    }
+ }

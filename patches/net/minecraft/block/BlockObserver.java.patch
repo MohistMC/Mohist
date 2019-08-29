@@ -1,0 +1,31 @@
+--- ../src-base/minecraft/net/minecraft/block/BlockObserver.java
++++ ../src-work/minecraft/net/minecraft/block/BlockObserver.java
+@@ -14,6 +14,7 @@
+ import net.minecraft.util.math.BlockPos;
+ import net.minecraft.world.IBlockAccess;
+ import net.minecraft.world.World;
++import org.bukkit.craftbukkit.v1_12_R1.event.CraftEventFactory;
+ 
+ public class BlockObserver extends BlockDirectional
+ {
+@@ -45,10 +46,20 @@
+     {
+         if (((Boolean)state.getValue(POWERED)).booleanValue())
+         {
++            // Paper start
++            if (CraftEventFactory.callRedstoneChange(worldIn, pos.getX(), pos.getY(), pos.getZ(), 15, 0).getNewCurrent() != 0) {
++                return;
++            }
++            // Paper end
+             worldIn.setBlockState(pos, state.withProperty(POWERED, Boolean.valueOf(false)), 2);
+         }
+         else
+         {
++            // Paper start
++            if (CraftEventFactory.callRedstoneChange(worldIn, pos.getX(), pos.getY(), pos.getZ(), 0, 15).getNewCurrent() != 15) {
++                return;
++            }
++            // Paper end
+             worldIn.setBlockState(pos, state.withProperty(POWERED, Boolean.valueOf(true)), 2);
+             worldIn.scheduleUpdate(pos, this, 2);
+         }

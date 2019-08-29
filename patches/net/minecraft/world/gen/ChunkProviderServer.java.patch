@@ -1,0 +1,169 @@
+--- ../src-base/minecraft/net/minecraft/world/gen/ChunkProviderServer.java
++++ ../src-work/minecraft/net/minecraft/world/gen/ChunkProviderServer.java
+@@ -1,7 +1,6 @@
+ package net.minecraft.world.gen;
+ 
+-import com.google.common.collect.Lists;
+-import com.google.common.collect.Sets;
++import io.netty.util.internal.ConcurrentSet;
+ import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
+ import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
+ import it.unimi.dsi.fastutil.objects.ObjectIterator;
+@@ -26,11 +25,12 @@
+ import net.minecraft.world.chunk.storage.IChunkLoader;
+ import org.apache.logging.log4j.LogManager;
+ import org.apache.logging.log4j.Logger;
++import org.bukkit.event.world.ChunkUnloadEvent;
+ 
+ public class ChunkProviderServer implements IChunkProvider
+ {
+     private static final Logger LOGGER = LogManager.getLogger();
+-    private final Set<Long> droppedChunksSet = Sets.<Long>newHashSet();
++    public final Set<Long> droppedChunksSet = new ConcurrentSet();
+     public final IChunkGenerator chunkGenerator;
+     public final IChunkLoader chunkLoader;
+     public final Long2ObjectMap<Chunk> id2ChunkMap = new Long2ObjectOpenHashMap<Chunk>(8192);
+@@ -83,6 +83,11 @@
+         return chunk;
+     }
+ 
++    // Is it copy of method above?
++    public Chunk getChunkIfLoaded(int x, int z) {
++        return id2ChunkMap.get(ChunkPos.asLong(x, z));
++    }
++
+     @Nullable
+     public Chunk loadChunk(int x, int z)
+     {
+@@ -106,7 +111,7 @@
+                 {
+                 this.id2ChunkMap.put(ChunkPos.asLong(x, z), chunk);
+                 chunk.onLoad();
+-                chunk.populate(this, this.chunkGenerator);
++                chunk.populateCB(this, this.chunkGenerator, false);
+                 }
+ 
+                 loadingChunks.remove(pos);
+@@ -154,7 +159,7 @@
+ 
+             this.id2ChunkMap.put(i, chunk);
+             chunk.onLoad();
+-            chunk.populate(this, this.chunkGenerator);
++            chunk.populateCB(this, this.chunkGenerator, true);
+         }
+ 
+         return chunk;
+@@ -177,7 +182,7 @@
+         }
+         catch (Exception exception)
+         {
+-            LOGGER.error("Couldn't load chunk", (Throwable)exception);
++			LOGGER.error("Couldn't load chunk", (Throwable)exception);
+             return null;
+         }
+     }
+@@ -190,7 +195,7 @@
+         }
+         catch (Exception exception)
+         {
+-            LOGGER.error("Couldn't save entities", (Throwable)exception);
++			LOGGER.error("Couldn't save entities", (Throwable)exception);
+         }
+     }
+ 
+@@ -203,22 +208,25 @@
+         }
+         catch (IOException ioexception)
+         {
+-            LOGGER.error("Couldn't save chunk", (Throwable)ioexception);
++ 			LOGGER.error("Couldn't save chunk", (Throwable)ioexception);
+         }
+         catch (MinecraftException minecraftexception)
+         {
+-            LOGGER.error("Couldn't save chunk; already in use by another instance of Minecraft?", (Throwable)minecraftexception);
+-        }
++			LOGGER.error("Couldn't save chunk; already in use by another instance of Minecraft?", (Throwable)minecraftexception);
++		}
+     }
+ 
+     public boolean saveChunks(boolean all)
+     {
+         int i = 0;
+-        List<Chunk> list = Lists.newArrayList(this.id2ChunkMap.values());
++        // Cauldron start - use thread-safe method for iterating loaded chunks
++        Object[] chunks = this.id2ChunkMap.values().toArray();
+ 
+-        for (int j = 0; j < list.size(); ++j)
++        for (int j = 0; j < chunks.length; ++j)
+         {
+-            Chunk chunk = list.get(j);
++            if (chunks[j] == null) { continue; }
++            Chunk chunk = (Chunk)chunks[j];
++            //Cauldron end
+ 
+             if (all)
+             {
+@@ -232,7 +240,7 @@
+                 ++i;
+ 
+                 if (i == 24 && !all)
+-                {
++				{
+                     return false;
+                 }
+             }
+@@ -266,11 +274,9 @@
+ 
+                     if (chunk != null && chunk.unloadQueued)
+                     {
+-                        chunk.onUnload();
+-                        net.minecraftforge.common.ForgeChunkManager.putDormantChunk(ChunkPos.asLong(chunk.x, chunk.z), chunk);
+-                        this.saveChunkData(chunk);
+-                        this.saveChunkExtraData(chunk);
+-                        this.id2ChunkMap.remove(olong);
++                        if (!unloadChunk(chunk, true)) {
++                            continue;
++                        }
+                         ++i;
+                     }
+                 }
+@@ -284,6 +290,39 @@
+         return false;
+     }
+ 
++    // CraftBukkit start
++    public boolean unloadChunk(Chunk chunk, boolean save) {
++        ChunkUnloadEvent event = new ChunkUnloadEvent(chunk.bukkitChunk, save);
++        this.world.getServer().getPluginManager().callEvent(event);
++        if (event.isCancelled()) {
++            return false;
++        }
++        save = event.isSaveChunk();
++
++        // Update neighbor counts
++        for (int x = -2; x < 3; x++) {
++            for (int z = -2; z < 3; z++) {
++                if (x == 0 && z == 0) {
++                    continue;
++                }
++
++                Chunk neighbor = this.getChunkIfLoaded(chunk.x + x, chunk.z + z);
++                if (neighbor != null) {
++                    neighbor.setNeighborUnloaded(-x, -z);
++                    chunk.setNeighborUnloaded(x, z);
++                }
++            }
++        }
++        // Moved from unloadChunks above
++        chunk.onUnload();
++        net.minecraftforge.common.ForgeChunkManager.putDormantChunk(ChunkPos.asLong(chunk.x, chunk.z), chunk);
++        this.saveChunkData(chunk);
++        this.saveChunkExtraData(chunk);
++        this.id2ChunkMap.remove(chunk.chunkKey);
++        return true;
++    }
++    // CraftBukkit end
++
+     public boolean canSave()
+     {
+         return !this.world.disableLevelSaving;

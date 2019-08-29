@@ -81,8 +81,8 @@ minecraft {
             patchDir "patches/"
             patchAfter "forge"
             genPatchesFrom "forge"
-            genMcpPatches = false
-            applyMcpPatches = false
+            genMcpPatches = true
+            applyMcpPatches = true
             s2sKeepImports = true
             with common
         }

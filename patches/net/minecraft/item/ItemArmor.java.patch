@@ -1,0 +1,40 @@
+--- ../src-base/minecraft/net/minecraft/item/ItemArmor.java
++++ ../src-work/minecraft/net/minecraft/item/ItemArmor.java
+@@ -29,6 +29,8 @@
+ import net.minecraft.world.World;
+ import net.minecraftforge.fml.relauncher.Side;
+ import net.minecraftforge.fml.relauncher.SideOnly;
++import org.bukkit.craftbukkit.v1_12_R1.inventory.CraftItemStack;
++import org.bukkit.event.block.BlockDispenseEvent;
+ 
+ public class ItemArmor extends Item
+ {
+@@ -63,6 +65,28 @@
+             EntityLivingBase entitylivingbase = list.get(0);
+             EntityEquipmentSlot entityequipmentslot = EntityLiving.getSlotForItemStack(stack);
+             ItemStack itemstack = stack.splitStack(1);
++            World world = blockSource.getWorld();
++            org.bukkit.block.Block block = world.getWorld().getBlockAt(blockSource.getBlockPos().getX(), blockSource.getBlockPos().getY(), blockSource.getBlockPos().getZ());
++            CraftItemStack craftItem = CraftItemStack.asCraftMirror(itemstack);
++
++            BlockDispenseEvent event = new BlockDispenseEvent(block, craftItem.clone(), new org.bukkit.util.Vector(0, 0, 0));
++            world.getServer().getPluginManager().callEvent(event);
++
++            if (event.isCancelled()) {
++                itemstack.grow(1);
++                return itemstack;
++            }
++
++            if (!event.getItem().equals(craftItem)) {
++                itemstack.grow(1);
++                // Chain to handler for new item
++                ItemStack eventStack = CraftItemStack.asNMSCopy(event.getItem());
++                IBehaviorDispenseItem idispensebehavior = (IBehaviorDispenseItem) BlockDispenser.DISPENSE_BEHAVIOR_REGISTRY.getObject(eventStack.getItem());
++                if (idispensebehavior != IBehaviorDispenseItem.DEFAULT_BEHAVIOR && idispensebehavior != ItemArmor.DISPENSER_BEHAVIOR) {
++                    idispensebehavior.dispense(blockSource, eventStack);
++                    return itemstack;
++                }
++            }
+             entitylivingbase.setItemStackToSlot(entityequipmentslot, itemstack);
+ 
+             if (entitylivingbase instanceof EntityLiving)

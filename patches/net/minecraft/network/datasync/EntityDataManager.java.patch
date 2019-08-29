@@ -1,0 +1,19 @@
+--- ../src-base/minecraft/net/minecraft/network/datasync/EntityDataManager.java
++++ ../src-work/minecraft/net/minecraft/network/datasync/EntityDataManager.java
+@@ -4,6 +4,7 @@
+ import com.google.common.collect.Maps;
+ import io.netty.handler.codec.DecoderException;
+ import io.netty.handler.codec.EncoderException;
++import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
+ import java.io.IOException;
+ import java.util.List;
+ import java.util.Map;
+@@ -26,7 +27,7 @@
+     private static final Logger LOGGER = LogManager.getLogger();
+     private static final Map < Class <? extends Entity > , Integer > NEXT_ID_MAP = Maps. < Class <? extends Entity > , Integer > newHashMap();
+     private final Entity entity;
+-    private final Map < Integer, EntityDataManager.DataEntry<? >> entries = Maps. < Integer, EntityDataManager.DataEntry<? >> newHashMap();
++    private final Map < Integer, EntityDataManager.DataEntry<? >> entries = new Int2ObjectOpenHashMap<>(); // Paper
+     private final ReadWriteLock lock = new ReentrantReadWriteLock();
+     private boolean empty = true;
+     private boolean dirty;

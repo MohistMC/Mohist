@@ -1,0 +1,11 @@
+--- ../src-base/minecraft/net/minecraft/inventory/Slot.java
++++ ../src-work/minecraft/net/minecraft/inventory/Slot.java
+@@ -8,7 +8,7 @@
+ 
+ public class Slot
+ {
+-    private final int slotIndex;
++    public final int slotIndex;
+     public final IInventory inventory;
+     public int slotNumber;
+     public int xPos;

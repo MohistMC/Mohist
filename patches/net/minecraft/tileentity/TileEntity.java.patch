@@ -1,0 +1,154 @@
+--- ../src-base/minecraft/net/minecraft/tileentity/TileEntity.java
++++ ../src-work/minecraft/net/minecraft/tileentity/TileEntity.java
+@@ -7,6 +7,7 @@
+ import net.minecraft.crash.CrashReportCategory;
+ import net.minecraft.crash.ICrashReportDetail;
+ import net.minecraft.init.Blocks;
++import net.minecraft.inventory.IInventory;
+ import net.minecraft.nbt.NBTTagCompound;
+ import net.minecraft.network.play.server.SPacketUpdateTileEntity;
+ import net.minecraft.util.Mirror;
+@@ -16,16 +17,21 @@
+ import net.minecraft.util.registry.RegistryNamespaced;
+ import net.minecraft.util.text.ITextComponent;
+ import net.minecraft.world.World;
++import net.minecraftforge.cauldron.inventory.CraftCustomInventory;
+ import net.minecraftforge.fml.relauncher.Side;
+ import net.minecraftforge.fml.relauncher.SideOnly;
+ import org.apache.logging.log4j.LogManager;
+ import org.apache.logging.log4j.Logger;
++import org.bukkit.craftbukkit.v1_12_R1.block.CraftBlockEntityState;
++import org.bukkit.inventory.InventoryHolder;
++import red.mohist.Mohist;
+ 
+ public abstract class TileEntity implements net.minecraftforge.common.capabilities.ICapabilitySerializable<NBTTagCompound>
+ {
+     private static final Logger LOGGER = LogManager.getLogger();
+     private static final RegistryNamespaced < ResourceLocation, Class <? extends TileEntity >> REGISTRY = new RegistryNamespaced < ResourceLocation, Class <? extends TileEntity >> ();
+-    protected World world;
++    public World world;
++    private boolean GC = false;
+     protected BlockPos pos = BlockPos.ORIGIN;
+     protected boolean tileEntityInvalid;
+     private int blockMetadata = -1;
+@@ -38,7 +44,7 @@
+ 
+     @Nullable
+     public static ResourceLocation getKey(Class <? extends TileEntity > clazz)
+-    {
++	{
+         return REGISTRY.getNameForObject(clazz);
+     }
+ 
+@@ -108,7 +114,7 @@
+         catch (Throwable throwable1)
+         {
+             LOGGER.error("Failed to create block entity {}", s, throwable1);
+-            net.minecraftforge.fml.common.FMLLog.log.error("A TileEntity {}({}) has thrown an exception during loading, its state cannot be restored. Report this to the mod author",
++            LOGGER.error("A TileEntity {}({}) has thrown an exception during loading, its state cannot be restored. Report this to the mod author",
+                     s, oclass == null ? null : oclass.getName(), throwable1);
+         }
+ 
+@@ -122,7 +128,7 @@
+             catch (Throwable throwable)
+             {
+                 LOGGER.error("Failed to load data for block entity {}", s, throwable);
+-                net.minecraftforge.fml.common.FMLLog.log.error("A TileEntity {}({}) has thrown an exception during loading, its state cannot be restored. Report this to the mod author",
++                LOGGER.error("A TileEntity {}({}) has thrown an exception during loading, its state cannot be restored. Report this to the mod author",
+                         s, oclass.getName(), throwable);
+                 tileentity = null;
+             }
+@@ -305,6 +311,17 @@
+     {
+     }
+ 
++    // KCauldron start
++    public boolean isGC()
++    {
++        return this.GC; //Returns true if the chunk it is inside of has marked it for unloading
++    }
++
++    public void setGC(boolean state)
++    {
++        this.GC = state; //Should never be touched by a mod. Would make it package-private but not sure if that would still work
++    }
++    // KCauldron end
+     // -- BEGIN FORGE PATCHES --
+     /**
+      * Called when you receive a TileEntityData packet for the location this
+@@ -315,7 +332,7 @@
+      * @param net The NetworkManager the packet originated from
+      * @param pkt The data packet
+      */
+-    public void onDataPacket(net.minecraft.network.NetworkManager net, net.minecraft.network.play.server.SPacketUpdateTileEntity pkt)
++    public void onDataPacket(net.minecraft.network.NetworkManager net, SPacketUpdateTileEntity pkt)
+     {
+     }
+ 
+@@ -339,16 +356,7 @@
+     }
+ 
+     private boolean isVanilla = getClass().getName().startsWith("net.minecraft.");
+-    /**
+-     * Called from Chunk.setBlockIDWithMetadata and Chunk.fillChunk, determines if this tile entity should be re-created when the ID, or Metadata changes.
+-     * Use with caution as this will leave straggler TileEntities, or create conflicts with other TileEntities if not used properly.
+-     *
+-     * @param world Current world
+-     * @param pos Tile's world position
+-     * @param oldState The old ID of the block
+-     * @param newState The new ID of the block (May be the same)
+-     * @return true forcing the invalidation of the existing TE, false not to invalidate the existing TE
+-     */
++
+     public boolean shouldRefresh(World world, BlockPos pos, IBlockState oldState, IBlockState newSate)
+     {
+         return isVanilla ? (oldState.getBlock() != newSate.getBlock()) : oldState != newSate;
+@@ -359,17 +367,8 @@
+         return pass == 0;
+     }
+ 
+-    /**
+-     * Sometimes default render bounding box: infinite in scope. Used to control rendering on {@link TileEntitySpecialRenderer}.
+-     */
+     public static final net.minecraft.util.math.AxisAlignedBB INFINITE_EXTENT_AABB = new net.minecraft.util.math.AxisAlignedBB(Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY);
+-    /**
+-     * Return an {@link AxisAlignedBB} that controls the visible scope of a {@link TileEntitySpecialRenderer} associated with this {@link TileEntity}
+-     * Defaults to the collision bounding box {@link Block#getCollisionBoundingBoxFromPool(World, int, int, int)} associated with the block
+-     * at this location.
+-     *
+-     * @return an appropriately size {@link AxisAlignedBB} for the {@link TileEntity}
+-     */
++
+     @SideOnly(Side.CLIENT)
+     public net.minecraft.util.math.AxisAlignedBB getRenderBoundingBox()
+     {
+@@ -531,4 +530,29 @@
+         register("shulker_box", TileEntityShulkerBox.class);
+         register("bed", TileEntityBed.class);
+     }
++
++    // CraftBukkit start - add method
++	@Nullable
++    public InventoryHolder getOwner() {
++        if (world == null) return null;
++        // Spigot start
++        org.bukkit.block.Block block = this.world.getWorld().getBlockAt(this.pos.getX(), this.pos.getY(), this.pos.getZ());
++        if (block == null) {
++            Mohist.LOGGER.warn("No block for owner at %s %d %d %d", new Object[] { this.world.getWorld(), this.pos.getX(), this.pos.getY(), this.pos.getZ() });
++            return null;
++        }
++        // Spigot end
++        org.bukkit.block.BlockState state = block.getState();
++        if (state instanceof InventoryHolder)
++        {
++            return (InventoryHolder) state;
++        }
++        if (state instanceof CraftBlockEntityState) {
++            TileEntity te = ((CraftBlockEntityState)state).getTileEntity();
++            if (te instanceof IInventory) {
++                return new CraftCustomInventory((IInventory)te);
++            }
++        }
++        return null;
++    }
+ }

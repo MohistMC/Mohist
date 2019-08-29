@@ -1,0 +1,20 @@
+--- ../src-base/minecraft/net/minecraft/nbt/NBTTagList.java
++++ ../src-work/minecraft/net/minecraft/nbt/NBTTagList.java
+@@ -4,6 +4,7 @@
+ import java.io.DataInput;
+ import java.io.DataOutput;
+ import java.io.IOException;
++import java.util.ArrayList;
+ import java.util.List;
+ import java.util.Objects;
+ import org.apache.logging.log4j.LogManager;
+@@ -249,7 +250,8 @@
+     {
+         NBTTagList nbttaglist = new NBTTagList();
+         nbttaglist.tagType = this.tagType;
+-
++        if ( nbttaglist.tagList instanceof ArrayList) // Thermos, ensure we dont create arrays to then delete them
++            ((ArrayList<NBTBase>)nbttaglist.tagList).ensureCapacity(this.tagList.size());
+         for (NBTBase nbtbase : this.tagList)
+         {
+             NBTBase nbtbase1 = nbtbase.copy();

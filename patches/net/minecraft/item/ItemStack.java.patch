@@ -1,0 +1,236 @@
+--- ../src-base/minecraft/net/minecraft/item/ItemStack.java
++++ ../src-work/minecraft/net/minecraft/item/ItemStack.java
+@@ -5,8 +5,8 @@
+ import com.google.common.collect.Multimap;
+ import java.text.DecimalFormat;
+ import java.util.List;
+-import java.util.Random;
+ import java.util.Map.Entry;
++import java.util.Random;
+ import javax.annotation.Nullable;
+ import net.minecraft.advancements.CriteriaTriggers;
+ import net.minecraft.block.Block;
+@@ -49,18 +49,19 @@
+ import net.minecraft.world.World;
+ import net.minecraftforge.fml.relauncher.Side;
+ import net.minecraftforge.fml.relauncher.SideOnly;
++import org.bukkit.craftbukkit.v1_12_R1.util.CraftMagicNumbers;
+ 
+ public final class ItemStack implements net.minecraftforge.common.capabilities.ICapabilitySerializable<NBTTagCompound>
+ {
+     public static final ItemStack EMPTY = new ItemStack((Item)null);
+     public static final DecimalFormat DECIMALFORMAT = new DecimalFormat("#.##");
+-    private int stackSize;
++    public int stackSize;
+     private int animationsToGo;
+-    private final Item item;
++    public Item item;
+     private NBTTagCompound stackTagCompound;
+     private boolean isEmpty;
+     int itemDamage;
+-    private EntityItemFrame itemFrame;
++    private transient EntityItemFrame itemFrame;
+     private Block canDestroyCacheBlock;
+     private boolean canDestroyCacheResult;
+     private Block canPlaceOnCacheBlock;
+@@ -119,47 +120,57 @@
+ 
+     public ItemStack(NBTTagCompound compound)
+     {
++        this.load(compound);
++
++        this.updateEmptyState();
++        this.forgeInit();
++    }
++
++    public void load(NBTTagCompound compound)
++    {
+         this.capNBT = compound.hasKey("ForgeCaps") ? compound.getCompoundTag("ForgeCaps") : null;
+         this.item = compound.hasKey("id", 8) ? Item.getByNameOrId(compound.getString("id")) : Items.AIR; //Forge fix tons of NumberFormatExceptions that are caused by deserializing EMPTY ItemStacks.
+         this.stackSize = compound.getByte("Count");
+-        this.itemDamage = Math.max(0, compound.getShort("Damage"));
++        // CraftBukkit start - Route through setData for filtering
++        // this.itemDamage = Math.max(0, compound.getShort("Damage"));
++        this.setItemDamage(compound.getShort("Damage"));
+ 
+         if (compound.hasKey("tag", 10))
+         {
+-            this.stackTagCompound = compound.getCompoundTag("tag");
+-
++            // CraftBukkit start - make defensive copy as this data may be coming from the save thread
++            // this.stackTagCompound = compound.getCompoundTag("tag");
++            this.stackTagCompound = compound.getCompoundTag("tag").copy();
+             if (this.item != null)
+             {
+-                this.item.updateItemStackNBT(compound);
++                // this.item.updateItemStackNBT(compound);
++                this.item.updateItemStackNBT(this.stackTagCompound);
+             }
+         }
+-
+-        this.updateEmptyState();
+-        this.forgeInit();
+     }
+ 
+     public boolean isEmpty()
+     {
+         if (this == EMPTY)
+-        {
++		{
+             return true;
+         }
+-        else if (this.getItemRaw() != null && this.getItemRaw() != Items.AIR)
+-        {
++		else if (this.getItemRaw() != null && this.getItemRaw() != Items.AIR)
++		{
+             if (this.stackSize <= 0)
+-            {
++			{
+                 return true;
+             }
+-            else
+-            {
++			else
++			{
+                 return this.itemDamage < -32768 || this.itemDamage > 65535;
+             }
+         }
+-        else
+-        {
++		else
++		{
+             return true;
+         }
+     }
++    // Paper end
+ 
+     public static void registerFixes(DataFixer fixer)
+     {
+@@ -185,10 +196,9 @@
+     {
+         if (!worldIn.isRemote) return net.minecraftforge.common.ForgeHooks.onPlaceItemIntoWorld(this, playerIn, worldIn, pos, side, hitX, hitY, hitZ, hand);
+         EnumActionResult enumactionresult = this.getItem().onItemUse(playerIn, worldIn, pos, hand, side, hitX, hitY, hitZ);
+-
+-        if (enumactionresult == EnumActionResult.SUCCESS)
++		if (enumactionresult == EnumActionResult.SUCCESS)
+         {
+-            playerIn.addStat(StatList.getObjectUseStats(this.item));
++        	playerIn.addStat(StatList.getObjectUseStats(this.item));
+         }
+ 
+         return enumactionresult;
+@@ -231,7 +241,8 @@
+ 
+         if (this.stackTagCompound != null)
+         {
+-            nbt.setTag("tag", this.stackTagCompound);
++            // nbt.setTag("tag", this.stackTagCompound);
++            nbt.setTag("tag", this.stackTagCompound.copy()); // CraftBukkit - make defensive copy, data is going to another thread
+         }
+ 
+         if (this.capabilities != null)
+@@ -291,6 +302,26 @@
+ 
+     public void setItemDamage(int meta)
+     {
++        // CraftBukkit start - Filter out data for items that shouldn't have it
++        // The crafting system uses this value for a special purpose so we have to allow it
++        if (meta == 32767) {
++            getItem().setDamage(this, meta);
++            return;
++        }
++
++        // Is this a block?
++        if (CraftMagicNumbers.getBlock(CraftMagicNumbers.getId(this.getItem())) != Blocks.AIR) {
++            // If vanilla doesn't use data on it don't allow any
++            if (!(this.getHasSubtypes() || this.getItem().isDamageable())) {
++                meta = 0;
++            }
++        }
++
++        // Filter invalid plant data
++        if (CraftMagicNumbers.getBlock(CraftMagicNumbers.getId(this.getItem())) == Blocks.DOUBLE_PLANT && (meta > 5 || meta < 0)) {
++            meta = 0;
++        }
++        // CraftBukkit end
+         getItem().setDamage(this, meta);
+     }
+ 
+@@ -322,6 +353,18 @@
+ 
+                 amount -= j;
+ 
++                // Spigot start
++                if (damager != null) {
++                    org.bukkit.craftbukkit.v1_12_R1.inventory.CraftItemStack item = org.bukkit.craftbukkit.v1_12_R1.inventory.CraftItemStack.asCraftMirror(this);
++                    org.bukkit.event.player.PlayerItemDamageEvent event = new org.bukkit.event.player.PlayerItemDamageEvent(damager.getBukkitEntity(), item, amount);
++                    org.bukkit.Bukkit.getServer().getPluginManager().callEvent(event);
++                    if (amount != event.getDamage() || event.isCancelled()) {
++                        event.getPlayer().updateInventory();
++                    }
++                    if (event.isCancelled()) return false;
++                    amount = event.getDamage();
++                }
++                // Spigot end
+                 if (amount <= 0)
+                 {
+                     return false;
+@@ -347,6 +390,11 @@
+                 if (this.attemptDamageItem(amount, entityIn.getRNG(), entityIn instanceof EntityPlayerMP ? (EntityPlayerMP)entityIn : null))
+                 {
+                     entityIn.renderBrokenItemStack(this);
++                    // CraftBukkit start - Check for item breaking
++                    if (this.stackSize == 1 && entityIn instanceof EntityPlayer) {
++                        org.bukkit.craftbukkit.v1_12_R1.event.CraftEventFactory.callPlayerItemBreakEvent((EntityPlayer) entityIn, this);
++                    }
++                    // CraftBukkit end
+                     this.shrink(1);
+ 
+                     if (entityIn instanceof EntityPlayer)
+@@ -983,6 +1031,14 @@
+ 
+     public void setRepairCost(int cost)
+     {
++        // CraftBukkit start - remove RepairCost tag when 0 (SPIGOT-3945)
++        if (cost == 0) {
++            if (this.hasTagCompound()) {
++                this.stackTagCompound.removeTag("RepairCost");
++            }
++            return;
++        }
++        // CraftBukkit end
+         if (!this.hasTagCompound())
+         {
+             this.stackTagCompound = new NBTTagCompound();
+@@ -1043,6 +1099,14 @@
+         nbttaglist.appendTag(nbttagcompound);
+     }
+ 
++    @Deprecated
++    public void setItem(Item item) {
++        this.item = item;
++        // Update delegate as well
++        this.delegate = item.delegate;
++        this.setItemDamage(this.getItemDamage()); // CraftBukkit - Set data again to ensure it is filtered properly
++    }
++
+     public ITextComponent getTextComponent()
+     {
+         TextComponentString textcomponentstring = new TextComponentString(this.getDisplayName());
+@@ -1280,4 +1344,16 @@
+     {
+         return this.isEmpty() || this.getItem().doesSneakBypassUse(this, world, pos, player);
+     }
++
++    // Spigot start
++    public static boolean fastMatches(ItemStack itemstack, ItemStack itemstack1) {
++        if (itemstack.isEmpty() && itemstack1.isEmpty()) {
++            return true;
++        }
++        if (!itemstack.isEmpty() && !itemstack1.isEmpty()) {
++            return itemstack.stackSize == itemstack1.stackSize && itemstack.item == itemstack1.item && itemstack.itemDamage == itemstack1.itemDamage;
++        }
++        return false;
++    }
++    // Spigot end
+ }

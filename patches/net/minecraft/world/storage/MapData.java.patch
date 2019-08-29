@@ -1,0 +1,230 @@
+--- ../src-base/minecraft/net/minecraft/world/storage/MapData.java
++++ ../src-work/minecraft/net/minecraft/world/storage/MapData.java
+@@ -1,9 +1,11 @@
+ package net.minecraft.world.storage;
+ 
++import com.google.common.base.Charsets;
+ import com.google.common.collect.Lists;
+ import com.google.common.collect.Maps;
+ import java.util.List;
+ import java.util.Map;
++import java.util.UUID;
+ import javax.annotation.Nullable;
+ import net.minecraft.entity.item.EntityItemFrame;
+ import net.minecraft.entity.player.EntityPlayer;
+@@ -15,6 +17,9 @@
+ import net.minecraft.util.math.BlockPos;
+ import net.minecraft.util.math.MathHelper;
+ import net.minecraft.world.World;
++import org.bukkit.craftbukkit.v1_12_R1.CraftServer;
++import org.bukkit.craftbukkit.v1_12_R1.CraftWorld;
++import org.bukkit.craftbukkit.v1_12_R1.map.CraftMapView;
+ 
+ public class MapData extends WorldSavedData
+ {
+@@ -25,13 +30,19 @@
+     public boolean unlimitedTracking;
+     public byte scale;
+     public byte[] colors = new byte[16384];
+-    public List<MapData.MapInfo> playersArrayList = Lists.<MapData.MapInfo>newArrayList();
+-    private final Map<EntityPlayer, MapData.MapInfo> playersHashMap = Maps.<EntityPlayer, MapData.MapInfo>newHashMap();
+-    public Map<String, MapDecoration> mapDecorations = Maps.<String, MapDecoration>newLinkedHashMap();
++    public List<MapInfo> playersArrayList = Lists.<MapInfo>newArrayList();
++    public final Map<EntityPlayer, MapInfo> playersHashMap = Maps.newHashMap(); // Spigot private -> public
++    public Map<UUID, MapDecoration> mapDecorations = Maps.newLinkedHashMap(); // Spigot
+ 
++    public final CraftMapView mapView;
++    private CraftServer server;
++    private UUID uniqueId = null;
++
+     public MapData(String mapname)
+     {
+         super(mapname);
++        mapView = new CraftMapView(this);
++        server = (CraftServer) org.bukkit.Bukkit.getServer();
+     }
+ 
+     public void calculateMapCenter(double x, double z, int mapScale)
+@@ -45,7 +56,31 @@
+ 
+     public void readFromNBT(NBTTagCompound nbt)
+     {
+-        this.dimension = nbt.getInteger("dimension");
++        // this.dimension = nbt.getInteger("dimension");
++        // CraftBukkit start
++        int dimension = nbt.getInteger("dimension");
++
++        if (dimension >= 10) {
++            long least = nbt.getLong("UUIDLeast");
++            long most = nbt.getLong("UUIDMost");
++
++            if (least != 0L && most != 0L) {
++                this.uniqueId = new UUID(most, least);
++
++                CraftWorld world = (CraftWorld) server.getWorld(this.uniqueId);
++                // Check if the stored world details are correct.
++                if (world == null) {
++                    /* All Maps which do not have their valid world loaded are set to a dimension which hopefully won't be reached.
++                       This is to prevent them being corrupted with the wrong map data. */
++                    dimension = 127;
++                } else {
++                    dimension = (byte) world.getHandle().dimension;
++                }
++            }
++        }
++
++        this.dimension = dimension;
++        // CraftBukkit end
+         this.xCenter = nbt.getInteger("xCenter");
+         this.zCenter = nbt.getInteger("zCenter");
+         this.scale = nbt.getByte("scale");
+@@ -97,6 +132,25 @@
+ 
+     public NBTTagCompound writeToNBT(NBTTagCompound compound)
+     {
++        // CraftBukkit start
++        if (this.dimension >= 10) {
++            if (this.uniqueId == null) {
++                for (org.bukkit.World world : server.getWorlds()) {
++                    CraftWorld cWorld = (CraftWorld) world;
++                    if (cWorld.getHandle().dimension == this.dimension) {
++                        this.uniqueId = cWorld.getUID();
++                        break;
++                    }
++                }
++            }
++            /* Perform a second check to see if a matching world was found, this is a necessary
++               change incase Maps are forcefully unlinked from a World and lack a UID.*/
++            if (this.uniqueId != null) {
++                compound.setLong("UUIDLeast", this.uniqueId.getLeastSignificantBits());
++                compound.setLong("UUIDMost", this.uniqueId.getMostSignificantBits());
++            }
++        }
++        // CraftBukkit end
+         compound.setInteger("dimension", this.dimension);
+         compound.setInteger("xCenter", this.xCenter);
+         compound.setInteger("zCenter", this.zCenter);
+@@ -113,25 +167,25 @@
+     {
+         if (!this.playersHashMap.containsKey(player))
+         {
+-            MapData.MapInfo mapdata$mapinfo = new MapData.MapInfo(player);
++            MapInfo mapdata$mapinfo = new MapInfo(player);
+             this.playersHashMap.put(player, mapdata$mapinfo);
+             this.playersArrayList.add(mapdata$mapinfo);
+         }
+ 
+         if (!player.inventory.hasItemStack(mapStack))
+         {
+-            this.mapDecorations.remove(player.getName());
++            this.mapDecorations.remove(player.getUniqueID()); // Spigot
+         }
+ 
+         for (int i = 0; i < this.playersArrayList.size(); ++i)
+         {
+-            MapData.MapInfo mapdata$mapinfo1 = this.playersArrayList.get(i);
++            MapInfo mapdata$mapinfo1 = this.playersArrayList.get(i);
+ 
+             if (!mapdata$mapinfo1.player.isDead && (mapdata$mapinfo1.player.inventory.hasItemStack(mapStack) || mapStack.isOnItemFrame()))
+             {
+                 if (!mapStack.isOnItemFrame() && mapdata$mapinfo1.player.dimension == this.dimension && this.trackingPosition)
+                 {
+-                    this.updateDecorations(MapDecoration.Type.PLAYER, mapdata$mapinfo1.player.world, mapdata$mapinfo1.player.getName(), mapdata$mapinfo1.player.posX, mapdata$mapinfo1.player.posZ, (double)mapdata$mapinfo1.player.rotationYaw);
++                    this.updateDecorations(MapDecoration.Type.PLAYER, mapdata$mapinfo1.player.world, mapdata$mapinfo1.player.getUniqueID(), mapdata$mapinfo1.player.posX, mapdata$mapinfo1.player.posZ, (double)mapdata$mapinfo1.player.rotationYaw);
+                 }
+             }
+             else
+@@ -145,7 +199,7 @@
+         {
+             EntityItemFrame entityitemframe = mapStack.getItemFrame();
+             BlockPos blockpos = entityitemframe.getHangingPosition();
+-            this.updateDecorations(MapDecoration.Type.FRAME, player.world, "frame-" + entityitemframe.getEntityId(), (double)blockpos.getX(), (double)blockpos.getZ(), (double)(entityitemframe.facingDirection.getHorizontalIndex() * 90));
++            this.updateDecorations(MapDecoration.Type.FRAME, player.world, UUID.nameUUIDFromBytes(("frame-" + entityitemframe.getEntityId()).getBytes(Charsets.US_ASCII)), (double)blockpos.getX(), (double)blockpos.getZ(), (double)(entityitemframe.facingDirection.getHorizontalIndex() * 90));
+         }
+ 
+         if (mapStack.hasTagCompound() && mapStack.getTagCompound().hasKey("Decorations", 9))
+@@ -155,10 +209,11 @@
+             for (int j = 0; j < nbttaglist.tagCount(); ++j)
+             {
+                 NBTTagCompound nbttagcompound = nbttaglist.getCompoundTagAt(j);
+-
+-                if (!this.mapDecorations.containsKey(nbttagcompound.getString("id")))
++                // Spigot - start
++                UUID uuid = UUID.nameUUIDFromBytes(nbttagcompound.getString("id").getBytes(Charsets.US_ASCII));
++                if (!this.mapDecorations.containsKey(uuid))
+                 {
+-                    this.updateDecorations(MapDecoration.Type.byIcon(nbttagcompound.getByte("type")), player.world, nbttagcompound.getString("id"), nbttagcompound.getDouble("x"), nbttagcompound.getDouble("z"), nbttagcompound.getDouble("rot"));
++                    this.updateDecorations(MapDecoration.Type.byIcon(nbttagcompound.getByte("type")), player.world, uuid, nbttagcompound.getDouble("x"), nbttagcompound.getDouble("z"), nbttagcompound.getDouble("rot"));
+                 }
+             }
+         }
+@@ -193,7 +248,7 @@
+         }
+     }
+ 
+-    private void updateDecorations(MapDecoration.Type type, World worldIn, String decorationName, double worldX, double worldZ, double rotationIn)
++    private void updateDecorations(MapDecoration.Type type, World worldIn, UUID decorationName, double worldX, double worldZ, double rotationIn) // Spigot; string->uuid
+     {
+         int i = 1 << this.scale;
+         float f = (float)(worldX - (double)this.xCenter) / (float)i;
+@@ -268,7 +323,7 @@
+     @Nullable
+     public Packet<?> getMapPacket(ItemStack mapStack, World worldIn, EntityPlayer player)
+     {
+-        MapData.MapInfo mapdata$mapinfo = this.playersHashMap.get(player);
++        MapInfo mapdata$mapinfo = this.playersHashMap.get(player);
+         return mapdata$mapinfo == null ? null : mapdata$mapinfo.getPacket(mapStack);
+     }
+ 
+@@ -276,19 +331,19 @@
+     {
+         super.markDirty();
+ 
+-        for (MapData.MapInfo mapdata$mapinfo : this.playersArrayList)
++        for (MapInfo mapdata$mapinfo : this.playersArrayList)
+         {
+             mapdata$mapinfo.update(x, y);
+         }
+     }
+ 
+-    public MapData.MapInfo getMapInfo(EntityPlayer player)
++    public MapInfo getMapInfo(EntityPlayer player)
+     {
+-        MapData.MapInfo mapdata$mapinfo = this.playersHashMap.get(player);
++        MapInfo mapdata$mapinfo = this.playersHashMap.get(player);
+ 
+         if (mapdata$mapinfo == null)
+         {
+-            mapdata$mapinfo = new MapData.MapInfo(player);
++            mapdata$mapinfo = new MapInfo(player);
+             this.playersHashMap.put(player, mapdata$mapinfo);
+             this.playersArrayList.add(mapdata$mapinfo);
+         }
+@@ -315,14 +370,25 @@
+         @Nullable
+         public Packet<?> getPacket(ItemStack stack)
+         {
++            org.bukkit.craftbukkit.v1_12_R1.map.RenderData render = MapData.this.mapView.render((org.bukkit.craftbukkit.v1_12_R1.entity.CraftPlayer) this.player.getBukkitEntity());
++
++            java.util.Collection<MapDecoration> icons = new java.util.ArrayList<>();
++
++            for ( org.bukkit.map.MapCursor cursor : render.cursors) {
++
++                if (cursor.isVisible()) {
++                    icons.add(new MapDecoration(MapDecoration.Type.byIcon(cursor.getRawType()), cursor.getX(), cursor.getY(), cursor.getDirection()));
++                }
++            }
++
+             if (this.isDirty)
+             {
+                 this.isDirty = false;
+-                return new SPacketMaps(stack.getMetadata(), MapData.this.scale, MapData.this.trackingPosition, MapData.this.mapDecorations.values(), MapData.this.colors, this.minX, this.minY, this.maxX + 1 - this.minX, this.maxY + 1 - this.minY);
++                return new SPacketMaps(stack.getMetadata(), MapData.this.scale, MapData.this.trackingPosition, icons, render.buffer, this.minX, this.minY, this.maxX + 1 - this.minX, this.maxY + 1 - this.minY);
+             }
+             else
+             {
+-                return this.tick++ % 5 == 0 ? new SPacketMaps(stack.getMetadata(), MapData.this.scale, MapData.this.trackingPosition, MapData.this.mapDecorations.values(), MapData.this.colors, 0, 0, 0, 0) : null;
++                return this.tick++ % 5 == 0 ? new SPacketMaps(stack.getMetadata(), MapData.this.scale, MapData.this.trackingPosition, icons, render.buffer, 0, 0, 0, 0) : null;
+             }
+         }
+ 

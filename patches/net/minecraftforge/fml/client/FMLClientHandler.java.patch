@@ -1,0 +1,20 @@
+--- ../src-base/minecraft/net/minecraftforge/fml/client/FMLClientHandler.java
++++ ../src-work/minecraft/net/minecraftforge/fml/client/FMLClientHandler.java
+@@ -790,7 +790,7 @@
+             boolean moddedClientAllowed = true;
+             if (!Strings.isNullOrEmpty(serverDescription))
+             {
+-                moddedClientAllowed = !serverDescription.endsWith(":NOFML??r");
++                moddedClientAllowed = !serverDescription.endsWith(":NOFML§r");
+             }
+             serverDataTag.put(data, new ExtendedServerListData("VANILLA", false, ImmutableMap.of(), !moddedClientAllowed));
+         }
+@@ -852,7 +852,7 @@
+ 
+     public String fixDescription(String description)
+     {
+-        return description.endsWith(":NOFML??r") ? description.substring(0, description.length() - 8)+"??r" : description;
++        return description.endsWith(":NOFML§r") ? description.substring(0, description.length() - 8)+"§r" : description;
+     }
+ 
+     public void connectToServerAtStartup(String host, int port)

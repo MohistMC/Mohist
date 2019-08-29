@@ -1,0 +1,27 @@
+--- ../src-base/minecraft/net/minecraft/block/BlockDispenser.java
++++ ../src-work/minecraft/net/minecraft/block/BlockDispenser.java
+@@ -50,8 +50,8 @@
+     {
+         return 4;
+     }
+-
+-    public void onBlockAdded(World worldIn, BlockPos pos, IBlockState state)
++	
++	public void onBlockAdded(World worldIn, BlockPos pos, IBlockState state)
+     {
+         super.onBlockAdded(worldIn, pos, state);
+         this.setDefaultDirection(worldIn, pos, state);
+@@ -115,12 +115,11 @@
+                     playerIn.addStat(StatList.DISPENSER_INSPECTED);
+                 }
+             }
+-
+             return true;
+         }
+     }
+ 
+-    protected void dispense(World worldIn, BlockPos pos)
++    public void dispense(World worldIn, BlockPos pos)
+     {
+         BlockSourceImpl blocksourceimpl = new BlockSourceImpl(worldIn, pos);
+         TileEntityDispenser tileentitydispenser = (TileEntityDispenser)blocksourceimpl.getBlockTileEntity();

@@ -1,0 +1,77 @@
+--- ../src-base/minecraft/net/minecraft/network/NetworkSystem.java
++++ ../src-work/minecraft/net/minecraft/network/NetworkSystem.java
+@@ -27,6 +27,8 @@
+ import java.util.Collections;
+ import java.util.Iterator;
+ import java.util.List;
++import java.util.Set;
++import java.util.concurrent.ConcurrentHashMap;
+ import net.minecraft.client.network.NetHandlerHandshakeMemory;
+ import net.minecraft.crash.CrashReport;
+ import net.minecraft.crash.CrashReportCategory;
+@@ -71,6 +73,9 @@
+     private final List<ChannelFuture> endpoints = Collections.<ChannelFuture>synchronizedList(Lists.newArrayList());
+     private final List<NetworkManager> networkManagers = Collections.<NetworkManager>synchronizedList(Lists.newArrayList());
+ 
++    private boolean processing = false; // Thermos (Robotia) -- syncy time!
++    private final Set stack = Collections.newSetFromMap(new ConcurrentHashMap());
++
+     public NetworkSystem(MinecraftServer server)
+     {
+         this.mcServer = server;
+@@ -113,7 +118,8 @@
+ 
+                     p_initChannel_1_.pipeline().addLast("timeout", new ReadTimeoutHandler(net.minecraftforge.fml.common.network.internal.FMLNetworkHandler.READ_TIMEOUT)).addLast("legacy_query", new LegacyPingHandler(NetworkSystem.this)).addLast("splitter", new NettyVarint21FrameDecoder()).addLast("decoder", new NettyPacketDecoder(EnumPacketDirection.SERVERBOUND)).addLast("prepender", new NettyVarint21FrameEncoder()).addLast("encoder", new NettyPacketEncoder(EnumPacketDirection.CLIENTBOUND));
+                     NetworkManager networkmanager = new NetworkManager(EnumPacketDirection.SERVERBOUND);
+-                    NetworkSystem.this.networkManagers.add(networkmanager);
++                    if (processing) { stack.add(networkmanager); } // Thermos (Robotia) -- syncy time
++                    else { NetworkSystem.this.networkManagers.add(networkmanager); }
+                     p_initChannel_1_.pipeline().addLast("packet_handler", networkmanager);
+                     networkmanager.setNetHandler(new NetHandlerHandshakeTCP(NetworkSystem.this.mcServer, networkmanager));
+                 }
+@@ -134,7 +140,8 @@
+                 {
+                     NetworkManager networkmanager = new NetworkManager(EnumPacketDirection.SERVERBOUND);
+                     networkmanager.setNetHandler(new NetHandlerHandshakeMemory(NetworkSystem.this.mcServer, networkmanager));
+-                    NetworkSystem.this.networkManagers.add(networkmanager);
++                    if (processing) { stack.add(networkmanager); } // Thermos (Robotia) -- syncy time
++                    else { NetworkSystem.this.networkManagers.add(networkmanager); }
+                     p_initChannel_1_.pipeline().addLast("packet_handler", networkmanager);
+                 }
+             }).group(SERVER_NIO_EVENTLOOP.getValue()).localAddress(LocalAddress.ANY)).bind().syncUninterruptibly();
+@@ -163,8 +170,16 @@
+ 
+     public void networkTick()
+     {
++        this.processing = true; // Thermos (Robotia)
+         synchronized (this.networkManagers)
+         {
++            // Spigot Start
++            // This prevents players from 'gaming' the server, and strategically relogging to increase their position in the tick order
++            if (org.spigotmc.SpigotConfig.playerShuffle > 0 && MinecraftServer.currentTick % org.spigotmc.SpigotConfig.playerShuffle == 0)
++            {
++                Collections.shuffle(this.networkManagers);
++            }
++            // Spigot End
+             Iterator<NetworkManager> iterator = this.networkManagers.iterator();
+ 
+             while (iterator.hasNext())
+@@ -209,12 +224,18 @@
+                     }
+                     else
+                     {
++                        // Spigot Start - Fix a race condition where a NetworkManager could be unregistered just before connection.
++                        if (networkmanager.preparing) continue;
++                        // Spigot End
+                         iterator.remove();
+                         networkmanager.checkDisconnected();
+                     }
+                 }
+             }
+         }
++        this.processing = false;
++        this.networkManagers.addAll(stack);
++        stack.clear();
+     }
+ 
+     public MinecraftServer getServer()

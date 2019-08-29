@@ -1,0 +1,10 @@
+--- ../src-base/minecraft/net/minecraft/world/ChunkCache.java
++++ ../src-work/minecraft/net/minecraft/world/ChunkCache.java
+@@ -1,7 +1,6 @@
+ package net.minecraft.world;
+ 
+ import javax.annotation.Nullable;
+-import net.minecraft.block.material.Material;
+ import net.minecraft.block.state.IBlockState;
+ import net.minecraft.init.Blocks;
+ import net.minecraft.tileentity.TileEntity;

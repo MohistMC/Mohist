@@ -1,0 +1,21 @@
+--- ../src-base/minecraft/net/minecraft/block/BlockShulkerBox.java
++++ ../src-work/minecraft/net/minecraft/block/BlockShulkerBox.java
+@@ -44,7 +44,7 @@
+ public class BlockShulkerBox extends BlockContainer
+ {
+     public static final PropertyEnum<EnumFacing> FACING = PropertyDirection.create("facing");
+-    private final EnumDyeColor color;
++    public final EnumDyeColor color;
+ 
+     public BlockShulkerBox(EnumDyeColor colorIn)
+     {
+@@ -201,8 +201,8 @@
+ 
+                 spawnAsEntity(worldIn, pos, itemstack);
+             }
+-
+             worldIn.updateComparatorOutputLevel(pos, state.getBlock());
++            tileentityshulkerbox.clear(); // Paper - This was intended to be called in Vanilla (is checked in the if statement above if has been called) - Fixes dupe issues
+         }
+ 
+         super.breakBlock(worldIn, pos, state);

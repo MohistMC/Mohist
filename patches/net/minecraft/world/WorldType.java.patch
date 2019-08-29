@@ -1,0 +1,20 @@
+--- ../src-base/minecraft/net/minecraft/world/WorldType.java
++++ ../src-work/minecraft/net/minecraft/world/WorldType.java
+@@ -2,6 +2,7 @@
+ 
+ import net.minecraftforge.fml.relauncher.Side;
+ import net.minecraftforge.fml.relauncher.SideOnly;
++import red.mohist.forge.ForgeInjectBukkit;
+ 
+ public class WorldType
+ {
+@@ -33,6 +34,9 @@
+         this.canBeCreated = true;
+         this.id = id;
+         WORLD_TYPES[id] = this;
++        if (org.bukkit.WorldType.getByName(name) == null) {
++            ForgeInjectBukkit.addBukkitWorldType(name);
++        }
+     }
+ 
+     public String getName()

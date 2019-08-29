@@ -1,0 +1,11 @@
+--- ../src-base/minecraft/net/minecraftforge/fml/common/launcher/FMLServerTweaker.java
++++ ../src-work/minecraft/net/minecraftforge/fml/common/launcher/FMLServerTweaker.java
+@@ -37,7 +37,7 @@
+ 
+         if (System.getProperty("log4j.configurationFile") == null)
+         {
+-            System.setProperty("log4j.configurationFile", "log4j2_server.xml");
++            System.setProperty("log4j.configurationFile", "log4j2_mohist.xml");
+             ((LoggerContext) LogManager.getContext(false)).reconfigure();
+         }
+     }

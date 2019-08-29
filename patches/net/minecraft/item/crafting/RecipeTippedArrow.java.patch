@@ -1,0 +1,20 @@
+--- ../src-base/minecraft/net/minecraft/item/crafting/RecipeTippedArrow.java
++++ ../src-work/minecraft/net/minecraft/item/crafting/RecipeTippedArrow.java
+@@ -8,8 +8,16 @@
+ import net.minecraft.util.NonNullList;
+ import net.minecraft.world.World;
+ 
+-public class RecipeTippedArrow extends net.minecraftforge.registries.IForgeRegistryEntry.Impl<IRecipe> implements IRecipe
++public class RecipeTippedArrow extends ShapedRecipes implements IRecipe
+ {
++    public RecipeTippedArrow() {
++        super("", 3, 3, NonNullList.from(Ingredient.EMPTY,
++                Ingredient.fromItem(Items.ARROW), Ingredient.fromItem(Items.ARROW), Ingredient.fromItem(Items.ARROW),
++                Ingredient.fromItem(Items.ARROW), Ingredient.fromItem(Items.LINGERING_POTION), Ingredient.fromItem(Items.ARROW),
++                Ingredient.fromItem(Items.ARROW), Ingredient.fromItem(Items.ARROW), Ingredient.fromItem(Items.ARROW)),
++                new ItemStack(Items.TIPPED_ARROW, 8));
++    }
++
+     public boolean matches(InventoryCrafting inv, World worldIn)
+     {
+         if (inv.getWidth() == 3 && inv.getHeight() == 3)

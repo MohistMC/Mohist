@@ -1,0 +1,265 @@
+--- ../src-base/minecraft/net/minecraft/server/management/PlayerChunkMap.java
++++ ../src-work/minecraft/net/minecraft/server/management/PlayerChunkMap.java
+@@ -10,9 +10,11 @@
+ import java.util.Collections;
+ import java.util.Comparator;
+ import java.util.Iterator;
++import java.util.LinkedList;
+ import java.util.List;
+ import java.util.Set;
+ import javax.annotation.Nullable;
++import net.minecraft.entity.player.EntityPlayer;
+ import net.minecraft.entity.player.EntityPlayerMP;
+ import net.minecraft.util.math.BlockPos;
+ import net.minecraft.util.math.ChunkPos;
+@@ -45,6 +47,7 @@
+     private final List<PlayerChunkMapEntry> entriesWithoutChunks = Lists.<PlayerChunkMapEntry>newLinkedList();
+     private final List<PlayerChunkMapEntry> entries = Lists.<PlayerChunkMapEntry>newArrayList();
+     private int playerViewRadius;
++    public int getViewDistance() { return playerViewRadius; } // Paper OBFHELPER
+     private long previousTotalWorldTime;
+     private boolean sortMissingChunks = true;
+     private boolean sortSendToPlayers = true;
+@@ -52,7 +55,7 @@
+     public PlayerChunkMap(WorldServer serverWorld)
+     {
+         this.world = serverWorld;
+-        this.setPlayerViewRadius(serverWorld.getMinecraftServer().getPlayerList().getViewDistance());
++        this.setPlayerViewRadius(serverWorld.spigotConfig.viewDistance); // Spigot
+     }
+ 
+     public WorldServer getWorldServer()
+@@ -155,8 +158,10 @@
+ 
+         if (!this.entriesWithoutChunks.isEmpty())
+         {
+-            long l = System.nanoTime() + 50000000L;
+-            int k = 49;
++            // Spigot start
++            org.spigotmc.SlackActivityAccountant activityAccountant = this.world.getMinecraftServer().slackActivityAccountant;
++            activityAccountant.startActivity(0.5);
++            // Spigot end
+             Iterator<PlayerChunkMapEntry> iterator = this.entriesWithoutChunks.iterator();
+ 
+             while (iterator.hasNext())
+@@ -176,15 +181,16 @@
+                             this.pendingSendToPlayers.remove(playerchunkmapentry1);
+                         }
+ 
+-                        --k;
+-
+-                        if (k < 0 || System.nanoTime() > l)
+-                        {
++                        if (activityAccountant.activityTimeIsExhausted()) { // Spigot
+                             break;
+                         }
+                     }
++                } else {
++                    // CraftBukkit - SPIGOT-2891: remove once chunk has been provided
++                    iterator.remove();
+                 }
+             }
++            activityAccountant.endActivity(); // Spigot
+         }
+ 
+         if (!this.pendingSendToPlayers.isEmpty())
+@@ -213,7 +219,7 @@
+         {
+             WorldProvider worldprovider = this.world.provider;
+ 
+-            if (!worldprovider.canRespawnHere())
++            if (!worldprovider.canRespawnHere() && !this.world.disableLevelSaving) // Paper - respect saving disabled setting
+             {
+                 this.world.getChunkProvider().queueUnloadAll();
+             }
+@@ -257,6 +263,14 @@
+         return playerchunkmapentry;
+     }
+ 
++    public final boolean isChunkInUse(int x, int z) {
++        PlayerChunkMapEntry pi = getEntry(x, z);
++        if (pi != null) {
++            return (pi.players.size() > 0);
++        }
++        return false;
++    }
++
+     public void markBlockForUpdate(BlockPos pos)
+     {
+         int i = pos.getX() >> 4;
+@@ -276,14 +290,22 @@
+         player.managedPosX = player.posX;
+         player.managedPosZ = player.posZ;
+ 
++        List<ChunkPos> chunkList = new LinkedList<>();
++
+         for (int k = i - this.playerViewRadius; k <= i + this.playerViewRadius; ++k)
+         {
+             for (int l = j - this.playerViewRadius; l <= j + this.playerViewRadius; ++l)
+             {
+-                this.getOrCreateEntry(k, l).addPlayer(player);
++                // this.getOrCreateEntry(k, l).addPlayer(player);
++                chunkList.add(new ChunkPos(k, l));
+             }
+         }
+ 
++        Collections.sort(chunkList, new ChunkCoordComparator(player));
++        for (ChunkPos pair : chunkList) {
++            this.getOrCreateEntry(pair.x, pair.z).addPlayer(player);
++        }
++
+         this.players.add(player);
+         this.markSortPending();
+     }
+@@ -341,6 +363,8 @@
+             int j1 = i - k;
+             int k1 = j - l;
+ 
++            List<ChunkPos> chunksToLoad = new LinkedList<>();
++
+             if (j1 != 0 || k1 != 0)
+             {
+                 for (int l1 = i - i1; l1 <= i + i1; ++l1)
+@@ -349,7 +373,8 @@
+                     {
+                         if (!this.overlaps(l1, i2, k, l, i1))
+                         {
+-                            this.getOrCreateEntry(l1, i2).addPlayer(player);
++                            // this.getOrCreateEntry(l1, i2).addPlayer(player);
++                            chunksToLoad.add(new ChunkPos(l1, i2));
+                         }
+ 
+                         if (!this.overlaps(l1 - j1, i2 - k1, i, j, i1))
+@@ -367,6 +392,12 @@
+                 player.managedPosX = player.posX;
+                 player.managedPosZ = player.posZ;
+                 this.markSortPending();
++                // CraftBukkit start - send nearest chunks first
++                Collections.sort(chunksToLoad, new ChunkCoordComparator(player));
++                for (ChunkPos pair : chunksToLoad) {
++                    this.getOrCreateEntry(pair.x, pair.z).addPlayer(player);
++                }
++                // CraftBukkit end
+             }
+         }
+     }
+@@ -425,6 +456,45 @@
+         }
+     }
+ 
++    public void setViewDistance(EntityPlayerMP entityplayer, int i) {
++        this.setViewDistance(entityplayer, i, true);
++    }
++
++    public void setViewDistance(EntityPlayerMP entityplayer, int i, boolean markSort) {
++        i = MathHelper.clamp(i, 3, 32);
++        int oldViewDistance = entityplayer.getViewDistance();
++        if (i != oldViewDistance) {
++            int j = i - oldViewDistance;
++            int k = (int)entityplayer.posX >> 4;
++            int l = (int)entityplayer.posZ >> 4;
++            int i1;
++            int j1;
++            if (j > 0) {
++                for(i1 = k - i; i1 <= k + i; ++i1) {
++                    for(j1 = l - i; j1 <= l + i; ++j1) {
++                        PlayerChunkMapEntry playerchunk = this.getOrCreateEntry(i1, j1);
++                        if (!playerchunk.containsPlayer(entityplayer)) {
++                            playerchunk.addPlayer(entityplayer);
++                        }
++                    }
++                }
++            } else {
++                for(i1 = k - oldViewDistance; i1 <= k + oldViewDistance; ++i1) {
++                    for(j1 = l - oldViewDistance; j1 <= l + oldViewDistance; ++j1) {
++                        if (!this.overlaps(i1, j1, k, l, i)) {
++                            this.getOrCreateEntry(i1, j1).removePlayer(entityplayer);
++                        }
++                    }
++                }
++
++                if (markSort) {
++                    this.markSortPending();
++                }
++            }
++        }
++
++    }
++
+     private void markSortPending()
+     {
+         this.sortMissingChunks = true;
+@@ -446,6 +516,20 @@
+         this.dirtyEntries.add(entry);
+     }
+ 
++    public void updateViewDistance(EntityPlayerMP player, final int distanceIn) {
++        int oldViewDistance = player.getViewDistance();
++        int toSet;
++        int playerViewDistance = toSet = MathHelper.clamp(distanceIn, 3, 32);
++        if (distanceIn < 0) {
++            playerViewDistance = -1;
++            toSet = this.world.getPlayerChunkMap().getViewDistance();
++        }
++        if (toSet != oldViewDistance) {
++            this.setViewDistance(player, toSet);
++            player.setViewDistance(playerViewDistance);
++        }
++    }
++
+     public void removeEntry(PlayerChunkMapEntry entry)
+     {
+         ChunkPos chunkpos = entry.getPos();
+@@ -456,11 +540,48 @@
+         this.dirtyEntries.remove(entry);
+         this.pendingSendToPlayers.remove(entry);
+         this.entriesWithoutChunks.remove(entry);
+-        Chunk chunk = entry.getChunk();
++    }
+ 
+-        if (chunk != null)
+-        {
+-            this.getWorldServer().getChunkProvider().queueUnload(chunk);
++    // CraftBukkit start - Sorter to load nearby chunks first
++    private static class ChunkCoordComparator implements java.util.Comparator<ChunkPos> {
++        private int x;
++        private int z;
++
++        public ChunkCoordComparator (EntityPlayer entityplayer) {
++            x = (int) entityplayer.posX >> 4;
++            z = (int) entityplayer.posZ >> 4;
+         }
++
++        public int compare(ChunkPos a, ChunkPos b) {
++            if (a.equals(b)) {
++                return 0;
++            }
++
++            // Subtract current position to set center point
++            int ax = a.x - this.x;
++            int az = a.z - this.z;
++            int bx = b.x - this.x;
++            int bz = b.z - this.z;
++
++            int result = ((ax - bx) * (ax + bx)) + ((az - bz) * (az + bz));
++            if (result != 0) {
++                return result;
++            }
++
++            if (ax < 0) {
++                if (bx < 0) {
++                    return bz - az;
++                } else {
++                    return -1;
++                }
++            } else {
++                if (bx < 0) {
++                    return 1;
++                } else {
++                    return az - bz;
++                }
++            }
++        }
+     }
++    // CraftBukkit end
+ }

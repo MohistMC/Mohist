@@ -1,0 +1,38 @@
+--- ../src-base/minecraft/net/minecraft/network/rcon/RConThreadMain.java
++++ ../src-work/minecraft/net/minecraft/network/rcon/RConThreadMain.java
+@@ -23,26 +23,26 @@
+     private final String rconPassword;
+     private Map<SocketAddress, RConThreadClient> clientThreads;
+ 
+-    public RConThreadMain(IServer p_i1538_1_)
++    public RConThreadMain(IServer iserver)
+     {
+-        super(p_i1538_1_, "RCON Listener");
+-        this.rconPort = p_i1538_1_.getIntProperty("rcon.port", 0);
+-        this.rconPassword = p_i1538_1_.getStringProperty("rcon.password", "");
+-        this.hostname = p_i1538_1_.getHostname();
+-        this.serverPort = p_i1538_1_.getPort();
++        super(iserver, "RCON Listener");
++        this.rconPort = iserver.getIntProperty("rcon.port", 0);
++        this.rconPassword = iserver.getStringProperty("rcon.password", "");
++        this.hostname = iserver.getStringProperty("rcon.ip", iserver.getHostname()); // Paper
++        this.serverPort = iserver.getPort();
+ 
+         if (0 == this.rconPort)
+         {
+             this.rconPort = this.serverPort + 10;
+             this.logInfo("Setting default rcon port to " + this.rconPort);
+-            p_i1538_1_.setProperty("rcon.port", Integer.valueOf(this.rconPort));
++            iserver.setProperty("rcon.port", Integer.valueOf(this.rconPort));
+ 
+             if (this.rconPassword.isEmpty())
+             {
+-                p_i1538_1_.setProperty("rcon.password", "");
++                iserver.setProperty("rcon.password", "");
+             }
+ 
+-            p_i1538_1_.saveProperties();
++            iserver.saveProperties();
+         }
+ 
+         if (this.hostname.isEmpty())

@@ -1,0 +1,19 @@
+--- ../src-base/minecraft/net/minecraft/nbt/NBTTagCompound.java
++++ ../src-work/minecraft/net/minecraft/nbt/NBTTagCompound.java
+@@ -25,7 +25,7 @@
+ {
+     private static final Logger LOGGER = LogManager.getLogger();
+     private static final Pattern SIMPLE_VALUE = Pattern.compile("[A-Za-z0-9._+-]+");
+-    private final Map<String, NBTBase> tagMap = Maps.<String, NBTBase>newHashMap();
++    private Map<String, NBTBase> tagMap = Maps.<String, NBTBase>newHashMap();
+ 
+     void write(DataOutput output) throws IOException
+     {
+@@ -82,7 +82,6 @@
+ 
+     public void setTag(String key, NBTBase value)
+     {
+-        if (value == null) throw new IllegalArgumentException("Invalid null NBT value with key " + key);
+         this.tagMap.put(key, value);
+     }
+ 

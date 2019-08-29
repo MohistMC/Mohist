@@ -1,0 +1,30 @@
+--- ../src-base/minecraft/net/minecraft/block/BlockSnowBlock.java
++++ ../src-work/minecraft/net/minecraft/block/BlockSnowBlock.java
+@@ -7,7 +7,6 @@
+ import net.minecraft.init.Items;
+ import net.minecraft.item.Item;
+ import net.minecraft.util.math.BlockPos;
+-import net.minecraft.world.EnumSkyBlock;
+ import net.minecraft.world.World;
+ 
+ public class BlockSnowBlock extends Block
+@@ -15,7 +14,6 @@
+     protected BlockSnowBlock()
+     {
+         super(Material.CRAFTED_SNOW);
+-        this.setTickRandomly(true);
+         this.setCreativeTab(CreativeTabs.BUILDING_BLOCKS);
+     }
+ 
+@@ -31,10 +29,5 @@
+ 
+     public void updateTick(World worldIn, BlockPos pos, IBlockState state, Random rand)
+     {
+-        if (worldIn.getLightFor(EnumSkyBlock.BLOCK, pos) > 11)
+-        {
+-            this.dropBlockAsItem(worldIn, pos, worldIn.getBlockState(pos), 0);
+-            worldIn.setBlockToAir(pos);
+-        }
+-    }
++	}
+ }

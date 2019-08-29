@@ -1,0 +1,41 @@
+--- ../src-base/minecraft/net/minecraft/block/BlockRedstoneDiode.java
++++ ../src-work/minecraft/net/minecraft/block/BlockRedstoneDiode.java
+@@ -15,6 +15,7 @@
+ import net.minecraft.world.World;
+ import net.minecraftforge.fml.relauncher.Side;
+ import net.minecraftforge.fml.relauncher.SideOnly;
++import org.bukkit.craftbukkit.v1_12_R1.event.CraftEventFactory;
+ 
+ public abstract class BlockRedstoneDiode extends BlockHorizontal
+ {
+@@ -53,18 +54,30 @@
+     {
+     }
+ 
++    private long last = 0L;
+     public void updateTick(World worldIn, BlockPos pos, IBlockState state, Random rand)
+     {
++        if (System.currentTimeMillis() - last <= -1)
++        {
++            return;
++        }
++        last = System.currentTimeMillis();
+         if (!this.isLocked(worldIn, pos, state))
+         {
+             boolean flag = this.shouldBePowered(worldIn, pos, state);
+ 
+             if (this.isRepeaterPowered && !flag)
+             {
++                if (CraftEventFactory.callRedstoneChange(worldIn, pos.getX(), pos.getY(), pos.getZ(), 15, 0).getNewCurrent() != 0) {
++                    return;
++                }
+                 worldIn.setBlockState(pos, this.getUnpoweredState(state), 2);
+             }
+             else if (!this.isRepeaterPowered)
+             {
++                if (CraftEventFactory.callRedstoneChange(worldIn, pos.getX(), pos.getY(), pos.getZ(), 0, 15).getNewCurrent() != 15) {
++                    return;
++                }
+                 worldIn.setBlockState(pos, this.getPoweredState(state), 2);
+ 
+                 if (!flag)

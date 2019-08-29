@@ -1,0 +1,27 @@
+--- ../src-base/minecraft/net/minecraft/item/ItemBlock.java
++++ ../src-work/minecraft/net/minecraft/item/ItemBlock.java
+@@ -8,7 +8,6 @@
+ import net.minecraft.block.state.IBlockState;
+ import net.minecraft.client.util.ITooltipFlag;
+ import net.minecraft.creativetab.CreativeTabs;
+-import net.minecraft.entity.Entity;
+ import net.minecraft.entity.player.EntityPlayer;
+ import net.minecraft.entity.player.EntityPlayerMP;
+ import net.minecraft.init.Blocks;
+@@ -19,7 +18,6 @@
+ import net.minecraft.util.EnumFacing;
+ import net.minecraft.util.EnumHand;
+ import net.minecraft.util.NonNullList;
+-import net.minecraft.util.SoundCategory;
+ import net.minecraft.util.math.BlockPos;
+ import net.minecraft.world.World;
+ import net.minecraftforge.fml.relauncher.Side;
+@@ -55,7 +53,7 @@
+             {
+                 iblockstate1 = worldIn.getBlockState(pos);
+                 SoundType soundtype = iblockstate1.getBlock().getSoundType(iblockstate1, worldIn, pos, player);
+-                worldIn.playSound(player, pos, soundtype.getPlaceSound(), SoundCategory.BLOCKS, (soundtype.getVolume() + 1.0F) / 2.0F, soundtype.getPitch() * 0.8F);
++                // worldIn.playSound(player, pos, soundtype.getPlaceSound(), SoundCategory.BLOCKS, (soundtype.getVolume() + 1.0F) / 2.0F, soundtype.getPitch() * 0.8F); // CraftBukkit - SPIGOT-1288
+                 itemstack.shrink(1);
+             }
+ 

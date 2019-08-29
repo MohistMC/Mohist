@@ -1,0 +1,28 @@
+--- ../src-base/minecraft/net/minecraft/advancements/FunctionManager.java
++++ ../src-work/minecraft/net/minecraft/advancements/FunctionManager.java
+@@ -29,8 +29,12 @@
+     private FunctionObject gameLoopFunction;
+     private final ArrayDeque<FunctionManager.QueuedCommand> commandQueue = new ArrayDeque<FunctionManager.QueuedCommand>();
+     private boolean isExecuting = false;
+-    private final ICommandSender gameLoopFunctionSender = new ICommandSender()
++    private final ICommandSender gameLoopFunctionSender = new CustomFunctionListener();
++
++    public class CustomFunctionListener implements ICommandSender
+     {
++
++        public org.bukkit.command.CommandSender sender = new org.bukkit.craftbukkit.v1_12_R1.command.CraftFunctionCommandSender(this);
+         public String getName()
+         {
+             return FunctionManager.this.currentGameLoopFunctionId;
+@@ -39,6 +43,11 @@
+         {
+             return permLevel <= 2;
+         }
++
++        public boolean canUseCommand(int permLevel, String commandName, String perm)
++        {
++            return permLevel <= 2;
++        }
+         public World getEntityWorld()
+         {
+             return FunctionManager.this.server.worlds[0];

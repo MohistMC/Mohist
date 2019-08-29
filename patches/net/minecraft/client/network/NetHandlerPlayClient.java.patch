@@ -1,0 +1,11 @@
+--- ../src-base/minecraft/net/minecraft/client/network/NetHandlerPlayClient.java
++++ ../src-work/minecraft/net/minecraft/client/network/NetHandlerPlayClient.java
+@@ -2099,7 +2099,7 @@
+ 
+                     if (iattributeinstance == null)
+                     {
+-                        iattributeinstance = abstractattributemap.registerAttribute(new RangedAttribute((IAttribute)null, spacketentityproperties$snapshot.getName(), 0.0D, -Double.MAX_VALUE, Double.MAX_VALUE)); // Forge: fix invalid value range (MC-150405)
++                        iattributeinstance = abstractattributemap.registerAttribute(new RangedAttribute((IAttribute)null, spacketentityproperties$snapshot.getName(), 0.0D, 2.2250738585072014E-308D, Double.MAX_VALUE));
+                     }
+ 
+                     iattributeinstance.setBaseValue(spacketentityproperties$snapshot.getBaseValue());

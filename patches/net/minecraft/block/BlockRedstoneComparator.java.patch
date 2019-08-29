@@ -1,0 +1,27 @@
+--- ../src-base/minecraft/net/minecraft/block/BlockRedstoneComparator.java
++++ ../src-work/minecraft/net/minecraft/block/BlockRedstoneComparator.java
+@@ -32,6 +32,7 @@
+ import net.minecraft.util.text.translation.I18n;
+ import net.minecraft.world.IBlockAccess;
+ import net.minecraft.world.World;
++import org.bukkit.craftbukkit.v1_12_R1.event.CraftEventFactory;
+ 
+ public class BlockRedstoneComparator extends BlockRedstoneDiode implements ITileEntityProvider
+ {
+@@ -230,10 +231,16 @@
+ 
+             if (flag && !flag1)
+             {
++                if (CraftEventFactory.callRedstoneChange(worldIn, pos.getX(), pos.getY(), pos.getZ(), 15, 0).getNewCurrent() != 0) {
++                    return;
++                }
+                 worldIn.setBlockState(pos, state.withProperty(POWERED, Boolean.valueOf(false)), 2);
+             }
+             else if (!flag && flag1)
+             {
++                if (CraftEventFactory.callRedstoneChange(worldIn, pos.getX(), pos.getY(), pos.getZ(), 0, 15).getNewCurrent() != 15) {
++                    return;
++                }
+                 worldIn.setBlockState(pos, state.withProperty(POWERED, Boolean.valueOf(true)), 2);
+             }
+ 

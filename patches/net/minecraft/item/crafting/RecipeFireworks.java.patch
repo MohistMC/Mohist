@@ -1,0 +1,20 @@
+--- ../src-base/minecraft/net/minecraft/item/crafting/RecipeFireworks.java
++++ ../src-work/minecraft/net/minecraft/item/crafting/RecipeFireworks.java
+@@ -11,10 +11,16 @@
+ import net.minecraft.util.NonNullList;
+ import net.minecraft.world.World;
+ 
+-public class RecipeFireworks extends net.minecraftforge.registries.IForgeRegistryEntry.Impl<IRecipe> implements IRecipe
++public class RecipeFireworks extends ShapelessRecipes implements IRecipe
+ {
+     private ItemStack resultItem = ItemStack.EMPTY;
+ 
++    // CraftBukkit start - Delegate to new parent class with bogus info
++    public RecipeFireworks() {
++        super("", new ItemStack(Items.FIREWORKS, 0, 0), NonNullList.from(Ingredient.EMPTY, Ingredient.fromItem(Items.GUNPOWDER)));
++    }
++    // CraftBukkit end
++
+     public boolean matches(InventoryCrafting inv, World worldIn)
+     {
+         this.resultItem = ItemStack.EMPTY;

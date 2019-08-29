@@ -1,0 +1,11 @@
+--- ../src-base/minecraft/net/minecraft/client/multiplayer/WorldClient.java
++++ ../src-work/minecraft/net/minecraft/client/multiplayer/WorldClient.java
+@@ -115,7 +115,7 @@
+         return this.clientChunkProvider;
+     }
+ 
+-    protected boolean isChunkLoaded(int x, int z, boolean allowEmpty)
++    public boolean isChunkLoaded(int x, int z, boolean allowEmpty)
+     {
+         return allowEmpty || !this.getChunkProvider().provideChunk(x, z).isEmpty();
+     }

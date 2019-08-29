@@ -1,0 +1,113 @@
+--- ../src-base/minecraft/net/minecraft/block/Block.java
++++ ../src-work/minecraft/net/minecraft/block/Block.java
+@@ -1,10 +1,8 @@
+ package net.minecraft.block;
+ 
+-import com.google.common.collect.Sets;
+-import com.google.common.collect.UnmodifiableIterator;
++import java.util.ArrayList;
+ import java.util.List;
+ import java.util.Random;
+-import java.util.Set;
+ import javax.annotation.Nullable;
+ import net.minecraft.block.material.EnumPushReaction;
+ import net.minecraft.block.material.MapColor;
+@@ -21,6 +19,7 @@
+ import net.minecraft.entity.item.EntityItem;
+ import net.minecraft.entity.item.EntityXPOrb;
+ import net.minecraft.entity.player.EntityPlayer;
++import net.minecraft.entity.player.EntityPlayerMP;
+ import net.minecraft.init.Blocks;
+ import net.minecraft.init.Enchantments;
+ import net.minecraft.init.Items;
+@@ -462,6 +461,10 @@
+ 
+     protected static void addCollisionBoxToList(BlockPos pos, AxisAlignedBB entityBox, List<AxisAlignedBB> collidingBoxes, @Nullable AxisAlignedBB blockBox)
+     {
++        if(collidingBoxes instanceof ArrayList)
++        {
++            ((ArrayList)collidingBoxes).ensureCapacity(30); // Thermos - force ArrayList minimum size
++        }
+         if (blockBox != NULL_AABB)
+         {
+             AxisAlignedBB axisalignedbb = blockBox.offset(pos);
+@@ -573,7 +576,8 @@
+ 
+             for (ItemStack drop : drops)
+             {
+-                if (worldIn.rand.nextFloat() <= chance)
++                // CraftBukkit - <= to < to allow for plugins to completely disable block drops from explosions
++                if (worldIn.rand.nextFloat() < chance)
+                 {
+                     spawnAsEntity(worldIn, pos, drop);
+                 }
+@@ -596,12 +600,27 @@
+             double d2 = (double)(worldIn.rand.nextFloat() * 0.5F) + 0.25D;
+             EntityItem entityitem = new EntityItem(worldIn, (double)pos.getX() + d0, (double)pos.getY() + d1, (double)pos.getZ() + d2, stack);
+             entityitem.setDefaultPickupDelay();
+-            worldIn.spawnEntity(entityitem);
++            if (worldIn.captureDrops != null) {
++                worldIn.captureDrops.add(entityitem);
++            } else {
++                worldIn.spawnEntity(entityitem);
++            }
+         }
+     }
+ 
++    // CraftBukkit start
++    public int getExpDrop(World world, IBlockState state, int enchantmentLevel) {
++        return 0;
++    }
++    // CraftBukkit end
++
+     public void dropXpOnBlockBreak(World worldIn, BlockPos pos, int amount)
+     {
++        dropXpOnBlockBreak(worldIn, pos, amount, null);
++    }
++
++    public void dropXpOnBlockBreak(World worldIn, BlockPos pos, int amount, EntityPlayerMP player)
++    {
+         if (!worldIn.isRemote && worldIn.getGameRules().getBoolean("doTileDrops"))
+         {
+             while (amount > 0)
+@@ -1564,18 +1583,13 @@
+      */
+     public boolean canPlaceTorchOnTop(IBlockState state, IBlockAccess world, BlockPos pos)
+     {
+-        if (this == Blocks.END_GATEWAY || this == Blocks.LIT_PUMPKIN)
++        if (state.isTopSolid() || state.getBlockFaceShape(world, pos, EnumFacing.UP) == BlockFaceShape.SOLID)
+         {
+-            return false;
++            return this != Blocks.END_GATEWAY && this != Blocks.LIT_PUMPKIN;
+         }
+-        else if (state.isTopSolid() || this instanceof BlockFence || this == Blocks.GLASS || this == Blocks.COBBLESTONE_WALL || this == Blocks.STAINED_GLASS)
+-        {
+-            return true;
+-        }
+         else
+         {
+-            BlockFaceShape shape = state.getBlockFaceShape(world, pos, EnumFacing.UP);
+-            return (shape == BlockFaceShape.SOLID || shape == BlockFaceShape.CENTER || shape == BlockFaceShape.CENTER_BIG) && !isExceptionBlockForAttaching(this);
++            return this instanceof BlockFence || this == Blocks.GLASS || this == Blocks.COBBLESTONE_WALL || this == Blocks.STAINED_GLASS;
+         }
+     }
+ 
+@@ -2642,6 +2656,18 @@
+         registerBlock(id, new ResourceLocation(textualID), block_);
+     }
+ 
++    // Spigot start
++    public static float range(float min, float value, float max) {
++        if (value < min) {
++            return min;
++        }
++        if (value > max) {
++            return max;
++        }
++        return value;
++    }
++    // Spigot end
++
+     public static enum EnumOffsetType
+     {
+         NONE,

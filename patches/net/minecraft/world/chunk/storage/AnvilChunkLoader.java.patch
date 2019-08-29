@@ -1,0 +1,102 @@
+--- ../src-base/minecraft/net/minecraft/world/chunk/storage/AnvilChunkLoader.java
++++ ../src-work/minecraft/net/minecraft/world/chunk/storage/AnvilChunkLoader.java
+@@ -1,8 +1,6 @@
+ package net.minecraft.world.chunk.storage;
+ 
+ import com.google.common.collect.Maps;
+-import java.io.DataInputStream;
+-import java.io.DataOutputStream;
+ import java.io.File;
+ import java.io.IOException;
+ import java.util.Collections;
+@@ -13,10 +11,10 @@
+ import net.minecraft.block.Block;
+ import net.minecraft.entity.Entity;
+ import net.minecraft.entity.EntityList;
+-import net.minecraft.nbt.CompressedStreamTools;
+ import net.minecraft.nbt.NBTTagCompound;
+ import net.minecraft.nbt.NBTTagList;
+ import net.minecraft.tileentity.TileEntity;
++import net.minecraft.util.ClassInheritanceMultiMap;
+ import net.minecraft.util.ResourceLocation;
+ import net.minecraft.util.datafix.DataFixer;
+ import net.minecraft.util.datafix.FixTypes;
+@@ -31,6 +29,8 @@
+ import net.minecraft.world.chunk.NibbleArray;
+ import net.minecraft.world.storage.IThreadedFileIO;
+ import net.minecraft.world.storage.ThreadedFileIOBase;
++import net.minecraftforge.common.MinecraftForge;
++import net.minecraftforge.event.world.ChunkDataEvent;
+ import org.apache.logging.log4j.LogManager;
+ import org.apache.logging.log4j.Logger;
+ 
+@@ -65,6 +65,7 @@
+             Chunk chunk = (Chunk) data[0];
+             NBTTagCompound nbttagcompound = (NBTTagCompound) data[1];
+             this.loadEntities(worldIn, nbttagcompound.getCompoundTag("Level"), chunk);
++            MinecraftForge.EVENT_BUS.post(new ChunkDataEvent.Load(chunk, nbttagcompound)); // Cauldron - Don't call ChunkDataEvent.Load async
+             return chunk;
+         }
+ 
+@@ -79,15 +80,14 @@
+ 
+         if (nbttagcompound == null)
+         {
+-            DataInputStream datainputstream = RegionFileCache.getChunkInputStream(this.chunkSaveLocation, x, z);
++            NBTTagCompound nbtTagCompound = RegionFileCache.getChunkInputStreamCB(this.chunkSaveLocation, x, z);
+ 
+-            if (datainputstream == null)
++            if (nbtTagCompound == null)
+             {
+                 return null;
+             }
+ 
+-            nbttagcompound = this.fixer.process(FixTypes.CHUNK, CompressedStreamTools.read(datainputstream));
+-            datainputstream.close(); // Forge: close stream after use
++            nbttagcompound = this.fixer.process(FixTypes.CHUNK, nbtTagCompound);
+         }
+ 
+         return this.checkedReadChunkFromNBT__Async(worldIn, x, z, nbttagcompound);
+@@ -238,9 +238,10 @@
+ 
+     private void writeChunkData(ChunkPos pos, NBTTagCompound compound) throws IOException
+     {
+-        DataOutputStream dataoutputstream = RegionFileCache.getChunkOutputStream(this.chunkSaveLocation, pos.x, pos.z);
+-        CompressedStreamTools.write(compound, dataoutputstream);
+-        dataoutputstream.close();
++        // DataOutputStream dataoutputstream = RegionFileCache.getChunkOutputStream(this.chunkSaveLocation, pos.x, pos.z);
++        // CompressedStreamTools.write(compound, dataoutputstream);
++        // dataoutputstream.close();
++        RegionFileCache.getChunkOutputStream(this.chunkSaveLocation, pos.x, pos.z, compound);
+     }
+ 
+     public void saveExtraChunkData(World worldIn, Chunk chunkIn) throws IOException
+@@ -350,10 +351,11 @@
+         compound.setByteArray("Biomes", chunkIn.getBiomeArray());
+         chunkIn.setHasEntities(false);
+         NBTTagList nbttaglist1 = new NBTTagList();
+-
+-        for (int i = 0; i < chunkIn.getEntityLists().length; ++i)
++        ClassInheritanceMultiMap<Entity>[] arr = chunkIn.getEntityLists();
++        for (int i = 0; i < arr.length; ++i)
+         {
+-            for (Entity entity : chunkIn.getEntityLists()[i])
++            ClassInheritanceMultiMap<Entity> list = arr[i];
++            for (Entity entity : list)
+             {
+                 NBTTagCompound nbttagcompound2 = new NBTTagCompound();
+ 
+@@ -609,8 +611,11 @@
+ 
+     public static void spawnEntity(Entity entityIn, World worldIn)
+     {
+-        if (worldIn.spawnEntity(entityIn) && entityIn.isBeingRidden())
+-        {
++        spawnEntity(entityIn, worldIn, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.DEFAULT);
++    }
++
++    public static void spawnEntity(Entity entityIn, World worldIn, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason reason) {
++        if (worldIn.addEntity(entityIn, reason) && entityIn.isBeingRidden()) {
+             for (Entity entity : entityIn.getPassengers())
+             {
+                 spawnEntity(entity, worldIn);

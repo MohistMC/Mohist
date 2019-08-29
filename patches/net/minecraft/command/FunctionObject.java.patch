@@ -1,0 +1,26 @@
+--- ../src-base/minecraft/net/minecraft/command/FunctionObject.java
++++ ../src-work/minecraft/net/minecraft/command/FunctionObject.java
+@@ -5,6 +5,7 @@
+ import java.util.List;
+ import javax.annotation.Nullable;
+ import net.minecraft.advancements.FunctionManager;
++import net.minecraft.tileentity.CommandBlockBaseLogic;
+ import net.minecraft.util.ResourceLocation;
+ 
+ public class FunctionObject
+@@ -108,7 +109,14 @@
+ 
+             public void execute(FunctionManager functionManagerIn, ICommandSender sender, ArrayDeque<FunctionManager.QueuedCommand> commandQueue, int maxCommandChainLength)
+             {
+-                functionManagerIn.getCommandManager().executeCommand(sender, this.command);
++                // functionManagerIn.getCommandManager().executeCommand(sender, this.command);
++                org.bukkit.command.CommandSender bukkitSender;
++                if (sender instanceof FunctionManager.CustomFunctionListener) {
++                    bukkitSender = ((FunctionManager.CustomFunctionListener) sender).sender;
++                } else {
++                    bukkitSender = CommandBlockBaseLogic.unwrapSender(sender);
++                }
++                CommandBlockBaseLogic.executeSafely(sender, bukkitSender, this.command);
+             }
+ 
+             public String toString()

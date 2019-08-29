@@ -1,0 +1,18 @@
+--- ../src-base/minecraft/net/minecraft/world/gen/structure/MapGenStructure.java
++++ ../src-work/minecraft/net/minecraft/world/gen/structure/MapGenStructure.java
+@@ -175,8 +175,13 @@
+     {
+         if (this.structureData == null && worldIn != null)
+         {
+-            this.structureData = (MapGenStructureData)worldIn.getPerWorldStorage().getOrLoadData(MapGenStructureData.class, this.getStructureName());
+-
++            // Spigot Start
++            if (worldIn.spigotConfig.saveStructureInfo && !this.getStructureName().equals("Mineshaft")) {
++                this.structureData = (MapGenStructureData)worldIn.getPerWorldStorage().getOrLoadData(MapGenStructureData.class, this.getStructureName());
++            } else {
++                this.structureData = new MapGenStructureData(this.getStructureName());
++            }
++            // Spigot End
+             if (this.structureData == null)
+             {
+                 this.structureData = new MapGenStructureData(this.getStructureName());

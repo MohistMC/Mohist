@@ -1,0 +1,22 @@
+--- ../src-base/minecraft/net/minecraftforge/fml/common/eventhandler/EventBus.java
++++ ../src-work/minecraft/net/minecraftforge/fml/common/eventhandler/EventBus.java
+@@ -38,6 +38,8 @@
+ import com.google.common.collect.MapMaker;
+ import com.google.common.collect.Sets;
+ import com.google.common.reflect.TypeToken;
++import org.bukkit.Bukkit;
++import red.mohist.api.event.BukkitHookForgeEvent;
+ 
+ public class EventBus implements IEventExceptionHandler
+ {
+@@ -172,7 +174,9 @@
+     public boolean post(Event event)
+     {
+         if (shutdown) return false;
+-
++        if (Bukkit.getServer() != null) {
++            Bukkit.getPluginManager().callEvent(new BukkitHookForgeEvent(event));
++        }
+         IEventListener[] listeners = event.getListenerList().getListeners(busID);
+         int index = 0;
+         try

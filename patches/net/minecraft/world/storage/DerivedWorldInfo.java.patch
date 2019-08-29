@@ -1,0 +1,30 @@
+--- ../src-base/minecraft/net/minecraft/world/storage/DerivedWorldInfo.java
++++ ../src-work/minecraft/net/minecraft/world/storage/DerivedWorldInfo.java
+@@ -68,7 +68,8 @@
+ 
+     public String getWorldName()
+     {
+-        return this.delegate.getWorldName();
++        String name = super.getWorldName();
++        return name != null ? name : this.delegate.getWorldName();
+     }
+ 
+     public int getSaveVersion()
+@@ -239,4 +240,17 @@
+     {
+         return this.delegate.getDimensionData(dimensionID);
+     }
++
++    public int getDimension() {
++        return this.delegate.getDimension();
++    }
++
++    public void setDimension(int dim) {
++        this.delegate.setDimension(dim);
++    }
++
++    @Override
++    public void tick() {
++        delegate.tick();
++    }
+ }

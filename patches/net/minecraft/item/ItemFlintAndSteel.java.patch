@@ -1,0 +1,23 @@
+--- ../src-base/minecraft/net/minecraft/item/ItemFlintAndSteel.java
++++ ../src-work/minecraft/net/minecraft/item/ItemFlintAndSteel.java
+@@ -1,7 +1,6 @@
+ package net.minecraft.item;
+ 
+ import net.minecraft.advancements.CriteriaTriggers;
+-import net.minecraft.block.material.Material;
+ import net.minecraft.creativetab.CreativeTabs;
+ import net.minecraft.entity.player.EntityPlayer;
+ import net.minecraft.entity.player.EntityPlayerMP;
+@@ -36,6 +35,12 @@
+         {
+             if (worldIn.isAirBlock(pos))
+             {
++                // CraftBukkit start - Store the clicked block
++                if (org.bukkit.craftbukkit.v1_12_R1.event.CraftEventFactory.callBlockIgniteEvent(worldIn, pos.getX(), pos.getY(), pos.getZ(), org.bukkit.event.block.BlockIgniteEvent.IgniteCause.FLINT_AND_STEEL, player).isCancelled()) {
++                    itemstack.damageItem(1, player);
++                    return EnumActionResult.PASS;
++                }
++                // CraftBukkit end
+                 worldIn.playSound(player, pos, SoundEvents.ITEM_FLINTANDSTEEL_USE, SoundCategory.BLOCKS, 1.0F, itemRand.nextFloat() * 0.4F + 0.8F);
+                 worldIn.setBlockState(pos, Blocks.FIRE.getDefaultState(), 11);
+             }

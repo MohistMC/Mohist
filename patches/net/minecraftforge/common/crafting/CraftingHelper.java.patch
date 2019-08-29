@@ -1,0 +1,145 @@
+--- ../src-base/minecraft/net/minecraftforge/common/crafting/CraftingHelper.java
++++ ../src-work/minecraft/net/minecraftforge/common/crafting/CraftingHelper.java
+@@ -37,7 +37,6 @@
+ import java.util.Map;
+ import java.util.Map.Entry;
+ import java.util.Set;
+-import java.util.function.BiConsumer;
+ import java.util.function.BiFunction;
+ import java.util.function.BooleanSupplier;
+ import java.util.function.Function;
+@@ -88,10 +87,10 @@
+ public class CraftingHelper {
+ 
+     private static final boolean DEBUG_LOAD_MINECRAFT = false;
+-    public static final Gson GSON = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create();
+-    private static final Map<ResourceLocation, IConditionFactory> conditions = Maps.newHashMap();
+-    private static final Map<ResourceLocation, IIngredientFactory> ingredients = Maps.newHashMap();
+-    private static final Map<ResourceLocation, IRecipeFactory> recipes = Maps.newHashMap();
++    private static Gson GSON = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create();
++    private static Map<ResourceLocation, IConditionFactory> conditions = Maps.newHashMap();
++    private static Map<ResourceLocation, IIngredientFactory> ingredients = Maps.newHashMap();
++    private static Map<ResourceLocation, IRecipeFactory> recipes = Maps.newHashMap();
+ 
+     static {
+         init();
+@@ -421,7 +420,7 @@
+     // INTERNAL
+     //=======================================================
+ 
+-    public static void init()
++    private static void init()
+     {
+         conditions.clear();
+         ingredients.clear();
+@@ -557,41 +556,35 @@
+         register(new ResourceLocation(name), fac);
+     }
+ 
+-    public static final class FactoryLoader<T>
++    static void loadFactories(JsonObject json, JsonContext context)
+     {
+-        final String name;
+-        final Class<T> type;
+-        final BiConsumer<ResourceLocation, T> consumer;
+-
+-        FactoryLoader(String name, Class<T> type, BiConsumer<ResourceLocation, T> consumer)
++        if (json.has("ingredients"))
+         {
+-            this.name = name;
+-            this.type = type;
+-            this.consumer = consumer;
++            for (Entry<String, JsonElement> entry : JsonUtils.getJsonObject(json, "ingredients").entrySet())
++            {
++                ResourceLocation key = new ResourceLocation(context.getModId(), entry.getKey());
++                String clsName = JsonUtils.getString(entry.getValue(), "ingredients[" + entry.getValue() + "]");
++                register(key, getClassInstance(clsName, IIngredientFactory.class));
++            }
+         }
+-    }
+ 
+-    public static final FactoryLoader<IIngredientFactory> INGREDIENTS = new FactoryLoader<>("ingredients", IIngredientFactory.class, CraftingHelper::register);
+-    public static final FactoryLoader<IRecipeFactory> RECIPES = new FactoryLoader<>("recipes", IRecipeFactory.class, CraftingHelper::register);
+-    public static final FactoryLoader<IConditionFactory> CONDITIONS = new FactoryLoader<>("conditions", IConditionFactory.class, CraftingHelper::register);
+-
+-    private static void loadFactories(JsonObject json, JsonContext context, FactoryLoader... loaders)
+-    {
+-        for (FactoryLoader<?> loader : loaders)
++        if (json.has("recipes"))
+         {
+-            loadFactory(json, context, loader);
++            for (Entry<String, JsonElement> entry : JsonUtils.getJsonObject(json, "recipes").entrySet())
++            {
++                ResourceLocation key = new ResourceLocation(context.getModId(), entry.getKey());
++                String clsName = JsonUtils.getString(entry.getValue(), "recipes[" + entry.getValue() + "]");
++                register(key, getClassInstance(clsName, IRecipeFactory.class));
++            }
+         }
+-    }
+ 
+-    private static <T> void loadFactory(JsonObject json, JsonContext context, FactoryLoader<T> loader)
+-    {
+-        if (json.has(loader.name))
++        if (json.has("conditions"))
+         {
+-            for (Entry<String, JsonElement> entry : JsonUtils.getJsonObject(json, loader.name).entrySet())
++            for (Entry<String, JsonElement> entry : JsonUtils.getJsonObject(json, "conditions").entrySet())
+             {
+                 ResourceLocation key = new ResourceLocation(context.getModId(), entry.getKey());
+-                String clsName = JsonUtils.getString(entry.getValue(), loader.name + "[" + entry.getValue() + "]");
+-                loader.consumer.accept(key, getClassInstance(clsName, loader.type));
++                String clsName = JsonUtils.getString(entry.getValue(), "conditions[" + entry.getValue() + "]");
++                register(key, getClassInstance(clsName, IConditionFactory.class));
+             }
+         }
+     }
+@@ -641,11 +634,6 @@
+ 
+     private static void loadFactories(ModContainer mod)
+     {
+-        loadFactories(mod, "assets/" + mod.getModId() + "/recipes", INGREDIENTS, RECIPES, CONDITIONS);
+-    }
+-
+-    public static void loadFactories(ModContainer mod, String base, FactoryLoader... loaders)
+-    {
+         FileSystem fs = null;
+         try
+         {
+@@ -655,11 +643,11 @@
+             if (mod.getSource().isFile())
+             {
+                 fs = FileSystems.newFileSystem(mod.getSource().toPath(), null);
+-                fPath = fs.getPath("/" + base, "_factories.json");
++                fPath = fs.getPath("/assets/" + ctx.getModId() + "/recipes/_factories.json");
+             }
+             else if (mod.getSource().isDirectory())
+             {
+-                fPath = mod.getSource().toPath().resolve(base).resolve("_factories.json");
++                fPath = mod.getSource().toPath().resolve("assets/" + ctx.getModId() + "/recipes/_factories.json");
+             }
+ 
+             if (fPath != null && Files.exists(fPath))
+@@ -667,7 +655,7 @@
+                 try (BufferedReader reader = Files.newBufferedReader(fPath))
+                 {
+                     JsonObject json = JsonUtils.fromJson(GSON, reader, JsonObject.class);
+-                    loadFactories(json, ctx, loaders);
++                    loadFactories(json, ctx);
+                 }
+             }
+         }
+@@ -725,12 +713,12 @@
+                 }
+                 catch (JsonParseException e)
+                 {
+-                    FMLLog.log.error("Parsing error loading recipe {}", key, e);
++                    FMLLog.log.debug("Parsing error loading recipe {}", key, e);
+                     return false;
+                 }
+                 catch (IOException e)
+                 {
+-                    FMLLog.log.error("Couldn't read recipe {} from {}", key, file, e);
++                    FMLLog.log.debug("Couldn't read recipe {} from {}", key, file, e);
+                     return false;
+                 }
+                 return true;

@@ -1,0 +1,32 @@
+--- ../src-base/minecraft/net/minecraft/network/play/client/CPacketChatMessage.java
++++ ../src-work/minecraft/net/minecraft/network/play/client/CPacketChatMessage.java
+@@ -1,6 +1,9 @@
+ package net.minecraft.network.play.client;
+ 
++import com.google.common.util.concurrent.ThreadFactoryBuilder;
+ import java.io.IOException;
++import java.util.concurrent.ExecutorService;
++import java.util.concurrent.Executors;
+ import net.minecraft.network.Packet;
+ import net.minecraft.network.PacketBuffer;
+ import net.minecraft.network.play.INetHandlerPlayServer;
+@@ -33,8 +36,17 @@
+         buf.writeString(this.message);
+     }
+ 
+-    public void processPacket(INetHandlerPlayServer handler)
+-    {
++    // Spigot Start
++    private static final ExecutorService executors = Executors.newCachedThreadPool(
++            new ThreadFactoryBuilder().setDaemon(true).setNameFormat("Async Chat Thread - #%d").build());
++
++    public void processPacket(final INetHandlerPlayServer handler) {
++        if ( !message.startsWith("/") )
++        {
++            executors.submit(() -> handler.processChatMessage( CPacketChatMessage.this ));
++            return;
++        }
++        // Spigot End
+         handler.processChatMessage(this);
+     }
+ 

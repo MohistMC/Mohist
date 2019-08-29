@@ -1,0 +1,11 @@
+--- ../src-base/minecraft/net/minecraft/item/ItemBlockSpecial.java
++++ ../src-work/minecraft/net/minecraft/item/ItemBlockSpecial.java
+@@ -18,7 +18,7 @@
+ 
+ public class ItemBlockSpecial extends Item
+ {
+-    private final Block block;
++    public final Block block; // PAIL: private->public  CraftBukkit
+ 
+     public ItemBlockSpecial(Block block)
+     {

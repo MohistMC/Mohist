@@ -1,0 +1,74 @@
+--- ../src-base/minecraft/net/minecraft/block/BlockFarmland.java
++++ ../src-work/minecraft/net/minecraft/block/BlockFarmland.java
+@@ -8,7 +8,6 @@
+ import net.minecraft.block.state.BlockStateContainer;
+ import net.minecraft.block.state.IBlockState;
+ import net.minecraft.entity.Entity;
+-import net.minecraft.entity.EntityLivingBase;
+ import net.minecraft.entity.player.EntityPlayer;
+ import net.minecraft.init.Blocks;
+ import net.minecraft.item.Item;
+@@ -19,6 +18,8 @@
+ import net.minecraft.world.World;
+ import net.minecraftforge.fml.relauncher.Side;
+ import net.minecraftforge.fml.relauncher.SideOnly;
++import org.bukkit.craftbukkit.v1_12_R1.event.CraftEventFactory;
++import org.bukkit.event.entity.EntityInteractEvent;
+ 
+ public class BlockFarmland extends Block
+ {
+@@ -72,20 +73,40 @@
+ 
+     public void onFallenUpon(World worldIn, BlockPos pos, Entity entityIn, float fallDistance)
+     {
++        super.onFallenUpon(worldIn, pos, entityIn, fallDistance); // CraftBukkit - moved here as game rules / events shouldn't affect fall damage.
+         if (net.minecraftforge.common.ForgeHooks.onFarmlandTrample(worldIn, pos, Blocks.DIRT.getDefaultState(), fallDistance, entityIn)) // Forge: Move logic to Entity#canTrample
+         {
++            org.bukkit.event.Cancellable cancellable;
++            if (entityIn instanceof EntityPlayer) {
++                cancellable = CraftEventFactory.callPlayerInteractEvent((EntityPlayer) entityIn, org.bukkit.event.block.Action.PHYSICAL, pos, null, null, null);
++            } else {
++                cancellable = new EntityInteractEvent(entityIn.getBukkitEntity(), worldIn.getWorld().getBlockAt(pos.getX(), pos.getY(), pos.getZ()));
++                worldIn.getServer().getPluginManager().callEvent((EntityInteractEvent) cancellable);
++            }
++
++            if (cancellable.isCancelled()) {
++                return;
++            }
++
++            if (CraftEventFactory.callEntityChangeBlockEvent(entityIn, pos, Blocks.DIRT, 0).isCancelled()) {
++                return;
++            }
+             turnToDirt(worldIn, pos);
+         }
+ 
+-        super.onFallenUpon(worldIn, pos, entityIn, fallDistance);
++//        super.onFallenUpon(worldIn, pos, entityIn, fallDistance); // CraftBukkit - moved up
+     }
+ 
+-    protected static void turnToDirt(World p_190970_0_, BlockPos worldIn)
++    protected static void turnToDirt(World worldIn, BlockPos pos)
+     {
+-        p_190970_0_.setBlockState(worldIn, Blocks.DIRT.getDefaultState());
+-        AxisAlignedBB axisalignedbb = field_194405_c.offset(worldIn);
++        org.bukkit.block.Block block = worldIn.getWorld().getBlockAt(pos.getX(), pos.getY(), pos.getZ());
++        if (CraftEventFactory.callBlockFadeEvent(block, Blocks.DIRT).isCancelled()) {
++            return;
++        }
++        worldIn.setBlockState(pos, Blocks.DIRT.getDefaultState());
++        AxisAlignedBB axisalignedbb = field_194405_c.offset(pos);
+ 
+-        for (Entity entity : p_190970_0_.getEntitiesWithinAABBExcludingEntity((Entity)null, axisalignedbb))
++        for (Entity entity : worldIn.getEntitiesWithinAABBExcludingEntity((Entity)null, axisalignedbb))
+         {
+             double d0 = Math.min(axisalignedbb.maxY - axisalignedbb.minY, axisalignedbb.maxY - entity.getEntityBoundingBox().minY);
+             entity.setPositionAndUpdate(entity.posX, entity.posY + d0 + 0.001D, entity.posZ);
+@@ -95,7 +116,7 @@
+     private boolean hasCrops(World worldIn, BlockPos pos)
+     {
+         Block block = worldIn.getBlockState(pos.up()).getBlock();
+-        return block instanceof net.minecraftforge.common.IPlantable && canSustainPlant(worldIn.getBlockState(pos), worldIn, pos, net.minecraft.util.EnumFacing.UP, (net.minecraftforge.common.IPlantable)block);
++        return block instanceof net.minecraftforge.common.IPlantable && canSustainPlant(worldIn.getBlockState(pos), worldIn, pos, EnumFacing.UP, (net.minecraftforge.common.IPlantable)block);
+     }
+ 
+     private boolean hasWater(World worldIn, BlockPos pos)

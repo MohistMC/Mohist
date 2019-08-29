@@ -1,0 +1,23 @@
+--- ../src-base/minecraft/net/minecraft/block/BlockLeaves.java
++++ ../src-work/minecraft/net/minecraft/block/BlockLeaves.java
+@@ -16,6 +16,7 @@
+ import net.minecraft.world.World;
+ import net.minecraftforge.fml.relauncher.Side;
+ import net.minecraftforge.fml.relauncher.SideOnly;
++import org.bukkit.event.block.LeavesDecayEvent;
+ 
+ public abstract class BlockLeaves extends Block implements net.minecraftforge.common.IShearable
+ {
+@@ -178,6 +179,12 @@
+ 
+     private void destroy(World worldIn, BlockPos pos)
+     {
++        LeavesDecayEvent event = new LeavesDecayEvent(worldIn.getWorld().getBlockAt(pos.getX(), pos.getY(), pos.getZ()));
++        worldIn.getServer().getPluginManager().callEvent(event);
++
++        if (event.isCancelled() || worldIn.getBlockState(pos).getBlock() != this) {
++            return;
++        }
+         this.dropBlockAsItem(worldIn, pos, worldIn.getBlockState(pos), 0);
+         worldIn.setBlockToAir(pos);
+     }

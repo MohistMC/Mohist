@@ -1,0 +1,44 @@
+--- ../src-base/minecraft/net/minecraft/item/ItemMonsterPlacer.java
++++ ../src-work/minecraft/net/minecraft/item/ItemMonsterPlacer.java
+@@ -152,7 +152,10 @@
+ 
+                 NBTTagCompound nbttagcompound1 = targetEntity.writeToNBT(new NBTTagCompound());
+                 UUID uuid = targetEntity.getUniqueID();
+-                nbttagcompound1.merge(nbttagcompound.getCompoundTag("EntityTag"));
++                NBTTagCompound entityTag = nbttagcompound.getCompoundTag("EntityTag");
++                entityTag.removeTag("Pos");
++                entityTag.removeTag("Motion");
++                nbttagcompound1.merge(entityTag);
+                 targetEntity.setUniqueId(uuid);
+                 targetEntity.readFromNBT(nbttagcompound1);
+             }
+@@ -220,6 +223,11 @@
+     @Nullable
+     public static Entity spawnCreature(World worldIn, @Nullable ResourceLocation entityID, double x, double y, double z)
+     {
++        return spawnCreature(worldIn, entityID, x, y, z, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.SPAWNER_EGG);
++    }
++
++    @Nullable
++    public static Entity spawnCreature(World worldIn, @Nullable ResourceLocation entityID, double x, double y, double z, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason spawnReason) {
+         if (entityID != null && EntityList.ENTITY_EGGS.containsKey(entityID))
+         {
+             Entity entity = null;
+@@ -236,8 +244,15 @@
+                     entityliving.renderYawOffset = entityliving.rotationYaw;
+                     if (net.minecraftforge.event.ForgeEventFactory.doSpecialSpawn(entityliving, worldIn, (float) x, (float) y, (float) z, null)) return null;
+                     entityliving.onInitialSpawn(worldIn.getDifficultyForLocation(new BlockPos(entityliving)), (IEntityLivingData)null);
+-                    worldIn.spawnEntity(entity);
+-                    entityliving.playLivingSound();
++                    // worldIn.spawnEntity(entity);
++                    // entityliving.playLivingSound();
++                    // CraftBukkit start - don't return an entity when CreatureSpawnEvent is canceled
++                    if (!worldIn.addEntity(entity, spawnReason)) {
++                        entity = null;
++                    } else {
++                        entityliving.playLivingSound();
++                    }
++                    // CraftBukkit end
+                 }
+             }
+ 

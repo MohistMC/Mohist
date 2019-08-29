@@ -1,0 +1,25 @@
+--- ../src-base/minecraft/net/minecraft/network/rcon/RConConsoleSource.java
++++ ../src-work/minecraft/net/minecraft/network/rcon/RConConsoleSource.java
+@@ -22,6 +22,10 @@
+         return "Rcon";
+     }
+ 
++    public void sendMessage(String message) {
++        this.buffer.append(message);
++    }
++
+     public void sendMessage(ITextComponent component)
+     {
+         this.buffer.append(component.getUnformattedText());
+@@ -32,6 +36,11 @@
+         return true;
+     }
+ 
++    public boolean canUseCommand(int permLevel, String commandName, String perm)
++    {
++        return true;
++    }
++
+     public World getEntityWorld()
+     {
+         return this.server.getEntityWorld();
