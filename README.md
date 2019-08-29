@@ -1,5 +1,7 @@
 ## Mohist
 
+## We have not left, except here, all other places are fake! Please don't be fooled!
+
 [![](https://ci.codemc.org/buildStatus/icon?job=Mohist-Community%2FMohist)](https://ci.codemc.org/job/Mohist-Community/job/Mohist/)
 ![](https://img.shields.io/github/stars/Mohist-Community/Mohist.svg?label=Stars)
 ![](https://img.shields.io/github/license/Mohist-Community/Mohist.svg)
