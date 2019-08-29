@@ -12,7 +12,6 @@
 Since CraftBukkit has modified a lot of underlying layers, some of the core mods are not available, we are working hard to improve.
 
 ### Getting Help
-   [**Discord**](https://discord.gg/HNmmrCV)
    [**Home**](https://www.mohist.red/)
    [**bStats**](https://bstats.org/plugin/bukkit/Mohist)
 
@@ -38,21 +37,6 @@ All builds will be in `.\Mohist\build\distributions\`
 If you are a plugin developer, you can add the following files to your library file `.\Mohist\build\localCache\Mohist\recompiled.jar`
 
 Mohist-xxxxx-server.jar - is the server we should run it
-
-### Installation
-* Read the wiki in detail [**WIKI**](https://github.com/Mohist-Community/Mohist/wiki/Install-Mohist)
-
-## How to install Mohsit: For those wishing to work on Mohsit itself
-
-If you wish to actually inspect Mohsit, submit PRs or otherwise work
- with Mohsit itself, you're in the right place!
- 
- [See the guide to setting up a Forge workspace](http://mcforge.readthedocs.io/en/latest/forgedev/).
-
-## Pull requests
-
-[See the "Making Changes and Pull Requests" section in the Forge documentation](http://mcforge.readthedocs.io/en/latest/forgedev/#making-changes-and-pull-requests).
-
 
 ### Credits
 * [**Bukkit**](https://hub.spigotmc.org/stash/scm/spigot/bukkit.git) - plugin support.
