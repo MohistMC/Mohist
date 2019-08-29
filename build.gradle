@@ -76,22 +76,11 @@ minecraft {
             with common
         }
 
-        kite {
-            rootDir "kite/"
-            patchDir "patches/"
-            patchAfter "forge"
-            genPatchesFrom "forge"
-            genMcpPatches = false
-            applyMcpPatches = false
-            s2sKeepImports = true
-            with common
-        }
-
         mohist {
             rootDir "."
             patchDir "patches/"
-            patchAfter "kite"
-            genPatchesFrom "kite"
+            patchAfter "forge"
+            genPatchesFrom "forge"
             genMcpPatches = false
             applyMcpPatches = false
             s2sKeepImports = true
