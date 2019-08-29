@@ -1,11 +1,9 @@
-<img src="https://i.loli.net/2019/08/01/5d41e9aa8096f11574.png">
+## Mohist
 
-## Mohist Made in China
-
-[![](https://ci.codemc.org/buildStatus/icon?job=PFCraft%2FMohist)](https://ci.codemc.org/job/PFCraft/job/Mohist/)
-![](https://img.shields.io/github/stars/PFCraft/Mohist.svg?label=Stars)
-![](https://img.shields.io/github/license/PFCraft/Mohist.svg)
-[![](https://img.shields.io/badge/Forge-1.12.2--14.23.5.2838-brightgreen.svg?colorB=26303d)](http://files.minecraftforge.net/maven/net/minecraftforge/forge/index_1.12.2.html)
+[![](https://ci.codemc.org/buildStatus/icon?job=Mohist-Community%2FMohist)](https://ci.codemc.org/job/Mohist-Community/job/Mohist/)
+![](https://img.shields.io/github/stars/Mohist-Community/Mohist.svg?label=Stars)
+![](https://img.shields.io/github/license/Mohist-Community/Mohist.svg)
+[![](https://img.shields.io/badge/Forge-1.12.2--14.23.5.2844-brightgreen.svg?colorB=26303d)](http://files.minecraftforge.net/maven/net/minecraftforge/forge/index_1.12.2.html)
 [![](https://img.shields.io/badge/Paper-1.12.2-brightgreen.svg?colorB=DC3340)](https://papermc.io/downloads#Paper-1.12)
 ![](https://img.shields.io/badge/Java-8u221-brightgreen.svg?colorB=469C00)
 
@@ -14,17 +12,16 @@ Since CraftBukkit has modified a lot of underlying layers, some of the core mods
 ### Getting Help
    [**Discord**](https://discord.gg/HNmmrCV)
    [**Home**](https://www.mohist.red/)
-   [**QQ**](https://jq.qq.com/?_wv=1027&k=5q7lcCb)
    [**bStats**](https://bstats.org/plugin/bukkit/Mohist)
 
 ### Download
 **Mohist is still in beta and you may encounter issues in using it with your server. You have been warned!**
-* [**Jenkins**](https://ci.codemc.org/job/PFCraft/job/Mohist/)
+* [**Jenkins**](https://ci.codemc.org/job/Mohist-Community/job/Mohist/)
 
 ### Building
 * Checkout project
   * You can use IDE or clone from console:
-  `git clone https://github.com/PFCraft/Mohist.git`
+  `git clone https://github.com/Mohist-Community/Mohist.git`
 * Setup
   * Setting up submodules:
   `git submodule update --init --recursive`
@@ -41,7 +38,7 @@ If you are a plugin developer, you can add the following files to your library f
 Mohist-xxxxx-server.jar - is the server we should run it
 
 ### Installation
-* Read the wiki in detail [**WIKI**](https://github.com/PFCraft/Mohist/wiki/Install-Mohist)
+* Read the wiki in detail [**WIKI**](https://github.com/Mohist-Community/Mohist/wiki/Install-Mohist)
 
 ## How to install Mohsit: For those wishing to work on Mohsit itself
 
