@@ -1,0 +1,204 @@
+buildscript {
+    repositories {
+        mavenLocal()
+        mavenCentral()
+        maven { url 'https://files.minecraftforge.net/maven' }
+        maven { url 'https://plugins.gradle.org/m2/' }
+    }
+    dependencies {
+        classpath 'net.minecraftforge.gradle:ForgeGradle:2.3-SNAPSHOT'
+        classpath 'net.nemerosa:versioning:2.7.1'
+    }
+}
+
+apply plugin: 'java'
+apply plugin: 'maven'
+apply plugin: 'net.minecraftforge.gradle.patcher'
+apply plugin: 'net.minecraftforge.gradle.launch4j'
+apply plugin: 'net.nemerosa.versioning'
+
+group = 'red.mohist'
+version = versioning {
+    full {it.abbreviated}
+    dirty = { t -> t }
+}.info.full
+
+repositories {
+    clear()
+    mavenCentral()
+    maven { url 'https://files.minecraftforge.net/maven' }
+    maven { url 'https://oss.sonatype.org/content/repositories/snapshots/' }
+    maven { url 'https://libraries.minecraft.net/' }
+    maven { url 'https://hub.spigotmc.org/nexus/content/groups/public/' }
+    maven { url 'http://repo.spongepowered.org/maven'
+    }
+}
+
+tasks.withType(JavaCompile) {
+    options.encoding = "UTF-8"
+}
+
+configurations.all {
+    transitive = false
+}
+
+dependencies {
+}
+
+minecraft.version = "1.12.2"
+
+minecraft {
+    mappings = 'snapshot_nodoc_20171003'
+    workspaceDir = "projects"
+    versionJson = "jsons/${minecraft.version}-mohist-dev.json"
+    buildUserdev = false
+    buildInstaller = true
+    installerVersion = "1.5"
+
+    def common = {
+        patchPrefixOriginal "../src-base/minecraft"
+        patchPrefixChanged "../src-work/minecraft"
+        mainClassClient "net.minecraft.launchwrapper.Launch"
+        tweakClassClient "net.minecraftforge.fml.common.launcher.FMLTweaker"
+        mainClassServer "net.minecraft.launchwrapper.Launch"
+        tweakClassServer "net.minecraftforge.fml.common.launcher.FMLServerTweaker"
+    }
+
+    projects {
+        forge {
+            rootDir "forge/"
+            patchDir "forge/patches/minecraft/"
+            patchAfter "clean"
+            genPatchesFrom "clean"
+            genMcpPatches = false
+            applyMcpPatches = false
+            s2sKeepImports = true
+            with common
+        }
+
+        kite {
+            rootDir "kite/"
+            patchDir "patches/"
+            patchAfter "forge"
+            genPatchesFrom "forge"
+            genMcpPatches = false
+            applyMcpPatches = false
+            s2sKeepImports = true
+            with common
+        }
+
+        mohist {
+            rootDir "."
+            patchDir "patches/"
+            patchAfter "kite"
+            genPatchesFrom "kite"
+            genMcpPatches = false
+            applyMcpPatches = false
+            s2sKeepImports = true
+            with common
+        }
+    }
+}
+
+sourceCompatibility = 1.8
+tasks.generateXmlConfig.dependsOn installer
+tasks.build.dependsOn 'launch4j'
+
+installer {
+    classifier = 'installer'
+    from "src/main/resources/mohist_logo.png"
+    rename "mohist_logo\\.png", "big_logo.png"
+}
+
+launch4j {
+    jar = installer.archivePath.canonicalPath
+    outfile = file("build/distributions/${project.name}-${project.version}-installer-win.exe").canonicalPath
+    icon = file('icon.ico').canonicalPath
+    manifest = file('l4jManifest.xml').canonicalPath
+    jreMinVersion = '1.8.0'
+    initialHeapPercent = 5
+    maxHeapPercent = 100
+}
+
+task signUniversal(type: SignJar, dependsOn: 'outputJar') {
+    onlyIf {
+        project.hasProperty('jarsigner')
+    }
+
+    def jarsigner = [:]
+
+    if (project.hasProperty('jarsigner'))
+        jarsigner = project.jarsigner
+
+    alias = 'forge'
+    exclude "paulscode/**"
+    storePass = jarsigner.storepass
+    keyPass = jarsigner.keypass
+    keyStore = jarsigner.keystore
+    inputFile = outputJar.archivePath
+    outputFile = outputJar.archivePath
+}
+uploadArchives.dependsOn signUniversal
+build.dependsOn signUniversal
+installer.dependsOn signUniversal
+
+outputJar {
+    classifier = 'server'
+
+    manifest.attributes([
+            "Implementation-Title": "Mohist",
+            "Implementation-Version": version,
+            "Main-Class": "red.mohist.Mohist",
+            "TweakClass": "net.minecraftforge.fml.common.launcher.FMLTweaker",
+            "Class-Path": getServerClasspath(file("jsons/${minecraft.version}-mohist-rel.json"))
+    ])
+}
+
+processJson {
+    releaseJson = "jsons/${minecraft.version}-mohist-rel.json"
+    addReplacements([
+            "@minecraft_version@": project.minecraft.version,
+            "@version@": project.version,
+            "@project@": "mohist",
+            "@artifact@": "red.mohist:mohist:${project.version}",
+            "@universal_jar@": { outputJar.archiveName },
+            "@timestamp@": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ"),
+    ])
+}
+
+extractForgeSources {
+    exclude "**/SideOnly.java", "**/Side.java"
+}
+
+genGradleProjects {
+    addCompileDep "junit:junit:4.12"
+    addCompileDep "org.junit.jupiter:junit-jupiter-api:5.0.0"
+    addCompileDep "org.opentest4j:opentest4j:1.0.0" // needed for junit 5
+    addCompileDep "org.hamcrest:hamcrest-core:1.3"
+}
+
+
+import groovy.json.JsonBuilder
+import groovy.json.JsonSlurper
+
+String getServerClasspath(File file) {
+    def node = new JsonSlurper().parse(file)
+    def out = new StringBuilder()
+    node.versionInfo.libraries.each { lib ->
+        if (lib.serverreq)
+        {
+            def split = lib.name.split(':')
+            def group = split[0].replace('.', '/')
+            def artifact = split[1]
+            def version = split[2]
+            out += "libraries/$group/$artifact/$version/$artifact-${version}.jar "
+        }
+    }
+    out += "minecraft_server.${minecraft.version}.jar"
+    return out.toString()
+}
+
+task dumpLibs(type: Copy) {
+    into "$buildDir/libs/libraries"
+    from configurations.compile
+}
