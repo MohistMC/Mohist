@@ -6,6 +6,7 @@ buildscript {
         maven { url 'https://plugins.gradle.org/m2/' }
     }
     dependencies {
+        classpath 'edu.sc.seis.launch4j:launch4j:2.4.6'
         classpath 'net.minecraftforge.gradle:ForgeGradle:2.3-SNAPSHOT'
         classpath 'net.nemerosa:versioning:2.7.1'
     }
@@ -14,7 +15,7 @@ buildscript {
 apply plugin: 'java'
 apply plugin: 'maven'
 apply plugin: 'net.minecraftforge.gradle.patcher'
-apply plugin: 'net.minecraftforge.gradle.launch4j'
+apply plugin: 'edu.sc.seis.launch4j'
 apply plugin: 'net.nemerosa.versioning'
 
 group = 'red.mohist'
@@ -34,6 +35,7 @@ repositories {
     }
 }
 
+sourceCompatibility = 1.8
 tasks.withType(JavaCompile) {
     options.encoding = "UTF-8"
 }
@@ -89,24 +91,10 @@ minecraft {
     }
 }
 
-sourceCompatibility = 1.8
-tasks.generateXmlConfig.dependsOn installer
-tasks.build.dependsOn 'launch4j'
-
 installer {
     classifier = 'installer'
     from "src/main/resources/mohist_logo.png"
     rename "mohist_logo\\.png", "big_logo.png"
-}
-
-launch4j {
-    jar = installer.archivePath.canonicalPath
-    outfile = file("build/distributions/${project.name}-${project.version}-installer-win.exe").canonicalPath
-    icon = file('icon.ico').canonicalPath
-    manifest = file('l4jManifest.xml').canonicalPath
-    jreMinVersion = '1.8.0'
-    initialHeapPercent = 5
-    maxHeapPercent = 100
 }
 
 task signUniversal(type: SignJar, dependsOn: 'outputJar') {
@@ -130,6 +118,18 @@ task signUniversal(type: SignJar, dependsOn: 'outputJar') {
 uploadArchives.dependsOn signUniversal
 build.dependsOn signUniversal
 installer.dependsOn signUniversal
+
+launch4j {
+    jar = installer.archivePath.canonicalPath
+    outfile = "${project.name}-${project.version}-installer-win.exe"
+    icon = file('icon.ico').canonicalPath
+    manifest = file('l4jManifest.xml').canonicalPath
+    jreMinVersion = '1.8.0_101'
+    initialHeapPercent = 5
+    maxHeapPercent = 100
+}
+tasks.createExe.dependsOn installer
+tasks.build.dependsOn 'launch4j'
 
 outputJar {
     classifier = 'server'
