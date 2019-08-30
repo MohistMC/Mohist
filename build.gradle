@@ -176,11 +176,6 @@ String getServerClasspath(File file) {
             out += "libraries/$group/$artifact/$version/$artifact-${version}.jar "
         }
     }
-    out += "minecraft_server.${minecraft.version}.jar"
+    out += "libraries/net/minecraft/1.12.2/minecraft_server.${minecraft.version}.jar"
     return out.toString()
-}
-
-task dumpLibs(type: Copy) {
-    into "$buildDir/libs/libraries"
-    from configurations.compile
 }

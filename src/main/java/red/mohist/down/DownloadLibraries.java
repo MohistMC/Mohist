@@ -16,11 +16,11 @@ public class DownloadLibraries implements Runnable {
 
     @Override
     public void run() {
-        String url = "https://github.com/PFCraft/Mohist/releases/download/libraries-1.2/libraries-1.2.zip";
+        String url = "https://github.com/Mohist-Community/Mohist/releases/download/libraries/libraries.zip";
         String fileName = "libraries.zip";
         Locale locale = Locale.getDefault();
         if (locale.getCountry().equals("CN") || Message.getLanguage(2).equals("CN")) {
-            url = "https://pfcraft.gitee.io/mohistdown/libraries-1.2.zip";
+            url = "https://mohist-community.gitee.io/mohistdown/libraries.zip";
         }
         new Download(url, fileName);
         File file = new File(fileName);

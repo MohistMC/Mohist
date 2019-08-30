@@ -7,7 +7,6 @@ import java.util.concurrent.Executors;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import red.mohist.down.DownloadLibraries;
-import red.mohist.down.DownloadServer;
 import red.mohist.down.Update;
 import red.mohist.util.i18n.Message;
 import red.mohist.util.ServerEula;
@@ -78,9 +77,7 @@ public class Mohist {
         {
             System.out.println(Message.getString("mohist.start.error.nothavelibrary"));
             System.out.println("");
-            ExecutorService ds = Executors.newCachedThreadPool();
             ExecutorService dl = Executors.newCachedThreadPool();
-            ds.execute(new DownloadServer());
             dl.execute(new DownloadLibraries());
             System.out.println(Message.getString("file.ok"));
         }
