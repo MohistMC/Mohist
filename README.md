@@ -1,3 +1,5 @@
+<img src="https://i.loli.net/2019/08/30/btYR9WDxd4XvhH3.png">
+
 ## Mohist
 
 ## We have not left, except here, all other places are fake! Please don't be fooled!
