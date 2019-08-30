@@ -2,7 +2,7 @@
 
 ## We have not left, except here, all other places are fake! Please don't be fooled!
 
-[![](https://ci.codemc.org/buildStatus/icon?job=Mohist-Community%2FMohist)](https://ci.codemc.org/job/Mohist-Community/job/Mohist/)
+[![](https://ci.codemc.org/buildStatus/icon?job=Mohist-Community%2FMohist-1.12.2)](https://ci.codemc.org/job/Mohist-Community/job/Mohist-1.12.2/)
 ![](https://img.shields.io/github/stars/Mohist-Community/Mohist.svg?label=Stars)
 ![](https://img.shields.io/github/license/Mohist-Community/Mohist.svg)
 [![](https://img.shields.io/badge/Forge-1.12.2--14.23.5.2844-brightgreen.svg?colorB=26303d)](http://files.minecraftforge.net/maven/net/minecraftforge/forge/index_1.12.2.html)
@@ -17,7 +17,7 @@ Since CraftBukkit has modified a lot of underlying layers, some of the core mods
 
 ### Download
 **Mohist is still in beta and you may encounter issues in using it with your server. You have been warned!**
-* [**Jenkins**](https://ci.codemc.org/job/Mohist-Community/job/Mohist/)
+* [**Jenkins**](https://ci.codemc.org/job/Mohist-Community/job/Mohist-1.12.2/)
 
 ### Building
 * Checkout project
