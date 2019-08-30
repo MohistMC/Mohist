@@ -448,21 +448,7 @@
      }
  
      public boolean wasTicked()
-@@ -1214,12 +1388,7 @@
- 
-         if (k == 255)
-         {
--            // Forge: checking for client ensures that biomes are only generated on integrated server
--            // in singleplayer. Generating biomes on the client may corrupt the biome ID arrays on
--            // the server while they are being generated because IntCache can't be thread safe,
--            // so client and server may end up filling the same array.
--            // This is not necessary in 1.13 and newer versions.
--            Biome biome = world.isRemote ? Biomes.PLAINS : provider.getBiome(pos, Biomes.PLAINS);
-+            Biome biome = provider.getBiome(pos, Biomes.PLAINS);
-             k = Biome.getIdForBiome(biome);
-             this.blockBiomeArray[j << 4 | i] = (byte)(k & 255);
-         }
-@@ -1545,11 +1714,11 @@
+@@ -1545,11 +1719,11 @@
          String format = "{} loaded a new chunk {} in dimension {} ({}) while populating chunk {}, causing cascading worldgen lag.";
  
          if (activeModContainer == null) { // vanilla minecraft has problems too (MC-114332), log it at a quieter level.

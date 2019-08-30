@@ -60,7 +60,7 @@
  import net.minecraft.util.DamageSource;
  import net.minecraft.util.EnumActionResult;
  import net.minecraft.util.EnumFacing;
-@@ -108,17 +114,17 @@
+@@ -108,10 +114,10 @@
  import net.minecraft.util.text.TextComponentString;
  import net.minecraft.util.text.TextFormatting;
  import net.minecraft.util.text.event.ClickEvent;
@@ -73,15 +73,15 @@
  import net.minecraft.world.storage.loot.LootEntry;
  import net.minecraft.world.storage.loot.LootTable;
  import net.minecraft.world.storage.loot.LootTableManager;
- import net.minecraft.world.storage.loot.conditions.LootCondition;
+@@ -119,6 +125,7 @@
  import net.minecraftforge.common.crafting.CraftingHelper;
--import net.minecraftforge.common.crafting.JsonContext;
+ import net.minecraftforge.common.crafting.JsonContext;
  import net.minecraftforge.common.util.BlockSnapshot;
 +import net.minecraftforge.common.util.FakePlayer;
  import net.minecraftforge.event.AnvilUpdateEvent;
  import net.minecraftforge.event.DifficultyChangeEvent;
  import net.minecraftforge.event.ForgeEventFactory;
-@@ -136,16 +142,15 @@
+@@ -136,16 +143,15 @@
  import net.minecraftforge.event.entity.living.LivingKnockBackEvent;
  import net.minecraftforge.event.entity.living.LivingSetAttackTargetEvent;
  import net.minecraftforge.event.entity.living.LootingLevelEvent;
@@ -99,7 +99,7 @@
  import net.minecraftforge.fml.common.Loader;
  import net.minecraftforge.fml.common.LoaderState;
  import net.minecraftforge.fml.common.ModContainer;
-@@ -159,12 +164,15 @@
+@@ -159,12 +165,15 @@
  import net.minecraftforge.registries.GameData;
  import net.minecraftforge.registries.IForgeRegistry;
  import net.minecraftforge.registries.RegistryManager;
@@ -119,7 +119,7 @@
  
  public class ForgeHooks
  {
-@@ -352,161 +360,6 @@
+@@ -352,161 +361,6 @@
       */
      public static boolean onPickBlock(RayTraceResult target, EntityPlayer player, World world)
      {
@@ -281,7 +281,7 @@
          ItemStack result;
          boolean isCreative = player.capabilities.isCreativeMode;
          TileEntity te = null;
-@@ -729,9 +582,10 @@
+@@ -729,9 +583,10 @@
      public static ITextComponent onServerChatEvent(NetHandlerPlayServer net, String raw, ITextComponent comp)
      {
          ServerChatEvent event = new ServerChatEvent(net.player, raw, comp);
@@ -295,7 +295,7 @@
          }
          return event.getComponent();
      }
-@@ -817,27 +671,8 @@
+@@ -817,27 +672,8 @@
  
      public static int onBlockBreakEvent(World world, GameType gameType, EntityPlayerMP entityPlayer, BlockPos pos)
      {
@@ -324,7 +324,7 @@
          {
              SPacketBlockChange packet = new SPacketBlockChange(world, pos);
              packet.blockState = Blocks.AIR.getDefaultState();
-@@ -847,11 +682,11 @@
+@@ -847,11 +683,11 @@
          // Post the block break event
          IBlockState state = world.getBlockState(pos);
          BlockEvent.BreakEvent event = new BlockEvent.BreakEvent(world, pos, state, entityPlayer);
@@ -338,7 +338,7 @@
          {
              // Let the client know the block still exists
              entityPlayer.connection.sendPacket(new SPacketBlockChange(world, pos));
-@@ -866,33 +701,75 @@
+@@ -866,33 +702,75 @@
                      entityPlayer.connection.sendPacket(pkt);
                  }
              }
@@ -419,7 +419,7 @@
              int newSize = itemstack.getCount();
              NBTTagCompound newNBT = null;
              if (itemstack.getTagCompound() != null)
-@@ -901,10 +778,8 @@
+@@ -901,10 +779,8 @@
              }
              BlockEvent.PlaceEvent placeEvent = null;
              @SuppressWarnings("unchecked")
@@ -431,7 +431,7 @@
              itemstack.setItemDamage(meta);
              itemstack.setCount(size);
              if (nbt != null)
-@@ -912,37 +787,39 @@
+@@ -912,37 +788,39 @@
                  itemstack.setTagCompound(nbt);
              }
              if (blockSnapshots.size() > 1)
@@ -482,7 +482,7 @@
                      int updateFlag = snap.getFlag();
                      IBlockState oldBlock = snap.getReplacedBlock();
                      IBlockState newBlock = world.getBlockState(snap.getPos());
-@@ -953,7 +830,30 @@
+@@ -953,7 +831,30 @@
  
                      world.markAndNotifyBlock(snap.getPos(), null, oldBlock, newBlock, updateFlag);
                  }
@@ -514,14 +514,6 @@
              }
          }
          world.capturedBlockSnapshots.clear();
-@@ -961,6 +861,7 @@
-         return ret;
-     }
- 
-+
-     public static boolean onAnvilChange(ContainerRepair container, @Nonnull ItemStack left, @Nonnull ItemStack right, IInventory outputSlot, String name, int baseCost)
-     {
-         AnvilUpdateEvent e = new AnvilUpdateEvent(left, right, name, baseCost);
 @@ -1076,7 +977,7 @@
              // Revert variable back to true as it would have been set to false
              if (entity instanceof EntityMinecartContainer)
@@ -531,36 +523,9 @@
              }
          }
          return !event.isCanceled();
-@@ -1317,10 +1218,9 @@
+@@ -1357,49 +1258,49 @@
+         JsonContext ctx = new JsonContext(mod.getModId());
  
-     public static boolean loadAdvancements(Map<ResourceLocation, Advancement.Builder> map)
-     {
--        CraftingHelper.init();
-         boolean errored = false;
-         setActiveModContainer(null);
--        Loader.instance().getActiveModList().forEach(ForgeHooks::loadFactories);
-+        //Loader.instance().getActiveModList().forEach((mod) -> loadFactories(mod));
-         for (ModContainer mod : Loader.instance().getActiveModList())
-         {
-             errored |= !loadAdvancements(map, mod);
-@@ -1329,11 +1229,6 @@
-         return errored;
-     }
- 
--    private static void loadFactories(ModContainer mod)
--    {
--        CraftingHelper.loadFactories(mod, "assets/" + mod.getModId() + "/advancements", CraftingHelper.CONDITIONS);
--    }
--
-     @Nullable
-     public static CriticalHitEvent getCriticalHit(EntityPlayer player, Entity target, boolean vanillaCritical, float damageModifier)
-     {
-@@ -1354,52 +1249,46 @@
- 
-     private static boolean loadAdvancements(Map<ResourceLocation, Advancement.Builder> map, ModContainer mod)
-     {
--        JsonContext ctx = new JsonContext(mod.getModId());
--
          return CraftingHelper.findFiles(mod, "assets/" + mod.getModId() + "/advancements", null,
 -            (root, file) ->
 -            {
@@ -598,7 +563,11 @@
 +                        try
 +                        {
 +                            reader = Files.newBufferedReader(file);
-+                            Advancement.Builder builder = JsonUtils.fromJson(AdvancementManager.GSON, reader, Advancement.Builder.class);
++                            String contents = IOUtils.toString(reader);
++                            JsonObject json = JsonUtils.gsonDeserialize(CraftingHelper.GSON, contents, JsonObject.class);
++                            if (!CraftingHelper.processConditions(json, "conditions", ctx))
++                                return true;
++                            Advancement.Builder builder = JsonUtils.gsonDeserialize(AdvancementManager.GSON, contents, Advancement.Builder.class);
 +                            map.put(key, builder);
 +                        }
 +                        catch (JsonParseException jsonparseexception)
@@ -640,20 +609,4 @@
 +                true, true
          );
      }
- 
-@@ -1477,7 +1366,6 @@
- 
-     public static boolean onFarmlandTrample(World world, BlockPos pos, IBlockState state, float fallDistance, Entity entity)
-     {
--
-         if (entity.canTrample(world, state.getBlock(), pos, fallDistance))
-         {
-             BlockEvent.FarmlandTrampleEvent event = new BlockEvent.FarmlandTrampleEvent(world, pos, state, fallDistance, entity);
-@@ -1486,7 +1374,6 @@
-         }
-         return false;
-     }
--
-     private static final Map<DataSerializer<?>, DataSerializerEntry> serializerEntries = GameData.getSerializerMap();
-     private static final ForgeRegistry<DataSerializerEntry> serializerRegistry = (ForgeRegistry<DataSerializerEntry>) ForgeRegistries.DATA_SERIALIZERS;
  
