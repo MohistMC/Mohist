@@ -18,10 +18,7 @@ apply plugin: 'net.minecraftforge.gradle.launch4j'
 apply plugin: 'net.nemerosa.versioning'
 
 group = 'red.mohist'
-version = versioning {
-    full {it.abbreviated}
-    dirty = { t -> t }
-}.info.full
+version = versioning.info.build
 
 repositories {
     clear()
@@ -53,7 +50,7 @@ minecraft {
     workspaceDir = "projects"
     versionJson = "jsons/${minecraft.version}-mohist-dev.json"
     buildUserdev = false
-    buildInstaller = true
+    buildInstaller = false
     installerVersion = "1.5"
 
     def common = {
@@ -114,7 +111,6 @@ task signUniversal(type: SignJar, dependsOn: 'outputJar') {
     inputFile = outputJar.archivePath
     outputFile = outputJar.archivePath
 }
-uploadArchives.dependsOn signUniversal
 build.dependsOn signUniversal
 installer.dependsOn signUniversal
 
@@ -127,7 +123,8 @@ launch4j {
     initialHeapPercent = 5
     maxHeapPercent = 100
 }
-tasks.createExe.dependsOn installer
+tasks.generateXmlConfig.dependsOn installer
+tasks.compileJava.enabled = false
 tasks.build.dependsOn 'launch4j'
 
 outputJar {
