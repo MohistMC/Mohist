@@ -16,6 +16,7 @@ public class Update {
         String str = "https://api.github.com/repos/Mohist-Community/Mohist/commits";
         try {
             System.out.println(Message.getString("update.check"));
+            System.out.println(Message.getString("update.stopcheck"));
             URL url = new URL(str);
             URLConnection conn = url.openConnection();
             InputStream is = conn.getInputStream();

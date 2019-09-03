@@ -69,9 +69,9 @@ public class Mohist {
             System.out.println("");
             System.out.println("                        " + Message.getString("forge.serverlanunchwrapper.1"));
             System.out.println("");
+            System.out.println(Message.getString("mohist.start"));
+            System.out.println(Message.getString("load.libraries"));
             LOGGER = LogManager.getLogger("Mohist");
-            Mohist.LOGGER.info(Message.getString("mohist.start"));
-            Mohist.LOGGER.info(Message.getString("load.libraries"));
         }
         catch (Exception e)
         {
