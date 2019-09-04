@@ -44,6 +44,7 @@ public class MohistConfig extends ConfigBase{
     // Bukkit Event Canceled
     public final BoolSetting explosion_canceled = new BoolSetting(this, "eventCanceled.explosion", false, "BlockExplosionEvent isCanceled");
     public final BoolSetting check_update = new BoolSetting(this, "check_update", true, "Check Update");
+    public final BoolSetting enable_progress = new BoolSetting(this, "enable_progress", true, "Enable download progress");
 
     public final BoolSetting asyn_aimove = new BoolSetting(this, "asyn.aimove", false, "Ai-Move");
     public final BoolSetting asyn_spawnerCreature = new BoolSetting(this, "asyn.spawnerCreature", false, "spawnerCreature");

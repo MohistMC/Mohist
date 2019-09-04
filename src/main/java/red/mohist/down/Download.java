@@ -2,6 +2,7 @@ package red.mohist.down;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.channels.Channels;
@@ -16,17 +17,35 @@ public class Download {
 
             HttpURLConnection connection = (HttpURLConnection) website.openConnection();
             connection.setRequestMethod("GET");
+            long alreadySize = 0;
             int code = connection.getResponseCode();
             if (code == 200) {
                 long startTime =  System.currentTimeMillis();
+                long unfinishedSize = connection.getContentLength();
 
+                long size = alreadySize + unfinishedSize;
                 System.out.println(Message.getFormatString("file.download.size", new Object[]{fileName, getSize(connection.getContentLengthLong())}));
                 System.out.println(Message.getFormatString("file.download", new Object[]{fileName}));
+
+                InputStream in = connection.getInputStream();
+
                 ReadableByteChannel rbc = Channels.newChannel(website.openStream());
                 FileOutputStream fos = new FileOutputStream(fileName);
                 fos.getChannel().transferFrom(rbc, 0, Long.MAX_VALUE);
+                byte[] buff = new byte[2048];
+                int len;
+                while ((len = in.read(buff)) != -1) {
+                    fos.write(buff, 0, len);
+                    alreadySize += len;
+                    Progress cpb = new Progress(50, '#');
+                    if (cpb.isEnable()) {
+                        cpb.show(fileName, (int) (alreadySize * 1.0 / size * 100));
+                    }
+                }
+                in.close();
                 rbc.close();
                 fos.close();
+                connection.disconnect();
 
                 long endTime =  System.currentTimeMillis();
                 long usedTime = (endTime-startTime)/1000;
@@ -34,7 +53,6 @@ public class Download {
             } else {
                 System.out.println(Message.getFormatString("file.download.nook", new Object[]{url}));
             }
-            connection.disconnect();
         } catch (IOException e) {
             e.printStackTrace();
         }
