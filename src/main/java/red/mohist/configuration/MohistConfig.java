@@ -51,7 +51,7 @@ public class MohistConfig extends ConfigBase{
     public final BoolSetting asyn_checkLight = new BoolSetting(this, "asyn.checkLight", false, "checkLight");
 
     public final StringSetting ANSI_ERROR_LEVEL = new StringSetting(this, "consolecolor.error-level", "[31;1m", "consolecolor.error-level");
-    public final StringSetting ANSI_WARN_LEVEL = new StringSetting(this, "consolecolor.warnlevel", "[33;1m", "consolecolor.warn-level");
+    public final StringSetting ANSI_WARN_LEVEL = new StringSetting(this, "consolecolor.warn-level", "[33;1m", "consolecolor.warn-level");
     public final StringSetting ANSI_ERROR_MSG = new StringSetting(this, "consolecolor.error-msg", "[31;1m", "consolecolor.error-msg");
     public final StringSetting ANSI_WARN_MSG = new StringSetting(this, "consolecolor.warn-msg", "[33;1m", "consolecolor.warn-msg");
 
