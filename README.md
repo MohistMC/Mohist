@@ -16,6 +16,7 @@ Since CraftBukkit has modified a lot of underlying layers, some of the core mods
 ### Getting Help
    [**Home**](https://www.mohist.red/)
    [**bStats**](https://bstats.org/plugin/bukkit/Mohist)
+   [**Discord**](https://discord.gg/JPF68ZM)
 
 ### Download
 **Mohist is still in beta and you may encounter issues in using it with your server. You have been warned!**
