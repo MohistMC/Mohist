@@ -35,7 +35,19 @@
      @Nullable
      public Chunk loadChunk(int x, int z)
      {
-@@ -106,7 +111,7 @@
+@@ -92,6 +97,11 @@
+     @Nullable
+     public Chunk loadChunk(int x, int z, @Nullable Runnable runnable)
+     {
++        return loadChunk(x, z, runnable, true);
++    }
++
++    public Chunk loadChunk(int x, int z, Runnable runnable, boolean generate)
++    {
+         Chunk chunk = this.getLoadedChunk(x, z);
+         if (chunk == null)
+         {
+@@ -106,7 +116,7 @@
                  {
                  this.id2ChunkMap.put(ChunkPos.asLong(x, z), chunk);
                  chunk.onLoad();
@@ -44,7 +56,16 @@
                  }
  
                  loadingChunks.remove(pos);
-@@ -154,7 +159,7 @@
+@@ -123,6 +133,8 @@
+                     return null;
+                 }
+             }
++        } else if (chunk == null && generate) {
++            chunk = provideChunk(x, z);
+         }
+ 
+         // If we didn't load the chunk async and have a callback run it now
+@@ -154,7 +166,7 @@
  
              this.id2ChunkMap.put(i, chunk);
              chunk.onLoad();
@@ -53,7 +74,7 @@
          }
  
          return chunk;
-@@ -177,7 +182,7 @@
+@@ -177,7 +189,7 @@
          }
          catch (Exception exception)
          {
@@ -62,7 +83,7 @@
              return null;
          }
      }
-@@ -190,7 +195,7 @@
+@@ -190,7 +202,7 @@
          }
          catch (Exception exception)
          {
@@ -71,7 +92,7 @@
          }
      }
  
-@@ -203,22 +208,25 @@
+@@ -203,22 +215,25 @@
          }
          catch (IOException ioexception)
          {
@@ -103,7 +124,7 @@
  
              if (all)
              {
-@@ -232,7 +240,7 @@
+@@ -232,7 +247,7 @@
                  ++i;
  
                  if (i == 24 && !all)
@@ -112,7 +133,7 @@
                      return false;
                  }
              }
-@@ -266,11 +274,9 @@
+@@ -266,11 +281,9 @@
  
                      if (chunk != null && chunk.unloadQueued)
                      {
@@ -127,7 +148,7 @@
                          ++i;
                      }
                  }
-@@ -284,6 +290,39 @@
+@@ -284,6 +297,39 @@
          return false;
      }
  
