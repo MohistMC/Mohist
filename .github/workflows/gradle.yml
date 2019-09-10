@@ -14,4 +14,6 @@ jobs:
       with:
         java-version: 1.8
     - name: Build with Gradle
-      run: ./gradlew.bat launch4j
+      run: |
+        chmod +x ./gradlew
+        ./gradlew launch4j
