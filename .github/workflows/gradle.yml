@@ -18,5 +18,6 @@ jobs:
         java-version: 1.8
     - name: Build with Gradle
       run: |
+        git submodule update --init --recursive
         chmod +x ./gradlew
         ./gradlew launch4j
