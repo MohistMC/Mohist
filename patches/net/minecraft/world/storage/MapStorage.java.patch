@@ -1,6 +1,12 @@
 --- ../src-base/minecraft/net/minecraft/world/storage/MapStorage.java
 +++ ../src-work/minecraft/net/minecraft/world/storage/MapStorage.java
-@@ -19,7 +19,7 @@
+@@ -14,12 +14,13 @@
+ import net.minecraft.nbt.NBTBase;
+ import net.minecraft.nbt.NBTTagCompound;
+ import net.minecraft.nbt.NBTTagShort;
++import red.mohist.asyn.ThreadBoxFactory;
+ 
+ public class MapStorage
  {
      private final ISaveHandler saveHandler;
      protected Map<String, WorldSavedData> loadedDataMap = Maps.<String, WorldSavedData>newHashMap();
@@ -9,3 +15,46 @@
      private final Map<String, Short> idCounts = Maps.<String, Short>newHashMap();
  
      public MapStorage(ISaveHandler saveHandlerIn)
+@@ -107,23 +108,29 @@
+     {
+         if (this.saveHandler != null)
+         {
+-            try
++            File file1 = this.saveHandler.getMapFileFromName(data.mapName);
++            NBTTagCompound nbt = data.writeToNBT(new NBTTagCompound());
++            if (file1 != null)
+             {
+-                File file1 = this.saveHandler.getMapFileFromName(data.mapName);
+-
+-                if (file1 != null)
++                try {
++                    ThreadBoxFactory.asyncWorldSaver.submit(() -> {
++                        try {
++                            NBTTagCompound nbttagcompound = new NBTTagCompound();
++                            nbttagcompound.setTag("data", nbt);
++                            FileOutputStream fileoutputstream = new FileOutputStream(file1);
++                            CompressedStreamTools.writeCompressed(nbttagcompound, fileoutputstream);
++                            fileoutputstream.close();
++                        }
++                        catch (Exception exception) {
++                            exception.printStackTrace();
++                        }
++                    }).get();
++                }
++                catch (Exception e)
+                 {
+-                    NBTTagCompound nbttagcompound = new NBTTagCompound();
+-                    nbttagcompound.setTag("data", data.writeToNBT(new NBTTagCompound()));
+-                    FileOutputStream fileoutputstream = new FileOutputStream(file1);
+-                    CompressedStreamTools.writeCompressed(nbttagcompound, fileoutputstream);
+-                    fileoutputstream.close();
++                    e.printStackTrace();
+                 }
+             }
+-            catch (Exception exception)
+-            {
+-                exception.printStackTrace();
+-            }
+         }
+     }
+ 
