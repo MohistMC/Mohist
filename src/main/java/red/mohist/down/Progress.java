@@ -56,6 +56,6 @@ public class Progress {
     }
 
     public Boolean isEnable() {
-        return MohistConfigUtil.isBoolean("enable_progress: ");
+        return MohistConfigUtil.getBoolean("enable_progress:", true);
     }
 }

@@ -23,8 +23,6 @@
 
 package red.mohist.console.log4j;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.List;
 import javax.annotation.Nullable;
 import org.apache.logging.log4j.Level;
@@ -38,7 +36,7 @@ import org.apache.logging.log4j.core.pattern.PatternConverter;
 import org.apache.logging.log4j.core.pattern.PatternFormatter;
 import org.apache.logging.log4j.core.pattern.PatternParser;
 import org.apache.logging.log4j.util.PerformanceSensitive;
-import red.mohist.util.FileUtil;
+import red.mohist.configuration.MohistConfigUtil;
 
 @Plugin(name = "highlightLevel", category = PatternConverter.CATEGORY)
 @ConverterKeys({ "highlightLevel" })
@@ -149,32 +147,10 @@ public class HighlightLevelConverter extends LogEventPatternConverter
     }
 
     public static String geterror() {
-        try {
-            File f = new File("mohist.yml");
-            String s = FileUtil.readContent(f, "UTF-8");
-            if(s.contains("error-level: ")){
-                String string = s.substring(s.indexOf("error-level: "));
-                String s1 = string.substring(string.indexOf(":") + 1).substring(2, 8);
-                return s1.substring(0, 6);
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return "[31;1m";
+        return MohistConfigUtil.getString("error-level:", 2, 8, 0, 6, "[31;1m");
     }
 
     public static String getwarn() {
-        try {
-            File f = new File("mohist.yml");
-            String s = FileUtil.readContent(f, "UTF-8");
-            if(s.contains("warn-level: ")){
-                String string = s.substring(s.indexOf("warn-level: "));
-                String s1 = string.substring(string.indexOf(":") + 1).substring(2, 8);
-                return s1.substring(0, 6);
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return "[33;1m";
+        return MohistConfigUtil.getString("warn-level:", 2, 8, 0, 6, "[33;1m");
     }
 }

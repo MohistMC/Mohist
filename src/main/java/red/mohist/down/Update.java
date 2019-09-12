@@ -44,6 +44,6 @@ public class Update {
     }
 
     public static boolean isCheckVersion() {
-        return MohistConfigUtil.isBoolean("check_update: ");
+        return MohistConfigUtil.getBoolean("check_update:", true);
     }
 }

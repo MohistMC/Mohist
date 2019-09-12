@@ -23,8 +23,6 @@
 
 package red.mohist.console.log4j;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.List;
 import javax.annotation.Nullable;
 import org.apache.logging.log4j.Level;
@@ -38,7 +36,7 @@ import org.apache.logging.log4j.core.pattern.PatternConverter;
 import org.apache.logging.log4j.core.pattern.PatternFormatter;
 import org.apache.logging.log4j.core.pattern.PatternParser;
 import org.apache.logging.log4j.util.PerformanceSensitive;
-import red.mohist.util.FileUtil;
+import red.mohist.configuration.MohistConfigUtil;
 
 @Plugin(name = "highlightMsg", category = PatternConverter.CATEGORY)
 @ConverterKeys({ "highlightMsg" })
@@ -122,7 +120,7 @@ public class HighlightMsgConverter extends LogEventPatternConverter
     }
 
     /**
-     * Gets a new instance of the {@link HighlightLevelConverter} with the
+     * Gets a new instance of the {@link HighlightMsgConverter} with the
      * specified options.
      *
      * @param config The current configuration
@@ -130,7 +128,7 @@ public class HighlightMsgConverter extends LogEventPatternConverter
      * @return The new instance
      */
     @Nullable
-    public static HighlightLevelConverter newInstance(Configuration config, String[] options)
+    public static HighlightMsgConverter newInstance(Configuration config, String[] options)
     {
         if (options.length != 1)
         {
@@ -145,36 +143,14 @@ public class HighlightMsgConverter extends LogEventPatternConverter
 
         PatternParser parser = PatternLayout.createPatternParser(config);
         List<PatternFormatter> formatters = parser.parse(options[0]);
-        return new HighlightLevelConverter(formatters);
+        return new HighlightMsgConverter(formatters);
     }
 
     public static String geterror() {
-        try {
-            File f = new File("mohist.yml");
-            String s = FileUtil.readContent(f, "UTF-8");
-            if(s.contains("error-msg: ")){
-                String string = s.substring(s.indexOf("error-msg: "));
-                String s1 = string.substring(string.indexOf(":") + 1).substring(2, 8);
-                return s1.substring(0, 6);
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return "[31;1m";
+        return MohistConfigUtil.getString("error-msg:", 2, 8, 0, 6, "[31;1m");
     }
 
     public static String getwarn() {
-        try {
-            File f = new File("mohist.yml");
-            String s = FileUtil.readContent(f, "UTF-8");
-            if(s.contains("warn-msg: ")){
-                String string = s.substring(s.indexOf("warn-msg: "));
-                String s1 = string.substring(string.indexOf(":") + 1).substring(2, 8);
-                return s1.substring(0, 6);
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return "[33;1m";
+        return MohistConfigUtil.getString("warn-msg:", 2, 8, 0, 6, "[33;1m");
     }
 }
