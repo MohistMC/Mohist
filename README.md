@@ -15,7 +15,7 @@
 Since CraftBukkit has modified a lot of underlying layers, some of the core mods are not available, we are working hard to improve.
 
 ### Getting Help
-   [**Home**](https://www.mohist.red/)
+   [**Home**](https://mohist.red/)
    [**bStats**](https://bstats.org/plugin/bukkit/Mohist)
    [**Discord**](https://discord.gg/JPF68ZM)
 
