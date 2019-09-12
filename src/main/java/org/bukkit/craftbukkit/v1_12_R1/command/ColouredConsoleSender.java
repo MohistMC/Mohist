@@ -53,6 +53,9 @@ public class ColouredConsoleSender extends CraftConsoleCommandSender {
         String result = pMsg + "§r";
         for (int length = colors.length, i = 0; i < length; ++i) {
             final ChatColor color = colors[i];
+            if (result.contains(" INFO]: ")) {
+                result = result.replace("INFO]:", "§aINFO§r]:");
+            }
             if (replacements.containsKey(color)) {
                 result = result.replaceAll("(?i)" + color.toString(), replacements.get(color));
             } else {
