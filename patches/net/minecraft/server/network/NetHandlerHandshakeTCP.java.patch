@@ -8,7 +8,7 @@
  import net.minecraft.network.EnumConnectionState;
  import net.minecraft.network.NetworkManager;
  import net.minecraft.network.handshake.INetHandlerHandshakeServer;
-@@ -8,42 +10,93 @@
+@@ -8,42 +10,114 @@
  import net.minecraft.server.MinecraftServer;
  import net.minecraft.util.text.ITextComponent;
  import net.minecraft.util.text.TextComponentTranslation;
@@ -35,24 +35,6 @@
 -    public void processHandshake(C00Handshake packetIn)
 -    {
 +    public void processHandshake(C00Handshake packetIn) {
-+        // Spigot Start
-+        if (org.spigotmc.SpigotConfig.bungee && packetIn.getRequestedState() == EnumConnectionState.LOGIN) {
-+            String[] split = packetIn.ip.split("\00");
-+            if (split.length == 3 || split.length == 4) {
-+                packetIn.ip = split[0];
-+                networkManager.socketAddress = new java.net.InetSocketAddress(split[1], ((java.net.InetSocketAddress) networkManager.getRemoteAddress()).getPort());
-+                networkManager.spoofedUUID = com.mojang.util.UUIDTypeAdapter.fromString( split[2] );
-+            } else {
-+                ITextComponent chatmessage = new TextComponentTranslation(Message.getString("message.bungeecord"));
-+                this.networkManager.sendPacket(new SPacketDisconnect(chatmessage));
-+                this.networkManager.closeChannel(chatmessage);
-+                return;
-+            }
-+            if (split.length == 4) {
-+                networkManager.spoofedProfile = gson.fromJson(split[3], com.mojang.authlib.properties.Property[].class);
-+            }
-+        }
-+        // Spigot End
          if (!net.minecraftforge.fml.common.FMLCommonHandler.instance().handleServerHandshake(packetIn, this.networkManager)) return;
  
 -        switch (packetIn.getRequestedState())
@@ -116,11 +98,50 @@
 -                {
 +                } else {
                      this.networkManager.setNetHandler(new NetHandlerLoginServer(this.server, this.networkManager));
++                    // Paper start - handshake event
++                    boolean proxyLogicEnabled = org.spigotmc.SpigotConfig.bungee;
++                    boolean handledByEvent = false;
++                    // Try and handle the handshake through the event
++                    if (com.destroystokyo.paper.event.player.PlayerHandshakeEvent.getHandlerList().getRegisteredListeners().length != 0) { // Hello? Can you hear me?
++                        com.destroystokyo.paper.event.player.PlayerHandshakeEvent event = new com.destroystokyo.paper.event.player.PlayerHandshakeEvent(packetIn.ip, !proxyLogicEnabled);
++                        if (event.callEvent()) {
++                            // If we've failed somehow, let the client know so and go no further.
++                            if (event.isFailed()) {
++                                ITextComponent itextcomponent1 = new TextComponentTranslation(event.getFailMessage());
++                                this.networkManager.sendPacket(new SPacketDisconnect(itextcomponent1));
++                                this.networkManager.closeChannel(itextcomponent1);
++                                return;
++                            }
++                            packetIn.ip = event.getServerHostname();
++                            this.networkManager.socketAddress = new java.net.InetSocketAddress(event.getSocketAddressHostname(), ((java.net.InetSocketAddress) this.networkManager.getRemoteAddress()).getPort());
++                            this.networkManager.spoofedUUID = event.getUniqueId();
++                            this.networkManager.spoofedProfile = gson.fromJson(event.getPropertiesJson(), com.mojang.authlib.properties.Property[].class);
++                            handledByEvent = true; // Hooray, we did it!
++                        }
++                    }
++                    // Don't try and handle default logic if it's been handled by the event.
++                    if (!handledByEvent && proxyLogicEnabled) {
++                        String[] split = packetIn.ip.split("\00");
++                        if (split.length == 3 || split.length == 4) {
++                            packetIn.ip = split[0];
++                            networkManager.socketAddress = new java.net.InetSocketAddress(split[1], ((java.net.InetSocketAddress) networkManager.getRemoteAddress()).getPort());
++                            networkManager.spoofedUUID = com.mojang.util.UUIDTypeAdapter.fromString(split[2]);
++                        } else {
++                            ITextComponent itextcomponent1 = new TextComponentTranslation(Message.getString("message.bungeecord"));
++                            this.networkManager.sendPacket(new SPacketDisconnect(itextcomponent1));
++                            this.networkManager.closeChannel(itextcomponent1);
++                            return;
++                        }
++                        if (split.length == 4) {
++                            networkManager.spoofedProfile = gson.fromJson(split[3], com.mojang.authlib.properties.Property[].class);
++                        }
++                    }
++                    // Spigot End
 +                    ((NetHandlerLoginServer) this.networkManager.getNetHandler()).hostname = packetIn.ip + ":" + packetIn.port; // CraftBukkit - set hostname
                  }
  
                  break;
-@@ -56,7 +109,6 @@
+@@ -56,7 +130,6 @@
          }
      }
  

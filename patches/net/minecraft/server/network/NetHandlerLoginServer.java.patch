@@ -8,15 +8,7 @@
  import com.mojang.authlib.GameProfile;
  import com.mojang.authlib.exceptions.AuthenticationUnavailableException;
  import io.netty.channel.ChannelFuture;
-@@ -16,6 +18,7 @@
- import java.util.concurrent.atomic.AtomicInteger;
- import javax.annotation.Nullable;
- import javax.crypto.SecretKey;
-+import net.minecraft.entity.player.EntityPlayer;
- import net.minecraft.entity.player.EntityPlayerMP;
- import net.minecraft.network.NetworkManager;
- import net.minecraft.network.login.INetHandlerLoginServer;
-@@ -29,10 +32,14 @@
+@@ -29,10 +31,14 @@
  import net.minecraft.util.CryptManager;
  import net.minecraft.util.ITickable;
  import net.minecraft.util.text.ITextComponent;
@@ -31,7 +23,7 @@
  
  public class NetHandlerLoginServer implements INetHandlerLoginServer, ITickable
  {
-@@ -42,13 +49,15 @@
+@@ -42,13 +48,15 @@
      private final byte[] verifyToken = new byte[4];
      private final MinecraftServer server;
      public final NetworkManager networkManager;
@@ -48,7 +40,7 @@
      public NetHandlerLoginServer(MinecraftServer serverIn, NetworkManager networkManagerIn)
      {
          this.server = serverIn;
-@@ -58,17 +67,21 @@
+@@ -58,17 +66,21 @@
  
      public void update()
      {
@@ -74,7 +66,7 @@
                  net.minecraftforge.fml.common.network.internal.FMLNetworkHandler.fmlServerHandshake(this.server.getPlayerList(), this.networkManager, this.player);
                  this.player = null;
              }
-@@ -80,6 +93,19 @@
+@@ -80,6 +92,19 @@
          }
      }
  
@@ -94,7 +86,7 @@
      public void disconnect(ITextComponent reason)
      {
          try
-@@ -94,22 +120,43 @@
+@@ -94,22 +119,43 @@
          }
      }
  
@@ -145,7 +137,7 @@
  
              if (this.server.getNetworkCompressionThreshold() >= 0 && !this.networkManager.isLocalChannel())
              {
-@@ -127,12 +174,12 @@
+@@ -127,12 +173,12 @@
  
              if (entityplayermp != null)
              {
@@ -161,7 +153,7 @@
              }
          }
      }
-@@ -149,23 +196,35 @@
+@@ -149,23 +195,35 @@
  
      public void processLoginStart(CPacketLoginStart packetIn)
      {
@@ -201,7 +193,7 @@
          PrivateKey privatekey = this.server.getKeyPair().getPrivate();
  
          if (!Arrays.equals(this.verifyToken, packetIn.getVerifyToken(privatekey)))
-@@ -175,7 +234,7 @@
+@@ -175,7 +233,7 @@
          else
          {
              this.secretKey = packetIn.getSecretKey(privatekey);
@@ -210,7 +202,7 @@
              this.networkManager.enableEncryption(this.secretKey);
              (new Thread(net.minecraftforge.fml.common.thread.SidedThreadGroups.SERVER, "User Authenticator #" + AUTHENTICATOR_THREAD_ID.incrementAndGet())
              {
-@@ -190,14 +249,18 @@
+@@ -190,14 +248,18 @@
  
                          if (NetHandlerLoginServer.this.loginGameProfile != null)
                          {
@@ -232,7 +224,7 @@
                          }
                          else
                          {
-@@ -211,13 +274,16 @@
+@@ -211,13 +273,16 @@
                          {
                              NetHandlerLoginServer.LOGGER.warn("Authentication servers are down but will let them in anyway!");
                              NetHandlerLoginServer.this.loginGameProfile = NetHandlerLoginServer.this.getOfflineProfile(gameprofile);
@@ -251,7 +243,7 @@
                      }
                  }
                  @Nullable
-@@ -230,10 +296,75 @@
+@@ -230,6 +295,55 @@
          }
      }
  
@@ -306,26 +298,4 @@
 +
      protected GameProfile getOfflineProfile(GameProfile original)
      {
--        UUID uuid = UUID.nameUUIDFromBytes(("OfflinePlayer:" + original.getName()).getBytes(StandardCharsets.UTF_8));
--        return new GameProfile(uuid, original.getName());
-+        GameProfile gameProfile;
-+
-+        UUID uuid;
-+        if (networkManager.spoofedUUID != null) {
-+            uuid = networkManager.spoofedUUID;
-+        } else {
-+            uuid = EntityPlayer.getOfflineUUID(original.getName());
-+        }
-+
-+        gameProfile = new GameProfile(uuid, original.getName());
-+
-+        if (networkManager.spoofedProfile != null) {
-+            for (com.mojang.authlib.properties.Property property : networkManager.spoofedProfile) {
-+                gameProfile.getProperties().put(property.getName(), property);
-+            }
-+        }
-+
-+        return gameProfile;
-     }
- 
-     static enum LoginState
+         UUID uuid = UUID.nameUUIDFromBytes(("OfflinePlayer:" + original.getName()).getBytes(StandardCharsets.UTF_8));
