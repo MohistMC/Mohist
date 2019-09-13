@@ -3,6 +3,7 @@ package org.bukkit.craftbukkit.v1_12_R1;
 import java.lang.ref.WeakReference;
 import java.util.Arrays;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.WorldServer;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.biome.BiomeProvider;
 import net.minecraft.world.chunk.NibbleArray;
@@ -24,7 +25,7 @@ public class CraftChunk implements Chunk {
         Arrays.fill(emptySkyLight, (byte) 0xFF);
     }
 
-    private final net.minecraft.world.World worldServer;
+    private final WorldServer worldServer;
     private final int x;
     private final int z;
     private WeakReference<net.minecraft.world.chunk.Chunk> weakChunk;
@@ -32,7 +33,7 @@ public class CraftChunk implements Chunk {
     public CraftChunk(net.minecraft.world.chunk.Chunk chunk) {
         this.weakChunk = new WeakReference<net.minecraft.world.chunk.Chunk>(chunk);
 
-        worldServer = getHandle().getWorld() instanceof net.minecraft.world.World ? getHandle().getWorld() : null; // Thermos - use world instead of worldserver for NatureOverhaul
+        worldServer = (WorldServer) getHandle().world;
         x = getHandle().x;
         z = getHandle().z;
     }

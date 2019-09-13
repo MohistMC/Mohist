@@ -1,10 +1,11 @@
 --- ../src-base/minecraft/net/minecraft/world/storage/MapStorage.java
 +++ ../src-work/minecraft/net/minecraft/world/storage/MapStorage.java
-@@ -14,12 +14,13 @@
+@@ -14,12 +14,14 @@
  import net.minecraft.nbt.NBTBase;
  import net.minecraft.nbt.NBTTagCompound;
  import net.minecraft.nbt.NBTTagShort;
 +import red.mohist.asyn.ThreadBoxFactory;
++import red.mohist.configuration.MohistConfig;
  
  public class MapStorage
  {
@@ -15,8 +16,33 @@
      private final Map<String, Short> idCounts = Maps.<String, Short>newHashMap();
  
      public MapStorage(ISaveHandler saveHandlerIn)
-@@ -107,23 +108,29 @@
+@@ -105,25 +107,54 @@
+ 
+     private void saveData(WorldSavedData data)
      {
++        if (!MohistConfig.instance.asyn_worldsave.getValue()) {
++            if (this.saveHandler != null) {
++                try {
++                    File file1 = this.saveHandler.getMapFileFromName(data.mapName);
++
++                    if (file1 != null) {
++                        NBTTagCompound nbttagcompound = new NBTTagCompound();
++                        nbttagcompound.setTag("data", data.writeToNBT(new NBTTagCompound()));
++                        FileOutputStream fileoutputstream = new FileOutputStream(file1);
++                        CompressedStreamTools.writeCompressed(nbttagcompound, fileoutputstream);
++                        fileoutputstream.close();
++                    }
++                } catch (Exception exception) {
++                    exception.printStackTrace();
++                }
++            }
++        } else {
++            saveData1(data);
++        }
++    }
++
++    private void saveData1(WorldSavedData data)
++    {
          if (this.saveHandler != null)
          {
 -            try

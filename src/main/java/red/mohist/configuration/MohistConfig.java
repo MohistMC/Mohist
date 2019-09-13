@@ -49,6 +49,7 @@ public class MohistConfig extends ConfigBase{
     public final BoolSetting asyn_aimove = new BoolSetting(this, "asyn.aimove", false, "Ai-Move");
     public final BoolSetting asyn_spawnerCreature = new BoolSetting(this, "asyn.spawnerCreature", false, "spawnerCreature");
     public final BoolSetting asyn_checkLight = new BoolSetting(this, "asyn.checkLight", false, "checkLight");
+    public final BoolSetting asyn_worldsave = new BoolSetting(this, "asyn.worldsave", false, "worldsave");
 
     public final StringSetting ANSI_ERROR_LEVEL = new StringSetting(this, "consolecolor.error-level", "[31;1m", "consolecolor.error-level");
     public final StringSetting ANSI_WARN_LEVEL = new StringSetting(this, "consolecolor.warn-level", "[33;1m", "consolecolor.warn-level");
