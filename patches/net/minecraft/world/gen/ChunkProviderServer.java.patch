@@ -92,7 +92,7 @@
          }
      }
  
-@@ -203,23 +215,20 @@
+@@ -203,23 +215,22 @@
          }
          catch (IOException ioexception)
          {
@@ -111,16 +111,19 @@
      {
          int i = 0;
 -        List<Chunk> list = Lists.newArrayList(this.id2ChunkMap.values());
- 
+-
 -        for (int j = 0; j < list.size(); ++j)
-+        for (Chunk chunk : this.id2ChunkMap.values())
++        Object[] chunks = this.id2ChunkMap.values().toArray();
++        for (int j = 0; j < chunks.length; ++j)
          {
 -            Chunk chunk = list.get(j);
 -
++            if (chunks[j] == null) { continue; }
++            Chunk chunk = (Chunk)chunks[j];
              if (all)
              {
                  this.saveChunkExtraData(chunk);
-@@ -266,11 +275,9 @@
+@@ -266,11 +277,9 @@
  
                      if (chunk != null && chunk.unloadQueued)
                      {
@@ -135,7 +138,7 @@
                          ++i;
                      }
                  }
-@@ -284,6 +291,39 @@
+@@ -284,6 +293,39 @@
          return false;
      }
  
