@@ -147,10 +147,10 @@ public class HighlightLevelConverter extends LogEventPatternConverter
     }
 
     public static String geterror() {
-        return MohistConfigUtil.getString("error-level:", 2, 8, 0, 6, "[31;1m");
+        return MohistConfigUtil.getString("error-level:", "[31;1m");
     }
 
     public static String getwarn() {
-        return MohistConfigUtil.getString("warn-level:", 2, 8, 0, 6, "[33;1m");
+        return MohistConfigUtil.getString("warn-level:", "[33;1m");
     }
 }
