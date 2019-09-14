@@ -18,6 +18,15 @@ public class Message {
     }
 
     public static String getLanguage(int key) {
-        return MohistConfigUtil.getString("lang:", "xx");
+        String locale = MohistConfigUtil.getString("lang:", "xx");
+        String language = locale.substring(0, 2);
+        String country = locale.substring(3, 5);
+        if (key == 1){
+            return language;
+        }
+        if (key == 2){
+            return country;
+        }
+        return "xx";
     }
 }
