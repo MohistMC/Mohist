@@ -1,11 +1,11 @@
 package red.mohist.forge;
 
-import red.mohist.configuration.MohistConfig;
+import red.mohist.configuration.MohistConfigUtil;
 
 public class ForgeVersion {
 
-    public static final int major = MohistConfig.instance.major.getValue();
-    public static final int minor = MohistConfig.instance.minor.getValue();
-    public static final int revision = MohistConfig.instance.revision.getValue();
-    public static final int build = MohistConfig.instance.build.getValue();
+    public static final int major = MohistConfigUtil.getInt("major:", "14");
+    public static final int minor = MohistConfigUtil.getInt("minor:", "23");
+    public static final int revision = MohistConfigUtil.getInt("revision:", "5");
+    public static final int build = MohistConfigUtil.getInt("build:", "2847");
 }
