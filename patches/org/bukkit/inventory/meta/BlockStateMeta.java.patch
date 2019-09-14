@@ -1,0 +1,16 @@
+--- ../src-base/minecraft/org/bukkit/inventory/meta/BlockStateMeta.java
++++ ../src-work/minecraft/org/bukkit/inventory/meta/BlockStateMeta.java
+@@ -1,4 +1,3 @@
+-
+ package org.bukkit.inventory.meta;
+ 
+ import org.bukkit.block.BlockState;
+@@ -8,7 +7,7 @@
+     /**
+      * Returns whether the item has a block state currently
+      * attached to it.
+-     * 
++     *
+      * @return whether a block state is already attached
+      */
+     boolean hasBlockState();

@@ -1,0 +1,22 @@
+--- ../src-base/minecraft/org/bukkit/event/entity/ProjectileHitEvent.java
++++ ../src-work/minecraft/org/bukkit/event/entity/ProjectileHitEvent.java
+@@ -31,6 +31,10 @@
+         this.hitBlock = hitBlock;
+     }
+ 
++    public static HandlerList getHandlerList() {
++        return handlers;
++    }
++
+     @Override
+     public Projectile getEntity() {
+         return (Projectile) entity;
+@@ -59,8 +63,4 @@
+         return handlers;
+     }
+ 
+-    public static HandlerList getHandlerList() {
+-        return handlers;
+-    }
+-
+ }

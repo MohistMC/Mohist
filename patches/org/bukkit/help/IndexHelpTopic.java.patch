@@ -1,0 +1,36 @@
+--- ../src-base/minecraft/org/bukkit/help/IndexHelpTopic.java
++++ ../src-work/minecraft/org/bukkit/help/IndexHelpTopic.java
+@@ -1,13 +1,12 @@
+ package org.bukkit.help;
+ 
++import java.util.Collection;
+ import org.bukkit.ChatColor;
+ import org.bukkit.command.CommandSender;
+ import org.bukkit.command.ConsoleCommandSender;
+ import org.bukkit.entity.Player;
+ import org.bukkit.util.ChatPaginator;
+ 
+-import java.util.Collection;
+-
+ /**
+  * This help topic generates a list of other help topics. This class is useful
+  * for adding your own index help topics. To enforce a particular order, use a
+@@ -101,12 +100,11 @@
+      * @return The rendered index line.
+      */
+     protected String buildIndexLine(CommandSender sender, HelpTopic topic) {
+-        StringBuilder line = new StringBuilder();
+-        line.append(ChatColor.GOLD);
+-        line.append(topic.getName());
+-        line.append(": ");
+-        line.append(ChatColor.WHITE);
+-        line.append(topic.getShortText());
+-        return line.toString();
++        String line = ChatColor.GOLD +
++                topic.getName() +
++                ": " +
++                ChatColor.WHITE +
++                topic.getShortText();
++        return line;
+     }
+ }

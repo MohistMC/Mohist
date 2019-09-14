@@ -1,0 +1,26 @@
+--- ../src-base/minecraft/org/bukkit/entity/Fireball.java
++++ ../src-work/minecraft/org/bukkit/entity/Fireball.java
+@@ -8,17 +8,17 @@
+ public interface Fireball extends Projectile, Explosive {
+ 
+     /**
+-     * Fireballs fly straight and do not take setVelocity(...) well.
++     * Retrieve the direction this fireball is heading toward
+      *
+-     * @param direction the direction this fireball is flying toward
++     * @return the direction
+      */
+-    public void setDirection(Vector direction);
++    public Vector getDirection();
+ 
+     /**
+-     * Retrieve the direction this fireball is heading toward
++     * Fireballs fly straight and do not take setVelocity(...) well.
+      *
+-     * @return the direction
++     * @param direction the direction this fireball is flying toward
+      */
+-    public Vector getDirection();
++    public void setDirection(Vector direction);
+ 
+ }

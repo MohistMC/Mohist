@@ -1,0 +1,22 @@
+--- ../src-base/minecraft/org/bukkit/event/block/BlockGrowEvent.java
++++ ../src-work/minecraft/org/bukkit/event/block/BlockGrowEvent.java
+@@ -29,6 +29,10 @@
+         this.newState = newState;
+     }
+ 
++    public static HandlerList getHandlerList() {
++        return handlers;
++    }
++
+     /**
+      * Gets the state of the block where it will form or spread to.
+      *
+@@ -49,8 +53,4 @@
+     public HandlerList getHandlers() {
+         return handlers;
+     }
+-
+-    public static HandlerList getHandlerList() {
+-        return handlers;
+-    }
+ }

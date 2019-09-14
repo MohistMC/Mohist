@@ -1,0 +1,22 @@
+--- ../src-base/minecraft/org/bukkit/event/vehicle/VehicleBlockCollisionEvent.java
++++ ../src-work/minecraft/org/bukkit/event/vehicle/VehicleBlockCollisionEvent.java
+@@ -16,6 +16,10 @@
+         this.block = block;
+     }
+ 
++    public static HandlerList getHandlerList() {
++        return handlers;
++    }
++
+     /**
+      * Gets the block the vehicle collided with
+      *
+@@ -29,8 +33,4 @@
+     public HandlerList getHandlers() {
+         return handlers;
+     }
+-
+-    public static HandlerList getHandlerList() {
+-        return handlers;
+-    }
+ }

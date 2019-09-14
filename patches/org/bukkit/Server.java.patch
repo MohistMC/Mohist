@@ -1,0 +1,299 @@
+--- ../src-base/minecraft/org/bukkit/Server.java
++++ ../src-work/minecraft/org/bukkit/Server.java
+@@ -1,5 +1,6 @@
+ package org.bukkit;
+ 
++import com.google.common.collect.ImmutableList;
+ import java.awt.image.BufferedImage;
+ import java.io.File;
+ import java.io.Serializable;
+@@ -11,13 +12,16 @@
+ import java.util.Set;
+ import java.util.UUID;
+ import java.util.logging.Logger;
+-
++import javax.annotation.Nonnull;
++import javax.annotation.Nullable;
+ import org.bukkit.Warning.WarningState;
++import org.bukkit.advancement.Advancement;
+ import org.bukkit.boss.BarColor;
+ import org.bukkit.boss.BarFlag;
+ import org.bukkit.boss.BarStyle;
+ import org.bukkit.boss.BossBar;
+ import org.bukkit.command.CommandException;
++import org.bukkit.command.CommandMap;
+ import org.bukkit.command.CommandSender;
+ import org.bukkit.command.ConsoleCommandSender;
+ import org.bukkit.command.PluginCommand;
+@@ -25,12 +29,15 @@
+ import org.bukkit.entity.Player;
+ import org.bukkit.event.inventory.InventoryType;
+ import org.bukkit.event.server.ServerListPingEvent;
++import org.bukkit.generator.ChunkGenerator;
+ import org.bukkit.help.HelpMap;
+ import org.bukkit.inventory.Inventory;
+ import org.bukkit.inventory.InventoryHolder;
++import org.bukkit.inventory.ItemFactory;
+ import org.bukkit.inventory.ItemStack;
+ import org.bukkit.inventory.Merchant;
+ import org.bukkit.inventory.Recipe;
++import org.bukkit.inventory.meta.ItemMeta;
+ import org.bukkit.map.MapView;
+ import org.bukkit.permissions.Permissible;
+ import org.bukkit.plugin.PluginManager;
+@@ -41,13 +48,6 @@
+ import org.bukkit.scoreboard.ScoreboardManager;
+ import org.bukkit.util.CachedServerIcon;
+ 
+-import com.google.common.collect.ImmutableList;
+-import org.bukkit.advancement.Advancement;
+-import org.bukkit.generator.ChunkGenerator;
+-
+-import org.bukkit.inventory.ItemFactory;
+-import org.bukkit.inventory.meta.ItemMeta;
+-
+ /**
+  * Represents a server implementation.
+  */
+@@ -90,6 +90,8 @@
+      */
+     public String getBukkitVersion();
+ 
++    public Player[] _INVALID_getOnlinePlayers();
++
+     /**
+      * Gets a view of all currently logged in players. This {@linkplain
+      * Collections#unmodifiableCollection(Collection) view} is a reused
+@@ -108,7 +110,7 @@
+      * affect the collection are fully supported. The effects following
+      * (non-exhaustive) {@link Entity#teleport(Location) teleportation},
+      * {@link Player#setHealth(double) death}, and {@link Player#kickPlayer(
+-     * String) kicking} are undefined. Any use of this collection from
++     *String) kicking} are undefined. Any use of this collection from
+      * asynchronous threads is unsafe.
+      * <p>
+      * For safe consequential iteration or mimicking the old array behavior,
+@@ -306,7 +308,7 @@
+      * @param name the name to look up
+      * @return a player if one was found, null otherwise
+      */
+-    @Deprecated
++
+     public Player getPlayer(String name);
+ 
+     /**
+@@ -317,7 +319,7 @@
+      * @param name Exact name of the player to retrieve
+      * @return a player object if one was found, null otherwise
+      */
+-    @Deprecated
++
+     public Player getPlayerExact(String name);
+ 
+     /**
+@@ -332,7 +334,7 @@
+      * @param name the (partial) name to match
+      * @return list of all possible players
+      */
+-    @Deprecated
++
+     public List<Player> matchPlayer(String name);
+ 
+     /**
+@@ -343,6 +345,9 @@
+      */
+     public Player getPlayer(UUID id);
+ 
++    @Nullable
++    public UUID getPlayerUniqueId(String playerName);
++
+     /**
+      * Gets the plugin manager for interfacing with plugins.
+      *
+@@ -424,7 +429,7 @@
+      * @return a map view if it exists, or null otherwise
+      * @deprecated Magic value
+      */
+-    @Deprecated
++
+     public MapView getMap(short id);
+ 
+     /**
+@@ -470,7 +475,7 @@
+      * Dispatches a command on this server, and executes it if found.
+      *
+      * @param sender the apparent sender of the command
+-     * @param commandLine the command + arguments. Example: <code>test abc
++     * @param commandLine the command arguments. Example: <code>test abc
+      *     123</code>
+      * @return returns false if no target is found
+      * @throws CommandException thrown when the executor for the given command
+@@ -587,7 +592,7 @@
+      * @return an offline player
+      * @see #getOfflinePlayer(java.util.UUID)
+      */
+-    @Deprecated
++
+     public OfflinePlayer getOfflinePlayer(String name);
+ 
+     /**
+@@ -881,6 +886,13 @@
+     CachedServerIcon loadServerIcon(BufferedImage image) throws IllegalArgumentException, Exception;
+ 
+     /**
++     * Gets the idle kick timeout.
++     *
++     * @return the idle timeout in minutes
++     */
++    public int getIdleTimeout();
++
++    /**
+      * Set the idle kick timeout. Any players idle for the specified amount of
+      * time will be automatically kicked.
+      * <p>
+@@ -891,20 +903,13 @@
+     public void setIdleTimeout(int threshold);
+ 
+     /**
+-     * Gets the idle kick timeout.
+-     *
+-     * @return the idle timeout in minutes
+-     */
+-    public int getIdleTimeout();
+-
+-    /**
+      * Create a ChunkData for use in a generator.
+-     * 
++     *
+      * See {@link ChunkGenerator#generateChunkData(org.bukkit.World, java.util.Random, int, int, org.bukkit.generator.ChunkGenerator.BiomeGrid)}
+-     * 
++     *
+      * @param world the world to create the ChunkData for
+      * @return a new ChunkData for the world
+-     * 
++     *
+      */
+     public ChunkGenerator.ChunkData createChunkData(World world);
+ 
+@@ -928,7 +933,24 @@
+      */
+     Entity getEntity(UUID uuid);
+ 
++    // Paper start
++
+     /**
++     * Gets the current server TPS
++     *
++     * @return current server TPS (1m, 5m, 15m in Paper-Server)
++     */
++    public double[] getTPS();
++
++    /**
++     * Gets the active {@link CommandMap}
++     *
++     * @return the active command map
++     */
++    CommandMap getCommandMap();
++    // Paper end
++
++    /**
+      * Get the advancement specified by this key.
+      *
+      * @param key unique advancement key
+@@ -948,6 +970,95 @@
+      * @see UnsafeValues
+      * @return the unsafe values instance
+      */
+-    @Deprecated
++
+     UnsafeValues getUnsafe();
++
++    Spigot spigot();
++
++    /**
++     * Checks if player names should be suggested when a command returns {@code null} as
++     * their tab completion result.
++     *
++     * @return true if player names should be suggested
++     */
++    boolean suggestPlayerNamesWhenNullTabCompletions();
++    // Spigot end
++
++    // Paper start - allow preventing player name suggestions by default
++
++    /**
++     * Creates a PlayerProfile for the specified uuid, with name as null
++     * @param uuid UUID to create profile for
++     * @return A PlayerProfile object
++     */
++    com.destroystokyo.paper.profile.PlayerProfile createProfile(@Nonnull UUID uuid);
++
++    /**
++     * Creates a PlayerProfile for the specified name, with UUID as null
++     * @param name Name to create profile for
++     * @return A PlayerProfile object
++     */
++    com.destroystokyo.paper.profile.PlayerProfile createProfile(@Nonnull String name);
++
++    /**
++     * Creates a PlayerProfile for the specified name/uuid
++     *
++     * Both UUID and Name can not be null at same time. One must be supplied.
++     *
++     * @param uuid UUID to create profile for
++     * @param name Name to create profile for
++     * @return A PlayerProfile object
++     */
++    com.destroystokyo.paper.profile.PlayerProfile createProfile(@Nullable UUID uuid, @Nullable String name);
++
++    // Spigot start
++    public class Spigot {
++
++        @Deprecated
++        public org.bukkit.configuration.file.YamlConfiguration getConfig()
++        {
++            throw new UnsupportedOperationException( "Not supported yet." );
++        }
++
++        public org.bukkit.configuration.file.YamlConfiguration getBukkitConfig()
++        {
++            throw new UnsupportedOperationException( "Not supported yet." );
++        }
++
++        public org.bukkit.configuration.file.YamlConfiguration getSpigotConfig()
++        {
++            throw new UnsupportedOperationException("Not supported yet.");
++        }
++
++        public org.bukkit.configuration.file.YamlConfiguration getPaperConfig()
++        {
++            throw new UnsupportedOperationException("Not supported yet.");
++        }
++
++        /**
++         * Sends the component to the player
++         *
++         * @param component the components to send
++         */
++        public void broadcast(net.md_5.bungee.api.chat.BaseComponent component) {
++            throw new UnsupportedOperationException("Not supported yet.");
++        }
++
++        /**
++         * Sends an array of components as a single message to the player
++         *
++         * @param components the components to send
++         */
++        public void broadcast(net.md_5.bungee.api.chat.BaseComponent... components) {
++            throw new UnsupportedOperationException("Not supported yet.");
++        }
++
++        /**
++         * Restart the server. If the server administrator has not configured restarting, the server will stop.
++         */
++        public void restart() {
++            throw new UnsupportedOperationException("Not supported yet.");
++        }
++    }
++    // Paper end
+ }

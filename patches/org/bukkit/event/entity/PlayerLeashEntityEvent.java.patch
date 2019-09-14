@@ -1,0 +1,40 @@
+--- ../src-base/minecraft/org/bukkit/event/entity/PlayerLeashEntityEvent.java
++++ ../src-work/minecraft/org/bukkit/event/entity/PlayerLeashEntityEvent.java
+@@ -13,8 +13,8 @@
+     private static final HandlerList handlers = new HandlerList();
+     private final Entity leashHolder;
+     private final Entity entity;
+-    private boolean cancelled = false;
+     private final Player player;
++    private boolean cancelled = false;
+ 
+     public PlayerLeashEntityEvent(Entity what, Entity leashHolder, Player leasher) {
+         this.leashHolder = leashHolder;
+@@ -22,6 +22,10 @@
+         this.player = leasher;
+     }
+ 
++    public static HandlerList getHandlerList() {
++        return handlers;
++    }
++
+     /**
+      * Returns the entity that is holding the leash.
+      *
+@@ -54,15 +58,11 @@
+         return handlers;
+     }
+ 
+-    public static HandlerList getHandlerList() {
+-        return handlers;
+-    }
+-
+     public boolean isCancelled() {
+         return this.cancelled;
+     }
+ 
+     public void setCancelled(boolean cancel) {
+-        this.cancelled  = cancel;
++        this.cancelled = cancel;
+     }
+ }

@@ -1,0 +1,127 @@
+--- ../src-base/minecraft/org/bukkit/entity/EntityType.java
++++ ../src-work/minecraft/org/bukkit/entity/EntityType.java
+@@ -2,17 +2,17 @@
+ 
+ import java.util.HashMap;
+ import java.util.Map;
+-
++import net.minecraftforge.cauldron.entity.CraftCustomEntity;
++import org.bukkit.Location;
++import org.bukkit.World;
+ import org.bukkit.entity.minecart.CommandMinecart;
+-import org.bukkit.entity.minecart.HopperMinecart;
+-import org.bukkit.entity.minecart.SpawnerMinecart;
+-import org.bukkit.entity.minecart.RideableMinecart;
+ import org.bukkit.entity.minecart.ExplosiveMinecart;
++import org.bukkit.entity.minecart.HopperMinecart;
+ import org.bukkit.entity.minecart.PoweredMinecart;
++import org.bukkit.entity.minecart.RideableMinecart;
++import org.bukkit.entity.minecart.SpawnerMinecart;
+ import org.bukkit.entity.minecart.StorageMinecart;
+ import org.bukkit.inventory.ItemStack;
+-import org.bukkit.Location;
+-import org.bukkit.World;
+ import org.bukkit.potion.PotionEffectType;
+ 
+ public enum EntityType {
+@@ -265,13 +265,9 @@
+     /**
+      * An unknown entity without an Entity Class
+      */
+-    UNKNOWN(null, null, -1, false);
++    UNKNOWN(null, null, -1, false),
++    FORGE_MOD("forge_mod", CraftCustomEntity.class, -1, false);
+ 
+-    private String name;
+-    private Class<? extends Entity> clazz;
+-    private short typeId;
+-    private boolean independent, living;
+-
+     private static final Map<String, EntityType> NAME_MAP = new HashMap<String, EntityType>();
+     private static final Map<Short, EntityType> ID_MAP = new HashMap<Short, EntityType>();
+ 
+@@ -286,6 +282,11 @@
+         }
+     }
+ 
++    private String name;
++    private Class<? extends Entity> clazz;
++    private short typeId;
++    private boolean independent, living;
++
+     private EntityType(String name, Class<? extends Entity> clazz, int typeId) {
+         this(name, clazz, typeId, true);
+     }
+@@ -302,35 +303,10 @@
+ 
+     /**
+      *
+-     * @return the entity type's name
+-     * @deprecated Magic value
+-     */
+-    @Deprecated
+-    public String getName() {
+-        return name;
+-    }
+-
+-    public Class<? extends Entity> getEntityClass() {
+-        return clazz;
+-    }
+-
+-    /**
+-     *
+-     * @return the raw type id 
+-     * @deprecated Magic value
+-     */
+-    @Deprecated
+-    public short getTypeId() {
+-        return typeId;
+-    }
+-
+-    /**
+-     *
+      * @param name the entity type's name
+      * @return the matching entity type or null
+      * @deprecated Magic value
+      */
+-    @Deprecated
+     public static EntityType fromName(String name) {
+         if (name == null) {
+             return null;
+@@ -344,7 +320,6 @@
+      * @return the matching entity type or null
+      * @deprecated Magic value
+      */
+-    @Deprecated
+     public static EntityType fromId(int id) {
+         if (id > Short.MAX_VALUE) {
+             return null;
+@@ -353,6 +328,28 @@
+     }
+ 
+     /**
++     *
++     * @return the entity type's name
++     * @deprecated Magic value
++     */
++    public String getName() {
++        return name;
++    }
++
++    public Class<? extends Entity> getEntityClass() {
++        return clazz;
++    }
++
++    /**
++     *
++     * @return the raw type id
++     * @deprecated Magic value
++     */
++    public short getTypeId() {
++        return typeId;
++    }
++
++    /**
+      * Some entities cannot be spawned using {@link
+      * World#spawnEntity(Location, EntityType)} or {@link
+      * World#spawn(Location, Class)}, usually because they require additional

@@ -1,0 +1,41 @@
+--- ../src-base/minecraft/org/bukkit/inventory/FurnaceInventory.java
++++ ../src-work/minecraft/org/bukkit/inventory/FurnaceInventory.java
+@@ -15,18 +15,18 @@
+     ItemStack getResult();
+ 
+     /**
+-     * Get the current fuel.
++     * Set the current item in the result slot.
+      *
+-     * @return The item
++     * @param stack The item
+      */
+-    ItemStack getFuel();
++    void setResult(ItemStack stack);
+ 
+     /**
+-     * Get the item currently smelting.
++     * Get the current fuel.
+      *
+      * @return The item
+      */
+-    ItemStack getSmelting();
++    ItemStack getFuel();
+ 
+     /**
+      * Set the current fuel.
+@@ -36,11 +36,11 @@
+     void setFuel(ItemStack stack);
+ 
+     /**
+-     * Set the current item in the result slot.
++     * Get the item currently smelting.
+      *
+-     * @param stack The item
++     * @return The item
+      */
+-    void setResult(ItemStack stack);
++    ItemStack getSmelting();
+ 
+     /**
+      * Set the item currently smelting.

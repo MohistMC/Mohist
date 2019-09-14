@@ -1,0 +1,66 @@
+--- ../src-base/minecraft/org/bukkit/scoreboard/Team.java
++++ ../src-work/minecraft/org/bukkit/scoreboard/Team.java
+@@ -1,7 +1,6 @@
+ package org.bukkit.scoreboard;
+ 
+ import java.util.Set;
+-
+ import org.bukkit.ChatColor;
+ import org.bukkit.OfflinePlayer;
+ import org.bukkit.potion.PotionEffectType;
+@@ -140,7 +139,7 @@
+      * @throws IllegalArgumentException if this team has been unregistered
+      * @deprecated see {@link #getOption(org.bukkit.scoreboard.Team.Option)}
+      */
+-    @Deprecated
++
+     NameTagVisibility getNameTagVisibility() throws IllegalArgumentException;
+ 
+     /**
+@@ -151,7 +150,7 @@
+      * @deprecated see
+      * {@link #setOption(org.bukkit.scoreboard.Team.Option, org.bukkit.scoreboard.Team.OptionStatus)}
+      */
+-    @Deprecated
++
+     void setNameTagVisibility(NameTagVisibility visibility) throws IllegalArgumentException;
+ 
+     /**
+@@ -162,7 +161,7 @@
+      * @deprecated Teams can contain entries that aren't players
+      * @see #getEntries()
+      */
+-    @Deprecated
++
+     Set<OfflinePlayer> getPlayers() throws IllegalStateException;
+ 
+     /**
+@@ -200,7 +199,7 @@
+      * @deprecated Teams can contain entries that aren't players
+      * @see #addEntry(String)
+      */
+-    @Deprecated
++
+     void addPlayer(OfflinePlayer player) throws IllegalStateException, IllegalArgumentException;
+ 
+     /**
+@@ -224,7 +223,7 @@
+      * @deprecated Teams can contain entries that aren't players
+      * @see #removeEntry(String)
+      */
+-    @Deprecated
++
+     boolean removePlayer(OfflinePlayer player) throws IllegalStateException, IllegalArgumentException;
+ 
+     /**
+@@ -254,8 +253,9 @@
+      * @deprecated Teams can contain entries that aren't players
+      * @see #hasEntry(String)
+      */
+-    @Deprecated
++
+     boolean hasPlayer(OfflinePlayer player) throws IllegalArgumentException, IllegalStateException;
++
+     /**
+      * Checks to see if the specified entry is a member of this team.
+      *

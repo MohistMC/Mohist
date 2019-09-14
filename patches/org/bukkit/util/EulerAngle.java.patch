@@ -1,0 +1,77 @@
+--- ../src-base/minecraft/org/bukkit/util/EulerAngle.java
++++ ../src-work/minecraft/org/bukkit/util/EulerAngle.java
+@@ -39,43 +39,43 @@
+     }
+ 
+     /**
+-     * Returns the angle on the y axis in radians
++     * Return a EulerAngle which is the result of changing
++     * the x axis to the passed angle
+      *
+-     * @return the angle in radians
++     * @param x the angle in radians
++     * @return the resultant EulerAngle
+      */
+-    public double getY() {
+-        return y;
++    public EulerAngle setX(double x) {
++        return new EulerAngle(x, y, z);
+     }
+ 
+     /**
+-     * Returns the angle on the z axis in radians
++     * Returns the angle on the y axis in radians
+      *
+      * @return the angle in radians
+      */
+-    public double getZ() {
+-        return z;
++    public double getY() {
++        return y;
+     }
+ 
+     /**
+      * Return a EulerAngle which is the result of changing
+-     * the x axis to the passed angle
++     * the y axis to the passed angle
+      *
+-     * @param x the angle in radians
++     * @param y the angle in radians
+      * @return the resultant EulerAngle
+      */
+-    public EulerAngle setX(double x) {
++    public EulerAngle setY(double y) {
+         return new EulerAngle(x, y, z);
+     }
+ 
+     /**
+-     * Return a EulerAngle which is the result of changing
+-     * the y axis to the passed angle
++     * Returns the angle on the z axis in radians
+      *
+-     * @param y the angle in radians
+-     * @return the resultant EulerAngle
++     * @return the angle in radians
+      */
+-    public EulerAngle setY(double y) {
+-        return new EulerAngle(x, y, z);
++    public double getZ() {
++        return z;
+     }
+ 
+     /**
+@@ -121,8 +121,12 @@
+ 
+     @Override
+     public boolean equals(Object o) {
+-        if (this == o) return true;
+-        if (o == null || getClass() != o.getClass()) return false;
++        if (this == o) {
++            return true;
++        }
++        if (o == null || getClass() != o.getClass()) {
++            return false;
++        }
+ 
+         EulerAngle that = (EulerAngle) o;
+ 

@@ -1,0 +1,22 @@
+--- ../src-base/minecraft/org/bukkit/event/entity/EntityBreedEvent.java
++++ ../src-work/minecraft/org/bukkit/event/entity/EntityBreedEvent.java
+@@ -37,6 +37,10 @@
+         setExperience(experience);
+     }
+ 
++    public static HandlerList getHandlerList() {
++        return handlers;
++    }
++
+     @Override
+     public LivingEntity getEntity() {
+         return (LivingEntity) entity;
+@@ -112,8 +116,4 @@
+     public HandlerList getHandlers() {
+         return handlers;
+     }
+-
+-    public static HandlerList getHandlerList() {
+-        return handlers;
+-    }
+ }

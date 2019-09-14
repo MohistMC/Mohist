@@ -1,0 +1,22 @@
+--- ../src-base/minecraft/org/bukkit/event/player/PlayerInteractEntityEvent.java
++++ ../src-work/minecraft/org/bukkit/event/player/PlayerInteractEntityEvent.java
+@@ -25,6 +25,10 @@
+         this.hand = hand;
+     }
+ 
++    public static HandlerList getHandlerList() {
++        return handlers;
++    }
++
+     public boolean isCancelled() {
+         return cancelled;
+     }
+@@ -55,8 +59,4 @@
+     public HandlerList getHandlers() {
+         return handlers;
+     }
+-
+-    public static HandlerList getHandlerList() {
+-        return handlers;
+-    }
+ }

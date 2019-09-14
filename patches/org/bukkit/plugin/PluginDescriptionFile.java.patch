@@ -1,0 +1,195 @@
+--- ../src-base/minecraft/org/bukkit/plugin/PluginDescriptionFile.java
++++ ../src-work/minecraft/org/bukkit/plugin/PluginDescriptionFile.java
+@@ -1,5 +1,8 @@
+ package org.bukkit.plugin;
+ 
++import com.google.common.collect.ImmutableList;
++import com.google.common.collect.ImmutableMap;
++import com.google.common.collect.ImmutableSet;
+ import java.io.InputStream;
+ import java.io.Reader;
+ import java.io.Writer;
+@@ -9,23 +12,18 @@
+ import java.util.Map;
+ import java.util.Set;
+ import java.util.regex.Pattern;
+-
+ import org.bukkit.command.CommandExecutor;
+ import org.bukkit.command.PluginCommand;
+-import org.bukkit.plugin.java.JavaPlugin;
+ import org.bukkit.permissions.Permissible;
+ import org.bukkit.permissions.Permission;
+ import org.bukkit.permissions.PermissionDefault;
++import org.bukkit.plugin.java.JavaPlugin;
+ import org.yaml.snakeyaml.Yaml;
+ import org.yaml.snakeyaml.constructor.AbstractConstruct;
+ import org.yaml.snakeyaml.constructor.SafeConstructor;
+ import org.yaml.snakeyaml.nodes.Node;
+ import org.yaml.snakeyaml.nodes.Tag;
+ 
+-import com.google.common.collect.ImmutableList;
+-import com.google.common.collect.ImmutableMap;
+-import com.google.common.collect.ImmutableSet;
+-
+ /**
+  * This type is the runtime-container for the information in the plugin.yml.
+  * All plugins must have a respective plugin.yml. For plugins written in java
+@@ -172,39 +170,34 @@
+  */
+ public final class PluginDescriptionFile {
+     private static final Pattern VALID_NAME = Pattern.compile("^[A-Za-z0-9 _.-]+$");
+-    private static final ThreadLocal<Yaml> YAML = new ThreadLocal<Yaml>() {
+-        @Override
+-        protected Yaml initialValue() {
+-            return new Yaml(new SafeConstructor() {
+-                {
+-                    yamlConstructors.put(null, new AbstractConstruct() {
++    private static final ThreadLocal<Yaml> YAML = ThreadLocal.withInitial(() -> new Yaml(new SafeConstructor() {
++        {
++            yamlConstructors.put(null, new AbstractConstruct() {
++                @Override
++                public Object construct(final Node node) {
++                    if (!node.getTag().startsWith("!@")) {
++                        // Unknown tag - will fail
++                        return SafeConstructor.undefinedConstructor.construct(node);
++                    }
++                    // Unknown awareness - provide a graceful substitution
++                    return new PluginAwareness() {
+                         @Override
+-                        public Object construct(final Node node) {
+-                            if (!node.getTag().startsWith("!@")) {
+-                                // Unknown tag - will fail
+-                                return SafeConstructor.undefinedConstructor.construct(node);
+-                            }
+-                            // Unknown awareness - provide a graceful substitution
+-                            return new PluginAwareness() {
+-                                @Override
+-                                public String toString() {
+-                                    return node.toString();
+-                                }
+-                            };
++                        public String toString() {
++                            return node.toString();
+                         }
+-                    });
+-                    for (final PluginAwareness.Flags flag : PluginAwareness.Flags.values()) {
+-                        yamlConstructors.put(new Tag("!@" + flag.name()), new AbstractConstruct() {
+-                            @Override
+-                            public PluginAwareness.Flags construct(final Node node) {
+-                                return flag;
+-                            }
+-                        });
+-                    }
++                    };
+                 }
+             });
++            for (final PluginAwareness.Flags flag : PluginAwareness.Flags.values()) {
++                yamlConstructors.put(new Tag("!@" + flag.name()), new AbstractConstruct() {
++                    @Override
++                    public PluginAwareness.Flags construct(final Node node) {
++                        return flag;
++                    }
++                });
++            }
+         }
+-    };
++    }));
+     String rawName = null;
+     private String name = null;
+     private String main = null;
+@@ -257,6 +250,25 @@
+         main = mainClass;
+     }
+ 
++    private static List<String> makePluginNameList(final Map<?, ?> map, final String key) throws InvalidDescriptionException {
++        final Object value = map.get(key);
++        if (value == null) {
++            return ImmutableList.of();
++        }
++
++        final ImmutableList.Builder<String> builder = ImmutableList.<String>builder();
++        try {
++            for (final Object entry : (Iterable<?>) value) {
++                builder.add(entry.toString().replace(' ', '_'));
++            }
++        } catch (ClassCastException ex) {
++            throw new InvalidDescriptionException(ex, key + " is of wrong type");
++        } catch (NullPointerException ex) {
++            throw new InvalidDescriptionException(ex, "invalid " + key + " format");
++        }
++        return builder.build();
++    }
++
+     /**
+      * Gives the name of the plugin. This name is a unique identifier for
+      * plugins.
+@@ -606,7 +618,7 @@
+      *     <td>String</td>
+      *     <td>This message is displayed to a player when the {@link
+      *         PluginCommand#setExecutor(CommandExecutor)} {@linkplain
+-     *         CommandExecutor#onCommand(CommandSender,Command,String,String[])
++     *         CommandExecutor#onCommand(CommandSender, Command, String, String[])
+      *         returns false}. &lt;command&gt; is a macro that is replaced
+      *         the command issued.</td>
+      *     <td><blockquote><pre>usage: Syntax error! Perhaps you meant /&lt;command&gt; PlayerName?</pre></blockquote>
+@@ -760,7 +772,7 @@
+      *</pre></blockquote>
+      * Another example, with nested definitions, can be found <a
+      * href="doc-files/permissions-example_plugin.yml">here</a>.
+-     * 
++     *
+      * @return the permissions this plugin will register
+      */
+     public List<Permission> getPermissions() {
+@@ -803,7 +815,7 @@
+      * not included in the API. Any unrecognized
+      * awareness (one unsupported or in a future version) will cause a dummy
+      * object to be created instead of failing.
+-     * 
++     *
+      * <ul>
+      * <li>Currently only supports the enumerated values in {@link
+      *     PluginAwareness.Flags}.
+@@ -850,7 +862,6 @@
+      * @return unused
+      * @deprecated unused
+      */
+-    @Deprecated
+     public String getClassLoaderOf() {
+         return classLoaderOf;
+     }
+@@ -1006,25 +1017,6 @@
+         }
+     }
+ 
+-    private static List<String> makePluginNameList(final Map<?, ?> map, final String key) throws InvalidDescriptionException {
+-        final Object value = map.get(key);
+-        if (value == null) {
+-            return ImmutableList.of();
+-        }
+-
+-        final ImmutableList.Builder<String> builder = ImmutableList.<String>builder();
+-        try {
+-            for (final Object entry : (Iterable<?>) value) {
+-                builder.add(entry.toString().replace(' ', '_'));
+-            }
+-        } catch (ClassCastException ex) {
+-            throw new InvalidDescriptionException(ex, key + " is of wrong type");
+-        } catch (NullPointerException ex) {
+-            throw new InvalidDescriptionException(ex, "invalid " + key + " format");
+-        }
+-        return builder.build();
+-    }
+-
+     private Map<String, Object> saveMap() {
+         Map<String, Object> map = new HashMap<String, Object>();
+ 
+@@ -1078,7 +1070,7 @@
+      * @return internal use
+      * @deprecated Internal use
+      */
+-    @Deprecated
++
+     public String getRawName() {
+         return rawName;
+     }

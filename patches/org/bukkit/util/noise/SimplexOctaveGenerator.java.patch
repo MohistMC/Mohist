@@ -1,0 +1,34 @@
+--- ../src-base/minecraft/org/bukkit/util/noise/SimplexOctaveGenerator.java
++++ ../src-work/minecraft/org/bukkit/util/noise/SimplexOctaveGenerator.java
+@@ -39,6 +39,16 @@
+         super(createOctaves(rand, octaves));
+     }
+ 
++    private static NoiseGenerator[] createOctaves(Random rand, int octaves) {
++        NoiseGenerator[] result = new NoiseGenerator[octaves];
++
++        for (int i = 0; i < octaves; i++) {
++            result[i] = new SimplexNoiseGenerator(rand);
++        }
++
++        return result;
++    }
++
+     @Override
+     public void setScale(double scale) {
+         super.setScale(scale);
+@@ -116,14 +126,4 @@
+ 
+         return result;
+     }
+-
+-    private static NoiseGenerator[] createOctaves(Random rand, int octaves) {
+-        NoiseGenerator[] result = new NoiseGenerator[octaves];
+-
+-        for (int i = 0; i < octaves; i++) {
+-            result[i] = new SimplexNoiseGenerator(rand);
+-        }
+-
+-        return result;
+-    }
+ }

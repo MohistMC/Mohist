@@ -1,0 +1,18 @@
+--- ../src-base/minecraft/org/bukkit/event/world/WorldInitEvent.java
++++ ../src-work/minecraft/org/bukkit/event/world/WorldInitEvent.java
+@@ -13,12 +13,12 @@
+         super(world);
+     }
+ 
+-    @Override
+-    public HandlerList getHandlers() {
++    public static HandlerList getHandlerList() {
+         return handlers;
+     }
+ 
+-    public static HandlerList getHandlerList() {
++    @Override
++    public HandlerList getHandlers() {
+         return handlers;
+     }
+ }

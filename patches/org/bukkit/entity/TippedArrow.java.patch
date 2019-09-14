@@ -1,0 +1,35 @@
+--- ../src-base/minecraft/org/bukkit/entity/TippedArrow.java
++++ ../src-work/minecraft/org/bukkit/entity/TippedArrow.java
+@@ -1,7 +1,6 @@
+ package org.bukkit.entity;
+ 
+ import java.util.List;
+-
+ import org.bukkit.Color;
+ import org.bukkit.potion.PotionData;
+ import org.bukkit.potion.PotionEffect;
+@@ -10,18 +9,18 @@
+ public interface TippedArrow extends Arrow {
+ 
+     /**
+-     * Sets the underlying potion data
++     * Returns the potion data about the base potion
+      *
+-     * @param data PotionData to set the base potion state to
++     * @return a PotionData object
+      */
+-    void setBasePotionData(PotionData data);
++    PotionData getBasePotionData();
+ 
+     /**
+-     * Returns the potion data about the base potion
++     * Sets the underlying potion data
+      *
+-     * @return a PotionData object
++     * @param data PotionData to set the base potion state to
+      */
+-    PotionData getBasePotionData();
++    void setBasePotionData(PotionData data);
+ 
+     /**
+      * Gets the color of this arrow.

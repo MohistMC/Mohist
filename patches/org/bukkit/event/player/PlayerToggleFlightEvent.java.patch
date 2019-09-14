@@ -1,0 +1,22 @@
+--- ../src-base/minecraft/org/bukkit/event/player/PlayerToggleFlightEvent.java
++++ ../src-work/minecraft/org/bukkit/event/player/PlayerToggleFlightEvent.java
+@@ -17,6 +17,10 @@
+         this.isFlying = isFlying;
+     }
+ 
++    public static HandlerList getHandlerList() {
++        return handlers;
++    }
++
+     /**
+      * Returns whether the player is trying to start or stop flying.
+      *
+@@ -38,8 +42,4 @@
+     public HandlerList getHandlers() {
+         return handlers;
+     }
+-
+-    public static HandlerList getHandlerList() {
+-        return handlers;
+-    }
+ }

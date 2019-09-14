@@ -1,0 +1,22 @@
+--- ../src-base/minecraft/org/bukkit/event/block/BlockDispenseEvent.java
++++ ../src-work/minecraft/org/bukkit/event/block/BlockDispenseEvent.java
+@@ -24,6 +24,10 @@
+         this.velocity = velocity;
+     }
+ 
++    public static HandlerList getHandlerList() {
++        return handlers;
++    }
++
+     /**
+      * Gets the item that is being dispensed. Modifying the returned item will
+      * have no effect, you must use {@link
+@@ -77,8 +81,4 @@
+     public HandlerList getHandlers() {
+         return handlers;
+     }
+-
+-    public static HandlerList getHandlerList() {
+-        return handlers;
+-    }
+ }

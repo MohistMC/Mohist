@@ -1,0 +1,22 @@
+--- ../src-base/minecraft/org/bukkit/event/player/PlayerLocaleChangeEvent.java
++++ ../src-work/minecraft/org/bukkit/event/player/PlayerLocaleChangeEvent.java
+@@ -17,6 +17,10 @@
+         this.locale = locale;
+     }
+ 
++    public static HandlerList getHandlerList() {
++        return handlers;
++    }
++
+     /**
+      * @see Player#getLocale()
+      *
+@@ -30,8 +34,4 @@
+     public HandlerList getHandlers() {
+         return handlers;
+     }
+-
+-    public static HandlerList getHandlerList() {
+-        return handlers;
+-    }
+ }

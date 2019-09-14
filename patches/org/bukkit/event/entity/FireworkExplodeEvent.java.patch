@@ -1,0 +1,22 @@
+--- ../src-base/minecraft/org/bukkit/event/entity/FireworkExplodeEvent.java
++++ ../src-work/minecraft/org/bukkit/event/entity/FireworkExplodeEvent.java
+@@ -16,6 +16,10 @@
+         super(what);
+     }
+ 
++    public static HandlerList getHandlerList() {
++        return handlers;
++    }
++
+     @Override
+     public boolean isCancelled() {
+         return cancel;
+@@ -42,8 +46,4 @@
+     public HandlerList getHandlers() {
+         return handlers;
+     }
+-
+-    public static HandlerList getHandlerList() {
+-        return handlers;
+-    }
+ }

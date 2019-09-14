@@ -1,0 +1,59 @@
+--- ../src-base/minecraft/org/bukkit/material/Diode.java
++++ ../src-work/minecraft/org/bukkit/material/Diode.java
+@@ -74,7 +74,7 @@
+      * @param type the raw type id
+      * @deprecated Magic value
+      */
+-    @Deprecated
++
+     public Diode(int type) {
+         super(type);
+     }
+@@ -88,7 +88,7 @@
+      * @param data the raw data value
+      * @deprecated Magic value
+      */
+-    @Deprecated
++
+     public Diode(int type, byte data) {
+         super(type, data);
+     }
+@@ -98,12 +98,21 @@
+      * @param data the raw data value
+      * @deprecated Magic value
+      */
+-    @Deprecated
++
+     public Diode(Material type, byte data) {
+         super(type, data);
+     }
+ 
+     /**
++     * Gets the delay of the repeater in ticks.
++     *
++     * @return The delay (1-4)
++     */
++    public int getDelay() {
++        return (getData() >> 2) + 1;
++    }
++
++    /**
+      * Sets the delay of the repeater.
+      *
+      * @param delay The new delay (1-4)
+@@ -121,15 +130,6 @@
+     }
+ 
+     /**
+-     * Gets the delay of the repeater in ticks.
+-     *
+-     * @return The delay (1-4)
+-     */
+-    public int getDelay() {
+-        return (getData() >> 2) + 1;
+-    }
+-
+-    /**
+      * Sets the direction this diode is facing.
+      *
+      * @param face The direction to set this diode to

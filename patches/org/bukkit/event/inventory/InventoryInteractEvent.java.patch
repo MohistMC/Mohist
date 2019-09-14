@@ -1,0 +1,48 @@
+--- ../src-base/minecraft/org/bukkit/event/inventory/InventoryInteractEvent.java
++++ ../src-work/minecraft/org/bukkit/event/inventory/InventoryInteractEvent.java
+@@ -2,9 +2,7 @@
+ 
+ import org.bukkit.entity.HumanEntity;
+ import org.bukkit.event.Cancellable;
+-import org.bukkit.event.Event.Result;
+ import org.bukkit.inventory.InventoryView;
+-import org.bukkit.inventory.ItemStack;
+ 
+ /**
+  * An abstract base class for events that describe an interaction between a
+@@ -27,17 +25,6 @@
+     }
+ 
+     /**
+-     * Sets the result of this event. This will change whether or not this
+-     * event is considered cancelled.
+-     *
+-     * @see #isCancelled()
+-     * @param newResult the new {@link Result} for this event
+-     */
+-    public void setResult(Result newResult) {
+-        result = newResult;
+-    }
+-
+-    /**
+      * Gets the {@link Result} of this event. The Result describes the
+      * behavior that will be applied to the inventory in relation to this
+      * event.
+@@ -49,6 +36,17 @@
+     }
+ 
+     /**
++     * Sets the result of this event. This will change whether or not this
++     * event is considered cancelled.
++     *
++     * @see #isCancelled()
++     * @param newResult the new {@link Result} for this event
++     */
++    public void setResult(Result newResult) {
++        result = newResult;
++    }
++
++    /**
+      * Gets whether or not this event is cancelled. This is based off of the
+      * Result value returned by {@link #getResult()}.  Result.ALLOW and
+      * Result.DEFAULT will result in a returned value of false, but

@@ -1,0 +1,29 @@
+--- ../src-base/minecraft/org/bukkit/ChunkSnapshot.java
++++ ../src-work/minecraft/org/bukkit/ChunkSnapshot.java
+@@ -50,7 +50,7 @@
+      * @return 0-255
+      * @deprecated Magic value
+      */
+-    @Deprecated
++
+     int getBlockTypeId(int x, int y, int z);
+ 
+     /**
+@@ -62,7 +62,7 @@
+      * @return 0-15
+      * @deprecated Magic value
+      */
+-    @Deprecated
++
+     int getBlockData(int x, int y, int z);
+ 
+     /**
+@@ -121,7 +121,7 @@
+      * @return rainfall at given coordinate
+      * @deprecated this is not a chunk property in current Minecraft versions
+      */
+-    @Deprecated
++
+     double getRawBiomeRainfall(int x, int z);
+ 
+     /**

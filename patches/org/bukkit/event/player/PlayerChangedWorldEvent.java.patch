@@ -1,0 +1,27 @@
+--- ../src-base/minecraft/org/bukkit/event/player/PlayerChangedWorldEvent.java
++++ ../src-work/minecraft/org/bukkit/event/player/PlayerChangedWorldEvent.java
+@@ -16,10 +16,14 @@
+         this.from = from;
+     }
+ 
++    public static HandlerList getHandlerList() {
++        return handlers;
++    }
++
+     /**
+      * Gets the world the player is switching from.
+      *
+-     * @return  player's previous world
++     * @return player's previous world
+      */
+     public World getFrom() {
+         return from;
+@@ -29,8 +33,4 @@
+     public HandlerList getHandlers() {
+         return handlers;
+     }
+-
+-    public static HandlerList getHandlerList() {
+-        return handlers;
+-    }
+ }

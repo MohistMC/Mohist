@@ -1,0 +1,31 @@
+--- ../src-base/minecraft/org/bukkit/event/entity/EntityTameEvent.java
++++ ../src-work/minecraft/org/bukkit/event/entity/EntityTameEvent.java
+@@ -10,14 +10,18 @@
+  */
+ public class EntityTameEvent extends EntityEvent implements Cancellable {
+     private static final HandlerList handlers = new HandlerList();
+-    private boolean cancelled;
+     private final AnimalTamer owner;
++    private boolean cancelled;
+ 
+     public EntityTameEvent(final LivingEntity entity, final AnimalTamer owner) {
+         super(entity);
+         this.owner = owner;
+     }
+ 
++    public static HandlerList getHandlerList() {
++        return handlers;
++    }
++
+     @Override
+     public LivingEntity getEntity() {
+         return (LivingEntity) entity;
+@@ -44,8 +48,4 @@
+     public HandlerList getHandlers() {
+         return handlers;
+     }
+-
+-    public static HandlerList getHandlerList() {
+-        return handlers;
+-    }
+ }

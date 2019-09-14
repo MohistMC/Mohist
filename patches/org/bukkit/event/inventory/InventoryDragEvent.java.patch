@@ -1,0 +1,42 @@
+--- ../src-base/minecraft/org/bukkit/event/inventory/InventoryDragEvent.java
++++ ../src-work/minecraft/org/bukkit/event/inventory/InventoryDragEvent.java
+@@ -1,9 +1,9 @@
+ package org.bukkit.event.inventory;
+ 
++import com.google.common.collect.ImmutableSet;
+ import java.util.Collections;
+ import java.util.Map;
+ import java.util.Set;
+-
+ import org.apache.commons.lang.Validate;
+ import org.bukkit.Location;
+ import org.bukkit.entity.HumanEntity;
+@@ -15,8 +15,6 @@
+ import org.bukkit.plugin.Plugin;
+ import org.bukkit.scheduler.BukkitScheduler;
+ 
+-import com.google.common.collect.ImmutableSet;
+-
+ /**
+  * This event is called when the player drags an item in their cursor across
+  * the inventory. The ItemStack is distributed across the slots the
+@@ -79,6 +77,10 @@
+         this.containerSlots = b.build();
+     }
+ 
++    public static HandlerList getHandlerList() {
++        return handlers;
++    }
++
+     /**
+      * Gets all items to be added to the inventory in this drag.
+      *
+@@ -157,8 +159,4 @@
+     public HandlerList getHandlers() {
+         return handlers;
+     }
+-
+-    public static HandlerList getHandlerList() {
+-        return handlers;
+-    }
+ }

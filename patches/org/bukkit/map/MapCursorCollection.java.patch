@@ -1,0 +1,20 @@
+--- ../src-base/minecraft/org/bukkit/map/MapCursorCollection.java
++++ ../src-work/minecraft/org/bukkit/map/MapCursorCollection.java
+@@ -72,7 +72,7 @@
+      * @return The newly added MapCursor.
+      * @deprecated Magic value
+      */
+-    @Deprecated
++
+     public MapCursor addCursor(int x, int y, byte direction, byte type) {
+         return addCursor(x, y, direction, type, true);
+     }
+@@ -88,7 +88,7 @@
+      * @return The newly added MapCursor.
+      * @deprecated Magic value
+      */
+-    @Deprecated
++
+     public MapCursor addCursor(int x, int y, byte direction, byte type, boolean visible) {
+         return addCursor(new MapCursor((byte) x, (byte) y, direction, type, visible));
+     }

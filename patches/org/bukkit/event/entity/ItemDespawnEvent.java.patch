@@ -1,0 +1,31 @@
+--- ../src-base/minecraft/org/bukkit/event/entity/ItemDespawnEvent.java
++++ ../src-work/minecraft/org/bukkit/event/entity/ItemDespawnEvent.java
+@@ -14,14 +14,18 @@
+  */
+ public class ItemDespawnEvent extends EntityEvent implements Cancellable {
+     private static final HandlerList handlers = new HandlerList();
+-    private boolean canceled;
+     private final Location location;
++    private boolean canceled;
+ 
+     public ItemDespawnEvent(final Item despawnee, final Location loc) {
+         super(despawnee);
+         location = loc;
+     }
+ 
++    public static HandlerList getHandlerList() {
++        return handlers;
++    }
++
+     public boolean isCancelled() {
+         return canceled;
+     }
+@@ -48,8 +52,4 @@
+     public HandlerList getHandlers() {
+         return handlers;
+     }
+-
+-    public static HandlerList getHandlerList() {
+-        return handlers;
+-    }
+ }

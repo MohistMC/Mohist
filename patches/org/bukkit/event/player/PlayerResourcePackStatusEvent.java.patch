@@ -1,0 +1,24 @@
+--- ../src-base/minecraft/org/bukkit/event/player/PlayerResourcePackStatusEvent.java
++++ ../src-work/minecraft/org/bukkit/event/player/PlayerResourcePackStatusEvent.java
+@@ -17,6 +17,10 @@
+         this.status = resourcePackStatus;
+     }
+ 
++    public static HandlerList getHandlerList() {
++        return handlers;
++    }
++
+     /**
+      * Gets the status of this pack.
+      *
+@@ -31,10 +35,6 @@
+         return handlers;
+     }
+ 
+-    public static HandlerList getHandlerList() {
+-        return handlers;
+-    }
+-
+     /**
+      * Status of the resource pack.
+      */

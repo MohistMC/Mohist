@@ -1,0 +1,27 @@
+--- ../src-base/minecraft/org/bukkit/entity/Explosive.java
++++ ../src-work/minecraft/org/bukkit/entity/Explosive.java
+@@ -6,18 +6,18 @@
+ public interface Explosive extends Entity {
+ 
+     /**
+-     * Set the radius affected by this explosive's explosion
++     * Return the radius or yield of this explosive's explosion
+      *
+-     * @param yield The explosive yield
++     * @return the radius of blocks affected
+      */
+-    public void setYield(float yield);
++    public float getYield();
+ 
+     /**
+-     * Return the radius or yield of this explosive's explosion
++     * Set the radius affected by this explosive's explosion
+      *
+-     * @return the radius of blocks affected
++     * @param yield The explosive yield
+      */
+-    public float getYield();
++    public void setYield(float yield);
+ 
+     /**
+      * Set whether or not this explosive's explosion causes fire

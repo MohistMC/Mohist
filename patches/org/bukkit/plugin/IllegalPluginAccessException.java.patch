@@ -1,0 +1,12 @@
+--- ../src-base/minecraft/org/bukkit/plugin/IllegalPluginAccessException.java
++++ ../src-work/minecraft/org/bukkit/plugin/IllegalPluginAccessException.java
+@@ -11,7 +11,8 @@
+      * Creates a new instance of <code>IllegalPluginAccessException</code>
+      * without detail message.
+      */
+-    public IllegalPluginAccessException() {}
++    public IllegalPluginAccessException() {
++    }
+ 
+     /**
+      * Constructs an instance of <code>IllegalPluginAccessException</code>

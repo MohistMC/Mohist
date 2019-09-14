@@ -1,0 +1,91 @@
+--- ../src-base/minecraft/org/bukkit/material/Pumpkin.java
++++ ../src-work/minecraft/org/bukkit/material/Pumpkin.java
+@@ -26,7 +26,7 @@
+      * @param type the raw type id
+      * @deprecated Magic value
+      */
+-    @Deprecated
++
+     public Pumpkin(final int type) {
+         super(type);
+     }
+@@ -40,7 +40,7 @@
+      * @param data the raw data value
+      * @deprecated Magic value
+      */
+-    @Deprecated
++
+     public Pumpkin(final int type, final byte data) {
+         super(type, data);
+     }
+@@ -50,7 +50,7 @@
+      * @param data the raw data value
+      * @deprecated Magic value
+      */
+-    @Deprecated
++
+     public Pumpkin(final Material type, final byte data) {
+         super(type, data);
+     }
+@@ -63,21 +63,21 @@
+         byte data;
+ 
+         switch (face) {
+-        case NORTH:
+-            data = 0x0;
+-            break;
++            case NORTH:
++                data = 0x0;
++                break;
+ 
+-        case EAST:
+-            data = 0x1;
+-            break;
++            case EAST:
++                data = 0x1;
++                break;
+ 
+-        case SOUTH:
+-            data = 0x2;
+-            break;
++            case SOUTH:
++                data = 0x2;
++                break;
+ 
+-        case WEST:
+-        default:
+-            data = 0x3;
++            case WEST:
++            default:
++                data = 0x3;
+         }
+ 
+         setData(data);
+@@ -87,18 +87,18 @@
+         byte data = getData();
+ 
+         switch (data) {
+-        case 0x0:
+-            return BlockFace.NORTH;
++            case 0x0:
++                return BlockFace.NORTH;
+ 
+-        case 0x1:
+-            return BlockFace.EAST;
++            case 0x1:
++                return BlockFace.EAST;
+ 
+-        case 0x2:
+-            return BlockFace.SOUTH;
++            case 0x2:
++                return BlockFace.SOUTH;
+ 
+-        case 0x3:
+-        default:
+-            return BlockFace.EAST;
++            case 0x3:
++            default:
++                return BlockFace.EAST;
+         }
+     }
+ 

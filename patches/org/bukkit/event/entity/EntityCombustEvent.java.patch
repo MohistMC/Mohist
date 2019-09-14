@@ -1,0 +1,22 @@
+--- ../src-base/minecraft/org/bukkit/event/entity/EntityCombustEvent.java
++++ ../src-work/minecraft/org/bukkit/event/entity/EntityCombustEvent.java
+@@ -20,6 +20,10 @@
+         this.cancel = false;
+     }
+ 
++    public static HandlerList getHandlerList() {
++        return handlers;
++    }
++
+     public boolean isCancelled() {
+         return cancel;
+     }
+@@ -52,8 +56,4 @@
+     public HandlerList getHandlers() {
+         return handlers;
+     }
+-
+-    public static HandlerList getHandlerList() {
+-        return handlers;
+-    }
+ }

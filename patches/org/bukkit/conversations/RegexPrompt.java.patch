@@ -1,0 +1,12 @@
+--- ../src-base/minecraft/org/bukkit/conversations/RegexPrompt.java
++++ ../src-work/minecraft/org/bukkit/conversations/RegexPrompt.java
+@@ -19,7 +19,8 @@
+         this.pattern = pattern;
+     }
+ 
+-    private RegexPrompt() {}
++    private RegexPrompt() {
++    }
+ 
+     @Override
+     protected boolean isInputValid(ConversationContext context, String input) {

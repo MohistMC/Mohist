@@ -1,0 +1,10 @@
+--- ../src-base/minecraft/org/bukkit/event/inventory/InventoryAction.java
++++ ../src-work/minecraft/org/bukkit/event/inventory/InventoryAction.java
+@@ -86,6 +86,5 @@
+     /**
+      * An unrecognized ClickType.
+      */
+-    UNKNOWN,
+-    ;
++    UNKNOWN,;
+ }

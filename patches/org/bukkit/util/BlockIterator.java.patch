@@ -1,0 +1,137 @@
+--- ../src-base/minecraft/org/bukkit/util/BlockIterator.java
++++ ../src-work/minecraft/org/bukkit/util/BlockIterator.java
+@@ -1,26 +1,23 @@
+ package org.bukkit.util;
+ 
+-import static org.bukkit.util.NumberConversions.*;
+-
+-import org.bukkit.World;
++import java.util.Iterator;
++import java.util.NoSuchElementException;
+ import org.bukkit.Location;
++import org.bukkit.World;
+ import org.bukkit.block.Block;
+ import org.bukkit.block.BlockFace;
+ import org.bukkit.entity.LivingEntity;
++import static org.bukkit.util.NumberConversions.floor;
++import static org.bukkit.util.NumberConversions.round;
+ 
+-import java.util.Iterator;
+-import java.util.NoSuchElementException;
+-
+ /**
+  * This class performs ray tracing and iterates along blocks on a line
+  */
+ public class BlockIterator implements Iterator<Block> {
+ 
++    private static final int gridSize = 1 << 24;
+     private final World world;
+     private final int maxDistance;
+-
+-    private static final int gridSize = 1 << 24;
+-
+     private boolean end = false;
+ 
+     private Block[] blockQueue = new Block[3];
+@@ -175,50 +172,6 @@
+ 
+     }
+ 
+-    private boolean blockEquals(Block a, Block b) {
+-        return a.getX() == b.getX() && a.getY() == b.getY() && a.getZ() == b.getZ();
+-    }
+-
+-    private BlockFace getXFace(Vector direction) {
+-        return ((direction.getX() > 0) ? BlockFace.EAST : BlockFace.WEST);
+-    }
+-
+-    private BlockFace getYFace(Vector direction) {
+-        return ((direction.getY() > 0) ? BlockFace.UP : BlockFace.DOWN);
+-    }
+-
+-    private BlockFace getZFace(Vector direction) {
+-        return ((direction.getZ() > 0) ? BlockFace.SOUTH : BlockFace.NORTH);
+-    }
+-
+-    private double getXLength(Vector direction) {
+-        return Math.abs(direction.getX());
+-    }
+-
+-    private double getYLength(Vector direction) {
+-        return Math.abs(direction.getY());
+-    }
+-
+-    private double getZLength(Vector direction) {
+-        return Math.abs(direction.getZ());
+-    }
+-
+-    private double getPosition(double direction, double position, int blockPosition) {
+-        return direction > 0 ? (position - blockPosition) : (blockPosition + 1 - position);
+-    }
+-
+-    private double getXPosition(Vector direction, Vector position, Block block) {
+-        return getPosition(direction.getX(), position.getX(), block.getX());
+-    }
+-
+-    private double getYPosition(Vector direction, Vector position, Block block) {
+-        return getPosition(direction.getY(), position.getY(), block.getY());
+-    }
+-
+-    private double getZPosition(Vector direction, Vector position, Block block) {
+-        return getPosition(direction.getZ(), position.getZ(), block.getZ());
+-    }
+-
+     /**
+      * Constructs the BlockIterator
+      *
+@@ -278,6 +231,50 @@
+         this(entity, 0);
+     }
+ 
++    private boolean blockEquals(Block a, Block b) {
++        return a.getX() == b.getX() && a.getY() == b.getY() && a.getZ() == b.getZ();
++    }
++
++    private BlockFace getXFace(Vector direction) {
++        return ((direction.getX() > 0) ? BlockFace.EAST : BlockFace.WEST);
++    }
++
++    private BlockFace getYFace(Vector direction) {
++        return ((direction.getY() > 0) ? BlockFace.UP : BlockFace.DOWN);
++    }
++
++    private BlockFace getZFace(Vector direction) {
++        return ((direction.getZ() > 0) ? BlockFace.SOUTH : BlockFace.NORTH);
++    }
++
++    private double getXLength(Vector direction) {
++        return Math.abs(direction.getX());
++    }
++
++    private double getYLength(Vector direction) {
++        return Math.abs(direction.getY());
++    }
++
++    private double getZLength(Vector direction) {
++        return Math.abs(direction.getZ());
++    }
++
++    private double getPosition(double direction, double position, int blockPosition) {
++        return direction > 0 ? (position - blockPosition) : (blockPosition + 1 - position);
++    }
++
++    private double getXPosition(Vector direction, Vector position, Block block) {
++        return getPosition(direction.getX(), position.getX(), block.getX());
++    }
++
++    private double getYPosition(Vector direction, Vector position, Block block) {
++        return getPosition(direction.getY(), position.getY(), block.getY());
++    }
++
++    private double getZPosition(Vector direction, Vector position, Block block) {
++        return getPosition(direction.getZ(), position.getZ(), block.getZ());
++    }
++
+     /**
+      * Returns true if the iteration has more elements
+      */

@@ -1,0 +1,12 @@
+--- ../src-base/minecraft/org/bukkit/configuration/InvalidConfigurationException.java
++++ ../src-work/minecraft/org/bukkit/configuration/InvalidConfigurationException.java
+@@ -10,7 +10,8 @@
+      * Creates a new instance of InvalidConfigurationException without a
+      * message or cause.
+      */
+-    public InvalidConfigurationException() {}
++    public InvalidConfigurationException() {
++    }
+ 
+     /**
+      * Constructs an instance of InvalidConfigurationException with the

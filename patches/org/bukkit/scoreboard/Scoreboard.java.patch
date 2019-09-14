@@ -1,0 +1,46 @@
+--- ../src-base/minecraft/org/bukkit/scoreboard/Scoreboard.java
++++ ../src-work/minecraft/org/bukkit/scoreboard/Scoreboard.java
+@@ -1,7 +1,6 @@
+ package org.bukkit.scoreboard;
+ 
+ import java.util.Set;
+-
+ import org.bukkit.OfflinePlayer;
+ 
+ /**
+@@ -66,7 +65,7 @@
+      * @deprecated Scoreboards can contain entries that aren't players
+      * @see #getScores(String)
+      */
+-    @Deprecated
++
+     Set<Score> getScores(OfflinePlayer player) throws IllegalArgumentException;
+ 
+     /**
+@@ -86,7 +85,7 @@
+      * @deprecated Scoreboards can contain entries that aren't players
+      * @see #resetScores(String)
+      */
+-    @Deprecated
++
+     void resetScores(OfflinePlayer player) throws IllegalArgumentException;
+ 
+     /**
+@@ -106,7 +105,7 @@
+      * @deprecated Scoreboards can contain entries that aren't players
+      * @see #getEntryTeam(String)
+      */
+-    @Deprecated
++
+     Team getPlayerTeam(OfflinePlayer player) throws IllegalArgumentException;
+ 
+     /**
+@@ -151,7 +150,7 @@
+      * @deprecated Scoreboards can contain entries that aren't players
+      * @see #getEntries()
+      */
+-    @Deprecated
++
+     Set<OfflinePlayer> getPlayers();
+ 
+     /**

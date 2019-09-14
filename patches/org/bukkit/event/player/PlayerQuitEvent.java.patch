@@ -1,0 +1,22 @@
+--- ../src-base/minecraft/org/bukkit/event/player/PlayerQuitEvent.java
++++ ../src-work/minecraft/org/bukkit/event/player/PlayerQuitEvent.java
+@@ -15,6 +15,10 @@
+         this.quitMessage = quitMessage;
+     }
+ 
++    public static HandlerList getHandlerList() {
++        return handlers;
++    }
++
+     /**
+      * Gets the quit message to send to all online players
+      *
+@@ -37,8 +41,4 @@
+     public HandlerList getHandlers() {
+         return handlers;
+     }
+-
+-    public static HandlerList getHandlerList() {
+-        return handlers;
+-    }
+ }

@@ -1,0 +1,22 @@
+--- ../src-base/minecraft/org/bukkit/event/player/PlayerAnimationEvent.java
++++ ../src-work/minecraft/org/bukkit/event/player/PlayerAnimationEvent.java
+@@ -24,6 +24,10 @@
+         animationType = PlayerAnimationType.ARM_SWING;
+     }
+ 
++    public static HandlerList getHandlerList() {
++        return handlers;
++    }
++
+     /**
+      * Get the type of this animation event
+      *
+@@ -45,8 +49,4 @@
+     public HandlerList getHandlers() {
+         return handlers;
+     }
+-
+-    public static HandlerList getHandlerList() {
+-        return handlers;
+-    }
+ }

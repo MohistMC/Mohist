@@ -1,0 +1,30 @@
+--- ../src-base/minecraft/org/bukkit/event/player/PlayerAchievementAwardedEvent.java
++++ ../src-work/minecraft/org/bukkit/event/player/PlayerAchievementAwardedEvent.java
+@@ -9,7 +9,6 @@
+  * Called when a player earns an achievement.
+  * @deprecated future versions of Minecraft do not have achievements
+  */
+-@Deprecated
+ public class PlayerAchievementAwardedEvent extends PlayerEvent implements Cancellable {
+     private static final HandlerList handlers = new HandlerList();
+     private final Achievement achievement;
+@@ -20,6 +19,10 @@
+         this.achievement = achievement;
+     }
+ 
++    public static HandlerList getHandlerList() {
++        return handlers;
++    }
++
+     /**
+      * Gets the Achievement being awarded.
+      *
+@@ -41,8 +44,4 @@
+     public HandlerList getHandlers() {
+         return handlers;
+     }
+-
+-    public static HandlerList getHandlerList() {
+-        return handlers;
+-    }
+ }

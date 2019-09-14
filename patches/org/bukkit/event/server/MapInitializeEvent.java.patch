@@ -1,0 +1,22 @@
+--- ../src-base/minecraft/org/bukkit/event/server/MapInitializeEvent.java
++++ ../src-work/minecraft/org/bukkit/event/server/MapInitializeEvent.java
+@@ -14,6 +14,10 @@
+         this.mapView = mapView;
+     }
+ 
++    public static HandlerList getHandlerList() {
++        return handlers;
++    }
++
+     /**
+      * Gets the map initialized in this event.
+      *
+@@ -27,8 +31,4 @@
+     public HandlerList getHandlers() {
+         return handlers;
+     }
+-
+-    public static HandlerList getHandlerList() {
+-        return handlers;
+-    }
+ }

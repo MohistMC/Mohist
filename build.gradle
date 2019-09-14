@@ -74,11 +74,22 @@ minecraft {
             with common
         }
 
-        mohist {
-            rootDir "."
+        bukkit {
+            rootDir "bukkit/"
             patchDir "patches/"
             patchAfter "forge"
             genPatchesFrom "forge"
+            genMcpPatches = false
+            applyMcpPatches = false
+            s2sKeepImports = true
+            with common
+        }
+
+        mohist {
+            rootDir "."
+            patchDir "patches/"
+            patchAfter "bukkit"
+            genPatchesFrom "bukkit"
             genMcpPatches = true
             applyMcpPatches = true
             s2sKeepImports = true

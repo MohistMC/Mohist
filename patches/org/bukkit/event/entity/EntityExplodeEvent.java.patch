@@ -1,0 +1,46 @@
+--- ../src-base/minecraft/org/bukkit/event/entity/EntityExplodeEvent.java
++++ ../src-work/minecraft/org/bukkit/event/entity/EntityExplodeEvent.java
+@@ -1,21 +1,20 @@
+ package org.bukkit.event.entity;
+ 
++import java.util.List;
+ import org.bukkit.Location;
+ import org.bukkit.block.Block;
+ import org.bukkit.entity.Entity;
+ import org.bukkit.event.Cancellable;
+ import org.bukkit.event.HandlerList;
+ 
+-import java.util.List;
+-
+ /**
+  * Called when an entity explodes
+  */
+ public class EntityExplodeEvent extends EntityEvent implements Cancellable {
+     private static final HandlerList handlers = new HandlerList();
+-    private boolean cancel;
+     private final Location location;
+     private final List<Block> blocks;
++    private boolean cancel;
+     private float yield;
+ 
+     public EntityExplodeEvent(final Entity what, final Location location, final List<Block> blocks, final float yield) {
+@@ -26,6 +25,10 @@
+         this.cancel = false;
+     }
+ 
++    public static HandlerList getHandlerList() {
++        return handlers;
++    }
++
+     public boolean isCancelled() {
+         return cancel;
+     }
+@@ -78,8 +81,4 @@
+     public HandlerList getHandlers() {
+         return handlers;
+     }
+-
+-    public static HandlerList getHandlerList() {
+-        return handlers;
+-    }
+ }

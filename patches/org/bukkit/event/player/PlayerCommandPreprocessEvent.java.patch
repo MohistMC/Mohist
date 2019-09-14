@@ -1,0 +1,41 @@
+--- ../src-base/minecraft/org/bukkit/event/player/PlayerCommandPreprocessEvent.java
++++ ../src-work/minecraft/org/bukkit/event/player/PlayerCommandPreprocessEvent.java
+@@ -2,7 +2,6 @@
+ 
+ import java.util.HashSet;
+ import java.util.Set;
+-
+ import org.apache.commons.lang.Validate;
+ import org.bukkit.entity.Player;
+ import org.bukkit.event.Cancellable;
+@@ -47,9 +46,9 @@
+  */
+ public class PlayerCommandPreprocessEvent extends PlayerEvent implements Cancellable {
+     private static final HandlerList handlers = new HandlerList();
++    private final Set<Player> recipients;
+     private boolean cancel = false;
+     private String message;
+-    private final Set<Player> recipients;
+ 
+     public PlayerCommandPreprocessEvent(final Player player, final String message) {
+         super(player);
+@@ -63,6 +62,10 @@
+         this.message = message;
+     }
+ 
++    public static HandlerList getHandlerList() {
++        return handlers;
++    }
++
+     public boolean isCancelled() {
+         return cancel;
+     }
+@@ -132,8 +135,4 @@
+     public HandlerList getHandlers() {
+         return handlers;
+     }
+-
+-    public static HandlerList getHandlerList() {
+-        return handlers;
+-    }
+ }

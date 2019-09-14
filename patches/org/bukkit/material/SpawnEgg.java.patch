@@ -1,0 +1,47 @@
+--- ../src-base/minecraft/org/bukkit/material/SpawnEgg.java
++++ ../src-work/minecraft/org/bukkit/material/SpawnEgg.java
+@@ -8,7 +8,7 @@
+  * Represents a spawn egg that can be used to spawn mobs
+  * @deprecated use {@link SpawnEggMeta}
+  */
+-@Deprecated
++
+ public class SpawnEgg extends MaterialData {
+ 
+     public SpawnEgg() {
+@@ -20,7 +20,7 @@
+      * @param data the raw data value
+      * @deprecated Magic value
+      */
+-    @Deprecated
++
+     public SpawnEgg(int type, byte data) {
+         super(type, data);
+     }
+@@ -29,7 +29,7 @@
+      * @param data the raw data value
+      * @deprecated Magic value
+      */
+-    @Deprecated
++
+     public SpawnEgg(byte data) {
+         super(Material.MONSTER_EGG, data);
+     }
+@@ -45,7 +45,7 @@
+      * @return The entity type.
+      * @deprecated This is now stored in {@link SpawnEggMeta}.
+      */
+-    @Deprecated
++
+     public EntityType getSpawnedType() {
+         return EntityType.fromId(getData());
+     }
+@@ -56,7 +56,7 @@
+      * @param type The entity type.
+      * @deprecated This is now stored in {@link SpawnEggMeta}.
+      */
+-    @Deprecated
++
+     public void setSpawnedType(EntityType type) {
+         setData((byte) type.getTypeId());
+     }

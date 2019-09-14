@@ -1,0 +1,48 @@
+--- ../src-base/minecraft/org/bukkit/event/player/PlayerFishEvent.java
++++ ../src-work/minecraft/org/bukkit/event/player/PlayerFishEvent.java
+@@ -1,9 +1,9 @@
+ package org.bukkit.event.player;
+ 
++import org.bukkit.entity.Entity;
+ import org.bukkit.entity.Fish;
+ import org.bukkit.entity.Player;
+ import org.bukkit.event.Cancellable;
+-import org.bukkit.entity.Entity;
+ import org.bukkit.event.HandlerList;
+ 
+ /**
+@@ -12,10 +12,10 @@
+ public class PlayerFishEvent extends PlayerEvent implements Cancellable {
+     private static final HandlerList handlers = new HandlerList();
+     private final Entity entity;
+-    private boolean cancel = false;
+-    private int exp;
+     private final State state;
+     private final Fish hookEntity;
++    private boolean cancel = false;
++    private int exp;
+ 
+     public PlayerFishEvent(final Player player, final Entity entity, final Fish hookEntity, final State state) {
+         super(player);
+@@ -24,6 +24,10 @@
+         this.state = state;
+     }
+ 
++    public static HandlerList getHandlerList() {
++        return handlers;
++    }
++
+     /**
+      * Gets the entity caught by the player.
+      * <p>
+@@ -92,10 +96,6 @@
+         return handlers;
+     }
+ 
+-    public static HandlerList getHandlerList() {
+-        return handlers;
+-    }
+-
+     /**
+      * An enum to specify the state of the fishing
+      */

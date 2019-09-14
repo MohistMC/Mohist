@@ -1,0 +1,31 @@
+--- ../src-base/minecraft/org/bukkit/plugin/PluginLoader.java
++++ ../src-work/minecraft/org/bukkit/plugin/PluginLoader.java
+@@ -4,7 +4,6 @@
+ import java.util.Map;
+ import java.util.Set;
+ import java.util.regex.Pattern;
+-
+ import org.bukkit.event.Event;
+ import org.bukkit.event.Listener;
+ 
+@@ -73,4 +72,20 @@
+      * @param plugin Plugin to disable
+      */
+     public void disablePlugin(Plugin plugin);
++
++    // Paper start - close Classloader on disable
++
++    /**
++     * Disables the specified plugin
++     * <p>
++     * Attempting to disable a plugin that is not enabled will have no effect
++     *
++     * @param plugin Plugin to disable
++     * @param closeClassloader if the classloader for the Plugin should be closed
++     */
++    // provide default to allow other PluginLoader implementations to work
++    default public void disablePlugin(Plugin plugin, boolean closeClassloader) {
++        disablePlugin(plugin);
++    }
++    // Paper end - close Classloader on disable
+ }

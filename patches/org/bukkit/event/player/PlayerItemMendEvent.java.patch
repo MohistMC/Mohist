@@ -1,0 +1,22 @@
+--- ../src-base/minecraft/org/bukkit/event/player/PlayerItemMendEvent.java
++++ ../src-work/minecraft/org/bukkit/event/player/PlayerItemMendEvent.java
+@@ -28,6 +28,10 @@
+         this.repairAmount = repairAmount;
+     }
+ 
++    public static HandlerList getHandlerList() {
++        return handlers;
++    }
++
+     /**
+      * Get the {@link ItemStack} to be repaired.
+      *
+@@ -85,8 +89,4 @@
+     public HandlerList getHandlers() {
+         return handlers;
+     }
+-
+-    public static HandlerList getHandlerList() {
+-        return handlers;
+-    }
+ }

@@ -1,0 +1,40 @@
+--- ../src-base/minecraft/org/bukkit/event/block/BlockBreakEvent.java
++++ ../src-work/minecraft/org/bukkit/event/block/BlockBreakEvent.java
+@@ -3,7 +3,6 @@
+ import org.bukkit.block.Block;
+ import org.bukkit.entity.Player;
+ import org.bukkit.event.Cancellable;
+-import org.bukkit.event.HandlerList;
+ 
+ /**
+  * Called when a block is broken by a player.
+@@ -48,21 +47,21 @@
+     }
+ 
+     /**
+-     * Sets whether or not the block will drop items as it normally would.
++     * Gets whether or not the block will drop items.
+      *
+-     * @param dropItems Whether or not the block will drop items
++     * @return Whether or not the block will drop items
+      */
+-    public void setDropItems(boolean dropItems) {
+-        this.dropItems = dropItems;
++    public boolean isDropItems() {
++        return this.dropItems;
+     }
+ 
+     /**
+-     * Gets whether or not the block will drop items.
++     * Sets whether or not the block will drop items as it normally would.
+      *
+-     * @return Whether or not the block will drop items
++     * @param dropItems Whether or not the block will drop items
+      */
+-    public boolean isDropItems() {
+-        return this.dropItems;
++    public void setDropItems(boolean dropItems) {
++        this.dropItems = dropItems;
+     }
+ 
+     public boolean isCancelled() {

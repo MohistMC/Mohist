@@ -1,0 +1,31 @@
+--- ../src-base/minecraft/org/bukkit/event/player/PlayerBedEnterEvent.java
++++ ../src-work/minecraft/org/bukkit/event/player/PlayerBedEnterEvent.java
+@@ -10,14 +10,18 @@
+  */
+ public class PlayerBedEnterEvent extends PlayerEvent implements Cancellable {
+     private static final HandlerList handlers = new HandlerList();
+-    private boolean cancel = false;
+     private final Block bed;
++    private boolean cancel = false;
+ 
+     public PlayerBedEnterEvent(final Player who, final Block bed) {
+         super(who);
+         this.bed = bed;
+     }
+ 
++    public static HandlerList getHandlerList() {
++        return handlers;
++    }
++
+     public boolean isCancelled() {
+         return cancel;
+     }
+@@ -39,8 +43,4 @@
+     public HandlerList getHandlers() {
+         return handlers;
+     }
+-
+-    public static HandlerList getHandlerList() {
+-        return handlers;
+-    }
+ }

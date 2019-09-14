@@ -1,0 +1,11 @@
+--- ../src-base/minecraft/org/bukkit/entity/Guardian.java
++++ ../src-work/minecraft/org/bukkit/entity/Guardian.java
+@@ -4,7 +4,7 @@
+ 
+     /**
+      * Check if the Guardian is an elder Guardian
+-     * 
++     *
+      * @return true if the Guardian is an Elder Guardian, false if not
+      * @deprecated should check if instance of {@link ElderGuardian}.
+      */

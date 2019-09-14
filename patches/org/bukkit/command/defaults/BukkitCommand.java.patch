@@ -1,0 +1,10 @@
+--- ../src-base/minecraft/org/bukkit/command/defaults/BukkitCommand.java
++++ ../src-work/minecraft/org/bukkit/command/defaults/BukkitCommand.java
+@@ -1,7 +1,6 @@
+ package org.bukkit.command.defaults;
+ 
+ import java.util.List;
+-
+ import org.bukkit.command.Command;
+ 
+ public abstract class BukkitCommand extends Command {

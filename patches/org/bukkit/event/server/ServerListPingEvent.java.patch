@@ -1,0 +1,51 @@
+--- ../src-base/minecraft/org/bukkit/event/server/ServerListPingEvent.java
++++ ../src-work/minecraft/org/bukkit/event/server/ServerListPingEvent.java
+@@ -2,7 +2,6 @@
+ 
+ import java.net.InetAddress;
+ import java.util.Iterator;
+-
+ import org.apache.commons.lang.Validate;
+ import org.bukkit.entity.Player;
+ import org.bukkit.event.HandlerList;
+@@ -16,8 +15,8 @@
+     private static final int MAGIC_PLAYER_COUNT = Integer.MIN_VALUE;
+     private static final HandlerList handlers = new HandlerList();
+     private final InetAddress address;
+-    private String motd;
+     private final int numPlayers;
++    private String motd;
+     private int maxPlayers;
+ 
+     public ServerListPingEvent(final InetAddress address, final String motd, final int numPlayers, final int maxPlayers) {
+@@ -32,7 +31,7 @@
+      * This constructor is intended for implementations that provide the
+      * {@link #iterator()} method, thus provided the {@link #getNumPlayers()}
+      * count.
+-     * 
++     *
+      * @param address the address of the pinger
+      * @param motd the message of the day
+      * @param maxPlayers the max number of players
+@@ -44,6 +43,10 @@
+         this.maxPlayers = maxPlayers;
+     }
+ 
++    public static HandlerList getHandlerList() {
++        return handlers;
++    }
++
+     /**
+      * Get the address the ping is coming from.
+      *
+@@ -124,10 +127,6 @@
+         return handlers;
+     }
+ 
+-    public static HandlerList getHandlerList() {
+-        return handlers;
+-    }
+-
+     /**
+      * {@inheritDoc}
+      * <p>

@@ -1,0 +1,33 @@
+--- ../src-base/minecraft/org/bukkit/event/entity/PigZapEvent.java
++++ ../src-work/minecraft/org/bukkit/event/entity/PigZapEvent.java
+@@ -11,9 +11,9 @@
+  */
+ public class PigZapEvent extends EntityEvent implements Cancellable {
+     private static final HandlerList handlers = new HandlerList();
+-    private boolean canceled;
+     private final PigZombie pigzombie;
+     private final LightningStrike bolt;
++    private boolean canceled;
+ 
+     public PigZapEvent(final Pig pig, final LightningStrike bolt, final PigZombie pigzombie) {
+         super(pig);
+@@ -21,6 +21,10 @@
+         this.pigzombie = pigzombie;
+     }
+ 
++    public static HandlerList getHandlerList() {
++        return handlers;
++    }
++
+     public boolean isCancelled() {
+         return canceled;
+     }
+@@ -57,8 +61,4 @@
+     public HandlerList getHandlers() {
+         return handlers;
+     }
+-
+-    public static HandlerList getHandlerList() {
+-        return handlers;
+-    }
+ }

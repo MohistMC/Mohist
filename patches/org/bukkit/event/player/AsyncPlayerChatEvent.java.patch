@@ -1,0 +1,42 @@
+--- ../src-base/minecraft/org/bukkit/event/player/AsyncPlayerChatEvent.java
++++ ../src-work/minecraft/org/bukkit/event/player/AsyncPlayerChatEvent.java
+@@ -2,7 +2,6 @@
+ 
+ import java.util.IllegalFormatException;
+ import java.util.Set;
+-
+ import org.bukkit.entity.Player;
+ import org.bukkit.event.Cancellable;
+ import org.bukkit.event.HandlerList;
+@@ -25,10 +24,10 @@
+  */
+ public class AsyncPlayerChatEvent extends PlayerEvent implements Cancellable {
+     private static final HandlerList handlers = new HandlerList();
++    private final Set<Player> recipients;
+     private boolean cancel = false;
+     private String message;
+     private String format = "<%1$s> %2$s";
+-    private final Set<Player> recipients;
+ 
+     /**
+      *
+@@ -44,6 +43,10 @@
+         recipients = players;
+     }
+ 
++    public static HandlerList getHandlerList() {
++        return handlers;
++    }
++
+     /**
+      * Gets the message that the player is attempting to send. This message
+      * will be used with {@link #getFormat()}.
+@@ -133,8 +136,4 @@
+     public HandlerList getHandlers() {
+         return handlers;
+     }
+-
+-    public static HandlerList getHandlerList() {
+-        return handlers;
+-    }
+ }

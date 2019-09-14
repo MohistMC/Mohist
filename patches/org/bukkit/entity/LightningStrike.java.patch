@@ -1,0 +1,23 @@
+--- ../src-base/minecraft/org/bukkit/entity/LightningStrike.java
++++ ../src-work/minecraft/org/bukkit/entity/LightningStrike.java
+@@ -12,4 +12,20 @@
+      */
+     public boolean isEffect();
+ 
++    @Override
++    Spigot spigot();
++
++    // Spigot start
++    public class Spigot extends Entity.Spigot {
++
++        /*
++         * Returns whether the strike is silent.
++         *
++         * @return whether the strike is silent.
++         */
++        public boolean isSilent() {
++            throw new UnsupportedOperationException("Not supported yet.");
++        }
++    }
++    // Spigot end
+ }

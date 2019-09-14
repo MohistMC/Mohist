@@ -1,0 +1,14 @@
+--- ../src-base/minecraft/org/bukkit/block/Banner.java
++++ ../src-work/minecraft/org/bukkit/block/Banner.java
+@@ -1,10 +1,9 @@
+ package org.bukkit.block;
+ 
++import java.util.List;
+ import org.bukkit.DyeColor;
+ import org.bukkit.block.banner.Pattern;
+ 
+-import java.util.List;
+-
+ /**
+  * Represents a captured state of a banner.
+  */

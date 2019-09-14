@@ -1,0 +1,30 @@
+--- ../src-base/minecraft/org/bukkit/event/block/BlockPlaceEvent.java
++++ ../src-work/minecraft/org/bukkit/event/block/BlockPlaceEvent.java
+@@ -23,7 +23,6 @@
+     protected Player player;
+     protected EquipmentSlot hand;
+ 
+-    @Deprecated
+     public BlockPlaceEvent(final Block placedBlock, final BlockState replacedBlockState, final Block placedAgainst, final ItemStack itemInHand, final Player thePlayer, final boolean canBuild) {
+         this(placedBlock, replacedBlockState, placedAgainst, itemInHand, thePlayer, canBuild, EquipmentSlot.HAND);
+     }
+@@ -39,6 +38,10 @@
+         cancel = false;
+     }
+ 
++    public static HandlerList getHandlerList() {
++        return handlers;
++    }
++
+     public boolean isCancelled() {
+         return cancel;
+     }
+@@ -130,8 +133,4 @@
+     public HandlerList getHandlers() {
+         return handlers;
+     }
+-
+-    public static HandlerList getHandlerList() {
+-        return handlers;
+-    }
+ }

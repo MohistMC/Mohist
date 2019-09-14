@@ -1,0 +1,22 @@
+--- ../src-base/minecraft/org/bukkit/event/world/ChunkUnloadEvent.java
++++ ../src-work/minecraft/org/bukkit/event/world/ChunkUnloadEvent.java
+@@ -21,6 +21,10 @@
+         this.saveChunk = save;
+     }
+ 
++    public static HandlerList getHandlerList() {
++        return handlers;
++    }
++
+     /**
+      * Return whether this chunk will be saved to disk.
+      *
+@@ -51,8 +55,4 @@
+     public HandlerList getHandlers() {
+         return handlers;
+     }
+-
+-    public static HandlerList getHandlerList() {
+-        return handlers;
+-    }
+ }

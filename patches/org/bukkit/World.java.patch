@@ -1,0 +1,405 @@
+--- ../src-base/minecraft/org/bukkit/World.java
++++ ../src-work/minecraft/org/bukkit/World.java
+@@ -1,17 +1,23 @@
+ package org.bukkit;
+ 
+ import java.io.File;
+-import org.bukkit.generator.ChunkGenerator;
+ import java.util.Collection;
+ import java.util.HashMap;
+ import java.util.List;
+ import java.util.Map;
+ import java.util.UUID;
+-
+ import org.bukkit.block.Biome;
+ import org.bukkit.block.Block;
+-import org.bukkit.entity.*;
++import org.bukkit.entity.Arrow;
++import org.bukkit.entity.Entity;
++import org.bukkit.entity.EntityType;
++import org.bukkit.entity.FallingBlock;
++import org.bukkit.entity.Item;
++import org.bukkit.entity.LightningStrike;
++import org.bukkit.entity.LivingEntity;
++import org.bukkit.entity.Player;
+ import org.bukkit.generator.BlockPopulator;
++import org.bukkit.generator.ChunkGenerator;
+ import org.bukkit.inventory.ItemStack;
+ import org.bukkit.material.MaterialData;
+ import org.bukkit.metadata.Metadatable;
+@@ -57,7 +63,7 @@
+      *     given location
+      * @deprecated Magic value
+      */
+-    @Deprecated
++
+     public int getBlockTypeIdAt(int x, int y, int z);
+ 
+     /**
+@@ -69,7 +75,7 @@
+      *     the given location
+      * @deprecated Magic value
+      */
+-    @Deprecated
++
+     public int getBlockTypeIdAt(Location location);
+ 
+     /**
+@@ -251,7 +257,7 @@
+      * @return true if the chunk has unloaded successfully, otherwise false
+      * @deprecated it is never safe to remove a chunk in use
+      */
+-    @Deprecated
++
+     public boolean unloadChunk(int x, int z, boolean save, boolean safe);
+ 
+     /**
+@@ -292,10 +298,10 @@
+      * @param x X-coordinate of the chunk
+      * @param z Z-coordinate of the chunk
+      * @return Whether the chunk was actually refreshed
+-     * 
++     *
+      * @deprecated This method is not guaranteed to work suitably across all client implementations.
+      */
+-    @Deprecated
++
+     public boolean refreshChunk(int x, int z);
+ 
+     /**
+@@ -360,7 +366,7 @@
+      * @return true if the tree was created successfully, otherwise false
+      * @deprecated rarely used API that was largely for implementation purposes
+      */
+-    @Deprecated
++
+     public boolean generateTree(Location loc, TreeType type, BlockChangeDelegate delegate);
+ 
+     /**
+@@ -411,13 +417,13 @@
+      * @return A List of all Entities currently residing in this world that
+      *     match the given class/interface
+      */
+-    @Deprecated
++
+     public <T extends Entity> Collection<T> getEntitiesByClass(Class<T>... classes);
+ 
+     /**
+      * Get a collection of all entities in this World matching the given
+      * class/interface
+-     * 
++     *
+      * @param <T> an entity subclass
+      * @param cls The class representing the type of entity to match
+      * @return A List of all Entities currently residing in this world that
+@@ -655,7 +661,107 @@
+      */
+     public boolean createExplosion(Location loc, float power, boolean setFire);
+ 
++    // Paper start
++
+     /**
++     * Creates explosion at given location with given power and optionally
++     * setting blocks on fire, with the specified entity as the source.
++     *
++     * @param source The source entity of the explosion
++     * @param loc Location to blow up
++     * @param power The power of explosion, where 4F is TNT
++     * @param setFire Whether or not to set blocks on fire
++     * @param breakBlocks Whether or not to have blocks be destroyed
++     * @return false if explosion was canceled, otherwise true
++     */
++    public boolean createExplosion(Entity source, Location loc, float power, boolean setFire, boolean breakBlocks);
++
++    /**
++     * Creates explosion at given location with given power and optionally
++     * setting blocks on fire, with the specified entity as the source.
++     *
++     * Will destroy other blocks
++     *
++     * @param source The source entity of the explosion
++     * @param loc Location to blow up
++     * @param power The power of explosion, where 4F is TNT
++     * @param setFire Whether or not to set blocks on fire
++     * @return false if explosion was canceled, otherwise true
++     */
++    public default boolean createExplosion(Entity source, Location loc, float power, boolean setFire) {
++        return createExplosion(source, loc, power, setFire, true);
++    }
++
++    /**
++     * Creates explosion at given location with given power, with the specified entity as the source.
++     * Will set blocks on fire and destroy blocks.
++     *
++     * @param source The source entity of the explosion
++     * @param loc Location to blow up
++     * @param power The power of explosion, where 4F is TNT
++     * @return false if explosion was canceled, otherwise true
++     */
++    public default boolean createExplosion(Entity source, Location loc, float power) {
++        return createExplosion(source, loc, power, true, true);
++    }
++
++    /**
++     * Creates explosion at given entities location with given power and optionally
++     * setting blocks on fire, with the specified entity as the source.
++     *
++     * @param source The source entity of the explosion
++     * @param power The power of explosion, where 4F is TNT
++     * @param setFire Whether or not to set blocks on fire
++     * @param breakBlocks Whether or not to have blocks be destroyed
++     * @return false if explosion was canceled, otherwise true
++     */
++    public default boolean createExplosion(Entity source, float power, boolean setFire, boolean breakBlocks) {
++        return createExplosion(source, source.getLocation(), power, setFire, breakBlocks);
++    }
++
++    /**
++     * Creates explosion at given entities location with given power and optionally
++     * setting blocks on fire, with the specified entity as the source.
++     *
++     * Will destroy blocks.
++     *
++     * @param source The source entity of the explosion
++     * @param power The power of explosion, where 4F is TNT
++     * @param setFire Whether or not to set blocks on fire
++     * @return false if explosion was canceled, otherwise true
++     */
++    public default boolean createExplosion(Entity source, float power, boolean setFire) {
++        return createExplosion(source, source.getLocation(), power, setFire, true);
++    }
++
++    /**
++     * Creates explosion at given entities location with given power and optionally
++     * setting blocks on fire, with the specified entity as the source.
++     *
++     * @param source The source entity of the explosion
++     * @param power The power of explosion, where 4F is TNT
++     * @return false if explosion was canceled, otherwise true
++     */
++    public default boolean createExplosion(Entity source, float power) {
++        return createExplosion(source, source.getLocation(), power, true, true);
++    }
++
++    /**
++     * Creates explosion at given location with given power and optionally
++     * setting blocks on fire or breaking blocks.
++     *
++     * @param loc Location to blow up
++     * @param power The power of explosion, where 4F is TNT
++     * @param setFire Whether or not to set blocks on fire
++     * @param breakBlocks Whether or not to have blocks be destroyed
++     * @return false if explosion was canceled, otherwise true
++     */
++    public default boolean createExplosion(Location loc, float power, boolean setFire, boolean breakBlocks) {
++        return createExplosion(loc.getX(), loc.getY(), loc.getZ(), power, setFire, breakBlocks);
++    }
++    // Paper end
++
++    /**
+      * Gets the {@link Environment} type of this world
+      *
+      * @return This worlds Environment type
+@@ -764,7 +870,7 @@
+      *     Material} are null or {@link Material} is not a block
+      * @deprecated Magic value
+      */
+-    @Deprecated
++
+     public FallingBlock spawnFallingBlock(Location location, Material material, byte data) throws IllegalArgumentException;
+ 
+     /**
+@@ -780,7 +886,7 @@
+      * @see #spawnFallingBlock(org.bukkit.Location, org.bukkit.Material, byte)
+      * @deprecated Magic value
+      */
+-    @Deprecated
++
+     public FallingBlock spawnFallingBlock(Location location, int blockId, byte blockData) throws IllegalArgumentException;
+ 
+     /**
+@@ -961,18 +1067,18 @@
+     public void setAutoSave(boolean value);
+ 
+     /**
+-     * Sets the Difficulty of the world.
++     * Gets the Difficulty of the world.
+      *
+-     * @param difficulty the new difficulty you want to set the world to
++     * @return The difficulty of the world.
+      */
+-    public void setDifficulty(Difficulty difficulty);
++    public Difficulty getDifficulty();
+ 
+     /**
+-     * Gets the Difficulty of the world.
++     * Sets the Difficulty of the world.
+      *
+-     * @return The difficulty of the world.
++     * @param difficulty the new difficulty you want to set the world to
+      */
+-    public Difficulty getDifficulty();
++    public void setDifficulty(Difficulty difficulty);
+ 
+     /**
+      * Gets the folder of this world on disk.
+@@ -1115,7 +1221,7 @@
+      * <p>
+      * <b>Note:</b> If set to a negative number the world will use the
+      * server-wide spawn limit instead.
+-     * 
++     *
+      * @param limit the new mob limit
+      */
+     void setMonsterSpawnLimit(int limit);
+@@ -1134,7 +1240,7 @@
+      * <p>
+      * <b>Note:</b> If set to a negative number the world will use the
+      * server-wide spawn limit instead.
+-     * 
++     *
+      * @param limit the new mob limit
+      */
+     void setAnimalSpawnLimit(int limit);
+@@ -1153,7 +1259,7 @@
+      * <p>
+      * <b>Note:</b> If set to a negative number the world will use the
+      * server-wide spawn limit instead.
+-     * 
++     *
+      * @param limit the new mob limit
+      */
+     void setWaterAnimalSpawnLimit(int limit);
+@@ -1172,7 +1278,7 @@
+      * <p>
+      * <b>Note:</b> If set to a negative number the world will use the
+      * server-wide spawn limit instead.
+-     * 
++     *
+      * @param limit the new mob limit
+      */
+     void setAmbientSpawnLimit(int limit);
+@@ -1470,6 +1576,7 @@
+      */
+     public <T> void spawnParticle(Particle particle, double x, double y, double z, int count, double offsetX, double offsetY, double offsetZ, double extra, T data);
+ 
++    Spigot spigot();
+ 
+     /**
+      * Represents various map environment types that a world may be
+@@ -1489,40 +1596,102 @@
+          */
+         THE_END(1);
+ 
+-        private final int id;
+         private static final Map<Integer, Environment> lookup = new HashMap<Integer, Environment>();
+ 
++        static {
++            for (Environment env : values()) {
++                lookup.put(env.getId(), env);
++            }
++        }
++
++        private final int id;
++
+         private Environment(int id) {
+             this.id = id;
+         }
+ 
++        public static void registerEnvironment(Environment env) {
++            lookup.put(env.getId(), env);
++        }
++
+         /**
++         * Get an environment by ID
++         *
++         * @param id The ID of the environment
++         * @return The environment
++         * @deprecated Magic value
++         */
++
++        public static Environment getEnvironment(int id) {
++            return lookup.get(id);
++        }
++
++        /**
+          * Gets the dimension ID of this environment
+          *
+          * @return dimension ID
+          * @deprecated Magic value
+          */
+-        @Deprecated
++
+         public int getId() {
+             return id;
+         }
++    }
++    // Spigot end
+ 
++    // Spigot start
++    public class Spigot {
++
+         /**
+-         * Get an environment by ID
++         * Plays an effect to all players within a default radius around a given
++         * location.
+          *
+-         * @param id The ID of the environment
+-         * @return The environment
+-         * @deprecated Magic value
++         * @param location the {@link Location} around which players must be to
++         * see the effect
++         * @param effect the {@link Effect}
++         * @throws IllegalArgumentException if the location or effect is null.
++         * It also throws when the effect requires a material or a material data
++         * @deprecated Spigot specific API, use {@link Particle}.
+          */
+-        @Deprecated
+-        public static Environment getEnvironment(int id) {
+-            return lookup.get(id);
++
++        public void playEffect(Location location, Effect effect) {
++            throw new UnsupportedOperationException("Not supported yet.");
+         }
+ 
+-        static {
+-            for (Environment env : values()) {
+-                lookup.put(env.getId(), env);
+-            }
++        /**
++         * Plays an effect to all players within a default radius around a given
++         * location. The effect will use the provided material (and material
++         * data if required). The particle's position on the client will be the
++         * given location, adjusted on each axis by a normal distribution with
++         * mean 0 and standard deviation given in the offset parameters, each
++         * particle has independently calculated offsets. The effect will have
++         * the given speed and particle count if the effect is a particle. Some
++         * effect will create multiple particles.
++         *
++         * @param location the {@link Location} around which players must be to
++         * see the effect
++         * @param effect effect the {@link Effect}
++         * @param id the item/block/data id for the effect
++         * @param data the data value of the block/item for the effect
++         * @param offsetX the amount to be randomly offset by in the X axis
++         * @param offsetY the amount to be randomly offset by in the Y axis
++         * @param offsetZ the amount to be randomly offset by in the Z axis
++         * @param speed the speed of the particles
++         * @param particleCount the number of particles
++         * @param radius the radius around the location
++         * @deprecated Spigot specific API, use {@link Particle}.
++         */
++
++        public void playEffect(Location location, Effect effect, int id, int data, float offsetX, float offsetY, float offsetZ, float speed, int particleCount, int radius) {
++            throw new UnsupportedOperationException("Not supported yet.");
+         }
++
++        public LightningStrike strikeLightning(Location loc, boolean isSilent) {
++            throw new UnsupportedOperationException("Not supported yet.");
++        }
++
++        public LightningStrike strikeLightningEffect(Location loc, boolean isSilent) {
++            throw new UnsupportedOperationException("Not supported yet.");
++        }
+     }
+ }

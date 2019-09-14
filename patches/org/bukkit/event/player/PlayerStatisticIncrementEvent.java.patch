@@ -1,0 +1,33 @@
+--- ../src-base/minecraft/org/bukkit/event/player/PlayerStatisticIncrementEvent.java
++++ ../src-work/minecraft/org/bukkit/event/player/PlayerStatisticIncrementEvent.java
+@@ -19,9 +19,9 @@
+     protected final Statistic statistic;
+     private final int initialValue;
+     private final int newValue;
+-    private boolean isCancelled = false;
+     private final EntityType entityType;
+     private final Material material;
++    private boolean isCancelled = false;
+ 
+     public PlayerStatisticIncrementEvent(Player player, Statistic statistic, int initialValue, int newValue) {
+         super(player);
+@@ -50,6 +50,10 @@
+         this.material = material;
+     }
+ 
++    public static HandlerList getHandlerList() {
++        return handlers;
++    }
++
+     /**
+      * Gets the statistic that is being incremented.
+      *
+@@ -109,8 +113,4 @@
+     public HandlerList getHandlers() {
+         return handlers;
+     }
+-
+-    public static HandlerList getHandlerList() {
+-        return handlers;
+-    }
+ }

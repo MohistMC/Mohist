@@ -1,0 +1,29 @@
+--- ../src-base/minecraft/org/bukkit/inventory/meta/FireworkEffectMeta.java
++++ ../src-work/minecraft/org/bukkit/inventory/meta/FireworkEffectMeta.java
+@@ -10,13 +10,6 @@
+ public interface FireworkEffectMeta extends ItemMeta {
+ 
+     /**
+-     * Sets the firework effect for this meta.
+-     *
+-     * @param effect the effect to set, or null to indicate none.
+-     */
+-    void setEffect(FireworkEffect effect);
+-
+-    /**
+      * Checks if this meta has an effect.
+      *
+      * @return true if this meta has an effect, false otherwise
+@@ -30,5 +23,12 @@
+      */
+     FireworkEffect getEffect();
+ 
++    /**
++     * Sets the firework effect for this meta.
++     *
++     * @param effect the effect to set, or null to indicate none.
++     */
++    void setEffect(FireworkEffect effect);
++
+     FireworkEffectMeta clone();
+ }

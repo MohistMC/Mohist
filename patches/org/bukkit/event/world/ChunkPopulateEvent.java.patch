@@ -1,0 +1,18 @@
+--- ../src-base/minecraft/org/bukkit/event/world/ChunkPopulateEvent.java
++++ ../src-work/minecraft/org/bukkit/event/world/ChunkPopulateEvent.java
+@@ -17,12 +17,12 @@
+         super(chunk);
+     }
+ 
+-    @Override
+-    public HandlerList getHandlers() {
++    public static HandlerList getHandlerList() {
+         return handlers;
+     }
+ 
+-    public static HandlerList getHandlerList() {
++    @Override
++    public HandlerList getHandlers() {
+         return handlers;
+     }
+ }

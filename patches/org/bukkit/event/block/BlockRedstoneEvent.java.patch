@@ -1,0 +1,22 @@
+--- ../src-base/minecraft/org/bukkit/event/block/BlockRedstoneEvent.java
++++ ../src-work/minecraft/org/bukkit/event/block/BlockRedstoneEvent.java
+@@ -17,6 +17,10 @@
+         this.newCurrent = newCurrent;
+     }
+ 
++    public static HandlerList getHandlerList() {
++        return handlers;
++    }
++
+     /**
+      * Gets the old current of this block
+      *
+@@ -48,8 +52,4 @@
+     public HandlerList getHandlers() {
+         return handlers;
+     }
+-
+-    public static HandlerList getHandlerList() {
+-        return handlers;
+-    }
+ }

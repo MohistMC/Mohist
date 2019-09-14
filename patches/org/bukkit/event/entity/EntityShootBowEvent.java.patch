@@ -1,0 +1,32 @@
+--- ../src-base/minecraft/org/bukkit/event/entity/EntityShootBowEvent.java
++++ ../src-work/minecraft/org/bukkit/event/entity/EntityShootBowEvent.java
+@@ -13,8 +13,8 @@
+ public class EntityShootBowEvent extends EntityEvent implements Cancellable {
+     private static final HandlerList handlers = new HandlerList();
+     private final ItemStack bow;
+-    private Entity projectile;
+     private final float force;
++    private Entity projectile;
+     private boolean cancelled;
+ 
+     public EntityShootBowEvent(final LivingEntity shooter, final ItemStack bow, final Projectile projectile, final float force) {
+@@ -24,6 +24,10 @@
+         this.force = force;
+     }
+ 
++    public static HandlerList getHandlerList() {
++        return handlers;
++    }
++
+     @Override
+     public LivingEntity getEntity() {
+         return (LivingEntity) entity;
+@@ -77,8 +81,4 @@
+     public HandlerList getHandlers() {
+         return handlers;
+     }
+-
+-    public static HandlerList getHandlerList() {
+-        return handlers;
+-    }
+ }

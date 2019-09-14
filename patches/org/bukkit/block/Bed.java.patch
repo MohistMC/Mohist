@@ -1,0 +1,9 @@
+--- ../src-base/minecraft/org/bukkit/block/Bed.java
++++ ../src-work/minecraft/org/bukkit/block/Bed.java
+@@ -5,4 +5,5 @@
+ /**
+  * Represents a captured state of a bed.
+  */
+-public interface Bed extends BlockState, Colorable { }
++public interface Bed extends BlockState, Colorable {
++}

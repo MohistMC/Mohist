@@ -1,0 +1,48 @@
+--- ../src-base/minecraft/org/bukkit/event/hanging/HangingBreakEvent.java
++++ ../src-work/minecraft/org/bukkit/event/hanging/HangingBreakEvent.java
+@@ -9,14 +9,18 @@
+  */
+ public class HangingBreakEvent extends HangingEvent implements Cancellable {
+     private static final HandlerList handlers = new HandlerList();
+-    private boolean cancelled;
+     private final HangingBreakEvent.RemoveCause cause;
++    private boolean cancelled;
+ 
+     public HangingBreakEvent(final Hanging hanging, final HangingBreakEvent.RemoveCause cause) {
+         super(hanging);
+         this.cause = cause;
+     }
+ 
++    public static HandlerList getHandlerList() {
++        return handlers;
++    }
++
+     /**
+      * Gets the cause for the hanging entity's removal
+      *
+@@ -34,6 +38,11 @@
+         this.cancelled = cancel;
+     }
+ 
++    @Override
++    public HandlerList getHandlers() {
++        return handlers;
++    }
++
+     /**
+      * An enum to specify the cause of the removal
+      */
+@@ -59,13 +68,4 @@
+          */
+         DEFAULT,
+     }
+-
+-    @Override
+-    public HandlerList getHandlers() {
+-        return handlers;
+-    }
+-
+-    public static HandlerList getHandlerList() {
+-        return handlers;
+-    }
+ }

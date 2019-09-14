@@ -1,0 +1,49 @@
+--- ../src-base/minecraft/org/bukkit/event/entity/EntityChangeBlockEvent.java
++++ ../src-work/minecraft/org/bukkit/event/entity/EntityChangeBlockEvent.java
+@@ -12,9 +12,9 @@
+ public class EntityChangeBlockEvent extends EntityEvent implements Cancellable {
+     private static final HandlerList handlers = new HandlerList();
+     private final Block block;
+-    private boolean cancel;
+     private final Material to;
+     private final byte data;
++    private boolean cancel;
+ 
+     /**
+      *
+@@ -24,7 +24,6 @@
+      * @param data the future block data
+      * @deprecated Magic value
+      */
+-    @Deprecated
+     public EntityChangeBlockEvent(final Entity what, final Block block, final Material to, final byte data) {
+         super(what);
+         this.block = block;
+@@ -33,6 +32,10 @@
+         this.data = data;
+     }
+ 
++    public static HandlerList getHandlerList() {
++        return handlers;
++    }
++
+     /**
+      * Gets the block the entity is changing
+      *
+@@ -65,7 +68,6 @@
+      * @return the data for the block that would be changed into
+      * @deprecated Magic value
+      */
+-    @Deprecated
+     public byte getData() {
+         return data;
+     }
+@@ -74,8 +76,4 @@
+     public HandlerList getHandlers() {
+         return handlers;
+     }
+-
+-    public static HandlerList getHandlerList() {
+-        return handlers;
+-    }
+ }

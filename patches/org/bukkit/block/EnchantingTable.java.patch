@@ -1,0 +1,9 @@
+--- ../src-base/minecraft/org/bukkit/block/EnchantingTable.java
++++ ../src-work/minecraft/org/bukkit/block/EnchantingTable.java
+@@ -5,4 +5,5 @@
+ /**
+  * Represents a captured state of an enchanting table.
+  */
+-public interface EnchantingTable extends BlockState, Nameable { }
++public interface EnchantingTable extends BlockState, Nameable {
++}

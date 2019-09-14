@@ -1,0 +1,20 @@
+--- ../src-base/minecraft/org/bukkit/material/Tripwire.java
++++ ../src-work/minecraft/org/bukkit/material/Tripwire.java
+@@ -15,7 +15,7 @@
+      * @param type the raw type id
+      * @deprecated Magic value
+      */
+-    @Deprecated
++
+     public Tripwire(final int type) {
+         super(type);
+     }
+@@ -25,7 +25,7 @@
+      * @param data the raw data value
+      * @deprecated Magic value
+      */
+-    @Deprecated
++
+     public Tripwire(final int type, final byte data) {
+         super(type, data);
+     }

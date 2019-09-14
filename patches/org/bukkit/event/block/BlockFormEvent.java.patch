@@ -1,0 +1,18 @@
+--- ../src-base/minecraft/org/bukkit/event/block/BlockFormEvent.java
++++ ../src-work/minecraft/org/bukkit/event/block/BlockFormEvent.java
+@@ -29,12 +29,12 @@
+         super(block, newState);
+     }
+ 
+-    @Override
+-    public HandlerList getHandlers() {
++    public static HandlerList getHandlerList() {
+         return handlers;
+     }
+ 
+-    public static HandlerList getHandlerList() {
++    @Override
++    public HandlerList getHandlers() {
+         return handlers;
+     }
+ }

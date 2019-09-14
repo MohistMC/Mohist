@@ -1,0 +1,93 @@
+--- ../src-base/minecraft/org/bukkit/material/Stairs.java
++++ ../src-work/minecraft/org/bukkit/material/Stairs.java
+@@ -12,7 +12,7 @@
+      * @param type the raw type id
+      * @deprecated Magic value
+      */
+-    @Deprecated
++
+     public Stairs(final int type) {
+         super(type);
+     }
+@@ -26,7 +26,7 @@
+      * @param data the raw data value
+      * @deprecated Magic value
+      */
+-    @Deprecated
++
+     public Stairs(final int type, final byte data) {
+         super(type, data);
+     }
+@@ -36,7 +36,7 @@
+      * @param data the raw data value
+      * @deprecated Magic value
+      */
+-    @Deprecated
++
+     public Stairs(final Material type, final byte data) {
+         super(type, data);
+     }
+@@ -48,18 +48,18 @@
+         byte data = getData();
+ 
+         switch (data & 0x3) {
+-        case 0x0:
+-        default:
+-            return BlockFace.EAST;
++            case 0x0:
++            default:
++                return BlockFace.EAST;
+ 
+-        case 0x1:
+-            return BlockFace.WEST;
++            case 0x1:
++                return BlockFace.WEST;
+ 
+-        case 0x2:
+-            return BlockFace.SOUTH;
++            case 0x2:
++                return BlockFace.SOUTH;
+ 
+-        case 0x3:
+-            return BlockFace.NORTH;
++            case 0x3:
++                return BlockFace.NORTH;
+         }
+     }
+ 
+@@ -77,22 +77,22 @@
+         byte data;
+ 
+         switch (face) {
+-        case NORTH:
+-            data = 0x3;
+-            break;
++            case NORTH:
++                data = 0x3;
++                break;
+ 
+-        case SOUTH:
+-            data = 0x2;
+-            break;
++            case SOUTH:
++                data = 0x2;
++                break;
+ 
+-        case EAST:
+-        default:
+-            data = 0x0;
+-            break;
++            case EAST:
++            default:
++                data = 0x0;
++                break;
+ 
+-        case WEST:
+-            data = 0x1;
+-            break;
++            case WEST:
++                data = 0x1;
++                break;
+         }
+ 
+         setData((byte) ((getData() & 0xC) | data));

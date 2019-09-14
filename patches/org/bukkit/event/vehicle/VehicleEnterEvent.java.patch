@@ -1,0 +1,31 @@
+--- ../src-base/minecraft/org/bukkit/event/vehicle/VehicleEnterEvent.java
++++ ../src-work/minecraft/org/bukkit/event/vehicle/VehicleEnterEvent.java
+@@ -10,14 +10,18 @@
+  */
+ public class VehicleEnterEvent extends VehicleEvent implements Cancellable {
+     private static final HandlerList handlers = new HandlerList();
+-    private boolean cancelled;
+     private final Entity entered;
++    private boolean cancelled;
+ 
+     public VehicleEnterEvent(final Vehicle vehicle, final Entity entered) {
+         super(vehicle);
+         this.entered = entered;
+     }
+ 
++    public static HandlerList getHandlerList() {
++        return handlers;
++    }
++
+     /**
+      * Gets the Entity that entered the vehicle.
+      *
+@@ -39,8 +43,4 @@
+     public HandlerList getHandlers() {
+         return handlers;
+     }
+-
+-    public static HandlerList getHandlerList() {
+-        return handlers;
+-    }
+ }

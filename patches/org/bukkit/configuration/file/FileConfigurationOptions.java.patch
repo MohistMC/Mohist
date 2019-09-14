@@ -1,0 +1,11 @@
+--- ../src-base/minecraft/org/bukkit/configuration/file/FileConfigurationOptions.java
++++ ../src-work/minecraft/org/bukkit/configuration/file/FileConfigurationOptions.java
+@@ -1,6 +1,7 @@
+ package org.bukkit.configuration.file;
+ 
+-import org.bukkit.configuration.*;
++import org.bukkit.configuration.MemoryConfiguration;
++import org.bukkit.configuration.MemoryConfigurationOptions;
+ 
+ /**
+  * Various settings for controlling the input and output of a {@link

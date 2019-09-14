@@ -1,0 +1,25 @@
+--- ../src-base/minecraft/org/bukkit/entity/PigZombie.java
++++ ../src-work/minecraft/org/bukkit/entity/PigZombie.java
+@@ -21,16 +21,16 @@
+     void setAnger(int level);
+ 
+     /**
+-     * Shorthand; sets to either 0 or the default level.
++     * Shorthand; gets whether the zombie is angry.
+      *
+-     * @param angry Whether the zombie should be angry.
++     * @return True if the zombie is angry, otherwise false.
+      */
+-    void setAngry(boolean angry);
++    boolean isAngry();
+ 
+     /**
+-     * Shorthand; gets whether the zombie is angry.
++     * Shorthand; sets to either 0 or the default level.
+      *
+-     * @return True if the zombie is angry, otherwise false.
++     * @param angry Whether the zombie should be angry.
+      */
+-    boolean isAngry();
++    void setAngry(boolean angry);
+ }

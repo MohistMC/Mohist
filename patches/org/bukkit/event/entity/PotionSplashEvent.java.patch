@@ -1,0 +1,40 @@
+--- ../src-base/minecraft/org/bukkit/event/entity/PotionSplashEvent.java
++++ ../src-work/minecraft/org/bukkit/event/entity/PotionSplashEvent.java
+@@ -3,7 +3,6 @@
+ import java.util.ArrayList;
+ import java.util.Collection;
+ import java.util.Map;
+-
+ import org.apache.commons.lang.Validate;
+ import org.bukkit.entity.LivingEntity;
+ import org.bukkit.entity.ThrownPotion;
+@@ -15,8 +14,8 @@
+  */
+ public class PotionSplashEvent extends ProjectileHitEvent implements Cancellable {
+     private static final HandlerList handlers = new HandlerList();
+-    private boolean cancelled;
+     private final Map<LivingEntity, Double> affectedEntities;
++    private boolean cancelled;
+ 
+     public PotionSplashEvent(final ThrownPotion potion, final Map<LivingEntity, Double> affectedEntities) {
+         super(potion);
+@@ -24,6 +23,10 @@
+         this.affectedEntities = affectedEntities;
+     }
+ 
++    public static HandlerList getHandlerList() {
++        return handlers;
++    }
++
+     @Override
+     public ThrownPotion getEntity() {
+         return (ThrownPotion) entity;
+@@ -87,8 +90,4 @@
+     public HandlerList getHandlers() {
+         return handlers;
+     }
+-
+-    public static HandlerList getHandlerList() {
+-        return handlers;
+-    }
+ }

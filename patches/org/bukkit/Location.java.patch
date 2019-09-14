@@ -1,0 +1,375 @@
+--- ../src-base/minecraft/org/bukkit/Location.java
++++ ../src-work/minecraft/org/bukkit/Location.java
+@@ -2,9 +2,9 @@
+ 
+ import java.util.HashMap;
+ import java.util.Map;
+-
+ import org.bukkit.block.Block;
+ import org.bukkit.configuration.serialization.ConfigurationSerializable;
++import org.bukkit.entity.Entity;
+ import org.bukkit.util.NumberConversions;
+ import org.bukkit.util.Vector;
+ 
+@@ -56,15 +56,34 @@
+     }
+ 
+     /**
+-     * Sets the world that this location resides in
++     * Safely converts a double (location coordinate) to an int (block
++     * coordinate)
+      *
+-     * @param world New world that this location resides in
++     * @param loc Precise coordinate
++     * @return Block coordinate
+      */
+-    public void setWorld(World world) {
+-        this.world = world;
++    public static int locToBlock(double loc) {
++        return NumberConversions.floor(loc);
+     }
+ 
+     /**
++     * Required method for deserialization
++     *
++     * @param args map to deserialize
++     * @return deserialized location
++     * @throws IllegalArgumentException if the world don't exists
++     * @see ConfigurationSerializable
++     */
++    public static Location deserialize(Map<String, Object> args) {
++        World world = Bukkit.getWorld((String) args.get("world"));
++        if (world == null) {
++            throw new IllegalArgumentException("unknown world");
++        }
++
++        return new Location(world, NumberConversions.toDouble(args.get("x")), NumberConversions.toDouble(args.get("y")), NumberConversions.toDouble(args.get("z")), NumberConversions.toFloat(args.get("yaw")), NumberConversions.toFloat(args.get("pitch")));
++    }
++
++    /**
+      * Gets the world that this location resides in
+      *
+      * @return World that contains this location
+@@ -74,6 +93,15 @@
+     }
+ 
+     /**
++     * Sets the world that this location resides in
++     *
++     * @param world New world that this location resides in
++     */
++    public void setWorld(World world) {
++        this.world = world;
++    }
++
++    /**
+      * Gets the chunk at the represented location
+      *
+      * @return Chunk at the represented location
+@@ -92,21 +120,21 @@
+     }
+ 
+     /**
+-     * Sets the x-coordinate of this location
++     * Gets the x-coordinate of this location
+      *
+-     * @param x X-coordinate
++     * @return x-coordinate
+      */
+-    public void setX(double x) {
+-        this.x = x;
++    public double getX() {
++        return x;
+     }
+ 
+     /**
+-     * Gets the x-coordinate of this location
++     * Sets the x-coordinate of this location
+      *
+-     * @return x-coordinate
++     * @param x X-coordinate
+      */
+-    public double getX() {
+-        return x;
++    public void setX(double x) {
++        this.x = x;
+     }
+ 
+     /**
+@@ -120,21 +148,21 @@
+     }
+ 
+     /**
+-     * Sets the y-coordinate of this location
++     * Gets the y-coordinate of this location
+      *
+-     * @param y y-coordinate
++     * @return y-coordinate
+      */
+-    public void setY(double y) {
+-        this.y = y;
++    public double getY() {
++        return y;
+     }
+ 
+     /**
+-     * Gets the y-coordinate of this location
++     * Sets the y-coordinate of this location
+      *
+-     * @return y-coordinate
++     * @param y y-coordinate
+      */
+-    public double getY() {
+-        return y;
++    public void setY(double y) {
++        this.y = y;
+     }
+ 
+     /**
+@@ -148,21 +176,21 @@
+     }
+ 
+     /**
+-     * Sets the z-coordinate of this location
++     * Gets the z-coordinate of this location
+      *
+-     * @param z z-coordinate
++     * @return z-coordinate
+      */
+-    public void setZ(double z) {
+-        this.z = z;
++    public double getZ() {
++        return z;
+     }
+ 
+     /**
+-     * Gets the z-coordinate of this location
++     * Sets the z-coordinate of this location
+      *
+-     * @return z-coordinate
++     * @param z z-coordinate
+      */
+-    public double getZ() {
+-        return z;
++    public void setZ(double z) {
++        this.z = z;
+     }
+ 
+     /**
+@@ -176,7 +204,7 @@
+     }
+ 
+     /**
+-     * Sets the yaw of this location, measured in degrees.
++     * Gets the yaw of this location, measured in degrees.
+      * <ul>
+      * <li>A yaw of 0 or 360 represents the positive z direction.
+      * <li>A yaw of 180 represents the negative z direction.
+@@ -187,14 +215,14 @@
+      * right-facing, increasing the scale of the next respective axis, and
+      * decreasing the scale of the previous axis.
+      *
+-     * @param yaw new rotation's yaw
++     * @return the rotation's yaw
+      */
+-    public void setYaw(float yaw) {
+-        this.yaw = yaw;
++    public float getYaw() {
++        return yaw;
+     }
+ 
+     /**
+-     * Gets the yaw of this location, measured in degrees.
++     * Sets the yaw of this location, measured in degrees.
+      * <ul>
+      * <li>A yaw of 0 or 360 represents the positive z direction.
+      * <li>A yaw of 180 represents the negative z direction.
+@@ -205,14 +233,14 @@
+      * right-facing, increasing the scale of the next respective axis, and
+      * decreasing the scale of the previous axis.
+      *
+-     * @return the rotation's yaw
++     * @param yaw new rotation's yaw
+      */
+-    public float getYaw() {
+-        return yaw;
++    public void setYaw(float yaw) {
++        this.yaw = yaw;
+     }
+ 
+     /**
+-     * Sets the pitch of this location, measured in degrees.
++     * Gets the pitch of this location, measured in degrees.
+      * <ul>
+      * <li>A pitch of 0 represents level forward facing.
+      * <li>A pitch of 90 represents downward facing, or negative y
+@@ -221,14 +249,14 @@
+      * </ul>
+      * Increasing pitch values the equivalent of looking down.
+      *
+-     * @param pitch new incline's pitch
++     * @return the incline's pitch
+      */
+-    public void setPitch(float pitch) {
+-        this.pitch = pitch;
++    public float getPitch() {
++        return pitch;
+     }
+ 
+     /**
+-     * Gets the pitch of this location, measured in degrees.
++     * Sets the pitch of this location, measured in degrees.
+      * <ul>
+      * <li>A pitch of 0 represents level forward facing.
+      * <li>A pitch of 90 represents downward facing, or negative y
+@@ -237,10 +265,10 @@
+      * </ul>
+      * Increasing pitch values the equivalent of looking down.
+      *
+-     * @return the incline's pitch
++     * @param pitch new incline's pitch
+      */
+-    public float getPitch() {
+-        return pitch;
++    public void setPitch(float pitch) {
++        this.pitch = pitch;
+     }
+ 
+     /**
+@@ -269,7 +297,7 @@
+     /**
+      * Sets the {@link #getYaw() yaw} and {@link #getPitch() pitch} to point
+      * in the direction of the vector.
+-     * 
++     *
+      * @param vector the direction vector
+      * @return the same location
+      */
+@@ -491,6 +519,87 @@
+         return this;
+     }
+ 
++    /**
++     * Creates explosion at this location with given power
++     *
++     * Will break blocks and ignite blocks on fire.
++     *
++     * @param power The power of explosion, where 4F is TNT
++     * @return false if explosion was canceled, otherwise true
++     */
++    public boolean createExplosion(float power) {
++        return world.createExplosion(this, power);
++    }
++
++    /**
++     * Creates explosion at this location with given power and optionally
++     * setting blocks on fire.
++     *
++     * Will break blocks.
++     *
++     * @param power The power of explosion, where 4F is TNT
++     * @param setFire Whether or not to set blocks on fire
++     * @return false if explosion was canceled, otherwise true
++     */
++    public boolean createExplosion(float power, boolean setFire) {
++        return world.createExplosion(this, power, setFire);
++    }
++
++    /**
++     * Creates explosion at this location with given power and optionally
++     * setting blocks on fire.
++     *
++     * @param power The power of explosion, where 4F is TNT
++     * @param setFire Whether or not to set blocks on fire
++     * @param breakBlocks Whether or not to have blocks be destroyed
++     * @return false if explosion was canceled, otherwise true
++     */
++    public boolean createExplosion(float power, boolean setFire, boolean breakBlocks) {
++        return world.createExplosion(this, power, setFire, breakBlocks);
++    }
++
++    /**
++     * Creates explosion at this location with given power, with the specified entity as the source.
++     *
++     * Will break blocks and ignite blocks on fire.
++     *
++     * @param source The source entity of the explosion
++     * @param power The power of explosion, where 4F is TNT
++     * @return false if explosion was canceled, otherwise true
++     */
++    public boolean createExplosion(Entity source, float power) {
++        return world.createExplosion(source, this, power, true, true);
++    }
++
++    /**
++     * Creates explosion at this location with given power and optionally
++     * setting blocks on fire, with the specified entity as the source.
++     *
++     * Will break blocks.
++     *
++     * @param source The source entity of the explosion
++     * @param power The power of explosion, where 4F is TNT
++     * @param setFire Whether or not to set blocks on fire
++     * @return false if explosion was canceled, otherwise true
++     */
++    public boolean createExplosion(Entity source, float power, boolean setFire) {
++        return world.createExplosion(source, this, power, setFire, true);
++    }
++
++    /**
++     * Creates explosion at this location with given power and optionally
++     * setting blocks on fire, with the specified entity as the source.
++     *
++     * @param source The source entity of the explosion
++     * @param power The power of explosion, where 4F is TNT
++     * @param setFire Whether or not to set blocks on fire
++     * @param breakBlocks Whether or not to have blocks be destroyed
++     * @return false if explosion was canceled, otherwise true
++     */
++    public boolean createExplosion(Entity source, float power, boolean setFire, boolean breakBlocks) {
++        return world.createExplosion(source, source.getLocation(), power, setFire, breakBlocks);
++    }
++
+     @Override
+     public boolean equals(Object obj) {
+         if (obj == null) {
+@@ -572,17 +681,6 @@
+         NumberConversions.checkFinite(yaw, "yaw not finite");
+     }
+ 
+-    /**
+-     * Safely converts a double (location coordinate) to an int (block
+-     * coordinate)
+-     *
+-     * @param loc Precise coordinate
+-     * @return Block coordinate
+-     */
+-    public static int locToBlock(double loc) {
+-        return NumberConversions.floor(loc);
+-    }
+-
+     @Utility
+     public Map<String, Object> serialize() {
+         Map<String, Object> data = new HashMap<String, Object>();
+@@ -597,21 +695,4 @@
+ 
+         return data;
+     }
+-
+-    /**
+-     * Required method for deserialization
+-     *
+-     * @param args map to deserialize
+-     * @return deserialized location
+-     * @throws IllegalArgumentException if the world don't exists
+-     * @see ConfigurationSerializable
+-     */
+-    public static Location deserialize(Map<String, Object> args) {
+-        World world = Bukkit.getWorld((String) args.get("world"));
+-        if (world == null) {
+-            throw new IllegalArgumentException("unknown world");
+-        }
+-
+-        return new Location(world, NumberConversions.toDouble(args.get("x")), NumberConversions.toDouble(args.get("y")), NumberConversions.toDouble(args.get("z")), NumberConversions.toFloat(args.get("yaw")), NumberConversions.toFloat(args.get("pitch")));
+-    }
+ }

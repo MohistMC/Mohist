@@ -1,0 +1,22 @@
+--- ../src-base/minecraft/org/bukkit/event/entity/VillagerAcquireTradeEvent.java
++++ ../src-work/minecraft/org/bukkit/event/entity/VillagerAcquireTradeEvent.java
+@@ -20,6 +20,10 @@
+         this.recipe = recipe;
+     }
+ 
++    public static HandlerList getHandlerList() {
++        return handlers;
++    }
++
+     /**
+      * Get the recipe to be acquired.
+      *
+@@ -57,8 +61,4 @@
+     public HandlerList getHandlers() {
+         return handlers;
+     }
+-
+-    public static HandlerList getHandlerList() {
+-        return handlers;
+-    }
+ }

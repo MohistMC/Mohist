@@ -1,0 +1,30 @@
+--- ../src-base/minecraft/org/bukkit/inventory/MerchantRecipe.java
++++ ../src-work/minecraft/org/bukkit/inventory/MerchantRecipe.java
+@@ -51,13 +51,6 @@
+         ingredients.remove(index);
+     }
+ 
+-    public void setIngredients(List<ItemStack> ingredients) {
+-        this.ingredients = new ArrayList<ItemStack>();
+-        for (ItemStack item : ingredients) {
+-            this.ingredients.add(item.clone());
+-        }
+-    }
+-
+     public List<ItemStack> getIngredients() {
+         List<ItemStack> copy = new ArrayList<ItemStack>();
+         for (ItemStack item : ingredients) {
+@@ -66,6 +59,13 @@
+         return copy;
+     }
+ 
++    public void setIngredients(List<ItemStack> ingredients) {
++        this.ingredients = new ArrayList<ItemStack>();
++        for (ItemStack item : ingredients) {
++            this.ingredients.add(item.clone());
++        }
++    }
++
+     /**
+      * Get the number of times this trade has been used.
+      *

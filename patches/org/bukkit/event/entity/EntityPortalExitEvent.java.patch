@@ -1,0 +1,31 @@
+--- ../src-base/minecraft/org/bukkit/event/entity/EntityPortalExitEvent.java
++++ ../src-work/minecraft/org/bukkit/event/entity/EntityPortalExitEvent.java
+@@ -22,6 +22,10 @@
+         this.after = after;
+     }
+ 
++    public static HandlerList getHandlerList() {
++        return handlers;
++    }
++
+     /**
+      * Gets a copy of the velocity that the entity has before entering the
+      * portal.
+@@ -44,7 +48,7 @@
+ 
+     /**
+      * Sets the velocity that the entity will have after exiting the portal.
+-     * 
++     *
+      * @param after the velocity after exiting the portal
+      */
+     public void setAfter(Vector after) {
+@@ -55,8 +59,4 @@
+     public HandlerList getHandlers() {
+         return handlers;
+     }
+-
+-    public static HandlerList getHandlerList() {
+-        return handlers;
+-    }
+ }

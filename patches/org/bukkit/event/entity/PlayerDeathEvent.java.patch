@@ -1,0 +1,69 @@
+--- ../src-base/minecraft/org/bukkit/event/entity/PlayerDeathEvent.java
++++ ../src-work/minecraft/org/bukkit/event/entity/PlayerDeathEvent.java
+@@ -1,7 +1,6 @@
+ package org.bukkit.event.entity;
+ 
+ import java.util.List;
+-
+ import org.bukkit.entity.Player;
+ import org.bukkit.inventory.ItemStack;
+ 
+@@ -38,21 +37,21 @@
+     }
+ 
+     /**
+-     * Set the death message that will appear to everyone on the server.
++     * Get the death message that will appear to everyone on the server.
+      *
+-     * @param deathMessage Message to appear to other players on the server.
++     * @return Message to appear to other players on the server.
+      */
+-    public void setDeathMessage(String deathMessage) {
+-        this.deathMessage = deathMessage;
++    public String getDeathMessage() {
++        return deathMessage;
+     }
+ 
+     /**
+-     * Get the death message that will appear to everyone on the server.
++     * Set the death message that will appear to everyone on the server.
+      *
+-     * @return Message to appear to other players on the server.
++     * @param deathMessage Message to appear to other players on the server.
+      */
+-    public String getDeathMessage() {
+-        return deathMessage;
++    public void setDeathMessage(String deathMessage) {
++        this.deathMessage = deathMessage;
+     }
+ 
+     /**
+@@ -142,20 +141,20 @@
+     }
+ 
+     /**
+-     * Sets if the Player keeps inventory on death.
++     * Gets if the Player keeps inventory on death.
+      *
+-     * @param keepInventory True to keep the inventory
++     * @return True if the player keeps inventory on death
+      */
+-    public void setKeepInventory(boolean keepInventory) {
+-        this.keepInventory = keepInventory;
++    public boolean getKeepInventory() {
++        return keepInventory;
+     }
+ 
+     /**
+-     * Gets if the Player keeps inventory on death.
++     * Sets if the Player keeps inventory on death.
+      *
+-     * @return True if the player keeps inventory on death
++     * @param keepInventory True to keep the inventory
+      */
+-    public boolean getKeepInventory() {
+-        return keepInventory;
++    public void setKeepInventory(boolean keepInventory) {
++        this.keepInventory = keepInventory;
+     }
+ }

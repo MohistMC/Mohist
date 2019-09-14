@@ -1,0 +1,65 @@
+--- ../src-base/minecraft/org/bukkit/NamespacedKey.java
++++ ../src-work/minecraft/org/bukkit/NamespacedKey.java
+@@ -42,7 +42,7 @@
+      * @param key
+      * @deprecated should never be used by plugins, for internal use only!!
+      */
+-    @Deprecated
++
+     public NamespacedKey(String namespace, String key) {
+         Preconditions.checkArgument(namespace != null && VALID_NAMESPACE.matcher(namespace).matches(), "namespace");
+         Preconditions.checkArgument(key != null && VALID_KEY.matcher(key).matches(), "key");
+@@ -75,6 +75,27 @@
+         Preconditions.checkArgument(string.length() < 256, "NamespacedKey must be less than 256 characters (%s)", string);
+     }
+ 
++    /**
++     * Return a new random key in the {@link #BUKKIT} namespace.
++     *
++     * @return new key
++     * @deprecated should never be used by plugins, for internal use only!!
++     */
++
++    public static NamespacedKey randomKey() {
++        return new NamespacedKey(BUKKIT, UUID.randomUUID().toString());
++    }
++
++    /**
++     * Get a key in the Minecraft namespace.
++     *
++     * @param key the key to use
++     * @return new key in the Minecraft namespace
++     */
++    public static NamespacedKey minecraft(String key) {
++        return new NamespacedKey(MINECRAFT, key);
++    }
++
+     public String getNamespace() {
+         return namespace;
+     }
+@@ -107,25 +128,4 @@
+     public String toString() {
+         return this.namespace + ":" + this.key;
+     }
+-
+-    /**
+-     * Return a new random key in the {@link #BUKKIT} namespace.
+-     *
+-     * @return new key
+-     * @deprecated should never be used by plugins, for internal use only!!
+-     */
+-    @Deprecated
+-    public static NamespacedKey randomKey() {
+-        return new NamespacedKey(BUKKIT, UUID.randomUUID().toString());
+-    }
+-
+-    /**
+-     * Get a key in the Minecraft namespace.
+-     *
+-     * @param key the key to use
+-     * @return new key in the Minecraft namespace
+-     */
+-    public static NamespacedKey minecraft(String key) {
+-        return new NamespacedKey(MINECRAFT, key);
+-    }
+ }

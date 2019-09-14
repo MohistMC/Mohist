@@ -1,0 +1,24 @@
+--- ../src-base/minecraft/org/bukkit/attribute/AttributeModifier.java
++++ ../src-work/minecraft/org/bukkit/attribute/AttributeModifier.java
+@@ -32,6 +32,10 @@
+         this.operation = operation;
+     }
+ 
++    public static AttributeModifier deserialize(Map<String, Object> args) {
++        return new AttributeModifier(UUID.fromString((String) args.get("uuid")), (String) args.get("name"), NumberConversions.toDouble(args.get("amount")), Operation.values()[NumberConversions.toInt(args.get("operation"))]);
++    }
++
+     /**
+      * Get the unique ID for this modifier.
+      *
+@@ -78,10 +82,6 @@
+         return data;
+     }
+ 
+-    public static AttributeModifier deserialize(Map<String, Object> args) {
+-        return new AttributeModifier(UUID.fromString((String) args.get("uuid")), (String) args.get("name"), NumberConversions.toDouble(args.get("amount")), Operation.values()[NumberConversions.toInt(args.get("operation"))]);
+-    }
+-
+     /**
+      * Enumerable operation to be applied.
+      */

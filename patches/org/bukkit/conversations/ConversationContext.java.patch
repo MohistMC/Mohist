@@ -1,0 +1,28 @@
+--- ../src-base/minecraft/org/bukkit/conversations/ConversationContext.java
++++ ../src-work/minecraft/org/bukkit/conversations/ConversationContext.java
+@@ -1,9 +1,8 @@
+ package org.bukkit.conversations;
+ 
++import java.util.Map;
+ import org.bukkit.plugin.Plugin;
+ 
+-import java.util.Map;
+-
+ /**
+  * A ConversationContext provides continuity between nodes in the prompt graph
+  * by giving the developer access to the subject of the conversation and a
+@@ -46,6 +45,14 @@
+     }
+ 
+     /**
++     * Gets the entire sessionData map.
++     * @return The full sessionData map.
++     */
++    public Map<Object, Object> getAllSessionData() {
++        return sessionData;
++    }
++
++    /**
+      * Gets session data shared between all {@link Prompt} invocations. Use
+      * this as a way to pass data through each Prompt as the conversation
+      * develops.

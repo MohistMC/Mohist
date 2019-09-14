@@ -1,0 +1,33 @@
+--- ../src-base/minecraft/org/bukkit/event/block/SignChangeEvent.java
++++ ../src-work/minecraft/org/bukkit/event/block/SignChangeEvent.java
+@@ -12,9 +12,9 @@
+  */
+ public class SignChangeEvent extends BlockEvent implements Cancellable {
+     private static final HandlerList handlers = new HandlerList();
+-    private boolean cancel = false;
+     private final Player player;
+     private final String[] lines;
++    private boolean cancel = false;
+ 
+     public SignChangeEvent(final Block theBlock, final Player thePlayer, final String[] theLines) {
+         super(theBlock);
+@@ -22,6 +22,10 @@
+         this.lines = theLines;
+     }
+ 
++    public static HandlerList getHandlerList() {
++        return handlers;
++    }
++
+     /**
+      * Gets the player changing the sign involved in this event.
+      *
+@@ -77,8 +81,4 @@
+     public HandlerList getHandlers() {
+         return handlers;
+     }
+-
+-    public static HandlerList getHandlerList() {
+-        return handlers;
+-    }
+ }

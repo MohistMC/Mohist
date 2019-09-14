@@ -1,0 +1,67 @@
+--- ../src-base/minecraft/org/bukkit/plugin/SimpleServicesManager.java
++++ ../src-work/minecraft/org/bukkit/plugin/SimpleServicesManager.java
+@@ -1,20 +1,18 @@
+ package org.bukkit.plugin;
+ 
+-import org.bukkit.Bukkit;
+-import org.bukkit.event.server.ServiceRegisterEvent;
+-import org.bukkit.event.server.ServiceUnregisterEvent;
+-
+ import com.google.common.collect.ImmutableList;
+ import com.google.common.collect.ImmutableSet;
+-
+ import java.util.ArrayList;
+ import java.util.Collections;
+ import java.util.HashMap;
+ import java.util.Iterator;
+-import java.util.Map;
+ import java.util.List;
++import java.util.Map;
+ import java.util.NoSuchElementException;
+ import java.util.Set;
++import org.bukkit.Bukkit;
++import org.bukkit.event.server.ServiceRegisterEvent;
++import org.bukkit.event.server.ServiceUnregisterEvent;
+ 
+ /**
+  * A simple services manager.
+@@ -79,7 +77,8 @@
+                         while (it2.hasNext()) {
+                             RegisteredServiceProvider<?> registered = it2.next();
+ 
+-                            if (registered.getPlugin().equals(plugin)) {
++                            Plugin oPlugin = registered.getPlugin();
++                            if (oPlugin != null ? oPlugin.equals(plugin) : plugin == null) {
+                                 it2.remove();
+                                 unregisteredEvents.add(new ServiceUnregisterEvent(registered));
+                             }
+@@ -92,7 +91,8 @@
+                         it.remove();
+                     }
+                 }
+-            } catch (NoSuchElementException e) {}
++            } catch (NoSuchElementException e) {
++            }
+         }
+         for (ServiceUnregisterEvent event : unregisteredEvents) {
+             Bukkit.getServer().getPluginManager().callEvent(event);
+@@ -140,7 +140,8 @@
+                         it.remove();
+                     }
+                 }
+-            } catch (NoSuchElementException e) {}
++            } catch (NoSuchElementException e) {
++            }
+         }
+         for (ServiceUnregisterEvent event : unregisteredEvents) {
+             Bukkit.getServer().getPluginManager().callEvent(event);
+@@ -181,7 +182,8 @@
+                         it.remove();
+                     }
+                 }
+-            } catch (NoSuchElementException e) {}
++            } catch (NoSuchElementException e) {
++            }
+         }
+         for (ServiceUnregisterEvent event : unregisteredEvents) {
+             Bukkit.getServer().getPluginManager().callEvent(event);

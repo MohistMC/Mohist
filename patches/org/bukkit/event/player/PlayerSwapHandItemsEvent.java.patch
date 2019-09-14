@@ -1,0 +1,22 @@
+--- ../src-base/minecraft/org/bukkit/event/player/PlayerSwapHandItemsEvent.java
++++ ../src-work/minecraft/org/bukkit/event/player/PlayerSwapHandItemsEvent.java
+@@ -24,6 +24,10 @@
+         this.offHandItem = offHandItem;
+     }
+ 
++    public static HandlerList getHandlerList() {
++        return handlers;
++    }
++
+     /**
+      * Gets the item switched to the main hand.
+      *
+@@ -74,8 +78,4 @@
+     public HandlerList getHandlers() {
+         return handlers;
+     }
+-
+-    public static HandlerList getHandlerList() {
+-        return handlers;
+-    }
+ }

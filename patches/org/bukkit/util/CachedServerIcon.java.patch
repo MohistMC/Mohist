@@ -1,0 +1,16 @@
+--- ../src-base/minecraft/org/bukkit/util/CachedServerIcon.java
++++ ../src-work/minecraft/org/bukkit/util/CachedServerIcon.java
+@@ -12,4 +12,12 @@
+  * @see Server#loadServerIcon(java.io.File)
+  * @see ServerListPingEvent#setServerIcon(CachedServerIcon)
+  */
+-public interface CachedServerIcon {}
++public interface CachedServerIcon {
++    public String getData(); // Spigot
++
++    // Paper start
++    default boolean isEmpty() {
++        return getData() == null;
++    }
++    // Paper end
++}

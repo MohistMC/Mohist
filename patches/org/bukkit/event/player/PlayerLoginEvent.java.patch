@@ -1,0 +1,82 @@
+--- ../src-base/minecraft/org/bukkit/event/player/PlayerLoginEvent.java
++++ ../src-work/minecraft/org/bukkit/event/player/PlayerLoginEvent.java
+@@ -1,7 +1,6 @@
+ package org.bukkit.event.player;
+ 
+ import java.net.InetAddress;
+-
+ import org.bukkit.entity.Player;
+ import org.bukkit.event.HandlerList;
+ 
+@@ -12,6 +11,7 @@
+     private static final HandlerList handlers = new HandlerList();
+     private final InetAddress address;
+     private final String hostname;
++    private final InetAddress realAddress; // Spigot
+     private Result result = Result.ALLOWED;
+     private String message = "";
+ 
+@@ -24,12 +24,19 @@
+      * @param address The address the player used to connect, provided for
+      *     timing issues
+      */
+-    public PlayerLoginEvent(final Player player, final String hostname, final InetAddress address) {
++    public PlayerLoginEvent(final Player player, final String hostname, final InetAddress address, final InetAddress realAddress) { // Spigot
+         super(player);
+         this.hostname = hostname;
+         this.address = address;
++        // Spigot start
++        this.realAddress = realAddress;
+     }
+ 
++    public PlayerLoginEvent(final Player player, final String hostname, final InetAddress address) {
++        this(player, hostname, address, address);
++        // Spigot end
++    }
++
+     /**
+      * This constructor pre-configures the event with a result and message
+      *
+@@ -40,13 +47,29 @@
+      * @param result The result status for this event
+      * @param message The message to be displayed if result denies login
+      */
+-    public PlayerLoginEvent(final Player player, String hostname, final InetAddress address, final Result result, final String message) {
+-        this(player, hostname, address);
++    public PlayerLoginEvent(final Player player, String hostname, final InetAddress address, final Result result, final String message, final InetAddress realAddress) { // Spigot
++        this(player, hostname, address, realAddress); // Spigot
+         this.result = result;
+         this.message = message;
+     }
+ 
++    // Spigot start
++
++    public static HandlerList getHandlerList() {
++        return handlers;
++    }
++    // Spigot end
++
+     /**
++     * Gets the connection address of this player, regardless of whether it has been spoofed or not.
++     *
++     * @return the player's connection address
++     */
++    public InetAddress getRealAddress() {
++        return realAddress;
++    }
++
++    /**
+      * Gets the current result of the login, as an enum
+      *
+      * @return Current Result of the login
+@@ -129,10 +152,6 @@
+         return handlers;
+     }
+ 
+-    public static HandlerList getHandlerList() {
+-        return handlers;
+-    }
+-
+     /**
+      * Basic kick reasons for communicating to plugins
+      */

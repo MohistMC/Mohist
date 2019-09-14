@@ -1,0 +1,39 @@
+--- ../src-base/minecraft/org/bukkit/event/block/BlockIgniteEvent.java
++++ ../src-work/minecraft/org/bukkit/event/block/BlockIgniteEvent.java
+@@ -35,6 +35,10 @@
+         this.cancel = false;
+     }
+ 
++    public static HandlerList getHandlerList() {
++        return handlers;
++    }
++
+     public boolean isCancelled() {
+         return cancel;
+     }
+@@ -83,6 +87,11 @@
+         return ignitingBlock;
+     }
+ 
++    @Override
++    public HandlerList getHandlers() {
++        return handlers;
++    }
++
+     /**
+      * An enum to specify the cause of the ignite
+      */
+@@ -117,13 +126,4 @@
+          */
+         EXPLOSION,
+     }
+-
+-    @Override
+-    public HandlerList getHandlers() {
+-        return handlers;
+-    }
+-
+-    public static HandlerList getHandlerList() {
+-        return handlers;
+-    }
+ }

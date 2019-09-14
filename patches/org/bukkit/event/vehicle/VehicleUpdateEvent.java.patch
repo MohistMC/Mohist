@@ -1,0 +1,18 @@
+--- ../src-base/minecraft/org/bukkit/event/vehicle/VehicleUpdateEvent.java
++++ ../src-work/minecraft/org/bukkit/event/vehicle/VehicleUpdateEvent.java
+@@ -13,12 +13,12 @@
+         super(vehicle);
+     }
+ 
+-    @Override
+-    public HandlerList getHandlers() {
++    public static HandlerList getHandlerList() {
+         return handlers;
+     }
+ 
+-    public static HandlerList getHandlerList() {
++    @Override
++    public HandlerList getHandlers() {
+         return handlers;
+     }
+ }

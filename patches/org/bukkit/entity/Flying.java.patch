@@ -1,0 +1,9 @@
+--- ../src-base/minecraft/org/bukkit/entity/Flying.java
++++ ../src-work/minecraft/org/bukkit/entity/Flying.java
+@@ -3,4 +3,5 @@
+ /**
+  * Represents a Flying Entity.
+  */
+-public interface Flying extends LivingEntity {}
++public interface Flying extends LivingEntity {
++}

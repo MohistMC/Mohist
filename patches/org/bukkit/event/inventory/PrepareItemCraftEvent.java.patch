@@ -1,0 +1,22 @@
+--- ../src-base/minecraft/org/bukkit/event/inventory/PrepareItemCraftEvent.java
++++ ../src-work/minecraft/org/bukkit/event/inventory/PrepareItemCraftEvent.java
+@@ -16,6 +16,10 @@
+         this.repair = isRepair;
+     }
+ 
++    public static HandlerList getHandlerList() {
++        return handlers;
++    }
++
+     /**
+      * Get the recipe that has been formed. If this event was triggered by a
+      * tool repair, this will be a temporary shapeless recipe representing the
+@@ -49,8 +53,4 @@
+     public HandlerList getHandlers() {
+         return handlers;
+     }
+-
+-    public static HandlerList getHandlerList() {
+-        return handlers;
+-    }
+ }

@@ -1,0 +1,22 @@
+--- ../src-base/minecraft/org/bukkit/event/player/PlayerItemBreakEvent.java
++++ ../src-work/minecraft/org/bukkit/event/player/PlayerItemBreakEvent.java
+@@ -19,6 +19,10 @@
+         this.brokenItem = brokenItem;
+     }
+ 
++    public static HandlerList getHandlerList() {
++        return handlers;
++    }
++
+     /**
+      * Gets the item that broke
+      *
+@@ -32,8 +36,4 @@
+     public HandlerList getHandlers() {
+         return handlers;
+     }
+-
+-    public static HandlerList getHandlerList() {
+-        return handlers;
+-    }
+ }

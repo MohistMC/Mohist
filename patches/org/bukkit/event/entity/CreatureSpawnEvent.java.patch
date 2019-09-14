@@ -1,0 +1,69 @@
+--- ../src-base/minecraft/org/bukkit/event/entity/CreatureSpawnEvent.java
++++ ../src-work/minecraft/org/bukkit/event/entity/CreatureSpawnEvent.java
+@@ -1,19 +1,13 @@
+ package org.bukkit.event.entity;
+ 
+-import org.bukkit.Location;
+-import org.bukkit.entity.Entity;
+ import org.bukkit.entity.LivingEntity;
+-import org.bukkit.event.Cancellable;
+-import org.bukkit.event.HandlerList;
+ 
+ /**
+  * Called when a creature is spawned into a world.
+  * <p>
+  * If a Creature Spawn event is cancelled, the creature will not spawn.
+  */
+-public class CreatureSpawnEvent extends EntityEvent implements Cancellable {
+-    private static final HandlerList handlers = new HandlerList();
+-    private boolean canceled;
++public class CreatureSpawnEvent extends EntitySpawnEvent {
+     private final SpawnReason spawnReason;
+ 
+     public CreatureSpawnEvent(final LivingEntity spawnee, final SpawnReason spawnReason) {
+@@ -21,29 +15,12 @@
+         this.spawnReason = spawnReason;
+     }
+ 
+-    public boolean isCancelled() {
+-        return canceled;
+-    }
+-
+-    public void setCancelled(boolean cancel) {
+-        canceled = cancel;
+-    }
+-
+     @Override
+     public LivingEntity getEntity() {
+         return (LivingEntity) entity;
+     }
+ 
+     /**
+-     * Gets the location at which the creature is spawning.
+-     *
+-     * @return The location at which the creature is spawning
+-     */
+-    public Location getLocation() {
+-        return getEntity().getLocation();
+-    }
+-
+-    /**
+      * Gets the reason for why the creature is being spawned.
+      *
+      * @return A SpawnReason value detailing the reason for the creature being
+@@ -53,15 +30,6 @@
+         return spawnReason;
+     }
+ 
+-    @Override
+-    public HandlerList getHandlers() {
+-        return handlers;
+-    }
+-
+-    public static HandlerList getHandlerList() {
+-        return handlers;
+-    }
+-
+     /**
+      * An enum to specify the type of spawning
+      */

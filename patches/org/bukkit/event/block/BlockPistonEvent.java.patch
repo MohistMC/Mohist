@@ -1,0 +1,12 @@
+--- ../src-base/minecraft/org/bukkit/event/block/BlockPistonEvent.java
++++ ../src-work/minecraft/org/bukkit/event/block/BlockPistonEvent.java
+@@ -9,8 +9,8 @@
+  * Called when a piston block is triggered
+  */
+ public abstract class BlockPistonEvent extends BlockEvent implements Cancellable {
+-    private boolean cancelled;
+     private final BlockFace direction;
++    private boolean cancelled;
+ 
+     public BlockPistonEvent(final Block block, final BlockFace direction) {
+         super(block);

@@ -1,0 +1,72 @@
+--- ../src-base/minecraft/org/bukkit/entity/LivingEntity.java
++++ ../src-work/minecraft/org/bukkit/entity/LivingEntity.java
+@@ -1,10 +1,8 @@
+ package org.bukkit.entity;
+ 
+ import java.util.Collection;
+-import java.util.HashSet;
+ import java.util.List;
+ import java.util.Set;
+-
+ import org.bukkit.Location;
+ import org.bukkit.Material;
+ import org.bukkit.attribute.Attributable;
+@@ -271,18 +269,18 @@
+     public EntityEquipment getEquipment();
+ 
+     /**
+-     * Sets whether or not the living entity can pick up items.
++     * Gets if the living entity can pick up items.
+      *
+-     * @param pickup whether or not the living entity can pick up items
++     * @return whether or not the living entity can pick up items
+      */
+-    public void setCanPickupItems(boolean pickup);
++    public boolean getCanPickupItems();
+ 
+     /**
+-     * Gets if the living entity can pick up items.
++     * Sets whether or not the living entity can pick up items.
+      *
+-     * @return whether or not the living entity can pick up items
++     * @param pickup whether or not the living entity can pick up items
+      */
+-    public boolean getCanPickupItems();
++    public void setCanPickupItems(boolean pickup);
+ 
+     /**
+      * Returns whether the entity is currently leashed.
+@@ -340,17 +338,6 @@
+     boolean hasAI();
+ 
+     /**
+-     * Set if this entity will be subject to collisions other entities.
+-     * <p>
+-     * Note that collisions are bidirectional, so this method would need to be
+-     * set to false on both the collidee and the collidant to ensure no
+-     * collisions take place.
+-     *
+-     * @param collidable collision status
+-     */
+-    void setCollidable(boolean collidable);
+-
+-    /**
+      * Gets if this entity is subject to collisions with other entities.
+      * <p>
+      * Please note that this method returns only the custom collidable state,
+@@ -360,4 +347,15 @@
+      * @return collision status
+      */
+     boolean isCollidable();
++
++    /**
++     * Set if this entity will be subject to collisions other entities.
++     * <p>
++     * Note that collisions are bidirectional, so this method would need to be
++     * set to false on both the collidee and the collidant to ensure no
++     * collisions take place.
++     *
++     * @param collidable collision status
++     */
++    void setCollidable(boolean collidable);
+ }

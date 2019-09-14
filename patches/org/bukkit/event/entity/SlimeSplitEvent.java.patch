@@ -1,0 +1,22 @@
+--- ../src-base/minecraft/org/bukkit/event/entity/SlimeSplitEvent.java
++++ ../src-work/minecraft/org/bukkit/event/entity/SlimeSplitEvent.java
+@@ -17,6 +17,10 @@
+         this.count = count;
+     }
+ 
++    public static HandlerList getHandlerList() {
++        return handlers;
++    }
++
+     public boolean isCancelled() {
+         return cancel;
+     }
+@@ -52,8 +56,4 @@
+     public HandlerList getHandlers() {
+         return handlers;
+     }
+-
+-    public static HandlerList getHandlerList() {
+-        return handlers;
+-    }
+ }

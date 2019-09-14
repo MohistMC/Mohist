@@ -1,0 +1,72 @@
+--- ../src-base/minecraft/org/bukkit/event/player/PlayerKickEvent.java
++++ ../src-work/minecraft/org/bukkit/event/player/PlayerKickEvent.java
+@@ -20,6 +20,10 @@
+         this.cancel = false;
+     }
+ 
++    public static HandlerList getHandlerList() {
++        return handlers;
++    }
++
+     /**
+      * Gets the reason why the player is getting kicked
+      *
+@@ -30,29 +34,21 @@
+     }
+ 
+     /**
+-     * Gets the leave message send to all online players
++     * Sets the reason why the player is getting kicked
+      *
+-     * @return string kick reason
++     * @param kickReason kick reason
+      */
+-    public String getLeaveMessage() {
+-        return leaveMessage;
++    public void setReason(String kickReason) {
++        this.kickReason = kickReason;
+     }
+ 
+-    public boolean isCancelled() {
+-        return cancel;
+-    }
+-
+-    public void setCancelled(boolean cancel) {
+-        this.cancel = cancel;
+-    }
+-
+     /**
+-     * Sets the reason why the player is getting kicked
++     * Gets the leave message send to all online players
+      *
+-     * @param kickReason kick reason
++     * @return string kick reason
+      */
+-    public void setReason(String kickReason) {
+-        this.kickReason = kickReason;
++    public String getLeaveMessage() {
++        return leaveMessage;
+     }
+ 
+     /**
+@@ -64,12 +60,16 @@
+         this.leaveMessage = leaveMessage;
+     }
+ 
++    public boolean isCancelled() {
++        return cancel;
++    }
++
++    public void setCancelled(boolean cancel) {
++        this.cancel = cancel;
++    }
++
+     @Override
+     public HandlerList getHandlers() {
+         return handlers;
+     }
+-
+-    public static HandlerList getHandlerList() {
+-        return handlers;
+-    }
+ }

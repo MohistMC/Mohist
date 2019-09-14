@@ -1,0 +1,32 @@
+--- ../src-base/minecraft/org/bukkit/event/block/BlockFadeEvent.java
++++ ../src-work/minecraft/org/bukkit/event/block/BlockFadeEvent.java
+@@ -20,8 +20,8 @@
+  */
+ public class BlockFadeEvent extends BlockEvent implements Cancellable {
+     private static final HandlerList handlers = new HandlerList();
+-    private boolean cancelled;
+     private final BlockState newState;
++    private boolean cancelled;
+ 
+     public BlockFadeEvent(final Block block, final BlockState newState) {
+         super(block);
+@@ -29,6 +29,10 @@
+         this.cancelled = false;
+     }
+ 
++    public static HandlerList getHandlerList() {
++        return handlers;
++    }
++
+     /**
+      * Gets the state of the block that will be fading, melting or
+      * disappearing.
+@@ -52,8 +56,4 @@
+     public HandlerList getHandlers() {
+         return handlers;
+     }
+-
+-    public static HandlerList getHandlerList() {
+-        return handlers;
+-    }
+ }

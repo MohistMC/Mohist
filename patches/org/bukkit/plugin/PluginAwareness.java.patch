@@ -1,0 +1,11 @@
+--- ../src-base/minecraft/org/bukkit/plugin/PluginAwareness.java
++++ ../src-work/minecraft/org/bukkit/plugin/PluginAwareness.java
+@@ -22,7 +22,6 @@
+          * @deprecated all plugins are now assumed to be UTF-8 aware.
+          */
+         @Deprecated
+-        UTF8,
+-        ;
++        UTF8,;
+     }
+ }

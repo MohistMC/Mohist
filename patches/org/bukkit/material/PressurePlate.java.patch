@@ -1,0 +1,29 @@
+--- ../src-base/minecraft/org/bukkit/material/PressurePlate.java
++++ ../src-work/minecraft/org/bukkit/material/PressurePlate.java
+@@ -14,7 +14,7 @@
+      * @param type the raw type id
+      * @deprecated Magic value
+      */
+-    @Deprecated
++
+     public PressurePlate(int type) {
+         super(type);
+     }
+@@ -28,7 +28,7 @@
+      * @param data the raw data value
+      * @deprecated Magic value
+      */
+-    @Deprecated
++
+     public PressurePlate(int type, byte data) {
+         super(type, data);
+     }
+@@ -38,7 +38,7 @@
+      * @param data the raw data value
+      * @deprecated Magic value
+      */
+-    @Deprecated
++
+     public PressurePlate(Material type, byte data) {
+         super(type, data);
+     }

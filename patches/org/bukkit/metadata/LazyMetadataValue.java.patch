@@ -1,0 +1,31 @@
+--- ../src-base/minecraft/org/bukkit/metadata/LazyMetadataValue.java
++++ ../src-work/minecraft/org/bukkit/metadata/LazyMetadataValue.java
+@@ -2,7 +2,6 @@
+ 
+ import java.lang.ref.SoftReference;
+ import java.util.concurrent.Callable;
+-
+ import org.apache.commons.lang.Validate;
+ import org.bukkit.plugin.Plugin;
+ 
+@@ -18,10 +17,10 @@
+  * when asked.
+  */
+ public class LazyMetadataValue extends MetadataValueAdapter {
++    private static final Object ACTUALLY_NULL = new Object();
+     private Callable<Object> lazyValue;
+     private CacheStrategy cacheStrategy;
+     private SoftReference<Object> internalValue;
+-    private static final Object ACTUALLY_NULL = new Object();
+ 
+     /**
+      * Initialized a LazyMetadataValue object with the default
+@@ -56,7 +55,7 @@
+     /**
+      * Protected special constructor used by FixedMetadataValue to bypass
+      * standard setup.
+-     * 
++     *
+      * @param owningPlugin the owning plugin
+      */
+     protected LazyMetadataValue(Plugin owningPlugin) {

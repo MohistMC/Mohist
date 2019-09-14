@@ -1,0 +1,20 @@
+--- ../src-base/minecraft/org/bukkit/event/EventHandler.java
++++ ../src-work/minecraft/org/bukkit/event/EventHandler.java
+@@ -24,7 +24,7 @@
+      * <li>HIGHEST
+      * <li>MONITOR
+      * </ol>
+-     * 
++     *
+      * @return the priority
+      */
+     EventPriority priority() default EventPriority.NORMAL;
+@@ -34,7 +34,7 @@
+      * <p>
+      * If ignoreCancelled is true and the event is cancelled, the method is
+      * not called. Otherwise, the method is always called.
+-     * 
++     *
+      * @return whether cancelled events should be ignored
+      */
+     boolean ignoreCancelled() default false;

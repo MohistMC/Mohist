@@ -1,0 +1,42 @@
+--- ../src-base/minecraft/org/bukkit/inventory/meta/PotionMeta.java
++++ ../src-work/minecraft/org/bukkit/inventory/meta/PotionMeta.java
+@@ -1,31 +1,29 @@
+ package org.bukkit.inventory.meta;
+ 
++import java.util.List;
+ import org.bukkit.Color;
++import org.bukkit.potion.PotionData;
+ import org.bukkit.potion.PotionEffect;
+ import org.bukkit.potion.PotionEffectType;
+-import org.bukkit.potion.PotionData;
+-import org.bukkit.potion.PotionType;
+ 
+-import java.util.List;
+-
+ /**
+  * Represents a potion or item that can have custom effects.
+  */
+ public interface PotionMeta extends ItemMeta {
+ 
+     /**
+-     * Sets the underlying potion data
++     * Returns the potion data about the base potion
+      *
+-     * @param data PotionData to set the base potion state to
++     * @return a PotionData object
+      */
+-    void setBasePotionData(PotionData data);
++    PotionData getBasePotionData();
+ 
+     /**
+-     * Returns the potion data about the base potion
++     * Sets the underlying potion data
+      *
+-     * @return a PotionData object
++     * @param data PotionData to set the base potion state to
+      */
+-    PotionData getBasePotionData();
++    void setBasePotionData(PotionData data);
+ 
+     /**
+      * Checks for the presence of custom potion effects.

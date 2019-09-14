@@ -1,0 +1,22 @@
+--- ../src-base/minecraft/org/bukkit/event/entity/ExplosionPrimeEvent.java
++++ ../src-work/minecraft/org/bukkit/event/entity/ExplosionPrimeEvent.java
+@@ -25,6 +25,10 @@
+         this(explosive, explosive.getYield(), explosive.isIncendiary());
+     }
+ 
++    public static HandlerList getHandlerList() {
++        return handlers;
++    }
++
+     public boolean isCancelled() {
+         return cancel;
+     }
+@@ -73,8 +77,4 @@
+     public HandlerList getHandlers() {
+         return handlers;
+     }
+-
+-    public static HandlerList getHandlerList() {
+-        return handlers;
+-    }
+ }

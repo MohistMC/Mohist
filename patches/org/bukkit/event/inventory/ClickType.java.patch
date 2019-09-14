@@ -1,0 +1,12 @@
+--- ../src-base/minecraft/org/bukkit/event/inventory/ClickType.java
++++ ../src-work/minecraft/org/bukkit/event/inventory/ClickType.java
+@@ -61,8 +61,7 @@
+      * <p>
+      * Any ClickType.UNKNOWN is called on a best-effort basis.
+      */
+-    UNKNOWN,
+-    ;
++    UNKNOWN,;
+ 
+     /**
+      * Gets whether this ClickType represents the pressing of a key on a

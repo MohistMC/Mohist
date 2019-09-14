@@ -1,0 +1,22 @@
+--- ../src-base/minecraft/org/bukkit/event/player/PlayerToggleSneakEvent.java
++++ ../src-work/minecraft/org/bukkit/event/player/PlayerToggleSneakEvent.java
+@@ -17,6 +17,10 @@
+         this.isSneaking = isSneaking;
+     }
+ 
++    public static HandlerList getHandlerList() {
++        return handlers;
++    }
++
+     /**
+      * Returns whether the player is now sneaking or not.
+      *
+@@ -38,8 +42,4 @@
+     public HandlerList getHandlers() {
+         return handlers;
+     }
+-
+-    public static HandlerList getHandlerList() {
+-        return handlers;
+-    }
+ }

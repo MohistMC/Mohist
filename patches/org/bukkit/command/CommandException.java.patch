@@ -1,0 +1,12 @@
+--- ../src-base/minecraft/org/bukkit/command/CommandException.java
++++ ../src-work/minecraft/org/bukkit/command/CommandException.java
+@@ -10,7 +10,8 @@
+      * Creates a new instance of <code>CommandException</code> without detail
+      * message.
+      */
+-    public CommandException() {}
++    public CommandException() {
++    }
+ 
+     /**
+      * Constructs an instance of <code>CommandException</code> with the

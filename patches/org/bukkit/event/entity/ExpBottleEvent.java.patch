@@ -1,0 +1,22 @@
+--- ../src-base/minecraft/org/bukkit/event/entity/ExpBottleEvent.java
++++ ../src-work/minecraft/org/bukkit/event/entity/ExpBottleEvent.java
+@@ -16,6 +16,10 @@
+         this.exp = exp;
+     }
+ 
++    public static HandlerList getHandlerList() {
++        return handlers;
++    }
++
+     @Override
+     public ThrownExpBottle getEntity() {
+         return (ThrownExpBottle) entity;
+@@ -68,8 +72,4 @@
+     public HandlerList getHandlers() {
+         return handlers;
+     }
+-
+-    public static HandlerList getHandlerList() {
+-        return handlers;
+-    }
+ }

@@ -1,0 +1,22 @@
+--- ../src-base/minecraft/org/bukkit/event/inventory/FurnaceBurnEvent.java
++++ ../src-work/minecraft/org/bukkit/event/inventory/FurnaceBurnEvent.java
+@@ -24,6 +24,10 @@
+         this.burning = true;
+     }
+ 
++    public static HandlerList getHandlerList() {
++        return handlers;
++    }
++
+     /**
+      * Gets the fuel ItemStack for this event
+      *
+@@ -81,8 +85,4 @@
+     public HandlerList getHandlers() {
+         return handlers;
+     }
+-
+-    public static HandlerList getHandlerList() {
+-        return handlers;
+-    }
+ }

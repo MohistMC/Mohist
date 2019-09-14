@@ -1,0 +1,75 @@
+--- ../src-base/minecraft/org/bukkit/block/Block.java
++++ ../src-work/minecraft/org/bukkit/block/Block.java
+@@ -1,11 +1,10 @@
+ package org.bukkit.block;
+ 
+ import java.util.Collection;
+-
+ import org.bukkit.Chunk;
++import org.bukkit.Location;
+ import org.bukkit.Material;
+ import org.bukkit.World;
+-import org.bukkit.Location;
+ import org.bukkit.inventory.ItemStack;
+ import org.bukkit.metadata.Metadatable;
+ 
+@@ -27,6 +26,15 @@
+     byte getData();
+ 
+     /**
++     * Sets the metadata for this block
++     *
++     * @param data New block specific metadata
++     * @deprecated Magic value
++     */
++    @Deprecated
++    void setData(byte data);
++
++    /**
+      * Gets the block at the given offsets
+      *
+      * @param modX X-coordinate offset
+@@ -73,6 +81,13 @@
+     Material getType();
+ 
+     /**
++     * Sets the type of this block
++     *
++     * @param type Material to change this block to
++     */
++    void setType(Material type);
++
++    /**
+      * Gets the type-id of this block
+      *
+      * @return block type-id
+@@ -164,15 +179,6 @@
+      * Sets the metadata for this block
+      *
+      * @param data New block specific metadata
+-     * @deprecated Magic value
+-     */
+-    @Deprecated
+-    void setData(byte data);
+-
+-    /**
+-     * Sets the metadata for this block
+-     *
+-     * @param data New block specific metadata
+      * @param applyPhysics False to cancel physics from the changed block.
+      * @deprecated Magic value
+      */
+@@ -183,13 +189,6 @@
+      * Sets the type of this block
+      *
+      * @param type Material to change this block to
+-     */
+-    void setType(Material type);
+-
+-    /**
+-     * Sets the type of this block
+-     *
+-     * @param type Material to change this block to
+      * @param applyPhysics False to cancel physics on the changed block.
+      */
+     void setType(Material type, boolean applyPhysics);

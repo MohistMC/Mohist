@@ -1,0 +1,32 @@
+--- ../src-base/minecraft/org/bukkit/event/entity/EntityToggleGlideEvent.java
++++ ../src-work/minecraft/org/bukkit/event/entity/EntityToggleGlideEvent.java
+@@ -15,15 +15,18 @@
+  */
+ public class EntityToggleGlideEvent extends EntityEvent implements Cancellable {
+     private static final HandlerList handlers = new HandlerList();
+-
+-    private boolean cancel = false;
+     private final boolean isGliding;
++    private boolean cancel = false;
+ 
+     public EntityToggleGlideEvent(LivingEntity who, final boolean isGliding) {
+         super(who);
+         this.isGliding = isGliding;
+     }
+ 
++    public static HandlerList getHandlerList() {
++        return handlers;
++    }
++
+     @Override
+     public boolean isCancelled() {
+         return cancel;
+@@ -43,8 +46,4 @@
+         return handlers;
+     }
+ 
+-    public static HandlerList getHandlerList() {
+-        return handlers;
+-    }
+-
+ }

@@ -1,0 +1,9 @@
+--- ../src-base/minecraft/org/bukkit/entity/Egg.java
++++ ../src-work/minecraft/org/bukkit/entity/Egg.java
+@@ -3,4 +3,5 @@
+ /**
+  * Represents a thrown egg.
+  */
+-public interface Egg extends Projectile {}
++public interface Egg extends Projectile {
++}

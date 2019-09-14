@@ -1,0 +1,36 @@
+--- ../src-base/minecraft/org/bukkit/event/inventory/InventoryMoveItemEvent.java
++++ ../src-work/minecraft/org/bukkit/event/inventory/InventoryMoveItemEvent.java
+@@ -25,11 +25,11 @@
+  */
+ public class InventoryMoveItemEvent extends Event implements Cancellable {
+     private static final HandlerList handlers = new HandlerList();
+-    private boolean cancelled;
+     private final Inventory sourceInventory;
+     private final Inventory destinationInventory;
+-    private ItemStack itemStack;
+     private final boolean didSourceInitiate;
++    private boolean cancelled;
++    private ItemStack itemStack;
+ 
+     public InventoryMoveItemEvent(final Inventory sourceInventory, final ItemStack itemStack, final Inventory destinationInventory, final boolean didSourceInitiate) {
+         Validate.notNull(itemStack, "ItemStack cannot be null");
+@@ -39,6 +39,10 @@
+         this.didSourceInitiate = didSourceInitiate;
+     }
+ 
++    public static HandlerList getHandlerList() {
++        return handlers;
++    }
++
+     /**
+      * Gets the Inventory that the ItemStack is being taken from
+      *
+@@ -101,8 +105,4 @@
+     public HandlerList getHandlers() {
+         return handlers;
+     }
+-
+-    public static HandlerList getHandlerList() {
+-        return handlers;
+-    }
+ }

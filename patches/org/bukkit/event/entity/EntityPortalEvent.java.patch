@@ -1,0 +1,22 @@
+--- ../src-base/minecraft/org/bukkit/event/entity/EntityPortalEvent.java
++++ ../src-work/minecraft/org/bukkit/event/entity/EntityPortalEvent.java
+@@ -21,6 +21,10 @@
+         this.travelAgent = pta;
+     }
+ 
++    public static HandlerList getHandlerList() {
++        return handlers;
++    }
++
+     /**
+      * Sets whether or not the Travel Agent will be used.
+      * <p>
+@@ -75,8 +79,4 @@
+     public HandlerList getHandlers() {
+         return handlers;
+     }
+-
+-    public static HandlerList getHandlerList() {
+-        return handlers;
+-    }
+ }

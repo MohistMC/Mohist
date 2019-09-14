@@ -1,0 +1,198 @@
+--- ../src-base/minecraft/org/bukkit/entity/Entity.java
++++ ../src-work/minecraft/org/bukkit/entity/Entity.java
+@@ -1,21 +1,20 @@
+ package org.bukkit.entity;
+ 
+-import org.bukkit.Location;
++import java.util.List;
++import java.util.Set;
++import java.util.UUID;
+ import org.bukkit.EntityEffect;
++import org.bukkit.Location;
+ import org.bukkit.Nameable;
+ import org.bukkit.Server;
+ import org.bukkit.World;
++import org.bukkit.block.PistonMoveReaction;
++import org.bukkit.command.CommandSender;
+ import org.bukkit.event.entity.EntityDamageEvent;
++import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
+ import org.bukkit.metadata.Metadatable;
+ import org.bukkit.util.Vector;
+ 
+-import java.util.List;
+-import java.util.Set;
+-import java.util.UUID;
+-import org.bukkit.block.PistonMoveReaction;
+-import org.bukkit.command.CommandSender;
+-import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
+-
+ /**
+  * Represents a base entity in the world
+  */
+@@ -40,18 +39,18 @@
+     public Location getLocation(Location loc);
+ 
+     /**
+-     * Sets this entity's velocity
++     * Gets this entity's current velocity
+      *
+-     * @param velocity New velocity to travel with
++     * @return Current traveling velocity of this entity
+      */
+-    public void setVelocity(Vector velocity);
++    public Vector getVelocity();
+ 
+     /**
+-     * Gets this entity's current velocity
++     * Sets this entity's velocity
+      *
+-     * @return Current traveling velocity of this entity
++     * @param velocity New velocity to travel with
+      */
+-    public Vector getVelocity();
++    public void setVelocity(Vector velocity);
+ 
+     /**
+      * Gets the entity's height
+@@ -148,13 +147,6 @@
+     public int getFireTicks();
+ 
+     /**
+-     * Returns the entity's maximum fire ticks.
+-     *
+-     * @return int maxFireTicks
+-     */
+-    public int getMaxFireTicks();
+-
+-    /**
+      * Sets the entity's current fire ticks (ticks before the entity stops
+      * being on fire).
+      *
+@@ -163,6 +155,13 @@
+     public void setFireTicks(int ticks);
+ 
+     /**
++     * Returns the entity's maximum fire ticks.
++     *
++     * @return int maxFireTicks
++     */
++    public int getMaxFireTicks();
++
++    /**
+      * Mark the entity's removal.
+      */
+     public void remove();
+@@ -266,13 +265,6 @@
+     public void setFallDistance(float distance);
+ 
+     /**
+-     * Record the last {@link EntityDamageEvent} inflicted on this entity
+-     *
+-     * @param event a {@link EntityDamageEvent}
+-     */
+-    public void setLastDamageCause(EntityDamageEvent event);
+-
+-    /**
+      * Retrieve the last {@link EntityDamageEvent} inflicted on this entity.
+      * This event may have been cancelled.
+      *
+@@ -282,6 +274,13 @@
+     public EntityDamageEvent getLastDamageCause();
+ 
+     /**
++     * Record the last {@link EntityDamageEvent} inflicted on this entity
++     *
++     * @param event a {@link EntityDamageEvent}
++     */
++    public void setLastDamageCause(EntityDamageEvent event);
++
++    /**
+      * Returns a unique and persistent id for this entity
+      *
+      * @return unique id
+@@ -350,6 +349,16 @@
+     public Entity getVehicle();
+ 
+     /**
++     * Gets whether or not the mob's custom name is displayed client side.
++     * <p>
++     * This value has no effect on players, they will always display their
++     * name.
++     *
++     * @return if the custom name is displayed
++     */
++    public boolean isCustomNameVisible();
++
++    /**
+      * Sets whether or not to display the mob's custom name client side. The
+      * name will be displayed above the mob similarly to a player.
+      * <p>
+@@ -361,14 +370,11 @@
+     public void setCustomNameVisible(boolean flag);
+ 
+     /**
+-     * Gets whether or not the mob's custom name is displayed client side.
+-     * <p>
+-     * This value has no effect on players, they will always display their
+-     * name.
++     * Gets whether the entity is glowing or not.
+      *
+-     * @return if the custom name is displayed
++     * @return whether the entity is glowing
+      */
+-    public boolean isCustomNameVisible();
++    boolean isGlowing();
+ 
+     /**
+      * Sets whether the entity has a team colored (default: white) glow.
+@@ -378,11 +384,11 @@
+     void setGlowing(boolean flag);
+ 
+     /**
+-     * Gets whether the entity is glowing or not.
++     * Gets whether the entity is invulnerable or not.
+      *
+-     * @return whether the entity is glowing
++     * @return whether the entity is
+      */
+-    boolean isGlowing();
++    public boolean isInvulnerable();
+ 
+     /**
+      * Sets whether the entity is invulnerable or not.
+@@ -395,13 +401,6 @@
+     public void setInvulnerable(boolean flag);
+ 
+     /**
+-     * Gets whether the entity is invulnerable or not.
+-     *
+-     * @return whether the entity is
+-     */
+-    public boolean isInvulnerable();
+-
+-    /**
+      * Gets whether the entity is silent or not.
+      *
+      * @return whether the entity is silent.
+@@ -478,4 +477,21 @@
+      * @return reaction
+      */
+     PistonMoveReaction getPistonMoveReaction();
++
++    @Override
++    Spigot spigot();
++
++    // Spigot start
++    public class Spigot extends CommandSender.Spigot {
++
++        /**
++         * Returns whether this entity is invulnerable.
++         *
++         * @return True if the entity is invulnerable.
++         */
++        public boolean isInvulnerable() {
++            throw new UnsupportedOperationException("Not supported yet.");
++        }
++    }
++    // Spigot end
+ }

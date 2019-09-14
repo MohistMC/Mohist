@@ -1,0 +1,32 @@
+--- ../src-base/minecraft/org/bukkit/event/entity/EntityPickupItemEvent.java
++++ ../src-work/minecraft/org/bukkit/event/entity/EntityPickupItemEvent.java
+@@ -11,8 +11,8 @@
+ public class EntityPickupItemEvent extends EntityEvent implements Cancellable {
+     private static final HandlerList handlers = new HandlerList();
+     private final Item item;
+-    private boolean cancel = false;
+     private final int remaining;
++    private boolean cancel = false;
+ 
+     public EntityPickupItemEvent(final LivingEntity entity, final Item item, final int remaining) {
+         super(entity);
+@@ -20,6 +20,10 @@
+         this.remaining = remaining;
+     }
+ 
++    public static HandlerList getHandlerList() {
++        return handlers;
++    }
++
+     @Override
+     public LivingEntity getEntity() {
+         return (LivingEntity) entity;
+@@ -55,8 +59,4 @@
+     public HandlerList getHandlers() {
+         return handlers;
+     }
+-
+-    public static HandlerList getHandlerList() {
+-        return handlers;
+-    }
+ }

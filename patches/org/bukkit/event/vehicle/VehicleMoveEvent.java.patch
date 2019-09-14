@@ -1,0 +1,27 @@
+--- ../src-base/minecraft/org/bukkit/event/vehicle/VehicleMoveEvent.java
++++ ../src-work/minecraft/org/bukkit/event/vehicle/VehicleMoveEvent.java
+@@ -19,6 +19,10 @@
+         this.to = to;
+     }
+ 
++    public static HandlerList getHandlerList() {
++        return handlers;
++    }
++
+     /**
+      * Get the previous position.
+      *
+@@ -37,13 +41,8 @@
+         return to;
+     }
+ 
+-
+     @Override
+     public HandlerList getHandlers() {
+         return handlers;
+     }
+-
+-    public static HandlerList getHandlerList() {
+-        return handlers;
+-    }
+ }

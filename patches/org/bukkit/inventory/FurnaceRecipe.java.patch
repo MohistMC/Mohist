@@ -1,0 +1,86 @@
+--- ../src-base/minecraft/org/bukkit/inventory/FurnaceRecipe.java
++++ ../src-work/minecraft/org/bukkit/inventory/FurnaceRecipe.java
+@@ -51,7 +51,6 @@
+      *     CraftBukkit server.)
+      * @deprecated Magic value
+      */
+-    @Deprecated
+     public FurnaceRecipe(ItemStack result, Material source, int data) {
+         this(result, source, data, 0);
+     }
+@@ -66,7 +65,6 @@
+      * @param experience The experience given by this recipe
+      * @deprecated Magic value
+      */
+-    @Deprecated
+     public FurnaceRecipe(ItemStack result, Material source, int data, float experience) {
+         this.output = new ItemStack(result);
+         this.ingredient = new ItemStack(source, 1, (short) data);
+@@ -87,22 +85,11 @@
+      * Sets the input of this furnace recipe.
+      *
+      * @param input The input material.
+-     * @return The changed recipe, so you can chain calls.
+-     */
+-    public FurnaceRecipe setInput(Material input) {
+-        return setInput(input, 0);
+-    }
+-
+-    /**
+-     * Sets the input of this furnace recipe.
+-     *
+-     * @param input The input material.
+      * @param data The data value. (Note: This is currently ignored by the
+      *     CraftBukkit server.)
+      * @return The changed recipe, so you can chain calls.
+      * @deprecated Magic value
+      */
+-    @Deprecated
+     public FurnaceRecipe setInput(Material input, int data) {
+         this.ingredient = new ItemStack(input, 1, (short) data);
+         return this;
+@@ -118,21 +105,22 @@
+     }
+ 
+     /**
+-     * Get the result of this recipe.
++     * Sets the input of this furnace recipe.
+      *
+-     * @return The resulting stack.
++     * @param input The input material.
++     * @return The changed recipe, so you can chain calls.
+      */
+-    public ItemStack getResult() {
+-        return output.clone();
++    public FurnaceRecipe setInput(Material input) {
++        return setInput(input, 0);
+     }
+ 
+     /**
+-     * Sets the experience given by this recipe.
++     * Get the result of this recipe.
+      *
+-     * @param experience the experience level
++     * @return The resulting stack.
+      */
+-    public void setExperience(float experience) {
+-        this.experience = experience;
++    public ItemStack getResult() {
++        return output.clone();
+     }
+ 
+     /**
+@@ -143,4 +131,13 @@
+     public float getExperience() {
+         return experience;
+     }
++
++    /**
++     * Sets the experience given by this recipe.
++     *
++     * @param experience the experience level
++     */
++    public void setExperience(float experience) {
++        this.experience = experience;
++    }
+ }

@@ -1,0 +1,9 @@
+--- ../src-base/minecraft/org/bukkit/entity/Shulker.java
++++ ../src-work/minecraft/org/bukkit/entity/Shulker.java
+@@ -2,4 +2,5 @@
+ 
+ import org.bukkit.material.Colorable;
+ 
+-public interface Shulker extends Golem, Colorable {}
++public interface Shulker extends Golem, Colorable {
++}

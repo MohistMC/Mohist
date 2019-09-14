@@ -1,0 +1,30 @@
+--- ../src-base/minecraft/org/bukkit/entity/Arrow.java
++++ ../src-work/minecraft/org/bukkit/entity/Arrow.java
+@@ -72,6 +72,9 @@
+      */
+     public void setPickupStatus(PickupStatus status);
+ 
++    @Override
++    Spigot spigot();
++
+     /**
+      * Represents the pickup status of this arrow.
+      */
+@@ -89,4 +92,17 @@
+          */
+         CREATIVE_ONLY
+     }
++
++    // Spigot start
++    public class Spigot extends Entity.Spigot {
++
++        public double getDamage() {
++            throw new UnsupportedOperationException("Not supported yet.");
++        }
++
++        public void setDamage(double damage) {
++            throw new UnsupportedOperationException("Not supported yet.");
++        }
++    }
++    // Spigot end
+ }

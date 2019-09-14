@@ -1,0 +1,43 @@
+--- ../src-base/minecraft/org/bukkit/event/block/BlockPistonRetractEvent.java
++++ ../src-work/minecraft/org/bukkit/event/block/BlockPistonRetractEvent.java
+@@ -12,24 +12,27 @@
+ public class BlockPistonRetractEvent extends BlockPistonEvent {
+     private static final HandlerList handlers = new HandlerList();
+     private List<Block> blocks;
+-    
++
+     public BlockPistonRetractEvent(final Block block, final List<Block> blocks, final BlockFace direction) {
+         super(block, direction);
+-        
++
+         this.blocks = blocks;
+     }
+ 
++    public static HandlerList getHandlerList() {
++        return handlers;
++    }
++
+     /**
+      * Gets the location where the possible moving block might be if the
+      * retracting piston is sticky.
+      *
+      * @return The possible location of the possibly moving block.
+      */
+-    @Deprecated
+     public Location getRetractLocation() {
+         return getBlock().getRelative(getDirection(), 2).getLocation();
+     }
+-    
++
+     /**
+      * Get an immutable list of the blocks which will be moved by the
+      * extending.
+@@ -44,8 +47,4 @@
+     public HandlerList getHandlers() {
+         return handlers;
+     }
+-
+-    public static HandlerList getHandlerList() {
+-        return handlers;
+-    }
+ }

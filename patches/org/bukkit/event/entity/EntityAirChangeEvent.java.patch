@@ -1,0 +1,22 @@
+--- ../src-base/minecraft/org/bukkit/event/entity/EntityAirChangeEvent.java
++++ ../src-work/minecraft/org/bukkit/event/entity/EntityAirChangeEvent.java
+@@ -20,6 +20,10 @@
+         this.amount = amount;
+     }
+ 
++    public static HandlerList getHandlerList() {
++        return handlers;
++    }
++
+     /**
+      * Gets the amount of air the entity has left (measured in ticks).
+      *
+@@ -52,8 +56,4 @@
+     public HandlerList getHandlers() {
+         return handlers;
+     }
+-
+-    public static HandlerList getHandlerList() {
+-        return handlers;
+-    }
+ }

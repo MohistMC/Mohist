@@ -1,0 +1,22 @@
+--- ../src-base/minecraft/org/bukkit/event/inventory/BrewingStandFuelEvent.java
++++ ../src-work/minecraft/org/bukkit/event/inventory/BrewingStandFuelEvent.java
+@@ -24,6 +24,10 @@
+         this.fuelPower = fuelPower;
+     }
+ 
++    public static HandlerList getHandlerList() {
++        return handlers;
++    }
++
+     /**
+      * Gets the ItemStack of the fuel before the amount was subtracted.
+      *
+@@ -85,8 +89,4 @@
+     public HandlerList getHandlers() {
+         return handlers;
+     }
+-
+-    public static HandlerList getHandlerList() {
+-        return handlers;
+-    }
+ }

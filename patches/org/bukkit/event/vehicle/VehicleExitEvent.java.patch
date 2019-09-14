@@ -1,0 +1,31 @@
+--- ../src-base/minecraft/org/bukkit/event/vehicle/VehicleExitEvent.java
++++ ../src-work/minecraft/org/bukkit/event/vehicle/VehicleExitEvent.java
+@@ -10,14 +10,18 @@
+  */
+ public class VehicleExitEvent extends VehicleEvent implements Cancellable {
+     private static final HandlerList handlers = new HandlerList();
+-    private boolean cancelled;
+     private final LivingEntity exited;
++    private boolean cancelled;
+ 
+     public VehicleExitEvent(final Vehicle vehicle, final LivingEntity exited) {
+         super(vehicle);
+         this.exited = exited;
+     }
+ 
++    public static HandlerList getHandlerList() {
++        return handlers;
++    }
++
+     /**
+      * Get the living entity that exited the vehicle.
+      *
+@@ -39,8 +43,4 @@
+     public HandlerList getHandlers() {
+         return handlers;
+     }
+-
+-    public static HandlerList getHandlerList() {
+-        return handlers;
+-    }
+ }

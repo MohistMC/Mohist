@@ -1,0 +1,34 @@
+--- ../src-base/minecraft/org/bukkit/event/entity/CreeperPowerEvent.java
++++ ../src-work/minecraft/org/bukkit/event/entity/CreeperPowerEvent.java
+@@ -12,8 +12,8 @@
+  */
+ public class CreeperPowerEvent extends EntityEvent implements Cancellable {
+     private static final HandlerList handlers = new HandlerList();
+-    private boolean canceled;
+     private final PowerCause cause;
++    private boolean canceled;
+     private LightningStrike bolt;
+ 
+     public CreeperPowerEvent(final Creeper creeper, final LightningStrike bolt, final PowerCause cause) {
+@@ -26,6 +26,10 @@
+         this.cause = cause;
+     }
+ 
++    public static HandlerList getHandlerList() {
++        return handlers;
++    }
++
+     public boolean isCancelled() {
+         return canceled;
+     }
+@@ -62,10 +66,6 @@
+         return handlers;
+     }
+ 
+-    public static HandlerList getHandlerList() {
+-        return handlers;
+-    }
+-
+     /**
+      * An enum to specify the cause of the change in power
+      */

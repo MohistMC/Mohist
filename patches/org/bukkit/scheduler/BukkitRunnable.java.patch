@@ -1,0 +1,47 @@
+--- ../src-base/minecraft/org/bukkit/scheduler/BukkitRunnable.java
++++ ../src-work/minecraft/org/bukkit/scheduler/BukkitRunnable.java
+@@ -55,7 +55,7 @@
+      * @throws IllegalStateException if this was already scheduled
+      * @see BukkitScheduler#runTaskAsynchronously(Plugin, Runnable)
+      */
+-    public synchronized BukkitTask runTaskAsynchronously(Plugin plugin) throws IllegalArgumentException, IllegalStateException  {
++    public synchronized BukkitTask runTaskAsynchronously(Plugin plugin) throws IllegalArgumentException, IllegalStateException {
+         checkNotYetScheduled();
+         return setupTask(Bukkit.getScheduler().runTaskAsynchronously(plugin, (Runnable) this));
+     }
+@@ -70,7 +70,7 @@
+      * @throws IllegalStateException if this was already scheduled
+      * @see BukkitScheduler#runTaskLater(Plugin, Runnable, long)
+      */
+-    public synchronized BukkitTask runTaskLater(Plugin plugin, long delay) throws IllegalArgumentException, IllegalStateException  {
++    public synchronized BukkitTask runTaskLater(Plugin plugin, long delay) throws IllegalArgumentException, IllegalStateException {
+         checkNotYetScheduled();
+         return setupTask(Bukkit.getScheduler().runTaskLater(plugin, (Runnable) this, delay));
+     }
+@@ -89,7 +89,7 @@
+      * @throws IllegalStateException if this was already scheduled
+      * @see BukkitScheduler#runTaskLaterAsynchronously(Plugin, Runnable, long)
+      */
+-    public synchronized BukkitTask runTaskLaterAsynchronously(Plugin plugin, long delay) throws IllegalArgumentException, IllegalStateException  {
++    public synchronized BukkitTask runTaskLaterAsynchronously(Plugin plugin, long delay) throws IllegalArgumentException, IllegalStateException {
+         checkNotYetScheduled();
+         return setupTask(Bukkit.getScheduler().runTaskLaterAsynchronously(plugin, (Runnable) this, delay));
+     }
+@@ -106,7 +106,7 @@
+      * @throws IllegalStateException if this was already scheduled
+      * @see BukkitScheduler#runTaskTimer(Plugin, Runnable, long, long)
+      */
+-    public synchronized BukkitTask runTaskTimer(Plugin plugin, long delay, long period) throws IllegalArgumentException, IllegalStateException  {
++    public synchronized BukkitTask runTaskTimer(Plugin plugin, long delay, long period) throws IllegalArgumentException, IllegalStateException {
+         checkNotYetScheduled();
+         return setupTask(Bukkit.getScheduler().runTaskTimer(plugin, (Runnable) this, delay, period));
+     }
+@@ -128,7 +128,7 @@
+      * @see BukkitScheduler#runTaskTimerAsynchronously(Plugin, Runnable, long,
+      *     long)
+      */
+-    public synchronized BukkitTask runTaskTimerAsynchronously(Plugin plugin, long delay, long period) throws IllegalArgumentException, IllegalStateException  {
++    public synchronized BukkitTask runTaskTimerAsynchronously(Plugin plugin, long delay, long period) throws IllegalArgumentException, IllegalStateException {
+         checkNotYetScheduled();
+         return setupTask(Bukkit.getScheduler().runTaskTimerAsynchronously(plugin, (Runnable) this, delay, period));
+     }

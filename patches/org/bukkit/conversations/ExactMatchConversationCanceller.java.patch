@@ -1,0 +1,15 @@
+--- ../src-base/minecraft/org/bukkit/conversations/ExactMatchConversationCanceller.java
++++ ../src-work/minecraft/org/bukkit/conversations/ExactMatchConversationCanceller.java
+@@ -16,9 +16,10 @@
+     public ExactMatchConversationCanceller(String escapeSequence) {
+         this.escapeSequence = escapeSequence;
+     }
+-    
+-    public void setConversation(Conversation conversation) {}
+ 
++    public void setConversation(Conversation conversation) {
++    }
++
+     public boolean cancelBasedOnInput(ConversationContext context, String input) {
+         return input.equals(escapeSequence);
+     }
