@@ -13,11 +13,11 @@
 ![](https://img.shields.io/badge/Jdk-8.0.222.10--openj9-brightgreen.svg?colorB=469C00)
 
 Since CraftBukkit has modified a lot of underlying layers, some of the core mods are not available, we are working hard to improve.
-
 ### Getting Help
    [**Home**](https://mohist.red/)
    [**bStats**](https://bstats.org/plugin/bukkit/Mohist)
-   [**Discord**](https://discord.gg/JPF68ZM)
+   [**Discord**](https://discord.gg/JPF68ZM)  
+   <img src="https://bstats.org/signatures/bukkit/Mohist.svg">
 
 ### Download
 **Mohist is still in beta and you may encounter issues in using it with your server. You have been warned!**
