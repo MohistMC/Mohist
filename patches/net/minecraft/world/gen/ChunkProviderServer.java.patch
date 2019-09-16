@@ -39,10 +39,10 @@
      @Nullable
      public Chunk loadChunk(int x, int z, @Nullable Runnable runnable)
      {
-+        return loadChunk(x, z, runnable, true);
++        return getChunkAt(x, z, runnable, true);
 +    }
 +
-+    public Chunk loadChunk(int x, int z, Runnable runnable, boolean generate)
++    public Chunk getChunkAt(int x, int z, Runnable runnable, boolean generate)
 +    {
          Chunk chunk = this.getLoadedChunk(x, z);
          if (chunk == null)
