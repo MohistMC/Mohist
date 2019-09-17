@@ -8,8 +8,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import red.mohist.down.DownloadLibraries;
 import red.mohist.down.Update;
-import red.mohist.util.i18n.Message;
 import red.mohist.util.ServerEula;
+import red.mohist.util.i18n.Message;
 
 public class Mohist {
 

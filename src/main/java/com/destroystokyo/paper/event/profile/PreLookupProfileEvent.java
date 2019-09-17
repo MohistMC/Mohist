@@ -5,15 +5,14 @@ import com.destroystokyo.paper.profile.ProfileProperty;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
 import com.mojang.authlib.properties.Property;
-import org.bukkit.Bukkit;
-import org.bukkit.event.Event;
-import org.bukkit.event.HandlerList;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import org.bukkit.Bukkit;
+import org.bukkit.event.Event;
+import org.bukkit.event.HandlerList;
 
 /**
  * Allows a plugin to intercept a Profile Lookup for a Profile by name

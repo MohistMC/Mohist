@@ -1,11 +1,10 @@
 package com.destroystokyo.paper.event.player;
 
+import java.util.UUID;
 import org.apache.commons.lang.Validate;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
-
-import java.util.UUID;
 
 /**
  * This event is fired during a player handshake.

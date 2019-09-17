@@ -1,7 +1,7 @@
 package com.destroystokyo.paper.network;
 
-import javax.annotation.Nullable;
 import java.net.InetSocketAddress;
+import javax.annotation.Nullable;
 
 /**
  * Represents a client connected to the server.

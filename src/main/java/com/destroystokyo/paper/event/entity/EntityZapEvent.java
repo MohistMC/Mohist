@@ -1,13 +1,12 @@
 package com.destroystokyo.paper.event.entity;
 
+import javax.annotation.Nonnull;
 import org.apache.commons.lang.Validate;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LightningStrike;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.entity.EntityEvent;
-
-import javax.annotation.Nonnull;
 
 /**
  *  Fired when lightning strikes an entity

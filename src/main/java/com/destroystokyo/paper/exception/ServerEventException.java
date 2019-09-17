@@ -1,10 +1,9 @@
 package com.destroystokyo.paper.exception;
 
+import static com.google.common.base.Preconditions.checkNotNull;
 import org.bukkit.event.Event;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.Plugin;
-
-import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * Exception thrown when a server event listener throws an exception

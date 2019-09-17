@@ -25,11 +25,10 @@ package com.destroystokyo.paper.event.profile;
 
 import com.destroystokyo.paper.profile.PlayerProfile;
 import com.destroystokyo.paper.profile.ProfileProperty;
+import java.util.Collection;
+import javax.annotation.Nonnull;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
-
-import javax.annotation.Nonnull;
-import java.util.Collection;
 
 /**
  * Fired when the server is requesting to fill in properties of an incomplete profile, such as textures.

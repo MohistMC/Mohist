@@ -2,7 +2,6 @@ package com.destroystokyo.paper.event.executor.asm;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.MapMaker;
-
 import java.util.concurrent.ConcurrentMap;
 
 public class SafeClassDefiner implements ClassDefiner {

@@ -1,7 +1,6 @@
 package net.minecraftforge.cauldron.inventory;
 
 import javax.annotation.Nullable;
-import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 import net.minecraftforge.items.IItemHandler;
@@ -21,17 +20,14 @@ import org.bukkit.inventory.InventoryHolder;
 
 public class CraftCustomInventory implements InventoryHolder {
 
-    private final IInventory inventory;
     private final CraftInventory container;
 
     public CraftCustomInventory(IInventory inventory) {
         this.container = new CraftInventory(inventory);
-        this.inventory = inventory;
     }
 
     public CraftCustomInventory(ItemStackHandler handler) {
         this.container = new CraftInventoryCustom(this, handler.getStacks());
-        this.inventory = this.container.getInventory();
     }
 
     @Nullable
@@ -52,19 +48,14 @@ public class CraftCustomInventory implements InventoryHolder {
             return new CraftCustomInventory(((SidedInvWrapper) handler).getInv());
         }
         if (handler instanceof PlayerInvWrapper) {
-            return new CraftCustomInventory(getPlayerInv((PlayerInvWrapper) handler));
-        }
-        return null;
-    }
-
-    public static InventoryPlayer getPlayerInv(PlayerInvWrapper inv) {
-        IItemHandlerModifiable[] piw = ObfuscationReflectionHelper.getPrivateValue(CombinedInvWrapper.class, inv, "itemHandler");
-        for (IItemHandlerModifiable itemHandler : piw) {
-            if (itemHandler instanceof PlayerMainInvWrapper) {
-                return ((PlayerMainInvWrapper) itemHandler).getInventoryPlayer();
-            }
-            if (itemHandler instanceof PlayerArmorInvWrapper) {
-                return ((PlayerArmorInvWrapper) itemHandler).getInventoryPlayer();
+            IItemHandlerModifiable[] piw = ObfuscationReflectionHelper.getPrivateValue(CombinedInvWrapper.class, (PlayerInvWrapper) handler, "itemHandler");
+            for (IItemHandlerModifiable itemHandler : piw) {
+                if (itemHandler instanceof PlayerMainInvWrapper) {
+                    return new CraftCustomInventory(((PlayerMainInvWrapper) itemHandler).getInventoryPlayer());
+                }
+                if (itemHandler instanceof PlayerArmorInvWrapper) {
+                    return new CraftCustomInventory(((PlayerArmorInvWrapper) itemHandler).getInventoryPlayer());
+                }
             }
         }
         return null;

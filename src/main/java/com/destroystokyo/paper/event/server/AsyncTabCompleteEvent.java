@@ -23,6 +23,8 @@
 
 package com.destroystokyo.paper.event.server;
 
+import java.util.ArrayList;
+import java.util.List;
 import org.apache.commons.lang.Validate;
 import org.bukkit.Location;
 import org.bukkit.command.Command;
@@ -30,9 +32,6 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Allows plugins to compute tab completion results asynchronously. If this event provides completions, then the standard synchronous process will not be fired to populate the results. However, the synchronous TabCompleteEvent will fire with the Async results.

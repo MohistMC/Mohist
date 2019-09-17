@@ -2,11 +2,10 @@ package com.destroystokyo.paper.event.profile;
 
 import com.destroystokyo.paper.profile.PlayerProfile;
 import com.mojang.authlib.GameProfile;
+import javax.annotation.Nonnull;
 import org.bukkit.Bukkit;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
-
-import javax.annotation.Nonnull;
 
 /**
  * Allows a plugin to be notified anytime AFTER a Profile has been looked up from the Mojang API

@@ -1,12 +1,11 @@
 package com.destroystokyo.paper.profile;
 
 import com.mojang.authlib.GameProfile;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.Set;
 import java.util.UUID;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * Represents a players profile for the game, such as UUID, Name, and textures.

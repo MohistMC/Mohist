@@ -9,8 +9,8 @@ import java.util.Enumeration;
 import java.util.Locale;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
-import red.mohist.util.i18n.Message;
 import red.mohist.util.FileUtil;
+import red.mohist.util.i18n.Message;
 
 public class DownloadLibraries implements Runnable {
 

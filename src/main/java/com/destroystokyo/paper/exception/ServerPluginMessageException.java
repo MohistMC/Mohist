@@ -1,9 +1,8 @@
 package com.destroystokyo.paper.exception;
 
+import static com.google.common.base.Preconditions.checkNotNull;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
-
-import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * Thrown when an incoming plugin message channel throws an exception
