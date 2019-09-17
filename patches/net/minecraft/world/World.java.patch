@@ -109,7 +109,8 @@
 +    public WorldProvider provider;
      protected PathWorldListener pathListener = new PathWorldListener();
      protected List<IWorldEventListener> eventListeners;
-     protected IChunkProvider chunkProvider;
+-    protected IChunkProvider chunkProvider;
++    public IChunkProvider chunkProvider;
      protected final ISaveHandler saveHandler;
 -    protected WorldInfo worldInfo;
 +    public WorldInfo worldInfo;

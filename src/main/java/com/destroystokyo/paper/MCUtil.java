@@ -1,14 +1,10 @@
 package com.destroystokyo.paper;
 
+import com.destroystokyo.paper.profile.CraftPlayerProfile;
+import com.destroystokyo.paper.profile.PlayerProfile;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
-import net.minecraft.entity.Entity;
-import net.minecraft.init.Blocks;
+import com.mojang.authlib.GameProfile;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.tileentity.TileEntityHopper;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
-import net.minecraft.world.chunk.Chunk;
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_12_R1.CraftWorld;
@@ -22,11 +18,21 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.function.Supplier;
 
+import net.minecraft.entity.Entity;
+import net.minecraft.init.Blocks;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.tileentity.TileEntityHopper;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.ChunkPos;
+import net.minecraft.world.World;
+import net.minecraft.world.chunk.Chunk;
+import net.minecraft.world.chunk.IChunkProvider;
+import net.minecraft.world.gen.ChunkProviderServer;
+
 public final class MCUtil {
     private static final Executor asyncExecutor = Executors.newSingleThreadExecutor(new ThreadFactoryBuilder().setNameFormat("Paper Async Task Handler Thread - %1$d").build());
 
-    private MCUtil() {
-    }
+    private MCUtil() {}
 
     /**
      * Quickly generate a stack trace for current location
@@ -56,7 +62,7 @@ public final class MCUtil {
      */
     public static <T> T ensureMain(String reason, Supplier<T> run) {
         if (AsyncCatcher.enabled && Thread.currentThread() != MinecraftServer.getServerInst().primaryThread) {
-            new IllegalStateException("Asynchronous " + reason + "! Blocking thread until it returns ").printStackTrace();
+            new IllegalStateException( "Asynchronous " + reason + "! Blocking thread until it returns ").printStackTrace();
             Waitable<T> wait = new Waitable<T>() {
                 @Override
                 protected T evaluate() {
@@ -72,6 +78,10 @@ public final class MCUtil {
             return null;
         }
         return run.get();
+    }
+
+    public static PlayerProfile toBukkit(GameProfile profile) {
+        return CraftPlayerProfile.asBukkitMirror(profile);
     }
 
     /**
@@ -116,7 +126,7 @@ public final class MCUtil {
      * @return
      */
     public static double distanceSq(Entity e1, Entity e2) {
-        return distanceSq(e1.posX, e1.posY, e1.posZ, e2.posX, e2.posY, e2.posZ);
+        return distanceSq(e1.posX,e1.posY,e1.posZ, e2.posX,e2.posY,e2.posZ);
     }
 
     /**

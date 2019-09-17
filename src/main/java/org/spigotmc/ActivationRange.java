@@ -3,7 +3,6 @@ package org.spigotmc;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityCreature;
 import net.minecraft.entity.EntityLiving;
-import net.minecraft.entity.EnumCreatureType;
 import net.minecraft.entity.MultiPartEntityPart;
 import net.minecraft.entity.boss.EntityWither;
 import net.minecraft.entity.effect.EntityWeatherEffect;
@@ -29,7 +28,6 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.common.DimensionManager;
-import net.minecraftforge.common.util.FakePlayer;
 
 public class ActivationRange {
 
@@ -46,14 +44,11 @@ public class ActivationRange {
      * @return group id
      */
     public static byte initializeEntityActivationType(Entity entity) {
-        // Cauldron start - account for entities that dont extend EntityMob, EntityAmbientCreature, EntityCreature
-        if (entity instanceof EntityMob || entity instanceof EntitySlime || entity.isCreatureType(EnumCreatureType.MONSTER, false)) // Cauldron - account for entities that dont extend EntityMob
+        if (entity instanceof EntityMob || entity instanceof EntitySlime)
         {
             return 1; // Monster
-        } else if (entity instanceof EntityCreature || entity instanceof EntityAmbientCreature || entity.isCreatureType(EnumCreatureType.CREATURE, false)
-                || entity.isCreatureType(EnumCreatureType.WATER_CREATURE, false) || entity.isCreatureType(EnumCreatureType.AMBIENT, false)) {
+        } else if (entity instanceof EntityCreature || entity instanceof EntityAmbientCreature) {
             return 2; // Animal
-            // Cauldron end
         } else {
             return 3; // Misc
         }
@@ -75,19 +70,16 @@ public class ActivationRange {
         if ((entity.activationType == 3 && config.miscActivationRange == 0)
                 || (entity.activationType == 2 && config.animalActivationRange == 0)
                 || (entity.activationType == 1 && config.monsterActivationRange == 0)
-                || entity instanceof EntityPlayer && !(entity instanceof FakePlayer) // Cauldron
+                || entity instanceof EntityPlayer
                 || entity instanceof EntityThrowable
                 || entity instanceof MultiPartEntityPart
                 || entity instanceof EntityWither
                 || entity instanceof EntityFireball
-                || entity instanceof EntityFallingBlock
                 || entity instanceof EntityWeatherEffect
                 || entity instanceof EntityTNTPrimed
+                || entity instanceof EntityFallingBlock // Paper - Always tick falling blocks
                 || entity instanceof EntityEnderCrystal
-                || entity instanceof EntityFireworkRocket
-                || (entity.getClass().getSuperclass() == Entity.class && !entity.isCreatureType(EnumCreatureType.CREATURE, false)
-                && !entity.isCreatureType(EnumCreatureType.AMBIENT, false) && !entity.isCreatureType(EnumCreatureType.MONSTER, false)
-                && !entity.isCreatureType(EnumCreatureType.WATER_CREATURE, false))) {
+                || entity instanceof EntityFireworkRocket) {
             return true;
         }
 
@@ -140,9 +132,6 @@ public class ActivationRange {
     private static void activateChunkEntities(Chunk chunk) {
         for (ClassInheritanceMultiMap<Entity> slice : chunk.entityLists) {
             for (Entity entity : slice) {
-                if (entity == null) {
-                    continue;
-                }
                 if (MinecraftServer.currentTick > entity.activatedTick) {
                     if (entity.defaultActivationState) {
                         entity.activatedTick = MinecraftServer.currentTick;
@@ -159,6 +148,7 @@ public class ActivationRange {
                                 entity.activatedTick = MinecraftServer.currentTick;
                             }
                             break;
+                        case 3:
                         default:
                             if (miscBB.intersects(entity.getEntityBoundingBox())) {
                                 entity.activatedTick = MinecraftServer.currentTick;
