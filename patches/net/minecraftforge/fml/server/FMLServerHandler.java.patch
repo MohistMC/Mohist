@@ -94,6 +94,15 @@
                  if (entry == null) throw new FileNotFoundException(langFile);
                  stream = zip.getInputStream(entry);
              }
+@@ -265,7 +278,7 @@
+         }
+         catch (FileNotFoundException e)
+         {
+-            FMLLog.log.warn("Missing English translation for {}: {}", container.getModId(), e.getMessage());
++            FMLLog.log.debug("Missing English translation for {}: {}", container.getModId(), e.getMessage());
+         }
+         catch (IOException e)
+         {
 @@ -285,7 +298,7 @@
      @Override
      public String getCurrentLanguage()

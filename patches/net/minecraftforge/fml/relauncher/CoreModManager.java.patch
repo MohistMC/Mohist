@@ -18,3 +18,12 @@
                  ((LoggerContext) LogManager.getContext(false)).reconfigure();
              }
          }
+@@ -579,7 +579,7 @@
+                 }
+                 else // This is a probably a normal minecraft workspace - log at warn
+                 {
+-                    FMLLog.log.warn("The coremod {} ({}) is not signed!", coreModName, coreModClass);
++                    FMLLog.log.debug("The coremod {} ({}) is not signed!", coreModName, coreModClass);
+                 }
+             }
+             else
