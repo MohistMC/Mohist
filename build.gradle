@@ -89,7 +89,7 @@ minecraft {
 
 installer {
     classifier = 'installer'
-    from "src/main/resources/mohist_logo.png"
+    from "mohist_logo.png"
     rename "mohist_logo\\.png", "big_logo.png"
 }
 
@@ -118,7 +118,7 @@ launch4j {
     jar = installer.archivePath.canonicalPath
     outfile = file("build/distributions/${project.name}-${project.version}-installer-win.exe").canonicalPath
     icon = file('icon.ico').canonicalPath
-    manifest = file('l4jManifest.xml').canonicalPath
+    manifest = file('forge/l4jManifest.xml').canonicalPath
     jreMinVersion = '1.8.0_101'
     initialHeapPercent = 5
     maxHeapPercent = 100
