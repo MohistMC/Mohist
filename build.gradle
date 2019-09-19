@@ -8,13 +8,14 @@ buildscript {
     dependencies {
         classpath 'net.minecraftforge.gradle:ForgeGradle:2.3-SNAPSHOT'
         classpath 'net.nemerosa:versioning:2.7.1'
+        classpath 'edu.sc.seis.launch4j:launch4j:2.4.6'
     }
 }
 
 apply plugin: 'java'
 apply plugin: 'maven'
 apply plugin: 'net.minecraftforge.gradle.patcher'
-apply plugin: 'net.minecraftforge.gradle.launch4j'
+apply plugin: 'edu.sc.seis.launch4j'
 apply plugin: 'net.nemerosa.versioning'
 
 group = 'red.mohist'
@@ -27,8 +28,6 @@ repositories {
     maven { url 'https://oss.sonatype.org/content/repositories/snapshots/' }
     maven { url 'https://libraries.minecraft.net/' }
     maven { url 'https://hub.spigotmc.org/nexus/content/groups/public/' }
-    maven { url 'http://repo.spongepowered.org/maven'
-    }
 }
 
 sourceCompatibility = 1.8
@@ -88,7 +87,7 @@ minecraft {
 }
 
 installer {
-    classifier = 'installer'
+    archiveClassifier = 'installer'
     from "mohist_logo.png"
     rename "mohist_logo\\.png", "big_logo.png"
 }
@@ -108,14 +107,14 @@ task signUniversal(type: SignJar, dependsOn: 'outputJar') {
     storePass = jarsigner.storepass
     keyPass = jarsigner.keypass
     keyStore = jarsigner.keystore
-    inputFile = outputJar.archivePath
-    outputFile = outputJar.archivePath
+    inputFile = outputJar.archiveFile.get().asFile
+    outputFile = outputJar.archiveFile.get().asFile
 }
 build.dependsOn signUniversal
 installer.dependsOn signUniversal
 
 launch4j {
-    jar = installer.archivePath.canonicalPath
+    jar = installer.archiveFile.get().asFile.canonicalPath
     outfile = file("build/distributions/${project.name}-${project.version}-installer-win.exe").canonicalPath
     icon = file('icon.ico').canonicalPath
     manifest = file('forge/l4jManifest.xml').canonicalPath
@@ -123,16 +122,16 @@ launch4j {
     initialHeapPercent = 5
     maxHeapPercent = 100
 }
-tasks.generateXmlConfig.dependsOn installer
+tasks.createExe.dependsOn installer
 tasks.compileJava.enabled = false
 tasks.build.dependsOn 'launch4j'
 
 outputJar {
-    classifier = 'server'
+    archiveClassifier = 'server'
 
     manifest.attributes([
             "Implementation-Title": "Mohist",
-            "Implementation-Version": version,
+            "Implementation-Version": project.version,
             "Main-Class": "red.mohist.Mohist",
             "TweakClass": "net.minecraftforge.fml.common.launcher.FMLTweaker",
             "Class-Path": getServerClasspath(file("jsons/${minecraft.version}-mohist-rel.json"))
@@ -146,7 +145,7 @@ processJson {
             "@version@": project.version,
             "@project@": "mohist",
             "@artifact@": "red.mohist:mohist:${project.version}",
-            "@universal_jar@": { outputJar.archiveName },
+            "@universal_jar@": { outputJar.archiveFileName },
             "@timestamp@": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ"),
     ])
 }
