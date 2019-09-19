@@ -234,21 +234,12 @@ public class ASMUtils {
         printClass(classNode);
     }
 
-    /**
-     * 校验是否是正确的签名
-     *
-     * 只有正确的签名才能进行remap,错误的直接返回
-     *
-     * @param signature
-     * @return
-     */
     public static boolean isValidSingnature(String signature) {
         return signature != null && !signature.isEmpty() && illegalSignaturePattern.matcher(signature).matches();
     }
 
     public static String getInternalName(Type type) {
         if (type.getSort() <= 8) {
-//            基本类型
             return type.getDescriptor();
         }
         return type.getInternalName();

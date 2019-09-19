@@ -10,9 +10,6 @@ public class ToolKit{
 
     protected static final String systemLineSeparator=System.getProperty("line.separator","\r\n");
 
-    /**
-     * 打印当前位置的堆栈
-     */
     public static void printStackTrace(){
         StackTraceElement[] tElements=Thread.currentThread().getStackTrace();
         for(int i=2;i<tElements.length;i++){
@@ -20,15 +17,6 @@ public class ToolKit{
         }
     }
 
-    /**
-     * 获取忽略大小写的Enum值
-     * 
-     * @param pValues
-     *            该Enum的所有制
-     * @param pEnumName
-     *            Enum的名字
-     * @return 符合添加的值或null
-     */
     public static <T extends Enum<T>> T getElement(T[] pValues,String pEnumName){
         for(T sT : pValues){
             if(sT.name().equalsIgnoreCase(pEnumName))
@@ -37,13 +25,6 @@ public class ToolKit{
         return null;
     }
 
-    /***
-     * 生成长度的随机字节数组
-     * 
-     * @param pLength
-     *            长度,>0
-     * @return 生成的随机字节
-     */
     public static byte[] randomByteArray(int pLength){
         if(pLength<=0)
             throw new IllegalArgumentException("The number must be positive ("+pLength+")");
@@ -56,51 +37,14 @@ public class ToolKit{
         return tData;
     }
 
-    /**
-     * 取不超过范围的值
-     * 
-     * @param pMin
-     *            最小值
-     * @param pMax
-     *            最大值
-     * @param pValue
-     *            当前输入值
-     * @return 调整后的值
-     */
     public static int between(int pMin,int pMax,int pValue){
         return Math.max(pMin,Math.min(pMax,pValue));
     }
 
-    /**
-     * 转换字符串为数值
-     * <p>
-     * 首次转换失败将尝试调出字符串中的合法字符进行再次转换,再次转换失败,则返回默认值
-     * </p>
-     * 
-     * @param pStr
-     *            数值字符串
-     * @param pDefValue
-     *            如果转换失败返回的默认值
-     * @return 数字
-     */
     public static int paseIntOrDefault(String pStr,int pDefValue){
         return paseIntOrDefault(pStr,10,pDefValue);
     }
 
-    /**
-     * 转换字符串为数值
-     * <p>
-     * 首次转换失败将尝试调出字符串中的合法字符进行再次转换,再次转换失败,则返回默认值
-     * </p>
-     * 
-     * @param pStr
-     *            数值字符串
-     * @param pRadix
-     *            转换进制
-     * @param pDefValue
-     *            如果转换失败返回的默认值
-     * @return 数字
-     */
     public static int paseIntOrDefault(String pStr,int pRadix,int pDefValue){
         if(StringUtil.isEmpty(pStr))
             return pDefValue;
@@ -125,13 +69,6 @@ public class ToolKit{
         }
     }
 
-    /**
-     * 版本大小比较
-     * 
-     * @param pV1
-     * @param pV2
-     * @return
-     */
     public static int compareVersion(String pV1,String pV2){
         String[] pVs1=pV1.split("\\.");
         String[] pVs2=pV2.split("\\.");
@@ -145,11 +82,6 @@ public class ToolKit{
         return pVs1.length-pVs2.length;
     }
 
-    /**
-     * 检查字符是否为可打印字符
-     * @param pChar
-     * @return
-     */
     public static boolean isPrintable(char pChar){
         return (pChar>='\u0020'&&pChar<='\u007E')||pChar=='\n'||pChar=='\r'||pChar=='\t'
                 ||pChar=='\u0085'||(pChar>='\u00A0'&&pChar<='\uD7FF')

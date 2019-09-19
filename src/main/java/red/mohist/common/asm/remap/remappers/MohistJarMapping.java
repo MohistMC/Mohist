@@ -23,7 +23,6 @@ import org.objectweb.asm.commons.Remapper;
 import red.mohist.common.asm.remap.model.ClassMapping;
 
 /**
- * 维护nms->mcp的映射
  *
  * @author pyz
  * @date 2019/7/2 10:02 PM

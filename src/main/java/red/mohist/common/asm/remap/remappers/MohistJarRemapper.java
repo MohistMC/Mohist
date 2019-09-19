@@ -8,7 +8,6 @@ import red.mohist.common.asm.remap.ASMUtils;
 import red.mohist.common.asm.remap.model.ClassMapping;
 
 /**
- * 负责nsm->mcp的remap
  *
  * @author pyz
  * @date 2019/7/3 10:38 PM

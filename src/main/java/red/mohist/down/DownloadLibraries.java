@@ -31,7 +31,7 @@ public class DownloadLibraries implements Runnable {
     public static void unZip(File srcFile) throws RuntimeException {
         long start = System.currentTimeMillis();
         if (!srcFile.exists()) {
-            throw new RuntimeException(srcFile.getPath() + "所指文件不存在");
+            throw new RuntimeException(srcFile.getPath() + "The file indicated does not exist.");
         }
 
         ZipFile zipFile = null;

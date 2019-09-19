@@ -11,11 +11,9 @@ import java.io.UnsupportedEncodingException;
 public class IOUtil{
 
     /**
-     * 关闭一个流
      * 
      * @param pSteams
-     *            流
-     * @return 是否无报错的关闭了
+     * @return
      */
     public static boolean closeStream(Closeable...pSteams){
         boolean pHasError=false;
@@ -33,11 +31,9 @@ public class IOUtil{
     }
 
     /**
-     * 关闭一个连接
      * 
      * @param pConns
-     *            连接
-     * @return 连接是否无报错的关闭了
+     * @return
      */
     public static boolean closeStream(AutoCloseable...pConns){
         boolean pHasError=false;
@@ -55,18 +51,10 @@ public class IOUtil{
     }
 
     /**
-     * 复制流中的数据
-     * <p>
-     * 数据复制完毕后,函数不会主动关闭输入输出流
-     * </p>
-     * 
      * @param pIPStream
-     *            输入流
      * @param pOPStream
-     *            输出流
-     * @return 复制的字节数
+     * @return
      * @throws IOException
-     *             读入或写入数据时发生IO异常
      */
     public static long copy(InputStream pIPStream,OutputStream pOPStream) throws IOException{
         int copyedCount=0,readCount=0;
@@ -79,15 +67,11 @@ public class IOUtil{
     }
 
     /**
-     * 将流中的内容全部读取出来,并使用指定编码转换为String
      * 
      * @param pIPStream
-     *            输入流
      * @param pEncoding
-     *            转换编码
-     * @return 读取到的内容
+     * @return
      * @throws IOException
-     *             读取数据时发生错误
      * @throws UnsupportedEncodingException
      */
     public static String readContent(InputStream pIPStream,String pEncoding) throws IOException{
@@ -99,13 +83,10 @@ public class IOUtil{
     }
 
     /**
-     * 将流中的内容全部读取出来
      * 
      * @param pIPSReader
-     *            输入流
-     * @return 读取到的内容
+     * @return
      * @throws IOException
-     *             读取数据时发生错误
      */
     public static String readContent(InputStreamReader pIPSReader) throws IOException{
         int readCount=0;
@@ -118,13 +99,10 @@ public class IOUtil{
     }
 
     /**
-     * 将流中的内容全部读取出来
      * 
      * @param pIStream
-     *            输入流
-     * @return 读取到的内容
+     * @return
      * @throws IOException
-     *             读取数据时发生错误
      */
     public static byte[] readData(InputStream pIStream) throws IOException{
         ByteArrayOutputStream tBAOStream=new ByteArrayOutputStream();

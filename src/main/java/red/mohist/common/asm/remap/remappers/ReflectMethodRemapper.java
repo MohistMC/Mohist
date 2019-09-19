@@ -28,7 +28,6 @@ import red.mohist.common.asm.remap.proxy.ProxyYamlConfiguration;
 import red.mohist.common.asm.remap.proxy.asm.ProxyClassWriter;
 
 /**
- * 负责反射remap
  *
  * @author pyz
  * @date 2019/7/2 8:51 PM
@@ -37,7 +36,6 @@ public class ReflectMethodRemapper extends MethodRemapper {
     private static Map<String, Map<String, Map<String, MethodRedirectRule>>> methodRedirectMapping = new HashMap<>();
 
     static {
-//        注册重定向规则
         registerMethodRemapper("java/lang/Class", "forName", Class.class, new Class[]{String.class}, ProxyClass.class);
         registerMethodRemapper("java/lang/Class", "forName", Class.class, new Class[]{String.class, Boolean.TYPE, ClassLoader.class}, ProxyClass.class);
         registerMethodRemapper("java/lang/Class", "getField", Field.class, new Class[]{String.class}, ProxyClass.class);
@@ -59,7 +57,7 @@ public class ReflectMethodRemapper extends MethodRemapper {
         registerMethodRemapper("java/net/URLClassLoader", "<init>", void.class, new Class[]{URL[].class, ClassLoader.class, URLStreamHandlerFactory.class}, DelegateURLClassLoder.class);
         registerMethodRemapper("java/net/URLClassLoader", "<init>", void.class, new Class[]{URL[].class, ClassLoader.class}, DelegateURLClassLoder.class);
         registerMethodRemapper("java/net/URLClassLoader", "<init>", void.class, new Class[]{URL[].class}, DelegateURLClassLoder.class);
-//        兼容旧版本的yaml
+
         registerMethodRemapper("org/bukkit/configuration/file/YamlConfiguration", "loadConfiguration", YamlConfiguration.class, new Class[]{InputStream.class}, ProxyYamlConfiguration.class);
     }
 
@@ -124,7 +122,6 @@ public class ReflectMethodRemapper extends MethodRemapper {
         if (desc.equals("()[B")) {
             if (name.equals("toByteArray")) {
                 if (owner.equals("com/comphenix/net/sf/cglib/asm/$ClassWriter")) {
-//            TODO 2019/7/15 11:00 PM 很不优雅
                     super.visitMethodInsn(opcode, owner, name, desc, itf);
                     super.visitMethodInsn(Opcodes.INVOKESTATIC, ProxyClassWriter.class.getName().replace('.', '/'), "remapClass", "([B)[B", false);
                     return;

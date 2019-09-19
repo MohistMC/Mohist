@@ -18,7 +18,6 @@ import net.md_5.specialsource.JarRemapper;
 import net.md_5.specialsource.provider.InheritanceProvider;
 
 /**
- * 与InheritanceMap相比,更加节省内存
  *
  * @author pyz
  * @date 2019/7/4 9:44 AM

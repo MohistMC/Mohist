@@ -8,7 +8,6 @@ import red.mohist.Mohist;
 import red.mohist.common.asm.remap.ASMUtils;
 
 /**
- * 负责插件多版本兼容
  *
  * @author pyz
  * @date 2019/7/2 8:05 PM
