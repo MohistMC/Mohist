@@ -11,15 +11,17 @@
  import net.minecraft.entity.Entity;
  import net.minecraft.entity.EntityList.EntityEggInfo;
  import net.minecraft.entity.EntityLiving;
-@@ -84,6 +88,7 @@
+@@ -84,6 +88,9 @@
                          return String.valueOf(EntityRegistration.this.getRegistryName());
                      }
                  };
-+            EntityList.REGISTRY.register(id, registryName, entityClass);
++            if (EntityList.REGISTRY.getNameForObject(entityClass) == null) {
++                EntityList.REGISTRY.register(id, registryName, entityClass);
++            }
          }
          public ResourceLocation getRegistryName()
          {
-@@ -148,6 +153,9 @@
+@@ -148,6 +155,9 @@
      private final BiMap<Class<? extends Entity>, EntityRegistration> entityClassRegistrations = HashBiMap.create();
      private final Map<Class<? extends Entity>, EntityEntry> entityClassEntries = GameData.getEntityClassMap();
  
@@ -29,7 +31,7 @@
      public static EntityRegistry instance()
      {
          return INSTANCE;
-@@ -171,6 +179,7 @@
+@@ -171,6 +181,7 @@
      public static void registerModEntity(ResourceLocation registryName, Class<? extends Entity> entityClass, String entityName, int id, Object mod, int trackingRange, int updateFrequency, boolean sendsVelocityUpdates)
      {
          instance().doModEntityRegistration(registryName, entityClass, entityName, id, mod, trackingRange, updateFrequency, sendsVelocityUpdates);
@@ -37,7 +39,7 @@
      }
  
      /**
-@@ -191,6 +200,7 @@
+@@ -191,6 +202,7 @@
      {
          instance().doModEntityRegistration(registryName, entityClass, entityName, id, mod, trackingRange, updateFrequency, sendsVelocityUpdates);
          EntityRegistry.registerEgg(registryName, eggPrimary, eggSecondary);
@@ -45,7 +47,7 @@
      }
  
      private void doModEntityRegistration(ResourceLocation registryName, Class<? extends Entity> entityClass, String entityName, int id, Object mod, int trackingRange, int updateFrequency, boolean sendsVelocityUpdates)
-@@ -385,4 +395,33 @@
+@@ -385,4 +397,33 @@
          this.entityClassRegistrations.put(entity, registration);
          this.entityRegistrations.put(registration.container, registration);
      }

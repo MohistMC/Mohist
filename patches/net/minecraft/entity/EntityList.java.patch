@@ -10,16 +10,14 @@
  import java.util.Map;
  import java.util.Set;
  import javax.annotation.Nullable;
-@@ -107,7 +105,8 @@
+@@ -107,6 +105,7 @@
      public static final ResourceLocation LIGHTNING_BOLT = new ResourceLocation("lightning_bolt");
      private static final ResourceLocation PLAYER = new ResourceLocation("player");
      private static final Logger LOGGER = LogManager.getLogger();
--    public static final Map<ResourceLocation, EntityList.EntityEggInfo> ENTITY_EGGS = Maps.<ResourceLocation, EntityList.EntityEggInfo>newLinkedHashMap();
 +    public static final RegistryNamespaced< ResourceLocation, Class <? extends Entity >> REGISTRY = new RegistryNamespaced < ResourceLocation, Class <? extends Entity >> ();
-+    public static final Map<ResourceLocation, EntityEggInfo> ENTITY_EGGS = Maps.<ResourceLocation, EntityEggInfo>newLinkedHashMap();
+     public static final Map<ResourceLocation, EntityList.EntityEggInfo> ENTITY_EGGS = Maps.<ResourceLocation, EntityList.EntityEggInfo>newLinkedHashMap();
      private static final Set<ResourceLocation> EXTRA_NAMES = Sets.newHashSet();
  
-     @Nullable
 @@ -222,7 +221,7 @@
              }
              catch (Exception e)
