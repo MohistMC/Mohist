@@ -5,8 +5,8 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.PluginLoadOrder;
-import red.mohist.event.BukkitHookForgeEvent;
-import red.mohist.event.BukkitStateForgeEvent;
+import red.mohist.api.event.BukkitHookForgeEvent;
+import red.mohist.api.event.BukkitStateForgeEvent;
 
 public class BukkitHookForgeEventTest implements Listener {
 
