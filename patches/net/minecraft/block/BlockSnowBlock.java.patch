@@ -1,30 +1,23 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockSnowBlock.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockSnowBlock.java
-@@ -7,7 +7,6 @@
+@@ -4,6 +4,7 @@
+ import net.minecraft.block.material.Material;
+ import net.minecraft.block.state.IBlockState;
+ import net.minecraft.creativetab.CreativeTabs;
++import net.minecraft.init.Blocks;
  import net.minecraft.init.Items;
  import net.minecraft.item.Item;
  import net.minecraft.util.math.BlockPos;
--import net.minecraft.world.EnumSkyBlock;
- import net.minecraft.world.World;
- 
- public class BlockSnowBlock extends Block
-@@ -15,7 +14,6 @@
-     protected BlockSnowBlock()
+@@ -33,8 +34,11 @@
      {
-         super(Material.CRAFTED_SNOW);
--        this.setTickRandomly(true);
-         this.setCreativeTab(CreativeTabs.BUILDING_BLOCKS);
-     }
- 
-@@ -31,10 +29,5 @@
- 
-     public void updateTick(World worldIn, BlockPos pos, IBlockState state, Random rand)
-     {
--        if (worldIn.getLightFor(EnumSkyBlock.BLOCK, pos) > 11)
--        {
--            this.dropBlockAsItem(worldIn, pos, worldIn.getBlockState(pos), 0);
--            worldIn.setBlockToAir(pos);
--        }
+         if (worldIn.getLightFor(EnumSkyBlock.BLOCK, pos) > 11)
+         {
++            if (org.bukkit.craftbukkit.v1_12_R1.event.CraftEventFactory.callBlockFadeEvent(worldIn.getWorld().getBlockAt(pos.getX(), pos.getY(), pos.getZ()), Blocks.AIR).isCancelled()) {
++                return;
++            }
+             this.dropBlockAsItem(worldIn, pos, worldIn.getBlockState(pos), 0);
+             worldIn.setBlockToAir(pos);
+         }
 -    }
 +	}
  }
