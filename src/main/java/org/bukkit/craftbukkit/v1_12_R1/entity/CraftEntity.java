@@ -125,6 +125,7 @@ import org.bukkit.Server;
 import org.bukkit.World;
 import org.bukkit.block.PistonMoveReaction;
 import org.bukkit.craftbukkit.v1_12_R1.CraftServer;
+import org.bukkit.craftbukkit.v1_12_R1.CraftWorld;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import org.bukkit.metadata.MetadataValue;
@@ -544,10 +545,8 @@ public abstract class CraftEntity implements org.bukkit.entity.Entity {
         // If this entity is riding another entity, we must dismount before teleporting.
         entity.dismountRidingEntity();
 
-        if (!location.getWorld().equals(getWorld())) {
-            entity.teleportTo(location, cause.isPortal());
-            return true;
-        }
+        entity.world = ((CraftWorld) location.getWorld()).getHandle();
+        
         // entity.setLocation() throws no event, and so cannot be cancelled
         entity.setPositionAndRotation(location.getX(), location.getY(), location.getZ(), location.getYaw(), location.getPitch());
         // SPIGOT-619: Force sync head rotation also
