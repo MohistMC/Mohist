@@ -1,11 +1,13 @@
 package red.mohist.down;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.net.URLConnection;
 import red.mohist.Mohist;
 import red.mohist.configuration.MohistConfigUtil;
+import red.mohist.util.FileUtil;
 import red.mohist.util.IOUtil;
 import red.mohist.util.i18n.Message;
 
@@ -48,5 +50,23 @@ public class Update {
 
     public static boolean isCheckVersion() {
         return MohistConfigUtil.getBoolean("check_update:", true);
+    }
+
+    public static boolean getLibrariesVersion() {
+        String ver = "https://raw.githubusercontent.com/Mohist-Community/Mohist/1.12.2/libraries.ver";
+        String newversion = MohistConfigUtil.getUrlString(ver, "1");
+        File lib = new File("libraries", "libraries.ver");
+        if (!lib.exists()) {
+            return true;
+        }
+        try {
+            String i = FileUtil.readContent(lib, "UTF-8");
+            if (i.equals(newversion)) {
+                return false;
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return true;
     }
 }

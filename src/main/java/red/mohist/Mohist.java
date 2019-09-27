@@ -50,6 +50,14 @@ public class Mohist {
             return;
         }
         if (Update.isCheckVersion()) {
+            if (Update.getLibrariesVersion()) {
+                System.out.println(Message.getString("mohist.start.error.nothavelibrary"));
+                System.out.println("");
+                ExecutorService dl = Executors.newCachedThreadPool();
+                dl.execute(new DownloadLibraries());
+                System.out.println(Message.getString("file.ok"));
+                return;
+            }
             Update.hasLatestVersion();
         }
         Class<?> launchwrapper = null;
