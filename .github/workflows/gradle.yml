@@ -21,4 +21,7 @@ jobs:
         git submodule update --init --recursive
         chmod +x ./gradlew
         ./gradlew launch4j
-        ./gradlew clean
+    - uses: actions/upload-artifact@master
+      with:
+        name: mohist
+        path: build/distributions/Mohist-*-server.jar
