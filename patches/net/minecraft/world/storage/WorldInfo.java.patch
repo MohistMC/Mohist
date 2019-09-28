@@ -80,18 +80,20 @@
          this.raining = isRaining;
      }
  
-@@ -713,6 +739,10 @@
+@@ -713,6 +739,12 @@
      {
          net.minecraftforge.common.ForgeHooks.onDifficultyChange(newDifficulty, this.difficulty);
          this.difficulty = newDifficulty;
 +        SPacketServerDifficulty packet = new SPacketServerDifficulty(this.getDifficulty(), this.isDifficultyLocked());
-+        for (EntityPlayerMP player : (java.util.List<EntityPlayerMP>) (java.util.List) world.playerEntities) {
-+            player.connection.sendPacket(packet);
++        if(world.playerEntities!=null && !world.playerEntities.isEmpty()) {
++            for (EntityPlayerMP player : (java.util.List<EntityPlayerMP>) (java.util.List) world.playerEntities) {
++                player.connection.sendPacket(packet);
++            }
 +        }
      }
  
      public boolean isDifficultyLocked()
-@@ -869,4 +899,29 @@
+@@ -869,4 +901,29 @@
      {
          return this.versionName;
      }
