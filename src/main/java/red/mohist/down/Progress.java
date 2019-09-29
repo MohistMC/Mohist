@@ -1,5 +1,6 @@
 package red.mohist.down;
 
+import java.io.File;
 import java.text.DecimalFormat;
 import red.mohist.configuration.MohistConfigUtil;
 import red.mohist.util.i18n.Message;
@@ -56,6 +57,7 @@ public class Progress {
     }
 
     public Boolean isEnable() {
-        return MohistConfigUtil.getBoolean("enable_progress:", true);
+        File f = new File("mohist-config", "mohist.yml");
+        return MohistConfigUtil.getBoolean(f, "enable_progress:", true);
     }
 }

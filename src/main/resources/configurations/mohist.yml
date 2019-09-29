@@ -25,38 +25,40 @@
 # Setting: messages.use-unknow-command Default: 未知指令! 使用 "/help" 获得帮助!   # Prompt unknown command
 # Setting: asyn.checkLight Default: false   # checkLight
 
+forgeversion:
+  build: 2847
+  revision: 5
+  minor: 23
+  major: 14
 console_name: Server
-remap:
-  dumpRemapPluginClass: false
-  multiVersionRemapPlugins: ''
-  multiVersionRemap: false
-  printRemapPluginClass: false
-  reflectRemap: true
-  nmsRemap: true
-  multiVersinoNMSRemap: true
-  versionNMSRemapPlugins:
-  - '*'
-  dumpNMSRemppedClass: false
 asyn:
   spawnerCreature: false
   aimove: false
   checkLight: false
+  worldsave: false
 perfomance:
   maxEntityCollisionsPerTick: 8
   entityCollideFrequency: 2
-  usechunksmapforpendingblocks: false
 server-type: FML
-debug:
-  printInvalidMapping: false
-  printThreadTimeCost: false
+remap:
+  multiVersionRemap: false
+  printRemapPluginClass: false
+  reflectRemap: true
+  dumpRemapPluginClass: false
+  multiVersionRemapPlugins: ''
+  nmsRemap: true
 eventCanceled:
   explosion: false
-support_nocmd: false
-check_update: false
+enable_progress: true
 lang: xx_XX
-config-version: 1
 consolecolor:
   warn-level: '[33;1m'
   error-level: '[31;1m'
   warn-msg: '[33;1m'
   error-msg: '[31;1m'
+debug:
+  printInvalidMapping: false
+  printThreadTimeCost: false
+support_nocmd: false
+check_update: true
+config-version: 1

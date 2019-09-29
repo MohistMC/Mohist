@@ -5,17 +5,33 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.net.URLConnection;
-import red.mohist.down.Update;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
+import java.util.Enumeration;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
+import red.mohist.Mohist;
 import red.mohist.util.FileUtil;
 import red.mohist.util.IOUtil;
 import red.mohist.util.Number;
-import red.mohist.util.i18n.Message;
 
 public class MohistConfigUtil {
 
-    public static File f = new File("mohist-config", "mohist.yml");
+    //public static File f = new File("mohist-config", "mohist.yml");
 
-    public static String getString(String key, String defaultreturn) {
+    public static String getString(String s, String key, String defaultreturn) {
+        if(s.contains(key)){
+            String string = s.substring(s.indexOf(key));
+            String s1 = (string.substring(string.indexOf(": ") + 2));
+            String[] ss = s1.split("\n");
+            return ss[0].trim().replace("'", "").replace("\"" , "");
+        }
+        return defaultreturn;
+    }
+
+    public static String getString(File f, String key, String defaultreturn) {
         try {
             String s = FileUtil.readContent(f, "UTF-8");
             if(s.contains(key)){
@@ -46,19 +62,43 @@ public class MohistConfigUtil {
         return defaultreturn;
     }
 
-    public static boolean getBoolean(String key, Boolean defaultreturn) {
-        String s = getString(key, defaultreturn.toString());
+    public static boolean getBoolean(File f, String key, Boolean defaultreturn) {
+        String s = getString(f, key, defaultreturn.toString());
         if (s.equals("false")){
             return false;
         }
         return defaultreturn;
     }
 
-    public static int getInt(String key, String defaultreturn){
-        String s = getString(key, defaultreturn);
+    public static int getInt(File f, String key, String defaultreturn){
+        String s = getString(f, key, defaultreturn);
         if (Number.isInteger(s)) {
             return Integer.parseInt(s);
         }
         return  Integer.parseInt(defaultreturn);
+    }
+
+    public static void copyMohistConfig()
+    {
+        try {
+            File configfile = new File("mohist-config");
+            if (!configfile.exists()) {
+                configfile.mkdirs();
+                String path = Mohist.class.getProtectionDomain().getCodeSource().getLocation().getPath();
+                String jarname = path.substring(path.lastIndexOf("/")+1,path.lastIndexOf("."));
+                JarFile jarFile = new JarFile(jarname + ".jar");
+                for (Enumeration<JarEntry> e = jarFile.entries(); e.hasMoreElements(); ) {
+                    JarEntry jarEntry = e.nextElement();
+                    if(jarEntry.getName().contains("configurations/mohist.yml")){
+                        InputStream jarEntryInputStream = jarFile.getInputStream(jarEntry);
+                        Path currentDir = Paths.get("mohist-config", "mohist.yml");
+                        Files.copy(jarEntryInputStream, currentDir, StandardCopyOption.REPLACE_EXISTING);
+                    }
+                }
+            }
+        } catch (Exception e) {
+            System.out.println("File copy exception!");
+            e.printStackTrace();
+        }
     }
 }

@@ -7,7 +7,6 @@ import java.net.URL;
 import java.net.URLConnection;
 import red.mohist.Mohist;
 import red.mohist.configuration.MohistConfigUtil;
-import red.mohist.util.FileUtil;
 import red.mohist.util.IOUtil;
 import red.mohist.util.i18n.Message;
 
@@ -49,24 +48,24 @@ public class Update {
     }
 
     public static boolean isCheckVersion() {
-        return MohistConfigUtil.getBoolean("check_update:", true);
+        File f = new File("mohist-config", "mohist.yml");
+        return MohistConfigUtil.getBoolean(f, "check_update:", false);
     }
 
     public static boolean getLibrariesVersion() {
         String ver = "https://raw.githubusercontent.com/Mohist-Community/Mohist/1.12.2/libraries.ver";
-        String newversion = MohistConfigUtil.getUrlString(ver, "1");
+        // Get the data in url
+        String newversion = MohistConfigUtil.getUrlString(ver, Mohist.LIB_VERSION);
+        String s = MohistConfigUtil.getString(newversion, "version:", Mohist.LIB_VERSION);
         File lib = new File("libraries", "libraries.ver");
         if (!lib.exists()) {
             return true;
         }
-        try {
-            String i = FileUtil.readContent(lib, "UTF-8");
-            if (i.equals(newversion)) {
-                return false;
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
+        // Get the data in lib
+        String i = MohistConfigUtil.getString(lib, "version:", Mohist.LIB_VERSION);
+        if (i.equals(s)) {
+            return false;
         }
-        return true;
+        return false;
     }
 }

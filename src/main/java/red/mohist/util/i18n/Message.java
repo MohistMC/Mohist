@@ -1,5 +1,6 @@
 package red.mohist.util.i18n;
 
+import java.io.File;
 import java.text.MessageFormat;
 import java.util.Locale;
 import java.util.ResourceBundle;
@@ -18,7 +19,8 @@ public class Message {
     }
 
     public static String getLanguage(int key) {
-        String locale = MohistConfigUtil.getString("lang:", "xx");
+        File f = new File("mohist-config", "mohist.yml");
+        String locale = MohistConfigUtil.getString(f, "lang:", "xx");
         if (locale.length() == 5) {
             String language = locale.substring(0, 2);
             String country = locale.substring(3, 5);

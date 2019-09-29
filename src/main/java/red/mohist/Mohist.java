@@ -6,6 +6,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import red.mohist.configuration.MohistConfigUtil;
 import red.mohist.down.DownloadLibraries;
 import red.mohist.down.Update;
 import red.mohist.util.ServerEula;
@@ -15,6 +16,7 @@ public class Mohist {
 
     private static final String NAME = "Mohist";
     public static final String VERSION = "1.4";
+    public static final String LIB_VERSION = "1";
     private static final String NATIVE_VERSON = "v1_12_R1";
     private static final String NMS_PREFIX = "net/minecraft/server/";
     public static Logger LOGGER;
@@ -41,6 +43,7 @@ public class Mohist {
             // Set this early so we don't need to reconfigure later
             System.setProperty("log4j.configurationFile", "log4j2_mohist.xml");
         }
+        MohistConfigUtil.copyMohistConfig();
 
         ServerEula eula = new ServerEula(new File("eula.txt"));
         if (!eula.hasAcceptedEULA())

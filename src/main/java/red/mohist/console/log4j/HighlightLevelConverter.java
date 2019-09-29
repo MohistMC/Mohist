@@ -23,6 +23,7 @@
 
 package red.mohist.console.log4j;
 
+import java.io.File;
 import java.util.List;
 import javax.annotation.Nullable;
 import org.apache.logging.log4j.Level;
@@ -46,6 +47,7 @@ public class HighlightLevelConverter extends LogEventPatternConverter
     private static final String ANSI_RESET = "\u001B[39;0m";
     private static final String ANSI_ERROR = "\u001B" + geterror();
     private static final String ANSI_WARN = "\u001B" + getwarn();
+    private static final File f = new File("mohist-config", "mohist.yml");
 
     private final List<PatternFormatter> formatters;
 
@@ -147,10 +149,10 @@ public class HighlightLevelConverter extends LogEventPatternConverter
     }
 
     public static String geterror() {
-        return MohistConfigUtil.getString("error-level:", "[31;1m");
+        return MohistConfigUtil.getString(f,"error-level:", "[31;1m");
     }
 
     public static String getwarn() {
-        return MohistConfigUtil.getString("warn-level:", "[33;1m");
+        return MohistConfigUtil.getString(f, "warn-level:", "[33;1m");
     }
 }
