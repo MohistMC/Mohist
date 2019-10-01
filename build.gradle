@@ -30,10 +30,9 @@ repositories {
     maven { url 'https://hub.spigotmc.org/nexus/content/groups/public/' }
 }
 
-sourceCompatibility = 1.8
-tasks.withType(JavaCompile) {
-    options.encoding = "UTF-8"
-}
+targetCompatibility = '1.8'
+sourceCompatibility = '1.8'
+compileJava.options.encoding = 'UTF-8'
 
 configurations.all {
     transitive = false
