@@ -67,13 +67,3 @@
      }
  
      public boolean canDoLightning(net.minecraft.world.chunk.Chunk chunk)
-@@ -603,4 +616,9 @@
-     {
-         return true;
-     }
-+    // Mohist start
-+    public static WorldProvider getProviderForDimension(int dimensionId){
-+        return DimensionManager.createProviderFor(dimensionId);
-+    }
-+    // Mohist end
- }

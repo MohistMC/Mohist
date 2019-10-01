@@ -997,15 +997,6 @@
              return false;
          }
          else
-@@ -3013,7 +3379,7 @@
- 
-     public List<Entity> getEntitiesInAABBexcluding(@Nullable Entity entityIn, AxisAlignedBB boundingBox, @Nullable Predicate <? super Entity > predicate)
-     {
--        List<Entity> list = Lists.<Entity>newArrayList();
-+        List<Entity> list = new ArrayList(30);
-         int j2 = MathHelper.floor((boundingBox.minX - MAX_ENTITY_RADIUS) / 16.0D);
-         int k2 = MathHelper.floor((boundingBox.maxX + MAX_ENTITY_RADIUS) / 16.0D);
-         int l2 = MathHelper.floor((boundingBox.minZ - MAX_ENTITY_RADIUS) / 16.0D);
 @@ -3033,15 +3399,15 @@
          return list;
      }
@@ -1028,15 +1019,6 @@
              }
          }
  
-@@ -3074,7 +3440,7 @@
-         int k2 = MathHelper.ceil((aabb.maxX + MAX_ENTITY_RADIUS) / 16.0D);
-         int l2 = MathHelper.floor((aabb.minZ - MAX_ENTITY_RADIUS) / 16.0D);
-         int i3 = MathHelper.ceil((aabb.maxZ + MAX_ENTITY_RADIUS) / 16.0D);
--        List<T> list = Lists.<T>newArrayList();
-+        List<T> list = new ArrayList(40);
- 
-         for (int j3 = j2; j3 < k2; ++j3)
-         {
 @@ -3142,7 +3508,16 @@
  
          for (Entity entity4 : this.loadedEntityList)

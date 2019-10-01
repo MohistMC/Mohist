@@ -156,7 +156,7 @@
 +            worldType = env.toString().toLowerCase();
 +            name = "DIM" + dim;
 +        } else {
-+            WorldProvider provider = WorldProvider.getProviderForDimension(dim);
++            WorldProvider provider = createProviderFor(dim);
 +            worldType = provider.getClass().getSimpleName().toLowerCase();
 +            worldType = worldType.replace("worldprovider", "");
 +            worldType = worldType.replace("provider", "");
