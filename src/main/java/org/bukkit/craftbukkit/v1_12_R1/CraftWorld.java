@@ -136,6 +136,7 @@ import net.minecraft.world.gen.feature.WorldGenSwamp;
 import net.minecraft.world.gen.feature.WorldGenTaiga1;
 import net.minecraft.world.gen.feature.WorldGenTaiga2;
 import net.minecraft.world.gen.feature.WorldGenTrees;
+import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.util.BlockSnapshot;
 import net.minecraftforge.fml.common.registry.EntityRegistry;
 import org.apache.commons.lang3.Validate;
@@ -864,7 +865,7 @@ public class CraftWorld implements World {
     public void setEnvironment(Environment env) {
         if (environment != env) {
             environment = env;
-            world.provider = net.minecraft.world.WorldProvider.getProviderForDimension(environment.getId());
+            world.provider = DimensionManager.createProviderFor(environment.getId());
         }
     }
 
