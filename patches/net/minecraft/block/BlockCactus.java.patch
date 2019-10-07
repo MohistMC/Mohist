@@ -23,7 +23,7 @@
 -                if (j == 15)
 -                {
 -                    worldIn.setBlockState(blockpos, this.getDefaultState());
-+                    if (j >= (byte)Block.range(3.0f, 100.0f / worldIn.spigotConfig.cactusModifier * 15.0f + 0.5f, 15.0f))
++                    if (j >= (byte)Block.range(3.0f, ((100.0f / worldIn.spigotConfig.cactusModifier) * 15.0f) + 0.5f, 15.0f))
 +                    {
 +                    // worldIn.setBlockState(blockpos, this.getDefaultState());
                      IBlockState iblockstate = state.withProperty(AGE, Integer.valueOf(0));

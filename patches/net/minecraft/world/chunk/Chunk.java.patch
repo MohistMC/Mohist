@@ -486,7 +486,7 @@
      public boolean isPopulated()
      {
 -        return this.ticked && this.isTerrainPopulated && this.isLightPopulated;
-+        return true;
++        return this.ticked && this.isTerrainPopulated;
      }
  
      public boolean wasTicked()
