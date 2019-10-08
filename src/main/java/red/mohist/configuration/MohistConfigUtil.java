@@ -19,8 +19,6 @@ import red.mohist.util.Number;
 
 public class MohistConfigUtil {
 
-    //public static File f = new File("mohist-config", "mohist.yml");
-
     public static String getString(String s, String key, String defaultreturn) {
         if(s.contains(key)){
             String string = s.substring(s.indexOf(key));
@@ -84,21 +82,13 @@ public class MohistConfigUtil {
             File configfile = new File("mohist-config");
             if (!configfile.exists()) {
                 configfile.mkdirs();
-                String path = Mohist.class.getProtectionDomain().getCodeSource().getLocation().getPath();
-                String jarname = path.substring(path.lastIndexOf("/")+1,path.lastIndexOf("."));
-                JarFile jarFile = new JarFile(jarname + ".jar");
-                for (Enumeration<JarEntry> e = jarFile.entries(); e.hasMoreElements(); ) {
-                    JarEntry jarEntry = e.nextElement();
-                    if(jarEntry.getName().contains("configurations/mohist.yml")){
-                        InputStream jarEntryInputStream = jarFile.getInputStream(jarEntry);
-                        Path currentDir = Paths.get("mohist-config", "mohist.yml");
-                        Files.copy(jarEntryInputStream, currentDir, StandardCopyOption.REPLACE_EXISTING);
-                    }
-                }
+
+                InputStream jarin = Mohist.class.getClassLoader().getResourceAsStream("configurations/mohist.yml");
+                Path currentDir = Paths.get("mohist-config", "mohist.yml");
+                Files.copy(jarin, currentDir, StandardCopyOption.REPLACE_EXISTING);
             }
         } catch (Exception e) {
             System.out.println("File copy exception!");
-            e.printStackTrace();
         }
     }
 }

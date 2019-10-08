@@ -25,9 +25,9 @@ repositories {
     clear()
     mavenCentral()
     maven { url 'https://files.minecraftforge.net/maven' }
+    maven { url 'https://hub.spigotmc.org/nexus/content/groups/public/' }
     maven { url 'https://oss.sonatype.org/content/repositories/snapshots/' }
     maven { url 'https://libraries.minecraft.net/' }
-    maven { url 'https://hub.spigotmc.org/nexus/content/groups/public/' }
 }
 
 targetCompatibility = '1.8'
