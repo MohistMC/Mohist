@@ -1,14 +1,5 @@
 --- ../src-base/minecraft/net/minecraft/network/NettyPacketEncoder.java
 +++ ../src-work/minecraft/net/minecraft/network/NettyPacketEncoder.java
-@@ -20,7 +20,7 @@
-         this.direction = direction;
-     }
- 
--    protected void encode(ChannelHandlerContext p_encode_1_, Packet<?> p_encode_2_, ByteBuf p_encode_3_) throws IOException, Exception
-+    protected void encode(ChannelHandlerContext p_encode_1_, Packet<?> p_encode_2_, ByteBuf p_encode_3_) throws Exception
-     {
-         EnumConnectionState enumconnectionstate = (EnumConnectionState)p_encode_1_.channel().attr(NetworkManager.PROTOCOL_ATTRIBUTE_KEY).get();
- 
 @@ -36,7 +36,10 @@
              {
                  LOGGER.debug(RECEIVED_PACKET_MARKER, "OUT: [{}:{}] {}", p_encode_1_.channel().attr(NetworkManager.PROTOCOL_ATTRIBUTE_KEY).get(), integer, p_encode_2_.getClass().getName());

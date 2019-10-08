@@ -216,15 +216,7 @@
              }
  
              if (this.channel.pipeline().get("compress") instanceof NettyCompressionEncoder)
-@@ -456,6 +471,7 @@
-                 {
-                     this.getNetHandler().onDisconnect(new TextComponentTranslation("multiplayer.disconnect.generic", new Object[0]));
-                 }
-+                this.outboundPacketsQueue.clear(); // Free up packet queue.
-             }
-         }
-     }
-@@ -476,4 +492,12 @@
+@@ -476,4 +491,12 @@
                  this.futureListeners = inFutureListeners;
              }
          }

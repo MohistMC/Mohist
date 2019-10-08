@@ -29,18 +29,7 @@
          {
              this.writeShort(-1);
          }
-@@ -336,6 +337,10 @@
- 
-             if (stack.getItem().isDamageable() || stack.getItem().getShareTag())
-             {
-+                // Spigot start - filter
-+                stack = stack.copy();
-+                CraftItemStack.setItemMeta(stack, CraftItemStack.getItemMeta(stack));
-+                // Spigot end
-                 nbttagcompound = stack.getItem().getNBTShareTag(stack);
-             }
- 
-@@ -359,6 +364,9 @@
+@@ -359,6 +360,9 @@
              int k = this.readShort();
              ItemStack itemstack = new ItemStack(Item.getItemById(i), j, k);
              itemstack.getItem().readNBTShareTag(itemstack, this.readCompoundTag());
