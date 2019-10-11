@@ -26,6 +26,15 @@
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
  
+@@ -41,7 +40,7 @@
+     private final Set<ChunkPos> chunksBeingSaved = Collections.<ChunkPos>newSetFromMap(Maps.newConcurrentMap());
+     public final File chunkSaveLocation;
+     private final DataFixer fixer;
+-    private boolean flushing;
++    //private boolean flushing;
+ 
+     public AnvilChunkLoader(File chunkSaveLocationIn, DataFixer dataFixerIn)
+     {
 @@ -65,6 +64,7 @@
              Chunk chunk = (Chunk) data[0];
              NBTTagCompound nbttagcompound = (NBTTagCompound) data[1];
@@ -53,7 +62,23 @@
          }
  
          return this.checkedReadChunkFromNBT__Async(worldIn, x, z, nbttagcompound);
-@@ -238,9 +237,10 @@
+@@ -194,9 +193,14 @@
+ 
+     public boolean writeNextIO()
+     {
++        return this.processSaveQueueEntry(false);
++    }
++
++    private synchronized boolean processSaveQueueEntry(boolean logCompletion)
++    {
+         if (this.chunksToSave.isEmpty())
+         {
+-            if (this.flushing)
++            if (logCompletion)
+             {
+                 LOGGER.info("ThreadedAnvilChunkStorage ({}): All chunks are saved", (Object)this.chunkSaveLocation.getName());
+             }
+@@ -238,9 +242,10 @@
  
      private void writeChunkData(ChunkPos pos, NBTTagCompound compound) throws IOException
      {
@@ -67,7 +92,50 @@
      }
  
      public void saveExtraChunkData(World worldIn, Chunk chunkIn) throws IOException
-@@ -609,8 +609,11 @@
+@@ -255,13 +260,18 @@
+     {
+         try
+         {
+-            this.flushing = true;
++            //this.flushing = true; // CraftBukkit
+ 
+-            while (this.writeNextIO());
++            while (true) {
++                if (this.processSaveQueueEntry(true)) { // CraftBukkit
++                    continue;
++                }
++                break; // CraftBukkit - Fix infinite loop when saving chunks
++            }
+         }
+         finally
+         {
+-            this.flushing = false;
++            //this.flushing = false; // CraftBukkit
+         }
+     }
+ 
+@@ -558,6 +568,11 @@
+     @Nullable
+     public static Entity readWorldEntityPos(NBTTagCompound compound, World worldIn, double x, double y, double z, boolean attemptSpawn)
+     {
++        return spawnEntity(compound, worldIn, x, y, z, attemptSpawn, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.DEFAULT);
++    }
++
++    public static Entity spawnEntity(NBTTagCompound compound, World worldIn, double x, double y, double z, boolean attemptSpawn, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason spawnReason)
++    {
+         Entity entity = createEntityFromNBT(compound, worldIn);
+ 
+         if (entity == null)
+@@ -568,7 +583,7 @@
+         {
+             entity.setLocationAndAngles(x, y, z, entity.rotationYaw, entity.rotationPitch);
+ 
+-            if (attemptSpawn && !worldIn.spawnEntity(entity))
++            if (attemptSpawn && !worldIn.addEntity(entity, spawnReason))
+             {
+                 return null;
+             }
+@@ -609,8 +624,11 @@
  
      public static void spawnEntity(Entity entityIn, World worldIn)
      {

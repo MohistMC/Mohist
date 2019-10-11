@@ -268,7 +268,7 @@
              damageAmount = net.minecraftforge.common.ForgeHooks.onLivingHurt(this, damageSrc, damageAmount);
              if (damageAmount <= 0) return;
              damageAmount = net.minecraftforge.common.ISpecialArmor.ArmorProperties.applyArmor(this, inventory.armorInventory, damageSrc, damageAmount);
-@@ -1140,8 +1213,15 @@
+@@ -1140,8 +1213,14 @@
                  }
              }
          }
@@ -276,7 +276,6 @@
      }
  
 +    // CraftBukkit start
-+    @Override
 +    protected boolean damageEntity_CB(DamageSource damageSrc, float damageAmount) {  // void -> boolean
 +        return super.damageEntity_CB(damageSrc, damageAmount);
 +    }
@@ -284,7 +283,7 @@
      public void openEditSign(TileEntitySign signTile)
      {
      }
-@@ -1317,8 +1397,17 @@
+@@ -1317,8 +1396,17 @@
  
                          if (j > 0 && !targetEntity.isBurning())
                          {
@@ -304,7 +303,7 @@
                          }
                      }
  
-@@ -1342,7 +1431,7 @@
+@@ -1342,7 +1430,7 @@
  
                              this.motionX *= 0.6D;
                              this.motionZ *= 0.6D;
@@ -313,7 +312,7 @@
                          }
  
                          if (flag3)
-@@ -1353,8 +1442,10 @@
+@@ -1353,8 +1441,10 @@
                              {
                                  if (entitylivingbase != this && entitylivingbase != targetEntity && !this.isOnSameTeam(entitylivingbase) && this.getDistanceSq(entitylivingbase) < 9.0D)
                                  {
@@ -326,7 +325,7 @@
                                  }
                              }
  
-@@ -1364,11 +1455,28 @@
+@@ -1364,11 +1454,28 @@
  
                          if (targetEntity instanceof EntityPlayerMP && targetEntity.velocityChanged)
                          {
@@ -360,7 +359,7 @@
                          }
  
                          if (flag2)
-@@ -1434,7 +1542,15 @@
+@@ -1434,7 +1541,15 @@
  
                              if (j > 0)
                              {
@@ -377,7 +376,7 @@
                              }
  
                              if (this.world instanceof WorldServer && f5 > 2.0F)
-@@ -1454,6 +1570,11 @@
+@@ -1454,6 +1569,11 @@
                          {
                              targetEntity.extinguish();
                          }
@@ -389,7 +388,7 @@
                      }
                  }
              }
-@@ -1527,6 +1648,10 @@
+@@ -1527,6 +1647,10 @@
          return this.gameProfile;
      }
  
@@ -400,7 +399,7 @@
      public EntityPlayer.SleepResult trySleep(BlockPos bedLocation)
      {
          EntityPlayer.SleepResult ret = net.minecraftforge.event.ForgeEventFactory.onPlayerSleepInBed(this, bedLocation);
-@@ -1572,6 +1697,20 @@
+@@ -1572,6 +1696,20 @@
              this.dismountRidingEntity();
          }
  
@@ -421,7 +420,7 @@
          this.spawnShoulderEntities();
          this.setSize(0.2F, 0.2F);
  
-@@ -1651,6 +1790,23 @@
+@@ -1651,6 +1789,23 @@
              this.world.updateAllPlayersSleepingFlag();
          }
  
@@ -445,7 +444,7 @@
          this.sleepTimer = immediately ? 0 : 100;
  
          if (setSpawn)
-@@ -1757,11 +1913,13 @@
+@@ -1757,11 +1912,13 @@
          {
              this.spawnPos = pos;
              this.spawnForced = forced;
@@ -459,7 +458,7 @@
          }
      }
  
-@@ -1820,7 +1978,10 @@
+@@ -1820,7 +1977,10 @@
              this.motionY = d3 * 0.6D;
              this.jumpMovementFactor = f;
              this.fallDistance = 0.0F;
@@ -471,7 +470,7 @@
          }
          else
          {
-@@ -2225,10 +2386,12 @@
+@@ -2225,10 +2385,12 @@
  
      protected void spawnShoulderEntities()
      {
@@ -488,7 +487,7 @@
      }
  
      private void spawnShoulderEntity(@Nullable NBTTagCompound p_192026_1_)
-@@ -2247,6 +2410,23 @@
+@@ -2247,6 +2409,23 @@
          }
      }
  
@@ -512,7 +511,7 @@
      @SideOnly(Side.CLIENT)
      public boolean isInvisibleToPlayer(EntityPlayer player)
      {
-@@ -2481,7 +2661,7 @@
+@@ -2481,7 +2660,7 @@
          return (NBTTagCompound)this.dataManager.get(LEFT_SHOULDER_ENTITY);
      }
  
@@ -521,7 +520,7 @@
      {
          this.dataManager.set(LEFT_SHOULDER_ENTITY, tag);
      }
-@@ -2491,7 +2671,7 @@
+@@ -2491,7 +2670,7 @@
          return (NBTTagCompound)this.dataManager.get(RIGHT_SHOULDER_ENTITY);
      }
  
@@ -530,7 +529,7 @@
      {
          this.dataManager.set(RIGHT_SHOULDER_ENTITY, tag);
      }
-@@ -2531,7 +2711,7 @@
+@@ -2531,7 +2710,7 @@
  
      public boolean canUseCommandBlock()
      {
