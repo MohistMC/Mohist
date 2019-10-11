@@ -129,8 +129,9 @@ outputJar {
     archiveClassifier = 'server'
 
     manifest.attributes([
+            "Manifest-Version": "1.4",
             "Implementation-Title": "Mohist",
-            "Implementation-Version": project.version,
+            "Implementation-Version": "git-Mohist-1.4-" + project.version,
             "Main-Class": "red.mohist.Mohist",
             "TweakClass": "net.minecraftforge.fml.common.launcher.FMLTweaker",
             "Class-Path": getServerClasspath(file("jsons/${minecraft.version}-mohist-rel.json"))

@@ -30,16 +30,17 @@ public class Update {
             String s2 = s1.substring(0, 7);
 
             String oldver = Update.class.getPackage().getImplementationVersion();
+            String oldver1 = oldver.substring(15, 22);
             String time = commits.substring(commits.indexOf(date));
             String time1 = time.substring(time.indexOf(date) + 8);
             String time2 = time1.substring(0, 20);
 
             String newversion = MohistConfigUtil.getUrlString(ver, Mohist.VERSION);
             String oldversion = Mohist.VERSION;
-            if (oldver.contains(s2)) {
-                System.out.println(Message.getFormatString("update.latest", new Object[]{oldversion, s2, oldver}));
+            if (oldver1.contains(s2)) {
+                System.out.println(Message.getFormatString("update.latest", new Object[]{oldversion, s2, oldver1}));
             } else {
-                System.out.println(Message.getFormatString("update.old", new Object[]{oldversion, newversion, s2, time2, oldver}));
+                System.out.println(Message.getFormatString("update.old", new Object[]{oldversion, newversion, s2, time2, oldver1}));
             }
             is.close();
         } catch (IOException e) {
