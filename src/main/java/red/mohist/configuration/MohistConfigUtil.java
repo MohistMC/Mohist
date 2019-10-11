@@ -60,12 +60,12 @@ public class MohistConfigUtil {
         return defaultreturn;
     }
 
-    public static boolean getBoolean(File f, String key, Boolean defaultreturn) {
-        String s = getString(f, key, defaultreturn.toString());
+    public static boolean getBoolean(File f, String key) {
+        String s = getString(f, key, "true");
         if (s.equals("false")){
             return false;
         }
-        return defaultreturn;
+        return true;
     }
 
     public static int getInt(File f, String key, String defaultreturn){
