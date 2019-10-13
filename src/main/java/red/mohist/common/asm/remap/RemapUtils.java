@@ -30,6 +30,7 @@ import red.mohist.common.asm.remap.remappers.MohistJarRemapper;
 import red.mohist.common.asm.remap.remappers.NMSVersionRemapper;
 import red.mohist.common.asm.remap.remappers.ReflectRemapper;
 import red.mohist.configuration.MohistConfig;
+import red.mohist.util.JarTool;
 import sun.reflect.Reflection;
 
 /**
@@ -58,7 +59,25 @@ public class RemapUtils {
         Map<String, String> relocations = new HashMap<String, String>();
         relocations.put("net.minecraft.server", "net.minecraft.server." + Mohist.getNativeVersion());
         try {
-            File nms = new File("libraries/red/mohist/mappings", "nms.srg");
+            String f = JarTool.getJarDir();
+            String f1 = f
+                    .replace("file:\\", "") // win
+                    .replace("file:/", "") // linux
+                    .replace("\\red\\mohist\\util", "") // win
+                    .replace("/red/mohist/util", ""); // linux
+            String jarname = f1.substring(f1.lastIndexOf("\\")+1,f1.lastIndexOf("."));
+            String jarname1 = f1.substring(f1.lastIndexOf("/")+1,f1.lastIndexOf("."));
+            String path = f1
+                    .replace("\\" + jarname + ".jar!", "")
+                    .replace("/" + jarname1 + ".jar!", "");
+            String fName;
+            String os = System.getProperty("os.name");
+            if (os.toLowerCase().startsWith("win")) {
+                fName = path + "/libraries/red/mohist/mappings/nms.srg";
+            } else {
+                fName = "/" + path + "/libraries/red/mohist/mappings/nms.srg";
+            }
+            File nms = new File(fName);
             if (!nms.exists()) {
                 Mohist.LOGGER.error("Unable to find remapping dependencies, please re-download the libraries file!");
                 FMLCommonHandler.instance().exitJava(1, true);

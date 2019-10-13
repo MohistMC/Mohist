@@ -8,6 +8,7 @@ import java.net.URLConnection;
 import red.mohist.Mohist;
 import red.mohist.configuration.MohistConfigUtil;
 import red.mohist.util.IOUtil;
+import red.mohist.util.JarTool;
 import red.mohist.util.i18n.Message;
 
 public class Update {
@@ -58,7 +59,7 @@ public class Update {
         // Get the data in url
         String newversion = MohistConfigUtil.getUrlString(ver, Mohist.LIB_VERSION);
         String s = MohistConfigUtil.getString(newversion, "version:", Mohist.LIB_VERSION);
-        File lib = new File("libraries", "libraries.ver");
+        File lib = new File(JarTool.getJarDir() + "/libraries/libraries.ver");
         if (!lib.exists()) {
             return true;
         }
