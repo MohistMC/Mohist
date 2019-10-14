@@ -9,7 +9,7 @@
  import java.io.File;
  import java.io.IOException;
  import java.util.Collections;
-@@ -13,7 +11,6 @@
+@@ -13,10 +11,10 @@
  import net.minecraft.block.Block;
  import net.minecraft.entity.Entity;
  import net.minecraft.entity.EntityList;
@@ -17,7 +17,11 @@
  import net.minecraft.nbt.NBTTagCompound;
  import net.minecraft.nbt.NBTTagList;
  import net.minecraft.tileentity.TileEntity;
-@@ -31,6 +28,8 @@
++import net.minecraft.util.ClassInheritanceMultiMap;
+ import net.minecraft.util.ResourceLocation;
+ import net.minecraft.util.datafix.DataFixer;
+ import net.minecraft.util.datafix.FixTypes;
+@@ -31,6 +29,8 @@
  import net.minecraft.world.chunk.NibbleArray;
  import net.minecraft.world.storage.IThreadedFileIO;
  import net.minecraft.world.storage.ThreadedFileIOBase;
@@ -26,7 +30,7 @@
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
  
-@@ -41,7 +40,7 @@
+@@ -41,7 +41,7 @@
      private final Set<ChunkPos> chunksBeingSaved = Collections.<ChunkPos>newSetFromMap(Maps.newConcurrentMap());
      public final File chunkSaveLocation;
      private final DataFixer fixer;
@@ -35,7 +39,7 @@
  
      public AnvilChunkLoader(File chunkSaveLocationIn, DataFixer dataFixerIn)
      {
-@@ -65,6 +64,7 @@
+@@ -65,6 +65,7 @@
              Chunk chunk = (Chunk) data[0];
              NBTTagCompound nbttagcompound = (NBTTagCompound) data[1];
              this.loadEntities(worldIn, nbttagcompound.getCompoundTag("Level"), chunk);
@@ -43,7 +47,7 @@
              return chunk;
          }
  
-@@ -79,15 +79,14 @@
+@@ -79,15 +80,14 @@
  
          if (nbttagcompound == null)
          {
@@ -62,7 +66,7 @@
          }
  
          return this.checkedReadChunkFromNBT__Async(worldIn, x, z, nbttagcompound);
-@@ -194,9 +193,14 @@
+@@ -194,9 +194,14 @@
  
      public boolean writeNextIO()
      {
@@ -78,7 +82,7 @@
              {
                  LOGGER.info("ThreadedAnvilChunkStorage ({}): All chunks are saved", (Object)this.chunkSaveLocation.getName());
              }
-@@ -238,9 +242,10 @@
+@@ -238,9 +243,10 @@
  
      private void writeChunkData(ChunkPos pos, NBTTagCompound compound) throws IOException
      {
@@ -92,7 +96,7 @@
      }
  
      public void saveExtraChunkData(World worldIn, Chunk chunkIn) throws IOException
-@@ -255,13 +260,18 @@
+@@ -255,13 +261,18 @@
      {
          try
          {
@@ -114,7 +118,21 @@
          }
      }
  
-@@ -558,6 +568,11 @@
+@@ -351,9 +362,11 @@
+         chunkIn.setHasEntities(false);
+         NBTTagList nbttaglist1 = new NBTTagList();
+ 
+-        for (int i = 0; i < chunkIn.getEntityLists().length; ++i)
++        ClassInheritanceMultiMap<Entity>[] entityLists = chunkIn.getEntityLists();
++        for (int i = 0; i < entityLists.length; ++i)
+         {
+-            for (Entity entity : chunkIn.getEntityLists()[i])
++            if (entityLists == null) continue;
++            for (Entity entity : entityLists[i])
+             {
+                 NBTTagCompound nbttagcompound2 = new NBTTagCompound();
+ 
+@@ -558,6 +571,11 @@
      @Nullable
      public static Entity readWorldEntityPos(NBTTagCompound compound, World worldIn, double x, double y, double z, boolean attemptSpawn)
      {
@@ -126,7 +144,7 @@
          Entity entity = createEntityFromNBT(compound, worldIn);
  
          if (entity == null)
-@@ -568,7 +583,7 @@
+@@ -568,7 +586,7 @@
          {
              entity.setLocationAndAngles(x, y, z, entity.rotationYaw, entity.rotationPitch);
  
@@ -135,7 +153,7 @@
              {
                  return null;
              }
-@@ -609,8 +624,11 @@
+@@ -609,8 +627,11 @@
  
      public static void spawnEntity(Entity entityIn, World worldIn)
      {

@@ -866,7 +866,7 @@
              {
                  i += random.nextInt(64) - random.nextInt(64);
                  k += random.nextInt(64) - random.nextInt(64);
-@@ -987,20 +1258,21 @@
+@@ -987,33 +1258,27 @@
      }
  
      public void saveAllChunks(boolean all, @Nullable IProgressUpdate progressCallback) throws MinecraftException
@@ -892,7 +892,20 @@
                  progressCallback.displayLoadingString("Saving chunks");
              }
  
-@@ -1039,6 +1311,12 @@
+             chunkproviderserver.saveChunks(all);
+             net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.world.WorldEvent.Save(this));
+ 
+-            for (Chunk chunk : Lists.newArrayList(chunkproviderserver.getLoadedChunks()))
+-            {
+-                if (chunk != null && !this.playerChunkMap.contains(chunk.x, chunk.z))
+-                {
+-                    chunkproviderserver.queueUnload(chunk);
+-                }
+-            }
+         }
+     }
+ 
+@@ -1039,6 +1304,12 @@
              }
          }
  
@@ -905,7 +918,7 @@
          this.worldInfo.setBorderSize(this.getWorldBorder().getDiameter());
          this.worldInfo.getBorderCenterX(this.getWorldBorder().getCenterX());
          this.worldInfo.getBorderCenterZ(this.getWorldBorder().getCenterZ());
-@@ -1058,6 +1336,12 @@
+@@ -1058,6 +1329,12 @@
          return this.canAddEntity(entityIn) ? super.spawnEntity(entityIn) : false;
      }
  
@@ -918,7 +931,7 @@
      public void loadEntities(Collection<Entity> entityCollection)
      {
          for (Entity entity : Lists.newArrayList(entityCollection))
-@@ -1074,7 +1358,6 @@
+@@ -1074,7 +1351,6 @@
      {
          if (entityIn.isDead)
          {
@@ -926,7 +939,7 @@
              return false;
          }
          else
-@@ -1085,7 +1368,7 @@
+@@ -1085,7 +1361,7 @@
              {
                  Entity entity = this.entitiesByUuid.get(uuid);
  
@@ -935,7 +948,7 @@
                  {
                      this.unloadedEntityList.remove(entity);
                  }
-@@ -1093,7 +1376,6 @@
+@@ -1093,7 +1369,6 @@
                  {
                      if (!(entityIn instanceof EntityPlayer))
                      {
@@ -943,7 +956,7 @@
                          return false;
                      }
  
-@@ -1141,9 +1423,17 @@
+@@ -1141,9 +1416,17 @@
  
      public boolean addWeatherEffect(Entity entityIn)
      {
@@ -962,7 +975,7 @@
              return true;
          }
          else
-@@ -1164,11 +1454,15 @@
+@@ -1164,11 +1447,15 @@
  
      public Explosion newExplosion(@Nullable Entity entityIn, double x, double y, double z, float strength, boolean isFlaming, boolean isSmoking)
      {
@@ -982,7 +995,7 @@
          if (!isSmoking)
          {
              explosion.clearAffectedBlockPositions();
-@@ -1211,7 +1505,8 @@
+@@ -1211,7 +1498,8 @@
              {
                  if (this.fireBlockEvent(blockeventdata))
                  {
@@ -992,7 +1005,7 @@
                  }
              }
  
-@@ -1298,11 +1593,19 @@
+@@ -1298,11 +1586,19 @@
  
      public void spawnParticle(EnumParticleTypes particleType, boolean longDistance, double xCoord, double yCoord, double zCoord, int numberOfParticles, double xOffset, double yOffset, double zOffset, double particleSpeed, int... particleArguments)
      {
@@ -1012,7 +1025,7 @@
              this.sendPacketWithinDistance(entityplayermp, longDistance, xCoord, yCoord, zCoord, spacketparticles);
          }
      }
-@@ -1362,9 +1665,45 @@
+@@ -1362,9 +1658,45 @@
      }
  
      static class ServerBlockEventList extends ArrayList<BlockEventData>
