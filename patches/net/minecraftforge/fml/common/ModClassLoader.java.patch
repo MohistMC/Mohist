@@ -1,15 +1,6 @@
 --- ../src-base/minecraft/net/minecraftforge/fml/common/ModClassLoader.java
 +++ ../src-work/minecraft/net/minecraftforge/fml/common/ModClassLoader.java
-@@ -112,8 +112,6 @@
-         {
-             "launchwrapper-",
-             "asm-all-",
--            "akka-actor_2.11-",
--            "config-",
-             "scala-",
-             "jopt-simple-",
-             "lzma-",
-@@ -150,7 +148,12 @@
+@@ -150,7 +150,12 @@
              "oshi-core-",
              "netty-",
              "libraryjavasound-",
@@ -19,7 +10,7 @@
 +            "sqlite-jdbc-",
 +            "SpecialSource-",
 +            "bungeecord-chat-",
-+            "snakeyaml"
++            "snakeyaml-"
          };
          for (String s : prefixes)
          {
