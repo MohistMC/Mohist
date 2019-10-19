@@ -50,7 +50,7 @@
                  {
                      if (playerIn instanceof EntityPlayerMP)
                      {
-@@ -143,8 +157,40 @@
+@@ -143,8 +157,45 @@
          }
      }
  
@@ -84,6 +84,11 @@
 +
      public boolean tryPlaceContainedLiquid(@Nullable EntityPlayer player, World worldIn, BlockPos posIn)
      {
++        // Mohist start - Compatible with randompatches:isSolid
++        IBlockState iblockstate = worldIn.getBlockState(posIn);
++        Material material = iblockstate.getMaterial();
++        boolean flag = !material.isSolid();
++        // Mohist end
 +        return tryPlaceContainedLiquid(player, worldIn, posIn, null, posIn, null);
 +    }
 +
@@ -91,7 +96,7 @@
          if (this.containedBlock == Blocks.AIR)
          {
              return false;
-@@ -162,6 +208,14 @@
+@@ -162,6 +213,14 @@
              }
              else
              {

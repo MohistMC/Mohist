@@ -184,15 +184,6 @@
                      return;
                  }
              }
-@@ -226,7 +298,7 @@
-         this.serverController.profiler.startSection("keepAlive");
-         long i = this.currentTimeMillis();
- 
--        if (i - this.field_194402_f >= 15000L)
-+        if (i - this.field_194402_f >= 25000L) // CraftBukkit
-         {
-             if (this.field_194403_g)
-             {
 @@ -239,14 +311,18 @@
                  this.field_194404_h = i;
                  this.sendPacket(new SPacketKeepAlive(this.field_194404_h));
