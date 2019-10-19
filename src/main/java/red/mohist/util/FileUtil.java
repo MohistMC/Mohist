@@ -135,7 +135,6 @@ public class FileUtil{
     /**
      * 
      * @param pFile
-     * @return 文件内容
      * @throws IOException
      */
     public static byte[] readData(File pFile) throws IOException{

@@ -9,12 +9,10 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
-import java.util.Enumeration;
-import java.util.jar.JarEntry;
-import java.util.jar.JarFile;
 import red.mohist.Mohist;
 import red.mohist.util.FileUtil;
 import red.mohist.util.IOUtil;
+import red.mohist.util.JarTool;
 import red.mohist.util.Number;
 
 public class MohistConfigUtil {
@@ -90,5 +88,10 @@ public class MohistConfigUtil {
         } catch (Exception e) {
             System.out.println("File copy exception!");
         }
+    }
+
+    public static String getMohistJarPath(){
+        String f = JarTool.getJarDir();
+        return f + "/";
     }
 }

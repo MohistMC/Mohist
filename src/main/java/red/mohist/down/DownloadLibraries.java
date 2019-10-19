@@ -9,6 +9,7 @@ import java.util.Enumeration;
 import java.util.Locale;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
+import red.mohist.configuration.MohistConfigUtil;
 import red.mohist.util.FileUtil;
 import red.mohist.util.i18n.Message;
 
@@ -44,10 +45,10 @@ public class DownloadLibraries implements Runnable {
                 ZipEntry entry = (ZipEntry) entries.nextElement();
                 if (entry.isDirectory()) {
                     String dirPath = entry.getName();
-                    File dir = new File(dirPath);
+                    File dir = new File(MohistConfigUtil.getMohistJarPath() + dirPath);
                     dir.mkdirs();
                 } else {
-                    File targetFile = new File(entry.getName());
+                    File targetFile = new File(MohistConfigUtil.getMohistJarPath() + entry.getName());
                     if(!targetFile.getParentFile().exists()){
                         targetFile.getParentFile().mkdirs();
                     }
