@@ -16,7 +16,7 @@
      private int size;
      private double centerX;
      private double centerZ;
-@@ -24,11 +25,15 @@
+@@ -24,11 +25,17 @@
      {
      }
  
@@ -29,13 +29,15 @@
 +        // CraftBukkit start - multiply out nether border
 +        // this.centerX = border.getCenterX();
 +        // this.centerZ = border.getCenterZ();
-+        this.centerX = border.getCenterX() * (border.world.provider instanceof WorldProviderHell ? 8 : 1);
-+        this.centerZ = border.getCenterZ() * (border.world.provider instanceof WorldProviderHell ? 8 : 1);
++        if (border.world != null) {
++            this.centerX = border.getCenterX() * (border.world.provider instanceof WorldProviderHell ? 8 : 1);
++            this.centerZ = border.getCenterZ() * (border.world.provider instanceof WorldProviderHell ? 8 : 1);
++        }
 +        // CraftBukkit end
          this.diameter = border.getDiameter();
          this.targetSize = border.getTargetSize();
          this.timeUntilTarget = border.getTimeUntilTarget();
-@@ -39,7 +44,7 @@
+@@ -39,7 +46,7 @@
  
      public void readPacketData(PacketBuffer buf) throws IOException
      {
