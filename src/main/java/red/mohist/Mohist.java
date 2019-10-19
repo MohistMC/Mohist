@@ -59,6 +59,7 @@ public class Mohist {
                 ExecutorService dl = Executors.newCachedThreadPool();
                 dl.execute(new DownloadLibraries());
                 System.out.println(Message.getString("file.ok"));
+                dl.shutdown();
                 return;
             }
             Update.hasLatestVersion();
@@ -91,6 +92,7 @@ public class Mohist {
             ExecutorService dl = Executors.newCachedThreadPool();
             dl.execute(new DownloadLibraries());
             System.out.println(Message.getString("file.ok"));
+            dl.shutdown();
         }
 
         try
