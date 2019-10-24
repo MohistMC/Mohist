@@ -867,21 +867,22 @@
          if (!(entityIn instanceof EntityPlayer))
          {
              int j2 = MathHelper.floor(entityIn.posX);
-@@ -1974,6 +2309,14 @@
+@@ -1974,7 +2309,15 @@
              {
                  return;
              }
++		}
 +
-+            // Spigot start
-+            if (forceUpdate && !org.spigotmc.ActivationRange.checkIfActive(entityIn)) {
-+                entityIn.ticksExisted++;
-+                entityIn.inactiveTick();
-+                return;
-+            }
-+            // Spigot end
++        // Spigot start
++        if (forceUpdate && !org.spigotmc.ActivationRange.checkIfActive(entityIn)) {
++        	entityIn.ticksExisted++;
++        	entityIn.inactiveTick();
++        	return;
          }
++        // Spigot end
  
          entityIn.lastTickPosX = entityIn.posX;
+         entityIn.lastTickPosY = entityIn.posY;
 @@ -1994,6 +2337,7 @@
              {
                  if(!entityIn.updateBlocked)

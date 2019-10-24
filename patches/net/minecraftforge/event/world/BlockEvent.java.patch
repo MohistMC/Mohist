@@ -48,21 +48,7 @@
          }
  
          public EntityPlayer getPlayer()
-@@ -213,6 +213,13 @@
-             super(blockSnapshot, placedAgainst, player);
-             this.player = player;
-             this.hand = hand;
-+            // Cauldron start - handle event on bukkit side
-+            org.bukkit.craftbukkit.v1_12_R1.block.CraftBlockState blockstate = org.bukkit.craftbukkit.v1_12_R1.block.CraftBlockState.getBlockState(getWorld(), getPos().getX(), getPos().getY(), getPos().getZ());
-+            org.bukkit.event.block.BlockPlaceEvent bukkitEvent = CraftEventFactory.callBlockPlaceEvent(getWorld(), player, hand , blockstate, getPos().getX(), getPos().getY(), getPos().getZ());
-+            if (bukkitEvent.isCancelled() || !bukkitEvent.canBuild()) {
-+                this.setCanceled(true);
-+            }
-+            // Cauldron end
-             if (DEBUG)
-             {
-                 System.out.printf("Created PlaceEvent - [PlacedBlock: %s ][PlacedAgainst: %s ][ItemStack: %s ][Player: %s ][Hand: %s]\n", getPlacedBlock(), placedAgainst, player.getHeldItem(hand), player, hand);
-@@ -399,6 +406,7 @@
+@@ -399,6 +399,7 @@
          }
      }
  
@@ -70,7 +56,7 @@
      /**
       * Fired when a crop block grows.  See subevents.
       *
-@@ -462,25 +470,20 @@
+@@ -462,25 +463,20 @@
      @Cancelable
      public static class FarmlandTrampleEvent extends BlockEvent
      {
@@ -96,7 +82,7 @@
      }
  
      /* Fired when an attempt is made to spawn a nether portal from
-@@ -492,13 +495,11 @@
+@@ -492,13 +488,11 @@
      public static class PortalSpawnEvent extends BlockEvent
      {
          private final BlockPortal.Size size;

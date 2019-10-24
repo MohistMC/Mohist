@@ -9,15 +9,6 @@
  
  public class EntityWolf extends EntityTameable
  {
-@@ -76,7 +78,7 @@
-         this.aiSit = new EntityAISit(this);
-         this.tasks.addTask(1, new EntityAISwimming(this));
-         this.tasks.addTask(2, this.aiSit);
--        this.tasks.addTask(3, new EntityWolf.AIAvoidEntity(this, EntityLlama.class, 24.0F, 1.5D, 1.5D));
-+        this.tasks.addTask(3, new AIAvoidEntity(this, EntityLlama.class, 24.0F, 1.5D, 1.5D));
-         this.tasks.addTask(4, new EntityAILeapAtTarget(this, 0.4F));
-         this.tasks.addTask(5, new EntityAIAttackMelee(this, 1.0D, true));
-         this.tasks.addTask(6, new EntityAIFollowOwner(this, 1.0D, 10.0F, 2.0F));
 @@ -115,6 +117,22 @@
          this.getAttributeMap().registerAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).setBaseValue(2.0D);
      }

@@ -80,6 +80,9 @@ public class CraftBlockState implements BlockState {
         this.createData((byte) blocksnapshot.getMeta());
     }
 
+    public static CraftBlockState getBlockState(BlockSnapshot blocksnapshot){
+        return new CraftBlockState(blocksnapshot);
+    }
 
 
     public static CraftBlockState getBlockState(net.minecraft.world.World world, int x, int y, int z) {
