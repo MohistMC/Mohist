@@ -16,6 +16,8 @@ public class Download {
             URL website = new URL(url);
 
             HttpURLConnection connection = (HttpURLConnection) website.openConnection();
+            connection.setConnectTimeout(8000);
+            //connection.setReadTimeout(8000);
             connection.setRequestMethod("GET");
             long alreadySize = 0;
             int code = connection.getResponseCode();
