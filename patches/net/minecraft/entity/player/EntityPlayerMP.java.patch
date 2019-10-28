@@ -109,7 +109,7 @@
      public boolean isChangingQuantityOnly;
      public int ping;
      public boolean queuedEndExit;
-+    private int viewDistance;
++    private int viewDistance = -1;
 +    // Paper start - cancellable death event
 +    public boolean queueHealthUpdatePacket = false;
 +    public SPacketUpdateHealth queuedHealthUpdatePacket;

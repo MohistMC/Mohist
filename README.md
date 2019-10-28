@@ -2,7 +2,7 @@
 
 ## Mohist
 
-## It is highly recommended to use the 1.4+ version to quickly resolve known and unknown errors!
+## It is highly recommended to use the 1.5+ version to quickly resolve known and unknown errors!
 #### We have not left, except here, all other places are fake! Please don't be fooled!
 
 [![](https://ci.codemc.org/buildStatus/icon?job=Mohist-Community%2FMohist-1.12.2)](https://ci.codemc.org/job/Mohist-Community/job/Mohist-1.12.2/)
