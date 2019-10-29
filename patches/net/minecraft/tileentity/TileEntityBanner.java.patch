@@ -11,23 +11,27 @@
      private boolean patternDataSet;
      private List<BannerPattern> patternList;
      private List<EnumDyeColor> colorList;
-@@ -34,6 +34,9 @@
+@@ -34,6 +34,11 @@
          if (nbttagcompound != null && nbttagcompound.hasKey("Patterns", 9))
          {
              this.patterns = nbttagcompound.getTagList("Patterns", 10).copy();
++            // CraftBukkit start
 +            while (this.patterns.tagCount() > 20) {
 +                this.patterns.removeTag(20);
 +            }
++            // CraftBukkit end
          }
  
          this.baseColor = p_175112_2_ ? getColor(stack) : ItemBanner.getBaseColor(stack);
-@@ -88,6 +91,9 @@
+@@ -88,6 +93,11 @@
  
          this.baseColor = EnumDyeColor.byDyeDamage(compound.getInteger("Base"));
          this.patterns = compound.getTagList("Patterns", 10);
++        // CraftBukkit start
 +        while (this.patterns.tagCount() > 20) {
 +            this.patterns.removeTag(20);
 +        }
++        // CraftBukkit end
          this.patternList = null;
          this.colorList = null;
          this.patternResourceLocation = null;

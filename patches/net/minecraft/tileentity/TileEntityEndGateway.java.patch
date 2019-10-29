@@ -29,10 +29,12 @@
  
      public NBTTagCompound writeToNBT(NBTTagCompound compound)
      {
-@@ -171,6 +176,22 @@
+@@ -171,6 +176,26 @@
              if (this.exitPortal != null)
              {
                  BlockPos blockpos = this.exactTeleport ? this.exitPortal : this.findExitPosition();
++
++                // CraftBukkit start - Fire PlayerTeleportEvent
 +                if (entityIn instanceof EntityPlayerMP) {
 +                    org.bukkit.craftbukkit.v1_12_R1.entity.CraftPlayer player = (CraftPlayer) entityIn.getBukkitEntity();
 +                    org.bukkit.Location location = new Location(world.getWorld(), (double) blockpos.getX() + 0.5D, (double) blockpos.getY() + 0.5D, (double) blockpos.getZ() + 0.5D);
@@ -49,6 +51,8 @@
 +                    this.triggerCooldown(); // CraftBukkit - call at end of method
 +                    return;
 +                }
++                // CraftBukkit end
++
                  entityIn.setPositionAndUpdate((double)blockpos.getX() + 0.5D, (double)blockpos.getY() + 0.5D, (double)blockpos.getZ() + 0.5D);
              }
  

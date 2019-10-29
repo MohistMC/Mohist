@@ -33,10 +33,10 @@
      private String customName;
      private int fuel;
  
-+    private int lastTick = MinecraftServer.currentTick;
 +    // CraftBukkit start - add fields and methods
++    private int lastTick = MinecraftServer.currentTick;
 +    public List<HumanEntity> transaction = new java.util.ArrayList<HumanEntity>();
-+    private int maxStack = MAX_STACK;
++    private int maxStack = 64;
 +    
 +    public List<ItemStack> getContents() {
 +        return this.brewingItemStacks;
@@ -67,8 +67,7 @@
          {
 -            this.fuel = 20;
 -            itemstack.shrink(1);
-+            // this.fuel = 20;
-+            // itemstack.shrink(1);
++            // CraftBukkit start
 +            BrewingStandFuelEvent event = new BrewingStandFuelEvent(world.getWorld().getBlockAt(pos.getX(), pos.getY(), pos.getZ()), CraftItemStack.asCraftMirror(itemstack), 20);
 +            this.world.getServer().getPluginManager().callEvent(event);
 +
@@ -76,14 +75,15 @@
 +                return;
 +            }
 +
-+            this.fuel = event.getFuelPower();
++            this.fuel = event.getFuelPower(); // PAIL fuelLevel
 +            if (this.fuel > 0 && event.isConsuming()) {
 +                itemstack.shrink(1);
 +            }
++            // CraftBukkit end
              this.markDirty();
          }
  
-@@ -83,10 +127,14 @@
+@@ -83,10 +127,15 @@
          boolean flag1 = this.brewTime > 0;
          ItemStack itemstack1 = this.brewingItemStacks.get(3);
  
@@ -97,13 +97,15 @@
 -            boolean flag2 = this.brewTime == 0;
 +            this.brewTime -= elapsedTicks;
 +            boolean flag2 = this.brewTime <= 0; // == -> <=
++            // CraftBukkit end
  
              if (flag2 && flag)
              {
-@@ -185,6 +233,15 @@
+@@ -184,6 +233,16 @@
+     {
          if (net.minecraftforge.event.ForgeEventFactory.onPotionAttemptBrew(brewingItemStacks)) return;
          ItemStack itemstack = this.brewingItemStacks.get(3);
- 
++        // CraftBukkit start
 +        InventoryHolder owner = this.getOwner();
 +        if (owner != null) {
 +            BrewEvent event = new BrewEvent(world.getWorld().getBlockAt(pos.getX(), pos.getY(), pos.getZ()), (org.bukkit.inventory.BrewerInventory) owner.getInventory(), this.fuel);
@@ -112,35 +114,16 @@
 +                return;
 +            }
 +        }
-+
++        // CraftBukkit end
+ 
          net.minecraftforge.common.brewing.BrewingRecipeRegistry.brewPotions(brewingItemStacks, brewingItemStacks.get(3), OUTPUT_SLOTS);
  
-         itemstack.shrink(1);
-@@ -269,7 +326,7 @@
+@@ -269,7 +328,7 @@
  
      public int getInventoryStackLimit()
      {
 -        return 64;
-+        return this.maxStack;
++        return this.maxStack; // CraftBukkit
      }
  
      public boolean isUsableByPlayer(EntityPlayer player)
-@@ -377,14 +434,14 @@
-         }
-     }
- 
--    net.minecraftforge.items.IItemHandler handlerInput = new net.minecraftforge.items.wrapper.SidedInvWrapper(this, net.minecraft.util.EnumFacing.UP);
--    net.minecraftforge.items.IItemHandler handlerOutput = new net.minecraftforge.items.wrapper.SidedInvWrapper(this, net.minecraft.util.EnumFacing.DOWN);
--    net.minecraftforge.items.IItemHandler handlerSides = new net.minecraftforge.items.wrapper.SidedInvWrapper(this, net.minecraft.util.EnumFacing.NORTH);
-+    net.minecraftforge.items.IItemHandler handlerInput = new net.minecraftforge.items.wrapper.SidedInvWrapper(this, EnumFacing.UP);
-+    net.minecraftforge.items.IItemHandler handlerOutput = new net.minecraftforge.items.wrapper.SidedInvWrapper(this, EnumFacing.DOWN);
-+    net.minecraftforge.items.IItemHandler handlerSides = new net.minecraftforge.items.wrapper.SidedInvWrapper(this, EnumFacing.NORTH);
- 
-     @SuppressWarnings("unchecked")
-     @Override
-     @javax.annotation.Nullable
--    public <T> T getCapability(net.minecraftforge.common.capabilities.Capability<T> capability, @javax.annotation.Nullable net.minecraft.util.EnumFacing facing)
-+    public <T> T getCapability(net.minecraftforge.common.capabilities.Capability<T> capability, @javax.annotation.Nullable EnumFacing facing)
-     {
-         if (facing != null && capability == net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABILITY)
-         {

@@ -7,15 +7,7 @@
  import com.google.common.collect.Lists;
  import com.google.common.collect.Sets;
  import java.util.Arrays;
-@@ -16,7 +17,6 @@
- import net.minecraft.entity.player.EntityPlayerMP;
- import net.minecraft.entity.player.InventoryPlayer;
- import net.minecraft.init.Blocks;
--import net.minecraft.init.Items;
- import net.minecraft.init.MobEffects;
- import net.minecraft.inventory.Container;
- import net.minecraft.inventory.ContainerBeacon;
-@@ -33,29 +33,63 @@
+@@ -33,6 +34,11 @@
  import net.minecraft.util.math.BlockPos;
  import net.minecraftforge.fml.relauncher.Side;
  import net.minecraftforge.fml.relauncher.SideOnly;
@@ -25,16 +17,9 @@
 +import org.bukkit.entity.HumanEntity;
 +import org.bukkit.entity.Player;
  
--public class TileEntityBeacon extends TileEntityLockable implements ITickable, ISidedInventory
--{
--    public static final Potion[][] EFFECTS_LIST = new Potion[][] {{MobEffects.SPEED, MobEffects.HASTE}, {MobEffects.RESISTANCE, MobEffects.JUMP_BOOST}, {MobEffects.STRENGTH}, {MobEffects.REGENERATION}};
-+public class TileEntityBeacon extends TileEntityLockable implements ITickable, ISidedInventory {
-+    public static final Potion[][] EFFECTS_LIST = new Potion[][]{{MobEffects.SPEED, MobEffects.HASTE}, {MobEffects.RESISTANCE, MobEffects.JUMP_BOOST}, {MobEffects.STRENGTH}, {MobEffects.REGENERATION}};
-     private static final Set<Potion> VALID_EFFECTS = Sets.<Potion>newHashSet();
--    private final List<TileEntityBeacon.BeamSegment> beamSegments = Lists.<TileEntityBeacon.BeamSegment>newArrayList();
-+    private final List<BeamSegment> beamSegments = Lists.<BeamSegment>newArrayList();
-     @SideOnly(Side.CLIENT)
-     private long beamRenderCounter;
+ public class TileEntityBeacon extends TileEntityLockable implements ITickable, ISidedInventory
+ {
+@@ -44,13 +50,45 @@
      @SideOnly(Side.CLIENT)
      private float beamRenderScale;
      private boolean isComplete;
@@ -81,16 +66,9 @@
 +    }
 +    // CraftBukkit end
  
--    public void update()
--    {
--        if (this.world.getTotalWorldTime() % 80L == 0L)
--        {
-+    public void update() {
-+        if (this.world.getTotalWorldTime() % 80L == 0L) {
-             this.updateBeacon();
-         }
-     }
-@@ -69,39 +103,67 @@
+     public void update()
+     {
+@@ -69,39 +107,67 @@
          }
      }
  
@@ -184,34 +162,7 @@
  
      private void updateSegmentColors()
      {
-@@ -112,7 +174,7 @@
-         this.levels = 0;
-         this.beamSegments.clear();
-         this.isComplete = true;
--        TileEntityBeacon.BeamSegment tileentitybeacon$beamsegment = new TileEntityBeacon.BeamSegment(EnumDyeColor.WHITE.getColorComponentValues());
-+        BeamSegment tileentitybeacon$beamsegment = new BeamSegment(EnumDyeColor.WHITE.getColorComponentValues());
-         this.beamSegments.add(tileentitybeacon$beamsegment);
-         boolean flag = true;
-         BlockPos.MutableBlockPos blockpos$mutableblockpos = new BlockPos.MutableBlockPos();
-@@ -159,7 +221,7 @@
-             }
-             else
-             {
--                tileentitybeacon$beamsegment = new TileEntityBeacon.BeamSegment(afloat);
-+                tileentitybeacon$beamsegment = new BeamSegment(afloat);
-                 this.beamSegments.add(tileentitybeacon$beamsegment);
-             }
- 
-@@ -215,7 +277,7 @@
-     }
- 
-     @SideOnly(Side.CLIENT)
--    public List<TileEntityBeacon.BeamSegment> getBeamSegments()
-+    public List<BeamSegment> getBeamSegments()
-     {
-         return this.beamSegments;
-     }
-@@ -285,8 +347,12 @@
+@@ -285,8 +351,12 @@
      public void readFromNBT(NBTTagCompound compound)
      {
          super.readFromNBT(compound);

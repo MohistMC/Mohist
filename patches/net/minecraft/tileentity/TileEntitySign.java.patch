@@ -104,17 +104,19 @@
              public BlockPos getPosition()
              {
                  return TileEntitySign.this.pos;
-@@ -201,7 +238,12 @@
+@@ -201,7 +238,14 @@
  
                  if (clickevent.getAction() == ClickEvent.Action.RUN_COMMAND)
                  {
 -                    playerIn.getServer().getCommandManager().executeCommand(icommandsender, clickevent.getValue());
++                    // CraftBukkit start
 +                    // playerIn.getServer().getCommandManager().executeCommand(icommandsender, clickevent.getValue());
 +                    CommandBlockBaseLogic.executeSafely(icommandsender, new org.bukkit.craftbukkit.v1_12_R1.command.ProxiedNativeCommandSender(
 +                            icommandsender,
 +                            new org.bukkit.craftbukkit.v1_12_R1.command.CraftBlockCommandSender(icommandsender),
 +                            playerIn.getBukkitEntity()
 +                    ), clickevent.getValue());
++                    // CraftBukkit end
                  }
              }
          }
