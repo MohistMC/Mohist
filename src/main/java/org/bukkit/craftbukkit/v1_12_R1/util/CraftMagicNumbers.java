@@ -14,6 +14,7 @@ import java.util.logging.Logger;
 import net.minecraft.advancements.AdvancementManager;
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.nbt.JsonToNBT;
 import net.minecraft.nbt.NBTException;
@@ -50,7 +51,7 @@ public final class CraftMagicNumbers implements UnsafeValues {
     }
 
     public static int getId(Block block) {
-        return Block.getIdFromBlock(block);
+        return Item.getIdFromItem(Item.getItemFromBlock(block));
     }
 
     public static Material getMaterial(Block block) {
@@ -60,7 +61,7 @@ public final class CraftMagicNumbers implements UnsafeValues {
     public static Item getItem(Material material) {
         // TODO: Don't use ID
         Item item = Item.getItemById(material.getId());
-        return item;
+        return item == null ? Items.AIR : item;
     }
 
     public static Item getItem(int id) {
@@ -76,7 +77,8 @@ public final class CraftMagicNumbers implements UnsafeValues {
         Material material = Material.getMaterial(Item.getIdFromItem(item));
 
         if (material == null) {
-            return Material.AIR;
+            material = Material.getMaterial(Block.getIdFromBlock(Block.getBlockFromItem(item)));
+            return material == null ? Material.AIR : material;
         }
 
         return material;
@@ -87,7 +89,7 @@ public final class CraftMagicNumbers implements UnsafeValues {
         material = material == null ? Material.AIR : material;
 
         // TODO: Don't use ID
-        Block block = Block.getBlockById(material.getId());
+        Block block = Block.getBlockFromItem(getItem(material));
 
         if (block == null) {
             return Blocks.AIR;

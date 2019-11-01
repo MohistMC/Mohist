@@ -83,7 +83,8 @@ public class CraftMetaSpawnEgg extends CraftMetaItem implements SpawnEggMeta {
         }
 
         if (hasSpawnedType()) {
-            entityTag.setString(ENTITY_ID.NBT, new ResourceLocation(spawnedType.getName()).toString());
+            String[] domain_and_name = this.entityTag.getString("id").split(":");
+            entityTag.setString(ENTITY_ID.NBT, new ResourceLocation(domain_and_name[0],spawnedType.getName()).toString().toLowerCase());
         }
 
         if (entityTag != null) {
