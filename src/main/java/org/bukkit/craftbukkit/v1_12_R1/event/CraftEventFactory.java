@@ -264,7 +264,7 @@ public class CraftEventFactory {
     private static PlayerEvent getPlayerBucketEvent(boolean isFilling, EntityPlayer who, int clickedX, int clickedY, int clickedZ, EnumFacing clickedFace, ItemStack itemstack, net.minecraft.item.Item item) {
         Player player = (who == null) ? null : (Player) who.getBukkitEntity();
         CraftItemStack itemInHand = CraftItemStack.asNewCraftStack(item);
-        Material bucket = CraftMagicNumbers.getMaterial(itemstack.getItem());
+        Material bucket = CraftMagicNumbers.getMaterial(itemstack == null ? Items.AIR : itemstack.getItem());
 
         CraftWorld craftWorld = (CraftWorld) player.getWorld();
         CraftServer craftServer = (CraftServer) player.getServer();
