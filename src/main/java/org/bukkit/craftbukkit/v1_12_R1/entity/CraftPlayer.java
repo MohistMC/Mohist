@@ -2,6 +2,7 @@ package org.bukkit.craftbukkit.v1_12_R1.entity;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Maps;
 import com.google.common.io.BaseEncoding;
 import com.mojang.authlib.GameProfile;
 import io.netty.buffer.Unpooled;
@@ -14,7 +15,6 @@ import java.net.SocketAddress;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -125,7 +125,7 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
     private static final WeakHashMap<Plugin, WeakReference<Plugin>> pluginWeakReferences = new WeakHashMap<>();
     private final ConversationTracker conversationTracker = new ConversationTracker();
     private final Set<String> channels = new ConcurrentSet<String>();
-    private final Map<UUID, Set<WeakReference<Plugin>>> hiddenPlayers = new HashMap<>();
+    private final Map<UUID, Set<WeakReference<Plugin>>> hiddenPlayers = Maps.newConcurrentMap(); // new HashMap<>(); // Akarin
     private long firstPlayed = 0;
     private long lastPlayed = 0;
     private boolean hasPlayedBefore = false;
