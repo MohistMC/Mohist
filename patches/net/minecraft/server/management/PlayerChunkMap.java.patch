@@ -1,18 +1,43 @@
 --- ../src-base/minecraft/net/minecraft/server/management/PlayerChunkMap.java
 +++ ../src-work/minecraft/net/minecraft/server/management/PlayerChunkMap.java
-@@ -10,9 +10,11 @@
+@@ -7,12 +7,17 @@
+ import com.google.common.collect.Sets;
+ import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
+ import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
++import java.util.ArrayList;
  import java.util.Collections;
  import java.util.Comparator;
  import java.util.Iterator;
 +import java.util.LinkedList;
  import java.util.List;
  import java.util.Set;
++import java.util.concurrent.locks.ReentrantReadWriteLock;
  import javax.annotation.Nullable;
++import javax.annotation.concurrent.ThreadSafe;
 +import net.minecraft.entity.player.EntityPlayer;
  import net.minecraft.entity.player.EntityPlayerMP;
  import net.minecraft.util.math.BlockPos;
  import net.minecraft.util.math.ChunkPos;
-@@ -45,6 +47,7 @@
+@@ -21,6 +26,11 @@
+ import net.minecraft.world.WorldServer;
+ import net.minecraft.world.chunk.Chunk;
+ 
++/**
++ * Akarin Changes Note
++ * 1) Make whole class thread-safe (safety issue)
++ */
++@ThreadSafe // Akarin - idk why we need do so!!
+ public class PlayerChunkMap
+ {
+     private static final Predicate<EntityPlayerMP> NOT_SPECTATOR = new Predicate<EntityPlayerMP>()
+@@ -39,12 +49,14 @@
+     };
+     private final WorldServer world;
+     private final List<EntityPlayerMP> players = Lists.<EntityPlayerMP>newArrayList();
++    private final ReentrantReadWriteLock playersLock = new ReentrantReadWriteLock(); // Akarin - add lock
+     private final Long2ObjectMap<PlayerChunkMapEntry> entryMap = new Long2ObjectOpenHashMap<PlayerChunkMapEntry>(4096);
+     private final Set<PlayerChunkMapEntry> dirtyEntries = Sets.<PlayerChunkMapEntry>newHashSet();
+     private final List<PlayerChunkMapEntry> pendingSendToPlayers = Lists.<PlayerChunkMapEntry>newLinkedList();
      private final List<PlayerChunkMapEntry> entriesWithoutChunks = Lists.<PlayerChunkMapEntry>newLinkedList();
      private final List<PlayerChunkMapEntry> entries = Lists.<PlayerChunkMapEntry>newArrayList();
      private int playerViewRadius;
@@ -20,7 +45,7 @@
      private long previousTotalWorldTime;
      private boolean sortMissingChunks = true;
      private boolean sortSendToPlayers = true;
-@@ -52,7 +55,7 @@
+@@ -52,7 +64,7 @@
      public PlayerChunkMap(WorldServer serverWorld)
      {
          this.world = serverWorld;
@@ -29,7 +54,16 @@
      }
  
      public WorldServer getWorldServer()
-@@ -155,8 +158,10 @@
+@@ -103,7 +115,7 @@
+         };
+     }
+ 
+-    public void tick()
++    public synchronized void tick() // Akarin - synchronized
+     {
+         long i = this.world.getTotalWorldTime();
+ 
+@@ -155,8 +167,10 @@
  
          if (!this.entriesWithoutChunks.isEmpty())
          {
@@ -42,7 +76,7 @@
              Iterator<PlayerChunkMapEntry> iterator = this.entriesWithoutChunks.iterator();
  
              while (iterator.hasNext())
-@@ -176,15 +181,16 @@
+@@ -176,15 +190,16 @@
                              this.pendingSendToPlayers.remove(playerchunkmapentry1);
                          }
  
@@ -63,7 +97,12 @@
          }
  
          if (!this.pendingSendToPlayers.isEmpty())
-@@ -213,7 +219,7 @@
+@@ -209,25 +224,27 @@
+             }
+         }
+ 
++        playersLock.readLock().lock(); // Akarin
+         if (this.players.isEmpty())
          {
              WorldProvider worldprovider = this.world.provider;
  
@@ -72,10 +111,28 @@
              {
                  this.world.getChunkProvider().queueUnloadAll();
              }
-@@ -257,6 +263,14 @@
+         }
++        playersLock.readLock().unlock(); // Akarin
+     }
+ 
+-    public boolean contains(int chunkX, int chunkZ)
++    public synchronized boolean contains(int chunkX, int chunkZ) // Akarin - synchronized
+     {
+         long i = getIndex(chunkX, chunkZ);
+         return this.entryMap.get(i) != null;
+     }
+ 
+     @Nullable
+-    public PlayerChunkMapEntry getEntry(int x, int z)
++    public synchronized PlayerChunkMapEntry getEntry(int x, int z) // Akarin - synchronized
+     {
+         return (PlayerChunkMapEntry)this.entryMap.get(getIndex(x, z));
+     }
+@@ -257,6 +274,16 @@
          return playerchunkmapentry;
      }
  
++    // CraftBukkit start - add method
 +    public final boolean isChunkInUse(int x, int z) {
 +        PlayerChunkMapEntry pi = getEntry(x, z);
 +        if (pi != null) {
@@ -83,11 +140,12 @@
 +        }
 +        return false;
 +    }
++    // CraftBukkit end
 +
      public void markBlockForUpdate(BlockPos pos)
      {
          int i = pos.getX() >> 4;
-@@ -276,14 +290,26 @@
+@@ -276,15 +303,31 @@
          player.managedPosX = player.posX;
          player.managedPosZ = player.posZ;
  
@@ -109,15 +167,20 @@
          }
  
 +        Collections.sort(chunkList, new ChunkCoordComparator(player));
-+        for (ChunkPos pair : chunkList) {
-+            this.getOrCreateEntry(pair.x, pair.z).addPlayer(player);
-+        }
++        synchronized (this) { // Akarin - synchronized
++            for (ChunkPos pair : chunkList) {
++                this.getOrCreateEntry(pair.x, pair.z).addPlayer(player);
++            }
++        } // Akarin
 +        // CraftBukkit end
 +
++        playersLock.writeLock().lock(); // Akarin
          this.players.add(player);
++        playersLock.writeLock().unlock(); // Akarin
          this.markSortPending();
      }
-@@ -293,10 +319,13 @@
+ 
+@@ -293,10 +336,13 @@
          int i = (int)player.managedPosX >> 4;
          int j = (int)player.managedPosZ >> 4;
  
@@ -133,7 +196,17 @@
                  PlayerChunkMapEntry playerchunkmapentry = this.getEntry(k, l);
  
                  if (playerchunkmapentry != null)
-@@ -337,19 +366,23 @@
+@@ -306,7 +352,9 @@
+             }
+         }
+ 
++        playersLock.writeLock().lock(); // Akarin
+         this.players.remove(player);
++        playersLock.writeLock().unlock(); // Akarin
+         this.markSortPending();
+     }
+ 
+@@ -337,19 +385,23 @@
          {
              int k = (int)player.managedPosX >> 4;
              int l = (int)player.managedPosZ >> 4;
@@ -160,20 +233,22 @@
                          }
  
                          if (!this.overlaps(l1 - j1, i2 - k1, i, j, i1))
-@@ -367,6 +400,12 @@
+@@ -367,6 +419,14 @@
                  player.managedPosX = player.posX;
                  player.managedPosZ = player.posZ;
                  this.markSortPending();
 +                // CraftBukkit start - send nearest chunks first
 +                Collections.sort(chunksToLoad, new ChunkCoordComparator(player));
-+                for (ChunkPos pair : chunksToLoad) {
-+                    this.getOrCreateEntry(pair.x, pair.z).addPlayer(player);
-+                }
++                synchronized (this) { // Akarin - synchronized
++                    for (ChunkPos pair : chunksToLoad) {
++                        this.getOrCreateEntry(pair.x, pair.z).addPlayer(player);
++                    }
++                } // Akarin
 +                // CraftBukkit end
              }
          }
      }
-@@ -377,6 +416,8 @@
+@@ -377,6 +437,8 @@
          return playerchunkmapentry != null && playerchunkmapentry.containsPlayer(player) && playerchunkmapentry.isSentToPlayers();
      }
  
@@ -182,14 +257,18 @@
      public void setPlayerViewRadius(int radius)
      {
          radius = MathHelper.clamp(radius, 3, 32);
-@@ -387,43 +428,53 @@
+@@ -385,45 +447,64 @@
+         {
+             int i = radius - this.playerViewRadius;
  
-             for (EntityPlayerMP entityplayermp : Lists.newArrayList(this.players))
-             {
+-            for (EntityPlayerMP entityplayermp : Lists.newArrayList(this.players))
+-            {
 -                int j = (int)entityplayermp.posX >> 4;
 -                int k = (int)entityplayermp.posZ >> 4;
-+                this.setViewDistance(entityplayermp, i, false); // Paper - Split, don't mark sort pending, we'll handle it after
-+            }
++            playersLock.readLock().lock(); // Akarin
++            ArrayList arraylist = Lists.newArrayList(this.players);
++            playersLock.readLock().unlock(); // Akarin
++            Iterator iterator = arraylist.iterator();
  
 -                if (i > 0)
 -                {
@@ -198,15 +277,19 @@
 -                        for (int k1 = k - radius; k1 <= k + radius; ++k1)
 -                        {
 -                            PlayerChunkMapEntry playerchunkmapentry = this.getOrCreateEntry(j1, k1);
-+            this.playerViewRadius = radius;
-+            this.markSortPending();
-+        }
-+    }
++            while (iterator.hasNext()) {
++                EntityPlayerMP entityplayermp = (EntityPlayerMP) iterator.next();
++                this.setViewDistance(entityplayermp, i, false); // Paper - Split, don't mark sort pending, we'll handle it after
++            }
  
 -                            if (!playerchunkmapentry.containsPlayer(entityplayermp))
 -                            {
 -                                playerchunkmapentry.addPlayer(entityplayermp);
--                            }
++            this.playerViewRadius = radius;
++            this.markSortPending();
++        }
++    }
++
 +    public void setViewDistance(EntityPlayerMP entityplayer, int i) {
 +        this.setViewDistance(entityplayer, i, true); // Mark sort pending by default so we don't have to remember to do so all the time
 +    }
@@ -223,14 +306,16 @@
 +            int i1;
 +            int j1;
 +            if (j > 0) {
-+                for(i1 = k - i; i1 <= k + i; ++i1) {
-+                    for(j1 = l - i; j1 <= l + i; ++j1) {
-+                        PlayerChunkMapEntry playerchunk = this.getOrCreateEntry(i1, j1);
-+                        if (!playerchunk.containsPlayer(entityplayer)) {
-+                            playerchunk.addPlayer(entityplayer);
++                synchronized (this) { // Akarin - synchronized
++                    for (i1 = k - i; i1 <= k + i; ++i1) {
++                        for (j1 = l - i; j1 <= l + i; ++j1) {
++                            PlayerChunkMapEntry playerchunk = this.getOrCreateEntry(i1, j1);
++                            if (!playerchunk.containsPlayer(entityplayer)) {
++                                playerchunk.addPlayer(entityplayer);
+                             }
                          }
                      }
-                 }
+-                }
 -                else
 -                {
 -                    for (int l = j - this.playerViewRadius; l <= j + this.playerViewRadius; ++l)
@@ -240,18 +325,20 @@
 -                            if (!this.overlaps(l, i1, j, k, radius))
 -                            {
 -                                this.getOrCreateEntry(l, i1).removePlayer(entityplayermp);
--                            }
++                } // Akarin
 +            } else {
-+                for(i1 = k - oldViewDistance; i1 <= k + oldViewDistance; ++i1) {
-+                    for(j1 = l - oldViewDistance; j1 <= l + oldViewDistance; ++j1) {
-+                        if (!this.overlaps(i1, j1, k, l, i)) {
-+                            this.getOrCreateEntry(i1, j1).removePlayer(entityplayer);
++                synchronized (this) { // Akarin - synchronized
++                    for (i1 = k - oldViewDistance; i1 <= k + oldViewDistance; ++i1) {
++                        for (j1 = l - oldViewDistance; j1 <= l + oldViewDistance; ++j1) {
++                            if (!this.overlaps(i1, j1, k, l, i)) {
++                                this.getOrCreateEntry(i1, j1).removePlayer(entityplayer);
+                             }
                          }
                      }
-                 }
++                } // Akarin
 +                if (markSort) {
 +                    this.markSortPending();
-+                }
+                 }
              }
 -
 -            this.playerViewRadius = radius;
@@ -262,7 +349,22 @@
  
      private void markSortPending()
      {
-@@ -456,11 +507,73 @@
+@@ -441,12 +522,12 @@
+         return (long)p_187307_0_ + 2147483647L | (long)p_187307_1_ + 2147483647L << 32;
+     }
+ 
+-    public void entryChanged(PlayerChunkMapEntry entry)
++    public synchronized void entryChanged(PlayerChunkMapEntry entry) // Akarin - synchronized
+     {
+         this.dirtyEntries.add(entry);
+     }
+ 
+-    public void removeEntry(PlayerChunkMapEntry entry)
++    public synchronized void removeEntry(PlayerChunkMapEntry entry) // Akarin - synchronized
+     {
+         ChunkPos chunkpos = entry.getPos();
+         long i = getIndex(chunkpos.x, chunkpos.z);
+@@ -456,11 +537,73 @@
          this.dirtyEntries.remove(entry);
          this.pendingSendToPlayers.remove(entry);
          this.entriesWithoutChunks.remove(entry);

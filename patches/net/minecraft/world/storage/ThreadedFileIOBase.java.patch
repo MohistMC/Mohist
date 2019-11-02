@@ -1,0 +1,89 @@
+--- ../src-base/minecraft/net/minecraft/world/storage/ThreadedFileIOBase.java
++++ ../src-work/minecraft/net/minecraft/world/storage/ThreadedFileIOBase.java
+@@ -1,22 +1,29 @@
+ package net.minecraft.world.storage;
+ 
+ import com.google.common.collect.Lists;
++import com.google.common.util.concurrent.ThreadFactoryBuilder;
++
+ import java.util.Collections;
+ import java.util.List;
++import java.util.concurrent.Executor;
++import java.util.concurrent.Executors;
++import java.util.concurrent.atomic.AtomicInteger;
+ 
+ public class ThreadedFileIOBase implements Runnable
+ {
+     private static final ThreadedFileIOBase INSTANCE = new ThreadedFileIOBase();
+-    private final List<IThreadedFileIO> threadedIOQueue = Collections.<IThreadedFileIO>synchronizedList(Lists.newArrayList());
++    private final List<IThreadedFileIO> threadedIOQueue = null; // Akarin - I don't think any plugin rely on this
+     private volatile long writeQueuedCounter;
+     private volatile long savedIOCounter;
+     private volatile boolean isThreadWaiting;
++    private final Executor executor = Executors.newFixedThreadPool(2, new ThreadFactoryBuilder().setNameFormat("Akarin File IO Thread - %1$d").setPriority(1).build());
++    private final AtomicInteger queuedChunkCounter = new AtomicInteger(0);
+ 
+     private ThreadedFileIOBase()
+     {
+-        Thread thread = new Thread(this, "File IO Thread");
+-        thread.setPriority(1);
+-        thread.start();
++        //Thread thread = new Thread(this, "File IO Thread");
++        //thread.setPriority(1);
++        //thread.start();
+     }
+ 
+     public static ThreadedFileIOBase getThreadedIOInstance()
+@@ -47,7 +54,7 @@
+ 
+             try
+             {
+-                Thread.sleep(this.isThreadWaiting ? 0L : 10L);
++                Thread.sleep(this.isThreadWaiting ? 0L : 2L);
+             }
+             catch (InterruptedException interruptedexception1)
+             {
+@@ -68,22 +75,35 @@
+         }
+     }
+ 
++    /**
++     * Process a chunk, re-add to the queue if unsuccessful
++     */
++    private void writeChunk(IThreadedFileIO fileIo) {
++        if (!fileIo.writeNextIO()) { // PAIL: WriteNextIO() -> Returns if the write was unsuccessful
++            queuedChunkCounter.decrementAndGet();
++
++            try {
++                Thread.sleep(isThreadWaiting ? 0L : 2L);
++            } catch (InterruptedException ex) {
++                ex.printStackTrace();
++            }
++        } else {
++            writeChunk(fileIo);
++        }
++    }
++
+     public void queueIO(IThreadedFileIO fileIo)
+     {
+-        if (!this.threadedIOQueue.contains(fileIo))
+-        {
+-            ++this.writeQueuedCounter;
+-            this.threadedIOQueue.add(fileIo);
+-        }
++        queuedChunkCounter.incrementAndGet();
++        executor.execute(() -> writeChunk(fileIo));
+     }
+ 
+     public void waitForFinish() throws InterruptedException
+     {
+         this.isThreadWaiting = true;
+ 
+-        while (this.writeQueuedCounter != this.savedIOCounter)
+-        {
+-            Thread.sleep(10L);
++        while (this.queuedChunkCounter.get() != 0) {
++            Thread.sleep(9L);
+         }
+ 
+         this.isThreadWaiting = false;
