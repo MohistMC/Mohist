@@ -13,7 +13,7 @@
      public UUID getOwnerId()
      {
 -        return (UUID)((Optional)this.dataManager.get(OWNER_UNIQUE_ID)).orNull();
-+        if (cachedOwnerId == null) cachedOwnerId = (UUID)((Optional)dataManager.get(OWNER_UNIQUE_ID);
++        if (cachedOwnerId == null) cachedOwnerId = dataManager.get(OWNER_UNIQUE_ID);
 +        return cachedOwnerId.orNull();
      }
  
