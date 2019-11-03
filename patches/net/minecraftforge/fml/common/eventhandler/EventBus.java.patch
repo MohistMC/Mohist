@@ -9,13 +9,16 @@
  
  public class EventBus implements IEventExceptionHandler
  {
-@@ -172,7 +174,9 @@
+@@ -172,7 +174,12 @@
      public boolean post(Event event)
      {
          if (shutdown) return false;
 -
 +        if (Bukkit.getServer() != null) {
-+            Bukkit.getPluginManager().callEvent(new BukkitHookForgeEvent(event));
++            BukkitHookForgeEvent bukkitHookForgeEvent = new BukkitHookForgeEvent(event);
++            if (bukkitHookForgeEvent.getHandlers().getRegisteredListeners().length > 0) {
++                org.bukkit.Bukkit.getPluginManager().callEvent(bukkitHookForgeEvent);
++            }
 +        }
          IEventListener[] listeners = event.getListenerList().getListeners(busID);
          int index = 0;

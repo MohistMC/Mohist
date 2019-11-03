@@ -9,3 +9,12 @@
              ((LoggerContext) LogManager.getContext(false)).reconfigure();
          }
      }
+@@ -57,7 +57,7 @@
+ 
+         classLoader.addClassLoaderExclusion("org.jline.");
+         classLoader.addClassLoaderExclusion("com.sun.jna.");
+-        classLoader.addClassLoaderExclusion("net.minecraftforge.server.terminalconsole.");
++        classLoader.addClassLoaderExclusion("red.mohist.console.log4j.TerminalConsoleAppender");
+ 
+         FMLLaunchHandler.configureForServerLaunch(classLoader, this);
+         FMLLaunchHandler.appendCoreMods();
