@@ -115,6 +115,7 @@ public class ThermiteRandom extends Random {
      * @param nbits
      * @return
      */
+    @Override
     public int next(int nbits) {
         long x = seed;
         x ^= (x << 21);
@@ -126,6 +127,7 @@ public class ThermiteRandom extends Random {
     }
     boolean haveNextNextGaussian = false;
     double nextNextGaussian = 0;
+    @Override
     synchronized public double nextGaussian() {
         // See Knuth, ACP, Section 3.4.1 Algorithm C.
         if (haveNextNextGaussian) {
@@ -199,6 +201,7 @@ public class ThermiteRandom extends Random {
      * @throws IllegalArgumentException if bound is not positive
      * @since 1.2
      */
+    @Override
     public int nextInt(int bound) {
         if (bound < 0) {
             throw new RuntimeException("BadBound");
@@ -218,6 +221,7 @@ public class ThermiteRandom extends Random {
         }
         return r;
     }
+    @Override
     public int nextInt() {
         return next(32);
     }    

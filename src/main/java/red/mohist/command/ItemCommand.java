@@ -32,11 +32,8 @@ public class ItemCommand extends Command {
             sender.sendMessage(ChatColor.RED + "Usage: " + usageMessage);
             return false;
         }
-        switch (args[0].toLowerCase(Locale.ENGLISH)) {
-            case "info":
-                // Not recommended for use in games, only test output
-                info(sender);
-                break;
+        if ("info".equals(args[0].toLowerCase(Locale.ENGLISH))) {// Not recommended for use in games, only test output
+            info(sender);
         }
         return false;
     }
