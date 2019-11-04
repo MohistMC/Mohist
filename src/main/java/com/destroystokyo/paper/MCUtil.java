@@ -2,11 +2,8 @@ package com.destroystokyo.paper;
 
 import com.destroystokyo.paper.profile.CraftPlayerProfile;
 import com.destroystokyo.paper.profile.PlayerProfile;
-import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import com.mojang.authlib.GameProfile;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
 import java.util.function.Supplier;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -25,7 +22,6 @@ import org.bukkit.craftbukkit.v1_12_R1.util.Waitable;
 import org.spigotmc.AsyncCatcher;
 
 public final class MCUtil {
-    private static final Executor asyncExecutor = Executors.newSingleThreadExecutor(new ThreadFactoryBuilder().setNameFormat("Paper Async Task Handler Thread - %1$d").build());
 
     private MCUtil() {}
 
@@ -187,14 +183,6 @@ public final class MCUtil {
         final int modX = pos.getX() & 15;
         final int modZ = pos.getZ() & 15;
         return (modX == 0 || modX == 15 || modZ == 0 || modZ == 15);
-    }
-
-    /**
-     * Posts a task to be executed asynchronously
-     * @param run
-     */
-    public static void scheduleAsyncTask(Runnable run) {
-        asyncExecutor.execute(run);
     }
 
     @Nullable

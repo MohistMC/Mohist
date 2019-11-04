@@ -1,5 +1,6 @@
 package red.mohist.common.async;
 
+import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ScheduledExecutorService;
@@ -20,6 +21,10 @@ public class MohistThreadBox {
 
     public static final ExecutorService FILEIO = new ThreadPoolExecutor(2, 2, 0L, TimeUnit.MILLISECONDS,
             new LinkedBlockingQueue<Runnable>(), new NamedThreadFactory("Mohist File IO Thread"));
+
+    public static final Executor ASYNCEXECUTOR = new ThreadPoolExecutor(1, 1, 0L, TimeUnit.MILLISECONDS,
+            new LinkedBlockingQueue<Runnable>(), new NamedThreadFactory("Mohist Async Task Handler Thread"));
+
 
     public static class AssignableThread extends Thread {
         public AssignableThread(Runnable run) {
