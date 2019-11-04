@@ -3,7 +3,6 @@
 ## Mohist
 
 ## It is highly recommended to use the 1.5+ version to quickly resolve known and unknown errors!
-#### We have not left, except here, all other places are fake! Please don't be fooled!
 
 [![](https://ci.codemc.org/buildStatus/icon?job=Mohist-Community%2FMohist-1.12.2)](https://ci.codemc.org/job/Mohist-Community/job/Mohist-1.12.2/)
 ![](https://img.shields.io/github/stars/Mohist-Community/Mohist.svg?label=Stars)
@@ -12,7 +11,6 @@
 [![](https://img.shields.io/badge/Paper-1.12.2-brightgreen.svg?colorB=DC3340)](https://papermc.io/downloads#Paper-1.12)
 ![](https://img.shields.io/badge/OracleJdk-8u231-brightgreen.svg?colorB=469C00)
 
-Since CraftBukkit has modified a lot of underlying layers, some of the core mods are not available, we are working hard to improve.
 ### Getting Help
    [**Home**](https://mohist.red/)
    [**bStats**](https://bstats.org/plugin/bukkit/Mohist)
@@ -43,7 +41,7 @@ If you are a plugin developer, you can add the following files to your library f
 
 Mohist-xxxxx-server.jar - is the server we should run it
 
-### Credits
+### Thanks for the following project
 * [**Bukkit**](https://hub.spigotmc.org/stash/scm/spigot/bukkit.git) - plugin support.
 * [**Paper**](https://github.com/PaperMC/Paper.git) - performance optimizations.
 * [**CraftBukkit**](https://hub.spigotmc.org/stash/scm/spigot/craftbukkit.git) - plugin support.
@@ -52,3 +50,7 @@ Mohist-xxxxx-server.jar - is the server we should run it
 * [**Atom**](https://gitlab.com/divinecode/atom/Atom.git) - Partial code source.
 * [**Thermos**](https://github.com/CyberdyneCC/Thermos.git) - Partial code source.
 * [**um_bukkit**](https://github.com/TechCatOther/um_bukkit.git) - Partial code source.
+
+
+### 中国用户捐赠二维码(备注信息便于记录)
+<img src="https://i.loli.net/2019/11/04/PkybBF1puUwCz6l.png">
