@@ -1,4 +1,4 @@
-package red.mohist.asyn;
+package red.mohist.common.async;
 
 import java.util.concurrent.ThreadFactory;
 
@@ -15,9 +15,10 @@ public class NamedThreadFactory implements ThreadFactory {
     }
 
     @Override
-    public Thread newThread(Runnable r) {
-        Thread thread = new Thread(r);
+    public Thread newThread( Runnable r) {
+        Thread thread = new MohistThreadBox.AssignableThread(r);
         thread.setName(name+"-"+(++id));
+        thread.setPriority(7);
         return thread;
     }
 }

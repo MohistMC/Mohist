@@ -2,10 +2,10 @@ package red.mohist;
 
 import java.io.File;
 import java.lang.reflect.Method;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.Objects;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import red.mohist.common.async.MohistThreadBox;
 import red.mohist.configuration.MohistConfigUtil;
 import red.mohist.down.DownloadLibraries;
 import red.mohist.down.Update;
@@ -55,11 +55,9 @@ public class Mohist {
         if (Update.isCheckVersion()) {
             if (Update.getLibrariesVersion()) {
                 System.out.println(Message.getString("mohist.start.error.nothavelibrary"));
-                System.out.println("");
-                ExecutorService dl = Executors.newCachedThreadPool();
-                dl.execute(new DownloadLibraries());
+                MohistThreadBox.DL.execute(new DownloadLibraries());
                 System.out.println(Message.getString("file.ok"));
-                dl.shutdown();
+                MohistThreadBox.DL.shutdown();
                 return;
             }
             Update.hasLatestVersion();
@@ -80,7 +78,6 @@ public class Mohist {
             System.out.println("");
             System.out.println("");
             System.out.println("                        " + Message.getString("forge.serverlanunchwrapper.1"));
-            System.out.println("");
             System.out.println(Message.getString("mohist.start"));
             System.out.println(Message.getString("load.libraries"));
             LOGGER = LogManager.getLogger("Mohist");
@@ -88,28 +85,19 @@ public class Mohist {
         catch (Exception e)
         {
             System.out.println(Message.getString("mohist.start.error.nothavelibrary"));
-            System.out.println("");
-            ExecutorService dl = Executors.newCachedThreadPool();
-            dl.execute(new DownloadLibraries());
+            MohistThreadBox.DL.execute(new DownloadLibraries());
             System.out.println(Message.getString("file.ok"));
-            dl.shutdown();
+            MohistThreadBox.DL.shutdown();
         }
 
         try
         {
-            Method main = null;
-            try{
-                main = launchwrapper.getMethod("main",String[].class);
-            }
-            catch(NullPointerException e)
-            {
-                return;
-            }
+            Method main = launchwrapper != null ? launchwrapper.getMethod("main", String[].class) : null;
             String[] allArgs = new String[args.length + 2];
             allArgs[0] = "--tweakClass";
             allArgs[1] = "net.minecraftforge.fml.common.launcher.FMLServerTweaker";
             System.arraycopy(args, 0, allArgs, 2, args.length);
-            main.invoke(null,(Object)allArgs);
+            Objects.requireNonNull(main).invoke(null,(Object)allArgs);
         }
         catch (Exception e)
         {

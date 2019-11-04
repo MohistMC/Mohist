@@ -10,19 +10,25 @@ public class JarTool {
 
     public static String getJarPath(){
         File file = getFile();
-        if(file==null)return null;
+        if(file==null) {
+            return null;
+        }
         return file.getAbsolutePath();
     }
 
     public static String getJarDir() {
         File file = getFile();
-        if(file==null)return null;
+        if(file==null) {
+            return null;
+        }
         return getFile().getParent();
     }
 
     public static String getJarName() {
         File file = getFile();
-        if(file==null)return null;
+        if(file==null) {
+            return null;
+        }
         return getFile().getName();
     }
 

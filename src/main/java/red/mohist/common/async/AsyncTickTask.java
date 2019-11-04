@@ -1,4 +1,4 @@
-package red.mohist.asyn;
+package red.mohist.common.async;
 
 import java.util.logging.Logger;
 

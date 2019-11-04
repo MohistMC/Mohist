@@ -212,8 +212,9 @@ public class ThermiteRandom extends Random {
         } else {
             for (int u = r;
                     u - (r = u % bound) + m < 0;
-                    u = next(31))
+                    u = next(31)) {
                 ;
+            }
         }
         return r;
     }

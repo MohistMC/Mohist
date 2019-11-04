@@ -52,7 +52,9 @@ public class MohistJarRemapper extends CustomRemapper {
         if (index != -1) {
             String outer = className.substring(0, index);
             String mapped = mapClassName(outer, packageMap, classMap);
-            if (mapped == null) return null;
+            if (mapped == null) {
+                return null;
+            }
             return mapped + className.substring(index);
         }
 

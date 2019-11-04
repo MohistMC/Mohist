@@ -70,8 +70,9 @@ public final class ConsoleCommandCompleter implements Completer
         try
         {
             List<String> completions = tabComplete.get();
-            if (!completions.isEmpty())
+            if (!completions.isEmpty()) {
                 Collections.sort(completions);
+            }
             if (prefix)
             {
                 candidates.addAll(completions);

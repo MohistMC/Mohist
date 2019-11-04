@@ -19,15 +19,17 @@ public class ToolKit{
 
     public static <T extends Enum<T>> T getElement(T[] pValues,String pEnumName){
         for(T sT : pValues){
-            if(sT.name().equalsIgnoreCase(pEnumName))
+            if(sT.name().equalsIgnoreCase(pEnumName)) {
                 return sT;
+            }
         }
         return null;
     }
 
     public static byte[] randomByteArray(int pLength){
-        if(pLength<=0)
+        if(pLength<=0) {
             throw new IllegalArgumentException("The number must be positive ("+pLength+")");
+        }
 
         byte[] tData=new byte[pLength];
         Random tRandom=new Random(System.nanoTime());
@@ -46,8 +48,9 @@ public class ToolKit{
     }
 
     public static int paseIntOrDefault(String pStr,int pRadix,int pDefValue){
-        if(StringUtil.isEmpty(pStr))
+        if(StringUtil.isEmpty(pStr)) {
             return pDefValue;
+        }
 
         try{
             return Integer.parseInt(pStr,pRadix);
@@ -73,11 +76,17 @@ public class ToolKit{
         String[] pVs1=pV1.split("\\.");
         String[] pVs2=pV2.split("\\.");
         for(int i=0;i<pVs1.length;i++){
-            if(pVs2.length<=i) return 0;
+            if(pVs2.length<=i) {
+                return 0;
+            }
             int t=pVs1[i].length()-pVs2[i].length();
-            if(t!=0) return t;
+            if(t!=0) {
+                return t;
+            }
             t=pVs1[i].compareTo(pVs2[i]);
-            if(t!=0) return t;
+            if(t!=0) {
+                return t;
+            }
         }
         return pVs1.length-pVs2.length;
     }

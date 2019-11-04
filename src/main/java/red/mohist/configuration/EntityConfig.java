@@ -40,8 +40,9 @@ public class EntityConfig extends ConfigBase {
             config = YamlConfiguration.loadConfiguration(configFile);
             String header = HEADER + "\n";
             for (Setting toggle : settings.values()) {
-                if (!toggle.description.equals(""))
+                if (!toggle.description.equals("")) {
                     header += "Setting: " + toggle.path + " Default: " + toggle.def + "   # " + toggle.description + "\n";
+                }
 
                 config.addDefault(toggle.path, toggle.def);
                 settings.get(toggle.path).setValue(config.getString(toggle.path));

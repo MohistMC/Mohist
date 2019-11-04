@@ -16,8 +16,6 @@ public class Download {
             URL website = new URL(url);
 
             HttpURLConnection connection = (HttpURLConnection) website.openConnection();
-            connection.setConnectTimeout(8000);
-            //connection.setReadTimeout(8000);
             connection.setRequestMethod("GET");
             long alreadySize = 0;
             int code = connection.getResponseCode();
@@ -51,7 +49,7 @@ public class Download {
 
                 long endTime =  System.currentTimeMillis();
                 long usedTime = (endTime-startTime)/1000;
-                System.out.println(Message.getFormatString("file.download.ok", new Object[]{ fileName, (int)usedTime}));
+                System.out.println(Message.getFormatString("file.download.ok", new Object[]{ fileName, String.valueOf(usedTime)}));
             } else {
                 System.out.println(Message.getFormatString("file.download.nook", new Object[]{url}));
             }
