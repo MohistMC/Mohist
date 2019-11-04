@@ -39,6 +39,7 @@ public final class PluginClassLoader extends URLClassLoader {
 
     static {
         try {
+            Class.forName("org.bukkit.PackageDefine");
             Class.forName("org.bukkit.craftbukkit.PackageDefine");
             Class.forName("org.spigotmc.PackageDefine");
             Class.forName("com.destroystokyo.paper.PackageDefine");

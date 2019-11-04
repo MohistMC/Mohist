@@ -31,6 +31,7 @@ import red.mohist.common.remap.remappers.NMSVersionRemapper;
 import red.mohist.common.remap.remappers.ReflectRemapper;
 import red.mohist.configuration.MohistConfig;
 import red.mohist.util.JarTool;
+import sun.reflect.Reflection;
 
 /**
  *
@@ -43,7 +44,6 @@ public class RemapUtils {
     public static final String mohistPrefix = "red.mohist.";
     public static final MohistJarMapping jarMapping;
     private static final List<Remapper> remappers = new ArrayList<>();
-    private static RemapSecurityManager rsm = new RemapSecurityManager();
 
     static {
         jarMapping = new MohistJarMapping();
@@ -202,7 +202,7 @@ public class RemapUtils {
     }
 
     public static ClassLoader getCallerClassLoder() {
-        return rsm.getCallerClass(3).getClassLoader();
+        return Reflection.getCallerClass(3).getClassLoader();
     }
 
     public static String inverseMapName(Class clazz) {
