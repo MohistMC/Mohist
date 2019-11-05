@@ -3,6 +3,7 @@ package org.bukkit.craftbukkit.v1_12_R1;
 import com.destroystokyo.paper.PaperMCConfig;
 import com.google.common.base.Charsets;
 import com.google.common.base.Preconditions;
+import com.google.common.cache.CacheBuilder;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterators;
 import com.google.common.collect.Lists;
@@ -189,7 +190,7 @@ public final class CraftServer implements Server {
     private final SimplePluginManager pluginManager = new SimplePluginManager(this, commandMap);
     private final Map<String, World> worlds = new LinkedHashMap<String, World>();
     private final Yaml yaml = new Yaml(new SafeConstructor());
-    private final Map<UUID, OfflinePlayer> offlinePlayers = new MapMaker().weakValues().makeMap();
+    private final Map<UUID, OfflinePlayer> offlinePlayers = CacheBuilder.newBuilder().softValues().<UUID, OfflinePlayer>build().asMap();
     private final EntityMetadataStore entityMetadata = new EntityMetadataStore();
     private final PlayerMetadataStore playerMetadata = new PlayerMetadataStore();
     private final WorldMetadataStore worldMetadata = new WorldMetadataStore();

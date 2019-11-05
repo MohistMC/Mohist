@@ -22,3 +22,21 @@
              flowIntoBlock(world, pos.up(densityDir), 1);
              return;
          }
+@@ -187,9 +199,16 @@
+                 flowMeta = 1;
+             }
+             boolean flowTo[] = getOptimalFlowDirections(world, pos);
++            org.bukkit.block.BlockFace[] faces = new org.bukkit.block.BlockFace[] { org.bukkit.block.BlockFace.WEST, org.bukkit.block.BlockFace.EAST,
++                    org.bukkit.block.BlockFace.NORTH, org.bukkit.block.BlockFace.SOUTH };
+             for (int i = 0; i < 4; i++)
+             {
+-                if (flowTo[i]) flowIntoBlock(world, pos.offset(SIDES.get(i)), flowMeta);
++                if (flowTo[i]) {
++                    org.bukkit.event.block.BlockFromToEvent event = new org.bukkit.event.block.BlockFromToEvent(source, faces[i]);
++                    if (server != null) server.getPluginManager().callEvent(event);
++                    if (event.isCancelled()) continue;
++                    flowIntoBlock(world, pos.offset(SIDES.get(i)), flowMeta);
++                }
+             }
+         }
+     }

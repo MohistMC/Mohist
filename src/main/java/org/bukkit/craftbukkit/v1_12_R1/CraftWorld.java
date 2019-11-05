@@ -516,7 +516,8 @@ public class CraftWorld implements World {
         }
 
         // If chunk had previously been queued to save, must do save to avoid loss of that data
-        return world.getChunkProvider().unloadChunk(chunk, chunk.mustSave || save);
+        world.getChunkProvider().queueUnload(chunk);
+        return chunk.unloadQueued;
     }
 
     public boolean regenerateChunk(int x, int z) {
