@@ -128,8 +128,8 @@
 +        terminalConsoleWriterThread.setPriority(1);
 +        terminalConsoleWriterThread.start();
 +
-+        System.setOut(new PrintStream(new LoggerOutputStream(logger, Level.INFO), true));
-+        System.setErr(new PrintStream(new LoggerOutputStream(logger, Level.WARN), true));
++        System.setOut(org.apache.logging.log4j.io.IoBuilder.forLogger(logger).setLevel(Level.INFO).buildPrintStream());
++        System.setErr(org.apache.logging.log4j.io.IoBuilder.forLogger(logger).setLevel(Level.WARN).buildPrintStream());
 +        // CraftBukkit end
          thread.setDaemon(true);
          thread.start();
