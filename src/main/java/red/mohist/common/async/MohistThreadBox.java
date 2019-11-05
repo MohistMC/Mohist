@@ -25,6 +25,9 @@ public class MohistThreadBox {
     public static final Executor ASYNCEXECUTOR = new ThreadPoolExecutor(1, 1, 0L, TimeUnit.MILLISECONDS,
             new LinkedBlockingQueue<Runnable>(), new NamedThreadFactory("Mohist Async Task Handler Thread"));
 
+    public static final Executor TCW = new ThreadPoolExecutor(1, 1, 0L, TimeUnit.MILLISECONDS,
+            new SynchronousQueue<Runnable>(), new NamedThreadFactory("TerminalConsoleWriter"));
+
 
     public static class AssignableThread extends Thread {
         public AssignableThread(Runnable run) {

@@ -16,7 +16,7 @@ public class Mohist {
 
     private static final String NAME = "Mohist";
     public static final String VERSION = "1.5";
-    public static final String LIB_VERSION = "2";
+    public static final String LIB_VERSION = "3";
     private static final String NATIVE_VERSON = "v1_12_R1";
     private static final String NMS_PREFIX = "net/minecraft/server/";
     public static Logger LOGGER;

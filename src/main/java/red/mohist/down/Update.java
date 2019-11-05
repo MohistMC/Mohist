@@ -58,10 +58,7 @@ public class Update {
     }
 
     public static boolean getLibrariesVersion() {
-        String ver = "https://raw.githubusercontent.com/Mohist-Community/Mohist/1.12.2/libraries.ver";
-        // Get the data in url
-        String newversion = MohistConfigUtil.getUrlString(ver, Mohist.LIB_VERSION);
-        String s = MohistConfigUtil.getString(newversion, "version:", Mohist.LIB_VERSION);
+        String s = Mohist.LIB_VERSION;
         File lib = new File(JarTool.getJarDir() + "/libraries/libraries.ver");
         if (!lib.exists()) {
             return true;
