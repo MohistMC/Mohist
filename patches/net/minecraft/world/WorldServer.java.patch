@@ -201,14 +201,137 @@
          this.functionManager = new FunctionManager(new File(new File(this.saveHandler.getWorldDirectory(), "data"), "functions"), this.mcServer);
          this.getWorldBorder().setCenter(this.worldInfo.getBorderCenterX(), this.worldInfo.getBorderCenterZ());
          this.getWorldBorder().setDamageAmount(this.worldInfo.getBorderDamagePerBlock());
-@@ -174,6 +252,20 @@
+@@ -174,6 +252,144 @@
          return this;
      }
  
++    // CraftBukkit start
 +    @Override
 +    public TileEntity getTileEntity(BlockPos pos) {
 +        TileEntity result = super.getTileEntity(pos);
++        Block type = getBlockState(pos).getBlock();
++
++        if (type == Blocks.CHEST || type == Blocks.TRAPPED_CHEST) { // Spigot
++            if (!(result instanceof TileEntityChest)) {
++                result = fixTileEntity(pos, type, result);
++            }
++        } else if (type == Blocks.FURNACE) {
++            if (!(result instanceof TileEntityFurnace)) {
++                result = fixTileEntity(pos, type, result);
++            }
++        } else if (type == Blocks.DROPPER) {
++            if (!(result instanceof TileEntityDropper)) {
++                result = fixTileEntity(pos, type, result);
++            }
++        } else if (type == Blocks.DISPENSER) {
++            if (!(result instanceof TileEntityDispenser)) {
++                result = fixTileEntity(pos, type, result);
++            }
++        } else if (type == Blocks.JUKEBOX) {
++            if (!(result instanceof BlockJukebox.TileEntityJukebox)) {
++                result = fixTileEntity(pos, type, result);
++            }
++        } else if (type == Blocks.NOTEBLOCK) {
++            if (!(result instanceof TileEntityNote)) {
++                result = fixTileEntity(pos, type, result);
++            }
++        } else if (type == Blocks.MOB_SPAWNER) {
++            if (!(result instanceof TileEntityMobSpawner)) {
++                result = fixTileEntity(pos, type, result);
++            }
++        } else if ((type == Blocks.STANDING_SIGN) || (type == Blocks.WALL_SIGN)) {
++            if (!(result instanceof TileEntitySign)) {
++                result = fixTileEntity(pos, type, result);
++            }
++        } else if (type == Blocks.ENDER_CHEST) {
++            if (!(result instanceof TileEntityEnderChest)) {
++                result = fixTileEntity(pos, type, result);
++            }
++        } else if (type == Blocks.BREWING_STAND) {
++            if (!(result instanceof TileEntityBrewingStand)) {
++                result = fixTileEntity(pos, type, result);
++            }
++        } else if (type == Blocks.BEACON) {
++            if (!(result instanceof TileEntityBeacon)) {
++                result = fixTileEntity(pos, type, result);
++            }
++        } else if (type == Blocks.HOPPER) {
++            if (!(result instanceof TileEntityHopper)) {
++                result = fixTileEntity(pos, type, result);
++            }
++        } else if (type == Blocks.ENCHANTING_TABLE) {
++            if (!(result instanceof TileEntityEnchantmentTable)) {
++                result = fixTileEntity(pos, type, result);
++            }
++        } else if (type == Blocks.END_PORTAL) {
++            if (!(result instanceof TileEntityEndPortal)) {
++                result = fixTileEntity(pos, type, result);
++            }
++        } else if (type == Blocks.SKULL) {
++            if (!(result instanceof TileEntitySkull)) {
++                result = fixTileEntity(pos, type, result);
++            }
++        } else if (type == Blocks.DAYLIGHT_DETECTOR || type == Blocks.DAYLIGHT_DETECTOR_INVERTED) {
++            if (!(result instanceof TileEntityDaylightDetector)) {
++                result = fixTileEntity(pos, type, result);
++            }
++        } else if (type == Blocks.POWERED_COMPARATOR || type == Blocks.UNPOWERED_COMPARATOR) {
++            if (!(result instanceof TileEntityComparator)) {
++                result = fixTileEntity(pos, type, result);
++            }
++        } else if (type == Blocks.FLOWER_POT) {
++            if (!(result instanceof TileEntityFlowerPot)) {
++                result = fixTileEntity(pos, type, result);
++            }
++        } else if (type == Blocks.STANDING_BANNER || type == Blocks.WALL_BANNER) {
++            if (!(result instanceof TileEntityBanner)) {
++                result = fixTileEntity(pos, type, result);
++            }
++        } else if (type == Blocks.STRUCTURE_BLOCK) {
++            if (!(result instanceof TileEntityStructure)) {
++                result = fixTileEntity(pos, type, result);
++            }
++        } else if (type == Blocks.END_GATEWAY) {
++            if (!(result instanceof TileEntityEndGateway)) {
++                result = fixTileEntity(pos, type, result);
++            }
++        } else if (type == Blocks.COMMAND_BLOCK) {
++            if (!(result instanceof TileEntityCommandBlock)) {
++                result = fixTileEntity(pos, type, result);
++            }
++        } else if (type == Blocks.STRUCTURE_BLOCK) {
++            if (!(result instanceof TileEntityStructure)) {
++                result = fixTileEntity(pos, type, result);
++            }
++        } else if (type == Blocks.BED) {
++            if (!(result instanceof TileEntityBed)) {
++                result = fixTileEntity(pos, type, result);
++            }
++        }
++        // Paper Start - add TE fix checks for shulkers, see nms.BlockShulkerBox
++        else if (type instanceof BlockShulkerBox) {
++            if (!(result instanceof TileEntityShulkerBox)) {
++                result = fixTileEntity(pos, type, result);
++            }
++        }
++        // Paper end
++
++
 +        return result;
++    }
++
++    private TileEntity fixTileEntity(BlockPos pos, Block type, TileEntity found) {
++        this.getServer().getLogger().log(Level.SEVERE, "Block at {0},{1},{2} is {3} but has {4}" + ". "
++                + "Bukkit will attempt to fix this, but there may be additional damage that we cannot recover.", new Object[]{pos.getX(), pos.getY(), pos.getZ(), org.bukkit.Material.getBlockMaterial(Block.getIdFromBlock(type)).toString(), found});
++        if (type instanceof ITileEntityProvider) {
++            TileEntity replacement = ((ITileEntityProvider) type).createNewTileEntity(this, type.getMetaFromState(this.getBlockState(pos)));
++            replacement.world = this;
++            this.setTileEntity(pos, replacement);
++            return replacement;
++        } else {
++            this.getServer().getLogger().severe("Don't know how to fix for this type... Can't do anything! :(");
++            return found;
++        }
 +    }
 +
 +    private boolean canSpawn(int x, int z) {
@@ -218,11 +341,12 @@
 +            return this.provider.canCoordinateBeSpawn(x, z);
 +        }
 +    }
++    // CraftBukkit end
 +
      public void tick()
      {
          super.tick();
-@@ -198,9 +290,20 @@
+@@ -198,9 +414,20 @@
  
          this.profiler.startSection("mobSpawner");
  
@@ -245,7 +369,7 @@
          }
  
          this.profiler.endStartSection("chunkSource");
-@@ -212,7 +315,7 @@
+@@ -212,7 +439,7 @@
              this.setSkylightSubtracted(j);
          }
  
@@ -254,7 +378,7 @@
  
          if (this.getGameRules().getBoolean("doDaylightCycle"))
          {
-@@ -236,6 +339,7 @@
+@@ -236,6 +463,7 @@
          }
          this.profiler.endSection();
          this.sendQueuedBlockEvents();
@@ -262,7 +386,7 @@
      }
  
      @Nullable
-@@ -268,7 +372,7 @@
+@@ -268,7 +496,7 @@
                  {
                      ++i;
                  }
@@ -271,7 +395,7 @@
                  {
                      ++j;
                  }
-@@ -302,15 +406,21 @@
+@@ -302,15 +530,21 @@
      {
          if (this.allPlayersSleeping && !this.isRemote)
          {
@@ -295,7 +419,7 @@
          }
          else
          {
-@@ -346,7 +456,7 @@
+@@ -346,7 +580,7 @@
          this.worldInfo.setSpawnZ(j);
      }
  
@@ -304,7 +428,7 @@
      {
          return this.getChunkProvider().chunkExists(x, z);
      }
-@@ -355,14 +465,19 @@
+@@ -355,14 +589,19 @@
      {
          this.profiler.startSection("playerCheckLight");
  
@@ -326,7 +450,7 @@
          }
  
          this.profiler.endSection();
-@@ -392,97 +507,94 @@
+@@ -392,97 +631,94 @@
              {
                  this.profiler.startSection("getChunk");
                  Chunk chunk = iterator.next();
@@ -492,7 +616,7 @@
              this.profiler.endSection();
          }
      }
-@@ -611,6 +723,7 @@
+@@ -611,6 +847,7 @@
  
          this.provider.onWorldUpdateEntities();
          super.updateEntities();
@@ -500,7 +624,7 @@
      }
  
      protected void tickPlayers()
-@@ -682,79 +795,70 @@
+@@ -682,79 +919,70 @@
          {
              return false;
          }
@@ -628,7 +752,7 @@
          }
      }
  
-@@ -766,6 +870,7 @@
+@@ -766,6 +994,7 @@
          int j = i + 16 + 2;
          int k = (chunkpos.z << 4) - 2;
          int l = k + 16 + 2;
@@ -636,7 +760,7 @@
          return this.getPendingBlockUpdates(new StructureBoundingBox(i, 0, k, j, 256, l), remove);
      }
  
-@@ -817,21 +922,6 @@
+@@ -817,21 +1046,6 @@
          return list;
      }
  
@@ -658,7 +782,7 @@
      private boolean canSpawnNPCs()
      {
          return this.mcServer.getCanSpawnNPCs();
-@@ -845,9 +935,53 @@
+@@ -845,9 +1059,53 @@
      protected IChunkProvider createChunkProvider()
      {
          IChunkLoader ichunkloader = this.saveHandler.getChunkLoader(this.provider);
@@ -713,7 +837,7 @@
      public boolean isBlockModifiable(EntityPlayer player, BlockPos pos)
      {
          return super.isBlockModifiable(player, pos);
-@@ -921,6 +1055,22 @@
+@@ -921,6 +1179,22 @@
          {
              if (net.minecraftforge.event.ForgeEventFactory.onCreateWorldSpawn(this, settings)) return;
              this.findingSpawnPoint = true;
@@ -736,7 +860,7 @@
              BiomeProvider biomeprovider = this.provider.getBiomeProvider();
              List<Biome> list = biomeprovider.getBiomesToSpawnIn();
              Random random = new Random(this.getSeed());
-@@ -941,7 +1091,7 @@
+@@ -941,7 +1215,7 @@
  
              int l = 0;
  
@@ -745,7 +869,7 @@
              {
                  i += random.nextInt(64) - random.nextInt(64);
                  k += random.nextInt(64) - random.nextInt(64);
-@@ -987,33 +1137,27 @@
+@@ -987,33 +1261,27 @@
      }
  
      public void saveAllChunks(boolean all, @Nullable IProgressUpdate progressCallback) throws MinecraftException
@@ -784,7 +908,7 @@
          }
      }
  
-@@ -1039,6 +1183,12 @@
+@@ -1039,6 +1307,12 @@
              }
          }
  
@@ -797,7 +921,7 @@
          this.worldInfo.setBorderSize(this.getWorldBorder().getDiameter());
          this.worldInfo.getBorderCenterX(this.getWorldBorder().getCenterX());
          this.worldInfo.getBorderCenterZ(this.getWorldBorder().getCenterZ());
-@@ -1058,6 +1208,12 @@
+@@ -1058,6 +1332,12 @@
          return this.canAddEntity(entityIn) ? super.spawnEntity(entityIn) : false;
      }
  
@@ -810,7 +934,7 @@
      public void loadEntities(Collection<Entity> entityCollection)
      {
          for (Entity entity : Lists.newArrayList(entityCollection))
-@@ -1074,7 +1230,6 @@
+@@ -1074,7 +1354,6 @@
      {
          if (entityIn.isDead)
          {
@@ -818,7 +942,7 @@
              return false;
          }
          else
-@@ -1085,7 +1240,7 @@
+@@ -1085,7 +1364,7 @@
              {
                  Entity entity = this.entitiesByUuid.get(uuid);
  
@@ -827,7 +951,7 @@
                  {
                      this.unloadedEntityList.remove(entity);
                  }
-@@ -1093,7 +1248,6 @@
+@@ -1093,7 +1372,6 @@
                  {
                      if (!(entityIn instanceof EntityPlayer))
                      {
@@ -835,7 +959,7 @@
                          return false;
                      }
  
-@@ -1141,9 +1295,17 @@
+@@ -1141,9 +1419,17 @@
  
      public boolean addWeatherEffect(Entity entityIn)
      {
@@ -854,7 +978,7 @@
              return true;
          }
          else
-@@ -1164,11 +1326,15 @@
+@@ -1164,11 +1450,15 @@
  
      public Explosion newExplosion(@Nullable Entity entityIn, double x, double y, double z, float strength, boolean isFlaming, boolean isSmoking)
      {
@@ -874,7 +998,7 @@
          if (!isSmoking)
          {
              explosion.clearAffectedBlockPositions();
-@@ -1211,7 +1377,8 @@
+@@ -1211,7 +1501,8 @@
              {
                  if (this.fireBlockEvent(blockeventdata))
                  {
@@ -884,7 +1008,7 @@
                  }
              }
  
-@@ -1298,11 +1465,19 @@
+@@ -1298,11 +1589,19 @@
  
      public void spawnParticle(EnumParticleTypes particleType, boolean longDistance, double xCoord, double yCoord, double zCoord, int numberOfParticles, double xOffset, double yOffset, double zOffset, double particleSpeed, int... particleArguments)
      {
@@ -904,7 +1028,7 @@
              this.sendPacketWithinDistance(entityplayermp, longDistance, xCoord, yCoord, zCoord, spacketparticles);
          }
      }
-@@ -1362,9 +1537,45 @@
+@@ -1362,9 +1661,45 @@
      }
  
      static class ServerBlockEventList extends ArrayList<BlockEventData>
