@@ -60,6 +60,8 @@ public class MohistConfig extends ConfigBase{
     public final IntSetting revision = new IntSetting(this, "forgeversion.revision",5,"forgeversion revision");
     public final IntSetting build = new IntSetting(this, "forgeversion.build",2847,"forgeversion build");
 
+    public final BoolSetting disableForgeChunkForceSystem = new BoolSetting(this, "forge.disablechunkforcesystem", false, "Disable ForgeChunkForceSystem"); // by Goodvise
+
 
     /* ======================================================================== */
 
