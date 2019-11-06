@@ -44,9 +44,14 @@
              FMLLog.log.warn(text);
  
              if (!query.isSynchronous()) return; // no-op until mc does commands in another thread (if ever)
-@@ -195,14 +200,14 @@
- 
-                         if (cmd.equals("/fml confirm"))
+@@ -192,22 +197,22 @@
+                     for (Iterator<PendingCommand> it = dedServer.pendingCommandList.iterator(); it.hasNext(); )
+                     {
+                         String cmd = it.next().command.trim().toLowerCase();
+-
+-                        if (cmd.equals("/fml confirm"))
++                        cmd = cmd.charAt(0) == '/' ? cmd.substring(1) : cmd; // strip the forward slash to make it optional
++                        if (cmd.equals("fml confirm"))
                          {
 -                            FMLLog.log.info("confirmed");
 +                            FMLLog.log.info(Message.getString("forge.fmlserverhandler.3"));
@@ -54,13 +59,20 @@
                              done = true;
                              it.remove();
                          }
-                         else if (cmd.equals("/fml cancel"))
+-                        else if (cmd.equals("/fml cancel"))
++                        else if (cmd.equals("fml cancel"))
                          {
 -                            FMLLog.log.info("cancelled");
 +                            FMLLog.log.info(Message.getString("forge.fmlserverhandler.4"));
                              query.setResult(false);
                              done = true;
                              it.remove();
+                         }
+-                        else if (cmd.equals("/stop"))
++                        else if (cmd.equals("stop"))
+                         {
+                             StartupQuery.abort();
+                         }
 @@ -236,8 +241,10 @@
      @Override
      public void addModAsResource(ModContainer container)
