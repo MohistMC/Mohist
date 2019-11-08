@@ -161,12 +161,12 @@ public class CraftChunk implements Chunk {
 
         for (int i = 0; i < 16; i++) {
 
-            for (Object obj : chunk.getEntityLists()[i].toArray()) {
-                if (!(obj instanceof net.minecraft.entity.Entity)) {
+            for (net.minecraft.entity.Entity entity : chunk.getEntityLists()[i]) {
+                if (entity == null) {
                     continue;
                 }
 
-                entities[index++] = ((net.minecraft.entity.Entity) obj).getBukkitEntity();
+                entities[index++] = entity.getBukkitEntity();
             }
         }
 
@@ -179,13 +179,12 @@ public class CraftChunk implements Chunk {
 
         BlockState[] entities = new BlockState[chunk.getTileEntityMap().size()];
 
-        for (Object obj : chunk.getTileEntityMap().keySet().toArray()) {
-            if (!(obj instanceof BlockPos)) {
+        for (BlockPos pos : chunk.getTileEntityMap().keySet()) {
+            if (pos == null) {
                 continue;
             }
 
-            BlockPos position = (BlockPos) obj;
-            entities[index++] = worldServer.getWorld().getBlockAt(position.getX(), position.getY(), position.getZ()).getState();
+            entities[index++] = worldServer.getWorld().getBlockAt(pos.getX(), pos.getY(), pos.getZ()).getState();
         }
 
         return entities;
