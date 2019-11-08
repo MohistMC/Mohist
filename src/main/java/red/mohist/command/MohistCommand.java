@@ -19,10 +19,10 @@ public class MohistCommand extends Command {
     public MohistCommand(String name) {
         super(name);
         this.description = "Mohist related commands";
-        this.usageMessage = "/mohist [mods|playermods|printthreadcost|lang]";
+        this.usageMessage = "/mohist [mods|playermods|printthreadcost|lang|item]";
     }
 
-    private List<String> params = Arrays.asList("mods", "playermods", "printthreadcost");
+    private List<String> params = Arrays.asList("mods", "playermods", "printthreadcost", "lang", "item");
 
     @Override
     public List<String> tabComplete(CommandSender sender, String alias, String[] args) throws IllegalArgumentException {
@@ -74,6 +74,10 @@ public class MohistCommand extends Command {
             case "lang":
                 sender.sendMessage(ChatColor.GREEN +ServerAPI.getLanguage());
                 break;
+            case "item":
+                if ("info".equals(args[1].toLowerCase(Locale.ENGLISH))){
+                    ItemCommand.info(sender);
+                }
             default:
                 sender.sendMessage(ChatColor.RED + "Usage: " + usageMessage);
                 return false;

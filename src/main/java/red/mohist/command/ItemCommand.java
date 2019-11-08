@@ -1,44 +1,18 @@
 package red.mohist.command;
 
-import java.util.Locale;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import org.bukkit.ChatColor;
-import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.craftbukkit.v1_12_R1.inventory.CraftItemStack;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import red.mohist.api.CustomNameAPI;
-import red.mohist.util.i18n.Message;
 
-public class ItemCommand extends Command {
+public class ItemCommand{
 
-    public ItemCommand(String name) {
-        super(name);
-        this.description = "Item commands";
-        this.usageMessage = "/item [info]";
-    }
-
-    @Override
-    public boolean execute(CommandSender sender, String commandLabel, String[] args) {
-        if (!sender.isOp()) {
-            sender.sendMessage(Message.getString("command.nopermission"));
-            return true;
-        }
-
-        if (args.length == 0) {
-            sender.sendMessage(ChatColor.RED + "Usage: " + usageMessage);
-            return false;
-        }
-        if ("info".equals(args[0].toLowerCase(Locale.ENGLISH))) {// Not recommended for use in games, only test output
-            info(sender);
-        }
-        return false;
-    }
-
-    private void info(CommandSender sender) {
+    public static void info(CommandSender sender) {
         if (sender instanceof Player) {
             Player player = (Player) sender;
             ItemStack itemStack = player.getInventory().getItemInMainHand();
