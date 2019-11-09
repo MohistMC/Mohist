@@ -10,7 +10,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import red.mohist.Mohist;
-import red.mohist.down.Update;
 import red.mohist.util.FileUtil;
 import red.mohist.util.IOUtil;
 import red.mohist.util.JarTool;
@@ -51,7 +50,6 @@ public class MohistConfigUtil {
 
             String s = IOUtil.readContent(is, "UTF-8");
             is.close();
-            Update.hasTimeOut = true;
             return s;
 
         } catch (IOException e) {
