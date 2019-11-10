@@ -67,6 +67,7 @@ sourceSets {
     // Fix idea can't import module automatically
     main.java.srcDir 'src/main/java/'
     main.java.srcDir 'projects/Mohist/src/main/java/'
+    test.java.srcDir 'src/test/java/'
 }
 
 configurations.all {
