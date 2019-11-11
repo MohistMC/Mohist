@@ -1,0 +1,2 @@
+gradlew idea
+STOP
