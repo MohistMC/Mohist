@@ -21,7 +21,8 @@ public class ConsoleCommandCompleter implements Completer {
             @Override
             protected List<String> evaluate() {
                 List<String> offers = server.getCommandMap().tabComplete(server.getConsoleSender(), buffer);
-
+                List<String> modstab = server.getCraftCommandMap().tabComplete(server.getConsoleSender(), buffer);
+                offers.addAll(modstab);
                 TabCompleteEvent tabEvent = new TabCompleteEvent(server.getConsoleSender(), buffer, (offers == null) ? Collections.EMPTY_LIST : offers);
                 server.getPluginManager().callEvent(tabEvent);
 
