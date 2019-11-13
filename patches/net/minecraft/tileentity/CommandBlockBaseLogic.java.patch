@@ -70,7 +70,7 @@
                      }
                      catch (Throwable throwable)
                      {
-@@ -198,6 +221,169 @@
+@@ -198,6 +221,171 @@
          }
      }
  
@@ -107,11 +107,13 @@
 +        String cmd = args[0];
 +        if (cmd.startsWith("minecraft:")) cmd = cmd.substring("minecraft:".length());
 +        if (cmd.startsWith("bukkit:")) cmd = cmd.substring("bukkit:".length());
++        if (cmd.startsWith("mohist:")) cmd = cmd.substring("mohist:".length());
 +
 +        // Block disallowed commands
 +        if (cmd.equalsIgnoreCase("stop") || cmd.equalsIgnoreCase("kick") || cmd.equalsIgnoreCase("op")
 +                || cmd.equalsIgnoreCase("deop") || cmd.equalsIgnoreCase("ban") || cmd.equalsIgnoreCase("ban-ip")
-+                || cmd.equalsIgnoreCase("pardon") || cmd.equalsIgnoreCase("pardon-ip") || cmd.equalsIgnoreCase("reload")) {
++                || cmd.equalsIgnoreCase("pardon") || cmd.equalsIgnoreCase("pardon-ip") || cmd.equalsIgnoreCase("reload")
++                || cmd.equalsIgnoreCase("mohist")) {
 +            return 0;
 +        }
 +
