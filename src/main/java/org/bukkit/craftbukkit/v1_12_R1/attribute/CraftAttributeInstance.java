@@ -43,7 +43,7 @@ public class CraftAttributeInstance implements AttributeInstance {
 
     @Override
     public Collection<AttributeModifier> getModifiers() {
-        List<AttributeModifier> result = new ArrayList<AttributeModifier>();
+        List<AttributeModifier> result = new ArrayList<>();
         for (net.minecraft.entity.ai.attributes.AttributeModifier nms : handle.getModifiers()) {
             result.add(convert(nms));
         }

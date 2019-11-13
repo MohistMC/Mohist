@@ -12,7 +12,7 @@ import org.bukkit.event.HandlerList;
  */
 public class PortalCreateEvent extends WorldEvent implements Cancellable {
     private static final HandlerList handlers = new HandlerList();
-    private final ArrayList<Block> blocks = new ArrayList<Block>();
+    private final ArrayList<Block> blocks = new ArrayList<>();
     private boolean cancel = false;
     private CreateReason reason = CreateReason.FIRE;
 

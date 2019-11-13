@@ -168,11 +168,11 @@ public class TileEntityCommand extends Command
 
         if (args.length == 1)
         {
-            return StringUtil.copyPartialMatches(args[0], COMMANDS, new ArrayList<String>(COMMANDS.size()));
+            return StringUtil.copyPartialMatches(args[0], COMMANDS, new ArrayList<>(COMMANDS.size()));
         }
         if (((args.length == 2) && "get".equalsIgnoreCase(args[0])) || "set".equalsIgnoreCase(args[0]))
         {
-            return StringUtil.copyPartialMatches(args[1], MinecraftServer.tileEntityConfig.getSettings().keySet(), new ArrayList<String>(MinecraftServer.tileEntityConfig.getSettings().size()));
+            return StringUtil.copyPartialMatches(args[1], MinecraftServer.tileEntityConfig.getSettings().keySet(), new ArrayList<>(MinecraftServer.tileEntityConfig.getSettings().size()));
         }
 
         return ImmutableList.of();

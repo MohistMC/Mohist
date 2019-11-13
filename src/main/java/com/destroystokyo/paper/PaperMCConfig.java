@@ -53,7 +53,7 @@ public class PaperMCConfig {
         config.options().copyDefaults(true);
         verbose = getBoolean("verbose", false);
 
-        commands = new HashMap<String, Command>();
+        commands = new HashMap<>();
 
         version = getInt("config-version", 13);
         set("config-version", 13);

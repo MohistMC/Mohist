@@ -48,7 +48,7 @@ public class SpigotConfig {
     public static boolean bungee;
     public static boolean lateBind;
     public static boolean disableStatSaving;
-    public static TObjectIntHashMap<String> forcedStats = new TObjectIntHashMap<String>();
+    public static TObjectIntHashMap<String> forcedStats = new TObjectIntHashMap<>();
     public static int playerSample;
     public static int playerShuffle;
     public static List<String> spamExclusions;
@@ -84,7 +84,7 @@ public class SpigotConfig {
         config.options().header(HEADER);
         config.options().copyDefaults(true);
 
-        commands = new HashMap<String, Command>();
+        commands = new HashMap<>();
 
         version = getInt("config-version", 11);
         set("config-version", 11);
@@ -251,7 +251,7 @@ public class SpigotConfig {
             set("commands.replace-commands", config.getStringList("replace-commands"));
             config.set("replace-commands", null);
         }
-        replaceCommands = new HashSet<String>((List<String>) getList("commands.replace-commands",
+        replaceCommands = new HashSet<>((List<String>) getList("commands.replace-commands",
                 Arrays.asList("setblock", "summon", "testforblock", "tellraw")));
     }
 

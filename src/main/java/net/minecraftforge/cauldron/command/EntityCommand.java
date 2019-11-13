@@ -168,11 +168,11 @@ public class EntityCommand extends Command
 
         if (args.length == 1)
         {
-            return StringUtil.copyPartialMatches(args[0], COMMANDS, new ArrayList<String>(COMMANDS.size()));
+            return StringUtil.copyPartialMatches(args[0], COMMANDS, new ArrayList<>(COMMANDS.size()));
         }
         if (((args.length == 2) && "get".equalsIgnoreCase(args[0])) || "set".equalsIgnoreCase(args[0]))
         {
-            return StringUtil.copyPartialMatches(args[1], MinecraftServer.entityConfig.getSettings().keySet(), new ArrayList<String>(MinecraftServer.entityConfig.getSettings().size()));
+            return StringUtil.copyPartialMatches(args[1], MinecraftServer.entityConfig.getSettings().keySet(), new ArrayList<>(MinecraftServer.entityConfig.getSettings().size()));
         }
 
         return ImmutableList.of();

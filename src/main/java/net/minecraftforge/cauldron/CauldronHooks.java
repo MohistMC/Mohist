@@ -14,7 +14,7 @@ import net.minecraft.world.gen.ChunkProviderServer;
 public class CauldronHooks {
 
     public static Map<Class<? extends TileEntity>, TileEntityCache> tileEntityCache = new HashMap<>();
-    public static Map<Class<? extends Entity>, EntityCache> entityCache = new HashMap<Class<? extends Entity>, EntityCache>();
+    public static Map<Class<? extends Entity>, EntityCache> entityCache = new HashMap<>();
 
     /*
      * Thermos

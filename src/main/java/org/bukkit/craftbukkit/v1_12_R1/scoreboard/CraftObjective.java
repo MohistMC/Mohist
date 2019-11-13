@@ -1,5 +1,6 @@
 package org.bukkit.craftbukkit.v1_12_R1.scoreboard;
 
+import java.util.Objects;
 import net.minecraft.scoreboard.ScoreObjective;
 import net.minecraft.scoreboard.Scoreboard;
 import org.apache.commons.lang3.Validate;
@@ -130,7 +131,7 @@ final class CraftObjective extends CraftScoreboardComponent implements Objective
             return false;
         }
         final CraftObjective other = (CraftObjective) obj;
-        return !(this.objective != other.objective && (this.objective == null || !this.objective.equals(other.objective)));
+        return !(!Objects.equals(this.objective, other.objective));
     }
 
 

@@ -74,7 +74,7 @@ public class AttributeModifier implements ConfigurationSerializable {
 
     @Override
     public Map<String, Object> serialize() {
-        Map<String, Object> data = new HashMap<String, Object>();
+        Map<String, Object> data = new HashMap<>();
         data.put("uuid", uuid.toString());
         data.put("name", name);
         data.put("operation", operation.ordinal());

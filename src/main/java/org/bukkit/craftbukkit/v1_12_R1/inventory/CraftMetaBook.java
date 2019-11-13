@@ -32,7 +32,7 @@ public class CraftMetaBook extends CraftMetaItem implements BookMeta {
     static final int MAX_PAGES = 50;
     static final int MAX_PAGE_LENGTH = 320; // 256 limit + 64 characters to allow for psuedo colour codes
     static final int MAX_TITLE_LENGTH = 32;
-    public List<ITextComponent> pages = new ArrayList<ITextComponent>();
+    public List<ITextComponent> pages = new ArrayList<>();
     // Spigot start
     private final BookMeta.Spigot spigot = new BookMeta.Spigot() {
 
@@ -349,7 +349,7 @@ public class CraftMetaBook extends CraftMetaItem implements BookMeta {
     @Override
     public CraftMetaBook clone() {
         CraftMetaBook meta = (CraftMetaBook) super.clone();
-        meta.pages = new ArrayList<ITextComponent>(pages);
+        meta.pages = new ArrayList<>(pages);
         return meta;
     }
 
@@ -406,7 +406,7 @@ public class CraftMetaBook extends CraftMetaItem implements BookMeta {
         }
 
         if (hasPages()) {
-            List<String> pagesString = new ArrayList<String>();
+            List<String> pagesString = new ArrayList<>();
             for (ITextComponent comp : pages) {
                 pagesString.add(CraftChatMessage.fromComponent(comp));
             }

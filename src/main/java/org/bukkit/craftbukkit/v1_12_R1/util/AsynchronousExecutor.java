@@ -30,8 +30,8 @@ public final class AsynchronousExecutor<P, T, C, E extends Throwable> {
     @SuppressWarnings("rawtypes")
     static final AtomicIntegerFieldUpdater STATE_FIELD = AtomicIntegerFieldUpdater.newUpdater(AsynchronousExecutor.Task.class, "state");
     final CallBackProvider<P, T, C, E> provider;
-    final Queue<Task> finished = new ConcurrentLinkedQueue<Task>();
-    final Map<P, Task> tasks = new HashMap<P, Task>();
+    final Queue<Task> finished = new ConcurrentLinkedQueue<>();
+    final Map<P, Task> tasks = new HashMap<>();
     final ThreadPoolExecutor pool;
     /**
      * Uses a thread pool to pass executions to the provider.
@@ -42,7 +42,7 @@ public final class AsynchronousExecutor<P, T, C, E extends Throwable> {
         this.provider = provider;
 
         // We have an unbound queue size so do not need a max thread size
-        pool = new ThreadPoolExecutor(coreSize, Integer.MAX_VALUE, 60L, TimeUnit.SECONDS, new LinkedBlockingQueue<Runnable>(), provider);
+        pool = new ThreadPoolExecutor(coreSize, Integer.MAX_VALUE, 60L, TimeUnit.SECONDS, new LinkedBlockingQueue<>(), provider);
     }
 
     @SuppressWarnings({"unchecked", "rawtypes"})
@@ -212,7 +212,7 @@ public final class AsynchronousExecutor<P, T, C, E extends Throwable> {
         static final int STAGE_1_COMPLETE = STAGE_1_SYNC + 1;
         static final int FINISHED = STAGE_1_COMPLETE + 1;
         final P parameter;
-        final List<C> callbacks = new LinkedList<C>();
+        final List<C> callbacks = new LinkedList<>();
         volatile int state = PENDING;
         T object;
         E t = null;

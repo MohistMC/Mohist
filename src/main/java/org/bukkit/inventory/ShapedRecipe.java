@@ -16,7 +16,7 @@ public class ShapedRecipe implements Recipe, Keyed {
     private final NamespacedKey key;
     private final ItemStack output;
     private String[] rows;
-    private Map<Character, ItemStack> ingredients = new HashMap<Character, ItemStack>();
+    private Map<Character, ItemStack> ingredients = new HashMap<>();
 
     public ShapedRecipe(ItemStack result) {
         this.key = NamespacedKey.randomKey();
@@ -71,7 +71,7 @@ public class ShapedRecipe implements Recipe, Keyed {
         }
 
         // Remove character mappings for characters that no longer exist in the shape
-        HashMap<Character, ItemStack> newIngredients = new HashMap<Character, ItemStack>();
+        HashMap<Character, ItemStack> newIngredients = new HashMap<>();
         for (String row : shape) {
             for (Character c : row.toCharArray()) {
                 newIngredients.put(c, ingredients.get(c));
@@ -131,7 +131,7 @@ public class ShapedRecipe implements Recipe, Keyed {
      * @return The mapping of character to ingredients.
      */
     public Map<Character, ItemStack> getIngredientMap() {
-        HashMap<Character, ItemStack> result = new HashMap<Character, ItemStack>();
+        HashMap<Character, ItemStack> result = new HashMap<>();
         for (Map.Entry<Character, ItemStack> ingredient : ingredients.entrySet()) {
             if (ingredient.getValue() == null) {
                 result.put(ingredient.getKey(), null);

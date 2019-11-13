@@ -1,6 +1,5 @@
 package red.mohist.common.remap.remappers;
 
-import java.util.Iterator;
 import java.util.Map;
 import net.md_5.specialsource.CustomRemapper;
 import net.md_5.specialsource.NodeType;
@@ -59,9 +58,7 @@ public class MohistJarRemapper extends CustomRemapper {
         }
 
         if (packageMap != null) {
-            Iterator<String> iter = packageMap.keySet().iterator();
-            while (iter.hasNext()) {
-                String oldPackage = iter.next();
+            for (String oldPackage : packageMap.keySet()) {
                 if (matchClassPackage(oldPackage, className)) {
                     String newPackage = packageMap.get(oldPackage);
 

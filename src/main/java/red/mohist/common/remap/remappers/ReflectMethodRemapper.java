@@ -69,7 +69,7 @@ public class ReflectMethodRemapper extends MethodRemapper {
         super(api, mv, remapper);
     }
 
-    private static void registerMethodRemapper(String owner, String name, Class returnType, Class[] args, Class remapOwner) {
+    private static void registerMethodRemapper(String owner, String name, Class<?> returnType, Class<?>[] args, Class<?> remapOwner) {
         Map<String, Map<String, MethodRedirectRule>> byName = methodRedirectMapping.computeIfAbsent(owner, k -> new HashMap<>());
         Map<String, MethodRedirectRule> byDesc = byName.computeIfAbsent(name, k -> new HashMap<>());
         String methodDescriptor = ASMUtils.toMethodDescriptor(returnType, args);

@@ -48,17 +48,17 @@ public class TileEntityConfig extends ConfigBase
         try
         {
             config = YamlConfiguration.loadConfiguration(configFile);
-            String header = HEADER + "\n";
+            StringBuilder header = new StringBuilder(HEADER + "\n");
             for (Setting toggle : settings.values())
             {
                 if (!toggle.description.equals("")) {
-                    header += "Setting: " + toggle.path + " Default: " + toggle.def + "   # " + toggle.description + "\n";
+                    header.append("Setting: ").append(toggle.path).append(" Default: ").append(toggle.def).append("   # ").append(toggle.description).append("\n");
                 }
 
                 config.addDefault(toggle.path, toggle.def);
                 settings.get(toggle.path).setValue(config.getString(toggle.path));
             }
-            config.options().header(header);
+            config.options().header(header.toString());
             config.options().copyDefaults(true);
 
             version = getInt("config-version", 1);

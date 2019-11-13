@@ -202,7 +202,7 @@ public class StringUtil{
 
     public static ArrayList<String> addSamePreifx(Collection<String> pList,String pPrefix){
         if(pList==null||pList.isEmpty()) {
-            return new ArrayList<String>(0);
+            return new ArrayList<>(0);
         }
         if(pPrefix==null) {
             pPrefix="";

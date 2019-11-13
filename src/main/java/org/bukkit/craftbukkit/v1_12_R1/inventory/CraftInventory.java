@@ -178,7 +178,7 @@ public class CraftInventory implements Inventory {
     }
 
     public HashMap<Integer, ItemStack> all(int materialId) {
-        HashMap<Integer, ItemStack> slots = new HashMap<Integer, ItemStack>();
+        HashMap<Integer, ItemStack> slots = new HashMap<>();
 
         ItemStack[] inventory = getStorageContents();
         for (int i = 0; i < inventory.length; i++) {
@@ -196,7 +196,7 @@ public class CraftInventory implements Inventory {
     }
 
     public HashMap<Integer, ItemStack> all(ItemStack item) {
-        HashMap<Integer, ItemStack> slots = new HashMap<Integer, ItemStack>();
+        HashMap<Integer, ItemStack> slots = new HashMap<>();
         if (item != null) {
             ItemStack[] inventory = getStorageContents();
             for (int i = 0; i < inventory.length; i++) {
@@ -288,7 +288,7 @@ public class CraftInventory implements Inventory {
 
     public HashMap<Integer, ItemStack> addItem(ItemStack... items) {
         Validate.noNullElements(items, "Item cannot be null");
-        HashMap<Integer, ItemStack> leftover = new HashMap<Integer, ItemStack>();
+        HashMap<Integer, ItemStack> leftover = new HashMap<>();
 
         /* TODO: some optimization
          *  - Create a 'firstPartial' with a 'fromIndex'
@@ -353,7 +353,7 @@ public class CraftInventory implements Inventory {
 
     public HashMap<Integer, ItemStack> removeItem(ItemStack... items) {
         Validate.notNull(items, "Items cannot be null");
-        HashMap<Integer, ItemStack> leftover = new HashMap<Integer, ItemStack>();
+        HashMap<Integer, ItemStack> leftover = new HashMap<>();
 
         // TODO: optimization
 
@@ -446,7 +446,7 @@ public class CraftInventory implements Inventory {
         try {
             return this.inventory.getViewers();
         } catch (AbstractMethodError e) {
-            return new java.util.ArrayList<HumanEntity>();
+            return new java.util.ArrayList<>();
         }
     }
 

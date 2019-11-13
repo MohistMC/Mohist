@@ -53,7 +53,7 @@ public class GenericCommandHelpTopic extends HelpTopic {
             sb.append(ChatColor.GOLD);
             sb.append("Aliases: ");
             sb.append(ChatColor.WHITE);
-            sb.append(ChatColor.WHITE + StringUtils.join(command.getAliases(), ", "));
+            sb.append(ChatColor.WHITE).append(StringUtils.join(command.getAliases(), ", "));
         }
         fullText = sb.toString();
     }

@@ -25,7 +25,7 @@ public class DumpCommand extends Command {
     public DumpCommand(String name) {
         super(name);
         this.description = "Universal Dump, which will print the information you need locally!";
-        this.usageMessage = "/mohist *";
+        this.usageMessage = "/dump [potions|enchants|cbcmds|modscmds|entitytypes|biomes]";
     }
 
     private List<String> params = Arrays.asList("potions", "enchants", "cbcmds", "modscmds", "entitytypes", "biomes");
@@ -84,12 +84,12 @@ public class DumpCommand extends Command {
         StringBuilder sb = new StringBuilder();
         for (PotionEffectType pet : PotionEffectType.values()) {
             if (pet != null) {
-                sb.append(pet.toString() + "\n");
+                sb.append(pet.toString()).append("\n");
             }
         }
         for (PotionType pet : PotionType.values()) {
             if (pet != null) {
-                sb.append(pet.toString() + "\n");
+                sb.append(pet.toString()).append("\n");
             }
         }
         try{
@@ -104,7 +104,7 @@ public class DumpCommand extends Command {
     private void dumpEnchant(CommandSender sender) {
         StringBuilder sb = new StringBuilder();
         for (Enchantment ench : Enchantment.values()) {
-            sb.append(ench.toString() + "\n");
+            sb.append(ench.toString()).append("\n");
         }
         try {
             FileUtils.writeByteArrayToFile(new File("dump", "enchant.mo"), sb.toString().getBytes(StandardCharsets.UTF_8));
@@ -117,7 +117,7 @@ public class DumpCommand extends Command {
     private void dumpEntityTypes(CommandSender sender) {
         StringBuilder sb = new StringBuilder();
         for (EntityType ent : EntityType.values()) {
-            sb.append(ent.toString() + "\n");
+            sb.append(ent.toString()).append("\n");
         }
         try {
             FileUtils.writeByteArrayToFile(new File("dump", "entitytypes.mo"), sb.toString().getBytes(StandardCharsets.UTF_8));
@@ -130,7 +130,11 @@ public class DumpCommand extends Command {
     private void dumpCBCommands(CommandSender sender) {
         StringBuilder sb = new StringBuilder();
         for (Command per : MinecraftServer.getServerInst().server.getCommandMap().getCommands()) {
-            sb.append(per.getName() + ": " + per.getPermission() + "\n");
+            // Do not print if there is no permission
+            if (per.getPermission() == null) {
+                continue;
+            }
+            sb.append(per.getName()).append(": ").append(per.getPermission()).append("\n");
         }
         try {
             FileUtils.writeByteArrayToFile(new File("dump", "cbcommands.mo"), sb.toString().getBytes(StandardCharsets.UTF_8));
@@ -143,7 +147,7 @@ public class DumpCommand extends Command {
     private void dumpModsCommands(CommandSender sender) {
         StringBuilder sb = new StringBuilder();
         for(Map.Entry<String,String> m: ServerAPI.forgecmdper.entrySet()){
-            sb.append(m.getKey() + ": " + m.getValue() + "\n");
+            sb.append(m.getKey()).append(": ").append(m.getValue()).append("\n");
         }
         try {
             FileUtils.writeByteArrayToFile(new File("dump", "modscommands.mo"), sb.toString().getBytes(StandardCharsets.UTF_8));
@@ -156,7 +160,7 @@ public class DumpCommand extends Command {
     private void dumpBiomes(CommandSender sender) {
         StringBuilder sb = new StringBuilder();
         for (Biome biome : Biome.values()) {
-            sb.append(biome.toString() + "\n");
+            sb.append(biome.toString()).append("\n");
         }
         try {
             FileUtils.writeByteArrayToFile(new File("dump", "biomes.mo"), sb.toString().getBytes(StandardCharsets.UTF_8));

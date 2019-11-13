@@ -14,8 +14,8 @@ import red.mohist.Mohist;
  * Base Permissible for use in any Permissible object via proxy or extension
  */
 public class PermissibleBase implements Permissible {
-    private final List<PermissionAttachment> attachments = new LinkedList<PermissionAttachment>();
-    private final Map<String, PermissionAttachmentInfo> permissions = new HashMap<String, PermissionAttachmentInfo>();
+    private final List<PermissionAttachment> attachments = new LinkedList<>();
+    private final Map<String, PermissionAttachmentInfo> permissions = new HashMap<>();
     private ServerOperator opable = null;
     private Permissible parent = this;
 
@@ -235,7 +235,7 @@ public class PermissibleBase implements Permissible {
     }
 
     public Set<PermissionAttachmentInfo> getEffectivePermissions() {
-        return new HashSet<PermissionAttachmentInfo>(permissions.values());
+        return new HashSet<>(permissions.values());
     }
 
     private static class RemoveAttachmentRunnable implements Runnable {

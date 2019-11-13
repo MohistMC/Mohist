@@ -2,6 +2,7 @@ package org.bukkit.command.defaults;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -18,7 +19,7 @@ public class PluginsCommand extends BukkitCommand {
         super(name);
         this.description = "Gets a list of plugins running on the server";
         this.usageMessage = "/plugins [load|unload|reload] [name]";
-        this.setAliases(Arrays.asList("pl"));
+        this.setAliases(Collections.singletonList("pl"));
     }
 
     private List<String> params = Arrays.asList("load", "unload", "reload");
@@ -64,7 +65,7 @@ public class PluginsCommand extends BukkitCommand {
 
     @Override
     public List<String> tabComplete(CommandSender sender, String alias, String[] args) throws IllegalArgumentException {
-        List<String> tabs = new ArrayList<String>();
+        List<String> tabs = new ArrayList<>();
         if (args.length == 2 && sender.isOp()) {
             if (checkparam(args[0])) {
                 for (Plugin pl : Bukkit.getServer().getPluginManager().getPlugins()) {

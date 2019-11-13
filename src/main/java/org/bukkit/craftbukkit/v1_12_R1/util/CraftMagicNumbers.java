@@ -137,7 +137,7 @@ public final class CraftMagicNumbers implements UnsafeValues {
 
     @Override
     public List<String> tabCompleteInternalStatisticOrAchievementName(String token, List<String> completions) {
-        List<String> matches = new ArrayList<String>();
+        List<String> matches = new ArrayList<>();
         for (net.minecraft.stats.StatBase statBase : StatList.ALL_STATS) {
             String statistic = statBase.statId;
             if (statistic.startsWith(token)) {

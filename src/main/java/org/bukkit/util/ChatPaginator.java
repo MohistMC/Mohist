@@ -73,7 +73,7 @@ public class ChatPaginator {
         char[] rawChars = (rawString + ' ').toCharArray(); // add a trailing space to trigger pagination
         StringBuilder word = new StringBuilder();
         StringBuilder line = new StringBuilder();
-        List<String> lines = new LinkedList<String>();
+        List<String> lines = new LinkedList<>();
         int lineColorChars = 0;
 
         for (int i = 0; i < rawChars.length; i++) {
@@ -88,10 +88,9 @@ public class ChatPaginator {
             }
 
             if (c == ' ' || c == '\n') {
+                String[] split = word.toString().split("(?<=\\G.{" + lineLength + "})");
                 if (line.length() == 0 && word.length() > lineLength) { // special case: extremely long word begins a line
-                    for (String partialWord : word.toString().split("(?<=\\G.{" + lineLength + "})")) {
-                        lines.add(partialWord);
-                    }
+                    lines.addAll(Arrays.asList(split));
                 } else if (line.length() + 1 + word.length() - lineColorChars == lineLength) { // Line exactly the correct length...newline
                     if (line.length() > 0) {
                         line.append(' ');
@@ -101,7 +100,7 @@ public class ChatPaginator {
                     line = new StringBuilder();
                     lineColorChars = 0;
                 } else if (line.length() + 1 + word.length() - lineColorChars > lineLength) { // Line too long...break the line
-                    for (String partialWord : word.toString().split("(?<=\\G.{" + lineLength + "})")) {
+                    for (String partialWord : split) {
                         lines.add(line.toString());
                         line = new StringBuilder(partialWord);
                     }

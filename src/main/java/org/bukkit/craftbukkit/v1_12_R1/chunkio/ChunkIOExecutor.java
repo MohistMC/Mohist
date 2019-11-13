@@ -10,7 +10,7 @@ public class ChunkIOExecutor {
     static final int BASE_THREADS = 2;
     static final int PLAYERS_PER_THREAD = 50;
 
-    private static final AsynchronousExecutor<QueuedChunk, Chunk, Runnable, RuntimeException> instance = new AsynchronousExecutor<QueuedChunk, Chunk, Runnable, RuntimeException>(new ChunkIOProvider(), BASE_THREADS);
+    private static final AsynchronousExecutor<QueuedChunk, Chunk, Runnable, RuntimeException> instance = new AsynchronousExecutor<>(new ChunkIOProvider(), BASE_THREADS);
 
     public static Chunk syncChunkLoad(World world, AnvilChunkLoader loader, ChunkProviderServer provider, int x, int z) {
         return instance.getSkipQueue(new QueuedChunk(x, z, loader, world, provider));

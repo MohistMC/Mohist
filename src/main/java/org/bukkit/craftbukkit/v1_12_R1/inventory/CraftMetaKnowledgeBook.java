@@ -21,7 +21,7 @@ public class CraftMetaKnowledgeBook extends CraftMetaItem implements KnowledgeBo
     static final ItemMetaKey BOOK_RECIPES = new ItemMetaKey("Recipes");
     static final int MAX_RECIPES = Short.MAX_VALUE;
 
-    protected List<NamespacedKey> recipes = new ArrayList<NamespacedKey>();
+    protected List<NamespacedKey> recipes = new ArrayList<>();
 
     CraftMetaKnowledgeBook(CraftMetaItem meta) {
         super(meta);
@@ -124,7 +124,7 @@ public class CraftMetaKnowledgeBook extends CraftMetaItem implements KnowledgeBo
     @Override
     public CraftMetaKnowledgeBook clone() {
         CraftMetaKnowledgeBook meta = (CraftMetaKnowledgeBook) super.clone();
-        meta.recipes = new ArrayList<NamespacedKey>(recipes);
+        meta.recipes = new ArrayList<>(recipes);
         return meta;
     }
 
@@ -161,7 +161,7 @@ public class CraftMetaKnowledgeBook extends CraftMetaItem implements KnowledgeBo
         super.serialize(builder);
 
         if (hasRecipes()) {
-            List<String> recipesString = new ArrayList<String>();
+            List<String> recipesString = new ArrayList<>();
             for (NamespacedKey recipe : recipes) {
                 recipesString.add(recipe.toString());
             }

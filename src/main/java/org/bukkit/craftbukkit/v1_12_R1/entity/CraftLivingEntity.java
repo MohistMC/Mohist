@@ -142,7 +142,7 @@ public class CraftLivingEntity extends CraftEntity implements LivingEntity {
         if (maxDistance > 120) {
             maxDistance = 120;
         }
-        ArrayList<Block> blocks = new ArrayList<Block>();
+        ArrayList<Block> blocks = new ArrayList<>();
         Iterator<Block> itr = new BlockIterator(this, maxDistance);
         while (itr.hasNext()) {
             Block block = itr.next();
@@ -295,7 +295,7 @@ public class CraftLivingEntity extends CraftEntity implements LivingEntity {
     }
 
     public Collection<PotionEffect> getActivePotionEffects() {
-        List<PotionEffect> effects = new ArrayList<PotionEffect>();
+        List<PotionEffect> effects = new ArrayList<>();
         for (net.minecraft.potion.PotionEffect handle : getHandle().getActivePotionMap().values()) {
             if (PotionEffectType.getById(Potion.getIdFromPotion(handle.getPotion())) == null) {
                 continue; // Cauldron - ignore null types

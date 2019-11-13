@@ -21,7 +21,7 @@ import red.mohist.Mohist;
 
 public class SimpleCommandMap implements CommandMap {
     private static final Pattern PATTERN_ON_SPACE = Pattern.compile(" ", Pattern.LITERAL);
-    protected final Map<String, Command> knownCommands = new HashMap<String, Command>();
+    protected final Map<String, Command> knownCommands = new HashMap<>();
     private final Server server;
 
     public SimpleCommandMap(final Server server) {
@@ -171,7 +171,7 @@ public class SimpleCommandMap implements CommandMap {
         int spaceIndex = cmdLine.indexOf(' ');
 
         if (spaceIndex == -1) {
-            ArrayList<String> completions = new ArrayList<String>();
+            ArrayList<String> completions = new ArrayList<>();
             Map<String, Command> knownCommands = this.knownCommands;
 
             final String prefix = (sender instanceof Player ? "/" : "");
@@ -232,7 +232,7 @@ public class SimpleCommandMap implements CommandMap {
             }
 
             String[] commandStrings = entry.getValue();
-            List<String> targets = new ArrayList<String>();
+            List<String> targets = new ArrayList<>();
             StringBuilder bad = new StringBuilder();
 
             for (String commandString : commandStrings) {

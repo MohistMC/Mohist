@@ -12,7 +12,7 @@ import org.apache.commons.lang.Validate;
 import org.bukkit.plugin.Plugin;
 
 public abstract class MetadataStoreBase<T> {
-    private Map<String, Map<Plugin, MetadataValue>> metadataMap = new ConcurrentHashMap<String, Map<Plugin, MetadataValue>>();
+    private Map<String, Map<Plugin, MetadataValue>> metadataMap = new ConcurrentHashMap<>();
 
     /**
      * Adds a metadata value to an object. Each metadata value is owned by a
@@ -41,11 +41,7 @@ public abstract class MetadataStoreBase<T> {
         Plugin owningPlugin = newMetadataValue.getOwningPlugin();
         Validate.notNull(owningPlugin, "Plugin cannot be null");
         String key = disambiguate(subject, metadataKey);
-        Map<Plugin, MetadataValue> entry = metadataMap.get(key);
-        if (entry == null) {
-            entry = new WeakHashMap<Plugin, MetadataValue>(1);
-            metadataMap.put(key, entry);
-        }
+        Map<Plugin, MetadataValue> entry = metadataMap.computeIfAbsent(key, k -> new WeakHashMap<>(1));
         synchronized (entry) {
             entry.put(owningPlugin, newMetadataValue);
         }
@@ -66,7 +62,7 @@ public abstract class MetadataStoreBase<T> {
         Map<Plugin, MetadataValue> entry = metadataMap.get(key);
         if (entry != null) {
             Collection<MetadataValue> values = entry.values();
-            return Collections.unmodifiableList(new ArrayList<MetadataValue>(values));
+            return Collections.unmodifiableList(new ArrayList<>(values));
         } else {
             return Collections.emptyList();
         }

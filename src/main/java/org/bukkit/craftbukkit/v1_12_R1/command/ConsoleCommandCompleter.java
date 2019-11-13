@@ -1,5 +1,7 @@
 package org.bukkit.craftbukkit.v1_12_R1.command;
 
+import com.google.common.collect.Sets;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -20,10 +22,12 @@ public class ConsoleCommandCompleter implements Completer {
         Waitable<List<String>> waitable = new Waitable<List<String>>() {
             @Override
             protected List<String> evaluate() {
-                List<String> offers = server.getCommandMap().tabComplete(server.getConsoleSender(), buffer);
+                List<String> cbstab = server.getCommandMap().tabComplete(server.getConsoleSender(), buffer);
                 List<String> modstab = server.getCraftCommandMap().tabComplete(server.getConsoleSender(), buffer);
-                offers.addAll(modstab);
-                TabCompleteEvent tabEvent = new TabCompleteEvent(server.getConsoleSender(), buffer, (offers == null) ? Collections.EMPTY_LIST : offers);
+                // Use Sets to union two lists and use an ordered LinkedHashSet
+                List<String> offers = new ArrayList<>(Sets.union(cbstab == null ? Collections.EMPTY_SET : Sets.newLinkedHashSet(cbstab), modstab == null ? Collections.EMPTY_SET : Sets.newLinkedHashSet(modstab)));
+
+                TabCompleteEvent tabEvent = new TabCompleteEvent(server.getConsoleSender(), buffer, offers);
                 server.getPluginManager().callEvent(tabEvent);
 
                 return tabEvent.isCancelled() ? Collections.EMPTY_LIST : tabEvent.getCompletions();

@@ -10,7 +10,7 @@ import org.apache.logging.log4j.Logger;
 import red.mohist.Mohist;
 
 public class ForwardLogHandler extends ConsoleHandler {
-    private Map<String, Logger> cachedLoggers = new ConcurrentHashMap<String, Logger>();
+    private Map<String, Logger> cachedLoggers = new ConcurrentHashMap<>();
 
     private Logger getLogger(String name) {
         Logger logger = cachedLoggers.get(name);

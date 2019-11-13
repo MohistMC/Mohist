@@ -8,7 +8,7 @@ import java.util.List;
  * MapCursorCollection is linked to a specific {@link MapRenderer}.
  */
 public final class MapCursorCollection {
-    private List<MapCursor> cursors = new ArrayList<MapCursor>();
+    private List<MapCursor> cursors = new ArrayList<>();
 
     /**
      * Get the amount of cursors in this collection.

@@ -194,7 +194,7 @@ public class LongObjectHashMap<V> implements Cloneable, Serializable {
      */
     @Deprecated
     public Set<Map.Entry<Long, V>> entrySet() {
-        HashSet<Map.Entry<Long, V>> set = new HashSet<Map.Entry<Long, V>>();
+        HashSet<Map.Entry<Long, V>> set = new HashSet<>();
         for (long key : keySet()) {
             set.add(new Entry(key, get(key)));
         }

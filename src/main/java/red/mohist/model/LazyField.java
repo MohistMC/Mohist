@@ -18,7 +18,7 @@ public class LazyField<T> {
     }
 
     public static <T> LazyField<T> from(Supplier<T> supplier) {
-        return new LazyField(supplier);
+        return new LazyField<>(supplier);
     }
 
     public T get() {

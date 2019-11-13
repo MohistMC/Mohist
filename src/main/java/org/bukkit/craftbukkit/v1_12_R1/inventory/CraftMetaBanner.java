@@ -24,7 +24,7 @@ public class CraftMetaBanner extends CraftMetaItem implements BannerMeta {
     static final ItemMetaKey PATTERN = new ItemMetaKey("Pattern", "pattern");
 
     private DyeColor base;
-    private List<Pattern> patterns = new ArrayList<Pattern>();
+    private List<Pattern> patterns = new ArrayList<>();
 
     CraftMetaBanner(CraftMetaItem meta) {
         super(meta);
@@ -35,7 +35,7 @@ public class CraftMetaBanner extends CraftMetaItem implements BannerMeta {
 
         CraftMetaBanner banner = (CraftMetaBanner) meta;
         base = banner.base;
-        patterns = new ArrayList<Pattern>(banner.patterns);
+        patterns = new ArrayList<>(banner.patterns);
     }
 
     CraftMetaBanner(NBTTagCompound tag) {
@@ -113,12 +113,12 @@ public class CraftMetaBanner extends CraftMetaItem implements BannerMeta {
 
     @Override
     public List<Pattern> getPatterns() {
-        return new ArrayList<Pattern>(patterns);
+        return new ArrayList<>(patterns);
     }
 
     @Override
     public void setPatterns(List<Pattern> patterns) {
-        this.patterns = new ArrayList<Pattern>(patterns);
+        this.patterns = new ArrayList<>(patterns);
     }
 
     @Override

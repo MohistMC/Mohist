@@ -142,15 +142,15 @@ public class ASMUtils {
         return internalName.replace('/', '.');
     }
 
-    public static Type toType(Class clazz) {
+    public static Type toType(Class<?> clazz) {
         return Type.getType(clazz);
     }
 
-    public static String toDescriptor(Class clazz) {
+    public static String toDescriptor(Class<?> clazz) {
         return Type.getDescriptor(clazz);
     }
 
-    public static String toInternalName(Class clazz) {
+    public static String toInternalName(Class<?> clazz) {
         return Type.getInternalName(clazz);
     }
 
@@ -158,9 +158,9 @@ public class ASMUtils {
         return className.replace('.', '/');
     }
 
-    public static String toArgumentDescriptor(Class... classes) {
+    public static String toArgumentDescriptor(Class<?>... classes) {
         StringJoiner sj = new StringJoiner("", "(", ")");
-        for (Class aClass : classes) {
+        for (Class<?> aClass : classes) {
             sj.add(Type.getDescriptor(aClass));
         }
         return sj.toString();
@@ -170,9 +170,9 @@ public class ASMUtils {
         return methodDescriptor.substring(0, methodDescriptor.lastIndexOf(')'));
     }
 
-    public static String toMethodDescriptor(Class returnType, Class... classes) {
+    public static String toMethodDescriptor(Class<?> returnType, Class<?>... classes) {
         StringJoiner sj = new StringJoiner("", "(", ")");
-        for (Class aClass : classes) {
+        for (Class<?> aClass : classes) {
             sj.add(toDescriptor(aClass));
         }
         return sj.toString() + toDescriptor(returnType);

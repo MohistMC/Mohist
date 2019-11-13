@@ -32,7 +32,7 @@ public class DelegateURLClassLoder extends URLClassLoader {
 
     {
         PluginDescriptionFile description = null;
-        Class curClass = this.getClass();
+        Class<?> curClass = this.getClass();
         ClassLoader classLoader = curClass.getClassLoader();
         while (true) {
             if (classLoader == null) {

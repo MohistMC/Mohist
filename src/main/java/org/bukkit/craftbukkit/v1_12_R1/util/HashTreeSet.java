@@ -8,8 +8,8 @@ import java.util.TreeSet;
 
 public class HashTreeSet<V> implements Set<V> {
 
-    private HashSet<V> hash = new HashSet<V>();
-    private TreeSet<V> tree = new TreeSet<V>();
+    private HashSet<V> hash = new HashSet<>();
+    private TreeSet<V> tree = new TreeSet<>();
 
     public HashTreeSet() {
 

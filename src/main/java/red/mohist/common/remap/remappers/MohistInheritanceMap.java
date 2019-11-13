@@ -37,7 +37,7 @@ public class MohistInheritanceMap extends InheritanceMap {
             if (parents == null) {
                 System.out.println("No inheritance information found for " + className);
             } else {
-                ArrayList<String> filteredParents = new ArrayList<String>();
+                ArrayList<String> filteredParents = new ArrayList<>();
 
                 // Include only classes requested
                 for (String parent : parents) {
@@ -56,7 +56,7 @@ public class MohistInheritanceMap extends InheritanceMap {
 
     @Override
     public void save(PrintWriter writer) {
-        List<String> classes = new ArrayList<String>(_inheritanceMap.keySet());
+        List<String> classes = new ArrayList<>(_inheritanceMap.keySet());
         Collections.sort(classes);
 
         for (String className : classes) {
@@ -83,14 +83,14 @@ public class MohistInheritanceMap extends InheritanceMap {
             List<String> parents = Arrays.asList(tokens).subList(1, tokens.length);
 
             if (classMap == null) {
-                setParents(className, new ArrayList<String>(parents));
+                setParents(className, new ArrayList<>(parents));
             } else {
                 String remappedClassName = JarRemapper.mapTypeName(className, /*packageMap*/ null, classMap, /*defaultIfUnmapped*/ null);
                 if (remappedClassName == null) {
                     throw new IOException("Inheritance map input class not remapped: " + className);
                 }
 
-                ArrayList<String> remappedParents = new ArrayList<String>();
+                ArrayList<String> remappedParents = new ArrayList<>();
                 for (String parent : parents) {
                     String remappedParent = JarRemapper.mapTypeName(parent, /*packageMap*/ null, classMap, /*defaultIfUnmapped*/ null);
                     if (remappedParent == null) {

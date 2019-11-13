@@ -47,6 +47,8 @@ dependencies {
     compile 'org.ow2.asm:asm-debug-all:5.2' // mohist
     compile 'org.apache.logging.log4j:log4j-iostreams:2.12.1' // paper
     compile 'org.jline:jline:3.5.1'
+    compile 'commons-io:commons-io:2.5'
+    compile 'net.sf.trove4j:trove4j:3.0.3'
 
     // minecraft_server.1.12.2.jar
     compile 'io.netty:netty-all:4.1.9.Final' // TODO craftbukkit(4.1.24.Final)

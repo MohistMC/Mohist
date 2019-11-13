@@ -93,8 +93,8 @@ public final class CraftChatMessage {
 
                 Style modifier = text.getStyle() != null ?
                         text.getStyle() : new Style();
-                List<ITextComponent> extras = new ArrayList<ITextComponent>();
-                List<ITextComponent> extrasOld = new ArrayList<ITextComponent>(text.getSiblings());
+                List<ITextComponent> extras = new ArrayList<>();
+                List<ITextComponent> extrasOld = new ArrayList<>(text.getSiblings());
                 component = text = new TextComponentString("");
 
                 int pos = 0;
@@ -158,7 +158,7 @@ public final class CraftChatMessage {
     private static class StringMessage {
         private static final Pattern INCREMENTAL_PATTERN = Pattern.compile("(" + String.valueOf(ChatColor.COLOR_CHAR) + "[0-9a-fk-or])|(\\n)|((?:(?:https?):\\/\\/)?(?:[-\\w_\\.]{2,}\\.[a-z]{2,4}.*?(?=[\\.\\?!,;:]?(?:[" + String.valueOf(ChatColor.COLOR_CHAR) + " \\n]|$))))", Pattern.CASE_INSENSITIVE);
 
-        private final List<ITextComponent> list = new ArrayList<ITextComponent>();
+        private final List<ITextComponent> list = new ArrayList<>();
         private final ITextComponent[] output;
         private final String message;
         private ITextComponent currentChatComponent = new TextComponentString("");

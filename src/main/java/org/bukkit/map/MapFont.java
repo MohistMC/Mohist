@@ -8,7 +8,7 @@ import org.bukkit.ChatColor;
  */
 public class MapFont {
 
-    private final HashMap<Character, CharacterSprite> chars = new HashMap<Character, CharacterSprite>();
+    private final HashMap<Character, CharacterSprite> chars = new HashMap<>();
     protected boolean malleable = true;
     private int height = 0;
 

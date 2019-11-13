@@ -46,7 +46,7 @@ public class CraftBeacon extends CraftContainer<TileEntityBeacon> implements Bea
             TileEntityBeacon beacon = (TileEntityBeacon) tileEntity;
 
             Collection<EntityPlayer> nms = beacon.getHumansInRange();
-            Collection<LivingEntity> bukkit = new ArrayList<LivingEntity>(nms.size());
+            Collection<LivingEntity> bukkit = new ArrayList<>(nms.size());
 
             for (EntityPlayer human : nms) {
                 bukkit.add(human.getBukkitEntity());
@@ -56,7 +56,7 @@ public class CraftBeacon extends CraftContainer<TileEntityBeacon> implements Bea
         }
 
         // block is no longer a beacon
-        return new ArrayList<LivingEntity>();
+        return new ArrayList<>();
     }
 
     @Override

@@ -145,8 +145,8 @@ public abstract class PotionEffectType {
      * Loot table unluck.
      */
     public static final PotionEffectType UNLUCK = new PotionEffectTypeWrapper(27);
-    private static final Map<Integer, PotionEffectType> byId = new HashMap<Integer, PotionEffectType>(); // Cauldron change underlying storage to map
-    private static final Map<String, PotionEffectType> byName = new HashMap<String, PotionEffectType>();
+    private static final Map<Integer, PotionEffectType> byId = new HashMap<>(); // Cauldron change underlying storage to map
+    private static final Map<String, PotionEffectType> byName = new HashMap<>();
     // will break on updates.
     private static boolean acceptingNew = true;
     private final int id;

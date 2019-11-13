@@ -56,7 +56,7 @@ public class RemapUtils {
         jarMapping.setInheritanceMap(new MohistInheritanceMap());
         jarMapping.setFallbackInheritanceProvider(new MohistInheritanceProvider());
 
-        Map<String, String> relocations = new HashMap<String, String>();
+        Map<String, String> relocations = new HashMap<>();
         relocations.put("net.minecraft.server", "net.minecraft.server." + Mohist.getNativeVersion());
         try {
             String f = JarTool.getJarDir();
@@ -156,7 +156,7 @@ public class RemapUtils {
         return mapping == null ? typeName : mapping.getNmsSrcName();
     }
 
-    public static String reverseMap(Class clazz) {
+    public static String reverseMap(Class<?> clazz) {
         ClassMapping mapping = jarMapping.byMCPName.get(clazz.getName());
         return mapping == null ? ASMUtils.toInternalName(clazz) : mapping.getNmsSrcName();
     }
@@ -181,23 +181,23 @@ public class RemapUtils {
         return Type.getMethodType(rt, ts).getDescriptor();
     }
 
-    public static String mapMethodName(Class clazz, String name, MethodType methodType) {
+    public static String mapMethodName(Class<?> clazz, String name, MethodType methodType) {
         return mapMethodName(clazz, name, methodType.parameterArray());
     }
 
-    public static String mapMethodName(Class type, String name, Class<?>... parameterTypes) {
+    public static String mapMethodName(Class<?> type, String name, Class<?>... parameterTypes) {
         return jarMapping.fastMapMethodName(type, name, parameterTypes);
     }
 
-    public static String inverseMapMethodName(Class type, String name, Class<?>... parameterTypes) {
+    public static String inverseMapMethodName(Class<?> type, String name, Class<?>... parameterTypes) {
         return jarMapping.fastReverseMapMethodName(type, name, parameterTypes);
     }
 
-    public static String mapFieldName(Class type, String fieldName) {
+    public static String mapFieldName(Class<?> type, String fieldName) {
         return jarMapping.fastMapFieldName(type, fieldName);
     }
 
-    public static String inverseMapFieldName(Class type, String fieldName) {
+    public static String inverseMapFieldName(Class<?> type, String fieldName) {
         return jarMapping.fastReverseMapFieldName(type, fieldName);
     }
 
@@ -205,12 +205,12 @@ public class RemapUtils {
         return Reflection.getCallerClass(3).getClassLoader();
     }
 
-    public static String inverseMapName(Class clazz) {
+    public static String inverseMapName(Class<?> clazz) {
         ClassMapping mapping = jarMapping.byMCPName.get(clazz.getName());
         return mapping == null ? clazz.getName() : mapping.getNmsName();
     }
 
-    public static String inverseMapSimpleName(Class clazz) {
+    public static String inverseMapSimpleName(Class<?> clazz) {
         ClassMapping mapping = jarMapping.byMCPName.get(clazz.getName());
         return mapping == null ? clazz.getSimpleName() : mapping.getNmsSimpleName();
     }

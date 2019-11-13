@@ -51,7 +51,7 @@ public class BlockPistonExtendEvent extends BlockPistonEvent {
      */
     public List<Block> getBlocks() {
         if (blocks == null) {
-            ArrayList<Block> tmp = new ArrayList<Block>();
+            ArrayList<Block> tmp = new ArrayList<>();
             for (int i = 0; i < this.getLength(); i++) {
                 tmp.add(block.getRelative(getDirection(), i + 1));
             }

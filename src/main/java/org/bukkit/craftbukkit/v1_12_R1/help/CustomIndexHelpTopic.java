@@ -15,7 +15,7 @@ public class CustomIndexHelpTopic extends IndexHelpTopic {
     private List<String> futureTopics;
 
     public CustomIndexHelpTopic(HelpMap helpMap, String name, String shortText, String permission, List<String> futureTopics, String preamble) {
-        super(name, shortText, permission, new HashSet<HelpTopic>(), preamble);
+        super(name, shortText, permission, new HashSet<>(), preamble);
         this.helpMap = helpMap;
         this.futureTopics = futureTopics;
     }
@@ -23,7 +23,7 @@ public class CustomIndexHelpTopic extends IndexHelpTopic {
     @Override
     public String getFullText(CommandSender sender) {
         if (futureTopics != null) {
-            List<HelpTopic> topics = new LinkedList<HelpTopic>();
+            List<HelpTopic> topics = new LinkedList<>();
             for (String futureTopic : futureTopics) {
                 HelpTopic topic = helpMap.getHelpTopic(futureTopic);
                 if (topic != null) {

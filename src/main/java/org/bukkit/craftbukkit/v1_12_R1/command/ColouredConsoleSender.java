@@ -10,7 +10,7 @@ import org.fusesource.jansi.Ansi;
 
 public class ColouredConsoleSender extends CraftConsoleCommandSender {
 
-    private static final Map<ChatColor, String> replacements = new EnumMap<ChatColor, String>(ChatColor.class);
+    private static final Map<ChatColor, String> replacements = new EnumMap<>(ChatColor.class);
     private static final ChatColor[] colors = ChatColor.values();
     private static Terminal terminal = null;
 

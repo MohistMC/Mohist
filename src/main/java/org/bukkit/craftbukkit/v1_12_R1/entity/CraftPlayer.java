@@ -124,7 +124,7 @@ import red.mohist.Mohist;
 public class CraftPlayer extends CraftHumanEntity implements Player {
     private static final WeakHashMap<Plugin, WeakReference<Plugin>> pluginWeakReferences = new WeakHashMap<>();
     private final ConversationTracker conversationTracker = new ConversationTracker();
-    private final Set<String> channels = new ConcurrentSet<String>();
+    private final Set<String> channels = new ConcurrentSet<>();
     private final Map<UUID, Set<WeakReference<Plugin>>> hiddenPlayers = Maps.newConcurrentMap(); // new HashMap<>(); // Akarin
     private long firstPlayed = 0;
     private long lastPlayed = 0;
@@ -208,7 +208,7 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
 
         @Override
         public Set<Player> getHiddenPlayers() {
-            Set<Player> ret = new HashSet<Player>();
+            Set<Player> ret = new HashSet<>();
             for (UUID u : hiddenPlayers.keySet()) {
                 ret.add(getServer().getPlayer(u));
             }
@@ -1221,7 +1221,7 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
 
     @Override
     public Map<String, Object> serialize() {
-        Map<String, Object> result = new LinkedHashMap<String, Object>();
+        Map<String, Object> result = new LinkedHashMap<>();
 
         result.put("name", getName());
 

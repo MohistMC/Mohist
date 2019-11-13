@@ -1,6 +1,7 @@
 package org.bukkit.craftbukkit.v1_12_R1.scheduler;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.PriorityQueue;
@@ -47,20 +48,16 @@ public class CraftScheduler implements BukkitScheduler {
         RECENT_TICKS = 30;
     }
 
+    // If the tasks should run on the same tick they should be run FIFO
     /**
      * Main thread logic only
      */
-    final PriorityQueue<CraftTask> pending = new PriorityQueue<CraftTask>(10, // Paper
-            (o1, o2) -> {
-                int value = Long.compare(o1.getNextRun(), o2.getNextRun());
-
-                // If the tasks should run on the same tick they should be run FIFO
-                return value != 0 ? value : Integer.compare(o1.getTaskId(), o2.getTaskId());
-            });
+    final PriorityQueue<CraftTask> pending = new PriorityQueue<>(10, // Paper
+            Comparator.comparingLong(CraftTask::getNextRun).thenComparingInt(CraftTask::getTaskId));
     /**
      * These are tasks that are currently active. It's provided for 'viewing' the current state.
      */
-    final ConcurrentHashMap<Integer, CraftTask> runners = new ConcurrentHashMap<Integer, CraftTask>(); // Paper
+    final ConcurrentHashMap<Integer, CraftTask> runners = new ConcurrentHashMap<>(); // Paper
     /**
      * Counter for IDs. Order doesn't matter, only uniqueness.
      */
@@ -68,7 +65,7 @@ public class CraftScheduler implements BukkitScheduler {
     /**
      * Main thread logic only
      */
-    private final List<CraftTask> temp = new ArrayList<CraftTask>();
+    private final List<CraftTask> temp = new ArrayList<>();
     // Paper start
     private final CraftScheduler asyncScheduler;
     private final boolean isAsyncScheduler;
@@ -80,7 +77,7 @@ public class CraftScheduler implements BukkitScheduler {
     /**
      * Tail of a linked-list. AtomicReference only matters when adding to queue
      */
-    private final AtomicReference<CraftTask> tail = new AtomicReference<CraftTask>(head);
+    private final AtomicReference<CraftTask> tail = new AtomicReference<>(head);
     /**
      * The sync task that is currently running on the main thread.
      */
@@ -179,7 +176,7 @@ public class CraftScheduler implements BukkitScheduler {
 
     public <T> Future<T> callSyncMethod(final Plugin plugin, final Callable<T> task) {
         validate(plugin, task);
-        final CraftFuture<T> future = new CraftFuture<T>(task, plugin, nextId());
+        final CraftFuture<T> future = new CraftFuture<>(task, plugin, nextId());
         handle(future, 0L);
         return future;
     }
@@ -353,7 +350,7 @@ public class CraftScheduler implements BukkitScheduler {
             return this.asyncScheduler.getActiveWorkers();
         }
         // Paper end
-        final ArrayList<BukkitWorker> workers = new ArrayList<BukkitWorker>();
+        final ArrayList<BukkitWorker> workers = new ArrayList<>();
         for (final CraftTask taskObj : runners.values()) {
             // Iterator will be a best-effort (may fail to grab very new values) if called from an async thread
             if (taskObj.isSync()) {
@@ -369,7 +366,7 @@ public class CraftScheduler implements BukkitScheduler {
     }
 
     public List<BukkitTask> getPendingTasks() {
-        final ArrayList<CraftTask> truePending = new ArrayList<CraftTask>();
+        final ArrayList<CraftTask> truePending = new ArrayList<>();
         for (CraftTask task = head.getNext(); task != null; task = task.getNext()) {
             if (task.getTaskId() != -1) {
                 // -1 is special code
@@ -377,7 +374,7 @@ public class CraftScheduler implements BukkitScheduler {
             }
         }
 
-        final ArrayList<BukkitTask> pending = new ArrayList<BukkitTask>();
+        final ArrayList<BukkitTask> pending = new ArrayList<>();
         for (CraftTask task : runners.values()) {
             if (task.getPeriod() >= CraftTask.NO_REPEATING) {
                 pending.add(task);

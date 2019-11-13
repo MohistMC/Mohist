@@ -303,7 +303,7 @@ public class CraftBlock implements Block {
             if (tileEntity instanceof IInventory) {
                 return new CraftCustomContainer(this);
             }
-            return new CraftBlockEntityState<TileEntity>(this, (Class<TileEntity>) tileEntity.getClass());
+            return new CraftBlockEntityState<>(this, (Class<TileEntity>) tileEntity.getClass());
         }
         switch (material) {
         case SIGN:
@@ -388,7 +388,7 @@ public class CraftBlock implements Block {
                 // Note: This will be returned when TileEntity.getOwner() is called
                 return new CraftCustomContainer(this);
             }
-            return new CraftBlockEntityState<TileEntity>(this, (Class<TileEntity>) tileEntity.getClass());
+            return new CraftBlockEntityState<>(this, (Class<TileEntity>) tileEntity.getClass());
         }
     }
 
@@ -529,7 +529,7 @@ public class CraftBlock implements Block {
     }
 
     public Collection<ItemStack> getDrops() {
-        List<ItemStack> drops = new ArrayList<ItemStack>();
+        List<ItemStack> drops = new ArrayList<>();
 
         net.minecraft.block.Block block = this.getNMSBlock();
         if (block != Blocks.AIR) {

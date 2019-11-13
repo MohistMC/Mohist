@@ -284,7 +284,7 @@ public class CraftWorld implements World {
     private static final Random rand = new Random();
     private final WorldServer world;
     private final CraftServer server = (CraftServer) Bukkit.getServer();
-    private final List<BlockPopulator> populators = new ArrayList<BlockPopulator>();
+    private final List<BlockPopulator> populators = new ArrayList<>();
     private final BlockMetadataStore blockMetadata = new BlockMetadataStore(this);
     // Spigot start
     private final Spigot spigot = new Spigot() {
@@ -935,7 +935,7 @@ public class CraftWorld implements World {
     }
 
     public List<Entity> getEntities() {
-        List<Entity> list = new ArrayList<Entity>();
+        List<Entity> list = new ArrayList<>();
 
         for (Object o : world.loadedEntityList) {
             if (o instanceof net.minecraft.entity.Entity) {
@@ -953,7 +953,7 @@ public class CraftWorld implements World {
     }
 
     public List<LivingEntity> getLivingEntities() {
-        List<LivingEntity> list = new ArrayList<LivingEntity>();
+        List<LivingEntity> list = new ArrayList<>();
 
         for (Object o : world.loadedEntityList) {
             if (o instanceof net.minecraft.entity.Entity) {
@@ -978,7 +978,7 @@ public class CraftWorld implements World {
 
     @SuppressWarnings("unchecked")
     public <T extends Entity> Collection<T> getEntitiesByClass(Class<T> clazz) {
-        Collection<T> list = new ArrayList<T>();
+        Collection<T> list = new ArrayList<>();
 
         for (Object entity : world.loadedEntityList) {
             if (entity instanceof net.minecraft.entity.Entity) {
@@ -1000,7 +1000,7 @@ public class CraftWorld implements World {
     }
 
     public Collection<Entity> getEntitiesByClasses(Class<?>... classes) {
-        Collection<Entity> list = new ArrayList<Entity>();
+        Collection<Entity> list = new ArrayList<>();
 
         for (Object entity : world.loadedEntityList) {
             if (entity instanceof net.minecraft.entity.Entity) {
@@ -1032,7 +1032,7 @@ public class CraftWorld implements World {
 
         AxisAlignedBB bb = new AxisAlignedBB(location.getX() - x, location.getY() - y, location.getZ() - z, location.getX() + x, location.getY() + y, location.getZ() + z);
         List<net.minecraft.entity.Entity> entityList = getHandle().getEntitiesInAABBexcluding(null, bb, null);
-        List<Entity> bukkitEntityList = new ArrayList<Entity>(entityList.size());
+        List<Entity> bukkitEntityList = new ArrayList<>(entityList.size());
         for (Object entity : entityList) {
             bukkitEntityList.add(((net.minecraft.entity.Entity) entity).getBukkitEntity());
         }
@@ -1040,7 +1040,7 @@ public class CraftWorld implements World {
     }
 
     public List<Player> getPlayers() {
-        List<Player> list = new ArrayList<Player>(world.playerEntities.size());
+        List<Player> list = new ArrayList<>(world.playerEntities.size());
 
         for (EntityPlayer human : world.playerEntities) {
             HumanEntity bukkitEntity = human.getBukkitEntity();
@@ -1623,7 +1623,7 @@ public class CraftWorld implements World {
     }
 
     public Set<String> getListeningPluginChannels() {
-        Set<String> result = new HashSet<String>();
+        Set<String> result = new HashSet<>();
 
         for (Player player : getPlayers()) {
             result.addAll(player.getListeningPluginChannels());

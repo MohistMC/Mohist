@@ -17,7 +17,7 @@ public class HandlerList {
     /**
      * List of all HandlerLists which have been created, for use in bakeAll()
      */
-    private static ArrayList<HandlerList> allLists = new ArrayList<HandlerList>();
+    private static final ArrayList<HandlerList> allLists = new ArrayList<>();
     /**
      * Dynamic handler lists. These are changed using register() and
      * unregister() and are automatically baked to the handlers array any time
@@ -36,9 +36,9 @@ public class HandlerList {
      * The HandlerList is then added to meta-list for use in bakeAll()
      */
     public HandlerList() {
-        handlerslots = new EnumMap<EventPriority, ArrayList<RegisteredListener>>(EventPriority.class);
+        handlerslots = new EnumMap<>(EventPriority.class);
         for (EventPriority o : EventPriority.values()) {
-            handlerslots.put(o, new ArrayList<RegisteredListener>());
+            handlerslots.put(o, new ArrayList<>());
         }
         synchronized (allLists) {
             allLists.add(this);
@@ -108,7 +108,7 @@ public class HandlerList {
      * @return the list of registered listeners
      */
     public static ArrayList<RegisteredListener> getRegisteredListeners(Plugin plugin) {
-        ArrayList<RegisteredListener> listeners = new ArrayList<RegisteredListener>();
+        ArrayList<RegisteredListener> listeners = new ArrayList<>();
         synchronized (allLists) {
             for (HandlerList h : allLists) {
                 synchronized (h) {
@@ -219,7 +219,7 @@ public class HandlerList {
         if (handlers != null) {
             return; // don't re-bake when still valid
         }
-        List<RegisteredListener> entries = new ArrayList<RegisteredListener>();
+        List<RegisteredListener> entries = new ArrayList<>();
         for (Entry<EventPriority, ArrayList<RegisteredListener>> entry : handlerslots.entrySet()) {
             entries.addAll(entry.getValue());
         }

@@ -58,7 +58,7 @@ public class PluginManagers {
             return true;
         }
         Plugin[] pl = Bukkit.getPluginManager().getPlugins();
-        ArrayList<Plugin> plugins = new ArrayList<Plugin>(java.util.Arrays.asList(pl));
+        ArrayList<Plugin> plugins = new ArrayList<>(java.util.Arrays.asList(pl));
         for (Plugin p : plugins) {
             if (desc.getName().equals(p.getName())) {
                 Object[] f = {desc.getName()};

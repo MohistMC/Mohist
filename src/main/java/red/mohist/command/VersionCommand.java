@@ -2,7 +2,7 @@ package red.mohist.command;
 
 import com.google.common.collect.ImmutableList;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import net.minecraftforge.common.ForgeVersion;
 import org.apache.commons.lang.Validate;
@@ -21,7 +21,7 @@ public class VersionCommand extends Command {
 
         this.description = "Gets the version of this server including any plugins in use";
         this.usageMessage = "/version [plugin name]";
-        this.setAliases(Arrays.asList("ver"));
+        this.setAliases(Collections.singletonList("ver"));
     }
 
     @Override
@@ -118,7 +118,7 @@ public class VersionCommand extends Command {
         Validate.notNull(alias, "Alias cannot be null");
 
         if (args.length == 1 && sender.isOp()) {
-            List<String> completions = new ArrayList<String>();
+            List<String> completions = new ArrayList<>();
             String toComplete = args[0].toLowerCase(java.util.Locale.ENGLISH);
             for (Plugin plugin : Bukkit.getPluginManager().getPlugins()) {
                 if (StringUtil.startsWithIgnoreCase(plugin.getName(), toComplete)) {

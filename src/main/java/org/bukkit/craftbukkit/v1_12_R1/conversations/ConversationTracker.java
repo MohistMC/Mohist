@@ -11,7 +11,7 @@ import red.mohist.Mohist;
  */
 public class ConversationTracker {
 
-    private LinkedList<Conversation> conversationQueue = new LinkedList<Conversation>();
+    private LinkedList<Conversation> conversationQueue = new LinkedList<>();
 
     public synchronized boolean beginConversation(Conversation conversation) {
         if (!conversationQueue.contains(conversation)) {
@@ -42,7 +42,7 @@ public class ConversationTracker {
     public synchronized void abandonAllConversations() {
 
         LinkedList<Conversation> oldQueue = conversationQueue;
-        conversationQueue = new LinkedList<Conversation>();
+        conversationQueue = new LinkedList<>();
         for (Conversation conversation : oldQueue) {
             try {
                 conversation.abandon(new ConversationAbandonedEvent(conversation, new ManuallyAbandonedConversationCanceller()));

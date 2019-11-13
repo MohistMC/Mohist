@@ -23,7 +23,7 @@ public abstract class ConfigBase
     public YamlConfiguration config;
     protected int version;
     protected Map<String, Command> commands;
-    protected Map<String, Setting> settings = new HashMap<String, Setting>();
+    protected Map<String, Setting> settings = new HashMap<>();
 
     /* ======================================================================== */
 
@@ -32,7 +32,7 @@ public abstract class ConfigBase
         this.configFile = new File("mohist-config", fileName);
         this.config = YamlConfiguration.loadConfiguration(configFile);
         this.commandName = commandName;
-        this.commands = new HashMap<String, Command>();
+        this.commands = new HashMap<>();
         this.addCommands();
     }
 

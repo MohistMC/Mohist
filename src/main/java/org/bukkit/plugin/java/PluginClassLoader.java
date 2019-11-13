@@ -27,7 +27,7 @@ import red.mohist.common.remap.RemapUtils;
 public final class PluginClassLoader extends URLClassLoader {
     final JavaPlugin plugin;
     private final JavaPluginLoader loader;
-    private final Map<String, Class<?>> classes = new HashMap<String, Class<?>>();
+    private final Map<String, Class<?>> classes = new HashMap<>();
     private final PluginDescriptionFile description;
     private final File dataFolder;
     private final File file;

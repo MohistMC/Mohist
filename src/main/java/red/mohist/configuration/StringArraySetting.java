@@ -15,8 +15,8 @@ public class StringArraySetting extends ArraySetting<String>
     {    	
     	String[] vals = values.split(",");
     	
-    	this.value_array = new ArrayList<String>(vals.length);
-    	this.value_set = new HashSet<String>(vals.length);
+    	this.value_array = new ArrayList<>(vals.length);
+    	this.value_set = new HashSet<>(vals.length);
     	
     	for(String val : vals)
     	{

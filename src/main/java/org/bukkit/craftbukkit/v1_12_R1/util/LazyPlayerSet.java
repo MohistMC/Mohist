@@ -20,7 +20,7 @@ public class LazyPlayerSet extends LazyHashSet<Player> {
             throw new IllegalStateException("Reference already created!");
         }
         List<EntityPlayerMP> players = server.getPlayerList().getPlayers();
-        HashSet<Player> reference = new HashSet<Player>(players.size());
+        HashSet<Player> reference = new HashSet<>(players.size());
         for (EntityPlayerMP player : players) {
             reference.add(player.getBukkitEntity());
         }

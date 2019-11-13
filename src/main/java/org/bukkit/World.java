@@ -1596,7 +1596,7 @@ public interface World extends PluginMessageRecipient, Metadatable {
          */
         THE_END(1);
 
-        private static final Map<Integer, Environment> lookup = new HashMap<Integer, Environment>();
+        private static final Map<Integer, Environment> lookup = new HashMap<>();
 
         static {
             for (Environment env : values()) {

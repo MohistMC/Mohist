@@ -9,7 +9,7 @@ import org.bukkit.Material;
  */
 public class MonsterEggs extends TexturedMaterial {
 
-    private static final List<Material> textures = new ArrayList<Material>();
+    private static final List<Material> textures = new ArrayList<>();
 
     static {
         textures.add(Material.STONE);

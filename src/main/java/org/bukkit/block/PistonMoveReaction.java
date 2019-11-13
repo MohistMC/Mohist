@@ -33,7 +33,7 @@ public enum PistonMoveReaction {
      */
     PUSH_ONLY(4);
 
-    private static Map<Integer, PistonMoveReaction> byId = new HashMap<Integer, PistonMoveReaction>();
+    private static Map<Integer, PistonMoveReaction> byId = new HashMap<>();
 
     static {
         for (PistonMoveReaction reaction : PistonMoveReaction.values()) {

@@ -1,9 +1,9 @@
 package org.bukkit.craftbukkit.v1_12_R1.inventory;
 
-import com.google.common.base.Predicates;
-import com.google.common.collect.Iterables;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.StreamSupport;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
@@ -22,7 +22,7 @@ public class InventoryWrapper implements IInventory {
 
     public InventoryWrapper(Inventory inventory) {
         this.inventory = inventory;
-        this.viewers = new ArrayList<HumanEntity>();
+        this.viewers = new ArrayList<>();
     }
 
     @Override
@@ -126,7 +126,7 @@ public class InventoryWrapper implements IInventory {
     @Override
     public List<ItemStack> getContents() {
         int size = getSizeInventory();
-        List<ItemStack> items = new ArrayList<ItemStack>(size);
+        List<ItemStack> items = new ArrayList<>(size);
 
         for (int i = 0; i < size; i++) {
             items.set(i, getStackInSlot(i));
@@ -182,6 +182,6 @@ public class InventoryWrapper implements IInventory {
 
     @Override
     public boolean isEmpty() {
-        return Iterables.any(inventory, Predicates.notNull());
+        return StreamSupport.stream(inventory.spliterator(), false).anyMatch(Objects::nonNull);
     }
 }

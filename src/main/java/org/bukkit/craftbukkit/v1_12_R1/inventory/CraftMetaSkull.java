@@ -1,6 +1,7 @@
 package org.bukkit.craftbukkit.v1_12_R1.inventory;
 
 import com.google.common.collect.ImmutableMap.Builder;
+import com.google.common.util.concurrent.Futures;
 import com.mojang.authlib.GameProfile;
 import java.util.Map;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -76,7 +77,7 @@ class CraftMetaSkull extends CraftMetaItem implements SkullMeta {
 
         if (profile != null) {
             // Fill in textures
-            profile = com.google.common.util.concurrent.Futures.getUnchecked(TileEntitySkull.updateGameprofile(profile, com.google.common.base.Predicates.alwaysTrue(), true)); // Spigot
+            profile = Futures.getUnchecked(TileEntitySkull.updateGameprofile(profile, gameProfile -> true, true)); // Spigot
 
             NBTTagCompound owner = new NBTTagCompound();
             NBTUtil.writeGameProfile(owner, profile);

@@ -71,7 +71,7 @@ public class MohistJarMapping implements ClassRemapperSupplier {
         }
     }
 
-    public String fastMapFieldName(Class clazz, String name) {
+    public String fastMapFieldName(Class<?> clazz, String name) {
         if (doNotMapField.contains(clazz.getName())) {
             return name;
         }
@@ -84,7 +84,7 @@ public class MohistJarMapping implements ClassRemapperSupplier {
         }
     }
 
-    public String fastReverseMapFieldName(Class clazz, String name) {
+    public String fastReverseMapFieldName(Class<?> clazz, String name) {
         if (doNotMapField.contains(clazz.getName())) {
             return name;
         }
@@ -97,7 +97,7 @@ public class MohistJarMapping implements ClassRemapperSupplier {
         }
     }
 
-    public String fastMapMethodName(Class clazz, String name, Class... args) {
+    public String fastMapMethodName(Class<?> clazz, String name, Class<?>... args) {
         if (doNotMapMethod.contains(clazz.getName())) {
             return name;
         }
@@ -110,7 +110,7 @@ public class MohistJarMapping implements ClassRemapperSupplier {
         }
     }
 
-    public String fastReverseMapMethodName(Class clazz, String name, Class... args) {
+    public String fastReverseMapMethodName(Class<?> clazz, String name, Class<?>... args) {
         if (doNotMapMethod.contains(clazz.getName())) {
             return name;
         }
@@ -123,7 +123,7 @@ public class MohistJarMapping implements ClassRemapperSupplier {
         }
     }
 
-    private String fastMapFieldName(boolean inverse, Class clazz, String key, String name) {
+    private String fastMapFieldName(boolean inverse, Class<?> clazz, String key, String name) {
         if (clazz == null) {
             return null;
         }
@@ -143,7 +143,7 @@ public class MohistJarMapping implements ClassRemapperSupplier {
         return null;
     }
 
-    private String directFastMapFieldName(boolean inverse, Class clazz, String name) {
+    private String directFastMapFieldName(boolean inverse, Class<?> clazz, String name) {
         String className = clazz.getName();
         if (!className.startsWith("net.minecraft.")) {
             return null;
@@ -159,7 +159,7 @@ public class MohistJarMapping implements ClassRemapperSupplier {
         return map.get(name);
     }
 
-    private String fastMapMethodName(boolean inverse, Class clazz, String key, String name, Class... args) {
+    private String fastMapMethodName(boolean inverse, Class<?> clazz, String key, String name, Class<?>... args) {
         if (clazz == null) {
             return null;
         }
@@ -176,7 +176,7 @@ public class MohistJarMapping implements ClassRemapperSupplier {
         if (mapName != null) {
             return mapName;
         }
-        for (Class aClass : clazz.getInterfaces()) {
+        for (Class<?> aClass : clazz.getInterfaces()) {
             mapName = fastMapMethodName(inverse, aClass, key, name, args);
             if (mapName != null) {
                 return mapName;
@@ -185,7 +185,7 @@ public class MohistJarMapping implements ClassRemapperSupplier {
         return null;
     }
 
-    private String directFastMapMethodName(boolean inverse, Class clazz, String name, Class... args) {
+    private String directFastMapMethodName(boolean inverse, Class<?> clazz, String name, Class<?>... args) {
         String className = clazz.getName();
         if (!className.startsWith("net.minecraft.")) {
             return null;
@@ -206,18 +206,18 @@ public class MohistJarMapping implements ClassRemapperSupplier {
 
     }
 
-    private String join(Class... args) {
+    private String join(Class<?>... args) {
         if (args == null) {
             return "";
         }
         StringJoiner sj = new StringJoiner(",");
-        for (Class arg : args) {
+        for (Class<?> arg : args) {
             sj.add(arg.getName());
         }
         return sj.toString();
     }
 
-    public final LinkedHashMap<String, String> packages = new LinkedHashMap<String, String>();
+    public final LinkedHashMap<String, String> packages = new LinkedHashMap<>();
     protected InheritanceMap inheritanceMap = new InheritanceMap();
     protected InheritanceProvider fallbackInheritanceProvider = null;
     protected String currentClass = null;

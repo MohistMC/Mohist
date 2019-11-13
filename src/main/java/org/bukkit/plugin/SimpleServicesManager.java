@@ -9,6 +9,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.Objects;
 import java.util.Set;
 import org.bukkit.Bukkit;
 import org.bukkit.event.server.ServiceRegisterEvent;
@@ -22,7 +23,7 @@ public class SimpleServicesManager implements ServicesManager {
     /**
      * Map of providers.
      */
-    private final Map<Class<?>, List<RegisteredServiceProvider<?>>> providers = new HashMap<Class<?>, List<RegisteredServiceProvider<?>>>();
+    private final Map<Class<?>, List<RegisteredServiceProvider<?>>> providers = new HashMap<>();
 
     /**
      * Register a provider of a service.
@@ -36,13 +37,9 @@ public class SimpleServicesManager implements ServicesManager {
     public <T> void register(Class<T> service, T provider, Plugin plugin, ServicePriority priority) {
         RegisteredServiceProvider<T> registeredProvider = null;
         synchronized (providers) {
-            List<RegisteredServiceProvider<?>> registered = providers.get(service);
-            if (registered == null) {
-                registered = new ArrayList<RegisteredServiceProvider<?>>();
-                providers.put(service, registered);
-            }
+            List<RegisteredServiceProvider<?>> registered = providers.computeIfAbsent(service, k -> new ArrayList<>());
 
-            registeredProvider = new RegisteredServiceProvider<T>(service, provider, priority, plugin);
+            registeredProvider = new RegisteredServiceProvider<>(service, provider, priority, plugin);
 
             // Insert the provider into the collection, much more efficient big O than sort
             int position = Collections.binarySearch(registered, registeredProvider);
@@ -62,7 +59,7 @@ public class SimpleServicesManager implements ServicesManager {
      * @param plugin The plugin
      */
     public void unregisterAll(Plugin plugin) {
-        ArrayList<ServiceUnregisterEvent> unregisteredEvents = new ArrayList<ServiceUnregisterEvent>();
+        ArrayList<ServiceUnregisterEvent> unregisteredEvents = new ArrayList<>();
         synchronized (providers) {
             Iterator<Map.Entry<Class<?>, List<RegisteredServiceProvider<?>>>> it = providers.entrySet().iterator();
 
@@ -78,7 +75,7 @@ public class SimpleServicesManager implements ServicesManager {
                             RegisteredServiceProvider<?> registered = it2.next();
 
                             Plugin oPlugin = registered.getPlugin();
-                            if (oPlugin != null ? oPlugin.equals(plugin) : plugin == null) {
+                            if (Objects.equals(oPlugin, plugin)) {
                                 it2.remove();
                                 unregisteredEvents.add(new ServiceUnregisterEvent(registered));
                             }
@@ -106,7 +103,7 @@ public class SimpleServicesManager implements ServicesManager {
      * @param provider The service provider implementation
      */
     public void unregister(Class<?> service, Object provider) {
-        ArrayList<ServiceUnregisterEvent> unregisteredEvents = new ArrayList<ServiceUnregisterEvent>();
+        ArrayList<ServiceUnregisterEvent> unregisteredEvents = new ArrayList<>();
         synchronized (providers) {
             Iterator<Map.Entry<Class<?>, List<RegisteredServiceProvider<?>>>> it = providers.entrySet().iterator();
 
@@ -154,7 +151,7 @@ public class SimpleServicesManager implements ServicesManager {
      * @param provider The service provider implementation
      */
     public void unregister(Object provider) {
-        ArrayList<ServiceUnregisterEvent> unregisteredEvents = new ArrayList<ServiceUnregisterEvent>();
+        ArrayList<ServiceUnregisterEvent> unregisteredEvents = new ArrayList<>();
         synchronized (providers) {
             Iterator<Map.Entry<Class<?>, List<RegisteredServiceProvider<?>>>> it = providers.entrySet().iterator();
 

@@ -31,7 +31,7 @@ public class CraftBanner extends CraftBlockEntityState<TileEntityBanner> impleme
         super.load(banner);
 
         base = DyeColor.getByDyeData((byte) banner.baseColor.getDyeDamage());
-        patterns = new ArrayList<Pattern>();
+        patterns = new ArrayList<>();
 
         if (banner.patterns != null) {
             for (int i = 0; i < banner.patterns.tagCount(); i++) {
@@ -53,12 +53,12 @@ public class CraftBanner extends CraftBlockEntityState<TileEntityBanner> impleme
 
     @Override
     public List<Pattern> getPatterns() {
-        return new ArrayList<Pattern>(patterns);
+        return new ArrayList<>(patterns);
     }
 
     @Override
     public void setPatterns(List<Pattern> patterns) {
-        this.patterns = new ArrayList<Pattern>(patterns);
+        this.patterns = new ArrayList<>(patterns);
     }
 
     @Override

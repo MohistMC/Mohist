@@ -16,7 +16,7 @@ import org.bukkit.material.MaterialData;
 public class ShapelessRecipe implements Recipe, Keyed {
     private final NamespacedKey key;
     private final ItemStack output;
-    private final List<ItemStack> ingredients = new ArrayList<ItemStack>();
+    private final List<ItemStack> ingredients = new ArrayList<>();
 
     public ShapelessRecipe(ItemStack result) {
         this.key = NamespacedKey.randomKey();
@@ -222,7 +222,7 @@ public class ShapelessRecipe implements Recipe, Keyed {
      * @return The input list
      */
     public List<ItemStack> getIngredientList() {
-        ArrayList<ItemStack> result = new ArrayList<ItemStack>(ingredients.size());
+        ArrayList<ItemStack> result = new ArrayList<>(ingredients.size());
         for (ItemStack ingredient : ingredients) {
             result.add(ingredient.clone());
         }

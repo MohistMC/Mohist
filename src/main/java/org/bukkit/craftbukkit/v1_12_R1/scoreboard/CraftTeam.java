@@ -1,6 +1,7 @@
 package org.bukkit.craftbukkit.v1_12_R1.scoreboard;
 
 import com.google.common.collect.ImmutableSet;
+import java.util.Objects;
 import java.util.Set;
 import net.minecraft.scoreboard.ScorePlayerTeam;
 import net.minecraft.scoreboard.Team.EnumVisible;
@@ -286,7 +287,7 @@ final class CraftTeam extends CraftScoreboardComponent implements Team {
             return false;
         }
         final CraftTeam other = (CraftTeam) obj;
-        return !(this.team != other.team && (this.team == null || !this.team.equals(other.team)));
+        return !(!Objects.equals(this.team, other.team));
     }
 
 }
