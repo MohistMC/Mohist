@@ -968,26 +968,7 @@
          if (this.isMovementBlocked())
          {
              this.isJumping = false;
-@@ -2390,7 +2691,17 @@
-         this.moveForward *= 0.98F;
-         this.randomYawVelocity *= 0.9F;
-         this.updateElytra();
--        this.travel(this.moveStrafing, this.moveVertical, this.moveForward);
-+
-+        if (MohistConfig.instance.asyn_aimove.getValue()) {
-+            float x = this.moveStrafing;//hose
-+            float y = this.moveVertical;
-+            float z = this.moveForward;
-+            AImove ait = new AImove(x, y, z);
-+            ait.fork();
-+            ait.join();
-+        } else {
-+            this.travel(this.moveStrafing, this.moveVertical, this.moveForward);
-+        }
-         this.world.profiler.endSection();
-         this.world.profiler.startSection("push");
-         this.collideWithNearbyEntities();
-@@ -2426,7 +2737,8 @@
+@@ -2426,7 +2727,8 @@
  
          if (!this.world.isRemote)
          {
@@ -997,7 +978,7 @@
          }
      }
  
-@@ -2434,38 +2746,41 @@
+@@ -2434,38 +2736,41 @@
      {
      }
  
@@ -1064,7 +1045,7 @@
      }
  
      protected void collideWithEntity(Entity entityIn)
-@@ -2560,12 +2875,12 @@
+@@ -2560,12 +2865,12 @@
  
      public boolean canBeCollidedWith()
      {
@@ -1079,7 +1060,7 @@
      }
  
      protected void markVelocityChanged()
-@@ -2629,7 +2944,7 @@
+@@ -2629,7 +2934,7 @@
          {
              PotionEffect effect = iterator.next();
  
@@ -1088,7 +1069,7 @@
              {
                  onFinishedPotionEffect(effect);
                  iterator.remove();
-@@ -2667,7 +2982,8 @@
+@@ -2667,7 +2972,8 @@
          if (this.isHandActive())
          {
              ItemStack itemstack = this.getHeldItem(this.getActiveHand());
@@ -1098,7 +1079,7 @@
  
              if (itemstack == this.activeItemStack)
              {
-@@ -2785,8 +3101,25 @@
+@@ -2785,8 +3091,25 @@
          if (!this.activeItemStack.isEmpty() && this.isHandActive())
          {
              this.updateItemUse(this.activeItemStack, 16);
@@ -1126,7 +1107,7 @@
              itemstack = net.minecraftforge.event.ForgeEventFactory.onItemUseFinish(this, activeItemStackCopy, getItemInUseCount(), itemstack);
              this.setHeldItem(this.getActiveHand(), itemstack);
              this.resetActiveHand();
-@@ -2897,11 +3230,14 @@
+@@ -2897,11 +3220,14 @@
  
              if (flag1)
              {
@@ -1146,7 +1127,7 @@
                  }
              }
          }
-@@ -2936,6 +3272,11 @@
+@@ -2936,6 +3262,11 @@
          }
      }
  
@@ -1158,7 +1139,7 @@
      public boolean canBeHitWithPotion()
      {
          return true;
-@@ -2949,7 +3290,7 @@
+@@ -2949,7 +3280,7 @@
      @SuppressWarnings("unchecked")
      @Override
      @Nullable
@@ -1167,7 +1148,7 @@
      {
          if (capability == net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABILITY)
          {
-@@ -2961,7 +3302,7 @@
+@@ -2961,7 +3292,7 @@
      }
  
      @Override
@@ -1176,7 +1157,7 @@
      {
          return capability == net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABILITY || super.hasCapability(capability, facing);
      }
-@@ -2975,7 +3316,7 @@
+@@ -2975,7 +3306,7 @@
      public void setPartying(BlockPos pos, boolean p_191987_2_)
      {
      }
@@ -1185,23 +1166,3 @@
      @Override
      public void moveRelative(float strafe, float up, float forward, float friction)
      {
-@@ -3001,4 +3342,19 @@
-             this.motionZ += (double)(forward * f2 + strafe * f1);
-         }
-     }
-+
-+    public class AImove extends RecursiveAction {
-+        float x, y, z;
-+
-+        public AImove(float x, float y, float z) {
-+            this.x = x;
-+            this.y = y;
-+            this.z = z;
-+        }
-+
-+        @Override
-+        protected void compute() {
-+            travel(this.x, this.y, this.z);
-+        }
-+    }
- }

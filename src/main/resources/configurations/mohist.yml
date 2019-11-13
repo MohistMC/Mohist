@@ -8,22 +8,17 @@
 # Setting: perfomance.maxEntityCollisionsPerTick Default: 8   # Max Entity Collisions PerTick
 # Setting: server-type Default: FML   # Set the server type displayed in motd (FML/BUKKIT/VANILLA)
 # Setting: remap.multiVersionRemapPlugins Default:    # Need a list of compatible plugins
-# Setting: messages.Outdate-Server Default: 过期的服务器! 请使用 {0}   # Outdate Server
 # Setting: remap.multiVersionRemap Default: false   # Compatible with multiple versions of nms
 # Setting: debug.printInvalidMapping Default: false   # printInvalidMapping
 # Setting: eventCanceled.explosion Default: false   # BlockExplosionEvent isCanceled
 # Setting: remap.printRemapPluginClass Default: false   # printRemapPluginClass
 # Setting: debug.printThreadTimeCost Default: false   # printThreadTimeCost
-# Setting: messages.Outdate-Client Default: 过期的客户端! 请使用 {0}   # Outdate Client
 # Setting: support_nocmd Default: false   # Some server tools do not recognize I18N
 # Setting: check_update Default: true   # Check Update
 # Setting: remap.reflectRemap Default: true   # Compatible reflection plugin
 # Setting: remap.nmsRemap Default: true   # Compatible with nms plugin
 # Setting: lang Default: en_US   # Mohist internationalization language setting, will return the default system language when your settings are invalid
 # Setting: perfomance.entityCollideFrequency Default: 2   # Entity Collide Frequency
-# Setting: asyn.aimove Default: false   # Ai-Move
-# Setting: messages.use-unknow-command Default: 未知指令! 使用 "/help" 获得帮助!   # Prompt unknown command
-# Setting: asyn.checkLight Default: false   # checkLight
 
 forgeversion:
   build: 2847
@@ -31,10 +26,6 @@ forgeversion:
   minor: 23
   major: 14
 console_name: Server
-asyn:
-  spawnerCreature: false
-  aimove: false
-  checkLight: false
 perfomance:
   maxEntityCollisionsPerTick: 8
   entityCollideFrequency: 2
@@ -61,3 +52,7 @@ debug:
 support_nocmd: false
 check_update: true
 config-version: 1
+forge:
+  disablechunkforcesystem: false
+world:
+  stopserversaveworlds: false

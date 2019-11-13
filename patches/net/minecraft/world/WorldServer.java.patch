@@ -346,7 +346,7 @@
      public void tick()
      {
          super.tick();
-@@ -198,9 +414,20 @@
+@@ -198,9 +414,12 @@
  
          this.profiler.startSection("mobSpawner");
  
@@ -355,21 +355,12 @@
 +        long time = this.worldInfo.getWorldTotalTime();
 +        if (this.getGameRules().getBoolean("doMobSpawning") && this.worldInfo.getTerrainType() != WorldType.DEBUG_ALL_BLOCK_STATES && (this.spawnHostileMobs || this.spawnPeacefulMobs) && this.playerEntities.size() > 0)
          {
--            this.entitySpawner.findChunksForSpawning(this, this.spawnHostileMobs, this.spawnPeacefulMobs, this.worldInfo.getWorldTotalTime() % 400L == 0L);
-+            boolean flag = this.spawnHostileMobs && (this.ticksPerMonsterSpawns != 0 && time % this.ticksPerMonsterSpawns == 0L);//hose
-+            boolean flag1 = this.spawnPeacefulMobs && (this.ticksPerAnimalSpawns != 0 && time % this.ticksPerAnimalSpawns == 0L);//hose
-+            boolean flag2 = this.worldInfo.getWorldTotalTime() % 400L == 0L;//hose
-+            if (MohistConfig.instance.asyn_spawnerCreature.getValue()) {
-+                spawnerCreature sc = new spawnerCreature(this, flag, flag1, flag2);//hose
-+                sc.fork();//hose
-+            } else {
-+                this.entitySpawner.findChunksForSpawning(this, flag, flag1, flag2);
-+            }
+             this.entitySpawner.findChunksForSpawning(this, this.spawnHostileMobs, this.spawnPeacefulMobs, this.worldInfo.getWorldTotalTime() % 400L == 0L);
 +            // CraftBukkit end
          }
  
          this.profiler.endStartSection("chunkSource");
-@@ -212,7 +439,7 @@
+@@ -212,7 +431,7 @@
              this.setSkylightSubtracted(j);
          }
  
@@ -378,7 +369,7 @@
  
          if (this.getGameRules().getBoolean("doDaylightCycle"))
          {
-@@ -236,6 +463,7 @@
+@@ -236,6 +455,7 @@
          }
          this.profiler.endSection();
          this.sendQueuedBlockEvents();
@@ -386,7 +377,7 @@
      }
  
      @Nullable
-@@ -268,7 +496,7 @@
+@@ -268,7 +488,7 @@
                  {
                      ++i;
                  }
@@ -395,7 +386,7 @@
                  {
                      ++j;
                  }
-@@ -302,15 +530,21 @@
+@@ -302,15 +522,21 @@
      {
          if (this.allPlayersSleeping && !this.isRemote)
          {
@@ -419,7 +410,7 @@
          }
          else
          {
-@@ -346,7 +580,7 @@
+@@ -346,7 +572,7 @@
          this.worldInfo.setSpawnZ(j);
      }
  
@@ -428,7 +419,7 @@
      {
          return this.getChunkProvider().chunkExists(x, z);
      }
-@@ -355,14 +589,19 @@
+@@ -355,7 +581,7 @@
      {
          this.profiler.startSection("playerCheckLight");
  
@@ -437,20 +428,7 @@
          {
              int i = this.rand.nextInt(this.playerEntities.size());
              EntityPlayer entityplayer = this.playerEntities.get(i);
-             int j = MathHelper.floor(entityplayer.posX) + this.rand.nextInt(11) - 5;
-             int k = MathHelper.floor(entityplayer.posY) + this.rand.nextInt(11) - 5;
-             int l = MathHelper.floor(entityplayer.posZ) + this.rand.nextInt(11) - 5;
--            this.checkLight(new BlockPos(j, k, l));
-+            if (MohistConfig.instance.asyn_checkLight.getValue()) {
-+                clight cl = new clight(j, k, l);//hose
-+                cl.fork();
-+            } else {
-+                this.checkLight(new BlockPos(j, k, l));
-+            }
-         }
- 
-         this.profiler.endSection();
-@@ -392,97 +631,94 @@
+@@ -392,97 +618,94 @@
              {
                  this.profiler.startSection("getChunk");
                  Chunk chunk = iterator.next();
@@ -616,7 +594,7 @@
              this.profiler.endSection();
          }
      }
-@@ -611,6 +847,7 @@
+@@ -611,6 +834,7 @@
  
          this.provider.onWorldUpdateEntities();
          super.updateEntities();
@@ -624,7 +602,7 @@
      }
  
      protected void tickPlayers()
-@@ -682,79 +919,70 @@
+@@ -682,79 +906,70 @@
          {
              return false;
          }
@@ -752,7 +730,7 @@
          }
      }
  
-@@ -766,6 +994,7 @@
+@@ -766,6 +981,7 @@
          int j = i + 16 + 2;
          int k = (chunkpos.z << 4) - 2;
          int l = k + 16 + 2;
@@ -760,7 +738,7 @@
          return this.getPendingBlockUpdates(new StructureBoundingBox(i, 0, k, j, 256, l), remove);
      }
  
-@@ -817,21 +1046,6 @@
+@@ -817,21 +1033,6 @@
          return list;
      }
  
@@ -782,7 +760,7 @@
      private boolean canSpawnNPCs()
      {
          return this.mcServer.getCanSpawnNPCs();
-@@ -845,9 +1059,53 @@
+@@ -845,9 +1046,53 @@
      protected IChunkProvider createChunkProvider()
      {
          IChunkLoader ichunkloader = this.saveHandler.getChunkLoader(this.provider);
@@ -837,7 +815,7 @@
      public boolean isBlockModifiable(EntityPlayer player, BlockPos pos)
      {
          return super.isBlockModifiable(player, pos);
-@@ -921,6 +1179,22 @@
+@@ -921,6 +1166,22 @@
          {
              if (net.minecraftforge.event.ForgeEventFactory.onCreateWorldSpawn(this, settings)) return;
              this.findingSpawnPoint = true;
@@ -860,7 +838,7 @@
              BiomeProvider biomeprovider = this.provider.getBiomeProvider();
              List<Biome> list = biomeprovider.getBiomesToSpawnIn();
              Random random = new Random(this.getSeed());
-@@ -941,7 +1215,7 @@
+@@ -941,7 +1202,7 @@
  
              int l = 0;
  
@@ -869,7 +847,7 @@
              {
                  i += random.nextInt(64) - random.nextInt(64);
                  k += random.nextInt(64) - random.nextInt(64);
-@@ -987,33 +1261,27 @@
+@@ -987,33 +1248,27 @@
      }
  
      public void saveAllChunks(boolean all, @Nullable IProgressUpdate progressCallback) throws MinecraftException
@@ -908,7 +886,7 @@
          }
      }
  
-@@ -1039,6 +1307,12 @@
+@@ -1039,6 +1294,12 @@
              }
          }
  
@@ -921,7 +899,7 @@
          this.worldInfo.setBorderSize(this.getWorldBorder().getDiameter());
          this.worldInfo.getBorderCenterX(this.getWorldBorder().getCenterX());
          this.worldInfo.getBorderCenterZ(this.getWorldBorder().getCenterZ());
-@@ -1058,6 +1332,12 @@
+@@ -1058,6 +1319,12 @@
          return this.canAddEntity(entityIn) ? super.spawnEntity(entityIn) : false;
      }
  
@@ -934,7 +912,7 @@
      public void loadEntities(Collection<Entity> entityCollection)
      {
          for (Entity entity : Lists.newArrayList(entityCollection))
-@@ -1074,7 +1354,6 @@
+@@ -1074,7 +1341,6 @@
      {
          if (entityIn.isDead)
          {
@@ -942,7 +920,7 @@
              return false;
          }
          else
-@@ -1085,7 +1364,7 @@
+@@ -1085,7 +1351,7 @@
              {
                  Entity entity = this.entitiesByUuid.get(uuid);
  
@@ -951,7 +929,7 @@
                  {
                      this.unloadedEntityList.remove(entity);
                  }
-@@ -1093,7 +1372,6 @@
+@@ -1093,7 +1359,6 @@
                  {
                      if (!(entityIn instanceof EntityPlayer))
                      {
@@ -959,7 +937,7 @@
                          return false;
                      }
  
-@@ -1141,9 +1419,17 @@
+@@ -1141,9 +1406,17 @@
  
      public boolean addWeatherEffect(Entity entityIn)
      {
@@ -978,7 +956,7 @@
              return true;
          }
          else
-@@ -1164,11 +1450,15 @@
+@@ -1164,11 +1437,15 @@
  
      public Explosion newExplosion(@Nullable Entity entityIn, double x, double y, double z, float strength, boolean isFlaming, boolean isSmoking)
      {
@@ -998,7 +976,7 @@
          if (!isSmoking)
          {
              explosion.clearAffectedBlockPositions();
-@@ -1211,7 +1501,8 @@
+@@ -1211,7 +1488,8 @@
              {
                  if (this.fireBlockEvent(blockeventdata))
                  {
@@ -1008,7 +986,7 @@
                  }
              }
  
-@@ -1298,11 +1589,19 @@
+@@ -1298,11 +1576,19 @@
  
      public void spawnParticle(EnumParticleTypes particleType, boolean longDistance, double xCoord, double yCoord, double zCoord, int numberOfParticles, double xOffset, double yOffset, double zOffset, double particleSpeed, int... particleArguments)
      {
@@ -1028,7 +1006,7 @@
              this.sendPacketWithinDistance(entityplayermp, longDistance, xCoord, yCoord, zCoord, spacketparticles);
          }
      }
-@@ -1362,9 +1661,45 @@
+@@ -1362,9 +1648,9 @@
      }
  
      static class ServerBlockEventList extends ArrayList<BlockEventData>
@@ -1037,42 +1015,7 @@
          {
 -            private ServerBlockEventList()
 -            {
-+        }
-+    }
-+
-+    public class spawnerCreature extends RecursiveAction {
-+        WorldServer worldserver;
-+        boolean flag, flag1, flag2;
-+
-+        public spawnerCreature(WorldServer worldserver, boolean flag, boolean flag1, boolean flag2) {
-+            this.worldserver = worldserver;
-+            this.flag = flag;
-+            this.flag1 = flag1;
-+            this.flag2 = flag2;
-+        }
-+
-+        @Override
-+        protected void compute() {
-+            entitySpawner.findChunksForSpawning(worldserver, flag, flag1, flag2);
-+        }
-+    }
-+
-+    public class clight extends RecursiveAction {
-+        int j, k, l;
-+
-+        public clight(int j, int k, int l) {
-+            this.l = l;
-+            this.j = j;
-+            this.k = k;
-+        }
-+
-+        @Override
-+        protected void compute() {
-+            try {
-+                checkLight(new BlockPos(this.j, this.k, this.l));
-+            } catch (Exception ex) {
-+                LogManager.getLogger().warn("check light warn: "+ex);
-             }
+-            }
          }
 +    }
  }

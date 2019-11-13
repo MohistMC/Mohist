@@ -45,10 +45,6 @@ public class MohistConfig extends ConfigBase{
     public final BoolSetting check_update = new BoolSetting(this, "check_update", true, "Check Update");
     public final BoolSetting enable_progress = new BoolSetting(this, "enable_progress", true, "Enable download progress");
 
-    public final BoolSetting asyn_aimove = new BoolSetting(this, "asyn.aimove", false, "Ai-Move");
-    public final BoolSetting asyn_spawnerCreature = new BoolSetting(this, "asyn.spawnerCreature", false, "spawnerCreature");
-    public final BoolSetting asyn_checkLight = new BoolSetting(this, "asyn.checkLight", false, "checkLight");
-
     public final StringSetting ANSI_ERROR_LEVEL = new StringSetting(this, "consolecolor.error-level", "[31;1m", "consolecolor.error-level");
     public final StringSetting ANSI_WARN_LEVEL = new StringSetting(this, "consolecolor.warn-level", "[33;1m", "consolecolor.warn-level");
     public final StringSetting ANSI_ERROR_MSG = new StringSetting(this, "consolecolor.error-msg", "[31;1m", "consolecolor.error-msg");
@@ -127,8 +123,8 @@ public class MohistConfig extends ConfigBase{
             config.options().header(header);
             config.options().copyDefaults(true);
 
-            version = getInt("config-version", 1);
-            set("config-version", 1);
+            version = getInt("config-version", 2);
+            set("config-version", 2);
 
             this.save();
         }
