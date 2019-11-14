@@ -69,6 +69,7 @@ import net.minecraft.world.storage.MapStorage;
 import net.minecraft.world.storage.SaveHandler;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
@@ -953,7 +954,7 @@ public final class CraftServer implements Server {
                 Mohist.LOGGER.error(ex);
             }
         }
-        MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.world.WorldEvent.Unload(handle)); // fire unload event before removing world
+        MinecraftForge.EVENT_BUS.post(new WorldEvent.Unload(handle)); // fire unload event before removing world
         worlds.remove(world.getName().toLowerCase(java.util.Locale.ENGLISH));
         DimensionManager.setWorld(handle.provider.getDimension(), null, FMLCommonHandler.instance().getMinecraftServerInstance()); // remove world from DimensionManager
         File parentFolder = world.getWorldFolder().getAbsoluteFile();
@@ -1526,7 +1527,6 @@ public final class CraftServer implements Server {
     public HelpMap getHelpMap() {
         return helpMap;
     }
-    // Cauldron end
 
     @Override // Paper - add override
     public SimpleCommandMap getCommandMap() {
@@ -1537,6 +1537,7 @@ public final class CraftServer implements Server {
     public CraftSimpleCommandMap getCraftCommandMap() {
         return craftCommandMap;
     }
+	// Cauldron end
 
     @Override
     public int getMonsterSpawnLimit() {

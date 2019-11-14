@@ -21,6 +21,11 @@ public class CraftAmbient extends CraftLivingEntity implements Ambient {
     }
 
     public EntityType getType() {
-        return EntityType.UNKNOWN;
+        EntityType type = EntityType.fromName(this.entityName);
+        if (type != null) {
+            return type;
+        } else {
+            return EntityType.UNKNOWN;
+        }
     }
 }

@@ -661,7 +661,6 @@ public class CraftWorld implements World {
         try {
             entity = (net.minecraft.entity.EntityLiving) aClass.getConstructor(new Class[]{net.minecraft.world.World.class}).newInstance(new Object[]{world});
         } catch (Throwable throwable) {
-            throwable.printStackTrace();
         }
         return entity;
     }
@@ -764,7 +763,6 @@ public class CraftWorld implements World {
                 int typeId = net.minecraft.block.Block.getIdFromBlock(blocksnapshot.getReplacedBlock().getBlock());
                 int data = blocksnapshot.getMeta();
                 int flag = blocksnapshot.getFlag();
-                ;
                 delegate.setTypeIdAndData(x, y, z, typeId, data);
                 net.minecraft.block.state.IBlockState newBlock = world.getBlockState(position);
                 world.markAndNotifyBlock(position, null, oldBlock, newBlock, flag);
