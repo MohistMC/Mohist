@@ -17,6 +17,7 @@ public class Update {
     public static void hasLatestVersion() {
         String str = "https://api.github.com/repos/Mohist-Community/Mohist/commits";
         String ver = "https://raw.githubusercontent.com/Mohist-Community/Mohist/1.12.2/mohist.ver";
+        String dl = "https://ci.codemc.io/job/Mohist-Community/job/Mohist-1.12.2/";
         try {
             System.out.println(Message.getString("update.check"));
             System.out.println(Message.getString("update.stopcheck"));
@@ -38,10 +39,10 @@ public class Update {
 
             String newversion = MohistConfigUtil.getUrlString(ver, Mohist.VERSION);
             String oldversion = Mohist.VERSION;
-            if (oldver.contains(s2)) {
+            if (oldver.equals(s2)) {
                 System.out.println(Message.getFormatString("update.latest", new Object[]{oldversion, s2, oldver}));
             } else {
-                System.out.println(Message.getFormatString("update.old", new Object[]{oldversion, newversion, s2, time2, oldver}));
+                System.out.println(Message.getFormatString("update.old", new Object[]{oldversion, newversion, s2, time2, oldver, dl}));
             }
             is.close();
 
@@ -63,9 +64,6 @@ public class Update {
         }
         // Get the data in lib
         String i = MohistConfigUtil.getString(lib, "version:", Mohist.LIB_VERSION);
-        if (i.equals(s)) {
-            return false;
-        }
-        return false;
+        return !i.equals(s);
     }
 }
