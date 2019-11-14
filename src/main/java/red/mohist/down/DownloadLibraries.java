@@ -9,19 +9,32 @@ import java.util.Enumeration;
 import java.util.Locale;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
+
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import red.mohist.configuration.MohistConfigUtil;
 import red.mohist.util.FileUtil;
+import red.mohist.util.HttpUtil;
 import red.mohist.util.i18n.Message;
 
 public class DownloadLibraries implements Runnable {
 
+    public static final String FIND_LOCATE = "http://ip.taobao.com//service/getIpInfo.php?ip=myip";
+
     @Override
     public void run() {
-        String url = "https://github.com/Mohist-Community/Mohist/releases/download/libraries/libraries.zip";
+        String url = null;
         String fileName = "libraries.zip";
-        Locale locale = Locale.getDefault();
-        if (locale.getCountry().equals("CN") || Message.getLanguage(2).equals("CN")) {
-            url = "https://mohist-community.gitee.io/mohistdown/libraries.zip";
+        try {
+            JsonObject json = new JsonParser().parse(HttpUtil.doGet(FIND_LOCATE)).getAsJsonObject();
+            String locate = json.getAsJsonObject("data").get("country_id").getAsString();
+            if (locate.equals("CN")) {
+                System.out.println("Detected China IP, Using Gitee Mirror.");
+                url = "https://mohist-community.gitee.io/mohistdown/libraries.zip"; //Gitee Mirror
+            }
+        } catch (Exception e) {
+            System.out.println("IP Detected Failed ! Using Github Mirror.");
+            url = "https://github.com/Mohist-Community/Mohist/releases/download/libraries/libraries.zip"; //Github Mirror
         }
         new Download(url, fileName);
         File file = new File(fileName);
