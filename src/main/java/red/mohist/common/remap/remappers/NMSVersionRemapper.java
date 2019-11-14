@@ -4,7 +4,6 @@ import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.objectweb.asm.commons.Remapper;
-import red.mohist.Mohist;
 import red.mohist.common.remap.ASMUtils;
 
 /**
@@ -13,7 +12,7 @@ import red.mohist.common.remap.ASMUtils;
  * @date 2019/7/2 8:05 PM
  */
 public class NMSVersionRemapper extends Remapper implements ClassRemapperSupplier {
-    private static final String targetVersion = Mohist.getNativeVersion();
+    public static final String targetVersion = "v1_12_R1";
     private static final Pattern cbPattern = Pattern.compile("org/bukkit/craftbukkit/(v\\d_\\d+_R\\d)/[\\w/]+");
     private static final Pattern nmsPattern = Pattern.compile("net/minecraft/server/(v\\d_\\d+_R\\d)/[\\w/]+");
 

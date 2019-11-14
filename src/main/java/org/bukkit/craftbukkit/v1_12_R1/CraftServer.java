@@ -176,7 +176,7 @@ public final class CraftServer implements Server {
 
     protected final MinecraftServer console;
     protected final DedicatedPlayerList playerList;
-    private final String serverName = Mohist.getName();
+    private final String serverName = Mohist.NAME;
     private final String serverVersion;
     private final String bukkitVersion = Versioning.getBukkitVersion();
     private final Logger logger = Logger.getLogger("Minecraft");

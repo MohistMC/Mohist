@@ -17,7 +17,6 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.Validate;
 import org.bukkit.plugin.InvalidPluginException;
 import org.bukkit.plugin.PluginDescriptionFile;
-import red.mohist.Mohist;
 import red.mohist.common.remap.ClassLoaderContext;
 import red.mohist.common.remap.RemapUtils;
 
@@ -92,7 +91,7 @@ public final class PluginClassLoader extends URLClassLoader {
         ClassLoaderContext.put(this);
         Class<?> result;
         try {
-            if (name.startsWith("net.minecraft.server." + Mohist.getNativeVersion())) {
+            if (name.startsWith("net.minecraft.server.v1_12_R1")) {
                 String remappedClass = RemapUtils.jarMapping.byNMSName.get(name).getMcpName();
                 return Class.forName(remappedClass);
             }
