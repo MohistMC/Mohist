@@ -30,7 +30,20 @@
      public final WorldServer world;
      private final Set<Long> loadingChunks = com.google.common.collect.Sets.newHashSet();
  
-@@ -83,6 +84,11 @@
+@@ -60,11 +61,8 @@
+ 
+     public void queueUnloadAll()
+     {
+-        ObjectIterator objectiterator = this.id2ChunkMap.values().iterator();
+ 
+-        while (objectiterator.hasNext())
+-        {
+-            Chunk chunk = (Chunk)objectiterator.next();
++        for (Chunk chunk : this.id2ChunkMap.values()) {
+             this.queueUnload(chunk);
+         }
+     }
+@@ -83,6 +81,11 @@
          return chunk;
      }
  
@@ -42,7 +55,7 @@
      @Nullable
      public Chunk loadChunk(int x, int z)
      {
-@@ -92,6 +98,11 @@
+@@ -92,6 +95,11 @@
      @Nullable
      public Chunk loadChunk(int x, int z, @Nullable Runnable runnable)
      {
@@ -54,7 +67,7 @@
          Chunk chunk = this.getLoadedChunk(x, z);
          if (chunk == null)
          {
-@@ -106,7 +117,7 @@
+@@ -106,7 +114,7 @@
                  {
                  this.id2ChunkMap.put(ChunkPos.asLong(x, z), chunk);
                  chunk.onLoad();
@@ -63,7 +76,7 @@
                  }
  
                  loadingChunks.remove(pos);
-@@ -123,6 +134,8 @@
+@@ -123,6 +131,8 @@
                      return null;
                  }
              }
@@ -72,7 +85,7 @@
          }
  
          // If we didn't load the chunk async and have a callback run it now
-@@ -154,7 +167,7 @@
+@@ -154,7 +164,7 @@
  
              this.id2ChunkMap.put(i, chunk);
              chunk.onLoad();
@@ -81,7 +94,7 @@
          }
  
          return chunk;
-@@ -177,7 +190,7 @@
+@@ -177,7 +187,7 @@
          }
          catch (Exception exception)
          {
@@ -90,7 +103,7 @@
              return null;
          }
      }
-@@ -190,7 +203,7 @@
+@@ -190,7 +200,7 @@
          }
          catch (Exception exception)
          {
@@ -99,7 +112,7 @@
          }
      }
  
-@@ -203,12 +216,12 @@
+@@ -203,12 +213,12 @@
          }
          catch (IOException ioexception)
          {
@@ -115,7 +128,7 @@
      }
  
      public boolean saveChunks(boolean all)
-@@ -266,11 +279,9 @@
+@@ -266,11 +276,9 @@
  
                      if (chunk != null && chunk.unloadQueued)
                      {
@@ -130,7 +143,7 @@
                          ++i;
                      }
                  }
-@@ -284,6 +295,39 @@
+@@ -284,6 +292,39 @@
          return false;
      }
  

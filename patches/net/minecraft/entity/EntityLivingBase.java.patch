@@ -689,7 +689,7 @@
              {
                  int i = (this.getActivePotionEffect(MobEffects.RESISTANCE).getAmplifier() + 1) * 5;
                  int j = 25 - i;
-@@ -1403,27 +1573,155 @@
+@@ -1403,27 +1573,129 @@
          }
      }
  
@@ -722,69 +722,43 @@
 +        if (!this.isEntityInvulnerable(damagesource)) {
 +            final boolean human = this instanceof EntityPlayer;
 +            f = net.minecraftforge.common.ForgeHooks.onLivingHurt(this, damagesource, f);
-+            if (f < 0) return true;
++            if (f <= 0) return true;
 +            float originalDamage = f;
-+            Function<Double, Double> hardHat = new Function<Double, Double>() {
-+                @Override
-+                public Double apply(Double f) {
-+                    if ((damagesource == DamageSource.ANVIL || damagesource == DamageSource.FALLING_BLOCK) && !EntityLivingBase.this.getItemStackFromSlot(EntityEquipmentSlot.HEAD).isEmpty()) {
-+                        return -(f - (f * 0.75F));
++            Function<Double, Double> hardHat = f12 -> {
++                if ((damagesource == DamageSource.ANVIL || damagesource == DamageSource.FALLING_BLOCK) && !EntityLivingBase.this.getItemStackFromSlot(EntityEquipmentSlot.HEAD).isEmpty()) {
++                    return -(f12 - (f12 * 0.75F));
 +
-+                    }
-+                    return -0.0;
 +                }
++                return -0.0;
 +            };
 +            float hardHatModifier = hardHat.apply((double) f).floatValue();
 +            f += hardHatModifier;
 +
-+            Function<Double, Double> blocking = new Function<Double, Double>() {
-+                @Override
-+                public Double apply(Double f) {
-+                    return -((EntityLivingBase.this.canBlockDamageSource(damagesource)) ? f : 0.0);
-+                }
-+            };
++            Function<Double, Double> blocking = f13 -> -((EntityLivingBase.this.canBlockDamageSource(damagesource)) ? f13 : 0.0);
 +            float blockingModifier = blocking.apply((double) f).floatValue();
 +            f += blockingModifier;
 +
-+            Function<Double, Double> armor = new Function<Double, Double>() {
-+                @Override
-+                public Double apply(Double f) {
-+                    return -(f - EntityLivingBase.this.applyArmorCalculations(damagesource, f.floatValue()));
-+                }
-+            };
++            Function<Double, Double> armor = f14 -> -(f14 - EntityLivingBase.this.applyArmorCalculations(damagesource, f14.floatValue()));
 +            float armorModifier = armor.apply((double) f).floatValue();
 +            f += armorModifier;
 +
-+            Function<Double, Double> resistance = new Function<Double, Double>() {
-+                @Override
-+                public Double apply(Double f) {
-+                    if (!damagesource.isDamageAbsolute() && EntityLivingBase.this.isPotionActive(MobEffects.RESISTANCE) && damagesource != DamageSource.OUT_OF_WORLD) {
-+                        int i = (EntityLivingBase.this.getActivePotionEffect(MobEffects.RESISTANCE).getAmplifier() + 1) * 5;
-+                        int j = 25 - i;
-+                        float f1 = f.floatValue() * (float) j;
-+                        return -(f - (f1 / 25.0F));
-+                    }
-+                    return -0.0;
++            Function<Double, Double> resistance = f15 -> {
++                if (!damagesource.isDamageAbsolute() && EntityLivingBase.this.isPotionActive(MobEffects.RESISTANCE) && damagesource != DamageSource.OUT_OF_WORLD) {
++                    int i = (EntityLivingBase.this.getActivePotionEffect(MobEffects.RESISTANCE).getAmplifier() + 1) * 5;
++                    int j = 25 - i;
++                    float f1 = f15.floatValue() * (float) j;
++                    return -(f15 - (f1 / 25.0F));
 +                }
++                return -0.0;
 +            };
 +            float resistanceModifier = resistance.apply((double) f).floatValue();
 +            f += resistanceModifier;
 +
-+            Function<Double, Double> magic = new Function<Double, Double>() {
-+                @Override
-+                public Double apply(Double f) {
-+                    return -(f - EntityLivingBase.this.applyPotionDamageCalculations(damagesource, f.floatValue()));
-+                }
-+            };
++            Function<Double, Double> magic = f16 -> -(f16 - EntityLivingBase.this.applyPotionDamageCalculations(damagesource, f16.floatValue()));
 +            float magicModifier = magic.apply((double) f).floatValue();
 +            f += magicModifier;
 +
-+            Function<Double, Double> absorption = new Function<Double, Double>() {
-+                @Override
-+                public Double apply(Double f) {
-+                    return -(Math.max(f - Math.max(f - EntityLivingBase.this.getAbsorptionAmount(), 0.0F), 0.0F));
-+                }
-+            };
++            Function<Double, Double> absorption = f17 -> -(Math.max(f17 - Math.max(f17 - EntityLivingBase.this.getAbsorptionAmount(), 0.0F), 0.0F));
 +            float absorptionModifier = absorption.apply((double) f).floatValue();
 +
 +            EntityDamageEvent event = CraftEventFactory.handleLivingEntityDamageEvent(this, damagesource, originalDamage, hardHatModifier, blockingModifier, armorModifier, resistanceModifier, magicModifier, absorptionModifier, hardHat, blocking, armor, resistance, magic, absorption);
@@ -862,7 +836,7 @@
      }
  
      public CombatTracker getCombatTracker()
-@@ -1605,6 +1903,7 @@
+@@ -1605,6 +1877,7 @@
          if (this.attributeMap == null)
          {
              this.attributeMap = new AttributeMap();
@@ -870,7 +844,7 @@
          }
  
          return this.attributeMap;
-@@ -1685,11 +1984,13 @@
+@@ -1685,11 +1958,13 @@
          }
      }
  
@@ -884,7 +858,7 @@
      protected float getSoundPitch()
      {
          return this.isChild() ? (this.rand.nextFloat() - this.rand.nextFloat()) * 0.2F + 1.5F : (this.rand.nextFloat() - this.rand.nextFloat()) * 0.2F + 1.0F;
-@@ -1843,9 +2144,9 @@
+@@ -1843,9 +2118,9 @@
                  if (!this.isInLava() || this instanceof EntityPlayer && ((EntityPlayer)this).capabilities.isFlying)
                  {
                      if (this.isElytraFlying())
@@ -896,7 +870,7 @@
                              this.fallDistance = 1.0F;
                          }
  
-@@ -1855,27 +2156,27 @@
+@@ -1855,27 +2130,27 @@
                          double d8 = Math.sqrt(this.motionX * this.motionX + this.motionZ * this.motionZ);
                          double d1 = vec3d.lengthVector();
                          float f4 = MathHelper.cos(f);
@@ -931,7 +905,7 @@
                              this.motionX += (vec3d.x / d6 * d8 - this.motionX) * 0.1D;
                              this.motionZ += (vec3d.z / d6 * d8 - this.motionZ) * 0.1D;
                          }
-@@ -1886,21 +2187,22 @@
+@@ -1886,21 +2161,22 @@
                          this.move(MoverType.SELF, this.motionX, this.motionY, this.motionZ);
  
                          if (this.collidedHorizontally && !this.world.isRemote)
@@ -960,7 +934,7 @@
                          }
                      }
                      else
-@@ -2345,7 +2647,6 @@
+@@ -2345,7 +2621,6 @@
          }
  
          this.world.profiler.startSection("ai");
@@ -968,7 +942,7 @@
          if (this.isMovementBlocked())
          {
              this.isJumping = false;
-@@ -2426,7 +2727,8 @@
+@@ -2426,7 +2701,8 @@
  
          if (!this.world.isRemote)
          {
@@ -978,7 +952,7 @@
          }
      }
  
-@@ -2434,38 +2736,41 @@
+@@ -2434,38 +2710,41 @@
      {
      }
  
@@ -1045,7 +1019,7 @@
      }
  
      protected void collideWithEntity(Entity entityIn)
-@@ -2560,12 +2865,12 @@
+@@ -2560,12 +2839,12 @@
  
      public boolean canBeCollidedWith()
      {
@@ -1060,7 +1034,7 @@
      }
  
      protected void markVelocityChanged()
-@@ -2629,7 +2934,7 @@
+@@ -2629,7 +2908,7 @@
          {
              PotionEffect effect = iterator.next();
  
@@ -1069,7 +1043,7 @@
              {
                  onFinishedPotionEffect(effect);
                  iterator.remove();
-@@ -2667,7 +2972,8 @@
+@@ -2667,7 +2946,8 @@
          if (this.isHandActive())
          {
              ItemStack itemstack = this.getHeldItem(this.getActiveHand());
@@ -1079,7 +1053,7 @@
  
              if (itemstack == this.activeItemStack)
              {
-@@ -2785,8 +3091,25 @@
+@@ -2785,8 +3065,25 @@
          if (!this.activeItemStack.isEmpty() && this.isHandActive())
          {
              this.updateItemUse(this.activeItemStack, 16);
@@ -1107,7 +1081,7 @@
              itemstack = net.minecraftforge.event.ForgeEventFactory.onItemUseFinish(this, activeItemStackCopy, getItemInUseCount(), itemstack);
              this.setHeldItem(this.getActiveHand(), itemstack);
              this.resetActiveHand();
-@@ -2897,11 +3220,14 @@
+@@ -2897,11 +3194,14 @@
  
              if (flag1)
              {
@@ -1127,7 +1101,7 @@
                  }
              }
          }
-@@ -2936,6 +3262,11 @@
+@@ -2936,6 +3236,11 @@
          }
      }
  
@@ -1139,7 +1113,7 @@
      public boolean canBeHitWithPotion()
      {
          return true;
-@@ -2949,7 +3280,7 @@
+@@ -2949,7 +3254,7 @@
      @SuppressWarnings("unchecked")
      @Override
      @Nullable
@@ -1148,7 +1122,7 @@
      {
          if (capability == net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABILITY)
          {
-@@ -2961,7 +3292,7 @@
+@@ -2961,7 +3266,7 @@
      }
  
      @Override
@@ -1157,7 +1131,7 @@
      {
          return capability == net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABILITY || super.hasCapability(capability, facing);
      }
-@@ -2975,7 +3306,7 @@
+@@ -2975,7 +3280,7 @@
      public void setPartying(BlockPos pos, boolean p_191987_2_)
      {
      }

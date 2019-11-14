@@ -10,7 +10,7 @@
  import java.util.Random;
  import java.util.Set;
  import net.minecraft.block.Block;
-@@ -21,12 +23,33 @@
+@@ -21,12 +23,29 @@
  import net.minecraft.util.math.MathHelper;
  import net.minecraft.world.biome.Biome;
  import net.minecraft.world.chunk.Chunk;
@@ -26,15 +26,11 @@
 +    private int getEntityCount(WorldServer server, Class oClass)
 +    {
 +        int i = 0;
-+        Iterator<ChunkPos> it = this.eligibleChunksForSpawning.iterator();
-+        while ( it.hasNext() )
-+        {
-+            ChunkPos coord = it.next();
++        for (ChunkPos coord : this.eligibleChunksForSpawning) {
 +            int x = coord.x;
 +            int z = coord.z;
-+            if ( !((ChunkProviderServer)server.chunkProvider).droppedChunksSet.contains( coord ) && server.isChunkLoaded( x, z, true ) )
-+            {
-+                i += Objects.requireNonNull(server.getChunkProvider().getLoadedChunk(x, z)).entityCount.get( oClass );
++            if (!((ChunkProviderServer) server.chunkProvider).droppedChunksSet.contains(coord) && server.isChunkLoaded(x, z, true)) {
++                i += Objects.requireNonNull(server.getChunkProvider().getLoadedChunk(x, z)).entityCount.get(oClass);
 +            }
 +        }
 +        return i;
@@ -44,7 +40,7 @@
      public int findChunksForSpawning(WorldServer worldServerIn, boolean spawnHostileMobs, boolean spawnPeacefulMobs, boolean spawnOnSetTickRate)
      {
          if (!spawnHostileMobs && !spawnPeacefulMobs)
-@@ -46,11 +69,14 @@
+@@ -46,11 +65,14 @@
                      int k = MathHelper.floor(entityplayer.posZ / 16.0D);
                      int l = 8;
  
@@ -64,7 +60,7 @@
                              ChunkPos chunkpos = new ChunkPos(i1 + j, j1 + k);
  
                              if (!this.eligibleChunksForSpawning.contains(chunkpos))
-@@ -77,20 +103,45 @@
+@@ -77,20 +99,45 @@
  
              for (EnumCreatureType enumcreaturetype : EnumCreatureType.values())
              {
@@ -116,7 +112,7 @@
                              BlockPos blockpos = getRandomChunkPosition(worldServerIn, chunkpos1.x, chunkpos1.z);
                              int k1 = blockpos.getX();
                              int l1 = blockpos.getY();
-@@ -156,15 +207,17 @@
+@@ -156,15 +203,17 @@
  
                                                      if (entityliving.isNotColliding())
                                                      {
@@ -137,7 +133,7 @@
                                                      {
                                                          continue label134;
                                                      }
-@@ -295,8 +348,11 @@
+@@ -295,8 +344,11 @@
  
                              if (net.minecraftforge.event.ForgeEventFactory.canEntitySpawn(entityliving, worldIn, j + 0.5f, (float) blockpos.getY(), k +0.5f, false) == net.minecraftforge.fml.common.eventhandler.Event.Result.DENY) continue;
                              entityliving.setLocationAndAngles((double)((float)j + 0.5F), (double)blockpos.getY(), (double)((float)k + 0.5F), randomIn.nextFloat() * 360.0F, 0.0F);

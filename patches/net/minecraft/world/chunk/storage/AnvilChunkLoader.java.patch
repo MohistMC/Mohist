@@ -118,21 +118,40 @@
          }
      }
  
-@@ -351,9 +362,11 @@
+@@ -351,22 +362,18 @@
          chunkIn.setHasEntities(false);
          NBTTagList nbttaglist1 = new NBTTagList();
  
 -        for (int i = 0; i < chunkIn.getEntityLists().length; ++i)
-+        ClassInheritanceMultiMap<Entity>[] entityLists = chunkIn.getEntityLists();
-+        for (int i = 0; i < entityLists.length; ++i)
-         {
+-        {
 -            for (Entity entity : chunkIn.getEntityLists()[i])
+-            {
++        ClassInheritanceMultiMap<Entity>[] entityLists = chunkIn.getEntityLists();
++        for (ClassInheritanceMultiMap<Entity> entityList : entityLists) {
 +            if (entityLists == null) continue;
-+            for (Entity entity : entityLists[i])
-             {
++            for (Entity entity : entityList) {
                  NBTTagCompound nbttagcompound2 = new NBTTagCompound();
  
-@@ -558,6 +571,11 @@
+-                try
+-                {
+-                if (entity.writeToNBTOptional(nbttagcompound2))
+-                {
+-                    chunkIn.setHasEntities(true);
+-                    nbttaglist1.appendTag(nbttagcompound2);
+-                }
+-                }
+-                catch (Exception e)
+-                {
++                try {
++                    if (entity.writeToNBTOptional(nbttagcompound2)) {
++                        chunkIn.setHasEntities(true);
++                        nbttaglist1.appendTag(nbttagcompound2);
++                    }
++                } catch (Exception e) {
+                     net.minecraftforge.fml.common.FMLLog.log.error("An Entity type {} has thrown an exception trying to write state. It will not persist. Report this to the mod author",
+                             entity.getClass().getName(), e);
+                 }
+@@ -558,6 +565,11 @@
      @Nullable
      public static Entity readWorldEntityPos(NBTTagCompound compound, World worldIn, double x, double y, double z, boolean attemptSpawn)
      {
@@ -144,7 +163,7 @@
          Entity entity = createEntityFromNBT(compound, worldIn);
  
          if (entity == null)
-@@ -568,7 +586,7 @@
+@@ -568,7 +580,7 @@
          {
              entity.setLocationAndAngles(x, y, z, entity.rotationYaw, entity.rotationPitch);
  
@@ -153,7 +172,7 @@
              {
                  return null;
              }
-@@ -609,8 +627,11 @@
+@@ -609,8 +621,11 @@
  
      public static void spawnEntity(Entity entityIn, World worldIn)
      {

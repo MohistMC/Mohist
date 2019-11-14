@@ -8,18 +8,15 @@
  
  public class BlockPressurePlateWeighted extends BlockBasePressurePlate
  {
-@@ -33,8 +34,30 @@
+@@ -33,8 +34,27 @@
  
      protected int computeRedstoneStrength(World worldIn, BlockPos pos)
      {
 -        int i = Math.min(worldIn.getEntitiesWithinAABB(Entity.class, PRESSURE_AABB.offset(pos)).size(), this.maxWeight);
 +//        int i = Math.min(worldIn.getEntitiesWithinAABB(Entity.class, PRESSURE_AABB.offset(pos)).size(), this.maxWeight);
 +        int i = 0;
-+        java.util.Iterator iterator = worldIn.getEntitiesWithinAABB(Entity.class, BlockPressurePlateWeighted.PRESSURE_AABB.offset(pos)).iterator();
  
-+        while (iterator.hasNext()) {
-+            Entity entity = (Entity) iterator.next();
-+
++        for (Entity entity : worldIn.getEntitiesWithinAABB(Entity.class, BlockPressurePlateWeighted.PRESSURE_AABB.offset(pos))) {
 +            org.bukkit.event.Cancellable cancellable;
 +
 +            if (entity instanceof EntityPlayer) {

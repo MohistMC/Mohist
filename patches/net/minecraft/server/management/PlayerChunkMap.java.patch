@@ -257,7 +257,7 @@
      public void setPlayerViewRadius(int radius)
      {
          radius = MathHelper.clamp(radius, 3, 32);
-@@ -385,45 +447,64 @@
+@@ -385,45 +447,63 @@
          {
              int i = radius - this.playerViewRadius;
  
@@ -268,7 +268,6 @@
 +            playersLock.readLock().lock(); // Akarin
 +            ArrayList arraylist = Lists.newArrayList(this.players);
 +            playersLock.readLock().unlock(); // Akarin
-+            Iterator iterator = arraylist.iterator();
  
 -                if (i > 0)
 -                {
@@ -277,8 +276,8 @@
 -                        for (int k1 = k - radius; k1 <= k + radius; ++k1)
 -                        {
 -                            PlayerChunkMapEntry playerchunkmapentry = this.getOrCreateEntry(j1, k1);
-+            while (iterator.hasNext()) {
-+                EntityPlayerMP entityplayermp = (EntityPlayerMP) iterator.next();
++            for (Object o : arraylist) {
++                EntityPlayerMP entityplayermp = (EntityPlayerMP) o;
 +                this.setViewDistance(entityplayermp, i, false); // Paper - Split, don't mark sort pending, we'll handle it after
 +            }
  
@@ -349,7 +348,7 @@
  
      private void markSortPending()
      {
-@@ -441,12 +522,12 @@
+@@ -441,12 +521,12 @@
          return (long)p_187307_0_ + 2147483647L | (long)p_187307_1_ + 2147483647L << 32;
      }
  
@@ -364,7 +363,7 @@
      {
          ChunkPos chunkpos = entry.getPos();
          long i = getIndex(chunkpos.x, chunkpos.z);
-@@ -456,11 +537,73 @@
+@@ -456,11 +536,73 @@
          this.dirtyEntries.remove(entry);
          this.pendingSendToPlayers.remove(entry);
          this.entriesWithoutChunks.remove(entry);
