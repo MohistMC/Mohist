@@ -6,29 +6,9 @@ import thermos.VersionParser
 buildscript {
     repositories {
         mavenLocal()
-        maven {
-            url 'http://maven.aliyun.com/nexus/content/groups/public'
-        }
-
-        maven {
-            name 'forge'
-            url 'http://files.minecraftforge.net/maven'
-        }
-        maven {
-            name 'sonatype'
-            url 'http://oss.sonatype.org/content/repositories/snapshots/'
-        }
-        maven {
-            name 'spigot'
-            url 'https://hub.spigotmc.org/nexus/content/repositories/snapshots/'
-        }
-        maven {
-            name 'spigot-public'
-            url 'https://hub.spigotmc.org/nexus/content/repositories/public/'
-        }
-
         mavenCentral()
-
+        maven { url 'https://files.minecraftforge.net/maven' }
+        maven { url 'https://plugins.gradle.org/m2/' }
     }
     dependencies {
         classpath 'net.minecraftforge.gradle:ForgeGradle:1.2-SNAPSHOT'
@@ -85,52 +65,12 @@ minecraft {
     srgExtra "PK: org/bukkit/craftbukkit org/bukkit/craftbukkit/v1_7_R4"
 }
 
-group = 'cyberdynecc'
-
-ext.buildInfoCached = null;
-
-def buildInfo(String key) {
-    if (!buildInfoCached) {
-        if (project.hasProperty('officialBuild')) {
-            buildInfoCached = new JsonSlurper().parse(new URL("http://i.yive.pw/thermos/version"))
-        } else {
-            buildInfoCached = [
-                    nextBuildNumber: versioning.info.build,
-                    version        : 'NONE'
-            ]
-        }
-    }
-    return key ? buildInfoCached[key] : buildInfoCached;
-}
-
-ext.gitInfoCached = null;
-
-def gitInfo(String key) {
-    if (!gitInfoCached) {
-        if (file('.git').exists()) {
-            gitInfoCached = [
-                    hash    : ['git', 'log', "--format=%h", '-n', '1'].execute().text.trim(),
-                    fullHash: ['git', 'log', "--format=%H", '-n', '1'].execute().text.trim(),
-                    branch  : System.getenv("CI_BUILD_REF_NAME") ?: ['git', 'symbolic-ref', '--short', 'HEAD'].execute().text.trim(),
-                    message : ['git', 'log', "--format=%B", '-n', '1'].execute().text.trim()
-            ]
-        } else {
-            gitInfoCached = [
-                    hash    : 'NOT_A_GIT',
-                    fullHash: 'NOT_A_GIT',
-                    branch  : 'NOT_A_GIT',
-                    message : 'NOT_A_GIT'
-            ]
-        }
-    }
-    return key ? gitInfoCached[key] : gitInfoCached;
-}
+group = 'red.mohist'
 
 ext.mcVersion = "1.7.10"
 ext.forgeVersion = VersionParser.parseForgeRevision(file('src/main/resources/fmlversion.properties'))
-ext.revision = project.hasProperty('revision') ? project.getProperty('revision') : buildInfo('nextBuildNumber')
-version = "${mcVersion}-${forgeVersion}.${revision}"
-if (project.hasProperty('officialBuild')) println "Updated Thermos version: ${version}"
+ext.revision = versioning.info.build
+version = "${mcVersion}-${revision}"
 
 launch4j {
     jreMinVersion = '1.8.0'
@@ -198,13 +138,7 @@ def generateClasspath(boolean legacy = false) {
 
 def generateManifest(boolean legacy = false) {
     [
-            'Thermos-Git-Branch'    : gitInfo('branch'),
-            'Thermos-Git-Hash'      : gitInfo('fullHash'),
-            'Thermos-Group'         : project.group,
-            'Thermos-Channel'       : project.name,
-            'Thermos-Version'       : project.version,
-            'Thermos-Legacy'        : legacy,
-            'Implementation-Vendor' : 'CyberdyneCC',
+            'Implementation-Vendor' : 'Mohist',
             'Implementation-Title'  : project.name,
             'Implementation-Version': project.version,
             'Specification-Vendor'  : 'Bukkit Team',
@@ -233,21 +167,7 @@ tasks.createChangelog.onlyIf { false }
 tasks.packageInstaller.onlyIf { false }
 
 task packageChangelog(type: CreateChangelog) {
-    onlyIf { project.hasProperty('officialBuild') }
-    classifier = 'changelog'
-    extension = 'txt'
-    oldChangelogUrl = "https://i.tcpr.ca/thermos/changelog.txt"
-    hash = gitInfo('hash')
-    message = gitInfo('message')
-    version = project.version
-}
 
-task bundleStub(type: Jar) {
-    classifier = 'stub'
-    manifest.attributes([
-            'Main-Class': 'cpw.mods.fml.relauncher.ServerLaunchWrapper',
-            'Class-Path': "bin/${project.group.replace('.', '/')}/${project.name}/${project.version}/${project.name}-${project.version}.jar"
-    ])
 }
 
 task installBundle(type: InstallBundle, dependsOn: jar) {
@@ -259,8 +179,7 @@ task installBundle(type: InstallBundle, dependsOn: jar) {
 task packageBundle(type: Zip, dependsOn: installBundle) {
     classifier = 'bundle'
     from fileTree(installBundle.installLocation)
-    from bundleStub
-    rename bundleStub.archiveName, 'Thermos.jar'
+    from packageUniversal
 }
 
 task signJars(type: Sign, dependsOn: [packageUniversal, packageChangelog, packageBundle, jar, 'generatePomFileForMavenPublication']) {
