@@ -6,10 +6,6 @@ import thermos.VersionParser
 buildscript {
     repositories {
         mavenLocal()
-        // maven {
-        // name 'prok'
-        // url 'https://repo.prok.pw/'
-        // }
         maven {
             url 'http://maven.aliyun.com/nexus/content/groups/public'
         }
@@ -36,6 +32,7 @@ buildscript {
     }
     dependencies {
         classpath 'net.minecraftforge.gradle:ForgeGradle:1.2-SNAPSHOT'
+        classpath 'gradle.plugin.net.nemerosa:versioning:2.8.2'
     }
 }
 
@@ -45,23 +42,15 @@ tasks.whenTaskAdded {
 
 apply plugin: 'maven'
 apply plugin: 'cauldron'
-apply plugin: 'maven-publish'
 apply plugin: 'signing'
+apply plugin: 'net.nemerosa.versioning'
 
 repositories {
     mavenLocal()
-    flatDir {  dirs 'libs' }
-    maven {
-        url 'http://maven.aliyun.com/nexus/content/groups/public'
-    }
     maven {
         name 'sonatype'
         url 'http://oss.sonatype.org/content/repositories/snapshots/'
     }
-    /*maven {
-        name 'prok'
-        url 'https://repo.prok.pw/'
-    }*/
     maven {
         name 'forge'
         url 'http://files.minecraftforge.net/maven'
@@ -106,7 +95,7 @@ def buildInfo(String key) {
             buildInfoCached = new JsonSlurper().parse(new URL("http://i.yive.pw/thermos/version"))
         } else {
             buildInfoCached = [
-                    nextBuildNumber: 'UNOFFICIAL',
+                    nextBuildNumber: versioning.info.build,
                     version        : 'NONE'
             ]
         }
