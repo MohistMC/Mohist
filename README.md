@@ -1,6 +1,6 @@
 <img src="https://i.loli.net/2019/08/30/btYR9WDxd4XvhH3.png">
 
-## Mohist
+## Mohist-1.12.2
 
 ## It is highly recommended to use the 1.5+ version to quickly resolve known and unknown errors!
 
