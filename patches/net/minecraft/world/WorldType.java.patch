@@ -1,20 +1,23 @@
 --- ../src-base/minecraft/net/minecraft/world/WorldType.java
 +++ ../src-work/minecraft/net/minecraft/world/WorldType.java
-@@ -2,6 +2,7 @@
- 
- import net.minecraftforge.fml.relauncher.Side;
- import net.minecraftforge.fml.relauncher.SideOnly;
-+import red.mohist.forge.ForgeInjectBukkit;
+@@ -19,6 +19,7 @@
+ import net.minecraft.world.gen.layer.GenLayerZoom;
+ import cpw.mods.fml.relauncher.Side;
+ import cpw.mods.fml.relauncher.SideOnly;
++import net.minecraftforge.common.util.EnumHelper; // Cauldron
  
  public class WorldType
  {
-@@ -33,6 +34,9 @@
+@@ -49,6 +50,12 @@
          this.canBeCreated = true;
-         this.id = id;
-         WORLD_TYPES[id] = this;
-+        if (org.bukkit.WorldType.getByName(name) == null) {
-+            ForgeInjectBukkit.addBukkitWorldType(name);
+         this.worldTypeId = p_i1960_1_;
+         worldTypes[p_i1960_1_] = this;
++        // Cauldron start - add worldtype for bukkit if it does not already exist
++        if (org.bukkit.WorldType.getByName(p_i1960_2_) == null)
++        {
++            EnumHelper.addBukkitWorldType(p_i1960_2_);
 +        }
++        // Cauldron end
      }
  
-     public String getName()
+     public String getWorldTypeName()

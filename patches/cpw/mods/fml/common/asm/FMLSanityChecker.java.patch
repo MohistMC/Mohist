@@ -1,0 +1,17 @@
+--- ../src-base/minecraft/cpw/mods/fml/common/asm/FMLSanityChecker.java
++++ ../src-work/minecraft/cpw/mods/fml/common/asm/FMLSanityChecker.java
+@@ -164,10 +164,12 @@
+                 FMLRelaunchLog.severe("Technical information: ClientBrandRetriever was at %s, there were %d certificates for it", codeSource.getLocation(), certCount);
+             }
+         }
+-        if (!goodFML)
++        // Cauldron start - disable message
++        /*if (!goodFML)
+         {
+             FMLRelaunchLog.severe("FML appears to be missing any signature data. This is not a good thing");
+-        }
++        }*/
++        // Cauldron end
+         return null;
+     }
+ 

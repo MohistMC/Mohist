@@ -1,25 +1,14 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockReed.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockReed.java
-@@ -21,6 +21,7 @@
- import net.minecraftforge.fml.relauncher.Side;
- import net.minecraftforge.fml.relauncher.SideOnly;
+@@ -44,9 +44,9 @@
+                 {
+                     int i1 = p_149674_1_.getBlockMetadata(p_149674_2_, p_149674_3_, p_149674_4_);
  
-+
- public class BlockReed extends Block implements net.minecraftforge.common.IPlantable
- {
-     public static final PropertyInteger AGE = PropertyInteger.create("age", 0, 15);
-@@ -57,9 +58,12 @@
- 
-                     if(net.minecraftforge.common.ForgeHooks.onCropsGrowPre(worldIn, pos, state, true))
+-                    if (i1 == 15)
++                    if (i1 >= (byte) range(3, (p_149674_1_.growthOdds / p_149674_1_.getSpigotConfig().caneModifier * 15) + 0.5F, 15))   // Spigot // Cauldron
                      {
--                    if (j == 15)
-+                    if (j >= (byte)Block.range(3.0f, 100.0f / worldIn.spigotConfig.caneModifier * 15.0f + 0.5f, 15.0f))
-                     {
--                        worldIn.setBlockState(pos.up(), this.getDefaultState());
-+
-+                        //worldIn.setBlockState(pos.up(), this.getDefaultState());
-+                        BlockPos upPos = pos.up();
-+                        org.bukkit.craftbukkit.v1_12_R1.event.CraftEventFactory.handleBlockGrowEvent(worldIn, upPos.getX(), upPos.getY(), upPos.getZ(), this, 0);
-                         worldIn.setBlockState(pos, state.withProperty(AGE, Integer.valueOf(0)), 4);
+-                        p_149674_1_.setBlock(p_149674_2_, p_149674_3_ + 1, p_149674_4_, this);
++                        org.bukkit.craftbukkit.event.CraftEventFactory.handleBlockGrowEvent(p_149674_1_, p_149674_2_, p_149674_3_ + 1, p_149674_4_, this, 0); // CraftBukkit
+                         p_149674_1_.setBlockMetadataWithNotify(p_149674_2_, p_149674_3_, p_149674_4_, 0, 4);
                      }
                      else

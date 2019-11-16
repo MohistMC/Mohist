@@ -1,25 +1,19 @@
 --- ../src-base/minecraft/net/minecraft/item/ItemBoat.java
 +++ ../src-work/minecraft/net/minecraft/item/ItemBoat.java
-@@ -84,6 +84,11 @@
-             }
-             else
-             {
-+                org.bukkit.event.player.PlayerInteractEvent event = org.bukkit.craftbukkit.v1_12_R1.event.CraftEventFactory.callPlayerInteractEvent(playerIn, org.bukkit.event.block.Action.RIGHT_CLICK_BLOCK, raytraceresult.getBlockPos(), raytraceresult.sideHit, itemstack, handIn);
-+
-+                if (event.isCancelled()) {
-+                    return new ActionResult<>(EnumActionResult.PASS, itemstack);
-+                }
-                 Block block = worldIn.getBlockState(raytraceresult.getBlockPos()).getBlock();
-                 boolean flag1 = block == Blocks.WATER || block == Blocks.FLOWING_WATER;
-                 EntityBoat entityboat = new EntityBoat(worldIn, raytraceresult.hitVec.x, flag1 ? raytraceresult.hitVec.y - 0.12D : raytraceresult.hitVec.y, raytraceresult.hitVec.z);
-@@ -98,7 +103,9 @@
-                 {
-                     if (!worldIn.isRemote)
-                     {
--                        worldIn.spawnEntity(entityboat);
-+                        // worldIn.spawnEntity(entityboat);
-+                        if (!worldIn.spawnEntity(entityboat))
-+                            return new ActionResult<>(EnumActionResult.PASS, itemstack);
-                     }
+@@ -80,7 +80,16 @@
+                     i = movingobjectposition.blockX;
+                     int j = movingobjectposition.blockY;
+                     int k = movingobjectposition.blockZ;
++                    // CraftBukkit start - Boat placement
++                    org.bukkit.event.player.PlayerInteractEvent event = org.bukkit.craftbukkit.event.CraftEventFactory.callPlayerInteractEvent(p_77659_3_, org.bukkit.event.block.Action.RIGHT_CLICK_BLOCK, i, j, k, movingobjectposition.sideHit, p_77659_1_);
  
-                     if (!playerIn.capabilities.isCreativeMode)
++                    if (event.isCancelled())
++                    {
++                        return p_77659_1_;
++                    }
++
++                    // CraftBukkit end
++
+                     if (p_77659_2_.getBlock(i, j, k) == Blocks.snow_layer)
+                     {
+                         --j;

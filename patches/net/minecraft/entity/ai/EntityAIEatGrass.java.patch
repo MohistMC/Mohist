@@ -1,29 +1,34 @@
 --- ../src-base/minecraft/net/minecraft/entity/ai/EntityAIEatGrass.java
 +++ ../src-work/minecraft/net/minecraft/entity/ai/EntityAIEatGrass.java
-@@ -10,6 +10,8 @@
- import net.minecraft.init.Blocks;
- import net.minecraft.util.math.BlockPos;
+@@ -6,6 +6,11 @@
+ import net.minecraft.util.MathHelper;
  import net.minecraft.world.World;
-+import org.bukkit.Material;
-+import org.bukkit.craftbukkit.v1_12_R1.event.CraftEventFactory;
  
++// CraftBukkit start
++import org.bukkit.craftbukkit.event.CraftEventFactory;
++import org.bukkit.Material;
++// CraftBukkit end
++
  public class EntityAIEatGrass extends EntityAIBase
  {
-@@ -78,7 +80,7 @@
+     private EntityLiving field_151500_b;
+@@ -69,7 +74,8 @@
  
-             if (IS_TALL_GRASS.apply(this.entityWorld.getBlockState(blockpos)))
+             if (this.field_151501_c.getBlock(i, j, k) == Blocks.tallgrass)
              {
--                if (net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(this.entityWorld, this.grassEaterEntity))
-+                if (!CraftEventFactory.callEntityChangeBlockEvent(this.grassEaterEntity, this.grassEaterEntity.world.getWorld().getBlockAt(blockpos.getX(), blockpos.getY(), blockpos.getZ()), Material.AIR, !net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(this.entityWorld, this.grassEaterEntity)).isCancelled())
+-                if (this.field_151501_c.getGameRules().getGameRuleBooleanValue("mobGriefing"))
++                // CraftBukkit
++                if (!CraftEventFactory.callEntityChangeBlockEvent(this.field_151500_b, this.field_151500_b.worldObj.getWorld().getBlockAt(i, j, k), Material.AIR, !this.field_151501_c.getGameRules().getGameRuleBooleanValue("mobGriefing")).isCancelled())
                  {
-                     this.entityWorld.destroyBlock(blockpos, false);
+                     this.field_151501_c.func_147480_a(i, j, k, false);
                  }
-@@ -91,7 +93,7 @@
- 
-                 if (this.entityWorld.getBlockState(blockpos1).getBlock() == Blocks.GRASS)
+@@ -78,7 +84,8 @@
+             }
+             else if (this.field_151501_c.getBlock(i, j - 1, k) == Blocks.grass)
+             {
+-                if (this.field_151501_c.getGameRules().getGameRuleBooleanValue("mobGriefing"))
++                // CraftBukkit
++                if (!CraftEventFactory.callEntityChangeBlockEvent(this.field_151500_b, this.field_151500_b.worldObj.getWorld().getBlockAt(i, j - 1, k), Material.DIRT, !this.field_151501_c.getGameRules().getGameRuleBooleanValue("mobGriefing")).isCancelled())
                  {
--                    if (net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(this.entityWorld, this.grassEaterEntity))
-+                    if (!CraftEventFactory.callEntityChangeBlockEvent(this.grassEaterEntity, this.grassEaterEntity.world.getWorld().getBlockAt(blockpos.getX(), blockpos.getY(), blockpos.getZ()), Material.AIR, !net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(this.entityWorld, this.grassEaterEntity)).isCancelled())
-                     {
-                         this.entityWorld.playEvent(2001, blockpos1, Block.getIdFromBlock(Blocks.GRASS));
-                         this.entityWorld.setBlockState(blockpos1, Blocks.DIRT.getDefaultState(), 2);
+                     this.field_151501_c.playAuxSFX(2001, i, j - 1, k, Block.getIdFromBlock(Blocks.grass));
+                     this.field_151501_c.setBlock(i, j - 1, k, Blocks.dirt, 0, 2);

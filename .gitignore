@@ -1,29 +1,14 @@
-# various other potential build files
-/build
+!.gitignore
 
-/projects
-/plugin
+# eclipse
 /eclipse
-/.gradle
-/.vscode
-/classes
-/out
-/logs
 
-# Mac filesystem dust
-.DS_Store
-
-# intellij
+# idea
+.idea
 *.iml
-*.ipr
-*.iws
-.idea/
 
-# patch
-*.rej
+# gradle
+build
+.gradle
 
-#eclipse
-**/bin
-**/.settings
-**/.classpath
-*.project
+*.DS_Store

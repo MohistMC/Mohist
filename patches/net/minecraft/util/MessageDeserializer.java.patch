@@ -1,0 +1,14 @@
+--- ../src-base/minecraft/net/minecraft/util/MessageDeserializer.java
++++ ../src-work/minecraft/net/minecraft/util/MessageDeserializer.java
+@@ -39,7 +39,10 @@
+ 
+             if (packet == null)
+             {
+-                throw new IOException("Bad packet id " + j);
++                if (j == 92)
++                    packetbuffer.setIndex(packetbuffer.writerIndex(), packetbuffer.writerIndex()); // Thermos - temporarily drop Factorization packet id 92 by skipping its bytes
++                else
++                    throw new IOException("Bad packet id " + j);
+             }
+             else
+             {

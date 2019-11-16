@@ -1,97 +1,48 @@
 --- ../src-base/minecraft/net/minecraft/world/chunk/Chunk.java
 +++ ../src-work/minecraft/net/minecraft/world/chunk/Chunk.java
-@@ -1,6 +1,7 @@
- package net.minecraft.world.chunk;
- 
- import com.google.common.base.Predicate;
-+import com.google.common.collect.ImmutableList;
- import com.google.common.collect.Maps;
- import com.google.common.collect.Queues;
- import java.util.Arrays;
-@@ -8,20 +9,28 @@
- import java.util.Map;
- import java.util.Random;
- import java.util.concurrent.ConcurrentLinkedQueue;
-+import java.util.stream.Collectors;
- import javax.annotation.Nullable;
- import net.minecraft.block.Block;
--import net.minecraft.block.ITileEntityProvider;
-+import net.minecraft.block.BlockSand;
- import net.minecraft.block.material.Material;
- import net.minecraft.block.state.IBlockState;
- import net.minecraft.crash.CrashReport;
- import net.minecraft.crash.CrashReportCategory;
- import net.minecraft.crash.ICrashReportDetail;
- import net.minecraft.entity.Entity;
-+import net.minecraft.entity.EntityLiving;
-+import net.minecraft.entity.EnumCreatureType;
-+import net.minecraft.entity.item.EntityItem;
-+import net.minecraft.entity.player.EntityPlayerMP;
- import net.minecraft.init.Biomes;
- import net.minecraft.init.Blocks;
-+import net.minecraft.inventory.IInventory;
- import net.minecraft.network.PacketBuffer;
-+import net.minecraft.server.MinecraftServer;
- import net.minecraft.tileentity.TileEntity;
- import net.minecraft.util.ClassInheritanceMultiMap;
-+import net.minecraft.util.EntitySelectors;
- import net.minecraft.util.EnumFacing;
- import net.minecraft.util.ReportedException;
- import net.minecraft.util.math.AxisAlignedBB;
-@@ -40,6 +49,7 @@
- import net.minecraftforge.fml.relauncher.SideOnly;
+@@ -36,6 +36,17 @@
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
-+import org.bukkit.Server;
  
- public class Chunk implements net.minecraftforge.common.capabilities.ICapabilityProvider
++// CraftBukkit start
++import net.minecraft.block.BlockContainer;
++import org.bukkit.Bukkit;
++// CraftBukkit end
++// Spigot start
++import net.minecraft.entity.EntityLiving;
++import net.minecraft.entity.EnumCreatureType;
++import net.minecraft.entity.player.EntityPlayerMP;
++import net.minecraft.inventory.IInventory;
++// Spigot end
++
+ public class Chunk
  {
-@@ -50,13 +60,13 @@
-     private final int[] precipitationHeightMap;
-     private final boolean[] updateSkylightColumns;
-     private boolean loaded;
--    private final World world;
--    private final int[] heightMap;
-+    public final World world;
-+    public final int[] heightMap;
-     public final int x;
-     public final int z;
-     private boolean isGapLightingUpdated;
--    private final Map<BlockPos, TileEntity> tileEntities;
--    private final ClassInheritanceMultiMap<Entity>[] entityLists;
-+    public final Map<BlockPos, TileEntity> tileEntities;
-+    public final ClassInheritanceMultiMap<Entity>[] entityLists;  // Spigot
-     private boolean isTerrainPopulated;
-     private boolean isLightPopulated;
-     private boolean ticked;
-@@ -68,7 +78,45 @@
+     private static final Logger logger = LogManager.getLogger();
+@@ -62,15 +73,49 @@
+     public int heightMapMinimum;
+     public long inhabitedTime;
      private int queuedLightChecks;
-     private final ConcurrentLinkedQueue<BlockPos> tileEntityPosQueue;
-     public boolean unloadQueued;
-+    public gnu.trove.map.hash.TObjectIntHashMap<Class> entityCount = new gnu.trove.map.hash.TObjectIntHashMap<Class>(); // Spigot
-+    // Paper start
-+    // Track the number of minecarts and items
-+    // Keep this synced with entitySlices.add() and entitySlices.remove()
-+    private final int[] itemCounts = new int[16];
-+    private final int[] inventoryEntityCounts = new int[16];
-+    // Paper end
++    public gnu.trove.map.hash.TObjectIntHashMap<Class> entityCount = new gnu.trove.map.hash.TObjectIntHashMap<Class>(); // Spigot (Cauldron protected -> public)
++    // PaperSpigot start - Asynchronous light updates
++    public java.util.concurrent.atomic.AtomicInteger pendingLightUpdates = new java.util.concurrent.atomic.AtomicInteger();
++    public long lightUpdateTime;
++    // PaperSpigot end
++    public int lastAccessedTick; // Cauldron track last time the chunk was accessed
+     private static final String __OBFID = "CL_00000373";
  
 +    // CraftBukkit start - Neighbor loaded cache for chunk lighting and entity ticking
 +    private int neighbors = 0x1 << 12;
-+    public long chunkKey;
-+
-+    public int lastAccessedTick; // Cauldron track last time the chunk was accessed
 +
 +    public boolean areNeighborsLoaded(final int radius) {
-+        switch (radius) {
++        switch(radius) {
 +            case 2:
 +                return this.neighbors == Integer.MAX_VALUE >> 6;
 +            case 1:
 +                final int mask =
-+                        //       x        z   offset          x        z   offset          x         z   offset
-+                        (0x1 << (1 * 5 +  1 + 12)) | (0x1 << (0 * 5 +  1 + 12)) | (0x1 << (-1 * 5 +  1 + 12)) |
-+                        (0x1 << (1 * 5 +  0 + 12)) | (0x1 << (0 * 5 +  0 + 12)) | (0x1 << (-1 * 5 +  0 + 12)) |
-+                        (0x1 << (1 * 5 + -1 + 12)) | (0x1 << (0 * 5 + -1 + 12)) | (0x1 << (-1 * 5 + -1 + 12));
++                    //        x        z   offset            x        z   offset            x         z   offset
++                    ( 0x1 << (1 * 5 +  1 + 12) ) | ( 0x1 << (0 * 5 +  1 + 12) ) | ( 0x1 << (-1 * 5 +  1 + 12) ) |
++                    ( 0x1 << (1 * 5 +  0 + 12) ) | ( 0x1 << (0 * 5 +  0 + 12) ) | ( 0x1 << (-1 * 5 +  0 + 12) ) |
++                    ( 0x1 << (1 * 5 + -1 + 12) ) | ( 0x1 << (0 * 5 + -1 + 12) ) | ( 0x1 << (-1 * 5 + -1 + 12) );
 +                return (this.neighbors & mask) == mask;
 +            default:
 +                throw new UnsupportedOperationException(String.valueOf(radius));
@@ -107,402 +58,368 @@
 +    }
 +    // CraftBukkit end
 +
-     public Chunk(World worldIn, int x, int z)
+     public Chunk(World p_i1995_1_, int p_i1995_2_, int p_i1995_3_)
      {
          this.storageArrays = new ExtendedBlockStorage[16];
-@@ -92,8 +140,13 @@
+         this.blockBiomeArray = new byte[256];
+         this.precipitationHeightMap = new int[256];
+         this.updateSkylightColumns = new boolean[256];
+-        this.chunkTileEntityMap = new HashMap();
++        this.chunkTileEntityMap = new HashMap(512,0.90F);
+         this.queuedLightChecks = 4096;
+         this.entityLists = new List[16];
+         this.worldObj = p_i1995_1_;
+@@ -80,13 +125,22 @@
+ 
+         for (int k = 0; k < this.entityLists.length; ++k)
+         {
+-            this.entityLists[k] = new ArrayList();
++            this.entityLists[k] = new org.bukkit.craftbukkit.util.UnsafeList(); // CraftBukkit - ArrayList -> UnsafeList
+         }
+ 
          Arrays.fill(this.precipitationHeightMap, -999);
          Arrays.fill(this.blockBiomeArray, (byte) - 1);
-         capabilities = net.minecraftforge.event.ForgeEventFactory.gatherCapabilities(this);
-+        this.bukkitChunk = new org.bukkit.craftbukkit.v1_12_R1.CraftChunk(this);
-+        this.chunkKey = ChunkPos.asLong(this.x, this.z);
++        // CraftBukkit start
++        if (!(this instanceof EmptyChunk))
++        {
++            this.bukkitChunk = new org.bukkit.craftbukkit.CraftChunk(this);
++        }
      }
  
 +    public org.bukkit.Chunk bukkitChunk;
 +    public boolean mustSave;
++    // CraftBukkit end
 +
-     public Chunk(World worldIn, ChunkPrimer primer, int x, int z)
+     public Chunk(World p_i45446_1_, Block[] p_i45446_2_, int p_i45446_3_, int p_i45446_4_)
      {
-         this(worldIn, x, z);
-@@ -332,8 +385,8 @@
- 
-     private void updateSkylightNeighborHeight(int x, int z, int startY, int endY)
+         this(p_i45446_1_, p_i45446_3_, p_i45446_4_);
+@@ -505,17 +559,17 @@
+     public Block getBlock(final int p_150810_1_, final int p_150810_2_, final int p_150810_3_)
      {
--        if (endY > startY && this.world.isAreaLoaded(new BlockPos(x, 0, z), 16))
--        {
-+        if (endY > startY && this.world.isAreaLoaded(new BlockPos(x, 0, z), 16)) 
-+		{
-             for (int i = startY; i < endY; ++i)
-             {
-                 this.world.checkLightFor(EnumSkyBlock.SKY, new BlockPos(x, i, z));
-@@ -468,7 +521,7 @@
-     }
- 
-     public IBlockState getBlockState(final int x, final int y, final int z)
--    {
-+	{
-         if (this.world.getWorldType() == WorldType.DEBUG_ALL_BLOCK_STATES)
+         Block block = Blocks.air;
+-
+-        if (p_150810_2_ >> 4 < this.storageArrays.length)
++        int p_2 = p_150810_2_ >> 4;
++        if (p_2 < this.storageArrays.length)
          {
-             IBlockState iblockstate = null;
-@@ -565,12 +618,12 @@
-                 {
-                     if (block1 != block) //Only fire block breaks when the block changes.
-                     block1.breakBlock(this.world, pos, iblockstate);
--                    TileEntity te = this.getTileEntity(pos, Chunk.EnumCreateEntityType.CHECK);
-+                    TileEntity te = this.getTileEntity(pos, EnumCreateEntityType.CHECK);
-                     if (te != null && te.shouldRefresh(this.world, pos, iblockstate, state)) this.world.removeTileEntity(pos);
-                 }
-                 else if (block1.hasTileEntity(iblockstate))
-                 {
--                    TileEntity te = this.getTileEntity(pos, Chunk.EnumCreateEntityType.CHECK);
-+                    TileEntity te = this.getTileEntity(pos, EnumCreateEntityType.CHECK);
-                     if (te != null && te.shouldRefresh(this.world, pos, iblockstate, state))
-                     this.world.removeTileEntity(pos);
-                 }
-@@ -608,6 +661,7 @@
-                     }
-                 }
+-            ExtendedBlockStorage extendedblockstorage = this.storageArrays[p_150810_2_ >> 4];
++            ExtendedBlockStorage extendedblockstorage = this.storageArrays[p_2];
  
-+                // CraftBukkit - Don't place while processing the BlockPlaceEvent, unless it's a BlockContainer. Prevents blocks such as TNT from activating when cancelled.
-                 // If capturing blocks, only run block physics for TE's. Non-TE's are handled in ForgeHooks.onPlaceItemIntoWorld
-                 if (!this.world.isRemote && block1 != block && (!this.world.captureBlockSnapshots || block.hasTileEntity(state)))
+             if (extendedblockstorage != null)
+             {
+-                try
+-                {
++                /*try
++                {*/ // Exception handled by high-level class with safier deletion
+                     block = extendedblockstorage.getBlockByExtId(p_150810_1_, p_150810_2_ & 15, p_150810_3_);
+-                }
++                /*}
+                 catch (Throwable throwable)
                  {
-@@ -616,7 +670,7 @@
+                     CrashReport crashreport = CrashReport.makeCrashReport(throwable, "Getting block");
+@@ -529,7 +583,7 @@
+                         }
+                     });
+                     throw new ReportedException(crashreport);
+-                }
++                }*/
+             }
+         }
  
-                 if (block.hasTileEntity(state))
-                 {
--                    TileEntity tileentity1 = this.getTileEntity(pos, Chunk.EnumCreateEntityType.CHECK);
-+                    TileEntity tileentity1 = this.getTileEntity(pos, EnumCreateEntityType.CHECK);
+@@ -589,9 +643,10 @@
  
-                     if (tileentity1 == null)
-                     {
-@@ -743,6 +797,28 @@
-         entityIn.chunkCoordZ = this.z;
-         this.entityLists[k].add(entityIn);
-         this.markDirty(); // Forge - ensure chunks are marked to save after an entity add
-+        if (entityIn instanceof EntityItem) {
-+            itemCounts[k]++;
-+        } else if (entityIn instanceof IInventory) {
-+            inventoryEntityCounts[k]++;
-+        }
-+
+             if (!this.worldObj.isRemote)
+             {
++                if (block1 == null) return false; // Cauldron
+                 block1.onBlockPreDestroy(this.worldObj, l1, p_150807_2_, i2, k1);
+             }
+-
++            // Cauldron - Removed CB patch that fixes BUKKIT-5238 to prevent stackoverflows. See issue #1165 and #1169
+             extendedblockstorage.func_150818_a(p_150807_1_, p_150807_2_ & 15, p_150807_3_, p_150807_4_);
+             extendedblockstorage.setExtBlockMetadata(p_150807_1_, p_150807_2_ & 15, p_150807_3_, p_150807_5_); // This line duplicates the one below, so breakBlock fires with valid worldstate
+ 
+@@ -777,8 +832,20 @@
+ 
+         if (i != this.xPosition || j != this.zPosition)
+         {
+-            logger.warn("Wrong location! " + p_76612_1_ + " (at " + i + ", " + j + " instead of " + this.xPosition + ", " + this.zPosition + ")");
+-            Thread.dumpStack();
++            // CraftBukkit start
++            Bukkit.getLogger().warning("Wrong location for " + p_76612_1_ + " in world '" + worldObj.getWorld().getName() + "'!");
++            //logger.warn("Wrong location! " + p_76612_1_ + " (at " + i + ", " + j + " instead of " + this.xPosition + ", " + this.zPosition + ")");
++            //Thread.dumpStack();
++            Bukkit.getLogger().warning(
++                    "Entity is at " + p_76612_1_.posX + "," + p_76612_1_.posZ + " (chunk " + i + "," + j + ") but was stored in chunk " + this.xPosition + ","
++                            + this.zPosition);
++            if (!(p_76612_1_ instanceof EntityPlayerMP))
++            {
++                Bukkit.getLogger().warning("Cauldron has removed " + p_76612_1_ + " to prevent a server crash.");
++                p_76612_1_.setDead();
++                return;
++            }
++            // CraftBukkit end
+         }
+ 
+         int k = MathHelper.floor_double(p_76612_1_.posY / 16.0D);
+@@ -799,6 +866,26 @@
+         p_76612_1_.chunkCoordY = k;
+         p_76612_1_.chunkCoordZ = this.zPosition;
+         this.entityLists[k].add(p_76612_1_);
 +        // Spigot start - increment creature type count
 +        // Keep this synced up with World.a(Class)
-+        if (entityIn instanceof EntityLiving) {
-+            EntityLiving entityinsentient = (EntityLiving) entityIn;
-+            if (entityinsentient.canDespawn() && entityinsentient.isNoDespawnRequired()) {
++        if (p_76612_1_ instanceof EntityLiving)
++        {
++            EntityLiving entityliving = (EntityLiving) p_76612_1_;
++
++            if (entityliving.canDespawn_CB() && entityliving.isNoDespawnRequired())
++            {
 +                return;
 +            }
 +        }
-+        for ( EnumCreatureType creatureType : EnumCreatureType.values() )
++
++        for (EnumCreatureType creatureType : EnumCreatureType.values())
 +        {
-+            if ( creatureType.getCreatureClass().isAssignableFrom( entityIn.getClass() ) )
++            if (creatureType.getCreatureClass().isAssignableFrom(p_76612_1_.getClass()))
 +            {
-+                this.entityCount.adjustOrPutValue( creatureType.getCreatureClass(), 1, 1 );
++                this.entityCount.adjustOrPutValue(creatureType.getCreatureClass(), 1, 1);
 +            }
 +        }
 +        // Spigot end
      }
  
-     public void removeEntity(Entity entityIn)
-@@ -761,9 +837,29 @@
-         {
-             index = this.entityLists.length - 1;
+     public void removeEntity(Entity p_76622_1_)
+@@ -819,6 +906,26 @@
          }
--
-         this.entityLists[index].remove(entityIn);
-         this.markDirty(); // Forge - ensure chunks are marked to save after entity removals
-+        if (entityIn instanceof EntityItem) {
-+            itemCounts[index]--;
-+        } else if (entityIn instanceof IInventory) {
-+            inventoryEntityCounts[index]--;
-+        }
+ 
+         this.entityLists[p_76608_2_].remove(p_76608_1_);
 +        // Spigot start - decrement creature type count
 +        // Keep this synced up with World.a(Class)
-+        if (entityIn instanceof EntityLiving) {
-+            EntityLiving entityinsentient = (EntityLiving) entityIn;
-+            if (entityinsentient.canDespawn() && entityinsentient.isNoDespawnRequired()) {
++        if (p_76608_1_ instanceof EntityLiving)
++        {
++            EntityLiving entityliving = (EntityLiving) p_76608_1_;
++
++            if (entityliving.canDespawn_CB() && entityliving.isNoDespawnRequired())
++            {
 +                return;
 +            }
 +        }
-+        for ( EnumCreatureType creatureType : EnumCreatureType.values() )
++
++        for (EnumCreatureType creatureType : EnumCreatureType.values())
 +        {
-+            if ( creatureType.getCreatureClass().isAssignableFrom( entityIn.getClass() ) )
++            if (creatureType.getCreatureClass().isAssignableFrom(p_76608_1_.getClass()))
 +            {
-+                this.entityCount.adjustValue( creatureType.getCreatureClass(), -1 );
++                this.entityCount.adjustValue(creatureType.getCreatureClass(), -1);
 +            }
 +        }
 +        // Spigot end
      }
  
-     public boolean canSeeSky(BlockPos pos)
-@@ -781,11 +877,14 @@
-         Block block = iblockstate.getBlock();
-         return !block.hasTileEntity(iblockstate) ? null : block.createTileEntity(this.world, iblockstate);
-     }
--
-+	
-     @Nullable
--    public TileEntity getTileEntity(BlockPos pos, Chunk.EnumCreateEntityType p_177424_2_)
-+    public TileEntity getTileEntity(BlockPos pos, EnumCreateEntityType p_177424_2_)
-     {
--        TileEntity tileentity = this.tileEntities.get(pos);
-+        TileEntity tileentity = null;
-+        if (tileentity == null) {
-+            tileentity = this.tileEntities.get(pos);
-+        }
- 
-         if (tileentity != null && tileentity.isInvalid())
-         {
-@@ -795,12 +894,12 @@
- 
-         if (tileentity == null)
-         {
--            if (p_177424_2_ == Chunk.EnumCreateEntityType.IMMEDIATE)
-+            if (p_177424_2_ == EnumCreateEntityType.IMMEDIATE)
-             {
-                 tileentity = this.createNewTileEntity(pos);
-                 this.world.setTileEntity(pos, tileentity);
-             }
--            else if (p_177424_2_ == Chunk.EnumCreateEntityType.QUEUED)
-+            else if (p_177424_2_ == EnumCreateEntityType.QUEUED)
-             {
-                 this.tileEntityPosQueue.add(pos.toImmutable());
-             }
-@@ -824,9 +923,18 @@
-         if (tileEntityIn.getWorld() != this.world) //Forge don't call unless it's changed, could screw up bad mods.
-         tileEntityIn.setWorld(this.world);
-         tileEntityIn.setPos(pos);
--
--        if (this.getBlockState(pos).getBlock().hasTileEntity(this.getBlockState(pos)))
-+        // Mohist start - validate TE for corrupted data
+     public boolean canBlockSeeTheSky(int p_76619_1_, int p_76619_2_, int p_76619_3_)
+@@ -874,9 +981,23 @@
+         p_150812_4_.xCoord = this.xPosition * 16 + p_150812_1_;
+         p_150812_4_.yCoord = p_150812_2_;
+         p_150812_4_.zCoord = this.zPosition * 16 + p_150812_3_;
++        // Cauldron start - validate TE for corrupted data
 +        Block block = null;
-+        try {
-+            block = this.getBlockState(pos).getBlock();
++        try
++        {
++            block = this.getBlock(p_150812_1_, p_150812_2_, p_150812_3_);
 +        }
 +        catch (ArrayIndexOutOfBoundsException e)
-         {
-+            tileEntityIn.invalidate();
++        {
++            System.out.println("ERROR: Detected corrupted TileEntity " + p_150812_4_ + " with bad extended block ID of "
++                    + ((p_150812_2_ & 15) << 8 | p_150812_3_ << 4 | p_150812_1_) + " @  " + p_150812_4_.xCoord + ", " + p_150812_4_.yCoord + ", "
++                    + p_150812_4_.zCoord + ". Removing TE to avoid crash...");
++            p_150812_4_.invalidate();
 +            return;
 +        }
-+        if (block != null && block.hasTileEntity(this.getBlockState(pos))) // Mohist end
+ 
+         int metadata = getBlockMetadata(p_150812_1_, p_150812_2_, p_150812_3_);
+-        if (this.getBlock(p_150812_1_, p_150812_2_, p_150812_3_).hasTileEntity(metadata))
++        if (block != null && block.hasTileEntity(metadata)) // Cauldron end
+         {
+             if (this.chunkTileEntityMap.containsKey(chunkposition))
+             {
+@@ -886,6 +1007,16 @@
+             p_150812_4_.validate();
+             this.chunkTileEntityMap.put(chunkposition, p_150812_4_);
+         }
++        // CraftBukkit start
++        else if (net.minecraft.server.MinecraftServer.getServer().tileEntityConfig.enableTEPlaceWarning.getValue()) // Cauldron
 +        {
-             if (this.tileEntities.containsKey(pos))
-             {
-                 ((TileEntity)this.tileEntities.get(pos)).invalidate();
-@@ -854,17 +962,16 @@
-     {
-         this.loaded = true;
-         this.world.addTileEntities(this.tileEntities.values());
--
-         for (ClassInheritanceMultiMap<Entity> classinheritancemultimap : this.entityLists)
-         {
--            this.world.loadEntities(com.google.common.collect.ImmutableList.copyOf(classinheritancemultimap));
-+            this.world.loadEntities(ImmutableList.copyOf(classinheritancemultimap));
-         }
-         net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.world.ChunkEvent.Load(this));
-     }
- 
-     public void onUnload()
-     {
--        java.util.Arrays.stream(entityLists).forEach(multimap -> com.google.common.collect.Lists.newArrayList(multimap.getByClass(net.minecraft.entity.player.EntityPlayer.class)).forEach(player -> world.updateEntityWithOptionalForce(player, false))); // FORGE - Fix for MC-92916
-+        Arrays.stream(entityLists).forEach(multimap -> com.google.common.collect.Lists.newArrayList(multimap.getByClass(net.minecraft.entity.player.EntityPlayer.class)).forEach(player -> world.updateEntityWithOptionalForce(player, false))); // FORGE - Fix for MC-92916
-         this.loaded = false;
- 
-         for (TileEntity tileentity : this.tileEntities.values())
-@@ -874,7 +981,14 @@
- 
-         for (ClassInheritanceMultiMap<Entity> classinheritancemultimap : this.entityLists)
-         {
--            this.world.unloadEntities(classinheritancemultimap);
-+            // Do not pass along players, as doing so can get them stuck outside of time.
-+            // (which for example disables inventory icon updates and prevents block breaking)
-+            this.world.unloadEntities(
-+                    classinheritancemultimap
-+                            .stream()
-+                            .filter(entity -> !(entity instanceof EntityPlayerMP))
-+                            .collect(Collectors.toCollection(() -> new ClassInheritanceMultiMap<>(Entity.class)))
-+            );
-         }
-         net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.world.ChunkEvent.Unload(this));
-     }
-@@ -895,6 +1009,15 @@
-         {
-             if (!this.entityLists[k].isEmpty())
-             {
-+                // Paper start - Don't search for inventories if we have none, and that is all we want
-+                /*
-+                 * We check if they want inventories by seeing if it is the static `IEntitySelector.c`
-+                 *
-+                 * Make sure the inventory selector stays in sync.
-+                 * It should be the one that checks `var1 instanceof IInventory && var1.isAlive()`
-+                 */
-+                if (filter == EntitySelectors.HAS_INVENTORY && inventoryEntityCounts[k] <= 0) continue;
-+                // Paper end
-                 for (Entity entity : this.entityLists[k])
-                 {
-                     if (entity.getEntityBoundingBox().intersects(aabb) && entity != entityIn)
-@@ -928,12 +1051,22 @@
-         int j = MathHelper.floor((aabb.maxY + World.MAX_ENTITY_RADIUS) / 16.0D);
-         i = MathHelper.clamp(i, 0, this.entityLists.length - 1);
-         j = MathHelper.clamp(j, 0, this.entityLists.length - 1);
--
-+        // Paper start
-+        int[] counts;
-+        if (EntityItem.class.isAssignableFrom(entityClass)) {
-+            counts = itemCounts;
-+        } else if (IInventory.class.isAssignableFrom(entityClass)) {
-+            counts = inventoryEntityCounts;
-+        } else {
-+            counts = null;
++            System.out.println("Attempted to place a tile entity (" + p_150812_4_ + ") at " + p_150812_4_.xCoord + "," + p_150812_4_.yCoord + ","
++                    + p_150812_4_.zCoord + " (" + org.bukkit.Material.getMaterial(Block.getIdFromBlock(getBlock(p_150812_1_, p_150812_2_, p_150812_3_)))
++                    + ") where there was no entity tile!");
++            System.out.println("Chunk coordinates: " + (this.xPosition * 16) + "," + (this.zPosition * 16));
++            new Exception().printStackTrace();
 +        }
-+        // Paper end
++        // CraftBukkit end
+     }
+ 
+     public void removeTileEntity(int p_150805_1_, int p_150805_2_, int p_150805_3_)
+@@ -936,6 +1067,21 @@
+ 
+         for (int i = 0; i < this.entityLists.length; ++i)
+         {
++            // CraftBukkit start
++            java.util.Iterator iter = this.entityLists[i].iterator();
++
++            while (iter.hasNext())
++            {
++                Entity entity = (Entity) iter.next();
++
++                // Do not pass along players, as doing so can get them stuck outside of time.
++                // (which for example disables inventory icon updates and prevents block breaking)
++                if (entity instanceof EntityPlayerMP)
++                {
++                    iter.remove();
++                }
++            }
++            // CraftBukkit end
+             this.worldObj.unloadEntities(this.entityLists[i]);
+         }
+         MinecraftForge.EVENT_BUS.post(new ChunkEvent.Unload(this));
+@@ -952,11 +1098,15 @@
+         int j = MathHelper.floor_double((p_76588_2_.maxY + World.MAX_ENTITY_RADIUS) / 16.0D);
+         i = MathHelper.clamp_int(i, 0, this.entityLists.length - 1);
+         j = MathHelper.clamp_int(j, 0, this.entityLists.length - 1);
+-
++        
++        if(p_76588_3_ instanceof ArrayList) // Thermos force ArrayList minimum size for faster entity adding
++        {
++        	((ArrayList)p_76588_3_).ensureCapacity(30);
++        }
++        
          for (int k = i; k <= j; ++k)
          {
-+            if (counts != null && counts[k] <= 0) continue; // Paper - Don't check a chunk if it doesn't have the type we are looking for
-             for (T t : this.entityLists[k].getByClass(entityClass))
+             List list1 = this.entityLists[k];
+-
+             for (int l = 0; l < list1.size(); ++l)
              {
--                if (t.getEntityBoundingBox().intersects(aabb) && (filter == null || filter.apply(t)))
-+                if (entityClass.isInstance(t) && t.getEntityBoundingBox().intersects(aabb) && (filter == null || filter.apply(t)))
-                 {
-                     listToFill.add(t);
-                 }
-@@ -950,12 +1083,8 @@
+                 Entity entity1 = (Entity)list1.get(l);
+@@ -1015,7 +1165,7 @@
                  return true;
              }
          }
--        else if (this.hasEntities && this.world.getTotalWorldTime() >= this.lastSaveTime + 600L)
--        {
--            return true;
--        }
- 
--        return this.dirty;
-+        return ((this.dirty || this.hasEntities) && this.world.getTotalWorldTime() >= this.lastSaveTime +  MinecraftServer.getServerInst().autosavePeriod);
-     }
- 
-     public Random getRandomWithSeed(long seed)
-@@ -1001,6 +1130,63 @@
+-        else if (this.hasEntities && this.worldObj.getTotalWorldTime() >= this.lastSaveTime + 600L)
++        else if (this.hasEntities && this.worldObj.getTotalWorldTime() >= this.lastSaveTime + net.minecraft.server.MinecraftServer.getServer().autosavePeriod * 4) // PaperSpigot - Only save if we've passed 4 auto save intervals without modification
+         {
+             return true;
          }
-     }
+@@ -1025,7 +1175,7 @@
  
-+    public void populateCB(IChunkProvider chunkProvider, IChunkGenerator chunkGenrator, boolean newChunk)
-+    {
-+        Server server = world.getServer();
-+        if (server != null) {
-+            /*
-+             * If it's a new world, the first few chunks are generated inside
-+             * the World constructor. We can't reliably alter that, so we have
-+             * no way of creating a CraftWorld/CraftServer at that point.
-+             */
-+            server.getPluginManager().callEvent(new org.bukkit.event.world.ChunkLoadEvent(bukkitChunk, newChunk));
-+        }
-+
-+        // Update neighbor counts
-+        for (int x = -2; x < 3; x++) {
-+            for (int z = -2; z < 3; z++) {
-+                if (x == 0 && z == 0) {
-+                    continue;
-+                }
-+
-+                Chunk neighbor = getWorld().getChunkIfLoaded(this.x + x, this.z + z);
-+                if (neighbor != null) {
-+                    neighbor.setNeighborLoaded(-x, -z);
-+                    setNeighborLoaded(x, z);
-+                }
-+            }
-+        }
-+        Chunk chunk = chunkProvider.getLoadedChunk(this.x, this.z - 1);
-+        Chunk chunk1 = chunkProvider.getLoadedChunk(this.x + 1, this.z);
-+        Chunk chunk2 = chunkProvider.getLoadedChunk(this.x, this.z + 1);
-+        Chunk chunk3 = chunkProvider.getLoadedChunk(this.x - 1, this.z);
-+
-+        if (chunk1 != null && chunk2 != null && chunkProvider.getLoadedChunk(this.x + 1, this.z + 1) != null)
-+        {
-+            this.populate(chunkGenrator);
-+        }
-+
-+        if (chunk3 != null && chunk2 != null && chunkProvider.getLoadedChunk(this.x - 1, this.z + 1) != null)
-+        {
-+            chunk3.populate(chunkGenrator);
-+        }
-+
-+        if (chunk != null && chunk1 != null && chunkProvider.getLoadedChunk(this.x + 1, this.z - 1) != null)
-+        {
-+            chunk.populate(chunkGenrator);
-+        }
-+
-+        if (chunk != null && chunk3 != null)
-+        {
-+            Chunk chunk4 = chunkProvider.getLoadedChunk(this.x - 1, this.z - 1);
-+
-+            if (chunk4 != null)
-+            {
-+                chunk4.populate(chunkGenrator);
-+            }
-+        }
-+    }
-+
-     protected void populate(IChunkGenerator generator)
+     public Random getRandomWithSeed(long p_76617_1_)
      {
-         if (populating != null && net.minecraftforge.common.ForgeModContainer.logCascadingWorldGeneration) logCascadingWorldGeneration();
-@@ -1017,6 +1203,26 @@
-         {
-             this.checkLight();
-             generator.populate(this.x, this.z);
-+            BlockSand.fallInstantly = true;
-+            Random random = new Random();
-+            random.setSeed(world.getSeed());
-+            long xRand = random.nextLong() / 2L * 2L + 1L;
-+            long zRand = random.nextLong() / 2L * 2L + 1L;
-+            random.setSeed((long) this.x * xRand + (long) this.z * zRand ^ world.getSeed());
-+
-+            org.bukkit.World world = this.world.getWorld();
-+            if (world != null) {
-+                this.world.populating = true;
-+                try {
-+                    for (org.bukkit.generator.BlockPopulator populator : world.getPopulators()) {
-+                        populator.populate(world, random, bukkitChunk);
-+                    }
-+                } finally {
-+                    this.world.populating = false;
-+                }
-+            }
-+            BlockSand.fallInstantly = false;
-+            this.world.getServer().getPluginManager().callEvent(new org.bukkit.event.world.ChunkPopulateEvent(bukkitChunk));
-             net.minecraftforge.fml.common.registry.GameRegistry.generateWorld(this.x, this.z, this.world, generator, this.world.getChunkProvider());
-             this.markDirty();
-         }
-@@ -1075,7 +1281,7 @@
-         {
-             BlockPos blockpos = this.tileEntityPosQueue.poll();
+-        return new Random(this.worldObj.getSeed() + (long)(this.xPosition * this.xPosition * 4987142) + (long)(this.xPosition * 5947611) + (long)(this.zPosition * this.zPosition) * 4392871L + (long)(this.zPosition * 389711) ^ p_76617_1_);
++        return new Random(this.worldObj.getSeed() + (4987142L * this.xPosition * this.xPosition) + (5947611L * this.xPosition) + (4392871L * this.zPosition * this.zPosition) + (389711L * this.zPosition) ^ p_76617_1_);
+     }
  
--            if (this.getTileEntity(blockpos, Chunk.EnumCreateEntityType.CHECK) == null && this.getBlockState(blockpos).getBlock().hasTileEntity(this.getBlockState(blockpos)))
-+            if (this.getTileEntity(blockpos, EnumCreateEntityType.CHECK) == null && this.getBlockState(blockpos).getBlock().hasTileEntity(this.getBlockState(blockpos)))
+     public boolean isEmpty()
+@@ -1035,6 +1185,7 @@
+ 
+     public void populateChunk(IChunkProvider p_76624_1_, IChunkProvider p_76624_2_, int p_76624_3_, int p_76624_4_)
+     {
++        worldObj.timings.syncChunkLoadPostTimer.startTiming(); // Spigot
+         if (!this.isTerrainPopulated && p_76624_1_.chunkExists(p_76624_3_ + 1, p_76624_4_ + 1) && p_76624_1_.chunkExists(p_76624_3_, p_76624_4_ + 1) && p_76624_1_.chunkExists(p_76624_3_ + 1, p_76624_4_))
+         {
+             p_76624_1_.populate(p_76624_2_, p_76624_3_, p_76624_4_);
+@@ -1054,6 +1205,7 @@
+         {
+             p_76624_1_.populate(p_76624_2_, p_76624_3_ - 1, p_76624_4_ - 1);
+         }
++        worldObj.timings.syncChunkLoadPostTimer.stopTiming(); // Spigot
+     }
+ 
+     public int getPrecipitationHeight(int p_76626_1_, int p_76626_2_)
+@@ -1091,7 +1243,7 @@
+     {
+         if (this.isGapLightingUpdated && !this.worldObj.provider.hasNoSky && !p_150804_1_)
+         {
+-            this.recheckGaps(this.worldObj.isRemote);
++            this.recheckGapsAsync(this.worldObj.isRemote);
+         }
+ 
+         this.field_150815_m = true;
+@@ -1104,7 +1256,8 @@
+ 
+     public boolean func_150802_k()
+     {
+-        return this.field_150815_m && this.isTerrainPopulated && this.isLightPopulated;
++        return true; // Spigot https://github.com/CyberdyneCC/Thermos/commit/e1ada4deb899529eaf28e3de66666f880a65d60f
++        //return this.field_150815_m && this.isTerrainPopulated && this.isLightPopulated;
+     }
+ 
+     public ChunkCoordIntPair getChunkCoordIntPair()
+@@ -1184,8 +1337,10 @@
+             if ((p_76607_2_ & 1 << l) != 0 && this.storageArrays[l] != null)
              {
-                 TileEntity tileentity = this.createNewTileEntity(blockpos);
-                 this.world.setTileEntity(blockpos, tileentity);
-@@ -1086,7 +1292,7 @@
+                 nibblearray = this.storageArrays[l].getMetadataArray();
+-                System.arraycopy(p_76607_1_, k, nibblearray.data, 0, nibblearray.data.length);
+-                k += nibblearray.data.length;
++                // Spigot start
++                System.arraycopy(p_76607_1_, k, nibblearray.getValueArray(), 0, nibblearray.getValueArray().length);
++                k += nibblearray.getValueArray().length;
++                // Spigot end
+             }
+         }
  
-     public boolean isPopulated()
-     {
--        return this.ticked && this.isTerrainPopulated && this.isLightPopulated;
-+        return this.ticked && this.isTerrainPopulated;
-     }
+@@ -1194,8 +1349,10 @@
+             if ((p_76607_2_ & 1 << l) != 0 && this.storageArrays[l] != null)
+             {
+                 nibblearray = this.storageArrays[l].getBlocklightArray();
+-                System.arraycopy(p_76607_1_, k, nibblearray.data, 0, nibblearray.data.length);
+-                k += nibblearray.data.length;
++                // Spigot start
++                System.arraycopy(p_76607_1_, k, nibblearray.getValueArray(), 0, nibblearray.getValueArray().length);
++                k += nibblearray.getValueArray().length;
++                // Spigot end
+             }
+         }
  
-     public boolean wasTicked()
-@@ -1545,11 +1751,11 @@
-         String format = "{} loaded a new chunk {} in dimension {} ({}) while populating chunk {}, causing cascading worldgen lag.";
+@@ -1206,8 +1363,10 @@
+                 if ((p_76607_2_ & 1 << l) != 0 && this.storageArrays[l] != null)
+                 {
+                     nibblearray = this.storageArrays[l].getSkylightArray();
+-                    System.arraycopy(p_76607_1_, k, nibblearray.data, 0, nibblearray.data.length);
+-                    k += nibblearray.data.length;
++                    // Spigot start
++                    System.arraycopy(p_76607_1_, k, nibblearray.getValueArray(), 0, nibblearray.getValueArray().length);
++                    k += nibblearray.getValueArray().length;
++                    // Spigot end
+                 }
+             }
+         }
+@@ -1229,8 +1388,8 @@
+                         nibblearray = this.storageArrays[l].createBlockMSBArray();
+                     }
  
-         if (activeModContainer == null) { // vanilla minecraft has problems too (MC-114332), log it at a quieter level.
--            net.minecraftforge.fml.common.FMLLog.log.debug(format, "Minecraft", this.getPos(), this.world.provider.getDimension(), this.world.provider.getDimensionType().getName(), populating);
--            net.minecraftforge.fml.common.FMLLog.log.debug("Consider setting 'fixVanillaCascading' to 'true' in the Forge config to fix many cases where this occurs in the base game.");
-+            LOGGER.debug(format, "Minecraft", this.getPos(), this.world.provider.getDimension(), this.world.provider.getDimensionType().getName(), populating);
-+            LOGGER.debug("Consider setting 'fixVanillaCascading' to 'true' in the Forge config to fix many cases where this occurs in the base game.");
-         } else {
--            net.minecraftforge.fml.common.FMLLog.log.warn(format, activeModContainer.getName(), this.getPos(), this.world.provider.getDimension(), this.world.provider.getDimensionType().getName(), populating);
--            net.minecraftforge.fml.common.FMLLog.log.warn("Please report this to the mod's issue tracker. This log can be disabled in the Forge config.");
-+            LOGGER.debug(format, activeModContainer.getName(), this.getPos(), this.world.provider.getDimension(), this.world.provider.getDimensionType().getName(), populating);
-+            LOGGER.debug("Please report this to the mod's issue tracker. This log can be disabled in the Forge config.");
+-                    System.arraycopy(p_76607_1_, k, nibblearray.data, 0, nibblearray.data.length);
+-                    k += nibblearray.data.length;
++                    System.arraycopy(p_76607_1_, k, nibblearray.getValueArray(), 0, nibblearray.getValueArray().length);
++                    k += nibblearray.getValueArray().length;
+                 }
+             }
+             else if (p_76607_4_ && this.storageArrays[l] != null && this.storageArrays[l].getBlockMSBArray() != null)
+@@ -1523,4 +1682,22 @@
+             }
          }
      }
- 
++
++    /**
++     * PaperSpigot - Recheck gaps asynchronously.
++     */
++    public void recheckGapsAsync(final boolean isStatic) {
++    	if (worldObj.isModded == null) worldObj.isModded = false;
++        if (!worldObj.spigotConfig.useAsyncLighting || !worldObj.isModded) {
++            this.recheckGaps(isStatic);
++            return;
++        }
++
++        worldObj.lightingExecutor.submit(new Runnable() {
++            @Override
++            public void run() {
++                Chunk.this.recheckGaps(isStatic);
++            }
++        });
++    }
+ }

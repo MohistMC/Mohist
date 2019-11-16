@@ -1,68 +1,184 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockDynamicLiquid.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockDynamicLiquid.java
-@@ -9,6 +9,8 @@
- import net.minecraft.util.EnumFacing;
- import net.minecraft.util.math.BlockPos;
+@@ -5,6 +5,11 @@
+ import net.minecraft.init.Blocks;
  import net.minecraft.world.World;
+ 
++// CraftBukkit start
 +import org.bukkit.block.BlockFace;
 +import org.bukkit.event.block.BlockFromToEvent;
- 
++// CraftBukkit end
++
  public class BlockDynamicLiquid extends BlockLiquid
  {
-@@ -82,7 +84,7 @@
+     int field_149815_a;
+@@ -37,6 +42,12 @@
+         int i1 = this.tickRate(p_149674_1_);
+         int j1;
+ 
++        // Cauldron - move CB edit to after variable initialization for coremod compatibility
++        // CraftBukkit start
++        org.bukkit.World bworld = p_149674_1_.getWorld();
++        org.bukkit.Server server = p_149674_1_.getServer();
++        org.bukkit.block.Block source = bworld == null ? null : bworld.getBlockAt(p_149674_2_, p_149674_3_, p_149674_4_);
++        // CraftBukkit end
+         if (l > 0)
+         {
+             byte b1 = -100;
+@@ -66,17 +77,22 @@
                  }
              }
  
--            if (this.blockMaterial == Material.LAVA && i < 8 && i1 < 8 && i1 > i && rand.nextInt(4) != 0)
-+            if (this.blockMaterial == Material.LAVA && i < 8 && i1 < 8 && i1 > i && rand.nextInt(4) != 0) // Paper
+-            if (this.field_149815_a >= 2 && this.blockMaterial == Material.water)
++            // Cauldron start - allow disabling infinite water sources
++            if(net.minecraft.server.MinecraftServer.getServer().cauldronConfig.infiniteWaterSource.getValue())
              {
-                 k *= 4;
+-                if (p_149674_1_.getBlock(p_149674_2_, p_149674_3_ - 1, p_149674_4_).getMaterial().isSolid())
++                if (this.field_149815_a >= 2 && this.blockMaterial == Material.water)
+                 {
+-                    j1 = 0;
++                    if (p_149674_1_.getBlock(p_149674_2_, p_149674_3_ - 1, p_149674_4_).getMaterial().isSolid())
++                    {
++                        j1 = 0;
++                    }
++                    else if (p_149674_1_.getBlock(p_149674_2_, p_149674_3_ - 1, p_149674_4_).getMaterial() == this.blockMaterial && p_149674_1_.getBlockMetadata(p_149674_2_, p_149674_3_ - 1, p_149674_4_) == 0)
++                    {
++                        j1 = 0;
++                    }
+                 }
+-                else if (p_149674_1_.getBlock(p_149674_2_, p_149674_3_ - 1, p_149674_4_).getMaterial() == this.blockMaterial && p_149674_1_.getBlockMetadata(p_149674_2_, p_149674_3_ - 1, p_149674_4_) == 0)
+-                {
+-                    j1 = 0;
+-                }
              }
-@@ -113,14 +115,22 @@
-             this.placeStaticBlock(worldIn, pos, state);
-         }
++            // Cauldron end
  
-+        org.bukkit.block.Block source = worldIn.getWorld().getBlockAt(pos.getX(), pos.getY(), pos.getZ());
-         IBlockState iblockstate1 = worldIn.getBlockState(pos.down());
- 
-         if (this.canFlowInto(worldIn, pos.down(), iblockstate1))
-         {
-+            BlockFromToEvent event = new BlockFromToEvent(source, BlockFace.DOWN);
-+            worldIn.getServer().getPluginManager().callEvent(event);
-+
-+            if (event.isCancelled()) {
-+                return;
-+            }
-             if (this.blockMaterial == Material.LAVA && worldIn.getBlockState(pos.down()).getMaterial() == Material.WATER)
+             if (this.blockMaterial == Material.lava && l < 8 && j1 < 8 && j1 > l && p_149674_5_.nextInt(4) != 0)
              {
--                worldIn.setBlockState(pos.down(), net.minecraftforge.event.ForgeEventFactory.fireFluidPlaceBlockEvent(worldIn, pos.down(), pos, Blocks.STONE.getDefaultState()));
--                this.triggerMixEffects(worldIn, pos.down());
-+                if (org.bukkit.craftbukkit.v1_12_R1.event.CraftEventFactory.handleBlockFormEvent(worldIn, pos.down(), net.minecraftforge.event.ForgeEventFactory.fireFluidPlaceBlockEvent(worldIn, pos.down(), pos, Blocks.STONE.getDefaultState()), null)) {
-+					this.triggerMixEffects(worldIn, pos.down());
+@@ -89,6 +105,13 @@
+                 {
+                     this.func_149811_n(p_149674_1_, p_149674_2_, p_149674_3_, p_149674_4_);
+                 }
++                // Cauldron start - allow lava decaying at a 'natural' rate - see https://mojang.atlassian.net/browse/MC-4631 Lava decay fails to schedule block update
++                else if (net.minecraft.server.MinecraftServer.getServer().cauldronConfig.flowingLavaDecay.getValue())
++                {
++                    // Ensure that even if the flow decay was skipped, it will retry at the material's natural flow period.
++                    p_149674_1_.scheduleBlockUpdate(p_149674_2_, p_149674_3_, p_149674_4_, this, this.tickRate(p_149674_1_));
 +                }
++                // Cauldron end
+             }
+             else
+             {
+@@ -102,7 +125,18 @@
+                 {
+                     p_149674_1_.setBlockMetadataWithNotify(p_149674_2_, p_149674_3_, p_149674_4_, j1, 2);
+                     p_149674_1_.scheduleBlockUpdate(p_149674_2_, p_149674_3_, p_149674_4_, this, i1);
+-                    p_149674_1_.notifyBlocksOfNeighborChange(p_149674_2_, p_149674_3_, p_149674_4_, this);
++                    
++                    // Thermos follow PaperSpigot style and do this right here
++                    p_149674_1_.notifyBlockOfNeighborChange(p_149674_2_ - 1, p_149674_3_, p_149674_4_, this);
++                    p_149674_1_.notifyBlockOfNeighborChange(p_149674_2_ + 1, p_149674_3_, p_149674_4_, this);
++                    
++                    // DON'T UPDATE THIS ONE PAPER SPIGOT SAYS DON'T DO IT
++                    //p_149674_1_.notifyBlockOfNeighborChange(p_149674_2_, p_149674_3_ - 1, p_149674_4_, this);
++                    
++                    p_149674_1_.notifyBlockOfNeighborChange(p_149674_2_, p_149674_3_ + 1, p_149674_4_, this);
++                    p_149674_1_.notifyBlockOfNeighborChange(p_149674_2_, p_149674_3_, p_149674_4_ - 1, this);
++                    p_149674_1_.notifyBlockOfNeighborChange(p_149674_2_, p_149674_3_, p_149674_4_ + 1, this);
++                    // p_149674_1_.notifyBlocksOfNeighborChange(p_149674_2_, p_149674_3_, p_149674_4_, this);
+                 }
+             }
+         }
+@@ -113,21 +147,36 @@
+ 
+         if (this.func_149809_q(p_149674_1_, p_149674_2_, p_149674_3_ - 1, p_149674_4_))
+         {
+-            if (this.blockMaterial == Material.lava && p_149674_1_.getBlock(p_149674_2_, p_149674_3_ - 1, p_149674_4_).getMaterial() == Material.water)
++            if (p_149674_1_.getType(p_149674_2_, p_149674_3_, p_149674_4_).getMaterial() != this.blockMaterial) { return; } // PaperSpigot - Stop updating flowing block if material has changed
++
++            // CraftBukkit start - Send "down" to the server
++            BlockFromToEvent event = new BlockFromToEvent(source, BlockFace.DOWN);
++
++            if (server != null && source != null)
+             {
+-                p_149674_1_.setBlock(p_149674_2_, p_149674_3_ - 1, p_149674_4_, Blocks.stone);
+-                this.func_149799_m(p_149674_1_, p_149674_2_, p_149674_3_ - 1, p_149674_4_);
+-                return;
++                server.getPluginManager().callEvent(event);
+             }
+ 
+-            if (l >= 8)
++            if (!event.isCancelled())
+             {
+-                this.func_149813_h(p_149674_1_, p_149674_2_, p_149674_3_ - 1, p_149674_4_, l);
++                if (this.blockMaterial == Material.lava && p_149674_1_.getBlock(p_149674_2_, p_149674_3_ - 1, p_149674_4_).getMaterial() == Material.water)
++                {
++                    p_149674_1_.setBlock(p_149674_2_, p_149674_3_ - 1, p_149674_4_, Blocks.stone);
++                    this.func_149799_m(p_149674_1_, p_149674_2_, p_149674_3_ - 1, p_149674_4_);
++                    return;
++                }
++
++                if (l >= 8)
++                {
++                    this.func_149813_h(p_149674_1_, p_149674_2_, p_149674_3_ - 1, p_149674_4_, l);
++                }
++                else
++                {
++                    this.func_149813_h(p_149674_1_, p_149674_2_, p_149674_3_ - 1, p_149674_4_, l + 8);
++                }
+             }
+-            else
+-            {
+-                this.func_149813_h(p_149674_1_, p_149674_2_, p_149674_3_ - 1, p_149674_4_, l + 8);
+-            }
++
++            // CraftBukkit end
+         }
+         else if (l >= 0 && (l == 0 || this.func_149807_p(p_149674_1_, p_149674_2_, p_149674_3_ - 1, p_149674_4_)))
+         {
+@@ -144,25 +193,31 @@
                  return;
              }
  
-@@ -150,14 +160,20 @@
+-            if (aboolean[0])
+-            {
+-                this.func_149813_h(p_149674_1_, p_149674_2_ - 1, p_149674_3_, p_149674_4_, j1);
+-            }
++            // CraftBukkit start - All four cardinal directions. Do not change the order!
++            BlockFace[] faces = new BlockFace[] { BlockFace.WEST, BlockFace.EAST, BlockFace.NORTH, BlockFace.SOUTH };
++            int index = 0;
  
-             for (EnumFacing enumfacing1 : set)
+-            if (aboolean[1])
++            for (BlockFace currentFace : faces)
              {
--                this.tryFlowInto(worldIn, pos.offset(enumfacing1), worldIn.getBlockState(pos.offset(enumfacing1)), k1);
-+                // CraftBukkit start
-+                BlockFromToEvent event = new BlockFromToEvent(source, org.bukkit.craftbukkit.v1_12_R1.block.CraftBlock.notchToBlockFace(enumfacing1));
-+                worldIn.getServer().getPluginManager().callEvent(event);
-+
-+                if (!event.isCancelled()) {
-+                    this.tryFlowInto(worldIn, pos.offset(enumfacing1), worldIn.getBlockState(pos.offset(enumfacing1)), k1);
+-                this.func_149813_h(p_149674_1_, p_149674_2_ + 1, p_149674_3_, p_149674_4_, j1);
+-            }
++                if (aboolean[index])
++                {
++                    BlockFromToEvent event = new BlockFromToEvent(source, currentFace);
+ 
+-            if (aboolean[2])
+-            {
+-                this.func_149813_h(p_149674_1_, p_149674_2_, p_149674_3_, p_149674_4_ - 1, j1);
+-            }
++                    if (server != null && source != null)
++                    {
++                        server.getPluginManager().callEvent(event);
++                    }
+ 
+-            if (aboolean[3])
+-            {
+-                this.func_149813_h(p_149674_1_, p_149674_2_, p_149674_3_, p_149674_4_ + 1, j1);
++                    if (!event.isCancelled())
++                    {
++                        this.func_149813_h(p_149674_1_, p_149674_2_ + currentFace.getModX(), p_149674_3_, p_149674_4_ + currentFace.getModZ(), j1);
++                    }
 +                }
++
++                index++;
              }
++
++            // CraftBukkit end
          }
      }
  
-     private void tryFlowInto(World worldIn, BlockPos pos, IBlockState state, int level)
-     {
--        if (this.canFlowInto(worldIn, pos, state))
-+        if (worldIn.isBlockLoaded(pos) && this.canFlowInto(worldIn, pos, state)) // CraftBukkit - add isLoaded check
-         {
-             if (state.getMaterial() != Material.AIR)
-             {

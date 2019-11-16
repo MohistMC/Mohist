@@ -1,70 +1,80 @@
 --- ../src-base/minecraft/net/minecraft/entity/EntityAgeable.java
 +++ ../src-work/minecraft/net/minecraft/entity/EntityAgeable.java
-@@ -22,6 +22,33 @@
-     private float ageWidth = -1.0F;
-     private float ageHeight;
- 
-+    public boolean ageLocked;
+@@ -10,6 +10,36 @@
+ {
+     private float field_98056_d = -1.0F;
+     private float field_98057_e;
++    public boolean ageLocked = false; // CraftBukkit
 +
 +    // Spigot start
 +    @Override
 +    public void inactiveTick()
 +    {
 +        super.inactiveTick();
-+        if ( this.world.isRemote || this.ageLocked )
-+        { // CraftBukkit
-+            this.setScaleForAge( this.isChild() );
-+        } else
++
++        if (this.worldObj.isRemote || this.ageLocked)
++        {
++            // CraftBukkit
++            this.setScaleForAge(this.isChild());
++        }
++        else
 +        {
 +            int i = this.getGrowingAge();
 +
-+            if ( i < 0 )
++            if (i < 0)
 +            {
 +                ++i;
-+                this.setGrowingAge( i );
-+            } else if ( i > 0 )
++                this.setGrowingAge(i);
++            }
++            else if (i > 0)
 +            {
 +                --i;
-+                this.setGrowingAge( i );
++                this.setGrowingAge(i);
 +            }
 +        }
 +    }
 +    // Spigot end
-+
-     public EntityAgeable(World worldIn)
-     {
-         super(worldIn);
-@@ -48,7 +75,7 @@
+     private static final String __OBFID = "CL_00001530";
+ 
+     public EntityAgeable(World p_i1578_1_)
+@@ -37,7 +67,7 @@
                      {
                          entityageable.setGrowingAge(-24000);
                          entityageable.setLocationAndAngles(this.posX, this.posY, this.posZ, 0.0F, 0.0F);
--                        this.world.spawnEntity(entityageable);
-+                        this.world.addEntity(entityageable, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.SPAWNER_EGG);
+-                        this.worldObj.spawnEntityInWorld(entityageable);
++                        this.worldObj.addEntity(entityageable, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.SPAWNER_EGG); // CraftBukkit
  
                          if (itemstack.hasDisplayName())
                          {
-@@ -154,6 +181,7 @@
-         super.writeEntityToNBT(compound);
-         compound.setInteger("Age", this.getGrowingAge());
-         compound.setInteger("ForcedAge", this.forcedAge);
-+        compound.setBoolean("AgeLocked", this.ageLocked);
+@@ -48,7 +78,7 @@
+                         {
+                             --itemstack.stackSize;
+ 
+-                            if (itemstack.stackSize <= 0)
++                            if (itemstack.stackSize == 0)    // CraftBukkit - allow less than 0 stacks as "infinite"
+                             {
+                                 p_70085_1_.inventory.setInventorySlotContents(p_70085_1_.inventory.currentItem, (ItemStack)null);
+                             }
+@@ -99,19 +129,21 @@
+     {
+         super.writeEntityToNBT(p_70014_1_);
+         p_70014_1_.setInteger("Age", this.getGrowingAge());
++        p_70014_1_.setBoolean("AgeLocked", this.ageLocked); // CraftBukkit
      }
  
-     public void readEntityFromNBT(NBTTagCompound compound)
-@@ -161,6 +189,7 @@
-         super.readEntityFromNBT(compound);
-         this.setGrowingAge(compound.getInteger("Age"));
-         this.forcedAge = compound.getInteger("ForcedAge");
-+        this.ageLocked = compound.getBoolean("AgeLocked");
+     public void readEntityFromNBT(NBTTagCompound p_70037_1_)
+     {
+         super.readEntityFromNBT(p_70037_1_);
+         this.setGrowingAge(p_70037_1_.getInteger("Age"));
++        this.ageLocked = p_70037_1_.getBoolean("AgeLocked"); // CraftBukkit
      }
  
-     public void notifyDataManagerChange(DataParameter<?> key)
-@@ -177,7 +206,7 @@
+     public void onLivingUpdate()
      {
          super.onLivingUpdate();
  
--        if (this.world.isRemote)
-+        if (this.world.isRemote || ageLocked)
+-        if (this.worldObj.isRemote)
++        if (this.worldObj.isRemote || this.ageLocked)   // CraftBukkit
          {
-             if (this.forcedAgeTimer > 0)
-             {
+             this.setScaleForAge(this.isChild());
+         }

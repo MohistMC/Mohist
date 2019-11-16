@@ -1,69 +1,80 @@
 --- ../src-base/minecraft/net/minecraft/entity/item/EntityFallingBlock.java
 +++ ../src-work/minecraft/net/minecraft/entity/item/EntityFallingBlock.java
-@@ -6,7 +6,6 @@
- import net.minecraft.block.Block;
- import net.minecraft.block.BlockAnvil;
- import net.minecraft.block.BlockFalling;
--import net.minecraft.block.ITileEntityProvider;
- import net.minecraft.block.material.Material;
- import net.minecraft.block.state.IBlockState;
- import net.minecraft.crash.CrashReportCategory;
-@@ -31,6 +30,7 @@
- import net.minecraft.world.World;
- import net.minecraftforge.fml.relauncher.Side;
- import net.minecraftforge.fml.relauncher.SideOnly;
-+import org.bukkit.craftbukkit.v1_12_R1.event.CraftEventFactory;
+@@ -2,8 +2,10 @@
  
+ import cpw.mods.fml.relauncher.Side;
+ import cpw.mods.fml.relauncher.SideOnly;
++
+ import java.util.ArrayList;
+ import java.util.Iterator;
++
+ import net.minecraft.block.Block;
+ import net.minecraft.block.BlockFalling;
+ import net.minecraft.block.ITileEntityProvider;
+@@ -19,9 +21,11 @@
+ import net.minecraft.util.MathHelper;
+ import net.minecraft.world.World;
+ 
++import org.bukkit.craftbukkit.event.CraftEventFactory; // CraftBukkit
++
  public class EntityFallingBlock extends Entity
  {
-@@ -38,7 +38,7 @@
-     public int fallTime;
-     public boolean shouldDropItem = true;
-     private boolean dontSetBlock;
--    private boolean hurtEntities;
-+    public boolean hurtEntities;
-     private int fallHurtMax = 40;
-     private float fallHurtAmount = 2.0F;
-     public NBTTagCompound tileEntityData;
-@@ -114,7 +114,7 @@
-             {
-                 BlockPos blockpos = new BlockPos(this);
+-    private Block field_145811_e;
++    public Block field_145811_e; // CraftBukkit - private -> public
+     public int field_145814_a;
+     public int field_145812_b;
+     public boolean field_145813_c;
+@@ -103,7 +107,8 @@
  
--                if (this.world.getBlockState(blockpos).getBlock() == block)
-+                if (this.world.getBlockState(blockpos).getBlock() == block && !CraftEventFactory.callEntityChangeBlockEvent(this, blockpos, Blocks.AIR, 0).isCancelled())
+                 if (this.field_145812_b == 1)
                  {
-                     this.world.setBlockToAir(blockpos);
-                 }
-@@ -170,7 +170,7 @@
-                     if (!flag1 && BlockFalling.canFallThrough(this.world.getBlockState(new BlockPos(this.posX, this.posY - 0.009999999776482582D, this.posZ))))
+-                    if (this.worldObj.getBlock(i, j, k) != this.field_145811_e)
++                    // CraftBukkit - compare data and call event
++                    if (this.field_145812_b != 1 || this.worldObj.getBlock(i, j, k) != this.field_145811_e || this.worldObj.getBlockMetadata(i, j, k) != this.field_145814_a || CraftEventFactory.callEntityChangeBlockEvent(this, i, j, k, Blocks.air, 0).isCancelled())
                      {
-                         this.onGround = false;
--                        return;
-+                        // return; // CraftBukkit
-                     }
+                         this.setDead();
+                         return;
+@@ -122,8 +127,17 @@
+                     {
+                         this.setDead();
  
-                     this.motionX *= 0.699999988079071D;
-@@ -183,8 +183,12 @@
- 
-                         if (!this.dontSetBlock)
+-                        if (!this.field_145808_f && this.worldObj.canPlaceEntityOnSide(this.field_145811_e, i, j, k, true, 1, (Entity)null, (ItemStack)null) && !BlockFalling.func_149831_e(this.worldObj, i, j - 1, k) && this.worldObj.setBlock(i, j, k, this.field_145811_e, this.field_145814_a, 3))
++                        // CraftBukkit start
++                        if (!this.field_145808_f && this.worldObj.canPlaceEntityOnSide(this.field_145811_e, i, j, k, true, 1, (Entity) null, (ItemStack) null) && !BlockFalling.func_149831_e(this.worldObj, i, j - 1, k) /* mimic the false conditions of setTypeIdAndData */ && i >= -30000000 && k >= -30000000 && i < 30000000 && k < 30000000 && j > 0 && j < 256 && !(this.worldObj.getBlock(i, j, k) == this.field_145811_e && this.worldObj.getBlockMetadata(i, j, k) == this.field_145814_a))
                          {
--                            if (this.world.mayPlace(block, blockpos1, true, EnumFacing.UP, this) && (flag1 || !BlockFalling.canFallThrough(this.world.getBlockState(blockpos1.down()))) && this.world.setBlockState(blockpos1, this.fallTile, 3))
-+                            if (this.world.mayPlace(block, blockpos1, true, EnumFacing.UP, this) && (flag1 || !BlockFalling.canFallThrough(this.world.getBlockState(blockpos1.down()))))
++                            if (CraftEventFactory.callEntityChangeBlockEvent(this, i, j, k, this.field_145811_e, this.field_145814_a).isCancelled())
++                            {
++                                return;
++                            }
++
++                            this.worldObj.setBlock(i, j, k, this.field_145811_e, this.field_145814_a, 3);
++                            // CraftBukkit end
++
+                             if (this.field_145811_e instanceof BlockFalling)
                              {
-+                                if (CraftEventFactory.callEntityChangeBlockEvent(this, blockpos1, this.fallTile.getBlock(), this.fallTile.getBlock().getMetaFromState(this.fallTile)).isCancelled()) {
-+                                    return;
-+                                }
-+                                this.world.setBlockState(blockpos1, this.fallTile, 3);
-                                 if (block instanceof BlockFalling)
-                                 {
-                                     ((BlockFalling)block).onEndFalling(this.world, blockpos1, this.fallTile, iblockstate);
-@@ -248,7 +252,9 @@
+                                 ((BlockFalling)this.field_145811_e).func_149828_a(this.worldObj, i, j, k, this.field_145814_a);
+@@ -189,8 +203,10 @@
  
-                 for (Entity entity : list)
+                 while (iterator.hasNext())
                  {
-+                    CraftEventFactory.entityDamage = this;
-                     entity.attackEntityFrom(damagesource, (float)Math.min(MathHelper.floor((float)i * this.fallHurtAmount), this.fallHurtMax));
-+                    CraftEventFactory.entityDamage = null;
+-                    Entity entity = (Entity)iterator.next();
+-                    entity.attackEntityFrom(damagesource, (float)Math.min(MathHelper.floor_float((float)i * this.field_145816_i), this.field_145815_h));
++                    Entity entity = (Entity) iterator.next();
++                    CraftEventFactory.entityDamage = this; // CraftBukkit
++                    entity.attackEntityFrom(damagesource,(float) Math.min(MathHelper.floor_float((float) i * this.field_145816_i), this.field_145815_h));
++                    CraftEventFactory.entityDamage = null; // CraftBukkit
                  }
  
                  if (flag && (double)this.rand.nextFloat() < 0.05000000074505806D + (double)i * 0.05D)
+@@ -304,4 +320,11 @@
+     {
+         return this.field_145811_e;
+     }
++
++    // Cauldron start
++    @Override
++    public boolean entityProjectileHook() {
++        return true;
++    }
++    // Cauldron end
+ }

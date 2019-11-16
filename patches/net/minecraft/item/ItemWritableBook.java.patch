@@ -1,0 +1,77 @@
+--- ../src-base/minecraft/net/minecraft/item/ItemWritableBook.java
++++ ../src-work/minecraft/net/minecraft/item/ItemWritableBook.java
+@@ -3,6 +3,7 @@
+ import net.minecraft.entity.player.EntityPlayer;
+ import net.minecraft.nbt.NBTTagCompound;
+ import net.minecraft.nbt.NBTTagList;
++import net.minecraft.nbt.NBTTagString;
+ import net.minecraft.world.World;
+ 
+ public class ItemWritableBook extends Item
+@@ -25,6 +26,49 @@
+         return true;
+     }
+ 
++    public static boolean shadowUpdate(ItemStack stack, ItemStack  push, boolean isSigning)
++    {
++        if (isSigning)
++        {
++            if(push.getTagCompound().hasKey("title", 8))
++                stack.setTagInfo("title", new NBTTagString(push.getTagCompound().getString("title")));
++        }
++        if (push.getTagCompound().hasKey("pages",9))
++            stack.setTagInfo("pages", push.getTagCompound().getTagList("pages", 8));
++        return true;
++        /*if (this.hasTagCompound() && par1.hasTagCompound())
++        {
++            NBTTagCompound nbttagcompound = this.getTagCompound();
++            NBTTagCompound nbttagcompound1 = par1.getTagCompound();
++            if (nbttagcompound1.hasKey("pages"))
++                nbttagcompound.setTag("pages", nbttagcompound1.getTag("pages"));
++            if (isSigning)
++            {
++                if (nbttagcompound1.hasKey("title"))
++                {
++                    nbttagcompound.setTag("title", nbttagcompound1.getTag("title"));
++                }
++                if (nbttagcompound1.hasKey("author"))
++                    nbttagcompound.setTag("author", nbttagcompound1.getTag("author"));
++            }
++        }
++        else if(par1.hasTagCompound())
++        {
++            NBTTagCompound nbttagcompound1 = par1.getTagCompound();
++            if (nbttagcompound1.hasKey("pages"))
++                this.setTagInfo("pages", nbttagcompound1.getTag("pages"));
++            if (isSigning)
++            {
++                if (nbttagcompound1.hasKey("title"))
++                {
++                    this.setTagInfo("title", nbttagcompound1.getTag("title"));
++                }
++                if (nbttagcompound1.hasKey("author"))
++                    this.setTagInfo("author", nbttagcompound1.getTag("author"));
++            }
++        }*/
++    }
++
+     public static boolean func_150930_a(NBTTagCompound p_150930_0_)
+     {
+         if (p_150930_0_ == null)
+@@ -43,15 +87,10 @@
+             {
+                 String s = nbttaglist.getStringTagAt(i);
+ 
+-                if (s == null)
++                if (s == null || s.length() > 256)
+                 {
+                     return false;
+                 }
+-
+-                if (s.length() > 256)
+-                {
+-                    return false;
+-                }
+             }
+ 
+             return true;

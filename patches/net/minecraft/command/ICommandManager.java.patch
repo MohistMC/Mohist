@@ -1,9 +1,0 @@
---- ../src-base/minecraft/net/minecraft/command/ICommandManager.java
-+++ ../src-work/minecraft/net/minecraft/command/ICommandManager.java
-@@ -14,4 +14,6 @@
-     List<ICommand> getPossibleCommands(ICommandSender sender);
- 
-     Map<String, ICommand> getCommands();
-+    
-+    Map<String, ICommand> getCommandMod();
- }

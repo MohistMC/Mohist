@@ -1,40 +1,70 @@
 --- ../src-base/minecraft/net/minecraft/tileentity/TileEntity.java
 +++ ../src-work/minecraft/net/minecraft/tileentity/TileEntity.java
-@@ -7,6 +7,7 @@
- import net.minecraft.crash.CrashReportCategory;
- import net.minecraft.crash.ICrashReportDetail;
- import net.minecraft.init.Blocks;
-+import net.minecraft.inventory.IInventory;
- import net.minecraft.nbt.NBTTagCompound;
- import net.minecraft.network.play.server.SPacketUpdateTileEntity;
- import net.minecraft.util.Mirror;
-@@ -16,16 +17,21 @@
- import net.minecraft.util.registry.RegistryNamespaced;
- import net.minecraft.util.text.ITextComponent;
- import net.minecraft.world.World;
-+import net.minecraftforge.cauldron.inventory.CraftCustomInventory;
- import net.minecraftforge.fml.relauncher.Side;
- import net.minecraftforge.fml.relauncher.SideOnly;
+@@ -22,20 +22,32 @@
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
-+import org.bukkit.craftbukkit.v1_12_R1.block.CraftBlockEntityState;
-+import org.bukkit.inventory.InventoryHolder;
-+import red.mohist.Mohist;
  
- public abstract class TileEntity implements net.minecraftforge.common.capabilities.ICapabilitySerializable<NBTTagCompound>
++import org.bukkit.craftbukkit.Overridden;
++import org.spigotmc.CustomTimingsHandler; // Spigot
++import org.bukkit.inventory.InventoryHolder; // CraftBukkit
++
+ public class TileEntity
  {
-     private static final Logger LOGGER = LogManager.getLogger();
-     private static final RegistryNamespaced < ResourceLocation, Class <? extends TileEntity >> REGISTRY = new RegistryNamespaced < ResourceLocation, Class <? extends TileEntity >> ();
--    protected World world;
-+    public World world;
+     private static final Logger logger = LogManager.getLogger();
+     private static Map nameToClassMap = new HashMap();
+-    private static Map classToNameMap = new HashMap();
+-    protected World worldObj;
++    public static Map classToNameMap = new HashMap(); // Cauldron - private -> public
++    public World worldObj; // CraftBukkit - protected -> public
 +    private boolean GC = false;
-     protected BlockPos pos = BlockPos.ORIGIN;
+     public int xCoord;
+     public int yCoord;
+     public int zCoord;
      protected boolean tileEntityInvalid;
-     private int blockMetadata = -1;
-@@ -305,6 +311,17 @@
+     public int blockMetadata = -1;
+     public Block blockType;
++    public CustomTimingsHandler tickTimer = org.bukkit.craftbukkit.SpigotTimings.getTileEntityTimings(this); // Spigot
+     private static final String __OBFID = "CL_00000340";
+ 
++    @Override
++    public int hashCode()
++    {
++        return ((yCoord * 31 + xCoord) * 31 + zCoord) * 17 + yCoord;
++    }
++
+     public static void addMapping(Class p_145826_0_, String p_145826_1_)
      {
+         if (nameToClassMap.containsKey(p_145826_1_))
+@@ -106,7 +118,11 @@
+         }
+         catch (Exception exception)
+         {
+-            exception.printStackTrace();
++            // Cauldron start - better debug
++            FMLLog.log(Level.ERROR, exception,
++                    "A TileEntity %s(%s) located @ %s,%s,%s has thrown an exception during creation, it cannot be created. Report this to the mod author",
++                    p_145827_0_.getString("id"), oclass.getName(), p_145827_0_.getInteger("x"), p_145827_0_.getInteger("y"), p_145827_0_.getInteger("z"));
++            // Cauldron end
+         }
+ 
+         if (tileentity != null)
+@@ -282,6 +298,31 @@
+         addMapping(TileEntityFlowerPot.class, "FlowerPot");
      }
  
++    // CraftBukkit start
++    public InventoryHolder getOwner()
++    {
++        org.bukkit.block.BlockState state = worldObj.getWorld().getBlockAt(xCoord, yCoord, zCoord).getState();
++
++        if (state instanceof InventoryHolder)
++        {
++            return (InventoryHolder) state;
++        }
++
++        return null;
++    }
++    // CraftBukkit end
 +    // KCauldron start
 +    public boolean isGC()
 +    {
@@ -46,37 +76,7 @@
 +        this.GC = state; //Should never be touched by a mod. Would make it package-private but not sure if that would still work
 +    }
 +    // KCauldron end
++
      // -- BEGIN FORGE PATCHES --
      /**
-      * Called when you receive a TileEntityData packet for the location this
-@@ -531,4 +548,30 @@
-         register("shulker_box", TileEntityShulkerBox.class);
-         register("bed", TileEntityBed.class);
-     }
-+
-+    // CraftBukkit start - add method
-+    @Nullable
-+    public InventoryHolder getOwner() {
-+        if (world == null) return null;
-+        // Spigot start
-+        org.bukkit.block.Block block = this.world.getWorld().getBlockAt(this.pos.getX(), this.pos.getY(), this.pos.getZ());
-+        if (block == null) {
-+            Mohist.LOGGER.warn("No block for owner at %s %d %d %d", new Object[] { this.world.getWorld(), this.pos.getX(), this.pos.getY(), this.pos.getZ() });
-+            return null;
-+        }
-+        // Spigot end
-+        org.bukkit.block.BlockState state = block.getState();
-+        if (state instanceof InventoryHolder)
-+        {
-+            return (InventoryHolder) state;
-+        }
-+        if (state instanceof CraftBlockEntityState) {
-+            TileEntity te = ((CraftBlockEntityState)state).getTileEntity();
-+            if (te instanceof IInventory) {
-+                return new CraftCustomInventory((IInventory)te);
-+            }
-+        }
-+        return null;
-+    }
-+    // CraftBukkit end
- }
+      * Determines if this TileEntity requires update calls.

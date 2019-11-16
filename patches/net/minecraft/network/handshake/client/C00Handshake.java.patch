@@ -1,33 +1,22 @@
 --- ../src-base/minecraft/net/minecraft/network/handshake/client/C00Handshake.java
 +++ ../src-work/minecraft/net/minecraft/network/handshake/client/C00Handshake.java
-@@ -11,8 +11,8 @@
- public class C00Handshake implements Packet<INetHandlerHandshakeServer>
+@@ -12,8 +12,8 @@
+ public class C00Handshake extends Packet
  {
-     private int protocolVersion;
--    private String ip;
--    private int port;
-+    public String ip;
-+    public int port;
-     private EnumConnectionState requestedState;
-     private boolean hasFMLMarker = false;
+     private int field_149600_a;
+-    private String field_149598_b;
+-    private int field_149599_c;
++    public String field_149598_b; // CraftBukkit private -> public
++    public int field_149599_c; // CraftBukkit private -> public
+     private EnumConnectionState field_149597_d;
+     private static final String __OBFID = "CL_00001372";
  
-@@ -38,11 +38,17 @@
-     public void readPacketData(PacketBuffer buf) throws IOException
+@@ -31,7 +31,7 @@
+     public void readPacketData(PacketBuffer p_148837_1_) throws IOException
      {
-         this.protocolVersion = buf.readVarInt();
--        this.ip = buf.readString(255);
-+        this.ip = buf.readString(Short.MAX_VALUE); // Spigot
-         this.port = buf.readUnsignedShort();
-         this.requestedState = EnumConnectionState.getById(buf.readVarInt());
-         this.hasFMLMarker = this.ip.contains("\0FML\0");
--        this.ip = this.ip.split("\0")[0];
-+        if (this.hasFMLMarker) {
-+            this.ip = this.ip.replace("\0FML\0", "");
-+        }
-+        String[] split = this.ip.split("\0");
-+        if (split.length > 2) {
-+            this.hasFMLMarker = true;
-+        }
+         this.field_149600_a = p_148837_1_.readVarIntFromBuffer();
+-        this.field_149598_b = p_148837_1_.readStringFromBuffer(255);
++        this.field_149598_b = p_148837_1_.readStringFromBuffer(Short.MAX_VALUE); // Spigot
+         this.field_149599_c = p_148837_1_.readUnsignedShort();
+         this.field_149597_d = EnumConnectionState.func_150760_a(p_148837_1_.readVarIntFromBuffer());
      }
- 
-     public void writePacketData(PacketBuffer buf) throws IOException

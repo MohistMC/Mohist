@@ -1,113 +1,148 @@
 --- ../src-base/minecraft/net/minecraft/item/ItemBucket.java
 +++ ../src-work/minecraft/net/minecraft/item/ItemBucket.java
-@@ -23,6 +23,10 @@
- import net.minecraft.util.math.BlockPos;
- import net.minecraft.util.math.RayTraceResult;
- import net.minecraft.world.World;
-+import org.bukkit.craftbukkit.v1_12_R1.event.CraftEventFactory;
-+import org.bukkit.craftbukkit.v1_12_R1.inventory.CraftItemStack;
+@@ -12,6 +12,13 @@
+ import net.minecraftforge.common.MinecraftForge;
+ import net.minecraftforge.event.entity.player.FillBucketEvent;
+ 
++// CraftBukkit start
++import org.bukkit.craftbukkit.event.CraftEventFactory;
++import org.bukkit.craftbukkit.inventory.CraftItemStack;
 +import org.bukkit.event.player.PlayerBucketEmptyEvent;
 +import org.bukkit.event.player.PlayerBucketFillEvent;
- 
++// CraftBukkit end
++
  public class ItemBucket extends Item
  {
-@@ -72,17 +76,27 @@
+     private Block isFull;
+@@ -19,7 +26,13 @@
  
-                     if (material == Material.WATER && ((Integer)iblockstate.getValue(BlockLiquid.LEVEL)).intValue() == 0)
+     public ItemBucket(Block p_i45331_1_)
+     {
+-        this.maxStackSize = 1;
++        // PaperSpigot start - Stackable Buckets
++        if ((p_i45331_1_ == Blocks.lava) || (p_i45331_1_ == Blocks.water)) {
++            this.maxStackSize = org.bukkit.Material.BUCKET.getMaxStackSize();
++        } else {
++            this.maxStackSize = 1;
++        }
++        // PaperSpigot end
+         this.isFull = p_i45331_1_;
+         this.setCreativeTab(CreativeTabs.tabMisc);
+     }
+@@ -83,23 +96,52 @@
+ 
+                     if (material == Material.water && l == 0)
                      {
-+                        PlayerBucketFillEvent event = CraftEventFactory.callPlayerBucketFillEvent(playerIn, blockpos.getX(), blockpos.getY(), blockpos.getZ(), null, itemstack, Items.WATER_BUCKET);
++                        // CraftBukkit start
++                        PlayerBucketFillEvent cbEvent = CraftEventFactory.callPlayerBucketFillEvent(p_77659_3_, i, j, k, -1, p_77659_1_, Items.water_bucket);
 +
-+                        if (event.isCancelled()) {
-+                            return new ActionResult<>(EnumActionResult.FAIL, itemstack);
++                        if (cbEvent.isCancelled())
++                        {
++                            return p_77659_1_;
 +                        }
-                         worldIn.setBlockState(blockpos, Blocks.AIR.getDefaultState(), 11);
-                         playerIn.addStat(StatList.getObjectUseStats(this));
-                         playerIn.playSound(SoundEvents.ITEM_BUCKET_FILL, 1.0F, 1.0F);
--                        return new ActionResult<ItemStack>(EnumActionResult.SUCCESS, this.fillBucket(itemstack, playerIn, Items.WATER_BUCKET));
-+                        return new ActionResult<ItemStack>(EnumActionResult.SUCCESS, this.fillBucket(itemstack, playerIn, Items.WATER_BUCKET, event.getItemStack()));
-                     }
-                     else if (material == Material.LAVA && ((Integer)iblockstate.getValue(BlockLiquid.LEVEL)).intValue() == 0)
-                     {
-+                        PlayerBucketFillEvent event = CraftEventFactory.callPlayerBucketFillEvent(playerIn, blockpos.getX(), blockpos.getY(), blockpos.getZ(), null, itemstack, Items.LAVA_BUCKET);
 +
-+                        if (event.isCancelled()) {
-+                            return new ActionResult<>(EnumActionResult.FAIL, itemstack);
-+                        }
-                         playerIn.playSound(SoundEvents.ITEM_BUCKET_FILL_LAVA, 1.0F, 1.0F);
-                         worldIn.setBlockState(blockpos, Blocks.AIR.getDefaultState(), 11);
-                         playerIn.addStat(StatList.getObjectUseStats(this));
--                        return new ActionResult<ItemStack>(EnumActionResult.SUCCESS, this.fillBucket(itemstack, playerIn, Items.LAVA_BUCKET));
-+                        return new ActionResult<ItemStack>(EnumActionResult.SUCCESS, this.fillBucket(itemstack, playerIn, Items.LAVA_BUCKET, event.getItemStack()));
++                        // CraftBukkit end
+                         p_77659_2_.setBlockToAir(i, j, k);
+-                        return this.func_150910_a(p_77659_1_, p_77659_3_, Items.water_bucket);
++                        return this.func_150910_a(p_77659_1_, p_77659_3_, Items.water_bucket, cbEvent.getItemStack()); // CraftBukkit - added Event stack
                      }
-                     else
+ 
+                     if (material == Material.lava && l == 0)
                      {
-@@ -99,7 +113,7 @@
-                 {
-                     return new ActionResult<ItemStack>(EnumActionResult.FAIL, itemstack);
++                        // CraftBukkit start
++                        PlayerBucketFillEvent cbEvent = CraftEventFactory.callPlayerBucketFillEvent(p_77659_3_, i, j, k, -1, p_77659_1_, Items.lava_bucket);
++
++                        if (cbEvent.isCancelled())
++                        {
++                            return p_77659_1_;
++                        }
++
++                        // CraftBukkit end
+                         p_77659_2_.setBlockToAir(i, j, k);
+-                        return this.func_150910_a(p_77659_1_, p_77659_3_, Items.lava_bucket);
++                        return this.func_150910_a(p_77659_1_, p_77659_3_, Items.lava_bucket, cbEvent.getItemStack()); // CraftBukkit - added Event stack
+                     }
                  }
--                else if (this.tryPlaceContainedLiquid(playerIn, worldIn, blockpos1))
-+                else if (this.tryPlaceContainedLiquid(playerIn, worldIn, blockpos1, raytraceresult.sideHit, blockpos, itemstack))
+                 else
                  {
-                     if (playerIn instanceof EntityPlayerMP)
+                     if (this.isFull == Blocks.air)
                      {
-@@ -143,8 +157,45 @@
+-                        return new ItemStack(Items.bucket);
++                        // CraftBukkit start
++                        PlayerBucketEmptyEvent cbEvent = CraftEventFactory.callPlayerBucketEmptyEvent(p_77659_3_, i, j, k, movingobjectposition.sideHit, p_77659_1_);
++
++                        if (cbEvent.isCancelled())
++                        {
++                            return p_77659_1_;
++                        }
++
++                        return CraftItemStack.asNMSCopy(cbEvent.getItemStack());
+                     }
+ 
++                    int clickedX = i, clickedY = j, clickedZ = k;
++                    // CraftBukkit end
++
+                     if (movingobjectposition.sideHit == 0)
+                     {
+                         --j;
+@@ -135,9 +177,19 @@
+                         return p_77659_1_;
+                     }
+ 
++                    // CraftBukkit start
++                    PlayerBucketEmptyEvent cbEvent = CraftEventFactory.callPlayerBucketEmptyEvent(p_77659_3_, clickedX, clickedY, clickedZ, movingobjectposition.sideHit, p_77659_1_);
++
++                    if (cbEvent.isCancelled())
++                    {
++                        return p_77659_1_;
++                    }
++
++                    // CraftBukkit end
++
+                     if (this.tryPlaceContainedLiquid(p_77659_2_, i, j, k) && !p_77659_3_.capabilities.isCreativeMode)
+                     {
+-                        return new ItemStack(Items.bucket);
++                        return CraftItemStack.asNMSCopy(cbEvent.getItemStack()); // CraftBukkit
+                     }
+                 }
+             }
+@@ -146,24 +198,32 @@
          }
      }
  
-+    // CraftBukkit - added ob.ItemStack result - TODO: Is this... the right way to handle this?
-+    private ItemStack fillBucket(ItemStack emptyBuckets, EntityPlayer player, Item fullBucket, org.bukkit.inventory.ItemStack result)
-+    {
-+        if (player.capabilities.isCreativeMode)
-+        {
-+            return emptyBuckets;
-+        }
-+        else
-+        {
-+            emptyBuckets.shrink(1);
-+
-+            if (emptyBuckets.isEmpty())
-+            {
-+                // return new ItemStack(fullBucket);
-+                return CraftItemStack.asNMSCopy(result);
-+            }
-+            else
-+            {
-+                if (!player.inventory.addItemStackToInventory(CraftItemStack.asNMSCopy(result)))
-+                {
-+                    player.dropItem(CraftItemStack.asNMSCopy(result), false);
-+                }
-+
-+                return emptyBuckets;
-+            }
-+        }
-+    }
-+
-     public boolean tryPlaceContainedLiquid(@Nullable EntityPlayer player, World worldIn, BlockPos posIn)
++    // Cauldron start - vanilla compatibility
+     private ItemStack func_150910_a(ItemStack p_150910_1_, EntityPlayer p_150910_2_, Item p_150910_3_)
      {
-+        // Mohist start - Compatible with randompatches:isSolid
-+        IBlockState iblockstate = worldIn.getBlockState(posIn);
-+        Material material = iblockstate.getMaterial();
-+        boolean flag = !material.isSolid();
-+        // Mohist end
-+        return tryPlaceContainedLiquid(player, worldIn, posIn, null, posIn, null);
+-        if (p_150910_2_.capabilities.isCreativeMode)
++        return this.func_150910_a(p_150910_1_, p_150910_2_, p_150910_3_, null);
 +    }
++    // Cauldron end
 +
-+    public boolean tryPlaceContainedLiquid(@Nullable EntityPlayer player, World worldIn, BlockPos posIn, EnumFacing enumdirection, BlockPos clicked, ItemStack itemstack) {
-         if (this.containedBlock == Blocks.AIR)
++    // CraftBukkit - added ob.ItemStack result - TODO: Is this... the right way to handle this?
++    private ItemStack func_150910_a(ItemStack itemstack, EntityPlayer entityplayer, Item item, org.bukkit.inventory.ItemStack result)
++    {
++        if (entityplayer.capabilities.isCreativeMode)
          {
-             return false;
-@@ -162,6 +213,14 @@
-             }
-             else
+-            return p_150910_1_;
++            return itemstack;
+         }
+-        else if (--p_150910_1_.stackSize <= 0)
++        else if (--itemstack.stackSize <= 0)
+         {
+-            return new ItemStack(p_150910_3_);
++            return CraftItemStack.asNMSCopy(result); // CraftBukkit
+         }
+         else
+         {
+-            if (!p_150910_2_.inventory.addItemStackToInventory(new ItemStack(p_150910_3_)))
++            if (!entityplayer.inventory.addItemStackToInventory(CraftItemStack.asNMSCopy(result)))   // CraftBukkit
              {
-+                if (player != null) {
-+                    PlayerBucketEmptyEvent event = CraftEventFactory.callPlayerBucketEmptyEvent(player, clicked.getX(), clicked.getY(), clicked.getZ(), enumdirection, itemstack);
-+                    if (event.isCancelled()) {
-+                        // TODO: inventory not updated
-+                        return false;
-+                    }
-+                }
-+
-                 if (worldIn.provider.doesWaterVaporize() && this.containedBlock == Blocks.FLOWING_WATER)
-                 {
-                     int l = posIn.getX();
+-                p_150910_2_.dropPlayerItemWithRandomChoice(new ItemStack(p_150910_3_, 1, 0), false);
++                entityplayer.dropPlayerItemWithRandomChoice(CraftItemStack.asNMSCopy(result), false); // CraftBukkit
+             }
+ 
+-            return p_150910_1_;
++            return itemstack;
+         }
+     }
+ 

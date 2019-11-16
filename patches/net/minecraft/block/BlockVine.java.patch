@@ -1,79 +1,77 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockVine.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockVine.java
-@@ -27,6 +27,7 @@
- import net.minecraft.world.World;
- import net.minecraftforge.fml.relauncher.Side;
- import net.minecraftforge.fml.relauncher.SideOnly;
-+import org.bukkit.craftbukkit.v1_12_R1.event.CraftEventFactory;
+@@ -21,6 +21,8 @@
+ import net.minecraftforge.common.ForgeHooks;
+ import net.minecraftforge.common.IShearable;
  
- public class BlockVine extends Block implements net.minecraftforge.common.IShearable
++import org.bukkit.craftbukkit.event.CraftEventFactory; // CraftBukkit
++
+ public class BlockVine extends Block implements IShearable
  {
-@@ -185,7 +186,7 @@
-     {
-         if (!worldIn.isRemote)
-         {
--            if (worldIn.rand.nextInt(4) == 0 && worldIn.isAreaLoaded(pos, 4)) // Forge: check area to prevent loading unloaded chunks
-+            if (worldIn.rand.nextInt(Math.max(1, (int)(100.0f / worldIn.spigotConfig.vineModifier) * 4)) == 0 && worldIn.isAreaLoaded(pos, 4)) // Forge: check area to prevent loading unloaded chunks
-             {
-                 int i = 4;
-                 int j = 5;
-@@ -233,7 +234,11 @@
+     private static final String __OBFID = "CL_00000330";
+@@ -268,7 +270,11 @@
  
-                     if (((Boolean)iblockstate2.getValue(NORTH)).booleanValue() || ((Boolean)iblockstate2.getValue(EAST)).booleanValue() || ((Boolean)iblockstate2.getValue(SOUTH)).booleanValue() || ((Boolean)iblockstate2.getValue(WEST)).booleanValue())
+                     if (j2 > 0)
                      {
--                        worldIn.setBlockState(blockpos2, iblockstate2, 2);
-+//                        worldIn.setBlockState(blockpos2, iblockstate2, 2);
-+                        BlockPos target = blockpos2;
-+                        org.bukkit.block.Block source = worldIn.getWorld().getBlockAt(pos.getX(), pos.getY(), pos.getZ());
-+                        org.bukkit.block.Block block = worldIn.getWorld().getBlockAt(target.getX(), target.getY(), target.getZ());
-+                        CraftEventFactory.handleBlockSpreadEvent(block, source, this, getMetaFromState(iblockstate2));
+-                        p_149674_1_.setBlock(p_149674_2_, p_149674_3_ + 1, p_149674_4_, this, j2, 2);
++                        // CraftBukkit start - Call BlockSpreadEvent
++                        org.bukkit.block.Block source = p_149674_1_.getWorld().getBlockAt(p_149674_2_, p_149674_3_, p_149674_4_);
++                        org.bukkit.block.Block block = p_149674_1_.getWorld().getBlockAt(p_149674_2_, p_149674_3_ + 1, p_149674_4_);
++                        CraftEventFactory.handleBlockSpreadEvent(block, source, this, l1);
++                        // CraftBukkit end
                      }
                  }
-                 else if (enumfacing1.getAxis().isHorizontal() && !((Boolean)state.getValue(getPropertyFor(enumfacing1))).booleanValue())
-@@ -253,21 +258,30 @@
-                             BlockPos blockpos = blockpos4.offset(enumfacing3);
-                             BlockPos blockpos1 = blockpos4.offset(enumfacing4);
+             }
+@@ -290,27 +296,34 @@
+                     {
+                         l1 = k1 + 1 & 3;
+                         i2 = k1 + 3 & 3;
++                        // CraftBukkit start - Call BlockSpreadEvent
++                        org.bukkit.block.Block source = p_149674_1_.getWorld().getBlockAt(p_149674_2_, p_149674_3_, p_149674_4_);
++                        org.bukkit.block.Block bukkitBlock = p_149674_1_.getWorld().getBlockAt(p_149674_2_ + Direction.offsetX[k1], p_149674_3_, p_149674_4_ + Direction.offsetZ[k1]);
  
-+                            org.bukkit.block.Block source = worldIn.getWorld().getBlockAt(pos.getX(), pos.getY(), pos.getZ());
-+                            org.bukkit.block.Block bukkitBlock = worldIn.getWorld().getBlockAt(blockpos4.getX(), blockpos4.getY(), blockpos4.getZ());
+                         if ((i1 & 1 << l1) != 0 && this.func_150093_a(p_149674_1_.getBlock(p_149674_2_ + Direction.offsetX[k1] + Direction.offsetX[l1], p_149674_3_, p_149674_4_ + Direction.offsetZ[k1] + Direction.offsetZ[l1])))
+                         {
+-                            p_149674_1_.setBlock(p_149674_2_ + Direction.offsetX[k1], p_149674_3_, p_149674_4_ + Direction.offsetZ[k1], this, 1 << l1, 2);
++                            CraftEventFactory.handleBlockSpreadEvent(bukkitBlock, source, this, 1 << l1);
+                         }
+                         else if ((i1 & 1 << i2) != 0 && this.func_150093_a(p_149674_1_.getBlock(p_149674_2_ + Direction.offsetX[k1] + Direction.offsetX[i2], p_149674_3_, p_149674_4_ + Direction.offsetZ[k1] + Direction.offsetZ[i2])))
+                         {
+-                            p_149674_1_.setBlock(p_149674_2_ + Direction.offsetX[k1], p_149674_3_, p_149674_4_ + Direction.offsetZ[k1], this, 1 << i2, 2);
++                            CraftEventFactory.handleBlockSpreadEvent(bukkitBlock, source, this, 1 << i2);
+                         }
+                         else if ((i1 & 1 << l1) != 0 && p_149674_1_.isAirBlock(p_149674_2_ + Direction.offsetX[k1] + Direction.offsetX[l1], p_149674_3_, p_149674_4_ + Direction.offsetZ[k1] + Direction.offsetZ[l1]) && this.func_150093_a(p_149674_1_.getBlock(p_149674_2_ + Direction.offsetX[l1], p_149674_3_, p_149674_4_ + Direction.offsetZ[l1])))
+                         {
+-                            p_149674_1_.setBlock(p_149674_2_ + Direction.offsetX[k1] + Direction.offsetX[l1], p_149674_3_, p_149674_4_ + Direction.offsetZ[k1] + Direction.offsetZ[l1], this, 1 << (k1 + 2 & 3), 2);
++                            bukkitBlock = p_149674_1_.getWorld().getBlockAt(p_149674_2_ + Direction.offsetX[k1] + Direction.offsetX[l1], p_149674_3_, p_149674_4_ + Direction.offsetZ[k1] + Direction.offsetZ[l1]);
++                            CraftEventFactory.handleBlockSpreadEvent(bukkitBlock, source, this, 1 << (k1 + 2 & 3));
+                         }
+                         else if ((i1 & 1 << i2) != 0 && p_149674_1_.isAirBlock(p_149674_2_ + Direction.offsetX[k1] + Direction.offsetX[i2], p_149674_3_, p_149674_4_ + Direction.offsetZ[k1] + Direction.offsetZ[i2]) && this.func_150093_a(p_149674_1_.getBlock(p_149674_2_ + Direction.offsetX[i2], p_149674_3_, p_149674_4_ + Direction.offsetZ[i2])))
+                         {
+-                            p_149674_1_.setBlock(p_149674_2_ + Direction.offsetX[k1] + Direction.offsetX[i2], p_149674_3_, p_149674_4_ + Direction.offsetZ[k1] + Direction.offsetZ[i2], this, 1 << (k1 + 2 & 3), 2);
++                            bukkitBlock = p_149674_1_.getWorld().getBlockAt(p_149674_2_ + Direction.offsetX[k1] + Direction.offsetX[i2], p_149674_3_, p_149674_4_ + Direction.offsetZ[k1] + Direction.offsetZ[i2]);
++                            CraftEventFactory.handleBlockSpreadEvent(bukkitBlock, source, this, 1 << (k1 + 2 & 3));
+                         }
+                         else if (this.func_150093_a(p_149674_1_.getBlock(p_149674_2_ + Direction.offsetX[k1], p_149674_3_ + 1, p_149674_4_ + Direction.offsetZ[k1])))
+                         {
+-                            p_149674_1_.setBlock(p_149674_2_ + Direction.offsetX[k1], p_149674_3_, p_149674_4_ + Direction.offsetZ[k1], this, 0, 2);
++                            CraftEventFactory.handleBlockSpreadEvent(bukkitBlock, source, this, 0);
+                         }
 +
-                             if (flag1 && this.canAttachTo(worldIn, blockpos.offset(enumfacing3), enumfacing3))
-                             {
--                                worldIn.setBlockState(blockpos4, this.getDefaultState().withProperty(getPropertyFor(enumfacing3), Boolean.valueOf(true)), 2);
-+//                                worldIn.setBlockState(blockpos4, this.getDefaultState().withProperty(getPropertyFor(enumfacing3), Boolean.valueOf(true)), 2);
-+                                CraftEventFactory.handleBlockSpreadEvent(bukkitBlock, source, this, getMetaFromState(this.getDefaultState().withProperty(getPropertyFor(enumfacing3), true)));
-                             }
-                             else if (flag2 && this.canAttachTo(worldIn, blockpos1.offset(enumfacing4), enumfacing4))
-                             {
--                                worldIn.setBlockState(blockpos4, this.getDefaultState().withProperty(getPropertyFor(enumfacing4), Boolean.valueOf(true)), 2);
-+//                                worldIn.setBlockState(blockpos4, this.getDefaultState().withProperty(getPropertyFor(enumfacing4), Boolean.valueOf(true)), 2);
-+                                CraftEventFactory.handleBlockSpreadEvent(bukkitBlock, source, this, getMetaFromState(this.getDefaultState().withProperty(getPropertyFor(enumfacing4), true)));
-                             }
-                             else if (flag1 && worldIn.isAirBlock(blockpos) && this.canAttachTo(worldIn, blockpos, enumfacing1))
-                             {
--                                worldIn.setBlockState(blockpos, this.getDefaultState().withProperty(getPropertyFor(enumfacing1.getOpposite()), Boolean.valueOf(true)), 2);
-+//                                worldIn.setBlockState(blockpos, this.getDefaultState().withProperty(getPropertyFor(enumfacing1.getOpposite()), Boolean.valueOf(true)), 2);
-+                                bukkitBlock = worldIn.getWorld().getBlockAt(blockpos.getX(), blockpos.getY(), blockpos.getZ());
-+                                CraftEventFactory.handleBlockSpreadEvent(bukkitBlock, source, this, getMetaFromState(this.getDefaultState().withProperty(getPropertyFor(enumfacing1.getOpposite()), true)));
-                             }
-                             else if (flag2 && worldIn.isAirBlock(blockpos1) && this.canAttachTo(worldIn, blockpos1, enumfacing1))
-                             {
--                                worldIn.setBlockState(blockpos1, this.getDefaultState().withProperty(getPropertyFor(enumfacing1.getOpposite()), Boolean.valueOf(true)), 2);
-+//                                worldIn.setBlockState(blockpos1, this.getDefaultState().withProperty(getPropertyFor(enumfacing1.getOpposite()), Boolean.valueOf(true)), 2);
-+                                bukkitBlock = worldIn.getWorld().getBlockAt(blockpos1.getX(), blockpos1.getY(), blockpos1.getZ());
-+                                CraftEventFactory.handleBlockSpreadEvent(bukkitBlock, source, this, getMetaFromState(this.getDefaultState().withProperty(getPropertyFor(enumfacing1.getOpposite()), true)));
-                             }
-                         }
-                         else if (iblockstate3.getBlockFaceShape(worldIn, blockpos4, enumfacing1) == BlockFaceShape.SOLID)
-@@ -298,7 +312,10 @@
++                        // CraftBukkit end
+                     }
+                     else if (block.blockMaterial.isOpaque() && block.renderAsNormalBlock())
+                     {
+@@ -327,7 +340,11 @@
  
-                             if (((Boolean)iblockstate1.getValue(NORTH)).booleanValue() || ((Boolean)iblockstate1.getValue(EAST)).booleanValue() || ((Boolean)iblockstate1.getValue(SOUTH)).booleanValue() || ((Boolean)iblockstate1.getValue(WEST)).booleanValue())
-                             {
--                                worldIn.setBlockState(blockpos3, iblockstate1, 2);
-+//                                worldIn.setBlockState(blockpos3, iblockstate1, 2);
-+                                org.bukkit.block.Block source = worldIn.getWorld().getBlockAt(pos.getX(), pos.getY(), pos.getZ());
-+                                org.bukkit.block.Block bukkitBlock = worldIn.getWorld().getBlockAt(blockpos3.getX(), blockpos3.getY(), blockpos3.getZ());
-+                                CraftEventFactory.handleBlockSpreadEvent(bukkitBlock, source, this, getMetaFromState(iblockstate1));
-                             }
+                         if (l1 > 0)
+                         {
+-                            p_149674_1_.setBlock(p_149674_2_, p_149674_3_ - 1, p_149674_4_, this, l1, 2);
++                            // CraftBukkit start - Call BlockSpreadEvent
++                            org.bukkit.block.Block source = p_149674_1_.getWorld().getBlockAt(p_149674_2_, p_149674_3_, p_149674_4_);
++                            org.bukkit.block.Block bukkitBlock = p_149674_1_.getWorld().getBlockAt(p_149674_2_, p_149674_3_ - 1, p_149674_4_);
++                            CraftEventFactory.handleBlockSpreadEvent(bukkitBlock, source, this, l1);
++                            // CraftBukkit end
                          }
-                         else if (block == this)
+                     }
+                     else if (block == this)

@@ -1,44 +1,20 @@
 --- ../src-base/minecraft/net/minecraft/item/ItemMonsterPlacer.java
 +++ ../src-work/minecraft/net/minecraft/item/ItemMonsterPlacer.java
-@@ -152,7 +152,10 @@
+@@ -55,7 +55,7 @@
  
-                 NBTTagCompound nbttagcompound1 = targetEntity.writeToNBT(new NBTTagCompound());
-                 UUID uuid = targetEntity.getUniqueID();
--                nbttagcompound1.merge(nbttagcompound.getCompoundTag("EntityTag"));
-+                NBTTagCompound entityTag = nbttagcompound.getCompoundTag("EntityTag");
-+                entityTag.removeTag("Pos");
-+                entityTag.removeTag("Motion");
-+                nbttagcompound1.merge(entityTag);
-                 targetEntity.setUniqueId(uuid);
-                 targetEntity.readFromNBT(nbttagcompound1);
-             }
-@@ -220,6 +223,11 @@
-     @Nullable
-     public static Entity spawnCreature(World worldIn, @Nullable ResourceLocation entityID, double x, double y, double z)
+     public boolean onItemUse(ItemStack p_77648_1_, EntityPlayer p_77648_2_, World p_77648_3_, int p_77648_4_, int p_77648_5_, int p_77648_6_, int p_77648_7_, float p_77648_8_, float p_77648_9_, float p_77648_10_)
      {
-+        return spawnCreature(worldIn, entityID, x, y, z, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.SPAWNER_EGG);
-+    }
-+
-+    @Nullable
-+    public static Entity spawnCreature(World worldIn, @Nullable ResourceLocation entityID, double x, double y, double z, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason spawnReason) {
-         if (entityID != null && EntityList.ENTITY_EGGS.containsKey(entityID))
+-        if (p_77648_3_.isRemote)
++        if (p_77648_3_.isRemote || p_77648_1_.getItemDamage() == 48 || p_77648_1_.getItemDamage() == 49 || p_77648_1_.getItemDamage() == 63 || p_77648_1_.getItemDamage() == 64)   // CraftBukkit
          {
-             Entity entity = null;
-@@ -236,8 +244,15 @@
+             return true;
+         }
+@@ -168,7 +168,7 @@
+                     entityliving.rotationYawHead = entityliving.rotationYaw;
                      entityliving.renderYawOffset = entityliving.rotationYaw;
-                     if (net.minecraftforge.event.ForgeEventFactory.doSpecialSpawn(entityliving, worldIn, (float) x, (float) y, (float) z, null)) return null;
-                     entityliving.onInitialSpawn(worldIn.getDifficultyForLocation(new BlockPos(entityliving)), (IEntityLivingData)null);
--                    worldIn.spawnEntity(entity);
--                    entityliving.playLivingSound();
-+                    // worldIn.spawnEntity(entity);
-+                    // entityliving.playLivingSound();
-+                    // CraftBukkit start - don't return an entity when CreatureSpawnEvent is canceled
-+                    if (!worldIn.addEntity(entity, spawnReason)) {
-+                        entity = null;
-+                    } else {
-+                        entityliving.playLivingSound();
-+                    }
-+                    // CraftBukkit end
+                     entityliving.onSpawnWithEgg((IEntityLivingData)null);
+-                    p_77840_0_.spawnEntityInWorld(entity);
++                    p_77840_0_.addEntity(entity, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.SPAWNER_EGG); // CraftBukkit
+                     entityliving.playLivingSound();
                  }
              }
- 

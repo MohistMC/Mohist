@@ -1,0 +1,11 @@
+--- ../src-base/minecraft/net/minecraft/entity/passive/EntityMooshroom.java
++++ ../src-work/minecraft/net/minecraft/entity/passive/EntityMooshroom.java
+@@ -12,6 +12,8 @@
+ import net.minecraft.world.World;
+ import net.minecraftforge.common.IShearable;
+ 
++import org.bukkit.event.player.PlayerShearEntityEvent; // CraftBukkit
++
+ public class EntityMooshroom extends EntityCow implements IShearable
+ {
+     private static final String __OBFID = "CL_00001645";

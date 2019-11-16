@@ -1,115 +1,169 @@
 --- ../src-base/minecraft/net/minecraft/entity/player/InventoryPlayer.java
 +++ ../src-work/minecraft/net/minecraft/entity/player/InventoryPlayer.java
-@@ -1,5 +1,6 @@
- package net.minecraft.entity.player;
+@@ -2,7 +2,9 @@
  
-+import java.util.ArrayList;
- import java.util.Arrays;
- import java.util.Iterator;
- import java.util.List;
-@@ -26,6 +27,9 @@
- import net.minecraft.world.World;
- import net.minecraftforge.fml.relauncher.Side;
- import net.minecraftforge.fml.relauncher.SideOnly;
-+import org.bukkit.Location;
-+import org.bukkit.craftbukkit.v1_12_R1.entity.CraftHumanEntity;
+ import cpw.mods.fml.relauncher.Side;
+ import cpw.mods.fml.relauncher.SideOnly;
++
+ import java.util.concurrent.Callable;
++
+ import net.minecraft.block.Block;
+ import net.minecraft.crash.CrashReport;
+ import net.minecraft.crash.CrashReportCategory;
+@@ -13,7 +15,13 @@
+ import net.minecraft.nbt.NBTTagCompound;
+ import net.minecraft.nbt.NBTTagList;
+ import net.minecraft.util.ReportedException;
++// CraftBukkit start
++import java.util.List;
+ 
++import org.bukkit.craftbukkit.entity.CraftHumanEntity;
 +import org.bukkit.entity.HumanEntity;
- 
++// CraftBukkit end
++
  public class InventoryPlayer implements IInventory
  {
-@@ -38,6 +42,50 @@
+     public ItemStack[] mainInventory = new ItemStack[36];
+@@ -25,7 +33,46 @@
      private ItemStack itemStack;
-     private int timesChanged;
- 
-+    // CraftBukkit start - add fields and methods
+     public boolean inventoryChanged;
+     private static final String __OBFID = "CL_00001709";
++    // CraftBukkit start
 +    public List<HumanEntity> transaction = new java.util.ArrayList<HumanEntity>();
 +    private int maxStack = MAX_STACK;
-+
-+    public List<ItemStack> getContents() {
-+        List<ItemStack> combined = new ArrayList<>(mainInventory.size() + armorInventory.size() + offHandInventory.size());
-+        for (List<ItemStack> sub : this.allInventories) {
-+            combined.addAll(sub);
-+        }
-+
-+        return combined;
+ 
++    public ItemStack[] getContents()
++    {
++        return this.mainInventory;
 +    }
 +
-+    public void onOpen(CraftHumanEntity who) {
-+        transaction.add(who);
-+    }
-+
-+    public void onClose(CraftHumanEntity who) {
-+        transaction.remove(who);
-+    }
-+
-+    public List<HumanEntity> getViewers() {
-+        return transaction;
-+    }
-+
-+    public List<ItemStack> getArmorContents() {
++    public ItemStack[] getArmorContents()
++    {
 +        return this.armorInventory;
 +    }
 +
-+    public org.bukkit.inventory.InventoryHolder getOwner() {
++    public void onOpen(CraftHumanEntity who)
++    {
++        transaction.add(who);
++    }
++
++    public void onClose(CraftHumanEntity who)
++    {
++        transaction.remove(who);
++    }
++
++    public List<HumanEntity> getViewers()
++    {
++        return transaction;
++    }
++
++    public org.bukkit.inventory.InventoryHolder getOwner()
++    {
 +        return this.player.getBukkitEntity();
 +    }
 +
-+    public void setMaxStackSize(int size) {
++    public void setMaxStackSize(int size)
++    {
 +        maxStack = size;
 +    }
-+
-+    @Override
-+    public Location getLocation() {
-+        return player.getBukkitEntity().getLocation();
-+    }
-+
 +    // CraftBukkit end
 +
-     public InventoryPlayer(EntityPlayer playerIn)
+     public InventoryPlayer(EntityPlayer p_i1750_1_)
      {
-         this.allInventories = Arrays.<NonNullList<ItemStack>>asList(this.mainInventory, this.armorInventory, this.offHandInventory);
-@@ -65,6 +113,23 @@
-         return stack1.getItem() == stack2.getItem() && (!stack1.getHasSubtypes() || stack1.getMetadata() == stack2.getMetadata()) && ItemStack.areItemStackTagsEqual(stack1, stack2);
+         this.player = p_i1750_1_;
+@@ -81,6 +128,34 @@
+         return -1;
      }
  
 +    // CraftBukkit start - Watch method above! :D
-+    public int canHold(ItemStack itemstack) {
-+        int remains = itemstack.getCount();
-+        for (int i = 0; i < this.mainInventory.size(); ++i) {
-+            ItemStack itemstack1 = this.getStackInSlot(i);
-+            if (itemstack1.isEmpty()) return itemstack.getCount();
++    public int canHold(ItemStack itemstack)
++    {
++        int remains = itemstack.stackSize;
++
++        for (int i = 0; i < this.mainInventory.length; ++i)
++        {
++            if (this.mainInventory[i] == null)
++            {
++                return itemstack.stackSize;
++            }
 +
 +            // Taken from firstPartial(ItemStack)
-+            if (!itemstack1.isEmpty() && itemstack1.getItem() == itemstack.getItem() && itemstack1.isStackable() && itemstack1.getCount() < itemstack1.getMaxStackSize() && itemstack1.getCount() < this.getInventoryStackLimit() && (!itemstack1.getHasSubtypes() || itemstack1.getMetadata() == itemstack.getMetadata()) && ItemStack.areItemStackTagsEqual(itemstack1, itemstack)) {
-+                remains -= (itemstack1.getMaxStackSize() < this.getInventoryStackLimit() ? itemstack1.getMaxStackSize() : this.getInventoryStackLimit()) - itemstack1.getCount();
++            if (this.mainInventory[i] != null && this.mainInventory[i].getItem() == itemstack.getItem() && this.mainInventory[i].isStackable() && this.mainInventory[i].stackSize < this.mainInventory[i].getMaxStackSize() && this.mainInventory[i].stackSize < this.getInventoryStackLimit() && (!this.mainInventory[i].getHasSubtypes() || this.mainInventory[i].getItemDamage() == itemstack.getItemDamage()) && ItemStack.areItemStackTagsEqual(this.mainInventory[i], itemstack))
++            {
++                remains -= (this.mainInventory[i].getMaxStackSize() < this.getInventoryStackLimit() ? this.mainInventory[i].getMaxStackSize() : this.getInventoryStackLimit()) - this.mainInventory[i].stackSize;
 +            }
-+            if (remains <= 0) return itemstack.getCount();
++
++            if (remains <= 0)
++            {
++                return itemstack.stackSize;
++            }
 +        }
-+        return itemstack.getCount() - remains;
++
++        return itemstack.stackSize - remains;
 +    }
 +    // CraftBukkit end
 +
      public int getFirstEmptyStack()
      {
-         for (int i = 0; i < this.mainInventory.size(); ++i)
-@@ -725,7 +790,7 @@
+         for (int i = 0; i < this.mainInventory.length; ++i)
+@@ -171,7 +246,7 @@
+             }
  
-     public int getInventoryStackLimit()
-     {
--        return 64;
-+        return maxStack; // CraftBukkit
+             j += this.itemStack.stackSize;
+-            this.setItemStack((ItemStack)null);
++            this.setItemStack(null);
+         }
+ 
+         return j;
+@@ -430,25 +505,24 @@
+ 
+         if (aitemstack[p_70298_1_] != null)
+         {
+-            ItemStack itemstack;
++            ItemStack itemstack = aitemstack[p_70298_1_], result;
+ 
+-            if (aitemstack[p_70298_1_].stackSize <= p_70298_2_)
++            if (itemstack.stackSize <= p_70298_2_)
+             {
+-                itemstack = aitemstack[p_70298_1_];
++                result = itemstack.copy();
++                itemstack.stackSize = 0;
+                 aitemstack[p_70298_1_] = null;
+-                return itemstack;
+             }
+             else
+             {
+-                itemstack = aitemstack[p_70298_1_].splitStack(p_70298_2_);
++                result = itemstack.splitStack(p_70298_2_);
+ 
+-                if (aitemstack[p_70298_1_].stackSize == 0)
++                if (itemstack.stackSize == 0)
+                 {
+-                    aitemstack[p_70298_1_] = null;
++                    itemstack = null;
+                 }
+-
+-                return itemstack;
+             }
++            return result;
+         }
+         else
+         {
+@@ -658,7 +732,7 @@
+             if (this.mainInventory[i] != null)
+             {
+                 this.player.func_146097_a(this.mainInventory[i], true, false);
+-                this.mainInventory[i] = null;
++                //this.mainInventory[i] = null; // Cauldron - we clear this in EntityPlayerMP.onDeath after PlayerDeathEvent
+             }
+         }
+ 
+@@ -667,7 +741,7 @@
+             if (this.armorInventory[i] != null)
+             {
+                 this.player.func_146097_a(this.armorInventory[i], true, false);
+-                this.armorInventory[i] = null;
++                //this.armorInventory[i] = null; // Cauldron - we clear this in EntityPlayerMP.onDeath after PlayerDeathEvent
+             }
+         }
      }
- 
-     public boolean canHarvestBlock(IBlockState state)
-@@ -802,6 +867,11 @@
- 
-     public ItemStack getItemStack()
-     {
-+        // CraftBukkit start
-+        if (this.itemStack.isEmpty()) {
-+            this.setItemStack(ItemStack.EMPTY);
-+        }
-+        // CraftBukkit end
-         return this.itemStack;
-     }
- 

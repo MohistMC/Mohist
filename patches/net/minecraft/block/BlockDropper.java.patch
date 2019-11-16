@@ -1,23 +1,59 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockDropper.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockDropper.java
-@@ -26,7 +26,7 @@
+@@ -13,6 +13,11 @@
+ import net.minecraft.tileentity.TileEntityHopper;
+ import net.minecraft.util.Facing;
+ import net.minecraft.world.World;
++// CraftBukkit start
++import org.bukkit.craftbukkit.inventory.CraftItemStack;
++import org.bukkit.event.inventory.InventoryMoveItemEvent;
++import net.minecraft.inventory.InventoryLargeChest;
++// CraftBukkit end
+ 
+ public class BlockDropper extends BlockDispenser
+ {
+@@ -38,7 +43,7 @@
          return new TileEntityDropper();
      }
  
--    protected void dispense(World worldIn, BlockPos pos)
-+    public void dispense(World worldIn, BlockPos pos)
+-    protected void func_149941_e(World p_149941_1_, int p_149941_2_, int p_149941_3_, int p_149941_4_)
++    public void func_149941_e(World p_149941_1_, int p_149941_2_, int p_149941_3_, int p_149941_4_)   // CraftBukkit - protected -> public
      {
-         BlockSourceImpl blocksourceimpl = new BlockSourceImpl(worldIn, pos);
+         BlockSourceImpl blocksourceimpl = new BlockSourceImpl(p_149941_1_, p_149941_2_, p_149941_3_, p_149941_4_);
          TileEntityDispenser tileentitydispenser = (TileEntityDispenser)blocksourceimpl.getBlockTileEntity();
-@@ -57,9 +57,9 @@
-                     else
+@@ -60,10 +65,33 @@
+ 
+                 if (iinventory != null)
+                 {
+-                    itemstack1 = TileEntityHopper.func_145889_a(iinventory, itemstack.copy().splitStack(1), Facing.oppositeSide[i1]);
++                    // CraftBukkit start - Fire event when pushing items into other inventories
++                    CraftItemStack oitemstack = CraftItemStack.asCraftMirror(itemstack.copy().splitStack(1));
++                    org.bukkit.inventory.Inventory destinationInventory;
+ 
+-                    if (itemstack1 == null)
++                    // Have to special case large chests as they work oddly
++                    if (iinventory instanceof InventoryLargeChest)
                      {
-                         itemstack1 = TileEntityHopper.putStackInInventoryAllSlots(tileentitydispenser, iinventory, itemstack.copy().splitStack(1), enumfacing.getOpposite());
--
-+                        
-                         if (itemstack1.isEmpty())
--                        {
-+						{
-                             itemstack1 = itemstack.copy();
-                             itemstack1.shrink(1);
-                         }
++                        destinationInventory = new org.bukkit.craftbukkit.inventory.CraftInventoryDoubleChest((InventoryLargeChest) iinventory);
++                    }
++                    else
++                    {
++                        destinationInventory = iinventory.getOwner().getInventory();
++                    }
++
++                    InventoryMoveItemEvent event = new InventoryMoveItemEvent(tileentitydispenser.getOwner().getInventory(), oitemstack.clone(), destinationInventory, true);
++                    p_149941_1_.getServer().getPluginManager().callEvent(event);
++
++                    if (event.isCancelled())
++                    {
++                        return;
++                    }
++
++                    itemstack1 = TileEntityHopper.func_145889_a(iinventory, CraftItemStack.asNMSCopy(event.getItem()), Facing.oppositeSide[i1]);
++
++                    if (event.getItem().equals(oitemstack) && itemstack1 == null)
++                    {
++                        // CraftBukkit end
+                         itemstack1 = itemstack.copy();
+ 
+                         if (--itemstack1.stackSize == 0)

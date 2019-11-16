@@ -1,20 +1,24 @@
 --- ../src-base/minecraft/net/minecraft/world/storage/SaveHandlerMP.java
 +++ ../src-work/minecraft/net/minecraft/world/storage/SaveHandlerMP.java
-@@ -1,6 +1,7 @@
- package net.minecraft.world.storage;
- 
+@@ -3,6 +3,8 @@
+ import cpw.mods.fml.relauncher.Side;
+ import cpw.mods.fml.relauncher.SideOnly;
  import java.io.File;
 +import java.util.UUID;
++
  import net.minecraft.nbt.NBTTagCompound;
  import net.minecraft.world.MinecraftException;
  import net.minecraft.world.WorldProvider;
-@@ -57,4 +58,9 @@
+@@ -50,4 +52,12 @@
      {
          return null;
      }
 +
++    // Cauldron start
 +    @Override
-+    public UUID getUUID() {
-+        return null;
++    public UUID getUUID()
++    {
++        return this.getUUID();
 +    }
++    // Cauldron end
  }

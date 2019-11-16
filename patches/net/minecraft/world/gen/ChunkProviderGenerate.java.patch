@@ -1,0 +1,14 @@
+--- ../src-base/minecraft/net/minecraft/world/gen/ChunkProviderGenerate.java
++++ ../src-work/minecraft/net/minecraft/world/gen/ChunkProviderGenerate.java
+@@ -194,6 +194,11 @@
+             for (int l = 0; l < 16; ++l)
+             {
+                 BiomeGenBase biomegenbase = p_147422_5_[l + k * 16];
++                if(biomegenbase == null)
++                {
++                	System.out.println("[Thermos] WARNING: Detected null biomegenbase at " + (l+k*16) + "!");
++                	continue;
++                }
+                 biomegenbase.genTerrainBlocks(this.worldObj, this.rand, p_147422_3_, p_147422_4_, p_147422_1_ * 16 + k, p_147422_2_ * 16 + l, this.stoneNoise[l + k * 16]);
+             }
+         }

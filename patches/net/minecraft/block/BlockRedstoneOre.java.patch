@@ -1,76 +1,44 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockRedstoneOre.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockRedstoneOre.java
-@@ -16,6 +16,8 @@
+@@ -13,6 +13,8 @@
+ import net.minecraft.world.IBlockAccess;
  import net.minecraft.world.World;
- import net.minecraftforge.fml.relauncher.Side;
- import net.minecraftforge.fml.relauncher.SideOnly;
-+import org.bukkit.craftbukkit.v1_12_R1.event.CraftEventFactory;
-+import org.bukkit.event.entity.EntityInteractEvent;
  
++import org.bukkit.event.entity.EntityInteractEvent; // CraftBukkit
++
  public class BlockRedstoneOre extends Block
  {
-@@ -40,19 +42,33 @@
+     private boolean field_150187_a;
+@@ -43,8 +45,30 @@
  
-     public void onBlockClicked(World worldIn, BlockPos pos, EntityPlayer playerIn)
+     public void onEntityWalking(World p_149724_1_, int p_149724_2_, int p_149724_3_, int p_149724_4_, Entity p_149724_5_)
      {
--        this.activate(worldIn, pos);
-+        this.activate(worldIn, pos, playerIn); // CraftBukkit - add playerIn
-         super.onBlockClicked(worldIn, pos, playerIn);
-     }
- 
-     public void onEntityWalk(World worldIn, BlockPos pos, Entity entityIn)
-     {
--        this.activate(worldIn, pos);
--        super.onEntityWalk(worldIn, pos, entityIn);
-+//        this.activate(worldIn, pos);
-+//        super.onEntityWalk(worldIn, pos, entityIn);
-+        if (entityIn instanceof EntityPlayer) {
-+            org.bukkit.event.player.PlayerInteractEvent event = org.bukkit.craftbukkit.v1_12_R1.event.CraftEventFactory.callPlayerInteractEvent((EntityPlayer) entityIn, org.bukkit.event.block.Action.PHYSICAL, pos, null, null, null);
-+            if (!event.isCancelled()) {
-+                this.activate(worldIn, pos, entityIn); // add entity
-+                super.onEntityWalk(worldIn, pos, entityIn);
-+            }
-+        } else {
-+            EntityInteractEvent event = new EntityInteractEvent(entityIn.getBukkitEntity(), worldIn.getWorld().getBlockAt(pos.getX(), pos.getY(), pos.getZ()));
-+            worldIn.getServer().getPluginManager().callEvent(event);
-+            if (!event.isCancelled()) {
-+                this.activate(worldIn, pos, entityIn); // add entity
-+                super.onEntityWalk(worldIn, pos, entityIn);
-+            }
-+        }
-     }
- 
-     public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ)
-     {
--        this.activate(worldIn, pos);
-+        this.activate(worldIn, pos, playerIn); // CraftBukkit - add playerIn
-         return super.onBlockActivated(worldIn, pos, state, playerIn, hand, facing, hitX, hitY, hitZ);
-     }
- 
-@@ -66,10 +82,26 @@
-         }
-     }
- 
-+    private void activate(World worldIn, BlockPos pos, Entity entity)
-+    {
-+        this.spawnParticles(worldIn, pos);
-+
-+        if (this == Blocks.REDSTONE_ORE)
+-        this.func_150185_e(p_149724_1_, p_149724_2_, p_149724_3_, p_149724_4_);
+-        super.onEntityWalking(p_149724_1_, p_149724_2_, p_149724_3_, p_149724_4_, p_149724_5_);
++        // CraftBukkit start
++        if (p_149724_5_ instanceof EntityPlayer)
 +        {
-+            if (CraftEventFactory.callEntityChangeBlockEvent(entity, pos, Blocks.LIT_REDSTONE_ORE, 0).isCancelled()) {
-+                return;
-+            }
-+            worldIn.setBlockState(pos, Blocks.LIT_REDSTONE_ORE.getDefaultState());
-+        }
-+    }
++            org.bukkit.event.player.PlayerInteractEvent event = org.bukkit.craftbukkit.event.CraftEventFactory.callPlayerInteractEvent((EntityPlayer) p_149724_5_, org.bukkit.event.block.Action.PHYSICAL, p_149724_2_, p_149724_3_, p_149724_4_, -1, null);
 +
-     public void updateTick(World worldIn, BlockPos pos, IBlockState state, Random rand)
-     {
-         if (this == Blocks.LIT_REDSTONE_ORE)
-         {
-+            if (CraftEventFactory.callBlockFadeEvent(worldIn.getWorld().getBlockAt(pos.getX(), pos.getY(), pos.getZ()), Blocks.REDSTONE_ORE).isCancelled()) {
-+                return;
++            if (!event.isCancelled())
++            {
++                this.func_150185_e(p_149724_1_, p_149724_2_, p_149724_3_, p_149724_4_);
++                super.onEntityWalking(p_149724_1_, p_149724_2_, p_149724_3_, p_149724_4_, p_149724_5_);
 +            }
-             worldIn.setBlockState(pos, Blocks.REDSTONE_ORE.getDefaultState());
-         }
++        }
++        else
++        {
++            EntityInteractEvent event = new EntityInteractEvent(p_149724_5_.getBukkitEntity(), p_149724_1_.getWorld().getBlockAt(p_149724_2_, p_149724_3_, p_149724_4_));
++            p_149724_1_.getServer().getPluginManager().callEvent(event);
++
++            if (!event.isCancelled())
++            {
++                this.func_150185_e(p_149724_1_, p_149724_2_, p_149724_3_, p_149724_4_);
++                super.onEntityWalking(p_149724_1_, p_149724_2_, p_149724_3_, p_149724_4_, p_149724_5_);
++            }
++        }
++
++        // CraftBukkit end
      }
+ 
+     public boolean onBlockActivated(World p_149727_1_, int p_149727_2_, int p_149727_3_, int p_149727_4_, EntityPlayer p_149727_5_, int p_149727_6_, float p_149727_7_, float p_149727_8_, float p_149727_9_)

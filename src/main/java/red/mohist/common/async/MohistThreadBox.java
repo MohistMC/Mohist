@@ -12,21 +12,21 @@ import java.util.concurrent.TimeUnit;
 public class MohistThreadBox {
 
     public static final ExecutorService DL = new ThreadPoolExecutor(1, Integer.MAX_VALUE, 60L, TimeUnit.SECONDS,
-            new SynchronousQueue<>(), new NamedThreadFactory("Mohist DL"));
+            new SynchronousQueue<Runnable>(), new NamedThreadFactory("Mohist DL"));
 
     public static final ScheduledExecutorService METRICS = new ScheduledThreadPoolExecutor(1, new NamedThreadFactory("Metrics"));
 
     public static final ExecutorService ASYNCCHAT = new ThreadPoolExecutor(1, Integer.MAX_VALUE, 60L, TimeUnit.SECONDS,
-            new SynchronousQueue<>(), new NamedThreadFactory("Async Chat Thread"));
+            new SynchronousQueue<Runnable>(), new NamedThreadFactory("Async Chat Thread"));
 
     public static final ExecutorService FILEIO = new ThreadPoolExecutor(2, 2, 0L, TimeUnit.MILLISECONDS,
-            new LinkedBlockingQueue<>(), new NamedThreadFactory("Mohist File IO Thread"));
+            new LinkedBlockingQueue<Runnable>(), new NamedThreadFactory("Mohist File IO Thread"));
 
     public static final Executor ASYNCEXECUTOR = new ThreadPoolExecutor(1, 1, 0L, TimeUnit.MILLISECONDS,
-            new LinkedBlockingQueue<>(), new NamedThreadFactory("Mohist Async Task Handler Thread"));
+            new LinkedBlockingQueue<Runnable>(), new NamedThreadFactory("Mohist Async Task Handler Thread"));
 
     public static final Executor TCW = new ThreadPoolExecutor(1, 1, 0L, TimeUnit.MILLISECONDS,
-            new SynchronousQueue<>(), new NamedThreadFactory("TerminalConsoleWriter"));
+            new SynchronousQueue<Runnable>(), new NamedThreadFactory("TerminalConsoleWriter"));
 
 
     public static class AssignableThread extends Thread {

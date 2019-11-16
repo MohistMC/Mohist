@@ -1,0 +1,11 @@
+--- ../src-base/minecraft/net/minecraft/network/play/client/C17PacketCustomPayload.java
++++ ../src-work/minecraft/net/minecraft/network/play/client/C17PacketCustomPayload.java
+@@ -12,7 +12,7 @@
+ public class C17PacketCustomPayload extends Packet
+ {
+     private String field_149562_a;
+-    private int field_149560_b;
++    public int field_149560_b; // CraftBukkit - private -> public
+     private byte[] field_149561_c;
+     private static final String __OBFID = "CL_00001356";
+ 

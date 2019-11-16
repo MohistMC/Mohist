@@ -1,0 +1,15 @@
+--- ../src-base/minecraft/net/minecraft/stats/StatFileWriter.java
++++ ../src-work/minecraft/net/minecraft/stats/StatFileWriter.java
+@@ -27,6 +27,12 @@
+     {
+         if (!p_150871_2_.isAchievement() || this.canUnlockAchievement((Achievement)p_150871_2_))
+         {
++            // CraftBukkit start
++            org.bukkit.event.Cancellable cancellable = org.bukkit.craftbukkit.event.CraftEventFactory.handleStatisticsIncrease(p_150871_1_, p_150871_2_, this.writeStat(p_150871_2_), p_150871_3_);
++            if (cancellable != null && cancellable.isCancelled()) {
++                return;
++            }
++            // CraftBukkit end
+             this.func_150873_a(p_150871_1_, p_150871_2_, this.writeStat(p_150871_2_) + p_150871_3_);
+         }
+     }

@@ -1,29 +1,22 @@
 --- ../src-base/minecraft/net/minecraftforge/common/util/FakePlayerFactory.java
 +++ ../src-work/minecraft/net/minecraftforge/common/util/FakePlayerFactory.java
-@@ -20,6 +20,7 @@
- package net.minecraftforge.common.util;
- 
- import java.lang.ref.WeakReference;
-+import java.nio.charset.StandardCharsets;
- import java.util.Iterator;
- import java.util.Map;
- import java.util.Map.Entry;
-@@ -35,7 +36,7 @@
+@@ -16,7 +16,7 @@
  {
      private static GameProfile MINECRAFT = new GameProfile(UUID.fromString("41C82C87-7AfB-4024-BA57-13D2C99CAE77"), "[Minecraft]");
      // Map of all active fake player usernames to their entities
 -    private static Map<GameProfile, FakePlayer> fakePlayers = Maps.newHashMap();
 +    public static Map<GameProfile, FakePlayer> fakePlayers = Maps.newHashMap();
-     private static WeakReference<FakePlayer> MINECRAFT_PLAYER = null;
- 
+     private static FakePlayer MINECRAFT_PLAYER = null;
+     
      public static FakePlayer getMinecraft(WorldServer world)
-@@ -56,12 +57,23 @@
+@@ -35,12 +35,24 @@
       */
      public static FakePlayer get(WorldServer world, GameProfile username)
      {
 -        if (!fakePlayers.containsKey(username))
 +        // Cauldron start - Refactored below to avoid a hashCode check with a null GameProfile ID
 +        if (username == null || username.getName() == null) return null;
++
 +        for (Map.Entry<GameProfile, FakePlayer> mapEntry : fakePlayers.entrySet())
          {
 -            FakePlayer fakePlayer = new FakePlayer(world, username);
@@ -38,7 +31,7 @@
 +        FakePlayer fakePlayer = new FakePlayer(world, username);
 +        if (username.getId() == null) // GameProfile hashCode check will fail with a null ID
 +        {
-+            username = new GameProfile(UUID.nameUUIDFromBytes(("OfflinePlayer:" + username.getName()).getBytes(StandardCharsets.UTF_8)), username.getName()); // Create new GameProfile with random UUID
++            username = new GameProfile(UUID.randomUUID(), username.getName()); // Create new GameProfile with random UUID
 +        }
 +        // Cauldron end
 +        fakePlayers.put(username, fakePlayer);

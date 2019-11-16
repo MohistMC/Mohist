@@ -1,54 +1,60 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockMushroom.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockMushroom.java
-@@ -9,6 +9,9 @@
- import net.minecraft.world.World;
+@@ -6,6 +6,12 @@
  import net.minecraft.world.gen.feature.WorldGenBigMushroom;
- import net.minecraft.world.gen.feature.WorldGenerator;
-+import org.bukkit.TreeType;
+ import net.minecraftforge.common.util.ForgeDirection;
+ 
++// CraftBukkit start
 +import org.bukkit.block.BlockState;
 +import org.bukkit.event.block.BlockSpreadEvent;
- 
++import org.bukkit.TreeType;
++// CraftBukkit end
++
  public class BlockMushroom extends BlockBush implements IGrowable
  {
-@@ -26,7 +29,8 @@
+     private static final String __OBFID = "CL_00000272";
+@@ -19,7 +25,9 @@
  
-     public void updateTick(World worldIn, BlockPos pos, IBlockState state, Random rand)
+     public void updateTick(World p_149674_1_, int p_149674_2_, int p_149674_3_, int p_149674_4_, Random p_149674_5_)
      {
--        if (rand.nextInt(25) == 0)
-+        final int sourceX = pos.getX(), sourceY = pos.getY(), sourceZ = pos.getZ();
-+        if (rand.nextInt(Math.max(1, (int)(100.0f / worldIn.spigotConfig.mushroomModifier) * 25)) == 0)
+-        if (p_149674_5_.nextInt(25) == 0)
++        final int sourceX = p_149674_2_, sourceY = p_149674_3_, sourceZ = p_149674_4_; // CraftBukkit
++
++        if (p_149674_5_.nextInt(Math.max(1, (int) p_149674_1_.growthOdds / p_149674_1_.getSpigotConfig().mushroomModifier * 25)) == 0)   // Spigot // Cauldron
          {
-             int i = 5;
-             int j = 4;
-@@ -58,7 +62,17 @@
+             byte b0 = 4;
+             int l = 5;
+@@ -66,7 +74,19 @@
  
-             if (worldIn.isAirBlock(blockpos1) && this.canBlockStay(worldIn, blockpos1, this.getDefaultState()))
+             if (p_149674_1_.isAirBlock(i1, j1, k1) && this.canBlockStay(p_149674_1_, i1, j1, k1))
              {
--                worldIn.setBlockState(blockpos1, this.getDefaultState(), 2);
-+//                worldIn.setBlockState(blockpos1, this.getDefaultState(), 2);
-+                org.bukkit.World bworld = worldIn.getWorld();
-+                BlockState blockState = bworld.getBlockAt(blockpos1.getX(), blockpos1.getY(), blockpos1.getZ()).getState();
-+                blockState.setType(org.bukkit.craftbukkit.v1_12_R1.util.CraftMagicNumbers.getMaterial(this)); // nms: this.id, 0, 2
-+
+-                p_149674_1_.setBlock(i1, j1, k1, this, 0, 2);
++                // CraftBukkit start
++                org.bukkit.World bworld = p_149674_1_.getWorld();
++                BlockState blockState = bworld.getBlockAt(i1, j1, k1).getState();
++                blockState.setTypeId(Block.getIdFromBlock(this)); // nms: this.id, 0, 2
 +                BlockSpreadEvent event = new BlockSpreadEvent(blockState.getBlock(), bworld.getBlockAt(sourceX, sourceY, sourceZ), blockState);
-+                worldIn.getServer().getPluginManager().callEvent(event);
++                p_149674_1_.getServer().getPluginManager().callEvent(event);
 +
-+                if (!event.isCancelled()) {
++                if (!event.isCancelled())
++                {
 +                    blockState.update(true);
 +                }
++
++                // CraftBukkit end
              }
          }
      }
-@@ -105,10 +119,12 @@
+@@ -102,10 +122,12 @@
  
-         if (this == Blocks.BROWN_MUSHROOM)
+         if (this == Blocks.brown_mushroom)
          {
-+            BlockSapling.treeType = TreeType.BROWN_MUSHROOM;
-             worldgenerator = new WorldGenBigMushroom(Blocks.BROWN_MUSHROOM_BLOCK);
++            BlockSapling.treeType = TreeType.BROWN_MUSHROOM; // CraftBukkit
+             worldgenbigmushroom = new WorldGenBigMushroom(0);
          }
-         else if (this == Blocks.RED_MUSHROOM)
+         else if (this == Blocks.red_mushroom)
          {
-+            BlockSapling.treeType = TreeType.RED_MUSHROOM;
-             worldgenerator = new WorldGenBigMushroom(Blocks.RED_MUSHROOM_BLOCK);
++            BlockSapling.treeType = TreeType.RED_MUSHROOM; // CraftBukkit
+             worldgenbigmushroom = new WorldGenBigMushroom(1);
          }
  

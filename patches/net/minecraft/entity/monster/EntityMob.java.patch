@@ -1,61 +1,40 @@
 --- ../src-base/minecraft/net/minecraft/entity/monster/EntityMob.java
 +++ ../src-work/minecraft/net/minecraft/entity/monster/EntityMob.java
-@@ -6,9 +6,7 @@
- import net.minecraft.entity.EntityLivingBase;
- import net.minecraft.entity.SharedMonsterAttributes;
- import net.minecraft.entity.player.EntityPlayer;
--import net.minecraft.init.Items;
- import net.minecraft.init.SoundEvents;
--import net.minecraft.item.ItemAxe;
- import net.minecraft.item.ItemStack;
- import net.minecraft.util.DamageSource;
- import net.minecraft.util.SoundCategory;
-@@ -18,6 +16,7 @@
- import net.minecraft.world.EnumDifficulty;
- import net.minecraft.world.EnumSkyBlock;
- import net.minecraft.world.World;
-+import org.bukkit.event.entity.EntityCombustByEntityEvent;
+@@ -1,5 +1,6 @@
+ package net.minecraft.entity.monster;
  
- public abstract class EntityMob extends EntityCreature implements IMob
- {
-@@ -111,7 +110,15 @@
- 
-             if (j > 0)
++import org.bukkit.event.entity.EntityTargetEvent; // CraftBukkit
+ import net.minecraft.enchantment.EnchantmentHelper;
+ import net.minecraft.entity.Entity;
+ import net.minecraft.entity.EntityCreature;
+@@ -75,7 +76,29 @@
              {
--                entityIn.setFire(j * 4);
-+                // entityIn.setFire(j * 4);
-+                // CraftBukkit start - Call a combust event when somebody hits with a fire enchanted item
-+                EntityCombustByEntityEvent combustEvent = new EntityCombustByEntityEvent(this.getBukkitEntity(), entityIn.getBukkitEntity(), j * 4);
-+                org.bukkit.Bukkit.getPluginManager().callEvent(combustEvent);
+                 if (entity != this)
+                 {
+-                    this.entityToAttack = entity;
++                    // CraftBukkit start - We still need to call events for entities without goals
++                    if (entity != this.entityToAttack && (this instanceof EntityBlaze || this instanceof EntityEnderman || this instanceof EntitySpider || this instanceof EntityGiantZombie || this instanceof EntitySilverfish))
++                    {
++                        EntityTargetEvent event = org.bukkit.craftbukkit.event.CraftEventFactory.callEntityTargetEvent(this, entity, EntityTargetEvent.TargetReason.TARGET_ATTACKED_ENTITY);
 +
-+                if (!combustEvent.isCancelled()) {
-+                    entityIn.setFire(combustEvent.getDuration());
-+                }
-+                // CraftBukkit end
-             }
++                        if (!event.isCancelled())
++                        {
++                            if (event.getTarget() == null)
++                            {
++                                this.entityToAttack = null;
++                            }
++                            else
++                            {
++                                this.entityToAttack = ((org.bukkit.craftbukkit.entity.CraftEntity) event.getTarget()).getHandle();
++                            }
++                        }
++                    }
++                    else
++                    {
++                        this.entityToAttack = entity;
++                    }
++
++                    // CraftBukkit end
+                 }
  
-             if (entityIn instanceof EntityPlayer)
-@@ -153,17 +160,18 @@
-         }
-         else
-         {
--            int i = this.world.getLightFromNeighbors(blockpos);
--
-+            boolean passes; // Paper
-             if (this.world.isThundering())
-             {
-                 int j = this.world.getSkylightSubtracted();
-                 this.world.setSkylightSubtracted(10);
--                i = this.world.getLightFromNeighbors(blockpos);
-+                passes = !world.isLightLevel(blockpos, this.rand.nextInt(9)); // Paper
-                 this.world.setSkylightSubtracted(j);
--            }
-+            }else{
-+                passes = !world.isLightLevel(blockpos, this.rand.nextInt(9));
-+            } // Paper
- 
--            return i <= this.rand.nextInt(8);
-+            return passes; // Paper
-         }
-     }
- 
+                 return true;

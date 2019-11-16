@@ -1,41 +1,64 @@
 --- ../src-base/minecraft/net/minecraft/inventory/InventoryEnderChest.java
 +++ ../src-work/minecraft/net/minecraft/inventory/InventoryEnderChest.java
-@@ -5,14 +5,23 @@
- import net.minecraft.nbt.NBTTagCompound;
+@@ -6,9 +6,61 @@
  import net.minecraft.nbt.NBTTagList;
  import net.minecraft.tileentity.TileEntityEnderChest;
-+import org.bukkit.Location;
-+import org.bukkit.inventory.InventoryHolder;
  
++// CraftBukkit start
++import java.util.List;
++import org.bukkit.craftbukkit.entity.CraftHumanEntity;
++import org.bukkit.entity.HumanEntity;
++// CraftBukkit end
++
++
  public class InventoryEnderChest extends InventoryBasic
  {
      private TileEntityEnderChest associatedChest;
-+    private final EntityPlayer owner;
++
++    // CraftBukkit start
++    public List<HumanEntity> transaction = new java.util.ArrayList<HumanEntity>();
++    public org.bukkit.entity.Player player;
++    private int maxStack = MAX_STACK;
++
++    public ItemStack[] getContents()
++    {
++        return this.inventoryContents;
++    }
++
++    public void onOpen(CraftHumanEntity who)
++    {
++        transaction.add(who);
++    }
++
++    public void onClose(CraftHumanEntity who)
++    {
++        transaction.remove(who);
++    }
++
++    public List<HumanEntity> getViewers()
++    {
++        return transaction;
++    }
++
++    public org.bukkit.inventory.InventoryHolder getOwner()
++    {
++        return this.player;
++    }
++
++    public void setMaxStackSize(int size)
++    {
++        maxStack = size;
++    }
++
++    /**
++     * Returns the maximum stack size for a inventory slot. Seems to always be 64, possibly will be extended. *Isn't
++     * this more of a set than a get?*
++     */
++    public int getInventoryStackLimit()
++    {
++        return maxStack;
++    }
++    // CraftBukkit end
+     private static final String __OBFID = "CL_00001759";
  
      public InventoryEnderChest()
-     {
-+        this(null);
-+    }
-+
-+    public InventoryEnderChest(EntityPlayer owner)
-+    {
-         super("container.enderchest", false, 27);
-+        this.owner = owner;
-     }
- 
-     public void setChestTileEntity(TileEntityEnderChest chestTileEntity)
-@@ -84,4 +93,14 @@
-         super.closeInventory(player);
-         this.associatedChest = null;
-     }
-+
-+    public InventoryHolder getBukkitOwner() {
-+        return owner != null ? owner.getBukkitEntity() : null;
-+    }
-+
-+    @Override
-+    public Location getLocation() {
-+        return new Location(this.associatedChest.getWorld().getWorld(), this.associatedChest.getPos().getX(), this.associatedChest.getPos().getY(), this.associatedChest.getPos().getZ());
-+    }
-+
- }

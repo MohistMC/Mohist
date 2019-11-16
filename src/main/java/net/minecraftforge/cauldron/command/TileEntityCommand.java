@@ -1,9 +1,13 @@
 package net.minecraftforge.cauldron.command;
 
-import com.google.common.collect.ImmutableList;
 import java.util.ArrayList;
 import java.util.List;
+
 import net.minecraft.server.MinecraftServer;
+import net.minecraftforge.cauldron.configuration.BoolSetting;
+import net.minecraftforge.cauldron.configuration.IntSetting;
+import net.minecraftforge.cauldron.configuration.Setting;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.Validate;
 import org.apache.commons.lang.math.NumberUtils;
@@ -11,9 +15,8 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.util.StringUtil;
-import red.mohist.configuration.BoolSetting;
-import red.mohist.configuration.IntSetting;
-import red.mohist.configuration.Setting;
+
+import com.google.common.collect.ImmutableList;
 
 public class TileEntityCommand extends Command
 {
@@ -37,13 +40,13 @@ public class TileEntityCommand extends Command
         }
         if ((args.length == 1) && "save".equalsIgnoreCase(args[0]))
         {
-            MinecraftServer.tileEntityConfig.save();
+            MinecraftServer.getServer().tileEntityConfig.save();
             sender.sendMessage(ChatColor.GREEN + "Config file saved");
             return true;
         }
         if ((args.length == 1) && "reload".equalsIgnoreCase(args[0]))
         {
-            MinecraftServer.tileEntityConfig.load();
+            MinecraftServer.getServer().tileEntityConfig.load();
             sender.sendMessage(ChatColor.GREEN + "Config file reloaded");
             return true;
         }
@@ -73,22 +76,22 @@ public class TileEntityCommand extends Command
     {
         try
         {
-            Setting toggle = MinecraftServer.tileEntityConfig.getSettings().get(args[1]);
+            Setting toggle = MinecraftServer.getServer().tileEntityConfig.getSettings().get(args[1]);
             // check config directly
-            if (toggle == null && MinecraftServer.tileEntityConfig.isSet(args[1]))
+            if (toggle == null && MinecraftServer.getServer().tileEntityConfig.isSet(args[1]))
             {
-                if (MinecraftServer.tileEntityConfig.isBoolean(args[1]))
+                if (MinecraftServer.getServer().tileEntityConfig.isBoolean(args[1]))
                 {
-                    toggle = new BoolSetting(MinecraftServer.tileEntityConfig, args[1], MinecraftServer.tileEntityConfig.getBoolean(args[1], false), "");
+                    toggle = new BoolSetting(MinecraftServer.getServer().tileEntityConfig, args[1], MinecraftServer.getServer().tileEntityConfig.getBoolean(args[1], false), "");
                 }
-                else if (MinecraftServer.tileEntityConfig.isInt(args[1]))
+                else if (MinecraftServer.getServer().tileEntityConfig.isInt(args[1]))
                 {
-                    toggle = new IntSetting(MinecraftServer.tileEntityConfig, args[1], MinecraftServer.tileEntityConfig.getInt(args[1], 1), "");
+                    toggle = new IntSetting(MinecraftServer.getServer().tileEntityConfig, args[1], MinecraftServer.getServer().tileEntityConfig.getInt(args[1], 1), "");
                 }
                 if (toggle != null)
                 {
-                    MinecraftServer.tileEntityConfig.getSettings().put(toggle.path, toggle);
-                    MinecraftServer.tileEntityConfig.load();
+                    MinecraftServer.getServer().tileEntityConfig.getSettings().put(toggle.path, toggle);
+                    MinecraftServer.getServer().tileEntityConfig.load();
                 }
             }
             if (toggle == null)
@@ -113,7 +116,7 @@ public class TileEntityCommand extends Command
         try
         {
             int setting = NumberUtils.toInt(args[2], 1);
-            MinecraftServer.tileEntityConfig.set(args[1], setting);
+            MinecraftServer.getServer().tileEntityConfig.set(args[1], setting);
         }
         catch (Exception ex)
         {
@@ -127,13 +130,13 @@ public class TileEntityCommand extends Command
     {
         try
         {
-            Setting toggle = MinecraftServer.tileEntityConfig.getSettings().get(args[1]);
+            Setting toggle = MinecraftServer.getServer().tileEntityConfig.getSettings().get(args[1]);
             // check config directly
-            if (toggle == null && MinecraftServer.tileEntityConfig.isSet(args[1]))
+            if (toggle == null && MinecraftServer.getServer().tileEntityConfig.isSet(args[1]))
             {
-                toggle = new BoolSetting(MinecraftServer.tileEntityConfig, args[1], MinecraftServer.tileEntityConfig.getBoolean(args[1], false), "");
-                MinecraftServer.tileEntityConfig.getSettings().put(toggle.path, toggle);
-                MinecraftServer.tileEntityConfig.load();
+                toggle = new BoolSetting(MinecraftServer.getServer().tileEntityConfig, args[1], MinecraftServer.getServer().tileEntityConfig.getBoolean(args[1], false), "");
+                MinecraftServer.getServer().tileEntityConfig.getSettings().put(toggle.path, toggle);
+                MinecraftServer.getServer().tileEntityConfig.load();
             }
             if (toggle == null)
             {
@@ -149,7 +152,7 @@ public class TileEntityCommand extends Command
             Object value = toggle.getValue();
             String option = (Boolean.TRUE.equals(value) ? ChatColor.GREEN : ChatColor.RED) + " " + value;
             sender.sendMessage(ChatColor.GOLD + args[1] + " " + option);
-            MinecraftServer.tileEntityConfig.save();
+            MinecraftServer.getServer().tileEntityConfig.save();
         }
         catch (Exception ex)
         {
@@ -168,11 +171,11 @@ public class TileEntityCommand extends Command
 
         if (args.length == 1)
         {
-            return StringUtil.copyPartialMatches(args[0], COMMANDS, new ArrayList<>(COMMANDS.size()));
+            return StringUtil.copyPartialMatches(args[0], COMMANDS, new ArrayList<String>(COMMANDS.size()));
         }
         if (((args.length == 2) && "get".equalsIgnoreCase(args[0])) || "set".equalsIgnoreCase(args[0]))
         {
-            return StringUtil.copyPartialMatches(args[1], MinecraftServer.tileEntityConfig.getSettings().keySet(), new ArrayList<>(MinecraftServer.tileEntityConfig.getSettings().size()));
+            return StringUtil.copyPartialMatches(args[1], MinecraftServer.getServer().tileEntityConfig.getSettings().keySet(), new ArrayList<String>(MinecraftServer.getServer().tileEntityConfig.getSettings().size()));
         }
 
         return ImmutableList.of();

@@ -1,153 +1,159 @@
 --- ../src-base/minecraft/net/minecraft/entity/projectile/EntityArrow.java
 +++ ../src-work/minecraft/net/minecraft/entity/projectile/EntityArrow.java
-@@ -12,6 +12,7 @@
- import net.minecraft.entity.EntityLivingBase;
- import net.minecraft.entity.IProjectile;
- import net.minecraft.entity.MoverType;
-+import net.minecraft.entity.item.EntityItem;
- import net.minecraft.entity.monster.EntityEnderman;
- import net.minecraft.entity.player.EntityPlayer;
- import net.minecraft.entity.player.EntityPlayerMP;
-@@ -36,6 +37,10 @@
+@@ -2,7 +2,9 @@
+ 
+ import cpw.mods.fml.relauncher.Side;
+ import cpw.mods.fml.relauncher.SideOnly;
++
+ import java.util.List;
++
+ import net.minecraft.block.Block;
+ import net.minecraft.block.material.Material;
+ import net.minecraft.enchantment.EnchantmentHelper;
+@@ -23,6 +25,14 @@
+ import net.minecraft.util.Vec3;
  import net.minecraft.world.World;
- import net.minecraftforge.fml.relauncher.Side;
- import net.minecraftforge.fml.relauncher.SideOnly;
+ 
++// CraftBukkit start
++import net.minecraft.entity.item.EntityItem;
++
 +import org.bukkit.entity.LivingEntity;
 +import org.bukkit.event.entity.EntityCombustByEntityEvent;
-+import org.bukkit.event.entity.EntityCombustEvent;
-+import org.bukkit.event.player.PlayerPickupArrowEvent;
- 
- public abstract class EntityArrow extends Entity implements IProjectile
++import org.bukkit.event.player.PlayerPickupItemEvent;
++// CraftBukkit end
++
+ public class EntityArrow extends Entity implements IProjectile
  {
-@@ -47,21 +52,33 @@
-         }
-     });
-     private static final DataParameter<Byte> CRITICAL = EntityDataManager.<Byte>createKey(EntityArrow.class, DataSerializers.BYTE);
--    private int xTile;
--    private int yTile;
--    private int zTile;
-+    public int xTile;
-+    public int yTile;
-+    public int zTile;
-     private Block inTile;
+     private int field_145791_d = -1;
+@@ -30,14 +40,14 @@
+     private int field_145789_f = -1;
+     private Block field_145790_g;
      private int inData;
--    protected boolean inGround;
-+    public boolean inGround; // Spigot
-     protected int timeInGround;
--    public EntityArrow.PickupStatus pickupStatus;
-+    public PickupStatus pickupStatus;
+-    private boolean inGround;
++    public boolean inGround = false; // Spigot - private -> public
+     public int canBePickedUp;
      public int arrowShake;
      public Entity shootingEntity;
      private int ticksInGround;
      private int ticksInAir;
-     private double damage;
+     private double damage = 2.0D;
 -    private int knockbackStrength;
-+    public int knockbackStrength;
++    public int knockbackStrength; // CraftBukkit - private -> public
+     private static final String __OBFID = "CL_00001715";
  
-+    // Spigot Start
-+    @Override
-+    public void inactiveTick()
-+    {
-+        if ( this.inGround )
-+        {
-+            this.ticksInGround += 1; // Despawn counter. First int after shooter
-+        }
-+        super.inactiveTick();
-+    }
-+    // Spigot End
-+
-     public EntityArrow(World worldIn)
-     {
-         super(worldIn);
-@@ -83,6 +100,7 @@
-     {
-         this(worldIn, shooter.posX, shooter.posY + (double)shooter.getEyeHeight() - 0.10000000149011612D, shooter.posZ);
-         this.shootingEntity = shooter;
-+        this.projectileSource = (LivingEntity) shooter.getBukkitEntity();
+     public EntityArrow(World p_i1753_1_)
+@@ -61,6 +71,7 @@
+         super(p_i1755_1_);
+         this.renderDistanceWeight = 10.0D;
+         this.shootingEntity = p_i1755_2_;
++        this.projectileSource = (LivingEntity) p_i1755_2_.getBukkitEntity(); // CraftBukkit
  
-         if (shooter instanceof EntityPlayer)
+         if (p_i1755_2_ instanceof EntityPlayer)
          {
-@@ -222,7 +240,7 @@
+@@ -91,6 +102,7 @@
+         super(p_i1756_1_);
+         this.renderDistanceWeight = 10.0D;
+         this.shootingEntity = p_i1756_2_;
++        this.projectileSource = (LivingEntity) p_i1756_2_.getBukkitEntity(); // CraftBukkit
+ 
+         if (p_i1756_2_ instanceof EntityPlayer)
+         {
+@@ -199,7 +211,7 @@
              {
                  ++this.ticksInGround;
  
--                if (this.ticksInGround >= 1200)
-+                if (this.ticksInGround >= world.spigotConfig.arrowDespawnRate) // Spigot - First int after shooter
+-                if (this.ticksInGround == 1200)
++                if (this.ticksInGround == worldObj.getSpigotConfig().arrowDespawnRate)   // Spigot // Cauldron
                  {
                      this.setDead();
                  }
-@@ -339,7 +357,7 @@
-     protected void onHit(RayTraceResult raytraceResultIn)
-     {
-         Entity entity = raytraceResultIn.entityHit;
--
-+        org.bukkit.craftbukkit.v1_12_R1.event.CraftEventFactory.callProjectileHitEvent(this, raytraceResultIn);
-         if (entity != null)
-         {
-             float f = MathHelper.sqrt(this.motionX * this.motionX + this.motionY * this.motionY + this.motionZ * this.motionZ);
-@@ -363,7 +381,12 @@
+@@ -246,7 +258,7 @@
  
-             if (this.isBurning() && !(entity instanceof EntityEnderman))
+                     if (movingobjectposition1 != null)
+                     {
+-                        double d1 = vec31.distanceTo(movingobjectposition1.hitVec);
++                        double d1 = vec31.squareDistanceTo(movingobjectposition1.hitVec); // CraftBukkit - distance efficiency
+ 
+                         if (d1 < d0 || d0 == 0.0D)
+                         {
+@@ -277,6 +289,8 @@
+ 
+             if (movingobjectposition != null)
              {
--                entity.setFire(5);
-+//                entity.setFire(5);
-+                EntityCombustByEntityEvent combustEvent = new EntityCombustByEntityEvent(this.getBukkitEntity(), entity.getBukkitEntity(), 5);
-+                org.bukkit.Bukkit.getPluginManager().callEvent(combustEvent);
-+                if (!combustEvent.isCancelled()) {
-+                    entity.setFire(combustEvent.getDuration());
-+                }
-             }
++                org.bukkit.craftbukkit.event.CraftEventFactory.callProjectileHitEvent(this); // CraftBukkit - Call event
++
+                 if (movingobjectposition.entityHit != null)
+                 {
+                     f2 = MathHelper.sqrt_double(this.motionX * this.motionX + this.motionY * this.motionY + this.motionZ * this.motionZ);
+@@ -298,13 +312,23 @@
+                         damagesource = DamageSource.causeArrowDamage(this, this.shootingEntity);
+                     }
  
-             if (entity.attackEntityFrom(damagesource, (float)i))
-@@ -565,14 +588,24 @@
+-                    if (this.isBurning() && !(movingobjectposition.entityHit instanceof EntityEnderman))
++                    // CraftBukkit start - Moved damage call
++                    if (movingobjectposition.entityHit.attackEntityFrom(damagesource, k))
+                     {
+-                        movingobjectposition.entityHit.setFire(5);
+-                    }
++                        if (this.isBurning() && !(movingobjectposition.entityHit instanceof EntityEnderman) && (!(movingobjectposition.entityHit instanceof EntityPlayerMP) || !(this.shootingEntity instanceof EntityPlayerMP) || this.worldObj.pvpMode))   // CraftBukkit - abide by pvp setting if destination is a player
++                        {
++                            EntityCombustByEntityEvent combustEvent = new EntityCombustByEntityEvent(this.getBukkitEntity(), entity.getBukkitEntity(), 5);
++                            org.bukkit.Bukkit.getPluginManager().callEvent(combustEvent);
  
-         this.setIsCritical(compound.getBoolean("crit"));
-     }
--
--    public void onCollideWithPlayer(EntityPlayer entityIn)
-+	public void onCollideWithPlayer(EntityPlayer entityIn)
+-                    if (movingobjectposition.entityHit.attackEntityFrom(damagesource, (float)k))
+-                    {
++                            if (!combustEvent.isCancelled())
++                            {
++                                movingobjectposition.entityHit.setFire(combustEvent.getDuration());
++                            }
++
++                            // CraftBukkit end
++                        }
++
++                    // if (movingobjectposition.entityHit.attackEntityFrom(damagesource, (float)k)) { // CraftBukkit - moved up
+                         if (movingobjectposition.entityHit instanceof EntityLivingBase)
+                         {
+                             EntityLivingBase entitylivingbase = (EntityLivingBase)movingobjectposition.entityHit;
+@@ -487,6 +511,23 @@
      {
-         if (!this.world.isRemote && this.inGround && this.arrowShake <= 0)
+         if (!this.worldObj.isRemote && this.inGround && this.arrowShake <= 0)
          {
--            boolean flag = this.pickupStatus == EntityArrow.PickupStatus.ALLOWED || this.pickupStatus == EntityArrow.PickupStatus.CREATIVE_ONLY && entityIn.capabilities.isCreativeMode;
-+            ItemStack itemstack = this.getArrowStack();
-+            EntityItem item = new EntityItem(this.world, this.posX, this.posY, this.posZ, itemstack);
-+            if (this.pickupStatus == PickupStatus.ALLOWED && entityIn.inventory.canHold(itemstack) > 0) {
-+                PlayerPickupArrowEvent event = new PlayerPickupArrowEvent((org.bukkit.entity.Player) entityIn.getBukkitEntity(), new org.bukkit.craftbukkit.v1_12_R1.entity.CraftItem(this.world.getServer(), this, item), (org.bukkit.entity.Arrow) this.getBukkitEntity());
-+                // event.setCancelled(!entityhuman.canPickUpLoot); TODO
-+                this.world.getServer().getPluginManager().callEvent(event);
- 
--            if (this.pickupStatus == EntityArrow.PickupStatus.ALLOWED && !entityIn.inventory.addItemStackToInventory(this.getArrowStack()))
-+                if (event.isCancelled()) {
++            // CraftBukkit start
++            ItemStack itemstack = new ItemStack(Items.arrow);
++
++            if (this.canBePickedUp == 1 && p_70100_1_.inventory.canHold(itemstack) > 0)
++            {
++                EntityItem item = new EntityItem(this.worldObj, this.posX, this.posY, this.posZ, itemstack);
++                PlayerPickupItemEvent event = new PlayerPickupItemEvent((org.bukkit.entity.Player) p_70100_1_.getBukkitEntity(), new org.bukkit.craftbukkit.entity.CraftItem(this.worldObj.getServer(), this, item), 0);
++                // event.setCancelled(!entityplayer.canPickUpLoot); TODO
++                this.worldObj.getServer().getPluginManager().callEvent(event);
++
++                if (event.isCancelled())
++                {
 +                    return;
 +                }
 +            }
-+            boolean flag = this.pickupStatus == PickupStatus.ALLOWED || this.pickupStatus == PickupStatus.CREATIVE_ONLY && entityIn.capabilities.isCreativeMode;
 +
-+            if (this.pickupStatus == PickupStatus.ALLOWED && !entityIn.inventory.addItemStackToInventory(item.getItem()))
-             {
-                 flag = false;
-             }
-@@ -584,7 +617,6 @@
-             }
-         }
++            // CraftBukkit end
+             boolean flag = this.canBePickedUp == 1 || this.canBePickedUp == 2 && p_70100_1_.capabilities.isCreativeMode;
+ 
+             if (this.canBePickedUp == 1 && !p_70100_1_.inventory.addItemStackToInventory(new ItemStack(Items.arrow, 1)))
+@@ -553,4 +594,18 @@
+         byte b0 = this.dataWatcher.getWatchableObjectByte(16);
+         return (b0 & 1) != 0;
      }
--
-     protected abstract ItemStack getArrowStack();
- 
-     protected boolean canTriggerWalking()
-@@ -655,7 +687,13 @@
- 
-         if (EnchantmentHelper.getMaxEnchantmentLevel(Enchantments.FLAME, p_190547_1_) > 0)
-         {
--            this.setFire(100);
-+//            this.setFire(100);
-+            EntityCombustEvent event = new EntityCombustEvent(this.getBukkitEntity(), 100);
-+            this.world.getServer().getPluginManager().callEvent(event);
 +
-+            if (!event.isCancelled()) {
-+                this.setFire(event.getDuration());
-+            }
-         }
-     }
- 
++    // CraftBukkit start
++    public boolean isInGround()
++    {
++        return inGround;
++    }
++    // CraftBukkit end
++
++    // Cauldron start
++    @Override
++    public boolean entityProjectileHook() {
++        return true;
++    }
++    // Cauldron end
+ }

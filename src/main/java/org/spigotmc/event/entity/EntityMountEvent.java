@@ -9,37 +9,44 @@ import org.bukkit.event.entity.EntityEvent;
  * Called when an entity attempts to ride another entity.
  *
  */
-public class EntityMountEvent extends EntityEvent implements Cancellable {
+public class EntityMountEvent extends EntityEvent implements Cancellable
+{
 
     private static final HandlerList handlers = new HandlerList();
-    private final Entity mount;
     private boolean cancelled;
+    private final Entity mount;
 
-    public EntityMountEvent(Entity what, Entity mount) {
-        super(what);
+    public EntityMountEvent(Entity what, Entity mount)
+    {
+        super( what );
         this.mount = mount;
     }
 
-    public static HandlerList getHandlerList() {
-        return handlers;
-    }
-
-    public Entity getMount() {
+    public Entity getMount()
+    {
         return mount;
     }
 
     @Override
-    public boolean isCancelled() {
+    public boolean isCancelled()
+    {
         return cancelled;
     }
 
     @Override
-    public void setCancelled(boolean cancel) {
+    public void setCancelled(boolean cancel)
+    {
         this.cancelled = cancel;
     }
 
     @Override
-    public HandlerList getHandlers() {
+    public HandlerList getHandlers()
+    {
+        return handlers;
+    }
+
+    public static HandlerList getHandlerList()
+    {
         return handlers;
     }
 }

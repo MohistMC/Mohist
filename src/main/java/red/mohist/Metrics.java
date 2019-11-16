@@ -43,9 +43,9 @@ public class Metrics {
     // The uuid of the server
     private static String serverUUID;
     // A list with all custom charts
-    private final List<CustomChart> charts = new ArrayList<>();
+    private final List<CustomChart> charts = new ArrayList<CustomChart>();
     private final String pluginName = "Mohist";
-    private final String pluginVersion = Mohist.getVersion();
+    private final String pluginVersion = "1.7.10";
     // Is bStats enabled on this server?
     private boolean enabled;
 
@@ -167,7 +167,15 @@ public class Metrics {
      * Starts the Scheduler which submits our data every 30 minutes.
      */
     private void startSubmitting() {
-        MohistThreadBox.METRICS.scheduleAtFixedRate(this::submitData, 1000 * 60 * 5, 1000 * 60 * 30, TimeUnit.MILLISECONDS);
+        MohistThreadBox.METRICS.scheduleAtFixedRate(new Runnable() {
+                                                        @Override
+                                                        public void run() {
+                                                            Metrics.this.submitData();
+                                                        }
+                                                    },
+                1000 * 60 * 5,
+                1000 * 60 * 30,
+                TimeUnit.MILLISECONDS);
         // Submit the data every 30 minutes, first time after 5 minutes to give other plugins enough time to start
         // WARNING: Changing the frequency has no effect but your plugin WILL be blocked/deleted!
         // WARNING: Just don't do it!

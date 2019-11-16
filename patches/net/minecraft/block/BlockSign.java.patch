@@ -1,0 +1,29 @@
+--- ../src-base/minecraft/net/minecraft/block/BlockSign.java
++++ ../src-work/minecraft/net/minecraft/block/BlockSign.java
+@@ -14,6 +14,8 @@
+ import net.minecraft.world.IBlockAccess;
+ import net.minecraft.world.World;
+ 
++import org.bukkit.event.block.BlockRedstoneEvent; // CraftBukkit
++
+ public class BlockSign extends BlockContainer
+ {
+     private Class field_149968_a;
+@@ -163,6 +165,17 @@
+         }
+ 
+         super.onNeighborBlockChange(p_149695_1_, p_149695_2_, p_149695_3_, p_149695_4_, p_149695_5_);
++
++        // CraftBukkit start
++        if (p_149695_5_ != null && p_149695_5_.canProvidePower())
++        {
++            org.bukkit.block.Block bukkitBlock = p_149695_1_.getWorld().getBlockAt(p_149695_2_, p_149695_3_, p_149695_4_);
++            int power = bukkitBlock.getBlockPower();
++            BlockRedstoneEvent eventRedstone = new BlockRedstoneEvent(bukkitBlock, power, power);
++            p_149695_1_.getServer().getPluginManager().callEvent(eventRedstone);
++        }
++
++        // CraftBukkit end
+     }
+ 
+     @SideOnly(Side.CLIENT)

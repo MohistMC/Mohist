@@ -1,10 +1,60 @@
 --- ../src-base/minecraft/net/minecraft/crash/CrashReport.java
 +++ ../src-work/minecraft/net/minecraft/crash/CrashReport.java
-@@ -116,6 +116,7 @@
-                 return IntCache.getCacheSizes();
+@@ -15,12 +15,18 @@
+ import java.util.Iterator;
+ import java.util.List;
+ import java.util.concurrent.Callable;
++
++import thermos.Thermos;
+ import net.minecraft.util.ReportedException;
+ import net.minecraft.world.gen.layer.IntCache;
++
+ import org.apache.commons.io.IOUtils;
+ import org.apache.commons.lang3.ArrayUtils;
+ import org.apache.logging.log4j.LogManager;
+ import org.apache.logging.log4j.Logger;
++import org.bukkit.Bukkit;
++import org.bukkit.ChatColor;
++import org.bukkit.plugin.Plugin;
+ 
+ public class CrashReport
+ {
+@@ -51,6 +57,38 @@
+                 return "1.7.10";
              }
          });
-+        this.systemDetailsCategory.addDetail("CraftBukkit Information", (ICrashReportDetail) new org.bukkit.craftbukkit.v1_12_R1.CraftCrashReport());
-         net.minecraftforge.fml.common.FMLCommonHandler.instance().enhanceCrashReport(this, this.systemDetailsCategory);
-     }
- 
++        this.theReportCategory.addCrashSectionCallable("Thermos Version", new Callable<String>() {
++            @Override
++            public String call() throws Exception {
++                return String.format("%s:%s:%s", Thermos.getGroup(), Thermos.getChannel(), Thermos.getCurrentVersion());
++            }
++        });
++        this.theReportCategory.addCrashSectionCallable("Plugins", new Callable<String>() {
++            @Override
++            public String call() throws Exception {
++                StringBuilder pluginList = new StringBuilder();
++                Plugin[] plugins = Bukkit.getPluginManager().getPlugins();
++                for (Plugin plugin : plugins) {
++                    if (pluginList.length() > 0)
++                        pluginList.append(", ");
++                    if (plugin.isEnabled()) pluginList.append(plugin.getDescription().getName());
++                }
++                return pluginList.toString();
++            }
++        });
++        this.theReportCategory.addCrashSectionCallable("Disabled Plugins", new Callable<String>() {
++            @Override
++            public String call() throws Exception {
++                StringBuilder pluginList = new StringBuilder();
++                Plugin[] plugins = Bukkit.getPluginManager().getPlugins();
++                for (Plugin plugin : plugins) {
++                    if (pluginList.length() > 0)
++                        pluginList.append(", ");
++                    if (!plugin.isEnabled()) pluginList.append(plugin.getDescription().getName());
++                }
++                return pluginList.toString();
++            }
++        });
+         this.theReportCategory.addCrashSectionCallable("Operating System", new Callable()
+         {
+             private static final String __OBFID = "CL_00001222";

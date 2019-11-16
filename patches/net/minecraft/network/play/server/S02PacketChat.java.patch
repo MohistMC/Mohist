@@ -1,0 +1,35 @@
+--- ../src-base/minecraft/net/minecraft/network/play/server/S02PacketChat.java
++++ ../src-work/minecraft/net/minecraft/network/play/server/S02PacketChat.java
+@@ -3,6 +3,9 @@
+ import cpw.mods.fml.relauncher.Side;
+ import cpw.mods.fml.relauncher.SideOnly;
+ import java.io.IOException;
++
++import net.md_5.bungee.api.chat.BaseComponent;
++import net.md_5.bungee.chat.ComponentSerializer;
+ import net.minecraft.network.INetHandler;
+ import net.minecraft.network.Packet;
+ import net.minecraft.network.PacketBuffer;
+@@ -13,6 +16,8 @@
+ {
+     private IChatComponent field_148919_a;
+     private boolean field_148918_b;
++    //Thermos start - Implement bungee chat api
++    public BaseComponent[] components;
+     private static final String __OBFID = "CL_00001289";
+ 
+     public S02PacketChat()
+@@ -39,7 +44,12 @@
+ 
+     public void writePacketData(PacketBuffer p_148840_1_) throws IOException
+     {
+-        p_148840_1_.writeStringToBuffer(IChatComponent.Serializer.func_150696_a(this.field_148919_a));
++        if (this.components != null) {
++            p_148840_1_.writeStringToBuffer(ComponentSerializer.toString(this.components));
++        } else {
++            p_148840_1_.writeStringToBuffer(IChatComponent.Serializer.func_150696_a(this.field_148919_a));
++        }
++        //thermos end
+     }
+ 
+     public void processPacket(INetHandlerPlayClient p_148833_1_)

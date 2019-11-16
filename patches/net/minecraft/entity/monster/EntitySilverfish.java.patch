@@ -1,22 +1,39 @@
 --- ../src-base/minecraft/net/minecraft/entity/monster/EntitySilverfish.java
 +++ ../src-work/minecraft/net/minecraft/entity/monster/EntitySilverfish.java
-@@ -221,6 +221,9 @@
+@@ -15,6 +15,8 @@
+ import net.minecraft.world.World;
+ import org.apache.commons.lang3.tuple.ImmutablePair;
  
-                     if (BlockSilverfish.canContainSilverfish(iblockstate))
-                     {
-+                        if (org.bukkit.craftbukkit.v1_12_R1.event.CraftEventFactory.callEntityChangeBlockEvent(this.entity, blockpos, Blocks.MONSTER_EGG, Block.getIdFromBlock(BlockSilverfish.getBlockById(iblockstate.getBlock().getMetaFromState(iblockstate)))).isCancelled()) {
-+                            return;
-+                        }
-                         world.setBlockState(blockpos, Blocks.MONSTER_EGG.getDefaultState().withProperty(BlockSilverfish.VARIANT, BlockSilverfish.EnumType.forModelBlock(iblockstate)), 3);
-                         this.entity.spawnExplosionParticle();
-                         this.entity.setDead();
-@@ -273,6 +276,9 @@
- 
-                                 if (iblockstate.getBlock() == Blocks.MONSTER_EGG)
++import org.bukkit.craftbukkit.event.CraftEventFactory; // CraftBukkit
++
+ public class EntitySilverfish extends EntityMob
+ {
+     private int allySummonCooldown;
+@@ -132,6 +134,13 @@
+                             {
+                                 if (this.worldObj.getBlock(i + i1, j + l, k + j1) == Blocks.monster_egg)
                                  {
-+                                    if (org.bukkit.craftbukkit.v1_12_R1.event.CraftEventFactory.callEntityChangeBlockEvent(this.silverfish, blockpos1, Blocks.AIR, 0).isCancelled()) {
++                                    // CraftBukkit start
++                                    if (CraftEventFactory.callEntityChangeBlockEvent(this, i + i1, j + l, k + j1, Blocks.air, 0).isCancelled())
++                                    {
 +                                        continue;
 +                                    }
-                                     if (net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(world, this.silverfish))
++
++                                    // CraftBukkit end
+                                     if (!this.worldObj.getGameRules().getGameRuleBooleanValue("mobGriefing"))
                                      {
-                                         world.destroyBlock(blockpos1, true);
+                                         int k1 = this.worldObj.getBlockMetadata(i + i1, j + l, k + j1);
+@@ -168,6 +177,13 @@
+ 
+                 if (BlockSilverfish.func_150196_a(block))
+                 {
++                    // CraftBukkit start
++                    if (CraftEventFactory.callEntityChangeBlockEvent(this, i + Facing.offsetsXForSide[l1], j + Facing.offsetsYForSide[l1], k + Facing.offsetsZForSide[l1], Blocks.monster_egg, Block.getIdFromBlock(BlockSilverfish.getBlockById(i1))).isCancelled())
++                    {
++                        return;
++                    }
++
++                    // CraftBukkit end
+                     this.worldObj.setBlock(i + Facing.offsetsXForSide[l1], j + Facing.offsetsYForSide[l1], k + Facing.offsetsZForSide[l1], Blocks.monster_egg, BlockSilverfish.func_150195_a(block, i1), 3);
+                     this.spawnExplosionParticle();
+                     this.setDead();

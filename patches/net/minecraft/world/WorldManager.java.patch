@@ -1,0 +1,11 @@
+--- ../src-base/minecraft/net/minecraft/world/WorldManager.java
++++ ../src-work/minecraft/net/minecraft/world/WorldManager.java
+@@ -12,7 +12,7 @@
+ public class WorldManager implements IWorldAccess
+ {
+     private MinecraftServer mcServer;
+-    private WorldServer theWorldServer;
++    public WorldServer theWorldServer; // CraftBukkit - private -> public
+     private static final String __OBFID = "CL_00001433";
+ 
+     public WorldManager(MinecraftServer p_i1517_1_, WorldServer p_i1517_2_)

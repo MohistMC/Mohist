@@ -1,0 +1,31 @@
+--- ../src-base/minecraft/org/bukkit/event/player/PlayerTeleportEvent.java
++++ ../src-work/minecraft/org/bukkit/event/player/PlayerTeleportEvent.java
+@@ -55,11 +55,28 @@
+          * portal
+          */
+         END_PORTAL,
++        // Cauldron start - added cause for mods
+         /**
++         * Indicates the teleportation was caused by a player entering a
++         * Mod portal
++         */
++        MOD,
++        // Cauldron end
++        DEATH, // KCauldron
++        /**
+          * Indicates the teleportation was caused by an event not covered by
+          * this enum
+          */
+         UNKNOWN;
++        
++        public boolean isPortal() {
++            switch(this) {
++            case NETHER_PORTAL:
++            case END_PORTAL:
++                return true;
++            }
++            return false;
++        }
+     }
+ 
+     @Override

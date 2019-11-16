@@ -1,0 +1,15 @@
+--- ../src-base/minecraft/net/minecraft/tileentity/TileEntityComparator.java
++++ ../src-work/minecraft/net/minecraft/tileentity/TileEntityComparator.java
+@@ -28,4 +28,12 @@
+     {
+         this.field_145997_a = p_145995_1_;
+     }
++
++    // Cauldron start
++    @Override
++    public boolean canUpdate()
++    {
++        return false;
++    }
++    // Cauldron end
+ }

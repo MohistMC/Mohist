@@ -1,32 +1,76 @@
 --- ../src-base/minecraft/net/minecraft/command/ServerCommandManager.java
 +++ ../src-work/minecraft/net/minecraft/command/ServerCommandManager.java
-@@ -40,6 +40,10 @@
-     public ServerCommandManager(MinecraftServer serverIn)
+@@ -39,8 +39,16 @@
+ {
+     private static final String __OBFID = "CL_00000922";
+ 
++    // Cauldron start - moved commands to it's own method to be executed further in server startup + changed to registerVanillaCommand
+     public ServerCommandManager()
      {
-         this.server = serverIn;
-+        CommandBase.setCommandListener(this);
++        CommandBase.setAdminCommander(this);
 +    }
 +
-+    public void registerVanillaCommands() {
++    public void registerVanillaCommands()
++    {
++        // Cauldron - do not register vanilla commands replaced by Bukkit
++        /*    
          this.registerCommand(new CommandTime());
          this.registerCommand(new CommandGameMode());
          this.registerCommand(new CommandDifficulty());
-@@ -89,8 +93,7 @@
-         this.registerCommand(new CommandLocate());
-         this.registerCommand(new CommandReload());
-         this.registerCommand(new CommandFunction());
--
--        if (serverIn.isDedicatedServer())
-+        if (server.isDedicatedServer())
+@@ -56,7 +64,6 @@
+         this.registerCommand(new CommandEmote());
+         this.registerCommand(new CommandShowSeed());
+         this.registerCommand(new CommandHelp());
+-        this.registerCommand(new CommandDebug());
+         this.registerCommand(new CommandMessage());
+         this.registerCommand(new CommandBroadcast());
+         this.registerCommand(new CommandSetSpawnpoint());
+@@ -64,17 +71,23 @@
+         this.registerCommand(new CommandGameRule());
+         this.registerCommand(new CommandClearInventory());
+         this.registerCommand(new CommandTestFor());
+-        this.registerCommand(new CommandSpreadPlayers());
+-        this.registerCommand(new CommandPlaySound());
+-        this.registerCommand(new CommandScoreboard());
+-        this.registerCommand(new CommandAchievement());
+-        this.registerCommand(new CommandSummon());
+-        this.registerCommand(new CommandSetBlock());
+-        this.registerCommand(new CommandTestForBlock());
+-        this.registerCommand(new CommandMessageRaw());
++        */
++        // Cauldron start - add permission nodes for rest of vanilla commands
++        this.registerCommand("vanilla.command", new CommandDebug());
++        this.registerCommand("vanilla.command", new CommandSpreadPlayers());
++        this.registerCommand("vanilla.command", new CommandPlaySound());
++        this.registerCommand("vanilla.command", new CommandScoreboard());
++        this.registerCommand("vanilla.command", new CommandAchievement());
++        this.registerCommand("vanilla.command", new CommandSummon());
++        this.registerCommand("vanilla.command", new CommandSetBlock());
++        this.registerCommand("vanilla.command", new CommandTestForBlock());
++        this.registerCommand("vanilla.command", new CommandMessageRaw());
++        this.registerCommand("vanilla.command", new CommandNetstat());
++        // Cauldron end
+ 
+         if (MinecraftServer.getServer().isDedicatedServer())
          {
++            /*
              this.registerCommand(new CommandOp());
              this.registerCommand(new CommandDeOp());
-@@ -147,7 +150,7 @@
-             }
+             this.registerCommand(new CommandStop());
+@@ -90,7 +103,7 @@
+             this.registerCommand(new CommandListPlayers());
+             this.registerCommand(new CommandWhitelist());
+             this.registerCommand(new CommandSetPlayerTimeout());
+-            this.registerCommand(new CommandNetstat());
++            */
+         }
+         else
+         {
+@@ -98,6 +111,7 @@
          }
  
--        if (sender != minecraftserver && minecraftserver.worlds[0].getGameRules().getBoolean("logAdminCommands"))
-+        if (sender != minecraftserver && minecraftserver.worlds[0].getGameRules().getBoolean("logAdminCommands") && !org.spigotmc.SpigotConfig.silentCommandBlocks) // Spigot
-         {
-             minecraftserver.sendMessage(itextcomponent);
-         }
+         CommandBase.setAdminCommander(this);
++        // Cauldron end
+     }
+ 
+     public void func_152372_a(ICommandSender p_152372_1_, ICommand p_152372_2_, int p_152372_3_, String p_152372_4_, Object ... p_152372_5_)

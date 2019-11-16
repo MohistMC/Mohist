@@ -1,128 +1,133 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockPistonBase.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockPistonBase.java
-@@ -1,6 +1,8 @@
- package net.minecraft.block;
- 
-+import com.google.common.collect.ImmutableList;
- import com.google.common.collect.Lists;
-+import java.util.AbstractList;
+@@ -4,6 +4,7 @@
+ import cpw.mods.fml.relauncher.SideOnly;
  import java.util.List;
- import javax.annotation.Nullable;
- import net.minecraft.block.material.EnumPushReaction;
-@@ -28,6 +30,9 @@
- import net.minecraft.util.math.BlockPos;
+ import net.minecraft.block.material.Material;
++import net.minecraft.block.BlockRailBase;
+ import net.minecraft.client.renderer.texture.IIconRegister;
+ import net.minecraft.creativetab.CreativeTabs;
+ import net.minecraft.entity.Entity;
+@@ -21,6 +22,12 @@
  import net.minecraft.world.IBlockAccess;
  import net.minecraft.world.World;
-+import org.bukkit.craftbukkit.v1_12_R1.block.CraftBlock;
-+import org.bukkit.event.block.BlockPistonExtendEvent;
-+import org.bukkit.event.block.BlockPistonRetractEvent;
  
- public class BlockPistonBase extends BlockDirectional
- {
-@@ -142,6 +147,15 @@
-         }
-         else if (!flag && ((Boolean)state.getValue(EXTENDED)).booleanValue())
-         {
-+            if (!this.isSticky) {
-+                org.bukkit.block.Block block = worldIn.getWorld().getBlockAt(pos.getX(), pos.getY(), pos.getZ());
-+                BlockPistonRetractEvent event = new BlockPistonRetractEvent(block, ImmutableList.<org.bukkit.block.Block>of(), CraftBlock.notchToBlockFace(enumfacing));
-+                worldIn.getServer().getPluginManager().callEvent(event);
++// CraftBukkit start
++import org.bukkit.craftbukkit.block.CraftBlock;
++import org.bukkit.event.block.BlockPistonRetractEvent;
++import org.bukkit.event.block.BlockPistonExtendEvent;
++// CraftBukkit end
 +
-+                if (event.isCancelled()) {
+ public class BlockPistonBase extends Block
+ {
+     private final boolean isSticky;
+@@ -128,13 +135,37 @@
+ 
+             if (flag && !isExtended(l))
+             {
+-                if (canExtend(p_150078_1_, p_150078_2_, p_150078_3_, p_150078_4_, i1))
++                // CraftBukkit start
++                int length = canExtend_IntCB(p_150078_1_, p_150078_2_, p_150078_3_, p_150078_4_, i1);
++
++                if (length >= 0)
+                 {
++                    org.bukkit.block.Block block = p_150078_1_.getWorld().getBlockAt(p_150078_2_, p_150078_3_, p_150078_4_);
++                    BlockPistonExtendEvent event = new BlockPistonExtendEvent(block, length, CraftBlock.notchToBlockFace(i1));
++                    p_150078_1_.getServer().getPluginManager().callEvent(event);
++
++                    if (event.isCancelled())
++                    {
++                        return;
++                    }
++
++                    // CraftBukkit end
+                     p_150078_1_.addBlockEvent(p_150078_2_, p_150078_3_, p_150078_4_, this, 0, i1);
+                 }
+             }
+             else if (!flag && isExtended(l))
+             {
++                // CraftBukkit start
++                org.bukkit.block.Block block = p_150078_1_.getWorld().getBlockAt(p_150078_2_, p_150078_3_, p_150078_4_);
++                BlockPistonRetractEvent event = new BlockPistonRetractEvent(block, CraftBlock.notchToBlockFace(i1));
++                p_150078_1_.getServer().getPluginManager().callEvent(event);
++
++                if (event.isCancelled())
++                {
 +                    return;
 +                }
-+            }
-             worldIn.addBlockEvent(pos, this, 1, enumfacing.getIndex());
-         }
-     }
-@@ -241,7 +255,8 @@
-                     }
-                 }
++
++                // CraftBukkit end
+                 p_150078_1_.setBlockMetadataWithNotify(p_150078_2_, p_150078_3_, p_150078_4_, i1, 2);
+                 p_150078_1_.addBlockEvent(p_150078_2_, p_150078_3_, p_150078_4_, this, 1, i1);
+             }
+@@ -297,6 +328,11 @@
  
--                if (!flag1 && !iblockstate.getBlock().isAir(iblockstate, worldIn, blockpos) && canPush(iblockstate, worldIn, blockpos, enumfacing.getOpposite(), false, enumfacing) && (iblockstate.getMobilityFlag() == EnumPushReaction.NORMAL || block == Blocks.PISTON || block == Blocks.STICKY_PISTON))
-+                // CraftBukkit - remove '!iblockstate.getBlock().isAir(iblockstate, worldIn, blockpos)' condition
-+                if (!flag1 && canPush(iblockstate, worldIn, blockpos, enumfacing.getOpposite(), false, enumfacing) && (iblockstate.getMobilityFlag() == EnumPushReaction.NORMAL || block == Blocks.PISTON || block == Blocks.STICKY_PISTON))
-                 {
-                     this.doMove(worldIn, pos, enumfacing, false);
-                 }
-@@ -273,7 +288,7 @@
+     public static int getPistonOrientation(int p_150076_0_)
      {
-         Block block = blockStateIn.getBlock();
++        if ((p_150076_0_ & 7) >= Facing.oppositeSide.length)
++        {
++            return 7;    // CraftBukkit - check for AIOOB on piston data
++        }
++
+         return p_150076_0_ & 7;
+     }
  
--        if (block == Blocks.OBSIDIAN)
-+        if (block == Blocks.OBSIDIAN || (block instanceof BlockRailBase))
+@@ -328,7 +364,7 @@
+ 
+     private static boolean canPushBlock(Block p_150080_0_, World p_150080_1_, int p_150080_2_, int p_150080_3_, int p_150080_4_, boolean p_150080_5_)
+     {
+-        if (p_150080_0_ == Blocks.obsidian)
++        if (p_150080_0_ == Blocks.obsidian || (p_150080_0_ instanceof BlockRailBase))
          {
              return false;
          }
-@@ -349,6 +364,71 @@
-             IBlockState[] aiblockstate = new IBlockState[k];
-             EnumFacing enumfacing = extending ? direction : direction.getOpposite();
+@@ -366,7 +402,13 @@
+         }
+     }
  
-+            final org.bukkit.block.Block bblock = worldIn.getWorld().getBlockAt(pos.getX(), pos.getY(), pos.getZ());
+-    private static boolean canExtend(World p_150077_0_, int p_150077_1_, int p_150077_2_, int p_150077_3_, int p_150077_4_)
++    // Cauldron start - vanilla compatibility
++    private static boolean canExtend(World world, int i, int j, int k, int l) {
++        return canExtend_IntCB(world, i, j, k, l) >= 0;
++    }
++    // Cauldron end
 +
-+            final List<BlockPos> moved = blockpistonstructurehelper.getBlocksToMove();
-+            final List<BlockPos> broken = blockpistonstructurehelper.getBlocksToDestroy();
-+
-+            List<org.bukkit.block.Block> blocks = new AbstractList<org.bukkit.block.Block>() {
-+
-+                @Override
-+                public int size() {
-+                    return moved.size() + broken.size();
-+                }
-+
-+                @Override
-+                public org.bukkit.block.Block get(int index) {
-+                    if (index >= size() || index < 0) {
-+                        throw new ArrayIndexOutOfBoundsException(index);
-+                    }
-+                    BlockPos pos = index < moved.size() ? moved.get(index) : broken.get(index - moved.size());
-+                    return bblock.getWorld().getBlockAt(pos.getX(), pos.getY(), pos.getZ());
-+                }
-+            };
-+            boolean cancell = false;
-+            for (BlockPos blockPos : moved) {
-+                if (worldIn.getTileEntity(blockPos) != null) {
-+                    cancell = true;
-+                    break;
-+                }
-+            }
-+            for (BlockPos blockPos : broken) {
-+                if (worldIn.getTileEntity(blockPos) != null) {
-+                    cancell = true;
-+                    break;
-+                }
-+            }
-+            if (cancell) {
-+                for (BlockPos b : broken) {
-+                    worldIn.notifyBlockUpdate(b, Blocks.AIR.getDefaultState(), worldIn.getBlockState(b), 3);
-+                }
-+                for (BlockPos b : moved) {
-+                    worldIn.notifyBlockUpdate(b, Blocks.AIR.getDefaultState(), worldIn.getBlockState(b), 3);
-+                    b = b.offset(enumfacing);
-+                    worldIn.notifyBlockUpdate(b, Blocks.AIR.getDefaultState(), worldIn.getBlockState(b), 3);
-+                }
-+                return false;
-+            }
-+            org.bukkit.event.block.BlockPistonEvent event;
-+            if (extending) {
-+                event = new BlockPistonExtendEvent(bblock, blocks, CraftBlock.notchToBlockFace(enumfacing));
-+            } else {
-+                event = new BlockPistonRetractEvent(bblock, blocks, CraftBlock.notchToBlockFace(enumfacing));
-+            }
-+            worldIn.getServer().getPluginManager().callEvent(event);
-+
-+            if (event.isCancelled()) {
-+                for (BlockPos b : broken) {
-+                    worldIn.notifyBlockUpdate(b, Blocks.AIR.getDefaultState(), worldIn.getBlockState(b), 3);
-+                }
-+                for (BlockPos b : moved) {
-+                    worldIn.notifyBlockUpdate(b, Blocks.AIR.getDefaultState(), worldIn.getBlockState(b), 3);
-+                    b = b.offset(enumfacing);
-+                    worldIn.notifyBlockUpdate(b, Blocks.AIR.getDefaultState(), worldIn.getBlockState(b), 3);
-+                }
-+                return false;
-+            }
-+
-             for (int j = list2.size() - 1; j >= 0; --j)
++    private static int canExtend_IntCB(World p_150077_0_, int p_150077_1_, int p_150077_2_, int p_150077_3_, int p_150077_4_) // CraftBukkit int -> boolean
+     {
+         int i1 = p_150077_1_ + Facing.offsetsXForSide[p_150077_4_];
+         int j1 = p_150077_2_ + Facing.offsetsYForSide[p_150077_4_];
+@@ -379,7 +421,7 @@
              {
-                 BlockPos blockpos1 = list2.get(j);
+                 if (j1 <= 0 || j1 >= p_150077_0_.getHeight())
+                 {
+-                    return false;
++                    return -1; // CraftBukkit
+                 }
+ 
+                 Block block = p_150077_0_.getBlock(i1, j1, k1);
+@@ -388,14 +430,14 @@
+                 {
+                     if (!canPushBlock(block, p_150077_0_, i1, j1, k1, true))
+                     {
+-                        return false;
++                        return -1; // CraftBukkit
+                     }
+ 
+                     if (block.getMobilityFlag() != 1)
+                     {
+                         if (l1 == 12)
+                         {
+-                            return false;
++                            return -1; // CraftBukkit
+                         }
+ 
+                         i1 += Facing.offsetsXForSide[p_150077_4_];
+@@ -407,7 +449,7 @@
+                 }
+             }
+ 
+-            return true;
++            return l1; // CraftBukkit
+         }
+     }
+ 

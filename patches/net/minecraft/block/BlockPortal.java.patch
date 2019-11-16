@@ -1,186 +1,383 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockPortal.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockPortal.java
-@@ -29,6 +29,8 @@
+@@ -14,6 +14,11 @@
+ import net.minecraft.world.IBlockAccess;
  import net.minecraft.world.World;
- import net.minecraftforge.fml.relauncher.Side;
- import net.minecraftforge.fml.relauncher.SideOnly;
+ 
++// CraftBukkit start
 +import org.bukkit.event.entity.EntityPortalEnterEvent;
 +import org.bukkit.event.world.PortalCreateEvent;
- 
++// CraftBukkit end
++
  public class BlockPortal extends BlockBreakable
  {
-@@ -62,7 +64,7 @@
+     public static final int[][] field_150001_a = new int[][] {new int[0], {3, 1}, {2, 0}};
+@@ -29,7 +34,7 @@
      {
-         super.updateTick(worldIn, pos, state, rand);
+         super.updateTick(p_149674_1_, p_149674_2_, p_149674_3_, p_149674_4_, p_149674_5_);
  
--        if (worldIn.provider.isSurfaceWorld() && worldIn.getGameRules().getBoolean("doMobSpawning") && rand.nextInt(2000) < worldIn.getDifficulty().getDifficultyId())
-+        if (worldIn.spigotConfig.enableZombiePigmenPortalSpawns && worldIn.provider.isSurfaceWorld() && worldIn.getGameRules().getBoolean("doMobSpawning") && rand.nextInt(2000) < worldIn.getDifficulty().getDifficultyId())
+-        if (p_149674_1_.provider.isSurfaceWorld() && p_149674_1_.getGameRules().getGameRuleBooleanValue("doMobSpawning") && p_149674_5_.nextInt(2000) < p_149674_1_.difficultySetting.getDifficultyId())
++        if (p_149674_1_.getSpigotConfig().enableZombiePigmenPortalSpawns && p_149674_1_.provider.isSurfaceWorld() && p_149674_1_.getGameRules().getGameRuleBooleanValue("doMobSpawning") && p_149674_5_.nextInt(2000) < p_149674_1_.difficultySetting.getDifficultyId())   // Spigot // Cauldron
          {
-             int i = pos.getY();
-             BlockPos blockpos;
-@@ -74,7 +76,7 @@
+             int l;
  
-             if (i > 0 && !worldIn.getBlockState(blockpos.up()).isNormalCube())
-             {
--                Entity entity = ItemMonsterPlacer.spawnCreature(worldIn, EntityList.getKey(EntityPigZombie.class), (double)blockpos.getX() + 0.5D, (double)blockpos.getY() + 1.1D, (double)blockpos.getZ() + 0.5D);
-+                Entity entity = ItemMonsterPlacer.spawnCreature(worldIn, EntityList.getKey(EntityPigZombie.class), (double)blockpos.getX() + 0.5D, (double)blockpos.getY() + 1.1D, (double)blockpos.getZ() + 0.5D, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.NETHER_PORTAL);
+@@ -104,13 +109,15 @@
  
-                 if (entity != null)
-                 {
-@@ -109,21 +111,19 @@
- 
-     public boolean trySpawnPortal(World worldIn, BlockPos pos)
-     {
--        BlockPortal.Size blockportal$size = new BlockPortal.Size(worldIn, pos, EnumFacing.Axis.X);
-+        Size blockportal$size = new Size(worldIn, pos, EnumFacing.Axis.X);
- 
--        if (blockportal$size.isValid() && blockportal$size.portalBlockCount == 0 && !net.minecraftforge.event.ForgeEventFactory.onTrySpawnPortal(worldIn, pos, blockportal$size))
-+        if (blockportal$size.isValid() && blockportal$size.portalBlockCount == 0 && !net.minecraftforge.event.ForgeEventFactory.onTrySpawnPortal(worldIn,pos,blockportal$size))
+         if (size.func_150860_b() && size.field_150864_e == 0)
          {
--            blockportal$size.placePortalBlocks();
+-            size.func_150859_c();
 -            return true;
-+            return blockportal$size.placePortalBlocksCB();
++            // CraftBukkit start - return portalcreator
++            return size.CB_func_150859_c(); // Cauldron
++            //return true;
+         }
+         else if (size1.func_150860_b() && size1.field_150864_e == 0)
+         {
+-            size1.func_150859_c();
+-            return true;
++            return size1.CB_func_150859_c(); // Cauldron
++            //return true;
++            // CraftBukkit end
          }
          else
          {
--            BlockPortal.Size blockportal$size1 = new BlockPortal.Size(worldIn, pos, EnumFacing.Axis.Z);
-+            Size blockportal$size1 = new Size(worldIn, pos, EnumFacing.Axis.Z);
- 
--            if (blockportal$size1.isValid() && blockportal$size1.portalBlockCount == 0 && !net.minecraftforge.event.ForgeEventFactory.onTrySpawnPortal(worldIn, pos, blockportal$size1))
-+            if (blockportal$size1.isValid() && blockportal$size1.portalBlockCount == 0 && !net.minecraftforge.event.ForgeEventFactory.onTrySpawnPortal(worldIn,pos,blockportal$size1))
-             {
--                blockportal$size1.placePortalBlocks();
--                return true;
-+                return blockportal$size1.placePortalBlocksCB();
-             }
-             else
-             {
-@@ -138,7 +138,7 @@
- 
-         if (enumfacing$axis == EnumFacing.Axis.X)
-         {
--            BlockPortal.Size blockportal$size = new BlockPortal.Size(worldIn, pos, EnumFacing.Axis.X);
-+            Size blockportal$size = new Size(worldIn, pos, EnumFacing.Axis.X);
- 
-             if (!blockportal$size.isValid() || blockportal$size.portalBlockCount < blockportal$size.width * blockportal$size.height)
-             {
-@@ -147,7 +147,7 @@
-         }
-         else if (enumfacing$axis == EnumFacing.Axis.Z)
-         {
--            BlockPortal.Size blockportal$size1 = new BlockPortal.Size(worldIn, pos, EnumFacing.Axis.Z);
-+            Size blockportal$size1 = new Size(worldIn, pos, EnumFacing.Axis.Z);
- 
-             if (!blockportal$size1.isValid() || blockportal$size1.portalBlockCount < blockportal$size1.width * blockportal$size1.height)
-             {
-@@ -216,6 +216,8 @@
+@@ -181,6 +188,10 @@
      {
-         if (!entityIn.isRiding() && !entityIn.isBeingRidden() && entityIn.isNonBoss())
+         if (p_149670_5_.ridingEntity == null && p_149670_5_.riddenByEntity == null)
          {
-+            EntityPortalEnterEvent event = new EntityPortalEnterEvent(entityIn.getBukkitEntity(), new org.bukkit.Location(worldIn.getWorld(), pos.getX(), pos.getY(), pos.getZ()));
-+            worldIn.getServer().getPluginManager().callEvent(event);
-             entityIn.setPortal(pos);
++            // CraftBukkit start - Entity in portal
++            EntityPortalEnterEvent event = new EntityPortalEnterEvent(p_149670_5_.getBukkitEntity(), new org.bukkit.Location(p_149670_1_.getWorld(), p_149670_2_, p_149670_3_, p_149670_4_));
++            p_149670_1_.getServer().getPluginManager().callEvent(event);
++            // CraftBukkit end
+             p_149670_5_.setInPortal();
          }
      }
-@@ -304,13 +306,13 @@
-     public BlockPattern.PatternHelper createPatternHelper(World worldIn, BlockPos p_181089_2_)
-     {
-         EnumFacing.Axis enumfacing$axis = EnumFacing.Axis.Z;
--        BlockPortal.Size blockportal$size = new BlockPortal.Size(worldIn, p_181089_2_, EnumFacing.Axis.X);
-+        Size blockportal$size = new Size(worldIn, p_181089_2_, EnumFacing.Axis.X);
-         LoadingCache<BlockPos, BlockWorldState> loadingcache = BlockPattern.createLoadingCache(worldIn, true);
+@@ -239,175 +250,223 @@
+     }
  
-         if (!blockportal$size.isValid())
+     public static class Size
++    {
++        private final World field_150867_a;
++        private final int field_150865_b;
++        private final int field_150866_c;
++        private final int field_150863_d;
++        private int field_150864_e = 0;
++        private ChunkCoordinates field_150861_f;
++        private int field_150862_g;
++        private int field_150868_h;
++        java.util.Collection<org.bukkit.block.Block> blocks; // CraftBukkit
++        private static final String __OBFID = "CL_00000285";
++
++        public Size(World p_i45415_1_, int p_i45415_2_, int p_i45415_3_, int p_i45415_4_, int p_i45415_5_)
          {
-             enumfacing$axis = EnumFacing.Axis.X;
--            blockportal$size = new BlockPortal.Size(worldIn, p_181089_2_, EnumFacing.Axis.Z);
-+            blockportal$size = new Size(worldIn, p_181089_2_, EnumFacing.Axis.Z);
-         }
+-            private final World field_150867_a;
+-            private final int field_150865_b;
+-            private final int field_150866_c;
+-            private final int field_150863_d;
+-            private int field_150864_e = 0;
+-            private ChunkCoordinates field_150861_f;
+-            private int field_150862_g;
+-            private int field_150868_h;
+-            private static final String __OBFID = "CL_00000285";
++            this.field_150867_a = p_i45415_1_;
++            this.field_150865_b = p_i45415_5_;
++            this.field_150863_d = BlockPortal.field_150001_a[p_i45415_5_][0];
++            this.field_150866_c = BlockPortal.field_150001_a[p_i45415_5_][1];
  
-         if (!blockportal$size.isValid())
-@@ -370,6 +372,7 @@
-             private BlockPos bottomLeft;
-             private int height;
-             private int width;
-+            java.util.Collection<org.bukkit.block.Block> blocks = new java.util.HashSet<org.bukkit.block.Block>();
- 
-             public Size(World worldIn, BlockPos p_i45694_2_, EnumFacing.Axis p_i45694_3_)
+-            public Size(World p_i45415_1_, int p_i45415_2_, int p_i45415_3_, int p_i45415_4_, int p_i45415_5_)
++            for (int i1 = p_i45415_3_; p_i45415_3_ > i1 - 21 && p_i45415_3_ > 0 && this.func_150857_a(p_i45415_1_.getBlock(p_i45415_2_, p_i45415_3_ - 1, p_i45415_4_)); --p_i45415_3_)
              {
-@@ -442,6 +445,8 @@
+-                this.field_150867_a = p_i45415_1_;
+-                this.field_150865_b = p_i45415_5_;
+-                this.field_150863_d = BlockPortal.field_150001_a[p_i45415_5_][0];
+-                this.field_150866_c = BlockPortal.field_150001_a[p_i45415_5_][1];
++                ;
++            }
  
-             protected int calculatePortalHeight()
-             {
-+                this.blocks.clear();
-+                org.bukkit.World bworld = this.world.getWorld();
-                 label56:
+-                for (int i1 = p_i45415_3_; p_i45415_3_ > i1 - 21 && p_i45415_3_ > 0 && this.func_150857_a(p_i45415_1_.getBlock(p_i45415_2_, p_i45415_3_ - 1, p_i45415_4_)); --p_i45415_3_)
++            int j1 = this.func_150853_a(p_i45415_2_, p_i45415_3_, p_i45415_4_, this.field_150863_d) - 1;
++
++            if (j1 >= 0)
++            {
++                this.field_150861_f = new ChunkCoordinates(p_i45415_2_ + j1 * Direction.offsetX[this.field_150863_d], p_i45415_3_, p_i45415_4_ + j1 * Direction.offsetZ[this.field_150863_d]);
++                this.field_150868_h = this.func_150853_a(this.field_150861_f.posX, this.field_150861_f.posY, this.field_150861_f.posZ, this.field_150866_c);
++
++                if (this.field_150868_h < 2 || this.field_150868_h > 21)
+                 {
+-                    ;
++                    this.field_150861_f = null;
++                    this.field_150868_h = 0;
+                 }
++            }
  
-                 for (this.height = 0; this.height < 21; ++this.height)
-@@ -468,6 +473,9 @@
-                             if (block != Blocks.OBSIDIAN)
-                             {
-                                 break label56;
-+                            } else {
-+                                BlockPos pos = blockpos.offset(this.leftDir);
-+                                blocks.add(bworld.getBlockAt(pos.getX(), pos.getY(), pos.getZ()));
-                             }
-                         }
-                         else if (i == this.width - 1)
-@@ -477,6 +485,9 @@
-                             if (block != Blocks.OBSIDIAN)
-                             {
-                                 break label56;
-+                            } else {
-+                                BlockPos pos = blockpos.offset(this.rightDir);
-+                                blocks.add(bworld.getBlockAt(pos.getX(), pos.getY(), pos.getZ()));
-                             }
-                         }
-                     }
-@@ -488,6 +499,9 @@
-                     {
-                         this.height = 0;
-                         break;
-+                    } else {
-+                        BlockPos pos = this.bottomLeft.offset(this.rightDir, j).up(this.height);
-+                        blocks.add(bworld.getBlockAt(pos.getX(), pos.getY(), pos.getZ()));
-                     }
+-                int j1 = this.func_150853_a(p_i45415_2_, p_i45415_3_, p_i45415_4_, this.field_150863_d) - 1;
++            if (this.field_150861_f != null)
++            {
++                this.field_150862_g = this.func_150858_a();
++            }
++        }
+ 
+-                if (j1 >= 0)
+-                {
+-                    this.field_150861_f = new ChunkCoordinates(p_i45415_2_ + j1 * Direction.offsetX[this.field_150863_d], p_i45415_3_, p_i45415_4_ + j1 * Direction.offsetZ[this.field_150863_d]);
+-                    this.field_150868_h = this.func_150853_a(this.field_150861_f.posX, this.field_150861_f.posY, this.field_150861_f.posZ, this.field_150866_c);
++        protected int func_150853_a(int p_150853_1_, int p_150853_2_, int p_150853_3_, int p_150853_4_)
++        {
++            int j1 = Direction.offsetX[p_150853_4_];
++            int k1 = Direction.offsetZ[p_150853_4_];
++            int i1;
++            Block block;
+ 
+-                    if (this.field_150868_h < 2 || this.field_150868_h > 21)
+-                    {
+-                        this.field_150861_f = null;
+-                        this.field_150868_h = 0;
+-                    }
++            for (i1 = 0; i1 < 22; ++i1)
++            {
++                block = this.field_150867_a.getBlock(p_150853_1_ + j1 * i1, p_150853_2_, p_150853_3_ + k1 * i1);
++
++                if (!this.func_150857_a(block))
++                {
++                    break;
                  }
  
-@@ -526,5 +540,38 @@
-                     }
+-                if (this.field_150861_f != null)
++                Block block1 = this.field_150867_a.getBlock(p_150853_1_ + j1 * i1, p_150853_2_ - 1, p_150853_3_ + k1 * i1);
++
++                if (block1 != Blocks.obsidian)
+                 {
+-                    this.field_150862_g = this.func_150858_a();
++                    break;
                  }
              }
+ 
+-            protected int func_150853_a(int p_150853_1_, int p_150853_2_, int p_150853_3_, int p_150853_4_)
++            block = this.field_150867_a.getBlock(p_150853_1_ + j1 * i1, p_150853_2_, p_150853_3_ + k1 * i1);
++            return block == Blocks.obsidian ? i1 : 0;
++        }
 +
-+            public boolean placePortalBlocksCB()
-+            {
-+                org.bukkit.World bworld = this.world.getWorld();
++        protected int func_150858_a()
++        {
++            this.blocks = new java.util.HashSet<org.bukkit.block.Block>(); // CraftBukkit
++            org.bukkit.World bworld = this.field_150867_a.getWorld();
++            int i;
++            int j;
++            int k;
++            int l;
++            label56:
 +
-+                // Copy below for loop
-+                for (int i = 0; i < this.width; ++i) {
-+                    BlockPos blockposition = this.bottomLeft.offset(this.rightDir, i);
-+
-+                    for (int j = 0; j < this.height; ++j) {
-+                        BlockPos pos = blockposition.up(j);
-+                        blocks.add(bworld.getBlockAt(pos.getX(), pos.getY(), pos.getZ()));
++            for (this.field_150862_g = 0; this.field_150862_g < 21; ++this.field_150862_g)
+             {
+-                int j1 = Direction.offsetX[p_150853_4_];
+-                int k1 = Direction.offsetZ[p_150853_4_];
+-                int i1;
+-                Block block;
++                i = this.field_150861_f.posY + this.field_150862_g;
+ 
+-                for (i1 = 0; i1 < 22; ++i1)
++                for (j = 0; j < this.field_150868_h; ++j)
+                 {
+-                    block = this.field_150867_a.getBlock(p_150853_1_ + j1 * i1, p_150853_2_, p_150853_3_ + k1 * i1);
++                    k = this.field_150861_f.posX + j * Direction.offsetX[BlockPortal.field_150001_a[this.field_150865_b][1]];
++                    l = this.field_150861_f.posZ + j * Direction.offsetZ[BlockPortal.field_150001_a[this.field_150865_b][1]];
++                    Block block = this.field_150867_a.getBlock(k, i, l);
+ 
+                     if (!this.func_150857_a(block))
+                     {
+-                        break;
++                        break label56;
+                     }
+ 
+-                    Block block1 = this.field_150867_a.getBlock(p_150853_1_ + j1 * i1, p_150853_2_ - 1, p_150853_3_ + k1 * i1);
+-
+-                    if (block1 != Blocks.obsidian)
++                    if (block == Blocks.portal)
+                     {
+-                        break;
++                        ++this.field_150864_e;
+                     }
+-                }
+ 
+-                block = this.field_150867_a.getBlock(p_150853_1_ + j1 * i1, p_150853_2_, p_150853_3_ + k1 * i1);
+-                return block == Blocks.obsidian ? i1 : 0;
+-            }
+-
+-            protected int func_150858_a()
+-            {
+-                int i;
+-                int j;
+-                int k;
+-                int l;
+-                label56:
+-
+-                for (this.field_150862_g = 0; this.field_150862_g < 21; ++this.field_150862_g)
+-                {
+-                    i = this.field_150861_f.posY + this.field_150862_g;
+-
+-                    for (j = 0; j < this.field_150868_h; ++j)
++                    if (j == 0)
+                     {
+-                        k = this.field_150861_f.posX + j * Direction.offsetX[BlockPortal.field_150001_a[this.field_150865_b][1]];
+-                        l = this.field_150861_f.posZ + j * Direction.offsetZ[BlockPortal.field_150001_a[this.field_150865_b][1]];
+-                        Block block = this.field_150867_a.getBlock(k, i, l);
++                        block = this.field_150867_a.getBlock(k + Direction.offsetX[BlockPortal.field_150001_a[this.field_150865_b][0]], i, l + Direction.offsetZ[BlockPortal.field_150001_a[this.field_150865_b][0]]);
+ 
+-                        if (!this.func_150857_a(block))
++                        if (block != Blocks.obsidian)
+                         {
+                             break label56;
++                            // CraftBukkit start - add the block to our list
+                         }
+-
+-                        if (block == Blocks.portal)
++                        else
+                         {
+-                            ++this.field_150864_e;
++                            blocks.add(bworld.getBlockAt(k + Direction.offsetX[BlockPortal.field_150001_a[this.field_150865_b][0]], i, l + Direction.offsetZ[BlockPortal.field_150001_a[this.field_150865_b][0]]));
++                            // CraftBukkit end
+                         }
 +                    }
-+                }
-+
-+                PortalCreateEvent event = new PortalCreateEvent(blocks, bworld, PortalCreateEvent.CreateReason.FIRE);
-+                this.world.getServer().getPluginManager().callEvent(event);
-+
-+                if (event.isCancelled()) {
-+                    return false;
-+                }
-+                for (int i = 0; i < this.width; ++i)
-+                {
-+                    BlockPos blockpos = this.bottomLeft.offset(this.rightDir, i);
-+
-+                    for (int j = 0; j < this.height; ++j)
++                    else if (j == this.field_150868_h - 1)
 +                    {
-+                        this.world.setBlockState(blockpos.up(j), Blocks.PORTAL.getDefaultState().withProperty(BlockPortal.AXIS, this.axis), 2);
-+                    }
-+                }
-+
-+                return true;
++                        block = this.field_150867_a.getBlock(k + Direction.offsetX[BlockPortal.field_150001_a[this.field_150865_b][1]], i, l + Direction.offsetZ[BlockPortal.field_150001_a[this.field_150865_b][1]]);
+ 
+-                        if (j == 0)
++                        if (block != Blocks.obsidian)
+                         {
+-                            block = this.field_150867_a.getBlock(k + Direction.offsetX[BlockPortal.field_150001_a[this.field_150865_b][0]], i, l + Direction.offsetZ[BlockPortal.field_150001_a[this.field_150865_b][0]]);
+-
+-                            if (block != Blocks.obsidian)
+-                            {
+-                                break label56;
+-                            }
++                            break label56;
++                            // CraftBukkit start - add the block to our list
+                         }
+-                        else if (j == this.field_150868_h - 1)
++                        else
+                         {
+-                            block = this.field_150867_a.getBlock(k + Direction.offsetX[BlockPortal.field_150001_a[this.field_150865_b][1]], i, l + Direction.offsetZ[BlockPortal.field_150001_a[this.field_150865_b][1]]);
+-
+-                            if (block != Blocks.obsidian)
+-                            {
+-                                break label56;
+-                            }
++                            blocks.add(bworld.getBlockAt(k + Direction.offsetX[BlockPortal.field_150001_a[this.field_150865_b][1]], i, l + Direction.offsetZ[BlockPortal.field_150001_a[this.field_150865_b][1]]));
++                            // CraftBukkit end
+                         }
+                     }
+                 }
 +            }
+ 
+-                for (i = 0; i < this.field_150868_h; ++i)
+-                {
+-                    j = this.field_150861_f.posX + i * Direction.offsetX[BlockPortal.field_150001_a[this.field_150865_b][1]];
+-                    k = this.field_150861_f.posY + this.field_150862_g;
+-                    l = this.field_150861_f.posZ + i * Direction.offsetZ[BlockPortal.field_150001_a[this.field_150865_b][1]];
++            for (i = 0; i < this.field_150868_h; ++i)
++            {
++                j = this.field_150861_f.posX + i * Direction.offsetX[BlockPortal.field_150001_a[this.field_150865_b][1]];
++                k = this.field_150861_f.posY + this.field_150862_g;
++                l = this.field_150861_f.posZ + i * Direction.offsetZ[BlockPortal.field_150001_a[this.field_150865_b][1]];
+ 
+-                    if (this.field_150867_a.getBlock(j, k, l) != Blocks.obsidian)
+-                    {
+-                        this.field_150862_g = 0;
+-                        break;
+-                    }
+-                }
+-
+-                if (this.field_150862_g <= 21 && this.field_150862_g >= 3)
++                if (this.field_150867_a.getBlock(j, k, l) != Blocks.obsidian)
+                 {
+-                    return this.field_150862_g;
+-                }
+-                else
+-                {
+-                    this.field_150861_f = null;
+-                    this.field_150868_h = 0;
+                     this.field_150862_g = 0;
+-                    return 0;
++                    break;
+                 }
+             }
+ 
+-            protected boolean func_150857_a(Block p_150857_1_)
++            if (this.field_150862_g <= 21 && this.field_150862_g >= 3)
+             {
+-                return p_150857_1_.blockMaterial == Material.air || p_150857_1_ == Blocks.fire || p_150857_1_ == Blocks.portal;
++                return this.field_150862_g;
+             }
++            else
++            {
++                this.field_150861_f = null;
++                this.field_150868_h = 0;
++                this.field_150862_g = 0;
++                return 0;
++            }
++        }
+ 
+-            public boolean func_150860_b()
++        protected boolean func_150857_a(Block p_150857_1_)
++        {
++            return p_150857_1_.blockMaterial == Material.air || p_150857_1_ == Blocks.fire || p_150857_1_ == Blocks.portal;
++        }
++
++        public boolean func_150860_b()
++        {
++            return this.field_150861_f != null && this.field_150868_h >= 2 && this.field_150868_h <= 21 && this.field_150862_g >= 3 && this.field_150862_g <= 21;
++        }
++
++        // Cauldron start - vanilla compatibility
++        public void func_150859_c()
++        {
++            this.CB_func_150859_c();
++        }
++        // Cauldron end
++
++        public boolean CB_func_150859_c()
++        {
++            org.bukkit.World bworld = this.field_150867_a.getWorld();
++
++            // Copy below for loop
++            for (int i = 0; i < this.field_150868_h; ++i)
+             {
+-                return this.field_150861_f != null && this.field_150868_h >= 2 && this.field_150868_h <= 21 && this.field_150862_g >= 3 && this.field_150862_g <= 21;
++                int j = this.field_150861_f.posX + Direction.offsetX[this.field_150866_c] * i;
++                int k = this.field_150861_f.posZ + Direction.offsetZ[this.field_150866_c] * i;
++
++                for (int l = 0; l < this.field_150862_g; ++l)
++                {
++                    int i1 = this.field_150861_f.posY + l;
++                    bworld.getBlockAt(j, i1, k);
++                }
+             }
+ 
+-            public void func_150859_c()
++            PortalCreateEvent event = new PortalCreateEvent(blocks, bworld, PortalCreateEvent.CreateReason.FIRE);
++            this.field_150867_a.getServer().getPluginManager().callEvent(event);
++
++            if (event.isCancelled())
+             {
++                return false;
++            }
++                // CraftBukkit end
++    
+                 for (int i = 0; i < this.field_150868_h; ++i)
+                 {
+                     int j = this.field_150861_f.posX + Direction.offsetX[this.field_150866_c] * i;
+                     int k = this.field_150861_f.posZ + Direction.offsetZ[this.field_150866_c] * i;
+-
++            
+                     for (int l = 0; l < this.field_150862_g; ++l)
+                     {
+                         int i1 = this.field_150861_f.posY + l;
+                         this.field_150867_a.setBlock(j, i1, k, Blocks.portal, this.field_150865_b, 2);
+                     }
+                 }
++
++                return true; // CraftBukkit
+             }
          }
  }

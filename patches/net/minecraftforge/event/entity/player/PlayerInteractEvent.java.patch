@@ -1,0 +1,11 @@
+--- ../src-base/minecraft/net/minecraftforge/event/entity/player/PlayerInteractEvent.java
++++ ../src-work/minecraft/net/minecraftforge/event/entity/player/PlayerInteractEvent.java
+@@ -47,7 +47,7 @@
+     public final int z;
+     public final int face;
+     public final World world;
+-    
++    public org.bukkit.event.player.PlayerInteractEvent cb;
+     public Result useBlock = DEFAULT;
+     public Result useItem = DEFAULT;
+ 

@@ -1,48 +1,53 @@
 --- ../src-base/minecraft/net/minecraft/network/NetworkSystem.java
 +++ ../src-work/minecraft/net/minecraft/network/NetworkSystem.java
-@@ -27,6 +27,8 @@
+@@ -25,7 +25,9 @@
  import java.util.Collections;
  import java.util.Iterator;
  import java.util.List;
 +import java.util.Set;
+ import java.util.concurrent.Callable;
 +import java.util.concurrent.ConcurrentHashMap;
  import net.minecraft.client.network.NetHandlerHandshakeMemory;
  import net.minecraft.crash.CrashReport;
  import net.minecraft.crash.CrashReportCategory;
-@@ -71,6 +73,9 @@
-     private final List<ChannelFuture> endpoints = Collections.<ChannelFuture>synchronizedList(Lists.newArrayList());
-     private final List<NetworkManager> networkManagers = Collections.<NetworkManager>synchronizedList(Lists.newArrayList());
+@@ -51,6 +53,9 @@
+     private final List networkManagers = Collections.synchronizedList(new ArrayList());
+     private static final String __OBFID = "CL_00001447";
  
 +    private boolean processing = false; // Thermos (Robotia) -- syncy time!
 +    private final Set stack = Collections.newSetFromMap(new ConcurrentHashMap());
 +
-     public NetworkSystem(MinecraftServer server)
+     public NetworkSystem(MinecraftServer p_i45292_1_)
      {
-         this.mcServer = server;
-@@ -113,7 +118,8 @@
+         this.mcServer = p_i45292_1_;
+@@ -88,7 +93,9 @@
  
-                     p_initChannel_1_.pipeline().addLast("timeout", new ReadTimeoutHandler(net.minecraftforge.fml.common.network.internal.FMLNetworkHandler.READ_TIMEOUT)).addLast("legacy_query", new LegacyPingHandler(NetworkSystem.this)).addLast("splitter", new NettyVarint21FrameDecoder()).addLast("decoder", new NettyPacketDecoder(EnumPacketDirection.SERVERBOUND)).addLast("prepender", new NettyVarint21FrameEncoder()).addLast("encoder", new NettyPacketEncoder(EnumPacketDirection.CLIENTBOUND));
-                     NetworkManager networkmanager = new NetworkManager(EnumPacketDirection.SERVERBOUND);
+                     p_initChannel_1_.pipeline().addLast("timeout", new ReadTimeoutHandler(FMLNetworkHandler.READ_TIMEOUT)).addLast("legacy_query", new PingResponseHandler(NetworkSystem.this)).addLast("splitter", new MessageDeserializer2()).addLast("decoder", new MessageDeserializer(NetworkManager.field_152462_h)).addLast("prepender", new MessageSerializer2()).addLast("encoder", new MessageSerializer(NetworkManager.field_152462_h));
+                     NetworkManager networkmanager = new NetworkManager(false);
 -                    NetworkSystem.this.networkManagers.add(networkmanager);
++
 +                    if (processing) { stack.add(networkmanager); } // Thermos (Robotia) -- syncy time
 +                    else { NetworkSystem.this.networkManagers.add(networkmanager); }
                      p_initChannel_1_.pipeline().addLast("packet_handler", networkmanager);
                      networkmanager.setNetHandler(new NetHandlerHandshakeTCP(NetworkSystem.this.mcServer, networkmanager));
                  }
-@@ -134,7 +140,8 @@
+@@ -111,7 +118,8 @@
                  {
-                     NetworkManager networkmanager = new NetworkManager(EnumPacketDirection.SERVERBOUND);
+                     NetworkManager networkmanager = new NetworkManager(false);
                      networkmanager.setNetHandler(new NetHandlerHandshakeMemory(NetworkSystem.this.mcServer, networkmanager));
 -                    NetworkSystem.this.networkManagers.add(networkmanager);
 +                    if (processing) { stack.add(networkmanager); } // Thermos (Robotia) -- syncy time
 +                    else { NetworkSystem.this.networkManagers.add(networkmanager); }
                      p_initChannel_1_.pipeline().addLast("packet_handler", networkmanager);
                  }
-             }).group(SERVER_NIO_EVENTLOOP.getValue()).localAddress(LocalAddress.ANY)).bind().syncUninterruptibly();
-@@ -163,8 +170,16 @@
+             }).group(eventLoops).localAddress(LocalAddress.ANY)).bind().syncUninterruptibly();
+@@ -135,10 +143,18 @@
  
      public void networkTick()
      {
+-        List list = this.networkManagers;
+-
++        // List list = new ArrayList(this.networkManagers); // Thermos (Robotia) -- not sure if this was put here by accident?
 +        this.processing = true; // Thermos (Robotia)
          synchronized (this.networkManagers)
          {
@@ -52,20 +57,12 @@
 +            {
 +                Collections.shuffle(this.networkManagers);
 +            }
++
 +            // Spigot End
-             Iterator<NetworkManager> iterator = this.networkManagers.iterator();
+             Iterator iterator = this.networkManagers.iterator();
  
              while (iterator.hasNext())
-@@ -209,12 +224,18 @@
-                     }
-                     else
-                     {
-+                        // Spigot Start - Fix a race condition where a NetworkManager could be unregistered just before connection.
-+                        if (networkmanager.preparing) continue;
-+                        // Spigot End
-                         iterator.remove();
-                         networkmanager.checkDisconnected();
-                     }
+@@ -197,6 +213,9 @@
                  }
              }
          }
@@ -74,4 +71,4 @@
 +        stack.clear();
      }
  
-     public MinecraftServer getServer()
+     public MinecraftServer func_151267_d()

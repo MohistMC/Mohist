@@ -1,44 +1,38 @@
 --- ../src-base/minecraft/net/minecraft/world/WorldServerMulti.java
 +++ ../src-work/minecraft/net/minecraft/world/WorldServerMulti.java
-@@ -7,12 +7,19 @@
- import net.minecraft.world.border.WorldBorder;
- import net.minecraft.world.storage.DerivedWorldInfo;
- import net.minecraft.world.storage.ISaveHandler;
-+import net.minecraft.world.storage.WorldInfo;
- 
- public class WorldServerMulti extends WorldServer
+@@ -9,16 +9,35 @@
  {
-     private final WorldServer delegate;
-     private IBorderListener borderListener;
+     private static final String __OBFID = "CL_00001430";
  
-+    public WorldServerMulti(MinecraftServer server, ISaveHandler saveHandlerIn, int dimensionId, WorldServer delegate, Profiler profilerIn, WorldInfo worldData, org.bukkit.World.Environment env, org.bukkit.generator.ChunkGenerator gen)
++    // CraftBukkit start - Add Environment and ChunkGenerator arguments
++    public WorldServerMulti(MinecraftServer p_i45283_1_, ISaveHandler p_i45283_2_, String p_i45283_3_, int p_i45283_4_, WorldSettings p_i45283_5_, WorldServer p_i45283_6_, Profiler p_i45283_7_, org.bukkit.World.Environment env, org.bukkit.generator.ChunkGenerator gen)
 +    {
-+        super(server, saveHandlerIn, worldData, dimensionId, profilerIn, env, gen);
-+        this.delegate = delegate;
++        super(p_i45283_1_, p_i45283_2_, p_i45283_3_, p_i45283_4_, p_i45283_5_, p_i45283_7_, env, gen);
++        // CraftBukkit end
++        this.mapStorage = p_i45283_6_.mapStorage;
++        this.worldScoreboard = p_i45283_6_.getScoreboard();
++        //this.worldInfo = new DerivedWorldInfo(p_i45283_6_.getWorldInfo());
++        //this.worldInfo.setWorldName(p_i45283_3_);
 +    }
 +
-     public WorldServerMulti(MinecraftServer server, ISaveHandler saveHandlerIn, int dimensionId, WorldServer delegate, Profiler profilerIn)
++    // Cauldron start - vanilla compatibility
+     public WorldServerMulti(MinecraftServer p_i45283_1_, ISaveHandler p_i45283_2_, String p_i45283_3_, int p_i45283_4_, WorldSettings p_i45283_5_, WorldServer p_i45283_6_, Profiler p_i45283_7_)
      {
-         super(server, saveHandlerIn, new DerivedWorldInfo(delegate.getWorldInfo()), dimensionId, profilerIn);
-@@ -51,11 +58,6 @@
-         this.delegate.getWorldBorder().addListener(this.borderListener);
+         super(p_i45283_1_, p_i45283_2_, p_i45283_3_, p_i45283_4_, p_i45283_5_, p_i45283_7_);
+         this.mapStorage = p_i45283_6_.mapStorage;
+         this.worldScoreboard = p_i45283_6_.getScoreboard();
+         this.worldInfo = new DerivedWorldInfo(p_i45283_6_.getWorldInfo());
++        //this.worldInfo.setWorldName(p_i45283_3_);
      }
++    // Cauldron end
  
--    protected void saveLevel() throws MinecraftException
--    {
--        this.perWorldStorage.saveAllData();
--    }
--
-     public World init()
++    /* we handle all saving including perWorldStorage in WorldServer.saveLevel. This needs to be disabled since we follow
++    // bukkit's world saving methods by using a seperate save handler for each world. Each world folder needs to generate a corresponding 
++    // level.dat for plugins that require it such as MultiWorld.
+     protected void saveLevel() throws MinecraftException
      {
-         this.mapStorage = this.delegate.getMapStorage();
-@@ -77,7 +79,8 @@
-         }
- 
-         this.initCapabilities();
--        return this;
-+        // return this;
-+        return super.init(); // CraftBukkit
+         this.perWorldStorage.saveAllData();
      }
- 
- 
++    */
++    // Cauldron end
+ }

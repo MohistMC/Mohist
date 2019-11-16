@@ -1,0 +1,34 @@
+--- ../src-base/minecraft/net/minecraft/world/gen/layer/GenLayerRareBiome.java
++++ ../src-work/minecraft/net/minecraft/world/gen/layer/GenLayerRareBiome.java
+@@ -14,7 +14,30 @@
+ 
+     public int[] getInts(int p_75904_1_, int p_75904_2_, int p_75904_3_, int p_75904_4_)
+     {
+-        int[] aint = this.parent.getInts(p_75904_1_ - 1, p_75904_2_ - 1, p_75904_3_ + 2, p_75904_4_ + 2);
++    	
++        int[] aint = null;
++        try
++        {
++        	aint = this.parent.getInts(p_75904_1_ - 1, p_75904_2_ - 1, p_75904_3_ + 2, p_75904_4_ + 2);
++        }
++        catch(Exception e2)
++        {
++        	try
++        	{
++        		aint = this.parent.getInts(p_75904_1_ - 1, p_75904_2_ - 1, p_75904_3_ + 2, p_75904_4_ + 2);
++        	}
++        	catch(Exception e1)
++        	{
++        		try
++        		{
++        			aint = this.parent.getInts(p_75904_1_ - 1, p_75904_2_ - 1, p_75904_3_ + 2, p_75904_4_ + 2);
++        		}
++        		catch(Exception e)
++        		{
++        			throw new RuntimeException("[Thermos] GenLayerRareBiome.parent.getInts(): " + e.getMessage());
++        		}
++        	}
++        }
+         int[] aint1 = IntCache.getIntCache(p_75904_3_ * p_75904_4_);
+ 
+         for (int i1 = 0; i1 < p_75904_4_; ++i1)

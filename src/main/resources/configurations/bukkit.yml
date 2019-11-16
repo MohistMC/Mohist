@@ -6,10 +6,11 @@
 # If you need help on this file, feel free to join us on irc or leave a message
 # on the forums asking for advice.
 # 
-# IRC: #spigot @ irc.spi.gt
-#    (If this means nothing to you, just go to http://www.spigotmc.org/pages/irc/ )
-# Forums: http://www.spigotmc.org/
-# Bug tracker: http://www.spigotmc.org/go/bugs
+# IRC: #bukkit @ esper.net
+#    (If this means nothing to you, just go to http://webchat.esper.net/?channels=bukkit )
+# Forums: http://forums.bukkit.org/forums/bukkit-help.6/
+# Twitter: http://twitter.com/CraftBukkit
+# Bug tracker: http://leaky.bukkit.org/
 
 
 settings:
@@ -17,6 +18,8 @@ settings:
     warn-on-overload: true
     permissions-file: permissions.yml
     update-folder: update
+    ping-packet-limit: 100
+    use-exact-login-location: false
     plugin-profiling: false
     connection-throttle: 4000
     query-plugins: true
@@ -28,10 +31,24 @@ spawn-limits:
     water-animals: 5
     ambient: 15
 chunk-gc:
+    enabled: false
     period-in-ticks: 600
     load-threshold: 0
 ticks-per:
     animal-spawns: 400
     monster-spawns: 1
     autosave: 6000
+auto-updater:
+    enabled: false
+    on-broken: [warn-console, warn-ops]
+    on-update: [warn-console, warn-ops]
+    preferred-channel: rb
+    host: dl.bukkit.org
+    suggest-channels: true
 aliases: now-in-commands.yml
+database:
+    username: bukkit
+    isolation: SERIALIZABLE
+    driver: org.sqlite.JDBC
+    password: walrus
+    url: jdbc:sqlite:{DIR}{NAME}.db

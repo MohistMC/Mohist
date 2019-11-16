@@ -1,102 +1,93 @@
 --- ../src-base/minecraft/net/minecraft/block/Block.java
 +++ ../src-work/minecraft/net/minecraft/block/Block.java
-@@ -1,10 +1,8 @@
- package net.minecraft.block;
- 
--import com.google.common.collect.Sets;
--import com.google.common.collect.UnmodifiableIterator;
-+import java.util.ArrayList;
- import java.util.List;
- import java.util.Random;
--import java.util.Set;
- import javax.annotation.Nullable;
- import net.minecraft.block.material.EnumPushReaction;
- import net.minecraft.block.material.MapColor;
-@@ -21,6 +19,7 @@
- import net.minecraft.entity.item.EntityItem;
- import net.minecraft.entity.item.EntityXPOrb;
- import net.minecraft.entity.player.EntityPlayer;
-+import net.minecraft.entity.player.EntityPlayerMP;
+@@ -27,6 +27,7 @@
  import net.minecraft.init.Blocks;
- import net.minecraft.init.Enchantments;
- import net.minecraft.init.Items;
-@@ -573,7 +572,8 @@
+ import net.minecraft.item.Item;
+ import net.minecraft.item.ItemBlock;
++import net.minecraft.item.ItemShears;
+ import net.minecraft.item.ItemStack;
+ import net.minecraft.stats.StatList;
+ import net.minecraft.tileentity.TileEntity;
+@@ -46,6 +47,7 @@
+ import net.minecraftforge.common.EnumPlantType;
+ import net.minecraftforge.common.ForgeHooks;
+ import net.minecraftforge.common.IPlantable;
++import net.minecraftforge.common.IShearable;
+ import net.minecraftforge.common.MinecraftForge;
+ import net.minecraftforge.common.util.ForgeDirection;
+ import net.minecraftforge.common.util.RotationHelper;
+@@ -122,6 +124,7 @@
+     private String unlocalizedName;
+     @SideOnly(Side.CLIENT)
+     protected IIcon blockIcon;
++    public boolean isForgeBlock; // Cauldron
+     private static final String __OBFID = "CL_00000199";
  
-             for (ItemStack drop : drops)
+     public final cpw.mods.fml.common.registry.RegistryDelegate<Block> delegate = 
+@@ -133,6 +136,8 @@
+ 
+     public static Block getBlockById(int p_149729_0_)
+     {
++    	if(p_149729_0_ == 0) return Blocks.air;
++    	
+         Block ret = (Block)blockRegistry.getObjectById(p_149729_0_);
+         return ret == null ? Blocks.air : ret;
+     }
+@@ -564,6 +569,10 @@
+ 
+     public void addCollisionBoxesToList(World p_149743_1_, int p_149743_2_, int p_149743_3_, int p_149743_4_, AxisAlignedBB p_149743_5_, List p_149743_6_, Entity p_149743_7_)
+     {
++    	if(p_149743_6_ instanceof ArrayList)
++    	{
++    		((ArrayList)p_149743_6_).ensureCapacity(30); // Thermos - force ArrayList minimum size
++    	}
+         AxisAlignedBB axisalignedbb1 = this.getCollisionBoundingBoxFromPool(p_149743_1_, p_149743_2_, p_149743_3_, p_149743_4_);
+ 
+         if (axisalignedbb1 != null && p_149743_5_.intersectsWith(axisalignedbb1))
+@@ -954,13 +963,18 @@
+         if (this.canSilkHarvest(p_149636_1_, p_149636_2_, p_149636_3_, p_149636_4_, p_149636_5_, p_149636_6_) && EnchantmentHelper.getSilkTouchModifier(p_149636_2_))
+         {
+             ArrayList<ItemStack> items = new ArrayList<ItemStack>();
+-            ItemStack itemstack = this.createStackedBlock(p_149636_6_);
+-
+-            if (itemstack != null)
++            
++            if (!((p_149636_2_.getHeldItem().getItem() instanceof ItemShears) && (this instanceof BlockLeavesBase) && (this instanceof IShearable)))
              {
--                if (worldIn.rand.nextFloat() <= chance)
-+                // CraftBukkit - <= to < to allow for plugins to completely disable block drops from explosions
-+                if (worldIn.rand.nextFloat() < chance)
-                 {
-                     spawnAsEntity(worldIn, pos, drop);
-                 }
-@@ -596,12 +596,27 @@
-             double d2 = (double)(worldIn.rand.nextFloat() * 0.5F) + 0.25D;
-             EntityItem entityitem = new EntityItem(worldIn, (double)pos.getX() + d0, (double)pos.getY() + d1, (double)pos.getZ() + d2, stack);
-             entityitem.setDefaultPickupDelay();
--            worldIn.spawnEntity(entityitem);
-+            if (worldIn.captureDrops != null) {
-+                worldIn.captureDrops.add(entityitem);
-+            } else {
-+                worldIn.spawnEntity(entityitem);
-+            }
-         }
-     }
- 
-+    // CraftBukkit start
-+    public int getExpDrop(World world, IBlockState state, int enchantmentLevel) {
-+        return 0;
-+    }
-+    // CraftBukkit end
+-                items.add(itemstack);
++                ItemStack itemstack = this.createStackedBlock(p_149636_6_);
 +
-     public void dropXpOnBlockBreak(World worldIn, BlockPos pos, int amount)
-     {
-+        dropXpOnBlockBreak(worldIn, pos, amount, null);
-+    }
-+
-+    public void dropXpOnBlockBreak(World worldIn, BlockPos pos, int amount, EntityPlayerMP player)
-+    {
-         if (!worldIn.isRemote && worldIn.getGameRules().getBoolean("doTileDrops"))
-         {
-             while (amount > 0)
-@@ -1564,18 +1579,13 @@
-      */
-     public boolean canPlaceTorchOnTop(IBlockState state, IBlockAccess world, BlockPos pos)
-     {
--        if (this == Blocks.END_GATEWAY || this == Blocks.LIT_PUMPKIN)
-+        if (state.isTopSolid() || state.getBlockFaceShape(world, pos, EnumFacing.UP) == BlockFaceShape.SOLID)
-         {
--            return false;
-+            return this != Blocks.END_GATEWAY && this != Blocks.LIT_PUMPKIN;
-         }
--        else if (state.isTopSolid() || this instanceof BlockFence || this == Blocks.GLASS || this == Blocks.COBBLESTONE_WALL || this == Blocks.STAINED_GLASS)
--        {
--            return true;
--        }
-         else
-         {
--            BlockFaceShape shape = state.getBlockFaceShape(world, pos, EnumFacing.UP);
--            return (shape == BlockFaceShape.SOLID || shape == BlockFaceShape.CENTER || shape == BlockFaceShape.CENTER_BIG) && !isExceptionBlockForAttaching(this);
-+            return this instanceof BlockFence || this == Blocks.GLASS || this == Blocks.COBBLESTONE_WALL || this == Blocks.STAINED_GLASS;
-         }
-     }
++                if (itemstack != null)
++                {
++                    items.add(itemstack);
++                }            	
+             }
  
-@@ -2642,6 +2652,18 @@
-         registerBlock(id, new ResourceLocation(textualID), block_);
++
+             ForgeEventFactory.fireBlockHarvesting(items, p_149636_1_, this, p_149636_3_, p_149636_4_, p_149636_5_, p_149636_6_, 0, 1.0f, true, p_149636_2_);
+             for (ItemStack is : items)
+             {
+@@ -1131,6 +1145,23 @@
+         return this;
      }
  
 +    // Spigot start
-+    public static float range(float min, float value, float max) {
-+        if (value < min) {
++    public static float range(float min, float value, float max)
++    {
++        if (value < min)
++        {
 +            return min;
 +        }
-+        if (value > max) {
++
++        if (value > max)
++        {
 +            return max;
 +        }
++
 +        return value;
 +    }
 +    // Spigot end
 +
-     public static enum EnumOffsetType
+     @SideOnly(Side.CLIENT)
+     protected String getTextureName()
      {
-         NONE,

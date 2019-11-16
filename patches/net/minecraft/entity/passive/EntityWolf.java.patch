@@ -1,81 +1,21 @@
 --- ../src-base/minecraft/net/minecraft/entity/passive/EntityWolf.java
 +++ ../src-work/minecraft/net/minecraft/entity/passive/EntityWolf.java
-@@ -51,6 +51,8 @@
- import net.minecraft.world.storage.loot.LootTableList;
- import net.minecraftforge.fml.relauncher.Side;
- import net.minecraftforge.fml.relauncher.SideOnly;
-+import org.bukkit.craftbukkit.v1_12_R1.event.CraftEventFactory;
-+import org.bukkit.event.entity.EntityTargetEvent;
+@@ -139,7 +139,8 @@
  
- public class EntityWolf extends EntityTameable
- {
-@@ -115,6 +117,22 @@
-         this.getAttributeMap().registerAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).setBaseValue(2.0D);
+     protected String getLivingSound()
+     {
+-        return this.isAngry() ? "mob.wolf.growl" : (this.rand.nextInt(3) == 0 ? (this.isTamed() && this.dataWatcher.getWatchableObjectFloat(18) < 10.0F ? "mob.wolf.whine" : "mob.wolf.panting") : "mob.wolf.bark");
++        // CraftBukkit - (getFloat(18) < 10) -> (getFloat(18) < this.getMaxHealth() / 2)
++        return this.isAngry() ? "mob.wolf.growl" : (this.rand.nextInt(3) == 0 ? (this.isTamed() && this.dataWatcher.getWatchableObjectFloat(18) < (this.getMaxHealth() / 2) ? "mob.wolf.whine" : "mob.wolf.panting") : "mob.wolf.bark");
      }
  
-+    // CraftBukkit - add overriden version
-+    @Override
-+    public boolean setGoalTarget(@Nullable EntityLivingBase entityliving, EntityTargetEvent.TargetReason reason, boolean fire) {
-+        if (!super.setGoalTarget(entityliving, reason, fire)) {
-+            return false;
-+        }
-+        entityliving = getAttackTarget();
-+        if (entityliving == null) {
-+            this.setAngry(false);
-+        } else if (!this.isTamed()) {
-+            this.setAngry(true);
-+        }
-+        return true;
-+    }
-+    // CraftBukkit end
-+
-     public void setAttackTarget(@Nullable EntityLivingBase entitylivingbaseIn)
+     protected String getHurtSound()
+@@ -527,7 +528,7 @@
+ 
+     protected boolean canDespawn()
      {
-         super.setAttackTarget(entitylivingbaseIn);
-@@ -336,7 +354,8 @@
+-        return !this.isTamed() && this.ticksExisted > 2400;
++        return !this.isTamed(); // CraftBukkit
+     }
  
-             if (this.aiSit != null)
-             {
--                this.aiSit.setSitting(false);
-+                // CraftBukkit - moved into EntityLiving.damageEntity_CB(DamageSource, float)
-+                // this.aiSit.setSitting(false);
-             }
- 
-             if (entity != null && !(entity instanceof EntityPlayer) && !(entity instanceof EntityArrow))
-@@ -395,7 +414,7 @@
-                             itemstack.shrink(1);
-                         }
- 
--                        this.heal((float)itemfood.getHealAmount(itemstack));
-+                        this.heal((float)itemfood.getHealAmount(itemstack), org.bukkit.event.entity.EntityRegainHealthEvent.RegainReason.EATING);
-                         return true;
-                     }
-                 }
-@@ -422,7 +441,7 @@
-                 this.aiSit.setSitting(!this.isSitting());
-                 this.isJumping = false;
-                 this.navigator.clearPath();
--                this.setAttackTarget((EntityLivingBase)null);
-+                this.setGoalTarget((EntityLivingBase)null, EntityTargetEvent.TargetReason.FORGOT_TARGET, true); // CraftBukkit
-             }
-         }
-         else if (itemstack.getItem() == Items.BONE && !this.isAngry())
-@@ -434,13 +453,16 @@
- 
-             if (!this.world.isRemote)
-             {
--                if (this.rand.nextInt(3) == 0 && !net.minecraftforge.event.ForgeEventFactory.onAnimalTame(this, player))
-+                // CraftBukkit - added event call and isCancelled check.
-+                if (this.rand.nextInt(3) == 0 && !net.minecraftforge.event.ForgeEventFactory.onAnimalTame(this, player) && !CraftEventFactory.callEntityTameEvent(this, player).isCancelled())
-                 {
-                     this.setTamedBy(player);
-                     this.navigator.clearPath();
-                     this.setAttackTarget((EntityLivingBase)null);
-                     this.aiSit.setSitting(true);
--                    this.setHealth(20.0F);
-+                    // CraftBukkit - 20.0 -> getMaxHealth()
-+                    // this.setHealth(20.0F);
-+                    this.setHealth(this.getMaxHealth());
-                     this.playTameEffect(true);
-                     this.world.setEntityState(this, (byte)7);
-                 }
+     public boolean func_142018_a(EntityLivingBase p_142018_1_, EntityLivingBase p_142018_2_)

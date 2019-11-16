@@ -1,127 +1,138 @@
 --- ../src-base/minecraft/net/minecraft/scoreboard/ServerScoreboard.java
 +++ ../src-work/minecraft/net/minecraft/scoreboard/ServerScoreboard.java
-@@ -30,7 +30,7 @@
+@@ -32,7 +32,7 @@
  
-         if (this.addedObjectives.contains(scoreIn.getObjective()))
+         if (this.field_96553_b.contains(p_96536_1_.func_96645_d()))
          {
--            this.scoreboardMCServer.getPlayerList().sendPacketToAllPlayers(new SPacketUpdateScore(scoreIn));
-+            this.sendAll(new SPacketUpdateScore(scoreIn));
+-            this.scoreboardMCServer.getConfigurationManager().sendPacketToAllPlayers(new S3CPacketUpdateScore(p_96536_1_, 0));
++            this.sendAll(new S3CPacketUpdateScore(p_96536_1_, 0)); // CraftBukkit - Internal packet method
          }
  
-         this.markSaveDataDirty();
-@@ -39,14 +39,14 @@
-     public void broadcastScoreUpdate(String scoreName)
+         this.func_96551_b();
+@@ -41,7 +41,7 @@
+     public void func_96516_a(String p_96516_1_)
      {
-         super.broadcastScoreUpdate(scoreName);
--        this.scoreboardMCServer.getPlayerList().sendPacketToAllPlayers(new SPacketUpdateScore(scoreName));
-+        this.sendAll(new SPacketUpdateScore(scoreName));
-         this.markSaveDataDirty();
+         super.func_96516_a(p_96516_1_);
+-        this.scoreboardMCServer.getConfigurationManager().sendPacketToAllPlayers(new S3CPacketUpdateScore(p_96516_1_));
++        this.sendAll(new S3CPacketUpdateScore(p_96516_1_)); // CraftBukkit - Internal packet method
+         this.func_96551_b();
      }
  
-     public void broadcastScoreUpdate(String scoreName, ScoreObjective objective)
-     {
-         super.broadcastScoreUpdate(scoreName, objective);
--        this.scoreboardMCServer.getPlayerList().sendPacketToAllPlayers(new SPacketUpdateScore(scoreName, objective));
-+        this.sendAll(new SPacketUpdateScore(scoreName, objective));
-         this.markSaveDataDirty();
-     }
- 
-@@ -59,7 +59,7 @@
+@@ -54,7 +54,7 @@
          {
-             if (this.getObjectiveDisplaySlotCount(scoreobjective) > 0)
+             if (this.func_96552_h(scoreobjective1) > 0)
              {
--                this.scoreboardMCServer.getPlayerList().sendPacketToAllPlayers(new SPacketDisplayObjective(objectiveSlot, objective));
-+                this.sendAll(new SPacketDisplayObjective(objectiveSlot, objective));
+-                this.scoreboardMCServer.getConfigurationManager().sendPacketToAllPlayers(new S3DPacketDisplayScoreboard(p_96530_1_, p_96530_2_));
++                this.sendAll(new S3DPacketDisplayScoreboard(p_96530_1_, p_96530_2_)); // CraftBukkit - Internal packet method
              }
              else
              {
-@@ -71,7 +71,7 @@
+@@ -66,7 +66,7 @@
          {
-             if (this.addedObjectives.contains(objective))
+             if (this.field_96553_b.contains(p_96530_2_))
              {
--                this.scoreboardMCServer.getPlayerList().sendPacketToAllPlayers(new SPacketDisplayObjective(objectiveSlot, objective));
-+                this.sendAll(new SPacketDisplayObjective(objectiveSlot, objective));
+-                this.scoreboardMCServer.getConfigurationManager().sendPacketToAllPlayers(new S3DPacketDisplayScoreboard(p_96530_1_, p_96530_2_));
++                this.sendAll(new S3DPacketDisplayScoreboard(p_96530_1_, p_96530_2_)); // CraftBukkit - Internal packet method
              }
              else
              {
-@@ -87,7 +87,7 @@
-         if (super.addPlayerToTeam(player, newTeam))
+@@ -82,7 +82,7 @@
+         if (super.func_151392_a(p_151392_1_, p_151392_2_))
          {
-             ScorePlayerTeam scoreplayerteam = this.getTeam(newTeam);
--            this.scoreboardMCServer.getPlayerList().sendPacketToAllPlayers(new SPacketTeams(scoreplayerteam, Arrays.asList(player), 3));
-+            this.sendAll(new SPacketTeams(scoreplayerteam, Arrays.asList(player), 3));
-             this.markSaveDataDirty();
+             ScorePlayerTeam scoreplayerteam = this.getTeam(p_151392_2_);
+-            this.scoreboardMCServer.getConfigurationManager().sendPacketToAllPlayers(new S3EPacketTeams(scoreplayerteam, Arrays.asList(new String[] {p_151392_1_}), 3));
++            this.sendAll(new S3EPacketTeams(scoreplayerteam, Arrays.asList(new String[] { p_151392_1_}), 3)); // CraftBukkit - Internal packet method
+             this.func_96551_b();
              return true;
          }
-@@ -100,7 +100,7 @@
-     public void removePlayerFromTeam(String username, ScorePlayerTeam playerTeam)
+@@ -95,7 +95,7 @@
+     public void removePlayerFromTeam(String p_96512_1_, ScorePlayerTeam p_96512_2_)
      {
-         super.removePlayerFromTeam(username, playerTeam);
--        this.scoreboardMCServer.getPlayerList().sendPacketToAllPlayers(new SPacketTeams(playerTeam, Arrays.asList(username), 4));
-+        this.sendAll(new SPacketTeams(playerTeam, Arrays.asList(username), 4));
-         this.markSaveDataDirty();
+         super.removePlayerFromTeam(p_96512_1_, p_96512_2_);
+-        this.scoreboardMCServer.getConfigurationManager().sendPacketToAllPlayers(new S3EPacketTeams(p_96512_2_, Arrays.asList(new String[] {p_96512_1_}), 4));
++        this.sendAll(new S3EPacketTeams(p_96512_2_, Arrays.asList(new String[] { p_96512_1_}), 4)); // CraftBukkit - Internal packet method
+         this.func_96551_b();
      }
  
-@@ -116,7 +116,7 @@
+@@ -111,7 +111,7 @@
  
-         if (this.addedObjectives.contains(objective))
+         if (this.field_96553_b.contains(p_96532_1_))
          {
--            this.scoreboardMCServer.getPlayerList().sendPacketToAllPlayers(new SPacketScoreboardObjective(objective, 2));
-+            this.sendAll(new SPacketScoreboardObjective(objective, 2));
+-            this.scoreboardMCServer.getConfigurationManager().sendPacketToAllPlayers(new S3BPacketScoreboardObjective(p_96532_1_, 2));
++            this.sendAll(new S3BPacketScoreboardObjective(p_96532_1_, 2)); // CraftBukkit - Internal packet method
          }
  
-         this.markSaveDataDirty();
-@@ -137,21 +137,21 @@
-     public void broadcastTeamCreated(ScorePlayerTeam playerTeam)
+         this.func_96551_b();
+@@ -132,21 +132,21 @@
+     public void broadcastTeamCreated(ScorePlayerTeam p_96523_1_)
      {
-         super.broadcastTeamCreated(playerTeam);
--        this.scoreboardMCServer.getPlayerList().sendPacketToAllPlayers(new SPacketTeams(playerTeam, 0));
-+        this.sendAll(new SPacketTeams(playerTeam, 0));
-         this.markSaveDataDirty();
+         super.broadcastTeamCreated(p_96523_1_);
+-        this.scoreboardMCServer.getConfigurationManager().sendPacketToAllPlayers(new S3EPacketTeams(p_96523_1_, 0));
++        this.sendAll(new S3EPacketTeams(p_96523_1_, 0)); // CraftBukkit - Internal packet method
+         this.func_96551_b();
      }
  
-     public void broadcastTeamInfoUpdate(ScorePlayerTeam playerTeam)
+     public void broadcastTeamRemoved(ScorePlayerTeam p_96538_1_)
      {
-         super.broadcastTeamInfoUpdate(playerTeam);
--        this.scoreboardMCServer.getPlayerList().sendPacketToAllPlayers(new SPacketTeams(playerTeam, 2));
-+        this.sendAll(new SPacketTeams(playerTeam, 2));
-         this.markSaveDataDirty();
+         super.broadcastTeamRemoved(p_96538_1_);
+-        this.scoreboardMCServer.getConfigurationManager().sendPacketToAllPlayers(new S3EPacketTeams(p_96538_1_, 2));
++        this.sendAll(new S3EPacketTeams(p_96538_1_, 2)); // CraftBukkit - Internal packet method
+         this.func_96551_b();
      }
  
-     public void broadcastTeamRemove(ScorePlayerTeam playerTeam)
+     public void func_96513_c(ScorePlayerTeam p_96513_1_)
      {
-         super.broadcastTeamRemove(playerTeam);
--        this.scoreboardMCServer.getPlayerList().sendPacketToAllPlayers(new SPacketTeams(playerTeam, 1));
-+        this.sendAll(new SPacketTeams(playerTeam, 1));
-         this.markSaveDataDirty();
+         super.func_96513_c(p_96513_1_);
+-        this.scoreboardMCServer.getConfigurationManager().sendPacketToAllPlayers(new S3EPacketTeams(p_96513_1_, 1));
++        this.sendAll(new S3EPacketTeams(p_96513_1_, 1)); // CraftBukkit - Internal packet method
+         this.func_96551_b();
      }
  
-@@ -196,6 +196,7 @@
+@@ -194,7 +194,13 @@
  
-         for (EntityPlayerMP entityplayermp : this.scoreboardMCServer.getPlayerList().getPlayers())
+         while (iterator.hasNext())
          {
-+            if (entityplayermp.getBukkitEntity().getScoreboard().getHandle() != this) continue; // CraftBukkit - Only players on this board
-             for (Packet<?> packet : list)
-             {
-                 entityplayermp.connection.sendPacket(packet);
-@@ -227,6 +228,7 @@
+-            EntityPlayerMP entityplayermp = (EntityPlayerMP)iterator.next();
++            EntityPlayerMP entityplayermp = (EntityPlayerMP) iterator.next();
++
++            if (entityplayermp.getBukkitEntity().getScoreboard().getHandle() != this)
++            {
++                continue;    // CraftBukkit - Only players on this board
++            }
++
+             Iterator iterator1 = list.iterator();
  
-         for (EntityPlayerMP entityplayermp : this.scoreboardMCServer.getPlayerList().getPlayers())
+             while (iterator1.hasNext())
+@@ -230,7 +236,13 @@
+ 
+         while (iterator.hasNext())
          {
-+            if (entityplayermp.getBukkitEntity().getScoreboard().getHandle() != this) continue; // CraftBukkit - Only players on this board
-             for (Packet<?> packet : list)
-             {
-                 entityplayermp.connection.sendPacket(packet);
-@@ -250,4 +252,12 @@
+-            EntityPlayerMP entityplayermp = (EntityPlayerMP)iterator.next();
++            EntityPlayerMP entityplayermp = (EntityPlayerMP) iterator.next();
++
++            if (entityplayermp.getBukkitEntity().getScoreboard().getHandle() != this)
++            {
++                continue;    // CraftBukkit - Only players on this board
++            }
++
+             Iterator iterator1 = list.iterator();
+ 
+             while (iterator1.hasNext())
+@@ -257,4 +269,17 @@
  
          return i;
      }
 +
-+    private void sendAll(Packet packet) {
-+        for (EntityPlayerMP entityplayer : this.scoreboardMCServer.getPlayerList().getPlayers()) {
-+            if (entityplayer.getBukkitEntity().getScoreboard().getHandle() == this) {
-+                entityplayer.connection.sendPacket(packet);
++    // CraftBukkit start - Send to players
++    private void sendAll(Packet packet)
++    {
++        for (EntityPlayerMP entityplayermp : (List<EntityPlayerMP>) this.scoreboardMCServer.getConfigurationManager().playerEntityList)
++        {
++            if (entityplayermp.getBukkitEntity().getScoreboard().getHandle() == this)
++            {
++                entityplayermp.playerNetServerHandler.sendPacket(packet);
 +            }
 +        }
 +    }
++    // CraftBukkit end
  }

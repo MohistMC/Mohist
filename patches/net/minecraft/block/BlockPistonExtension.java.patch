@@ -1,0 +1,28 @@
+--- ../src-base/minecraft/net/minecraft/block/BlockPistonExtension.java
++++ ../src-work/minecraft/net/minecraft/block/BlockPistonExtension.java
+@@ -55,6 +55,12 @@
+     public void breakBlock(World p_149749_1_, int p_149749_2_, int p_149749_3_, int p_149749_4_, Block p_149749_5_, int p_149749_6_)
+     {
+         super.breakBlock(p_149749_1_, p_149749_2_, p_149749_3_, p_149749_4_, p_149749_5_, p_149749_6_);
++
++        if ((p_149749_6_ & 7) >= Facing.oppositeSide.length)
++        {
++            return;    // CraftBukkit - fix a piston AIOOBE issue
++        }
++
+         int i1 = Facing.oppositeSide[getDirectionMeta(p_149749_6_)];
+         p_149749_2_ += Facing.offsetsXForSide[i1];
+         p_149749_3_ += Facing.offsetsYForSide[i1];
+@@ -200,6 +206,12 @@
+     public void onNeighborBlockChange(World p_149695_1_, int p_149695_2_, int p_149695_3_, int p_149695_4_, Block p_149695_5_)
+     {
+         int l = getDirectionMeta(p_149695_1_.getBlockMetadata(p_149695_2_, p_149695_3_, p_149695_4_));
++
++        if ((l & 7) >= Facing.oppositeSide.length)
++        {
++            return;    // CraftBukkit - fix a piston AIOOBE issue
++        }
++
+         Block block1 = p_149695_1_.getBlock(p_149695_2_ - Facing.offsetsXForSide[l], p_149695_3_ - Facing.offsetsYForSide[l], p_149695_4_ - Facing.offsetsZForSide[l]);
+ 
+         if (block1 != Blocks.piston && block1 != Blocks.sticky_piston)

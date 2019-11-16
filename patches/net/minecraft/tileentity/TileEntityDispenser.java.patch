@@ -1,52 +1,69 @@
 --- ../src-base/minecraft/net/minecraft/tileentity/TileEntityDispenser.java
 +++ ../src-work/minecraft/net/minecraft/tileentity/TileEntityDispenser.java
-@@ -1,5 +1,6 @@
- package net.minecraft.tileentity;
+@@ -7,6 +7,13 @@
+ import net.minecraft.nbt.NBTTagCompound;
+ import net.minecraft.nbt.NBTTagList;
  
++// CraftBukkit start
 +import java.util.List;
- import java.util.Random;
- import net.minecraft.entity.player.EntityPlayer;
- import net.minecraft.entity.player.InventoryPlayer;
-@@ -12,12 +13,38 @@
- import net.minecraft.util.datafix.DataFixer;
- import net.minecraft.util.datafix.FixTypes;
- import net.minecraft.util.datafix.walkers.ItemStackDataLists;
-+import org.bukkit.craftbukkit.v1_12_R1.entity.CraftHumanEntity;
++
++import org.bukkit.craftbukkit.entity.CraftHumanEntity;
 +import org.bukkit.entity.HumanEntity;
- 
- public class TileEntityDispenser extends TileEntityLockableLoot
++// CraftBukkit end
++
+ public class TileEntityDispenser extends TileEntity implements IInventory
  {
-     private static final Random RNG = new Random();
-     private NonNullList<ItemStack> stacks = NonNullList.<ItemStack>withSize(9, ItemStack.EMPTY);
+     private ItemStack[] field_146022_i = new ItemStack[9];
+@@ -14,6 +21,36 @@
+     protected String field_146020_a;
+     private static final String __OBFID = "CL_00000352";
  
-+    // CraftBukkit start - add fields and methods
++    // CraftBukkit start
 +    public List<HumanEntity> transaction = new java.util.ArrayList<HumanEntity>();
 +    private int maxStack = MAX_STACK;
-+    
-+    public List<ItemStack> getContents() {
-+        return this.stacks;
++
++    public ItemStack[] getContents()
++    {
++        return this.field_146022_i;
 +    }
-+        
-+    public void onOpen(CraftHumanEntity who) {
++
++    public void onOpen(CraftHumanEntity who)
++    {
 +        transaction.add(who);
 +    }
-+    
-+    public void onClose(CraftHumanEntity who) {
++
++    public void onClose(CraftHumanEntity who)
++    {
 +        transaction.remove(who);
 +    }
-+        
-+    public List<HumanEntity> getViewers() {
++
++    public List<HumanEntity> getViewers()
++    {
 +        return transaction;
 +    }
-+        
-+    public void setMaxStackSize(int size) {
++
++    public void setMaxStackSize(int size)
++    {
 +        maxStack = size;
 +    }
 +    // CraftBukkit end
++
      public int getSizeInventory()
      {
          return 9;
-@@ -112,7 +139,7 @@
+@@ -79,6 +116,11 @@
+         {
+             if (this.field_146022_i[k] != null && this.field_146021_j.nextInt(j++) == 0)
+             {
++                if (this.field_146022_i[k].stackSize == 0)
++                {
++                    continue;    // CraftBukkit
++                }
++
+                 i = k;
+             }
+         }
+@@ -176,7 +218,7 @@
  
      public int getInventoryStackLimit()
      {
@@ -54,4 +71,17 @@
 +        return maxStack; // CraftBukkit
      }
  
-     public String getGuiID()
+     public boolean isUseableByPlayer(EntityPlayer p_70300_1_)
+@@ -192,4 +234,12 @@
+     {
+         return true;
+     }
++
++    // Cauldron start
++    @Override
++    public boolean canUpdate()
++    {
++        return false;
++    }
++    // Cauldron end
+ }

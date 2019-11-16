@@ -1,19 +1,22 @@
 package net.minecraftforge.cauldron.block;
 
 import net.minecraft.inventory.IInventory;
+
 import org.bukkit.block.Block;
-import org.bukkit.craftbukkit.v1_12_R1.CraftWorld;
-import org.bukkit.craftbukkit.v1_12_R1.block.CraftBlockState;
-import org.bukkit.craftbukkit.v1_12_R1.inventory.CraftInventory;
+import org.bukkit.craftbukkit.CraftWorld;
+import org.bukkit.craftbukkit.block.CraftBlockState;
+import org.bukkit.craftbukkit.inventory.CraftInventory;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 
 public class CraftCustomContainer extends CraftBlockState implements InventoryHolder {
+    private final CraftWorld world;
     private final net.minecraft.inventory.IInventory container;
 
     public CraftCustomContainer(Block block) {
         super(block);
-        container = (IInventory) ((CraftWorld) getWorld()).getTileEntityAt(getX(), getY(), getZ());
+        world = (CraftWorld) block.getWorld();
+        container = (IInventory)world.getTileEntityAt(getX(), getY(), getZ());
     }
 
     @Override

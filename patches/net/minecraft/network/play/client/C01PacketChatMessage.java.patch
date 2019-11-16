@@ -1,0 +1,14 @@
+--- ../src-base/minecraft/net/minecraft/network/play/client/C01PacketChatMessage.java
++++ ../src-work/minecraft/net/minecraft/network/play/client/C01PacketChatMessage.java
+@@ -52,4 +52,11 @@
+     {
+         this.processPacket((INetHandlerPlayServer)p_148833_1_);
+     }
++
++    // CraftBukkit start - make chat async
++    public boolean hasPriority()
++    {
++        return !this.field_149440_a.startsWith("/");
++    }
++    // CraftBukkit end
+ }

@@ -1,0 +1,11 @@
+--- ../src-base/minecraft/net/minecraft/world/chunk/EmptyChunk.java
++++ ../src-work/minecraft/net/minecraft/world/chunk/EmptyChunk.java
+@@ -113,7 +113,7 @@
+ 
+     public Random getRandomWithSeed(long p_76617_1_)
+     {
+-        return new Random(this.worldObj.getSeed() + (long)(this.xPosition * this.xPosition * 4987142) + (long)(this.xPosition * 5947611) + (long)(this.zPosition * this.zPosition) * 4392871L + (long)(this.zPosition * 389711) ^ p_76617_1_);
++        return new Random(this.worldObj.getSeed() + (4987142L * this.xPosition * this.xPosition) + (5947611L * this.xPosition) + (4392871L * this.zPosition * this.zPosition) + (389711L * this.zPosition) ^ p_76617_1_);
+     }
+ 
+     public boolean isEmpty()

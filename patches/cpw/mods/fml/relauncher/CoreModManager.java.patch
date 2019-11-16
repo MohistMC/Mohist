@@ -1,0 +1,85 @@
+--- ../src-base/minecraft/cpw/mods/fml/relauncher/CoreModManager.java
++++ ../src-work/minecraft/cpw/mods/fml/relauncher/CoreModManager.java
+@@ -60,7 +60,7 @@
+     private static final Attributes.Name COREMODCONTAINSFMLMOD = new Attributes.Name("FMLCorePluginContainsFMLMod");
+     private static final Attributes.Name MODTYPE = new Attributes.Name("ModType");
+     private static final Attributes.Name MODSIDE = new Attributes.Name("ModSide");
+-    private static String[] rootPlugins = { "cpw.mods.fml.relauncher.FMLCorePlugin", "net.minecraftforge.classloading.FMLForgePlugin" };
++    private static String[] rootPlugins = { "cpw.mods.fml.relauncher.FMLCorePlugin", "net.minecraftforge.classloading.FMLForgePlugin", "pw.prok.imagine.ImagineLoadingPlugin" };
+     private static List<String> loadedCoremods = Lists.newArrayList();
+     private static List<FMLPluginWrapper> loadPlugins;
+     private static boolean deobfuscatedEnvironment;
+@@ -101,6 +101,7 @@
+         @Override
+         public void injectIntoClassLoader(LaunchClassLoader classLoader)
+         {
++            // Cauldron end
+             FMLRelaunchLog.fine("Injecting coremod %s {%s} class transformers", name, coreModInstance.getClass().getName());
+             if (coreModInstance.getASMTransformerClass() != null) for (String transformer : coreModInstance.getASMTransformerClass())
+             {
+@@ -160,6 +161,9 @@
+ 
+     }
+ 
++    // Cauldron - group output of @MCVersion warnings
++    private static List<String> noVersionAnnotationCoreMods = new ArrayList<String>();
++
+     public static void handleLaunch(File mcDir, LaunchClassLoader classLoader, FMLTweaker tweaker)
+     {
+         CoreModManager.mcDir = mcDir;
+@@ -219,6 +223,19 @@
+             loadCoreMod(classLoader, coreModClassName, null);
+         }
+         discoverCoreMods(mcDir, classLoader);
++        // Cauldron start - group output of @MCVersion warnings
++        if (!noVersionAnnotationCoreMods.isEmpty())
++        {
++            FMLRelaunchLog
++                    .warning("The following coremods do not have a @MCVersion annotation. They may cause problems if this is not the correct version of Minecraft for them.");
++            StringBuilder sb = new StringBuilder("Missing @MCVersion: ");
++            for (String className : noVersionAnnotationCoreMods)
++            {
++                sb.append(className).append("  ");
++            }
++            FMLRelaunchLog.warning(sb.toString());
++        }
++        // Cauldron end
+ 
+     }
+ 
+@@ -336,6 +353,10 @@
+             String cascadedTweaker = mfAttributes.getValue("TweakClass");
+             if (cascadedTweaker != null)
+             {
++                if ("fastcraft.Tweaker".equals(cascadedTweaker) && !"false".equals(System.getProperty("thermos.fastcraft.disable", "true"))) {
++                    FMLRelaunchLog.info("Found FastCraft tweaker, skipping...");
++                    continue;
++                }
+                 FMLRelaunchLog.info("Loading tweaker %s from %s", cascadedTweaker, coreMod.getName());
+                 Integer sortOrder = Ints.tryParse(Strings.nullToEmpty(mfAttributes.getValue("TweakOrder")));
+                 sortOrder = (sortOrder == null ? Integer.valueOf(0) : sortOrder);
+@@ -365,6 +386,10 @@
+                 FMLRelaunchLog.fine("Not found coremod data in %s", coreMod.getName());
+                 continue;
+             }
++            if ("fastcraft.LoadingPlugin".equals(fmlCorePlugin) && !"false".equals(System.getProperty("thermos.fastcraft.disable", "true"))) {
++                FMLRelaunchLog.warning("Found FastCraft coremod, skipping...");
++                continue;
++            }
+             // Support things that are mod jars, but not FML mod jars
+             try
+             {
+@@ -467,8 +492,11 @@
+             MCVersion requiredMCVersion = coreModClazz.getAnnotation(IFMLLoadingPlugin.MCVersion.class);
+             if (!Arrays.asList(rootPlugins).contains(coreModClass) && (requiredMCVersion == null || Strings.isNullOrEmpty(requiredMCVersion.value())))
+             {
+-                FMLRelaunchLog.log(Level.WARN, "The coremod %s does not have a MCVersion annotation, it may cause issues with this version of Minecraft",
+-                        coreModClass);
++                // Cauldron start - group output of @MCVersion warnings
++                // FMLRelaunchLog.log(Level.WARN, "The coremod %s does not have a MCVersion annotation, it may cause issues with this version of Minecraft",
++                //        coreModClass);
++                noVersionAnnotationCoreMods.add(coreModClass);
++                // Cauldron end
+             }
+             else if (requiredMCVersion != null && !FMLInjectionData.mccversion.equals(requiredMCVersion.value()))
+             {

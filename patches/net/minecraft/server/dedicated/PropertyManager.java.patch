@@ -1,166 +1,98 @@
 --- ../src-base/minecraft/net/minecraft/server/dedicated/PropertyManager.java
 +++ ../src-work/minecraft/net/minecraft/server/dedicated/PropertyManager.java
-@@ -3,10 +3,14 @@
- import java.io.File;
- import java.io.FileInputStream;
- import java.io.FileOutputStream;
--import java.io.IOException;
-+import java.io.InputStreamReader;
-+import java.io.OutputStream;
-+import java.io.OutputStreamWriter;
- import java.util.Properties;
-+import joptsimple.OptionSet;
- import net.minecraftforge.fml.relauncher.Side;
- import net.minecraftforge.fml.relauncher.SideOnly;
-+import org.apache.commons.io.IOUtils;
+@@ -10,11 +10,13 @@
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
  
-@@ -14,8 +18,9 @@
++import joptsimple.OptionSet; // CraftBukkit
++
+ @SideOnly(Side.SERVER)
  public class PropertyManager
  {
-     private static final Logger LOGGER = LogManager.getLogger();
+     private static final Logger field_164440_a = LogManager.getLogger();
 -    private final Properties serverProperties = new Properties();
-+    public final Properties serverProperties = new Properties();
++    public final Properties serverProperties = new Properties(); // CraftBukkit - private -> public
      private final File serverPropertiesFile;
-+    private OptionSet options = null;
+     private static final String __OBFID = "CL_00001782";
  
-     public PropertyManager(File propertiesFile)
-     {
-@@ -28,7 +33,7 @@
-             try
-             {
-                 fileinputstream = new FileInputStream(propertiesFile);
--                this.serverProperties.load(fileinputstream);
-+                this.serverProperties.load(new InputStreamReader(fileinputstream, "utf-8"));
-             }
-             catch (Exception exception)
-             {
-@@ -37,17 +42,7 @@
-             }
-             finally
-             {
--                if (fileinputstream != null)
--                {
--                    try
--                    {
--                        fileinputstream.close();
--                    }
--                    catch (IOException var11)
--                    {
--                        ;
--                    }
--                }
-+                IOUtils.closeQuietly(fileinputstream);
-             }
-         }
-         else
-@@ -57,6 +52,18 @@
+@@ -58,6 +60,26 @@
          }
      }
  
-+    public PropertyManager(final OptionSet options) {
++    // CraftBukkit start
++    private OptionSet options = null;
++
++    public PropertyManager(final OptionSet options)
++    {
 +        this((File) options.valueOf("config"));
 +        this.options = options;
 +    }
 +
-+    private <T> T getOverride(String name, T value) {
-+        if ((this.options != null) && (this.options.has(name)) && !name.equals( "online-mode")) { // Spigot
++    private <T> T getOverride(String name, T value)
++    {
++        if ((this.options != null) && (this.options.has(name)))
++        {
 +            return (T) this.options.valueOf(name);
 +        }
++
 +        return value;
 +    }
++    // CraftBukkit end
 +
      public void generateNewProperties()
      {
-         LOGGER.info("Generating new properties file");
-@@ -69,8 +76,13 @@
+         field_164440_a.info("Generating new properties file");
+@@ -70,6 +92,13 @@
  
          try
          {
 +            // CraftBukkit start - Don't attempt writing to file if it's read only
-+            if (this.serverPropertiesFile.exists() && !this.serverPropertiesFile.canWrite()) {
++            if (this.serverPropertiesFile.exists() && !this.serverPropertiesFile.canWrite())
++            {
 +                return;
 +            }
++
 +            // CraftBukkit end
              fileoutputstream = new FileOutputStream(this.serverPropertiesFile);
--            this.serverProperties.store(fileoutputstream, "Minecraft server properties");
-+            this.serverProperties.store(new OutputStreamWriter(fileoutputstream, "utf-8"), "Minecraft server properties");
+             this.serverProperties.store(fileoutputstream, "Minecraft server properties");
+         }
+@@ -108,20 +137,20 @@
+             this.saveProperties();
+         }
+ 
+-        return this.serverProperties.getProperty(p_73671_1_, p_73671_2_);
++        return this.getOverride(p_73671_1_, this.serverProperties.getProperty(p_73671_1_, p_73671_2_)); // CraftBukkit
+     }
+ 
+     public int getIntProperty(String p_73669_1_, int p_73669_2_)
+     {
+         try
+         {
+-            return Integer.parseInt(this.getStringProperty(p_73669_1_, "" + p_73669_2_));
++            return this.getOverride(p_73669_1_, Integer.parseInt(this.getStringProperty(p_73669_1_, "" + p_73669_2_))); // CraftBukkit
          }
          catch (Exception exception)
          {
-@@ -79,17 +91,7 @@
-         }
-         finally
-         {
--            if (fileoutputstream != null)
--            {
--                try
--                {
--                    fileoutputstream.close();
--                }
--                catch (IOException var10)
--                {
--                    ;
--                }
--            }
-+            IOUtils.closeQuietly((OutputStream)fileoutputstream);
-         }
-     }
- 
-@@ -107,20 +109,20 @@
+             this.serverProperties.setProperty(p_73669_1_, "" + p_73669_2_);
              this.saveProperties();
+-            return p_73669_2_;
++            return this.getOverride(p_73669_1_, p_73669_2_); // CraftBukkit
          }
- 
--        return this.serverProperties.getProperty(key, defaultValue);
-+        return getOverride(key, this.serverProperties.getProperty(key, defaultValue));
      }
  
-     public int getIntProperty(String key, int defaultValue)
+@@ -129,13 +158,13 @@
      {
          try
          {
--            return Integer.parseInt(this.getStringProperty(key, "" + defaultValue));
-+            return getOverride(key, Integer.parseInt(this.getStringProperty(key, "" + defaultValue)));
+-            return Boolean.parseBoolean(this.getStringProperty(p_73670_1_, "" + p_73670_2_));
++            return this.getOverride(p_73670_1_, Boolean.parseBoolean(this.getStringProperty(p_73670_1_, "" + p_73670_2_))); // CraftBukkit
          }
-         catch (Exception var4)
+         catch (Exception exception)
          {
-             this.serverProperties.setProperty(key, "" + defaultValue);
+             this.serverProperties.setProperty(p_73670_1_, "" + p_73670_2_);
              this.saveProperties();
--            return defaultValue;
-+            return getOverride(key, defaultValue);
-         }
-     }
- 
-@@ -128,13 +130,13 @@
-     {
-         try
-         {
--            return Long.parseLong(this.getStringProperty(key, "" + defaultValue));
-+            return getOverride(key, Long.parseLong(this.getStringProperty(key, "" + defaultValue)));
-         }
-         catch (Exception var5)
-         {
-             this.serverProperties.setProperty(key, "" + defaultValue);
-             this.saveProperties();
--            return defaultValue;
-+            return getOverride(key, defaultValue);
-         }
-     }
- 
-@@ -142,13 +144,13 @@
-     {
-         try
-         {
--            return Boolean.parseBoolean(this.getStringProperty(key, "" + defaultValue));
-+            return getOverride(key, Boolean.parseBoolean(this.getStringProperty(key, "" + defaultValue)));
-         }
-         catch (Exception var4)
-         {
-             this.serverProperties.setProperty(key, "" + defaultValue);
-             this.saveProperties();
--            return defaultValue;
-+            return getOverride(key, defaultValue);
+-            return p_73670_2_;
++            return this.getOverride(p_73670_1_, p_73670_2_); // CraftBukkit
          }
      }
  

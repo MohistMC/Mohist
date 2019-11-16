@@ -1,0 +1,17 @@
+--- ../src-base/minecraft/net/minecraft/util/WeightedRandomFishable.java
++++ ../src-work/minecraft/net/minecraft/util/WeightedRandomFishable.java
+@@ -6,9 +6,11 @@
+ 
+ public class WeightedRandomFishable extends WeightedRandom.Item
+ {
+-    private final ItemStack field_150711_b;
+-    private float field_150712_c;
+-    private boolean field_150710_d;
++    // Cauldron start - private -> public
++    public final ItemStack field_150711_b;
++    public float field_150712_c;
++    public boolean field_150710_d;
++    // Cauldron end
+     private static final String __OBFID = "CL_00001664";
+ 
+     public WeightedRandomFishable(ItemStack p_i45317_1_, int p_i45317_2_)

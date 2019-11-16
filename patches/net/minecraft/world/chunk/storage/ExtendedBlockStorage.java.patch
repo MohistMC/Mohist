@@ -1,35 +1,269 @@
 --- ../src-base/minecraft/net/minecraft/world/chunk/storage/ExtendedBlockStorage.java
 +++ ../src-work/minecraft/net/minecraft/world/chunk/storage/ExtendedBlockStorage.java
-@@ -27,6 +27,22 @@
+@@ -31,6 +31,29 @@
          }
      }
  
-+    public ExtendedBlockStorage(int y, boolean flag, char[] blockIds) {
++    // CraftBukkit start
++    public ExtendedBlockStorage(int y, boolean flag, byte[] blkIds, byte[] extBlkIds)
++    {
 +        this.yBase = y;
-+        this.data = new BlockStateContainer();
-+        for (int i = 0; i < blockIds.length; i++) {
-+            int xx = i & 15;
-+            int yy = (i >> 8) & 15;
-+            int zz = (i >> 4) & 15;
-+            this.data.set(xx, yy, zz, Block.BLOCK_STATE_IDS.getByValue(blockIds[i]));
-+        }
-+        this.blockLight = new NibbleArray();
-+        if (flag) {
-+            this.skyLight = new NibbleArray();
-+        }
-+        recalculateRefCounts();
-+    }
++        this.blockLSBArray = blkIds;
 +
-     public IBlockState get(int x, int y, int z)
++        if (extBlkIds != null)
++        {
++            this.blockMSBArray = new NibbleArray(extBlkIds, 4);
++        }
++
++        this.blockMetadataArray = new NibbleArray(this.blockLSBArray.length, 4);
++        this.blocklightArray = new NibbleArray(this.blockLSBArray.length, 4);
++
++        if (flag)
++        {
++            this.skylightArray = new NibbleArray(this.blockLSBArray.length, 4);
++        }
++
++        this.removeInvalidBlocks();
++    }
++    // CraftBukkit end
++
+     public Block getBlockByExtId(int p_150819_1_, int p_150819_2_, int p_150819_3_)
      {
-         return this.data.get(x, y, z);
-@@ -65,7 +81,8 @@
+         int l = this.blockLSBArray[p_150819_2_ << 8 | p_150819_3_ << 4 | p_150819_1_] & 255;
+@@ -39,7 +62,11 @@
+         {
+             l |= this.blockMSBArray.get(p_150819_1_, p_150819_2_, p_150819_3_) << 8;
+         }
++        
++        // Thermos instant delete block IDs which are banned
++        if (net.minecraftforge.cauldron.configuration.CauldronConfig.instance.instantRemove.contains(l)) return Blocks.air;
  
-     public boolean isEmpty()
-     {
--        return this.blockRefCount == 0;
-+        // return this.blockRefCount == 0;
-+        return false; // CraftBukkit - MC-80966
++        
+         return Block.getBlockById(l);
      }
  
-     public boolean needsRandomTick()
+@@ -139,6 +166,106 @@
+ 
+     public void removeInvalidBlocks()
+     {
++        // CraftBukkit start - Optimize for speed
++        byte[] blkIds = this.blockLSBArray;
++        int cntNonEmpty = 0;
++        int cntTicking = 0;
++
++        if (this.blockMSBArray == null)   // No extended block IDs?  Don't waste time messing with them
++        {
++            for (int off = 0; off < blkIds.length; off++)
++            {
++                int l = blkIds[off] & 0xFF;
++
++                if (l > 0)
++                {
++                    if (Block.getBlockById(l) == null)
++                    {
++                        blkIds[off] = 0;
++                    }
++                    else
++                    {
++                        ++cntNonEmpty;
++
++                        if (Block.getBlockById(l).getTickRandomly())
++                        {
++                            ++cntTicking;
++                        }
++                    }
++                }
++            }
++        }
++        else
++        {
++            this.blockMSBArray.forceToNonTrivialArray(); // Spigot
++            byte[] ext = this.blockMSBArray.getValueArray();
++
++            for (int off = 0, off2 = 0; off < blkIds.length;)
++            {
++                byte extid = ext[off2];
++                int l = (blkIds[off] & 0xFF) | ((extid & 0xF) << 8); // Even data
++
++                if (l > 0)
++                {
++                    if (Block.getBlockById(l) == null)
++                    {
++                        blkIds[off] = 0;
++                        ext[off2] &= 0xF0;
++                    }
++                    else
++                    {
++                        ++cntNonEmpty;
++
++                        if (Block.getBlockById(l).getTickRandomly())
++                        {
++                            ++cntTicking;
++                        }
++                    }
++                }
++
++                off++;
++                l = (blkIds[off] & 0xFF) | ((extid & 0xF0) << 4); // Odd data
++
++                if (l > 0)
++                {
++                    if (Block.getBlockById(l) == null)
++                    {
++                        blkIds[off] = 0;
++                        ext[off2] &= 0x0F;
++                    }
++                    else
++                    {
++                        ++cntNonEmpty;
++
++                        if (Block.getBlockById(l).getTickRandomly())
++                        {
++                            ++cntTicking;
++                        }
++                    }
++                }
++
++                off++;
++                off2++;
++            }
++
++            // Spigot start
++            this.blockMSBArray.detectAndProcessTrivialArray();
++
++            if (this.blockMSBArray.isTrivialArray() && (this.blockMSBArray.getTrivialArrayValue() == 0))
++            {
++                this.blockMSBArray = null;
++            }
++
++            // Spigot end
++        }
++
++        this.blockRefCount = cntNonEmpty;
++        this.tickRefCount = cntTicking;
++    }
++
++    public void old_recalcBlockCounts()
++    {
++        // CraftBukkit end
+         this.blockRefCount = 0;
+         this.tickRefCount = 0;
+ 
+@@ -175,51 +302,112 @@
+         this.blockMSBArray = null;
+     }
+ 
++
++    
+     public NibbleArray getBlockMSBArray()
+     {
++    	if(this.blockMSBArray != null)
++    	{
++    		this.blockMSBArray.forceToNonTrivialArray();
++    	}    	
+         return this.blockMSBArray;
+     }
+ 
+     public NibbleArray getMetadataArray()
+     {
++    	if(blockMetadataArray != null)
++    	{
++    		this.blockMetadataArray.forceToNonTrivialArray();
++    	}
+         return this.blockMetadataArray;
+     }
+ 
+     public NibbleArray getBlocklightArray()
+     {
++    	if(blocklightArray != null)
++    	{
++    		this.blocklightArray.forceToNonTrivialArray();
++    	}   
+         return this.blocklightArray;
+     }
+ 
+     public NibbleArray getSkylightArray()
+     {
++    	if(skylightArray != null)
++    	{
++    		this.skylightArray.forceToNonTrivialArray();
++    	}       	
+         return this.skylightArray;
+     }
+ 
+     public void setBlockLSBArray(byte[] p_76664_1_)
+     {
+-        this.blockLSBArray = p_76664_1_;
++        this.blockLSBArray = this.validateByteArray(p_76664_1_); // CraftBukkit - Validate data
+     }
+ 
+     public void setBlockMSBArray(NibbleArray p_76673_1_)
+     {
+-        this.blockMSBArray = p_76673_1_;
++        // CraftBukkit start - Don't hang on to an empty nibble array
++        boolean empty = true;
++
++        // Spigot start
++        if ((!p_76673_1_.isTrivialArray()) || (p_76673_1_.getTrivialArrayValue() != 0))
++        {
++            empty = false;
++        }
++
++        // Spigot end
++
++        if (empty)
++        {
++            return;
++        }
++
++        // CraftBukkit end
++        this.blockMSBArray = this.validateNibbleArray(p_76673_1_); // CraftBukkit - Validate data
+     }
+ 
+     public void setBlockMetadataArray(NibbleArray p_76668_1_)
+     {
+-        this.blockMetadataArray = p_76668_1_;
++        this.blockMetadataArray = this.validateNibbleArray(p_76668_1_); // CraftBukkit - Validate data
+     }
+ 
+     public void setBlocklightArray(NibbleArray p_76659_1_)
+     {
+-        this.blocklightArray = p_76659_1_;
++        this.blocklightArray = this.validateNibbleArray(p_76659_1_); // CraftBukkit - Validate data
+     }
+ 
+     public void setSkylightArray(NibbleArray p_76666_1_)
+     {
+-        this.skylightArray = p_76666_1_;
++        this.skylightArray = this.validateNibbleArray(p_76666_1_); // CraftBukkit - Validate data
+     }
+ 
++    // CraftBukkit start - Validate array lengths
++    private NibbleArray validateNibbleArray(NibbleArray nibbleArray)
++    {
++        // Spigot start - fix for more awesome nibble arrays
++        if (nibbleArray != null && nibbleArray.getByteLength() < 2048)
++        {
++            nibbleArray.resizeArray(2048);
++        }
++
++        // Spigot end
++        return nibbleArray;
++    }
++
++    private byte[] validateByteArray(byte[] byteArray)
++    {
++        if (byteArray != null && byteArray.length < 4096)
++        {
++            byte[] newArray = new byte[4096];
++            System.arraycopy(byteArray, 0, newArray, 0, byteArray.length);
++            byteArray = newArray;
++        }
++
++        return byteArray;
++    }
++    // CraftBukkit end
++
+     @SideOnly(Side.CLIENT)
+     public NibbleArray createBlockMSBArray()
+     {

@@ -1,25 +1,16 @@
 --- ../src-base/minecraft/net/minecraft/network/rcon/RConConsoleSource.java
 +++ ../src-work/minecraft/net/minecraft/network/rcon/RConConsoleSource.java
-@@ -22,6 +22,10 @@
-         return "Rcon";
+@@ -25,6 +25,13 @@
+         return new ChatComponentText(this.getCommandSenderName());
      }
  
-+    public void sendMessage(String message) {
++    // CraftBukkit start - Send a String
++    public void sendMessage(String message)
++    {
 +        this.buffer.append(message);
 +    }
++    // CraftBukkit end
 +
-     public void sendMessage(ITextComponent component)
+     public void addChatMessage(IChatComponent p_145747_1_)
      {
-         this.buffer.append(component.getUnformattedText());
-@@ -32,6 +36,11 @@
-         return true;
-     }
- 
-+    public boolean canUseCommand(int permLevel, String commandName, String perm)
-+    {
-+        return true;
-+    }
-+
-     public World getEntityWorld()
-     {
-         return this.server.getEntityWorld();
+         this.buffer.append(p_145747_1_.getUnformattedText());

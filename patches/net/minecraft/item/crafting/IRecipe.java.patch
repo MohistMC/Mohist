@@ -1,36 +1,9 @@
 --- ../src-base/minecraft/net/minecraft/item/crafting/IRecipe.java
 +++ ../src-work/minecraft/net/minecraft/item/crafting/IRecipe.java
-@@ -3,6 +3,7 @@
- import net.minecraft.inventory.InventoryCrafting;
- import net.minecraft.item.ItemStack;
- import net.minecraft.util.NonNullList;
-+import net.minecraft.util.ResourceLocation;
- import net.minecraft.world.World;
+@@ -13,4 +13,6 @@
+     int getRecipeSize();
  
- public interface IRecipe extends net.minecraftforge.registries.IForgeRegistryEntry<IRecipe>
-@@ -20,18 +21,22 @@
-         return net.minecraftforge.common.ForgeHooks.defaultRecipeGetRemainingItems(inv);
-     }
- 
--default NonNullList<Ingredient> getIngredients()
-+    default NonNullList<Ingredient> getIngredients()
-     {
-         return NonNullList.<Ingredient>create();
-     }
- 
--default boolean isDynamic()
-+    default boolean isDynamic()
-     {
-         return false;
-     }
- 
--default String getGroup()
-+    default String getGroup()
-     {
-         return "";
-     }
+     ItemStack getRecipeOutput();
 +
 +    org.bukkit.inventory.Recipe toBukkitRecipe(); // CraftBukkit
-+
-+    void setKey(ResourceLocation key); // CraftBukkit
  }

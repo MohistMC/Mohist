@@ -6,8 +6,8 @@
      public boolean allowEdit = true;
 -    private float flySpeed = 0.05F;
 -    private float walkSpeed = 0.1F;
-+    public float flySpeed = 0.05F;
-+    public float walkSpeed = 0.1F;
++    public float flySpeed = 0.05F; // CraftBukkit private -> public
++    public float walkSpeed = 0.1F; // CraftBukkit private -> public
+     private static final String __OBFID = "CL_00001708";
  
-     public void writeCapabilitiesToNBT(NBTTagCompound tagCompound)
-     {
+     public void writeCapabilitiesToNBT(NBTTagCompound p_75091_1_)

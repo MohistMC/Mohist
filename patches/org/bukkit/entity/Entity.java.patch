@@ -1,0 +1,25 @@
+--- ../src-base/minecraft/org/bukkit/entity/Entity.java
++++ ../src-work/minecraft/org/bukkit/entity/Entity.java
+@@ -291,4 +291,22 @@
+      * @return The current vehicle.
+      */
+     public Entity getVehicle();
++
++    // Spigot Start
++    public class Spigot
++    {
++
++        /**
++         * Returns whether this entity is invulnerable.
++         *         
++        * @return True if the entity is invulnerable.
++         */
++        public boolean isInvulnerable()
++        {
++            throw new UnsupportedOperationException( "Not supported yet." );
++        }
++    }
++
++    Spigot spigot();
++    // Spigot End
+ }

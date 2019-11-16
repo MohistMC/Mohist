@@ -1,15 +1,21 @@
 --- ../src-base/minecraft/net/minecraft/item/ItemFireball.java
 +++ ../src-work/minecraft/net/minecraft/item/ItemFireball.java
-@@ -38,6 +38,12 @@
+@@ -61,6 +61,18 @@
              {
-                 if (worldIn.getBlockState(pos).getMaterial() == Material.AIR)
+                 if (p_77648_3_.getBlock(p_77648_4_, p_77648_5_, p_77648_6_).getMaterial() == Material.air)
                  {
-+                    if (org.bukkit.craftbukkit.v1_12_R1.event.CraftEventFactory.callBlockIgniteEvent(worldIn, pos.getX(), pos.getY(), pos.getZ(), org.bukkit.event.block.BlockIgniteEvent.IgniteCause.FIREBALL, player).isCancelled()) {
-+                        if (!player.capabilities.isCreativeMode) {
-+                            itemstack.shrink(1);
++                    // CraftBukkit start
++                    if (org.bukkit.craftbukkit.event.CraftEventFactory.callBlockIgniteEvent(p_77648_3_, p_77648_4_, p_77648_5_, p_77648_6_, org.bukkit.event.block.BlockIgniteEvent.IgniteCause.FIREBALL, p_77648_2_).isCancelled())
++                    {
++                        if (!p_77648_2_.capabilities.isCreativeMode)
++                        {
++                            --p_77648_1_.stackSize;
 +                        }
-+                        return EnumActionResult.PASS;
++
++                        return false;
 +                    }
-                     worldIn.playSound((EntityPlayer)null, pos, SoundEvents.ITEM_FIRECHARGE_USE, SoundCategory.BLOCKS, 1.0F, (itemRand.nextFloat() - itemRand.nextFloat()) * 0.2F + 1.0F);
-                     worldIn.setBlockState(pos, Blocks.FIRE.getDefaultState());
++
++                    // CraftBukkit end
+                     p_77648_3_.playSoundEffect((double)p_77648_4_ + 0.5D, (double)p_77648_5_ + 0.5D, (double)p_77648_6_ + 0.5D, "fire.ignite", 1.0F, itemRand.nextFloat() * 0.4F + 0.8F);
+                     p_77648_3_.setBlock(p_77648_4_, p_77648_5_, p_77648_6_, Blocks.fire);
                  }

@@ -1,67 +1,18 @@
 --- ../src-base/minecraft/net/minecraft/item/ItemMinecart.java
 +++ ../src-work/minecraft/net/minecraft/item/ItemMinecart.java
-@@ -15,6 +15,8 @@
- import net.minecraft.util.EnumHand;
- import net.minecraft.util.math.BlockPos;
- import net.minecraft.world.World;
-+import org.bukkit.craftbukkit.v1_12_R1.inventory.CraftItemStack;
-+import org.bukkit.event.block.BlockDispenseEvent;
- 
- public class ItemMinecart extends Item
- {
-@@ -64,15 +66,41 @@
-                 }
-             }
- 
--            EntityMinecart entityminecart = EntityMinecart.create(world, d0, d1 + d3, d2, ((ItemMinecart)stack.getItem()).minecartType);
-+            // EntityMinecart entityminecart = EntityMinecart.create(world, d0, d1 + d3, d2, ((ItemMinecart)stack.getItem()).minecartType);
-+            ItemStack itemstack1 = stack.splitStack(1);
-+            org.bukkit.block.Block block2 = world.getWorld().getBlockAt(source.getBlockPos().getX(), source.getBlockPos().getY(), source.getBlockPos().getZ());
-+            CraftItemStack craftItem = CraftItemStack.asCraftMirror(itemstack1);
- 
-+            BlockDispenseEvent event = new BlockDispenseEvent(block2, craftItem.clone(), new org.bukkit.util.Vector(d0, d1 + d3, d2));
-+            world.getServer().getPluginManager().callEvent(event);
-+
-+            if (event.isCancelled()) {
-+                stack.grow(1);
-+                return stack;
-+            }
-+
-+            if (!event.getItem().equals(craftItem)) {
-+                stack.grow(1);
-+                // Chain to handler for new item
-+                ItemStack eventStack = CraftItemStack.asNMSCopy(event.getItem());
-+                IBehaviorDispenseItem idispensebehavior = BlockDispenser.DISPENSE_BEHAVIOR_REGISTRY.getObject(eventStack.getItem());
-+                if (idispensebehavior != IBehaviorDispenseItem.DEFAULT_BEHAVIOR && idispensebehavior != this) {
-+                    idispensebehavior.dispense(source, eventStack);
-+                    return stack;
-+                }
-+            }
-+
-+            itemstack1 = CraftItemStack.asNMSCopy(event.getItem());
-+            EntityMinecart entityminecart = EntityMinecart.create(world, event.getVelocity().getX(), event.getVelocity().getY(), event.getVelocity().getZ(), ((ItemMinecart) itemstack1.getItem()).minecartType);
-+
-             if (stack.hasDisplayName())
+@@ -79,6 +79,15 @@
+         {
+             if (!p_77648_3_.isRemote)
              {
-                 entityminecart.setCustomNameTag(stack.getDisplayName());
-             }
++                // CraftBukkit start - Minecarts
++                org.bukkit.event.player.PlayerInteractEvent event = org.bukkit.craftbukkit.event.CraftEventFactory.callPlayerInteractEvent(p_77648_2_, org.bukkit.event.block.Action.RIGHT_CLICK_BLOCK, p_77648_4_, p_77648_5_, p_77648_6_, p_77648_7_, p_77648_1_);
++
++                if (event.isCancelled())
++                {
++                    return false;
++                }
++
++                // CraftBukkit end
+                 EntityMinecart entityminecart = EntityMinecart.createMinecart(p_77648_3_, (double)((float)p_77648_4_ + 0.5F), (double)((float)p_77648_5_ + 0.5F), (double)((float)p_77648_6_ + 0.5F), this.minecartType);
  
--            world.spawnEntity(entityminecart);
--            stack.shrink(1);
-+            // world.spawnEntity(entityminecart);
-+            if (!world.spawnEntity(entityminecart)) stack.grow(1);
-+            // stack.shrink(1); // CraftBukkit - handled during event processing
-             return stack;
-         }
-         protected void playDispenseSound(IBlockSource source)
-@@ -119,7 +147,9 @@
-                     entityminecart.setCustomNameTag(itemstack.getDisplayName());
-                 }
- 
--                worldIn.spawnEntity(entityminecart);
-+                // worldIn.spawnEntity(entityminecart);
-+                if (!worldIn.spawnEntity(entityminecart))
-+                    return EnumActionResult.PASS;
-             }
- 
-             itemstack.shrink(1);
+                 if (p_77648_1_.hasDisplayName())

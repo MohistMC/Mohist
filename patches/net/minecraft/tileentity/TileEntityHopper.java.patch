@@ -1,185 +1,246 @@
 --- ../src-base/minecraft/net/minecraft/tileentity/TileEntityHopper.java
 +++ ../src-work/minecraft/net/minecraft/tileentity/TileEntityHopper.java
-@@ -7,12 +7,14 @@
- import net.minecraft.block.BlockHopper;
- import net.minecraft.entity.Entity;
- import net.minecraft.entity.item.EntityItem;
-+import net.minecraft.entity.item.EntityMinecartHopper;
- import net.minecraft.entity.player.EntityPlayer;
- import net.minecraft.entity.player.InventoryPlayer;
- import net.minecraft.inventory.Container;
- import net.minecraft.inventory.ContainerHopper;
- import net.minecraft.inventory.IInventory;
- import net.minecraft.inventory.ISidedInventory;
-+import net.minecraft.inventory.InventoryLargeChest;
- import net.minecraft.inventory.ItemStackHelper;
- import net.minecraft.item.ItemStack;
- import net.minecraft.nbt.NBTTagCompound;
-@@ -27,6 +29,13 @@
- import net.minecraft.util.math.BlockPos;
- import net.minecraft.util.math.MathHelper;
+@@ -18,11 +18,52 @@
+ import net.minecraft.util.MathHelper;
  import net.minecraft.world.World;
-+import net.minecraftforge.cauldron.inventory.CraftCustomInventory;
-+import org.bukkit.craftbukkit.v1_12_R1.entity.CraftHumanEntity;
-+import org.bukkit.craftbukkit.v1_12_R1.inventory.CraftItemStack;
+ 
++// CraftBukkit start
++import net.minecraft.entity.item.EntityMinecartHopper;
++import net.minecraft.inventory.InventoryLargeChest;
++import org.bukkit.craftbukkit.entity.CraftHumanEntity;
++import org.bukkit.craftbukkit.inventory.CraftItemStack;
 +import org.bukkit.entity.HumanEntity;
 +import org.bukkit.event.inventory.InventoryMoveItemEvent;
 +import org.bukkit.event.inventory.InventoryPickupItemEvent;
 +import org.bukkit.inventory.Inventory;
- 
- public class TileEntityHopper extends TileEntityLockableLoot implements IHopper, ITickable
++// CraftBukkit end
++
+ public class TileEntityHopper extends TileEntity implements IHopper
  {
-@@ -34,6 +43,30 @@
-     private int transferCooldown = -1;
-     private long tickedGameTime;
- 
-+    // CraftBukkit start - add fields and methods
+     private ItemStack[] field_145900_a = new ItemStack[5];
+     private String field_145902_i;
+     private int field_145901_j = -1;
++
++    // CraftBukkit start
 +    public List<HumanEntity> transaction = new java.util.ArrayList<HumanEntity>();
 +    private int maxStack = MAX_STACK;
-+    
-+    public List<ItemStack> getContents() {
-+        return this.inventory;
++
++    public ItemStack[] getContents()
++    {
++        return this.field_145900_a;
 +    }
-+        
-+    public void onOpen(CraftHumanEntity who) {
++
++    public void onOpen(CraftHumanEntity who)
++    {
 +        transaction.add(who);
 +    }
-+    
-+    public void onClose(CraftHumanEntity who) {
++
++    public void onClose(CraftHumanEntity who)
++    {
 +        transaction.remove(who);
 +    }
-+        
-+    public List<HumanEntity> getViewers() {
++
++    public List<HumanEntity> getViewers()
++    {
 +        return transaction;
 +    }
-+        
-+    public void setMaxStackSize(int size) {
++
++    public void setMaxStackSize(int size)
++    {
 +        maxStack = size;
 +    }
 +    // CraftBukkit end
-     public static void registerFixesHopper(DataFixer fixer)
-     {
-         fixer.registerWalker(FixTypes.BLOCK_ENTITY, new ItemStackDataLists(TileEntityHopper.class, new String[] {"Items"}));
-@@ -78,7 +111,7 @@
+     private static final String __OBFID = "CL_00000359";
  
-     public int getSizeInventory()
-     {
--        return this.inventory.size();
-+        return this.inventory.size(); // CraftBukkit
-     }
- 
-     public ItemStack decrStackSize(int index, int count)
-@@ -106,7 +139,7 @@
- 
-     public int getInventoryStackLimit()
-     {
--        return 64;
-+        return maxStack;
-     }
- 
-     public void update()
-@@ -119,7 +152,11 @@
-             if (!this.isOnTransferCooldown())
-             {
-                 this.setTransferCooldown(0);
--                this.updateHopper();
-+                // Spigot start
-+                if (!this.updateHopper() && this.world.spigotConfig.hopperCheck > 1) {
-+                    this.setTransferCooldown(this.world.spigotConfig.hopperCheck);
-+                }
-+                // Spigot end
-             }
-         }
-     }
-@@ -144,7 +181,7 @@
+     public void readFromNBT(NBTTagCompound p_145839_1_)
+@@ -212,12 +253,18 @@
  
                  if (flag)
                  {
--                    this.setTransferCooldown(8);
-+                    this.setTransferCooldown(world.spigotConfig.hopperTransfer); // Spigot
+-                    this.func_145896_c(8);
++                    this.func_145896_c(this.worldObj.getSpigotConfig().hopperTransfer); // Spigot // Cauldron
                      this.markDirty();
                      return true;
                  }
-@@ -358,14 +395,48 @@
-         if (!itemstack.isEmpty() && canExtractItemFromSlot(inventoryIn, itemstack, index, direction))
+             }
+ 
++            // Spigot start
++            if (!this.func_145888_j())
++            {
++                this.func_145896_c(this.worldObj.getSpigotConfig().hopperCheck); // Cauldron
++            }
++            // Spigot end
+             return false;
+         }
+         else
+@@ -285,18 +332,70 @@
+                     if (this.getStackInSlot(j) != null)
+                     {
+                         ItemStack itemstack = this.getStackInSlot(j).copy();
+-                        ItemStack itemstack1 = func_145889_a(iinventory, this.decrStackSize(j, 1), i);
+-
++                        // CraftBukkit start - Call event when pushing items into other inventories
++                        CraftItemStack oitemstack = CraftItemStack.asCraftMirror(this.decrStackSize(j, 1));
++                        Inventory destinationInventory;
++    
++                        // Have to special case large chests as they work oddly
++                        if (iinventory instanceof InventoryLargeChest)
++                        {
++                            destinationInventory = new org.bukkit.craftbukkit.inventory.CraftInventoryDoubleChest((InventoryLargeChest) iinventory);
++                        }
++                        else
++                        {
++                            // Cauldron start - support mod inventories, with no owners
++                            try {
++                                if (iinventory.getOwner() != null) {
++                                    destinationInventory = iinventory.getOwner().getInventory();
++                                } else {
++                                    // TODO: create a mod inventory for passing to the event, instead of null
++                                    destinationInventory = null;
++                                }
++                             } catch (AbstractMethodError e) { // fixes openblocks AbstractMethodError
++                                if (iinventory instanceof net.minecraft.tileentity.TileEntity) {
++                                    org.bukkit.inventory.InventoryHolder holder = net.minecraftforge.cauldron.CauldronUtils.getOwner((net.minecraft.tileentity.TileEntity)iinventory);
++                                    if (holder != null) {
++                                        destinationInventory = holder.getInventory();
++                                    } else {
++                                        destinationInventory = null;
++                                    }
++                                } else {
++                                    destinationInventory = null;
++                                }
++                            }
++                            // Cauldron end
++                        }
++    
++                        InventoryMoveItemEvent event = new InventoryMoveItemEvent(this.getOwner().getInventory(), oitemstack.clone(), destinationInventory, true);
++                        this.getWorldObj().getServer().getPluginManager().callEvent(event);
++    
++                        if (event.isCancelled())
++                        {
++                            this.setInventorySlotContents(j, itemstack);
++                            this.func_145896_c(worldObj.spigotConfig.hopperTransfer); // Spigot
++                            return false;
++                        }
++    
++                        ItemStack itemstack1 = func_145889_a(iinventory, CraftItemStack.asNMSCopy(event.getItem()), i);
++    
+                         if (itemstack1 == null || itemstack1.stackSize == 0)
+                         {
+-                            iinventory.markDirty();
++                            if (event.getItem().equals(oitemstack))
++                            {
++                                iinventory.markDirty();
++                            }
++                            else
++                            {
++                                this.setInventorySlotContents(j, itemstack);
++                            }
++    
++                            // CraftBukkit end
+                             return true;
+                         }
+-
++    
+                         this.setInventorySlotContents(j, itemstack);
+                     }
+                 }
+-
+                 return false;
+             }
+         }
+@@ -427,11 +526,71 @@
+         if (itemstack != null && func_145890_b(p_145892_1_, itemstack, p_145892_2_, p_145892_3_))
          {
              ItemStack itemstack1 = itemstack.copy();
--            ItemStack itemstack2 = putStackInInventoryAllSlots(inventoryIn, hopper, inventoryIn.decrStackSize(index, 1), (EnumFacing)null);
+-            ItemStack itemstack2 = func_145889_a(p_145892_0_, p_145892_1_.decrStackSize(p_145892_2_, 1), -1);
 +            // CraftBukkit start - Call event on collection of items from inventories into the hopper
-+            CraftItemStack oitemstack = CraftItemStack.asCraftMirror(inventoryIn.decrStackSize(index, hopper.getWorld().spigotConfig.hopperAmount));
++            CraftItemStack oitemstack = CraftItemStack.asCraftMirror(p_145892_1_.decrStackSize(p_145892_2_, 1));
++            Inventory sourceInventory = null;
  
-+            Inventory sourceInventory;
 +            // Have to special case large chests as they work oddly
-+            if (inventoryIn instanceof InventoryLargeChest) {
-+                sourceInventory = new org.bukkit.craftbukkit.v1_12_R1.inventory.CraftInventoryDoubleChest((InventoryLargeChest) inventoryIn);
-+            } else {
-+                sourceInventory = inventoryIn.getOwner() != null ? inventoryIn.getOwner().getInventory() : new CraftCustomInventory(inventoryIn).getInventory();
++            if (p_145892_1_ instanceof InventoryLargeChest)
++            {
++                sourceInventory = new org.bukkit.craftbukkit.inventory.CraftInventoryDoubleChest((InventoryLargeChest) p_145892_1_);
++            }
++            else
++            {
++                // Cauldron start - support mod inventories, with no owners
++                try
++                {
++                    if (p_145892_1_.getOwner() != null)
++                    {
++                        sourceInventory = p_145892_1_.getOwner().getInventory();
++                    } 
++                    else
++                    {
++                        // TODO: create a mod inventory for passing to the event, instead of null
++                        sourceInventory = null;
++                    }
++                }
++                catch (AbstractMethodError e)
++                {
++                    sourceInventory = null;
++                }
++                finally { if (sourceInventory == null) { sourceInventory = new thermos.CraftInventoryWrapper(p_145892_1_); } }
++                // Cauldron end
 +            }
 +
-+            InventoryMoveItemEvent event = new InventoryMoveItemEvent(sourceInventory, oitemstack.clone(), hopper.getOwner().getInventory(), false);
++            InventoryMoveItemEvent event = new InventoryMoveItemEvent(sourceInventory, oitemstack.clone(), p_145892_0_.getOwner().getInventory(), false);
++            p_145892_0_.getWorldObj().getServer().getPluginManager().callEvent(event);
 +
-+            if (sourceInventory != null) {
-+                hopper.getWorld().getServer().getPluginManager().callEvent(event); // Mohist
-+            }
-+            if (event.isCancelled()) {
-+                inventoryIn.setInventorySlotContents(index, itemstack1);
++            if (event.isCancelled())
++            {
++                p_145892_1_.setInventorySlotContents(p_145892_2_, itemstack1);
 +
-+                if (hopper instanceof TileEntityHopper) {
-+                    ((TileEntityHopper) hopper).setTransferCooldown(hopper.getWorld().spigotConfig.hopperTransfer); // Delay hopper checks
-+                } else if (hopper instanceof EntityMinecartHopper) {
-+                    ((EntityMinecartHopper) hopper).setTransferTicker(hopper.getWorld().spigotConfig.hopperTransfer / 2); // Delay hopper minecart checks
++                if (p_145892_0_ instanceof TileEntityHopper)
++                {
++                    ((TileEntityHopper) p_145892_0_).func_145896_c(p_145892_0_.getWorldObj().spigotConfig.hopperTransfer); // Spigot
++                }
++                else if (p_145892_0_ instanceof EntityMinecartHopper)
++                {
++                    ((EntityMinecartHopper) p_145892_0_).setDisplayTileData(p_145892_0_.getWorldObj().spigotConfig.hopperTransfer / 2); // Spigot
 +                }
 +
 +                return false;
 +            }
-+			 int origCount = event.getItem().getAmount(); // Spigot
-+            ItemStack itemstack2 = putStackInInventoryAllSlots(inventoryIn, hopper, CraftItemStack.asNMSCopy(event.getItem()), null);
 +
-             if (itemstack2.isEmpty())
++            ItemStack itemstack2 = func_145889_a(p_145892_0_, CraftItemStack.asNMSCopy(event.getItem()), -1);
++
+             if (itemstack2 == null || itemstack2.stackSize == 0)
              {
--                inventoryIn.markDirty();
-+                // inventoryIn.markDirty();
-+                if (event.getItem().equals(oitemstack)) {
-+                    inventoryIn.markDirty();
-+                } else {
-+                    inventoryIn.setInventorySlotContents(index, itemstack1);
+-                p_145892_1_.markDirty();
++                if (event.getItem().equals(oitemstack))
++                {
++                    p_145892_1_.markDirty();
 +                }
++                else
++                {
++                    p_145892_1_.setInventorySlotContents(p_145892_2_, itemstack1);
++                }
++
 +                // CraftBukkit end
                  return true;
              }
--
-+			itemstack1.shrink(origCount - itemstack2.getCount());
-             inventoryIn.setInventorySlotContents(index, itemstack1);
-         }
  
-@@ -382,6 +453,13 @@
+@@ -451,6 +610,20 @@
          }
          else
          {
 +            // CraftBukkit start
-+            InventoryPickupItemEvent event = new InventoryPickupItemEvent(destination.getOwner().getInventory(), (org.bukkit.entity.Item) entity.getBukkitEntity());
-+            entity.world.getServer().getPluginManager().callEvent(event);
-+            if (event.isCancelled()) {
-+                return false;
++            // Cauldron start - vanilla compatibility
++            if (p_145898_0_.getOwner() != null && p_145898_1_.getBukkitEntity() != null)
++            {
++                InventoryPickupItemEvent event = new InventoryPickupItemEvent(p_145898_0_.getOwner().getInventory(), (org.bukkit.entity.Item) p_145898_1_.getBukkitEntity());
++                p_145898_1_.worldObj.getServer().getPluginManager().callEvent(event);
++
++                if (event.isCancelled())
++                {
++                    return false;
++                }
 +            }
++            // Cauldron end
 +            // CraftBukkit end
-             ItemStack itemstack = entity.getItem().copy();
-             ItemStack itemstack1 = putStackInInventoryAllSlots(source, destination, itemstack, (EnumFacing)null);
- 
-@@ -491,7 +569,7 @@
-                             }
-                         }
- 
--                        tileentityhopper1.setTransferCooldown(8 - k);
-+                        tileentityhopper1.setTransferCooldown(tileentityhopper1.world.spigotConfig.hopperTransfer - k); // Spigot
-                     }
-                 }
- 
-@@ -525,6 +603,7 @@
-         int j = MathHelper.floor(y);
-         int k = MathHelper.floor(z);
-         BlockPos blockpos = new BlockPos(i, j, k);
-+		if (!worldIn.isBlockLoaded(blockpos)) return null; // Spigot
-         net.minecraft.block.state.IBlockState state = worldIn.getBlockState(blockpos);
-         Block block = state.getBlock();
+             ItemStack itemstack = p_145898_1_.getEntityItem().copy();
+             ItemStack itemstack1 = func_145889_a(p_145898_0_, itemstack, -1);
  

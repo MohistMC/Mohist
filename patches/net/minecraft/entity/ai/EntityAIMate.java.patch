@@ -1,53 +1,42 @@
 --- ../src-base/minecraft/net/minecraft/entity/ai/EntityAIMate.java
 +++ ../src-work/minecraft/net/minecraft/entity/ai/EntityAIMate.java
-@@ -6,6 +6,7 @@
+@@ -4,6 +4,7 @@
+ import java.util.List;
+ import java.util.Random;
  import net.minecraft.entity.EntityAgeable;
++import net.minecraft.entity.EntityLiving;
  import net.minecraft.entity.item.EntityXPOrb;
  import net.minecraft.entity.passive.EntityAnimal;
-+import net.minecraft.entity.passive.EntityTameable;
- import net.minecraft.entity.player.EntityPlayerMP;
+ import net.minecraft.entity.passive.EntityCow;
+@@ -12,6 +13,8 @@
  import net.minecraft.stats.StatList;
- import net.minecraft.util.EnumParticleTypes;
-@@ -106,6 +107,9 @@
+ import net.minecraft.world.World;
+ 
++import net.minecraft.entity.passive.EntityTameable; // CraftBukkit
++
+ public class EntityAIMate extends EntityAIBase
+ {
+     private EntityAnimal theAnimal;
+@@ -93,6 +96,13 @@
  
          if (entityageable != null)
          {
-+            if (entityageable instanceof EntityTameable && ((EntityTameable) entityageable).isTamed()) {
-+                entityageable.persistenceRequired = true;
++            // CraftBukkit start - set persistence for tame animals
++            if (entityageable instanceof EntityTameable && ((EntityTameable) entityageable).isTamed())
++            {
++                ((EntityLiving)entityageable).persistenceRequired = true; // Cauldron - fix illegal access error. SS bug?
 +            }
-             EntityPlayerMP entityplayermp = this.animal.getLoveCause();
- 
-             if (entityplayermp == null && this.targetMate.getLoveCause() != null)
-@@ -113,6 +117,13 @@
-                 entityplayermp = this.targetMate.getLoveCause();
-             }
- 
-+            int experience = this.animal.getRNG().nextInt(7) + 1;
-+            org.bukkit.event.entity.EntityBreedEvent entityBreedEvent = org.bukkit.craftbukkit.v1_12_R1.event.CraftEventFactory.callEntityBreedEvent(entityageable, animal, targetMate, entityplayermp, this.animal.breedItem, experience);
-+            if (entityBreedEvent.isCancelled()) {
-+                return;
-+            }
-+            experience = entityBreedEvent.getExperience();
 +
-             if (entityplayermp != null)
-             {
-                 entityplayermp.addStat(StatList.ANIMALS_BRED);
-@@ -125,7 +136,7 @@
++            // CraftBukkit end
+             EntityPlayer entityplayer = this.theAnimal.func_146083_cb();
+ 
+             if (entityplayer == null && this.targetMate.func_146083_cb() != null)
+@@ -116,7 +126,7 @@
              this.targetMate.resetInLove();
              entityageable.setGrowingAge(-24000);
-             entityageable.setLocationAndAngles(this.animal.posX, this.animal.posY, this.animal.posZ, 0.0F, 0.0F);
--            this.world.spawnEntity(entityageable);
-+            this.world.addEntity(entityageable, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.BREEDING);
-             Random random = this.animal.getRNG();
+             entityageable.setLocationAndAngles(this.theAnimal.posX, this.theAnimal.posY, this.theAnimal.posZ, 0.0F, 0.0F);
+-            this.theWorld.spawnEntityInWorld(entityageable);
++            this.theWorld.addEntity(entityageable, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.BREEDING); // CraftBukkit - added SpawnReason
+             Random random = this.theAnimal.getRNG();
  
              for (int i = 0; i < 7; ++i)
-@@ -141,7 +152,8 @@
- 
-             if (this.world.getGameRules().getBoolean("doMobLoot"))
-             {
--                this.world.spawnEntity(new EntityXPOrb(this.world, this.animal.posX, this.animal.posY, this.animal.posZ, random.nextInt(7) + 1));
-+                if (experience > 0)
-+                    this.world.spawnEntity(new EntityXPOrb(this.world, this.animal.posX, this.animal.posY, this.animal.posZ, experience));
-             }
-         }
-     }

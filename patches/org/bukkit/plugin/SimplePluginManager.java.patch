@@ -1,0 +1,31 @@
+--- ../src-base/minecraft/org/bukkit/plugin/SimplePluginManager.java
++++ ../src-work/minecraft/org/bukkit/plugin/SimplePluginManager.java
+@@ -132,7 +132,9 @@
+             try {
+                 description = loader.getPluginDescription(file);
+                 String name = description.getName();
+-                if (name.equalsIgnoreCase("bukkit") || name.equalsIgnoreCase("minecraft") || name.equalsIgnoreCase("mojang")) {
++                if (name.equalsIgnoreCase("bukkit") || name.equalsIgnoreCase("minecraft") || name.equalsIgnoreCase("mojang")
++                        // Cauldron - Add more restricted names
++                        || name.equalsIgnoreCase("spigot") || name.equalsIgnoreCase("forge") || name.equalsIgnoreCase("cauldron") || name.equalsIgnoreCase("mcpc") || name.equalsIgnoreCase("kcauldron") || name.equalsIgnoreCase("thermos")) {
+                     server.getLogger().log(Level.SEVERE, "Could not load '" + file.getPath() + "' in folder '" + directory.getPath() + "': Restricted Name");
+                     continue;
+                 } else if (description.rawName.indexOf(' ') != -1) {
+@@ -188,6 +190,9 @@
+             }
+         }
+ 
++        // Cauldron - fill names for Cauldron-provided dependencies
++        loadedPlugins.addAll(ImmutableSet.of("Cauldron", "Forge", "MCPC", "MCPC+", "KCauldron", "Thermos"));
++
+         while (!plugins.isEmpty()) {
+             boolean missingDependency = true;
+             Iterator<String> pluginIterator = plugins.keySet().iterator();
+@@ -295,6 +300,7 @@
+             }
+         }
+ 
++        org.bukkit.command.defaults.TimingsCommand.timingStart = System.nanoTime(); // Spigot
+         return result.toArray(new Plugin[result.size()]);
+     }
+ 

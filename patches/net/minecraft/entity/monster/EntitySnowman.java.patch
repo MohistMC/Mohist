@@ -1,30 +1,44 @@
 --- ../src-base/minecraft/net/minecraft/entity/monster/EntitySnowman.java
 +++ ../src-work/minecraft/net/minecraft/entity/monster/EntitySnowman.java
-@@ -30,6 +30,7 @@
- import net.minecraft.util.math.MathHelper;
+@@ -19,6 +19,12 @@
+ import net.minecraft.util.MathHelper;
  import net.minecraft.world.World;
- import net.minecraft.world.storage.loot.LootTableList;
-+import org.bukkit.craftbukkit.v1_12_R1.event.CraftEventFactory;
  
- public class EntitySnowman extends EntityGolem implements IRangedAttackMob, net.minecraftforge.common.IShearable
++// CraftBukkit start
++import org.bukkit.craftbukkit.event.CraftEventFactory;
++import org.bukkit.craftbukkit.util.CraftMagicNumbers;
++import org.bukkit.event.block.EntityBlockFormEvent;
++// CraftBukkit end
++
+ public class EntitySnowman extends EntityGolem implements IRangedAttackMob
  {
-@@ -101,7 +102,9 @@
+     private static final String __OBFID = "CL_00001650";
+@@ -61,7 +67,7 @@
  
-             if (this.world.getBiome(new BlockPos(i, 0, k)).getTemperature(new BlockPos(i, j, k)) > 1.0F)
+         if (this.worldObj.getBiomeGenForCoords(i, k).getFloatTemperature(i, j, k) > 1.0F)
+         {
+-            this.attackEntityFrom(DamageSource.onFire, 1.0F);
++            this.attackEntityFrom(CraftEventFactory.MELTING, 1.0F); // CraftBukkit - DamageSource.BURN -> CraftEventFactory.MELTING
+         }
+ 
+         for (int l = 0; l < 4; ++l)
+@@ -72,7 +78,18 @@
+ 
+             if (this.worldObj.getBlock(i, j, k).getMaterial() == Material.air && this.worldObj.getBiomeGenForCoords(i, k).getFloatTemperature(i, j, k) < 0.8F && Blocks.snow_layer.canPlaceBlockAt(this.worldObj, i, j, k))
              {
--                this.attackEntityFrom(DamageSource.ON_FIRE, 1.0F);
-+                // CraftBukkit - DamageSource.BURN -> CraftEventFactory.MELTING
-+                // this.attackEntityFrom(DamageSource.ON_FIRE, 1.0F);
-+                this.attackEntityFrom(CraftEventFactory.MELTING, 1.0F);
-             }
- 
-             if (!net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(this.world, this))
-@@ -118,7 +121,7 @@
- 
-                 if (this.world.getBlockState(blockpos).getMaterial() == Material.AIR && this.world.getBiome(blockpos).getTemperature(blockpos) < 0.8F && Blocks.SNOW_LAYER.canPlaceBlockAt(this.world, blockpos))
-                 {
--                    this.world.setBlockState(blockpos, Blocks.SNOW_LAYER.getDefaultState());
-+                    org.bukkit.craftbukkit.v1_12_R1.event.CraftEventFactory.handleBlockFormEvent(this.world, blockpos, Blocks.SNOW_LAYER.getDefaultState(), this);
-                 }
+-                this.worldObj.setBlock(i, j, k, Blocks.snow_layer);
++                // CraftBukkit start
++                org.bukkit.block.BlockState blockState = this.worldObj.getWorld().getBlockAt(i, j, k).getState();
++                blockState.setType(CraftMagicNumbers.getMaterial(Blocks.snow_layer));
++                EntityBlockFormEvent event = new EntityBlockFormEvent(this.getBukkitEntity(), blockState.getBlock(), blockState);
++                this.worldObj.getServer().getPluginManager().callEvent(event);
++
++                if (!event.isCancelled())
++                {
++                    blockState.update(true);
++                }
++
++                // CraftBukkit end
              }
          }
+     }

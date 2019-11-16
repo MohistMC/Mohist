@@ -1,124 +1,104 @@
 --- ../src-base/minecraft/net/minecraft/tileentity/TileEntityBrewingStand.java
 +++ ../src-work/minecraft/net/minecraft/tileentity/TileEntityBrewingStand.java
-@@ -1,6 +1,7 @@
- package net.minecraft.tileentity;
- 
- import java.util.Arrays;
-+import java.util.List;
- import net.minecraft.block.BlockBrewingStand;
- import net.minecraft.block.state.IBlockState;
- import net.minecraft.entity.player.EntityPlayer;
-@@ -15,6 +16,7 @@
- import net.minecraft.item.ItemStack;
- import net.minecraft.nbt.NBTTagCompound;
+@@ -13,17 +13,55 @@
+ import net.minecraft.nbt.NBTTagList;
  import net.minecraft.potion.PotionHelper;
+ 
++// CraftBukkit start
 +import net.minecraft.server.MinecraftServer;
- import net.minecraft.util.EnumFacing;
- import net.minecraft.util.ITickable;
- import net.minecraft.util.NonNullList;
-@@ -22,6 +24,12 @@
- import net.minecraft.util.datafix.FixTypes;
- import net.minecraft.util.datafix.walkers.ItemStackDataLists;
- import net.minecraft.util.math.BlockPos;
-+import org.bukkit.craftbukkit.v1_12_R1.entity.CraftHumanEntity;
-+import org.bukkit.craftbukkit.v1_12_R1.inventory.CraftItemStack;
++import org.bukkit.craftbukkit.entity.CraftHumanEntity;
 +import org.bukkit.entity.HumanEntity;
 +import org.bukkit.event.inventory.BrewEvent;
-+import org.bukkit.event.inventory.BrewingStandFuelEvent;
-+import org.bukkit.inventory.InventoryHolder;
- 
- public class TileEntityBrewingStand extends TileEntityLockable implements ITickable, ISidedInventory
++// CraftBukkit end
++
+ public class TileEntityBrewingStand extends TileEntity implements ISidedInventory
  {
-@@ -35,6 +43,31 @@
-     private String customName;
-     private int fuel;
+     private static final int[] field_145941_a = new int[] {3};
+     private static final int[] field_145947_i = new int[] {0, 1, 2};
+-    private ItemStack[] brewingItemStacks = new ItemStack[4];
+-    private int brewTime;
++    public ItemStack[] brewingItemStacks = new ItemStack[4]; // CraftBukkit - private -> public
++    public int brewTime; // CraftBukkit - private -> public
+     private int filledSlots;
+     private Item ingredientID;
+     private String field_145942_n;
++    private int lastTick = MinecraftServer.currentTick; // CraftBukkit
+     private static final String __OBFID = "CL_00000345";
  
-+    // CraftBukkit start - add fields and methods
-+    private int lastTick = MinecraftServer.currentTick;
++    // CraftBukkit start
 +    public List<HumanEntity> transaction = new java.util.ArrayList<HumanEntity>();
 +    private int maxStack = 64;
-+    
-+    public List<ItemStack> getContents() {
-+        return this.brewingItemStacks;
-+    }
-+        
-+    public void onOpen(CraftHumanEntity who) {
++
++    public void onOpen(CraftHumanEntity who)
++    {
 +        transaction.add(who);
 +    }
-+    
-+    public void onClose(CraftHumanEntity who) {
++
++    public void onClose(CraftHumanEntity who)
++    {
 +        transaction.remove(who);
 +    }
-+        
-+    public List<HumanEntity> getViewers() {
++
++    public List<HumanEntity> getViewers()
++    {
 +        return transaction;
 +    }
-+        
-+    public void setMaxStackSize(int size) {
++
++    public ItemStack[] getContents()
++    {
++        return this.brewingItemStacks;
++    }
++
++    public void setMaxStackSize(int size)
++    {
 +        maxStack = size;
 +    }
 +    // CraftBukkit end
-     public String getName()
++
+     public String getInventoryName()
      {
-         return this.hasCustomName() ? this.customName : "container.brewing";
-@@ -74,8 +107,19 @@
+         return this.hasCustomInventoryName() ? this.field_145942_n : "container.brewing";
+@@ -46,12 +84,17 @@
  
-         if (this.fuel <= 0 && itemstack.getItem() == Items.BLAZE_POWDER)
-         {
--            this.fuel = 20;
--            itemstack.shrink(1);
-+            // CraftBukkit start
-+            BrewingStandFuelEvent event = new BrewingStandFuelEvent(world.getWorld().getBlockAt(pos.getX(), pos.getY(), pos.getZ()), CraftItemStack.asCraftMirror(itemstack), 20);
-+            this.world.getServer().getPluginManager().callEvent(event);
-+
-+            if (event.isCancelled()) {
-+                return;
-+            }
-+
-+            this.fuel = event.getFuelPower(); // PAIL fuelLevel
-+            if (this.fuel > 0 && event.isConsuming()) {
-+                itemstack.shrink(1);
-+            }
-+            // CraftBukkit end
-             this.markDirty();
-         }
- 
-@@ -83,10 +127,15 @@
-         boolean flag1 = this.brewTime > 0;
-         ItemStack itemstack1 = this.brewingItemStacks.get(3);
- 
+     public void updateEntity()
+     {
 +        // CraftBukkit start - Use wall time instead of ticks for brewing
 +        int elapsedTicks = MinecraftServer.currentTick - this.lastTick;
 +        this.lastTick = MinecraftServer.currentTick;
 +
-         if (flag1)
+         if (this.brewTime > 0)
          {
 -            --this.brewTime;
--            boolean flag2 = this.brewTime == 0;
 +            this.brewTime -= elapsedTicks;
-+            boolean flag2 = this.brewTime <= 0; // == -> <=
-+            // CraftBukkit end
  
-             if (flag2 && flag)
+-            if (this.brewTime == 0)
++            if (this.brewTime <= 0)   // == -> <=
              {
-@@ -184,6 +233,16 @@
-     {
-         if (net.minecraftforge.event.ForgeEventFactory.onPotionAttemptBrew(brewingItemStacks)) return;
-         ItemStack itemstack = this.brewingItemStacks.get(3);
-+        // CraftBukkit start
-+        InventoryHolder owner = this.getOwner();
-+        if (owner != null) {
-+            BrewEvent event = new BrewEvent(world.getWorld().getBlockAt(pos.getX(), pos.getY(), pos.getZ()), (org.bukkit.inventory.BrewerInventory) owner.getInventory(), this.fuel);
-+            org.bukkit.Bukkit.getPluginManager().callEvent(event);
-+            if (event.isCancelled()) {
-+                return;
++                // CraftBukkit end
+                 this.brewPotions();
+                 this.markDirty();
+             }
+@@ -141,7 +184,19 @@
+         if (this.canBrew())
+         {
+             ItemStack itemstack = this.brewingItemStacks[3];
++            // CraftBukkit start
++            if (getOwner() != null)
++            {
++                BrewEvent event = new BrewEvent(worldObj.getWorld().getBlockAt(xCoord, yCoord, zCoord), (org.bukkit.inventory.BrewerInventory) this.getOwner()
++                        .getInventory());
++                org.bukkit.Bukkit.getPluginManager().callEvent(event);
+ 
++                if (event.isCancelled())
++                {
++                    return;
++                }
 +            }
-+        }
-+        // CraftBukkit end
- 
-         net.minecraftforge.common.brewing.BrewingRecipeRegistry.brewPotions(brewingItemStacks, brewingItemStacks.get(3), OUTPUT_SLOTS);
- 
-@@ -269,7 +328,7 @@
++            // CraftBukkit end
+             for (int i = 0; i < 3; ++i)
+             {
+                 if (this.brewingItemStacks[i] != null && this.brewingItemStacks[i].getItem() instanceof ItemPotion)
+@@ -280,7 +335,7 @@
  
      public int getInventoryStackLimit()
      {
@@ -126,4 +106,4 @@
 +        return this.maxStack; // CraftBukkit
      }
  
-     public boolean isUsableByPlayer(EntityPlayer player)
+     public boolean isUseableByPlayer(EntityPlayer p_70300_1_)

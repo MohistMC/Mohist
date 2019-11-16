@@ -1,0 +1,14 @@
+--- ../src-base/minecraft/net/minecraft/entity/ai/EntityAITasks.java
++++ ../src-work/minecraft/net/minecraft/entity/ai/EntityAITasks.java
+@@ -104,7 +104,10 @@
+         while (iterator.hasNext())
+         {
+             entityaitaskentry = (EntityAITasks.EntityAITaskEntry)iterator.next();
+-            this.theProfiler.startSection(entityaitaskentry.action.getClass().getSimpleName());
++            if (this.theProfiler.profilingEnabled) //Unnecessary lag...do it only if profiling is on
++            	this.theProfiler.startSection(entityaitaskentry.action.getClass().getSimpleName());
++            else
++            	this.theProfiler.startSection("EntityAITaskEntry.EntityAIBase");
+             entityaitaskentry.action.startExecuting();
+             this.theProfiler.endSection();
+         }

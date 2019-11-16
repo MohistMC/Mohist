@@ -1,0 +1,282 @@
+--- ../src-base/minecraft/org/bukkit/Material.java
++++ ../src-work/minecraft/org/bukkit/Material.java
+@@ -3,6 +3,22 @@
+ import java.lang.reflect.Constructor;
+ import java.util.Map;
+ 
++// Cauldron start
++import java.lang.reflect.Array;
++import java.lang.reflect.Constructor;
++import java.lang.reflect.Field;
++import java.lang.reflect.Method;
++import java.util.ArrayList;
++import java.util.Arrays;
++import java.util.List;
++
++import org.bukkit.inventory.ItemStack;
++
++import net.minecraftforge.common.util.EnumHelper;
++import net.minecraftforge.cauldron.api.inventory.BukkitOreDictionary;
++import net.minecraftforge.cauldron.api.inventory.OreDictionaryEntry;
++// Cauldron end
++
+ import org.apache.commons.lang.Validate;
+ import org.bukkit.map.MapView;
+ import org.bukkit.material.Bed;
+@@ -418,14 +434,30 @@
+     private final int id;
+     private final Constructor<? extends MaterialData> ctor;
+     private static Material[] byId = new Material[383];
+-    private final static Map<String, Material> BY_NAME = Maps.newHashMap();
++    private static Map<String, Material> BY_NAME = Maps.newHashMap(); // Cauldron - remove final
+     private final int maxStack;
+     private final short durability;
++    // Cauldron start
++    private static Object reflectionFactory;
++    private static Method newConstructorAccessor;
++    private static Method newInstance;
++    private static Method newFieldAccessor;
++    private static Method fieldAccessorSet;
++    private static boolean isSetup;
++    private boolean isForgeBlock = false;
++    // Cauldron end
+ 
+     private Material(final int id) {
+         this(id, 64);
+     }
+ 
++    // Cauldron start - constructor used to set if the Material is a block or not
++    private Material(final int id, boolean flag) {
++        this(id, 64);
++        this.isForgeBlock = flag;
++    }
++    // Cauldron end
++
+     private Material(final int id, final int stack) {
+         this(id, stack, MaterialData.class);
+     }
+@@ -526,10 +558,17 @@
+      * @return true if this material is a block
+      */
+     public boolean isBlock() {
+-        return id < 256;
++        return id < 256 || isForgeBlock; // Cauldron
+     }
+ 
+     /**
++     * Checks if the material is a forge block
++     *
++     * @return true if this material is a forge block
++     */
++    public boolean isForgeBlock() { return isForgeBlock; }
++
++    /**
+      * Checks if this Material is edible.
+      *
+      * @return true if this Material is edible.
+@@ -615,16 +654,202 @@
+         } catch (NumberFormatException ex) {}
+ 
+         if (result == null) {
+-            String filtered = name.toUpperCase();
+-
+-            filtered = filtered.replaceAll("\\s+", "_").replaceAll("\\W", "");
++            // Cauldron start - extract to normalizeName()
++            String filtered = normalizeName(name);
+             result = BY_NAME.get(filtered);
++            // Cauldron end
+         }
+ 
++        // Cauldron start - Try the ore dictionary
++        if (result == null) {
++            BukkitOreDictionary dict = net.minecraftforge.cauldron.api.Cauldron.getOreDictionary();
++            OreDictionaryEntry entry = dict.getOreEntry(name);
++            if (entry != null) {
++                List<ItemStack> items = dict.getDefinitions(entry);
++                if (items.size() > 0) {
++                    // TODO check sanity on multiple item results
++                    ItemStack item = items.get(0);
++                    if (item.getDurability() == 0 || item.getDurability() == Short.MAX_VALUE) {
++                        result = item.getType();
++                    } else {
++                        // bad! we have an item with data!
++                    }
++                }
++            }
++        }
++        // Cauldron end
++
+         return result;
+     }
+ 
++    /* ===============================  Cauldron START ============================= */
++
++    // use a normalize() function to ensure it is accessible after a round-trip
++    public static String normalizeName(String name) {
++        return name.toUpperCase().replaceAll("(:|\\s)", "_").replaceAll("\\W", "");
++    }
++
++    public static Material addMaterial(int id, boolean isBlock)
++    {
++        return addMaterial(id, "X" + String.valueOf(id), isBlock);
++    }
++
++    public static Material addMaterial(int id, String name, boolean isBlock) {
++      if (byId[id] == null) {
++        String materialName = normalizeName(name);
++        Material material = (Material) EnumHelper.addEnum(Material.class, materialName, new Class[]{Integer.TYPE, Boolean.TYPE}, new Object[]{Integer.valueOf(id), isBlock});
++        byId[id] = material;
++        BY_NAME.put(materialName, material);
++        BY_NAME.put("X" + String.valueOf(id), material);
++        return material;
++      }
++      return null;
++    }
++
++    public static void setMaterialName(int id, String name, boolean flag) {
++      String materialName = normalizeName(name);
++
++      if (byId[id] == null)
++      {
++        addMaterial(id, materialName, flag);
++      }
++      else // replace existing enum
++      {
++          /* TODO: find out how to do this with Forge's EnumHelper (addEnum?) - used for enabling descriptive (vs numeric) Material names
++          Material material = getMaterial(id);
++          BY_NAME.remove(material);
++          Material newMaterial = EnumHelper.replaceEnum(Material.class, material_name, material.ordinal(), new Class[] { Integer.TYPE }, new Object[] { Integer.valueOf(id) });
++          if (newMaterial == null)
++              System.out.println("Error replacing Material " + name + " with id " + id);
++          else {
++              byId[id] = newMaterial;
++              BY_NAME.put(material_name, newMaterial);
++          }
++          */
++      }
++    }
++
++    private static void setup()
++    {
++      if (isSetup)
++      {
++        return;
++      }
++      try {
++        Method getReflectionFactory = Class.forName("sun.reflect.ReflectionFactory").getDeclaredMethod("getReflectionFactory", new Class[0]);
++        reflectionFactory = getReflectionFactory.invoke(null, new Object[0]);
++        newConstructorAccessor = Class.forName("sun.reflect.ReflectionFactory").getDeclaredMethod("newConstructorAccessor", new Class[] { Constructor.class });
++        newInstance = Class.forName("sun.reflect.ConstructorAccessor").getDeclaredMethod("newInstance", new Class[] { Object[].class });
++        newFieldAccessor = Class.forName("sun.reflect.ReflectionFactory").getDeclaredMethod("newFieldAccessor", new Class[] { Field.class, Boolean.TYPE });
++        fieldAccessorSet = Class.forName("sun.reflect.FieldAccessor").getDeclaredMethod("set", new Class[] { Object.class, Object.class });
++      } catch (Exception e) {
++        e.printStackTrace();
++      }
++
++      isSetup = true;
++    }
++
++    private static Object getConstructorAccessor(Class<?> enumClass, Class<?>[] additionalParameterTypes) throws Exception {
++      Class[] parameterTypes = null;
++
++      parameterTypes = new Class[additionalParameterTypes.length + 2];
++      parameterTypes[0] = String.class;
++      parameterTypes[1] = Integer.TYPE;
++      System.arraycopy(additionalParameterTypes, 0, parameterTypes, 2, additionalParameterTypes.length);
++
++      return newConstructorAccessor.invoke(reflectionFactory, new Object[] { enumClass.getDeclaredConstructor(parameterTypes) });
++    }
++
++    private static <T extends Enum<?>> T makeEnum(Class<T> enumClass, String value, int ordinal, Class<?>[] additionalTypes, Object[] additionalValues) throws Exception {
++      Object[] parms = null;
++
++      parms = new Object[additionalValues.length + 2];
++      parms[0] = value;
++      parms[1] = Integer.valueOf(ordinal);
++      System.arraycopy(additionalValues, 0, parms, 2, additionalValues.length);
++
++      return (T)enumClass.cast(newInstance.invoke(getConstructorAccessor(enumClass, additionalTypes), new Object[] { parms }));
++    }
++
++    private static void setFailsafeFieldValue(Field field, Object target, Object value) throws Exception {
++      field.setAccessible(true);
++      Field modifiersField = Field.class.getDeclaredField("modifiers");
++      modifiersField.setAccessible(true);
++      modifiersField.setInt(field, field.getModifiers() & 0xFFFFFFEF);
++      Object fieldAccessor = newFieldAccessor.invoke(reflectionFactory, new Object[] { field, Boolean.valueOf(false) });
++      fieldAccessorSet.invoke(fieldAccessor, new Object[] { target, value });
++    }
++
++    private static void blankField(Class<?> enumClass, String fieldName) throws Exception {
++      for (Field field : Class.class.getDeclaredFields())
++        if (field.getName().contains(fieldName)) {
++          field.setAccessible(true);
++          setFailsafeFieldValue(field, enumClass, null);
++          break;
++        }
++    }
++
++    private static void cleanEnumCache(Class<?> enumClass) throws Exception
++    {
++      blankField(enumClass, "enumConstantDirectory");
++      blankField(enumClass, "enumConstants");
++    }
++
++    public static <T extends Enum<?>> T replaceEnum(Class<T> enumType, String enumName, int ordinal,  Class<?>[] paramTypes, Object[] paramValues)
++    {
++      if (!isSetup) setup();
++      Field valuesField = null;
++      Field[] fields = enumType.getDeclaredFields();
++      int flags = 4122;
++      String valueType = String.format("[L%s;", new Object[] { enumType.getName() });
++
++      for (Field field : fields) {
++        if (((field.getModifiers() & flags) != flags) || (!field.getType().getName().equals(valueType))) {
++          continue;
++        }
++        valuesField = field;
++        break;
++      }
++
++      valuesField.setAccessible(true);
++      try
++      {
++        Enum[] previousValues = (Enum[])(Enum[])valuesField.get(enumType);
++        Enum[] newValues = new Enum[previousValues.length];
++        Enum newValue = null;
++        for (Enum enumValue : previousValues)
++        {
++            if (enumValue.ordinal() == ordinal)
++            {
++               newValue = makeEnum(enumType, enumName, ordinal, paramTypes, paramValues);
++               newValues[enumValue.ordinal()] =  newValue;
++            }
++            else newValues[enumValue.ordinal()] = enumValue;
++        }
++        List values = new ArrayList(Arrays.asList(newValues));
++
++        setFailsafeFieldValue(valuesField, null, values.toArray((Enum[])(Enum[])Array.newInstance(enumType, 0)));
++        cleanEnumCache(enumType);
++        return (T) newValue;
++      } catch (Exception e) {
++        e.printStackTrace();
++        throw new RuntimeException(e.getMessage(), e);
++      }
++    }
++    /* ===============================  Cauldron END============================= */
++
+     static {
++        // Cauldron start
++        byId = new Material[32000];
++        BY_NAME = Maps.newHashMap();
++
++        reflectionFactory = null;
++        newConstructorAccessor = null;
++        newInstance = null;
++        newFieldAccessor = null;
++        fieldAccessorSet = null;
++        isSetup = false;
++        // Cauldron end
+         for (Material material : values()) {
+             if (byId.length > material.id) {
+                 byId[material.id] = material;

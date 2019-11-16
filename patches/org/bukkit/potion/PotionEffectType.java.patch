@@ -1,0 +1,57 @@
+--- ../src-base/minecraft/org/bukkit/potion/PotionEffectType.java
++++ ../src-work/minecraft/org/bukkit/potion/PotionEffectType.java
+@@ -202,7 +202,7 @@
+         return "PotionEffectType[" + id + ", " + getName() + "]";
+     }
+ 
+-    private static final PotionEffectType[] byId = new PotionEffectType[24];
++    private static final Map<Integer, PotionEffectType> byId = new HashMap<Integer, PotionEffectType>(); // Cauldron change underlying storage to map
+     private static final Map<String, PotionEffectType> byName = new HashMap<String, PotionEffectType>();
+     // will break on updates.
+     private static boolean acceptingNew = true;
+@@ -216,9 +216,9 @@
+      */
+     @Deprecated
+     public static PotionEffectType getById(int id) {
+-        if (id >= byId.length || id < 0)
++        if (id >= byId.size() || id < 0) // Cauldron
+             return null;
+-        return byId[id];
++        return byId.get(id); // Cauldron
+     }
+ 
+     /**
+@@ -240,15 +240,18 @@
+      * @param type PotionType to register
+      */
+     public static void registerPotionEffectType(PotionEffectType type) {
++        // Cauldron start - allow vanilla to replace potions
++        /*
+         if (byId[type.id] != null || byName.containsKey(type.getName().toLowerCase())) {
+             throw new IllegalArgumentException("Cannot set already-set type");
+         } else if (!acceptingNew) {
+             throw new IllegalStateException(
+                     "No longer accepting new potion effect types (can only be done by the server implementation)");
+         }
+-
+-        byId[type.id] = type;
++        */
++        byId.put(type.id, type);
+         byName.put(type.getName().toLowerCase(), type);
++        // Cauldron end
+     }
+ 
+     /**
+@@ -264,6 +267,11 @@
+      * @return Array of types.
+      */
+     public static PotionEffectType[] values() {
+-        return byId.clone();
++        // Cauldron start
++        int maxId = 0;
++        for(int id : byId.keySet()) maxId = Math.max(maxId, id);
++        PotionEffectType[] result = new PotionEffectType[maxId + 1];
++        return byId.values().toArray(result); // Cauldron change underlying storage to map
++        // Cauldron end
+     }
+ }

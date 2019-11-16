@@ -1,74 +1,71 @@
 --- ../src-base/minecraft/net/minecraft/item/crafting/FurnaceRecipes.java
 +++ ../src-work/minecraft/net/minecraft/item/crafting/FurnaceRecipes.java
-@@ -1,6 +1,6 @@
- package net.minecraft.item.crafting;
+@@ -2,6 +2,7 @@
  
--import com.google.common.collect.Maps;
+ import java.util.HashMap;
+ import java.util.Iterator;
 +import java.util.LinkedHashMap;
  import java.util.Map;
  import java.util.Map.Entry;
  import net.minecraft.block.Block;
-@@ -15,15 +15,18 @@
+@@ -14,8 +15,9 @@
  public class FurnaceRecipes
  {
-     private static final FurnaceRecipes SMELTING_BASE = new FurnaceRecipes();
--    private final Map<ItemStack, ItemStack> smeltingList = Maps.<ItemStack, ItemStack>newHashMap();
--    private final Map<ItemStack, Float> experienceList = Maps.<ItemStack, Float>newHashMap();
-+    public Map<ItemStack, ItemStack> smeltingList = new LinkedHashMap();
-+    private final Map<ItemStack, Float> experienceList = new LinkedHashMap();
+     private static final FurnaceRecipes smeltingBase = new FurnaceRecipes();
+-    private Map smeltingList = new HashMap();
+-    private Map experienceList = new HashMap();
++    public Map smeltingList = new LinkedHashMap(); // CraftBukkit - private -> public
++    private Map experienceList = new LinkedHashMap();
++    public Map customRecipes = new LinkedHashMap(); // CraftBukkit
+     private static final String __OBFID = "CL_00000085";
  
-+    public Map<ItemStack,ItemStack> customRecipes = new LinkedHashMap();
-+    public Map<ItemStack,Float> customExperience = new LinkedHashMap();
-+
-     public static FurnaceRecipes instance()
-     {
-         return SMELTING_BASE;
+     public static FurnaceRecipes smelting()
+@@ -23,7 +25,7 @@
+         return smeltingBase;
      }
  
 -    private FurnaceRecipes()
-+    public FurnaceRecipes()
++    public FurnaceRecipes()   // CraftBukkit - private -> public
      {
-         this.addSmeltingRecipeForBlock(Blocks.IRON_ORE, new ItemStack(Items.IRON_INGOT), 0.7F);
-         this.addSmeltingRecipeForBlock(Blocks.GOLD_ORE, new ItemStack(Items.GOLD_INGOT), 1.0F);
-@@ -101,6 +104,11 @@
-         this.addSmeltingRecipe(new ItemStack(Blocks.STAINED_HARDENED_CLAY, 1, EnumDyeColor.BLACK.getMetadata()), new ItemStack(Blocks.BLACK_GLAZED_TERRACOTTA), 0.1F);
+         this.func_151393_a(Blocks.iron_ore, new ItemStack(Items.iron_ingot), 0.7F);
+         this.func_151393_a(Blocks.gold_ore, new ItemStack(Items.gold_ingot), 1.0F);
+@@ -76,16 +78,37 @@
+         this.experienceList.put(p_151394_2_, Float.valueOf(p_151394_3_));
      }
  
-+    public void registerRecipe(ItemStack itemstack, ItemStack itemstack1, float f) {
++    // CraftBukkit start
++    public void registerRecipe(ItemStack itemstack, ItemStack itemstack1)
++    {
 +        this.customRecipes.put(itemstack, itemstack1);
-+        this.customExperience.put(itemstack, f);
 +    }
++    // CraftBukkit end
 +
-     public void addSmeltingRecipeForBlock(Block input, ItemStack stack, float experience)
+     public ItemStack getSmeltingResult(ItemStack p_151395_1_)
      {
-         this.addSmelting(Item.getItemFromBlock(input), stack, experience);
-@@ -120,6 +128,14 @@
+-        Iterator iterator = this.smeltingList.entrySet().iterator();
++        // CraftBukkit start
++        boolean vanilla = false;
++        Iterator iterator = this.customRecipes.entrySet().iterator();
++        // CraftBukkit end
+         Entry entry;
  
-     public ItemStack getSmeltingResult(ItemStack stack)
-     {
-+        for (Entry<ItemStack, ItemStack> entry : this.customRecipes.entrySet())
-+        {
-+            if (this.compareItemStacks(stack, entry.getKey()))
-+            {
-+                return entry.getValue();
-+            }
-+        }
-+
-         for (Entry<ItemStack, ItemStack> entry : this.smeltingList.entrySet())
+         do
          {
-             if (this.compareItemStacks(stack, entry.getKey()))
-@@ -146,6 +162,14 @@
-         float ret = stack.getItem().getSmeltingExperience(stack);
-         if (ret != -1) return ret;
+             if (!iterator.hasNext())
+             {
+-                return null;
++                // CraftBukkit start
++                if (!vanilla)
++                {
++                    iterator = this.smeltingList.entrySet().iterator();
++                    vanilla = true;
++                }
++                else
++                {
++                    return null;
++                }
++
++                // CraftBukkit end
+             }
  
-+        for (Entry<ItemStack, Float> entry : this.customExperience.entrySet())
-+        {
-+            if (this.compareItemStacks(stack, entry.getKey()))
-+            {
-+                return ((Float)entry.getValue()).floatValue();
-+            }
-+        }
-+
-         for (Entry<ItemStack, Float> entry : this.experienceList.entrySet())
-         {
-             if (this.compareItemStacks(stack, entry.getKey()))
+             entry = (Entry)iterator.next();

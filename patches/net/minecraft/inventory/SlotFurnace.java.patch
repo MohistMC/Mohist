@@ -1,0 +1,36 @@
+--- ../src-base/minecraft/net/minecraft/inventory/SlotFurnace.java
++++ ../src-work/minecraft/net/minecraft/inventory/SlotFurnace.java
+@@ -9,6 +9,12 @@
+ import net.minecraft.stats.AchievementList;
+ import net.minecraft.util.MathHelper;
+ 
++// CraftBukkit start
++import net.minecraft.tileentity.TileEntityFurnace;
++import org.bukkit.entity.Player;
++import org.bukkit.event.inventory.FurnaceExtractEvent;
++// CraftBukkit end
++
+ public class SlotFurnace extends Slot
+ {
+     private EntityPlayer thePlayer;
+@@ -74,6 +80,20 @@
+                 i = j;
+             }
+ 
++            // Cauldron start - validate inventory before attempting to cast it
++            if (this.inventory instanceof TileEntityFurnace) 
++            {
++                // CraftBukkit start
++                Player player = (Player) thePlayer.getBukkitEntity();
++                TileEntityFurnace furnace = ((TileEntityFurnace) this.inventory);
++                org.bukkit.block.Block block = thePlayer.worldObj.getWorld().getBlockAt(furnace.xCoord, furnace.yCoord, furnace.zCoord);
++                FurnaceExtractEvent event = new FurnaceExtractEvent(player, block, org.bukkit.craftbukkit.util.CraftMagicNumbers.getMaterial(p_75208_1_.getItem()), p_75208_1_.stackSize, i);
++                thePlayer.worldObj.getServer().getPluginManager().callEvent(event);
++                i = event.getExpToDrop();
++                // CraftBukkit end
++            }
++            // Cauldron end
++
+             while (i > 0)
+             {
+                 j = EntityXPOrb.getXPSplit(i);

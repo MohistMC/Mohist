@@ -1,29 +1,32 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockBasePressurePlate.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockBasePressurePlate.java
-@@ -14,6 +14,7 @@
- import net.minecraft.util.math.BlockPos;
+@@ -11,6 +11,8 @@
  import net.minecraft.world.IBlockAccess;
  import net.minecraft.world.World;
-+import org.bukkit.event.block.BlockRedstoneEvent;
  
++import org.bukkit.event.block.BlockRedstoneEvent; // CraftBukkit
++
  public abstract class BlockBasePressurePlate extends Block
  {
-@@ -124,7 +125,18 @@
-         int i = this.computeRedstoneStrength(worldIn, pos);
-         boolean flag = oldRedstoneStrength > 0;
-         boolean flag1 = i > 0;
+     private String field_150067_a;
+@@ -122,7 +124,20 @@
+         int i1 = this.func_150065_e(p_150062_1_, p_150062_2_, p_150062_3_, p_150062_4_);
+         boolean flag = p_150062_5_ > 0;
+         boolean flag1 = i1 > 0;
 +        // CraftBukkit start - Interact Pressure Plate
-+        org.bukkit.World bworld = worldIn.getWorld();
-+        org.bukkit.plugin.PluginManager manager = worldIn.getServer().getPluginManager();
++        org.bukkit.World bworld = p_150062_1_.getWorld();
++        org.bukkit.plugin.PluginManager manager = p_150062_1_.getServer().getPluginManager();
  
-+        if (flag != flag1) {
-+            BlockRedstoneEvent eventRedstone = new BlockRedstoneEvent(bworld.getBlockAt(pos.getX(), pos.getY(), pos.getZ()), oldRedstoneStrength, i);
++        if (flag != flag1)
++        {
++            BlockRedstoneEvent eventRedstone = new BlockRedstoneEvent(bworld.getBlockAt(p_150062_2_, p_150062_3_, p_150062_4_), p_150062_5_, i1);
 +            manager.callEvent(eventRedstone);
-+
 +            flag1 = eventRedstone.getNewCurrent() > 0;
-+            i = eventRedstone.getNewCurrent();
++            i1 = eventRedstone.getNewCurrent();
 +        }
++
 +        // CraftBukkit end
-         if (oldRedstoneStrength != i)
++
+         if (p_150062_5_ != i1)
          {
-             state = this.setRedstoneStrength(state, i);
+             p_150062_1_.setBlockMetadataWithNotify(p_150062_2_, p_150062_3_, p_150062_4_, this.func_150066_d(i1), 2);

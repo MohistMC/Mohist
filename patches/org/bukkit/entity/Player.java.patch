@@ -1,0 +1,114 @@
+--- ../src-base/minecraft/org/bukkit/entity/Player.java
++++ ../src-work/minecraft/org/bukkit/entity/Player.java
+@@ -2,19 +2,11 @@
+ 
+ import java.net.InetSocketAddress;
+ 
+-import org.bukkit.Achievement;
+-import org.bukkit.ChatColor;
+-import org.bukkit.Effect;
+-import org.bukkit.Instrument;
+-import org.bukkit.Location;
+-import org.bukkit.Material;
+-import org.bukkit.Note;
+-import org.bukkit.OfflinePlayer;
+-import org.bukkit.Sound;
+-import org.bukkit.Statistic;
+-import org.bukkit.WeatherType;
++import net.md_5.bungee.api.chat.BaseComponent;
++import org.bukkit.*;
+ import org.bukkit.command.CommandSender;
+ import org.bukkit.conversations.Conversable;
++import org.bukkit.craftbukkit.CraftServer;
+ import org.bukkit.map.MapView;
+ import org.bukkit.plugin.messaging.PluginMessageRecipient;
+ import org.bukkit.scoreboard.Scoreboard;
+@@ -1035,4 +1027,88 @@
+      * @see Player#setHealthScaled(boolean)
+      */
+     public double getHealthScale();
++
++    // Spigot start
++    public class Spigot extends Entity.Spigot
++    {
++
++        /**
++         * Gets the connection address of this player, regardless of whether it
++         * has been spoofed or not.
++         *
++         * @return the player's connection address
++         */
++        public InetSocketAddress getRawAddress()
++        {
++            throw new UnsupportedOperationException( "Not supported yet." );
++        }
++
++        public void playEffect(Location location, Effect effect, int id, int data, float offsetX, float offsetY, float offsetZ, float speed, int particleCount, int radius)
++        {
++            throw new UnsupportedOperationException( "Not supported yet." );
++        }
++
++        /**
++         * Gets whether the player collides with entities
++         *
++         * @return the player's collision toggle state
++         */
++        public boolean getCollidesWithEntities()
++        {
++            throw new UnsupportedOperationException( "Not supported yet." );
++        }
++
++        /**
++         * Sets whether the player collides with entities
++         *
++         * @param collides whether the player should collide with entities or
++         * not.
++         */
++        public void setCollidesWithEntities(boolean collides)
++        {
++            throw new UnsupportedOperationException( "Not supported yet." );
++        }
++
++        /**
++         * Respawns the player if dead.
++         */
++        public void respawn()
++        {
++            throw new UnsupportedOperationException( "Not supported yet." );
++        }
++
++        /**
++         * Gets player locale language.
++         *
++         * @return the player's client language settings
++         */
++        public String getLocale()
++        {
++            throw new UnsupportedOperationException( "Not supported yet." );
++        }
++
++        /**
++         * Gets all players hidden with {@link hidePlayer(org.bukkit.entity.Player)}.
++         *
++         * @return a Set with all hidden players
++         */
++        public java.util.Set<Player> getHiddenPlayers()
++        {
++            throw new UnsupportedOperationException( "Not supported yet." );
++        }
++
++        /**
++         * Send a BaseComponent message from the BungeeCord Chat api.
++         */
++        public void sendMessage(BaseComponent component) {
++            throw new UnsupportedOperationException( "Not supported yet." );
++        }
++
++        public /* varargs */ void sendMessage(BaseComponent ... components) {
++            throw new UnsupportedOperationException("Not supported yet.");
++        }
++    }
++
++    Spigot spigot();
++    // Spigot end
+ }

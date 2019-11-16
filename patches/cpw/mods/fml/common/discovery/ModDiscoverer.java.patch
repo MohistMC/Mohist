@@ -1,0 +1,30 @@
+--- ../src-base/minecraft/cpw/mods/fml/common/discovery/ModDiscoverer.java
++++ ../src-work/minecraft/cpw/mods/fml/common/discovery/ModDiscoverer.java
+@@ -16,7 +16,9 @@
+ import java.util.List;
+ import java.util.regex.Matcher;
+ import java.util.regex.Pattern;
++
+ import org.apache.logging.log4j.Level;
++
+ import com.google.common.base.Throwables;
+ import com.google.common.collect.ImmutableList;
+ import com.google.common.collect.Lists;
+@@ -148,6 +150,17 @@
+             }
+         }
+ 
++        if (!"false".equals(System.getProperty("thermos.fastcraft.disable", "true"))) {
++            java.util.Iterator<ModContainer> iterator = modList.iterator();
++            while(iterator.hasNext()) {
++                ModContainer container = iterator.next();
++                if ("FastCraft".equals(container.getModId())) {
++                    FMLLog.log(Level.WARN, "[Thermos] Sorry, the FastCraft mod will not be loaded due to Thermos compatibility issues. If you still wish to enable it, add \"-thermos.fastcraft.disable=false\" to your server launch script.");
++                    iterator.remove();
++                }
++            }
++        }
++
+         return modList;
+     }
+ 

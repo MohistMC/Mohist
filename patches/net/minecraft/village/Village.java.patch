@@ -1,19 +1,11 @@
 --- ../src-base/minecraft/net/minecraft/village/Village.java
 +++ ../src-work/minecraft/net/minecraft/village/Village.java
-@@ -18,7 +18,6 @@
- import net.minecraft.entity.player.EntityPlayer;
- import net.minecraft.nbt.NBTTagCompound;
- import net.minecraft.nbt.NBTTagList;
--import net.minecraft.server.management.PlayerProfileCache;
- import net.minecraft.util.EnumFacing;
- import net.minecraft.util.math.AxisAlignedBB;
- import net.minecraft.util.math.BlockPos;
-@@ -83,7 +82,7 @@
+@@ -71,7 +71,7 @@
              {
-                 EntityIronGolem entityirongolem = new EntityIronGolem(this.world);
-                 entityirongolem.setPosition(vec3d.x, vec3d.y, vec3d.z);
--                this.world.spawnEntity(entityirongolem);
-+                this.world.addEntity(entityirongolem, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.VILLAGE_DEFENSE);
+                 EntityIronGolem entityirongolem = new EntityIronGolem(this.worldObj);
+                 entityirongolem.setPosition(vec3.xCoord, vec3.yCoord, vec3.zCoord);
+-                this.worldObj.spawnEntityInWorld(entityirongolem);
++                this.worldObj.addEntity(entityirongolem, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.VILLAGE_DEFENSE); // CraftBukkit
                  ++this.numIronGolems;
              }
          }

@@ -1,111 +1,164 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockPumpkin.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockPumpkin.java
-@@ -25,6 +25,8 @@
- import net.minecraft.util.Rotation;
- import net.minecraft.util.math.BlockPos;
+@@ -14,6 +14,12 @@
+ import net.minecraft.util.MathHelper;
  import net.minecraft.world.World;
-+import org.bukkit.craftbukkit.v1_12_R1.util.BlockStateListPopulator;
-+import org.bukkit.event.entity.CreatureSpawnEvent;
  
- public class BlockPumpkin extends BlockHorizontal
++// CraftBukkit start
++import org.bukkit.craftbukkit.util.BlockStateListPopulator;
++import org.bukkit.event.block.BlockRedstoneEvent;
++import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
++// CraftBukkit end
++
+ public class BlockPumpkin extends BlockDirectional
  {
-@@ -62,34 +64,35 @@
-     private void trySpawnGolem(World worldIn, BlockPos pos)
+     private boolean field_149985_a;
+@@ -41,72 +47,95 @@
      {
-         BlockPattern.PatternHelper blockpattern$patternhelper = this.getSnowmanPattern().match(worldIn, pos);
--
-+        BlockStateListPopulator blockList = new BlockStateListPopulator(worldIn.getWorld());
-         if (blockpattern$patternhelper != null)
+         super.onBlockAdded(p_149726_1_, p_149726_2_, p_149726_3_, p_149726_4_);
+ 
++        // CHECK FOR SNOWMEN AHH
+         if (p_149726_1_.getBlock(p_149726_2_, p_149726_3_ - 1, p_149726_4_) == Blocks.snow && p_149726_1_.getBlock(p_149726_2_, p_149726_3_ - 2, p_149726_4_) == Blocks.snow)
          {
-             for (int i = 0; i < this.getSnowmanPattern().getThumbLength(); ++i)
+             if (!p_149726_1_.isRemote)
              {
-                 BlockWorldState blockworldstate = blockpattern$patternhelper.translateOffset(0, i, 0);
--                worldIn.setBlockState(blockworldstate.getPos(), Blocks.AIR.getDefaultState(), 2);
-+//                worldIn.setBlockState(blockworldstate.getPos(), Blocks.AIR.getDefaultState(), 2);
-+                BlockPos pos1 = blockworldstate.getPos();
-+                blockList.setTypeId(pos1.getX(), pos1.getY(), pos1.getZ(), 0);
-             }
- 
-             EntitySnowman entitysnowman = new EntitySnowman(worldIn);
-             BlockPos blockpos1 = blockpattern$patternhelper.translateOffset(0, 2, 0).getPos();
-             entitysnowman.setLocationAndAngles((double)blockpos1.getX() + 0.5D, (double)blockpos1.getY() + 0.05D, (double)blockpos1.getZ() + 0.5D, 0.0F, 0.0F);
--            worldIn.spawnEntity(entitysnowman);
-+            if (worldIn.addEntity(entitysnowman, CreatureSpawnEvent.SpawnReason.BUILD_SNOWMAN)) {
-+                blockList.updateList();
- 
--            for (EntityPlayerMP entityplayermp : worldIn.getEntitiesWithinAABB(EntityPlayerMP.class, entitysnowman.getEntityBoundingBox().grow(5.0D)))
--            {
--                CriteriaTriggers.SUMMONED_ENTITY.trigger(entityplayermp, entitysnowman);
+-                p_149726_1_.setBlock(p_149726_2_, p_149726_3_, p_149726_4_, getBlockById(0), 0, 2);
+-                p_149726_1_.setBlock(p_149726_2_, p_149726_3_ - 1, p_149726_4_, getBlockById(0), 0, 2);
+-                p_149726_1_.setBlock(p_149726_2_, p_149726_3_ - 2, p_149726_4_, getBlockById(0), 0, 2);
++                // CraftBukkit start - Use BlockStateListPopulator
++                BlockStateListPopulator blockList = new BlockStateListPopulator(p_149726_1_.getWorld());
++                blockList.setTypeId(p_149726_2_, p_149726_3_, p_149726_4_, 0);
++                blockList.setTypeId(p_149726_2_, p_149726_3_ - 1, p_149726_4_, 0);
++                blockList.setTypeId(p_149726_2_, p_149726_3_ - 2, p_149726_4_, 0);
+                 EntitySnowman entitysnowman = new EntitySnowman(p_149726_1_);
+-                entitysnowman.setLocationAndAngles((double)p_149726_2_ + 0.5D, (double)p_149726_3_ - 1.95D, (double)p_149726_4_ + 0.5D, 0.0F, 0.0F);
+-                p_149726_1_.spawnEntityInWorld(entitysnowman);
+-                p_149726_1_.notifyBlockChange(p_149726_2_, p_149726_3_, p_149726_4_, getBlockById(0));
+-                p_149726_1_.notifyBlockChange(p_149726_2_, p_149726_3_ - 1, p_149726_4_, getBlockById(0));
+-                p_149726_1_.notifyBlockChange(p_149726_2_, p_149726_3_ - 2, p_149726_4_, getBlockById(0));
 -            }
-+                for (EntityPlayerMP entityplayermp : worldIn.getEntitiesWithinAABB(EntityPlayerMP.class, entitysnowman.getEntityBoundingBox().grow(5.0D))) {
-+                    CriteriaTriggers.SUMMONED_ENTITY.trigger(entityplayermp, entitysnowman);
-+                }
++                entitysnowman.setLocationAndAngles((double) p_149726_2_ + 0.5D, (double) p_149726_3_ - 1.95D, (double) p_149726_4_ + 0.5D, 0.0F, 0.0F);
  
--            for (int l = 0; l < 120; ++l)
--            {
--                worldIn.spawnParticle(EnumParticleTypes.SNOW_SHOVEL, (double)blockpos1.getX() + worldIn.rand.nextDouble(), (double)blockpos1.getY() + worldIn.rand.nextDouble() * 2.5D, (double)blockpos1.getZ() + worldIn.rand.nextDouble(), 0.0D, 0.0D, 0.0D);
--            }
-+                for (int l = 0; l < 120; ++l) {
-+                    worldIn.spawnParticle(EnumParticleTypes.SNOW_SHOVEL, (double) blockpos1.getX() + worldIn.rand.nextDouble(), (double) blockpos1.getY() + worldIn.rand.nextDouble() * 2.5D, (double) blockpos1.getZ() + worldIn.rand.nextDouble(), 0.0D, 0.0D, 0.0D);
++                if (p_149726_1_.addEntity(entitysnowman, SpawnReason.BUILD_SNOWMAN))
++                {
++                    blockList.updateList();
++                    // Check if everything is still there for dat snowman
++                    if (p_149726_1_.getBlock(p_149726_2_, p_149726_3_ - 1, p_149726_4_) == Blocks.snow && p_149726_1_.getBlock(p_149726_2_, p_149726_3_ - 2, p_149726_4_) == Blocks.snow)
++                    {
++                    	entitysnowman.isDead = true;
++                    	p_149726_1_.removeEntity(entitysnowman);
++                    }
 +                }
- 
--            for (int i1 = 0; i1 < this.getSnowmanPattern().getThumbLength(); ++i1)
--            {
--                BlockWorldState blockworldstate2 = blockpattern$patternhelper.translateOffset(0, i1, 0);
--                worldIn.notifyNeighborsRespectDebug(blockworldstate2.getPos(), Blocks.AIR, false);
-+                for (int i1 = 0; i1 < this.getSnowmanPattern().getThumbLength(); ++i1) {
-+                    BlockWorldState blockworldstate2 = blockpattern$patternhelper.translateOffset(0, i1, 0);
-+                    worldIn.notifyNeighborsRespectDebug(blockworldstate2.getPos(), Blocks.AIR, false);
-+                }
++                
++            }
++            
+             for (int i1 = 0; i1 < 120; ++i1)
+             {
+                 p_149726_1_.spawnParticle("snowshovel", (double)p_149726_2_ + p_149726_1_.rand.nextDouble(), (double)(p_149726_3_ - 2) + p_149726_1_.rand.nextDouble() * 2.5D, (double)p_149726_4_ + p_149726_1_.rand.nextDouble(), 0.0D, 0.0D, 0.0D);
              }
          }
-         else
-@@ -102,7 +105,9 @@
++        // Check below middle pumpkin for 2 iron blocks
+         else if (p_149726_1_.getBlock(p_149726_2_, p_149726_3_ - 1, p_149726_4_) == Blocks.iron_block && p_149726_1_.getBlock(p_149726_2_, p_149726_3_ - 2, p_149726_4_) == Blocks.iron_block)
+         {
++        	//Check in the X direction for iron block left and right 1 block below pumpkin
+             boolean flag = p_149726_1_.getBlock(p_149726_2_ - 1, p_149726_3_ - 1, p_149726_4_) == Blocks.iron_block && p_149726_1_.getBlock(p_149726_2_ + 1, p_149726_3_ - 1, p_149726_4_) == Blocks.iron_block;
++            //Check in the Z direction for iron block left and right 1 block below pumpkin
+             boolean flag1 = p_149726_1_.getBlock(p_149726_2_, p_149726_3_ - 1, p_149726_4_ - 1) == Blocks.iron_block && p_149726_1_.getBlock(p_149726_2_, p_149726_3_ - 1, p_149726_4_ + 1) == Blocks.iron_block;
+ 
+             if (flag || flag1)
+             {
+-                p_149726_1_.setBlock(p_149726_2_, p_149726_3_, p_149726_4_, getBlockById(0), 0, 2);
+-                p_149726_1_.setBlock(p_149726_2_, p_149726_3_ - 1, p_149726_4_, getBlockById(0), 0, 2);
+-                p_149726_1_.setBlock(p_149726_2_, p_149726_3_ - 2, p_149726_4_, getBlockById(0), 0, 2);
++                // CraftBukkit start - Use BlockStateListPopulator
++                BlockStateListPopulator blockList = new BlockStateListPopulator(p_149726_1_.getWorld());
++                blockList.setTypeId(p_149726_2_, p_149726_3_, p_149726_4_, 0);
++                blockList.setTypeId(p_149726_2_, p_149726_3_ - 1, p_149726_4_, 0);
++                blockList.setTypeId(p_149726_2_, p_149726_3_ - 2, p_149726_4_, 0);
+ 
++                // If the iron blocks were in the X direction
+                 if (flag)
                  {
-                     for (int k = 0; k < this.getGolemPattern().getThumbLength(); ++k)
-                     {
--                        worldIn.setBlockState(blockpattern$patternhelper.translateOffset(j, k, 0).getPos(), Blocks.AIR.getDefaultState(), 2);
-+//                        worldIn.setBlockState(blockpattern$patternhelper.translateOffset(j, k, 0).getPos(), Blocks.AIR.getDefaultState(), 2);
-+                        BlockPos pos2 = blockpattern$patternhelper.translateOffset(j, k, 0).getPos();
-+                        blockList.setTypeId(pos2.getX(), pos2.getY(), pos2.getZ(), 0);
-                     }
+-                    p_149726_1_.setBlock(p_149726_2_ - 1, p_149726_3_ - 1, p_149726_4_, getBlockById(0), 0, 2);
+-                    p_149726_1_.setBlock(p_149726_2_ + 1, p_149726_3_ - 1, p_149726_4_, getBlockById(0), 0, 2);
++                    blockList.setTypeId(p_149726_2_ - 1, p_149726_3_ - 1, p_149726_4_, 0);
++                    blockList.setTypeId(p_149726_2_ + 1, p_149726_3_ - 1, p_149726_4_, 0);
+                 }
++                // If the iron blocks were in the Z direction
+                 else
+                 {
+-                    p_149726_1_.setBlock(p_149726_2_, p_149726_3_ - 1, p_149726_4_ - 1, getBlockById(0), 0, 2);
+-                    p_149726_1_.setBlock(p_149726_2_, p_149726_3_ - 1, p_149726_4_ + 1, getBlockById(0), 0, 2);
++                    blockList.setTypeId(p_149726_2_, p_149726_3_ - 1, p_149726_4_ - 1, 0);
++                    blockList.setTypeId(p_149726_2_, p_149726_3_ - 1, p_149726_4_ + 1, 0);
                  }
  
-@@ -110,24 +115,22 @@
-                 EntityIronGolem entityirongolem = new EntityIronGolem(worldIn);
+                 EntityIronGolem entityirongolem = new EntityIronGolem(p_149726_1_);
                  entityirongolem.setPlayerCreated(true);
-                 entityirongolem.setLocationAndAngles((double)blockpos.getX() + 0.5D, (double)blockpos.getY() + 0.05D, (double)blockpos.getZ() + 0.5D, 0.0F, 0.0F);
--                worldIn.spawnEntity(entityirongolem);
-+                if (worldIn.addEntity(entityirongolem, CreatureSpawnEvent.SpawnReason.BUILD_IRONGOLEM)) {
+-                entityirongolem.setLocationAndAngles((double)p_149726_2_ + 0.5D, (double)p_149726_3_ - 1.95D, (double)p_149726_4_ + 0.5D, 0.0F, 0.0F);
+-                p_149726_1_.spawnEntityInWorld(entityirongolem);
++                entityirongolem.setLocationAndAngles((double) p_149726_2_ + 0.5D, (double) p_149726_3_ - 1.95D, (double) p_149726_4_ + 0.5D, 0.0F, 0.0F);
+ 
+-                for (int l = 0; l < 120; ++l)
++                if (p_149726_1_.addEntity(entityirongolem, SpawnReason.BUILD_IRONGOLEM))
+                 {
+-                    p_149726_1_.spawnParticle("snowballpoof", (double)p_149726_2_ + p_149726_1_.rand.nextDouble(), (double)(p_149726_3_ - 2) + p_149726_1_.rand.nextDouble() * 3.9D, (double)p_149726_4_ + p_149726_1_.rand.nextDouble(), 0.0D, 0.0D, 0.0D);
+-                }
++                    for (int i1 = 0; i1 < 120; ++i1)
++                    {
++                        p_149726_1_.spawnParticle("snowballpoof", (double) p_149726_2_ + p_149726_1_.rand.nextDouble(), (double)(p_149726_3_ - 2) + p_149726_1_.rand.nextDouble() * 3.9D, (double) p_149726_4_ + p_149726_1_.rand.nextDouble(), 0.0D, 0.0D, 0.0D);
++                    }
+ 
+-                p_149726_1_.notifyBlockChange(p_149726_2_, p_149726_3_, p_149726_4_, getBlockById(0));
+-                p_149726_1_.notifyBlockChange(p_149726_2_, p_149726_3_ - 1, p_149726_4_, getBlockById(0));
+-                p_149726_1_.notifyBlockChange(p_149726_2_, p_149726_3_ - 2, p_149726_4_, getBlockById(0));
 +                    blockList.updateList();
++                    //Recheck if the stuff is still there and the iron golem failed to delete its blocks - then delete the golem quickly
++                    if (p_149726_1_.getBlock(p_149726_2_, p_149726_3_ - 1, p_149726_4_) == Blocks.iron_block && p_149726_1_.getBlock(p_149726_2_, p_149726_3_ - 2, p_149726_4_) == Blocks.iron_block)
++                    {
++                    	//Check in the X direction for iron block left and right 1 block below pumpkin
++                        boolean xdir = p_149726_1_.getBlock(p_149726_2_ - 1, p_149726_3_ - 1, p_149726_4_) == Blocks.iron_block && p_149726_1_.getBlock(p_149726_2_ + 1, p_149726_3_ - 1, p_149726_4_) == Blocks.iron_block;
++                        //Check in the Z direction for iron block left and right 1 block below pumpkin
++                        boolean zdir = p_149726_1_.getBlock(p_149726_2_, p_149726_3_ - 1, p_149726_4_ - 1) == Blocks.iron_block && p_149726_1_.getBlock(p_149726_2_, p_149726_3_ - 1, p_149726_4_ + 1) == Blocks.iron_block;
++                        if (xdir || zdir)
++                        {
++                        	entityirongolem.isDead = true;
++                        	p_149726_1_.removeEntity(entityirongolem);
  
--                for (EntityPlayerMP entityplayermp1 : worldIn.getEntitiesWithinAABB(EntityPlayerMP.class, entityirongolem.getEntityBoundingBox().grow(5.0D)))
+-                if (flag)
 -                {
--                    CriteriaTriggers.SUMMONED_ENTITY.trigger(entityplayermp1, entityirongolem);
--                }
-+                    for (EntityPlayerMP entityplayermp1 : worldIn.getEntitiesWithinAABB(EntityPlayerMP.class, entityirongolem.getEntityBoundingBox().grow(5.0D))) {
-+                        CriteriaTriggers.SUMMONED_ENTITY.trigger(entityplayermp1, entityirongolem);
-+                    }
- 
--                for (int j1 = 0; j1 < 120; ++j1)
--                {
--                    worldIn.spawnParticle(EnumParticleTypes.SNOWBALL, (double)blockpos.getX() + worldIn.rand.nextDouble(), (double)blockpos.getY() + worldIn.rand.nextDouble() * 3.9D, (double)blockpos.getZ() + worldIn.rand.nextDouble(), 0.0D, 0.0D, 0.0D);
--                }
-+                    for (int j1 = 0; j1 < 120; ++j1) {
-+                        worldIn.spawnParticle(EnumParticleTypes.SNOWBALL, (double) blockpos.getX() + worldIn.rand.nextDouble(), (double) blockpos.getY() + worldIn.rand.nextDouble() * 3.9D, (double) blockpos.getZ() + worldIn.rand.nextDouble(), 0.0D, 0.0D, 0.0D);
-+                    }
- 
--                for (int k1 = 0; k1 < this.getGolemPattern().getPalmLength(); ++k1)
--                {
--                    for (int l1 = 0; l1 < this.getGolemPattern().getThumbLength(); ++l1)
--                    {
--                        BlockWorldState blockworldstate1 = blockpattern$patternhelper.translateOffset(k1, l1, 0);
--                        worldIn.notifyNeighborsRespectDebug(blockworldstate1.getPos(), Blocks.AIR, false);
-+                    for (int k1 = 0; k1 < this.getGolemPattern().getPalmLength(); ++k1) {
-+                        for (int l1 = 0; l1 < this.getGolemPattern().getThumbLength(); ++l1) {
-+                            BlockWorldState blockworldstate1 = blockpattern$patternhelper.translateOffset(k1, l1, 0);
-+                            worldIn.notifyNeighborsRespectDebug(blockworldstate1.getPos(), Blocks.AIR, false);
+-                    p_149726_1_.notifyBlockChange(p_149726_2_ - 1, p_149726_3_ - 1, p_149726_4_, getBlockById(0));
+-                    p_149726_1_.notifyBlockChange(p_149726_2_ + 1, p_149726_3_ - 1, p_149726_4_, getBlockById(0));
 +                        }
-                     }
++                    }
                  }
+-                else
+-                {
+-                    p_149726_1_.notifyBlockChange(p_149726_2_, p_149726_3_ - 1, p_149726_4_ - 1, getBlockById(0));
+-                    p_149726_1_.notifyBlockChange(p_149726_2_, p_149726_3_ - 1, p_149726_4_ + 1, getBlockById(0));
+-                }
++
++                // CraftBukkit end
              }
+         }
+     }
+@@ -122,6 +151,19 @@
+         p_149689_1_.setBlockMetadataWithNotify(p_149689_2_, p_149689_3_, p_149689_4_, l, 2);
+     }
+ 
++    // CraftBukkit start
++    public void onNeighborBlockChange(World world, int i, int j, int k, Block block)
++    {
++        if (block != null && block.canProvidePower())
++        {
++            org.bukkit.block.Block bukkitBlock = world.getWorld().getBlockAt(i, j, k);
++            int power = bukkitBlock.getBlockPower();
++            BlockRedstoneEvent eventRedstone = new BlockRedstoneEvent(bukkitBlock, power, power);
++            world.getServer().getPluginManager().callEvent(eventRedstone);
++        }
++    }
++    // CraftBukkit end
++
+     @SideOnly(Side.CLIENT)
+     public void registerBlockIcons(IIconRegister p_149651_1_)
+     {

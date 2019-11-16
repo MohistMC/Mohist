@@ -1,0 +1,19 @@
+--- ../src-base/minecraft/net/minecraft/block/BlockHopper.java
++++ ../src-work/minecraft/net/minecraft/block/BlockHopper.java
+@@ -22,6 +22,7 @@
+ import net.minecraft.util.IIcon;
+ import net.minecraft.world.IBlockAccess;
+ import net.minecraft.world.World;
++import net.minecraft.inventory.IInventory; // CraftBukkit
+ 
+ public class BlockHopper extends BlockContainer
+ {
+@@ -210,7 +211,7 @@
+ 
+     public static int getDirectionFromMetadata(int p_149918_0_)
+     {
+-        return p_149918_0_ & 7;
++        return Math.min(p_149918_0_ & 7, 5); // CraftBukkit - Fix AIOOBE in callers
+     }
+ 
+     public static boolean func_149917_c(int p_149917_0_)

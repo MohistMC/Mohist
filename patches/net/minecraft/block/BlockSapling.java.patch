@@ -1,132 +1,130 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockSapling.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockSapling.java
-@@ -1,5 +1,6 @@
- package net.minecraft.block;
- 
-+import java.util.List;
- import java.util.Random;
- import net.minecraft.block.properties.IProperty;
- import net.minecraft.block.properties.PropertyEnum;
-@@ -24,12 +25,17 @@
- import net.minecraft.world.gen.feature.WorldGenTaiga2;
+@@ -22,10 +22,18 @@
  import net.minecraft.world.gen.feature.WorldGenTrees;
  import net.minecraft.world.gen.feature.WorldGenerator;
+ 
++// CraftBukkit start
 +import org.bukkit.Location;
 +import org.bukkit.TreeType;
 +import org.bukkit.block.BlockState;
 +import org.bukkit.event.world.StructureGrowEvent;
- 
++// CraftBukkit end
++
  public class BlockSapling extends BlockBush implements IGrowable
  {
-     public static final PropertyEnum<BlockPlanks.EnumType> TYPE = PropertyEnum.<BlockPlanks.EnumType>create("type", BlockPlanks.EnumType.class);
-     public static final PropertyInteger STAGE = PropertyInteger.create("stage", 0, 1);
-     protected static final AxisAlignedBB SAPLING_AABB = new AxisAlignedBB(0.09999999403953552D, 0.0D, 0.09999999403953552D, 0.8999999761581421D, 0.800000011920929D, 0.8999999761581421D);
+     public static final String[] field_149882_a = new String[] {"oak", "spruce", "birch", "jungle", "acacia", "roofed_oak"};
+     private static final IIcon[] field_149881_b = new IIcon[field_149882_a.length];
 +    public static TreeType treeType; // CraftBukkit
+     private static final String __OBFID = "CL_00000305";
  
      protected BlockSapling()
-     {
-@@ -54,9 +60,31 @@
-             super.updateTick(worldIn, pos, state, rand);
+@@ -41,9 +49,39 @@
+         {
+             super.updateTick(p_149674_1_, p_149674_2_, p_149674_3_, p_149674_4_, p_149674_5_);
  
-             if (!worldIn.isAreaLoaded(pos, 1)) return; // Forge: prevent loading unloaded chunks when checking neighbor's light
--            if (worldIn.getLightFromNeighbors(pos.up()) >= 9 && rand.nextInt(7) == 0)
--            {
-+            if (worldIn.isLightLevel(pos.up(), 9) && rand.nextInt(Math.max(2, (int)(100.0f / worldIn.spigotConfig.saplingModifier * 7.0f + 0.5f))) == 0) {
-+                worldIn.captureTreeGeneration = true;
-                 this.grow(worldIn, pos, state, rand);
-+                worldIn.captureTreeGeneration = false;
-+                if (worldIn.capturedBlockSnapshots.size() > 0) {
+-            if (p_149674_1_.getBlockLightValue(p_149674_2_, p_149674_3_ + 1, p_149674_4_) >= 9 && p_149674_5_.nextInt(7) == 0)
++            if (p_149674_1_.getBlockLightValue(p_149674_2_, p_149674_3_ + 1, p_149674_4_) >= 9 && (p_149674_5_.nextInt(Math.max(2, (int)((p_149674_1_.growthOdds / p_149674_1_.getSpigotConfig().saplingModifier * 7) + 0.5F))) == 0))    // Spigot // Cauldron
+             {
++                // Cauldron start
++                p_149674_1_.captureTreeGeneration = true;
+                 this.func_149879_c(p_149674_1_, p_149674_2_, p_149674_3_, p_149674_4_, p_149674_5_);
++                p_149674_1_.captureTreeGeneration = false;
++                if (p_149674_1_.capturedBlockSnapshots.size() > 0)
++                {
 +                    TreeType treeType = BlockSapling.treeType;
 +                    BlockSapling.treeType = null;
-+                    Location location = new Location(worldIn.getWorld(), pos.getX(), pos.getY(), pos.getZ());
-+                    List<net.minecraftforge.common.util.BlockSnapshot> blocks = (List) worldIn.capturedBlockSnapshots.clone();
++                    Location location = new Location(p_149674_1_.getWorld(), p_149674_2_, p_149674_3_, p_149674_4_);
++                    List<net.minecraftforge.common.util.BlockSnapshot> blocks = (List) p_149674_1_.capturedBlockSnapshots.clone();
 +                    List<BlockState> blockstates = new java.util.ArrayList();
-+                    for (net.minecraftforge.common.util.BlockSnapshot snapshot : blocks) {
-+                        blockstates.add(new org.bukkit.craftbukkit.v1_12_R1.block.CraftBlockState(snapshot));
++                    for (net.minecraftforge.common.util.BlockSnapshot snapshot : blocks)
++                    {
++                        blockstates.add(new org.bukkit.craftbukkit.block.CraftBlockState(snapshot));
 +                    }
-+                    worldIn.capturedBlockSnapshots.clear();
++                    p_149674_1_.capturedBlockSnapshots.clear();
 +                    StructureGrowEvent event = null;
-+                    if (treeType != null) {
++                    if (treeType != null)
++                    {
 +                        event = new StructureGrowEvent(location, treeType, false, null, blockstates);
 +                        org.bukkit.Bukkit.getPluginManager().callEvent(event);
 +                    }
-+                    if (event == null || !event.isCancelled()) {
-+                        for (BlockState blockstate : blockstates) {
++                    if (event == null || !event.isCancelled())
++                    {
++                        for (BlockState blockstate : blockstates)
++                        {
 +                            blockstate.update(true);
 +                        }
 +                    }
 +                }
++                // Cauldron end
              }
          }
      }
-@@ -76,7 +104,17 @@
-     public void generateTree(World worldIn, BlockPos pos, IBlockState state, Random rand)
+@@ -73,7 +111,20 @@
      {
-         if (!net.minecraftforge.event.terraingen.TerrainGen.saplingGrowTree(worldIn, rand, pos)) return;
--        WorldGenerator worldgenerator = (WorldGenerator)(rand.nextInt(10) == 0 ? new WorldGenBigTree(true) : new WorldGenTrees(true));
-+        // CraftBukkit start - Turn ternary operator into if statement to set treeType
-+        // WorldGenerator worldgenerator = (WorldGenerator)(rand.nextInt(10) == 0 ? new WorldGenBigTree(true) : new WorldGenTrees(true));
-+        WorldGenerator worldgenerator;
-+        if (rand.nextInt(10) == 0) {
-+            treeType = TreeType.BIG_TREE;
-+            worldgenerator = new WorldGenBigTree(true);
-+        } else {
-+            treeType = TreeType.TREE;
-+            worldgenerator = new WorldGenTrees(true);
+         if (!net.minecraftforge.event.terraingen.TerrainGen.saplingGrowTree(p_149878_1_, p_149878_5_, p_149878_2_, p_149878_3_, p_149878_4_)) return;
+         int l = p_149878_1_.getBlockMetadata(p_149878_2_, p_149878_3_, p_149878_4_) & 7;
+-        Object object = p_149878_5_.nextInt(10) == 0 ? new WorldGenBigTree(true) : new WorldGenTrees(true);
++        // CraftBukkit start
++        Object object = null;
++        if (p_149878_5_.nextInt(10) == 0)
++        { 
++            treeType = TreeType.BIG_TREE; // CraftBukkit
++            object = new WorldGenBigTree(true);
++        }
++        else
++        {
++            treeType = TreeType.TREE; // CraftBukkit
++            object = new WorldGenTrees(true);
 +        }
 +        // CraftBukkit end
-         int i = 0;
-         int j = 0;
++
+         int i1 = 0;
+         int j1 = 0;
          boolean flag = false;
-@@ -92,6 +130,7 @@
-                     {
-                         if (this.isTwoByTwoOfType(worldIn, pos, i, j, BlockPlanks.EnumType.SPRUCE))
-                         {
-+                            treeType = TreeType.MEGA_REDWOOD; // CraftBukkit
-                             worldgenerator = new WorldGenMegaPineTree(false, rand.nextBoolean());
-                             flag = true;
-                             break label68;
-@@ -103,11 +142,13 @@
-                 {
-                     i = 0;
-                     j = 0;
-+                    treeType = TreeType.REDWOOD; // CraftBukkit
-                     worldgenerator = new WorldGenTaiga2(true);
-                 }
+@@ -84,6 +135,7 @@
+             default:
+                 break;
+             case 1:
++                treeType = TreeType.REDWOOD; // CraftBukkit
+                 label78:
+ 
+                 for (i1 = 0; i1 >= -1; --i1)
+@@ -108,6 +160,7 @@
  
                  break;
-             case BIRCH:
+             case 2:
 +                treeType = TreeType.BIRCH; // CraftBukkit
-                 worldgenerator = new WorldGenBirchTree(true, false);
+                 object = new WorldGenForest(true, false);
                  break;
-             case JUNGLE:
-@@ -121,6 +162,7 @@
+             case 3:
+@@ -119,6 +172,7 @@
                      {
-                         if (this.isTwoByTwoOfType(worldIn, pos, i, j, BlockPlanks.EnumType.JUNGLE))
+                         if (this.func_149880_a(p_149878_1_, p_149878_2_ + i1, p_149878_3_, p_149878_4_ + j1, 3) && this.func_149880_a(p_149878_1_, p_149878_2_ + i1 + 1, p_149878_3_, p_149878_4_ + j1, 3) && this.func_149880_a(p_149878_1_, p_149878_2_ + i1, p_149878_3_, p_149878_4_ + j1 + 1, 3) && this.func_149880_a(p_149878_1_, p_149878_2_ + i1 + 1, p_149878_3_, p_149878_4_ + j1 + 1, 3))
                          {
 +                            treeType = TreeType.JUNGLE; // CraftBukkit
-                             worldgenerator = new WorldGenMegaJungle(true, 10, 20, iblockstate, iblockstate1);
+                             object = new WorldGenMegaJungle(true, 10, 20, 3, 3);
                              flag = true;
-                             break label82;
-@@ -132,11 +174,13 @@
+                             break label93;
+@@ -130,11 +184,13 @@
                  {
-                     i = 0;
-                     j = 0;
+                     j1 = 0;
+                     i1 = 0;
 +                    treeType = TreeType.SMALL_JUNGLE; // CraftBukkit
-                     worldgenerator = new WorldGenTrees(true, 4 + rand.nextInt(7), iblockstate, iblockstate1, false);
+                     object = new WorldGenTrees(true, 4 + p_149878_5_.nextInt(7), 3, 3, false);
                  }
  
                  break;
-             case ACACIA:
+             case 4:
 +                treeType = TreeType.ACACIA; // CraftBukkit
-                 worldgenerator = new WorldGenSavannaTree(true);
+                 object = new WorldGenSavannaTree(true);
                  break;
-             case DARK_OAK:
-@@ -148,6 +192,7 @@
-                     {
-                         if (this.isTwoByTwoOfType(worldIn, pos, i, j, BlockPlanks.EnumType.DARK_OAK))
+             case 5:
+@@ -147,6 +203,7 @@
+                         if (this.func_149880_a(p_149878_1_, p_149878_2_ + i1, p_149878_3_, p_149878_4_ + j1, 5) && this.func_149880_a(p_149878_1_, p_149878_2_ + i1 + 1, p_149878_3_, p_149878_4_ + j1, 5) && this.func_149880_a(p_149878_1_, p_149878_2_ + i1, p_149878_3_, p_149878_4_ + j1 + 1, 5) && this.func_149880_a(p_149878_1_, p_149878_2_ + i1 + 1, p_149878_3_, p_149878_4_ + j1 + 1, 5))
                          {
+                             object = new WorldGenCanopyTree(true);
 +                            treeType = TreeType.DARK_OAK; // CraftBukkit
-                             worldgenerator = new WorldGenCanopyTree(true);
                              flag = true;
-                             break label96;
+                             break label108;
+                         }

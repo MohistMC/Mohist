@@ -18,10 +18,6 @@ public class PlayerItemDamageEvent extends PlayerEvent implements Cancellable {
         this.damage = damage;
     }
 
-    public static HandlerList getHandlerList() {
-        return handlers;
-    }
-
     public ItemStack getItem() {
         return item;
     }
@@ -49,6 +45,10 @@ public class PlayerItemDamageEvent extends PlayerEvent implements Cancellable {
 
     @Override
     public HandlerList getHandlers() {
+        return handlers;
+    }
+
+    public static HandlerList getHandlerList() {
         return handlers;
     }
 }

@@ -1,24 +1,34 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockCommandBlock.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockCommandBlock.java
-@@ -27,6 +27,7 @@
+@@ -10,6 +10,8 @@
+ import net.minecraft.tileentity.TileEntityCommandBlock;
  import net.minecraft.world.World;
- import org.apache.logging.log4j.LogManager;
- import org.apache.logging.log4j.Logger;
-+import org.bukkit.event.block.BlockRedstoneEvent;
  
++import org.bukkit.event.block.BlockRedstoneEvent; // CraftBukkit
++
  public class BlockCommandBlock extends BlockContainer
  {
-@@ -58,6 +59,13 @@
-                 TileEntityCommandBlock tileentitycommandblock = (TileEntityCommandBlock)tileentity;
-                 boolean flag = worldIn.isBlockPowered(pos);
-                 boolean flag1 = tileentitycommandblock.isPowered();
-+                org.bukkit.block.Block bukkitBlock = worldIn.getWorld().getBlockAt(pos.getX(), pos.getY(), pos.getZ());
-+                int old = flag1 ? 15 : 0;
-+                int current = flag ? 15 : 0;
-+
-+                BlockRedstoneEvent eventRedstone = new BlockRedstoneEvent(bukkitBlock, old, current);
-+                worldIn.getServer().getPluginManager().callEvent(eventRedstone);
-+                flag = eventRedstone.getNewCurrent() > 0;
-                 tileentitycommandblock.setPowered(flag);
+     private static final String __OBFID = "CL_00000219";
+@@ -31,13 +33,20 @@
+             boolean flag = p_149695_1_.isBlockIndirectlyGettingPowered(p_149695_2_, p_149695_3_, p_149695_4_);
+             int l = p_149695_1_.getBlockMetadata(p_149695_2_, p_149695_3_, p_149695_4_);
+             boolean flag1 = (l & 1) != 0;
++            // CraftBukkit start
++            org.bukkit.block.Block bukkitBlock = p_149695_1_.getWorld().getBlockAt(p_149695_2_, p_149695_3_, p_149695_4_);
++            int old = flag1 ? 15 : 0;
++            int current = flag ? 15 : 0;
++            BlockRedstoneEvent eventRedstone = new BlockRedstoneEvent(bukkitBlock, old, current);
++            p_149695_1_.getServer().getPluginManager().callEvent(eventRedstone);
++            // CraftBukkit end
  
-                 if (!flag1 && !tileentitycommandblock.isAuto() && tileentitycommandblock.getMode() != TileEntityCommandBlock.Mode.SEQUENCE)
+-            if (flag && !flag1)
++            if (eventRedstone.getNewCurrent() > 0 && !(eventRedstone.getOldCurrent() > 0))   // CraftBukkit
+             {
+                 p_149695_1_.setBlockMetadataWithNotify(p_149695_2_, p_149695_3_, p_149695_4_, l | 1, 4);
+                 p_149695_1_.scheduleBlockUpdate(p_149695_2_, p_149695_3_, p_149695_4_, this, this.tickRate(p_149695_1_));
+             }
+-            else if (!flag && flag1)
++            else if (!(eventRedstone.getNewCurrent() > 0) && eventRedstone.getOldCurrent() > 0)     // CraftBukkit
+             {
+                 p_149695_1_.setBlockMetadataWithNotify(p_149695_2_, p_149695_3_, p_149695_4_, l & -2, 4);
+             }

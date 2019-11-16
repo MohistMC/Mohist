@@ -1,18 +1,21 @@
 --- ../src-base/minecraft/net/minecraft/world/gen/structure/MapGenStructure.java
 +++ ../src-work/minecraft/net/minecraft/world/gen/structure/MapGenStructure.java
-@@ -175,8 +175,13 @@
+@@ -239,8 +239,17 @@
      {
-         if (this.structureData == null && worldIn != null)
+         if (this.field_143029_e == null)
          {
--            this.structureData = (MapGenStructureData)worldIn.getPerWorldStorage().getOrLoadData(MapGenStructureData.class, this.getStructureName());
--
+-            this.field_143029_e = (MapGenStructureData)p_143027_1_.perWorldStorage.loadData(MapGenStructureData.class, this.func_143025_a());
 +            // Spigot Start
-+            if (worldIn.spigotConfig.saveStructureInfo && !this.getStructureName().equals("Mineshaft")) {
-+                this.structureData = (MapGenStructureData)worldIn.getPerWorldStorage().getOrLoadData(MapGenStructureData.class, this.getStructureName());
-+            } else {
-+                this.structureData = new MapGenStructureData(this.getStructureName());
++            if (p_143027_1_.getSpigotConfig().saveStructureInfo && !this.func_143025_a().equals("Mineshaft")) // Cauldron
++            {
++                this.field_143029_e = (MapGenStructureData) p_143027_1_.loadItemData(MapGenStructureData.class, this.func_143025_a());
 +            }
++            else
++            {
++                this.field_143029_e = new MapGenStructureData(this.func_143025_a());
++            }
+ 
 +            // Spigot End
-             if (this.structureData == null)
+             if (this.field_143029_e == null)
              {
-                 this.structureData = new MapGenStructureData(this.getStructureName());
+                 this.field_143029_e = new MapGenStructureData(this.func_143025_a());

@@ -1,96 +1,74 @@
 --- ../src-base/minecraft/net/minecraft/command/CommandHandler.java
 +++ ../src-work/minecraft/net/minecraft/command/CommandHandler.java
-@@ -16,26 +16,27 @@
- import net.minecraft.util.text.TextFormatting;
- import org.apache.logging.log4j.LogManager;
- import org.apache.logging.log4j.Logger;
-+import org.bukkit.command.CommandWrapper;
-+import org.bukkit.craftbukkit.v1_12_R1.command.CraftSimpleCommandMap;
-+import org.bukkit.craftbukkit.v1_12_R1.command.ModCustomCommand;
-+import red.mohist.util.i18n.Message;
+@@ -16,6 +16,11 @@
  
- public abstract class CommandHandler implements ICommandManager
+ import net.minecraftforge.common.MinecraftForge;
+ import net.minecraftforge.event.CommandEvent;
++// Cauldron start
++import org.bukkit.craftbukkit.command.CraftSimpleCommandMap;
++import org.bukkit.craftbukkit.command.ModCustomCommand;
++import cpw.mods.fml.common.FMLCommonHandler;
++// Cauldron end
+ 
+ public class CommandHandler implements ICommandManager
  {
-     private static final Logger LOGGER = LogManager.getLogger();
-     private final Map<String, ICommand> commandMap = Maps.<String, ICommand>newHashMap();
-+    private final Map<String, ICommand> commandMod = Maps.<String, ICommand>newHashMap();
-     private final Set<ICommand> commandSet = Sets.<ICommand>newHashSet();
+@@ -48,7 +53,7 @@
+                 throw new CommandNotFoundException();
+             }
  
-     public int executeCommand(ICommandSender sender, String rawCommand)
+-            if (icommand.canCommandSenderUseCommand(p_71556_1_))
++            if (true || icommand.canCommandSenderUseCommand(p_71556_1_)) // Cauldron start - disable check for permissions since we handle it on Bukkit side
+             {
+                 CommandEvent event = new CommandEvent(icommand, p_71556_1_, astring);
+                 if (MinecraftForge.EVENT_BUS.post(event))
+@@ -134,11 +139,30 @@
+ 
+     public ICommand registerCommand(ICommand p_71560_1_)
      {
-         rawCommand = rawCommand.trim();
- 
--        if (rawCommand.startsWith("/"))
--        {
--            rawCommand = rawCommand.substring(1);
--        }
--
-         String[] astring = rawCommand.split(" ");
-         String s = astring[0];
-         astring = dropFirstString(astring);
-         ICommand icommand = this.commandMap.get(s);
-+        if (icommand == null) icommand = CommandWrapper.toNMSCommand(sender, s);
-         int i = 0;
- 
-         try
-@@ -146,16 +147,40 @@
- 
-     public ICommand registerCommand(ICommand command)
-     {
--        this.commandMap.put(command.getName(), command);
--        this.commandSet.add(command);
--
--        for (String s : command.getAliases())
-+        String pre = command.getClass().getName().substring(command.getClass().getName().lastIndexOf('.')+1).toLowerCase() + "." + command.getName();
-+        if (command instanceof CommandBase)
-         {
--            ICommand icommand = this.commandMap.get(s);
-+        	if (!((CommandBase)command).permissionNode.equals("minecraft"))
-+        	{
-+        		pre = ((CommandBase)command).permissionNode;
-+        		this.commandMod.put(command.getName(), command);
-+        	}
-+        }
-+        return registerCommand(command, pre);
+-        List list = p_71560_1_.getCommandAliases();
+-        this.commandMap.put(p_71560_1_.getCommandName(), p_71560_1_);
+-        this.commandSet.add(p_71560_1_);
++    // Cauldron start - register commands with permission nodes, defaulting to class name
++        return registerCommand(p_71560_1_, p_71560_1_.getClass().getName());
 +    }
  
--            if (icommand == null || !icommand.getName().equals(s))
--            {
--                this.commandMap.put(s, command);
 +    public ICommand registerCommand(String permissionGroup, ICommand par1ICommand)
 +    {
-+        return registerCommand(par1ICommand, permissionGroup + "." + par1ICommand.getName());
++        return registerCommand(par1ICommand, permissionGroup + "." + par1ICommand.getCommandName());
 +    }
 +
-+    public ICommand registerCommand(ICommand command, String permissionNode) {
-+        List<String> list = command.getAliases();
-+        this.commandMap.put(command.getName(), command);
-+        this.commandSet.add(command);
++    public ICommand registerCommand(ICommand par1ICommand, String permissionNode)
++    {
++        List list = par1ICommand.getCommandAliases();
++        this.commandMap.put(par1ICommand.getCommandName(), par1ICommand);
++        this.commandSet.add(par1ICommand);
 +        // register vanilla commands with Bukkit to support permissions.
-+        CraftSimpleCommandMap commandMap = MinecraftServer.getServerInst().server.getCraftCommandMap();
-+        ModCustomCommand customCommand = new ModCustomCommand(command.getName());
++        CraftSimpleCommandMap commandMap = FMLCommonHandler.instance().getMinecraftServerInstance().server.getCraftCommandMap();
++        ModCustomCommand customCommand = new ModCustomCommand(par1ICommand.getCommandName());
 +        customCommand.setPermission(permissionNode);
-+        if (list != null) customCommand.setAliases(list);
-+        commandMap.register(command.getName(), customCommand);
-+        LogManager.getLogger().debug(Message.getFormatString("command.register", new Object[]{command.getName(), permissionNode}));
-+        if (list != null) {
-+            for (String s : list) {
-+                ICommand icommand = (ICommand)this.commandMap.get(s);
-+                if (icommand == null || !icommand.getName().equals(s)) {
-+                    this.commandMap.put(s, command);
-+                }
+         if (list != null)
++            customCommand.setAliases(list);
++        commandMap.register(par1ICommand.getCommandName(), customCommand);
++        LogManager.getLogger().info("Registered command " + par1ICommand.getCommandName() + " with permission node " + permissionNode);
++
++        if (list != null)
+         {
+             Iterator iterator = list.iterator();
+ 
+@@ -149,13 +173,14 @@
+ 
+                 if (icommand1 == null || !icommand1.getCommandName().equals(s))
+                 {
+-                    this.commandMap.put(s, p_71560_1_);
++                    this.commandMap.put(s, par1ICommand);
+                 }
              }
          }
  
-@@ -223,6 +248,11 @@
-     {
-         return this.commandMap;
+-        return p_71560_1_;
++        return par1ICommand;
      }
-+    
-+    public Map<String, ICommand> getCommandMod()
-+    {
-+        return this.commandMod;
-+    }
++    // Cauldron end
  
-     private int getUsernameIndex(ICommand command, String[] args) throws CommandException
+     private static String[] dropFirstString(String[] p_71559_0_)
      {

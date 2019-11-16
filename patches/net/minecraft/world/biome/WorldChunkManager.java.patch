@@ -1,0 +1,77 @@
+--- ../src-base/minecraft/net/minecraft/world/biome/WorldChunkManager.java
++++ ../src-work/minecraft/net/minecraft/world/biome/WorldChunkManager.java
+@@ -27,11 +27,14 @@
+     private List biomesToSpawnIn;
+     private static final String __OBFID = "CL_00000166";
+ 
++    private boolean SSR = false;
++
+     protected WorldChunkManager()
+     {
+         this.biomeCache = new BiomeCache(this);
+         this.biomesToSpawnIn = new ArrayList();
+         this.biomesToSpawnIn.addAll(allowedBiomes);
++        SSR = customCache(this);
+     }
+ 
+     public WorldChunkManager(long p_i1975_1_, WorldType p_i1975_3_)
+@@ -41,13 +44,19 @@
+         agenlayer = getModdedBiomeGenerators(p_i1975_3_, p_i1975_1_, agenlayer);
+         this.genBiomes = agenlayer[0];
+         this.biomeIndexLayer = agenlayer[1];
++        SSR = customCache(this);
+     }
+ 
+     public WorldChunkManager(World p_i1976_1_)
+     {
+         this(p_i1976_1_.getSeed(), p_i1976_1_.getWorldInfo().getTerrainType());
++        SSR = customCache(this);
+     }
+ 
++    public static boolean customCache(WorldChunkManager WCM)
++    {
++        return (WCM.getClass().getName().toLowerCase().equals("lotrworldchunkmanager")); // Thermos - LOTR implements its own int cache, so no need for WCM to manage it...
++    }
+     public List getBiomesToSpawnIn()
+     {
+         return this.biomesToSpawnIn;
+@@ -60,6 +69,7 @@
+ 
+     public float[] getRainfall(float[] p_76936_1_, int p_76936_2_, int p_76936_3_, int p_76936_4_, int p_76936_5_)
+     {
++        if(!SSR)
+         IntCache.resetIntCache();
+ 
+         if (p_76936_1_ == null || p_76936_1_.length < p_76936_4_ * p_76936_5_)
+@@ -107,6 +117,7 @@
+ 
+     public BiomeGenBase[] getBiomesForGeneration(BiomeGenBase[] p_76937_1_, int p_76937_2_, int p_76937_3_, int p_76937_4_, int p_76937_5_)
+     {
++        if(!SSR)
+         IntCache.resetIntCache();
+ 
+         if (p_76937_1_ == null || p_76937_1_.length < p_76937_4_ * p_76937_5_)
+@@ -145,6 +156,7 @@
+ 
+     public BiomeGenBase[] getBiomeGenAt(BiomeGenBase[] p_76931_1_, int p_76931_2_, int p_76931_3_, int p_76931_4_, int p_76931_5_, boolean p_76931_6_)
+     {
++        if(!SSR)
+         IntCache.resetIntCache();
+ 
+         if (p_76931_1_ == null || p_76931_1_.length < p_76931_4_ * p_76931_5_)
+@@ -173,6 +185,7 @@
+ 
+     public boolean areBiomesViable(int p_76940_1_, int p_76940_2_, int p_76940_3_, List p_76940_4_)
+     {
++        if(!SSR)
+         IntCache.resetIntCache();
+         int l = p_76940_1_ - p_76940_3_ >> 2;
+         int i1 = p_76940_2_ - p_76940_3_ >> 2;
+@@ -211,6 +224,7 @@
+ 
+     public ChunkPosition findBiomePosition(int p_150795_1_, int p_150795_2_, int p_150795_3_, List p_150795_4_, Random p_150795_5_)
+     {
++        if(!SSR)
+         IntCache.resetIntCache();
+         int l = p_150795_1_ - p_150795_3_ >> 2;
+         int i1 = p_150795_2_ - p_150795_3_ >> 2;

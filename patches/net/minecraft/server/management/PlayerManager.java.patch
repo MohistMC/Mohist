@@ -1,0 +1,122 @@
+--- ../src-base/minecraft/net/minecraft/server/management/PlayerManager.java
++++ ../src-work/minecraft/net/minecraft/server/management/PlayerManager.java
+@@ -18,14 +18,19 @@
+ import org.apache.logging.log4j.LogManager;
+ import org.apache.logging.log4j.Logger;
+ 
++//CraftBukkit start
++import java.util.Collections;
++import java.util.Queue;
++// CraftBukkit end
++
+ public class PlayerManager
+ {
+     private static final Logger field_152627_a = LogManager.getLogger();
+     private final WorldServer theWorldServer;
+     private final List players = new ArrayList();
+     private final LongHashMap playerInstances = new LongHashMap();
+-    private final List chunkWatcherWithPlayers = new ArrayList();
+-    private final List playerInstanceList = new ArrayList();
++    private final Queue chunkWatcherWithPlayers = new java.util.concurrent.ConcurrentLinkedQueue(); // CraftBukkit ArrayList -> ConcurrentLinkedQueue
++    private final Queue playerInstanceList = new java.util.concurrent.ConcurrentLinkedQueue(); // CraftBukkit ArrayList -> ConcurrentLinkedQueue
+     private int playerViewRadius;
+     private long previousTotalWorldTime;
+     private final int[][] xzDirectionsConst = new int[][] {{1, 0}, {0, 1}, { -1, 0}, {0, -1}};
+@@ -37,6 +42,14 @@
+         this.func_152622_a(p_i1176_1_.func_73046_m().getConfigurationManager().getViewDistance());
+     }
+ 
++    // Cauldron start - vanilla compatibility
++    public PlayerManager(WorldServer p_i1176_1_, int viewDistance /* Spigot */)
++    {
++        this.theWorldServer = p_i1176_1_;
++        this.func_152622_a(viewDistance); // Spigot
++    }
++    // Cauldron end
++
+     public WorldServer getWorldServer()
+     {
+         return this.theWorldServer;
+@@ -51,27 +64,38 @@
+         if (i - this.previousTotalWorldTime > 8000L)
+         {
+             this.previousTotalWorldTime = i;
++            // CraftBukkit start - Use iterator
++            java.util.Iterator iterator = this.playerInstanceList.iterator();
+ 
+-            for (j = 0; j < this.playerInstanceList.size(); ++j)
++            while (iterator.hasNext())
+             {
+-                playerinstance = (PlayerManager.PlayerInstance)this.playerInstanceList.get(j);
++                playerinstance = (PlayerManager.PlayerInstance)iterator.next();
+                 playerinstance.sendChunkUpdate();
+                 playerinstance.processChunk();
+             }
+         }
+         else
+         {
+-            for (j = 0; j < this.chunkWatcherWithPlayers.size(); ++j)
++            java.util.Iterator iterator = this.chunkWatcherWithPlayers.iterator();
++
++            while (iterator.hasNext())
+             {
+-                playerinstance = (PlayerManager.PlayerInstance)this.chunkWatcherWithPlayers.get(j);
++                playerinstance = (PlayerManager.PlayerInstance)iterator.next();
+                 playerinstance.sendChunkUpdate();
++                iterator.remove();
++                // CraftBukkit end
+             }
+         }
+ 
+-        this.chunkWatcherWithPlayers.clear();
++        // this.chunkWatcherWithPlayers.clear(); // CraftBukkit - Removals are already covered
+ 
+         if (this.players.isEmpty())
+         {
++            if (this.theWorldServer.loadedEntityList.size() == 0 || this.theWorldServer.theChunkProviderServer.loadedChunkHashMap_KC.size() == 0)
++            {
++                return; // CraftBukkit - Only do unload when we go from non-empty to empty
++            }
++
+             WorldProvider worldprovider = this.theWorldServer.provider;
+ 
+             if (!worldprovider.canRespawnHere())
+@@ -102,6 +126,20 @@
+         return playerinstance;
+     }
+ 
++    // CraftBukkit start
++    public final boolean isChunkInUse(int x, int z)
++    {
++        PlayerManager.PlayerInstance pi = getOrCreateChunkWatcher(x, z, false);
++
++        if (pi != null)
++        {
++            return (pi.playersWatchingChunk.size() > 0);
++        }
++
++        return false;
++    }
++    // CraftBukkit end
++
+     public void markBlockForUpdate(int p_151250_1_, int p_151250_2_, int p_151250_3_)
+     {
+         int l = p_151250_1_ >> 4;
+@@ -275,7 +313,7 @@
+                     this.getOrCreateChunkWatcher(pair.chunkXPos, pair.chunkZPos, true).addPlayer(p_72685_1_);
+                 }
+ 
+-                if (i1 > 1 || i1 < -1 || j1 > 1 || j1 < -1)
++                if (j1 > 1 || j1 < -1 || k1 > 1 || k1 < -1) // Spigot- missed diff
+                 {
+                     java.util.Collections.sort(p_72685_1_.loadedChunks, new net.minecraftforge.common.util.ChunkCoordComparator(p_72685_1_));
+                 }
+@@ -541,7 +579,7 @@
+                     {
+                         i = this.chunkLocation.chunkXPos * 16;
+                         j = this.chunkLocation.chunkZPos * 16;
+-                        this.sendToAllPlayersWatchingChunk(new S21PacketChunkData(PlayerManager.this.theWorldServer.getChunkFromChunkCoords(this.chunkLocation.chunkXPos, this.chunkLocation.chunkZPos), false, this.flagsYAreasToUpdate));
++                        this.sendToAllPlayersWatchingChunk(new S21PacketChunkData(PlayerManager.this.theWorldServer.getChunkFromChunkCoords(this.chunkLocation.chunkXPos, this.chunkLocation.chunkZPos), (this.flagsYAreasToUpdate == 0xFFFF), this.flagsYAreasToUpdate)); // CraftBukkit - send everything (including biome) if all sections flagged
+ 
+                         // Forge: Grabs ALL tile entities is costly on a modded server, only send needed ones
+                         for (k = 0; false && k < 16; ++k)

@@ -1,29 +1,32 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockTrapDoor.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockTrapDoor.java
-@@ -24,6 +24,7 @@
+@@ -13,6 +13,8 @@
  import net.minecraft.world.World;
- import net.minecraftforge.fml.relauncher.Side;
- import net.minecraftforge.fml.relauncher.SideOnly;
-+import org.bukkit.event.block.BlockRedstoneEvent;
+ import net.minecraftforge.common.util.ForgeDirection;
  
++import org.bukkit.event.block.BlockRedstoneEvent; // CraftBukkit
++
  public class BlockTrapDoor extends Block
  {
-@@ -130,6 +131,18 @@
+     /** Set this to allow trapdoors to remain free-floating */
+@@ -176,6 +178,20 @@
  
-             if (flag || blockIn.getDefaultState().canProvidePower())
+             if (flag || p_149695_5_.canProvidePower())
              {
-+                org.bukkit.World bworld = worldIn.getWorld();
-+                org.bukkit.block.Block bblock = bworld.getBlockAt(pos.getX(), pos.getY(), pos.getZ());
-+
++                // CraftBukkit start
++                org.bukkit.World bworld = p_149695_1_.getWorld();
++                org.bukkit.block.Block bblock = bworld.getBlockAt(p_149695_2_, p_149695_3_, p_149695_4_);
 +                int power = bblock.getBlockPower();
-+                int oldPower = state.getValue(OPEN) ? 15 : 0;
++                int oldPower = (p_149695_1_.getBlockMetadata(p_149695_2_, p_149695_3_, p_149695_4_) & 4) > 0 ? 15 : 0;
 +
-+                if (oldPower == 0 ^ power == 0 || blockIn.getDefaultState().hasComparatorInputOverride()) {
++                if (oldPower == 0 ^ power == 0 || p_149695_5_.canProvidePower())
++                {
 +                    BlockRedstoneEvent eventRedstone = new BlockRedstoneEvent(bblock, oldPower, power);
-+                    worldIn.getServer().getPluginManager().callEvent(eventRedstone);
++                    p_149695_1_.getServer().getPluginManager().callEvent(eventRedstone);
 +                    flag = eventRedstone.getNewCurrent() > 0;
 +                }
 +
-                 boolean flag1 = ((Boolean)state.getValue(OPEN)).booleanValue();
- 
-                 if (flag1 != flag)
++                // CraftBukkit end
+                 this.func_150120_a(p_149695_1_, p_149695_2_, p_149695_3_, p_149695_4_, flag);
+             }
+         }

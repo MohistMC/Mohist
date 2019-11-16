@@ -1,155 +1,263 @@
 --- ../src-base/minecraft/net/minecraft/entity/player/EntityPlayer.java
 +++ ../src-work/minecraft/net/minecraft/entity/player/EntityPlayer.java
-@@ -8,7 +8,6 @@
- import java.util.UUID;
- import javax.annotation.Nullable;
- import net.minecraft.block.Block;
--import net.minecraft.block.BlockBed;
- import net.minecraft.block.BlockHorizontal;
- import net.minecraft.block.material.Material;
- import net.minecraft.block.state.IBlockState;
-@@ -32,7 +31,6 @@
- import net.minecraft.entity.passive.EntityPig;
- import net.minecraft.entity.passive.EntityTameable;
- import net.minecraft.entity.projectile.EntityFishHook;
--import net.minecraft.init.Blocks;
- import net.minecraft.init.Items;
- import net.minecraft.init.MobEffects;
- import net.minecraft.init.SoundEvents;
-@@ -42,7 +40,6 @@
- import net.minecraft.inventory.IInventory;
- import net.minecraft.inventory.InventoryEnderChest;
- import net.minecraft.item.ItemArmor;
--import net.minecraft.item.ItemAxe;
- import net.minecraft.item.ItemElytra;
- import net.minecraft.item.ItemStack;
- import net.minecraft.item.ItemSword;
-@@ -92,6 +89,16 @@
- import net.minecraft.world.WorldServer;
- import net.minecraftforge.fml.relauncher.Side;
- import net.minecraftforge.fml.relauncher.SideOnly;
-+import org.bukkit.craftbukkit.v1_12_R1.entity.CraftHumanEntity;
-+import org.bukkit.craftbukkit.v1_12_R1.entity.CraftItem;
+@@ -92,6 +92,22 @@
+ import net.minecraftforge.event.entity.player.PlayerFlyableFallEvent;
+ import net.minecraftforge.event.entity.player.PlayerSleepInBedEvent;
+ 
++// CraftBukkit start
++import net.minecraft.network.play.server.S2FPacketSetSlot;
++
++import org.bukkit.Bukkit;
++import org.bukkit.craftbukkit.entity.CraftHumanEntity;
++import org.bukkit.craftbukkit.entity.CraftItem;
++import org.bukkit.craftbukkit.inventory.CraftItemStack;
 +import org.bukkit.entity.Player;
-+import org.bukkit.event.entity.CreatureSpawnEvent;
 +import org.bukkit.event.entity.EntityCombustByEntityEvent;
++import org.bukkit.event.inventory.InventoryCloseEvent;
 +import org.bukkit.event.player.PlayerBedEnterEvent;
 +import org.bukkit.event.player.PlayerBedLeaveEvent;
 +import org.bukkit.event.player.PlayerDropItemEvent;
-+import org.bukkit.event.player.PlayerVelocityEvent;
-+import org.bukkit.util.Vector;
- 
- @SuppressWarnings("incomplete-switch")
- public abstract class EntityPlayer extends EntityLivingBase
-@@ -109,10 +116,11 @@
-     protected static final DataParameter<NBTTagCompound> LEFT_SHOULDER_ENTITY = EntityDataManager.<NBTTagCompound>createKey(EntityPlayer.class, DataSerializers.COMPOUND_TAG);
-     protected static final DataParameter<NBTTagCompound> RIGHT_SHOULDER_ENTITY = EntityDataManager.<NBTTagCompound>createKey(EntityPlayer.class, DataSerializers.COMPOUND_TAG);
-     public InventoryPlayer inventory = new InventoryPlayer(this);
--    protected InventoryEnderChest enderChest = new InventoryEnderChest();
-+    protected InventoryEnderChest enderChest = new InventoryEnderChest(this); // CraftBukkit - add "this" to constructor
++import org.bukkit.event.player.PlayerItemConsumeEvent;
++// CraftBukkit end
++
+ public abstract class EntityPlayer extends EntityLivingBase implements ICommandSender
+ {
+     public static final String PERSISTED_NBT_TAG = "PlayerPersisted";
+@@ -102,7 +118,7 @@
+     private InventoryEnderChest theInventoryEnderChest = new InventoryEnderChest();
      public Container inventoryContainer;
      public Container openContainer;
 -    protected FoodStats foodStats = new FoodStats();
-+    protected FoodStats applecores_vanilla = new FoodStats(); // Mohist - add the original amount, which doesn't actually work, but is compatible with apple cores
-+    protected FoodStats foodStats = new FoodStats(this); // CraftBukkit - add "this" to constructor
++    protected FoodStats foodStats = new FoodStats(this); // CraftBukkit - add this argument
      protected int flyToggleTimer;
      public float prevCameraYaw;
      public float cameraYaw;
-@@ -123,9 +131,9 @@
-     public double chasingPosX;
-     public double chasingPosY;
-     public double chasingPosZ;
+@@ -113,9 +129,19 @@
+     public double field_71094_bP;
+     public double field_71095_bQ;
+     public double field_71085_bR;
 -    protected boolean sleeping;
-+    public boolean sleeping;
-     public BlockPos bedLocation;
--    private int sleepTimer;
-+    public int sleepTimer;
-     public float renderOffsetX;
-     @SideOnly(Side.CLIENT)
-     public float renderOffsetY;
-@@ -147,6 +155,15 @@
-     @Nullable
-     public EntityFishHook fishEntity;
- 
++    // CraftBukkit start
++    public boolean sleeping; // protected -> public
 +    public boolean fauxSleeping;
 +    public String spawnWorld = "";
-+    public int oldLevel = -1;
 +
 +    @Override
-+    public CraftHumanEntity getBukkitEntity() {
++    public CraftHumanEntity getBukkitEntity()
++    {
 +        return (CraftHumanEntity) super.getBukkitEntity();
 +    }
-+
-     protected CooldownTracker createCooldownTracker()
-     {
-         return new CooldownTracker();
-@@ -162,6 +179,9 @@
-         BlockPos blockpos = worldIn.getSpawnPoint();
-         this.setLocationAndAngles((double)blockpos.getX() + 0.5D, (double)(blockpos.getY() + 1), (double)blockpos.getZ() + 0.5D, 0.0F, 0.0F);
-         this.unused180 = 180.0F;
-+
-+        net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.EntityEvent.EntityConstructing(this));
-+        super.capabilities = net.minecraftforge.event.ForgeEventFactory.gatherCapabilities(this);
-     }
- 
-     protected void applyEntityAttributes()
-@@ -408,7 +428,7 @@
-         return SoundCategory.PLAYERS;
-     }
- 
--    protected int getFireImmuneTicks()
-+    public int getFireImmuneTicks()
-     {
-         return 20;
-     }
-@@ -499,7 +519,8 @@
++    // CraftBukkit end
+     public ChunkCoordinates playerLocation;
+-    private int sleepTimer;
++    public int sleepTimer; // CraftBukkit - private -> public
+     public float field_71079_bU;
+     @SideOnly(Side.CLIENT)
+     public float field_71082_cx;
+@@ -124,6 +150,7 @@
+     private boolean spawnForced;
+     private ChunkCoordinates startMinecartRidingCoordinate;
+     public PlayerCapabilities capabilities = new PlayerCapabilities();
++    public int oldLevel = -1; // CraftBukkit
+     public int experienceLevel;
+     public int experienceTotal;
+     public float experience;
+@@ -416,6 +443,42 @@
          {
-             if (this.getHealth() < this.getMaxHealth() && this.ticksExisted % 20 == 0)
-             {
--                this.heal(1.0F);
-+                // CraftBukkit - added regain reason of "REGEN" for filtering purposes.
-+                this.heal(1.0F, org.bukkit.event.entity.EntityRegainHealthEvent.RegainReason.REGEN);
-             }
+             this.updateItemUse(this.itemInUse, 16);
+             int i = this.itemInUse.stackSize;
++            // CraftBukkit start
++            org.bukkit.inventory.ItemStack craftItem = CraftItemStack.asBukkitCopy(this.itemInUse);
++            PlayerItemConsumeEvent event = new PlayerItemConsumeEvent((Player) this.getBukkitEntity(), craftItem);
++            worldObj.getServer().getPluginManager().callEvent(event);
++
++            if (event.isCancelled())
++            {
++                // Update client
++                if (this instanceof EntityPlayerMP)
++                {
++                    ((EntityPlayerMP) this).playerNetServerHandler.sendPacket(new S2FPacketSetSlot((byte) 0, openContainer.getSlotFromInventory(
++                            (IInventory) this.inventory, this.inventory.currentItem).slotIndex, this.itemInUse));
++                    // Spigot Start
++                    ((EntityPlayerMP) this).getBukkitEntity().updateInventory();
++                    ((EntityPlayerMP) this).getBukkitEntity().updateScaledHealth();
++                    // Spigot End
++                }
++
++                return;
++            }
++
++            // Plugin modified the item, process it but don't remove it
++            if (!craftItem.equals(event.getItem()))
++            {
++                CraftItemStack.asNMSCopy(event.getItem()).onFoodEaten(this.worldObj, this);
++
++                // Update client
++                if (this instanceof EntityPlayerMP)
++                {
++                    ((EntityPlayerMP) this).playerNetServerHandler.sendPacket(new S2FPacketSetSlot((byte) 0, openContainer.getSlotFromInventory(
++                            (IInventory) this.inventory, this.inventory.currentItem).slotIndex, this.itemInUse));
++                }
++
++                return;
++            }
++            // CraftBukkit end
+             ItemStack itemstack = this.itemInUse.onFoodEaten(this.worldObj, this);
  
-             if (this.foodStats.needFood() && this.ticksExisted % 10 == 0)
-@@ -527,7 +548,7 @@
+             itemstack = ForgeEventFactory.onItemUseFinish(this, itemInUse, itemInUseCount, itemstack);
+@@ -452,6 +515,7 @@
+         return this.getHealth() <= 0.0F || this.isPlayerSleeping();
+     }
+ 
++    // CraftBukkit - protected -> public
+     public void closeScreen()
+     {
+         this.openContainer = this.inventoryContainer;
+@@ -459,23 +523,40 @@
+ 
+     public void mountEntity(Entity p_70078_1_)
+     {
++        // CraftBukkit start - mirror Entity mount changes
++        this.setPassengerOf(p_70078_1_);
++    }
++
++    public void setPassengerOf(Entity p_70078_1_)
++    {
++        // CraftBukkit end
+         if (this.ridingEntity != null && p_70078_1_ == null)
+         {
+-            if (!this.worldObj.isRemote)
+-            {
+-                this.dismountEntity(this.ridingEntity);
+-            }
++            worldObj.getServer().getPluginManager()
++                    .callEvent(new org.spigotmc.event.entity.EntityDismountEvent(this.getBukkitEntity(), this.ridingEntity.getBukkitEntity())); // Spigot
++            // CraftBukkit start - use parent method instead to correctly fire
++            // VehicleExitEvent
++            Entity originalVehicle = this.ridingEntity;
++            // First statement moved down, second statement handled in parent
++            // method.
++            /*
++             * if (!this.world.isStatic) { this.l(this.vehicle); }
++             * 
++             * if (this.vehicle != null) { this.vehicle.passenger = null; }
++             * 
++             * this.vehicle = null;
++             */
++            super.setPassengerOf(p_70078_1_);
+ 
+-            if (this.ridingEntity != null)
++            if (!this.worldObj.isRemote && this.ridingEntity == null)
+             {
+-                this.ridingEntity.riddenByEntity = null;
++                this.dismountEntity(originalVehicle);
+             }
+-
+-            this.ridingEntity = null;
++            // CraftBukkit end
+         }
+         else
+         {
+-            super.mountEntity(p_70078_1_);
++            super.setPassengerOf(p_70078_1_); // CraftBukkit - call new parent
+         }
+     }
+ 
+@@ -532,7 +613,8 @@
+ 
+         if (this.worldObj.difficultySetting == EnumDifficulty.PEACEFUL && this.getHealth() < this.getMaxHealth() && this.worldObj.getGameRules().getGameRuleBooleanValue("naturalRegeneration") && this.ticksExisted % 20 * 12 == 0)
+         {
+-            this.heal(1.0F);
++            // CraftBukkit - added regain reason of "REGEN" for filtering purposes.
++            this.heal(1.0F, org.bukkit.event.entity.EntityRegainHealthEvent.RegainReason.REGEN);
+         }
+ 
+         this.inventory.decrementAnimations();
+@@ -554,7 +636,8 @@
  
          this.setAIMoveSpeed((float)iattributeinstance.getAttributeValue());
-         float f = MathHelper.sqrt(this.motionX * this.motionX + this.motionZ * this.motionZ);
--        float f1 = (float)(Math.atan(-this.motionY * 0.20000000298023224D) * 15.0D);
-+        float f1 = (float) (org.bukkit.craftbukkit.v1_12_R1.TrigMath.atan(-this.motionY * 0.20000000298023224D) * 15.0D);
+         float f = MathHelper.sqrt_double(this.motionX * this.motionX + this.motionZ * this.motionZ);
+-        float f1 = (float)Math.atan(-this.motionY * 0.20000000298023224D) * 15.0F;
++        // CraftBukkit - Math -> TrigMath
++        float f1 = (float) org.bukkit.craftbukkit.TrigMath.atan(-this.motionY * 0.20000000298023224D) * 15.0F;
  
          if (f > 0.1F)
          {
-@@ -691,6 +712,7 @@
-     @Nullable
-     public EntityItem dropItem(boolean dropAll)
-     {
-+        // Called only when dropped by Q or CTRL-Q
-         ItemStack stack = inventory.getCurrentItem();
+@@ -589,7 +672,7 @@
  
-         if (stack.isEmpty())
-@@ -750,6 +772,30 @@
-                 entityitem.motionZ += Math.sin((double)f3) * (double)f2;
+             List list = this.worldObj.getEntitiesWithinAABBExcludingEntity(this, axisalignedbb);
+ 
+-            if (list != null)
++            if (list != null && this.canBeCollidedWith()) // Spigot: this.canBeCollidedWith() condition
+             {
+                 for (int i = 0; i < list.size(); ++i)
+                 {
+@@ -636,11 +719,6 @@
+         captureDrops = true;
+         capturedDrops.clear();
+ 
+-        if (this.getCommandSenderName().equals("Notch"))
+-        {
+-            this.func_146097_a(new ItemStack(Items.apple, 1), true, false);
+-        }
+-
+         if (!this.worldObj.getGameRules().getGameRuleBooleanValue("keepInventory"))
+         {
+             this.inventory.dropAllItems();
+@@ -687,12 +765,14 @@
+     public void addToPlayerScore(Entity p_70084_1_, int p_70084_2_)
+     {
+         this.addScore(p_70084_2_);
+-        Collection collection = this.getWorldScoreboard().func_96520_a(IScoreObjectiveCriteria.totalKillCount);
++        // CraftBukkit - Get our scores instead
++        Collection<Score> collection = this.worldObj.getServer().getScoreboardManager().getScoreboardScores(IScoreObjectiveCriteria.totalKillCount, this.getCommandSenderName(), new java.util.ArrayList<Score>());
+ 
+         if (p_70084_1_ instanceof EntityPlayer)
+         {
+             this.addStat(StatList.playerKillsStat, 1);
+-            collection.addAll(this.getWorldScoreboard().func_96520_a(IScoreObjectiveCriteria.playerKillCount));
++            // CraftBukkit - Get our scores instead
++            this.worldObj.getServer().getScoreboardManager().getScoreboardScores(IScoreObjectiveCriteria.playerKillCount, this.getCommandSenderName(), collection);
+         }
+         else
+         {
+@@ -703,8 +783,7 @@
+ 
+         while (iterator.hasNext())
+         {
+-            ScoreObjective scoreobjective = (ScoreObjective)iterator.next();
+-            Score score = this.getWorldScoreboard().func_96529_a(this.getCommandSenderName(), scoreobjective);
++            Score score = (Score) iterator.next(); // CraftBukkit - Use our scores instead
+             score.func_96648_a();
+         }
+     }
+@@ -777,6 +856,36 @@
+                 entityitem.motionZ += Math.sin((double)f1) * (double)f;
              }
  
-+            // CraftBukkit start - fire PlayerDropItemEvent
++            // CraftBukkit start
 +            Player player = (Player) this.getBukkitEntity();
-+            CraftItem drop = new CraftItem(this.world.getServer(), entityitem);
-+
++            CraftItem drop = new CraftItem(this.worldObj.getServer(), entityitem);
 +            PlayerDropItemEvent event = new PlayerDropItemEvent(player, drop);
-+            this.world.getServer().getPluginManager().callEvent(event);
++            this.worldObj.getServer().getPluginManager().callEvent(event);
 +
-+            if (event.isCancelled()) {
++            if (event.isCancelled())
++            {
++                // player.getInventory().addItem(drop.getItemStack());
 +                org.bukkit.inventory.ItemStack cur = player.getInventory().getItemInHand();
-+                if (traceItem && (cur == null || cur.getAmount() == 0)) {
++                if (p_146097_3_ && (cur == null || cur.getAmount() == 0))
++                {
 +                    // The complete stack was dropped
 +                    player.getInventory().setItemInHand(drop.getItemStack());
-+                } else if (traceItem && cur.isSimilar(drop.getItemStack()) && cur.getAmount() < cur.getMaxStackSize() && drop.getItemStack().getAmount() == 1) {
++                }
++                else if (p_146097_3_ && cur.isSimilar(drop.getItemStack()) && drop.getItemStack().getAmount() == 1)
++                {
 +                    // Only one item is dropped
 +                    cur.setAmount(cur.getAmount() + 1);
 +                    player.getInventory().setItemInHand(cur);
-+                } else {
++                }
++                else
++                {
 +                    // Fallback
 +                    player.getInventory().addItem(drop.getItemStack());
 +                }
@@ -157,384 +265,277 @@
 +            }
 +            // CraftBukkit end
 +
-             ItemStack itemstack = this.dropItemAndGetStack(entityitem);
- 
-             if (traceItem)
-@@ -893,6 +939,11 @@
+             this.joinEntityItemWithWorld(entityitem);
+             this.addStat(StatList.dropStat, 1);
+             return entityitem;
+@@ -881,6 +990,15 @@
              this.wakeUpPlayer(true, true, false);
          }
  
-+        this.spawnWorld = compound.getString("SpawnWorld");
-+        if ("".equals(spawnWorld)) {
-+            this.spawnWorld = this.world.getServer().getWorlds().get(0).getName();
-+        }
++        // CraftBukkit start
++        this.spawnWorld = p_70037_1_.getString("SpawnWorld");
 +
-         if (compound.hasKey("SpawnX", 99) && compound.hasKey("SpawnY", 99) && compound.hasKey("SpawnZ", 99))
++        if ("".equals(spawnWorld))
++        {
++            this.spawnWorld = this.worldObj.getServer().getWorlds().get(0).getName();
++        }
++        // CraftBukkit end
++
+         if (p_70037_1_.hasKey("SpawnX", 99) && p_70037_1_.hasKey("SpawnY", 99) && p_70037_1_.hasKey("SpawnZ", 99))
          {
-             this.spawnPos = new BlockPos(compound.getInteger("SpawnX"), compound.getInteger("SpawnY"), compound.getInteger("SpawnZ"));
-@@ -987,6 +1038,7 @@
-         {
-             compound.setTag("ShoulderEntityRight", this.getRightShoulderEntity());
+             this.spawnChunk = new ChunkCoordinates(p_70037_1_.getInteger("SpawnX"), p_70037_1_.getInteger("SpawnY"), p_70037_1_.getInteger("SpawnZ"));
+@@ -925,6 +1043,7 @@
+             p_70014_1_.setInteger("SpawnY", this.spawnChunk.posY);
+             p_70014_1_.setInteger("SpawnZ", this.spawnChunk.posZ);
+             p_70014_1_.setBoolean("SpawnForced", this.spawnForced);
++            p_70014_1_.setString("SpawnWorld", spawnWorld); // CraftBukkit - fixes bed spawns for multiworld worlds
          }
-+        compound.setString("SpawnWorld", spawnWorld); // CraftBukkit - fixes bed spawns for multiworld worlds
-     }
  
-     public boolean attackEntityFrom(DamageSource source, float amount)
-@@ -1015,13 +1067,13 @@
-                     this.wakeUpPlayer(true, true, false);
-                 }
- 
--                this.spawnShoulderEntities();
-+                // this.spawnShoulderEntities(); // CraftBukkit - moved down
- 
-                 if (source.isDifficultyScaled())
+         NBTTagList spawnlist = new NBTTagList();
+@@ -1003,7 +1122,7 @@
                  {
-                     if (this.world.getDifficulty() == EnumDifficulty.PEACEFUL)
+                     if (this.worldObj.difficultySetting == EnumDifficulty.PEACEFUL)
                      {
--                        amount = 0.0F;
-+                        return false; // CraftBukkit - f = 0.0f -> return false
+-                        p_70097_2_ = 0.0F;
++                        return false; // CraftBukkit - p_70097_2_ = 0.0F; -> return false
                      }
  
-                     if (this.world.getDifficulty() == EnumDifficulty.EASY)
-@@ -1035,7 +1087,14 @@
+                     if (this.worldObj.difficultySetting == EnumDifficulty.EASY)
+@@ -1017,7 +1136,7 @@
                      }
                  }
  
--                return amount == 0.0F ? false : super.attackEntityFrom(source, amount);
-+                // return amount == 0.0F ? false : super.attackEntityFrom(source, amount);
-+                // CraftBukkit start - Don't filter out 0 damage
-+                boolean damaged = super.attackEntityFrom(source, amount);
-+                if (damaged) {
-+                    this.spawnShoulderEntities();
-+                }
-+                return damaged;
-+                // CraftBukkit end
-             }
-         }
-     }
-@@ -1052,17 +1111,29 @@
+-                if (p_70097_2_ == 0.0F)
++                if (false && p_70097_2_ == 0.0F)   // CraftBukkit - Don't filter out 0 damage
+                 {
+                     return false;
+                 }
+@@ -1039,9 +1158,40 @@
  
-     public boolean canAttackPlayer(EntityPlayer other)
+     public boolean canAttackPlayer(EntityPlayer p_96122_1_)
      {
 -        Team team = this.getTeam();
--        Team team1 = other.getTeam();
--
--        if (team == null)
--        {
--            return true;
-+        // Team team = this.getTeam();
-+        // Team team1 = other.getTeam();
-+        // CraftBukkit start - Change to check OTHER player's scoreboard team according to API
+-        Team team1 = p_96122_1_.getTeam();
+-        return team == null ? true : (!team.isSameTeam(team1) ? true : team.getAllowFriendlyFire());
++        // CraftBukkit start - Change to check OTHER player's scoreboard team
++        // according to API
 +        // To summarize this method's logic, it's "Can parameter hurt this"
 +        org.bukkit.scoreboard.Team team;
-+        if (other instanceof EntityPlayerMP) {
-+            EntityPlayerMP thatPlayer = (EntityPlayerMP) other;
++
++        if (p_96122_1_ instanceof EntityPlayerMP)
++        {
++            EntityPlayerMP thatPlayer = (EntityPlayerMP) p_96122_1_;
 +            team = thatPlayer.getBukkitEntity().getScoreboard().getPlayerTeam(thatPlayer.getBukkitEntity());
-+            if (team == null || team.allowFriendlyFire()) {
++
++            if (team == null || team.allowFriendlyFire())
++            {
 +                return true;
 +            }
-+        } else {
-+            // This should never be called, but is implemented anyway
-+            org.bukkit.OfflinePlayer thisPlayer = other.world.getServer().getOfflinePlayer(other.getUniqueID());
-+            team = other.world.getServer().getScoreboardManager().getMainScoreboard().getPlayerTeam(thisPlayer);
-+            if (team == null || team.allowFriendlyFire()) {
-+                return true;
-+            }
-         }
--        else
--        {
--            return !team.isSameTeam(team1) ? true : team.getAllowFriendlyFire();
-+        if (this instanceof EntityPlayerMP) {
-+            return !team.hasEntry(((EntityPlayerMP) this).getBukkitEntity().getName());
-         }
-+        return !team.hasEntry(this.world.getServer().getOfflinePlayer(this.getUniqueID()).getName());
-     }
- 
-     protected void damageArmor(float damage)
-@@ -1113,10 +1184,12 @@
-         return (float)i / (float)this.inventory.armorInventory.size();
-     }
- 
--    protected void damageEntity(DamageSource damageSrc, float damageAmount)
--    {
--        if (!this.isEntityInvulnerable(damageSrc))
--        {
-+    // vanilla compatibility Fix AppleCore
-+    protected void damageEntity(DamageSource damageSrc, float damageAmount) {
-+        if (true) {
-+            this.damageEntity_CB(damageSrc, damageAmount);
 +        }
-+        if (!this.isEntityInvulnerable(damageSrc)) {
-             damageAmount = net.minecraftforge.common.ForgeHooks.onLivingHurt(this, damageSrc, damageAmount);
-             if (damageAmount <= 0) return;
-             damageAmount = net.minecraftforge.common.ISpecialArmor.ArmorProperties.applyArmor(this, inventory.armorInventory, damageSrc, damageAmount);
-@@ -1140,8 +1213,14 @@
-                 }
++        else
++        {
++            // This should never be called, but is implemented anyway
++            org.bukkit.OfflinePlayer thisPlayer = p_96122_1_.worldObj.getServer().getOfflinePlayer(p_96122_1_.getCommandSenderName());
++            team = p_96122_1_.worldObj.getServer().getScoreboardManager().getMainScoreboard().getPlayerTeam(thisPlayer);
++
++            if (team == null || team.allowFriendlyFire())
++            {
++                return true;
++            }
++        }
++
++        if (this instanceof EntityPlayerMP)
++        {
++            return !team.hasPlayer(((EntityPlayerMP) this).getBukkitEntity());
++        }
++
++        return !team.hasPlayer(this.worldObj.getServer().getOfflinePlayer(this.getCommandSenderName()));
++        // CraftBukkit end
+     }
+ 
+     protected void damageArmor(float p_70675_1_)
+@@ -1073,19 +1223,34 @@
+         return (float)i / (float)this.inventory.armorInventory.length;
+     }
+ 
++    // Cauldron start - vanilla compatibility
+     protected void damageEntity(DamageSource p_70665_1_, float p_70665_2_)
+     {
++        this.damageEntity_CB(p_70665_1_, p_70665_2_);
++    }
++    // Cauldron end
++
++    // CraftBukkit start
++    protected boolean damageEntity_CB(DamageSource p_70665_1_, float p_70665_2_) // void
++                                                                                 // ->
++                                                                                 // boolean
++    {
++        if (true)
++        {
++            return super.damageEntity_CB(p_70665_1_, p_70665_2_);
++        }
++        // CraftBukkit end
+         if (!this.isEntityInvulnerable())
+         {
+             p_70665_2_ = ForgeHooks.onLivingHurt(this, p_70665_1_, p_70665_2_);
+-            if (p_70665_2_ <= 0) return;
++            if (p_70665_2_ <= 0) return false;
+             if (!p_70665_1_.isUnblockable() && this.isBlocking() && p_70665_2_ > 0.0F)
+             {
+                 p_70665_2_ = (1.0F + p_70665_2_) * 0.5F;
+             }
+ 
+             p_70665_2_ = ArmorProperties.ApplyArmor(this, inventory.armorInventory, p_70665_1_, p_70665_2_);
+-            if (p_70665_2_ <= 0) return;
++            if (p_70665_2_ <= 0) return false;
+             p_70665_2_ = this.applyPotionDamageCalculations(p_70665_1_, p_70665_2_);
+             float f1 = p_70665_2_;
+             p_70665_2_ = Math.max(p_70665_2_ - this.getAbsorptionAmount(), 0.0F);
+@@ -1099,6 +1264,7 @@
+                 this.func_110142_aN().func_94547_a(p_70665_1_, f2, p_70665_2_);
              }
          }
-+        return;
++        return true;
      }
  
-+    // CraftBukkit start
-+    protected boolean damageEntity_CB(DamageSource damageSrc, float damageAmount) {  // void -> boolean
-+        return super.damageEntity_CB(damageSrc, damageAmount);
-+    }
-+
-     public void openEditSign(TileEntitySign signTile)
-     {
-     }
-@@ -1317,8 +1396,17 @@
+     public void func_146101_a(TileEntityFurnace p_146101_1_) {}
+@@ -1134,7 +1300,8 @@
  
-                         if (j > 0 && !targetEntity.isBurning())
-                         {
--                            flag4 = true;
--                            targetEntity.setFire(1);
-+                            // flag4 = true;
-+                            // targetEntity.setFire(1);
-+                            // CraftBukkit start - Call a combust event when somebody hits with a fire enchanted item
-+                            EntityCombustByEntityEvent combustEvent = new EntityCombustByEntityEvent(this.getBukkitEntity(), targetEntity.getBukkitEntity(), 1);
-+                            org.bukkit.Bukkit.getPluginManager().callEvent(combustEvent);
-+
-+                            if (!combustEvent.isCancelled()) {
-+                                flag4 = true;
-+                                targetEntity.setFire(combustEvent.getDuration());
-+                            }
-+                            // CraftBukkit end
-                         }
+                 if (itemstack.interactWithEntity(this, (EntityLivingBase)p_70998_1_))
+                 {
+-                    if (itemstack.stackSize <= 0 && !this.capabilities.isCreativeMode)
++                    // CraftBukkit - bypass infinite items; <= 0 -> == 0
++                    if (itemstack.stackSize == 0 && !this.capabilities.isCreativeMode)
+                     {
+                         this.destroyCurrentEquippedItem();
                      }
- 
-@@ -1342,7 +1430,7 @@
- 
-                             this.motionX *= 0.6D;
-                             this.motionZ *= 0.6D;
--                            this.setSprinting(false);
-+							this.setSprinting(false);
-                         }
- 
-                         if (flag3)
-@@ -1353,8 +1441,10 @@
-                             {
-                                 if (entitylivingbase != this && entitylivingbase != targetEntity && !this.isOnSameTeam(entitylivingbase) && this.getDistanceSq(entitylivingbase) < 9.0D)
-                                 {
--                                    entitylivingbase.knockBack(this, 0.4F, (double)MathHelper.sin(this.rotationYaw * 0.017453292F), (double)(-MathHelper.cos(this.rotationYaw * 0.017453292F)));
--                                    entitylivingbase.attackEntityFrom(DamageSource.causePlayerDamage(this), f3);
-+                                    // CraftBukkit start - Only apply knockback if the damage hits
-+                                    if (entitylivingbase.attackEntityFrom(DamageSource.causePlayerDamage(this).sweep(), f3)) {
-+                                        entitylivingbase.knockBack(this, 0.4F, (double) MathHelper.sin(this.rotationYaw * 0.017453292F), (double) (-MathHelper.cos(this.rotationYaw * 0.017453292F)));
-+                                    }
-                                 }
-                             }
- 
-@@ -1364,11 +1454,28 @@
- 
-                         if (targetEntity instanceof EntityPlayerMP && targetEntity.velocityChanged)
+@@ -1281,7 +1448,8 @@
                          {
--                            ((EntityPlayerMP)targetEntity).connection.sendPacket(new SPacketEntityVelocity(targetEntity));
--                            targetEntity.velocityChanged = false;
--                            targetEntity.motionX = d1;
--                            targetEntity.motionY = d2;
--                            targetEntity.motionZ = d3;
-+                            // CraftBukkit start - Add Velocity Event
-+                            boolean cancelled = false;
-+                            Player player = (Player) targetEntity.getBukkitEntity();
-+                            org.bukkit.util.Vector velocity = new Vector( d1, d2, d3 );
-+
-+                            PlayerVelocityEvent event = new PlayerVelocityEvent(player, velocity.clone());
-+                            world.getServer().getPluginManager().callEvent(event);
-+
-+                            if (event.isCancelled()) {
-+                                cancelled = true;
-+                            } else if (!velocity.equals(event.getVelocity())) {
-+                                player.setVelocity(event.getVelocity());
-+                            }
-+
-+                            if (!cancelled) {
-+                                ((EntityPlayerMP) targetEntity).connection.sendPacket(new SPacketEntityVelocity(targetEntity));
-+                                targetEntity.velocityChanged = false;
-+                                targetEntity.motionX = d1;
-+                                targetEntity.motionY = d2;
-+                                targetEntity.motionZ = d3;
-+                            }
-+                            // CraftBukkit end
-                         }
+                             itemstack.hitEntity((EntityLivingBase)object, this);
  
-                         if (flag2)
-@@ -1434,7 +1541,15 @@
+-                            if (itemstack.stackSize <= 0)
++                            // CraftBukkit - bypass infinite items; <= 0 -> == 0
++                            if (itemstack.stackSize == 0)
+                             {
+                                 this.destroyCurrentEquippedItem();
+                             }
+@@ -1293,7 +1461,17 @@
  
                              if (j > 0)
                              {
--                                targetEntity.setFire(j * 4);
-+                                // targetEntity.setFire(j * 4);
-+                                // CraftBukkit start - Call a combust event when somebody hits with a fire enchanted item
-+                                EntityCombustByEntityEvent combustEvent = new EntityCombustByEntityEvent(this.getBukkitEntity(), entity.getBukkitEntity(), j * 4);
+-                                p_71059_1_.setFire(j * 4);
++                                // CraftBukkit start - Call a combust event when
++                                // somebody hits with a fire enchanted item
++                                EntityCombustByEntityEvent combustEvent = new EntityCombustByEntityEvent(this.getBukkitEntity(), p_71059_1_.getBukkitEntity(),
++                                        j * 4);
 +                                org.bukkit.Bukkit.getPluginManager().callEvent(combustEvent);
 +
-+                                if (!combustEvent.isCancelled()) {
-+                                    entity.setFire(combustEvent.getDuration());
++                                if (!combustEvent.isCancelled())
++                                {
++                                    p_71059_1_.setFire(combustEvent.getDuration());
 +                                }
 +                                // CraftBukkit end
                              }
- 
-                             if (this.world instanceof WorldServer && f5 > 2.0F)
-@@ -1454,6 +1569,11 @@
-                         {
-                             targetEntity.extinguish();
                          }
-+                        // CraftBukkit start - resync on cancelled event
-+                        if (this instanceof EntityPlayerMP) {
-+                            ((EntityPlayerMP) this).getBukkitEntity().updateInventory();
-+                        }
-+                        // CraftBukkit end
-                     }
-                 }
-             }
-@@ -1527,6 +1647,10 @@
-         return this.gameProfile;
-     }
  
-+    public GameProfile getProfile(){
-+        return getGameProfile();
-+    }
-+
-     public EntityPlayer.SleepResult trySleep(BlockPos bedLocation)
-     {
-         EntityPlayer.SleepResult ret = net.minecraftforge.event.ForgeEventFactory.onPlayerSleepInBed(this, bedLocation);
-@@ -1572,6 +1696,20 @@
-             this.dismountRidingEntity();
+@@ -1322,6 +1500,10 @@
+ 
+         if (this.openContainer != null)
+         {
++            // CraftBukkit start
++            InventoryCloseEvent event = new InventoryCloseEvent(this.openContainer.getBukkitView());
++            if (this.openContainer.getBukkitView() != null) Bukkit.getServer().getPluginManager().callEvent(event); // Cauldron - allow vanilla mods to bypass
++            // CraftBukkit end
+             this.openContainer.onContainerClosed(this);
+         }
+     }
+@@ -1381,6 +1563,20 @@
+             this.mountEntity((Entity)null);
          }
  
-+        // CraftBukkit start - fire PlayerBedEnterEvent
-+        if (this.getBukkitEntity() instanceof Player) {
++        // CraftBukkit start
++        if (this.getBukkitEntity() instanceof Player)
++        {
 +            Player player = (Player) this.getBukkitEntity();
-+            org.bukkit.block.Block bed = this.world.getWorld().getBlockAt(bedLocation.getX(), bedLocation.getY(), bedLocation.getZ());
++            org.bukkit.block.Block bed = this.worldObj.getWorld().getBlockAt(p_71018_1_, p_71018_2_, p_71018_3_);
++            PlayerBedEnterEvent cbEvent = new PlayerBedEnterEvent(player, bed);
++            this.worldObj.getServer().getPluginManager().callEvent(cbEvent);
 +
-+            PlayerBedEnterEvent event = new PlayerBedEnterEvent(player, bed);
-+            this.world.getServer().getPluginManager().callEvent(event);
-+
-+            if (event.isCancelled()) {
-+                return EntityPlayer.SleepResult.OTHER_PROBLEM;
++            if (cbEvent.isCancelled())
++            {
++                return EntityPlayer.EnumStatus.OTHER_PROBLEM;
 +            }
 +        }
 +        // CraftBukkit end
-+
-         this.spawnShoulderEntities();
          this.setSize(0.2F, 0.2F);
+         this.yOffset = 0.2F;
  
-@@ -1651,6 +1789,23 @@
-             this.world.updateAllPlayersSleepingFlag();
+@@ -1476,6 +1672,26 @@
+             this.worldObj.updateAllPlayersSleepingFlag();
          }
  
-+        // CraftBukkit start - fire PlayerBedLeaveEvent
-+        if (this.getBukkitEntity() instanceof Player) {
++        // CraftBukkit start
++        if (this.getBukkitEntity() instanceof Player)
++        {
 +            Player player = (Player) this.getBukkitEntity();
-+
 +            org.bukkit.block.Block bed;
-+            BlockPos blockposition = this.bedLocation;
-+            if (blockposition != null) {
-+                bed = this.world.getWorld().getBlockAt(blockposition.getX(), blockposition.getY(), blockposition.getZ());
-+            } else {
-+                bed = this.world.getWorld().getBlockAt(player.getLocation());
++
++            if (chunkcoordinates != null)
++            {
++                bed = this.worldObj.getWorld().getBlockAt(chunkcoordinates.posX, chunkcoordinates.posY, chunkcoordinates.posZ);
++            }
++            else
++            {
++                bed = this.worldObj.getWorld().getBlockAt(player.getLocation());
 +            }
 +
 +            PlayerBedLeaveEvent event = new PlayerBedLeaveEvent(player, bed);
-+            this.world.getServer().getPluginManager().callEvent(event);
++            this.worldObj.getServer().getPluginManager().callEvent(event);
 +        }
 +        // CraftBukkit end
 +
-         this.sleepTimer = immediately ? 0 : 100;
- 
-         if (setSpawn)
-@@ -1757,11 +1912,13 @@
+         if (p_70999_1_)
          {
-             this.spawnPos = pos;
-             this.spawnForced = forced;
-+            this.spawnWorld = this.world.worldInfo.getWorldName();
+             this.sleepTimer = 0;
+@@ -1606,11 +1822,13 @@
+         {
+             this.spawnChunk = new ChunkCoordinates(p_71063_1_);
+             this.spawnForced = p_71063_2_;
++            this.spawnWorld = this.worldObj.worldInfo.getWorldName(); // CraftBukkit
          }
          else
          {
-             this.spawnPos = null;
+             this.spawnChunk = null;
              this.spawnForced = false;
-+            this.spawnWorld = "";
++            this.spawnWorld = ""; // CraftBukkit
          }
      }
  
-@@ -1820,7 +1977,10 @@
-             this.motionY = d3 * 0.6D;
-             this.jumpMovementFactor = f;
-             this.fallDistance = 0.0F;
--            this.setFlag(7, false);
-+            // this.setFlag(7, false);
-+            if (getFlag(7) && !org.bukkit.craftbukkit.v1_12_R1.event.CraftEventFactory.callToggleGlideEvent(this, false).isCancelled()) {
-+                this.setFlag(7, false);
-+            }
+@@ -2022,7 +2240,17 @@
+             this.experience = p_71049_1_.experience;
+             this.setScore(p_71049_1_.getScore());
          }
-         else
-         {
-@@ -2225,10 +2385,12 @@
- 
-     protected void spawnShoulderEntities()
-     {
--        this.spawnShoulderEntity(this.getLeftShoulderEntity());
--        this.setLeftShoulderEntity(new NBTTagCompound());
--        this.spawnShoulderEntity(this.getRightShoulderEntity());
--        this.setRightShoulderEntity(new NBTTagCompound());
-+        if (this.spawnShoulderEntity_CB(this.getLeftShoulderEntity())) {
-+            this.setLeftShoulderEntity(new NBTTagCompound());
-+        }
-+        if (this.spawnShoulderEntity_CB(this.getRightShoulderEntity())) {
-+            this.setRightShoulderEntity(new NBTTagCompound());
-+        }
-     }
- 
-     private void spawnShoulderEntity(@Nullable NBTTagCompound p_192026_1_)
-@@ -2247,6 +2409,23 @@
-         }
-     }
- 
-+    private boolean spawnShoulderEntity_CB(@Nullable NBTTagCompound p_192026_1_) // CraftBukkit void->boolean
-+    {
-+        if (!this.world.isRemote && !p_192026_1_.hasNoTags())
+-
++        else if(this instanceof EntityPlayerMP)
 +        {
-+            Entity entity = EntityList.createEntityFromNBT(p_192026_1_, this.world);
-+
-+            if (entity instanceof EntityTameable)
-+            {
-+                ((EntityTameable)entity).setOwnerId(this.entityUniqueID);
-+            }
-+
-+            entity.setPosition(this.posX, this.posY + 0.699999988079071D, this.posZ);
-+            return this.world.addEntity(entity, CreatureSpawnEvent.SpawnReason.SHOULDER_ENTITY);
++        	if(((EntityPlayerMP)p_71049_1_).keptInventory)
++        	{
++                this.inventory.copyInventory(p_71049_1_.inventory);
++                this.experienceLevel = p_71049_1_.experienceLevel;
++                this.experienceTotal = p_71049_1_.experienceTotal;
++                this.experience = p_71049_1_.experience;
++                this.setScore(p_71049_1_.getScore());
++        	}
 +        }
-+        return true;
-+    }
-+
-     @SideOnly(Side.CLIENT)
-     public boolean isInvisibleToPlayer(EntityPlayer player)
-     {
-@@ -2481,7 +2660,7 @@
-         return (NBTTagCompound)this.dataManager.get(LEFT_SHOULDER_ENTITY);
+         this.theInventoryEnderChest = p_71049_1_.theInventoryEnderChest;
+ 
+         this.spawnChunkMap = p_71049_1_.spawnChunkMap;
+@@ -2035,7 +2263,7 @@
+         {
+             getEntityData().setTag(PERSISTED_NBT_TAG, old.getCompoundTag(PERSISTED_NBT_TAG));
+         }
+-        MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.player.PlayerEvent.Clone(this, p_71049_1_, !p_71049_2_));
++        MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.player.PlayerEvent.Clone(this, p_71049_1_, !p_71049_2_)); // Thermos - returned to EntityPlayer. Should never have been removed here.
      }
  
--    protected void setLeftShoulderEntity(NBTTagCompound tag)
-+    public void setLeftShoulderEntity(NBTTagCompound tag)
-     {
-         this.dataManager.set(LEFT_SHOULDER_ENTITY, tag);
-     }
-@@ -2491,7 +2670,7 @@
-         return (NBTTagCompound)this.dataManager.get(RIGHT_SHOULDER_ENTITY);
-     }
- 
--    protected void setRightShoulderEntity(NBTTagCompound tag)
-+    public void setRightShoulderEntity(NBTTagCompound tag)
-     {
-         this.dataManager.set(RIGHT_SHOULDER_ENTITY, tag);
-     }
-@@ -2531,7 +2710,7 @@
- 
-     public boolean canUseCommandBlock()
-     {
--        return this.capabilities.isCreativeMode && this.canUseCommand(2, "");
-+        return this.capabilities.isCreativeMode && (this.canUseCommand(2, "") || this.canUseCommand(2, "", "minecraft"));
-     }
- 
-     /**
+     protected boolean canTriggerWalking()

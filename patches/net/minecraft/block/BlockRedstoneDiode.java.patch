@@ -1,41 +1,65 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockRedstoneDiode.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockRedstoneDiode.java
-@@ -15,6 +15,7 @@
+@@ -13,16 +13,22 @@
+ import net.minecraft.world.IBlockAccess;
  import net.minecraft.world.World;
- import net.minecraftforge.fml.relauncher.Side;
- import net.minecraftforge.fml.relauncher.SideOnly;
-+import org.bukkit.craftbukkit.v1_12_R1.event.CraftEventFactory;
  
- public abstract class BlockRedstoneDiode extends BlockHorizontal
++import org.bukkit.craftbukkit.event.CraftEventFactory; // CraftBukkit
++
++import net.minecraftforge.cauldron.configuration.CauldronConfig;
++
+ public abstract class BlockRedstoneDiode extends BlockDirectional
  {
-@@ -53,18 +54,30 @@
+     protected final boolean isRepeaterPowered;
+     private static final String __OBFID = "CL_00000226";
++    private boolean limit;
+ 
+     protected BlockRedstoneDiode(boolean p_i45400_1_)
      {
+         super(Material.circuits);
+         this.isRepeaterPowered = p_i45400_1_;
+         this.setBlockBounds(0.0F, 0.0F, 0.0F, 1.0F, 0.125F, 1.0F);
++        if(this.getClass().getSimpleName().toLowerCase().contains("redstonerepeater"))limit = true;
+     }
+ 
+     public boolean renderAsNormalBlock()
+@@ -40,22 +46,37 @@
+         return !World.doesBlockHaveSolidTopSurface(p_149718_1_, p_149718_2_, p_149718_3_ - 1, p_149718_4_) ? false : super.canBlockStay(p_149718_1_, p_149718_2_, p_149718_3_, p_149718_4_);
      }
  
 +    private long last = 0L;
-     public void updateTick(World worldIn, BlockPos pos, IBlockState state, Random rand)
+     public void updateTick(World p_149674_1_, int p_149674_2_, int p_149674_3_, int p_149674_4_, Random p_149674_5_)
      {
-+        if (System.currentTimeMillis() - last <= -1)
-+        {
-+            return;
-+        }
++        if (System.currentTimeMillis() - last <= CauldronConfig.instance.repeaterL.getValue()) { return; }
 +        last = System.currentTimeMillis();
-         if (!this.isLocked(worldIn, pos, state))
+         int l = p_149674_1_.getBlockMetadata(p_149674_2_, p_149674_3_, p_149674_4_);
+ 
+-        if (!this.func_149910_g(p_149674_1_, p_149674_2_, p_149674_3_, p_149674_4_, l))
++        if (!this.func_149910_g((IBlockAccess) p_149674_1_, p_149674_2_, p_149674_3_, p_149674_4_, l))   // CraftBukkit - Cast world to IBlockAccess to call the right method.
          {
-             boolean flag = this.shouldBePowered(worldIn, pos, state);
+             boolean flag = this.isGettingInput(p_149674_1_, p_149674_2_, p_149674_3_, p_149674_4_, l);
  
              if (this.isRepeaterPowered && !flag)
              {
-+                if (CraftEventFactory.callRedstoneChange(worldIn, pos.getX(), pos.getY(), pos.getZ(), 15, 0).getNewCurrent() != 0) {
++                // CraftBukkit start
++                if (CraftEventFactory.callRedstoneChange(p_149674_1_, p_149674_2_, p_149674_3_, p_149674_4_, 15, 0).getNewCurrent() != 0)
++                {
 +                    return;
 +                }
-                 worldIn.setBlockState(pos, this.getUnpoweredState(state), 2);
++
++                // CraftBukkit end
+                 p_149674_1_.setBlock(p_149674_2_, p_149674_3_, p_149674_4_, this.getBlockUnpowered(), l, 2);
              }
              else if (!this.isRepeaterPowered)
              {
-+                if (CraftEventFactory.callRedstoneChange(worldIn, pos.getX(), pos.getY(), pos.getZ(), 0, 15).getNewCurrent() != 15) {
++                // CraftBukkit start
++                if (CraftEventFactory.callRedstoneChange(p_149674_1_, p_149674_2_, p_149674_3_, p_149674_4_, 0, 15).getNewCurrent() != 15)
++                {
 +                    return;
 +                }
-                 worldIn.setBlockState(pos, this.getPoweredState(state), 2);
- 
++                // CraftBukkit end
+                 p_149674_1_.setBlock(p_149674_2_, p_149674_3_, p_149674_4_, this.getBlockPowered(), l, 2);
+-
                  if (!flag)
+                 {
+                     p_149674_1_.scheduleBlockUpdateWithPriority(p_149674_2_, p_149674_3_, p_149674_4_, this.getBlockPowered(), this.func_149899_k(l), -1);

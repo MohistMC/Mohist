@@ -1,27 +1,28 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockDispenser.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockDispenser.java
-@@ -50,8 +50,8 @@
-     {
-         return 4;
-     }
--
--    public void onBlockAdded(World worldIn, BlockPos pos, IBlockState state)
-+	
-+	public void onBlockAdded(World worldIn, BlockPos pos, IBlockState state)
-     {
-         super.onBlockAdded(worldIn, pos, state);
-         this.setDefaultDirection(worldIn, pos, state);
-@@ -115,12 +115,11 @@
-                     playerIn.addStat(StatList.DISPENSER_INSPECTED);
-                 }
-             }
--
-             return true;
+@@ -30,6 +30,7 @@
+ {
+     public static final IRegistry dispenseBehaviorRegistry = new RegistryDefaulted(new BehaviorDefaultDispenseItem());
+     protected Random field_149942_b = new Random();
++    public static boolean eventFired = false; // CraftBukkit
+     @SideOnly(Side.CLIENT)
+     protected IIcon field_149944_M;
+     @SideOnly(Side.CLIENT)
+@@ -124,7 +125,8 @@
          }
      }
  
--    protected void dispense(World worldIn, BlockPos pos)
-+    public void dispense(World worldIn, BlockPos pos)
+-    protected void func_149941_e(World p_149941_1_, int p_149941_2_, int p_149941_3_, int p_149941_4_)
++    // CraftBukkit - protected -> public
++    public void func_149941_e(World p_149941_1_, int p_149941_2_, int p_149941_3_, int p_149941_4_)
      {
-         BlockSourceImpl blocksourceimpl = new BlockSourceImpl(worldIn, pos);
+         BlockSourceImpl blocksourceimpl = new BlockSourceImpl(p_149941_1_, p_149941_2_, p_149941_3_, p_149941_4_);
          TileEntityDispenser tileentitydispenser = (TileEntityDispenser)blocksourceimpl.getBlockTileEntity();
+@@ -145,6 +147,7 @@
+                 if (ibehaviordispenseitem != IBehaviorDispenseItem.itemDispenseBehaviorProvider)
+                 {
+                     ItemStack itemstack1 = ibehaviordispenseitem.dispense(blocksourceimpl, itemstack);
++                    eventFired = false; // CraftBukkit - reset event status
+                     tileentitydispenser.setInventorySlotContents(l, itemstack1.stackSize == 0 ? null : itemstack1);
+                 }
+             }

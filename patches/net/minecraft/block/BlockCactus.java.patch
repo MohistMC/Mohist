@@ -1,43 +1,31 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockCactus.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockCactus.java
-@@ -9,7 +9,6 @@
- import net.minecraft.block.state.IBlockState;
- import net.minecraft.creativetab.CreativeTabs;
- import net.minecraft.entity.Entity;
--import net.minecraft.init.Blocks;
- import net.minecraft.util.BlockRenderLayer;
- import net.minecraft.util.DamageSource;
- import net.minecraft.util.EnumFacing;
-@@ -19,6 +18,7 @@
- import net.minecraft.world.World;
- import net.minecraftforge.fml.relauncher.Side;
- import net.minecraftforge.fml.relauncher.SideOnly;
-+import org.bukkit.craftbukkit.v1_12_R1.event.CraftEventFactory;
+@@ -17,6 +17,8 @@
+ import net.minecraftforge.common.util.ForgeDirection;
+ import net.minecraftforge.common.IPlantable;
  
- public class BlockCactus extends Block implements net.minecraftforge.common.IPlantable
++import org.bukkit.craftbukkit.event.CraftEventFactory; // CraftBukkit
++
+ public class BlockCactus extends Block implements IPlantable
  {
-@@ -54,10 +54,11 @@
+     @SideOnly(Side.CLIENT)
+@@ -47,9 +49,9 @@
+             {
+                 int i1 = p_149674_1_.getBlockMetadata(p_149674_2_, p_149674_3_, p_149674_4_);
  
-                 if(net.minecraftforge.common.ForgeHooks.onCropsGrowPre(worldIn, blockpos, state, true))
+-                if (i1 == 15)
++                if (i1 >= (byte) range(3, (p_149674_1_.growthOdds / p_149674_1_.getSpigotConfig().cactusModifier * 15) + 0.5F, 15))   // Spigot // Cauldron
                  {
--                if (j == 15)
--                {
--                    worldIn.setBlockState(blockpos, this.getDefaultState());
-+                    if (j >= (byte)Block.range(3.0f, ((100.0f / worldIn.spigotConfig.cactusModifier) * 15.0f) + 0.5f, 15.0f))
-+                    {
-+                    // worldIn.setBlockState(blockpos, this.getDefaultState());
-                     IBlockState iblockstate = state.withProperty(AGE, Integer.valueOf(0));
-+                    CraftEventFactory.handleBlockGrowEvent(worldIn, blockpos.getX(), blockpos.getY(), blockpos.getZ(), this, 0);
-                     worldIn.setBlockState(pos, iblockstate, 4);
-                     iblockstate.neighborChanged(worldIn, blockpos, this, pos);
+-                    p_149674_1_.setBlock(p_149674_2_, p_149674_3_ + 1, p_149674_4_, this);
++                    CraftEventFactory.handleBlockGrowEvent(p_149674_1_, p_149674_2_, p_149674_3_ + 1, p_149674_4_, this, 0); // CraftBukkit
+                     p_149674_1_.setBlockMetadataWithNotify(p_149674_2_, p_149674_3_, p_149674_4_, 0, 4);
+                     this.onNeighborBlockChange(p_149674_1_, p_149674_2_, p_149674_3_ + 1, p_149674_4_, this);
                  }
-@@ -123,7 +124,9 @@
+@@ -135,6 +137,7 @@
  
-     public void onEntityCollidedWithBlock(World worldIn, BlockPos pos, IBlockState state, Entity entityIn)
+     public void onEntityCollidedWithBlock(World p_149670_1_, int p_149670_2_, int p_149670_3_, int p_149670_4_, Entity p_149670_5_)
      {
-+        CraftEventFactory.blockDamage = worldIn.getWorld().getBlockAt(pos.getX(), pos.getY(), pos.getZ());
-         entityIn.attackEntityFrom(DamageSource.CACTUS, 1.0F);
-+        CraftEventFactory.blockDamage = null;
++        // Cauldron - moved CraftBukkit hook to func_145775_I() - doBlockCollisions
+         p_149670_5_.attackEntityFrom(DamageSource.cactus, 1.0F);
      }
  
-     public IBlockState getStateFromMeta(int meta)

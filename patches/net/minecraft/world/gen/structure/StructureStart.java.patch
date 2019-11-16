@@ -1,13 +1,12 @@
 --- ../src-base/minecraft/net/minecraft/world/gen/structure/StructureStart.java
 +++ ../src-work/minecraft/net/minecraft/world/gen/structure/StructureStart.java
-@@ -43,8 +43,8 @@
-         while (iterator.hasNext())
+@@ -41,7 +41,8 @@
          {
-             StructureComponent structurecomponent = iterator.next();
--
--            if (structurecomponent.getBoundingBox().intersectsWith(structurebb) && !structurecomponent.addComponentParts(worldIn, rand, structurebb))
+             StructureComponent structurecomponent = (StructureComponent)iterator.next();
+ 
+-            if (structurecomponent.getBoundingBox().intersectsWith(p_75068_3_) && !structurecomponent.addComponentParts(p_75068_1_, p_75068_2_, p_75068_3_))
 +            // Cauldron - validate structurecomponent
-+            if ((structurecomponent == null || structurecomponent.getBoundingBox() == null) || structurecomponent.getBoundingBox().intersectsWith(structurebb) && !structurecomponent.addComponentParts(worldIn, rand, structurebb))
++            if ((structurecomponent == null || structurecomponent.getBoundingBox() == null) || (structurecomponent.getBoundingBox().intersectsWith(p_75068_3_) && !structurecomponent.addComponentParts(p_75068_1_, p_75068_2_, p_75068_3_)))
              {
                  iterator.remove();
              }

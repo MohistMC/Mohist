@@ -1,189 +1,312 @@
 --- ../src-base/minecraft/net/minecraft/entity/item/EntityItem.java
 +++ ../src-work/minecraft/net/minecraft/entity/item/EntityItem.java
-@@ -13,6 +13,7 @@
- import net.minecraft.network.datasync.DataParameter;
- import net.minecraft.network.datasync.DataSerializers;
- import net.minecraft.network.datasync.EntityDataManager;
-+import net.minecraft.server.MinecraftServer;
- import net.minecraft.stats.StatList;
- import net.minecraft.util.DamageSource;
- import net.minecraft.util.datafix.DataFixer;
-@@ -26,13 +27,15 @@
- import net.minecraftforge.fml.relauncher.SideOnly;
- import org.apache.logging.log4j.LogManager;
- import org.apache.logging.log4j.Logger;
-+import org.bukkit.event.entity.EntityPickupItemEvent;
-+import org.bukkit.event.player.PlayerPickupItemEvent;
+@@ -22,6 +22,11 @@
+ import cpw.mods.fml.common.FMLCommonHandler;
+ import cpw.mods.fml.common.eventhandler.Event.Result;
  
++// CraftBukkit start
++import org.bukkit.event.player.PlayerPickupItemEvent;
++import net.minecraft.server.MinecraftServer;
++// CraftBukkit end
++
  public class EntityItem extends Entity
  {
-     private static final Logger LOGGER = LogManager.getLogger();
-     private static final DataParameter<ItemStack> ITEM = EntityDataManager.<ItemStack>createKey(EntityItem.class, DataSerializers.ITEM_STACK);
-     private int age;
--    private int pickupDelay;
-+    public int pickupDelay;
-     private int health;
-     private String thrower;
-     private String owner;
-@@ -43,6 +46,8 @@
-      */
-     public int lifespan = 6000;
+     private static final Logger logger = LogManager.getLogger();
+@@ -31,6 +36,7 @@
+     private String field_145801_f;
+     private String field_145802_g;
+     public float hoverStart;
++    private int lastTick = MinecraftServer.currentTick; // CraftBukkit
+     private static final String __OBFID = "CL_00001669";
  
-+    private int lastTick = MinecraftServer.currentTick - 1;
+     /**
+@@ -55,6 +61,15 @@
+     public EntityItem(World p_i1710_1_, double p_i1710_2_, double p_i1710_4_, double p_i1710_6_, ItemStack p_i1710_8_)
+     {
+         this(p_i1710_1_, p_i1710_2_, p_i1710_4_, p_i1710_6_);        
 +
-     public EntityItem(World worldIn, double x, double y, double z)
-     {
-         super(worldIn);
-@@ -60,7 +65,7 @@
-     {
-         this(worldIn, x, y, z);
-         this.setItem(stack);
--        this.lifespan = (stack.getItem() == null ? 6000 : stack.getItem().getEntityLifespan(stack, worldIn));
-+        this.lifespan = (stack.getItem() == null ? world.spigotConfig.itemDespawnRate : stack.getItem().getEntityLifespan(stack, worldIn)); // Spigot
++        // CraftBukkit start - Can't set null items in the datawatcher
++        if (p_i1710_8_ == null || p_i1710_8_.getItem() == null)
++        {
++            return;
++        }
++
++        // CraftBukkit end
++
+         this.setEntityItemStack(p_i1710_8_);
+         this.lifespan = (p_i1710_8_.getItem() == null ? 6000 : p_i1710_8_.getItem().getEntityLifespan(p_i1710_8_, p_i1710_1_));
      }
- 
-     protected boolean canTriggerWalking()
-@@ -93,10 +98,12 @@
+@@ -81,6 +96,10 @@
+     public void onUpdate()
+     {
+         ItemStack stack = this.getDataWatcher().getWatchableObjectItemStack(10);
++        if (stack == null || stack.stackSize == 0) {
++            setDead();
++            return;
++        }
+         if (stack != null && stack.getItem() != null)
          {
-             super.onUpdate();
- 
--            if (this.pickupDelay > 0 && this.pickupDelay != 32767)
--            {
--                --this.pickupDelay;
--            }
-+            // CraftBukkit start - Use wall time for pickup and despawn timers
-+            int elapsedTicks = MinecraftServer.currentTick - this.lastTick;
-+            if (this.pickupDelay != 32767) this.pickupDelay -= elapsedTicks;
-+            if (this.age != -32768) this.age += elapsedTicks;
-+            this.lastTick = MinecraftServer.currentTick;
-+            // CraftBukkit end
- 
-             this.prevPosX = this.posX;
-             this.prevPosY = this.posY;
-@@ -156,10 +163,12 @@
-                 this.motionY *= -0.5D;
+             if (stack.getItem().onEntityItemUpdate(this))
+@@ -89,93 +108,103 @@
              }
- 
-+            /* Craftbukkit start - moved up
-             if (this.age != -32768)
-             {
-                 ++this.age;
-             }
-+            */
- 
-             this.handleWaterMovement();
- 
-@@ -180,6 +189,10 @@
- 
-             if (!this.world.isRemote && this.age >= lifespan)
-             {
-+                if (org.bukkit.craftbukkit.v1_12_R1.event.CraftEventFactory.callItemDespawnEvent(this).isCancelled()) {
-+                    this.age = 0;
-+                    return;
-+                }
-                 int hook = net.minecraftforge.event.ForgeEventFactory.onItemExpire(this, item);
-                 if (hook < 0) this.setDead();
-                 else          this.lifespan += hook;
-@@ -191,10 +204,35 @@
          }
-     }
  
-+    // Spigot start - copied from above
-+    @Override
-+    public void inactiveTick() {
+-        if (this.getEntityItem() == null)
+-        {
+-            this.setDead();
++        super.onUpdate();
 +        // CraftBukkit start - Use wall time for pickup and despawn timers
 +        int elapsedTicks = MinecraftServer.currentTick - this.lastTick;
-+        if (this.pickupDelay != 32767) this.pickupDelay -= elapsedTicks;
-+        if (this.age != -32768) this.age += elapsedTicks;
++        this.delayBeforeCanPickup -= elapsedTicks;
++        if (this.delayBeforeCanPickup < 0) this.delayBeforeCanPickup = 0; // Cauldron
++        this.age += elapsedTicks;
 +        this.lastTick = MinecraftServer.currentTick;
 +        // CraftBukkit end
 +
-+        if (!this.world.isRemote && this.age >= world.spigotConfig.itemDespawnRate) { // Spigot
-+            // CraftBukkit start - fire ItemDespawnEvent
-+            if (org.bukkit.craftbukkit.v1_12_R1.event.CraftEventFactory.callItemDespawnEvent(this).isCancelled()) {
++        boolean forceUpdate = this.ticksExisted > 0 && this.ticksExisted % 25 == 0; // Cauldron - optimize item tick updates
++        this.prevPosX = this.posX;
++        this.prevPosY = this.posY;
++        this.prevPosZ = this.posZ;
++        this.motionY -= 0.03999999910593033D;
++        // Cauldron start - if forced
++        if (forceUpdate || noClip) {
++            this.noClip = this.func_145771_j(this.posX, (this.boundingBox.minY + this.boundingBox.maxY) / 2.0D, this.posZ);
+         }
+-        else
+-        {
+-            super.onUpdate();
++        // Cauldron end
++        this.moveEntity(this.motionX, this.motionY, this.motionZ);
++        boolean flag = (int)this.prevPosX != (int)this.posX || (int)this.prevPosY != (int)this.posY || (int)this.prevPosZ != (int)this.posZ;
+ 
+-            if (this.delayBeforeCanPickup > 0)
++        if ((flag && this.ticksExisted % 5 == 0) || forceUpdate) // Cauldron - if forced
++        {
++            if (this.worldObj.getBlock(MathHelper.floor_double(this.posX), MathHelper.floor_double(this.posY), MathHelper.floor_double(this.posZ)).getMaterial() == Material.lava)
+             {
+-                --this.delayBeforeCanPickup;
++                this.motionY = 0.20000000298023224D;
++                this.motionX = (double)((this.rand.nextFloat() - this.rand.nextFloat()) * 0.2F);
++                this.motionZ = (double)((this.rand.nextFloat() - this.rand.nextFloat()) * 0.2F);
++                this.playSound("random.fizz", 0.4F, 2.0F + this.rand.nextFloat() * 0.4F);
+             }
+ 
+-            this.prevPosX = this.posX;
+-            this.prevPosY = this.posY;
+-            this.prevPosZ = this.posZ;
+-            this.motionY -= 0.03999999910593033D;
+-            this.noClip = this.func_145771_j(this.posX, (this.boundingBox.minY + this.boundingBox.maxY) / 2.0D, this.posZ);
+-            this.moveEntity(this.motionX, this.motionY, this.motionZ);
+-            boolean flag = (int)this.prevPosX != (int)this.posX || (int)this.prevPosY != (int)this.posY || (int)this.prevPosZ != (int)this.posZ;
+-
+-            if (flag || this.ticksExisted % 25 == 0)
++            if (forceUpdate && !this.worldObj.isRemote) // Cauldron - if forced
+             {
+-                if (this.worldObj.getBlock(MathHelper.floor_double(this.posX), MathHelper.floor_double(this.posY), MathHelper.floor_double(this.posZ)).getMaterial() == Material.lava)
+-                {
+-                    this.motionY = 0.20000000298023224D;
+-                    this.motionX = (double)((this.rand.nextFloat() - this.rand.nextFloat()) * 0.2F);
+-                    this.motionZ = (double)((this.rand.nextFloat() - this.rand.nextFloat()) * 0.2F);
+-                    this.playSound("random.fizz", 0.4F, 2.0F + this.rand.nextFloat() * 0.4F);
+-                }
+-
+-                if (!this.worldObj.isRemote)
+-                {
+-                    this.searchForOtherItemsNearby();
+-                }
++                this.searchForOtherItemsNearby();
+             }
++        }
+ 
+-            float f = 0.98F;
++        float f = 0.98F;
+ 
+-            if (this.onGround)
+-            {
+-                f = this.worldObj.getBlock(MathHelper.floor_double(this.posX), MathHelper.floor_double(this.boundingBox.minY) - 1, MathHelper.floor_double(this.posZ)).slipperiness * 0.98F;
+-            }
++        if (this.onGround)
++        {
++            f = this.worldObj.getBlock(MathHelper.floor_double(this.posX), MathHelper.floor_double(this.boundingBox.minY) - 1, MathHelper.floor_double(this.posZ)).slipperiness * 0.98F;
++        }
+ 
+-            this.motionX *= (double)f;
+-            this.motionY *= 0.9800000190734863D;
+-            this.motionZ *= (double)f;
++        this.motionX *= (double)f;
++        this.motionY *= 0.9800000190734863D;
++        this.motionZ *= (double)f;
+ 
+-            if (this.onGround)
+-            {
+-                this.motionY *= -0.5D;
+-            }
++        if (this.onGround)
++        {
++            this.motionY *= -0.5D;
++        }
+ 
+-            ++this.age;
++        // ++this.age; // CraftBukkit - Moved up (base age on wall time)
+ 
+-            ItemStack item = getDataWatcher().getWatchableObjectItemStack(10);
+-    
+-            if (!this.worldObj.isRemote && this.age >= lifespan)
++        ItemStack item = getDataWatcher().getWatchableObjectItemStack(10);
++        
++        if (!this.worldObj.isRemote && this.age >= lifespan - 1) // Cauldron adjust for age being off by one when it is first dropped
++        {
++            // CraftBukkit start
++            if (org.bukkit.craftbukkit.event.CraftEventFactory.callItemDespawnEvent(this).isCancelled())
+             {
+-                if (item != null)
+-                {   
+-                    ItemExpireEvent event = new ItemExpireEvent(this, (item.getItem() == null ? 6000 : item.getItem().getEntityLifespan(item, worldObj)));
+-                    if (MinecraftForge.EVENT_BUS.post(event))
+-                    {
+-                        lifespan += event.extraLife;
+-                    }
+-                    else
+-                    {
+-                        this.setDead();
+-                    }
 +                this.age = 0;
 +                return;
 +            }
 +            // CraftBukkit end
++            if (item != null)
++            {   
++                ItemExpireEvent event = new ItemExpireEvent(this, (item.getItem() == null ? this.worldObj.getSpigotConfig().itemDespawnRate : item.getItem().getEntityLifespan(item, worldObj))); // Spigot // Cauldron
++                if (MinecraftForge.EVENT_BUS.post(event))
++                {
++                    lifespan += event.extraLife;
+                 }
+                 else
+                 {
+                     this.setDead();
+                 }
+             }
+-    
+-            if (item != null && item.stackSize <= 0)
++            else
+             {
+                 this.setDead();
+             }
+         }
++
++        if (item != null && item.stackSize <= 0)
++        {
 +            this.setDead();
 +        }
-+    }
-+    // Spigot end
-+
+     }
+ 
      private void searchForOtherItemsNearby()
      {
--        for (EntityItem entityitem : this.world.getEntitiesWithinAABB(EntityItem.class, this.getEntityBoundingBox().grow(0.5D, 0.0D, 0.5D)))
--        {
+-        Iterator iterator = this.worldObj.getEntitiesWithinAABB(EntityItem.class, this.boundingBox.expand(0.5D, 0.0D, 0.5D)).iterator();
 +        // Spigot start
-+        double radius = world.spigotConfig.itemMerge;
-+        for (EntityItem entityitem : this.world.getEntitiesWithinAABB(EntityItem.class, this.getEntityBoundingBox().grow(radius, radius, radius)))
-+            // Spigot end
-+            {
-             this.combineItems(entityitem);
-         }
-     }
-@@ -248,11 +286,14 @@
-                     }
-                     else
-                     {
--                        itemstack1.grow(itemstack.getCount());
--                        other.pickupDelay = Math.max(other.pickupDelay, this.pickupDelay);
--                        other.age = Math.min(other.age, this.age);
--                        other.setItem(itemstack1);
--                        this.setDead();
-+                        // Spigot start
-+                        if (org.bukkit.craftbukkit.v1_12_R1.event.CraftEventFactory.callItemMergeEvent(other, this).isCancelled()) return false;
-+                        itemstack.grow(itemstack1.getCount());
-+                        this.pickupDelay = Math.max(other.pickupDelay, this.pickupDelay);
-+                        this.age = Math.min(other.age, this.age);
-+                        this.setItem(itemstack);
-+                        other.setDead();
-+                        // Spigot end
-                         return true;
-                     }
-                 }
-@@ -314,6 +355,9 @@
-         }
-         else
++        double radius = worldObj.getSpigotConfig().itemMerge; // Cauldron
++        Iterator iterator = this.worldObj.getEntitiesWithinAABB(EntityItem.class, this.boundingBox.expand(radius, radius, radius)).iterator();
++        // Spigot end
+ 
+         while (iterator.hasNext())
          {
-+            if (org.bukkit.craftbukkit.v1_12_R1.event.CraftEventFactory.handleNonLivingEntityDamageEvent(this, source, amount)) {
-+                return false;
+@@ -225,11 +254,13 @@
+             }
+             else
+             {
+-                itemstack1.stackSize += itemstack.stackSize;
+-                p_70289_1_.delayBeforeCanPickup = Math.max(p_70289_1_.delayBeforeCanPickup, this.delayBeforeCanPickup);
+-                p_70289_1_.age = Math.min(p_70289_1_.age, this.age);
+-                p_70289_1_.setEntityItemStack(itemstack1);
+-                this.setDead();
++                // Spigot start
++                itemstack.stackSize += itemstack1.stackSize;
++                this.delayBeforeCanPickup = Math.max(p_70289_1_.delayBeforeCanPickup, this.delayBeforeCanPickup);
++                this.age = Math.min(p_70289_1_.age, this.age);
++                this.setEntityItemStack(itemstack);
++                p_70289_1_.setDead();
++                // Spigot end
+                 return true;
+             }
+         }
+@@ -316,8 +347,27 @@
+         }
+ 
+         NBTTagCompound nbttagcompound1 = p_70037_1_.getCompoundTag("Item");
+-        this.setEntityItemStack(ItemStack.loadItemStackFromNBT(nbttagcompound1));
+ 
++        // CraftBukkit start
++        if (nbttagcompound1 != null)
++        {
++            ItemStack itemstack = ItemStack.loadItemStackFromNBT(nbttagcompound1);
++
++            if (itemstack != null)
++            {
++                this.setEntityItemStack(itemstack);
 +            }
-             this.markVelocityChanged();
-             this.health = (int)((float)this.health - amount);
- 
-@@ -393,6 +437,34 @@
-             Item item = itemstack.getItem();
-             int i = itemstack.getCount();
- 
-+            // CraftBukkit start - fire PlayerPickupItemEvent
-+            int canHold = entityIn.inventory.canHold(itemstack);
-+            int remaining = i - canHold;
++            else
++            {
++                this.setDead();
++            }
++        }
++        else
++        {
++            this.setDead();
++        }
 +
-+            if (this.pickupDelay <= 0 && canHold > 0) {
-+                itemstack.setCount(canHold);
-+                PlayerPickupItemEvent playerEvent = new PlayerPickupItemEvent((org.bukkit.entity.Player) entityIn.getBukkitEntity(), (org.bukkit.entity.Item) this.getBukkitEntity(), remaining);
-+                playerEvent.setCancelled(!entityIn.canPickUpLoot);
-+                this.world.getServer().getPluginManager().callEvent(playerEvent);
-+                if (playerEvent.isCancelled()) {
++        // CraftBukkit end
+         ItemStack item = getDataWatcher().getWatchableObjectItemStack(10);
+ 
+         if (item == null || item.stackSize <= 0)
+@@ -350,6 +400,31 @@
+             ItemStack itemstack = this.getEntityItem();
+             int i = itemstack.stackSize;
+ 
++            // CraftBukkit start
++            int canHold = p_70100_1_.inventory.canHold(itemstack);
++            int remaining = itemstack.stackSize - canHold;
++
++            if (this.delayBeforeCanPickup <= 0 && canHold > 0)
++            {
++                itemstack.stackSize = canHold;
++                // Cauldron start - rename to cbEvent to fix naming collision
++                PlayerPickupItemEvent cbEvent = new PlayerPickupItemEvent((org.bukkit.entity.Player) p_70100_1_.getBukkitEntity(), (org.bukkit.entity.Item) this.getBukkitEntity(), remaining);
++                //cbEvent.setCancelled(!par1EntityPlayer.canPickUpLoot); TODO
++                this.worldObj.getServer().getPluginManager().callEvent(cbEvent);
++                itemstack.stackSize = canHold + remaining;
++
++                if (cbEvent.isCancelled())
++                {
 +                    return;
 +                }
-+
-+                // Call newer event afterwards
-+                EntityPickupItemEvent entityEvent = new EntityPickupItemEvent((org.bukkit.entity.Player) entityIn.getBukkitEntity(), (org.bukkit.entity.Item) this.getBukkitEntity(), remaining);
-+                entityEvent.setCancelled(!entityIn.canPickUpLoot);
-+                this.world.getServer().getPluginManager().callEvent(entityEvent);
-+                if (entityEvent.isCancelled()) {
-+                    return;
-+                }
-+
-+                itemstack.setCount(canHold + remaining);
++                // Cauldron end
 +
 +                // Possibly < 0; fix here so we do not have to modify code below
-+                this.pickupDelay = 0;
++                this.delayBeforeCanPickup = 0;
 +            }
++
 +            // CraftBukkit end
 +
-             int hook = net.minecraftforge.event.ForgeEventFactory.onItemPickup(this, entityIn);
-             if (hook < 0) return;
-             ItemStack clone = itemstack.copy();
+             if (this.delayBeforeCanPickup <= 0 && (this.field_145802_g == null || lifespan - this.age <= 200 || this.field_145802_g.equals(p_70100_1_.getCommandSenderName())) && (event.getResult() == Result.ALLOW || i <= 0 || p_70100_1_.inventory.addItemStackToInventory(itemstack)))
+             {
+                 if (itemstack.getItem() == Item.getItemFromBlock(Blocks.log))
+@@ -423,7 +498,7 @@
+     public ItemStack getEntityItem()
+     {
+         ItemStack itemstack = this.getDataWatcher().getWatchableObjectItemStack(10);
+-        return itemstack == null ? new ItemStack(Blocks.stone) : itemstack;
++        return itemstack == null ? new ItemStack(Blocks.air, 0) : itemstack;
+     }
+ 
+     public void setEntityItemStack(ItemStack p_92058_1_)
+@@ -451,4 +526,10 @@
+     {
+         this.field_145801_f = p_145799_1_;
+     }
++    
++    @Override
++    public boolean entityAllowedToSpawn() {
++        ItemStack stack = getDataWatcher().getWatchableObjectItemStack(10);
++        return stack != null && stack.getItem() != null && stack.stackSize > 0;
++    }
+ }

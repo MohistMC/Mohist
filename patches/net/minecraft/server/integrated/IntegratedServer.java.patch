@@ -1,68 +1,60 @@
 --- ../src-base/minecraft/net/minecraft/server/integrated/IntegratedServer.java
 +++ ../src-work/minecraft/net/minecraft/server/integrated/IntegratedServer.java
-@@ -8,6 +8,7 @@
- import java.io.File;
- import java.io.IOException;
- import java.net.InetAddress;
-+import java.net.UnknownHostException;
- import net.minecraft.client.ClientBrandRetriever;
- import net.minecraft.client.Minecraft;
- import net.minecraft.client.multiplayer.ThreadLanServerPing;
-@@ -17,12 +18,14 @@
- import net.minecraft.entity.player.EntityPlayerMP;
- import net.minecraft.profiler.Snooper;
+@@ -13,9 +13,11 @@
+ import net.minecraft.crash.CrashReport;
+ import net.minecraft.profiler.PlayerUsageSnooper;
  import net.minecraft.server.MinecraftServer;
 +import net.minecraft.server.dedicated.PropertyManager;
- import net.minecraft.server.management.PlayerProfileCache;
  import net.minecraft.util.CryptManager;
  import net.minecraft.util.HttpUtil;
- import net.minecraft.util.Util;
  import net.minecraft.world.EnumDifficulty;
- import net.minecraft.world.GameType;
 +import net.minecraft.world.MinecraftException;
- import net.minecraft.world.ServerWorldEventHandler;
+ import net.minecraft.world.WorldManager;
  import net.minecraft.world.WorldServer;
- import net.minecraft.world.WorldServerDemo;
-@@ -48,7 +51,7 @@
- 
-     public IntegratedServer(Minecraft clientIn, String folderNameIn, String worldNameIn, WorldSettings worldSettingsIn, YggdrasilAuthenticationService authServiceIn, MinecraftSessionService sessionServiceIn, GameProfileRepository profileRepoIn, PlayerProfileCache profileCacheIn)
-     {
--        super(new File(clientIn.mcDataDir, "saves"), clientIn.getProxy(), clientIn.getDataFixer(), authServiceIn, sessionServiceIn, profileRepoIn, profileCacheIn);
-+        super(null, clientIn.getProxy(), clientIn.getDataFixer(), authServiceIn, sessionServiceIn, profileRepoIn, profileCacheIn);
-         this.setServerOwner(clientIn.getSession().getUsername());
-         this.setFolderName(folderNameIn);
-         this.setWorldName(worldNameIn);
-@@ -60,6 +63,11 @@
-         this.worldSettings = this.isDemo() ? WorldServerDemo.DEMO_WORLD_SETTINGS : worldSettingsIn;
-     }
- 
-+    @Override
-+    public PropertyManager getPropertyManager() {
-+        return null;
-+    }
-+
-     public ServerCommandManager createCommandManager()
-     {
-         return new IntegratedServerCommandManager(this);
-@@ -142,7 +150,7 @@
+ import net.minecraft.world.WorldServerMulti;
+@@ -78,7 +80,7 @@
          this.initialWorldChunkLoad();
      }
  
--    public boolean init() throws IOException
-+    public boolean init() throws UnknownHostException // Cauldron
+-    protected boolean startServer() throws IOException
++    protected boolean startServer() throws java.net.UnknownHostException // Cauldron
      {
-         LOGGER.info("Starting integrated minecraft server version 1.12.2");
+         logger.info("Starting integrated minecraft server version 1.7.10");
          this.setOnlineMode(true);
-@@ -369,7 +377,11 @@
- 
-     public void stopServer()
-     {
--        super.stopServer();
-+        try {
-+            super.stopServer();
-+        } catch (MinecraftException e) {
-+            e.printStackTrace();
-+        }
- 
-         if (this.lanServerPing != null)
+@@ -103,7 +105,15 @@
          {
+             logger.info("Saving and pausing game...");
+             this.getConfigurationManager().saveAllPlayerData();
+-            this.saveAllWorlds(false);
++            try
++            {
++                this.saveAllWorlds(false);
++            }
++            catch (MinecraftException e)
++            {
++                // TODO Auto-generated catch block
++                e.printStackTrace();
++            }
+         }
+ 
+         if (!this.isGamePaused)
+@@ -236,7 +246,7 @@
+         }
+     }
+ 
+-    public void stopServer()
++    public void stopServer() throws MinecraftException // Cauldron
+     {
+         super.stopServer();
+ 
+@@ -277,4 +287,10 @@
+     {
+         return 4;
+     }
++
++    @Override
++    public PropertyManager getPropertyManager()
++    {
++        return null;
++    }
+ }

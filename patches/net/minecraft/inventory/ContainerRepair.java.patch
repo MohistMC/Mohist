@@ -1,151 +1,71 @@
 --- ../src-base/minecraft/net/minecraft/inventory/ContainerRepair.java
 +++ ../src-work/minecraft/net/minecraft/inventory/ContainerRepair.java
-@@ -18,6 +18,8 @@
- import org.apache.commons.lang3.StringUtils;
+@@ -17,19 +17,13 @@
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
-+import org.bukkit.craftbukkit.v1_12_R1.event.CraftEventFactory;
-+import org.bukkit.craftbukkit.v1_12_R1.inventory.CraftInventoryView;
  
++import org.bukkit.craftbukkit.inventory.CraftInventoryView; // CraftBukkit
++
  public class ContainerRepair extends Container
  {
-@@ -28,9 +30,13 @@
-     private final BlockPos selfPosition;
-     public int maximumCost;
-     public int materialCost;
--    private String repairedItemName;
-+    public String repairedItemName;
-     private final EntityPlayer player;
+     private static final Logger logger = LogManager.getLogger();
+     private IInventory outputSlot = new InventoryCraftResult();
+-    private IInventory inputSlots = new InventoryBasic("Repair", true, 2)
+-    {
+-        private static final String __OBFID = "CL_00001733";
+-        public void markDirty()
+-        {
+-            super.markDirty();
+-            ContainerRepair.this.onCraftMatrixChanged(this);
+-        }
+-    };
++    private IInventory inputSlots = new ContainerRepairInventory(this, "Repair", true, 2);
+     private World theWorld;
+     private int field_82861_i;
+     private int field_82858_j;
+@@ -39,9 +33,14 @@
+     private String repairedItemName;
+     private final EntityPlayer thePlayer;
+     private static final String __OBFID = "CL_00001732";
++    // CraftBukkit start
++    private CraftInventoryView bukkitEntity = null;
++    private InventoryPlayer player;
  
-+    private int lastLevelCost;
-+    private CraftInventoryView bukkitEntity;
-+    private InventoryPlayer playerInventory;
+     public ContainerRepair(InventoryPlayer p_i1800_1_, final World p_i1800_2_, final int p_i1800_3_, final int p_i1800_4_, final int p_i1800_5_, EntityPlayer p_i1800_6_)
+     {
++        this.player = p_i1800_1_;
++        // CraftBukkit end
+         this.theWorld = p_i1800_2_;
+         this.field_82861_i = p_i1800_3_;
+         this.field_82858_j = p_i1800_4_;
+@@ -461,6 +460,11 @@
+ 
+     public boolean canInteractWith(EntityPlayer p_75145_1_)
+     {
++        if (!this.checkReachable)
++        {
++            return true; // CraftBukkit
++        }
 +
-     @SideOnly(Side.CLIENT)
-     public ContainerRepair(InventoryPlayer playerInventory, World worldIn, EntityPlayer player)
-     {
-@@ -39,6 +45,7 @@
- 
-     public ContainerRepair(InventoryPlayer playerInventory, final World worldIn, final BlockPos blockPosIn, EntityPlayer player)
-     {
-+        this.playerInventory = playerInventory;
-         this.outputSlot = new InventoryCraftResult();
-         this.inputSlots = new InventoryBasic("Repair", true, 2)
-         {
-@@ -155,7 +162,9 @@
- 
-         if (itemstack.isEmpty())
-         {
--            this.outputSlot.setInventorySlotContents(0, ItemStack.EMPTY);
-+            if (this.getBukkitView() != null) {
-+                CraftEventFactory.callPrepareAnvilEvent(this.getBukkitView(), ItemStack.EMPTY);
-+            }
-             this.maximumCost = 0;
-         }
-         else
-@@ -169,7 +178,13 @@
- 
-             if (!itemstack2.isEmpty())
-             {
--                if (!net.minecraftforge.common.ForgeHooks.onAnvilChange(this, itemstack, itemstack2, outputSlot, repairedItemName, j)) return;
-+                if (!net.minecraftforge.common.ForgeHooks.onAnvilChange(this, itemstack, itemstack2, outputSlot, repairedItemName, j))
-+                {
-+                    if (this.getBukkitView() != null) {
-+                        CraftEventFactory.callPrepareAnvilEvent(this.getBukkitView(), this.outputSlot.getStackInSlot(0));
-+                    }
-+                    return;
-+                }
-                 flag = itemstack2.getItem() == Items.ENCHANTED_BOOK && !ItemEnchantedBook.getEnchantments(itemstack2).hasNoTags();
- 
-                 if (itemstack1.isItemStackDamageable() && itemstack1.getItem().getIsRepairable(itemstack, itemstack2))
-@@ -178,8 +193,11 @@
- 
-                     if (l2 <= 0)
-                     {
--                        this.outputSlot.setInventorySlotContents(0, ItemStack.EMPTY);
--                        this.maximumCost = 0;
-+						//this.outputSlot.setInventorySlotContents(0, ItemStack.EMPTY);
-+                        if (getBukkitView() != null) {
-+							org.bukkit.craftbukkit.v1_12_R1.event.CraftEventFactory.callPrepareAnvilEvent(getBukkitView(), ItemStack.EMPTY);
-+                        }
-+						this.maximumCost = 0;
-                         return;
-                     }
- 
-@@ -199,7 +217,9 @@
-                 {
-                     if (!flag && (itemstack1.getItem() != itemstack2.getItem() || !itemstack1.isItemStackDamageable()))
-                     {
--                        this.outputSlot.setInventorySlotContents(0, ItemStack.EMPTY);
-+                        if (this.getBukkitView() != null) {
-+                            CraftEventFactory.callPrepareAnvilEvent(this.getBukkitView(), ItemStack.EMPTY);
-+                        }
-                         this.maximumCost = 0;
-                         return;
-                     }
-@@ -299,8 +319,11 @@
- 
-                     if (flag3 && !flag2)
-                     {
--                        this.outputSlot.setInventorySlotContents(0, ItemStack.EMPTY);
--                        this.maximumCost = 0;
-+						//this.outputSlot.setInventorySlotContents(0, ItemStack.EMPTY);
-+                        if (getBukkitView() != null) {
-+							org.bukkit.craftbukkit.v1_12_R1.event.CraftEventFactory.callPrepareAnvilEvent(getBukkitView(), ItemStack.EMPTY);
-+                        }
-+						this.maximumCost = 0;
-                         return;
-                     }
-                 }
-@@ -358,8 +381,11 @@
-                 EnchantmentHelper.setEnchantments(map, itemstack1);
-             }
- 
--            this.outputSlot.setInventorySlotContents(0, itemstack1);
--            this.detectAndSendChanges();
-+			//this.outputSlot.setInventorySlotContents(0, itemstack1);
-+            if (getBukkitView() != null) {
-+				org.bukkit.craftbukkit.v1_12_R1.event.CraftEventFactory.callPrepareAnvilEvent(getBukkitView(), itemstack1);
-+            }
-+			this.detectAndSendChanges();
-         }
+         return this.theWorld.getBlock(this.field_82861_i, this.field_82858_j, this.field_82859_k) != Blocks.anvil ? false : p_75145_1_.getDistanceSq((double)this.field_82861_i + 0.5D, (double)this.field_82858_j + 0.5D, (double)this.field_82859_k + 0.5D) <= 64.0D;
      }
  
-@@ -390,6 +416,7 @@
- 
-     public boolean canInteractWith(EntityPlayer playerIn)
-     {
-+        if (!this.checkReachable) return true;
-         if (this.world.getBlockState(this.selfPosition).getBlock() != Blocks.ANVIL)
-         {
-             return false;
-@@ -471,4 +498,29 @@
+@@ -535,4 +539,18 @@
  
          this.updateRepairOutput();
      }
 +
-+    @Override
-+    public void detectAndSendChanges() {
-+        super.detectAndSendChanges();
-+        for (int i = 0; i < this.listeners.size(); ++i) {
-+            IContainerListener icrafting = this.listeners.get(i);
-+			if (this.lastLevelCost != this.maximumCost) {
-+            	icrafting.sendWindowProperty(this, 0, this.maximumCost);
-+			}
-+        }
-+
-+        this.lastLevelCost = this.maximumCost;
-+    }
-+
-+    @Override
-+    public CraftInventoryView getBukkitView() {
-+        if (bukkitEntity != null) {
++    // CraftBukkit start
++    public CraftInventoryView getBukkitView()
++    {
++        if (bukkitEntity != null)
++        {
 +            return bukkitEntity;
 +        }
 +
-+        org.bukkit.craftbukkit.v1_12_R1.inventory.CraftInventory inventory = new org.bukkit.craftbukkit.v1_12_R1.inventory.CraftInventoryAnvil(
-+                new org.bukkit.Location(world.getWorld(), selfPosition.getX(), selfPosition.getY(), selfPosition.getZ()), this.inputSlots, this.outputSlot, this);
-+        bukkitEntity = new CraftInventoryView(this.playerInventory.player.getBukkitEntity(), inventory, this);
++        org.bukkit.craftbukkit.inventory.CraftInventory inventory = new org.bukkit.craftbukkit.inventory.CraftInventoryAnvil(this.inputSlots, this.outputSlot);
++        bukkitEntity = new CraftInventoryView(this.player.player.getBukkitEntity(), inventory, this);
 +        return bukkitEntity;
 +    }
++    // CraftBukkit end
  }

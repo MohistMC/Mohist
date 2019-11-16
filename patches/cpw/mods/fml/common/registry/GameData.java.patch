@@ -1,0 +1,69 @@
+--- ../src-base/minecraft/cpw/mods/fml/common/registry/GameData.java
++++ ../src-work/minecraft/cpw/mods/fml/common/registry/GameData.java
+@@ -14,7 +14,9 @@
+ 
+ import java.io.File;
+ import java.io.IOException;
++import java.util.ArrayList;
+ import java.util.BitSet;
++import java.util.Collections;
+ import java.util.HashMap;
+ import java.util.HashSet;
+ import java.util.Iterator;
+@@ -1036,4 +1038,56 @@
+             throw new RuntimeException("WHAT?");
+         }
+     }
++
++    // Cauldron start
++    public static void injectItemBukkitMaterials()
++    {
++        FMLControlledNamespacedRegistry<Item> itemRegistry = getItemRegistry();
++        List<Integer> ids = new ArrayList<Integer>();
++
++        for (Item thing : itemRegistry.typeSafeIterable())
++        {
++            ids.add(itemRegistry.getId(thing));
++        }
++
++        // sort by id
++        Collections.sort(ids);
++
++        for (int id : ids)
++        {
++            Item item = itemRegistry.getRaw(id);
++            // inject item materials into Bukkit for FML
++            org.bukkit.Material material = org.bukkit.Material.addMaterial(id, itemRegistry.getNameForObject(item), false);
++            if (material != null)
++            {
++                FMLLog.info("Injected new Forge item material %s with ID %d.", material.name(), material.getId());
++            }
++        }
++    }
++
++    public static void injectBlockBukkitMaterials()
++    {
++        FMLControlledNamespacedRegistry<Block> blockRegistry = getBlockRegistry();
++        List<Integer> ids = new ArrayList<Integer>();
++
++        for (Block block : blockRegistry.typeSafeIterable())
++        {
++            ids.add(blockRegistry.getId(block));
++        }
++
++        // sort by id
++        Collections.sort(ids);
++
++        for (int id : ids)
++        {
++            Block block = blockRegistry.getRaw(id);
++            // inject block materials into Bukkit for FML
++            org.bukkit.Material material = org.bukkit.Material.addMaterial(id, blockRegistry.getNameForObject(block), true);
++            if (material != null)
++            {
++                FMLLog.info("Injected new Forge block material %s with ID %d.", material.name(), material.getId());
++            }
++        }
++    }
++    // Cauldron end
+ }

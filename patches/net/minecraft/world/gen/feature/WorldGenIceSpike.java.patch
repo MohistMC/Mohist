@@ -1,0 +1,29 @@
+--- ../src-base/minecraft/net/minecraft/world/gen/feature/WorldGenIceSpike.java
++++ ../src-work/minecraft/net/minecraft/world/gen/feature/WorldGenIceSpike.java
+@@ -56,7 +56,7 @@
+ 
+                             if (block.getMaterial() == Material.air || block == Blocks.dirt || block == Blocks.snow || block == Blocks.ice)
+                             {
+-                                this.func_150515_a(p_76484_1_, p_76484_3_ + l1, p_76484_4_ + j1, p_76484_5_ + i2, Blocks.packed_ice);
++                                p_76484_1_.setBlock(p_76484_3_ + l1, p_76484_4_ + j1, p_76484_5_ + i2, Blocks.packed_ice); // Spigot
+                             }
+ 
+                             if (j1 != 0 && k1 > 1)
+@@ -65,7 +65,7 @@
+ 
+                                 if (block.getMaterial() == Material.air || block == Blocks.dirt || block == Blocks.snow || block == Blocks.ice)
+                                 {
+-                                    this.func_150515_a(p_76484_1_, p_76484_3_ + l1, p_76484_4_ - j1, p_76484_5_ + i2, Blocks.packed_ice);
++                                    p_76484_1_.setBlock(p_76484_3_ + l1, p_76484_4_ - j1, p_76484_5_ + i2, Blocks.packed_ice); // Spigot
+                                 }
+                             }
+                         }
+@@ -106,7 +106,7 @@
+ 
+                             if (block1.getMaterial() == Material.air || block1 == Blocks.dirt || block1 == Blocks.snow || block1 == Blocks.ice || block1 == Blocks.packed_ice)
+                             {
+-                                this.func_150515_a(p_76484_1_, p_76484_3_ + j2, l1, p_76484_5_ + k1, Blocks.packed_ice);
++                                p_76484_1_.setBlock(p_76484_3_ + j2, l1, p_76484_5_ + k1, Blocks.packed_ice); // Spigot
+                                 --l1;
+                                 --k2;
+ 

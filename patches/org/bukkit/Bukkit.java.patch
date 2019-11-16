@@ -1,0 +1,10 @@
+--- ../src-base/minecraft/org/bukkit/Bukkit.java
++++ ../src-work/minecraft/org/bukkit/Bukkit.java
+@@ -301,6 +301,7 @@
+      */
+     public static void reload() {
+         server.reload();
++        org.spigotmc.CustomTimingsHandler.reload(); // Spigot
+     }
+ 
+     /**

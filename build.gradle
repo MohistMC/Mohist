@@ -1,212 +1,353 @@
+import groovy.json.JsonSlurper
+import thermos.CreateChangelog
+import thermos.InstallBundle
+import thermos.VersionParser
+
 buildscript {
     repositories {
         mavenLocal()
+        // maven {
+        // name 'prok'
+        // url 'https://repo.prok.pw/'
+        // }
+        maven {
+            url 'http://maven.aliyun.com/nexus/content/groups/public'
+        }
+
+        maven {
+            name 'forge'
+            url 'http://files.minecraftforge.net/maven'
+        }
+        maven {
+            name 'sonatype'
+            url 'http://oss.sonatype.org/content/repositories/snapshots/'
+        }
+        maven {
+            name 'spigot'
+            url 'https://hub.spigotmc.org/nexus/content/repositories/snapshots/'
+        }
+        maven {
+            name 'spigot-public'
+            url 'https://hub.spigotmc.org/nexus/content/repositories/public/'
+        }
+
         mavenCentral()
-        maven { url 'https://files.minecraftforge.net/maven' }
-        maven { url 'https://plugins.gradle.org/m2/' }
+
     }
     dependencies {
-        classpath 'net.minecraftforge.gradle:ForgeGradle:2.3-SNAPSHOT'
-        classpath 'gradle.plugin.net.nemerosa:versioning:2.8.2'
-        classpath 'edu.sc.seis.launch4j:launch4j:2.4.6'
+        classpath 'net.minecraftforge.gradle:ForgeGradle:1.2-SNAPSHOT'
     }
 }
 
-apply plugin: 'java'
-apply plugin: 'maven'
-apply plugin: 'idea'
-apply plugin: 'net.minecraftforge.gradle.patcher'
-apply plugin: 'edu.sc.seis.launch4j'
-apply plugin: 'net.nemerosa.versioning'
+tasks.whenTaskAdded {
+    if (it.name.startsWith('publish')) it.dependsOn 'preparePublication'
+}
 
-group = 'red.mohist'
-version = versioning.info.build
+apply plugin: 'maven'
+apply plugin: 'cauldron'
+apply plugin: 'maven-publish'
+apply plugin: 'signing'
 
 repositories {
+    mavenLocal()
+    flatDir {  dirs 'libs' }
+    maven {
+        url 'http://maven.aliyun.com/nexus/content/groups/public'
+    }
+    maven {
+        name 'sonatype'
+        url 'http://oss.sonatype.org/content/repositories/snapshots/'
+    }
+    /*maven {
+        name 'prok'
+        url 'https://repo.prok.pw/'
+    }*/
+    maven {
+        name 'forge'
+        url 'http://files.minecraftforge.net/maven'
+    }
+    maven {
+        name 'minecraft'
+        url 'https://libraries.minecraft.net/'
+    }
+    maven {
+        name 'spigot'
+        url 'https://hub.spigotmc.org/nexus/content/repositories/snapshots/'
+    }
+    maven {
+        name 'spigot-public'
+        url 'https://hub.spigotmc.org/nexus/content/repositories/public/'
+    }
+    maven {
+        name 'uraniummc'
+        url 'https://repo.uraniummc.cc/repository/maven-public/'
+    }
+
     mavenCentral()
-    maven { url 'https://files.minecraftforge.net/maven' }
-    maven { url 'https://hub.spigotmc.org/nexus/content/groups/public/' }
-    maven { url 'https://oss.sonatype.org/content/repositories/snapshots/' }
-    maven { url 'https://libraries.minecraft.net/' }
+
+}
+
+minecraft {
+    version = '1.7.10'
+    mcpVersion = '9.05'
+    mainClass = 'cpw.mods.fml.relauncher.ServerLaunchWrapper'
+    tweakClass = 'cpw.mods.fml.common.launcher.FMLTweaker'
+    installerVersion = "1.4"
+    srgExtra "PK: org/bukkit/craftbukkit org/bukkit/craftbukkit/v1_7_R4"
+}
+
+group = 'cyberdynecc'
+
+ext.buildInfoCached = null;
+
+def buildInfo(String key) {
+    if (!buildInfoCached) {
+        if (project.hasProperty('officialBuild')) {
+            buildInfoCached = new JsonSlurper().parse(new URL("http://i.yive.pw/thermos/version"))
+        } else {
+            buildInfoCached = [
+                    nextBuildNumber: 'UNOFFICIAL',
+                    version        : 'NONE'
+            ]
+        }
+    }
+    return key ? buildInfoCached[key] : buildInfoCached;
+}
+
+ext.gitInfoCached = null;
+
+def gitInfo(String key) {
+    if (!gitInfoCached) {
+        if (file('.git').exists()) {
+            gitInfoCached = [
+                    hash    : ['git', 'log', "--format=%h", '-n', '1'].execute().text.trim(),
+                    fullHash: ['git', 'log', "--format=%H", '-n', '1'].execute().text.trim(),
+                    branch  : System.getenv("CI_BUILD_REF_NAME") ?: ['git', 'symbolic-ref', '--short', 'HEAD'].execute().text.trim(),
+                    message : ['git', 'log', "--format=%B", '-n', '1'].execute().text.trim()
+            ]
+        } else {
+            gitInfoCached = [
+                    hash    : 'NOT_A_GIT',
+                    fullHash: 'NOT_A_GIT',
+                    branch  : 'NOT_A_GIT',
+                    message : 'NOT_A_GIT'
+            ]
+        }
+    }
+    return key ? gitInfoCached[key] : gitInfoCached;
+}
+
+ext.mcVersion = "1.7.10"
+ext.forgeVersion = VersionParser.parseForgeRevision(file('src/main/resources/fmlversion.properties'))
+ext.revision = project.hasProperty('revision') ? project.getProperty('revision') : buildInfo('nextBuildNumber')
+version = "${mcVersion}-${forgeVersion}.${revision}"
+if (project.hasProperty('officialBuild')) println "Updated Thermos version: ${version}"
+
+launch4j {
+    jreMinVersion = '1.8.0'
+}
+
+configurations {
+    compile.extendsFrom exported
+    libraries
+    bootstrap
 }
 
 dependencies {
-    // According to the order in the libraries folder, (Bukkit,craftbukkit,spigot,paper,mohist)
-    compile 'com.conversantmedia:disruptor:1.2.14' // mohist
-    compile 'com.googlecode.json-simple:json-simple:1.1.1' // bukkit
-    compile 'commons-lang:commons-lang:2.6' // bukkit
-    compile 'jline:jline:2.13' //craftbukkit(2.12.1)
-    compile 'mysql:mysql-connector-java:5.1.46' // craftbukkit
-    compile 'net.md-5:SpecialSource:1.8.5' // mohist
-    compile 'net.md-5:bungeecord-chat:1.12-SNAPSHOT' // spigot
-    compile 'net.minecraft:launchwrapper:1.12'
-    compile 'net.sf.jopt-simple:jopt-simple:5.0.3' // craftbukkit(5.0.4)
-    compile 'org.yaml:snakeyaml:1.19' // bukkit
-    compile 'org.xerial:sqlite-jdbc:3.21.0.1' // craftbukkit
-    compile 'org.apache.commons:commons-lang3:3.5'
-    compile 'org.ow2.asm:asm-debug-all:5.2' // mohist
-    compile 'org.apache.logging.log4j:log4j-iostreams:2.12.1' // paper
-    compile 'org.jline:jline:3.5.1'
-    compile 'commons-io:commons-io:2.5'
-    compile 'net.sf.trove4j:trove4j:3.0.3'
-
-    // minecraft_server.1.12.2.jar
-    compile 'io.netty:netty-all:4.1.9.Final' // TODO craftbukkit(4.1.24.Final)
-    compile 'com.google.code.findbugs:jsr305:3.0.1'
-    compile 'com.mojang:authlib:1.5.25'
-    compile 'it.unimi.dsi:fastutil:7.1.0'
-    compile 'org.apache.logging.log4j:log4j-api:2.8.1'
-    compile 'org.apache.logging.log4j:log4j-core:2.8.1'
-    compile 'com.google.code.gson:gson:2.8.0' // bukkit
-    compile 'com.google.guava:guava:21.0' //bukkit
+    bootstrap 'pw.prok:KBootstrap:0.2.+'
+    libraries 'net.minecraft:launchwrapper:1.12@jar'
+    libraries 'org.ow2.asm:asm-all:5.0.3'
+    libraries 'com.typesafe.akka:akka-actor_2.11:2.3.3'
+    libraries 'com.typesafe:config:1.2.1'
+    libraries 'org.scala-lang:scala-actors-migration_2.11:1.1.0'
+    libraries 'org.scala-lang:scala-compiler:2.11.7'
+    libraries 'org.scala-lang.plugins:scala-continuations-library_2.11:1.0.2'
+    libraries 'org.scala-lang.plugins:scala-continuations-plugin_2.11.2:1.0.2'
+    libraries 'org.scala-lang:scala-library:2.11.7'
+    libraries 'org.scala-lang:scala-parser-combinators:2.11.0-M4'
+    libraries 'org.scala-lang:scala-reflect:2.11.7'
+    libraries 'org.scala-lang:scala-swing:2.11.0-M7'
+    libraries 'org.scala-lang:scala-xml:2.11.0-M4'
+    libraries 'net.sf.jopt-simple:jopt-simple:5.0.1'
+    libraries 'lzma:lzma:0.0.1'
+    libraries 'org.yaml:snakeyaml:1.9'
+    libraries 'commons-lang:commons-lang:2.6'
+    libraries 'org.avaje:ebean:2.7.3'
+    libraries 'jline:jline:2.6'
+    libraries 'net.md-5:SpecialSource:1.7.4'
+    libraries 'net.sourceforge.argo:argo:2.25'
+    libraries 'com.googlecode.json-simple:json-simple:1.1'
+    libraries 'org.xerial:sqlite-jdbc:3.7.2'
+    libraries 'mysql:mysql-connector-java:5.1.14'
+    libraries 'javax.persistence:persistence-api:1.0.2'
+    libraries 'net.minecraft:server:1.7.10'
+    libraries 'org.apache.httpcomponents:httpclient:4.4.1'
+    libraries 'net.openhft:affinity:3.0.1'
+    libraries 'org.fusesource.jansi:jansi:1.11'
+    libraries 'com.koloboke:koloboke-impl-jdk8:1.0.0'
+    libraries 'java3d:vecmath:1.3.1'
 }
 
-targetCompatibility = '1.8'
-sourceCompatibility = '1.8'
-compileJava.options.encoding = 'UTF-8'
-
-sourceSets {
-    // Fix idea can't import module automatically
-    main.java.srcDir 'src/main/java/'
-    main.java.srcDir 'projects/Mohist/src/main/java/'
-    test.java.srcDir 'src/test/java/'
+packageUniversal {
+    from { configurations.exported.collect { it.isDirectory() ? it : zipTree(it) } }
 }
 
-configurations.all {
-    transitive = false
+def String repeat(String string, int times) {
+    StringBuilder builder = new StringBuilder(string.length() * times)
+    times.times { builder.append(string) }
+    builder as String
 }
 
-minecraft.version = "1.12.2"
-
-minecraft {
-    mappings = 'snapshot_nodoc_20171003'
-    workspaceDir = "projects"
-    versionJson = "jsons/${minecraft.version}-mohist-dev.json"
-    buildUserdev = false
-    buildInstaller = false
-    installerVersion = "1.5"
-
-    def common = {
-        patchPrefixOriginal "../src-base/minecraft"
-        patchPrefixChanged "../src-work/minecraft"
-        mainClassClient "net.minecraft.launchwrapper.Launch"
-        tweakClassClient "net.minecraftforge.fml.common.launcher.FMLTweaker"
-        mainClassServer "net.minecraft.launchwrapper.Launch"
-        tweakClassServer "net.minecraftforge.fml.common.launcher.FMLServerTweaker"
+def generateClasspath(boolean legacy = false) {
+    def classpath = ''
+    configurations.libraries.resolvedConfiguration.resolvedArtifacts.collect { it.moduleVersion.id }.each {
+        def jar = "${it.group.replace('.', '/')}/${it.name}/${it.version}/${it.name}-${it.version}.jar"
+        classpath += " ${legacy ? 'libraries/' : repeat('../', (group as String).split('\\.').length + 2)}${jar}"
     }
-
-    projects {
-        forge {
-            rootDir "forge/"
-            patchDir "forge/patches/minecraft/"
-            patchAfter "clean"
-            genPatchesFrom "clean"
-            genMcpPatches = false
-            applyMcpPatches = false
-            s2sKeepImports = true
-            with common
-        }
-
-        mohist {
-            rootDir "."
-            patchDir "patches/"
-            patchAfter "forge"
-            genPatchesFrom "forge"
-            genMcpPatches = true
-            applyMcpPatches = true
-            s2sKeepImports = true
-            with common
-        }
-    }
+    return classpath.trim()
 }
 
-installer {
-    archiveClassifier = 'installer'
-    from "mohist_logo.png"
-    rename "mohist_logo\\.png", "big_logo.png"
+def generateManifest(boolean legacy = false) {
+    [
+            'Thermos-Git-Branch'    : gitInfo('branch'),
+            'Thermos-Git-Hash'      : gitInfo('fullHash'),
+            'Thermos-Group'         : project.group,
+            'Thermos-Channel'       : project.name,
+            'Thermos-Version'       : project.version,
+            'Thermos-Legacy'        : legacy,
+            'Implementation-Vendor' : 'CyberdyneCC',
+            'Implementation-Title'  : project.name,
+            'Implementation-Version': project.version,
+            'Specification-Vendor'  : 'Bukkit Team',
+            'Specification-Title'   : 'Bukkit',
+            'Specification-Version' : '1.7.10-R0.1-SNAPSHOT',
+            'Forge-Version'         : VersionParser.parseForgeVersion(file('forge/src/main/java/net/minecraftforge/common/ForgeVersion.java'), file('src/main/resources/fmlversion.properties')),
+            'TweakClass'            : 'cpw.mods.fml.common.launcher.FMLTweaker',
+            'Main-Class'            : 'cpw.mods.fml.relauncher.ServerLaunchWrapper',
+            'Class-Path'            : generateClasspath(legacy)
+    ]
 }
 
-task signUniversal(type: SignJar, dependsOn: 'outputJar') {
-    onlyIf {
-        project.hasProperty('jarsigner')
-    }
-
-    def jarsigner = [:]
-
-    if (project.hasProperty('jarsigner'))
-        jarsigner = project.jarsigner
-
-    alias = 'forge'
-    exclude "paulscode/**"
-    storePass = jarsigner.storepass
-    keyPass = jarsigner.keypass
-    keyStore = jarsigner.keystore
-    inputFile = outputJar.archiveFile.get().asFile
-    outputFile = outputJar.archiveFile.get().asFile
+tasks.packageUniversal {
+    classifier = 'server'
+    setManifest {}
+    manifest.attributes(generateManifest(true))
 }
-build.dependsOn signUniversal
-installer.dependsOn signUniversal
 
-launch4j {
-    jar = installer.archiveFile.get().asFile.canonicalPath
-    outfile = file("build/distributions/${project.name}-${project.version}-installer-win.exe").canonicalPath
-    icon = file('icon.ico').canonicalPath
-    manifest = file('forge/l4jManifest.xml').canonicalPath
-    jreMinVersion = '1.8.0_101'
-    initialHeapPercent = 5
-    maxHeapPercent = 100
+task jar(type: Jar, dependsOn: packageUniversal) {
+    destinationDir file("${buildDir}/distributions")
+    from zipTree(tasks.packageUniversal.archivePath)
+    manifest.attributes(generateManifest())
 }
-tasks.createExe.dependsOn installer
-tasks.compileJava.enabled = false
-tasks.build.dependsOn 'launch4j'
 
-outputJar {
-    archiveClassifier = 'server'
+tasks.createChangelog.onlyIf { false }
+tasks.packageInstaller.onlyIf { false }
 
+task packageChangelog(type: CreateChangelog) {
+    onlyIf { project.hasProperty('officialBuild') }
+    classifier = 'changelog'
+    extension = 'txt'
+    oldChangelogUrl = "https://i.tcpr.ca/thermos/changelog.txt"
+    hash = gitInfo('hash')
+    message = gitInfo('message')
+    version = project.version
+}
+
+task bundleStub(type: Jar) {
+    classifier = 'stub'
     manifest.attributes([
-            "Manifest-Version": "1.5",
-            "Implementation-Title": "Mohist",
-            "Implementation-Version": project.version,
-            "Main-Class": "red.mohist.Mohist",
-            "TweakClass": "net.minecraftforge.fml.common.launcher.FMLTweaker",
-            "Class-Path": getServerClasspath(file("jsons/${minecraft.version}-mohist-rel.json"))
+            'Main-Class': 'cpw.mods.fml.relauncher.ServerLaunchWrapper',
+            'Class-Path': "bin/${project.group.replace('.', '/')}/${project.name}/${project.version}/${project.name}-${project.version}.jar"
     ])
 }
 
-processJson {
-    releaseJson = "jsons/${minecraft.version}-mohist-rel.json"
-    addReplacements([
-            "@minecraft_version@": project.minecraft.version,
-            "@version@": project.version,
-            "@project@": "mohist",
-            "@artifact@": "red.mohist:mohist:${project.version}",
-            "@universal_jar@": { outputJar.archiveFileName },
-            "@timestamp@": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ"),
-    ])
+task installBundle(type: InstallBundle, dependsOn: jar) {
+    serverJar tasks.jar.archivePath
+    bootstrapClasspath configurations.bootstrap
+    bootstrapMain 'pw.prok.bootstrap.Main'
 }
 
-genGradleProjects {
-    addCompileDep "junit:junit:4.12"
-    addCompileDep "org.junit.jupiter:junit-jupiter-api:5.0.0"
-    addCompileDep "org.opentest4j:opentest4j:1.0.0" // needed for junit 5
-    addCompileDep "org.hamcrest:hamcrest-core:1.3"
+task packageBundle(type: Zip, dependsOn: installBundle) {
+    classifier = 'bundle'
+    from fileTree(installBundle.installLocation)
+    from bundleStub
+    rename bundleStub.archiveName, 'Thermos.jar'
 }
 
-import groovy.json.JsonSlurper
+task signJars(type: Sign, dependsOn: [packageUniversal, packageChangelog, packageBundle, jar, 'generatePomFileForMavenPublication']) {
+    sign packageUniversal
+    sign packageChangelog
+    sign packageBundle
+    sign jar
+}
 
-String getServerClasspath(File file) {
-    def node = new JsonSlurper().parse(file)
-    def out = new StringBuilder()
-    node.versionInfo.libraries.each { lib ->
-        if (lib.serverreq)
-        {
-            def split = lib.name.split(':')
-            def group = split[0].replace('.', '/')
-            def artifact = split[1]
-            def version = split[2]
-            out += "libraries/$group/$artifact/$version/$artifact-${version}.jar "
-        }
+task signPom(type: Sign, dependsOn: 'generatePomFileForMavenPublication') {
+    outputs.upToDateWhen { false }
+    sign file("${buildDir}/publications/maven/pom-default.xml")
+}
+
+task preparePublication(dependsOn: [signJars, signPom]) {}
+
+def getPomSignature = {
+    return project.tasks.signPom.signatureFiles.collect { it }[0]
+}
+
+def getSignatureFiles = {
+    def allFiles = project.tasks.signJars.signatureFiles.collect { it }
+    def signedServer = allFiles.find { it.name.contains('-server') }
+    def signedChangelog = allFiles.find { it.name.contains('-changelog') }
+    def signedBundle = allFiles.find { it.name.contains('-bundle') }
+    def signedJar = (allFiles - [signedServer, signedChangelog, signedBundle])[0]
+    return [
+            [archive: signedServer, classifier: 'server', extension: 'jar.asc'],
+            [archive: signedChangelog, classifier: 'changelog', extension: 'txt.asc'],
+            [archive: signedBundle, classifier: 'bundle', extension: 'zip.asc'],
+            [archive: signedJar, classifier: null, extension: 'jar.asc']
+    ]
+}
+
+tasks.generateProjectCauldron << {
+    def file = new File('eclipse/cauldron/build.gradle')
+    file.append('''
+repositories {
+    clear()
+    /*maven {
+        name 'prok'
+        url 'https://repo.prok.pw/'
+    }*/
+    maven {
+        name 'forge'
+        url 'http://files.minecraftforge.net/maven'
     }
-    out += "libraries/net/minecraft/1.12.2/minecraft_server.${minecraft.version}.jar"
-    return out.toString()
+    maven {
+        name 'minecraft'
+        url 'https://libraries.minecraft.net/'
+    }
+	maven {
+        name 'spigot-public'
+        url 'https://hub.spigotmc.org/nexus/content/repositories/public/'
+    }
+    mavenCentral()
+	mavenLocal()
+}
+dependencies {
+''')
+    configurations.libraries.resolvedConfiguration.resolvedArtifacts.collect { it.moduleVersion.id }.each { module ->
+        if (['net.minecraft:server:', 'org.ow2.asm:asm-all'].findAll { (module as String).startsWith it }.size() > 0) {
+            return
+        }
+        file.append("    compile '${module}'\n")
+    }
+    file.append('}')
+}
+
+task resolveAllDependencies {
+    doLast {
+        configurations.each { it.resolve() }
+    }
+}
+
+task dumpLibs(type: Copy) {
+    into "$buildDir/libraries"
+    from configurations.libraries
 }

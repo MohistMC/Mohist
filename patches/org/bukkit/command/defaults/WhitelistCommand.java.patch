@@ -1,0 +1,11 @@
+--- ../src-base/minecraft/org/bukkit/command/defaults/WhitelistCommand.java
++++ ../src-work/minecraft/org/bukkit/command/defaults/WhitelistCommand.java
+@@ -104,7 +104,7 @@
+         } else if (args.length == 2) {
+             if (args[0].equalsIgnoreCase("add")) {
+                 List<String> completions = new ArrayList<String>();
+-                for (OfflinePlayer player : Bukkit.getOfflinePlayers()) {
++                for (OfflinePlayer player : Bukkit.getOnlinePlayers()) {
+                     String name = player.getName();
+                     if (StringUtil.startsWithIgnoreCase(name, args[1]) && !player.isWhitelisted()) {
+                         completions.add(name);

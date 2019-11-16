@@ -1,0 +1,13 @@
+--- ../src-base/minecraft/net/minecraft/network/play/server/S3FPacketCustomPayload.java
++++ ../src-work/minecraft/net/minecraft/network/play/server/S3FPacketCustomPayload.java
+@@ -30,7 +30,9 @@
+         //TODO: Remove this when FML protocol is re-written. To restore vanilla compatibility.
+         if (p_i45190_2_.length > 0x1FFF9A) // Max size of ANY MC packet is 0x1FFFFF minus max size of this packet (101)
+         {
+-            throw new IllegalArgumentException("Payload may not be larger than 2097050 bytes");
++            org.apache.logging.log4j.Logger logger = org.apache.logging.log4j.LogManager.getLogger("NETWORKERROR");
++            logger.error("[Channel: "+ p_i45190_1_ +"] Payload may not be larger than 2097050 bytes");
++            p_i45190_2_ = new byte[1];
+         }
+     }
+ 

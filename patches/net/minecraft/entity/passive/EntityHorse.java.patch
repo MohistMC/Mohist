@@ -1,0 +1,134 @@
+--- ../src-base/minecraft/net/minecraft/entity/passive/EntityHorse.java
++++ ../src-work/minecraft/net/minecraft/entity/passive/EntityHorse.java
+@@ -50,7 +50,7 @@
+             return p_82704_1_ instanceof EntityHorse && ((EntityHorse)p_82704_1_).func_110205_ce();
+         }
+     };
+-    private static final IAttribute horseJumpStrength = (new RangedAttribute("horse.jumpStrength", 0.7D, 0.0D, 2.0D)).setDescription("Jump Strength").setShouldWatch(true);
++    public static final IAttribute horseJumpStrength = (new RangedAttribute("horse.jumpStrength", 0.7D, 0.0D, 2.0D)).setDescription("Jump Strength").setShouldWatch(true); // CraftBukkit - private -> public
+     private static final String[] horseArmorTextures = new String[] {null, "textures/entity/horse/armor/horse_armor_iron.png", "textures/entity/horse/armor/horse_armor_gold.png", "textures/entity/horse/armor/horse_armor_diamond.png"};
+     private static final String[] field_110273_bx = new String[] {"", "meo", "goo", "dio"};
+     private static final int[] armorValues = new int[] {0, 5, 7, 11};
+@@ -64,7 +64,7 @@
+     public int field_110278_bp;
+     public int field_110279_bq;
+     protected boolean horseJumping;
+-    private AnimalChest horseChest;
++    public AnimalChest horseChest; // CraftBukkit - private -> public
+     private boolean hasReproduced;
+     protected int temper;
+     protected float jumpPower;
+@@ -78,6 +78,7 @@
+     private int field_110285_bP;
+     private String field_110286_bQ;
+     private String[] field_110280_bR = new String[3];
++    public int maxDomestication = 100; // CraftBukkit - store max domestication value
+     private static final String __OBFID = "CL_00001641";
+ 
+     public EntityHorse(World p_i1685_1_)
+@@ -403,13 +404,13 @@
+     private int func_110225_cC()
+     {
+         int i = this.getHorseType();
+-        return this.isChested() && (i == 1 || i == 2) ? 17 : 2;
++        return this.isChested() /* && (i == 1 || i == 2) */ ? 17 : 2; // CraftBukkit - Remove type check
+     }
+ 
+-    private void func_110226_cD()
++    public void func_110226_cD()   // CraftBukkit - private -> public
+     {
+         AnimalChest animalchest = this.horseChest;
+-        this.horseChest = new AnimalChest("HorseChest", this.func_110225_cC());
++        this.horseChest = new AnimalChest("HorseChest", this.func_110225_cC(), this); // CraftBukkit - add this horse
+         this.horseChest.func_110133_a(this.getCommandSenderName());
+ 
+         if (animalchest != null)
+@@ -950,12 +951,25 @@
+     {
+         super.onDeath(p_70645_1_);
+ 
++        /* CraftBukkit start - Handle chest dropping in dropFewItems below
+         if (!this.worldObj.isRemote)
+         {
+             this.dropChestItems();
+         }
++        // CraftBukkit end */
+     }
+ 
++    // CraftBukkit start - Add method
++    protected void dropFewItems(boolean flag, int i) {
++        super.dropFewItems(flag, i);
++
++        // Moved from die method above
++        if (!this.worldObj.isRemote) {
++            this.dropChestItems();
++        }
++    }
++    // CraftBukkit end
++
+     public void onLivingUpdate()
+     {
+         if (this.rand.nextInt(200) == 0)
+@@ -1278,6 +1292,7 @@
+         p_70014_1_.setInteger("Temper", this.getTemper());
+         p_70014_1_.setBoolean("Tame", this.isTame());
+         p_70014_1_.setString("OwnerUUID", this.func_152119_ch());
++        p_70014_1_.setInteger("Bukkit.MaxDomestication", this.maxDomestication); // CraftBukkit
+ 
+         if (this.isChested())
+         {
+@@ -1327,6 +1342,13 @@
+             this.func_152120_b(p_70037_1_.getString("OwnerUUID"));
+         }
+ 
++        // CraftBukkit start
++        if (p_70037_1_.hasKey("Bukkit.MaxDomestication"))
++        {
++            this.maxDomestication = p_70037_1_.getInteger("Bukkit.MaxDomestication");
++        }
++
++        // CraftBukkit end
+         IAttributeInstance iattributeinstance = this.getAttributeMap().getAttributeInstanceByName("Speed");
+ 
+         if (iattributeinstance != null)
+@@ -1566,24 +1588,33 @@
+     {
+         if (this.isHorseSaddled())
+         {
++            // CraftBukkit start - fire HorseJumpEvent, use event power
+             if (p_110206_1_ < 0)
+             {
+                 p_110206_1_ = 0;
+             }
+-            else
+-            {
+-                this.field_110294_bI = true;
+-                this.makeHorseRear();
+-            }
+ 
++            float power;
++
+             if (p_110206_1_ >= 90)
+             {
+-                this.jumpPower = 1.0F;
++                power = 1.0F;
+             }
+             else
+             {
+-                this.jumpPower = 0.4F + 0.4F * (float)p_110206_1_ / 90.0F;
++                power = 0.4F + 0.4F * (float)p_110206_1_ / 90.0F;
+             }
++
++            org.bukkit.event.entity.HorseJumpEvent event = org.bukkit.craftbukkit.event.CraftEventFactory.callHorseJumpEvent(this, power);
++
++            if (!event.isCancelled())
++            {
++                this.field_110294_bI = true;
++                this.makeHorseRear();
++                this.jumpPower = event.getPower();
++            }
++
++            // CraftBukkit end
+         }
+     }
+ 
