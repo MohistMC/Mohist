@@ -601,19 +601,7 @@
                  FMLCommonHandler.instance().handleServerStopped();
                  this.serverStopped = true;
                  this.systemExitNow();
-@@ -497,6 +782,11 @@
-     {
-         File file1 = this.getFile("server-icon.png");
- 
-+        if (!file1.isFile())
-+        {
-+        	System.out.println("Hey, you don't have a server icon! Try out one of Thermos' Icon Generators at https://github.com/CyberdyneCC/ThermosIconGenerators !");
-+        }
-+
-         if (file1.isFile())
-         {
-             ByteBuf bytebuf = Unpooled.buffer();
-@@ -532,8 +822,12 @@
+@@ -532,8 +817,12 @@
  
      public void tick()
      {
@@ -626,7 +614,7 @@
          ++this.tickCounter;
  
          if (this.startProfiling)
-@@ -562,12 +856,21 @@
+@@ -562,12 +851,21 @@
              this.field_147147_p.func_151318_b().func_151330_a(agameprofile);
          }
  
@@ -650,7 +638,7 @@
          }
  
          this.theProfiler.startSection("tallying");
-@@ -575,25 +878,57 @@
+@@ -575,25 +873,57 @@
          this.theProfiler.endSection();
          this.theProfiler.startSection("snooper");
  
@@ -710,7 +698,7 @@
          int i;
  
          Integer[] ids = DimensionManager.getIDs(this.tickCounter % 200 == 0);
-@@ -602,19 +937,21 @@
+@@ -602,19 +932,21 @@
              int id = ids[x];
              long j = System.nanoTime();
  
@@ -735,7 +723,7 @@
  
                  this.theProfiler.startSection("tick");
                  FMLCommonHandler.instance().onPreWorldTick(worldserver);
-@@ -622,22 +959,46 @@
+@@ -622,22 +954,46 @@
  
                  try
                  {
@@ -784,7 +772,7 @@
                      worldserver.addWorldInfoToCrashReport(crashreport);
                      throw new ReportedException(crashreport);
                  }
-@@ -645,10 +1006,12 @@
+@@ -645,10 +1001,12 @@
                  FMLCommonHandler.instance().onPostWorldTick(worldserver);
                  this.theProfiler.endSection();
                  this.theProfiler.startSection("tracker");
@@ -798,7 +786,7 @@
  
              worldTickTimes.get(id)[this.tickCounter % 100] = System.nanoTime() - j;
          }
-@@ -656,15 +1019,21 @@
+@@ -656,15 +1014,21 @@
          this.theProfiler.endStartSection("dim_unloading");
          DimensionManager.unloadWorlds(worldTickTimes);
          this.theProfiler.endStartSection("connection");
@@ -820,7 +808,7 @@
  
          this.theProfiler.endSection();
      }
-@@ -699,6 +1068,13 @@
+@@ -699,6 +1063,13 @@
  
      public WorldServer worldServerForDimension(int p_71218_1_)
      {
@@ -834,7 +822,7 @@
          WorldServer ret = DimensionManager.getWorld(p_71218_1_);
          if (ret == null)
          {
-@@ -784,13 +1160,14 @@
+@@ -784,13 +1155,14 @@
  
      public List getPossibleCompletions(ICommandSender p_71248_1_, String p_71248_2_)
      {
@@ -853,7 +841,7 @@
  
              if (list != null)
              {
-@@ -798,40 +1175,25 @@
+@@ -798,40 +1170,25 @@
  
                  while (iterator.hasNext())
                  {
@@ -902,7 +890,7 @@
      }
  
      public static MinecraftServer getServer()
-@@ -1034,7 +1396,7 @@
+@@ -1034,7 +1391,7 @@
  
      public boolean isServerInOnlineMode()
      {
@@ -911,7 +899,7 @@
      }
  
      public void setOnlineMode(boolean p_71229_1_)
-@@ -1124,7 +1486,7 @@
+@@ -1124,7 +1481,7 @@
  
      public NetworkSystem func_147137_ag()
      {
@@ -920,7 +908,7 @@
      }
  
      @SideOnly(Side.CLIENT)
-@@ -1259,8 +1621,11 @@
+@@ -1259,8 +1616,11 @@
      {
          Bootstrap.func_151354_b();
  
@@ -932,7 +920,7 @@
              boolean flag = true;
              String s = null;
              String s1 = ".";
-@@ -1356,16 +1721,34 @@
+@@ -1356,16 +1716,34 @@
              {
                  dedicatedserver.setGuiEnabled();
              }
@@ -973,7 +961,7 @@
          }
          catch (Exception exception)
          {
-@@ -1400,15 +1783,70 @@
+@@ -1400,15 +1778,70 @@
      @SideOnly(Side.SERVER)
      public String getPlugins()
      {
@@ -1049,7 +1037,7 @@
      }
  
      @SideOnly(Side.SERVER)
-@@ -1455,9 +1893,213 @@
+@@ -1455,9 +1888,213 @@
          return this.serverStopped;
      }
  

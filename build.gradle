@@ -1,6 +1,5 @@
 import thermos.CreateChangelog
 import thermos.InstallBundle
-import thermos.VersionParser
 
 buildscript {
     repositories {
@@ -15,13 +14,8 @@ buildscript {
     }
 }
 
-tasks.whenTaskAdded {
-    if (it.name.startsWith('publish')) it.dependsOn 'preparePublication'
-}
-
 apply plugin: 'maven'
 apply plugin: 'cauldron'
-apply plugin: 'signing'
 apply plugin: 'net.nemerosa.versioning'
 
 repositories {
@@ -65,15 +59,7 @@ minecraft {
 }
 
 group = 'red.mohist'
-
-ext.mcVersion = "1.7.10"
-ext.forgeVersion = VersionParser.parseForgeRevision(file('src/main/resources/fmlversion.properties'))
-ext.revision = versioning.info.build
-version = "${mcVersion}-${revision}"
-
-launch4j {
-    jreMinVersion = '1.8.0'
-}
+version = '1.7.10-' +  versioning.info.build
 
 configurations {
     compile.extendsFrom exported
@@ -120,46 +106,31 @@ packageUniversal {
     from { configurations.exported.collect { it.isDirectory() ? it : zipTree(it) } }
 }
 
-def String repeat(String string, int times) {
-    StringBuilder builder = new StringBuilder(string.length() * times)
-    times.times { builder.append(string) }
-    builder as String
-}
-
-def generateClasspath(boolean legacy = false) {
+def generateClasspath() {
     def classpath = ''
     configurations.libraries.resolvedConfiguration.resolvedArtifacts.collect { it.moduleVersion.id }.each {
         def jar = "${it.group.replace('.', '/')}/${it.name}/${it.version}/${it.name}-${it.version}.jar"
-        classpath += " ${legacy ? 'libraries/' : repeat('../', (group as String).split('\\.').length + 2)}${jar}"
+        classpath += " libraries/${jar}"
     }
     return classpath.trim()
-}
-
-def generateManifest(boolean legacy = false) {
-    [
-            'Implementation-Vendor' : 'Mohist',
-            'Implementation-Title'  : project.name,
-            'Implementation-Version': project.version,
-            'Specification-Vendor'  : 'Bukkit Team',
-            'Specification-Title'   : 'Bukkit',
-            'Specification-Version' : '1.7.10-R0.1-SNAPSHOT',
-            'Forge-Version'         : VersionParser.parseForgeVersion(file('forge/src/main/java/net/minecraftforge/common/ForgeVersion.java'), file('src/main/resources/fmlversion.properties')),
-            'TweakClass'            : 'cpw.mods.fml.common.launcher.FMLTweaker',
-            'Main-Class'            : 'cpw.mods.fml.relauncher.ServerLaunchWrapper',
-            'Class-Path'            : generateClasspath(legacy)
-    ]
 }
 
 tasks.packageUniversal {
     classifier = 'server'
     setManifest {}
-    manifest.attributes(generateManifest(true))
+    manifest.attributes([
+            'Manifest-Version' : '1.0',
+            'Implementation-Title'  : project.name,
+            'Implementation-Version': project.version,
+            'TweakClass'            : 'cpw.mods.fml.common.launcher.FMLTweaker',
+            'Main-Class'            : 'cpw.mods.fml.relauncher.ServerLaunchWrapper',
+            'Class-Path'            : generateClasspath()
+    ])
 }
 
 task jar(type: Jar, dependsOn: packageUniversal) {
     destinationDir file("${buildDir}/distributions")
     from zipTree(tasks.packageUniversal.archivePath)
-    manifest.attributes(generateManifest())
 }
 
 tasks.createChangelog.onlyIf { false }
@@ -181,37 +152,14 @@ task packageBundle(type: Zip, dependsOn: installBundle) {
     from packageUniversal
 }
 
-task signJars(type: Sign, dependsOn: [packageUniversal, packageChangelog, packageBundle, jar, 'generatePomFileForMavenPublication']) {
+task signJars(type: Sign, dependsOn: [packageUniversal, packageChangelog, packageBundle, jar]) {
     sign packageUniversal
     sign packageChangelog
     sign packageBundle
     sign jar
 }
 
-task signPom(type: Sign, dependsOn: 'generatePomFileForMavenPublication') {
-    outputs.upToDateWhen { false }
-    sign file("${buildDir}/publications/maven/pom-default.xml")
-}
-
-task preparePublication(dependsOn: [signJars, signPom]) {}
-
-def getPomSignature = {
-    return project.tasks.signPom.signatureFiles.collect { it }[0]
-}
-
-def getSignatureFiles = {
-    def allFiles = project.tasks.signJars.signatureFiles.collect { it }
-    def signedServer = allFiles.find { it.name.contains('-server') }
-    def signedChangelog = allFiles.find { it.name.contains('-changelog') }
-    def signedBundle = allFiles.find { it.name.contains('-bundle') }
-    def signedJar = (allFiles - [signedServer, signedChangelog, signedBundle])[0]
-    return [
-            [archive: signedServer, classifier: 'server', extension: 'jar.asc'],
-            [archive: signedChangelog, classifier: 'changelog', extension: 'txt.asc'],
-            [archive: signedBundle, classifier: 'bundle', extension: 'zip.asc'],
-            [archive: signedJar, classifier: null, extension: 'jar.asc']
-    ]
-}
+task preparePublication(dependsOn: [signJars]) {}
 
 tasks.generateProjectCauldron << {
     def file = new File('eclipse/cauldron/build.gradle')
