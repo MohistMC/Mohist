@@ -1899,86 +1899,15 @@
      }
  
      public void processTabComplete(C14PacketTabComplete p_147341_1_)
-@@ -1066,8 +2354,9 @@
-     public void processVanilla250Packet(C17PacketCustomPayload p_147349_1_)
-     {
-         PacketBuffer packetbuffer;
--        ItemStack itemstack;
--        ItemStack itemstack1;
-+        ItemStack push;
-+        ItemStack nouveau;
-+        ItemStack stack;
- 
-         if ("MC|BEdit".equals(p_147349_1_.func_149559_c()))
-         {
-@@ -1075,25 +2364,25 @@
- 
-             try
-             {
--                itemstack = packetbuffer.readItemStackFromBuffer();
-+                push = packetbuffer.readItemStackFromBuffer();
- 
--                if (itemstack != null)
-+                if (push != null)
-                 {
--                    if (!ItemWritableBook.func_150930_a(itemstack.getTagCompound()))
-+                    if (!ItemWritableBook.func_150930_a(push.getTagCompound()))
+@@ -1136,18 +2424,26 @@
+                     if (itemstack.getItem() == Items.written_book && itemstack1.getItem() == Items.writable_book)
                      {
-                         throw new IOException("Invalid book tag!");
-                     }
- 
--                    itemstack1 = this.playerEntity.inventory.getCurrentItem();
-+                    stack = this.playerEntity.inventory.getCurrentItem();
- 
--                    if (itemstack1 == null)
-+                    if (stack == null)
-                     {
-                         return;
-                     }
- 
--                    if (itemstack.getItem() == Items.writable_book && itemstack.getItem() == itemstack1.getItem())
-+                    if (push.getItem() == Items.writable_book && push.getItem() == stack.getItem())
-                     {
--                        itemstack1.setTagInfo("pages", itemstack.getTagCompound().getTagList("pages", 8));
-+                        stack.setTagInfo("pages", push.getTagCompound().getTagList("pages", 8));
-                     }
- 
-                     return;
-@@ -1117,37 +2406,45 @@
- 
-             try
-             {
--                itemstack = packetbuffer.readItemStackFromBuffer();
-+                push = packetbuffer.readItemStackFromBuffer();
- 
--                if (itemstack == null)
-+                if (push == null)
-                 {
-                     return;
-                 }
- 
--                if (!ItemEditableBook.validBookTagContents(itemstack.getTagCompound()))
-+                if (!ItemEditableBook.validBookTagContents(push.getTagCompound()))
-                 {
-                     throw new IOException("Invalid book tag!");
-                 }
- 
--                itemstack1 = this.playerEntity.inventory.getCurrentItem();
-+                stack = this.playerEntity.inventory.getCurrentItem();
- 
--                if (itemstack1 != null)
-+                if (stack != null)
-                 {
--                    if (itemstack.getItem() == Items.written_book && itemstack1.getItem() == Items.writable_book)
-+                    if (push.getItem() == Items.written_book && stack.getItem() == Items.writable_book)
-                     {
--                        itemstack1.setTagInfo("author", new NBTTagString(this.playerEntity.getCommandSenderName()));
+                         itemstack1.setTagInfo("author", new NBTTagString(this.playerEntity.getCommandSenderName()));
 -                        itemstack1.setTagInfo("title", new NBTTagString(itemstack.getTagCompound().getString("title")));
 -                        itemstack1.setTagInfo("pages", itemstack.getTagCompound().getTagList("pages", 8));
 -                        itemstack1.func_150996_a(Items.written_book);
-+                        stack.setTagInfo("author", new NBTTagString(this.playerEntity.getCommandSenderName()));
-+                        ItemWritableBook.shadowUpdate(stack, push, true);
-+                        CraftEventFactory.handleEditBookEvent(playerEntity, stack); // CraftBukkit
++                        ItemWritableBook.shadowUpdate(itemstack1, itemstack, true);
++                        CraftEventFactory.handleEditBookEvent(playerEntity, itemstack1); // CraftBukkit
                      }
  
                      return;
@@ -2003,7 +1932,7 @@
              }
              finally
              {
-@@ -1174,9 +2471,12 @@
+@@ -1174,9 +2470,12 @@
                          ((ContainerMerchant)container).setCurrentRecipeIndex(i);
                      }
                  }
@@ -2017,7 +1946,7 @@
                  }
              }
              else if ("MC|AdvCdm".equals(p_147349_1_.func_149559_c()))
-@@ -1222,9 +2522,12 @@
+@@ -1222,9 +2521,12 @@
                              this.playerEntity.addChatMessage(new ChatComponentTranslation("advMode.setCommand.success", new Object[] {s1}));
                          }
                      }
@@ -2032,7 +1961,7 @@
                      }
                      finally
                      {
-@@ -1257,9 +2560,12 @@
+@@ -1257,9 +2559,12 @@
                              tileentitybeacon.markDirty();
                          }
                      }
@@ -2047,7 +1976,7 @@
                      }
                  }
              }
-@@ -1281,6 +2587,13 @@
+@@ -1281,6 +2586,13 @@
                      containerrepair.updateItemName("");
                  }
              }
@@ -2061,7 +1990,7 @@
          }
      }
  
-@@ -1292,6 +2605,21 @@
+@@ -1292,6 +2604,21 @@
          }
      }
  
