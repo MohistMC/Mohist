@@ -1,11 +1,10 @@
 --- ../src-base/minecraft/net/minecraft/crash/CrashReport.java
 +++ ../src-work/minecraft/net/minecraft/crash/CrashReport.java
-@@ -15,12 +15,18 @@
+@@ -15,12 +15,16 @@
  import java.util.Iterator;
  import java.util.List;
  import java.util.concurrent.Callable;
 +
-+import thermos.Thermos;
  import net.minecraft.util.ReportedException;
  import net.minecraft.world.gen.layer.IntCache;
 +
@@ -14,21 +13,14 @@
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
 +import org.bukkit.Bukkit;
-+import org.bukkit.ChatColor;
 +import org.bukkit.plugin.Plugin;
  
  public class CrashReport
  {
-@@ -51,6 +57,38 @@
+@@ -51,6 +55,32 @@
                  return "1.7.10";
              }
          });
-+        this.theReportCategory.addCrashSectionCallable("Thermos Version", new Callable<String>() {
-+            @Override
-+            public String call() throws Exception {
-+                return String.format("%s:%s:%s", Thermos.getGroup(), Thermos.getChannel(), Thermos.getCurrentVersion());
-+            }
-+        });
 +        this.theReportCategory.addCrashSectionCallable("Plugins", new Callable<String>() {
 +            @Override
 +            public String call() throws Exception {

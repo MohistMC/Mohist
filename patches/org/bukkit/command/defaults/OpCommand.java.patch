@@ -1,15 +1,14 @@
 --- ../src-base/minecraft/org/bukkit/command/defaults/OpCommand.java
 +++ ../src-work/minecraft/org/bukkit/command/defaults/OpCommand.java
-@@ -12,6 +12,8 @@
+@@ -12,6 +12,7 @@
  import org.bukkit.command.CommandSender;
  import org.bukkit.entity.Player;
  import org.bukkit.util.StringUtil;
-+import thermos.Thermos;
 +import net.minecraft.server.MinecraftServer;
  
  import com.google.common.collect.ImmutableList;
  
-@@ -32,10 +34,26 @@
+@@ -32,10 +33,26 @@
          }
  
          OfflinePlayer player = Bukkit.getOfflinePlayer(args[0]);

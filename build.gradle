@@ -1,4 +1,3 @@
-import groovy.json.JsonSlurper
 import thermos.CreateChangelog
 import thermos.InstallBundle
 import thermos.VersionParser
@@ -217,29 +216,24 @@ def getSignatureFiles = {
 tasks.generateProjectCauldron << {
     def file = new File('eclipse/cauldron/build.gradle')
     file.append('''
-repositories {
-    clear()
-    /*maven {
-        name 'prok'
-        url 'https://repo.prok.pw/'
-    }*/
-    maven {
-        name 'forge'
-        url 'http://files.minecraftforge.net/maven'
+    repositories {
+        clear()
+        mavenCentral()
+        mavenLocal()
+        maven {
+            name 'forge'
+            url 'http://files.minecraftforge.net/maven'
+        }
+        maven {
+            name 'minecraft'
+            url 'https://libraries.minecraft.net/'
+        }
+	    maven {
+            name 'spigot-public'
+            url 'https://hub.spigotmc.org/nexus/content/repositories/public/'
+        }
     }
-    maven {
-        name 'minecraft'
-        url 'https://libraries.minecraft.net/'
-    }
-	maven {
-        name 'spigot-public'
-        url 'https://hub.spigotmc.org/nexus/content/repositories/public/'
-    }
-    mavenCentral()
-	mavenLocal()
-}
-dependencies {
-''')
+    dependencies {''')
     configurations.libraries.resolvedConfiguration.resolvedArtifacts.collect { it.moduleVersion.id }.each { module ->
         if (['net.minecraft:server:', 'org.ow2.asm:asm-all'].findAll { (module as String).startsWith it }.size() > 0) {
             return

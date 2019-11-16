@@ -120,10 +120,6 @@ public class ThermosCommand extends Command {
             sender.sendMessage(String.format("%sOverall - %s%s%.2fms / %s%.2ftps", ChatColor.BLUE, ChatColor.RESET,
                     ChatColor.DARK_RED, meanTickTime, colourTPS, meanTPS));
             sender.sendMessage(ChatColor.DARK_RED + "---------------------------------------");
-        } else if ("restart".equals(action)) {
-            if (!testPermission(sender, RESTART))
-                return true;
-            Thermos.restart();
         } else if ("dump".equals(action)) {
             if (!testPermission(sender, DUMP))
                 return true;
