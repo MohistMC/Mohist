@@ -1,9 +1,9 @@
 --- ../src-base/minecraft/org/bukkit/event/block/BlockFromToEvent.java
 +++ ../src-work/minecraft/org/bukkit/event/block/BlockFromToEvent.java
-@@ -28,7 +28,14 @@
+@@ -21,7 +21,14 @@
+     public BlockFromToEvent(final Block block, final BlockFace face) {
          super(block);
-         this.to = toBlock;
-         this.face = BlockFace.SELF;
+         this.face = face;
 -        this.cancel = false;
 +        // do not flow into unloaded chunks
 +        // https://github.com/aikar/EMC-Bukkit/commit/71da77292535c31073a06e2c68aa93cbe5db408e
@@ -15,4 +15,4 @@
 +        }
      }
  
-     /**
+     public BlockFromToEvent(final Block block, final Block toBlock) {
