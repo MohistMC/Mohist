@@ -1,0 +1,18 @@
+--- ../src-base/minecraft/org/bukkit/event/block/BlockFromToEvent.java
++++ ../src-work/minecraft/org/bukkit/event/block/BlockFromToEvent.java
+@@ -28,7 +28,14 @@
+         super(block);
+         this.to = toBlock;
+         this.face = BlockFace.SELF;
+-        this.cancel = false;
++        // do not flow into unloaded chunks
++        // https://github.com/aikar/EMC-Bukkit/commit/71da77292535c31073a06e2c68aa93cbe5db408e
++        int x = block.getX() + face.getModX();
++        int z = block.getZ() + face.getModZ();
++        this.cancel = !block.getWorld().isChunkLoaded(x >> 4, z >> 4);
++        if (this.cancel) {
++            this.face = BlockFace.SELF;
++        }
+     }
+ 
+     /**

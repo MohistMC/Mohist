@@ -106,7 +106,16 @@
      public static EnumAction addAction(String name)
      {
          return addEnum(EnumAction.class, name);
-@@ -280,6 +364,86 @@
+@@ -181,6 +265,8 @@
+ 
+     private static void cleanEnumCache(Class<?> enumClass) throws Exception
+     {
++        // OpenJ9 moved the below fields
++        blankField(enumClass, "enumVars");
+         blankField(enumClass, "enumConstantDirectory");
+         blankField(enumClass, "enumConstants");
+     }
+@@ -280,6 +366,86 @@
          }
      }
  
