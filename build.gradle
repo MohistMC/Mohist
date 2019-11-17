@@ -100,8 +100,6 @@ dependencies {
     libraries 'org.fusesource.jansi:jansi:1.11'
     libraries 'com.koloboke:koloboke-impl-jdk8:1.0.0'
     libraries 'java3d:vecmath:1.3.1'
-    libraries 'org.apache.logging.log4j:log4j-api:2.8.1'
-    libraries 'org.apache.logging.log4j:log4j-core:2.8.1'
 }
 
 packageUniversal {
@@ -183,6 +181,8 @@ tasks.generateProjectCauldron << {
             url 'https://hub.spigotmc.org/nexus/content/repositories/public/'
         }
     }
+    sourceCompatibility = '1.8'
+    targetCompatibility = '1.8'
     dependencies {''')
     configurations.libraries.resolvedConfiguration.resolvedArtifacts.collect { it.moduleVersion.id }.each { module ->
         if (['net.minecraft:server:', 'org.ow2.asm:asm-all'].findAll { (module as String).startsWith it }.size() > 0) {

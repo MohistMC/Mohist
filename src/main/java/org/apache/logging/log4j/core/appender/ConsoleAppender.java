@@ -30,9 +30,9 @@ import org.apache.logging.log4j.core.config.plugins.Plugin;
 import org.apache.logging.log4j.core.config.plugins.PluginAttribute;
 import org.apache.logging.log4j.core.config.plugins.PluginElement;
 import org.apache.logging.log4j.core.config.plugins.PluginFactory;
+import org.apache.logging.log4j.core.helpers.Booleans;
+import org.apache.logging.log4j.core.helpers.Loader;
 import org.apache.logging.log4j.core.layout.PatternLayout;
-import org.apache.logging.log4j.core.util.Booleans;
-import org.apache.logging.log4j.core.util.Loader;
 import org.apache.logging.log4j.util.PropertiesUtil;
 
 /**
@@ -91,7 +91,7 @@ public final class ConsoleAppender extends AbstractOutputStreamAppender {
             return null;
         }
         if (layout == null) {
-            layout = PatternLayout.createDefaultLayout();
+            layout = PatternLayout.createLayout(null, null, null, null, null);
         }
         final boolean isFollow = Boolean.parseBoolean(follow);
         final boolean ignoreExceptions = Booleans.parseBoolean(ignore, true);
@@ -238,7 +238,7 @@ public final class ConsoleAppender extends AbstractOutputStreamAppender {
          */
         @Override
         public OutputStreamManager createManager(final String name, final FactoryData data) {
-            return new OutputStreamManager(data.os, data.type, data.layout, false);
+            return new OutputStreamManager(data.os, data.type, data.layout);
         }
     }
 
