@@ -1,13 +1,12 @@
 package net.minecraftforge.cauldron.apiimpl;
 
 import com.google.common.base.Predicate;
+import java.util.Random;
 import net.minecraftforge.cauldron.api.Fishing;
 import net.minecraftforge.cauldron.api.WeightedRandomFishable;
 import net.minecraftforge.common.FishingHooks;
 import org.bukkit.craftbukkit.inventory.CraftItemStack;
 import org.bukkit.inventory.ItemStack;
-
-import java.util.Random;
 
 public class FishingInterface implements Fishing {
     private static net.minecraft.util.WeightedRandomFishable toNms(WeightedRandomFishable bukkit) {

@@ -1,7 +1,6 @@
 package net.minecraftforge.cauldron.configuration;
 
 import java.util.List;
-
 import net.minecraft.server.MinecraftServer;
 
 public class WorldConfig

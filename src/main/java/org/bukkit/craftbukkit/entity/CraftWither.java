@@ -1,8 +1,8 @@
 package org.bukkit.craftbukkit.entity;
 
 import org.bukkit.craftbukkit.CraftServer;
-import org.bukkit.entity.Wither;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Wither;
 
 public class CraftWither extends CraftMonster implements Wither {
     public CraftWither(CraftServer server, net.minecraft.entity.boss.EntityWither entity) {

@@ -5,7 +5,6 @@ import java.io.StringWriter;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.concurrent.Callable;
-
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginDescriptionFile;

@@ -1,11 +1,9 @@
 package net.minecraftforge.cauldron.configuration;
 
-import net.minecraft.server.MinecraftServer;
-import net.minecraftforge.cauldron.command.CauldronCommand;
-
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
-
+import net.minecraft.server.MinecraftServer;
+import net.minecraftforge.cauldron.command.CauldronCommand;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 public class CauldronConfig extends ConfigBase

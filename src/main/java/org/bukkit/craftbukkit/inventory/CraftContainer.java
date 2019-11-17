@@ -1,13 +1,12 @@
 package org.bukkit.craftbukkit.inventory;
 
+import net.minecraft.inventory.Container;
+import net.minecraft.inventory.Slot;
 import org.bukkit.craftbukkit.entity.CraftPlayer;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryView;
-
-import net.minecraft.inventory.Container;
-import net.minecraft.inventory.Slot;
 
 
 public class CraftContainer extends net.minecraft.inventory.Container {

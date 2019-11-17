@@ -1,19 +1,15 @@
 package net.md_5.bungee.chat;
 
 import com.google.common.base.Preconditions;
-import java.lang.reflect.Type;
+import com.google.gson.JsonDeserializationContext;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonSerializationContext;
 import java.util.Arrays;
 import java.util.HashSet;
-import java.util.List;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.HoverEvent;
-import net.md_5.bungee.chat.ComponentSerializer;
-import com.google.gson.JsonDeserializationContext;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonSerializationContext;
 
 public class BaseComponentSerializer {
     protected void deserialize(JsonObject object, BaseComponent component, JsonDeserializationContext context) {

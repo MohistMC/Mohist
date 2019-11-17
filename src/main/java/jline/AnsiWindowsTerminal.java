@@ -18,12 +18,11 @@
 
 package jline;
 
+import java.io.ByteArrayOutputStream;
+import java.io.OutputStream;
 import org.fusesource.jansi.AnsiConsole;
 import org.fusesource.jansi.AnsiOutputStream;
 import org.fusesource.jansi.WindowsAnsiOutputStream;
-
-import java.io.ByteArrayOutputStream;
-import java.io.OutputStream;
 
 /**
  * ANSI-supported {@link WindowsTerminal}.

@@ -3,13 +3,9 @@ package net.md_5.bungee.api.chat;
 import java.beans.ConstructorProperties;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import net.md_5.bungee.api.ChatColor;
-import net.md_5.bungee.api.chat.BaseComponent;
-import net.md_5.bungee.api.chat.ClickEvent;
 
 public class TextComponent
 extends BaseComponent {

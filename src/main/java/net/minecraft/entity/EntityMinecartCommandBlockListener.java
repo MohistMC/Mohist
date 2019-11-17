@@ -1,8 +1,8 @@
 package net.minecraft.entity;
 
-import io.netty.buffer.ByteBuf;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import io.netty.buffer.ByteBuf;
 import net.minecraft.command.server.CommandBlockLogic;
 import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.util.IChatComponent;

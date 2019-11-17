@@ -1,7 +1,5 @@
 package thermos.chaud;
 
-import net.minecraft.entity.player.EntityPlayer;
-
 public class DesUtils {
 
     public static boolean isModded(String pkg)

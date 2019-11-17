@@ -3,9 +3,7 @@ package org.bukkit.craftbukkit.generator;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-
-import net.minecraft.world.chunk.IChunkProvider; // Cauldron
-
+import net.minecraft.world.chunk.IChunkProvider;
 import org.bukkit.craftbukkit.CraftWorld;
 import org.bukkit.generator.BlockPopulator;
 

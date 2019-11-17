@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.net.URLConnection;
-import red.mohist.Mohist;
 import red.mohist.configuration.MohistConfigUtil;
 import red.mohist.util.IOUtil;
 import red.mohist.util.JarTool;

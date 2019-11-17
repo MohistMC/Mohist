@@ -2,7 +2,6 @@ package net.md_5.bungee.api.chat;
 
 import java.beans.ConstructorProperties;
 import java.util.Arrays;
-import net.md_5.bungee.api.chat.BaseComponent;
 
 public final class HoverEvent {
     private final Action action;

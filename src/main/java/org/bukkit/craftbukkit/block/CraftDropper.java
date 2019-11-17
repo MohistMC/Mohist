@@ -3,7 +3,6 @@ package org.bukkit.craftbukkit.block;
 import net.minecraft.block.BlockDropper;
 import net.minecraft.init.Blocks;
 import net.minecraft.tileentity.TileEntityDropper;
-
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.Dropper;

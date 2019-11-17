@@ -2,12 +2,10 @@ package net.minecraftforge.cauldron.configuration;
 
 import java.util.ArrayList;
 import java.util.HashSet;
-
-import org.bukkit.World;
-
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import org.bukkit.World;
 
 public class ItemDataArraySetting extends ArraySetting<Long> 
 {

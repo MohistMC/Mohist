@@ -1,6 +1,6 @@
 package org.bukkit.craftbukkit.enchantments;
 
-import org.apache.commons.lang.StringUtils; // Cauldron
+import org.apache.commons.lang.StringUtils;
 import org.bukkit.craftbukkit.inventory.CraftItemStack;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.enchantments.EnchantmentTarget;

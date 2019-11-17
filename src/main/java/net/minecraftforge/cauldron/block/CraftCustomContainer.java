@@ -1,7 +1,6 @@
 package net.minecraftforge.cauldron.block;
 
 import net.minecraft.inventory.IInventory;
-
 import org.bukkit.block.Block;
 import org.bukkit.craftbukkit.CraftWorld;
 import org.bukkit.craftbukkit.block.CraftBlockState;

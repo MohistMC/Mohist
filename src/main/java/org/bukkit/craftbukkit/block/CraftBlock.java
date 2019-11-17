@@ -1,21 +1,23 @@
 package org.bukkit.craftbukkit.block;
 
+import cpw.mods.fml.common.FMLLog;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-
-import net.minecraft.world.EnumSkyBlock;
-import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraft.block.BlockCocoa;
 import net.minecraft.block.BlockRedstoneWire;
 import net.minecraft.init.Blocks;
-
+import net.minecraft.inventory.IInventory;
 import net.minecraft.item.Item;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTUtil;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntitySkull;
-
+import net.minecraft.world.EnumSkyBlock;
+import net.minecraft.world.biome.BiomeGenBase;
+import net.minecraftforge.cauldron.block.CraftCustomContainer;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -26,21 +28,16 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.PistonMoveReaction;
 import org.bukkit.craftbukkit.CraftChunk;
+import org.bukkit.craftbukkit.CraftWorld;
 import org.bukkit.craftbukkit.inventory.CraftItemStack;
 import org.bukkit.craftbukkit.util.CraftMagicNumbers;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.metadata.MetadataValue;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.util.BlockVector;
-// Cauldron start
-import cpw.mods.fml.common.FMLLog;
-import net.minecraft.server.MinecraftServer;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.inventory.IInventory;
-import net.minecraftforge.cauldron.block.CraftCustomContainer;
-// Cauldron end
 
-import org.bukkit.craftbukkit.CraftWorld;
+// Cauldron start
+// Cauldron end
 
 public class CraftBlock implements Block {
     private final CraftChunk chunk;

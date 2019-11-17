@@ -1,10 +1,11 @@
 package net.minecraft.inventory;
 
 // CraftBukkit start
+
 import java.util.List;
+import net.minecraft.item.ItemStack;
 import org.bukkit.craftbukkit.entity.CraftHumanEntity;
 import org.bukkit.entity.HumanEntity;
-import net.minecraft.item.ItemStack;
 // CraftBukkit end
 
 public class ContainerRepairInventory extends InventoryBasic   // CraftBukkit - public

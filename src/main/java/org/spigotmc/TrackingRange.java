@@ -1,12 +1,14 @@
 package org.spigotmc;
 
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.item.EntityXPOrb;
-import net.minecraft.entity.monster.EntityGhast;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.item.EntityItemFrame;
 import net.minecraft.entity.item.EntityPainting;
-import net.minecraft.entity.player.EntityPlayerMP;;
+import net.minecraft.entity.item.EntityXPOrb;
+import net.minecraft.entity.monster.EntityGhast;
+import net.minecraft.entity.player.EntityPlayerMP;
+
+;
 
 public class TrackingRange
 {

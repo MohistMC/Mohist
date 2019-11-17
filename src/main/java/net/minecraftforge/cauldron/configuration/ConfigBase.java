@@ -2,28 +2,13 @@ package net.minecraftforge.cauldron.configuration;
 
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
-
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.WorldServer;
-import net.minecraftforge.cauldron.CauldronHooks;
-import net.minecraftforge.cauldron.TileEntityCache;
-import net.minecraftforge.cauldron.command.CauldronCommand;
-import net.minecraftforge.common.DimensionManager;
-
-import org.apache.commons.lang.BooleanUtils;
-import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.configuration.file.YamlConfiguration;
-
-import com.google.common.base.Throwables;
 
 public abstract class ConfigBase
 {

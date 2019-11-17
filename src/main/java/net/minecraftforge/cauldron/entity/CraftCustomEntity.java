@@ -1,12 +1,10 @@
 package net.minecraftforge.cauldron.entity;
 
+import cpw.mods.fml.common.registry.EntityRegistry;
 import net.minecraft.entity.Entity;
-
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.craftbukkit.entity.CraftEntity;
 import org.bukkit.entity.EntityType;
-
-import cpw.mods.fml.common.registry.EntityRegistry;
 
 public class CraftCustomEntity extends CraftEntity {
 

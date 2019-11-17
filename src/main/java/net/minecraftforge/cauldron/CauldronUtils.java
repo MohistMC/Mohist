@@ -6,13 +6,9 @@ import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
-import cpw.mods.fml.relauncher.FMLRelaunchLog;
-
-import org.bukkit.inventory.InventoryHolder;
-
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntity;
+import org.bukkit.inventory.InventoryHolder;
 
 public class CauldronUtils {
     private static boolean deobfuscated = false;

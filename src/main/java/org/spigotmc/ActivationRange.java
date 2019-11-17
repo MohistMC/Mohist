@@ -2,39 +2,38 @@ package org.spigotmc;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import net.minecraft.util.AxisAlignedBB;
-import net.minecraft.world.chunk.Chunk;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.passive.EntityAmbientCreature;
-import net.minecraft.entity.passive.EntityAnimal;
-import net.minecraft.entity.projectile.EntityArrow;
-import net.minecraft.entity.boss.EntityDragonPart;
 import net.minecraft.entity.EntityCreature;
-import net.minecraft.entity.item.EntityEnderCrystal;
+import net.minecraft.entity.EntityLiving;
+import net.minecraft.entity.EnumCreatureType;
 import net.minecraft.entity.boss.EntityDragon;
-import net.minecraft.entity.projectile.EntityFireball;
+import net.minecraft.entity.boss.EntityDragonPart;
+import net.minecraft.entity.boss.EntityWither;
+import net.minecraft.entity.effect.EntityWeatherEffect;
+import net.minecraft.entity.item.EntityEnderCrystal;
 import net.minecraft.entity.item.EntityFallingBlock;
 import net.minecraft.entity.item.EntityFireworkRocket;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.EntityLiving;
-import net.minecraft.entity.monster.EntityMob;
-import net.minecraft.entity.projectile.EntityThrowable;
-import net.minecraft.entity.passive.EntitySheep;
-import net.minecraft.entity.monster.EntitySlime;
 import net.minecraft.entity.item.EntityTNTPrimed;
+import net.minecraft.entity.monster.EntityMob;
+import net.minecraft.entity.monster.EntitySlime;
+import net.minecraft.entity.passive.EntityAmbientCreature;
+import net.minecraft.entity.passive.EntityAnimal;
+import net.minecraft.entity.passive.EntitySheep;
 import net.minecraft.entity.passive.EntityVillager;
-import net.minecraft.entity.effect.EntityWeatherEffect;
-import net.minecraft.entity.boss.EntityWither;
-import net.minecraft.util.MathHelper;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.projectile.EntityArrow;
+import net.minecraft.entity.projectile.EntityFireball;
+import net.minecraft.entity.projectile.EntityThrowable;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.util.AxisAlignedBB;
+import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
-
-import org.bukkit.craftbukkit.SpigotTimings;
-// Cauldron start
-import net.minecraft.entity.EnumCreatureType;
+import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.util.FakePlayer;
+import org.bukkit.craftbukkit.SpigotTimings;
+
+// Cauldron start
 // Cauldron end
 
 public class ActivationRange

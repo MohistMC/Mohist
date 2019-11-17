@@ -17,8 +17,8 @@
 package org.bukkit.craftbukkit.util;
 
 import java.util.Arrays;
-import java.util.Iterator;
 import java.util.ConcurrentModificationException;
+import java.util.Iterator;
 import java.util.NoSuchElementException;
 
 public class LongHashSet {

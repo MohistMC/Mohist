@@ -1,11 +1,8 @@
 package org.bukkit.craftbukkit.command;
 
-import static org.bukkit.util.Java15Compat.Arrays_copyOfRange;
-
+import cpw.mods.fml.common.FMLCommonHandler;
 import java.util.regex.Pattern;
-
 import net.minecraft.command.ICommandSender;
-
 import org.bukkit.Server;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandException;
@@ -13,8 +10,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.command.SimpleCommandMap;
 import org.bukkit.craftbukkit.entity.CraftPlayer;
-
-import cpw.mods.fml.common.FMLCommonHandler;
+import static org.bukkit.util.Java15Compat.Arrays_copyOfRange;
 
 public class CraftSimpleCommandMap extends SimpleCommandMap {
 

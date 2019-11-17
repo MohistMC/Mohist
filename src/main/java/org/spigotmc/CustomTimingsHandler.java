@@ -1,19 +1,11 @@
 package org.spigotmc;
 
-import org.bukkit.command.defaults.TimingsCommand;
-import org.bukkit.event.HandlerList;
-import org.bukkit.plugin.Plugin;
-import org.bukkit.plugin.RegisteredListener;
-import org.bukkit.plugin.TimedRegisteredListener;
 import java.io.PrintStream;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
-
 import org.bukkit.Bukkit;
 import org.bukkit.World;
+import org.bukkit.command.defaults.TimingsCommand;
 
 /**
  * Provides custom timing sections for /timings merged.

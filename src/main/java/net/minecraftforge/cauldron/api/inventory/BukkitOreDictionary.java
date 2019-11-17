@@ -1,9 +1,8 @@
 package net.minecraftforge.cauldron.api.inventory;
 
+import java.util.List;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
-
-import java.util.List;
 
 /**
  * The Forge Ore Dictionary provides a way for multiple items to share a common

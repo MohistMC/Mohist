@@ -1,8 +1,7 @@
 package thermos;
 
-import org.apache.logging.log4j.Level;
-
 import cpw.mods.fml.common.FMLLog;
+import org.apache.logging.log4j.Level;
 
 public class TLog {
     private static final TLog DEFAULT_LOGGER = new TLog("Thermos");

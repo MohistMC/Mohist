@@ -1,9 +1,8 @@
 package net.minecraftforge.cauldron.api.inventory;
 
-import net.minecraftforge.cauldron.api.Cauldron;
-
 import java.util.ArrayList;
 import java.util.List;
+import net.minecraftforge.cauldron.api.Cauldron;
 
 /**
  * An OreDictionaryEntry is an opaque reference to an entry in the Forge Ore

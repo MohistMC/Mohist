@@ -1,22 +1,16 @@
 package org.spigotmc;
 
 import java.io.File;
-import java.io.FileWriter;
 import java.lang.management.ManagementFactory;
 import java.lang.management.MonitorInfo;
 import java.lang.management.ThreadInfo;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.cauldron.CauldronHooks;
-import net.minecraftforge.cauldron.configuration.CauldronConfig;
-
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 
 
 public class WatchdogThread extends Thread

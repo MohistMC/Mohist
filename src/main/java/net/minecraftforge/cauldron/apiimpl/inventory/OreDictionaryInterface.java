@@ -1,17 +1,16 @@
 package net.minecraftforge.cauldron.apiimpl.inventory;
 
 import com.google.common.collect.ImmutableList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import net.minecraftforge.cauldron.api.inventory.BukkitOreDictionary;
 import net.minecraftforge.cauldron.api.inventory.OreDictionaryEntry;
 import net.minecraftforge.oredict.OreDictionary;
 import org.bukkit.Material;
 import org.bukkit.craftbukkit.inventory.CraftItemStack;
 import org.bukkit.inventory.ItemStack;
-
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 public class OreDictionaryInterface implements BukkitOreDictionary {
     private Map<String, String> normalizedToCanonicalMap = null;

@@ -1,7 +1,6 @@
 package org.bukkit.craftbukkit.block;
 
 import net.minecraft.tileentity.TileEntityNote;
-
 import org.bukkit.Instrument;
 import org.bukkit.Material;
 import org.bukkit.Note;
