@@ -21,7 +21,12 @@ public class BlockFromToEvent extends BlockEvent implements Cancellable {
     public BlockFromToEvent(final Block block, final BlockFace face) {
         super(block);
         this.face = face;
-        this.cancel = false;
+        int x = block.getX() + face.getModX();
+        int z = block.getZ() + face.getModZ();
+        this.cancel = !block.getWorld().isChunkLoaded(x >> 4, z >> 4);
+        if (this.cancel) {
+            this.face = BlockFace.SELF;
+        }
     }
 
     public BlockFromToEvent(final Block block, final Block toBlock) {
