@@ -50,23 +50,26 @@ public class UTF8Control extends ResourceBundle.Control {
             InputStream stream = null;
             try {
                 stream = AccessController.doPrivileged(
-                        (PrivilegedExceptionAction<InputStream>) () -> {
-                            InputStream is = null;
-                            if (reloadFlag) {
-                                URL url = classLoader.getResource(resourceName);
-                                if (url != null) {
-                                    URLConnection connection = url.openConnection();
-                                    if (connection != null) {
-                                        // Disable caches to get fresh data for
-                                        // reloading.
-                                        connection.setUseCaches(false);
-                                        is = connection.getInputStream();
+                        new PrivilegedExceptionAction<InputStream>() {
+                            @Override
+                            public InputStream run() throws Exception {
+                                InputStream is = null;
+                                if (reloadFlag) {
+                                    URL url = classLoader.getResource(resourceName);
+                                    if (url != null) {
+                                        URLConnection connection = url.openConnection();
+                                        if (connection != null) {
+                                            // Disable caches to get fresh data for
+                                            // reloading.
+                                            connection.setUseCaches(false);
+                                            is = connection.getInputStream();
+                                        }
                                     }
+                                } else {
+                                    is = classLoader.getResourceAsStream(resourceName);
                                 }
-                            } else {
-                                is = classLoader.getResourceAsStream(resourceName);
+                                return is;
                             }
-                            return is;
                         });
             } catch (PrivilegedActionException e) {
                 throw (IOException) e.getException();

@@ -39,7 +39,7 @@ public class StringUtil{
         }
 
         char[] tContent=pStr.toCharArray();
-        TreeSet<Character> tExclude=new TreeSet<>();
+        TreeSet<Character> tExclude=new TreeSet<Character>();
         for(char sC : pChars) {
             tExclude.add(sC);
         }
@@ -59,7 +59,7 @@ public class StringUtil{
     }
 
     public static ArrayList<String> split(String pStr,char pSeparator){
-        ArrayList<String> tSubStr=new ArrayList<>();
+        ArrayList<String> tSubStr=new ArrayList<String>();
         if(pStr==null||pStr.isEmpty()) {
             return tSubStr;
         }
@@ -80,7 +80,7 @@ public class StringUtil{
     }
 
     public static ArrayList<String> splitNoEmpty(String pStr,char pSeparator){
-        ArrayList<String> tSubStr=new ArrayList<>();
+        ArrayList<String> tSubStr=new ArrayList<String>();
         if(pStr==null||pStr.isEmpty()) {
             return tSubStr;
         }
@@ -144,7 +144,7 @@ public class StringUtil{
     }
 
     public static Collection<String> getSamePrefix(Collection<String> pStrs,String pPrefix,boolean pIgnoreCase,boolean pIgnoreSame){
-        ArrayList<String> tFound=new ArrayList<>();
+        ArrayList<String> tFound=new ArrayList<String>();
         if(pStrs==null||pStrs.isEmpty()) {
             return tFound;
         }
@@ -202,12 +202,12 @@ public class StringUtil{
 
     public static ArrayList<String> addSamePreifx(Collection<String> pList,String pPrefix){
         if(pList==null||pList.isEmpty()) {
-            return new ArrayList<>(0);
+            return new ArrayList<String>(0);
         }
         if(pPrefix==null) {
             pPrefix="";
         }
-        ArrayList<String> newList=new ArrayList<>(pList.size());
+        ArrayList<String> newList=new ArrayList<String>(pList.size());
         for(String sStr : pList){
             if(sStr==null) {
                 newList.add(pPrefix);

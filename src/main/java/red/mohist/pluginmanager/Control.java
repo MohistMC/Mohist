@@ -26,22 +26,16 @@ import org.bukkit.plugin.java.JavaPluginLoader;
 
 public class Control {
 
-    public static PluginDescriptionFile getDescription(File file) {
-        try {
-            JarFile jar = new JarFile(file);
-            ZipEntry zip = jar.getEntry("plugin.yml");
-            if (zip == null) {
-                jar.close();
-                return null;
-            }
-            PluginDescriptionFile pdf = new PluginDescriptionFile(jar.getInputStream(zip));
+    public static PluginDescriptionFile getDescription(File file) throws InvalidDescriptionException, IOException {
+        JarFile jar = new JarFile(file);
+        ZipEntry zip = jar.getEntry("plugin.yml");
+        if (zip == null) {
             jar.close();
-            return pdf;
-        } catch (InvalidDescriptionException | IOException ioe) {
-            ioe.printStackTrace();
+            return null;
         }
-
-        return null;
+        PluginDescriptionFile pdf = new PluginDescriptionFile(jar.getInputStream(zip));
+        jar.close();
+        return pdf;
     }
 
     public static File getFile(JavaPlugin plugin) {
@@ -76,7 +70,11 @@ public class Control {
                 e.printStackTrace();
             }
             return p;
-        } catch (InvalidPluginException | InvalidDescriptionException | UnknownDependencyException e) {
+        } catch (InvalidPluginException e) {
+            e.printStackTrace();
+        } catch (InvalidDescriptionException e) {
+            e.printStackTrace();
+        } catch (UnknownDependencyException e) {
             e.printStackTrace();
         }
         return null;
@@ -90,7 +88,7 @@ public class Control {
         List<Plugin> plugins;
         Map<String, Plugin> names;
         Map<String, Command> commands;
-        ArrayList<Plugin> reload = new ArrayList<>();
+        ArrayList<Plugin> reload = new ArrayList<Plugin>();
         disablePlugin(plugin);
         if (reloaddependents) {
             for (Plugin p : pluginManager.getPlugins()) {
@@ -140,7 +138,10 @@ public class Control {
             commandMap = (SimpleCommandMap) commandMapField.get(pluginManager);
             commands = (Map<String, Command>) knownCommandsField.get(commandMap);
 
-        } catch (NoSuchFieldException | IllegalAccessException e) {
+        } catch (NoSuchFieldException e) {
+            e.printStackTrace();
+            return false;
+        } catch (IllegalAccessException e) {
             e.printStackTrace();
             return false;
         }

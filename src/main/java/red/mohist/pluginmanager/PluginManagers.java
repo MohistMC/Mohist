@@ -1,9 +1,11 @@
 package red.mohist.pluginmanager;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
+import org.bukkit.plugin.InvalidDescriptionException;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -23,7 +25,7 @@ public class PluginManagers {
         return true;
     }
 
-    public static boolean loadPluginCommand(CommandSender sender, String label, String[] split) {
+    public static boolean loadPluginCommand(CommandSender sender, String label, String[] split) throws InvalidDescriptionException, IOException {
         if (!hasPermission(sender)) {
             return true;
         }
@@ -58,7 +60,7 @@ public class PluginManagers {
             return true;
         }
         Plugin[] pl = Bukkit.getPluginManager().getPlugins();
-        ArrayList<Plugin> plugins = new ArrayList<>(java.util.Arrays.asList(pl));
+        ArrayList<Plugin> plugins = new ArrayList<Plugin>(java.util.Arrays.asList(pl));
         for (Plugin p : plugins) {
             if (desc.getName().equals(p.getName())) {
                 Object[] f = {desc.getName()};

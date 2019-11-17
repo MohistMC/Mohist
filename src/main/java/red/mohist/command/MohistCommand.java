@@ -25,7 +25,7 @@ public class MohistCommand extends Command {
 
     @Override
     public List<String> tabComplete(CommandSender sender, String alias, String[] args) throws IllegalArgumentException {
-        List<String> list = new ArrayList<>();
+        List<String> list = new ArrayList<String>();
         if (args.length == 1 && sender.isOp()) {
             for (String param : params) {
                 if (param.toLowerCase().startsWith(args[0].toLowerCase())) {
@@ -49,30 +49,24 @@ public class MohistCommand extends Command {
             return false;
         }
 
-        switch (args[0].toLowerCase(Locale.ENGLISH)) {
-            case "mods":
-                // Not recommended for use in games, only test output
-                sender.sendMessage(ChatColor.GREEN + "" + ServerAPI.getModSize() + " " + ServerAPI.getModList());
-                break;
-            case "playermods":
-                // Not recommended for use in games, only test output
-                if (args.length == 1) {
-                    sender.sendMessage(ChatColor.RED + "Usage: " + usageMessage);
-                    return false;
-                }
-                Player player = Bukkit.getPlayer(args[1]);
-                if (player != null) {
-                    sender.sendMessage(ChatColor.GREEN + "" + PlayerAPI.getModSize(player) + " " + PlayerAPI.getModlist(player));
-                } else {
-                    sender.sendMessage(ChatColor.RED + "The player [" + args[1] + "] is not online.");
-                }
-                break;
-            case "lang":
-                sender.sendMessage(ChatColor.GREEN +ServerAPI.getLanguage());
-                break;
-            default:
+        if ("mods".equals(args[0].toLowerCase(Locale.ENGLISH))) {// Not recommended for use in games, only test output
+            sender.sendMessage(ChatColor.GREEN + "" + ServerAPI.getModSize() + " " + ServerAPI.getModList());
+        } else if ("playermods".equals(args[0].toLowerCase(Locale.ENGLISH))) {// Not recommended for use in games, only test output
+            if (args.length == 1) {
                 sender.sendMessage(ChatColor.RED + "Usage: " + usageMessage);
                 return false;
+            }
+            Player player = Bukkit.getPlayer(args[1]);
+            if (player != null) {
+                sender.sendMessage(ChatColor.GREEN + "" + PlayerAPI.getModSize(player) + " " + PlayerAPI.getModlist(player));
+            } else {
+                sender.sendMessage(ChatColor.RED + "The player [" + args[1] + "] is not online.");
+            }
+        } else if ("lang".equals(args[0].toLowerCase(Locale.ENGLISH))) {
+            sender.sendMessage(ChatColor.GREEN + ServerAPI.getLanguage());
+        } else {
+            sender.sendMessage(ChatColor.RED + "Usage: " + usageMessage);
+            return false;
         }
 
         return true;

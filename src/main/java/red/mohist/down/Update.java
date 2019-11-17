@@ -37,8 +37,8 @@ public class Update {
             String time1 = time.substring(time.indexOf(date) + 8);
             String time2 = time1.substring(0, 20);
 
-            String newversion = MohistConfigUtil.getUrlString(ver, Mohist.VERSION);
-            String oldversion = Mohist.VERSION;
+            String newversion = MohistConfigUtil.getUrlString(ver, "1.0");
+            String oldversion = "1.0";
             if (oldver.equals(s2)) {
                 System.out.println(Message.getFormatString("update.latest", new Object[]{oldversion, s2, oldver}));
             } else {
@@ -57,13 +57,13 @@ public class Update {
     }
 
     public static boolean getLibrariesVersion() {
-        String s = Mohist.LIB_VERSION;
+        String s = "1.0";
         File lib = new File(JarTool.getJarDir() + "/libraries/libraries.ver");
         if (!lib.exists()) {
             return true;
         }
         // Get the data in lib
-        String i = MohistConfigUtil.getString(lib, "version:", Mohist.LIB_VERSION);
+        String i = MohistConfigUtil.getString(lib, "version:", "1.0");
         return !i.equals(s);
     }
 }

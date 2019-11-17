@@ -23,12 +23,12 @@
 
 package red.mohist.console.log4j;
 
+import com.google.common.base.Function;
 import com.google.common.base.Functions;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.io.Serializable;
 import java.io.Writer;
-import java.util.function.Function;
 import javax.annotation.Nullable;
 import jline.TerminalFactory;
 import static jline.TerminalFactory.OFF;
@@ -64,9 +64,9 @@ public class TerminalConsoleAppender extends AbstractAppender
         return reader;
     }
 
-    private static Function<String, String> formatter = Functions.identity();
+    private static Function<Object, Object> formatter = Functions.identity();
 
-    public static void setFormatter(Function<String, String> format)
+    public static void setFormatter(Function<Object, Object> format)
     {
         formatter = format != null ? format : Functions.identity();
     }
@@ -182,7 +182,7 @@ public class TerminalConsoleAppender extends AbstractAppender
 
     protected String formatEvent(LogEvent event)
     {
-        return formatter.apply(getLayout().toSerializable(event).toString());
+        return (String) formatter.apply(getLayout().toSerializable(event));
     }
 
 }
