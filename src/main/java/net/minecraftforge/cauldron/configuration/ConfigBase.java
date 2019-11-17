@@ -32,10 +32,10 @@ public abstract class ConfigBase
     
     /* ======================================================================== */
 
-    protected YamlConfiguration config;
+    public YamlConfiguration config;
     protected int version;
     protected Map<String, Command> commands;
-    protected Map<String, Setting> settings = new HashMap<String, Setting>();
+    public Map<String, Setting> settings = new HashMap<String, Setting>();
 
     /* ======================================================================== */
 

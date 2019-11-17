@@ -1,0 +1,11 @@
+--- ../src-base/minecraft/cpw/mods/fml/relauncher/ServerLaunchWrapper.java
++++ ../src-work/minecraft/cpw/mods/fml/relauncher/ServerLaunchWrapper.java
+@@ -1,6 +1,8 @@
+ package cpw.mods.fml.relauncher;
+ 
+ import java.lang.reflect.Method;
++import org.apache.logging.log4j.LogManager;
++import red.mohist.Mohist;
+ 
+ public class ServerLaunchWrapper {
+ 
