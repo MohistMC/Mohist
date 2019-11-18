@@ -51,7 +51,7 @@ public class Update {
     }
 
     public static boolean isCheckVersion() {
-        File f = new File("mohist-config", "mohist.yml");
+        File f = new File("mohist.yml");
         return MohistConfigUtil.getBoolean(f, "check_update:");
     }
 

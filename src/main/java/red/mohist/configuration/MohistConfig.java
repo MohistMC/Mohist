@@ -106,7 +106,6 @@ public class MohistConfig extends ConfigBase {
     public void addCommands()
     {
         commands.put("mohist", new MohistCommand("mohist"));
-        commands.put("version", new VersionCommand("version"));
         commands.put("Dump", new DumpCommand("version"));
     }
 
