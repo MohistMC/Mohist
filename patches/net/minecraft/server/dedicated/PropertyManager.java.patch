@@ -1,6 +1,16 @@
 --- ../src-base/minecraft/net/minecraft/server/dedicated/PropertyManager.java
 +++ ../src-work/minecraft/net/minecraft/server/dedicated/PropertyManager.java
-@@ -10,11 +10,13 @@
+@@ -6,15 +6,23 @@
+ import java.io.FileInputStream;
+ import java.io.FileOutputStream;
+ import java.io.IOException;
++import java.io.InputStreamReader;
++import java.io.OutputStream;
++import java.io.OutputStreamWriter;
++import java.nio.charset.StandardCharsets;
+ import java.util.Properties;
++import org.apache.commons.io.Charsets;
++import org.apache.commons.io.IOUtils;
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
  
@@ -15,7 +25,35 @@
      private final File serverPropertiesFile;
      private static final String __OBFID = "CL_00001782";
  
-@@ -58,6 +60,26 @@
+@@ -29,7 +37,7 @@
+             try
+             {
+                 fileinputstream = new FileInputStream(p_i45278_1_);
+-                this.serverProperties.load(fileinputstream);
++                this.serverProperties.load(new InputStreamReader(fileinputstream, Charsets.UTF_8));
+             }
+             catch (Exception exception)
+             {
+@@ -38,17 +46,7 @@
+             }
+             finally
+             {
+-                if (fileinputstream != null)
+-                {
+-                    try
+-                    {
+-                        fileinputstream.close();
+-                    }
+-                    catch (IOException ioexception)
+-                    {
+-                        ;
+-                    }
+-                }
++                IOUtils.closeQuietly(fileinputstream);
+             }
+         }
+         else
+@@ -58,6 +56,26 @@
          }
      }
  
@@ -42,7 +80,7 @@
      public void generateNewProperties()
      {
          field_164440_a.info("Generating new properties file");
-@@ -70,6 +92,13 @@
+@@ -70,8 +88,15 @@
  
          try
          {
@@ -54,9 +92,31 @@
 +
 +            // CraftBukkit end
              fileoutputstream = new FileOutputStream(this.serverPropertiesFile);
-             this.serverProperties.store(fileoutputstream, "Minecraft server properties");
+-            this.serverProperties.store(fileoutputstream, "Minecraft server properties");
++            this.serverProperties.store(new OutputStreamWriter(fileoutputstream, Charsets.UTF_8), "Minecraft server properties");
          }
-@@ -108,20 +137,20 @@
+         catch (Exception exception)
+         {
+@@ -80,17 +105,7 @@
+         }
+         finally
+         {
+-            if (fileoutputstream != null)
+-            {
+-                try
+-                {
+-                    fileoutputstream.close();
+-                }
+-                catch (IOException ioexception)
+-                {
+-                    ;
+-                }
+-            }
++            IOUtils.closeQuietly(fileoutputstream);
+         }
+     }
+ 
+@@ -108,20 +123,20 @@
              this.saveProperties();
          }
  
@@ -80,7 +140,7 @@
          }
      }
  
-@@ -129,13 +158,13 @@
+@@ -129,13 +144,13 @@
      {
          try
          {
