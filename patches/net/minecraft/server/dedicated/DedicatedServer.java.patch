@@ -140,7 +140,7 @@
          this.field_154332_n = new ServerEula(new File("eula.txt"));
  
          if (!this.field_154332_n.func_154346_a())
-@@ -172,6 +231,18 @@
+@@ -172,6 +231,19 @@
                  this.setServerPort(this.settings.getIntProperty("server-port", 25565));
              }
  
@@ -155,11 +155,12 @@
 +            tileEntityConfig.registerCommands();
 +            sushchestvoConfig.registerCommands();
 +            // Cauldron end
++            mohistConfig.registerCommands();
 +
              field_155771_h.info("Generating keypair");
              this.setKeyPair(CryptManager.createNewKeyPair());
              field_155771_h.info("Starting Minecraft server on " + (this.getServerHostname().length() == 0 ? "*" : this.getServerHostname()) + ":" + this.getServerPort());
-@@ -180,7 +251,7 @@
+@@ -180,7 +252,7 @@
              {
                  this.func_147137_ag().addLanEndpoint(inetaddress, this.getServerPort());
              }
@@ -168,7 +169,7 @@
              {
                  field_155771_h.warn("**** FAILED TO BIND TO PORT!");
                  field_155771_h.warn("The exception was: {}", new Object[] {ioexception.toString()});
-@@ -196,10 +267,17 @@
+@@ -196,10 +268,17 @@
                  field_155771_h.warn("To change this, set \"online-mode\" to \"true\" in the server.properties file.");
              }
  
@@ -188,7 +189,7 @@
  
              if (!PreYggdrasilConverter.func_152714_a(this.settings))
              {
-@@ -208,7 +286,8 @@
+@@ -208,7 +287,8 @@
              else
              {
                  FMLCommonHandler.instance().onServerStarted();
@@ -198,7 +199,7 @@
                  long j = System.nanoTime();
  
                  if (this.getFolderName() == null)
-@@ -274,11 +353,30 @@
+@@ -274,11 +354,30 @@
                      this.theRConThreadMain.startThread();
                  }
  
@@ -229,7 +230,7 @@
      public boolean canStructuresSpawn()
      {
          return this.canSpawnStructures;
-@@ -364,11 +462,19 @@
+@@ -364,11 +463,19 @@
  
      public void executePendingCommands()
      {
