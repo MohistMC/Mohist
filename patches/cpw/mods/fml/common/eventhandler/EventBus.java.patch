@@ -1,0 +1,21 @@
+--- ../src-base/minecraft/cpw/mods/fml/common/eventhandler/EventBus.java
++++ ../src-work/minecraft/cpw/mods/fml/common/eventhandler/EventBus.java
+@@ -19,6 +19,8 @@
+ import cpw.mods.fml.common.FMLLog;
+ import cpw.mods.fml.common.Loader;
+ import cpw.mods.fml.common.ModContainer;
++import org.bukkit.Bukkit;
++import red.mohist.api.event.BukkitHookForgeEvent;
+ 
+ public class EventBus implements IEventExceptionHandler
+ {
+@@ -131,6 +133,9 @@
+ 
+     public boolean post(Event event)
+     {
++        if (Bukkit.getServer() != null && BukkitHookForgeEvent.getHandlerList().getRegisteredListeners().length > 0) {
++            org.bukkit.Bukkit.getPluginManager().callEvent(new BukkitHookForgeEvent(event));
++        }
+         IEventListener[] listeners = event.getListenerList().getListeners(busID);
+         int index = 0;
+         try
