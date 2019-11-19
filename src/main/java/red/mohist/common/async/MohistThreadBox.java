@@ -24,21 +24,7 @@ public class MohistThreadBox {
     public static final ExecutorService ASYNCEXECUTOR = Executors.newSingleThreadExecutor(NamedThreadFactory.CustomName("Mohist Async Task Handler Thread"));
 
     public static final ExecutorService TCW = Executors.newSingleThreadExecutor(NamedThreadFactory.CustomName("TerminalConsoleWriter"));
-
-    /**
-     * Registry order: SoundEvent -> Block
-     */
-    public static final ExecutorService STAGE_BLOCK = Executors.newSingleThreadExecutor(NamedThreadFactory.CustomName("Mohist Parallel Registry Thread"));
-    /**
-     * Registry order: Item -> PotionBrewer & orderless: BlockFire, Biome (After STAGE_BLOCK)
-     */
-    public static final ExecutorService STAGE_BLOCK_BASE  = Executors.newFixedThreadPool(3, NamedThreadFactory.CustomName("Mohist Parallel Registry Thread"));
-
-    /**
-     * Registry order: MobEffectList -> PotionRegistry & orderless: Enchantment, EntityTypes
-     */
-    public static final ExecutorService STAGE_STANDALONE = Executors.newFixedThreadPool(3, NamedThreadFactory.CustomName("Mohist Parallel Registry Thread"));
-
+    
     public static class AssignableThread extends Thread {
         public AssignableThread(Runnable run) {
             super(run);
