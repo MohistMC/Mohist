@@ -24,7 +24,7 @@ public class MohistThreadBox {
     public static final ExecutorService ASYNCEXECUTOR = Executors.newSingleThreadExecutor(NamedThreadFactory.CustomName("Mohist Async Task Handler Thread"));
 
     public static final ExecutorService TCW = Executors.newSingleThreadExecutor(NamedThreadFactory.CustomName("TerminalConsoleWriter"));
-    
+
     public static class AssignableThread extends Thread {
         public AssignableThread(Runnable run) {
             super(run);

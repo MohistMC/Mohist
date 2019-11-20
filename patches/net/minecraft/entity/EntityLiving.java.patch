@@ -8,7 +8,7 @@
  import net.minecraft.init.Blocks;
  import net.minecraft.init.Items;
  import net.minecraft.inventory.EntityEquipmentSlot;
-@@ -57,6 +58,13 @@
+@@ -57,6 +58,14 @@
  import net.minecraft.world.storage.loot.LootTable;
  import net.minecraftforge.fml.relauncher.Side;
  import net.minecraftforge.fml.relauncher.SideOnly;
@@ -19,10 +19,11 @@
 +import org.bukkit.event.entity.EntityTargetEvent;
 +import org.bukkit.event.entity.EntityTargetLivingEntityEvent;
 +import org.bukkit.event.entity.EntityUnleashEvent;
++import red.mohist.common.RealTimeTicking;
  
  public abstract class EntityLiving extends EntityLivingBase
  {
-@@ -68,16 +76,16 @@
+@@ -68,16 +77,16 @@
      protected EntityJumpHelper jumpHelper;
      private final EntityBodyHelper bodyHelper;
      protected PathNavigate navigator;
@@ -45,7 +46,7 @@
      private final Map<PathNodeType, Float> mapPathPriority = Maps.newEnumMap(PathNodeType.class);
      private ResourceLocation deathLootTable;
      private long deathLootTableSeed;
-@@ -171,8 +179,37 @@
+@@ -171,8 +180,37 @@
      {
          this.attackTarget = entitylivingbaseIn;
          net.minecraftforge.common.ForgeHooks.onLivingSetAttackTarget(this, entitylivingbaseIn);
@@ -83,7 +84,7 @@
      public boolean canAttackClass(Class <? extends EntityLivingBase > cls)
      {
          return cls != EntityGhast.class;
-@@ -447,12 +484,21 @@
+@@ -447,12 +485,21 @@
      {
          super.readEntityFromNBT(compound);
  
@@ -107,7 +108,7 @@
  
          if (compound.hasKey("ArmorItems", 9))
          {
-@@ -653,8 +699,14 @@
+@@ -653,8 +700,14 @@
              }
          }
  
@@ -124,7 +125,7 @@
              double d0;
  
              switch (entityequipmentslot.getSlotType())
-@@ -671,7 +723,9 @@
+@@ -671,7 +724,9 @@
  
              if (!itemstack1.isEmpty() && (double)(this.rand.nextFloat() - 0.1F) < d0)
              {
@@ -134,7 +135,7 @@
              }
  
              this.setItemStackToSlot(entityequipmentslot, itemstack);
-@@ -696,7 +750,7 @@
+@@ -696,7 +751,7 @@
          return true;
      }
  
@@ -143,7 +144,7 @@
      {
          return true;
      }
-@@ -722,9 +776,9 @@
+@@ -722,9 +777,9 @@
          else
          {
              Entity entity = this.world.getClosestPlayerToEntity(this, -1.0D);
@@ -155,7 +156,13 @@
                  double d0 = entity.posX - this.posX;
                  double d1 = entity.posY - this.posY;
                  double d2 = entity.posZ - this.posZ;
-@@ -753,6 +807,12 @@
+@@ -749,10 +804,17 @@
+ 
+     protected final void updateEntityActionState()
+     {
+-        ++this.idleTime;
++        int ticks = (int) ((RealTimeTicking) this.getEntityWorld()).getRealTimeTicks();
++        this.idleTime += ticks;
          this.world.profiler.startSection("checkDespawn");
          this.despawnEntity();
          this.world.profiler.endSection();
@@ -168,7 +175,7 @@
          this.world.profiler.startSection("sensing");
          this.senses.clearSensingCache();
          this.world.profiler.endSection();
-@@ -1192,12 +1252,12 @@
+@@ -1192,12 +1254,12 @@
  
      public boolean canPickUpLoot()
      {
@@ -183,7 +190,7 @@
      }
  
      public boolean isNoDespawnRequired()
-@@ -1209,6 +1269,10 @@
+@@ -1209,6 +1271,10 @@
      {
          if (this.getLeashed() && this.getLeashHolder() == player)
          {
@@ -194,7 +201,7 @@
              this.clearLeashed(true, !player.capabilities.isCreativeMode);
              return true;
          }
-@@ -1218,6 +1282,10 @@
+@@ -1218,6 +1284,10 @@
  
              if (itemstack.getItem() == Items.LEAD && this.canBeLeashedTo(player))
              {
@@ -205,7 +212,7 @@
                  this.setLeashHolder(player, true);
                  itemstack.shrink(1);
                  return true;
-@@ -1245,11 +1313,13 @@
+@@ -1245,11 +1315,13 @@
          {
              if (!this.isEntityAlive())
              {
@@ -219,7 +226,7 @@
                  this.clearLeashed(true, true);
              }
          }
-@@ -1264,7 +1334,9 @@
+@@ -1264,7 +1336,9 @@
  
              if (!this.world.isRemote && dropLead)
              {
@@ -229,7 +236,7 @@
              }
  
              if (!this.world.isRemote && sendPacket && this.world instanceof WorldServer)
-@@ -1348,6 +1420,7 @@
+@@ -1348,6 +1422,7 @@
              }
              else
              {
@@ -237,7 +244,7 @@
                  this.clearLeashed(false, true);
              }
          }
-@@ -1448,7 +1521,6 @@
+@@ -1448,7 +1523,6 @@
          ON_GROUND,
          IN_AIR,
          IN_WATER;

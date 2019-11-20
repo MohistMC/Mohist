@@ -8,7 +8,15 @@
  import net.minecraft.util.DamageSource;
  import net.minecraft.util.EnumHand;
  import net.minecraft.util.ResourceLocation;
-@@ -38,6 +39,8 @@
+@@ -30,6 +31,7 @@
+ import net.minecraft.world.storage.loot.LootTableList;
+ import net.minecraftforge.fml.relauncher.Side;
+ import net.minecraftforge.fml.relauncher.SideOnly;
++import red.mohist.common.RealTimeTicking;
+ 
+ public class EntityZombieVillager extends EntityZombie
+ {
+@@ -38,6 +40,8 @@
      private int conversionTime;
      private UUID converstionStarter;
  
@@ -17,7 +25,7 @@
      public EntityZombieVillager(World worldIn)
      {
          super(worldIn);
-@@ -110,6 +113,11 @@
+@@ -110,6 +114,11 @@
          if (!this.world.isRemote && this.isConverting())
          {
              int i = this.getConversionProgress();
@@ -29,7 +37,7 @@
              this.conversionTime -= i;
  
              if (this.conversionTime <= 0)
-@@ -145,7 +153,7 @@
+@@ -145,7 +154,7 @@
          }
      }
  
@@ -38,7 +46,7 @@
      {
          return !this.isConverting();
      }
-@@ -203,7 +211,7 @@
+@@ -203,7 +212,7 @@
              entityvillager.setAlwaysRenderNameTag(this.getAlwaysRenderNameTag());
          }
  
@@ -47,3 +55,14 @@
  
          if (this.converstionStarter != null)
          {
+@@ -249,8 +258,8 @@
+                 }
+             }
+         }
+-
+-        return i;
++        int ticks = (int) ((RealTimeTicking) this.getEntityWorld()).getRealTimeTicks();
++        return i * ticks;
+     }
+ 
+     protected float getSoundPitch()

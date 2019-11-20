@@ -8,17 +8,18 @@
  import net.minecraft.entity.MoverType;
  import net.minecraft.entity.player.EntityPlayer;
  import net.minecraft.init.Enchantments;
-@@ -15,6 +16,9 @@
+@@ -15,6 +16,10 @@
  import net.minecraft.world.World;
  import net.minecraftforge.fml.relauncher.Side;
  import net.minecraftforge.fml.relauncher.SideOnly;
 +import org.bukkit.craftbukkit.v1_12_R1.event.CraftEventFactory;
 +import org.bukkit.event.entity.EntityTargetEvent;
 +import org.bukkit.event.entity.EntityTargetLivingEntityEvent;
++import red.mohist.common.RealTimeTicking;
  
  public class EntityXPOrb extends Entity
  {
-@@ -74,6 +78,7 @@
+@@ -74,10 +79,12 @@
      public void onUpdate()
      {
          super.onUpdate();
@@ -26,7 +27,13 @@
  
          if (this.delayBeforeCanPickup > 0)
          {
-@@ -117,18 +122,27 @@
+-            --this.delayBeforeCanPickup;
++            int ticks = (int) ((RealTimeTicking) this.getEntityWorld()).getRealTimeTicks();
++            this.delayBeforeCanPickup = Math.max(0, this.delayBeforeCanPickup - ticks);
+         }
+ 
+         this.prevPosX = this.posX;
+@@ -117,18 +124,27 @@
  
          if (this.closestPlayer != null)
          {
@@ -65,7 +72,17 @@
              }
          }
  
-@@ -195,22 +209,22 @@
+@@ -152,7 +168,8 @@
+         }
+ 
+         ++this.xpColor;
+-        ++this.xpOrbAge;
++        int ticks = (int) ((RealTimeTicking) this.getEntityWorld()).getRealTimeTicks();
++        this.xpOrbAge += ticks;
+ 
+         if (this.xpOrbAge >= 6000)
+         {
+@@ -195,22 +212,22 @@
      {
          compound.setShort("Health", (short)this.xpOrbHealth);
          compound.setShort("Age", (short)this.xpOrbAge);
@@ -92,7 +109,7 @@
                  if (net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.player.PlayerPickupXpEvent(entityIn, this))) return;
                  entityIn.xpCooldown = 2;
                  entityIn.onItemPickup(this, 1);
-@@ -220,13 +234,17 @@
+@@ -220,13 +237,17 @@
                  {
                      float ratio = itemstack.getItem().getXpRepairRatio(itemstack);
                      int i = Math.min(roundAverage(this.xpValue * ratio), itemstack.getItemDamage());
@@ -113,7 +130,7 @@
                  }
  
                  this.setDead();
-@@ -296,6 +314,24 @@
+@@ -296,6 +317,24 @@
  
      public static int getXPSplit(int expValue)
      {

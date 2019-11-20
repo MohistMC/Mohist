@@ -1,8 +1,9 @@
 --- ../src-base/minecraft/net/minecraft/server/management/PlayerInteractionManager.java
 +++ ../src-work/minecraft/net/minecraft/server/management/PlayerInteractionManager.java
-@@ -1,19 +1,24 @@
+@@ -1,19 +1,25 @@
  package net.minecraft.server.management;
  
++import java.util.Objects;
  import net.minecraft.block.Block;
 +import net.minecraft.block.BlockCake;
  import net.minecraft.block.BlockChest;
@@ -26,7 +27,7 @@
  import net.minecraft.tileentity.TileEntity;
  import net.minecraft.tileentity.TileEntityChest;
  import net.minecraft.util.ActionResult;
-@@ -25,6 +30,10 @@
+@@ -25,6 +31,11 @@
  import net.minecraft.world.ILockableContainer;
  import net.minecraft.world.World;
  import net.minecraft.world.WorldServer;
@@ -34,10 +35,11 @@
 +import org.bukkit.event.Event;
 +import org.bukkit.event.block.Action;
 +import org.bukkit.event.player.PlayerInteractEvent;
++import red.mohist.common.RealTimeTicking;
  
  public class PlayerInteractionManager
  {
-@@ -50,7 +59,7 @@
+@@ -50,7 +61,7 @@
          this.gameType = type;
          type.configurePlayerCapabilities(this.player.capabilities);
          this.player.sendPlayerAbilities();
@@ -46,16 +48,17 @@
          this.world.updateAllPlayersSleepingFlag();
      }
  
-@@ -81,7 +90,7 @@
+@@ -81,7 +92,8 @@
  
      public void updateBlockRemoving()
      {
 -        ++this.curblockDamage;
-+        this.curblockDamage = MinecraftServer.currentTick;  // CraftBukkit
++        int ticks = (int) ((RealTimeTicking) Objects.requireNonNull(this.world.getMinecraftServer())).getRealTimeTicks();
++        this.curblockDamage += ticks;
  
          if (this.receivedFinishDiggingPacket)
          {
-@@ -137,6 +146,19 @@
+@@ -137,6 +149,19 @@
  
      public void onBlockClicked(BlockPos pos, EnumFacing side)
      {
@@ -75,7 +78,7 @@
          double reachDist = player.getEntityAttribute(EntityPlayer.REACH_DISTANCE).getAttributeValue();
          net.minecraftforge.event.entity.player.PlayerInteractEvent.LeftClickBlock event = net.minecraftforge.common.ForgeHooks.onLeftClickBlock(player, pos, side, net.minecraftforge.common.ForgeHooks.rayTraceEyeHitVec(player, reachDist + 1));
          if (event.isCanceled())
-@@ -185,11 +207,24 @@
+@@ -185,11 +210,24 @@
              this.initialDamage = this.curblockDamage;
              float f = 1.0F;
  
@@ -102,7 +105,7 @@
                      this.world.extinguishFire((EntityPlayer)null, pos, side);
                  }
                  else
-@@ -200,6 +235,26 @@
+@@ -200,6 +238,26 @@
                  }
                  f = iblockstate.getPlayerRelativeBlockHardness(this.player, this.player.world, pos);
              }
@@ -129,7 +132,7 @@
              if (event.getUseItem() == net.minecraftforge.fml.common.eventhandler.Event.Result.DENY)
              {
                  if (f >= 1.0F)
-@@ -221,6 +276,7 @@
+@@ -221,6 +279,7 @@
                  this.destroyPos = pos;
                  int i = (int)(f * 10.0F);
                  this.world.sendBlockBreakProgress(this.player.getEntityId(), pos, i);
@@ -137,7 +140,7 @@
                  this.durabilityRemainingOnBlock = i;
              }
          }
-@@ -230,6 +286,7 @@
+@@ -230,6 +289,7 @@
      {
          if (pos.equals(this.destroyPos))
          {
@@ -145,7 +148,7 @@
              int i = this.curblockDamage - this.initialDamage;
              IBlockState iblockstate = this.world.getBlockState(pos);
  
-@@ -251,6 +308,15 @@
+@@ -251,6 +311,15 @@
                      this.initialBlockDamage = this.initialDamage;
                  }
              }
@@ -161,7 +164,7 @@
          }
      }
  
-@@ -279,25 +345,25 @@
+@@ -279,25 +348,25 @@
      }
  
      public boolean tryHarvestBlock(BlockPos pos)
@@ -194,7 +197,7 @@
                  ItemStack stack = player.getHeldItemMainhand();
                  if (!stack.isEmpty() && stack.getItem().onBlockStartBreak(stack, pos, player)) return false;
  
-@@ -305,33 +371,33 @@
+@@ -305,33 +374,33 @@
                  boolean flag1 = false;
  
                  if (this.isCreative())
@@ -235,7 +238,7 @@
                  }
                  return flag1;
              }
-@@ -396,105 +462,156 @@
+@@ -396,105 +465,156 @@
          }
      }
  
