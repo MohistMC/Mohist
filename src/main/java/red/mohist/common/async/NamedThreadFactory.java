@@ -1,6 +1,5 @@
 package red.mohist.common.async;
 
-import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import java.util.concurrent.ThreadFactory;
 
 /**
@@ -21,9 +20,5 @@ public class NamedThreadFactory implements ThreadFactory {
         thread.setName(name + " - " + (++id));
         thread.setPriority(7);
         return thread;
-    }
-
-    public static ThreadFactory CustomName(String name){
-        return new ThreadFactoryBuilder().setNameFormat(name + " - %1$d").build();
     }
 }
