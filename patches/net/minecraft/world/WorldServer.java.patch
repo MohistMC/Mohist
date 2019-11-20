@@ -1,11 +1,10 @@
 --- ../src-base/minecraft/net/minecraft/world/WorldServer.java
 +++ ../src-work/minecraft/net/minecraft/world/WorldServer.java
-@@ -14,27 +14,27 @@
+@@ -14,27 +14,26 @@
  import java.util.Set;
  import java.util.TreeSet;
  import java.util.UUID;
 -import java.util.function.Predicate;
-+import java.util.concurrent.RecursiveAction;
 +import java.util.logging.Level;
  import java.util.stream.Collectors;
  import javax.annotation.Nullable;
@@ -33,7 +32,7 @@
  import net.minecraft.entity.player.EntityPlayer;
  import net.minecraft.entity.player.EntityPlayerMP;
  import net.minecraft.init.Blocks;
-@@ -50,6 +50,30 @@
+@@ -50,6 +49,30 @@
  import net.minecraft.scoreboard.ServerScoreboard;
  import net.minecraft.server.MinecraftServer;
  import net.minecraft.server.management.PlayerChunkMap;
@@ -64,7 +63,7 @@
  import net.minecraft.util.EnumParticleTypes;
  import net.minecraft.util.IProgressUpdate;
  import net.minecraft.util.IThreadListener;
-@@ -77,16 +101,21 @@
+@@ -77,16 +100,21 @@
  import net.minecraft.world.storage.WorldInfo;
  import net.minecraft.world.storage.WorldSavedDataCallableSave;
  import net.minecraft.world.storage.loot.LootTableManager;
@@ -76,9 +75,10 @@
  import org.apache.logging.log4j.Logger;
 +import org.bukkit.event.entity.CreatureSpawnEvent;
 +import org.bukkit.event.weather.LightningStrikeEvent;
-+import red.mohist.configuration.MohistConfig;
++import red.mohist.common.RealTimeTicking;
  
- public class WorldServer extends World implements IThreadListener
+-public class WorldServer extends World implements IThreadListener
++public class WorldServer extends World implements IThreadListener, RealTimeTicking
  {
      private static final Logger LOGGER = LogManager.getLogger();
      private final MinecraftServer mcServer;
@@ -87,7 +87,7 @@
      private final PlayerChunkMap playerChunkMap;
      private final Set<NextTickListEntry> pendingTickListEntriesHashSet = Sets.<NextTickListEntry>newHashSet();
      private final TreeSet<NextTickListEntry> pendingTickListEntriesTreeSet = new TreeSet<NextTickListEntry>();
-@@ -105,31 +134,69 @@
+@@ -105,31 +133,69 @@
      protected Set<ChunkPos> doneChunks = new java.util.HashSet<ChunkPos>();
      public List<Teleporter> customTeleporters = new ArrayList<Teleporter>();
  
@@ -160,7 +160,7 @@
          if (villagecollection == null)
          {
              this.villageCollection = new VillageCollection(this);
-@@ -140,20 +207,31 @@
+@@ -140,20 +206,31 @@
              this.villageCollection = villagecollection;
              this.villageCollection.setWorldsForAll(this);
          }
@@ -201,7 +201,7 @@
          this.functionManager = new FunctionManager(new File(new File(this.saveHandler.getWorldDirectory(), "data"), "functions"), this.mcServer);
          this.getWorldBorder().setCenter(this.worldInfo.getBorderCenterX(), this.worldInfo.getBorderCenterZ());
          this.getWorldBorder().setDamageAmount(this.worldInfo.getBorderDamagePerBlock());
-@@ -174,6 +252,144 @@
+@@ -174,6 +251,144 @@
          return this;
      }
  
@@ -346,7 +346,7 @@
      public void tick()
      {
          super.tick();
-@@ -198,9 +414,12 @@
+@@ -198,9 +413,12 @@
  
          this.profiler.startSection("mobSpawner");
  
@@ -360,7 +360,7 @@
          }
  
          this.profiler.endStartSection("chunkSource");
-@@ -212,11 +431,14 @@
+@@ -212,11 +430,14 @@
              this.setSkylightSubtracted(j);
          }
  
@@ -377,7 +377,7 @@
          }
  
          this.profiler.endStartSection("tickPending");
-@@ -236,6 +458,7 @@
+@@ -236,6 +457,7 @@
          }
          this.profiler.endSection();
          this.sendQueuedBlockEvents();
@@ -385,7 +385,7 @@
      }
  
      @Nullable
-@@ -268,7 +491,7 @@
+@@ -268,7 +490,7 @@
                  {
                      ++i;
                  }
@@ -394,7 +394,7 @@
                  {
                      ++j;
                  }
-@@ -302,15 +525,21 @@
+@@ -302,15 +524,21 @@
      {
          if (this.allPlayersSleeping && !this.isRemote)
          {
@@ -418,7 +418,7 @@
          }
          else
          {
-@@ -346,7 +575,7 @@
+@@ -346,7 +574,7 @@
          this.worldInfo.setSpawnZ(j);
      }
  
@@ -427,7 +427,7 @@
      {
          return this.getChunkProvider().chunkExists(x, z);
      }
-@@ -355,7 +584,7 @@
+@@ -355,7 +583,7 @@
      {
          this.profiler.startSection("playerCheckLight");
  
@@ -436,7 +436,7 @@
          {
              int i = this.rand.nextInt(this.playerEntities.size());
              EntityPlayer entityplayer = this.playerEntities.get(i);
-@@ -392,97 +621,94 @@
+@@ -392,97 +620,94 @@
              {
                  this.profiler.startSection("getChunk");
                  Chunk chunk = iterator.next();
@@ -602,7 +602,7 @@
              this.profiler.endSection();
          }
      }
-@@ -611,6 +837,7 @@
+@@ -611,6 +836,7 @@
  
          this.provider.onWorldUpdateEntities();
          super.updateEntities();
@@ -610,7 +610,7 @@
      }
  
      protected void tickPlayers()
-@@ -682,79 +909,70 @@
+@@ -682,79 +908,70 @@
          {
              return false;
          }
@@ -738,7 +738,7 @@
          }
      }
  
-@@ -766,6 +984,7 @@
+@@ -766,6 +983,7 @@
          int j = i + 16 + 2;
          int k = (chunkpos.z << 4) - 2;
          int l = k + 16 + 2;
@@ -746,7 +746,7 @@
          return this.getPendingBlockUpdates(new StructureBoundingBox(i, 0, k, j, 256, l), remove);
      }
  
-@@ -817,21 +1036,6 @@
+@@ -817,21 +1035,6 @@
          return list;
      }
  
@@ -768,7 +768,7 @@
      private boolean canSpawnNPCs()
      {
          return this.mcServer.getCanSpawnNPCs();
-@@ -845,9 +1049,53 @@
+@@ -845,9 +1048,53 @@
      protected IChunkProvider createChunkProvider()
      {
          IChunkLoader ichunkloader = this.saveHandler.getChunkLoader(this.provider);
@@ -823,7 +823,7 @@
      public boolean isBlockModifiable(EntityPlayer player, BlockPos pos)
      {
          return super.isBlockModifiable(player, pos);
-@@ -921,6 +1169,22 @@
+@@ -921,6 +1168,22 @@
          {
              if (net.minecraftforge.event.ForgeEventFactory.onCreateWorldSpawn(this, settings)) return;
              this.findingSpawnPoint = true;
@@ -846,7 +846,7 @@
              BiomeProvider biomeprovider = this.provider.getBiomeProvider();
              List<Biome> list = biomeprovider.getBiomesToSpawnIn();
              Random random = new Random(this.getSeed());
-@@ -941,7 +1205,7 @@
+@@ -941,7 +1204,7 @@
  
              int l = 0;
  
@@ -855,7 +855,7 @@
              {
                  i += random.nextInt(64) - random.nextInt(64);
                  k += random.nextInt(64) - random.nextInt(64);
-@@ -987,33 +1251,27 @@
+@@ -987,33 +1250,27 @@
      }
  
      public void saveAllChunks(boolean all, @Nullable IProgressUpdate progressCallback) throws MinecraftException
@@ -894,7 +894,7 @@
          }
      }
  
-@@ -1039,6 +1297,12 @@
+@@ -1039,6 +1296,12 @@
              }
          }
  
@@ -907,7 +907,7 @@
          this.worldInfo.setBorderSize(this.getWorldBorder().getDiameter());
          this.worldInfo.getBorderCenterX(this.getWorldBorder().getCenterX());
          this.worldInfo.getBorderCenterZ(this.getWorldBorder().getCenterZ());
-@@ -1058,6 +1322,12 @@
+@@ -1058,6 +1321,12 @@
          return this.canAddEntity(entityIn) ? super.spawnEntity(entityIn) : false;
      }
  
@@ -920,7 +920,7 @@
      public void loadEntities(Collection<Entity> entityCollection)
      {
          for (Entity entity : Lists.newArrayList(entityCollection))
-@@ -1074,7 +1344,6 @@
+@@ -1074,7 +1343,6 @@
      {
          if (entityIn.isDead)
          {
@@ -928,7 +928,7 @@
              return false;
          }
          else
-@@ -1085,7 +1354,7 @@
+@@ -1085,7 +1353,7 @@
              {
                  Entity entity = this.entitiesByUuid.get(uuid);
  
@@ -937,7 +937,7 @@
                  {
                      this.unloadedEntityList.remove(entity);
                  }
-@@ -1093,7 +1362,6 @@
+@@ -1093,7 +1361,6 @@
                  {
                      if (!(entityIn instanceof EntityPlayer))
                      {
@@ -945,7 +945,7 @@
                          return false;
                      }
  
-@@ -1141,9 +1409,17 @@
+@@ -1141,9 +1408,17 @@
  
      public boolean addWeatherEffect(Entity entityIn)
      {
@@ -964,7 +964,7 @@
              return true;
          }
          else
-@@ -1164,11 +1440,15 @@
+@@ -1164,11 +1439,15 @@
  
      public Explosion newExplosion(@Nullable Entity entityIn, double x, double y, double z, float strength, boolean isFlaming, boolean isSmoking)
      {
@@ -984,7 +984,7 @@
          if (!isSmoking)
          {
              explosion.clearAffectedBlockPositions();
-@@ -1211,7 +1491,8 @@
+@@ -1211,7 +1490,8 @@
              {
                  if (this.fireBlockEvent(blockeventdata))
                  {
@@ -994,7 +994,7 @@
                  }
              }
  
-@@ -1298,11 +1579,19 @@
+@@ -1298,11 +1578,19 @@
  
      public void spawnParticle(EnumParticleTypes particleType, boolean longDistance, double xCoord, double yCoord, double zCoord, int numberOfParticles, double xOffset, double yOffset, double zOffset, double particleSpeed, int... particleArguments)
      {
@@ -1014,7 +1014,7 @@
              this.sendPacketWithinDistance(entityplayermp, longDistance, xCoord, yCoord, zCoord, spacketparticles);
          }
      }
-@@ -1362,9 +1651,9 @@
+@@ -1362,9 +1650,9 @@
      }
  
      static class ServerBlockEventList extends ArrayList<BlockEventData>
