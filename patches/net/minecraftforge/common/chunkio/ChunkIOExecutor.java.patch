@@ -11,7 +11,7 @@
  import java.util.concurrent.LinkedBlockingQueue;
  import java.util.concurrent.ThreadFactory;
  import java.util.concurrent.ThreadPoolExecutor;
-@@ -29,15 +31,17 @@
+@@ -29,11 +31,13 @@
  
  import com.google.common.collect.Maps;
  
@@ -25,20 +25,6 @@
  
  public class ChunkIOExecutor
  {
--    private static final int BASE_THREADS = 1;
-+    private static final int BASE_THREADS = 2;
-     private static final int PLAYERS_PER_THREAD = 50;
- 
-     private static final Map<QueuedChunk, ChunkIOProvider> tasks = Maps.newConcurrentMap();
-@@ -49,7 +53,7 @@
-             @Override
-             public Thread newThread(Runnable r)
-             {
--                Thread thread = new Thread(r, "Chunk I/O Executor Thread-" + count.getAndIncrement());
-+                Thread thread = new Thread(r, "Forge Chunk I/O Executor Thread-" + count.getAndIncrement());
-                 thread.setDaemon(true);
-                 return thread;
-             }
 @@ -91,7 +95,27 @@
              task = new ChunkIOProvider(key, loader, provider);
              task.run();
