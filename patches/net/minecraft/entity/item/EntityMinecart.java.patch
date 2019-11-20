@@ -245,6 +245,15 @@
          }
      }
  
+@@ -522,7 +548,7 @@
+         this.motionZ = d5 * d2 / d3;
+         Entity entity = this.getPassengers().isEmpty() ? null : (Entity)this.getPassengers().get(0);
+ 
+-        if (entity instanceof EntityLivingBase)
++        if (entity instanceof EntityPlayer) // Fix MC-64836
+         {
+             double d6 = (double)((EntityLivingBase)entity).moveForward;
+ 
 @@ -668,7 +694,7 @@
  
      protected void applyDrag()
