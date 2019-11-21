@@ -325,16 +325,6 @@ public class MohistDevPlugin extends DevBasePlugin {
 
     @SuppressWarnings("UnstableApiUsage")
     private void createPackageTasks() {
-        /*
-        ChangelogTask log = makeTask("createChangelog", ChangelogTask.class);
-        log.getOutputs().upToDateWhen(Constants.CALL_FALSE);
-        log.setServerRoot(delayedString("{JENKINS_SERVER}"));
-        log.setJobName(delayedString("{JENKINS_JOB}"));
-        log.setAuthName(delayedString("{JENKINS_AUTH_NAME}"));
-        log.setAuthPassword(delayedString("{JENKINS_AUTH_PASSWORD}"));
-        log.setTargetBuild(delayedString("{BUILD_NUM}"));
-        log.setOutput(delayedFile(CHANGELOG));
-         */
 
         final DelayedJar uni = makeTask("packageUniversal", DelayedJar.class);
         uni.setClassifier(delayedString("B{BUILD_NUM}").call());

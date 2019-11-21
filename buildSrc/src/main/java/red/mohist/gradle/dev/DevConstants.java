@@ -105,7 +105,7 @@ public class DevConstants {
     static final String FML_RESOURCES = "{FML_DIR}/src/main/resources";
     static final String FML_TEST_SOURCES = "{FML_DIR}/src/test/java";
     static final String FML_TEST_RES = "{FML_DIR}/src/test/resources";
-    static final String FML_VERSIONF = "{FML_DIR}/build/tmp/fmlversion.properties";
+    static final String FML_VERSIONF = "src/main/resources/fmlversion.properties";
     static final String FML_LICENSE = "{FML_DIR}/LICENSE-fml.txt";
     static final String FML_CREDITS = "{FML_DIR}/CREDITS-fml.txt";
     static final String FML_LOGO = "{FML_DIR}/jsons/big_logo.png";
