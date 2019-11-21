@@ -128,22 +128,11 @@ task jar(type: Jar, dependsOn: packageUniversal) {
 
 tasks.packageInstaller.onlyIf { false }
 
-task signJars(type: Sign, dependsOn: [packageUniversal, jar]) {
-    sign packageUniversal
-    sign jar
-}
-
-task preparePublication(dependsOn: [signJars]) {}
-
 tasks.generateProjectCauldron << {
     def file = new File('eclipse/cauldron/build.gradle')
     file.append('''
 repositories {
     clear()
-    maven {
-        name 'prok'
-        url 'https://github.com/juanmuscaria/maven/raw/master/ThermosLibs'
-    }
     maven {
         name 'forge'
         url 'http://files.minecraftforge.net/maven/'
