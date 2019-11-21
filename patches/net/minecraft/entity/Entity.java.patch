@@ -556,11 +556,13 @@
              compound.setTag("Rotation", this.newFloatNBTList(this.rotationYaw, this.rotationPitch));
              compound.setFloat("FallDistance", this.fallDistance);
              compound.setShort("Fire", (short)this.fire);
-@@ -1696,7 +1864,15 @@
+@@ -1696,7 +1864,17 @@
              compound.setBoolean("Invulnerable", this.invulnerable);
              compound.setInteger("PortalCooldown", this.timeUntilPortal);
              compound.setUniqueId("UUID", this.getUniqueID());
 -
++            AxisAlignedBB aabb = this.getEntityBoundingBox();
++            compound.setTag("AABB", this.newDoubleNBTList(aabb.minX, aabb.minY, aabb.minZ, aabb.maxX, aabb.maxY, aabb.maxZ));
 +            // CraftBukkit start
 +            // PAIL: Check above UUID reads 1.8 properly, ie: UUIDMost / UUIDLeast
 +            if (this.world != null) {
@@ -573,7 +575,7 @@
              if (this.hasCustomName())
              {
                  compound.setString("CustomName", this.getCustomNameTag());
-@@ -1761,7 +1937,6 @@
+@@ -1761,7 +1939,6 @@
                      compound.setTag("Passengers", nbttaglist1);
                  }
              }
@@ -581,7 +583,7 @@
              return compound;
          }
          catch (Throwable throwable)
-@@ -1784,21 +1959,6 @@
+@@ -1784,21 +1961,6 @@
              this.motionY = nbttaglist2.getDoubleAt(1);
              this.motionZ = nbttaglist2.getDoubleAt(2);
  
@@ -603,11 +605,29 @@
              this.posX = nbttaglist.getDoubleAt(0);
              this.posY = nbttaglist.getDoubleAt(1);
              this.posZ = nbttaglist.getDoubleAt(2);
-@@ -1869,6 +2029,54 @@
+@@ -1869,6 +2031,72 @@
              {
                  this.setPosition(this.posX, this.posY, this.posZ);
              }
 +
++            if (compound.hasKey("AABB", 9))
++            {
++                NBTTagList aabb_tag = compound.getTagList("AABB", 6);
++
++                AxisAlignedBB aabb = new AxisAlignedBB(aabb_tag.getDoubleAt(0), aabb_tag.getDoubleAt(1), aabb_tag.getDoubleAt(2), aabb_tag.getDoubleAt(3), aabb_tag.getDoubleAt(4), aabb_tag.getDoubleAt(5));
++
++                double deltaX = ((aabb.minX + aabb.maxX) / 2.0D) - this.posX;
++                double deltaY = aabb.minY - this.posY;
++                double deltaZ = ((aabb.minZ + aabb.maxZ) / 2.0D) - this.posZ;
++
++                // If the position and AABB center point are > 0.1 blocks apart then do not restore the AABB. In vanilla
++                // this should never happen, but mods might not be aware that the AABB is stored and that the entity
++                // position will be reset to it. A good example of this is the ExtraUtils2 golden lasso.
++                if (((deltaX * deltaX) + (deltaY * deltaY) + (deltaZ * deltaZ)) < 0.01D)
++                {
++                    this.setEntityBoundingBox(aabb);
++                }
++            }
 +            if (this instanceof EntityLivingBase) {
 +                EntityLivingBase entity = (EntityLivingBase) this;
 +                this.ticksExisted = compound.getInteger("Spigot.ticksLived");
@@ -658,7 +678,7 @@
          }
          catch (Throwable throwable)
          {
-@@ -1885,7 +2093,7 @@
+@@ -1885,7 +2113,7 @@
      }
  
      @Nullable
@@ -667,7 +687,7 @@
      {
          ResourceLocation resourcelocation = EntityList.getKey(this);
          return resourcelocation == null ? null : resourcelocation.toString();
-@@ -2110,6 +2318,28 @@
+@@ -2110,6 +2338,28 @@
          }
          else
          {
@@ -696,7 +716,7 @@
              if (!this.world.isRemote && passenger instanceof EntityPlayer && !(this.getControllingPassenger() instanceof EntityPlayer))
              {
                  this.riddenByEntities.add(0, passenger);
-@@ -2129,6 +2359,27 @@
+@@ -2129,6 +2379,27 @@
          }
          else
          {
@@ -724,7 +744,7 @@
              this.riddenByEntities.remove(passenger);
              passenger.rideCooldown = 60;
          }
-@@ -2325,12 +2576,12 @@
+@@ -2325,12 +2596,12 @@
          this.setFlag(5, invisible);
      }
  
@@ -739,7 +759,7 @@
      {
          byte b0 = ((Byte)this.dataManager.get(FLAGS)).byteValue();
  
-@@ -2351,17 +2602,52 @@
+@@ -2351,17 +2622,52 @@
  
      public void setAir(int air)
      {
@@ -794,7 +814,7 @@
          }
      }
  
-@@ -2502,7 +2788,7 @@
+@@ -2502,7 +2808,7 @@
  
      public String toString()
      {
@@ -803,7 +823,7 @@
      }
  
      public boolean isEntityInvulnerable(DamageSource source)
-@@ -2540,7 +2826,7 @@
+@@ -2540,7 +2846,7 @@
      public Entity changeDimension(int dimensionIn)
      {
          if (this.world.isRemote || this.isDead) return null;
@@ -812,7 +832,7 @@
      }
  
      @Nullable // Forge: Entities that require custom handling should override this method, not the other
-@@ -2551,53 +2837,73 @@
+@@ -2551,53 +2857,73 @@
              if (!net.minecraftforge.common.ForgeHooks.onTravelToDimension(this, dimensionIn)) return null;
              this.world.profiler.startSection("changeDimension");
              MinecraftServer minecraftserver = this.getServer();
@@ -925,7 +945,7 @@
              this.world.profiler.endStartSection("reloading");
              Entity entity = EntityList.newEntity(this.getClass(), worldserver1);
  
-@@ -2605,28 +2911,26 @@
+@@ -2605,28 +2931,26 @@
              {
                  entity.copyDataFromOld(this);
  
@@ -963,7 +983,7 @@
              return entity;
          }
          else
-@@ -2755,6 +3059,11 @@
+@@ -2755,6 +3079,11 @@
  
      public void setCustomNameTag(String name)
      {
@@ -975,7 +995,7 @@
          this.dataManager.set(CUSTOM_NAME, name);
      }
  
-@@ -2838,7 +3147,25 @@
+@@ -2838,7 +3167,25 @@
  
      public void setEntityBoundingBox(AxisAlignedBB bb)
      {
@@ -1002,7 +1022,7 @@
      }
  
      public float getEyeHeight()
-@@ -2870,6 +3197,11 @@
+@@ -2870,6 +3217,11 @@
          return true;
      }
  
@@ -1014,7 +1034,7 @@
      public BlockPos getPosition()
      {
          return new BlockPos(this.posX, this.posY + 0.5D, this.posZ);
-@@ -2897,11 +3229,11 @@
+@@ -2897,11 +3249,11 @@
  
      public void setCommandStat(CommandResultStats.Type type, int amount)
      {
@@ -1030,7 +1050,7 @@
  
      @Nullable
      public MinecraftServer getServer()
-@@ -2974,7 +3306,6 @@
+@@ -2974,7 +3326,6 @@
      public void onRemovedFromWorld() {
          this.isAddedToWorld = false;
      }
@@ -1038,7 +1058,7 @@
      /**
       * Returns a NBTTagCompound that can be used to store custom data for this entity.
       * It will be written, and read from disc, so it persists over world saves.
-@@ -3030,7 +3361,7 @@
+@@ -3030,7 +3381,7 @@
          {
              return ((net.minecraft.entity.item.EntityMinecart)this).getCartItem();
          }
@@ -1047,7 +1067,7 @@
          {
              return new ItemStack(((EntityBoat)this).getItemBoat());
          }
-@@ -3109,14 +3440,14 @@
+@@ -3109,14 +3460,14 @@
      }
  
      @Override
@@ -1064,7 +1084,7 @@
      {
          return capabilities == null ? null : capabilities.getCapability(capability, facing);
      }
-@@ -3319,7 +3650,7 @@
+@@ -3319,7 +3670,7 @@
          return SoundCategory.NEUTRAL;
      }
  

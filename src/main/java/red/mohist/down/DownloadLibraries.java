@@ -1,18 +1,12 @@
 package red.mohist.down;
 
-import static it.unimi.dsi.fastutil.io.TextIO.BUFFER_SIZE;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Enumeration;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
-
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 import red.mohist.configuration.MohistConfigUtil;
 import red.mohist.util.FileUtil;
 import red.mohist.util.HttpUtil;
@@ -71,7 +65,7 @@ public class DownloadLibraries implements Runnable {
                     InputStream is = zipFile.getInputStream(entry);
                     FileOutputStream fos = new FileOutputStream(targetFile);
                     int len;
-                    byte[] buf = new byte[BUFFER_SIZE];
+                    byte[] buf = new byte[8 * 1024];
                     while ((len = is.read(buf)) != -1) {
                         fos.write(buf, 0, len);
                     }
