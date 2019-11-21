@@ -1,5 +1,4 @@
-import thermos.CreateChangelog
-import thermos.InstallBundle
+import red.mohist.gradle.dev.MohistDevPlugin
 
 buildscript {
     repositories {
@@ -10,13 +9,11 @@ buildscript {
     }
     dependencies {
         classpath 'net.minecraftforge.gradle:ForgeGradle:1.2-SNAPSHOT'
-        classpath 'gradle.plugin.net.nemerosa:versioning:2.8.2'
     }
 }
 
 apply plugin: 'maven'
-apply plugin: 'cauldron'
-apply plugin: 'net.nemerosa.versioning'
+apply plugin: MohistDevPlugin
 
 repositories {
     mavenLocal()
@@ -40,10 +37,6 @@ repositories {
         name 'spigot-public'
         url 'https://hub.spigotmc.org/nexus/content/repositories/public/'
     }
-    maven {
-        name 'uraniummc'
-        url 'https://repo.uraniummc.cc/repository/maven-public/'
-    }
 
     mavenCentral()
 
@@ -59,7 +52,7 @@ minecraft {
 }
 
 group = 'red.mohist'
-version = '1.7.10-' +  versioning.info.build
+version = '1.7.10'
 
 configurations {
     compile.extendsFrom exported
@@ -94,7 +87,6 @@ dependencies {
     libraries 'org.xerial:sqlite-jdbc:3.7.2'
     libraries 'mysql:mysql-connector-java:5.1.14'
     libraries 'javax.persistence:persistence-api:1.0.2'
-    libraries 'net.minecraft:server:1.7.10'
     libraries 'org.apache.httpcomponents:httpclient:4.4.1'
     libraries 'net.openhft:affinity:3.0.1'
     libraries 'org.fusesource.jansi:jansi:1.11'
@@ -112,6 +104,7 @@ def generateClasspath() {
         def jar = "${it.group.replace('.', '/')}/${it.name}/${it.version}/${it.name}-${it.version}.jar"
         classpath += " libraries/${jar}"
     }
+    classpath += " libraries/net/minecraft/server/1.7.10/server-1.7.10.jar"
     return classpath.trim()
 }
 
@@ -133,29 +126,10 @@ task jar(type: Jar, dependsOn: packageUniversal) {
     from zipTree(tasks.packageUniversal.archivePath)
 }
 
-tasks.createChangelog.onlyIf { false }
 tasks.packageInstaller.onlyIf { false }
 
-task packageChangelog(type: CreateChangelog) {
-
-}
-
-task installBundle(type: InstallBundle, dependsOn: jar) {
-    serverJar tasks.jar.archivePath
-    bootstrapClasspath configurations.bootstrap
-    bootstrapMain 'pw.prok.bootstrap.Main'
-}
-
-task packageBundle(type: Zip, dependsOn: installBundle) {
-    classifier = 'bundle'
-    from fileTree(installBundle.installLocation)
-    from packageUniversal
-}
-
-task signJars(type: Sign, dependsOn: [packageUniversal, packageChangelog, packageBundle, jar]) {
+task signJars(type: Sign, dependsOn: [packageUniversal, jar]) {
     sign packageUniversal
-    sign packageChangelog
-    sign packageBundle
     sign jar
 }
 
@@ -164,26 +138,28 @@ task preparePublication(dependsOn: [signJars]) {}
 tasks.generateProjectCauldron << {
     def file = new File('eclipse/cauldron/build.gradle')
     file.append('''
-    repositories {
-        clear()
-        mavenCentral()
-        mavenLocal()
-        maven {
-            name 'forge'
-            url 'http://files.minecraftforge.net/maven'
-        }
-        maven {
-            name 'minecraft'
-            url 'https://libraries.minecraft.net/'
-        }
-	    maven {
-            name 'spigot-public'
-            url 'https://hub.spigotmc.org/nexus/content/repositories/public/'
-        }
+repositories {
+    clear()
+    maven {
+        name 'prok'
+        url 'https://github.com/juanmuscaria/maven/raw/master/ThermosLibs'
     }
-    sourceCompatibility = '1.8'
-    targetCompatibility = '1.8'
-    dependencies {''')
+    maven {
+        name 'forge'
+        url 'http://files.minecraftforge.net/maven/'
+    }
+    maven {
+        name 'minecraft'
+        url 'https://libraries.minecraft.net/'
+    }
+    mavenCentral()
+    mavenLocal()
+}
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+[compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
+dependencies {
+''')
     configurations.libraries.resolvedConfiguration.resolvedArtifacts.collect { it.moduleVersion.id }.each { module ->
         if (['net.minecraft:server:', 'org.ow2.asm:asm-all'].findAll { (module as String).startsWith it }.size() > 0) {
             return
