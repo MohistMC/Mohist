@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/cpw/mods/fml/common/network/internal/FMLNetworkHandler.java
 +++ ../src-work/minecraft/cpw/mods/fml/common/network/internal/FMLNetworkHandler.java
-@@ -47,6 +47,16 @@
+@@ -47,6 +47,17 @@
  import cpw.mods.fml.common.registry.EntityRegistry.EntityRegistration;
  import cpw.mods.fml.relauncher.Side;
  import cpw.mods.fml.relauncher.SideOnly;
@@ -13,11 +13,12 @@
 +import org.bukkit.craftbukkit.inventory.CraftInventory;
 +import org.bukkit.craftbukkit.inventory.CraftInventoryView;
 +import org.bukkit.event.inventory.InventoryType;
++import red.mohist.configuration.MohistConfig;
 +// Cauldron end
  
  public class FMLNetworkHandler
  {
-@@ -75,6 +85,31 @@
+@@ -75,6 +86,31 @@
              Container remoteGuiContainer = NetworkRegistry.INSTANCE.getRemoteGuiContainer(mc, entityPlayerMP, modGuiId, world, x, y, z);
              if (remoteGuiContainer != null)
              {
@@ -49,7 +50,7 @@
                  entityPlayerMP.getNextWindowId();
                  entityPlayerMP.closeContainer();
                  int windowId = entityPlayerMP.currentWindowId;
-@@ -131,6 +166,7 @@
+@@ -131,6 +167,7 @@
      public static String checkModList(Map<String,String> listData, Side side)
      {
          List<ModContainer> rejects = Lists.newArrayList();
@@ -57,7 +58,7 @@
          for (Entry<ModContainer, NetworkModHolder> networkMod : NetworkRegistry.INSTANCE.registry().entrySet())
          {
              boolean result = networkMod.getValue().check(listData, side);
-@@ -138,9 +174,15 @@
+@@ -138,9 +175,15 @@
              {
                  rejects.add(networkMod.getKey());
              }
@@ -73,3 +74,12 @@
              return null;
          }
          else
+@@ -188,7 +231,7 @@
+     public static void enhanceStatusQuery(JsonObject jsonobject)
+     {
+         JsonObject fmlData = new JsonObject();
+-        fmlData.addProperty("type", "FML");
++        fmlData.addProperty("type", MohistConfig.instance.server_type.getValue());
+         JsonArray modList = new JsonArray();
+         for (ModContainer mc : Loader.instance().getActiveModList())
+         {
