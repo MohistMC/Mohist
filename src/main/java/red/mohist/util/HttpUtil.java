@@ -7,6 +7,9 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
 
+/**
+ * @author ChenhaoShen
+ */
 public class HttpUtil {
 
     public static String doGet(String url) throws Exception{
