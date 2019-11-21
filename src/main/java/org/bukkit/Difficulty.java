@@ -1,8 +1,7 @@
 package org.bukkit;
 
-import java.util.Map;
-
 import com.google.common.collect.Maps;
+import java.util.Map;
 
 /**
  * Represents the various difficulty levels that are available.

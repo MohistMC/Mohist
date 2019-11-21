@@ -1,10 +1,8 @@
 package org.bukkit;
 
-import java.util.Map;
-
-import org.bukkit.entity.HumanEntity;
-
 import com.google.common.collect.Maps;
+import java.util.Map;
+import org.bukkit.entity.HumanEntity;
 
 /**
  * Represents the various type of game modes that {@link HumanEntity}s may

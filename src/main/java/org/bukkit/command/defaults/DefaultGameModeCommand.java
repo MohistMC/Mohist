@@ -1,16 +1,14 @@
 package org.bukkit.command.defaults;
 
+import com.google.common.collect.ImmutableList;
 import java.util.ArrayList;
 import java.util.List;
-
 import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.util.StringUtil;
-
-import com.google.common.collect.ImmutableList;
 
 public class DefaultGameModeCommand extends VanillaCommand {
     private static final List<String> GAMEMODE_NAMES = ImmutableList.of("adventure", "creative", "survival");

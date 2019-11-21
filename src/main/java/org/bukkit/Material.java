@@ -1,9 +1,6 @@
 package org.bukkit;
 
-import java.lang.reflect.Constructor;
-import java.util.Map;
-
-// Cauldron start
+import com.google.common.collect.Maps;
 import java.lang.reflect.Array;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
@@ -11,15 +8,12 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
-import org.bukkit.inventory.ItemStack;
-
-import net.minecraftforge.common.util.EnumHelper;
+import java.util.Map;
 import net.minecraftforge.cauldron.api.inventory.BukkitOreDictionary;
 import net.minecraftforge.cauldron.api.inventory.OreDictionaryEntry;
-// Cauldron end
-
+import net.minecraftforge.common.util.EnumHelper;
 import org.apache.commons.lang.Validate;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.map.MapView;
 import org.bukkit.material.Bed;
 import org.bukkit.material.Button;
@@ -72,7 +66,8 @@ import org.bukkit.material.Wool;
 import org.bukkit.potion.Potion;
 import org.bukkit.util.Java15Compat;
 
-import com.google.common.collect.Maps;
+// Cauldron start
+// Cauldron end
 
 /**
  * An enum of all material IDs accepted by the official server and client

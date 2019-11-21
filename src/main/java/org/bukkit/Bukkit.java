@@ -1,5 +1,6 @@
 package org.bukkit;
 
+import com.avaje.ebean.config.ServerConfig;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.Collection;
@@ -9,7 +10,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 import java.util.logging.Logger;
-
 import org.bukkit.Warning.WarningState;
 import org.bukkit.command.CommandException;
 import org.bukkit.command.CommandSender;
@@ -18,10 +18,10 @@ import org.bukkit.command.PluginCommand;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.help.HelpMap;
-import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemFactory;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.Recipe;
 import org.bukkit.map.MapView;
 import org.bukkit.plugin.PluginManager;
@@ -30,8 +30,6 @@ import org.bukkit.plugin.messaging.Messenger;
 import org.bukkit.scheduler.BukkitScheduler;
 import org.bukkit.scoreboard.ScoreboardManager;
 import org.bukkit.util.CachedServerIcon;
-
-import com.avaje.ebean.config.ServerConfig;
 
 /**
  * Represents the Bukkit core, for version and Server singleton handling

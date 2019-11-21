@@ -7,7 +7,6 @@ import java.io.InputStream;
 import java.io.Reader;
 import java.util.Map;
 import java.util.logging.Level;
-
 import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.Configuration;

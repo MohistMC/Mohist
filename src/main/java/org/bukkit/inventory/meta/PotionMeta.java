@@ -1,10 +1,9 @@
 package org.bukkit.inventory.meta;
 
+import java.util.List;
 import org.bukkit.Material;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
-
-import java.util.List;
 
 /**
  * Represents a potion ({@link Material#POTION}) that can have custom effects.

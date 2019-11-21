@@ -8,7 +8,6 @@ import net.minecraftforge.cauldron.configuration.IntSetting;
 import net.minecraftforge.cauldron.configuration.Setting;
 import net.minecraftforge.cauldron.configuration.StringArraySetting;
 import net.minecraftforge.cauldron.configuration.StringSetting;
-import org.bukkit.command.defaults.VersionCommand;
 import org.bukkit.configuration.file.YamlConfiguration;
 import red.mohist.api.ServerAPI;
 import red.mohist.command.DumpCommand;

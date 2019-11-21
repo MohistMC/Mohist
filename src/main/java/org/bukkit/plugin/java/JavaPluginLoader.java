@@ -1,19 +1,16 @@
 package org.bukkit.plugin.java;
 
 // Cauldron start
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
+
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
-import net.md_5.specialsource.InheritanceMap;
-import net.md_5.specialsource.JarMapping;
-import net.md_5.specialsource.transformer.MavenShade;
-// Cauldron end
-
+import com.google.common.collect.ImmutableList;
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
@@ -27,7 +24,9 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.logging.Level;
 import java.util.regex.Pattern;
-
+import net.md_5.specialsource.InheritanceMap;
+import net.md_5.specialsource.JarMapping;
+import net.md_5.specialsource.transformer.MavenShade;
 import org.apache.commons.lang.Validate;
 import org.bukkit.Server;
 import org.bukkit.Warning;
@@ -50,10 +49,10 @@ import org.bukkit.plugin.PluginLoader;
 import org.bukkit.plugin.RegisteredListener;
 import org.bukkit.plugin.TimedRegisteredListener;
 import org.bukkit.plugin.UnknownDependencyException;
-import org.spigotmc.CustomTimingsHandler; // Spigot
+import org.spigotmc.CustomTimingsHandler;
 import org.yaml.snakeyaml.error.YAMLException;
 
-import com.google.common.collect.ImmutableList;
+// Cauldron end
 
 /**
  * Represents a Java plugin loader, allowing plugins in the form of .jar

@@ -1,14 +1,12 @@
 package org.bukkit.command.defaults;
 
+import com.google.common.collect.ImmutableList;
 import java.util.List;
-
 import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityDamageEvent;
-
-import com.google.common.collect.ImmutableList;
 
 public class KillCommand extends VanillaCommand {
     public KillCommand() {

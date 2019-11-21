@@ -3,7 +3,6 @@ package org.bukkit.entity;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
-
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.inventory.EntityEquipment;

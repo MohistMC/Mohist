@@ -1,15 +1,15 @@
 package org.bukkit.command.defaults;
 
+import com.google.common.collect.ImmutableList;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
 import org.apache.commons.lang.Validate;
 import org.bukkit.Achievement;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.Statistic;
 import org.bukkit.Material;
+import org.bukkit.Statistic;
 import org.bukkit.Statistic.Type;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -17,8 +17,6 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerAchievementAwardedEvent;
 import org.bukkit.event.player.PlayerStatisticIncrementEvent;
-
-import com.google.common.collect.ImmutableList;
 
 public class AchievementCommand extends VanillaCommand {
     public AchievementCommand() {

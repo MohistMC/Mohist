@@ -1,34 +1,38 @@
 package org.bukkit.plugin.java;
 
 // Cauldron start
-import net.md_5.specialsource.provider.ClassLoaderProvider;
-import net.md_5.specialsource.transformer.MavenShade;
-//import org.bouncycastle.util.io.Streams;
-import net.md_5.specialsource.*;
-import net.md_5.specialsource.repo.*;
-import net.minecraft.server.MinecraftServer;
-import net.minecraftforge.cauldron.configuration.CauldronConfig;
-import net.minecraftforge.cauldron.CauldronUtils;
 
-import org.bukkit.plugin.PluginDescriptionFile;
-import java.io.*;
-import java.net.JarURLConnection;
-import java.security.CodeSigner;
-import java.security.CodeSource;
-import java.util.concurrent.*;
-// Cauldron end
-
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.JarURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.security.CodeSigner;
+import java.security.CodeSource;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
-
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
+import net.md_5.specialsource.JarMapping;
+import net.md_5.specialsource.JarRemapper;
+import net.md_5.specialsource.RemapperProcessor;
+import net.md_5.specialsource.provider.ClassLoaderProvider;
+import net.md_5.specialsource.repo.RuntimeRepo;
+import net.md_5.specialsource.transformer.MavenShade;
+import net.minecraft.server.MinecraftServer;
+import net.minecraftforge.cauldron.CauldronUtils;
 import org.apache.commons.lang.Validate;
 import org.bukkit.plugin.InvalidPluginException;
 import org.bukkit.plugin.PluginDescriptionFile;
+
+//import org.bouncycastle.util.io.Streams;
+// Cauldron end
 
 /**
  * A ClassLoader for plugins, to allow shared classes across multiple plugins

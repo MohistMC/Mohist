@@ -1,5 +1,6 @@
 package org.bukkit.plugin;
 
+import com.google.common.collect.ImmutableSet;
 import java.io.File;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
@@ -17,7 +18,6 @@ import java.util.WeakHashMap;
 import java.util.logging.Level;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
 import org.apache.commons.lang.Validate;
 import org.bukkit.Server;
 import org.bukkit.command.Command;
@@ -31,8 +31,6 @@ import org.bukkit.permissions.Permissible;
 import org.bukkit.permissions.Permission;
 import org.bukkit.permissions.PermissionDefault;
 import org.bukkit.util.FileUtil;
-
-import com.google.common.collect.ImmutableSet;
 
 /**
  * Handles all plugin management from the Server

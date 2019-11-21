@@ -1,8 +1,7 @@
 package org.bukkit;
 
-import java.util.Map;
-
 import com.google.common.collect.Maps;
+import java.util.Map;
 
 /**
  * Represents the different species of trees regardless of size.

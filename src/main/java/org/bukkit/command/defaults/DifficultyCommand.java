@@ -1,16 +1,15 @@
 package org.bukkit.command.defaults;
 
 import com.google.common.collect.ImmutableList;
+import java.util.ArrayList;
+import java.util.List;
 import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Difficulty;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.util.StringUtil;
-import org.bukkit.Difficulty;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class DifficultyCommand extends VanillaCommand {
     private static final List<String> DIFFICULTY_NAMES = ImmutableList.of("peaceful", "easy", "normal", "hard");

@@ -1,18 +1,16 @@
 package org.bukkit.event.entity;
 
+import com.google.common.base.Function;
+import com.google.common.base.Functions;
+import com.google.common.collect.ImmutableMap;
 import java.util.EnumMap;
 import java.util.Map;
-
 import org.apache.commons.lang.Validate;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.HandlerList;
 import org.bukkit.util.NumberConversions;
-
-import com.google.common.base.Function;
-import com.google.common.base.Functions;
-import com.google.common.collect.ImmutableMap;
 
 /**
  * Stores data for damage events

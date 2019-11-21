@@ -1,14 +1,12 @@
 package org.bukkit.command.defaults;
 
+import com.google.common.collect.ImmutableList;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-
 import org.apache.commons.lang.Validate;
 import org.apache.commons.lang.WordUtils;
-import com.google.common.collect.ImmutableList;
-
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;

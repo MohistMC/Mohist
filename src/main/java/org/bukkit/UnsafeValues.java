@@ -1,7 +1,6 @@
 package org.bukkit;
 
 import java.util.List;
-
 import org.bukkit.inventory.ItemStack;
 
 /**

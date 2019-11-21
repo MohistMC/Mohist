@@ -1,9 +1,7 @@
 package org.bukkit.command.defaults;
 
 import java.util.Arrays;
-
 import net.minecraft.server.MinecraftServer;
-
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
