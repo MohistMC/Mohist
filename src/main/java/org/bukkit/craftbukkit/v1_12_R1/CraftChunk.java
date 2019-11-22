@@ -25,7 +25,7 @@ public class CraftChunk implements Chunk {
         Arrays.fill(emptySkyLight, (byte) 0xFF);
     }
 
-    private final WorldServer worldServer;
+    private final net.minecraft.world.World worldServer;
     private final int x;
     private final int z;
     private WeakReference<net.minecraft.world.chunk.Chunk> weakChunk;
@@ -33,7 +33,7 @@ public class CraftChunk implements Chunk {
     public CraftChunk(net.minecraft.world.chunk.Chunk chunk) {
         this.weakChunk = new WeakReference<>(chunk);
 
-        worldServer = (WorldServer) getHandle().world;
+        worldServer = getHandle().world instanceof net.minecraft.world.World ? (net.minecraft.world.World) getHandle().world : null;
         x = getHandle().x;
         z = getHandle().z;
     }
