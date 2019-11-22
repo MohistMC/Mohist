@@ -479,7 +479,7 @@
              }
  
 -            this.saveAllWorlds(false);
-+            if (MohistConfig.instance.stopserversaveworlds.getValue()) {
++            if (!MohistConfig.instance.stopserversaveworlds.getValue()) {
 +                this.saveAllWorlds(false);
 +            }
  
