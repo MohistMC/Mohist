@@ -154,7 +154,7 @@ class CraftMetaItem implements ItemMeta, Repairable {
             NBTTagCompound display = tag.getCompoundTag(DISPLAY.NBT);
 
             if (display.hasKey(NAME.NBT)) {
-                displayName = limit(display.getString(NAME.NBT), 1024); // Spigot
+                displayName = display.getString(NAME.NBT);
             }
 
             if (display.hasKey(LOCNAME.NBT)) {
@@ -166,7 +166,7 @@ class CraftMetaItem implements ItemMeta, Repairable {
                 lore = new ArrayList<>(list.tagCount());
 
                 for (int index = 0; index < list.tagCount(); index++) {
-                    String line = limit(list.getStringTagAt(index), 1024); // Spigot
+                    String line = list.getStringTagAt(index);
                     lore.add(line);
                 }
             }
@@ -183,6 +183,9 @@ class CraftMetaItem implements ItemMeta, Repairable {
         }
         if (tag.hasKey(UNBREAKABLE.NBT)) {
             unbreakable = tag.getBoolean(UNBREAKABLE.NBT);
+        }
+        if (tag.hasKey(CraftMetaBlockState.BLOCK_ENTITY_TAG.NBT)) {
+            unhandledTags.put(CraftMetaBlockState.BLOCK_ENTITY_TAG.NBT, tag.getTag(CraftMetaBlockState.BLOCK_ENTITY_TAG.NBT));
         }
 
         if (tag.getTag(ATTRIBUTES.NBT) instanceof NBTTagList) {
