@@ -70,7 +70,7 @@
                      }
                      catch (Throwable throwable)
                      {
-@@ -198,6 +221,171 @@
+@@ -198,6 +221,173 @@
          }
      }
  
@@ -137,6 +137,8 @@
 +
 +        // Make sure this is a valid command
 +        if (commandMap.getCommand(args[0]) == null) {
++            net.minecraft.command.ICommandManager icommandmanager = MinecraftServer.getServerInst().getCommandManager();
++            icommandmanager.executeCommand(sender, command);
 +            return 0;
 +        }
 +
