@@ -1,0 +1,11 @@
+--- ../src-base/minecraft/net/minecraftforge/server/command/CommandDimensions.java
++++ ../src-work/minecraft/net/minecraftforge/server/command/CommandDimensions.java
+@@ -47,7 +47,7 @@
+     @Override
+     public int getRequiredPermissionLevel()
+     {
+-        return 0;
++        return 4;
+     }
+ 
+     @Override

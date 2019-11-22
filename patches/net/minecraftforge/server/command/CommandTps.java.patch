@@ -8,6 +8,15 @@
  import net.minecraftforge.common.DimensionManager;
  
  class CommandTps extends CommandBase
+@@ -47,7 +48,7 @@
+     @Override
+     public int getRequiredPermissionLevel()
+     {
+-        return 0;
++        return 4;
+     }
+ 
+     @Override
 @@ -90,13 +91,15 @@
      private static String getDimensionPrefix(int dimId)
      {
