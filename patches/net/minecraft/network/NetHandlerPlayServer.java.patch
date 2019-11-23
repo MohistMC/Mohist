@@ -1820,7 +1820,7 @@
          }
      }
  
-@@ -1340,12 +2422,25 @@
+@@ -1340,20 +2422,28 @@
      public void processPlayerAbilities(CPacketPlayerAbilities packetIn)
      {
          PacketThreadUtil.checkThreadAndEnqueue(packetIn, this, this.player.getServerWorld());
@@ -1840,15 +1840,24 @@
      public void processTabComplete(CPacketTabComplete packetIn)
      {
 -        PacketThreadUtil.checkThreadAndEnqueue(packetIn, this, this.player.getServerWorld());
+-        List<String> list = Lists.<String>newArrayList();
+-
+-        for (String s : this.serverController.getTabCompletions(this.player, packetIn.getMessage(), packetIn.getTargetBlock(), packetIn.hasTargetBlock()))
+-        {
+-            list.add(s);
 +		PacketThreadUtil.checkThreadAndEnqueue(packetIn, this, this.player.getServerWorld());
 +        if (chatSpamField.addAndGet(this, 10) > 500 && !this.serverController.getPlayerList().canSendCommands(this.player.getGameProfile())) {
 +            this.disconnect(new TextComponentTranslation("disconnect.spam", new Object[0]));
 +            return;
-+        }
-         List<String> list = Lists.<String>newArrayList();
+         }
++        List<String> list = this.serverController.getTabCompletions(this.player, packetIn.getMessage(), packetIn.getTargetBlock(), packetIn.hasTargetBlock());
  
-         for (String s : this.serverController.getTabCompletions(this.player, packetIn.getMessage(), packetIn.getTargetBlock(), packetIn.hasTargetBlock()))
-@@ -1369,6 +2464,11 @@
+-        this.player.connection.sendPacket(new SPacketTabComplete((String[])list.toArray(new String[list.size()])));
++        this.player.connection.sendPacket(new SPacketTabComplete(list.toArray(new String[0])));
+     }
+ 
+     public void processClientSettings(CPacketClientSettings packetIn)
+@@ -1369,6 +2459,11 @@
  
          if ("MC|BEdit".equals(s))
          {
@@ -1860,7 +1869,7 @@
              PacketBuffer packetbuffer = packetIn.getBufferData();
  
              try
-@@ -1395,15 +2495,22 @@
+@@ -1395,15 +2490,22 @@
                  if (itemstack.getItem() == Items.WRITABLE_BOOK && itemstack.getItem() == itemstack1.getItem())
                  {
                      itemstack1.setTagInfo("pages", itemstack.getTagCompound().getTagList("pages", 8));
@@ -1883,7 +1892,7 @@
              PacketBuffer packetbuffer1 = packetIn.getBufferData();
  
              try
-@@ -1443,12 +2550,14 @@
+@@ -1443,12 +2545,14 @@
                      }
  
                      itemstack2.setTagInfo("pages", nbttaglist);
@@ -1899,7 +1908,7 @@
              }
          }
          else if ("MC|TrSel".equals(s))
-@@ -1466,6 +2575,7 @@
+@@ -1466,6 +2570,7 @@
              catch (Exception exception5)
              {
                  LOGGER.error("Couldn't select trade", (Throwable)exception5);
@@ -1907,7 +1916,7 @@
              }
          }
          else if ("MC|AdvCmd".equals(s))
-@@ -1528,6 +2638,7 @@
+@@ -1528,6 +2633,7 @@
              catch (Exception exception4)
              {
                  LOGGER.error("Couldn't set command block", (Throwable)exception4);
@@ -1915,7 +1924,7 @@
              }
          }
          else if ("MC|AutoCmd".equals(s))
-@@ -1606,6 +2717,7 @@
+@@ -1606,6 +2712,7 @@
              catch (Exception exception3)
              {
                  LOGGER.error("Couldn't set command block", (Throwable)exception3);
@@ -1923,7 +1932,7 @@
              }
          }
          else if ("MC|Beacon".equals(s))
-@@ -1632,6 +2744,7 @@
+@@ -1632,6 +2739,7 @@
                  catch (Exception exception2)
                  {
                      LOGGER.error("Couldn't set beacon", (Throwable)exception2);
@@ -1931,7 +1940,7 @@
                  }
              }
          }
-@@ -1743,6 +2856,7 @@
+@@ -1743,6 +2851,7 @@
              catch (Exception exception1)
              {
                  LOGGER.error("Couldn't set structure block", (Throwable)exception1);
@@ -1939,7 +1948,7 @@
              }
          }
          else if ("MC|PickItem".equals(s))
-@@ -1760,7 +2874,43 @@
+@@ -1760,7 +2869,43 @@
              catch (Exception exception)
              {
                  LOGGER.error("Couldn't pick item", (Throwable)exception);

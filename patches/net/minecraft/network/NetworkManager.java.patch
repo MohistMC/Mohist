@@ -216,7 +216,21 @@
              }
  
              if (this.channel.pipeline().get("compress") instanceof NettyCompressionEncoder)
-@@ -476,4 +491,12 @@
+@@ -440,12 +455,8 @@
+     {
+         if (this.channel != null && !this.channel.isOpen())
+         {
+-            if (this.disconnected)
++            if (!this.disconnected)
+             {
+-                LOGGER.warn("handleDisconnection() called twice");
+-            }
+-            else
+-            {
+                 this.disconnected = true;
+ 
+                 if (this.getExitMessage() != null)
+@@ -476,4 +487,12 @@
                  this.futureListeners = inFutureListeners;
              }
          }
