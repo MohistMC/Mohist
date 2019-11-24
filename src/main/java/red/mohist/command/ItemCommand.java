@@ -8,7 +8,6 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.craftbukkit.v1_12_R1.inventory.CraftItemStack;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import red.mohist.api.CustomNameAPI;
 
 public class ItemCommand{
 
@@ -18,7 +17,7 @@ public class ItemCommand{
             ItemStack itemStack = player.getInventory().getItemInMainHand();
             Item item = CraftItemStack.asNMSCopy(itemStack).getItem();
             // item name and i18n name
-            player.sendMessage(ChatColor.GRAY + "Name - " + ChatColor.GREEN + itemStack.getType().toString() + " (" + CustomNameAPI.getItemName(itemStack) + ")");
+            player.sendMessage(ChatColor.GRAY + "Name - " + ChatColor.GREEN + itemStack.getType().toString());
             // mcp and bukkit
             player.sendMessage(ChatColor.GRAY + "ID - " + ChatColor.GREEN + Item.getIdFromItem(item) + ":" + itemStack.getDurability() + " ("
             + itemStack.getTypeId() + ":" + itemStack.getDurability() + ")");
