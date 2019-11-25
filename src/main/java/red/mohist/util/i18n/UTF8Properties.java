@@ -59,9 +59,9 @@ public class UTF8Properties extends Properties {
             for (String key : this.commentMap.keySet()) {
                 String value = this.getProperty(key);
                 String comment = this.commentMap.get(key);
-                key = saveConvert(key, true, false);
-                value = saveConvert(value, false, false);
-                key = saveConvert(key, true, false);
+                key = saveConvert(key, true);
+                value = saveConvert(value, false);
+                key = saveConvert(key, true);
                 if (comment != null && !comment.equals("")) {
                     writeComments(bufferedWriter, comment);
                 }
@@ -72,7 +72,7 @@ public class UTF8Properties extends Properties {
         bufferedWriter.flush();
     }
 
-    private String saveConvert(String theString, boolean escapeSpace, boolean escapeUnicode) {
+    private String saveConvert(String theString, boolean escapeSpace) {
         int len = theString.length();
         int bufLen = len * 2;
         if (bufLen < 0) {
@@ -121,16 +121,7 @@ public class UTF8Properties extends Properties {
                     outBuffer.append(aChar);
                     break;
                 default:
-                    if (((aChar < 0x0020) || (aChar > 0x007e)) & escapeUnicode) {
-                        outBuffer.append('\\');
-                        outBuffer.append('u');
-                        outBuffer.append(toHex((aChar >> 12) & 0xF));
-                        outBuffer.append(toHex((aChar >> 8) & 0xF));
-                        outBuffer.append(toHex((aChar >> 4) & 0xF));
-                        outBuffer.append(toHex(aChar & 0xF));
-                    } else {
-                        outBuffer.append(aChar);
-                    }
+                    outBuffer.append(aChar);
             }
         }
         return outBuffer.toString();

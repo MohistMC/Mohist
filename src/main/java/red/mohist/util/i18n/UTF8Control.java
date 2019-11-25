@@ -3,6 +3,7 @@ package red.mohist.util.i18n;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.nio.charset.StandardCharsets;
@@ -34,20 +35,20 @@ public class UTF8Control extends ResourceBundle.Control {
                 // If the class isn't a ResourceBundle subclass, throw a
                 // ClassCastException.
                 if (ResourceBundle.class.isAssignableFrom(bundleClass)) {
-                    bundle = bundleClass.newInstance();
+                    bundle = bundleClass.getConstructor().newInstance();
                 } else {
                     throw new ClassCastException(bundleClass.getName() + " cannot be cast to ResourceBundle");
                 }
-            } catch (ClassNotFoundException e) {
+            } catch (ClassNotFoundException | NoSuchMethodException | InvocationTargetException ignored) {
             }
         } else if (format.equals("java.properties")) {
-            final String resourceName = toResourceName0(bundleName, "properties");
+            final String resourceName = toResourceName0(bundleName);
             if (resourceName == null) {
-                return bundle;
+                return null;
             }
             final ClassLoader classLoader = loader;
             final boolean reloadFlag = reload;
-            InputStream stream = null;
+            InputStream stream;
             try {
                 stream = AccessController.doPrivileged(
                         (PrivilegedExceptionAction<InputStream>) () -> {
@@ -84,12 +85,12 @@ public class UTF8Control extends ResourceBundle.Control {
         return bundle;
     }
 
-    private String toResourceName0(String bundleName, String suffix) {
+    private String toResourceName0(String bundleName) {
         // application protocol check
         if (bundleName.contains("://")) {
             return null;
         } else {
-            return toResourceName(bundleName, suffix);
+            return toResourceName(bundleName, "properties");
         }
     }
 
