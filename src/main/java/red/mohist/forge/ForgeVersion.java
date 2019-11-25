@@ -1,6 +1,7 @@
 package red.mohist.forge;
 
 import java.io.File;
+import java.util.Map;
 import red.mohist.configuration.MohistConfigUtil;
 
 public class ForgeVersion {
@@ -9,4 +10,18 @@ public class ForgeVersion {
     public static final int minor = MohistConfigUtil.getInt(f, "minor:", "23");
     public static final int revision = MohistConfigUtil.getInt(f, "revision:", "5");
     public static final int build = MohistConfigUtil.getInt(f, "build:", "2847");
+
+    public static boolean isCompatibleLowForge(Map<String, String> modList) {
+        String forgeVersion = modList.get("forge");
+        if (forgeVersion != null) {
+            try {
+                if (Integer.parseInt(forgeVersion.split("\\.")[3]) < 2826) {
+                    return false;
+                }
+            } catch (Exception e) {
+                return true;
+            }
+        }
+        return true;
+    }
 }
