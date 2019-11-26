@@ -10,7 +10,7 @@
      }
  
      public int getSaveVersion()
-@@ -239,4 +240,17 @@
+@@ -239,4 +240,12 @@
      {
          return this.delegate.getDimensionData(dimensionID);
      }
@@ -21,10 +21,5 @@
 +
 +    public void setDimension(int dim) {
 +        this.delegate.setDimension(dim);
-+    }
-+
-+    @Override
-+    public void tick() {
-+        delegate.tick();
 +    }
  }

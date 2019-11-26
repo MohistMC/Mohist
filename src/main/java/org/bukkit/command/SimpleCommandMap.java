@@ -15,6 +15,7 @@ import org.bukkit.Server;
 import org.bukkit.command.defaults.BukkitCommand;
 import org.bukkit.command.defaults.HelpCommand;
 import org.bukkit.command.defaults.PluginsCommand;
+import org.bukkit.command.defaults.TimingsCommand;
 import org.bukkit.entity.Player;
 import org.bukkit.util.StringUtil;
 import red.mohist.Mohist;
@@ -31,6 +32,7 @@ public class SimpleCommandMap implements CommandMap {
 
     private void setDefaultCommands() {
         register("bukkit", new PluginsCommand("plugins"));
+        register("bukkit", new TimingsCommand("timings"));
     }
 
     public void setFallbackCommands() {

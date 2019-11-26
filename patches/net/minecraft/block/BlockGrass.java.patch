@@ -12,14 +12,9 @@
  
  public class BlockGrass extends Block implements IGrowable
  {
-@@ -38,30 +43,58 @@
-     {
-         if (!worldIn.isRemote)
-         {
-+            int lightLevel = -1; // Paper
+@@ -41,7 +46,16 @@
              if (!worldIn.isAreaLoaded(pos, 3)) return; // Forge: prevent loading unloaded chunks when checking neighbor's light and spreading
--            if (worldIn.getLightFromNeighbors(pos.up()) < 4 && worldIn.getBlockState(pos.up()).getLightOpacity(worldIn, pos.up()) > 2)
-+            if (worldIn.getBlockState(pos.up()).getLightOpacity(worldIn, pos.up()) > 2 && (lightLevel = worldIn.getLightFromNeighbors(pos.up())) < 4 )
+             if (worldIn.getLightFromNeighbors(pos.up()) < 4 && worldIn.getBlockState(pos.up()).getLightOpacity(worldIn, pos.up()) > 2)
              {
 -                worldIn.setBlockState(pos, Blocks.DIRT.getDefaultState());
 +                    org.bukkit.World bworld = worldIn.getWorld();
@@ -35,38 +30,12 @@
              }
              else
              {
--                if (worldIn.getLightFromNeighbors(pos.up()) >= 9)
-+                // Paper start
-+                // If light was calculated above, reuse it, else grab it
-+                if (lightLevel == -1) {
-+                    lightLevel = worldIn.getLightFromNeighbors(pos.up());
-+                }
-+                if (lightLevel >= 9)
-                 {
-+                    // Paper end
-                     for (int i = 0; i < 4; ++i)
-                     {
-                         BlockPos blockpos = pos.add(rand.nextInt(3) - 1, rand.nextInt(5) - 3, rand.nextInt(3) - 1);
+@@ -61,7 +75,17 @@
  
--                        if (blockpos.getY() >= 0 && blockpos.getY() < 256 && !worldIn.isBlockLoaded(blockpos))
--                        {
-+                        IBlockState iblockstate2 = worldIn.getBlockState(blockpos); // Paper - moved up
-+                        if (iblockstate2 == null)
-+						{
-                             return;
-                         }
- 
-                         IBlockState iblockstate = worldIn.getBlockState(blockpos.up());
--                        IBlockState iblockstate1 = worldIn.getBlockState(blockpos);
-+                        //IBlockState iblockstate1 = worldIn.getBlockState(blockpos); // Paper - moved up
- 
--                        if (iblockstate1.getBlock() == Blocks.DIRT && iblockstate1.getValue(BlockDirt.VARIANT) == BlockDirt.DirtType.DIRT && worldIn.getLightFromNeighbors(blockpos.up()) >= 4 && iblockstate.getLightOpacity(worldIn, pos.up()) <= 2)
--                        {
+                         if (iblockstate1.getBlock() == Blocks.DIRT && iblockstate1.getValue(BlockDirt.VARIANT) == BlockDirt.DirtType.DIRT && worldIn.getLightFromNeighbors(blockpos.up()) >= 4 && iblockstate.getLightOpacity(worldIn, pos.up()) <= 2)
+                         {
 -                            worldIn.setBlockState(blockpos, Blocks.GRASS.getDefaultState());
-+                        // Paper - move last check before isLightLevel to avoid unneeded light checks
-+                        if (iblockstate2.getBlock() == Blocks.DIRT && iblockstate2.getValue(BlockDirt.VARIANT) == BlockDirt.DirtType.DIRT && iblockstate.getLightOpacity(worldIn, pos.up()) <= 2 && worldIn.isLightLevel(blockpos.up(), 4))
-+						{
-+                            //worldIn.setBlockState(blockpos, Blocks.GRASS.getDefaultState());
++//                            worldIn.setBlockState(blockpos, Blocks.GRASS.getDefaultState());
 +                            org.bukkit.World bworld = worldIn.getWorld();
 +                            BlockState blockState = bworld.getBlockAt(blockpos.getX(), blockpos.getY(), blockpos.getZ()).getState();
 +                            blockState.setType(CraftMagicNumbers.getMaterial(Blocks.GRASS));
@@ -80,7 +49,7 @@
                          }
                      }
                  }
-@@ -109,7 +142,8 @@
+@@ -109,7 +133,8 @@
  
                              if (Blocks.TALLGRASS.canBlockStay(worldIn, blockpos1, iblockstate1))
                              {

@@ -93,7 +93,7 @@
      }
  
      public boolean isDifficultyLocked()
-@@ -869,4 +901,29 @@
+@@ -869,4 +901,25 @@
      {
          return this.versionName;
      }
@@ -117,9 +117,5 @@
 +    public int getDimension()
 +    {
 +        return this.dimension;
-+    }
-+
-+    public void tick() {
-+        totalTime++;
 +    }
  }

@@ -35,27 +35,11 @@
              }
  
              if (entityIn instanceof EntityPlayer)
-@@ -153,17 +160,18 @@
-         }
-         else
-         {
--            int i = this.world.getLightFromNeighbors(blockpos);
--
-+            boolean passes; // Paper
-             if (this.world.isThundering())
-             {
-                 int j = this.world.getSkylightSubtracted();
+@@ -161,6 +168,7 @@
                  this.world.setSkylightSubtracted(10);
--                i = this.world.getLightFromNeighbors(blockpos);
-+                passes = !world.isLightLevel(blockpos, this.rand.nextInt(9)); // Paper
+                 i = this.world.getLightFromNeighbors(blockpos);
                  this.world.setSkylightSubtracted(j);
--            }
-+            }else{
-+                passes = !world.isLightLevel(blockpos, this.rand.nextInt(9));
-+            } // Paper
++
+             }
  
--            return i <= this.rand.nextInt(8);
-+            return passes; // Paper
-         }
-     }
- 
+             return i <= this.rand.nextInt(8);

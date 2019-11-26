@@ -16,26 +16,30 @@
  
  public class BlockStem extends BlockBush implements IGrowable
  {
-@@ -67,7 +67,7 @@
+@@ -67,18 +67,18 @@
          super.updateTick(worldIn, pos, state, rand);
  
          if (!worldIn.isAreaLoaded(pos, 1)) return; // Forge: prevent loading unloaded chunks when checking neighbor's light
 -        if (worldIn.getLightFromNeighbors(pos.up()) >= 9)
-+        if (worldIn.isLightLevel(pos.up(), 9)) // Paper
++        if (worldIn.getLightFromNeighbors(pos.up()) >= 9) 
          {
              float f = BlockCrops.getGrowthChance(this, worldIn, pos);
  
-@@ -78,7 +78,8 @@
+             if(net.minecraftforge.common.ForgeHooks.onCropsGrowPre(worldIn, pos, state, rand.nextInt((int)(25.0F / f) + 1) == 0))
+             {
+-                int i = ((Integer)state.getValue(AGE)).intValue();
++                int i = (Integer) state.getValue(AGE);
+ 
                  if (i < 7)
                  {
-                     IBlockState newState = state.withProperty(AGE, Integer.valueOf(i + 1));
+-                    IBlockState newState = state.withProperty(AGE, Integer.valueOf(i + 1));
 -                    worldIn.setBlockState(pos, newState, 2);
++                    IBlockState newState = state.withProperty(AGE, i + 1);
 +                    CraftEventFactory.handleBlockGrowEvent(worldIn, pos.getX(), pos.getY(), pos.getZ(), this, getMetaFromState(newState));
-+//                    worldIn.setBlockState(pos, newState, 2);
                  }
                  else
                  {
-@@ -96,7 +97,8 @@
+@@ -96,7 +96,8 @@
  
                      if (worldIn.isAirBlock(pos) && (block.canSustainPlant(soil, worldIn, pos.down(), EnumFacing.UP, this) || block == Blocks.DIRT || block == Blocks.GRASS))
                      {
@@ -45,7 +49,7 @@
                      }
                  }
                  net.minecraftforge.common.ForgeHooks.onCropsGrowPost(worldIn, pos, state, worldIn.getBlockState(pos));
-@@ -107,7 +109,8 @@
+@@ -107,7 +108,8 @@
      public void growStem(World worldIn, BlockPos pos, IBlockState state)
      {
          int i = ((Integer)state.getValue(AGE)).intValue() + MathHelper.getInt(worldIn.rand, 2, 5);

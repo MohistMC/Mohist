@@ -8,21 +8,12 @@
  
  public class BlockCrops extends BlockBush implements IGrowable
  {
-@@ -71,7 +72,7 @@
-         super.updateTick(worldIn, pos, state, rand);
- 
-         if (!worldIn.isAreaLoaded(pos, 1)) return; // Forge: prevent loading unloaded chunks when checking neighbor's light
--        if (worldIn.getLightFromNeighbors(pos.up()) >= 9)
-+        if (worldIn.isLightLevel(pos.up(), 9))
-         {
-             int i = this.getAge(state);
- 
 @@ -79,9 +80,10 @@
              {
                  float f = getGrowthChance(this, worldIn, pos);
  
 -                if(net.minecraftforge.common.ForgeHooks.onCropsGrowPre(worldIn, pos, state, rand.nextInt((int)(25.0F / f) + 1) == 0))
-+                if(net.minecraftforge.common.ForgeHooks.onCropsGrowPre(worldIn, pos, state, rand.nextInt((int) (25.0F / f) + 1) == 0))
++                if(net.minecraftforge.common.ForgeHooks.onCropsGrowPre(worldIn, pos, state, rand.nextInt((int) ((100.0F / worldIn.spigotConfig.wheatModifier) * (25.0F / f)) + 1) == 0)) // Spigot
                  {
 -                    worldIn.setBlockState(pos, this.withAge(i + 1), 2);
 +                    IBlockState data = this.withAge(i + 1);

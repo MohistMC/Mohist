@@ -53,7 +53,7 @@
  import net.minecraft.server.management.PlayerList;
  import net.minecraft.server.management.PlayerProfileCache;
  import net.minecraft.util.IProgressUpdate;
-@@ -73,35 +80,49 @@
+@@ -73,35 +80,50 @@
  import net.minecraft.world.MinecraftException;
  import net.minecraft.world.ServerWorldEventHandler;
  import net.minecraft.world.World;
@@ -79,6 +79,7 @@
 +import org.bukkit.Bukkit;
 +import org.bukkit.craftbukkit.v1_12_R1.CraftServer;
 +import org.bukkit.craftbukkit.v1_12_R1.Main;
++import org.bukkit.craftbukkit.v1_12_R1.SpigotTimings;
 +import org.spigotmc.SlackActivityAccountant;
 +import red.mohist.common.RealTimeTicking;
 +import red.mohist.configuration.EntityConfig;
@@ -110,7 +111,7 @@
      @SideOnly(Side.SERVER)
      private String hostname;
      private int serverPort = -1;
-@@ -128,7 +149,6 @@
+@@ -128,7 +150,6 @@
      private KeyPair serverKeyPair;
      private String serverOwner;
      private String folderName;
@@ -118,7 +119,7 @@
      private String worldName;
      private boolean isDemo;
      private boolean enableBonusChest;
-@@ -144,26 +164,80 @@
+@@ -144,26 +165,84 @@
      private final GameProfileRepository profileRepo;
      private final PlayerProfileCache profileCache;
      private long nanoTimeSinceStatusRefresh;
@@ -142,6 +143,10 @@
 +    public int autosavePeriod;
 +    // CraftBukkit end
 +    // Spigot start
++    public static final int TPS = 20;
++    public static final int TICK_TIME = 1000000000 / TPS;
++    private static final int SAMPLE_INTERVAL = 100;
++    public final double[] recentTps = new double[ 3 ];
 +    public final SlackActivityAccountant slackActivityAccountant = new SlackActivityAccountant();
 +    // Spigot end
  
@@ -205,7 +210,7 @@
      public ServerCommandManager createCommandManager()
      {
          return new ServerCommandManager(this);
-@@ -221,97 +295,97 @@
+@@ -221,97 +300,97 @@
  
      public void loadAllWorlds(String saveName, String worldNameIn, long seed, WorldType type, String generatorOptions)
      {
@@ -368,7 +373,7 @@
      }
  
      public void initialWorldChunkLoad()
-@@ -323,25 +397,29 @@
+@@ -323,25 +402,29 @@
          int i1 = 0;
          this.setUserMessage("menu.generatingTerrain");
          int j1 = 0;
@@ -414,7 +419,7 @@
              }
          }
  
-@@ -394,13 +472,13 @@
+@@ -394,13 +477,13 @@
  
      public void saveAllWorlds(boolean isSilent)
      {
@@ -430,7 +435,7 @@
                  }
  
                  try
-@@ -415,10 +493,22 @@
+@@ -415,10 +498,22 @@
          }
      }
  
@@ -456,7 +461,7 @@
          if (this.getNetworkSystem() != null)
          {
              this.getNetworkSystem().terminateEndpoints();
-@@ -426,14 +516,15 @@
+@@ -426,14 +521,15 @@
  
          if (this.playerList != null)
          {
@@ -474,7 +479,7 @@
  
              for (WorldServer worldserver : this.worlds)
              {
-@@ -443,9 +534,12 @@
+@@ -443,9 +539,12 @@
                  }
              }
  
@@ -489,7 +494,7 @@
              {
                  if (worldserver1 != null)
                  {
-@@ -453,11 +547,12 @@
+@@ -453,11 +552,12 @@
                      worldserver1.flush();
                  }
              }
@@ -503,7 +508,7 @@
              }
          }
  
-@@ -467,6 +562,12 @@
+@@ -467,6 +567,12 @@
          }
  
          CommandBase.setCommandListener(null); // Forge: fix MC-128561
@@ -516,56 +521,16 @@
      }
  
      public boolean isServerRunning()
-@@ -479,74 +580,127 @@
+@@ -479,74 +585,72 @@
          this.serverRunning = false;
      }
  
-+    private static final int TPS = 20;
-+    private static final long SEC_IN_NANO = 1000000000;
-+    public static final long TICK_TIME = SEC_IN_NANO / TPS;
-+    private static final long MAX_CATCHUP_BUFFER = TICK_TIME * TPS * 60L;
-+    private static final int SAMPLE_INTERVAL = 20;
-+    public final RollingAverage tps1 = new RollingAverage(60);
-+    public final RollingAverage tps5 = new RollingAverage(60 * 5);
-+    public final RollingAverage tps15 = new RollingAverage(60 * 15);
-+    public double[] recentTps = new double[3];
-+
-+    public static class RollingAverage {
-+        private final int size;
-+        private long time;
-+        private double total;
-+        private int index = 0;
-+        private final double[] samples;
-+        private final long[] times;
-+
-+              RollingAverage(int size) {
-+                  this.size = size;
-+                  this.time = size * SEC_IN_NANO;
-+                  this.total = TPS * SEC_IN_NANO * size;
-+                  this.samples = new double[size];
-+                  this.times = new long[size];
-+                  for (int i = 0; i < size; i++) {
-+                          this.samples[i] = TPS;
-+                          this.times[i] = SEC_IN_NANO;
-+                      }
-+              }
-+
-+              public void add(double x, long t) {
-+                  time -= times[index];
-+                  total -= samples[index] * times[index];
-+                  samples[index] = x;
-+                  times[index] = t;
-+                  time += t;
-+                  total += x * t;
-+                  if (++index == size) {
-+                          index = 0;
-+                      }
-+              }
-+
-+              public double getAverage() {
-+                  return total / time;
-+              }
++    // Spigot Start
++    private static double calcTps(double avg, double exp, double tps)
++    {
++        return ( avg * exp ) + ( tps * ( 1 - exp ) );
 +    }
++    // Spigot End
 +
      public void run()
      {
@@ -583,7 +548,7 @@
  
 +                // Spigot start
 +                Arrays.fill( recentTps, 20 );
-+                long start = System.nanoTime(), lastTick = start - TICK_TIME, catchupTime = 0, curTime, wait, tickSection = start;
++                long lastTick = System.nanoTime(), catchupTime = 0, curTime, wait, tickSection = lastTick;
                  while (this.serverRunning)
                  {
 -                    long k = getCurrentTimeMillis();
@@ -595,49 +560,36 @@
 -                        j = 2000L;
 -                        this.timeOfLastWarning = this.currentTime;
 +                    curTime = System.nanoTime();
-+                    wait = TICK_TIME - (curTime - lastTick);
-+                    if (wait > 0) {
-+                        if (catchupTime < 2E6) {
-+                            wait += Math.abs(catchupTime);
-+                        } else if (wait < catchupTime) {
-+                            catchupTime -= wait;
-+                            wait = 0;
-+                        } else {
-+                            wait -= catchupTime;
-+                            catchupTime = 0;
-+                        }
-                     }
--
--                    if (j < 0L)
--                    {
--                        LOGGER.warn("Time ran backwards! Did the system time change?");
--                        j = 0L;
++                    wait = TICK_TIME - (curTime - lastTick) - catchupTime;
 +                    if (wait > 0) {
 +                        Thread.sleep(wait / 1000000);
-+                        curTime = System.nanoTime();
-+                        wait = TICK_TIME - (curTime - lastTick);
++                        catchupTime = 0;
++                        continue;
++                    } else {
++                        catchupTime = Math.min(1000000000, Math.abs(wait));
                      }
+ 
+-                    if (j < 0L)
++                    if ( MinecraftServer.currentTick++ % SAMPLE_INTERVAL == 0 )
+                     {
+-                        LOGGER.warn("Time ran backwards! Did the system time change?");
+-                        j = 0L;
++                        double currentTps = 1E9 / ( curTime - tickSection ) * SAMPLE_INTERVAL;
++                        recentTps[0] = calcTps( recentTps[0], 0.92, currentTps ); // 1/exp(5sec/1min)
++                        recentTps[1] = calcTps( recentTps[1], 0.9835, currentTps ); // 1/exp(5sec/5min)
++                        recentTps[2] = calcTps( recentTps[2], 0.9945, currentTps ); // 1/exp(5sec/15min)
++                        tickSection = curTime;
+                     }
++                    lastTick = curTime;
  
 -                    i += j;
 -                    this.currentTime = k;
 -
 -                    if (this.worlds[0].areAllPlayersAsleep())
-+                    catchupTime = Math.min(MAX_CATCHUP_BUFFER, catchupTime - wait);
-+                    if ( ++MinecraftServer.currentTick % SAMPLE_INTERVAL == 0 )
-                     {
+-                    {
 -                        this.tick();
 -                        i = 0L;
-+                        final long diff = curTime - tickSection;
-+                        double currentTps = 1E9 / diff * SAMPLE_INTERVAL;
-+                        tps1.add(currentTps, diff);
-+                        tps5.add(currentTps, diff);
-+                        tps15.add(currentTps, diff);
-+                        // Backwards compat with bad plugins
-+                        recentTps[0] = tps1.getAverage();
-+                        recentTps[1] = tps5.getAverage();
-+                        recentTps[2] = tps15.getAverage();
-+                        tickSection = curTime;
-                     }
+-                    }
 -                    else
 -                    {
 -                        while (i > 50L)
@@ -646,8 +598,7 @@
 -                            this.tick();
 -                        }
 -                    }
-+                    lastTick = curTime;
- 
+-
 -                    Thread.sleep(Math.max(1L, 50L - i));
 +                    this.tick();
                      this.serverIsRunning = true;
@@ -678,7 +629,7 @@
              CrashReport crashreport = null;
  
              if (throwable1 instanceof ReportedException)
-@@ -555,21 +709,21 @@
+@@ -555,21 +659,21 @@
              }
              else
              {
@@ -704,11 +655,7 @@
              this.finalTick(crashreport);
          }
          finally
-@@ -577,14 +731,19 @@
-             try
-             {
-                 this.stopServer();
-+                this.serverStopped = true;
+@@ -580,12 +684,18 @@
              }
              catch (Throwable throwable)
              {
@@ -717,16 +664,18 @@
              }
              finally
              {
--                net.minecraftforge.fml.common.FMLCommonHandler.instance().handleServerStopped();
-+                try {
-+                    this.reader.getTerminal().restore();
-+                }
-+                catch (Exception ex2) {}
-+                FMLCommonHandler.instance().handleServerStopped();
+                 net.minecraftforge.fml.common.FMLCommonHandler.instance().handleServerStopped();
                  this.serverStopped = true;
++                // CraftBukkit start - Restore terminal to original settings
++                try {
++                    reader.getTerminal().restore();
++                } catch (Exception ignored) {
++                }
++                // CraftBukkit end
                  this.systemExitNow();
              }
-@@ -607,8 +766,11 @@
+         }
+@@ -607,8 +717,11 @@
              try
              {
                  BufferedImage bufferedimage = ImageIO.read(file1);
@@ -740,7 +689,7 @@
                  ImageIO.write(bufferedimage, "PNG", new ByteBufOutputStream(bytebuf));
                  ByteBuf bytebuf1 = Base64.encode(bytebuf);
                  response.setFavicon("data:image/png;base64," + bytebuf1.toString(StandardCharsets.UTF_8));
-@@ -616,7 +778,7 @@
+@@ -616,7 +729,7 @@
              }
              catch (Exception exception)
              {
@@ -749,7 +698,7 @@
              }
              finally
              {
-@@ -653,8 +815,15 @@
+@@ -653,8 +766,16 @@
  
      public void tick()
      {
@@ -759,6 +708,7 @@
 +            realTimeTicks = 1;
 +        }
 +        lastTickNanos = currentNanos;
++		SpigotTimings.serverTickTimer.startTiming(); // Spigot
 +        this.slackActivityAccountant.tickStarted(); // Spigot
          long i = System.nanoTime();
 -        net.minecraftforge.fml.common.FMLCommonHandler.instance().onPreServerTick();
@@ -766,7 +716,7 @@
          ++this.tickCounter;
  
          if (this.startProfiling)
-@@ -683,8 +852,7 @@
+@@ -683,121 +804,155 @@
              this.statusResponse.getPlayers().setPlayers(agameprofile);
              this.statusResponse.invalidateJson();
          }
@@ -774,10 +724,12 @@
 -        if (this.tickCounter % 900 == 0)
 +        if (autosavePeriod > 0 && this.tickCounter % autosavePeriod == 0) // CraftBukkit
          {
++            SpigotTimings.worldSaveTimer.startTiming(); // Spigot
              this.profiler.startSection("save");
              this.playerList.saveAllPlayerData();
-@@ -692,64 +860,74 @@
+             this.saveAllWorlds(true);
              this.profiler.endSection();
++            SpigotTimings.worldSaveTimer.stopTiming(); // Spigot
          }
  
 +
@@ -807,11 +759,15 @@
 -        net.minecraftforge.fml.common.FMLCommonHandler.instance().onPostServerTick();
 +        this.slackActivityAccountant.tickEnded(tickNanos); // Spigot
 +        FMLCommonHandler.instance().onPostServerTick();
++		SpigotTimings.serverTickTimer.stopTiming(); // Spigot
++        org.spigotmc.CustomTimingsHandler.tick(); // Spigot
      }
  
      public void updateTimeLightAndEntities()
      {
++        SpigotTimings.schedulerTimer.startTiming(); // Spigot
 +        this.server.getScheduler().mainThreadHeartbeat(this.tickCounter); // CraftBukkit
++        SpigotTimings.schedulerTimer.stopTiming(); // Spigot
          this.profiler.startSection("jobs");
  
 -        synchronized (this.futureTaskQueue)
@@ -832,12 +788,17 @@
          this.profiler.endStartSection("levels");
 +        // CraftBukkit start
 +        // Run tasks that are waiting on processing
++        SpigotTimings.processQueueTimer.startTiming(); // Spigot
 +        while (!processQueue.isEmpty()) {
 +            processQueue.remove().run();
 +        }
++        SpigotTimings.processQueueTimer.stopTiming(); // Spigot
 +
++		SpigotTimings.chunkIOTickTimer.startTiming(); // Spigot
 +        org.bukkit.craftbukkit.v1_12_R1.chunkio.ChunkIOExecutor.tick();
++		SpigotTimings.chunkIOTickTimer.stopTiming(); // Spigot
 +
++        SpigotTimings.timeUpdateTimer.startTiming(); // Spigot
 +        // Send time updates to everyone, it will get the right time from the world the player is in.
 +        if (this.tickCounter % 20 == 0) {
 +            for (int i = 0; i < this.getPlayerList().getPlayers().size(); ++i) {
@@ -845,6 +806,7 @@
 +                entityplayer.connection.sendPacket(new SPacketTimeUpdate(entityplayer.world.getTotalWorldTime(), entityplayer.getPlayerTime(), entityplayer.world.getGameRules().getBoolean("doDaylightCycle"))); // Add support for per player time
 +            }
 +        }
++        SpigotTimings.timeUpdateTimer.stopTiming(); // Spigot
          net.minecraftforge.common.chunkio.ChunkIOExecutor.tick();
  
 -        Integer[] ids = net.minecraftforge.common.DimensionManager.getIDs(this.tickCounter % 200 == 0);
@@ -872,49 +834,107 @@
 -                    this.playerList.sendPacketToAllPlayersInDimension(new SPacketTimeUpdate(worldserver.getTotalWorldTime(), worldserver.getWorldTime(), worldserver.getGameRules().getBoolean("doDaylightCycle")), worldserver.provider.getDimension());
 -                    this.profiler.endSection();
 -                }
--
-                 this.profiler.startSection("tick");
++            this.profiler.startSection("tick");
++            FMLCommonHandler.instance().onPreWorldTick(worldserver);
+ 
+-                this.profiler.startSection("tick");
 -                net.minecraftforge.fml.common.FMLCommonHandler.instance().onPreWorldTick(worldserver);
-+                FMLCommonHandler.instance().onPreWorldTick(worldserver);
++            try
++            {
++                worldserver.timings.doTick.startTiming(); // Spigot
++                worldserver.tick();
++                worldserver.timings.doTick.stopTiming(); // Spigot
++            }
++            catch (Throwable throwable1)
++            {
++                CrashReport crashreport = CrashReport.makeCrashReport(throwable1, "Exception ticking world");
++                worldserver.addWorldInfoToCrashReport(crashreport);
++                throw new ReportedException(crashreport);
++            }
  
-                 try
-                 {
-@@ -773,19 +951,18 @@
-                     throw new ReportedException(crashreport1);
-                 }
- 
+-                try
+-                {
+-                    worldserver.tick();
+-                }
+-                catch (Throwable throwable1)
+-                {
+-                    CrashReport crashreport = CrashReport.makeCrashReport(throwable1, "Exception ticking world");
+-                    worldserver.addWorldInfoToCrashReport(crashreport);
+-                    throw new ReportedException(crashreport);
+-                }
+-
+-                try
+-                {
+-                    worldserver.updateEntities();
+-                }
+-                catch (Throwable throwable)
+-                {
+-                    CrashReport crashreport1 = CrashReport.makeCrashReport(throwable, "Exception ticking world entities");
+-                    worldserver.addWorldInfoToCrashReport(crashreport1);
+-                    throw new ReportedException(crashreport1);
+-                }
+-
 -                net.minecraftforge.fml.common.FMLCommonHandler.instance().onPostWorldTick(worldserver);
-+                FMLCommonHandler.instance().onPostWorldTick(worldserver);
-                 this.profiler.endSection();
-                 this.profiler.startSection("tracker");
-                 worldserver.getEntityTracker().tick();
-                 this.profiler.endSection();
-                 this.profiler.endSection();
--            }
-+                worldserver.explosionDensityCache.clear(); // Paper - Optimize explosions
+-                this.profiler.endSection();
+-                this.profiler.startSection("tracker");
+-                worldserver.getEntityTracker().tick();
+-                this.profiler.endSection();
+-                this.profiler.endSection();
++            try
++            {
++                worldserver.timings.tickEntities.startTiming(); // Spigot
++                worldserver.updateEntities();
++                worldserver.timings.tickEntities.stopTiming(); // Spigot
+             }
++            catch (Throwable throwable)
++            {
++                CrashReport crashreport1 = CrashReport.makeCrashReport(throwable, "Exception ticking world entities");
++                worldserver.addWorldInfoToCrashReport(crashreport1);
++                throw new ReportedException(crashreport1);
++            }
  
 -            worldTickTimes.get(id)[this.tickCounter % 100] = System.nanoTime() - i;
++            net.minecraftforge.fml.common.FMLCommonHandler.instance().onPostWorldTick(worldserver);
++            this.profiler.endSection();
++            this.profiler.startSection("tracker");
++            worldserver.timings.tracker.startTiming(); // Spigot
++            worldserver.getEntityTracker().tick();
++            worldserver.timings.tracker.stopTiming(); // Spigot
++            this.profiler.endSection();
++            this.profiler.endSection();
++            worldserver.explosionDensityCache.clear(); // Paper - Optimize explosions
++
 +                worldTickTimes.get(id)[this.tickCounter % 100] = System.nanoTime() - i;
          }
  
          this.profiler.endStartSection("dim_unloading");
--        net.minecraftforge.common.DimensionManager.unloadWorlds(worldTickTimes);
+         net.minecraftforge.common.DimensionManager.unloadWorlds(worldTickTimes);
          this.profiler.endStartSection("connection");
++        SpigotTimings.connectionTimer.startTiming(); // Spigot
          this.getNetworkSystem().networkTick();
++        SpigotTimings.connectionTimer.stopTiming(); // Spigot
          this.profiler.endStartSection("players");
-@@ -794,9 +971,8 @@
++        SpigotTimings.playerListTimer.startTiming(); // Spigot
+         this.playerList.onTick();
++        SpigotTimings.playerListTimer.stopTiming(); // Spigot
+         this.profiler.endStartSection("commandFunctions");
++        SpigotTimings.commandFunctionsTimer.startTiming(); // Spigot
          this.getFunctionManager().update();
++        SpigotTimings.commandFunctionsTimer.stopTiming();// Spigot
          this.profiler.endStartSection("tickables");
  
 -        for (int k = 0; k < this.tickables.size(); ++k)
 -        {
 -            ((ITickable)this.tickables.get(k)).update();
++		SpigotTimings.tickablesTimer.startTiming(); // Spigot
 +        for (ITickable tickable : this.tickables) {
 +            ((ITickable) tickable).update();
          }
++		SpigotTimings.tickablesTimer.stopTiming(); // Spigot
  
          this.profiler.endSection();
-@@ -809,9 +985,11 @@
+     }
+@@ -809,9 +964,11 @@
  
      public void startServerThread()
      {
@@ -926,7 +946,7 @@
      }
  
      public File getFile(String fileName)
-@@ -826,15 +1004,20 @@
+@@ -826,15 +983,20 @@
  
      public WorldServer getWorld(int dimension)
      {
@@ -950,7 +970,7 @@
      public String getMinecraftVersion()
      {
          return "1.12.2";
-@@ -862,7 +1045,7 @@
+@@ -862,7 +1024,7 @@
  
      public String getServerModName()
      {
@@ -959,7 +979,7 @@
      }
  
      public CrashReport addServerInfoToCrashReport(CrashReport report)
-@@ -891,7 +1074,7 @@
+@@ -891,7 +1053,7 @@
  
      public List<String> getTabCompletions(ICommandSender sender, String input, @Nullable BlockPos pos, boolean hasTargetBlock)
      {
@@ -968,7 +988,7 @@
          boolean flag = input.startsWith("/");
  
          if (flag)
-@@ -908,11 +1091,9 @@
+@@ -908,11 +1070,9 @@
              {
                  if (CommandBase.doesStringStartWith(s2, s1))
                  {
@@ -981,7 +1001,7 @@
          }
          else
          {
-@@ -925,27 +1106,29 @@
+@@ -925,27 +1085,29 @@
                  {
                      if (flag1 && !hasTargetBlock)
                      {
@@ -1017,7 +1037,7 @@
      }
  
      public void sendMessage(ITextComponent component)
-@@ -958,6 +1141,11 @@
+@@ -958,6 +1120,11 @@
          return true;
      }
  
@@ -1029,7 +1049,7 @@
      public ICommandManager getCommandManager()
      {
          return this.commandManager;
-@@ -993,13 +1181,11 @@
+@@ -993,13 +1160,11 @@
          this.folderName = name;
      }
  
@@ -1043,7 +1063,7 @@
      public String getWorldName()
      {
          return this.worldName;
-@@ -1012,7 +1198,7 @@
+@@ -1012,7 +1177,7 @@
  
      public void setDifficultyForAllWorlds(EnumDifficulty difficulty)
      {
@@ -1052,7 +1072,7 @@
          {
              if (worldserver1 != null)
              {
-@@ -1094,9 +1280,9 @@
+@@ -1094,9 +1259,9 @@
          playerSnooper.addClientStat("avg_tick_ms", Integer.valueOf((int)(MathHelper.average(this.tickTimeArray) * 1.0E-6D)));
          int l = 0;
  
@@ -1064,7 +1084,7 @@
              {
                  if (worldserver1 != null)
                  {
-@@ -1134,7 +1320,8 @@
+@@ -1134,7 +1299,8 @@
  
      public boolean isServerInOnlineMode()
      {
@@ -1074,7 +1094,7 @@
      }
  
      public void setOnlineMode(boolean online)
-@@ -1228,17 +1415,23 @@
+@@ -1228,17 +1394,23 @@
  
      public void setGameType(GameType gameMode)
      {
@@ -1100,7 +1120,7 @@
      @SideOnly(Side.CLIENT)
      public boolean serverIsInRunLoop()
      {
-@@ -1331,7 +1524,7 @@
+@@ -1331,7 +1503,7 @@
      @Nullable
      public Entity getEntityFromUuid(UUID uuid)
      {
@@ -1109,7 +1129,7 @@
          {
              if (worldserver1 != null)
              {
-@@ -1357,6 +1550,11 @@
+@@ -1357,6 +1529,11 @@
          return this;
      }
  
@@ -1121,7 +1141,7 @@
      public int getMaxWorldSize()
      {
          return 29999984;
-@@ -1366,15 +1564,14 @@
+@@ -1366,15 +1543,14 @@
      {
          Validate.notNull(callable);
  
@@ -1142,7 +1162,7 @@
          }
          else
          {
-@@ -1455,134 +1652,41 @@
+@@ -1455,134 +1631,41 @@
      }
  
      @SideOnly(Side.SERVER)
@@ -1293,7 +1313,7 @@
          }
      }
  
-@@ -1595,7 +1699,8 @@
+@@ -1595,7 +1678,8 @@
      @SideOnly(Side.SERVER)
      public boolean isDebuggingEnabled()
      {
@@ -1303,7 +1323,7 @@
      }
  
      @SideOnly(Side.SERVER)
-@@ -1659,4 +1764,9 @@
+@@ -1659,4 +1743,9 @@
      {
          return this.dataFixer;
      }

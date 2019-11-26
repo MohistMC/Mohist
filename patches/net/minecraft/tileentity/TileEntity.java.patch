@@ -8,7 +8,7 @@
  import net.minecraft.nbt.NBTTagCompound;
  import net.minecraft.network.play.server.SPacketUpdateTileEntity;
  import net.minecraft.util.Mirror;
-@@ -16,16 +17,21 @@
+@@ -16,20 +17,28 @@
  import net.minecraft.util.registry.RegistryNamespaced;
  import net.minecraft.util.text.ITextComponent;
  import net.minecraft.world.World;
@@ -17,8 +17,10 @@
  import net.minecraftforge.fml.relauncher.SideOnly;
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
++import org.bukkit.craftbukkit.v1_12_R1.SpigotTimings;
 +import org.bukkit.craftbukkit.v1_12_R1.block.CraftBlockEntityState;
 +import org.bukkit.inventory.InventoryHolder;
++import org.spigotmc.CustomTimingsHandler;
 +import red.mohist.Mohist;
  
  public abstract class TileEntity implements net.minecraftforge.common.capabilities.ICapabilitySerializable<NBTTagCompound>
@@ -31,7 +33,12 @@
      protected BlockPos pos = BlockPos.ORIGIN;
      protected boolean tileEntityInvalid;
      private int blockMetadata = -1;
-@@ -305,6 +311,17 @@
+     protected Block blockType;
++    public CustomTimingsHandler tickTimer = SpigotTimings.getTileEntityTimings(this); // Spigot
+ 
+     public static void register(String id, Class <? extends TileEntity > clazz)
+     {
+@@ -305,6 +314,17 @@
      {
      }
  
@@ -49,7 +56,7 @@
      // -- BEGIN FORGE PATCHES --
      /**
       * Called when you receive a TileEntityData packet for the location this
-@@ -531,4 +548,30 @@
+@@ -531,4 +551,30 @@
          register("shulker_box", TileEntityShulkerBox.class);
          register("bed", TileEntityBed.class);
      }
