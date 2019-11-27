@@ -10,9 +10,6 @@ import java.util.concurrent.TimeUnit;
 
 public class MohistThreadBox {
 
-    public static final ExecutorService DL = new ThreadPoolExecutor(1, Integer.MAX_VALUE, 60L, TimeUnit.SECONDS,
-            new SynchronousQueue<>(), new NamedThreadFactory("Mohist DL"));
-
     public static final ScheduledExecutorService METRICS = new ScheduledThreadPoolExecutor(1, new NamedThreadFactory("Metrics"));
 
     public static final ExecutorService ASYNCCHAT = Executors.newCachedThreadPool(new NamedThreadFactory("Async Chat Thread"));

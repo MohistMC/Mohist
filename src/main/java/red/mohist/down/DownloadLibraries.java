@@ -12,12 +12,11 @@ import red.mohist.util.FileUtil;
 import red.mohist.util.HttpUtil;
 import red.mohist.util.i18n.Message;
 
-public class DownloadLibraries implements Runnable {
+public class DownloadLibraries{
 
     public static final String FIND_LOCATE = "https://passport.lazercloud.com/api/v1/options/GetLocate";
 
-    @Override
-    public void run() {
+    public static void run() {
         String url = null;
         String fileName = "libraries.zip";
         try {
