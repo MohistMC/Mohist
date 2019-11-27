@@ -592,15 +592,6 @@
              try
              {
                  if(entity.updateBlocked) continue;
-@@ -1700,7 +1962,7 @@
- 
-                 if (net.minecraftforge.common.ForgeModContainer.removeErroringEntities)
-                 {
--                    net.minecraftforge.fml.common.FMLLog.log.fatal("{}", crashreport.getCompleteReport());
-+                    Mohist.LOGGER.fatal("{}", crashreport.getCompleteReport());
-                     removeEntity(entity);
-                 }
-                 else
 @@ -1737,67 +1999,83 @@
          this.tickPlayers();
          this.profiler.endStartSection("regular");

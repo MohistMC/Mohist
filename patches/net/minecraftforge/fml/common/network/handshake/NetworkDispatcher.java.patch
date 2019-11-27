@@ -9,18 +9,7 @@
      private ConnectionState state;
      private ConnectionType connectionType;
      private final Side side;
-@@ -208,6 +208,10 @@
-                 if (this.player.connection != this) return;
-                 super.update();
-             }
-+
-+            public void sendPacket(Packet<?> packetIn) {
-+                super.sendPacket(packetIn);
-+            }
-         };
-         this.netHandler = serverHandler;
-         // NULL the play server here - we restore it further on. If not, there are packets sent before the login
-@@ -597,7 +601,7 @@
+@@ -597,7 +597,7 @@
              }
              else
              {
