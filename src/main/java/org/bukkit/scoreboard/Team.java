@@ -145,6 +145,17 @@ public interface Team {
     void addPlayer(OfflinePlayer player) throws IllegalStateException, IllegalArgumentException;
 
     /**
+     * This puts the specified entry onto this team for the scoreboard.
+     * <p>
+     * This will remove the entry from any other team on the scoreboard.
+     *
+     * @param entry the entry to add
+     * @throws IllegalArgumentException if entry is null
+     * @throws IllegalStateException if this team has been unregistered
+     */
+    void addEntry(String entry) throws IllegalStateException, IllegalArgumentException;
+
+    /**
      * Removes the player from this team.
      *
      * @param player the player to remove
@@ -153,6 +164,16 @@ public interface Team {
      * @throws IllegalStateException if this team has been unregistered
      */
     boolean removePlayer(OfflinePlayer player) throws IllegalStateException, IllegalArgumentException;
+
+    /**
+     * Removes the entry from this team.
+     *
+     * @param entry the entry to remove
+     * @throws IllegalArgumentException if entry is null
+     * @throws IllegalStateException if this team has been unregistered
+     * @return if the entry was a part of this team
+     */
+    boolean removeEntry(String entry) throws IllegalStateException, IllegalArgumentException;
 
     /**
      * Unregisters this team from the Scoreboard
@@ -170,4 +191,14 @@ public interface Team {
      * @throws IllegalStateException if this team has been unregistered
      */
     boolean hasPlayer(OfflinePlayer player) throws IllegalArgumentException, IllegalStateException;
+    
+    /**
+     * Checks to see if the specified entry is a member of this team.
+     *
+     * @param entry the entry to search for
+     * @return true if the entry is a member of this team
+     * @throws IllegalArgumentException if entry is null
+     * @throws IllegalStateException if this team has been unregistered
+     */
+    boolean hasEntry(String entry) throws IllegalArgumentException, IllegalStateException;
 }

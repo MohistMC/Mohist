@@ -43,7 +43,7 @@
      private static final String __OBFID = "CL_00000347";
  
      public void writeToNBT(NBTTagCompound p_145841_1_)
-@@ -70,4 +40,12 @@
+@@ -70,4 +40,14 @@
      {
          return this.field_145994_a;
      }
@@ -52,7 +52,9 @@
 +    @Override
 +    public boolean canUpdate()
 +    {
-+        return true; // Thermos - don't create incompat issues for no reason...jeez guys... >.< Fix #180
++        return true; //False will make some mods not work
 +    }
++    @Override
++    public void updateEntity() {}//???
 +    // Cauldron end
  }

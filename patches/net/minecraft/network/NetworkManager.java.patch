@@ -68,18 +68,6 @@
          if (this.channel != null && this.channel.isOpen())
          {
              this.flushOutboundQueue();
-@@ -181,9 +206,9 @@
-     {
-         if (this.channel != null && this.channel.isOpen())
-         {
--            while (!this.outboundPacketsQueue.isEmpty())
-+            NetworkManager.InboundHandlerTuplePacketListener inboundhandlertuplepacketlistener = null;
-+            while ((inboundhandlertuplepacketlistener = (NetworkManager.InboundHandlerTuplePacketListener)this.outboundPacketsQueue.poll()) != null)
-             {
--                NetworkManager.InboundHandlerTuplePacketListener inboundhandlertuplepacketlistener = (NetworkManager.InboundHandlerTuplePacketListener)this.outboundPacketsQueue.poll();
-                 this.dispatchPacket(inboundhandlertuplepacketlistener.field_150774_a, inboundhandlertuplepacketlistener.field_150773_b);
-             }
-         }
 @@ -208,7 +233,15 @@
          {
              for (int i = 1000; !this.receivedPacketsQueue.isEmpty() && i >= 0; --i)

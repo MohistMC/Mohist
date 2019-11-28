@@ -107,28 +107,45 @@ final class CraftTeam extends CraftScoreboardComponent implements Team {
 
     public void addPlayer(OfflinePlayer player) throws IllegalStateException, IllegalArgumentException {
         Validate.notNull(player, "OfflinePlayer cannot be null");
+        this.addEntry(player.getName());
+    }
+
+    @Override
+    public void addEntry(String player) throws IllegalStateException,IllegalArgumentException{
+        Validate.notNull(player, "PlayerName cannot be null");
         CraftScoreboard scoreboard = checkState();
 
-        scoreboard.board.func_151392_a(player.getName(), team.getRegisteredName());
+        scoreboard.board.func_151392_a(player, team.getRegisteredName());
     }
 
     public boolean removePlayer(OfflinePlayer player) throws IllegalStateException, IllegalArgumentException {
-        Validate.notNull(player, "OfflinePlayer cannot be null");
+        return this.removeEntry(player.getName());
+    }
+    
+    @Override
+    public boolean removeEntry(String player) throws IllegalStateException,IllegalArgumentException{
+        Validate.notNull(player, "PlayerName cannot be null");
         CraftScoreboard scoreboard = checkState();
 
-        if (!team.getMembershipCollection().contains(player.getName())) {
+        if (!team.getMembershipCollection().contains(player)) {
             return false;
         }
 
-        scoreboard.board.removePlayerFromTeam(player.getName(), team);
+        scoreboard.board.removePlayerFromTeam(player, team);
         return true;
     }
 
     public boolean hasPlayer(OfflinePlayer player) throws IllegalArgumentException, IllegalStateException {
         Validate.notNull(player, "OfflinePlayer cannot be null");
+        return this.hasEntry(player.getName());
+    }
+    
+    @Override
+    public boolean hasEntry(String entry) throws IllegalArgumentException,IllegalStateException{
+        Validate.notNull(entry, "PlayerName cannot be null");
         CraftScoreboard scoreboard = checkState();
 
-        return team.getMembershipCollection().contains(player.getName());
+        return team.getMembershipCollection().contains(entry);
     }
 
     @Override

@@ -1,0 +1,11 @@
+--- ../src-base/minecraft/net/minecraft/block/BlockRailBase.java
++++ ../src-work/minecraft/net/minecraft/block/BlockRailBase.java
+@@ -98,7 +98,7 @@
+         {
+             this.func_150052_a(p_149726_1_, p_149726_2_, p_149726_3_, p_149726_4_, true);
+ 
+-            if (this.field_150053_a)
++            if (this.field_150053_a&&p_149726_1_.getBlock(p_149726_2_,p_149726_3_,p_149726_4_)==this)
+             {
+                 this.onNeighborBlockChange(p_149726_1_, p_149726_2_, p_149726_3_, p_149726_4_, this);
+             }

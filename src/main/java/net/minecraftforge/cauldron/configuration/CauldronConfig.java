@@ -1,9 +1,9 @@
 package net.minecraftforge.cauldron.configuration;
 
 import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
 import net.minecraft.server.MinecraftServer;
 import net.minecraftforge.cauldron.command.CauldronCommand;
+import org.apache.commons.lang3.reflect.FieldUtils;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 public class CauldronConfig extends ConfigBase
@@ -15,7 +15,7 @@ public class CauldronConfig extends ConfigBase
             + "\n"
             + "IRC: #cauldron @ irc.esper.net ( http://webchat.esper.net/?channel=cauldron )\n"
             + "Forums: http://cauldron.minecraftforge.net/\n";
-    public static CauldronConfig instance;
+
     /* ======================================================================== */
 
     // Logging options
@@ -46,7 +46,7 @@ public class CauldronConfig extends ConfigBase
     public final BoolSetting checkEntityMaxSpeeds = new BoolSetting(this, "settings.check-entity-max-speeds", false, "Removes any entity that exceeds max speed.");
     public final IntSetting largeBoundingBoxLogSize = new IntSetting(this, "settings.entity-bounding-box-max-size", 1000, "Max size of an entity's bounding box before removing it (either being too large or bugged and 'moving' too fast)");
     public final IntSetting entityMaxSpeed = new IntSetting(this, "settings.entity-max-speed", 100, "Square of the max speed of an entity before removing it");
-    public final IntSetting chunkGCGracePeriod = new IntSetting(this, "settings.chunk-gc-grace-period",0,"Grace period of no-ticks before unload");
+    public final BoolSetting removeErroringBlocks=new BoolSetting(this,"setting.remove-erroring-blocks",true,"Set this to true to remove any Blocks that throws an error in its update method instead of closing the server and reporting a crash log.");
 
     // Debug settings
     public final BoolSetting enableThreadContentionMonitoring = new BoolSetting(this, "debug.thread-contention-monitoring", false, "Set true to enable Java's thread contention monitoring for thread dumps");
@@ -58,24 +58,15 @@ public class CauldronConfig extends ConfigBase
     public final BoolSetting fakePlayerLogin = new BoolSetting(this, "fake-players.do-login", false, "Raise login events for fake players");
     public final IntSetting maxPlayersVisible = new IntSetting(this, "world-settings.max-players-visible", -1, "How many players will visible in the tab list");
 
-    // Thermos caterings
-    public final BoolSetting realNames = new BoolSetting(this, "world-settings.use-real-names", false, "Instead of DIM##, use the world name prescribed by the mod! Be careful with this one, could create incompat with existing setups!");
-
-    // Optimization options
-    public final IntSetting repeaterL = new IntSetting(this, "optimized.redstone-repeater-update-speed", -1, "how many milliseconds the server must ignore before trying repeater updates");
-    public final IntSetting redstoneTorchL = new IntSetting(this, "optimized.redstone-redstoneTorch-update-speed", -1, "how many milliseconds the server must ignore before trying redstoneTorch updates");
-    public final BoolSetting affinity = new BoolSetting(this, "optimized.affinity-locking", false, "Whether to enable affinity locking. Very technical usage, recommended for dedicated hosts only. Ask on Discord or GitHub for info on how to set this up properly.");
-    public final BoolSetting ramChunks = new BoolSetting(this, "optimized.ram-load-chunks", false, "Loads chunks into the system RAM (experimental). WARNING! ENABLING THIS WILL INCREASE RAM USAGE BY OVER 1GB.");
-    
-    //Protection options
-    public final BoolSetting protectSP = new BoolSetting(this, "protection.spawn-protect", true, "Whether to enable Thermos' all-seeing protection in the spawn world");
-    public final IntArraySetting instantRemove = new IntArraySetting(this, "protection.instant-removal", "", "Contains Block IDs that you want to NEVER exist in the world i.e. world anchors (just in case) (e.g. instant-removal: 1,93,56,24 ");
-    public final StringArraySetting blockedCMDs = new StringArraySetting(this, "protection.blocked-cmds", "", "Contains commands you want to block from being used in-game, you must also include command aliases (e.g. blocked-cmds: /op,/deop,/stop,/restart .");
-    public final BoolSetting noFallbackAlias = new BoolSetting(this, "protection.no-fallback-alias", true, "Don't allow commands of the format plugin:cmd, the plugin: will be removed (recommended to keep at true)");
     // Plug-in options
-    public final BoolSetting reloadPlugins = new BoolSetting(this, "plugin-settings.allow-reload", false, "Allow plugins to be reloaded. WARNING - breaks with some mods. We *will not* support this!");
-
     public final BoolSetting remapPluginFile = new BoolSetting(this, "plugin-settings.default.remap-plugin-file", false, "Remap the plugin file (dev)");
+
+    // Block Monitor
+    public final BoolSetting modPacketPlace = new BoolSetting(this, "block-monitor.mod-packet-place", true, "monitor block place on mod packet");
+    public final BoolSetting modPacketInteract = new BoolSetting(this, "block-monitor.mod-packet-interact", false, "monitor block interact on mod packet");
+    
+    //player chunk load 
+    public final IntSetting playerChunkLoadDelay = new IntSetting(this, "player-chunk.load-delay", 0, "delay(tick) to load player chunk.");
 
     /* ======================================================================== */
 
@@ -83,36 +74,51 @@ public class CauldronConfig extends ConfigBase
     {
         super(fileName, commandName);
         init();
-        instance = this;
     }
 
     public void init()
     {
-    	for(Field f : this.getClass().getFields())
-    	{
-    		if(Modifier.isFinal(f.getModifiers()) && Modifier.isPublic(f.getModifiers()) && !Modifier.isStatic(f.getModifiers()))
-    		{
-    			try
-    			{
-    				Setting setting = (Setting) f.get(this);
-    				if(setting == null) continue;
-        			settings.put(setting.path, setting);    				
-    			}
-    			catch (ClassCastException e) 
-    			{
-    				
-    			}
-    			catch(Throwable t)
-    			{
-    				System.out.println("[Thermos] Failed to initialize a CauldronConfig setting.");
-    				t.printStackTrace();
-    			}
+        // Uranium start
+        for(Field sField : CauldronConfig.class.getDeclaredFields()){
+            if(!Setting.class.isAssignableFrom(sField.getType())||sField.getAnnotation(Deprecated.class)!=null)
+                continue;
 
-    		}
-    	}
+            sField.setAccessible(true);
+            try {
+                Setting tValue = (Setting) FieldUtils.readField(sField, this);
+                if(tValue!=null)
+                    register(tValue);
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+            }
+        }
+        addDefaults();
+        //Uranium end
         load();
     }
+    private void disableLegacyRemap(String pluginName){
+        config.addDefault("plugin-settings."+pluginName+".remap-nms-v1_7_R4", true);
+        config.addDefault("plugin-settings."+pluginName+".remap-nms-v1_7_R3", false);
+        config.addDefault("plugin-settings."+pluginName+".remap-nms-v1_7_R1", false);
+        config.addDefault("plugin-settings."+pluginName+".remap-nms-v1_6_R3", false);
+        config.addDefault("plugin-settings."+pluginName+".remap-nms-v1_5_R3", false);
+        config.addDefault("plugin-settings."+pluginName+".remap-nms-pre", "false");
+        config.addDefault("plugin-settings."+pluginName+".remap-obc-v1_7_R4", true);
+        config.addDefault("plugin-settings."+pluginName+".remap-obc-v1_7_R3", false);
+        config.addDefault("plugin-settings."+pluginName+".remap-obc-v1_7_R1", false);
+        config.addDefault("plugin-settings."+pluginName+".remap-obc-v1_6_R3", false);
+        config.addDefault("plugin-settings."+pluginName+".remap-obc-v1_5_R3", false);
+        config.addDefault("plugin-settings."+pluginName+".remap-obc-pre", false);
+    }
+    //Uranium start
+    public void addDefaults(){
+        disableLegacyRemap("WorldEdit");
+    }
 
+    private void register(Setting<?> setting) {
+        settings.put(setting.path, setting);
+    }
+    //Uranium end
     public void addCommands()
     {
         commands.put(this.commandName, new CauldronCommand());

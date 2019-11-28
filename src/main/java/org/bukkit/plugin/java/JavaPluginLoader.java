@@ -2,6 +2,8 @@ package org.bukkit.plugin.java;
 
 // Cauldron start
 
+import cc.uraniummc.eventexecutor.ASMEventExecutorGenerate;
+import cc.uraniummc.eventexecutor.EventExecutorImp;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.google.common.collect.ImmutableList;
@@ -51,7 +53,6 @@ import org.bukkit.plugin.TimedRegisteredListener;
 import org.bukkit.plugin.UnknownDependencyException;
 import org.spigotmc.CustomTimingsHandler;
 import org.yaml.snakeyaml.error.YAMLException;
-
 // Cauldron end
 
 /**
@@ -269,7 +270,7 @@ public final class JavaPluginLoader implements PluginLoader {
         Set<Method> methods;
         try {
             Method[] publicMethods = listener.getClass().getMethods();
-            methods = new HashSet<Method>(publicMethods.length, Float.MAX_VALUE);
+            methods = new HashSet<Method>(publicMethods.length);
             for (Method method : publicMethods) {
                 methods.add(method);
             }
@@ -320,26 +321,40 @@ public final class JavaPluginLoader implements PluginLoader {
                 }
             }
 
-            final CustomTimingsHandler timings = new CustomTimingsHandler("Plugin: " + plugin.getDescription().getFullName() + " Event: " + listener.getClass().getName() + "::" + method.getName()+"("+eventClass.getSimpleName()+")", pluginParentTimer); // Spigot
-            EventExecutor executor = new EventExecutor() {
-                public void execute(Listener listener, Event event) throws EventException {
-                    try {
-                        if (!eventClass.isAssignableFrom(event.getClass())) {
-                            return;
+            EventExecutor executor = ASMEventExecutorGenerate.createWrapperInstance(plugin,listener,method);
+            if(executor == null){
+                final CustomTimingsHandler timings = new CustomTimingsHandler("Plugin: " + plugin.getDescription().getFullName()
+                        + " Event: " + listener.getClass().getName() + "::"
+                        + method.getName()
+                        + "(" + eventClass.getSimpleName() + ")", pluginParentTimer);
+                executor = new EventExecutor() {
+
+                    public void execute(Listener listener, Event event) throws EventException {
+                        try {
+                            if (!eventClass.isAssignableFrom(event.getClass())) {
+                                return;
+                            }
+                            // Spigot start
+                            boolean isAsync = event.isAsynchronous();
+                            if (!isAsync) timings.startTiming();
+                            method.invoke(listener, event);
+                            if (!isAsync) timings.stopTiming();
+                            // Spigot end
+                        } catch (InvocationTargetException ex) {
+                            throw new EventException(ex.getCause());
+                        } catch (Throwable t) {
+                            throw new EventException(t);
                         }
-                        // Spigot start
-                        boolean isAsync = event.isAsynchronous();
-                        if (!isAsync) timings.startTiming();
-                        method.invoke(listener, event);
-                        if (!isAsync) timings.stopTiming();
-                        // Spigot end
-                    } catch (InvocationTargetException ex) {
-                        throw new EventException(ex.getCause());
-                    } catch (Throwable t) {
-                        throw new EventException(t);
                     }
-                }
-            };
+                };
+            } else {
+                CustomTimingsHandler tTiming = new CustomTimingsHandler("Plugin: " + plugin.getDescription().getFullName()
+                        + " Event: " + listener.getClass().getName() + "::"
+                        + method.getName() + "_ASM"
+                        + "(" + eventClass.getSimpleName() + ")", pluginParentTimer);
+                ((EventExecutorImp)executor).initExecute(eventClass, tTiming);
+            }
+
             if (false) { // Spigot - RL handles useTimings check now
                 eventSet.add(new TimedRegisteredListener(listener, executor, eh.priority(), plugin, eh.ignoreCancelled()));
             } else {

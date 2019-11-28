@@ -26,7 +26,7 @@ public abstract class ConfigBase
 
     public ConfigBase(String fileName, String commandName)
     {
-        this.configFile = new File(fileName);
+        this.configFile=new File(MinecraftServer.serverConfigDir,fileName);
         this.config = YamlConfiguration.loadConfiguration(configFile);
         this.commandName = commandName;
         this.commands = new HashMap<String, Command>();
@@ -77,10 +77,6 @@ public abstract class ConfigBase
                 {
                     worldserver.tileentityConfig.save();
                 }
-                if (worldserver.sushchestvoConfig != null)
-                {
-                    worldserver.sushchestvoConfig.save();
-                }                
             }
         }
     }

@@ -1,7 +1,10 @@
 package org.bukkit.plugin.java;
 
-// Cauldron start
-
+import cc.uraniummc.UraniumMapping;
+import cc.uraniummc.UraniumRemapper;
+import com.google.common.io.Files;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -19,6 +22,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import java.util.regex.Pattern;
 import net.md_5.specialsource.JarMapping;
 import net.md_5.specialsource.JarRemapper;
 import net.md_5.specialsource.RemapperProcessor;
@@ -27,20 +31,26 @@ import net.md_5.specialsource.repo.RuntimeRepo;
 import net.md_5.specialsource.transformer.MavenShade;
 import net.minecraft.server.MinecraftServer;
 import net.minecraftforge.cauldron.CauldronUtils;
+import static org.apache.commons.codec.Charsets.UTF_8;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.Validate;
 import org.bukkit.plugin.InvalidPluginException;
 import org.bukkit.plugin.PluginDescriptionFile;
+import org.objectweb.asm.Type;
 
-//import org.bouncycastle.util.io.Streams;
 // Cauldron end
+//import org.bouncycastle.util.io.Streams;
 
 /**
  * A ClassLoader for plugins, to allow shared classes across multiple plugins
  */
 public class PluginClassLoader extends URLClassLoader {
     private final JavaPluginLoader loader;
-    private final ConcurrentMap<String, Class<?>> classes = new ConcurrentHashMap<String, Class<?>>(); // Cauldron - Threadsafe classloading
+    private final ConcurrentMap<String, Class<?>> classes = new ConcurrentHashMap<String, Class<?>>(); // Cauldron - Threadsafe classloadin
     private final PluginDescriptionFile description;
+    public PluginDescriptionFile getDescription(){
+        return description;
+    }
     private final File dataFolder;
     private final File file;
     JavaPlugin plugin; // Cauldron - remove final
@@ -52,7 +62,7 @@ public class PluginClassLoader extends URLClassLoader {
     private boolean debug;            // classloader debugging
     private int remapFlags = -1;
 
-    private static ConcurrentMap<Integer,JarMapping> jarMappings = new ConcurrentHashMap<Integer, JarMapping>();
+    private static ConcurrentMap<Integer,UraniumMapping> jarMappings = new ConcurrentHashMap<Integer, UraniumMapping>();
     private static final int F_GLOBAL_INHERIT   = 1 << 1;
     private static final int F_REMAP_OBCPRE     = 1 << 2;
     private static final int F_REMAP_NMS152     = 1 << 3;
@@ -65,12 +75,91 @@ public class PluginClassLoader extends URLClassLoader {
     private static final int F_REMAP_OBC172     = 1 << 10;
     private static final int F_REMAP_OBC179     = 1 << 11;
     private static final int F_REMAP_OBC1710    = 1 << 12;
+    private static final int F_REMAP_GUAVA17    = 1 << 13;
+    private static final int F_REMAP_GUAVA21    = 1 << 14;
+    private static final int F_REMAP_REFLECTION = 1 << 15;
+    private static final int F_REMAP_FUTURE = 1 << 16;
+    private static final int F_REMAP_SQLITE321 = 1 << 17;
     private static final int F_REMAP_NMSPRE_MASK= 0xffff0000;  // "unversioned" NMS plugin version
-
     // This trick bypasses Maven Shade's package rewriting when using String literals [same trick in jline]
     private static final String org_bukkit_craftbukkit = new String(new char[] {'o','r','g','/','b','u','k','k','i','t','/','c','r','a','f','t','b','u','k','k','i','t'});
     // Cauldron end
+    // Uranium start
+    public final UraniumPluginClassLoader umcl=new UraniumPluginClassLoader();
+    public final class UraniumPluginClassLoader{
+        public UraniumPluginClassLoader() {
+        }
+        public boolean checkVer(String pTargetVer){
+            char sign=pTargetVer.charAt(0);
+            String ver=description.getVersion()!=null?description.getVersion():"";
+            double ven;
+            try{
+                ven=Double.valueOf(ver);
+            }catch (NumberFormatException e){
+                ven=0;
+            }
+            String cver_info=pTargetVer.substring(1);
+            double cven;
+            try{
+                cven=Double.valueOf(cver_info);
+            }catch (NumberFormatException e){
+                cven=0;
+            }
+            boolean equal=false;
+            switch (sign){
+                case '>':
+                case '<':
+                    if(pTargetVer.charAt(1)=='=')equal=true;
+                    cver_info=cver_info.substring(1);
+                    break;
+            }
+            switch (sign){
+                case '=':
+                    return ver.equals(cver_info);
+                case '-':
+                    return ver.startsWith(cver_info);
+                case '+':
+                    return ver.endsWith(cver_info);
+                case '>':
+                    return equal?ven>=cven:ven>cven;
+                case '<':
+                    return equal?ven<=cven:ven<cven;
+                case '*':
+                    return Pattern.compile(cver_info).matcher(ver).find();
+                default:
+                    return ver.equals(pTargetVer);
+            }
+        }
+        public String remapClass(String pClass){
+            String tPacket="net.minecraft.util.";
+            if(pClass.startsWith(tPacket)&&pClass.indexOf('.',tPacket.length())!=-1){
+                return pClass.substring(tPacket.length());
+            }else
+            if(pClass.startsWith("net.minecraft.server")) {
+                JarMapping jarMapping = getJarMapping(remapFlags); // grab from SpecialSource
+                String remappedClass = jarMapping.classes.get(pClass.replaceAll("\\.", "/")); // get remapped pkgmcp class name
+                return remappedClass;
+            }
+            return pClass;
+        }
+        public String remapMethod(Class<?> pClass,String pName, Class<?>[]parameterTypes,boolean pDeclared){
+            UraniumMapping jarMapping = (UraniumMapping) getJarMapping(remapFlags); // grab from SpecialSource
+            StringBuilder keyF=new StringBuilder(pName+" (");
+            if(parameterTypes!=null&&parameterTypes.length>0){
+                for(Class<?> type : parameterTypes){
+                    keyF.append(Type.getType(type).getDescriptor());
+                }
+            }
+            keyF.append(")");
+            return jarMapping.remapMethod(jarMapping.mRclasses.get(pClass.getName().replace('.', '/')),pName,keyF.toString(),pDeclared);
+        }
 
+        public String remapField(Class<?> pClass,String pName,boolean pDeclared){
+            UraniumMapping jarMapping=(UraniumMapping)getJarMapping(remapFlags); // grab from SpecialSource
+            return jarMapping.remapField(jarMapping.mRclasses.get(pClass.getName().replace('.', '/')),pName,pDeclared);
+        }
+    }
+    // Uranium end
     PluginClassLoader(final JavaPluginLoader loader, final ClassLoader parent, final PluginDescriptionFile description, final File dataFolder, final File file) throws InvalidPluginException, MalformedURLException {
         super(new URL[] {file.toURI().toURL()}, parent);
         Validate.notNull(loader, "Loader cannot be null");
@@ -104,7 +193,7 @@ public class PluginClassLoader extends URLClassLoader {
         boolean reflectFields = MinecraftServer.getServer().cauldronConfig.getBoolean("plugin-settings.default.remap-reflect-field", true);
         boolean reflectClass = MinecraftServer.getServer().cauldronConfig.getBoolean("plugin-settings.default.remap-reflect-class", true);
         boolean allowFuture = MinecraftServer.getServer().cauldronConfig.getBoolean("plugin-settings.default.remap-allow-future", false);
-
+        //boolean remapToSqlite321 = MinecraftServer.uraniumConfig.enableSQLite321.getValue();
         // plugin-specific overrides
         useCustomClassLoader = MinecraftServer.getServer().cauldronConfig.getBoolean("plugin-settings."+pluginName+".custom-class-loader", useCustomClassLoader, false);
         debug = MinecraftServer.getServer().cauldronConfig.getBoolean("plugin-settings."+pluginName+".debug", debug, false);
@@ -125,7 +214,23 @@ public class PluginClassLoader extends URLClassLoader {
         reflectFields = MinecraftServer.getServer().cauldronConfig.getBoolean("plugin-settings."+pluginName+".remap-reflect-field", reflectFields, false);
         reflectClass = MinecraftServer.getServer().cauldronConfig.getBoolean("plugin-settings."+pluginName+".remap-reflect-class", reflectClass, false);
         allowFuture = MinecraftServer.getServer().cauldronConfig.getBoolean("plugin-settings."+pluginName+".remap-allow-future", allowFuture, false);
-
+        //remapToSqlite321 = MinecraftServer.uraniumConfig.getBoolean("plugin-settings."+pluginName+".remap-to-sqlite321",remapToSqlite321,false);
+        // Uranium start
+        boolean remapGuava17= MinecraftServer.uraniumConfig.enableGuava17.getValue();
+        boolean remapGuava21= MinecraftServer.uraniumConfig.enableGuava21.getValue();
+        String remap_guava17_ver=MinecraftServer.uraniumConfig.getString("plugin-settings."+pluginName+".remap-guava17-ver",null);
+        String remap_guava21_ver=MinecraftServer.uraniumConfig.getString("plugin-settings."+pluginName+".remap-guava21-ver",null);
+        remapGuava17 = MinecraftServer.uraniumConfig.getBoolean("plugin-settings." + pluginName + ".remap-guava17", remapGuava17, false);
+        if(remap_guava17_ver!=null&&!remapGuava17) {
+            remapGuava17 = umcl.checkVer(remap_guava17_ver);
+        }
+        remapGuava21 = MinecraftServer.uraniumConfig.getBoolean("plugin-settings." + pluginName + ".remap-guava21", remapGuava21, false);
+        if(remap_guava21_ver!=null&&!remapGuava21) {
+            remapGuava21 = umcl.checkVer(remap_guava21_ver);
+        }
+        boolean remapReflection=MinecraftServer.uraniumConfig.remapReflection.getValue();
+        remapReflection=MinecraftServer.uraniumConfig.getBoolean("plugin-settings."+pluginName+".remap-Reflection",remapReflection,false);
+        // Uranium end
         if (debug) {
             System.out.println("PluginClassLoader debugging enabled for "+pluginName);
         }
@@ -158,7 +263,13 @@ public class PluginClassLoader extends URLClassLoader {
         if (remapOBC152) flags |= F_REMAP_OBC152;
         if (remapOBCPre) flags |= F_REMAP_OBCPRE;
         if (globalInherit) flags |= F_GLOBAL_INHERIT;
-
+        //Uranium start
+        if (remapGuava17) flags |= F_REMAP_GUAVA17;
+        if (remapReflection) flags |=F_REMAP_REFLECTION;
+        if (allowFuture) flags |=F_REMAP_FUTURE;
+        //if (remapToSqlite321) flags |= F_REMAP_SQLITE321;
+        if (remapGuava21) flags |= F_REMAP_GUAVA21;
+        //Uranium end
         remapFlags = flags; // used in findClass0
         JarMapping jarMapping = getJarMapping(flags);
 
@@ -172,8 +283,8 @@ public class PluginClassLoader extends URLClassLoader {
             jarMapping.setFallbackInheritanceProvider(new ClassLoaderProvider(this));
         }
 
-        remapper = new thermos.ThermosRemapper(jarMapping);
-
+        remapper = new cc.uraniummc.UraniumRemapper((UraniumMapping) jarMapping,this,remapReflection);
+        ((UraniumRemapper)remapper).setDebug(true);
         if (pluginInherit || reflectFields || reflectClass) {
             remapperProcessor = new RemapperProcessor(
                     pluginInherit ? loader.getGlobalInheritanceMap() : null,
@@ -186,7 +297,27 @@ public class PluginClassLoader extends URLClassLoader {
             remapperProcessor = null;
         }
         // Cauldron end
+        //Uranium start
 
+        if(debug) {
+            try {
+                UraniumMapping um=(UraniumMapping)jarMapping;
+                File fp=new File("remap-maps");
+                if(!fp.exists())fp.mkdirs();
+                File fm= new File(fp,pluginName+".tmp.methods");
+                File ff= new File(fp,pluginName+".tmp.fields");
+                File fc=new File(fp,pluginName+".tmp.classes");
+                File frm= new File(fp,pluginName+".tmp.rmethods");
+                File frc=new File(fp,pluginName+".tmp.rclasses");
+                Gson g = new GsonBuilder().setPrettyPrinting().create();
+                Files.write(g.toJson(jarMapping.methods),fm, UTF_8);
+                Files.write(g.toJson(jarMapping.fields),ff, UTF_8);
+                Files.write(g.toJson(jarMapping.classes),fc,UTF_8);
+                Files.write(g.toJson(um.mMethodsNR),frm,UTF_8);
+                Files.write(g.toJson(um.mRclasses),frc,UTF_8);
+            }catch (Exception e){}
+        }
+        //Uranium end
         try {
             Class<?> jarClass;
             try {
@@ -232,7 +363,7 @@ public class PluginClassLoader extends URLClassLoader {
      * @param jarMapping An existing JarMappings instance to load into
      * @param obfVersion CraftBukkit version with internal obfuscation counter identifier
      *                   >=1.4.7 this is the major version + R#. v1_4_R1=1.4.7, v1_5_R1=1.5, v1_5_R2=1.5.1..
-     *                   For older versions (including pre-safeguard) it is the full Minecraft version number
+     *                   For older Futureversions (including pre-safeguard) it is the full Minecraft version number
      * @throws IOException
      */
     private void loadNmsMappings(JarMapping jarMapping, String obfVersion) throws IOException {
@@ -247,7 +378,12 @@ public class PluginClassLoader extends URLClassLoader {
                     new BufferedReader(new InputStreamReader(loader.getClass().getClassLoader().getResourceAsStream("mappings/"+obfVersion+"/cb2pkgmcp.srg"))),
                     new MavenShade(relocations),
                     null, false);
-
+            //Uranium start
+            jarMapping.loadMappings(
+                    new BufferedReader(new InputStreamReader(loader.getClass().getClassLoader().getResourceAsStream("uranium_data/mappings/new.srg"))),
+                    new MavenShade(relocations),
+                    null, false);
+            //Uranium end
             jarMapping.loadMappings(
                     new BufferedReader(new InputStreamReader(loader.getClass().getClassLoader().getResourceAsStream("mappings/"+obfVersion+"/obf2pkgmcp.srg"))),
                     null, // no version relocation for obf
@@ -261,7 +397,12 @@ public class PluginClassLoader extends URLClassLoader {
                     new BufferedReader(new InputStreamReader(loader.getClass().getClassLoader().getResourceAsStream("mappings/"+obfVersion+"/cb2numpkg.srg"))),
                     new MavenShade(relocations),
                     null, false);
-
+            //Uranium start
+            jarMapping.loadMappings(
+                    new BufferedReader(new InputStreamReader(loader.getClass().getClassLoader().getResourceAsStream("uranium_data/mappings/new.srg"))),
+                    new MavenShade(relocations),
+                    null, false);
+            //Uranium end
             if (obfVersion.equals("v1_7_R4")) {
                 jarMapping.loadMappings(
                         new BufferedReader(new InputStreamReader(loader.getClass().getClassLoader().getResourceAsStream("mappings/"+obfVersion+"/obf2numpkg.srg"))),
@@ -275,10 +416,30 @@ public class PluginClassLoader extends URLClassLoader {
         // remap bouncycastle to Forge's included copy, not the vanilla obfuscated copy (not in Cauldron), see #133
         //jarMapping.packages.put("net/minecraft/"+obfVersion+"/org/bouncycastle", "org/bouncycastle"); No longer needed
     }
-
+    // Added future version of NMS remap, limited support some new plugins.
+    private void loadFuture(JarMapping jarMapping, String[] obfVersion) throws IOException{
+        Map<String, String> relocations = new HashMap<String, String>();
+        // mc-dev jar to CB, apply version shading (aka plugin safeguard)
+        for(String obf:obfVersion) {
+            relocations.put("net.minecraft.server", "net.minecraft.server." + obf);
+        }
+        jarMapping.loadMappings(
+                new BufferedReader(new InputStreamReader(loader.getClass().getClassLoader().getResourceAsStream("uranium_data/mappings/new.srg"))),
+                new MavenShade(relocations),
+                null, false);
+        /*
+        jarMapping.loadMappings(
+                new BufferedReader(new InputStreamReader(loader.getClass().getClassLoader().getResourceAsStream("mappings/v1_7_R4/cb2numpkg.srg"))),
+                new MavenShade(relocations),
+                null, false);
+        */
+        jarMapping.loadMappings(
+                new BufferedReader(new InputStreamReader(loader.getClass().getClassLoader().getResourceAsStream("mappings/v1_7_R4/obf2numpkg.srg"))),
+                null, // no version relocation for obf
+                null, false);
+    }
     private JarMapping getJarMapping(int flags) {
-        JarMapping jarMapping = jarMappings.get(flags);
-
+        UraniumMapping jarMapping = jarMappings.get(flags);
         if (jarMapping != null) {
             if (debug) {
                 System.out.println("Mapping reused for "+Integer.toHexString(flags));
@@ -286,66 +447,36 @@ public class PluginClassLoader extends URLClassLoader {
             return jarMapping;
         }
 
-        jarMapping = new JarMapping();
+        jarMapping = new UraniumMapping();
         try {
 
             // Guava 10 is part of the Bukkit API, so plugins can use it, but FML includes Guava 15
             // To resolve this conflict, remap plugin usages to Guava 10 in a separate package
             // Most plugins should keep this enabled, unless they want a newer Guava
-	    // Thermos force usage of guava17 for pex 1.23 and newer
-        	if (this.description.getName().equals("PermissionsEx"))
-        	{
-        		String[] vn = this.description.getVersion().split(".");
-        		if(vn.length >= 2)
-        		{
-        			try
-        			{
-        				if (Integer.parseInt(vn[1]) >= 23)
-        					jarMapping.packages.put("com/google/common", "guava17/com/google/common");
-        				else
-        	        		jarMapping.packages.put("com/google/common", "guava10/com/google/common");
-        			}
-        			catch(Exception e)
-        			{
-                		jarMapping.packages.put("com/google/common", "guava10/com/google/common");        				
-        			}
-        		}
-        		else
-        		{
-        			jarMapping.packages.put("com/google/common", "guava10/com/google/common");
-        		}
-        	}
-        	else if (this.description.getName().equals("BuycraftX"))
-        	{
-        		String[] vn = this.description.getVersion().split(".");
-        		if(vn.length >= 2)
-        		{
-        			try
-        			{
-        				if (Integer.parseInt(vn[1]) >= 10)
-        					jarMapping.packages.put("com/google/common", "guava17/com/google/common");
-        				else
-        	        		jarMapping.packages.put("com/google/common", "guava10/com/google/common");
-        			}
-        			catch(Exception e)
-        			{
-                		jarMapping.packages.put("com/google/common", "guava10/com/google/common");        				
-        			}
-        		}
-        		else
-        		{
-        			jarMapping.packages.put("com/google/common", "guava10/com/google/common");
-        		}
-        	}        	
-        	else
-        		jarMapping.packages.put("com/google/common", "guava10/com/google/common");
+            // Uranium using guava17 when config enable
+            if((flags & F_REMAP_GUAVA17)==0) {
+                if((flags & F_REMAP_GUAVA21)!=0){
+                    jarMapping.packages.put("com/google/common", "guava21/com/google/common");
+                }else{
+                    jarMapping.packages.put("com/google/common", "guava10/com/google/common");
+                }
+            }else{
+                jarMapping.packages.put("com/google/common", "guava17/com/google/common");
+            }
+            //Uranium start
+            //Remap SQLite for some new plugins.
+            /*
+            if((flags & F_REMAP_SQLITE321)!=0) {
+                jarMapping.packages.put("org/sqlite", "sqlite321/org/sqlite");
+            }
+            */
+            //Uranium end
             jarMapping.packages.put(org_bukkit_craftbukkit + "/libs/com/google/gson", "com/google/gson"); // Handle Gson being in a "normal" place
             // Bukkit moves these packages to nms while we keep them in root so we must relocate them for plugins that rely on them
             jarMapping.packages.put("net/minecraft/util/io", "io");
             jarMapping.packages.put("net/minecraft/util/com", "com");
             jarMapping.packages.put("net/minecraft/util/gnu", "gnu");
             jarMapping.packages.put("net/minecraft/util/org", "org");
-
             if ((flags & F_REMAP_NMS1710) != 0) {
                 loadNmsMappings(jarMapping, "v1_7_R4");
             }
@@ -418,8 +549,21 @@ public class PluginClassLoader extends URLClassLoader {
                         null, false);
             }
 
+            if((flags & F_REMAP_FUTURE) !=0){
+                InputStream is=loader.getClass().getClassLoader().getResourceAsStream("Futureversions");
+                String all=IOUtils.toString(is);
+                String[] futureVer=all.split("\n");
+                loadFuture(jarMapping,futureVer);
+            }
+
             System.out.println("Mapping loaded "+jarMapping.packages.size()+" packages, "+jarMapping.classes.size()+" classes, "+jarMapping.fields.size()+" fields, "+jarMapping.methods.size()+" methods, flags "+Integer.toHexString(flags));
 
+            if(jarMapping.mMethodsNR.isEmpty()&&!jarMapping.methods.isEmpty()){
+                jarMapping.loadMethodsNR();
+            }
+            if(jarMapping.mRclasses.isEmpty()&&!jarMapping.classes.isEmpty()){
+                jarMapping.loadRClasses();
+            }
             JarMapping currentJarMapping = jarMappings.putIfAbsent(flags, jarMapping);
             return currentJarMapping == null ? jarMapping : currentJarMapping;
         } catch (IOException ex) {
@@ -433,7 +577,7 @@ public class PluginClassLoader extends URLClassLoader {
         if (name.startsWith("net.minecraft."))
         {
             JarMapping jarMapping = this.getJarMapping(remapFlags); // grab from SpecialSource
-            String remappedClass = jarMapping.classes.get(name.replaceAll("\\.", "\\/")); // get remapped pkgmcp class name
+            String remappedClass = jarMapping.classes.get(name.replaceAll("\\.", "/")); // get remapped pkgmcp class name
             Class<?> clazz = ((net.minecraft.launchwrapper.LaunchClassLoader)MinecraftServer.getServer().getClass().getClassLoader()).findClass(remappedClass);
             return clazz;
         }

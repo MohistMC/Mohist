@@ -34,7 +34,7 @@
 +            Item item = itemRegistry.getRaw(id);
 +            // inject item materials into Bukkit for FML
 +            org.bukkit.Material material = org.bukkit.Material.addMaterial(id, itemRegistry.getNameForObject(item), false);
-+            if (material != null)
++            if (material != null && net.minecraft.server.MinecraftServer.uraniumConfig.loggingMaterialInjection.getValue())
 +            {
 +                FMLLog.info("Injected new Forge item material %s with ID %d.", material.name(), material.getId());
 +            }
@@ -59,7 +59,7 @@
 +            Block block = blockRegistry.getRaw(id);
 +            // inject block materials into Bukkit for FML
 +            org.bukkit.Material material = org.bukkit.Material.addMaterial(id, blockRegistry.getNameForObject(block), true);
-+            if (material != null)
++            if (material != null && net.minecraft.server.MinecraftServer.uraniumConfig.loggingMaterialInjection.getValue())
 +            {
 +                FMLLog.info("Injected new Forge block material %s with ID %d.", material.name(), material.getId());
 +            }

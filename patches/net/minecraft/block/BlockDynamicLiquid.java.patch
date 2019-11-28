@@ -69,37 +69,15 @@
              }
              else
              {
-@@ -102,7 +125,18 @@
-                 {
-                     p_149674_1_.setBlockMetadataWithNotify(p_149674_2_, p_149674_3_, p_149674_4_, j1, 2);
-                     p_149674_1_.scheduleBlockUpdate(p_149674_2_, p_149674_3_, p_149674_4_, this, i1);
--                    p_149674_1_.notifyBlocksOfNeighborChange(p_149674_2_, p_149674_3_, p_149674_4_, this);
-+                    
-+                    // Thermos follow PaperSpigot style and do this right here
-+                    p_149674_1_.notifyBlockOfNeighborChange(p_149674_2_ - 1, p_149674_3_, p_149674_4_, this);
-+                    p_149674_1_.notifyBlockOfNeighborChange(p_149674_2_ + 1, p_149674_3_, p_149674_4_, this);
-+                    
-+                    // DON'T UPDATE THIS ONE PAPER SPIGOT SAYS DON'T DO IT
-+                    //p_149674_1_.notifyBlockOfNeighborChange(p_149674_2_, p_149674_3_ - 1, p_149674_4_, this);
-+                    
-+                    p_149674_1_.notifyBlockOfNeighborChange(p_149674_2_, p_149674_3_ + 1, p_149674_4_, this);
-+                    p_149674_1_.notifyBlockOfNeighborChange(p_149674_2_, p_149674_3_, p_149674_4_ - 1, this);
-+                    p_149674_1_.notifyBlockOfNeighborChange(p_149674_2_, p_149674_3_, p_149674_4_ + 1, this);
-+                    // p_149674_1_.notifyBlocksOfNeighborChange(p_149674_2_, p_149674_3_, p_149674_4_, this);
-                 }
-             }
-         }
-@@ -113,21 +147,36 @@
+@@ -113,21 +136,34 @@
  
          if (this.func_149809_q(p_149674_1_, p_149674_2_, p_149674_3_ - 1, p_149674_4_))
          {
 -            if (this.blockMaterial == Material.lava && p_149674_1_.getBlock(p_149674_2_, p_149674_3_ - 1, p_149674_4_).getMaterial() == Material.water)
-+            if (p_149674_1_.getType(p_149674_2_, p_149674_3_, p_149674_4_).getMaterial() != this.blockMaterial) { return; } // PaperSpigot - Stop updating flowing block if material has changed
-+
 +            // CraftBukkit start - Send "down" to the server
 +            BlockFromToEvent event = new BlockFromToEvent(source, BlockFace.DOWN);
 +
-+            if (server != null && source != null)
++            if (server != null)
              {
 -                p_149674_1_.setBlock(p_149674_2_, p_149674_3_ - 1, p_149674_4_, Blocks.stone);
 -                this.func_149799_m(p_149674_1_, p_149674_2_, p_149674_3_ - 1, p_149674_4_);
@@ -136,7 +114,7 @@
          }
          else if (l >= 0 && (l == 0 || this.func_149807_p(p_149674_1_, p_149674_2_, p_149674_3_ - 1, p_149674_4_)))
          {
-@@ -144,25 +193,31 @@
+@@ -144,25 +180,31 @@
                  return;
              }
  
@@ -161,7 +139,7 @@
 -            {
 -                this.func_149813_h(p_149674_1_, p_149674_2_, p_149674_3_, p_149674_4_ - 1, j1);
 -            }
-+                    if (server != null && source != null)
++                    if (server != null)
 +                    {
 +                        server.getPluginManager().callEvent(event);
 +                    }

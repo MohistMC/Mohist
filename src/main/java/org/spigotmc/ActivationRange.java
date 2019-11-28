@@ -11,7 +11,6 @@ import net.minecraft.entity.boss.EntityDragonPart;
 import net.minecraft.entity.boss.EntityWither;
 import net.minecraft.entity.effect.EntityWeatherEffect;
 import net.minecraft.entity.item.EntityEnderCrystal;
-import net.minecraft.entity.item.EntityFallingBlock;
 import net.minecraft.entity.item.EntityFireworkRocket;
 import net.minecraft.entity.item.EntityTNTPrimed;
 import net.minecraft.entity.monster.EntityMob;
@@ -73,7 +72,7 @@ public class ActivationRange
      * These entities are excluded from Activation range checks.
      *
      * @param entity
-     * @param world
+     * @param config
      * @return boolean If it should always tick.
      */
     public static boolean initializeEntityActivationState(Entity entity, SpigotWorldConfig config)
@@ -100,7 +99,6 @@ public class ActivationRange
                 || entity instanceof EntityFireball
                 || entity instanceof EntityWeatherEffect
                 || entity instanceof EntityTNTPrimed
-                || entity instanceof EntityFallingBlock // PaperSpigot - Always tick falling blocks
                 || entity instanceof EntityEnderCrystal
                 || entity instanceof EntityFireworkRocket
                 || entity instanceof EntityVillager
@@ -318,15 +316,10 @@ public class ActivationRange
         // Make sure not on edge of unloaded chunk
         int x = net.minecraft.util.MathHelper.floor_double( entity.posX );
         int z = net.minecraft.util.MathHelper.floor_double( entity.posZ );
-        
-        if ( isActive && !(entity.worldObj.isActiveBlockCoord(x, z) || entity.worldObj.doChunksNearChunkExist( x, 0, z, 16 ) )) {
+        if ( isActive && !entity.worldObj.doChunksNearChunkExist( x, 0, z, 16 ) ) {
             isActive = false;
         }
-        
-        if(entity instanceof EntityFireworkRocket || !entity.isAddedToChunk()) // Force continued activation for teleporting entities
-        {
-        	isActive = true;
-        }
+
         SpigotTimings.checkIfActiveTimer.stopTiming();
         return isActive;
     }

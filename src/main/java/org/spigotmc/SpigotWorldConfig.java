@@ -217,12 +217,13 @@ public class SpigotWorldConfig
     public List<Integer> hiddenBlocks;
     public List<Integer> replaceBlocks;
     public AntiXray antiXrayInstance;
-    private void antiXray() {
-        antiXray = getBoolean("anti-xray.enabled", false);
-        log("Anti X-Ray: " + antiXray);
+    private void antiXray()
+    {
+        antiXray = getBoolean( "anti-xray.enabled", true );
+        log( "Anti X-Ray: " + antiXray );
 
-        engineMode = getInt("anti-xray.engine-mode", 1);
-        log("\tEngine Mode: " + engineMode);
+        engineMode = getInt( "anti-xray.engine-mode", 1 );
+        log( "\tEngine Mode: " + engineMode );
 
         if ( SpigotConfig.version < 5 )
         {
@@ -278,12 +279,12 @@ public class SpigotWorldConfig
         log( "Max Entity Collisions: " + maxCollisionsPerEntity );
     }
     
-    public int tileMaxTickTime = 1000;
-    public int entityMaxTickTime = 1000;
+    public int tileMaxTickTime;
+    public int entityMaxTickTime;
     private void maxTickTimes()
     {
-        tileMaxTickTime = getInt("max-tick-time.tile", 1000);
-        entityMaxTickTime = getInt("max-tick-time.entity", 1000);
+        tileMaxTickTime = getInt("max-tick-time.tile", 50);
+        entityMaxTickTime = getInt("max-tick-time.entity", 50);
         log("Tile Max Tick Time: " + tileMaxTickTime + "ms Entity max Tick Time: " + entityMaxTickTime + "ms");
     }
 
@@ -299,8 +300,9 @@ public class SpigotWorldConfig
     }
 
     public boolean useAsyncLighting;
-    private void useAsyncLighting() {
-        useAsyncLighting = getBoolean("use-async-lighting", false);
-        log("World async lighting: " + useAsyncLighting);
+    private void useAsyncLighting()
+    {
+        useAsyncLighting = getBoolean( "use-async-lighting", true );
+        log( "World async lighting: " + useAsyncLighting );
     }
 }

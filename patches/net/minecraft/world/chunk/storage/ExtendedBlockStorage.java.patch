@@ -30,19 +30,7 @@
      public Block getBlockByExtId(int p_150819_1_, int p_150819_2_, int p_150819_3_)
      {
          int l = this.blockLSBArray[p_150819_2_ << 8 | p_150819_3_ << 4 | p_150819_1_] & 255;
-@@ -39,7 +62,11 @@
-         {
-             l |= this.blockMSBArray.get(p_150819_1_, p_150819_2_, p_150819_3_) << 8;
-         }
-+        
-+        // Thermos instant delete block IDs which are banned
-+        if (net.minecraftforge.cauldron.configuration.CauldronConfig.instance.instantRemove.contains(l)) return Blocks.air;
- 
-+        
-         return Block.getBlockById(l);
-     }
- 
-@@ -139,6 +166,106 @@
+@@ -139,6 +162,106 @@
  
      public void removeInvalidBlocks()
      {
@@ -149,47 +137,7 @@
          this.blockRefCount = 0;
          this.tickRefCount = 0;
  
-@@ -175,51 +302,112 @@
-         this.blockMSBArray = null;
-     }
- 
-+
-+    
-     public NibbleArray getBlockMSBArray()
-     {
-+    	if(this.blockMSBArray != null)
-+    	{
-+    		this.blockMSBArray.forceToNonTrivialArray();
-+    	}    	
-         return this.blockMSBArray;
-     }
- 
-     public NibbleArray getMetadataArray()
-     {
-+    	if(blockMetadataArray != null)
-+    	{
-+    		this.blockMetadataArray.forceToNonTrivialArray();
-+    	}
-         return this.blockMetadataArray;
-     }
- 
-     public NibbleArray getBlocklightArray()
-     {
-+    	if(blocklightArray != null)
-+    	{
-+    		this.blocklightArray.forceToNonTrivialArray();
-+    	}   
-         return this.blocklightArray;
-     }
- 
-     public NibbleArray getSkylightArray()
-     {
-+    	if(skylightArray != null)
-+    	{
-+    		this.skylightArray.forceToNonTrivialArray();
-+    	}       	
-         return this.skylightArray;
-     }
+@@ -197,29 +320,72 @@
  
      public void setBlockLSBArray(byte[] p_76664_1_)
      {

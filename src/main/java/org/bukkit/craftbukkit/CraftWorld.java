@@ -1,5 +1,6 @@
 package org.bukkit.craftbukkit;
 
+import cc.uraniummc.capture.type.CaptureTree;
 import cpw.mods.fml.common.registry.EntityRegistry;
 import java.io.File;
 import java.util.ArrayList;
@@ -11,7 +12,7 @@ import java.util.Set;
 import java.util.UUID;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.IEntityLivingData;
-import net.minecraft.world.WorldServer;
+import net.minecraft.world.ChunkCoordIntPair;
 import net.minecraftforge.common.util.BlockSnapshot;
 import org.apache.commons.lang.Validate;
 import org.bukkit.BlockChangeDelegate;
@@ -33,7 +34,6 @@ import org.bukkit.craftbukkit.entity.CraftLightningStrike;
 import org.bukkit.craftbukkit.entity.CraftPlayer;
 import org.bukkit.craftbukkit.inventory.CraftItemStack;
 import org.bukkit.craftbukkit.metadata.BlockMetadataStore;
-import org.bukkit.craftbukkit.util.LongHash;
 import org.bukkit.entity.Ambient;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Bat;
@@ -193,14 +193,12 @@ public class CraftWorld implements World {
     }
 
     public Chunk[] getLoadedChunks() {
-        Object[] chunks = world.theChunkProviderServer.loadedChunkHashMap_KC.rawVanilla().values().toArray();
-        org.bukkit.Chunk[] craftChunks = new CraftChunk[chunks.length];
-
-        for (int i = 0; i < chunks.length; i++) {
-            net.minecraft.world.chunk.Chunk chunk = (net.minecraft.world.chunk.Chunk) chunks[i];
-            craftChunks[i] = chunk.bukkitChunk;
+        List tLoadedChunk = world.theChunkProviderServer.loadedChunks;
+        final org.bukkit.Chunk[] craftChunks = new CraftChunk[tLoadedChunk.size()];
+        int i = 0;
+        for(Object sObj : tLoadedChunk){
+            craftChunks[i++]=((net.minecraft.world.chunk.Chunk) sObj).bukkitChunk;
         }
-
         return craftChunks;
     }
 
@@ -317,8 +315,7 @@ public class CraftWorld implements World {
         }
 
         world.theChunkProviderServer.chunksToUnload.remove(x, z);
-        //net.minecraft.world.chunk.Chunk chunk = world.theChunkProviderServer.loadedChunkHashMap_TH.get(LongHash.toLong(x, z));
-        net.minecraft.world.chunk.Chunk chunk = world.theChunkProviderServer.loadedChunkHashMap_KC.rawThermos().get(x,z); //Thermos replacement for line above
+        net.minecraft.world.chunk.Chunk chunk = world.theChunkProviderServer.getChunkIfLoaded(x,z);
 
         if (chunk == null) {
             world.timings.syncChunkLoadTimer.startTiming(); // Spigot
@@ -332,8 +329,9 @@ public class CraftWorld implements World {
 
     private void chunkLoadPostProcess(net.minecraft.world.chunk.Chunk chunk, int x, int z) {
         if (chunk != null) {
-            world.theChunkProviderServer.loadedChunkHashMap_KC.add(LongHash.toLong(x, z), chunk); // Passes to chunkt_TH
+            world.theChunkProviderServer.loadedChunkHashMap.add(ChunkCoordIntPair.chunkXZ2Int(x, z),chunk);
             world.theChunkProviderServer.loadedChunks.add(chunk); // Cauldron - vanilla compatibility
+
             chunk.onChunkLoad();
 
             if (!chunk.isTerrainPopulated && world.theChunkProviderServer.chunkExists(x + 1, z + 1) && world.theChunkProviderServer.chunkExists(x, z + 1) && world.theChunkProviderServer.chunkExists(x + 1, z)) {
@@ -563,13 +561,11 @@ public class CraftWorld implements World {
             break;
         }
 
-        world.captureTreeGeneration = true;
-        world.captureBlockSnapshots = true;
+        CaptureTree tCapture=world.mCapture.startTreeGenCapture(null,loc);
         boolean grownTree = gen.generate(world, rand, loc.getBlockX(), loc.getBlockY(), loc.getBlockZ());
-        world.captureBlockSnapshots = false;
-        world.captureTreeGeneration = false;
+        tCapture.markHandled();
         if (grownTree) { // Copy block data to delegate
-            for (BlockSnapshot blocksnapshot : world.capturedBlockSnapshots) {
+            for (BlockSnapshot blocksnapshot : tCapture.mCapturedBlocks) {
                 int x = blocksnapshot.x;
                 int y = blocksnapshot.y;
                 int z = blocksnapshot.z;
@@ -581,11 +577,9 @@ public class CraftWorld implements World {
                 net.minecraft.block.Block newBlock = world.getBlock(x, y, z); 
                 world.markAndNotifyBlock(x, y, z, null, oldBlock, newBlock, flag);
             }
-            world.capturedBlockSnapshots.clear();
             return true;
         }
         else {
-            world.capturedBlockSnapshots.clear();
             return false;
         }
     }
@@ -1449,8 +1443,15 @@ public class CraftWorld implements World {
         }
 
         final net.minecraft.world.gen.ChunkProviderServer cps = world.theChunkProviderServer;
-        for(net.minecraft.world.chunk.Chunk chunk : world.theChunkProviderServer.loadedChunkHashMap_KC.rawVanilla().values())
-        {
+        List tLoadedChunk = world.theChunkProviderServer.loadedChunks;
+        List<net.minecraft.world.chunk.Chunk> tToUnloadChunk=new ArrayList<net.minecraft.world.chunk.Chunk>();
+        for(int i=tLoadedChunk.size()-1;i>=0;i--){
+            net.minecraft.world.chunk.Chunk chunk = null;
+            try{
+                chunk=(net.minecraft.world.chunk.Chunk)tLoadedChunk.get(i);
+            }catch(IndexOutOfBoundsException ignore){
+                continue;
+            }
             // If in use, skip it
             if (isChunkInUse(chunk.xPosition, chunk.zPosition)) {
                 continue;
@@ -1462,8 +1463,11 @@ public class CraftWorld implements World {
             }
 
             // Add unload request
-            cps.unloadChunksIfNotNearSpawn(chunk.xPosition, chunk.zPosition);
-            continue;        	
+            tToUnloadChunk.add(chunk);
+        }
+        
+        for(net.minecraft.world.chunk.Chunk sChunk : tToUnloadChunk){
+            cps.unloadChunksIfNotNearSpawn(sChunk.xPosition, sChunk.zPosition);
         }
     }
 
@@ -1526,10 +1530,5 @@ public class CraftWorld implements World {
     {
         return spigot;
     }
-    
     // Spigot end
-    public WorldServer getWorldServer()
-    {
-    	return this.world;
-    }    
 }

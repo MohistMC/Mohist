@@ -1,13 +1,16 @@
 package org.bukkit.command.defaults;
 
+import com.google.common.collect.ImmutableList;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginDescriptionFile;
+import org.bukkit.util.StringUtil;
 
 public class VersionCommand extends BukkitCommand {
     public VersionCommand(String name) {
@@ -24,19 +27,43 @@ public class VersionCommand extends BukkitCommand {
         if (!testPermission(sender)) return true;
 
         if (args.length == 0) {
-            sender.sendMessage("This server is running Mohist " + Bukkit.getBukkitVersion() + " | " + Bukkit.getVersion());
+            sender.sendMessage("This server is running " + Bukkit.getName() + " version " + Bukkit.getVersion() + " (Implementing API version " + Bukkit.getBukkitVersion() + ")");
         } else {
+            StringBuilder name = new StringBuilder();
 
-            if (true) {
-                sender.sendMessage("This server is not running any plugins.");
+            for (String arg : args) {
+                if (name.length() > 0) {
+                    name.append(' ');
+                }
+
+                name.append(arg);
+            }
+
+            String pluginName = name.toString();
+            Plugin exactPlugin = Bukkit.getPluginManager().getPlugin(pluginName);
+            if (exactPlugin != null) {
+                describeToSender(exactPlugin, sender);
+                return true;
+            }
+
+            boolean found = false;
+            pluginName = pluginName.toLowerCase();
+            for (Plugin plugin : Bukkit.getPluginManager().getPlugins()) {
+                if (plugin.getName().toLowerCase().contains(pluginName)) {
+                    describeToSender(plugin, sender);
+                    found = true;
+                }
+            }
+
+            if (!found) {
+                sender.sendMessage("This server is not running any plugin by that name.");
+                sender.sendMessage("Use /plugins to get a list of plugins.");
             }
         }
         return true;
     }
 
     private void describeToSender(Plugin plugin, CommandSender sender) {
-	sender.sendMessage("Author: Fracica");
-/*
         PluginDescriptionFile desc = plugin.getDescription();
         sender.sendMessage(ChatColor.GREEN + desc.getName() + ChatColor.WHITE + " version " + ChatColor.GREEN + desc.getVersion());
 
@@ -55,12 +82,12 @@ public class VersionCommand extends BukkitCommand {
                 sender.sendMessage("Authors: " + getAuthors(desc));
             }
         }
-*/
     }
 
     private String getAuthors(final PluginDescriptionFile desc) {
-        return "Fracica";
-/*
+        StringBuilder result = new StringBuilder();
+        List<String> authors = desc.getAuthors();
+
         for (int i = 0; i < authors.size(); i++) {
             if (result.length() > 0) {
                 result.append(ChatColor.WHITE);
@@ -76,7 +103,7 @@ public class VersionCommand extends BukkitCommand {
             result.append(authors.get(i));
         }
 
-        return result.toString();*/
+        return result.toString();
     }
 
     @Override
@@ -84,10 +111,9 @@ public class VersionCommand extends BukkitCommand {
         Validate.notNull(sender, "Sender cannot be null");
         Validate.notNull(args, "Arguments cannot be null");
         Validate.notNull(alias, "Alias cannot be null");
-            List<String> completions = new ArrayList<String>();
-  		completions.add("None");return completions;
 
-/*        if (args.length == 1) {
+        if (args.length == 1) {
+            List<String> completions = new ArrayList<String>();
             String toComplete = args[0].toLowerCase();
             for (Plugin plugin : Bukkit.getPluginManager().getPlugins()) {
                 if (StringUtil.startsWithIgnoreCase(plugin.getName(), toComplete)) {
@@ -96,6 +122,6 @@ public class VersionCommand extends BukkitCommand {
             }
             return completions;
         }
-        return ImmutableList.of();*/
+        return ImmutableList.of();
     }
 }

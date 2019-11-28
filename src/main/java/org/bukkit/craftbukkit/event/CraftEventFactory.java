@@ -18,6 +18,7 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemSword;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.EntityDamageSource;
+import net.minecraft.util.MovingObjectPosition;
 import net.minecraftforge.common.util.FakePlayer;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -482,10 +483,9 @@ public class CraftEventFactory {
         } else if (source instanceof EntityDamageSource) {
             Entity damager = source.getEntity();
             DamageCause cause = DamageCause.ENTITY_ATTACK;
-            Entity indirect = null;
+
             if (source instanceof net.minecraft.util.EntityDamageSourceIndirect) {
-                    indirect = ((net.minecraft.util.EntityDamageSourceIndirect) source).getSourceOfDamage();
-                    damager = ((net.minecraft.util.EntityDamageSourceIndirect) source).getProximateDamageSource();
+                damager = ((net.minecraft.util.EntityDamageSourceIndirect) source).getProximateDamageSource();
                 // Cauldron start - vanilla compatibility
                 if (damager != null) {
                     if (damager.getBukkitEntity() instanceof ThrownPotion) {
@@ -493,9 +493,6 @@ public class CraftEventFactory {
                     } else if (damager.getBukkitEntity() instanceof Projectile) {
                         cause = DamageCause.PROJECTILE;
                     }
-                }
-                if (indirect != null) {
-                    if (indirect instanceof EntityPlayer) { if (cause == null) { cause = DamageCause.ENTITY_ATTACK; damager = indirect; } }
                 }
                 // Cauldron end
             } else if ("thorns".equals(source.damageType)) {
@@ -849,6 +846,15 @@ public class CraftEventFactory {
         return event;
     }
 
+    public static ProjectileHitEvent callProjectileHitEvent(Entity entity, MovingObjectPosition position) {
+        Block hitBlock = null;
+        if (position.typeOfHit == MovingObjectPosition.MovingObjectType.BLOCK) {
+            hitBlock = entity.getBukkitEntity().getWorld().getBlockAt(position.blockX, position.blockY, position.blockZ);
+        }
+        ProjectileHitEvent event = new ProjectileHitEvent((Projectile) entity.getBukkitEntity(), position.entityHit == null ? null : position.entityHit.getBukkitEntity(), hitBlock);
+        entity.worldObj.getServer().getPluginManager().callEvent(event);
+        return event;
+    }
     public static ProjectileHitEvent callProjectileHitEvent(net.minecraft.entity.Entity entity) {
         ProjectileHitEvent event = new ProjectileHitEvent((Projectile) entity.getBukkitEntity());
         entity.worldObj.getServer().getPluginManager().callEvent(event);

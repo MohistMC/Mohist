@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/inventory/Container.java
 +++ ../src-work/minecraft/net/minecraft/inventory/Container.java
-@@ -2,36 +2,94 @@
+@@ -2,17 +2,34 @@
  
  import cpw.mods.fml.relauncher.Side;
  import cpw.mods.fml.relauncher.SideOnly;
@@ -35,9 +35,7 @@
  public abstract class Container
  {
      public List inventoryItemStacks = new ArrayList();
--    public List inventorySlots = new ArrayList();
-+    public List<Slot> inventorySlots = new ArrayList<Slot>();
-     public int windowId;
+@@ -21,12 +38,53 @@
      @SideOnly(Side.CLIENT)
      private short transactionID;
      private int field_94535_f = -1;
@@ -92,12 +90,6 @@
      protected Slot addSlotToContainer(Slot p_75146_1_)
      {
          p_75146_1_.slotNumber = this.inventorySlots.size();
-         this.inventorySlots.add(p_75146_1_);
--        this.inventoryItemStacks.add((Object)null);
-+        this.inventoryItemStacks.add(null);
-         return p_75146_1_;
-     }
- 
 @@ -39,7 +97,11 @@
      {
          if (this.crafters.contains(p_75132_1_))
@@ -111,23 +103,8 @@
          }
          else
          {
-@@ -51,7 +113,7 @@
- 
-     public List getInventory()
-     {
--        ArrayList arraylist = new ArrayList();
-+        ArrayList<ItemStack> arraylist = new ArrayList<ItemStack>();
- 
-         for (int i = 0; i < this.inventorySlots.size(); ++i)
-         {
-@@ -71,10 +133,12 @@
-     {
-         for (int i = 0; i < this.inventorySlots.size(); ++i)
-         {
--            ItemStack itemstack = ((Slot)this.inventorySlots.get(i)).getStack();
-+        	Slot slotty = (Slot)this.inventorySlots.get(i);
-+        	slotty.slotNumber = i; // Thermos ensure correct indexing
-+            ItemStack itemstack = (slotty).getStack();
+@@ -74,7 +136,7 @@
+             ItemStack itemstack = ((Slot)this.inventorySlots.get(i)).getStack();
              ItemStack itemstack1 = (ItemStack)this.inventoryItemStacks.get(i);
  
 -            if (!ItemStack.areItemStacksEqual(itemstack1, itemstack))
@@ -135,7 +112,7 @@
              {
                  itemstack1 = itemstack == null ? null : itemstack.copy();
                  this.inventoryItemStacks.set(i, itemstack1);
-@@ -85,6 +149,7 @@
+@@ -85,6 +147,7 @@
                  }
              }
          }
@@ -143,18 +120,18 @@
      }
  
      public boolean enchantItem(EntityPlayer p_75140_1_, int p_75140_2_)
-@@ -109,6 +174,10 @@
+@@ -109,6 +172,10 @@
  
      public Slot getSlot(int p_75139_1_)
      {
 +        // Cauldron start - vanilla compatibility. fixes NPE with ProjectRed's Item Stock Keeper
-+        if (p_75139_1_ < 0 || p_75139_1_ > this.inventorySlots.size())
++        if (p_75139_1_ < 0 || p_75139_1_ >= this.inventorySlots.size())
 +            return null;
 +        // Cauldron end
          return (Slot)this.inventorySlots.get(p_75139_1_);
      }
  
-@@ -168,6 +237,7 @@
+@@ -168,6 +235,7 @@
                      itemstack3 = inventoryplayer.getItemStack().copy();
                      i1 = inventoryplayer.getItemStack().stackSize;
                      Iterator iterator = this.field_94537_h.iterator();
@@ -162,7 +139,7 @@
  
                      while (iterator.hasNext())
                      {
-@@ -190,18 +260,55 @@
+@@ -190,18 +258,55 @@
                              }
  
                              i1 -= itemstack1.stackSize - j1;
@@ -223,7 +200,7 @@
                  }
  
                  this.func_94533_d();
-@@ -235,10 +342,17 @@
+@@ -235,10 +340,17 @@
  
                          if (p_75144_2_ == 1)
                          {
@@ -242,7 +219,7 @@
                                  inventoryplayer.setItemStack((ItemStack)null);
                              }
                          }
-@@ -730,4 +844,10 @@
+@@ -730,4 +842,10 @@
              return MathHelper.floor_float(f * 14.0F) + (i > 0 ? 1 : 0);
          }
      }

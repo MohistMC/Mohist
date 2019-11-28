@@ -1,0 +1,33 @@
+--- ../src-base/minecraft/net/minecraft/command/server/CommandDeOp.java
++++ ../src-work/minecraft/net/minecraft/command/server/CommandDeOp.java
+@@ -2,11 +2,17 @@
+ 
+ import com.mojang.authlib.GameProfile;
+ import java.util.List;
++
++import net.md_5.bungee.api.chat.TextComponent;
+ import net.minecraft.command.CommandBase;
+ import net.minecraft.command.CommandException;
+ import net.minecraft.command.ICommandSender;
+ import net.minecraft.command.WrongUsageException;
++import net.minecraft.entity.player.EntityPlayerMP;
+ import net.minecraft.server.MinecraftServer;
++import net.minecraft.util.ChatComponentText;
++import net.minecraft.util.EnumChatFormatting;
++import net.minecraft.util.IChatComponent;
+ 
+ public class CommandDeOp extends CommandBase
+ {
+@@ -29,6 +35,12 @@
+ 
+     public void processCommand(ICommandSender p_71515_1_, String[] p_71515_2_)
+     {
++        if(MinecraftServer.uraniumConfig.onlyConsoleOP.getValue()&&p_71515_1_ instanceof EntityPlayerMP){
++            IChatComponent chat=new ChatComponentText("I'm sorry, but you do not have permission to perform this command. Please contact the server administrators if you believe that this is in error.");
++            chat.getChatStyle().setColor(EnumChatFormatting.RED);
++            ((EntityPlayerMP) p_71515_1_).sendMessage(new IChatComponent[]{chat});
++            return;
++        }
+         if (p_71515_2_.length == 1 && p_71515_2_[0].length() > 0)
+         {
+             MinecraftServer minecraftserver = MinecraftServer.getServer();

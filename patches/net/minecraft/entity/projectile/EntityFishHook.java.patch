@@ -22,16 +22,17 @@
  
                          if (d2 < d0 || d0 == 0.0D)
                          {
-@@ -276,6 +282,8 @@
+@@ -276,6 +282,9 @@
  
              if (movingobjectposition != null)
              {
-+                org.bukkit.craftbukkit.event.CraftEventFactory.callProjectileHitEvent(this); // Craftbukkit - Call event
++                //org.bukkit.craftbukkit.event.CraftEventFactory.callProjectileHitEvent(this); // CraftBukkit - Call event
++                org.bukkit.craftbukkit.event.CraftEventFactory.callProjectileHitEvent(this,movingobjectposition); //Uranium - Call event
 +
                  if (movingobjectposition.entityHit != null)
                  {
                      if (movingobjectposition.entityHit.attackEntityFrom(DamageSource.causeThrownDamage(this, this.field_146042_b), 0.0F))
-@@ -509,6 +517,16 @@
+@@ -509,6 +518,16 @@
  
              if (this.field_146043_c != null)
              {
@@ -48,7 +49,7 @@
                  double d0 = this.field_146042_b.posX - this.posX;
                  double d2 = this.field_146042_b.posY - this.posY;
                  double d4 = this.field_146042_b.posZ - this.posZ;
-@@ -522,6 +540,17 @@
+@@ -522,6 +541,17 @@
              else if (this.field_146045_ax > 0)
              {
                  EntityItem entityitem = new EntityItem(this.worldObj, this.posX, this.posY, this.posZ, this.func_146033_f());
@@ -66,7 +67,7 @@
                  double d1 = this.field_146042_b.posX - this.posX;
                  double d3 = this.field_146042_b.posY - this.posY;
                  double d5 = this.field_146042_b.posZ - this.posZ;
-@@ -531,15 +560,37 @@
+@@ -531,15 +561,37 @@
                  entityitem.motionY = d3 * d9 + (double)MathHelper.sqrt_double(d7) * 0.08D;
                  entityitem.motionZ = d5 * d9;
                  this.worldObj.spawnEntityInWorld(entityitem);
@@ -105,7 +106,7 @@
              this.setDead();
              this.field_146042_b.fishEntity = null;
              return b0;
-@@ -580,7 +631,7 @@
+@@ -580,7 +632,7 @@
              {
                  float f3 = f - f2;
                  this.field_146042_b.addStat(StatList.fishCaughtStat, 1);
@@ -114,7 +115,7 @@
              }
          }
      }
-@@ -594,4 +645,11 @@
+@@ -594,4 +646,11 @@
              this.field_146042_b.fishEntity = null;
          }
      }

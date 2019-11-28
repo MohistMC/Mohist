@@ -1,0 +1,20 @@
+--- ../src-base/minecraft/cpw/mods/fml/server/FMLServerHandler.java
++++ ../src-work/minecraft/cpw/mods/fml/server/FMLServerHandler.java
+@@ -17,6 +17,8 @@
+ import java.util.List;
+ import java.util.Set;
+ 
++import cc.uraniummc.Uranium;
++import cc.uraniummc.UraniumConfig;
+ import net.minecraft.command.ServerCommand;
+ import net.minecraft.network.INetHandler;
+ import net.minecraft.network.NetHandlerPlayServer;
+@@ -224,7 +226,7 @@
+     @Override
+     public String getCurrentLanguage()
+     {
+-        return "en_US";
++        return (MinecraftServer.uraniumConfig==null||MinecraftServer.uraniumConfig.language==null)?"en_US":MinecraftServer.uraniumConfig.language.getValue();
+     }
+ 
+     @Override

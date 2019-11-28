@@ -1,18 +1,11 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockPistonBase.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockPistonBase.java
-@@ -4,6 +4,7 @@
- import cpw.mods.fml.relauncher.SideOnly;
- import java.util.List;
- import net.minecraft.block.material.Material;
-+import net.minecraft.block.BlockRailBase;
- import net.minecraft.client.renderer.texture.IIconRegister;
- import net.minecraft.creativetab.CreativeTabs;
- import net.minecraft.entity.Entity;
-@@ -21,6 +22,12 @@
+@@ -21,6 +21,13 @@
  import net.minecraft.world.IBlockAccess;
  import net.minecraft.world.World;
  
 +// CraftBukkit start
++import net.minecraftforge.common.util.ForgeDirection;
 +import org.bukkit.craftbukkit.block.CraftBlock;
 +import org.bukkit.event.block.BlockPistonRetractEvent;
 +import org.bukkit.event.block.BlockPistonExtendEvent;
@@ -72,16 +65,12 @@
          return p_150076_0_ & 7;
      }
  
-@@ -328,7 +364,7 @@
+@@ -362,11 +398,17 @@
+             }
  
-     private static boolean canPushBlock(Block p_150080_0_, World p_150080_1_, int p_150080_2_, int p_150080_3_, int p_150080_4_, boolean p_150080_5_)
-     {
--        if (p_150080_0_ == Blocks.obsidian)
-+        if (p_150080_0_ == Blocks.obsidian || (p_150080_0_ instanceof BlockRailBase))
-         {
-             return false;
-         }
-@@ -366,7 +402,13 @@
+             return !(p_150080_1_.getBlock(p_150080_2_, p_150080_3_, p_150080_4_).hasTileEntity(p_150080_1_.getBlockMetadata(p_150080_2_, p_150080_3_, p_150080_4_)));
+-            
++
          }
      }
  
@@ -131,3 +120,23 @@
          }
      }
  
+@@ -464,7 +506,7 @@
+             Block[] ablock;
+             int k2;
+             int l2;
+-            int i3;
++            int i3=0;
+ 
+             for (ablock = new Block[13]; i1 != p_150079_2_ || j1 != p_150079_3_ || k1 != p_150079_4_; k1 = i3)
+             {
+@@ -507,4 +549,10 @@
+             return true;
+         }
+     }
++
++    @Override
++    public boolean rotateBlock(World worldObj, int x, int y, int z, ForgeDirection axis) {
++
++        return super.rotateBlock(worldObj, x, y, z, axis);
++    }
+ }

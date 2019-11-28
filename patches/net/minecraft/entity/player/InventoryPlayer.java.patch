@@ -1,30 +1,23 @@
 --- ../src-base/minecraft/net/minecraft/entity/player/InventoryPlayer.java
 +++ ../src-work/minecraft/net/minecraft/entity/player/InventoryPlayer.java
-@@ -2,7 +2,9 @@
+@@ -1,8 +1,15 @@
+ package net.minecraft.entity.player;
  
++// CraftBukkit start
++import java.util.List;
++import java.util.concurrent.Callable;
++
++import org.bukkit.craftbukkit.entity.CraftHumanEntity;
++import org.bukkit.entity.HumanEntity;
++
++import cc.uraniummc.capture.type.CaptureBlock;
  import cpw.mods.fml.relauncher.Side;
  import cpw.mods.fml.relauncher.SideOnly;
-+
- import java.util.concurrent.Callable;
-+
+-import java.util.concurrent.Callable;
  import net.minecraft.block.Block;
  import net.minecraft.crash.CrashReport;
  import net.minecraft.crash.CrashReportCategory;
-@@ -13,7 +15,13 @@
- import net.minecraft.nbt.NBTTagCompound;
- import net.minecraft.nbt.NBTTagList;
- import net.minecraft.util.ReportedException;
-+// CraftBukkit start
-+import java.util.List;
- 
-+import org.bukkit.craftbukkit.entity.CraftHumanEntity;
-+import org.bukkit.entity.HumanEntity;
-+// CraftBukkit end
-+
- public class InventoryPlayer implements IInventory
- {
-     public ItemStack[] mainInventory = new ItemStack[36];
-@@ -25,7 +33,46 @@
+@@ -25,7 +32,46 @@
      private ItemStack itemStack;
      public boolean inventoryChanged;
      private static final String __OBFID = "CL_00001709";
@@ -71,7 +64,7 @@
      public InventoryPlayer(EntityPlayer p_i1750_1_)
      {
          this.player = p_i1750_1_;
-@@ -81,6 +128,34 @@
+@@ -81,6 +127,34 @@
          return -1;
      }
  
@@ -106,7 +99,7 @@
      public int getFirstEmptyStack()
      {
          for (int i = 0; i < this.mainInventory.length; ++i)
-@@ -171,7 +246,7 @@
+@@ -171,7 +245,7 @@
              }
  
              j += this.itemStack.stackSize;
@@ -115,7 +108,23 @@
          }
  
          return j;
-@@ -430,25 +505,24 @@
+@@ -350,6 +424,15 @@
+     {
+         if (p_70441_1_ != null && p_70441_1_.stackSize != 0 && p_70441_1_.getItem() != null)
+         {
++            CaptureBlock tBlockCapture=player.worldObj.mCapture.getLastBlockCapture();
++            if(tBlockCapture!=null&&tBlockCapture.mEnable){
++                tBlockCapture.addCaptureItem(player,ItemStack.copyItemStack(p_70441_1_));
++                p_70441_1_.stackSize=0;
++                return true;
++            }else if(player.worldObj.restoringBlockSnapshots){
++                p_70441_1_.stackSize=0;
++                return true;
++            }
+             try
+             {
+                 int i;
+@@ -430,25 +513,24 @@
  
          if (aitemstack[p_70298_1_] != null)
          {
@@ -149,7 +158,7 @@
          }
          else
          {
-@@ -658,7 +732,7 @@
+@@ -658,7 +740,7 @@
              if (this.mainInventory[i] != null)
              {
                  this.player.func_146097_a(this.mainInventory[i], true, false);
@@ -158,7 +167,7 @@
              }
          }
  
-@@ -667,7 +741,7 @@
+@@ -667,7 +749,7 @@
              if (this.armorInventory[i] != null)
              {
                  this.player.func_146097_a(this.armorInventory[i], true, false);

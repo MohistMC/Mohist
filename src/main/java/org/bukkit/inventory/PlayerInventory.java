@@ -87,7 +87,39 @@ public interface PlayerInventory extends Inventory {
      * @return The currently held ItemStack
      */
     public ItemStack getItemInHand();
+//Uranium start (Copy from spigot 1.12)
+    /**
+     * Gets a copy of the item the player is currently holding
+     * in their main hand.
+     *
+     * @return the currently held item
+     */
+    public ItemStack getItemInMainHand();
 
+    /**
+     * Sets the item the player is holding in their main hand.
+     *
+     * @param item The item to put into the player's hand
+     */
+    void setItemInMainHand(ItemStack item);
+
+    /**
+     * (Only return main hand)
+     * Gets a copy of the item the player is currently holding
+     * in their off hand.
+     *
+     * @return the currently held item
+     */
+    ItemStack getItemInOffHand();
+
+    /**
+     * (Only return main hand)
+     * Sets the item the player is holding in their off hand.
+     *
+     * @param item The item to put into the player's hand
+     */
+    void setItemInOffHand(ItemStack item);
+//Uranium end
     /**
      * Sets the item in hand
      *

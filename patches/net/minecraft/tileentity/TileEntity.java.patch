@@ -1,10 +1,9 @@
 --- ../src-base/minecraft/net/minecraft/tileentity/TileEntity.java
 +++ ../src-work/minecraft/net/minecraft/tileentity/TileEntity.java
-@@ -22,20 +22,32 @@
+@@ -22,18 +22,22 @@
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
  
-+import org.bukkit.craftbukkit.Overridden;
 +import org.spigotmc.CustomTimingsHandler; // Spigot
 +import org.bukkit.inventory.InventoryHolder; // CraftBukkit
 +
@@ -16,7 +15,6 @@
 -    protected World worldObj;
 +    public static Map classToNameMap = new HashMap(); // Cauldron - private -> public
 +    public World worldObj; // CraftBukkit - protected -> public
-+    private boolean GC = false;
      public int xCoord;
      public int yCoord;
      public int zCoord;
@@ -26,16 +24,8 @@
 +    public CustomTimingsHandler tickTimer = org.bukkit.craftbukkit.SpigotTimings.getTileEntityTimings(this); // Spigot
      private static final String __OBFID = "CL_00000340";
  
-+    @Override
-+    public int hashCode()
-+    {
-+        return ((yCoord * 31 + xCoord) * 31 + zCoord) * 17 + yCoord;
-+    }
-+
      public static void addMapping(Class p_145826_0_, String p_145826_1_)
-     {
-         if (nameToClassMap.containsKey(p_145826_1_))
-@@ -106,7 +118,11 @@
+@@ -106,7 +110,11 @@
          }
          catch (Exception exception)
          {
@@ -48,7 +38,7 @@
          }
  
          if (tileentity != null)
-@@ -282,6 +298,31 @@
+@@ -282,6 +290,20 @@
          addMapping(TileEntityFlowerPot.class, "FlowerPot");
      }
  
@@ -65,18 +55,25 @@
 +        return null;
 +    }
 +    // CraftBukkit end
-+    // KCauldron start
-+    public boolean isGC()
-+    {
-+        return this.GC; //Returns true if the chunk it is inside of has marked it for unloading
-+    }
-+
-+    public void setGC(boolean state)
-+    {
-+        this.GC = state; //Should never be touched by a mod. Would make it package-private but not sure if that would still work
-+    }
-+    // KCauldron end
 +
      // -- BEGIN FORGE PATCHES --
      /**
       * Determines if this TileEntity requires update calls.
+@@ -317,8 +339,8 @@
+      * Called from Chunk.setBlockIDWithMetadata, determines if this tile entity should be re-created when the ID, or Metadata changes.
+      * Use with caution as this will leave straggler TileEntities, or create conflicts with other TileEntities if not used properly.
+      *
+-     * @param oldID The old ID of the block
+-     * @param newID The new ID of the block (May be the same)
++     * @param oldBlock The old ID of the block
++     * @param newBlock The new ID of the block (May be the same)
+      * @param oldMeta The old metadata of the block
+      * @param newMeta The new metadata of the block (May be the same)
+      * @param world Current world
+@@ -370,4 +392,6 @@
+         }
+         return bb;
+     }
++
++    public boolean dead;
+ }

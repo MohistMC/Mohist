@@ -1,0 +1,26 @@
+--- ../src-base/minecraft/net/minecraft/block/BlockCauldron.java
++++ ../src-work/minecraft/net/minecraft/block/BlockCauldron.java
+@@ -233,4 +233,23 @@
+         int j = MathHelper.clamp_int(p_150025_0_, 0, 3);
+         return (float)(6 + 3 * j) / 16.0F;
+     }
++/*
++    //Uranium start
++    private boolean changeLevel(World world, BlockPosition blockposition, IBlockData iblockdata, int i, Entity entity, CauldronLevelChangeEvent.ChangeReason reason) {
++        int newLevel = Integer.valueOf(MathHelper.clamp(i, 0, 3));
++        CauldronLevelChangeEvent event = new CauldronLevelChangeEvent(
++                world.getWorld().getBlockAt(blockposition.getX(), blockposition.getY(), blockposition.getZ()),
++                (entity == null) ? null : entity.getBukkitEntity(), reason, iblockdata.get(BlockCauldron.LEVEL), newLevel
++        );
++        world.getServer().getPluginManager().callEvent(event);
++        if (event.isCancelled()) {
++            return false;
++        }
++        world.setTypeAndData(blockposition, iblockdata.set(BlockCauldron.LEVEL, newLevel), 2);
++        world.updateAdjacentComparators(blockposition, this);
++        return true;
++        // CraftBukkit end
++    }
++    //Uranium end
++*/
+ }

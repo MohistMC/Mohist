@@ -1,6 +1,34 @@
 --- ../src-base/minecraft/net/minecraft/server/management/UserList.java
 +++ ../src-work/minecraft/net/minecraft/server/management/UserList.java
-@@ -184,6 +184,12 @@
+@@ -14,6 +14,8 @@
+ import com.google.gson.JsonSerializer;
+ import cpw.mods.fml.relauncher.Side;
+ import cpw.mods.fml.relauncher.SideOnly;
++import net.minecraft.server.MinecraftServer;
++
+ import java.io.BufferedReader;
+ import java.io.BufferedWriter;
+ import java.io.File;
+@@ -56,7 +58,7 @@
+ 
+     public UserList(File p_i1144_1_)
+     {
+-        this.field_152695_c = p_i1144_1_;
++        this.field_152695_c = (!p_i1144_1_.isAbsolute()&&!Boolean.getBoolean("NoChangeDir_UserList"))?new File(MinecraftServer.serverConfigDir,p_i1144_1_.getPath()):p_i1144_1_;
+         GsonBuilder gsonbuilder = (new GsonBuilder()).setPrettyPrinting();
+         gsonbuilder.registerTypeHierarchyAdapter(UserListEntry.class, new UserList.Serializer(null));
+         this.field_152694_b = gsonbuilder.create();
+@@ -119,6 +121,9 @@
+ 
+     protected String func_152681_a(Object p_152681_1_)
+     {
++        if(p_152681_1_ instanceof com.mojang.authlib.GameProfile){
++            return ((com.mojang.authlib.GameProfile)p_152681_1_).getName().toLowerCase();
++        }
+         return p_152681_1_.toString();
+     }
+ 
+@@ -184,6 +189,12 @@
          return this.field_152696_d.size() < 1;
      }
  

@@ -6,7 +6,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import net.minecraft.world.WorldServer;
 import org.bukkit.block.Biome;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Arrow;
@@ -1273,6 +1272,4 @@ public interface World extends PluginMessageRecipient, Metadatable {
             }
         }
     }
-    
-    public abstract WorldServer getWorldServer();
 }

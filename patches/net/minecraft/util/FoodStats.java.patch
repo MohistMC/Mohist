@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/util/FoodStats.java
 +++ ../src-work/minecraft/net/minecraft/util/FoodStats.java
-@@ -7,16 +7,34 @@
+@@ -7,16 +7,31 @@
  import net.minecraft.item.ItemStack;
  import net.minecraft.nbt.NBTTagCompound;
  import net.minecraft.world.EnumDifficulty;
@@ -31,15 +31,12 @@
 +        org.apache.commons.lang.Validate.notNull(entityplayer);
 +        this.entityplayer = entityplayer;
 +    }
-+
-+    public FoodStats() {} // Thermos allow empty constructor
-+
 +    // CraftBukkit end
 +
      public void addStats(int p_75122_1_, float p_75122_2_)
      {
          this.foodLevel = Math.min(p_75122_1_ + this.foodLevel, 20);
-@@ -25,7 +43,17 @@
+@@ -25,7 +40,17 @@
  
      public void func_151686_a(ItemFood p_151686_1_, ItemStack p_151686_2_)
      {
@@ -58,7 +55,7 @@
      }
  
      public void onUpdate(EntityPlayer p_75118_1_)
-@@ -43,7 +71,16 @@
+@@ -43,7 +68,16 @@
              }
              else if (enumdifficulty != EnumDifficulty.PEACEFUL)
              {
@@ -76,7 +73,7 @@
              }
          }
  
-@@ -53,7 +90,8 @@
+@@ -53,7 +87,8 @@
  
              if (this.foodTimer >= 80)
              {

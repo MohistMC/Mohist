@@ -132,7 +132,8 @@ public final class SimplePluginManager implements PluginManager {
                 String name = description.getName();
                 if (name.equalsIgnoreCase("bukkit") || name.equalsIgnoreCase("minecraft") || name.equalsIgnoreCase("mojang")
                         // Cauldron - Add more restricted names
-                        || name.equalsIgnoreCase("spigot") || name.equalsIgnoreCase("forge") || name.equalsIgnoreCase("cauldron") || name.equalsIgnoreCase("mcpc") || name.equalsIgnoreCase("kcauldron") || name.equalsIgnoreCase("thermos")) {
+                        || name.equalsIgnoreCase("spigot") || name.equalsIgnoreCase("forge") || name.equalsIgnoreCase("cauldron") || name.equalsIgnoreCase("mcpc") || name.equalsIgnoreCase("uranium")
+                        || name.equalsIgnoreCase("mohist")|| name.equalsIgnoreCase("thermos")) {
                     server.getLogger().log(Level.SEVERE, "Could not load '" + file.getPath() + "' in folder '" + directory.getPath() + "': Restricted Name");
                     continue;
                 } else if (description.rawName.indexOf(' ') != -1) {
@@ -189,7 +190,7 @@ public final class SimplePluginManager implements PluginManager {
         }
 
         // Cauldron - fill names for Cauldron-provided dependencies
-        loadedPlugins.addAll(ImmutableSet.of("Cauldron", "Forge", "MCPC", "MCPC+", "KCauldron", "Thermos"));
+        loadedPlugins.addAll(ImmutableSet.of("Cauldron", "Forge", "MCPC", "MCPC+","Uranium", "Mohist"));
 
         while (!plugins.isEmpty()) {
             boolean missingDependency = true;
@@ -437,6 +438,7 @@ public final class SimplePluginManager implements PluginManager {
 
             try {
                 server.getServicesManager().unregisterAll(plugin);
+                cc.uraniummc.eventexecutor.ASMEventExecutorGenerate.removeListener(plugin);
             } catch (Throwable ex) {
                 server.getLogger().log(Level.SEVERE, "Error occurred (in the plugin loader) while unregistering services for " + plugin.getDescription().getFullName() + " (Is it up to date?)", ex);
             }
@@ -619,7 +621,7 @@ public final class SimplePluginManager implements PluginManager {
     }
 
     public void recalculatePermissionDefaults(Permission perm) {
-        if (permissions.containsValue(perm)) {
+        if (perm!=null&&permissions.containsValue(perm)) {//Uranium added null check
             defaultPerms.get(true).remove(perm);
             defaultPerms.get(false).remove(perm);
 

@@ -18,7 +18,7 @@ public final class CraftMapView implements MapView {
     public final List<MapRenderer> renderers = new ArrayList<MapRenderer>(); // Spigot
     private final Map<MapRenderer, Map<CraftPlayer, CraftMapCanvas>> canvases = new HashMap<MapRenderer, Map<CraftPlayer, CraftMapCanvas>>();
     protected final net.minecraft.world.storage.MapData worldMap;
-    public MapRenderer defaultRenderer;
+
     public CraftMapView(net.minecraft.world.storage.MapData worldMap) {
         this.worldMap = worldMap;
         addRenderer(new CraftMapRenderer(this, worldMap));
@@ -138,6 +138,7 @@ public final class CraftMapView implements MapView {
                 canvas = new CraftMapCanvas(this);
                 canvases.get(renderer).put(renderer.isContextual() ? player : null, canvas);
             }
+
             canvas.setBase(render.buffer);
             renderer.render(this, canvas, player);
 

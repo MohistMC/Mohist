@@ -146,7 +146,7 @@
              DimensionManager.getProviderType(dim);
          }
          catch (Exception e)
-@@ -242,9 +295,63 @@
+@@ -242,9 +295,52 @@
          ISaveHandler savehandler = overworld.getSaveHandler();
          WorldSettings worldSettings = new WorldSettings(overworld.getWorldInfo());
  
@@ -155,7 +155,6 @@
 +        String worldType;
 +        String name;
 +        String oldName = "";
-+        String realName = "";
 +        Environment env = Environment.getEnvironment(getProviderType(dim));
 +        if (dim >= -1 && dim <= 1)
 +        {
@@ -163,7 +162,6 @@
 +                return;
 +            worldType = env.toString().toLowerCase();
 +            name = "DIM" + dim;
-+            realName = name;
 +        }
 +        else
 +        {
@@ -178,13 +176,6 @@
 +
 +            name = provider.getSaveFolder();
 +            if (name == null) name = "DIM0";
-+
-+            if (net.minecraftforge.cauldron.configuration.CauldronConfig.instance.realNames.getValue()) // Thermos - allow server owners to use real names for worlds, but remember to keep the SaveHandler directory..
-+            {
-+                realName = provider.getDimensionName();
-+            }
-+            else { realName = name; }
-+
 +        }
 +        // add ability to disable dimensions
 +        if (!MinecraftServer.getServer().cauldronConfig.getBoolean("world-environment-settings." + worldType + ".enabled", true))
@@ -195,9 +186,7 @@
 +        if (mcServer instanceof DedicatedServer) {
 +            worldSettings.func_82750_a(((DedicatedServer) mcServer).getStringProperty("generator-settings", ""));
 +        }
-+
-+
-+        WorldServer world = new WorldServerMulti(mcServer, new AnvilSaveHandler(mcServer.server.getWorldContainer(), name, true), realName, dim, worldSettings, overworld, mcServer.theProfiler, env, gen); // Thermos - real world names, heyo!
++        WorldServer world = new WorldServerMulti(mcServer, new AnvilSaveHandler(mcServer.server.getWorldContainer(), name, true), name, dim, worldSettings, overworld, mcServer.theProfiler, env, gen);
 +
 +        if (gen != null)
 +        {
@@ -211,7 +200,7 @@
          if (!mcServer.isSinglePlayer())
          {
              world.getWorldInfo().setGameType(mcServer.getGameType());
-@@ -253,6 +360,79 @@
+@@ -253,6 +349,79 @@
          mcServer.func_147139_a(mcServer.func_147135_j());
      }
  
@@ -291,7 +280,7 @@
      public static WorldServer getWorld(int id)
      {
          return worlds.get(id);
-@@ -266,7 +446,7 @@
+@@ -266,7 +435,7 @@
      public static boolean shouldLoadSpawn(int dim)
      {
          int id = getProviderType(dim);
@@ -300,7 +289,7 @@
      }
  
      static
-@@ -306,7 +486,8 @@
+@@ -306,7 +475,8 @@
      }
  
      public static void unloadWorld(int id) {
@@ -310,7 +299,7 @@
      }
  
      /*
-@@ -315,26 +496,9 @@
+@@ -315,26 +485,9 @@
      public static void unloadWorlds(Hashtable<Integer, long[]> worldTickTimes) {
          for (int id : unloadQueue) {
              WorldServer w = worlds.get(id);
@@ -339,7 +328,7 @@
              }
          }
          unloadQueue.clear();
-@@ -425,4 +589,45 @@
+@@ -425,4 +578,45 @@
              return null;
          }
      }

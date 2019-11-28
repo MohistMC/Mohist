@@ -19,7 +19,7 @@
 +        // Cauldron start - register item/block materials for Bukkit
 +        boolean isForgeBlock = p_148756_3_ instanceof Block && (p_148756_3_.getClass().getName().length() > 3 && !p_148756_3_.getClass().getName().startsWith("net.minecraft.block")) ? true : false;
 +        org.bukkit.Material material = org.bukkit.Material.addMaterial(p_148756_1_, p_148756_2_, isForgeBlock);
-+        if (material != null && net.minecraft.server.MinecraftServer.thermosConfig.loggingMaterialInjection.getValue())
++        if (material != null && net.minecraft.server.MinecraftServer.uraniumConfig.loggingMaterialInjection.getValue())
 +        {
 +            if (isForgeBlock)
 +            {

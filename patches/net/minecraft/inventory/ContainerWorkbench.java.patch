@@ -48,12 +48,12 @@
 +        ItemStack craftResult = CraftingManager.getInstance().findMatchingRecipe(this.craftMatrix, this.worldObj);
 +        this.craftResult.setInventorySlotContents(0, craftResult);
 +
-+        if (super.crafters.size() < 1 || !(super.crafters.get(0) instanceof EntityPlayerMP))
++        if (super.crafters.size() < 1)
 +        {
 +            return;
 +        }
 +
-+        EntityPlayerMP player = (EntityPlayerMP) super.crafters.get(0); // Thermos - this will always be correct now!
++        EntityPlayerMP player = (EntityPlayerMP) super.crafters.get(0); // TODO: Is this _always_ correct? Seems like it.
 +        player.playerNetServerHandler.sendPacket(new S2FPacketSetSlot(player.openContainer.windowId, 0, craftResult));
 +        // CraftBukkit end
      }

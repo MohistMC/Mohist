@@ -31,7 +31,6 @@ import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.ChunkCoordIntPair;
 import net.minecraft.world.World;
-import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.gen.ChunkProviderServer;
 import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
 
@@ -42,7 +41,7 @@ public class CauldronHooks
     public static int tickingDimension = 0;
     public static ChunkCoordIntPair tickingChunk = null;
     public static Map<Class<? extends TileEntity>, TileEntityCache> tileEntityCache = new HashMap<Class<? extends TileEntity>, TileEntityCache>();
-    public static Map<Class<? extends Entity>, SushchestvoCache> sushchestvoCache = new HashMap<Class<? extends Entity>, SushchestvoCache>();
+    public static Map<Class<? extends Entity>, EntityCache> entityCache = new HashMap<Class<? extends Entity>, EntityCache>();
 
     private static TObjectLongHashMap<CollisionWarning> recentWarnings = new TObjectLongHashMap<CollisionWarning>();
 
@@ -273,64 +272,6 @@ public class CauldronHooks
         }
     }
 
-    /*
-     * Thermos
-     * 0 = false, dependent on others
-     * 1 = true
-     * -1 = false, absolute
-     */
-    public static byte canSushchestvoTick(Entity entity, World world)
-    {
-        if (entity == null || world.sushchestvoConfig == null) { return 0; }
-        if (!MinecraftServer.sushchestvoConfig.skipEntityTicks.getValue()) { return 1; }
-        
-        int cX = net.minecraft.util.MathHelper.floor_double( entity.posX ) >> 4, cZ = net.minecraft.util.MathHelper.floor_double( entity.posZ ) >> 4;
-        int iX = net.minecraft.util.MathHelper.floor_double( entity.posX ), iZ = net.minecraft.util.MathHelper.floor_double( entity.posZ );
-        	SushchestvoCache seCache = sushchestvoCache.get(entity.getClass());
-            if (seCache == null)
-            {
-                String seConfigPath = entity.getClass().getName().replace(".", "-");
-                seConfigPath = seConfigPath.replaceAll("[^A-Za-z0-9\\-]", ""); // Fix up odd class names to prevent YAML errors
-                seCache = new SushchestvoCache(entity.getClass(), world.getWorldInfo().getWorldName().toLowerCase(), seConfigPath, world.sushchestvoConfig.getBoolean(seConfigPath + ".tick-no-players", false), world.sushchestvoConfig.getBoolean(seConfigPath + ".never-ever-tick", false), world.sushchestvoConfig.getInt(seConfigPath + ".tick-interval", 1));
-                sushchestvoCache.put(entity.getClass(), seCache);
-            }
-
-            if(seCache.neverEverTick)
-            {
-            	return -1;
-            }
-    
-            // Skip tick interval
-            if (seCache.tickInterval > 0 && (world.getWorldInfo().getWorldTotalTime() % seCache.tickInterval == 0L))
-            {
-                return 0;
-            }
-
-            // Tick with no players near?
-            if (seCache.tickNoPlayers)
-            {
-                return 1;
-            }
-
-        	if(world.chunkProvider instanceof ChunkProviderServer) // Thermos - allow the server to tick entities that are in chunks trying to unload
-        	{
-        		ChunkProviderServer cps = ((ChunkProviderServer)world.chunkProvider);
-        		if(cps.chunksToUnload.contains(cX, cZ))
-        		{
-        			Chunk c = cps.getChunkIfLoaded(cX, cZ);
-        			if(c != null)
-        			{
-        				if(c.lastAccessedTick < 2L)
-        				{
-        					return 1;
-        				}
-        			}
-        		}
-        	}
-        	
-            return -1;
-    }
-    
     public static boolean canTileEntityTick(TileEntity tileEntity, World world)
     {
         if (tileEntity == null || world.tileentityConfig == null) return false;
@@ -351,29 +292,23 @@ public class CauldronHooks
                 return false;
             }
     
-            // Skip tick interval
-            if (teCache.tickInterval > 0 && (world.getWorldInfo().getWorldTotalTime() % teCache.tickInterval == 0L))
-            {
-                return true;
+            return teCache.tickInterval==1||(teCache.tickInterval>0&&(world.rand.nextInt(teCache.tickInterval)==0)); // rand skip tick
+        }
+        return true;
+    }
+    
+    public static boolean canEntityTick(Entity pEntity,World world){
+        if(pEntity==null||world.tileentityConfig==null) return false;
+        if(MinecraftServer.entityConfig.skipEntityTicks.getValue()){
+            EntityCache eCache=entityCache.get(pEntity.getClass());
+            if(eCache==null){
+                String teConfigPath=pEntity.getClass().getName().replace(".","-");
+                teConfigPath=teConfigPath.replaceAll("[^A-Za-z0-9\\-]",""); // Fix up odd class names to prevent YAML errors
+                eCache=new EntityCache(pEntity.getClass(),world.getWorldInfo().getWorldName().toLowerCase(),teConfigPath,world.entityConfig.getInt(teConfigPath+".tick-interval",1));
+                entityCache.put(pEntity.getClass(),eCache);
             }
-            
-        	if(world.chunkProvider instanceof ChunkProviderServer) // Thermos - allow the server to tick tiles that are trying to unload
-        	{
-        		ChunkProviderServer cps = ((ChunkProviderServer)world.chunkProvider);
-        		if(cps.chunksToUnload.contains(tileEntity.xCoord >> 4, tileEntity.zCoord >> 4))
-        		{
-        			Chunk c = cps.getChunkIfLoaded(tileEntity.xCoord >> 4, tileEntity.zCoord >> 4);
-        			if(c != null)
-        			{
-        				if(c.lastAccessedTick < 2L)
-        				{
-        					return true;
-        				}
-        			}
-        		}
-        	}
-        	
-            return false;
+
+            return eCache.tickInterval==1||(eCache.tickInterval>0&&(world.rand.nextInt(eCache.tickInterval)==0)); // rand skip tick
         }
         return true;
     }
@@ -404,7 +339,7 @@ public class CauldronHooks
                 writer.name("name").value(world.getWorld().getName());
                 writer.name("dimensionId").value(world.provider.dimensionId);
                 writer.name("players").value(world.playerEntities.size());
-                writer.name("loadedChunks").value(world.theChunkProviderServer.loadedChunkHashMap_KC.size());
+                writer.name("loadedChunks").value(world.theChunkProviderServer.getLoadedChunkCount());
                 writer.name("activeChunks").value(world.activeChunkSet.size());
                 writer.name("entities").value(world.loadedEntityList.size());
                 writer.name("tiles").value(world.loadedTileEntityList.size());

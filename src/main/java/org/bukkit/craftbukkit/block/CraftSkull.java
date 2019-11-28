@@ -100,7 +100,7 @@ public class CraftSkull extends CraftBlockState implements Skull {
     }
 
     static BlockFace getBlockFace(byte rotation) {
-        switch (rotation % 16) {
+        switch (rotation) {
             case 0:
                 return BlockFace.NORTH;
             case 1:

@@ -14,22 +14,7 @@
  public class ItemBucket extends Item
  {
      private Block isFull;
-@@ -19,7 +26,13 @@
- 
-     public ItemBucket(Block p_i45331_1_)
-     {
--        this.maxStackSize = 1;
-+        // PaperSpigot start - Stackable Buckets
-+        if ((p_i45331_1_ == Blocks.lava) || (p_i45331_1_ == Blocks.water)) {
-+            this.maxStackSize = org.bukkit.Material.BUCKET.getMaxStackSize();
-+        } else {
-+            this.maxStackSize = 1;
-+        }
-+        // PaperSpigot end
-         this.isFull = p_i45331_1_;
-         this.setCreativeTab(CreativeTabs.tabMisc);
-     }
-@@ -83,23 +96,52 @@
+@@ -83,23 +90,52 @@
  
                      if (material == Material.water && l == 0)
                      {
@@ -85,7 +70,7 @@
                      if (movingobjectposition.sideHit == 0)
                      {
                          --j;
-@@ -135,9 +177,19 @@
+@@ -135,9 +171,19 @@
                          return p_77659_1_;
                      }
  
@@ -106,7 +91,7 @@
                      }
                  }
              }
-@@ -146,24 +198,32 @@
+@@ -146,24 +192,32 @@
          }
      }
  

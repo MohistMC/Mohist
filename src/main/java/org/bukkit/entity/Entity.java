@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.UUID;
 import org.bukkit.EntityEffect;
 import org.bukkit.Location;
+import org.bukkit.Nameable;
 import org.bukkit.Server;
 import org.bukkit.World;
 import org.bukkit.event.entity.EntityDamageEvent;
@@ -14,7 +15,7 @@ import org.bukkit.util.Vector;
 /**
  * Represents a base entity in the world
  */
-public interface Entity extends Metadatable {
+public interface Entity extends Metadatable,Nameable {
 
     /**
      * Gets the entity's current position
@@ -308,4 +309,25 @@ public interface Entity extends Metadatable {
 
     Spigot spigot();
     // Spigot End
+
+    /**
+     * Sets whether or not to display the mob's custom name client side. The
+     * name will be displayed above the mob similarly to a player.
+     * <p>
+     * This value has no effect on players, they will always display their
+     * name.
+     *
+     * @param flag custom name or not
+     */
+    public void setCustomNameVisible(boolean flag);
+
+    /**
+     * Gets whether or not the mob's custom name is displayed client side.
+     * <p>
+     * This value has no effect on players, they will always display their
+     * name.
+     *
+     * @return if the custom name is displayed
+     */
+    public boolean isCustomNameVisible();
 }

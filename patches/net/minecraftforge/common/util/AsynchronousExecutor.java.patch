@@ -1,0 +1,13 @@
+--- ../src-base/minecraft/net/minecraftforge/common/util/AsynchronousExecutor.java
++++ ../src-work/minecraft/net/minecraftforge/common/util/AsynchronousExecutor.java
+@@ -268,8 +268,8 @@
+         if (task == null) {
+             // Print debug info for QueuedChunk and avoid crash
+             //throw new IllegalStateException("Unknown " + parameter);
+-            FMLLog.info("Unknown %s", parameter);
+-            FMLLog.info("This should not happen. Please report this error to Forge.");
++            //FMLLog.info("Unknown %s", parameter); // KCauldron
++            //FMLLog.info("This should not happen. Please report this error to Forge."); // KCauldron
+             return false;
+         }
+         if (!task.callbacks.remove(callback)) {

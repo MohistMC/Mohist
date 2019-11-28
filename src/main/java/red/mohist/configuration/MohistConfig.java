@@ -4,15 +4,12 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import net.minecraftforge.cauldron.configuration.BoolSetting;
 import net.minecraftforge.cauldron.configuration.ConfigBase;
-import net.minecraftforge.cauldron.configuration.IntSetting;
 import net.minecraftforge.cauldron.configuration.Setting;
-import net.minecraftforge.cauldron.configuration.StringArraySetting;
 import net.minecraftforge.cauldron.configuration.StringSetting;
 import org.bukkit.configuration.file.YamlConfiguration;
 import red.mohist.api.ServerAPI;
 import red.mohist.command.DumpCommand;
 import red.mohist.command.MohistCommand;
-import red.mohist.util.i18n.Message;
 
 public class MohistConfig extends ConfigBase {
 

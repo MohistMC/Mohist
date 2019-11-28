@@ -1,35 +1,59 @@
 --- ../src-base/minecraft/net/minecraft/network/play/server/S02PacketChat.java
 +++ ../src-work/minecraft/net/minecraft/network/play/server/S02PacketChat.java
-@@ -3,6 +3,9 @@
+@@ -3,6 +3,7 @@
  import cpw.mods.fml.relauncher.Side;
  import cpw.mods.fml.relauncher.SideOnly;
  import java.io.IOException;
 +
-+import net.md_5.bungee.api.chat.BaseComponent;
-+import net.md_5.bungee.chat.ComponentSerializer;
  import net.minecraft.network.INetHandler;
  import net.minecraft.network.Packet;
  import net.minecraft.network.PacketBuffer;
-@@ -13,6 +16,8 @@
+@@ -13,11 +14,12 @@
  {
      private IChatComponent field_148919_a;
      private boolean field_148918_b;
-+    //Thermos start - Implement bungee chat api
-+    public BaseComponent[] components;
++    public final boolean title;
      private static final String __OBFID = "CL_00001289";
- 
+-
      public S02PacketChat()
-@@ -39,7 +44,12 @@
- 
-     public void writePacketData(PacketBuffer p_148840_1_) throws IOException
      {
--        p_148840_1_.writeStringToBuffer(IChatComponent.Serializer.func_150696_a(this.field_148919_a));
-+        if (this.components != null) {
-+            p_148840_1_.writeStringToBuffer(ComponentSerializer.toString(this.components));
-+        } else {
-+            p_148840_1_.writeStringToBuffer(IChatComponent.Serializer.func_150696_a(this.field_148919_a));
-+        }
-+        //thermos end
+         this.field_148918_b = true;
++        title=false;
      }
  
-     public void processPacket(INetHandlerPlayClient p_148833_1_)
+     public S02PacketChat(IChatComponent p_i45179_1_)
+@@ -27,11 +29,25 @@
+ 
+     public S02PacketChat(IChatComponent p_i45180_1_, boolean p_i45180_2_)
+     {
+-        this.field_148918_b = true;
+         this.field_148919_a = p_i45180_1_;
+         this.field_148918_b = p_i45180_2_;
++        title=false;
+     }
+ 
++    public S02PacketChat(IChatComponent p_i45180_1_, byte p_i45180_2_)
++    {
++        this.field_148919_a = p_i45180_1_;
++        this.field_148918_b = true;
++        title=p_i45180_2_==2;
++    }
++
++    public S02PacketChat(IChatComponent p_i45180_1_, int p_i45180_2_)
++    {
++        this.field_148919_a = p_i45180_1_;
++        this.field_148918_b = true;
++        title=p_i45180_2_==2;
++    }
++
+     public void readPacketData(PacketBuffer p_148837_1_) throws IOException
+     {
+         this.field_148919_a = IChatComponent.Serializer.func_150699_a(p_148837_1_.readStringFromBuffer(32767));
+@@ -52,7 +68,6 @@
+         return String.format("message=\'%s\'", new Object[] {this.field_148919_a});
+     }
+ 
+-    @SideOnly(Side.CLIENT)
+     public IChatComponent func_148915_c()
+     {
+         return this.field_148919_a;

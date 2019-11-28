@@ -12,7 +12,7 @@ import org.bukkit.entity.Entity;
 
 public class CraftChunk implements Chunk {
     private WeakReference<net.minecraft.world.chunk.Chunk> weakChunk;
-    private final net.minecraft.world.World worldServer;
+    private final net.minecraft.world.WorldServer worldServer;
     private final int x;
     private final int z;
     private static final byte[] emptyData = new byte[2048];
@@ -24,7 +24,7 @@ public class CraftChunk implements Chunk {
             this.weakChunk = new WeakReference<net.minecraft.world.chunk.Chunk>(chunk);
         }
 
-        worldServer = getHandle().worldObj instanceof net.minecraft.world.World ? (net.minecraft.world.World) getHandle().worldObj : null; // Thermos - use world instead of worldserver for NatureOverhaul
+        worldServer = getHandle().worldObj instanceof net.minecraft.world.WorldServer ? (net.minecraft.world.WorldServer) getHandle().worldObj : null;
         x = getHandle().xPosition;
         z = getHandle().zPosition;
     }

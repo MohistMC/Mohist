@@ -1,10 +1,40 @@
 --- ../src-base/minecraft/net/minecraft/server/dedicated/DedicatedServer.java
 +++ ../src-work/minecraft/net/minecraft/server/dedicated/DedicatedServer.java
-@@ -34,9 +34,19 @@
+@@ -3,17 +3,21 @@
+ import cpw.mods.fml.common.FMLCommonHandler;
+ import cpw.mods.fml.relauncher.Side;
+ import cpw.mods.fml.relauncher.SideOnly;
+-import java.io.BufferedReader;
++
+ import java.io.File;
+ import java.io.IOException;
+-import java.io.InputStreamReader;
++import java.lang.reflect.Field;
++import java.lang.reflect.Modifier;
+ import java.net.InetAddress;
+ import java.net.Proxy;
++import java.net.URL;
+ import java.util.ArrayList;
+ import java.util.Collections;
+ import java.util.List;
+ import java.util.Random;
+ import java.util.concurrent.Callable;
++
++import net.minecraft.client.Minecraft;
+ import net.minecraft.command.ICommandSender;
+ import net.minecraft.command.ServerCommand;
+ import net.minecraft.crash.CrashReport;
+@@ -30,13 +34,25 @@
+ import net.minecraft.util.ChunkCoordinates;
+ import net.minecraft.util.CryptManager;
+ import net.minecraft.util.MathHelper;
++import net.minecraft.util.StatCollector;
+ import net.minecraft.world.EnumDifficulty;
  import net.minecraft.world.World;
  import net.minecraft.world.WorldSettings;
  import net.minecraft.world.WorldType;
 +import net.minecraft.world.chunk.storage.AnvilSaveConverter;
++import net.minecraftforge.common.util.FakePlayer;
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
  
@@ -20,7 +50,7 @@
  @SideOnly(Side.SERVER)
  public class DedicatedServer extends MinecraftServer implements IServer
  {
-@@ -44,7 +54,7 @@
+@@ -44,18 +60,20 @@
      public final List pendingCommandList = Collections.synchronizedList(new ArrayList());
      private RConThreadQuery theRConThreadQuery;
      private RConThreadMain theRConThreadMain;
@@ -29,10 +59,10 @@
      private ServerEula field_154332_n;
      private boolean canSpawnStructures;
      private WorldSettings.GameType gameType;
-@@ -52,10 +62,13 @@
+     private boolean guiIsEnabled;
      public static boolean allowPlayerLogins = false;
      private static final String __OBFID = "CL_00001784";
- 
+-
 -    public DedicatedServer(File p_i1508_1_)
 +    // CraftBukkit start - Signature changed
 +    public DedicatedServer(joptsimple.OptionSet options)
@@ -46,7 +76,7 @@
          {
              private static final String __OBFID = "CL_00001787";
              {
-@@ -82,31 +95,77 @@
+@@ -82,31 +100,77 @@
          };
      }
  
@@ -86,7 +116,7 @@
 +                        {
 +                            s = bufferedreader.readLine();
 +                        }
-+                        if (s != null)
++                        if (s != null && !s.isEmpty())
 +                        {
 +                            this.server.addPendingCommand(s, this.server);
 +                        }
@@ -131,16 +161,37 @@
          field_155771_h.info("Starting minecraft server version 1.7.10");
  
          if (Runtime.getRuntime().maxMemory() / 1024L / 1024L < 512L)
-@@ -117,7 +176,7 @@
-         FMLCommonHandler.instance().onServerStart(this);
+@@ -115,26 +179,19 @@
+         }
  
+         FMLCommonHandler.instance().onServerStart(this);
+-
++        StatCollector.setLoaded(true);
          field_155771_h.info("Loading properties");
 -        this.settings = new PropertyManager(new File("server.properties"));
 +        this.settings = new PropertyManager(this.options); // CraftBukkit - CLI argument support
          this.field_154332_n = new ServerEula(new File("eula.txt"));
  
-         if (!this.field_154332_n.func_154346_a())
-@@ -172,6 +231,19 @@
+-        if (!this.field_154332_n.func_154346_a())
+         {
+-            field_155771_h.info("You need to agree to the EULA in order to run the server. Go to eula.txt for more info.");
+-            this.field_154332_n.func_154348_b();
+-            return false;
+-        }
+-        else
+-        {
+             if (this.isSinglePlayer())
+             {
+                 this.setHostname("127.0.0.1");
+             }
+             else
+             {
+-                this.setOnlineMode(this.settings.getBooleanProperty("online-mode", true));
++                this.setOnlineMode(this.settings.getBooleanProperty("online-mode", false));
+                 this.setHostname(this.settings.getStringProperty("server-ip", ""));
+             }
+ 
+@@ -172,6 +229,18 @@
                  this.setServerPort(this.settings.getIntProperty("server-port", 25565));
              }
  
@@ -150,17 +201,16 @@
 +            org.spigotmc.SpigotConfig.registerCommands();
 +            // Spigot end
 +            // Cauldron start
-+            thermosConfig.registerCommands();
++            uraniumConfig.registerCommands();
 +            cauldronConfig.registerCommands();
 +            tileEntityConfig.registerCommands();
-+            sushchestvoConfig.registerCommands();
++            entityConfig.registerCommands();
 +            // Cauldron end
-+            mohistConfig.registerCommands();
 +
              field_155771_h.info("Generating keypair");
              this.setKeyPair(CryptManager.createNewKeyPair());
              field_155771_h.info("Starting Minecraft server on " + (this.getServerHostname().length() == 0 ? "*" : this.getServerHostname()) + ":" + this.getServerPort());
-@@ -180,7 +252,7 @@
+@@ -180,7 +249,7 @@
              {
                  this.func_147137_ag().addLanEndpoint(inetaddress, this.getServerPort());
              }
@@ -169,8 +219,27 @@
              {
                  field_155771_h.warn("**** FAILED TO BIND TO PORT!");
                  field_155771_h.warn("The exception was: {}", new Object[] {ioexception.toString()});
-@@ -196,10 +268,17 @@
+@@ -194,12 +263,36 @@
+                 field_155771_h.warn("The server will make no attempt to authenticate usernames. Beware.");
+                 field_155771_h.warn("While this makes the game possible to play without internet access, it also opens up the ability for hackers to connect with any username they choose.");
                  field_155771_h.warn("To change this, set \"online-mode\" to \"true\" in the server.properties file.");
++            }else{
++                if(MinecraftServer.uraniumConfig.usingCustomOnlineModeServer.getValue()){
++                    try{
++                        Class c=Class.forName("com.mojang.authlib.yggdrasil.YggdrasilMinecraftSessionService");
++                        Field fff=c.getDeclaredField("CHECK_URL");
++                        fff.setAccessible(true);
++                        Field fina=Field.class.getDeclaredField("modifiers");
++                        fina.setAccessible(true);
++                        fina.setInt(fff,fff.getModifiers()&~Modifier.FINAL);
++                        fff.set(null,new URL(MinecraftServer.uraniumConfig.customOnlineModeServer.getValue()));
++                        fina.setInt(fff,fff.getModifiers()&Modifier.FINAL);
++                        fina.setAccessible(false);
++                        fff.setAccessible(false);
++                    }catch (Exception e){
++                        field_155771_h.error("Set custom online mode server failed......");
++                    }
++                }
              }
  
 -            if (this.func_152368_aE())
@@ -189,7 +258,7 @@
  
              if (!PreYggdrasilConverter.func_152714_a(this.settings))
              {
-@@ -208,7 +287,8 @@
+@@ -208,7 +301,8 @@
              else
              {
                  FMLCommonHandler.instance().onServerStarted();
@@ -199,7 +268,7 @@
                  long j = System.nanoTime();
  
                  if (this.getFolderName() == null)
-@@ -274,11 +354,30 @@
+@@ -274,11 +368,36 @@
                      this.theRConThreadMain.startThread();
                  }
  
@@ -214,7 +283,13 @@
 +                    this.settings.saveProperties();
 +                }
 +                // CraftBukkit end
-+
++                // KCauldronX start
++                for(FakePlayer fp:FakePlayer.fakePlayers){
++                    fp.callBukkitLoginEvent();
++                }
++                FakePlayer.fakePlayers=null;
++                FakePlayer.BukkitInited=true;
++                // KCauldronX end
                  return FMLCommonHandler.instance().handleServerStarting(this);
              }
          }
@@ -230,7 +305,7 @@
      public boolean canStructuresSpawn()
      {
          return this.canSpawnStructures;
-@@ -364,11 +463,19 @@
+@@ -364,11 +483,19 @@
  
      public void executePendingCommands()
      {

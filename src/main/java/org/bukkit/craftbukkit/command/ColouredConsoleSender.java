@@ -16,6 +16,7 @@ public class ColouredConsoleSender extends CraftConsoleCommandSender {
     private final ChatColor[] colors = ChatColor.values();
 
     protected ColouredConsoleSender() {
+        super();
         this.terminal = ((CraftServer) getServer()).getReader().getTerminal();
 
         replacements.put(ChatColor.BLACK, Ansi.ansi().a(Attribute.RESET).fg(Ansi.Color.BLACK).boldOff().toString());

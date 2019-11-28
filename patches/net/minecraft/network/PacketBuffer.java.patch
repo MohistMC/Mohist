@@ -1,6 +1,23 @@
 --- ../src-base/minecraft/net/minecraft/network/PacketBuffer.java
 +++ ../src-work/minecraft/net/minecraft/network/PacketBuffer.java
-@@ -98,7 +98,7 @@
+@@ -4,6 +4,8 @@
+ import io.netty.buffer.ByteBuf;
+ import io.netty.buffer.ByteBufAllocator;
+ import io.netty.buffer.ByteBufProcessor;
++import io.netty.handler.codec.DecoderException;
++import io.netty.handler.codec.EncoderException;
+ import io.netty.util.ReferenceCounted;
+ import java.io.IOException;
+ import java.io.InputStream;
+@@ -18,6 +20,7 @@
+ import net.minecraft.nbt.CompressedStreamTools;
+ import net.minecraft.nbt.NBTSizeTracker;
+ import net.minecraft.nbt.NBTTagCompound;
++import net.minecraft.util.IChatComponent;
+ 
+ public class PacketBuffer extends ByteBuf
+ {
+@@ -98,7 +101,7 @@
  
      public void writeItemStackToBuffer(ItemStack p_150788_1_) throws IOException
      {
@@ -9,3 +26,45 @@
          {
              this.writeShort(-1);
          }
+@@ -900,4 +903,41 @@
+     {
+         return this.field_150794_a.release(p_release_1_);
+     }
++
++    public IChatComponent readChatComponent() throws IOException
++    {
++        return IChatComponent.Serializer.func_150699_a(this.readStringFromBuffer(32767));
++    }
++
++    public void writeChatComponent(IChatComponent component) throws IOException
++    {
++        this.writeString(IChatComponent.Serializer.func_150696_a(component));
++    }
++
++    public <T extends Enum<T>> T readEnumValue(Class<T> enumClass)
++    {
++        return (T)((Enum[])enumClass.getEnumConstants())[this.readVarIntFromBuffer()];
++    }
++
++    public void writeEnumValue(Enum<?> value)
++    {
++        this.writeVarIntToBuffer(value.ordinal());
++    }
++
++    public PacketBuffer writeString(String string)
++    {
++        byte[] abyte = string.getBytes(Charsets.UTF_8);
++
++        if (abyte.length > 32767)
++        {
++            throw new EncoderException("String too big (was " + string.length() + " bytes encoded, max " + 32767 + ")");
++        }
++        else
++        {
++            this.writeVarIntToBuffer(abyte.length);
++            this.writeBytes(abyte);
++            return this;
++        }
++    }
++
+ }

@@ -8,6 +8,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.Utility;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
+import org.bukkit.craftbukkit.inventory.CraftItemStack;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.material.MaterialData;
@@ -21,6 +22,7 @@ public class ItemStack implements Cloneable, ConfigurationSerializable {
     private MaterialData data = null;
     private short durability = 0;
     private ItemMeta meta;
+    private net.minecraft.item.ItemStack mNMSItem=null; //add by cc
 
     @Utility
     protected ItemStack() {}
@@ -270,6 +272,14 @@ public class ItemStack implements Cloneable, ConfigurationSerializable {
      */
     @Utility
     public int getMaxStackSize() {
+        if(this.mNMSItem==null){
+            this.mNMSItem=CraftItemStack.asNMSCopy(this);
+        }
+        
+        if(this.mNMSItem!=null){
+            return this.mNMSItem.getItem().getItemStackLimit(this.mNMSItem);
+        }
+
         Material material = getType();
         if (material != null) {
             return material.getMaxStackSize();

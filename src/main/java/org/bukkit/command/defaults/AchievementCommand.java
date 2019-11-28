@@ -115,7 +115,7 @@ public class AchievementCommand extends VanillaCommand {
                 return true;
             }
 
-            PlayerStatisticIncrementEvent event = new PlayerStatisticIncrementEvent(player, statistic, player.getStatistic(statistic, entityType), player.getStatistic(statistic, entityType) + 1, entityType);
+            PlayerStatisticIncrementEvent event = new PlayerStatisticIncrementEvent(player, statistic, player.getStatistic(statistic), player.getStatistic(statistic) + 1, entityType);
             Bukkit.getServer().getPluginManager().callEvent(event);
             if (event.isCancelled()) {
                 sender.sendMessage(String.format("Unable to increment %s for %s", statisticString, player.getName()));
@@ -139,12 +139,12 @@ public class AchievementCommand extends VanillaCommand {
 
             Material material = Material.getMaterial(id);
 
-            if (material == null || org.bukkit.craftbukkit.CraftStatistic.getMaterialStatistic(statistic, material) == null) {
+            if (material == null) {
                 sender.sendMessage(String.format("Unknown achievement or statistic '%s'", statisticString));
                 return true;
             }
 
-            PlayerStatisticIncrementEvent event = new PlayerStatisticIncrementEvent(player, statistic, player.getStatistic(statistic, material), player.getStatistic(statistic, material) + 1, material);
+            PlayerStatisticIncrementEvent event = new PlayerStatisticIncrementEvent(player, statistic, player.getStatistic(statistic), player.getStatistic(statistic) + 1, material);
             Bukkit.getServer().getPluginManager().callEvent(event);
             if (event.isCancelled()) {
                 sender.sendMessage(String.format("Unable to increment %s for %s", statisticString, player.getName()));

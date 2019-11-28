@@ -1,7 +1,6 @@
 package org.bukkit.entity;
 
 import java.net.InetSocketAddress;
-import net.md_5.bungee.api.chat.BaseComponent;
 import org.bukkit.Achievement;
 import org.bukkit.ChatColor;
 import org.bukkit.Effect;
@@ -1105,15 +1104,37 @@ public interface Player extends HumanEntity, Conversable, CommandSender, Offline
             throw new UnsupportedOperationException( "Not supported yet." );
         }
 
-        /**
-         * Send a BaseComponent message from the BungeeCord Chat api.
-         */
-        public void sendMessage(BaseComponent component) {
-            throw new UnsupportedOperationException( "Not supported yet." );
+        public void sendMessage(net.md_5.bungee.api.chat.BaseComponent component) {
+            throw new UnsupportedOperationException("Not supported yet.");
         }
 
-        public /* varargs */ void sendMessage(BaseComponent ... components) {
+        public void sendMessage(net.md_5.bungee.api.chat.BaseComponent... components) {
             throw new UnsupportedOperationException("Not supported yet.");
+        }
+
+        /**
+         * Sends the component to the specified screen position of this player
+         *
+         * @param position the screen position
+         * @param component the components to send
+         */
+        public void sendMessage(net.md_5.bungee.api.ChatMessageType position, net.md_5.bungee.api.chat.BaseComponent component) {
+            throw new UnsupportedOperationException("Not supported yet.");
+        }
+
+        /**
+         * Sends an array of components as a single message to the specified screen position of this player
+         *
+         * @param position the screen position
+         * @param components the components to send
+         */
+        public void sendMessage(net.md_5.bungee.api.ChatMessageType position, net.md_5.bungee.api.chat.BaseComponent... components) {
+            throw new UnsupportedOperationException("Not supported yet.");
+        }
+
+        public int getPing()
+        {
+            throw new UnsupportedOperationException( "Not supported yet." );
         }
     }
 

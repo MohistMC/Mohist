@@ -1,26 +1,25 @@
 --- ../src-base/minecraft/cpw/mods/fml/common/network/handshake/FMLHandshakeServerState.java
 +++ ../src-work/minecraft/cpw/mods/fml/common/network/handshake/FMLHandshakeServerState.java
-@@ -19,6 +19,10 @@
-         {
-             NetworkDispatcher dispatcher = ctx.channel().attr(NetworkDispatcher.FML_DISPATCHER).get();
-             int overrideDim = dispatcher.serverInitiateHandshake();
-+            if(overrideDim == -100000)
-+            {
-+            	return ERROR;
-+            }
-             ctx.writeAndFlush(FMLHandshakeMessage.makeCustomChannelRegistration(NetworkRegistry.INSTANCE.channelNamesFor(Side.SERVER))).addListener(ChannelFutureListener.FIRE_EXCEPTION_ON_FAILURE);
-             ctx.writeAndFlush(new FMLHandshakeMessage.ServerHello(overrideDim)).addListener(ChannelFutureListener.FIRE_EXCEPTION_ON_FAILURE);
-             return HELLO;
-@@ -37,7 +41,11 @@
+@@ -9,6 +9,7 @@
+ import cpw.mods.fml.common.network.internal.FMLNetworkHandler;
+ import cpw.mods.fml.common.registry.GameData;
+ import cpw.mods.fml.relauncher.Side;
++import net.minecraft.server.MinecraftServer;
+ 
+ enum FMLHandshakeServerState implements IHandshakeState<FMLHandshakeServerState>
+ {
+@@ -37,8 +38,13 @@
              }
  
              FMLHandshakeMessage.ModList client = (FMLHandshakeMessage.ModList)msg;
 -            FMLLog.info("Client attempting to join with %d mods : %s", client.modListSize(), client.modListAsString());
-+            if (net.minecraft.server.MinecraftServer.thermosConfig.loggingClientModList.getValue()) {
++            if (net.minecraft.server.MinecraftServer.uraniumConfig.loggingClientModList.getValue()) {
 +                FMLLog.info("Client attempting to join with %d mods : %s", client.modListSize(), client.modListAsString());
 +            } else {
 +                FMLLog.info("Client attempting to join with %d mods", client.modListSize());
 +            }
              String result = FMLNetworkHandler.checkModList(client, Side.CLIENT);
++
              if (result != null)
              {
+                 NetworkDispatcher dispatcher = ctx.channel().attr(NetworkDispatcher.FML_DISPATCHER).get();

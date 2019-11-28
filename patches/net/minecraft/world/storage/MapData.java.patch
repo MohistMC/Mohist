@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/world/storage/MapData.java
 +++ ../src-work/minecraft/net/minecraft/world/storage/MapData.java
-@@ -14,6 +14,14 @@
+@@ -14,6 +14,16 @@
  import net.minecraft.world.World;
  import net.minecraft.world.WorldSavedData;
  
@@ -8,14 +8,16 @@
 +import java.util.UUID;
 +
 +import org.bukkit.craftbukkit.CraftServer;
-+import org.bukkit.craftbukkit.CraftWorld;
++import org.bukkit.craftbukkit.map.CraftMapRenderer;
 +import org.bukkit.craftbukkit.map.CraftMapView;
++import org.bukkit.craftbukkit.entity.CraftPlayer;
++import org.bukkit.craftbukkit.map.RenderData;
 +// CraftBukkit end
 +
  public class MapData extends WorldSavedData
  {
      public int xCenter;
-@@ -21,14 +29,24 @@
+@@ -21,14 +31,24 @@
      public int dimension;
      public byte scale;
      public byte[] colors = new byte[16384];
@@ -43,7 +45,7 @@
      }
  
      public void readFromNBT(NBTTagCompound p_76184_1_)
-@@ -107,14 +125,14 @@
+@@ -107,14 +127,14 @@
      {
          if (!this.playersHashMap.containsKey(p_76191_1_))
          {
@@ -60,7 +62,7 @@
          }
  
          for (int i = 0; i < this.playersArrayList.size(); ++i)
-@@ -125,7 +143,7 @@
+@@ -125,7 +145,7 @@
              {
                  if (!p_76191_2_.isOnItemFrame() && mapinfo1.entityplayerObj.dimension == this.dimension)
                  {
@@ -69,7 +71,7 @@
                  }
              }
              else
-@@ -137,11 +155,11 @@
+@@ -137,11 +157,11 @@
  
          if (p_76191_2_.isOnItemFrame())
          {
@@ -83,7 +85,7 @@
      {
          int j = 1 << this.scale;
          float f = (float)(p_82567_4_ - (double)this.xCenter) / (float)j;
-@@ -156,7 +174,7 @@
+@@ -156,7 +176,7 @@
              p_82567_8_ += p_82567_8_ < 0.0D ? -8.0D : 8.0D;
              b2 = (byte)((int)(p_82567_8_ * 16.0D / 360.0D));
  
@@ -92,7 +94,7 @@
              {
                  int k = (int)(p_82567_2_.getWorldInfo().getWorldTime() / 10L);
                  b2 = (byte)(k * k * 34187121 + k * 121 >> 15 & 15);
-@@ -250,7 +268,7 @@
+@@ -250,7 +270,7 @@
                  byte b3 = p_76192_1_[i * 3 + 2];
                  byte b0 = p_76192_1_[i * 3 + 3];
                  byte b1 = (byte)(p_76192_1_[i * 3 + 1] & 15);
@@ -101,7 +103,7 @@
              }
          }
          else if (p_76192_1_[0] == 2)
-@@ -265,7 +283,7 @@
+@@ -265,7 +285,7 @@
  
          if (mapinfo == null)
          {
@@ -110,7 +112,7 @@
              this.playersHashMap.put(p_82568_1_, mapinfo);
              this.playersArrayList.add(mapinfo);
          }
-@@ -300,10 +318,12 @@
+@@ -300,10 +320,12 @@
          private byte[] lastPlayerLocationOnMap;
          public int field_82569_d;
          private boolean field_82570_i;
@@ -124,14 +126,14 @@
              this.entityplayerObj = p_i2138_2_;
  
              for (int i = 0; i < this.field_76209_b.length; ++i)
-@@ -328,20 +348,37 @@
+@@ -328,21 +350,38 @@
                  int i;
                  int i1;
  
 +                // Spigot start
-+                boolean custom = this.mapDataObj.mapView.renderers.size() > 1 || !(this.mapDataObj.mapView.renderers.get(0) instanceof org.bukkit.craftbukkit.map.CraftMapRenderer);
-+                org.bukkit.craftbukkit.map.RenderData render = (custom) ? this.mapDataObj.mapView.render((org.bukkit.craftbukkit.entity.CraftPlayer) entityplayerObj.getBukkitEntity()) : null; // CraftBukkit
-+    
++                boolean custom = this.mapDataObj.mapView.renderers.size() > 1 || !(this.mapDataObj.mapView.renderers.get(0) instanceof CraftMapRenderer);
++                RenderData render = (custom) ? this.mapDataObj.mapView.render((CraftPlayer) entityplayerObj.getBukkitEntity()) : null; // CraftBukkit
++
                  if (--this.ticksUntilPlayerLocationMapUpdate < 0)
                  {
                      this.ticksUntilPlayerLocationMapUpdate = 4;
@@ -139,11 +141,10 @@
 +                    abyte = new byte[((custom) ? render.cursors.size() : this.mapDataObj.playersVisibleOnMap.size()) * 3 + 1]; // CraftBukkit
                      abyte[0] = 1;
                      i = 0;
--
+ 
 -                    for (Iterator iterator = MapData.this.playersVisibleOnMap.values().iterator(); iterator.hasNext(); ++i)
-+    
 +                    // CraftBukkit start
-+    
++
 +                    // Spigot start
 +                    for (Iterator iterator = ((custom) ? render.cursors.iterator() : this.mapDataObj.playersVisibleOnMap.values().iterator()); iterator.hasNext(); ++i)
                      {
@@ -152,20 +153,30 @@
 -                        abyte[i * 3 + 2] = mapcoord.centerX;
 -                        abyte[i * 3 + 3] = mapcoord.centerZ;
 +                        org.bukkit.map.MapCursor cursor = (custom) ? (org.bukkit.map.MapCursor) iterator.next() : null;
-+    
++
 +                        if (cursor != null && !cursor.isVisible())
 +                        {
 +                            continue;
 +                        }
-+    
++
 +                        MapCoord deco = (custom) ? null : (MapCoord) iterator.next();
 +                        abyte[i * 3 + 1] = (byte)(((custom) ? cursor.getRawType() : deco.iconSize) << 4 | ((custom) ? cursor.getDirection() : deco.iconRotation) & 15);
 +                        abyte[i * 3 + 2] = (byte)((custom) ? cursor.getX() : deco.centerX);
 +                        abyte[i * 3 + 3] = (byte)((custom) ? cursor.getY() : deco.centerZ);
                      }
-+    
+ 
 +                    // Spigot end
 +                    // CraftBukkit end
- 
++
                      boolean flag = !p_76204_1_.isOnItemFrame();
  
+                     if (this.lastPlayerLocationOnMap != null && this.lastPlayerLocationOnMap.length == abyte.length)
+@@ -383,7 +422,7 @@
+ 
+                         for (int j = 0; j < abyte1.length - 3; ++j)
+                         {
+-                            abyte1[j + 3] = MapData.this.colors[(j + i1) * 128 + i];
++                            abyte1[j + 3] = ((custom) ? render.buffer : MapData.this.colors)[(j + i1) * 128 + i];
+                         }
+ 
+                         this.field_76210_c[i] = -1;

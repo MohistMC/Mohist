@@ -1,0 +1,37 @@
+--- ../src-base/minecraft/net/minecraft/util/StringTranslate.java
++++ ../src-work/minecraft/net/minecraft/util/StringTranslate.java
+@@ -1,5 +1,6 @@
+ package net.minecraft.util;
+ 
++import cc.uraniummc.Uranium;
+ import com.google.common.base.Splitter;
+ import com.google.common.collect.Iterables;
+ import com.google.common.collect.Maps;
+@@ -14,6 +15,9 @@
+ import java.util.Iterator;
+ import java.util.Map;
+ import java.util.regex.Pattern;
++
++import net.minecraft.client.Minecraft;
++import net.minecraft.server.MinecraftServer;
+ import org.apache.commons.io.Charsets;
+ import org.apache.commons.io.IOUtils;
+ 
+@@ -31,6 +35,7 @@
+         InputStream inputstream = StringTranslate.class.getResourceAsStream("/assets/minecraft/lang/en_US.lang");
+         languageList = Maps.newHashMap();
+         inject(this, inputstream);
++        //loadLang(MinecraftServer.uraniumConfig.language.getValue());
+     }
+ 
+     public static void inject(InputStream inputstream)
+@@ -125,4 +130,9 @@
+     {
+         return this.lastUpdateTimeInMilliseconds;
+     }
++
++    private void loadLang(String lang){
++        InputStream inputstream = StringTranslate.class.getResourceAsStream("/assets/minecraft/lang/"+lang+".lang");
++        inject(this,inputstream);
++    }
+ }

@@ -21,7 +21,7 @@
      {
          BlockSourceImpl blocksourceimpl = new BlockSourceImpl(p_149941_1_, p_149941_2_, p_149941_3_, p_149941_4_);
          TileEntityDispenser tileentitydispenser = (TileEntityDispenser)blocksourceimpl.getBlockTileEntity();
-@@ -60,10 +65,33 @@
+@@ -60,13 +65,36 @@
  
                  if (iinventory != null)
                  {
@@ -56,4 +56,17 @@
 +                        // CraftBukkit end
                          itemstack1 = itemstack.copy();
  
-                         if (--itemstack1.stackSize == 0)
+-                        if (--itemstack1.stackSize == 0)
++                        if (--itemstack1.stackSize <= 0)
+                         {
+                             itemstack1 = null;
+                         }
+@@ -80,7 +108,7 @@
+                 {
+                     itemstack1 = this.field_149947_P.dispense(blocksourceimpl, itemstack);
+ 
+-                    if (itemstack1 != null && itemstack1.stackSize == 0)
++                    if (itemstack1 != null && itemstack1.stackSize <= 0)
+                     {
+                         itemstack1 = null;
+                     }

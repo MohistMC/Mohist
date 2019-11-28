@@ -1,0 +1,11 @@
+--- ../src-base/minecraft/net/minecraft/server/management/UserListWhitelist.java
++++ ../src-work/minecraft/net/minecraft/server/management/UserListWhitelist.java
+@@ -43,7 +43,7 @@
+ 
+     protected String func_152704_b(GameProfile p_152704_1_)
+     {
+-        return p_152704_1_.getId().toString();
++        return p_152704_1_.getName().toLowerCase();
+     }
+ 
+     public GameProfile func_152706_a(String p_152706_1_)

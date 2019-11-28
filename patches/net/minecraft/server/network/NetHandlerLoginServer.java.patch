@@ -1,11 +1,15 @@
 --- ../src-base/minecraft/net/minecraft/server/network/NetHandlerLoginServer.java
 +++ ../src-work/minecraft/net/minecraft/server/network/NetHandlerLoginServer.java
-@@ -2,17 +2,17 @@
+@@ -1,19 +1,23 @@
+ package net.minecraft.server.network;
  
++import cc.uraniummc.UraniumUUIDManager;
  import com.google.common.base.Charsets;
  import com.mojang.authlib.GameProfile;
 -import com.mojang.authlib.exceptions.AuthenticationUnavailableException;
 -
++import cpw.mods.fml.common.FMLCommonHandler;
++import cpw.mods.fml.common.network.FMLNetworkEvent;
  import cpw.mods.fml.common.network.internal.FMLNetworkHandler;
  import io.netty.util.concurrent.GenericFutureListener;
 -import java.math.BigInteger;
@@ -19,9 +23,11 @@
  import javax.crypto.SecretKey;
 +
  import net.minecraft.network.EnumConnectionState;
++import net.minecraft.network.NetHandlerPlayServer;
  import net.minecraft.network.NetworkManager;
  import net.minecraft.network.login.INetHandlerLoginServer;
-@@ -23,12 +23,17 @@
+ import net.minecraft.network.login.client.C00PacketLoginStart;
+@@ -23,12 +27,17 @@
  import net.minecraft.network.login.server.S02PacketLoginSuccess;
  import net.minecraft.server.MinecraftServer;
  import net.minecraft.util.ChatComponentText;
@@ -40,7 +46,7 @@
  public class NetHandlerLoginServer implements INetHandlerLoginServer
  {
      private static final AtomicInteger field_147331_b = new AtomicInteger(0);
-@@ -37,25 +42,28 @@
+@@ -37,25 +46,28 @@
      private final byte[] field_147330_e = new byte[4];
      private final MinecraftServer field_147327_f;
      public final NetworkManager field_147333_a;
@@ -72,7 +78,7 @@
          {
              this.func_147326_c();
          }
-@@ -81,24 +89,54 @@
+@@ -81,24 +93,73 @@
          }
      }
  
@@ -85,7 +91,18 @@
 +            uuid = field_147333_a.spoofedUUID;
 +        } else
 +        {
-+            uuid = UUID.nameUUIDFromBytes( ( "OfflinePlayer:" + this.field_147337_i.getName() ).getBytes( Charsets.UTF_8 ) );
++            final String name;
++            switch (MinecraftServer.uraniumConfig.uuidMode.getValue()){
++                case 1:
++                    name=field_147337_i.getName().toLowerCase();
++                    break;
++                case 2:
++                    name=field_147337_i.getName().toUpperCase();
++                    break;
++                default:
++                    name=field_147337_i.getName();
++            }
++            uuid = UUID.nameUUIDFromBytes( ( "OfflinePlayer:" + name ).getBytes( Charsets.UTF_8 ) );
 +        }
 +
 +        this.field_147337_i = new GameProfile( uuid, this.field_147337_i.getName() );
@@ -127,11 +144,19 @@
              this.field_147328_g = NetHandlerLoginServer.LoginState.ACCEPTED;
              this.field_147333_a.scheduleOutboundPacket(new S02PacketLoginSuccess(this.field_147337_i), new GenericFutureListener[0]);
 -            FMLNetworkHandler.fmlServerHandshake(this.field_147327_f.getConfigurationManager(), this.field_147333_a, this.field_147327_f.getConfigurationManager().createPlayerForUser(this.field_147337_i));
-+            FMLNetworkHandler.fmlServerHandshake(this.field_147327_f.getConfigurationManager(), this.field_147333_a, this.field_147327_f.getConfigurationManager().processLogin(this.field_147337_i, s)); // CraftBukkit - add player reference
++            /*
++            if(MinecraftServer.uraniumConfig.fakeVanillaMode.getValue()){
++                NetHandlerPlayServer handler=new NetHandlerPlayServer(this.field_147327_f.getConfigurationManager().getServerInstance(), this.field_147333_a, s);
++                this.field_147333_a.setConnectionState(EnumConnectionState.PLAY);
++                this.field_147333_a.channel().config().setAutoRead(false);
++                this.field_147327_f.getConfigurationManager().initializeConnectionToPlayer(this.field_147333_a, this.field_147327_f.getConfigurationManager().processLogin(this.field_147337_i,s),handler);
++            }else {*/
++                FMLNetworkHandler.fmlServerHandshake(this.field_147327_f.getConfigurationManager(), this.field_147333_a, this.field_147327_f.getConfigurationManager().processLogin(this.field_147337_i, s)); // CraftBukkit - add player reference
++            //}
          }
      }
  
-@@ -114,29 +152,33 @@
+@@ -114,29 +175,33 @@
  
      public void onConnectionStateTransition(EnumConnectionState p_147232_1_, EnumConnectionState p_147232_2_)
      {
@@ -170,7 +195,7 @@
          PrivateKey privatekey = this.field_147327_f.getKeyPair().getPrivate();
  
          if (!Arrays.equals(this.field_147330_e, p_147315_1_.func_149299_b(privatekey)))
-@@ -145,54 +187,12 @@
+@@ -145,63 +210,53 @@
          }
          else
          {
@@ -228,7 +253,10 @@
          }
      }
  
-@@ -202,6 +202,38 @@
+     protected GameProfile func_152506_a(GameProfile p_152506_1_)
+     {
+-        UUID uuid = UUID.nameUUIDFromBytes(("OfflinePlayer:" + p_152506_1_.getName()).getBytes(Charsets.UTF_8));
++        UUID uuid = UraniumUUIDManager.getOfflineUUID(p_152506_1_.getName());
          return new GameProfile(uuid, p_152506_1_.getName());
      }
  

@@ -1,7 +1,5 @@
 package org.bukkit.craftbukkit.inventory;
 
-import net.minecraft.inventory.Container;
-import net.minecraft.inventory.Slot;
 import org.bukkit.craftbukkit.entity.CraftPlayer;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.event.inventory.InventoryType;
@@ -83,7 +81,7 @@ public class CraftContainer extends net.minecraft.inventory.Container {
             this.inventoryItemStacks.clear();
             this.inventorySlots.clear();
             if (typeChanged) {
-                setupSlots(top, bottom, entityhuman.openContainer);
+                setupSlots(top, bottom);
             }
             int size = getSize();
             player.getHandle().playerNetServerHandler.sendPacket(new net.minecraft.network.play.server.S2DPacketOpenWindow(this.windowId, type, cachedTitle, size, true));
@@ -126,7 +124,7 @@ public class CraftContainer extends net.minecraft.inventory.Container {
         return typeID;
     }
 
-    private void setupSlots(net.minecraft.inventory.IInventory top, net.minecraft.inventory.IInventory bottom, Container ... openContainer) {
+    private void setupSlots(net.minecraft.inventory.IInventory top, net.minecraft.inventory.IInventory bottom) {
         switch(cachedType) {
         case CREATIVE:
             break; // TODO: This should be an error?
@@ -153,20 +151,9 @@ public class CraftContainer extends net.minecraft.inventory.Container {
         case HOPPER:
             setupHopper(top, bottom);
             break;
-        default: // Thermos handle setup for custom inventories
-        	if(openContainer.length > 0)
-        		setupCustomInventory(top, bottom, openContainer[0]);
-        	break;
         }
     }
 
-    private void setupCustomInventory(net.minecraft.inventory.IInventory top, net.minecraft.inventory.IInventory bottom, Container openContainer) {
-        for (Slot s : openContainer.inventorySlots)
-        {
-        	this.addSlotToContainer(s);
-        }
-    }
-    
     private void setupChest(net.minecraft.inventory.IInventory top, net.minecraft.inventory.IInventory bottom) {
         int rows = top.getSizeInventory() / 9;
         int row;
