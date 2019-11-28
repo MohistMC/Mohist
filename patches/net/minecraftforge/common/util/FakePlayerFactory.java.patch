@@ -1,6 +1,16 @@
 --- ../src-base/minecraft/net/minecraftforge/common/util/FakePlayerFactory.java
 +++ ../src-work/minecraft/net/minecraftforge/common/util/FakePlayerFactory.java
-@@ -35,12 +35,24 @@
+@@ -17,6 +17,9 @@
+     private static GameProfile MINECRAFT = new GameProfile(UUID.fromString("41C82C87-7AfB-4024-BA57-13D2C99CAE77"), "[Minecraft]");
+     // Map of all active fake player usernames to their entities
+     private static Map<GameProfile, FakePlayer> fakePlayers = Maps.newHashMap();
++    public static Map<GameProfile, FakePlayer> getFakePlayers(){
++        return fakePlayers;
++    }
+     private static FakePlayer MINECRAFT_PLAYER = null;
+     
+     public static FakePlayer getMinecraft(WorldServer world)
+@@ -35,12 +38,24 @@
       */
      public static FakePlayer get(WorldServer world, GameProfile username)
      {
