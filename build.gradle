@@ -79,8 +79,6 @@ dependencies {
     libraries 'java3d:vecmath:1.3.1'
     libraries 'colt:colt:1.2.0'
     libraries 'org.jetbrains.kotlin:kotlin-runtime:1.1.4-2'
-    libraries 'net.md-5:bungeecord-chat:1.7.10-SNAPSHOT'
-    libraries 'net.minecraft:server:1.7.10'
 }
 
 packageUniversal {
@@ -93,6 +91,7 @@ def generateClasspath() {
         def jar = "${it.group.replace('.', '/')}/${it.name}/${it.version}/${it.name}-${it.version}.jar"
         classpath += " libraries/${jar}"
     }
+    classpath += " libraries/net/minecraft/server/1.7.10/server-1.7.10.jar"
     return classpath.trim()
 }
 
