@@ -12,7 +12,16 @@
  
  public class ServerLaunchWrapper {
  
-@@ -24,18 +29,32 @@
+@@ -19,23 +24,41 @@
+ 
+     private void run(String[] args)
+     {
++        if (System.getProperty("log4j.configurationFile") == null) {
++            // Set this early so we don't need to reconfigure later
++            System.setProperty("log4j.configurationFile", "log4j2_mohist.xml");
++        }
+         Class<?> launchwrapper = null;
+         try
          {
              launchwrapper = Class.forName("net.minecraft.launchwrapper.Launch",true,getClass().getClassLoader());
              Class.forName("org.objectweb.asm.Type",true,getClass().getClassLoader());
@@ -50,7 +59,7 @@
              String[] allArgs = new String[args.length + 2];
              allArgs[0] = "--tweakClass";
              allArgs[1] = "cpw.mods.fml.common.launcher.FMLServerTweaker";
-@@ -44,9 +63,7 @@
+@@ -44,9 +67,7 @@
          }
          catch (Exception e)
          {
