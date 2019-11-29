@@ -92,7 +92,6 @@ public class CauldronConfig extends ConfigBase
                 e.printStackTrace();
             }
         }
-        addDefaults();
         //Uranium end
         load();
     }
@@ -138,6 +137,7 @@ public class CauldronConfig extends ConfigBase
                 config.addDefault(toggle.path, toggle.def);
                 settings.get(toggle.path).setValue(config.getString(toggle.path));
             }
+            addDefaults();
             config.options().header(header);
             config.options().copyDefaults(true);
 
