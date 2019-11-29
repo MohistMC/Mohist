@@ -47,6 +47,8 @@ public class MohistConfigUtil {
         try {
             URL url = new URL(urlkey);
             URLConnection conn = url.openConnection();
+            conn.setConnectTimeout(10*1000);
+            conn.setReadTimeout(10*1000);
             InputStream is = conn.getInputStream();
 
             String s = IOUtil.readContent(is, "UTF-8");
