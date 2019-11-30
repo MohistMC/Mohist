@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/inventory/InventoryBasic.java
 +++ ../src-work/minecraft/net/minecraft/inventory/InventoryBasic.java
-@@ -10,6 +10,9 @@
+@@ -10,17 +10,60 @@
  import net.minecraft.util.text.TextComponentTranslation;
  import net.minecraftforge.fml.relauncher.Side;
  import net.minecraftforge.fml.relauncher.SideOnly;
@@ -10,7 +10,10 @@
  
  public class InventoryBasic implements IInventory
  {
-@@ -19,8 +22,48 @@
+     private String inventoryTitle;
+     private final int slotsCount;
+-    private final NonNullList<ItemStack> inventoryContents;
++    public final NonNullList<ItemStack> inventoryContents;
      private List<IInventoryChangedListener> changeListeners;
      private boolean hasCustomName;
  
