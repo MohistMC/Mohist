@@ -3,7 +3,6 @@ package org.bukkit.plugin.java;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.reflect.Method;
 import java.net.JarURLConnection;
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -18,8 +17,6 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.Validate;
 import org.bukkit.plugin.InvalidPluginException;
 import org.bukkit.plugin.PluginDescriptionFile;
-
-import net.minecraft.launchwrapper.LaunchClassLoader;
 import red.mohist.common.remap.ClassLoaderContext;
 import red.mohist.common.remap.RemapUtils;
 
@@ -54,18 +51,6 @@ public final class PluginClassLoader extends URLClassLoader {
     PluginClassLoader(final JavaPluginLoader loader, final ClassLoader parent, final PluginDescriptionFile description, final File dataFolder, final File file) throws IOException, InvalidPluginException {
         super(new URL[]{file.toURI().toURL()}, parent);
         Validate.notNull(loader, "Loader cannot be null");
-        
-        if (parent != null && parent instanceof LaunchClassLoader)
-        {
-        	try {
-        	Method methode = parent.getClass().getDeclaredMethod("addChild", ClassLoader.class);
-        	methode.invoke(parent, this);
-        	}catch(Exception e)
-        	{
-        		
-        	}
-        }
-        
         this.loader = loader;
         this.description = description;
         this.dataFolder = dataFolder;
@@ -97,36 +82,6 @@ public final class PluginClassLoader extends URLClassLoader {
         }
     }
 
-    public Class<?> getPluginClass(String name)
-    {
-    	synchronized (name.intern()) {
-            Class<?> result = classes.get(name);
-
-            if (result == null) {
-
-                if (result == null) {
-                    	try {
-							result = remappedFindClass(name);
-						} catch (ClassNotFoundException e) {
-						}
-
-                    if (result != null) {
-                        loader.setClass(name, result);
-                    }
-                }
-                if (result != null) {
-                    Class<?> old = classes.putIfAbsent(name, result);
-                    if (old != null && old != result) {
-                        System.err.println("Defined class " + name + " twice as different classes, " + result + " and " + old);
-                        result = old;
-                    }
-                }
-            }
-
-            return result;
-    	}
-    }
-    
     @Override
     protected Class<?> findClass(String name) throws ClassNotFoundException {
         return findClass(name, true);

@@ -6,7 +6,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.lang.reflect.Method;
 import java.net.JarURLConnection;
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -34,7 +33,6 @@ public class LaunchClassLoader extends URLClassLoader {
     public static final int BUFFER_SIZE = 1 << 12;
     private List<URL> sources;
     private ClassLoader parent = getClass().getClassLoader();
-    private List<ClassLoader> child = new ArrayList<ClassLoader>();
 
     private List<IClassTransformer> transformers = new ArrayList<IClassTransformer>(2);
     private Map<String, Class<?>> cachedClasses = new ConcurrentHashMap<String, Class<?>>();
@@ -92,11 +90,6 @@ public class LaunchClassLoader extends URLClassLoader {
                 tempFolder.mkdirs();
             }
         }
-    }
-    
-    public void addChild(ClassLoader child)
-    {
-    	this.child.add(child);
     }
 
     public void registerTransformer(String transformerClassName) {
@@ -197,30 +190,6 @@ public class LaunchClassLoader extends URLClassLoader {
             cachedClasses.put(transformedName, clazz);
             return clazz;
         } catch (Throwable e) {
-        	
-
-        	if (!child.isEmpty())
-            {
-            for (ClassLoader child : child)
-            {
-            	final String transformedName = transformName(name);
-            	
-            	try {
-            	Method find = child.getClass().getDeclaredMethod("getPluginClass", String.class);
-            	Class<?> classe = (Class<?>) find.invoke(child, transformedName);
-            	if (classe != null)
-            	{
-            		cachedClasses.put(name,classe);
-            		return classe;
-            	}
-            	}catch(Exception e1)
-            	{
-            		
-            	}
-
-            }
-            }
-        	
             invalidClasses.add(name);
             if (DEBUG) {
                 LogWrapper.log(Level.TRACE, e, "Exception encountered attempting classloading of %s", name);
