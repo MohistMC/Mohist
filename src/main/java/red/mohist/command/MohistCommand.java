@@ -75,7 +75,7 @@ public class MohistCommand extends Command {
                 sender.sendMessage(ChatColor.GREEN +ServerAPI.getLanguage());
                 break;
             case "item":
-                if (args.Length > 0 && "info".equals(args[1].toLowerCase(Locale.ENGLISH))){
+                if (args.length > 0 && "info".equals(args[1].toLowerCase(Locale.ENGLISH))){
                     ItemCommand.info(sender);
                 }
             default:
