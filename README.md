@@ -2,7 +2,7 @@
 
 ## Mohist-1.12.2
 
-## It is highly recommended to use the 1.5+ version to quickly resolve known and unknown errors!
+## It is highly recommended to use the 1.6+ version to quickly resolve known and unknown errors!
 
 [![](https://ci.codemc.org/buildStatus/icon?job=Mohist-Community%2FMohist-1.12.2)](https://ci.codemc.org/job/Mohist-Community/job/Mohist-1.12.2/)
 ![](https://img.shields.io/github/stars/Mohist-Community/Mohist.svg?label=Stars)

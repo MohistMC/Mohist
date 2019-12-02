@@ -14,7 +14,7 @@ import red.mohist.util.i18n.Message;
 public class Mohist {
 
     public static final String NAME = "Mohist";
-    public static final String VERSION = "1.5";
+    public static final String VERSION = "1.6";
     public static final String LIB_VERSION = "3";
     public static Logger LOGGER;
 
