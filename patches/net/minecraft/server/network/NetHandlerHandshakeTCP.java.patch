@@ -8,52 +8,40 @@
  import net.minecraft.network.EnumConnectionState;
  import net.minecraft.network.NetworkManager;
  import net.minecraft.network.handshake.INetHandlerHandshakeServer;
-@@ -8,42 +10,114 @@
+@@ -8,12 +10,18 @@
  import net.minecraft.server.MinecraftServer;
  import net.minecraft.util.text.ITextComponent;
  import net.minecraft.util.text.TextComponentTranslation;
 +import red.mohist.configuration.MohistConfig;
 +import red.mohist.util.i18n.Message;
  
--public class NetHandlerHandshakeTCP implements INetHandlerHandshakeServer
--{
-+public class NetHandlerHandshakeTCP implements INetHandlerHandshakeServer {
+ public class NetHandlerHandshakeTCP implements INetHandlerHandshakeServer
+ {
      private final MinecraftServer server;
      private final NetworkManager networkManager;
  
--    public NetHandlerHandshakeTCP(MinecraftServer serverIn, NetworkManager netManager)
--    {
 +    private static final HashMap<InetAddress, Long> throttleTracker = new HashMap<InetAddress, Long>();
 +    private static int throttleCounter = 0;
 +    private static final com.google.gson.Gson gson = new com.google.gson.Gson(); // Spigot
 +
-+    public NetHandlerHandshakeTCP(MinecraftServer serverIn, NetworkManager netManager) {
+     public NetHandlerHandshakeTCP(MinecraftServer serverIn, NetworkManager netManager)
+     {
          this.server = serverIn;
-         this.networkManager = netManager;
-     }
- 
--    public void processHandshake(C00Handshake packetIn)
--    {
-+    public void processHandshake(C00Handshake packetIn) {
-         if (!net.minecraftforge.fml.common.FMLCommonHandler.instance().handleServerHandshake(packetIn, this.networkManager)) return;
- 
--        switch (packetIn.getRequestedState())
--        {
-+        switch (packetIn.getRequestedState()) {
+@@ -29,21 +37,104 @@
              case LOGIN:
                  this.networkManager.setConnectionState(EnumConnectionState.LOGIN);
  
--                if (packetIn.getProtocolVersion() > 340)
--                {
--                    ITextComponent itextcomponent = new TextComponentTranslation("multiplayer.disconnect.outdated_server", new Object[] {"1.12.2"});
 +                // CraftBukkit start - Connection throttle
-+                try {
++                try
++                {
 +                    long currentTime = System.currentTimeMillis();
 +                    long connectionThrottle = MinecraftServer.getServerInst().server.getConnectionThrottle();
 +                    InetAddress address = ((java.net.InetSocketAddress) this.networkManager.getRemoteAddress()).getAddress();
 +
-+                    synchronized (throttleTracker) {
-+                        if (throttleTracker.containsKey(address) && !"127.0.0.1".equals(address.getHostAddress()) && currentTime - throttleTracker.get(address) < connectionThrottle) {
++                    synchronized (throttleTracker)
++                    {
++                        if (throttleTracker.containsKey(address) && !"127.0.0.1".equals(address.getHostAddress()) && currentTime - throttleTracker.get(address) < connectionThrottle)
++                        {
 +                            throttleTracker.put(address, currentTime);
 +                            ITextComponent chatmessage = new TextComponentTranslation("Connection throttled! Please wait before reconnecting.");
 +                            this.networkManager.sendPacket(new SPacketDisconnect(chatmessage));
@@ -63,40 +51,46 @@
 +
 +                        throttleTracker.put(address, currentTime);
 +                        throttleCounter++;
-+                        if (throttleCounter > 200) {
++                        if (throttleCounter > 200)
++                        {
 +                            throttleCounter = 0;
 +
 +                            // Cleanup stale entries
 +                            java.util.Iterator iter = throttleTracker.entrySet().iterator();
-+                            while (iter.hasNext()) {
++                            while (iter.hasNext())
++                            {
 +                                java.util.Map.Entry<InetAddress, Long> entry = (java.util.Map.Entry) iter.next();
-+                                if (entry.getValue() > connectionThrottle) {
++                                if (entry.getValue() > connectionThrottle)
++                                {
 +                                    iter.remove();
 +                                }
 +                            }
 +                        }
 +                    }
-+                } catch (Throwable t) {
++                }
++                catch (Throwable t)
++                {
 +                    org.apache.logging.log4j.LogManager.getLogger().debug("Failed to check connection throttle", t);
 +                }
 +                // CraftBukkit end
 +
-+                if (packetIn.getProtocolVersion() > 340) {
+                 if (packetIn.getProtocolVersion() > 340)
+                 {
+-                    ITextComponent itextcomponent = new TextComponentTranslation("multiplayer.disconnect.outdated_server", new Object[] {"1.12.2"});
 +                    ITextComponent itextcomponent = new TextComponentTranslation(MohistConfig.instance.outdatedServerMessage.getValue().replaceAll("'", "''"), new Object[] {"1.12.2"}); // Spigot
                      this.networkManager.sendPacket(new SPacketDisconnect(itextcomponent));
                      this.networkManager.closeChannel(itextcomponent);
--                }
--                else if (packetIn.getProtocolVersion() < 340)
--                {
+                 }
+                 else if (packetIn.getProtocolVersion() < 340)
+                 {
 -                    ITextComponent itextcomponent1 = new TextComponentTranslation("multiplayer.disconnect.outdated_client", new Object[] {"1.12.2"});
-+                } else if (packetIn.getProtocolVersion() < 340) {
 +                    ITextComponent itextcomponent1 = new TextComponentTranslation(MohistConfig.instance.outdatedClientMessage.getValue().replaceAll("'", "''"), new Object[] {"1.12.2"}); // Spigot
                      this.networkManager.sendPacket(new SPacketDisconnect(itextcomponent1));
                      this.networkManager.closeChannel(itextcomponent1);
--                }
--                else
+                 }
+                 else
 -                {
-+                } else {
++                    {
                      this.networkManager.setNetHandler(new NetHandlerLoginServer(this.server, this.networkManager));
 +                    // Paper start - handshake event
 +                    boolean proxyLogicEnabled = org.spigotmc.SpigotConfig.bungee;
@@ -141,12 +135,3 @@
                  }
  
                  break;
-@@ -56,7 +130,6 @@
-         }
-     }
- 
--    public void onDisconnect(ITextComponent reason)
--    {
-+    public void onDisconnect(ITextComponent reason) {
-     }
- }

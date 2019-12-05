@@ -1,15 +1,5 @@
 --- ../src-base/minecraft/net/minecraft/world/gen/structure/MapGenStronghold.java
 +++ ../src-work/minecraft/net/minecraft/world/gen/structure/MapGenStronghold.java
-@@ -4,8 +4,8 @@
- import it.unimi.dsi.fastutil.objects.ObjectIterator;
- import java.util.List;
- import java.util.Map;
--import java.util.Random;
- import java.util.Map.Entry;
-+import java.util.Random;
- import net.minecraft.util.math.BlockPos;
- import net.minecraft.util.math.ChunkPos;
- import net.minecraft.util.math.MathHelper;
 @@ -151,8 +151,16 @@
                  double d0 = 4.0D * this.distance + this.distance * (double)j * 6.0D + (random.nextDouble() - 0.5D) * this.distance * 2.5D;
                  int j1 = (int)Math.round(Math.cos(d1) * d0);
@@ -29,15 +19,3 @@
                  if (blockpos != null)
                  {
                      j1 = blockpos.getX() >> 4;
-@@ -181,9 +189,9 @@
- 
-     protected StructureStart getStructureStart(int chunkX, int chunkZ)
-     {
--        MapGenStronghold.Start mapgenstronghold$start;
-+         MapGenStronghold.Start mapgenstronghold$start;
- 
--        for (mapgenstronghold$start = new MapGenStronghold.Start(this.world, this.rand, chunkX, chunkZ); mapgenstronghold$start.getComponents().isEmpty() || ((StructureStrongholdPieces.Stairs2)mapgenstronghold$start.getComponents().get(0)).strongholdPortalRoom == null; mapgenstronghold$start = new MapGenStronghold.Start(this.world, this.rand, chunkX, chunkZ))
-+        for (mapgenstronghold$start = new  MapGenStronghold.Start(this.world, this.rand, chunkX, chunkZ); mapgenstronghold$start.getComponents().isEmpty() || ((StructureStrongholdPieces.Stairs2)mapgenstronghold$start.getComponents().get(0)).strongholdPortalRoom == null; mapgenstronghold$start = new  MapGenStronghold.Start(this.world, this.rand, chunkX, chunkZ))
-         {
-             ;
-         }
