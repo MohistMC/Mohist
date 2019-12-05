@@ -85,15 +85,6 @@
  
  public abstract class World implements IBlockAccess, net.minecraftforge.common.capabilities.ICapabilityProvider
  {
-@@ -77,7 +107,7 @@
-     protected boolean scheduledUpdatesAreImmediate;
-     public final List<Entity> loadedEntityList = Lists.<Entity>newArrayList();
-     protected final List<Entity> unloadedEntityList = Lists.<Entity>newArrayList();
--    public final List<TileEntity> loadedTileEntityList = Lists.<TileEntity>newArrayList();
-+    public List<TileEntity> loadedTileEntityList = Lists.<TileEntity>newArrayList();
-     public final List<TileEntity> tickableTileEntities = Lists.<TileEntity>newArrayList();
-     private final List<TileEntity> addedTileEntityList = Lists.<TileEntity>newArrayList();
-     private final List<TileEntity> tileEntitiesToBeRemoved = Lists.<TileEntity>newArrayList();
 @@ -86,32 +116,32 @@
      protected final IntHashMap<Entity> entitiesById = new IntHashMap<Entity>();
      private final long cloudColour = 16777215L;
@@ -403,7 +394,7 @@
      public IBlockState getBlockState(BlockPos pos)
      {
 +		// CraftBukkit start - tree generation
-+        if (captureTreeGeneration && Bukkit.isPrimaryThread())
++        if (captureTreeGeneration)
 +		{
 +            for (net.minecraftforge.common.util.BlockSnapshot blocksnapshot : this.capturedBlockSnapshots)
 +            {
