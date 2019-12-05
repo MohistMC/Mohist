@@ -65,21 +65,6 @@ public abstract class ConfigBase
         }
     }
 
-    public void saveWorldConfigs()
-    {
-        if (MinecraftServer.getServerInst().worldServerList != null) {
-            for (int i = 0; i < MinecraftServer.getServerInst().worldServerList.size(); ++i) {
-                WorldServer worldserver = MinecraftServer.getServerInst().worldServerList.get(i);
-                if (worldserver.entityWorldConfig != null) {
-                    worldserver.entityWorldConfig.save();
-                }
-                if (worldserver.tileEntityWorldConfig != null) {
-                    worldserver.tileEntityWorldConfig.save();
-                }
-            }
-        }
-    }
-
     protected abstract void load();
  
     public void set(String path, Object val)

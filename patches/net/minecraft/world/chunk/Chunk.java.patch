@@ -135,16 +135,10 @@
                  // If capturing blocks, only run block physics for TE's. Non-TE's are handled in ForgeHooks.onPlaceItemIntoWorld
                  if (!this.world.isRemote && block1 != block && (!this.world.captureBlockSnapshots || block.hasTileEntity(state)))
                  {
-@@ -743,6 +789,28 @@
+@@ -743,6 +789,22 @@
          entityIn.chunkCoordZ = this.z;
          this.entityLists[k].add(entityIn);
          this.markDirty(); // Forge - ensure chunks are marked to save after an entity add
-+        if (entityIn instanceof EntityItem) {
-+            itemCounts[k]++;
-+        } else if (entityIn instanceof IInventory) {
-+            inventoryEntityCounts[k]++;
-+        }
-+
 +        // Spigot start - increment creature type count
 +        // Keep this synced up with World.a(Class)
 +        if (entityIn instanceof EntityLiving) {
@@ -164,15 +158,10 @@
      }
  
      public void removeEntity(Entity entityIn)
-@@ -764,6 +832,27 @@
+@@ -764,6 +826,22 @@
  
          this.entityLists[index].remove(entityIn);
          this.markDirty(); // Forge - ensure chunks are marked to save after entity removals
-+        if (entityIn instanceof EntityItem) {
-+            itemCounts[index]--;
-+        } else if (entityIn instanceof IInventory) {
-+            inventoryEntityCounts[index]--;
-+        }
 +        // Spigot start - decrement creature type count
 +        // Keep this synced up with World.a(Class)
 +        if (entityIn instanceof EntityLiving) {
@@ -192,7 +181,7 @@
      }
  
      public boolean canSeeSky(BlockPos pos)
-@@ -781,11 +870,14 @@
+@@ -781,11 +859,14 @@
          Block block = iblockstate.getBlock();
          return !block.hasTileEntity(iblockstate) ? null : block.createTileEntity(this.world, iblockstate);
      }
@@ -209,7 +198,7 @@
  
          if (tileentity != null && tileentity.isInvalid())
          {
-@@ -824,9 +916,18 @@
+@@ -824,9 +905,18 @@
          if (tileEntityIn.getWorld() != this.world) //Forge don't call unless it's changed, could screw up bad mods.
          tileEntityIn.setWorld(this.world);
          tileEntityIn.setPos(pos);
@@ -230,7 +219,7 @@
              if (this.tileEntities.containsKey(pos))
              {
                  ((TileEntity)this.tileEntities.get(pos)).invalidate();
-@@ -854,17 +955,16 @@
+@@ -854,17 +944,16 @@
      {
          this.loaded = true;
          this.world.addTileEntities(this.tileEntities.values());
@@ -250,7 +239,7 @@
          this.loaded = false;
  
          for (TileEntity tileentity : this.tileEntities.values())
-@@ -874,7 +974,14 @@
+@@ -874,7 +963,14 @@
  
          for (ClassInheritanceMultiMap<Entity> classinheritancemultimap : this.entityLists)
          {
@@ -266,7 +255,7 @@
          }
          net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.world.ChunkEvent.Unload(this));
      }
-@@ -1001,6 +1108,65 @@
+@@ -1001,6 +1097,65 @@
          }
      }
  
@@ -332,7 +321,7 @@
      protected void populate(IChunkGenerator generator)
      {
          if (populating != null && net.minecraftforge.common.ForgeModContainer.logCascadingWorldGeneration) logCascadingWorldGeneration();
-@@ -1017,6 +1183,26 @@
+@@ -1017,6 +1172,26 @@
          {
              this.checkLight();
              generator.populate(this.x, this.z);
@@ -359,7 +348,7 @@
              net.minecraftforge.fml.common.registry.GameRegistry.generateWorld(this.x, this.z, this.world, generator, this.world.getChunkProvider());
              this.markDirty();
          }
-@@ -1086,7 +1272,7 @@
+@@ -1086,7 +1261,7 @@
  
      public boolean isPopulated()
      {
@@ -368,7 +357,7 @@
      }
  
      public boolean wasTicked()
-@@ -1548,8 +1734,8 @@
+@@ -1548,8 +1723,8 @@
              net.minecraftforge.fml.common.FMLLog.log.debug(format, "Minecraft", this.getPos(), this.world.provider.getDimension(), this.world.provider.getDimensionType().getName(), populating);
              net.minecraftforge.fml.common.FMLLog.log.debug("Consider setting 'fixVanillaCascading' to 'true' in the Forge config to fix many cases where this occurs in the base game.");
          } else {

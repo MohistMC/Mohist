@@ -155,7 +155,7 @@
              }
  
              this.setCanSpawnAnimals(this.settings.getBooleanProperty("spawn-animals", true));
-@@ -181,10 +222,28 @@
+@@ -181,10 +222,26 @@
                  this.setServerPort(this.settings.getIntProperty("server-port", 25565));
              }
  
@@ -171,8 +171,6 @@
 +
 +            // Mohist start
 +            mohistConfig.registerCommands();
-+            entityConfig.registerCommands();
-+            tileEntityConfig.registerCommands();
 +            // Mohist end
 +
              LOGGER.info("Generating keypair");
@@ -185,7 +183,7 @@
              try
              {
                  this.getNetworkSystem().addLanEndpoint(inetaddress, this.getServerPort());
-@@ -196,15 +255,7 @@
+@@ -196,15 +253,7 @@
                  LOGGER.warn("Perhaps a server is already running on that port?");
                  return false;
              }
@@ -202,7 +200,7 @@
              if (this.convertFiles())
              {
                  this.getPlayerProfileCache().save();
-@@ -217,7 +268,7 @@
+@@ -217,7 +266,7 @@
              else
              {
                  net.minecraftforge.fml.common.FMLCommonHandler.instance().onServerStarted();
@@ -211,7 +209,7 @@
                  long j = System.nanoTime();
  
                  if (this.getFolderName() == null)
-@@ -270,9 +321,15 @@
+@@ -270,9 +319,15 @@
                  this.loadAllWorlds(this.getFolderName(), this.getFolderName(), k, worldtype, s2);
                  long i1 = System.nanoTime() - j;
                  String s3 = String.format("%.3fs", (double)i1 / 1.0E9D);
@@ -229,7 +227,7 @@
                  if (this.settings.hasProperty("announce-player-achievements"))
                  {
                      this.worlds[0].getGameRules().setOrCreateGameRule("announceAdvancements", this.settings.getBooleanProperty("announce-player-achievements", true) ? "true" : "false");
-@@ -292,16 +349,28 @@
+@@ -292,16 +347,28 @@
                      LOGGER.info("Starting remote control listener");
                      this.rconThread = new RConThreadMain(this);
                      this.rconThread.startThread();
@@ -264,7 +262,7 @@
                  Items.AIR.getSubItems(CreativeTabs.SEARCH, NonNullList.create());
                  // <3 you Grum for this, saves us ~30 patch files! --^
                  return net.minecraftforge.fml.common.FMLCommonHandler.instance().handleServerStarting(this);
-@@ -427,11 +496,20 @@
+@@ -427,11 +494,20 @@
  
      public void executePendingCommands()
      {
@@ -289,7 +287,7 @@
      }
  
      public boolean isDedicatedServer()
-@@ -684,13 +762,66 @@
+@@ -684,13 +760,66 @@
  
      public String getPlugins()
      {
