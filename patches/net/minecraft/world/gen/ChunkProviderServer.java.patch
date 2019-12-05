@@ -12,7 +12,7 @@
  import it.unimi.dsi.fastutil.objects.ObjectIterator;
  import java.io.IOException;
  import java.util.Collection;
-@@ -26,14 +26,15 @@
+@@ -26,11 +26,12 @@
  import net.minecraft.world.chunk.storage.IChunkLoader;
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
@@ -22,28 +22,11 @@
  {
      private static final Logger LOGGER = LogManager.getLogger();
 -    private final Set<Long> droppedChunksSet = Sets.<Long>newHashSet();
-+    public final Set<Long> droppedChunksSet = new ConcurrentSet<>();
++    public final Set<Long> droppedChunksSet = Sets.<Long>newHashSet();
      public final IChunkGenerator chunkGenerator;
      public final IChunkLoader chunkLoader;
--    public final Long2ObjectMap<Chunk> id2ChunkMap = new Long2ObjectOpenHashMap<Chunk>(8192);
-+    public final Long2ObjectMap<Chunk> id2ChunkMap = new Long2ObjectLinkedOpenHashMap<Chunk>(8192);
-     public final WorldServer world;
-     private final Set<Long> loadingChunks = com.google.common.collect.Sets.newHashSet();
- 
-@@ -60,11 +61,8 @@
- 
-     public void queueUnloadAll()
-     {
--        ObjectIterator objectiterator = this.id2ChunkMap.values().iterator();
- 
--        while (objectiterator.hasNext())
--        {
--            Chunk chunk = (Chunk)objectiterator.next();
-+        for (Chunk chunk : this.id2ChunkMap.values()) {
-             this.queueUnload(chunk);
-         }
-     }
-@@ -83,6 +81,11 @@
+     public final Long2ObjectMap<Chunk> id2ChunkMap = new Long2ObjectOpenHashMap<Chunk>(8192);
+@@ -83,6 +84,11 @@
          return chunk;
      }
  
@@ -55,7 +38,7 @@
      @Nullable
      public Chunk loadChunk(int x, int z)
      {
-@@ -92,6 +95,11 @@
+@@ -92,6 +98,11 @@
      @Nullable
      public Chunk loadChunk(int x, int z, @Nullable Runnable runnable)
      {
@@ -67,7 +50,7 @@
          Chunk chunk = this.getLoadedChunk(x, z);
          if (chunk == null)
          {
-@@ -106,7 +114,7 @@
+@@ -106,7 +117,7 @@
                  {
                  this.id2ChunkMap.put(ChunkPos.asLong(x, z), chunk);
                  chunk.onLoad();
@@ -76,7 +59,7 @@
                  }
  
                  loadingChunks.remove(pos);
-@@ -123,6 +131,8 @@
+@@ -123,6 +134,8 @@
                      return null;
                  }
              }
@@ -85,7 +68,7 @@
          }
  
          // If we didn't load the chunk async and have a callback run it now
-@@ -136,6 +146,7 @@
+@@ -136,6 +149,7 @@
  
          if (chunk == null)
          {
@@ -93,7 +76,7 @@
              long i = ChunkPos.asLong(x, z);
  
              try
-@@ -154,7 +165,8 @@
+@@ -154,7 +168,8 @@
  
              this.id2ChunkMap.put(i, chunk);
              chunk.onLoad();
@@ -103,7 +86,7 @@
          }
  
          return chunk;
-@@ -177,7 +189,7 @@
+@@ -177,7 +192,7 @@
          }
          catch (Exception exception)
          {
@@ -112,7 +95,7 @@
              return null;
          }
      }
-@@ -190,7 +202,7 @@
+@@ -190,7 +205,7 @@
          }
          catch (Exception exception)
          {
@@ -121,7 +104,7 @@
          }
      }
  
-@@ -203,12 +215,12 @@
+@@ -203,12 +218,12 @@
          }
          catch (IOException ioexception)
          {
@@ -137,7 +120,7 @@
      }
  
      public boolean saveChunks(boolean all)
-@@ -266,11 +278,9 @@
+@@ -266,11 +281,9 @@
  
                      if (chunk != null && chunk.unloadQueued)
                      {
@@ -152,7 +135,7 @@
                          ++i;
                      }
                  }
-@@ -284,6 +294,39 @@
+@@ -284,6 +297,39 @@
          return false;
      }
  

@@ -64,23 +64,15 @@
      private boolean isTerrainPopulated;
      private boolean isLightPopulated;
      private boolean ticked;
-@@ -68,7 +78,45 @@
+@@ -68,7 +78,37 @@
      private int queuedLightChecks;
      private final ConcurrentLinkedQueue<BlockPos> tileEntityPosQueue;
      public boolean unloadQueued;
 +    public gnu.trove.map.hash.TObjectIntHashMap<Class> entityCount = new gnu.trove.map.hash.TObjectIntHashMap<Class>(); // Spigot
-+    // Paper start
-+    // Track the number of minecarts and items
-+    // Keep this synced with entitySlices.add() and entitySlices.remove()
-+    private final int[] itemCounts = new int[16];
-+    private final int[] inventoryEntityCounts = new int[16];
-+    // Paper end
  
 +    // CraftBukkit start - Neighbor loaded cache for chunk lighting and entity ticking
 +    private int neighbors = 0x1 << 12;
 +    public long chunkKey;
-+
-+    public int lastAccessedTick; // Cauldron track last time the chunk was accessed
 +
 +    public boolean areNeighborsLoaded(final int radius) {
 +        switch (radius) {
@@ -110,7 +102,7 @@
      public Chunk(World worldIn, int x, int z)
      {
          this.storageArrays = new ExtendedBlockStorage[16];
-@@ -92,8 +140,13 @@
+@@ -92,8 +132,13 @@
          Arrays.fill(this.precipitationHeightMap, -999);
          Arrays.fill(this.blockBiomeArray, (byte) - 1);
          capabilities = net.minecraftforge.event.ForgeEventFactory.gatherCapabilities(this);
@@ -124,7 +116,7 @@
      public Chunk(World worldIn, ChunkPrimer primer, int x, int z)
      {
          this(worldIn, x, z);
-@@ -332,8 +385,8 @@
+@@ -332,8 +377,8 @@
  
      private void updateSkylightNeighborHeight(int x, int z, int startY, int endY)
      {
@@ -135,7 +127,7 @@
              for (int i = startY; i < endY; ++i)
              {
                  this.world.checkLightFor(EnumSkyBlock.SKY, new BlockPos(x, i, z));
-@@ -608,6 +661,7 @@
+@@ -608,6 +653,7 @@
                      }
                  }
  
@@ -143,7 +135,7 @@
                  // If capturing blocks, only run block physics for TE's. Non-TE's are handled in ForgeHooks.onPlaceItemIntoWorld
                  if (!this.world.isRemote && block1 != block && (!this.world.captureBlockSnapshots || block.hasTileEntity(state)))
                  {
-@@ -743,6 +797,28 @@
+@@ -743,6 +789,28 @@
          entityIn.chunkCoordZ = this.z;
          this.entityLists[k].add(entityIn);
          this.markDirty(); // Forge - ensure chunks are marked to save after an entity add
@@ -172,7 +164,7 @@
      }
  
      public void removeEntity(Entity entityIn)
-@@ -764,6 +840,27 @@
+@@ -764,6 +832,27 @@
  
          this.entityLists[index].remove(entityIn);
          this.markDirty(); // Forge - ensure chunks are marked to save after entity removals
@@ -200,7 +192,7 @@
      }
  
      public boolean canSeeSky(BlockPos pos)
-@@ -781,11 +878,14 @@
+@@ -781,11 +870,14 @@
          Block block = iblockstate.getBlock();
          return !block.hasTileEntity(iblockstate) ? null : block.createTileEntity(this.world, iblockstate);
      }
@@ -217,7 +209,7 @@
  
          if (tileentity != null && tileentity.isInvalid())
          {
-@@ -824,9 +924,18 @@
+@@ -824,9 +916,18 @@
          if (tileEntityIn.getWorld() != this.world) //Forge don't call unless it's changed, could screw up bad mods.
          tileEntityIn.setWorld(this.world);
          tileEntityIn.setPos(pos);
@@ -238,7 +230,7 @@
              if (this.tileEntities.containsKey(pos))
              {
                  ((TileEntity)this.tileEntities.get(pos)).invalidate();
-@@ -854,17 +963,16 @@
+@@ -854,17 +955,16 @@
      {
          this.loaded = true;
          this.world.addTileEntities(this.tileEntities.values());
@@ -258,7 +250,7 @@
          this.loaded = false;
  
          for (TileEntity tileentity : this.tileEntities.values())
-@@ -874,7 +982,14 @@
+@@ -874,7 +974,14 @@
  
          for (ClassInheritanceMultiMap<Entity> classinheritancemultimap : this.entityLists)
          {
@@ -274,62 +266,7 @@
          }
          net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.world.ChunkEvent.Unload(this));
      }
-@@ -895,6 +1010,15 @@
-         {
-             if (!this.entityLists[k].isEmpty())
-             {
-+                // Paper start - Don't search for inventories if we have none, and that is all we want
-+                /*
-+                 * We check if they want inventories by seeing if it is the static `IEntitySelector.c`
-+                 *
-+                 * Make sure the inventory selector stays in sync.
-+                 * It should be the one that checks `var1 instanceof IInventory && var1.isAlive()`
-+                 */
-+                if (filter == EntitySelectors.HAS_INVENTORY && inventoryEntityCounts[k] <= 0) continue;
-+                // Paper end
-                 for (Entity entity : this.entityLists[k])
-                 {
-                     if (entity.getEntityBoundingBox().intersects(aabb) && entity != entityIn)
-@@ -928,12 +1052,22 @@
-         int j = MathHelper.floor((aabb.maxY + World.MAX_ENTITY_RADIUS) / 16.0D);
-         i = MathHelper.clamp(i, 0, this.entityLists.length - 1);
-         j = MathHelper.clamp(j, 0, this.entityLists.length - 1);
--
-+        // Paper start
-+        int[] counts;
-+        if (EntityItem.class.isAssignableFrom(entityClass)) {
-+            counts = itemCounts;
-+        } else if (IInventory.class.isAssignableFrom(entityClass)) {
-+            counts = inventoryEntityCounts;
-+        } else {
-+            counts = null;
-+        }
-+        // Paper end
-         for (int k = i; k <= j; ++k)
-         {
-+            if (counts != null && counts[k] <= 0) continue; // Paper - Don't check a chunk if it doesn't have the type we are looking for
-             for (T t : this.entityLists[k].getByClass(entityClass))
-             {
--                if (t.getEntityBoundingBox().intersects(aabb) && (filter == null || filter.apply(t)))
-+                if (entityClass.isInstance(t) && t.getEntityBoundingBox().intersects(aabb) && (filter == null || filter.apply(t)))
-                 {
-                     listToFill.add(t);
-                 }
-@@ -950,12 +1084,8 @@
-                 return true;
-             }
-         }
--        else if (this.hasEntities && this.world.getTotalWorldTime() >= this.lastSaveTime + 600L)
--        {
--            return true;
--        }
- 
--        return this.dirty;
-+        return ((this.dirty || this.hasEntities) && this.world.getTotalWorldTime() >= this.lastSaveTime +  MinecraftServer.getServerInst().autosavePeriod);
-     }
- 
-     public Random getRandomWithSeed(long seed)
-@@ -1001,6 +1131,65 @@
+@@ -1001,6 +1108,65 @@
          }
      }
  
@@ -395,7 +332,7 @@
      protected void populate(IChunkGenerator generator)
      {
          if (populating != null && net.minecraftforge.common.ForgeModContainer.logCascadingWorldGeneration) logCascadingWorldGeneration();
-@@ -1017,6 +1206,26 @@
+@@ -1017,6 +1183,26 @@
          {
              this.checkLight();
              generator.populate(this.x, this.z);
@@ -422,7 +359,7 @@
              net.minecraftforge.fml.common.registry.GameRegistry.generateWorld(this.x, this.z, this.world, generator, this.world.getChunkProvider());
              this.markDirty();
          }
-@@ -1086,7 +1295,7 @@
+@@ -1086,7 +1272,7 @@
  
      public boolean isPopulated()
      {
@@ -431,7 +368,7 @@
      }
  
      public boolean wasTicked()
-@@ -1548,8 +1757,8 @@
+@@ -1548,8 +1734,8 @@
              net.minecraftforge.fml.common.FMLLog.log.debug(format, "Minecraft", this.getPos(), this.world.provider.getDimension(), this.world.provider.getDimensionType().getName(), populating);
              net.minecraftforge.fml.common.FMLLog.log.debug("Consider setting 'fixVanillaCascading' to 'true' in the Forge config to fix many cases where this occurs in the base game.");
          } else {
