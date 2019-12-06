@@ -18,7 +18,7 @@ apply plugin: MohistDevPlugin
 repositories {
     mavenLocal()
     mavenCentral()
-    maven { url 'http://repo.uraniummc.cc/content/groups/public/' }
+    maven { url 'https://repo.uraniummc.cc/repository/maven-public/' }
     maven { url 'http://oss.sonatype.org/content/repositories/snapshots/' }
     maven { url 'https://files.minecraftforge.net/maven' }
     maven { url 'https://libraries.minecraft.net/' }
@@ -37,7 +37,7 @@ minecraft {
 }
 
 group = 'red.mohist'
-version = '1.7.10'
+version = '1.7.10-1.1'
 
 configurations {
     compile.extendsFrom exported
@@ -85,6 +85,12 @@ packageUniversal {
     from { configurations.exported.collect { it.isDirectory() ? it : zipTree(it) } }
 }
 
+packageInstaller {
+    classifier = 'installer'
+    from "mohist_logo.png"
+    rename "mohist_logo\\.png", "big_logo.png"
+}
+
 def generateClasspath() {
     def classpath = ''
     configurations.libraries.resolvedConfiguration.resolvedArtifacts.collect { it.moduleVersion.id }.each {
@@ -113,14 +119,12 @@ task jar(type: Jar, dependsOn: packageUniversal) {
     from zipTree(tasks.packageUniversal.archivePath)
 }
 
-tasks.packageInstaller.onlyIf { false }
-
 tasks.generateProjectCauldron << {
     def file = new File('eclipse/cauldron/build.gradle')
     file.append('''
 repositories {
     clear()
-    maven { url 'http://repo.uraniummc.cc/content/groups/public/' }
+    maven { url 'https://repo.uraniummc.cc/repository/maven-public/' }
     maven { url 'https://files.minecraftforge.net/maven/' }
     maven { url 'https://libraries.minecraft.net/' }
     maven { url 'https://raw.githubusercontent.com/Mohist-Community/Mohist-Maven/master/maven/' }

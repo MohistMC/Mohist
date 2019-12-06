@@ -367,7 +367,7 @@ public class MohistDevPlugin extends DevBasePlugin {
         task.setOutputFile(delayedFile(INSTALL_PROFILE));
         task.addReplacement("@minecraft_version@", delayedString("{MC_VERSION}"));
         task.addReplacement("@version@", delayedString("{VERSION}"));
-        task.addReplacement("@project@", delayedString("cauldron"));
+        task.addReplacement("@project@", delayedString("Mohist"));
         task.addReplacement("@artifact@", delayedString("net.minecraftforge:forge:{MC_VERSION}-{VERSION}"));
         task.addReplacement("@universal_jar@", new Closure<String>(project) {
             public String call() {

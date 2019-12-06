@@ -1,11 +1,164 @@
 --- ../src-base/minecraft/net/minecraft/world/chunk/storage/RegionFileCache.java
 +++ ../src-work/minecraft/net/minecraft/world/chunk/storage/RegionFileCache.java
-@@ -10,7 +10,7 @@
+@@ -4,20 +4,23 @@
+ import java.io.DataOutputStream;
+ import java.io.File;
+ import java.io.IOException;
+-import java.util.HashMap;
+ import java.util.Iterator;
++import java.util.LinkedHashMap;
+ import java.util.Map;
  
++import net.minecraft.nbt.CompressedStreamTools;
++import net.minecraft.nbt.NBTTagCompound;
++import red.mohist.configuration.MohistConfig;
++
  public class RegionFileCache
  {
 -    private static final Map regionsByFilename = new HashMap();
-+    public static final Map regionsByFilename = new HashMap(); // CraftBukkit - private -> public
-     private static final String __OBFID = "CL_00000383";
+-    private static final String __OBFID = "CL_00000383";
++    public static final Map<File, RegionFile> REGIONS_BY_FILE = new LinkedHashMap<File, RegionFile>(net.minecraft.server.MinecraftServer.uraniumConfig.chunk_cache_size.getValue().intValue(), 0.75f, true); // Spigot - private -> public, Paper - HashMap -> LinkedHashMap
  
-     public static synchronized RegionFile createOrLoadRegionFile(File p_76550_0_, int p_76550_1_, int p_76550_2_)
+-    public static synchronized RegionFile createOrLoadRegionFile(File p_76550_0_, int p_76550_1_, int p_76550_2_)
++    public static synchronized RegionFile createOrLoadRegionFile(File worldDir, int chunkX, int chunkZ)
+     {
+-        File file2 = new File(p_76550_0_, "region");
+-        File file3 = new File(file2, "r." + (p_76550_1_ >> 5) + "." + (p_76550_2_ >> 5) + ".mca");
+-        RegionFile regionfile = (RegionFile)regionsByFilename.get(file3);
++        File file1 = new File(worldDir, "region");
++        File file2 = new File(file1, "r." + (chunkX >> 5) + "." + (chunkZ >> 5) + ".mca");
++        RegionFile regionfile = REGIONS_BY_FILE.get(file2);
+ 
+         if (regionfile != null)
+         {
+@@ -25,30 +28,68 @@
+         }
+         else
+         {
+-            if (!file2.exists())
++            if (!file1.exists())
+             {
+-                file2.mkdirs();
++                file1.mkdirs();
+             }
+ 
+-            if (regionsByFilename.size() >= 256)
++            if (REGIONS_BY_FILE.size() >= 256)
+             {
+-                clearRegionFileReferences();
++                trimCache(); // Paper
+             }
+ 
+-            RegionFile regionfile1 = new RegionFile(file3);
+-            regionsByFilename.put(file3, regionfile1);
++            RegionFile regionfile1 = new RegionFile(file2);
++            REGIONS_BY_FILE.put(file2, regionfile1);
+             return regionfile1;
+         }
+     }
+ 
+-    public static synchronized void clearRegionFileReferences()
++    // Paper Start
++    private static synchronized void trimCache() {
++        Iterator<Map.Entry<File, RegionFile>> itr = RegionFileCache.REGIONS_BY_FILE.entrySet().iterator();
++        int count = RegionFileCache.REGIONS_BY_FILE.size() - 256;
++        while (count-- >= 0 && itr.hasNext()) {
++            try {
++                itr.next().getValue().close();
++            } catch (IOException ioexception) {
++                ioexception.printStackTrace();
++            }
++            itr.remove();
++        }
++    }
++    // Paper End
++
++    public static synchronized RegionFile getRegionFileIfExists(File worldDir, int chunkX, int chunkZ)
+     {
+-        Iterator iterator = regionsByFilename.values().iterator();
++        File file1 = new File(worldDir, "region");
++        File file2 = new File(file1, "r." + (chunkX >> 5) + "." + (chunkZ >> 5) + ".mca");
++        RegionFile regionfile = REGIONS_BY_FILE.get(file2);
+ 
+-        while (iterator.hasNext())
++        if (regionfile != null)
+         {
+-            RegionFile regionfile = (RegionFile)iterator.next();
++            return regionfile;
++        }
++        else if (file1.exists() && file2.exists())
++        {
++            if (REGIONS_BY_FILE.size() >= 256)
++            {
++                clearRegionFileReferences();
++            }
+ 
++            RegionFile regionfile1 = new RegionFile(file2);
++            REGIONS_BY_FILE.put(file2, regionfile1);
++            return regionfile1;
++        }
++        else
++        {
++            return null;
++        }
++    }
++
++    public static synchronized void clearRegionFileReferences()
++    {
++        for (RegionFile regionfile : REGIONS_BY_FILE.values())
++        {
+             try
+             {
+                 if (regionfile != null)
+@@ -62,18 +103,44 @@
+             }
+         }
+ 
+-        regionsByFilename.clear();
++        REGIONS_BY_FILE.clear();
+     }
+ 
+-    public static DataInputStream getChunkInputStream(File p_76549_0_, int p_76549_1_, int p_76549_2_)
++    public static DataInputStream getChunkInputStream(File worldDir, int chunkX, int chunkZ)
+     {
+-        RegionFile regionfile = createOrLoadRegionFile(p_76549_0_, p_76549_1_, p_76549_2_);
+-        return regionfile.getChunkDataInputStream(p_76549_1_ & 31, p_76549_2_ & 31);
++        RegionFile regionfile = createOrLoadRegionFile(worldDir, chunkX, chunkZ);
++        return regionfile.getChunkDataInputStream(chunkX & 31, chunkZ & 31);
+     }
+ 
+-    public static DataOutputStream getChunkOutputStream(File p_76552_0_, int p_76552_1_, int p_76552_2_)
++    public static synchronized NBTTagCompound getChunkInputStreamCB(File worldDir, int chunkX, int chunkZ) throws IOException
+     {
+-        RegionFile regionfile = createOrLoadRegionFile(p_76552_0_, p_76552_1_, p_76552_2_);
+-        return regionfile.getChunkDataOutputStream(p_76552_1_ & 31, p_76552_2_ & 31);
++        RegionFile regionfile = createOrLoadRegionFile(worldDir, chunkX, chunkZ);
++        DataInputStream datainputstream = regionfile.getChunkDataInputStream(chunkX & 31, chunkZ & 31);
++
++        if (datainputstream == null) {
++            return null;
++        }
++
++        return CompressedStreamTools.read(datainputstream);
+     }
++
++    public static DataOutputStream getChunkOutputStream(File worldDir, int chunkX, int chunkZ)
++    {
++        RegionFile regionfile = createOrLoadRegionFile(worldDir, chunkX, chunkZ);
++        return regionfile.getChunkDataOutputStream(chunkX & 31, chunkZ & 31);
++    }
++
++    public static synchronized void getChunkOutputStream(File worldDir, int chunkX, int chunkZ, NBTTagCompound nbttagcompound) throws IOException
++    {
++        RegionFile regionfile = createOrLoadRegionFile(worldDir, chunkX, chunkZ);
++        DataOutputStream dataoutputstream = regionfile.getChunkDataOutputStream(chunkX & 31, chunkZ & 31);
++        CompressedStreamTools.write(nbttagcompound, dataoutputstream);
++        dataoutputstream.close();
++    }
++
++    public static boolean chunkExists(File worldDir, int chunkX, int chunkZ)
++    {
++        RegionFile regionfile = getRegionFileIfExists(worldDir, chunkX, chunkZ);
++        return regionfile != null ? regionfile.isChunkSaved(chunkX & 31, chunkZ & 31) : false;
++    }
+ }

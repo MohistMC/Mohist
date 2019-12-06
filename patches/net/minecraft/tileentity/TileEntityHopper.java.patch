@@ -1,17 +1,22 @@
 --- ../src-base/minecraft/net/minecraft/tileentity/TileEntityHopper.java
 +++ ../src-work/minecraft/net/minecraft/tileentity/TileEntityHopper.java
-@@ -18,11 +18,52 @@
+@@ -18,11 +18,57 @@
  import net.minecraft.util.MathHelper;
  import net.minecraft.world.World;
  
 +// CraftBukkit start
 +import net.minecraft.entity.item.EntityMinecartHopper;
 +import net.minecraft.inventory.InventoryLargeChest;
++
++import org.bukkit.Chunk;
++import org.bukkit.block.Hopper;
 +import org.bukkit.craftbukkit.entity.CraftHumanEntity;
 +import org.bukkit.craftbukkit.inventory.CraftItemStack;
 +import org.bukkit.entity.HumanEntity;
++import org.bukkit.entity.minecart.HopperMinecart;
 +import org.bukkit.event.inventory.InventoryMoveItemEvent;
 +import org.bukkit.event.inventory.InventoryPickupItemEvent;
++import org.bukkit.event.inventory.InventoryType;
 +import org.bukkit.inventory.Inventory;
 +// CraftBukkit end
 +
@@ -53,7 +58,7 @@
      private static final String __OBFID = "CL_00000359";
  
      public void readFromNBT(NBTTagCompound p_145839_1_)
-@@ -212,12 +253,18 @@
+@@ -212,12 +258,18 @@
  
                  if (flag)
                  {
@@ -73,12 +78,11 @@
              return false;
          }
          else
-@@ -285,18 +332,70 @@
+@@ -285,18 +337,92 @@
                      if (this.getStackInSlot(j) != null)
                      {
                          ItemStack itemstack = this.getStackInSlot(j).copy();
 -                        ItemStack itemstack1 = func_145889_a(iinventory, this.decrStackSize(j, 1), i);
--
 +                        // CraftBukkit start - Call event when pushing items into other inventories
 +                        CraftItemStack oitemstack = CraftItemStack.asCraftMirror(this.decrStackSize(j, 1));
 +                        Inventory destinationInventory;
@@ -115,6 +119,28 @@
 +    
 +                        InventoryMoveItemEvent event = new InventoryMoveItemEvent(this.getOwner().getInventory(), oitemstack.clone(), destinationInventory, true);
 +                        this.getWorldObj().getServer().getPluginManager().callEvent(event);
++                        
++                        if (this.getOwner().getInventory().getType() == InventoryType.HOPPER && destinationInventory.getHolder().getInventory().getType() == InventoryType.HOPPER)
++                        {
++                        	
++                        	Chunk from = null;
++                        	Chunk to = null;
++                        
++                        	if (this.getOwner() instanceof HopperMinecart)
++                        		from = ((HopperMinecart)this.getOwner()).getLocation().getChunk();
++                        	else
++                        		from = ((Hopper)this.getOwner()).getChunk();
++                        	
++                        	if (destinationInventory.getHolder() instanceof HopperMinecart)
++                        		to = ((HopperMinecart)destinationInventory.getHolder()).getLocation().getChunk();
++                        	else
++                        		to = ((Hopper)destinationInventory.getHolder()).getChunk();
++                        
++                        	if (( from != to) && ((!from.isLoaded()) || (!to.isLoaded()))) {
++                        		event.setCancelled(true);
++                        	}
++                        }
+ 
 +    
 +                        if (event.isCancelled())
 +                        {
@@ -149,7 +175,7 @@
                  return false;
              }
          }
-@@ -427,11 +526,66 @@
+@@ -427,11 +553,66 @@
          if (itemstack != null && func_145890_b(p_145892_1_, itemstack, p_145892_2_, p_145892_3_))
          {
              ItemStack itemstack1 = itemstack.copy();
@@ -218,7 +244,7 @@
                  return true;
              }
  
-@@ -451,6 +605,20 @@
+@@ -451,6 +632,20 @@
          }
          else
          {
