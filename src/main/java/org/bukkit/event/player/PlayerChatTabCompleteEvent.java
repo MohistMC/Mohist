@@ -13,7 +13,6 @@ public class PlayerChatTabCompleteEvent extends PlayerEvent {
     private final String message;
     private final String lastToken;
     private final Collection<String> completions;
-    private final boolean isPinging;
 
     public PlayerChatTabCompleteEvent(final Player who, final String message, final Collection<String> completions) {
         super(who);
@@ -22,43 +21,11 @@ public class PlayerChatTabCompleteEvent extends PlayerEvent {
         this.message = message;
         int i = message.lastIndexOf(' ');
         if (i < 0) {
-        	if(message.length() > 0 && message.charAt(0) == '@')
-        	{
-        		this.lastToken = message.substring(1);
-        		this.isPinging = true;
-        	}
-        	else
-        	{
-        		this.lastToken = message;
-        		this.isPinging = false;
-        	}
-        		
-        } 
-        else 
-        {
-        	String lastToken = message.substring(i+1);
-        	if (lastToken.length() > 0 && lastToken.charAt(0) == '@')
-        	{
-        		if (lastToken.length() == 1)
-        		{
-        			lastToken = "";
-        		}
-        		else
-        			lastToken = lastToken.substring(1);
-        		this.isPinging = true;
-        	}
-        	else
-        	{
-        		this.isPinging = false;
-        	}
-        	this.lastToken = lastToken;
+            this.lastToken = message;
+        } else {
+            this.lastToken = message.substring(i + 1);
         }
         this.completions = completions;
-    }
-    
-    public boolean isPinging()
-    {
-    	return this.isPinging;
     }
 
     /**

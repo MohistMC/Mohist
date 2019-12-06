@@ -557,13 +557,6 @@ public enum Material {
     }
 
     /**
-     * Checks if the material is a forge block
-     *
-     * @return true if this material is a forge block
-     */
-    public boolean isForgeBlock() { return isForgeBlock; }
-
-    /**
      * Checks if this Material is edible.
      *
      * @return true if this Material is edible.

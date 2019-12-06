@@ -57,7 +57,7 @@
  
                          if (d1 < d0 || d0 == 0.0D)
                          {
-@@ -159,6 +173,14 @@
+@@ -159,6 +173,15 @@
              if (movingobjectposition != null)
              {
                  this.onImpact(movingobjectposition);
@@ -65,14 +65,15 @@
 +                // CraftBukkit start
 +                if (this.isDead)
 +                {
-+                    CraftEventFactory.callProjectileHitEvent(this);
++                    //org.bukkit.craftbukkit.event.CraftEventFactory.callProjectileHitEvent(this); // CraftBukkit - Call event
++                    org.bukkit.craftbukkit.event.CraftEventFactory.callProjectileHitEvent(this,movingobjectposition); //Uranium - Call event
 +                }
 +
 +                // CraftBukkit end
              }
  
              this.posX += this.motionX;
-@@ -227,6 +249,8 @@
+@@ -227,6 +250,8 @@
          p_70014_1_.setShort("zTile", (short)this.field_145794_g);
          p_70014_1_.setByte("inTile", (byte)Block.getIdFromBlock(this.field_145796_h));
          p_70014_1_.setByte("inGround", (byte)(this.inGround ? 1 : 0));
@@ -81,7 +82,7 @@
          p_70014_1_.setTag("direction", this.newDoubleNBTList(new double[] {this.motionX, this.motionY, this.motionZ}));
      }
  
-@@ -238,8 +262,17 @@
+@@ -238,8 +263,17 @@
          this.field_145796_h = Block.getBlockById(p_70037_1_.getByte("inTile") & 255);
          this.inGround = p_70037_1_.getByte("inGround") == 1;
  
@@ -100,7 +101,7 @@
              NBTTagList nbttaglist = p_70037_1_.getTagList("direction", 6);
              this.motionX = nbttaglist.func_150309_d(0);
              this.motionY = nbttaglist.func_150309_d(1);
-@@ -273,6 +306,13 @@
+@@ -273,6 +307,13 @@
  
              if (p_70097_1_.getEntity() != null)
              {
@@ -114,7 +115,7 @@
                  Vec3 vec3 = p_70097_1_.getEntity().getLookVec();
  
                  if (vec3 != null)
-@@ -288,6 +328,7 @@
+@@ -288,6 +329,7 @@
                  if (p_70097_1_.getEntity() instanceof EntityLivingBase)
                  {
                      this.shootingEntity = (EntityLivingBase)p_70097_1_.getEntity();
@@ -122,7 +123,7 @@
                  }
  
                  return true;
-@@ -315,4 +356,11 @@
+@@ -315,4 +357,11 @@
      {
          return 15728880;
      }

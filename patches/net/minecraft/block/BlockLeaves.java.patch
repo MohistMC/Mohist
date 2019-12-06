@@ -1,6 +1,16 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockLeaves.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockLeaves.java
-@@ -18,6 +18,8 @@
+@@ -8,16 +8,16 @@
+ import net.minecraft.creativetab.CreativeTabs;
+ import net.minecraft.entity.player.EntityPlayer;
+ import net.minecraft.init.Blocks;
+-import net.minecraft.init.Items;
+ import net.minecraft.item.Item;
+ import net.minecraft.item.ItemStack;
+-import net.minecraft.stats.StatList;
+ import net.minecraft.util.IIcon;
+ import net.minecraft.world.ColorizerFoliage;
+ import net.minecraft.world.IBlockAccess;
  import net.minecraft.world.World;
  import net.minecraftforge.common.IShearable;
  
@@ -9,7 +19,7 @@
  public abstract class BlockLeaves extends BlockLeavesBase implements IShearable
  {
      int[] field_150128_a;
-@@ -222,6 +224,16 @@
+@@ -222,6 +222,16 @@
  
      private void removeLeaves(World p_150126_1_, int p_150126_2_, int p_150126_3_, int p_150126_4_)
      {
@@ -26,3 +36,17 @@
          this.dropBlockAsItem(p_150126_1_, p_150126_2_, p_150126_3_, p_150126_4_, p_150126_1_.getBlockMetadata(p_150126_2_, p_150126_3_, p_150126_4_), 0);
          p_150126_1_.setBlockToAir(p_150126_2_, p_150126_3_, p_150126_4_);
      }
+@@ -308,6 +318,13 @@
+             world.setBlockMetadataWithNotify(x, y, z, i2 | 8, 4);
+         }
+         world.setBlockMetadataWithNotify(x, y, z, world.getBlockMetadata(x, y, z) | 8, 4);
++        // KCauldron start - fast leaves decay
++        if (net.minecraft.server.MinecraftServer.uraniumConfig.commonFastLeavesDecayEnable.getValue()) {
++            int min = net.minecraft.server.MinecraftServer.uraniumConfig.commonFastLeavesDecayMinTickTime.getValue();
++            int max = net.minecraft.server.MinecraftServer.uraniumConfig.commonFastLeavesDecayMaxTickTime.getValue();
++            world.scheduleBlockUpdate(x, y, z, this, min + world.rand.nextInt(max - min));
++        }
++        // KCauldron end
+     }
+ 
+     @Override

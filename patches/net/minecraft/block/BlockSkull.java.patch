@@ -12,41 +12,15 @@
  public class BlockSkull extends BlockContainer
  {
      private static final String __OBFID = "CL_00000307";
-@@ -135,10 +140,12 @@
-             if ((p_149749_6_ & 8) == 0)
+@@ -172,16 +177,18 @@
              {
-                 ItemStack itemstack = new ItemStack(Items.skull, 1, this.getDamageValue(p_149749_1_, p_149749_2_, p_149749_3_, p_149749_4_));
--                TileEntitySkull tileentityskull = (TileEntitySkull)p_149749_1_.getTileEntity(p_149749_2_, p_149749_3_, p_149749_4_);
-+                TileEntity tileEntity = p_149749_1_.getTileEntity(p_149749_2_, p_149749_3_, p_149749_4_);
- 
--                if (tileentityskull == null) return ret;
-+                if (!(tileEntity instanceof TileEntitySkull)) return ret;
- 
-+                TileEntitySkull tileentityskull = (TileEntitySkull) tileEntity;
-+
-                 if (tileentityskull.func_145904_a() == 3 && tileentityskull.func_152108_a() != null)
+                 if (p_149965_1_.getBlock(p_149965_2_, p_149965_3_ - 1, p_149965_4_ + l) == Blocks.soul_sand && p_149965_1_.getBlock(p_149965_2_, p_149965_3_ - 1, p_149965_4_ + l + 1) == Blocks.soul_sand && p_149965_1_.getBlock(p_149965_2_, p_149965_3_ - 2, p_149965_4_ + l + 1) == Blocks.soul_sand && p_149965_1_.getBlock(p_149965_2_, p_149965_3_ - 1, p_149965_4_ + l + 2) == Blocks.soul_sand && this.func_149966_a(p_149965_1_, p_149965_2_, p_149965_3_, p_149965_4_ + l, 1) && this.func_149966_a(p_149965_1_, p_149965_2_, p_149965_3_, p_149965_4_ + l + 1, 1) && this.func_149966_a(p_149965_1_, p_149965_2_, p_149965_3_, p_149965_4_ + l + 2, 1))
                  {
-                     itemstack.setTagCompound(new NBTTagCompound());
-@@ -162,111 +169,122 @@
-     {
-         if (p_149965_5_.func_145904_a() == 1 && p_149965_3_ >= 2 && p_149965_1_.difficultySetting != EnumDifficulty.PEACEFUL && !p_149965_1_.isRemote)
-         {
--            int l;
-+            int iter;
-             EntityWither entitywither;
-             Iterator iterator;
-             EntityPlayer entityplayer;
-             int i1;
- 
--            for (l = -2; l <= 0; ++l)
-+            for (iter = -2; iter <= 0; ++iter)
-             {
--                if (p_149965_1_.getBlock(p_149965_2_, p_149965_3_ - 1, p_149965_4_ + l) == Blocks.soul_sand && p_149965_1_.getBlock(p_149965_2_, p_149965_3_ - 1, p_149965_4_ + l + 1) == Blocks.soul_sand && p_149965_1_.getBlock(p_149965_2_, p_149965_3_ - 2, p_149965_4_ + l + 1) == Blocks.soul_sand && p_149965_1_.getBlock(p_149965_2_, p_149965_3_ - 1, p_149965_4_ + l + 2) == Blocks.soul_sand && this.func_149966_a(p_149965_1_, p_149965_2_, p_149965_3_, p_149965_4_ + l, 1) && this.func_149966_a(p_149965_1_, p_149965_2_, p_149965_3_, p_149965_4_ + l + 1, 1) && this.func_149966_a(p_149965_1_, p_149965_2_, p_149965_3_, p_149965_4_ + l + 2, 1))
-+                if (p_149965_1_.getBlock(p_149965_2_, p_149965_3_ - 1, p_149965_4_ + iter) == Blocks.soul_sand && p_149965_1_.getBlock(p_149965_2_, p_149965_3_ - 1, p_149965_4_ + iter + 1) == Blocks.soul_sand && p_149965_1_.getBlock(p_149965_2_, p_149965_3_ - 2, p_149965_4_ + iter + 1) == Blocks.soul_sand && p_149965_1_.getBlock(p_149965_2_, p_149965_3_ - 1, p_149965_4_ + iter + 2) == Blocks.soul_sand && this.func_149966_a(p_149965_1_, p_149965_2_, p_149965_3_, p_149965_4_ + iter, 1) && this.func_149966_a(p_149965_1_, p_149965_2_, p_149965_3_, p_149965_4_ + iter + 1, 1) && this.func_149966_a(p_149965_1_, p_149965_2_, p_149965_3_, p_149965_4_ + iter + 2, 1))
-                 {
--                    p_149965_1_.setBlockMetadataWithNotify(p_149965_2_, p_149965_3_, p_149965_4_ + l, 8, 2);
--                    p_149965_1_.setBlockMetadataWithNotify(p_149965_2_, p_149965_3_, p_149965_4_ + l + 1, 8, 2);
--                    p_149965_1_.setBlockMetadataWithNotify(p_149965_2_, p_149965_3_, p_149965_4_ + l + 2, 8, 2);
++                    // CraftBukkit start - Use BlockStateListPopulator
++                    BlockStateListPopulator blockList = new BlockStateListPopulator(p_149965_1_.getWorld());
+                     p_149965_1_.setBlockMetadataWithNotify(p_149965_2_, p_149965_3_, p_149965_4_ + l, 8, 2);
+                     p_149965_1_.setBlockMetadataWithNotify(p_149965_2_, p_149965_3_, p_149965_4_ + l + 1, 8, 2);
+                     p_149965_1_.setBlockMetadataWithNotify(p_149965_2_, p_149965_3_, p_149965_4_ + l + 2, 8, 2);
 -                    p_149965_1_.setBlock(p_149965_2_, p_149965_3_, p_149965_4_ + l, getBlockById(0), 0, 2);
 -                    p_149965_1_.setBlock(p_149965_2_, p_149965_3_, p_149965_4_ + l + 1, getBlockById(0), 0, 2);
 -                    p_149965_1_.setBlock(p_149965_2_, p_149965_3_, p_149965_4_ + l + 2, getBlockById(0), 0, 2);
@@ -54,24 +28,17 @@
 -                    p_149965_1_.setBlock(p_149965_2_, p_149965_3_ - 1, p_149965_4_ + l + 1, getBlockById(0), 0, 2);
 -                    p_149965_1_.setBlock(p_149965_2_, p_149965_3_ - 1, p_149965_4_ + l + 2, getBlockById(0), 0, 2);
 -                    p_149965_1_.setBlock(p_149965_2_, p_149965_3_ - 2, p_149965_4_ + l + 1, getBlockById(0), 0, 2);
-+                    // CraftBukkit start - Use BlockStateListPopulator
-+                    BlockStateListPopulator blockList = new BlockStateListPopulator(p_149965_1_.getWorld());
-+                    p_149965_1_.setBlockMetadataWithNotify(p_149965_2_, p_149965_3_, p_149965_4_ + iter, 8, 2);
-+                    p_149965_1_.setBlockMetadataWithNotify(p_149965_2_, p_149965_3_, p_149965_4_ + iter + 1, 8, 2);
-+                    p_149965_1_.setBlockMetadataWithNotify(p_149965_2_, p_149965_3_, p_149965_4_ + iter + 2, 8, 2);
-+                    blockList.setTypeAndData(p_149965_2_, p_149965_3_, p_149965_4_ + iter, getBlockById(0), 0, 2);
-+                    blockList.setTypeAndData(p_149965_2_, p_149965_3_, p_149965_4_ + iter + 1, getBlockById(0), 0, 2);
-+                    blockList.setTypeAndData(p_149965_2_, p_149965_3_, p_149965_4_ + iter + 2, getBlockById(0), 0, 2);
-+                    blockList.setTypeAndData(p_149965_2_, p_149965_3_ - 1, p_149965_4_ + iter, getBlockById(0), 0, 2);
-+                    blockList.setTypeAndData(p_149965_2_, p_149965_3_ - 1, p_149965_4_ + iter + 1, getBlockById(0), 0, 2);
-+                    blockList.setTypeAndData(p_149965_2_, p_149965_3_ - 1, p_149965_4_ + iter + 2, getBlockById(0), 0, 2);
-+                    blockList.setTypeAndData(p_149965_2_, p_149965_3_ - 2, p_149965_4_ + iter + 1, getBlockById(0), 0, 2);
++                    blockList.setTypeAndData(p_149965_2_, p_149965_3_, p_149965_4_ + l, getBlockById(0), 0, 2);
++                    blockList.setTypeAndData(p_149965_2_, p_149965_3_, p_149965_4_ + l + 1, getBlockById(0), 0, 2);
++                    blockList.setTypeAndData(p_149965_2_, p_149965_3_, p_149965_4_ + l + 2, getBlockById(0), 0, 2);
++                    blockList.setTypeAndData(p_149965_2_, p_149965_3_ - 1, p_149965_4_ + l, getBlockById(0), 0, 2);
++                    blockList.setTypeAndData(p_149965_2_, p_149965_3_ - 1, p_149965_4_ + l + 1, getBlockById(0), 0, 2);
++                    blockList.setTypeAndData(p_149965_2_, p_149965_3_ - 1, p_149965_4_ + l + 2, getBlockById(0), 0, 2);
++                    blockList.setTypeAndData(p_149965_2_, p_149965_3_ - 2, p_149965_4_ + l + 1, getBlockById(0), 0, 2);
  
                      if (!p_149965_1_.isRemote)
                      {
-                         entitywither = new EntityWither(p_149965_1_);
--                        entitywither.setLocationAndAngles((double)p_149965_2_ + 0.5D, (double)p_149965_3_ - 1.45D, (double)(p_149965_4_ + l) + 1.5D, 90.0F, 0.0F);
-+                        entitywither.setLocationAndAngles((double)p_149965_2_ + 0.5D, (double)p_149965_3_ - 1.45D, (double)(p_149965_4_ + iter) + 1.5D, 90.0F, 0.0F);
+@@ -190,18 +197,21 @@
                          entitywither.renderYawOffset = 90.0F;
                          entitywither.func_82206_m();
  
@@ -79,36 +46,30 @@
 +                        if (p_149965_1_.addEntity(entitywither, SpawnReason.BUILD_WITHER))
                          {
 -                            iterator = p_149965_1_.getEntitiesWithinAABB(EntityPlayer.class, entitywither.boundingBox.expand(50.0D, 50.0D, 50.0D)).iterator();
-+                            if (!p_149965_1_.isRemote)
-+                            {
-+                                iterator = p_149965_1_.getEntitiesWithinAABB(EntityPlayer.class, entitywither.boundingBox.expand(50.0D, 50.0D, 50.0D)).iterator();
- 
+-
 -                            while (iterator.hasNext())
++                            if (!p_149965_1_.isRemote)
+                             {
+-                                entityplayer = (EntityPlayer)iterator.next();
+-                                entityplayer.triggerAchievement(AchievementList.field_150963_I);
++                                iterator = p_149965_1_.getEntitiesWithinAABB(EntityPlayer.class, entitywither.boundingBox.expand(50.0D, 50.0D, 50.0D)).iterator();
++
 +                                while (iterator.hasNext())
 +                                {
 +                                    entityplayer = (EntityPlayer) iterator.next();
 +                                    entityplayer.triggerAchievement(AchievementList.field_150963_I);
 +                                }
-+                            }
-+
-+                            blockList.updateList();
-+                            // Is the wither still hanging around?
-+                            if (p_149965_1_.getBlock(p_149965_2_, p_149965_3_ - 1, p_149965_4_ + iter) == Blocks.soul_sand && p_149965_1_.getBlock(p_149965_2_, p_149965_3_ - 1, p_149965_4_ + iter + 1) == Blocks.soul_sand && p_149965_1_.getBlock(p_149965_2_, p_149965_3_ - 2, p_149965_4_ + iter + 1) == Blocks.soul_sand && p_149965_1_.getBlock(p_149965_2_, p_149965_3_ - 1, p_149965_4_ + iter + 2) == Blocks.soul_sand && this.func_149966_a(p_149965_1_, p_149965_2_, p_149965_3_, p_149965_4_ + iter, 1) && this.func_149966_a(p_149965_1_, p_149965_2_, p_149965_3_, p_149965_4_ + iter + 1, 1) && this.func_149966_a(p_149965_1_, p_149965_2_, p_149965_3_, p_149965_4_ + iter + 2, 1))
-                             {
--                                entityplayer = (EntityPlayer)iterator.next();
--                                entityplayer.triggerAchievement(AchievementList.field_150963_I);
-+                            	entitywither.isDead = true;
-+                            	p_149965_1_.removeEntity(entitywither);
                              }
-                         }
--
+-                        }
+ 
 -                        p_149965_1_.spawnEntityInWorld(entitywither);
++                            blockList.updateList();
++                        }
                      }
  
                      for (i1 = 0; i1 < 120; ++i1)
-                     {
--                        p_149965_1_.spawnParticle("snowballpoof", (double)p_149965_2_ + p_149965_1_.rand.nextDouble(), (double)(p_149965_3_ - 2) + p_149965_1_.rand.nextDouble() * 3.9D, (double)(p_149965_4_ + l + 1) + p_149965_1_.rand.nextDouble(), 0.0D, 0.0D, 0.0D);
-+                        p_149965_1_.spawnParticle("snowballpoof", (double)p_149965_2_ + p_149965_1_.rand.nextDouble(), (double)(p_149965_3_ - 2) + p_149965_1_.rand.nextDouble() * 3.9D, (double)(p_149965_4_ + iter + 1) + p_149965_1_.rand.nextDouble(), 0.0D, 0.0D, 0.0D);
+@@ -209,13 +219,7 @@
+                         p_149965_1_.spawnParticle("snowballpoof", (double)p_149965_2_ + p_149965_1_.rand.nextDouble(), (double)(p_149965_3_ - 2) + p_149965_1_.rand.nextDouble() * 3.9D, (double)(p_149965_4_ + l + 1) + p_149965_1_.rand.nextDouble(), 0.0D, 0.0D, 0.0D);
                      }
  
 -                    p_149965_1_.notifyBlockChange(p_149965_2_, p_149965_3_, p_149965_4_ + l, getBlockById(0));
@@ -122,16 +83,15 @@
                      return;
                  }
              }
- 
--            for (l = -2; l <= 0; ++l)
-+            for (iter = -2; iter <= 0; ++iter)
+@@ -224,16 +228,18 @@
              {
--                if (p_149965_1_.getBlock(p_149965_2_ + l, p_149965_3_ - 1, p_149965_4_) == Blocks.soul_sand && p_149965_1_.getBlock(p_149965_2_ + l + 1, p_149965_3_ - 1, p_149965_4_) == Blocks.soul_sand && p_149965_1_.getBlock(p_149965_2_ + l + 1, p_149965_3_ - 2, p_149965_4_) == Blocks.soul_sand && p_149965_1_.getBlock(p_149965_2_ + l + 2, p_149965_3_ - 1, p_149965_4_) == Blocks.soul_sand && this.func_149966_a(p_149965_1_, p_149965_2_ + l, p_149965_3_, p_149965_4_, 1) && this.func_149966_a(p_149965_1_, p_149965_2_ + l + 1, p_149965_3_, p_149965_4_, 1) && this.func_149966_a(p_149965_1_, p_149965_2_ + l + 2, p_149965_3_, p_149965_4_, 1))
-+                if (p_149965_1_.getBlock(p_149965_2_ + iter, p_149965_3_ - 1, p_149965_4_) == Blocks.soul_sand && p_149965_1_.getBlock(p_149965_2_ + iter + 1, p_149965_3_ - 1, p_149965_4_) == Blocks.soul_sand && p_149965_1_.getBlock(p_149965_2_ + iter + 1, p_149965_3_ - 2, p_149965_4_) == Blocks.soul_sand && p_149965_1_.getBlock(p_149965_2_ + iter + 2, p_149965_3_ - 1, p_149965_4_) == Blocks.soul_sand && this.func_149966_a(p_149965_1_, p_149965_2_ + iter, p_149965_3_, p_149965_4_, 1) && this.func_149966_a(p_149965_1_, p_149965_2_ + iter + 1, p_149965_3_, p_149965_4_, 1) && this.func_149966_a(p_149965_1_, p_149965_2_ + iter + 2, p_149965_3_, p_149965_4_, 1))
+                 if (p_149965_1_.getBlock(p_149965_2_ + l, p_149965_3_ - 1, p_149965_4_) == Blocks.soul_sand && p_149965_1_.getBlock(p_149965_2_ + l + 1, p_149965_3_ - 1, p_149965_4_) == Blocks.soul_sand && p_149965_1_.getBlock(p_149965_2_ + l + 1, p_149965_3_ - 2, p_149965_4_) == Blocks.soul_sand && p_149965_1_.getBlock(p_149965_2_ + l + 2, p_149965_3_ - 1, p_149965_4_) == Blocks.soul_sand && this.func_149966_a(p_149965_1_, p_149965_2_ + l, p_149965_3_, p_149965_4_, 1) && this.func_149966_a(p_149965_1_, p_149965_2_ + l + 1, p_149965_3_, p_149965_4_, 1) && this.func_149966_a(p_149965_1_, p_149965_2_ + l + 2, p_149965_3_, p_149965_4_, 1))
                  {
--                    p_149965_1_.setBlockMetadataWithNotify(p_149965_2_ + l, p_149965_3_, p_149965_4_, 8, 2);
--                    p_149965_1_.setBlockMetadataWithNotify(p_149965_2_ + l + 1, p_149965_3_, p_149965_4_, 8, 2);
--                    p_149965_1_.setBlockMetadataWithNotify(p_149965_2_ + l + 2, p_149965_3_, p_149965_4_, 8, 2);
++                    // CraftBukkit start - Use BlockStateListPopulator
++                    BlockStateListPopulator blockList = new BlockStateListPopulator(p_149965_1_.getWorld());
+                     p_149965_1_.setBlockMetadataWithNotify(p_149965_2_ + l, p_149965_3_, p_149965_4_, 8, 2);
+                     p_149965_1_.setBlockMetadataWithNotify(p_149965_2_ + l + 1, p_149965_3_, p_149965_4_, 8, 2);
+                     p_149965_1_.setBlockMetadataWithNotify(p_149965_2_ + l + 2, p_149965_3_, p_149965_4_, 8, 2);
 -                    p_149965_1_.setBlock(p_149965_2_ + l, p_149965_3_, p_149965_4_, getBlockById(0), 0, 2);
 -                    p_149965_1_.setBlock(p_149965_2_ + l + 1, p_149965_3_, p_149965_4_, getBlockById(0), 0, 2);
 -                    p_149965_1_.setBlock(p_149965_2_ + l + 2, p_149965_3_, p_149965_4_, getBlockById(0), 0, 2);
@@ -139,61 +99,48 @@
 -                    p_149965_1_.setBlock(p_149965_2_ + l + 1, p_149965_3_ - 1, p_149965_4_, getBlockById(0), 0, 2);
 -                    p_149965_1_.setBlock(p_149965_2_ + l + 2, p_149965_3_ - 1, p_149965_4_, getBlockById(0), 0, 2);
 -                    p_149965_1_.setBlock(p_149965_2_ + l + 1, p_149965_3_ - 2, p_149965_4_, getBlockById(0), 0, 2);
-+                    // CraftBukkit start - Use BlockStateListPopulator
-+                    BlockStateListPopulator blockList = new BlockStateListPopulator(p_149965_1_.getWorld());
-+                    p_149965_1_.setBlockMetadataWithNotify(p_149965_2_ + iter, p_149965_3_, p_149965_4_, 8, 2);
-+                    p_149965_1_.setBlockMetadataWithNotify(p_149965_2_ + iter + 1, p_149965_3_, p_149965_4_, 8, 2);
-+                    p_149965_1_.setBlockMetadataWithNotify(p_149965_2_ + iter + 2, p_149965_3_, p_149965_4_, 8, 2);
-+                    blockList.setTypeAndData(p_149965_2_ + iter, p_149965_3_, p_149965_4_, getBlockById(0), 0, 2);
-+                    blockList.setTypeAndData(p_149965_2_ + iter + 1, p_149965_3_, p_149965_4_, getBlockById(0), 0, 2);
-+                    blockList.setTypeAndData(p_149965_2_ + iter + 2, p_149965_3_, p_149965_4_, getBlockById(0), 0, 2);
-+                    blockList.setTypeAndData(p_149965_2_ + iter, p_149965_3_ - 1, p_149965_4_, getBlockById(0), 0, 2);
-+                    blockList.setTypeAndData(p_149965_2_ + iter + 1, p_149965_3_ - 1, p_149965_4_, getBlockById(0), 0, 2);
-+                    blockList.setTypeAndData(p_149965_2_ + iter + 2, p_149965_3_ - 1, p_149965_4_, getBlockById(0), 0, 2);
-+                    blockList.setTypeAndData(p_149965_2_ + iter + 1, p_149965_3_ - 2, p_149965_4_, getBlockById(0), 0, 2);
++                    blockList.setTypeAndData(p_149965_2_ + l, p_149965_3_, p_149965_4_, getBlockById(0), 0, 2);
++                    blockList.setTypeAndData(p_149965_2_ + l + 1, p_149965_3_, p_149965_4_, getBlockById(0), 0, 2);
++                    blockList.setTypeAndData(p_149965_2_ + l + 2, p_149965_3_, p_149965_4_, getBlockById(0), 0, 2);
++                    blockList.setTypeAndData(p_149965_2_ + l, p_149965_3_ - 1, p_149965_4_, getBlockById(0), 0, 2);
++                    blockList.setTypeAndData(p_149965_2_ + l + 1, p_149965_3_ - 1, p_149965_4_, getBlockById(0), 0, 2);
++                    blockList.setTypeAndData(p_149965_2_ + l + 2, p_149965_3_ - 1, p_149965_4_, getBlockById(0), 0, 2);
++                    blockList.setTypeAndData(p_149965_2_ + l + 1, p_149965_3_ - 2, p_149965_4_, getBlockById(0), 0, 2);
  
                      if (!p_149965_1_.isRemote)
                      {
-                         entitywither = new EntityWither(p_149965_1_);
--                        entitywither.setLocationAndAngles((double)(p_149965_2_ + l) + 1.5D, (double)p_149965_3_ - 1.45D, (double)p_149965_4_ + 0.5D, 0.0F, 0.0F);
-+                        entitywither.setLocationAndAngles((double)(p_149965_2_ + iter) + 1.5D, (double)p_149965_3_ - 1.45D, (double)p_149965_4_ + 0.5D, 0.0F, 0.0F);
+@@ -241,18 +247,21 @@
+                         entitywither.setLocationAndAngles((double)(p_149965_2_ + l) + 1.5D, (double)p_149965_3_ - 1.45D, (double)p_149965_4_ + 0.5D, 0.0F, 0.0F);
                          entitywither.func_82206_m();
  
 -                        if (!p_149965_1_.isRemote)
 +                        if (p_149965_1_.addEntity(entitywither, SpawnReason.BUILD_WITHER))
                          {
 -                            iterator = p_149965_1_.getEntitiesWithinAABB(EntityPlayer.class, entitywither.boundingBox.expand(50.0D, 50.0D, 50.0D)).iterator();
-+                            if (!p_149965_1_.isRemote)
-+                            {
-+                                iterator = p_149965_1_.getEntitiesWithinAABB(EntityPlayer.class, entitywither.boundingBox.expand(50.0D, 50.0D, 50.0D)).iterator();
- 
+-
 -                            while (iterator.hasNext())
++                            if (!p_149965_1_.isRemote)
+                             {
+-                                entityplayer = (EntityPlayer)iterator.next();
+-                                entityplayer.triggerAchievement(AchievementList.field_150963_I);
++                                iterator = p_149965_1_.getEntitiesWithinAABB(EntityPlayer.class, entitywither.boundingBox.expand(50.0D, 50.0D, 50.0D)).iterator();
++
 +                                while (iterator.hasNext())
 +                                {
 +                                    entityplayer = (EntityPlayer) iterator.next();
 +                                    entityplayer.triggerAchievement(AchievementList.field_150963_I);
 +                                }
-+                            }
-+
-+                            blockList.updateList();
-+                            
-+                            // Is the wither stuff still hanging around...?
-+                            if (p_149965_1_.getBlock(p_149965_2_ + iter, p_149965_3_ - 1, p_149965_4_) == Blocks.soul_sand && p_149965_1_.getBlock(p_149965_2_ + iter + 1, p_149965_3_ - 1, p_149965_4_) == Blocks.soul_sand && p_149965_1_.getBlock(p_149965_2_ + iter + 1, p_149965_3_ - 2, p_149965_4_) == Blocks.soul_sand && p_149965_1_.getBlock(p_149965_2_ + iter + 2, p_149965_3_ - 1, p_149965_4_) == Blocks.soul_sand && this.func_149966_a(p_149965_1_, p_149965_2_ + iter, p_149965_3_, p_149965_4_, 1) && this.func_149966_a(p_149965_1_, p_149965_2_ + iter + 1, p_149965_3_, p_149965_4_, 1) && this.func_149966_a(p_149965_1_, p_149965_2_ + iter + 2, p_149965_3_, p_149965_4_, 1))
-                             {
--                                entityplayer = (EntityPlayer)iterator.next();
--                                entityplayer.triggerAchievement(AchievementList.field_150963_I);
-+                            	entitywither.isDead = true;
-+                            	p_149965_1_.removeEntity(entitywither);
                              }
-                         }
--
+-                        }
+ 
 -                        p_149965_1_.spawnEntityInWorld(entitywither);
++                            blockList.updateList();
++                        }
                      }
  
                      for (i1 = 0; i1 < 120; ++i1)
-                     {
--                        p_149965_1_.spawnParticle("snowballpoof", (double)(p_149965_2_ + l + 1) + p_149965_1_.rand.nextDouble(), (double)(p_149965_3_ - 2) + p_149965_1_.rand.nextDouble() * 3.9D, (double)p_149965_4_ + p_149965_1_.rand.nextDouble(), 0.0D, 0.0D, 0.0D);
-+                        p_149965_1_.spawnParticle("snowballpoof", (double)(p_149965_2_ + iter + 1) + p_149965_1_.rand.nextDouble(), (double)(p_149965_3_ - 2) + p_149965_1_.rand.nextDouble() * 3.9D, (double)p_149965_4_ + p_149965_1_.rand.nextDouble(), 0.0D, 0.0D, 0.0D);
+@@ -260,13 +269,7 @@
+                         p_149965_1_.spawnParticle("snowballpoof", (double)(p_149965_2_ + l + 1) + p_149965_1_.rand.nextDouble(), (double)(p_149965_3_ - 2) + p_149965_1_.rand.nextDouble() * 3.9D, (double)p_149965_4_ + p_149965_1_.rand.nextDouble(), 0.0D, 0.0D, 0.0D);
                      }
  
 -                    p_149965_1_.notifyBlockChange(p_149965_2_ + l, p_149965_3_, p_149965_4_, getBlockById(0));

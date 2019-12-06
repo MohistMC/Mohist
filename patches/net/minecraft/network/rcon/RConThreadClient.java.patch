@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/network/rcon/RConThreadClient.java
 +++ ../src-work/minecraft/net/minecraft/network/rcon/RConThreadClient.java
-@@ -41,20 +41,21 @@
+@@ -41,9 +41,9 @@
  
      public void run()
      {
@@ -10,24 +10,9 @@
 -            try
 +            while (true)
              {
--                if (!this.running)
-+                if (!this.running || clientSocket == null)
+                 if (!this.running)
                  {
-                     break;
-                 }
- 
-                 BufferedInputStream bufferedinputstream = new BufferedInputStream(this.clientSocket.getInputStream());
-                 int i = bufferedinputstream.read(this.buffer, 0, 1460);
--
--                if (10 > i)
-+                
-+                if (i < 10)
-                 {
-+                    this.running = false; // Cauldron
-                     return;
-                 }
- 
-@@ -110,26 +111,23 @@
+@@ -110,26 +110,23 @@
                      }
                  }
              }
@@ -57,7 +42,7 @@
      }
  
      private void sendResponse(int p_72654_1_, int p_72654_2_, String p_72654_3_) throws IOException
-@@ -167,6 +165,7 @@
+@@ -167,6 +164,7 @@
  
      private void closeSocket()
      {

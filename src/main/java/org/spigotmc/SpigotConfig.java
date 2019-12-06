@@ -11,6 +11,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
+import net.minecraft.server.MinecraftServer;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -21,7 +22,7 @@ import red.mohist.Metrics;
 public class SpigotConfig
 {
 
-    private static final File CONFIG_FILE = new File( "spigot.yml" );
+    private static final File CONFIG_FILE = new File(MinecraftServer.serverConfigDir, "spigot.yml" );
     private static final String HEADER = "This is the main configuration file for Spigot.\n"
             + "As you can see, there's tons to configure. Some options may impact gameplay, so use\n"
             + "with caution, and make sure you know what each option does before configuring.\n"
@@ -38,8 +39,6 @@ public class SpigotConfig
     static int version;
     static Map<String, Command> commands;
     /*========================================================================*/
-    private static Metrics metrics;
-
     public static void init()
     {
         config = YamlConfiguration.loadConfiguration( CONFIG_FILE );
@@ -263,10 +262,4 @@ public class SpigotConfig
     {
         fullMatchRate = getInt( "settings.fullMatchRate", 10);
     }
-
-    //thermos start - Add getconfig method to spigot
-    public static YamlConfiguration getConfig() {
-        return config;
-    }
-    //thermos end
 }

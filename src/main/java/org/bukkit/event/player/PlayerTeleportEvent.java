@@ -62,7 +62,9 @@ public class PlayerTeleportEvent extends PlayerMoveEvent {
          */
         MOD,
         // Cauldron end
-        DEATH, // KCauldron
+        // KCauldron start
+        DEATH,
+        // KCauldron end
         /**
          * Indicates the teleportation was caused by an event not covered by
          * this enum

@@ -1,13 +1,6 @@
 --- ../src-base/minecraft/cpw/mods/fml/common/FMLCommonHandler.java
 +++ ../src-work/minecraft/cpw/mods/fml/common/FMLCommonHandler.java
-@@ -31,12 +31,17 @@
- import net.minecraft.network.INetHandler;
- import net.minecraft.network.NetworkManager;
- import net.minecraft.server.MinecraftServer;
-+import net.minecraft.server.management.ServerConfigurationManager;
- import net.minecraft.world.World;
- import net.minecraft.world.storage.SaveHandler;
- import net.minecraft.world.storage.WorldInfo;
+@@ -37,6 +37,10 @@
  
  import org.apache.logging.log4j.Level;
  import org.apache.logging.log4j.Logger;
@@ -18,6 +11,14 @@
  
  import com.google.common.base.Joiner;
  import com.google.common.base.Strings;
+@@ -245,6 +249,7 @@
+     public void onPostServerTick()
+     {
+         bus().post(new TickEvent.ServerTickEvent(Phase.END));
++        cc.uraniummc.ChunkGenerator.INSTANCE.chunkGeneratorCycle(); // KCauldron
+     }
+ 
+     /**
 @@ -385,10 +390,11 @@
          {
              return;
@@ -38,27 +39,23 @@
 -        List<String> modNames = Lists.newArrayListWithExpectedSize(3);
 +        // Cauldron start    
 +        List<String> modNames = Lists.newArrayListWithExpectedSize(6);
-+        modNames.add("thermos");
++        modNames.add("uranium");
++        modNames.add("kcauldron");
 +        modNames.add("cauldron");
 +        modNames.add("craftbukkit");
 +        modNames.add("mcpc");
-+        modNames.add("kcauldron");
 +        // Cauldron end
          modNames.add("fml");
          if (!noForge)
          {
-@@ -540,8 +553,21 @@
+@@ -540,8 +553,17 @@
          bus().post(new InputEvent.KeyInputEvent());
      }
  
 +    // Cauldron start - wrapper to notify plugins for mods that bypass ServerConfigurationManager
      public void firePlayerChangedDimensionEvent(EntityPlayer player, int fromDim, int toDim)
      {
-+        // Thermos - (Robotia) Ok so turns out whoever wrote this bit didn't get enough sleep.
-+        // It should've gotten the dim from the fromDim ID, not the player world.
-+        // The player world returns the world the player is in after transfer...!
-+        // It should be fine now though.
-+        this.firePlayerChangedDimensionEvent(player, fromDim, toDim, MinecraftServer.getServer().worldServerForDimension(fromDim).getWorld());
++        this.firePlayerChangedDimensionEvent(player, fromDim, toDim, player.worldObj.getWorld());
 +    }
 +
 +    public void firePlayerChangedDimensionEvent(EntityPlayer player, int fromDim, int toDim, CraftWorld fromWorld)

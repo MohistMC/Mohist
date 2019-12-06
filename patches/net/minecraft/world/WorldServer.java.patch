@@ -1,42 +1,40 @@
 --- ../src-base/minecraft/net/minecraft/world/WorldServer.java
 +++ ../src-work/minecraft/net/minecraft/world/WorldServer.java
-@@ -1,16 +1,22 @@
+@@ -1,8 +1,11 @@
  package net.minecraft.world;
  
  import com.google.common.collect.Lists;
 +
++import cpw.mods.fml.common.FMLLog;
  import cpw.mods.fml.relauncher.Side;
  import cpw.mods.fml.relauncher.SideOnly;
 +
  import java.io.File;
  import java.util.ArrayList;
-+import java.util.LinkedHashSet;
  import java.util.HashSet;
- import java.util.Iterator;
- import java.util.List;
+@@ -11,6 +14,7 @@
  import java.util.Random;
  import java.util.Set;
-+import java.util.SortedSet;
  import java.util.TreeSet;
-+import java.util.Collections;
 +
  import net.minecraft.block.Block;
  import net.minecraft.block.BlockEventData;
  import net.minecraft.block.material.Material;
-@@ -56,6 +62,7 @@
+@@ -56,10 +60,13 @@
  import net.minecraft.world.chunk.storage.IChunkLoader;
  import net.minecraft.world.gen.ChunkProviderServer;
  import net.minecraft.world.gen.feature.WorldGeneratorBonusChest;
 +import net.minecraft.world.storage.DerivedWorldInfo;
  import net.minecraft.world.storage.ISaveHandler;
++import net.minecraftforge.cauldron.configuration.CauldronConfig;
  import net.minecraftforge.common.ChestGenHooks;
  import static net.minecraftforge.common.ChestGenHooks.BONUS_CHEST;
-@@ -63,15 +70,31 @@
+ import net.minecraftforge.common.DimensionManager;
++import net.minecraftforge.common.ForgeModContainer;
  import net.minecraftforge.common.MinecraftForge;
  import net.minecraftforge.event.ForgeEventFactory;
  import net.minecraftforge.event.world.WorldEvent;
-+import net.minecraftforge.cauldron.command.CauldronCommand;
- 
+@@ -67,11 +74,26 @@
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
  
@@ -64,7 +62,7 @@
      private final PlayerManager thePlayerManager;
      private Set pendingTickListEntriesHashSet;
      private TreeSet pendingTickListEntriesTreeSet;
-@@ -92,9 +115,13 @@
+@@ -92,9 +114,13 @@
      protected Set<ChunkCoordIntPair> doneChunks = new HashSet<ChunkCoordIntPair>();
      public List<Teleporter> customTeleporters = new ArrayList<Teleporter>();
  
@@ -78,22 +76,27 @@
          this.mcServer = p_i45284_1_;
          this.theEntityTracker = new EntityTracker(this);
          this.thePlayerManager = new PlayerManager(this);
-@@ -106,12 +133,12 @@
+@@ -103,15 +129,17 @@
+         {
+             this.entityIdMap = new IntHashMap();
+         }
++        
++        if (this.blockUpdatesTracker == null) this.blockUpdatesTracker = new cc.uraniummc.BlockUpdatesTracker(this);
  
          if (this.pendingTickListEntriesHashSet == null)
          {
 -            this.pendingTickListEntriesHashSet = new HashSet();
-+            this.pendingTickListEntriesHashSet = Collections.synchronizedSet(new LinkedHashSet());
++            this.pendingTickListEntriesHashSet = blockUpdatesTracker.hashSet;
          }
  
          if (this.pendingTickListEntriesTreeSet == null)
          {
 -            this.pendingTickListEntriesTreeSet = new TreeSet();
-+            this.pendingTickListEntriesTreeSet = (new TreeSet());
++            this.pendingTickListEntriesTreeSet = blockUpdatesTracker.treeSet;
          }
  
          this.worldTeleporter = new Teleporter(this);
-@@ -124,6 +151,47 @@
+@@ -124,6 +152,49 @@
              this.mapStorage.setData("scoreboard", scoreboardsavedata);
          }
  
@@ -117,15 +120,17 @@
 +        {
 +            this.entityIdMap = new IntHashMap();
 +        }
++        
++        if (this.blockUpdatesTracker == null) this.blockUpdatesTracker = new cc.uraniummc.BlockUpdatesTracker(this);
 +
 +        if (this.pendingTickListEntriesHashSet == null)
 +        {
-+            this.pendingTickListEntriesHashSet = Collections.synchronizedSet(new LinkedHashSet());
++            this.pendingTickListEntriesHashSet = blockUpdatesTracker.hashSet;
 +        }
 +
 +        if (this.pendingTickListEntriesTreeSet == null)
 +        {
-+            this.pendingTickListEntriesTreeSet = (new TreeSet());
++            this.pendingTickListEntriesTreeSet = blockUpdatesTracker.treeSet;
 +        }
 +
 +        this.worldTeleporter = new org.bukkit.craftbukkit.CraftTravelAgent(this); // CraftBukkit
@@ -141,7 +146,7 @@
          if (!(this instanceof WorldServerMulti)) //Forge: We fix the global mapStorage, which causes us to share scoreboards early. So don't associate the save data with the temporary scoreboard
          {
              scoreboardsavedata.func_96499_a(this.worldScoreboard);
-@@ -132,6 +200,31 @@
+@@ -132,6 +203,32 @@
          DimensionManager.setWorld(p_i45284_4_, this);
      }
  
@@ -155,6 +160,7 @@
 +        this.theEntityTracker = null;
 +        this.thePlayerManager = null;
 +        this.worldTeleporter = null;
++        this.blockUpdatesTracker = null;
 +    }
 +
 +    private boolean canSpawn(int x, int z)
@@ -173,7 +179,7 @@
      public void tick()
      {
          super.tick();
-@@ -155,12 +248,19 @@
+@@ -155,12 +252,19 @@
          }
  
          this.theProfiler.startSection("mobSpawner");
@@ -196,7 +202,7 @@
          this.theProfiler.endStartSection("chunkSource");
          this.chunkProvider.unloadQueuedChunks();
          int j = this.calculateSkylightSubtracted(1.0F);
-@@ -170,30 +270,47 @@
+@@ -170,30 +274,47 @@
              this.skylightSubtracted = j;
          }
  
@@ -245,7 +251,7 @@
      }
  
      public BiomeGenBase.SpawnListEntry spawnRandomCreature(EnumCreatureType p_73057_1_, int p_73057_2_, int p_73057_3_, int p_73057_4_)
-@@ -212,7 +329,7 @@
+@@ -212,7 +333,7 @@
          {
              EntityPlayer entityplayer = (EntityPlayer)iterator.next();
  
@@ -254,7 +260,7 @@
              {
                  this.allPlayersSleeping = false;
                  break;
-@@ -240,7 +357,25 @@
+@@ -240,7 +361,25 @@
  
      private void resetRainAndThunder()
      {
@@ -281,7 +287,7 @@
      }
  
      public boolean areAllPlayersAsleep()
-@@ -248,19 +383,26 @@
+@@ -248,19 +387,26 @@
          if (this.allPlayersSleeping && !this.isRemote)
          {
              Iterator iterator = this.playerEntities.iterator();
@@ -311,7 +317,7 @@
              return false;
          }
          else
-@@ -302,15 +444,29 @@
+@@ -302,15 +448,29 @@
          super.func_147456_g();
          int i = 0;
          int j = 0;
@@ -347,7 +353,7 @@
              this.func_147467_a(k, l, chunk);
              this.theProfiler.endStartSection("tickChunk");
              chunk.func_150804_b(false);
-@@ -346,12 +502,32 @@
+@@ -346,12 +506,32 @@
  
                  if (this.isBlockFreezableNaturally(j1 + k, l1 - 1, k1 + l))
                  {
@@ -382,7 +388,7 @@
                  }
  
                  if (this.isRaining())
-@@ -388,6 +564,7 @@
+@@ -388,6 +568,7 @@
                          if (block.getTickRandomly())
                          {
                              ++i;
@@ -390,7 +396,7 @@
                              block.updateTick(this, j2 + k, l2 + extendedblockstorage.getYLocation(), k2 + l, this.rand);
                          }
                      }
-@@ -396,6 +573,13 @@
+@@ -396,12 +577,19 @@
  
              this.theProfiler.endSection();
          }
@@ -404,16 +410,87 @@
      }
  
      public boolean isBlockTickScheduledThisTick(int p_147477_1_, int p_147477_2_, int p_147477_3_, Block p_147477_4_)
-@@ -427,7 +611,7 @@
-                 {
-                     Block block1 = this.getBlock(nextticklistentry.xCoord, nextticklistentry.yCoord, nextticklistentry.zCoord);
+     {
+-        NextTickListEntry nextticklistentry = new NextTickListEntry(p_147477_1_, p_147477_2_, p_147477_3_, p_147477_4_);
+-        return this.pendingTickListEntriesThisTick.contains(nextticklistentry);
++        for (cc.uraniummc.BlockUpdateEntry entry : (Iterable<cc.uraniummc.BlockUpdateEntry>) pendingTickListEntriesThisTick) if (entry.x == p_147477_1_ && entry.y == p_147477_2_ && entry.z == p_147477_3_ && entry.block == p_147477_4_) return true;
++        return false;
+     }
  
+     public void scheduleBlockUpdate(int p_147464_1_, int p_147464_2_, int p_147464_3_, Block p_147464_4_, int p_147464_5_)
+@@ -411,70 +599,29 @@
+ 
+     public void scheduleBlockUpdateWithPriority(int p_147454_1_, int p_147454_2_, int p_147454_3_, Block p_147454_4_, int p_147454_5_, int p_147454_6_)
+     {
+-        NextTickListEntry nextticklistentry = new NextTickListEntry(p_147454_1_, p_147454_2_, p_147454_3_, p_147454_4_);
+-        //Keeping here as a note for future when it may be restored.
+-        //boolean isForced = getPersistentChunks().containsKey(new ChunkCoordIntPair(nextticklistentry.xCoord >> 4, nextticklistentry.zCoord >> 4));
+-        //byte b0 = isForced ? 0 : 8;
+-        byte b0 = 0;
+-
+-        if (this.scheduledUpdatesAreImmediate && p_147454_4_.getMaterial() != Material.air)
+-        {
+-            if (p_147454_4_.func_149698_L())
+-            {
+-                b0 = 8;
+-
+-                if (this.checkChunksExist(nextticklistentry.xCoord - b0, nextticklistentry.yCoord - b0, nextticklistentry.zCoord - b0, nextticklistentry.xCoord + b0, nextticklistentry.yCoord + b0, nextticklistentry.zCoord + b0))
+-                {
+-                    Block block1 = this.getBlock(nextticklistentry.xCoord, nextticklistentry.yCoord, nextticklistentry.zCoord);
+-
 -                    if (block1.getMaterial() != Material.air && block1 == nextticklistentry.func_151351_a())
-+                    if (block1.getMaterial() != Material.air && block1 == nextticklistentry.func_151351_a() && p_147454_6_ != 0)
-                     {
-                         block1.updateTick(this, nextticklistentry.xCoord, nextticklistentry.yCoord, nextticklistentry.zCoord, this.rand);
-                     }
-@@ -474,7 +658,7 @@
+-                    {
+-                        block1.updateTick(this, nextticklistentry.xCoord, nextticklistentry.yCoord, nextticklistentry.zCoord, this.rand);
+-                    }
++        if (this.scheduledUpdatesAreImmediate && p_147454_4_.getMaterial() != Material.air) {
++            if (p_147454_4_.func_149698_L()) {
++                if (checkChunksExist(p_147454_1_ - 8, p_147454_2_ - 8, p_147454_3_ - 8, p_147454_1_ + 8, p_147454_2_ + 8, p_147454_3_ + 8)) {
++                    Block block = getBlock(p_147454_1_, p_147454_2_, p_147454_3_);
++                    if (block.getMaterial() != Material.air && block == p_147454_4_)
++                        block.updateTick(this, p_147454_1_, p_147454_2_, p_147454_3_, rand);
+                 }
+-
+                 return;
+             }
+-
+             p_147454_5_ = 1;
+         }
+-
+-        if (this.checkChunksExist(p_147454_1_ - b0, p_147454_2_ - b0, p_147454_3_ - b0, p_147454_1_ + b0, p_147454_2_ + b0, p_147454_3_ + b0))
+-        {
+-            if (p_147454_4_.getMaterial() != Material.air)
+-            {
+-                nextticklistentry.setScheduledTime((long)p_147454_5_ + this.worldInfo.getWorldTotalTime());
+-                nextticklistentry.setPriority(p_147454_6_);
+-            }
+-
+-            if (!this.pendingTickListEntriesHashSet.contains(nextticklistentry))
+-            {
+-                this.pendingTickListEntriesHashSet.add(nextticklistentry);
+-                this.pendingTickListEntriesTreeSet.add(nextticklistentry);
+-            }
+-        }
++        if (getChunkIfLoaded(p_147454_1_ >> 4, p_147454_3_ >> 4) != null)
++            blockUpdatesTracker.allocateEntry(p_147454_1_, p_147454_2_, p_147454_3_, p_147454_6_, p_147454_5_ + this.worldInfo.getWorldTotalTime(), p_147454_4_);
+     }
+ 
+     public void func_147446_b(int p_147446_1_, int p_147446_2_, int p_147446_3_, Block p_147446_4_, int p_147446_5_, int p_147446_6_)
+     {
+-        NextTickListEntry nextticklistentry = new NextTickListEntry(p_147446_1_, p_147446_2_, p_147446_3_, p_147446_4_);
+-        nextticklistentry.setPriority(p_147446_6_);
+-
+-        if (p_147446_4_.getMaterial() != Material.air)
+-        {
+-            nextticklistentry.setScheduledTime((long)p_147446_5_ + this.worldInfo.getWorldTotalTime());
+-        }
+-
+-        if (!this.pendingTickListEntriesHashSet.contains(nextticklistentry))
+-        {
+-            this.pendingTickListEntriesHashSet.add(nextticklistentry);
+-            this.pendingTickListEntriesTreeSet.add(nextticklistentry);
+-        }
++        blockUpdatesTracker.allocateEntry(p_147446_1_, p_147446_2_, p_147446_3_, p_147446_6_, p_147446_5_ + this.worldInfo.getWorldTotalTime(), p_147446_4_);
+     }
  
      public void updateEntities()
      {
@@ -422,7 +499,7 @@
          {
              if (this.updateEntityTick++ >= 1200)
              {
-@@ -487,6 +671,7 @@
+@@ -487,6 +634,7 @@
          }
  
          super.updateEntities();
@@ -430,54 +507,22 @@
      }
  
      public void resetUpdateEntityTick()
-@@ -494,19 +679,60 @@
-         this.updateEntityTick = 0;
-     }
+@@ -496,33 +644,40 @@
  
-+    public void reevaluate()
-+    {
-+        if(this.pendingTickListEntriesTreeSet.size() > this.pendingTickListEntriesHashSet.size())
-+        {
-+                for(Object o : this.pendingTickListEntriesTreeSet)
-+                {
-+                        if(!this.pendingTickListEntriesHashSet.contains(o))
-+                        {
-+                                //this.pendingTickListEntriesHashSet.add(o);
-+                                NextTickListEntry t = (NextTickListEntry) o;
-+                                System.out.println("Detected TreeSet culprit at " +t.xCoord+", "+t.yCoord+", " + t.zCoord + " and leaving. Notify someone we got a bogey!");
-+                        }
-+                }
-+        }
-+        else if(this.pendingTickListEntriesTreeSet.size() < this.pendingTickListEntriesHashSet.size())
-+        {
-+                for(Object o : this.pendingTickListEntriesHashSet)
-+                {
-+                        if(!this.pendingTickListEntriesTreeSet.contains(o))
-+                        {
-+                                //this.pendingTickListEntriesTreeSet.add(o);
-+                                NextTickListEntry t = (NextTickListEntry) o;
-+                                System.out.println("Detected HashSet culprit at " +t.xCoord+", "+t.yCoord+", " + t.zCoord + " and leaving. Notify someone we got a bogey!");
-+                        }
-+                }
-+        }
-+    }
-+
-+    long last = 0L;
      public boolean tickUpdates(boolean p_72955_1_)
      {
-         int i = this.pendingTickListEntriesTreeSet.size();
+-        int i = this.pendingTickListEntriesTreeSet.size();
++        int i = blockUpdatesTracker.size();
  
 -        if (i != this.pendingTickListEntriesHashSet.size())
-+        if (CauldronCommand.debug)
++        //if (i != this.pendingTickListEntriesHashSet.size())
++        //{
++        //    throw new IllegalStateException("TickNextTick list out of synch");
++        //}
++        //else
          {
 -            throw new IllegalStateException("TickNextTick list out of synch");
-+        	if(System.currentTimeMillis() - last > 20000L)
-+        	{
-+        		System.out.println("[WARN - Robotia] TickNextTick list out of synch by " +Math.abs(this.pendingTickListEntriesTreeSet.size()-this.pendingTickListEntriesHashSet.size() ));
-+        		reevaluate(); last = System.currentTimeMillis();
-+        	}
-+            	//throw new IllegalStateException("TickNextTick list out of synch");
-         }
+-        }
 -        else
 -        {
              if (i > 1000)
@@ -496,57 +541,123 @@
              }
  
              this.theProfiler.startSection("cleaning");
-@@ -577,17 +803,15 @@
+-            NextTickListEntry nextticklistentry;
++            cc.uraniummc.BlockUpdateEntry nextticklistentry;
+ 
+             for (int j = 0; j < i; ++j)
+             {
+-                nextticklistentry = (NextTickListEntry)this.pendingTickListEntriesTreeSet.first();
+-
+-                if (!p_72955_1_ && nextticklistentry.scheduledTime > this.worldInfo.getWorldTotalTime())
++                nextticklistentry = blockUpdatesTracker.peek();
++                Chunk chunk = getChunkIfLoaded(nextticklistentry.x >> 4, nextticklistentry.z >> 4);
++                if (!p_72955_1_ && nextticklistentry.time > this.worldInfo.getWorldTotalTime())
+                 {
+                     break;
+                 }
+-
+-                this.pendingTickListEntriesTreeSet.remove(nextticklistentry);
+-                this.pendingTickListEntriesHashSet.remove(nextticklistentry);
++                blockUpdatesTracker.removeEntry(nextticklistentry, true);
+                 this.pendingTickListEntriesThisTick.add(nextticklistentry);
+             }
+ 
+@@ -532,22 +687,22 @@
+ 
+             while (iterator.hasNext())
+             {
+-                nextticklistentry = (NextTickListEntry)iterator.next();
++                nextticklistentry = (cc.uraniummc.BlockUpdateEntry)iterator.next();
+                 iterator.remove();
+                 //Keeping here as a note for future when it may be restored.
+                 //boolean isForced = getPersistentChunks().containsKey(new ChunkCoordIntPair(nextticklistentry.xCoord >> 4, nextticklistentry.zCoord >> 4));
+                 //byte b0 = isForced ? 0 : 8;
+                 byte b0 = 0;
+ 
+-                if (this.checkChunksExist(nextticklistentry.xCoord - b0, nextticklistentry.yCoord - b0, nextticklistentry.zCoord - b0, nextticklistentry.xCoord + b0, nextticklistentry.yCoord + b0, nextticklistentry.zCoord + b0))
++                if (this.checkChunksExist(nextticklistentry.x - b0, nextticklistentry.y - b0, nextticklistentry.z - b0, nextticklistentry.x + b0, nextticklistentry.y + b0, nextticklistentry.z + b0))
+                 {
+-                    Block block = this.getBlock(nextticklistentry.xCoord, nextticklistentry.yCoord, nextticklistentry.zCoord);
++                    Block block = this.getBlock(nextticklistentry.x, nextticklistentry.y, nextticklistentry.z);
+ 
+-                    if (block.getMaterial() != Material.air && Block.isEqualTo(block, nextticklistentry.func_151351_a()))
++                    if (block.getMaterial() != Material.air && Block.isEqualTo(block, nextticklistentry.block))
+                     {
+                         try
+                         {
+-                            block.updateTick(this, nextticklistentry.xCoord, nextticklistentry.yCoord, nextticklistentry.zCoord, this.rand);
++                            block.updateTick(this, nextticklistentry.x, nextticklistentry.y, nextticklistentry.z, this.rand);
+                         }
+                         catch (Throwable throwable1)
+                         {
+@@ -557,27 +712,35 @@
+ 
+                             try
+                             {
+-                                k = this.getBlockMetadata(nextticklistentry.xCoord, nextticklistentry.yCoord, nextticklistentry.zCoord);
++                                k = this.getBlockMetadata(nextticklistentry.x, nextticklistentry.y, nextticklistentry.z);
+                             }
+                             catch (Throwable throwable)
+                             {
+                                 k = -1;
+                             }
+ 
+-                            CrashReportCategory.func_147153_a(crashreportcategory, nextticklistentry.xCoord, nextticklistentry.yCoord, nextticklistentry.zCoord, block, k);
+-                            throw new ReportedException(crashreport);
++                            CrashReportCategory.func_147153_a(crashreportcategory, nextticklistentry.x, nextticklistentry.y, nextticklistentry.z, block, k);
++                            if (MinecraftServer.cauldronConfig.removeErroringBlocks.getValue())
++                            {
++                                FMLLog.getLogger().log(org.apache.logging.log4j.Level.ERROR, crashreport.getCompleteReport());
++                                setBlockToAir(nextticklistentry.x, nextticklistentry.y, nextticklistentry.y);
++                            }
++                            else
++                            {
++                                throw new ReportedException(crashreport);
++                            }
+                         }
+                     }
+                 }
+                 else
+                 {
+-                    this.scheduleBlockUpdate(nextticklistentry.xCoord, nextticklistentry.yCoord, nextticklistentry.zCoord, nextticklistentry.func_151351_a(), 0);
++                    this.scheduleBlockUpdate(nextticklistentry.x, nextticklistentry.y, nextticklistentry.z, nextticklistentry.block, 0);
+                 }
+             }
  
              this.theProfiler.endSection();
              this.pendingTickListEntriesThisTick.clear();
 -            return !this.pendingTickListEntriesTreeSet.isEmpty();
--        }
-+            return !this.pendingTickListEntriesTreeSet.isEmpty();        
++            return !blockUpdatesTracker.isEmpty();
+         }
      }
  
--    public List getPendingBlockUpdates(Chunk p_72920_1_, boolean p_72920_2_)
-+    public List<NextTickListEntry> getPendingBlockUpdates(Chunk p_72920_1_, boolean p_72920_2_)
-     {
--        ArrayList arraylist = null;
--        ChunkCoordIntPair chunkcoordintpair = p_72920_1_.getChunkCoordIntPair();
--        int i = (chunkcoordintpair.chunkXPos << 4) - 2;
-+        ArrayList<NextTickListEntry> arraylist = null;
-+        int i = (p_72920_1_.xPosition << 4) - 2; // Thermos get rid of unnecessary ChunkCoordPosition pair creation
-         int j = i + 16 + 2;
--        int k = (chunkcoordintpair.chunkZPos << 4) - 2;
-+        int k = (p_72920_1_.zPosition << 4) - 2;
-         int l = k + 16 + 2;
+@@ -596,7 +759,7 @@
  
-         for (int i1 = 0; i1 < 2; ++i1)
-@@ -617,19 +841,24 @@
+             if (i1 == 0)
+             {
+-                iterator = this.pendingTickListEntriesTreeSet.iterator();
++                iterator = this.blockUpdatesTracker.iterator();
+             }
+             else
+             {
+@@ -610,13 +773,13 @@
+ 
+             while (iterator.hasNext())
+             {
+-                NextTickListEntry nextticklistentry = (NextTickListEntry)iterator.next();
++                cc.uraniummc.BlockUpdateEntry nextticklistentry = (cc.uraniummc.BlockUpdateEntry)iterator.next();
+ 
+-                if (nextticklistentry.xCoord >= i && nextticklistentry.xCoord < j && nextticklistentry.zCoord >= k && nextticklistentry.zCoord < l)
++                if (nextticklistentry.x >= i && nextticklistentry.x < j && nextticklistentry.z >= k && nextticklistentry.z < l)
+                 {
                      if (p_72920_2_)
                      {
-                         this.pendingTickListEntriesHashSet.remove(nextticklistentry);
-+                        
-+                        if(i1 != 0) // Thermos - dump it if we're looking at this.pendingTickListEntriesThisTick
-+                        {
-+                        	this.pendingTickListEntriesTreeSet.remove(nextticklistentry);
-+                        }
+-                        this.pendingTickListEntriesHashSet.remove(nextticklistentry);
++                        //this.pendingTickListEntriesHashSet.remove(nextticklistentry);
                          iterator.remove();
                      }
  
-                     if (arraylist == null)
-                     {
--                        arraylist = new ArrayList();
-+                        arraylist = new ArrayList<NextTickListEntry>(30);
-                     }
- 
-                     arraylist.add(nextticklistentry);
-                 }
-             }
-         }
--
-+        
-         return arraylist;
-     }
- 
-@@ -651,7 +880,37 @@
+@@ -651,7 +814,37 @@
      protected IChunkProvider createChunkProvider()
      {
          IChunkLoader ichunkloader = this.saveHandler.getChunkLoader(this.provider);
@@ -585,7 +696,7 @@
          return this.theChunkProviderServer;
      }
  
-@@ -659,29 +918,31 @@
+@@ -659,29 +852,31 @@
      {
          ArrayList arraylist = new ArrayList();
  
@@ -632,16 +743,27 @@
          return arraylist;
      }
  
-@@ -704,7 +965,7 @@
+@@ -701,15 +896,17 @@
+         {
+             this.entityIdMap = new IntHashMap();
+         }
++        
++        if (blockUpdatesTracker == null) blockUpdatesTracker = new cc.uraniummc.BlockUpdatesTracker(this);
  
          if (this.pendingTickListEntriesHashSet == null)
          {
 -            this.pendingTickListEntriesHashSet = new HashSet();
-+            this.pendingTickListEntriesHashSet = Collections.synchronizedSet(new LinkedHashSet());
++            this.pendingTickListEntriesHashSet = blockUpdatesTracker.hashSet;
          }
  
          if (this.pendingTickListEntriesTreeSet == null)
-@@ -733,7 +994,28 @@
+         {
+-            this.pendingTickListEntriesTreeSet = new TreeSet();
++            this.pendingTickListEntriesTreeSet = blockUpdatesTracker.treeSet;
+         }
+ 
+         this.createSpawnPosition(p_72963_1_);
+@@ -733,7 +930,28 @@
              int i = 0;
              int j = this.provider.getAverageGroundLevel();
              int k = 0;
@@ -670,7 +792,14 @@
              if (chunkposition != null)
              {
                  i = chunkposition.chunkPosX;
-@@ -876,6 +1158,20 @@
+@@ -871,11 +1089,26 @@
+ 
+     public Entity getEntityByID(int p_73045_1_)
+     {
+-        return (Entity)this.entityIdMap.lookup(p_73045_1_);
++        Entity entity = (Entity)this.entityIdMap.lookup(p_73045_1_);
++        return entity == null || entity.isDead ? null : entity;
+     }
  
      public boolean addWeatherEffect(Entity p_72942_1_)
      {
@@ -691,18 +820,17 @@
          if (super.addWeatherEffect(p_72942_1_))
          {
              this.mcServer.getConfigurationManager().sendToAllNear(p_72942_1_.posX, p_72942_1_.posY, p_72942_1_.posZ, 512.0D, this.provider.dimensionId, new S2CPacketSpawnGlobalEntity(p_72942_1_));
-@@ -894,13 +1190,24 @@
+@@ -894,13 +1127,23 @@
  
      public Explosion newExplosion(Entity p_72885_1_, double p_72885_2_, double p_72885_4_, double p_72885_6_, float p_72885_8_, boolean p_72885_9_, boolean p_72885_10_)
      {
 +        // CraftBukkit start
 +        Explosion explosion = super.newExplosion(p_72885_1_, p_72885_2_, p_72885_4_, p_72885_6_, p_72885_8_, p_72885_9_, p_72885_10_);
-+	if(explosion == null)return null;
-+	try{
++
 +        if (explosion.wasCanceled)
 +        {
 +            return explosion;
-+        }}catch(Exception e){return null;}
++        }
 +
 +        /* Remove
          Explosion explosion = new Explosion(this, p_72885_1_, p_72885_2_, p_72885_4_, p_72885_6_, p_72885_8_);
@@ -717,22 +845,18 @@
          if (!p_72885_10_)
          {
              explosion.affectedBlockPositions.clear();
-@@ -977,7 +1284,8 @@
+@@ -977,7 +1220,7 @@
      {
          boolean flag = this.isRaining();
          super.updateWeather();
 -
-+        
-+        // Thermos send those gradual rain changes man!
++        /* CraftBukkit start
          if (this.prevRainingStrength != this.rainingStrength)
          {
              this.mcServer.getConfigurationManager().sendPacketToAllPlayersInDimension(new S2BPacketChangeGameState(7, this.rainingStrength), this.provider.dimensionId);
-@@ -987,11 +1295,9 @@
-         {
+@@ -988,10 +1231,6 @@
              this.mcServer.getConfigurationManager().sendPacketToAllPlayersInDimension(new S2BPacketChangeGameState(8, this.thunderingStrength), this.provider.dimensionId);
          }
-+        
-+        /* CraftBukkit start
  
 -        /*The function in use here has been replaced in order to only send the weather info to players in the correct dimension,
 -        rather than to all players on the server. This is what causes the client-side rain, as the
@@ -741,7 +865,7 @@
          if (flag != this.isRaining())
          {
              if (flag)
-@@ -1006,6 +1312,33 @@
+@@ -1006,6 +1245,33 @@
              this.mcServer.getConfigurationManager().sendPacketToAllPlayersInDimension(new S2BPacketChangeGameState(7, this.rainingStrength), this.provider.dimensionId);
              this.mcServer.getConfigurationManager().sendPacketToAllPlayersInDimension(new S2BPacketChangeGameState(8, this.thunderingStrength), this.provider.dimensionId);
          }
@@ -775,7 +899,7 @@
      }
  
      protected int func_152379_p()
-@@ -1069,4 +1402,53 @@
+@@ -1069,4 +1335,54 @@
                  this();
              }
          }
@@ -826,6 +950,7 @@
 +        return this.getBlock(x, y, z);
 +    }
 +    // CraftBukkit end
-+
 +    
++    // KCauldron start
++    public cc.uraniummc.BlockUpdatesTracker blockUpdatesTracker;
  }

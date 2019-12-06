@@ -1,128 +1,131 @@
 --- ../src-base/minecraft/net/minecraft/world/World.java
 +++ ../src-work/minecraft/net/minecraft/world/World.java
-@@ -2,9 +2,11 @@
+@@ -1,7 +1,5 @@
+ package net.minecraft.world;
  
- import cpw.mods.fml.relauncher.Side;
- import cpw.mods.fml.relauncher.SideOnly;
-+
+-import cpw.mods.fml.relauncher.Side;
+-import cpw.mods.fml.relauncher.SideOnly;
  import java.util.ArrayList;
  import java.util.Calendar;
  import java.util.Collection;
-+import java.util.HashMap;
- import java.util.HashSet;
- import java.util.Iterator;
- import java.util.List;
-@@ -12,6 +14,9 @@
+@@ -12,19 +10,55 @@
  import java.util.Set;
  import java.util.UUID;
  import java.util.concurrent.Callable;
-+import java.util.concurrent.ConcurrentHashMap;
-+import java.util.concurrent.ConcurrentMap;
 +
++import org.bukkit.Bukkit;
++import org.bukkit.craftbukkit.CraftServer;
++import org.bukkit.craftbukkit.CraftWorld;
++import org.bukkit.craftbukkit.SpigotTimings;
++import org.bukkit.craftbukkit.block.CraftBlockState;
++import org.bukkit.craftbukkit.event.CraftEventFactory;
++import org.bukkit.craftbukkit.util.CraftMagicNumbers;
++import org.bukkit.event.block.BlockCanBuildEvent;
++import org.bukkit.event.block.BlockPhysicsEvent;
++import org.bukkit.event.block.BlockPlaceEvent;
++import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
++import org.bukkit.event.weather.ThunderChangeEvent;
++import org.bukkit.event.weather.WeatherChangeEvent;
++import org.bukkit.generator.ChunkGenerator;
++// Cauldron end
++import org.spigotmc.TickLimiter;
++
++import com.google.common.collect.ImmutableSetMultimap;
++
++import cc.uraniummc.capture.WorldCapture;
++import cc.uraniummc.capture.type.CaptureBlock;
++import cc.uraniummc.capture.type.CaptureTree;
++import cpw.mods.fml.common.FMLLog;
++import cpw.mods.fml.relauncher.Side;
++import cpw.mods.fml.relauncher.SideOnly;
  import net.minecraft.block.Block;
- import net.minecraft.block.BlockHopper;
+-import net.minecraft.block.BlockHopper;
  import net.minecraft.block.BlockLiquid;
-@@ -23,11 +28,15 @@
+-import net.minecraft.block.BlockSlab;
+-import net.minecraft.block.BlockSnow;
+-import net.minecraft.block.BlockStairs;
+ import net.minecraft.block.material.Material;
+ import net.minecraft.command.IEntitySelector;
  import net.minecraft.crash.CrashReport;
  import net.minecraft.crash.CrashReportCategory;
  import net.minecraft.entity.Entity;
-+import net.minecraft.entity.EntityList;
  import net.minecraft.entity.EntityLiving;
- import net.minecraft.entity.player.EntityPlayer;
- import net.minecraft.init.Blocks;
-+import net.minecraft.inventory.IInventory;
-+import net.minecraft.item.ItemBlock;
- import net.minecraft.item.ItemStack;
- import net.minecraft.nbt.NBTTagCompound;
-+import net.minecraft.network.play.server.S2EPacketCloseWindow;
- import net.minecraft.pathfinding.PathEntity;
- import net.minecraft.pathfinding.PathFinder;
- import net.minecraft.profiler.Profiler;
-@@ -51,7 +60,6 @@
- import net.minecraft.world.storage.ISaveHandler;
- import net.minecraft.world.storage.MapStorage;
- import net.minecraft.world.storage.WorldInfo;
--
- import cpw.mods.fml.common.FMLLog;
- 
- import com.google.common.collect.ImmutableSetMultimap;
-@@ -67,9 +75,63 @@
- import net.minecraftforge.event.entity.EntityEvent;
- import net.minecraftforge.event.entity.EntityJoinWorldEvent;
- import net.minecraftforge.event.world.WorldEvent;
-+import net.openhft.affinity.AffinityLock;
-+import thermos.chaud.HashedArrayList;
- import net.minecraftforge.event.entity.PlaySoundAtEntityEvent;
- import net.minecraft.entity.EnumCreatureType;
- 
 +// CraftBukkit start
 +import net.minecraft.entity.EntityLivingBase;
++import net.minecraft.entity.EnumCreatureType;
 +import net.minecraft.entity.item.EntityItem;
++// CraftBukkit end
++// Spigot Start
++import net.minecraft.entity.item.EntityXPOrb;
 +import net.minecraft.entity.monster.EntityGhast;
 +import net.minecraft.entity.monster.EntityGolem;
 +import net.minecraft.entity.monster.EntityMob;
 +import net.minecraft.entity.monster.EntitySlime;
 +import net.minecraft.entity.passive.EntityAnimal;
 +import net.minecraft.entity.passive.EntityWaterMob;
+ import net.minecraft.entity.player.EntityPlayer;
 +import net.minecraft.entity.player.EntityPlayerMP;
+ import net.minecraft.init.Blocks;
+ import net.minecraft.item.ItemStack;
+ import net.minecraft.nbt.NBTTagCompound;
+@@ -36,7 +70,6 @@
+ import net.minecraft.tileentity.TileEntity;
+ import net.minecraft.util.AxisAlignedBB;
+ import net.minecraft.util.ChunkCoordinates;
+-import net.minecraft.util.Direction;
+ import net.minecraft.util.Facing;
+ import net.minecraft.util.MathHelper;
+ import net.minecraft.util.MovingObjectPosition;
+@@ -48,31 +81,30 @@
+ import net.minecraft.world.biome.WorldChunkManager;
+ import net.minecraft.world.chunk.Chunk;
+ import net.minecraft.world.chunk.IChunkProvider;
 +import net.minecraft.world.gen.ChunkProviderServer;
-+
-+import org.bukkit.Bukkit;
-+import org.bukkit.World.Environment;
-+import org.bukkit.block.BlockState;
-+import org.bukkit.craftbukkit.util.CraftMagicNumbers;
-+import org.bukkit.craftbukkit.util.LongHashSet;
-+import org.bukkit.craftbukkit.util.UnsafeList;
-+import org.bukkit.entity.HumanEntity;
-+import org.bukkit.generator.ChunkGenerator;
-+import org.bukkit.craftbukkit.CraftServer;
-+import org.bukkit.craftbukkit.CraftWorld;
-+import org.bukkit.craftbukkit.event.CraftEventFactory;
-+import org.bukkit.event.block.BlockCanBuildEvent;
-+import org.bukkit.event.block.BlockPhysicsEvent;
-+import org.bukkit.event.block.BlockPlaceEvent;
-+import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
-+import org.bukkit.event.entity.*;
-+import org.bukkit.event.weather.WeatherChangeEvent;
-+import org.bukkit.event.weather.ThunderChangeEvent;
-+
-+// CraftBukkit end
-+// Spigot Start
-+import net.minecraft.entity.item.EntityXPOrb;
-+
-+import org.bukkit.craftbukkit.SpigotTimings;
-+
-+// Spigot end
-+// Cauldron start
-+import net.minecraft.nbt.NBTTagCompound;
+ import net.minecraft.world.storage.ISaveHandler;
+ import net.minecraft.world.storage.MapStorage;
+ import net.minecraft.world.storage.WorldInfo;
+-
+-import cpw.mods.fml.common.FMLLog;
+-
+-import com.google.common.collect.ImmutableSetMultimap;
+-
 +import net.minecraftforge.cauldron.CauldronHooks;
-+import net.minecraftforge.cauldron.configuration.CauldronConfig;
 +import net.minecraftforge.cauldron.configuration.CauldronWorldConfig;
-+import net.minecraftforge.cauldron.configuration.SushchestvoWorldConfig;
-+import net.minecraftforge.cauldron.configuration.TileEntityConfig;
++import net.minecraftforge.cauldron.configuration.EntityWorldConfig;
 +import net.minecraftforge.cauldron.configuration.TileEntityWorldConfig;
+ import net.minecraftforge.client.ForgeHooksClient;
 +import net.minecraftforge.common.DimensionManager;
-+
-+import org.bukkit.block.BlockState;
-+// Cauldron end
-+import org.spigotmc.TickLimiter;
-+
+ import net.minecraftforge.common.ForgeChunkManager;
+ import net.minecraftforge.common.ForgeChunkManager.Ticket;
+ import net.minecraftforge.common.ForgeModContainer;
+-import net.minecraftforge.common.ForgeHooks;
+ import net.minecraftforge.common.MinecraftForge;
+-import net.minecraftforge.common.util.ForgeDirection;
+ import net.minecraftforge.common.WorldSpecificSaveHandler;
++import net.minecraftforge.common.util.BlockSnapshot;
++import net.minecraftforge.common.util.ForgeDirection;
+ import net.minecraftforge.event.entity.EntityEvent;
+ import net.minecraftforge.event.entity.EntityJoinWorldEvent;
+-import net.minecraftforge.event.world.WorldEvent;
+ import net.minecraftforge.event.entity.PlaySoundAtEntityEvent;
+-import net.minecraft.entity.EnumCreatureType;
+ 
  public abstract class World implements IBlockAccess
  {
-    /**
-@@ -82,16 +144,15 @@
-     public final MapStorage perWorldStorage;
+-   /**
++    /**
+      * Used in the getEntitiesWithinAABB functions to expand the search area for entities.
+      * Modders should change this variable to a higher value if it is less then the radius
+      * of one of there entities.
+@@ -83,15 +115,14 @@
  
      public boolean scheduledUpdatesAreImmediate;
--    public List loadedEntityList = new ArrayList();
+     public List loadedEntityList = new ArrayList();
 -    protected List unloadedEntityList = new ArrayList();
--    public List loadedTileEntityList = new ArrayList();
--    private List addedTileEntityList = new ArrayList();
++    public List unloadedEntityList = new ArrayList(); // Cauldron
+     public List loadedTileEntityList = new ArrayList();
+     private List addedTileEntityList = new ArrayList();
 -    private List field_147483_b = new ArrayList();
-+    public List loadedEntityList = new HashedArrayList();
-+    public List unloadedEntityList = new HashedArrayList(); // Cauldron
-+    public List loadedTileEntityList = new HashedArrayList();
-+    private List addedTileEntityList = new HashedArrayList();
 +    public List field_147483_b = new ArrayList(); // Cauldron
      public List playerEntities = new ArrayList();
      public List weatherEffects = new ArrayList();
@@ -132,13 +135,11 @@
      protected final int DIST_HASH_MAGIC = 1013904223;
      public float prevRainingStrength;
      public float rainingStrength;
-@@ -99,27 +160,92 @@
-     public float thunderingStrength;
+@@ -100,31 +131,94 @@
      public int lastLightningBolt;
      public EnumDifficulty difficultySetting;
--    public Random rand = new Random();
+     public Random rand = new Random();
 -    public final WorldProvider provider;
-+    public Random rand = new thermos.thermite.ThermiteRandom();
 +    protected int updateLCG = this.rand.nextInt();
 +    public WorldProvider provider; // CraftBukkit - remove final
      protected List worldAccesses = new ArrayList();
@@ -174,15 +175,11 @@
      private boolean field_147481_N;
      int[] lightUpdateBlockList;
 +    // Cauldron start
-+    public boolean captureTreeGeneration = false;
-+    public ArrayList<EntityItem> capturedItems = new ArrayList<EntityItem>();
 +    public int entitiesTicked;
 +    public int tilesTicked;
 +    public CauldronWorldConfig cauldronConfig;
 +    public TileEntityWorldConfig tileentityConfig;
-+    public SushchestvoWorldConfig sushchestvoConfig;
-+    
-+    public Boolean isModded = null;
++    public EntityWorldConfig entityConfig; // imcc
 +    // preload world crash report classes to fix NCDFE masking StackOverflow/memory error, see #721
 +    private static boolean preloadedCrashClasses = false;
 +    {
@@ -233,7 +230,14 @@
      private static final String __OBFID = "CL_00000140";
      public boolean restoringBlockSnapshots = false;
      public boolean captureBlockSnapshots = false;
-@@ -166,6 +292,27 @@
+     public ArrayList<net.minecraftforge.common.util.BlockSnapshot> capturedBlockSnapshots = new ArrayList<net.minecraftforge.common.util.BlockSnapshot>();
+ 
++    public WorldCapture mCapture=new WorldCapture(this);
++
+     public BiomeGenBase getBiomeGenForCoords(final int p_72807_1_, final int p_72807_2_)
+     {
+         return provider.getBiomeGenForCoords(p_72807_1_, p_72807_2_);
+@@ -166,6 +260,27 @@
          return this.provider.worldChunkMgr;
      }
  
@@ -261,7 +265,7 @@
      @SideOnly(Side.CLIENT)
      public World(ISaveHandler p_i45368_1_, String p_i45368_2_, WorldProvider p_i45368_3_, WorldSettings p_i45368_4_, Profiler p_i45368_5_)
      {
-@@ -179,6 +326,12 @@
+@@ -179,6 +294,12 @@
          this.worldInfo = new WorldInfo(p_i45368_4_, p_i45368_2_);
          this.provider = p_i45368_3_;
          perWorldStorage = new MapStorage((ISaveHandler)null);
@@ -274,20 +278,20 @@
      }
  
      // Broken up so that the WorldClient gets the chance to set the mapstorage object before the dimension initializes
-@@ -207,8 +360,182 @@
+@@ -207,8 +328,177 @@
          this.calculateInitialWeather();
      }
  
 +    // Changed signature - added gen and env
 +    public World(ISaveHandler p_i45369_1_, String p_i45369_2_, WorldSettings p_i45369_3_, WorldProvider p_i45369_4_, Profiler p_i45369_5_, ChunkGenerator gen,
-+            org.bukkit.World.Environment env)
++                 org.bukkit.World.Environment env)
 +    {
 +        this.spigotConfig = new org.spigotmc.SpigotWorldConfig(p_i45369_2_); // Spigot
 +        initLimiter(); // Spigot
 +        // Cauldron start
-+        this.cauldronConfig = new CauldronWorldConfig(p_i45369_2_, MinecraftServer.getServer().cauldronConfig);
-+        this.tileentityConfig = new TileEntityWorldConfig(p_i45369_2_, MinecraftServer.getServer().tileEntityConfig);
-+        this.sushchestvoConfig = new SushchestvoWorldConfig(p_i45369_2_, MinecraftServer.getServer().sushchestvoConfig);
++        this.cauldronConfig = new CauldronWorldConfig(p_i45369_2_, MinecraftServer.cauldronConfig);
++        this.tileentityConfig = new TileEntityWorldConfig(p_i45369_2_, MinecraftServer.tileEntityConfig);
++        this.entityConfig = new EntityWorldConfig(p_i45369_2_, MinecraftServer.entityConfig);
 +        // Cauldron end
 +        this.worldInfo = p_i45369_1_.loadWorldInfo(); // Spigot
 +        this.generator = gen;
@@ -369,12 +373,7 @@
 +        }
 +        // Cauldron end
 +        this.chunkProvider = this.createChunkProvider();
-+        // Thermos start
-+	try {
-+	if(this.chunkProvider != null)
-+            this.isModded = !this.chunkProvider.getClass().getPackage().getName().startsWith("net.minecraft"); } catch(Exception e) { this.isModded = false; }
-+        // Thermos end
-+        
++
 +        if (this instanceof WorldServer)
 +        {
 +            this.perWorldStorage = new MapStorage(new WorldSpecificSaveHandler((WorldServer) this, p_i45369_1_));
@@ -437,7 +436,7 @@
 +            initLimiter(); // Spigot
 +            this.cauldronConfig = new CauldronWorldConfig(p_i45369_2_, MinecraftServer.getServer().cauldronConfig);
 +            this.tileentityConfig = new TileEntityWorldConfig(p_i45369_2_, MinecraftServer.getServer().tileEntityConfig);
-+            this.sushchestvoConfig = new SushchestvoWorldConfig(p_i45369_2_, MinecraftServer.getServer().sushchestvoConfig);            
++            this.entityConfig = new EntityWorldConfig(p_i45369_2_, MinecraftServer.getServer().entityConfig);
 +            this.world = DimensionManager.getWorld(0).getWorld();
 +            this.timings = DimensionManager.getWorld(0).timings;
 +            this.activeChunkSet_CB = new gnu.trove.map.hash.TLongShortHashMap(spigotConfig.chunksPerTick * 5, 0.7f, Long.MIN_VALUE, Short.MIN_VALUE);
@@ -457,7 +456,7 @@
          this.ambientTickCountdown = this.rand.nextInt(12000);
          this.spawnHostileMobs = true;
          this.spawnPeacefulMobs = true;
-@@ -216,7 +543,6 @@
+@@ -216,7 +506,6 @@
          this.lightUpdateBlockList = new int[32768];
          this.saveHandler = p_i45369_1_;
          this.theProfiler = p_i45369_5_;
@@ -465,7 +464,7 @@
          this.worldInfo = p_i45369_1_.loadWorldInfo();
  
          if (p_i45369_4_ != null)
-@@ -235,15 +561,33 @@
+@@ -235,13 +524,26 @@
          if (this.worldInfo == null)
          {
              this.worldInfo = new WorldInfo(p_i45369_3_, p_i45369_2_);
@@ -490,32 +489,25 @@
 +        this.provider.dimensionId = providerId;
 +        // Cauldron end
          this.chunkProvider = this.createChunkProvider();
--
-+        // Thermos start
-+	try {
-+	if(this.chunkProvider != null)
-+            this.isModded = !this.chunkProvider.getClass().getPackage().getName().startsWith("net.minecraft"); } catch(Exception e) { this.isModded = false; }
-+        // Thermos end
-+        
+ 
          if (this instanceof WorldServer)
-         {
-             this.perWorldStorage = new MapStorage(new WorldSpecificSaveHandler((WorldServer)this, p_i45369_1_));
-@@ -294,6 +638,7 @@
+@@ -294,6 +596,7 @@
          this.calculateInitialSkylight();
          this.calculateInitialWeather();
      }
-+    // Cauldron end    
++    // Cauldron end
  
      private static MapStorage s_mapStorage;
      private static ISaveHandler s_savehandler;
-@@ -336,6 +681,18 @@
+@@ -336,6 +639,19 @@
  
      public Block getBlock(int p_147439_1_, int p_147439_2_, int p_147439_3_)
      {
 +        // Cauldron start - tree generation
-+        if (captureTreeGeneration)
++        CaptureTree tTreeCapture=this.mCapture.getLastTreeGenCapture();
++        if (tTreeCapture!=null&&tTreeCapture.mEnable)
 +        {
-+            for (net.minecraftforge.common.util.BlockSnapshot blocksnapshot : capturedBlockSnapshots)
++            for (net.minecraftforge.common.util.BlockSnapshot blocksnapshot : tTreeCapture.mCapturedBlocks)
 +            {
 +                if (blocksnapshot.x == p_147439_1_ && blocksnapshot.y == p_147439_2_ && blocksnapshot.z == p_147439_3_)
 +                {
@@ -527,103 +519,26 @@
          if (p_147439_1_ >= -30000000 && p_147439_3_ >= -30000000 && p_147439_1_ < 30000000 && p_147439_3_ < 30000000 && p_147439_2_ >= 0 && p_147439_2_ < 256)
          {
              Chunk chunk = null;
-@@ -376,35 +733,58 @@
-         return this.checkChunksExist(p_72873_1_ - p_72873_4_, p_72873_2_ - p_72873_4_, p_72873_3_ - p_72873_4_, p_72873_1_ + p_72873_4_, p_72873_2_ + p_72873_4_, p_72873_3_ + p_72873_4_);
+@@ -404,7 +720,7 @@
+         }
      }
  
--    public boolean checkChunksExist(int p_72904_1_, int p_72904_2_, int p_72904_3_, int p_72904_4_, int p_72904_5_, int p_72904_6_)
--    {
--        if (p_72904_5_ >= 0 && p_72904_2_ < 256)
--        {
--            p_72904_1_ >>= 4;
--            p_72904_3_ >>= 4;
--            p_72904_4_ >>= 4;
--            p_72904_6_ >>= 4;
-+	public boolean checkChunksExist(int p_72904_1_, int p_72904_2_, int p_72904_3_, int p_72904_4_, int p_72904_5_, int p_72904_6_)
-+	{
-+		if (p_72904_5_ >= 0 && p_72904_2_ < 256)
-+		{
-+			if (!(this.chunkProvider instanceof ChunkProviderServer))
-+			{
-+				p_72904_1_ >>= 4;
-+				p_72904_3_ >>= 4;
-+				p_72904_4_ >>= 4;
-+				p_72904_6_ >>= 4;
-+	
-+				for (int k1 = p_72904_1_; k1 <= p_72904_4_; ++k1)
-+				{
-+					for (int l1 = p_72904_3_; l1 <= p_72904_6_; ++l1)
-+					{
-+						if (!this.chunkExists(k1, l1))
-+						{
-+							return false;
-+						}
-+					}
-+				}
-+	
-+				return true;
-+			}
-+			else
-+			{
-+				p_72904_1_ >>= 4;
-+				p_72904_3_ >>= 4;
-+				p_72904_4_ >>= 4;
-+				p_72904_6_ >>= 4;
-+	
-+				ArrayList<int[]> st = new ArrayList<int[]>();
-+				st.ensureCapacity((p_72904_4_ - p_72904_1_+1) * (p_72904_6_ - p_72904_3_ + 1));
-+	
-+				for (int k1 = p_72904_1_; k1 <= p_72904_4_; ++k1)
-+				{
-+					for (int l1 = p_72904_3_; l1 <= p_72904_6_; ++l1)
-+					{
-+						st.add(new int[] { k1, l1} );
-+					}
-+				}
-+				ChunkProviderServer cps = (ChunkProviderServer) this.chunkProvider;
-+				return cps.loadedChunkHashMap_KC.rawThermos().bulkCheck(st);            	
-+			}
-+		}
-+		else
-+		{
-+			return false;
-+		}
-+	}
- 
--            for (int k1 = p_72904_1_; k1 <= p_72904_4_; ++k1)
--            {
--                for (int l1 = p_72904_3_; l1 <= p_72904_6_; ++l1)
--                {
--                    if (!this.chunkExists(k1, l1))
--                    {
--                        return false;
--                    }
--                }
--            }
--
--            return true;
--        }
--        else
--        {
--            return false;
--        }
--    }
--
 -    protected boolean chunkExists(int p_72916_1_, int p_72916_2_)
 +    public boolean chunkExists(int p_72916_1_, int p_72916_2_) // Cauldron - protected -> public for repackaging
      {
          return this.chunkProvider.chunkExists(p_72916_1_, p_72916_2_);
      }
-@@ -421,6 +801,27 @@
+@@ -421,6 +737,28 @@
  
      public boolean setBlock(int p_147465_1_, int p_147465_2_, int p_147465_3_, Block p_147465_4_, int p_147465_5_, int p_147465_6_)
      {
 +        // Cauldron start - tree generation
-+        if (this.captureTreeGeneration)
++        CaptureTree tTreeCapture=this.mCapture.getLastTreeGenCapture();
++        if (tTreeCapture!=null&&tTreeCapture.mEnable)
 +        {
 +            net.minecraftforge.common.util.BlockSnapshot blocksnapshot = null;
 +
-+            for (net.minecraftforge.common.util.BlockSnapshot previous : capturedBlockSnapshots)
++            for (net.minecraftforge.common.util.BlockSnapshot previous : tTreeCapture.mCapturedBlocks)
 +            {
 +                if (previous.x == p_147465_1_ && previous.y == p_147465_2_ && previous.z == p_147465_3_)
 +                {
@@ -633,54 +548,78 @@
 +            }
 +            if (blocksnapshot != null)
 +            {
-+                capturedBlockSnapshots.remove(blocksnapshot);
++                tTreeCapture.mCapturedBlocks.remove(blocksnapshot);
 +            }
-+            this.capturedBlockSnapshots.add(new net.minecraftforge.common.util.BlockSnapshot(this, p_147465_1_, p_147465_2_, p_147465_3_, p_147465_4_, p_147465_5_, p_147465_6_));
++            tTreeCapture.mCapturedBlocks.add(new net.minecraftforge.common.util.BlockSnapshot(this, p_147465_1_, p_147465_2_, p_147465_3_, p_147465_4_, p_147465_5_, p_147465_6_));
 +            return true;
 +        }
 +        // Cauldron end
          if (p_147465_1_ >= -30000000 && p_147465_3_ >= -30000000 && p_147465_1_ < 30000000 && p_147465_3_ < 30000000)
          {
              if (p_147465_2_ < 0)
-@@ -448,8 +849,22 @@
-                     this.capturedBlockSnapshots.add(blockSnapshot);
+@@ -435,32 +773,42 @@
+             {
+                 Chunk chunk = this.getChunkFromChunkCoords(p_147465_1_ >> 4, p_147465_3_ >> 4);
+                 Block block1 = null;
+-                net.minecraftforge.common.util.BlockSnapshot blockSnapshot = null;
+ 
+                 if ((p_147465_6_ & 1) != 0)
+                 {
+                     block1 = chunk.getBlock(p_147465_1_ & 15, p_147465_2_, p_147465_3_ & 15);
                  }
  
-+                // Cauldron start - capture blockstates
-+                net.minecraftforge.common.util.BlockSnapshot blocksnapshot = null;
-+                if (this.captureBlockSnapshots)
-+                {
-+                    blocksnapshot = net.minecraftforge.common.util.BlockSnapshot.getBlockSnapshot(this, p_147465_1_, p_147465_2_, p_147465_3_, p_147465_6_);
-+                    this.capturedBlockSnapshots.add(blocksnapshot);
-+                }
-+
-                 boolean flag = chunk.func_150807_a(p_147465_1_ & 15, p_147465_2_, p_147465_3_ & 15, p_147465_4_, p_147465_5_);
+-                if (this.captureBlockSnapshots && !this.isRemote)
+-                {
+-                    blockSnapshot = net.minecraftforge.common.util.BlockSnapshot.getBlockSnapshot(this, p_147465_1_, p_147465_2_, p_147465_3_, p_147465_6_);
+-                    this.capturedBlockSnapshots.add(blockSnapshot);
++                boolean flag=true;
++                CaptureBlock tBlockCapture=this.mCapture.getLastBlockCapture();
++                BlockSnapshot tSnapshot=null;
++                if(tBlockCapture!=null&&tBlockCapture.mEnable){
++                    tSnapshot=BlockSnapshot.getBlockSnapshot(this,p_147465_1_,p_147465_2_,p_147465_3_,p_147465_6_);
++                    tBlockCapture.mCapturedBlocks.add(tSnapshot);
++                    if(p_147465_4_==Blocks.air){
++                        flag&=tBlockCapture.fireBlockBreak(tSnapshot,false);
++                    }
+                 }
  
-+                if (!flag && this.captureBlockSnapshots)
-+                {
-+                    this.capturedBlockSnapshots.remove(blocksnapshot);
+-                boolean flag = chunk.func_150807_a(p_147465_1_ & 15, p_147465_2_, p_147465_3_ & 15, p_147465_4_, p_147465_5_);
++                if(flag){
++                    flag&=chunk.func_150807_a(p_147465_1_&15,p_147465_2_,p_147465_3_&15,p_147465_4_,p_147465_5_);
 +                }
-+                // Cauldron end
-+
-                 if (!flag && blockSnapshot != null)
-                 {
-                     this.capturedBlockSnapshots.remove(blockSnapshot);
-@@ -460,6 +875,7 @@
+ 
+-                if (!flag && blockSnapshot != null)
+-                {
+-                    this.capturedBlockSnapshots.remove(blockSnapshot);
+-                    blockSnapshot = null;
++                if(flag&&tSnapshot!=null){
++                    if(p_147465_4_!=Blocks.air){
++                        tBlockCapture.fireBlockPlace(tSnapshot,p_147465_4_,false);
++                    }
++                }else if(tSnapshot!=null){
++                    tBlockCapture.mCapturedBlocks.remove(tSnapshot);
++                    tSnapshot=null;
+                 }
+ 
+                 this.theProfiler.startSection("checkLight");
                  this.func_147451_t(p_147465_1_, p_147465_2_, p_147465_3_);
                  this.theProfiler.endSection();
  
+-                if (flag && blockSnapshot == null) // Don't notify clients or update physics while capturing blockstates
 +                // Cauldron add !this.captureBlockStates
-                 if (flag && blockSnapshot == null) // Don't notify clients or update physics while capturing blockstates
++                if (tSnapshot==null&&flag) // Don't notify clients or update physics while capturing blockstates
                  {
                      // Modularize client and physic updates
-@@ -496,6 +912,19 @@
+                     this.markAndNotifyBlock(p_147465_1_, p_147465_2_, p_147465_3_, chunk, block1, p_147465_4_, p_147465_6_);
+@@ -496,6 +844,20 @@
  
      public int getBlockMetadata(int p_72805_1_, int p_72805_2_, int p_72805_3_)
      {
 +        // Cauldron start - tree generation
-+        if (captureTreeGeneration)
++        CaptureTree treeGenCapture=this.mCapture.getLastTreeGenCapture();
++        if (treeGenCapture!=null&&treeGenCapture.mEnable)
 +        {
-+            for (net.minecraftforge.common.util.BlockSnapshot blocksnapshot : capturedBlockSnapshots)
++            for (net.minecraftforge.common.util.BlockSnapshot blocksnapshot : treeGenCapture.mCapturedBlocks)
 +            {
 +                if (blocksnapshot.x == p_72805_1_ && blocksnapshot.y == p_72805_2_ && blocksnapshot.z == p_72805_3_)
 +                {
@@ -693,7 +632,7 @@
          if (p_72805_1_ >= -30000000 && p_72805_3_ >= -30000000 && p_72805_1_ < 30000000 && p_72805_3_ < 30000000)
          {
              if (p_72805_2_ < 0)
-@@ -511,7 +940,7 @@
+@@ -511,7 +873,7 @@
                  Chunk chunk = this.getChunkFromChunkCoords(p_72805_1_ >> 4, p_72805_3_ >> 4);
                  p_72805_1_ &= 15;
                  p_72805_3_ &= 15;
@@ -702,7 +641,59 @@
              }
          }
          else
-@@ -610,6 +1039,12 @@
+@@ -534,6 +896,14 @@
+             }
+             else
+             {
++                CaptureBlock tBlockCapture=this.mCapture.getLastBlockCapture();
++                BlockSnapshot tSnapshot=null;
++                if(MinecraftServer.uraniumConfig.captureBlockOnMetaChange.getValue()
++                        &&tBlockCapture!=null&&tBlockCapture.mEnable){
++                    tSnapshot=BlockSnapshot.getBlockSnapshot(this,p_72921_1_,p_72921_2_,p_72921_3_,p_72921_4_);
++                    if(!MinecraftServer.uraniumConfig.shouldBlockCaptureOnMetaChange(tSnapshot.replacedBlock, tSnapshot.meta))
++                        tSnapshot=null;
++                }
+                 Chunk chunk = this.getChunkFromChunkCoords(p_72921_1_ >> 4, p_72921_3_ >> 4);
+                 int j1 = p_72921_1_ & 15;
+                 int k1 = p_72921_3_ & 15;
+@@ -541,20 +911,25 @@
+ 
+                 if (flag)
+                 {
+-                    Block block = chunk.getBlock(j1, p_72921_2_, k1);
++                    if(tSnapshot!=null){
++                        tBlockCapture.fireBlockPlace(tSnapshot,tSnapshot.getReplacedBlock(),false);
++                        tBlockCapture.mCapturedBlocks.add(tSnapshot);
++                    }else{
++                        Block block = chunk.getBlock(j1, p_72921_2_, k1);
+ 
+-                    if ((p_72921_5_ & 2) != 0 && (!this.isRemote || (p_72921_5_ & 4) == 0) && chunk.func_150802_k())
+-                    {
+-                        this.markBlockForUpdate(p_72921_1_, p_72921_2_, p_72921_3_);
+-                    }
++                        if ((p_72921_5_ & 2) != 0 && (!this.isRemote || (p_72921_5_ & 4) == 0) && chunk.func_150802_k())
++                        {
++                            this.markBlockForUpdate(p_72921_1_, p_72921_2_, p_72921_3_);
++                        }
+ 
+-                    if (!this.isRemote && (p_72921_5_ & 1) != 0)
+-                    {
+-                        this.notifyBlockChange(p_72921_1_, p_72921_2_, p_72921_3_, block);
+-
+-                        if (block.hasComparatorInputOverride())
++                        if (!this.isRemote && (p_72921_5_ & 1) != 0)
+                         {
+-                            this.func_147453_f(p_72921_1_, p_72921_2_, p_72921_3_, block);
++                            this.notifyBlockChange(p_72921_1_, p_72921_2_, p_72921_3_, block);
++
++                            if (block.hasComparatorInputOverride())
++                            {
++                                this.func_147453_f(p_72921_1_, p_72921_2_, p_72921_3_, block);
++                            }
+                         }
+                     }
+                 }
+@@ -610,6 +985,12 @@
  
      public void notifyBlockChange(int p_147444_1_, int p_147444_2_, int p_147444_3_, Block p_147444_4_)
      {
@@ -715,7 +706,7 @@
          this.notifyBlocksOfNeighborChange(p_147444_1_, p_147444_2_, p_147444_3_, p_147444_4_);
      }
  
-@@ -694,6 +1129,21 @@
+@@ -694,6 +1075,21 @@
  
              try
              {
@@ -737,50 +728,31 @@
                  block.onNeighborBlockChange(this, p_147460_1_, p_147460_2_, p_147460_3_, p_147460_4_);
              }
              catch (Throwable throwable1)
-@@ -947,14 +1397,13 @@
-         {
-             int l = p_72972_2_ >> 4;
-             int i1 = p_72972_4_ >> 4;
--
--            if (!this.chunkExists(l, i1))
-+            Chunk chunk = this.getChunkIfLoaded(l, i1);
-+            if(chunk == null)
-             {
-                 return p_72972_1_.defaultLightValue;
-             }
-             else
-             {
--                Chunk chunk = this.getChunkFromChunkCoords(l, i1);
-                 return chunk.getSavedLightValue(p_72972_1_, p_72972_2_ & 15, p_72972_3_, p_72972_4_ & 15);
-             }
-         }
-@@ -1304,9 +1753,24 @@
-         this.weatherEffects.add(p_72942_1_);
-         return true;
-     }
--
-+    
-+    public List<EntityItem> itemStackSpawnQueue = new ArrayList<EntityItem>();
-+    public boolean captureItemDrops = false;
-+    
+@@ -1307,8 +1703,22 @@
+ 
      public boolean spawnEntityInWorld(Entity p_72838_1_)
      {
 +        // CraftBukkit start - Used for entities other than creatures
-+    	if(p_72838_1_ instanceof EntityItem && this.captureItemDrops)
-+    	{
-+    		itemStackSpawnQueue.add((EntityItem)p_72838_1_);
-+    		return true;
-+    	}
 +        return this.addEntity(p_72838_1_, SpawnReason.DEFAULT); // Set reason as DEFAULT
 +    }
 +
 +    public boolean addEntity(Entity p_72838_1_, SpawnReason spawnReason) // Changed signature, added SpawnReason
 +    {
-+        if (!p_72838_1_.entityAllowedToSpawn()) return false; // Cauldron
++        if (p_72838_1_==null||!p_72838_1_.entityAllowedToSpawn()) return false; // Cauldron
          // do not drop any items while restoring blocksnapshots. Prevents dupes
-         if (!this.isRemote && (p_72838_1_ == null || (p_72838_1_ instanceof net.minecraft.entity.item.EntityItem && this.restoringBlockSnapshots))) return false;
+-        if (!this.isRemote && (p_72838_1_ == null || (p_72838_1_ instanceof net.minecraft.entity.item.EntityItem && this.restoringBlockSnapshots))) return false;
++        if(!this.isRemote){
++            if(this.restoringBlockSnapshots)
++                return false;
++            if(this.mCapture.isCapture()&&!(p_72838_1_ instanceof EntityPlayerMP)){
++                this.mCapture.addCaptureEntity(this,p_72838_1_,spawnReason);
++                return true;
++            }
++        }
  
-@@ -1319,23 +1783,99 @@
+         int i = MathHelper.floor_double(p_72838_1_.posX / 16.0D);
+         int j = MathHelper.floor_double(p_72838_1_.posZ / 16.0D);
+@@ -1319,23 +1729,99 @@
              flag = true;
          }
  
@@ -882,7 +854,7 @@
              return true;
          }
      }
-@@ -1346,6 +1886,8 @@
+@@ -1346,6 +1832,8 @@
          {
              ((IWorldAccess)this.worldAccesses.get(i)).onEntityCreate(p_72923_1_);
          }
@@ -891,7 +863,7 @@
      }
  
      public void onEntityRemoved(Entity p_72847_1_)
-@@ -1354,6 +1896,8 @@
+@@ -1354,6 +1842,8 @@
          {
              ((IWorldAccess)this.worldAccesses.get(i)).onEntityDestroy(p_72847_1_);
          }
@@ -900,7 +872,7 @@
      }
  
      public void removeEntity(Entity p_72900_1_)
-@@ -1397,6 +1941,19 @@
+@@ -1397,6 +1887,19 @@
          }
  
          this.loadedEntityList.remove(p_72973_1_);
@@ -920,12 +892,10 @@
          this.onEntityRemoved(p_72973_1_);
      }
  
-@@ -1407,42 +1964,62 @@
- 
+@@ -1408,40 +1911,58 @@
      public List getCollidingBoundingBoxes(Entity p_72945_1_, AxisAlignedBB p_72945_2_)
      {
--        this.collidingBoundingBoxes.clear();
-+        this.collidingBoundingBoxes = new ArrayList(30);
+         this.collidingBoundingBoxes.clear();
 +        if (CauldronHooks.checkBoundingBoxSize(p_72945_1_, p_72945_2_)) return new ArrayList(); // Removing misbehaved living entities
          int i = MathHelper.floor_double(p_72945_2_.minX);
          int j = MathHelper.floor_double(p_72945_2_.maxX + 1.0D);
@@ -993,12 +963,9 @@
          List list = this.getEntitiesWithinAABBExcludingEntity(p_72945_1_, p_72945_2_.expand(d0, d0, d0));
 +        net.minecraftforge.cauldron.CauldronHooks.logEntitySize(this, p_72945_1_, list); // Cauldron add logging for entity collisions
  
-+        this.collidingBoundingBoxes.ensureCapacity(list.size());
-+        
          for (int j2 = 0; j2 < list.size(); ++j2)
          {
-             AxisAlignedBB axisalignedbb1 = ((Entity)list.get(j2)).getBoundingBox();
-@@ -1797,11 +2374,22 @@
+@@ -1797,11 +2318,22 @@
          Entity entity;
          CrashReport crashreport;
          CrashReportCategory crashreportcategory;
@@ -1021,7 +988,23 @@
              try
              {
                  ++entity.ticksExisted;
-@@ -1862,10 +2450,14 @@
+@@ -1812,14 +2344,7 @@
+                 crashreport = CrashReport.makeCrashReport(throwable2, "Ticking entity");
+                 crashreportcategory = crashreport.makeCategory("Entity being ticked");
+ 
+-                if (entity == null)
+-                {
+-                    crashreportcategory.addCrashSection("Entity", "~~NULL~~");
+-                }
+-                else
+-                {
+-                    entity.addEntityCrashInfo(crashreportcategory);
+-                }
++                entity.addEntityCrashInfo(crashreportcategory);
+ 
+                 if (ForgeModContainer.removeErroringEntities)
+                 {
+@@ -1862,10 +2387,14 @@
  
          this.unloadedEntityList.clear();
          this.theProfiler.endStartSection("regular");
@@ -1033,13 +1016,13 @@
 -            entity = (Entity)this.loadedEntityList.get(i);
 +        int entitiesThisCycle = 0;
 +        if (tickPosition < 0) tickPosition = 0;
-+        for (entityLimiter.initTick(); entitiesThisCycle < loadedEntityList.size() && (entitiesThisCycle % 10 == 0 || entityLimiter.shouldContinue()); tickPosition++, entitiesThisCycle++) { 
++        for (entityLimiter.initTick(); entitiesThisCycle < loadedEntityList.size() && (entitiesThisCycle % 10 == 0 || entityLimiter.shouldContinue()); tickPosition++, entitiesThisCycle++) {
 +            tickPosition = (tickPosition < loadedEntityList.size()) ? tickPosition : 0;
 +            entity = (Entity)this.loadedEntityList.get(this.tickPosition);
  
              if (entity.ridingEntity != null)
              {
-@@ -1884,7 +2476,9 @@
+@@ -1884,7 +2413,9 @@
              {
                  try
                  {
@@ -1049,15 +1032,15 @@
                  }
                  catch (Throwable throwable1)
                  {
-@@ -1916,30 +2510,82 @@
+@@ -1916,30 +2447,84 @@
                  {
                      this.getChunkFromChunkCoords(j, l).removeEntity(entity);
                  }
 -
 -                this.loadedEntityList.remove(i--);
 +                if (this.tickPosition < this.loadedEntityList.size()) // KCauldron
-+                this.loadedEntityList.remove(this.tickPosition--); // CraftBukkit - Use field for loop variable
-+                else thermos.TLog.get().warning("Entity removal desync! " + entity); // KCauldron
++                    this.loadedEntityList.remove(this.tickPosition--); // CraftBukkit - Use field for loop variable
++                else cc.uraniummc.ULog.get().warning("Entity removal desync! " + entity); // KCauldron
                  this.onEntityRemoved(entity);
              }
  
@@ -1072,33 +1055,35 @@
 -
 -        while (iterator.hasNext())
 +        // CraftBukkit start - From below, clean up tile entities before ticking them
-+        if (!this.field_147483_b.isEmpty())
++        if (!this.field_147483_b.isEmpty() && !cc.uraniummc.UraniumConfig.tileEntityListRecreation)
          {
 -            TileEntity tileentity = (TileEntity)iterator.next();
 +            for (Object tile : field_147483_b)
 +            {
-+                TileEntity te = (TileEntity)tile;
-+                try { te.setGC(true); } catch (Exception e) {}
-+                te.onChunkUnload();
++                ((TileEntity) tile).onChunkUnload();
 +            }
-+            List temporary_tile_entity_list = new ArrayList(this.loadedTileEntityList.size());
-+            for(Object tile : loadedTileEntityList)
-+            {
-+                boolean marker = false;
-+                try { marker = !((TileEntity)tile).isGC(); } catch (Exception e) { try { marker = this.field_147483_b.contains(tile); } catch (Exception ex) { marker = false; } }
-+                if (marker) { temporary_tile_entity_list.add(tile); }
-+            }
-+            this.loadedTileEntityList = temporary_tile_entity_list;
-+            for (Object tile : field_147483_b)
-+            {
-+                TileEntity te = (TileEntity)tile;
-+                try { te.setGC(false); } catch (Exception e) { }
-+            }
++            this.loadedTileEntityList.removeAll(this.field_147483_b);
 +            this.field_147483_b.clear();
 +        }
 +        // CraftBukkit end
  
 -            if (!tileentity.isInvalid() && tileentity.hasWorldObj() && this.blockExists(tileentity.xCoord, tileentity.yCoord, tileentity.zCoord))
++        // KCauldron start
++        if (cc.uraniummc.UraniumConfig.tileEntityListRecreation) {
++            List<TileEntity> newEntityList = new ArrayList<TileEntity>();
++            final int length = loadedTileEntityList.size();
++            for (int tileIndex = 0; tileIndex < length; tileIndex++) {
++                TileEntity tile = (TileEntity) loadedTileEntityList.get(tileIndex);
++                if (tile.dead) {
++                    tile.onChunkUnload();
++                    continue;
++                }
++                newEntityList.add(tile);
++            }
++            loadedTileEntityList = newEntityList;
++        }
++        // KCauldron end
++
 +        int tilesThisCycle = 0;
 +        for (tileLimiter.initTick(); tilesThisCycle < loadedTileEntityList.size() && (tilesThisCycle % 10 == 0 || tileLimiter.shouldContinue()); tileTickPosition++, tilesThisCycle++) {
 +            tileTickPosition = (tileTickPosition < loadedTileEntityList.size()) ? tileTickPosition : 0;
@@ -1107,7 +1092,6 @@
 +            // Spigot start
 +            if (tileentity == null)
              {
-+                getServer().getLogger().severe("Cauldron has detected a null entity and has removed it, preventing a crash");
 +                tilesThisCycle--;
 +                this.loadedTileEntityList.remove(tileTickPosition--);
 +                continue;
@@ -1124,7 +1108,8 @@
 +                continue;
 +            }
 +
-+            if (tileentity.hasWorldObj() && CauldronHooks.canTileEntityTick(tileentity, this) && this.blockExists(tileentity.xCoord, tileentity.yCoord, tileentity.zCoord))
++            if (tileentity.hasWorldObj() && CauldronHooks.canTileEntityTick(tileentity, this)
++                    && this.blockExists(tileentity.xCoord, tileentity.yCoord, tileentity.zCoord))
 +            {
                  try
                  {
@@ -1139,7 +1124,7 @@
                      crashreport = CrashReport.makeCrashReport(throwable, "Ticking block entity");
                      crashreportcategory = crashreport.makeCategory("Block entity being ticked");
                      tileentity.func_145828_a(crashreportcategory);
-@@ -1955,23 +2601,13 @@
+@@ -1955,23 +2540,13 @@
                      }
                  }
              }
@@ -1168,7 +1153,7 @@
          if (!this.field_147483_b.isEmpty())
          {
              for (Object tile : field_147483_b)
-@@ -1981,6 +2617,7 @@
+@@ -1981,6 +2556,7 @@
              this.loadedTileEntityList.removeAll(this.field_147483_b);
              this.field_147483_b.clear();
          }
@@ -1176,31 +1161,13 @@
  
          this.field_147481_N = false;
  
-@@ -1992,14 +2629,14 @@
-             {
-                 TileEntity tileentity1 = (TileEntity)this.addedTileEntityList.get(k);
- 
--                if (!tileentity1.isInvalid())
-+                if (!tileentity1.isInvalid() && !tileentity1.isGC())
-                 {
-                     if (!this.loadedTileEntityList.contains(tileentity1))
-                     {
-                         this.loadedTileEntityList.add(tileentity1);
-                     }
-                 }
--                else
-+                else if(tileentity1.isInvalid())
-                 {
-                     if (this.chunkExists(tileentity1.xCoord >> 4, tileentity1.zCoord >> 4))
-                     {
-@@ -2016,17 +2653,24 @@
+@@ -2016,17 +2592,23 @@
              this.addedTileEntityList.clear();
          }
  
 +        timings.tileEntityPending.stopTiming(); // Spigot
          this.theProfiler.endSection();
          this.theProfiler.endSection();
-+        
      }
  
      public void func_147448_a(Collection p_147448_1_)
@@ -1221,49 +1188,41 @@
      }
  
      public void updateEntity(Entity p_72870_1_)
-@@ -2036,11 +2680,16 @@
+@@ -2036,21 +2618,41 @@
  
      public void updateEntityWithOptionalForce(Entity p_72866_1_, boolean p_72866_2_)
      {
 +        if (p_72866_1_.isDead) return;
-         int i = MathHelper.floor_double(p_72866_1_.posX);
-         int j = MathHelper.floor_double(p_72866_1_.posZ);
--        boolean isForced = getPersistentChunks().containsKey(new ChunkCoordIntPair(i >> 4, j >> 4));
--        byte b0 = isForced ? (byte)0 : 32;
--        boolean canUpdate = !p_72866_2_ || this.checkChunksExist(i - b0, 0, j - b0, i + b0, 0, j + b0);
-+        ChunkCoordIntPair cp = new ChunkCoordIntPair(i >> 4, j >> 4);
-+        boolean isForced = this.activity.containsKey(cp) || getPersistentChunks().containsKey(cp);
-+//        byte b0 = isForced ? (byte)0 : 32; Thermos - this B ded
-+        // CraftBukkit start - Use neighbor cache instead of looking up
-+        Chunk startingChunk = this.getChunkIfLoaded(i >> 4, j >> 4);
-+        boolean canUpdate = !p_72866_2_ || (startingChunk != null && (isForced || startingChunk.areNeighborsLoaded(2)));
-+        // CraftBukkit end
- 
-         if (!canUpdate)
-         {
-@@ -2048,9 +2697,30 @@
-             MinecraftForge.EVENT_BUS.post(event);
-             canUpdate = event.canUpdate;
-         }
--
-+        // Spigot start
-+        /* Thermos - tickAbility has several possible states:
-+         0  = don't change anything
-+         -1 = force no tick
-+         1  = force tick and ignore Spigot
-+        */
-+        byte tickAbility = CauldronHooks.canSushchestvoTick(p_72866_1_,this);
-+        if (!isForced && !canUpdate && (tickAbility == -1 || (!org.spigotmc.ActivationRange.checkIfActive(p_72866_1_) && tickAbility != 1))) // Cauldron - ignore if forge event forced update or entity is in forced chunk
-+        {
++        if(!CauldronHooks.canEntityTick(p_72866_1_,this)&&!p_72866_2_){
 +            p_72866_1_.ticksExisted++;
 +            p_72866_1_.inactiveTick();
 +            return;
 +        }
-+        else if(tickAbility == -1) // Thermos force no ticking if it is set to be so
+         int i = MathHelper.floor_double(p_72866_1_.posX);
+         int j = MathHelper.floor_double(p_72866_1_.posZ);
+         boolean isForced = getPersistentChunks().containsKey(new ChunkCoordIntPair(i >> 4, j >> 4));
+         byte b0 = isForced ? (byte)0 : 32;
+-        boolean canUpdate = !p_72866_2_ || this.checkChunksExist(i - b0, 0, j - b0, i + b0, 0, j + b0);
++        // CraftBukkit start - Use neighbor cache instead of looking up
++        Chunk startingChunk = this.getChunkIfLoaded(i >> 4, j >> 4);
++        boolean canUpdate = !p_72866_2_ || (startingChunk != null && startingChunk.areNeighborsLoaded(2));
++        // CraftBukkit end
++        boolean forceUpdate = false; // Cauldron
+ 
+         if (!canUpdate)
+         {
+             EntityEvent.CanUpdate event = new EntityEvent.CanUpdate(p_72866_1_);
+             MinecraftForge.EVENT_BUS.post(event);
+             canUpdate = event.canUpdate;
++            forceUpdate = canUpdate; // Cauldron
+         }
+-
++        // Spigot start
++        if (!isForced && !forceUpdate && !org.spigotmc.ActivationRange.checkIfActive(p_72866_1_)) // Cauldron - ignore if forge event forced update or entity is in forced chunk
 +        {
 +            p_72866_1_.ticksExisted++;
 +            p_72866_1_.inactiveTick();
-+            return;        	
++            return;
 +        }
 +        // Spigot end
          if (canUpdate)
@@ -1273,7 +1232,7 @@
              p_72866_1_.lastTickPosX = p_72866_1_.posX;
              p_72866_1_.lastTickPosY = p_72866_1_.posY;
              p_72866_1_.lastTickPosZ = p_72866_1_.posZ;
-@@ -2134,6 +2804,7 @@
+@@ -2134,6 +2736,7 @@
                      p_72866_1_.riddenByEntity = null;
                  }
              }
@@ -1281,7 +1240,7 @@
          }
      }
  
-@@ -2570,7 +3241,7 @@
+@@ -2570,7 +3173,7 @@
              return;
          }
  
@@ -1290,40 +1249,17 @@
          {
              if (this.field_147481_N)
              {
-@@ -2606,12 +3277,32 @@
-     public void removeTileEntity(int p_147475_1_, int p_147475_2_, int p_147475_3_)
-     {
-         Chunk chunk = getChunkFromChunkCoords(p_147475_1_ >> 4, p_147475_3_ >> 4);
-+        TileEntity te = chunk.getTileEntityUnsafe(p_147475_1_ & 15, p_147475_2_, p_147475_3_ & 15);
-+        if(te != null)
-+        {
-+            /* TODO: This was done incorrectly by me originally. The idea is to forcefully close the inventories of broken tiles
-+             * However, at the moment this does not seem possible. I was looking through the code and found that containers
-+             * have all the information about who is using them. However, there is no easy way to tell that a container is
-+             * linked to a tile. Maybe this can be something for the future but it is unlikely.
-+             *
-+             */
-+        	/*if(te instanceof IInventory)
-+        	{
-+        		IInventory ii = (IInventory)te;
-+        		for(HumanEntity e : ii.getViewers())
-+        		{
-+        			e.closeInventory();
-+        		}
-+        	}*/
-+        }
-+        
-         if (chunk != null) chunk.removeTileEntity(p_147475_1_ & 15, p_147475_2_, p_147475_3_ & 15);
-         func_147453_f(p_147475_1_, p_147475_2_, p_147475_3_, getBlock(p_147475_1_, p_147475_2_, p_147475_3_));
-     }
+@@ -2612,6 +3215,9 @@
  
      public void func_147457_a(TileEntity p_147457_1_)
      {
-+        if(p_147457_1_ != null)
++        if (cc.uraniummc.UraniumConfig.tileEntityListRecreation) {
++            p_147457_1_.dead = true; return;
++        }
          this.field_147483_b.add(p_147457_1_);
      }
  
-@@ -2718,7 +3409,15 @@
+@@ -2718,7 +3324,15 @@
  
                      if (i <= 0)
                      {
@@ -1340,7 +1276,7 @@
                      }
                  }
  
-@@ -2754,7 +3453,15 @@
+@@ -2754,7 +3368,15 @@
  
                      if (j <= 0)
                      {
@@ -1357,7 +1293,7 @@
                      }
                  }
  
-@@ -2777,8 +3484,41 @@
+@@ -2777,8 +3399,41 @@
      protected void setActivePlayerChunksAndCheckLight()
      {
          this.activeChunkSet.clear();
@@ -1400,7 +1336,7 @@
          int i;
          EntityPlayer entityplayer;
          int j;
-@@ -2788,17 +3528,28 @@
+@@ -2788,17 +3443,28 @@
          for (i = 0; i < this.playerEntities.size(); ++i)
          {
              entityplayer = (EntityPlayer)this.playerEntities.get(i);
@@ -1435,7 +1371,7 @@
          }
  
          this.theProfiler.endSection();
-@@ -2810,7 +3561,7 @@
+@@ -2810,7 +3476,7 @@
  
          this.theProfiler.startSection("playerCheckLight");
  
@@ -1444,7 +1380,7 @@
          {
              i = this.rand.nextInt(this.playerEntities.size());
              entityplayer = (EntityPlayer)this.playerEntities.get(i);
-@@ -3034,9 +3785,9 @@
+@@ -3034,9 +3700,9 @@
          }
      }
  
@@ -1452,58 +1388,11 @@
 +    public boolean updateLightByType(EnumSkyBlock p_147463_1_, int p_147463_2_, int p_147463_3_, int p_147463_4_, Chunk chunk, List<Chunk> neighbors)
      {
 -        if (!this.doChunksNearChunkExist(p_147463_2_, p_147463_3_, p_147463_4_, 17))
-+        if (chunk == null) // CraftBukkit / PaperSpigot
++        if (chunk == null||!chunk.isChunkLoaded) // CraftBukkit / PaperSpigot
          {
              return false;
          }
-@@ -3166,6 +3917,28 @@
-                 }
-             }
- 
-+            // PaperSpigot start - Asynchronous light updates
-+            
-+            // Thermos avoid lighting modded chunks
-+            if(isModded == null && this.chunkProvider != null)
-+            {
-+                this.isModded = !this.chunkProvider.getClass().getPackage().getName().startsWith("net.minecraft");
-+            }
-+            else if(this.chunkProvider == null)
-+            {
-+            	this.isModded = false;
-+            }
-+            // Thermos end
-+            
-+            if (!isModded && chunk.worldObj.spigotConfig.useAsyncLighting) {
-+                chunk.pendingLightUpdates.decrementAndGet();
-+                if (neighbors != null) {
-+                    for (Chunk neighbor : neighbors) {
-+                        neighbor.pendingLightUpdates.decrementAndGet();
-+                    }
-+                }
-+            }
-+            // PaperSpigot end
-             this.theProfiler.endSection();
-             return true;
-         }
-@@ -3188,7 +3961,7 @@
- 
-     public List getEntitiesWithinAABBExcludingEntity(Entity p_94576_1_, AxisAlignedBB p_94576_2_, IEntitySelector p_94576_3_)
-     {
--        ArrayList arraylist = new ArrayList();
-+        ArrayList arraylist = new ArrayList(30); // Thermos - force minimal size
-         int i = MathHelper.floor_double((p_94576_2_.minX - MAX_ENTITY_RADIUS) / 16.0D);
-         int j = MathHelper.floor_double((p_94576_2_.maxX + MAX_ENTITY_RADIUS) / 16.0D);
-         int k = MathHelper.floor_double((p_94576_2_.minZ - MAX_ENTITY_RADIUS) / 16.0D);
-@@ -3219,7 +3992,7 @@
-         int j = MathHelper.floor_double((p_82733_2_.maxX + MAX_ENTITY_RADIUS) / 16.0D);
-         int k = MathHelper.floor_double((p_82733_2_.minZ - MAX_ENTITY_RADIUS) / 16.0D);
-         int l = MathHelper.floor_double((p_82733_2_.maxZ + MAX_ENTITY_RADIUS) / 16.0D);
--        ArrayList arraylist = new ArrayList();
-+        ArrayList arraylist = new ArrayList(40);
- 
-         for (int i1 = i; i1 <= j; ++i1)
-         {
-@@ -3284,8 +4057,21 @@
+@@ -3284,8 +3950,21 @@
          {
              Entity entity = (Entity)this.loadedEntityList.get(j);
  
@@ -1526,7 +1415,7 @@
                  ++i;
              }
          }
-@@ -3298,6 +4084,7 @@
+@@ -3298,6 +3977,7 @@
          for (int i = 0; i < p_72868_1_.size(); ++i)
          {
              Entity entity = (Entity)p_72868_1_.get(i);
@@ -1534,7 +1423,7 @@
              if (!MinecraftForge.EVENT_BUS.post(new EntityJoinWorldEvent(entity, this)))
              {
                  loadedEntityList.add(entity);
-@@ -3314,8 +4101,17 @@
+@@ -3314,8 +3994,17 @@
      public boolean canPlaceEntityOnSide(Block p_147472_1_, int p_147472_2_, int p_147472_3_, int p_147472_4_, boolean p_147472_5_, int p_147472_6_, Entity p_147472_7_, ItemStack p_147472_8_)
      {
          Block block1 = this.getBlock(p_147472_2_, p_147472_3_, p_147472_4_);
@@ -1544,7 +1433,7 @@
 +        // CraftBukkit start - store default return
 +        boolean defaultReturn = axisalignedbb != null && !this.checkNoEntityCollision(axisalignedbb, p_147472_7_) ? false
 +                : (block1.getMaterial() == Material.circuits && p_147472_1_ == Blocks.anvil ? true : block1.isReplaceable(this, p_147472_2_, p_147472_3_,
-+                        p_147472_4_) && p_147472_1_.canReplace(this, p_147472_2_, p_147472_3_, p_147472_4_, p_147472_6_, p_147472_8_));
++                p_147472_4_) && p_147472_1_.canReplace(this, p_147472_2_, p_147472_3_, p_147472_4_, p_147472_6_, p_147472_8_));
 +        BlockCanBuildEvent event = new BlockCanBuildEvent(this.getWorld().getBlockAt(p_147472_2_, p_147472_3_, p_147472_4_),
 +                CraftMagicNumbers.getId(p_147472_1_), defaultReturn);
 +        this.getServer().getPluginManager().callEvent(event);
@@ -1553,7 +1442,7 @@
      }
  
      public PathEntity getPathEntityToEntity(Entity p_72865_1_, Entity p_72865_2_, float p_72865_3_, boolean p_72865_4_, boolean p_72865_5_, boolean p_72865_6_, boolean p_72865_7_)
-@@ -3464,6 +4260,12 @@
+@@ -3464,6 +4153,12 @@
          for (int i = 0; i < this.playerEntities.size(); ++i)
          {
              EntityPlayer entityplayer1 = (EntityPlayer)this.playerEntities.get(i);
@@ -1566,7 +1455,7 @@
              double d5 = entityplayer1.getDistanceSq(p_72977_1_, p_72977_3_, p_72977_5_);
  
              if ((p_72977_7_ < 0.0D || d5 < p_72977_7_ * p_72977_7_) && (d4 == -1.0D || d5 < d4))
-@@ -3489,7 +4291,12 @@
+@@ -3489,7 +4184,12 @@
          for (int i = 0; i < this.playerEntities.size(); ++i)
          {
              EntityPlayer entityplayer1 = (EntityPlayer)this.playerEntities.get(i);
@@ -1580,7 +1469,7 @@
              if (!entityplayer1.capabilities.disableDamage && entityplayer1.isEntityAlive())
              {
                  double d5 = entityplayer1.getDistanceSq(p_72846_1_, p_72846_3_, p_72846_5_);
-@@ -3660,6 +4467,18 @@
+@@ -3660,6 +4360,18 @@
  
      public void updateAllPlayersSleepingFlag() {}
  
@@ -1599,7 +1488,7 @@
      public float getWeightedThunderStrength(float p_72819_1_)
      {
          return (this.prevThunderingStrength + (this.thunderingStrength - this.prevThunderingStrength) * p_72819_1_) * this.getRainStrength(p_72819_1_);
-@@ -3932,8 +4751,8 @@
+@@ -3932,8 +4644,8 @@
       */
      public void addTileEntity(TileEntity entity)
      {
@@ -1610,7 +1499,7 @@
          {
              dest.add(entity);
          }
-@@ -4029,4 +4848,132 @@
+@@ -4029,4 +4741,117 @@
          }
          return count;
      }
@@ -1626,11 +1515,9 @@
 +        return getBlock(x, y, z);
 +    }
 +
-+    public ConcurrentMap<ChunkCoordIntPair, Ticket> activity = new ConcurrentHashMap<ChunkCoordIntPair, Ticket>();
-+    
 +    public boolean isActiveChunk(int x, int z)
 +    {
-+        return activeChunkSet_CB.containsKey(chunkToKey(x, z)) || activity.containsKey(new ChunkCoordIntPair(x, z));
++        return getPersistentChunks().containsKey(new ChunkCoordIntPair(x, z)) || activeChunkSet_CB.containsKey(chunkToKey(x, z));
 +    }
 +
 +    public boolean isActiveChunk(long key)
@@ -1638,18 +1525,11 @@
 +        return isActiveChunk(keyToX(key), keyToZ(key));
 +    }
 +
-+    private final HashMap<Integer, Object[]> access_cache = new HashMap<Integer, Object[]>();
-+
 +    public boolean isActiveBlockCoord(int x, int z)
 +    {
 +        return isActiveChunk(x >> 4, z >> 4);
 +    }
 +
-+    public boolean isActiveBlockCoord(int x, int y, int z)
-+    {
-+        return isActiveChunk(x >> 4, z >> 4);
-+    }    
-+    
 +    public boolean inActiveChunk(Entity entity)
 +    {
 +        return isActiveBlockCoord(MathHelper.floor_double(entity.posX), MathHelper.floor_double(entity.posZ));
@@ -1661,8 +1541,8 @@
 +        BlockPlaceEvent placeEvent = null;
 +        if (ItemStack.currentPlayer != null)
 +        {
-+            placeEvent = org.bukkit.craftbukkit.event.CraftEventFactory.callBlockPlaceEvent(this, ItemStack.currentPlayer,
-+                    org.bukkit.craftbukkit.block.CraftBlockState.getBlockState(this, x, y, z, 3), x, y, z);
++            placeEvent = CraftEventFactory.callBlockPlaceEvent(this, ItemStack.currentPlayer,
++                    CraftBlockState.getBlockState(this, x, y, z, 3), x, y, z);
 +        }
 +
 +        if (placeEvent != null && (placeEvent.isCancelled() || !placeEvent.canBuild()))
@@ -1679,20 +1559,20 @@
 +        return this.spigotConfig;
 +    }
 +    // Cauldron end
-+    
++
 +    // Spigot start
 +    private void initLimiter() {
 +        entityLimiter = new TickLimiter(spigotConfig.entityMaxTickTime);
 +        tileLimiter = new TickLimiter(spigotConfig.tileMaxTickTime);
 +    }
 +    // Spigot end
-+    
++
 +    // Cauldron start
 +    public boolean isProfilingWorld() {
 +        return provider.dimensionId == Integer.MIN_VALUE; // Mystcraft
 +    }
 +    // Cauldron end
-+    
++
 +    public Chunk getChunkIfLoaded(int x, int z) {
 +        return ((ChunkProviderServer) this.chunkProvider).getChunkIfLoaded(x, z);
 +    }
@@ -1707,14 +1587,10 @@
 +        if (chunk == null || !chunk.areNeighborsLoaded(1)) {
 +            return false;
 +        }
-+        // Thermos force modded chunks to use synchronous lighting
-+        if(chunk.worldObj.isModded == null) chunk.worldObj.isModded = false;
-+        if (!chunk.worldObj.spigotConfig.useAsyncLighting || !chunk.worldObj.isModded) {
++
++        if (!chunk.worldObj.spigotConfig.useAsyncLighting) {
 +            return this.updateLightByType(enumskyblock, x, y, z, chunk, null);
 +        }
-+
-+        chunk.pendingLightUpdates.incrementAndGet();
-+        chunk.lightUpdateTime = chunk.worldObj.getTotalWorldTime();
 +
 +        final List<Chunk> neighbors = new ArrayList<Chunk>();
 +        for (int cx = (x >> 4) - 1; cx <= (x >> 4) + 1; ++cx) {
@@ -1722,8 +1598,6 @@
 +                if (cx != x >> 4 && cz != z >> 4) {
 +                    Chunk neighbor = this.getChunkIfLoaded(cx, cz);
 +                    if (neighbor != null) {
-+                        neighbor.pendingLightUpdates.incrementAndGet();
-+                        neighbor.lightUpdateTime = chunk.worldObj.getTotalWorldTime();
 +                        neighbors.add(neighbor);
 +                    }
 +                }

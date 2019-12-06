@@ -1,0 +1,78 @@
+--- ../src-base/minecraft/net/minecraftforge/common/util/FakePlayer.java
++++ ../src-work/minecraft/net/minecraftforge/common/util/FakePlayer.java
+@@ -1,11 +1,15 @@
+ package net.minecraftforge.common.util;
+ 
++import cc.uraniummc.ULog;
+ import com.mojang.authlib.GameProfile;
+ 
+ import cpw.mods.fml.common.FMLCommonHandler;
++import cpw.mods.fml.common.FMLLog;
++import cpw.mods.fml.common.gameevent.PlayerEvent;
+ import net.minecraft.entity.player.EntityPlayer;
+ import net.minecraft.entity.player.EntityPlayerMP;
+ import net.minecraft.network.play.client.C15PacketClientSettings;
++import net.minecraft.server.MinecraftServer;
+ import net.minecraft.server.management.ItemInWorldManager;
+ import net.minecraft.stats.StatBase;
+ import net.minecraft.util.ChunkCoordinates;
+@@ -13,15 +17,58 @@
+ import net.minecraft.util.IChatComponent;
+ import net.minecraft.world.World;
+ import net.minecraft.world.WorldServer;
++import net.minecraftforge.cauldron.configuration.CauldronConfig;
++import net.minecraftforge.common.MinecraftForge;
++import net.minecraftforge.event.ForgeEventFactory;
++import org.apache.logging.log4j.LogManager;
++import org.bukkit.Bukkit;
++import org.bukkit.craftbukkit.scheduler.CraftTask;
++import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
++import org.bukkit.event.player.PlayerLoginEvent;
++import org.bukkit.event.player.PlayerPreLoginEvent;
+ 
++import java.net.InetAddress;
++import java.util.ArrayList;
++import java.util.HashSet;
++import java.util.concurrent.ConcurrentSkipListSet;
++
+ //Preliminary, simple Fake Player class 
+ public class FakePlayer extends EntityPlayerMP
+ {
++    static public ArrayList<FakePlayer> fakePlayers=new ArrayList();
++    static public boolean BukkitInited=false;
+     public FakePlayer(WorldServer world, GameProfile name)
+     {
+         super(FMLCommonHandler.instance().getMinecraftServerInstance(), world, name, new ItemInWorldManager(world));
++        //KCauldronX Start
++        if(MinecraftServer.cauldronConfig.fakePlayerLogin.getValue()) {
++            if (!BukkitInited) {
++                fakePlayers.add(this);
++            } else {
++                callBukkitLoginEvent();
++            }
++        }
++        //KCauldronX End
+     }
+-
++    public void callBukkitLoginEvent(){
++        new Thread(new Runnable() {
++            @Override
++            public void run() {
++                AsyncPlayerPreLoginEvent prelogin2 = new AsyncPlayerPreLoginEvent(getCommandSenderName(), InetAddress.getLoopbackAddress(), getUniqueID());
++                Bukkit.getPluginManager().callEvent(prelogin2);
++                MinecraftServer.getServer().processQueue.add(new Runnable() {
++                    @Override
++                    public void run() {
++                        PlayerPreLoginEvent prelogin1 = new PlayerPreLoginEvent(getCommandSenderName(), InetAddress.getLoopbackAddress(), getUniqueID());
++                        Bukkit.getPluginManager().callEvent(prelogin1);
++                        PlayerLoginEvent login = new PlayerLoginEvent(getBukkitEntity(), "localhost", InetAddress.getLoopbackAddress());
++                        Bukkit.getPluginManager().callEvent(login);
++                        ULog.get().info("%s","Fakeplayer "+getCommandSenderName()+" ("+getUniqueID()+") joined server");
++                    }
++                });
++            }
++        }).start();
++    }
+     @Override public boolean canCommandSenderUseCommand(int i, String s){ return false; }
+     @Override public ChunkCoordinates getPlayerCoordinates()
+     {

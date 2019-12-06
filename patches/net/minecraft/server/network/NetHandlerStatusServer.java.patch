@@ -1,14 +1,13 @@
 --- ../src-base/minecraft/net/minecraft/server/network/NetHandlerStatusServer.java
 +++ ../src-work/minecraft/net/minecraft/server/network/NetHandlerStatusServer.java
-@@ -1,5 +1,7 @@
+@@ -1,5 +1,6 @@
  package net.minecraft.server.network;
  
-+
 +import io.netty.channel.ChannelFutureListener;
  import io.netty.util.concurrent.GenericFutureListener;
  import net.minecraft.network.EnumConnectionState;
  import net.minecraft.network.NetworkManager;
-@@ -11,12 +13,26 @@
+@@ -11,8 +12,21 @@
  import net.minecraft.server.MinecraftServer;
  import net.minecraft.util.IChatComponent;
  
@@ -21,26 +20,20 @@
 +
  public class NetHandlerStatusServer implements INetHandlerStatusServer
  {
-     private final MinecraftServer field_147314_a;
-     private final NetworkManager field_147313_b;
-     private static final String __OBFID = "CL_00001464";
- 
 +    //CraftBukkit start
 +    private static final int WAITING = 0;
 +    private static final int PING = 1;
 +    private static final int DONE = 2;
 +    private int state = WAITING;
 +    //Craftbukkit end
-+
-     public NetHandlerStatusServer(MinecraftServer p_i45299_1_, NetworkManager p_i45299_2_)
-     {
-         this.field_147314_a = p_i45299_1_;
-@@ -37,11 +53,55 @@
+     private final MinecraftServer field_147314_a;
+     private final NetworkManager field_147313_b;
+     private static final String __OBFID = "CL_00001464";
+@@ -37,7 +51,46 @@
  
      public void processServerQuery(C00PacketServerQuery p_147312_1_)
      {
 -        this.field_147313_b.scheduleOutboundPacket(new S00PacketServerInfo(this.field_147314_a.func_147134_at()), new GenericFutureListener[0]);
-+
 +        this.field_147313_b.scheduleOutboundPacket(new S00PacketServerInfo(this.field_147314_a.func_147134_at()));
 +
 +        if (state != WAITING) {
@@ -70,6 +63,7 @@
 +                this.icon = (CraftIconCache) icon;
 +            }
 +        }
++
 +        ServerListPingEvent event = new ServerListPingEvent();
 +        this.field_147314_a.server.getPluginManager().callEvent(event);
 +        ServerStatusResponse ping = new ServerStatusResponse();
@@ -78,18 +72,8 @@
 +        ping.func_151319_a(new ServerStatusResponse.PlayerCountData(event.getMaxPlayers(), field_147314_a.getConfigurationManager().getCurrentPlayerCount()));
 +        ping.func_151321_a(new ServerStatusResponse.MinecraftProtocolVersionIdentifier(field_147314_a.getServerModName() + " " + field_147314_a.getMinecraftVersion(), 5)); // TODO: Update when protocol changes
 +        this.field_147313_b.scheduleOutboundPacket(new S00PacketServerInfo(ping), new GenericFutureListener[0]);
++
 +        // CraftBukkit end
      }
  
      public void processPing(C01PacketPing p_147311_1_)
-     {
--        this.field_147313_b.scheduleOutboundPacket(new S01PacketPong(p_147311_1_.func_149289_c()), new GenericFutureListener[0]);
-+        this.field_147313_b.scheduleOutboundPacket(new S01PacketPong(p_147311_1_.func_149289_c()));
-+        if (state != PING) {
-+            this.field_147313_b.closeChannel(null);
-+            return;
-+        }
-+        state = DONE;
-+        this.field_147313_b.scheduleOutboundPacket(new S01PacketPong(p_147311_1_.func_149289_c()), ChannelFutureListener.CLOSE);
-     }
- }

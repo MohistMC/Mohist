@@ -30,3 +30,16 @@
          if (p_150062_5_ != i1)
          {
              p_150062_1_.setBlockMetadataWithNotify(p_150062_2_, p_150062_3_, p_150062_4_, this.func_150066_d(i1), 2);
+@@ -141,7 +156,11 @@
+ 
+         if (flag1)
+         {
+-            p_150062_1_.scheduleBlockUpdate(p_150062_2_, p_150062_3_, p_150062_4_, this, this.tickRate(p_150062_1_));
++            if(i1!=p_150062_5_){
++                p_150062_1_.scheduleBlockUpdate(p_150062_2_, p_150062_3_, p_150062_4_, this, this.tickRate(p_150062_1_));
++            }else{
++                p_150062_1_.func_147446_b(p_150062_2_, p_150062_3_, p_150062_4_, this, this.tickRate(p_150062_1_),0);
++            }
+         }
+     }
+ 

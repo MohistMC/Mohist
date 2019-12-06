@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/cpw/mods/fml/common/network/internal/FMLNetworkHandler.java
 +++ ../src-work/minecraft/cpw/mods/fml/common/network/internal/FMLNetworkHandler.java
-@@ -47,6 +47,17 @@
+@@ -47,6 +47,16 @@
  import cpw.mods.fml.common.registry.EntityRegistry.EntityRegistration;
  import cpw.mods.fml.relauncher.Side;
  import cpw.mods.fml.relauncher.SideOnly;
@@ -13,12 +13,11 @@
 +import org.bukkit.craftbukkit.inventory.CraftInventory;
 +import org.bukkit.craftbukkit.inventory.CraftInventoryView;
 +import org.bukkit.event.inventory.InventoryType;
-+import red.mohist.configuration.MohistConfig;
 +// Cauldron end
  
  public class FMLNetworkHandler
  {
-@@ -75,6 +86,31 @@
+@@ -75,6 +85,31 @@
              Container remoteGuiContainer = NetworkRegistry.INSTANCE.getRemoteGuiContainer(mc, entityPlayerMP, modGuiId, world, x, y, z);
              if (remoteGuiContainer != null)
              {
@@ -50,36 +49,41 @@
                  entityPlayerMP.getNextWindowId();
                  entityPlayerMP.closeContainer();
                  int windowId = entityPlayerMP.currentWindowId;
-@@ -131,6 +167,7 @@
-     public static String checkModList(Map<String,String> listData, Side side)
-     {
-         List<ModContainer> rejects = Lists.newArrayList();
-+        List<ModContainer> hackpacks = Lists.newArrayList();
-         for (Entry<ModContainer, NetworkModHolder> networkMod : NetworkRegistry.INSTANCE.registry().entrySet())
-         {
-             boolean result = networkMod.getValue().check(listData, side);
-@@ -138,9 +175,15 @@
-             {
-                 rejects.add(networkMod.getKey());
-             }
-+            String name = networkMod.getKey().getName().toLowerCase() + networkMod.getKey().getModId().toLowerCase();
-+            if(rejects.isEmpty() && (name.contains("cjb") || name.contains("kradxns") || name.contains("chestfinder") || name.contains("cheating") || name.contains("xray") || name.contains("radarbro") || name.contains("zyin"))) hackpacks.add(networkMod.getKey());
-         }
-         if (rejects.isEmpty())
-         {
-+            if(!hackpacks.isEmpty()) {
-+                FMLLog.info("[Thermos] Rejecting hacker %s: %s", side, hackpacks);
-+                return String.format("Hack rejections %s",hackpacks);
-+            }
-             return null;
-         }
-         else
-@@ -188,7 +231,7 @@
+@@ -187,17 +222,26 @@
+ 
      public static void enhanceStatusQuery(JsonObject jsonobject)
      {
-         JsonObject fmlData = new JsonObject();
+-        JsonObject fmlData = new JsonObject();
 -        fmlData.addProperty("type", "FML");
-+        fmlData.addProperty("type", MohistConfig.instance.server_type.getValue());
-         JsonArray modList = new JsonArray();
-         for (ModContainer mc : Loader.instance().getActiveModList())
-         {
+-        JsonArray modList = new JsonArray();
+-        for (ModContainer mc : Loader.instance().getActiveModList())
+-        {
+-            JsonObject modData = new JsonObject();
+-            modData.addProperty("modid", mc.getModId());
+-            modData.addProperty("version", mc.getVersion());
+-            modList.add(modData);
++        /*
++        //Uranium start
++        if(!MinecraftServer.uraniumConfig.fakeVanillaMode.getValue()) {
++            //Uranium end
++            */
++            JsonObject fmlData = new JsonObject();
++            fmlData.addProperty("type", "FML");
++            JsonArray modList = new JsonArray();
++            for (ModContainer mc : Loader.instance().getActiveModList()) {
++                JsonObject modData = new JsonObject();
++                modData.addProperty("modid", mc.getModId());
++                modData.addProperty("version", mc.getVersion());
++                modList.add(modData);
++            }
++            fmlData.add("modList", modList);
++            jsonobject.add("modinfo", fmlData);
++            /*
++            //Uranium start
+         }
+-        fmlData.add("modList", modList);
+-        jsonobject.add("modinfo", fmlData);
++        //Uranium end
++        */
+     }
+ }

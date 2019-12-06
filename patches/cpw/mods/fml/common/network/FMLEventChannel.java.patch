@@ -1,0 +1,43 @@
+--- ../src-base/minecraft/cpw/mods/fml/common/network/FMLEventChannel.java
++++ ../src-work/minecraft/cpw/mods/fml/common/network/FMLEventChannel.java
+@@ -1,16 +1,20 @@
+ package cpw.mods.fml.common.network;
+ 
+-import io.netty.channel.ChannelFutureListener;
+-import io.netty.channel.ChannelHandlerContext;
+ import java.util.EnumMap;
+-import net.minecraft.client.network.NetHandlerPlayClient;
+-import net.minecraft.entity.player.EntityPlayerMP;
+-import net.minecraft.network.NetHandlerPlayServer;
++
++import cc.uraniummc.capture.type.CaptureBlock;
+ import cpw.mods.fml.common.FMLCommonHandler;
+ import cpw.mods.fml.common.eventhandler.EventBus;
+ import cpw.mods.fml.common.eventhandler.SubscribeEvent;
++import cpw.mods.fml.common.network.FMLNetworkEvent.ServerCustomPacketEvent;
+ import cpw.mods.fml.common.network.internal.FMLProxyPacket;
+ import cpw.mods.fml.relauncher.Side;
++import io.netty.channel.ChannelFutureListener;
++import io.netty.channel.ChannelHandlerContext;
++import net.minecraft.client.network.NetHandlerPlayClient;
++import net.minecraft.entity.player.EntityPlayerMP;
++import net.minecraft.network.NetHandlerPlayServer;
++import net.minecraft.server.MinecraftServer;
+ 
+ /**
+  * An event driven network channel, using {@link FMLNetworkEvent.CustomPacketEvent} and {@link FMLNetworkEvent.CustomNetworkEvent}
+@@ -100,7 +104,14 @@
+         FMLNetworkEvent.CustomPacketEvent<?> event = factory.make(msg);
+         if (event != null)
+         {
++            CaptureBlock tCapture=null;
++            if(MinecraftServer.cauldronConfig.modPacketPlace.getValue()&&event instanceof ServerCustomPacketEvent){
++                EntityPlayerMP tPlayer=((NetHandlerPlayServer)((ServerCustomPacketEvent)event).handler).playerEntity;
++                tCapture=tPlayer.worldObj.mCapture.startCapture(tPlayer);
++            }
+             this.eventBus.post(event);
++            
++            if(tCapture!=null) tCapture.endCapture();
+             if (event.reply != null)
+             {
+                 ctx.channel().attr(FMLOutboundHandler.FML_MESSAGETARGET).set(FMLOutboundHandler.OutboundTarget.REPLY);

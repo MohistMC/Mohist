@@ -1,0 +1,36 @@
+--- ../src-base/minecraft/net/minecraft/client/settings/GameSettings.java
++++ ../src-work/minecraft/net/minecraft/client/settings/GameSettings.java
+@@ -1,5 +1,7 @@
+ package net.minecraft.client.settings;
+ 
++import cc.uraniummc.Uranium;
++import cc.uraniummc.UraniumConfig;
+ import com.google.common.collect.Maps;
+ import com.google.gson.Gson;
+ 
+@@ -23,6 +25,7 @@
+ import net.minecraft.client.stream.TwitchStream;
+ import net.minecraft.entity.player.EntityPlayer;
+ import net.minecraft.network.play.client.C15PacketClientSettings;
++import net.minecraft.server.MinecraftServer;
+ import net.minecraft.util.MathHelper;
+ import net.minecraft.world.EnumDifficulty;
+ import org.apache.commons.lang3.ArrayUtils;
+@@ -215,7 +218,7 @@
+         this.noclipRate = 1.0F;
+         this.debugCamRate = 1.0F;
+         this.fovSetting = 70.0F;
+-        this.language = "en_US";
++        this.language = MinecraftServer.uraniumConfig.language.getValue();
+         this.forceUnicodeFont = false;
+         this.mc = p_i1016_1_;
+         this.optionsFile = new File(p_i1016_2_, "options.txt");
+@@ -285,7 +288,7 @@
+         this.noclipRate = 1.0F;
+         this.debugCamRate = 1.0F;
+         this.fovSetting = 70.0F;
+-        this.language = "en_US";
++        this.language = MinecraftServer.uraniumConfig.language.getValue();
+         this.forceUnicodeFont = false;
+     }
+ 

@@ -125,6 +125,7 @@ public class CauldronUtils {
 
     public static boolean deobfuscatedEnvironment()
     {
+        /*
         try
         {
             // Are we in a 'decompiled' environment?
@@ -138,6 +139,7 @@ public class CauldronUtils {
         catch (IOException e1)
         {
         }
+        */
         return deobfuscated;
     }
 }

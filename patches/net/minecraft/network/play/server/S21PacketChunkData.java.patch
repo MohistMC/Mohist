@@ -1,14 +1,5 @@
 --- ../src-base/minecraft/net/minecraft/network/play/server/S21PacketChunkData.java
 +++ ../src-work/minecraft/net/minecraft/network/play/server/S21PacketChunkData.java
-@@ -45,7 +45,7 @@
- 
-     private void deflate()
-     {
--        Deflater deflater = new Deflater(-1);
-+        Deflater deflater = new Deflater(4); // Spigot -1 -> 4
-         try
-         {
-             deflater.setInput(this.field_149278_f, 0, this.field_149278_f.length);
 @@ -198,8 +198,10 @@
              if (aextendedblockstorage[l] != null && (!p_149269_1_ || !aextendedblockstorage[l].isEmpty()) && (p_149269_2_ & 1 << l) != 0)
              {

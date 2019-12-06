@@ -215,8 +215,6 @@ public abstract class PotionEffectType {
      */
     @Deprecated
     public static PotionEffectType getById(int id) {
-        if (id >= byId.size() || id < 0) // Cauldron
-            return null;
         return byId.get(id); // Cauldron
     }
 

@@ -70,24 +70,7 @@
      private static final String __OBFID = "CL_00001743";
  
      public InventoryCrafting(Container p_i1807_1_, int p_i1807_2_, int p_i1807_3_)
-@@ -30,15 +88,7 @@
- 
-     public ItemStack getStackInRowAndColumn(int p_70463_1_, int p_70463_2_)
-     {
--        if (p_70463_1_ >= 0 && p_70463_1_ < this.inventoryWidth)
--        {
--            int k = p_70463_1_ + p_70463_2_ * this.inventoryWidth;
--            return this.getStackInSlot(k);
--        }
--        else
--        {
--            return null;
--        }
-+    	return (p_70463_1_ >= 0 && p_70463_1_ < this.inventoryWidth) ?  this.getStackInSlot(p_70463_1_ + p_70463_2_ * this.inventoryWidth) : null;
-     }
- 
-     public String getInventoryName()
-@@ -105,7 +155,7 @@
+@@ -105,7 +163,7 @@
  
      public int getInventoryStackLimit()
      {

@@ -62,7 +62,7 @@
      public EntityMinecartContainer(World p_i1716_1_)
      {
          super(p_i1716_1_);
-@@ -147,8 +196,16 @@
+@@ -147,6 +196,13 @@
  
      public void travelToDimension(int p_71027_1_)
      {
@@ -75,7 +75,4 @@
 +        // Spigot End
          this.dropContentsWhenDead = false;
          super.travelToDimension(p_71027_1_);
-+        this.minecartContainerItems = new ItemStack[36]; // Drop the inventory to fix dupe glitch
      }
- 
-     public void setDead()

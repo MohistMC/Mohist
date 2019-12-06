@@ -58,7 +58,7 @@
      }
  
      public double getMountedYOffset()
-@@ -97,6 +134,20 @@
+@@ -97,6 +134,19 @@
          }
          else if (!this.worldObj.isRemote && !this.isDead)
          {
@@ -74,12 +74,11 @@
 +            }
 +
 +            // f = event.getDamage(); // TODO Why don't we do this?
-+            if((float)event.getDamage() != p_70097_2_ ) p_70097_2_ = (float)event.getDamage(); // Thermos - wow that's sad, maybe we should implement instead of leaving it at "TODO"
 +            // CraftBukkit end
              this.setForwardDirection(-this.getForwardDirection());
              this.setTimeSinceHit(10);
              this.setDamageTaken(this.getDamageTaken() + p_70097_2_ * 10.0F);
-@@ -105,6 +156,18 @@
+@@ -105,6 +155,18 @@
  
              if (flag || this.getDamageTaken() > 40.0F)
              {
@@ -98,7 +97,7 @@
                  if (this.riddenByEntity != null)
                  {
                      this.riddenByEntity.mountEntity(this);
-@@ -181,6 +244,13 @@
+@@ -181,6 +243,13 @@
  
      public void onUpdate()
      {
@@ -112,7 +111,7 @@
          super.onUpdate();
  
          if (this.getTimeSinceHit() > 0)
-@@ -303,7 +373,25 @@
+@@ -303,7 +372,25 @@
                  this.motionX += -Math.sin((double)(f * (float)Math.PI / 180.0F)) * this.speedMultiplier * (double)entitylivingbase.moveForward * 0.05000000074505806D;
                  this.motionZ += Math.cos((double)(f * (float)Math.PI / 180.0F)) * this.speedMultiplier * (double)entitylivingbase.moveForward * 0.05000000074505806D;
              }
@@ -138,7 +137,7 @@
              d2 = Math.sqrt(this.motionX * this.motionX + this.motionZ * this.motionZ);
  
              if (d2 > 0.35D)
-@@ -347,18 +435,32 @@
+@@ -347,18 +434,32 @@
  
                      if (block == Blocks.snow_layer)
                      {
@@ -172,7 +171,7 @@
              {
                  this.motionX *= 0.5D;
                  this.motionY *= 0.5D;
-@@ -371,17 +473,27 @@
+@@ -371,17 +472,27 @@
              {
                  if (!this.worldObj.isRemote && !this.isDead)
                  {
@@ -207,7 +206,7 @@
                  }
              }
              else
-@@ -415,7 +527,22 @@
+@@ -415,7 +526,22 @@
  
              this.rotationYaw = (float)((double)this.rotationYaw + d7);
              this.setRotation(this.rotationYaw, this.rotationPitch);
@@ -230,7 +229,7 @@
              if (!this.worldObj.isRemote)
              {
                  List list = this.worldObj.getEntitiesWithinAABBExcludingEntity(this, this.boundingBox.expand(0.20000000298023224D, 0.0D, 0.20000000298023224D));
-@@ -435,6 +562,7 @@
+@@ -435,6 +561,7 @@
  
                  if (this.riddenByEntity != null && this.riddenByEntity.isDead)
                  {

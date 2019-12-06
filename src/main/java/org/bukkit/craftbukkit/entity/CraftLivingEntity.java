@@ -6,6 +6,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 import org.apache.commons.lang.Validate;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -126,13 +127,39 @@ public class CraftLivingEntity extends CraftEntity implements LivingEntity {
             if (maxLength != 0 && blocks.size() > maxLength) {
                 blocks.remove(0);
             }
-            int id = block.getTypeId();
+            byte id = (byte)block.getTypeId();
             if (transparent == null) {
                 if (id != 0) {
                     break;
                 }
             } else {
-                if (!transparent.contains((byte) id)) {
+                if (!transparent.contains(id)) {
+                    break;
+                }
+            }
+        }
+        return blocks;
+    }
+
+    private List<Block> getLineOfSight(Set<Material> transparent, int maxDistance, int maxLength) {
+        if (maxDistance > 120) {
+            maxDistance = 120;
+        }
+        ArrayList<Block> blocks = new ArrayList<Block>();
+        Iterator<Block> itr = new BlockIterator(this, maxDistance);
+        while (itr.hasNext()) {
+            Block block = itr.next();
+            blocks.add(block);
+            if (maxLength != 0 && blocks.size() > maxLength) {
+                blocks.remove(0);
+            }
+            Material material = block.getType();
+            if (transparent == null) {
+                if (!material.equals(Material.AIR)) {
+                    break;
+                }
+            } else {
+                if (!transparent.contains(material)) {
                     break;
                 }
             }
@@ -143,12 +170,19 @@ public class CraftLivingEntity extends CraftEntity implements LivingEntity {
     public List<Block> getLineOfSight(HashSet<Byte> transparent, int maxDistance) {
         return getLineOfSight(transparent, maxDistance, 0);
     }
+    @Override
+    public List<Block> getLineOfSight(Set<Material> transparent, int maxDistance) {
+        return getLineOfSight(transparent, maxDistance, 0);
+    }
 
     public Block getTargetBlock(HashSet<Byte> transparent, int maxDistance) {
         List<Block> blocks = getLineOfSight(transparent, maxDistance, 1);
         return blocks.get(0);
     }
-
+    public Block getTargetBlock(Set<Material> transparent, int maxDistance) {
+        List<Block> blocks = getLineOfSight(transparent, maxDistance, 1);
+        return blocks.get(0);
+    }
     public List<Block> getLastTwoTargetBlocks(HashSet<Byte> transparent, int maxDistance) {
         return getLineOfSight(transparent, maxDistance, 2);
     }
@@ -378,47 +412,6 @@ public class CraftLivingEntity extends CraftEntity implements LivingEntity {
         }
 
         return super.teleport(location, cause);
-    }
-
-    public void setCustomName(String name) {
-        if (!(getHandle() instanceof net.minecraft.entity.EntityLiving)) {
-            return;
-        }
-
-        if (name == null) {
-            name = "";
-        }
-
-        // Names cannot be more than 64 characters due to DataWatcher limitations
-        if (name.length() > 64) {
-            name = name.substring(0, 64);
-        }
-
-        ((net.minecraft.entity.EntityLiving) getHandle()).setCustomNameTag(name);
-    }
-
-    public String getCustomName() {
-        if (!(getHandle() instanceof net.minecraft.entity.EntityLiving)) {
-            return null;
-        }
-
-        String name = ((net.minecraft.entity.EntityLiving) getHandle()).getCustomNameTag();
-
-        if (name == null || name.length() == 0) {
-            return null;
-        }
-
-        return name;
-    }
-
-    public void setCustomNameVisible(boolean flag) {
-        if (getHandle() instanceof net.minecraft.entity.EntityLiving) {
-            ((net.minecraft.entity.EntityLiving) getHandle()).setAlwaysRenderNameTag(flag);
-        }
-    }
-
-    public boolean isCustomNameVisible() {
-        return getHandle() instanceof net.minecraft.entity.EntityLiving && ((net.minecraft.entity.EntityLiving) getHandle()).getAlwaysRenderNameTag();
     }
 
     public boolean isLeashed() {

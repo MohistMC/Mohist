@@ -147,7 +147,7 @@ public class CraftOfflinePlayer implements OfflinePlayer, ConfigurationSerializa
                 return (player.playerNetServerHandler != null) ? player.playerNetServerHandler.getPlayerB() : null; // Cauldron
             }
         }
-        EntityPlayer player = net.minecraftforge.common.util.FakePlayerFactory.fakePlayers.get(profile);
+        EntityPlayer player = net.minecraftforge.common.util.FakePlayerFactory.getFakePlayers().get(profile);
         return player != null ? (Player)player.getBukkitEntity() : null;
     }
 

@@ -26,8 +26,14 @@ import org.bukkit.permissions.PermissionAttachmentInfo;
 import org.bukkit.plugin.Plugin;
 
 public class CraftHumanEntity extends CraftLivingEntity implements HumanEntity {
-    public CraftInventoryPlayer inventory;
-    public CraftInventory enderChest;
+    private CraftInventoryPlayer inventory;
+    public void setInventory(CraftInventoryPlayer craftInventoryPlayer){
+        inventory = craftInventoryPlayer;
+    }
+    private CraftInventory enderChest;
+    public void setEnderChest(CraftInventory craftInventory){
+        enderChest = craftInventory;
+    }
     protected final PermissibleBase perm = new PermissibleBase(this);
     private boolean op;
     private GameMode mode;
@@ -47,7 +53,6 @@ public class CraftHumanEntity extends CraftLivingEntity implements HumanEntity {
     }
 
     public EntityEquipment getEquipment() {
-        if (inventory == null) inventory = new CraftInventoryPlayer(((net.minecraft.entity.player.EntityPlayer) entity).inventory);
         return inventory;
     }
 

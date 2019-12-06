@@ -18,11 +18,13 @@
      {
          BlockSourceImpl blocksourceimpl = new BlockSourceImpl(p_149941_1_, p_149941_2_, p_149941_3_, p_149941_4_);
          TileEntityDispenser tileentitydispenser = (TileEntityDispenser)blocksourceimpl.getBlockTileEntity();
-@@ -145,6 +147,7 @@
+@@ -145,7 +147,8 @@
                  if (ibehaviordispenseitem != IBehaviorDispenseItem.itemDispenseBehaviorProvider)
                  {
                      ItemStack itemstack1 = ibehaviordispenseitem.dispense(blocksourceimpl, itemstack);
+-                    tileentitydispenser.setInventorySlotContents(l, itemstack1.stackSize == 0 ? null : itemstack1);
 +                    eventFired = false; // CraftBukkit - reset event status
-                     tileentitydispenser.setInventorySlotContents(l, itemstack1.stackSize == 0 ? null : itemstack1);
++                    tileentitydispenser.setInventorySlotContents(l, itemstack1.stackSize <= 0 ? null : itemstack1);
                  }
              }
+         }

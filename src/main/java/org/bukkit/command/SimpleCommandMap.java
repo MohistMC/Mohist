@@ -210,7 +210,7 @@ public class SimpleCommandMap implements CommandMap {
         if (args.length == 0) {
             return false;
         }
-        
+
         String sentCommandLabel = args[0].toLowerCase();
         Command target = getCommand(sentCommandLabel);
 

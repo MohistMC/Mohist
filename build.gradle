@@ -6,7 +6,6 @@ buildscript {
         mavenCentral()
         maven { url 'https://files.minecraftforge.net/maven' }
         maven { url 'https://plugins.gradle.org/m2/' }
-        maven { url 'https://raw.githubusercontent.com/Mohist-Community/Mohist-Maven/master/maven/' }
     }
     dependencies {
         classpath 'net.minecraftforge.gradle:ForgeGradle:1.2-SNAPSHOT'
@@ -18,28 +17,14 @@ apply plugin: MohistDevPlugin
 
 repositories {
     mavenLocal()
-    maven { url 'https://raw.githubusercontent.com/Mohist-Community/Mohist-Maven/master/maven/' }
-    maven {
-        name 'sonatype'
-        url 'http://oss.sonatype.org/content/repositories/snapshots/'
-    }
-    maven {
-        name 'forge'
-        url 'http://files.minecraftforge.net/maven'
-    }
-    maven {
-        name 'minecraft'
-        url 'https://libraries.minecraft.net/'
-    }
-    maven {
-        name 'spigot'
-        url 'https://hub.spigotmc.org/nexus/content/repositories/snapshots/'
-    }
-    maven {
-        name 'spigot-public'
-        url 'https://hub.spigotmc.org/nexus/content/repositories/public/'
-    }
     mavenCentral()
+    maven { url 'http://repo.uraniummc.cc/content/groups/public/' }
+    maven { url 'http://oss.sonatype.org/content/repositories/snapshots/' }
+    maven { url 'https://files.minecraftforge.net/maven' }
+    maven { url 'https://libraries.minecraft.net/' }
+    maven { url 'https://hub.spigotmc.org/nexus/content/repositories/snapshots/' }
+    maven { url 'https://hub.spigotmc.org/nexus/content/repositories/public/' }
+    maven { url 'https://raw.githubusercontent.com/Mohist-Community/Mohist-Maven/master/maven/' }
 }
 
 minecraft {
@@ -61,40 +46,39 @@ configurations {
 }
 
 dependencies {
-    bootstrap 'pw.prok:KBootstrap:0.2.+'
+    bootstrap 'cc.uraniummc:KBootstrapX:0.2.+'
 
-    libraries 'net.minecraft:launchwrapper:1.12@jar'
     libraries 'org.ow2.asm:asm-all:5.0.3'
     libraries 'com.typesafe.akka:akka-actor_2.11:2.3.3'
-    libraries 'com.typesafe:config:1.2.1'
+    libraries 'com.typesafe:config:1.3.1'
     libraries 'org.scala-lang:scala-actors-migration_2.11:1.1.0'
-    libraries 'org.scala-lang:scala-compiler:2.11.7'
+    libraries 'org.scala-lang:scala-compiler:2.11.1'
     libraries 'org.scala-lang.plugins:scala-continuations-library_2.11:1.0.2'
-    libraries 'org.scala-lang.plugins:scala-continuations-plugin_2.11.2:1.0.2'
-    libraries 'org.scala-lang:scala-library:2.11.7'
-    libraries 'org.scala-lang:scala-parser-combinators:2.11.0-M4'
-    libraries 'org.scala-lang:scala-reflect:2.11.7'
-    libraries 'org.scala-lang:scala-swing:2.11.0-M7'
-    libraries 'org.scala-lang:scala-xml:2.11.0-M4'
+    libraries 'org.scala-lang.plugins:scala-continuations-plugin_2.11.1:1.0.2'
+    libraries 'org.scala-lang:scala-library:2.11.1'
+    libraries 'org.scala-lang:scala-parser-combinators_2.11:1.0.1'
+    libraries 'org.scala-lang:scala-reflect:2.11.1'
+    libraries 'org.scala-lang:scala-swing_2.11:1.0.1'
+    libraries 'org.scala-lang:scala-xml_2.11:1.0.2'
     libraries 'net.sf.jopt-simple:jopt-simple:5.0.1'
     libraries 'lzma:lzma:0.0.1'
-    libraries 'org.yaml:snakeyaml:1.9'
+    libraries 'org.yaml:snakeyaml:1.15'
     libraries 'commons-lang:commons-lang:2.6'
-    libraries 'org.avaje:ebean:2.7.3'
-    libraries 'jline:jline:2.6'
+    libraries 'org.avaje:ebean:2.8.1'
+    libraries 'jline:jline:2.13'
     libraries 'net.md-5:SpecialSource:1.7.4'
-    libraries 'net.md-5:bungeecord-chat:1.7.10-SNAPSHOT'
     libraries 'net.sourceforge.argo:argo:2.25'
     libraries 'com.googlecode.json-simple:json-simple:1.1'
     libraries 'org.xerial:sqlite-jdbc:3.7.2'
-    libraries 'mysql:mysql-connector-java:5.1.14'
+    libraries 'mysql:mysql-connector-java:5.1.46'//
     libraries 'javax.persistence:persistence-api:1.0.2'
     libraries 'org.apache.httpcomponents:httpclient:4.4.1'
+    libraries 'pw.prok:KImagine:0.2.0@jar'
     libraries 'net.openhft:affinity:3.0.1'
     libraries 'org.fusesource.jansi:jansi:1.11'
-    libraries 'com.koloboke:koloboke-impl-jdk8:1.0.0'
     libraries 'java3d:vecmath:1.3.1'
-    libraries 'pw.prok:KImagine:0.2.0'
+    libraries 'colt:colt:1.2.0'
+    libraries 'org.jetbrains.kotlin:kotlin-runtime:1.1.4-2'
 }
 
 packageUniversal {
@@ -136,15 +120,10 @@ tasks.generateProjectCauldron << {
     file.append('''
 repositories {
     clear()
-    maven { url 'https://raw.githubusercontent.com/Mohist-Community/Mohist-Maven/master/maven' }
-    maven {
-        name 'forge'
-        url 'http://files.minecraftforge.net/maven/'
-    }
-    maven {
-        name 'minecraft'
-        url 'https://libraries.minecraft.net/'
-    }
+    maven { url 'http://repo.uraniummc.cc/content/groups/public/' }
+    maven { url 'https://files.minecraftforge.net/maven/' }
+    maven { url 'https://libraries.minecraft.net/' }
+    maven { url 'https://raw.githubusercontent.com/Mohist-Community/Mohist-Maven/master/maven/' }
     mavenCentral()
     mavenLocal()
 }
@@ -169,6 +148,6 @@ task resolveAllDependencies {
 }
 
 task dumpLibs(type: Copy) {
-    into "$buildDir/libraries"
+    into "libraries"
     from configurations.libraries
 }

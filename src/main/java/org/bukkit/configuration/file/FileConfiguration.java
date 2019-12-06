@@ -32,7 +32,7 @@ public abstract class FileConfiguration extends MemoryConfiguration {
      * @deprecated temporary compatibility measure
      */
     @Deprecated
-    public static final boolean UTF8_OVERRIDE = true;
+    public static final boolean UTF8_OVERRIDE=true;
     /**
      * This value specifies if the system default encoding is unicode, but
      * cannot parse standard ASCII.
@@ -40,14 +40,14 @@ public abstract class FileConfiguration extends MemoryConfiguration {
      * @deprecated temporary compatibility measure
      */
     @Deprecated
-    public static final boolean UTF_BIG = false;
+    public static final boolean UTF_BIG=false;
     /**
      * This value specifies if the system supports unicode.
      *
      * @deprecated temporary compatibility measure
      */
     @Deprecated
-    public static final boolean SYSTEM_UTF =true;
+    public static final boolean SYSTEM_UTF=true;
 
     /**
      * Creates an empty {@link FileConfiguration} with no default values.

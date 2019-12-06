@@ -1,6 +1,16 @@
 --- ../src-base/minecraft/net/minecraft/command/CommandHandler.java
 +++ ../src-work/minecraft/net/minecraft/command/CommandHandler.java
-@@ -16,6 +16,11 @@
+@@ -9,13 +9,19 @@
+ import java.util.Set;
+ import java.util.Map.Entry;
+ import net.minecraft.entity.player.EntityPlayerMP;
+-import net.minecraft.util.ChatComponentTranslation;
+-import net.minecraft.util.EnumChatFormatting;
++import net.minecraft.event.HoverEvent;
++import net.minecraft.server.MinecraftServer;
++import net.minecraft.util.*;
+ import org.apache.logging.log4j.LogManager;
+ import org.apache.logging.log4j.Logger;
  
  import net.minecraftforge.common.MinecraftForge;
  import net.minecraftforge.event.CommandEvent;
@@ -12,7 +22,7 @@
  
  public class CommandHandler implements ICommandManager
  {
-@@ -48,7 +53,7 @@
+@@ -48,7 +54,7 @@
                  throw new CommandNotFoundException();
              }
  
@@ -21,7 +31,31 @@
              {
                  CommandEvent event = new CommandEvent(icommand, p_71556_1_, astring);
                  if (MinecraftForge.EVENT_BUS.post(event))
-@@ -134,11 +139,30 @@
+@@ -124,6 +130,23 @@
+         catch (Throwable throwable)
+         {
+             chatcomponenttranslation = new ChatComponentTranslation("commands.generic.exception", new Object[0]);
++            if(MinecraftServer.uraniumConfig.allowShowCommandThrowableOnClient.getValue()) {
++                StringBuilder td = new StringBuilder();
++                td.append("Exception in your command ").append(p_71556_2_).append(" ").append(throwable.getClass().getName()).append(": ").append(throwable.getLocalizedMessage()).append("\n");
++                for (StackTraceElement ste : throwable.getStackTrace()) {
++                    td.append(" at ").append(ste.toString()).append("\n");
++                }
++                Throwable cause=throwable;
++                while ((cause=cause.getCause())!=null){
++                    td.append("Cause by ");
++                    td.append(cause.getClass().getClass().getName()).append(":").append(cause.getLocalizedMessage()).append("\n");
++                    for (StackTraceElement ste : cause.getStackTrace()) {
++                        td.append(" at ").append(ste.toString()).append("\n");
++                    }
++                }
++                td.deleteCharAt(td.length() - 1);
++                chatcomponenttranslation.getChatStyle().setChatHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ChatComponentText(td.toString())));
++            }
+             chatcomponenttranslation.getChatStyle().setColor(EnumChatFormatting.RED);
+             p_71556_1_.addChatMessage(chatcomponenttranslation);
+             logger.error("Couldn\'t process command: \'" + p_71556_2_ + "\'", throwable);
+@@ -134,11 +157,30 @@
  
      public ICommand registerCommand(ICommand p_71560_1_)
      {
@@ -55,7 +89,7 @@
          {
              Iterator iterator = list.iterator();
  
-@@ -149,13 +173,14 @@
+@@ -149,13 +191,14 @@
  
                  if (icommand1 == null || !icommand1.getCommandName().equals(s))
                  {

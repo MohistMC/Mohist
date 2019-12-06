@@ -1,14 +1,15 @@
 --- ../src-base/minecraft/net/minecraft/world/chunk/storage/AnvilChunkLoader.java
 +++ ../src-work/minecraft/net/minecraft/world/chunk/storage/AnvilChunkLoader.java
-@@ -5,6 +5,7 @@
- import java.io.File;
- import java.io.IOException;
- import java.util.ArrayList;
-+import java.util.Collection;
- import java.util.HashSet;
- import java.util.Iterator;
+@@ -10,6 +10,8 @@
  import java.util.List;
-@@ -33,6 +34,13 @@
+ import java.util.Set;
+ 
++import cc.uraniummc.Uranium;
++import cc.uraniummc.UraniumConfig;
+ import net.minecraft.block.Block;
+ import net.minecraft.entity.Entity;
+ import net.minecraft.entity.EntityList;
+@@ -33,6 +35,13 @@
  import org.apache.logging.log4j.Logger;
  
  import cpw.mods.fml.common.FMLLog;
@@ -22,7 +23,7 @@
  
  public class AnvilChunkLoader implements IChunkLoader, IThreadedFileIO
  {
-@@ -41,6 +49,7 @@
+@@ -41,6 +50,7 @@
      private Set pendingAnvilChunksCoordinates = new HashSet();
      private Object syncLockObject = new Object();
      public final File chunkSaveLocation;
@@ -30,14 +31,7 @@
      private static final String __OBFID = "CL_00000384";
  
      public AnvilChunkLoader(File p_i2003_1_)
-@@ -68,18 +77,22 @@
-             }
-         }
- 
--        return RegionFileCache.createOrLoadRegionFile(this.chunkSaveLocation, i, j).chunkExists(i & 31, j & 31);
-+        final RegionFile region = RegionFileCache.createOrLoadRegionFile(this.chunkSaveLocation, i, j, false);
-+        return region != null && region.chunkExists(i & 31, j & 31);
-     }
+@@ -73,13 +83,16 @@
  
      public Chunk loadChunk(World p_75815_1_, int p_75815_2_, int p_75815_3_) throws IOException
      {
@@ -148,39 +142,36 @@
                  }
  
                  nbttaglist.appendTag(nbttagcompound1);
-@@ -379,17 +402,16 @@
+@@ -379,7 +402,7 @@
          }
  
          p_75820_3_.setTag("TileEntities", nbttaglist3);
 -        List list = p_75820_2_.getPendingBlockUpdates(p_75820_1_, false);
--
--        if (list != null)
-+        Collection<NextTickListEntry> list = p_75820_2_.getPendingBlockUpdates(p_75820_1_, false);
-+        if(list == null)
++        Set list = p_75820_1_.blockUpdates;
+ 
+         if (list != null)
          {
-+        	return;
-+        }
-             long k = p_75820_2_.getTotalWorldTime();
-             NBTTagList nbttaglist1 = new NBTTagList();
--            Iterator iterator = list.iterator();
--
--            while (iterator.hasNext())
-+            for(Iterator<NextTickListEntry> iterator = list.iterator(); iterator.hasNext();)
+@@ -389,13 +412,13 @@
+ 
+             while (iterator.hasNext())
              {
 -                NextTickListEntry nextticklistentry = (NextTickListEntry)iterator.next();
-+                NextTickListEntry nextticklistentry = iterator.next();
++                cc.uraniummc.BlockUpdateEntry nextticklistentry = (cc.uraniummc.BlockUpdateEntry)iterator.next();
                  NBTTagCompound nbttagcompound2 = new NBTTagCompound();
-                 nbttagcompound2.setInteger("i", Block.getIdFromBlock(nextticklistentry.func_151351_a()));
-                 nbttagcompound2.setInteger("x", nextticklistentry.xCoord);
-@@ -401,7 +423,6 @@
+-                nbttagcompound2.setInteger("i", Block.getIdFromBlock(nextticklistentry.func_151351_a()));
+-                nbttagcompound2.setInteger("x", nextticklistentry.xCoord);
+-                nbttagcompound2.setInteger("y", nextticklistentry.yCoord);
+-                nbttagcompound2.setInteger("z", nextticklistentry.zCoord);
+-                nbttagcompound2.setInteger("t", (int)(nextticklistentry.scheduledTime - k));
++                nbttagcompound2.setInteger("i", Block.getIdFromBlock(nextticklistentry.block));
++                nbttagcompound2.setInteger("x", nextticklistentry.x);
++                nbttagcompound2.setInteger("y", nextticklistentry.y);
++                nbttagcompound2.setInteger("z", nextticklistentry.z);
++                nbttagcompound2.setInteger("t", (int)(nextticklistentry.time - k));
+                 nbttagcompound2.setInteger("p", nextticklistentry.priority);
+                 nbttaglist1.appendTag(nbttagcompound2);
              }
- 
-             p_75820_3_.setTag("TileTicks", nbttaglist1);
--        }
-     }
- 
-     private Chunk readChunkFromNBT(World p_75823_1_, NBTTagCompound p_75823_2_)
-@@ -455,6 +476,7 @@
+@@ -455,6 +478,7 @@
  
      public void loadEntities(World p_75823_1_, NBTTagCompound p_75823_2_, Chunk chunk)
      {
@@ -188,7 +179,7 @@
          NBTTagList nbttaglist1 = p_75823_2_.getTagList("Entities", 10);
  
          if (nbttaglist1 != null)
-@@ -468,24 +490,31 @@
+@@ -468,24 +492,31 @@
                  if (entity2 != null)
                  {
                      chunk.addEntity(entity2);
@@ -229,7 +220,7 @@
          NBTTagList nbttaglist2 = p_75823_2_.getTagList("TileEntities", 10);
  
          if (nbttaglist2 != null)
-@@ -497,11 +526,35 @@
+@@ -497,11 +528,35 @@
  
                  if (tileentity != null)
                  {
@@ -265,7 +256,13 @@
          if (p_75823_2_.hasKey("TileTicks", 9))
          {
              NBTTagList nbttaglist3 = p_75823_2_.getTagList("TileTicks", 10);
-@@ -515,6 +568,7 @@
+@@ -511,10 +566,12 @@
+                 for (int j1 = 0; j1 < nbttaglist3.tagCount(); ++j1)
+                 {
+                     NBTTagCompound nbttagcompound5 = nbttaglist3.getCompoundTagAt(j1);
+-                    p_75823_1_.func_147446_b(nbttagcompound5.getInteger("x"), nbttagcompound5.getInteger("y"), nbttagcompound5.getInteger("z"), Block.getBlockById(nbttagcompound5.getInteger("i")), nbttagcompound5.getInteger("t"), nbttagcompound5.getInteger("p"));
++                    cc.uraniummc.BlockUpdateEntry entry = ((net.minecraft.world.WorldServer) p_75823_1_).blockUpdatesTracker.allocateEntry(nbttagcompound5.getInteger("x"), nbttagcompound5.getInteger("y"), nbttagcompound5.getInteger("z"), nbttagcompound5.getInteger("p"), nbttagcompound5.getInteger("t"), Block.getBlockById(nbttagcompound5.getInteger("i")));
++                    chunk.blockUpdates.add(entry);
                  }
              }
          }

@@ -171,7 +171,7 @@ public final class CraftItemStack extends ItemStack {
 
     @Override
     public int getMaxStackSize() {
-        return (handle == null) ? Material.AIR.getMaxStackSize() : handle.getItem().getItemStackLimit();
+        return (handle == null) ? Material.AIR.getMaxStackSize() : handle.getItem().getItemStackLimit(this.handle);
     }
 
     @Override
@@ -369,7 +369,7 @@ public final class CraftItemStack extends ItemStack {
 
         if (item.stackTagCompound == null)
         {
-            item.stackTagCompound = item.writeToNBT(new net.minecraft.nbt.NBTTagCompound());
+            item.stackTagCompound = new net.minecraft.nbt.NBTTagCompound();
         }
 
         ((CraftMetaItem)itemMeta).applyToItem(item.stackTagCompound);

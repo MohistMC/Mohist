@@ -14,17 +14,18 @@ import net.minecraftforge.cauldron.configuration.Setting;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.Validate;
 import org.apache.commons.lang.math.NumberUtils;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.util.StringUtil;
+import org.spigotmc.SpigotConfig;
 
 public class CauldronCommand extends Command
 {
     private static final List<String> COMMANDS = ImmutableList.of("get", "set", "tick-interval", "save", "reload", "chunks", "heap");
     private static final List<String> CHUNK_COMMANDS = ImmutableList.of("print", "dump");
 
-    public static boolean debug = false;
     public CauldronCommand()
     {
         super("cauldron");
@@ -41,13 +42,6 @@ public class CauldronCommand extends Command
         {
             return true;
         }
-        if((args.length > 0) && "debug".equalsIgnoreCase(args[0]))
-        {
-                debug = !debug;
-                sender.sendMessage("Robotia says debug is " + debug);
-                return true;
-        }
-
         if ((args.length > 0) && "heap".equalsIgnoreCase(args[0]))
         {
             processHeap(sender, args);
@@ -64,15 +58,28 @@ public class CauldronCommand extends Command
             sender.sendMessage(ChatColor.GREEN + "Config file saved");
             return true;
         }
-        if ((args.length == 1) && "reload".equalsIgnoreCase(args[0]))
+        if ((args.length == 1||args.length == 2) && "reload".equalsIgnoreCase(args[0]))
         {
-            MinecraftServer.getServer().cauldronConfig.load();
-            for (int i = 0; i < MinecraftServer.getServer().worlds.size(); i++)
-            {
-                MinecraftServer.getServer().worlds.get(i).cauldronConfig.init(); // reload world configs
+            if(args.length==1){
+                MinecraftServer.getServer().cauldronConfig.load();
+                for (int i = 0; i < MinecraftServer.getServer().worlds.size(); i++)
+                {
+                    MinecraftServer.getServer().worlds.get(i).cauldronConfig.init(); // reload world configs
+                }
+                sender.sendMessage(ChatColor.GREEN + "Config file reloaded");
+                return true;
+            }else if(args[1].equalsIgnoreCase("bukkit")){
+                Bukkit.getServer().reload();
+                sender.sendMessage(ChatColor.GREEN + "Bukkit Config file reloaded");
+                return true;
+            }else if(args[1].equalsIgnoreCase("spigot")){
+                SpigotConfig.init();
+                sender.sendMessage(ChatColor.GREEN + "Spigot Config file reloaded");
+                return true;
+            }else{
+                sender.sendMessage(ChatColor.GREEN + "§creload unknow model");
+                return true;
             }
-            sender.sendMessage(ChatColor.GREEN + "Config file reloaded");
-            return true;
         }
         if (args.length < 2)
         {
@@ -114,7 +121,7 @@ public class CauldronCommand extends Command
         for (net.minecraft.world.WorldServer world : MinecraftServer.getServer().worlds)
         {
             sender.sendMessage(ChatColor.GOLD + "Dimension: " + ChatColor.GRAY + world.provider.dimensionId +
-                    ChatColor.GOLD + " Loaded Chunks: " + ChatColor.GRAY + world.theChunkProviderServer.loadedChunkHashMap_KC.size() +
+                    ChatColor.GOLD + " Loaded Chunks: " + ChatColor.GRAY + world.theChunkProviderServer.getLoadedChunkCount() +
                     ChatColor.GOLD + " Active Chunks: " + ChatColor.GRAY + world.activeChunkSet.size() +
                     ChatColor.GOLD + " Entities: " + ChatColor.GRAY + world.loadedEntityList.size() +
                     ChatColor.GOLD + " Tile Entities: " + ChatColor.GRAY + world.loadedTileEntityList.size()

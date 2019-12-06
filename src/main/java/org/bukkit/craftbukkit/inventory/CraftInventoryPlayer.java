@@ -25,7 +25,27 @@ public class CraftInventoryPlayer extends CraftInventory implements org.bukkit.i
     public ItemStack getItemInHand() {
         return CraftItemStack.asCraftMirror(getInventory().getCurrentItem());
     }
+    //Uranium start
+    @Override
+    public ItemStack getItemInMainHand() {
+        return getItemInHand();
+    }
 
+    @Override
+    public void setItemInMainHand(ItemStack item) {
+        setItemInHand(item);
+    }
+
+    @Override
+    public ItemStack getItemInOffHand() {
+        return null;
+    }
+
+    @Override
+    public void setItemInOffHand(ItemStack item) {
+
+    }
+    //Uranium end
     public void setItemInHand(ItemStack stack) {
         setItem(getHeldItemSlot(), stack);
     }

@@ -3,7 +3,9 @@ package org.bukkit.entity;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.potion.PotionEffect;
@@ -54,7 +56,22 @@ public interface LivingEntity extends Entity, Damageable, ProjectileSource {
      */
     @Deprecated
     public List<Block> getLineOfSight(HashSet<Byte> transparent, int maxDistance);
-
+    /**
+     * Gets all blocks along the living entity's line of sight.
+     * <p>
+     * This list contains all blocks from the living entity's eye position to
+     * target inclusive.
+     *
+     * @param transparent HashSet containing all transparent block IDs (set to
+     *     null for only air)
+     * @param maxDistance this is the maximum distance to scan (may be limited
+     *     by server by at least 100 blocks, no less)
+     * @return list containing all blocks along the living entity's line of
+     *     sight
+     * @deprecated Magic value
+     */
+    @Deprecated
+    public List<Block> getLineOfSight(Set<Material> transparent, int maxDistance);
     /**
      * Gets the block that the living entity has targeted.
      *
@@ -67,7 +84,16 @@ public interface LivingEntity extends Entity, Damageable, ProjectileSource {
      */
     @Deprecated
     public Block getTargetBlock(HashSet<Byte> transparent, int maxDistance);
-
+    /**
+     * Gets the block that the living entity has targeted.
+     *
+     * @param transparent HashSet containing all transparent block Materials (set to
+     *     null for only air)
+     * @param maxDistance this is the maximum distance to scan (may be limited
+     *     by server by at least 100 blocks, no less)
+     * @return block that the living entity has targeted
+     */
+    public Block getTargetBlock(Set<Material> transparent, int maxDistance);
     /**
      * Gets the last two blocks along the living entity's line of sight.
      * <p>
@@ -318,31 +344,6 @@ public interface LivingEntity extends Entity, Damageable, ProjectileSource {
      * @return whether or not the living entity can pick up items
      */
     public boolean getCanPickupItems();
-
-    /**
-     * Sets a custom name on a mob. This name will be used in death messages
-     * and can be sent to the client as a nameplate over the mob.
-     * <p>
-     * Setting the name to null or an empty string will clear it.
-     * <p>
-     * This value has no effect on players, they will always use their real
-     * name.
-     *
-     * @param name the name to set
-     */
-    public void setCustomName(String name);
-
-    /**
-     * Gets the custom name on a mob. If there is no name this method will
-     * return null.
-     * <p>
-     * This value has no effect on players, they will always use their real
-     * name.
-     *
-     * @return name of the mob or null
-     */
-    public String getCustomName();
-
     /**
      * Sets whether or not to display the mob's custom name client side. The
      * name will be displayed above the mob similarly to a player.

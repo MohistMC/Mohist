@@ -1,0 +1,9 @@
+# Mapping by xjboss
+CL: net/minecraft/server/PacketPlayOutTitle cc/uraniummc/packet/S45PacketTitle
+CL: net/minecraft/server/PacketPlayOutTitle$EnumTitleAction cc/uraniummc/packet/S45PacketTitle$Type
+CL: net/minecraft/server/EnumTitleAction cc/uraniummc/packet/S45PacketTitle$Type
+FD: net/minecraft/server/PacketPlayOutTitle/a cc/uraniummc/packet/S45PacketTitle/type
+FD: net/minecraft/server/PacketPlayOutTitle/b cc/uraniummc/packet/S45PacketTitle/message
+FD: net/minecraft/server/PacketPlayOutTitle/c cc/uraniummc/packet/S45PacketTitle/fadeInTime
+FD: net/minecraft/server/PacketPlayOutTitle/d cc/uraniummc/packet/S45PacketTitle/displayTime
+FD: net/minecraft/server/PacketPlayOutTitle/e cc/uraniummc/packet/S45PacketTitle/fadeOutTime

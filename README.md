@@ -2,7 +2,7 @@
 
 ## Mohist-1.7.10
 
-## Subsequent maintenance version of Thermos!
+## The upstream project is UrniumMC!
 
 [![](https://ci.codemc.org/buildStatus/icon?job=Mohist-Community%2FMohist-1.7.10)](https://ci.codemc.org/job/Mohist-Community/job/Mohist-1.7.10/)
 ![](https://img.shields.io/github/stars/Mohist-Community/Mohist.svg?label=Stars)

@@ -13,12 +13,7 @@
  public class BlockPumpkin extends BlockDirectional
  {
      private boolean field_149985_a;
-@@ -41,72 +47,95 @@
-     {
-         super.onBlockAdded(p_149726_1_, p_149726_2_, p_149726_3_, p_149726_4_);
- 
-+        // CHECK FOR SNOWMEN AHH
-         if (p_149726_1_.getBlock(p_149726_2_, p_149726_3_ - 1, p_149726_4_) == Blocks.snow && p_149726_1_.getBlock(p_149726_2_, p_149726_3_ - 2, p_149726_4_) == Blocks.snow)
+@@ -45,15 +51,18 @@
          {
              if (!p_149726_1_.isRemote)
              {
@@ -36,34 +31,16 @@
 -                p_149726_1_.notifyBlockChange(p_149726_2_, p_149726_3_, p_149726_4_, getBlockById(0));
 -                p_149726_1_.notifyBlockChange(p_149726_2_, p_149726_3_ - 1, p_149726_4_, getBlockById(0));
 -                p_149726_1_.notifyBlockChange(p_149726_2_, p_149726_3_ - 2, p_149726_4_, getBlockById(0));
--            }
 +                entitysnowman.setLocationAndAngles((double) p_149726_2_ + 0.5D, (double) p_149726_3_ - 1.95D, (double) p_149726_4_ + 0.5D, 0.0F, 0.0F);
- 
++
 +                if (p_149726_1_.addEntity(entitysnowman, SpawnReason.BUILD_SNOWMAN))
 +                {
 +                    blockList.updateList();
-+                    // Check if everything is still there for dat snowman
-+                    if (p_149726_1_.getBlock(p_149726_2_, p_149726_3_ - 1, p_149726_4_) == Blocks.snow && p_149726_1_.getBlock(p_149726_2_, p_149726_3_ - 2, p_149726_4_) == Blocks.snow)
-+                    {
-+                    	entitysnowman.isDead = true;
-+                    	p_149726_1_.removeEntity(entitysnowman);
-+                    }
 +                }
-+                
-+            }
-+            
-             for (int i1 = 0; i1 < 120; ++i1)
-             {
-                 p_149726_1_.spawnParticle("snowshovel", (double)p_149726_2_ + p_149726_1_.rand.nextDouble(), (double)(p_149726_3_ - 2) + p_149726_1_.rand.nextDouble() * 2.5D, (double)p_149726_4_ + p_149726_1_.rand.nextDouble(), 0.0D, 0.0D, 0.0D);
              }
-         }
-+        // Check below middle pumpkin for 2 iron blocks
-         else if (p_149726_1_.getBlock(p_149726_2_, p_149726_3_ - 1, p_149726_4_) == Blocks.iron_block && p_149726_1_.getBlock(p_149726_2_, p_149726_3_ - 2, p_149726_4_) == Blocks.iron_block)
-         {
-+        	//Check in the X direction for iron block left and right 1 block below pumpkin
-             boolean flag = p_149726_1_.getBlock(p_149726_2_ - 1, p_149726_3_ - 1, p_149726_4_) == Blocks.iron_block && p_149726_1_.getBlock(p_149726_2_ + 1, p_149726_3_ - 1, p_149726_4_) == Blocks.iron_block;
-+            //Check in the Z direction for iron block left and right 1 block below pumpkin
-             boolean flag1 = p_149726_1_.getBlock(p_149726_2_, p_149726_3_ - 1, p_149726_4_ - 1) == Blocks.iron_block && p_149726_1_.getBlock(p_149726_2_, p_149726_3_ - 1, p_149726_4_ + 1) == Blocks.iron_block;
+ 
+             for (int i1 = 0; i1 < 120; ++i1)
+@@ -68,45 +77,38 @@
  
              if (flag || flag1)
              {
@@ -76,7 +53,6 @@
 +                blockList.setTypeId(p_149726_2_, p_149726_3_ - 1, p_149726_4_, 0);
 +                blockList.setTypeId(p_149726_2_, p_149726_3_ - 2, p_149726_4_, 0);
  
-+                // If the iron blocks were in the X direction
                  if (flag)
                  {
 -                    p_149726_1_.setBlock(p_149726_2_ - 1, p_149726_3_ - 1, p_149726_4_, getBlockById(0), 0, 2);
@@ -84,7 +60,6 @@
 +                    blockList.setTypeId(p_149726_2_ - 1, p_149726_3_ - 1, p_149726_4_, 0);
 +                    blockList.setTypeId(p_149726_2_ + 1, p_149726_3_ - 1, p_149726_4_, 0);
                  }
-+                // If the iron blocks were in the Z direction
                  else
                  {
 -                    p_149726_1_.setBlock(p_149726_2_, p_149726_3_ - 1, p_149726_4_ - 1, getBlockById(0), 0, 2);
@@ -112,25 +87,12 @@
 -                p_149726_1_.notifyBlockChange(p_149726_2_, p_149726_3_, p_149726_4_, getBlockById(0));
 -                p_149726_1_.notifyBlockChange(p_149726_2_, p_149726_3_ - 1, p_149726_4_, getBlockById(0));
 -                p_149726_1_.notifyBlockChange(p_149726_2_, p_149726_3_ - 2, p_149726_4_, getBlockById(0));
-+                    blockList.updateList();
-+                    //Recheck if the stuff is still there and the iron golem failed to delete its blocks - then delete the golem quickly
-+                    if (p_149726_1_.getBlock(p_149726_2_, p_149726_3_ - 1, p_149726_4_) == Blocks.iron_block && p_149726_1_.getBlock(p_149726_2_, p_149726_3_ - 2, p_149726_4_) == Blocks.iron_block)
-+                    {
-+                    	//Check in the X direction for iron block left and right 1 block below pumpkin
-+                        boolean xdir = p_149726_1_.getBlock(p_149726_2_ - 1, p_149726_3_ - 1, p_149726_4_) == Blocks.iron_block && p_149726_1_.getBlock(p_149726_2_ + 1, p_149726_3_ - 1, p_149726_4_) == Blocks.iron_block;
-+                        //Check in the Z direction for iron block left and right 1 block below pumpkin
-+                        boolean zdir = p_149726_1_.getBlock(p_149726_2_, p_149726_3_ - 1, p_149726_4_ - 1) == Blocks.iron_block && p_149726_1_.getBlock(p_149726_2_, p_149726_3_ - 1, p_149726_4_ + 1) == Blocks.iron_block;
-+                        if (xdir || zdir)
-+                        {
-+                        	entityirongolem.isDead = true;
-+                        	p_149726_1_.removeEntity(entityirongolem);
- 
+-
 -                if (flag)
 -                {
 -                    p_149726_1_.notifyBlockChange(p_149726_2_ - 1, p_149726_3_ - 1, p_149726_4_, getBlockById(0));
 -                    p_149726_1_.notifyBlockChange(p_149726_2_ + 1, p_149726_3_ - 1, p_149726_4_, getBlockById(0));
-+                        }
-+                    }
++                    blockList.updateList();
                  }
 -                else
 -                {
@@ -142,7 +104,7 @@
              }
          }
      }
-@@ -122,6 +151,19 @@
+@@ -122,6 +124,19 @@
          p_149689_1_.setBlockMetadataWithNotify(p_149689_2_, p_149689_3_, p_149689_4_, l, 2);
      }
  

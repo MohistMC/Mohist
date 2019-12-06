@@ -1,7 +1,6 @@
 package org.bukkit.craftbukkit.map;
 
 import java.util.UUID;
-import net.minecraftforge.cauldron.command.CauldronCommand;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.map.MapCanvas;
@@ -20,13 +19,6 @@ public class CraftMapRenderer extends MapRenderer {
 
     @Override
     public void render(MapView map, MapCanvas canvas, Player player) {
-        if(CauldronCommand.debug) {
-        System.out.println("Default Map Render called!");
-        for (StackTraceElement ste : Thread.currentThread().getStackTrace()) {
-            System.out.println(ste);
-        } }
-
-
         // Map
         for (int x = 0; x < 128; ++x) {
             for (int y = 0; y < 128; ++y) {

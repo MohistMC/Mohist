@@ -1,0 +1,51 @@
+--- ../src-base/minecraft/net/minecraft/util/StatCollector.java
++++ ../src-work/minecraft/net/minecraft/util/StatCollector.java
+@@ -1,19 +1,37 @@
+ package net.minecraft.util;
+ 
++import cpw.mods.fml.common.registry.LanguageRegistry;
++
+ public class StatCollector
+ {
+     private static StringTranslate localizedName = StringTranslate.getInstance();
+     private static StringTranslate fallbackTranslator = new StringTranslate();
++    private static LanguageRegistry languageRegistry = LanguageRegistry.instance();
+     private static final String __OBFID = "CL_00001211";
++    private static boolean loaded=false;
+ 
++    public static void setLoaded(boolean loaded) {
++        StatCollector.loaded = loaded;
++    }
++
+     public static String translateToLocal(String p_74838_0_)
+     {
+-        return localizedName.translateKey(p_74838_0_);
++        String en=localizedName.translateKey(p_74838_0_);
++        if(loaded){
++            String ret=languageRegistry.getStringLocalization(p_74838_0_);
++            return ret.isEmpty()?en:ret;
++        }
++        return en;
+     }
+ 
+     public static String translateToLocalFormatted(String p_74837_0_, Object ... p_74837_1_)
+     {
+-        return localizedName.translateKeyFormat(p_74837_0_, p_74837_1_);
++        String en=localizedName.translateKeyFormat(p_74837_0_, p_74837_1_);
++        if(loaded){
++            String ret=languageRegistry.getStringLocalization(p_74837_0_);
++            return ret.isEmpty()?localizedName.translateKeyFormat(p_74837_0_, p_74837_1_):String.format(ret,p_74837_1_);
++        }
++        return en;
+     }
+ 
+     public static String translateToFallback(String p_150826_0_)
+@@ -23,7 +41,7 @@
+ 
+     public static boolean canTranslate(String p_94522_0_)
+     {
+-        return localizedName.containsTranslateKey(p_94522_0_);
++        return !languageRegistry.getStringLocalization(p_94522_0_).equals("")||localizedName.containsTranslateKey(p_94522_0_);
+     }
+ 
+     public static long getLastTranslationUpdateTimeInMilliseconds()

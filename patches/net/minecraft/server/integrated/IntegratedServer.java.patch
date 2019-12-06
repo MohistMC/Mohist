@@ -12,7 +12,7 @@
  import net.minecraft.world.WorldManager;
  import net.minecraft.world.WorldServer;
  import net.minecraft.world.WorldServerMulti;
-@@ -78,7 +80,7 @@
+@@ -78,10 +80,10 @@
          this.initialWorldChunkLoad();
      }
  
@@ -20,7 +20,11 @@
 +    protected boolean startServer() throws java.net.UnknownHostException // Cauldron
      {
          logger.info("Starting integrated minecraft server version 1.7.10");
-         this.setOnlineMode(true);
+-        this.setOnlineMode(true);
++        this.setOnlineMode(false);
+         this.setCanSpawnAnimals(true);
+         this.setCanSpawnNPCs(true);
+         this.setAllowPvp(true);
 @@ -103,7 +105,15 @@
          {
              logger.info("Saving and pausing game...");

@@ -30,35 +30,31 @@
  import net.minecraftforge.common.util.ForgeDirection;
  import net.minecraftforge.event.brewing.PotionBrewEvent;
  import net.minecraftforge.event.brewing.PotionBrewedEvent;
-@@ -70,8 +74,20 @@
+@@ -70,8 +74,18 @@
          return event;
      }
  
 +        public static boolean isSpawn(EntityPlayer ep)
 +        {
-+                return MinecraftServer.getServer().cauldronConfig.protectSP.getValue() && ep.worldObj.worldInfo.getWorldName().toLowerCase().contains("spawn");
++                return ep.worldObj.worldInfo.getWorldName().toLowerCase().contains("spawn");
 +        }
 +
      public static boolean doPlayerHarvestCheck(EntityPlayer player, Block block, boolean success)
      {
 +                if (isSpawn(player) && nonVanilla(player))
 +                {
-+                        if (CauldronCommand.debug)
-+                                System.out.println("Told player no harvest");
 +                        return false;
 +                }
 +
          PlayerEvent.HarvestCheck event = new PlayerEvent.HarvestCheck(player, block, success);
          MinecraftForge.EVENT_BUS.post(event);
          return event.success;
-@@ -80,27 +96,218 @@
+@@ -80,27 +94,172 @@
      @Deprecated // Location version below
      public static float getBreakSpeed(EntityPlayer player, Block block, int metadata, float original)
      {
 +                if (isSpawn(player) && nonVanilla(player))
 +                {
-+                        if (CauldronCommand.debug)
-+                                System.out.println("Told user breakspeed = 0");
 +                        return 0F;
 +                }
 +
@@ -69,8 +65,6 @@
      {
 +                if (isSpawn(player) && nonVanilla(player))
 +                {
-+                        if (CauldronCommand.debug)
-+                                System.out.println("Told user breakspeed = 0");
 +                        return 0F;
 +                }
 +
@@ -80,10 +74,6 @@
  
 +        private static boolean outsideOfVanillaRange(int id)
 +        {
-+                if (CauldronCommand.debug)
-+                {
-+                        System.out.println("Testing item ID " + id);
-+                }
 +                return (id > 197 && !(id >= 256 && id <= 431) && !(id >= 2256 && id <= 2267))
 +                                && !( id == 628 || id == 5374 || id == 4568 || id == 4354 || id == 4355 || id == 4356
 +                                || (id >= 4324 && id <= 4329) || id == 4338 || id == 4688 || id == 4916 || (id <= 4987 && id>= 4980)
@@ -102,19 +92,15 @@
 +        {
 +                if (ep == null)
 +                {
-+                if(CauldronCommand.debug)System.out.println("EntityPlayer is null");
 +                        return false;
 +                }
 +                if(isOp(ep)) return false;
 +                if (ep.getHeldItem() == null)
 +                {
-+                        if (CauldronCommand.debug)
-+                                System.out.println("Held item is null");
 +                        return false;
 +                }
 +                if (ep.getHeldItem().getItem() == null)
 +                {
-+                if(CauldronCommand.debug)System.out.println("Item getItem() is null");
 +                        return false;
 +                }
 +                if( outsideOfVanillaRange(Item.getIdFromItem(ep.getHeldItem().getItem())))
@@ -173,8 +159,6 @@
 +                if (isSpawn(player) && nonVanilla(player))
 +                {
 +                        event.setCanceled(true);
-+                        if (CauldronCommand.debug)
-+                                System.out.println("Canceled onPlayerInteract()");
 +                } else
 +                        MinecraftForge.EVENT_BUS.post(event);
 +                return event;
@@ -188,18 +172,10 @@
 -        return event;
 +    	if(player == null || isOp(player) || isCoFHFakePlayer(player,x,y,z,face))
 +    	{
-+        	if(CauldronCommand.debug)
-+        	{
-+        		System.out.println("[Thermos] CoFH Fake Player / Null player detected...refusing to create Bukkit event");
-+        	}
 +        	onPlayerBukkitInteract( player, action, x, y, z, face, world, null);
 +        }
 +    	else
 +    	{
-+    		if(CauldronCommand.debug)
-+    		{
-+        		System.out.println("[Thermos] Creating & calling bukkit event!");
-+    		}
 +    	}
 +        org.bukkit.event.block.Action aktor = null;
 +        switch (action)
@@ -221,10 +197,6 @@
 +    
 +    private static boolean isCoFHFakePlayer(EntityPlayer player, int x, int y, int z, int face)
 +    {
-+    	if(CauldronCommand.debug)
-+    	{
-+    		System.out.println("[Thermos] Checking if it is a CoFH Fake Player...");
-+    	}
 +    	return player instanceof FakePlayer && player.getGameProfile().getName().equals("[CoFH]");
 +    }
 +    
@@ -234,10 +206,6 @@
 +                
 +                if(eve != null && !(player == null || isOp(player) || isCoFHFakePlayer(player,x,y,z,face)))
 +                {
-+                	if(CauldronCommand.debug)
-+                	{
-+                		System.out.println("[Thermos] Using Bukkit Event for this action...");
-+                	}
 +                	event.cb = eve;
 +                	if(eve.isCancelled()) 
 +                	{ 
@@ -245,26 +213,10 @@
 +                		return event; 
 +                	}
 +                }
-+                else if(eve == null)
-+                {
-+                	if(CauldronCommand.debug)
-+                	{
-+                		System.out.println("[Thermos] Refusing to call Bukkit event for that interaction");
-+                	}
-+                }
-+                else
-+                {
-+                	if(CauldronCommand.debug)
-+                	{
-+                		System.out.println("[Thermos] Bukkit event was never considered...single tear");
-+                	}                	
-+                }
 +                
 +                if (isSpawn(player) && nonVanilla(player))
 +                {
 +                        event.setCanceled(true);
-+                        if (CauldronCommand.debug)
-+                                System.out.println("Canceled onPlayerInteract()");
 +                } else
 +                        MinecraftForge.EVENT_BUS.post(event);
 +                return event;
@@ -274,7 +226,7 @@
      public static void onPlayerDestroyItem(EntityPlayer player, ItemStack stack)
      {
          MinecraftForge.EVENT_BUS.post(new PlayerDestroyItemEvent(player, stack));
-@@ -182,30 +389,64 @@
+@@ -182,30 +341,56 @@
          return MinecraftForge.EVENT_BUS.post(new EntityStruckByLightningEvent(entity, bolt));
      }
  
@@ -289,8 +241,6 @@
 +                if (isSpawn(player) && nonVanilla(player))
 +                {
 +                        event = new PlayerUseItemEvent.Start(player, null, duration);
-+                        if (CauldronCommand.debug)
-+                                System.out.println("Canceled onItemuseStart()");
 +                } else
 +                {
 +                        event = new PlayerUseItemEvent.Start(player, item, duration);
@@ -309,8 +259,6 @@
 +                if (isSpawn(player) && nonVanilla(player))
 +                {
 +                        event = new PlayerUseItemEvent.Tick(player, null, duration);
-+                        if (CauldronCommand.debug)
-+                                System.out.println("Canceled onItemuseTick()");
 +                } else
 +                {
 +                        event = new PlayerUseItemEvent.Tick(player, item, duration);
@@ -323,8 +271,6 @@
 +                if (isSpawn(player) && nonVanilla(player))
 +                {
 +                        event = new PlayerUseItemEvent.Start(player, null, duration);
-+                        if (CauldronCommand.debug)
-+                                System.out.println("Canceled onItemuseStop()");
 +                } else
 +                {
 +                        event = new PlayerUseItemEvent.Start(player, item, duration);
@@ -342,8 +288,6 @@
 +                if (isSpawn(player) && nonVanilla(player))
 +                {
 +                        event = new PlayerUseItemEvent.Finish(player, null, duration, null);
-+                        if (CauldronCommand.debug)
-+                                System.out.println("Canceled onItemuseFinish()");
 +                } else
 +                        event = new PlayerUseItemEvent.Finish(player, item, duration, result);
 +                MinecraftForge.EVENT_BUS.post(event);

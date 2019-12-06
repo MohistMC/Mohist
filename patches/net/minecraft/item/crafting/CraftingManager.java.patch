@@ -1,6 +1,18 @@
 --- ../src-base/minecraft/net/minecraft/item/crafting/CraftingManager.java
 +++ ../src-work/minecraft/net/minecraft/item/crafting/CraftingManager.java
-@@ -13,10 +13,17 @@
+@@ -1,9 +1,11 @@
+ package net.minecraft.item.crafting;
+ 
+ import java.util.ArrayList;
++import java.util.Collection;
+ import java.util.Collections;
+ import java.util.Comparator;
+ import java.util.HashMap;
++import java.util.Iterator;
+ import java.util.List;
+ import net.minecraft.block.Block;
+ import net.minecraft.init.Blocks;
+@@ -13,10 +15,55 @@
  import net.minecraft.item.ItemStack;
  import net.minecraft.world.World;
  
@@ -12,14 +24,52 @@
 -    private List recipes = new ArrayList();
 +    // CraftBukkit start
 +    /** A list of all the recipes added */
-+    public List recipes = new ArrayList(); // private -> public
++    public List recipes = new ArrayList(){
++        @Override
++        public void add(int index, Object element) {
++            if(!doCheck(element)) return;
++            super.add(index, element);
++        }
++        
++        @Override
++        public boolean add(Object e) {
++            if(!doCheck(e)) return false;
++            return super.add(e);
++        }
++        
++        @Override
++        public boolean addAll(Collection c) {
++            Iterator iterator = c.iterator();
++            while(iterator.hasNext()){
++                if(!doCheck(iterator.next())) iterator.remove();
++            }
++            
++            return super.addAll(c);
++        }
++        
++        @Override
++        public boolean addAll(int index, Collection c) {
++            Iterator iterator = c.iterator();
++            while(iterator.hasNext()){
++                if(!doCheck(iterator.next())) iterator.remove();
++            }
++            return super.addAll(index, c);
++        }
++        
++        private boolean doCheck(Object element){
++            if(!(element instanceof IRecipe)) return true;
++            IRecipe tRecipe=(IRecipe)element;
++            return tRecipe.getRecipeOutput()==null||tRecipe.getRecipeOutput().getItem()!=null;
++        }
++        
++    }; // private -> public
 +    public IRecipe lastRecipe;
 +    public org.bukkit.inventory.InventoryView lastCraftView;
 +    // CraftBukkit end
      private static final String __OBFID = "CL_00000090";
  
      public static final CraftingManager getInstance()
-@@ -24,7 +31,8 @@
+@@ -24,7 +71,8 @@
          return instance;
      }
  
@@ -29,11 +79,10 @@
      {
          (new RecipesTools()).addRecipes(this);
          (new RecipesWeapons()).addRecipes(this);
-@@ -152,6 +160,24 @@
+@@ -152,6 +200,23 @@
          this.addShapelessRecipe(new ItemStack(Items.fire_charge, 3), new Object[] {Items.gunpowder, Items.blaze_powder, new ItemStack(Items.coal, 1, 1)});
          this.addRecipe(new ItemStack(Blocks.daylight_detector), new Object[] {"GGG", "QQQ", "WWW", 'G', Blocks.glass, 'Q', Items.quartz, 'W', Blocks.wooden_slab});
          this.addRecipe(new ItemStack(Blocks.hopper), new Object[] {"I I", "ICI", " I ", 'I', Items.iron_ingot, 'C', Blocks.chest});
-+        this.addShapelessRecipe(new ItemStack(Blocks.mossy_cobblestone, 1), new Object[] { Blocks.vine, Blocks.cobblestone });
 +        /*Collections.sort(this.recipes, new Comparator() // CraftBukkit - moved below
 +        {
 +            private static final String __OBFID = "CL_00000091";
@@ -54,7 +103,7 @@
          Collections.sort(this.recipes, new Comparator()
          {
              private static final String __OBFID = "CL_00000091";
-@@ -312,7 +338,22 @@
+@@ -312,7 +377,22 @@
                  i1 = 0;
              }
  
@@ -78,7 +127,7 @@
          }
          else
          {
-@@ -320,12 +361,23 @@
+@@ -320,12 +400,23 @@
              {
                  IRecipe irecipe = (IRecipe)this.recipes.get(j);
  

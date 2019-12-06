@@ -1,0 +1,11 @@
+--- ../src-base/minecraft/net/minecraft/server/management/UserListBans.java
++++ ../src-work/minecraft/net/minecraft/server/management/UserListBans.java
+@@ -40,7 +40,7 @@
+ 
+     protected String func_152701_b(GameProfile p_152701_1_)
+     {
+-        return p_152701_1_.getId().toString();
++        return p_152701_1_.getName().toLowerCase();
+     }
+ 
+     public GameProfile func_152703_a(String p_152703_1_)

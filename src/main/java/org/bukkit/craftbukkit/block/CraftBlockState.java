@@ -68,16 +68,7 @@ public class CraftBlockState implements BlockState {
         this.light = (byte) blocksnapshot.replacedBlock.getLightValue();
         this.chunk = (CraftChunk) this.world.getBlockAt(this.x, this.y, this.z).getChunk();
         this.flag = 3;
-        TileEntity te = this.world.getHandle().getTileEntity(this.x, this.y, this.z);
-        if (te != null)
-        {
-            this.nbt = new NBTTagCompound();
-            te.writeToNBT(this.nbt);
-        }
-        else
-        {
-            this.nbt = null;
-        }
+        this.nbt = blocksnapshot.getNBT();
 
         this.createData((byte) blocksnapshot.meta);
     }

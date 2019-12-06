@@ -1,18 +1,33 @@
 --- ../src-base/minecraft/net/minecraftforge/event/world/BlockEvent.java
 +++ ../src-work/minecraft/net/minecraftforge/event/world/BlockEvent.java
-@@ -16,6 +16,11 @@
- import net.minecraftforge.common.ForgeHooks;
- import net.minecraftforge.common.util.BlockSnapshot;
+@@ -3,17 +3,23 @@
+ import java.util.ArrayList;
+ import java.util.List;
  
++import org.bukkit.block.BlockState;
++import org.bukkit.craftbukkit.block.CraftBlockState;
 +// Cauldron start
 +import org.bukkit.craftbukkit.event.CraftEventFactory;
++import org.bukkit.event.block.BlockMultiPlaceEvent;
++
+ import com.google.common.collect.ImmutableList;
+ 
++import cc.uraniummc.capture.type.CaptureBlock;
+ import cpw.mods.fml.common.eventhandler.Cancelable;
+ import cpw.mods.fml.common.eventhandler.Event;
+ import net.minecraft.block.Block;
+-import net.minecraft.enchantment.EnchantmentHelper;
+ import net.minecraft.entity.player.EntityPlayer;
+-import net.minecraft.init.Blocks;
 +import net.minecraft.entity.player.EntityPlayerMP;
 +// Cauldron end
-+
- public class BlockEvent extends Event {
-     private static final boolean DEBUG = Boolean.parseBoolean(System.getProperty("forge.debugBlockEvent", "false"));
+ import net.minecraft.item.ItemStack;
+ import net.minecraft.world.World;
+-import net.minecraftforge.common.ForgeHooks;
+ import net.minecraftforge.common.util.BlockSnapshot;
  
-@@ -80,17 +85,18 @@
+ public class BlockEvent extends Event {
+@@ -80,17 +86,18 @@
              super(x, y, z, world, block, blockMetadata);
              this.player = player;
  
@@ -37,20 +52,43 @@
          }
  
          public EntityPlayer getPlayer()
-@@ -140,6 +146,16 @@
+@@ -140,6 +147,21 @@
              this.blockSnapshot = blockSnapshot;
              this.placedBlock = blockSnapshot.getCurrentBlock();
              this.placedAgainst = placedAgainst;
 +            // Cauldron start - handle event on bukkit side
-+            org.bukkit.craftbukkit.block.CraftBlockState blockstate = org.bukkit.craftbukkit.block.CraftBlockState.getBlockState(super.world, super.x, super.y,
-+                    super.z);
-+            org.bukkit.event.block.BlockPlaceEvent bukkitEvent = CraftEventFactory.callBlockPlaceEvent(super.world, player, blockstate, super.x, super.y,
-+                    super.z);
-+            if (bukkitEvent.isCancelled() || !bukkitEvent.canBuild())
-+            {
-+                this.setCanceled(true);
++            if(!(this instanceof MultiPlaceEvent)){
++                org.bukkit.craftbukkit.block.CraftBlockState blockstate=new org.bukkit.craftbukkit.block.CraftBlockState(blockSnapshot);
++                org.bukkit.event.block.BlockPlaceEvent bukkitEvent=CraftEventFactory.callBlockPlaceEvent(super.world,player,blockstate,super.x,super.y,
++                        super.z);
++                if(bukkitEvent.isCancelled()||!bukkitEvent.canBuild()){
++                    this.setCanceled(true);
++                }
++                
++                CaptureBlock tCapture=world.mCapture.getLastBlockCapture();
++                if(tCapture!=null&&tCapture.mEnable){
++                    tCapture.addCheckedBlock(world,x,y,z);
++                }
 +            }
 +            // Cauldron end
              if (DEBUG)
              {
                  System.out.printf("Created PlaceEvent - [PlacedBlock: %s ][PlacedAgainst: %s ][ItemStack: %s ][Player: %s ]\n", placedBlock, placedAgainst, player.getCurrentEquippedItem(), player);
+@@ -160,7 +182,17 @@
+ 
+         public MultiPlaceEvent(List<BlockSnapshot> blockSnapshots, Block placedAgainst, EntityPlayer player) {
+             super(blockSnapshots.get(0), placedAgainst, player);
++
+             this.blockSnapshots = ImmutableList.copyOf(blockSnapshots);
++            
++            //bukkit start
++            ArrayList<BlockState> tStates=new ArrayList<BlockState>(blockSnapshots.size());
++            for(BlockSnapshot sSnapshot : this.blockSnapshots){
++                tStates.add(new CraftBlockState(sSnapshot));
++            }
++            BlockMultiPlaceEvent tEvent=CraftEventFactory.callBlockMultiPlaceEvent(super.world,player,tStates,super.x,super.y,super.z);
++            this.setCanceled(tEvent.isCancelled()||!tEvent.canBuild());
++            
+             if (DEBUG)
+             {
+                 System.out.printf("Created MultiPlaceEvent - [PlacedAgainst: %s ][ItemInHand: %s ][Player: %s ]\n", placedAgainst, this.itemInHand, player);

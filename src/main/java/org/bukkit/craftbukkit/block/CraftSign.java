@@ -40,7 +40,7 @@ public class CraftSign extends CraftBlockState implements Sign {
     public boolean update(boolean force, boolean applyPhysics) {
         boolean result = super.update(force, applyPhysics);
 
-        if (result && sign != null) {
+        if (result) {
             sign.signText = sanitizeLines(lines);
             sign.markDirty();
         }

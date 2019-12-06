@@ -1,21 +1,23 @@
 --- ../src-base/minecraft/net/minecraftforge/common/chunkio/ChunkIOProvider.java
 +++ ../src-work/minecraft/net/minecraftforge/common/chunkio/ChunkIOProvider.java
-@@ -9,6 +9,9 @@
+@@ -9,7 +9,10 @@
  import java.io.IOException;
  import java.util.concurrent.atomic.AtomicInteger;
  
+-class ChunkIOProvider implements AsynchronousExecutor.CallBackProvider<QueuedChunk, net.minecraft.world.chunk.Chunk, Runnable, RuntimeException> {
 +import org.bukkit.Server;
 +import org.bukkit.craftbukkit.util.LongHash;
 +
- class ChunkIOProvider implements AsynchronousExecutor.CallBackProvider<QueuedChunk, net.minecraft.world.chunk.Chunk, Runnable, RuntimeException> {
++class ChunkIOProvider implements AsynchronousExecutor.CallBackProvider<QueuedChunk, net.minecraft.world.chunk.Chunk, cc.uraniummc.ChunkCallback, RuntimeException> {
      private final AtomicInteger threadNumber = new AtomicInteger(1);
  
-@@ -41,14 +44,36 @@
+     // async stuff
+@@ -41,19 +44,41 @@
          queuedChunk.loader.loadEntities(queuedChunk.world, queuedChunk.compound.getCompoundTag("Level"), chunk);
          MinecraftForge.EVENT_BUS.post(new ChunkDataEvent.Load(chunk, queuedChunk.compound)); // Don't call ChunkDataEvent.Load async
          chunk.lastSaveTime = queuedChunk.provider.worldObj.getTotalWorldTime();
 -        queuedChunk.provider.loadedChunkHashMap.add(ChunkCoordIntPair.chunkXZ2Int(queuedChunk.x, queuedChunk.z), chunk);
-+        queuedChunk.provider.loadedChunkHashMap_KC.add(LongHash.toLong(queuedChunk.x, queuedChunk.z), chunk); // Will auto-pass to chunkT
++        queuedChunk.provider.loadedChunkHashMap.add(ChunkCoordIntPair.chunkXZ2Int(queuedChunk.x, queuedChunk.z),chunk);
          queuedChunk.provider.loadedChunks.add(chunk);
          chunk.onChunkLoad();
  
@@ -48,3 +50,10 @@
          chunk.populateChunk(queuedChunk.provider, queuedChunk.provider, queuedChunk.x, queuedChunk.z);
      }
  
+-    public void callStage3(QueuedChunk queuedChunk, net.minecraft.world.chunk.Chunk chunk, Runnable runnable) throws RuntimeException {
+-        runnable.run();
++    public void callStage3(QueuedChunk queuedChunk, net.minecraft.world.chunk.Chunk chunk, cc.uraniummc.ChunkCallback callback) throws RuntimeException {
++        callback.onChunkLoaded(chunk);
+     }
+ 
+     public Thread newThread(Runnable runnable) {

@@ -5,7 +5,7 @@
      private static final Attributes.Name MODTYPE = new Attributes.Name("ModType");
      private static final Attributes.Name MODSIDE = new Attributes.Name("ModSide");
 -    private static String[] rootPlugins = { "cpw.mods.fml.relauncher.FMLCorePlugin", "net.minecraftforge.classloading.FMLForgePlugin" };
-+    private static String[] rootPlugins = { "cpw.mods.fml.relauncher.FMLCorePlugin", "net.minecraftforge.classloading.FMLForgePlugin", "pw.prok.imagine.ImagineLoadingPlugin" };
++    private static String[] rootPlugins = { "cpw.mods.fml.relauncher.FMLCorePlugin", "net.minecraftforge.classloading.FMLForgePlugin", "pw.prok.imagine.ImagineLoadingPlugin","cc.uraniummc.UraniumPlusCore"};
      private static List<String> loadedCoremods = Lists.newArrayList();
      private static List<FMLPluginWrapper> loadPlugins;
      private static boolean deobfuscatedEnvironment;
@@ -51,7 +51,7 @@
              String cascadedTweaker = mfAttributes.getValue("TweakClass");
              if (cascadedTweaker != null)
              {
-+                if ("fastcraft.Tweaker".equals(cascadedTweaker) && !"false".equals(System.getProperty("thermos.fastcraft.disable", "true"))) {
++                if ("fastcraft.Tweaker".equals(cascadedTweaker) && !"false".equals(System.getProperty("kcauldron.fastcraft.disable", "true"))) {
 +                    FMLRelaunchLog.info("Found FastCraft tweaker, skipping...");
 +                    continue;
 +                }
@@ -62,7 +62,7 @@
                  FMLRelaunchLog.fine("Not found coremod data in %s", coreMod.getName());
                  continue;
              }
-+            if ("fastcraft.LoadingPlugin".equals(fmlCorePlugin) && !"false".equals(System.getProperty("thermos.fastcraft.disable", "true"))) {
++            if ("fastcraft.LoadingPlugin".equals(fmlCorePlugin) && !"false".equals(System.getProperty("kcauldron.fastcraft.disable", "true"))) {
 +                FMLRelaunchLog.warning("Found FastCraft coremod, skipping...");
 +                continue;
 +            }

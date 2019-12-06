@@ -28,7 +28,7 @@
  
                          if (d1 < d0 || d0 == 0.0D)
                          {
-@@ -213,6 +214,14 @@
+@@ -213,6 +214,15 @@
              else
              {
                  this.onImpact(movingobjectposition);
@@ -36,7 +36,8 @@
 +                // CraftBukkit start
 +                if (this.isDead)
 +                {
-+                    org.bukkit.craftbukkit.event.CraftEventFactory.callProjectileHitEvent(this);
++                    //org.bukkit.craftbukkit.event.CraftEventFactory.callProjectileHitEvent(this); // CraftBukkit - Call event
++                    org.bukkit.craftbukkit.event.CraftEventFactory.callProjectileHitEvent(this,movingobjectposition); //Uranium - Call event
 +                }
 +
 +                // CraftBukkit end

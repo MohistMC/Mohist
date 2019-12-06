@@ -141,7 +141,7 @@
                  this.func_151261_b(new S20PacketEntityProperties(this.myEntity.getEntityId(), set));
              }
  
-@@ -353,6 +415,19 @@
+@@ -353,10 +415,24 @@
  
              if (d0 >= (double)(-this.blocksDistanceThreshold) && d0 <= (double)this.blocksDistanceThreshold && d1 >= (double)(-this.blocksDistanceThreshold) && d1 <= (double)this.blocksDistanceThreshold)
              {
@@ -160,8 +160,14 @@
 +                p_73117_1_.destroyedItemsNetCache.remove(Integer.valueOf(this.myEntity.getEntityId()));
                  if (!this.trackingPlayers.contains(p_73117_1_) && (this.isPlayerWatchingThisChunk(p_73117_1_) || this.myEntity.forceSpawn))
                  {
-                     this.trackingPlayers.add(p_73117_1_);
-@@ -369,6 +444,13 @@
+-                    this.trackingPlayers.add(p_73117_1_);
+                     Packet packet = this.func_151260_c();
++                    if(packet==null) return;
++                    this.trackingPlayers.add(p_73117_1_);
+                     p_73117_1_.playerNetServerHandler.sendPacket(packet);
+ 
+                     if (!this.myEntity.getDataWatcher().getIsBlank())
+@@ -369,6 +445,13 @@
                          ServersideAttributeMap serversideattributemap = (ServersideAttributeMap)((EntityLivingBase)this.myEntity).getAttributeMap();
                          Collection collection = serversideattributemap.getWatchedAttributes();
  
@@ -175,7 +181,7 @@
                          if (!collection.isEmpty())
                          {
                              p_73117_1_.playerNetServerHandler.sendPacket(new S20PacketEntityProperties(this.myEntity.getEntityId(), collection));
-@@ -397,6 +479,14 @@
+@@ -397,6 +480,14 @@
                          p_73117_1_.playerNetServerHandler.sendPacket(new S1BPacketEntityAttach(0, this.myEntity, this.myEntity.ridingEntity));
                      }
  
@@ -190,7 +196,7 @@
                      if (this.myEntity instanceof EntityLiving && ((EntityLiving)this.myEntity).getLeashedToEntity() != null)
                      {
                          p_73117_1_.playerNetServerHandler.sendPacket(new S1BPacketEntityAttach(1, this.myEntity, ((EntityLiving)this.myEntity).getLeashedToEntity()));
-@@ -425,6 +515,11 @@
+@@ -425,6 +516,11 @@
                          }
                      }
  
@@ -202,7 +208,7 @@
                      if (this.myEntity instanceof EntityLivingBase)
                      {
                          EntityLivingBase entitylivingbase = (EntityLivingBase)this.myEntity;
-@@ -465,7 +560,10 @@
+@@ -465,7 +561,10 @@
      {
          if (this.myEntity.isDead)
          {
@@ -214,7 +220,7 @@
          }
  
          Packet pkt = FMLNetworkHandler.getEntitySpawningPacket(this.myEntity);
-@@ -491,7 +589,7 @@
+@@ -491,7 +590,7 @@
          {
              return new S0EPacketSpawnObject(this.myEntity, 1);
          }
@@ -223,7 +229,7 @@
          {
              if (this.myEntity instanceof EntityFishHook)
              {
-@@ -528,13 +626,13 @@
+@@ -528,13 +627,13 @@
                  return new S0EPacketSpawnObject(this.myEntity, 76);
              }
              else
@@ -240,7 +246,7 @@
                      byte b0 = 63;
  
                      if (this.myEntity instanceof EntitySmallFireball)
-@@ -584,7 +682,7 @@
+@@ -584,7 +683,7 @@
                  else if (this.myEntity instanceof EntityItemFrame)
                  {
                      EntityItemFrame entityitemframe = (EntityItemFrame)this.myEntity;
@@ -249,7 +255,7 @@
                      s0epacketspawnobject.func_148996_a(MathHelper.floor_float((float)(entityitemframe.field_146063_b * 32)));
                      s0epacketspawnobject.func_148995_b(MathHelper.floor_float((float)(entityitemframe.field_146064_c * 32)));
                      s0epacketspawnobject.func_149005_c(MathHelper.floor_float((float)(entityitemframe.field_146062_d * 32)));
-@@ -593,7 +691,7 @@
+@@ -593,7 +692,7 @@
                  else if (this.myEntity instanceof EntityLeashKnot)
                  {
                      EntityLeashKnot entityleashknot = (EntityLeashKnot)this.myEntity;
@@ -258,7 +264,7 @@
                      s0epacketspawnobject.func_148996_a(MathHelper.floor_float((float)(entityleashknot.field_146063_b * 32)));
                      s0epacketspawnobject.func_148995_b(MathHelper.floor_float((float)(entityleashknot.field_146064_c * 32)));
                      s0epacketspawnobject.func_149005_c(MathHelper.floor_float((float)(entityleashknot.field_146062_d * 32)));
-@@ -607,13 +705,17 @@
+@@ -607,13 +706,19 @@
                  {
                      throw new IllegalArgumentException("Don\'t know how to add " + this.myEntity.getClass() + "!");
                  }
@@ -273,7 +279,9 @@
          }
 +        else
 +        {
-+            throw new IllegalArgumentException("Don\'t know how to add " + this.myEntity.getClass() + "! Report this error to mod author.");
++            // 没必要的抛出
++            // throw new IllegalArgumentException("Don\'t know how to add " + this.myEntity.getClass() + "! Report this error to mod author.");
++            return null;
 +        }
      }
  
