@@ -26,3 +26,12 @@
                  ArrayList<ItemStack> drops = target.onSheared(itemstack, entity.worldObj, (int)entity.posX, (int)entity.posY, (int)entity.posZ,
                          EnchantmentHelper.getEnchantmentLevel(Enchantment.fortune.effectId, itemstack));
  
+@@ -87,7 +99,7 @@
+             return false;
+         }
+         Block block = player.worldObj.getBlock(x, y, z);
+-        if (block instanceof IShearable)
++        if (block instanceof IShearable && !(block instanceof BlockLeavesBase))
+         {
+             IShearable target = (IShearable)block;
+             if (target.isShearable(itemstack, player.worldObj, x, y, z))
