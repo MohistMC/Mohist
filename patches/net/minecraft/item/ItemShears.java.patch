@@ -1,15 +1,16 @@
 --- ../src-base/minecraft/net/minecraft/item/ItemShears.java
 +++ ../src-work/minecraft/net/minecraft/item/ItemShears.java
-@@ -3,6 +3,8 @@
+@@ -3,6 +3,9 @@
  import java.util.ArrayList;
  import java.util.Random;
  
++import net.minecraft.block.BlockLeavesBase;
 +import org.bukkit.event.player.PlayerShearEntityEvent;
 +
  import net.minecraft.block.Block;
  import net.minecraft.block.material.Material;
  import net.minecraft.creativetab.CreativeTabs;
-@@ -61,6 +63,16 @@
+@@ -61,6 +64,16 @@
              IShearable target = (IShearable)entity;
              if (target.isShearable(itemstack, entity.worldObj, (int)entity.posX, (int)entity.posY, (int)entity.posZ))
              {
@@ -26,7 +27,7 @@
                  ArrayList<ItemStack> drops = target.onSheared(itemstack, entity.worldObj, (int)entity.posX, (int)entity.posY, (int)entity.posZ,
                          EnchantmentHelper.getEnchantmentLevel(Enchantment.fortune.effectId, itemstack));
  
-@@ -87,7 +99,7 @@
+@@ -87,7 +100,7 @@
              return false;
          }
          Block block = player.worldObj.getBlock(x, y, z);
