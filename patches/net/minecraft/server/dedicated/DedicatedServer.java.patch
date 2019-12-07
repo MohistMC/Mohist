@@ -50,13 +50,13 @@
  @SideOnly(Side.SERVER)
  public class DedicatedServer extends MinecraftServer implements IServer
  {
-@@ -44,18 +60,20 @@
+@@ -44,18 +60,19 @@
      public final List pendingCommandList = Collections.synchronizedList(new ArrayList());
      private RConThreadQuery theRConThreadQuery;
      private RConThreadMain theRConThreadMain;
 -    private PropertyManager settings;
+-    private ServerEula field_154332_n;
 +    public PropertyManager settings; // CraftBukkit - private -> public
-     private ServerEula field_154332_n;
      private boolean canSpawnStructures;
      private WorldSettings.GameType gameType;
      private boolean guiIsEnabled;
@@ -76,7 +76,7 @@
          {
              private static final String __OBFID = "CL_00001787";
              {
-@@ -82,31 +100,77 @@
+@@ -82,31 +99,77 @@
          };
      }
  
@@ -161,7 +161,7 @@
          field_155771_h.info("Starting minecraft server version 1.7.10");
  
          if (Runtime.getRuntime().maxMemory() / 1024L / 1024L < 512L)
-@@ -115,26 +179,19 @@
+@@ -115,26 +178,18 @@
          }
  
          FMLCommonHandler.instance().onServerStart(this);
@@ -169,8 +169,8 @@
 +        StatCollector.setLoaded(true);
          field_155771_h.info("Loading properties");
 -        this.settings = new PropertyManager(new File("server.properties"));
+-        this.field_154332_n = new ServerEula(new File("eula.txt"));
 +        this.settings = new PropertyManager(this.options); // CraftBukkit - CLI argument support
-         this.field_154332_n = new ServerEula(new File("eula.txt"));
  
 -        if (!this.field_154332_n.func_154346_a())
          {
@@ -191,7 +191,7 @@
                  this.setHostname(this.settings.getStringProperty("server-ip", ""));
              }
  
-@@ -172,6 +229,18 @@
+@@ -172,6 +227,18 @@
                  this.setServerPort(this.settings.getIntProperty("server-port", 25565));
              }
  
@@ -210,7 +210,7 @@
              field_155771_h.info("Generating keypair");
              this.setKeyPair(CryptManager.createNewKeyPair());
              field_155771_h.info("Starting Minecraft server on " + (this.getServerHostname().length() == 0 ? "*" : this.getServerHostname()) + ":" + this.getServerPort());
-@@ -180,7 +249,7 @@
+@@ -180,7 +247,7 @@
              {
                  this.func_147137_ag().addLanEndpoint(inetaddress, this.getServerPort());
              }
@@ -219,7 +219,7 @@
              {
                  field_155771_h.warn("**** FAILED TO BIND TO PORT!");
                  field_155771_h.warn("The exception was: {}", new Object[] {ioexception.toString()});
-@@ -194,12 +263,36 @@
+@@ -194,12 +261,36 @@
                  field_155771_h.warn("The server will make no attempt to authenticate usernames. Beware.");
                  field_155771_h.warn("While this makes the game possible to play without internet access, it also opens up the ability for hackers to connect with any username they choose.");
                  field_155771_h.warn("To change this, set \"online-mode\" to \"true\" in the server.properties file.");
@@ -258,7 +258,7 @@
  
              if (!PreYggdrasilConverter.func_152714_a(this.settings))
              {
-@@ -208,7 +301,8 @@
+@@ -208,7 +299,8 @@
              else
              {
                  FMLCommonHandler.instance().onServerStarted();
@@ -268,7 +268,7 @@
                  long j = System.nanoTime();
  
                  if (this.getFolderName() == null)
-@@ -274,11 +368,36 @@
+@@ -274,11 +366,36 @@
                      this.theRConThreadMain.startThread();
                  }
  
@@ -305,7 +305,7 @@
      public boolean canStructuresSpawn()
      {
          return this.canSpawnStructures;
-@@ -364,11 +483,19 @@
+@@ -364,11 +481,19 @@
  
      public void executePendingCommands()
      {
