@@ -19,7 +19,7 @@ public class Message {
     }
 
     public static String getLanguage(int key) {
-        File f = new File("mohist.yml");
+        File f = new File("mohist-config", "mohist.yml");
         String locale = MohistConfigUtil.getString(f, "lang:", "xx");
         if (locale.length() == 5) {
             String language = locale.substring(0, 2);

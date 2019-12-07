@@ -26,7 +26,7 @@ public abstract class ConfigBase
 
     public ConfigBase(String fileName, String commandName)
     {
-        this.configFile=new File(MinecraftServer.serverConfigDir,fileName);
+        this.configFile=new File("mohist-config", fileName);
         this.config = YamlConfiguration.loadConfiguration(configFile);
         this.commandName = commandName;
         this.commands = new HashMap<String, Command>();

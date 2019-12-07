@@ -57,7 +57,7 @@ public class Progress {
     }
 
     public Boolean isEnable() {
-        File f = new File("mohist.yml");
+        File f = new File("mohist-config", "mohist.yml");
         return MohistConfigUtil.getBoolean(f, "enable_progress:");
     }
 }

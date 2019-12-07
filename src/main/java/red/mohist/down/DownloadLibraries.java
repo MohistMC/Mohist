@@ -5,22 +5,31 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Enumeration;
-import java.util.Locale;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import red.mohist.configuration.MohistConfigUtil;
 import red.mohist.util.FileUtil;
+import red.mohist.util.HttpUtil;
 import red.mohist.util.i18n.Message;
 
-public class DownloadLibraries implements Runnable {
+public class DownloadLibraries{
 
-    @Override
-    public void run() {
-        String url = "https://github.com/Mohist-Community/Mohist/releases/download/1.7.10bate/libraries.zip";
+    public static final String FIND_LOCATE = "https://passport.lazercloud.com/api/v1/options/GetLocate";
+
+    public static void run() {
+        String url = null;
         String fileName = "libraries.zip";
-        Locale locale = Locale.getDefault();
-        if (locale.getCountry().equals("CN") || Message.getLanguage(2).equals("CN")) {
-            url = "https://mohist-community.gitee.io/mohistdown/libraries-1.7.10.zip";
+        try {
+            String locateInfo = HttpUtil.doGet(FIND_LOCATE);
+
+            if (locateInfo !=null && locateInfo.equals("CN")) {
+                System.out.println("Detected China IP, Using Gitee Mirror.");
+                url = "https://mohist-community.gitee.io/mohistdown/libraries-1.7.10.zip"; //Gitee Mirror
+            } else {
+                url = "https://github.com/Mohist-Community/Mohist/releases/download/1.7.10bate/libraries.zip"; //Github Mirror
+            }
+        } catch (Exception e) {
+            url = "https://github.com/Mohist-Community/Mohist/releases/download/1.7.10bate/libraries.zip"; //Github Mirror
         }
         new Download(url, fileName);
         File file = new File(fileName);

@@ -30,7 +30,7 @@ repositories {
 minecraft {
     version = '1.7.10'
     mcpVersion = '9.05'
-    mainClass = 'cpw.mods.fml.relauncher.ServerLaunchWrapper'
+    mainClass = 'red.mohist.Mohist'
     tweakClass = 'cpw.mods.fml.common.launcher.FMLTweaker'
     installerVersion = "1.4"
     srgExtra "PK: org/bukkit/craftbukkit org/bukkit/craftbukkit/v1_7_R4"
@@ -109,7 +109,7 @@ tasks.packageUniversal {
             'Implementation-Title'  : project.name,
             'Implementation-Version': project.version,
             'TweakClass'            : 'cpw.mods.fml.common.launcher.FMLTweaker',
-            'Main-Class'            : 'cpw.mods.fml.relauncher.ServerLaunchWrapper',
+            'Main-Class'            : 'red.mohist.Mohist',
             'Class-Path'            : generateClasspath()
     ])
 }

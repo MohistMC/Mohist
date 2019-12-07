@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/cpw/mods/fml/common/network/internal/FMLNetworkHandler.java
 +++ ../src-work/minecraft/cpw/mods/fml/common/network/internal/FMLNetworkHandler.java
-@@ -47,6 +47,16 @@
+@@ -47,6 +47,17 @@
  import cpw.mods.fml.common.registry.EntityRegistry.EntityRegistration;
  import cpw.mods.fml.relauncher.Side;
  import cpw.mods.fml.relauncher.SideOnly;
@@ -13,11 +13,12 @@
 +import org.bukkit.craftbukkit.inventory.CraftInventory;
 +import org.bukkit.craftbukkit.inventory.CraftInventoryView;
 +import org.bukkit.event.inventory.InventoryType;
++import red.mohist.configuration.MohistConfig;
 +// Cauldron end
  
  public class FMLNetworkHandler
  {
-@@ -75,6 +85,31 @@
+@@ -75,6 +86,31 @@
              Container remoteGuiContainer = NetworkRegistry.INSTANCE.getRemoteGuiContainer(mc, entityPlayerMP, modGuiId, world, x, y, z);
              if (remoteGuiContainer != null)
              {
@@ -49,7 +50,7 @@
                  entityPlayerMP.getNextWindowId();
                  entityPlayerMP.closeContainer();
                  int windowId = entityPlayerMP.currentWindowId;
-@@ -187,17 +222,26 @@
+@@ -187,17 +223,26 @@
  
      public static void enhanceStatusQuery(JsonObject jsonobject)
      {
@@ -68,7 +69,7 @@
 +            //Uranium end
 +            */
 +            JsonObject fmlData = new JsonObject();
-+            fmlData.addProperty("type", "FML");
++            fmlData.addProperty("type", MohistConfig.instance.server_type.getValue());
 +            JsonArray modList = new JsonArray();
 +            for (ModContainer mc : Loader.instance().getActiveModList()) {
 +                JsonObject modData = new JsonObject();

@@ -1,12 +1,13 @@
 --- ../src-base/minecraft/cpw/mods/fml/common/asm/transformers/TerminalTransformer.java
 +++ ../src-work/minecraft/cpw/mods/fml/common/asm/transformers/TerminalTransformer.java
-@@ -46,7 +46,8 @@
+@@ -46,7 +46,9 @@
                                     clsName.equals("net/minecraft/server/dedicated/DedicatedServer") ||
                                     clsName.equals("cpw/mods/fml/common/FMLCommonHandler") ||
                                     clsName.startsWith("com/jcraft/jogg/") ||
 -                                   clsName.startsWith("scala/sys/")
 +                                   clsName.startsWith("scala/sys/") ||
-+                                   clsName.startsWith("net/md_5/specialsource")
++                                   clsName.startsWith("net/md_5/specialsource")||
++                                   clsName.startsWith("red/mohist")
                                     );
  
              return new MethodVisitor(Opcodes.ASM5, super.visitMethod(mAccess, mName, mDesc, mSignature, mExceptions))

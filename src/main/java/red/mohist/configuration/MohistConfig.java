@@ -92,8 +92,8 @@ public class MohistConfig extends ConfigBase {
             config.options().header(header.toString());
             config.options().copyDefaults(true);
 
-            version = getInt("config-version", 2);
-            set("config-version", 2);
+            version = getInt("config-version", 1);
+            set("config-version", 1);
 
             this.save();
         }
