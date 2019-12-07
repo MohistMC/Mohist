@@ -1,6 +1,23 @@
 --- ../src-base/minecraft/net/minecraftforge/fml/common/ModClassLoader.java
 +++ ../src-work/minecraft/net/minecraftforge/fml/common/ModClassLoader.java
-@@ -150,7 +150,12 @@
+@@ -110,7 +110,6 @@
+         if (!name.endsWith(".jar")) return false;
+         String[] prefixes =
+         {
+-            "launchwrapper-",
+             "asm-all-",
+             "akka-actor_2.11-",
+             "config-",
+@@ -141,16 +140,18 @@
+             "authlib-",
+             "log4j-api-",
+             "log4j-core-",
+-            "lwjgl-",
+-            "lwjgl_util-",
+-            "twitch-",
+             "jline-",
+             "jna-",
+             "platform-",
              "oshi-core-",
              "netty-",
              "libraryjavasound-",
