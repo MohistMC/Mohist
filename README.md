@@ -33,10 +33,10 @@
 * Building
   * Build the project for Linux:
   `./gradlew setupMohist` 
-  `./gradlew buildPackages`
+  `./gradlew launch4j`
   * or for Windows:
   `./gradlew.bat setupMohist ` 
-  `./gradlew.bat buildPackages `
+  `./gradlew.bat launch4j `
 
 All builds will be in `.\Mohist\build\distributions\`
 
