@@ -48,6 +48,10 @@ public class UraniumConfig extends ConfigBase {
 
     public BoolSetting experimentalTileEntityListRecreation = new BoolSetting(this,
             "experimental.tileEntityListRecreation", false, "EXPERIMENTAL! Recreate list of TE each tick.");
+    
+    public BoolSetting enable_oversizedchunk = new BoolSetting(this, "command.enable_oversizedchunk", true, "Enable Oversized Chunk to be saved");
+    
+    public IntSetting chunk_cache_size = new IntSetting(this,"command.chunk_cache_size", 256, "Size of cached chunk");
 
     /**
      * by xjboss<br>
