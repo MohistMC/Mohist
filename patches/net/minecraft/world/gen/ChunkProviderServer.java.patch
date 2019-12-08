@@ -108,7 +108,7 @@
      }
  
      public boolean saveChunks(boolean all)
-@@ -266,11 +281,9 @@
+@@ -266,17 +281,15 @@
  
                      if (chunk != null && chunk.unloadQueued)
                      {
@@ -123,6 +123,13 @@
                          ++i;
                      }
                  }
+             }
+ 
+-            if (this.id2ChunkMap.isEmpty()) net.minecraftforge.common.DimensionManager.unloadWorld(this.world.provider.getDimension());
++            //if (this.id2ChunkMap.isEmpty()) net.minecraftforge.common.DimensionManager.unloadWorld(this.world.provider.getDimension());
+ 
+             this.chunkLoader.chunkTick();
+         }
 @@ -284,6 +297,39 @@
          return false;
      }

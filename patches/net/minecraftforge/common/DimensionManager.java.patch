@@ -134,7 +134,15 @@
          }
  
          ArrayList<WorldServer> tmp = new ArrayList<WorldServer>();
-@@ -253,16 +269,45 @@
+@@ -242,6 +258,7 @@
+ 
+     public static void initDimension(int dim)
+     {
++        if (dim == 0) return;
+         WorldServer overworld = getWorld(0);
+         if (overworld == null)
+         {
+@@ -253,16 +270,49 @@
          }
          catch (Exception e)
          {
@@ -167,6 +175,7 @@
 +            }
 +
 +            name = provider.getSaveFolder();
++            if (name == null) name = "DIM0";
 +        }
 +
 +        ChunkGenerator gen = mcServer.server.getGenerator(name);
@@ -175,7 +184,10 @@
 +        }
 +        WorldInfo worldInfo = new WorldInfo(worldSettings, name);
 +        WorldServer world = (dim == 0 ? overworld : (WorldServer)(new WorldServerMulti(mcServer, new AnvilSaveHandler(mcServer.server.getWorldContainer(), name, true, mcServer.getDataFixer()), dim, overworld, mcServer.profiler, worldInfo, env, gen).init()));
-+
++        if (gen != null)
++        {
++            world.getWorld().getPopulators().addAll(gen.getDefaultPopulators(world.getWorld()));
++        }
 +        mcServer.getPlayerList().setPlayerManager(mcServer.worldServerList.toArray(new WorldServer[mcServer.worldServerList.size()]));
          world.addEventListener(new ServerWorldEventHandler(mcServer, world));
          MinecraftForge.EVENT_BUS.post(new WorldEvent.Load(world));
@@ -183,7 +195,7 @@
          if (!mcServer.isSinglePlayer())
          {
              world.getWorldInfo().setGameType(mcServer.getGameType());
-@@ -303,7 +348,6 @@
+@@ -303,7 +353,6 @@
      {
          return dimensions.keySet().toArray(new Integer[0]);
      }
@@ -191,7 +203,7 @@
      public static WorldProvider createProviderFor(int dim)
      {
          try
-@@ -321,7 +365,7 @@
+@@ -321,7 +370,7 @@
          }
          catch (Exception e)
          {
@@ -200,7 +212,17 @@
                      dim, getProviderType(dim), e);
              throw new RuntimeException(e);
          }
-@@ -357,7 +401,7 @@
+@@ -343,7 +392,8 @@
+         return ForgeChunkManager.getPersistentChunksFor(world).isEmpty()
+                 && world.playerEntities.isEmpty()
+                 && !world.provider.getDimensionType().shouldLoadSpawn()
+-                && !keepLoaded.contains(world.provider.getDimension());
++                && !keepLoaded.contains(world.provider.getDimension())
++                && world.getWorld().getKeepSpawnInMemory();
+     }
+ 
+     /**
+@@ -357,7 +407,7 @@
  
          if (unloadQueue.add(id))
          {
@@ -209,7 +231,7 @@
          }
      }
  
-@@ -387,23 +431,10 @@
+@@ -387,23 +437,10 @@
              // Don't unload the world if the status changed
              if (w == null || !canUnloadWorld(w))
              {
@@ -235,7 +257,7 @@
          }
      }
  
-@@ -499,4 +530,109 @@
+@@ -499,4 +536,109 @@
              return null;
          }
      }
