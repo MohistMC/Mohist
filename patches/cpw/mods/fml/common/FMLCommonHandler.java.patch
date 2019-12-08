@@ -11,7 +11,22 @@
  
  import com.google.common.base.Joiner;
  import com.google.common.base.Strings;
-@@ -245,6 +249,7 @@
+@@ -151,13 +155,7 @@
+      */
+     public Side getEffectiveSide()
+     {
+-        Thread thr = Thread.currentThread();
+-        if ((thr.getName().equals("Server thread")))
+-        {
+-            return Side.SERVER;
+-        }
+-
+-        return Side.CLIENT;
++        return Side.SERVER;
+     }
+     /**
+      * Raise an exception
+@@ -245,6 +243,7 @@
      public void onPostServerTick()
      {
          bus().post(new TickEvent.ServerTickEvent(Phase.END));
@@ -19,7 +34,7 @@
      }
  
      /**
-@@ -385,10 +390,11 @@
+@@ -385,10 +384,11 @@
          {
              return;
          }
@@ -32,7 +47,7 @@
          handlerSet.add(handler);
          handlerToCheck = new WeakReference<SaveHandler>(handler); // for confirmBackupLevelDatUse
          Map<String,NBTBase> additionalProperties = Maps.newHashMap();
-@@ -496,7 +502,14 @@
+@@ -496,7 +496,14 @@
  
      public String getModName()
      {
@@ -48,7 +63,7 @@
          modNames.add("fml");
          if (!noForge)
          {
-@@ -540,8 +553,17 @@
+@@ -540,8 +547,17 @@
          bus().post(new InputEvent.KeyInputEvent());
      }
  
