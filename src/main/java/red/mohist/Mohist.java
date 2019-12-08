@@ -18,7 +18,7 @@ import red.mohist.util.i18n.Message;
 public class Mohist {
 
     public static final String NAME = "Mohist";
-    public static Logger LOGGER = LogManager.getLogger("Mohist");
+    public static Logger LOGGER;
     public static final String LIB_VERSION = "1";
 
     public static String getVersion() {
