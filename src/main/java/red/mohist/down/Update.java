@@ -37,8 +37,8 @@ public class Update {
             String time1 = time.substring(time.indexOf(date) + 8);
             String time2 = time1.substring(0, 20);
 
-            String newversion = MohistConfigUtil.getUrlString(ver, "1.0");
-            String oldversion = "1.0";
+            String newversion = MohistConfigUtil.getUrlString(ver, Mohist.VERSION);
+            String oldversion = Mohist.VERSION;
             if (oldver.equals(s2)) {
                 System.out.println(Message.getFormatString("update.latest", new Object[]{oldversion, s2, oldver}));
             } else {

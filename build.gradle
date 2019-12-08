@@ -37,7 +37,7 @@ minecraft {
 }
 
 group = 'red.mohist'
-version = '1.7.10-1.1'
+version = '1.7.10-' + 'git rev-parse --short HEAD'.execute().text.trim()
 
 configurations {
     compile.extendsFrom exported
@@ -105,9 +105,9 @@ tasks.packageUniversal {
     classifier = 'server'
     setManifest {}
     manifest.attributes([
-            'Manifest-Version' : '1.0',
+            'Manifest-Version' : '1.1',
             'Implementation-Title'  : project.name,
-            'Implementation-Version': project.version,
+            'Implementation-Version': 'git rev-parse --short HEAD'.execute().text.trim(),
             'TweakClass'            : 'cpw.mods.fml.common.launcher.FMLTweaker',
             'Main-Class'            : 'red.mohist.Mohist',
             'Class-Path'            : generateClasspath()
