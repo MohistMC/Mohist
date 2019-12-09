@@ -9,7 +9,24 @@
      private ConnectionState state;
      private ConnectionType connectionType;
      private final Side side;
-@@ -219,7 +219,7 @@
+@@ -140,6 +140,16 @@
+ 
+     int serverInitiateHandshake()
+     {
++    	// Thermos wait until the player object was assigned by the fml:packet_handler in serverToClientHandshake()
++    	for(int i = 0; this.manager.channel().pipeline().get("fml:packet_handler") == null; i++)
++    	{
++    		try {Thread.sleep(10L);} catch(Exception e){}
++    		if(i == 20) // We waited 200ms, no dice
++    		{
++    			return -100000;
++    		}
++    	}
++    	
+         // Send mod salutation to the client
+         // This will be ignored by vanilla clients
+         this.state = ConnectionState.AWAITING_HANDSHAKE;
+@@ -219,7 +229,7 @@
          }
          else
          {
@@ -18,7 +35,7 @@
          }
          return false;
      }
-@@ -304,6 +304,7 @@
+@@ -304,6 +314,7 @@
              state = ConnectionState.HANDSHAKING;
          }
          String channelName = msg.func_149559_c();
@@ -26,7 +43,7 @@
          if ("FML|HS".equals(channelName) || "REGISTER".equals(channelName) || "UNREGISTER".equals(channelName))
          {
              FMLProxyPacket proxy = new FMLProxyPacket(msg);
-@@ -325,6 +326,7 @@
+@@ -325,6 +336,7 @@
          else if (NetworkRegistry.INSTANCE.hasChannel(channelName, Side.SERVER))
          {
              FMLProxyPacket proxy = new FMLProxyPacket(msg);
@@ -34,7 +51,7 @@
              proxy.setDispatcher(this);
              context.fireChannelRead(proxy);
              return true;
-@@ -482,7 +484,7 @@
+@@ -482,7 +494,7 @@
          // Stop the epic channel closed spam at close
          if (!(cause instanceof ClosedChannelException))
          {

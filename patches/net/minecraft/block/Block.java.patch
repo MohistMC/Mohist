@@ -8,7 +8,27 @@
      private static final String __OBFID = "CL_00000199";
  
      public final cpw.mods.fml.common.registry.RegistryDelegate<Block> delegate = 
-@@ -1131,6 +1132,23 @@
+@@ -954,11 +955,15 @@
+         if (this.canSilkHarvest(p_149636_1_, p_149636_2_, p_149636_3_, p_149636_4_, p_149636_5_, p_149636_6_) && EnchantmentHelper.getSilkTouchModifier(p_149636_2_))
+         {
+             ArrayList<ItemStack> items = new ArrayList<ItemStack>();
+-            ItemStack itemstack = this.createStackedBlock(p_149636_6_);
+-
+-            if (itemstack != null)
++            
++            if (!((p_149636_2_.getHeldItem().getItem() instanceof ItemShears) && (this instanceof BlockLeavesBase) && (this instanceof IShearable)))
+             {
+-                items.add(itemstack);
++                ItemStack itemstack = this.createStackedBlock(p_149636_6_);
++
++                if (itemstack != null)
++                {
++                    items.add(itemstack);
++                }            	
+             }
+ 
+             ForgeEventFactory.fireBlockHarvesting(items, p_149636_1_, this, p_149636_3_, p_149636_4_, p_149636_5_, p_149636_6_, 0, 1.0f, true, p_149636_2_);
+@@ -1131,6 +1136,23 @@
          return this;
      }
  

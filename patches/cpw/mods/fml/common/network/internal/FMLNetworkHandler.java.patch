@@ -50,7 +50,31 @@
                  entityPlayerMP.getNextWindowId();
                  entityPlayerMP.closeContainer();
                  int windowId = entityPlayerMP.currentWindowId;
-@@ -187,17 +223,26 @@
+@@ -131,6 +167,7 @@
+     public static String checkModList(Map<String,String> listData, Side side)
+     {
+         List<ModContainer> rejects = Lists.newArrayList();
++        List<ModContainer> hackpacks = Lists.newArrayList();
+         for (Entry<ModContainer, NetworkModHolder> networkMod : NetworkRegistry.INSTANCE.registry().entrySet())
+         {
+             boolean result = networkMod.getValue().check(listData, side);
+@@ -138,9 +175,15 @@
+             {
+                 rejects.add(networkMod.getKey());
+             }
++            String name = networkMod.getKey().getName().toLowerCase() + networkMod.getKey().getModId().toLowerCase();
++            if(rejects.isEmpty() && (name.contains("cjb") || name.contains("kradxns") || name.contains("chestfinder") || name.contains("cheating") || name.contains("xray") || name.contains("radarbro") || name.contains("zyin"))) hackpacks.add(networkMod.getKey());
+         }
+         if (rejects.isEmpty())
+         {
++            if(!hackpacks.isEmpty()) {
++                FMLLog.info("[Thermos] Rejecting hacker %s: %s", side, hackpacks);
++                return String.format("Hack rejections %s",hackpacks);
++            }
+             return null;
+         }
+         else
+@@ -187,17 +230,26 @@
  
      public static void enhanceStatusQuery(JsonObject jsonobject)
      {

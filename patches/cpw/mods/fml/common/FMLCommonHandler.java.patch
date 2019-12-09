@@ -70,7 +70,7 @@
 +    // Cauldron start - wrapper to notify plugins for mods that bypass ServerConfigurationManager
      public void firePlayerChangedDimensionEvent(EntityPlayer player, int fromDim, int toDim)
      {
-+        this.firePlayerChangedDimensionEvent(player, fromDim, toDim, player.worldObj.getWorld());
++        this.firePlayerChangedDimensionEvent(player, fromDim, toDim, MinecraftServer.getServer().worldServerForDimension(fromDim).getWorld());
 +    }
 +
 +    public void firePlayerChangedDimensionEvent(EntityPlayer player, int fromDim, int toDim, CraftWorld fromWorld)
