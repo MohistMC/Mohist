@@ -74,41 +74,12 @@
              return null;
          }
          else
-@@ -187,17 +230,26 @@
- 
+@@ -188,7 +231,7 @@
      public static void enhanceStatusQuery(JsonObject jsonobject)
      {
--        JsonObject fmlData = new JsonObject();
+         JsonObject fmlData = new JsonObject();
 -        fmlData.addProperty("type", "FML");
--        JsonArray modList = new JsonArray();
--        for (ModContainer mc : Loader.instance().getActiveModList())
--        {
--            JsonObject modData = new JsonObject();
--            modData.addProperty("modid", mc.getModId());
--            modData.addProperty("version", mc.getVersion());
--            modList.add(modData);
-+        /*
-+        //Uranium start
-+        if(!MinecraftServer.uraniumConfig.fakeVanillaMode.getValue()) {
-+            //Uranium end
-+            */
-+            JsonObject fmlData = new JsonObject();
-+            fmlData.addProperty("type", MohistConfig.instance.server_type.getValue());
-+            JsonArray modList = new JsonArray();
-+            for (ModContainer mc : Loader.instance().getActiveModList()) {
-+                JsonObject modData = new JsonObject();
-+                modData.addProperty("modid", mc.getModId());
-+                modData.addProperty("version", mc.getVersion());
-+                modList.add(modData);
-+            }
-+            fmlData.add("modList", modList);
-+            jsonobject.add("modinfo", fmlData);
-+            /*
-+            //Uranium start
-         }
--        fmlData.add("modList", modList);
--        jsonobject.add("modinfo", fmlData);
-+        //Uranium end
-+        */
-     }
- }
++        fmlData.addProperty("type", MohistConfig.instance.server_type.getValue());
+         JsonArray modList = new JsonArray();
+         for (ModContainer mc : Loader.instance().getActiveModList())
+         {
