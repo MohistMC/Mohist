@@ -2,6 +2,8 @@ package red.mohist.configuration;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
+import java.util.ArrayList;
+import java.util.List;
 import org.bukkit.configuration.file.YamlConfiguration;
 import red.mohist.api.ServerAPI;
 import red.mohist.command.DumpCommand;
@@ -58,6 +60,7 @@ public class MohistConfig extends ConfigBase{
     public final BoolSetting disableForgeChunkForceSystem = new BoolSetting(this, "forge.disablechunkforcesystem", false, "Disable ForgeChunkForceSystem"); // by Goodvise
     public final BoolSetting stopserversaveworlds = new BoolSetting(this, "world.stopserversaveworlds", false, "stopserversaveworlds");
 
+    public List<String> autounloadWorld_whitelist=new ArrayList();
 
     /* ======================================================================== */
 
@@ -120,12 +123,14 @@ public class MohistConfig extends ConfigBase{
                 config.addDefault(toggle.path, toggle.def);
                 settings.get(toggle.path).setValue(config.getString(toggle.path));
             }
-            config.options().header(header.toString());
-            config.options().copyDefaults(true);
 
             version = getInt("config-version", 2);
             set("config-version", 2);
+            config.addDefault("forge.autounloadWorld_whitelist",new String[]{"0", "1", "-1"});
+            this.autounloadWorld_whitelist=config.getStringList("capture.blockNotCaptureOnMetaChange");
 
+            config.options().header(header.toString());
+            config.options().copyDefaults(true);
             this.save();
         }
         catch (Exception ex)

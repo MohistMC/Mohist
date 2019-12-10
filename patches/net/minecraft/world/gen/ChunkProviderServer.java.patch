@@ -1,10 +1,12 @@
 --- ../src-base/minecraft/net/minecraft/world/gen/ChunkProviderServer.java
 +++ ../src-work/minecraft/net/minecraft/world/gen/ChunkProviderServer.java
-@@ -26,11 +26,12 @@
+@@ -26,11 +26,14 @@
  import net.minecraft.world.chunk.storage.IChunkLoader;
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
 +import org.bukkit.event.world.ChunkUnloadEvent;
++import red.mohist.api.ServerAPI;
++import red.mohist.configuration.MohistConfig;
  
  public class ChunkProviderServer implements IChunkProvider
  {
@@ -14,7 +16,7 @@
      public final IChunkGenerator chunkGenerator;
      public final IChunkLoader chunkLoader;
      public final Long2ObjectMap<Chunk> id2ChunkMap = new Long2ObjectOpenHashMap<Chunk>(8192);
-@@ -83,6 +84,11 @@
+@@ -83,6 +86,11 @@
          return chunk;
      }
  
@@ -26,7 +28,7 @@
      @Nullable
      public Chunk loadChunk(int x, int z)
      {
-@@ -92,6 +98,11 @@
+@@ -92,6 +100,11 @@
      @Nullable
      public Chunk loadChunk(int x, int z, @Nullable Runnable runnable)
      {
@@ -38,7 +40,7 @@
          Chunk chunk = this.getLoadedChunk(x, z);
          if (chunk == null)
          {
-@@ -106,7 +117,7 @@
+@@ -106,7 +119,7 @@
                  {
                  this.id2ChunkMap.put(ChunkPos.asLong(x, z), chunk);
                  chunk.onLoad();
@@ -47,7 +49,7 @@
                  }
  
                  loadingChunks.remove(pos);
-@@ -123,6 +134,8 @@
+@@ -123,6 +136,8 @@
                      return null;
                  }
              }
@@ -56,7 +58,7 @@
          }
  
          // If we didn't load the chunk async and have a callback run it now
-@@ -136,6 +149,7 @@
+@@ -136,6 +151,7 @@
  
          if (chunk == null)
          {
@@ -64,7 +66,7 @@
              long i = ChunkPos.asLong(x, z);
  
              try
-@@ -154,7 +168,8 @@
+@@ -154,7 +170,8 @@
  
              this.id2ChunkMap.put(i, chunk);
              chunk.onLoad();
@@ -74,7 +76,7 @@
          }
  
          return chunk;
-@@ -177,7 +192,7 @@
+@@ -177,7 +194,7 @@
          }
          catch (Exception exception)
          {
@@ -83,7 +85,7 @@
              return null;
          }
      }
-@@ -190,7 +205,7 @@
+@@ -190,7 +207,7 @@
          }
          catch (Exception exception)
          {
@@ -92,7 +94,7 @@
          }
      }
  
-@@ -203,12 +218,12 @@
+@@ -203,12 +220,12 @@
          }
          catch (IOException ioexception)
          {
@@ -108,7 +110,7 @@
      }
  
      public boolean saveChunks(boolean all)
-@@ -266,11 +281,9 @@
+@@ -266,17 +283,22 @@
  
                      if (chunk != null && chunk.unloadQueued)
                      {
@@ -123,7 +125,21 @@
                          ++i;
                      }
                  }
-@@ -284,6 +297,39 @@
+             }
+ 
+-            if (this.id2ChunkMap.isEmpty()) net.minecraftforge.common.DimensionManager.unloadWorld(this.world.provider.getDimension());
++            if (this.id2ChunkMap.isEmpty()){
++                int dim = this.world.provider.getDimension();
++                for (String dim1 : MohistConfig.instance.autounloadWorld_whitelist) {
++                    if (!dim1.equals(String.valueOf(dim))) {
++                        net.minecraftforge.common.DimensionManager.unloadWorld(dim);
++                    }
++                }
++            }
+ 
+             this.chunkLoader.chunkTick();
+         }
+@@ -284,6 +306,39 @@
          return false;
      }
  
