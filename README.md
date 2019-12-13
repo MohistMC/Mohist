@@ -32,10 +32,10 @@
   `git submodule update --init --recursive`
 * Building
   * Build the project for Linux:
-  `./gradlew setupMohist` 
+  `./gradlew setupCauldron` 
   `./gradlew launch4j`
   * or for Windows:
-  `./gradlew.bat setupMohist ` 
+  `./gradlew.bat setupCauldron ` 
   `./gradlew.bat launch4j `
 
 All builds will be in `.\Mohist\build\distributions\`
