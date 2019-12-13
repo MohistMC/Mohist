@@ -2,9 +2,6 @@ package red.mohist;
 
 import java.io.File;
 import java.lang.reflect.Method;
-import java.util.Objects;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import red.mohist.configuration.MohistConfigUtil;
 import red.mohist.down.DownloadLibraries;
 import red.mohist.down.Update;
@@ -20,7 +17,6 @@ public class Mohist {
     public static final String NAME = "Mohist";
     public static final String VERSION = "1.1";
     public static final String LIB_VERSION = "1";
-    public static Logger LOGGER;
 
     public static String getVersion() {
         return Mohist.class.getPackage().getImplementationVersion() != null ? Metrics.class.getPackage().getImplementationVersion() : "unknown";
@@ -62,7 +58,6 @@ public class Mohist {
             System.out.println("                        " + Message.getString("forge.serverlanunchwrapper.1"));
             System.out.println(Message.getString("mohist.start"));
             System.out.println(Message.getString("load.libraries"));
-            LOGGER = LogManager.getLogger("Mohist");
         }
         catch (Exception e)
         {
@@ -78,7 +73,7 @@ public class Mohist {
             allArgs[0] = "--tweakClass";
             allArgs[1] = "cpw.mods.fml.common.launcher.FMLServerTweaker";
             System.arraycopy(args, 0, allArgs, 2, args.length);
-            Objects.requireNonNull(main).invoke(null,(Object)allArgs);
+            main.invoke(null,(Object)allArgs);
         }
         catch (Exception e)
         {

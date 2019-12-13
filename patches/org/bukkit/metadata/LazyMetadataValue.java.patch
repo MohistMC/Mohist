@@ -1,0 +1,10 @@
+--- ../src-base/minecraft/org/bukkit/metadata/LazyMetadataValue.java
++++ ../src-work/minecraft/org/bukkit/metadata/LazyMetadataValue.java
+@@ -2,7 +2,6 @@
+ 
+ import java.lang.ref.SoftReference;
+ import java.util.concurrent.Callable;
+-
+ import org.apache.commons.lang.Validate;
+ import org.bukkit.plugin.Plugin;
+ 

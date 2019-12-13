@@ -1,0 +1,21 @@
+--- ../src-base/minecraft/org/bukkit/command/defaults/PardonCommand.java
++++ ../src-work/minecraft/org/bukkit/command/defaults/PardonCommand.java
+@@ -1,8 +1,8 @@
+ package org.bukkit.command.defaults;
+ 
++import com.google.common.collect.ImmutableList;
+ import java.util.ArrayList;
+ import java.util.List;
+-
+ import org.apache.commons.lang.Validate;
+ import org.bukkit.BanList;
+ import org.bukkit.Bukkit;
+@@ -12,8 +12,6 @@
+ import org.bukkit.command.CommandSender;
+ import org.bukkit.util.StringUtil;
+ 
+-import com.google.common.collect.ImmutableList;
+-
+ public class PardonCommand extends VanillaCommand {
+     public PardonCommand() {
+         super("pardon");

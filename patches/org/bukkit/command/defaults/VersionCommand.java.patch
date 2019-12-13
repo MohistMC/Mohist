@@ -1,0 +1,22 @@
+--- ../src-base/minecraft/org/bukkit/command/defaults/VersionCommand.java
++++ ../src-work/minecraft/org/bukkit/command/defaults/VersionCommand.java
+@@ -1,9 +1,9 @@
+ package org.bukkit.command.defaults;
+ 
++import com.google.common.collect.ImmutableList;
+ import java.util.ArrayList;
+ import java.util.Arrays;
+ import java.util.List;
+-
+ import org.apache.commons.lang.Validate;
+ import org.bukkit.Bukkit;
+ import org.bukkit.ChatColor;
+@@ -12,8 +12,6 @@
+ import org.bukkit.plugin.PluginDescriptionFile;
+ import org.bukkit.util.StringUtil;
+ 
+-import com.google.common.collect.ImmutableList;
+-
+ public class VersionCommand extends BukkitCommand {
+     public VersionCommand(String name) {
+         super(name);

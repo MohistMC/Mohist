@@ -1,0 +1,26 @@
+--- ../src-base/minecraft/org/bukkit/command/defaults/HelpCommand.java
++++ ../src-work/minecraft/org/bukkit/command/defaults/HelpCommand.java
+@@ -1,5 +1,6 @@
+ package org.bukkit.command.defaults;
+ 
++import com.google.common.collect.ImmutableList;
+ import java.util.ArrayList;
+ import java.util.Arrays;
+ import java.util.HashMap;
+@@ -7,7 +8,6 @@
+ import java.util.Map;
+ import java.util.Set;
+ import java.util.TreeSet;
+-
+ import org.apache.commons.lang.ArrayUtils;
+ import org.apache.commons.lang.StringUtils;
+ import org.apache.commons.lang.Validate;
+@@ -22,8 +22,6 @@
+ import org.bukkit.help.IndexHelpTopic;
+ import org.bukkit.util.ChatPaginator;
+ 
+-import com.google.common.collect.ImmutableList;
+-
+ public class HelpCommand extends VanillaCommand {
+     public HelpCommand() {
+         super("help");

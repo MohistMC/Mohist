@@ -1,0 +1,13 @@
+--- ../src-base/minecraft/org/bukkit/DyeColor.java
++++ ../src-work/minecraft/org/bukkit/DyeColor.java
+@@ -1,9 +1,8 @@
+ package org.bukkit;
+ 
++import com.google.common.collect.ImmutableMap;
+ import java.util.Map;
+ 
+-import com.google.common.collect.ImmutableMap;
+-
+ /**
+  * All supported color values for dyes and cloth
+  */

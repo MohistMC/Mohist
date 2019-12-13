@@ -1,0 +1,30 @@
+--- ../src-base/minecraft/org/bukkit/command/defaults/BanIpCommand.java
++++ ../src-work/minecraft/org/bukkit/command/defaults/BanIpCommand.java
+@@ -1,8 +1,8 @@
+ package org.bukkit.command.defaults;
+ 
++import com.google.common.collect.ImmutableList;
+ import java.util.List;
+ import java.util.regex.Pattern;
+-
+ import org.apache.commons.lang.StringUtils;
+ import org.apache.commons.lang.Validate;
+ import org.bukkit.BanList;
+@@ -12,8 +12,6 @@
+ import org.bukkit.command.CommandSender;
+ import org.bukkit.entity.Player;
+ 
+-import com.google.common.collect.ImmutableList;
+-
+ public class BanIpCommand extends VanillaCommand {
+     public static final Pattern ipValidity = Pattern.compile("^([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\.([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\.([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\.([01]?\\d\\d?|2[0-4]\\d|25[0-5])$");
+ 
+@@ -32,7 +30,7 @@
+             return false;
+         }
+ 
+-        String reason = args.length > 0 ? StringUtils.join(args, ' ', 1, args.length) : null;
++        String reason = StringUtils.join(args, ' ', 1, args.length);
+ 
+         if (ipValidity.matcher(args[0]).matches()) {
+             processIPBan(args[0], sender, reason);

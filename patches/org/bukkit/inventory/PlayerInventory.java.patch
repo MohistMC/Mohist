@@ -1,0 +1,43 @@
+--- ../src-base/minecraft/org/bukkit/inventory/PlayerInventory.java
++++ ../src-work/minecraft/org/bukkit/inventory/PlayerInventory.java
+@@ -87,8 +87,40 @@
+      * @return The currently held ItemStack
+      */
+     public ItemStack getItemInHand();
++//Uranium start (Copy from spigot 1.12)
++    /**
++     * Gets a copy of the item the player is currently holding
++     * in their main hand.
++     *
++     * @return the currently held item
++     */
++    public ItemStack getItemInMainHand();
+ 
+     /**
++     * Sets the item the player is holding in their main hand.
++     *
++     * @param item The item to put into the player's hand
++     */
++    void setItemInMainHand(ItemStack item);
++
++    /**
++     * (Only return main hand)
++     * Gets a copy of the item the player is currently holding
++     * in their off hand.
++     *
++     * @return the currently held item
++     */
++    ItemStack getItemInOffHand();
++
++    /**
++     * (Only return main hand)
++     * Sets the item the player is holding in their off hand.
++     *
++     * @param item The item to put into the player's hand
++     */
++    void setItemInOffHand(ItemStack item);
++//Uranium end
++    /**
+      * Sets the item in hand
+      *
+      * @param stack Stack to set

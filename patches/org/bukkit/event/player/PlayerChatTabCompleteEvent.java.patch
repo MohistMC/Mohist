@@ -1,0 +1,10 @@
+--- ../src-base/minecraft/org/bukkit/event/player/PlayerChatTabCompleteEvent.java
++++ ../src-work/minecraft/org/bukkit/event/player/PlayerChatTabCompleteEvent.java
+@@ -1,7 +1,6 @@
+ package org.bukkit.event.player;
+ 
+ import java.util.Collection;
+-
+ import org.apache.commons.lang.Validate;
+ import org.bukkit.entity.Player;
+ import org.bukkit.event.HandlerList;

@@ -1,0 +1,10 @@
+--- ../src-base/minecraft/org/bukkit/event/player/PlayerChatEvent.java
++++ ../src-work/minecraft/org/bukkit/event/player/PlayerChatEvent.java
+@@ -2,7 +2,6 @@
+ 
+ import java.util.HashSet;
+ import java.util.Set;
+-
+ import org.apache.commons.lang.Validate;
+ import org.bukkit.Warning;
+ import org.bukkit.entity.Player;

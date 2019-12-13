@@ -1,0 +1,19 @@
+--- ../src-base/minecraft/org/bukkit/configuration/file/YamlConfiguration.java
++++ ../src-work/minecraft/org/bukkit/configuration/file/YamlConfiguration.java
+@@ -7,7 +7,6 @@
+ import java.io.Reader;
+ import java.util.Map;
+ import java.util.logging.Level;
+-
+ import org.apache.commons.lang.Validate;
+ import org.bukkit.Bukkit;
+ import org.bukkit.configuration.Configuration;
+@@ -33,7 +32,7 @@
+     public String saveToString() {
+         yamlOptions.setIndent(options().indent());
+         yamlOptions.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
+-        yamlOptions.setAllowUnicode(SYSTEM_UTF);
++        yamlOptions.setAllowUnicode(true);
+         yamlRepresenter.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
+ 
+         String header = buildHeader();

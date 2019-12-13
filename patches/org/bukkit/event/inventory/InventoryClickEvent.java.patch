@@ -1,0 +1,65 @@
+--- ../src-base/minecraft/org/bukkit/event/inventory/InventoryClickEvent.java
++++ ../src-work/minecraft/org/bukkit/event/inventory/InventoryClickEvent.java
+@@ -1,15 +1,15 @@
+ package org.bukkit.event.inventory;
+ 
+-import org.bukkit.inventory.Inventory;
+-import org.bukkit.inventory.InventoryView;
++import org.bukkit.Location;
+ import org.bukkit.entity.HumanEntity;
+ import org.bukkit.entity.Player;
+ import org.bukkit.event.HandlerList;
+ import org.bukkit.event.inventory.InventoryType.SlotType;
+-import org.bukkit.Location;
++import org.bukkit.inventory.Inventory;
++import org.bukkit.inventory.InventoryView;
+ import org.bukkit.inventory.ItemStack;
+-import org.bukkit.scheduler.BukkitScheduler;
+ import org.bukkit.plugin.Plugin;
++import org.bukkit.scheduler.BukkitScheduler;
+ 
+ /**
+  * This event is called when a player clicks a slot in an inventory.
+@@ -52,7 +52,7 @@
+     private int rawSlot;
+     private ItemStack current = null;
+     private int hotbarKey = -1;
+-
++    private Inventory clickedInventory=null;
+     @Deprecated
+     public InventoryClickEvent(InventoryView view, SlotType type, int slot, boolean right, boolean shift) {
+         this(view, type, slot, right ? (shift ? ClickType.SHIFT_RIGHT : ClickType.RIGHT) : (shift ? ClickType.SHIFT_LEFT : ClickType.LEFT), InventoryAction.SWAP_WITH_CURSOR);
+@@ -64,6 +64,13 @@
+         this.rawSlot = slot;
+         this.whichSlot = view.convertSlot(slot);
+         this.click = click;
++        if(slot < 0) {
++            this.clickedInventory = null;
++        } else if(view.getTopInventory() != null && slot < view.getTopInventory().getSize()) {
++            this.clickedInventory = view.getTopInventory();
++        } else {
++            this.clickedInventory = view.getBottomInventory();
++        }
+         this.action = action;
+     }
+ 
+@@ -77,7 +84,7 @@
+      *
+      * @return the slot type
+      */
+-    public SlotType getSlotType() {
++    public SlotType     getSlotType() {
+         return slot_type;
+     }
+ 
+@@ -101,7 +108,9 @@
+         }
+         return getView().getItem(rawSlot);
+     }
+-
++    public Inventory getClickedInventory(){
++        return this.clickedInventory;
++    }
+     /**
+      * Gets whether or not the ClickType for this event represents a right
+      * click.

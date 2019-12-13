@@ -1,0 +1,17 @@
+--- ../src-base/minecraft/org/bukkit/Color.java
++++ ../src-work/minecraft/org/bukkit/Color.java
+@@ -1,13 +1,11 @@
+ package org.bukkit;
+ 
++import com.google.common.collect.ImmutableMap;
+ import java.util.Map;
+-
+ import org.apache.commons.lang.Validate;
+ import org.bukkit.configuration.serialization.ConfigurationSerializable;
+ import org.bukkit.configuration.serialization.SerializableAs;
+ 
+-import com.google.common.collect.ImmutableMap;
+-
+ /**
+  * A container for a color palette. This class is immutable; the set methods
+  * return a new color. The color names listed as fields are HTML4 standards,

@@ -1,0 +1,10 @@
+--- ../src-base/minecraft/org/bukkit/util/io/BukkitObjectOutputStream.java
++++ ../src-work/minecraft/org/bukkit/util/io/BukkitObjectOutputStream.java
+@@ -4,7 +4,6 @@
+ import java.io.ObjectOutputStream;
+ import java.io.OutputStream;
+ import java.io.Serializable;
+-
+ import org.bukkit.configuration.serialization.ConfigurationSerializable;
+ 
+ /**

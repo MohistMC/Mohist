@@ -1,0 +1,74 @@
+--- ../src-base/minecraft/org/bukkit/entity/Entity.java
++++ ../src-work/minecraft/org/bukkit/entity/Entity.java
+@@ -1,21 +1,21 @@
+ package org.bukkit.entity;
+ 
+-import org.bukkit.Location;
++import java.util.List;
++import java.util.UUID;
+ import org.bukkit.EntityEffect;
++import org.bukkit.Location;
++import org.bukkit.Nameable;
+ import org.bukkit.Server;
+ import org.bukkit.World;
+ import org.bukkit.event.entity.EntityDamageEvent;
++import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
+ import org.bukkit.metadata.Metadatable;
+ import org.bukkit.util.Vector;
+ 
+-import java.util.List;
+-import java.util.UUID;
+-import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
+-
+ /**
+  * Represents a base entity in the world
+  */
+-public interface Entity extends Metadatable {
++public interface Entity extends Metadatable,Nameable {
+ 
+     /**
+      * Gets the entity's current position
+@@ -291,4 +291,43 @@
+      * @return The current vehicle.
+      */
+     public Entity getVehicle();
++
++    // Spigot Start
++    public class Spigot
++    {
++
++        /**
++         * Returns whether this entity is invulnerable.
++         *         
++        * @return True if the entity is invulnerable.
++         */
++        public boolean isInvulnerable()
++        {
++            throw new UnsupportedOperationException( "Not supported yet." );
++        }
++    }
++
++    Spigot spigot();
++    // Spigot End
++
++    /**
++     * Sets whether or not to display the mob's custom name client side. The
++     * name will be displayed above the mob similarly to a player.
++     * <p>
++     * This value has no effect on players, they will always display their
++     * name.
++     *
++     * @param flag custom name or not
++     */
++    public void setCustomNameVisible(boolean flag);
++
++    /**
++     * Gets whether or not the mob's custom name is displayed client side.
++     * <p>
++     * This value has no effect on players, they will always display their
++     * name.
++     *
++     * @return if the custom name is displayed
++     */
++    public boolean isCustomNameVisible();
+ }

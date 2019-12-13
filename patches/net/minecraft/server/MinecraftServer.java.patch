@@ -1078,12 +1078,11 @@
      }
  
      @SideOnly(Side.SERVER)
-@@ -1455,9 +1866,223 @@
+@@ -1455,9 +1866,222 @@
          return this.serverStopped;
      }
  
 +    public static OptionSet loadOptions(String[] args) {
-+        Mohist.LOGGER = LogManager.getLogger("Mohist");
 +        OptionParser parser = new OptionParser() {
 +            {
 +                acceptsAll(Arrays.asList("?", "help"), "Show the help");

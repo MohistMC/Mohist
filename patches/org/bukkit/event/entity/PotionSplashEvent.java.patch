@@ -1,0 +1,10 @@
+--- ../src-base/minecraft/org/bukkit/event/entity/PotionSplashEvent.java
++++ ../src-work/minecraft/org/bukkit/event/entity/PotionSplashEvent.java
+@@ -3,7 +3,6 @@
+ import java.util.ArrayList;
+ import java.util.Collection;
+ import java.util.Map;
+-
+ import org.apache.commons.lang.Validate;
+ import org.bukkit.entity.LivingEntity;
+ import org.bukkit.entity.ThrownPotion;

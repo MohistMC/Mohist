@@ -1,0 +1,10 @@
+--- ../src-base/minecraft/org/bukkit/event/server/ServerListPingEvent.java
++++ ../src-work/minecraft/org/bukkit/event/server/ServerListPingEvent.java
+@@ -2,7 +2,6 @@
+ 
+ import java.net.InetAddress;
+ import java.util.Iterator;
+-
+ import org.apache.commons.lang.Validate;
+ import org.bukkit.entity.Player;
+ import org.bukkit.event.HandlerList;

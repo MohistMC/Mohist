@@ -1,0 +1,58 @@
+--- ../src-base/minecraft/org/bukkit/configuration/MemorySection.java
++++ ../src-work/minecraft/org/bukkit/configuration/MemorySection.java
+@@ -1,18 +1,18 @@
+ package org.bukkit.configuration;
+ 
+-import static org.bukkit.util.NumberConversions.*;
+-
+ import java.util.ArrayList;
+ import java.util.LinkedHashMap;
+ import java.util.LinkedHashSet;
+ import java.util.List;
+ import java.util.Map;
+ import java.util.Set;
+-
+ import org.apache.commons.lang.Validate;
+ import org.bukkit.Color;
+ import org.bukkit.OfflinePlayer;
+ import org.bukkit.inventory.ItemStack;
++import static org.bukkit.util.NumberConversions.toDouble;
++import static org.bukkit.util.NumberConversions.toInt;
++import static org.bukkit.util.NumberConversions.toLong;
+ import org.bukkit.util.Vector;
+ 
+ /**
+@@ -760,7 +760,8 @@
+      * @return Full path of the section from its root.
+      */
+     public static String createPath(ConfigurationSection section, String key) {
+-        return createPath(section, key, (section == null) ? null : section.getRoot());
++        Validate.notNull(section, "Cannot create path without a section");
++        return createPath(section, key, section.getRoot());
+     }
+ 
+     /**
+@@ -784,17 +785,15 @@
+         char separator = root.options().pathSeparator();
+ 
+         StringBuilder builder = new StringBuilder();
+-        if (section != null) {
+-            for (ConfigurationSection parent = section; (parent != null) && (parent != relativeTo); parent = parent.getParent()) {
+-                if (builder.length() > 0) {
+-                    builder.insert(0, separator);
+-                }
+-
+-                builder.insert(0, parent.getName());
++        for (ConfigurationSection parent = section; parent != null && parent != relativeTo; parent = parent.getParent()) {
++            if (builder.length() > 0) {
++                builder.insert(0, separator);
+             }
++
++            builder.insert(0, parent.getName());
+         }
+ 
+-        if ((key != null) && (key.length() > 0)) {
++        if (key != null && key.length() > 0) {
+             if (builder.length() > 0) {
+                 builder.append(separator);
+             }

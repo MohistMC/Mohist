@@ -1,0 +1,278 @@
+--- ../src-base/minecraft/org/bukkit/plugin/java/JavaPluginLoader.java
++++ ../src-work/minecraft/org/bukkit/plugin/java/JavaPluginLoader.java
+@@ -1,22 +1,34 @@
+ package org.bukkit.plugin.java;
+ 
++// Cauldron start
++
++import cc.uraniummc.eventexecutor.ASMEventExecutorGenerate;
++import cc.uraniummc.eventexecutor.EventExecutorImp;
++import com.google.common.collect.BiMap;
++import com.google.common.collect.HashBiMap;
++import com.google.common.collect.ImmutableList;
++import java.io.BufferedReader;
+ import java.io.File;
+ import java.io.FileNotFoundException;
+ import java.io.IOException;
+ import java.io.InputStream;
++import java.io.InputStreamReader;
+ import java.lang.reflect.InvocationTargetException;
+ import java.lang.reflect.Method;
+ import java.util.Arrays;
+ import java.util.HashMap;
+ import java.util.HashSet;
+ import java.util.LinkedHashMap;
++import java.util.List;
+ import java.util.Map;
+ import java.util.Set;
+ import java.util.jar.JarEntry;
+ import java.util.jar.JarFile;
+ import java.util.logging.Level;
+ import java.util.regex.Pattern;
+-
++import net.md_5.specialsource.InheritanceMap;
++import net.md_5.specialsource.JarMapping;
++import net.md_5.specialsource.transformer.MavenShade;
+ import org.apache.commons.lang.Validate;
+ import org.bukkit.Server;
+ import org.bukkit.Warning;
+@@ -39,7 +51,9 @@
+ import org.bukkit.plugin.RegisteredListener;
+ import org.bukkit.plugin.TimedRegisteredListener;
+ import org.bukkit.plugin.UnknownDependencyException;
++import org.spigotmc.CustomTimingsHandler;
+ import org.yaml.snakeyaml.error.YAMLException;
++// Cauldron end
+ 
+ /**
+  * Represents a Java plugin loader, allowing plugins in the form of .jar
+@@ -49,6 +63,7 @@
+     private final Pattern[] fileFilters = new Pattern[] { Pattern.compile("\\.jar$"), };
+     private final Map<String, Class<?>> classes = new HashMap<String, Class<?>>();
+     private final Map<String, PluginClassLoader> loaders = new LinkedHashMap<String, PluginClassLoader>();
++    public static final CustomTimingsHandler pluginParentTimer = new CustomTimingsHandler("** Plugins"); // Spigot
+ 
+     /**
+      * This class was not meant to be constructed explicitly
+@@ -59,43 +74,41 @@
+         server = instance;
+     }
+ 
+-    public Plugin loadPlugin(final File file) throws InvalidPluginException {
++    public Plugin loadPlugin(File file) throws InvalidPluginException {
+         Validate.notNull(file, "File cannot be null");
+ 
+         if (!file.exists()) {
+             throw new InvalidPluginException(new FileNotFoundException(file.getPath() + " does not exist"));
+         }
+ 
+-        final PluginDescriptionFile description;
++        PluginDescriptionFile description;
+         try {
+             description = getPluginDescription(file);
+         } catch (InvalidDescriptionException ex) {
+             throw new InvalidPluginException(ex);
+         }
+ 
+-        final File parentFile = file.getParentFile();
+-        final File dataFolder = new File(parentFile, description.getName());
+-        @SuppressWarnings("deprecation")
+-        final File oldDataFolder = new File(parentFile, description.getRawName());
++        File dataFolder = new File(file.getParentFile(), description.getName());
++        File oldDataFolder = getDataFolder(file);
+ 
+         // Found old data folder
+         if (dataFolder.equals(oldDataFolder)) {
+             // They are equal -- nothing needs to be done!
+         } else if (dataFolder.isDirectory() && oldDataFolder.isDirectory()) {
+-            server.getLogger().warning(String.format(
+-                "While loading %s (%s) found old-data folder: `%s' next to the new one `%s'",
+-                description.getFullName(),
++            server.getLogger().log(Level.INFO, String.format(
++                "While loading %s (%s) found old-data folder: %s next to the new one: %s",
++                description.getName(),
+                 file,
+                 oldDataFolder,
+                 dataFolder
+             ));
+         } else if (oldDataFolder.isDirectory() && !dataFolder.exists()) {
+             if (!oldDataFolder.renameTo(dataFolder)) {
+-                throw new InvalidPluginException("Unable to rename old data folder: `" + oldDataFolder + "' to: `" + dataFolder + "'");
++                throw new InvalidPluginException("Unable to rename old data folder: '" + oldDataFolder + "' to: '" + dataFolder + "'");
+             }
+             server.getLogger().log(Level.INFO, String.format(
+-                "While loading %s (%s) renamed data folder: `%s' to `%s'",
+-                description.getFullName(),
++                "While loading %s (%s) renamed data folder: '%s' to '%s'",
++                description.getName(),
+                 file,
+                 oldDataFolder,
+                 dataFolder
+@@ -104,14 +117,19 @@
+ 
+         if (dataFolder.exists() && !dataFolder.isDirectory()) {
+             throw new InvalidPluginException(String.format(
+-                "Projected datafolder: `%s' for %s (%s) exists and is not a directory",
++                "Projected datafolder: '%s' for %s (%s) exists and is not a directory",
+                 dataFolder,
+-                description.getFullName(),
++                description.getName(),
+                 file
+             ));
+         }
+ 
+-        for (final String pluginName : description.getDepend()) {
++        List<String> depend = description.getDepend();
++        if (depend == null) {
++            depend = ImmutableList.<String>of();
++        }
++
++        for (String pluginName : depend) {
+             if (loaders == null) {
+                 throw new UnknownDependencyException(pluginName);
+             }
+@@ -122,7 +140,7 @@
+             }
+         }
+ 
+-        final PluginClassLoader loader;
++        PluginClassLoader loader;
+         try {
+             loader = new PluginClassLoader(this, getClass().getClassLoader(), description, dataFolder, file);
+         } catch (InvalidPluginException ex) {
+@@ -136,6 +154,26 @@
+         return loader.plugin;
+     }
+ 
++    private File getDataFolder(File file) {
++        File dataFolder = null;
++
++        String filename = file.getName();
++        int index = file.getName().lastIndexOf(".");
++
++        if (index != -1) {
++            String name = filename.substring(0, index);
++
++            dataFolder = new File(file.getParentFile(), name);
++        } else {
++            // This is if there is no extension, which should not happen
++            // Using _ to prevent name collision
++
++            dataFolder = new File(file.getParentFile(), filename + "_");
++        }
++
++        return dataFolder;
++    }
++
+     public PluginDescriptionFile getPluginDescription(File file) throws InvalidDescriptionException {
+         Validate.notNull(file, "File cannot be null");
+ 
+@@ -232,7 +270,7 @@
+         Set<Method> methods;
+         try {
+             Method[] publicMethods = listener.getClass().getMethods();
+-            methods = new HashSet<Method>(publicMethods.length, Float.MAX_VALUE);
++            methods = new HashSet<Method>(publicMethods.length);
+             for (Method method : publicMethods) {
+                 methods.add(method);
+             }
+@@ -283,21 +321,41 @@
+                 }
+             }
+ 
+-            EventExecutor executor = new EventExecutor() {
+-                public void execute(Listener listener, Event event) throws EventException {
+-                    try {
+-                        if (!eventClass.isAssignableFrom(event.getClass())) {
+-                            return;
++            EventExecutor executor = ASMEventExecutorGenerate.createWrapperInstance(plugin,listener,method);
++            if(executor == null){
++                final CustomTimingsHandler timings = new CustomTimingsHandler("Plugin: " + plugin.getDescription().getFullName()
++                        + " Event: " + listener.getClass().getName() + "::"
++                        + method.getName()
++                        + "(" + eventClass.getSimpleName() + ")", pluginParentTimer);
++                executor = new EventExecutor() {
++
++                    public void execute(Listener listener, Event event) throws EventException {
++                        try {
++                            if (!eventClass.isAssignableFrom(event.getClass())) {
++                                return;
++                            }
++                            // Spigot start
++                            boolean isAsync = event.isAsynchronous();
++                            if (!isAsync) timings.startTiming();
++                            method.invoke(listener, event);
++                            if (!isAsync) timings.stopTiming();
++                            // Spigot end
++                        } catch (InvocationTargetException ex) {
++                            throw new EventException(ex.getCause());
++                        } catch (Throwable t) {
++                            throw new EventException(t);
+                         }
+-                        method.invoke(listener, event);
+-                    } catch (InvocationTargetException ex) {
+-                        throw new EventException(ex.getCause());
+-                    } catch (Throwable t) {
+-                        throw new EventException(t);
+                     }
+-                }
+-            };
+-            if (useTimings) {
++                };
++            } else {
++                CustomTimingsHandler tTiming = new CustomTimingsHandler("Plugin: " + plugin.getDescription().getFullName()
++                        + " Event: " + listener.getClass().getName() + "::"
++                        + method.getName() + "_ASM"
++                        + "(" + eventClass.getSimpleName() + ")", pluginParentTimer);
++                ((EventExecutorImp)executor).initExecute(eventClass, tTiming);
++            }
++
++            if (false) { // Spigot - RL handles useTimings check now
+                 eventSet.add(new TimedRegisteredListener(listener, executor, eh.priority(), plugin, eh.ignoreCancelled()));
+             } else {
+                 eventSet.add(new RegisteredListener(listener, executor, eh.priority(), plugin, eh.ignoreCancelled()));
+@@ -362,4 +420,44 @@
+             }
+         }
+     }
++
++    // Cauldron start
++    private InheritanceMap globalInheritanceMap = null;
++
++    /**
++     * Get the inheritance map for remapping all plugins
++     */
++    public InheritanceMap getGlobalInheritanceMap() {
++        if (globalInheritanceMap == null) {
++            Map<String, String> relocationsCurrent = new HashMap<String, String>();
++            relocationsCurrent.put("net.minecraft.server", "net.minecraft.server."+PluginClassLoader.getNativeVersion());
++            JarMapping currentMappings = new JarMapping();
++
++            try {
++                currentMappings.loadMappings(
++                        new BufferedReader(new InputStreamReader(this.getClass().getClassLoader().getResourceAsStream("mappings/"+PluginClassLoader.getNativeVersion()+"/cb2numpkg.srg"))),
++                        new MavenShade(relocationsCurrent),
++                        null, false);
++            } catch (IOException ex) {
++                ex.printStackTrace();
++                throw new RuntimeException(ex);
++            }
++
++            BiMap<String, String> inverseClassMap = HashBiMap.create(currentMappings.classes).inverse();
++            globalInheritanceMap = new InheritanceMap();
++
++            BufferedReader reader = new BufferedReader(new InputStreamReader(this.getClass().getClassLoader().getResourceAsStream("mappings/"+PluginClassLoader.getNativeVersion()+"/nms.inheritmap")));
++
++            try {
++                globalInheritanceMap.load(reader, inverseClassMap);
++            } catch (IOException ex) {
++                ex.printStackTrace();
++                throw new RuntimeException(ex);
++            }
++            System.out.println("Loaded inheritance map of "+globalInheritanceMap.size()+" classes");
++        }
++
++        return globalInheritanceMap;
++    }
++    // Cauldron end
+ }

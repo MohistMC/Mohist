@@ -1,0 +1,10 @@
+--- ../src-base/minecraft/org/bukkit/event/block/BlockBreakEvent.java
++++ ../src-work/minecraft/org/bukkit/event/block/BlockBreakEvent.java
+@@ -3,7 +3,6 @@
+ import org.bukkit.block.Block;
+ import org.bukkit.entity.Player;
+ import org.bukkit.event.Cancellable;
+-import org.bukkit.event.HandlerList;
+ 
+ /**
+  * Called when a block is broken by a player.

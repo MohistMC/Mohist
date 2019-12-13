@@ -1,0 +1,19 @@
+--- ../src-base/minecraft/org/bukkit/command/defaults/SpreadPlayersCommand.java
++++ ../src-work/minecraft/org/bukkit/command/defaults/SpreadPlayersCommand.java
+@@ -7,7 +7,6 @@
+ import java.util.Map;
+ import java.util.Random;
+ import java.util.Set;
+-
+ import org.bukkit.Bukkit;
+ import org.bukkit.ChatColor;
+ import org.bukkit.Location;
+@@ -92,7 +91,7 @@
+         final int rangeSpread = range(world, distance, xRangeMin, zRangeMin, xRangeMax, zRangeMax, locations);
+ 
+         if (rangeSpread == -1) {
+-            sender.sendMessage(String.format("Could not spread %d %s around %s,%s (too many players for space - try using spread of at most %s)", spreadSize, teams ? "teams" : "players", x, z));
++            sender.sendMessage(String.format("Could not spread %d %s around %s,%s (too many players for space - try using spread of at most %s)", spreadSize, teams ? "teams" : "players", x, z, "TODO")); // TODO: Add latest argument
+             return false;
+         }
+ 

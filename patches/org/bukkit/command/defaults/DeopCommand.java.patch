@@ -1,0 +1,33 @@
+--- ../src-base/minecraft/org/bukkit/command/defaults/DeopCommand.java
++++ ../src-work/minecraft/org/bukkit/command/defaults/DeopCommand.java
+@@ -1,8 +1,8 @@
+ package org.bukkit.command.defaults;
+ 
++import com.google.common.collect.ImmutableList;
+ import java.util.ArrayList;
+ import java.util.List;
+-
+ import org.apache.commons.lang.Validate;
+ import org.bukkit.Bukkit;
+ import org.bukkit.ChatColor;
+@@ -12,8 +12,6 @@
+ import org.bukkit.entity.Player;
+ import org.bukkit.util.StringUtil;
+ 
+-import com.google.common.collect.ImmutableList;
+-
+ public class DeopCommand extends VanillaCommand {
+     public DeopCommand() {
+         super("deop");
+@@ -49,9 +47,9 @@
+ 
+         if (args.length == 1) {
+             List<String> completions = new ArrayList<String>();
+-            for (OfflinePlayer player : Bukkit.getOfflinePlayers()) {
++            for (OfflinePlayer player : Bukkit.getOperators()) {
+                 String playerName = player.getName();
+-                if (player.isOp() && StringUtil.startsWithIgnoreCase(playerName, args[0])) {
++                if (StringUtil.startsWithIgnoreCase(playerName, args[0])) {
+                     completions.add(playerName);
+                 }
+             }

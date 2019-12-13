@@ -1,0 +1,23 @@
+--- ../src-base/minecraft/org/bukkit/command/defaults/PluginsCommand.java
++++ ../src-work/minecraft/org/bukkit/command/defaults/PluginsCommand.java
+@@ -1,7 +1,6 @@
+ package org.bukkit.command.defaults;
+ 
+ import java.util.Arrays;
+-
+ import org.bukkit.Bukkit;
+ import org.bukkit.ChatColor;
+ import org.bukkit.command.CommandSender;
+@@ -40,4 +39,12 @@
+ 
+         return "(" + plugins.length + "): " + pluginList.toString();
+     }
++
++    // Spigot Start
++    @Override
++    public java.util.List<String> tabComplete(CommandSender sender, String alias, String[] args) throws IllegalArgumentException
++    {
++        return java.util.Collections.emptyList();
++    }
++    // Spigot End
+ }

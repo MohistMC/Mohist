@@ -1,0 +1,27 @@
+--- ../src-base/minecraft/org/bukkit/GameMode.java
++++ ../src-work/minecraft/org/bukkit/GameMode.java
+@@ -1,17 +1,21 @@
+ package org.bukkit;
+ 
++import com.google.common.collect.Maps;
+ import java.util.Map;
+-
+ import org.bukkit.entity.HumanEntity;
+ 
+-import com.google.common.collect.Maps;
+-
+ /**
+  * Represents the various type of game modes that {@link HumanEntity}s may
+  * have
+  */
+ public enum GameMode {
++    // Cauldron start - FakePlayers do not set their gametype and use the default
+     /**
++     * Default mode
++     */
++    NOT_SET(-1),
++    // Cauldron end
++    /**
+      * Creative mode may fly, build instantly, become invulnerable and create
+      * free items.
+      */

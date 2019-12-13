@@ -1,0 +1,10 @@
+--- ../src-base/minecraft/org/bukkit/metadata/MetadataValueAdapter.java
++++ ../src-work/minecraft/org/bukkit/metadata/MetadataValueAdapter.java
+@@ -1,7 +1,6 @@
+ package org.bukkit.metadata;
+ 
+ import java.lang.ref.WeakReference;
+-
+ import org.apache.commons.lang.Validate;
+ import org.bukkit.plugin.Plugin;
+ import org.bukkit.util.NumberConversions;

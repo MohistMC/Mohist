@@ -1,0 +1,28 @@
+--- ../src-base/minecraft/org/bukkit/command/defaults/ScoreboardCommand.java
++++ ../src-work/minecraft/org/bukkit/command/defaults/ScoreboardCommand.java
+@@ -1,5 +1,7 @@
+ package org.bukkit.command.defaults;
+ 
++import com.google.common.collect.ImmutableList;
++import com.google.common.collect.ImmutableMap;
+ import java.util.ArrayList;
+ import java.util.Collection;
+ import java.util.Collections;
+@@ -7,7 +9,6 @@
+ import java.util.List;
+ import java.util.Map;
+ import java.util.Set;
+-
+ import org.apache.commons.lang.ArrayUtils;
+ import org.apache.commons.lang.StringUtils;
+ import org.apache.commons.lang.Validate;
+@@ -23,9 +24,6 @@
+ import org.bukkit.scoreboard.Team;
+ import org.bukkit.util.StringUtil;
+ 
+-import com.google.common.collect.ImmutableList;
+-import com.google.common.collect.ImmutableMap;
+-
+ public class ScoreboardCommand extends VanillaCommand {
+ 
+     private static final List<String> MAIN_CHOICES = ImmutableList.of("objectives", "players", "teams");

@@ -1,0 +1,27 @@
+--- ../src-base/minecraft/org/bukkit/command/defaults/TellCommand.java
++++ ../src-work/minecraft/org/bukkit/command/defaults/TellCommand.java
+@@ -1,7 +1,6 @@
+ package org.bukkit.command.defaults;
+ 
+ import java.util.Arrays;
+-
+ import org.bukkit.Bukkit;
+ import org.bukkit.ChatColor;
+ import org.bukkit.command.CommandSender;
+@@ -45,4 +44,16 @@
+ 
+         return true;
+     }
++
++    // Spigot Start
++    @Override
++    public java.util.List<String> tabComplete(CommandSender sender, String alias, String[] args) throws IllegalArgumentException
++    {
++        if ( args.length == 0 )
++        {
++            return super.tabComplete( sender, alias, args );
++        }
++        return java.util.Collections.emptyList();
++    }
++    // Spigot End
+ }

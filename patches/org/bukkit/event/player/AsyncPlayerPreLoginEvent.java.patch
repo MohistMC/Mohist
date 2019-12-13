@@ -1,0 +1,10 @@
+--- ../src-base/minecraft/org/bukkit/event/player/AsyncPlayerPreLoginEvent.java
++++ ../src-work/minecraft/org/bukkit/event/player/AsyncPlayerPreLoginEvent.java
+@@ -2,7 +2,6 @@
+ 
+ import java.net.InetAddress;
+ import java.util.UUID;
+-
+ import org.bukkit.event.Event;
+ import org.bukkit.event.HandlerList;
+ 

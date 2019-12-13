@@ -1,0 +1,19 @@
+--- ../src-base/minecraft/org/bukkit/command/defaults/SpawnpointCommand.java
++++ ../src-work/minecraft/org/bukkit/command/defaults/SpawnpointCommand.java
+@@ -1,6 +1,7 @@
+ package org.bukkit.command.defaults;
+ 
+ import com.google.common.collect.ImmutableList;
++import java.util.List;
+ import org.apache.commons.lang.Validate;
+ import org.bukkit.Bukkit;
+ import org.bukkit.ChatColor;
+@@ -10,8 +11,6 @@
+ import org.bukkit.command.CommandSender;
+ import org.bukkit.entity.Player;
+ 
+-import java.util.List;
+-
+ public class SpawnpointCommand extends VanillaCommand {
+ 
+     public SpawnpointCommand() {

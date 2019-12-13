@@ -1,0 +1,13 @@
+--- ../src-base/minecraft/org/bukkit/event/player/PlayerFishEvent.java
++++ ../src-work/minecraft/org/bukkit/event/player/PlayerFishEvent.java
+@@ -1,9 +1,9 @@
+ package org.bukkit.event.player;
+ 
++import org.bukkit.entity.Entity;
+ import org.bukkit.entity.Fish;
+ import org.bukkit.entity.Player;
+ import org.bukkit.event.Cancellable;
+-import org.bukkit.entity.Entity;
+ import org.bukkit.event.HandlerList;
+ 
+ /**

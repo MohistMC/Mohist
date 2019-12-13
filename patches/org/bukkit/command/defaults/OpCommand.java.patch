@@ -1,0 +1,22 @@
+--- ../src-base/minecraft/org/bukkit/command/defaults/OpCommand.java
++++ ../src-work/minecraft/org/bukkit/command/defaults/OpCommand.java
+@@ -1,9 +1,9 @@
+ package org.bukkit.command.defaults;
+ 
++import com.google.common.collect.ImmutableList;
+ import java.util.ArrayList;
+ import java.util.Collections;
+ import java.util.List;
+-
+ import org.apache.commons.lang.Validate;
+ import org.bukkit.Bukkit;
+ import org.bukkit.ChatColor;
+@@ -13,8 +13,6 @@
+ import org.bukkit.entity.Player;
+ import org.bukkit.util.StringUtil;
+ 
+-import com.google.common.collect.ImmutableList;
+-
+ public class OpCommand extends VanillaCommand {
+     public OpCommand() {
+         super("op");

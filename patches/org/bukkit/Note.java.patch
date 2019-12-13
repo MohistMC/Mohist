@@ -1,0 +1,15 @@
+--- ../src-base/minecraft/org/bukkit/Note.java
++++ ../src-work/minecraft/org/bukkit/Note.java
+@@ -1,11 +1,9 @@
+ package org.bukkit;
+ 
++import com.google.common.collect.Maps;
+ import java.util.Map;
+-
+ import org.apache.commons.lang.Validate;
+ 
+-import com.google.common.collect.Maps;
+-
+ /**
+  * A note class to store a specific note.
+  */

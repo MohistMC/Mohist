@@ -1,0 +1,15 @@
+--- ../src-base/minecraft/org/bukkit/Art.java
++++ ../src-work/minecraft/org/bukkit/Art.java
+@@ -1,11 +1,9 @@
+ package org.bukkit;
+ 
++import com.google.common.collect.Maps;
+ import java.util.HashMap;
+-
+ import org.apache.commons.lang.Validate;
+ 
+-import com.google.common.collect.Maps;
+-
+ /**
+  * Represents the art on a painting
+  */

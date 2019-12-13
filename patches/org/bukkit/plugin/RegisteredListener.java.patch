@@ -1,0 +1,14 @@
+--- ../src-base/minecraft/org/bukkit/plugin/RegisteredListener.java
++++ ../src-work/minecraft/org/bukkit/plugin/RegisteredListener.java
+@@ -1,6 +1,10 @@
+ package org.bukkit.plugin;
+ 
+-import org.bukkit.event.*;
++import org.bukkit.event.Cancellable;
++import org.bukkit.event.Event;
++import org.bukkit.event.EventException;
++import org.bukkit.event.EventPriority;
++import org.bukkit.event.Listener;
+ 
+ /**
+  * Stores relevant information for plugin listeners

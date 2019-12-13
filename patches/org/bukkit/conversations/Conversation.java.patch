@@ -1,0 +1,36 @@
+--- ../src-base/minecraft/org/bukkit/conversations/Conversation.java
++++ ../src-work/minecraft/org/bukkit/conversations/Conversation.java
+@@ -1,11 +1,10 @@
+ package org.bukkit.conversations;
+ 
+-import org.bukkit.plugin.Plugin;
+-
+ import java.util.ArrayList;
+ import java.util.HashMap;
+ import java.util.List;
+ import java.util.Map;
++import org.bukkit.plugin.Plugin;
+ 
+ /**
+  * The Conversation class is responsible for tracking the current state of a
+@@ -209,6 +208,7 @@
+      * @param input The user's chat text.
+      */
+     public void acceptInput(String input) {
++        try { // Spigot
+         if (currentPrompt != null) {
+ 
+             // Echo the user's input
+@@ -228,6 +228,12 @@
+             currentPrompt = currentPrompt.acceptInput(context, input);
+             outputNextPrompt();
+         }
++        // Spigot Start
++        } catch ( Throwable t )
++        {
++            org.bukkit.Bukkit.getLogger().log( java.util.logging.Level.SEVERE, "Error handling conversation prompt", t );
++        }
++        // Spigot End
+     }
+ 
+     /**

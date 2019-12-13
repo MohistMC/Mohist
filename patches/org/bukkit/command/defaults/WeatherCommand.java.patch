@@ -1,0 +1,23 @@
+--- ../src-base/minecraft/org/bukkit/command/defaults/WeatherCommand.java
++++ ../src-work/minecraft/org/bukkit/command/defaults/WeatherCommand.java
+@@ -1,6 +1,9 @@
+ package org.bukkit.command.defaults;
+ 
+ import com.google.common.collect.ImmutableList;
++import java.util.ArrayList;
++import java.util.List;
++import java.util.Random;
+ import org.apache.commons.lang.Validate;
+ import org.bukkit.Bukkit;
+ import org.bukkit.ChatColor;
+@@ -9,10 +12,6 @@
+ import org.bukkit.command.CommandSender;
+ import org.bukkit.util.StringUtil;
+ 
+-import java.util.ArrayList;
+-import java.util.List;
+-import java.util.Random;
+-
+ public class WeatherCommand extends VanillaCommand {
+     private static final List<String> WEATHER_TYPES = ImmutableList.of("clear", "rain", "thunder");
+ 

@@ -1,0 +1,19 @@
+--- ../src-base/minecraft/org/bukkit/potion/PotionEffect.java
++++ ../src-work/minecraft/org/bukkit/potion/PotionEffect.java
+@@ -1,15 +1,13 @@
+ package org.bukkit.potion;
+ 
++import com.google.common.collect.ImmutableMap;
+ import java.util.Map;
+ import java.util.NoSuchElementException;
+-
+ import org.apache.commons.lang.Validate;
+ import org.bukkit.configuration.serialization.ConfigurationSerializable;
+ import org.bukkit.configuration.serialization.SerializableAs;
+ import org.bukkit.entity.LivingEntity;
+ 
+-import com.google.common.collect.ImmutableMap;
+-
+ /**
+  * Represents a potion effect, that can be added to a {@link LivingEntity}. A
+  * potion effect has a duration that it will last for, an amplifier that will
