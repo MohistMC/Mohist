@@ -63,28 +63,7 @@
      {
          long i = this.world.getTotalWorldTime();
  
-@@ -155,8 +167,10 @@
- 
-         if (!this.entriesWithoutChunks.isEmpty())
-         {
--            long l = System.nanoTime() + 50000000L;
--            int k = 49;
-+            // Spigot start
-+            org.spigotmc.SlackActivityAccountant activityAccountant = this.world.getMinecraftServer().slackActivityAccountant;
-+            activityAccountant.startActivity(0.5);
-+            // Spigot end
-             Iterator<PlayerChunkMapEntry> iterator = this.entriesWithoutChunks.iterator();
- 
-             while (iterator.hasNext())
-@@ -176,15 +190,16 @@
-                             this.pendingSendToPlayers.remove(playerchunkmapentry1);
-                         }
- 
--                        --k;
--
--                        if (k < 0 || System.nanoTime() > l)
--                        {
-+                        if (activityAccountant.activityTimeIsExhausted()) { // Spigot
+@@ -183,6 +195,9 @@
                              break;
                          }
                      }
@@ -93,10 +72,7 @@
 +                    iterator.remove();
                  }
              }
-+            activityAccountant.endActivity(); // Spigot
          }
- 
-         if (!this.pendingSendToPlayers.isEmpty())
 @@ -209,25 +224,27 @@
              }
          }

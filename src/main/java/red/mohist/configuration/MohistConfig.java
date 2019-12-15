@@ -52,11 +52,6 @@ public class MohistConfig extends ConfigBase{
     public final StringSetting ANSI_ERROR_MSG = new StringSetting(this, "consolecolor.error-msg", "[31;1m", "consolecolor.error-msg");
     public final StringSetting ANSI_WARN_MSG = new StringSetting(this, "consolecolor.warn-msg", "[33;1m", "consolecolor.warn-msg");
 
-    public final IntSetting major = new IntSetting(this, "forgeversion.major",14,"forgeversion major");
-    public final IntSetting minor = new IntSetting(this, "forgeversion.minor",23,"forgeversion minor");
-    public final IntSetting revision = new IntSetting(this, "forgeversion.revision",5,"forgeversion revision");
-    public final IntSetting build = new IntSetting(this, "forgeversion.build",2847,"forgeversion build");
-
     public final BoolSetting disableForgeChunkForceSystem = new BoolSetting(this, "forge.disablechunkforcesystem", false, "Disable ForgeChunkForceSystem"); // by Goodvise
     public final BoolSetting stopserversaveworlds = new BoolSetting(this, "world.stopserversaveworlds", false, "stopserversaveworlds");
 
