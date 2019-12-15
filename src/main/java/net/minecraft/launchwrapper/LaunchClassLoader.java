@@ -40,11 +40,12 @@ public class LaunchClassLoader extends URLClassLoader {
 
     private Set<String> classLoaderExceptions = new HashSet<String>();
     private Set<String> transformerExceptions = new HashSet<String>();
+    private Map<Package, Manifest> packageManifests = new ConcurrentHashMap<Package, Manifest>();
     private Map<String,byte[]> resourceCache = new ConcurrentHashMap<String,byte[]>(1000);
     private Set<String> negativeResourceCache = Collections.newSetFromMap(new ConcurrentHashMap<String, Boolean>());
 
     private IClassNameTransformer renameTransformer;
-
+    private static final Manifest EMPTY = new Manifest();
     private final ThreadLocal<byte[]> loadBuffer = new ThreadLocal<byte[]>();
 
     private static final String[] RESERVED_NAMES = {"CON", "PRN", "AUX", "NUL", "COM1", "COM2", "COM3", "COM4", "COM5", "COM6", "COM7", "COM8", "COM9", "LPT1", "LPT2", "LPT3", "LPT4", "LPT5", "LPT6", "LPT7", "LPT8", "LPT9"};
@@ -162,6 +163,7 @@ public class LaunchClassLoader extends URLClassLoader {
                         signers = entry.getCodeSigners();
                         if (pkg == null) {
                             pkg = definePackage(packageName, manifest, jarURLConnection.getJarFileURL());
+                            packageManifests.put(pkg, manifest);
                         } else {
                             if (pkg.isSealed() && !pkg.isSealed(jarURLConnection.getJarFileURL())) {
                                 LogWrapper.severe("The jar file %s is trying to seal already secured path %s", jarFile.getName(), packageName);
@@ -174,6 +176,7 @@ public class LaunchClassLoader extends URLClassLoader {
                     Package pkg = getPackage(packageName);
                     if (pkg == null) {
                         pkg = definePackage(packageName, null, null, null, null, null, null, null);
+                        packageManifests.put(pkg, LaunchClassLoader.EMPTY);
                     } else if (pkg.isSealed()) {
                         LogWrapper.severe("The URL %s is defining elements for sealed path %s", urlConnection.getURL(), packageName);
                     }
