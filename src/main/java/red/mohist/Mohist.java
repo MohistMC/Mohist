@@ -8,6 +8,7 @@ import org.apache.logging.log4j.Logger;
 import red.mohist.configuration.MohistConfigUtil;
 import red.mohist.down.DownloadLibraries;
 import red.mohist.down.Update;
+import red.mohist.forge.FindClassInMod;
 import red.mohist.util.ServerEula;
 import red.mohist.util.i18n.Message;
 
@@ -26,6 +27,11 @@ public class Mohist {
         if (System.getProperty("log4j.configurationFile") == null) {
             // Set this early so we don't need to reconfigure later
             System.setProperty("log4j.configurationFile", "log4j2_mohist.xml");
+        }
+        try {
+            FindClassInMod.jar();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
         MohistConfigUtil.copyMohistConfig();
 
