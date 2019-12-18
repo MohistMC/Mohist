@@ -1,0 +1,58 @@
+# This is the main configuration file for Mohist.
+# 
+# Home: https://www.mohist.red/
+#
+# Setting: console_name Default: Server   # Front of the console, for example /say
+# Setting: remap.dumpRemapPluginClass Default: false   # dumpRemapPluginClass
+# Setting: asyn.spawnerCreature Default: false   # spawnerCreature
+# Setting: perfomance.maxEntityCollisionsPerTick Default: 8   # Max Entity Collisions PerTick
+# Setting: server-type Default: FML   # Set the server type displayed in motd (FML/BUKKIT/VANILLA)
+# Setting: remap.multiVersionRemapPlugins Default:    # Need a list of compatible plugins
+# Setting: remap.multiVersionRemap Default: false   # Compatible with multiple versions of nms
+# Setting: debug.printInvalidMapping Default: false   # printInvalidMapping
+# Setting: eventCanceled.explosion Default: false   # BlockExplosionEvent isCanceled
+# Setting: remap.printRemapPluginClass Default: false   # printRemapPluginClass
+# Setting: debug.printThreadTimeCost Default: false   # printThreadTimeCost
+# Setting: support_nocmd Default: false   # Some server tools do not recognize I18N
+# Setting: check_update Default: true   # Check Update
+# Setting: remap.reflectRemap Default: true   # Compatible reflection plugin
+# Setting: remap.nmsRemap Default: true   # Compatible with nms plugin
+# Setting: lang Default: en_US   # Mohist internationalization language setting, will return the default system language when your settings are invalid
+# Setting: perfomance.entityCollideFrequency Default: 2   # Entity Collide Frequency
+
+forgeversion:
+  build: 2847
+  revision: 5
+  minor: 23
+  major: 14
+console_name: Server
+perfomance:
+  maxEntityCollisionsPerTick: 8
+  entityCollideFrequency: 2
+server-type: FML
+remap:
+  multiVersionRemap: false
+  printRemapPluginClass: false
+  reflectRemap: true
+  dumpRemapPluginClass: false
+  multiVersionRemapPlugins: ''
+  nmsRemap: true
+eventCanceled:
+  explosion: false
+enable_progress: true
+lang: xx_XX
+consolecolor:
+  warn-level: '[33;1m'
+  error-level: '[31;1m'
+  warn-msg: '[33;1m'
+  error-msg: '[31;1m'
+debug:
+  printInvalidMapping: false
+  printThreadTimeCost: false
+support_nocmd: false
+check_update: true
+config-version: 1
+forge:
+  disablechunkforcesystem: false
+world:
+  stopserversaveworlds: false
