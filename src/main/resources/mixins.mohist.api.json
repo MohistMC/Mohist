@@ -1,0 +1,17 @@
+{
+  "required": true,
+  "package": "red.mohist.api.mixin",
+  "refmap": "mixins.mohist.api.refmap.json",
+  "compatibilityLevel": "JAVA_8",
+  "mixins": [
+  ],
+  "server": [
+    "server.MixinMinecraftServer"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  },
+  "overwrites": {
+    "conformVisibility": true
+  }
+}
