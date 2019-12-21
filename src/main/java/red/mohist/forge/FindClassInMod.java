@@ -22,9 +22,11 @@ public class FindClassInMod {
     }
 
     class JarZipFileFilter implements FileFilter {
+        @Override
         public boolean accept(File file) {
-            if (file.isDirectory())
+            if (file.isDirectory()) {
                 return true;
+            }
 
             String name = file.getName().toLowerCase();
             if (name.endsWith(".jar") || name.endsWith(".zip")) {
@@ -78,7 +80,6 @@ public class FindClassInMod {
 
                 if (name.equals(m_classname)) {
                     result = true;
-
                     break;
                 }
             }
@@ -93,7 +94,7 @@ public class FindClassInMod {
     public static void jar() throws Exception {
         String libDir = "mods";
         // example: red.mohist.Mohsit
-        List<String> classlist = Arrays.asList("xxx.xxx.xx.xx", "cccc.cccc.cccc");
+        List<String> classlist = Arrays.asList("shadows.fastbench.net.HijackedPlayerList", "cccc.cccc.cccc");
         for (String classname : classlist) {
             classname = classname.replaceAll("\\.", "/") + ".class";
 
