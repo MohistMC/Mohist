@@ -222,8 +222,10 @@ public class LaunchClassLoader extends URLClassLoader {
             LogWrapper.fine("Saving transformed class \"%s\" to \"%s\"", transformedName, outFile.getAbsolutePath().replace('\\', '/'));
 
             final OutputStream output = new FileOutputStream(outFile);
-            output.write(data);
-            output.close();
+            if (data != null) {
+                output.write(data);
+                output.close();
+            }
         } catch (IOException ex) {
             LogWrapper.log(Level.WARN, ex, "Could not save transformed class \"%s\"", transformedName);
         }
