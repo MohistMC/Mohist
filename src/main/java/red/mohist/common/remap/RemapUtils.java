@@ -40,8 +40,6 @@ import sun.reflect.Reflection;
  */
 public class RemapUtils {
 
-    public static final String nmsPrefix = "net.minecraft.server.";
-    public static final String mohistPrefix = "red.mohist.";
     public static final MohistJarMapping jarMapping;
     private static final List<Remapper> remappers = new ArrayList<>();
 
@@ -213,5 +211,9 @@ public class RemapUtils {
     public static String inverseMapSimpleName(Class<?> clazz) {
         ClassMapping mapping = jarMapping.byMCPName.get(clazz.getName());
         return mapping == null ? clazz.getSimpleName() : mapping.getNmsSimpleName();
+    }
+
+    public static boolean isNMSClass(String className) {
+        return className.replace("/", ".").startsWith("net.minecraft.server.v1_12_R1");
     }
 }
