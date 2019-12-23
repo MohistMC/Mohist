@@ -31,6 +31,7 @@ public class PlayerAPI {
         return player.getBukkitEntity().getPlayer();
     }
 
+    // Don't count the default number of mods
     public static int getModSize(Player player) {
         return mods.get(getNMSPlayer(player)) == null ? 0 : mods.get(getNMSPlayer(player)) - 4;
     }
