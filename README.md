@@ -15,7 +15,7 @@
 ### Getting Help
    [**Home**](https://mohist.red/)
    [**bStats**](https://bstats.org/plugin/bukkit/Mohist)
-   [**Discord**](https://discord.gg/JPF68ZM)
+   [**Discord**](https://discord.gg/ZgXjHGd)
    [**QQ**](https://jq.qq.com/?_wv=1027&k=5YIRYnH)  
    
    <img src="https://bstats.org/signatures/bukkit/Mohist.svg">
