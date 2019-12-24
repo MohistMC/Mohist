@@ -40,7 +40,6 @@ public class CraftBlockState implements BlockState {
         this.type = block.getTypeId();
         this.chunk = (CraftChunk) block.getChunk();
         this.flag = 3;
-        createData(block.getData());
         // Cauldron start - save TE data
         TileEntity te = world.getHandle().getTileEntity(new BlockPos(this.x, this.y, this.z));
         if (te != null)
@@ -52,6 +51,7 @@ public class CraftBlockState implements BlockState {
             nbt = null;
         }
         // Cauldron end
+        createData(block.getData());
     }
 
     public CraftBlockState(final Block block, int flag) {
@@ -81,11 +81,6 @@ public class CraftBlockState implements BlockState {
         this.createData((byte) blocksnapshot.getMeta());
     }
 
-    public static CraftBlockState getBlockState(BlockSnapshot blocksnapshot){
-        return new CraftBlockState(blocksnapshot);
-    }
-
-
     public static CraftBlockState getBlockState(net.minecraft.world.World world, int x, int y, int z) {
         return new CraftBlockState(world.getWorld().getBlockAt(x, y, z));
     }
@@ -94,34 +89,28 @@ public class CraftBlockState implements BlockState {
         return new CraftBlockState(world.getWorld().getBlockAt(x, y, z), flag);
     }
 
-    @Override
     public World getWorld() {
         requirePlaced();
         return world;
     }
 
-    @Override
     public int getX() {
         return x;
     }
 
-    @Override
     public int getY() {
         return y;
     }
 
-    @Override
     public int getZ() {
         return z;
     }
 
-    @Override
     public Chunk getChunk() {
         requirePlaced();
         return chunk;
     }
 
-    @Override
     public void setData(final MaterialData data) {
         Material mat = getType();
 
@@ -137,17 +126,14 @@ public class CraftBlockState implements BlockState {
         }
     }
 
-    @Override
     public MaterialData getData() {
         return data;
     }
 
-    @Override
     public void setType(final Material type) {
         setTypeId(type.getId());
     }
 
-    @Override
     public boolean setTypeId(final int type) {
         if (this.type != type) {
             this.type = type;
@@ -157,7 +143,6 @@ public class CraftBlockState implements BlockState {
         return true;
     }
 
-    @Override
     public Material getType() {
         return Material.getMaterial(getTypeId());
     }
@@ -170,33 +155,27 @@ public class CraftBlockState implements BlockState {
         return flag;
     }
 
-    @Override
     public int getTypeId() {
         return type;
     }
 
-    @Override
     public byte getLightLevel() {
         return getBlock().getLightLevel();
     }
 
-    @Override
     public Block getBlock() {
         requirePlaced();
         return world.getBlockAt(x, y, z);
     }
 
-    @Override
     public boolean update() {
         return update(false);
     }
 
-    @Override
     public boolean update(boolean force) {
         return update(force, true);
     }
 
-    @Override
     public boolean update(boolean force, boolean applyPhysics) {
         if (!isPlaced()) {
             return true;
@@ -231,8 +210,8 @@ public class CraftBlockState implements BlockState {
             {
                 NBTTagCompound nbt2 = new NBTTagCompound();
                 te.writeToNBT(nbt2);
-                if (!nbt2.equals(this.nbt)) {
-                    te.readFromNBT(this.nbt);
+                if (!nbt2.equals(nbt)) {
+                    te.readFromNBT(nbt);
                 }
             }
         }
@@ -249,17 +228,14 @@ public class CraftBlockState implements BlockState {
         }
     }
 
-    @Override
     public byte getRawData() {
         return data.getData();
     }
 
-    @Override
     public Location getLocation() {
         return new Location(world, x, y, z);
     }
 
-    @Override
     public Location getLocation(Location loc) {
         if (loc != null) {
             loc.setWorld(world);
@@ -273,7 +249,6 @@ public class CraftBlockState implements BlockState {
         return loc;
     }
 
-    @Override
     public void setRawData(byte data) {
         this.data.setData(data);
     }
@@ -302,10 +277,13 @@ public class CraftBlockState implements BlockState {
         if (this.type != other.type) {
             return false;
         }
-        if (!Objects.equals(this.data, other.data)) {
+        if (this.data != other.data && (this.data == null || !this.data.equals(other.data))) {
             return false;
         }
-        return Objects.equals(this.nbt, other.nbt);
+        if (this.nbt != other.nbt && (this.nbt == null || !this.nbt.equals(other.nbt))) {
+            return false;
+        }
+        return true;
     }
 
     @Override

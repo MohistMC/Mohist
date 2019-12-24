@@ -10,7 +10,6 @@ import net.minecraft.block.BlockRedstoneWire;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
-import net.minecraft.inventory.IInventory;
 import net.minecraft.item.Item;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTUtil;
@@ -20,7 +19,6 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.EnumSkyBlock;
-import net.minecraftforge.cauldron.block.CraftCustomContainer;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -54,6 +52,10 @@ public class CraftBlock implements Block {
 
     private static net.minecraft.block.Block getNMSBlock(int type) {
         return CraftMagicNumbers.getBlock(type);
+    }
+
+    private net.minecraft.block.Block getNMSBlock() {
+        return CraftMagicNumbers.getBlock(this); // TODO: UPDATE THIS
     }
 
     public static BlockFace notchToBlockFace(EnumFacing notch) {
@@ -111,10 +113,6 @@ public class CraftBlock implements Block {
         }
 
         return net.minecraft.world.biome.Biome.REGISTRY.getObject(new ResourceLocation(bio.name().toLowerCase(java.util.Locale.ENGLISH)));
-    }
-
-    private net.minecraft.block.Block getNMSBlock() {
-        return CraftMagicNumbers.getBlock(this); // TODO: UPDATE THIS
     }
 
     public World getWorld() {
@@ -292,19 +290,19 @@ public class CraftBlock implements Block {
         return "CraftBlock{" + "chunk=" + chunk + ",x=" + x + ",y=" + y + ",z=" + z + ",type=" + getType() + ",data=" + getData() + '}';
     }
 
+    @Override
     public BlockState getState() {
         Material material = getType();
         // Cauldron start - if null, check for TE that implements IInventory
         if (material == null) {
-            TileEntity tileEntity = chunk.getCraftWorld().getTileEntityAt(x, y, z);
-            if (tileEntity == null) {
+            TileEntity tileEntity = ((CraftWorld)this.getWorld()).getHandle().getTileEntity(new BlockPos(x, y, z));
+            if (tileEntity != null) {
+                return new CraftBlockEntityState<TileEntity>(this, (Class<TileEntity>) tileEntity.getClass());
+            } else {
                 return new CraftBlockState(this);
             }
-            if (tileEntity instanceof IInventory) {
-                return new CraftCustomContainer(this);
-            }
-            return new CraftBlockEntityState<>(this, (Class<TileEntity>) tileEntity.getClass());
         }
+        // Cauldron end
         switch (material) {
         case SIGN:
         case SIGN_POST:
@@ -379,16 +377,13 @@ public class CraftBlock implements Block {
             return new CraftBed(this);
         default:
             // Cauldron start
-            TileEntity tileEntity = chunk.getCraftWorld().getTileEntityAt(x, y, z);
-            if (tileEntity == null) {
+            TileEntity tileEntity = ((CraftWorld)this.getWorld()).getHandle().getTileEntity(new BlockPos(x, y, z));;
+            if (tileEntity != null) {
+                return new CraftBlockEntityState<TileEntity>(this, (Class<TileEntity>) tileEntity.getClass());
+            } else {
                 return new CraftBlockState(this);
             }
-            if (tileEntity instanceof IInventory) {
-                // In order to allow plugins to properly grab the container location, we must pass a class that extends CraftBlockState and implements InventoryHolder.
-                // Note: This will be returned when TileEntity.getOwner() is called
-                return new CraftCustomContainer(this);
-            }
-            return new CraftBlockEntityState<>(this, (Class<TileEntity>) tileEntity.getClass());
+            // Cauldron end
         }
     }
 

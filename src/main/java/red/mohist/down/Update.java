@@ -66,6 +66,9 @@ public class Update {
         }
         // Get the data in lib
         String i = MohistConfigUtil.getString(lib, "version:", Mohist.LIB_VERSION);
-        return !i.equals(s);
+        if(i.equals(s)){
+            return false;
+        }
+        return true;
     }
 }
