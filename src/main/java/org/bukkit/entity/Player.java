@@ -392,6 +392,24 @@ public interface Player extends HumanEntity, Conversable, CommandSender, Offline
      * @param map The map to be sent
      */
     public void sendMap(MapView map);
+    /**
+      * Sends an Action Bar message to the client.
+      *
+      * Use Section symbols for legacy color codes to send formatting.
+      *
+      * @param message The message to send
+     */
+    public void sendActionBar(String message);
+
+    /**
+      * Sends an Action Bar message to the client.
+      *
+      * Use supplied alternative character to the section symbol to represent legacy color codes.
+      *
+      * @param alternateChar Alternate symbol such as '&'
+      * @param message The message to send
+      */
+    public void sendActionBar(char alternateChar, String message);
 
     public void updateInventory();
 
