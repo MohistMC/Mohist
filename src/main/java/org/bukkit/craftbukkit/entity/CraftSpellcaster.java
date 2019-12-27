@@ -7,13 +7,13 @@ import org.bukkit.entity.Spellcaster;
 
 public class CraftSpellcaster extends CraftIllager implements Spellcaster {
 
-    public CraftSpellcaster(CraftServer server, EntityIllagerWizard entity) {
+    public CraftSpellcaster(CraftServer server, SpellcastingIllagerEntity entity) {
         super(server, entity);
     }
 
     @Override
-    public EntityIllagerWizard getHandle() {
-        return (EntityIllagerWizard) super.getHandle();
+    public SpellcastingIllagerEntity getHandle() {
+        return (SpellcastingIllagerEntity) super.getHandle();
     }
 
     @Override
@@ -30,6 +30,6 @@ public class CraftSpellcaster extends CraftIllager implements Spellcaster {
     public void setSpell(Spell spell) {
         Preconditions.checkArgument(spell != null, "Use Spell.NONE");
 
-        getHandle().setSpell(EntityIllagerWizard.Spell.a(spell.ordinal()));
+        getHandle().setSpell(SpellcastingIllagerEntity.Spell.a(spell.ordinal()));
     }
 }

@@ -15,7 +15,7 @@ public final class CraftCocoa extends org.bukkit.craftbukkit.block.data.CraftBlo
 
     // org.bukkit.craftbukkit.block.data.CraftAgeable
 
-    private static final net.minecraft.state.PropertyInteger AGE = getInteger(net.minecraft.block.BlockCocoa.class, "age");
+    private static final net.minecraft.state.PropertyInteger AGE = getInteger(net.minecraft.block.CocoaBlock.class, "age");
 
     @Override
     public int getAge() {
@@ -34,7 +34,7 @@ public final class CraftCocoa extends org.bukkit.craftbukkit.block.data.CraftBlo
 
     // org.bukkit.craftbukkit.block.data.CraftDirectional
 
-    private static final net.minecraft.state.PropertyEnum<?> FACING = getEnum(net.minecraft.block.BlockCocoa.class, "facing");
+    private static final net.minecraft.state.PropertyEnum<?> FACING = getEnum(net.minecraft.block.CocoaBlock.class, "facing");
 
     @Override
     public org.bukkit.block.BlockFace getFacing() {

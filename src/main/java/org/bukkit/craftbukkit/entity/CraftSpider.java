@@ -7,13 +7,13 @@ import org.bukkit.entity.Spider;
 
 public class CraftSpider extends CraftMonster implements Spider {
 
-    public CraftSpider(CraftServer server, EntitySpider entity) {
+    public CraftSpider(CraftServer server, SpiderEntity entity) {
         super(server, entity);
     }
 
     @Override
-    public EntitySpider getHandle() {
-        return (EntitySpider) entity;
+    public SpiderEntity getHandle() {
+        return (SpiderEntity) entity;
     }
 
     @Override

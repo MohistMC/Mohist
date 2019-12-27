@@ -21,15 +21,15 @@ import org.bukkit.craftbukkit.util.CraftMagicNumbers;
 public class CraftChunkSnapshot implements ChunkSnapshot {
     private final int x, z;
     private final String worldname;
-    private final DataPaletteBlock<IBlockData>[] blockids;
+    private final IPaletteBlock<BlockState>[] blockids;
     private final byte[][] skylight;
     private final byte[][] emitlight;
     private final boolean[] empty;
-    private final HeightMap hmap; // Height map
+    private final Heightmap hmap; // Height map
     private final long captureFulltime;
-    private final BiomeStorage biome;
+    private final BiomeContainer biome;
 
-    CraftChunkSnapshot(int x, int z, String wname, long wtime, DataPaletteBlock<IBlockData>[] sectionBlockIDs, byte[][] sectionSkyLights, byte[][] sectionEmitLights, boolean[] sectionEmpty, HeightMap hmap, BiomeStorage biome) {
+    CraftChunkSnapshot(int x, int z, String wname, long wtime, IPaletteBlock<BlockState>[] sectionBlockIDs, byte[][] sectionSkyLights, byte[][] sectionEmitLights, boolean[] sectionEmpty, Heightmap hmap, BiomeContainer biome) {
         this.x = x;
         this.z = z;
         this.worldname = wname;
@@ -61,8 +61,8 @@ public class CraftChunkSnapshot implements ChunkSnapshot {
     public boolean contains(BlockData block) {
         Preconditions.checkArgument(block != null, "Block cannot be null");
 
-        IBlockData nms = ((CraftBlockData) block).getState();
-        for (DataPaletteBlock<IBlockData> palette : blockids) {
+        BlockState nms = ((CraftBlockData) block).getState();
+        for (IPaletteBlock<BlockState> palette : blockids) {
             if (palette.contains(nms)) {
                 return true;
             }
@@ -139,7 +139,7 @@ public class CraftChunkSnapshot implements ChunkSnapshot {
         Preconditions.checkState(biome != null, "ChunkSnapshot created without biome. Please call getSnapshot with includeBiome=true");
         CraftChunk.validateChunkCoordinates(x, y, z);
 
-        return biome.getBiome(x, y, z).getAdjustedTemperature(new BlockPosition((this.x << 4) | x, y, (this.z << 4) | z));
+        return biome.getBiome(x, y, z).getAdjustedTemperature(new BlockPos((this.x << 4) | x, y, (this.z << 4) | z));
     }
 
     @Override

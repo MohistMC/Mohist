@@ -16,7 +16,7 @@ public final class CraftFence extends org.bukkit.craftbukkit.block.data.CraftBlo
     // org.bukkit.craftbukkit.block.data.CraftMultipleFacing
 
     private static final net.minecraft.state.PropertyBoolean[] FACES = new net.minecraft.state.PropertyBoolean[]{
-        getBoolean(net.minecraft.block.BlockFence.class, "north", true), getBoolean(net.minecraft.block.BlockFence.class, "east", true), getBoolean(net.minecraft.block.BlockFence.class, "south", true), getBoolean(net.minecraft.block.BlockFence.class, "west", true), getBoolean(net.minecraft.block.BlockFence.class, "up", true), getBoolean(net.minecraft.block.BlockFence.class, "down", true)
+        getBoolean(net.minecraft.block.FenceBlock.class, "north", true), getBoolean(net.minecraft.block.FenceBlock.class, "east", true), getBoolean(net.minecraft.block.FenceBlock.class, "south", true), getBoolean(net.minecraft.block.FenceBlock.class, "west", true), getBoolean(net.minecraft.block.FenceBlock.class, "up", true), getBoolean(net.minecraft.block.FenceBlock.class, "down", true)
     };
 
     @Override
@@ -57,7 +57,7 @@ public final class CraftFence extends org.bukkit.craftbukkit.block.data.CraftBlo
 
     // org.bukkit.craftbukkit.block.data.CraftWaterlogged
 
-    private static final net.minecraft.state.PropertyBoolean WATERLOGGED = getBoolean(net.minecraft.block.BlockFence.class, "waterlogged");
+    private static final net.minecraft.state.PropertyBoolean WATERLOGGED = getBoolean(net.minecraft.block.FenceBlock.class, "waterlogged");
 
     @Override
     public boolean isWaterlogged() {

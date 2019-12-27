@@ -7,13 +7,13 @@ import org.bukkit.entity.MagmaCube;
 
 public class CraftMagmaCube extends CraftSlime implements MagmaCube {
 
-    public CraftMagmaCube(CraftServer server, EntityMagmaCube entity) {
+    public CraftMagmaCube(CraftServer server, MagmaCubeEntity entity) {
         super(server, entity);
     }
 
     @Override
-    public EntityMagmaCube getHandle() {
-        return (EntityMagmaCube) entity;
+    public MagmaCubeEntity getHandle() {
+        return (MagmaCubeEntity) entity;
     }
 
     @Override

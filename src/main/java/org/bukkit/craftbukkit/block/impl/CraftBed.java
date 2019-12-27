@@ -15,8 +15,8 @@ public final class CraftBed extends org.bukkit.craftbukkit.block.data.CraftBlock
 
     // org.bukkit.craftbukkit.block.data.type.CraftBed
 
-    private static final net.minecraft.state.PropertyEnum<?> PART = getEnum(net.minecraft.block.BlockBed.class, "part");
-    private static final net.minecraft.state.PropertyBoolean OCCUPIED = getBoolean(net.minecraft.block.BlockBed.class, "occupied");
+    private static final net.minecraft.state.PropertyEnum<?> PART = getEnum(net.minecraft.block.BedBlock.class, "part");
+    private static final net.minecraft.state.PropertyBoolean OCCUPIED = getBoolean(net.minecraft.block.BedBlock.class, "occupied");
 
     @Override
     public Part getPart() {
@@ -35,7 +35,7 @@ public final class CraftBed extends org.bukkit.craftbukkit.block.data.CraftBlock
 
     // org.bukkit.craftbukkit.block.data.CraftDirectional
 
-    private static final net.minecraft.state.PropertyEnum<?> FACING = getEnum(net.minecraft.block.BlockBed.class, "facing");
+    private static final net.minecraft.state.PropertyEnum<?> FACING = getEnum(net.minecraft.block.BedBlock.class, "facing");
 
     @Override
     public org.bukkit.block.BlockFace getFacing() {

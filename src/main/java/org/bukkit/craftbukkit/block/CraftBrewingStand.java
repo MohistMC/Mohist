@@ -7,13 +7,13 @@ import org.bukkit.block.BrewingStand;
 import org.bukkit.craftbukkit.inventory.CraftInventoryBrewer;
 import org.bukkit.inventory.BrewerInventory;
 
-public class CraftBrewingStand extends CraftContainer<TileEntityBrewingStand> implements BrewingStand {
+public class CraftBrewingStand extends CraftContainer<BrewingStandTileEntity> implements BrewingStand {
 
     public CraftBrewingStand(Block block) {
-        super(block, TileEntityBrewingStand.class);
+        super(block, BrewingStandTileEntity.class);
     }
 
-    public CraftBrewingStand(final Material material, final TileEntityBrewingStand te) {
+    public CraftBrewingStand(final Material material, final BrewingStandTileEntity te) {
         super(material, te);
     }
 

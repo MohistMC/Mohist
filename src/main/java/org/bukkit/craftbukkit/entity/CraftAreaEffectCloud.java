@@ -22,13 +22,13 @@ import org.bukkit.projectiles.ProjectileSource;
 
 public class CraftAreaEffectCloud extends CraftEntity implements AreaEffectCloud {
 
-    public CraftAreaEffectCloud(CraftServer server, EntityAreaEffectCloud entity) {
+    public CraftAreaEffectCloud(CraftServer server, AreaEffectCloudEntity entity) {
         super(server, entity);
     }
 
     @Override
-    public EntityAreaEffectCloud getHandle() {
-        return (EntityAreaEffectCloud) super.getHandle();
+    public AreaEffectCloudEntity getHandle() {
+        return (AreaEffectCloudEntity) super.getHandle();
     }
 
     @Override
@@ -141,7 +141,7 @@ public class CraftAreaEffectCloud extends CraftEntity implements AreaEffectCloud
         int effectId = effect.getType().getId();
         MobEffect existing = null;
         for (MobEffect mobEffect : getHandle().effects) {
-            if (MobEffectList.getId(mobEffect.getMobEffect()) == effectId) {
+            if (Effect.getId(mobEffect.getMobEffect()) == effectId) {
                 existing = mobEffect;
             }
         }
@@ -191,7 +191,7 @@ public class CraftAreaEffectCloud extends CraftEntity implements AreaEffectCloud
         int effectId = effect.getId();
         MobEffect existing = null;
         for (MobEffect mobEffect : getHandle().effects) {
-            if (MobEffectList.getId(mobEffect.getMobEffect()) == effectId) {
+            if (Effect.getId(mobEffect.getMobEffect()) == effectId) {
                 existing = mobEffect;
             }
         }
@@ -216,16 +216,16 @@ public class CraftAreaEffectCloud extends CraftEntity implements AreaEffectCloud
 
     @Override
     public ProjectileSource getSource() {
-        EntityLiving source = getHandle().getSource();
+        LivingEntity source = getHandle().getSource();
         return (source == null) ? null : (LivingEntity) source.getBukkitEntity();
     }
 
     @Override
     public void setSource(ProjectileSource shooter) {
         if (shooter instanceof CraftLivingEntity) {
-            getHandle().setSource((EntityLiving) ((CraftLivingEntity) shooter).getHandle());
+            getHandle().setSource((LivingEntity) ((CraftLivingEntity) shooter).getHandle());
         } else {
-            getHandle().setSource((EntityLiving) null);
+            getHandle().setSource((LivingEntity) null);
         }
     }
 }

@@ -13,7 +13,7 @@ import org.bukkit.projectiles.ProjectileSource;
 public class CraftFishHook extends AbstractProjectile implements FishHook {
     private double biteChance = -1;
 
-    public CraftFishHook(CraftServer server, EntityFishingHook entity) {
+    public CraftFishHook(CraftServer server, AbstractFishEntityingHook entity) {
         super(server, entity);
     }
 
@@ -34,8 +34,8 @@ public class CraftFishHook extends AbstractProjectile implements FishHook {
     }
 
     @Override
-    public EntityFishingHook getHandle() {
-        return (EntityFishingHook) entity;
+    public AbstractFishEntityingHook getHandle() {
+        return (AbstractFishEntityingHook) entity;
     }
 
     @Override
@@ -50,7 +50,7 @@ public class CraftFishHook extends AbstractProjectile implements FishHook {
 
     @Override
     public double getBiteChance() {
-        EntityFishingHook hook = getHandle();
+        AbstractFishEntityingHook hook = getHandle();
 
         if (this.biteChance == -1) {
             if (hook.world.isRainingAt(new BlockPosition(MathHelper.floor(hook.locX()), MathHelper.floor(hook.locY()) + 1, MathHelper.floor(hook.locZ())))) {

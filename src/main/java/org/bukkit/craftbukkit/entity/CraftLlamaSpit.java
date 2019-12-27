@@ -8,13 +8,13 @@ import org.bukkit.projectiles.ProjectileSource;
 
 public class CraftLlamaSpit extends AbstractProjectile implements LlamaSpit {
 
-    public CraftLlamaSpit(CraftServer server, EntityLlamaSpit entity) {
+    public CraftLlamaSpit(CraftServer server, LlamaEntitySpit entity) {
         super(server, entity);
     }
 
     @Override
-    public EntityLlamaSpit getHandle() {
-        return (EntityLlamaSpit) super.getHandle();
+    public LlamaEntitySpit getHandle() {
+        return (LlamaEntitySpit) super.getHandle();
     }
 
     @Override

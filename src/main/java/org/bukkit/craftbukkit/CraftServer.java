@@ -10,6 +10,7 @@ import com.google.common.collect.MapMaker;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 import com.mojang.authlib.GameProfile;
+import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.StringReader;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.tree.CommandNode;
@@ -77,6 +78,7 @@ import net.minecraft.world.storage.SaveHandler;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraft.world.WorldSettings;
 import net.minecraft.world.WorldType;
+import net.minecraftforge.common.DimensionManager;
 import org.apache.commons.lang.Validate;
 import org.bukkit.BanList;
 import org.bukkit.Bukkit;
@@ -662,7 +664,7 @@ public final class CraftServer implements Server {
     }
 
     // NOTE: Should only be called from DedicatedServer.ah()
-    public boolean dispatchServerCommand(CommandSender sender, ServerCommand serverCommand) {
+    public boolean dispatchServerCommand(CommandSender sender, PendingCommand serverCommand) {
         if (sender instanceof Conversable) {
             Conversable conversable = (Conversable)sender;
 
@@ -706,7 +708,7 @@ public final class CraftServer implements Server {
         configuration = YamlConfiguration.loadConfiguration(getConfigFile());
         commandsConfiguration = YamlConfiguration.loadConfiguration(getCommandsConfigFile());
 
-        console.propertyManager = new DedicatedServerSettings(console.options);
+        console.propertyManager = new ServerPropertiesProvider(console.options);
         DedicatedServerProperties config = console.propertyManager.getProperties();
 
         console.setSpawnAnimals(config.spawnAnimals);
@@ -1218,7 +1220,7 @@ public final class CraftServer implements Server {
     @Override
     @Deprecated
     public CraftMapView getMap(int id) {
-        WorldMap worldmap = console.getWorldServer(DimensionManager.OVERWORLD).a("map_" + id);
+        MapData worldmap = console.getWorldServer(DimensionManager.OVERWORLD).a("map_" + id);
         if (worldmap == null) {
             return null;
         }
@@ -1230,7 +1232,7 @@ public final class CraftServer implements Server {
         Validate.notNull(world, "World cannot be null");
 
         net.minecraft.item.ItemStack stack = new net.minecraft.item.ItemStack(Items.MAP, 1);
-        WorldMap worldmap = ItemWorldMap.getSavedMap(stack, ((CraftWorld) world).getHandle());
+        MapData worldmap = ItemMapData.getSavedMap(stack, ((CraftWorld) world).getHandle());
         return worldmap.mapView;
     }
 
@@ -1250,10 +1252,10 @@ public final class CraftServer implements Server {
         BlockPosition structurePosition = new BlockPosition(structureLocation.getBlockX(), structureLocation.getBlockY(), structureLocation.getBlockZ());
 
         // Create map with trackPlayer = true, unlimitedTracking = true
-        net.minecraft.item.ItemStack stack = ItemWorldMap.createFilledMapView(worldServer, structurePosition.getX(), structurePosition.getZ(), MapView.Scale.NORMAL.getValue(), true, true);
-        ItemWorldMap.applySepiaFilter(worldServer, stack);
-        // "+" map ID taken from EntityVillager
-        ItemWorldMap.getSavedMap(stack, worldServer).decorateMap(stack, structurePosition, "+", MapIcon.Type.a(structureType.getMapIcon().getValue()));
+        net.minecraft.item.ItemStack stack = ItemMapData.createFilledMapView(worldServer, structurePosition.getX(), structurePosition.getZ(), MapView.Scale.NORMAL.getValue(), true, true);
+        ItemMapData.applySepiaFilter(worldServer, stack);
+        // "+" map ID taken from VillagerEntity
+        ItemMapData.getSavedMap(stack, worldServer).decorateMap(stack, structurePosition, "+", MapIcon.Type.a(structureType.getMapIcon().getValue()));
 
         return CraftItemStack.asBukkitCopy(stack);
     }
@@ -1847,12 +1849,12 @@ public final class CraftServer implements Server {
             case org.bukkit.Tag.REGISTRY_BLOCKS:
                 Preconditions.checkArgument(clazz == org.bukkit.Material.class, "Block namespace must have material type");
 
-                TagsServer<Block> blockTags = console.getTagRegistry().getBlockTags();
+                NetworkTagCollection<Block> blockTags = console.getTagRegistry().getBlockTags();
                 return blockTags.b().keySet().stream().map(key -> (org.bukkit.Tag<T>) new CraftBlockTag(blockTags, key)).collect(ImmutableList.toImmutableList());
             case org.bukkit.Tag.REGISTRY_ITEMS:
                 Preconditions.checkArgument(clazz == org.bukkit.Material.class, "Item namespace must have material type");
 
-                TagsServer<Item> itemTags = console.getTagRegistry().getItemTags();
+                NetworkTagCollection<Item> itemTags = console.getTagRegistry().getItemTags();
                 return itemTags.b().keySet().stream().map(key -> (org.bukkit.Tag<T>) new CraftItemTag(itemTags, key)).collect(ImmutableList.toImmutableList());
             default:
                 throw new IllegalArgumentException();
@@ -1872,7 +1874,7 @@ public final class CraftServer implements Server {
         Preconditions.checkArgument(selector != null, "Selector cannot be null");
         Preconditions.checkArgument(sender != null, "Sender cannot be null");
 
-        ArgumentEntity arg = ArgumentEntity.multipleEntities();
+        EntityArgument arg = EntityArgument.multipleEntities();
         List<? extends net.minecraft.entity.Entity> nms;
 
         try {

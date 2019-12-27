@@ -7,13 +7,13 @@ import org.bukkit.entity.Turtle;
 
 public class CraftTurtle extends CraftAnimals implements Turtle {
 
-    public CraftTurtle(CraftServer server, EntityTurtle entity) {
+    public CraftTurtle(CraftServer server, TurtleEntity entity) {
         super(server, entity);
     }
 
     @Override
-    public EntityTurtle getHandle() {
-        return (EntityTurtle) super.getHandle();
+    public TurtleEntity getHandle() {
+        return (TurtleEntity) super.getHandle();
     }
 
     @Override

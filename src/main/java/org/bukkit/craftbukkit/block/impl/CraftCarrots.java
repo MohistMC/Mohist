@@ -15,7 +15,7 @@ public final class CraftCarrots extends org.bukkit.craftbukkit.block.data.CraftB
 
     // org.bukkit.craftbukkit.block.data.CraftAgeable
 
-    private static final net.minecraft.state.PropertyInteger AGE = getInteger(net.minecraft.block.BlockCarrots.class, "age");
+    private static final net.minecraft.state.PropertyInteger AGE = getInteger(net.minecraft.block.CarrotBlock.class, "age");
 
     @Override
     public int getAge() {

@@ -8,7 +8,7 @@ import org.bukkit.entity.Horse.Variant;
 
 public class CraftDonkey extends CraftChestedHorse implements Donkey {
 
-    public CraftDonkey(CraftServer server, EntityHorseDonkey entity) {
+    public CraftDonkey(CraftServer server, HorseEntityDonkey entity) {
         super(server, entity);
     }
 

@@ -12,13 +12,13 @@ import org.bukkit.craftbukkit.projectiles.CraftBlockProjectileSource;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.projectiles.BlockProjectileSource;
 
-public class CraftDispenser extends CraftLootable<TileEntityDispenser> implements Dispenser {
+public class CraftDispenser extends CraftLootable<DispenserTileEntity> implements Dispenser {
 
     public CraftDispenser(final Block block) {
-        super(block, TileEntityDispenser.class);
+        super(block, DispenserTileEntity.class);
     }
 
-    public CraftDispenser(final Material material, final TileEntityDispenser te) {
+    public CraftDispenser(final Material material, final DispenserTileEntity te) {
         super(material, te);
     }
 
@@ -44,7 +44,7 @@ public class CraftDispenser extends CraftLootable<TileEntityDispenser> implement
             return null;
         }
 
-        return new CraftBlockProjectileSource((TileEntityDispenser) this.getTileEntityFromWorld());
+        return new CraftBlockProjectileSource((DispenserTileEntity) this.getTileEntityFromWorld());
     }
 
     @Override
@@ -53,7 +53,7 @@ public class CraftDispenser extends CraftLootable<TileEntityDispenser> implement
 
         if (block.getType() == Material.DISPENSER) {
             CraftWorld world = (CraftWorld) this.getWorld();
-            BlockDispenser dispense = (BlockDispenser) Blocks.DISPENSER;
+            DispenserBlock dispense = (DispenserBlock) Blocks.DISPENSER;
 
             dispense.dispense(world.getHandle(), this.getPosition());
             return true;

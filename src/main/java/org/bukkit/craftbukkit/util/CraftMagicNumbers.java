@@ -50,15 +50,15 @@ public final class CraftMagicNumbers implements UnsafeValues {
 
     private CraftMagicNumbers() {}
 
-    public static IBlockData getBlock(MaterialData material) {
+    public static BlockState getBlock(MaterialData material) {
         return getBlock(material.getItemType(), material.getData());
     }
 
-    public static IBlockData getBlock(Material material, byte data) {
+    public static BlockState getBlock(Material material, byte data) {
         return CraftLegacy.fromLegacyData(CraftLegacy.toLegacy(material), getBlock(material), data);
     }
 
-    public static MaterialData getMaterial(IBlockData data) {
+    public static MaterialData getMaterial(BlockState data) {
         return CraftLegacy.toLegacy(getMaterial(data.getBlock())).getNewData(toLegacyData(data));
     }
 
@@ -81,20 +81,20 @@ public final class CraftMagicNumbers implements UnsafeValues {
     private static final Map<Material, Block> MATERIAL_BLOCK = new HashMap<>();
 
     static {
-        for (Block block : IRegistry.BLOCK) {
-            BLOCK_MATERIAL.put(block, Material.getMaterial(IRegistry.BLOCK.getKey(block).getKey().toUpperCase(Locale.ROOT)));
+        for (Block block : Registry.BLOCK) {
+            BLOCK_MATERIAL.put(block, Material.getMaterial(Registry.BLOCK.getKey(block).getKey().toUpperCase(Locale.ROOT)));
         }
 
-        for (Item item : IRegistry.ITEM) {
-            ITEM_MATERIAL.put(item, Material.getMaterial(IRegistry.ITEM.getKey(item).getKey().toUpperCase(Locale.ROOT)));
+        for (Item item : Registry.ITEM) {
+            ITEM_MATERIAL.put(item, Material.getMaterial(Registry.ITEM.getKey(item).getKey().toUpperCase(Locale.ROOT)));
         }
 
         for (Material material : Material.values()) {
-            MinecraftKey key = key(material);
-            IRegistry.ITEM.getOptional(key).ifPresent((item) -> {
+            ResourceLocation key = key(material);
+            Registry.ITEM.getOptional(key).ifPresent((item) -> {
                 MATERIAL_ITEM.put(material, item);
             });
-            IRegistry.BLOCK.getOptional(key).ifPresent((block) -> {
+            Registry.BLOCK.getOptional(key).ifPresent((block) -> {
                 MATERIAL_BLOCK.put(material, block);
             });
         }
@@ -116,7 +116,7 @@ public final class CraftMagicNumbers implements UnsafeValues {
         return MATERIAL_BLOCK.get(material);
     }
 
-    public static MinecraftKey key(Material mat) {
+    public static ResourceLocation key(Material mat) {
         if (mat.isLegacy()) {
             mat = CraftLegacy.fromLegacy(mat);
         }
@@ -125,7 +125,7 @@ public final class CraftMagicNumbers implements UnsafeValues {
     }
     // ========================================================================
 
-    public static byte toLegacyData(IBlockData data) {
+    public static byte toLegacyData(BlockState data) {
         return CraftLegacy.toLegacyData(data);
     }
 
@@ -166,7 +166,7 @@ public final class CraftMagicNumbers implements UnsafeValues {
         NBTTagCompound stack = new NBTTagCompound();
         stack.setString("id", "minecraft:" + material.toLowerCase(Locale.ROOT));
 
-        Dynamic<NBTBase> converted = DataConverterRegistry.a().update(DataConverterTypes.ITEM_STACK, new Dynamic<>(DynamicOpsNBT.a, stack), version, this.getDataVersion());
+        Dynamic<INBT> converted = DataConverterRegistry.a().update(DataConverterTypes.ITEM_STACK, new Dynamic<>(NBTDynamicOps.a, stack), version, this.getDataVersion());
         String newId = converted.get("id").asString("");
 
         return Material.matchMaterial(newId);
@@ -201,7 +201,7 @@ public final class CraftMagicNumbers implements UnsafeValues {
         net.minecraft.item.ItemStack nmsStack = CraftItemStack.asNMSCopy(stack);
 
         try {
-            nmsStack.setTag((NBTTagCompound) MojangsonParser.parse(arguments));
+            nmsStack.setTag((NBTTagCompound) JsonToNBT.parse(arguments));
         } catch (CommandSyntaxException ex) {
             Logger.getLogger(CraftMagicNumbers.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -217,7 +217,7 @@ public final class CraftMagicNumbers implements UnsafeValues {
             throw new IllegalArgumentException("Advancement " + key + " already exists.");
         }
 
-        net.minecraft.advancements.Advancement.SerializedAdvancement nms = (net.minecraft.advancements.Advancement.SerializedAdvancement) ChatDeserializer.a(AdvancementDataWorld.DESERIALIZER, advancement, net.minecraft.advancements.Advancement.SerializedAdvancement.class);
+        net.minecraft.advancements.Advancement.SerializedAdvancement nms = (net.minecraft.advancements.Advancement.SerializedAdvancement) JSONUtils.a(AdvancementDataWorld.DESERIALIZER, advancement, net.minecraft.advancements.Advancement.SerializedAdvancement.class);
         if (nms != null) {
             MinecraftServer.getServer().getAdvancementData().REGISTRY.a(Maps.newHashMap(Collections.singletonMap(CraftNamespacedKey.toMinecraft(key), nms)));
             Advancement bukkit = Bukkit.getAdvancement(key);
@@ -289,9 +289,9 @@ public final class CraftMagicNumbers implements UnsafeValues {
     }
 
     /**
-     * This helper class represents the different NBT Tags.
+     * This helper class represents the different NBT TagCollection.
      * <p>
-     * These should match NBTBase#getTypeId
+     * These should match INBT#getTypeId
      */
     public static class NBT {
 

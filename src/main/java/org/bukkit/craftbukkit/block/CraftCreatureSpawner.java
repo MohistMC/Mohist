@@ -9,19 +9,19 @@ import org.bukkit.block.Block;
 import org.bukkit.block.CreatureSpawner;
 import org.bukkit.entity.EntityType;
 
-public class CraftCreatureSpawner extends CraftBlockEntityState<TileEntityMobSpawner> implements CreatureSpawner {
+public class CraftCreatureSpawner extends CraftBlockEntityState<MobSpawnerTileEntity> implements CreatureSpawner {
 
     public CraftCreatureSpawner(final Block block) {
-        super(block, TileEntityMobSpawner.class);
+        super(block, MobSpawnerTileEntity.class);
     }
 
-    public CraftCreatureSpawner(final Material material, TileEntityMobSpawner te) {
+    public CraftCreatureSpawner(final Material material, MobSpawnerTileEntity te) {
         super(material, te);
     }
 
     @Override
     public EntityType getSpawnedType() {
-        MinecraftKey key = this.getSnapshot().getSpawner().getMobName();
+        ResourceLocation key = this.getSnapshot().getSpawner().getMobName();
         return (key == null) ? EntityType.PIG : EntityType.fromName(key.getKey());
     }
 
@@ -31,7 +31,7 @@ public class CraftCreatureSpawner extends CraftBlockEntityState<TileEntityMobSpa
             throw new IllegalArgumentException("Can't spawn EntityType " + entityType + " from mobspawners!");
         }
 
-        this.getSnapshot().getSpawner().setMobName(EntityTypes.a(entityType.getName()).get());
+        this.getSnapshot().getSpawner().setMobName(EntityType.a(entityType.getName()).get());
     }
 
     @Override

@@ -6,7 +6,7 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.ExperienceOrb;
 
 public class CraftExperienceOrb extends CraftEntity implements ExperienceOrb {
-    public CraftExperienceOrb(CraftServer server, EntityExperienceOrb entity) {
+    public CraftExperienceOrb(CraftServer server, ExperienceOrbEntity entity) {
         super(server, entity);
     }
 
@@ -21,8 +21,8 @@ public class CraftExperienceOrb extends CraftEntity implements ExperienceOrb {
     }
 
     @Override
-    public EntityExperienceOrb getHandle() {
-        return (EntityExperienceOrb) entity;
+    public ExperienceOrbEntity getHandle() {
+        return (ExperienceOrbEntity) entity;
     }
 
     @Override

@@ -113,7 +113,7 @@ class CraftMetaMap extends CraftMetaItem implements MapMeta {
         }
 
         if (hasColor()) {
-            setDisplayTag(tag, MAP_COLOR.NBT, NBTTagInt.a(color.asRGB()));
+            setDisplayTag(tag, MAP_COLOR.NBT, IntNBT.a(color.asRGB()));
         }
     }
 

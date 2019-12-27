@@ -15,7 +15,7 @@ public final class CraftStairs extends org.bukkit.craftbukkit.block.data.CraftBl
 
     // org.bukkit.craftbukkit.block.data.type.CraftStairs
 
-    private static final net.minecraft.state.PropertyEnum<?> SHAPE = getEnum(net.minecraft.block.BlockStairs.class, "shape");
+    private static final net.minecraft.state.PropertyEnum<?> SHAPE = getEnum(net.minecraft.block.StairsBlock.class, "shape");
 
     @Override
     public Shape getShape() {
@@ -29,7 +29,7 @@ public final class CraftStairs extends org.bukkit.craftbukkit.block.data.CraftBl
 
     // org.bukkit.craftbukkit.block.data.CraftBisected
 
-    private static final net.minecraft.state.PropertyEnum<?> HALF = getEnum(net.minecraft.block.BlockStairs.class, "half");
+    private static final net.minecraft.state.PropertyEnum<?> HALF = getEnum(net.minecraft.block.StairsBlock.class, "half");
 
     @Override
     public Half getHalf() {
@@ -43,7 +43,7 @@ public final class CraftStairs extends org.bukkit.craftbukkit.block.data.CraftBl
 
     // org.bukkit.craftbukkit.block.data.CraftDirectional
 
-    private static final net.minecraft.state.PropertyEnum<?> FACING = getEnum(net.minecraft.block.BlockStairs.class, "facing");
+    private static final net.minecraft.state.PropertyEnum<?> FACING = getEnum(net.minecraft.block.StairsBlock.class, "facing");
 
     @Override
     public org.bukkit.block.BlockFace getFacing() {
@@ -62,7 +62,7 @@ public final class CraftStairs extends org.bukkit.craftbukkit.block.data.CraftBl
 
     // org.bukkit.craftbukkit.block.data.CraftWaterlogged
 
-    private static final net.minecraft.state.PropertyBoolean WATERLOGGED = getBoolean(net.minecraft.block.BlockStairs.class, "waterlogged");
+    private static final net.minecraft.state.PropertyBoolean WATERLOGGED = getBoolean(net.minecraft.block.StairsBlock.class, "waterlogged");
 
     @Override
     public boolean isWaterlogged() {

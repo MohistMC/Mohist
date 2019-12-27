@@ -7,13 +7,13 @@ import org.bukkit.entity.Phantom;
 
 public class CraftPhantom extends CraftFlying implements Phantom {
 
-    public CraftPhantom(CraftServer server, EntityPhantom entity) {
+    public CraftPhantom(CraftServer server, PhantomEntity entity) {
         super(server, entity);
     }
 
     @Override
-    public EntityPhantom getHandle() {
-        return (EntityPhantom) super.getHandle();
+    public PhantomEntity getHandle() {
+        return (PhantomEntity) super.getHandle();
     }
 
     @Override

@@ -7,13 +7,13 @@ import org.bukkit.entity.EntityType;
 
 public class CraftCow extends CraftAnimals implements Cow {
 
-    public CraftCow(CraftServer server, EntityCow entity) {
+    public CraftCow(CraftServer server, CowEntity entity) {
         super(server, entity);
     }
 
     @Override
-    public EntityCow getHandle() {
-        return (EntityCow) entity;
+    public CowEntity getHandle() {
+        return (CowEntity) entity;
     }
 
     @Override

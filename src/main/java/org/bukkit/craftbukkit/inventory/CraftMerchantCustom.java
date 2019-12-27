@@ -31,7 +31,7 @@ public class CraftMerchantCustom extends CraftMerchant {
 
     public static class MinecraftMerchant implements IMerchant {
 
-        private final IChatBaseComponent title;
+        private final ITextComponent title;
         private final MerchantRecipeList trades = new MerchantRecipeList();
         private EntityHuman tradingPlayer;
         private World tradingWorld;
@@ -75,7 +75,7 @@ public class CraftMerchantCustom extends CraftMerchant {
         public void i(ItemStack itemstack) {
         }
 
-        public IChatBaseComponent getScoreboardDisplayName() {
+        public ITextComponent getScoreboardDisplayName() {
             return title;
         }
 
@@ -100,7 +100,7 @@ public class CraftMerchantCustom extends CraftMerchant {
 
         @Override
         public SoundEffect getTradeSound() {
-            return SoundEffects.ENTITY_VILLAGER_YES;
+            return SoundEvents.ENTITY_VILLAGER_YES;
         }
     }
 }

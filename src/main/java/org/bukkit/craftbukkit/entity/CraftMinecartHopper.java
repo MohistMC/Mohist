@@ -10,7 +10,7 @@ import org.bukkit.inventory.Inventory;
 public final class CraftMinecartHopper extends CraftMinecartContainer implements HopperMinecart {
     private final CraftInventory inventory;
 
-    public CraftMinecartHopper(CraftServer server, EntityMinecartHopper entity) {
+    public CraftMinecartHopper(CraftServer server, HopperMinecartEntity entity) {
         super(server, entity);
         inventory = new CraftInventory(entity);
     }
@@ -32,11 +32,11 @@ public final class CraftMinecartHopper extends CraftMinecartContainer implements
 
     @Override
     public boolean isEnabled() {
-        return ((EntityMinecartHopper) getHandle()).isEnabled();
+        return ((HopperMinecartEntity) getHandle()).isEnabled();
     }
 
     @Override
     public void setEnabled(boolean enabled) {
-        ((EntityMinecartHopper) getHandle()).setEnabled(enabled);
+        ((HopperMinecartEntity) getHandle()).setEnabled(enabled);
     }
 }

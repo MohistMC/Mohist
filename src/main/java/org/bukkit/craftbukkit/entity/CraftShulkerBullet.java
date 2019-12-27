@@ -9,7 +9,7 @@ import org.bukkit.projectiles.ProjectileSource;
 
 public class CraftShulkerBullet extends AbstractProjectile implements ShulkerBullet {
 
-    public CraftShulkerBullet(CraftServer server, EntityShulkerBullet entity) {
+    public CraftShulkerBullet(CraftServer server, ShulkerBulletEntity entity) {
         super(server, entity);
     }
 
@@ -49,7 +49,7 @@ public class CraftShulkerBullet extends AbstractProjectile implements ShulkerBul
     }
 
     @Override
-    public EntityShulkerBullet getHandle() {
-        return (EntityShulkerBullet) entity;
+    public ShulkerBulletEntity getHandle() {
+        return (ShulkerBulletEntity) entity;
     }
 }

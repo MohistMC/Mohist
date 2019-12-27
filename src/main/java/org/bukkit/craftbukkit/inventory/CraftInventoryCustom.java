@@ -125,7 +125,7 @@ public class CraftInventoryCustom extends CraftInventory {
         public void update() {}
 
         @Override
-        public boolean a(EntityHuman entityhuman) {
+        public boolean a(PlayerEntity entityhuman) {
             return true;
         }
 
@@ -164,12 +164,12 @@ public class CraftInventoryCustom extends CraftInventory {
         }
 
         @Override
-        public void startOpen(EntityHuman entityHuman) {
+        public void startOpen(PlayerEntity entityHuman) {
 
         }
 
         @Override
-        public void closeContainer(EntityHuman entityHuman) {
+        public void closeContainer(PlayerEntity entityHuman) {
 
         }
 

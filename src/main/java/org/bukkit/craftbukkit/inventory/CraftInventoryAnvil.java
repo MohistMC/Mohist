@@ -9,9 +9,9 @@ import org.bukkit.inventory.AnvilInventory;
 public class CraftInventoryAnvil extends CraftResultInventory implements AnvilInventory {
 
     private final Location location;
-    private final ContainerAnvil container;
+    private final RepairContainer container;
 
-    public CraftInventoryAnvil(Location location, IInventory inventory, IInventory resultInventory, ContainerAnvil container) {
+    public CraftInventoryAnvil(Location location, IInventory inventory, IInventory resultInventory, RepairContainer container) {
         super(inventory, resultInventory);
         this.location = location;
         this.container = container;

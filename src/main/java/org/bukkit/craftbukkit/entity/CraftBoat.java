@@ -8,7 +8,7 @@ import org.bukkit.entity.EntityType;
 
 public class CraftBoat extends CraftVehicle implements Boat {
 
-    public CraftBoat(CraftServer server, EntityBoat entity) {
+    public CraftBoat(CraftServer server, BoatEntity entity) {
         super(server, entity);
     }
 
@@ -67,8 +67,8 @@ public class CraftBoat extends CraftVehicle implements Boat {
     }
 
     @Override
-    public EntityBoat getHandle() {
-        return (EntityBoat) entity;
+    public BoatEntity getHandle() {
+        return (BoatEntity) entity;
     }
 
     @Override
@@ -81,7 +81,7 @@ public class CraftBoat extends CraftVehicle implements Boat {
         return EntityType.BOAT;
     }
 
-    public static TreeSpecies getTreeSpecies(EntityBoat.EnumBoatType boatType) {
+    public static TreeSpecies getTreeSpecies(BoatEntity.EnumBoatType boatType) {
         switch (boatType) {
             case SPRUCE:
                 return TreeSpecies.REDWOOD;
@@ -99,21 +99,21 @@ public class CraftBoat extends CraftVehicle implements Boat {
         }
     }
 
-    public static EntityBoat.EnumBoatType getBoatType(TreeSpecies species) {
+    public static BoatEntity.EnumBoatType getBoatType(TreeSpecies species) {
         switch (species) {
             case REDWOOD:
-                return EntityBoat.EnumBoatType.SPRUCE;
+                return BoatEntity.EnumBoatType.SPRUCE;
             case BIRCH:
-                return EntityBoat.EnumBoatType.BIRCH;
+                return BoatEntity.EnumBoatType.BIRCH;
             case JUNGLE:
-                return EntityBoat.EnumBoatType.JUNGLE;
+                return BoatEntity.EnumBoatType.JUNGLE;
             case ACACIA:
-                return EntityBoat.EnumBoatType.ACACIA;
+                return BoatEntity.EnumBoatType.ACACIA;
             case DARK_OAK:
-                return EntityBoat.EnumBoatType.DARK_OAK;
+                return BoatEntity.EnumBoatType.DARK_OAK;
             case GENERIC:
             default:
-                return EntityBoat.EnumBoatType.OAK;
+                return BoatEntity.EnumBoatType.OAK;
         }
     }
 }

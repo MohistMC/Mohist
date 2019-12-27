@@ -7,13 +7,13 @@ import org.bukkit.entity.SpectralArrow;
 
 public class CraftSpectralArrow extends CraftArrow implements SpectralArrow {
 
-    public CraftSpectralArrow(CraftServer server, EntitySpectralArrow entity) {
+    public CraftSpectralArrow(CraftServer server, SpectralArrowEntity entity) {
         super(server, entity);
     }
 
     @Override
-    public EntitySpectralArrow getHandle() {
-        return (EntitySpectralArrow) entity;
+    public SpectralArrowEntity getHandle() {
+        return (SpectralArrowEntity) entity;
     }
 
     @Override

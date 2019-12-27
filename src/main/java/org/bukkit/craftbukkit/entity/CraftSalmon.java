@@ -7,13 +7,13 @@ import org.bukkit.entity.Salmon;
 
 public class CraftSalmon extends CraftFish implements Salmon {
 
-    public CraftSalmon(CraftServer server, EntitySalmon entity) {
+    public CraftSalmon(CraftServer server, SalmonEntity entity) {
         super(server, entity);
     }
 
     @Override
-    public EntitySalmon getHandle() {
-        return (EntitySalmon) super.getHandle();
+    public SalmonEntity getHandle() {
+        return (SalmonEntity) super.getHandle();
     }
 
     @Override

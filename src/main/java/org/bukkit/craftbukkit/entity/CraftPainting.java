@@ -56,8 +56,8 @@ public class CraftPainting extends CraftHanging implements Painting {
     }
 
     private void update() {
-        WorldServer world = ((CraftWorld) getWorld()).getHandle();
-        EntityPainting painting = EntityTypes.PAINTING.a(world);
+        ServerWorld world = ((CraftWorld) getWorld()).getHandle();
+        EntityPainting painting = EntityType.PAINTING.a(world);
         painting.blockPosition = getHandle().blockPosition;
         painting.art = getHandle().art;
         painting.setDirection(getHandle().getDirection());

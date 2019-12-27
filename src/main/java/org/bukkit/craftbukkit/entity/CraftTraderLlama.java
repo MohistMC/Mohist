@@ -7,13 +7,13 @@ import org.bukkit.entity.TraderLlama;
 
 public class CraftTraderLlama extends CraftLlama implements TraderLlama {
 
-    public CraftTraderLlama(CraftServer server, EntityLlamaTrader entity) {
+    public CraftTraderLlama(CraftServer server, LlamaEntityTrader entity) {
         super(server, entity);
     }
 
     @Override
-    public EntityLlamaTrader getHandle() {
-        return (EntityLlamaTrader) super.getHandle();
+    public LlamaEntityTrader getHandle() {
+        return (LlamaEntityTrader) super.getHandle();
     }
 
     @Override

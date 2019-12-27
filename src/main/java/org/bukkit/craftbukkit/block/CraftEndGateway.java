@@ -8,19 +8,19 @@ import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.EndGateway;
 
-public class CraftEndGateway extends CraftBlockEntityState<TileEntityEndGateway> implements EndGateway {
+public class CraftEndGateway extends CraftBlockEntityState<EndGatewayTileEntity> implements EndGateway {
 
     public CraftEndGateway(Block block) {
-        super(block, TileEntityEndGateway.class);
+        super(block, EndGatewayTileEntity.class);
     }
 
-    public CraftEndGateway(final Material material, TileEntityEndGateway te) {
+    public CraftEndGateway(final Material material, EndGatewayTileEntity te) {
         super(material, te);
     }
 
     @Override
     public Location getExitLocation() {
-        BlockPosition pos = this.getSnapshot().exitPortal;
+        BlockPos pos = this.getSnapshot().exitPortal;
         return pos == null ? null : new Location(this.isPlaced() ? this.getWorld() : null, pos.getX(), pos.getY(), pos.getZ());
     }
 
@@ -31,7 +31,7 @@ public class CraftEndGateway extends CraftBlockEntityState<TileEntityEndGateway>
         } else if (!Objects.equals(location.getWorld(), this.isPlaced() ? this.getWorld() : null)) {
             throw new IllegalArgumentException("Cannot set exit location to different world");
         } else {
-            this.getSnapshot().exitPortal = new BlockPosition(location.getBlockX(), location.getBlockY(), location.getBlockZ());
+            this.getSnapshot().exitPortal = new BlockPos(location.getBlockX(), location.getBlockY(), location.getBlockZ());
         }
     }
 
@@ -56,7 +56,7 @@ public class CraftEndGateway extends CraftBlockEntityState<TileEntityEndGateway>
     }
 
     @Override
-    public void applyTo(TileEntityEndGateway endGateway) {
+    public void applyTo(EndGatewayTileEntity endGateway) {
         super.applyTo(endGateway);
 
         if (this.getSnapshot().exitPortal == null) {

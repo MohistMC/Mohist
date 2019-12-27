@@ -46,9 +46,9 @@ import org.bukkit.projectiles.BlockProjectileSource;
 import org.bukkit.util.Vector;
 
 public class CraftBlockProjectileSource implements BlockProjectileSource {
-    private final TileEntityDispenser dispenserBlock;
+    private final DispenserTileEntity dispenserBlock;
 
-    public CraftBlockProjectileSource(TileEntityDispenser dispenserBlock) {
+    public CraftBlockProjectileSource(DispenserTileEntity dispenserBlock) {
         this.dispenserBlock = dispenserBlock;
     }
 
@@ -65,42 +65,42 @@ public class CraftBlockProjectileSource implements BlockProjectileSource {
     @Override
     public <T extends Projectile> T launchProjectile(Class<? extends T> projectile, Vector velocity) {
         Validate.isTrue(getBlock().getType() == Material.DISPENSER, "Block is no longer dispenser");
-        // Copied from BlockDispenser.dispense()
-        SourceBlock isourceblock = new SourceBlock(dispenserBlock.getWorld(), dispenserBlock.getPosition());
-        // Copied from DispenseBehaviorProjectile
-        IPosition iposition = BlockDispenser.a(isourceblock);
-        EnumDirection enumdirection = (EnumDirection) isourceblock.getBlockData().get(BlockDispenser.FACING);
+        // Copied from DispenserBlock.dispense()
+        ProxyBlockSource isourceblock = new ProxyBlockSource(dispenserBlock.getWorld(), dispenserBlock.getPosition());
+        // Copied from DispenseTaskProjectile
+        IPosition iposition = DispenserBlock.a(isourceblock);
+        Direction enumdirection = (Direction) isourceblock.getBlockData().get(DispenserBlock.FACING);
         net.minecraft.world.World world = dispenserBlock.getWorld();
         net.minecraft.entity.Entity launch = null;
 
         if (Snowball.class.isAssignableFrom(projectile)) {
-            launch = new EntitySnowball(world, iposition.getX(), iposition.getY(), iposition.getZ());
+            launch = new SnowballEntity(world, iposition.getX(), iposition.getY(), iposition.getZ());
         } else if (Egg.class.isAssignableFrom(projectile)) {
-            launch = new EntityEgg(world, iposition.getX(), iposition.getY(), iposition.getZ());
+            launch = new EggEntity(world, iposition.getX(), iposition.getY(), iposition.getZ());
         } else if (EnderPearl.class.isAssignableFrom(projectile)) {
-            launch = new EntityEnderPearl(world, null);
+            launch = new EnderPearlEntity(world, null);
             launch.setPosition(iposition.getX(), iposition.getY(), iposition.getZ());
         } else if (ThrownExpBottle.class.isAssignableFrom(projectile)) {
-            launch = new EntityThrownExpBottle(world, iposition.getX(), iposition.getY(), iposition.getZ());
+            launch = new ExperienceBottleEntity(world, iposition.getX(), iposition.getY(), iposition.getZ());
         } else if (ThrownPotion.class.isAssignableFrom(projectile)) {
             if (LingeringPotion.class.isAssignableFrom(projectile)) {
-                launch = new EntityPotion(world, iposition.getX(), iposition.getY(), iposition.getZ());
-                ((EntityPotion) launch).setItem(CraftItemStack.asNMSCopy(new ItemStack(org.bukkit.Material.LINGERING_POTION, 1)));
+                launch = new PotionEntity(world, iposition.getX(), iposition.getY(), iposition.getZ());
+                ((PotionEntity) launch).setItem(CraftItemStack.asNMSCopy(new ItemStack(org.bukkit.Material.LINGERING_POTION, 1)));
             } else {
-                launch = new EntityPotion(world, iposition.getX(), iposition.getY(), iposition.getZ());
-                ((EntityPotion) launch).setItem(CraftItemStack.asNMSCopy(new ItemStack(org.bukkit.Material.SPLASH_POTION, 1)));
+                launch = new PotionEntity(world, iposition.getX(), iposition.getY(), iposition.getZ());
+                ((PotionEntity) launch).setItem(CraftItemStack.asNMSCopy(new ItemStack(org.bukkit.Material.SPLASH_POTION, 1)));
             }
         } else if (AbstractArrow.class.isAssignableFrom(projectile)) {
             if (TippedArrow.class.isAssignableFrom(projectile)) {
-                launch = new EntityTippedArrow(world, iposition.getX(), iposition.getY(), iposition.getZ());
-                ((EntityTippedArrow) launch).setType(CraftPotionUtil.fromBukkit(new PotionData(PotionType.WATER, false, false)));
+                launch = new ArrowEntity(world, iposition.getX(), iposition.getY(), iposition.getZ());
+                ((ArrowEntity) launch).setType(CraftPotionUtil.fromBukkit(new PotionData(PotionType.WATER, false, false)));
             } else if (SpectralArrow.class.isAssignableFrom(projectile)) {
-                launch = new EntitySpectralArrow(world, iposition.getX(), iposition.getY(), iposition.getZ());
+                launch = new SpectralArrowEntity(world, iposition.getX(), iposition.getY(), iposition.getZ());
             } else {
-                launch = new EntityTippedArrow(world, iposition.getX(), iposition.getY(), iposition.getZ());
+                launch = new ArrowEntity(world, iposition.getX(), iposition.getY(), iposition.getZ());
             }
-            ((EntityArrow) launch).fromPlayer = EntityArrow.PickupStatus.ALLOWED;
-            ((EntityArrow) launch).projectileSource = this;
+            ((AbstractArrowEntity) launch).fromPlayer = AbstractArrowEntity.PickupStatus.ALLOWED;
+            ((AbstractArrowEntity) launch).projectileSource = this;
         } else if (Fireball.class.isAssignableFrom(projectile)) {
             double d0 = iposition.getX() + (double) ((float) enumdirection.getAdjacentX() * 0.3F);
             double d1 = iposition.getY() + (double) ((float) enumdirection.getAdjacentY() * 0.3F);
@@ -111,43 +111,43 @@ public class CraftBlockProjectileSource implements BlockProjectileSource {
             double d5 = random.nextGaussian() * 0.05D + (double) enumdirection.getAdjacentZ();
 
             if (SmallFireball.class.isAssignableFrom(projectile)) {
-                launch = new EntitySmallFireball(world, null, d0, d1, d2);
+                launch = new SmallFireballEntity(world, null, d0, d1, d2);
             } else if (WitherSkull.class.isAssignableFrom(projectile)) {
-                launch = EntityTypes.WITHER_SKULL.a(world);
+                launch = EntityType.WITHER_SKULL.a(world);
                 launch.setPosition(d0, d1, d2);
                 double d6 = (double) MathHelper.sqrt(d3 * d3 + d4 * d4 + d5 * d5);
 
-                ((EntityFireball) launch).dirX = d3 / d6 * 0.1D;
-                ((EntityFireball) launch).dirY = d4 / d6 * 0.1D;
-                ((EntityFireball) launch).dirZ = d5 / d6 * 0.1D;
+                ((DamagingProjectileEntity) launch).dirX = d3 / d6 * 0.1D;
+                ((DamagingProjectileEntity) launch).dirY = d4 / d6 * 0.1D;
+                ((DamagingProjectileEntity) launch).dirZ = d5 / d6 * 0.1D;
             } else {
-                launch = EntityTypes.FIREBALL.a(world);
+                launch = EntityType.FIREBALL.a(world);
                 launch.setPosition(d0, d1, d2);
                 double d6 = (double) MathHelper.sqrt(d3 * d3 + d4 * d4 + d5 * d5);
 
-                ((EntityFireball) launch).dirX = d3 / d6 * 0.1D;
-                ((EntityFireball) launch).dirY = d4 / d6 * 0.1D;
-                ((EntityFireball) launch).dirZ = d5 / d6 * 0.1D;
+                ((DamagingProjectileEntity) launch).dirX = d3 / d6 * 0.1D;
+                ((DamagingProjectileEntity) launch).dirY = d4 / d6 * 0.1D;
+                ((DamagingProjectileEntity) launch).dirZ = d5 / d6 * 0.1D;
             }
 
-            ((EntityFireball) launch).projectileSource = this;
+            ((DamagingProjectileEntity) launch).projectileSource = this;
         }
 
         Validate.notNull(launch, "Projectile not supported");
 
         if (launch instanceof IProjectile) {
-            if (launch instanceof EntityProjectile) {
-                ((EntityProjectile) launch).projectileSource = this;
+            if (launch instanceof ThrowableEntity) {
+                ((ThrowableEntity) launch).projectileSource = this;
             }
-            // Values from DispenseBehaviorProjectile
+            // Values from DispenseTaskProjectile
             float a = 6.0F;
             float b = 1.1F;
-            if (launch instanceof EntityPotion || launch instanceof ThrownExpBottle) {
-                // Values from respective DispenseBehavior classes
+            if (launch instanceof PotionEntity || launch instanceof ThrownExpBottle) {
+                // Values from respective DispenseTask classes
                 a *= 0.5F;
                 b *= 1.25F;
             }
-            // Copied from DispenseBehaviorProjectile
+            // Copied from DispenseTaskProjectile
             ((IProjectile) launch).shoot((double) enumdirection.getAdjacentX(), (double) ((float) enumdirection.getAdjacentY() + 0.1F), (double) enumdirection.getAdjacentZ(), b, a);
         }
 

@@ -12,15 +12,15 @@ public interface CraftRecipe extends Recipe {
 
     void addToCraftingManager();
 
-    default RecipeItemStack toNMS(RecipeChoice bukkit, boolean requireNotEmpty) {
-        RecipeItemStack stack;
+    default Ingredient toNMS(RecipeChoice bukkit, boolean requireNotEmpty) {
+        Ingredient stack;
 
         if (bukkit == null) {
-            stack = RecipeItemStack.a;
+            stack = Ingredient.a;
         } else if (bukkit instanceof RecipeChoice.MaterialChoice) {
-            stack = new RecipeItemStack(((RecipeChoice.MaterialChoice) bukkit).getChoices().stream().map((mat) -> new net.minecraft.item.crafting.Ingredient.StackProvider(CraftItemStack.asNMSCopy(new ItemStack(mat)))));
+            stack = new Ingredient(((RecipeChoice.MaterialChoice) bukkit).getChoices().stream().map((mat) -> new net.minecraft.item.crafting.Ingredient.StackProvider(CraftItemStack.asNMSCopy(new ItemStack(mat)))));
         } else if (bukkit instanceof RecipeChoice.ExactChoice) {
-            stack = new RecipeItemStack(((RecipeChoice.ExactChoice) bukkit).getChoices().stream().map((mat) -> new net.minecraft.item.crafting.Ingredient.StackProvider(CraftItemStack.asNMSCopy(mat))));
+            stack = new Ingredient(((RecipeChoice.ExactChoice) bukkit).getChoices().stream().map((mat) -> new net.minecraft.item.crafting.Ingredient.StackProvider(CraftItemStack.asNMSCopy(mat))));
             stack.exact = true;
         } else {
             throw new IllegalArgumentException("Unknown recipe stack instance " + bukkit);
@@ -34,7 +34,7 @@ public interface CraftRecipe extends Recipe {
         return stack;
     }
 
-    public static RecipeChoice toBukkit(RecipeItemStack list) {
+    public static RecipeChoice toBukkit(Ingredient list) {
         list.buildChoices();
 
         if (list.choices.length == 0) {

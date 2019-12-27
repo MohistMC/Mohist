@@ -15,7 +15,7 @@ public final class CraftMycel extends org.bukkit.craftbukkit.block.data.CraftBlo
 
     // org.bukkit.craftbukkit.block.data.CraftSnowable
 
-    private static final net.minecraft.state.PropertyBoolean SNOWY = getBoolean(net.minecraft.block.BlockMycel.class, "snowy");
+    private static final net.minecraft.state.PropertyBoolean SNOWY = getBoolean(net.minecraft.block.MyceliumBlock.class, "snowy");
 
     @Override
     public boolean isSnowy() {

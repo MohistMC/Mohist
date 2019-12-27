@@ -15,7 +15,7 @@ public final class CraftBubbleColumn extends org.bukkit.craftbukkit.block.data.C
 
     // org.bukkit.craftbukkit.block.data.type.CraftBubbleColumn
 
-    private static final net.minecraft.state.PropertyBoolean DRAG = getBoolean(net.minecraft.block.BlockBubbleColumn.class, "drag");
+    private static final net.minecraft.state.PropertyBoolean DRAG = getBoolean(net.minecraft.block.BubbleColumnBlock.class, "drag");
 
     @Override
     public boolean isDrag() {

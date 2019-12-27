@@ -7,7 +7,7 @@ import org.bukkit.entity.minecart.PoweredMinecart;
 
 @SuppressWarnings("deprecation")
 public class CraftMinecartFurnace extends CraftMinecart implements PoweredMinecart {
-    public CraftMinecartFurnace(CraftServer server, EntityMinecartFurnace entity) {
+    public CraftMinecartFurnace(CraftServer server, FurnaceMinecartEntity entity) {
         super(server, entity);
     }
 

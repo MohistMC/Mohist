@@ -15,7 +15,7 @@ public final class CraftLogAbstract extends org.bukkit.craftbukkit.block.data.Cr
 
     // org.bukkit.craftbukkit.block.data.CraftOrientable
 
-    private static final net.minecraft.state.PropertyEnum<?> AXIS = getEnum(net.minecraft.block.BlockLogAbstract.class, "axis");
+    private static final net.minecraft.state.PropertyEnum<?> AXIS = getEnum(net.minecraft.block.LogBlock.class, "axis");
 
     @Override
     public org.bukkit.Axis getAxis() {

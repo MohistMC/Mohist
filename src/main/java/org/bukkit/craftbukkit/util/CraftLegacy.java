@@ -339,7 +339,7 @@ public class CraftLegacy {
                         continue;
                     }
                     IBlockData blockData = block.getBlockData();
-                    BlockStateList states = block.getStates();
+                    StateContainer states = block.getStates();
 
                     Optional<NBTTagCompound> propMap = blockTag.getElement("Properties");
                     if (propMap.isPresent()) {
@@ -400,7 +400,7 @@ public class CraftLegacy {
                 stack.setInt("id", material.getId());
                 stack.setShort("Damage", data);
 
-                Dynamic<NBTBase> converted = DataConverterRegistry.a().update(DataConverterTypes.ITEM_STACK, new Dynamic<NBTBase>(DynamicOpsNBT.a, stack), -1, CraftMagicNumbers.INSTANCE.getDataVersion());
+                Dynamic<INBT> converted = DataConverterRegistry.a().update(DataConverterTypes.ITEM_STACK, new Dynamic<INBT>(DynamicOpsNBT.a, stack), -1, CraftMagicNumbers.INSTANCE.getDataVersion());
 
                 String newId = converted.get("id").asString("");
                 // Recover spawn eggs with invalid data

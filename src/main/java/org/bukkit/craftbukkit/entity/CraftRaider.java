@@ -10,13 +10,13 @@ import org.bukkit.entity.Raider;
 
 public abstract class CraftRaider extends CraftMonster implements Raider {
 
-    public CraftRaider(CraftServer server, EntityRaider entity) {
+    public CraftRaider(CraftServer server, AbstractRaiderEntity entity) {
         super(server, entity);
     }
 
     @Override
-    public EntityRaider getHandle() {
-        return (EntityRaider) super.getHandle();
+    public AbstractRaiderEntity getHandle() {
+        return (AbstractRaiderEntity) super.getHandle();
     }
 
     @Override
@@ -32,11 +32,11 @@ public abstract class CraftRaider extends CraftMonster implements Raider {
     @Override
     public void setPatrolTarget(Block block) {
         if (block == null) {
-            getHandle().setPatrolTarget((BlockPosition) null);
+            getHandle().setPatrolTarget((BlockPos) null);
         } else {
             Preconditions.checkArgument(block.getWorld().equals(this.getWorld()), "Block must be in same world");
 
-            getHandle().setPatrolTarget(new BlockPosition(block.getX(), block.getY(), block.getZ()));
+            getHandle().setPatrolTarget(new BlockPos(block.getX(), block.getY(), block.getZ()));
         }
     }
 

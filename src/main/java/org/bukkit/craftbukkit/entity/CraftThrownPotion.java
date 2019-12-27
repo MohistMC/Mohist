@@ -16,14 +16,14 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 
 public class CraftThrownPotion extends CraftProjectile implements ThrownPotion {
-    public CraftThrownPotion(CraftServer server, EntityPotion entity) {
+    public CraftThrownPotion(CraftServer server, PotionEntity entity) {
         super(server, entity);
     }
 
     @Override
     public Collection<PotionEffect> getEffects() {
         ImmutableList.Builder<PotionEffect> builder = ImmutableList.builder();
-        for (MobEffect effect : PotionUtil.getEffects(getHandle().getItem())) {
+        for (EffectInstance effect : PotionUtil.getEffects(getHandle().getItem())) {
             builder.add(CraftPotionUtil.toBukkit(effect));
         }
         return builder.build();
@@ -46,8 +46,8 @@ public class CraftThrownPotion extends CraftProjectile implements ThrownPotion {
     }
 
     @Override
-    public EntityPotion getHandle() {
-        return (EntityPotion) entity;
+    public PotionEntity getHandle() {
+        return (PotionEntity) entity;
     }
 
     @Override

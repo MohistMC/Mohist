@@ -6,15 +6,15 @@ import org.bukkit.command.RemoteConsoleCommandSender;
 
 public class CraftRemoteConsoleCommandSender extends ServerCommandSender implements RemoteConsoleCommandSender {
 
-    private final RemoteControlCommandListener listener;
+    private final RConConsoleSource listener;
 
-    public CraftRemoteConsoleCommandSender(RemoteControlCommandListener listener) {
+    public CraftRemoteConsoleCommandSender(RConConsoleSource listener) {
         this.listener = listener;
     }
 
     @Override
     public void sendMessage(String message) {
-        listener.sendMessage(new ChatComponentText(message + "\n")); // Send a newline after each message, to preserve formatting.
+        listener.sendMessage(new StringTextComponent(message + "\n")); // Send a newline after each message, to preserve formatting.
     }
 
     @Override

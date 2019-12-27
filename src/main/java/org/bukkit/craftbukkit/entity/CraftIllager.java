@@ -6,13 +6,13 @@ import org.bukkit.entity.Illager;
 
 public class CraftIllager extends CraftRaider implements Illager {
 
-    public CraftIllager(CraftServer server, EntityIllagerAbstract entity) {
+    public CraftIllager(CraftServer server, AbstractIllagerEntity entity) {
         super(server, entity);
     }
 
     @Override
-    public EntityIllagerAbstract getHandle() {
-        return (EntityIllagerAbstract) super.getHandle();
+    public AbstractIllagerEntity getHandle() {
+        return (AbstractIllagerEntity) super.getHandle();
     }
 
     @Override

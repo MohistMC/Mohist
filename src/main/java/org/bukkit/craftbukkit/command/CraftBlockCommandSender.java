@@ -12,10 +12,10 @@ import org.bukkit.craftbukkit.util.CraftChatMessage;
  * Represents input from a command block
  */
 public class CraftBlockCommandSender extends ServerCommandSender implements BlockCommandSender {
-    private final CommandListenerWrapper block;
+    private final CommandSource block;
     private final TileEntity tile;
 
-    public CraftBlockCommandSender(CommandListenerWrapper commandBlockListenerAbstract, TileEntity tile) {
+    public CraftBlockCommandSender(CommandSource commandBlockListenerAbstract, TileEntity tile) {
         super();
         this.block = commandBlockListenerAbstract;
         this.tile = tile;
@@ -28,7 +28,7 @@ public class CraftBlockCommandSender extends ServerCommandSender implements Bloc
 
     @Override
     public void sendMessage(String message) {
-        for (IChatBaseComponent component : CraftChatMessage.fromString(message)) {
+        for (ITextComponent component : CraftChatMessage.fromString(message)) {
             block.base.sendMessage(component);
         }
     }
@@ -55,7 +55,7 @@ public class CraftBlockCommandSender extends ServerCommandSender implements Bloc
         throw new UnsupportedOperationException("Cannot change operator status of a block");
     }
 
-    public CommandListenerWrapper getWrapper() {
+    public CommandSource getWrapper() {
         return block;
     }
 }

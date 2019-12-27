@@ -13,7 +13,7 @@ public class CraftBlockInventoryHolder implements BlockInventoryHolder {
     private final Block block;
     private final Inventory inventory;
 
-    public CraftBlockInventoryHolder(GeneratorAccess world, BlockPosition pos, IInventory inv) {
+    public CraftBlockInventoryHolder(IWorld world, BlockPos pos, IInventory inv) {
         this.block = CraftBlock.at(world, pos);
         this.inventory = new CraftInventory(inv);
     }

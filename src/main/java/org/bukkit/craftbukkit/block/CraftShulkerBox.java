@@ -10,13 +10,13 @@ import org.bukkit.craftbukkit.inventory.CraftInventory;
 import org.bukkit.craftbukkit.util.CraftMagicNumbers;
 import org.bukkit.inventory.Inventory;
 
-public class CraftShulkerBox extends CraftLootable<TileEntityShulkerBox> implements ShulkerBox {
+public class CraftShulkerBox extends CraftLootable<TileShulkerEntityBox> implements ShulkerBox {
 
     public CraftShulkerBox(final Block block) {
-        super(block, TileEntityShulkerBox.class);
+        super(block, TileShulkerEntityBox.class);
     }
 
-    public CraftShulkerBox(final Material material, final TileEntityShulkerBox te) {
+    public CraftShulkerBox(final Material material, final TileShulkerEntityBox te) {
         super(material, te);
     }
 
@@ -38,6 +38,6 @@ public class CraftShulkerBox extends CraftLootable<TileEntityShulkerBox> impleme
     public DyeColor getColor() {
         net.minecraft.block.Block block = CraftMagicNumbers.getBlock(this.getType());
 
-        return DyeColor.getByWoolData((byte) ((BlockShulkerBox) block).color.getColorIndex());
+        return DyeColor.getByWoolData((byte) ((ShulkerBoxBlock) block).color.getColorIndex());
     }
 }

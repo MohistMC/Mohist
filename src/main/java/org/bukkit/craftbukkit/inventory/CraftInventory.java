@@ -449,13 +449,13 @@ public class CraftInventory implements Inventory {
             return inventory.getSize() >= 9 ? InventoryType.WORKBENCH : InventoryType.CRAFTING;
         } else if (inventory instanceof PlayerInventory) {
             return InventoryType.PLAYER;
-        } else if (inventory instanceof TileEntityDropper) {
+        } else if (inventory instanceof DropperTileEntity) {
             return InventoryType.DROPPER;
-        } else if (inventory instanceof TileEntityDispenser) {
+        } else if (inventory instanceof DispenserTileEntity) {
             return InventoryType.DISPENSER;
-        } else if (inventory instanceof TileEntityBlastFurnace) {
+        } else if (inventory instanceof BlastFurnaceTileEntity) {
             return InventoryType.BLAST_FURNACE;
-        } else if (inventory instanceof TileEntitySmoker) {
+        } else if (inventory instanceof SmokerTileEntity) {
             return InventoryType.SMOKER;
         } else if (inventory instanceof TileEntityFurnace) {
             return InventoryType.FURNACE;
@@ -467,7 +467,7 @@ public class CraftInventory implements Inventory {
             return ((CraftInventoryCustom.MinecraftInventory) inventory).getType();
         } else if (inventory instanceof InventoryEnderChest) {
             return InventoryType.ENDER_CHEST;
-        } else if (inventory instanceof InventoryMerchant) {
+        } else if (inventory instanceof MerchantInventory) {
             return InventoryType.MERCHANT;
         } else if (this instanceof CraftInventoryBeacon) {
             return InventoryType.BEACON;
@@ -475,9 +475,9 @@ public class CraftInventory implements Inventory {
            return InventoryType.ANVIL;
         } else if (inventory instanceof IHopper) {
             return InventoryType.HOPPER;
-        } else if (inventory instanceof TileEntityShulkerBox) {
+        } else if (inventory instanceof TileShulkerEntityBox) {
             return InventoryType.SHULKER_BOX;
-        } else if (inventory instanceof TileEntityBarrel) {
+        } else if (inventory instanceof BarrelTileEntity) {
             return InventoryType.BARREL;
         } else if (inventory instanceof TileEntityLectern.LecternInventory) {
             return InventoryType.LECTERN;

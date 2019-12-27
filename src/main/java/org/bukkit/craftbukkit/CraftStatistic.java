@@ -15,91 +15,91 @@ import org.bukkit.craftbukkit.util.CraftMagicNumbers;
 import org.bukkit.entity.EntityType;
 
 public enum CraftStatistic {
-    DAMAGE_DEALT(StatisticList.DAMAGE_DEALT),
-    DAMAGE_TAKEN(StatisticList.DAMAGE_TAKEN),
-    DEATHS(StatisticList.DEATHS),
-    MOB_KILLS(StatisticList.MOB_KILLS),
-    PLAYER_KILLS(StatisticList.PLAYER_KILLS),
-    FISH_CAUGHT(StatisticList.FISH_CAUGHT),
-    ANIMALS_BRED(StatisticList.ANIMALS_BRED),
-    LEAVE_GAME(StatisticList.LEAVE_GAME),
-    JUMP(StatisticList.JUMP),
-    DROP_COUNT(StatisticList.DROP),
-    DROP(new MinecraftKey("dropped")),
-    PICKUP(new MinecraftKey("picked_up")),
-    PLAY_ONE_MINUTE(StatisticList.PLAY_ONE_MINUTE),
-    WALK_ONE_CM(StatisticList.WALK_ONE_CM),
-    WALK_ON_WATER_ONE_CM(StatisticList.WALK_ON_WATER_ONE_CM),
-    FALL_ONE_CM(StatisticList.FALL_ONE_CM),
-    SNEAK_TIME(StatisticList.SNEAK_TIME),
-    CLIMB_ONE_CM(StatisticList.CLIMB_ONE_CM),
-    FLY_ONE_CM(StatisticList.FLY_ONE_CM),
-    WALK_UNDER_WATER_ONE_CM(StatisticList.WALK_UNDER_WATER_ONE_CM),
-    MINECART_ONE_CM(StatisticList.MINECART_ONE_CM),
-    BOAT_ONE_CM(StatisticList.BOAT_ONE_CM),
-    PIG_ONE_CM(StatisticList.PIG_ONE_CM),
-    HORSE_ONE_CM(StatisticList.HORSE_ONE_CM),
-    SPRINT_ONE_CM(StatisticList.SPRINT_ONE_CM),
-    CROUCH_ONE_CM(StatisticList.CROUCH_ONE_CM),
-    AVIATE_ONE_CM(StatisticList.AVIATE_ONE_CM),
-    MINE_BLOCK(new MinecraftKey("mined")),
-    USE_ITEM(new MinecraftKey("used")),
-    BREAK_ITEM(new MinecraftKey("broken")),
-    CRAFT_ITEM(new MinecraftKey("crafted")),
-    KILL_ENTITY(new MinecraftKey("killed")),
-    ENTITY_KILLED_BY(new MinecraftKey("killed_by")),
-    TIME_SINCE_DEATH(StatisticList.TIME_SINCE_DEATH),
-    TALKED_TO_VILLAGER(StatisticList.TALKED_TO_VILLAGER),
-    TRADED_WITH_VILLAGER(StatisticList.TRADED_WITH_VILLAGER),
-    CAKE_SLICES_EATEN(StatisticList.EAT_CAKE_SLICE),
-    CAULDRON_FILLED(StatisticList.FILL_CAULDRON),
-    CAULDRON_USED(StatisticList.USE_CAULDRON),
-    ARMOR_CLEANED(StatisticList.CLEAN_ARMOR),
-    BANNER_CLEANED(StatisticList.CLEAN_BANNER),
-    BREWINGSTAND_INTERACTION(StatisticList.INTERACT_WITH_BREWINGSTAND),
-    BEACON_INTERACTION(StatisticList.INTERACT_WITH_BEACON),
-    DROPPER_INSPECTED(StatisticList.INSPECT_DROPPER),
-    HOPPER_INSPECTED(StatisticList.INSPECT_HOPPER),
-    DISPENSER_INSPECTED(StatisticList.INSPECT_DISPENSER),
-    NOTEBLOCK_PLAYED(StatisticList.PLAY_NOTEBLOCK),
-    NOTEBLOCK_TUNED(StatisticList.TUNE_NOTEBLOCK),
-    FLOWER_POTTED(StatisticList.POT_FLOWER),
-    TRAPPED_CHEST_TRIGGERED(StatisticList.TRIGGER_TRAPPED_CHEST),
-    ENDERCHEST_OPENED(StatisticList.OPEN_ENDERCHEST),
-    ITEM_ENCHANTED(StatisticList.ENCHANT_ITEM),
-    RECORD_PLAYED(StatisticList.PLAY_RECORD),
-    FURNACE_INTERACTION(StatisticList.INTERACT_WITH_FURNACE),
-    CRAFTING_TABLE_INTERACTION(StatisticList.INTERACT_WITH_CRAFTING_TABLE),
-    CHEST_OPENED(StatisticList.OPEN_CHEST),
-    SLEEP_IN_BED(StatisticList.SLEEP_IN_BED),
-    SHULKER_BOX_OPENED(StatisticList.OPEN_SHULKER_BOX),
-    TIME_SINCE_REST(StatisticList.TIME_SINCE_REST),
-    SWIM_ONE_CM(StatisticList.SWIM_ONE_CM),
-    DAMAGE_DEALT_ABSORBED(StatisticList.DAMAGE_DEALT_ABSORBED),
-    DAMAGE_DEALT_RESISTED(StatisticList.DAMAGE_DEALT_RESISTED),
-    DAMAGE_BLOCKED_BY_SHIELD(StatisticList.DAMAGE_BLOCKED_BY_SHIELD),
-    DAMAGE_ABSORBED(StatisticList.DAMAGE_ABSORBED),
-    DAMAGE_RESISTED(StatisticList.DAMAGE_RESISTED),
-    CLEAN_SHULKER_BOX(StatisticList.CLEAN_SHULKER_BOX),
-    OPEN_BARREL(StatisticList.OPEN_BARREL),
-    INTERACT_WITH_BLAST_FURNACE(StatisticList.INTERACT_WITH_BLAST_FURNACE),
-    INTERACT_WITH_SMOKER(StatisticList.INTERACT_WITH_SMOKER),
-    INTERACT_WITH_LECTERN(StatisticList.INTERACT_WITH_LECTERN),
-    INTERACT_WITH_CAMPFIRE(StatisticList.INTERACT_WITH_CAMPFIRE),
-    INTERACT_WITH_CARTOGRAPHY_TABLE(StatisticList.INTERACT_WITH_CARTOGRAPHY_TABLE),
-    INTERACT_WITH_LOOM(StatisticList.INTERACT_WITH_LOOM),
-    INTERACT_WITH_STONECUTTER(StatisticList.INTERACT_WITH_STONECUTTER),
-    BELL_RING(StatisticList.BELL_RING),
-    RAID_TRIGGER(StatisticList.RAID_TRIGGER),
-    RAID_WIN(StatisticList.RAID_WIN),
-    INTERACT_WITH_ANVIL(StatisticList.INTERACT_WITH_ANVIL),
-    INTERACT_WITH_GRINDSTONE(StatisticList.INTERACT_WITH_GRINDSTONE);
-    private final MinecraftKey minecraftKey;
+    DAMAGE_DEALT(Stats.DAMAGE_DEALT),
+    DAMAGE_TAKEN(Stats.DAMAGE_TAKEN),
+    DEATHS(Stats.DEATHS),
+    MOB_KILLS(Stats.MOB_KILLS),
+    PLAYER_KILLS(Stats.PLAYER_KILLS),
+    FISH_CAUGHT(Stats.FISH_CAUGHT),
+    ANIMALS_BRED(Stats.ANIMALS_BRED),
+    LEAVE_GAME(Stats.LEAVE_GAME),
+    JUMP(Stats.JUMP),
+    DROP_COUNT(Stats.DROP),
+    DROP(new ResourceLocation("dropped")),
+    PICKUP(new ResourceLocation("picked_up")),
+    PLAY_ONE_MINUTE(Stats.PLAY_ONE_MINUTE),
+    WALK_ONE_CM(Stats.WALK_ONE_CM),
+    WALK_ON_WATER_ONE_CM(Stats.WALK_ON_WATER_ONE_CM),
+    FALL_ONE_CM(Stats.FALL_ONE_CM),
+    SNEAK_TIME(Stats.SNEAK_TIME),
+    CLIMB_ONE_CM(Stats.CLIMB_ONE_CM),
+    FLY_ONE_CM(Stats.FLY_ONE_CM),
+    WALK_UNDER_WATER_ONE_CM(Stats.WALK_UNDER_WATER_ONE_CM),
+    MINECART_ONE_CM(Stats.MINECART_ONE_CM),
+    BOAT_ONE_CM(Stats.BOAT_ONE_CM),
+    PIG_ONE_CM(Stats.PIG_ONE_CM),
+    HORSE_ONE_CM(Stats.HORSE_ONE_CM),
+    SPRINT_ONE_CM(Stats.SPRINT_ONE_CM),
+    CROUCH_ONE_CM(Stats.CROUCH_ONE_CM),
+    AVIATE_ONE_CM(Stats.AVIATE_ONE_CM),
+    MINE_BLOCK(new ResourceLocation("mined")),
+    USE_ITEM(new ResourceLocation("used")),
+    BREAK_ITEM(new ResourceLocation("broken")),
+    CRAFT_ITEM(new ResourceLocation("crafted")),
+    KILL_ENTITY(new ResourceLocation("killed")),
+    ENTITY_KILLED_BY(new ResourceLocation("killed_by")),
+    TIME_SINCE_DEATH(Stats.TIME_SINCE_DEATH),
+    TALKED_TO_VILLAGER(Stats.TALKED_TO_VILLAGER),
+    TRADED_WITH_VILLAGER(Stats.TRADED_WITH_VILLAGER),
+    CAKE_SLICES_EATEN(Stats.EAT_CAKE_SLICE),
+    CAULDRON_FILLED(Stats.FILL_CAULDRON),
+    CAULDRON_USED(Stats.USE_CAULDRON),
+    ARMOR_CLEANED(Stats.CLEAN_ARMOR),
+    BANNER_CLEANED(Stats.CLEAN_BANNER),
+    BREWINGSTAND_INTERACTION(Stats.INTERACT_WITH_BREWINGSTAND),
+    BEACON_INTERACTION(Stats.INTERACT_WITH_BEACON),
+    DROPPER_INSPECTED(Stats.INSPECT_DROPPER),
+    HOPPER_INSPECTED(Stats.INSPECT_HOPPER),
+    DISPENSER_INSPECTED(Stats.INSPECT_DISPENSER),
+    NOTEBLOCK_PLAYED(Stats.PLAY_NOTEBLOCK),
+    NOTEBLOCK_TUNED(Stats.TUNE_NOTEBLOCK),
+    FLOWER_POTTED(Stats.POT_FLOWER),
+    TRAPPED_CHEST_TRIGGERED(Stats.TRIGGER_TRAPPED_CHEST),
+    ENDERCHEST_OPENED(Stats.OPEN_ENDERCHEST),
+    ITEM_ENCHANTED(Stats.ENCHANT_ITEM),
+    RECORD_PLAYED(Stats.PLAY_RECORD),
+    FURNACE_INTERACTION(Stats.INTERACT_WITH_FURNACE),
+    CRAFTING_TABLE_INTERACTION(Stats.INTERACT_WITH_CRAFTING_TABLE),
+    CHEST_OPENED(Stats.OPEN_CHEST),
+    SLEEP_IN_BED(Stats.SLEEP_IN_BED),
+    SHULKER_BOX_OPENED(Stats.OPEN_SHULKER_BOX),
+    TIME_SINCE_REST(Stats.TIME_SINCE_REST),
+    SWIM_ONE_CM(Stats.SWIM_ONE_CM),
+    DAMAGE_DEALT_ABSORBED(Stats.DAMAGE_DEALT_ABSORBED),
+    DAMAGE_DEALT_RESISTED(Stats.DAMAGE_DEALT_RESISTED),
+    DAMAGE_BLOCKED_BY_SHIELD(Stats.DAMAGE_BLOCKED_BY_SHIELD),
+    DAMAGE_ABSORBED(Stats.DAMAGE_ABSORBED),
+    DAMAGE_RESISTED(Stats.DAMAGE_RESISTED),
+    CLEAN_SHULKER_BOX(Stats.CLEAN_SHULKER_BOX),
+    OPEN_BARREL(Stats.OPEN_BARREL),
+    INTERACT_WITH_BLAST_FURNACE(Stats.INTERACT_WITH_BLAST_FURNACE),
+    INTERACT_WITH_SMOKER(Stats.INTERACT_WITH_SMOKER),
+    INTERACT_WITH_LECTERN(Stats.INTERACT_WITH_LECTERN),
+    INTERACT_WITH_CAMPFIRE(Stats.INTERACT_WITH_CAMPFIRE),
+    INTERACT_WITH_CARTOGRAPHY_TABLE(Stats.INTERACT_WITH_CARTOGRAPHY_TABLE),
+    INTERACT_WITH_LOOM(Stats.INTERACT_WITH_LOOM),
+    INTERACT_WITH_STONECUTTER(Stats.INTERACT_WITH_STONECUTTER),
+    BELL_RING(Stats.BELL_RING),
+    RAID_TRIGGER(Stats.RAID_TRIGGER),
+    RAID_WIN(Stats.RAID_WIN),
+    INTERACT_WITH_ANVIL(Stats.INTERACT_WITH_ANVIL),
+    INTERACT_WITH_GRINDSTONE(Stats.INTERACT_WITH_GRINDSTONE);
+    private final ResourceLocation minecraftKey;
     private final org.bukkit.Statistic bukkit;
-    private static final BiMap<MinecraftKey, org.bukkit.Statistic> statistics;
+    private static final BiMap<ResourceLocation, org.bukkit.Statistic> statistics;
 
     static {
-        ImmutableBiMap.Builder<MinecraftKey, org.bukkit.Statistic> statisticBuilder = ImmutableBiMap.builder();
+        ImmutableBiMap.Builder<ResourceLocation, org.bukkit.Statistic> statisticBuilder = ImmutableBiMap.builder();
         for (CraftStatistic statistic : CraftStatistic.values()) {
             statisticBuilder.put(statistic.minecraftKey, statistic.bukkit);
         }
@@ -107,7 +107,7 @@ public enum CraftStatistic {
         statistics = statisticBuilder.build();
     }
 
-    private CraftStatistic(MinecraftKey minecraftKey) {
+    private CraftStatistic(ResourceLocation minecraftKey) {
         this.minecraftKey = minecraftKey;
 
         this.bukkit = org.bukkit.Statistic.valueOf(this.name());
@@ -115,11 +115,11 @@ public enum CraftStatistic {
     }
 
     public static org.bukkit.Statistic getBukkitStatistic(net.minecraft.stats.Stat<?> statistic) {
-        IRegistry statRegistry = statistic.getWrapper().getRegistry();
-        MinecraftKey nmsKey = IRegistry.STATS.getKey(statistic.getWrapper());
+        Registry statRegistry = statistic.getWrapper().getRegistry();
+        ResourceLocation nmsKey = Registry.STATS.getKey(statistic.getWrapper());
 
-        if (statRegistry == IRegistry.CUSTOM_STAT) {
-            nmsKey = (MinecraftKey) statistic.b();
+        if (statRegistry == Registry.CUSTOM_STAT) {
+            nmsKey = (ResourceLocation) statistic.b();
         }
 
         return statistics.get(nmsKey);
@@ -128,7 +128,7 @@ public enum CraftStatistic {
     public static net.minecraft.stats.Stat getNMSStatistic(org.bukkit.Statistic bukkit) {
         Preconditions.checkArgument(bukkit.getType() == Statistic.Type.UNTYPED, "This method only accepts untyped statistics");
 
-        net.minecraft.stats.Stat<MinecraftKey> nms = StatisticList.CUSTOM.b(statistics.inverse().get(bukkit));
+        net.minecraft.stats.Stat<ResourceLocation> nms = Stats.CUSTOM.b(statistics.inverse().get(bukkit));
         Preconditions.checkArgument(nms != null, "NMS Statistic %s does not exist", bukkit);
 
         return nms;
@@ -137,22 +137,22 @@ public enum CraftStatistic {
     public static net.minecraft.stats.Stat getMaterialStatistic(org.bukkit.Statistic stat, Material material) {
         try {
             if (stat == Statistic.MINE_BLOCK) {
-                return StatisticList.BLOCK_MINED.b(CraftMagicNumbers.getBlock(material));
+                return Stats.BLOCK_MINED.b(CraftMagicNumbers.getBlock(material));
             }
             if (stat == Statistic.CRAFT_ITEM) {
-                return StatisticList.ITEM_CRAFTED.b(CraftMagicNumbers.getItem(material));
+                return Stats.ITEM_CRAFTED.b(CraftMagicNumbers.getItem(material));
             }
             if (stat == Statistic.USE_ITEM) {
-                return StatisticList.ITEM_USED.b(CraftMagicNumbers.getItem(material));
+                return Stats.ITEM_USED.b(CraftMagicNumbers.getItem(material));
             }
             if (stat == Statistic.BREAK_ITEM) {
-                return StatisticList.ITEM_BROKEN.b(CraftMagicNumbers.getItem(material));
+                return Stats.ITEM_BROKEN.b(CraftMagicNumbers.getItem(material));
             }
             if (stat == Statistic.PICKUP) {
-                return StatisticList.ITEM_PICKED_UP.b(CraftMagicNumbers.getItem(material));
+                return Stats.ITEM_PICKED_UP.b(CraftMagicNumbers.getItem(material));
             }
             if (stat == Statistic.DROP) {
-                return StatisticList.ITEM_DROPPED.b(CraftMagicNumbers.getItem(material));
+                return Stats.ITEM_DROPPED.b(CraftMagicNumbers.getItem(material));
             }
         } catch (ArrayIndexOutOfBoundsException e) {
             return null;
@@ -162,7 +162,7 @@ public enum CraftStatistic {
 
     public static net.minecraft.stats.Stat getEntityStatistic(org.bukkit.Statistic stat, EntityType entity) {
         if (entity.getName() != null) {
-            EntityTypes<?> nmsEntity = IRegistry.ENTITY_TYPE.get(new MinecraftKey(entity.getName()));
+            EntityType<?> nmsEntity = Registry.ENTITY_TYPE.get(new ResourceLocation(entity.getName()));
 
             if (stat == org.bukkit.Statistic.KILL_ENTITY) {
                 return net.minecraft.stats.Stats.ENTITY_KILLED.b(nmsEntity);
@@ -174,8 +174,8 @@ public enum CraftStatistic {
         return null;
     }
 
-    public static EntityType getEntityTypeFromStatistic(net.minecraft.stats.Stat<EntityTypes<?>> statistic) {
-        MinecraftKey name = EntityTypes.getName(statistic.b());
+    public static EntityType getEntityTypeFromStatistic(net.minecraft.stats.Stat<EntityType<?>> statistic) {
+        ResourceLocation name = EntityType.getName(statistic.b());
         return EntityType.fromName(name.getKey());
     }
 

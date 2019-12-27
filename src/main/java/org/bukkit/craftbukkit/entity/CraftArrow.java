@@ -13,7 +13,7 @@ import org.bukkit.projectiles.ProjectileSource;
 
 public class CraftArrow extends AbstractProjectile implements AbstractArrow {
 
-    public CraftArrow(CraftServer server, EntityArrow entity) {
+    public CraftArrow(CraftServer server, AbstractArrowEntity entity) {
         super(server, entity);
     }
 
@@ -87,7 +87,7 @@ public class CraftArrow extends AbstractProjectile implements AbstractArrow {
             return null;
         }
 
-        BlockPosition pos = getHandle().getChunkCoordinates();
+        BlockPos pos = getHandle().getChunkCoordinates();
         return getWorld().getBlockAt(pos.getX(), pos.getY(), pos.getZ());
     }
 
@@ -99,20 +99,20 @@ public class CraftArrow extends AbstractProjectile implements AbstractArrow {
     @Override
     public void setPickupStatus(PickupStatus status) {
         Preconditions.checkNotNull(status, "status");
-        getHandle().fromPlayer = EntityArrow.PickupStatus.a(status.ordinal());
+        getHandle().fromPlayer = AbstractArrowEntity.PickupStatus.a(status.ordinal());
     }
 
     @Override
     public void setTicksLived(int value) {
         super.setTicksLived(value);
 
-        // Second field for EntityArrow
-        getHandle().despawnCounter = value;
+        // Second field for AbstractArrowEntity
+        getHandle().despawnIStatFormatter = value;
     }
 
     @Override
-    public EntityArrow getHandle() {
-        return (EntityArrow) entity;
+    public AbstractArrowEntity getHandle() {
+        return (AbstractArrowEntity) entity;
     }
 
     @Override

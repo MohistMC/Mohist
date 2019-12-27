@@ -189,7 +189,7 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
     public void sendRawMessage(String message) {
         if (getHandle().playerConnection == null) return;
 
-        for (IChatBaseComponent component : CraftChatMessage.fromString(message)) {
+        for (ITextComponent component : CraftChatMessage.fromString(message)) {
             getHandle().playerConnection.sendPacket(new PacketPlayOutChat(component));
         }
     }
@@ -236,8 +236,8 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
         }
     }
 
-    private IChatBaseComponent playerListHeader;
-    private IChatBaseComponent playerListFooter;
+    private ITextComponent playerListHeader;
+    private ITextComponent playerListFooter;
 
     @Override
     public String getPlayerListHeader() {
@@ -368,7 +368,7 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
         }
 
         float f = (float) Math.pow(2.0D, (note - 12.0D) / 12.0D);
-        getHandle().playerConnection.sendPacket(new PacketPlayOutNamedSoundEffect(CraftSound.getSoundEffect("block.note_block." + instrumentName), net.minecraft.util.SoundCategory.RECORDS, loc.getBlockX(), loc.getBlockY(), loc.getBlockZ(), 3.0f, f));
+        getHandle().playerConnection.sendPacket(new SPlaySoundEffectPacket(CraftSound.getSoundEffect("block.note_block." + instrumentName), net.minecraft.util.SoundCategory.RECORDS, loc.getBlockX(), loc.getBlockY(), loc.getBlockZ(), 3.0f, f));
     }
 
     @Override
@@ -430,7 +430,7 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
                 break;
         }
         float f = (float) Math.pow(2.0D, (note.getId() - 12.0D) / 12.0D);
-        getHandle().playerConnection.sendPacket(new PacketPlayOutNamedSoundEffect(CraftSound.getSoundEffect("block.note_block." + instrumentName), net.minecraft.util.SoundCategory.RECORDS, loc.getBlockX(), loc.getBlockY(), loc.getBlockZ(), 3.0f, f));
+        getHandle().playerConnection.sendPacket(new SPlaySoundEffectPacket(CraftSound.getSoundEffect("block.note_block." + instrumentName), net.minecraft.util.SoundCategory.RECORDS, loc.getBlockX(), loc.getBlockY(), loc.getBlockZ(), 3.0f, f));
     }
 
     @Override
@@ -447,7 +447,7 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
     public void playSound(Location loc, Sound sound, org.bukkit.SoundCategory category, float volume, float pitch) {
         if (loc == null || sound == null || category == null || getHandle().playerConnection == null) return;
 
-        PacketPlayOutNamedSoundEffect packet = new PacketPlayOutNamedSoundEffect(CraftSound.getSoundEffect(CraftSound.getSound(sound)), net.minecraft.util.SoundCategory.valueOf(category.name()), loc.getX(), loc.getY(), loc.getZ(), volume, pitch);
+        SPlaySoundEffectPacket packet = new SPlaySoundEffectPacket(CraftSound.getSoundEffect(CraftSound.getSound(sound)), net.minecraft.util.SoundCategory.valueOf(category.name()), loc.getX(), loc.getY(), loc.getZ(), volume, pitch);
         getHandle().playerConnection.sendPacket(packet);
     }
 
@@ -455,7 +455,7 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
     public void playSound(Location loc, String sound, org.bukkit.SoundCategory category, float volume, float pitch) {
         if (loc == null || sound == null || category == null || getHandle().playerConnection == null) return;
 
-        PacketPlayOutCustomSoundEffect packet = new PacketPlayOutCustomSoundEffect(new MinecraftKey(sound), net.minecraft.util.SoundCategory.valueOf(category.name()), new Vec3D(loc.getX(), loc.getY(), loc.getZ()), volume, pitch);
+        SPlaySoundPacket packet = new SPlaySoundPacket(new MinecraftKey(sound), net.minecraft.util.SoundCategory.valueOf(category.name()), new Vec3D(loc.getX(), loc.getY(), loc.getZ()), volume, pitch);
         getHandle().playerConnection.sendPacket(packet);
     }
 
@@ -543,7 +543,7 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
             throw new IllegalArgumentException("Must have at least 4 lines");
         }
 
-        IChatBaseComponent[] components = CraftSign.sanitizeLines(lines);
+        ITextComponent[] components = CraftSign.sanitizeLines(lines);
         TileEntitySign sign = new TileEntitySign();
         sign.setPosition(new BlockPosition(loc.getBlockX(), loc.getBlockY(), loc.getBlockZ()));
         sign.setColor(EnumColor.fromColorIndex(dyeColor.getWoolData()));
@@ -1413,7 +1413,7 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
     @Override
     public void setScoreboard(Scoreboard scoreboard) {
         Validate.notNull(scoreboard, "Scoreboard cannot be null");
-        PlayerConnection playerConnection = getHandle().playerConnection;
+        ServerPlayNetHandler playerConnection = getHandle().playerConnection;
         if (playerConnection == null) {
             throw new IllegalStateException("Cannot set scoreboard yet");
         }

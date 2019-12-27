@@ -8,7 +8,7 @@ import org.bukkit.entity.EnderCrystal;
 import org.bukkit.entity.EntityType;
 
 public class CraftEnderCrystal extends CraftEntity implements EnderCrystal {
-    public CraftEnderCrystal(CraftServer server, EntityEnderCrystal entity) {
+    public CraftEnderCrystal(CraftServer server, EnderCrystalEntity entity) {
         super(server, entity);
     }
 
@@ -24,24 +24,24 @@ public class CraftEnderCrystal extends CraftEntity implements EnderCrystal {
 
     @Override
     public Location getBeamTarget() {
-        BlockPosition pos = getHandle().getBeamTarget();
+        BlockPos pos = getHandle().getBeamTarget();
         return pos == null ? null : new Location(getWorld(), pos.getX(), pos.getY(), pos.getZ());
     }
 
     @Override
     public void setBeamTarget(Location location) {
         if (location == null) {
-            getHandle().setBeamTarget((BlockPosition) null);
+            getHandle().setBeamTarget((BlockPos) null);
         } else if (location.getWorld() != getWorld()) {
             throw new IllegalArgumentException("Cannot set beam target location to different world");
         } else {
-            getHandle().setBeamTarget(new BlockPosition(location.getBlockX(), location.getBlockY(), location.getBlockZ()));
+            getHandle().setBeamTarget(new BlockPos(location.getBlockX(), location.getBlockY(), location.getBlockZ()));
         }
     }
 
     @Override
-    public EntityEnderCrystal getHandle() {
-        return (EntityEnderCrystal) entity;
+    public EnderCrystalEntity getHandle() {
+        return (EnderCrystalEntity) entity;
     }
 
     @Override

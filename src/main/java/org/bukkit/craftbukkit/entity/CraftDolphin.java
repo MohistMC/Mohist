@@ -7,13 +7,13 @@ import org.bukkit.entity.EntityType;
 
 public class CraftDolphin extends CraftWaterMob implements Dolphin {
 
-    public CraftDolphin(CraftServer server, EntityDolphin entity) {
+    public CraftDolphin(CraftServer server, DolphinEntity entity) {
         super(server, entity);
     }
 
     @Override
-    public EntityDolphin getHandle() {
-        return (EntityDolphin) super.getHandle();
+    public DolphinEntity getHandle() {
+        return (DolphinEntity) super.getHandle();
     }
 
     @Override

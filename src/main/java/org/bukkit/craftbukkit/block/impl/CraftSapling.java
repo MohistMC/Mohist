@@ -15,7 +15,7 @@ public final class CraftSapling extends org.bukkit.craftbukkit.block.data.CraftB
 
     // org.bukkit.craftbukkit.block.data.type.CraftSapling
 
-    private static final net.minecraft.state.PropertyInteger STAGE = getInteger(net.minecraft.block.BlockSapling.class, "stage");
+    private static final net.minecraft.state.PropertyInteger STAGE = getInteger(net.minecraft.block.SaplingBlock.class, "stage");
 
     @Override
     public int getStage() {

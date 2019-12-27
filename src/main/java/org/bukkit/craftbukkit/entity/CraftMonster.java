@@ -6,13 +6,13 @@ import org.bukkit.entity.Monster;
 
 public class CraftMonster extends CraftCreature implements Monster {
 
-    public CraftMonster(CraftServer server, EntityMonster entity) {
+    public CraftMonster(CraftServer server, MonsterEntity entity) {
         super(server, entity);
     }
 
     @Override
-    public EntityMonster getHandle() {
-        return (EntityMonster) entity;
+    public MonsterEntity getHandle() {
+        return (MonsterEntity) entity;
     }
 
     @Override

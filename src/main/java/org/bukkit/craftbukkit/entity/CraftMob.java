@@ -10,13 +10,13 @@ import org.bukkit.entity.Mob;
 import org.bukkit.loot.LootTable;
 
 public abstract class CraftMob extends CraftLivingEntity implements Mob {
-    public CraftMob(CraftServer server, EntityInsentient entity) {
+    public CraftMob(CraftServer server, MobEntity entity) {
         super(server, entity);
     }
 
     @Override
     public void setTarget(LivingEntity target) {
-        EntityInsentient entity = getHandle();
+        MobEntity entity = getHandle();
         if (target == null) {
             entity.setGoalTarget(null, null, false);
         } else if (target instanceof CraftLivingEntity) {
@@ -32,8 +32,8 @@ public abstract class CraftMob extends CraftLivingEntity implements Mob {
     }
 
     @Override
-    public EntityInsentient getHandle() {
-        return (EntityInsentient) entity;
+    public MobEntity getHandle() {
+        return (MobEntity) entity;
     }
 
     @Override

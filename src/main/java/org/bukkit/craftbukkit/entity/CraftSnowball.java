@@ -6,13 +6,13 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Snowball;
 
 public class CraftSnowball extends CraftProjectile implements Snowball {
-    public CraftSnowball(CraftServer server, EntitySnowball entity) {
+    public CraftSnowball(CraftServer server, SnowballEntity entity) {
         super(server, entity);
     }
 
     @Override
-    public EntitySnowball getHandle() {
-        return (EntitySnowball) entity;
+    public SnowballEntity getHandle() {
+        return (SnowballEntity) entity;
     }
 
     @Override

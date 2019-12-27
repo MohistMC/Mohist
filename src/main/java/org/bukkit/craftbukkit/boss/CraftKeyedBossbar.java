@@ -7,7 +7,7 @@ import org.bukkit.craftbukkit.util.CraftNamespacedKey;
 
 public class CraftKeyedBossbar extends CraftBossBar implements KeyedBossBar {
 
-    public CraftKeyedBossbar(BossBattleCustom bossBattleCustom) {
+    public CraftKeyedBossbar(BossInfoCustom bossBattleCustom) {
         super(bossBattleCustom);
     }
 
@@ -17,7 +17,7 @@ public class CraftKeyedBossbar extends CraftBossBar implements KeyedBossBar {
     }
 
     @Override
-    public BossBattleCustom getHandle() {
-        return (BossBattleCustom) super.getHandle();
+    public BossInfoCustom getHandle() {
+        return (BossInfoCustom) super.getHandle();
     }
 }

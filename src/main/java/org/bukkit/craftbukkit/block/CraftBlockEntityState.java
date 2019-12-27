@@ -55,7 +55,7 @@ public class CraftBlockEntityState<T extends TileEntity> extends CraftBlockState
 
     // copies the TileEntity-specific data, retains the position
     private void copyData(T from, T to) {
-        BlockPosition pos = to.getPosition();
+        BlockPos pos = to.getPosition();
         NBTTagCompound nbtTagCompound = from.save(new NBTTagCompound());
         to.load(nbtTagCompound);
 

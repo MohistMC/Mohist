@@ -16,7 +16,7 @@ public final class CraftCobbleWall extends org.bukkit.craftbukkit.block.data.Cra
     // org.bukkit.craftbukkit.block.data.CraftMultipleFacing
 
     private static final net.minecraft.state.PropertyBoolean[] FACES = new net.minecraft.state.PropertyBoolean[]{
-        getBoolean(net.minecraft.block.BlockCobbleWall.class, "north", true), getBoolean(net.minecraft.block.BlockCobbleWall.class, "east", true), getBoolean(net.minecraft.block.BlockCobbleWall.class, "south", true), getBoolean(net.minecraft.block.BlockCobbleWall.class, "west", true), getBoolean(net.minecraft.block.BlockCobbleWall.class, "up", true), getBoolean(net.minecraft.block.BlockCobbleWall.class, "down", true)
+        getBoolean(net.minecraft.block.WallBlock.class, "north", true), getBoolean(net.minecraft.block.WallBlock.class, "east", true), getBoolean(net.minecraft.block.WallBlock.class, "south", true), getBoolean(net.minecraft.block.WallBlock.class, "west", true), getBoolean(net.minecraft.block.WallBlock.class, "up", true), getBoolean(net.minecraft.block.WallBlock.class, "down", true)
     };
 
     @Override
@@ -57,7 +57,7 @@ public final class CraftCobbleWall extends org.bukkit.craftbukkit.block.data.Cra
 
     // org.bukkit.craftbukkit.block.data.CraftWaterlogged
 
-    private static final net.minecraft.state.PropertyBoolean WATERLOGGED = getBoolean(net.minecraft.block.BlockCobbleWall.class, "waterlogged");
+    private static final net.minecraft.state.PropertyBoolean WATERLOGGED = getBoolean(net.minecraft.block.WallBlock.class, "waterlogged");
 
     @Override
     public boolean isWaterlogged() {

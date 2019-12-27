@@ -7,13 +7,13 @@ import org.bukkit.entity.Vindicator;
 
 public class CraftVindicator extends CraftIllager implements Vindicator {
 
-    public CraftVindicator(CraftServer server, EntityVindicator entity) {
+    public CraftVindicator(CraftServer server, VindicatorEntity entity) {
         super(server, entity);
     }
 
     @Override
-    public EntityVindicator getHandle() {
-        return (EntityVindicator) super.getHandle();
+    public VindicatorEntity getHandle() {
+        return (VindicatorEntity) super.getHandle();
     }
 
     @Override

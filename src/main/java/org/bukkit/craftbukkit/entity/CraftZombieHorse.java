@@ -8,7 +8,7 @@ import org.bukkit.entity.ZombieHorse;
 
 public class CraftZombieHorse extends CraftAbstractHorse implements ZombieHorse {
 
-    public CraftZombieHorse(CraftServer server, EntityHorseZombie entity) {
+    public CraftZombieHorse(CraftServer server, HorseZombieEntity entity) {
         super(server, entity);
     }
 

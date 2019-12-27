@@ -12,19 +12,19 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.material.MaterialData;
 
 public class CraftEnderman extends CraftMonster implements Enderman {
-    public CraftEnderman(CraftServer server, EntityEnderman entity) {
+    public CraftEnderman(CraftServer server, EndermanEntity entity) {
         super(server, entity);
     }
 
     @Override
     public MaterialData getCarriedMaterial() {
-        IBlockData blockData = getHandle().getCarried();
+        BlockState blockData = getHandle().getCarried();
         return (blockData == null) ? Material.AIR.getNewData((byte) 0) : CraftMagicNumbers.getMaterial(blockData);
     }
 
     @Override
     public BlockData getCarriedBlock() {
-        IBlockData blockData = getHandle().getCarried();
+        BlockState blockData = getHandle().getCarried();
         return (blockData == null) ? null : CraftBlockData.fromData(blockData);
     }
 
@@ -39,8 +39,8 @@ public class CraftEnderman extends CraftMonster implements Enderman {
     }
 
     @Override
-    public EntityEnderman getHandle() {
-        return (EntityEnderman) entity;
+    public EndermanEntity getHandle() {
+        return (EndermanEntity) entity;
     }
 
     @Override

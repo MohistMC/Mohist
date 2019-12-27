@@ -15,11 +15,11 @@ import org.bukkit.persistence.PersistentDataType;
 
 public final class CraftPersistentDataContainer implements PersistentDataContainer {
 
-    private final Map<String, NBTBase> customDataTags = new HashMap<>();
+    private final Map<String, INBT> customDataTags = new HashMap<>();
     private final CraftPersistentDataTypeRegistry registry;
     private final CraftPersistentDataAdapterContext adapterContext;
 
-    public CraftPersistentDataContainer(Map<String, NBTBase> customTags, CraftPersistentDataTypeRegistry registry) {
+    public CraftPersistentDataContainer(Map<String, INBT> customTags, CraftPersistentDataTypeRegistry registry) {
         this(registry);
         this.customDataTags.putAll(customTags);
     }
@@ -43,7 +43,7 @@ public final class CraftPersistentDataContainer implements PersistentDataContain
         Validate.notNull(key, "The provided key for the custom value was null");
         Validate.notNull(type, "The provided type for the custom value was null");
 
-        NBTBase value = this.customDataTags.get(key.toString());
+        INBT value = this.customDataTags.get(key.toString());
         if (value == null) {
             return false;
         }
@@ -56,7 +56,7 @@ public final class CraftPersistentDataContainer implements PersistentDataContain
         Validate.notNull(key, "The provided key for the custom value was null");
         Validate.notNull(type, "The provided type for the custom value was null");
 
-        NBTBase value = this.customDataTags.get(key.toString());
+        INBT value = this.customDataTags.get(key.toString());
         if (value == null) {
             return null;
         }
@@ -93,25 +93,25 @@ public final class CraftPersistentDataContainer implements PersistentDataContain
             return false;
         }
 
-        Map<String, NBTBase> myRawMap = getRaw();
-        Map<String, NBTBase> theirRawMap = ((CraftPersistentDataContainer) obj).getRaw();
+        Map<String, INBT> myRawMap = getRaw();
+        Map<String, INBT> theirRawMap = ((CraftPersistentDataContainer) obj).getRaw();
 
         return Objects.equals(myRawMap, theirRawMap);
     }
 
     public NBTTagCompound toTagCompound() {
         NBTTagCompound tag = new NBTTagCompound();
-        for (Entry<String, NBTBase> entry : this.customDataTags.entrySet()) {
+        for (Entry<String, INBT> entry : this.customDataTags.entrySet()) {
             tag.set(entry.getKey(), entry.getValue());
         }
         return tag;
     }
 
-    public void put(String key, NBTBase base) {
+    public void put(String key, INBT base) {
         this.customDataTags.put(key, base);
     }
 
-    public void putAll(Map<String, NBTBase> map) {
+    public void putAll(Map<String, INBT> map) {
         this.customDataTags.putAll(map);
     }
 
@@ -121,7 +121,7 @@ public final class CraftPersistentDataContainer implements PersistentDataContain
         }
     }
 
-    public Map<String, NBTBase> getRaw() {
+    public Map<String, INBT> getRaw() {
         return this.customDataTags;
     }
 

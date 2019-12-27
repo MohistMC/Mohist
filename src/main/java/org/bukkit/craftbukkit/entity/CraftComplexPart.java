@@ -9,13 +9,13 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.event.entity.EntityDamageEvent;
 
 public class CraftComplexPart extends CraftEntity implements ComplexEntityPart {
-    public CraftComplexPart(CraftServer server, EntityComplexPart entity) {
+    public CraftComplexPart(CraftServer server, EnderDragonPartEntity entity) {
         super(server, entity);
     }
 
     @Override
     public ComplexLivingEntity getParent() {
-        return (ComplexLivingEntity) ((EntityEnderDragon) getHandle().owner).getBukkitEntity();
+        return (ComplexLivingEntity) ((EnderDragonEntity) getHandle().owner).getBukkitEntity();
     }
 
     @Override
@@ -34,8 +34,8 @@ public class CraftComplexPart extends CraftEntity implements ComplexEntityPart {
     }
 
     @Override
-    public EntityComplexPart getHandle() {
-        return (EntityComplexPart) entity;
+    public EnderDragonPartEntity getHandle() {
+        return (EnderDragonPartEntity) entity;
     }
 
     @Override

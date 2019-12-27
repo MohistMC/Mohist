@@ -6,13 +6,13 @@ import org.bukkit.entity.Bat;
 import org.bukkit.entity.EntityType;
 
 public class CraftBat extends CraftAmbient implements Bat {
-    public CraftBat(CraftServer server, EntityBat entity) {
+    public CraftBat(CraftServer server, BatEntity entity) {
         super(server, entity);
     }
 
     @Override
-    public EntityBat getHandle() {
-        return (EntityBat) entity;
+    public BatEntity getHandle() {
+        return (BatEntity) entity;
     }
 
     @Override

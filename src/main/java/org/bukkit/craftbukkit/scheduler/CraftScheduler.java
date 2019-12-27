@@ -44,7 +44,7 @@ import org.bukkit.scheduler.BukkitWorker;
 public class CraftScheduler implements BukkitScheduler {
 
     /**
-     * Counter for IDs. Order doesn't matter, only uniqueness.
+     * IStatFormatter for IDs. Order doesn't matter, only uniqueness.
      */
     private final AtomicInteger ids = new AtomicInteger(1);
     /**

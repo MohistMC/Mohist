@@ -15,7 +15,7 @@ public final class CraftWitherSkullWall extends org.bukkit.craftbukkit.block.dat
 
     // org.bukkit.craftbukkit.block.data.CraftDirectional
 
-    private static final net.minecraft.state.PropertyEnum<?> FACING = getEnum(net.minecraft.block.BlockWitherSkullWall.class, "facing");
+    private static final net.minecraft.state.PropertyEnum<?> FACING = getEnum(net.minecraft.block.WitherSkeletonSkullBlockWall.class, "facing");
 
     @Override
     public org.bukkit.block.BlockFace getFacing() {

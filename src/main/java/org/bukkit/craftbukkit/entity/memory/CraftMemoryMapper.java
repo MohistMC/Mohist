@@ -15,8 +15,8 @@ public final class CraftMemoryMapper {
     public static Object fromNms(Object object) {
         if (object instanceof GlobalPos) {
             return fromNms((GlobalPos) object);
-        } else if (object instanceof MinecraftSerializableLong) {
-            return ((MinecraftSerializableLong) object).a();
+        } else if (object instanceof IDynamicSerializableLong) {
+            return ((IDynamicSerializableLong) object).a();
         }
 
         throw new UnsupportedOperationException("Do not know how to map " + object);
@@ -28,7 +28,7 @@ public final class CraftMemoryMapper {
         } else if (object instanceof Location) {
             return toNms((Location) object);
         } else if (object instanceof Long) {
-            return MinecraftSerializableLong.a((Long) object);
+            return IDynamicSerializableLong.a((Long) object);
         }
 
         throw new UnsupportedOperationException("Do not know how to map " + object);

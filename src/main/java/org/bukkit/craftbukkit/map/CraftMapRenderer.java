@@ -12,9 +12,9 @@ import org.bukkit.map.MapView;
 
 public class CraftMapRenderer extends MapRenderer {
 
-    private final WorldMap worldMap;
+    private final MapData worldMap;
 
-    public CraftMapRenderer(CraftMapView mapView, WorldMap worldMap) {
+    public CraftMapRenderer(CraftMapView mapView, MapData worldMap) {
         super(false);
         this.worldMap = worldMap;
     }
@@ -41,7 +41,7 @@ public class CraftMapRenderer extends MapRenderer {
                 continue;
             }
 
-            MapIcon decoration = (MapIcon) worldMap.decorations.get(key);
+            MapDecoration decoration = (MapDecoration) worldMap.decorations.get(key);
             cursors.addCursor(decoration.getX(), decoration.getY(), (byte) (decoration.getRotation() & 15), decoration.getType().a(), true, CraftChatMessage.fromComponent(decoration.getName()));
         }
     }

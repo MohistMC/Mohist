@@ -16,9 +16,9 @@ import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
 
 public class CraftProfileBanList implements org.bukkit.BanList {
-    private final GameProfileBanList list;
+    private final BanList list;
 
-    public CraftProfileBanList(GameProfileBanList list){
+    public CraftProfileBanList(BanList list){
         this.list = list;
     }
 
@@ -31,7 +31,7 @@ public class CraftProfileBanList implements org.bukkit.BanList {
             return null;
         }
 
-        GameProfileBanEntry entry = (GameProfileBanEntry) list.get(profile);
+        ProfileBanEntry entry = (ProfileBanEntry) list.get(profile);
         if (entry == null) {
             return null;
         }
@@ -48,7 +48,7 @@ public class CraftProfileBanList implements org.bukkit.BanList {
             return null;
         }
 
-        GameProfileBanEntry entry = new GameProfileBanEntry(profile, new Date(),
+        ProfileBanEntry entry = new ProfileBanEntry(profile, new Date(),
                 StringUtils.isBlank(source) ? null : source, expires,
                 StringUtils.isBlank(reason) ? null : reason);
 
@@ -67,9 +67,9 @@ public class CraftProfileBanList implements org.bukkit.BanList {
     public Set<org.bukkit.BanEntry> getBanEntries() {
         ImmutableSet.Builder<org.bukkit.BanEntry> builder = ImmutableSet.builder();
 
-        for (JsonListEntry entry : list.getValues()) {
+        for (UserListEntry entry : list.getValues()) {
             GameProfile profile = (GameProfile) entry.getKey();
-            builder.add(new CraftProfileBanEntry(profile, (GameProfileBanEntry) entry, list));
+            builder.add(new CraftProfileBanEntry(profile, (ProfileBanEntry) entry, list));
         }
 
         return builder.build();

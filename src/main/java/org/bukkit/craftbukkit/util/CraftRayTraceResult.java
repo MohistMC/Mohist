@@ -18,22 +18,22 @@ public class CraftRayTraceResult {
 
     private CraftRayTraceResult() {}
 
-    public static RayTraceResult fromNMS(World world, MovingObjectPosition nmsHitResult) {
+    public static RayTraceResult fromNMS(World world, RayTraceResult nmsHitResult) {
         if (nmsHitResult == null || nmsHitResult.getType() == EnumMovingObjectType.MISS) return null;
 
-        Vec3D nmsHitPos = nmsHitResult.getPos();
+        Vec3d nmsHitPos = nmsHitResult.getPos();
         Vector hitPosition = new Vector(nmsHitPos.x, nmsHitPos.y, nmsHitPos.z);
         BlockFace hitBlockFace = null;
 
         if (nmsHitResult.getType() == EnumMovingObjectType.ENTITY) {
-            Entity hitEntity = ((MovingObjectPositionEntity) nmsHitResult).getEntity().getBukkitEntity();
+            Entity hitEntity = ((EntityRayTraceResult) nmsHitResult).getEntity().getBukkitEntity();
             return new RayTraceResult(hitPosition, hitEntity, null);
         }
 
         Block hitBlock = null;
         BlockPosition nmsBlockPos = null;
         if (nmsHitResult.getType() == EnumMovingObjectType.BLOCK) {
-            MovingObjectPositionBlock blockHitResult = (MovingObjectPositionBlock) nmsHitResult;
+            RayTraceResultBlock blockHitResult = (RayTraceResultBlock) nmsHitResult;
             hitBlockFace = CraftBlock.notchToBlockFace(blockHitResult.getDirection());
             nmsBlockPos = blockHitResult.getBlockPosition();
         }

@@ -36,16 +36,16 @@ import org.bukkit.plugin.Plugin;
 
 public class CraftChunk implements Chunk {
     private WeakReference<net.minecraft.world.chunk.Chunk> weakChunk;
-    private final WorldServer worldServer;
+    private final ServerWorld worldServer;
     private final int x;
     private final int z;
-    private static final DataPaletteBlock<IBlockData> emptyBlockIDs = new ChunkSection(0).getBlocks();
+    private static final IPaletteBlock<IBlockData> emptyBlockIDs = new ChunkSection(0).getBlocks();
     private static final byte[] emptyLight = new byte[2048];
 
     public CraftChunk(net.minecraft.world.chunk.Chunk chunk) {
         this.weakChunk = new WeakReference<net.minecraft.world.chunk.Chunk>(chunk);
 
-        worldServer = (WorldServer) getHandle().world;
+        worldServer = (ServerWorld) getHandle().world;
         x = getHandle().getPos().x;
         z = getHandle().getPos().z;
     }
@@ -169,7 +169,7 @@ public class CraftChunk implements Chunk {
 
     @Override
     public boolean isSlimeChunk() {
-        // 987234911L is deterimined in EntitySlime when seeing if a slime can spawn in a chunk
+        // 987234911L is deterimined in SlimeEntity when seeing if a slime can spawn in a chunk
         return SeededRandom.a(getX(), getZ(), getWorld().getSeed(), 987234911L).nextInt(10) == 0;
     }
 
@@ -239,7 +239,7 @@ public class CraftChunk implements Chunk {
         net.minecraft.world.chunk.Chunk chunk = getHandle();
 
         ChunkSection[] cs = chunk.getSections();
-        DataPaletteBlock[] sectionBlockIDs = new DataPaletteBlock[cs.length];
+        IPaletteBlock[] sectionBlockIDs = new IPaletteBlock[cs.length];
         byte[][] sectionSkyLights = new byte[cs.length][];
         byte[][] sectionEmitLights = new byte[cs.length][];
         boolean[] sectionEmpty = new boolean[cs.length];
@@ -254,20 +254,20 @@ public class CraftChunk implements Chunk {
                 NBTTagCompound data = new NBTTagCompound();
                 cs[i].getBlocks().a(data, "Palette", "BlockStates");
 
-                DataPaletteBlock blockids = new DataPaletteBlock<>(ChunkSection.GLOBAL_PALETTE, net.minecraft.block.Block.REGISTRY_ID, GameProfileSerializer::d, GameProfileSerializer::a, Blocks.AIR.getBlockData()); // TODO: snapshot whole ChunkSection
+                IPaletteBlock blockids = new IPaletteBlock<>(ChunkSection.GLOBAL_PALETTE, net.minecraft.block.Block.REGISTRY_ID, NBTUtil::d, NBTUtil::a, Blocks.AIR.getBlockData()); // TODO: snapshot whole ChunkSection
                 blockids.a(data.getList("Palette", CraftMagicNumbers.NBT.TAG_COMPOUND), data.getLongArray("BlockStates"));
 
                 sectionBlockIDs[i] = blockids;
 
                 LightEngine lightengine = chunk.world.getChunkProvider().getLightEngine();
-                NibbleArray skyLightArray = lightengine.a(EnumSkyBlock.SKY).a(SectionPosition.a(x, i, z));
+                NibbleArray skyLightArray = lightengine.a(LightType.SKY).a(SectionPosition.a(x, i, z));
                 if (skyLightArray == null) {
                     sectionSkyLights[i] = emptyLight;
                 } else {
                     sectionSkyLights[i] = new byte[2048];
                     System.arraycopy(skyLightArray.asBytes(), 0, sectionSkyLights[i], 0, 2048);
                 }
-                NibbleArray emitLightArray = lightengine.a(EnumSkyBlock.BLOCK).a(SectionPosition.a(x, i, z));
+                NibbleArray emitLightArray = lightengine.a(LightType.BLOCK).a(SectionPosition.a(x, i, z));
                 if (emitLightArray == null) {
                     sectionEmitLights[i] = emptyLight;
                 } else {
@@ -284,7 +284,7 @@ public class CraftChunk implements Chunk {
             hmap.a(chunk.heightMap.get(HeightMap.Type.MOTION_BLOCKING).a());
         }
 
-        BiomeStorage biome = null;
+        BiomeContainer biome = null;
 
         if (includeBiome|| includeBiomeTempRain) {
             biome = chunk.getBiomeIndex().b();
@@ -295,16 +295,16 @@ public class CraftChunk implements Chunk {
     }
 
     public static ChunkSnapshot getEmptyChunkSnapshot(int x, int z, CraftWorld world, boolean includeBiome, boolean includeBiomeTempRain) {
-        BiomeStorage biome = null;
+        BiomeContainer biome = null;
 
         if (includeBiome || includeBiomeTempRain) {
             WorldChunkManager wcm = world.getHandle().getChunkProvider().getChunkGenerator().getWorldChunkManager();
-            biome = new BiomeStorage(new ChunkCoordIntPair(x, z), wcm);
+            biome = new BiomeContainer(new ChunkCoordIntPair(x, z), wcm);
         }
 
         /* Fill with empty data */
         int hSection = world.getMaxHeight() >> 4;
-        DataPaletteBlock[] blockIDs = new DataPaletteBlock[hSection];
+        IPaletteBlock[] blockIDs = new IPaletteBlock[hSection];
         byte[][] skyLight = new byte[hSection][];
         byte[][] emitLight = new byte[hSection][];
         boolean[] empty = new boolean[hSection];

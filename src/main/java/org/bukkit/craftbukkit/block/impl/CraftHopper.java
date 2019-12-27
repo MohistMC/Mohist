@@ -15,7 +15,7 @@ public final class CraftHopper extends org.bukkit.craftbukkit.block.data.CraftBl
 
     // org.bukkit.craftbukkit.block.data.type.CraftHopper
 
-    private static final net.minecraft.state.PropertyBoolean ENABLED = getBoolean(net.minecraft.block.BlockHopper.class, "enabled");
+    private static final net.minecraft.state.PropertyBoolean ENABLED = getBoolean(net.minecraft.block.HopperBlock.class, "enabled");
 
     @Override
     public boolean isEnabled() {
@@ -29,7 +29,7 @@ public final class CraftHopper extends org.bukkit.craftbukkit.block.data.CraftBl
 
     // org.bukkit.craftbukkit.block.data.CraftDirectional
 
-    private static final net.minecraft.state.PropertyEnum<?> FACING = getEnum(net.minecraft.block.BlockHopper.class, "facing");
+    private static final net.minecraft.state.PropertyEnum<?> FACING = getEnum(net.minecraft.block.HopperBlock.class, "facing");
 
     @Override
     public org.bukkit.block.BlockFace getFacing() {

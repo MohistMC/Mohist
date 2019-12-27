@@ -7,13 +7,13 @@ import org.bukkit.entity.Trident;
 
 public class CraftTrident extends CraftArrow implements Trident {
 
-    public CraftTrident(CraftServer server, EntityThrownTrident entity) {
+    public CraftTrident(CraftServer server, TridentEntity entity) {
         super(server, entity);
     }
 
     @Override
-    public EntityThrownTrident getHandle() {
-        return (EntityThrownTrident) super.getHandle();
+    public TridentEntity getHandle() {
+        return (TridentEntity) super.getHandle();
     }
 
     @Override

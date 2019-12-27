@@ -7,13 +7,13 @@ import org.bukkit.entity.PufferFish;
 
 public class CraftPufferFish extends CraftFish implements PufferFish {
 
-    public CraftPufferFish(CraftServer server, EntityPufferFish entity) {
+    public CraftPufferFish(CraftServer server, PufferfishEntity entity) {
         super(server, entity);
     }
 
     @Override
-    public EntityPufferFish getHandle() {
-        return (EntityPufferFish) super.getHandle();
+    public PufferfishEntity getHandle() {
+        return (PufferfishEntity) super.getHandle();
     }
 
     @Override

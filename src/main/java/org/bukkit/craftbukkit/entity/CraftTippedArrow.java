@@ -17,13 +17,13 @@ import org.bukkit.potion.PotionEffectType;
 
 public class CraftTippedArrow extends CraftArrow implements Arrow {
 
-    public CraftTippedArrow(CraftServer server, EntityTippedArrow entity) {
+    public CraftTippedArrow(CraftServer server, ArrowEntity entity) {
         super(server, entity);
     }
 
     @Override
-    public EntityTippedArrow getHandle() {
-        return (EntityTippedArrow) entity;
+    public ArrowEntity getHandle() {
+        return (ArrowEntity) entity;
     }
 
     @Override
@@ -41,7 +41,7 @@ public class CraftTippedArrow extends CraftArrow implements Arrow {
         int effectId = effect.getType().getId();
         MobEffect existing = null;
         for (MobEffect mobEffect : getHandle().effects) {
-            if (MobEffectList.getId(mobEffect.getMobEffect()) == effectId) {
+            if (Effect.getId(mobEffect.getMobEffect()) == effectId) {
                 existing = mobEffect;
             }
         }
@@ -91,7 +91,7 @@ public class CraftTippedArrow extends CraftArrow implements Arrow {
         int effectId = effect.getId();
         MobEffect existing = null;
         for (MobEffect mobEffect : getHandle().effects) {
-            if (MobEffectList.getId(mobEffect.getMobEffect()) == effectId) {
+            if (Effect.getId(mobEffect.getMobEffect()) == effectId) {
                 existing = mobEffect;
             }
         }

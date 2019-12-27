@@ -6,13 +6,13 @@ import org.bukkit.entity.Ambient;
 import org.bukkit.entity.EntityType;
 
 public class CraftAmbient extends CraftMob implements Ambient {
-    public CraftAmbient(CraftServer server, EntityAmbient entity) {
+    public CraftAmbient(CraftServer server, AmbientEntity entity) {
         super(server, entity);
     }
 
     @Override
-    public EntityAmbient getHandle() {
-        return (EntityAmbient) entity;
+    public AmbientEntity getHandle() {
+        return (AmbientEntity) entity;
     }
 
     @Override

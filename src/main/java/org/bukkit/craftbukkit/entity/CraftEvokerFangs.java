@@ -9,13 +9,13 @@ import org.bukkit.entity.LivingEntity;
 
 public class CraftEvokerFangs extends CraftEntity implements EvokerFangs {
 
-    public CraftEvokerFangs(CraftServer server, EntityEvokerFangs entity) {
+    public CraftEvokerFangs(CraftServer server, EvokerFangsEntity entity) {
         super(server, entity);
     }
 
     @Override
-    public EntityEvokerFangs getHandle() {
-        return (EntityEvokerFangs) super.getHandle();
+    public EvokerFangsEntity getHandle() {
+        return (EvokerFangsEntity) super.getHandle();
     }
 
     @Override
@@ -30,7 +30,7 @@ public class CraftEvokerFangs extends CraftEntity implements EvokerFangs {
 
     @Override
     public LivingEntity getOwner() {
-        EntityLiving owner = getHandle().getOwner();
+        LivingEntity owner = getHandle().getOwner();
 
         return (owner == null) ? null : (LivingEntity) owner.getBukkitEntity();
     }

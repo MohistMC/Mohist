@@ -8,14 +8,14 @@ import net.minecraft.server.management.IPBanList;
 import org.bukkit.Bukkit;
 
 public final class CraftIpBanEntry implements org.bukkit.BanEntry {
-    private final IpBanList list;
+    private final IPBanList list;
     private final String target;
     private Date created;
     private String source;
     private Date expiration;
     private String reason;
 
-    public CraftIpBanEntry(String target, IpBanEntry entry, IpBanList list) {
+    public CraftIpBanEntry(String target, IpBanEntry entry, IPBanList list) {
         this.list = list;
         this.target = target;
         this.created = entry.getCreated() != null ? new Date(entry.getCreated().getTime()) : null;

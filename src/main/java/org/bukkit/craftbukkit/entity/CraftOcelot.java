@@ -6,13 +6,13 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Ocelot;
 
 public class CraftOcelot extends CraftAnimals implements Ocelot {
-    public CraftOcelot(CraftServer server, EntityOcelot ocelot) {
+    public CraftOcelot(CraftServer server, OcelotEntity ocelot) {
         super(server, ocelot);
     }
 
     @Override
-    public EntityOcelot getHandle() {
-        return (EntityOcelot) entity;
+    public OcelotEntity getHandle() {
+        return (OcelotEntity) entity;
     }
 
     @Override

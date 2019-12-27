@@ -15,7 +15,7 @@ public final class CraftDirtSnow extends org.bukkit.craftbukkit.block.data.Craft
 
     // org.bukkit.craftbukkit.block.data.CraftSnowable
 
-    private static final net.minecraft.state.PropertyBoolean SNOWY = getBoolean(net.minecraft.block.BlockDirtSnow.class, "snowy");
+    private static final net.minecraft.state.PropertyBoolean SNOWY = getBoolean(net.minecraft.block.SnowyDirtBlock.class, "snowy");
 
     @Override
     public boolean isSnowy() {

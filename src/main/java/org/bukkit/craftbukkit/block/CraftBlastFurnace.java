@@ -8,10 +8,10 @@ import org.bukkit.block.Block;
 public class CraftBlastFurnace extends CraftFurnace implements BlastFurnace {
 
     public CraftBlastFurnace(Block block) {
-        super(block, TileEntityBlastFurnace.class);
+        super(block, BlastFurnaceTileEntity.class);
     }
 
-    public CraftBlastFurnace(Material material, TileEntityBlastFurnace te) {
+    public CraftBlastFurnace(Material material, BlastFurnaceTileEntity te) {
         super(material, te);
     }
 }

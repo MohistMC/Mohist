@@ -10,13 +10,13 @@ import org.bukkit.entity.EntityType;
 
 public class CraftCat extends CraftTameableAnimal implements Cat {
 
-    public CraftCat(CraftServer server, EntityCat entity) {
+    public CraftCat(CraftServer server, CatEntity entity) {
         super(server, entity);
     }
 
     @Override
-    public EntityCat getHandle() {
-        return (EntityCat) super.getHandle();
+    public CatEntity getHandle() {
+        return (CatEntity) super.getHandle();
     }
 
     @Override
@@ -48,6 +48,6 @@ public class CraftCat extends CraftTameableAnimal implements Cat {
 
     @Override
     public void setCollarColor(DyeColor color) {
-        getHandle().setCollarColor(EnumColor.fromColorIndex(color.getWoolData()));
+        getHandle().setCollarColor(DyeColor.fromColorIndex(color.getWoolData()));
     }
 }

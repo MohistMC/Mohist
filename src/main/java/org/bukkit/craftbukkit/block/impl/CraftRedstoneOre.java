@@ -15,7 +15,7 @@ public final class CraftRedstoneOre extends org.bukkit.craftbukkit.block.data.Cr
 
     // org.bukkit.craftbukkit.block.data.CraftLightable
 
-    private static final net.minecraft.state.PropertyBoolean LIT = getBoolean(net.minecraft.block.BlockRedstoneOre.class, "lit");
+    private static final net.minecraft.state.PropertyBoolean LIT = getBoolean(net.minecraft.block.RedstoneOreBlock.class, "lit");
 
     @Override
     public boolean isLit() {

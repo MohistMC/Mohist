@@ -10,13 +10,13 @@ import org.bukkit.entity.Zombie;
 
 public class CraftZombie extends CraftMonster implements Zombie {
 
-    public CraftZombie(CraftServer server, EntityZombie entity) {
+    public CraftZombie(CraftServer server, ZombieEntity entity) {
         super(server, entity);
     }
 
     @Override
-    public EntityZombie getHandle() {
-        return (EntityZombie) entity;
+    public ZombieEntity getHandle() {
+        return (ZombieEntity) entity;
     }
 
     @Override
@@ -41,7 +41,7 @@ public class CraftZombie extends CraftMonster implements Zombie {
 
     @Override
     public boolean isVillager() {
-        return getHandle() instanceof EntityZombieVillager;
+        return getHandle() instanceof ZombieEntityVillager;
     }
 
     @Override
@@ -75,7 +75,7 @@ public class CraftZombie extends CraftMonster implements Zombie {
     public void setConversionTime(int time) {
         if (time < 0) {
             getHandle().drownedConversionTime = -1;
-            getHandle().getDataWatcher().set(EntityZombie.DROWN_CONVERTING, false);
+            getHandle().getDataWatcher().set(ZombieEntity.DROWN_CONVERTING, false);
         } else {
             getHandle().startDrownedConversion(time);
         }

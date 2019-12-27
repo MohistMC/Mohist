@@ -9,7 +9,7 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Hanging;
 
 public class CraftHanging extends CraftEntity implements Hanging {
-    public CraftHanging(CraftServer server, EntityHanging entity) {
+    public CraftHanging(CraftServer server, HangingEntity entity) {
         super(server, entity);
     }
 
@@ -25,21 +25,21 @@ public class CraftHanging extends CraftEntity implements Hanging {
 
     @Override
     public boolean setFacingDirection(BlockFace face, boolean force) {
-        EntityHanging hanging = getHandle();
-        EnumDirection dir = hanging.getDirection();
+        HangingEntity hanging = getHandle();
+        Direction dir = hanging.getDirection();
         switch (face) {
             case SOUTH:
             default:
-                getHandle().setDirection(EnumDirection.SOUTH);
+                getHandle().setDirection(Direction.SOUTH);
                 break;
             case WEST:
-                getHandle().setDirection(EnumDirection.WEST);
+                getHandle().setDirection(Direction.WEST);
                 break;
             case NORTH:
-                getHandle().setDirection(EnumDirection.NORTH);
+                getHandle().setDirection(Direction.NORTH);
                 break;
             case EAST:
-                getHandle().setDirection(EnumDirection.EAST);
+                getHandle().setDirection(Direction.EAST);
                 break;
         }
         if (!force && !hanging.survives()) {
@@ -52,14 +52,14 @@ public class CraftHanging extends CraftEntity implements Hanging {
 
     @Override
     public BlockFace getFacing() {
-        EnumDirection direction = this.getHandle().getDirection();
+        Direction direction = this.getHandle().getDirection();
         if (direction == null) return BlockFace.SELF;
         return CraftBlock.notchToBlockFace(direction);
     }
 
     @Override
-    public EntityHanging getHandle() {
-        return (EntityHanging) entity;
+    public HangingEntity getHandle() {
+        return (HangingEntity) entity;
     }
 
     @Override

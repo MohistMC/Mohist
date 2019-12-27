@@ -15,21 +15,21 @@ import org.bukkit.block.Block;
 import org.bukkit.block.banner.Pattern;
 import org.bukkit.block.banner.PatternType;
 
-public class CraftBanner extends CraftBlockEntityState<TileEntityBanner> implements Banner {
+public class CraftBanner extends CraftBlockEntityState<BannerTileEntity> implements Banner {
 
     private DyeColor base;
     private List<Pattern> patterns;
 
     public CraftBanner(final Block block) {
-        super(block, TileEntityBanner.class);
+        super(block, BannerTileEntity.class);
     }
 
-    public CraftBanner(final Material material, final TileEntityBanner te) {
+    public CraftBanner(final Material material, final BannerTileEntity te) {
         super(material, te);
     }
 
     @Override
-    public void load(TileEntityBanner banner) {
+    public void load(BannerTileEntity banner) {
         super.load(banner);
 
         base = DyeColor.getByWoolData((byte) ((BlockBannerAbstract) this.data.getBlock()).getColor().getColorIndex());
@@ -90,12 +90,12 @@ public class CraftBanner extends CraftBlockEntityState<TileEntityBanner> impleme
     }
 
     @Override
-    public void applyTo(TileEntityBanner banner) {
+    public void applyTo(BannerTileEntity banner) {
         super.applyTo(banner);
 
         banner.color = EnumColor.fromColorIndex(base.getWoolData());
 
-        NBTTagList newPatterns = new NBTTagList();
+        ListNBT newPatterns = new ListNBT();
 
         for (Pattern p : patterns) {
             NBTTagCompound compound = new NBTTagCompound();

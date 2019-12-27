@@ -9,7 +9,7 @@ import org.bukkit.entity.TNTPrimed;
 
 public class CraftTNTPrimed extends CraftEntity implements TNTPrimed {
 
-    public CraftTNTPrimed(CraftServer server, EntityTNTPrimed entity) {
+    public CraftTNTPrimed(CraftServer server, TNTEntity entity) {
         super(server, entity);
     }
 
@@ -44,8 +44,8 @@ public class CraftTNTPrimed extends CraftEntity implements TNTPrimed {
     }
 
     @Override
-    public EntityTNTPrimed getHandle() {
-        return (EntityTNTPrimed) entity;
+    public TNTEntity getHandle() {
+        return (TNTEntity) entity;
     }
 
     @Override
@@ -60,7 +60,7 @@ public class CraftTNTPrimed extends CraftEntity implements TNTPrimed {
 
     @Override
     public Entity getSource() {
-        EntityLiving source = getHandle().getSource();
+        LivingEntity source = getHandle().getSource();
 
         return (source != null) ? source.getBukkitEntity() : null;
     }

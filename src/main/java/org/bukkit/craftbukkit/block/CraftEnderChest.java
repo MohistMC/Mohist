@@ -5,13 +5,13 @@ import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.EnderChest;
 
-public class CraftEnderChest extends CraftBlockEntityState<TileEntityEnderChest> implements EnderChest {
+public class CraftEnderChest extends CraftBlockEntityState<EnderChestTileEntity> implements EnderChest {
 
     public CraftEnderChest(final Block block) {
-        super(block, TileEntityEnderChest.class);
+        super(block, EnderChestTileEntity.class);
     }
 
-    public CraftEnderChest(final Material material, final TileEntityEnderChest te) {
+    public CraftEnderChest(final Material material, final EnderChestTileEntity te) {
         super(material, te);
     }
 }

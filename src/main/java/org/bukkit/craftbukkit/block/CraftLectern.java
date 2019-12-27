@@ -7,13 +7,13 @@ import org.bukkit.block.Lectern;
 import org.bukkit.craftbukkit.inventory.CraftInventoryLectern;
 import org.bukkit.inventory.Inventory;
 
-public class CraftLectern extends CraftBlockEntityState<TileEntityLectern> implements Lectern {
+public class CraftLectern extends CraftBlockEntityState<LecternTileEntity> implements Lectern {
 
     public CraftLectern(Block block) {
-        super(block, TileEntityLectern.class);
+        super(block, LecternTileEntity.class);
     }
 
-    public CraftLectern(Material material, TileEntityLectern te) {
+    public CraftLectern(Material material, LecternTileEntity te) {
         super(material, te);
     }
 

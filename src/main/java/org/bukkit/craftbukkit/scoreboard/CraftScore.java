@@ -44,8 +44,8 @@ final class CraftScore implements Score {
         Scoreboard board = objective.checkState().board;
 
         if (board.getPlayers().contains(entry)) { // Lazy
-            Map<ScoreboardObjective, ScoreboardScore> scores = board.getPlayerObjectives(entry);
-            ScoreboardScore score = scores.get(objective.getHandle());
+            Map<ScoreObjective, Score> scores = board.getPlayerObjectives(entry);
+            Score score = scores.get(objective.getHandle());
             if (score != null) { // Lazy
                 return score.getScore();
             }

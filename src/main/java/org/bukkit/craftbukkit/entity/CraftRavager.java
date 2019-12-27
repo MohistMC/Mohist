@@ -7,13 +7,13 @@ import org.bukkit.entity.Ravager;
 
 public class CraftRavager extends CraftRaider implements Ravager {
 
-    public CraftRavager(CraftServer server, EntityRavager entity) {
+    public CraftRavager(CraftServer server, RavagerEntity entity) {
         super(server, entity);
     }
 
     @Override
-    public EntityRavager getHandle() {
-        return (EntityRavager) super.getHandle();
+    public RavagerEntity getHandle() {
+        return (RavagerEntity) super.getHandle();
     }
 
     @Override

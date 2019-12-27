@@ -8,13 +8,13 @@ import org.bukkit.entity.Animals;
 
 public class CraftAnimals extends CraftAgeable implements Animals {
 
-    public CraftAnimals(CraftServer server, EntityAnimal entity) {
+    public CraftAnimals(CraftServer server, AnimalEntity entity) {
         super(server, entity);
     }
 
     @Override
-    public EntityAnimal getHandle() {
-        return (EntityAnimal) entity;
+    public AnimalEntity getHandle() {
+        return (AnimalEntity) entity;
     }
 
     @Override

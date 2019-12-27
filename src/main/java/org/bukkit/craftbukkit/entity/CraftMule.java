@@ -8,7 +8,7 @@ import org.bukkit.entity.Mule;
 
 public class CraftMule extends CraftChestedHorse implements Mule {
 
-    public CraftMule(CraftServer server, EntityHorseMule entity) {
+    public CraftMule(CraftServer server, MuleEntity entity) {
         super(server, entity);
     }
 

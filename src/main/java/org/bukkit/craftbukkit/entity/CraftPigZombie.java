@@ -7,7 +7,7 @@ import org.bukkit.entity.PigZombie;
 
 public class CraftPigZombie extends CraftZombie implements PigZombie {
 
-    public CraftPigZombie(CraftServer server, EntityPigZombie entity) {
+    public CraftPigZombie(CraftServer server, ZombiePigmanEntity entity) {
         super(server, entity);
     }
 
@@ -32,8 +32,8 @@ public class CraftPigZombie extends CraftZombie implements PigZombie {
     }
 
     @Override
-    public EntityPigZombie getHandle() {
-        return (EntityPigZombie) entity;
+    public ZombiePigmanEntity getHandle() {
+        return (ZombiePigmanEntity) entity;
     }
 
     @Override

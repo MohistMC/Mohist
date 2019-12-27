@@ -17,13 +17,13 @@ import org.bukkit.entity.Villager;
 
 public class CraftVillager extends CraftAbstractVillager implements Villager {
 
-    public CraftVillager(CraftServer server, EntityVillager entity) {
+    public CraftVillager(CraftServer server, VillagerEntity entity) {
         super(server, entity);
     }
 
     @Override
-    public EntityVillager getHandle() {
-        return (EntityVillager) entity;
+    public VillagerEntity getHandle() {
+        return (VillagerEntity) entity;
     }
 
     @Override
@@ -49,13 +49,13 @@ public class CraftVillager extends CraftAbstractVillager implements Villager {
 
     @Override
     public Type getVillagerType() {
-        return Type.valueOf(IRegistry.VILLAGER_TYPE.getKey(getHandle().getVillagerData().getType()).getKey().toUpperCase(Locale.ROOT));
+        return Type.valueOf(Registry.VILLAGER_TYPE.getKey(getHandle().getVillagerData().getType()).getKey().toUpperCase(Locale.ROOT));
     }
 
     @Override
     public void setVillagerType(Type type) {
         Validate.notNull(type);
-        getHandle().setVillagerData(getHandle().getVillagerData().withType(IRegistry.VILLAGER_TYPE.get(CraftNamespacedKey.toMinecraft(type.getKey()))));
+        getHandle().setVillagerData(getHandle().getVillagerData().withType(Registry.VILLAGER_TYPE.get(CraftNamespacedKey.toMinecraft(type.getKey()))));
     }
 
     @Override
@@ -88,9 +88,9 @@ public class CraftVillager extends CraftAbstractVillager implements Villager {
         Preconditions.checkArgument(location.getWorld() != null, "Location needs to be in a world");
         Preconditions.checkArgument(location.getWorld().equals(getWorld()), "Cannot sleep across worlds");
 
-        BlockPosition position = new BlockPosition(location.getBlockX(), location.getBlockY(), location.getBlockZ());
-        IBlockData iblockdata = getHandle().world.getType(position);
-        if (!(iblockdata.getBlock() instanceof BlockBed)) {
+        BlockPos position = new BlockPos(location.getBlockX(), location.getBlockY(), location.getBlockZ());
+        BlockState iblockdata = getHandle().world.getType(position);
+        if (!(iblockdata.getBlock() instanceof BedBlock)) {
             return false;
         }
 
@@ -106,10 +106,10 @@ public class CraftVillager extends CraftAbstractVillager implements Villager {
     }
 
     public static Profession nmsToBukkitProfession(VillagerProfession nms) {
-        return Profession.valueOf(IRegistry.VILLAGER_PROFESSION.getKey(nms).getKey().toUpperCase(Locale.ROOT));
+        return Profession.valueOf(Registry.VILLAGER_PROFESSION.getKey(nms).getKey().toUpperCase(Locale.ROOT));
     }
 
     public static VillagerProfession bukkitToNmsProfession(Profession bukkit) {
-        return IRegistry.VILLAGER_PROFESSION.get(CraftNamespacedKey.toMinecraft(bukkit.getKey()));
+        return Registry.VILLAGER_PROFESSION.get(CraftNamespacedKey.toMinecraft(bukkit.getKey()));
     }
 }

@@ -15,7 +15,7 @@ public final class CraftTallPlantFlower extends org.bukkit.craftbukkit.block.dat
 
     // org.bukkit.craftbukkit.block.data.CraftBisected
 
-    private static final net.minecraft.state.PropertyEnum<?> HALF = getEnum(net.minecraft.block.FourWayBlockPlantFlower.class, "half");
+    private static final net.minecraft.state.PropertyEnum<?> HALF = getEnum(net.minecraft.block.FourWayBushBlockFlower.class, "half");
 
     @Override
     public Half getHalf() {

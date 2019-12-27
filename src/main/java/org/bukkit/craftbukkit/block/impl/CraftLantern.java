@@ -15,7 +15,7 @@ public final class CraftLantern extends org.bukkit.craftbukkit.block.data.CraftB
 
     // org.bukkit.craftbukkit.block.data.type.CraftLantern
 
-    private static final net.minecraft.state.PropertyBoolean HANGING = getBoolean(net.minecraft.block.BlockLantern.class, "hanging");
+    private static final net.minecraft.state.PropertyBoolean HANGING = getBoolean(net.minecraft.block.LanternBlock.class, "hanging");
 
     @Override
     public boolean isHanging() {

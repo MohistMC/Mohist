@@ -6,7 +6,7 @@ import org.bukkit.entity.DragonFireball;
 import org.bukkit.entity.EntityType;
 
 public class CraftDragonFireball extends CraftFireball implements DragonFireball {
-    public CraftDragonFireball(CraftServer server, EntityDragonFireball entity) {
+    public CraftDragonFireball(CraftServer server, DragonFireballEntity entity) {
         super(server, entity);
     }
 

@@ -15,7 +15,7 @@ public final class CraftCoralPlant extends org.bukkit.craftbukkit.block.data.Cra
 
     // org.bukkit.craftbukkit.block.data.CraftWaterlogged
 
-    private static final net.minecraft.state.PropertyBoolean WATERLOGGED = getBoolean(net.minecraft.block.CoralBlockPlant.class, "waterlogged");
+    private static final net.minecraft.state.PropertyBoolean WATERLOGGED = getBoolean(net.minecraft.block.CoralBushBlock.class, "waterlogged");
 
     @Override
     public boolean isWaterlogged() {

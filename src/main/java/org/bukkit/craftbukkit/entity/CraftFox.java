@@ -11,13 +11,13 @@ import org.bukkit.entity.Fox;
 
 public class CraftFox extends CraftAnimals implements Fox {
 
-    public CraftFox(CraftServer server, EntityFox entity) {
+    public CraftFox(CraftServer server, FoxEntity entity) {
         super(server, entity);
     }
 
     @Override
-    public EntityFox getHandle() {
-        return (EntityFox) super.getHandle();
+    public FoxEntity getHandle() {
+        return (FoxEntity) super.getHandle();
     }
 
     @Override
@@ -39,7 +39,7 @@ public class CraftFox extends CraftAnimals implements Fox {
     public void setFoxType(Type type) {
         Preconditions.checkArgument(type != null, "type");
 
-        getHandle().setFoxType(EntityFox.Type.values()[type.ordinal()]);
+        getHandle().setFoxType(FoxEntity.Type.values()[type.ordinal()]);
     }
 
     @Override
@@ -69,7 +69,7 @@ public class CraftFox extends CraftAnimals implements Fox {
 
     @Override
     public AnimalTamer getFirstTrustedPlayer() {
-        UUID uuid = getHandle().getDataWatcher().get(EntityFox.by).orElse(null);
+        UUID uuid = getHandle().getDataWatcher().get(FoxEntity.by).orElse(null);
         if (uuid == null) {
             return null;
         }
@@ -84,16 +84,16 @@ public class CraftFox extends CraftAnimals implements Fox {
 
     @Override
     public void setFirstTrustedPlayer(AnimalTamer player) {
-        if (player == null && getHandle().getDataWatcher().get(EntityFox.bz).isPresent()) {
+        if (player == null && getHandle().getDataWatcher().get(FoxEntity.bz).isPresent()) {
             throw new IllegalStateException("Must remove second trusted player first");
         }
 
-        getHandle().getDataWatcher().set(EntityFox.by, player == null ? Optional.empty() : Optional.of(player.getUniqueId()));
+        getHandle().getDataWatcher().set(FoxEntity.by, player == null ? Optional.empty() : Optional.of(player.getUniqueId()));
     }
 
     @Override
     public AnimalTamer getSecondTrustedPlayer() {
-        UUID uuid = getHandle().getDataWatcher().get(EntityFox.bz).orElse(null);
+        UUID uuid = getHandle().getDataWatcher().get(FoxEntity.bz).orElse(null);
         if (uuid == null) {
             return null;
         }
@@ -108,10 +108,10 @@ public class CraftFox extends CraftAnimals implements Fox {
 
     @Override
     public void setSecondTrustedPlayer(AnimalTamer player) {
-        if (player != null && !getHandle().getDataWatcher().get(EntityFox.by).isPresent()) {
+        if (player != null && !getHandle().getDataWatcher().get(FoxEntity.by).isPresent()) {
             throw new IllegalStateException("Must add first trusted player first");
         }
 
-        getHandle().getDataWatcher().set(EntityFox.bz, player == null ? Optional.empty() : Optional.of(player.getUniqueId()));
+        getHandle().getDataWatcher().set(FoxEntity.bz, player == null ? Optional.empty() : Optional.of(player.getUniqueId()));
     }
 }

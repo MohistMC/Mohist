@@ -14,7 +14,7 @@ public class CraftEnchantment extends Enchantment {
     private final net.minecraft.enchantment.Enchantment target;
 
     public CraftEnchantment(net.minecraft.enchantment.Enchantment target) {
-        super(CraftNamespacedKey.fromMinecraft(IRegistry.ENCHANTMENT.getKey(target)));
+        super(CraftNamespacedKey.fromMinecraft(Registry.ENCHANTMENT.getKey(target)));
         this.target = target;
     }
 
@@ -71,7 +71,7 @@ public class CraftEnchantment extends Enchantment {
 
     @Override
     public boolean isCursed() {
-        return target instanceof EnchantmentBinding || target instanceof EnchantmentVanishing;
+        return target instanceof BindingCurseEnchantment || target instanceof EnchantmentVanishing;
     }
 
     @Override
@@ -82,7 +82,7 @@ public class CraftEnchantment extends Enchantment {
     @Override
     public String getName() {
         // PAIL: migration paths
-        switch (IRegistry.ENCHANTMENT.a(target)) {
+        switch (Registry.ENCHANTMENT.a(target)) {
         case 0:
             return "PROTECTION_ENVIRONMENTAL";
         case 1:
@@ -158,7 +158,7 @@ public class CraftEnchantment extends Enchantment {
         case 36:
             return "VANISHING_CURSE";
         default:
-            return "UNKNOWN_ENCHANT_" + IRegistry.ENCHANTMENT.a(target);
+            return "UNKNOWN_ENCHANT_" + Registry.ENCHANTMENT.a(target);
         }
     }
 

@@ -7,13 +7,13 @@ import org.bukkit.entity.Skeleton;
 
 public class CraftSkeleton extends CraftMonster implements Skeleton {
 
-    public CraftSkeleton(CraftServer server, EntitySkeletonAbstract entity) {
+    public CraftSkeleton(CraftServer server, SkeletonEntityAbstract entity) {
         super(server, entity);
     }
 
     @Override
-    public EntitySkeletonAbstract getHandle() {
-        return (EntitySkeletonAbstract) entity;
+    public SkeletonEntityAbstract getHandle() {
+        return (SkeletonEntityAbstract) entity;
     }
 
     @Override

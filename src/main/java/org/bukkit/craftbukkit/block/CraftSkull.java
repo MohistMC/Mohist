@@ -16,21 +16,21 @@ import org.bukkit.block.data.Directional;
 import org.bukkit.block.data.Rotatable;
 import org.bukkit.craftbukkit.entity.CraftPlayer;
 
-public class CraftSkull extends CraftBlockEntityState<TileEntitySkull> implements Skull {
+public class CraftSkull extends CraftBlockEntityState<SkullTileEntity> implements Skull {
 
     private static final int MAX_OWNER_LENGTH = 16;
     private GameProfile profile;
 
     public CraftSkull(final Block block) {
-        super(block, TileEntitySkull.class);
+        super(block, SkullTileEntity.class);
     }
 
-    public CraftSkull(final Material material, final TileEntitySkull te) {
+    public CraftSkull(final Material material, final SkullTileEntity te) {
         super(material, te);
     }
 
     @Override
-    public void load(TileEntitySkull skull) {
+    public void load(SkullTileEntity skull) {
         super.load(skull);
 
         profile = skull.gameProfile;
@@ -154,7 +154,7 @@ public class CraftSkull extends CraftBlockEntityState<TileEntitySkull> implement
     }
 
     @Override
-    public void applyTo(TileEntitySkull skull) {
+    public void applyTo(SkullTileEntity skull) {
         super.applyTo(skull);
 
         if (getSkullType() == SkullType.PLAYER) {

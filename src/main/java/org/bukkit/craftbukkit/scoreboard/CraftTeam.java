@@ -4,7 +4,7 @@ import com.google.common.collect.ImmutableSet;
 import java.util.Set;
 import net.minecraft.scoreboard.ScorePlayerTeam;
 import net.minecraft.scoreboard.Team;
-import net.minecraft.scoreboard.ScoreboardTeamBase.EnumNameTagVisibility;
+import net.minecraft.scoreboard.Team.EnumNameTagVisibility;
 import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -14,9 +14,9 @@ import org.bukkit.scoreboard.NameTagVisibility;
 import org.bukkit.scoreboard.Team;
 
 final class CraftTeam extends CraftScoreboardComponent implements Team {
-    private final ScoreboardTeam team;
+    private final ScorePlayerTeam team;
 
-    CraftTeam(CraftScoreboard scoreboard, ScoreboardTeam team) {
+    CraftTeam(CraftScoreboard scoreboard, ScorePlayerTeam team) {
         super(scoreboard);
         this.team = team;
     }
@@ -245,7 +245,7 @@ final class CraftTeam extends CraftScoreboardComponent implements Team {
                 team.setDeathMessageVisibility(EnumNameTagVisibility.values()[status.ordinal()]);
                 break;
             case COLLISION_RULE:
-                team.setCollisionRule(ScoreboardTeamBase.EnumTeamPush.values()[status.ordinal()]);
+                team.setCollisionRule(Team.EnumTeamPush.values()[status.ordinal()]);
                 break;
             default:
                 throw new IllegalArgumentException("Unrecognised option " + option);

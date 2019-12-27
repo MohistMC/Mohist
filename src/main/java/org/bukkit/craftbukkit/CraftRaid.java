@@ -91,9 +91,9 @@ public final class CraftRaid implements Raid {
 
     @Override
     public List<Raider> getRaiders() {
-        return handle.getRaiders().stream().map(new Function<EntityRaider, Raider>() {
+        return handle.getRaiders().stream().map(new Function<AbstractRaiderEntity, Raider>() {
             @Override
-            public Raider apply(EntityRaider entityRaider) {
+            public Raider apply(AbstractRaiderEntity entityRaider) {
                 return (Raider) entityRaider.getBukkitEntity();
             }
         }).collect(ImmutableList.toImmutableList());

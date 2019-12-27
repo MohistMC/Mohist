@@ -6,13 +6,13 @@ import org.bukkit.entity.Flying;
 
 public class CraftFlying extends CraftMob implements Flying {
 
-    public CraftFlying(CraftServer server, EntityFlying entity) {
+    public CraftFlying(CraftServer server, FlyingEntity entity) {
         super(server, entity);
     }
 
     @Override
-    public EntityFlying getHandle() {
-        return (EntityFlying) entity;
+    public FlyingEntity getHandle() {
+        return (FlyingEntity) entity;
     }
 
     @Override

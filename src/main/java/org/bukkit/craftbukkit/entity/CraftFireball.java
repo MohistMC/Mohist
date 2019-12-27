@@ -10,7 +10,7 @@ import org.bukkit.projectiles.ProjectileSource;
 import org.bukkit.util.Vector;
 
 public class CraftFireball extends AbstractProjectile implements Fireball {
-    public CraftFireball(CraftServer server, EntityFireball entity) {
+    public CraftFireball(CraftServer server, DamagingProjectileEntity entity) {
         super(server, entity);
     }
 
@@ -67,8 +67,8 @@ public class CraftFireball extends AbstractProjectile implements Fireball {
     }
 
     @Override
-    public EntityFireball getHandle() {
-        return (EntityFireball) entity;
+    public DamagingProjectileEntity getHandle() {
+        return (DamagingProjectileEntity) entity;
     }
 
     @Override

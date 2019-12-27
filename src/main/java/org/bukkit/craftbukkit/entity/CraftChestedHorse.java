@@ -6,13 +6,13 @@ import org.bukkit.entity.ChestedHorse;
 
 public abstract class CraftChestedHorse extends CraftAbstractHorse implements ChestedHorse {
 
-    public CraftChestedHorse(CraftServer server, EntityHorseChestedAbstract entity) {
+    public CraftChestedHorse(CraftServer server, HorseEntityChestedAbstract entity) {
         super(server, entity);
     }
 
     @Override
-    public EntityHorseChestedAbstract getHandle() {
-        return (EntityHorseChestedAbstract) super.getHandle();
+    public HorseEntityChestedAbstract getHandle() {
+        return (HorseEntityChestedAbstract) super.getHandle();
     }
 
     @Override

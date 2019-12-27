@@ -9,9 +9,9 @@ import org.bukkit.inventory.ItemStack;
 
 public class CraftComplexRecipe implements CraftRecipe, ComplexRecipe {
 
-    private final IRecipeComplex recipe;
+    private final SpecialRecipe recipe;
 
-    public CraftComplexRecipe(IRecipeComplex recipe) {
+    public CraftComplexRecipe(SpecialRecipe recipe) {
         this.recipe = recipe;
     }
 

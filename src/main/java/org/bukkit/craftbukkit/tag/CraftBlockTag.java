@@ -11,7 +11,7 @@ import org.bukkit.craftbukkit.util.CraftMagicNumbers;
 
 public class CraftBlockTag extends CraftTag<Block, Material> {
 
-    public CraftBlockTag(TagsServer<Block> registry, MinecraftKey tag) {
+    public CraftBlockTag(NetworkTagCollection<Block> registry, ResourceLocation tag) {
         super(registry, tag);
     }
 

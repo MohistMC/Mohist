@@ -11,13 +11,13 @@ import org.bukkit.inventory.LlamaInventory;
 
 public class CraftLlama extends CraftChestedHorse implements Llama {
 
-    public CraftLlama(CraftServer server, EntityLlama entity) {
+    public CraftLlama(CraftServer server, LlamaEntity entity) {
         super(server, entity);
     }
 
     @Override
-    public EntityLlama getHandle() {
-        return (EntityLlama) super.getHandle();
+    public LlamaEntity getHandle() {
+        return (LlamaEntity) super.getHandle();
     }
 
     @Override

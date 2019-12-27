@@ -53,12 +53,12 @@ public class CraftBlock implements Block {
     private final net.minecraft.world.IWorld world;
     private final BlockPosition position;
 
-    public CraftBlock(GeneratorAccess world, BlockPosition position) {
+    public CraftBlock(IWorld world, BlockPosition position) {
         this.world = world;
         this.position = position.immutableCopy();
     }
 
-    public static CraftBlock at(GeneratorAccess world, BlockPosition position) {
+    public static CraftBlock at(IWorld world, BlockPosition position) {
         return new CraftBlock(world, position);
     }
 
@@ -215,12 +215,12 @@ public class CraftBlock implements Block {
 
     @Override
     public byte getLightFromSky() {
-        return (byte) world.getBrightness(EnumSkyBlock.SKY, position);
+        return (byte) world.getBrightness(LightType.SKY, position);
     }
 
     @Override
     public byte getLightFromBlocks() {
-        return (byte) world.getBrightness(EnumSkyBlock.BLOCK, position);
+        return (byte) world.getBrightness(LightType.BLOCK, position);
     }
 
 
@@ -268,7 +268,7 @@ public class CraftBlock implements Block {
         return "CraftBlock{pos=" + position + ",type=" + getType() + ",data=" + getNMS() + ",fluid=" + world.getFluid(position) + '}';
     }
 
-    public static BlockFace notchToBlockFace(EnumDirection notch) {
+    public static BlockFace notchToBlockFace(Direction notch) {
         if (notch == null) return BlockFace.SELF;
         switch (notch) {
         case DOWN:
@@ -288,20 +288,20 @@ public class CraftBlock implements Block {
         }
     }
 
-    public static EnumDirection blockFaceToNotch(BlockFace face) {
+    public static Direction blockFaceToNotch(BlockFace face) {
         switch (face) {
         case DOWN:
-            return EnumDirection.DOWN;
+            return Direction.DOWN;
         case UP:
-            return EnumDirection.UP;
+            return Direction.UP;
         case NORTH:
-            return EnumDirection.NORTH;
+            return Direction.NORTH;
         case SOUTH:
-            return EnumDirection.SOUTH;
+            return Direction.SOUTH;
         case WEST:
-            return EnumDirection.WEST;
+            return Direction.WEST;
         case EAST:
-            return EnumDirection.EAST;
+            return Direction.EAST;
         default:
             return null;
         }
@@ -482,20 +482,20 @@ public class CraftBlock implements Block {
         getWorld().setBiome(getX(), getY(), getZ(), bio);
     }
 
-    public static Biome biomeBaseToBiome(BiomeBase base) {
+    public static Biome biomeBaseToBiome(Biome base) {
         if (base == null) {
             return null;
         }
 
-        return Biome.valueOf(IRegistry.BIOME.getKey(base).getKey().toUpperCase(java.util.Locale.ENGLISH));
+        return Biome.valueOf(Registry.BIOME.getKey(base).getKey().toUpperCase(java.util.Locale.ENGLISH));
     }
 
-    public static BiomeBase biomeToBiomeBase(Biome bio) {
+    public static Biome biomeToBiome(Biome bio) {
         if (bio == null) {
             return null;
         }
 
-        return IRegistry.BIOME.get(new MinecraftKey(bio.name().toLowerCase(java.util.Locale.ENGLISH)));
+        return Registry.BIOME.get(new MinecraftKey(bio.name().toLowerCase(java.util.Locale.ENGLISH)));
     }
 
     @Override
@@ -509,7 +509,7 @@ public class CraftBlock implements Block {
     }
 
     @Override
-    public boolean isBlockPowered() {
+    public boolean isRedstoneBlock() {
         return world.getMinecraftWorld().getBlockPower(position) > 0;
     }
 
@@ -552,17 +552,17 @@ public class CraftBlock implements Block {
     @Override
     public int getBlockPower(BlockFace face) {
         int power = 0;
-        BlockRedstoneWire wire = (BlockRedstoneWire) Blocks.REDSTONE_WIRE;
+        RedstoneWireBlock wire = (RedstoneWireBlock) Blocks.REDSTONE_WIRE;
         net.minecraft.world.World world = this.world.getMinecraftWorld();
         int x = getX();
         int y = getY();
         int z = getZ();
-        if ((face == BlockFace.DOWN || face == BlockFace.SELF) && world.isBlockFacePowered(new BlockPosition(x, y - 1, z), EnumDirection.DOWN)) power = wire.getPower(power, world.getType(new BlockPosition(x, y - 1, z)));
-        if ((face == BlockFace.UP || face == BlockFace.SELF) && world.isBlockFacePowered(new BlockPosition(x, y + 1, z), EnumDirection.UP)) power = wire.getPower(power, world.getType(new BlockPosition(x, y + 1, z)));
-        if ((face == BlockFace.EAST || face == BlockFace.SELF) && world.isBlockFacePowered(new BlockPosition(x + 1, y, z), EnumDirection.EAST)) power = wire.getPower(power, world.getType(new BlockPosition(x + 1, y, z)));
-        if ((face == BlockFace.WEST || face == BlockFace.SELF) && world.isBlockFacePowered(new BlockPosition(x - 1, y, z), EnumDirection.WEST)) power = wire.getPower(power, world.getType(new BlockPosition(x - 1, y, z)));
-        if ((face == BlockFace.NORTH || face == BlockFace.SELF) && world.isBlockFacePowered(new BlockPosition(x, y, z - 1), EnumDirection.NORTH)) power = wire.getPower(power, world.getType(new BlockPosition(x, y, z - 1)));
-        if ((face == BlockFace.SOUTH || face == BlockFace.SELF) && world.isBlockFacePowered(new BlockPosition(x, y, z + 1), EnumDirection.SOUTH)) power = wire.getPower(power, world.getType(new BlockPosition(x, y, z + 1)));
+        if ((face == BlockFace.DOWN || face == BlockFace.SELF) && world.isBlockFacePowered(new BlockPosition(x, y - 1, z), Direction.DOWN)) power = wire.getPower(power, world.getType(new BlockPosition(x, y - 1, z)));
+        if ((face == BlockFace.UP || face == BlockFace.SELF) && world.isBlockFacePowered(new BlockPosition(x, y + 1, z), Direction.UP)) power = wire.getPower(power, world.getType(new BlockPosition(x, y + 1, z)));
+        if ((face == BlockFace.EAST || face == BlockFace.SELF) && world.isBlockFacePowered(new BlockPosition(x + 1, y, z), Direction.EAST)) power = wire.getPower(power, world.getType(new BlockPosition(x + 1, y, z)));
+        if ((face == BlockFace.WEST || face == BlockFace.SELF) && world.isBlockFacePowered(new BlockPosition(x - 1, y, z), Direction.WEST)) power = wire.getPower(power, world.getType(new BlockPosition(x - 1, y, z)));
+        if ((face == BlockFace.NORTH || face == BlockFace.SELF) && world.isBlockFacePowered(new BlockPosition(x, y, z - 1), Direction.NORTH)) power = wire.getPower(power, world.getType(new BlockPosition(x, y, z - 1)));
+        if ((face == BlockFace.SOUTH || face == BlockFace.SELF) && world.isBlockFacePowered(new BlockPosition(x, y, z + 1), Direction.SOUTH)) power = wire.getPower(power, world.getType(new BlockPosition(x, y, z + 1)));
         return power > 0 ? power : (face == BlockFace.SELF ? isBlockIndirectlyPowered() : isBlockFaceIndirectlyPowered(face)) ? 15 : 0;
     }
 
@@ -617,7 +617,7 @@ public class CraftBlock implements Block {
 
         // Modelled off EntityHuman#hasBlock
         if (iblockdata.getMaterial().isAlwaysDestroyable() || nms.canDestroySpecialBlock(iblockdata)) {
-            return net.minecraft.block.Block.getDrops(iblockdata, (WorldServer) world.getMinecraftWorld(), position, world.getTileEntity(position), null, nms)
+            return net.minecraft.block.Block.getDrops(iblockdata, (ServerWorld) world.getMinecraftWorld(), position, world.getTileEntity(position), null, nms)
                     .stream().map(CraftItemStack::asBukkitCopy).collect(Collectors.toList());
         } else {
             return Collections.emptyList();
@@ -668,7 +668,7 @@ public class CraftBlock implements Block {
         Vec3D startPos = new Vec3D(start.getX(), start.getY(), start.getZ());
         Vec3D endPos = new Vec3D(start.getX() + dir.getX(), start.getY() + dir.getY(), start.getZ() + dir.getZ());
 
-        MovingObjectPosition nmsHitResult = world.rayTraceBlock(new RayTrace(startPos, endPos, RayTrace.BlockCollisionOption.OUTLINE, CraftFluidCollisionMode.toNMS(fluidCollisionMode), null), position);
+        RayTraceResult nmsHitResult = world.rayTraceBlock(new RayTrace(startPos, endPos, RayTrace.BlockCollisionOption.OUTLINE, CraftFluidCollisionMode.toNMS(fluidCollisionMode), null), position);
         return CraftRayTraceResult.fromNMS(this.getWorld(), nmsHitResult);
     }
 

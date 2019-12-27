@@ -11,16 +11,16 @@ import org.bukkit.scoreboard.RenderType;
 import org.bukkit.scoreboard.Score;
 
 final class CraftObjective extends CraftScoreboardComponent implements Objective {
-    private final ScoreboardObjective objective;
+    private final ScoreObjective objective;
     private final CraftCriteria criteria;
 
-    CraftObjective(CraftScoreboard scoreboard, ScoreboardObjective objective) {
+    CraftObjective(CraftScoreboard scoreboard, ScoreObjective objective) {
         super(scoreboard);
         this.objective = objective;
         this.criteria = CraftCriteria.getFromNMS(objective);
     }
 
-    ScoreboardObjective getHandle() {
+    ScoreObjective getHandle() {
         return objective;
     }
 
@@ -65,7 +65,7 @@ final class CraftObjective extends CraftScoreboardComponent implements Objective
     public void setDisplaySlot(DisplaySlot slot) throws IllegalStateException {
         CraftScoreboard scoreboard = checkState();
         Scoreboard board = scoreboard.board;
-        ScoreboardObjective objective = this.objective;
+        ScoreObjective objective = this.objective;
 
         for (int i = 0; i < CraftScoreboardTranslations.MAX_DISPLAY_SLOT; i++) {
             if (board.getObjectiveForSlot(i) == objective) {
@@ -82,7 +82,7 @@ final class CraftObjective extends CraftScoreboardComponent implements Objective
     public DisplaySlot getDisplaySlot() throws IllegalStateException {
         CraftScoreboard scoreboard = checkState();
         Scoreboard board = scoreboard.board;
-        ScoreboardObjective objective = this.objective;
+        ScoreObjective objective = this.objective;
 
         for (int i = 0; i < CraftScoreboardTranslations.MAX_DISPLAY_SLOT; i++) {
             if (board.getObjectiveForSlot(i) == objective) {

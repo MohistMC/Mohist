@@ -8,7 +8,7 @@ import org.bukkit.entity.SkeletonHorse;
 
 public class CraftSkeletonHorse extends CraftAbstractHorse implements SkeletonHorse {
 
-    public CraftSkeletonHorse(CraftServer server, EntityHorseSkeleton entity) {
+    public CraftSkeletonHorse(CraftServer server, SkeletonHorseEntity entity) {
         super(server, entity);
     }
 

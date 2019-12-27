@@ -17,7 +17,7 @@ public class CraftEnderDragon extends CraftComplexLivingEntity implements EnderD
 
     private BossBar bossBar;
 
-    public CraftEnderDragon(CraftServer server, EntityEnderDragon entity) {
+    public CraftEnderDragon(CraftServer server, EnderDragonEntity entity) {
         super(server, entity);
 
         if (entity.getEnderDragonBattle() != null) {
@@ -29,7 +29,7 @@ public class CraftEnderDragon extends CraftComplexLivingEntity implements EnderD
     public Set<ComplexEntityPart> getParts() {
         Builder<ComplexEntityPart> builder = ImmutableSet.builder();
 
-        for (EntityComplexPart part : getHandle().children) {
+        for (EnderDragonPartEntity part : getHandle().children) {
             builder.add((ComplexEntityPart) part.getBukkitEntity());
         }
 
@@ -37,8 +37,8 @@ public class CraftEnderDragon extends CraftComplexLivingEntity implements EnderD
     }
 
     @Override
-    public EntityEnderDragon getHandle() {
-        return (EntityEnderDragon) entity;
+    public EnderDragonEntity getHandle() {
+        return (EnderDragonEntity) entity;
     }
 
     @Override
@@ -53,7 +53,7 @@ public class CraftEnderDragon extends CraftComplexLivingEntity implements EnderD
 
     @Override
     public Phase getPhase() {
-        return Phase.values()[getHandle().getDataWatcher().get(EntityEnderDragon.PHASE)];
+        return Phase.values()[getHandle().getDataWatcher().get(EnderDragonEntity.PHASE)];
     }
 
     @Override
@@ -61,12 +61,12 @@ public class CraftEnderDragon extends CraftComplexLivingEntity implements EnderD
         getHandle().getDragonControllerManager().setControllerPhase(getMinecraftPhase(phase));
     }
 
-    public static Phase getBukkitPhase(DragonControllerPhase phase) {
+    public static Phase getBukkitPhase(PhaseType phase) {
         return Phase.values()[phase.b()];
     }
 
-    public static DragonControllerPhase getMinecraftPhase(Phase phase) {
-        return DragonControllerPhase.getById(phase.ordinal());
+    public static PhaseType getMinecraftPhase(Phase phase) {
+        return PhaseType.getById(phase.ordinal());
     }
 
     @Override

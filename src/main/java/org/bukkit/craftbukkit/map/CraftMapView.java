@@ -22,9 +22,9 @@ public final class CraftMapView implements MapView {
     private final Map<CraftPlayer, RenderData> renderCache = new HashMap<CraftPlayer, RenderData>();
     private final List<MapRenderer> renderers = new ArrayList<MapRenderer>();
     private final Map<MapRenderer, Map<CraftPlayer, CraftMapCanvas>> canvases = new HashMap<MapRenderer, Map<CraftPlayer, CraftMapCanvas>>();
-    protected final WorldMap worldMap;
+    protected final MapData worldMap;
 
-    public CraftMapView(WorldMap worldMap) {
+    public CraftMapView(MapData worldMap) {
         this.worldMap = worldMap;
         addRenderer(new CraftMapRenderer(this, worldMap));
     }

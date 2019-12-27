@@ -9,7 +9,7 @@ import org.bukkit.event.entity.CreeperPowerEvent;
 
 public class CraftCreeper extends CraftMonster implements Creeper {
 
-    public CraftCreeper(CraftServer server, EntityCreeper entity) {
+    public CraftCreeper(CraftServer server, CreeperEntity entity) {
         super(server, entity);
     }
 
@@ -75,8 +75,8 @@ public class CraftCreeper extends CraftMonster implements Creeper {
     }
 
     @Override
-    public EntityCreeper getHandle() {
-        return (EntityCreeper) entity;
+    public CreeperEntity getHandle() {
+        return (CreeperEntity) entity;
     }
 
     @Override

@@ -17,13 +17,13 @@ import org.bukkit.entity.ZombieVillager;
 
 public class CraftVillagerZombie extends CraftZombie implements ZombieVillager {
 
-    public CraftVillagerZombie(CraftServer server, EntityZombieVillager entity) {
+    public CraftVillagerZombie(CraftServer server, ZombieVillagerEntity entity) {
         super(server, entity);
     }
 
     @Override
-    public EntityZombieVillager getHandle() {
-        return (EntityZombieVillager) super.getHandle();
+    public ZombieVillagerEntity getHandle() {
+        return (ZombieVillagerEntity) super.getHandle();
     }
 
     @Override
@@ -38,13 +38,13 @@ public class CraftVillagerZombie extends CraftZombie implements ZombieVillager {
 
     @Override
     public Villager.Profession getVillagerProfession() {
-        return Villager.Profession.valueOf(IRegistry.VILLAGER_PROFESSION.getKey(getHandle().getVillagerData().getProfession()).getKey().toUpperCase(Locale.ROOT));
+        return Villager.Profession.valueOf(Registry.VILLAGER_PROFESSION.getKey(getHandle().getVillagerData().getProfession()).getKey().toUpperCase(Locale.ROOT));
     }
 
     @Override
     public void setVillagerProfession(Villager.Profession profession) {
         Validate.notNull(profession);
-        getHandle().setVillagerData(getHandle().getVillagerData().withProfession(IRegistry.VILLAGER_PROFESSION.get(new MinecraftKey(profession.name().toLowerCase(Locale.ROOT)))));
+        getHandle().setVillagerData(getHandle().getVillagerData().withProfession(Registry.VILLAGER_PROFESSION.get(new ResourceLocation(profession.name().toLowerCase(Locale.ROOT)))));
     }
 
     @Override
@@ -63,10 +63,10 @@ public class CraftVillagerZombie extends CraftZombie implements ZombieVillager {
     public void setConversionTime(int time) {
         if (time < 0) {
             getHandle().conversionTime = -1;
-            getHandle().getDataWatcher().set(EntityZombieVillager.CONVERTING, false);
+            getHandle().getDataWatcher().set(ZombieVillagerEntity.CONVERTING, false);
             getHandle().persistent = false; // CraftBukkit - SPIGOT-4684 update persistence
             getHandle().conversionPlayer = null;
-            getHandle().removeEffect(MobEffects.INCREASE_DAMAGE, org.bukkit.event.entity.EntityPotionEffectEvent.Cause.CONVERSION);
+            getHandle().removeEffect(Effects.INCREASE_DAMAGE, org.bukkit.event.entity.PotionEntityEffectEvent.Cause.CONVERSION);
         } else {
             getHandle().startConversion((UUID) null, time);
         }

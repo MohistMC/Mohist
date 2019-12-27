@@ -8,10 +8,10 @@ import org.bukkit.block.Smoker;
 public class CraftSmoker extends CraftFurnace implements Smoker {
 
     public CraftSmoker(Block block) {
-        super(block, TileEntitySmoker.class);
+        super(block, SmokerTileEntity.class);
     }
 
-    public CraftSmoker(Material material, TileEntitySmoker te) {
+    public CraftSmoker(Material material, SmokerTileEntity te) {
         super(material, te);
     }
 }

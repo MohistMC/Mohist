@@ -6,7 +6,7 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.WitherSkull;
 
 public class CraftWitherSkull extends CraftFireball implements WitherSkull {
-    public CraftWitherSkull(CraftServer server, EntityWitherSkull entity) {
+    public CraftWitherSkull(CraftServer server, WitherEntitySkull entity) {
         super(server, entity);
     }
 
@@ -21,8 +21,8 @@ public class CraftWitherSkull extends CraftFireball implements WitherSkull {
     }
 
     @Override
-    public EntityWitherSkull getHandle() {
-        return (EntityWitherSkull) entity;
+    public WitherEntitySkull getHandle() {
+        return (WitherEntitySkull) entity;
     }
 
     @Override

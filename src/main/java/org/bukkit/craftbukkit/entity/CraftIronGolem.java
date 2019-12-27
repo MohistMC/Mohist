@@ -6,13 +6,13 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.IronGolem;
 
 public class CraftIronGolem extends CraftGolem implements IronGolem {
-    public CraftIronGolem(CraftServer server, EntityIronGolem entity) {
+    public CraftIronGolem(CraftServer server, IronGolemEntity entity) {
         super(server, entity);
     }
 
     @Override
-    public EntityIronGolem getHandle() {
-        return (EntityIronGolem) entity;
+    public IronGolemEntity getHandle() {
+        return (IronGolemEntity) entity;
     }
 
     @Override

@@ -7,13 +7,13 @@ import org.bukkit.entity.Vex;
 
 public class CraftVex extends CraftMonster implements Vex {
 
-    public CraftVex(CraftServer server, EntityVex entity) {
+    public CraftVex(CraftServer server, VexEntity entity) {
         super(server, entity);
     }
 
     @Override
-    public EntityVex getHandle() {
-        return (EntityVex) super.getHandle();
+    public VexEntity getHandle() {
+        return (VexEntity) super.getHandle();
     }
 
     @Override

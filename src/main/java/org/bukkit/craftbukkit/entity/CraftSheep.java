@@ -8,7 +8,7 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Sheep;
 
 public class CraftSheep extends CraftAnimals implements Sheep {
-    public CraftSheep(CraftServer server, EntitySheep entity) {
+    public CraftSheep(CraftServer server, SheepEntity entity) {
         super(server, entity);
     }
 
@@ -19,7 +19,7 @@ public class CraftSheep extends CraftAnimals implements Sheep {
 
     @Override
     public void setColor(DyeColor color) {
-        getHandle().setColor(EnumColor.fromColorIndex(color.getWoolData()));
+        getHandle().setColor(DyeColor.fromColorIndex(color.getWoolData()));
     }
 
     @Override
@@ -33,8 +33,8 @@ public class CraftSheep extends CraftAnimals implements Sheep {
     }
 
     @Override
-    public EntitySheep getHandle() {
-        return (EntitySheep) entity;
+    public SheepEntity getHandle() {
+        return (SheepEntity) entity;
     }
 
     @Override

@@ -15,8 +15,8 @@ public final class CraftRepeater extends org.bukkit.craftbukkit.block.data.Craft
 
     // org.bukkit.craftbukkit.block.data.type.CraftRepeater
 
-    private static final net.minecraft.state.PropertyInteger DELAY = getInteger(net.minecraft.block.BlockRepeater.class, "delay");
-    private static final net.minecraft.state.PropertyBoolean LOCKED = getBoolean(net.minecraft.block.BlockRepeater.class, "locked");
+    private static final net.minecraft.state.PropertyInteger DELAY = getInteger(net.minecraft.block.RepeaterBlock.class, "delay");
+    private static final net.minecraft.state.PropertyBoolean LOCKED = getBoolean(net.minecraft.block.RepeaterBlock.class, "locked");
 
     @Override
     public int getDelay() {
@@ -50,7 +50,7 @@ public final class CraftRepeater extends org.bukkit.craftbukkit.block.data.Craft
 
     // org.bukkit.craftbukkit.block.data.CraftDirectional
 
-    private static final net.minecraft.state.PropertyEnum<?> FACING = getEnum(net.minecraft.block.BlockRepeater.class, "facing");
+    private static final net.minecraft.state.PropertyEnum<?> FACING = getEnum(net.minecraft.block.RepeaterBlock.class, "facing");
 
     @Override
     public org.bukkit.block.BlockFace getFacing() {
@@ -69,7 +69,7 @@ public final class CraftRepeater extends org.bukkit.craftbukkit.block.data.Craft
 
     // org.bukkit.craftbukkit.block.data.CraftPowerable
 
-    private static final net.minecraft.state.PropertyBoolean POWERED = getBoolean(net.minecraft.block.BlockRepeater.class, "powered");
+    private static final net.minecraft.state.PropertyBoolean POWERED = getBoolean(net.minecraft.block.RepeaterBlock.class, "powered");
 
     @Override
     public boolean isPowered() {

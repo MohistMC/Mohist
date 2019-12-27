@@ -15,7 +15,7 @@ public final class CraftMinecartTrack extends org.bukkit.craftbukkit.block.data.
 
     // org.bukkit.craftbukkit.block.data.CraftRail
 
-    private static final net.minecraft.state.PropertyEnum<?> SHAPE = getEnum(net.minecraft.block.BlockMinecartTrack.class, "shape");
+    private static final net.minecraft.state.PropertyEnum<?> SHAPE = getEnum(net.minecraft.block.RailBlock.class, "shape");
 
     @Override
     public Shape getShape() {

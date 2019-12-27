@@ -16,7 +16,7 @@ public final class CraftHugeMushroom extends org.bukkit.craftbukkit.block.data.C
     // org.bukkit.craftbukkit.block.data.CraftMultipleFacing
 
     private static final net.minecraft.state.PropertyBoolean[] FACES = new net.minecraft.state.PropertyBoolean[]{
-        getBoolean(net.minecraft.block.BlockHugeMushroom.class, "north", true), getBoolean(net.minecraft.block.BlockHugeMushroom.class, "east", true), getBoolean(net.minecraft.block.BlockHugeMushroom.class, "south", true), getBoolean(net.minecraft.block.BlockHugeMushroom.class, "west", true), getBoolean(net.minecraft.block.BlockHugeMushroom.class, "up", true), getBoolean(net.minecraft.block.BlockHugeMushroom.class, "down", true)
+        getBoolean(net.minecraft.block.HugeMushroomBlock.class, "north", true), getBoolean(net.minecraft.block.HugeMushroomBlock.class, "east", true), getBoolean(net.minecraft.block.HugeMushroomBlock.class, "south", true), getBoolean(net.minecraft.block.HugeMushroomBlock.class, "west", true), getBoolean(net.minecraft.block.HugeMushroomBlock.class, "up", true), getBoolean(net.minecraft.block.HugeMushroomBlock.class, "down", true)
     };
 
     @Override

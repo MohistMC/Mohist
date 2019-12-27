@@ -9,13 +9,13 @@ import org.bukkit.inventory.Inventory;
 
 public class CraftPillager extends CraftIllager implements Pillager {
 
-    public CraftPillager(CraftServer server, EntityPillager entity) {
+    public CraftPillager(CraftServer server, PillagerEntity entity) {
         super(server, entity);
     }
 
     @Override
-    public EntityPillager getHandle() {
-        return (EntityPillager) super.getHandle();
+    public PillagerEntity getHandle() {
+        return (PillagerEntity) super.getHandle();
     }
 
     @Override

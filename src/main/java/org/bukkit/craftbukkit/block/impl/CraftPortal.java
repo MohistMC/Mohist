@@ -15,7 +15,7 @@ public final class CraftPortal extends org.bukkit.craftbukkit.block.data.CraftBl
 
     // org.bukkit.craftbukkit.block.data.CraftOrientable
 
-    private static final net.minecraft.state.PropertyEnum<?> AXIS = getEnum(net.minecraft.block.BlockPortal.class, "axis");
+    private static final net.minecraft.state.PropertyEnum<?> AXIS = getEnum(net.minecraft.block.NetherPortalBlock.class, "axis");
 
     @Override
     public org.bukkit.Axis getAxis() {

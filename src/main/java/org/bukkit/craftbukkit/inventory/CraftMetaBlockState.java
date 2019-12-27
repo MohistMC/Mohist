@@ -136,7 +136,7 @@ public class CraftMetaBlockState extends CraftMetaItem implements BlockStateMeta
     }
 
     @Override
-    void serializeInternal(final Map<String, NBTBase> internalTags) {
+    void serializeInternal(final Map<String, INBT> internalTags) {
         if (blockEntityTag != null) {
             internalTags.put(BLOCK_ENTITY_TAG.NBT, blockEntityTag);
         }
@@ -321,14 +321,14 @@ public class CraftMetaBlockState extends CraftMetaItem implements BlockStateMeta
             return new CraftFurnace(material, (TileEntityFurnace) te);
         case DISPENSER:
             if (te == null) {
-                te = new TileEntityDispenser();
+                te = new DispenserTileEntity();
             }
-            return new CraftDispenser(material, (TileEntityDispenser) te);
+            return new CraftDispenser(material, (DispenserTileEntity) te);
         case DROPPER:
             if (te == null) {
-                te = new TileEntityDropper();
+                te = new DropperTileEntity();
             }
-            return new CraftDropper(material, (TileEntityDropper) te);
+            return new CraftDropper(material, (DropperTileEntity) te);
         case END_GATEWAY:
             if (te == null) {
                 te = new TileEntityEndGateway();
@@ -491,9 +491,9 @@ public class CraftMetaBlockState extends CraftMetaItem implements BlockStateMeta
             return new CraftCampfire(material, (TileEntityCampfire) te);
         case JIGSAW:
             if (te == null){
-                te = new TileEntityJigsaw();
+                te = new JigsawTileEntity();
             }
-            return new CraftJigsaw(material, (TileEntityJigsaw) te);
+            return new CraftJigsaw(material, (JigsawTileEntity) te);
         case LECTERN:
             if (te == null){
                 te = new TileEntityLectern();
@@ -501,9 +501,9 @@ public class CraftMetaBlockState extends CraftMetaItem implements BlockStateMeta
             return new CraftLectern(material, (TileEntityLectern) te);
         case SMOKER:
             if (te == null){
-                te = new TileEntitySmoker();
+                te = new SmokerTileEntity();
             }
-            return new CraftSmoker(material, (TileEntitySmoker) te);
+            return new CraftSmoker(material, (SmokerTileEntity) te);
         case BEE_NEST:
         case BEEHIVE:
             if (te == null){

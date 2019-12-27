@@ -64,7 +64,7 @@ class CraftMetaSkull extends CraftMetaItem implements SkullMeta {
     }
 
     @Override
-    void serializeInternal(final Map<String, NBTBase> internalTags) {
+    void serializeInternal(final Map<String, INBT> internalTags) {
         if (profile != null) {
             internalTags.put(SKULL_PROFILE.NBT, serializedProfile);
         }

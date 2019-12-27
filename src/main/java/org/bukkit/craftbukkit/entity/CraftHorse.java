@@ -10,13 +10,13 @@ import org.bukkit.inventory.HorseInventory;
 
 public class CraftHorse extends CraftAbstractHorse implements Horse {
 
-    public CraftHorse(CraftServer server, EntityHorse entity) {
+    public CraftHorse(CraftServer server, HorseEntity entity) {
         super(server, entity);
     }
 
     @Override
-    public EntityHorse getHandle() {
-        return (EntityHorse) super.getHandle();
+    public HorseEntity getHandle() {
+        return (HorseEntity) super.getHandle();
     }
 
     @Override

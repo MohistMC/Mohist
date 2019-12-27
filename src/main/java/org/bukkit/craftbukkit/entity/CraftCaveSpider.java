@@ -6,13 +6,13 @@ import org.bukkit.entity.CaveSpider;
 import org.bukkit.entity.EntityType;
 
 public class CraftCaveSpider extends CraftSpider implements CaveSpider {
-    public CraftCaveSpider(CraftServer server, EntityCaveSpider entity) {
+    public CraftCaveSpider(CraftServer server, CaveSpiderEntity entity) {
         super(server, entity);
     }
 
     @Override
-    public EntityCaveSpider getHandle() {
-        return (EntityCaveSpider) entity;
+    public CaveSpiderEntity getHandle() {
+        return (CaveSpiderEntity) entity;
     }
 
     @Override

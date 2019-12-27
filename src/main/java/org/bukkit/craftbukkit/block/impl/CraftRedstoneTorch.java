@@ -15,7 +15,7 @@ public final class CraftRedstoneTorch extends org.bukkit.craftbukkit.block.data.
 
     // org.bukkit.craftbukkit.block.data.CraftLightable
 
-    private static final net.minecraft.state.PropertyBoolean LIT = getBoolean(net.minecraft.block.BlockRedstoneTorch.class, "lit");
+    private static final net.minecraft.state.PropertyBoolean LIT = getBoolean(net.minecraft.block.RedstoneTorchBlock.class, "lit");
 
     @Override
     public boolean isLit() {

@@ -8,13 +8,13 @@ import org.bukkit.entity.Parrot;
 
 public class CraftParrot extends CraftTameableAnimal implements Parrot {
 
-    public CraftParrot(CraftServer server, EntityParrot parrot) {
+    public CraftParrot(CraftServer server, ParrotEntity parrot) {
         super(server, parrot);
     }
 
     @Override
-    public EntityParrot getHandle() {
-        return (EntityParrot) entity;
+    public ParrotEntity getHandle() {
+        return (ParrotEntity) entity;
     }
 
     @Override

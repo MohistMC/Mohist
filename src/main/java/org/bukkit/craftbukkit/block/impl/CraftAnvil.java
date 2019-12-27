@@ -15,7 +15,7 @@ public final class CraftAnvil extends org.bukkit.craftbukkit.block.data.CraftBlo
 
     // org.bukkit.craftbukkit.block.data.CraftDirectional
 
-    private static final net.minecraft.state.PropertyEnum<?> FACING = getEnum(net.minecraft.block.BlockAnvil.class, "facing");
+    private static final net.minecraft.state.PropertyEnum<?> FACING = getEnum(net.minecraft.block.AnvilBlock.class, "facing");
 
     @Override
     public org.bukkit.block.BlockFace getFacing() {

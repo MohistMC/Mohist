@@ -16,7 +16,7 @@ public final class CraftVine extends org.bukkit.craftbukkit.block.data.CraftBloc
     // org.bukkit.craftbukkit.block.data.CraftMultipleFacing
 
     private static final net.minecraft.state.PropertyBoolean[] FACES = new net.minecraft.state.PropertyBoolean[]{
-        getBoolean(net.minecraft.block.BlockVine.class, "north", true), getBoolean(net.minecraft.block.BlockVine.class, "east", true), getBoolean(net.minecraft.block.BlockVine.class, "south", true), getBoolean(net.minecraft.block.BlockVine.class, "west", true), getBoolean(net.minecraft.block.BlockVine.class, "up", true), getBoolean(net.minecraft.block.BlockVine.class, "down", true)
+        getBoolean(net.minecraft.block.VineBlock.class, "north", true), getBoolean(net.minecraft.block.VineBlock.class, "east", true), getBoolean(net.minecraft.block.VineBlock.class, "south", true), getBoolean(net.minecraft.block.VineBlock.class, "west", true), getBoolean(net.minecraft.block.VineBlock.class, "up", true), getBoolean(net.minecraft.block.VineBlock.class, "down", true)
     };
 
     @Override

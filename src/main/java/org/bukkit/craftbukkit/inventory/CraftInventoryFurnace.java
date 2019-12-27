@@ -6,7 +6,7 @@ import org.bukkit.inventory.FurnaceInventory;
 import org.bukkit.inventory.ItemStack;
 
 public class CraftInventoryFurnace extends CraftInventory implements FurnaceInventory {
-    public CraftInventoryFurnace(TileEntityFurnace inventory) {
+    public CraftInventoryFurnace(AbstractFurnaceTileEntity inventory) {
         super(inventory);
     }
 

@@ -35,7 +35,7 @@ public class CraftMerchant implements Merchant {
 
     @Override
     public void setRecipes(List<MerchantRecipe> recipes) {
-        MerchantRecipeList recipesList = merchant.getOffers();
+        MerchantOffers recipesList = merchant.getOffers();
         recipesList.clear();
         for (MerchantRecipe recipe : recipes) {
             recipesList.add(CraftMerchantRecipe.fromBukkit(recipe).toMinecraft());
@@ -64,7 +64,7 @@ public class CraftMerchant implements Merchant {
 
     @Override
     public HumanEntity getTrader() {
-        EntityHuman eh = merchant.getTrader();
+        PlayerEntity eh = merchant.getTrader();
         return eh == null ? null : eh.getBukkitEntity();
     }
 

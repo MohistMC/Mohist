@@ -7,7 +7,7 @@ import org.bukkit.entity.EnderDragonPart;
 import org.bukkit.entity.Entity;
 
 public class CraftEnderDragonPart extends CraftComplexPart implements EnderDragonPart {
-    public CraftEnderDragonPart(CraftServer server, EntityComplexPart entity) {
+    public CraftEnderDragonPart(CraftServer server, EnderDragonPartEntity entity) {
         super(server, entity);
     }
 
@@ -17,8 +17,8 @@ public class CraftEnderDragonPart extends CraftComplexPart implements EnderDrago
     }
 
     @Override
-    public EntityComplexPart getHandle() {
-        return (EntityComplexPart) entity;
+    public EnderDragonPartEntity getHandle() {
+        return (EnderDragonPartEntity) entity;
     }
 
     @Override

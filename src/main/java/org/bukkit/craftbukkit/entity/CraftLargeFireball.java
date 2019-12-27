@@ -6,7 +6,7 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LargeFireball;
 
 public class CraftLargeFireball extends CraftFireball implements LargeFireball {
-    public CraftLargeFireball(CraftServer server, EntityLargeFireball entity) {
+    public CraftLargeFireball(CraftServer server, FireballEntity entity) {
         super(server, entity);
     }
 
@@ -17,8 +17,8 @@ public class CraftLargeFireball extends CraftFireball implements LargeFireball {
     }
 
     @Override
-    public EntityLargeFireball getHandle() {
-        return (EntityLargeFireball) entity;
+    public FireballEntity getHandle() {
+        return (FireballEntity) entity;
     }
 
     @Override

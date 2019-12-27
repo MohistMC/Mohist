@@ -10,13 +10,13 @@ import org.bukkit.entity.TropicalFish;
 
 public class CraftTropicalFish extends CraftFish implements TropicalFish {
 
-    public CraftTropicalFish(CraftServer server, EntityTropicalFish entity) {
+    public CraftTropicalFish(CraftServer server, TropicalFishEntity entity) {
         super(server, entity);
     }
 
     @Override
-    public EntityTropicalFish getHandle() {
-        return (EntityTropicalFish) entity;
+    public TropicalFishEntity getHandle() {
+        return (TropicalFishEntity) entity;
     }
 
     @Override

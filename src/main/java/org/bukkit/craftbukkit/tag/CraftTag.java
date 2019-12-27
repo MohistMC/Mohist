@@ -10,12 +10,12 @@ import org.bukkit.craftbukkit.util.CraftNamespacedKey;
 public abstract class CraftTag<N, B extends Keyed> implements Tag<B> {
 
     private final net.minecraft.tags.NetworkTagCollection<N> registry;
-    private final MinecraftKey tag;
+    private final ResourceLocation tag;
     //
     private int version = -1;
     private net.minecraft.tags.Tag<N> handle;
 
-    public CraftTag(TagsServer<N> registry, MinecraftKey tag) {
+    public CraftTag(NetworkTagCollection<N> registry, ResourceLocation tag) {
         this.registry = registry;
         this.tag = tag;
     }

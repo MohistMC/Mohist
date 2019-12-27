@@ -45,7 +45,7 @@ public class CraftMetaCrossbow extends CraftMetaItem implements CrossbowMeta {
         charged = tag.getBoolean(CHARGED.NBT);
 
         if (tag.hasKeyOfType(CHARGED_PROJECTILES.NBT, CraftMagicNumbers.NBT.TAG_LIST)) {
-            NBTTagList list = tag.getList(CHARGED_PROJECTILES.NBT, CraftMagicNumbers.NBT.TAG_COMPOUND);
+            ListNBT list = tag.getList(CHARGED_PROJECTILES.NBT, CraftMagicNumbers.NBT.TAG_COMPOUND);
 
             if (list != null && !list.isEmpty()) {
                 chargedProjectiles = new ArrayList<>();
@@ -83,7 +83,7 @@ public class CraftMetaCrossbow extends CraftMetaItem implements CrossbowMeta {
 
         tag.setBoolean(CHARGED.NBT, charged);
         if (hasChargedProjectiles()) {
-            NBTTagList list = new NBTTagList();
+            ListNBT list = new ListNBT();
 
             for (ItemStack item : chargedProjectiles) {
                 NBTTagCompound saved = new NBTTagCompound();
@@ -141,7 +141,7 @@ public class CraftMetaCrossbow extends CraftMetaItem implements CrossbowMeta {
     @Override
     public void addChargedProjectile(ItemStack item) {
         Preconditions.checkArgument(item != null, "item");
-        Preconditions.checkArgument(item.getType() == Material.FIREWORK_ROCKET || CraftMagicNumbers.getItem(item.getType()) instanceof ItemArrow, "Item %s is not an arrow or firework rocket", item);
+        Preconditions.checkArgument(item.getType() == Material.FIREWORK_ROCKET || CraftMagicNumbers.getItem(item.getType()) instanceof ArrowItem, "Item %s is not an arrow or firework rocket", item);
 
         if (chargedProjectiles == null) {
             chargedProjectiles = new ArrayList<>();

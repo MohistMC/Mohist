@@ -15,8 +15,8 @@ public final class CraftTurtleEgg extends org.bukkit.craftbukkit.block.data.Craf
 
     // org.bukkit.craftbukkit.block.data.type.CraftTurtleEgg
 
-    private static final net.minecraft.state.PropertyInteger EGGS = getInteger(net.minecraft.block.BlockTurtleEgg.class, "eggs");
-    private static final net.minecraft.state.PropertyInteger HATCH = getInteger(net.minecraft.block.BlockTurtleEgg.class, "hatch");
+    private static final net.minecraft.state.PropertyInteger EGGS = getInteger(net.minecraft.block.TurtleEggBlock.class, "eggs");
+    private static final net.minecraft.state.PropertyInteger HATCH = getInteger(net.minecraft.block.TurtleEggBlock.class, "hatch");
 
     @Override
     public int getEggs() {

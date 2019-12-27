@@ -17,15 +17,15 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.ItemFrame;
 
 public class CraftItemFrame extends CraftHanging implements ItemFrame {
-    public CraftItemFrame(CraftServer server, EntityItemFrame entity) {
+    public CraftItemFrame(CraftServer server, ItemEntityFrame entity) {
         super(server, entity);
     }
 
     @Override
     public boolean setFacingDirection(BlockFace face, boolean force) {
-        EntityHanging hanging = getHandle();
-        EnumDirection oldDir = hanging.getDirection();
-        EnumDirection newDir = CraftBlock.blockFaceToNotch(face);
+        HangingEntity hanging = getHandle();
+        Direction oldDir = hanging.getDirection();
+        Direction newDir = CraftBlock.blockFaceToNotch(face);
 
         getHandle().setDirection(newDir);
         if (!force && !hanging.survives()) {
@@ -39,16 +39,16 @@ public class CraftItemFrame extends CraftHanging implements ItemFrame {
     }
 
     private void update() {
-        EntityItemFrame old = this.getHandle();
+        ItemEntityFrame old = this.getHandle();
 
-        WorldServer world = ((CraftWorld) getWorld()).getHandle();
+        ServerWorld world = ((CraftWorld) getWorld()).getHandle();
         BlockPosition position = old.getBlockPosition();
-        EnumDirection direction = old.getDirection();
+        Direction direction = old.getDirection();
         ItemStack item = old.getItem() != null ? old.getItem().cloneItemStack() : null;
 
         old.die();
 
-        EntityItemFrame frame = new EntityItemFrame(world,position,direction);
+        ItemEntityFrame frame = new ItemEntityFrame(world,position,direction);
         frame.setItem(item);
         world.addEntity(frame);
         this.entity = frame;
@@ -129,8 +129,8 @@ public class CraftItemFrame extends CraftHanging implements ItemFrame {
     }
 
     @Override
-    public EntityItemFrame getHandle() {
-        return (EntityItemFrame) entity;
+    public ItemEntityFrame getHandle() {
+        return (ItemEntityFrame) entity;
     }
 
     @Override

@@ -25,12 +25,12 @@ import org.bukkit.plugin.Plugin;
 public class CraftOfflinePlayer implements OfflinePlayer, ConfigurationSerializable {
     private final GameProfile profile;
     private final CraftServer server;
-    private final WorldNBTStorage storage;
+    private final SaveHandler storage;
 
     protected CraftOfflinePlayer(CraftServer server, GameProfile profile) {
         this.server = server;
         this.profile = profile;
-        this.storage = (WorldNBTStorage) (server.console.getWorldServer(DimensionManager.OVERWORLD).getDataManager());
+        this.storage = (SaveHandler) (server.console.getWorldServer(DimensionType.OVERWORLD).getDataManager());
 
     }
 
@@ -122,7 +122,7 @@ public class CraftOfflinePlayer implements OfflinePlayer, ConfigurationSerializa
     @Override
     public void setWhitelisted(boolean value) {
         if (value) {
-            server.getHandle().getWhitelist().add(new WhiteListEntry(profile));
+            server.getHandle().getWhitelist().add(new WhitelistEntry(profile));
         } else {
             server.getHandle().getWhitelist().remove(profile);
         }

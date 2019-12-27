@@ -24,8 +24,8 @@ import org.bukkit.plugin.Plugin;
 public class CraftBlockState implements BlockState {
     private final CraftWorld world;
     private final CraftChunk chunk;
-    private final BlockPosition position;
-    protected IBlockData data;
+    private final BlockPos position;
+    protected BlockState data;
     protected int flag;
 
     public CraftBlockState(final Block block) {
@@ -45,10 +45,10 @@ public class CraftBlockState implements BlockState {
         world = null;
         data = CraftMagicNumbers.getBlock(material).getBlockData();
         chunk = null;
-        position = BlockPosition.ZERO;
+        position = BlockPos.ZERO;
     }
 
-    public static CraftBlockState getBlockState(GeneratorAccess world, net.minecraft.util.math.BlockPos pos) {
+    public static CraftBlockState getBlockState(IWorld world, net.minecraft.util.math.BlockPos pos) {
         return new CraftBlockState(CraftBlock.at(world, pos));
     }
 
@@ -83,15 +83,15 @@ public class CraftBlockState implements BlockState {
         return chunk;
     }
 
-    public void setData(IBlockData data) {
+    public void setData(BlockState data) {
         this.data = data;
     }
 
-    public BlockPosition getPosition() {
+    public BlockPos getPosition() {
         return this.position;
     }
 
-    public IBlockData getHandle() {
+    public BlockState getHandle() {
         return this.data;
     }
 
@@ -184,7 +184,7 @@ public class CraftBlockState implements BlockState {
             }
         }
 
-        IBlockData newBlock = this.data;
+        BlockState newBlock = this.data;
         block.setTypeAndData(newBlock, applyPhysics);
         world.getHandle().notify(
                 position,

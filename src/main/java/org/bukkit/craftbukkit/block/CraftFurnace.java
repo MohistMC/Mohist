@@ -8,7 +8,7 @@ import org.bukkit.block.Furnace;
 import org.bukkit.craftbukkit.inventory.CraftInventoryFurnace;
 import org.bukkit.inventory.FurnaceInventory;
 
-public class CraftFurnace<T extends TileEntityFurnace> extends CraftContainer<T> implements Furnace {
+public class CraftFurnace<T extends AbstractFurnaceTileEntity> extends CraftContainer<T> implements Furnace {
 
     public CraftFurnace(Block block, Class<T> tileEntityClass) {
         super(block, tileEntityClass);
@@ -41,7 +41,7 @@ public class CraftFurnace<T extends TileEntityFurnace> extends CraftContainer<T>
     public void setBurnTime(short burnTime) {
         this.getSnapshot().burnTime = burnTime;
         // SPIGOT-844: Allow lighting and relighting using this API
-        this.data = this.data.set(BlockFurnace.LIT, burnTime > 0);
+        this.data = this.data.set(AbstractFurnaceBlock.LIT, burnTime > 0);
     }
 
     @Override

@@ -7,13 +7,13 @@ import org.bukkit.entity.EntityType;
 
 public class CraftCod extends CraftFish implements Cod {
 
-    public CraftCod(CraftServer server, EntityCod entity) {
+    public CraftCod(CraftServer server, CodEntity entity) {
         super(server, entity);
     }
 
     @Override
-    public EntityCod getHandle() {
-        return (EntityCod) super.getHandle();
+    public CodEntity getHandle() {
+        return (CodEntity) super.getHandle();
     }
 
     @Override

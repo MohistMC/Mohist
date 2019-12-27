@@ -11,7 +11,7 @@ public class CraftWither extends CraftMonster implements Wither {
 
     private BossBar bossBar;
 
-    public CraftWither(CraftServer server, EntityWither entity) {
+    public CraftWither(CraftServer server, WitherEntity entity) {
         super(server, entity);
 
         if (entity.bossBattle != null) {
@@ -20,8 +20,8 @@ public class CraftWither extends CraftMonster implements Wither {
     }
 
     @Override
-    public EntityWither getHandle() {
-        return (EntityWither) entity;
+    public WitherEntity getHandle() {
+        return (WitherEntity) entity;
     }
 
     @Override

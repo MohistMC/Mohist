@@ -13,13 +13,13 @@ import org.bukkit.inventory.AbstractHorseInventory;
 
 public abstract class CraftAbstractHorse extends CraftAnimals implements AbstractHorse {
 
-    public CraftAbstractHorse(CraftServer server, EntityHorseAbstract entity) {
+    public CraftAbstractHorse(CraftServer server, HorseEntityAbstract entity) {
         super(server, entity);
     }
 
     @Override
-    public EntityHorseAbstract getHandle() {
-        return (EntityHorseAbstract) entity;
+    public HorseEntityAbstract getHandle() {
+        return (HorseEntityAbstract) entity;
     }
 
     @Override
@@ -58,7 +58,7 @@ public abstract class CraftAbstractHorse extends CraftAnimals implements Abstrac
     @Override
     public void setJumpStrength(double strength) {
         Validate.isTrue(strength >= 0, "Jump strength cannot be less than zero");
-        getHandle().getAttributeInstance(EntityHorse.attributeJumpStrength).setValue(strength);
+        getHandle().getAttributeInstance(HorseEntity.attributeJumpStrength).setValue(strength);
     }
 
     @Override

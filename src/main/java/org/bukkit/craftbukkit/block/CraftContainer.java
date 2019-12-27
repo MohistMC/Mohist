@@ -7,7 +7,7 @@ import org.bukkit.block.Block;
 import org.bukkit.block.Container;
 import org.bukkit.craftbukkit.util.CraftChatMessage;
 
-public abstract class CraftContainer<T extends TileEntityContainer> extends CraftBlockEntityState<T> implements Container {
+public abstract class CraftContainer<T extends LockableTileEntity> extends CraftBlockEntityState<T> implements Container {
 
     public CraftContainer(Block block, Class<T> tileEntityClass) {
         super(block, tileEntityClass);
@@ -29,7 +29,7 @@ public abstract class CraftContainer<T extends TileEntityContainer> extends Craf
 
     @Override
     public void setLock(String key) {
-        this.getSnapshot().chestLock = (key == null) ? ChestLock.a : new ChestLock(key);
+        this.getSnapshot().chestLock = (key == null) ? LockCode.a : new LockCode(key);
     }
 
     @Override

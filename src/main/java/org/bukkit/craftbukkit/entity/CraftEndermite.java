@@ -7,13 +7,13 @@ import org.bukkit.entity.EntityType;
 
 public class CraftEndermite extends CraftMonster implements Endermite {
 
-    public CraftEndermite(CraftServer server, EntityEndermite entity) {
+    public CraftEndermite(CraftServer server, EndermiteEntity entity) {
         super(server, entity);
     }
 
     @Override
-    public EntityEndermite getHandle() {
-        return (EntityEndermite) super.getHandle();
+    public EndermiteEntity getHandle() {
+        return (EndermiteEntity) super.getHandle();
     }
 
     @Override

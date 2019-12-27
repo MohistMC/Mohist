@@ -7,13 +7,13 @@ import org.bukkit.entity.Ghast;
 
 public class CraftGhast extends CraftFlying implements Ghast {
 
-    public CraftGhast(CraftServer server, EntityGhast entity) {
+    public CraftGhast(CraftServer server, GhastEntity entity) {
         super(server, entity);
     }
 
     @Override
-    public EntityGhast getHandle() {
-        return (EntityGhast) entity;
+    public GhastEntity getHandle() {
+        return (GhastEntity) entity;
     }
 
     @Override

@@ -88,7 +88,7 @@ public class CraftMetaSpawnEgg extends CraftMetaItem implements SpawnEggMeta {
     }
 
     @Override
-    void serializeInternal(Map<String, NBTBase> internalTags) {
+    void serializeInternal(Map<String, INBT> internalTags) {
         if (entityTag != null && !entityTag.isEmpty()) {
             internalTags.put(ENTITY_TAG.NBT, entityTag);
         }

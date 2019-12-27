@@ -7,7 +7,7 @@ import org.bukkit.entity.Guardian;
 
 public class CraftGuardian extends CraftMonster implements Guardian {
 
-    public CraftGuardian(CraftServer server, EntityGuardian entity) {
+    public CraftGuardian(CraftServer server, GuardianEntity entity) {
         super(server, entity);
     }
 

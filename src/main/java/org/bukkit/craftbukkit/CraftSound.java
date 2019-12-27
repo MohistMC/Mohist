@@ -832,7 +832,7 @@ public enum CraftSound {
     }
 
     public static SoundEffect getSoundEffect(String s) {
-        SoundEffect effect = IRegistry.SOUND_EVENT.get(new MinecraftKey(s));
+        SoundEffect effect = Registry.SOUND_EVENT.get(new ResourceLocation(s));
         Preconditions.checkArgument(effect != null, "Sound effect %s does not exist", s);
 
         return effect;

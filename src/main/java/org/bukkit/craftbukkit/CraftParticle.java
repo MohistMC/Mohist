@@ -117,17 +117,17 @@ public enum CraftParticle {
         Preconditions.checkState(bukkit != null, "Bukkit particle %s does not exist", this.name());
     }
 
-    public static ParticleParam toNMS(Particle bukkit) {
+    public static IParticleData toNMS(Particle bukkit) {
         return toNMS(bukkit, null);
     }
 
-    public static <T> ParticleParam toNMS(Particle particle, T obj) {
+    public static <T> IParticleData toNMS(Particle particle, T obj) {
         Particle canonical = particle;
         if (aliases.containsKey(particle)) {
             canonical = aliases.get(particle);
         }
 
-        net.minecraft.particles.ParticleType nms = IRegistry.PARTICLE_TYPE.get(particles.get(canonical));
+        net.minecraft.particles.ParticleType nms = Registry.PARTICLE_TYPE.get(particles.get(canonical));
         Preconditions.checkArgument(nms != null, "No NMS particle %s", particle);
 
         if (particle.getDataType().equals(Void.class)) {
@@ -136,20 +136,20 @@ public enum CraftParticle {
         Preconditions.checkArgument(obj != null, "Particle %s requires data, null provided", particle);
         if (particle.getDataType().equals(ItemStack.class)) {
             ItemStack itemStack = (ItemStack) obj;
-            return new ParticleParamItem((net.minecraft.particles.ParticleType<ParticleParamItem>) nms, CraftItemStack.asNMSCopy(itemStack));
+            return new ItemParticleData((net.minecraft.particles.ParticleType<ItemParticleData>) nms, CraftItemStack.asNMSCopy(itemStack));
         }
         if (particle.getDataType() == MaterialData.class) {
             MaterialData data = (MaterialData) obj;
-            return new ParticleParamBlock((net.minecraft.particles.ParticleType<ParticleParamBlock>) nms, CraftMagicNumbers.getBlock(data));
+            return new IParticleDataBlock((net.minecraft.particles.ParticleType<IParticleDataBlock>) nms, CraftMagicNumbers.getBlock(data));
         }
         if (particle.getDataType() == BlockData.class) {
             BlockData data = (BlockData) obj;
-            return new ParticleParamBlock((net.minecraft.particles.ParticleType<ParticleParamBlock>) nms, ((CraftBlockData) data).getState());
+            return new IParticleDataBlock((net.minecraft.particles.ParticleType<IParticleDataBlock>) nms, ((CraftBlockData) data).getState());
         }
         if (particle.getDataType() == Particle.DustOptions.class) {
             Particle.DustOptions data = (Particle.DustOptions) obj;
             Color color = data.getColor();
-            return new ParticleParamRedstone(color.getRed() / 255.0f, color.getGreen() / 255.0f, color.getBlue() / 255.0f, data.getSize());
+            return new RedstoneParticleData(color.getRed() / 255.0f, color.getGreen() / 255.0f, color.getBlue() / 255.0f, data.getSize());
         }
         throw new IllegalArgumentException(particle.getDataType().toString());
     }
@@ -159,6 +159,6 @@ public enum CraftParticle {
     }
 
     public static Particle toBukkit(net.minecraft.particles.ParticleType nms) {
-        return particles.inverse().get(IRegistry.PARTICLE_TYPE.getKey(nms));
+        return particles.inverse().get(Registry.PARTICLE_TYPE.getKey(nms));
     }
 }

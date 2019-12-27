@@ -15,7 +15,7 @@ public final class CraftRedstoneTorchWall extends org.bukkit.craftbukkit.block.d
 
     // org.bukkit.craftbukkit.block.data.CraftDirectional
 
-    private static final net.minecraft.state.PropertyEnum<?> FACING = getEnum(net.minecraft.block.BlockRedstoneTorchWall.class, "facing");
+    private static final net.minecraft.state.PropertyEnum<?> FACING = getEnum(net.minecraft.block.RedstoneTorchBlockWall.class, "facing");
 
     @Override
     public org.bukkit.block.BlockFace getFacing() {
@@ -34,7 +34,7 @@ public final class CraftRedstoneTorchWall extends org.bukkit.craftbukkit.block.d
 
     // org.bukkit.craftbukkit.block.data.CraftLightable
 
-    private static final net.minecraft.state.PropertyBoolean LIT = getBoolean(net.minecraft.block.BlockRedstoneTorchWall.class, "lit");
+    private static final net.minecraft.state.PropertyBoolean LIT = getBoolean(net.minecraft.block.RedstoneTorchBlockWall.class, "lit");
 
     @Override
     public boolean isLit() {

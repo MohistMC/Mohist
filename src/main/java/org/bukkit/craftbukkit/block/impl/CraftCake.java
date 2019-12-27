@@ -15,7 +15,7 @@ public final class CraftCake extends org.bukkit.craftbukkit.block.data.CraftBloc
 
     // org.bukkit.craftbukkit.block.data.type.CraftCake
 
-    private static final net.minecraft.state.PropertyInteger BITES = getInteger(net.minecraft.block.BlockCake.class, "bites");
+    private static final net.minecraft.state.PropertyInteger BITES = getInteger(net.minecraft.block.CakeBlock.class, "bites");
 
     @Override
     public int getBites() {

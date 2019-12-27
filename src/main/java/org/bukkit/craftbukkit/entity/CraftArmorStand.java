@@ -10,7 +10,7 @@ import org.bukkit.util.EulerAngle;
 
 public class CraftArmorStand extends CraftLivingEntity implements ArmorStand {
 
-    public CraftArmorStand(CraftServer server, EntityArmorStand entity) {
+    public CraftArmorStand(CraftServer server, ArmorStandEntity entity) {
         super(server, entity);
     }
 
@@ -25,8 +25,8 @@ public class CraftArmorStand extends CraftLivingEntity implements ArmorStand {
     }
 
     @Override
-    public EntityArmorStand getHandle() {
-        return (EntityArmorStand) super.getHandle();
+    public ArmorStandEntity getHandle() {
+        return (ArmorStandEntity) super.getHandle();
     }
 
     @Override
@@ -186,7 +186,7 @@ public class CraftArmorStand extends CraftLivingEntity implements ArmorStand {
         getHandle().setSmall(small);
     }
 
-    private static EulerAngle fromNMS(Vector3f old) {
+    private static EulerAngle fromNMS(Rotations old) {
         return new EulerAngle(
             Math.toRadians(old.getX()),
             Math.toRadians(old.getY()),
@@ -194,8 +194,8 @@ public class CraftArmorStand extends CraftLivingEntity implements ArmorStand {
         );
     }
 
-    private static Vector3f toNMS(EulerAngle old) {
-        return new Vector3f(
+    private static Rotations toNMS(EulerAngle old) {
+        return new Rotations(
             (float) Math.toDegrees(old.getX()),
             (float) Math.toDegrees(old.getY()),
             (float) Math.toDegrees(old.getZ())

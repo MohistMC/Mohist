@@ -15,7 +15,7 @@ public final class CraftTrapdoor extends org.bukkit.craftbukkit.block.data.Craft
 
     // org.bukkit.craftbukkit.block.data.CraftBisected
 
-    private static final net.minecraft.state.PropertyEnum<?> HALF = getEnum(net.minecraft.block.BlockTrapdoor.class, "half");
+    private static final net.minecraft.state.PropertyEnum<?> HALF = getEnum(net.minecraft.block.TrapDoorBlock.class, "half");
 
     @Override
     public Half getHalf() {
@@ -29,7 +29,7 @@ public final class CraftTrapdoor extends org.bukkit.craftbukkit.block.data.Craft
 
     // org.bukkit.craftbukkit.block.data.CraftDirectional
 
-    private static final net.minecraft.state.PropertyEnum<?> FACING = getEnum(net.minecraft.block.BlockTrapdoor.class, "facing");
+    private static final net.minecraft.state.PropertyEnum<?> FACING = getEnum(net.minecraft.block.TrapDoorBlock.class, "facing");
 
     @Override
     public org.bukkit.block.BlockFace getFacing() {
@@ -48,7 +48,7 @@ public final class CraftTrapdoor extends org.bukkit.craftbukkit.block.data.Craft
 
     // org.bukkit.craftbukkit.block.data.CraftOpenable
 
-    private static final net.minecraft.state.PropertyBoolean OPEN = getBoolean(net.minecraft.block.BlockTrapdoor.class, "open");
+    private static final net.minecraft.state.PropertyBoolean OPEN = getBoolean(net.minecraft.block.TrapDoorBlock.class, "open");
 
     @Override
     public boolean isOpen() {
@@ -62,7 +62,7 @@ public final class CraftTrapdoor extends org.bukkit.craftbukkit.block.data.Craft
 
     // org.bukkit.craftbukkit.block.data.CraftPowerable
 
-    private static final net.minecraft.state.PropertyBoolean POWERED = getBoolean(net.minecraft.block.BlockTrapdoor.class, "powered");
+    private static final net.minecraft.state.PropertyBoolean POWERED = getBoolean(net.minecraft.block.TrapDoorBlock.class, "powered");
 
     @Override
     public boolean isPowered() {
@@ -76,7 +76,7 @@ public final class CraftTrapdoor extends org.bukkit.craftbukkit.block.data.Craft
 
     // org.bukkit.craftbukkit.block.data.CraftWaterlogged
 
-    private static final net.minecraft.state.PropertyBoolean WATERLOGGED = getBoolean(net.minecraft.block.BlockTrapdoor.class, "waterlogged");
+    private static final net.minecraft.state.PropertyBoolean WATERLOGGED = getBoolean(net.minecraft.block.TrapDoorBlock.class, "waterlogged");
 
     @Override
     public boolean isWaterlogged() {

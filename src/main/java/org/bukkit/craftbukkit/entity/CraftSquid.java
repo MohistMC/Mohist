@@ -7,13 +7,13 @@ import org.bukkit.entity.Squid;
 
 public class CraftSquid extends CraftWaterMob implements Squid {
 
-    public CraftSquid(CraftServer server, EntitySquid entity) {
+    public CraftSquid(CraftServer server, SquidEntity entity) {
         super(server, entity);
     }
 
     @Override
-    public EntitySquid getHandle() {
-        return (EntitySquid) entity;
+    public SquidEntity getHandle() {
+        return (SquidEntity) entity;
     }
 
     @Override

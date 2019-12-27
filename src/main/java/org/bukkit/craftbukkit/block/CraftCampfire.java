@@ -7,13 +7,13 @@ import org.bukkit.block.Campfire;
 import org.bukkit.craftbukkit.inventory.CraftItemStack;
 import org.bukkit.inventory.ItemStack;
 
-public class CraftCampfire extends CraftBlockEntityState<TileEntityCampfire> implements Campfire {
+public class CraftCampfire extends CraftBlockEntityState<CampfireTileEntity> implements Campfire {
 
     public CraftCampfire(Block block) {
-        super(block, TileEntityCampfire.class);
+        super(block, CampfireTileEntity.class);
     }
 
-    public CraftCampfire(Material material, TileEntityCampfire te) {
+    public CraftCampfire(Material material, CampfireTileEntity te) {
         super(material, te);
     }
 

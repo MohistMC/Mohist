@@ -28,7 +28,7 @@ public final class CraftPersistentDataTypeRegistry {
 
     private final Function<Class, TagAdapter> CREATE_ADAPTER = this::createAdapter;
 
-    private class TagAdapter<T, Z extends NBTBase> {
+    private class TagAdapter<T, Z extends INBT> {
 
         private final Function<T, Z> builder;
         private final Function<Z, T> extractor;
@@ -55,8 +55,8 @@ public final class CraftPersistentDataTypeRegistry {
          * the defined base type and therefore is not applicable to the
          * extractor function
          */
-        T extract(NBTBase base) {
-            Validate.isInstanceOf(nbtBaseType, base, "The provided NBTBase was of the type %s. Expected type %s", base.getClass().getSimpleName(), nbtBaseType.getSimpleName());
+        T extract(INBT base) {
+            Validate.isInstanceOf(nbtBaseType, base, "The provided INBT was of the type %s. Expected type %s", base.getClass().getSimpleName(), nbtBaseType.getSimpleName());
             return this.extractor.apply(nbtBaseType.cast(base));
         }
 
@@ -83,7 +83,7 @@ public final class CraftPersistentDataTypeRegistry {
          *
          * @return if the tag was an instance of the set type
          */
-        boolean isInstance(NBTBase base) {
+        boolean isInstance(INBT base) {
             return this.nbtBaseType.isInstance(base);
         }
     }
@@ -110,13 +110,13 @@ public final class CraftPersistentDataTypeRegistry {
             Primitives
          */
         if (Objects.equals(Byte.class, type)) {
-            return createAdapter(Byte.class, NBTTagByte.class, NBTTagByte::a, NBTTagByte::asByte);
+            return createAdapter(Byte.class, ByteNBT.class, ByteNBT::a, ByteNBT::asByte);
         }
         if (Objects.equals(Short.class, type)) {
-            return createAdapter(Short.class, NBTTagShort.class, NBTTagShort::a, NBTTagShort::asShort);
+            return createAdapter(Short.class, ShortNBT.class, ShortNBT::a, ShortNBT::asShort);
         }
         if (Objects.equals(Integer.class, type)) {
-            return createAdapter(Integer.class, NBTTagInt.class, NBTTagInt::a, NBTTagInt::asInt);
+            return createAdapter(Integer.class, IntNBT.class, IntNBT::a, IntNBT::asInt);
         }
         if (Objects.equals(Long.class, type)) {
             return createAdapter(Long.class, NBTTagLong.class, NBTTagLong::a, NBTTagLong::asLong);
@@ -125,7 +125,7 @@ public final class CraftPersistentDataTypeRegistry {
             return createAdapter(Float.class, NBTTagFloat.class, NBTTagFloat::a, NBTTagFloat::asFloat);
         }
         if (Objects.equals(Double.class, type)) {
-            return createAdapter(Double.class, NBTTagDouble.class, NBTTagDouble::a, NBTTagDouble::asDouble);
+            return createAdapter(Double.class, DoubleNBT.class, DoubleNBT::a, DoubleNBT::asDouble);
         }
 
         /*
@@ -139,13 +139,13 @@ public final class CraftPersistentDataTypeRegistry {
             Primitive Arrays
          */
         if (Objects.equals(byte[].class, type)) {
-            return createAdapter(byte[].class, NBTTagByteArray.class, array -> new NBTTagByteArray(Arrays.copyOf(array, array.length)), n -> Arrays.copyOf(n.getBytes(), n.size()));
+            return createAdapter(byte[].class, ByteNBTArray.class, array -> new ByteNBTArray(Arrays.copyOf(array, array.length)), n -> Arrays.copyOf(n.getBytes(), n.size()));
         }
         if (Objects.equals(int[].class, type)) {
-            return createAdapter(int[].class, NBTTagIntArray.class, array -> new NBTTagIntArray(Arrays.copyOf(array, array.length)), n -> Arrays.copyOf(n.getInts(), n.size()));
+            return createAdapter(int[].class, IntNBTArray.class, array -> new IntNBTArray(Arrays.copyOf(array, array.length)), n -> Arrays.copyOf(n.getInts(), n.size()));
         }
         if (Objects.equals(long[].class, type)) {
-            return createAdapter(long[].class, NBTTagLongArray.class, array -> new NBTTagLongArray(Arrays.copyOf(array, array.length)), n -> Arrays.copyOf(n.getLongs(), n.size()));
+            return createAdapter(long[].class, LongArrayNBT.class, array -> new LongArrayNBT(Arrays.copyOf(array, array.length)), n -> Arrays.copyOf(n.getLongs(), n.size()));
         }
 
         /*
@@ -165,7 +165,7 @@ public final class CraftPersistentDataTypeRegistry {
         throw new IllegalArgumentException("Could not find a valid TagAdapter implementation for the requested type " + type.getSimpleName());
     }
 
-    private <T, Z extends NBTBase> TagAdapter<T, Z> createAdapter(Class<T> primitiveType, Class<Z> nbtBaseType, Function<T, Z> builder, Function<Z, T> extractor) {
+    private <T, Z extends INBT> TagAdapter<T, Z> createAdapter(Class<T> primitiveType, Class<Z> nbtBaseType, Function<T, Z> builder, Function<Z, T> extractor) {
         return new TagAdapter<>(primitiveType, nbtBaseType, builder, extractor);
     }
 
@@ -181,7 +181,7 @@ public final class CraftPersistentDataTypeRegistry {
      * @throws IllegalArgumentException if no suitable tag type adapter for this
      * type was found
      */
-    public <T> NBTBase wrap(Class<T> type, T value) {
+    public <T> INBT wrap(Class<T> type, T value) {
         return this.adapters.computeIfAbsent(type, CREATE_ADAPTER).build(value);
     }
 
@@ -197,7 +197,7 @@ public final class CraftPersistentDataTypeRegistry {
      * @throws IllegalArgumentException if no suitable tag type adapter for this
      * type was found
      */
-    public <T> boolean isInstanceOf(Class<T> type, NBTBase base) {
+    public <T> boolean isInstanceOf(Class<T> type, INBT base) {
         return this.adapters.computeIfAbsent(type, CREATE_ADAPTER).isInstance(base);
     }
 
@@ -218,7 +218,7 @@ public final class CraftPersistentDataTypeRegistry {
      * @throws IllegalArgumentException if no suitable tag type adapter for this
      * type was found
      */
-    public <T> T extract(Class<T> type, NBTBase tag) throws ClassCastException, IllegalArgumentException {
+    public <T> T extract(Class<T> type, INBT tag) throws ClassCastException, IllegalArgumentException {
         TagAdapter adapter = this.adapters.computeIfAbsent(type, CREATE_ADAPTER);
         Validate.isTrue(adapter.isInstance(tag), "`The found tag instance cannot store %s as it is a %s", type.getSimpleName(), tag.getClass().getSimpleName());
 

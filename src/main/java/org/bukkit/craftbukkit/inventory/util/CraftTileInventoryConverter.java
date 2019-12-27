@@ -94,7 +94,7 @@ public abstract class CraftTileInventoryConverter implements CraftInventoryCreat
 
         @Override
         public IInventory getTileEntity() {
-            return new TileEntityDispenser();
+            return new DispenserTileEntity();
         }
     }
 
@@ -102,7 +102,7 @@ public abstract class CraftTileInventoryConverter implements CraftInventoryCreat
 
         @Override
         public IInventory getTileEntity() {
-            return new TileEntityDropper();
+            return new DropperTileEntity();
         }
     }
 
@@ -118,7 +118,7 @@ public abstract class CraftTileInventoryConverter implements CraftInventoryCreat
 
         @Override
         public IInventory getTileEntity() {
-            return new TileEntityBlastFurnace();
+            return new BlastFurnaceTileEntity();
         }
     }
 
@@ -134,7 +134,7 @@ public abstract class CraftTileInventoryConverter implements CraftInventoryCreat
 
         @Override
         public IInventory getTileEntity() {
-            return new TileEntitySmoker();
+            return new SmokerTileEntity();
         }
     }
 }

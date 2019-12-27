@@ -7,7 +7,7 @@ import org.bukkit.entity.WitherSkeleton;
 
 public class CraftWitherSkeleton extends CraftSkeleton implements WitherSkeleton {
 
-    public CraftWitherSkeleton(CraftServer server, EntitySkeletonWither entity) {
+    public CraftWitherSkeleton(CraftServer server, SkeletonWitherEntity entity) {
         super(server, entity);
     }
 

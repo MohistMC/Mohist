@@ -104,7 +104,7 @@ public class CraftContainer extends Container {
         cachedTitle = view.getTitle();
         if (view.getPlayer() instanceof CraftPlayer) {
             CraftPlayer player = (CraftPlayer) view.getPlayer();
-            Containers type = getNotchInventoryType(cachedType);
+            ContainerType type = getNotchInventoryType(cachedType);
             IInventory top = ((CraftInventory) view.getTopInventory()).getInventory();
             PlayerInventory bottom = (PlayerInventory) ((CraftInventory) view.getBottomInventory()).getInventory();
             this.items.clear();
@@ -119,44 +119,44 @@ public class CraftContainer extends Container {
         return true;
     }
 
-    public static Containers getNotchInventoryType(InventoryType type) {
+    public static ContainerType getNotchInventoryType(InventoryType type) {
         switch (type) {
             case WORKBENCH:
-                return Containers.CRAFTING;
+                return ContainerType.CRAFTING;
             case FURNACE:
-                return Containers.FURNACE;
+                return ContainerType.FURNACE;
             case DISPENSER:
-                return Containers.GENERIC_3X3;
+                return ContainerType.GENERIC_3X3;
             case ENCHANTING:
-                return Containers.ENCHANTMENT;
+                return ContainerType.ENCHANTMENT;
             case BREWING:
-                return Containers.BREWING_STAND;
+                return ContainerType.BREWING_STAND;
             case BEACON:
-                return Containers.BEACON;
+                return ContainerType.BEACON;
             case ANVIL:
-                return Containers.ANVIL;
+                return ContainerType.ANVIL;
             case HOPPER:
-                return Containers.HOPPER;
+                return ContainerType.HOPPER;
             case DROPPER:
-                return Containers.GENERIC_3X3;
+                return ContainerType.GENERIC_3X3;
             case SHULKER_BOX:
-                return Containers.SHULKER_BOX;
+                return ContainerType.SHULKER_BOX;
             case BLAST_FURNACE:
-                return Containers.BLAST_FURNACE;
+                return ContainerType.BLAST_FURNACE;
             case LECTERN:
-                return Containers.LECTERN;
+                return ContainerType.LECTERN;
             case SMOKER:
-                return Containers.SMOKER;
+                return ContainerType.SMOKER;
             case LOOM:
-                return Containers.LOOM;
+                return ContainerType.LOOM;
             case CARTOGRAPHY:
-                return Containers.CARTOGRAPHY_TABLE;
+                return ContainerType.CARTOGRAPHY_TABLE;
             case GRINDSTONE:
-                return Containers.GRINDSTONE;
+                return ContainerType.GRINDSTONE;
             case STONECUTTER:
-                return Containers.STONECUTTER;
+                return ContainerType.STONECUTTER;
             default:
-                return Containers.GENERIC_9X3;
+                return ContainerType.GENERIC_9X3;
         }
     }
 
@@ -169,7 +169,7 @@ public class CraftContainer extends Container {
             case CHEST:
             case ENDER_CHEST:
             case BARREL:
-                delegate = new ContainerChest(Containers.GENERIC_9X3, windowId, bottom, top, top.getSize() / 9);
+                delegate = new ContainerChest(ContainerType.GENERIC_9X3, windowId, bottom, top, top.getSize() / 9);
                 break;
             case DISPENSER:
             case DROPPER:
@@ -189,7 +189,7 @@ public class CraftContainer extends Container {
                 delegate = new ContainerBrewingStand(windowId, bottom, top, new ContainerProperties(2));
                 break;
             case HOPPER:
-                delegate = new ContainerHopper(windowId, bottom, top);
+                delegate = new HopperContainer(windowId, bottom, top);
                 break;
             case ANVIL:
                 delegate = new ContainerAnvil(windowId, bottom);
@@ -201,7 +201,7 @@ public class CraftContainer extends Container {
                 delegate = new ContainerShulkerBox(windowId, bottom, top);
                 break;
             case BLAST_FURNACE:
-                delegate = new ContainerBlastFurnace(windowId, bottom, top, new ContainerProperties(4));
+                delegate = new BlastFurnaceContainer(windowId, bottom, top, new ContainerProperties(4));
                 break;
             case LECTERN:
                 delegate = new ContainerLectern(windowId, top, new ContainerProperties(1), bottom);
@@ -216,7 +216,7 @@ public class CraftContainer extends Container {
                 delegate = new ContainerCartography(windowId, bottom);
                 break;
             case GRINDSTONE:
-                delegate = new ContainerGrindstone(windowId, bottom);
+                delegate = new GrindstoneContainer(windowId, bottom);
                 break;
             case STONECUTTER:
                 delegate = new ContainerStonecutter(windowId, bottom);
@@ -230,12 +230,12 @@ public class CraftContainer extends Container {
 
         // SPIGOT-4598 - we should still delegate the shift click handler
         if (cachedType == InventoryType.WORKBENCH) {
-            delegate = new ContainerWorkbench(windowId, bottom);
+            delegate = new WorkbenchContainer(windowId, bottom);
         }
     }
 
     private void setupWorkbench(IInventory top, IInventory bottom) {
-        // This code copied from ContainerWorkbench
+        // This code copied from WorkbenchContainer
         this.a(new Slot(top, 0, 124, 35));
 
         int row;
@@ -256,7 +256,7 @@ public class CraftContainer extends Container {
         for (col = 0; col < 9; ++col) {
             this.a(new Slot(bottom, col, 8 + col * 18, 142));
         }
-        // End copy from ContainerWorkbench
+        // End copy from WorkbenchContainer
     }
 
     @Override
@@ -270,7 +270,7 @@ public class CraftContainer extends Container {
     }
 
     @Override
-    public Containers<?> getType() {
+    public ContainerType<?> getType() {
         return getNotchInventoryType(cachedType);
     }
 }
