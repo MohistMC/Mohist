@@ -1,6 +1,6 @@
 package org.bukkit.craftbukkit.entity;
 
-import net.minecraft.server.EntityCaveSpider;
+import net.minecraft.entity.monster.CaveSpiderEntity;
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.entity.CaveSpider;
 import org.bukkit.entity.EntityType;

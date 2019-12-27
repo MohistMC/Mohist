@@ -1,8 +1,8 @@
 package org.bukkit.craftbukkit.entity.memory;
 
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.server.GlobalPos;
-import net.minecraft.server.MinecraftSerializableLong;
+import net.minecraft.util.math.GlobalPos;
+import net.minecraft.util.LongSerializable;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.CraftServer;

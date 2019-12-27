@@ -2,8 +2,8 @@ package org.bukkit.craftbukkit.block;
 
 import com.google.common.base.Preconditions;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.server.NBTTagCompound;
-import net.minecraft.server.TileEntity;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.tileentity.TileEntity;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.TileState;

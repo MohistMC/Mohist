@@ -1,6 +1,6 @@
 package org.bukkit.craftbukkit.block;
 
-import net.minecraft.server.TileEntityBell;
+import net.minecraft.tileentity.BellTileEntity;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 

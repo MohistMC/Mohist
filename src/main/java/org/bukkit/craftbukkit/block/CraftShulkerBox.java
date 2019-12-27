@@ -1,7 +1,7 @@
 package org.bukkit.craftbukkit.block;
 
-import net.minecraft.server.BlockShulkerBox;
-import net.minecraft.server.TileEntityShulkerBox;
+import net.minecraft.block.ShulkerBoxBlock;
+import net.minecraft.tileentity.ShulkerBoxTileEntity;
 import org.bukkit.DyeColor;
 import org.bukkit.Material;
 import org.bukkit.block.Block;

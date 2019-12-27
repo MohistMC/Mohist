@@ -1,11 +1,11 @@
 package org.bukkit.craftbukkit;
 
 import com.google.common.base.Preconditions;
-import net.minecraft.server.BiomeStorage;
+import net.minecraft.world.biome.BiomeContainer;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.server.DataPaletteBlock;
-import net.minecraft.server.HeightMap;
-import net.minecraft.server.IBlockData;
+import net.minecraft.util.palette.PalettedContainer;
+import net.minecraft.world.gen.Heightmap;
+import net.minecraft.block.BlockState;
 import org.bukkit.ChunkSnapshot;
 import org.bukkit.Material;
 import org.bukkit.block.Biome;

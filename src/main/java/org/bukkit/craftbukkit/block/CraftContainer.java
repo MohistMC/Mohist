@@ -1,7 +1,7 @@
 package org.bukkit.craftbukkit.block;
 
-import net.minecraft.server.ChestLock;
-import net.minecraft.server.TileEntityContainer;
+import net.minecraft.world.LockCode;
+import net.minecraft.tileentity.LockableTileEntity;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.Container;

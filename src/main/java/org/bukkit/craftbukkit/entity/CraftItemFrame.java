@@ -1,11 +1,11 @@
 package org.bukkit.craftbukkit.entity;
 
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.server.EntityHanging;
-import net.minecraft.server.EntityItemFrame;
-import net.minecraft.server.EnumDirection;
-import net.minecraft.server.ItemStack;
-import net.minecraft.server.WorldServer;
+import net.minecraft.entity.item.HangingEntity;
+import net.minecraft.entity.item.ItemFrameEntity;
+import net.minecraft.util.Direction;
+import net.minecraft.item.ItemStack;
+import net.minecraft.world.server.ServerWorld;
 import org.apache.commons.lang.Validate;
 import org.bukkit.Rotation;
 import org.bukkit.block.BlockFace;

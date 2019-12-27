@@ -1,7 +1,7 @@
 package org.bukkit.craftbukkit.entity;
 
-import net.minecraft.server.EntityHanging;
-import net.minecraft.server.EnumDirection;
+import net.minecraft.entity.item.HangingEntity;
+import net.minecraft.util.Direction;
 import org.bukkit.block.BlockFace;
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.craftbukkit.block.CraftBlock;

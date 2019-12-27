@@ -3,10 +3,10 @@ package org.bukkit.craftbukkit.inventory;
 import it.unimi.dsi.fastutil.objects.Object2ObjectLinkedOpenHashMap;
 import java.util.Iterator;
 import java.util.Map;
-import net.minecraft.server.IRecipe;
-import net.minecraft.server.MinecraftKey;
+import net.minecraft.item.crafting.IRecipe;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.Recipes;
+import net.minecraft.item.crafting.IRecipeType;
 import org.bukkit.inventory.Recipe;
 
 public class RecipeIterator implements Iterator<Recipe> {

@@ -1,8 +1,8 @@
 package org.bukkit.craftbukkit.generator;
 
-import net.minecraft.server.GeneratorAccess;
-import net.minecraft.server.GeneratorSettingsDefault;
-import net.minecraft.server.WorldChunkManager;
+import net.minecraft.world.IWorld;
+import net.minecraft.world.gen.GenerationSettings;
+import net.minecraft.world.biome.provider.BiomeProvider;
 
 // Do not implement functions to this class, add to NormalChunkGenerator
 public abstract class InternalChunkGenerator<C extends GeneratorSettingsDefault> extends net.minecraft.server.ChunkGenerator<C> {

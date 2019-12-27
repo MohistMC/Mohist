@@ -2,7 +2,7 @@ package org.bukkit.craftbukkit.entity;
 
 import com.google.common.base.Preconditions;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.server.EntityRaider;
+import net.minecraft.entity.monster.AbstractRaiderEntity;
 import org.bukkit.block.Block;
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.craftbukkit.block.CraftBlock;

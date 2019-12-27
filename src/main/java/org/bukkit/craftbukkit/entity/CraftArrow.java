@@ -2,7 +2,7 @@ package org.bukkit.craftbukkit.entity;
 
 import com.google.common.base.Preconditions;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.server.EntityArrow;
+import net.minecraft.entity.projectile.AbstractArrowEntity;
 import org.apache.commons.lang.Validate;
 import org.bukkit.block.Block;
 import org.bukkit.craftbukkit.CraftServer;

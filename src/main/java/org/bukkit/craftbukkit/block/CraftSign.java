@@ -1,9 +1,9 @@
 package org.bukkit.craftbukkit.block;
 
-import net.minecraft.server.ChatComponentText;
-import net.minecraft.server.EnumColor;
-import net.minecraft.server.IChatBaseComponent;
-import net.minecraft.server.TileEntitySign;
+import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.item.DyeColor;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.tileentity.SignTileEntity;
 import org.bukkit.DyeColor;
 import org.bukkit.Material;
 import org.bukkit.block.Block;

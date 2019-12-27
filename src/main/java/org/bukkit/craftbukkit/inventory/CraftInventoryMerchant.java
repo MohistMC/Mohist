@@ -1,7 +1,7 @@
 package org.bukkit.craftbukkit.inventory;
 
-import net.minecraft.server.IMerchant;
-import net.minecraft.server.InventoryMerchant;
+import net.minecraft.entity.merchant.IMerchant;
+import net.minecraft.inventory.MerchantInventory;
 import org.bukkit.inventory.Merchant;
 import org.bukkit.inventory.MerchantInventory;
 import org.bukkit.inventory.MerchantRecipe;

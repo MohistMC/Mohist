@@ -1,7 +1,7 @@
 package org.bukkit.craftbukkit.entity;
 
 import com.google.common.base.Preconditions;
-import net.minecraft.server.EntityIllagerWizard;
+import net.minecraft.entity.monster.SpellcastingIllagerEntity;
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.entity.Spellcaster;
 

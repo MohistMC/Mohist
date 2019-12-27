@@ -1,9 +1,9 @@
 package org.bukkit.craftbukkit.block;
 
-import net.minecraft.server.BlockChest;
-import net.minecraft.server.Blocks;
-import net.minecraft.server.ITileInventory;
-import net.minecraft.server.TileEntityChest;
+import net.minecraft.block.ChestBlock;
+import net.minecraft.block.Blocks;
+import net.minecraft.inventory.container.INamedContainerProvider;
+import net.minecraft.tileentity.ChestTileEntity;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.Chest;

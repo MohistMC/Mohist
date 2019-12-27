@@ -1,6 +1,6 @@
 package org.bukkit.craftbukkit.entity;
 
-import net.minecraft.server.EntityEnderPearl;
+import net.minecraft.entity.item.EnderPearlEntity;
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.entity.EnderPearl;
 import org.bukkit.entity.EntityType;

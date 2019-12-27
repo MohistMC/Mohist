@@ -1,6 +1,6 @@
 package org.bukkit.craftbukkit.entity;
 
-import net.minecraft.server.EntityHorseDonkey;
+import net.minecraft.entity.passive.horse.DonkeyEntity;
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.entity.Donkey;
 import org.bukkit.entity.EntityType;

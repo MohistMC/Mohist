@@ -2,9 +2,9 @@ package org.bukkit.craftbukkit.entity;
 
 import com.google.common.collect.ImmutableList;
 import java.util.Collection;
-import net.minecraft.server.EntityPotion;
-import net.minecraft.server.MobEffect;
-import net.minecraft.server.PotionUtil;
+import net.minecraft.entity.projectile.PotionEntity;
+import net.minecraft.potion.EffectInstance;
+import net.minecraft.potion.PotionUtils;
 import org.apache.commons.lang.Validate;
 import org.bukkit.Material;
 import org.bukkit.craftbukkit.CraftServer;

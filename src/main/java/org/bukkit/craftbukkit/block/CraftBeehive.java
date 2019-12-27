@@ -2,7 +2,7 @@ package org.bukkit.craftbukkit.block;
 
 import com.google.common.base.Preconditions;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.server.TileEntityBeehive;
+import net.minecraft.tileentity.BeehiveTileEntity;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;

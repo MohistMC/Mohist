@@ -1,6 +1,6 @@
 package org.bukkit.craftbukkit.entity;
 
-import net.minecraft.server.EntityAgeable;
+import net.minecraft.entity.AgeableEntity;
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.entity.Ageable;
 

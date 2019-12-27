@@ -1,7 +1,7 @@
 package org.bukkit.craftbukkit.inventory;
 
-import net.minecraft.server.EntityInsentient;
-import net.minecraft.server.EnumItemSlot;
+import net.minecraft.entity.MobEntity;
+import net.minecraft.inventory.EquipmentSlotType;
 import org.bukkit.craftbukkit.entity.CraftLivingEntity;
 import org.bukkit.entity.Entity;
 import org.bukkit.inventory.EntityEquipment;

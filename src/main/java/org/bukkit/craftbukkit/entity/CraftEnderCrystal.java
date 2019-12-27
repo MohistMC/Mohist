@@ -1,7 +1,7 @@
 package org.bukkit.craftbukkit.entity;
 
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.server.EntityEnderCrystal;
+import net.minecraft.entity.item.EnderCrystalEntity;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.entity.EnderCrystal;

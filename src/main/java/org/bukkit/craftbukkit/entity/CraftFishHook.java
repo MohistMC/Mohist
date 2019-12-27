@@ -1,9 +1,9 @@
 package org.bukkit.craftbukkit.entity;
 
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.server.EntityFishingHook;
-import net.minecraft.server.EntityHuman;
-import net.minecraft.server.MathHelper;
+import net.minecraft.entity.projectile.FishingBobberEntity;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.util.math.MathHelper;
 import org.apache.commons.lang.Validate;
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.entity.EntityType;

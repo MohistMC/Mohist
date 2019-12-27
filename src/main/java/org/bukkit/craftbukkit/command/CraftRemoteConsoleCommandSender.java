@@ -1,7 +1,7 @@
 package org.bukkit.craftbukkit.command;
 
-import net.minecraft.server.ChatComponentText;
-import net.minecraft.server.RemoteControlCommandListener;
+import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.network.rcon.RConConsoleSource;
 import org.bukkit.command.RemoteConsoleCommandSender;
 
 public class CraftRemoteConsoleCommandSender extends ServerCommandSender implements RemoteConsoleCommandSender {

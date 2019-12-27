@@ -3,7 +3,7 @@ package org.bukkit.craftbukkit.attribute;
 import com.google.common.base.CaseFormat;
 import com.google.common.base.Preconditions;
 import java.util.Locale;
-import net.minecraft.server.AttributeMapBase;
+import net.minecraft.entity.ai.attributes.AbstractAttributeMap;
 import org.apache.commons.lang3.EnumUtils;
 import org.bukkit.attribute.Attributable;
 import org.bukkit.attribute.Attribute;

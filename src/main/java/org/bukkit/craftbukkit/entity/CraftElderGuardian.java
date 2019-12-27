@@ -1,6 +1,6 @@
 package org.bukkit.craftbukkit.entity;
 
-import net.minecraft.server.EntityGuardianElder;
+import net.minecraft.entity.monster.ElderGuardianEntity;
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.entity.ElderGuardian;
 import org.bukkit.entity.EntityType;

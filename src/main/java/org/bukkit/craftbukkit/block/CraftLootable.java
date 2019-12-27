@@ -1,7 +1,7 @@
 package org.bukkit.craftbukkit.block;
 
-import net.minecraft.server.MinecraftKey;
-import net.minecraft.server.TileEntityLootable;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.tileentity.LockableLootTileEntity;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.Nameable;

@@ -1,8 +1,8 @@
 package org.bukkit.craftbukkit.command;
 
-import net.minecraft.server.CommandListenerWrapper;
-import net.minecraft.server.IChatBaseComponent;
-import net.minecraft.server.TileEntity;
+import net.minecraft.command.CommandSource;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.tileentity.TileEntity;
 import org.bukkit.block.Block;
 import org.bukkit.command.BlockCommandSender;
 import org.bukkit.craftbukkit.block.CraftBlock;

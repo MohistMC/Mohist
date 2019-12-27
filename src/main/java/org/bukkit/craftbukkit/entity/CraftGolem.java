@@ -1,6 +1,6 @@
 package org.bukkit.craftbukkit.entity;
 
-import net.minecraft.server.EntityGolem;
+import net.minecraft.entity.passive.GolemEntity;
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.entity.Golem;
 

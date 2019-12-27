@@ -1,7 +1,7 @@
 package org.bukkit.craftbukkit.entity;
 
-import net.minecraft.server.EntityLiving;
-import net.minecraft.server.EntityTNTPrimed;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.item.TNTEntity;
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;

@@ -2,9 +2,9 @@ package org.bukkit.craftbukkit.inventory;
 
 import java.util.List;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.NonNullList;
-import net.minecraft.server.RecipeItemStack;
-import net.minecraft.server.ShapelessRecipes;
+import net.minecraft.util.NonNullList;
+import net.minecraft.item.crafting.Ingredient;
+import net.minecraft.item.crafting.ShapelessRecipe;
 import org.bukkit.NamespacedKey;
 import org.bukkit.craftbukkit.util.CraftNamespacedKey;
 import org.bukkit.inventory.ItemStack;

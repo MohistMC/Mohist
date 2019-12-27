@@ -1,8 +1,8 @@
 package org.bukkit.craftbukkit.inventory;
 
 import com.google.common.base.Preconditions;
-import net.minecraft.server.ContainerAnvil;
-import net.minecraft.server.IInventory;
+import net.minecraft.inventory.container.RepairContainer;
+import net.minecraft.inventory.IInventory;
 import org.bukkit.Location;
 import org.bukkit.inventory.AnvilInventory;
 

@@ -5,9 +5,9 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Set;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.server.Fluid;
-import net.minecraft.server.IBlockData;
-import net.minecraft.server.World;
+import net.minecraft.fluid.IFluidState;
+import net.minecraft.block.BlockState;
+import net.minecraft.world.World;
 import org.bukkit.block.BlockState;
 import org.bukkit.craftbukkit.block.CraftBlockState;
 

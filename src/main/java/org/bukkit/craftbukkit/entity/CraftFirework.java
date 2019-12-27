@@ -1,9 +1,9 @@
 package org.bukkit.craftbukkit.entity;
 
 import java.util.Random;
-import net.minecraft.server.EntityFireworks;
-import net.minecraft.server.ItemStack;
-import net.minecraft.server.Items;
+import net.minecraft.entity.item.FireworkRocketEntity;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import org.bukkit.Material;
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.craftbukkit.inventory.CraftItemStack;

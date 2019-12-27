@@ -4,8 +4,8 @@ import com.google.common.collect.Lists;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
-import net.minecraft.server.AdvancementDataPlayer;
-import net.minecraft.server.CriterionProgress;
+import net.minecraft.advancements.PlayerAdvancements;
+import net.minecraft.advancements.CriterionProgress;
 import org.bukkit.advancement.Advancement;
 import org.bukkit.advancement.AdvancementProgress;
 

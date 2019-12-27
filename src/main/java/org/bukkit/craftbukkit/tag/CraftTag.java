@@ -1,7 +1,7 @@
 package org.bukkit.craftbukkit.tag;
 
-import net.minecraft.server.MinecraftKey;
-import net.minecraft.server.TagsServer;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.tags.NetworkTagCollection;
 import org.bukkit.Keyed;
 import org.bukkit.NamespacedKey;
 import org.bukkit.Tag;

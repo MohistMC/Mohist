@@ -1,10 +1,10 @@
 package org.bukkit.craftbukkit.inventory;
 
 import com.google.common.base.Preconditions;
-import net.minecraft.server.EntityPlayer;
-import net.minecraft.server.PacketPlayOutHeldItemSlot;
-import net.minecraft.server.PacketPlayOutSetSlot;
-import net.minecraft.server.PlayerInventory;
+import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.network.play.server.SHeldItemChangePacket;
+import net.minecraft.network.play.server.SSetSlotPacket;
+import net.minecraft.entity.player.PlayerInventory;
 import org.apache.commons.lang.Validate;
 import org.bukkit.craftbukkit.entity.CraftPlayer;
 import org.bukkit.entity.HumanEntity;

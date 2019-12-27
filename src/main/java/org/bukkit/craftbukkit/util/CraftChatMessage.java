@@ -7,13 +7,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import net.minecraft.server.ChatClickable;
+import net.minecraft.util.text.event.ClickEvent;
 import net.minecraft.server.ChatClickable.EnumClickAction;
-import net.minecraft.server.ChatComponentText;
-import net.minecraft.server.ChatMessage;
-import net.minecraft.server.ChatModifier;
-import net.minecraft.server.EnumChatFormat;
-import net.minecraft.server.IChatBaseComponent;
+import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.util.text.Style;
+import net.minecraft.util.text.TextFormatting;
+import net.minecraft.util.text.ITextComponent;
 import org.bukkit.ChatColor;
 
 public final class CraftChatMessage {

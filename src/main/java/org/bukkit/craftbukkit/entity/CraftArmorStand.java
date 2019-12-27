@@ -1,7 +1,7 @@
 package org.bukkit.craftbukkit.entity;
 
-import net.minecraft.server.EntityArmorStand;
-import net.minecraft.server.Vector3f;
+import net.minecraft.entity.item.ArmorStandEntity;
+import net.minecraft.util.math.Rotations;
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.EntityType;

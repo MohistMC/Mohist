@@ -1,6 +1,6 @@
 package org.bukkit.craftbukkit.entity;
 
-import net.minecraft.server.EntityDrowned;
+import net.minecraft.entity.monster.DrownedEntity;
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.entity.Drowned;
 import org.bukkit.entity.EntityType;

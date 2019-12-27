@@ -1,8 +1,8 @@
 package org.bukkit.craftbukkit.block;
 
-import net.minecraft.server.BlockDispenser;
-import net.minecraft.server.Blocks;
-import net.minecraft.server.TileEntityDispenser;
+import net.minecraft.block.DispenserBlock;
+import net.minecraft.block.Blocks;
+import net.minecraft.tileentity.DispenserTileEntity;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.Dispenser;

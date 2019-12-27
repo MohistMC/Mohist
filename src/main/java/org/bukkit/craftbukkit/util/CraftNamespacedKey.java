@@ -1,6 +1,6 @@
 package org.bukkit.craftbukkit.util;
 
-import net.minecraft.server.MinecraftKey;
+import net.minecraft.util.ResourceLocation;
 import org.bukkit.NamespacedKey;
 
 public final class CraftNamespacedKey {

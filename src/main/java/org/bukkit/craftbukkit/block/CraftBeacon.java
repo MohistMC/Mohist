@@ -2,11 +2,11 @@ package org.bukkit.craftbukkit.block;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import net.minecraft.server.ChestLock;
-import net.minecraft.server.EntityHuman;
-import net.minecraft.server.MobEffectList;
-import net.minecraft.server.TileEntity;
-import net.minecraft.server.TileEntityBeacon;
+import net.minecraft.world.LockCode;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.potion.Effect;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.tileentity.BeaconTileEntity;
 import org.bukkit.Material;
 import org.bukkit.block.Beacon;
 import org.bukkit.block.Block;

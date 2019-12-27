@@ -1,6 +1,6 @@
 package org.bukkit.craftbukkit.block;
 
-import net.minecraft.server.TileEntityFurnaceFurnace;
+import net.minecraft.tileentity.FurnaceTileEntity;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 

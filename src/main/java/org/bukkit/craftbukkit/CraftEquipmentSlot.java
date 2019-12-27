@@ -1,6 +1,6 @@
 package org.bukkit.craftbukkit;
 
-import net.minecraft.server.EnumItemSlot;
+import net.minecraft.inventory.EquipmentSlotType;
 import org.bukkit.inventory.EquipmentSlot;
 
 public class CraftEquipmentSlot {
