@@ -8,7 +8,7 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import net.minecraft.util.text.event.ClickEvent;
-import net.minecraft.server.ChatClickable.EnumClickAction;
+import net.minecraft.util.text.event.ClickEvent.EnumClickAction;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.util.text.Style;

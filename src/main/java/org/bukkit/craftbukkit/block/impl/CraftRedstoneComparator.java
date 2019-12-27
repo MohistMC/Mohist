@@ -9,13 +9,13 @@ public final class CraftRedstoneComparator extends org.bukkit.craftbukkit.block.
         super();
     }
 
-    public CraftRedstoneComparator(net.minecraft.server.IBlockData state) {
+    public CraftRedstoneComparator(net.minecraft.block.BlockState state) {
         super(state);
     }
 
     // org.bukkit.craftbukkit.block.data.type.CraftComparator
 
-    private static final net.minecraft.server.BlockStateEnum<?> MODE = getEnum(net.minecraft.server.BlockRedstoneComparator.class, "mode");
+    private static final net.minecraft.state.PropertyEnum<?> MODE = getEnum(net.minecraft.block.ComparatorBlock.class, "mode");
 
     @Override
     public Mode getMode() {
@@ -29,7 +29,7 @@ public final class CraftRedstoneComparator extends org.bukkit.craftbukkit.block.
 
     // org.bukkit.craftbukkit.block.data.CraftDirectional
 
-    private static final net.minecraft.server.BlockStateEnum<?> FACING = getEnum(net.minecraft.server.BlockRedstoneComparator.class, "facing");
+    private static final net.minecraft.state.PropertyEnum<?> FACING = getEnum(net.minecraft.block.ComparatorBlock.class, "facing");
 
     @Override
     public org.bukkit.block.BlockFace getFacing() {
@@ -48,7 +48,7 @@ public final class CraftRedstoneComparator extends org.bukkit.craftbukkit.block.
 
     // org.bukkit.craftbukkit.block.data.CraftPowerable
 
-    private static final net.minecraft.server.BlockStateBoolean POWERED = getBoolean(net.minecraft.server.BlockRedstoneComparator.class, "powered");
+    private static final net.minecraft.state.PropertyBoolean POWERED = getBoolean(net.minecraft.block.ComparatorBlock.class, "powered");
 
     @Override
     public boolean isPowered() {

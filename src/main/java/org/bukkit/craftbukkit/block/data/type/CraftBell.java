@@ -5,7 +5,7 @@ import org.bukkit.craftbukkit.block.data.CraftBlockData;
 
 public abstract class CraftBell extends CraftBlockData implements Bell {
 
-    private static final net.minecraft.server.BlockStateEnum<?> ATTACHMENT = getEnum("attachment");
+    private static final net.minecraft.state.PropertyEnum<?> ATTACHMENT = getEnum("attachment");
 
     @Override
     public Attachment getAttachment() {

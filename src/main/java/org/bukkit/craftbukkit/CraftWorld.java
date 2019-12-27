@@ -340,7 +340,7 @@ public class CraftWorld implements World {
 
     @Override
     public boolean isChunkLoaded(int x, int z) {
-        net.minecraft.server.Chunk chunk = world.getChunkProvider().getChunkAt(x, z, false);
+        net.minecraft.world.chunk.Chunk chunk = world.getChunkProvider().getChunkAt(x, z, false);
         return chunk != null;
     }
 
@@ -356,7 +356,7 @@ public class CraftWorld implements World {
     @Override
     public Chunk[] getLoadedChunks() {
         Long2ObjectLinkedOpenHashMap<PlayerChunk> chunks = world.getChunkProvider().playerChunkMap.visibleChunks;
-        return chunks.values().stream().map(PlayerChunk::getFullChunk).filter(Objects::nonNull).map(net.minecraft.server.Chunk::getBukkitChunk).toArray(Chunk[]::new);
+        return chunks.values().stream().map(PlayerChunk::getFullChunk).filter(Objects::nonNull).map(net.minecraft.world.chunk.Chunk::getBukkitChunk).toArray(Chunk[]::new);
     }
 
     @Override
@@ -381,7 +381,7 @@ public class CraftWorld implements World {
 
     @Override
     public boolean unloadChunkRequest(int x, int z) {
-        net.minecraft.server.IChunkAccess chunk = world.getChunkProvider().getChunkAt(x, z, ChunkStatus.FULL, false);
+        net.minecraft.world.chunk.IChunk chunk = world.getChunkProvider().getChunkAt(x, z, ChunkStatus.FULL, false);
         if (chunk != null) {
             world.getChunkProvider().removeTicket(TicketType.PLUGIN, chunk.getPos(), 1, Unit.INSTANCE);
         }
@@ -390,7 +390,7 @@ public class CraftWorld implements World {
     }
 
     private boolean unloadChunk0(int x, int z, boolean save) {
-        net.minecraft.server.Chunk chunk = (net.minecraft.server.Chunk) world.getChunkProvider().getChunkAt(x, z, ChunkStatus.FULL, false);
+        net.minecraft.world.chunk.Chunk chunk = (net.minecraft.world.chunk.Chunk) world.getChunkProvider().getChunkAt(x, z, ChunkStatus.FULL, false);
         if (chunk == null) {
             return true;
         }
@@ -413,7 +413,7 @@ public class CraftWorld implements World {
         final long chunkKey = ChunkCoordIntPair.pair(x, z);
         world.getChunkProvider().unloadQueue.remove(chunkKey);
 
-        net.minecraft.server.Chunk chunk = world.getChunkProvider().generateChunk(x, z);
+        net.minecraft.world.chunk.Chunk chunk = world.getChunkProvider().generateChunk(x, z);
         PlayerChunk playerChunk = world.getPlayerChunkMap().getChunk(x, z);
         if (playerChunk != null) {
             playerChunk.chunk = chunk;
@@ -463,7 +463,7 @@ public class CraftWorld implements World {
             chunk = world.getChunkProvider().getChunkAt(x, z, ChunkStatus.FULL, true);
         }
 
-        if (chunk instanceof net.minecraft.server.Chunk) {
+        if (chunk instanceof net.minecraft.world.chunk.Chunk) {
             world.getChunkProvider().addTicket(TicketType.PLUGIN, new ChunkCoordIntPair(x, z), 1, Unit.INSTANCE);
             return true;
         }
@@ -658,8 +658,8 @@ public class CraftWorld implements World {
     public boolean generateTree(Location loc, TreeType type) {
         BlockPosition pos = new BlockPosition(loc.getBlockX(), loc.getBlockY(), loc.getBlockZ());
 
-        net.minecraft.server.WorldGenerator gen;
-        net.minecraft.server.WorldGenFeatureConfiguration conf;
+        net.minecraft.world.WorldGenerator gen;
+        net.minecraft.world.gen.feature.IFeatureConfig conf;
         switch (type) {
         case BIG_TREE:
             gen = WorldGenerator.FANCY_TREE;
@@ -744,10 +744,10 @@ public class CraftWorld implements World {
         if (grownTree) { // Copy block data to delegate
             for (BlockState blockstate : world.capturedBlockStates) {
                 BlockPosition position = ((CraftBlockState) blockstate).getPosition();
-                net.minecraft.server.IBlockData oldBlock = world.getType(position);
+                net.minecraft.block.BlockState oldBlock = world.getType(position);
                 int flag = ((CraftBlockState) blockstate).getFlag();
                 delegate.setBlockData(blockstate.getX(), blockstate.getY(), blockstate.getZ(), blockstate.getBlockData());
-                net.minecraft.server.IBlockData newBlock = world.getType(position);
+                net.minecraft.block.BlockState newBlock = world.getType(position);
                 world.notifyAndUpdatePhysics(position, null, oldBlock, newBlock, newBlock, flag);
             }
             world.capturedBlockStates.clear();
@@ -922,7 +922,7 @@ public class CraftWorld implements World {
         BiomeBase bb = CraftBlock.biomeToBiomeBase(bio);
         BlockPosition pos = new BlockPosition(x, 0, z);
         if (this.world.isLoaded(pos)) {
-            net.minecraft.server.Chunk chunk = this.world.getChunkAtWorldCoords(pos);
+            net.minecraft.world.chunk.Chunk chunk = this.world.getChunkAtWorldCoords(pos);
 
             if (chunk != null) {
                 chunk.getBiomeIndex().setBiome(x, y, z, bb);
@@ -958,8 +958,8 @@ public class CraftWorld implements World {
         List<Entity> list = new ArrayList<Entity>();
 
         for (Object o : world.entitiesById.values()) {
-            if (o instanceof net.minecraft.server.Entity) {
-                net.minecraft.server.Entity mcEnt = (net.minecraft.server.Entity) o;
+            if (o instanceof net.minecraft.entity.Entity) {
+                net.minecraft.entity.Entity mcEnt = (net.minecraft.entity.Entity) o;
                 Entity bukkitEntity = mcEnt.getBukkitEntity();
 
                 // Assuming that bukkitEntity isn't null
@@ -977,8 +977,8 @@ public class CraftWorld implements World {
         List<LivingEntity> list = new ArrayList<LivingEntity>();
 
         for (Object o : world.entitiesById.values()) {
-            if (o instanceof net.minecraft.server.Entity) {
-                net.minecraft.server.Entity mcEnt = (net.minecraft.server.Entity) o;
+            if (o instanceof net.minecraft.entity.Entity) {
+                net.minecraft.entity.Entity mcEnt = (net.minecraft.entity.Entity) o;
                 Entity bukkitEntity = mcEnt.getBukkitEntity();
 
                 // Assuming that bukkitEntity isn't null
@@ -1004,8 +1004,8 @@ public class CraftWorld implements World {
         Collection<T> list = new ArrayList<T>();
 
         for (Object entity: world.entitiesById.values()) {
-            if (entity instanceof net.minecraft.server.Entity) {
-                Entity bukkitEntity = ((net.minecraft.server.Entity) entity).getBukkitEntity();
+            if (entity instanceof net.minecraft.entity.Entity) {
+                Entity bukkitEntity = ((net.minecraft.entity.Entity) entity).getBukkitEntity();
 
                 if (bukkitEntity == null) {
                     continue;
@@ -1027,8 +1027,8 @@ public class CraftWorld implements World {
         Collection<Entity> list = new ArrayList<Entity>();
 
         for (Object entity: world.entitiesById.values()) {
-            if (entity instanceof net.minecraft.server.Entity) {
-                Entity bukkitEntity = ((net.minecraft.server.Entity) entity).getBukkitEntity();
+            if (entity instanceof net.minecraft.entity.Entity) {
+                Entity bukkitEntity = ((net.minecraft.entity.Entity) entity).getBukkitEntity();
 
                 if (bukkitEntity == null) {
                     continue;
@@ -1074,10 +1074,10 @@ public class CraftWorld implements World {
         Validate.notNull(boundingBox, "Bounding box is null!");
 
         AxisAlignedBB bb = new AxisAlignedBB(boundingBox.getMinX(), boundingBox.getMinY(), boundingBox.getMinZ(), boundingBox.getMaxX(), boundingBox.getMaxY(), boundingBox.getMaxZ());
-        List<net.minecraft.server.Entity> entityList = getHandle().getEntities((net.minecraft.server.Entity) null, bb, null);
+        List<net.minecraft.entity.Entity> entityList = getHandle().getEntities((net.minecraft.entity.Entity) null, bb, null);
         List<Entity> bukkitEntityList = new ArrayList<org.bukkit.entity.Entity>(entityList.size());
 
-        for (net.minecraft.server.Entity entity : entityList) {
+        for (net.minecraft.entity.Entity entity : entityList) {
             Entity bukkitEntity = entity.getBukkitEntity();
             if (filter == null || filter.test(bukkitEntity)) {
                 bukkitEntityList.add(bukkitEntity);
@@ -1408,12 +1408,12 @@ public class CraftWorld implements World {
     }
 
     @SuppressWarnings("unchecked")
-    public net.minecraft.server.Entity createEntity(Location location, Class<? extends Entity> clazz) throws IllegalArgumentException {
+    public net.minecraft.entity.Entity createEntity(Location location, Class<? extends Entity> clazz) throws IllegalArgumentException {
         if (location == null || clazz == null) {
             throw new IllegalArgumentException("Location or entity class cannot be null");
         }
 
-        net.minecraft.server.Entity entity = null;
+        net.minecraft.entity.Entity entity = null;
 
         double x = location.getX();
         double y = location.getY();
@@ -1697,9 +1697,9 @@ public class CraftWorld implements World {
                     AxisAlignedBB bb = (ItemFrame.class.isAssignableFrom(clazz))
                             ? EntityItemFrame.calculateBoundingBox(null, pos, CraftBlock.blockFaceToNotch(dir).opposite(), width, height)
                             : EntityHanging.calculateBoundingBox(null, pos, CraftBlock.blockFaceToNotch(dir).opposite(), width, height);
-                    List<net.minecraft.server.Entity> list = (List<net.minecraft.server.Entity>) world.getEntities(null, bb);
-                    for (Iterator<net.minecraft.server.Entity> it = list.iterator(); !taken && it.hasNext();) {
-                        net.minecraft.server.Entity e = it.next();
+                    List<net.minecraft.entity.Entity> list = (List<net.minecraft.entity.Entity>) world.getEntities(null, bb);
+                    for (Iterator<net.minecraft.entity.Entity> it = list.iterator(); !taken && it.hasNext();) {
+                        net.minecraft.entity.Entity e = it.next();
                         if (e instanceof EntityHanging) {
                             taken = true; // Hanging entities do not like hanging entities which intersect them.
                         }
@@ -1737,7 +1737,7 @@ public class CraftWorld implements World {
         } else if (LightningStrike.class.isAssignableFrom(clazz)) {
             entity = new EntityLightning(world, x, y, z, false);
         } else if (Firework.class.isAssignableFrom(clazz)) {
-            entity = new EntityFireworks(world, x, y, z, net.minecraft.server.ItemStack.a);
+            entity = new EntityFireworks(world, x, y, z, net.minecraft.item.ItemStack.a);
         } else if (AreaEffectCloud.class.isAssignableFrom(clazz)) {
             entity = new EntityAreaEffectCloud(world, x, y, z);
         } else if (EvokerFangs.class.isAssignableFrom(clazz)) {
@@ -1752,12 +1752,12 @@ public class CraftWorld implements World {
     }
 
     @SuppressWarnings("unchecked")
-    public <T extends Entity> T addEntity(net.minecraft.server.Entity entity, SpawnReason reason) throws IllegalArgumentException {
+    public <T extends Entity> T addEntity(net.minecraft.entity.Entity entity, SpawnReason reason) throws IllegalArgumentException {
         return addEntity(entity, reason, null);
     }
 
     @SuppressWarnings("unchecked")
-    public <T extends Entity> T addEntity(net.minecraft.server.Entity entity, SpawnReason reason, Consumer<T> function) throws IllegalArgumentException {
+    public <T extends Entity> T addEntity(net.minecraft.entity.Entity entity, SpawnReason reason, Consumer<T> function) throws IllegalArgumentException {
         Preconditions.checkArgument(entity != null, "Cannot spawn null entity");
 
         if (entity instanceof EntityInsentient) {
@@ -1773,7 +1773,7 @@ public class CraftWorld implements World {
     }
 
     public <T extends Entity> T spawn(Location location, Class<T> clazz, Consumer<T> function, SpawnReason reason) throws IllegalArgumentException {
-        net.minecraft.server.Entity entity = createEntity(location, clazz);
+        net.minecraft.entity.Entity entity = createEntity(location, clazz);
 
         return addEntity(entity, reason, function);
     }
@@ -2221,7 +2221,7 @@ public class CraftWorld implements World {
         Validate.isTrue(radius >= 0, "Radius cannot be negative");
 
         PersistentRaid persistentRaid = world.getPersistentRaid();
-        net.minecraft.server.Raid raid = persistentRaid.getNearbyRaid(new BlockPosition(location.getBlockX(), location.getBlockY(), location.getBlockZ()), radius * radius);
+        net.minecraft.world.raid.Raid raid = persistentRaid.getNearbyRaid(new BlockPosition(location.getBlockX(), location.getBlockY(), location.getBlockZ()), radius * radius);
         return (raid == null) ? null : new CraftRaid(raid);
     }
 

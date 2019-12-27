@@ -5,7 +5,7 @@ import org.bukkit.craftbukkit.block.data.CraftBlockData;
 
 public abstract class CraftDoor extends CraftBlockData implements Door {
 
-    private static final net.minecraft.server.BlockStateEnum<?> HINGE = getEnum("hinge");
+    private static final net.minecraft.state.PropertyEnum<?> HINGE = getEnum("hinge");
 
     @Override
     public Hinge getHinge() {

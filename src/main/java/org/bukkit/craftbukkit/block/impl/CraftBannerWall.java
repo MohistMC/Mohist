@@ -9,13 +9,13 @@ public final class CraftBannerWall extends org.bukkit.craftbukkit.block.data.Cra
         super();
     }
 
-    public CraftBannerWall(net.minecraft.server.IBlockData state) {
+    public CraftBannerWall(net.minecraft.block.BlockState state) {
         super(state);
     }
 
     // org.bukkit.craftbukkit.block.data.CraftDirectional
 
-    private static final net.minecraft.server.BlockStateEnum<?> FACING = getEnum(net.minecraft.server.BlockBannerWall.class, "facing");
+    private static final net.minecraft.state.PropertyEnum<?> FACING = getEnum(net.minecraft.block.BlockBannerWall.class, "facing");
 
     @Override
     public org.bukkit.block.BlockFace getFacing() {

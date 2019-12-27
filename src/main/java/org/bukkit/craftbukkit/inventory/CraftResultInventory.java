@@ -23,10 +23,10 @@ public class CraftResultInventory extends CraftInventory {
     @Override
     public ItemStack getItem(int slot) {
         if (slot < getIngredientsInventory().getSize()) {
-            net.minecraft.server.ItemStack item = getIngredientsInventory().getItem(slot);
+            net.minecraft.item.ItemStack item = getIngredientsInventory().getItem(slot);
             return item.isEmpty() ? null : CraftItemStack.asCraftMirror(item);
         } else {
-            net.minecraft.server.ItemStack item = getResultInventory().getItem(slot - getIngredientsInventory().getSize());
+            net.minecraft.item.ItemStack item = getResultInventory().getItem(slot - getIngredientsInventory().getSize());
             return item.isEmpty() ? null : CraftItemStack.asCraftMirror(item);
         }
     }

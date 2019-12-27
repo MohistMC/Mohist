@@ -5,7 +5,7 @@ import org.bukkit.craftbukkit.block.data.CraftBlockData;
 
 public abstract class CraftCake extends CraftBlockData implements Cake {
 
-    private static final net.minecraft.server.BlockStateInteger BITES = getInteger("bites");
+    private static final net.minecraft.state.PropertyInteger BITES = getInteger("bites");
 
     @Override
     public int getBites() {

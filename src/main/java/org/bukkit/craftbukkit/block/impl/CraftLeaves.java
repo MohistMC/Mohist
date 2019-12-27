@@ -9,14 +9,14 @@ public final class CraftLeaves extends org.bukkit.craftbukkit.block.data.CraftBl
         super();
     }
 
-    public CraftLeaves(net.minecraft.server.IBlockData state) {
+    public CraftLeaves(net.minecraft.block.BlockState state) {
         super(state);
     }
 
     // org.bukkit.craftbukkit.block.data.type.CraftLeaves
 
-    private static final net.minecraft.server.BlockStateInteger DISTANCE = getInteger(net.minecraft.server.BlockLeaves.class, "distance");
-    private static final net.minecraft.server.BlockStateBoolean PERSISTENT = getBoolean(net.minecraft.server.BlockLeaves.class, "persistent");
+    private static final net.minecraft.state.PropertyInteger DISTANCE = getInteger(net.minecraft.block.BlockLeaves.class, "distance");
+    private static final net.minecraft.state.PropertyBoolean PERSISTENT = getBoolean(net.minecraft.block.BlockLeaves.class, "persistent");
 
     @Override
     public boolean isPersistent() {

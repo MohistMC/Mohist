@@ -4,7 +4,7 @@ import org.bukkit.block.data.Bisected;
 
 public class CraftBisected extends CraftBlockData implements Bisected {
 
-    private static final net.minecraft.server.BlockStateEnum<?> HALF = getEnum("half");
+    private static final net.minecraft.state.PropertyEnum<?> HALF = getEnum("half");
 
     @Override
     public Half getHalf() {

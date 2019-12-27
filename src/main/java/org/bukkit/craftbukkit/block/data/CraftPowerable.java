@@ -4,7 +4,7 @@ import org.bukkit.block.data.Powerable;
 
 public abstract class CraftPowerable extends CraftBlockData implements Powerable {
 
-    private static final net.minecraft.server.BlockStateBoolean POWERED = getBoolean("powered");
+    private static final net.minecraft.state.PropertyBoolean POWERED = getBoolean("powered");
 
     @Override
     public boolean isPowered() {

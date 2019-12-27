@@ -24,7 +24,7 @@ public class CraftCampfire extends CraftBlockEntityState<TileEntityCampfire> imp
 
     @Override
     public ItemStack getItem(int index) {
-        net.minecraft.server.ItemStack item = getSnapshot().getItems().get(index);
+        net.minecraft.item.ItemStack item = getSnapshot().getItems().get(index);
         return item.isEmpty() ? null : CraftItemStack.asCraftMirror(item);
     }
 

@@ -4,7 +4,7 @@ import org.bukkit.block.data.Openable;
 
 public abstract class CraftOpenable extends CraftBlockData implements Openable {
 
-    private static final net.minecraft.server.BlockStateBoolean OPEN = getBoolean("open");
+    private static final net.minecraft.state.PropertyBoolean OPEN = getBoolean("open");
 
     @Override
     public boolean isOpen() {

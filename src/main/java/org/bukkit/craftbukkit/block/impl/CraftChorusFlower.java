@@ -9,13 +9,13 @@ public final class CraftChorusFlower extends org.bukkit.craftbukkit.block.data.C
         super();
     }
 
-    public CraftChorusFlower(net.minecraft.server.IBlockData state) {
+    public CraftChorusFlower(net.minecraft.block.BlockState state) {
         super(state);
     }
 
     // org.bukkit.craftbukkit.block.data.CraftAgeable
 
-    private static final net.minecraft.server.BlockStateInteger AGE = getInteger(net.minecraft.server.BlockChorusFlower.class, "age");
+    private static final net.minecraft.state.PropertyInteger AGE = getInteger(net.minecraft.block.BlockChorusFlower.class, "age");
 
     @Override
     public int getAge() {

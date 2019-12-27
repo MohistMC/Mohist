@@ -9,14 +9,14 @@ public final class CraftTurtleEgg extends org.bukkit.craftbukkit.block.data.Craf
         super();
     }
 
-    public CraftTurtleEgg(net.minecraft.server.IBlockData state) {
+    public CraftTurtleEgg(net.minecraft.block.BlockState state) {
         super(state);
     }
 
     // org.bukkit.craftbukkit.block.data.type.CraftTurtleEgg
 
-    private static final net.minecraft.server.BlockStateInteger EGGS = getInteger(net.minecraft.server.BlockTurtleEgg.class, "eggs");
-    private static final net.minecraft.server.BlockStateInteger HATCH = getInteger(net.minecraft.server.BlockTurtleEgg.class, "hatch");
+    private static final net.minecraft.state.PropertyInteger EGGS = getInteger(net.minecraft.block.BlockTurtleEgg.class, "eggs");
+    private static final net.minecraft.state.PropertyInteger HATCH = getInteger(net.minecraft.block.BlockTurtleEgg.class, "hatch");
 
     @Override
     public int getEggs() {

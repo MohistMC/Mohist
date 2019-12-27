@@ -2,7 +2,7 @@ package org.bukkit.craftbukkit.util;
 
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
-import net.minecraft.server.MovingObjectPosition.EnumMovingObjectType;
+import net.minecraft.util.math.RayTraceResult.EnumMovingObjectType;
 import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.util.math.EntityRayTraceResult;
 import net.minecraft.util.math.Vec3d;

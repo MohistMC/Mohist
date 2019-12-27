@@ -9,13 +9,13 @@ public final class CraftLogAbstract extends org.bukkit.craftbukkit.block.data.Cr
         super();
     }
 
-    public CraftLogAbstract(net.minecraft.server.IBlockData state) {
+    public CraftLogAbstract(net.minecraft.block.BlockState state) {
         super(state);
     }
 
     // org.bukkit.craftbukkit.block.data.CraftOrientable
 
-    private static final net.minecraft.server.BlockStateEnum<?> AXIS = getEnum(net.minecraft.server.BlockLogAbstract.class, "axis");
+    private static final net.minecraft.state.PropertyEnum<?> AXIS = getEnum(net.minecraft.block.BlockLogAbstract.class, "axis");
 
     @Override
     public org.bukkit.Axis getAxis() {

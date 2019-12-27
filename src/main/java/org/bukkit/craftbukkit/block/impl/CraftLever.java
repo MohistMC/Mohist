@@ -9,13 +9,13 @@ public final class CraftLever extends org.bukkit.craftbukkit.block.data.CraftBlo
         super();
     }
 
-    public CraftLever(net.minecraft.server.IBlockData state) {
+    public CraftLever(net.minecraft.block.BlockState state) {
         super(state);
     }
 
     // org.bukkit.craftbukkit.block.data.type.CraftSwitch
 
-    private static final net.minecraft.server.BlockStateEnum<?> FACE = getEnum(net.minecraft.server.BlockLever.class, "face");
+    private static final net.minecraft.state.PropertyEnum<?> FACE = getEnum(net.minecraft.block.BlockLever.class, "face");
 
     @Override
     public Face getFace() {
@@ -29,7 +29,7 @@ public final class CraftLever extends org.bukkit.craftbukkit.block.data.CraftBlo
 
     // org.bukkit.craftbukkit.block.data.CraftDirectional
 
-    private static final net.minecraft.server.BlockStateEnum<?> FACING = getEnum(net.minecraft.server.BlockLever.class, "facing");
+    private static final net.minecraft.state.PropertyEnum<?> FACING = getEnum(net.minecraft.block.BlockLever.class, "facing");
 
     @Override
     public org.bukkit.block.BlockFace getFacing() {
@@ -48,7 +48,7 @@ public final class CraftLever extends org.bukkit.craftbukkit.block.data.CraftBlo
 
     // org.bukkit.craftbukkit.block.data.CraftPowerable
 
-    private static final net.minecraft.server.BlockStateBoolean POWERED = getBoolean(net.minecraft.server.BlockLever.class, "powered");
+    private static final net.minecraft.state.PropertyBoolean POWERED = getBoolean(net.minecraft.block.BlockLever.class, "powered");
 
     @Override
     public boolean isPowered() {

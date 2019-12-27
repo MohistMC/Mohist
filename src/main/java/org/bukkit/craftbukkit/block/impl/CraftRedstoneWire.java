@@ -9,16 +9,16 @@ public final class CraftRedstoneWire extends org.bukkit.craftbukkit.block.data.C
         super();
     }
 
-    public CraftRedstoneWire(net.minecraft.server.IBlockData state) {
+    public CraftRedstoneWire(net.minecraft.block.BlockState state) {
         super(state);
     }
 
     // org.bukkit.craftbukkit.block.data.type.CraftRedstoneWire
 
-    private static final net.minecraft.server.BlockStateEnum<?> NORTH = getEnum(net.minecraft.server.BlockRedstoneWire.class, "north");
-    private static final net.minecraft.server.BlockStateEnum<?> EAST = getEnum(net.minecraft.server.BlockRedstoneWire.class, "east");
-    private static final net.minecraft.server.BlockStateEnum<?> SOUTH = getEnum(net.minecraft.server.BlockRedstoneWire.class, "south");
-    private static final net.minecraft.server.BlockStateEnum<?> WEST = getEnum(net.minecraft.server.BlockRedstoneWire.class, "west");
+    private static final net.minecraft.state.PropertyEnum<?> NORTH = getEnum(net.minecraft.block.RedstoneWireBlock.class, "north");
+    private static final net.minecraft.state.PropertyEnum<?> EAST = getEnum(net.minecraft.block.RedstoneWireBlock.class, "east");
+    private static final net.minecraft.state.PropertyEnum<?> SOUTH = getEnum(net.minecraft.block.RedstoneWireBlock.class, "south");
+    private static final net.minecraft.state.PropertyEnum<?> WEST = getEnum(net.minecraft.block.RedstoneWireBlock.class, "west");
 
     @Override
     public Connection getFace(org.bukkit.block.BlockFace face) {
@@ -63,7 +63,7 @@ public final class CraftRedstoneWire extends org.bukkit.craftbukkit.block.data.C
 
     // org.bukkit.craftbukkit.block.data.CraftAnaloguePowerable
 
-    private static final net.minecraft.server.BlockStateInteger POWER = getInteger(net.minecraft.server.BlockRedstoneWire.class, "power");
+    private static final net.minecraft.state.PropertyInteger POWER = getInteger(net.minecraft.block.RedstoneWireBlock.class, "power");
 
     @Override
     public int getPower() {

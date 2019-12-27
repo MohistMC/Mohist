@@ -9,13 +9,13 @@ public final class CraftStemAttached extends org.bukkit.craftbukkit.block.data.C
         super();
     }
 
-    public CraftStemAttached(net.minecraft.server.IBlockData state) {
+    public CraftStemAttached(net.minecraft.block.BlockState state) {
         super(state);
     }
 
     // org.bukkit.craftbukkit.block.data.CraftDirectional
 
-    private static final net.minecraft.server.BlockStateEnum<?> FACING = getEnum(net.minecraft.server.BlockStemAttached.class, "facing");
+    private static final net.minecraft.state.PropertyEnum<?> FACING = getEnum(net.minecraft.block.AttachedStemBlock.class, "facing");
 
     @Override
     public org.bukkit.block.BlockFace getFacing() {

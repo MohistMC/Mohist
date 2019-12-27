@@ -11,9 +11,9 @@ import org.bukkit.enchantments.EnchantmentWrapper;
 import org.bukkit.inventory.ItemStack;
 
 public class CraftEnchantment extends Enchantment {
-    private final net.minecraft.server.Enchantment target;
+    private final net.minecraft.enchantment.Enchantment target;
 
-    public CraftEnchantment(net.minecraft.server.Enchantment target) {
+    public CraftEnchantment(net.minecraft.enchantment.Enchantment target) {
         super(CraftNamespacedKey.fromMinecraft(IRegistry.ENCHANTMENT.getKey(target)));
         this.target = target;
     }
@@ -162,7 +162,7 @@ public class CraftEnchantment extends Enchantment {
         }
     }
 
-    public static net.minecraft.server.Enchantment getRaw(Enchantment enchantment) {
+    public static net.minecraft.enchantment.Enchantment getRaw(Enchantment enchantment) {
         if (enchantment instanceof EnchantmentWrapper) {
             enchantment = ((EnchantmentWrapper) enchantment).getEnchantment();
         }
@@ -186,7 +186,7 @@ public class CraftEnchantment extends Enchantment {
         return !target.isCompatible(ench.target);
     }
 
-    public net.minecraft.server.Enchantment getHandle() {
+    public net.minecraft.enchantment.Enchantment getHandle() {
         return target;
     }
 }

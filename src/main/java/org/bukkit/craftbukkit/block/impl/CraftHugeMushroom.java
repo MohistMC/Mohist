@@ -9,14 +9,14 @@ public final class CraftHugeMushroom extends org.bukkit.craftbukkit.block.data.C
         super();
     }
 
-    public CraftHugeMushroom(net.minecraft.server.IBlockData state) {
+    public CraftHugeMushroom(net.minecraft.block.BlockState state) {
         super(state);
     }
 
     // org.bukkit.craftbukkit.block.data.CraftMultipleFacing
 
-    private static final net.minecraft.server.BlockStateBoolean[] FACES = new net.minecraft.server.BlockStateBoolean[]{
-        getBoolean(net.minecraft.server.BlockHugeMushroom.class, "north", true), getBoolean(net.minecraft.server.BlockHugeMushroom.class, "east", true), getBoolean(net.minecraft.server.BlockHugeMushroom.class, "south", true), getBoolean(net.minecraft.server.BlockHugeMushroom.class, "west", true), getBoolean(net.minecraft.server.BlockHugeMushroom.class, "up", true), getBoolean(net.minecraft.server.BlockHugeMushroom.class, "down", true)
+    private static final net.minecraft.state.PropertyBoolean[] FACES = new net.minecraft.state.PropertyBoolean[]{
+        getBoolean(net.minecraft.block.BlockHugeMushroom.class, "north", true), getBoolean(net.minecraft.block.BlockHugeMushroom.class, "east", true), getBoolean(net.minecraft.block.BlockHugeMushroom.class, "south", true), getBoolean(net.minecraft.block.BlockHugeMushroom.class, "west", true), getBoolean(net.minecraft.block.BlockHugeMushroom.class, "up", true), getBoolean(net.minecraft.block.BlockHugeMushroom.class, "down", true)
     };
 
     @Override

@@ -9,13 +9,13 @@ public final class CraftMinecartDetector extends org.bukkit.craftbukkit.block.da
         super();
     }
 
-    public CraftMinecartDetector(net.minecraft.server.IBlockData state) {
+    public CraftMinecartDetector(net.minecraft.block.BlockState state) {
         super(state);
     }
 
     // org.bukkit.craftbukkit.block.data.CraftPowerable
 
-    private static final net.minecraft.server.BlockStateBoolean POWERED = getBoolean(net.minecraft.server.BlockMinecartDetector.class, "powered");
+    private static final net.minecraft.state.PropertyBoolean POWERED = getBoolean(net.minecraft.block.BlockMinecartDetector.class, "powered");
 
     @Override
     public boolean isPowered() {
@@ -29,7 +29,7 @@ public final class CraftMinecartDetector extends org.bukkit.craftbukkit.block.da
 
     // org.bukkit.craftbukkit.block.data.CraftRail
 
-    private static final net.minecraft.server.BlockStateEnum<?> SHAPE = getEnum(net.minecraft.server.BlockMinecartDetector.class, "shape");
+    private static final net.minecraft.state.PropertyEnum<?> SHAPE = getEnum(net.minecraft.block.BlockMinecartDetector.class, "shape");
 
     @Override
     public Shape getShape() {

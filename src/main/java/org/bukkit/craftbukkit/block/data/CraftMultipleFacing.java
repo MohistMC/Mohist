@@ -4,7 +4,7 @@ import org.bukkit.block.data.MultipleFacing;
 
 public abstract class CraftMultipleFacing extends CraftBlockData implements MultipleFacing {
 
-    private static final net.minecraft.server.BlockStateBoolean[] FACES = new net.minecraft.server.BlockStateBoolean[]{
+    private static final net.minecraft.state.PropertyBoolean[] FACES = new net.minecraft.state.PropertyBoolean[]{
         getBoolean("north", true), getBoolean("east", true), getBoolean("south", true), getBoolean("west", true), getBoolean("up", true), getBoolean("down", true)
     };
 

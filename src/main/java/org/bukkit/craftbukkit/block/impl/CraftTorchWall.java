@@ -9,13 +9,13 @@ public final class CraftTorchWall extends org.bukkit.craftbukkit.block.data.Craf
         super();
     }
 
-    public CraftTorchWall(net.minecraft.server.IBlockData state) {
+    public CraftTorchWall(net.minecraft.block.BlockState state) {
         super(state);
     }
 
     // org.bukkit.craftbukkit.block.data.CraftDirectional
 
-    private static final net.minecraft.server.BlockStateEnum<?> FACING = getEnum(net.minecraft.server.BlockTorchWall.class, "facing");
+    private static final net.minecraft.state.PropertyEnum<?> FACING = getEnum(net.minecraft.block.TorchBlockWall.class, "facing");
 
     @Override
     public org.bukkit.block.BlockFace getFacing() {

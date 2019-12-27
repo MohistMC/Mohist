@@ -9,13 +9,13 @@ public final class CraftBubbleColumn extends org.bukkit.craftbukkit.block.data.C
         super();
     }
 
-    public CraftBubbleColumn(net.minecraft.server.IBlockData state) {
+    public CraftBubbleColumn(net.minecraft.block.BlockState state) {
         super(state);
     }
 
     // org.bukkit.craftbukkit.block.data.type.CraftBubbleColumn
 
-    private static final net.minecraft.server.BlockStateBoolean DRAG = getBoolean(net.minecraft.server.BlockBubbleColumn.class, "drag");
+    private static final net.minecraft.state.PropertyBoolean DRAG = getBoolean(net.minecraft.block.BlockBubbleColumn.class, "drag");
 
     @Override
     public boolean isDrag() {

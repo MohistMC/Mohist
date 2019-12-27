@@ -9,14 +9,14 @@ public final class CraftNote extends org.bukkit.craftbukkit.block.data.CraftBloc
         super();
     }
 
-    public CraftNote(net.minecraft.server.IBlockData state) {
+    public CraftNote(net.minecraft.block.BlockState state) {
         super(state);
     }
 
     // org.bukkit.craftbukkit.block.data.type.CraftNoteBlock
 
-    private static final net.minecraft.server.BlockStateEnum<?> INSTRUMENT = getEnum(net.minecraft.server.BlockNote.class, "instrument");
-    private static final net.minecraft.server.BlockStateInteger NOTE = getInteger(net.minecraft.server.BlockNote.class, "note");
+    private static final net.minecraft.state.PropertyEnum<?> INSTRUMENT = getEnum(net.minecraft.block.BlockNote.class, "instrument");
+    private static final net.minecraft.state.PropertyInteger NOTE = getInteger(net.minecraft.block.BlockNote.class, "note");
 
     @Override
     public org.bukkit.Instrument getInstrument() {
@@ -40,7 +40,7 @@ public final class CraftNote extends org.bukkit.craftbukkit.block.data.CraftBloc
 
     // org.bukkit.craftbukkit.block.data.CraftPowerable
 
-    private static final net.minecraft.server.BlockStateBoolean POWERED = getBoolean(net.minecraft.server.BlockNote.class, "powered");
+    private static final net.minecraft.state.PropertyBoolean POWERED = getBoolean(net.minecraft.block.BlockNote.class, "powered");
 
     @Override
     public boolean isPowered() {

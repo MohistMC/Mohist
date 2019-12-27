@@ -13,9 +13,9 @@ public class CraftAdvancementProgress implements AdvancementProgress {
 
     private final CraftAdvancement advancement;
     private final AdvancementDataPlayer playerData;
-    private final net.minecraft.server.AdvancementProgress handle;
+    private final net.minecraft.advancements.AdvancementProgress handle;
 
-    public CraftAdvancementProgress(CraftAdvancement advancement, AdvancementDataPlayer player, net.minecraft.server.AdvancementProgress handle) {
+    public CraftAdvancementProgress(CraftAdvancement advancement, AdvancementDataPlayer player, net.minecraft.advancements.AdvancementProgress handle) {
         this.advancement = advancement;
         this.playerData = player;
         this.handle = handle;

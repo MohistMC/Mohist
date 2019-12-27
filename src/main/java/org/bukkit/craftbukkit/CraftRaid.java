@@ -16,9 +16,9 @@ import org.bukkit.entity.Raider;
 
 public final class CraftRaid implements Raid {
 
-    private final net.minecraft.server.Raid handle;
+    private final net.minecraft.world.raid.Raid handle;
 
-    public CraftRaid(net.minecraft.server.Raid handle) {
+    public CraftRaid(net.minecraft.world.raid.Raid handle) {
         this.handle = handle;
     }
 

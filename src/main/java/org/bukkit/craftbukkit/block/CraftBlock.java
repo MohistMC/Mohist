@@ -50,7 +50,7 @@ import org.bukkit.util.RayTraceResult;
 import org.bukkit.util.Vector;
 
 public class CraftBlock implements Block {
-    private final net.minecraft.server.GeneratorAccess world;
+    private final net.minecraft.world.IWorld world;
     private final BlockPosition position;
 
     public CraftBlock(GeneratorAccess world, BlockPosition position) {
@@ -62,11 +62,11 @@ public class CraftBlock implements Block {
         return new CraftBlock(world, position);
     }
 
-    private net.minecraft.server.Block getNMSBlock() {
+    private net.minecraft.block.Block getNMSBlock() {
         return getNMS().getBlock();
     }
 
-    public net.minecraft.server.IBlockData getNMS() {
+    public net.minecraft.block.BlockState getNMS() {
         return world.getType(position);
     }
 
@@ -179,8 +179,8 @@ public class CraftBlock implements Block {
         // SPIGOT-611: need to do this to prevent glitchiness. Easier to handle this here (like /setblock) than to fix weirdness in tile entity cleanup
         if (!blockData.isAir() && blockData.getBlock() instanceof BlockTileEntity && blockData.getBlock() != getNMSBlock()) {
             // SPIGOT-4612: faster - just clear tile
-            if (world instanceof net.minecraft.server.World) {
-                ((net.minecraft.server.World) world).removeTileEntity(position);
+            if (world instanceof net.minecraft.world.World) {
+                ((net.minecraft.world.World) world).removeTileEntity(position);
             } else {
                 world.setTypeAndData(position, Blocks.AIR.getBlockData(), 0);
             }
@@ -553,7 +553,7 @@ public class CraftBlock implements Block {
     public int getBlockPower(BlockFace face) {
         int power = 0;
         BlockRedstoneWire wire = (BlockRedstoneWire) Blocks.REDSTONE_WIRE;
-        net.minecraft.server.World world = this.world.getMinecraftWorld();
+        net.minecraft.world.World world = this.world.getMinecraftWorld();
         int x = getX();
         int y = getY();
         int z = getZ();
@@ -594,11 +594,11 @@ public class CraftBlock implements Block {
     @Override
     public boolean breakNaturally(ItemStack item) {
         // Order matters here, need to drop before setting to air so skulls can get their data
-        net.minecraft.server.Block block = this.getNMSBlock();
+        net.minecraft.block.Block block = this.getNMSBlock();
         boolean result = false;
 
         if (block != null && block != Blocks.AIR) {
-            net.minecraft.server.Block.dropItems(getNMS(), world.getMinecraftWorld(), position, world.getTileEntity(position), null, CraftItemStack.asNMSCopy(item));
+            net.minecraft.block.Block.dropItems(getNMS(), world.getMinecraftWorld(), position, world.getTileEntity(position), null, CraftItemStack.asNMSCopy(item));
             result = true;
         }
 
@@ -613,11 +613,11 @@ public class CraftBlock implements Block {
     @Override
     public Collection<ItemStack> getDrops(ItemStack item) {
         IBlockData iblockdata = getNMS();
-        net.minecraft.server.ItemStack nms = CraftItemStack.asNMSCopy(item);
+        net.minecraft.item.ItemStack nms = CraftItemStack.asNMSCopy(item);
 
         // Modelled off EntityHuman#hasBlock
         if (iblockdata.getMaterial().isAlwaysDestroyable() || nms.canDestroySpecialBlock(iblockdata)) {
-            return net.minecraft.server.Block.getDrops(iblockdata, (WorldServer) world.getMinecraftWorld(), position, world.getTileEntity(position), null, nms)
+            return net.minecraft.block.Block.getDrops(iblockdata, (WorldServer) world.getMinecraftWorld(), position, world.getTileEntity(position), null, nms)
                     .stream().map(CraftItemStack::asBukkitCopy).collect(Collectors.toList());
         } else {
             return Collections.emptyList();

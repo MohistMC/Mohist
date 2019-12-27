@@ -1,6 +1,6 @@
 package org.bukkit.craftbukkit;
 
-import net.minecraft.server.RayTrace.FluidCollisionOption;
+import net.minecraft.util.math.RayTraceContext.FluidCollisionOption;
 import org.bukkit.FluidCollisionMode;
 
 public class CraftFluidCollisionMode {

@@ -9,14 +9,14 @@ public final class CraftChorusFruit extends org.bukkit.craftbukkit.block.data.Cr
         super();
     }
 
-    public CraftChorusFruit(net.minecraft.server.IBlockData state) {
+    public CraftChorusFruit(net.minecraft.block.BlockState state) {
         super(state);
     }
 
     // org.bukkit.craftbukkit.block.data.CraftMultipleFacing
 
-    private static final net.minecraft.server.BlockStateBoolean[] FACES = new net.minecraft.server.BlockStateBoolean[]{
-        getBoolean(net.minecraft.server.BlockChorusFruit.class, "north", true), getBoolean(net.minecraft.server.BlockChorusFruit.class, "east", true), getBoolean(net.minecraft.server.BlockChorusFruit.class, "south", true), getBoolean(net.minecraft.server.BlockChorusFruit.class, "west", true), getBoolean(net.minecraft.server.BlockChorusFruit.class, "up", true), getBoolean(net.minecraft.server.BlockChorusFruit.class, "down", true)
+    private static final net.minecraft.state.PropertyBoolean[] FACES = new net.minecraft.state.PropertyBoolean[]{
+        getBoolean(net.minecraft.block.BlockChorusFruit.class, "north", true), getBoolean(net.minecraft.block.BlockChorusFruit.class, "east", true), getBoolean(net.minecraft.block.BlockChorusFruit.class, "south", true), getBoolean(net.minecraft.block.BlockChorusFruit.class, "west", true), getBoolean(net.minecraft.block.BlockChorusFruit.class, "up", true), getBoolean(net.minecraft.block.BlockChorusFruit.class, "down", true)
     };
 
     @Override

@@ -28,7 +28,7 @@ public final class CraftScoreboardManager implements ScoreboardManager {
     private final Collection<CraftScoreboard> scoreboards = new WeakCollection<CraftScoreboard>();
     private final Map<CraftPlayer, CraftScoreboard> playerBoards = new HashMap<CraftPlayer, CraftScoreboard>();
 
-    public CraftScoreboardManager(MinecraftServer minecraftserver, net.minecraft.server.Scoreboard scoreboardServer) {
+    public CraftScoreboardManager(MinecraftServer minecraftserver, net.minecraft.scoreboard.Scoreboard scoreboardServer) {
         mainScoreboard = new CraftScoreboard(scoreboardServer);
         server = minecraftserver;
         scoreboards.add(mainScoreboard);
@@ -57,8 +57,8 @@ public final class CraftScoreboardManager implements ScoreboardManager {
         Validate.isTrue(bukkitScoreboard instanceof CraftScoreboard, "Cannot set player scoreboard to an unregistered Scoreboard");
 
         CraftScoreboard scoreboard = (CraftScoreboard) bukkitScoreboard;
-        net.minecraft.server.Scoreboard oldboard = getPlayerBoard(player).getHandle();
-        net.minecraft.server.Scoreboard newboard = scoreboard.getHandle();
+        net.minecraft.scoreboard.Scoreboard oldboard = getPlayerBoard(player).getHandle();
+        net.minecraft.scoreboard.Scoreboard newboard = scoreboard.getHandle();
         EntityPlayer entityplayer = player.getHandle();
 
         if (oldboard == newboard) {

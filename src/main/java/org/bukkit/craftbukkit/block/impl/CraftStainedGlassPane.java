@@ -9,14 +9,14 @@ public final class CraftStainedGlassPane extends org.bukkit.craftbukkit.block.da
         super();
     }
 
-    public CraftStainedGlassPane(net.minecraft.server.IBlockData state) {
+    public CraftStainedGlassPane(net.minecraft.block.BlockState state) {
         super(state);
     }
 
     // org.bukkit.craftbukkit.block.data.CraftMultipleFacing
 
-    private static final net.minecraft.server.BlockStateBoolean[] FACES = new net.minecraft.server.BlockStateBoolean[]{
-        getBoolean(net.minecraft.server.BlockStainedGlassPane.class, "north", true), getBoolean(net.minecraft.server.BlockStainedGlassPane.class, "east", true), getBoolean(net.minecraft.server.BlockStainedGlassPane.class, "south", true), getBoolean(net.minecraft.server.BlockStainedGlassPane.class, "west", true), getBoolean(net.minecraft.server.BlockStainedGlassPane.class, "up", true), getBoolean(net.minecraft.server.BlockStainedGlassPane.class, "down", true)
+    private static final net.minecraft.state.PropertyBoolean[] FACES = new net.minecraft.state.PropertyBoolean[]{
+        getBoolean(net.minecraft.block.StainedGlassBlockPane.class, "north", true), getBoolean(net.minecraft.block.StainedGlassBlockPane.class, "east", true), getBoolean(net.minecraft.block.StainedGlassBlockPane.class, "south", true), getBoolean(net.minecraft.block.StainedGlassBlockPane.class, "west", true), getBoolean(net.minecraft.block.StainedGlassBlockPane.class, "up", true), getBoolean(net.minecraft.block.StainedGlassBlockPane.class, "down", true)
     };
 
     @Override
@@ -57,7 +57,7 @@ public final class CraftStainedGlassPane extends org.bukkit.craftbukkit.block.da
 
     // org.bukkit.craftbukkit.block.data.CraftWaterlogged
 
-    private static final net.minecraft.server.BlockStateBoolean WATERLOGGED = getBoolean(net.minecraft.server.BlockStainedGlassPane.class, "waterlogged");
+    private static final net.minecraft.state.PropertyBoolean WATERLOGGED = getBoolean(net.minecraft.block.StainedGlassBlockPane.class, "waterlogged");
 
     @Override
     public boolean isWaterlogged() {

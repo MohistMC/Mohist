@@ -9,13 +9,13 @@ public final class CraftSkullPlayerWall extends org.bukkit.craftbukkit.block.dat
         super();
     }
 
-    public CraftSkullPlayerWall(net.minecraft.server.IBlockData state) {
+    public CraftSkullPlayerWall(net.minecraft.block.BlockState state) {
         super(state);
     }
 
     // org.bukkit.craftbukkit.block.data.CraftDirectional
 
-    private static final net.minecraft.server.BlockStateEnum<?> FACING = getEnum(net.minecraft.server.BlockSkullPlayerWall.class, "facing");
+    private static final net.minecraft.state.PropertyEnum<?> FACING = getEnum(net.minecraft.block.SkullPlayerBlockWall.class, "facing");
 
     @Override
     public org.bukkit.block.BlockFace getFacing() {

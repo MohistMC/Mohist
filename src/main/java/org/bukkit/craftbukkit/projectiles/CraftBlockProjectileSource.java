@@ -70,8 +70,8 @@ public class CraftBlockProjectileSource implements BlockProjectileSource {
         // Copied from DispenseBehaviorProjectile
         IPosition iposition = BlockDispenser.a(isourceblock);
         EnumDirection enumdirection = (EnumDirection) isourceblock.getBlockData().get(BlockDispenser.FACING);
-        net.minecraft.server.World world = dispenserBlock.getWorld();
-        net.minecraft.server.Entity launch = null;
+        net.minecraft.world.World world = dispenserBlock.getWorld();
+        net.minecraft.entity.Entity launch = null;
 
         if (Snowball.class.isAssignableFrom(projectile)) {
             launch = new EntitySnowball(world, iposition.getX(), iposition.getY(), iposition.getZ());

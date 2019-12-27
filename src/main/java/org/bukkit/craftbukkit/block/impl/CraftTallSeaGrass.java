@@ -9,13 +9,13 @@ public final class CraftTallSeaGrass extends org.bukkit.craftbukkit.block.data.C
         super();
     }
 
-    public CraftTallSeaGrass(net.minecraft.server.IBlockData state) {
+    public CraftTallSeaGrass(net.minecraft.block.BlockState state) {
         super(state);
     }
 
     // org.bukkit.craftbukkit.block.data.CraftBisected
 
-    private static final net.minecraft.server.BlockStateEnum<?> HALF = getEnum(net.minecraft.server.BlockTallSeaGrass.class, "half");
+    private static final net.minecraft.state.PropertyEnum<?> HALF = getEnum(net.minecraft.block.TallSeaGrassBlock.class, "half");
 
     @Override
     public Half getHalf() {

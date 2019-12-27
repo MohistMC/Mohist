@@ -3,7 +3,7 @@ package org.bukkit.craftbukkit.inventory;
 import com.google.common.collect.ImmutableMap.Builder;
 import java.util.Map;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraft.server.IChatBaseComponent.ChatSerializer;
+import net.minecraft.util.text.ITextComponent.ChatSerializer;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.nbt.StringNBT;

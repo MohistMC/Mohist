@@ -5,7 +5,7 @@ import org.bukkit.craftbukkit.block.data.CraftBlockData;
 
 public abstract class CraftSwitch extends CraftBlockData implements Switch {
 
-    private static final net.minecraft.server.BlockStateEnum<?> FACE = getEnum("face");
+    private static final net.minecraft.state.PropertyEnum<?> FACE = getEnum("face");
 
     @Override
     public Face getFace() {

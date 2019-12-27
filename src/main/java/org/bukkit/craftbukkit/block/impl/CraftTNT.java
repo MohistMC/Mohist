@@ -9,13 +9,13 @@ public final class CraftTNT extends org.bukkit.craftbukkit.block.data.CraftBlock
         super();
     }
 
-    public CraftTNT(net.minecraft.server.IBlockData state) {
+    public CraftTNT(net.minecraft.block.BlockState state) {
         super(state);
     }
 
     // org.bukkit.craftbukkit.block.data.type.CraftTNT
 
-    private static final net.minecraft.server.BlockStateBoolean UNSTABLE = getBoolean(net.minecraft.server.BlockTNT.class, "unstable");
+    private static final net.minecraft.state.PropertyBoolean UNSTABLE = getBoolean(net.minecraft.block.TNTBlock.class, "unstable");
 
     @Override
     public boolean isUnstable() {

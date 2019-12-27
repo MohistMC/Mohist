@@ -430,7 +430,7 @@ class CraftMetaItem implements ItemMeta, Damageable, Repairable, BlockDataMeta {
                 // entry is not an actual NBTTagCompound. getCompound returns empty NBTTagCompound in that case
                 continue;
             }
-            net.minecraft.server.AttributeModifier nmsModifier = GenericAttributes.a(entry);
+            net.minecraft.entity.ai.attributes.AttributeModifier nmsModifier = GenericAttributes.a(entry);
             if (nmsModifier == null) {
                 continue;
             }
@@ -710,7 +710,7 @@ class CraftMetaItem implements ItemMeta, Damageable, Repairable, BlockDataMeta {
             if (entry.getKey() == null || entry.getValue() == null) {
                 continue;
             }
-            net.minecraft.server.AttributeModifier nmsModifier = CraftAttributeInstance.convert(entry.getValue());
+            net.minecraft.entity.ai.attributes.AttributeModifier nmsModifier = CraftAttributeInstance.convert(entry.getValue());
             NBTTagCompound sub = GenericAttributes.a(nmsModifier);
             if (sub.isEmpty()) {
                 continue;

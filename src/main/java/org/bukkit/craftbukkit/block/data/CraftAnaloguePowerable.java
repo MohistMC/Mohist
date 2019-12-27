@@ -4,7 +4,7 @@ import org.bukkit.block.data.AnaloguePowerable;
 
 public abstract class CraftAnaloguePowerable extends CraftBlockData implements AnaloguePowerable {
 
-    private static final net.minecraft.server.BlockStateInteger POWER = getInteger("power");
+    private static final net.minecraft.state.PropertyInteger POWER = getInteger("power");
 
     @Override
     public int getPower() {

@@ -9,13 +9,13 @@ public final class CraftPotatoes extends org.bukkit.craftbukkit.block.data.Craft
         super();
     }
 
-    public CraftPotatoes(net.minecraft.server.IBlockData state) {
+    public CraftPotatoes(net.minecraft.block.BlockState state) {
         super(state);
     }
 
     // org.bukkit.craftbukkit.block.data.CraftAgeable
 
-    private static final net.minecraft.server.BlockStateInteger AGE = getInteger(net.minecraft.server.BlockPotatoes.class, "age");
+    private static final net.minecraft.state.PropertyInteger AGE = getInteger(net.minecraft.block.BlockPotatoes.class, "age");
 
     @Override
     public int getAge() {

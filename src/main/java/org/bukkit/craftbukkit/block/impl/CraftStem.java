@@ -9,13 +9,13 @@ public final class CraftStem extends org.bukkit.craftbukkit.block.data.CraftBloc
         super();
     }
 
-    public CraftStem(net.minecraft.server.IBlockData state) {
+    public CraftStem(net.minecraft.block.BlockState state) {
         super(state);
     }
 
     // org.bukkit.craftbukkit.block.data.CraftAgeable
 
-    private static final net.minecraft.server.BlockStateInteger AGE = getInteger(net.minecraft.server.BlockStem.class, "age");
+    private static final net.minecraft.state.PropertyInteger AGE = getInteger(net.minecraft.block.StemBlock.class, "age");
 
     @Override
     public int getAge() {
