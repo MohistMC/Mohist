@@ -39,7 +39,7 @@ public class CraftMetaCrossbow extends CraftMetaItem implements CrossbowMeta {
         }
     }
 
-    CraftMetaCrossbow(NBTTagCompound tag) {
+    CraftMetaCrossbow(CompoundNBT tag) {
         super(tag);
 
         charged = tag.getBoolean(CHARGED.NBT);
@@ -51,7 +51,7 @@ public class CraftMetaCrossbow extends CraftMetaItem implements CrossbowMeta {
                 chargedProjectiles = new ArrayList<>();
 
                 for (int i = 0; i < list.size(); i++) {
-                    NBTTagCompound nbttagcompound1 = list.getCompound(i);
+                    CompoundNBT nbttagcompound1 = list.getCompound(i);
 
                     chargedProjectiles.add(CraftItemStack.asCraftMirror(net.minecraft.item.ItemStack.a(nbttagcompound1)));
                 }
@@ -78,7 +78,7 @@ public class CraftMetaCrossbow extends CraftMetaItem implements CrossbowMeta {
     }
 
     @Override
-    void applyToItem(NBTTagCompound tag) {
+    void applyToItem(CompoundNBT tag) {
         super.applyToItem(tag);
 
         tag.setBoolean(CHARGED.NBT, charged);
@@ -86,7 +86,7 @@ public class CraftMetaCrossbow extends CraftMetaItem implements CrossbowMeta {
             ListNBT list = new ListNBT();
 
             for (ItemStack item : chargedProjectiles) {
-                NBTTagCompound saved = new NBTTagCompound();
+                CompoundNBT saved = new CompoundNBT();
                 CraftItemStack.asNMSCopy(item).save(saved);
                 list.add(saved);
             }

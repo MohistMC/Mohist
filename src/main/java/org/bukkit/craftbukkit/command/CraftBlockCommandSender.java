@@ -23,13 +23,13 @@ public class CraftBlockCommandSender extends ServerCommandSender implements Bloc
 
     @Override
     public Block getBlock() {
-        return CraftBlock.at(tile.getWorld(), tile.getPosition());
+        return CraftBlock.at(tile.getWorld(), tile.getPos());
     }
 
     @Override
     public void sendMessage(String message) {
         for (ITextComponent component : CraftChatMessage.fromString(message)) {
-            block.base.sendMessage(component);
+            block.source.sendMessage(component);
         }
     }
 

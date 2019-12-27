@@ -24,10 +24,10 @@ public class CraftNBTTagConfigSerializer {
     private static final JsonToNBT MOJANGSON_PARSER = new JsonToNBT(new StringReader(""));
 
     public static Object serialize(INBT base) {
-        if (base instanceof NBTTagCompound) {
+        if (base instanceof CompoundNBT) {
             Map<String, Object> innerMap = new HashMap<>();
-            for (String key : ((NBTTagCompound) base).getKeys()) {
-                innerMap.put(key, serialize(((NBTTagCompound) base).get(key)));
+            for (String key : ((CompoundNBT) base).getKeys()) {
+                innerMap.put(key, serialize(((CompoundNBT) base).get(key)));
             }
 
             return innerMap;
@@ -38,7 +38,7 @@ public class CraftNBTTagConfigSerializer {
             }
 
             return baseList;
-        } else if (base instanceof NBTTagString) {
+        } else if (base instanceof StringNBT) {
             return base.asString();
         } else if (base instanceof IntNBT) { // No need to check for doubles, those are covered by the double itself
             return base.toString() + "i";
@@ -49,7 +49,7 @@ public class CraftNBTTagConfigSerializer {
 
     public static INBT deserialize(Object object) {
         if (object instanceof Map) {
-            NBTTagCompound compound = new NBTTagCompound();
+            CompoundNBT compound = new CompoundNBT();
             for (Map.Entry<String, Object> entry : ((Map<String, Object>) object).entrySet()) {
                 compound.set(entry.getKey(), deserialize(entry.getValue()));
             }
@@ -84,9 +84,9 @@ public class CraftNBTTagConfigSerializer {
                 INBT nbtBase = MOJANGSON_PARSER.parseLiteral(string);
 
                 if (nbtBase instanceof IntNBT) { // If this returns an integer, it did not use our method from above
-                    return NBTTagString.a(nbtBase.asString()); // It then is a string that was falsely read as an int
+                    return StringNBT.a(nbtBase.asString()); // It then is a string that was falsely read as an int
                 } else if (nbtBase instanceof DoubleNBT) {
-                    return NBTTagString.a(String.valueOf(((DoubleNBT) nbtBase).asDouble())); // Doubles add "d" at the end
+                    return StringNBT.a(String.valueOf(((DoubleNBT) nbtBase).asDouble())); // Doubles add "d" at the end
                 } else {
                     return nbtBase;
                 }

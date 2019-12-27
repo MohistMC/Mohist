@@ -163,10 +163,10 @@ public final class CraftMagicNumbers implements UnsafeValues {
             return Material.getMaterial(material);
         }
 
-        NBTTagCompound stack = new NBTTagCompound();
+        CompoundNBT stack = new CompoundNBT();
         stack.setString("id", "minecraft:" + material.toLowerCase(Locale.ROOT));
 
-        Dynamic<INBT> converted = DataConverterRegistry.a().update(DataConverterTypes.ITEM_STACK, new Dynamic<>(NBTDynamicOps.a, stack), version, this.getDataVersion());
+        Dynamic<INBT> converted = DataFixesManager.a().update(DataConverterTypes.ITEM_STACK, new Dynamic<>(NBTDynamicOps.a, stack), version, this.getDataVersion());
         String newId = converted.get("id").asString("");
 
         return Material.matchMaterial(newId);
@@ -201,7 +201,7 @@ public final class CraftMagicNumbers implements UnsafeValues {
         net.minecraft.item.ItemStack nmsStack = CraftItemStack.asNMSCopy(stack);
 
         try {
-            nmsStack.setTag((NBTTagCompound) JsonToNBT.parse(arguments));
+            nmsStack.setTag((CompoundNBT) JsonToNBT.parse(arguments));
         } catch (CommandSyntaxException ex) {
             Logger.getLogger(CraftMagicNumbers.class.getName()).log(Level.SEVERE, null, ex);
         }

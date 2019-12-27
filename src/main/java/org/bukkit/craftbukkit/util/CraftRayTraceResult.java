@@ -1,8 +1,6 @@
 package org.bukkit.craftbukkit.util;
 
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.RayTraceResult;
-import net.minecraft.util.math.RayTraceResult.EnumMovingObjectType;
 import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.util.math.EntityRayTraceResult;
 import net.minecraft.util.math.Vec3d;
@@ -18,24 +16,24 @@ public class CraftRayTraceResult {
 
     private CraftRayTraceResult() {}
 
-    public static RayTraceResult fromNMS(World world, RayTraceResult nmsHitResult) {
-        if (nmsHitResult == null || nmsHitResult.getType() == EnumMovingObjectType.MISS) return null;
+    public static RayTraceResult fromNMS(World world, net.minecraft.util.math.RayTraceResult nmsHitResult) {
+        if (nmsHitResult == null || nmsHitResult.getType() == net.minecraft.util.math.RayTraceResult.Type.MISS) return null;
 
         Vec3d nmsHitPos = nmsHitResult.getPos();
         Vector hitPosition = new Vector(nmsHitPos.x, nmsHitPos.y, nmsHitPos.z);
         BlockFace hitBlockFace = null;
 
-        if (nmsHitResult.getType() == EnumMovingObjectType.ENTITY) {
+        if (nmsHitResult.getType() == net.minecraft.util.math.RayTraceResult.Type.ENTITY) {
             Entity hitEntity = ((EntityRayTraceResult) nmsHitResult).getEntity().getBukkitEntity();
             return new RayTraceResult(hitPosition, hitEntity, null);
         }
 
         Block hitBlock = null;
-        BlockPosition nmsBlockPos = null;
-        if (nmsHitResult.getType() == EnumMovingObjectType.BLOCK) {
-            RayTraceResultBlock blockHitResult = (RayTraceResultBlock) nmsHitResult;
+        BlockPos nmsBlockPos = null;
+        if (nmsHitResult.getType() == net.minecraft.util.math.RayTraceResult.Type.BLOCK) {
+            BlockRayTraceResult blockHitResult = (BlockRayTraceResult) nmsHitResult;
             hitBlockFace = CraftBlock.notchToBlockFace(blockHitResult.getDirection());
-            nmsBlockPos = blockHitResult.getBlockPosition();
+            nmsBlockPos = blockHitResult.getBlockPos();
         }
         if (nmsBlockPos != null && world != null) {
             hitBlock = world.getBlockAt(nmsBlockPos.getX(), nmsBlockPos.getY(), nmsBlockPos.getZ());

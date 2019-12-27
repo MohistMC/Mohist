@@ -11,13 +11,13 @@ import org.bukkit.configuration.serialization.DelegateDeserialization;
 public class CraftMetaArmorStand extends CraftMetaItem {
 
     static final ItemMetaKey ENTITY_TAG = new ItemMetaKey("EntityTag", "entity-tag");
-    NBTTagCompound entityTag;
+    CompoundNBT entityTag;
 
     CraftMetaArmorStand(CraftMetaItem meta) {
         super(meta);
     }
 
-    CraftMetaArmorStand(NBTTagCompound tag) {
+    CraftMetaArmorStand(CompoundNBT tag) {
         super(tag);
 
         if (tag.hasKey(ENTITY_TAG.NBT)) {
@@ -30,7 +30,7 @@ public class CraftMetaArmorStand extends CraftMetaItem {
     }
 
     @Override
-    void deserializeInternal(NBTTagCompound tag, Object context) {
+    void deserializeInternal(CompoundNBT tag, Object context) {
         super.deserializeInternal(tag, context);
 
         if (tag.hasKey(ENTITY_TAG.NBT)) {
@@ -46,7 +46,7 @@ public class CraftMetaArmorStand extends CraftMetaItem {
     }
 
     @Override
-    void applyToItem(NBTTagCompound tag) {
+    void applyToItem(CompoundNBT tag) {
         super.applyToItem(tag);
 
         if (entityTag != null) {

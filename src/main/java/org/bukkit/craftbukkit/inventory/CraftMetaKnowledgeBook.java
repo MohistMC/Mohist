@@ -32,7 +32,7 @@ public class CraftMetaKnowledgeBook extends CraftMetaItem implements KnowledgeBo
         }
     }
 
-    CraftMetaKnowledgeBook(NBTTagCompound tag) {
+    CraftMetaKnowledgeBook(CompoundNBT tag) {
         super(tag);
 
         if (tag.hasKey(BOOK_RECIPES.NBT)) {
@@ -60,13 +60,13 @@ public class CraftMetaKnowledgeBook extends CraftMetaItem implements KnowledgeBo
     }
 
     @Override
-    void applyToItem(NBTTagCompound itemData) {
+    void applyToItem(CompoundNBT itemData) {
         super.applyToItem(itemData);
 
         if (hasRecipes()) {
             NBTTagList list = new NBTTagList();
             for (NamespacedKey recipe : this.recipes) {
-                list.add(NBTTagString.a(recipe.toString()));
+                list.add(StringNBT.a(recipe.toString()));
             }
             itemData.set(BOOK_RECIPES.NBT, list);
         }

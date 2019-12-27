@@ -58,7 +58,7 @@ public abstract class CraftAbstractHorse extends CraftAnimals implements Abstrac
     @Override
     public void setJumpStrength(double strength) {
         Validate.isTrue(strength >= 0, "Jump strength cannot be less than zero");
-        getHandle().getAttributeInstance(HorseEntity.attributeJumpStrength).setValue(strength);
+        getHandle().getIAttributeInstance(HorseEntity.attributeJumpStrength).setValue(strength);
     }
 
     @Override

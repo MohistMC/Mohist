@@ -25,12 +25,12 @@ public class CraftEnchantment extends Enchantment {
 
     @Override
     public int getStartLevel() {
-        return target.getStartLevel();
+        return target.getMinLevel();
     }
 
     @Override
     public EnchantmentTarget getItemTarget() {
-        switch (target.itemTarget) {
+        switch (target.type) {
         case ALL:
             return EnchantmentTarget.ALL;
         case ARMOR:
@@ -66,23 +66,23 @@ public class CraftEnchantment extends Enchantment {
 
     @Override
     public boolean isTreasure() {
-        return target.isTreasure();
+        return target.isTreasureEnchantment();
     }
 
     @Override
     public boolean isCursed() {
-        return target instanceof BindingCurseEnchantment || target instanceof EnchantmentVanishing;
+        return target instanceof BindingCurseEnchantment || target instanceof VanishingCurseEnchantment;
     }
 
     @Override
     public boolean canEnchantItem(ItemStack item) {
-        return target.canEnchant(CraftItemStack.asNMSCopy(item));
+        return target.canApply(CraftItemStack.asNMSCopy(item));
     }
 
     @Override
     public String getName() {
         // PAIL: migration paths
-        switch (Registry.ENCHANTMENT.a(target)) {
+        switch (Registry.ENCHANTMENT.getId(target)) {
         case 0:
             return "PROTECTION_ENVIRONMENTAL";
         case 1:
@@ -158,7 +158,7 @@ public class CraftEnchantment extends Enchantment {
         case 36:
             return "VANISHING_CURSE";
         default:
-            return "UNKNOWN_ENCHANT_" + Registry.ENCHANTMENT.a(target);
+            return "UNKNOWN_ENCHANT_" + Registry.ENCHANTMENT.getKey(target);
         }
     }
 
@@ -183,7 +183,7 @@ public class CraftEnchantment extends Enchantment {
             return false;
         }
         CraftEnchantment ench = (CraftEnchantment) other;
-        return !target.isCompatible(ench.target);
+        return !target.isCompatibleWith(ench.target);
     }
 
     public net.minecraft.enchantment.Enchantment getHandle() {

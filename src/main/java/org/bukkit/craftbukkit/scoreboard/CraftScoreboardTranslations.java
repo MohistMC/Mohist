@@ -23,11 +23,11 @@ class CraftScoreboardTranslations {
         return Scoreboard.getSlotForName(SLOTS.get(slot));
     }
 
-    static RenderType toBukkitRender(ScoreCriteria.EnumScoreboardHealthDisplay display) {
+    static RenderType toBukkitRender(ScoreCriteria.RenderType display) {
         return RenderType.valueOf(display.name());
     }
 
-    static ScoreCriteria.EnumScoreboardHealthDisplay fromBukkitRender(RenderType render) {
-        return ScoreCriteria.EnumScoreboardHealthDisplay.valueOf(render.name());
+    static ScoreCriteria.RenderType fromBukkitRender(RenderType render) {
+        return ScoreCriteria.RenderType.valueOf(render.name());
     }
 }

@@ -94,7 +94,7 @@ public class CraftChunk implements Chunk {
     public Block getBlock(int x, int y, int z) {
         validateChunkCoordinates(x, y, z);
 
-        return new CraftBlock(worldServer, new BlockPosition((this.x << 4) | x, y, (this.z << 4) | z));
+        return new CraftBlock(worldServer, new BlockPos((this.x << 4) | x, y, (this.z << 4) | z));
     }
 
     @Override
@@ -136,11 +136,11 @@ public class CraftChunk implements Chunk {
         BlockState[] entities = new BlockState[chunk.tileEntities.size()];
 
         for (Object obj : chunk.tileEntities.keySet().toArray()) {
-            if (!(obj instanceof BlockPosition)) {
+            if (!(obj instanceof BlockPos)) {
                 continue;
             }
 
-            BlockPosition position = (BlockPosition) obj;
+            BlockPos position = (BlockPos) obj;
             entities[index++] = worldServer.getWorld().getBlockAt(position.getX(), position.getY(), position.getZ()).getState();
         }
 
@@ -251,7 +251,7 @@ public class CraftChunk implements Chunk {
                 sectionEmitLights[i] = emptyLight;
                 sectionEmpty[i] = true;
             } else { // Not empty
-                NBTTagCompound data = new NBTTagCompound();
+                CompoundNBT data = new CompoundNBT();
                 cs[i].getBlocks().a(data, "Palette", "BlockStates");
 
                 IPaletteBlock blockids = new IPaletteBlock<>(ChunkSection.GLOBAL_PALETTE, net.minecraft.block.Block.REGISTRY_ID, NBTUtil::d, NBTUtil::a, Blocks.AIR.getBlockData()); // TODO: snapshot whole ChunkSection
@@ -260,14 +260,14 @@ public class CraftChunk implements Chunk {
                 sectionBlockIDs[i] = blockids;
 
                 LightEngine lightengine = chunk.world.getChunkProvider().getLightEngine();
-                NibbleArray skyLightArray = lightengine.a(LightType.SKY).a(SectionPosition.a(x, i, z));
+                NibbleArray skyLightArray = lightengine.a(LightType.SKY).a(SectionPos.a(x, i, z));
                 if (skyLightArray == null) {
                     sectionSkyLights[i] = emptyLight;
                 } else {
                     sectionSkyLights[i] = new byte[2048];
                     System.arraycopy(skyLightArray.asBytes(), 0, sectionSkyLights[i], 0, 2048);
                 }
-                NibbleArray emitLightArray = lightengine.a(LightType.BLOCK).a(SectionPosition.a(x, i, z));
+                NibbleArray emitLightArray = lightengine.a(LightType.BLOCK).a(SectionPos.a(x, i, z));
                 if (emitLightArray == null) {
                     sectionEmitLights[i] = emptyLight;
                 } else {

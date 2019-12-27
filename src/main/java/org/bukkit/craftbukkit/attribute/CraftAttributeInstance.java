@@ -30,13 +30,13 @@ public class CraftAttributeInstance implements AttributeInstance {
 
     @Override
     public void setBaseValue(double d) {
-        handle.setValue(d);
+        handle.setBaseValue(d);
     }
 
     @Override
     public Collection<AttributeModifier> getModifiers() {
         List<AttributeModifier> result = new ArrayList<AttributeModifier>();
-        for (net.minecraft.entity.ai.attributes.AttributeModifier nms : handle.getModifiers()) {
+        for (net.minecraft.entity.ai.attributes.AttributeModifier nms : handle.func_225505_c_()) {
             result.add(convert(nms));
         }
 
@@ -46,7 +46,7 @@ public class CraftAttributeInstance implements AttributeInstance {
     @Override
     public void addModifier(AttributeModifier modifier) {
         Preconditions.checkArgument(modifier != null, "modifier");
-        handle.addModifier(convert(modifier));
+        handle.applyModifier(convert(modifier));
     }
 
     @Override
@@ -62,7 +62,7 @@ public class CraftAttributeInstance implements AttributeInstance {
 
     @Override
     public double getDefaultValue() {
-       return handle.getAttribute().getDefault();
+       return handle.getAttribute().getDefaultValue();
     }
 
     public static net.minecraft.entity.ai.attributes.AttributeModifier convert(AttributeModifier bukkit) {
@@ -70,6 +70,6 @@ public class CraftAttributeInstance implements AttributeInstance {
     }
 
     public static AttributeModifier convert(net.minecraft.entity.ai.attributes.AttributeModifier nms) {
-        return new AttributeModifier(nms.getUniqueId(), nms.getName(), nms.getAmount(), AttributeModifier.Operation.values()[nms.getOperation().ordinal()]);
+        return new AttributeModifier(nms.getID(), nms.getName(), nms.getAmount(), AttributeModifier.Operation.values()[nms.getOperation().ordinal()]);
     }
 }

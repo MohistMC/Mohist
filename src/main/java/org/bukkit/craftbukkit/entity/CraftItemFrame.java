@@ -42,7 +42,7 @@ public class CraftItemFrame extends CraftHanging implements ItemFrame {
         ItemEntityFrame old = this.getHandle();
 
         ServerWorld world = ((CraftWorld) getWorld()).getHandle();
-        BlockPosition position = old.getBlockPosition();
+        BlockPos position = old.getBlockPos();
         Direction direction = old.getDirection();
         ItemStack item = old.getItem() != null ? old.getItem().cloneItemStack() : null;
 

@@ -276,8 +276,8 @@ public class CraftBlockData implements BlockData {
         return stateString.toString();
     }
 
-    public NBTTagCompound toStates() {
-        NBTTagCompound compound = new NBTTagCompound();
+    public CompoundNBT toStates() {
+        CompoundNBT compound = new CompoundNBT();
 
         for (Map.Entry<IProperty<?>, Comparable<?>> entry : state.getStateMap().entrySet()) {
             IProperty iblockstate = (IProperty) entry.getKey();

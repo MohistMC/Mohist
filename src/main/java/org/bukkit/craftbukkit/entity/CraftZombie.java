@@ -41,7 +41,7 @@ public class CraftZombie extends CraftMonster implements Zombie {
 
     @Override
     public boolean isVillager() {
-        return getHandle() instanceof ZombieEntityVillager;
+        return getHandle() instanceof ZombieVillagerEntity;
     }
 
     @Override

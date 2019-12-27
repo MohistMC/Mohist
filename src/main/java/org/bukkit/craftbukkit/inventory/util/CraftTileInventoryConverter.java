@@ -22,7 +22,7 @@ import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 
-public abstract class CraftTileInventoryConverter implements CraftInventoryCreator.InventoryConverter {
+public abstract class CraftSimpleNamedContainerProviderConverter implements CraftInventoryCreator.InventoryConverter {
 
     public abstract IInventory getTileEntity();
 
@@ -45,12 +45,12 @@ public abstract class CraftTileInventoryConverter implements CraftInventoryCreat
         return new CraftInventory(tileEntity);
     }
 
-    public static class Furnace extends CraftTileInventoryConverter {
+    public static class Furnace extends CraftSimpleNamedContainerProviderConverter {
 
         @Override
         public IInventory getTileEntity() {
             TileEntityFurnace furnace = new TileEntityFurnaceFurnace();
-            furnace.setLocation(MinecraftServer.getServer().getWorldServer(DimensionManager.OVERWORLD), BlockPosition.ZERO); // TODO: customize this if required
+            furnace.setLocation(MinecraftServer.getServer().getServerWorld(DimensionManager.OVERWORLD), BlockPos.ZERO); // TODO: customize this if required
             return furnace;
         }
 
@@ -67,7 +67,7 @@ public abstract class CraftTileInventoryConverter implements CraftInventoryCreat
         }
     }
 
-    public static class BrewingStand extends CraftTileInventoryConverter {
+    public static class BrewingStand extends CraftSimpleNamedContainerProviderConverter {
 
         @Override
         public IInventory getTileEntity() {
@@ -90,7 +90,7 @@ public abstract class CraftTileInventoryConverter implements CraftInventoryCreat
         }
     }
 
-    public static class Dispenser extends CraftTileInventoryConverter {
+    public static class Dispenser extends CraftSimpleNamedContainerProviderConverter {
 
         @Override
         public IInventory getTileEntity() {
@@ -98,7 +98,7 @@ public abstract class CraftTileInventoryConverter implements CraftInventoryCreat
         }
     }
 
-    public static class Dropper extends CraftTileInventoryConverter {
+    public static class Dropper extends CraftSimpleNamedContainerProviderConverter {
 
         @Override
         public IInventory getTileEntity() {
@@ -106,7 +106,7 @@ public abstract class CraftTileInventoryConverter implements CraftInventoryCreat
         }
     }
 
-    public static class Hopper extends CraftTileInventoryConverter {
+    public static class Hopper extends CraftSimpleNamedContainerProviderConverter {
 
         @Override
         public IInventory getTileEntity() {
@@ -114,7 +114,7 @@ public abstract class CraftTileInventoryConverter implements CraftInventoryCreat
         }
     }
 
-    public static class BlastFurnace extends CraftTileInventoryConverter {
+    public static class BlastFurnace extends CraftSimpleNamedContainerProviderConverter {
 
         @Override
         public IInventory getTileEntity() {
@@ -122,7 +122,7 @@ public abstract class CraftTileInventoryConverter implements CraftInventoryCreat
         }
     }
 
-    public static class Lectern extends CraftTileInventoryConverter {
+    public static class Lectern extends CraftSimpleNamedContainerProviderConverter {
 
         @Override
         public IInventory getTileEntity() {
@@ -130,7 +130,7 @@ public abstract class CraftTileInventoryConverter implements CraftInventoryCreat
         }
     }
 
-    public static class Smoker extends CraftTileInventoryConverter {
+    public static class Smoker extends CraftSimpleNamedContainerProviderConverter {
 
         @Override
         public IInventory getTileEntity() {

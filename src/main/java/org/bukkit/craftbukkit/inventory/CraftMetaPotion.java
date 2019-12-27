@@ -52,7 +52,7 @@ class CraftMetaPotion extends CraftMetaItem implements PotionMeta {
         }
     }
 
-    CraftMetaPotion(NBTTagCompound tag) {
+    CraftMetaPotion(CompoundNBT tag) {
         super(tag);
         if (tag.hasKey(DEFAULT_POTION.NBT)) {
             type = CraftPotionUtil.toBukkit(tag.getString(DEFAULT_POTION.NBT));
@@ -70,7 +70,7 @@ class CraftMetaPotion extends CraftMetaItem implements PotionMeta {
             customEffects = new ArrayList<PotionEffect>(length);
 
             for (int i = 0; i < length; i++) {
-                NBTTagCompound effect = list.getCompound(i);
+                CompoundNBT effect = list.getCompound(i);
                 PotionEffectType type = PotionEffectType.getById(effect.getByte(ID.NBT));
                 // SPIGOT-4047: Vanilla just disregards these
                 if (type == null) {
@@ -110,7 +110,7 @@ class CraftMetaPotion extends CraftMetaItem implements PotionMeta {
     }
 
     @Override
-    void applyToItem(NBTTagCompound tag) {
+    void applyToItem(CompoundNBT tag) {
         super.applyToItem(tag);
 
         tag.setString(DEFAULT_POTION.NBT, CraftPotionUtil.fromBukkit(type));
@@ -124,7 +124,7 @@ class CraftMetaPotion extends CraftMetaItem implements PotionMeta {
             tag.set(POTION_EFFECTS.NBT, effectList);
 
             for (PotionEffect effect : customEffects) {
-                NBTTagCompound effectData = new NBTTagCompound();
+                CompoundNBT effectData = new CompoundNBT();
                 effectData.setByte(ID.NBT, (byte) effect.getType().getId());
                 effectData.setByte(AMPLIFIER.NBT, (byte) effect.getAmplifier());
                 effectData.setInt(DURATION.NBT, effect.getDuration());

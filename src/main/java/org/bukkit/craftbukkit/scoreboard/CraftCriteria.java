@@ -12,9 +12,9 @@ final class CraftCriteria {
     static {
         ImmutableMap.Builder<String, CraftCriteria> defaults = ImmutableMap.builder();
 
-        for (Map.Entry<?, ?> entry : ((Map<?,?> ) IScoreboardCriteria.criteria).entrySet()) {
+        for (Map.Entry<?, ?> entry : ((Map<?,?> ) ScoreCriteria.criteria).entrySet()) {
             String name = entry.getKey().toString();
-            IScoreboardCriteria criteria = (IScoreboardCriteria) entry.getValue();
+            ScoreCriteria criteria = (ScoreCriteria) entry.getValue();
 
             defaults.put(name, new CraftCriteria(criteria));
         }
@@ -23,7 +23,7 @@ final class CraftCriteria {
         DUMMY = DEFAULTS.get("dummy");
     }
 
-    final IScoreboardCriteria criteria;
+    final ScoreCriteria criteria;
     final String bukkitName;
 
     private CraftCriteria(String bukkitName) {
@@ -31,12 +31,12 @@ final class CraftCriteria {
         this.criteria = DUMMY.criteria;
     }
 
-    private CraftCriteria(IScoreboardCriteria criteria) {
+    private CraftCriteria(ScoreCriteria criteria) {
         this.criteria = criteria;
         this.bukkitName = criteria.getName();
     }
 
-    static CraftCriteria getFromNMS(ScoreboardObjective objective) {
+    static CraftCriteria getFromNMS(ScoreObjective objective) {
         return DEFAULTS.get(objective.getCriteria().getName());
     }
 

@@ -12,10 +12,10 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
 
-public class CraftIpBanList implements org.bukkit.BanList {
-    private final IpBanList list;
+public class CraftIPBanList implements org.bukkit.BanList {
+    private final IPBanList list;
 
-    public CraftIpBanList(IpBanList list) {
+    public CraftIPBanList(IPBanList list) {
         this.list = list;
     }
 
@@ -23,19 +23,19 @@ public class CraftIpBanList implements org.bukkit.BanList {
     public org.bukkit.BanEntry getBanEntry(String target) {
         Validate.notNull(target, "Target cannot be null");
 
-        IpBanEntry entry = (IpBanEntry) list.get(target);
+        IPBanEntry entry = (IPBanEntry) list.get(target);
         if (entry == null) {
             return null;
         }
 
-        return new CraftIpBanEntry(target, entry, list);
+        return new CraftIPBanEntry(target, entry, list);
     }
 
     @Override
     public org.bukkit.BanEntry addBan(String target, String reason, Date expires, String source) {
         Validate.notNull(target, "Ban target cannot be null");
 
-        IpBanEntry entry = new IpBanEntry(target, new Date(),
+        IPBanEntry entry = new IPBanEntry(target, new Date(),
                 StringUtils.isBlank(source) ? null : source, expires,
                 StringUtils.isBlank(reason) ? null : reason);
 
@@ -47,14 +47,14 @@ public class CraftIpBanList implements org.bukkit.BanList {
             Bukkit.getLogger().log(Level.SEVERE, "Failed to save banned-ips.json, {0}", ex.getMessage());
         }
 
-        return new CraftIpBanEntry(target, entry, list);
+        return new CraftIPBanEntry(target, entry, list);
     }
 
     @Override
     public Set<org.bukkit.BanEntry> getBanEntries() {
         ImmutableSet.Builder<org.bukkit.BanEntry> builder = ImmutableSet.builder();
         for (String target : list.getEntries()) {
-            builder.add(new CraftIpBanEntry(target, (IpBanEntry) list.get(target), list));
+            builder.add(new CraftIPBanEntry(target, (IPBanEntry) list.get(target), list));
         }
 
         return builder.build();

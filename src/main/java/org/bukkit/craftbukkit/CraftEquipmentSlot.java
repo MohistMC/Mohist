@@ -5,28 +5,28 @@ import org.bukkit.inventory.EquipmentSlot;
 
 public class CraftEquipmentSlot {
 
-    private static final EnumItemSlot[] slots = new EnumItemSlot[EquipmentSlot.values().length];
-    private static final EquipmentSlot[] enums = new EquipmentSlot[EnumItemSlot.values().length];
+    private static final EquipmentSlotType[] slots = new EquipmentSlotType[EquipmentSlot.values().length];
+    private static final EquipmentSlot[] enums = new EquipmentSlot[EquipmentSlotType.values().length];
 
     static {
-        set(EquipmentSlot.HAND, EnumItemSlot.MAINHAND);
-        set(EquipmentSlot.OFF_HAND, EnumItemSlot.OFFHAND);
-        set(EquipmentSlot.FEET, EnumItemSlot.FEET);
-        set(EquipmentSlot.LEGS, EnumItemSlot.LEGS);
-        set(EquipmentSlot.CHEST, EnumItemSlot.CHEST);
-        set(EquipmentSlot.HEAD, EnumItemSlot.HEAD);
+        set(EquipmentSlot.HAND, EquipmentSlotType.MAINHAND);
+        set(EquipmentSlot.OFF_HAND, EquipmentSlotType.OFFHAND);
+        set(EquipmentSlot.FEET, EquipmentSlotType.FEET);
+        set(EquipmentSlot.LEGS, EquipmentSlotType.LEGS);
+        set(EquipmentSlot.CHEST, EquipmentSlotType.CHEST);
+        set(EquipmentSlot.HEAD, EquipmentSlotType.HEAD);
     }
 
-    private static void set(EquipmentSlot type, EnumItemSlot value) {
+    private static void set(EquipmentSlot type, EquipmentSlotType value) {
         slots[type.ordinal()] = value;
         enums[value.ordinal()] = type;
     }
 
-    public static EquipmentSlot getSlot(EnumItemSlot nms) {
+    public static EquipmentSlot getSlot(EquipmentSlotType nms) {
         return enums[nms.ordinal()];
     }
 
-    public static EnumItemSlot getNMS(EquipmentSlot slot) {
+    public static EquipmentSlotType getNMS(EquipmentSlot slot) {
         return slots[slot.ordinal()];
     }
 }

@@ -11,16 +11,16 @@ import org.bukkit.attribute.AttributeInstance;
 
 public class CraftAttributeMap implements Attributable {
 
-    private final AttributeMapBase handle;
+    private final AbstractAttributeMap handle;
 
-    public CraftAttributeMap(AttributeMapBase handle) {
+    public CraftAttributeMap(AbstractAttributeMap handle) {
         this.handle = handle;
     }
 
     @Override
     public AttributeInstance getAttribute(Attribute attribute) {
         Preconditions.checkArgument(attribute != null, "attribute");
-        net.minecraft.entity.ai.attributes.IAttributeInstance nms = handle.a(toMinecraft(attribute.name()));
+        net.minecraft.entity.ai.attributes.IAttributeInstance nms = handle.getAttributeInstanceByName(toMinecraft(attribute.name()));
 
         return (nms == null) ? null : new CraftAttributeInstance(nms, attribute);
     }

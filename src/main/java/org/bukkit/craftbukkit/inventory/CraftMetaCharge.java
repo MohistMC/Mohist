@@ -29,7 +29,7 @@ class CraftMetaCharge extends CraftMetaItem implements FireworkEffectMeta {
         setEffect(SerializableMeta.getObject(FireworkEffect.class, map, EXPLOSION.BUKKIT, true));
     }
 
-    CraftMetaCharge(NBTTagCompound tag) {
+    CraftMetaCharge(CompoundNBT tag) {
         super(tag);
 
         if (tag.hasKey(EXPLOSION.NBT)) {
@@ -57,7 +57,7 @@ class CraftMetaCharge extends CraftMetaItem implements FireworkEffectMeta {
     }
 
     @Override
-    void applyToItem(NBTTagCompound itemTag) {
+    void applyToItem(CompoundNBT itemTag) {
         super.applyToItem(itemTag);
 
         if (hasEffect()) {

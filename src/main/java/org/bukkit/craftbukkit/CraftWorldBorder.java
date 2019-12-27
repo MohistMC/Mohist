@@ -115,6 +115,6 @@ public class CraftWorldBorder implements WorldBorder {
     public boolean isInside(Location location) {
         Preconditions.checkArgument(location != null, "location");
 
-        return location.getWorld().equals(this.world) && this.handle.a(new BlockPosition(location.getX(), location.getY(), location.getZ()));
+        return location.getWorld().equals(this.world) && this.handle.a(new BlockPos(location.getX(), location.getY(), location.getZ()));
     }
 }

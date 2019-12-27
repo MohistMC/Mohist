@@ -47,11 +47,11 @@ public class CraftMetaBook extends CraftMetaItem implements BookMeta {
         }
     }
 
-    CraftMetaBook(NBTTagCompound tag) {
+    CraftMetaBook(CompoundNBT tag) {
         this(tag, true);
     }
 
-    CraftMetaBook(NBTTagCompound tag, boolean handlePages) {
+    CraftMetaBook(CompoundNBT tag, boolean handlePages) {
         super(tag);
 
         if (tag.hasKey(BOOK_TITLE.NBT)) {
@@ -109,11 +109,11 @@ public class CraftMetaBook extends CraftMetaItem implements BookMeta {
     }
 
     @Override
-    void applyToItem(NBTTagCompound itemData) {
+    void applyToItem(CompoundNBT itemData) {
         applyToItem(itemData, true);
     }
 
-    void applyToItem(NBTTagCompound itemData, boolean handlePages) {
+    void applyToItem(CompoundNBT itemData, boolean handlePages) {
         super.applyToItem(itemData);
 
         if (hasTitle()) {
@@ -128,7 +128,7 @@ public class CraftMetaBook extends CraftMetaItem implements BookMeta {
             if (hasPages()) {
                 NBTTagList list = new NBTTagList();
                 for (ITextComponent page : pages) {
-                    list.add(NBTTagString.a(page == null ? "" : page.getLegacyString()));
+                    list.add(StringNBT.a(page == null ? "" : page.getLegacyString()));
                 }
                 itemData.set(BOOK_PAGES.NBT, list);
             }

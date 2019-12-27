@@ -47,7 +47,7 @@ public class CraftBlockEntityState<T extends TileEntity> extends CraftBlockState
             return null;
         }
 
-        NBTTagCompound nbtTagCompound = tileEntity.save(new NBTTagCompound());
+        CompoundNBT nbtTagCompound = tileEntity.save(new CompoundNBT());
         T snapshot = (T) TileEntity.create(nbtTagCompound);
 
         return snapshot;
@@ -56,7 +56,7 @@ public class CraftBlockEntityState<T extends TileEntity> extends CraftBlockState
     // copies the TileEntity-specific data, retains the position
     private void copyData(T from, T to) {
         BlockPos pos = to.getPosition();
-        NBTTagCompound nbtTagCompound = from.save(new NBTTagCompound());
+        CompoundNBT nbtTagCompound = from.save(new CompoundNBT());
         to.load(nbtTagCompound);
 
         // reset the original position:
@@ -81,11 +81,11 @@ public class CraftBlockEntityState<T extends TileEntity> extends CraftBlockState
     }
 
     // gets the NBT data of the TileEntity represented by this block state
-    public NBTTagCompound getSnapshotNBT() {
+    public CompoundNBT getSnapshotNBT() {
         // update snapshot
         applyTo(snapshot);
 
-        return snapshot.save(new NBTTagCompound());
+        return snapshot.save(new CompoundNBT());
     }
 
     // copies the data of the given tile entity to this block state

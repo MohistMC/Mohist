@@ -92,9 +92,9 @@ public enum CraftParticle {
     LEGACY_BLOCK_CRACK("block"),
     LEGACY_BLOCK_DUST("block"),
     LEGACY_FALLING_DUST("falling_dust");
-    private final MinecraftKey minecraftKey;
+    private final ResourceLocation minecraftKey;
     private final Particle bukkit;
-    private static final BiMap<Particle, MinecraftKey> particles;
+    private static final BiMap<Particle, ResourceLocation> particles;
     private static final Map<Particle, Particle> aliases;
 
     static {
@@ -111,7 +111,7 @@ public enum CraftParticle {
     }
 
     private CraftParticle(String minecraftKey) {
-        this.minecraftKey = new MinecraftKey(minecraftKey);
+        this.minecraftKey = new ResourceLocation(minecraftKey);
 
         this.bukkit = Particle.valueOf(this.name());
         Preconditions.checkState(bukkit != null, "Bukkit particle %s does not exist", this.name());

@@ -34,15 +34,15 @@ public class CraftMapRenderer extends MapRenderer {
             cursors.removeCursor(cursors.getCursor(0));
         }
 
-        for (Object key : worldMap.decorations.keySet()) {
+        for (Object key : worldMap.mapDecorations.keySet()) {
             // If this cursor is for a player check visibility with vanish system
             Player other = Bukkit.getPlayerExact((String) key);
             if (other != null && !player.canSee(other)) {
                 continue;
             }
 
-            MapDecoration decoration = (MapDecoration) worldMap.decorations.get(key);
-            cursors.addCursor(decoration.getX(), decoration.getY(), (byte) (decoration.getRotation() & 15), decoration.getType().a(), true, CraftChatMessage.fromComponent(decoration.getName()));
+            MapDecoration decoration = (MapDecoration) worldMap.mapDecorations.get(key);
+            cursors.addCursor(decoration.getX(), decoration.getY(), (byte) (decoration.getRotation() & 15), decoration.getType().getIcon(), true, CraftChatMessage.fromComponent(decoration.getCustomName()));
         }
     }
 

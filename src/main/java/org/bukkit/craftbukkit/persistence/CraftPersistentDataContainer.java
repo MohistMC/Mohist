@@ -15,13 +15,13 @@ import org.bukkit.persistence.PersistentDataType;
 
 public final class CraftPersistentDataContainer implements PersistentDataContainer {
 
-    private final Map<String, INBT> customDataTags = new HashMap<>();
+    private final Map<String, INBT> customDataTagCollection = new HashMap<>();
     private final CraftPersistentDataTypeRegistry registry;
     private final CraftPersistentDataAdapterContext adapterContext;
 
-    public CraftPersistentDataContainer(Map<String, INBT> customTags, CraftPersistentDataTypeRegistry registry) {
+    public CraftPersistentDataContainer(Map<String, INBT> customTagCollection, CraftPersistentDataTypeRegistry registry) {
         this(registry);
-        this.customDataTags.putAll(customTags);
+        this.customDataTagCollection.putAll(customTagCollection);
     }
 
     public CraftPersistentDataContainer(CraftPersistentDataTypeRegistry registry) {
@@ -35,7 +35,7 @@ public final class CraftPersistentDataContainer implements PersistentDataContain
         Validate.notNull(type, "The provided type for the custom value was null");
         Validate.notNull(value, "The provided value for the custom value was null");
 
-        this.customDataTags.put(key.toString(), registry.wrap(type.getPrimitiveType(), type.toPrimitive(value, adapterContext)));
+        this.customDataTagCollection.put(key.toString(), registry.wrap(type.getPrimitiveType(), type.toPrimitive(value, adapterContext)));
     }
 
     @Override
@@ -43,7 +43,7 @@ public final class CraftPersistentDataContainer implements PersistentDataContain
         Validate.notNull(key, "The provided key for the custom value was null");
         Validate.notNull(type, "The provided type for the custom value was null");
 
-        INBT value = this.customDataTags.get(key.toString());
+        INBT value = this.customDataTagCollection.get(key.toString());
         if (value == null) {
             return false;
         }
@@ -56,7 +56,7 @@ public final class CraftPersistentDataContainer implements PersistentDataContain
         Validate.notNull(key, "The provided key for the custom value was null");
         Validate.notNull(type, "The provided type for the custom value was null");
 
-        INBT value = this.customDataTags.get(key.toString());
+        INBT value = this.customDataTagCollection.get(key.toString());
         if (value == null) {
             return null;
         }
@@ -74,12 +74,12 @@ public final class CraftPersistentDataContainer implements PersistentDataContain
     public void remove(NamespacedKey key) {
         Validate.notNull(key, "The provided key for the custom value was null");
 
-        this.customDataTags.remove(key.toString());
+        this.customDataTagCollection.remove(key.toString());
     }
 
     @Override
     public boolean isEmpty() {
-        return this.customDataTags.isEmpty();
+        return this.customDataTagCollection.isEmpty();
     }
 
     @Override
@@ -99,30 +99,30 @@ public final class CraftPersistentDataContainer implements PersistentDataContain
         return Objects.equals(myRawMap, theirRawMap);
     }
 
-    public NBTTagCompound toTagCompound() {
-        NBTTagCompound tag = new NBTTagCompound();
-        for (Entry<String, INBT> entry : this.customDataTags.entrySet()) {
+    public CompoundNBT toTagCompound() {
+        CompoundNBT tag = new CompoundNBT();
+        for (Entry<String, INBT> entry : this.customDataTagCollection.entrySet()) {
             tag.set(entry.getKey(), entry.getValue());
         }
         return tag;
     }
 
     public void put(String key, INBT base) {
-        this.customDataTags.put(key, base);
+        this.customDataTagCollection.put(key, base);
     }
 
     public void putAll(Map<String, INBT> map) {
-        this.customDataTags.putAll(map);
+        this.customDataTagCollection.putAll(map);
     }
 
-    public void putAll(NBTTagCompound compound) {
+    public void putAll(CompoundNBT compound) {
         for (String key : compound.getKeys()) {
-            this.customDataTags.put(key, compound.get(key));
+            this.customDataTagCollection.put(key, compound.get(key));
         }
     }
 
     public Map<String, INBT> getRaw() {
-        return this.customDataTags;
+        return this.customDataTagCollection;
     }
 
     public CraftPersistentDataTypeRegistry getDataTagTypeRegistry() {
@@ -132,7 +132,7 @@ public final class CraftPersistentDataContainer implements PersistentDataContain
     @Override
     public int hashCode() {
         int hashCode = 3;
-        hashCode += this.customDataTags.hashCode(); // We will simply add the maps hashcode
+        hashCode += this.customDataTagCollection.hashCode(); // We will simply add the maps hashcode
         return hashCode;
     }
 

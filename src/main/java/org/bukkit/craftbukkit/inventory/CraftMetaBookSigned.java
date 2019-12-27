@@ -20,7 +20,7 @@ class CraftMetaBookSigned extends CraftMetaBook implements BookMeta {
         super(meta);
     }
 
-    CraftMetaBookSigned(NBTTagCompound tag) {
+    CraftMetaBookSigned(CompoundNBT tag) {
         super(tag, false);
 
         boolean resolved = true;
@@ -51,7 +51,7 @@ class CraftMetaBookSigned extends CraftMetaBook implements BookMeta {
     }
 
     @Override
-    void applyToItem(NBTTagCompound itemData) {
+    void applyToItem(CompoundNBT itemData) {
         super.applyToItem(itemData, false);
 
         if (hasTitle()) {
@@ -65,7 +65,7 @@ class CraftMetaBookSigned extends CraftMetaBook implements BookMeta {
         if (hasPages()) {
             NBTTagList list = new NBTTagList();
             for (ITextComponent page : pages) {
-                list.add(NBTTagString.a(
+                list.add(StringNBT.a(
                     ChatSerializer.a(page)
                 ));
             }

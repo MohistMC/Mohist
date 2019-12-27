@@ -26,7 +26,7 @@ class CraftMetaSkull extends CraftMetaItem implements SkullMeta {
     static final int MAX_OWNER_LENGTH = 16;
 
     private GameProfile profile;
-    private NBTTagCompound serializedProfile;
+    private CompoundNBT serializedProfile;
 
     CraftMetaSkull(CraftMetaItem meta) {
         super(meta);
@@ -37,7 +37,7 @@ class CraftMetaSkull extends CraftMetaItem implements SkullMeta {
         this.setProfile(skullMeta.profile);
     }
 
-    CraftMetaSkull(NBTTagCompound tag) {
+    CraftMetaSkull(CompoundNBT tag) {
         super(tag);
 
         if (tag.hasKeyOfType(SKULL_OWNER.NBT, CraftMagicNumbers.NBT.TAG_COMPOUND)) {
@@ -55,7 +55,7 @@ class CraftMetaSkull extends CraftMetaItem implements SkullMeta {
     }
 
     @Override
-    void deserializeInternal(NBTTagCompound tag, Object context) {
+    void deserializeInternal(CompoundNBT tag, Object context) {
         super.deserializeInternal(tag, context);
 
         if (tag.hasKeyOfType(SKULL_PROFILE.NBT, CraftMagicNumbers.NBT.TAG_COMPOUND)) {
@@ -72,11 +72,11 @@ class CraftMetaSkull extends CraftMetaItem implements SkullMeta {
 
     private void setProfile(GameProfile profile) {
         this.profile = profile;
-        this.serializedProfile = (profile == null) ? null : GameProfileSerializer.serialize(new NBTTagCompound(), profile);
+        this.serializedProfile = (profile == null) ? null : GameProfileSerializer.serialize(new CompoundNBT(), profile);
     }
 
     @Override
-    void applyToItem(NBTTagCompound tag) {
+    void applyToItem(CompoundNBT tag) {
         super.applyToItem(tag);
 
         if (profile != null) {

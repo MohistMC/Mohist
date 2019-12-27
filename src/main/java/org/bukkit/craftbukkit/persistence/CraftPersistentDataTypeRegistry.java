@@ -119,10 +119,10 @@ public final class CraftPersistentDataTypeRegistry {
             return createAdapter(Integer.class, IntNBT.class, IntNBT::a, IntNBT::asInt);
         }
         if (Objects.equals(Long.class, type)) {
-            return createAdapter(Long.class, NBTTagLong.class, NBTTagLong::a, NBTTagLong::asLong);
+            return createAdapter(Long.class, LongNBT.class, LongNBT::a, LongNBT::asLong);
         }
         if (Objects.equals(Float.class, type)) {
-            return createAdapter(Float.class, NBTTagFloat.class, NBTTagFloat::a, NBTTagFloat::asFloat);
+            return createAdapter(Float.class, FloatNBT.class, FloatNBT::a, FloatNBT::asFloat);
         }
         if (Objects.equals(Double.class, type)) {
             return createAdapter(Double.class, DoubleNBT.class, DoubleNBT::a, DoubleNBT::asDouble);
@@ -132,17 +132,17 @@ public final class CraftPersistentDataTypeRegistry {
             String
          */
         if (Objects.equals(String.class, type)) {
-            return createAdapter(String.class, NBTTagString.class, NBTTagString::a, NBTTagString::asString);
+            return createAdapter(String.class, StringNBT.class, StringNBT::a, StringNBT::asString);
         }
 
         /*
             Primitive Arrays
          */
         if (Objects.equals(byte[].class, type)) {
-            return createAdapter(byte[].class, ByteNBTArray.class, array -> new ByteNBTArray(Arrays.copyOf(array, array.length)), n -> Arrays.copyOf(n.getBytes(), n.size()));
+            return createAdapter(byte[].class, ByteArrayNBT.class, array -> new ByteArrayNBT(Arrays.copyOf(array, array.length)), n -> Arrays.copyOf(n.getBytes(), n.size()));
         }
         if (Objects.equals(int[].class, type)) {
-            return createAdapter(int[].class, IntNBTArray.class, array -> new IntNBTArray(Arrays.copyOf(array, array.length)), n -> Arrays.copyOf(n.getInts(), n.size()));
+            return createAdapter(int[].class, IntArrayNBT.class, array -> new IntArrayNBT(Arrays.copyOf(array, array.length)), n -> Arrays.copyOf(n.getInts(), n.size()));
         }
         if (Objects.equals(long[].class, type)) {
             return createAdapter(long[].class, LongArrayNBT.class, array -> new LongArrayNBT(Arrays.copyOf(array, array.length)), n -> Arrays.copyOf(n.getLongs(), n.size()));
@@ -153,7 +153,7 @@ public final class CraftPersistentDataTypeRegistry {
             Passing any other instance of this form to the tag type registry will throw a ClassCastException as defined in TagAdapter#build
          */
         if (Objects.equals(PersistentDataContainer.class, type)) {
-            return createAdapter(CraftPersistentDataContainer.class, NBTTagCompound.class, CraftPersistentDataContainer::toTagCompound, tag -> {
+            return createAdapter(CraftPersistentDataContainer.class, CompoundNBT.class, CraftPersistentDataContainer::toTagCompound, tag -> {
                 CraftPersistentDataContainer container = new CraftPersistentDataContainer(this);
                 for (String key : tag.getKeys()) {
                     container.put(key, tag.get(key));

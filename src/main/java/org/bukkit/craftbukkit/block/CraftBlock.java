@@ -51,14 +51,14 @@ import org.bukkit.util.Vector;
 
 public class CraftBlock implements Block {
     private final net.minecraft.world.IWorld world;
-    private final BlockPosition position;
+    private final BlockPos position;
 
-    public CraftBlock(IWorld world, BlockPosition position) {
+    public CraftBlock(IWorld world, BlockPos position) {
         this.world = world;
         this.position = position.immutableCopy();
     }
 
-    public static CraftBlock at(IWorld world, BlockPosition position) {
+    public static CraftBlock at(IWorld world, BlockPos position) {
         return new CraftBlock(world, position);
     }
 
@@ -70,7 +70,7 @@ public class CraftBlock implements Block {
         return world.getType(position);
     }
 
-    public BlockPosition getPosition() {
+    public BlockPos getPosition() {
         return position;
     }
 
@@ -495,7 +495,7 @@ public class CraftBlock implements Block {
             return null;
         }
 
-        return Registry.BIOME.get(new MinecraftKey(bio.name().toLowerCase(java.util.Locale.ENGLISH)));
+        return Registry.BIOME.get(new ResourceLocation(bio.name().toLowerCase(java.util.Locale.ENGLISH)));
     }
 
     @Override
@@ -557,12 +557,12 @@ public class CraftBlock implements Block {
         int x = getX();
         int y = getY();
         int z = getZ();
-        if ((face == BlockFace.DOWN || face == BlockFace.SELF) && world.isBlockFacePowered(new BlockPosition(x, y - 1, z), Direction.DOWN)) power = wire.getPower(power, world.getType(new BlockPosition(x, y - 1, z)));
-        if ((face == BlockFace.UP || face == BlockFace.SELF) && world.isBlockFacePowered(new BlockPosition(x, y + 1, z), Direction.UP)) power = wire.getPower(power, world.getType(new BlockPosition(x, y + 1, z)));
-        if ((face == BlockFace.EAST || face == BlockFace.SELF) && world.isBlockFacePowered(new BlockPosition(x + 1, y, z), Direction.EAST)) power = wire.getPower(power, world.getType(new BlockPosition(x + 1, y, z)));
-        if ((face == BlockFace.WEST || face == BlockFace.SELF) && world.isBlockFacePowered(new BlockPosition(x - 1, y, z), Direction.WEST)) power = wire.getPower(power, world.getType(new BlockPosition(x - 1, y, z)));
-        if ((face == BlockFace.NORTH || face == BlockFace.SELF) && world.isBlockFacePowered(new BlockPosition(x, y, z - 1), Direction.NORTH)) power = wire.getPower(power, world.getType(new BlockPosition(x, y, z - 1)));
-        if ((face == BlockFace.SOUTH || face == BlockFace.SELF) && world.isBlockFacePowered(new BlockPosition(x, y, z + 1), Direction.SOUTH)) power = wire.getPower(power, world.getType(new BlockPosition(x, y, z + 1)));
+        if ((face == BlockFace.DOWN || face == BlockFace.SELF) && world.isBlockFacePowered(new BlockPos(x, y - 1, z), Direction.DOWN)) power = wire.getPower(power, world.getType(new BlockPos(x, y - 1, z)));
+        if ((face == BlockFace.UP || face == BlockFace.SELF) && world.isBlockFacePowered(new BlockPos(x, y + 1, z), Direction.UP)) power = wire.getPower(power, world.getType(new BlockPos(x, y + 1, z)));
+        if ((face == BlockFace.EAST || face == BlockFace.SELF) && world.isBlockFacePowered(new BlockPos(x + 1, y, z), Direction.EAST)) power = wire.getPower(power, world.getType(new BlockPos(x + 1, y, z)));
+        if ((face == BlockFace.WEST || face == BlockFace.SELF) && world.isBlockFacePowered(new BlockPos(x - 1, y, z), Direction.WEST)) power = wire.getPower(power, world.getType(new BlockPos(x - 1, y, z)));
+        if ((face == BlockFace.NORTH || face == BlockFace.SELF) && world.isBlockFacePowered(new BlockPos(x, y, z - 1), Direction.NORTH)) power = wire.getPower(power, world.getType(new BlockPos(x, y, z - 1)));
+        if ((face == BlockFace.SOUTH || face == BlockFace.SELF) && world.isBlockFacePowered(new BlockPos(x, y, z + 1), Direction.SOUTH)) power = wire.getPower(power, world.getType(new BlockPos(x, y, z + 1)));
         return power > 0 ? power : (face == BlockFace.SELF ? isBlockIndirectlyPowered() : isBlockFaceIndirectlyPowered(face)) ? 15 : 0;
     }
 

@@ -27,10 +27,10 @@ class CraftMetaLeatherArmor extends CraftMetaItem implements LeatherArmorMeta {
         this.color = armorMeta.color;
     }
 
-    CraftMetaLeatherArmor(NBTTagCompound tag) {
+    CraftMetaLeatherArmor(CompoundNBT tag) {
         super(tag);
         if (tag.hasKey(DISPLAY.NBT)) {
-            NBTTagCompound display = tag.getCompound(DISPLAY.NBT);
+            CompoundNBT display = tag.getCompound(DISPLAY.NBT);
             if (display.hasKey(COLOR.NBT)) {
                 try {
                     color = Color.fromRGB(display.getInt(COLOR.NBT));
@@ -47,7 +47,7 @@ class CraftMetaLeatherArmor extends CraftMetaItem implements LeatherArmorMeta {
     }
 
     @Override
-    void applyToItem(NBTTagCompound itemTag) {
+    void applyToItem(CompoundNBT itemTag) {
         super.applyToItem(itemTag);
 
         if (hasColor()) {

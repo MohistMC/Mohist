@@ -831,8 +831,8 @@ public enum CraftSound {
         return CraftSound.valueOf(sound.name()).minecraftKey;
     }
 
-    public static SoundEffect getSoundEffect(String s) {
-        SoundEffect effect = Registry.SOUND_EVENT.get(new ResourceLocation(s));
+    public static SoundEvent getSoundEvent(String s) {
+        SoundEvent effect = Registry.SOUND_EVENT.get(new ResourceLocation(s));
         Preconditions.checkArgument(effect != null, "Sound effect %s does not exist", s);
 
         return effect;

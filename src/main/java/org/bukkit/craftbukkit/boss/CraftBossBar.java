@@ -53,33 +53,33 @@ public class CraftBossBar implements BossBar {
         this.flags.put(BarFlag.CREATE_FOG, new FlagContainer(handle::isCreateFog, handle::setCreateFog));
     }
 
-    private BarColor convertColor(BossInfo.BarColor color) {
+    private BarColor convertColor(BossInfo.Color color) {
         BarColor bukkitColor = BarColor.valueOf(color.name());
         return (bukkitColor == null) ? BarColor.WHITE : bukkitColor;
     }
 
-    private BossInfo.BarColor convertColor(BarColor color) {
-        BossInfo.BarColor nmsColor = BossInfo.BarColor.valueOf(color.name());
-        return (nmsColor == null) ? BossInfo.BarColor.WHITE : nmsColor;
+    private BossInfo.Color convertColor(BarColor color) {
+        BossInfo.Color nmsColor = BossInfo.Color.valueOf(color.name());
+        return (nmsColor == null) ? BossInfo.Color.WHITE : nmsColor;
     }
 
-    private BossInfo.BarStyle convertStyle(BarStyle style) {
+    private BossInfo.Overlay convertStyle(BarStyle style) {
         switch (style) {
             default:
             case SOLID:
-                return BossInfo.BarStyle.PROGRESS;
+                return BossInfo.Overlay.PROGRESS;
             case SEGMENTED_6:
-                return BossInfo.BarStyle.NOTCHED_6;
+                return BossInfo.Overlay.NOTCHED_6;
             case SEGMENTED_10:
-                return BossInfo.BarStyle.NOTCHED_10;
+                return BossInfo.Overlay.NOTCHED_10;
             case SEGMENTED_12:
-                return BossInfo.BarStyle.NOTCHED_12;
+                return BossInfo.Overlay.NOTCHED_12;
             case SEGMENTED_20:
-                return BossInfo.BarStyle.NOTCHED_20;
+                return BossInfo.Overlay.NOTCHED_20;
         }
     }
 
-    private BarStyle convertStyle(BossInfo.BarStyle style) {
+    private BarStyle convertStyle(BossInfo.Overlay style) {
         switch (style) {
             default:
             case PROGRESS:
@@ -103,7 +103,7 @@ public class CraftBossBar implements BossBar {
     @Override
     public void setTitle(String title) {
         handle.title = CraftChatMessage.fromString(title, true)[0];
-        handle.sendUpdate(SUpdateBossInfoPacket.Action.UPDATE_NAME);
+        handle.sendUpdate(SUpdateBossInfoPacket.Operation.UPDATE_NAME);
     }
 
     @Override
@@ -114,7 +114,7 @@ public class CraftBossBar implements BossBar {
     @Override
     public void setColor(BarColor color) {
         handle.color = convertColor(color);
-        handle.sendUpdate(SUpdateBossInfoPacket.Action.UPDATE_STYLE);
+        handle.sendUpdate(SUpdateBossInfoPacket.Operation.UPDATE_STYLE);
     }
 
     @Override
@@ -125,7 +125,7 @@ public class CraftBossBar implements BossBar {
     @Override
     public void setStyle(BarStyle style) {
         handle.style = convertStyle(style);
-        handle.sendUpdate(SUpdateBossInfoPacket.Action.UPDATE_STYLE);
+        handle.sendUpdate(SUpdateBossInfoPacket.Operation.UPDATE_STYLE);
     }
 
     @Override
@@ -156,12 +156,12 @@ public class CraftBossBar implements BossBar {
     @Override
     public void setProgress(double progress) {
         Preconditions.checkArgument(progress >= 0.0 && progress <= 1.0, "Progress must be between 0.0 and 1.0 (%s)", progress);
-        handle.setProgress((float) progress);
+        handle.setPercent((float) progress);
     }
 
     @Override
     public double getProgress() {
-        return handle.getProgress();
+        return handle.getPercent();
     }
 
     @Override

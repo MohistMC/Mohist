@@ -81,7 +81,7 @@ public class CraftLootTable implements org.bukkit.loot.LootTable {
                 Entity nmsLootedEntity = ((CraftEntity) context.getLootedEntity()).getHandle();
                 builder.set(LootContextParameters.THIS_ENTITY, nmsLootedEntity);
                 builder.set(LootContextParameters.DAMAGE_SOURCE, DamageSource.GENERIC);
-                builder.set(LootContextParameters.POSITION, new BlockPosition(nmsLootedEntity));
+                builder.set(LootContextParameters.POSITION, new BlockPos(nmsLootedEntity));
             }
 
             if (context.getKiller() != null) {

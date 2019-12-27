@@ -3,8 +3,7 @@ package org.bukkit.craftbukkit.scoreboard;
 import com.google.common.collect.ImmutableSet;
 import java.util.Set;
 import net.minecraft.scoreboard.ScorePlayerTeam;
-import net.minecraft.scoreboard.Team;
-import net.minecraft.scoreboard.Team.EnumNameTagVisibility;
+import net.minecraft.scoreboard.Team.Visible;
 import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -239,35 +238,35 @@ final class CraftTeam extends CraftScoreboardComponent implements Team {
 
         switch (option) {
             case NAME_TAG_VISIBILITY:
-                team.setNameTagVisibility(EnumNameTagVisibility.values()[status.ordinal()]);
+                team.setNameTagVisibility(Visible.values()[status.ordinal()]);
                 break;
             case DEATH_MESSAGE_VISIBILITY:
-                team.setDeathMessageVisibility(EnumNameTagVisibility.values()[status.ordinal()]);
+                team.setDeathMessageVisibility(Visible.values()[status.ordinal()]);
                 break;
             case COLLISION_RULE:
-                team.setCollisionRule(Team.EnumTeamPush.values()[status.ordinal()]);
+                team.setCollisionRule(net.minecraft.scoreboard.Team.CollisionRule.values()[status.ordinal()]);
                 break;
             default:
                 throw new IllegalArgumentException("Unrecognised option " + option);
         }
     }
 
-    public static EnumNameTagVisibility bukkitToNotch(NameTagVisibility visibility) {
+    public static Visible bukkitToNotch(NameTagVisibility visibility) {
         switch (visibility) {
             case ALWAYS:
-                return EnumNameTagVisibility.ALWAYS;
+                return Visible.ALWAYS;
             case NEVER:
-                return EnumNameTagVisibility.NEVER;
+                return Visible.NEVER;
             case HIDE_FOR_OTHER_TEAMS:
-                return EnumNameTagVisibility.HIDE_FOR_OTHER_TEAMS;
+                return Visible.HIDE_FOR_OTHER_TEAMS;
             case HIDE_FOR_OWN_TEAM:
-                return EnumNameTagVisibility.HIDE_FOR_OWN_TEAM;
+                return Visible.HIDE_FOR_OWN_TEAM;
             default:
                 throw new IllegalArgumentException("Unknown visibility level " + visibility);
         }
     }
 
-    public static NameTagVisibility notchToBukkit(EnumNameTagVisibility visibility) {
+    public static NameTagVisibility notchToBukkit(Visible visibility) {
         switch (visibility) {
             case ALWAYS:
                 return NameTagVisibility.ALWAYS;

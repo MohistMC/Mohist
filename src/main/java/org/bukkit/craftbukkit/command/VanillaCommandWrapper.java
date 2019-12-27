@@ -65,7 +65,7 @@ public final class VanillaCommandWrapper extends BukkitCommand {
 
     public static CommandSource getListener(CommandSender sender) {
         if (sender instanceof Player) {
-            return ((CraftPlayer) sender).getHandle().getCommandListener();
+            return ((CraftPlayer) sender).getHandle().getCommandSource();
         }
         if (sender instanceof BlockCommandSender) {
             return ((CraftBlockCommandSender) sender).getWrapper();
@@ -77,7 +77,7 @@ public final class VanillaCommandWrapper extends BukkitCommand {
             return ((DedicatedServer) MinecraftServer.getServer()).remoteControlCommandListener.getWrapper();
         }
         if (sender instanceof ConsoleCommandSender) {
-            return ((CraftServer) sender.getServer()).getServer().getServerCommandListener();
+            return ((CraftServer) sender.getServer()).getServer().getCommandSource();
         }
         if (sender instanceof ProxiedCommandSender) {
             return ((ProxiedNativeCommandSender) sender).getHandle();

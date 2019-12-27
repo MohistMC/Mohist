@@ -44,7 +44,7 @@ class CraftMetaMap extends CraftMetaItem implements MapMeta {
         this.color = map.color;
     }
 
-    CraftMetaMap(NBTTagCompound tag) {
+    CraftMetaMap(CompoundNBT tag) {
         super(tag);
 
         if (tag.hasKeyOfType(MAP_ID.NBT, CraftMagicNumbers.NBT.TAG_ANY_NUMBER)) {
@@ -56,7 +56,7 @@ class CraftMetaMap extends CraftMetaItem implements MapMeta {
         }
 
         if (tag.hasKey(DISPLAY.NBT)) {
-            NBTTagCompound display = tag.getCompound(DISPLAY.NBT);
+            CompoundNBT display = tag.getCompound(DISPLAY.NBT);
 
             if (display.hasKey(MAP_LOC_NAME.NBT)) {
                 locName = display.getString(MAP_LOC_NAME.NBT);
@@ -97,7 +97,7 @@ class CraftMetaMap extends CraftMetaItem implements MapMeta {
     }
 
     @Override
-    void applyToItem(NBTTagCompound tag) {
+    void applyToItem(CompoundNBT tag) {
         super.applyToItem(tag);
 
         if (hasMapId()){
@@ -109,7 +109,7 @@ class CraftMetaMap extends CraftMetaItem implements MapMeta {
         }
 
         if (hasLocationName()) {
-            setDisplayTag(tag, MAP_LOC_NAME.NBT, NBTTagString.a(getLocationName()));
+            setDisplayTag(tag, MAP_LOC_NAME.NBT, StringNBT.a(getLocationName()));
         }
 
         if (hasColor()) {

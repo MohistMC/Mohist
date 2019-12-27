@@ -188,14 +188,14 @@ public final class CraftItemStack extends ItemStack {
         int size = list.size();
 
         for (int i = 0; i < size; i++) {
-            NBTTagCompound tag = (NBTTagCompound) list.get(i);
+            CompoundNBT tag = (CompoundNBT) list.get(i);
             String id = tag.getString(ENCHANTMENTS_ID.NBT);
             if (id.equals(ench.getKey().toString())) {
                 tag.setShort(ENCHANTMENTS_LVL.NBT, (short) level);
                 return;
             }
         }
-        NBTTagCompound tag = new NBTTagCompound();
+        CompoundNBT tag = new CompoundNBT();
         tag.setString(ENCHANTMENTS_ID.NBT, ench.getKey().toString());
         tag.setShort(ENCHANTMENTS_LVL.NBT, (short) level);
         list.add(tag);
@@ -207,7 +207,7 @@ public final class CraftItemStack extends ItemStack {
         }
 
         if (item.getTag() == null) {
-            item.setTag(new NBTTagCompound());
+            item.setTag(new CompoundNBT());
         }
 
         return true;
@@ -240,7 +240,7 @@ public final class CraftItemStack extends ItemStack {
         int size = list.size();
 
         for (int i = 0; i < size; i++) {
-            NBTTagCompound enchantment = (NBTTagCompound) list.get(i);
+            CompoundNBT enchantment = (CompoundNBT) list.get(i);
             String id = enchantment.getString(ENCHANTMENTS_ID.NBT);
             if (id.equals(ench.getKey().toString())) {
                 index = i;
@@ -287,8 +287,8 @@ public final class CraftItemStack extends ItemStack {
         ImmutableMap.Builder<Enchantment, Integer> result = ImmutableMap.builder();
 
         for (int i = 0; i < list.size(); i++) {
-            String id = ((NBTTagCompound) list.get(i)).getString(ENCHANTMENTS_ID.NBT);
-            int level = 0xffff & ((NBTTagCompound) list.get(i)).getShort(ENCHANTMENTS_LVL.NBT);
+            String id = ((CompoundNBT) list.get(i)).getString(ENCHANTMENTS_ID.NBT);
+            int level = 0xffff & ((CompoundNBT) list.get(i)).getShort(ENCHANTMENTS_LVL.NBT);
 
             Enchantment enchant = Enchantment.getByKey(CraftNamespacedKey.fromStringOrNull(id));
             if (enchant != null) {
@@ -554,7 +554,7 @@ public final class CraftItemStack extends ItemStack {
             item.setItem(newItem);
         }
 
-        NBTTagCompound tag = new NBTTagCompound();
+        CompoundNBT tag = new CompoundNBT();
         item.setTag(tag);
 
         ((CraftMetaItem) itemMeta).applyToItem(tag);

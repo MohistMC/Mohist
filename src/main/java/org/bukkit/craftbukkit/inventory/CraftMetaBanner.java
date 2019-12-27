@@ -38,21 +38,21 @@ public class CraftMetaBanner extends CraftMetaItem implements BannerMeta {
         patterns = new ArrayList<Pattern>(banner.patterns);
     }
 
-    CraftMetaBanner(NBTTagCompound tag) {
+    CraftMetaBanner(CompoundNBT tag) {
         super(tag);
 
         if (!tag.hasKey("BlockEntityTag")) {
             return;
         }
 
-        NBTTagCompound entityTag = tag.getCompound("BlockEntityTag");
+        CompoundNBT entityTag = tag.getCompound("BlockEntityTag");
 
         base = entityTag.hasKey(BASE.NBT) ? DyeColor.getByWoolData((byte) entityTag.getInt(BASE.NBT)) : null;
 
         if (entityTag.hasKey(PATTERNS.NBT)) {
             NBTTagList patterns = entityTag.getList(PATTERNS.NBT, CraftMagicNumbers.NBT.TAG_COMPOUND);
             for (int i = 0; i < Math.min(patterns.size(), 20); i++) {
-                NBTTagCompound p = patterns.getCompound(i);
+                CompoundNBT p = patterns.getCompound(i);
                 DyeColor color = DyeColor.getByWoolData((byte) p.getInt(COLOR.NBT));
                 PatternType pattern = PatternType.getByIdentifier(p.getString(PATTERN.NBT));
 
@@ -84,10 +84,10 @@ public class CraftMetaBanner extends CraftMetaItem implements BannerMeta {
         }
     }
     @Override
-    void applyToItem(NBTTagCompound tag) {
+    void applyToItem(CompoundNBT tag) {
         super.applyToItem(tag);
 
-        NBTTagCompound entityTag = new NBTTagCompound();
+        CompoundNBT entityTag = new CompoundNBT();
         if (base != null) {
             entityTag.setInt(BASE.NBT, base.getWoolData());
         }
@@ -95,7 +95,7 @@ public class CraftMetaBanner extends CraftMetaItem implements BannerMeta {
         NBTTagList newPatterns = new NBTTagList();
 
         for (Pattern p : patterns) {
-            NBTTagCompound compound = new NBTTagCompound();
+            CompoundNBT compound = new CompoundNBT();
             compound.setInt(COLOR.NBT, p.getColor().getWoolData());
             compound.setString(PATTERN.NBT, p.getPattern().getIdentifier());
             newPatterns.add(compound);

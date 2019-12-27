@@ -6,11 +6,11 @@ import org.bukkit.inventory.Merchant;
 import org.bukkit.inventory.MerchantInventory;
 import org.bukkit.inventory.MerchantRecipe;
 
-public class CraftInventoryMerchant extends CraftInventory implements MerchantInventory {
+public class CraftMerchantInventory extends CraftInventory implements MerchantInventory {
 
     private final IMerchant merchant;
 
-    public CraftInventoryMerchant(IMerchant merchant, InventoryMerchant inventory) {
+    public CraftMerchantInventory(IMerchant merchant, MerchantInventory inventory) {
         super(inventory);
         this.merchant = merchant;
     }
@@ -27,8 +27,8 @@ public class CraftInventoryMerchant extends CraftInventory implements MerchantIn
     }
 
     @Override
-    public InventoryMerchant getInventory() {
-        return (InventoryMerchant) inventory;
+    public MerchantInventory getInventory() {
+        return (MerchantInventory) inventory;
     }
 
     @Override

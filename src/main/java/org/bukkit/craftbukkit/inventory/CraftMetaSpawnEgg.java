@@ -20,7 +20,7 @@ public class CraftMetaSpawnEgg extends CraftMetaItem implements SpawnEggMeta {
     static final ItemMetaKey ENTITY_ID = new ItemMetaKey("id");
 
     private EntityType spawnedType;
-    private NBTTagCompound entityTag;
+    private CompoundNBT entityTag;
 
     CraftMetaSpawnEgg(CraftMetaItem meta) {
         super(meta);
@@ -35,7 +35,7 @@ public class CraftMetaSpawnEgg extends CraftMetaItem implements SpawnEggMeta {
         updateMaterial(null); // Trigger type population
     }
 
-    CraftMetaSpawnEgg(NBTTagCompound tag) {
+    CraftMetaSpawnEgg(CompoundNBT tag) {
         super(tag);
 
         if (tag.hasKey(ENTITY_TAG.NBT)) {
@@ -53,7 +53,7 @@ public class CraftMetaSpawnEgg extends CraftMetaItem implements SpawnEggMeta {
     }
 
     @Override
-    void deserializeInternal(NBTTagCompound tag, Object context) {
+    void deserializeInternal(CompoundNBT tag, Object context) {
         super.deserializeInternal(tag, context);
 
         if (tag.hasKey(ENTITY_TAG.NBT)) {
@@ -77,12 +77,12 @@ public class CraftMetaSpawnEgg extends CraftMetaItem implements SpawnEggMeta {
             // Tag still has some other data, lets try our luck with a conversion
             if (!entityTag.isEmpty()) {
                 // SPIGOT-4128: This is hopeless until we start versioning stacks. RIP data.
-                // entityTag = (NBTTagCompound) MinecraftServer.getServer().dataConverterManager.update(DataConverterTypes.ENTITY, new Dynamic(DynamicOpsNBT.a, entityTag), -1, CraftMagicNumbers.DATA_VERSION).getValue();
+                // entityTag = (CompoundNBT) MinecraftServer.getServer().dataConverterManager.update(DataConverterTypes.ENTITY, new Dynamic(DynamicOpsNBT.a, entityTag), -1, CraftMagicNumbers.DATA_VERSION).getValue();
             }
 
             // See if we can read a converted ID tag
             if (entityTag.hasKey(ENTITY_ID.NBT)) {
-                this.spawnedType = EntityType.fromName(new MinecraftKey(entityTag.getString(ENTITY_ID.NBT)).getKey());
+                this.spawnedType = EntityType.fromName(new ResourceLocation(entityTag.getString(ENTITY_ID.NBT)).getKey());
             }
         }
     }
@@ -95,11 +95,11 @@ public class CraftMetaSpawnEgg extends CraftMetaItem implements SpawnEggMeta {
     }
 
     @Override
-    void applyToItem(NBTTagCompound tag) {
+    void applyToItem(CompoundNBT tag) {
         super.applyToItem(tag);
 
         if (!isSpawnEggEmpty() && entityTag == null) {
-            entityTag = new NBTTagCompound();
+            entityTag = new CompoundNBT();
         }
 
         if (entityTag != null) {

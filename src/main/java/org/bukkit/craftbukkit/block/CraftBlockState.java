@@ -4,7 +4,6 @@ import com.google.common.base.Preconditions;
 import java.util.List;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IWorld;
-import net.minecraft.block.BlockState;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.Material;
