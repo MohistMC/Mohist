@@ -12,6 +12,5 @@ public class Launcher implements IMixinConnector {
     @Override
     public void connect() {
         Mixins.addConfiguration("mixins.mohist.api.json");
-        Mixins.addConfiguration("mixins.mohist.core.json");
     }
 }

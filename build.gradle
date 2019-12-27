@@ -113,13 +113,16 @@ repositories {
         name = "spigotmc-repo"
         url = "https://hub.spigotmc.org/nexus/content/repositories/snapshots/"
     }
-
 }
 
+//83af86db
 
 dependencies {
     minecraft 'net.minecraftforge:forge:1.15.1-30.0.15'
     compile("org.spongepowered:mixin:0.8-SNAPSHOT")
+    compile 'org.bukkit:bukkit:1.15.1-R0.1-SNAPSHOT'
+    compile 'org.fusesource.jansi:jansi:1.18'
+    compile 'jline:jline:2.13'
 }
 
 mixin {
