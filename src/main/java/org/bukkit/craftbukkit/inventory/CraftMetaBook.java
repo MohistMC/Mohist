@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.ITextComponent.ChatSerializer;
+import net.minecraft.util.text.ITextComponent.Serializer;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.nbt.StringNBT;
@@ -54,31 +54,31 @@ public class CraftMetaBook extends CraftMetaItem implements BookMeta {
     CraftMetaBook(CompoundNBT tag, boolean handlePages) {
         super(tag);
 
-        if (tag.hasKey(BOOK_TITLE.NBT)) {
+        if (tag.contains(BOOK_TITLE.NBT)) {
             this.title = tag.getString(BOOK_TITLE.NBT);
         }
 
-        if (tag.hasKey(BOOK_AUTHOR.NBT)) {
+        if (tag.contains(BOOK_AUTHOR.NBT)) {
             this.author = tag.getString(BOOK_AUTHOR.NBT);
         }
 
         boolean resolved = false;
-        if (tag.hasKey(RESOLVED.NBT)) {
+        if (tag.contains(RESOLVED.NBT)) {
             resolved = tag.getBoolean(RESOLVED.NBT);
         }
 
-        if (tag.hasKey(GENERATION.NBT)) {
+        if (tag.contains(GENERATION.NBT)) {
             generation = tag.getInt(GENERATION.NBT);
         }
 
-        if (tag.hasKey(BOOK_PAGES.NBT) && handlePages) {
-            NBTTagList pages = tag.getList(BOOK_PAGES.NBT, CraftMagicNumbers.NBT.TAG_STRING);
+        if (tag.contains(BOOK_PAGES.NBT) && handlePages) {
+            ListNBT pages = tag.getList(BOOK_PAGES.NBT, CraftMagicNumbers.NBT.TAG_STRING);
 
             for (int i = 0; i < Math.min(pages.size(), MAX_PAGES); i++) {
                 String page = pages.getString(i);
                 if (resolved) {
                     try {
-                        this.pages.add(ChatSerializer.a(page));
+                        this.pages.add(Serializer.fromJson(page));
                         continue;
                     } catch (Exception e) {
                         // Ignore and treat as an old book
@@ -117,27 +117,27 @@ public class CraftMetaBook extends CraftMetaItem implements BookMeta {
         super.applyToItem(itemData);
 
         if (hasTitle()) {
-            itemData.setString(BOOK_TITLE.NBT, this.title);
+            itemData.putString(BOOK_TITLE.NBT, this.title);
         }
 
         if (hasAuthor()) {
-            itemData.setString(BOOK_AUTHOR.NBT, this.author);
+            itemData.putString(BOOK_AUTHOR.NBT, this.author);
         }
 
         if (handlePages) {
             if (hasPages()) {
-                NBTTagList list = new NBTTagList();
+                ListNBT list = new ListNBT();
                 for (ITextComponent page : pages) {
-                    list.add(StringNBT.a(page == null ? "" : page.getLegacyString()));
+                    list.add(StringNBT.func_229705_a_(page == null ? "" : page.getFormattedText()));
                 }
-                itemData.set(BOOK_PAGES.NBT, list);
+                itemData.put(BOOK_PAGES.NBT, list);
             }
 
             itemData.remove(RESOLVED.NBT);
         }
 
         if (generation != null) {
-            itemData.setInt(GENERATION.NBT, generation);
+            itemData.putInt(GENERATION.NBT, generation);
         }
     }
 

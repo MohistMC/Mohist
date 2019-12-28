@@ -3,6 +3,9 @@
  */
 package org.bukkit.craftbukkit.block.impl;
 
+import net.minecraft.state.BooleanProperty;
+import net.minecraft.state.EnumProperty;
+
 public final class CraftMinecartDetector extends org.bukkit.craftbukkit.block.data.CraftBlockData implements org.bukkit.block.data.type.RedstoneRail, org.bukkit.block.data.Powerable, org.bukkit.block.data.Rail {
 
     public CraftMinecartDetector() {
@@ -15,7 +18,7 @@ public final class CraftMinecartDetector extends org.bukkit.craftbukkit.block.da
 
     // org.bukkit.craftbukkit.block.data.CraftPowerable
 
-    private static final net.minecraft.state.PropertyBoolean POWERED = getBoolean(net.minecraft.block.DetectorRailBlock.class, "powered");
+    private static final BooleanProperty POWERED = getBoolean(net.minecraft.block.DetectorRailBlock.class, "powered");
 
     @Override
     public boolean isPowered() {
@@ -29,7 +32,7 @@ public final class CraftMinecartDetector extends org.bukkit.craftbukkit.block.da
 
     // org.bukkit.craftbukkit.block.data.CraftRail
 
-    private static final net.minecraft.state.PropertyEnum<?> SHAPE = getEnum(net.minecraft.block.DetectorRailBlock.class, "shape");
+    private static final EnumProperty<?> SHAPE = getEnum(net.minecraft.block.DetectorRailBlock.class, "shape");
 
     @Override
     public Shape getShape() {

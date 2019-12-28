@@ -3,6 +3,8 @@
  */
 package org.bukkit.craftbukkit.block.impl;
 
+import net.minecraft.state.BooleanProperty;
+
 public final class CraftBubbleColumn extends org.bukkit.craftbukkit.block.data.CraftBlockData implements org.bukkit.block.data.type.BubbleColumn {
 
     public CraftBubbleColumn() {
@@ -15,7 +17,7 @@ public final class CraftBubbleColumn extends org.bukkit.craftbukkit.block.data.C
 
     // org.bukkit.craftbukkit.block.data.type.CraftBubbleColumn
 
-    private static final net.minecraft.state.PropertyBoolean DRAG = getBoolean(net.minecraft.block.BubbleColumnBlock.class, "drag");
+    private static final BooleanProperty DRAG = getBoolean(net.minecraft.block.BubbleColumnBlock.class, "drag");
 
     @Override
     public boolean isDrag() {

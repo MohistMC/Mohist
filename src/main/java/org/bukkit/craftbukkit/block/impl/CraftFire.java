@@ -3,7 +3,11 @@
  */
 package org.bukkit.craftbukkit.block.impl;
 
-public final class CraftFire extends org.bukkit.craftbukkit.block.data.CraftBlockData implements org.bukkit.block.data.type.Fire, org.bukkit.block.data.Ageable, org.bukkit.block.data.MultipleFacing {
+import net.minecraft.state.BooleanProperty;
+import net.minecraft.state.IntegerProperty;
+
+public final class
+CraftFire extends org.bukkit.craftbukkit.block.data.CraftBlockData implements org.bukkit.block.data.type.Fire, org.bukkit.block.data.Ageable, org.bukkit.block.data.MultipleFacing {
 
     public CraftFire() {
         super();
@@ -15,7 +19,7 @@ public final class CraftFire extends org.bukkit.craftbukkit.block.data.CraftBloc
 
     // org.bukkit.craftbukkit.block.data.CraftAgeable
 
-    private static final net.minecraft.state.PropertyInteger AGE = getInteger(net.minecraft.block.FireBlock.class, "age");
+    private static final IntegerProperty AGE = getInteger(net.minecraft.block.FireBlock.class, "age");
 
     @Override
     public int getAge() {
@@ -34,7 +38,7 @@ public final class CraftFire extends org.bukkit.craftbukkit.block.data.CraftBloc
 
     // org.bukkit.craftbukkit.block.data.CraftMultipleFacing
 
-    private static final net.minecraft.state.PropertyBoolean[] FACES = new net.minecraft.state.PropertyBoolean[]{
+    private static final BooleanProperty[] FACES = new BooleanProperty[]{
         getBoolean(net.minecraft.block.FireBlock.class, "north", true), getBoolean(net.minecraft.block.FireBlock.class, "east", true), getBoolean(net.minecraft.block.FireBlock.class, "south", true), getBoolean(net.minecraft.block.FireBlock.class, "west", true), getBoolean(net.minecraft.block.FireBlock.class, "up", true), getBoolean(net.minecraft.block.FireBlock.class, "down", true)
     };
 

@@ -3,6 +3,8 @@
  */
 package org.bukkit.craftbukkit.block.impl;
 
+import net.minecraft.state.EnumProperty;
+
 public final class CraftGrindstone extends org.bukkit.craftbukkit.block.data.CraftBlockData implements org.bukkit.block.data.Directional {
 
     public CraftGrindstone() {
@@ -15,7 +17,7 @@ public final class CraftGrindstone extends org.bukkit.craftbukkit.block.data.Cra
 
     // org.bukkit.craftbukkit.block.data.CraftDirectional
 
-    private static final net.minecraft.state.PropertyEnum<?> FACING = getEnum(net.minecraft.block.GrindstoneBlock.class, "facing");
+    private static final EnumProperty<?> FACING = getEnum(net.minecraft.block.GrindstoneBlock.class, "facing");
 
     @Override
     public org.bukkit.block.BlockFace getFacing() {

@@ -15,23 +15,23 @@ public final class CraftInventoryCreator {
 
     private CraftInventoryCreator() {
         converterMap.put(InventoryType.CHEST, DEFAULT_CONVERTER);
-        converterMap.put(InventoryType.DISPENSER, new CraftSimpleNamedContainerProviderConverter.Dispenser());
-        converterMap.put(InventoryType.DROPPER, new CraftSimpleNamedContainerProviderConverter.Dropper());
-        converterMap.put(InventoryType.FURNACE, new CraftSimpleNamedContainerProviderConverter.Furnace());
+        converterMap.put(InventoryType.DISPENSER, new CraftTileInventoryConverter.Dispenser());
+        converterMap.put(InventoryType.DROPPER, new CraftTileInventoryConverter.Dropper());
+        converterMap.put(InventoryType.FURNACE, new CraftTileInventoryConverter.Furnace());
         converterMap.put(InventoryType.WORKBENCH, DEFAULT_CONVERTER);
         converterMap.put(InventoryType.ENCHANTING, DEFAULT_CONVERTER);
-        converterMap.put(InventoryType.BREWING, new CraftSimpleNamedContainerProviderConverter.BrewingStand());
+        converterMap.put(InventoryType.BREWING, new CraftTileInventoryConverter.BrewingStand());
         converterMap.put(InventoryType.PLAYER, DEFAULT_CONVERTER);
         converterMap.put(InventoryType.MERCHANT, DEFAULT_CONVERTER);
         converterMap.put(InventoryType.ENDER_CHEST, DEFAULT_CONVERTER);
         converterMap.put(InventoryType.ANVIL, DEFAULT_CONVERTER);
         converterMap.put(InventoryType.BEACON, DEFAULT_CONVERTER);
-        converterMap.put(InventoryType.HOPPER, new CraftSimpleNamedContainerProviderConverter.Hopper());
+        converterMap.put(InventoryType.HOPPER, new CraftTileInventoryConverter.Hopper());
         converterMap.put(InventoryType.SHULKER_BOX, DEFAULT_CONVERTER);
         converterMap.put(InventoryType.BARREL, DEFAULT_CONVERTER);
-        converterMap.put(InventoryType.BLAST_FURNACE, new CraftSimpleNamedContainerProviderConverter.BlastFurnace());
-        converterMap.put(InventoryType.LECTERN, new CraftSimpleNamedContainerProviderConverter.Lectern());
-        converterMap.put(InventoryType.SMOKER, new CraftSimpleNamedContainerProviderConverter.Smoker());
+        converterMap.put(InventoryType.BLAST_FURNACE, new CraftTileInventoryConverter.BlastFurnace());
+        converterMap.put(InventoryType.LECTERN, new CraftTileInventoryConverter.Lectern());
+        converterMap.put(InventoryType.SMOKER, new CraftTileInventoryConverter.Smoker());
         converterMap.put(InventoryType.LOOM, DEFAULT_CONVERTER);
         converterMap.put(InventoryType.CARTOGRAPHY, DEFAULT_CONVERTER);
         converterMap.put(InventoryType.GRINDSTONE, DEFAULT_CONVERTER);

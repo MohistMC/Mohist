@@ -1,5 +1,6 @@
 package org.bukkit.craftbukkit.inventory.util;
 
+import net.minecraft.tileentity.MobSpawnerTileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.dimension.DimensionType;
 import net.minecraft.inventory.IInventory;
@@ -14,6 +15,7 @@ import net.minecraft.tileentity.HopperTileEntity;
 import net.minecraft.tileentity.LecternTileEntity;
 import net.minecraft.tileentity.LockableLootTileEntity;
 import net.minecraft.tileentity.SmokerTileEntity;
+import net.minecraftforge.common.DimensionManager;
 import org.bukkit.craftbukkit.inventory.CraftInventory;
 import org.bukkit.craftbukkit.inventory.CraftInventoryBrewer;
 import org.bukkit.craftbukkit.inventory.CraftInventoryFurnace;
@@ -22,7 +24,7 @@ import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 
-public abstract class CraftSimpleNamedContainerProviderConverter implements CraftInventoryCreator.InventoryConverter {
+public abstract class CraftTileInventoryConverter implements CraftInventoryCreator.InventoryConverter {
 
     public abstract IInventory getTileEntity();
 
@@ -34,8 +36,8 @@ public abstract class CraftSimpleNamedContainerProviderConverter implements Craf
     @Override
     public Inventory createInventory(InventoryHolder holder, InventoryType type, String title) {
         IInventory te = getTileEntity();
-        if (te instanceof TileEntityLootable) {
-            ((TileEntityLootable) te).setCustomName(CraftChatMessage.fromStringOrNull(title));
+        if (te instanceof LockableLootTileEntity) {
+            ((LockableLootTileEntity) te).setCustomName(CraftChatMessage.fromStringOrNull(title));
         }
 
         return getInventory(te);
@@ -45,11 +47,11 @@ public abstract class CraftSimpleNamedContainerProviderConverter implements Craf
         return new CraftInventory(tileEntity);
     }
 
-    public static class Furnace extends CraftSimpleNamedContainerProviderConverter {
+    public static class Furnace extends CraftTileInventoryConverter {
 
         @Override
         public IInventory getTileEntity() {
-            TileEntityFurnace furnace = new TileEntityFurnaceFurnace();
+            AbstractFurnaceTileEntity furnace = new MobSpawnerTileEntity();
             furnace.setLocation(MinecraftServer.getServer().getServerWorld(DimensionManager.OVERWORLD), BlockPos.ZERO); // TODO: customize this if required
             return furnace;
         }
@@ -57,29 +59,29 @@ public abstract class CraftSimpleNamedContainerProviderConverter implements Craf
         @Override
         public Inventory createInventory(InventoryHolder owner, InventoryType type, String title) {
             IInventory tileEntity = getTileEntity();
-            ((TileEntityFurnace) tileEntity).setCustomName(CraftChatMessage.fromStringOrNull(title));
+            ((AbstractFurnaceTileEntity) tileEntity).setCustomName(CraftChatMessage.fromStringOrNull(title));
             return getInventory(tileEntity);
         }
 
         @Override
         public Inventory getInventory(IInventory tileEntity) {
-            return new CraftInventoryFurnace((TileEntityFurnace) tileEntity);
+            return new CraftInventoryFurnace((AbstractFurnaceTileEntity) tileEntity);
         }
     }
 
-    public static class BrewingStand extends CraftSimpleNamedContainerProviderConverter {
+    public static class BrewingStand extends CraftTileInventoryConverter {
 
         @Override
         public IInventory getTileEntity() {
-            return new TileEntityBrewingStand();
+            return new BrewingStandTileEntity();
         }
 
         @Override
         public Inventory createInventory(InventoryHolder holder, InventoryType type, String title) {
             // BrewingStand does not extend TileEntityLootable
             IInventory tileEntity = getTileEntity();
-            if (tileEntity instanceof TileEntityBrewingStand) {
-                ((TileEntityBrewingStand) tileEntity).setCustomName(CraftChatMessage.fromStringOrNull(title));
+            if (tileEntity instanceof BrewingStandTileEntity) {
+                ((BrewingStandTileEntity) tileEntity).setCustomName(CraftChatMessage.fromStringOrNull(title));
             }
             return getInventory(tileEntity);
         }
@@ -90,7 +92,7 @@ public abstract class CraftSimpleNamedContainerProviderConverter implements Craf
         }
     }
 
-    public static class Dispenser extends CraftSimpleNamedContainerProviderConverter {
+    public static class Dispenser extends CraftTileInventoryConverter {
 
         @Override
         public IInventory getTileEntity() {
@@ -98,7 +100,7 @@ public abstract class CraftSimpleNamedContainerProviderConverter implements Craf
         }
     }
 
-    public static class Dropper extends CraftSimpleNamedContainerProviderConverter {
+    public static class Dropper extends CraftTileInventoryConverter {
 
         @Override
         public IInventory getTileEntity() {
@@ -106,15 +108,15 @@ public abstract class CraftSimpleNamedContainerProviderConverter implements Craf
         }
     }
 
-    public static class Hopper extends CraftSimpleNamedContainerProviderConverter {
+    public static class Hopper extends CraftTileInventoryConverter {
 
         @Override
         public IInventory getTileEntity() {
-            return new TileEntityHopper();
+            return new HopperTileEntity();
         }
     }
 
-    public static class BlastFurnace extends CraftSimpleNamedContainerProviderConverter {
+    public static class BlastFurnace extends CraftTileInventoryConverter {
 
         @Override
         public IInventory getTileEntity() {
@@ -122,15 +124,15 @@ public abstract class CraftSimpleNamedContainerProviderConverter implements Craf
         }
     }
 
-    public static class Lectern extends CraftSimpleNamedContainerProviderConverter {
+    public static class Lectern extends CraftTileInventoryConverter {
 
         @Override
         public IInventory getTileEntity() {
-            return new TileEntityLectern().inventory;
+            return new LecternTileEntity().inventory;
         }
     }
 
-    public static class Smoker extends CraftSimpleNamedContainerProviderConverter {
+    public static class Smoker extends CraftTileInventoryConverter {
 
         @Override
         public IInventory getTileEntity() {

@@ -3,6 +3,8 @@
  */
 package org.bukkit.craftbukkit.block.impl;
 
+import net.minecraft.state.BooleanProperty;
+
 public final class CraftCoralDead extends org.bukkit.craftbukkit.block.data.CraftBlockData implements org.bukkit.block.data.Waterlogged {
 
     public CraftCoralDead() {
@@ -15,7 +17,7 @@ public final class CraftCoralDead extends org.bukkit.craftbukkit.block.data.Craf
 
     // org.bukkit.craftbukkit.block.data.CraftWaterlogged
 
-    private static final net.minecraft.state.PropertyBoolean WATERLOGGED = getBoolean(net.minecraft.block.CoralBlockDead.class, "waterlogged");
+    private static final BooleanProperty WATERLOGGED = getBoolean(net.minecraft.block.DeadCoralPlantBlock.class, "waterlogged");
 
     @Override
     public boolean isWaterlogged() {

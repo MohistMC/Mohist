@@ -15,26 +15,26 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
-public class CraftBeacon extends CraftBlockEntityState<TileEntityBeacon> implements Beacon {
+public class CraftBeacon extends CraftBlockEntityState<BeaconTileEntity> implements Beacon {
 
     public CraftBeacon(final Block block) {
-        super(block, TileEntityBeacon.class);
+        super(block, BeaconTileEntity.class);
     }
 
-    public CraftBeacon(final Material material, final TileEntityBeacon te) {
+    public CraftBeacon(final Material material, final BeaconTileEntity te) {
         super(material, te);
     }
 
     @Override
     public Collection<LivingEntity> getEntitiesInRange() {
         TileEntity tileEntity = this.getTileEntityFromWorld();
-        if (tileEntity instanceof TileEntityBeacon) {
-            TileEntityBeacon beacon = (TileEntityBeacon) tileEntity;
+        if (tileEntity instanceof BeaconTileEntity) {
+            BeaconTileEntity beacon = (BeaconTileEntity) tileEntity;
 
-            Collection<EntityHuman> nms = beacon.getHumansInRange();
+            Collection<PlayerEntity> nms = beacon.getHumansInRange();
             Collection<LivingEntity> bukkit = new ArrayList<LivingEntity>(nms.size());
 
-            for (EntityHuman human : nms) {
+            for (PlayerEntity human : nms) {
                 bukkit.add(human.getBukkitEntity());
             }
 
@@ -72,7 +72,7 @@ public class CraftBeacon extends CraftBlockEntityState<TileEntityBeacon> impleme
 
     @Override
     public String getCustomName() {
-        TileEntityBeacon beacon = this.getSnapshot();
+        BeaconTileEntity beacon = this.getSnapshot();
         return beacon.customName != null ? CraftChatMessage.fromComponent(beacon.customName) : null;
     }
 

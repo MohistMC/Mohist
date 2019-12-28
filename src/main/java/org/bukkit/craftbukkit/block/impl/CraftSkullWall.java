@@ -3,6 +3,8 @@
  */
 package org.bukkit.craftbukkit.block.impl;
 
+import net.minecraft.state.EnumProperty;
+
 public final class CraftSkullWall extends org.bukkit.craftbukkit.block.data.CraftBlockData implements org.bukkit.block.data.Directional {
 
     public CraftSkullWall() {
@@ -15,7 +17,7 @@ public final class CraftSkullWall extends org.bukkit.craftbukkit.block.data.Craf
 
     // org.bukkit.craftbukkit.block.data.CraftDirectional
 
-    private static final net.minecraft.state.PropertyEnum<?> FACING = getEnum(net.minecraft.block.SkullBlockWall.class, "facing");
+    private static final EnumProperty<?> FACING = getEnum(net.minecraft.block.SkullPlayerBlock.class, "facing");
 
     @Override
     public org.bukkit.block.BlockFace getFacing() {

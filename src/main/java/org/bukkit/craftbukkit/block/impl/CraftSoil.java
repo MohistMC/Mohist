@@ -3,6 +3,8 @@
  */
 package org.bukkit.craftbukkit.block.impl;
 
+import net.minecraft.state.IntegerProperty;
+
 public final class CraftSoil extends org.bukkit.craftbukkit.block.data.CraftBlockData implements org.bukkit.block.data.type.Farmland {
 
     public CraftSoil() {
@@ -15,7 +17,7 @@ public final class CraftSoil extends org.bukkit.craftbukkit.block.data.CraftBloc
 
     // org.bukkit.craftbukkit.block.data.type.CraftFarmland
 
-    private static final net.minecraft.state.PropertyInteger MOISTURE = getInteger(net.minecraft.block.FarmlandBlock.class, "moisture");
+    private static final IntegerProperty MOISTURE = getInteger(net.minecraft.block.FarmlandBlock.class, "moisture");
 
     @Override
     public int getMoisture() {

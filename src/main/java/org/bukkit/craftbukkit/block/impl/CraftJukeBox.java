@@ -3,6 +3,8 @@
  */
 package org.bukkit.craftbukkit.block.impl;
 
+import net.minecraft.state.BooleanProperty;
+
 public final class CraftJukeBox extends org.bukkit.craftbukkit.block.data.CraftBlockData implements org.bukkit.block.data.type.Jukebox {
 
     public CraftJukeBox() {
@@ -15,7 +17,7 @@ public final class CraftJukeBox extends org.bukkit.craftbukkit.block.data.CraftB
 
     // org.bukkit.craftbukkit.block.data.type.CraftJukebox
 
-    private static final net.minecraft.state.PropertyBoolean HAS_RECORD = getBoolean(net.minecraft.block.JukeboxBlock.class, "has_record");
+    private static final BooleanProperty HAS_RECORD = getBoolean(net.minecraft.block.JukeboxBlock.class, "has_record");
 
     @Override
     public boolean hasRecord() {

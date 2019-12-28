@@ -3,6 +3,9 @@
  */
 package org.bukkit.craftbukkit.block.impl;
 
+import net.minecraft.state.BooleanProperty;
+import net.minecraft.state.EnumProperty;
+
 public final class CraftObserver extends org.bukkit.craftbukkit.block.data.CraftBlockData implements org.bukkit.block.data.type.Observer, org.bukkit.block.data.Directional, org.bukkit.block.data.Powerable {
 
     public CraftObserver() {
@@ -15,7 +18,7 @@ public final class CraftObserver extends org.bukkit.craftbukkit.block.data.Craft
 
     // org.bukkit.craftbukkit.block.data.CraftDirectional
 
-    private static final net.minecraft.state.PropertyEnum<?> FACING = getEnum(net.minecraft.block.ObserverBlock.class, "facing");
+    private static final EnumProperty<?> FACING = getEnum(net.minecraft.block.ObserverBlock.class, "facing");
 
     @Override
     public org.bukkit.block.BlockFace getFacing() {
@@ -34,7 +37,7 @@ public final class CraftObserver extends org.bukkit.craftbukkit.block.data.Craft
 
     // org.bukkit.craftbukkit.block.data.CraftPowerable
 
-    private static final net.minecraft.state.PropertyBoolean POWERED = getBoolean(net.minecraft.block.ObserverBlock.class, "powered");
+    private static final BooleanProperty POWERED = getBoolean(net.minecraft.block.ObserverBlock.class, "powered");
 
     @Override
     public boolean isPowered() {

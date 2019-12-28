@@ -3,6 +3,8 @@
  */
 package org.bukkit.craftbukkit.block.impl;
 
+import net.minecraft.state.IntegerProperty;
+
 public final class CraftBanner extends org.bukkit.craftbukkit.block.data.CraftBlockData implements org.bukkit.block.data.Rotatable {
 
     public CraftBanner() {
@@ -15,7 +17,7 @@ public final class CraftBanner extends org.bukkit.craftbukkit.block.data.CraftBl
 
     // org.bukkit.craftbukkit.block.data.CraftRotatable
 
-    private static final net.minecraft.state.PropertyInteger ROTATION = getInteger(net.minecraft.block.BannerBlock.class, "rotation");
+    private static final IntegerProperty ROTATION = getInteger(net.minecraft.block.BannerBlock.class, "rotation");
 
     @Override
     public org.bukkit.block.BlockFace getRotation() {

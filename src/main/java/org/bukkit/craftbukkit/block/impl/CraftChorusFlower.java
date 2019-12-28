@@ -3,6 +3,8 @@
  */
 package org.bukkit.craftbukkit.block.impl;
 
+import net.minecraft.state.IntegerProperty;
+
 public final class CraftChorusFlower extends org.bukkit.craftbukkit.block.data.CraftBlockData implements org.bukkit.block.data.Ageable {
 
     public CraftChorusFlower() {
@@ -15,7 +17,7 @@ public final class CraftChorusFlower extends org.bukkit.craftbukkit.block.data.C
 
     // org.bukkit.craftbukkit.block.data.CraftAgeable
 
-    private static final net.minecraft.state.PropertyInteger AGE = getInteger(net.minecraft.block.ChorusFlowerBlock.class, "age");
+    private static final IntegerProperty AGE = getInteger(net.minecraft.block.ChorusFlowerBlock.class, "age");
 
     @Override
     public int getAge() {

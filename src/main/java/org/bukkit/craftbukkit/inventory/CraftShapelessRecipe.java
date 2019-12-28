@@ -4,7 +4,6 @@ import java.util.List;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.NonNullList;
 import net.minecraft.item.crafting.Ingredient;
-import net.minecraft.item.crafting.ShapelessRecipe;
 import org.bukkit.NamespacedKey;
 import org.bukkit.craftbukkit.util.CraftNamespacedKey;
 import org.bukkit.inventory.ItemStack;
@@ -13,14 +12,14 @@ import org.bukkit.inventory.ShapelessRecipe;
 
 public class CraftShapelessRecipe extends ShapelessRecipe implements CraftRecipe {
     // TODO: Could eventually use this to add a matches() method or some such
-    private ShapelessRecipe recipe;
+    private net.minecraft.item.crafting.ShapelessRecipe recipe;
 
     public CraftShapelessRecipe(NamespacedKey key, ItemStack result) {
         super(key, result);
     }
 
-    public CraftShapelessRecipe(ItemStack result, ShapelessRecipe recipe) {
-        this(CraftNamespacedKey.fromMinecraft(recipe.getKey()), result);
+    public CraftShapelessRecipe(ItemStack result, net.minecraft.item.crafting.ShapelessRecipe recipe) {
+        this(CraftNamespacedKey.fromMinecraft(recipe.getId()), result);
         this.recipe = recipe;
     }
 
@@ -39,11 +38,11 @@ public class CraftShapelessRecipe extends ShapelessRecipe implements CraftRecipe
     @Override
     public void addToCraftingManager() {
         List<org.bukkit.inventory.RecipeChoice> ingred = this.getChoiceList();
-        NonNullList<Ingredient> data = NonNullList.a(ingred.size(), Ingredient.a);
+        NonNullList<Ingredient> data = NonNullList.withSize(ingred.size(), Ingredient.EMPTY);
         for (int i = 0; i < ingred.size(); i++) {
             data.set(i, toNMS(ingred.get(i), true));
         }
 
-        MinecraftServer.getServer().getCraftingManager().addRecipe(new ShapelessRecipe(CraftNamespacedKey.toMinecraft(this.getKey()), this.getGroup(), CraftItemStack.asNMSCopy(this.getResult()), data));
+        MinecraftServer.getServer().getCraftingManager().addRecipe(new net.minecraft.item.crafting.ShapelessRecipe(CraftNamespacedKey.toMinecraft(this.getKey()), this.getGroup(), CraftItemStack.asNMSCopy(this.getResult()), data));
     }
 }

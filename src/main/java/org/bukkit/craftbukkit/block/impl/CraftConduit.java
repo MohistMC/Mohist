@@ -3,6 +3,8 @@
  */
 package org.bukkit.craftbukkit.block.impl;
 
+import net.minecraft.state.BooleanProperty;
+
 public final class CraftConduit extends org.bukkit.craftbukkit.block.data.CraftBlockData implements org.bukkit.block.data.Waterlogged {
 
     public CraftConduit() {
@@ -15,7 +17,7 @@ public final class CraftConduit extends org.bukkit.craftbukkit.block.data.CraftB
 
     // org.bukkit.craftbukkit.block.data.CraftWaterlogged
 
-    private static final net.minecraft.state.PropertyBoolean WATERLOGGED = getBoolean(net.minecraft.block.ConduitBlock.class, "waterlogged");
+    private static final BooleanProperty WATERLOGGED = getBoolean(net.minecraft.block.ConduitBlock.class, "waterlogged");
 
     @Override
     public boolean isWaterlogged() {

@@ -1,16 +1,15 @@
 package org.bukkit.craftbukkit.inventory;
 
 import net.minecraft.entity.merchant.IMerchant;
-import net.minecraft.inventory.MerchantInventory;
 import org.bukkit.inventory.Merchant;
 import org.bukkit.inventory.MerchantInventory;
 import org.bukkit.inventory.MerchantRecipe;
 
-public class CraftMerchantInventory extends CraftInventory implements MerchantInventory {
+public class CraftInventoryMerchant extends CraftInventory implements MerchantInventory {
 
     private final IMerchant merchant;
 
-    public CraftMerchantInventory(IMerchant merchant, MerchantInventory inventory) {
+    public CraftInventoryMerchant(IMerchant merchant, net.minecraft.inventory.MerchantInventory inventory) {
         super(inventory);
         this.merchant = merchant;
     }
@@ -27,8 +26,8 @@ public class CraftMerchantInventory extends CraftInventory implements MerchantIn
     }
 
     @Override
-    public MerchantInventory getInventory() {
-        return (MerchantInventory) inventory;
+    public net.minecraft.inventory.MerchantInventory getInventory() {
+        return (net.minecraft.inventory.MerchantInventory) inventory;
     }
 
     @Override

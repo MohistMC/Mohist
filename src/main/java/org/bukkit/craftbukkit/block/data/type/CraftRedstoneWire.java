@@ -1,14 +1,15 @@
 package org.bukkit.craftbukkit.block.data.type;
 
+import net.minecraft.state.EnumProperty;
 import org.bukkit.block.data.type.RedstoneWire;
 import org.bukkit.craftbukkit.block.data.CraftBlockData;
 
 public abstract class CraftRedstoneWire extends CraftBlockData implements RedstoneWire {
 
-    private static final net.minecraft.state.PropertyEnum<?> NORTH = getEnum("north");
-    private static final net.minecraft.state.PropertyEnum<?> EAST = getEnum("east");
-    private static final net.minecraft.state.PropertyEnum<?> SOUTH = getEnum("south");
-    private static final net.minecraft.state.PropertyEnum<?> WEST = getEnum("west");
+    private static final EnumProperty<?> NORTH = getEnum("north");
+    private static final EnumProperty<?> EAST = getEnum("east");
+    private static final EnumProperty<?> SOUTH = getEnum("south");
+    private static final EnumProperty<?> WEST = getEnum("west");
 
     @Override
     public Connection getFace(org.bukkit.block.BlockFace face) {

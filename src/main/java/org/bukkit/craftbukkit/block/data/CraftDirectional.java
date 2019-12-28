@@ -1,10 +1,11 @@
 package org.bukkit.craftbukkit.block.data;
 
+import net.minecraft.state.EnumProperty;
 import org.bukkit.block.data.Directional;
 
 public abstract class CraftDirectional extends CraftBlockData implements Directional {
 
-    private static final net.minecraft.state.PropertyEnum<?> FACING = getEnum("facing");
+    private static final EnumProperty<?> FACING = getEnum("facing");
 
     @Override
     public org.bukkit.block.BlockFace getFacing() {

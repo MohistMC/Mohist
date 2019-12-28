@@ -3,6 +3,8 @@
  */
 package org.bukkit.craftbukkit.block.impl;
 
+import net.minecraft.state.IntegerProperty;
+
 public final class CraftSapling extends org.bukkit.craftbukkit.block.data.CraftBlockData implements org.bukkit.block.data.type.Sapling {
 
     public CraftSapling() {
@@ -15,7 +17,7 @@ public final class CraftSapling extends org.bukkit.craftbukkit.block.data.CraftB
 
     // org.bukkit.craftbukkit.block.data.type.CraftSapling
 
-    private static final net.minecraft.state.PropertyInteger STAGE = getInteger(net.minecraft.block.SaplingBlock.class, "stage");
+    private static final IntegerProperty STAGE = getInteger(net.minecraft.block.SaplingBlock.class, "stage");
 
     @Override
     public int getStage() {

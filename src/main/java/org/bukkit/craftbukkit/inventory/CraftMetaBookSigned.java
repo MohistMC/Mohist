@@ -3,7 +3,7 @@ package org.bukkit.craftbukkit.inventory;
 import com.google.common.collect.ImmutableMap.Builder;
 import java.util.Map;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.ITextComponent.ChatSerializer;
+import net.minecraft.util.text.ITextComponent.Serializer;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.nbt.StringNBT;
@@ -24,18 +24,18 @@ class CraftMetaBookSigned extends CraftMetaBook implements BookMeta {
         super(tag, false);
 
         boolean resolved = true;
-        if (tag.hasKey(RESOLVED.NBT)) {
+        if (tag.contains(RESOLVED.NBT)) {
             resolved = tag.getBoolean(RESOLVED.NBT);
         }
 
-        if (tag.hasKey(BOOK_PAGES.NBT)) {
-            NBTTagList pages = tag.getList(BOOK_PAGES.NBT, CraftMagicNumbers.NBT.TAG_STRING);
+        if (tag.contains(BOOK_PAGES.NBT)) {
+            ListNBT pages = tag.getList(BOOK_PAGES.NBT, CraftMagicNumbers.NBT.TAG_STRING);
 
             for (int i = 0; i < Math.min(pages.size(), MAX_PAGES); i++) {
                 String page = pages.getString(i);
                 if (resolved) {
                     try {
-                        this.pages.add(ChatSerializer.a(page));
+                        this.pages.add(Serializer.fromJson(page));
                         continue;
                     } catch (Exception e) {
                         // Ignore and treat as an old book
@@ -55,26 +55,26 @@ class CraftMetaBookSigned extends CraftMetaBook implements BookMeta {
         super.applyToItem(itemData, false);
 
         if (hasTitle()) {
-            itemData.setString(BOOK_TITLE.NBT, this.title);
+            itemData.putString(BOOK_TITLE.NBT, this.title);
         }
 
         if (hasAuthor()) {
-            itemData.setString(BOOK_AUTHOR.NBT, this.author);
+            itemData.putString(BOOK_AUTHOR.NBT, this.author);
         }
 
         if (hasPages()) {
-            NBTTagList list = new NBTTagList();
+            ListNBT list = new ListNBT();
             for (ITextComponent page : pages) {
-                list.add(StringNBT.a(
-                    ChatSerializer.a(page)
+                list.add(StringNBT.func_229705_a_(
+                        Serializer.toJson(page)
                 ));
             }
-            itemData.set(BOOK_PAGES.NBT, list);
+            itemData.put(BOOK_PAGES.NBT, list);
         }
-        itemData.setBoolean(RESOLVED.NBT, true);
+        itemData.putBoolean(RESOLVED.NBT, true);
 
         if (generation != null) {
-            itemData.setInt(GENERATION.NBT, generation);
+            itemData.putInt(GENERATION.NBT, generation);
         }
     }
 

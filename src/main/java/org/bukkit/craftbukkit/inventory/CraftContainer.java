@@ -41,7 +41,7 @@ public class CraftContainer extends Container {
     private Container delegate;
     private final int cachedSize;
 
-    public CraftContainer(InventoryView view, EntityHuman player, int id) {
+    public CraftContainer(InventoryView view, PlayerEntity player, int id) {
         super(getNotchInventoryType(view.getType()), id);
         this.view = view;
         // TODO: Do we need to check that it really is a CraftInventory?
@@ -53,7 +53,7 @@ public class CraftContainer extends Container {
         setupSlots(top, bottom, player);
     }
 
-    public CraftContainer(final Inventory inventory, final EntityHuman player, int id) {
+    public CraftContainer(final Inventory inventory, final PlayerEntity player, int id) {
         this(new InventoryView() {
             @Override
             public Inventory getTopInventory() {
@@ -92,7 +92,7 @@ public class CraftContainer extends Container {
     }
 
     @Override
-    public boolean c(EntityHuman entityhuman) {
+    public boolean c(PlayerEntity entityhuman) {
         if (cachedType == view.getType() && cachedSize == getSize() && cachedTitle.equals(view.getTitle())) {
             return true;
         }
@@ -113,7 +113,7 @@ public class CraftContainer extends Container {
                 setupSlots(top, bottom, player.getHandle());
             }
             int size = getSize();
-            player.getHandle().connection.sendPacket(new PacketPlayOutOpenWindow(this.windowId, type, new ChatComponentText(cachedTitle)));
+            player.getHandle().connection.sendPacket(new SOpenWindowPacket(this.windowId, type, new StringTextComponent(cachedTitle)));
             player.updateInventory();
         }
         return true;
@@ -150,7 +150,7 @@ public class CraftContainer extends Container {
             case LOOM:
                 return ContainerType.LOOM;
             case CARTOGRAPHY:
-                return ContainerType.CARTOGRAPHY_TABLE;
+                return ContainerType.field_226625_v_;
             case GRINDSTONE:
                 return ContainerType.GRINDSTONE;
             case STONECUTTER:
@@ -160,7 +160,7 @@ public class CraftContainer extends Container {
         }
     }
 
-    private void setupSlots(IInventory top, PlayerInventory bottom, EntityHuman entityhuman) {
+    private void setupSlots(IInventory top, PlayerInventory bottom, PlayerEntity entityhuman) {
         int windowId = -1;
         switch (cachedType) {
             case CREATIVE:
@@ -169,57 +169,57 @@ public class CraftContainer extends Container {
             case CHEST:
             case ENDER_CHEST:
             case BARREL:
-                delegate = new ContainerChest(ContainerType.GENERIC_9X3, windowId, bottom, top, top.getSize() / 9);
+                delegate = new ChestContainer(ContainerType.GENERIC_9X3, windowId, bottom, top, top.getSize() / 9);
                 break;
             case DISPENSER:
             case DROPPER:
-                delegate = new ContainerDispenser(windowId, bottom, top);
+                delegate = new DispenserContainer(windowId, bottom, top);
                 break;
             case FURNACE:
-                delegate = new ContainerFurnaceFurnace(windowId, bottom, top, new ContainerProperties(4));
+                delegate = new FurnaceContainer(windowId, bottom, top, new IntArray(4));
                 break;
             case CRAFTING: // TODO: This should be an error?
             case WORKBENCH:
                 setupWorkbench(top, bottom); // SPIGOT-3812 - manually set up slots so we can use the delegated inventory and not the automatically created one
                 break;
             case ENCHANTING:
-                delegate = new ContainerEnchantTable(windowId, bottom);
+                delegate = new EnchantmentContainer(windowId, bottom);
                 break;
             case BREWING:
-                delegate = new ContainerBrewingStand(windowId, bottom, top, new ContainerProperties(2));
+                delegate = new BrewingStandContainer(windowId, bottom, top, new IntArray(2));
                 break;
             case HOPPER:
                 delegate = new HopperContainer(windowId, bottom, top);
                 break;
             case ANVIL:
-                delegate = new ContainerAnvil(windowId, bottom);
+                delegate = new RepairContainer(windowId, bottom);
                 break;
             case BEACON:
-                delegate = new ContainerBeacon(windowId, bottom);
+                delegate = new BeaconContainer(windowId, bottom);
                 break;
             case SHULKER_BOX:
-                delegate = new ContainerShulkerBox(windowId, bottom, top);
+                delegate = new ShulkerBoxContainer(windowId, bottom, top);
                 break;
             case BLAST_FURNACE:
-                delegate = new BlastFurnaceContainer(windowId, bottom, top, new ContainerProperties(4));
+                delegate = new BlastFurnaceContainer(windowId, bottom, top, new IntArray(4));
                 break;
             case LECTERN:
-                delegate = new ContainerLectern(windowId, top, new ContainerProperties(1), bottom);
+                delegate = new LecternContainer(windowId, top, new IntArray(1), bottom);
                 break;
             case SMOKER:
-                delegate = new ContainerSmoker(windowId, bottom, top, new ContainerProperties(4));
+                delegate = new SmokerContainer(windowId, bottom, top, new IntArray(4));
                 break;
             case LOOM:
-                delegate = new ContainerLoom(windowId, bottom);
+                delegate = new LoomContainer(windowId, bottom);
                 break;
             case CARTOGRAPHY:
-                delegate = new ContainerCartography(windowId, bottom);
+                delegate = new CartographyContainer(windowId, bottom);
                 break;
             case GRINDSTONE:
                 delegate = new GrindstoneContainer(windowId, bottom);
                 break;
             case STONECUTTER:
-                delegate = new ContainerStonecutter(windowId, bottom);
+                delegate = new StonecutterContainer(windowId, bottom);
                 break;
         }
 
@@ -260,12 +260,12 @@ public class CraftContainer extends Container {
     }
 
     @Override
-    public ItemStack shiftClick(EntityHuman entityhuman, int i) {
+    public ItemStack shiftClick(PlayerEntity entityhuman, int i) {
         return (delegate != null) ? delegate.shiftClick(entityhuman, i) : super.shiftClick(entityhuman, i);
     }
 
     @Override
-    public boolean canUse(EntityHuman entity) {
+    public boolean canUse(PlayerEntity entity) {
         return true;
     }
 

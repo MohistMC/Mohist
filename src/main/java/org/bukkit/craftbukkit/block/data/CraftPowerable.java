@@ -1,10 +1,11 @@
 package org.bukkit.craftbukkit.block.data;
 
+import net.minecraft.state.BooleanProperty;
 import org.bukkit.block.data.Powerable;
 
 public abstract class CraftPowerable extends CraftBlockData implements Powerable {
 
-    private static final net.minecraft.state.PropertyBoolean POWERED = getBoolean("powered");
+    private static final BooleanProperty POWERED = getBoolean("powered");
 
     @Override
     public boolean isPowered() {

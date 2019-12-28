@@ -8,13 +8,13 @@ import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.Beehive;
 
-public class CraftBeehive extends CraftBlockEntityState<TileBeeEntityhive> implements Beehive {
+public class CraftBeehive extends CraftBlockEntityState<BeehiveTileEntity> implements Beehive {
 
     public CraftBeehive(final Block block) {
-        super(block, TileBeeEntityhive.class);
+        super(block, BeehiveTileEntity.class);
     }
 
-    public CraftBeehive(final Material material, final TileBeeEntityhive te) {
+    public CraftBeehive(final Material material, final BeehiveTileEntity te) {
         super(material, te);
     }
 

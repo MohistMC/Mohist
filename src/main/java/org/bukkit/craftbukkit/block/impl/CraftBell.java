@@ -3,6 +3,8 @@
  */
 package org.bukkit.craftbukkit.block.impl;
 
+import net.minecraft.state.EnumProperty;
+
 public final class CraftBell extends org.bukkit.craftbukkit.block.data.CraftBlockData implements org.bukkit.block.data.type.Bell, org.bukkit.block.data.Directional {
 
     public CraftBell() {
@@ -15,7 +17,7 @@ public final class CraftBell extends org.bukkit.craftbukkit.block.data.CraftBloc
 
     // org.bukkit.craftbukkit.block.data.type.CraftBell
 
-    private static final net.minecraft.state.PropertyEnum<?> ATTACHMENT = getEnum(net.minecraft.block.BellBlock.class, "attachment");
+    private static final EnumProperty<?> ATTACHMENT = getEnum(net.minecraft.block.BellBlock.class, "attachment");
 
     @Override
     public Attachment getAttachment() {
@@ -29,7 +31,7 @@ public final class CraftBell extends org.bukkit.craftbukkit.block.data.CraftBloc
 
     // org.bukkit.craftbukkit.block.data.CraftDirectional
 
-    private static final net.minecraft.state.PropertyEnum<?> FACING = getEnum(net.minecraft.block.BellBlock.class, "facing");
+    private static final EnumProperty<?> FACING = getEnum(net.minecraft.block.BellBlock.class, "facing");
 
     @Override
     public org.bukkit.block.BlockFace getFacing() {

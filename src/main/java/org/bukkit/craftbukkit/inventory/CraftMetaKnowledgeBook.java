@@ -35,8 +35,8 @@ public class CraftMetaKnowledgeBook extends CraftMetaItem implements KnowledgeBo
     CraftMetaKnowledgeBook(CompoundNBT tag) {
         super(tag);
 
-        if (tag.hasKey(BOOK_RECIPES.NBT)) {
-            NBTTagList pages = tag.getList(BOOK_RECIPES.NBT, 8);
+        if (tag.contains(BOOK_RECIPES.NBT)) {
+            ListNBT pages = tag.getList(BOOK_RECIPES.NBT, 8);
 
             for (int i = 0; i < pages.size(); i++) {
                 String recipe = pages.getString(i);
@@ -64,11 +64,11 @@ public class CraftMetaKnowledgeBook extends CraftMetaItem implements KnowledgeBo
         super.applyToItem(itemData);
 
         if (hasRecipes()) {
-            NBTTagList list = new NBTTagList();
+            ListNBT list = new ListNBT();
             for (NamespacedKey recipe : this.recipes) {
-                list.add(StringNBT.a(recipe.toString()));
+                list.add(StringNBT.func_229705_a_(recipe.toString()));
             }
-            itemData.set(BOOK_RECIPES.NBT, list);
+            itemData.put(BOOK_RECIPES.NBT, list);
         }
     }
 

@@ -1,10 +1,11 @@
 package org.bukkit.craftbukkit.block.data;
 
+import net.minecraft.state.BooleanProperty;
 import org.bukkit.block.data.Waterlogged;
 
 public abstract class CraftWaterlogged extends CraftBlockData implements Waterlogged {
 
-    private static final net.minecraft.state.PropertyBoolean WATERLOGGED = getBoolean("waterlogged");
+    private static final BooleanProperty WATERLOGGED = getBoolean("waterlogged");
 
     @Override
     public boolean isWaterlogged() {

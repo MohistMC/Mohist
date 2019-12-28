@@ -3,6 +3,8 @@
  */
 package org.bukkit.craftbukkit.block.impl;
 
+import net.minecraft.state.BooleanProperty;
+
 public final class CraftDirtSnow extends org.bukkit.craftbukkit.block.data.CraftBlockData implements org.bukkit.block.data.Snowable {
 
     public CraftDirtSnow() {
@@ -15,7 +17,7 @@ public final class CraftDirtSnow extends org.bukkit.craftbukkit.block.data.Craft
 
     // org.bukkit.craftbukkit.block.data.CraftSnowable
 
-    private static final net.minecraft.state.PropertyBoolean SNOWY = getBoolean(net.minecraft.block.SnowyDirtBlock.class, "snowy");
+    private static final BooleanProperty SNOWY = getBoolean(net.minecraft.block.SnowyDirtBlock.class, "snowy");
 
     @Override
     public boolean isSnowy() {

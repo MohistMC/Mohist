@@ -3,6 +3,8 @@
  */
 package org.bukkit.craftbukkit.block.impl;
 
+import net.minecraft.state.BooleanProperty;
+
 public final class CraftChorusFruit extends org.bukkit.craftbukkit.block.data.CraftBlockData implements org.bukkit.block.data.MultipleFacing {
 
     public CraftChorusFruit() {
@@ -15,7 +17,7 @@ public final class CraftChorusFruit extends org.bukkit.craftbukkit.block.data.Cr
 
     // org.bukkit.craftbukkit.block.data.CraftMultipleFacing
 
-    private static final net.minecraft.state.PropertyBoolean[] FACES = new net.minecraft.state.PropertyBoolean[]{
+    private static final BooleanProperty[] FACES = new BooleanProperty[]{
         getBoolean(net.minecraft.block.ChorusPlantBlock.class, "north", true), getBoolean(net.minecraft.block.ChorusPlantBlock.class, "east", true), getBoolean(net.minecraft.block.ChorusPlantBlock.class, "south", true), getBoolean(net.minecraft.block.ChorusPlantBlock.class, "west", true), getBoolean(net.minecraft.block.ChorusPlantBlock.class, "up", true), getBoolean(net.minecraft.block.ChorusPlantBlock.class, "down", true)
     };
 

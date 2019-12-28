@@ -1,11 +1,12 @@
 package org.bukkit.craftbukkit.block.data.type;
 
+import net.minecraft.state.IntegerProperty;
 import org.bukkit.block.data.type.Beehive;
 import org.bukkit.craftbukkit.block.data.CraftBlockData;
 
 public abstract class CraftBeehive extends CraftBlockData implements Beehive {
 
-    private static final net.minecraft.state.PropertyInteger HONEY_LEVEL = getInteger("honey_level");
+    private static final IntegerProperty HONEY_LEVEL = getInteger("honey_level");
 
     @Override
     public int getHoneyLevel() {

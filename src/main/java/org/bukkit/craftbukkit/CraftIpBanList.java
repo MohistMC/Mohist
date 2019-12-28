@@ -12,10 +12,10 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
 
-public class CraftIPBanList implements org.bukkit.BanList {
+public class CraftIpBanList implements org.bukkit.BanList {
     private final IPBanList list;
 
-    public CraftIPBanList(IPBanList list) {
+    public CraftIpBanList(IPBanList list) {
         this.list = list;
     }
 

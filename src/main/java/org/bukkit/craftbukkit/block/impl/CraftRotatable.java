@@ -3,6 +3,8 @@
  */
 package org.bukkit.craftbukkit.block.impl;
 
+import net.minecraft.state.EnumProperty;
+
 public final class CraftRotatable extends org.bukkit.craftbukkit.block.data.CraftBlockData implements org.bukkit.block.data.Orientable {
 
     public CraftRotatable() {
@@ -15,7 +17,7 @@ public final class CraftRotatable extends org.bukkit.craftbukkit.block.data.Craf
 
     // org.bukkit.craftbukkit.block.data.CraftOrientable
 
-    private static final net.minecraft.state.PropertyEnum<?> AXIS = getEnum(net.minecraft.block.RotatedPillarBlock.class, "axis");
+    private static final EnumProperty<?> AXIS = getEnum(net.minecraft.block.RotatedPillarBlock.class, "axis");
 
     @Override
     public org.bukkit.Axis getAxis() {

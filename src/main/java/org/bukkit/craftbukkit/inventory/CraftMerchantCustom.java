@@ -1,5 +1,6 @@
 package org.bukkit.craftbukkit.inventory;
 
+import javax.annotation.Nullable;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.text.ITextComponent;
@@ -32,14 +33,14 @@ public class CraftMerchantCustom extends CraftMerchant {
     public static class MinecraftMerchant implements IMerchant {
 
         private final ITextComponent title;
-        private final MerchantRecipeList trades = new MerchantRecipeList();
-        private EntityHuman tradingPlayer;
+        private final MerchantOffers trades = new MerchantOffers();
+        private PlayerEntity tradingPlayer;
         private World tradingWorld;
         protected CraftMerchant craftMerchant;
 
         public MinecraftMerchant(String title) {
             Validate.notNull(title, "Title cannot be null");
-            this.title = new ChatComponentText(title);
+            this.title = new StringTextComponent(title);
         }
 
         @Override
@@ -47,32 +48,39 @@ public class CraftMerchantCustom extends CraftMerchant {
             return craftMerchant;
         }
 
+        @Nullable
         @Override
-        public void setTradingPlayer(EntityHuman entityhuman) {
-            this.tradingPlayer = entityhuman;
-            if (entityhuman != null) {
-                this.tradingWorld = entityhuman.world;
-            }
-        }
-
-        @Override
-        public EntityHuman getTrader() {
+        public PlayerEntity getCustomer() {
             return this.tradingPlayer;
         }
 
         @Override
-        public MerchantRecipeList getOffers() {
+        public void setCustomer(@Nullable PlayerEntity player) {
+            this.tradingPlayer = player;
+            if (player != null) {
+                this.tradingWorld = player.world;
+            }
+        }
+
+
+        @Override
+        public MerchantOffers getOffers() {
             return this.trades;
         }
 
         @Override
-        public void a(MerchantRecipe merchantrecipe) {
-            // increase recipe's uses
-            merchantrecipe.increaseUses();
+        public void func_213703_a(@Nullable MerchantOffers p_213703_1_) {
+
         }
 
         @Override
-        public void i(ItemStack itemstack) {
+        public void onTrade(MerchantOffer p_213704_1_) {
+            p_213704_1_.increaseUses();
+        }
+
+        @Override
+        public void verifySellingItem(ItemStack stack) {
+
         }
 
         public ITextComponent getScoreboardDisplayName() {
@@ -85,22 +93,23 @@ public class CraftMerchantCustom extends CraftMerchant {
         }
 
         @Override
-        public int getExperience() {
-            return 0; // xp
+        public int getXp() {
+            return 0;
         }
 
         @Override
-        public void setExperience(int i) {
+        public void func_213702_q(int p_213702_1_) {
+
         }
 
         @Override
-        public boolean isRegularVillager() {
-            return false; // is-regular-villager flag (hides some gui elements: xp bar, name suffix)
-        }
-
-        @Override
-        public SoundEffect getTradeSound() {
+        public SoundEvent func_213714_ea() {
             return SoundEvents.ENTITY_VILLAGER_YES;
+        }
+
+        @Override
+        public boolean func_213705_dZ() {
+            return false; // is-regular-villager flag (hides some gui elements: xp bar, name suffix)
         }
     }
 }

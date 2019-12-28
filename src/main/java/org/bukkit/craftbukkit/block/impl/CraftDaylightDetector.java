@@ -3,6 +3,9 @@
  */
 package org.bukkit.craftbukkit.block.impl;
 
+import net.minecraft.state.BooleanProperty;
+import net.minecraft.state.IntegerProperty;
+
 public final class CraftDaylightDetector extends org.bukkit.craftbukkit.block.data.CraftBlockData implements org.bukkit.block.data.type.DaylightDetector, org.bukkit.block.data.AnaloguePowerable {
 
     public CraftDaylightDetector() {
@@ -15,7 +18,7 @@ public final class CraftDaylightDetector extends org.bukkit.craftbukkit.block.da
 
     // org.bukkit.craftbukkit.block.data.type.CraftDaylightDetector
 
-    private static final net.minecraft.state.PropertyBoolean INVERTED = getBoolean(net.minecraft.block.DaylightDetectorBlock.class, "inverted");
+    private static final BooleanProperty INVERTED = getBoolean(net.minecraft.block.DaylightDetectorBlock.class, "inverted");
 
     @Override
     public boolean isInverted() {
@@ -29,7 +32,7 @@ public final class CraftDaylightDetector extends org.bukkit.craftbukkit.block.da
 
     // org.bukkit.craftbukkit.block.data.CraftAnaloguePowerable
 
-    private static final net.minecraft.state.PropertyInteger POWER = getInteger(net.minecraft.block.DaylightDetectorBlock.class, "power");
+    private static final IntegerProperty POWER = getInteger(net.minecraft.block.DaylightDetectorBlock.class, "power");
 
     @Override
     public int getPower() {

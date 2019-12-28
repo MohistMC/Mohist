@@ -40,9 +40,9 @@ class CraftMetaSkull extends CraftMetaItem implements SkullMeta {
     CraftMetaSkull(CompoundNBT tag) {
         super(tag);
 
-        if (tag.hasKeyOfType(SKULL_OWNER.NBT, CraftMagicNumbers.NBT.TAG_COMPOUND)) {
-            this.setProfile(GameProfileSerializer.deserialize(tag.getCompound(SKULL_OWNER.NBT)));
-        } else if (tag.hasKeyOfType(SKULL_OWNER.NBT, CraftMagicNumbers.NBT.TAG_STRING) && !tag.getString(SKULL_OWNER.NBT).isEmpty()) {
+        if (tag.contains(SKULL_OWNER.NBT, CraftMagicNumbers.NBT.TAG_COMPOUND)) {
+            this.setProfile(NBTUtil.readGameProfile(tag.getCompound(SKULL_OWNER.NBT)));
+        } else if (tag.contains(SKULL_OWNER.NBT, CraftMagicNumbers.NBT.TAG_STRING) && !tag.getString(SKULL_OWNER.NBT).isEmpty()) {
             this.setProfile(new GameProfile(null, tag.getString(SKULL_OWNER.NBT)));
         }
     }
@@ -58,8 +58,8 @@ class CraftMetaSkull extends CraftMetaItem implements SkullMeta {
     void deserializeInternal(CompoundNBT tag, Object context) {
         super.deserializeInternal(tag, context);
 
-        if (tag.hasKeyOfType(SKULL_PROFILE.NBT, CraftMagicNumbers.NBT.TAG_COMPOUND)) {
-            this.setProfile(GameProfileSerializer.deserialize(tag.getCompound(SKULL_PROFILE.NBT)));
+        if (tag.contains(SKULL_PROFILE.NBT, CraftMagicNumbers.NBT.TAG_COMPOUND)) {
+            this.setProfile(NBTUtil.readGameProfile(tag.getCompound(SKULL_PROFILE.NBT)));
         }
     }
 
@@ -72,7 +72,7 @@ class CraftMetaSkull extends CraftMetaItem implements SkullMeta {
 
     private void setProfile(GameProfile profile) {
         this.profile = profile;
-        this.serializedProfile = (profile == null) ? null : GameProfileSerializer.serialize(new CompoundNBT(), profile);
+        this.serializedProfile = (profile == null) ? null : NBTUtil.writeGameProfile(new CompoundNBT(), profile);
     }
 
     @Override
@@ -81,9 +81,9 @@ class CraftMetaSkull extends CraftMetaItem implements SkullMeta {
 
         if (profile != null) {
             // Fill in textures
-            setProfile(TileEntitySkull.b(profile));
+            setProfile(SkullTileEntity.updateGameProfile(profile));
 
-            tag.set(SKULL_OWNER.NBT, serializedProfile);
+            tag.put(SKULL_OWNER.NBT, serializedProfile);
         }
     }
 

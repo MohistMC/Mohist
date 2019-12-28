@@ -3,6 +3,9 @@
  */
 package org.bukkit.craftbukkit.block.impl;
 
+import net.minecraft.state.EnumProperty;
+import net.minecraft.state.IntegerProperty;
+
 public final class CraftBamboo extends org.bukkit.craftbukkit.block.data.CraftBlockData implements org.bukkit.block.data.type.Bamboo, org.bukkit.block.data.Ageable, org.bukkit.block.data.type.Sapling {
 
     public CraftBamboo() {
@@ -15,7 +18,7 @@ public final class CraftBamboo extends org.bukkit.craftbukkit.block.data.CraftBl
 
     // org.bukkit.craftbukkit.block.data.type.CraftBamboo
 
-    private static final net.minecraft.state.PropertyEnum<?> LEAVES = getEnum(net.minecraft.block.BambooBlock.class, "leaves");
+    private static final EnumProperty<?> LEAVES = getEnum(net.minecraft.block.BambooBlock.class, "leaves");
 
     @Override
     public Leaves getLeaves() {
@@ -29,7 +32,7 @@ public final class CraftBamboo extends org.bukkit.craftbukkit.block.data.CraftBl
 
     // org.bukkit.craftbukkit.block.data.CraftAgeable
 
-    private static final net.minecraft.state.PropertyInteger AGE = getInteger(net.minecraft.block.BambooBlock.class, "age");
+    private static final IntegerProperty AGE = getInteger(net.minecraft.block.BambooBlock.class, "age");
 
     @Override
     public int getAge() {
@@ -48,7 +51,7 @@ public final class CraftBamboo extends org.bukkit.craftbukkit.block.data.CraftBl
 
     // org.bukkit.craftbukkit.block.data.type.CraftSapling
 
-    private static final net.minecraft.state.PropertyInteger STAGE = getInteger(net.minecraft.block.BambooBlock.class, "stage");
+    private static final IntegerProperty STAGE = getInteger(net.minecraft.block.BambooBlock.class, "stage");
 
     @Override
     public int getStage() {

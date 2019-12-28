@@ -3,6 +3,9 @@
  */
 package org.bukkit.craftbukkit.block.impl;
 
+import net.minecraft.state.BooleanProperty;
+import net.minecraft.state.IntegerProperty;
+
 public final class CraftFloorSign extends org.bukkit.craftbukkit.block.data.CraftBlockData implements org.bukkit.block.data.type.Sign, org.bukkit.block.data.Rotatable, org.bukkit.block.data.Waterlogged {
 
     public CraftFloorSign() {
@@ -15,7 +18,7 @@ public final class CraftFloorSign extends org.bukkit.craftbukkit.block.data.Craf
 
     // org.bukkit.craftbukkit.block.data.CraftRotatable
 
-    private static final net.minecraft.state.PropertyInteger ROTATION = getInteger(net.minecraft.block.StandingSignBlock.class, "rotation");
+    private static final IntegerProperty ROTATION = getInteger(net.minecraft.block.StandingSignBlock.class, "rotation");
 
     @Override
     public org.bukkit.block.BlockFace getRotation() {
@@ -118,7 +121,7 @@ public final class CraftFloorSign extends org.bukkit.craftbukkit.block.data.Craf
 
     // org.bukkit.craftbukkit.block.data.CraftWaterlogged
 
-    private static final net.minecraft.state.PropertyBoolean WATERLOGGED = getBoolean(net.minecraft.block.StandingSignBlock.class, "waterlogged");
+    private static final BooleanProperty WATERLOGGED = getBoolean(net.minecraft.block.StandingSignBlock.class, "waterlogged");
 
     @Override
     public boolean isWaterlogged() {

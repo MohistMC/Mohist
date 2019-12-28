@@ -185,9 +185,9 @@ public abstract class CraftEntity implements org.bukkit.entity.Entity {
          */
         if (entity instanceof EntityLiving) {
             // Players
-            if (entity instanceof EntityHuman) {
+            if (entity instanceof PlayerEntity) {
                 if (entity instanceof ServerPlayerEntity) { return new CraftPlayer(server, (ServerPlayerEntity) entity); }
-                else { return new CraftHumanEntity(server, (EntityHuman) entity); }
+                else { return new CraftHumanEntity(server, (PlayerEntity) entity); }
             }
             // Water Animals
             else if (entity instanceof EntityWaterAnimal) {
@@ -780,7 +780,7 @@ public abstract class CraftEntity implements org.bukkit.entity.Entity {
 
     @Override
     public String getName() {
-        return CraftChatMessage.fromComponent(getHandle().getDisplayName(), EnumChatFormat.WHITE);
+        return CraftChatMessage.fromComponent(getHandle().getDisplayName(), TextFormatting.WHITE);
     }
 
     @Override

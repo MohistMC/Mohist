@@ -1,12 +1,13 @@
 package org.bukkit.craftbukkit.block.data.type;
 
+import net.minecraft.state.IntegerProperty;
 import org.bukkit.block.data.type.TurtleEgg;
 import org.bukkit.craftbukkit.block.data.CraftBlockData;
 
 public abstract class CraftTurtleEgg extends CraftBlockData implements TurtleEgg {
 
-    private static final net.minecraft.state.PropertyInteger EGGS = getInteger("eggs");
-    private static final net.minecraft.state.PropertyInteger HATCH = getInteger("hatch");
+    private static final IntegerProperty EGGS = getInteger("eggs");
+    private static final IntegerProperty HATCH = getInteger("hatch");
 
     @Override
     public int getEggs() {

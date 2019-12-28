@@ -10,7 +10,7 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
 public class CraftInventoryDoubleChest extends CraftInventory implements DoubleChestInventory {
-    public ITileInventory tile;
+    public INamedContainerProvider tile;
     private final CraftInventory left;
     private final CraftInventory right;
 

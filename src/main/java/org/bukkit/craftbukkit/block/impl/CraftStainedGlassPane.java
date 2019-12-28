@@ -3,6 +3,8 @@
  */
 package org.bukkit.craftbukkit.block.impl;
 
+import net.minecraft.state.BooleanProperty;
+
 public final class CraftStainedGlassPane extends org.bukkit.craftbukkit.block.data.CraftBlockData implements org.bukkit.block.data.type.GlassPane, org.bukkit.block.data.MultipleFacing, org.bukkit.block.data.Waterlogged {
 
     public CraftStainedGlassPane() {
@@ -15,8 +17,8 @@ public final class CraftStainedGlassPane extends org.bukkit.craftbukkit.block.da
 
     // org.bukkit.craftbukkit.block.data.CraftMultipleFacing
 
-    private static final net.minecraft.state.PropertyBoolean[] FACES = new net.minecraft.state.PropertyBoolean[]{
-        getBoolean(net.minecraft.block.StainedGlassBlockPane.class, "north", true), getBoolean(net.minecraft.block.StainedGlassBlockPane.class, "east", true), getBoolean(net.minecraft.block.StainedGlassBlockPane.class, "south", true), getBoolean(net.minecraft.block.StainedGlassBlockPane.class, "west", true), getBoolean(net.minecraft.block.StainedGlassBlockPane.class, "up", true), getBoolean(net.minecraft.block.StainedGlassBlockPane.class, "down", true)
+    private static final BooleanProperty[] FACES = new BooleanProperty[]{
+        getBoolean(net.minecraft.block.StainedGlassPaneBlock.class, "north", true), getBoolean(net.minecraft.block.StainedGlassPaneBlock.class, "east", true), getBoolean(net.minecraft.block.StainedGlassPaneBlock.class, "south", true), getBoolean(net.minecraft.block.StainedGlassPaneBlock.class, "west", true), getBoolean(net.minecraft.block.StainedGlassPaneBlock.class, "up", true), getBoolean(net.minecraft.block.StainedGlassPaneBlock.class, "down", true)
     };
 
     @Override
@@ -57,7 +59,7 @@ public final class CraftStainedGlassPane extends org.bukkit.craftbukkit.block.da
 
     // org.bukkit.craftbukkit.block.data.CraftWaterlogged
 
-    private static final net.minecraft.state.PropertyBoolean WATERLOGGED = getBoolean(net.minecraft.block.StainedGlassBlockPane.class, "waterlogged");
+    private static final BooleanProperty WATERLOGGED = getBoolean(net.minecraft.block.StainedGlassPaneBlock.class, "waterlogged");
 
     @Override
     public boolean isWaterlogged() {

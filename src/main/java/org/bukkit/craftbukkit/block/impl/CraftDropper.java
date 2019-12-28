@@ -3,6 +3,9 @@
  */
 package org.bukkit.craftbukkit.block.impl;
 
+import net.minecraft.state.BooleanProperty;
+import net.minecraft.state.EnumProperty;
+
 public final class CraftDropper extends org.bukkit.craftbukkit.block.data.CraftBlockData implements org.bukkit.block.data.type.Dispenser, org.bukkit.block.data.Directional {
 
     public CraftDropper() {
@@ -15,7 +18,7 @@ public final class CraftDropper extends org.bukkit.craftbukkit.block.data.CraftB
 
     // org.bukkit.craftbukkit.block.data.type.CraftDispenser
 
-    private static final net.minecraft.state.PropertyBoolean TRIGGERED = getBoolean(net.minecraft.block.DropperBlock.class, "triggered");
+    private static final BooleanProperty TRIGGERED = getBoolean(net.minecraft.block.DropperBlock.class, "triggered");
 
     @Override
     public boolean isTriggered() {
@@ -29,7 +32,7 @@ public final class CraftDropper extends org.bukkit.craftbukkit.block.data.CraftB
 
     // org.bukkit.craftbukkit.block.data.CraftDirectional
 
-    private static final net.minecraft.state.PropertyEnum<?> FACING = getEnum(net.minecraft.block.DropperBlock.class, "facing");
+    private static final EnumProperty<?> FACING = getEnum(net.minecraft.block.DropperBlock.class, "facing");
 
     @Override
     public org.bukkit.block.BlockFace getFacing() {

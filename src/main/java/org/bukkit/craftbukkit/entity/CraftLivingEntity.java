@@ -409,8 +409,8 @@ public class CraftLivingEntity extends CraftEntity implements LivingEntity {
         } else if (ThrownExpBottle.class.isAssignableFrom(projectile)) {
             launch = new EntityThrownExpBottle(world, getHandle());
             ((EntityProjectile) launch).a(getHandle(), getHandle().pitch, getHandle().yaw, -20.0F, 0.7F, 1.0F); // ExperienceBottleItem
-        } else if (FishHook.class.isAssignableFrom(projectile) && getHandle() instanceof EntityHuman) {
-            launch = new AbstractFishEntityingHook((EntityHuman) getHandle(), world, 0, 0);
+        } else if (FishHook.class.isAssignableFrom(projectile) && getHandle() instanceof PlayerEntity) {
+            launch = new AbstractFishEntityingHook((PlayerEntity) getHandle(), world, 0, 0);
         } else if (Fireball.class.isAssignableFrom(projectile)) {
             Location location = getEyeLocation();
             Vector direction = location.getDirection().multiply(10);

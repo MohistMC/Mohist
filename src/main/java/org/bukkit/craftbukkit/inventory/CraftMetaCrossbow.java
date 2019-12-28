@@ -44,7 +44,7 @@ public class CraftMetaCrossbow extends CraftMetaItem implements CrossbowMeta {
 
         charged = tag.getBoolean(CHARGED.NBT);
 
-        if (tag.hasKeyOfType(CHARGED_PROJECTILES.NBT, CraftMagicNumbers.NBT.TAG_LIST)) {
+        if (tag.contains(CHARGED_PROJECTILES.NBT, CraftMagicNumbers.NBT.TAG_LIST)) {
             ListNBT list = tag.getList(CHARGED_PROJECTILES.NBT, CraftMagicNumbers.NBT.TAG_COMPOUND);
 
             if (list != null && !list.isEmpty()) {
@@ -53,7 +53,7 @@ public class CraftMetaCrossbow extends CraftMetaItem implements CrossbowMeta {
                 for (int i = 0; i < list.size(); i++) {
                     CompoundNBT nbttagcompound1 = list.getCompound(i);
 
-                    chargedProjectiles.add(CraftItemStack.asCraftMirror(net.minecraft.item.ItemStack.a(nbttagcompound1)));
+                    chargedProjectiles.add(CraftItemStack.asCraftMirror(net.minecraft.item.ItemStack.read(nbttagcompound1)));
                 }
             }
         }
@@ -81,17 +81,17 @@ public class CraftMetaCrossbow extends CraftMetaItem implements CrossbowMeta {
     void applyToItem(CompoundNBT tag) {
         super.applyToItem(tag);
 
-        tag.setBoolean(CHARGED.NBT, charged);
+        tag.putBoolean(CHARGED.NBT, charged);
         if (hasChargedProjectiles()) {
             ListNBT list = new ListNBT();
 
             for (ItemStack item : chargedProjectiles) {
                 CompoundNBT saved = new CompoundNBT();
-                CraftItemStack.asNMSCopy(item).save(saved);
+                CraftItemStack.asNMSCopy(item).deserializeNBT(saved);
                 list.add(saved);
             }
 
-            tag.set(CHARGED_PROJECTILES.NBT, list);
+            tag.put(CHARGED_PROJECTILES.NBT, list);
         }
     }
 

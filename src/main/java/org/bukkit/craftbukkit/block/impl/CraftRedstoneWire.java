@@ -3,6 +3,9 @@
  */
 package org.bukkit.craftbukkit.block.impl;
 
+import net.minecraft.state.EnumProperty;
+import net.minecraft.state.IntegerProperty;
+
 public final class CraftRedstoneWire extends org.bukkit.craftbukkit.block.data.CraftBlockData implements org.bukkit.block.data.type.RedstoneWire, org.bukkit.block.data.AnaloguePowerable {
 
     public CraftRedstoneWire() {
@@ -15,10 +18,10 @@ public final class CraftRedstoneWire extends org.bukkit.craftbukkit.block.data.C
 
     // org.bukkit.craftbukkit.block.data.type.CraftRedstoneWire
 
-    private static final net.minecraft.state.PropertyEnum<?> NORTH = getEnum(net.minecraft.block.RedstoneWireBlock.class, "north");
-    private static final net.minecraft.state.PropertyEnum<?> EAST = getEnum(net.minecraft.block.RedstoneWireBlock.class, "east");
-    private static final net.minecraft.state.PropertyEnum<?> SOUTH = getEnum(net.minecraft.block.RedstoneWireBlock.class, "south");
-    private static final net.minecraft.state.PropertyEnum<?> WEST = getEnum(net.minecraft.block.RedstoneWireBlock.class, "west");
+    private static final EnumProperty<?> NORTH = getEnum(net.minecraft.block.RedstoneWireBlock.class, "north");
+    private static final EnumProperty<?> EAST = getEnum(net.minecraft.block.RedstoneWireBlock.class, "east");
+    private static final EnumProperty<?> SOUTH = getEnum(net.minecraft.block.RedstoneWireBlock.class, "south");
+    private static final EnumProperty<?> WEST = getEnum(net.minecraft.block.RedstoneWireBlock.class, "west");
 
     @Override
     public Connection getFace(org.bukkit.block.BlockFace face) {
@@ -63,7 +66,7 @@ public final class CraftRedstoneWire extends org.bukkit.craftbukkit.block.data.C
 
     // org.bukkit.craftbukkit.block.data.CraftAnaloguePowerable
 
-    private static final net.minecraft.state.PropertyInteger POWER = getInteger(net.minecraft.block.RedstoneWireBlock.class, "power");
+    private static final IntegerProperty POWER = getInteger(net.minecraft.block.RedstoneWireBlock.class, "power");
 
     @Override
     public int getPower() {

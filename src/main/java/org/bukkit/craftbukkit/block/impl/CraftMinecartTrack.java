@@ -3,6 +3,8 @@
  */
 package org.bukkit.craftbukkit.block.impl;
 
+import net.minecraft.state.EnumProperty;
+
 public final class CraftMinecartTrack extends org.bukkit.craftbukkit.block.data.CraftBlockData implements org.bukkit.block.data.Rail {
 
     public CraftMinecartTrack() {
@@ -15,7 +17,7 @@ public final class CraftMinecartTrack extends org.bukkit.craftbukkit.block.data.
 
     // org.bukkit.craftbukkit.block.data.CraftRail
 
-    private static final net.minecraft.state.PropertyEnum<?> SHAPE = getEnum(net.minecraft.block.RailBlock.class, "shape");
+    private static final EnumProperty<?> SHAPE = getEnum(net.minecraft.block.RailBlock.class, "shape");
 
     @Override
     public Shape getShape() {

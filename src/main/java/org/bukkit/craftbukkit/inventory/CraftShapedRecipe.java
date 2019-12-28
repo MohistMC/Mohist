@@ -4,7 +4,6 @@ import java.util.Map;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.NonNullList;
 import net.minecraft.item.crafting.Ingredient;
-import net.minecraft.item.crafting.ShapedRecipe;
 import org.bukkit.NamespacedKey;
 import org.bukkit.craftbukkit.util.CraftNamespacedKey;
 import org.bukkit.inventory.ItemStack;
@@ -13,14 +12,14 @@ import org.bukkit.inventory.ShapedRecipe;
 
 public class CraftShapedRecipe extends ShapedRecipe implements CraftRecipe {
     // TODO: Could eventually use this to add a matches() method or some such
-    private ShapedIRecipeType recipe;
+    private net.minecraft.item.crafting.ShapedRecipe recipe;
 
     public CraftShapedRecipe(NamespacedKey key, ItemStack result) {
         super(key, result);
     }
 
-    public CraftShapedRecipe(ItemStack result, ShapedIRecipeType recipe) {
-        this(CraftNamespacedKey.fromMinecraft(recipe.getKey()), result);
+    public CraftShapedRecipe(ItemStack result, net.minecraft.item.crafting.ShapedRecipe recipe) {
+        this(CraftNamespacedKey.fromMinecraft(recipe.getId()), result);
         this.recipe = recipe;
     }
 
@@ -47,7 +46,7 @@ public class CraftShapedRecipe extends ShapedRecipe implements CraftRecipe {
         String[] shape = this.getShape();
         Map<Character, org.bukkit.inventory.RecipeChoice> ingred = this.getChoiceMap();
         int width = shape[0].length();
-        NonNullList<Ingredient> data = NonNullList.a(shape.length * width, Ingredient.a);
+        NonNullList<Ingredient> data = NonNullList.withSize(shape.length * width, Ingredient.EMPTY);
 
         for (int i = 0; i < shape.length; i++) {
             String row = shape[i];
@@ -56,6 +55,6 @@ public class CraftShapedRecipe extends ShapedRecipe implements CraftRecipe {
             }
         }
 
-        MinecraftServer.getServer().getCraftingManager().addRecipe(new ShapedIRecipeType(CraftNamespacedKey.toMinecraft(this.getKey()), this.getGroup(), width, shape.length, data, CraftItemStack.asNMSCopy(this.getResult())));
+        MinecraftServer.getServer().getCraftingManager().addRecipe(new net.minecraft.item.crafting.ShapedRecipe(CraftNamespacedKey.toMinecraft(this.getKey()), this.getGroup(), width, shape.length, data, CraftItemStack.asNMSCopy(this.getResult())));
     }
 }

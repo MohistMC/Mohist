@@ -32,7 +32,7 @@ class CraftMetaTropicalFishBucket extends CraftMetaItem implements TropicalFishB
     CraftMetaTropicalFishBucket(CompoundNBT tag) {
         super(tag);
 
-        if (tag.hasKeyOfType(VARIANT.NBT, CraftMagicNumbers.NBT.TAG_INT)) {
+        if (tag.contains(VARIANT.NBT, CraftMagicNumbers.NBT.TAG_INT)) {
             this.variant = tag.getInt(VARIANT.NBT);
         }
     }
@@ -51,7 +51,7 @@ class CraftMetaTropicalFishBucket extends CraftMetaItem implements TropicalFishB
         super.applyToItem(tag);
 
         if (hasVariant()) {
-            tag.setInt(VARIANT.NBT, variant);
+            tag.putInt(VARIANT.NBT, variant);
         }
     }
 

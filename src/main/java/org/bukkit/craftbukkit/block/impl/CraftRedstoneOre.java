@@ -3,6 +3,8 @@
  */
 package org.bukkit.craftbukkit.block.impl;
 
+import net.minecraft.state.BooleanProperty;
+
 public final class CraftRedstoneOre extends org.bukkit.craftbukkit.block.data.CraftBlockData implements org.bukkit.block.data.Lightable {
 
     public CraftRedstoneOre() {
@@ -15,7 +17,7 @@ public final class CraftRedstoneOre extends org.bukkit.craftbukkit.block.data.Cr
 
     // org.bukkit.craftbukkit.block.data.CraftLightable
 
-    private static final net.minecraft.state.PropertyBoolean LIT = getBoolean(net.minecraft.block.RedstoneOreBlock.class, "lit");
+    private static final BooleanProperty LIT = getBoolean(net.minecraft.block.RedstoneOreBlock.class, "lit");
 
     @Override
     public boolean isLit() {

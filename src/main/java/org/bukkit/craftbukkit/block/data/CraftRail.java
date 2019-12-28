@@ -1,10 +1,11 @@
 package org.bukkit.craftbukkit.block.data;
 
+import net.minecraft.state.EnumProperty;
 import org.bukkit.block.data.Rail;
 
 public abstract class CraftRail extends CraftBlockData implements Rail {
 
-    private static final net.minecraft.state.PropertyEnum<?> SHAPE = getEnum("shape");
+    private static final EnumProperty<?> SHAPE = getEnum("shape");
 
     @Override
     public Shape getShape() {

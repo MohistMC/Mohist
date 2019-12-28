@@ -1,10 +1,11 @@
 package org.bukkit.craftbukkit.block.data;
 
+import net.minecraft.state.IntegerProperty;
 import org.bukkit.block.data.Ageable;
 
 public abstract class CraftAgeable extends CraftBlockData implements Ageable {
 
-    private static final net.minecraft.state.PropertyInteger AGE = getInteger("age");
+    private static final IntegerProperty AGE = getInteger("age");
 
     @Override
     public int getAge() {

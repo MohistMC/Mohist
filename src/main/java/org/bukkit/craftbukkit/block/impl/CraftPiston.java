@@ -3,6 +3,9 @@
  */
 package org.bukkit.craftbukkit.block.impl;
 
+import net.minecraft.state.BooleanProperty;
+import net.minecraft.state.EnumProperty;
+
 public final class CraftPiston extends org.bukkit.craftbukkit.block.data.CraftBlockData implements org.bukkit.block.data.type.Piston, org.bukkit.block.data.Directional {
 
     public CraftPiston() {
@@ -15,7 +18,7 @@ public final class CraftPiston extends org.bukkit.craftbukkit.block.data.CraftBl
 
     // org.bukkit.craftbukkit.block.data.type.CraftPiston
 
-    private static final net.minecraft.state.PropertyBoolean EXTENDED = getBoolean(net.minecraft.block.PistonBlock.class, "extended");
+    private static final BooleanProperty EXTENDED = getBoolean(net.minecraft.block.PistonBlock.class, "extended");
 
     @Override
     public boolean isExtended() {
@@ -29,7 +32,7 @@ public final class CraftPiston extends org.bukkit.craftbukkit.block.data.CraftBl
 
     // org.bukkit.craftbukkit.block.data.CraftDirectional
 
-    private static final net.minecraft.state.PropertyEnum<?> FACING = getEnum(net.minecraft.block.PistonBlock.class, "facing");
+    private static final EnumProperty<?> FACING = getEnum(net.minecraft.block.PistonBlock.class, "facing");
 
     @Override
     public org.bukkit.block.BlockFace getFacing() {

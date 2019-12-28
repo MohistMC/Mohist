@@ -1,11 +1,12 @@
 package org.bukkit.craftbukkit.block.data.type;
 
+import net.minecraft.state.IntegerProperty;
 import org.bukkit.block.data.type.Cake;
 import org.bukkit.craftbukkit.block.data.CraftBlockData;
 
 public abstract class CraftCake extends CraftBlockData implements Cake {
 
-    private static final net.minecraft.state.PropertyInteger BITES = getInteger("bites");
+    private static final IntegerProperty BITES = getInteger("bites");
 
     @Override
     public int getBites() {

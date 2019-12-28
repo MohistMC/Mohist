@@ -1,11 +1,12 @@
 package org.bukkit.craftbukkit.block.data.type;
 
+import net.minecraft.state.BooleanProperty;
 import org.bukkit.block.data.type.Campfire;
 import org.bukkit.craftbukkit.block.data.CraftBlockData;
 
 public abstract class CraftCampfire extends CraftBlockData implements Campfire {
 
-    private static final net.minecraft.state.PropertyBoolean SIGNAL_FIRE = getBoolean("signal_fire");
+    private static final BooleanProperty SIGNAL_FIRE = getBoolean("signal_fire");
 
     @Override
     public boolean isSignalFire() {

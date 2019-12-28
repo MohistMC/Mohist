@@ -3,6 +3,8 @@
  */
 package org.bukkit.craftbukkit.block.impl;
 
+import net.minecraft.state.BooleanProperty;
+
 public final class CraftHugeMushroom extends org.bukkit.craftbukkit.block.data.CraftBlockData implements org.bukkit.block.data.MultipleFacing {
 
     public CraftHugeMushroom() {
@@ -15,7 +17,7 @@ public final class CraftHugeMushroom extends org.bukkit.craftbukkit.block.data.C
 
     // org.bukkit.craftbukkit.block.data.CraftMultipleFacing
 
-    private static final net.minecraft.state.PropertyBoolean[] FACES = new net.minecraft.state.PropertyBoolean[]{
+    private static final BooleanProperty[] FACES = new BooleanProperty[]{
         getBoolean(net.minecraft.block.HugeMushroomBlock.class, "north", true), getBoolean(net.minecraft.block.HugeMushroomBlock.class, "east", true), getBoolean(net.minecraft.block.HugeMushroomBlock.class, "south", true), getBoolean(net.minecraft.block.HugeMushroomBlock.class, "west", true), getBoolean(net.minecraft.block.HugeMushroomBlock.class, "up", true), getBoolean(net.minecraft.block.HugeMushroomBlock.class, "down", true)
     };
 

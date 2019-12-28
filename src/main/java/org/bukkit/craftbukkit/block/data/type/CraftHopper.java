@@ -1,11 +1,12 @@
 package org.bukkit.craftbukkit.block.data.type;
 
+import net.minecraft.state.BooleanProperty;
 import org.bukkit.block.data.type.Hopper;
 import org.bukkit.craftbukkit.block.data.CraftBlockData;
 
 public abstract class CraftHopper extends CraftBlockData implements Hopper {
 
-    private static final net.minecraft.state.PropertyBoolean ENABLED = getBoolean("enabled");
+    private static final BooleanProperty ENABLED = getBoolean("enabled");
 
     @Override
     public boolean isEnabled() {

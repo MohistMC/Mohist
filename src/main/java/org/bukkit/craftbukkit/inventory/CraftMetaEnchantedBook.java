@@ -34,7 +34,7 @@ class CraftMetaEnchantedBook extends CraftMetaItem implements EnchantmentStorage
     CraftMetaEnchantedBook(CompoundNBT tag) {
         super(tag);
 
-        if (!tag.hasKey(STORED_ENCHANTMENTS.NBT)) {
+        if (!tag.contains(STORED_ENCHANTMENTS.NBT)) {
             return;
         }
 

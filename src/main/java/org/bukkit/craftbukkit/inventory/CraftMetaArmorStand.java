@@ -20,7 +20,7 @@ public class CraftMetaArmorStand extends CraftMetaItem {
     CraftMetaArmorStand(CompoundNBT tag) {
         super(tag);
 
-        if (tag.hasKey(ENTITY_TAG.NBT)) {
+        if (tag.contains(ENTITY_TAG.NBT)) {
             entityTag = tag.getCompound(ENTITY_TAG.NBT);
         }
     }
@@ -33,7 +33,7 @@ public class CraftMetaArmorStand extends CraftMetaItem {
     void deserializeInternal(CompoundNBT tag, Object context) {
         super.deserializeInternal(tag, context);
 
-        if (tag.hasKey(ENTITY_TAG.NBT)) {
+        if (tag.contains(ENTITY_TAG.NBT)) {
             entityTag = tag.getCompound(ENTITY_TAG.NBT);
         }
     }
@@ -50,7 +50,7 @@ public class CraftMetaArmorStand extends CraftMetaItem {
         super.applyToItem(tag);
 
         if (entityTag != null) {
-            tag.set(ENTITY_TAG.NBT, entityTag);
+            tag.put(ENTITY_TAG.NBT, entityTag);
         }
     }
 
@@ -115,7 +115,7 @@ public class CraftMetaArmorStand extends CraftMetaItem {
         CraftMetaArmorStand clone = (CraftMetaArmorStand) super.clone();
 
         if (entityTag != null) {
-            clone.entityTag = entityTag.clone();
+            clone.entityTag = entityTag.copy();
         }
 
         return clone;

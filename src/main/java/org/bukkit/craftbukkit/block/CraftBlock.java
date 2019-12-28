@@ -615,7 +615,7 @@ public class CraftBlock implements Block {
         IBlockData iblockdata = getNMS();
         net.minecraft.item.ItemStack nms = CraftItemStack.asNMSCopy(item);
 
-        // Modelled off EntityHuman#hasBlock
+        // Modelled off PlayerEntity#hasBlock
         if (iblockdata.getMaterial().isAlwaysDestroyable() || nms.canDestroySpecialBlock(iblockdata)) {
             return net.minecraft.block.Block.getDrops(iblockdata, (ServerWorld) world.getMinecraftWorld(), position, world.getTileEntity(position), null, nms)
                     .stream().map(CraftItemStack::asBukkitCopy).collect(Collectors.toList());

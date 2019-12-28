@@ -61,7 +61,7 @@ public class CraftInventoryView extends InventoryView {
         if (slot < 0) {
             return null;
         }
-        return CraftItemStack.asCraftMirror(container.getSlot(slot).getItem());
+        return CraftItemStack.asCraftMirror(container.getSlot(slot).getStack());
     }
 
     @Override

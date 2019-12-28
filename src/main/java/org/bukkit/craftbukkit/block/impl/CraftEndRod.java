@@ -3,6 +3,8 @@
  */
 package org.bukkit.craftbukkit.block.impl;
 
+import net.minecraft.state.EnumProperty;
+
 public final class CraftEndRod extends org.bukkit.craftbukkit.block.data.CraftBlockData implements org.bukkit.block.data.Directional {
 
     public CraftEndRod() {
@@ -15,7 +17,7 @@ public final class CraftEndRod extends org.bukkit.craftbukkit.block.data.CraftBl
 
     // org.bukkit.craftbukkit.block.data.CraftDirectional
 
-    private static final net.minecraft.state.PropertyEnum<?> FACING = getEnum(net.minecraft.block.EndRodBlock.class, "facing");
+    private static final EnumProperty<?> FACING = getEnum(net.minecraft.block.EndRodBlock.class, "facing");
 
     @Override
     public org.bukkit.block.BlockFace getFacing() {

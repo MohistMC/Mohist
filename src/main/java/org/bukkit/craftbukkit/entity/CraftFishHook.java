@@ -29,7 +29,7 @@ public class CraftFishHook extends AbstractProjectile implements FishHook {
     @Override
     public void setShooter(ProjectileSource shooter) {
         if (shooter instanceof CraftHumanEntity) {
-            getHandle().owner = (EntityHuman) ((CraftHumanEntity) shooter).entity;
+            getHandle().owner = (PlayerEntity) ((CraftHumanEntity) shooter).entity;
         }
     }
 

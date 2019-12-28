@@ -3,6 +3,9 @@
  */
 package org.bukkit.craftbukkit.block.impl;
 
+import net.minecraft.state.BooleanProperty;
+import net.minecraft.state.EnumProperty;
+
 public final class CraftCommand extends org.bukkit.craftbukkit.block.data.CraftBlockData implements org.bukkit.block.data.type.CommandBlock, org.bukkit.block.data.Directional {
 
     public CraftCommand() {
@@ -15,7 +18,7 @@ public final class CraftCommand extends org.bukkit.craftbukkit.block.data.CraftB
 
     // org.bukkit.craftbukkit.block.data.type.CraftCommandBlock
 
-    private static final net.minecraft.state.PropertyBoolean CONDITIONAL = getBoolean(net.minecraft.block.CommandBlockBlock.class, "conditional");
+    private static final BooleanProperty CONDITIONAL = getBoolean(net.minecraft.block.CommandBlockBlock.class, "conditional");
 
     @Override
     public boolean isConditional() {
@@ -29,7 +32,7 @@ public final class CraftCommand extends org.bukkit.craftbukkit.block.data.CraftB
 
     // org.bukkit.craftbukkit.block.data.CraftDirectional
 
-    private static final net.minecraft.state.PropertyEnum<?> FACING = getEnum(net.minecraft.block.CommandBlockBlock.class, "facing");
+    private static final EnumProperty<?> FACING = getEnum(net.minecraft.block.CommandBlockBlock.class, "facing");
 
     @Override
     public org.bukkit.block.BlockFace getFacing() {

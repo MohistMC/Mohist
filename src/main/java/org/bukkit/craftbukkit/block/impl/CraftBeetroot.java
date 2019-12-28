@@ -3,6 +3,8 @@
  */
 package org.bukkit.craftbukkit.block.impl;
 
+import net.minecraft.state.IntegerProperty;
+
 public final class CraftBeetroot extends org.bukkit.craftbukkit.block.data.CraftBlockData implements org.bukkit.block.data.Ageable {
 
     public CraftBeetroot() {
@@ -15,7 +17,7 @@ public final class CraftBeetroot extends org.bukkit.craftbukkit.block.data.Craft
 
     // org.bukkit.craftbukkit.block.data.CraftAgeable
 
-    private static final net.minecraft.state.PropertyInteger AGE = getInteger(net.minecraft.block.BeetrootBlock.class, "age");
+    private static final IntegerProperty AGE = getInteger(net.minecraft.block.BeetrootBlock.class, "age");
 
     @Override
     public int getAge() {

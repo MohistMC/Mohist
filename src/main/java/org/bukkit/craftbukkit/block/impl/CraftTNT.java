@@ -3,6 +3,8 @@
  */
 package org.bukkit.craftbukkit.block.impl;
 
+import net.minecraft.state.BooleanProperty;
+
 public final class CraftTNT extends org.bukkit.craftbukkit.block.data.CraftBlockData implements org.bukkit.block.data.type.TNT {
 
     public CraftTNT() {
@@ -15,7 +17,7 @@ public final class CraftTNT extends org.bukkit.craftbukkit.block.data.CraftBlock
 
     // org.bukkit.craftbukkit.block.data.type.CraftTNT
 
-    private static final net.minecraft.state.PropertyBoolean UNSTABLE = getBoolean(net.minecraft.block.TNTBlock.class, "unstable");
+    private static final BooleanProperty UNSTABLE = getBoolean(net.minecraft.block.TNTBlock.class, "unstable");
 
     @Override
     public boolean isUnstable() {

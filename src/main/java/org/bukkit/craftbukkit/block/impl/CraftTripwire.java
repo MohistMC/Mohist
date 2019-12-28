@@ -3,6 +3,8 @@
  */
 package org.bukkit.craftbukkit.block.impl;
 
+import net.minecraft.state.BooleanProperty;
+
 public final class CraftTripwire extends org.bukkit.craftbukkit.block.data.CraftBlockData implements org.bukkit.block.data.type.Tripwire, org.bukkit.block.data.Attachable, org.bukkit.block.data.MultipleFacing, org.bukkit.block.data.Powerable {
 
     public CraftTripwire() {
@@ -15,7 +17,7 @@ public final class CraftTripwire extends org.bukkit.craftbukkit.block.data.Craft
 
     // org.bukkit.craftbukkit.block.data.type.CraftTripwire
 
-    private static final net.minecraft.state.PropertyBoolean DISARMED = getBoolean(net.minecraft.block.TripWireBlock.class, "disarmed");
+    private static final BooleanProperty DISARMED = getBoolean(net.minecraft.block.TripWireBlock.class, "disarmed");
 
     @Override
     public boolean isDisarmed() {
@@ -29,7 +31,7 @@ public final class CraftTripwire extends org.bukkit.craftbukkit.block.data.Craft
 
     // org.bukkit.craftbukkit.block.data.CraftAttachable
 
-    private static final net.minecraft.state.PropertyBoolean ATTACHED = getBoolean(net.minecraft.block.TripWireBlock.class, "attached");
+    private static final BooleanProperty ATTACHED = getBoolean(net.minecraft.block.TripWireBlock.class, "attached");
 
     @Override
     public boolean isAttached() {
@@ -43,7 +45,7 @@ public final class CraftTripwire extends org.bukkit.craftbukkit.block.data.Craft
 
     // org.bukkit.craftbukkit.block.data.CraftMultipleFacing
 
-    private static final net.minecraft.state.PropertyBoolean[] FACES = new net.minecraft.state.PropertyBoolean[]{
+    private static final BooleanProperty[] FACES = new BooleanProperty[]{
         getBoolean(net.minecraft.block.TripWireBlock.class, "north", true), getBoolean(net.minecraft.block.TripWireBlock.class, "east", true), getBoolean(net.minecraft.block.TripWireBlock.class, "south", true), getBoolean(net.minecraft.block.TripWireBlock.class, "west", true), getBoolean(net.minecraft.block.TripWireBlock.class, "up", true), getBoolean(net.minecraft.block.TripWireBlock.class, "down", true)
     };
 
@@ -85,7 +87,7 @@ public final class CraftTripwire extends org.bukkit.craftbukkit.block.data.Craft
 
     // org.bukkit.craftbukkit.block.data.CraftPowerable
 
-    private static final net.minecraft.state.PropertyBoolean POWERED = getBoolean(net.minecraft.block.TripWireBlock.class, "powered");
+    private static final BooleanProperty POWERED = getBoolean(net.minecraft.block.TripWireBlock.class, "powered");
 
     @Override
     public boolean isPowered() {

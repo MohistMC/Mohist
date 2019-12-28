@@ -3,6 +3,8 @@
  */
 package org.bukkit.craftbukkit.block.impl;
 
+import net.minecraft.state.IntegerProperty;
+
 public final class CraftCauldron extends org.bukkit.craftbukkit.block.data.CraftBlockData implements org.bukkit.block.data.Levelled {
 
     public CraftCauldron() {
@@ -15,7 +17,7 @@ public final class CraftCauldron extends org.bukkit.craftbukkit.block.data.Craft
 
     // org.bukkit.craftbukkit.block.data.CraftLevelled
 
-    private static final net.minecraft.state.PropertyInteger LEVEL = getInteger(net.minecraft.block.CauldronBlock.class, "level");
+    private static final IntegerProperty LEVEL = getInteger(net.minecraft.block.CauldronBlock.class, "level");
 
     @Override
     public int getLevel() {

@@ -85,7 +85,7 @@ public class CraftLootTable implements org.bukkit.loot.LootTable {
             }
 
             if (context.getKiller() != null) {
-                EntityHuman nmsKiller = ((CraftHumanEntity) context.getKiller()).getHandle();
+                PlayerEntity nmsKiller = ((CraftHumanEntity) context.getKiller()).getHandle();
                 builder.set(LootContextParameters.KILLER_ENTITY, nmsKiller);
                 // If there is a player killer, damage source should reflect that in case loot tables use that information
                 builder.set(LootContextParameters.DAMAGE_SOURCE, DamageSource.playerAttack(nmsKiller));

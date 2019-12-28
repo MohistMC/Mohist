@@ -3,6 +3,8 @@
  */
 package org.bukkit.craftbukkit.block.impl;
 
+import net.minecraft.state.BooleanProperty;
+
 public final class CraftRedstoneTorch extends org.bukkit.craftbukkit.block.data.CraftBlockData implements org.bukkit.block.data.Lightable {
 
     public CraftRedstoneTorch() {
@@ -15,7 +17,7 @@ public final class CraftRedstoneTorch extends org.bukkit.craftbukkit.block.data.
 
     // org.bukkit.craftbukkit.block.data.CraftLightable
 
-    private static final net.minecraft.state.PropertyBoolean LIT = getBoolean(net.minecraft.block.RedstoneTorchBlock.class, "lit");
+    private static final BooleanProperty LIT = getBoolean(net.minecraft.block.RedstoneTorchBlock.class, "lit");
 
     @Override
     public boolean isLit() {

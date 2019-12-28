@@ -47,22 +47,22 @@ class CraftMetaMap extends CraftMetaItem implements MapMeta {
     CraftMetaMap(CompoundNBT tag) {
         super(tag);
 
-        if (tag.hasKeyOfType(MAP_ID.NBT, CraftMagicNumbers.NBT.TAG_ANY_NUMBER)) {
+        if (tag.contains(MAP_ID.NBT, CraftMagicNumbers.NBT.TAG_ANY_NUMBER)) {
             this.mapId = tag.getInt(MAP_ID.NBT);
         }
 
-        if (tag.hasKey(MAP_SCALING.NBT)) {
+        if (tag.contains(MAP_SCALING.NBT)) {
             this.scaling = tag.getBoolean(MAP_SCALING.NBT) ? SCALING_TRUE : SCALING_FALSE;
         }
 
-        if (tag.hasKey(DISPLAY.NBT)) {
+        if (tag.contains(DISPLAY.NBT)) {
             CompoundNBT display = tag.getCompound(DISPLAY.NBT);
 
-            if (display.hasKey(MAP_LOC_NAME.NBT)) {
+            if (display.contains(MAP_LOC_NAME.NBT)) {
                 locName = display.getString(MAP_LOC_NAME.NBT);
             }
 
-            if (display.hasKey(MAP_COLOR.NBT)) {
+            if (display.contains(MAP_COLOR.NBT)) {
                 try {
                     color = Color.fromRGB(display.getInt(MAP_COLOR.NBT));
                 } catch (IllegalArgumentException ex) {
@@ -101,19 +101,19 @@ class CraftMetaMap extends CraftMetaItem implements MapMeta {
         super.applyToItem(tag);
 
         if (hasMapId()){
-            tag.setInt(MAP_ID.NBT, getMapId());
+            tag.putInt(MAP_ID.NBT, getMapId());
         }
 
         if (hasScaling()) {
-            tag.setBoolean(MAP_SCALING.NBT, isScaling());
+            tag.putBoolean(MAP_SCALING.NBT, isScaling());
         }
 
         if (hasLocationName()) {
-            setDisplayTag(tag, MAP_LOC_NAME.NBT, StringNBT.a(getLocationName()));
+            setDisplayTag(tag, MAP_LOC_NAME.NBT, StringNBT.func_229705_a_(getLocationName()));
         }
 
         if (hasColor()) {
-            setDisplayTag(tag, MAP_COLOR.NBT, IntNBT.a(color.asRGB()));
+            setDisplayTag(tag, MAP_COLOR.NBT, IntNBT.func_229692_a_(color.asRGB()));
         }
     }
 

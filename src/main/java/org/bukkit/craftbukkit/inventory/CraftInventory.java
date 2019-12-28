@@ -387,7 +387,7 @@ public class CraftInventory implements Inventory {
     }
 
     private int getMaxItemStack() {
-        return getInventory().getMaxStackSize();
+        return getInventory().getInventoryStackLimit();
     }
 
     @Override
@@ -445,8 +445,8 @@ public class CraftInventory implements Inventory {
     @Override
     public InventoryType getType() {
         // Thanks to Droppers extending Dispensers, Blast Furnaces & Smokers extending Furnace, order is important.
-        if (inventory instanceof InventoryCrafting) {
-            return inventory.getSize() >= 9 ? InventoryType.WORKBENCH : InventoryType.CRAFTING;
+        if (inventory instanceof CraftingInventory) {
+            return inventory.getSizeInventory() >= 9 ? InventoryType.WORKBENCH : InventoryType.CRAFTING;
         } else if (inventory instanceof PlayerInventory) {
             return InventoryType.PLAYER;
         } else if (inventory instanceof DropperTileEntity) {
@@ -457,15 +457,15 @@ public class CraftInventory implements Inventory {
             return InventoryType.BLAST_FURNACE;
         } else if (inventory instanceof SmokerTileEntity) {
             return InventoryType.SMOKER;
-        } else if (inventory instanceof TileEntityFurnace) {
+        } else if (inventory instanceof AbstractFurnaceTileEntity) {
             return InventoryType.FURNACE;
         } else if (this instanceof CraftInventoryEnchanting) {
            return InventoryType.ENCHANTING;
-        } else if (inventory instanceof TileEntityBrewingStand) {
+        } else if (inventory instanceof BrewingStandTileEntity) {
             return InventoryType.BREWING;
         } else if (inventory instanceof CraftInventoryCustom.MinecraftInventory) {
             return ((CraftInventoryCustom.MinecraftInventory) inventory).getType();
-        } else if (inventory instanceof InventoryEnderChest) {
+        } else if (inventory instanceof EnderChestInventory) {
             return InventoryType.ENDER_CHEST;
         } else if (inventory instanceof MerchantInventory) {
             return InventoryType.MERCHANT;
@@ -475,11 +475,11 @@ public class CraftInventory implements Inventory {
            return InventoryType.ANVIL;
         } else if (inventory instanceof IHopper) {
             return InventoryType.HOPPER;
-        } else if (inventory instanceof TileShulkerEntityBox) {
+        } else if (inventory instanceof ShulkerBoxTileEntity) {
             return InventoryType.SHULKER_BOX;
         } else if (inventory instanceof BarrelTileEntity) {
             return InventoryType.BARREL;
-        } else if (inventory instanceof TileEntityLectern.LecternInventory) {
+        } else if (inventory instanceof LecternTileEntity.LecternInventory) {
             return InventoryType.LECTERN;
         } else if (this instanceof CraftInventoryLoom) {
             return InventoryType.LOOM;

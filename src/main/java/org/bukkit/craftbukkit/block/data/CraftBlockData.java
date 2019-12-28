@@ -486,7 +486,7 @@ public class CraftBlockData implements BlockData {
         register(net.minecraft.block.SmokerBlock.class, org.bukkit.craftbukkit.block.impl.CraftSmoker::new);
         register(net.minecraft.block.BlockSnow.class, org.bukkit.craftbukkit.block.impl.CraftSnow::new);
         register(net.minecraft.block.FarmlandBlock.class, org.bukkit.craftbukkit.block.impl.CraftSoil::new);
-        register(net.minecraft.block.StainedGlassBlockPane.class, org.bukkit.craftbukkit.block.impl.CraftStainedGlassPane::new);
+        register(net.minecraft.block.StainedGlassPaneBlock.class, org.bukkit.craftbukkit.block.impl.CraftStainedGlassPane::new);
         register(net.minecraft.block.StairsBlock.class, org.bukkit.craftbukkit.block.impl.CraftStairs::new);
         register(net.minecraft.block.StemBlock.class, org.bukkit.craftbukkit.block.impl.CraftStem::new);
         register(net.minecraft.block.AttachedStemBlock.class, org.bukkit.craftbukkit.block.impl.CraftStemAttached::new);
@@ -499,7 +499,7 @@ public class CraftBlockData implements BlockData {
         register(net.minecraft.block.FourWayBlockPlant.class, org.bukkit.craftbukkit.block.impl.CraftTallPlant::new);
         register(net.minecraft.block.FourWayBlockPlantFlower.class, org.bukkit.craftbukkit.block.impl.CraftTallPlantFlower::new);
         register(net.minecraft.block.TallSeaGrassBlock.class, org.bukkit.craftbukkit.block.impl.CraftTallSeaGrass::new);
-        register(net.minecraft.block.TorchBlockWall.class, org.bukkit.craftbukkit.block.impl.CraftTorchWall::new);
+        register(net.minecraft.block.WallTorchBlock.class, org.bukkit.craftbukkit.block.impl.CraftTorchWall::new);
         register(net.minecraft.block.TrapDoorBlock.class, org.bukkit.craftbukkit.block.impl.CraftTrapdoor::new);
         register(net.minecraft.block.TripWireBlock.class, org.bukkit.craftbukkit.block.impl.CraftTripwire::new);
         register(net.minecraft.block.TripWireHookBlock.class, org.bukkit.craftbukkit.block.impl.CraftTripwireHook::new);

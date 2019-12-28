@@ -3,6 +3,8 @@
  */
 package org.bukkit.craftbukkit.block.impl;
 
+import net.minecraft.state.EnumProperty;
+
 public final class CraftTallPlantFlower extends org.bukkit.craftbukkit.block.data.CraftBlockData implements org.bukkit.block.data.Bisected {
 
     public CraftTallPlantFlower() {
@@ -15,7 +17,7 @@ public final class CraftTallPlantFlower extends org.bukkit.craftbukkit.block.dat
 
     // org.bukkit.craftbukkit.block.data.CraftBisected
 
-    private static final net.minecraft.state.PropertyEnum<?> HALF = getEnum(net.minecraft.block.FourWayBushBlockFlower.class, "half");
+    private static final EnumProperty<?> HALF = getEnum(net.minecraft.block.TallFlowerBlock.class, "half");
 
     @Override
     public Half getHalf() {

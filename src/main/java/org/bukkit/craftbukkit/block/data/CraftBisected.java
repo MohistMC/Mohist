@@ -1,10 +1,11 @@
 package org.bukkit.craftbukkit.block.data;
 
+import net.minecraft.state.EnumProperty;
 import org.bukkit.block.data.Bisected;
 
 public class CraftBisected extends CraftBlockData implements Bisected {
 
-    private static final net.minecraft.state.PropertyEnum<?> HALF = getEnum("half");
+    private static final EnumProperty<?> HALF = getEnum("half");
 
     @Override
     public Half getHalf() {

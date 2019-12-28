@@ -84,9 +84,9 @@ public class CraftMerchantRecipe extends MerchantRecipe {
     public net.minecraft.item.MerchantOffer toMinecraft() {
         List<ItemStack> ingredients = getIngredients();
         Preconditions.checkState(!ingredients.isEmpty(), "No offered ingredients");
-        handle.buyingItem1 = CraftItemStack.asNMSCopy(ingredients.get(0));
+        handle.buyingStackFirst = CraftItemStack.asNMSCopy(ingredients.get(0));
         if (ingredients.size() > 1) {
-            handle.buyingItem2 = CraftItemStack.asNMSCopy(ingredients.get(1));
+            handle.buyingStackSecond = CraftItemStack.asNMSCopy(ingredients.get(1));
         }
         return handle;
     }

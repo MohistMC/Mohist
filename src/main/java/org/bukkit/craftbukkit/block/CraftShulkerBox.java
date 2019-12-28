@@ -10,13 +10,13 @@ import org.bukkit.craftbukkit.inventory.CraftInventory;
 import org.bukkit.craftbukkit.util.CraftMagicNumbers;
 import org.bukkit.inventory.Inventory;
 
-public class CraftShulkerBox extends CraftLootable<TileShulkerEntityBox> implements ShulkerBox {
+public class CraftShulkerBox extends CraftLootable<ShulkerBoxTileEntity> implements ShulkerBox {
 
     public CraftShulkerBox(final Block block) {
-        super(block, TileShulkerEntityBox.class);
+        super(block, ShulkerBoxTileEntity.class);
     }
 
-    public CraftShulkerBox(final Material material, final TileShulkerEntityBox te) {
+    public CraftShulkerBox(final Material material, final ShulkerBoxTileEntity te) {
         super(material, te);
     }
 

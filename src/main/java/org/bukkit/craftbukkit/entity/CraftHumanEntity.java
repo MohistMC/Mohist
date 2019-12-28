@@ -85,7 +85,7 @@ public class CraftHumanEntity extends CraftLivingEntity implements HumanEntity {
     private boolean op;
     private GameMode mode;
 
-    public CraftHumanEntity(final CraftServer server, final EntityHuman entity) {
+    public CraftHumanEntity(final CraftServer server, final PlayerEntity entity) {
         super(server, entity);
         mode = server.getDefaultGameMode();
         this.inventory = new CraftInventoryPlayer(entity.inventory);
@@ -147,7 +147,7 @@ public class CraftHumanEntity extends CraftLivingEntity implements HumanEntity {
         BlockPos bed = getHandle().getBed();
 
         if (world != null && bed != null) {
-            Optional<Vec3D> spawnLoc = EntityHuman.getBed(((CraftWorld) world).getHandle(), bed, getHandle().isRespawnForced());
+            Optional<Vec3D> spawnLoc = PlayerEntity.getBed(((CraftWorld) world).getHandle(), bed, getHandle().isRespawnForced());
             if (spawnLoc.isPresent()) {
                 Vec3D vec = spawnLoc.get();
                 return new Location(world, vec.x, vec.y, vec.z);
@@ -295,11 +295,11 @@ public class CraftHumanEntity extends CraftLivingEntity implements HumanEntity {
     }
 
     @Override
-    public EntityHuman getHandle() {
-        return (EntityHuman) entity;
+    public PlayerEntity getHandle() {
+        return (PlayerEntity) entity;
     }
 
-    public void setHandle(final EntityHuman entity) {
+    public void setHandle(final PlayerEntity entity) {
         super.setHandle(entity);
         this.inventory = new CraftInventoryPlayer(entity.inventory);
     }
@@ -389,8 +389,8 @@ public class CraftHumanEntity extends CraftLivingEntity implements HumanEntity {
                 }
                 break;
             case FURNACE:
-                if (iinventory instanceof TileEntityFurnaceFurnace) {
-                    getHandle().openContainer((TileEntityFurnaceFurnace) iinventory);
+                if (iinventory instanceof MobSpawnerTileEntity) {
+                    getHandle().openContainer((MobSpawnerTileEntity) iinventory);
                 } else {
                     openCustomInventory(inventory, player, ContainerType.FURNACE);
                 }
@@ -399,8 +399,8 @@ public class CraftHumanEntity extends CraftLivingEntity implements HumanEntity {
                 openCustomInventory(inventory, player, ContainerType.CRAFTING);
                 break;
             case BREWING:
-                if (iinventory instanceof TileEntityBrewingStand) {
-                    getHandle().openContainer((TileEntityBrewingStand) iinventory);
+                if (iinventory instanceof BrewingStandTileEntity) {
+                    getHandle().openContainer((BrewingStandTileEntity) iinventory);
                 } else {
                     openCustomInventory(inventory, player, ContainerType.BREWING_STAND);
                 }
@@ -418,8 +418,8 @@ public class CraftHumanEntity extends CraftLivingEntity implements HumanEntity {
                 }
                 break;
             case BEACON:
-                if (iinventory instanceof TileEntityBeacon) {
-                    getHandle().openContainer((TileEntityBeacon) iinventory);
+                if (iinventory instanceof BeaconTileEntity) {
+                    getHandle().openContainer((BeaconTileEntity) iinventory);
                 } else {
                     openCustomInventory(inventory, player, ContainerType.BEACON);
                 }

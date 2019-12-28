@@ -1,12 +1,14 @@
 package org.bukkit.craftbukkit.block.data.type;
 
+import net.minecraft.state.BooleanProperty;
+import net.minecraft.state.IntegerProperty;
 import org.bukkit.block.data.type.Repeater;
 import org.bukkit.craftbukkit.block.data.CraftBlockData;
 
 public abstract class CraftRepeater extends CraftBlockData implements Repeater {
 
-    private static final net.minecraft.state.PropertyInteger DELAY = getInteger("delay");
-    private static final net.minecraft.state.PropertyBoolean LOCKED = getBoolean("locked");
+    private static final IntegerProperty DELAY = getInteger("delay");
+    private static final BooleanProperty LOCKED = getBoolean("locked");
 
     @Override
     public int getDelay() {

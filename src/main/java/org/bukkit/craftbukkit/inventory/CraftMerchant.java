@@ -64,7 +64,7 @@ public class CraftMerchant implements Merchant {
 
     @Override
     public HumanEntity getTrader() {
-        PlayerEntity eh = merchant.getTrader();
+        PlayerEntity eh = merchant.getCustomer();
         return eh == null ? null : eh.getBukkitEntity();
     }
 
