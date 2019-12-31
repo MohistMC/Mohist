@@ -9,7 +9,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
-import java.util.Objects;
 import java.util.Set;
 import org.bukkit.Bukkit;
 import org.bukkit.event.server.ServiceRegisterEvent;
@@ -75,7 +74,7 @@ public class SimpleServicesManager implements ServicesManager {
                             RegisteredServiceProvider<?> registered = it2.next();
 
                             Plugin oPlugin = registered.getPlugin();
-                            if (Objects.equals(oPlugin, plugin)) {
+                            if (oPlugin != null ? oPlugin.equals(plugin) : plugin == null) {
                                 it2.remove();
                                 unregisteredEvents.add(new ServiceUnregisterEvent(registered));
                             }

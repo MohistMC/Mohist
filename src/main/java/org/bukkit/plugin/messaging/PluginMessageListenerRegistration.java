@@ -1,6 +1,5 @@
 package org.bukkit.plugin.messaging;
 
-import java.util.Objects;
 import org.bukkit.plugin.Plugin;
 
 /**
@@ -78,16 +77,16 @@ public final class PluginMessageListenerRegistration {
             return false;
         }
         final PluginMessageListenerRegistration other = (PluginMessageListenerRegistration) obj;
-        if (!Objects.equals(this.messenger, other.messenger)) {
+        if (this.messenger != other.messenger && (this.messenger == null || !this.messenger.equals(other.messenger))) {
             return false;
         }
-        if (!Objects.equals(this.plugin, other.plugin)) {
+        if (this.plugin != other.plugin && (this.plugin == null || !this.plugin.equals(other.plugin))) {
             return false;
         }
-        if (!Objects.equals(this.channel, other.channel)) {
+        if ((this.channel == null) ? (other.channel != null) : !this.channel.equals(other.channel)) {
             return false;
         }
-        if (!Objects.equals(this.listener, other.listener)) {
+        if (this.listener != other.listener && (this.listener == null || !this.listener.equals(other.listener))) {
             return false;
         }
         return true;

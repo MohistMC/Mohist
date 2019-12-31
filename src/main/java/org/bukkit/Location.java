@@ -2,7 +2,6 @@ package org.bukkit;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 import org.bukkit.block.Block;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.entity.Entity;
@@ -611,7 +610,7 @@ public class Location implements Cloneable, ConfigurationSerializable {
         }
         final Location other = (Location) obj;
 
-        if (!Objects.equals(this.world, other.world)) {
+        if (this.world != other.world && (this.world == null || !this.world.equals(other.world))) {
             return false;
         }
         if (Double.doubleToLongBits(this.x) != Double.doubleToLongBits(other.x)) {

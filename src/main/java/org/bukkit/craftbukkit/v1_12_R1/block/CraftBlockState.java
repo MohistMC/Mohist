@@ -1,7 +1,6 @@
 package org.bukkit.craftbukkit.v1_12_R1.block;
 
 import java.util.List;
-import java.util.Objects;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
@@ -262,7 +261,7 @@ public class CraftBlockState implements BlockState {
             return false;
         }
         final CraftBlockState other = (CraftBlockState) obj;
-        if (!Objects.equals(this.world, other.world)) {
+        if (this.world != other.world && (this.world == null || !this.world.equals(other.world))) {
             return false;
         }
         if (this.x != other.x) {
