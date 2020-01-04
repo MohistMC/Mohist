@@ -1,0 +1,11 @@
+--- ../src-base/minecraft/net/minecraftforge/registries/NamespacedWrapper.java
++++ ../src-work/minecraft/net/minecraftforge/registries/NamespacedWrapper.java
+@@ -35,7 +35,7 @@
+ import net.minecraft.util.registry.RegistryNamespaced;
+ import net.minecraftforge.fml.common.FMLLog;
+ 
+-class NamespacedWrapper<V extends IForgeRegistryEntry<V>> extends RegistryNamespaced<ResourceLocation, V> implements ILockableRegistry
++public class NamespacedWrapper<V extends IForgeRegistryEntry<V>> extends RegistryNamespaced<ResourceLocation, V> implements ILockableRegistry
+ {
+     private boolean locked = false;
+     private ForgeRegistry<V> delegate;
