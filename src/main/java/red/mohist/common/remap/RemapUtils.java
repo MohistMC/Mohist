@@ -13,7 +13,6 @@ import java.util.List;
 import java.util.Map;
 import net.md_5.specialsource.transformer.MavenShade;
 import net.minecraftforge.fml.common.FMLCommonHandler;
-import org.bukkit.plugin.PluginDescriptionFile;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.Type;
@@ -103,7 +102,7 @@ public class RemapUtils {
 
     private static final Object remapLock = new Object();
 
-    public static byte[] remapFindClass(PluginDescriptionFile description, String name, byte[] bs) throws IOException {
+    public static byte[] remapFindClass(String name, byte[] bs) throws IOException {
         synchronized (remapLock) {
             if (MohistConfig.instance.printRemapPluginClass.getValue()) {
                 System.out.println("========= before remap ========= ");
@@ -112,26 +111,19 @@ public class RemapUtils {
             ClassNode classNode = new ClassNode();
             new ClassReader(bs).accept(classNode, ClassReader.EXPAND_FRAMES);
             for (Remapper remapper : remappers) {
-                if (description != null && remapper instanceof NMSVersionRemapper && !MohistConfig.instance.multiVersionRemapPlugins.contains(description.getName())) {
-                    continue;
+
+                ClassNode container = new ClassNode();
+                ClassRemapper classRemapper;
+                if (remapper instanceof ClassRemapperSupplier) {
+                    classRemapper = ((ClassRemapperSupplier) remapper).getClassRemapper(container);
+                } else {
+                    classRemapper = new ClassRemapper(container, remapper);
                 }
-                try {
-                    RemapContext.push(new RemapContext().setClassNode(classNode).setDescription(description));
-                    ClassNode container = new ClassNode();
-                    ClassRemapper classRemapper;
-                    if (remapper instanceof ClassRemapperSupplier) {
-                        classRemapper = ((ClassRemapperSupplier) remapper).getClassRemapper(container);
-                    } else {
-                        classRemapper = new ClassRemapper(container, remapper);
-                    }
-                    classNode.accept(classRemapper);
-                    classNode = container;
-                    if (MohistConfig.instance.printRemapPluginClass.getValue()) {
-                        System.out.println("========= after " + remapper.getClass().getSimpleName() + " remap ========= ");
-                        ASMUtils.printClass(classNode);
-                    }
-                } finally {
-                    RemapContext.pop();
+                classNode.accept(classRemapper);
+                classNode = container;
+                if (MohistConfig.instance.printRemapPluginClass.getValue()) {
+                    System.out.println("========= after " + remapper.getClass().getSimpleName() + " remap ========= ");
+                    ASMUtils.printClass(classNode);
                 }
             }
             ClassWriter writer = new ClassWriter(ClassWriter.COMPUTE_MAXS);

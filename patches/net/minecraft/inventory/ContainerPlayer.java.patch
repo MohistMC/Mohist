@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/inventory/ContainerPlayer.java
 +++ ../src-work/minecraft/net/minecraft/inventory/ContainerPlayer.java
-@@ -9,19 +9,30 @@
+@@ -9,6 +9,8 @@
  import net.minecraft.item.ItemStack;
  import net.minecraftforge.fml.relauncher.Side;
  import net.minecraftforge.fml.relauncher.SideOnly;
@@ -9,11 +9,7 @@
  
  public class ContainerPlayer extends Container
  {
-     private static final EntityEquipmentSlot[] VALID_EQUIPMENT_SLOTS = new EntityEquipmentSlot[] {EntityEquipmentSlot.HEAD, EntityEquipmentSlot.CHEST, EntityEquipmentSlot.LEGS, EntityEquipmentSlot.FEET};
--    public InventoryCrafting craftMatrix = new InventoryCrafting(this, 2, 2);
--    public InventoryCraftResult craftResult = new InventoryCraftResult();
-+    public InventoryCrafting craftMatrix; // CraftBukkit - move initialization into constructor
-+    public InventoryCraftResult craftResult; // CraftBukkit - move initialization into constructor
+@@ -18,10 +20,19 @@
      public boolean isLocalWorld;
      private final EntityPlayer player;
  
@@ -33,11 +29,12 @@
          this.addSlotToContainer(new SlotCrafting(playerInventory.player, this.craftMatrix, this.craftResult, 0, 154, 28));
  
          for (int i = 0; i < 2; ++i)
-@@ -202,4 +213,15 @@
+@@ -202,4 +213,17 @@
      {
          return slotIn.inventory != this.craftResult && super.canMergeSlot(stack, slotIn);
      }
 +
++    // CraftBukkit start
 +    @Override
 +    public CraftInventoryView getBukkitView() {
 +        if (bukkitEntity != null) {
@@ -48,4 +45,5 @@
 +        bukkitEntity = new CraftInventoryView(this.playerInventory.player.getBukkitEntity(), inventory, this);
 +        return bukkitEntity;
 +    }
++    // CraftBukkit end
  }

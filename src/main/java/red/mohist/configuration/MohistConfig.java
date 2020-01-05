@@ -33,7 +33,6 @@ public class MohistConfig extends ConfigBase{
     public final BoolSetting reflectRemap = new BoolSetting(this, "remap.reflectRemap", true, "Compatible reflection plugin");
 
     public final BoolSetting multiVersionRemap = new BoolSetting(this, "remap.multiVersionRemap", false, "Compatible with multiple versions of nms");
-    public final StringArraySetting multiVersionRemapPlugins = new StringArraySetting(this, "remap.multiVersionRemapPlugins", "", "Need a list of compatible plugins");
 
     public final IntSetting entityCollideFrequency = new IntSetting(this, "perfomance.entityCollideFrequency",2,"Entity Collide Frequency");
     public final IntSetting maxEntityCollisionsPerTick = new IntSetting(this, "perfomance.maxEntityCollisionsPerTick",8,"Max Entity Collisions PerTick");

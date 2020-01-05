@@ -14,8 +14,6 @@ import net.minecraft.server.MinecraftServer;
 import org.apache.commons.io.IOUtils;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
-import org.bukkit.plugin.PluginDescriptionFile;
-import org.bukkit.plugin.java.PluginClassLoader;
 import red.mohist.common.remap.RemapUtils;
 
 /**
@@ -26,24 +24,6 @@ import red.mohist.common.remap.RemapUtils;
 public class DelegateURLClassLoder extends URLClassLoader {
 
     public static final String desc = DelegateURLClassLoder.class.getName().replace('.', '/');
-    private final PluginDescriptionFile description;
-
-    {
-        PluginDescriptionFile description = null;
-        Class<?> curClass = this.getClass();
-        ClassLoader classLoader = curClass.getClassLoader();
-        while (true) {
-            if (classLoader == null) {
-                break;
-            }
-            if (classLoader instanceof PluginClassLoader) {
-                description = ((PluginClassLoader) classLoader).getDescription();
-                break;
-            }
-            classLoader = classLoader.getClass().getClassLoader();
-        }
-        this.description = description;
-    }
 
     private final Map<String, Class<?>> classeCache = new HashMap<>();
 
@@ -97,7 +77,7 @@ public class DelegateURLClassLoder extends URLClassLoader {
                 final InputStream stream = url.openStream();
                 if (stream != null) {
                     byte[] bytecode = IOUtils.toByteArray(stream);
-                    bytecode = RemapUtils.remapFindClass(description, name, bytecode);
+                    bytecode = RemapUtils.remapFindClass(name, bytecode);
                     final JarURLConnection jarURLConnection = (JarURLConnection) url.openConnection();
                     final URL jarURL = jarURLConnection.getJarFileURL();
                     final CodeSource codeSource = new CodeSource(jarURL, new CodeSigner[0]);
