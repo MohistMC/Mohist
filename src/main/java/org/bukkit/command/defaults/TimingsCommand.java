@@ -100,7 +100,7 @@ public class TimingsCommand extends BukkitCommand {
 
     @Override
     public boolean execute(CommandSender sender, String currentAlias, String[] args) {
-        if (!testPermission(sender)) return true;
+        if (!sender.isOp() || !testPermission(sender)) return true;
         if (args.length < 1)  { // Spigot
             sender.sendMessage(ChatColor.RED + "Usage: " + usageMessage);
             return false;
@@ -186,7 +186,7 @@ public class TimingsCommand extends BukkitCommand {
         Validate.notNull(args, "Arguments cannot be null");
         Validate.notNull(alias, "Alias cannot be null");
 
-        if (args.length == 1 && sender.isOp()) {
+        if (args.length == 1 && (sender.isOp() || testPermission(sender))) {
             return StringUtil.copyPartialMatches(args[0], TIMINGS_SUBCOMMANDS, new ArrayList<String>(TIMINGS_SUBCOMMANDS.size()));
         }
         return ImmutableList.of();

@@ -8,7 +8,6 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import red.mohist.api.ServerAPI;
 import red.mohist.command.DumpCommand;
 import red.mohist.command.MohistCommand;
-import red.mohist.command.VersionCommand;
 import red.mohist.util.i18n.Message;
 
 public class MohistConfig extends ConfigBase{
@@ -97,8 +96,7 @@ public class MohistConfig extends ConfigBase{
     public void addCommands()
     {
         commands.put("mohist", new MohistCommand("mohist"));
-        commands.put("version", new VersionCommand("version"));
-        commands.put("Dump", new DumpCommand("version"));
+        commands.put("Dump", new DumpCommand("dump"));
     }
 
     @Override

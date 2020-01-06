@@ -1,9 +1,6 @@
-package red.mohist.command;
+package org.bukkit.command.defaults;
 
 import com.google.common.collect.ImmutableList;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 import net.minecraftforge.common.ForgeVersion;
 import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
@@ -15,6 +12,10 @@ import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.util.StringUtil;
 import red.mohist.util.i18n.Message;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 public class VersionCommand extends Command {
     public VersionCommand(String name) {
         super(name);
@@ -22,11 +23,12 @@ public class VersionCommand extends Command {
         this.description = "Gets the version of this server including any plugins in use";
         this.usageMessage = "/version [plugin name]";
         this.setAliases(Collections.singletonList("ver"));
+        this.setPermission("bukkit.command.version");
     }
 
     @Override
     public boolean execute(CommandSender sender, String currentAlias, String[] args) {
-        if (!sender.isOp()) {
+        if (!sender.isOp() || !testPermission(sender)) {
             sender.sendMessage(Message.getString("command.nopermission"));
             return true;
         }

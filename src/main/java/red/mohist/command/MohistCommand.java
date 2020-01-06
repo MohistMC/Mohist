@@ -20,6 +20,7 @@ public class MohistCommand extends Command {
         super(name);
         this.description = "Mohist related commands";
         this.usageMessage = "/mohist [mods|playermods|printthreadcost|lang|item]";
+        this.setPermission("mohist.command.mohist");
     }
 
     private List<String> params = Arrays.asList("mods", "playermods", "printthreadcost", "lang", "item");
@@ -27,7 +28,7 @@ public class MohistCommand extends Command {
     @Override
     public List<String> tabComplete(CommandSender sender, String alias, String[] args) throws IllegalArgumentException {
         List<String> list = new ArrayList<>();
-        if (args.length == 1 && sender.isOp()) {
+        if (args.length == 1 && (sender.isOp() || testPermission(sender))) {
             for (String param : params) {
                 if (param.toLowerCase().startsWith(args[0].toLowerCase())) {
                     list.add(param);
@@ -40,7 +41,7 @@ public class MohistCommand extends Command {
 
     @Override
     public boolean execute(CommandSender sender, String commandLabel, String[] args) {
-        if (!sender.isOp()) {
+        if (!sender.isOp() || !testPermission(sender)) {
             sender.sendMessage(Message.getString("command.nopermission"));
             return true;
         }

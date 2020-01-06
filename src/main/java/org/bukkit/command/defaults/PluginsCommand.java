@@ -20,6 +20,7 @@ public class PluginsCommand extends BukkitCommand {
         this.description = "Gets a list of plugins running on the server";
         this.usageMessage = "/plugins [load|unload|reload] [name]";
         this.setAliases(Collections.singletonList("pl"));
+        this.setPermission("bukkit.command.plugins");
     }
 
     private List<String> params = Arrays.asList("load", "unload", "reload");
@@ -36,7 +37,7 @@ public class PluginsCommand extends BukkitCommand {
 
     @Override
     public boolean execute(CommandSender sender, String currentAlias, String[] args) {
-        if (!sender.isOp()) {
+        if (!sender.isOp() || !testPermission(sender)) {
             sender.sendMessage(Message.getString("command.nopermission"));
             return true;
         }
@@ -66,7 +67,7 @@ public class PluginsCommand extends BukkitCommand {
     @Override
     public List<String> tabComplete(CommandSender sender, String alias, String[] args) throws IllegalArgumentException {
         List<String> tabs = new ArrayList<>();
-        if (args.length == 2 && sender.isOp()) {
+        if (args.length == 2 && (sender.isOp() || testPermission(sender))) {
             if (checkparam(args[0])) {
                 for (Plugin pl : Bukkit.getServer().getPluginManager().getPlugins()) {
                     String plname = pl.getDescription().getName();

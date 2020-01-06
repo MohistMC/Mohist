@@ -29,6 +29,7 @@ public class HelpCommand extends BukkitCommand {
         this.description = "Shows the help menu";
         this.usageMessage = "/help <pageNumber>\n/help <topic>\n/help <topic> <pageNumber>";
         this.setAliases(Collections.singletonList("?"));
+        this.setPermission("bukkit.command.help");
     }
 
     /**
@@ -96,7 +97,7 @@ public class HelpCommand extends BukkitCommand {
 
     @Override
     public boolean execute(CommandSender sender, String currentAlias, String[] args) {
-        if (!sender.isOp()) {
+        if (!sender.isOp() || !testPermission(sender)) {
             sender.sendMessage(Message.getString("command.nopermission"));
             return true;
         }
@@ -181,7 +182,7 @@ public class HelpCommand extends BukkitCommand {
         Validate.notNull(args, "Arguments cannot be null");
         Validate.notNull(alias, "Alias cannot be null");
 
-        if (args.length == 1 && sender.isOp()) {
+        if (args.length == 1 && (sender.isOp() || testPermission(sender))) {
             List<String> matchedTopics = new ArrayList<>();
             String searchString = args[0];
             for (HelpTopic topic : Bukkit.getServer().getHelpMap().getHelpTopics()) {

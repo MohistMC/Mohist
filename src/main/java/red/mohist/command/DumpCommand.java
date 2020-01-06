@@ -26,6 +26,7 @@ public class DumpCommand extends Command {
         super(name);
         this.description = "Universal Dump, which will print the information you need locally!";
         this.usageMessage = "/dump [potions|enchants|cbcmds|modscmds|entitytypes|biomes]";
+        this.setPermission("mohist.command.dump");
     }
 
     private List<String> params = Arrays.asList("potions", "enchants", "cbcmds", "modscmds", "entitytypes", "biomes");
@@ -33,7 +34,7 @@ public class DumpCommand extends Command {
     @Override
     public List<String> tabComplete(CommandSender sender, String alias, String[] args) throws IllegalArgumentException {
         List<String> list = new ArrayList<>();
-        if (args.length == 1 && sender.isOp()) {
+        if (args.length == 1 && (sender.isOp() || testPermission(sender))) {
             for (String param : params) {
                 if (param.toLowerCase().startsWith(args[0].toLowerCase())) {
                     list.add(param);
@@ -46,7 +47,7 @@ public class DumpCommand extends Command {
 
     @Override
     public boolean execute(CommandSender sender, String commandLabel, String[] args) {
-        if (!sender.isOp()) {
+        if (!sender.isOp() || !testPermission(sender)) {
             sender.sendMessage(Message.getString("command.nopermission"));
             return true;
         }
