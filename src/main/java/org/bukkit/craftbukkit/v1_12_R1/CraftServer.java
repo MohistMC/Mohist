@@ -52,16 +52,13 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.dedicated.DedicatedPlayerList;
 import net.minecraft.server.dedicated.DedicatedServer;
 import net.minecraft.server.dedicated.PendingCommand;
+import net.minecraft.server.dedicated.PropertyManager;
 import net.minecraft.server.management.PlayerList;
 import net.minecraft.server.management.UserListEntry;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.registry.RegistryNamespaced;
 import net.minecraft.util.text.translation.I18n;
-import net.minecraft.world.GameType;
-import net.minecraft.world.MinecraftException;
-import net.minecraft.world.WorldServer;
-import net.minecraft.world.WorldSettings;
-import net.minecraft.world.WorldType;
+import net.minecraft.world.*;
 import net.minecraft.world.chunk.storage.RegionFile;
 import net.minecraft.world.chunk.storage.RegionFileCache;
 import net.minecraft.world.storage.MapData;
@@ -160,6 +157,7 @@ import org.bukkit.plugin.java.JavaPluginLoader;
 import org.bukkit.plugin.messaging.Messenger;
 import org.bukkit.plugin.messaging.StandardMessenger;
 import org.bukkit.potion.Potion;
+import org.bukkit.scheduler.BukkitWorker;
 import org.bukkit.util.StringUtil;
 import org.bukkit.util.permissions.DefaultPermissions;
 import org.yaml.snakeyaml.Yaml;
@@ -768,7 +766,97 @@ public final class CraftServer implements Server {
 
     @Override
     public void reload() {
-        // Mohist - disable reload
+        reloadCount++;
+        configuration = YamlConfiguration.loadConfiguration(getConfigFile());
+        commandsConfiguration = YamlConfiguration.loadConfiguration(getCommandsConfigFile());
+        PropertyManager config = new PropertyManager(console.options);
+
+        ((DedicatedServer) console).settings = config;
+
+        boolean animals = config.getBooleanProperty("spawn-animals", console.getCanSpawnAnimals());
+        boolean monsters = config.getBooleanProperty("spawn-monsters", console.worlds[0].getDifficulty() != EnumDifficulty.PEACEFUL);
+        EnumDifficulty difficulty = EnumDifficulty.getDifficultyEnum(config.getIntProperty("difficulty", console.worldServerList.get(0).getDifficulty().ordinal()));
+
+        online.value = config.getBooleanProperty("online-mode", console.isServerInOnlineMode());
+        console.setCanSpawnAnimals(config.getBooleanProperty("spawn-animals", console.getCanSpawnAnimals()));
+        console.setAllowPvp(config.getBooleanProperty("pvp", console.isPVPEnabled()));
+        console.setAllowFlight(config.getBooleanProperty("allow-flight", console.isFlightAllowed()));
+        console.setMOTD(config.getStringProperty("motd", console.getMOTD()));
+        monsterSpawn = configuration.getInt("spawn-limits.monsters");
+        animalSpawn = configuration.getInt("spawn-limits.animals");
+        waterAnimalSpawn = configuration.getInt("spawn-limits.water-animals");
+        ambientSpawn = configuration.getInt("spawn-limits.ambient");
+        warningState = WarningState.value(configuration.getString("settings.deprecated-verbose"));
+        printSaveWarning = false;
+        console.autosavePeriod = configuration.getInt("ticks-per.autosave");
+        chunkGCPeriod = configuration.getInt("chunk-gc.period-in-ticks");
+        chunkGCLoadThresh = configuration.getInt("chunk-gc.load-threshold");
+        loadIcon();
+
+        try {
+            playerList.getBannedIPs().readSavedFile();
+        } catch (IOException ex) {
+            logger.log(Level.WARNING, "Failed to load banned-ips.json, " + ex.getMessage());
+        }
+        try {
+            playerList.getBannedPlayers().readSavedFile();
+        } catch (IOException ex) {
+            logger.log(Level.WARNING, "Failed to load banned-players.json, " + ex.getMessage());
+        }
+
+        org.spigotmc.SpigotConfig.init((File) console.options.valueOf("spigot-settings")); // Spigot
+        for (WorldServer world : console.worlds) {
+            world.worldInfo.setDifficulty(difficulty);
+            world.setAllowedSpawnTypes(monsters, animals);
+            if (this.getTicksPerAnimalSpawns() < 0) {
+                world.ticksPerAnimalSpawns = 400;
+            } else {
+                world.ticksPerAnimalSpawns = this.getTicksPerAnimalSpawns();
+            }
+
+            if (this.getTicksPerMonsterSpawns() < 0) {
+                world.ticksPerMonsterSpawns = 1;
+            } else {
+                world.ticksPerMonsterSpawns = this.getTicksPerMonsterSpawns();
+            }
+            world.spigotConfig.init(); // Spigot
+        }
+
+        pluginManager.clearPlugins();
+        commandMap.clearCommands();
+        resetRecipes();
+        reloadData();
+        org.spigotmc.SpigotConfig.registerCommands(); // Spigot
+        overrideAllCommandBlockCommands = commandsConfiguration.getStringList("command-block-overrides").contains("*");
+
+        int pollCount = 0;
+
+        // Wait for at most 2.5 seconds for plugins to close their threads
+        while (pollCount < 50 && getScheduler().getActiveWorkers().size() > 0) {
+            try {
+                Thread.sleep(50);
+            } catch (InterruptedException e) {
+            }
+            pollCount++;
+        }
+
+        List<BukkitWorker> overdueWorkers = getScheduler().getActiveWorkers();
+        for (BukkitWorker worker : overdueWorkers) {
+            Plugin plugin = worker.getOwner();
+            String author = "<NoAuthorGiven>";
+            if (plugin.getDescription().getAuthors().size() > 0) {
+                author = plugin.getDescription().getAuthors().get(0);
+            }
+            getLogger().log(Level.SEVERE, String.format(
+                    "Nag author: '%s' of '%s' about the following: %s",
+                    author,
+                    plugin.getDescription().getName(),
+                    "This plugin is not properly shutting down its async tasks when it is being reloaded.  This may cause conflicts with the newly loaded version of the plugin"
+            ));
+        }
+        loadPlugins();
+        enablePlugins(PluginLoadOrder.STARTUP);
+        enablePlugins(PluginLoadOrder.POSTWORLD);
     }
 
     @Override

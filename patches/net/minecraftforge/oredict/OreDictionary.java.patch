@@ -1,0 +1,45 @@
+--- ../src-base/minecraft/net/minecraftforge/oredict/OreDictionary.java
++++ ../src-work/minecraft/net/minecraftforge/oredict/OreDictionary.java
+@@ -55,6 +55,7 @@
+ import net.minecraftforge.fml.common.eventhandler.Event;
+ import net.minecraftforge.fml.common.registry.ForgeRegistries;
+ import net.minecraftforge.registries.GameData;
++import red.mohist.util.i18n.Message;
+ 
+ import javax.annotation.Nonnull;
+ 
+@@ -389,7 +390,7 @@
+             ItemStack.EMPTY //So the above can have a comma and we don't have to keep editing extra lines.
+         };
+ 
+-        FMLLog.log.info("Starts to replace vanilla recipe ingredients with ore ingredients.");
++        FMLLog.log.info(Message.getString("forge.oredictionary.1"));
+         int replaced = 0;
+         // Search vanilla recipes for recipes to replace
+         for(IRecipe obj : CraftingManager.REGISTRY)
+@@ -421,7 +422,7 @@
+                                 matches = true;
+                                 if (oreName != null && !oreName.equals(ent.getValue()))
+                                 {
+-                                    FMLLog.log.info("Invalid recipe found with multiple oredict ingredients in the same ingredient..."); //TODO: Write a dumper?
++                                    //FMLLog.log.info("Invalid recipe found with multiple oredict ingredients in the same ingredient..."); //TODO: Write a dumper?
+                                     skip = true;
+                                     break;
+                                 }
+@@ -449,14 +450,14 @@
+                         if(DEBUG && replacedIngs.add(ing))
+                         {
+                             String recipeName = obj.getRegistryName().getResourcePath();
+-                            FMLLog.log.debug("Replaced {} of the recipe \'{}\' with \"{}\".", ing.getMatchingStacks(), recipeName, oreName);
++                            FMLLog.log.debug(Message.getFormatString("forge.oredictionary.2", new Object[]{ing.getMatchingStacks(), recipeName, oreName}));
+                         }
+                     }
+                 }
+             }
+         }
+ 
+-        FMLLog.log.info("Replaced {} ore ingredients", replaced);
++        FMLLog.log.info(Message.getFormatString("forge.oredictionary.3", new Object[]{replaced}));
+     }
+ 
+     /**

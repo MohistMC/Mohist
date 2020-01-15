@@ -50,11 +50,11 @@ public class ColouredConsoleSender extends CraftConsoleCommandSender {
         if (terminal != null && !terminal.isAnsiSupported()) {
             return ChatColor.stripColor(pMsg);
         }
-        String result = pMsg + "§r";
+        String result = pMsg + ChatColor.RESET;
         for (int length = colors.length, i = 0; i < length; ++i) {
             final ChatColor color = colors[i];
             if (result.contains(" INFO]: ")) {
-                result = result.replace("INFO]:", "§aINFO§r]:");
+                result = result.replace("INFO]:", ChatColor.GREEN + "INFO" + ChatColor.RESET + "]:");
             }
             if (replacements.containsKey(color)) {
                 result = result.replaceAll("(?i)" + color.toString(), replacements.get(color));
