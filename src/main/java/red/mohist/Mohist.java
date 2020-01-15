@@ -56,7 +56,7 @@ public class Mohist {
             launchwrapper = Class.forName("net.minecraft.launchwrapper.Launch",true, Mohist.class.getClassLoader());
             Class.forName("org.objectweb.asm.Type",true, Mohist.class.getClassLoader());
             System.out.println("");
-            System.out.println("");
+            System.out.println("                   __                     __      ");
             System.out.println(" /'\\_/`\\          /\\ \\       __          /\\ \\__   ");
             System.out.println("/\\      \\     ___ \\ \\ \\___  /\\_\\     ____\\ \\ ,_\\  ");
             System.out.println("\\ \\ \\__\\ \\   / __`\\\\ \\  _ `\\\\/\\ \\   /',__\\\\ \\ \\/  ");
