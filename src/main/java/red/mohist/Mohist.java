@@ -5,6 +5,7 @@ import java.lang.reflect.Method;
 import java.util.Objects;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import red.mohist.common.remap.RemapUtils;
 import red.mohist.configuration.MohistConfigUtil;
 import red.mohist.down.DownloadLibraries;
 import red.mohist.down.Update;
@@ -24,6 +25,12 @@ public class Mohist {
     }
 
     public static void main(String[] args) {
+        try {
+            RemapUtils.getCallerClassLoder();
+        } catch (Throwable e) {
+            System.out.println(Message.getString("unsupported.java.version"));
+            System.exit(0);
+        }
         if (System.getProperty("log4j.configurationFile") == null) {
             // Set this early so we don't need to reconfigure later
             System.setProperty("log4j.configurationFile", "log4j2_mohist.xml");
