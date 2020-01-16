@@ -17,7 +17,7 @@ import red.mohist.util.i18n.Message;
 public class PluginsCommand extends BukkitCommand {
     public PluginsCommand(String name) {
         super(name);
-        this.description = "Gets a list of plugins running on the server";
+        this.description = Message.getString("pluginscommand.des");
         this.usageMessage = "/plugins [load|unload|reload] [name]";
         this.setAliases(Collections.singletonList("pl"));
         this.setPermission("bukkit.command.plugins");
