@@ -91,7 +91,7 @@ public final class PluginClassLoader extends URLClassLoader {
         ClassLoaderContext.put(this);
         Class<?> result;
         try {
-            if (name.startsWith("net.minecraft.server.v1_12_R1")) {
+            if (name.replace("/", ".").startsWith("net.minecraft.server.v1_12_R1")) {
                 String remappedClass = RemapUtils.jarMapping.byNMSName.get(name).getMcpName();
                 return Class.forName(remappedClass);
             }
