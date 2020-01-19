@@ -7,7 +7,6 @@ import java.lang.reflect.Modifier;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashMap;
-import java.util.ListIterator;
 import java.util.Map;
 import java.util.StringJoiner;
 import java.util.function.BiConsumer;
@@ -19,11 +18,8 @@ import org.objectweb.asm.Type;
 import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.FieldInsnNode;
-import org.objectweb.asm.tree.FieldNode;
 import org.objectweb.asm.tree.InvokeDynamicInsnNode;
-import org.objectweb.asm.tree.LocalVariableNode;
 import org.objectweb.asm.tree.MethodInsnNode;
-import org.objectweb.asm.tree.MethodNode;
 import org.objectweb.asm.tree.TypeInsnNode;
 import org.objectweb.asm.tree.VarInsnNode;
 
@@ -198,40 +194,6 @@ public class ASMUtils {
 
     public static String getTypeName(int type) {
         return opcodeMap.get(type);
-    }
-
-    public static void printClass(ClassNode classNode) {
-        System.out.println("============ " + classNode.name + " ============");
-        if (classNode.fields != null) {
-            for (FieldNode field : classNode.fields) {
-                System.out.println("  field " + field.desc + " " + field.name + " " + field.signature);
-            }
-        }
-        if (classNode.methods != null) {
-            for (MethodNode method : classNode.methods) {
-                System.out.println("  method " + method.name + " " + method.desc);
-                if (method.instructions == null) {
-                    continue;
-                }
-                ListIterator<AbstractInsnNode> it = method.instructions.iterator();
-                while (it.hasNext()) {
-                    print("    insn", it.next());
-                }
-                if (method.localVariables == null) {
-                    continue;
-                }
-                for (LocalVariableNode localVariable : method.localVariables) {
-                    System.out.println("    localVariable " + localVariable.getClass().getSimpleName() + " " + localVariable.name + " " + localVariable.desc + " " + localVariable.signature);
-                }
-            }
-        }
-    }
-
-    public static void printClass(byte[] bs) {
-        ClassNode classNode = new ClassNode();
-        ClassReader classReader = new ClassReader(bs);
-        classReader.accept(classNode, 0);
-        printClass(classNode);
     }
 
     public static boolean isValidSingnature(String signature) {

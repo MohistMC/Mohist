@@ -6,7 +6,6 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.lang.invoke.MethodType;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -26,9 +25,7 @@ import red.mohist.common.remap.remappers.MohistInheritanceMap;
 import red.mohist.common.remap.remappers.MohistInheritanceProvider;
 import red.mohist.common.remap.remappers.MohistJarMapping;
 import red.mohist.common.remap.remappers.MohistJarRemapper;
-import red.mohist.common.remap.remappers.NMSVersionRemapper;
 import red.mohist.common.remap.remappers.ReflectRemapper;
-import red.mohist.configuration.MohistConfig;
 import red.mohist.util.JarTool;
 import sun.reflect.Reflection;
 
@@ -87,16 +84,9 @@ public class RemapUtils {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        if (MohistConfig.instance.multiVersionRemap.getValue()) {
-            remappers.add(new NMSVersionRemapper());
-        }
         MohistJarRemapper jarRemapper = new MohistJarRemapper(jarMapping);
-        if (MohistConfig.instance.nmsRemap.getValue()) {
-            remappers.add(jarRemapper);
-        }
-        if (MohistConfig.instance.reflectRemap.getValue()) {
-            remappers.add(new ReflectRemapper());
-        }
+        remappers.add(jarRemapper);
+        remappers.add(new ReflectRemapper());
         jarMapping.initFastMethodMapping(jarRemapper);
     }
 
@@ -104,10 +94,6 @@ public class RemapUtils {
 
     public static byte[] remapFindClass(String name, byte[] bs) throws IOException {
         synchronized (remapLock) {
-            if (MohistConfig.instance.printRemapPluginClass.getValue()) {
-                System.out.println("========= before remap ========= ");
-                ASMUtils.printClass(bs);
-            }
             ClassNode classNode = new ClassNode();
             new ClassReader(bs).accept(classNode, ClassReader.EXPAND_FRAMES);
             for (Remapper remapper : remappers) {
@@ -121,17 +107,10 @@ public class RemapUtils {
                 }
                 classNode.accept(classRemapper);
                 classNode = container;
-                if (MohistConfig.instance.printRemapPluginClass.getValue()) {
-                    System.out.println("========= after " + remapper.getClass().getSimpleName() + " remap ========= ");
-                    ASMUtils.printClass(classNode);
-                }
             }
             ClassWriter writer = new ClassWriter(ClassWriter.COMPUTE_MAXS);
             classNode.accept(writer);
             bs = writer.toByteArray();
-            if (MohistConfig.instance.dumpRemapPluginClass.getValue()) {
-                ASMUtils.dump(Paths.get(System.getProperty("user.dir"), "dumpRemapPluginClass"), bs);
-            }
             return bs;
         }
     }
