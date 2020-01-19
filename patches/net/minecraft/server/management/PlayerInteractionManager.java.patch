@@ -164,7 +164,7 @@
          }
      }
  
-@@ -279,25 +348,25 @@
+@@ -279,59 +348,61 @@
      }
  
      public boolean tryHarvestBlock(BlockPos pos)
@@ -195,9 +195,12 @@
 +			else
 +			{
                  ItemStack stack = player.getHeldItemMainhand();
-                 if (!stack.isEmpty() && stack.getItem().onBlockStartBreak(stack, pos, player)) return false;
+-                if (!stack.isEmpty() && stack.getItem().onBlockStartBreak(stack, pos, player)) return false;
++                if (pos != null) {
++                    if (!stack.isEmpty() && stack.getItem().onBlockStartBreak(stack, pos, player)) return false;
++                }
  
-@@ -305,33 +374,33 @@
+                 this.world.playEvent(this.player, 2001, pos, Block.getStateId(iblockstate));
                  boolean flag1 = false;
  
                  if (this.isCreative())
@@ -238,7 +241,7 @@
                  }
                  return flag1;
              }
-@@ -396,105 +465,156 @@
+@@ -396,105 +467,156 @@
          }
      }
  
