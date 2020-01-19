@@ -1,6 +1,9 @@
 package org.bukkit.command.defaults;
 
 import com.google.common.collect.ImmutableList;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import net.minecraftforge.common.ForgeVersion;
 import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
@@ -11,10 +14,6 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.util.StringUtil;
 import red.mohist.util.i18n.Message;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
 public class VersionCommand extends Command {
     public VersionCommand(String name) {
