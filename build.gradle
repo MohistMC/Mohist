@@ -20,6 +20,8 @@ buildscript {
 }
 
 apply plugin: 'net.minecraftforge.gradle'
+// Only edit below this line, the above code adds and enables the necessary things for Forge to be setup.
+apply plugin: 'eclipse'
 apply plugin: 'org.spongepowered.mixin'
 apply plugin: "com.github.johnrengelman.shadow"
 apply plugin: "org.ajoberstar.grgit"
@@ -115,14 +117,18 @@ repositories {
     }
 }
 
-//83af86db
+//e911c70f
 
 dependencies {
-    minecraft 'net.minecraftforge:forge:1.15.1-30.0.15'
-    compile("org.spongepowered:mixin:0.8-SNAPSHOT")
-    compile 'org.bukkit:bukkit:1.15.1-R0.1-SNAPSHOT'
+    minecraft 'net.minecraftforge:forge:1.15.2-31.0.1'
+    compile 'org.spongepowered:mixin:0.8-SNAPSHOT'
+    compile 'org.bukkit:bukkit:1.15.2-R0.1-SNAPSHOT'
     compile 'org.fusesource.jansi:jansi:1.18'
     compile 'jline:jline:2.13'
+
+    compile 'com.googlecode.json-simple:json-simple:1.1.1'
+    compile 'org.xerial:sqlite-jdbc:3.30.1'
+    compile 'mysql:mysql-connector-java:5.1.48'
 }
 
 mixin {

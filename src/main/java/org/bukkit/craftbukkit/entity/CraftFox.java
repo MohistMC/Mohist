@@ -69,7 +69,7 @@ public class CraftFox extends CraftAnimals implements Fox {
 
     @Override
     public AnimalTamer getFirstTrustedPlayer() {
-        UUID uuid = getHandle().getDataWatcher().get(FoxEntity.by).orElse(null);
+        UUID uuid = getHandle().getDataWatcher().get(FoxEntity.FIRST_TRUSTED_PLAYER).orElse(null);
         if (uuid == null) {
             return null;
         }
@@ -84,16 +84,16 @@ public class CraftFox extends CraftAnimals implements Fox {
 
     @Override
     public void setFirstTrustedPlayer(AnimalTamer player) {
-        if (player == null && getHandle().getDataWatcher().get(FoxEntity.bz).isPresent()) {
+        if (player == null && getHandle().getDataWatcher().get(FoxEntity.SECOND_TRUSTED_PLAYER).isPresent()) {
             throw new IllegalStateException("Must remove second trusted player first");
         }
 
-        getHandle().getDataWatcher().set(FoxEntity.by, player == null ? Optional.empty() : Optional.of(player.getUniqueId()));
+        getHandle().getDataWatcher().set(FoxEntity.FIRST_TRUSTED_PLAYER, player == null ? Optional.empty() : Optional.of(player.getUniqueId()));
     }
 
     @Override
     public AnimalTamer getSecondTrustedPlayer() {
-        UUID uuid = getHandle().getDataWatcher().get(FoxEntity.bz).orElse(null);
+        UUID uuid = getHandle().getDataWatcher().get(FoxEntity.SECOND_TRUSTED_PLAYER).orElse(null);
         if (uuid == null) {
             return null;
         }
@@ -108,10 +108,10 @@ public class CraftFox extends CraftAnimals implements Fox {
 
     @Override
     public void setSecondTrustedPlayer(AnimalTamer player) {
-        if (player != null && !getHandle().getDataWatcher().get(FoxEntity.by).isPresent()) {
+        if (player != null && !getHandle().getDataWatcher().get(FoxEntity.FIRST_TRUSTED_PLAYER).isPresent()) {
             throw new IllegalStateException("Must add first trusted player first");
         }
 
-        getHandle().getDataWatcher().set(FoxEntity.bz, player == null ? Optional.empty() : Optional.of(player.getUniqueId()));
+        getHandle().getDataWatcher().set(FoxEntity.SECOND_TRUSTED_PLAYER, player == null ? Optional.empty() : Optional.of(player.getUniqueId()));
     }
 }

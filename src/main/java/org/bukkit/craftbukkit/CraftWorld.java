@@ -719,7 +719,7 @@ public class CraftWorld implements World {
             break;
         case TALL_BIRCH:
             gen = Feature.NORMAL_TREE;
-            conf = DefaultBiomeFeatures.TALL_BIRCH_TREE;
+            conf = DefaultBiomeFeatures.TALL_BIRCH_TREE_BEES_0002;
             break;
         case CHORUS_PLANT:
             ((ChorusFlowerBlock) Blocks.CHORUS_FLOWER).a(world, pos, rand, 8);
@@ -1878,6 +1878,16 @@ public class CraftWorld implements World {
     @Override
     public boolean canGenerateStructures() {
         return world.getWorldData().shouldGenerateMapFeatures();
+    }
+
+    @Override
+    public boolean isHardcore() {
+        return world.getWorldData().isHardcore();
+    }
+
+    @Override
+    public void setHardcore(boolean hardcore) {
+        world.getWorldData().setHardcore(hardcore);
     }
 
     @Override

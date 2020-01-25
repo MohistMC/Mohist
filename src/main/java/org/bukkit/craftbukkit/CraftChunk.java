@@ -14,7 +14,7 @@ import net.minecraft.util.palette.PalettedContainer;
 import net.minecraft.world.LightType;
 import net.minecraft.nbt.NBTUtil;
 import net.minecraft.world.gen.Heightmap;
-import net.minecraft.block.BlockState;
+import net.minecraft.world.lighting.LightEngine;
 import net.minecraft.world.lighting.WorldLightManager;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.world.chunk.NibbleArray;
@@ -39,7 +39,7 @@ public class CraftChunk implements Chunk {
     private final ServerWorld worldServer;
     private final int x;
     private final int z;
-    private static final IPaletteBlock<IBlockData> emptyBlockIDs = new ChunkSection(0).getBlocks();
+    private static final PalettedContainer<net.minecraft.block.BlockState> emptyBlockIDs = new ChunkSection(0).getBlocks();
     private static final byte[] emptyLight = new byte[2048];
 
     public CraftChunk(net.minecraft.world.chunk.Chunk chunk) {
@@ -170,7 +170,7 @@ public class CraftChunk implements Chunk {
     @Override
     public boolean isSlimeChunk() {
         // 987234911L is deterimined in SlimeEntity when seeing if a slime can spawn in a chunk
-        return SeededRandom.a(getX(), getZ(), getWorld().getSeed(), 987234911L).nextInt(10) == 0;
+        return SharedSeedRandom.seedSlimeChunk(getX(), getZ(), getWorld().getSeed(), 987234911L).nextInt(10) == 0;
     }
 
     @Override
@@ -219,7 +219,7 @@ public class CraftChunk implements Chunk {
     public boolean contains(BlockData block) {
         Preconditions.checkArgument(block != null, "Block cannot be null");
 
-        IBlockData nms = ((CraftBlockData) block).getState();
+        net.minecraft.block.BlockState nms = ((CraftBlockData) block).getState();
         for (ChunkSection section : getHandle().getSections()) {
             if (section != null && section.getBlocks().contains(nms)) {
                 return true;
@@ -239,7 +239,7 @@ public class CraftChunk implements Chunk {
         net.minecraft.world.chunk.Chunk chunk = getHandle();
 
         ChunkSection[] cs = chunk.getSections();
-        IPaletteBlock[] sectionBlockIDs = new IPaletteBlock[cs.length];
+        PalettedContainer[] sectionBlockIDs = new PalettedContainer[cs.length];
         byte[][] sectionSkyLights = new byte[cs.length][];
         byte[][] sectionEmitLights = new byte[cs.length][];
         boolean[] sectionEmpty = new boolean[cs.length];
@@ -254,7 +254,7 @@ public class CraftChunk implements Chunk {
                 CompoundNBT data = new CompoundNBT();
                 cs[i].getBlocks().a(data, "Palette", "BlockStates");
 
-                IPaletteBlock blockids = new IPaletteBlock<>(ChunkSection.GLOBAL_PALETTE, net.minecraft.block.Block.REGISTRY_ID, NBTUtil::d, NBTUtil::a, Blocks.AIR.getBlockData()); // TODO: snapshot whole ChunkSection
+                PalettedContainer blockids = new PalettedContainer<>(ChunkSection.GLOBAL_PALETTE, net.minecraft.block.Block.REGISTRY_ID, NBTUtil::d, NBTUtil::a, Blocks.AIR.getBlockData()); // TODO: snapshot whole ChunkSection
                 blockids.a(data.getList("Palette", CraftMagicNumbers.NBT.TAG_COMPOUND), data.getLongArray("BlockStates"));
 
                 sectionBlockIDs[i] = blockids;
@@ -304,7 +304,7 @@ public class CraftChunk implements Chunk {
 
         /* Fill with empty data */
         int hSection = world.getMaxHeight() >> 4;
-        IPaletteBlock[] blockIDs = new IPaletteBlock[hSection];
+        PalettedContainer[] blockIDs = new PalettedContainer[hSection];
         byte[][] skyLight = new byte[hSection][];
         byte[][] emitLight = new byte[hSection][];
         boolean[] empty = new boolean[hSection];

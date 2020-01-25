@@ -46,7 +46,7 @@ public class CustomChunkGenerator extends InternalChunkGenerator<GenerationSetti
 
     private class CustomBiomeGrid implements BiomeGrid {
 
-        private final BiomeContainer biome;
+        private final BiomeContainer biome; // SPIGOT-5529: stored in 4x4 grid
 
         public CustomBiomeGrid(BiomeContainer biome) {
             this.biome = biome;
@@ -59,19 +59,19 @@ public class CustomChunkGenerator extends InternalChunkGenerator<GenerationSetti
 
         @Override
         public void setBiome(int x, int z, Biome bio) {
-            for (int y = 0; y < world.getWorld().getMaxHeight(); y++) {
+            for (int y = 0; y < world.getWorld().getMaxHeight(); y += 4) {
                 setBiome(x, y, z, bio);
             }
         }
 
         @Override
         public Biome getBiome(int x, int y, int z) {
-            return CraftBlock.biomeBaseToBiome(biome.getBiome(x, y, z));
+            return CraftBlock.biomeBaseToBiome(biome.getBiome(x>> 2, y >> 2, z >> 2));
         }
 
         @Override
         public void setBiome(int x, int y, int z, Biome bio) {
-            biome.setBiome(x, y, z, CraftBlock.biomeToBiomeBase(bio));
+            biome.setBiome(x >> 2, y >> 2, z >> 2, CraftBlock.biomeToBiomeBase(bio));
         }
     }
 
@@ -177,10 +177,12 @@ public class CustomChunkGenerator extends InternalChunkGenerator<GenerationSetti
 
     @Override
     public void spawnMobs(ServerWorld worldserver, boolean flag, boolean flag1) {
-        this.mobSpawnerPhantom.a(worldserver, flag, flag1);
-        this.mobSpawnerPatrol.a(worldserver, flag, flag1);
-        this.mobSpawnerCat.a(worldserver, flag, flag1);
-        this.villageSiege.a(worldserver, flag, flag1);
+        if (worldserver.getWorldProvider().isOverworld()) {
+            this.mobSpawnerPhantom.a(worldserver, flag, flag1);
+            this.mobSpawnerPatrol.a(worldserver, flag, flag1);
+            this.mobSpawnerCat.a(worldserver, flag, flag1);
+            this.villageSiege.a(worldserver, flag, flag1);
+        }
     }
 
     @Override

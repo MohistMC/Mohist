@@ -14,7 +14,7 @@ public class CraftArt {
     static {
         ImmutableBiMap.Builder<PaintingType, Art> artworkBuilder = ImmutableBiMap.builder();
         for (ResourceLocation key : Registry.MOTIVE.keySet()) {
-            artworkBuilder.put(Registry.MOTIVE.get(key), Art.getByName(key.getKey()));
+            artworkBuilder.put(Registry.MOTIVE.getOrDefault(key), Art.getByName(key.getPath()));
         }
 
         artwork = artworkBuilder.build();

@@ -29,6 +29,7 @@ import net.minecraft.entity.ai.attributes.IAttributeInstance;
 import net.minecraft.entity.ai.attributes.AttributeMap;
 import net.minecraft.entity.ai.attributes.ModifiableAttributeInstance;
 import net.minecraft.entity.ai.attributes.RangedAttribute;
+import net.minecraft.network.play.server.SSetExperiencePacket;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.inventory.container.Container;
@@ -643,6 +644,11 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
         // If this player is riding another entity, we must dismount before teleporting.
         entity.stopRiding();
 
+        // SPIGOT-5509: Wakeup, similar to riding
+        if (this.isSleeping()) {
+            this.wakeup(false);
+        }
+
         // Update the From Location
         from = event.getFrom();
         // Grab the new To Location dependent on whether the event was cancelled.
@@ -941,6 +947,7 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
 
     @Override
     public void setLevel(int level) {
+        Preconditions.checkArgument(level >= 0, "Experience level must not be negative (%s)", level);
         getHandle().expLevel = level;
         getHandle().lastSentExp = -1;
     }
@@ -952,7 +959,26 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
 
     @Override
     public void setTotalExperience(int exp) {
+        Preconditions.checkArgument(exp >= 0, "Total experience points must not be negative (%s)", exp);
         getHandle().expTotal = exp;
+    }
+
+    @Override
+    public void sendExperienceChange(float progress) {
+        sendExperienceChange(progress, getLevel());
+    }
+
+    @Override
+    public void sendExperienceChange(float progress, int level) {
+        Preconditions.checkArgument(progress >= 0.0 && progress <= 1.0, "Experience progress must be between 0.0 and 1.0 (%s)", progress);
+        Preconditions.checkArgument(level >= 0, "Experience level must not be negative (%s)", level);
+
+        if (getHandle().connection == null) {
+            return;
+        }
+
+        SSetExperiencePacket packet = new SSetExperiencePacket(progress, getTotalExperience(), level);
+        getHandle().connection.sendPacket(packet);
     }
 
     @Override

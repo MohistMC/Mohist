@@ -21,7 +21,7 @@ import org.bukkit.craftbukkit.util.CraftMagicNumbers;
 public class CraftChunkSnapshot implements ChunkSnapshot {
     private final int x, z;
     private final String worldname;
-    private final IPaletteBlock<BlockState>[] blockids;
+    private final PalettedContainer<BlockState>[] blockids;
     private final byte[][] skylight;
     private final byte[][] emitlight;
     private final boolean[] empty;
@@ -29,7 +29,7 @@ public class CraftChunkSnapshot implements ChunkSnapshot {
     private final long captureFulltime;
     private final BiomeContainer biome;
 
-    CraftChunkSnapshot(int x, int z, String wname, long wtime, IPaletteBlock<BlockState>[] sectionBlockIDs, byte[][] sectionSkyLights, byte[][] sectionEmitLights, boolean[] sectionEmpty, Heightmap hmap, BiomeContainer biome) {
+    CraftChunkSnapshot(int x, int z, String wname, long wtime, PalettedContainer<BlockState>[] sectionBlockIDs, byte[][] sectionSkyLights, byte[][] sectionEmitLights, boolean[] sectionEmpty, Heightmap hmap, BiomeContainer biome) {
         this.x = x;
         this.z = z;
         this.worldname = wname;
@@ -62,7 +62,7 @@ public class CraftChunkSnapshot implements ChunkSnapshot {
         Preconditions.checkArgument(block != null, "Block cannot be null");
 
         BlockState nms = ((CraftBlockData) block).getState();
-        for (IPaletteBlock<BlockState> palette : blockids) {
+        for (PalettedContainer<BlockState> palette : blockids) {
             if (palette.contains(nms)) {
                 return true;
             }

@@ -39,6 +39,7 @@ import org.bukkit.advancement.Advancement;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.craftbukkit.block.data.CraftBlockData;
 import org.bukkit.craftbukkit.inventory.CraftItemStack;
+import org.bukkit.craftbukkit.legacy.CraftLegacy;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.material.MaterialData;
 import org.bukkit.plugin.InvalidPluginException;
@@ -90,6 +91,10 @@ public final class CraftMagicNumbers implements UnsafeValues {
         }
 
         for (Material material : Material.values()) {
+            if (material.isLegacy()) {
+                continue;
+            }
+
             ResourceLocation key = key(material);
             Registry.ITEM.getOptional(key).ifPresent((item) -> {
                 MATERIAL_ITEM.put(material, item);
@@ -117,10 +122,6 @@ public final class CraftMagicNumbers implements UnsafeValues {
     }
 
     public static ResourceLocation key(Material mat) {
-        if (mat.isLegacy()) {
-            mat = CraftLegacy.fromLegacy(mat);
-        }
-
         return CraftNamespacedKey.toMinecraft(mat.getKey());
     }
     // ========================================================================
@@ -188,7 +189,7 @@ public final class CraftMagicNumbers implements UnsafeValues {
      * @return string
      */
     public String getMappingsVersion() {
-        return "d2fa25e37d6e69667dc7f4a33d7644e1";
+        return "5684afcc1835d966e1b6eb0ed3f72edb";
     }
 
     @Override
@@ -266,7 +267,8 @@ public final class CraftMagicNumbers implements UnsafeValues {
             }
         } else {
             if (minimumIndex == -1) {
-                Bukkit.getLogger().log(Level.WARNING, "Plugin " + pdf.getFullName() + " does not specify an api-version.");
+                CraftLegacy.init();
+                Bukkit.getLogger().log(Level.WARNING, "Legacy plugin " + pdf.getFullName() + " does not specify an api-version.");
             } else {
                 throw new InvalidPluginException("Plugin API version " + pdf.getAPIVersion() + " is lower than the minimum allowed version. Please update or replace it.");
             }

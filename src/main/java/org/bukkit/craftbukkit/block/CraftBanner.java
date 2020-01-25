@@ -4,7 +4,6 @@ import com.google.common.base.Preconditions;
 import java.util.ArrayList;
 import java.util.List;
 import net.minecraft.block.AbstractBannerBlock;
-import net.minecraft.item.DyeColor;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.tileentity.BannerTileEntity;
@@ -32,7 +31,7 @@ public class CraftBanner extends CraftBlockEntityState<BannerTileEntity> impleme
     public void load(BannerTileEntity banner) {
         super.load(banner);
 
-        base = DyeColor.getByWoolData((byte) ((BlockBannerAbstract) this.data.getBlock()).getColor().getColorIndex());
+        base = DyeColor.getByWoolData((byte) ((AbstractBannerBlock) this.data.getBlock()).getColor().getId());
         patterns = new ArrayList<Pattern>();
 
         if (banner.patterns != null) {
@@ -93,14 +92,14 @@ public class CraftBanner extends CraftBlockEntityState<BannerTileEntity> impleme
     public void applyTo(BannerTileEntity banner) {
         super.applyTo(banner);
 
-        banner.color = EnumColor.fromColorIndex(base.getWoolData());
+        banner.baseColor = net.minecraft.item.DyeColor.byId(base.getWoolData());
 
         ListNBT newPatterns = new ListNBT();
 
         for (Pattern p : patterns) {
             CompoundNBT compound = new CompoundNBT();
-            compound.setInt("Color", p.getColor().getWoolData());
-            compound.setString("Pattern", p.getPattern().getIdentifier());
+            compound.putInt("Color", p.getColor().getWoolData());
+            compound.putString("Pattern", p.getPattern().getIdentifier());
             newPatterns.add(compound);
         }
         banner.patterns = newPatterns;
