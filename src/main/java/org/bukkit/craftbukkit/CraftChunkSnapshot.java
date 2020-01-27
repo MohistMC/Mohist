@@ -75,21 +75,21 @@ public class CraftChunkSnapshot implements ChunkSnapshot {
     public Material getBlockType(int x, int y, int z) {
         CraftChunk.validateChunkCoordinates(x, y, z);
 
-        return CraftMagicNumbers.getMaterial(blockids[y >> 4].a(x, y & 0xF, z).getBlock());
+        return CraftMagicNumbers.getMaterial(blockids[y >> 4].get(x, y & 0xF, z).getBlock());
     }
 
     @Override
     public final BlockData getBlockData(int x, int y, int z) {
         CraftChunk.validateChunkCoordinates(x, y, z);
 
-        return CraftBlockData.fromData(blockids[y >> 4].a(x, y & 0xF, z));
+        return CraftBlockData.fromData(blockids[y >> 4].get(x, y & 0xF, z));
     }
 
     @Override
     public final int getData(int x, int y, int z) {
         CraftChunk.validateChunkCoordinates(x, y, z);
 
-        return CraftMagicNumbers.toLegacyData(blockids[y >> 4].a(x, y & 0xF, z));
+        return CraftMagicNumbers.toLegacyData(blockids[y >> 4].get(x, y & 0xF, z));
     }
 
     @Override
@@ -113,7 +113,7 @@ public class CraftChunkSnapshot implements ChunkSnapshot {
         Preconditions.checkState(hmap != null, "ChunkSnapshot created without height map. Please call getSnapshot with includeMaxblocky=true");
         CraftChunk.validateChunkCoordinates(x, 0, z);
 
-        return hmap.a(x, z);
+        return hmap.getHeight(x, z);
     }
 
     @Override
@@ -126,7 +126,7 @@ public class CraftChunkSnapshot implements ChunkSnapshot {
         Preconditions.checkState(biome != null, "ChunkSnapshot created without biome. Please call getSnapshot with includeBiome=true");
         CraftChunk.validateChunkCoordinates(x, y, z);
 
-        return CraftBlock.biomeBaseToBiome(biome.getBiome(x, y, z));
+        return CraftBlock.biomeBaseToBiome(biome.func_225526_b_(x, y, z));
     }
 
     @Override
@@ -139,7 +139,7 @@ public class CraftChunkSnapshot implements ChunkSnapshot {
         Preconditions.checkState(biome != null, "ChunkSnapshot created without biome. Please call getSnapshot with includeBiome=true");
         CraftChunk.validateChunkCoordinates(x, y, z);
 
-        return biome.getBiome(x, y, z).getAdjustedTemperature(new BlockPos((this.x << 4) | x, y, (this.z << 4) | z));
+        return biome.func_225526_b_(x, y, z).func_225486_c(new BlockPos((this.x << 4) | x, y, (this.z << 4) | z));
     }
 
     @Override

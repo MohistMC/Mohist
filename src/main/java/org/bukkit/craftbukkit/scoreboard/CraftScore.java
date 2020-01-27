@@ -42,11 +42,11 @@ final class CraftScore implements Score {
     public int getScore() throws IllegalStateException {
         Scoreboard board = objective.checkState().board;
 
-        if (board.getPlayers().contains(entry)) { // Lazy
-            Map<ScoreObjective, net.minecraft.scoreboard.Score> scores = board.getPlayerObjectives(entry);
+        if (board.getObjectiveNames().contains(entry)) { // Lazy
+            Map<ScoreObjective, net.minecraft.scoreboard.Score> scores = board.getObjectivesForEntity(entry);
             net.minecraft.scoreboard.Score score = scores.get(objective.getHandle());
             if (score != null) { // Lazy
-                return score.getScore();
+                return score.getScorePoints();
             }
         }
 
@@ -55,14 +55,14 @@ final class CraftScore implements Score {
 
     @Override
     public void setScore(int score) throws IllegalStateException {
-        objective.checkState().board.getPlayerScoreForObjective(entry, objective.getHandle()).setScore(score);
+        objective.checkState().board.getOrCreateScore(entry, objective.getHandle()).setScorePoints(score);
     }
 
     @Override
     public boolean isScoreSet() throws IllegalStateException {
         Scoreboard board = objective.checkState().board;
 
-        return board.getPlayers().contains(entry) && board.getPlayerObjectives(entry).containsKey(objective.getHandle());
+        return board.getObjectiveNames().contains(entry) && board.getObjectivesForEntity(entry).containsKey(objective.getHandle());
     }
 
     @Override

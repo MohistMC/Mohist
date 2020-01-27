@@ -24,7 +24,7 @@ public final class CraftRaid implements Raid {
 
     @Override
     public boolean isStarted() {
-        return handle.isStarted();
+        return handle.func_221301_k();
     }
 
     @Override
@@ -39,14 +39,14 @@ public final class CraftRaid implements Raid {
 
     @Override
     public void setBadOmenLevel(int badOmenLevel) {
-        int max = handle.getMaxBadOmenLevel();
+        int max = handle.getMaxLevel();
         Preconditions.checkArgument(0 <= badOmenLevel && badOmenLevel <= max, "Bad Omen level must be between 0 and %s", max);
         handle.badOmenLevel = badOmenLevel;
     }
 
     @Override
     public Location getLocation() {
-        BlockPos pos = handle.getCenter();
+        BlockPos pos = handle.func_221304_t();
         World world = handle.getWorld();
         return new Location(world.getWorld(), pos.getX(), pos.getY(), pos.getZ());
     }
@@ -66,7 +66,7 @@ public final class CraftRaid implements Raid {
 
     @Override
     public int getSpawnedGroups() {
-        return handle.getGroupsSpawned();
+        return handle.func_221315_l();
     }
 
     @Override
@@ -81,7 +81,7 @@ public final class CraftRaid implements Raid {
 
     @Override
     public float getTotalHealth() {
-        return handle.sumMobHealth();
+        return handle.getCurrentHealth();
     }
 
     @Override

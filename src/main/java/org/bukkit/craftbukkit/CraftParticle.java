@@ -131,7 +131,7 @@ public enum CraftParticle {
         Preconditions.checkArgument(nms != null, "No NMS particle %s", particle);
 
         if (particle.getDataType().equals(Void.class)) {
-            return (ParticleType) nms;
+            return (BasicParticleType) nms;
         }
         Preconditions.checkArgument(obj != null, "Particle %s requires data, null provided", particle);
         if (particle.getDataType().equals(ItemStack.class)) {
@@ -140,11 +140,11 @@ public enum CraftParticle {
         }
         if (particle.getDataType() == MaterialData.class) {
             MaterialData data = (MaterialData) obj;
-            return new IParticleDataBlock((net.minecraft.particles.ParticleType<IParticleDataBlock>) nms, CraftMagicNumbers.getBlock(data));
+            return new BlockParticleData((net.minecraft.particles.ParticleType<BlockParticleData>) nms, CraftMagicNumbers.getBlock(data));
         }
         if (particle.getDataType() == BlockData.class) {
             BlockData data = (BlockData) obj;
-            return new IParticleDataBlock((net.minecraft.particles.ParticleType<IParticleDataBlock>) nms, ((CraftBlockData) data).getState());
+            return new BlockParticleData((net.minecraft.particles.ParticleType<BlockParticleData>) nms, ((CraftBlockData) data).getState());
         }
         if (particle.getDataType() == Particle.DustOptions.class) {
             Particle.DustOptions data = (Particle.DustOptions) obj;
@@ -154,8 +154,8 @@ public enum CraftParticle {
         throw new IllegalArgumentException(particle.getDataType().toString());
     }
 
-    public static Particle toBukkit(net.minecraft.particles.ParticleTypeParam nms) {
-        return toBukkit(nms.getParticle());
+    public static Particle toBukkit(net.minecraft.particles.IParticleData nms) {
+        return toBukkit(nms.getType());
     }
 
     public static Particle toBukkit(net.minecraft.particles.ParticleType nms) {

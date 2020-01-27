@@ -68,13 +68,13 @@ final class CraftObjective extends CraftScoreboardComponent implements Objective
         ScoreObjective objective = this.objective;
 
         for (int i = 0; i < CraftScoreboardTranslations.MAX_DISPLAY_SLOT; i++) {
-            if (board.getObjectiveForSlot(i) == objective) {
-                board.setDisplaySlot(i, null);
+            if (board.getObjectiveInDisplaySlot(i) == objective) {
+                board.setObjectiveInDisplaySlot(i, null);
             }
         }
         if (slot != null) {
             int slotNumber = CraftScoreboardTranslations.fromBukkitSlot(slot);
-            board.setDisplaySlot(slotNumber, getHandle());
+            board.setObjectiveInDisplaySlot(slotNumber, getHandle());
         }
     }
 
@@ -85,7 +85,7 @@ final class CraftObjective extends CraftScoreboardComponent implements Objective
         ScoreObjective objective = this.objective;
 
         for (int i = 0; i < CraftScoreboardTranslations.MAX_DISPLAY_SLOT; i++) {
-            if (board.getObjectiveForSlot(i) == objective) {
+            if (board.getObjectiveInDisplaySlot(i) == objective) {
                 return CraftScoreboardTranslations.toBukkitSlot(i);
             }
         }
@@ -128,7 +128,7 @@ final class CraftObjective extends CraftScoreboardComponent implements Objective
     public void unregister() throws IllegalStateException {
         CraftScoreboard scoreboard = checkState();
 
-        scoreboard.board.unregisterObjective(objective);
+        scoreboard.board.removeObjective(objective);
     }
 
     @Override

@@ -1,7 +1,5 @@
 package org.bukkit.craftbukkit.inventory.util;
 
-import net.minecraft.tileentity.MobSpawnerTileEntity;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.dimension.DimensionType;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.server.MinecraftServer;
@@ -15,7 +13,6 @@ import net.minecraft.tileentity.HopperTileEntity;
 import net.minecraft.tileentity.LecternTileEntity;
 import net.minecraft.tileentity.LockableLootTileEntity;
 import net.minecraft.tileentity.SmokerTileEntity;
-import net.minecraftforge.common.DimensionManager;
 import org.bukkit.craftbukkit.inventory.CraftInventory;
 import org.bukkit.craftbukkit.inventory.CraftInventoryBrewer;
 import org.bukkit.craftbukkit.inventory.CraftInventoryFurnace;
@@ -51,8 +48,8 @@ public abstract class CraftTileInventoryConverter implements CraftInventoryCreat
 
         @Override
         public IInventory getTileEntity() {
-            AbstractFurnaceTileEntity furnace = new MobSpawnerTileEntity();
-            furnace.setLocation(MinecraftServer.getServer().getServerWorld(DimensionManager.OVERWORLD), BlockPos.ZERO); // TODO: customize this if required
+            AbstractFurnaceTileEntity furnace = new FurnaceTileEntity();
+            furnace.setWorld(MinecraftServer.getServer().getWorld(DimensionType.OVERWORLD)); // TODO: customize this if required
             return furnace;
         }
 
@@ -128,7 +125,7 @@ public abstract class CraftTileInventoryConverter implements CraftInventoryCreat
 
         @Override
         public IInventory getTileEntity() {
-            return new LecternTileEntity().inventory;
+            return new LecternTileEntity().field_214048_a;
         }
     }
 

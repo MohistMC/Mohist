@@ -83,11 +83,11 @@ public final class CraftMagicNumbers implements UnsafeValues {
 
     static {
         for (Block block : Registry.BLOCK) {
-            BLOCK_MATERIAL.put(block, Material.getMaterial(Registry.BLOCK.getKey(block).getKey().toUpperCase(Locale.ROOT)));
+            BLOCK_MATERIAL.put(block, Material.getMaterial(Registry.BLOCK.getKey(block).getPath().toUpperCase(Locale.ROOT)));
         }
 
         for (Item item : Registry.ITEM) {
-            ITEM_MATERIAL.put(item, Material.getMaterial(Registry.ITEM.getKey(item).getKey().toUpperCase(Locale.ROOT)));
+            ITEM_MATERIAL.put(item, Material.getMaterial(Registry.ITEM.getKey(item).getPath().toUpperCase(Locale.ROOT)));
         }
 
         for (Material material : Material.values()) {
@@ -96,10 +96,10 @@ public final class CraftMagicNumbers implements UnsafeValues {
             }
 
             ResourceLocation key = key(material);
-            Registry.ITEM.getOptional(key).ifPresent((item) -> {
+            Registry.ITEM.getValue(key).ifPresent((item) -> {
                 MATERIAL_ITEM.put(material, item);
             });
-            Registry.BLOCK.getOptional(key).ifPresent((block) -> {
+            Registry.BLOCK.getValue(key).ifPresent((block) -> {
                 MATERIAL_BLOCK.put(material, block);
             });
         }
@@ -165,9 +165,9 @@ public final class CraftMagicNumbers implements UnsafeValues {
         }
 
         CompoundNBT stack = new CompoundNBT();
-        stack.setString("id", "minecraft:" + material.toLowerCase(Locale.ROOT));
+        stack.putString("id", "minecraft:" + material.toLowerCase(Locale.ROOT));
 
-        Dynamic<INBT> converted = DataFixesManager.a().update(DataConverterTypes.ITEM_STACK, new Dynamic<>(NBTDynamicOps.a, stack), version, this.getDataVersion());
+        Dynamic<INBT> converted = DataFixesManager.getDataFixer().update(TypeReferences.ITEM_STACK, new Dynamic<>(NBTDynamicOps.INSTANCE, stack), version, this.getDataVersion());
         String newId = converted.get("id").asString("");
 
         return Material.matchMaterial(newId);
@@ -194,7 +194,7 @@ public final class CraftMagicNumbers implements UnsafeValues {
 
     @Override
     public int getDataVersion() {
-        return SharedConstants.getGameVersion().getWorldVersion();
+        return SharedConstants.getVersion().getWorldVersion();
     }
 
     @Override
@@ -202,7 +202,7 @@ public final class CraftMagicNumbers implements UnsafeValues {
         net.minecraft.item.ItemStack nmsStack = CraftItemStack.asNMSCopy(stack);
 
         try {
-            nmsStack.setTag((CompoundNBT) JsonToNBT.parse(arguments));
+            nmsStack.setTag((CompoundNBT) JsonToNBT.getTagFromJson(arguments));
         } catch (CommandSyntaxException ex) {
             Logger.getLogger(CraftMagicNumbers.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -218,9 +218,9 @@ public final class CraftMagicNumbers implements UnsafeValues {
             throw new IllegalArgumentException("Advancement " + key + " already exists.");
         }
 
-        net.minecraft.advancements.Advancement.SerializedAdvancement nms = (net.minecraft.advancements.Advancement.SerializedAdvancement) JSONUtils.a(AdvancementDataWorld.DESERIALIZER, advancement, net.minecraft.advancements.Advancement.SerializedAdvancement.class);
+        net.minecraft.advancements.Advancement.Builder nms = (net.minecraft.advancements.Advancement.Builder) JSONUtils.fromJson(AdvancementManager.GSON, advancement, net.minecraft.advancements.Advancement.Builder.class);
         if (nms != null) {
-            MinecraftServer.getServer().getAdvancementData().REGISTRY.a(Maps.newHashMap(Collections.singletonMap(CraftNamespacedKey.toMinecraft(key), nms)));
+            MinecraftServer.getServer().getAdvancementManager().field_223388_c.loadAdvancements(Maps.newHashMap(Collections.singletonMap(CraftNamespacedKey.toMinecraft(key), nms)));
             Advancement bukkit = Bukkit.getAdvancement(key);
 
             if (bukkit != null) {
@@ -233,7 +233,7 @@ public final class CraftMagicNumbers implements UnsafeValues {
                     Bukkit.getLogger().log(Level.SEVERE, "Error saving advancement " + key, ex);
                 }
 
-                MinecraftServer.getServer().getPlayerList().reload();
+                MinecraftServer.getServer().getPlayerList().reloadResources();
 
                 return bukkit;
             }

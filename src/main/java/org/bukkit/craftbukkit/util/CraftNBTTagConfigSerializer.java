@@ -26,7 +26,7 @@ public class CraftNBTTagConfigSerializer {
     public static Object serialize(INBT base) {
         if (base instanceof CompoundNBT) {
             Map<String, Object> innerMap = new HashMap<>();
-            for (String key : ((CompoundNBT) base).getKeys()) {
+            for (String key : ((CompoundNBT) base).keySet()) {
                 innerMap.put(key, serialize(((CompoundNBT) base).get(key)));
             }
 
@@ -39,7 +39,7 @@ public class CraftNBTTagConfigSerializer {
 
             return baseList;
         } else if (base instanceof StringNBT) {
-            return base.asString();
+            return base.getString();
         } else if (base instanceof IntNBT) { // No need to check for doubles, those are covered by the double itself
             return base.toString() + "i";
         }
@@ -51,7 +51,7 @@ public class CraftNBTTagConfigSerializer {
         if (object instanceof Map) {
             CompoundNBT compound = new CompoundNBT();
             for (Map.Entry<String, Object> entry : ((Map<String, Object>) object).entrySet()) {
-                compound.set(entry.getKey(), deserialize(entry.getValue()));
+                compound.put(entry.getKey(), deserialize(entry.getValue()));
             }
 
             return compound;
@@ -72,21 +72,21 @@ public class CraftNBTTagConfigSerializer {
 
             if (ARRAY.matcher(string).matches()) {
                 try {
-                    return new JsonToNBT(new StringReader(string)).parseArray();
+                    return new JsonToNBT(new StringReader(string)).readArrayTag(); // TODO: public
                 } catch (CommandSyntaxException e) {
                     throw new RuntimeException("Could not deserialize found list ", e);
                 }
             } else if (INTEGER.matcher(string).matches()) { //Read integers on our own
-                return IntNBT.a(Integer.parseInt(string.substring(0, string.length() - 1)));
+                return IntNBT.func_229692_a_(Integer.parseInt(string.substring(0, string.length() - 1)));
             } else if (DOUBLE.matcher(string).matches()) {
-                return DoubleNBT.a(Double.parseDouble(string.substring(0, string.length() - 1)));
+                return DoubleNBT.func_229684_a_(Double.parseDouble(string.substring(0, string.length() - 1)));
             } else {
-                INBT nbtBase = MOJANGSON_PARSER.parseLiteral(string);
+                INBT nbtBase = MOJANGSON_PARSER.type(string); // TODO: public
 
                 if (nbtBase instanceof IntNBT) { // If this returns an integer, it did not use our method from above
-                    return StringNBT.a(nbtBase.asString()); // It then is a string that was falsely read as an int
+                    return StringNBT.func_229705_a_(nbtBase.getString()); // It then is a string that was falsely read as an int
                 } else if (nbtBase instanceof DoubleNBT) {
-                    return StringNBT.a(String.valueOf(((DoubleNBT) nbtBase).asDouble())); // Doubles add "d" at the end
+                    return StringNBT.func_229705_a_(String.valueOf(((DoubleNBT) nbtBase).getDouble())); // Doubles add "d" at the end
                 } else {
                     return nbtBase;
                 }

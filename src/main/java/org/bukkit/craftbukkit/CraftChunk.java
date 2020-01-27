@@ -252,9 +252,9 @@ public class CraftChunk implements Chunk {
                 sectionEmpty[i] = true;
             } else { // Not empty
                 CompoundNBT data = new CompoundNBT();
-                cs[i].getBlocks().a(data, "Palette", "BlockStates");
+                cs[i].getData().writeChunkPalette(data, "Palette", "BlockStates");
 
-                PalettedContainer blockids = new PalettedContainer<>(ChunkSection.GLOBAL_PALETTE, net.minecraft.block.Block.REGISTRY_ID, NBTUtil::d, NBTUtil::a, Blocks.AIR.getBlockData()); // TODO: snapshot whole ChunkSection
+                PalettedContainer blockids = new PalettedContainer<>(ChunkSection.REGISTRY_PALETTE, net.minecraft.block.Block.REGISTRY_ID, NBTUtil::d, NBTUtil::a, Blocks.AIR.getBlockData()); // TODO: snapshot whole ChunkSection
                 blockids.a(data.getList("Palette", CraftMagicNumbers.NBT.TAG_COMPOUND), data.getLongArray("BlockStates"));
 
                 sectionBlockIDs[i] = blockids;
@@ -265,23 +265,23 @@ public class CraftChunk implements Chunk {
                     sectionSkyLights[i] = emptyLight;
                 } else {
                     sectionSkyLights[i] = new byte[2048];
-                    System.arraycopy(skyLightArray.asBytes(), 0, sectionSkyLights[i], 0, 2048);
+                    System.arraycopy(skyLightArray.getData(), 0, sectionSkyLights[i], 0, 2048);
                 }
                 NibbleArray emitLightArray = lightengine.a(LightType.BLOCK).a(SectionPos.a(x, i, z));
                 if (emitLightArray == null) {
                     sectionEmitLights[i] = emptyLight;
                 } else {
                     sectionEmitLights[i] = new byte[2048];
-                    System.arraycopy(emitLightArray.asBytes(), 0, sectionEmitLights[i], 0, 2048);
+                    System.arraycopy(emitLightArray.getData(), 0, sectionEmitLights[i], 0, 2048);
                 }
             }
         }
 
-        HeightMap hmap = null;
+        Heightmap hmap = null;
 
         if (includeMaxBlockY) {
-            hmap = new HeightMap(null, HeightMap.Type.MOTION_BLOCKING);
-            hmap.a(chunk.heightMap.get(HeightMap.Type.MOTION_BLOCKING).a());
+            hmap = new Heightmap(null, Heightmap.Type.MOTION_BLOCKING);
+            hmap.a(chunk.heightMap.get(Heightmap.Type.MOTION_BLOCKING).a());
         }
 
         BiomeContainer biome = null;
@@ -298,8 +298,8 @@ public class CraftChunk implements Chunk {
         BiomeContainer biome = null;
 
         if (includeBiome || includeBiomeTempRain) {
-            WorldChunkManager wcm = world.getHandle().getChunkProvider().getChunkGenerator().getWorldChunkManager();
-            biome = new BiomeContainer(new ChunkCoordIntPair(x, z), wcm);
+            BiomeProvider wcm = world.getHandle().getChunkProvider().getChunkGenerator().getBiomeProvider();
+            biome = new BiomeContainer(new ChunkPos(x, z), wcm);
         }
 
         /* Fill with empty data */

@@ -31,7 +31,7 @@ public final class CraftMapView implements MapView {
 
     @Override
     public int getId() {
-        String text = worldMap.getId();
+        String text = worldMap.getName();
         if (text.startsWith("map_")) {
             try {
                 return Integer.parseInt(text.substring("map_".length()));
@@ -61,35 +61,35 @@ public final class CraftMapView implements MapView {
 
     @Override
     public World getWorld() {
-        DimensionManager dimension = worldMap.map;
-        ServerWorld world = MinecraftServer.getServer().getServerWorld(dimension);
+        DimensionType dimension = worldMap.dimension;
+        ServerWorld world = MinecraftServer.getServer().getWorld(dimension);
 
         return (world == null) ? null : world.getWorld();
     }
 
     @Override
     public void setWorld(World world) {
-        worldMap.map = ((CraftWorld) world).getHandle().getDimension().getDimensionManager();
+        worldMap.dimension = ((CraftWorld) world).getHandle().getDimension().getType();
     }
 
     @Override
     public int getCenterX() {
-        return worldMap.centerX;
+        return worldMap.xCenter;
     }
 
     @Override
     public int getCenterZ() {
-        return worldMap.centerZ;
+        return worldMap.zCenter;
     }
 
     @Override
     public void setCenterX(int x) {
-        worldMap.centerX = x;
+        worldMap.xCenter = x;
     }
 
     @Override
     public void setCenterZ(int z) {
-        worldMap.centerZ = z;
+        worldMap.zCenter = z;
     }
 
     @Override
@@ -178,12 +178,12 @@ public final class CraftMapView implements MapView {
 
     @Override
     public boolean isTrackingPosition() {
-        return worldMap.track;
+        return worldMap.trackingPosition;
     }
 
     @Override
     public void setTrackingPosition(boolean trackingPosition) {
-        worldMap.track = trackingPosition;
+        worldMap.trackingPosition = trackingPosition;
     }
 
     @Override

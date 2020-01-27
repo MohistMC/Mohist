@@ -110,42 +110,42 @@ public final class CraftPersistentDataTypeRegistry {
             Primitives
          */
         if (Objects.equals(Byte.class, type)) {
-            return createAdapter(Byte.class, ByteNBT.class, ByteNBT::a, ByteNBT::asByte);
+            return createAdapter(Byte.class, ByteNBT.class, ByteNBT::new, ByteNBT::getByte);
         }
         if (Objects.equals(Short.class, type)) {
-            return createAdapter(Short.class, ShortNBT.class, ShortNBT::a, ShortNBT::asShort);
+            return createAdapter(Short.class, ShortNBT.class, ShortNBT::new, ShortNBT::getShort);
         }
         if (Objects.equals(Integer.class, type)) {
-            return createAdapter(Integer.class, IntNBT.class, IntNBT::a, IntNBT::asInt);
+            return createAdapter(Integer.class, IntNBT.class, IntNBT::new, IntNBT::getInt);
         }
         if (Objects.equals(Long.class, type)) {
-            return createAdapter(Long.class, LongNBT.class, LongNBT::a, LongNBT::asLong);
+            return createAdapter(Long.class, LongNBT.class, LongNBT::new, LongNBT::getLong);
         }
         if (Objects.equals(Float.class, type)) {
-            return createAdapter(Float.class, FloatNBT.class, FloatNBT::a, FloatNBT::asFloat);
+            return createAdapter(Float.class, FloatNBT.class, FloatNBT::new, FloatNBT::getFloat);
         }
         if (Objects.equals(Double.class, type)) {
-            return createAdapter(Double.class, DoubleNBT.class, DoubleNBT::a, DoubleNBT::asDouble);
+            return createAdapter(Double.class, DoubleNBT.class, DoubleNBT::new, DoubleNBT::getDouble);
         }
 
         /*
             String
          */
         if (Objects.equals(String.class, type)) {
-            return createAdapter(String.class, StringNBT.class, StringNBT::a, StringNBT::asString);
+            return createAdapter(String.class, StringNBT.class, StringNBT::new, StringNBT::getString);
         }
 
         /*
             Primitive Arrays
          */
         if (Objects.equals(byte[].class, type)) {
-            return createAdapter(byte[].class, ByteArrayNBT.class, array -> new ByteArrayNBT(Arrays.copyOf(array, array.length)), n -> Arrays.copyOf(n.getBytes(), n.size()));
+            return createAdapter(byte[].class, ByteArrayNBT.class, array -> new ByteArrayNBT(Arrays.copyOf(array, array.length)), n -> Arrays.copyOf(n.getByteArray(), n.size()));
         }
         if (Objects.equals(int[].class, type)) {
-            return createAdapter(int[].class, IntArrayNBT.class, array -> new IntArrayNBT(Arrays.copyOf(array, array.length)), n -> Arrays.copyOf(n.getInts(), n.size()));
+            return createAdapter(int[].class, IntArrayNBT.class, array -> new IntArrayNBT(Arrays.copyOf(array, array.length)), n -> Arrays.copyOf(n.getIntArray(), n.size()));
         }
         if (Objects.equals(long[].class, type)) {
-            return createAdapter(long[].class, LongArrayNBT.class, array -> new LongArrayNBT(Arrays.copyOf(array, array.length)), n -> Arrays.copyOf(n.getLongs(), n.size()));
+            return createAdapter(long[].class, LongArrayNBT.class, array -> new LongArrayNBT(Arrays.copyOf(array, array.length)), n -> Arrays.copyOf(n.getAsLongArray(), n.size()));
         }
 
         /*
@@ -155,7 +155,7 @@ public final class CraftPersistentDataTypeRegistry {
         if (Objects.equals(PersistentDataContainer.class, type)) {
             return createAdapter(CraftPersistentDataContainer.class, CompoundNBT.class, CraftPersistentDataContainer::toTagCompound, tag -> {
                 CraftPersistentDataContainer container = new CraftPersistentDataContainer(this);
-                for (String key : tag.getKeys()) {
+                for (String key : tag.keySet()) {
                     container.put(key, tag.get(key));
                 }
                 return container;

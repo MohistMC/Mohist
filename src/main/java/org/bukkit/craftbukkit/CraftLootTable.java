@@ -12,7 +12,6 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.world.storage.loot.LootParameterSets;
 import net.minecraft.world.storage.loot.LootParameters;
 import net.minecraft.world.storage.loot.LootTable;
-import net.minecraft.world.storage.loot.LootContext;
 import net.minecraft.world.server.ServerWorld;
 import org.bukkit.Location;
 import org.bukkit.NamespacedKey;
@@ -40,8 +39,8 @@ public class CraftLootTable implements org.bukkit.loot.LootTable {
 
     @Override
     public Collection<ItemStack> populateLoot(Random random, LootContext context) {
-        LootTableInfo nmsContext = convertContext(context);
-        List<net.minecraft.item.ItemStack> nmsItems = handle.populateLoot(nmsContext);
+        net.minecraft.world.storage.loot.LootContext nmsContext = convertContext(context);
+        List<net.minecraft.item.ItemStack> nmsItems = handle.generate(nmsContext);
         Collection<ItemStack> bukkit = new ArrayList<>(nmsItems.size());
 
         for (net.minecraft.item.ItemStack item : nmsItems) {
@@ -56,7 +55,7 @@ public class CraftLootTable implements org.bukkit.loot.LootTable {
 
     @Override
     public void fillInventory(Inventory inventory, Random random, LootContext context) {
-        LootTableInfo nmsContext = convertContext(context);
+        net.minecraft.world.storage.loot.LootContext nmsContext = convertContext(context);
         CraftInventory craftInventory = (CraftInventory) inventory;
         IInventory handle = craftInventory.getInventory();
 
@@ -69,30 +68,30 @@ public class CraftLootTable implements org.bukkit.loot.LootTable {
         return key;
     }
 
-    private LootTableInfo convertContext(LootContext context) {
+    private net.minecraft.world.storage.loot.LootContext convertContext(LootContext context) {
         Location loc = context.getLocation();
         ServerWorld handle = ((CraftWorld) loc.getWorld()).getHandle();
 
-        LootTableInfo.Builder builder = new LootTableInfo.Builder(handle);
-        if (getHandle() != LootTable.EMPTY) {
+        net.minecraft.world.storage.loot.LootContext.Builder builder = new net.minecraft.world.storage.loot.LootContext.Builder(handle);
+        if (getHandle() != LootTable.EMPTY_LOOT_TABLE) {
             // builder.luck(context.getLuck());
 
             if (context.getLootedEntity() != null) {
                 Entity nmsLootedEntity = ((CraftEntity) context.getLootedEntity()).getHandle();
-                builder.set(LootContextParameters.THIS_ENTITY, nmsLootedEntity);
-                builder.set(LootContextParameters.DAMAGE_SOURCE, DamageSource.GENERIC);
-                builder.set(LootContextParameters.POSITION, new BlockPos(nmsLootedEntity));
+                builder.withParameter(LootParameters.THIS_ENTITY, nmsLootedEntity);
+                builder.withParameter(LootParameters.DAMAGE_SOURCE, DamageSource.GENERIC);
+                builder.withParameter(LootParameters.POSITION, new BlockPos(nmsLootedEntity));
             }
 
             if (context.getKiller() != null) {
                 PlayerEntity nmsKiller = ((CraftHumanEntity) context.getKiller()).getHandle();
-                builder.set(LootContextParameters.KILLER_ENTITY, nmsKiller);
+                builder.withParameter(LootParameters.KILLER_ENTITY, nmsKiller);
                 // If there is a player killer, damage source should reflect that in case loot tables use that information
-                builder.set(LootContextParameters.DAMAGE_SOURCE, DamageSource.playerAttack(nmsKiller));
+                builder.withParameter(LootParameters.DAMAGE_SOURCE, DamageSource.causePlayerDamage(nmsKiller));
             }
         }
 
-        return builder.build(getHandle().getLootContextParameterSet());
+        return builder.build(getHandle().getParameterSet());
     }
 
     @Override

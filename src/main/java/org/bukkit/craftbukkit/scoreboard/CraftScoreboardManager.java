@@ -74,7 +74,7 @@ public final class CraftScoreboardManager implements ScoreboardManager {
         // Old objective tracking
         HashSet<ScoreObjective> removed = new HashSet<ScoreObjective>();
         for (int i = 0; i < 3; ++i) {
-            ScoreObjective scoreboardobjective = oldboard.getObjectiveForSlot(i);
+            ScoreObjective scoreboardobjective = oldboard.getObjectiveInDisplaySlot(i);
             if (scoreboardobjective != null && !removed.contains(scoreboardobjective)) {
                 entityplayer.connection.sendPacket(new SScoreboardObjectivePacket(scoreboardobjective, 1));
                 removed.add(scoreboardobjective);
@@ -89,7 +89,7 @@ public final class CraftScoreboardManager implements ScoreboardManager {
         }
 
         // The above is the reverse of the below method.
-        server.getPlayerList().sendScoreboard((ServerScoreboard) newboard, player.getHandle());
+        server.getPlayerList().sendScoreboard((ServerScoreboard) newboard, player.getHandle()); //TODO: public
     }
 
     // CraftBukkit method
@@ -101,7 +101,7 @@ public final class CraftScoreboardManager implements ScoreboardManager {
     public void getScoreboardScores(ScoreCriteria criteria, String name, Consumer<Score> consumer) {
         for (CraftScoreboard scoreboard : scoreboards) {
             Scoreboard board = scoreboard.board;
-            board.getObjectivesForCriteria(criteria, name, (score) -> consumer.accept(score));
+            board.forAllObjectives(criteria, name, (score) -> consumer.accept(score));
         }
     }
 }

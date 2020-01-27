@@ -24,7 +24,7 @@ public class CraftBlockState implements BlockState {
     private final CraftWorld world;
     private final CraftChunk chunk;
     private final BlockPos position;
-    protected BlockState data;
+    protected net.minecraft.block.BlockState data;
     protected int flag;
 
     public CraftBlockState(final Block block) {
@@ -82,7 +82,7 @@ public class CraftBlockState implements BlockState {
         return chunk;
     }
 
-    public void setData(BlockState data) {
+    public void setData(net.minecraft.block.BlockState data) {
         this.data = data;
     }
 
@@ -90,7 +90,7 @@ public class CraftBlockState implements BlockState {
         return this.position;
     }
 
-    public BlockState getHandle() {
+    public net.minecraft.block.BlockState getHandle() {
         return this.data;
     }
 
@@ -183,7 +183,7 @@ public class CraftBlockState implements BlockState {
             }
         }
 
-        BlockState newBlock = this.data;
+        net.minecraft.block.BlockState newBlock = this.data;
         block.setTypeAndData(newBlock, applyPhysics);
         world.getHandle().notify(
                 position,

@@ -94,7 +94,7 @@ final class CraftTeam extends CraftScoreboardComponent implements Team {
     public boolean allowFriendlyFire() throws IllegalStateException {
         CraftScoreboard scoreboard = checkState();
 
-        return team.allowFriendlyFire();
+        return team.getAllowFriendlyFire();
     }
 
     @Override
@@ -108,14 +108,14 @@ final class CraftTeam extends CraftScoreboardComponent implements Team {
     public boolean canSeeFriendlyInvisibles() throws IllegalStateException {
         CraftScoreboard scoreboard = checkState();
 
-        return team.canSeeFriendlyInvisibles();
+        return team.getSeeFriendlyInvisiblesEnabled();
     }
 
     @Override
     public void setCanSeeFriendlyInvisibles(boolean enabled) throws IllegalStateException {
         CraftScoreboard scoreboard = checkState();
 
-        team.setCanSeeFriendlyInvisibles(enabled);
+        team.setSeeFriendlyInvisiblesEnabled(enabled);
     }
 
     @Override
@@ -137,7 +137,7 @@ final class CraftTeam extends CraftScoreboardComponent implements Team {
         CraftScoreboard scoreboard = checkState();
 
         ImmutableSet.Builder<OfflinePlayer> players = ImmutableSet.builder();
-        for (String playerName : team.getPlayerNameSet()) {
+        for (String playerName : team.getMembershipCollection()) {
             players.add(Bukkit.getOfflinePlayer(playerName));
         }
         return players.build();
@@ -148,7 +148,7 @@ final class CraftTeam extends CraftScoreboardComponent implements Team {
         CraftScoreboard scoreboard = checkState();
 
         ImmutableSet.Builder<String> entries = ImmutableSet.builder();
-        for (String playerName: team.getPlayerNameSet()){
+        for (String playerName: team.getMembershipCollection()){
             entries.add(playerName);
         }
         return entries.build();
@@ -158,7 +158,7 @@ final class CraftTeam extends CraftScoreboardComponent implements Team {
     public int getSize() throws IllegalStateException {
         CraftScoreboard scoreboard = checkState();
 
-        return team.getPlayerNameSet().size();
+        return team.getMembershipCollection().size();
     }
 
     @Override
@@ -186,7 +186,7 @@ final class CraftTeam extends CraftScoreboardComponent implements Team {
         Validate.notNull(entry, "Entry cannot be null");
         CraftScoreboard scoreboard = checkState();
 
-        if (!team.getPlayerNameSet().contains(entry)) {
+        if (!team.getMembershipCollection().contains(entry)) {
             return false;
         }
 
@@ -206,7 +206,7 @@ final class CraftTeam extends CraftScoreboardComponent implements Team {
 
         CraftScoreboard scoreboard = checkState();
 
-        return team.getPlayerNameSet().contains(entry);
+        return team.getMembershipCollection().contains(entry);
     }
 
     @Override

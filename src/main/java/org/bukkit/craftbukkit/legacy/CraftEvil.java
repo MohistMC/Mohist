@@ -10,7 +10,6 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
 import org.bukkit.craftbukkit.block.CraftBlock;
 import org.bukkit.craftbukkit.block.CraftBlockState;
-import org.bukkit.craftbukkit.util.CraftLegacy;
 import org.bukkit.inventory.ItemStack;
 
 /**

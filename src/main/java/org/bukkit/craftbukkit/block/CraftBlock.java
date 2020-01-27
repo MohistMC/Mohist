@@ -6,7 +6,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.world.biome.Biome;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.block.RedstoneWireBlock;
 import net.minecraft.block.ContainerBlock;
@@ -175,7 +174,7 @@ public class CraftBlock implements Block {
         setTypeAndData(((CraftBlockData) data).getState(), applyPhysics);
     }
 
-    public boolean setTypeAndData(final IBlockData blockData, final boolean applyPhysics) {
+    public boolean setTypeAndData(final net.minecraft.block.BlockState blockData, final boolean applyPhysics) {
         // SPIGOT-611: need to do this to prevent glitchiness. Easier to handle this here (like /setblock) than to fix weirdness in tile entity cleanup
         if (!blockData.isAir() && blockData.getBlock() instanceof BlockTileEntity && blockData.getBlock() != getNMSBlock()) {
             // SPIGOT-4612: faster - just clear tile
@@ -482,7 +481,7 @@ public class CraftBlock implements Block {
         getWorld().setBiome(getX(), getY(), getZ(), bio);
     }
 
-    public static Biome biomeBaseToBiome(Biome base) {
+    public static Biome biomeBaseToBiome(net.minecraft.world.biome.Biome base) {
         if (base == null) {
             return null;
         }

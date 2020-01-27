@@ -31,7 +31,7 @@ public class CraftProfileBanList implements org.bukkit.BanList {
             return null;
         }
 
-        ProfileBanEntry entry = (ProfileBanEntry) list.get(profile);
+        ProfileBanEntry entry = (ProfileBanEntry) list.getEntry(profile);
         if (entry == null) {
             return null;
         }
@@ -52,10 +52,10 @@ public class CraftProfileBanList implements org.bukkit.BanList {
                 StringUtils.isBlank(source) ? null : source, expires,
                 StringUtils.isBlank(reason) ? null : reason);
 
-        list.add(entry);
+        list.addEntry(entry);
 
         try {
-            list.save();
+            list.writeChanges();
         } catch (IOException ex) {
             Bukkit.getLogger().log(Level.SEVERE, "Failed to save banned-players.json, {0}", ex.getMessage());
         }
@@ -67,8 +67,8 @@ public class CraftProfileBanList implements org.bukkit.BanList {
     public Set<org.bukkit.BanEntry> getBanEntries() {
         ImmutableSet.Builder<org.bukkit.BanEntry> builder = ImmutableSet.builder();
 
-        for (UserListEntry entry : list.getValues()) {
-            GameProfile profile = (GameProfile) entry.getKey();
+        for (UserListEntry entry : list.getEntries()) {
+            GameProfile profile = (GameProfile) entry.getValue(); //TODO add public
             builder.add(new CraftProfileBanEntry(profile, (ProfileBanEntry) entry, list));
         }
 
@@ -92,7 +92,7 @@ public class CraftProfileBanList implements org.bukkit.BanList {
         Validate.notNull(target, "Target cannot be null");
 
         GameProfile profile = getProfile(target);
-        list.remove(profile);
+        list.removeEntry(profile);
     }
 
     private GameProfile getProfile(String target) {

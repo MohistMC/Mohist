@@ -100,6 +100,6 @@ public class CraftPotionEffectType extends PotionEffectType {
 
     @Override
     public Color getColor() {
-        return Color.fromRGB(handle.getColor());
+        return Color.fromRGB(handle.getLiquidColor());
     }
 }

@@ -30,7 +30,7 @@ public class CraftOfflinePlayer implements OfflinePlayer, ConfigurationSerializa
     protected CraftOfflinePlayer(CraftServer server, GameProfile profile) {
         this.server = server;
         this.profile = profile;
-        this.storage = (SaveHandler) (server.console.getServerWorld(DimensionType.OVERWORLD).getDataManager());
+        this.storage = (SaveHandler) (server.console.getWorld(DimensionType.OVERWORLD).getSaveHandler());
 
     }
 
@@ -58,7 +58,7 @@ public class CraftOfflinePlayer implements OfflinePlayer, ConfigurationSerializa
         CompoundNBT data = getBukkitData();
 
         if (data != null) {
-            if (data.hasKey("lastKnownName")) {
+            if (data.contains("lastKnownName")) {
                 return data.getString("lastKnownName");
             }
         }
@@ -77,7 +77,7 @@ public class CraftOfflinePlayer implements OfflinePlayer, ConfigurationSerializa
 
     @Override
     public boolean isOp() {
-        return server.getHandle().isOp(profile);
+        return server.getHandle().canSendCommands(profile);
     }
 
     @Override
@@ -116,15 +116,15 @@ public class CraftOfflinePlayer implements OfflinePlayer, ConfigurationSerializa
 
     @Override
     public boolean isWhitelisted() {
-        return server.getHandle().getWhitelist().isWhitelisted(profile);
+        return server.getHandle().getWhitelistedPlayers().isWhitelisted(profile);
     }
 
     @Override
     public void setWhitelisted(boolean value) {
         if (value) {
-            server.getHandle().getWhitelist().add(new WhitelistEntry(profile));
+            server.getHandle().getWhitelistedPlayers().addEntry(new WhitelistEntry(profile));
         } else {
-            server.getHandle().getWhitelist().remove(profile);
+            server.getHandle().getWhitelistedPlayers().removeEntry(profile);
         }
     }
 
@@ -185,8 +185,8 @@ public class CraftOfflinePlayer implements OfflinePlayer, ConfigurationSerializa
         CompoundNBT result = getData();
 
         if (result != null) {
-            if (!result.hasKey("bukkit")) {
-                result.set("bukkit", new CompoundNBT());
+            if (!result.contains("bukkit")) {
+                result.put("bukkit", new CompoundNBT());
             }
             result = result.getCompound("bukkit");
         }
@@ -195,7 +195,7 @@ public class CraftOfflinePlayer implements OfflinePlayer, ConfigurationSerializa
     }
 
     private File getDataFile() {
-        return new File(storage.getPlayerDir(), getUniqueId() + ".dat");
+        return new File(storage.getWorldDirectory(), getUniqueId() + ".dat");
     }
 
     @Override
@@ -206,7 +206,7 @@ public class CraftOfflinePlayer implements OfflinePlayer, ConfigurationSerializa
         CompoundNBT data = getBukkitData();
 
         if (data != null) {
-            if (data.hasKey("firstPlayed")) {
+            if (data.contains("firstPlayed")) {
                 return data.getLong("firstPlayed");
             } else {
                 File file = getDataFile();
@@ -225,7 +225,7 @@ public class CraftOfflinePlayer implements OfflinePlayer, ConfigurationSerializa
         CompoundNBT data = getBukkitData();
 
         if (data != null) {
-            if (data.hasKey("lastPlayed")) {
+            if (data.contains("lastPlayed")) {
                 return data.getLong("lastPlayed");
             } else {
                 File file = getDataFile();
@@ -246,7 +246,7 @@ public class CraftOfflinePlayer implements OfflinePlayer, ConfigurationSerializa
         CompoundNBT data = getData();
         if (data == null) return null;
 
-        if (data.hasKey("SpawnX") && data.hasKey("SpawnY") && data.hasKey("SpawnZ")) {
+        if (data.contains("SpawnX") && data.contains("SpawnY") && data.contains("SpawnZ")) {
             String spawnWorld = data.getString("SpawnWorld");
             if (spawnWorld.equals("")) {
                 spawnWorld = server.getWorlds().get(0).getName();

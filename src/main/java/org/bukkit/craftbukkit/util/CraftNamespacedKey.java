@@ -12,7 +12,7 @@ public final class CraftNamespacedKey {
         if (string == null || string.isEmpty()) {
             return null;
         }
-        ResourceLocation minecraft = ResourceLocation.a(string);
+        ResourceLocation minecraft = ResourceLocation.tryCreate(string);
         return (minecraft == null) ? null : fromMinecraft(minecraft);
     }
 
@@ -21,7 +21,7 @@ public final class CraftNamespacedKey {
     }
 
     public static NamespacedKey fromMinecraft(ResourceLocation minecraft) {
-        return new NamespacedKey(minecraft.getNamespace(), minecraft.getKey());
+        return new NamespacedKey(minecraft.getNamespace(), minecraft.getPath());
     }
 
     public static ResourceLocation toMinecraft(NamespacedKey key) {

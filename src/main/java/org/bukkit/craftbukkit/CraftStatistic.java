@@ -4,7 +4,6 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.ImmutableBiMap;
 import net.minecraft.block.Block;
-import net.minecraft.entity.EntityType;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.item.Item;
 import net.minecraft.util.ResourceLocation;
@@ -115,11 +114,11 @@ public enum CraftStatistic {
     }
 
     public static org.bukkit.Statistic getBukkitStatistic(net.minecraft.stats.Stat<?> statistic) {
-        Registry statRegistry = statistic.getWrapper().getRegistry();
-        ResourceLocation nmsKey = Registry.STATS.getKey(statistic.getWrapper());
+        Registry statRegistry = statistic.getType().getRegistry();
+        ResourceLocation nmsKey = Registry.STATS.getKey(statistic.getType());
 
         if (statRegistry == Registry.CUSTOM_STAT) {
-            nmsKey = (ResourceLocation) statistic.b();
+            nmsKey = (ResourceLocation) statistic.getValue();
         }
 
         return statistics.get(nmsKey);
@@ -128,7 +127,7 @@ public enum CraftStatistic {
     public static net.minecraft.stats.Stat getNMSStatistic(org.bukkit.Statistic bukkit) {
         Preconditions.checkArgument(bukkit.getType() == Statistic.Type.UNTYPED, "This method only accepts untyped statistics");
 
-        net.minecraft.stats.Stat<ResourceLocation> nms = Stats.CUSTOM.b(statistics.inverse().get(bukkit));
+        net.minecraft.stats.Stat<ResourceLocation> nms = Stats.CUSTOM.get(statistics.inverse().get(bukkit));
         Preconditions.checkArgument(nms != null, "NMS Statistic %s does not exist", bukkit);
 
         return nms;
@@ -137,22 +136,22 @@ public enum CraftStatistic {
     public static net.minecraft.stats.Stat getMaterialStatistic(org.bukkit.Statistic stat, Material material) {
         try {
             if (stat == Statistic.MINE_BLOCK) {
-                return Stats.BLOCK_MINED.b(CraftMagicNumbers.getBlock(material));
+                return Stats.BLOCK_MINED.get(CraftMagicNumbers.getBlock(material));
             }
             if (stat == Statistic.CRAFT_ITEM) {
-                return Stats.ITEM_CRAFTED.b(CraftMagicNumbers.getItem(material));
+                return Stats.ITEM_CRAFTED.get(CraftMagicNumbers.getItem(material));
             }
             if (stat == Statistic.USE_ITEM) {
-                return Stats.ITEM_USED.b(CraftMagicNumbers.getItem(material));
+                return Stats.ITEM_USED.get(CraftMagicNumbers.getItem(material));
             }
             if (stat == Statistic.BREAK_ITEM) {
-                return Stats.ITEM_BROKEN.b(CraftMagicNumbers.getItem(material));
+                return Stats.ITEM_BROKEN.get(CraftMagicNumbers.getItem(material));
             }
             if (stat == Statistic.PICKUP) {
-                return Stats.ITEM_PICKED_UP.b(CraftMagicNumbers.getItem(material));
+                return Stats.ITEM_PICKED_UP.get(CraftMagicNumbers.getItem(material));
             }
             if (stat == Statistic.DROP) {
-                return Stats.ITEM_DROPPED.b(CraftMagicNumbers.getItem(material));
+                return Stats.ITEM_DROPPED.get(CraftMagicNumbers.getItem(material));
             }
         } catch (ArrayIndexOutOfBoundsException e) {
             return null;
@@ -162,29 +161,29 @@ public enum CraftStatistic {
 
     public static net.minecraft.stats.Stat getEntityStatistic(org.bukkit.Statistic stat, EntityType entity) {
         if (entity.getName() != null) {
-            EntityType<?> nmsEntity = Registry.ENTITY_TYPE.get(new ResourceLocation(entity.getName()));
+            net.minecraft.entity.EntityType<?> nmsEntity = Registry.ENTITY_TYPE.getOrDefault(new ResourceLocation(entity.getName()));
 
             if (stat == org.bukkit.Statistic.KILL_ENTITY) {
-                return net.minecraft.stats.Stats.ENTITY_KILLED.b(nmsEntity);
+                return net.minecraft.stats.Stats.ENTITY_KILLED.get(nmsEntity);
             }
             if (stat == org.bukkit.Statistic.ENTITY_KILLED_BY) {
-                return net.minecraft.stats.Stats.ENTITY_KILLED_BY.b(nmsEntity);
+                return net.minecraft.stats.Stats.ENTITY_KILLED_BY.get(nmsEntity);
             }
         }
         return null;
     }
 
-    public static EntityType getEntityTypeFromStatistic(net.minecraft.stats.Stat<EntityType<?>> statistic) {
-        ResourceLocation name = EntityType.getName(statistic.b());
-        return EntityType.fromName(name.getKey());
+    public static EntityType getEntityTypeFromStatistic(net.minecraft.stats.Stat<net.minecraft.entity.EntityType<?>> statistic) {
+        ResourceLocation name = net.minecraft.entity.EntityType.getKey(statistic.getValue());
+        return EntityType.fromName(name.getPath());
     }
 
     public static Material getMaterialFromStatistic(net.minecraft.stats.Stat<?> statistic) {
-        if (statistic.b() instanceof Item) {
-            return CraftMagicNumbers.getMaterial((Item) statistic.b());
+        if (statistic.getValue() instanceof Item) {
+            return CraftMagicNumbers.getMaterial((Item) statistic.getValue());
         }
-        if (statistic.b() instanceof Block) {
-            return CraftMagicNumbers.getMaterial((Block) statistic.b());
+        if (statistic.getValue() instanceof Block) {
+            return CraftMagicNumbers.getMaterial((Block) statistic.getValue());
         }
         return null;
     }

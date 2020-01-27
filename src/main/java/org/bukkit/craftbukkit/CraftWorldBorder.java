@@ -28,7 +28,7 @@ public class CraftWorldBorder implements WorldBorder {
 
     @Override
     public double getSize() {
-        return this.handle.getSize();
+        return this.handle.getDiameter();
     }
 
     @Override
@@ -43,9 +43,9 @@ public class CraftWorldBorder implements WorldBorder {
         time = Math.min(9223372036854775L, Math.max(0L, time));
 
         if (time > 0L) {
-            this.handle.transitionSizeBetween(this.handle.getSize(), newSize, time * 1000L);
+            this.handle.setTransition(this.handle.getSize(), newSize, time * 1000L);
         } else {
-            this.handle.setSize(newSize);
+            this.handle.setTransition(newSize);
         }
     }
 
@@ -83,12 +83,12 @@ public class CraftWorldBorder implements WorldBorder {
 
     @Override
     public double getDamageAmount() {
-        return this.handle.getDamageAmount();
+        return this.handle.getDamagePerBlock();
     }
 
     @Override
     public void setDamageAmount(double damage) {
-        this.handle.setDamageAmount(damage);
+        this.handle.setDamagePerBlock(damage);
     }
 
     @Override
@@ -115,6 +115,6 @@ public class CraftWorldBorder implements WorldBorder {
     public boolean isInside(Location location) {
         Preconditions.checkArgument(location != null, "location");
 
-        return location.getWorld().equals(this.world) && this.handle.a(new BlockPos(location.getX(), location.getY(), location.getZ()));
+        return location.getWorld().equals(this.world) && this.handle.contains(new BlockPos(location.getX(), location.getY(), location.getZ()));
     }
 }

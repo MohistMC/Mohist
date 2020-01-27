@@ -14,7 +14,7 @@ import org.bukkit.craftbukkit.util.CraftMagicNumbers;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginDescriptionFile;
 
-public class CraftCrashReport implements CrashReportCallable<Object> {
+public class CraftCrashReport implements ICrashReportDetail<Object> {
 
     @Override
     public Object call() throws Exception {
