@@ -42,6 +42,7 @@ import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandSenderWrapper;
 import net.minecraft.command.ICommand;
 import net.minecraft.command.ICommandSender;
+import net.minecraft.command.ServerCommandManager;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Enchantments;
 import net.minecraft.init.Items;
@@ -436,7 +437,7 @@ public final class CraftServer implements Server {
     }
 
     private void setVanillaCommands(boolean first) {
-        Map<String, ICommand> commands = console.getCommandManager().getCommands();
+        Map<String, ICommand> commands = new ServerCommandManager(console).getCommands();
         for (ICommand cmd : commands.values()) {
             // Spigot start
             if (console.getCommandManager().getCommandMod().containsValue(cmd))

@@ -456,7 +456,6 @@
 +            if (placeEvent != null && placeEvent.isCanceled() || (blockPlaceEvent != null && (blockPlaceEvent.isCancelled() || !blockPlaceEvent.canBuild())))
 +			{
                  ret = EnumActionResult.FAIL; // cancel placement
-+                blockPlaceEvent.getPlayer().updateInventory();
                  // revert back all captured blocks
                  for (BlockSnapshot blocksnapshot : Lists.reverse(blockSnapshots))
 -                {
@@ -465,6 +464,7 @@
                      blocksnapshot.restore(true, false);
                      world.restoringBlockSnapshots = false;
                  }
++				((org.bukkit.craftbukkit.v1_12_R1.entity.CraftPlayer) player.getBukkitEntity()).updateInventory();
              }
 -            else
 -            {

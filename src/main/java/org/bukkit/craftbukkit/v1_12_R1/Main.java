@@ -119,8 +119,6 @@ public class Main {
 
                 acceptsAll(asList("demo"), "Demo mode");
 
-                acceptsAll(asList("mixin"), "This argument is needed for proper Mixin Framework work in the test env");
-
                 // Spigot Start
                 acceptsAll(asList("S", "spigot-settings"), "File for spigot settings")
                         .withRequiredArg()
@@ -141,7 +139,7 @@ public class Main {
                 acceptsAll(asList("mohist", "mohist-settings"), "File for mohist settings")
                         .withRequiredArg()
                         .ofType(File.class)
-                        .defaultsTo(new File("mohist.yml"))
+                        .defaultsTo(new File("mohist-config", "mohist.yml"))
                         .describedAs("Yml file");
                 // Mohist End
 
@@ -150,7 +148,7 @@ public class Main {
                 acceptsAll(asList("server-name"), "Name of the server")
                         .withRequiredArg()
                         .ofType(String.class)
-                        .defaultsTo("Unknown Server")
+                        .defaultsTo("Mohist Server")
                         .describedAs("Name");
                 // Paper end
             }

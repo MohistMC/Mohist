@@ -151,7 +151,7 @@ public final class VanillaCommandWrapper extends BukkitCommand {
             return ((CraftBlockCommandSender) sender).getTileEntity();
         }
         if (sender instanceof CommandMinecart) {
-            return ((CraftMinecartCommand) sender).getHandle().getCommandBlockLogic();
+            return ((EntityMinecartCommandBlock) ((CraftMinecartCommand) sender).getHandle()).getCommandBlockLogic();
         }
         if (sender instanceof RemoteConsoleCommandSender) {
             return ((DedicatedServer) MinecraftServer.getServerInst()).rconConsoleSource;
