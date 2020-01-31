@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraftforge/fml/common/network/FMLOutboundHandler.java
 +++ ../src-work/minecraft/net/minecraftforge/fml/common/network/FMLOutboundHandler.java
-@@ -131,9 +131,9 @@
+@@ -131,16 +131,16 @@
              @Override
              public void validateArgs(Object args)
              {
@@ -12,3 +12,11 @@
                  }
              }
              @Override
+             public List<NetworkDispatcher> selectNetworks(Object args, ChannelHandlerContext context, FMLProxyPacket packet)
+             {
+                 EntityPlayerMP player = (EntityPlayerMP) args;
+-                NetworkDispatcher dispatcher = (player == null || player instanceof FakePlayer) ? null : player.connection.netManager.channel().attr(NetworkDispatcher.FML_DISPATCHER).get();
++                NetworkDispatcher dispatcher = (player == null || player.connection == null || player instanceof FakePlayer) ? null : player.connection.netManager.channel().attr(NetworkDispatcher.FML_DISPATCHER).get();
+                 return dispatcher == null ? ImmutableList.<NetworkDispatcher>of() : ImmutableList.of(dispatcher);
+             }
+         },

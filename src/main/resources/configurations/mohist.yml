@@ -20,11 +20,6 @@
 # Setting: lang Default: en_US   # Mohist internationalization language setting, will return the default system language when your settings are invalid
 # Setting: perfomance.entityCollideFrequency Default: 2   # Entity Collide Frequency
 
-forgeversion:
-  build: 2847
-  revision: 5
-  minor: 23
-  major: 14
 console_name: Server
 perfomance:
   maxEntityCollisionsPerTick: 8
@@ -44,6 +39,9 @@ check_update: true
 config-version: 1
 forge:
   disablechunkforcesystem: false
+  modsblacklist:
+    list: []
+    kickmessage: Use of unauthorized mods
 world:
   stopserversaveworlds: false
 disable-announce-Advancements: false

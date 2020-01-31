@@ -45,6 +45,9 @@ public class MohistConfig extends ConfigBase{
     public final BoolSetting stopserversaveworlds = new BoolSetting(this, "world.stopserversaveworlds", false, "stopserversaveworlds");
     public final BoolSetting disableannounceAdvancements = new BoolSetting(this, "disable-announce-Advancements", false, "Turn off achievment notifications");
 
+    public final StringArraySetting modsblacklist = new StringArraySetting(this, "forge.modsblacklist.list", "", "mods black-list");
+    public final StringSetting modsblacklistkickMessage = new StringSetting(this, "forge.modsblacklist.kickmessage", "Use of unauthorized mods", "mods black-list kick Message");
+
     public List<String> autounloadWorld_whitelist=new ArrayList();
 
     /* ======================================================================== */

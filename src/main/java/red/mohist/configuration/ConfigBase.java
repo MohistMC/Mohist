@@ -115,7 +115,7 @@ public abstract class ConfigBase
         return config.getInt(path, config.getInt(path));
     }
 
-    private <T> List getList(String path, T def)
+    public <T> List getList(String path, T def)
     {
         config.addDefault(path, def);
         return config.getList(path, config.getList(path));
@@ -133,6 +133,17 @@ public abstract class ConfigBase
         config.addDefault(path, def);
         }
         return config.getString(path, def);
+    }
+
+    public List<String> getStringList(String path, List<String> def)
+    {
+        config.addDefault(path, def);
+        return config.getStringList(path);
+    }
+
+    public YamlConfiguration getConfig()
+    {
+        return config;
     }
 
     public String getFakePlayer(String className, String defaultName)
