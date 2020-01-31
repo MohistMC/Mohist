@@ -437,7 +437,7 @@ public final class CraftServer implements Server {
     }
 
     private void setVanillaCommands(boolean first) {
-        Map<String, ICommand> commands = new ServerCommandManager(console).getCommands();
+        Map<String, ICommand> commands = console.getCommandManager().getCommands();
         for (ICommand cmd : commands.values()) {
             // Spigot start
             if (console.getCommandManager().getCommandMod().containsValue(cmd))
