@@ -12,6 +12,7 @@ import org.bukkit.entity.Player;
 import red.mohist.MohistThreadCost;
 import red.mohist.api.PlayerAPI;
 import red.mohist.api.ServerAPI;
+import red.mohist.configuration.MohistConfig;
 import red.mohist.util.i18n.Message;
 
 public class MohistCommand extends Command {
@@ -76,9 +77,14 @@ public class MohistCommand extends Command {
                 sender.sendMessage(ChatColor.GREEN +ServerAPI.getLanguage());
                 break;
             case "item":
-                if (args.length > 0 && "info".equals(args[1].toLowerCase(Locale.ENGLISH))){
+                if ("info".equals(args[1].toLowerCase(Locale.ENGLISH))){
                     ItemCommand.info(sender);
                 }
+                break;
+            case "reload":
+                MohistConfig.instance.load();
+                sender.sendMessage(ChatColor.GREEN + "mohist.yml reload complete.");
+                break;
             default:
                 sender.sendMessage(ChatColor.RED + "Usage: " + usageMessage);
                 return false;
