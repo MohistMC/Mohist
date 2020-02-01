@@ -14,6 +14,7 @@ import net.minecraft.server.MinecraftServer;
 import org.apache.commons.io.IOUtils;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
+import org.bukkit.plugin.java.JavaPlugin;
 import red.mohist.common.remap.RemapUtils;
 
 /**
@@ -43,27 +44,29 @@ public class DelegateURLClassLoder extends URLClassLoader {
     protected Class<?> findClass(final String name) throws ClassNotFoundException {
         if (RemapUtils.isNMSClass(name)) {
             String mapName = RemapUtils.map(name.replace('.', '/')).replace('/', '.');
-            return ((LaunchClassLoader) MinecraftServer.getServerInst().getClass().getClassLoader()).findClass(mapName);
+            return JavaPlugin.class.getClassLoader().loadClass(mapName);
         }
         Class<?> result = this.classeCache.get(name);
+        if (result != null) {
+            return result;
+        }
         synchronized (name.intern()) {
-            if (result == null) {
-                result = this.remappedFindClass(name);
-                if (result != null) {
-                    this.cacheClass(name, result);
-                }
-                if (result == null) {
-                    try {
-                        result = super.findClass(name);
-                    } catch (ClassNotFoundException e) {
-                        result = ((LaunchClassLoader) MinecraftServer.getServerInst().getClass().getClassLoader()).findClass(name);
-                    }
-                }
-                if (result == null) {
-                    throw new ClassNotFoundException(name);
-                }
-                this.cacheClass(name, result);
+            result = this.remappedFindClass(name);
+            if (result != null) {
+                return result;
             }
+            result = this.remappedFindClass(name);
+            if (result == null) {
+                try {
+                    result = super.findClass(name);
+                } catch (ClassNotFoundException e) {
+                    result = ((LaunchClassLoader) MinecraftServer.getServerInst().getClass().getClassLoader()).findClass(name);
+                }
+            }
+            if (result == null) {
+                throw new ClassNotFoundException(name);
+            }
+            this.cacheClass(name, result);
         }
         return result;
     }
@@ -73,19 +76,21 @@ public class DelegateURLClassLoder extends URLClassLoader {
         try {
             final String path = name.replace('.', '/').concat(".class");
             final URL url = this.findResource(path);
-            if (url != null) {
-                final InputStream stream = url.openStream();
-                if (stream != null) {
-                    byte[] bytecode = IOUtils.toByteArray(stream);
-                    bytecode = RemapUtils.remapFindClass(name, bytecode);
-                    final JarURLConnection jarURLConnection = (JarURLConnection) url.openConnection();
-                    final URL jarURL = jarURLConnection.getJarFileURL();
-                    final CodeSource codeSource = new CodeSource(jarURL, new CodeSigner[0]);
-                    result = this.defineClass(name, bytecode, 0, bytecode.length, codeSource);
-                    if (result != null) {
-                        this.resolveClass(result);
-                    }
-                }
+            if (url == null) {
+                return null;
+            }
+            final InputStream stream = url.openStream();
+            if (stream == null) {
+                return null;
+            }
+            byte[] bytecode = IOUtils.toByteArray(stream);
+            bytecode = RemapUtils.remapFindClass(name, bytecode);
+            final JarURLConnection jarURLConnection = (JarURLConnection) url.openConnection();
+            final URL jarURL = jarURLConnection.getJarFileURL();
+            final CodeSource codeSource = new CodeSource(jarURL, new CodeSigner[0]);
+            result = this.defineClass(name, bytecode, 0, bytecode.length, codeSource);
+            if (result != null) {
+                this.resolveClass(result);
             }
         } catch (Throwable t) {
             throw new ClassNotFoundException("Failed to remap class " + name, t);
@@ -94,11 +99,9 @@ public class DelegateURLClassLoder extends URLClassLoader {
     }
 
     protected void cacheClass(final String name, final Class<?> clazz) {
-        if (!this.classeCache.containsKey(name)) {
-            this.classeCache.put(name, clazz);
-            if (ConfigurationSerializable.class.isAssignableFrom(clazz)) {
-                ConfigurationSerialization.registerClass(clazz.asSubclass(ConfigurationSerializable.class));
-            }
+        this.classeCache.put(name, clazz);
+        if (ConfigurationSerializable.class.isAssignableFrom(clazz)) {
+            ConfigurationSerialization.registerClass((Class<? extends ConfigurationSerializable>) clazz);
         }
     }
 }

@@ -185,6 +185,6 @@ public class RemapUtils {
     }
 
     public static boolean isNMSClass(String className) {
-        return className.replace("/", ".").startsWith("net.minecraft.server.v1_12_R1");
+        return className.startsWith("net.minecraft.server.") || className.startsWith("red.mohist.");
     }
 }
