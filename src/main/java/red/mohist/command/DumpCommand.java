@@ -81,7 +81,7 @@ public class DumpCommand extends Command {
         return false;
     }
 
-    public static void dumpPotions(CommandSender sender){
+    private void dumpPotions(CommandSender sender){
         StringBuilder sb = new StringBuilder();
         for (PotionEffectType pet : PotionEffectType.values()) {
             if (pet != null) {
@@ -94,8 +94,9 @@ public class DumpCommand extends Command {
             }
         }
         try{
-            FileUtils.writeByteArrayToFile(new File("dump", "potions.mo"), sb.toString().getBytes(StandardCharsets.UTF_8));
-            sender.sendMessage("Ok");
+            File file = new File("dump", "potions.mo");
+            FileUtils.writeByteArrayToFile(file, sb.toString().getBytes(StandardCharsets.UTF_8));
+            dumpmsg(sender, file, "potions");
         }
         catch (IOException ex){
             ex.printStackTrace();
@@ -108,8 +109,9 @@ public class DumpCommand extends Command {
             sb.append(ench.toString()).append("\n");
         }
         try {
-            FileUtils.writeByteArrayToFile(new File("dump", "enchant.mo"), sb.toString().getBytes(StandardCharsets.UTF_8));
-            sender.sendMessage("Ok");
+            File file = new File("dump", "enchants.mo");
+            FileUtils.writeByteArrayToFile(file, sb.toString().getBytes(StandardCharsets.UTF_8));
+            dumpmsg(sender, file, "enchants");
         } catch (IOException ex) {
             ex.printStackTrace();
         }
@@ -121,8 +123,9 @@ public class DumpCommand extends Command {
             sb.append(ent.toString()).append("\n");
         }
         try {
-            FileUtils.writeByteArrayToFile(new File("dump", "entitytypes.mo"), sb.toString().getBytes(StandardCharsets.UTF_8));
-            sender.sendMessage("Ok");
+            File file = new File("dump", "entitytypes.mo");
+            FileUtils.writeByteArrayToFile(file, sb.toString().getBytes(StandardCharsets.UTF_8));
+            dumpmsg(sender, file, "entitytypes");
         } catch (IOException ex) {
             ex.printStackTrace();
         }
@@ -138,8 +141,9 @@ public class DumpCommand extends Command {
             sb.append(per.getName()).append(": ").append(per.getPermission()).append("\n");
         }
         try {
-            FileUtils.writeByteArrayToFile(new File("dump", "cbcommands.mo"), sb.toString().getBytes(StandardCharsets.UTF_8));
-            sender.sendMessage("Ok");
+            File file = new File("dump", "cbcommands.mo");
+            FileUtils.writeByteArrayToFile(file, sb.toString().getBytes(StandardCharsets.UTF_8));
+            dumpmsg(sender, file, "cbcommands");
         } catch (IOException ex) {
             ex.printStackTrace();
         }
@@ -151,8 +155,9 @@ public class DumpCommand extends Command {
             sb.append(m.getKey()).append(": ").append(m.getValue()).append("\n");
         }
         try {
-            FileUtils.writeByteArrayToFile(new File("dump", "modscommands.mo"), sb.toString().getBytes(StandardCharsets.UTF_8));
-            sender.sendMessage("Ok");
+            File file = new File("dump", "modscommands.mo");
+            FileUtils.writeByteArrayToFile(file, sb.toString().getBytes(StandardCharsets.UTF_8));
+            dumpmsg(sender, file, "modscommands");
         } catch (IOException ex) {
             ex.printStackTrace();
         }
@@ -164,10 +169,15 @@ public class DumpCommand extends Command {
             sb.append(biome.toString()).append("\n");
         }
         try {
-            FileUtils.writeByteArrayToFile(new File("dump", "biomes.mo"), sb.toString().getBytes(StandardCharsets.UTF_8));
-            sender.sendMessage("Ok");
+            File file = new File("dump", "biomes.mo");
+            FileUtils.writeByteArrayToFile(file, sb.toString().getBytes(StandardCharsets.UTF_8));
+            dumpmsg(sender, file, "biomes");
         } catch (IOException ex) {
             ex.printStackTrace();
         }
+    }
+
+    private void dumpmsg(CommandSender sender, File file, String type){
+        sender.sendMessage("Successfully dump " + type + ", output path: " + file.getAbsolutePath());
     }
 }

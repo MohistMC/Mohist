@@ -20,11 +20,11 @@ public class MohistCommand extends Command {
     public MohistCommand(String name) {
         super(name);
         this.description = "Mohist related commands";
-        this.usageMessage = "/mohist [mods|playermods|printthreadcost|lang|item]";
+        this.usageMessage = "/mohist [mods|playermods|printthreadcost|lang|item|reload]";
         this.setPermission("mohist.command.mohist");
     }
 
-    private List<String> params = Arrays.asList("mods", "playermods", "printthreadcost", "lang", "item");
+    private List<String> params = Arrays.asList("mods", "playermods", "printthreadcost", "lang", "item", "reload");
 
     @Override
     public List<String> tabComplete(CommandSender sender, String alias, String[] args) throws IllegalArgumentException {
