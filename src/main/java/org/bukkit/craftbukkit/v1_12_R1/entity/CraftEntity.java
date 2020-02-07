@@ -493,6 +493,9 @@ public abstract class CraftEntity implements org.bukkit.entity.Entity {
     }
 
     public Vector getVelocity() {
+        if (!(Math.abs(entity.motionX) <= Double.MAX_VALUE)) entity.motionX = 0;
+        if (!(Math.abs(entity.motionY) <= Double.MAX_VALUE)) entity.motionY = 0;
+        if (!(Math.abs(entity.motionZ) <= Double.MAX_VALUE)) entity.motionZ = 0;
         return new Vector(entity.motionX, entity.motionY, entity.motionZ);
     }
 
