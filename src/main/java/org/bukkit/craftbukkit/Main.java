@@ -191,7 +191,7 @@ public class Main {
                 }
 
                 System.out.println("Loading libraries, please wait...");
-                MinecraftServer.main(options);
+                //MinecraftServer.main(options); //Mohist
             } catch (Throwable t) {
                 t.printStackTrace();
             }

@@ -34,7 +34,7 @@ public final class CraftChatMessage {
     }
 
     public static ChatColor getColor(TextFormatting format) {
-        return ChatColor.getByChar(format.formattingCode); //TODO: public
+        return ChatColor.getByChar(format.formattingCode);
     }
 
     private static class StringMessage {

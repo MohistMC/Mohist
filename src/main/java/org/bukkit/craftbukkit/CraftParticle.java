@@ -127,7 +127,7 @@ public enum CraftParticle {
             canonical = aliases.get(particle);
         }
 
-        net.minecraft.particles.ParticleType nms = Registry.PARTICLE_TYPE.get(particles.get(canonical));
+        net.minecraft.particles.ParticleType nms = Registry.PARTICLE_TYPE.getOrDefault(particles.get(canonical));
         Preconditions.checkArgument(nms != null, "No NMS particle %s", particle);
 
         if (particle.getDataType().equals(Void.class)) {

@@ -72,7 +72,7 @@ public class CraftNBTTagConfigSerializer {
 
             if (ARRAY.matcher(string).matches()) {
                 try {
-                    return new JsonToNBT(new StringReader(string)).readArrayTag(); // TODO: public
+                    return new JsonToNBT(new StringReader(string)).readArrayTag();
                 } catch (CommandSyntaxException e) {
                     throw new RuntimeException("Could not deserialize found list ", e);
                 }
@@ -81,7 +81,7 @@ public class CraftNBTTagConfigSerializer {
             } else if (DOUBLE.matcher(string).matches()) {
                 return DoubleNBT.func_229684_a_(Double.parseDouble(string.substring(0, string.length() - 1)));
             } else {
-                INBT nbtBase = MOJANGSON_PARSER.type(string); // TODO: public
+                INBT nbtBase = MOJANGSON_PARSER.type(string);
 
                 if (nbtBase instanceof IntNBT) { // If this returns an integer, it did not use our method from above
                     return StringNBT.func_229705_a_(nbtBase.getString()); // It then is a string that was falsely read as an int

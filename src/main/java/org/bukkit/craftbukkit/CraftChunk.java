@@ -14,6 +14,7 @@ import net.minecraft.util.palette.PalettedContainer;
 import net.minecraft.world.LightType;
 import net.minecraft.nbt.NBTUtil;
 import net.minecraft.world.gen.Heightmap;
+import net.minecraft.world.lighting.ILightListener;
 import net.minecraft.world.lighting.LightEngine;
 import net.minecraft.world.lighting.WorldLightManager;
 import net.minecraft.nbt.CompoundNBT;
@@ -39,7 +40,7 @@ public class CraftChunk implements Chunk {
     private final ServerWorld worldServer;
     private final int x;
     private final int z;
-    private static final PalettedContainer<net.minecraft.block.BlockState> emptyBlockIDs = new ChunkSection(0).getBlocks();
+    private static final PalettedContainer<net.minecraft.block.BlockState> emptyBlockIDs = new ChunkSection(0).getData();
     private static final byte[] emptyLight = new byte[2048];
 
     public CraftChunk(net.minecraft.world.chunk.Chunk chunk) {
@@ -52,7 +53,7 @@ public class CraftChunk implements Chunk {
 
     @Override
     public World getWorld() {
-        return worldServer.getWorld();
+        return worldServer.getWorldCB();
     }
 
     public CraftWorld getCraftWorld() {
@@ -63,7 +64,7 @@ public class CraftChunk implements Chunk {
         net.minecraft.world.chunk.Chunk c = weakChunk.get();
 
         if (c == null) {
-            c = worldServer.getChunkAt(x, z);
+            c = worldServer.getChunk(x, z);
 
             weakChunk = new WeakReference<net.minecraft.world.chunk.Chunk>(c);
         }
@@ -106,14 +107,14 @@ public class CraftChunk implements Chunk {
         net.minecraft.world.chunk.Chunk chunk = getHandle();
 
         for (int i = 0; i < 16; i++) {
-            count += chunk.entitySlices[i].size();
+            count += chunk.entityLists[i].size();
         }
 
         Entity[] entities = new Entity[count];
 
         for (int i = 0; i < 16; i++) {
 
-            for (Object obj : chunk.entitySlices[i].toArray()) {
+            for (Object obj : chunk.entityLists[i].toArray()) {
                 if (!(obj instanceof net.minecraft.entity.Entity)) {
                     continue;
                 }
@@ -141,7 +142,7 @@ public class CraftChunk implements Chunk {
             }
 
             BlockPos position = (BlockPos) obj;
-            entities[index++] = worldServer.getWorld().getBlockAt(position.getX(), position.getY(), position.getZ()).getState();
+            entities[index++] = worldServer.getWorldCB().getBlockAt(position.getX(), position.getY(), position.getZ()).getState();
         }
 
         return entities;
@@ -221,7 +222,7 @@ public class CraftChunk implements Chunk {
 
         net.minecraft.block.BlockState nms = ((CraftBlockData) block).getState();
         for (ChunkSection section : getHandle().getSections()) {
-            if (section != null && section.getBlocks().contains(nms)) {
+            if (section != null && section.getData().contains(nms)) {
                 return true;
             }
         }
@@ -254,20 +255,20 @@ public class CraftChunk implements Chunk {
                 CompoundNBT data = new CompoundNBT();
                 cs[i].getData().writeChunkPalette(data, "Palette", "BlockStates");
 
-                PalettedContainer blockids = new PalettedContainer<>(ChunkSection.REGISTRY_PALETTE, net.minecraft.block.Block.REGISTRY_ID, NBTUtil::d, NBTUtil::a, Blocks.AIR.getBlockData()); // TODO: snapshot whole ChunkSection
-                blockids.a(data.getList("Palette", CraftMagicNumbers.NBT.TAG_COMPOUND), data.getLongArray("BlockStates"));
+                PalettedContainer blockids = new PalettedContainer<net.minecraft.block.BlockState>(ChunkSection.REGISTRY_PALETTE, net.minecraft.block.Block.BLOCK_STATE_IDS, NBTUtil::readBlockState, NBTUtil::writeBlockState, Blocks.AIR.getDefaultState()); // TODO: snapshot whole ChunkSection
+                blockids.readChunkPalette(data.getList("Palette", CraftMagicNumbers.NBT.TAG_COMPOUND), data.getLongArray("BlockStates"));
 
                 sectionBlockIDs[i] = blockids;
 
-                LightEngine lightengine = chunk.world.getChunkProvider().getLightEngine();
-                NibbleArray skyLightArray = lightengine.a(LightType.SKY).a(SectionPos.a(x, i, z));
+                WorldLightManager lightengine = chunk.world.getChunkProvider().getLightManager();
+                NibbleArray skyLightArray = lightengine.getLightEngine(LightType.SKY).getData(SectionPos.of(x, i, z));
                 if (skyLightArray == null) {
                     sectionSkyLights[i] = emptyLight;
                 } else {
                     sectionSkyLights[i] = new byte[2048];
                     System.arraycopy(skyLightArray.getData(), 0, sectionSkyLights[i], 0, 2048);
                 }
-                NibbleArray emitLightArray = lightengine.a(LightType.BLOCK).a(SectionPos.a(x, i, z));
+                NibbleArray emitLightArray = lightengine.getLightEngine(LightType.BLOCK).getData(SectionPos.of(x, i, z));
                 if (emitLightArray == null) {
                     sectionEmitLights[i] = emptyLight;
                 } else {
@@ -281,13 +282,13 @@ public class CraftChunk implements Chunk {
 
         if (includeMaxBlockY) {
             hmap = new Heightmap(null, Heightmap.Type.MOTION_BLOCKING);
-            hmap.a(chunk.heightMap.get(Heightmap.Type.MOTION_BLOCKING).a());
+            hmap.setDataArray(chunk.heightMap.get(Heightmap.Type.MOTION_BLOCKING).getDataArray());
         }
 
         BiomeContainer biome = null;
 
         if (includeBiome|| includeBiomeTempRain) {
-            biome = chunk.getBiomeIndex().b();
+            biome = chunk.func_225549_i_().func_227057_b_();
         }
 
         World world = getWorld();
@@ -316,7 +317,7 @@ public class CraftChunk implements Chunk {
             empty[i] = true;
         }
 
-        return new CraftChunkSnapshot(x, z, world.getName(), world.getFullTime(), blockIDs, skyLight, emitLight, empty, new HeightMap(null, HeightMap.Type.MOTION_BLOCKING), biome);
+        return new CraftChunkSnapshot(x, z, world.getName(), world.getFullTime(), blockIDs, skyLight, emitLight, empty, new Heightmap(null, Heightmap.Type.MOTION_BLOCKING), biome);
     }
 
     static void validateChunkCoordinates(int x, int y, int z) {

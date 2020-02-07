@@ -89,7 +89,7 @@ public final class CraftLegacy {
         return (mappedData == null) ? new MaterialData(Material.LEGACY_AIR) : mappedData;
     }
 
-    public static BlockState fromLegacyData(Material material, Block block, byte data) {
+    public static BlockState fromLegacyData(Material material, byte data) {
         Preconditions.checkArgument(material.isLegacy(), "fromLegacyData on modern Material");
 
         MaterialData materialData = new MaterialData(material, data);
@@ -106,11 +106,11 @@ public final class CraftLegacy {
             return convertedBlock.getDefaultState();
         }
 
-        // Return existing block
-        return block.getDefaultState();
+        // Return air
+        return Blocks.AIR.getDefaultState();
     }
 
-    public static Item fromLegacyData(Material material, Item item, short data) {
+    public static Item fromLegacyData(Material material, short data) {
         Preconditions.checkArgument(material.isLegacy(), "fromLegacyData on modern Material. Did you forget to define api-version: 1.13 in your plugin.yml?");
 
         MaterialData materialData = new MaterialData(material, (byte) data);
@@ -136,8 +136,8 @@ public final class CraftLegacy {
             }
         }
 
-        // Return existing item
-        return item;
+        // Return air
+        return Items.AIR;
     }
 
     public static byte toLegacyData(BlockState blockData) {
@@ -253,6 +253,9 @@ public final class CraftLegacy {
 
     static {
         System.err.println("Initializing Legacy Material Support. Unless you have legacy plugins and/or data this is a bug!");
+        if (MinecraftServer.getServer() != null && MinecraftServer.getServer().isDebugging()) {
+            new Exception().printStackTrace();
+        }
 
         SPAWN_EGGS.put((byte) 0, Material.PIG_SPAWN_EGG); // Will be fixed by updateMaterial if possible
 

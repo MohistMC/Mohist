@@ -1120,6 +1120,21 @@ public final class CraftServer implements Server {
     }
 
     @Override
+    public boolean removeRecipe(NamespacedKey recipeKey) {
+        Preconditions.checkArgument(recipeKey != null, "recipeKey == null");
+
+        MinecraftKey mcKey = CraftNamespacedKey.toMinecraft(recipeKey);
+        for (Object2ObjectLinkedOpenHashMap<MinecraftKey, IRecipe<?>> recipes : getServer().getCraftingManager().recipes.values()) {
+            if (recipes.remove(mcKey) != null) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+
+    @Override
     public Map<String, String[]> getCommandAliases() {
         ConfigurationSection section = commandsConfiguration.getConfigurationSection("aliases");
         Map<String, String[]> result = new LinkedHashMap<String, String[]>();

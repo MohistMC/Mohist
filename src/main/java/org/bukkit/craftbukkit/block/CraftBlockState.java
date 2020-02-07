@@ -21,7 +21,7 @@ import org.bukkit.metadata.MetadataValue;
 import org.bukkit.plugin.Plugin;
 
 public class CraftBlockState implements BlockState {
-    private final CraftWorld world;
+    protected final CraftWorld world;
     private final CraftChunk chunk;
     private final BlockPos position;
     protected net.minecraft.block.BlockState data;

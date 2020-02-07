@@ -62,6 +62,7 @@ import net.minecraft.world.raid.Raid;
 import net.minecraft.util.Unit;
 import net.minecraft.world.World;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Server;
 import org.bukkit.Statistic.Type;
@@ -144,6 +145,7 @@ import org.bukkit.event.entity.EntityDamageEvent.DamageModifier;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.bukkit.event.entity.EntityPlaceEvent;
+import org.bukkit.event.entity.EntityPortalEvent;
 import org.bukkit.event.entity.EntityPotionEffectEvent;
 import org.bukkit.event.entity.EntityShootBowEvent;
 import org.bukkit.event.entity.EntitySpawnEvent;
@@ -1379,12 +1381,12 @@ public class CraftEventFactory {
         return event;
     }
 
-    public static EntityBreedEvent callEntityBreedEvent(LivingEntity child, LivingEntity mother, LivingEntity father, LivingEntity breeder, ItemStack bredWith, int experience) {
+    public static EntityBreedEvent callEntityBreedEvent(net.minecraft.entity.LivingEntity child, net.minecraft.entity.LivingEntity mother, net.minecraft.entity.LivingEntity father, net.minecraft.entity.LivingEntity breeder, ItemStack bredWith, int experience) {
         org.bukkit.entity.LivingEntity breederEntity = (LivingEntity) (breeder == null ? null : breeder.getBukkitEntity());
         CraftItemStack bredWithStack = bredWith == null ? null : CraftItemStack.asCraftMirror(bredWith).clone();
 
         EntityBreedEvent event = new EntityBreedEvent((LivingEntity) child.getBukkitEntity(), (LivingEntity) mother.getBukkitEntity(), (LivingEntity) father.getBukkitEntity(), breederEntity, bredWithStack, experience);
-        child.world.getServer().getPluginManager().callEvent(event);
+        child.world.getServerCB().getPluginManager().callEvent(event);
         return event;
     }
 

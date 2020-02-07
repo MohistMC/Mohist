@@ -286,11 +286,8 @@ public class CraftWorld implements World {
 
     @Override
     public int getHighestBlockYAt(int x, int z) {
-        if (!isChunkLoaded(x >> 4, z >> 4)) {
-            getChunkAt(x >> 4, z >> 4); // Transient load for this tick
-        }
-
-        return world.getHeight(Heightmap.Type.MOTION_BLOCKING, new BlockPos(x, 0, z)).getY();
+        // Transient load for this tick
+        return world.getChunkAt(x >> 4, z >> 4).a(HeightMap.Type.MOTION_BLOCKING, x, z);
     }
 
     @Override
@@ -310,7 +307,7 @@ public class CraftWorld implements World {
     public boolean setSpawnLocation(int x, int y, int z) {
         try {
             Location previousLocation = getSpawnLocation();
-            world.worldData.setSpawn(new BlockPos(x, y, z));
+            world.worldInfo.setSpawn(new BlockPos(x, y, z));
 
             // Notify anyone who's listening.
             SpawnChangeEvent event = new SpawnChangeEvent(this, previousLocation);
@@ -341,7 +338,7 @@ public class CraftWorld implements World {
     @Override
     public boolean isChunkGenerated(int x, int z) {
         try {
-            return isChunkLoaded(x, z) || world.getChunkProvider().playerChunkDistanceGraph.read(new ChunkPos(x, z)) != null;
+            return isChunkLoaded(x, z) || world.getChunkProvider().chunkManager.read(new ChunkPos(x, z)) != null;
         } catch (IOException ex) {
             throw new RuntimeException(ex);
         }
@@ -736,7 +733,7 @@ public class CraftWorld implements World {
         world.captureBlockStates = false;
         world.captureTreeGeneration = false;
         if (grownTree) { // Copy block data to delegate
-            for (BlockState blockstate : world.capturedBlockStates) {
+            for (BlockState blockstate : world.capturedBlockStates.values()) {
                 BlockPos position = ((CraftBlockState) blockstate).getPosition();
                 net.minecraft.block.BlockState oldBlock = world.getBlockState(position);
                 int flag = ((CraftBlockState) blockstate).getFlag();
@@ -755,11 +752,6 @@ public class CraftWorld implements World {
     @Override
     public String getName() {
         return world.worldInfo.getWorldName();
-    }
-
-    @Deprecated
-    public long getId() {
-        return world.worldInfo.getSeed();
     }
 
     @Override
@@ -901,7 +893,7 @@ public class CraftWorld implements World {
 
     @Override
     public Biome getBiome(int x, int y, int z) {
-        return CraftBlock.biomeBaseToBiome(this.world.getBiome(new BlockPos(x, y, z)));
+        return CraftBlock.biomeBaseToBiome(this.world.getBiome(x >> 2, y >> 2, z >> 2));
     }
 
     @Override
@@ -919,7 +911,7 @@ public class CraftWorld implements World {
             net.minecraft.world.chunk.Chunk chunk = this.world.getChunkAt(pos);
 
             if (chunk != null) {
-                chunk.getBiomeIndex().setBiome(x, y, z, bb);
+                chunk.getBiomeIndex().setBiome(x >> 2, y >> 2, z >> 2, bb);
 
                 chunk.markDirty(); // SPIGOT-2890
             }
@@ -934,7 +926,7 @@ public class CraftWorld implements World {
     @Override
     public double getTemperature(int x, int y, int z) {
         BlockPos pos = new BlockPos(x, y, z);
-        return this.world.getBiome(pos).getAdjustedTemperature(pos);
+        return this.world.getBiome(x >> 2, y >> 2, z >> 2).getAdjustedTemperature(pos);
     }
 
     @Override
@@ -944,7 +936,7 @@ public class CraftWorld implements World {
 
     @Override
     public double getHumidity(int x, int y, int z) {
-        return this.world.getBiome(new BlockPos(x, y, z)).getHumidity();
+        return this.world.getBiome(x >> 2, y >> 2, z >> 2).getHumidity();
     }
 
     @Override

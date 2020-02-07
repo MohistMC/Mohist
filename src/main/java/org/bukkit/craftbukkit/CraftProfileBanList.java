@@ -68,7 +68,7 @@ public class CraftProfileBanList implements org.bukkit.BanList {
         ImmutableSet.Builder<org.bukkit.BanEntry> builder = ImmutableSet.builder();
 
         for (UserListEntry entry : list.getEntries()) {
-            GameProfile profile = (GameProfile) entry.getValue(); //TODO add public
+            GameProfile profile = (GameProfile) entry.getValue();
             builder.add(new CraftProfileBanEntry(profile, (ProfileBanEntry) entry, list));
         }
 
@@ -104,6 +104,6 @@ public class CraftProfileBanList implements org.bukkit.BanList {
             //
         }
 
-        return (uuid != null) ? MinecraftServer.getServer().getPlayerProfileCache().getProfile(uuid) : MinecraftServer.getServer().getPlayerProfileCache().getProfile(target);
+        return (uuid != null) ? MinecraftServer.getServer().getPlayerProfileCache().getProfileByUUID(uuid) : MinecraftServer.getServer().getPlayerProfileCache().getGameProfileForUsername(target);
     }
 }

@@ -30,7 +30,7 @@ public enum CraftStatistic {
     WALK_ONE_CM(Stats.WALK_ONE_CM),
     WALK_ON_WATER_ONE_CM(Stats.WALK_ON_WATER_ONE_CM),
     FALL_ONE_CM(Stats.FALL_ONE_CM),
-    SNEAK_TIME(Stats.SNEAK_TIME),
+    SNEAK_TIME(Stats.field_226147_n_),
     CLIMB_ONE_CM(Stats.CLIMB_ONE_CM),
     FLY_ONE_CM(Stats.FLY_ONE_CM),
     WALK_UNDER_WATER_ONE_CM(Stats.WALK_UNDER_WATER_ONE_CM),
@@ -91,8 +91,8 @@ public enum CraftStatistic {
     BELL_RING(Stats.BELL_RING),
     RAID_TRIGGER(Stats.RAID_TRIGGER),
     RAID_WIN(Stats.RAID_WIN),
-    INTERACT_WITH_ANVIL(Stats.INTERACT_WITH_ANVIL),
-    INTERACT_WITH_GRINDSTONE(Stats.INTERACT_WITH_GRINDSTONE);
+    INTERACT_WITH_ANVIL(Stats.field_226145_aA_),
+    INTERACT_WITH_GRINDSTONE(Stats.field_226146_aB_);
     private final ResourceLocation minecraftKey;
     private final org.bukkit.Statistic bukkit;
     private static final BiMap<ResourceLocation, org.bukkit.Statistic> statistics;
