@@ -1248,8 +1248,7 @@
          PacketThreadUtil.checkThreadAndEnqueue(packetIn, this, this.player.getServerWorld());
 +        if (this.player.isMovementBlocked()) return;
          WorldServer worldserver = this.serverController.getWorld(this.player.dimension);
--        Entity entity = packetIn.getEntityFromWorld(worldserver);
-+        Entity entity = packetIn.getEntityFromWorld((World)worldserver);
+         Entity entity = packetIn.getEntityFromWorld(worldserver);
 +        // Spigot Start
 +        if ( entity == player && !player.isSpectator() )
 +        {

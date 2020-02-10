@@ -49,6 +49,7 @@ public class MohistConfig extends ConfigBase{
     public final StringSetting modsblacklistkickMessage = new StringSetting(this, "forge.modsblacklist.kickmessage", "Use of unauthorized mods", "mods black-list kick Message");
 
     public List<String> autounloadWorld_whitelist=new ArrayList();
+    public final BoolSetting fakePlayerLogin = new BoolSetting(this, "fake-players.do-login", false, "Raise login events for fake players");
 
     /* ======================================================================== */
 
