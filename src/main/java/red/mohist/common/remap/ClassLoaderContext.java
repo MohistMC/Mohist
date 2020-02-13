@@ -19,14 +19,6 @@ public class ClassLoaderContext {
         stack.push(classLoader);
     }
 
-    public static ClassLoader remove(){
-        LinkedList<ClassLoader> stack = THREAD_LOCAL.get();
-        if (stack == null || stack.isEmpty()) {
-            return null;
-        }
-        return stack.remove();
-    }
-
     public static ClassLoader pop() {
         LinkedList<ClassLoader> stack = THREAD_LOCAL.get();
         if (stack == null || stack.isEmpty()) {

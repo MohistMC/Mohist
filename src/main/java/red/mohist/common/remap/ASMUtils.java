@@ -7,6 +7,7 @@ import java.lang.reflect.Modifier;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashMap;
+import java.util.ListIterator;
 import java.util.Map;
 import java.util.StringJoiner;
 import java.util.function.BiConsumer;
@@ -18,8 +19,11 @@ import org.objectweb.asm.Type;
 import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.FieldInsnNode;
+import org.objectweb.asm.tree.FieldNode;
 import org.objectweb.asm.tree.InvokeDynamicInsnNode;
+import org.objectweb.asm.tree.LocalVariableNode;
 import org.objectweb.asm.tree.MethodInsnNode;
+import org.objectweb.asm.tree.MethodNode;
 import org.objectweb.asm.tree.TypeInsnNode;
 import org.objectweb.asm.tree.VarInsnNode;
 
@@ -138,15 +142,15 @@ public class ASMUtils {
         return internalName.replace('/', '.');
     }
 
-    public static Type toType(Class<?> clazz) {
+    public static Type toType(Class clazz) {
         return Type.getType(clazz);
     }
 
-    public static String toDescriptor(Class<?> clazz) {
+    public static String toDescriptor(Class clazz) {
         return Type.getDescriptor(clazz);
     }
 
-    public static String toInternalName(Class<?> clazz) {
+    public static String toInternalName(Class clazz) {
         return Type.getInternalName(clazz);
     }
 
@@ -154,9 +158,9 @@ public class ASMUtils {
         return className.replace('.', '/');
     }
 
-    public static String toArgumentDescriptor(Class<?>... classes) {
+    public static String toArgumentDescriptor(Class... classes) {
         StringJoiner sj = new StringJoiner("", "(", ")");
-        for (Class<?> aClass : classes) {
+        for (Class aClass : classes) {
             sj.add(Type.getDescriptor(aClass));
         }
         return sj.toString();
@@ -166,9 +170,9 @@ public class ASMUtils {
         return methodDescriptor.substring(0, methodDescriptor.lastIndexOf(')'));
     }
 
-    public static String toMethodDescriptor(Class<?> returnType, Class<?>... classes) {
+    public static String toMethodDescriptor(Class returnType, Class... classes) {
         StringJoiner sj = new StringJoiner("", "(", ")");
-        for (Class<?> aClass : classes) {
+        for (Class aClass : classes) {
             sj.add(toDescriptor(aClass));
         }
         return sj.toString() + toDescriptor(returnType);
@@ -196,12 +200,55 @@ public class ASMUtils {
         return opcodeMap.get(type);
     }
 
+    public static void printClass(ClassNode classNode) {
+        System.out.println("============ " + classNode.name + " ============");
+        if (classNode.fields != null) {
+            for (FieldNode field : classNode.fields) {
+                System.out.println("  field " + field.desc + " " + field.name + " " + field.signature);
+            }
+        }
+        if (classNode.methods != null) {
+            for (MethodNode method : classNode.methods) {
+                System.out.println("  method " + method.name + " " + method.desc);
+                if (method.instructions == null) {
+                    continue;
+                }
+                ListIterator<AbstractInsnNode> it = method.instructions.iterator();
+                while (it.hasNext()) {
+                    print("    insn", it.next());
+                }
+                if (method.localVariables == null) {
+                    continue;
+                }
+                for (LocalVariableNode localVariable : method.localVariables) {
+                    System.out.println("    localVariable " + localVariable.getClass().getSimpleName() + " " + localVariable.name + " " + localVariable.desc + " " + localVariable.signature);
+                }
+            }
+        }
+    }
+
+    public static void printClass(byte[] bs) {
+        ClassNode classNode = new ClassNode();
+        ClassReader classReader = new ClassReader(bs);
+        classReader.accept(classNode, 0);
+        printClass(classNode);
+    }
+
+    /**
+     * 校验是否是正确的签名
+     *
+     * 只有正确的签名才能进行remap,错误的直接返回
+     *
+     * @param signature
+     * @return
+     */
     public static boolean isValidSingnature(String signature) {
         return signature != null && !signature.isEmpty() && illegalSignaturePattern.matcher(signature).matches();
     }
 
     public static String getInternalName(Type type) {
         if (type.getSort() <= 8) {
+//            基本类型
             return type.getDescriptor();
         }
         return type.getInternalName();

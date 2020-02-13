@@ -1,5 +1,6 @@
 package red.mohist.common.remap.remappers;
 
+import java.util.Iterator;
 import java.util.Map;
 import net.md_5.specialsource.CustomRemapper;
 import net.md_5.specialsource.NodeType;
@@ -7,6 +8,7 @@ import red.mohist.common.remap.ASMUtils;
 import red.mohist.common.remap.model.ClassMapping;
 
 /**
+ * 负责nsm->mcp的remap
  *
  * @author pyz
  * @date 2019/7/3 10:38 PM
@@ -51,14 +53,14 @@ public class MohistJarRemapper extends CustomRemapper {
         if (index != -1) {
             String outer = className.substring(0, index);
             String mapped = mapClassName(outer, packageMap, classMap);
-            if (mapped == null) {
-                return null;
-            }
+            if (mapped == null) return null;
             return mapped + className.substring(index);
         }
 
         if (packageMap != null) {
-            for (String oldPackage : packageMap.keySet()) {
+            Iterator<String> iter = packageMap.keySet().iterator();
+            while (iter.hasNext()) {
+                String oldPackage = iter.next();
                 if (matchClassPackage(oldPackage, className)) {
                     String newPackage = packageMap.get(oldPackage);
 

@@ -6,6 +6,7 @@ import org.objectweb.asm.commons.Remapper;
 import red.mohist.common.remap.ASMUtils;
 
 /**
+ * 负责反射remap
  *
  * @author pyz
  * @date 2019/7/2 8:05 PM
@@ -13,6 +14,7 @@ import red.mohist.common.remap.ASMUtils;
 public class ReflectRemapper extends Remapper implements ClassRemapperSupplier {
 
     /**
+     * 使用自定义的ClassRemapper,进行反射remap
      *
      * @param classWriter
      * @return

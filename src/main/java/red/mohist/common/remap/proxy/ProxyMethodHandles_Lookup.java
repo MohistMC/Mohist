@@ -23,8 +23,6 @@ public class ProxyMethodHandles_Lookup {
                 case "getDeclaredMethod":
                     type = MethodType.methodType(type.returnType(), new Class[]{Class.class, String.class});
                     clazz = ProxyClass.class;
-                    break;
-                default:
             }
         } else if (clazz == ClassLoader.class) {
             if (name.equals("loadClass")) {

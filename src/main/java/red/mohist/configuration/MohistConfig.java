@@ -23,6 +23,15 @@ public class MohistConfig extends ConfigBase{
     public final StringSetting unknownCommandMessage = new StringSetting(this, "messages.use-unknow-command", Message.getString("use.unknow.command"), "Prompt unknown command");
     public final StringSetting outdatedClientMessage = new StringSetting(this, "messages.Outdate-Client", Message.getString("outdate.client"), "Outdate Client");
     public final StringSetting outdatedServerMessage = new StringSetting(this, "messages.Outdate-Server", Message.getString("outdate.server"), "Outdate Server");
+    public final BoolSetting printThreadTimeCost = new BoolSetting(this, "debug.printThreadTimeCost", false, "printThreadTimeCost");
+    public final BoolSetting dumpRemapPluginClass = new BoolSetting(this, "remap.dumpRemapPluginClass", false, "dumpRemapPluginClass");
+    public final BoolSetting printRemapPluginClass = new BoolSetting(this, "remap.printRemapPluginClass", false, "printRemapPluginClass");
+    public final BoolSetting printInvalidMapping = new BoolSetting(this, "debug.printInvalidMapping", false, "printInvalidMapping");
+    public final BoolSetting nmsRemap = new BoolSetting(this, "remap.nmsRemap", true, "Compatible with nms plugin");
+    public final BoolSetting reflectRemap = new BoolSetting(this, "remap.reflectRemap", true, "Compatible reflection plugin");
+
+    public final BoolSetting multiVersionRemap = new BoolSetting(this, "remap.multiVersionRemap", false, "Compatible with multiple versions of nms");
+    public final StringArraySetting multiVersionRemapPlugins = new StringArraySetting(this, "remap.multiVersionRemapPlugins", "", "Need a list of compatible plugins");
 
     public final IntSetting entityCollideFrequency = new IntSetting(this, "perfomance.entityCollideFrequency",2,"Entity Collide Frequency");
     public final IntSetting maxEntityCollisionsPerTick = new IntSetting(this, "perfomance.maxEntityCollisionsPerTick",8,"Max Entity Collisions PerTick");

@@ -91,7 +91,7 @@ public final class PluginClassLoader extends URLClassLoader {
         ClassLoaderContext.put(this);
         Class<?> result;
         try {
-            if (name.replace("/", ".").startsWith("net.minecraft.server.v1_12_R1")) {
+            if (name.startsWith("net.minecraft.server.v1_12_R1")) {
                 String remappedClass = RemapUtils.jarMapping.byNMSName.get(name).getMcpName();
                 return Class.forName(remappedClass);
             }
@@ -165,7 +165,7 @@ public final class PluginClassLoader extends URLClassLoader {
                 if (stream != null) {
 //                  remap
                     byte[] bytecode = IOUtils.toByteArray(stream);
-                    bytecode = RemapUtils.remapFindClass(name, bytecode);
+                    bytecode = RemapUtils.remapFindClass(description, name, bytecode);
                     // Define (create) the class using the modified byte code
                     // The top-child class loader is used for this to prevent access violations
                     // Set the codesource to the jar, not within the jar, for compatibility with

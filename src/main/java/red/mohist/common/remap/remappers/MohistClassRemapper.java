@@ -8,6 +8,7 @@ import org.objectweb.asm.commons.Remapper;
 import red.mohist.common.remap.proxy.DelegateURLClassLoder;
 
 /**
+ * 负责反射remap,
  *
  * @author pyz
  * @date 2019/7/2 9:16 PM
@@ -23,6 +24,7 @@ public class MohistClassRemapper extends ClassRemapper {
     }
 
     /**
+     * 把所有方法改成public
      *
      * @param access
      * @param name
@@ -37,6 +39,7 @@ public class MohistClassRemapper extends ClassRemapper {
     }
 
     /**
+     * 把所有类改成public
      *
      * @param version
      * @param access
@@ -54,6 +57,7 @@ public class MohistClassRemapper extends ClassRemapper {
     }
 
     /**
+     * 把所有字段改成public
      *
      * @param access
      * @param name
@@ -68,6 +72,7 @@ public class MohistClassRemapper extends ClassRemapper {
     }
 
     /**
+     * 做反射proxy
      *
      * @param mv
      * @return

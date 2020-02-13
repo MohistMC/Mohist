@@ -14,8 +14,11 @@ import net.minecraft.server.MinecraftServer;
 import org.apache.commons.io.IOUtils;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
+import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.plugin.java.PluginClassLoader;
 import red.mohist.common.remap.RemapUtils;
+
 
 /**
  *
@@ -25,6 +28,24 @@ import red.mohist.common.remap.RemapUtils;
 public class DelegateURLClassLoder extends URLClassLoader {
 
     public static final String desc = DelegateURLClassLoder.class.getName().replace('.', '/');
+    private final PluginDescriptionFile description;
+
+    {
+        PluginDescriptionFile description = null;
+        Class curClass = this.getClass();
+        ClassLoader classLoader = curClass.getClassLoader();
+        while (true) {
+            if (classLoader == null) {
+                break;
+            }
+            if (classLoader instanceof PluginClassLoader) {
+                description = ((PluginClassLoader) classLoader).getDescription();
+                break;
+            }
+            classLoader = classLoader.getClass().getClassLoader();
+        }
+        this.description = description;
+    }
 
     private final Map<String, Class<?>> classeCache = new HashMap<>();
 
@@ -42,7 +63,7 @@ public class DelegateURLClassLoder extends URLClassLoader {
 
     @Override
     protected Class<?> findClass(final String name) throws ClassNotFoundException {
-        if (RemapUtils.isNMSClass(name)) {
+        if (name.startsWith(RemapUtils.nmsPrefix) || name.startsWith(RemapUtils.mohistPrefix)) {
             String mapName = RemapUtils.map(name.replace('.', '/')).replace('/', '.');
             return JavaPlugin.class.getClassLoader().loadClass(mapName);
         }
@@ -51,7 +72,7 @@ public class DelegateURLClassLoder extends URLClassLoader {
             return result;
         }
         synchronized (name.intern()) {
-            result = this.remappedFindClass(name);
+            result = this.classeCache.get(name);
             if (result != null) {
                 return result;
             }
@@ -84,7 +105,7 @@ public class DelegateURLClassLoder extends URLClassLoader {
                 return null;
             }
             byte[] bytecode = IOUtils.toByteArray(stream);
-            bytecode = RemapUtils.remapFindClass(name, bytecode);
+            bytecode = RemapUtils.remapFindClass(description, name, bytecode);
             final JarURLConnection jarURLConnection = (JarURLConnection) url.openConnection();
             final URL jarURL = jarURLConnection.getJarFileURL();
             final CodeSource codeSource = new CodeSource(jarURL, new CodeSigner[0]);
