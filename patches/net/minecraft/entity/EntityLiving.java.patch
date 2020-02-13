@@ -41,7 +41,7 @@
 -    private boolean canPickUpLoot;
 -    private boolean persistenceRequired;
 +    public float[] inventoryArmorDropChances = new float[4];
-+    // private boolean canPickUpLoot; // CraftBukkit - moved up to EntityLivingBase
++    private boolean canPickUpLoot_vanilla = false; // Mohist - Compatible with RoughMobs 2 / RoughMobs
 +    public boolean persistenceRequired;
      private final Map<PathNodeType, Float> mapPathPriority = Maps.newEnumMap(PathNodeType.class);
      private ResourceLocation deathLootTable;
