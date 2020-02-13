@@ -13,12 +13,3 @@
  
      @Nullable
      public static ResourceLocation getKey(Entity entityIn)
-@@ -222,7 +226,7 @@
-             }
-             catch (Exception e)
-             {
--                net.minecraftforge.fml.common.FMLLog.log.error("An Entity {}({}) has thrown an exception during loading, its state cannot be restored. Report this to the mod author",
-+                LOGGER.error("An Entity {}({}) has thrown an exception during loading, its state cannot be restored. Report this to the mod author",
-                         nbt.getString("id"), entity.getName(), e);
-                 entity = null;
-             }
