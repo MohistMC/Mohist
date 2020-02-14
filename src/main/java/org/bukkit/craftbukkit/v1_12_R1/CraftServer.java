@@ -210,6 +210,11 @@ public final class CraftServer implements Server {
         }
 
         @Override
+        public void restart() {
+            org.spigotmc.RestartCommand.restart();
+        }
+
+        @Override
         public YamlConfiguration getBukkitConfig()
         {
             return configuration;
