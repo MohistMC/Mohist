@@ -36,11 +36,11 @@
   * or for Windows:
   `./gradlew.bat launch4j `
 
-All builds will be in `.\Mohist\build\distributions\`
-
-If you are a plugin developer, you can add the following files to your library file `.\Mohist\build\localCache\Mohist\recompiled.jar`
-
+All builds will be in `.\Mohist\build\distributions\` 
 Mohist-xxxxx-server.jar - is the server we should run it
+
+### Plugin development
+ [**MohistRemapGuide**](https://github.com/Mohist-Community/MohistRemapGuide)
 
 ### Thanks for the following project
 * [**Bukkit**](https://hub.spigotmc.org/stash/scm/spigot/bukkit.git) - plugin support.
