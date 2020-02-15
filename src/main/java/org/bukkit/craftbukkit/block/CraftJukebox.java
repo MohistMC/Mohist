@@ -31,9 +31,9 @@ public class CraftJukebox extends CraftBlockEntityState<JukeboxTileEntity> imple
             CraftWorld world = (CraftWorld) this.getWorld();
             Material record = this.getPlaying();
             if (record == Material.AIR) {
-                world.getHandle().setTypeAndData(this.getPosition(), Blocks.JUKEBOX.getBlockData().set(JukeboxBlock.HAS_RECORD, false), 3);
+                world.getHandle().setBlockState(this.getPosition(), Blocks.JUKEBOX.getDefaultState().with(JukeboxBlock.HAS_RECORD, false), 3);
             } else {
-                world.getHandle().setTypeAndData(this.getPosition(), Blocks.JUKEBOX.getBlockData().set(JukeboxBlock.HAS_RECORD, true), 3);
+                world.getHandle().setBlockState(this.getPosition(), Blocks.JUKEBOX.getDefaultState().with(JukeboxBlock.HAS_RECORD, true), 3);
             }
             world.playEffect(this.getLocation(), Effect.RECORD_PLAY, record);
         }
@@ -66,9 +66,9 @@ public class CraftJukebox extends CraftBlockEntityState<JukeboxTileEntity> imple
         ItemStack nms = CraftItemStack.asNMSCopy(record);
         this.getSnapshot().setRecord(nms);
         if (nms.isEmpty()) {
-            this.data = this.data.set(JukeboxBlock.HAS_RECORD, false);
+            this.data = this.data.with(JukeboxBlock.HAS_RECORD, false);
         } else {
-            this.data = this.data.set(JukeboxBlock.HAS_RECORD, true);
+            this.data = this.data.with(JukeboxBlock.HAS_RECORD, true);
         }
     }
 

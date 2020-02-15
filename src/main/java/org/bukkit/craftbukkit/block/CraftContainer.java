@@ -19,17 +19,17 @@ public abstract class CraftContainer<T extends LockableTileEntity> extends Craft
 
     @Override
     public boolean isLocked() {
-        return !this.getSnapshot().chestLock.key.isEmpty();
+        return !this.getSnapshot().code.key.isEmpty();
     }
 
     @Override
     public String getLock() {
-        return this.getSnapshot().chestLock.key;
+        return this.getSnapshot().code.key;
     }
 
     @Override
     public void setLock(String key) {
-        this.getSnapshot().chestLock = (key == null) ? LockCode.a : new LockCode(key);
+        this.getSnapshot().code = (key == null) ? LockCode.EMPTY_CODE : new LockCode(key);
     }
 
     @Override

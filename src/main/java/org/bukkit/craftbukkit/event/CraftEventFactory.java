@@ -201,7 +201,7 @@ import org.bukkit.inventory.meta.BookMeta;
 import org.bukkit.potion.PotionEffect;
 
 public class CraftEventFactory {
-    public static final DamageSource MELTING = CraftDamageSource.copyOf(DamageSource.BURN);
+    public static final DamageSource MELTING = CraftDamageSource.copyOf(DamageSource.ON_FIRE);
     public static final DamageSource POISON = CraftDamageSource.copyOf(DamageSource.MAGIC);
     public static org.bukkit.block.Block blockDamage; // For use in EntityDamageByBlockEvent
     public static Entity entityDamage; // For use in EntityDamageByEntityEvent
@@ -274,8 +274,8 @@ public class CraftEventFactory {
      * Block place methods
      */
     public static BlockMultiPlaceEvent callBlockMultiPlaceEvent(World world, PlayerEntity who, Hand hand, List<BlockState> blockStates, int clickedX, int clickedY, int clickedZ) {
-        CraftWorld craftWorld = world.getWorld();
-        CraftServer craftServer = world.getServer();
+        CraftWorld craftWorld = world.getWorldCB();
+        CraftServer craftServer = world.getServerCB();
         Player player = (Player) who.getBukkitEntity();
 
         Block blockClicked = craftWorld.getBlockAt(clickedX, clickedY, clickedZ);
@@ -1076,7 +1076,7 @@ public class CraftEventFactory {
 
     public static Container callInventoryOpenEvent(ServerPlayerEntity player, Container container, boolean cancelled) {
         if (player.openContainer != player.container) { // fire INVENTORY_CLOSE if one already open
-            player.connection.a(new CCloseWindowPacket(player.openContainer.windowId));
+            player.connection.processCloseWindow(new CCloseWindowPacket(player.openContainer.windowId));
         }
 
         CraftServer server = player.world.getServer();
@@ -1510,7 +1510,7 @@ public class CraftEventFactory {
     /**
      * EntityPortalEvent
      */
-    public static EntityPortalEvent callEntityPortalEvent(Entity entity, World exitWorld, BlockPosition exitPosition, int searchRadius) {
+    public static EntityPortalEvent callEntityPortalEvent(Entity entity, World exitWorld, BlockPos exitPosition, int searchRadius) {
         org.bukkit.entity.Entity bukkitEntity = entity.getBukkitEntity();
         Location enter = bukkitEntity.getLocation();
         Location exit = new Location(exitWorld.getWorld(), exitPosition.getX(), exitPosition.getY(), exitPosition.getZ());

@@ -23,8 +23,8 @@ public class CraftCommandBlock extends CraftBlockEntityState<CommandBlockTileEnt
     public void load(CommandBlockTileEntity commandBlock) {
         super.load(commandBlock);
 
-        command = commandBlock.getCommandBlock().getCommand();
-        name = CraftChatMessage.fromComponent(commandBlock.getCommandBlock().getName());
+        command = commandBlock.getCommandBlockLogic().getCommand();
+        name = CraftChatMessage.fromComponent(commandBlock.getCommandBlockLogic().getName());
     }
 
     @Override
@@ -51,7 +51,7 @@ public class CraftCommandBlock extends CraftBlockEntityState<CommandBlockTileEnt
     public void applyTo(CommandBlockTileEntity commandBlock) {
         super.applyTo(commandBlock);
 
-        commandBlock.getCommandBlock().setCommand(command);
-        commandBlock.getCommandBlock().setName(CraftChatMessage.fromStringOrNull(name));
+        commandBlock.getCommandBlockLogic().setCommand(command);
+        commandBlock.getCommandBlockLogic().setName(CraftChatMessage.fromStringOrNull(name));
     }
 }

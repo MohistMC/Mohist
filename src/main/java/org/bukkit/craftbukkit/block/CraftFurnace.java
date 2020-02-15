@@ -41,7 +41,7 @@ public class CraftFurnace<T extends AbstractFurnaceTileEntity> extends CraftCont
     public void setBurnTime(short burnTime) {
         this.getSnapshot().burnTime = burnTime;
         // SPIGOT-844: Allow lighting and relighting using this API
-        this.data = this.data.set(AbstractFurnaceBlock.LIT, burnTime > 0);
+        this.data = this.data.with(AbstractFurnaceBlock.LIT, burnTime > 0);
     }
 
     @Override

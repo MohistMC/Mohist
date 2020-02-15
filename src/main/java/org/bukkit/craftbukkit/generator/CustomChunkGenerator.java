@@ -3,34 +3,33 @@ package org.bukkit.craftbukkit.generator;
 import com.google.common.base.Preconditions;
 import java.util.List;
 import java.util.Random;
-import net.minecraft.server.BiomeBase;
-import net.minecraft.server.BiomeManager;
-import net.minecraft.server.BiomeStorage;
-import net.minecraft.server.Block;
-import net.minecraft.server.BlockPosition;
-import net.minecraft.server.ChunkProviderGenerate;
-import net.minecraft.server.ChunkProviderHell;
-import net.minecraft.server.ChunkProviderTheEnd;
-import net.minecraft.server.ChunkSection;
-import net.minecraft.server.DefinedStructureManager;
-import net.minecraft.server.EnumCreatureType;
-import net.minecraft.server.GeneratorAccess;
-import net.minecraft.server.GeneratorSettingsDefault;
-import net.minecraft.server.GeneratorSettingsEnd;
-import net.minecraft.server.GeneratorSettingsNether;
-import net.minecraft.server.GeneratorSettingsOverworld;
-import net.minecraft.server.HeightMap;
-import net.minecraft.server.IChunkAccess;
-import net.minecraft.server.ITileEntity;
-import net.minecraft.server.ProtoChunk;
-import net.minecraft.server.RegionLimitedWorldAccess;
-import net.minecraft.server.StructureGenerator;
-import net.minecraft.server.TileEntity;
-import net.minecraft.server.World;
-import net.minecraft.server.WorldChunkManager;
-import net.minecraft.server.WorldGenFeatureConfiguration;
-import net.minecraft.server.WorldGenStage;
-import net.minecraft.server.WorldServer;
+import net.minecraft.block.Block;
+import net.minecraft.block.ITileEntityProvider;
+import net.minecraft.entity.EntityClassification;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.IWorld;
+import net.minecraft.world.World;
+import net.minecraft.world.biome.BiomeContainer;
+import net.minecraft.world.biome.BiomeManager;
+import net.minecraft.world.biome.provider.BiomeProvider;
+import net.minecraft.world.chunk.ChunkPrimer;
+import net.minecraft.world.chunk.ChunkSection;
+import net.minecraft.world.chunk.IChunk;
+import net.minecraft.world.gen.EndChunkGenerator;
+import net.minecraft.world.gen.EndGenerationSettings;
+import net.minecraft.world.gen.GenerationSettings;
+import net.minecraft.world.gen.GenerationStage;
+import net.minecraft.world.gen.Heightmap;
+import net.minecraft.world.gen.NetherChunkGenerator;
+import net.minecraft.world.gen.NetherGenSettings;
+import net.minecraft.world.gen.OverworldChunkGenerator;
+import net.minecraft.world.gen.OverworldGenSettings;
+import net.minecraft.world.gen.WorldGenRegion;
+import net.minecraft.world.gen.feature.IFeatureConfig;
+import net.minecraft.world.gen.feature.structure.Structure;
+import net.minecraft.world.gen.feature.template.TemplateManager;
+import net.minecraft.world.server.ServerWorld;
 import org.bukkit.block.Biome;
 import org.bukkit.craftbukkit.block.CraftBlock;
 import org.bukkit.generator.ChunkGenerator;
@@ -40,7 +39,7 @@ import org.bukkit.generator.ChunkGenerator.ChunkData;
 public class CustomChunkGenerator extends InternalChunkGenerator<GeneratorSettingsDefault> {
     private final net.minecraft.server.ChunkGenerator delegate;
     private final ChunkGenerator generator;
-    private final WorldServer world;
+    private final ServerWorld world;
     private final Random random = new Random();
 
     private class CustomBiomeGrid implements BiomeGrid {
@@ -100,11 +99,6 @@ public class CustomChunkGenerator extends InternalChunkGenerator<GeneratorSettin
     }
 
     @Override
-    public void buildBase(RegionLimitedWorldAccess regionlimitedworldaccess, IChunkAccess ichunkaccess) {
-        // Disable vanilla generation
-    }
-
-    @Override
     public <C extends WorldGenFeatureConfiguration> C getFeatureConfiguration(BiomeBase biomebase, StructureGenerator<C> structuregenerator) {
         return (C) delegate.getFeatureConfiguration(biomebase, structuregenerator);
     }
@@ -125,7 +119,7 @@ public class CustomChunkGenerator extends InternalChunkGenerator<GeneratorSettin
     }
 
     @Override
-    public void createStructures(BiomeManager biomemanager, IChunkAccess ichunkaccess, net.minecraft.server.ChunkGenerator<?> chunkgenerator, DefinedStructureManager definedstructuremanager) {
+    public void buildBase(RegionLimitedWorldAccess regionlimitedworldaccess, IChunkAccess ichunkaccess) {
         // Call the bukkit ChunkGenerator before structure generation so correct biome information is available.
         int x = ichunkaccess.getPos().x;
         int z = ichunkaccess.getPos().z;
@@ -176,23 +170,14 @@ public class CustomChunkGenerator extends InternalChunkGenerator<GeneratorSettin
                 }
             }
         }
+    }
 
+    @Override
+    public void createStructures(BiomeManager biomemanager, IChunkAccess ichunkaccess, net.minecraft.server.ChunkGenerator<?> chunkgenerator, DefinedStructureManager definedstructuremanager) {
         if (generator.shouldGenerateStructures()) {
-            // Vanilla only uses biome at block 9 (see createStructures).
-            // We don't use BiomeGrid as another aspect of generation may try and get from a chunk somewhere else.
-            final BiomeBase biome = biomegrid.biome.getBiome(9 >> 2, 0, 9 >> 2);
-            delegate.createStructures(new BiomeManager(null, 0, null) {
-
-                @Override
-                public BiomeManager a(WorldChunkManager worldchunkmanager) {
-                    return this;
-                }
-
-                @Override
-                public BiomeBase a(BlockPosition blockposition) {
-                    return biome;
-                }
-            }, ichunkaccess, chunkgenerator, definedstructuremanager);
+            // Still need a way of getting the biome of this chunk to pass to createStructures
+            // Using default biomes for now.
+            delegate.createStructures(biomemanager, ichunkaccess, chunkgenerator, definedstructuremanager);
         }
     }
 

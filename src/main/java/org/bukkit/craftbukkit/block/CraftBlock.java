@@ -13,10 +13,8 @@ import net.minecraft.block.Blocks;
 import net.minecraft.util.Direction;
 import net.minecraft.world.LightType;
 import net.minecraft.world.IWorld;
-import net.minecraft.block.BlockState;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.RayTraceContext;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.Vec3d;
@@ -75,7 +73,7 @@ public class CraftBlock implements Block {
 
     @Override
     public World getWorld() {
-        return world.getMinecraftWorld().getWorld();
+        return world.getWorld().getWorld();
     }
 
     public CraftWorld getCraftWorld() {
@@ -664,8 +662,8 @@ public class CraftBlock implements Block {
         }
 
         Vector dir = direction.clone().normalize().multiply(maxDistance);
-        Vec3D startPos = new Vec3D(start.getX(), start.getY(), start.getZ());
-        Vec3D endPos = new Vec3D(start.getX() + dir.getX(), start.getY() + dir.getY(), start.getZ() + dir.getZ());
+        Vec3d startPos = new Vec3d(start.getX(), start.getY(), start.getZ());
+        Vec3d endPos = new Vec3d(start.getX() + dir.getX(), start.getY() + dir.getY(), start.getZ() + dir.getZ());
 
         RayTraceResult nmsHitResult = world.rayTraceBlock(new RayTrace(startPos, endPos, RayTrace.BlockCollisionOption.OUTLINE, CraftFluidCollisionMode.toNMS(fluidCollisionMode), null), position);
         return CraftRayTraceResult.fromNMS(this.getWorld(), nmsHitResult);

@@ -3,7 +3,6 @@ package org.bukkit.craftbukkit.block;
 import com.google.common.base.Preconditions;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.state.properties.StructureMode;
-import net.minecraft.util.Mirror;
 import net.minecraft.util.Rotation;
 import net.minecraft.tileentity.StructureBlockTileEntity;
 import org.apache.commons.lang3.Validate;
@@ -31,13 +30,13 @@ public class CraftStructureBlock extends CraftBlockEntityState<StructureBlockTil
 
     @Override
     public String getStructureName() {
-        return getSnapshot().getStructureName();
+        return getSnapshot().getName();
     }
 
     @Override
     public void setStructureName(String name) {
         Preconditions.checkArgument(name != null, "Structure Name cannot be null");
-        getSnapshot().setStructureName(name);
+        getSnapshot().setName(name);
     }
 
     @Override
@@ -54,12 +53,12 @@ public class CraftStructureBlock extends CraftBlockEntityState<StructureBlockTil
     @Override
     public void setAuthor(LivingEntity entity) {
         Preconditions.checkArgument(entity != null, "Structure Block author entity cannot be null");
-        getSnapshot().setAuthor(((CraftLivingEntity) entity).getHandle());
+        getSnapshot().createdBy(((CraftLivingEntity) entity).getHandle());
     }
 
     @Override
     public BlockVector getRelativePosition() {
-        return new BlockVector(getSnapshot().relativePosition.getX(), getSnapshot().relativePosition.getY(), getSnapshot().relativePosition.getZ());
+        return new BlockVector(getSnapshot().position.getX(), getSnapshot().position.getY(), getSnapshot().position.getZ());
     }
 
     @Override
@@ -67,7 +66,7 @@ public class CraftStructureBlock extends CraftBlockEntityState<StructureBlockTil
         Validate.isTrue(isBetween(vector.getBlockX(), -MAX_SIZE, MAX_SIZE), "Structure Size (X) must be between -" + MAX_SIZE + " and " + MAX_SIZE);
         Validate.isTrue(isBetween(vector.getBlockY(), -MAX_SIZE, MAX_SIZE), "Structure Size (Y) must be between -" + MAX_SIZE + " and " + MAX_SIZE);
         Validate.isTrue(isBetween(vector.getBlockZ(), -MAX_SIZE, MAX_SIZE), "Structure Size (Z) must be between -" + MAX_SIZE + " and " + MAX_SIZE);
-        getSnapshot().relativePosition = new BlockPos(vector.getBlockX(), vector.getBlockY(), vector.getBlockZ());
+        getSnapshot().position = new BlockPos(vector.getBlockX(), vector.getBlockY(), vector.getBlockZ());
     }
 
     @Override
@@ -85,7 +84,7 @@ public class CraftStructureBlock extends CraftBlockEntityState<StructureBlockTil
 
     @Override
     public void setMirror(Mirror mirror) {
-        getSnapshot().mirror = Mirror.valueOf(mirror.name());
+        getSnapshot().mirror = net.minecraft.util.Mirror.valueOf(mirror.name());
     }
 
     @Override
@@ -105,12 +104,12 @@ public class CraftStructureBlock extends CraftBlockEntityState<StructureBlockTil
 
     @Override
     public void setUsageMode(UsageMode mode) {
-        getSnapshot().usageMode = StructureMode.valueOf(mode.name());
+        getSnapshot().mode = StructureMode.valueOf(mode.name());
     }
 
     @Override
     public UsageMode getUsageMode() {
-        return UsageMode.valueOf(getSnapshot().getUsageMode().name());
+        return UsageMode.valueOf(getSnapshot().getMode().name());
     }
 
     @Override
@@ -182,7 +181,7 @@ public class CraftStructureBlock extends CraftBlockEntityState<StructureBlockTil
         super.applyTo(tileEntity);
 
         // Ensure block type is correct
-        tileEntity.setUsageMode(tileEntity.getUsageMode());
+        tileEntity.setMode(tileEntity.getMode());
     }
 
     private static boolean isBetween(int num, int min, int max) {

@@ -15,8 +15,8 @@ public final class CraftMemoryMapper {
     public static Object fromNms(Object object) {
         if (object instanceof GlobalPos) {
             return fromNms((GlobalPos) object);
-        } else if (object instanceof IDynamicSerializableLong) {
-            return ((IDynamicSerializableLong) object).a();
+        } else if (object instanceof LongSerializable) {
+            return ((LongSerializable) object).get();
         }
 
         throw new UnsupportedOperationException("Do not know how to map " + object);
@@ -28,17 +28,17 @@ public final class CraftMemoryMapper {
         } else if (object instanceof Location) {
             return toNms((Location) object);
         } else if (object instanceof Long) {
-            return IDynamicSerializableLong.a((Long) object);
+            return LongSerializable.of((Long) object);
         }
 
         throw new UnsupportedOperationException("Do not know how to map " + object);
     }
 
     public static Location fromNms(GlobalPos globalPos) {
-        return new org.bukkit.Location(((CraftServer) Bukkit.getServer()).getServer().getServerWorld(globalPos.getDimensionManager()).getWorld(), globalPos.getBlockPos().getX(), globalPos.getBlockPos().getY(), globalPos.getBlockPos().getZ());
+        return new org.bukkit.Location(((CraftServer) Bukkit.getServer()).getServer().getWorld(globalPos.getDimension()).getWorld(), globalPos.getPos().getX(), globalPos.getPos().getY(), globalPos.getPos().getZ());
     }
 
     public static GlobalPos toNms(Location location) {
-        return GlobalPos.create(((CraftWorld) location.getWorld()).getHandle().getDimension().getDimensionManager(), new BlockPos(location.getX(), location.getY(), location.getZ()));
+        return GlobalPos.of(((CraftWorld) location.getWorld()).getHandle().getDimension().getType(), new BlockPos(location.getX(), location.getY(), location.getZ()));
     }
 }

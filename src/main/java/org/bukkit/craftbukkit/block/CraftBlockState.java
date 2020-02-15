@@ -42,7 +42,7 @@ public class CraftBlockState implements BlockState {
 
     public CraftBlockState(Material material) {
         world = null;
-        data = CraftMagicNumbers.getBlock(material).getBlockData();
+        data = CraftMagicNumbers.getBlock(material).getDefaultState();
         chunk = null;
         position = BlockPos.ZERO;
     }
@@ -52,7 +52,7 @@ public class CraftBlockState implements BlockState {
     }
 
     public static CraftBlockState getBlockState(net.minecraft.world.World world, net.minecraft.util.math.BlockPos pos, int flag) {
-        return new CraftBlockState(world.getWorld().getBlockAt(pos.getX(), pos.getY(), pos.getZ()), flag);
+        return new CraftBlockState(world.getWorldCB().getBlockAt(pos.getX(), pos.getY(), pos.getZ()), flag);
     }
 
     @Override
@@ -132,7 +132,7 @@ public class CraftBlockState implements BlockState {
         Preconditions.checkArgument(type.isBlock(), "Material must be a block!");
 
         if (this.getType() != type) {
-            this.data = CraftMagicNumbers.getBlock(type).getBlockData();
+            this.data = CraftMagicNumbers.getBlock(type).getDefaultState();
         }
     }
 
@@ -185,17 +185,19 @@ public class CraftBlockState implements BlockState {
 
         net.minecraft.block.BlockState newBlock = this.data;
         block.setTypeAndData(newBlock, applyPhysics);
-        world.getHandle().notify(
+        world.getHandle().notifyBlockUpdate(
                 position,
                 block.getNMS(),
                 newBlock,
                 3
         );
 
+        /*
         // Update levers etc
         if (false && applyPhysics && getData() instanceof Attachable) { // Call does not map to new API
-            world.getHandle().applyPhysics(position.shift(CraftBlock.blockFaceToNotch(((Attachable) getData()).getAttachedFace())), newBlock.getBlock());
+            world.getHandle().notifyBlockUpdate(position.offset(CraftBlock.blockFaceToNotch(((Attachable) getData()).getAttachedFace())), newBlock.getBlock());
         }
+         */
 
         return true;
     }

@@ -4,27 +4,17 @@ buildscript {
         jcenter()
         mavenCentral()
         maven {
-            name = 'SpongePowered'
-            url = 'https://dist.creeper.host/Sponge/maven/'
-        }
-        maven {
             url "https://plugins.gradle.org/m2/"
         }
     }
     dependencies {
         classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '3.+', changing: true
-        classpath "com.github.jengelman.gradle.plugins:shadow:5.1.0"
-        classpath 'org.spongepowered:mixingradle:0.7-SNAPSHOT'
-        classpath "org.ajoberstar.grgit:grgit-gradle:4.0.0"
     }
 }
 
 apply plugin: 'net.minecraftforge.gradle'
 // Only edit below this line, the above code adds and enables the necessary things for Forge to be setup.
 apply plugin: 'eclipse'
-apply plugin: 'org.spongepowered.mixin'
-apply plugin: "com.github.johnrengelman.shadow"
-apply plugin: "org.ajoberstar.grgit"
 
 
 version = 'git rev-parse --short HEAD'.execute().text.trim()
@@ -102,26 +92,16 @@ minecraft {
 repositories {
     mavenLocal()
     mavenCentral()
-
-    maven {
-        name = "spongepowered-repo"
-        url = "https://dist.creeper.host/Sponge/maven/"
-    }
-    maven {
-        name = "Jitpack"
-        url = "https://jitpack.io"
-    }
     maven {
         name = "spigotmc-repo"
         url = "https://hub.spigotmc.org/nexus/content/repositories/snapshots/"
     }
 }
 
-//807a677e
+//37f32da8
 
 dependencies {
-    minecraft 'net.minecraftforge:forge:1.15.2-31.1.0'
-    compile 'org.spongepowered:mixin:0.8-SNAPSHOT'
+    minecraft 'net.minecraftforge:forge:1.15.2-31.1.12'
     compile 'org.bukkit:bukkit:1.15.2-R0.1-SNAPSHOT'
     compile 'org.fusesource.jansi:jansi:1.18'
     compile 'jline:jline:2.13'
@@ -133,26 +113,6 @@ dependencies {
     compile 'org.jetbrains:annotations:18.0.0'
 }
 
-mixin {
-    add sourceSets.main, "mixins.mohist.core.refmap.json"
-}
-
-
-shadowJar {
-    dependencies {
-        include(dependency("org.spongepowered:mixin"))
-    }
-
-    exclude 'dummyThing'
-    exclude 'LICENSE.txt'
-    classifier = 'full'
-}
-
-reobf {
-    shadowJar {
-        classpath = sourceSets.main.compileClasspath
-    }
-}
 jar {
     manifest {
         attributes([
@@ -171,5 +131,3 @@ def reobfArtifact = artifacts.add('default', reobfFile) {
     type 'jar'
     builtBy 'reobfJar'
 }
-
-build.dependsOn(shadowJar)

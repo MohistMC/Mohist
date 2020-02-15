@@ -13,13 +13,13 @@ import org.bukkit.inventory.AbstractHorseInventory;
 
 public abstract class CraftAbstractHorse extends CraftAnimals implements AbstractHorse {
 
-    public CraftAbstractHorse(CraftServer server, HorseEntityAbstract entity) {
+    public CraftAbstractHorse(CraftServer server, AbstractHorseEntity entity) {
         super(server, entity);
     }
 
     @Override
-    public HorseEntityAbstract getHandle() {
-        return (HorseEntityAbstract) entity;
+    public AbstractHorseEntity getHandle() {
+        return (AbstractHorseEntity) entity;
     }
 
     @Override
@@ -41,7 +41,7 @@ public abstract class CraftAbstractHorse extends CraftAnimals implements Abstrac
 
     @Override
     public int getMaxDomestication() {
-        return getHandle().getMaxDomestication();
+        return getHandle().getMaxTemper();
     }
 
     @Override
@@ -52,13 +52,13 @@ public abstract class CraftAbstractHorse extends CraftAnimals implements Abstrac
 
     @Override
     public double getJumpStrength() {
-        return getHandle().getJumpStrength();
+        return getHandle().getHorseJumpStrength();
     }
 
     @Override
     public void setJumpStrength(double strength) {
         Validate.isTrue(strength >= 0, "Jump strength cannot be less than zero");
-        getHandle().getIAttributeInstance(HorseEntity.attributeJumpStrength).setValue(strength);
+        getHandle().getAttribute(HorseEntity.JUMP_STRENGTH).setValue(strength);
     }
 
     @Override
@@ -68,7 +68,7 @@ public abstract class CraftAbstractHorse extends CraftAnimals implements Abstrac
 
     @Override
     public void setTamed(boolean tamed) {
-        getHandle().setTamed(tamed);
+        getHandle().setHorseTamed(tamed);
     }
 
     @Override
@@ -90,15 +90,15 @@ public abstract class CraftAbstractHorse extends CraftAnimals implements Abstrac
     }
 
     public UUID getOwnerUUID() {
-        return getHandle().getOwnerUUID();
+        return getHandle().getOwnerUniqueId();
     }
 
     public void setOwnerUUID(UUID uuid) {
-        getHandle().setOwnerUUID(uuid);
+        getHandle().setOwnerUniqueId(uuid);
     }
 
     @Override
     public AbstractHorseInventory getInventory() {
-        return new CraftInventoryAbstractHorse(getHandle().inventoryChest);
+        return new CraftInventoryAbstractHorse(getHandle().horseChest);
     }
 }

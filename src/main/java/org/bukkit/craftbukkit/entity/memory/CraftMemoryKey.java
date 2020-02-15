@@ -10,7 +10,7 @@ public final class CraftMemoryKey {
     private CraftMemoryKey() {}
 
     public static <T, U> MemoryModuleType<U> fromMemoryKey(MemoryKey<T> memoryKey) {
-        return (MemoryModuleType<U>) Registry.MEMORY_MODULE_TYPE.get(CraftNamespacedKey.toMinecraft(memoryKey.getKey()));
+        return (MemoryModuleType<U>) Registry.MEMORY_MODULE_TYPE.getOrDefault(CraftNamespacedKey.toMinecraft(memoryKey.getKey()));
     }
 
     public static <T, U> MemoryKey<U> toMemoryKey(MemoryModuleType<T> memoryModuleType) {

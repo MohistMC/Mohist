@@ -1,13 +1,13 @@
 package org.bukkit.craftbukkit.block;
 
 import java.util.Random;
-import net.minecraft.server.BlockPosition;
-import net.minecraft.server.EntityBee;
-import net.minecraft.server.EntityTypes;
-import net.minecraft.server.GeneratorAccess;
-import net.minecraft.server.TileEntity;
-import net.minecraft.server.TileEntityBeehive;
-import net.minecraft.server.World;
+import net.minecraft.world.World;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.IWorld;
+import net.minecraft.entity.passive.BeeEntity;
+import net.minecraft.entity.EntityType;
+import net.minecraft.tileentity.BeehiveTileEntity;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 
@@ -27,21 +27,21 @@ public final class CapturedBlockState extends CraftBlockState {
 
         // SPIGOT-5537: Horrible hack to manually add bees given World.captureTreeGeneration does not support tiles
         if (this.treeBlock && getType() == Material.BEE_NEST) {
-            GeneratorAccess generatoraccess = this.world.getHandle();
-            BlockPosition blockposition1 = this.getPosition();
+            IWorld generatoraccess = this.world.getHandle();
+            BlockPos blockposition1 = this.getPosition();
             Random random = generatoraccess.getRandom();
 
             // Begin copied block from WorldGenFeatureTreeBeehive
             TileEntity tileentity = generatoraccess.getTileEntity(blockposition1);
 
-            if (tileentity instanceof TileEntityBeehive) {
-                TileEntityBeehive tileentitybeehive = (TileEntityBeehive) tileentity;
+            if (tileentity instanceof BeehiveTileEntity) {
+                BeehiveTileEntity tileentitybeehive = (BeehiveTileEntity) tileentity;
                 int j = 2 + random.nextInt(2);
 
                 for (int k = 0; k < j; ++k) {
-                    EntityBee entitybee = new EntityBee(EntityTypes.BEE, generatoraccess.getMinecraftWorld());
+                    BeeEntity entitybee = new BeeEntity(EntityType.BEE, generatoraccess.getWorld());
 
-                    tileentitybeehive.a(entitybee, false, random.nextInt(599));
+                    tileentitybeehive.func_226962_a_(entitybee, false, random.nextInt(599));
                 }
             }
             // End copied block
@@ -50,11 +50,11 @@ public final class CapturedBlockState extends CraftBlockState {
         return result;
     }
 
-    public static CapturedBlockState getBlockState(World world, BlockPosition pos, int flag) {
+    public static CapturedBlockState getBlockState(World world, BlockPos pos, int flag) {
         return new CapturedBlockState(world.getWorld().getBlockAt(pos.getX(), pos.getY(), pos.getZ()), flag, false);
     }
 
-    public static CapturedBlockState getTreeBlockState(World world, BlockPosition pos, int flag) {
+    public static CapturedBlockState getTreeBlockState(World world, BlockPos pos, int flag) {
         return new CapturedBlockState(world.getWorld().getBlockAt(pos.getX(), pos.getY(), pos.getZ()), flag, true);
     }
 }

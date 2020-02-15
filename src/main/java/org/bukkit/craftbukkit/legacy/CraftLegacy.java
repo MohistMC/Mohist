@@ -2,12 +2,6 @@ package org.bukkit.craftbukkit.legacy;
 
 import com.google.common.base.Preconditions;
 import com.mojang.datafixers.Dynamic;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
@@ -16,6 +10,8 @@ import net.minecraft.item.Items;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.INBT;
 import net.minecraft.nbt.NBTDynamicOps;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.state.IProperty;
 import net.minecraft.state.StateContainer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.datafix.DataFixesManager;
@@ -28,6 +24,8 @@ import org.bukkit.Material;
 import org.bukkit.craftbukkit.util.CraftMagicNumbers;
 import org.bukkit.entity.EntityType;
 import org.bukkit.material.MaterialData;
+
+import java.util.*;
 
 /**
  * This class may seem unnecessarily slow and complicated/repetitive however it
@@ -78,7 +76,7 @@ public final class CraftLegacy {
                 mappedData = blockToMaterial.get(block);
                 // Fallback to matching item
                 if (mappedData == null) {
-                    mappedData = itemToMaterial.get(block.getItem());
+                    mappedData = itemToMaterial.get(block.asItem());
                 }
             }
         } else {
@@ -126,13 +124,13 @@ public final class CraftLegacy {
             // Try exact match first
             BlockState converted = materialToData.get(materialData);
             if (converted != null) {
-                return converted.getBlock().getItem();
+                return converted.getBlock().asItem();
             }
 
             // Fallback to any block
             Block convertedBlock = materialToBlock.get(materialData);
             if (convertedBlock != null) {
-                return convertedBlock.getItem();
+                return convertedBlock.asItem();
             }
         }
 
@@ -310,7 +308,7 @@ public final class CraftLegacy {
         SPAWN_EGGS.put((byte) EntityType.PIG_ZOMBIE.getTypeId(), Material.ZOMBIE_PIGMAN_SPAWN_EGG);
         SPAWN_EGGS.put((byte) EntityType.ZOMBIE_VILLAGER.getTypeId(), Material.ZOMBIE_VILLAGER_SPAWN_EGG);
 
-        Bootstrap.init();
+        Bootstrap.register();
 
         for (Material material : Material.values()) {
             if (!material.isLegacy()) {
@@ -344,7 +342,7 @@ public final class CraftLegacy {
                     if (propMap.isPresent()) {
                         CompoundNBT properties = propMap.get();
                         for (String dataKey : properties.keySet()) {
-                            BlockState state = states.a(dataKey);
+                            IProperty state = states.getProperty(dataKey);
 
                             if (state == null) {
                                 if (whitelistedStates.contains(dataKey)) {
@@ -354,9 +352,9 @@ public final class CraftLegacy {
                             }
 
                             Preconditions.checkState(!properties.getString(dataKey).isEmpty(), "Empty data string");
-                            Optional opt = state.b(properties.getString(dataKey));
+                            Optional opt = state.parseValue(properties.getString(dataKey));
 
-                            blockData = blockData.set(state, (Comparable) opt.get());
+                            blockData = blockData.with(state, (Comparable) opt.get());
                         }
                     }
 

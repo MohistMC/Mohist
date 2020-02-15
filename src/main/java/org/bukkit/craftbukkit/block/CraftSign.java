@@ -1,7 +1,6 @@
 package org.bukkit.craftbukkit.block;
 
 import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.item.DyeColor;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.tileentity.SignTileEntity;
 import org.bukkit.DyeColor;
@@ -27,8 +26,8 @@ public class CraftSign extends CraftBlockEntityState<SignTileEntity> implements 
     public void load(SignTileEntity sign) {
         super.load(sign);
 
-        lines = new String[sign.lines.length];
-        System.arraycopy(revertComponents(sign.lines), 0, lines, 0, lines.length);
+        lines = new String[sign.signText.length];
+        System.arraycopy(revertComponents(sign.signText), 0, lines, 0, lines.length);
         editable = sign.isEditable;
     }
 
@@ -59,12 +58,12 @@ public class CraftSign extends CraftBlockEntityState<SignTileEntity> implements 
 
     @Override
     public DyeColor getColor() {
-        return DyeColor.getByWoolData((byte) getSnapshot().getColor().getColorIndex());
+        return DyeColor.getByWoolData((byte) getSnapshot().getTextColor().getId());
     }
 
     @Override
     public void setColor(DyeColor color) {
-        getSnapshot().setColor(DyeColor.fromColorIndex(color.getWoolData()));
+        getSnapshot().setTextColor(net.minecraft.item.DyeColor.byId(color.getWoolData()));
     }
 
     @Override
@@ -72,7 +71,7 @@ public class CraftSign extends CraftBlockEntityState<SignTileEntity> implements 
         super.applyTo(sign);
 
         ITextComponent[] newLines = sanitizeLines(lines);
-        System.arraycopy(newLines, 0, sign.lines, 0, 4);
+        System.arraycopy(newLines, 0, sign.signText, 0, 4);
         sign.isEditable = editable;
     }
 

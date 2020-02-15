@@ -48,9 +48,9 @@ public class CraftBossBar implements BossBar {
 
     private void initialize() {
         this.flags = new HashMap<>();
-        this.flags.put(BarFlag.DARKEN_SKY, new FlagContainer(handle::isDarkenSky, handle::setDarkenSky));
-        this.flags.put(BarFlag.PLAY_BOSS_MUSIC, new FlagContainer(handle::isPlayMusic, handle::setPlayMusic));
-        this.flags.put(BarFlag.CREATE_FOG, new FlagContainer(handle::isCreateFog, handle::setCreateFog));
+        this.flags.put(BarFlag.DARKEN_SKY, new FlagContainer(handle::shouldDarkenSky, handle::setDarkenSky));
+        this.flags.put(BarFlag.PLAY_BOSS_MUSIC, new FlagContainer(handle::shouldPlayEndBossMusic, handle::setPlayEndBossMusic));
+        this.flags.put(BarFlag.CREATE_FOG, new FlagContainer(handle::shouldCreateFog, handle::setCreateFog));
     }
 
     private BarColor convertColor(BossInfo.Color color) {
@@ -97,12 +97,12 @@ public class CraftBossBar implements BossBar {
 
     @Override
     public String getTitle() {
-        return CraftChatMessage.fromComponent(handle.title);
+        return CraftChatMessage.fromComponent(handle.name);
     }
 
     @Override
     public void setTitle(String title) {
-        handle.title = CraftChatMessage.fromString(title, true)[0];
+        handle.name = CraftChatMessage.fromString(title, true)[0];
         handle.sendUpdate(SUpdateBossInfoPacket.Operation.UPDATE_NAME);
     }
 
@@ -167,7 +167,7 @@ public class CraftBossBar implements BossBar {
     @Override
     public void addPlayer(Player player) {
         Preconditions.checkArgument(player != null, "player == null");
-        Preconditions.checkArgument(((CraftPlayer) player).getHandle().playerConnection != null, "player is not fully connected (wait for PlayerJoinEvent)");
+        Preconditions.checkArgument(((CraftPlayer) player).getHandle().connection != null, "player is not fully connected (wait for PlayerJoinEvent)");
 
         handle.addPlayer(((CraftPlayer) player).getHandle());
     }
