@@ -14,26 +14,3 @@
      private int changes;
      private int changedSectionFilter;
      private long lastUpdateInhabitedTime;
-@@ -37,11 +37,11 @@
-         public void run()
-         {
-             PlayerChunkMapEntry.this.chunk = PlayerChunkMapEntry.this.playerChunkMap.getWorldServer().getChunkProvider().loadChunk(PlayerChunkMapEntry.this.pos.x, PlayerChunkMapEntry.this.pos.z);
--            PlayerChunkMapEntry.this.loading = false;
-+    		PlayerChunkMapEntry.this.loading = false;
-         }
-     };
-     private boolean loading = true;
--
-+	
-     public PlayerChunkMapEntry(PlayerChunkMap mapIn, int chunkX, int chunkZ)
-     {
-         this.playerChunkMap = mapIn;
-@@ -114,7 +114,7 @@
- 
-     public boolean providePlayerChunk(boolean canGenerate)
-     {
--        if (this.loading) return false;
-+		if (this.loading) return false;
-         if (this.chunk != null)
-         {
-             return true;
