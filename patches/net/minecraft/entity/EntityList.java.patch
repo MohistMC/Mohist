@@ -1,13 +1,15 @@
 --- ../src-base/minecraft/net/minecraft/entity/EntityList.java
 +++ ../src-work/minecraft/net/minecraft/entity/EntityList.java
-@@ -107,8 +107,12 @@
+@@ -107,8 +107,13 @@
      public static final ResourceLocation LIGHTNING_BOLT = new ResourceLocation("lightning_bolt");
      private static final ResourceLocation PLAYER = new ResourceLocation("player");
      private static final Logger LOGGER = LogManager.getLogger();
 +    // Mohist compatible Citizens2
 +    public static final RegistryNamespaced< ResourceLocation, Class <? extends Entity >> REGISTRY = new RegistryNamespaced < ResourceLocation, Class <? extends Entity >> ();
      public static final Map<ResourceLocation, EntityList.EntityEggInfo> ENTITY_EGGS = Maps.<ResourceLocation, EntityList.EntityEggInfo>newLinkedHashMap();
-     private static final Set<ResourceLocation> EXTRA_NAMES = Sets.newHashSet();
+-    private static final Set<ResourceLocation> EXTRA_NAMES = Sets.newHashSet();
++    // Mohist private -> public compatible imiPet(KNOWN_TYPES -> EXTRA_NAMES)
++    public static final Set<ResourceLocation> EXTRA_NAMES = Sets.newHashSet();
 +    // Mohist compatible SilkSpawners
 +    public static final List<String> OLD_NAMES = Lists.<String>newArrayList();
  

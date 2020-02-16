@@ -38,6 +38,7 @@ public class RemapUtils {
 
     public static final MohistJarMapping jarMapping;
     private static final List<Remapper> remappers = new ArrayList<>();
+    public static Map<String, String> relocations = new HashMap<>();
 
     static {
         jarMapping = new MohistJarMapping();
@@ -50,35 +51,10 @@ public class RemapUtils {
         jarMapping.setInheritanceMap(new MohistInheritanceMap());
         jarMapping.setFallbackInheritanceProvider(new MohistInheritanceProvider());
 
-        Map<String, String> relocations = new HashMap<>();
         relocations.put("net.minecraft.server", "net.minecraft.server.v1_12_R1");
         try {
-            String f = JarTool.getJarDir();
-            String f1 = f
-                    .replace("file:\\", "") // win
-                    .replace("file:/", "") // linux
-                    .replace("\\red\\mohist\\util", "") // win
-                    .replace("/red/mohist/util", ""); // linux
-            String jarname = f1.substring(f1.lastIndexOf("\\")+1,f1.lastIndexOf("."));
-            String jarname1 = f1.substring(f1.lastIndexOf("/")+1,f1.lastIndexOf("."));
-            String path = f1
-                    .replace("\\" + jarname + ".jar!", "")
-                    .replace("/" + jarname1 + ".jar!", "");
-            String fName;
-            String os = System.getProperty("os.name");
-            if (os.toLowerCase().startsWith("win")) {
-                fName = path + "/libraries/red/mohist/mappings/nms.srg";
-            } else {
-                fName = "/" + path + "/libraries/red/mohist/mappings/nms.srg";
-            }
-            File nms = new File(fName);
-            if (!nms.exists()) {
-                Mohist.LOGGER.error("Unable to find remapping dependencies, please re-download the libraries file!");
-                FMLCommonHandler.instance().exitJava(1, true);
-            }
-            FileInputStream fos = new FileInputStream(nms);
             jarMapping.loadMappings(
-                    new BufferedReader(new InputStreamReader(fos)),
+                    new BufferedReader(new InputStreamReader(RemapUtils.class.getClassLoader().getResourceAsStream("mappings/nms.srg"))),
                     new MavenShade(relocations),
                     null, false);
         } catch (Exception e) {
