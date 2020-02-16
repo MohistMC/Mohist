@@ -1,7 +1,6 @@
 package red.mohist.common.remap.model;
 
 /**
- * 定义一个remap规则
  * @author pyz
  * @date 2019/6/30 11:50 PM
  */

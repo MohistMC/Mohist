@@ -11,7 +11,6 @@ public class MohistInheritanceProvider implements InheritanceProvider {
     @Override
     public Set<String> getParents(String className) {
         if (className.startsWith("org/springframework/")) {
-//            不处理spring的类
             return null;
         }
         return fineParents(className, true);
@@ -19,7 +18,6 @@ public class MohistInheritanceProvider implements InheritanceProvider {
 
     protected Set<String> fineParents(String className, boolean remap) {
         if (className.startsWith("net/minecraft/")) {
-//            nms 拿不到字节码,需要用反射
             return fineNMSParents(className, remap);
         } else {
             return findNormalParents(className, remap);

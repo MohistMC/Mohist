@@ -6,14 +6,12 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.lang.invoke.MethodType;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import net.md_5.specialsource.transformer.MavenShade;
 import net.minecraftforge.fml.common.FMLCommonHandler;
-import org.bukkit.plugin.PluginDescriptionFile;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.Type;
@@ -27,9 +25,7 @@ import red.mohist.common.remap.remappers.MohistInheritanceMap;
 import red.mohist.common.remap.remappers.MohistInheritanceProvider;
 import red.mohist.common.remap.remappers.MohistJarMapping;
 import red.mohist.common.remap.remappers.MohistJarRemapper;
-import red.mohist.common.remap.remappers.NMSVersionRemapper;
 import red.mohist.common.remap.remappers.ReflectRemapper;
-import red.mohist.configuration.MohistConfig;
 import red.mohist.util.JarTool;
 import sun.reflect.Reflection;
 
@@ -40,8 +36,6 @@ import sun.reflect.Reflection;
  */
 public class RemapUtils {
 
-    public static final String nmsPrefix = "net.minecraft.server.";
-    public static final String mohistPrefix = "red.mohist.";
     public static final MohistJarMapping jarMapping;
     private static final List<Remapper> remappers = new ArrayList<>();
 
@@ -56,7 +50,7 @@ public class RemapUtils {
         jarMapping.setInheritanceMap(new MohistInheritanceMap());
         jarMapping.setFallbackInheritanceProvider(new MohistInheritanceProvider());
 
-        Map<String, String> relocations = new HashMap<String, String>();
+        Map<String, String> relocations = new HashMap<>();
         relocations.put("net.minecraft.server", "net.minecraft.server.v1_12_R1");
         try {
             String f = JarTool.getJarDir();
@@ -90,58 +84,33 @@ public class RemapUtils {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        if (MohistConfig.instance.multiVersionRemap.getValue()) {
-            remappers.add(new NMSVersionRemapper());
-        }
         MohistJarRemapper jarRemapper = new MohistJarRemapper(jarMapping);
-        if (MohistConfig.instance.nmsRemap.getValue()) {
-            remappers.add(jarRemapper);
-        }
-        if (MohistConfig.instance.reflectRemap.getValue()) {
-            remappers.add(new ReflectRemapper());
-        }
+        remappers.add(jarRemapper);
+        remappers.add(new ReflectRemapper());
         jarMapping.initFastMethodMapping(jarRemapper);
     }
 
     private static final Object remapLock = new Object();
 
-    public static byte[] remapFindClass(PluginDescriptionFile description, String name, byte[] bs) throws IOException {
+    public static byte[] remapFindClass(String name, byte[] bs) throws IOException {
         synchronized (remapLock) {
-            if (MohistConfig.instance.printRemapPluginClass.getValue()) {
-                System.out.println("========= before remap ========= ");
-                red.mohist.common.remap.ASMUtils.printClass(bs);
-            }
             ClassNode classNode = new ClassNode();
             new ClassReader(bs).accept(classNode, ClassReader.EXPAND_FRAMES);
             for (Remapper remapper : remappers) {
-                if (description != null && remapper instanceof NMSVersionRemapper && !MohistConfig.instance.multiVersionRemapPlugins.contains(description.getName())) {
-                    continue;
+
+                ClassNode container = new ClassNode();
+                ClassRemapper classRemapper;
+                if (remapper instanceof ClassRemapperSupplier) {
+                    classRemapper = ((ClassRemapperSupplier) remapper).getClassRemapper(container);
+                } else {
+                    classRemapper = new ClassRemapper(container, remapper);
                 }
-                try {
-                    red.mohist.common.remap.RemapContext.push(new red.mohist.common.remap.RemapContext().setClassNode(classNode).setDescription(description));
-                    ClassNode container = new ClassNode();
-                    ClassRemapper classRemapper;
-                    if (remapper instanceof ClassRemapperSupplier) {
-                        classRemapper = ((ClassRemapperSupplier) remapper).getClassRemapper(container);
-                    } else {
-                        classRemapper = new ClassRemapper(container, remapper);
-                    }
-                    classNode.accept(classRemapper);
-                    classNode = container;
-                    if (MohistConfig.instance.printRemapPluginClass.getValue()) {
-                        System.out.println("========= after " + remapper.getClass().getSimpleName() + " remap ========= ");
-                        ASMUtils.printClass(classNode);
-                    }
-                } finally {
-                    RemapContext.pop();
-                }
+                classNode.accept(classRemapper);
+                classNode = container;
             }
             ClassWriter writer = new ClassWriter(ClassWriter.COMPUTE_MAXS);
             classNode.accept(writer);
             bs = writer.toByteArray();
-            if (MohistConfig.instance.dumpRemapPluginClass.getValue()) {
-                ASMUtils.dump(Paths.get(System.getProperty("user.dir"), "dumpRemapPluginClass"), bs);
-            }
             return bs;
         }
     }
@@ -156,7 +125,7 @@ public class RemapUtils {
         return mapping == null ? typeName : mapping.getNmsSrcName();
     }
 
-    public static String reverseMap(Class clazz) {
+    public static String reverseMap(Class<?> clazz) {
         ClassMapping mapping = jarMapping.byMCPName.get(clazz.getName());
         return mapping == null ? ASMUtils.toInternalName(clazz) : mapping.getNmsSrcName();
     }
@@ -181,23 +150,23 @@ public class RemapUtils {
         return Type.getMethodType(rt, ts).getDescriptor();
     }
 
-    public static String mapMethodName(Class clazz, String name, MethodType methodType) {
+    public static String mapMethodName(Class<?> clazz, String name, MethodType methodType) {
         return mapMethodName(clazz, name, methodType.parameterArray());
     }
 
-    public static String mapMethodName(Class type, String name, Class<?>... parameterTypes) {
+    public static String mapMethodName(Class<?> type, String name, Class<?>... parameterTypes) {
         return jarMapping.fastMapMethodName(type, name, parameterTypes);
     }
 
-    public static String inverseMapMethodName(Class type, String name, Class<?>... parameterTypes) {
+    public static String inverseMapMethodName(Class<?> type, String name, Class<?>... parameterTypes) {
         return jarMapping.fastReverseMapMethodName(type, name, parameterTypes);
     }
 
-    public static String mapFieldName(Class type, String fieldName) {
+    public static String mapFieldName(Class<?> type, String fieldName) {
         return jarMapping.fastMapFieldName(type, fieldName);
     }
 
-    public static String inverseMapFieldName(Class type, String fieldName) {
+    public static String inverseMapFieldName(Class<?> type, String fieldName) {
         return jarMapping.fastReverseMapFieldName(type, fieldName);
     }
 
@@ -205,13 +174,17 @@ public class RemapUtils {
         return Reflection.getCallerClass(3).getClassLoader();
     }
 
-    public static String inverseMapName(Class clazz) {
+    public static String inverseMapName(Class<?> clazz) {
         ClassMapping mapping = jarMapping.byMCPName.get(clazz.getName());
         return mapping == null ? clazz.getName() : mapping.getNmsName();
     }
 
-    public static String inverseMapSimpleName(Class clazz) {
+    public static String inverseMapSimpleName(Class<?> clazz) {
         ClassMapping mapping = jarMapping.byMCPName.get(clazz.getName());
         return mapping == null ? clazz.getSimpleName() : mapping.getNmsSimpleName();
+    }
+
+    public static boolean isNMSClass(String className) {
+        return className.startsWith("net.minecraft.server.") || className.startsWith("red.mohist.");
     }
 }
