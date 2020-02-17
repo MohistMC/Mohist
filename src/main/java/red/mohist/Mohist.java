@@ -17,7 +17,6 @@ public class Mohist {
 
     public static final String NAME = "Mohist";
     public static final String VERSION = "1.6";
-    public static final String LIB_VERSION = "4";
     public static Logger LOGGER;
 
     public static String getVersion() {
@@ -49,17 +48,15 @@ public class Mohist {
         if (Update.isCheckVersion()) {
             Update.hasLatestVersion();
         }
-        if (Update.getLibrariesVersion()) {
-            System.out.println(Message.getString("mohist.start.error.nothavelibrary"));
+        try {
             DownloadLibraries.run();
-            System.out.println(Message.getString("file.ok"));
-            return;
+        } catch (Exception e) {
+            e.printStackTrace();
         }
         Class<?> launchwrapper = null;
-        try
-        {
-            launchwrapper = Class.forName("net.minecraft.launchwrapper.Launch",true, Mohist.class.getClassLoader());
-            Class.forName("org.objectweb.asm.Type",true, Mohist.class.getClassLoader());
+        try {
+            launchwrapper = Class.forName("net.minecraft.launchwrapper.Launch", true, Mohist.class.getClassLoader());
+            Class.forName("org.objectweb.asm.Type", true, Mohist.class.getClassLoader());
             System.out.println("");
             System.out.println("                   __                     __      ");
             System.out.println(" /'\\_/`\\          /\\ \\       __          /\\ \\__   ");
@@ -74,25 +71,20 @@ public class Mohist {
             System.out.println(Message.getString("mohist.start"));
             System.out.println(Message.getString("load.libraries"));
             LOGGER = LogManager.getLogger("Mohist");
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             System.out.println(Message.getString("mohist.start.error.nothavelibrary"));
             e.printStackTrace(System.err);
             System.exit(1);
         }
 
-        try
-        {
+        try {
             Method main = launchwrapper != null ? launchwrapper.getMethod("main", String[].class) : null;
             String[] allArgs = new String[args.length + 2];
             allArgs[0] = "--tweakClass";
             allArgs[1] = "net.minecraftforge.fml.common.launcher.FMLServerTweaker";
             System.arraycopy(args, 0, allArgs, 2, args.length);
-            Objects.requireNonNull(main).invoke(null,(Object)allArgs);
-        }
-        catch (Exception e)
-        {
+            Objects.requireNonNull(main).invoke(null, (Object) allArgs);
+        } catch (Exception e) {
             System.out.println(Message.getString("mohist.start.error"));
             e.printStackTrace(System.err);
             System.exit(1);

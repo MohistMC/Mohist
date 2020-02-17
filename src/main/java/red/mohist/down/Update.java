@@ -57,18 +57,4 @@ public class Update {
         File f = new File("mohist-config", "mohist.yml");
         return MohistConfigUtil.getBoolean(f, "check_update:");
     }
-
-    public static boolean getLibrariesVersion() {
-        String s = Mohist.LIB_VERSION;
-        File lib = new File(JarTool.getJarDir() + "/libraries/libraries.ver");
-        if (!lib.exists()) {
-            return true;
-        }
-        // Get the data in lib
-        String i = MohistConfigUtil.getString(lib, "version:", Mohist.LIB_VERSION);
-        if(i.equals(s)){
-            return false;
-        }
-        return true;
-    }
 }

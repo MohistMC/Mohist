@@ -1,8 +1,6 @@
 package red.mohist.common.remap;
 
 import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.lang.invoke.MethodType;
@@ -11,14 +9,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import net.md_5.specialsource.transformer.MavenShade;
-import net.minecraftforge.fml.common.FMLCommonHandler;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.commons.ClassRemapper;
 import org.objectweb.asm.commons.Remapper;
 import org.objectweb.asm.tree.ClassNode;
-import red.mohist.Mohist;
 import red.mohist.common.remap.model.ClassMapping;
 import red.mohist.common.remap.remappers.ClassRemapperSupplier;
 import red.mohist.common.remap.remappers.MohistInheritanceMap;
@@ -26,7 +22,6 @@ import red.mohist.common.remap.remappers.MohistInheritanceProvider;
 import red.mohist.common.remap.remappers.MohistJarMapping;
 import red.mohist.common.remap.remappers.MohistJarRemapper;
 import red.mohist.common.remap.remappers.ReflectRemapper;
-import red.mohist.util.JarTool;
 import sun.reflect.Reflection;
 
 /**
