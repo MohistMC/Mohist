@@ -11,6 +11,7 @@ libraries/net/java/dev/jna/jna/4.4.0/jna-4.4.0.jar|34d3537524a6c8c134e840e7be601
 libraries/net/md-5/bungeecord-chat/1.12-SNAPSHOT/bungeecord-chat-1.12-SNAPSHOT.jar|3227092125953bd4b82e80958e24695f
 libraries/net/md-5/SpecialSource/1.8.5/SpecialSource-1.8.5.jar|bfb833db1ebffacce294d325e1031cb9
 libraries/net/minecraft/1.12.2/minecraft_server.1.12.2.jar|71728ed3fbd0acd1394bf3ade2649a5c
+libraries/net/minecraft/launchwrapper/1.12/launchwrapper-1.12.jar|934b2d91c7c5be4a49577c9e6b40e8da
 libraries/net/sf/jopt-simple/jopt-simple/5.0.3/jopt-simple-5.0.3.jar|0a5ec84e23df9d7cfb4063bc55f2744c
 libraries/net/sf/trove4j/trove4j/3.0.3/trove4j-3.0.3.jar|8fc4d4e0129244f9fd39650c5f30feb2
 libraries/org/apache/commons/commons-lang3/3.5/commons-lang3-3.5.jar|780b5a8b72eebe6d0dbff1c11b5658fa

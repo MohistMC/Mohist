@@ -5,17 +5,21 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.URLClassLoader;
 import java.util.HashMap;
 import java.util.Map;
+import red.mohist.api.ServerAPI;
 import red.mohist.util.HttpUtil;
+import red.mohist.util.JarLoader;
 import red.mohist.util.MD5Util;
+import red.mohist.util.i18n.Message;
 
-public class DownloadLibraries{
+public class DownloadLibraries {
 
     public static final String FIND_LOCATE = "https://passport.lazercloud.com/api/v1/options/GetLocate";
 
     public static void run() throws Exception {
-        String url = null;
+        String url = "";
         String path = null;
         InputStream listStream = DownloadLibraries.class.getClassLoader().getResourceAsStream("lib.red");
         if (listStream == null) return;
@@ -23,8 +27,7 @@ public class DownloadLibraries{
         try {
             BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(listStream));
             String str = null;
-            while((str = bufferedReader.readLine()) != null)
-            {
+            while ((str = bufferedReader.readLine()) != null) {
                 String[] args = str.split("\\|");
                 if (args.length == 2) {
                     path = args[0];
@@ -50,24 +53,30 @@ public class DownloadLibraries{
 
                 String[] args = entry.getKey().getPath().split("\\\\");
                 int size = args.length;
-                String filepath = entry.getKey().getPath().replace("\\" +  args[size-1], "");
+                String filepath = entry.getKey().getPath().replace("\\" + args[size - 1], "");
                 File newfile = new File(filepath);
-                if (!newfile.exists()){
+                if (!newfile.exists()) {
                     newfile.mkdirs();
                 }
                 try {
                     String locateInfo = HttpUtil.doGet(FIND_LOCATE);
 
                     if (locateInfo != null && locateInfo.equals("CN")) {
-                        System.out.println("Detected China IP, Using Gitee Mirror.");
                         url = "https://mohist-community.gitee.io/mohistdown/"; //Gitee Mirror
                     } else {
                         url = "https://www.mgazul.cn/"; //Github Mirror
                     }
                 } catch (Exception e) {
-                    url = "https://www.mgazul.cn/"; //Github Mirror
+                    if (Message.getLanguage(2).contains("CN")) {
+                        url = "https://mohist-community.gitee.io/mohistdown/"; //Gitee Mirror
+                    } else {
+                        url = "https://www.mgazul.cn/"; //Github Mirror
+                    }
                 }
                 new Download(url + entry.getKey().getPath().replace("\\", "/"), entry.getKey());
+                JarLoader jarLoader = new JarLoader((URLClassLoader)ClassLoader.getSystemClassLoader());
+
+                JarLoader.loadjar(jarLoader, filepath);
             }
         }
     }

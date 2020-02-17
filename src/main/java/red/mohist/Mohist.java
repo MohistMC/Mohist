@@ -1,9 +1,11 @@
 package red.mohist;
 
 import java.io.File;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.URLClassLoader;
 import java.util.Objects;
+import java.util.concurrent.CountDownLatch;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import red.mohist.configuration.MohistConfigUtil;
@@ -23,7 +25,7 @@ public class Mohist {
         return Mohist.class.getPackage().getImplementationVersion() != null ? Metrics.class.getPackage().getImplementationVersion() : "unknown";
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Throwable {
         if (!(Mohist.class.getClassLoader() instanceof URLClassLoader)) {
             System.out.println(Message.getString("unsupported.java.version"));
             System.exit(0);
@@ -48,46 +50,7 @@ public class Mohist {
         if (Update.isCheckVersion()) {
             Update.hasLatestVersion();
         }
-        try {
-            DownloadLibraries.run();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        Class<?> launchwrapper = null;
-        try {
-            launchwrapper = Class.forName("net.minecraft.launchwrapper.Launch", true, Mohist.class.getClassLoader());
-            Class.forName("org.objectweb.asm.Type", true, Mohist.class.getClassLoader());
-            System.out.println("");
-            System.out.println("                   __                     __      ");
-            System.out.println(" /'\\_/`\\          /\\ \\       __          /\\ \\__   ");
-            System.out.println("/\\      \\     ___ \\ \\ \\___  /\\_\\     ____\\ \\ ,_\\  ");
-            System.out.println("\\ \\ \\__\\ \\   / __`\\\\ \\  _ `\\\\/\\ \\   /',__\\\\ \\ \\/  ");
-            System.out.println(" \\ \\ \\_/\\ \\ /\\ \\L\\ \\\\ \\ \\ \\ \\\\ \\ \\ /\\__, `\\\\ \\ \\_ ");
-            System.out.println("  \\ \\_\\\\ \\_\\\\ \\____/ \\ \\_\\ \\_\\\\ \\_\\\\/\\____/ \\ \\__\\");
-            System.out.println("   \\/_/ \\/_/ \\/___/   \\/_/\\/_/ \\/_/ \\/___/   \\/__/");
-            System.out.println("");
-            System.out.println("");
-            System.out.println("                        " + Message.getString("forge.serverlanunchwrapper.1"));
-            System.out.println(Message.getString("mohist.start"));
-            System.out.println(Message.getString("load.libraries"));
-            LOGGER = LogManager.getLogger("Mohist");
-        } catch (Exception e) {
-            System.out.println(Message.getString("mohist.start.error.nothavelibrary"));
-            e.printStackTrace(System.err);
-            System.exit(1);
-        }
-
-        try {
-            Method main = launchwrapper != null ? launchwrapper.getMethod("main", String[].class) : null;
-            String[] allArgs = new String[args.length + 2];
-            allArgs[0] = "--tweakClass";
-            allArgs[1] = "net.minecraftforge.fml.common.launcher.FMLServerTweaker";
-            System.arraycopy(args, 0, allArgs, 2, args.length);
-            Objects.requireNonNull(main).invoke(null, (Object) allArgs);
-        } catch (Exception e) {
-            System.out.println(Message.getString("mohist.start.error"));
-            e.printStackTrace(System.err);
-            System.exit(1);
-        }
+        DownloadLibraries.run();
+        Class.forName("net.minecraftforge.fml.relauncher.ServerLaunchWrapper").getDeclaredMethod("main", String[].class).invoke(null, new Object[]{args});
     }
 }
