@@ -16,6 +16,8 @@ public class HttpUtil {
         URL localURL = new URL(url);
         URLConnection connection = localURL.openConnection();
         HttpURLConnection httpURLConnection = (HttpURLConnection)connection;
+        httpURLConnection.setConnectTimeout(10*1000);
+        httpURLConnection.setReadTimeout(10*1000);
         httpURLConnection.setRequestProperty("Accept-Charset", "utf-8");
         httpURLConnection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
         InputStream in = null;

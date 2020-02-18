@@ -9,6 +9,7 @@ import java.net.URLClassLoader;
 import java.util.HashMap;
 import java.util.Map;
 import red.mohist.api.ServerAPI;
+import red.mohist.configuration.MohistConfig;
 import red.mohist.util.HttpUtil;
 import red.mohist.util.JarLoader;
 import red.mohist.util.MD5Util;
@@ -36,7 +37,10 @@ public class DownloadLibraries {
                     try {
                         File file = new File(path);
                         // Judgement files and MD5
-                        if (!file.exists() || !MD5Util.getMD5(file).equals(md5)) {
+                        String[] jarpath = file.getPath().split("\\\\");
+                        int size = jarpath.length;
+                        String jarname = args[size - 1];
+                        if (!MohistConfig.instance.libsblacklist.getValue().contains(jarname) && (!file.exists() || !MD5Util.getMD5(file).equals(md5))) {
                             lib.put(file, md5);
                         }
                     } catch (IOException e) {
