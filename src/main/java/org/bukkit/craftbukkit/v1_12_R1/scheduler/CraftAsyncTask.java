@@ -51,13 +51,6 @@ class CraftAsyncTask extends CraftTask {
             super.run();
         } catch (final Throwable t) {
             thrown = t;
-            getOwner().getLogger().log(
-                    Level.WARNING,
-                    String.format(
-                            "Plugin %s generated an exception while executing task %s",
-                            getOwner().getDescription().getFullName(),
-                            getTaskId()),
-                    thrown);
         } finally {
             // Cleanup is important for any async task, otherwise ghost tasks are everywhere
             synchronized (workers) {
