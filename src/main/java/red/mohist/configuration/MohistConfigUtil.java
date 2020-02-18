@@ -29,7 +29,7 @@ public class MohistConfigUtil {
 
     public static String getString(File f, String key, String defaultreturn) {
         try {
-            String s = FileUtil.readContent(f, "UTF-8");
+            String s = FileUtil.readContent(f);
             if (s.contains(key)) {
                 String string = s.substring(s.indexOf(key));
                 String s1 = (string.substring(string.indexOf(": ") + 2));
@@ -50,7 +50,7 @@ public class MohistConfigUtil {
             conn.setReadTimeout(10*1000);
             InputStream is = conn.getInputStream();
 
-            String s = IOUtil.readContent(is, "UTF-8");
+            String s = IOUtil.readContent(is);
             is.close();
             return s;
 

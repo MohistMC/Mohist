@@ -34,7 +34,6 @@ public class MohistConfig extends ConfigBase{
     // Bukkit Event Canceled
     public final BoolSetting explosion_canceled = new BoolSetting(this, "eventCanceled.explosion", false, "BlockExplosionEvent isCanceled");
     public final BoolSetting check_update = new BoolSetting(this, "check_update", true, "Check Update");
-    public final StringArraySetting libsblacklist = new StringArraySetting(this, "libsblacklist", "[aaaa.jar, bbbb.jar]", "Library file auto-detection filter list");
 
     public final StringSetting ANSI_ERROR_LEVEL = new StringSetting(this, "consolecolor.error-level", "[31;1m", "consolecolor.error-level");
     public final StringSetting ANSI_WARN_LEVEL = new StringSetting(this, "consolecolor.warn-level", "[33;1m", "consolecolor.warn-level");

@@ -8,7 +8,6 @@ import java.net.URLConnection;
 import red.mohist.Mohist;
 import red.mohist.configuration.MohistConfigUtil;
 import red.mohist.util.IOUtil;
-import red.mohist.util.JarTool;
 import red.mohist.util.i18n.Message;
 
 public class Update {
@@ -26,7 +25,7 @@ public class Update {
             conn.setConnectTimeout(10*1000);
             conn.setReadTimeout(10*1000);
             InputStream is = conn.getInputStream();
-            String commits = IOUtil.readContent(is, "UTF-8");
+            String commits = IOUtil.readContent(is);
             String sha = "\"sha\":\"";
             String date = "\"date\":\"";
 

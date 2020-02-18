@@ -8,8 +8,6 @@ import java.io.InputStreamReader;
 import java.net.URLClassLoader;
 import java.util.HashMap;
 import java.util.Map;
-import red.mohist.api.ServerAPI;
-import red.mohist.configuration.MohistConfig;
 import red.mohist.util.HttpUtil;
 import red.mohist.util.JarLoader;
 import red.mohist.util.MD5Util;
@@ -37,10 +35,7 @@ public class DownloadLibraries {
                     try {
                         File file = new File(path);
                         // Judgement files and MD5
-                        String[] jarpath = file.getPath().split("\\\\");
-                        int size = jarpath.length;
-                        String jarname = args[size - 1];
-                        if (!MohistConfig.instance.libsblacklist.getValue().contains(jarname) && (!file.exists() || !MD5Util.getMD5(file).equals(md5))) {
+                        if ((!file.exists() || !MD5Util.getMD5(file).equals(md5))) {
                             lib.put(file, md5);
                         }
                     } catch (IOException e) {
@@ -77,7 +72,7 @@ public class DownloadLibraries {
                         url = "https://www.mgazul.cn/"; //Github Mirror
                     }
                 }
-                new Download(url + entry.getKey().getPath().replace("\\", "/"), entry.getKey());
+                new Download(url + entry.getKey().getPath().replace("\\", "/"), entry.getKey(), args[size - 1]);
                 JarLoader jarLoader = new JarLoader((URLClassLoader)ClassLoader.getSystemClassLoader());
 
                 JarLoader.loadjar(jarLoader, filepath);

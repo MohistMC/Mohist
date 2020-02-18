@@ -1,15 +1,14 @@
 package red.mohist.util;
 
 import java.io.File;
-import java.io.FileFilter;
 import java.lang.reflect.Method;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 
 public class JarLoader {
 
     private URLClassLoader urlClassLoader;
+
     public JarLoader(URLClassLoader urlClassLoader) {
         this.urlClassLoader = urlClassLoader;
     }
@@ -20,23 +19,17 @@ public class JarLoader {
         addURL.invoke(urlClassLoader, url);
     }
 
-    public static void loadjar(JarLoader jarLoader, String path) throws MalformedURLException, Exception{
+    public static void loadjar(JarLoader jarLoader, String path) throws Exception {
         File libdir = new File(path);
         if (libdir != null && libdir.isDirectory()) {
 
-            File[] listFiles = libdir.listFiles(new FileFilter() {
-
-                @Override
-                public boolean accept(File file) {
-                    return file.exists() && file.isFile() && file.getName().endsWith(".jar");
-                }
-            });
+            File[] listFiles = libdir.listFiles(file -> file.exists() && file.isFile() && file.getName().endsWith(".jar"));
 
             for (File file : listFiles) {
                 jarLoader.loadJar(file.toURI().toURL());
             }
 
-        }else{
+        } else {
             System.exit(0);
         }
     }
