@@ -49,8 +49,8 @@ public class Mohist {
         }
         if (Update.isCheckVersion()) {
             Update.hasLatestVersion();
+            DownloadLibraries.run();
         }
-        DownloadLibraries.run();
         Class.forName("net.minecraftforge.fml.relauncher.ServerLaunchWrapper").getDeclaredMethod("main", String[].class).invoke(null, new Object[]{args});
     }
 }
