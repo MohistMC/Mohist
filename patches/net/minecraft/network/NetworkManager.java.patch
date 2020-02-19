@@ -71,7 +71,15 @@
                  this.disconnected = true;
  
                  if (this.getExitMessage() != null)
-@@ -476,4 +486,12 @@
+@@ -456,6 +466,7 @@
+                 {
+                     this.getNetHandler().onDisconnect(new TextComponentTranslation("multiplayer.disconnect.generic", new Object[0]));
+                 }
++                this.outboundPacketsQueue.clear(); // Free up packet queue.
+             }
+         }
+     }
+@@ -476,4 +487,12 @@
                  this.futureListeners = inFutureListeners;
              }
          }

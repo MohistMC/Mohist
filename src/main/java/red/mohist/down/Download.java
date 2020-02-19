@@ -1,18 +1,25 @@
 package red.mohist.down;
 
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.channels.Channels;
+import java.nio.channels.FileChannel;
 import java.nio.channels.ReadableByteChannel;
 import red.mohist.util.i18n.Message;
 
 public class Download {
 
-    public Download(String url, File fileName, String jaranme) {
+    public Download(String url, String savePath, String jaranme) {
         try {
+            File file=new File(savePath);
+            if(!file.exists()){
+                file.createNewFile();
+            }
             URL website = new URL(url);
 
             HttpURLConnection connection = (HttpURLConnection) website.openConnection();
@@ -20,17 +27,30 @@ public class Download {
             connection.setReadTimeout(10*1000);
             connection.setRequestMethod("GET");
             int code = connection.getResponseCode();
-            if (code == 200) {
+            if (code == HttpURLConnection.HTTP_OK) {
                 long size = connection.getContentLengthLong();
 
-                System.out.println(Message.getFormatString("file.download.start", new Object[]{url, getSize(size)}));
-                ReadableByteChannel rbc = Channels.newChannel(connection.getInputStream());
-                FileOutputStream fos = new FileOutputStream(fileName);
-                fos.getChannel().transferFrom(rbc, 0, Long.MAX_VALUE);
-                rbc.close();
-                fos.close();
+                System.out.println(Message.getFormatString("file.download.start", new Object[]{jaranme, getSize(size)}));
+
+                DataInputStream in = new DataInputStream(connection.getInputStream());
+                DataOutputStream out = new DataOutputStream(new FileOutputStream(savePath));
+                byte[] buffer = new byte[2048];
+                int count = 0;
+                while ((count = in.read(buffer)) > 0) {
+                    out.write(buffer, 0, count);
+                }
+                try {
+                    if(out!=null) {
+                        out.close();
+                    }
+                    if(in!=null) {
+                        in.close();
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
                 connection.disconnect();
-                System.out.println(Message.getFormatString("file.download.ok", new Object[]{url}));
+                System.out.println(Message.getFormatString("file.download.ok", new Object[]{jaranme}));
             } else {
                 System.out.println(Message.getFormatString("file.download.nook", new Object[]{jaranme}));
             }

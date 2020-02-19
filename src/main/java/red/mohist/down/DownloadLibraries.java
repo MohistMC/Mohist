@@ -72,7 +72,7 @@ public class DownloadLibraries {
                         url = "https://www.mgazul.cn/"; //Github Mirror
                     }
                 }
-                new Download(url + entry.getKey().getPath().replace("\\", "/"), entry.getKey(), args[size - 1]);
+                new Download(url + entry.getKey().getPath().replace("\\", "/"), entry.getKey().getPath(), args[size - 1]);
                 JarLoader jarLoader = new JarLoader((URLClassLoader)ClassLoader.getSystemClassLoader());
 
                 JarLoader.loadjar(jarLoader, filepath);
