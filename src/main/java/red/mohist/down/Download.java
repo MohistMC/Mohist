@@ -7,16 +7,20 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.nio.channels.Channels;
-import java.nio.channels.FileChannel;
-import java.nio.channels.ReadableByteChannel;
 import red.mohist.util.i18n.Message;
 
 public class Download {
 
     public Download(String url, String savePath, String jaranme) {
         try {
-            File file=new File(savePath);
+            String fName;
+            String os = System.getProperty("os.name");
+            if (os.toLowerCase().startsWith("win")) {
+                fName = savePath;
+            } else {
+                fName = "/" + savePath;
+            }
+            File file=new File(fName);
             if(!file.exists()){
                 file.createNewFile();
             }
@@ -33,7 +37,7 @@ public class Download {
                 System.out.println(Message.getFormatString("file.download.start", new Object[]{jaranme, getSize(size)}));
 
                 DataInputStream in = new DataInputStream(connection.getInputStream());
-                DataOutputStream out = new DataOutputStream(new FileOutputStream(savePath));
+                DataOutputStream out = new DataOutputStream(new FileOutputStream(file));
                 byte[] buffer = new byte[2048];
                 int count = 0;
                 while ((count = in.read(buffer)) > 0) {
