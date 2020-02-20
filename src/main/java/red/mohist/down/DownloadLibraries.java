@@ -68,7 +68,7 @@ public class DownloadLibraries {
                         url = "https://www.mgazul.cn/"; //Github Mirror
                     }
                 } catch (Exception e) {
-                    if (Message.getLanguage(2).contains("CN")) {
+                    if (Message.getCountry().contains("CN")) {
                         url = "https://mohist-community.gitee.io/mohistdown/"; //Gitee Mirror
                     } else {
                         url = "https://www.mgazul.cn/"; //Github Mirror

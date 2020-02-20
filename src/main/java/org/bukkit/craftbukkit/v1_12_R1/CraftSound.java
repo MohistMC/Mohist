@@ -3,8 +3,6 @@ package org.bukkit.craftbukkit.v1_12_R1;
 import com.google.common.base.Preconditions;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
-import net.minecraftforge.common.util.EnumHelper;
-import org.apache.commons.lang3.EnumUtils;
 import org.apache.commons.lang3.Validate;
 import org.bukkit.Sound;
 

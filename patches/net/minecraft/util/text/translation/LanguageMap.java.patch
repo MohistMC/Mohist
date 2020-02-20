@@ -1,21 +1,20 @@
 --- ../src-base/minecraft/net/minecraft/util/text/translation/LanguageMap.java
 +++ ../src-work/minecraft/net/minecraft/util/text/translation/LanguageMap.java
-@@ -12,6 +12,9 @@
+@@ -12,6 +12,8 @@
  import net.minecraftforge.fml.relauncher.Side;
  import net.minecraftforge.fml.relauncher.SideOnly;
  import org.apache.commons.io.IOUtils;
-+import org.bukkit.Server;
 +import red.mohist.Mohist;
-+import red.mohist.api.ServerAPI;
++import red.mohist.util.i18n.Message;
  
  public class LanguageMap
  {
-@@ -23,7 +26,10 @@
+@@ -23,7 +25,10 @@
  
      public LanguageMap()
      {
 -        InputStream inputstream = LanguageMap.class.getResourceAsStream("/assets/minecraft/lang/en_us.lang");
-+        String lang = ServerAPI.getLanguage().toLowerCase();
++        String lang = Message.getLocale().toLowerCase();
 +        InputStream inputstream1 = Mohist.class.getResourceAsStream("/assets/minecraft/lang/" + lang + ".lang");
 +        InputStream inputstream2 = Mohist.class.getResourceAsStream("/assets/minecraft/lang/en_us.lang");
 +        InputStream inputstream = inputstream1 == null ? inputstream2 : inputstream1;

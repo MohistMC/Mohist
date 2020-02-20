@@ -8,7 +8,6 @@ import net.minecraft.server.MinecraftServer;
 import org.bukkit.Bukkit;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.Plugin;
-import red.mohist.util.i18n.Message;
 
 public class ServerAPI {
 
@@ -41,9 +40,5 @@ public class ServerAPI {
 
     public static MinecraftServer getNMSServer(){
         return MinecraftServer.getServerInst();
-    }
-
-    public static String getLanguage(){
-        return Message.rb.getLocale().toString();
     }
 }

@@ -8,7 +8,7 @@ import red.mohist.configuration.MohistConfigUtil;
 
 public class Message {
 
-    public static ResourceBundle rb = ResourceBundle.getBundle("assets.mohist.lang.message", new Locale(getLanguage(1), getLanguage(2)), new UTF8Control());
+    public static ResourceBundle rb = ResourceBundle.getBundle("assets.mohist.lang.message", new Locale(getLanguage(), getCountry()), new UTF8Control());
 
     public static String getString(String key) {
         return rb.getString(key);
@@ -18,7 +18,7 @@ public class Message {
         return new MessageFormat(getString(key)).format(f);
     }
 
-    public static String getLanguage(int key) {
+    public static String getLocale(int key) {
         File f = new File("mohist-config", "mohist.yml");
         String locale = MohistConfigUtil.getString(f, "lang:", "xx");
         if (locale.length() == 5) {
@@ -32,5 +32,17 @@ public class Message {
             }
         }
         return "xx";
+    }
+
+    public static String getLanguage() {
+        return getLocale(1);
+    }
+
+    public static String getCountry() {
+        return getLocale(2);
+    }
+
+    public static String getLocale() {
+        return Message.rb.getLocale().toString();
     }
 }

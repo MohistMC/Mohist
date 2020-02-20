@@ -13,7 +13,7 @@
          this.id = id;
          WORLD_TYPES[id] = this;
 +        if (org.bukkit.WorldType.getByName(name) == null) {
-+            ForgeInjectBukkit.addBukkitWorldType(name);
++            ForgeInjectBukkit.addEnumWorldType(name);
 +        }
      }
  

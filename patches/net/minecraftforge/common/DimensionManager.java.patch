@@ -338,7 +338,7 @@
 +        org.bukkit.World.Environment env = org.bukkit.World.Environment.getEnvironment(dim);
 +        if(env == null){
 +            worldType = worldType.replace("WorldProvider","");
-+            env = ForgeInjectBukkit.addBukkitEnvironment(dim,worldType.toUpperCase());
++            env = ForgeInjectBukkit.addEnumEnvironment(dim,worldType.toUpperCase());
 +            org.bukkit.World.Environment.registerEnvironment(env);
 +        }
 +        return env;

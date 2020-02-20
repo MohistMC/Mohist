@@ -74,7 +74,7 @@ public class MohistCommand extends Command {
                 MohistThreadCost.dumpThreadCpuTime();
                 break;
             case "lang":
-                sender.sendMessage(ChatColor.GREEN +ServerAPI.getLanguage());
+                sender.sendMessage(ChatColor.GREEN +Message.getLocale());
                 break;
             case "item":
                 if ("info".equals(args[1].toLowerCase(Locale.ENGLISH))){

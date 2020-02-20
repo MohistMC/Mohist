@@ -15,3 +15,13 @@
  
      @Nullable
      public static ResourceLocation getKey(Entity entityIn)
+@@ -155,8 +160,7 @@
+ 
+     public static int getID(Class<? extends Entity> cls)
+     {
+-        net.minecraftforge.fml.common.registry.EntityEntry entry = net.minecraftforge.fml.common.registry.EntityRegistry.getEntry(cls);
+-        return entry == null ? -1 : net.minecraftforge.registries.GameData.getEntityRegistry().getID(entry);
++        return REGISTRY.getIDForObject(cls);
+     }
+ 
+     @Nullable

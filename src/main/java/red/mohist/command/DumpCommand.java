@@ -12,6 +12,7 @@ import net.minecraft.server.MinecraftServer;
 import org.apache.commons.io.FileUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.block.Biome;
+import org.bukkit.block.banner.PatternType;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.enchantments.Enchantment;
@@ -25,11 +26,11 @@ public class DumpCommand extends Command {
     public DumpCommand(String name) {
         super(name);
         this.description = "Universal Dump, which will print the information you need locally!";
-        this.usageMessage = "/dump [potions|enchants|cbcmds|modscmds|entitytypes|biomes]";
+        this.usageMessage = "/dump [potions|enchants|cbcmds|modscmds|entitytypes|biomes|pattern]";
         this.setPermission("mohist.command.dump");
     }
 
-    private List<String> params = Arrays.asList("potions", "enchants", "cbcmds", "modscmds", "entitytypes", "biomes");
+    private List<String> params = Arrays.asList("potions", "enchants", "cbcmds", "modscmds", "entitytypes", "biomes", "pattern");
 
     @Override
     public List<String> tabComplete(CommandSender sender, String alias, String[] args) throws IllegalArgumentException {
@@ -74,6 +75,9 @@ public class DumpCommand extends Command {
             case "biomes":
                 dumpBiomes(sender);
                 break;
+            case "pattern":
+                dumpPattern(sender);
+                break;
             default:
                 sender.sendMessage(ChatColor.RED + "Usage: " + usageMessage);
                 return false;
@@ -94,7 +98,7 @@ public class DumpCommand extends Command {
             }
         }
         try{
-            File file = new File("dump", "potions.mo");
+            File file = new File("dump", "potions.red");
             FileUtils.writeByteArrayToFile(file, sb.toString().getBytes(StandardCharsets.UTF_8));
             dumpmsg(sender, file, "potions");
         }
@@ -109,7 +113,7 @@ public class DumpCommand extends Command {
             sb.append(ench.toString()).append("\n");
         }
         try {
-            File file = new File("dump", "enchants.mo");
+            File file = new File("dump", "enchants.red");
             FileUtils.writeByteArrayToFile(file, sb.toString().getBytes(StandardCharsets.UTF_8));
             dumpmsg(sender, file, "enchants");
         } catch (IOException ex) {
@@ -123,7 +127,7 @@ public class DumpCommand extends Command {
             sb.append(ent.toString()).append("\n");
         }
         try {
-            File file = new File("dump", "entitytypes.mo");
+            File file = new File("dump", "entitytypes.red");
             FileUtils.writeByteArrayToFile(file, sb.toString().getBytes(StandardCharsets.UTF_8));
             dumpmsg(sender, file, "entitytypes");
         } catch (IOException ex) {
@@ -141,7 +145,7 @@ public class DumpCommand extends Command {
             sb.append(per.getName()).append(": ").append(per.getPermission()).append("\n");
         }
         try {
-            File file = new File("dump", "cbcommands.mo");
+            File file = new File("dump", "cbcommands.red");
             FileUtils.writeByteArrayToFile(file, sb.toString().getBytes(StandardCharsets.UTF_8));
             dumpmsg(sender, file, "cbcommands");
         } catch (IOException ex) {
@@ -155,7 +159,7 @@ public class DumpCommand extends Command {
             sb.append(m.getKey()).append(": ").append(m.getValue()).append("\n");
         }
         try {
-            File file = new File("dump", "modscommands.mo");
+            File file = new File("dump", "modscommands.red");
             FileUtils.writeByteArrayToFile(file, sb.toString().getBytes(StandardCharsets.UTF_8));
             dumpmsg(sender, file, "modscommands");
         } catch (IOException ex) {
@@ -169,9 +173,24 @@ public class DumpCommand extends Command {
             sb.append(biome.toString()).append("\n");
         }
         try {
-            File file = new File("dump", "biomes.mo");
+            File file = new File("dump", "biomes.red");
             FileUtils.writeByteArrayToFile(file, sb.toString().getBytes(StandardCharsets.UTF_8));
             dumpmsg(sender, file, "biomes");
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    private void dumpPattern(CommandSender sender){
+        StringBuilder sb = new StringBuilder();
+        for (PatternType patternType : PatternType.values()) {
+            String key = patternType.getIdentifier();
+            sb.append(key + "_" + patternType.getByIdentifier(key)).append("\n");
+        }
+        try {
+            File file = new File("dump", "pattern.red");
+            FileUtils.writeByteArrayToFile(file, sb.toString().getBytes(StandardCharsets.UTF_8));
+            dumpmsg(sender, file, "pattern");
         } catch (IOException ex) {
             ex.printStackTrace();
         }

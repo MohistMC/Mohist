@@ -189,7 +189,7 @@ public class Main {
                 if (Main.useJline) {
                     AnsiConsole.systemInstall();
                 } else {
-                    System.setProperty("jline.terminal", UnsupportedTerminal.class.getName());
+                    System.setProperty(jline.TerminalFactory.JLINE_TERMINAL, UnsupportedTerminal.class.getName());
                 }
 
 

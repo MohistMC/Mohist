@@ -20,19 +20,18 @@
  import net.minecraft.network.INetHandler;
  import net.minecraft.network.NetHandlerPlayServer;
  import net.minecraft.network.NetworkManager;
-@@ -46,9 +50,9 @@
+@@ -46,9 +50,8 @@
  import net.minecraftforge.fml.common.network.FMLNetworkEvent;
  import net.minecraftforge.fml.relauncher.FMLLaunchHandler;
  import net.minecraftforge.fml.relauncher.Side;
 -
 -import com.google.common.collect.ImmutableList;
  import org.apache.commons.io.IOUtils;
-+import red.mohist.api.ServerAPI;
 +import red.mohist.util.i18n.Message;
  
  /**
   * Handles primary communication from hooked code into the system
-@@ -172,8 +176,9 @@
+@@ -172,8 +175,9 @@
          else
          {
              String text = query.getText() +
@@ -44,7 +43,7 @@
              FMLLog.log.warn(text);
  
              if (!query.isSynchronous()) return; // no-op until mc does commands in another thread (if ever)
-@@ -192,22 +197,22 @@
+@@ -192,22 +196,22 @@
                      for (Iterator<PendingCommand> it = dedServer.pendingCommandList.iterator(); it.hasNext(); )
                      {
                          String cmd = it.next().command.trim().toLowerCase();
@@ -73,20 +72,20 @@
                          {
                              StartupQuery.abort();
                          }
-@@ -236,8 +241,10 @@
+@@ -236,8 +240,10 @@
      @Override
      public void addModAsResource(ModContainer container)
      {
 -        String langFile = "assets/" + container.getModId().toLowerCase() + "/lang/en_us.lang";
 -        String langFile2 = "assets/" + container.getModId().toLowerCase() + "/lang/en_US.lang";
-+        String langFile = "assets/" + container.getModId().toLowerCase() + "/lang/"+ ServerAPI.getLanguage().toLowerCase() +".lang";
-+        String langFile2 = "assets/" + container.getModId().toLowerCase() + "/lang/"+ ServerAPI.getLanguage() +".lang";
++        String langFile = "assets/" + container.getModId().toLowerCase() + "/lang/"+ Message.getLocale().toLowerCase() +".lang";
++        String langFile2 = "assets/" + container.getModId().toLowerCase() + "/lang/"+ Message.getLocale() +".lang";
 +        String langFile3 = "assets/" + container.getModId().toLowerCase() + "/lang/en_us.lang";
 +        String langFile4 = "assets/" + container.getModId().toLowerCase() + "/lang/en_US.lang";
          File source = container.getSource();
          InputStream stream = null;
          ZipFile zip = null;
-@@ -249,6 +256,10 @@
+@@ -249,6 +255,10 @@
                  if (!f.exists())
                      f = new File(source.toURI().resolve(langFile2).getPath());
                  if (!f.exists())
@@ -97,7 +96,7 @@
                      throw new FileNotFoundException(source.toURI().resolve(langFile).getPath());
                  stream = new FileInputStream(f);
              }
-@@ -257,6 +268,8 @@
+@@ -257,6 +267,8 @@
                  zip = new ZipFile(source);
                  ZipEntry entry = zip.getEntry(langFile);
                  if (entry == null) entry = zip.getEntry(langFile2);
@@ -106,7 +105,7 @@
                  if (entry == null) throw new FileNotFoundException(langFile);
                  stream = zip.getInputStream(entry);
              }
-@@ -265,7 +278,7 @@
+@@ -265,7 +277,7 @@
          }
          catch (FileNotFoundException e)
          {
@@ -115,12 +114,12 @@
          }
          catch (IOException e)
          {
-@@ -285,7 +298,7 @@
+@@ -285,7 +297,7 @@
      @Override
      public String getCurrentLanguage()
      {
 -        return "en_US";
-+        return ServerAPI.getLanguage();
++        return Message.getLocale();
      }
  
      @Override
