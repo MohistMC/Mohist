@@ -11,43 +11,32 @@ import red.mohist.util.i18n.Message;
 
 public class Download {
 
-    public Download(String url, String savePath, String jaranme) {
+    public Download(String url, File savePath, String jaranme) {
         try {
-            String fName;
-            String os = System.getProperty("os.name");
-            if (os.toLowerCase().startsWith("win")) {
-                fName = savePath;
-            } else {
-                fName = "/" + savePath;
-            }
-            File file=new File(fName);
-            if(!file.exists()){
-                file.createNewFile();
-            }
             URL website = new URL(url);
 
             HttpURLConnection connection = (HttpURLConnection) website.openConnection();
-            connection.setConnectTimeout(10*1000);
-            connection.setReadTimeout(10*1000);
+            connection.setConnectTimeout(10 * 1000);
+            connection.setReadTimeout(10 * 1000);
             connection.setRequestMethod("GET");
             int code = connection.getResponseCode();
             if (code == HttpURLConnection.HTTP_OK) {
                 long size = connection.getContentLengthLong();
 
-                System.out.println(Message.getFormatString("file.download.start", new Object[]{jaranme, getSize(size)}));
+                System.out.println(Message.getFormatString("file.download.start", new Object[]{url, getSize(size)}));
 
                 DataInputStream in = new DataInputStream(connection.getInputStream());
-                DataOutputStream out = new DataOutputStream(new FileOutputStream(file));
+                DataOutputStream out = new DataOutputStream(new FileOutputStream(savePath));
                 byte[] buffer = new byte[2048];
                 int count = 0;
                 while ((count = in.read(buffer)) > 0) {
                     out.write(buffer, 0, count);
                 }
                 try {
-                    if(out!=null) {
+                    if (out != null) {
                         out.close();
                     }
-                    if(in!=null) {
+                    if (in != null) {
                         in.close();
                     }
                 } catch (Exception e) {
@@ -56,7 +45,7 @@ public class Download {
                 connection.disconnect();
                 System.out.println(Message.getFormatString("file.download.ok", new Object[]{jaranme}));
             } else {
-                System.out.println(Message.getFormatString("file.download.nook", new Object[]{jaranme}));
+                System.out.println(Message.getFormatString("file.download.nook", new Object[]{url}));
             }
         } catch (IOException e) {
             e.printStackTrace();

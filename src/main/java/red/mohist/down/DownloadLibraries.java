@@ -50,13 +50,15 @@ public class DownloadLibraries {
         if (lib.size() > 0) {
             for (Map.Entry<File, String> entry : lib.entrySet()) {
 
-                String[] args = entry.getKey().getPath().split("\\\\");
+                String[] args = entry.getKey().getPath().replaceAll("\\\\", "/").split("/");
                 int size = args.length;
-                String filepath = entry.getKey().getPath().replace("\\" + args[size - 1], "");
+                String jarname = args[size - 1];
+                String filepath = entry.getKey().getPath().replaceAll("\\\\", "/").replace("/" + jarname, "");
                 File newfile = new File(filepath);
                 if (!newfile.exists()) {
                     newfile.mkdirs();
                 }
+                File jar = new File(filepath, jarname);
                 try {
                     String locateInfo = HttpUtil.doGet(FIND_LOCATE);
 
@@ -72,8 +74,8 @@ public class DownloadLibraries {
                         url = "https://www.mgazul.cn/"; //Github Mirror
                     }
                 }
-                new Download(url + entry.getKey().getPath().replace("\\", "/"), entry.getKey().getPath(), args[size - 1]);
-                JarLoader jarLoader = new JarLoader((URLClassLoader)ClassLoader.getSystemClassLoader());
+                new Download(url + entry.getKey().getPath().replace("\\", "/"), jar, jarname);
+                JarLoader jarLoader = new JarLoader((URLClassLoader) ClassLoader.getSystemClassLoader());
 
                 JarLoader.loadjar(jarLoader, filepath);
             }
