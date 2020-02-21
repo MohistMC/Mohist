@@ -33,10 +33,12 @@
          }
      }
  
-@@ -495,6 +500,12 @@
+@@ -495,6 +500,14 @@
      {
          RegistryNamespaced<ResourceLocation, EntityEntry> reg = getWrapper(EntityEntry.class);
          reg.register(id, key, new EntityEntry(clazz, oldName));
++        // Mohist compatible Citizens2
++        EntityList.REGISTRY.register(id, key, clazz);
 +        // Mohist compatible SilkSpawners
 +        while (EntityList.OLD_NAMES.size() <= id)
 +        {
@@ -46,7 +48,7 @@
      }
  
      private static class EntityCallbacks implements IForgeRegistry.AddCallback<EntityEntry>, IForgeRegistry.ClearCallback<EntityEntry>, IForgeRegistry.CreateCallback<EntityEntry>
-@@ -879,11 +890,11 @@
+@@ -879,11 +892,11 @@
      /**
       * Check a name for a domain prefix, and if not present infer it from the
       * current active mod container.
@@ -60,7 +62,7 @@
       * @return The {@link ResourceLocation} with given or inferred domain
       */
      public static ResourceLocation checkPrefix(String name, boolean warnOverrides)
-@@ -895,7 +906,7 @@
+@@ -895,7 +908,7 @@
          String prefix = mc == null || (mc instanceof InjectedModContainer && ((InjectedModContainer)mc).wrappedContainer instanceof FMLContainer) ? "minecraft" : mc.getModId().toLowerCase(Locale.ROOT);
          if (warnOverrides && !oldPrefix.equals(prefix) && oldPrefix.length() > 0)
          {
