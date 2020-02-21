@@ -3,21 +3,20 @@ buildscript {
         mavenLocal()
         mavenCentral()
         maven { url 'https://files.minecraftforge.net/maven' }
-        maven { url 'https://plugins.gradle.org/m2/' }
     }
     dependencies {
         classpath 'net.minecraftforge.gradle:ForgeGradle:2.3-SNAPSHOT'
-        classpath 'gradle.plugin.net.nemerosa:versioning:2.8.2'
-        classpath 'edu.sc.seis.launch4j:launch4j:2.4.6'
     }
 }
 
-apply plugin: 'java'
-apply plugin: 'maven'
-apply plugin: 'idea'
+plugins {
+    id "java"
+    id "idea"
+    id "net.nemerosa.versioning" version "2.11.0"
+    id "edu.sc.seis.launch4j" version "2.4.6"
+}
+
 apply plugin: 'net.minecraftforge.gradle.patcher'
-apply plugin: 'edu.sc.seis.launch4j'
-apply plugin: 'net.nemerosa.versioning'
 
 group = 'red.mohist'
 version = versioning.info.build
