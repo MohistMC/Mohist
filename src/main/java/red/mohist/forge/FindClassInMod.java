@@ -94,7 +94,7 @@ public class FindClassInMod {
     public static void jar() throws Exception {
         String libDir = "mods";
         // example: red.mohist.Mohsit
-        List<String> classlist = Arrays.asList("com.tmtravlr.jaff.entities.EntityFish" /*JustAFewFish*/, "cccc.cccc.cccc");
+        List<String> classlist = Arrays.asList("com.tmtravlr.jaff.entities.EntityFish" /*JustAFewFish*/, "org.spongepowered.mod.SpongeMod");
         for (String classname : classlist) {
             classname = classname.replaceAll("\\.", "/") + ".class";
 
