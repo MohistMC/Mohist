@@ -320,17 +320,13 @@ public final class CraftLegacy {
                 for (byte data = 0; data < 16; data++) {
                     MaterialData matData = new MaterialData(material, data);
                     Dynamic blockTag = BlockStateFlatteningMap.getFixedNBTForID(material.getId() << 4 | data);
+                    blockTag = DataConverterRegistry.a().update(DataConverterTypes.BLOCK_STATE, blockTag, 100, CraftMagicNumbers.INSTANCE.getDataVersion());
                     // TODO: better skull conversion, chests
                     if (blockTag.get("Name").asString("").contains("%%FILTER_ME%%")) {
                         continue;
                     }
 
                     String name = blockTag.get("Name").asString("");
-                    // TODO: need to fix
-                    if (name.equals("minecraft:portal")) {
-                        name = "minecraft:nether_portal";
-                    }
-
                     Block block = Registry.BLOCK.getOrDefault(new ResourceLocation(name));
                     if (block == null) {
                         continue;
@@ -353,7 +349,9 @@ public final class CraftLegacy {
 
                             Preconditions.checkState(!properties.getString(dataKey).isEmpty(), "Empty data string");
                             Optional opt = state.parseValue(properties.getString(dataKey));
-
+                            if (!opt.isPresent()) {
+                                throw new IllegalStateException("No state value " + properties.getString(dataKey) + " for " + dataKey);
+                            }
                             blockData = blockData.with(state, (Comparable) opt.get());
                         }
                     }
