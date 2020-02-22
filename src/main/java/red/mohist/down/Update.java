@@ -14,7 +14,7 @@ public class Update {
 
     // Why use a hard core to split a String? Because I didn't actually start Mohist before this, there is no lib load, we can't use lib.
     public static void hasLatestVersion() {
-        String str = "https://api.github.com/repos/Mohist-Community/Mohist/commits";
+        String str = "https://api.github.com/repos/Mohist-Community/Mohist/branches/1.12.2";
         String ver = "https://raw.githubusercontent.com/Mohist-Community/Mohist/1.12.2/mohist.ver";
         String dl = "https://ci.codemc.io/job/Mohist-Community/job/Mohist-1.12.2/";
         try {

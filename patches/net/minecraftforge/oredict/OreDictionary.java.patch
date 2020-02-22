@@ -1,6 +1,22 @@
 --- ../src-base/minecraft/net/minecraftforge/oredict/OreDictionary.java
 +++ ../src-work/minecraft/net/minecraftforge/oredict/OreDictionary.java
-@@ -55,6 +55,7 @@
+@@ -19,6 +19,7 @@
+ 
+ package net.minecraftforge.oredict;
+ 
++import it.unimi.dsi.fastutil.ints.IntOpenHashSet;
+ import java.util.ArrayList;
+ import java.util.Collections;
+ import java.util.HashMap;
+@@ -32,6 +33,7 @@
+ import net.minecraft.util.NonNullList;
+ import net.minecraft.util.ResourceLocation;
+ import net.minecraftforge.fml.common.ModContainer;
++import net.minecraftforge.registries.IRegistryDelegate;
+ import org.apache.logging.log4j.Level;
+ 
+ import net.minecraft.block.Block;
+@@ -55,6 +57,7 @@
  import net.minecraftforge.fml.common.eventhandler.Event;
  import net.minecraftforge.fml.common.registry.ForgeRegistries;
  import net.minecraftforge.registries.GameData;
@@ -8,7 +24,7 @@
  
  import javax.annotation.Nonnull;
  
-@@ -389,7 +390,7 @@
+@@ -389,7 +392,7 @@
              ItemStack.EMPTY //So the above can have a comma and we don't have to keep editing extra lines.
          };
  
@@ -17,7 +33,7 @@
          int replaced = 0;
          // Search vanilla recipes for recipes to replace
          for(IRecipe obj : CraftingManager.REGISTRY)
-@@ -421,7 +422,7 @@
+@@ -421,7 +424,7 @@
                                  matches = true;
                                  if (oreName != null && !oreName.equals(ent.getValue()))
                                  {
@@ -26,7 +42,7 @@
                                      skip = true;
                                      break;
                                  }
-@@ -449,14 +450,14 @@
+@@ -449,14 +452,14 @@
                          if(DEBUG && replacedIngs.add(ing))
                          {
                              String recipeName = obj.getRegistryName().getResourcePath();
@@ -43,3 +59,28 @@
      }
  
      /**
+@@ -503,12 +506,13 @@
+     {
+         if (stack.isEmpty()) throw new IllegalArgumentException("Stack can not be invalid!");
+ 
+-        Set<Integer> set = new HashSet<Integer>();
++        Item item = stack.getItem();
++        if (item == null) throw new IllegalArgumentException();
+ 
+         // HACK: use the registry name's ID. It is unique and it knows about substitutions. Fallback to a -1 value (what Item.getIDForItem would have returned) in the case where the registry is not aware of the item yet
+         // IT should be noted that -1 will fail the gate further down, if an entry already exists with value -1 for this name. This is what is broken and being warned about.
+         // APPARENTLY it's quite common to do this. OreDictionary should be considered alongside Recipes - you can't make them properly until you've registered with the game.
+-        ResourceLocation registryName = stack.getItem().delegate.name();
++        ResourceLocation registryName = item.delegate.name();
+         int id;
+         if (registryName == null)
+         {
+@@ -519,6 +523,8 @@
+         {
+             id = Item.REGISTRY.getIDForObject(stack.getItem().delegate.get());
+         }
++
++        Set<Integer> set = new IntOpenHashSet();
+         List<Integer> ids = stackToId.get(id);
+         if (ids != null) set.addAll(ids);
+         ids = stackToId.get(id | ((stack.getItemDamage() + 1) << 16));
