@@ -2,7 +2,7 @@
 
 ## Mohist-1.12.2
 
-## It is highly recommended to use the 1.6+ version to quickly resolve known and unknown errors!
+## When Mohist-1.15.2 is released, it means that we will no longer support version 1.12.2 because there is not enough time and energy to maintain multiple versions!
 
 [![](https://ci.codemc.org/buildStatus/icon?job=Mohist-Community%2FMohist-1.12.2)](https://ci.codemc.org/job/Mohist-Community/job/Mohist-1.12.2/)
 ![](https://img.shields.io/github/stars/Mohist-Community/Mohist.svg?label=Stars)
@@ -51,7 +51,3 @@ Mohist-xxxxx-server.jar - is the server we should run it
 * [**Atom**](https://gitlab.com/divinecode/atom/Atom.git) - Partial code source.
 * [**Thermos**](https://github.com/CyberdyneCC/Thermos.git) - Partial code source.
 * [**um_bukkit**](https://github.com/TechCatOther/um_bukkit.git) - Partial code source.
-
-
-### 中国用户捐赠二维码(备注信息便于记录)
-<img src="https://i.loli.net/2019/11/04/PkybBF1puUwCz6l.png">
