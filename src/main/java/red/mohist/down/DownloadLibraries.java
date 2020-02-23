@@ -16,10 +16,21 @@ import red.mohist.util.i18n.Message;
 public class DownloadLibraries {
 
     public static final String FIND_LOCATE = "https://passport.lazercloud.com/api/v1/options/GetLocate";
+    public static String url = "https://www.mgazul.cn/";
 
     public static void run() throws Exception {
-        String url = "";
         String path = null;
+        try {
+            String locateInfo = HttpUtil.doGet(FIND_LOCATE);
+
+            if (Message.getCountry().contains("CN") || (locateInfo != null && locateInfo.equals("CN"))) {
+                url = "https://mohist-community.gitee.io/mohistdown/"; //Gitee Mirror
+            } else {
+                url = "https://www.mgazul.cn/"; //Github Mirror
+            }
+        } catch (Exception e) {
+            url = "https://www.mgazul.cn/"; //Github Mirror
+        }
         InputStream listStream = DownloadLibraries.class.getClassLoader().getResourceAsStream("lib.red");
         if (listStream == null) return;
         Map<File, String> lib = new HashMap<>();
@@ -59,21 +70,6 @@ public class DownloadLibraries {
                     newfile.mkdirs();
                 }
                 File jar = new File(filepath, jarname);
-                try {
-                    String locateInfo = HttpUtil.doGet(FIND_LOCATE);
-
-                    if (locateInfo != null && locateInfo.equals("CN")) {
-                        url = "https://mohist-community.gitee.io/mohistdown/"; //Gitee Mirror
-                    } else {
-                        url = "https://www.mgazul.cn/"; //Github Mirror
-                    }
-                } catch (Exception e) {
-                    if (Message.getCountry().contains("CN")) {
-                        url = "https://mohist-community.gitee.io/mohistdown/"; //Gitee Mirror
-                    } else {
-                        url = "https://www.mgazul.cn/"; //Github Mirror
-                    }
-                }
                 new Download(url + entry.getKey().getPath().replace("\\", "/"), jar, jarname);
                 JarLoader jarLoader = new JarLoader((URLClassLoader) ClassLoader.getSystemClassLoader());
 

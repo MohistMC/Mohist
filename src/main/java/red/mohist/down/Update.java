@@ -23,7 +23,6 @@ public class Update {
             URL url = new URL(str);
             URLConnection conn = url.openConnection();
             conn.setConnectTimeout(10*1000);
-            conn.setReadTimeout(10*1000);
             InputStream is = conn.getInputStream();
             String commits = IOUtil.readContent(is);
             String sha = "\"sha\":\"";
