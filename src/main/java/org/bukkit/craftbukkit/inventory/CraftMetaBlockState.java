@@ -4,9 +4,8 @@ import com.google.common.base.Objects;
 import com.google.common.collect.ImmutableMap;
 import java.util.Map;
 import net.minecraft.item.DyeColor;
-import net.minecraft.nbt.INBT;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.tileentity.TileEntity;
+import net.minecraft.nbt.INBT;
 import net.minecraft.tileentity.BannerTileEntity;
 import net.minecraft.tileentity.BarrelTileEntity;
 import net.minecraft.tileentity.BeaconTileEntity;
@@ -18,24 +17,24 @@ import net.minecraft.tileentity.CampfireTileEntity;
 import net.minecraft.tileentity.ChestTileEntity;
 import net.minecraft.tileentity.CommandBlockTileEntity;
 import net.minecraft.tileentity.ComparatorTileEntity;
+import net.minecraft.tileentity.DaylightDetectorTileEntity;
 import net.minecraft.tileentity.DispenserTileEntity;
 import net.minecraft.tileentity.DropperTileEntity;
 import net.minecraft.tileentity.EnchantingTableTileEntity;
 import net.minecraft.tileentity.EndGatewayTileEntity;
 import net.minecraft.tileentity.EnderChestTileEntity;
-import net.minecraft.tileentity.AbstractFurnaceTileEntity;
 import net.minecraft.tileentity.FurnaceTileEntity;
 import net.minecraft.tileentity.HopperTileEntity;
 import net.minecraft.tileentity.JigsawTileEntity;
 import net.minecraft.tileentity.JukeboxTileEntity;
 import net.minecraft.tileentity.LecternTileEntity;
-import net.minecraft.tileentity.DaylightDetectorTileEntity;
 import net.minecraft.tileentity.MobSpawnerTileEntity;
 import net.minecraft.tileentity.ShulkerBoxTileEntity;
 import net.minecraft.tileentity.SignTileEntity;
 import net.minecraft.tileentity.SkullTileEntity;
 import net.minecraft.tileentity.SmokerTileEntity;
 import net.minecraft.tileentity.StructureBlockTileEntity;
+import net.minecraft.tileentity.TileEntity;
 import org.apache.commons.lang.Validate;
 import org.bukkit.Material;
 import org.bukkit.block.BlockState;
@@ -390,7 +389,7 @@ public class CraftMetaBlockState extends CraftMetaItem implements BlockStateMeta
             if (te == null) {
                 te = new BannerTileEntity();
             }
-            ((BannerTileEntity) te).color = (blockEntityTag == null) ? DyeColor.WHITE : DyeColor.byId(blockEntityTag.getInt(CraftMetaBanner.BASE.NBT));
+            ((BannerTileEntity) te).baseColor = (blockEntityTag == null) ? DyeColor.WHITE : DyeColor.byId(blockEntityTag.getInt(CraftMetaBanner.BASE.NBT));
         case BLACK_BANNER:
         case BLACK_WALL_BANNER:
         case BLUE_BANNER:

@@ -17,21 +17,21 @@ public class CraftInventoryDoubleChest extends CraftInventory implements DoubleC
     public CraftInventoryDoubleChest(ChestBlock.DoubleInventory block) {
         super(block.inventorylargechest);
         this.tile = block;
-        this.left = new CraftInventory(block.inventorylargechest.left);
-        this.right = new CraftInventory(block.inventorylargechest.right);
+        this.left = new CraftInventory(block.inventorylargechest.field_70477_b);
+        this.right = new CraftInventory(block.inventorylargechest.field_70478_c);
     }
 
     public CraftInventoryDoubleChest(DoubleSidedInventory largeChest) {
         super(largeChest);
-        if (largeChest.left instanceof DoubleSidedInventory) {
-            left = new CraftInventoryDoubleChest((DoubleSidedInventory) largeChest.left);
+        if (largeChest.field_70477_b instanceof DoubleSidedInventory) {
+            left = new CraftInventoryDoubleChest((DoubleSidedInventory) largeChest.field_70477_b);
         } else {
-            left = new CraftInventory(largeChest.left);
+            left = new CraftInventory(largeChest.field_70477_b);
         }
-        if (largeChest.right instanceof DoubleSidedInventory) {
-            right = new CraftInventoryDoubleChest((DoubleSidedInventory) largeChest.right);
+        if (largeChest.field_70478_c instanceof DoubleSidedInventory) {
+            right = new CraftInventoryDoubleChest((DoubleSidedInventory) largeChest.field_70478_c);
         } else {
-            right = new CraftInventory(largeChest.right);
+            right = new CraftInventory(largeChest.field_70478_c);
         }
     }
 
@@ -47,8 +47,8 @@ public class CraftInventoryDoubleChest extends CraftInventory implements DoubleC
 
     @Override
     public void setContents(ItemStack[] items) {
-        if (getInventory().getSize() < items.length) {
-            throw new IllegalArgumentException("Invalid inventory size; expected " + getInventory().getSize() + " or less");
+        if (getInventory().getSizeInventory() < items.length) {
+            throw new IllegalArgumentException("Invalid inventory size; expected " + getInventory().getSizeInventory() + " or less");
         }
         ItemStack[] leftItems = new ItemStack[left.getSize()], rightItems = new ItemStack[right.getSize()];
         System.arraycopy(items, 0, leftItems, 0, Math.min(left.getSize(), items.length));

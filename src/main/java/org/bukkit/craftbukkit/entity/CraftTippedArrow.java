@@ -39,9 +39,9 @@ public class CraftTippedArrow extends CraftArrow implements Arrow {
     @Override
     public boolean addCustomEffect(PotionEffect effect, boolean override) {
         int effectId = effect.getType().getId();
-        MobEffect existing = null;
-        for (MobEffect mobEffect : getHandle().effects) {
-            if (Effect.getId(mobEffect.getMobEffect()) == effectId) {
+        EffectInstance existing = null;
+        for (EffectInstance mobEffect : getHandle().customPotionEffects) {
+            if (Effect.getId(mobEffect.getPotion()) == effectId) {
                 existing = mobEffect;
             }
         }
@@ -49,7 +49,7 @@ public class CraftTippedArrow extends CraftArrow implements Arrow {
             if (!override) {
                 return false;
             }
-            getHandle().effects.remove(existing);
+            getHandle().customPotionEffects.remove(existing);
         }
         getHandle().addEffect(CraftPotionUtil.fromBukkit(effect));
         getHandle().refreshEffects();
@@ -58,14 +58,14 @@ public class CraftTippedArrow extends CraftArrow implements Arrow {
 
     @Override
     public void clearCustomEffects() {
-        getHandle().effects.clear();
+        getHandle().customPotionEffects.clear();
         getHandle().refreshEffects();
     }
 
     @Override
     public List<PotionEffect> getCustomEffects() {
         ImmutableList.Builder<PotionEffect> builder = ImmutableList.builder();
-        for (MobEffect effect : getHandle().effects) {
+        for (EffectInstance effect : getHandle().customPotionEffects) {
             builder.add(CraftPotionUtil.toBukkit(effect));
         }
         return builder.build();
@@ -73,8 +73,8 @@ public class CraftTippedArrow extends CraftArrow implements Arrow {
 
     @Override
     public boolean hasCustomEffect(PotionEffectType type) {
-        for (MobEffect effect : getHandle().effects) {
-            if (CraftPotionUtil.equals(effect.getMobEffect(), type)) {
+        for (EffectInstance effect : getHandle().customPotionEffects) {
+            if (CraftPotionUtil.equals(effect.getPotion(), type)) {
                 return true;
             }
         }
@@ -83,22 +83,22 @@ public class CraftTippedArrow extends CraftArrow implements Arrow {
 
     @Override
     public boolean hasCustomEffects() {
-        return !getHandle().effects.isEmpty();
+        return !getHandle().customPotionEffects.isEmpty();
     }
 
     @Override
     public boolean removeCustomEffect(PotionEffectType effect) {
         int effectId = effect.getId();
-        MobEffect existing = null;
-        for (MobEffect mobEffect : getHandle().effects) {
-            if (Effect.getId(mobEffect.getMobEffect()) == effectId) {
+        EffectInstance existing = null;
+        for (EffectInstance mobEffect : getHandle().customPotionEffects) {
+            if (Effect.getId(mobEffect.getPotion()) == effectId) {
                 existing = mobEffect;
             }
         }
         if (existing == null) {
             return false;
         }
-        getHandle().effects.remove(existing);
+        getHandle().customPotionEffects.remove(existing);
         getHandle().refreshEffects();
         return true;
     }
@@ -116,7 +116,7 @@ public class CraftTippedArrow extends CraftArrow implements Arrow {
 
     @Override
     public void setColor(Color color) {
-        getHandle().setColor(color.asRGB());
+        getHandle().setFixedColor(color.asRGB());
     }
 
     @Override

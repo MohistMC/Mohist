@@ -75,7 +75,7 @@ public class CraftMerchantCustom extends CraftMerchant {
 
         @Override
         public void onTrade(MerchantOffer p_213704_1_) {
-            p_213704_1_.increaseUses();
+            p_213704_1_.func_222219_j();
         }
 
         @Override

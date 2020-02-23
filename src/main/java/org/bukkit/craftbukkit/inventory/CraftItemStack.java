@@ -183,7 +183,7 @@ public final class CraftItemStack extends ItemStack {
         ListNBT list = getEnchantmentList(handle);
         if (list == null) {
             list = new ListNBT();
-            handle.getTag().set(ENCHANTMENTS.NBT, list);
+            handle.getTag().put(ENCHANTMENTS.NBT, list);
         }
         int size = list.size();
 

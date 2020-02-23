@@ -2,7 +2,6 @@ package org.bukkit.craftbukkit.entity;
 
 import com.google.common.base.Preconditions;
 import net.minecraft.entity.passive.CatEntity;
-import net.minecraft.item.DyeColor;
 import org.bukkit.DyeColor;
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.entity.Cat;
@@ -43,11 +42,11 @@ public class CraftCat extends CraftTameableAnimal implements Cat {
 
     @Override
     public DyeColor getCollarColor() {
-        return DyeColor.getByWoolData((byte) getHandle().getCollarColor().getColorIndex());
+        return DyeColor.getByWoolData((byte) getHandle().getCollarColor().getId());
     }
 
     @Override
     public void setCollarColor(DyeColor color) {
-        getHandle().setCollarColor(DyeColor.fromColorIndex(color.getWoolData()));
+        getHandle().setCollarColor(net.minecraft.item.DyeColor.byId(color.getWoolData()));
     }
 }

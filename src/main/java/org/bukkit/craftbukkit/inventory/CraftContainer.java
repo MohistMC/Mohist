@@ -92,7 +92,7 @@ public class CraftContainer extends Container {
     }
 
     @Override
-    public boolean c(PlayerEntity entityhuman) {
+    public boolean getCanCraft(PlayerEntity entityhuman) {
         if (cachedType == view.getType() && cachedSize == getSize() && cachedTitle.equals(view.getTitle())) {
             return true;
         }
@@ -107,8 +107,8 @@ public class CraftContainer extends Container {
             ContainerType type = getNotchInventoryType(cachedType);
             IInventory top = ((CraftInventory) view.getTopInventory()).getInventory();
             PlayerInventory bottom = (PlayerInventory) ((CraftInventory) view.getBottomInventory()).getInventory();
-            this.items.clear();
-            this.slots.clear();
+            this.inventoryItemStacks.clear();
+            this.inventorySlots.clear();
             if (typeChanged) {
                 setupSlots(top, bottom, player.getHandle());
             }
@@ -169,7 +169,7 @@ public class CraftContainer extends Container {
             case CHEST:
             case ENDER_CHEST:
             case BARREL:
-                delegate = new ChestContainer(ContainerType.GENERIC_9X3, windowId, bottom, top, top.getSize() / 9);
+                delegate = new ChestContainer(ContainerType.GENERIC_9X3, windowId, bottom, top, top.getSizeInventory() / 9);
                 break;
             case DISPENSER:
             case DROPPER:
@@ -224,8 +224,8 @@ public class CraftContainer extends Container {
         }
 
         if (delegate != null) {
-            this.items = delegate.items;
-            this.slots = delegate.slots;
+            this.inventoryItemStacks = delegate.inventoryItemStacks;
+            this.inventorySlots = delegate.inventorySlots;
         }
 
         // SPIGOT-4598 - we should still delegate the shift click handler
@@ -236,36 +236,36 @@ public class CraftContainer extends Container {
 
     private void setupWorkbench(IInventory top, IInventory bottom) {
         // This code copied from WorkbenchContainer
-        this.a(new Slot(top, 0, 124, 35));
+        this.addSlot(new Slot(top, 0, 124, 35));
 
         int row;
         int col;
 
         for (row = 0; row < 3; ++row) {
             for (col = 0; col < 3; ++col) {
-                this.a(new Slot(top, 1 + col + row * 3, 30 + col * 18, 17 + row * 18));
+                this.addSlot(new Slot(top, 1 + col + row * 3, 30 + col * 18, 17 + row * 18));
             }
         }
 
         for (row = 0; row < 3; ++row) {
             for (col = 0; col < 9; ++col) {
-                this.a(new Slot(bottom, col + row * 9 + 9, 8 + col * 18, 84 + row * 18));
+                this.addSlot(new Slot(bottom, col + row * 9 + 9, 8 + col * 18, 84 + row * 18));
             }
         }
 
         for (col = 0; col < 9; ++col) {
-            this.a(new Slot(bottom, col, 8 + col * 18, 142));
+            this.addSlot(new Slot(bottom, col, 8 + col * 18, 142));
         }
         // End copy from WorkbenchContainer
     }
 
     @Override
-    public ItemStack shiftClick(PlayerEntity entityhuman, int i) {
-        return (delegate != null) ? delegate.shiftClick(entityhuman, i) : super.shiftClick(entityhuman, i);
+    public ItemStack transferStackInSlot(PlayerEntity entityhuman, int i) {
+        return (delegate != null) ? delegate.transferStackInSlot(entityhuman, i) : super.transferStackInSlot(entityhuman, i);
     }
 
     @Override
-    public boolean canUse(PlayerEntity entity) {
+    public boolean canInteractWith(PlayerEntity entity) {
         return true;
     }
 

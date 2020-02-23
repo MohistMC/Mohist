@@ -18,24 +18,24 @@ public class CraftEnderman extends CraftMonster implements Enderman {
 
     @Override
     public MaterialData getCarriedMaterial() {
-        BlockState blockData = getHandle().getCarried();
+        BlockState blockData = getHandle().getHeldBlockState();
         return (blockData == null) ? Material.AIR.getNewData((byte) 0) : CraftMagicNumbers.getMaterial(blockData);
     }
 
     @Override
     public BlockData getCarriedBlock() {
-        BlockState blockData = getHandle().getCarried();
+        BlockState blockData = getHandle().getHeldBlockState();
         return (blockData == null) ? null : CraftBlockData.fromData(blockData);
     }
 
     @Override
     public void setCarriedMaterial(MaterialData data) {
-        getHandle().setCarried(CraftMagicNumbers.getBlock(data));
+        getHandle().setHeldBlockState(CraftMagicNumbers.getBlock(data));
     }
 
     @Override
     public void setCarriedBlock(BlockData blockData) {
-        getHandle().setCarried(blockData == null ? null : ((CraftBlockData) blockData).getState());
+        getHandle().setHeldBlockState(blockData == null ? null : ((CraftBlockData) blockData).getState());
     }
 
     @Override

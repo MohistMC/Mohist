@@ -28,11 +28,11 @@ public class CraftEndermite extends CraftMonster implements Endermite {
 
     @Override
     public boolean isPlayerSpawned() {
-        return getHandle().isPlayerSpawned();
+        return getHandle().isSpawnedByPlayer();
     }
 
     @Override
     public void setPlayerSpawned(boolean playerSpawned) {
-        getHandle().setPlayerSpawned(playerSpawned);
+        getHandle().setSpawnedByPlayer(playerSpawned);
     }
 }

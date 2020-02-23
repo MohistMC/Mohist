@@ -14,12 +14,12 @@ public class CraftBoat extends CraftVehicle implements Boat {
 
     @Override
     public TreeSpecies getWoodType() {
-        return getTreeSpecies(getHandle().getType());
+        return getTreeSpecies(getHandle().getBoatType());
     }
 
     @Override
     public void setWoodType(TreeSpecies species) {
-        getHandle().setType(getBoatType(species));
+        getHandle().setBoatType(getBoatType(species));
     }
 
     @Override
@@ -81,7 +81,7 @@ public class CraftBoat extends CraftVehicle implements Boat {
         return EntityType.BOAT;
     }
 
-    public static TreeSpecies getTreeSpecies(BoatEntity.EnumBoatType boatType) {
+    public static TreeSpecies getTreeSpecies(BoatEntity.Type boatType) {
         switch (boatType) {
             case SPRUCE:
                 return TreeSpecies.REDWOOD;
@@ -99,21 +99,21 @@ public class CraftBoat extends CraftVehicle implements Boat {
         }
     }
 
-    public static BoatEntity.EnumBoatType getBoatType(TreeSpecies species) {
+    public static BoatEntity.Type getBoatType(TreeSpecies species) {
         switch (species) {
             case REDWOOD:
-                return BoatEntity.EnumBoatType.SPRUCE;
+                return BoatEntity.Type.SPRUCE;
             case BIRCH:
-                return BoatEntity.EnumBoatType.BIRCH;
+                return BoatEntity.Type.BIRCH;
             case JUNGLE:
-                return BoatEntity.EnumBoatType.JUNGLE;
+                return BoatEntity.Type.JUNGLE;
             case ACACIA:
-                return BoatEntity.EnumBoatType.ACACIA;
+                return BoatEntity.Type.ACACIA;
             case DARK_OAK:
-                return BoatEntity.EnumBoatType.DARK_OAK;
+                return BoatEntity.Type.DARK_OAK;
             case GENERIC:
             default:
-                return BoatEntity.EnumBoatType.OAK;
+                return BoatEntity.Type.OAK;
         }
     }
 }

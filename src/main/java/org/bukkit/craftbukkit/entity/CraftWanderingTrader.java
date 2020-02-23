@@ -7,13 +7,13 @@ import org.bukkit.entity.WanderingTrader;
 
 public class CraftWanderingTrader extends CraftAbstractVillager implements WanderingTrader {
 
-    public CraftWanderingTrader(CraftServer server, VillagerEntityTrader entity) {
+    public CraftWanderingTrader(CraftServer server, WanderingTraderEntity entity) {
         super(server, entity);
     }
 
     @Override
-    public VillagerEntityTrader getHandle() {
-        return (VillagerEntityTrader) entity;
+    public WanderingTraderEntity getHandle() {
+        return (WanderingTraderEntity) entity;
     }
 
     @Override

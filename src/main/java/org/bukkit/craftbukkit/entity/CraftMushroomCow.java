@@ -18,14 +18,14 @@ public class CraftMushroomCow extends CraftCow implements MushroomCow {
 
     @Override
     public Variant getVariant() {
-        return Variant.values()[getHandle().getVariant().ordinal()];
+        return Variant.values()[getHandle().getMooshroomType().ordinal()];
     }
 
     @Override
     public void setVariant(Variant variant) {
         Preconditions.checkArgument(variant != null, "variant");
 
-        getHandle().setVariant(MooshroomEntity.Type.values()[variant.ordinal()]);
+        getHandle().setMooshroomType(MooshroomEntity.Type.values()[variant.ordinal()]);
     }
 
     @Override

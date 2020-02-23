@@ -77,11 +77,11 @@ public abstract class CraftMinecart extends CraftVehicle implements Minecart {
     public void setDisplayBlock(MaterialData material) {
         if(material != null) {
             BlockState block = CraftMagicNumbers.getBlock(material);
-            this.getHandle().setDisplayBlock(block);
+            this.getHandle().setDisplayTile(block);
         } else {
             // Set block to air (default) and set the flag to not have a display block.
-            this.getHandle().setDisplayBlock(Blocks.AIR.getBlockData());
-            this.getHandle().a(false);
+            this.getHandle().setDisplayTile(Blocks.AIR.getDefaultState());
+            this.getHandle().setHasDisplayTile(false);
         }
     }
 
@@ -89,33 +89,33 @@ public abstract class CraftMinecart extends CraftVehicle implements Minecart {
     public void setDisplayBlockData(BlockData blockData) {
         if (blockData != null) {
             BlockState block = ((CraftBlockData) blockData).getState();
-            this.getHandle().setDisplayBlock(block);
+            this.getHandle().setDisplayTile(block);
         } else {
             // Set block to air (default) and set the flag to not have a display block.
-            this.getHandle().setDisplayBlock(Blocks.AIR.getBlockData());
-            this.getHandle().a(false);
+            this.getHandle().setDisplayTile(Blocks.AIR.getDefaultState());
+            this.getHandle().setHasDisplayTile(false);
         }
     }
 
     @Override
     public MaterialData getDisplayBlock() {
-        BlockState blockData = getHandle().getDisplayBlock();
+        BlockState blockData = getHandle().getDisplayTile();
         return CraftMagicNumbers.getMaterial(blockData);
     }
 
     @Override
     public BlockData getDisplayBlockData() {
-        BlockState blockData = getHandle().getDisplayBlock();
+        BlockState blockData = getHandle().getDisplayTile();
         return CraftBlockData.fromData(blockData);
     }
 
     @Override
     public void setDisplayBlockOffset(int offset) {
-        getHandle().setDisplayBlockOffset(offset);
+        getHandle().setDisplayTileOffset(offset);
     }
 
     @Override
     public int getDisplayBlockOffset() {
-        return getHandle().getDisplayBlockOffset();
+        return getHandle().getDisplayTileOffset();
     }
 }

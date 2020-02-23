@@ -53,12 +53,12 @@ public class CraftArrow extends AbstractProjectile implements AbstractArrow {
 
     @Override
     public boolean isCritical() {
-        return getHandle().isCritical();
+        return getHandle().getIsCritical();
     }
 
     @Override
     public void setCritical(boolean critical) {
-        getHandle().setCritical(critical);
+        getHandle().setIsCritical(critical);
     }
 
     @Override
@@ -87,19 +87,19 @@ public class CraftArrow extends AbstractProjectile implements AbstractArrow {
             return null;
         }
 
-        BlockPos pos = getHandle().getChunkCoordinates();
+        BlockPos pos = getHandle().getPosition();
         return getWorld().getBlockAt(pos.getX(), pos.getY(), pos.getZ());
     }
 
     @Override
     public PickupStatus getPickupStatus() {
-        return PickupStatus.values()[getHandle().fromPlayer.ordinal()];
+        return PickupStatus.values()[getHandle().pickupStatus.ordinal()];
     }
 
     @Override
     public void setPickupStatus(PickupStatus status) {
         Preconditions.checkNotNull(status, "status");
-        getHandle().fromPlayer = AbstractArrowEntity.PickupStatus.a(status.ordinal());
+        getHandle().pickupStatus = AbstractArrowEntity.PickupStatus.getByOrdinal(status.ordinal());
     }
 
     @Override
@@ -107,7 +107,7 @@ public class CraftArrow extends AbstractProjectile implements AbstractArrow {
         super.setTicksLived(value);
 
         // Second field for AbstractArrowEntity
-        getHandle().despawnIStatFormatter = value;
+        getHandle().ticksInGround = value;
     }
 
     @Override

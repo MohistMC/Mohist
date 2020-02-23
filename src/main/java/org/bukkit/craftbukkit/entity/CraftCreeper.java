@@ -15,7 +15,7 @@ public class CraftCreeper extends CraftMonster implements Creeper {
 
     @Override
     public boolean isPowered() {
-        return getHandle().isPowered();
+        return getHandle().func_225509_J__();
     }
 
     @Override
@@ -44,12 +44,12 @@ public class CraftCreeper extends CraftMonster implements Creeper {
     public void setMaxFuseTicks(int ticks) {
         Preconditions.checkArgument(ticks >= 0, "ticks < 0");
 
-        getHandle().maxFuseTicks = ticks;
+        getHandle().fuseTime = ticks;
     }
 
     @Override
     public int getMaxFuseTicks() {
-        return getHandle().maxFuseTicks;
+        return getHandle().fuseTime;
     }
 
     @Override

@@ -9,13 +9,13 @@ import org.bukkit.entity.EnderSignal;
 import org.bukkit.entity.EntityType;
 
 public class CraftEnderSignal extends CraftEntity implements EnderSignal {
-    public CraftEnderSignal(CraftServer server, EntityEnderSignal entity) {
+    public CraftEnderSignal(CraftServer server, EyeOfEnderEntity entity) {
         super(server, entity);
     }
 
     @Override
-    public EntityEnderSignal getHandle() {
-        return (EntityEnderSignal) entity;
+    public EyeOfEnderEntity getHandle() {
+        return (EyeOfEnderEntity) entity;
     }
 
     @Override
@@ -30,23 +30,23 @@ public class CraftEnderSignal extends CraftEntity implements EnderSignal {
 
     @Override
     public Location getTargetLocation() {
-        return new Location(getWorld(), getHandle().targetX, getHandle().targetY, getHandle().targetZ, getHandle().yaw, getHandle().pitch);
+        return new Location(getWorld(), getHandle().targetX, getHandle().targetY, getHandle().targetZ, getHandle().rotationYaw, getHandle().rotationPitch);
     }
 
     @Override
     public void setTargetLocation(Location location) {
         Preconditions.checkArgument(getWorld().equals(location.getWorld()), "Cannot target EnderSignal across worlds");
-        getHandle().a(new BlockPos(location.getX(), location.getY(), location.getZ()));
+        getHandle().moveTowards(new BlockPos(location.getX(), location.getY(), location.getZ()));
     }
 
     @Override
     public boolean getDropItem() {
-        return getHandle().shouldDropItem;
+        return getHandle().shatterOrDrop;
     }
 
     @Override
     public void setDropItem(boolean shouldDropItem) {
-        getHandle().shouldDropItem = shouldDropItem;
+        getHandle().shatterOrDrop = shouldDropItem;
     }
 
     @Override

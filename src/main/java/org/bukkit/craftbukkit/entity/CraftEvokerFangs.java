@@ -1,7 +1,6 @@
 package org.bukkit.craftbukkit.entity;
 
 import net.minecraft.entity.projectile.EvokerFangsEntity;
-import net.minecraft.entity.LivingEntity;
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.EvokerFangs;
@@ -30,13 +29,13 @@ public class CraftEvokerFangs extends CraftEntity implements EvokerFangs {
 
     @Override
     public LivingEntity getOwner() {
-        LivingEntity owner = getHandle().getOwner();
+        net.minecraft.entity.LivingEntity owner = getHandle().getCaster();
 
         return (owner == null) ? null : (LivingEntity) owner.getBukkitEntity();
     }
 
     @Override
     public void setOwner(LivingEntity owner) {
-        getHandle().a(owner == null ? null : ((CraftLivingEntity) owner).getHandle());
+        getHandle().setCaster(owner == null ? null : ((CraftLivingEntity) owner).getHandle());
     }
 }

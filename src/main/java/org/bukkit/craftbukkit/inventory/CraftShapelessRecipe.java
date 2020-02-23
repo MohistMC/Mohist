@@ -43,6 +43,6 @@ public class CraftShapelessRecipe extends ShapelessRecipe implements CraftRecipe
             data.set(i, toNMS(ingred.get(i), true));
         }
 
-        MinecraftServer.getServer().getCraftingManager().addRecipe(new net.minecraft.item.crafting.ShapelessRecipe(CraftNamespacedKey.toMinecraft(this.getKey()), this.getGroup(), CraftItemStack.asNMSCopy(this.getResult()), data));
+        MinecraftServer.getServer().getRecipeManager().addRecipe(new net.minecraft.item.crafting.ShapelessRecipe(CraftNamespacedKey.toMinecraft(this.getKey()), this.getGroup(), CraftItemStack.asNMSCopy(this.getResult()), data));
     }
 }

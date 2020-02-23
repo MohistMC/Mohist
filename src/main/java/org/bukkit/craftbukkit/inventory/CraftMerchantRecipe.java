@@ -10,17 +10,17 @@ public class CraftMerchantRecipe extends MerchantRecipe {
     private final net.minecraft.item.MerchantOffer handle;
 
     public CraftMerchantRecipe(net.minecraft.item.MerchantOffer merchantRecipe) {
-        super(CraftItemStack.asBukkitCopy(merchantRecipe.sellingItem), 0);
+        super(CraftItemStack.asBukkitCopy(merchantRecipe.sellingStack), 0);
         this.handle = merchantRecipe;
-        addIngredient(CraftItemStack.asBukkitCopy(merchantRecipe.buyingItem1));
-        addIngredient(CraftItemStack.asBukkitCopy(merchantRecipe.buyingItem2));
+        addIngredient(CraftItemStack.asBukkitCopy(merchantRecipe.buyingStackFirst));
+        addIngredient(CraftItemStack.asBukkitCopy(merchantRecipe.buyingStackSecond));
     }
 
     public CraftMerchantRecipe(ItemStack result, int uses, int maxUses, boolean experienceReward, int experience, float priceMultiplier) {
         super(result, uses, maxUses, experienceReward, experience, priceMultiplier);
         this.handle = new net.minecraft.item.MerchantOffer(
-                net.minecraft.item.ItemStack.a,
-                net.minecraft.item.ItemStack.a,
+                net.minecraft.item.ItemStack.EMPTY,
+                net.minecraft.item.ItemStack.EMPTY,
                 CraftItemStack.asNMSCopy(result),
                 uses,
                 maxUses,
@@ -53,22 +53,22 @@ public class CraftMerchantRecipe extends MerchantRecipe {
 
     @Override
     public boolean hasExperienceReward() {
-        return handle.rewardExp;
+        return handle.doesRewardEXP;
     }
 
     @Override
     public void setExperienceReward(boolean flag) {
-        handle.rewardExp = flag;
+        handle.doesRewardEXP = flag;
     }
 
     @Override
     public int getVillagerExperience() {
-        return handle.xp;
+        return handle.givenEXP;
     }
 
     @Override
     public void setVillagerExperience(int villagerExperience) {
-        handle.xp = villagerExperience;
+        handle.givenEXP = villagerExperience;
     }
 
     @Override

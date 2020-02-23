@@ -17,29 +17,29 @@ import org.bukkit.plugin.Plugin;
 public class CraftMinecartCommand extends CraftMinecart implements CommandMinecart {
     private final PermissibleBase perm = new PermissibleBase(this);
 
-    public CraftMinecartCommand(CraftServer server, EntityMinecartCommandBlock entity) {
+    public CraftMinecartCommand(CraftServer server, MinecartCommandBlockEntity entity) {
         super(server, entity);
     }
 
     @Override
-    public EntityMinecartCommandBlock getHandle() {
-        return (EntityMinecartCommandBlock) entity;
+    public MinecartCommandBlockEntity getHandle() {
+        return (MinecartCommandBlockEntity) entity;
     }
 
     @Override
     public String getCommand() {
-        return getHandle().getCommandBlock().getCommand();
+        return getHandle().getCommandBlockLogic().getCommand();
     }
 
     @Override
     public void setCommand(String command) {
-        getHandle().getCommandBlock().setCommand(command != null ? command : "");
-        getHandle().getDataWatcher().set(EntityMinecartCommandBlock.COMMAND, getHandle().getCommandBlock().getCommand());
+        getHandle().getCommandBlockLogic().setCommand(command != null ? command : "");
+        getHandle().getDataManager().set(MinecartCommandBlockEntity.COMMAND, getHandle().getCommandBlockLogic().getCommand());
     }
 
     @Override
     public void setName(String name) {
-        getHandle().getCommandBlock().setName(CraftChatMessage.fromStringOrNull(name));
+        getHandle().getCommandBlockLogic().setName(CraftChatMessage.fromStringOrNull(name));
     }
 
     @Override
@@ -62,7 +62,7 @@ public class CraftMinecartCommand extends CraftMinecart implements CommandMineca
 
     @Override
     public String getName() {
-        return CraftChatMessage.fromComponent(getHandle().getCommandBlock().getName());
+        return CraftChatMessage.fromComponent(getHandle().getCommandBlockLogic().getName());
     }
 
     @Override

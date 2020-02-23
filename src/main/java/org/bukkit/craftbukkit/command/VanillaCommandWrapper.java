@@ -53,10 +53,10 @@ public final class VanillaCommandWrapper extends BukkitCommand {
         Validate.notNull(alias, "Alias cannot be null");
 
         CommandSource icommandlistener = getListener(sender);
-        ParseResults<CommandSource> parsed = dispatcher.a().parse(toDispatcher(args, getName()), icommandlistener);
+        ParseResults<CommandSource> parsed = dispatcher.getDispatcher().parse(toDispatcher(args, getName()), icommandlistener);
 
         List<String> results = new ArrayList<>();
-        dispatcher.a().getCompletionSuggestions(parsed).thenAccept((suggestions) -> {
+        dispatcher.getDispatcher().getCompletionSuggestions(parsed).thenAccept((suggestions) -> {
             suggestions.getList().forEach((s) -> results.add(s.getText()));
         });
 
@@ -71,10 +71,10 @@ public final class VanillaCommandWrapper extends BukkitCommand {
             return ((CraftBlockCommandSender) sender).getWrapper();
         }
         if (sender instanceof CommandMinecart) {
-            return ((MinecartCommandBlockEntity) ((CraftMinecartCommand) sender).getHandle()).getCommandBlock().getWrapper();
+            return ((CraftMinecartCommand)sender).getHandle().getCommandBlockLogic().getCommandSource();
         }
         if (sender instanceof RemoteConsoleCommandSender) {
-            return ((DedicatedServer) MinecraftServer.getServer()).remoteControlCommandListener.getWrapper();
+            return ((DedicatedServer) MinecraftServer.getServer()).rconConsoleSource.getCommandSource();
         }
         if (sender instanceof ConsoleCommandSender) {
             return ((CraftServer) sender.getServer()).getServer().getCommandSource();

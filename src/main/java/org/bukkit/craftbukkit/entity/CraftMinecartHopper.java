@@ -32,11 +32,11 @@ public final class CraftMinecartHopper extends CraftMinecartContainer implements
 
     @Override
     public boolean isEnabled() {
-        return ((HopperMinecartEntity) getHandle()).isEnabled();
+        return ((HopperMinecartEntity) getHandle()).getBlocked();
     }
 
     @Override
     public void setEnabled(boolean enabled) {
-        ((HopperMinecartEntity) getHandle()).setEnabled(enabled);
+        ((HopperMinecartEntity) getHandle()).setBlocked(enabled);
     }
 }

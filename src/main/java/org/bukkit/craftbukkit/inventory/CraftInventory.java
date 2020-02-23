@@ -41,12 +41,12 @@ public class CraftInventory implements Inventory {
 
     @Override
     public int getSize() {
-        return getInventory().getSize();
+        return getInventory().getSizeInventory();
     }
 
     @Override
     public ItemStack getItem(int index) {
-        net.minecraft.item.ItemStack item = getInventory().getItem(index);
+        net.minecraft.item.ItemStack item = getInventory().getStackInSlot(index);
         return item.isEmpty() ? null : CraftItemStack.asCraftMirror(item);
     }
 
@@ -96,7 +96,7 @@ public class CraftInventory implements Inventory {
 
     @Override
     public void setItem(int index, ItemStack item) {
-        getInventory().setItem(index, CraftItemStack.asNMSCopy(item));
+        getInventory().setInventorySlotContents(index, CraftItemStack.asNMSCopy(item));
     }
 
     @Override
@@ -501,7 +501,7 @@ public class CraftInventory implements Inventory {
 
     @Override
     public int getMaxStackSize() {
-        return inventory.getMaxStackSize();
+        return inventory.getInventoryStackLimit();
     }
 
     @Override

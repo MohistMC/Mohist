@@ -13,14 +13,14 @@ import org.bukkit.projectiles.ProjectileSource;
 public class CraftFishHook extends AbstractProjectile implements FishHook {
     private double biteChance = -1;
 
-    public CraftFishHook(CraftServer server, AbstractFishEntityingHook entity) {
+    public CraftFishHook(CraftServer server, FishingBobberEntity entity) {
         super(server, entity);
     }
 
     @Override
     public ProjectileSource getShooter() {
-        if (getHandle().owner != null) {
-            return getHandle().owner.getBukkitEntity();
+        if (getHandle().angler != null) {
+            return getHandle().angler.getBukkitEntity();
         }
 
         return null;
@@ -29,13 +29,13 @@ public class CraftFishHook extends AbstractProjectile implements FishHook {
     @Override
     public void setShooter(ProjectileSource shooter) {
         if (shooter instanceof CraftHumanEntity) {
-            getHandle().owner = (PlayerEntity) ((CraftHumanEntity) shooter).entity;
+            getHandle().angler = (PlayerEntity) ((CraftHumanEntity) shooter).entity;
         }
     }
 
     @Override
-    public AbstractFishEntityingHook getHandle() {
-        return (AbstractFishEntityingHook) entity;
+    public FishingBobberEntity getHandle() {
+        return (FishingBobberEntity) entity;
     }
 
     @Override
@@ -50,10 +50,10 @@ public class CraftFishHook extends AbstractProjectile implements FishHook {
 
     @Override
     public double getBiteChance() {
-        AbstractFishEntityingHook hook = getHandle();
+        FishingBobberEntity hook = getHandle();
 
         if (this.biteChance == -1) {
-            if (hook.world.isRainingAt(new BlockPos(MathHelper.floor(hook.locX()), MathHelper.floor(hook.locY()) + 1, MathHelper.floor(hook.locZ())))) {
+            if (hook.world.isRainingAt(new BlockPos(MathHelper.floor(hook.getPosX()), MathHelper.floor(hook.getPosY()) + 1, MathHelper.floor(hook.getPosZs())))) {
                 return 1/300.0;
             }
             return 1/500.0;

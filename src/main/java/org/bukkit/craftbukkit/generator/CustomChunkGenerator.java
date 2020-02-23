@@ -36,17 +36,17 @@ import org.bukkit.generator.ChunkGenerator;
 import org.bukkit.generator.ChunkGenerator.BiomeGrid;
 import org.bukkit.generator.ChunkGenerator.ChunkData;
 
-public class CustomChunkGenerator extends InternalChunkGenerator<GeneratorSettingsDefault> {
-    private final net.minecraft.server.ChunkGenerator delegate;
+public class CustomChunkGenerator extends InternalChunkGenerator<GenerationSettings> {
+    private final net.minecraft.world.gen.ChunkGenerator delegate;
     private final ChunkGenerator generator;
     private final ServerWorld world;
     private final Random random = new Random();
 
     private class CustomBiomeGrid implements BiomeGrid {
 
-        private final BiomeStorage biome; // SPIGOT-5529: stored in 4x4 grid
+        private final BiomeContainer biome; // SPIGOT-5529: stored in 4x4 grid
 
-        public CustomBiomeGrid(BiomeStorage biome) {
+        public CustomBiomeGrid(BiomeContainer biome) {
             this.biome = biome;
         }
 
@@ -64,7 +64,7 @@ public class CustomChunkGenerator extends InternalChunkGenerator<GeneratorSettin
 
         @Override
         public Biome getBiome(int x, int y, int z) {
-            return CraftBlock.biomeBaseToBiome(biome.getBiome(x >> 2, y >> 2, z >> 2));
+            return CraftBlock.biomeBaseToBiome(biome.func_225526_b_(x >> 2, y >> 2, z >> 2));
         }
 
         @Override
@@ -74,43 +74,43 @@ public class CustomChunkGenerator extends InternalChunkGenerator<GeneratorSettin
     }
 
     public CustomChunkGenerator(World world, ChunkGenerator generator) {
-        super(world, world.worldProvider.getChunkGenerator().getWorldChunkManager(), new GeneratorSettingsDefault());
-        switch (world.getWorld().getEnvironment()) {
+        super(world, world.dimension.createChunkGenerator().getBiomeProvider(), new GenerationSettings());
+        switch (world.getWorldCB().getEnvironment()) {
             case NORMAL:
-                this.delegate = new ChunkProviderGenerate(world, world.worldProvider.getChunkGenerator().getWorldChunkManager(), new GeneratorSettingsOverworld());
+                this.delegate = new OverworldChunkGenerator(world, world.dimension.createChunkGenerator().getBiomeProvider(), new OverworldGenSettings());
                 break;
             case NETHER:
-                this.delegate = new ChunkProviderHell(world, world.worldProvider.getChunkGenerator().getWorldChunkManager(), new GeneratorSettingsNether());
+                this.delegate = new NetherChunkGenerator(world, world.dimension.createChunkGenerator().getBiomeProvider(), new NetherGenSettings());
                 break;
             case THE_END:
-                this.delegate = new ChunkProviderTheEnd(world, world.worldProvider.getChunkGenerator().getWorldChunkManager(), new GeneratorSettingsEnd());
+                this.delegate = new EndChunkGenerator(world, world.dimension.createChunkGenerator().getBiomeProvider(), new EndGenerationSettings());
                 break;
             default:
-                throw new AssertionError("Unknown delegate for environment " + world.getWorld().getEnvironment());
+                throw new AssertionError("Unknown delegate for environment " + world.getWorldCB().getEnvironment());
         }
 
-        this.world = (WorldServer) world;
+        this.world = (ServerWorld) world;
         this.generator = generator;
     }
 
     @Override
-    public void createBiomes(IChunkAccess ichunkaccess) {
+    public void generateBiomes(IChunk ichunkaccess) {
         // Don't allow the server to override any custom biomes that have been set
     }
 
     @Override
-    public <C extends WorldGenFeatureConfiguration> C getFeatureConfiguration(BiomeBase biomebase, StructureGenerator<C> structuregenerator) {
-        return (C) delegate.getFeatureConfiguration(biomebase, structuregenerator);
+    public <C extends IFeatureConfig> C getStructureConfig(net.minecraft.world.biome.Biome biomebase, Structure<C> structuregenerator) {
+        return (C) delegate.getStructureConfig(biomebase, structuregenerator);
     }
 
     @Override
-    public WorldChunkManager getWorldChunkManager() {
-        return delegate.getWorldChunkManager();
+    public BiomeProvider getBiomeProvider() {
+        return delegate.getBiomeProvider();
     }
 
     @Override
-    public void storeStructures(GeneratorAccess generatoraccess, IChunkAccess ichunkaccess) {
-        delegate.storeStructures(generatoraccess, ichunkaccess);
+    public void generateStructureStarts(IWorld generatoraccess, IChunk ichunkaccess) {
+        delegate.generateStructureStarts(generatoraccess, ichunkaccess);
     }
 
     @Override
@@ -119,21 +119,21 @@ public class CustomChunkGenerator extends InternalChunkGenerator<GeneratorSettin
     }
 
     @Override
-    public void buildBase(RegionLimitedWorldAccess regionlimitedworldaccess, IChunkAccess ichunkaccess) {
+    public void func_225551_a_(WorldGenRegion regionlimitedworldaccess, IChunk ichunkaccess) {
         // Call the bukkit ChunkGenerator before structure generation so correct biome information is available.
         int x = ichunkaccess.getPos().x;
         int z = ichunkaccess.getPos().z;
         random.setSeed((long) x * 341873128712L + (long) z * 132897987541L);
 
         // Get default biome data for chunk
-        CustomBiomeGrid biomegrid = new CustomBiomeGrid(new BiomeStorage(ichunkaccess.getPos(), this.getWorldChunkManager()));
+        CustomBiomeGrid biomegrid = new CustomBiomeGrid(new BiomeContainer(ichunkaccess.getPos(), this.getBiomeProvider()));
 
         ChunkData data;
         if (generator.isParallelCapable()) {
-            data = generator.generateChunkData(this.world.getWorld(), random, x, z, biomegrid);
+            data = generator.generateChunkData(this.world.getWorldCB(), random, x, z, biomegrid);
         } else {
             synchronized (this) {
-                data = generator.generateChunkData(this.world.getWorld(), random, x, z, biomegrid);
+                data = generator.generateChunkData(this.world.getWorldCB(), random, x, z, biomegrid);
             }
         }
 
@@ -155,86 +155,86 @@ public class CustomChunkGenerator extends InternalChunkGenerator<GeneratorSettin
         }
 
         // Set biome grid
-        ((ProtoChunk) ichunkaccess).a(biomegrid.biome);
+        ((ChunkPrimer) ichunkaccess).func_225548_a_(biomegrid.biome);
 
         if (craftData.getTiles() != null) {
-            for (BlockPosition pos : craftData.getTiles()) {
+            for (BlockPos pos : craftData.getTiles()) {
                 int tx = pos.getX();
                 int ty = pos.getY();
                 int tz = pos.getZ();
                 Block block = craftData.getTypeId(tx, ty, tz).getBlock();
 
-                if (block.isTileEntity()) {
-                    TileEntity tile = ((ITileEntity) block).createTile(world);
-                    ichunkaccess.setTileEntity(new BlockPosition((x << 4) + tx, ty, (z << 4) + tz), tile);
+                if (block.hasTileEntity()) {
+                    TileEntity tile = ((ITileEntityProvider) block).createNewTileEntity(world);
+                    ichunkaccess.addTileEntity(new BlockPos((x << 4) + tx, ty, (z << 4) + tz), tile);
                 }
             }
         }
     }
 
     @Override
-    public void createStructures(BiomeManager biomemanager, IChunkAccess ichunkaccess, net.minecraft.server.ChunkGenerator<?> chunkgenerator, DefinedStructureManager definedstructuremanager) {
+    public void generateStructures(BiomeManager biomemanager, IChunk ichunkaccess, net.minecraft.world.gen.ChunkGenerator<?> chunkgenerator, TemplateManager definedstructuremanager) {
         if (generator.shouldGenerateStructures()) {
             // Still need a way of getting the biome of this chunk to pass to createStructures
             // Using default biomes for now.
-            delegate.createStructures(biomemanager, ichunkaccess, chunkgenerator, definedstructuremanager);
+            delegate.generateStructures(biomemanager, ichunkaccess, chunkgenerator, definedstructuremanager);
         }
     }
 
     @Override
-    public void doCarving(BiomeManager biomemanager, IChunkAccess ichunkaccess, WorldGenStage.Features worldgenstage_features) {
+    public void func_225550_a_(BiomeManager biomemanager, IChunk ichunkaccess, GenerationStage.Carving worldgenstage_features) {
         if (generator.shouldGenerateCaves()) {
-            delegate.doCarving(biomemanager, ichunkaccess, worldgenstage_features);
+            delegate.func_225550_a_(biomemanager, ichunkaccess, worldgenstage_features);
         }
     }
 
     @Override
-    public void buildNoise(GeneratorAccess generatoraccess, IChunkAccess ichunkaccess) {
+    public void makeBase(IWorld generatoraccess, IChunk ichunkaccess) {
         // Disable vanilla generation
     }
 
     @Override
-    public int getBaseHeight(int i, int j, HeightMap.Type heightmap_type) {
-        return delegate.getBaseHeight(i, j, heightmap_type);
+    public int func_222529_a(int i, int j, Heightmap.Type heightmap_type) {
+        return delegate.func_222529_a(i, j, heightmap_type);
     }
 
     @Override
-    public List<BiomeBase.BiomeMeta> getMobsFor(EnumCreatureType enumcreaturetype, BlockPosition blockposition) {
-        return delegate.getMobsFor(enumcreaturetype, blockposition);
+    public List<net.minecraft.world.biome.Biome.SpawnListEntry> getPossibleCreatures(EntityClassification enumcreaturetype, BlockPos blockposition) {
+        return delegate.getPossibleCreatures(enumcreaturetype, blockposition);
     }
 
     @Override
-    public void addDecorations(RegionLimitedWorldAccess regionlimitedworldaccess) {
+    public void decorate(WorldGenRegion regionlimitedworldaccess) {
         if (generator.shouldGenerateDecorations()) {
-            delegate.addDecorations(regionlimitedworldaccess);
+            delegate.decorate(regionlimitedworldaccess);
         }
     }
 
     @Override
-    public void addMobs(RegionLimitedWorldAccess regionlimitedworldaccess) {
+    public void spawnMobs(WorldGenRegion regionlimitedworldaccess) {
         if (generator.shouldGenerateMobs()) {
-            delegate.addMobs(regionlimitedworldaccess);
+            delegate.spawnMobs(regionlimitedworldaccess);
         }
     }
 
     @Override
-    public BlockPosition findNearestMapFeature(World world, String s, BlockPosition blockposition, int i, boolean flag) {
-        return delegate.findNearestMapFeature(world, s, blockposition, i, flag);
+    public BlockPos findNearestStructure(World world, String s, BlockPos blockposition, int i, boolean flag) {
+        return delegate.findNearestStructure(world, s, blockposition, i, flag);
     }
 
     @Override
-    public GeneratorSettingsDefault getSettings() {
+    public GenerationSettings getSettings() {
         return delegate.getSettings();
     }
 
     @Override
-    public void doMobSpawning(WorldServer worldserver, boolean flag, boolean flag1) {
-        delegate.doMobSpawning(worldserver, flag, flag1);
+    public void spawnMobs(ServerWorld worldserver, boolean flag, boolean flag1) {
+        delegate.spawnMobs(worldserver, flag, flag1);
     }
 
     @Override
-    public boolean canSpawnStructure(BiomeBase biomebase, StructureGenerator<? extends WorldGenFeatureConfiguration> structuregenerator) {
-        return delegate.canSpawnStructure(biomebase, structuregenerator);
+    public boolean hasStructure(net.minecraft.world.biome.Biome biomebase, Structure<? extends IFeatureConfig> structuregenerator) {
+        return delegate.hasStructure(biomebase, structuregenerator);
     }
 
     @Override
@@ -243,12 +243,12 @@ public class CustomChunkGenerator extends InternalChunkGenerator<GeneratorSettin
     }
 
     @Override
-    public int getSpawnHeight() {
-        return delegate.getSpawnHeight();
+    public int getGroundHeight() {
+        return delegate.getGroundHeight();
     }
 
     @Override
-    public int getGenerationDepth() {
-        return delegate.getGenerationDepth();
+    public int getMaxHeight() {
+        return delegate.getMaxHeight();
     }
 }

@@ -337,7 +337,7 @@ public class CraftWorld implements World {
     @Override
     public boolean isChunkGenerated(int x, int z) {
         try {
-            return isChunkLoaded(x, z) || world.getChunkProvider().chunkManager.read(new ChunkPos(x, z)) != null;
+            return isChunkLoaded(x, z) || world.getChunkProvider().chunkManager.readChunk(new ChunkPos(x, z)) != null;
         } catch (IOException ex) {
             throw new RuntimeException(ex);
         }
@@ -345,7 +345,7 @@ public class CraftWorld implements World {
 
     @Override
     public Chunk[] getLoadedChunks() {
-        Long2ObjectLinkedOpenHashMap<ChunkHolder> chunks = world.getChunkProvider().playerChunkDistanceGraph.visibleChunks;
+        Long2ObjectLinkedOpenHashMap<ChunkHolder> chunks = world.getChunkProvider().chunkManager.immutableLoadedChunks;
         return chunks.values().stream().map(ChunkHolder::getFullChunk).filter(Objects::nonNull).map(net.minecraft.world.chunk.Chunk::getBukkitChunk).toArray(Chunk[]::new);
     }
 

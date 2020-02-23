@@ -13,12 +13,12 @@ public class CraftSlime extends CraftMob implements Slime {
 
     @Override
     public int getSize() {
-        return getHandle().getSize();
+        return getHandle().getSlimeSize();
     }
 
     @Override
     public void setSize(int size) {
-        getHandle().setSize(size, true);
+        getHandle().setSlimeSize(size, true);
     }
 
     @Override

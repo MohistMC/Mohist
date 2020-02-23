@@ -19,14 +19,14 @@ public class CraftTameableAnimal extends CraftAnimals implements Tameable, Creat
 
     public UUID getOwnerUUID() {
         try {
-            return getHandle().getOwnerUUID();
+            return getHandle().getOwnerId();
         } catch (IllegalArgumentException ex) {
             return null;
         }
     }
 
     public void setOwnerUUID(UUID uuid) {
-        getHandle().setOwnerUUID(uuid);
+        getHandle().setOwnerId(uuid);
     }
 
     @Override
@@ -74,7 +74,7 @@ public class CraftTameableAnimal extends CraftAnimals implements Tameable, Creat
 
     public void setSitting(boolean sitting) {
         getHandle().setSitting(sitting);
-        getHandle().getGoalSit().setSitting(sitting);
+        getHandle().getAISit().setSitting(sitting);
     }
 
     @Override

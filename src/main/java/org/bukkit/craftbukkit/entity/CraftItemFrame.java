@@ -17,19 +17,19 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.ItemFrame;
 
 public class CraftItemFrame extends CraftHanging implements ItemFrame {
-    public CraftItemFrame(CraftServer server, ItemEntityFrame entity) {
+    public CraftItemFrame(CraftServer server, ItemFrameEntity entity) {
         super(server, entity);
     }
 
     @Override
     public boolean setFacingDirection(BlockFace face, boolean force) {
         HangingEntity hanging = getHandle();
-        Direction oldDir = hanging.getDirection();
+        Direction oldDir = hanging.getHorizontalFacing();
         Direction newDir = CraftBlock.blockFaceToNotch(face);
 
-        getHandle().setDirection(newDir);
-        if (!force && !hanging.survives()) {
-            hanging.setDirection(oldDir);
+        getHandle().updateFacingWithBoundingBox(newDir);
+        if (!force && !hanging.onValidSurface()) {
+            hanging.updateFacingWithBoundingBox(oldDir);
             return false;
         }
 
@@ -39,17 +39,17 @@ public class CraftItemFrame extends CraftHanging implements ItemFrame {
     }
 
     private void update() {
-        ItemEntityFrame old = this.getHandle();
+        ItemFrameEntity old = this.getHandle();
 
         ServerWorld world = ((CraftWorld) getWorld()).getHandle();
-        BlockPos position = old.getBlockPos();
-        Direction direction = old.getDirection();
-        ItemStack item = old.getItem() != null ? old.getItem().cloneItemStack() : null;
+        BlockPos position = old.getHangingPosition();
+        Direction direction = old.getHorizontalFacing();
+        ItemStack item = old.getDisplayedItem() != null ? old.getDisplayedItem().copy() : null;
 
-        old.die();
+        old.remove();
 
-        ItemEntityFrame frame = new ItemEntityFrame(world,position,direction);
-        frame.setItem(item);
+        ItemFrameEntity frame = new ItemFrameEntity(world,position,direction);
+        frame.setDisplayedItem(item);
         world.addEntity(frame);
         this.entity = frame;
     }
@@ -101,7 +101,7 @@ public class CraftItemFrame extends CraftHanging implements ItemFrame {
     @Override
     public void setRotation(Rotation rotation) {
         Validate.notNull(rotation, "Rotation cannot be null");
-        getHandle().setRotation(toInteger(rotation));
+        getHandle().setItemRotation(toInteger(rotation));
     }
 
     static int toInteger(Rotation rotation) {
@@ -129,8 +129,8 @@ public class CraftItemFrame extends CraftHanging implements ItemFrame {
     }
 
     @Override
-    public ItemEntityFrame getHandle() {
-        return (ItemEntityFrame) entity;
+    public ItemFrameEntity getHandle() {
+        return (ItemFrameEntity) entity;
     }
 
     @Override

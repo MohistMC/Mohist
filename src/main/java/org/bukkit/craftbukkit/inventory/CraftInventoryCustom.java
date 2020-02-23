@@ -55,7 +55,7 @@ public class CraftInventoryCustom extends CraftInventory {
 
         public MinecraftInventory(InventoryHolder owner, int size, String title) {
             Validate.notNull(title, "Title cannot be null");
-            this.items = NonNullList.a(size, ItemStack.a);
+            this.items = NonNullList.withSize(size, ItemStack.EMPTY);
             this.title = title;
             this.viewers = new ArrayList<HumanEntity>();
             this.owner = owner;
@@ -63,56 +63,56 @@ public class CraftInventoryCustom extends CraftInventory {
         }
 
         @Override
-        public int getSize() {
+        public int getSizeInventory() {
             return items.size();
         }
 
         @Override
-        public ItemStack getItem(int i) {
+        public ItemStack getStackInSlot(int i) {
             return items.get(i);
         }
 
         @Override
-        public ItemStack splitStack(int i, int j) {
-            ItemStack stack = this.getItem(i);
+        public ItemStack decrStackSize(int i, int j) {
+            ItemStack stack = this.getStackInSlot(i);
             ItemStack result;
-            if (stack == ItemStack.a) return stack;
+            if (stack == ItemStack.EMPTY) return stack;
             if (stack.getCount() <= j) {
-                this.setItem(i, ItemStack.a);
+                this.setInventorySlotContents(i, ItemStack.EMPTY);
                 result = stack;
             } else {
                 result = CraftItemStack.copyNMSStack(stack, j);
-                stack.subtract(j);
+                stack.shrink(j);
             }
-            this.update();
+            this.markDirty();
             return result;
         }
 
         @Override
-        public ItemStack splitWithoutUpdate(int i) {
-            ItemStack stack = this.getItem(i);
+        public ItemStack removeStackFromSlot(int i) {
+            ItemStack stack = this.getStackInSlot(i);
             ItemStack result;
-            if (stack == ItemStack.a) return stack;
+            if (stack == ItemStack.EMPTY) return stack;
             if (stack.getCount() <= 1) {
-                this.setItem(i, null);
+                this.setInventorySlotContents(i, null);
                 result = stack;
             } else {
                 result = CraftItemStack.copyNMSStack(stack, 1);
-                stack.subtract(1);
+                stack.shrink(1);
             }
             return result;
         }
 
         @Override
-        public void setItem(int i, ItemStack itemstack) {
+        public void setInventorySlotContents(int i, ItemStack itemstack) {
             items.set(i, itemstack);
-            if (itemstack != ItemStack.a && this.getMaxStackSize() > 0 && itemstack.getCount() > this.getMaxStackSize()) {
-                itemstack.setCount(this.getMaxStackSize());
+            if (itemstack != ItemStack.EMPTY && this.getInventoryStackLimit() > 0 && itemstack.getCount() > this.getInventoryStackLimit()) {
+                itemstack.setCount(this.getInventoryStackLimit());
             }
         }
 
         @Override
-        public int getMaxStackSize() {
+        public int getInventoryStackLimit() {
             return maxStack;
         }
 
@@ -122,10 +122,10 @@ public class CraftInventoryCustom extends CraftInventory {
         }
 
         @Override
-        public void update() {}
+        public void markDirty() {}
 
         @Override
-        public boolean a(PlayerEntity entityhuman) {
+        public boolean isUsableByPlayer(PlayerEntity entityhuman) {
             return true;
         }
 
@@ -159,17 +159,17 @@ public class CraftInventoryCustom extends CraftInventory {
         }
 
         @Override
-        public boolean b(int i, ItemStack itemstack) {
+        public boolean isItemValidForSlot(int i, ItemStack itemstack) {
             return true;
         }
 
         @Override
-        public void startOpen(PlayerEntity entityHuman) {
+        public void openInventory(PlayerEntity entityHuman) {
 
         }
 
         @Override
-        public void closeContainer(PlayerEntity entityHuman) {
+        public void closeInventory(PlayerEntity entityHuman) {
 
         }
 

@@ -31,12 +31,12 @@ public class CraftZombie extends CraftMonster implements Zombie {
 
     @Override
     public boolean isBaby() {
-        return getHandle().isBaby();
+        return getHandle().isChild();
     }
 
     @Override
     public void setBaby(boolean flag) {
-        getHandle().setBaby(flag);
+        getHandle().setChild(flag);
     }
 
     @Override
@@ -61,7 +61,7 @@ public class CraftZombie extends CraftMonster implements Zombie {
 
     @Override
     public boolean isConverting() {
-        return getHandle().isDrownConverting();
+        return getHandle().isDrowning();
     }
 
     @Override
@@ -75,9 +75,9 @@ public class CraftZombie extends CraftMonster implements Zombie {
     public void setConversionTime(int time) {
         if (time < 0) {
             getHandle().drownedConversionTime = -1;
-            getHandle().getDataWatcher().set(ZombieEntity.DROWN_CONVERTING, false);
+            getHandle().getDataManager().set(ZombieEntity.DROWNING, false);
         } else {
-            getHandle().startDrownedConversion(time);
+            getHandle().startDrowning(time);
         }
     }
 }

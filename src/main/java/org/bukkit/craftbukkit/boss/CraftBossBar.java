@@ -119,12 +119,12 @@ public class CraftBossBar implements BossBar {
 
     @Override
     public BarStyle getStyle() {
-        return convertStyle(handle.style);
+        return convertStyle(handle.overlay);
     }
 
     @Override
     public void setStyle(BarStyle style) {
-        handle.style = convertStyle(style);
+        handle.overlay = convertStyle(style);
         handle.sendUpdate(SUpdateBossInfoPacket.Operation.UPDATE_STYLE);
     }
 

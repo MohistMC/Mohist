@@ -26,8 +26,8 @@ public interface CraftRecipe extends Recipe {
             throw new IllegalArgumentException("Unknown recipe stack instance " + bukkit);
         }
 
-        stack.buildChoices();
-        if (requireNotEmpty && stack.choices.length == 0) {
+        stack.determineMatchingStacks();
+        if (requireNotEmpty && stack.matchingStacks.length == 0) {
             throw new IllegalArgumentException("Recipe requires at least one non-air choice!");
         }
 
@@ -35,23 +35,23 @@ public interface CraftRecipe extends Recipe {
     }
 
     public static RecipeChoice toBukkit(Ingredient list) {
-        list.buildChoices();
+        list.determineMatchingStacks();
 
-        if (list.choices.length == 0) {
+        if (list.matchingStacks.length == 0) {
             return null;
         }
 
         if (list.exact) {
-            List<org.bukkit.inventory.ItemStack> choices = new ArrayList<>(list.choices.length);
-            for (net.minecraft.item.ItemStack i : list.choices) {
+            List<org.bukkit.inventory.ItemStack> choices = new ArrayList<>(list.matchingStacks.length);
+            for (net.minecraft.item.ItemStack i : list.matchingStacks) {
                 choices.add(CraftItemStack.asBukkitCopy(i));
             }
 
             return new RecipeChoice.ExactChoice(choices);
         } else {
 
-            List<org.bukkit.Material> choices = new ArrayList<>(list.choices.length);
-            for (net.minecraft.item.ItemStack i : list.choices) {
+            List<org.bukkit.Material> choices = new ArrayList<>(list.matchingStacks.length);
+            for (net.minecraft.item.ItemStack i : list.matchingStacks) {
                 choices.add(CraftMagicNumbers.getMaterial(i.getItem()));
             }
 

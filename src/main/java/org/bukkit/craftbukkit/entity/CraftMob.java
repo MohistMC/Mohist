@@ -26,9 +26,9 @@ public abstract class CraftMob extends CraftLivingEntity implements Mob {
 
     @Override
     public CraftLivingEntity getTarget() {
-        if (getHandle().getGoalTarget() == null) return null;
+        if (getHandle().getAttackTarget() == null) return null;
 
-        return (CraftLivingEntity) getHandle().getGoalTarget().getBukkitEntity();
+        return (CraftLivingEntity) getHandle().getAttackTarget().getBukkitEntity();
     }
 
     @Override
@@ -53,26 +53,26 @@ public abstract class CraftMob extends CraftLivingEntity implements Mob {
 
     @Override
     public void setLootTable(LootTable table) {
-        getHandle().lootTableKey = (table == null) ? null : CraftNamespacedKey.toMinecraft(table.getKey());
+        getHandle().deathLootTable = (table == null) ? null : CraftNamespacedKey.toMinecraft(table.getKey());
     }
 
     @Override
     public LootTable getLootTable() {
-        if (getHandle().lootTableKey == null) {
-            getHandle().lootTableKey = getHandle().getLootTable();
+        if (getHandle().deathLootTable == null) {
+            getHandle().deathLootTable = getHandle().getLootTable();
         }
 
-        NamespacedKey key = CraftNamespacedKey.fromMinecraft(getHandle().lootTableKey);
+        NamespacedKey key = CraftNamespacedKey.fromMinecraft(getHandle().deathLootTable);
         return Bukkit.getLootTable(key);
     }
 
     @Override
     public void setSeed(long seed) {
-        getHandle().lootTableSeed = seed;
+        getHandle().deathLootTableSeed = seed;
     }
 
     @Override
     public long getSeed() {
-        return getHandle().lootTableSeed;
+        return getHandle().deathLootTableSeed;
     }
 }

@@ -23,12 +23,12 @@ public class CraftInventoryPlayer extends CraftInventory implements org.bukkit.i
 
     @Override
     public ItemStack[] getStorageContents() {
-        return asCraftMirror(getInventory().items);
+        return asCraftMirror(getInventory().mainInventory);
     }
 
     @Override
     public ItemStack getItemInMainHand() {
-        return CraftItemStack.asCraftMirror(getInventory().getItemInHand());
+        return CraftItemStack.asCraftMirror(getInventory().getCurrentItem());
     }
 
     @Override
@@ -38,7 +38,7 @@ public class CraftInventoryPlayer extends CraftInventory implements org.bukkit.i
 
     @Override
     public ItemStack getItemInOffHand() {
-        return CraftItemStack.asCraftMirror(getInventory().extraSlots.get(0));
+        return CraftItemStack.asCraftMirror(getInventory().offHandInventory.get(0));
     }
 
     @Override
@@ -156,7 +156,7 @@ public class CraftInventoryPlayer extends CraftInventory implements org.bukkit.i
 
     @Override
     public ItemStack[] getArmorContents() {
-        return asCraftMirror(getInventory().armor);
+        return asCraftMirror(getInventory().armorInventory);
     }
 
     private void setSlots(ItemStack[] items, int baseSlot, int length) {
@@ -176,22 +176,22 @@ public class CraftInventoryPlayer extends CraftInventory implements org.bukkit.i
 
     @Override
     public void setStorageContents(ItemStack[] items) throws IllegalArgumentException {
-        setSlots(items, 0, getInventory().items.size());
+        setSlots(items, 0, getInventory().mainInventory.size());
     }
 
     @Override
     public void setArmorContents(ItemStack[] items) {
-        setSlots(items, getInventory().items.size(), getInventory().armor.size());
+        setSlots(items, getInventory().mainInventory.size(), getInventory().armorInventory.size());
     }
 
     @Override
     public ItemStack[] getExtraContents() {
-        return asCraftMirror(getInventory().extraSlots);
+        return asCraftMirror(getInventory().offHandInventory);
     }
 
     @Override
     public void setExtraContents(ItemStack[] items) {
-        setSlots(items, getInventory().items.size() + getInventory().armor.size(), getInventory().extraSlots.size());
+        setSlots(items, getInventory().mainInventory.size() + getInventory().armorInventory.size(), getInventory().offHandInventory.size());
     }
 
     @Override

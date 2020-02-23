@@ -7,7 +7,7 @@ import org.bukkit.entity.EntityType;
 
 public class CraftElderGuardian extends CraftGuardian implements ElderGuardian {
 
-    public CraftElderGuardian(CraftServer server, GuardianEntityElder entity) {
+    public CraftElderGuardian(CraftServer server, ElderGuardianEntity entity) {
         super(server, entity);
     }
 

@@ -50,9 +50,9 @@ public class CraftInventoryView extends InventoryView {
     public void setItem(int slot, ItemStack item) {
         net.minecraft.item.ItemStack stack = CraftItemStack.asNMSCopy(item);
         if (slot >= 0) {
-            container.getSlot(slot).set(stack);
+            container.getSlot(slot).putStack(stack);
         } else {
-            player.getHandle().drop(stack, false);
+            player.getHandle().dropItem(stack, false);
         }
     }
 
