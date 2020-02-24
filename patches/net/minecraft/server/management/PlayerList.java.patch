@@ -357,7 +357,7 @@
 +
 +        // CraftBukkit start - Quitting must be before we do final save of data, in case plugins need to modify it
 +        org.bukkit.craftbukkit.v1_12_R1.event.CraftEventFactory.handleInventoryCloseEvent(playerIn);
-+        if(playerIn.connection != null || cserver != null) {
++        if(playerIn.connection != null && cserver != null) {
 +            PlayerQuitEvent playerQuitEvent = new PlayerQuitEvent(cserver.getPlayer(playerIn), "\u00A7e" + playerIn.getName() + " left the game");
 +            Bukkit.getPluginManager().callEvent(playerQuitEvent);
 +            playerIn.getBukkitEntity().disconnect(playerQuitEvent.getQuitMessage());
@@ -399,7 +399,7 @@
 +            }
 +        }
 +        // This removes the scoreboard (and player reference) for the specific player in the manager
-+        if (playerIn.connection != null || cserver != null) { //TODO Fix NullPointerException #99
++        if (playerIn.connection != null && cserver != null) { //TODO Fix NullPointerException #99
 +            cserver.getScoreboardManager().removePlayer(playerIn.getBukkitEntity());
 +        }
 +
