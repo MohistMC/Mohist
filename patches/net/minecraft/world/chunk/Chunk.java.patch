@@ -255,7 +255,30 @@
          }
          net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.world.ChunkEvent.Unload(this));
      }
-@@ -1001,6 +1097,65 @@
+@@ -943,19 +1039,11 @@
+ 
+     public boolean needsSaving(boolean p_76601_1_)
+     {
+-        if (p_76601_1_)
+-        {
+-            if (this.hasEntities && this.world.getTotalWorldTime() != this.lastSaveTime || this.dirty)
+-            {
+-                return true;
+-            }
++        if (p_76601_1_) {
++            return dirty || (hasEntities && this.world.getTotalWorldTime() != this.lastSaveTime);
+         }
+-        else if (this.hasEntities && this.world.getTotalWorldTime() >= this.lastSaveTime + 600L)
+-        {
+-            return true;
+-        }
+ 
+-        return this.dirty;
++        return (dirty || hasEntities) && this.world.getTotalWorldTime() >= this.lastSaveTime + 2111L;
+     }
+ 
+     public Random getRandomWithSeed(long seed)
+@@ -1001,6 +1089,65 @@
          }
      }
  
@@ -321,7 +344,7 @@
      protected void populate(IChunkGenerator generator)
      {
          if (populating != null && net.minecraftforge.common.ForgeModContainer.logCascadingWorldGeneration) logCascadingWorldGeneration();
-@@ -1017,6 +1172,26 @@
+@@ -1017,6 +1164,26 @@
          {
              this.checkLight();
              generator.populate(this.x, this.z);
@@ -348,7 +371,7 @@
              net.minecraftforge.fml.common.registry.GameRegistry.generateWorld(this.x, this.z, this.world, generator, this.world.getChunkProvider());
              this.markDirty();
          }
-@@ -1086,7 +1261,7 @@
+@@ -1086,7 +1253,7 @@
  
      public boolean isPopulated()
      {
@@ -357,7 +380,7 @@
      }
  
      public boolean wasTicked()
-@@ -1548,8 +1723,8 @@
+@@ -1548,8 +1715,8 @@
              net.minecraftforge.fml.common.FMLLog.log.debug(format, "Minecraft", this.getPos(), this.world.provider.getDimension(), this.world.provider.getDimensionType().getName(), populating);
              net.minecraftforge.fml.common.FMLLog.log.debug("Consider setting 'fixVanillaCascading' to 'true' in the Forge config to fix many cases where this occurs in the base game.");
          } else {
