@@ -17,3 +17,12 @@
      }
  
      public void addMissingMod(ArtifactVersion acceptedVersion, @Nullable ArtifactVersion currentVersion, boolean required)
+@@ -96,7 +97,7 @@
+     @Override
+     protected void printStackTrace(WrappedPrintStream stream)
+     {
+-        stream.println("Missing Mods:");
++        stream.println(Message.getString("missingdodsexception.2"));
+         for (MissingModInfo info : this.missingModsInfos)
+         {
+             ArtifactVersion acceptedVersion = info.getAcceptedVersion();

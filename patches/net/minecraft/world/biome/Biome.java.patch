@@ -8,6 +8,15 @@
  
  public abstract class Biome extends net.minecraftforge.registries.IForgeRegistryEntry.Impl<Biome>
  {
+@@ -375,7 +376,7 @@
+         return this.rainfall;
+     }
+ 
+-    @SideOnly(Side.CLIENT)
++    //@SideOnly(Side.CLIENT)
+     public final String getBiomeName()
+     {
+         return this.biomeName;
 @@ -475,7 +476,7 @@
              return;
          }

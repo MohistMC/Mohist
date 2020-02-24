@@ -18,7 +18,39 @@
                  ((LoggerContext) LogManager.getContext(false)).reconfigure();
              }
          }
-@@ -579,7 +579,7 @@
+@@ -438,8 +438,6 @@
+                 }
+                 else
+                 {
+-                    FMLLog.log.warn("Found FMLCorePluginContainsFMLMod marker in {}. This is not recommended, @Mods should be in a separate jar from the coremod.",
+-                            coreMod.getName());
+                     candidateModFiles.add(coreMod.getName());
+                 }
+             }
+@@ -534,19 +532,16 @@
+             MCVersion requiredMCVersion = coreModClazz.getAnnotation(IFMLLoadingPlugin.MCVersion.class);
+             if (!Arrays.asList(rootPlugins).contains(coreModClass) && (requiredMCVersion == null || Strings.isNullOrEmpty(requiredMCVersion.value())))
+             {
+-                FMLLog.log.warn("The coremod {} does not have a MCVersion annotation, it may cause issues with this version of Minecraft",
+-                        coreModClass);
++                //FMLLog.log.warn("The coremod {} does not have a MCVersion annotation, it may cause issues with this version of Minecraft",coreModClass);
+             }
+             else if (requiredMCVersion != null && !FMLInjectionData.mccversion.equals(requiredMCVersion.value()))
+             {
+-                FMLLog.log.error("The coremod {} is requesting minecraft version {} and minecraft is {}. It will be ignored.", coreModClass,
+-                        requiredMCVersion.value(), FMLInjectionData.mccversion);
++                //FMLLog.log.error("The coremod {} is requesting minecraft version {} and minecraft is {}. It will be ignored.", coreModClass,requiredMCVersion.value(), FMLInjectionData.mccversion);
+                 return null;
+             }
+             else if (requiredMCVersion != null)
+             {
+-                FMLLog.log.debug("The coremod {} requested minecraft version {} and minecraft is {}. It will be loaded.", coreModClass,
+-                        requiredMCVersion.value(), FMLInjectionData.mccversion);
++                //FMLLog.log.debug("The coremod {} requested minecraft version {} and minecraft is {}. It will be loaded.", coreModClass,requiredMCVersion.value(), FMLInjectionData.mccversion);
+             }
+             TransformerExclusions trExclusions = coreModClazz.getAnnotation(IFMLLoadingPlugin.TransformerExclusions.class);
+             if (trExclusions != null)
+@@ -579,7 +574,7 @@
                  }
                  else // This is a probably a normal minecraft workspace - log at warn
                  {

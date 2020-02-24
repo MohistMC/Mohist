@@ -9,7 +9,13 @@
      private final Set<Advancement> roots = Sets.<Advancement>newLinkedHashSet();
      private final Set<Advancement> nonRoots = Sets.<Advancement>newLinkedHashSet();
      private AdvancementList.Listener listener;
-@@ -133,7 +133,7 @@
+@@ -128,12 +128,12 @@
+                     }
+ 
+                     Entry<ResourceLocation, Advancement.Builder> entry1 = (Entry)iterator.next();
+-                    LOGGER.error("Couldn't load advancement " + entry1.getKey() + ": " + entry1.getValue());
++                    LOGGER.debug("Couldn't load advancement " + entry1.getKey() + ": " + entry1.getValue());
+                 }
              }
          }
  

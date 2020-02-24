@@ -1,10 +1,155 @@
 --- ../src-base/minecraft/net/minecraft/crash/CrashReport.java
 +++ ../src-work/minecraft/net/minecraft/crash/CrashReport.java
-@@ -116,6 +116,7 @@
+@@ -21,13 +21,16 @@
+ import org.apache.commons.lang3.ArrayUtils;
+ import org.apache.logging.log4j.LogManager;
+ import org.apache.logging.log4j.Logger;
++import org.bukkit.Bukkit;
++import red.mohist.Mohist;
++import red.mohist.util.i18n.Message;
+ 
+ public class CrashReport
+ {
+     private static final Logger LOGGER = LogManager.getLogger();
+     private final String description;
+     private final Throwable cause;
+-    private final CrashReportCategory systemDetailsCategory = new CrashReportCategory(this, "System Details");
++    private final CrashReportCategory systemDetailsCategory = new CrashReportCategory(this, Message.getString("miencraft.crashreport"));
+     private final List<CrashReportCategory> crashReportSections = Lists.<CrashReportCategory>newArrayList();
+     private File crashReportFile;
+     private boolean firstCategoryInCrashReport = true;
+@@ -42,35 +45,35 @@
+ 
+     private void populateEnvironment()
+     {
+-        this.systemDetailsCategory.addDetail("Minecraft Version", new ICrashReportDetail<String>()
++        this.systemDetailsCategory.addDetail(Message.getString("miencraft.crashreport1"), new ICrashReportDetail<String>()
+         {
+             public String call()
+             {
+-                return "1.12.2";
++                return "1.12.2-" + Mohist.getVersion();
+             }
+         });
+-        this.systemDetailsCategory.addDetail("Operating System", new ICrashReportDetail<String>()
++        this.systemDetailsCategory.addDetail(Message.getString("miencraft.crashreport2"), new ICrashReportDetail<String>()
+         {
+             public String call()
+             {
+-                return System.getProperty("os.name") + " (" + System.getProperty("os.arch") + ") version " + System.getProperty("os.version");
++                return System.getProperty("os.name") + " (" + System.getProperty("os.arch") + ") " + Message.getString("miencraft.crashreport3") + " " + System.getProperty("os.version");
+             }
+         });
+-        this.systemDetailsCategory.addDetail("Java Version", new ICrashReportDetail<String>()
++        this.systemDetailsCategory.addDetail(Message.getString("miencraft.crashreport4"), new ICrashReportDetail<String>()
+         {
+             public String call()
+             {
+                 return System.getProperty("java.version") + ", " + System.getProperty("java.vendor");
+             }
+         });
+-        this.systemDetailsCategory.addDetail("Java VM Version", new ICrashReportDetail<String>()
++        this.systemDetailsCategory.addDetail(Message.getString("miencraft.crashreport5"), new ICrashReportDetail<String>()
+         {
+             public String call()
+             {
+                 return System.getProperty("java.vm.name") + " (" + System.getProperty("java.vm.info") + "), " + System.getProperty("java.vm.vendor");
+             }
+         });
+-        this.systemDetailsCategory.addDetail("Memory", new ICrashReportDetail<String>()
++        this.systemDetailsCategory.addDetail(Message.getString("miencraft.crashreport6"), new ICrashReportDetail<String>()
+         {
+             public String call()
+             {
+@@ -84,7 +87,7 @@
+                 return k + " bytes (" + j1 + " MB) / " + j + " bytes (" + i1 + " MB) up to " + i + " bytes (" + l + " MB)";
+             }
+         });
+-        this.systemDetailsCategory.addDetail("JVM Flags", new ICrashReportDetail<String>()
++        this.systemDetailsCategory.addDetail(Message.getString("miencraft.crashreport7"), new ICrashReportDetail<String>()
+         {
+             public String call()
+             {
+@@ -109,13 +112,14 @@
+                 return String.format("%d total; %s", i, stringbuilder.toString());
+             }
+         });
+-        this.systemDetailsCategory.addDetail("IntCache", new ICrashReportDetail<String>()
++        this.systemDetailsCategory.addDetail(Message.getString("miencraft.crashreport8"), new ICrashReportDetail<String>()
+         {
+             public String call() throws Exception
+             {
                  return IntCache.getCacheSizes();
              }
          });
-+        this.systemDetailsCategory.addDetail("CraftBukkit Information", (ICrashReportDetail) new org.bukkit.craftbukkit.v1_12_R1.CraftCrashReport());
++        this.systemDetailsCategory.addDetail(Message.getString("miencraft.crashreport9"), (ICrashReportDetail) new org.bukkit.craftbukkit.v1_12_R1.CraftCrashReport());
          net.minecraftforge.fml.common.FMLCommonHandler.instance().enhanceCrashReport(this, this.systemDetailsCategory);
      }
  
+@@ -138,9 +142,9 @@
+ 
+         if (this.stacktrace != null && this.stacktrace.length > 0)
+         {
+-            builder.append("-- Head --\n");
+-            builder.append("Thread: ").append(Thread.currentThread().getName()).append("\n");
+-            builder.append("Stacktrace:\n");
++            builder.append("-- " + Message.getString("miencraft.crashreport10") + " --\n");
++            builder.append(Message.getString("miencraft.crashreport11") + ": ").append(Thread.currentThread().getName()).append("\n");
++            builder.append(Message.getString("miencraft.crashreport12") + ":\n");
+ 
+             for (StackTraceElement stacktraceelement : this.stacktrace)
+             {
+@@ -205,19 +209,17 @@
+     public String getCompleteReport()
+     {
+         StringBuilder stringbuilder = new StringBuilder();
+-        stringbuilder.append("---- Minecraft Crash Report ----\n");
++        stringbuilder.append(Message.getString("miencraft.crashreport13") + "\n");
+         net.minecraftforge.fml.relauncher.CoreModManager.onCrash(stringbuilder);
+-        stringbuilder.append("// ");
+-        stringbuilder.append(getWittyComment());
+         stringbuilder.append("\n\n");
+-        stringbuilder.append("Time: ");
++        stringbuilder.append(Message.getString("miencraft.crashreport14") + ": ");
+         stringbuilder.append((new SimpleDateFormat()).format(new Date()));
+         stringbuilder.append("\n");
+-        stringbuilder.append("Description: ");
++        stringbuilder.append(Message.getString("miencraft.crashreport15") + ": ");
+         stringbuilder.append(this.description);
+         stringbuilder.append("\n\n");
+         stringbuilder.append(this.getCauseStackTraceOrString());
+-        stringbuilder.append("\n\nA detailed walkthrough of the error, its code path and all known details is as follows:\n");
++        stringbuilder.append("\n\n" + Message.getString("miencraft.crashreport16") + ":\n");
+ 
+         for (int i = 0; i < 87; ++i)
+         {
+@@ -261,7 +263,7 @@
+             }
+             catch (Throwable throwable)
+             {
+-                LOGGER.error("Could not save crash report to {}", toFile, throwable);
++                LOGGER.error(Message.getFormatString("miencraft.crashreport17", new Object[] {toFile}), throwable);
+                 flag1 = false;
+             }
+             finally
+@@ -332,20 +334,6 @@
+         return crashreportcategory;
+     }
+ 
+-    private static String getWittyComment()
+-    {
+-        String[] astring = new String[] {"Who set us up the TNT?", "Everything's going to plan. No, really, that was supposed to happen.", "Uh... Did I do that?", "Oops.", "Why did you do that?", "I feel sad now :(", "My bad.", "I'm sorry, Dave.", "I let you down. Sorry :(", "On the bright side, I bought you a teddy bear!", "Daisy, daisy...", "Oh - I know what I did wrong!", "Hey, that tickles! Hehehe!", "I blame Dinnerbone.", "You should try our sister game, Minceraft!", "Don't be sad. I'll do better next time, I promise!", "Don't be sad, have a hug! <3", "I just don't know what went wrong :(", "Shall we play a game?", "Quite honestly, I wouldn't worry myself about that.", "I bet Cylons wouldn't have this problem.", "Sorry :(", "Surprise! Haha. Well, this is awkward.", "Would you like a cupcake?", "Hi. I'm Minecraft, and I'm a crashaholic.", "Ooh. Shiny.", "This doesn't make any sense!", "Why is it breaking :(", "Don't do that.", "Ouch. That hurt :(", "You're mean.", "This is a token for 1 free hug. Redeem at your nearest Mojangsta: [~~HUG~~]", "There are four lights!", "But it works on my machine."};
+-
+-        try
+-        {
+-            return astring[(int)(System.nanoTime() % (long)astring.length)];
+-        }
+-        catch (Throwable var2)
+-        {
+-            return "Witty comment unavailable :(";
+-        }
+-    }
+-
+     public static CrashReport makeCrashReport(Throwable causeIn, String descriptionIn)
+     {
+         CrashReport crashreport;
