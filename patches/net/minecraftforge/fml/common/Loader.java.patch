@@ -55,7 +55,7 @@
  import net.minecraftforge.fml.common.versioning.ArtifactVersion;
  import net.minecraftforge.fml.common.versioning.DependencyParser;
  import net.minecraftforge.fml.common.versioning.VersionParser;
-@@ -68,38 +93,11 @@
+@@ -68,38 +93,12 @@
  import net.minecraftforge.fml.relauncher.libraries.Repository;
  import net.minecraftforge.registries.GameData;
  import net.minecraftforge.registries.ObjectHolderRegistry;
@@ -63,6 +63,7 @@
  import org.apache.commons.io.IOUtils;
  import org.apache.logging.log4j.Level;
 +import red.mohist.api.ServerAPI;
++import red.mohist.forge.MohistMod;
 +import red.mohist.util.i18n.Message;
  
 -import com.google.common.base.CharMatcher;
@@ -96,7 +97,15 @@
  /**
   * The loader class performs the actual loading of the mod code from disk.
   *
-@@ -209,8 +207,8 @@
+@@ -173,6 +172,7 @@
+     private LoadController modController;
+     private MinecraftDummyContainer minecraft;
+     private MCPDummyContainer mcp;
++    private MohistMod mohistMod;
+ 
+     private static File minecraftDir;
+     private static List<String> injectedContainers;
+@@ -209,19 +209,22 @@
          modClassLoader = new ModClassLoader(getClass().getClassLoader());
          if (mccversion !=null && !mccversion.equals(MC_VERSION))
          {
@@ -107,7 +116,21 @@
          }
  
          minecraft = new MinecraftDummyContainer(MC_VERSION);
-@@ -232,7 +230,7 @@
+         InputStream mcpModInputStream = getClass().getResourceAsStream("/mcpmod.info");
++        InputStream mohistModInputStream = getClass().getResourceAsStream("/mohistmod.info");
+         try
+         {
+             mcp = new MCPDummyContainer(MetadataCollection.from(mcpModInputStream, "MCP").getMetadataForId("mcp", null));
++            mohistMod = new MohistMod(MetadataCollection.from(mohistModInputStream, "Mohist").getMetadataForId("mohist", null));
+         }
+         finally
+         {
+             IOUtils.closeQuietly(mcpModInputStream);
++            IOUtils.closeQuietly(mohistModInputStream);
+         }
+     }
+ 
+@@ -232,7 +235,7 @@
       */
      private void sortModList()
      {
@@ -116,7 +139,7 @@
          List<WrongMinecraftVersionException> wrongMinecraftExceptions = new ArrayList<>();
          List<MissingModsException> missingModsExceptions = new ArrayList<>();
          try
-@@ -248,7 +246,7 @@
+@@ -248,7 +251,7 @@
              {
                  if (!mod.acceptableMinecraftVersionRange().containsVersion(minecraft.getProcessedVersion()))
                  {
@@ -125,7 +148,7 @@
                      WrongMinecraftVersionException ret = new WrongMinecraftVersionException(mod, getMCVersionString());
                      FMLLog.log.fatal(ret.getMessage());
                      wrongMinecraftExceptions.add(ret);
-@@ -285,7 +283,7 @@
+@@ -285,7 +288,7 @@
  
              if (wrongMinecraftExceptions.isEmpty() && missingModsExceptions.isEmpty())
              {
@@ -134,7 +157,7 @@
              }
              else if (missingModsExceptions.size()==1 && wrongMinecraftExceptions.isEmpty())
              {
-@@ -305,7 +303,7 @@
+@@ -305,7 +308,7 @@
  
              try
              {
@@ -143,7 +166,7 @@
                  List<ModContainer> sortedMods = sorter.sort();
                  // Reset active list to the sorted list
                  modController.getActiveModList().clear();
-@@ -314,37 +312,37 @@
+@@ -314,37 +317,37 @@
                  mods.removeAll(sortedMods);
                  sortedMods.addAll(mods);
                  mods = sortedMods;
@@ -190,7 +213,7 @@
              }
          }
  
-@@ -367,7 +365,7 @@
+@@ -367,10 +370,11 @@
      private ModDiscoverer identifyMods(List<String> additionalContainers)
      {
          injectedContainers.addAll(additionalContainers);
@@ -199,7 +222,11 @@
          mods.add(minecraft);
          // Add in the MCP mod container
          mods.add(new InjectedModContainer(mcp,new File("minecraft.jar")));
-@@ -380,7 +378,7 @@
++        mods.add(new InjectedModContainer(mohistMod,new File("mohist.jar")));
+         for (String cont : injectedContainers)
+         {
+             ModContainer mc;
+@@ -380,7 +384,7 @@
              }
              catch (Exception e)
              {
@@ -208,7 +235,7 @@
                  throw new LoaderException(e);
              }
              mods.add(new InjectedModContainer(mc,mc.getSource()));
-@@ -389,9 +387,9 @@
+@@ -389,9 +393,9 @@
  
          //if (!FMLForgePlugin.RUNTIME_DEOBF) //Only descover mods in the classpath if we're in the dev env.
          {                                  //TODO: Move this to GradleStart? And add a specific mod canidate for Forge itself.
@@ -220,7 +247,7 @@
          }
  
          List<Artifact> maven_canidates = LibraryManager.flattenLists(minecraftDir);
-@@ -415,11 +413,11 @@
+@@ -415,11 +419,11 @@
              // skip loaded coremods
              if (CoreModManager.getIgnoredMods().contains(mod.getName()))
              {
@@ -234,7 +261,7 @@
                  discoverer.addCandidate(new ModCandidate(mod, mod, ContainerType.JAR));
              }
          }
-@@ -427,7 +425,7 @@
+@@ -427,7 +431,7 @@
          mods.addAll(discoverer.identifyMods());
          identifyDuplicates(mods);
          namedMods = Maps.uniqueIndex(mods, ModContainer::getModId);
@@ -243,7 +270,7 @@
          return discoverer;
      }
  
-@@ -457,7 +455,7 @@
+@@ -457,7 +461,7 @@
          {
              if (e.getCount() > 1)
              {
@@ -252,7 +279,7 @@
                  dupes.putAll(e.getElement(),dupsearch.get(e.getElement()));
              }
          }
-@@ -486,44 +484,43 @@
+@@ -486,44 +490,43 @@
          }
          catch (IOException ioe)
          {
@@ -307,7 +334,7 @@
              throw new LoaderException();
          }
  
-@@ -577,14 +574,14 @@
+@@ -577,14 +580,14 @@
          {
              if (nonMod.isFile())
              {
@@ -324,7 +351,7 @@
                  }
              }
          }
-@@ -594,14 +591,14 @@
+@@ -594,14 +597,14 @@
          modController.transition(LoaderState.CONSTRUCTING, false);
          modController.distributeStateMessage(LoaderState.CONSTRUCTING, modClassLoader, discoverer.getASMTable(), reverseDependencies);
  
@@ -342,7 +369,7 @@
          for (ModContainer mod : getActiveModList())
          {
              if (mod.getSigningCertificate() == null)
-@@ -609,7 +606,7 @@
+@@ -609,7 +612,7 @@
          }
          if (getActiveModList().isEmpty())
          {
@@ -351,7 +378,7 @@
          }
          progressBar.step("Initializing mods Phase 1");
          modController.transition(LoaderState.PREINITIALIZATION, false);
-@@ -619,7 +616,7 @@
+@@ -619,7 +622,7 @@
      {
          if (!modController.isInState(LoaderState.PREINITIALIZATION))
          {
@@ -360,7 +387,7 @@
              return;
          }
          GameData.fireCreateRegistryEvents();
-@@ -638,34 +635,34 @@
+@@ -638,34 +641,34 @@
      private void disableRequestedMods()
      {
          String forcedModList = System.getProperty("fml.modStates", "");
@@ -401,7 +428,7 @@
  
          Map<String, Boolean> isEnabled = Maps.transformValues(modStates, Boolean::parseBoolean);
  
-@@ -673,7 +670,7 @@
+@@ -673,7 +676,7 @@
          {
              if (namedMods.containsKey(entry.getKey()))
              {
@@ -410,7 +437,7 @@
                  namedMods.get(entry.getKey()).setEnabledState(entry.getValue());
              }
          }
-@@ -756,7 +753,8 @@
+@@ -756,7 +759,8 @@
          modController.transition(LoaderState.AVAILABLE, false);
          modController.distributeStateMessage(LoaderState.AVAILABLE);
          GameData.freezeData();
@@ -420,7 +447,7 @@
          progressBar.step("Completing Minecraft initialization");
      }
  
-@@ -904,8 +902,10 @@
+@@ -904,8 +908,10 @@
              }
          }
  
@@ -433,7 +460,7 @@
          return true;
      }
  
-@@ -923,17 +923,17 @@
+@@ -923,17 +929,17 @@
          Disableable disableable = mc.canBeDisabled();
          if (disableable == Disableable.NEVER)
          {
@@ -454,7 +481,7 @@
              modController.disableMod(mc);
              List<ModContainer> localmods = Lists.newArrayList(mods);
              localmods.remove(mc);
-@@ -955,7 +955,7 @@
+@@ -955,7 +961,7 @@
          }
          catch (Exception e)
          {
@@ -463,7 +490,7 @@
          }
      }
  
-@@ -973,7 +973,7 @@
+@@ -973,7 +979,7 @@
          File injectedDepFile = new File(getConfigDir(),"injectedDependencies.json");
          if (!injectedDepFile.exists())
          {
@@ -472,7 +499,7 @@
              return;
          }
          JsonParser parser = new JsonParser();
-@@ -998,18 +998,18 @@
+@@ -998,18 +1004,18 @@
                      } else if (type.equals("after")) {
                          injectedAfter.put(modId, VersionParser.parseVersionReference(depObj.get("target").getAsString()));
                      } else {
