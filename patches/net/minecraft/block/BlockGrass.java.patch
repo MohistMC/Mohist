@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockGrass.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockGrass.java
-@@ -15,6 +15,11 @@
+@@ -15,6 +15,12 @@
  import net.minecraft.world.World;
  import net.minecraftforge.fml.relauncher.Side;
  import net.minecraftforge.fml.relauncher.SideOnly;
@@ -9,47 +9,128 @@
 +import org.bukkit.craftbukkit.v1_12_R1.util.CraftMagicNumbers;
 +import org.bukkit.event.block.BlockFadeEvent;
 +import org.bukkit.event.block.BlockSpreadEvent;
++import red.mohist.configuration.MohistConfig;
  
  public class BlockGrass extends Block implements IGrowable
  {
-@@ -41,7 +46,16 @@
-             if (!worldIn.isAreaLoaded(pos, 3)) return; // Forge: prevent loading unloaded chunks when checking neighbor's light and spreading
-             if (worldIn.getLightFromNeighbors(pos.up()) < 4 && worldIn.getBlockState(pos.up()).getLightOpacity(worldIn, pos.up()) > 2)
-             {
+@@ -34,34 +40,49 @@
+         return state.withProperty(SNOWY, Boolean.valueOf(block == Blocks.SNOW || block == Blocks.SNOW_LAYER));
+     }
+ 
+-    public void updateTick(World worldIn, BlockPos pos, IBlockState state, Random rand)
++    private void originalUpdateTick(World worldIn, BlockPos pos, Random rand)
+     {
+-        if (!worldIn.isRemote)
++        if (worldIn.getLightFromNeighbors(pos.up()) < 4 && worldIn.getBlockState(pos.up()).getLightOpacity(worldIn, pos.up()) > 2)
+         {
+-            if (!worldIn.isAreaLoaded(pos, 3)) return; // Forge: prevent loading unloaded chunks when checking neighbor's light and spreading
+-            if (worldIn.getLightFromNeighbors(pos.up()) < 4 && worldIn.getBlockState(pos.up()).getLightOpacity(worldIn, pos.up()) > 2)
+-            {
 -                worldIn.setBlockState(pos, Blocks.DIRT.getDefaultState());
-+                    org.bukkit.World bworld = worldIn.getWorld();
-+                    BlockState blockState = bworld.getBlockAt(pos.getX(), pos.getY(), pos.getZ()).getState();
-+                    blockState.setType(CraftMagicNumbers.getMaterial(Blocks.DIRT));
++            org.bukkit.World bworld = worldIn.getWorld();
++            BlockState blockState = bworld.getBlockAt(pos.getX(), pos.getY(), pos.getZ()).getState();
++            blockState.setType(CraftMagicNumbers.getMaterial(Blocks.DIRT));
 +
-+                    BlockFadeEvent event = new BlockFadeEvent(blockState.getBlock(), blockState);
-+                    worldIn.getServer().getPluginManager().callEvent(event);
++            BlockFadeEvent event = new BlockFadeEvent(blockState.getBlock(), blockState);
++            worldIn.getServer().getPluginManager().callEvent(event);
++
++            if (!event.isCancelled()) {
++                blockState.update(true);
+             }
+-            else
++        }
++        else
++        {
++            if (worldIn.getLightFromNeighbors(pos.up()) >= 9)
+             {
+-                if (worldIn.getLightFromNeighbors(pos.up()) >= 9)
++                for (int i = 0; i < 4; ++i)
+                 {
+-                    for (int i = 0; i < 4; ++i)
++                    BlockPos blockpos = pos.add(rand.nextInt(3) - 1, rand.nextInt(5) - 3, rand.nextInt(3) - 1);
++
++                    if (blockpos.getY() >= 0 && blockpos.getY() < 256 && !worldIn.isBlockLoaded(blockpos))
+                     {
+-                        BlockPos blockpos = pos.add(rand.nextInt(3) - 1, rand.nextInt(5) - 3, rand.nextInt(3) - 1);
++                        return;
++                    }
+ 
+-                        if (blockpos.getY() >= 0 && blockpos.getY() < 256 && !worldIn.isBlockLoaded(blockpos))
+-                        {
+-                            return;
+-                        }
++                    IBlockState iblockstate = worldIn.getBlockState(blockpos.up());
++                    IBlockState iblockstate1 = worldIn.getBlockState(blockpos);
+ 
+-                        IBlockState iblockstate = worldIn.getBlockState(blockpos.up());
+-                        IBlockState iblockstate1 = worldIn.getBlockState(blockpos);
++                    if (iblockstate1.getBlock() == Blocks.DIRT && iblockstate1.getValue(BlockDirt.VARIANT) == BlockDirt.DirtType.DIRT && worldIn.getLightFromNeighbors(blockpos.up()) >= 4 && iblockstate.getLightOpacity(worldIn, pos.up()) <= 2)
++                    {
+ 
+-                        if (iblockstate1.getBlock() == Blocks.DIRT && iblockstate1.getValue(BlockDirt.VARIANT) == BlockDirt.DirtType.DIRT && worldIn.getLightFromNeighbors(blockpos.up()) >= 4 && iblockstate.getLightOpacity(worldIn, pos.up()) <= 2)
+-                        {
+-                            worldIn.setBlockState(blockpos, Blocks.GRASS.getDefaultState());
++                        org.bukkit.World bworld = worldIn.getWorld();
++                        BlockState blockState = bworld.getBlockAt(blockpos.getX(), blockpos.getY(), blockpos.getZ()).getState();
++                        blockState.setType(CraftMagicNumbers.getMaterial(Blocks.GRASS));
++
++                        BlockSpreadEvent event = new BlockSpreadEvent(blockState.getBlock(), bworld.getBlockAt(pos.getX(), pos.getY(), pos.getZ()), blockState);
++                        worldIn.getServer().getPluginManager().callEvent(event);
++
++                        if (!event.isCancelled()) {
++                            blockState.update(true);
+                         }
+                     }
+                 }
+@@ -69,6 +90,47 @@
+         }
+     }
+ 
++    private void withoutLightChecksUpdateTick(World worldIn, BlockPos pos, Random rand) {
++
++        for (int i = 0; i < 4; ++i) {
++
++            BlockPos blockpos = pos.add(rand.nextInt(3) - 1, rand.nextInt(5) - 3, rand.nextInt(3) - 1);
++
++            if (blockpos.getY() >= 0 && blockpos.getY() < 256 && !worldIn.isBlockLoaded(blockpos)) {
++                return;
++            }
++
++            IBlockState iblockstate1 = worldIn.getBlockState(blockpos);
++
++            if (iblockstate1.getBlock() == Blocks.DIRT && iblockstate1.getValue(BlockDirt.VARIANT) == BlockDirt.DirtType.DIRT) {
++
++                org.bukkit.World bworld = worldIn.getWorld();
++                BlockState blockState = bworld.getBlockAt(blockpos.getX(), blockpos.getY(), blockpos.getZ()).getState();
++                blockState.setType(CraftMagicNumbers.getMaterial(Blocks.GRASS));
++
++                BlockSpreadEvent event = new BlockSpreadEvent(blockState.getBlock(), bworld.getBlockAt(pos.getX(), pos.getY(), pos.getZ()), blockState);
++                worldIn.getServer().getPluginManager().callEvent(event);
 +
 +                if (!event.isCancelled()) {
 +                    blockState.update(true);
 +                }
-             }
-             else
-             {
-@@ -61,7 +75,17 @@
- 
-                         if (iblockstate1.getBlock() == Blocks.DIRT && iblockstate1.getValue(BlockDirt.VARIANT) == BlockDirt.DirtType.DIRT && worldIn.getLightFromNeighbors(blockpos.up()) >= 4 && iblockstate.getLightOpacity(worldIn, pos.up()) <= 2)
-                         {
--                            worldIn.setBlockState(blockpos, Blocks.GRASS.getDefaultState());
-+//                            worldIn.setBlockState(blockpos, Blocks.GRASS.getDefaultState());
-+                            org.bukkit.World bworld = worldIn.getWorld();
-+                            BlockState blockState = bworld.getBlockAt(blockpos.getX(), blockpos.getY(), blockpos.getZ()).getState();
-+                            blockState.setType(CraftMagicNumbers.getMaterial(Blocks.GRASS));
++            }
++        }
++    }
 +
-+                            BlockSpreadEvent event = new BlockSpreadEvent(blockState.getBlock(), bworld.getBlockAt(pos.getX(), pos.getY(), pos.getZ()), blockState);
-+                            worldIn.getServer().getPluginManager().callEvent(event);
++    public void updateTick(World worldIn, BlockPos pos, IBlockState state, Random rand)
++    {
++        if (!worldIn.isRemote)
++        {
++            if (!worldIn.isAreaLoaded(pos, 3)) return; // Forge: prevent loading unloaded chunks when checking neighbor's light and spreading
 +
-+                            if (!event.isCancelled()) {
-+                                blockState.update(true);
-+                            }
-                         }
-                     }
-                 }
-@@ -109,7 +133,8 @@
++            if (!MohistConfig.instance.useBlockUpdatesWithoutLightsChecks.getValue())
++                originalUpdateTick(worldIn, pos, rand);
++            else
++                withoutLightChecksUpdateTick(worldIn, pos, rand);
++        }
++    }
++
+     public Item getItemDropped(IBlockState state, Random rand, int fortune)
+     {
+         return Blocks.DIRT.getItemDropped(Blocks.DIRT.getDefaultState().withProperty(BlockDirt.VARIANT, BlockDirt.DirtType.DIRT), rand, fortune);
+@@ -109,7 +171,8 @@
  
                              if (Blocks.TALLGRASS.canBlockStay(worldIn, blockpos1, iblockstate1))
                              {

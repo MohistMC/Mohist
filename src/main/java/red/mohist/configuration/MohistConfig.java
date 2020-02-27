@@ -26,7 +26,8 @@ public class MohistConfig extends ConfigBase{
 
     public final IntSetting entityCollideFrequency = new IntSetting(this, "perfomance.entityCollideFrequency",2,"Entity Collide Frequency");
     public final IntSetting maxEntityCollisionsPerTick = new IntSetting(this, "perfomance.maxEntityCollisionsPerTick",8,"Max Entity Collisions PerTick");
-
+    public final BoolSetting useBlockUpdatesWithoutLightsChecks = new BoolSetting(this, "perfomance.useBlockUpdatesWithoutLightsChecks", true, "It gives a performance gain due to the removal of alert checks when updating some blocks.");
+    
     public final StringSetting server_type = new StringSetting(this, "server-type", "FML", "Set the server type displayed in motd (FML/BUKKIT/VANILLA)");
     public final StringSetting lang = new StringSetting(this, "lang", "en_US", "Mohist internationalization language setting, will return the default system language when your settings are invalid");
     public final StringSetting console_name = new StringSetting(this, "console_name", "Server", "Front of the console, for example /say");
