@@ -38,6 +38,7 @@ import org.apache.logging.log4j.core.pattern.PatternFormatter;
 import org.apache.logging.log4j.core.pattern.PatternParser;
 import org.apache.logging.log4j.util.PerformanceSensitive;
 import red.mohist.configuration.MohistConfigUtil;
+import red.mohist.util.ANSIColorUtils;
 
 @Plugin(name = "highlightMsg", category = PatternConverter.CATEGORY)
 @ConverterKeys({ "highlightMsg" })
@@ -45,8 +46,8 @@ import red.mohist.configuration.MohistConfigUtil;
 public class HighlightMsgConverter extends LogEventPatternConverter
 {
     private static final String ANSI_RESET = "\u001B[39;0m";
-    private static final String ANSI_ERROR = "\u001B" + geterror();
-    private static final String ANSI_WARN = "\u001B" + getwarn();
+    private static final String ANSI_ERROR = geterror();
+    private static final String ANSI_WARN = getwarn();
 
     private final List<PatternFormatter> formatters;
 
@@ -149,11 +150,13 @@ public class HighlightMsgConverter extends LogEventPatternConverter
 
     public static String geterror() {
         File f = new File("mohist-config", "mohist.yml");
-        return MohistConfigUtil.getString(f, "error-msg:", "[31;1m");
+        String cc = MohistConfigUtil.getString(f, "error-msg:", "c");
+        return ANSIColorUtils.getColor(cc, "\u001b[0;31;1m");
     }
 
     public static String getwarn() {
         File f = new File("mohist-config", "mohist.yml");
-        return MohistConfigUtil.getString(f, "warn-msg:", "[33;1m");
+        String cc = MohistConfigUtil.getString(f, "warn-msg:", "e");
+        return ANSIColorUtils.getColor(cc, "\u001b[0;33;1m");
     }
 }

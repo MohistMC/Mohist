@@ -103,8 +103,10 @@ public class ForgeInjectBukkit {
         for (BannerPattern bannerpattern : BannerPattern.values()) {
             String p_i47246_3_ = bannerpattern.name();
             String hashname = bannerpattern.getHashname();
-            PatternType patternType = EnumHelper.addEnum(PatternType.class, p_i47246_3_, new Class[]{String.class}, new Object[]{hashname});
-            PATTERN_MAP.put(hashname, patternType);
+            if (PatternType.getByIdentifier(hashname) == null) {
+                PatternType patternType = EnumHelper.addEnum(PatternType.class, p_i47246_3_, new Class[]{String.class}, new Object[]{hashname});
+                PATTERN_MAP.put(hashname, patternType);
+            }
         }
     }
 
