@@ -1,4 +1,4 @@
-<img src="https://i.loli.net/2019/08/30/btYR9WDxd4XvhH3.png">
+<img src="https://i.loli.net/2020/02/28/vZRHJACadF7rgn5.png">
 
 ## Mohist-1.15.2(In development)
 
