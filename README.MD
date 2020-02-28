@@ -11,7 +11,7 @@
 [![](https://img.shields.io/badge/Forge-1.12.2--14.23.5.2847-brightgreen.svg?colorB=26303d)](http://files.minecraftforge.net/maven/net/minecraftforge/forge/index_1.12.2.html)
 [![](https://img.shields.io/badge/Paper-1.12.2-brightgreen.svg?colorB=DC3340)](https://papermc.io/downloads#Paper-1.12)
 ![](https://img.shields.io/badge/AdoptOpenJDK-8u242-brightgreen.svg?colorB=469C00)
-![](https://img.shields.io/badge/Gradle-5.5.1-brightgreen.svg?colorB=469C00)
+![](https://img.shields.io/badge/Gradle-5.6.4-brightgreen.svg?colorB=469C00)
 [![](https://badges.crowdin.net/mohist/localized.svg)](https://crowdin.com/project/mohist)
 
 ### Getting Help
@@ -38,7 +38,7 @@
   * or for Windows:
   `./gradlew.bat launch4j `
 
-All builds will be in `.\Mohist\build\distributions\` 
+All builds will be in `.\build\distributions\` 
 Mohist-xxxxx-server.jar - is the server we should run it
 
 ### Plugin development
