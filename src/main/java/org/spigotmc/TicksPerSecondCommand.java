@@ -87,7 +87,8 @@ public class TicksPerSecondCommand extends Command {
     }
 
     private static final long mean(long[] array) {
-        long r = 0;
+        if (array == null || array.length == 0) return 0L;
+        long r = 0L;
         for (long i : array)
             r += i;
         return r / array.length;
