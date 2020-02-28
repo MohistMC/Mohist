@@ -2,7 +2,7 @@
 
 ## Mohist-1.12.2
 
-## When Mohist-1.15.2 is released, it means that we will no longer support version 1.12.2 because there is not enough time and energy to maintain multiple versions!
+## It is highly recommended to use the 1.7+ version to quickly resolve known and unknown errors!
 
 [![](https://ci.codemc.org/buildStatus/icon?job=Mohist-Community%2FMohist-1.12.2)](https://ci.codemc.org/job/Mohist-Community/job/Mohist-1.12.2/)
 ![](https://img.shields.io/github/stars/Mohist-Community/Mohist.svg?label=Stars)
