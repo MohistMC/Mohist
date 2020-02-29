@@ -24,7 +24,7 @@ public class Download {
 
                 System.out.println(Message.getFormatString("file.download.start", new Object[]{url, getSize(size)}));
 
-                DataInputStream in = new DataInputStream(connection.getInputStream());
+                DataInputStream in = new DataInputStream(website.openStream());
                 DataOutputStream out = new DataOutputStream(new FileOutputStream(savePath));
                 byte[] buffer = new byte[2048];
                 int count = 0;

@@ -23,7 +23,7 @@ public class DownloadLibraries {
         try {
             String locateInfo = HttpUtil.doGet(FIND_LOCATE);
 
-            if (Message.getCountry().contains("CN") || (locateInfo != null && locateInfo.equals("CN"))) {
+            if ((locateInfo != null && locateInfo.equals("CN")) || Message.getCountry().contains("CN")) {
                 url = "https://mohist-community.gitee.io/mohistdown/"; //Gitee Mirror
             } else {
                 url = "https://www.mgazul.cn/"; //Github Mirror
