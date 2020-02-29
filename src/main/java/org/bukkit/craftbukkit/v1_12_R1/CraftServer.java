@@ -171,6 +171,8 @@ import org.yaml.snakeyaml.error.MarkedYAMLException;
 import red.mohist.Mohist;
 import red.mohist.configuration.MohistConfig;
 import red.mohist.util.i18n.Message;
+import org.bukkit.configuration.file.FileConfiguration;
+import red.mohist.pluginmanager.PluginManagers;
 
 public final class CraftServer implements Server {
     static {
@@ -413,6 +415,18 @@ public final class CraftServer implements Server {
         for (Plugin plugin : plugins) {
             if ((!plugin.isEnabled()) && (plugin.getDescription().getLoad() == type)) {
                 enablePlugin(plugin);
+		/* by lliioolllcn */
+                if (MinecraftServer.mohistConfig.pluginCheckBug.getValue()) {
+                    new Thread(() -> {
+                        /* Check some plugins bug */
+                        FileConfiguration f = YamlConfiguration.loadConfiguration(new InputStreamReader(plugin.getResource("plugin.yml")));
+                        String version = f.getString("version");
+                        if (PluginManagers.checkBug(plugin, version)) {
+
+                            Mohist.LOGGER.warn(Message.getString("plugin.promptbug"), plugin.getName(), version != null ? version : Message.getString("plugin.unknow"));
+                        }
+                    }).start();
+                }
             }
         }
 
