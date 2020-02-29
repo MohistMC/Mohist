@@ -9,6 +9,7 @@ import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.inventory.InventoryEnderChest;
 import net.minecraft.inventory.InventoryMerchant;
 import net.minecraft.tileentity.IHopper;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityBeacon;
 import net.minecraft.tileentity.TileEntityBrewingStand;
 import net.minecraft.tileentity.TileEntityDispenser;
@@ -523,6 +524,11 @@ public class CraftInventory implements Inventory {
 
     @Override
     public Location getLocation() {
-        return inventory.getLocation();
+        if (inventory instanceof net.minecraft.tileentity.TileEntity) {
+            TileEntity tileEntity = (TileEntity) inventory;
+            return new Location(tileEntity.getWorld().getWorld(), tileEntity.getPos().getX(), tileEntity.getPos().getY(), tileEntity.getPos().getZ());
+        } else {
+            return inventory.getLocation();
+        }
     }
 }

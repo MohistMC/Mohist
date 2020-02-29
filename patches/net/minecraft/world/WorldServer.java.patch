@@ -72,7 +72,7 @@
  import net.minecraft.util.EnumParticleTypes;
  import net.minecraft.util.IProgressUpdate;
  import net.minecraft.util.IThreadListener;
-@@ -77,18 +102,23 @@
+@@ -77,16 +102,21 @@
  import net.minecraft.world.storage.WorldInfo;
  import net.minecraft.world.storage.WorldSavedDataCallableSave;
  import net.minecraft.world.storage.loot.LootTableManager;
@@ -94,11 +94,8 @@
 -    private final EntityTracker entityTracker;
 +    public EntityTracker entityTracker;
      private final PlayerChunkMap playerChunkMap;
--    private final Set<NextTickListEntry> pendingTickListEntriesHashSet = Sets.<NextTickListEntry>newHashSet();
-+    private final Set<NextTickListEntry> pendingTickListEntriesHashSet = Collections.synchronizedSet(new LinkedHashSet());
+     private final Set<NextTickListEntry> pendingTickListEntriesHashSet = Sets.<NextTickListEntry>newHashSet();
      private final TreeSet<NextTickListEntry> pendingTickListEntriesTreeSet = new TreeSet<NextTickListEntry>();
-     private final Map<UUID, Entity> entitiesByUuid = Maps.<UUID, Entity>newHashMap();
-     public boolean disableLevelSaving;
 @@ -105,31 +135,69 @@
      protected Set<ChunkPos> doneChunks = new java.util.HashSet<ChunkPos>();
      public List<Teleporter> customTeleporters = new ArrayList<Teleporter>();
