@@ -158,7 +158,7 @@ public class PluginManagers {
     }
     
     private static Map<String, List<String>> plugins = new HashMap<String, List<String>>() {{
-        /* 表示exampl插件的1.0版本和2.0版本有这个漏洞 */
+        /* 表示example插件的1.0版本和2.0版本有这个漏洞 */
         /* Indicates that the 1.0 and 2.0 versions of the example plugin have this vulnerability */
         /*
         put("example", new ArrayList<String>() {{
@@ -167,8 +167,8 @@ public class PluginManagers {
         }});// 格式：插件名称,有漏洞的版本
 
          */
-        /* 表示exampl1插件的所有版本都有这个漏洞 */
-        /* Indicates that all versions of the exampl1 plugin have this vulnerability */
+        /* 表示example1插件的所有版本都有这个漏洞 */
+        /* Indicates that all versions of the example1 plugin have this vulnerability */
         /*
         put("example1", new ArrayList<String>() {{
             add("all");

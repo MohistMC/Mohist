@@ -14,7 +14,7 @@
      private final String description;
      private final Throwable cause;
 -    private final CrashReportCategory systemDetailsCategory = new CrashReportCategory(this, "System Details");
-+    private final CrashReportCategory systemDetailsCategory = new CrashReportCategory(this, Message.getString("miencraft.crashreport"));
++    private final CrashReportCategory systemDetailsCategory = new CrashReportCategory(this, Message.getString("minecraft.crashreport"));
      private final List<CrashReportCategory> crashReportSections = Lists.<CrashReportCategory>newArrayList();
      private File crashReportFile;
      private boolean firstCategoryInCrashReport = true;
@@ -23,7 +23,7 @@
      private void populateEnvironment()
      {
 -        this.systemDetailsCategory.addDetail("Minecraft Version", new ICrashReportDetail<String>()
-+        this.systemDetailsCategory.addDetail(Message.getString("miencraft.crashreport1"), new ICrashReportDetail<String>()
++        this.systemDetailsCategory.addDetail(Message.getString("minecraft.crashreport1"), new ICrashReportDetail<String>()
          {
              public String call()
              {
@@ -32,16 +32,16 @@
              }
          });
 -        this.systemDetailsCategory.addDetail("Operating System", new ICrashReportDetail<String>()
-+        this.systemDetailsCategory.addDetail(Message.getString("miencraft.crashreport2"), new ICrashReportDetail<String>()
++        this.systemDetailsCategory.addDetail(Message.getString("minecraft.crashreport2"), new ICrashReportDetail<String>()
          {
              public String call()
              {
 -                return System.getProperty("os.name") + " (" + System.getProperty("os.arch") + ") version " + System.getProperty("os.version");
-+                return System.getProperty("os.name") + " (" + System.getProperty("os.arch") + ") " + Message.getString("miencraft.crashreport3") + " " + System.getProperty("os.version");
++                return System.getProperty("os.name") + " (" + System.getProperty("os.arch") + ") " + Message.getString("minecraft.crashreport3") + " " + System.getProperty("os.version");
              }
          });
 -        this.systemDetailsCategory.addDetail("Java Version", new ICrashReportDetail<String>()
-+        this.systemDetailsCategory.addDetail(Message.getString("miencraft.crashreport4"), new ICrashReportDetail<String>()
++        this.systemDetailsCategory.addDetail(Message.getString("minecraft.crashreport4"), new ICrashReportDetail<String>()
          {
              public String call()
              {
@@ -49,7 +49,7 @@
              }
          });
 -        this.systemDetailsCategory.addDetail("Java VM Version", new ICrashReportDetail<String>()
-+        this.systemDetailsCategory.addDetail(Message.getString("miencraft.crashreport5"), new ICrashReportDetail<String>()
++        this.systemDetailsCategory.addDetail(Message.getString("minecraft.crashreport5"), new ICrashReportDetail<String>()
          {
              public String call()
              {
@@ -57,7 +57,7 @@
              }
          });
 -        this.systemDetailsCategory.addDetail("Memory", new ICrashReportDetail<String>()
-+        this.systemDetailsCategory.addDetail(Message.getString("miencraft.crashreport6"), new ICrashReportDetail<String>()
++        this.systemDetailsCategory.addDetail(Message.getString("minecraft.crashreport6"), new ICrashReportDetail<String>()
          {
              public String call()
              {
@@ -66,7 +66,7 @@
              }
          });
 -        this.systemDetailsCategory.addDetail("JVM Flags", new ICrashReportDetail<String>()
-+        this.systemDetailsCategory.addDetail(Message.getString("miencraft.crashreport7"), new ICrashReportDetail<String>()
++        this.systemDetailsCategory.addDetail(Message.getString("minecraft.crashreport7"), new ICrashReportDetail<String>()
          {
              public String call()
              {
@@ -75,14 +75,14 @@
              }
          });
 -        this.systemDetailsCategory.addDetail("IntCache", new ICrashReportDetail<String>()
-+        this.systemDetailsCategory.addDetail(Message.getString("miencraft.crashreport8"), new ICrashReportDetail<String>()
++        this.systemDetailsCategory.addDetail(Message.getString("minecraft.crashreport8"), new ICrashReportDetail<String>()
          {
              public String call() throws Exception
              {
                  return IntCache.getCacheSizes();
              }
          });
-+        this.systemDetailsCategory.addDetail(Message.getString("miencraft.crashreport9"), (ICrashReportDetail) new org.bukkit.craftbukkit.v1_12_R1.CraftCrashReport());
++        this.systemDetailsCategory.addDetail(Message.getString("minecraft.crashreport9"), (ICrashReportDetail) new org.bukkit.craftbukkit.v1_12_R1.CraftCrashReport());
          net.minecraftforge.fml.common.FMLCommonHandler.instance().enhanceCrashReport(this, this.systemDetailsCategory);
      }
  
@@ -93,9 +93,9 @@
 -            builder.append("-- Head --\n");
 -            builder.append("Thread: ").append(Thread.currentThread().getName()).append("\n");
 -            builder.append("Stacktrace:\n");
-+            builder.append("-- " + Message.getString("miencraft.crashreport10") + " --\n");
-+            builder.append(Message.getString("miencraft.crashreport11") + ": ").append(Thread.currentThread().getName()).append("\n");
-+            builder.append(Message.getString("miencraft.crashreport12") + ":\n");
++            builder.append("-- " + Message.getString("minecraft.crashreport10") + " --\n");
++            builder.append(Message.getString("minecraft.crashreport11") + ": ").append(Thread.currentThread().getName()).append("\n");
++            builder.append(Message.getString("minecraft.crashreport12") + ":\n");
  
              for (StackTraceElement stacktraceelement : this.stacktrace)
              {
@@ -104,22 +104,22 @@
      {
          StringBuilder stringbuilder = new StringBuilder();
 -        stringbuilder.append("---- Minecraft Crash Report ----\n");
-+        stringbuilder.append(Message.getString("miencraft.crashreport13") + "\n");
++        stringbuilder.append(Message.getString("minecraft.crashreport13") + "\n");
          net.minecraftforge.fml.relauncher.CoreModManager.onCrash(stringbuilder);
 -        stringbuilder.append("// ");
 -        stringbuilder.append(getWittyComment());
          stringbuilder.append("\n\n");
 -        stringbuilder.append("Time: ");
-+        stringbuilder.append(Message.getString("miencraft.crashreport14") + ": ");
++        stringbuilder.append(Message.getString("minecraft.crashreport14") + ": ");
          stringbuilder.append((new SimpleDateFormat()).format(new Date()));
          stringbuilder.append("\n");
 -        stringbuilder.append("Description: ");
-+        stringbuilder.append(Message.getString("miencraft.crashreport15") + ": ");
++        stringbuilder.append(Message.getString("minecraft.crashreport15") + ": ");
          stringbuilder.append(this.description);
          stringbuilder.append("\n\n");
          stringbuilder.append(this.getCauseStackTraceOrString());
 -        stringbuilder.append("\n\nA detailed walkthrough of the error, its code path and all known details is as follows:\n");
-+        stringbuilder.append("\n\n" + Message.getString("miencraft.crashreport16") + ":\n");
++        stringbuilder.append("\n\n" + Message.getString("minecraft.crashreport16") + ":\n");
  
          for (int i = 0; i < 87; ++i)
          {
@@ -128,7 +128,7 @@
              catch (Throwable throwable)
              {
 -                LOGGER.error("Could not save crash report to {}", toFile, throwable);
-+                LOGGER.error(Message.getFormatString("miencraft.crashreport17", new Object[] {toFile}), throwable);
++                LOGGER.error(Message.getFormatString("minecraft.crashreport17", new Object[] {toFile}), throwable);
                  flag1 = false;
              }
              finally

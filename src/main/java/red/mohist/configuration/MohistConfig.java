@@ -50,7 +50,7 @@ public class MohistConfig extends ConfigBase{
     public List<String> autounloadWorld_whitelist=new ArrayList();
     public final BoolSetting fakePlayerLogin = new BoolSetting(this, "fake-players.do-login", false, "Raise login events for fake players");
     
-    public final BoolSetting pluginCheckBug = new BoolSetting(this, "plugin.promptBug", false, "Prompt for possible vulnerabilities of some plugins");// by lliioolllcn
+    public final BoolSetting pluginCheckBug = new BoolSetting(this, "plugin.promptBug", false, "Prompt for possible vulnerabilities of some plugins");// by lliioollcn
 
     /* ======================================================================== */
 
