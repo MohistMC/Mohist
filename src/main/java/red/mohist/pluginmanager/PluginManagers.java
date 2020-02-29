@@ -1,13 +1,19 @@
 package red.mohist.pluginmanager;
 
 import java.io.File;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.java.JavaPlugin;
-import red.mohist.util.i18n.Message;
 
 public class PluginManagers {
 
@@ -148,5 +154,40 @@ public class PluginManagers {
             sender.sendMessage(Message.getFormatString("pluginscommand.reloaded", d));
         }
         return true;
+    }
+    
+    private static Map<String, List<String>> plugins = new HashMap<String, List<String>>() {{
+        /* 表示exampl插件的1.0版本和2.0版本有这个漏洞 */
+        /* Indicates that the 1.0 and 2.0 versions of the example plugin have this vulnerability */
+        /*
+        put("example", new ArrayList<String>() {{
+            add("1.0");
+            add("2.0");
+        }});// 格式：插件名称,有漏洞的版本
+
+         */
+        /* 表示exampl1插件的所有版本都有这个漏洞 */
+        /* Indicates that all versions of the exampl1 plugin have this vulnerability */
+        /*
+        put("example1", new ArrayList<String>() {{
+            add("all");
+        }});
+         */
+
+        put("example", new ArrayList<String>() {{
+            add("all");
+        }});
+        put("example1", new ArrayList<String>() {{
+            add("1.0");
+        }});
+        put("example2", new ArrayList<String>() {{
+            add("1.0");
+            add("2.0");
+        }});
+    }};
+
+    public static synchronized boolean checkBug(Plugin plugin, String version) {
+        // 判断plugins是否为空，是的话返回false,否则判断plugins是否包含插件名称且plugins获取到的List是否包含当前插件版本，如果version为null，返回是否包含all，如果不为null,返回是否包含version
+        return !plugins.isEmpty() ? (plugins.containsKey(plugin.getName()) && (plugins.get(plugin.getName()).contains("all") || plugins.get(plugin.getName()).contains(version))) : false;
     }
 }
