@@ -183,6 +183,7 @@ public class Metrics {
         JSONObject data = new JSONObject();
 
         data.put("pluginName", pluginName); // Append the name of the plugin
+        data.put("id", "3939"); // Append the id of the plugin
         data.put("pluginVersion", pluginVersion); // Append the version of the plugin
         JSONArray customCharts = new JSONArray();
         for (CustomChart customChart : charts) {
@@ -223,7 +224,7 @@ public class Metrics {
         data.put("playerAmount", playerAmount);
         data.put("onlineMode", onlineMode);
         data.put("bukkitVersion", bukkitVersion);
-
+        data.put("bukkitName", "Mohist");
         data.put("javaVersion", javaVersion);
         data.put("osName", osName);
         data.put("osArch", osArch);
