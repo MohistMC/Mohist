@@ -8,19 +8,31 @@
  import net.minecraft.block.BlockPortal;
  import net.minecraft.block.state.IBlockState;
  import net.minecraft.block.state.pattern.BlockPattern;
-@@ -14,6 +15,9 @@
+@@ -14,6 +15,11 @@
  import net.minecraft.util.math.BlockPos;
  import net.minecraft.util.math.ChunkPos;
  import net.minecraft.util.math.MathHelper;
 +import org.bukkit.Location;
 +import org.bukkit.event.entity.EntityPortalExitEvent;
++import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 +import org.bukkit.util.Vector;
++import red.mohist.Mohist;
  
  public class Teleporter implements net.minecraftforge.common.util.ITeleporter
  {
-@@ -33,61 +37,93 @@
+@@ -29,65 +35,102 @@
+ 
+     public void placeInPortal(Entity entityIn, float rotationYaw)
+     {
++        placeInPortal(entityIn, rotationYaw, TeleportCause.MOD);
++    }
++
++    public void placeInPortal(Entity entityIn, float rotationYaw, TeleportCause cause)
++    {
+         if (this.world.provider.getDimensionType().getId() != 1)
          {
-             if (!this.placeInExistingPortal(entityIn, rotationYaw))
+-            if (!this.placeInExistingPortal(entityIn, rotationYaw))
++            if (!this.placeInExistingPortal(entityIn, rotationYaw) && cause != TeleportCause.MOD)
              {
 -                this.makePortal(entityIn);
 +                this.isTheEnd(entityIn);
@@ -143,7 +155,7 @@
  
              for (int i1 = -128; i1 <= 128; ++i1)
              {
-@@ -108,8 +144,7 @@
+@@ -108,8 +151,7 @@
  
                              double d1 = blockpos1.distanceSq(blockpos3);
  
@@ -153,7 +165,7 @@
                                  d0 = d1;
                                  blockpos = blockpos1;
                              }
-@@ -119,16 +154,104 @@
+@@ -119,16 +161,104 @@
              }
          }
  
@@ -266,7 +278,7 @@
              boolean flag1 = blockpattern$patternhelper.getForwards().rotateY().getAxisDirection() == EnumFacing.AxisDirection.NEGATIVE;
              double d2 = blockpattern$patternhelper.getForwards().getAxis() == EnumFacing.Axis.X ? (double)blockpattern$patternhelper.getFrontTopLeft().getZ() : (double)blockpattern$patternhelper.getFrontTopLeft().getX();
              double d6 = (double)(blockpattern$patternhelper.getFrontTopLeft().getY() + 1) - entityIn.getLastPortalVec().y * (double)blockpattern$patternhelper.getHeight();
-@@ -173,27 +296,250 @@
+@@ -173,27 +303,250 @@
                  f3 = 1.0F;
              }
  
@@ -529,7 +541,7 @@
      }
  
      public boolean makePortal(Entity entityIn)
-@@ -404,11 +750,11 @@
+@@ -404,11 +757,11 @@
          if (worldTime % 100L == 0L)
          {
              long i = worldTime - 300L;
@@ -543,3 +555,19 @@
  
                  if (teleporter$portalposition == null || teleporter$portalposition.lastUpdateTime < i)
                  {
+@@ -432,8 +785,14 @@
+     @Override
+     public void placeEntity(World world, Entity entity, float yaw)
+     {
++        placeEntity(world, entity, yaw, TeleportCause.MOD);
++    }
++
++    @Override
++    public void placeEntity(World world, Entity entity, float yaw, TeleportCause cause)
++    {
+         if (entity instanceof EntityPlayerMP)
+-            placeInPortal(entity, yaw);
++            placeInPortal(entity, yaw, cause);
+         else
+             placeInExistingPortal(entity, yaw);
+     }

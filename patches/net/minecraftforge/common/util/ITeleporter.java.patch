@@ -1,14 +1,20 @@
 --- ../src-base/minecraft/net/minecraftforge/common/util/ITeleporter.java
 +++ ../src-work/minecraft/net/minecraftforge/common/util/ITeleporter.java
-@@ -23,6 +23,7 @@
+@@ -23,6 +23,8 @@
  import net.minecraft.world.Teleporter;
  import net.minecraft.world.World;
  import net.minecraft.world.WorldProvider;
 +import org.bukkit.craftbukkit.v1_12_R1.CraftTravelAgent;
++import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
  
  /**
   * Interface for handling the placement of entities during dimension change.
-@@ -55,6 +56,7 @@
+@@ -52,9 +54,12 @@
+      */
+     void placeEntity(World world, Entity entity, float yaw);
+ 
++    void placeEntity(World world, Entity entity, float yaw, TeleportCause cause);
++
      // used internally to handle vanilla hardcoding
      default boolean isVanilla()
      {

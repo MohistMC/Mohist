@@ -1,0 +1,22 @@
+--- ../src-base/minecraft/net/minecraftforge/server/command/CommandSetDimension.java
++++ ../src-work/minecraft/net/minecraftforge/server/command/CommandSetDimension.java
+@@ -33,6 +33,7 @@
+ import javax.annotation.Nullable;
+ import java.util.Collections;
+ import java.util.List;
++import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
+ 
+ public class CommandSetDimension extends CommandBase
+ {
+@@ -116,5 +117,11 @@
+         {
+             entity.moveToBlockPosAndAngles(targetPos, yaw, entity.rotationPitch);
+         }
++
++        @Override
++        public void placeEntity(World world, Entity entity, float yaw, TeleportCause cause)
++        {
++            entity.moveToBlockPosAndAngles(targetPos, yaw, entity.rotationPitch);
++        }
+     }
+ }
