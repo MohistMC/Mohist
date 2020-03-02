@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/world/gen/ChunkProviderServer.java
 +++ ../src-work/minecraft/net/minecraft/world/gen/ChunkProviderServer.java
-@@ -26,11 +26,14 @@
+@@ -26,17 +26,39 @@
  import net.minecraft.world.chunk.storage.IChunkLoader;
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
@@ -15,8 +15,34 @@
 +    public final Set<Long> droppedChunksSet = Sets.<Long>newHashSet();
      public final IChunkGenerator chunkGenerator;
      public final IChunkLoader chunkLoader;
-     public final Long2ObjectMap<Chunk> id2ChunkMap = new Long2ObjectOpenHashMap<Chunk>(8192);
-@@ -83,6 +86,11 @@
+-    public final Long2ObjectMap<Chunk> id2ChunkMap = new Long2ObjectOpenHashMap<Chunk>(8192);
+     public final WorldServer world;
+     private final Set<Long> loadingChunks = com.google.common.collect.Sets.newHashSet();
++    // Paper start
++    protected Chunk lastChunkByPos = null;
++    public Long2ObjectOpenHashMap<Chunk> id2ChunkMap = new Long2ObjectOpenHashMap<Chunk>(8192) {
+ 
++        @Override
++        public Chunk get (long key) {
++            if (lastChunkByPos != null && key == lastChunkByPos.chunkKey) {
++                return lastChunkByPos;
++            }
++            return lastChunkByPos = super.get(key);
++        }
++
++        @Override
++        public Chunk remove (long key) {
++            if (lastChunkByPos != null && key == lastChunkByPos.chunkKey) {
++                lastChunkByPos = null;
++            }
++            return super.remove(key);
++        }
++    };
++    // Paper end
+     public ChunkProviderServer(WorldServer worldObjIn, IChunkLoader chunkLoaderIn, IChunkGenerator chunkGeneratorIn)
+     {
+         this.world = worldObjIn;
+@@ -83,6 +105,11 @@
          return chunk;
      }
  
@@ -28,7 +54,7 @@
      @Nullable
      public Chunk loadChunk(int x, int z)
      {
-@@ -92,6 +100,11 @@
+@@ -92,6 +119,11 @@
      @Nullable
      public Chunk loadChunk(int x, int z, @Nullable Runnable runnable)
      {
@@ -40,7 +66,7 @@
          Chunk chunk = this.getLoadedChunk(x, z);
          if (chunk == null)
          {
-@@ -106,7 +119,7 @@
+@@ -106,7 +138,7 @@
                  {
                  this.id2ChunkMap.put(ChunkPos.asLong(x, z), chunk);
                  chunk.onLoad();
@@ -49,7 +75,7 @@
                  }
  
                  loadingChunks.remove(pos);
-@@ -123,6 +136,8 @@
+@@ -123,6 +155,8 @@
                      return null;
                  }
              }
@@ -58,7 +84,7 @@
          }
  
          // If we didn't load the chunk async and have a callback run it now
-@@ -136,6 +151,7 @@
+@@ -136,6 +170,7 @@
  
          if (chunk == null)
          {
@@ -66,7 +92,7 @@
              long i = ChunkPos.asLong(x, z);
  
              try
-@@ -154,7 +170,8 @@
+@@ -154,7 +189,8 @@
  
              this.id2ChunkMap.put(i, chunk);
              chunk.onLoad();
@@ -76,7 +102,7 @@
          }
  
          return chunk;
-@@ -177,7 +194,7 @@
+@@ -177,7 +213,7 @@
          }
          catch (Exception exception)
          {
@@ -85,7 +111,7 @@
              return null;
          }
      }
-@@ -190,7 +207,7 @@
+@@ -190,7 +226,7 @@
          }
          catch (Exception exception)
          {
@@ -94,7 +120,7 @@
          }
      }
  
-@@ -203,22 +220,19 @@
+@@ -203,22 +239,19 @@
          }
          catch (IOException ioexception)
          {
@@ -121,7 +147,7 @@
  
              if (all)
              {
-@@ -229,11 +243,10 @@
+@@ -229,11 +262,10 @@
              {
                  this.saveChunkData(chunk);
                  chunk.setModified(false);
@@ -135,7 +161,7 @@
                  }
              }
          }
-@@ -266,17 +279,22 @@
+@@ -266,17 +298,22 @@
  
                      if (chunk != null && chunk.unloadQueued)
                      {
@@ -164,7 +190,7 @@
  
              this.chunkLoader.chunkTick();
          }
-@@ -284,6 +302,39 @@
+@@ -284,6 +321,39 @@
          return false;
      }
  

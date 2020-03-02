@@ -1,0 +1,147 @@
+--- ../src-base/minecraft/net/minecraft/util/math/BlockPos.java
++++ ../src-work/minecraft/net/minecraft/util/math/BlockPos.java
+@@ -74,72 +74,121 @@
+ 
+     public BlockPos up()
+     {
+-        return this.up(1);
++        return new BlockPos(this.getX(), this.getY() + 1, this.getZ()); // Paper - Optimize BlockPos
++        //return this.up(1);
+     }
+ 
+     public BlockPos up(int n)
+     {
+-        return this.offset(EnumFacing.UP, n);
++        return n == 0 ? this : new BlockPos(this.getX(), this.getY() + n, this.getZ()); // Paper - Optimize BlockPos
++        //return this.offset(EnumFacing.UP, n);
+     }
+ 
+     public BlockPos down()
+     {
+-        return this.down(1);
++        return new BlockPos(this.getX(), this.getY() - 1, this.getZ()); // Paper - Optimize BlockPos
++        //return this.down(1);
+     }
+ 
+     public BlockPos down(int n)
+     {
+-        return this.offset(EnumFacing.DOWN, n);
++        return n == 0 ? this : new BlockPos(this.getX(), this.getY() - n, this.getZ()); // Paper - Optimize BlockPos
++        //return this.offset(EnumFacing.DOWN, n);
+     }
+ 
+     public BlockPos north()
+     {
+-        return this.north(1);
++        return new BlockPos(this.getX(), this.getY(), this.getZ() - 1); // Paper - Optimize BlockPos
++        //return this.north(1);
+     }
+ 
+     public BlockPos north(int n)
+     {
+-        return this.offset(EnumFacing.NORTH, n);
++        return n == 0 ? this : new BlockPos(this.getX(), this.getY(), this.getZ() - n); // Paper - Optimize BlockPos
++        //return this.offset(EnumFacing.NORTH, n);
+     }
+ 
+     public BlockPos south()
+     {
+-        return this.south(1);
++        return new BlockPos(this.getX(), this.getY(), this.getZ() + 1); // Paper - Optimize BlockPos
++        //return this.south(1);
+     }
+ 
+     public BlockPos south(int n)
+     {
+-        return this.offset(EnumFacing.SOUTH, n);
++        return n == 0 ? this : new BlockPos(this.getX(), this.getY(), this.getZ() + n); // Paper - Optimize BlockPos
++        //return this.offset(EnumFacing.SOUTH, n);
+     }
+ 
+     public BlockPos west()
+     {
+-        return this.west(1);
++        return new BlockPos(this.getX() - 1, this.getY(), this.getZ()); // Paper - Optimize BlockPos
++        //return this.west(1);
+     }
+ 
+     public BlockPos west(int n)
+     {
+-        return this.offset(EnumFacing.WEST, n);
++        return n == 0 ? this : new BlockPos(this.getX() - n, this.getY(), this.getZ()); // Paper - Optimize BlockPos
++        //return this.offset(EnumFacing.WEST, n);
+     }
+ 
+     public BlockPos east()
+     {
+-        return this.east(1);
++        return new BlockPos(this.getX() + 1, this.getY(), this.getZ()); // Paper - Optimize BlockPos
++        //return this.east(1);
+     }
+ 
+     public BlockPos east(int n)
+     {
+-        return this.offset(EnumFacing.EAST, n);
++        return n == 0 ? this : new BlockPos(this.getX() + n, this.getY(), this.getZ()); // Paper - Optimize BlockPos
++        //return this.offset(EnumFacing.EAST, n);
+     }
+ 
+     public BlockPos offset(EnumFacing facing)
+     {
+-        return this.offset(facing, 1);
++        switch (facing)
++        {
++            case UP:
++                return new BlockPos(this.getX(), this.getY() + 1, this.getZ());
++            case DOWN:
++                return new BlockPos(this.getX(), this.getY() - 1, this.getZ());
++            case NORTH:
++                return new BlockPos(this.getX(), this.getY(), this.getZ() - 1);
++            case SOUTH:
++                return new BlockPos(this.getX(), this.getY(), this.getZ() + 1);
++            case WEST:
++                return new BlockPos(this.getX() - 1, this.getY(), this.getZ());
++            case EAST:
++                return new BlockPos(this.getX() + 1, this.getY(), this.getZ());
++            default:
++                return new BlockPos(this.getX() + facing.getFrontOffsetX(), this.getY() + facing.getFrontOffsetY(), this.getZ() + facing.getFrontOffsetZ());
++        }
++        //return this.offset(facing, 1);
+     }
+ 
+     public BlockPos offset(EnumFacing facing, int n)
+     {
+-        return n == 0 ? this : new BlockPos(this.getX() + facing.getFrontOffsetX() * n, this.getY() + facing.getFrontOffsetY() * n, this.getZ() + facing.getFrontOffsetZ() * n);
++        if (n == 0)
++            return this;
++
++        switch (facing)
++        {
++            case UP:
++                return new BlockPos(this.getX(), this.getY() + n, this.getZ());
++            case DOWN:
++                return new BlockPos(this.getX(), this.getY() - n, this.getZ());
++            case NORTH:
++                return new BlockPos(this.getX(), this.getY(), this.getZ() - n);
++            case SOUTH:
++                return new BlockPos(this.getX(), this.getY(), this.getZ() + n);
++            case WEST:
++                return new BlockPos(this.getX() - n, this.getY(), this.getZ());
++            case EAST:
++                return new BlockPos(this.getX() + n, this.getY(), this.getZ());
++            default:
++                return new BlockPos(this.getX() + facing.getFrontOffsetX() * n, this.getY() + facing.getFrontOffsetY() * n, this.getZ() + facing.getFrontOffsetZ() * n);
++        }
++        //return n == 0 ? this : new BlockPos(this.getX() + facing.getFrontOffsetX() * n, this.getY() + facing.getFrontOffsetY() * n, this.getZ() + facing.getFrontOffsetZ() * n);
+     }
+ 
+     public BlockPos rotate(Rotation rotationIn)
+@@ -456,7 +505,7 @@
+             {
+                 if (this.released)
+                 {
+-                    BlockPos.LOGGER.error("PooledMutableBlockPosition modified after it was released.", new Throwable());
++                    BlockPos.LOGGER.error("PooledMutableBlockPos modified after it was released.", new Throwable());
+                     this.released = false;
+                 }
+ 

@@ -1,6 +1,69 @@
 --- ../src-base/minecraft/net/minecraft/entity/ai/EntityAINearestAttackableTarget.java
 +++ ../src-work/minecraft/net/minecraft/entity/ai/EntityAINearestAttackableTarget.java
-@@ -122,7 +122,7 @@
+@@ -71,8 +71,9 @@
+         {
+             return false;
+         }
+-        else if (this.targetClass != EntityPlayer.class && this.targetClass != EntityPlayerMP.class)
++        else
+         {
++
+             List<T> list = this.taskOwner.world.<T>getEntitiesWithinAABB(this.targetClass, this.getTargetableArea(this.getTargetDistance()), this.targetEntitySelector);
+ 
+             if (list.isEmpty())
+@@ -81,37 +82,31 @@
+             }
+             else
+             {
++
+                 Collections.sort(list, this.sorter);
+                 this.targetEntity = list.get(0);
+-                return true;
+-            }
+-        }
+-        else
+-        {
+-            this.targetEntity = (T)this.taskOwner.world.getNearestAttackablePlayer(this.taskOwner.posX, this.taskOwner.posY + (double)this.taskOwner.getEyeHeight(), this.taskOwner.posZ, this.getTargetDistance(), this.getTargetDistance(), new Function<EntityPlayer, Double>()
+-            {
+-                @Nullable
+-                public Double apply(@Nullable EntityPlayer p_apply_1_)
++
++                if (this.targetEntity instanceof EntityPlayer)
+                 {
+-                    ItemStack itemstack = p_apply_1_.getItemStackFromSlot(EntityEquipmentSlot.HEAD);
+ 
+-                    if (itemstack.getItem() == Items.SKULL)
++                    EntityPlayer entityPlayer = (EntityPlayer) this.targetEntity;
++                    ItemStack itemStackOnHead = entityPlayer.getItemStackFromSlot(EntityEquipmentSlot.HEAD);
++
++                    if (itemStackOnHead.getItem() == Items.SKULL)
+                     {
+-                        int i = itemstack.getItemDamage();
++
++                        int i = itemStackOnHead.getItemDamage();
++
+                         boolean flag = EntityAINearestAttackableTarget.this.taskOwner instanceof EntitySkeleton && i == 0;
+                         boolean flag1 = EntityAINearestAttackableTarget.this.taskOwner instanceof EntityZombie && i == 2;
+                         boolean flag2 = EntityAINearestAttackableTarget.this.taskOwner instanceof EntityCreeper && i == 4;
+ 
+-                        if (flag || flag1 || flag2)
+-                        {
+-                            return 0.5D;
+-                        }
++                        return !flag && !flag1 && !flag2;
+                     }
+-
+-                    return 1.0D;
+                 }
+-            }, (Predicate<EntityPlayer>)this.targetEntitySelector);
+-            return this.targetEntity != null;
++
++                return true;
++            }
+         }
+     }
+ 
+@@ -122,7 +117,7 @@
  
      public void startExecuting()
      {

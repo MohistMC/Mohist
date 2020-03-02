@@ -1,0 +1,28 @@
+--- ../src-base/minecraft/net/minecraft/pathfinding/PathNavigateGround.java
++++ ../src-work/minecraft/net/minecraft/pathfinding/PathNavigateGround.java
+@@ -2,6 +2,7 @@
+ 
+ import net.minecraft.block.Block;
+ import net.minecraft.block.material.Material;
++import net.minecraft.block.state.IBlockState;
+ import net.minecraft.entity.Entity;
+ import net.minecraft.entity.EntityLiving;
+ import net.minecraft.init.Blocks;
+@@ -278,8 +279,16 @@
+ 
+             if (d0 * p_179692_8_ + d1 * p_179692_10_ >= 0.0D)
+             {
+-                Block block = this.world.getBlockState(blockpos).getBlock();
++                //TODO: Goodvise optimization start
++                IBlockState blockState = this.world.getBlockStateIfLoaded(blockpos);
+ 
++                if (blockState == null)
++                {
++                    return false;
++                }
++                //TODO: Goodvise patchfindg end;
++                Block block = blockState.getBlock();
++
+                 if (!block.isPassable(this.world, blockpos))
+                 {
+                     return false;
