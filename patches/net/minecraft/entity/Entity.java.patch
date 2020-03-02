@@ -842,7 +842,7 @@
      }
  
      public boolean isEntityInvulnerable(DamageSource source)
-@@ -2551,53 +2862,67 @@
+@@ -2551,53 +2862,58 @@
              if (!net.minecraftforge.common.ForgeHooks.onTravelToDimension(this, dimensionIn)) return null;
              this.world.profiler.startSection("changeDimension");
              MinecraftServer minecraftserver = this.getServer();
@@ -859,24 +859,7 @@
 +            // int i = this.dimension;
 +            // WorldServer worldserver = minecraftserver.getWorld(i);
 +            // WorldServer worldserver1 = minecraftserver.getWorld(dimensionIn);
-+            WorldServer exitWorld = null;
-+            if (this.dimension < CraftWorld.CUSTOM_DIMENSION_OFFSET) { // Plugins must specify exit from custom Bukkit worlds
-+                // Only target existing worlds (compensate for allow-nether/allow-end as false)
-+                for (WorldServer world : minecraftserver.worlds) {
-+                    if (world.dimension == dimensionIn) {
-+                        exitWorld = world;
-+                    }
-+                }
-             }
- 
--            this.world.removeEntity(this);
--            this.isDead = false;
--            this.world.profiler.startSection("reposition");
--            BlockPos blockpos;
--
--            if (dimensionIn == 1 && teleporter.isVanilla())
--            {
--                blockpos = worldserver1.getSpawnCoordinate();
++            WorldServer exitWorld = minecraftserver.getWorld(dimensionIn);
 +            BlockPos blockposition = null; // PAIL: CHECK
 +            Location enter = this.getBukkitEntity().getLocation();
 +            Location exit;
@@ -887,15 +870,24 @@
 +                    exit = minecraftserver.getPlayerList().calculateTarget(enter, minecraftserver.getWorld(dimensionIn));
 +                }
              }
+-
+-            this.world.removeEntity(this);
+-            this.isDead = false;
+-            this.world.profiler.startSection("reposition");
+-            BlockPos blockpos;
+-
+-            if (dimensionIn == 1 && teleporter.isVanilla())
+-            {
+-                blockpos = worldserver1.getSpawnCoordinate();
++            else {
++                exit = null;
+             }
 -            else
 -            {
 -                double moveFactor = worldserver.provider.getMovementFactor() / worldserver1.provider.getMovementFactor();
 -                double d0 = MathHelper.clamp(this.posX * moveFactor, worldserver1.getWorldBorder().minX() + 16.0D, worldserver1.getWorldBorder().maxX() - 16.0D);
 -                double d1 = MathHelper.clamp(this.posZ * moveFactor, worldserver1.getWorldBorder().minZ() + 16.0D, worldserver1.getWorldBorder().maxZ() - 16.0D);
 -                double d2 = 8.0D;
-+            else {
-+                exit = null;
-+            }
 +            boolean useTravelAgent = exitWorld != null && !(this.dimension == 1 && exitWorld.dimension == 1); // don't use agent for custom worlds or return from THE_END
  
 -                if (false && dimensionIn == -1)
@@ -950,7 +942,7 @@
              this.world.profiler.endStartSection("reloading");
              Entity entity = EntityList.newEntity(this.getClass(), worldserver1);
  
-@@ -2605,28 +2930,26 @@
+@@ -2605,28 +2921,26 @@
              {
                  entity.copyDataFromOld(this);
  
@@ -988,7 +980,7 @@
              return entity;
          }
          else
-@@ -2755,6 +3078,11 @@
+@@ -2755,6 +3069,11 @@
  
      public void setCustomNameTag(String name)
      {
@@ -1000,7 +992,7 @@
          this.dataManager.set(CUSTOM_NAME, name);
      }
  
-@@ -2838,7 +3166,25 @@
+@@ -2838,7 +3157,25 @@
  
      public void setEntityBoundingBox(AxisAlignedBB bb)
      {
@@ -1027,7 +1019,7 @@
      }
  
      public float getEyeHeight()
-@@ -2870,6 +3216,11 @@
+@@ -2870,6 +3207,11 @@
          return true;
      }
  
@@ -1039,7 +1031,7 @@
      public BlockPos getPosition()
      {
          return new BlockPos(this.posX, this.posY + 0.5D, this.posZ);
-@@ -2897,11 +3248,11 @@
+@@ -2897,11 +3239,11 @@
  
      public void setCommandStat(CommandResultStats.Type type, int amount)
      {
@@ -1055,7 +1047,7 @@
  
      @Nullable
      public MinecraftServer getServer()
-@@ -2974,7 +3325,6 @@
+@@ -2974,7 +3316,6 @@
      public void onRemovedFromWorld() {
          this.isAddedToWorld = false;
      }
@@ -1063,7 +1055,7 @@
      /**
       * Returns a NBTTagCompound that can be used to store custom data for this entity.
       * It will be written, and read from disc, so it persists over world saves.
-@@ -3030,7 +3380,7 @@
+@@ -3030,7 +3371,7 @@
          {
              return ((net.minecraft.entity.item.EntityMinecart)this).getCartItem();
          }
@@ -1072,7 +1064,7 @@
          {
              return new ItemStack(((EntityBoat)this).getItemBoat());
          }
-@@ -3109,14 +3459,14 @@
+@@ -3109,14 +3450,14 @@
      }
  
      @Override
@@ -1089,7 +1081,7 @@
      {
          return capabilities == null ? null : capabilities.getCapability(capability, facing);
      }
-@@ -3319,7 +3669,7 @@
+@@ -3319,7 +3660,7 @@
          return SoundCategory.NEUTRAL;
      }
  

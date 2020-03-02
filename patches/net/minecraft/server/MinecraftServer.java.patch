@@ -920,7 +920,7 @@
      }
  
      public File getFile(String fileName)
-@@ -826,11 +974,15 @@
+@@ -826,13 +974,17 @@
  
      public WorldServer getWorld(int dimension)
      {
@@ -937,8 +937,11 @@
 +            DimensionManager.initDimension(dimension);
 +            ret = DimensionManager.getWorld(dimension);
          }
-         return ret;
+-        return ret;
++        return ret != null ? ret : worlds[0];
      }
+ 
+     public String getMinecraftVersion()
 @@ -862,7 +1014,7 @@
  
      public String getServerModName()
