@@ -84,7 +84,7 @@
          if (id == 1)
          {
              this.openCount = type;
-@@ -427,4 +463,14 @@
+@@ -427,4 +463,8 @@
      {
          return new net.minecraftforge.items.wrapper.SidedInvWrapper(this, EnumFacing.UP);
      }
@@ -92,10 +92,4 @@
 +    // CARPET-optimizedTileEntities: Whether the tile entity is asleep or not.
 +    // False by default so tile entities wake up upon chunk loading
 +    private boolean isSleeping = false;
-+
-+    // CARPET-optimizedTileEntities
-+    @Override
-+    public void wakeUp(){
-+        this.isSleeping = false;
-+    }
  }

@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/tileentity/TileEntityLockable.java
 +++ ../src-work/minecraft/net/minecraft/tileentity/TileEntityLockable.java
-@@ -71,4 +71,15 @@
+@@ -71,4 +71,12 @@
      {
          return capability == net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABILITY || super.hasCapability(capability, facing);
      }
@@ -11,8 +11,5 @@
 +        if (world == null) return null;
 +        return new org.bukkit.Location(world.getWorld(), pos.getX(), pos.getY(), pos.getZ());
 +    }
-+
-+    // CARPET-optimizedTileEntities
-+    public abstract void wakeUp();
 +    // CraftBukkit end
  }

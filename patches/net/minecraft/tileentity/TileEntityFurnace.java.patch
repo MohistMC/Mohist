@@ -223,7 +223,7 @@
      {
          if (facing != null && capability == net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABILITY)
              if (facing == EnumFacing.DOWN)
-@@ -551,4 +626,14 @@
+@@ -551,4 +626,8 @@
                  return (T) handlerSide;
          return super.getCapability(capability, facing);
      }
@@ -231,10 +231,4 @@
 +    // CARPET-optimizedTileEntities: Whether the tile entity is asleep or not.
 +    // False by default so tile entities wake up upon chunk loading
 +    private boolean isSleeping = false;
-+
-+    // CARPET-optimizedTileEntities
-+    @Override
-+    public void wakeUp(){
-+        this.isSleeping = false;
-+    }
  }

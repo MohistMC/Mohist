@@ -56,7 +56,7 @@
      // -- BEGIN FORGE PATCHES --
      /**
       * Called when you receive a TileEntityData packet for the location this
-@@ -531,4 +551,33 @@
+@@ -531,4 +551,30 @@
          register("shulker_box", TileEntityShulkerBox.class);
          register("bed", TileEntityBed.class);
      }
@@ -85,8 +85,5 @@
 +        }
 +        return null;
 +    }
-+
-+    // CARPET-optimizedTileEntities
-+    public abstract void wakeUp();
 +    // CraftBukkit end
  }

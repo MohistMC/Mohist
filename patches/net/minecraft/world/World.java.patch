@@ -623,7 +623,7 @@
  
      private boolean getCollisionBoxes(@Nullable Entity entityIn, AxisAlignedBB aabb, boolean p_191504_3_, @Nullable List<AxisAlignedBB> outList)
      {
-+        return CollisionBoxesOptimizations.optimizedGetCollisionBoxes(this, entityIn, aabb, p_191504_3_, outList); // CARPET-MASA
++        //return CollisionBoxesOptimizations.optimizedGetCollisionBoxes(this, entityIn, aabb, p_191504_3_, outList); // CARPET-MASA
          int i = MathHelper.floor(aabb.minX) - 1;
          int j = MathHelper.ceil(aabb.maxX) + 1;
          int k = MathHelper.floor(aabb.minY) - 1;

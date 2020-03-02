@@ -141,7 +141,7 @@
      }
  
      public boolean isUsableByPlayer(EntityPlayer player)
-@@ -407,4 +471,13 @@
+@@ -407,4 +471,9 @@
      {
          this.brewingItemStacks.clear();
      }
@@ -150,8 +150,4 @@
 +    // CARPET-optimizedTileEntities: Whether the tile entity is asleep or not.
 +    // False by default so tile entities wake up upon chunk loading
 +    private boolean isSleeping = false;
-+
-+    // CARPET-optimizedTileEntities
-+    @Override
-+    public void wakeUp() { this.isSleeping = false; }
  }

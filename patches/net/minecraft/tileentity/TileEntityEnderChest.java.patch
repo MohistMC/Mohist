@@ -28,7 +28,7 @@
          if (id == 1)
          {
              this.numPlayersUsing = type;
-@@ -109,4 +119,14 @@
+@@ -109,4 +119,9 @@
              return player.getDistanceSq((double)this.pos.getX() + 0.5D, (double)this.pos.getY() + 0.5D, (double)this.pos.getZ() + 0.5D) <= 64.0D;
          }
      }
@@ -37,9 +37,4 @@
 +    // False by default so tile entities wake up upon chunk loading
 +    private boolean isSleeping = false;
 +
-+    // CARPET-optimizedTileEntities
-+    @Override
-+    public void wakeUp(){
-+        this.isSleeping = false;
-+    }
  }

@@ -147,7 +147,7 @@
          }
      }
  
-@@ -411,4 +472,14 @@
+@@ -411,4 +472,8 @@
      {
          return this.chestContents;
      }
@@ -155,10 +155,4 @@
 +    // CARPET-optimizedTileEntities: Whether the tile entity is asleep or not.
 +    // False by default so tile entities wake up upon chunk loading
 +    private boolean isSleeping = false;
-+
-+    // CARPET-optimizedTileEntities
-+    @Override
-+    public void wakeUp(){
-+        this.isSleeping = false;
-+    }
  }
