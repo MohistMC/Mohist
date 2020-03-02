@@ -5,7 +5,7 @@
              public void validateArgs(Object args)
              {
 -                if (!(args instanceof EntityPlayerMP))
-+                if (!(args instanceof EntityPlayer))
++                if (args != null && !(args instanceof EntityPlayer)) //by Goodvise
                  {
 -                    throw new RuntimeException("PLAYER target expects a Player arg");
 +                    throw new RuntimeException("PLAYER target expects a Player arg... it is a " + args.getClass().getName());
