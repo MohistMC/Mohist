@@ -59,11 +59,14 @@
      public int getSizeInventory()
      {
          return this.furnaceItemStacks.size();
-@@ -166,12 +198,28 @@
+@@ -166,12 +198,31 @@
  
      public void update()
      {
 -        boolean flag = this.isBurning();
++        // CARPET-optimizedTileEntities: Skip the update if sleeping
++        if(this.isSleeping)
++            return;
 +        boolean flag = (this.getBlockType() == Blocks.LIT_FURNACE); // CraftBukkit - SPIGOT-844 - Check if furnace block is lit using the block instead of burn time
          boolean flag1 = false;
  
@@ -90,7 +93,7 @@
          }
  
          if (!this.world.isRemote)
-@@ -180,13 +228,21 @@
+@@ -180,13 +231,21 @@
  
              if (this.isBurning() || !itemstack.isEmpty() && !((ItemStack)this.furnaceItemStacks.get(0)).isEmpty())
              {
@@ -118,7 +121,7 @@
                          flag1 = true;
  
                          if (!itemstack.isEmpty())
-@@ -202,33 +258,18 @@
+@@ -202,34 +261,23 @@
                          }
                      }
                  }
@@ -153,9 +156,14 @@
                  BlockFurnace.setState(this.isBurning(), this.world, this.pos);
 +                this.updateContainingBlockInfo(); // CraftBukkit - Invalidate tile entity's cached block type
              }
++
++            // CARPET-optimizedTileEntities: Fall asleep if not burning
++            if(!this.isBurning())
++                this.isSleeping = true;
          }
  
-@@ -289,6 +330,31 @@
+         if (flag1)
+@@ -289,6 +337,31 @@
              ItemStack itemstack1 = FurnaceRecipes.instance().getSmeltingResult(itemstack);
              ItemStack itemstack2 = this.furnaceItemStacks.get(2);
  
@@ -187,7 +195,7 @@
              if (itemstack2.isEmpty())
              {
                  this.furnaceItemStacks.set(2, itemstack1.copy());
-@@ -297,6 +363,8 @@
+@@ -297,6 +370,8 @@
              {
                  itemstack2.grow(itemstack1.getCount());
              }
@@ -196,7 +204,7 @@
  
              if (itemstack.getItem() == Item.getItemFromBlock(Blocks.SPONGE) && itemstack.getMetadata() == 1 && !((ItemStack)this.furnaceItemStacks.get(1)).isEmpty() && ((ItemStack)this.furnaceItemStacks.get(1)).getItem() == Items.BUCKET)
              {
-@@ -533,14 +601,14 @@
+@@ -533,14 +608,14 @@
          this.furnaceItemStacks.clear();
      }
  
@@ -215,3 +223,18 @@
      {
          if (facing != null && capability == net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABILITY)
              if (facing == EnumFacing.DOWN)
+@@ -551,4 +626,14 @@
+                 return (T) handlerSide;
+         return super.getCapability(capability, facing);
+     }
++
++    // CARPET-optimizedTileEntities: Whether the tile entity is asleep or not.
++    // False by default so tile entities wake up upon chunk loading
++    private boolean isSleeping = false;
++
++    // CARPET-optimizedTileEntities
++    @Override
++    public void wakeUp(){
++        this.isSleeping = false;
++    }
+ }

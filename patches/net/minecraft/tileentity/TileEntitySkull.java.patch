@@ -98,7 +98,17 @@
      public static void setProfileCache(PlayerProfileCache profileCacheIn)
      {
          profileCache = profileCacheIn;
-@@ -134,49 +201,90 @@
+@@ -82,7 +149,8 @@
+ 
+     public void update()
+     {
+-        if (this.skullType == 5)
++        // CARPET-optimizedTileEntities: Skip update on servers, because it only performs an animation
++        if (this.skullType == 5 && this.world.isRemote)
+         {
+             if (this.world.isBlockPowered(this.pos))
+             {
+@@ -134,49 +202,90 @@
  
      private void updatePlayerProfile()
      {

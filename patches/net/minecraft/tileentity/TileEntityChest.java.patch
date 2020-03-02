@@ -62,7 +62,48 @@
      }
  
      public void updateContainingBlockInfo()
-@@ -325,8 +353,21 @@
+@@ -212,6 +240,10 @@
+ 
+     public void update()
+     {
++
++         // CARPET-optimizedTileEntities: Skip the update if sleeping
++        if(this.isSleeping)
++            return;
+         this.checkForAdjacentChests();
+         int i = this.pos.getX();
+         int j = this.pos.getY();
+@@ -237,6 +269,10 @@
+             }
+         }
+ 
++        // CARPET-optimizedTileEntities: If no players are using the chest, go to sleep
++        if(this.numPlayersUsing == 0)
++            this.isSleeping = true;
++
+         this.prevLidAngle = this.lidAngle;
+         float f1 = 0.1F;
+ 
+@@ -260,6 +296,9 @@
+ 
+         if (this.numPlayersUsing == 0 && this.lidAngle > 0.0F || this.numPlayersUsing > 0 && this.lidAngle < 1.0F)
+         {
++            // CARPET-optimizedTileEntities: This is the closing animation.
++            // It is possible here that numPlayersUsing is 0, so make sure you don't sleep
++            this.isSleeping = false;
+             float f2 = this.lidAngle;
+ 
+             if (this.numPlayersUsing > 0)
+@@ -305,6 +344,8 @@
+ 
+     public boolean receiveClientEvent(int id, int type)
+     {
++        // CARPET-optimizedTileEntities: Wake up the chest when a player uses it
++        this.isSleeping = false;
+         if (id == 1)
+         {
+             this.numPlayersUsing = type;
+@@ -325,8 +366,21 @@
                  this.numPlayersUsing = 0;
              }
  
@@ -84,7 +125,7 @@
              this.world.notifyNeighborsOfStateChange(this.pos, this.getBlockType(), false);
  
              if (this.getChestType() == BlockChest.Type.TRAP)
-@@ -340,14 +381,21 @@
+@@ -340,14 +394,21 @@
      {
          if (!player.isSpectator() && this.getBlockType() instanceof BlockChest)
          {
@@ -106,3 +147,18 @@
          }
      }
  
+@@ -411,4 +472,14 @@
+     {
+         return this.chestContents;
+     }
++
++    // CARPET-optimizedTileEntities: Whether the tile entity is asleep or not.
++    // False by default so tile entities wake up upon chunk loading
++    private boolean isSleeping = false;
++
++    // CARPET-optimizedTileEntities
++    @Override
++    public void wakeUp(){
++        this.isSleeping = false;
++    }
+ }
