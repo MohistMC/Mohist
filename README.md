@@ -45,11 +45,12 @@ All builds will be in `.\build\distributions\`
  [**Mohist Remap Guide**](https://github.com/Mohist-Community/MohistRemapGuide)
 
 ### Thanks for the following project
-* [**Bukkit**](https://hub.spigotmc.org/stash/scm/spigot/bukkit.git) - plugin support.
-* [**Paper**](https://github.com/PaperMC/Paper.git) - performance optimizations.
-* [**CraftBukkit**](https://hub.spigotmc.org/stash/scm/spigot/craftbukkit.git) - plugin support.
-* [**Spigot**](https://hub.spigotmc.org/stash/scm/spigot/spigot.git) - plugin support.
-* [**MinecraftForge**](https://github.com/MinecraftForge/MinecraftForge.git) - mod support.
+* [**Bukkit**](https://hub.spigotmc.org/stash/scm/spigot/bukkit.git) - Plugin support.
+* [**Paper**](https://github.com/PaperMC/Paper.git) - Performance optimizations.
+* [**CraftBukkit**](https://hub.spigotmc.org/stash/scm/spigot/craftbukkit.git) - Plugin support.
+* [**Spigot**](https://hub.spigotmc.org/stash/scm/spigot/spigot.git) - Plugin support.
+* [**MinecraftForge**](https://github.com/MinecraftForge/MinecraftForge.git) - Mod support.
 * [**Atom**](https://gitlab.com/divinecode/atom/Atom.git) - Partial code source.
 * [**Thermos**](https://github.com/CyberdyneCC/Thermos.git) - Partial code source.
 * [**um_bukkit**](https://github.com/TechCatOther/um_bukkit.git) - Partial code source.
+* [**CarpetMod**](https://github.com/gnembon/carpetmod112.git) - Performance optimizations.
