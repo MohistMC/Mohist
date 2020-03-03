@@ -1,0 +1,13 @@
+--- ../src-base/minecraft/net/minecraft/tileentity/TileEntityEnchantmentTable.java
++++ ../src-work/minecraft/net/minecraft/tileentity/TileEntityEnchantmentTable.java
+@@ -52,6 +52,10 @@
+ 
+     public void update()
+     {
++        // CARPET-optimizedTileEntities: Skip the update on servers, because it only performs an animation
++        if(this.world.isRemote)
++            return;
++
+         this.bookSpreadPrev = this.bookSpread;
+         this.bookRotationPrev = this.bookRotation;
+         EntityPlayer entityplayer = this.world.getClosestPlayer((double)((float)this.pos.getX() + 0.5F), (double)((float)this.pos.getY() + 0.5F), (double)((float)this.pos.getZ() + 0.5F), 3.0D, false);

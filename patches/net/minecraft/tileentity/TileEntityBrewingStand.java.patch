@@ -61,7 +61,15 @@
      public String getName()
      {
          return this.hasCustomName() ? this.customName : "container.brewing";
-@@ -74,8 +107,19 @@
+@@ -70,12 +103,27 @@
+ 
+     public void update()
+     {
++        // CARPET-optimizedTileEntities: Skip the update if sleeping
++        if(this.isSleeping)
++            return;
++
+         ItemStack itemstack = this.brewingItemStacks.get(4);
  
          if (this.fuel <= 0 && itemstack.getItem() == Items.BLAZE_POWDER)
          {
@@ -83,7 +91,7 @@
              this.markDirty();
          }
  
-@@ -85,8 +129,10 @@
+@@ -85,8 +133,10 @@
  
          if (flag1)
          {
@@ -96,7 +104,18 @@
  
              if (flag2 && flag)
              {
-@@ -184,6 +230,16 @@
+@@ -134,6 +184,10 @@
+                 this.world.setBlockState(this.pos, iblockstate, 2);
+             }
+         }
++
++        // CARPET-optimizedTileEntities: Fall asleep if not brewing
++        if(this.brewTime == 0)
++            this.isSleeping = true;
+     }
+ 
+     public boolean[] createFilledSlotsArray()
+@@ -184,6 +238,16 @@
      {
          if (net.minecraftforge.event.ForgeEventFactory.onPotionAttemptBrew(brewingItemStacks)) return;
          ItemStack itemstack = this.brewingItemStacks.get(3);
@@ -113,7 +132,7 @@
  
          net.minecraftforge.common.brewing.BrewingRecipeRegistry.brewPotions(brewingItemStacks, brewingItemStacks.get(3), OUTPUT_SLOTS);
  
-@@ -269,7 +325,7 @@
+@@ -269,7 +333,7 @@
  
      public int getInventoryStackLimit()
      {
@@ -122,3 +141,13 @@
      }
  
      public boolean isUsableByPlayer(EntityPlayer player)
+@@ -407,4 +471,9 @@
+     {
+         this.brewingItemStacks.clear();
+     }
++
++
++    // CARPET-optimizedTileEntities: Whether the tile entity is asleep or not.
++    // False by default so tile entities wake up upon chunk loading
++    private boolean isSleeping = false;
+ }

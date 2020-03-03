@@ -53,3 +53,4 @@ Mohist-xxxxx-server.jar - 这是你应该运行的Jar
 * [**Atom**](https://gitlab.com/divinecode/atom/Atom.git) - 部分源代码.
 * [**Thermos**](https://github.com/CyberdyneCC/Thermos.git) - 部分源代码.
 * [**um_bukkit**](https://github.com/TechCatOther/um_bukkit.git) - 部分源代码.
+* [**CarpetMod**](https://github.com/gnembon/carpetmod112.git) - 性能优化.

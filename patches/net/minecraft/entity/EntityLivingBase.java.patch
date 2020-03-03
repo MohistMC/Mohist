@@ -916,14 +916,15 @@
          }
      }
  
-@@ -2434,38 +2706,41 @@
+@@ -2434,38 +2706,42 @@
      {
      }
  
 -    protected void collideWithNearbyEntities()
 -    {
 +    protected void collideWithNearbyEntities() {
-+        if (!(this instanceof EntityPlayerMP) && this.ticksExisted % MohistConfig.instance.entityCollideFrequency.getValue() == 0) {
++        // Collision calculations are cancelled if canBePushed() is false. Return here to lag optimize the collision code. CARPET-XCOM
++        if (!canBePushed() && !(this instanceof EntityPlayerMP) && this.ticksExisted % MohistConfig.instance.entityCollideFrequency.getValue() == 0) {
 +            return;
 +        }
          List<Entity> list = this.world.getEntitiesInAABBexcluding(this, this.getEntityBoundingBox(), EntitySelectors.getTeamCollisionPredicate(this));
@@ -983,7 +984,7 @@
      }
  
      protected void collideWithEntity(Entity entityIn)
-@@ -2560,12 +2835,12 @@
+@@ -2560,12 +2836,12 @@
  
      public boolean canBeCollidedWith()
      {
@@ -998,7 +999,7 @@
      }
  
      protected void markVelocityChanged()
-@@ -2629,7 +2904,7 @@
+@@ -2629,7 +2905,7 @@
          {
              PotionEffect effect = iterator.next();
  
@@ -1007,7 +1008,7 @@
              {
                  onFinishedPotionEffect(effect);
                  iterator.remove();
-@@ -2785,8 +3060,25 @@
+@@ -2785,8 +3061,25 @@
          if (!this.activeItemStack.isEmpty() && this.isHandActive())
          {
              this.updateItemUse(this.activeItemStack, 16);
@@ -1035,7 +1036,7 @@
              itemstack = net.minecraftforge.event.ForgeEventFactory.onItemUseFinish(this, activeItemStackCopy, getItemInUseCount(), itemstack);
              this.setHeldItem(this.getActiveHand(), itemstack);
              this.resetActiveHand();
-@@ -2897,11 +3189,14 @@
+@@ -2897,11 +3190,14 @@
  
              if (flag1)
              {
@@ -1055,7 +1056,7 @@
                  }
              }
          }
-@@ -2936,6 +3231,11 @@
+@@ -2936,6 +3232,11 @@
          }
      }
  
@@ -1067,7 +1068,7 @@
      public boolean canBeHitWithPotion()
      {
          return true;
-@@ -2949,7 +3249,7 @@
+@@ -2949,7 +3250,7 @@
      @SuppressWarnings("unchecked")
      @Override
      @Nullable
@@ -1076,7 +1077,7 @@
      {
          if (capability == net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABILITY)
          {
-@@ -2961,7 +3261,7 @@
+@@ -2961,7 +3262,7 @@
      }
  
      @Override
@@ -1085,7 +1086,7 @@
      {
          return capability == net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABILITY || super.hasCapability(capability, facing);
      }
-@@ -2975,7 +3275,7 @@
+@@ -2975,7 +3276,7 @@
      public void setPartying(BlockPos pos, boolean p_191987_2_)
      {
      }

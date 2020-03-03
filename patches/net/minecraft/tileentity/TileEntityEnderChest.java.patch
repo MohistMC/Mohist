@@ -1,0 +1,40 @@
+--- ../src-base/minecraft/net/minecraft/tileentity/TileEntityEnderChest.java
++++ ../src-work/minecraft/net/minecraft/tileentity/TileEntityEnderChest.java
+@@ -15,6 +15,11 @@
+ 
+     public void update()
+     {
++
++        // CARPET-optimizedTileEntities: Skip the rest of the update if sleeping
++        if(this.isSleeping)
++            return;
++        // I have seriously no clue what this code does, but it lags the server ALOT, so ill get rid of it.
+         if (++this.ticksSinceSync % 20 * 4 == 0)
+         {
+             this.world.addBlockEvent(this.pos, Blocks.ENDER_CHEST, 1, this.numPlayersUsing);
+@@ -65,10 +70,15 @@
+                 this.lidAngle = 0.0F;
+             }
+         }
++        // CARPET-optimizedTileEntities: Go to sleep if no one is using the chest and you are not performing an animation
++        else if(this.numPlayersUsing == 0)
++            this.isSleeping = true;
+     }
+ 
+     public boolean receiveClientEvent(int id, int type)
+     {
++        // CARPET-optimizedTileEntities: Wake up if a player is using the enderchest
++        this.isSleeping = false;
+         if (id == 1)
+         {
+             this.numPlayersUsing = type;
+@@ -109,4 +119,9 @@
+             return player.getDistanceSq((double)this.pos.getX() + 0.5D, (double)this.pos.getY() + 0.5D, (double)this.pos.getZ() + 0.5D) <= 64.0D;
+         }
+     }
++
++    // CARPET-optimizedTileEntities: Whether the tile entity is asleep or not.
++    // False by default so tile entities wake up upon chunk loading
++    private boolean isSleeping = false;
++
+ }

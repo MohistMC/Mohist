@@ -40,7 +40,36 @@
      public TileEntityShulkerBox()
      {
          this((EnumDyeColor)null);
-@@ -199,7 +225,7 @@
+@@ -56,6 +82,10 @@
+ 
+     public void update()
+     {
++        // CARPET-optimizedTileEntities: Skip the update if sleeping
++        if(this.isSleeping)
++            return;
++
+         this.updateAnimation();
+ 
+         if (this.animationStatus == TileEntityShulkerBox.AnimationStatus.OPENING || this.animationStatus == TileEntityShulkerBox.AnimationStatus.CLOSING)
+@@ -71,6 +101,8 @@
+         switch (this.animationStatus)
+         {
+             case CLOSED:
++                // CARPET-optimizedTileEntities: Fall asleep if closed
++                this.isSleeping = true;
+                 this.progress = 0.0F;
+                 break;
+             case OPENING:
+@@ -95,6 +127,8 @@
+ 
+                 break;
+             case OPENED:
++                // CARPET-optimizedTileEntities: Fall asleep if opened
++                this.isSleeping = true;
+                 this.progress = 1.0F;
+         }
+     }
+@@ -199,11 +233,13 @@
  
      public int getInventoryStackLimit()
      {
@@ -49,3 +78,18 @@
      }
  
      public boolean receiveClientEvent(int id, int type)
+     {
++        // CARPET-optimizedTileEntities: Skip the update if sleeping
++        this.isSleeping = false;
+         if (id == 1)
+         {
+             this.openCount = type;
+@@ -427,4 +463,8 @@
+     {
+         return new net.minecraftforge.items.wrapper.SidedInvWrapper(this, EnumFacing.UP);
+     }
++
++    // CARPET-optimizedTileEntities: Whether the tile entity is asleep or not.
++    // False by default so tile entities wake up upon chunk loading
++    private boolean isSleeping = false;
+ }
