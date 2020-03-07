@@ -8,22 +8,18 @@ import java.io.InputStreamReader;
 import java.net.URLClassLoader;
 import java.util.HashMap;
 import java.util.Map;
-import red.mohist.util.HttpUtil;
 import red.mohist.util.JarLoader;
 import red.mohist.util.MD5Util;
 import red.mohist.util.i18n.Message;
 
 public class DownloadLibraries {
 
-    public static final String FIND_LOCATE = "https://passport.lazercloud.com/api/v1/options/GetLocate";
     public static String url = "https://www.mgazul.cn/";
 
     public static void run() throws Exception {
         String path = null;
         try {
-            String locateInfo = HttpUtil.doGet(FIND_LOCATE);
-
-            if ((locateInfo != null && locateInfo.equals("CN")) || Message.getCountry().contains("CN")) {
+            if (Message.getCountry().contains("CN")) {
                 url = "https://mohist-community.gitee.io/mohistdown/"; //Gitee Mirror
             } else {
                 url = "https://www.mgazul.cn/"; //Github Mirror

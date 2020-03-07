@@ -22,7 +22,6 @@ public class Update {
             System.out.println(Message.getString("update.stopcheck"));
             URL url = new URL(str);
             URLConnection conn = url.openConnection();
-            conn.setConnectTimeout(10*1000);
             InputStream is = conn.getInputStream();
             String commits = IOUtil.readContent(is);
             String sha = "\"sha\":\"";

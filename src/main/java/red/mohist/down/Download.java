@@ -7,41 +7,39 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.nio.channels.Channels;
+import java.nio.channels.FileChannel;
+import java.nio.channels.ReadableByteChannel;
+import java.nio.file.StandardOpenOption;
 import red.mohist.util.i18n.Message;
 
 public class Download {
 
     public Download(String url, File savePath, String jaranme) {
+        ReadableByteChannel rbc = null;
+        FileChannel fileChannel = null;
         try {
             URL website = new URL(url);
 
             HttpURLConnection connection = (HttpURLConnection) website.openConnection();
-            connection.setConnectTimeout(10 * 1000);
-            connection.setRequestMethod("GET");
-            int code = connection.getResponseCode();
-            if (code == HttpURLConnection.HTTP_OK) {
+            if (connection.getResponseCode() < 400) {
                 long size = connection.getContentLengthLong();
 
                 System.out.println(Message.getFormatString("file.download.start", new Object[]{url, getSize(size)}));
 
-                DataInputStream in = new DataInputStream(website.openStream());
-                DataOutputStream out = new DataOutputStream(new FileOutputStream(savePath));
-                byte[] buffer = new byte[2048];
-                int count = 0;
-                while ((count = in.read(buffer)) > 0) {
-                    out.write(buffer, 0, count);
-                }
+                rbc = Channels.newChannel(website.openStream());
+                fileChannel = FileChannel.open(savePath.toPath(), StandardOpenOption.CREATE, StandardOpenOption.WRITE, StandardOpenOption.TRUNCATE_EXISTING);
+                fileChannel.transferFrom(rbc, 0L, Long.MAX_VALUE);
                 try {
-                    if (out != null) {
-                        out.close();
+                    if (rbc != null) {
+                        rbc.close();
                     }
-                    if (in != null) {
-                        in.close();
+                    if (fileChannel != null) {
+                        fileChannel.close();
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-                connection.disconnect();
                 System.out.println(Message.getFormatString("file.download.ok", new Object[]{jaranme}));
             } else {
                 System.out.println(Message.getFormatString("file.download.nook", new Object[]{url}));
@@ -52,12 +50,6 @@ public class Download {
     }
 
     public static String getSize(long size) {
-        if (size >= 1099511627776L) {
-            return (float) size / 1099511627776.0F + " TB";
-        }
-        if (size >= 1073741824L) {
-            return (float) size / 1073741824.0F + " GB";
-        }
         if (size >= 1048576L) {
             return (float) size / 1048576.0F + " MB";
         }
