@@ -48,6 +48,7 @@ public class MohistInheritanceProvider implements InheritanceProvider {
     }
 
     protected Set<String> findNormalParents(String className, boolean remap) {
+		//TODO: ScriptManager -> java.lang.ArrayIndexOutOfBoundsException: 27210
         ClassNode cn = MohistClassRepo.getInstance().findClass(className);
         if (cn == null) {
             if (!remap) {

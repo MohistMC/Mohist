@@ -79,7 +79,7 @@ public class RemapUtils {
                 classNode.accept(classRemapper);
                 classNode = container;
             }
-            ClassWriter writer = new ClassWriter(ClassWriter.COMPUTE_MAXS);
+            ClassWriter writer = new ClassWriter(0);
             classNode.accept(writer);
             bs = writer.toByteArray();
             return bs;
