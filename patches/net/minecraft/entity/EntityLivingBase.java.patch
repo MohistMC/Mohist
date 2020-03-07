@@ -617,7 +617,7 @@
              {
                  int i = (this.getActivePotionEffect(MobEffects.RESISTANCE).getAmplifier() + 1) * 5;
                  int j = 25 - i;
-@@ -1403,27 +1561,129 @@
+@@ -1403,27 +1561,131 @@
          }
      }
  
@@ -649,8 +649,10 @@
 +    protected boolean damageEntity_CB(final DamageSource damagesource, float f) { // void -> boolean, add final
 +        if (!this.isEntityInvulnerable(damagesource)) {
 +            final boolean human = this instanceof EntityPlayer;
-+            f = net.minecraftforge.common.ForgeHooks.onLivingHurt(this, damagesource, f);
-+            if (f <= 0) return true;
++            if (!human || f > 0) {
++                f = net.minecraftforge.common.ForgeHooks.onLivingHurt(this, damagesource, f);
++                if (f <= 0) return true;
+             }
 +            float originalDamage = f;
 +            Function<Double, Double> hardHat = f12 -> {
 +                if ((damagesource == DamageSource.ANVIL || damagesource == DamageSource.FALLING_BLOCK) && !EntityLivingBase.this.getItemStackFromSlot(EntityEquipmentSlot.HEAD).isEmpty()) {
@@ -692,7 +694,7 @@
 +            EntityDamageEvent event = CraftEventFactory.handleLivingEntityDamageEvent(this, damagesource, originalDamage, hardHatModifier, blockingModifier, armorModifier, resistanceModifier, magicModifier, absorptionModifier, hardHat, blocking, armor, resistance, magic, absorption);
 +            if (event.isCancelled()) {
 +                return false;
-             }
++            }
 +
 +            if (human && event.getDamage() > 0.0) {
 +                float damage = ISpecialArmor.ArmorProperties.applyArmor(this, (NonNullList)((EntityPlayer)this).inventory.armorInventory, damagesource, event.getDamage());
@@ -764,7 +766,7 @@
      }
  
      public CombatTracker getCombatTracker()
-@@ -1605,6 +1865,7 @@
+@@ -1605,6 +1867,7 @@
          if (this.attributeMap == null)
          {
              this.attributeMap = new AttributeMap();
@@ -772,7 +774,7 @@
          }
  
          return this.attributeMap;
-@@ -1843,9 +2104,9 @@
+@@ -1843,9 +2106,9 @@
                  if (!this.isInLava() || this instanceof EntityPlayer && ((EntityPlayer)this).capabilities.isFlying)
                  {
                      if (this.isElytraFlying())
@@ -784,7 +786,7 @@
                              this.fallDistance = 1.0F;
                          }
  
-@@ -1855,27 +2116,27 @@
+@@ -1855,27 +2118,27 @@
                          double d8 = Math.sqrt(this.motionX * this.motionX + this.motionZ * this.motionZ);
                          double d1 = vec3d.lengthVector();
                          float f4 = MathHelper.cos(f);
@@ -819,7 +821,7 @@
                              this.motionX += (vec3d.x / d6 * d8 - this.motionX) * 0.1D;
                              this.motionZ += (vec3d.z / d6 * d8 - this.motionZ) * 0.1D;
                          }
-@@ -1886,21 +2147,22 @@
+@@ -1886,21 +2149,22 @@
                          this.move(MoverType.SELF, this.motionX, this.motionY, this.motionZ);
  
                          if (this.collidedHorizontally && !this.world.isRemote)
@@ -848,7 +850,7 @@
                          }
                      }
                      else
-@@ -2093,6 +2355,7 @@
+@@ -2093,6 +2357,7 @@
      public void onUpdate()
      {
          if (net.minecraftforge.common.ForgeHooks.onLivingUpdate(this)) return;
@@ -856,7 +858,7 @@
          super.onUpdate();
          this.updateActiveHand();
  
-@@ -2176,7 +2439,9 @@
+@@ -2176,7 +2441,9 @@
              }
          }
  
@@ -866,7 +868,7 @@
          double d0 = this.posX - this.prevPosX;
          double d1 = this.posZ - this.prevPosZ;
          float f3 = (float)(d0 * d0 + d1 * d1);
-@@ -2269,6 +2534,7 @@
+@@ -2269,6 +2536,7 @@
          {
              this.ticksElytraFlying = 0;
          }
@@ -874,7 +876,7 @@
      }
  
      protected float updateDistance(float p_110146_1_, float p_110146_2_)
-@@ -2345,7 +2611,7 @@
+@@ -2345,7 +2613,7 @@
          }
  
          this.world.profiler.startSection("ai");
@@ -883,7 +885,7 @@
          if (this.isMovementBlocked())
          {
              this.isJumping = false;
-@@ -2359,6 +2625,7 @@
+@@ -2359,6 +2627,7 @@
              this.updateEntityActionState();
              this.world.profiler.endSection();
          }
@@ -891,7 +893,7 @@
  
          this.world.profiler.endSection();
          this.world.profiler.startSection("jump");
-@@ -2390,10 +2657,14 @@
+@@ -2390,10 +2659,14 @@
          this.moveForward *= 0.98F;
          this.randomYawVelocity *= 0.9F;
          this.updateElytra();
@@ -906,7 +908,7 @@
          this.world.profiler.endSection();
      }
  
-@@ -2426,7 +2697,8 @@
+@@ -2426,7 +2699,8 @@
  
          if (!this.world.isRemote)
          {
@@ -916,7 +918,7 @@
          }
      }
  
-@@ -2434,38 +2706,41 @@
+@@ -2434,38 +2708,41 @@
      {
      }
  
@@ -983,7 +985,7 @@
      }
  
      protected void collideWithEntity(Entity entityIn)
-@@ -2560,12 +2835,12 @@
+@@ -2560,12 +2837,12 @@
  
      public boolean canBeCollidedWith()
      {
@@ -998,7 +1000,7 @@
      }
  
      protected void markVelocityChanged()
-@@ -2629,7 +2904,7 @@
+@@ -2629,7 +2906,7 @@
          {
              PotionEffect effect = iterator.next();
  
@@ -1007,7 +1009,7 @@
              {
                  onFinishedPotionEffect(effect);
                  iterator.remove();
-@@ -2785,8 +3060,25 @@
+@@ -2785,8 +3062,25 @@
          if (!this.activeItemStack.isEmpty() && this.isHandActive())
          {
              this.updateItemUse(this.activeItemStack, 16);
@@ -1035,7 +1037,7 @@
              itemstack = net.minecraftforge.event.ForgeEventFactory.onItemUseFinish(this, activeItemStackCopy, getItemInUseCount(), itemstack);
              this.setHeldItem(this.getActiveHand(), itemstack);
              this.resetActiveHand();
-@@ -2897,11 +3189,14 @@
+@@ -2897,11 +3191,14 @@
  
              if (flag1)
              {
@@ -1055,7 +1057,7 @@
                  }
              }
          }
-@@ -2936,6 +3231,11 @@
+@@ -2936,6 +3233,11 @@
          }
      }
  
@@ -1067,7 +1069,7 @@
      public boolean canBeHitWithPotion()
      {
          return true;
-@@ -2949,7 +3249,7 @@
+@@ -2949,7 +3251,7 @@
      @SuppressWarnings("unchecked")
      @Override
      @Nullable
@@ -1076,7 +1078,7 @@
      {
          if (capability == net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABILITY)
          {
-@@ -2961,7 +3261,7 @@
+@@ -2961,7 +3263,7 @@
      }
  
      @Override
@@ -1085,7 +1087,7 @@
      {
          return capability == net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABILITY || super.hasCapability(capability, facing);
      }
-@@ -2975,7 +3275,7 @@
+@@ -2975,7 +3277,7 @@
      public void setPartying(BlockPos pos, boolean p_191987_2_)
      {
      }

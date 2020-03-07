@@ -1,4 +1,4 @@
-package org.bukkit.craftbukkit.v1_12_R1;
+package org.bukkit.craftbukkit;
 
 import java.io.File;
 import java.io.IOException;

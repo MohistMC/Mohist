@@ -1,2 +1,2 @@
 gradlew idea
-STOP
+pause

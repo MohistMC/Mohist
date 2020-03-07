@@ -36,18 +36,6 @@ public final class PluginClassLoader extends URLClassLoader {
     private JavaPlugin pluginInit;
     private IllegalStateException pluginState;
 
-    static {
-        try {
-            Class.forName("org.bukkit.PackageDefine");
-            Class.forName("org.bukkit.craftbukkit.PackageDefine");
-            Class.forName("org.spigotmc.PackageDefine");
-            Class.forName("com.destroystokyo.paper.PackageDefine");
-
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        }
-    }
-
     PluginClassLoader(final JavaPluginLoader loader, final ClassLoader parent, final PluginDescriptionFile description, final File dataFolder, final File file) throws IOException, InvalidPluginException {
         super(new URL[]{file.toURI().toURL()}, parent);
         Validate.notNull(loader, "Loader cannot be null");

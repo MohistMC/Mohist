@@ -6,7 +6,7 @@ import java.io.OutputStream;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import jline.console.ConsoleReader;
-import org.bukkit.craftbukkit.v1_12_R1.Main;
+import org.bukkit.craftbukkit.Main;
 import org.bukkit.craftbukkit.v1_12_R1.command.ColouredConsoleSender;
 
 @SuppressWarnings("ALL")

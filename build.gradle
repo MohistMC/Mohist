@@ -30,35 +30,72 @@ repositories {
 }
 
 dependencies {
-    // According to the order in the libraries folder, (Bukkit,craftbukkit,spigot,paper,mohist)
-    compile 'com.googlecode.json-simple:json-simple:1.1.1' // bukkit
-    compile 'commons-lang:commons-lang:2.6' // bukkit
-    compile 'jline:jline:2.13' //craftbukkit(2.12.1)
-    compile 'mysql:mysql-connector-java:5.1.46' // craftbukkit
-    compile 'mysql:mysql-connector-java:8.0.19' // mohist
-    compile 'net.md-5:SpecialSource:1.8.5' // mohist
-    compile 'net.md-5:bungeecord-chat:1.12-SNAPSHOT' // spigot
-    compile 'net.sf.jopt-simple:jopt-simple:5.0.3' // craftbukkit(5.0.4)
-    compile 'org.yaml:snakeyaml:1.19' // bukkit
-    compile 'org.xerial:sqlite-jdbc:3.21.0.1' // craftbukkit
-    compile 'org.apache.commons:commons-lang3:3.5'
-    compile 'org.ow2.asm:asm-debug-all:5.2' // mohist
-    compile 'org.jline:jline:3.5.1'
-    compile 'commons-io:commons-io:2.5'
-    compile 'net.sf.trove4j:trove4j:3.0.3'
-    compile 'org.jetbrains:annotations:18.0.0'
-
-    // minecraft_server.1.12.2.jar
-    compile 'io.netty:netty-all:4.1.9.Final' // TODO craftbukkit(4.1.24.Final)
+    compile 'junit:junit:4.12'
+    compile 'org.junit.jupiter:junit-jupiter-api:5.0.0'
+    compile 'org.opentest4j:opentest4j:1.0.0'
+    compile 'org.hamcrest:hamcrest-core:1.3'
     compile 'com.google.code.findbugs:jsr305:3.0.1'
+    compile 'com.mojang:patchy:1.1'
+    compile 'oshi-project:oshi-core:1.1'
+    compile 'net.java.dev.jna:jna:4.4.0'
+    compile 'net.java.dev.jna:platform:3.4.0'
+    compile 'com.ibm.icu:icu4j-core-mojang:51.2'
+    compile 'net.sf.jopt-simple:jopt-simple:5.0.3'
+    compile 'com.paulscode:codecjorbis:20101023'
+    compile 'com.paulscode:codecwav:20101023'
+    compile 'com.paulscode:libraryjavasound:20101123'
+    compile 'com.paulscode:librarylwjglopenal:20100824'
+    compile 'com.paulscode:soundsystem:20120107'
+    compile 'io.netty:netty-all:4.1.9.Final'
+    compile 'com.google.guava:guava:21.0'
+    compile 'org.apache.commons:commons-lang3:3.5'
+    compile 'commons-io:commons-io:2.5'
+    compile 'commons-codec:commons-codec:1.10'
+    compile 'net.java.jinput:jinput:2.0.5'
+    compile 'net.java.jutils:jutils:1.0.0'
+    compile 'com.google.code.gson:gson:2.8.0'
     compile 'com.mojang:authlib:1.5.25'
-    compile 'java3d:vecmath:1.5.2'
+    compile 'com.mojang:realms:1.10.22'
+    compile 'org.apache.commons:commons-compress:1.8.1'
+    compile 'org.apache.httpcomponents:httpclient:4.3.3'
+    compile 'commons-logging:commons-logging:1.1.3'
+    compile 'org.apache.httpcomponents:httpcore:4.3.2'
     compile 'it.unimi.dsi:fastutil:7.1.0'
     compile 'org.apache.logging.log4j:log4j-api:2.8.1'
     compile 'org.apache.logging.log4j:log4j-core:2.8.1'
-    compile 'com.google.code.gson:gson:2.8.0' // bukkit
-    compile 'com.google.guava:guava:21.0' //bukkit
+    compile 'org.lwjgl.lwjgl:lwjgl:2.9.4-nightly-20150209'
+    compile 'org.lwjgl.lwjgl:lwjgl_util:2.9.4-nightly-20150209'
+    compile 'com.mojang:text2speech:1.10.3'
     compile 'net.minecraft:launchwrapper:1.12'
+    compile 'org.jline:jline:3.5.1'
+    compile 'jline:jline:2.13'
+    compile 'com.google.code.findbugs:jsr305:1.3.9'
+    compile 'org.ow2.asm:asm-debug-all:5.2'
+    compile 'com.typesafe.akka:akka-actor_2.11:2.3.3'
+    compile 'com.typesafe:config:1.3.1'
+    compile 'org.scala-lang:scala-actors-migration_2.11:1.1.0'
+    compile 'org.scala-lang:scala-compiler:2.11.1'
+    compile 'org.scala-lang.plugins:scala-continuations-library_2.11:1.0.2'
+    compile 'org.scala-lang.plugins:scala-continuations-plugin_2.11.1:1.0.2'
+    compile 'org.scala-lang:scala-library:2.11.1'
+    compile 'org.scala-lang.modules:scala-parser-combinators_2.11:1.0.1'
+    compile 'org.scala-lang:scala-reflect:2.11.1'
+    compile 'org.scala-lang.modules:scala-swing_2.11:1.0.1'
+    compile 'org.scala-lang.modules:scala-xml_2.11:1.0.2'
+    compile 'com.googlecode.json-simple:json-simple:1.1.1'
+    compile 'org.yaml:snakeyaml:1.19'
+    compile 'lzma:lzma:0.0.1'
+    compile 'java3d:vecmath:1.5.2'
+    compile 'net.sf.trove4j:trove4j:3.0.3'
+    compile 'org.xerial:sqlite-jdbc:3.21.0.1'
+    compile 'mysql:mysql-connector-java:5.1.46'
+    compile 'mysql:mysql-connector-java:8.0.19'
+    compile 'net.md-5:SpecialSource:1.8.5'
+    compile 'net.md-5:bungeecord-chat:1.12-SNAPSHOT'
+    compile 'org.apache.commons:commons-lang3:3.5'
+    compile 'commons-lang:commons-lang:2.6'
+    compile 'org.jetbrains:annotations:18.0.0'
+    compile 'org.apache.maven:maven-artifact:3.5.3'
 }
 
 targetCompatibility = '1.8'
@@ -69,7 +106,6 @@ sourceSets {
     // Fix idea can't import module automatically
     main.java.srcDir 'src/main/java/'
     main.java.srcDir 'projects/Mohist/src/main/java/'
-    test.java.srcDir 'src/test/java/'
 }
 
 configurations.all {
@@ -82,7 +118,7 @@ minecraft {
     mappings = 'snapshot_nodoc_20171003'
     workspaceDir = "projects"
     versionJson = "jsons/${minecraft.version}-mohist-dev.json"
-    buildUserdev = false
+    buildUserdev = true
     buildInstaller = false
     installerVersion = "1.5"
 
@@ -158,6 +194,7 @@ launch4j {
 }
 tasks.createExe.dependsOn installer
 tasks.compileJava.enabled = false
+tasks.compileTestJava.enabled = false
 tasks.build.dependsOn 'launch4j'
 
 outputJar {
