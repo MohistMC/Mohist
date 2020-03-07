@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.List;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.server.MinecraftServer;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 
@@ -120,7 +121,7 @@ public class RestartCommand extends Command
                 {
                 }
             }
-            System.exit(0);
+            FMLCommonHandler.instance().exitJava(0, false);
         } catch ( Exception ex )
         {
             ex.printStackTrace();
