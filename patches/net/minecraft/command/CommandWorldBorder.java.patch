@@ -1,23 +1,19 @@
 --- ../src-base/minecraft/net/minecraft/command/CommandWorldBorder.java
 +++ ../src-work/minecraft/net/minecraft/command/CommandWorldBorder.java
-@@ -34,7 +34,7 @@
+@@ -3,6 +3,7 @@
+ import java.util.Collections;
+ import java.util.List;
+ import javax.annotation.Nullable;
++import net.minecraft.entity.player.EntityPlayerMP;
+ import net.minecraft.server.MinecraftServer;
+ import net.minecraft.util.math.BlockPos;
+ import net.minecraft.util.math.MathHelper;
+@@ -34,7 +35,7 @@
          }
          else
          {
 -            WorldBorder worldborder = this.getWorldBorder(server);
-+            WorldBorder worldborder = this.getWorldBorder(sender);
++            WorldBorder worldborder = sender instanceof EntityPlayerMP ? sender.getEntityWorld().getWorldBorder() : this.getWorldBorder(server);
  
              if ("set".equals(args[0]))
              {
-@@ -187,9 +187,9 @@
-         }
-     }
- 
--    protected WorldBorder getWorldBorder(MinecraftServer server)
-+    protected WorldBorder getWorldBorder(ICommandSender sender)
-     {
--        return server.worlds[0].getWorldBorder();
-+        return sender.getEntityWorld().getWorldBorder();
-     }
- 
-     public List<String> getTabCompletions(MinecraftServer server, ICommandSender sender, String[] args, @Nullable BlockPos targetPos)
