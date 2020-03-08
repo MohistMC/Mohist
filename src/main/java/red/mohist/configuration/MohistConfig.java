@@ -53,6 +53,8 @@ public class MohistConfig extends ConfigBase{
     public final BoolSetting pluginCheckBug = new BoolSetting(this, "plugin.promptBug", false, "Prompt for possible vulnerabilities of some plugins");// by lliioollcn
     public final BoolSetting CloseChatInConsole = new BoolSetting(this, "CloseChatInConsole", false, "Player's chat info will not be recorded in the console after opening");
 
+    public final IntSetting minChunkLoadThreads = new IntSetting(this, "settings.min-chunk-load-threads",2,"Keep people from doing stupid things with max of 6");
+
     /* ======================================================================== */
 
     public MohistConfig()

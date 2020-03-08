@@ -5,9 +5,10 @@ import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.storage.AnvilChunkLoader;
 import net.minecraft.world.gen.ChunkProviderServer;
 import org.bukkit.craftbukkit.v1_12_R1.util.AsynchronousExecutor;
+import red.mohist.configuration.MohistConfig;
 
 public class ChunkIOExecutor {
-    static final int BASE_THREADS = 2;
+    static final int BASE_THREADS = Math.min(6, MohistConfig.instance.minChunkLoadThreads.getValue());
     static final int PLAYERS_PER_THREAD = 50;
 
     private static final AsynchronousExecutor<QueuedChunk, Chunk, Runnable, RuntimeException> instance = new AsynchronousExecutor<>(new ChunkIOProvider(), BASE_THREADS);
