@@ -40,7 +40,7 @@ public class RemapUtils {
         jarMapping.packages.put("org/bukkit/craftbukkit/libs/it/unimi/dsi/fastutil/", "it/unimi/dsi/fastutil/");
         jarMapping.packages.put("org/bukkit/craftbukkit/libs/jline/", "jline/");
         jarMapping.packages.put("org/bukkit/craftbukkit/libs/joptsimple/", "joptsimple/");
-        jarMapping.packages.put("catserver/api/bukkit/event/ForgeEvent", "red/mohist/api/event/BukkitHookForgeEvent");
+        jarMapping.classes.put("catserver/api/bukkit/event/ForgeEvent", "red/mohist/api/event/BukkitHookForgeEvent");
         jarMapping.registerFieldMapping("catserver/api/bukkit/event/ForgeEvent","handlers", "red/mohist/api/event/BukkitHookForgeEvent", "handlers");
         jarMapping.registerFieldMapping("catserver/api/bukkit/event/ForgeEvent","forgeEvent", "red/mohist/api/event/BukkitHookForgeEvent", "event");
         jarMapping.registerMethodMapping("org/bukkit/Bukkit", "getOnlinePlayers", "()[Lorg/bukkit/entity/Player;", "org/bukkit/Bukkit", "_INVALID_getOnlinePlayers", "()[Lorg/bukkit/entity/Player;");
