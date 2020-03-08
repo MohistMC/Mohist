@@ -2,15 +2,9 @@ package red.mohist.common.remap.remappers;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ListIterator;
 import net.md_5.specialsource.repo.CachingRepo;
 import org.objectweb.asm.ClassReader;
-import org.objectweb.asm.Opcodes;
-import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.ClassNode;
-import org.objectweb.asm.tree.MethodInsnNode;
-import org.objectweb.asm.tree.MethodNode;
-import red.mohist.Mohist;
 import red.mohist.common.remap.ClassLoaderContext;
 
 /**

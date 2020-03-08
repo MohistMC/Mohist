@@ -76,21 +76,19 @@ public class DelegateURLClassLoder extends URLClassLoader {
         try {
             final String path = name.replace('.', '/').concat(".class");
             final URL url = this.findResource(path);
-            if (url == null) {
-                return null;
-            }
-            final InputStream stream = url.openStream();
-            if (stream == null) {
-                return null;
-            }
-            byte[] bytecode = IOUtils.toByteArray(stream);
-            bytecode = RemapUtils.remapFindClass(name, bytecode);
-            final JarURLConnection jarURLConnection = (JarURLConnection) url.openConnection();
-            final URL jarURL = jarURLConnection.getJarFileURL();
-            final CodeSource codeSource = new CodeSource(jarURL, new CodeSigner[0]);
-            result = this.defineClass(name, bytecode, 0, bytecode.length, codeSource);
-            if (result != null) {
-                this.resolveClass(result);
+            if (url != null) {
+                final InputStream stream = url.openStream();
+                if (stream != null) {
+                    byte[] bytecode = IOUtils.toByteArray(stream);
+                    bytecode = RemapUtils.remapFindClass(bytecode);
+                    final JarURLConnection jarURLConnection = (JarURLConnection) url.openConnection();
+                    final URL jarURL = jarURLConnection.getJarFileURL();
+                    final CodeSource codeSource = new CodeSource(jarURL, new CodeSigner[0]);
+                    result = this.defineClass(name, bytecode, 0, bytecode.length, codeSource);
+                    if (result != null) {
+                        this.resolveClass(result);
+                    }
+                }
             }
         } catch (Throwable t) {
             throw new ClassNotFoundException("Failed to remap class " + name, t);

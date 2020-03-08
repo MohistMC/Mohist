@@ -60,4 +60,12 @@ public class ProxyClass {
         Objects.requireNonNull(clazz);
         return RemapUtils.inverseMapSimpleName(clazz);
     }
+
+    public static Method[] getDeclaredMethods(Class<?> inst) {
+        try {
+            return inst.getDeclaredMethods();
+        } catch (NoClassDefFoundError e) {
+            return new Method[]{};
+        }
+    }
 }

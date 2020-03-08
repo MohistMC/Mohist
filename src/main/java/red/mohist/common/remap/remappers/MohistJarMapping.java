@@ -37,8 +37,6 @@ public class MohistJarMapping implements ClassRemapperSupplier {
     public final Map<String, String> fields = new HashMap<>();
     public final Map<String, String> methods = new HashMap<>();
     public final Map<String, String> fastMapping = new HashMap<>();
-    public final Set<String> doNotMapField = new HashSet<>();
-    public final Set<String> doNotMapMethod = new HashSet<>();
 
     public MohistJarMapping() {
     }
@@ -72,12 +70,8 @@ public class MohistJarMapping implements ClassRemapperSupplier {
     }
 
     public String fastMapFieldName(Class<?> clazz, String name) {
-        if (doNotMapField.contains(clazz.getName())) {
-            return name;
-        }
         String mapped = fastMapFieldName(false, clazz, clazz.getName() + " " + name, name);
         if (mapped == null) {
-//            doNotMapField.add(clazz.getName());
             return name;
         } else {
             return mapped;
@@ -85,12 +79,8 @@ public class MohistJarMapping implements ClassRemapperSupplier {
     }
 
     public String fastReverseMapFieldName(Class<?> clazz, String name) {
-        if (doNotMapField.contains(clazz.getName())) {
-            return name;
-        }
         String mapped = fastMapFieldName(true, clazz, clazz.getName() + " " + name, name);
         if (mapped == null) {
-//            doNotMapField.add(clazz.getName());
             return name;
         } else {
             return mapped;
@@ -98,12 +88,8 @@ public class MohistJarMapping implements ClassRemapperSupplier {
     }
 
     public String fastMapMethodName(Class<?> clazz, String name, Class<?>... args) {
-        if (doNotMapMethod.contains(clazz.getName())) {
-            return name;
-        }
         String mapped = fastMapMethodName(false, clazz, clazz.getName() + " " + name + " " + join(args), name, args);
         if (mapped == null) {
-//            doNotMapMethod.add(clazz.getName());
             return name;
         } else {
             return mapped;
@@ -111,12 +97,8 @@ public class MohistJarMapping implements ClassRemapperSupplier {
     }
 
     public String fastReverseMapMethodName(Class<?> clazz, String name, Class<?>... args) {
-        if (doNotMapMethod.contains(clazz.getName())) {
-            return name;
-        }
         String mapped = fastMapMethodName(true, clazz, clazz.getName() + " " + name + " " + join(args), name, args);
         if (mapped == null) {
-//            doNotMapMethod.add(clazz.getName());
             return name;
         } else {
             return mapped;

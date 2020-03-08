@@ -15,6 +15,7 @@ import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.commons.MethodRemapper;
 import org.objectweb.asm.commons.Remapper;
+import red.mohist.Mohist;
 import red.mohist.common.remap.ASMUtils;
 import red.mohist.common.remap.model.MethodRedirectRule;
 import red.mohist.common.remap.proxy.DelegateURLClassLoder;
@@ -44,6 +45,7 @@ public class ReflectMethodRemapper extends MethodRemapper {
         registerMethodRemapper("java/lang/Class", "getDeclaredMethod", Method.class, new Class[]{String.class, Class[].class}, ProxyClass.class);
         registerMethodRemapper("java/lang/Class", "getName", String.class, new Class[]{}, ProxyClass.class);
         registerMethodRemapper("java/lang/Class", "getSimpleName", String.class, new Class[]{}, ProxyClass.class);
+        registerMethodRemapper("java/lang/Class", "getDeclaredMethods", Method.class, new Class[]{}, ProxyClass.class);
         registerMethodRemapper("java/lang/reflect/Method", "getName", String.class, new Class[]{}, ProxyMethod.class);
         registerMethodRemapper("java/lang/reflect/Field", "getName", String.class, new Class[]{}, ProxyField.class);
         registerMethodRemapper("java/lang/invoke/MethodType", "fromMethodDescriptorString", MethodType.class, new Class[]{String.class, ClassLoader.class}, ProxyMethodType.class);

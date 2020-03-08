@@ -12,7 +12,7 @@ public class ProxyClassWriter {
 
     public static byte[] remapClass(byte[] code) {
         try {
-            return RemapUtils.remapFindClass(null, code);
+            return RemapUtils.remapFindClass(code);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

@@ -32,6 +32,7 @@ import sun.reflect.Reflection;
 public class RemapUtils {
 
     public static final MohistJarMapping jarMapping;
+    public static final MohistJarRemapper jarRemapper;
     private static final List<Remapper> remappers = new ArrayList<>();
     public static Map<String, String> relocations = new HashMap<>();
 
@@ -59,7 +60,7 @@ public class RemapUtils {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        MohistJarRemapper jarRemapper = new MohistJarRemapper(jarMapping);
+        jarRemapper = new MohistJarRemapper(jarMapping);
         remappers.add(jarRemapper);
         remappers.add(new ReflectRemapper());
         jarMapping.initFastMethodMapping(jarRemapper);
@@ -67,10 +68,11 @@ public class RemapUtils {
 
     private static final Object remapLock = new Object();
 
-    public static byte[] remapFindClass(String name, byte[] bs) throws IOException {
+    public static byte[] remapFindClass(byte[] bs) throws IOException {
         synchronized (remapLock) {
+            ClassReader reader = new ClassReader(bs); // Turn from bytes into visitor
             ClassNode classNode = new ClassNode();
-            new ClassReader(bs).accept(classNode, ClassReader.EXPAND_FRAMES);
+            reader.accept(classNode, ClassReader.EXPAND_FRAMES);
             for (Remapper remapper : remappers) {
 
                 ClassNode container = new ClassNode();
