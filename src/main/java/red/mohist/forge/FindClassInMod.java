@@ -2,9 +2,7 @@ package red.mohist.forge;
 
 import java.io.File;
 import java.io.FileFilter;
-import java.util.Arrays;
 import java.util.Enumeration;
-import java.util.List;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 

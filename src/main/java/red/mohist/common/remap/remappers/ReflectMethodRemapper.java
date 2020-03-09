@@ -15,7 +15,6 @@ import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.commons.MethodRemapper;
 import org.objectweb.asm.commons.Remapper;
-import red.mohist.Mohist;
 import red.mohist.common.remap.ASMUtils;
 import red.mohist.common.remap.model.MethodRedirectRule;
 import red.mohist.common.remap.proxy.DelegateURLClassLoder;

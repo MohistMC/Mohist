@@ -100,6 +100,7 @@ import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.command.SimpleCommandMap;
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.conversations.Conversable;
@@ -171,9 +172,8 @@ import org.yaml.snakeyaml.constructor.SafeConstructor;
 import org.yaml.snakeyaml.error.MarkedYAMLException;
 import red.mohist.Mohist;
 import red.mohist.configuration.MohistConfig;
-import red.mohist.util.i18n.Message;
-import org.bukkit.configuration.file.FileConfiguration;
 import red.mohist.pluginmanager.PluginManagers;
+import red.mohist.util.i18n.Message;
 
 public final class CraftServer implements Server {
     static {
