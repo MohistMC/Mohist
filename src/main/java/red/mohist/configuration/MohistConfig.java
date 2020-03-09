@@ -54,6 +54,7 @@ public class MohistConfig extends ConfigBase{
     public final BoolSetting CloseChatInConsole = new BoolSetting(this, "CloseChatInConsole", false, "Player's chat info will not be recorded in the console after opening");
 
     public final IntSetting minChunkLoadThreads = new IntSetting(this, "settings.min-chunk-load-threads",2,"Keep people from doing stupid things with max of 6");
+    public final BoolSetting keepSpawnInMemory = new BoolSetting(this, "keep-spawn-loaded", true, "Keep spawn chunk loaded");
 
     /* ======================================================================== */
 
