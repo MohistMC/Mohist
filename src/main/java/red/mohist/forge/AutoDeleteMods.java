@@ -16,6 +16,7 @@ public class AutoDeleteMods {
                 "org.spongepowered.mod.SpongeMod" /*SpongeForge*/,
                 "org.dimdev.vanillafix.VanillaFix" /*VanillaFix*/,
                 "lumien.custommainmenu.CustomMainMenu" /*CustomMainMenu*/,
+                "com.performant.coremod.Performant" /*Performant*/,
                 "optifine.Differ" /*OptiFine*/);
     }
 }

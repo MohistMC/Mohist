@@ -29,3 +29,5 @@ libraries/org/scala-lang/scala-swing_2.11/1.0.1/scala-swing_2.11-1.0.1.jar|5d8c9
 libraries/org/scala-lang/scala-xml_2.11/1.0.2/scala-xml_2.11-1.0.2.jar|a54ca733ef0ede9c343f1ce9ed0b527c
 libraries/org/xerial/sqlite-jdbc/3.21.0.1/sqlite-jdbc-3.21.0.1.jar|ae5064ef5ef5005e6c7e5bb95fd8e9ba
 libraries/org/yaml/snakeyaml/1.19/snakeyaml-1.19.jar|95472b5a0ded8761545342a087e82117
+libraries/org/cache2k/cache2k-api/1.3.1.Alpha/cache2k-api-1.3.1.Alpha.jar|6646194a67c3ffd53acda6d16f8c17a0
+libraries/org/cache2k/cache2k-core/1.3.1.Alpha/cache2k-core-1.3.1.Alpha.jar|fd13bcf2add15f3ead58f5b0cd7f20f9
