@@ -11,6 +11,8 @@ public class MohistThreadBox {
 
     public static final ExecutorService ASYNCCHAT = Executors.newCachedThreadPool(new NamedThreadFactory("Async Chat Thread"));
 
+    public static final ExecutorService FILEIO = Executors.newFixedThreadPool(2, new NamedThreadFactory("Mohist File IO Thread"));
+
     public static final ExecutorService ASYNCEXECUTOR = Executors.newSingleThreadExecutor(new NamedThreadFactory("Mohist Async Task Handler Thread"));
 
     public static final ExecutorService TCW = Executors.newSingleThreadExecutor(new NamedThreadFactory("TerminalConsoleWriter"));
