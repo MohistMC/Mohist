@@ -619,7 +619,7 @@
              this.finalTick(crashreport);
          }
          finally
-@@ -577,15 +666,22 @@
+@@ -577,13 +666,20 @@
              try
              {
                  this.stopServer();
@@ -632,18 +632,15 @@
              }
              finally
              {
--                net.minecraftforge.fml.common.FMLCommonHandler.instance().handleServerStopped();
-                 this.serverStopped = true;
 +                // CraftBukkit start - Restore terminal to original settings
 +                try {
 +                    reader.getTerminal().restore();
 +                } catch (Exception ignored) {
 +                }
 +                // CraftBukkit end
-+                FMLCommonHandler.instance().handleServerStopped();
+                 net.minecraftforge.fml.common.FMLCommonHandler.instance().handleServerStopped();
+                 this.serverStopped = true;
                  this.systemExitNow();
-             }
-         }
 @@ -607,8 +703,11 @@
              try
              {
