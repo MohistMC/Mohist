@@ -19,7 +19,7 @@ public class DownloadLibraries {
     public static void run() throws Exception {
         String path = null;
         try {
-            if (Message.getCountry().contains("CN")) {
+            if (Message.getLocale().contains("CN") || Message.getCountry().contains("CN")) {
                 url = "https://mohist-community.gitee.io/mohistdown/"; //Gitee Mirror
             } else {
                 url = "https://www.mgazul.cn/"; //Github Mirror

@@ -1,7 +1,6 @@
 package red.mohist;
 
 import java.io.File;
-import java.net.URLClassLoader;
 import org.apache.logging.log4j.Logger;
 import red.mohist.configuration.MohistConfigUtil;
 import red.mohist.down.DownloadLibraries;
@@ -21,7 +20,8 @@ public class Mohist {
     }
 
     public static void main(String[] args) throws Throwable {
-        if (!(Mohist.class.getClassLoader() instanceof URLClassLoader)) {
+        float javaVersion = Float.parseFloat(System.getProperty("java.class.version"));
+        if (javaVersion != 52.0) {
             System.out.println(Message.getString("unsupported.java.version"));
             System.exit(0);
         }
