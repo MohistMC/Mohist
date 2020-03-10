@@ -1,16 +1,15 @@
 package org.bukkit.craftbukkit.inventory;
 
-import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap.Builder;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.ITextComponent.Serializer;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.nbt.StringNBT;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.ITextComponent.Serializer;
 import org.apache.commons.lang.Validate;
 import org.bukkit.Material;
 import org.bukkit.configuration.serialization.DelegateDeserialization;
@@ -128,7 +127,7 @@ public class CraftMetaBook extends CraftMetaItem implements BookMeta {
             if (hasPages()) {
                 ListNBT list = new ListNBT();
                 for (ITextComponent page : pages) {
-                    list.add(StringNBT.func_229705_a_(page == null ? "" : page.getFormattedText()));
+                    list.add(StringNBT.valueOf(page == null ? "" : page.getFormattedText()));
                 }
                 itemData.put(BOOK_PAGES.NBT, list);
             }

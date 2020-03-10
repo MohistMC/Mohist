@@ -64,7 +64,7 @@ public class CustomChunkGenerator extends InternalChunkGenerator<GenerationSetti
 
         @Override
         public Biome getBiome(int x, int y, int z) {
-            return CraftBlock.biomeBaseToBiome(biome.func_225526_b_(x >> 2, y >> 2, z >> 2));
+            return CraftBlock.biomeBaseToBiome(biome.getNoiseBiome(x >> 2, y >> 2, z >> 2));
         }
 
         @Override

@@ -1,18 +1,19 @@
 package org.bukkit.craftbukkit.inventory.util;
 
-import net.minecraft.world.dimension.DimensionType;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.tileentity.AbstractFurnaceTileEntity;
 import net.minecraft.tileentity.BlastFurnaceTileEntity;
 import net.minecraft.tileentity.BrewingStandTileEntity;
 import net.minecraft.tileentity.DispenserTileEntity;
 import net.minecraft.tileentity.DropperTileEntity;
-import net.minecraft.tileentity.AbstractFurnaceTileEntity;
 import net.minecraft.tileentity.FurnaceTileEntity;
 import net.minecraft.tileentity.HopperTileEntity;
 import net.minecraft.tileentity.LecternTileEntity;
 import net.minecraft.tileentity.LockableLootTileEntity;
 import net.minecraft.tileentity.SmokerTileEntity;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.dimension.DimensionType;
 import org.bukkit.craftbukkit.inventory.CraftInventory;
 import org.bukkit.craftbukkit.inventory.CraftInventoryBrewer;
 import org.bukkit.craftbukkit.inventory.CraftInventoryFurnace;
@@ -49,7 +50,7 @@ public abstract class CraftTileInventoryConverter implements CraftInventoryCreat
         @Override
         public IInventory getTileEntity() {
             AbstractFurnaceTileEntity furnace = new FurnaceTileEntity();
-            furnace.setWorldAndPos(MinecraftServer.getServer().getWorld(DimensionType.OVERWORLD)); // TODO: customize this if required
+            furnace.setWorldAndPos(MinecraftServer.getServer().getWorld(DimensionType.OVERWORLD), BlockPos.ZERO); // TODO: customize this if required
             return furnace;
         }
 

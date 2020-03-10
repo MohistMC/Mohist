@@ -222,7 +222,7 @@ public class CraftEventFactory {
     }
 
     public static <T extends Event> T callEvent(T event) {
-        Bukkit.getServerCB().getPluginManager().callEvent(event);
+        Bukkit.getServer().getPluginManager().callEvent(event);
         return event;
     }
 

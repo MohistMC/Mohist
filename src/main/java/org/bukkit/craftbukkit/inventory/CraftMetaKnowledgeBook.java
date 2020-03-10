@@ -66,7 +66,7 @@ public class CraftMetaKnowledgeBook extends CraftMetaItem implements KnowledgeBo
         if (hasRecipes()) {
             ListNBT list = new ListNBT();
             for (NamespacedKey recipe : this.recipes) {
-                list.add(StringNBT.func_229705_a_(recipe.toString()));
+                list.add(StringNBT.valueOf(recipe.toString()));
             }
             itemData.put(BOOK_RECIPES.NBT, list);
         }

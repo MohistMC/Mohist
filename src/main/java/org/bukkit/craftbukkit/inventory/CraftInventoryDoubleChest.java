@@ -17,21 +17,21 @@ public class CraftInventoryDoubleChest extends CraftInventory implements DoubleC
     public CraftInventoryDoubleChest(ChestBlock.DoubleInventory block) {
         super(block.inventorylargechest);
         this.tile = block;
-        this.left = new CraftInventory(block.inventorylargechest.field_70477_b);
-        this.right = new CraftInventory(block.inventorylargechest.field_70478_c);
+        this.left = new CraftInventory(block.inventorylargechest.upperChest);
+        this.right = new CraftInventory(block.inventorylargechest.lowerChest);
     }
 
     public CraftInventoryDoubleChest(DoubleSidedInventory largeChest) {
         super(largeChest);
-        if (largeChest.field_70477_b instanceof DoubleSidedInventory) {
-            left = new CraftInventoryDoubleChest((DoubleSidedInventory) largeChest.field_70477_b);
+        if (largeChest.upperChest instanceof DoubleSidedInventory) {
+            left = new CraftInventoryDoubleChest((DoubleSidedInventory) largeChest.upperChest);
         } else {
-            left = new CraftInventory(largeChest.field_70477_b);
+            left = new CraftInventory(largeChest.upperChest);
         }
-        if (largeChest.field_70478_c instanceof DoubleSidedInventory) {
-            right = new CraftInventoryDoubleChest((DoubleSidedInventory) largeChest.field_70478_c);
+        if (largeChest.lowerChest instanceof DoubleSidedInventory) {
+            right = new CraftInventoryDoubleChest((DoubleSidedInventory) largeChest.lowerChest);
         } else {
-            right = new CraftInventory(largeChest.field_70478_c);
+            right = new CraftInventory(largeChest.lowerChest);
         }
     }
 

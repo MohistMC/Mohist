@@ -228,7 +228,7 @@ public final class CraftMagicNumbers implements UnsafeValues {
 
         net.minecraft.advancements.Advancement.Builder nms = (net.minecraft.advancements.Advancement.Builder) JSONUtils.fromJson(AdvancementManager.GSON, advancement, net.minecraft.advancements.Advancement.Builder.class);
         if (nms != null) {
-            MinecraftServer.getServer().getAdvancementManager().field_223388_c.loadAdvancements(Maps.newHashMap(Collections.singletonMap(CraftNamespacedKey.toMinecraft(key), nms)));
+            MinecraftServer.getServer().getAdvancementManager().advancementList.loadAdvancements(Maps.newHashMap(Collections.singletonMap(CraftNamespacedKey.toMinecraft(key), nms)));
             Advancement bukkit = Bukkit.getAdvancement(key);
 
             if (bukkit != null) {

@@ -77,16 +77,16 @@ public class CraftNBTTagConfigSerializer {
                     throw new RuntimeException("Could not deserialize found list ", e);
                 }
             } else if (INTEGER.matcher(string).matches()) { //Read integers on our own
-                return IntNBT.func_229692_a_(Integer.parseInt(string.substring(0, string.length() - 1)));
+                return IntNBT.valueOf(Integer.parseInt(string.substring(0, string.length() - 1)));
             } else if (DOUBLE.matcher(string).matches()) {
-                return DoubleNBT.func_229684_a_(Double.parseDouble(string.substring(0, string.length() - 1)));
+                return DoubleNBT.valueOf(Double.parseDouble(string.substring(0, string.length() - 1)));
             } else {
                 INBT nbtBase = MOJANGSON_PARSER.type(string);
 
                 if (nbtBase instanceof IntNBT) { // If this returns an integer, it did not use our method from above
-                    return StringNBT.func_229705_a_(nbtBase.getString()); // It then is a string that was falsely read as an int
+                    return StringNBT.valueOf(nbtBase.getString()); // It then is a string that was falsely read as an int
                 } else if (nbtBase instanceof DoubleNBT) {
-                    return StringNBT.func_229705_a_(String.valueOf(((DoubleNBT) nbtBase).getDouble())); // Doubles add "d" at the end
+                    return StringNBT.valueOf(String.valueOf(((DoubleNBT) nbtBase).getDouble())); // Doubles add "d" at the end
                 } else {
                     return nbtBase;
                 }

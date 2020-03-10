@@ -73,7 +73,7 @@ public class CraftBlock implements Block {
 
     @Override
     public World getWorld() {
-        return world.getWorld().getWorld();
+        return world.getWorld().getWorldCB();
     }
 
     public CraftWorld getCraftWorld() {
@@ -487,7 +487,7 @@ public class CraftBlock implements Block {
         return Biome.valueOf(Registry.BIOME.getKey(base).getKey().toUpperCase(java.util.Locale.ENGLISH));
     }
 
-    public static Biome biomeToBiome(Biome bio) {
+    public static net.minecraft.world.biome.Biome biomeToBiomeBase(Biome bio) {
         if (bio == null) {
             return null;
         }

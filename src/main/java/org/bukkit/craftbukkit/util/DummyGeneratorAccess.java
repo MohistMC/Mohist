@@ -134,12 +134,12 @@ public class DummyGeneratorAccess implements IWorld {
     }
 
     @Override
-    public BiomeManager func_225523_d_() {
+    public BiomeManager getBiomeManager() {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
-    public Biome func_225604_a_(int p_225604_1_, int p_225604_2_, int p_225604_3_) {
+    public Biome getNoiseBiomeRaw(int p_225604_1_, int p_225604_2_, int p_225604_3_) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
@@ -159,7 +159,7 @@ public class DummyGeneratorAccess implements IWorld {
     }
 
     @Override
-    public WorldLightManager func_225524_e_() {
+    public WorldLightManager getLightManager() {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 

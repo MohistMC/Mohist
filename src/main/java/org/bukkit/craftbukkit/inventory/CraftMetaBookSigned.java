@@ -65,7 +65,7 @@ class CraftMetaBookSigned extends CraftMetaBook implements BookMeta {
         if (hasPages()) {
             ListNBT list = new ListNBT();
             for (ITextComponent page : pages) {
-                list.add(StringNBT.func_229705_a_(
+                list.add(StringNBT.valueOf(
                         Serializer.toJson(page)
                 ));
             }
