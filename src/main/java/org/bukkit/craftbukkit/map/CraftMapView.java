@@ -64,7 +64,7 @@ public final class CraftMapView implements MapView {
         DimensionType dimension = worldMap.dimension;
         ServerWorld world = MinecraftServer.getServer().getWorld(dimension);
 
-        return (world == null) ? null : world.getWorld();
+        return (world == null) ? null : world.getWorldCB();
     }
 
     @Override

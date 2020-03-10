@@ -109,7 +109,7 @@ public final class CraftLegacy {
     }
 
     public static Item fromLegacyData(Material material, short data) {
-        Preconditions.checkArgument(material.isLegacy(), "fromLegacyData on modern Material. Did you forget to define api-version: 1.13 in your plugin.yml?");
+        Preconditions.checkArgument(material.isLegacy(), "fromLegacyData on modern Material. Did you forget to define a modern (1.13+) api-version in your plugin.yml?");
 
         MaterialData materialData = new MaterialData(material, (byte) data);
 
@@ -251,7 +251,7 @@ public final class CraftLegacy {
 
     static {
         System.err.println("Initializing Legacy Material Support. Unless you have legacy plugins and/or data this is a bug!");
-        if (MinecraftServer.getServer() != null && MinecraftServer.getServer().isDebugging()) {
+        if (MinecraftServer.getServer() != null && MinecraftServer.getServer().isDebuggingEnabled()) {
             new Exception().printStackTrace();
         }
 
@@ -320,7 +320,7 @@ public final class CraftLegacy {
                 for (byte data = 0; data < 16; data++) {
                     MaterialData matData = new MaterialData(material, data);
                     Dynamic blockTag = BlockStateFlatteningMap.getFixedNBTForID(material.getId() << 4 | data);
-                    blockTag = DataConverterRegistry.a().update(DataConverterTypes.BLOCK_STATE, blockTag, 100, CraftMagicNumbers.INSTANCE.getDataVersion());
+                    blockTag = DataFixesManager.getDataFixer().update(TypeReferences.BLOCK_STATE, blockTag, 100, CraftMagicNumbers.INSTANCE.getDataVersion());
                     // TODO: better skull conversion, chests
                     if (blockTag.get("Name").asString("").contains("%%FILTER_ME%%")) {
                         continue;

@@ -12,7 +12,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
-import net.minecraft.server.MinecraftServer;
 import org.fusesource.jansi.AnsiConsole;
 
 public class Main {
@@ -148,7 +147,7 @@ public class Main {
             }
 
             float javaVersion = Float.parseFloat(System.getProperty("java.class.version"));
-            if (javaVersion > 57.0) {
+            if (javaVersion > 58.0) {
                 System.err.println("Unsupported Java detected (" + javaVersion + "). Only up to Java 13 is supported.");
                 return;
             }
