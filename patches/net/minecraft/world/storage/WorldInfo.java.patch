@@ -85,7 +85,7 @@
          net.minecraftforge.common.ForgeHooks.onDifficultyChange(newDifficulty, this.difficulty);
          this.difficulty = newDifficulty;
 +        SPacketServerDifficulty packet = new SPacketServerDifficulty(this.getDifficulty(), this.isDifficultyLocked());
-+        if(world.playerEntities!=null && !world.playerEntities.isEmpty()) {
++        if(world != null && world.playerEntities!=null && !world.playerEntities.isEmpty()) {
 +            for (EntityPlayerMP player : (java.util.List<EntityPlayerMP>) (java.util.List) world.playerEntities) {
 +                player.connection.sendPacket(packet);
 +            }
