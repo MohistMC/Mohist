@@ -17,15 +17,18 @@
 
 [![Mohist Stats](https://bstats.org/signatures/bukkit/Mohist.svg)](https://bstats.org/plugin/bukkit/Mohist/3939)
 
-### Getting Help
+Getting Help
+------
    [**Home**](https://mohist.red/)
    [**Discord**](https://discord.gg/ZgXjHGd)
    [**QQ**](https://jq.qq.com/?_wv=1027&k=5YIRYnH)  
    
-### Download
+Download
+------
 * [**Jenkins**](https://ci.codemc.org/job/Mohist-Community/job/Mohist-1.12.2/)
 
-### Building
+Building
+------
 * Checkout project
   * You can use IDE or clone from console:
   `git clone https://github.com/Mohist-Community/Mohist.git`
@@ -41,10 +44,12 @@
 All builds will be in `.\build\distributions\` 
 `Mohist-xxxxx-server.jar` is the server file that you should run
 
-### Plugin development
+Plugin development
+------
  [**Mohist Remap Guide**](https://github.com/Mohist-Community/MohistRemapGuide)
 
-### Thanks for the following project
+Thanks for the following project
+------
 * [**Bukkit**](https://hub.spigotmc.org/stash/scm/spigot/bukkit.git) - plugin support.
 * [**Paper**](https://github.com/PaperMC/Paper.git) - performance optimizations.
 * [**CraftBukkit**](https://hub.spigotmc.org/stash/scm/spigot/craftbukkit.git) - plugin support.
@@ -53,3 +58,9 @@ All builds will be in `.\build\distributions\`
 * [**Atom**](https://gitlab.com/divinecode/atom/Atom.git) - Partial code source.
 * [**Thermos**](https://github.com/CyberdyneCC/Thermos.git) - Partial code source.
 * [**um_bukkit**](https://github.com/TechCatOther/um_bukkit.git) - Partial code source.
+
+Special Thanks To:
+-------------
+
+<a href="https://serverjars.com/"><img src="https://serverjars.com/assets/img/logo_white.svg" width="200"></a>
+<a href="https://ci.codemc.io/"><img src="https://i.loli.net/2020/03/11/YNicj3PLkU5BZJT.png" width="200"></a>
