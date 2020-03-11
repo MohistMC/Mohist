@@ -152,21 +152,23 @@
              inventoryIn.setInventorySlotContents(index, itemstack1);
          }
  
-@@ -382,6 +453,13 @@
+@@ -382,6 +453,15 @@
          }
          else
          {
 +            // CraftBukkit start
-+            InventoryPickupItemEvent event = new InventoryPickupItemEvent(destination.getOwner().getInventory(), (org.bukkit.entity.Item) entity.getBukkitEntity());
-+            entity.world.getServer().getPluginManager().callEvent(event);
-+            if (event.isCancelled()) {
-+                return false;
++            if (destination.getOwner() != null && entity.getBukkitEntity() != null) {
++                InventoryPickupItemEvent event = new InventoryPickupItemEvent(destination.getOwner().getInventory(), (org.bukkit.entity.Item) entity.getBukkitEntity());
++                entity.world.getServer().getPluginManager().callEvent(event);
++                if (event.isCancelled()) {
++                    return false;
++                }
 +            }
 +            // CraftBukkit end
              ItemStack itemstack = entity.getItem().copy();
              ItemStack itemstack1 = putStackInInventoryAllSlots(source, destination, itemstack, (EnumFacing)null);
  
-@@ -491,7 +569,7 @@
+@@ -491,7 +571,7 @@
                              }
                          }
  
@@ -175,7 +177,7 @@
                      }
                  }
  
-@@ -525,6 +603,7 @@
+@@ -525,6 +605,7 @@
          int j = MathHelper.floor(y);
          int k = MathHelper.floor(z);
          BlockPos blockpos = new BlockPos(i, j, k);
