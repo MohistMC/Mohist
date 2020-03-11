@@ -117,7 +117,7 @@
  
          minecraft = new MinecraftDummyContainer(MC_VERSION);
          InputStream mcpModInputStream = getClass().getResourceAsStream("/mcpmod.info");
-+        InputStream mohistModInputStream = getClass().getResourceAsStream("/mohistmod.info");
++        InputStream mohistModInputStream = MohistMod.modinfo();
          try
          {
              mcp = new MCPDummyContainer(MetadataCollection.from(mcpModInputStream, "MCP").getMetadataForId("mcp", null));
