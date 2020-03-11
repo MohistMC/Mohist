@@ -14,7 +14,7 @@ public class Update {
 
     // Why use a hard core to split a String? Because I didn't actually start Mohist before this, there is no lib load, we can't use lib.
     public static void hasLatestVersion() {
-        String str = "https://api.github.com/repos/Mohist-Community/Mohist/branches/1.12.2";
+        String str = "https://ci.codemc.io/job/Mohist-Community/job/Mohist-1.12.2/lastBuild/";
         String ver = "https://raw.githubusercontent.com/Mohist-Community/Mohist/1.12.2/mohist.ver";
         String dl = "https://ci.codemc.io/job/Mohist-Community/job/Mohist-1.12.2/";
         try {
@@ -22,19 +22,20 @@ public class Update {
             System.out.println(Message.getString("update.stopcheck"));
             URL url = new URL(str);
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-            if (connection.getResponseCode() < 400) {
+            connection.setRequestProperty("User-Agent", "Mohist");
+            if (connection.getResponseCode() == 200) {
                 InputStream is = connection.getInputStream();
                 String commits = IOUtil.readContent(is);
-                String sha = "\"sha\":\"";
-                String date = "\"date\":\"";
+                String sha = "/build/distributions/Mohist-";
+                String date = "(Wed Mar ";
 
                 String s0 = commits.substring(commits.indexOf(sha));
-                String s1 = s0.substring(s0.indexOf(sha) + 7);
+                String s1 = s0.substring(s0.indexOf(sha) + sha.length());
                 String s2 = s1.substring(0, 7);
 
                 String oldver = Update.class.getPackage().getImplementationVersion();
                 String time = commits.substring(commits.indexOf(date));
-                String time1 = time.substring(time.indexOf(date) + 8);
+                String time1 = time.substring(time.indexOf(date) + date.length());
                 String time2 = time1.substring(0, 20);
 
                 String newversion = MohistConfigUtil.getUrlString(ver, Mohist.VERSION);
