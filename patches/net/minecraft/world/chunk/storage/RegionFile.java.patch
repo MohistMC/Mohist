@@ -1,54 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/world/chunk/storage/RegionFile.java
 +++ ../src-work/minecraft/net/minecraft/world/chunk/storage/RegionFile.java
-@@ -76,12 +76,12 @@
-             {
-                 int k = this.dataFile.readInt();
-                 this.offsets[j1] = k;
--
-+                // Spigot start
-                 int length = k & 255;
-                 if (length == 255)
-                 {
--                    if ((k >> 8) <= this.sectorFree.size())
--                    { // We're maxed out, so we need to read the proper length from the section
-+                    // We're maxed out, so we need to read the proper length from the section
-+                    if ((k >> 8) <= this.sectorFree.size()) {
-                         this.dataFile.seek((k >> 8) * 4096);
-                         length = (this.dataFile.readInt() + 4)/ 4096 + 1;
-                         this.dataFile.seek(j1 * 4 + 4); //Go back to where we were
-@@ -91,13 +91,16 @@
-                 {
-                     for (int l = 0; l < length; ++l)
-                     {
-+                        // Spigot end
-                         this.sectorFree.set((k >> 8) + l, Boolean.valueOf(false));
-                     }
-                 }
-                 else if (length > 0)
-                     net.minecraftforge.fml.common.FMLLog.log.warn("Invalid chunk: ({}, {}) Offset: {} Length: {} runs off end file. {}", j1 % 32, (int)(j1 / 32), k >> 8, length, fileNameIn);
-+
-             }
- 
-+
-             for (int k1 = 0; k1 < 1024; ++k1)
-             {
-                 int l1 = this.dataFile.readInt();
-@@ -138,12 +141,13 @@
-                 {
-                     int j = i >> 8;
-                     int k = i & 255;
-+                    // Spigot start
-                     if (k == 255)
-                     {
-                         this.dataFile.seek(j * 4096);
-                         k = (this.dataFile.readInt() + 4) / 4096 + 1;
-                     }
--
-+                    // Spigot end
-                     if (j + k > this.sectorFree.size())
-                     {
-                         return null;
-@@ -155,12 +159,10 @@
+@@ -155,12 +155,10 @@
  
                          if (l > 4096 * k)
                          {
@@ -61,27 +13,7 @@
                              return null;
                          }
                          else
-@@ -197,7 +199,7 @@
-     @Nullable
-     public DataOutputStream getChunkDataOutputStream(int x, int z)
-     {
--        return this.outOfBounds(x, z) ? null : new DataOutputStream(new BufferedOutputStream(new DeflaterOutputStream(new RegionFile.ChunkBuffer(x, z))));
-+        return this.outOfBounds(x, z) ? null : new DataOutputStream(new BufferedOutputStream(new DeflaterOutputStream(new ChunkBuffer(x, z))));
-     }
- 
-     protected synchronized void write(int x, int z, byte[] data, int length)
-@@ -207,17 +209,18 @@
-             int i = this.getOffset(x, z);
-             int j = i >> 8;
-             int k = i & 255;
-+			// Spigot start
-             if (k == 255)
-             {
-                 this.dataFile.seek(j * 4096);
-                 k = (this.dataFile.readInt() + 4) / 4096 + 1;
-             }
-+			// Spigot end
-             int l = (length + 5) / 4096 + 1;
+@@ -216,8 +214,7 @@
  
              if (l >= 256)
              {
@@ -91,21 +23,3 @@
              }
  
              if (j != 0 && k == l)
-@@ -265,7 +268,7 @@
-                 if (j1 >= l)
-                 {
-                     j = l1;
--                    this.setOffset(x, z, l1 << 8 | (l > 255 ? 255 : l));
-+                    this.setOffset(x, z, l1 << 8 | (l > 255 ? 255 : l)); // Spigot
- 
-                     for (int j2 = 0; j2 < l; ++j2)
-                     {
-@@ -287,7 +290,7 @@
- 
-                     this.sizeDelta += 4096 * l;
-                     this.write(j, data, length);
--                    this.setOffset(x, z, j << 8 | (l > 255 ? 255 : l));
-+                    this.setOffset(x, z, j << 8 | (l > 255 ? 255 : l)); // Spigot
-                 }
-             }
- 

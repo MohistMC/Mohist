@@ -39,7 +39,7 @@
  
      public AnvilChunkLoader(File chunkSaveLocationIn, DataFixer dataFixerIn)
      {
-@@ -58,13 +58,15 @@
+@@ -58,8 +58,9 @@
      @Nullable
      public Chunk loadChunk(World worldIn, int x, int z) throws IOException
      {
@@ -50,13 +50,7 @@
          if (data != null)
          {
              Chunk chunk = (Chunk) data[0];
-             NBTTagCompound nbttagcompound = (NBTTagCompound) data[1];
-             this.loadEntities(worldIn, nbttagcompound.getCompoundTag("Level"), chunk);
-+            MinecraftForge.EVENT_BUS.post(new ChunkDataEvent.Load(chunk, nbttagcompound)); // Cauldron - Don't call ChunkDataEvent.Load async
-             return chunk;
-         }
- 
-@@ -79,15 +81,14 @@
+@@ -79,15 +80,14 @@
  
          if (nbttagcompound == null)
          {
@@ -75,7 +69,7 @@
          }
  
          return this.checkedReadChunkFromNBT__Async(worldIn, x, z, nbttagcompound);
-@@ -194,9 +195,14 @@
+@@ -194,9 +194,14 @@
  
      public boolean writeNextIO()
      {
@@ -91,7 +85,7 @@
              {
                  LOGGER.info("ThreadedAnvilChunkStorage ({}): All chunks are saved", (Object)this.chunkSaveLocation.getName());
              }
-@@ -238,9 +244,10 @@
+@@ -238,9 +243,10 @@
  
      private void writeChunkData(ChunkPos pos, NBTTagCompound compound) throws IOException
      {
@@ -105,7 +99,7 @@
      }
  
      public void saveExtraChunkData(World worldIn, Chunk chunkIn) throws IOException
-@@ -255,13 +262,18 @@
+@@ -255,13 +261,18 @@
      {
          try
          {
@@ -127,7 +121,7 @@
          }
      }
  
-@@ -351,22 +363,18 @@
+@@ -351,10 +362,10 @@
          chunkIn.setHasEntities(false);
          NBTTagList nbttaglist1 = new NBTTagList();
  
@@ -141,26 +135,8 @@
 +            for (Entity entity : entityList) {
                  NBTTagCompound nbttagcompound2 = new NBTTagCompound();
  
--                try
--                {
--                if (entity.writeToNBTOptional(nbttagcompound2))
--                {
--                    chunkIn.setHasEntities(true);
--                    nbttaglist1.appendTag(nbttagcompound2);
--                }
--                }
--                catch (Exception e)
--                {
-+                try {
-+                    if (entity.writeToNBTOptional(nbttagcompound2)) {
-+                        chunkIn.setHasEntities(true);
-+                        nbttaglist1.appendTag(nbttagcompound2);
-+                    }
-+                } catch (Exception e) {
-                     net.minecraftforge.fml.common.FMLLog.log.error("An Entity type {} has thrown an exception trying to write state. It will not persist. Report this to the mod author",
-                             entity.getClass().getName(), e);
-                 }
-@@ -478,6 +486,7 @@
+                 try
+@@ -478,6 +489,7 @@
  
      public void loadEntities(World worldIn, NBTTagCompound compound, Chunk chunk)
      {
@@ -168,7 +144,7 @@
          NBTTagList nbttaglist1 = compound.getTagList("Entities", 10);
  
          for (int j1 = 0; j1 < nbttaglist1.tagCount(); ++j1)
-@@ -486,7 +495,8 @@
+@@ -486,7 +498,8 @@
              readChunkEntity(nbttagcompound1, worldIn, chunk);
              chunk.setHasEntities(true);
          }
@@ -178,7 +154,7 @@
          NBTTagList nbttaglist2 = compound.getTagList("TileEntities", 10);
  
          for (int k1 = 0; k1 < nbttaglist2.tagCount(); ++k1)
-@@ -499,7 +509,8 @@
+@@ -499,7 +512,8 @@
                  chunk.addTileEntity(tileentity);
              }
          }
@@ -188,7 +164,7 @@
          if (compound.hasKey("TileTicks", 9))
          {
              NBTTagList nbttaglist3 = compound.getTagList("TileTicks", 10);
-@@ -521,6 +532,7 @@
+@@ -521,6 +535,7 @@
                  worldIn.scheduleBlockUpdate(new BlockPos(nbttagcompound3.getInteger("x"), nbttagcompound3.getInteger("y"), nbttagcompound3.getInteger("z")), block, nbttagcompound3.getInteger("t"), nbttagcompound3.getInteger("p"));
              }
          }
@@ -196,7 +172,7 @@
      }
  
      @Nullable
-@@ -558,6 +570,11 @@
+@@ -558,6 +573,11 @@
      @Nullable
      public static Entity readWorldEntityPos(NBTTagCompound compound, World worldIn, double x, double y, double z, boolean attemptSpawn)
      {
@@ -208,7 +184,7 @@
          Entity entity = createEntityFromNBT(compound, worldIn);
  
          if (entity == null)
-@@ -568,7 +585,7 @@
+@@ -568,7 +588,7 @@
          {
              entity.setLocationAndAngles(x, y, z, entity.rotationYaw, entity.rotationPitch);
  
@@ -217,7 +193,7 @@
              {
                  return null;
              }
-@@ -609,8 +626,11 @@
+@@ -609,8 +629,11 @@
  
      public static void spawnEntity(Entity entityIn, World worldIn)
      {
