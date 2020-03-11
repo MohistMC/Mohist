@@ -162,28 +162,7 @@
      }
  
      public boolean canSeeSky(BlockPos pos)
-@@ -824,9 +901,18 @@
-         if (tileEntityIn.getWorld() != this.world) //Forge don't call unless it's changed, could screw up bad mods.
-         tileEntityIn.setWorld(this.world);
-         tileEntityIn.setPos(pos);
--
--        if (this.getBlockState(pos).getBlock().hasTileEntity(this.getBlockState(pos)))
-+        // Mohist start - validate TE for corrupted data
-+        Block block = null;
-+        try {
-+            block = this.getBlockState(pos).getBlock();
-+        }
-+        catch (ArrayIndexOutOfBoundsException e)
-         {
-+            tileEntityIn.invalidate();
-+            return;
-+        }
-+        if (block != null && block.hasTileEntity(this.getBlockState(pos))) // Mohist end
-+        {
-             if (this.tileEntities.containsKey(pos))
-             {
-                 ((TileEntity)this.tileEntities.get(pos)).invalidate();
-@@ -874,7 +960,14 @@
+@@ -874,7 +951,14 @@
  
          for (ClassInheritanceMultiMap<Entity> classinheritancemultimap : this.entityLists)
          {
@@ -199,30 +178,7 @@
          }
          net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.world.ChunkEvent.Unload(this));
      }
-@@ -943,19 +1036,11 @@
- 
-     public boolean needsSaving(boolean p_76601_1_)
-     {
--        if (p_76601_1_)
--        {
--            if (this.hasEntities && this.world.getTotalWorldTime() != this.lastSaveTime || this.dirty)
--            {
--                return true;
--            }
-+        if (p_76601_1_) {
-+            return dirty || (hasEntities && this.world.getTotalWorldTime() != this.lastSaveTime);
-         }
--        else if (this.hasEntities && this.world.getTotalWorldTime() >= this.lastSaveTime + 600L)
--        {
--            return true;
--        }
- 
--        return this.dirty;
-+        return (dirty || hasEntities) && this.world.getTotalWorldTime() >= this.lastSaveTime + 2111L;
-     }
- 
-     public Random getRandomWithSeed(long seed)
-@@ -1001,6 +1086,65 @@
+@@ -1001,6 +1085,65 @@
          }
      }
  
@@ -288,7 +244,7 @@
      protected void populate(IChunkGenerator generator)
      {
          if (populating != null && net.minecraftforge.common.ForgeModContainer.logCascadingWorldGeneration) logCascadingWorldGeneration();
-@@ -1017,6 +1161,26 @@
+@@ -1017,6 +1160,26 @@
          {
              this.checkLight();
              generator.populate(this.x, this.z);
@@ -315,7 +271,7 @@
              net.minecraftforge.fml.common.registry.GameRegistry.generateWorld(this.x, this.z, this.world, generator, this.world.getChunkProvider());
              this.markDirty();
          }
-@@ -1086,7 +1250,7 @@
+@@ -1086,7 +1249,7 @@
  
      public boolean isPopulated()
      {
@@ -324,7 +280,7 @@
      }
  
      public boolean wasTicked()
-@@ -1548,8 +1712,8 @@
+@@ -1548,8 +1711,8 @@
              net.minecraftforge.fml.common.FMLLog.log.debug(format, "Minecraft", this.getPos(), this.world.provider.getDimension(), this.world.provider.getDimensionType().getName(), populating);
              net.minecraftforge.fml.common.FMLLog.log.debug("Consider setting 'fixVanillaCascading' to 'true' in the Forge config to fix many cases where this occurs in the base game.");
          } else {
