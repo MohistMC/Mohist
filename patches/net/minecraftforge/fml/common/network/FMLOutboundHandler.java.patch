@@ -1,11 +1,8 @@
 --- ../src-base/minecraft/net/minecraftforge/fml/common/network/FMLOutboundHandler.java
 +++ ../src-work/minecraft/net/minecraftforge/fml/common/network/FMLOutboundHandler.java
-@@ -131,16 +131,16 @@
-             @Override
-             public void validateArgs(Object args)
+@@ -133,14 +133,14 @@
              {
--                if (!(args instanceof EntityPlayerMP))
-+                if (args != null && !(args instanceof EntityPlayer)) //by Goodvise
+                 if (!(args instanceof EntityPlayerMP))
                  {
 -                    throw new RuntimeException("PLAYER target expects a Player arg");
 +                    throw new RuntimeException("PLAYER target expects a Player arg... it is a " + args.getClass().getName());
