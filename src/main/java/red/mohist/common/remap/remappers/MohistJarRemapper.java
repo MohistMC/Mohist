@@ -17,9 +17,9 @@ public class MohistJarRemapper extends CustomRemapper {
 
     @Override
     public String mapSignature(String signature, boolean typeSignature) {
-        if (ASMUtils.isValidSingnature(signature)) {
+        try {
             return super.mapSignature(signature, typeSignature);
-        } else {
+        } catch (Exception e) {
             return signature;
         }
     }

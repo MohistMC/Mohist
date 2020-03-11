@@ -61,6 +61,5 @@ Thanks for the following project
 
 Special Thanks To:
 -------------
-
 <a href="https://serverjars.com/"><img src="https://serverjars.com/assets/img/logo_white.svg" width="200"></a>
 <a href="https://ci.codemc.io/"><img src="https://i.loli.net/2020/03/11/YNicj3PLkU5BZJT.png" width="200"></a>

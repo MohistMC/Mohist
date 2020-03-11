@@ -33,7 +33,6 @@ public class ASMUtils {
     private static final Map<Integer, String> opcodeMap = new HashMap<>();
     private static final Map<Integer, String> typeMap = new HashMap<>();
     private static final Map<Integer, BiConsumer<String, AbstractInsnNode>> printerMap = new HashMap<>();
-    private static final Pattern illegalSignaturePattern = Pattern.compile("^[0-9a-zA-Z_/();<>\\[]+$");
 
     static {
         for (Field field : Opcodes.class.getDeclaredFields()) {
@@ -194,10 +193,6 @@ public class ASMUtils {
 
     public static String getTypeName(int type) {
         return opcodeMap.get(type);
-    }
-
-    public static boolean isValidSingnature(String signature) {
-        return signature != null && !signature.isEmpty() && illegalSignaturePattern.matcher(signature).matches();
     }
 
     public static String getInternalName(Type type) {
