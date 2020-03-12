@@ -27,6 +27,15 @@ Download
 ------
 * [**Jenkins**](https://ci.codemc.org/job/Mohist-Community/job/Mohist-1.12.2/)
 
+Install
+------
+This software requires Java 8.
+
+[Download](https://ci.codemc.org/job/Mohist-Community/job/Mohist-1.12.2/) and place the server jar in an empty directory. Now launch it using the `java` command:
+```sh
+java -jar yourJar.jar
+```
+
 Building
 ------
 * Checkout project
