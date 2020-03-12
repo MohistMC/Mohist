@@ -682,6 +682,15 @@
          ++this.tickCounter;
  
          if (this.startProfiling)
+@@ -671,7 +778,7 @@
+         {
+             this.nanoTimeSinceStatusRefresh = i;
+             this.statusResponse.setPlayers(new ServerStatusResponse.Players(this.getMaxPlayers(), this.getCurrentPlayerCount()));
+-            GameProfile[] agameprofile = new GameProfile[Math.min(this.getCurrentPlayerCount(), 12)];
++            GameProfile[] agameprofile = new GameProfile[Math.min(this.getCurrentPlayerCount(), org.spigotmc.SpigotConfig.playerSample)];
+             int j = MathHelper.getInt(this.random, 0, this.getCurrentPlayerCount() - agameprofile.length);
+ 
+             for (int k = 0; k < agameprofile.length; ++k)
 @@ -683,121 +790,157 @@
              this.statusResponse.getPlayers().setPlayers(agameprofile);
              this.statusResponse.invalidateJson();
