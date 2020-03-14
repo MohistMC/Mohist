@@ -155,7 +155,6 @@ public class Metrics {
         JSONObject data = new JSONObject();
 
         data.put("pluginName", name); // Append the name of the server software
-        data.put("id", "3939"); // Append the id of the plugin
         JSONArray customCharts = new JSONArray();
         for (CustomChart customChart : charts) {
             // Add the data of the custom charts
@@ -590,7 +589,7 @@ public class Metrics {
 
                 metrics.addCustomChart(new Metrics.SingleLineChart("players", () -> Bukkit.getOnlinePlayers().size()));
                 metrics.addCustomChart(new Metrics.SimplePie("online_mode", () -> Bukkit.getOnlineMode() ? "online" : "offline"));
-                metrics.addCustomChart(new Metrics.SimplePie("paper_version", () -> Mohist.getVersion()));
+                metrics.addCustomChart(new Metrics.SimplePie("mohist_version", () -> Mohist.getVersion()));
 
                 metrics.addCustomChart(new Metrics.DrilldownPie("java_version", () -> {
                     Map<String, Map<String, Integer>> map = new HashMap<>();
