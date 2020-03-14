@@ -1352,16 +1352,6 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
     }
 
     @Override
-    public int getViewDistance() {
-        return this.getHandle().getViewDistance();
-    }
-
-    @Override
-    public void setViewDistance(final int viewDistance) {
-        ((WorldServer) this.getHandle().world).getPlayerChunkMap().updateViewDistance(this.getHandle(), viewDistance);
-    }
-
-    @Override
     public void setTexturePack(String url) {
         setResourcePack(url);
     }

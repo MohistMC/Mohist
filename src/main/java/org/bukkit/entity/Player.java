@@ -1453,21 +1453,6 @@ public interface Player extends HumanEntity, Conversable, CommandSender, Offline
     @Override
     Spigot spigot();
 
-    /**
-     * Gets the view distance for this player
-     * @return the player's view distance
-     */
-    public int getViewDistance();
-    // Spigot end
-
-    // Paper start
-
-    /**
-     * Sets the view distance for this player
-     * @param viewDistance the player's view distance
-     */
-    public void setViewDistance(int viewDistance);
-
     // Spigot start
     public class Spigot extends Entity.Spigot {
         /**
