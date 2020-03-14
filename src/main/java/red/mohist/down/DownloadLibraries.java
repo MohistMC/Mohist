@@ -8,6 +8,7 @@ import java.io.InputStreamReader;
 import java.net.URLClassLoader;
 import java.util.HashMap;
 import java.util.Map;
+import red.mohist.configuration.MohistConfigUtil;
 import red.mohist.util.JarLoader;
 import red.mohist.util.MD5Util;
 import red.mohist.util.i18n.Message;
@@ -17,6 +18,7 @@ public class DownloadLibraries {
     public static String url = "https://www.mgazul.cn/";
 
     public static void run() throws Exception {
+        File f = new File("mohist-config", "mohist.yml");
         String path = null;
         try {
             if (Message.getLocale().contains("CN") || Message.getCountry().contains("CN")) {
@@ -38,12 +40,19 @@ public class DownloadLibraries {
                 if (args.length == 2) {
                     path = args[0];
                     String md5 = args[1];
-
                     try {
                         File file = new File(path);
                         // Judgement files and MD5
+
                         if ((!file.exists() || !MD5Util.getMD5(file).equals(md5))) {
-                            lib.put(file, md5);
+                            String[] jar = file.getPath().replaceAll("\\\\", "/").split("/");
+                            int size = jar.length;
+                            String jarname = jar[size - 1].replace(".jar", "");
+                            String ymljar = MohistConfigUtil.getString(f, "libraries_black_list:", "xxxxx");
+                            boolean libb = ymljar.contains(jarname);
+                            if (!libb) {
+                                lib.put(file, md5);
+                            }
                         }
                     } catch (IOException e) {
                         System.out.println(e.toString());

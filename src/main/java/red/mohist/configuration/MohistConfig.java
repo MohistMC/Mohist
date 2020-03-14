@@ -58,6 +58,7 @@ public class MohistConfig extends ConfigBase{
     public final BoolSetting keepSpawnInMemory = new BoolSetting(this, "keep-spawn-loaded", true, "Keep spawn chunk loaded");
 
     public final IntSetting entityTickLimit = new IntSetting(this, "entity-tick-limit", 300, "Entity maximum tick limit, entities exceeding this value will not be updated"); // by CraftDream
+    public final StringSetting libraries_black_list = new StringSetting(this, "libraries_black_list", "aaaaa;bbbbbb", "libraries_black_list");
 
     /* ======================================================================== */
 
