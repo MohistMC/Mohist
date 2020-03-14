@@ -8,13 +8,14 @@
  import net.minecraft.stats.StatList;
  import net.minecraft.util.DamageSource;
  import net.minecraft.util.datafix.DataFixer;
-@@ -26,13 +27,16 @@
+@@ -26,13 +27,17 @@
  import net.minecraftforge.fml.relauncher.SideOnly;
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
 +import org.bukkit.event.entity.EntityPickupItemEvent;
 +import org.bukkit.event.player.PlayerPickupItemEvent;
 +import red.mohist.common.RealTimeTicking;
++import red.mohist.configuration.MohistConfig;
  
  public class EntityItem extends Entity
  {
@@ -26,7 +27,7 @@
      private int health;
      private String thrower;
      private String owner;
-@@ -43,6 +47,8 @@
+@@ -43,6 +48,8 @@
       */
      public int lifespan = 6000;
  
@@ -35,7 +36,7 @@
      public EntityItem(World worldIn, double x, double y, double z)
      {
          super(worldIn);
-@@ -60,7 +66,7 @@
+@@ -60,7 +67,7 @@
      {
          this(worldIn, x, y, z);
          this.setItem(stack);
@@ -44,7 +45,7 @@
      }
  
      protected boolean canTriggerWalking()
-@@ -93,10 +99,17 @@
+@@ -93,10 +100,26 @@
          {
              super.onUpdate();
  
@@ -52,20 +53,29 @@
 -            {
 -                --this.pickupDelay;
 +            // CraftBukkit start - Use wall time for pickup and despawn timers
++            int elapsedTicks = MinecraftServer.currentTick - this.lastTick;
 +            if (this.pickupDelay != 32767) {
-+                int ticks = (int) ((RealTimeTicking) this.getEntityWorld()).getRealTimeTicks();
-+                this.pickupDelay = Math.max(0, this.pickupDelay - ticks);
++                if (MohistConfig.instance.RealTimeTicking()) {
++                    int ticks = (int) ((RealTimeTicking) this.getEntityWorld()).getRealTimeTicks();
++                    this.pickupDelay = Math.max(0, this.pickupDelay - ticks);
++                } else {
++                    this.pickupDelay -= elapsedTicks;
++                }
              }
 +            if (this.age != -32768) {
-+                int ticks = (int) ((RealTimeTicking) this.getEntityWorld()).getRealTimeTicks();
-+                this.age += ticks;
++                if(MohistConfig.instance.RealTimeTicking()) {
++                    int ticks = (int) ((RealTimeTicking) this.getEntityWorld()).getRealTimeTicks();
++                    this.age += ticks;
++                } else {
++                    this.age += elapsedTicks;
++                }
 +            }
 +            this.lastTick = MinecraftServer.currentTick;
 +            // CraftBukkit end
  
              this.prevPosX = this.posX;
              this.prevPosY = this.posY;
-@@ -156,10 +169,12 @@
+@@ -156,10 +179,12 @@
                  this.motionY *= -0.5D;
              }
  
@@ -78,7 +88,7 @@
  
              this.handleWaterMovement();
  
-@@ -180,6 +195,10 @@
+@@ -180,6 +205,10 @@
  
              if (!this.world.isRemote && this.age >= lifespan)
              {
@@ -89,7 +99,7 @@
                  int hook = net.minecraftforge.event.ForgeEventFactory.onItemExpire(this, item);
                  if (hook < 0) this.setDead();
                  else          this.lifespan += hook;
-@@ -191,10 +210,35 @@
+@@ -191,10 +220,35 @@
          }
      }
  
@@ -127,7 +137,7 @@
              this.combineItems(entityitem);
          }
      }
-@@ -248,11 +292,14 @@
+@@ -248,11 +302,14 @@
                      }
                      else
                      {
@@ -147,7 +157,7 @@
                          return true;
                      }
                  }
-@@ -314,6 +361,9 @@
+@@ -314,6 +371,9 @@
          }
          else
          {
@@ -157,7 +167,7 @@
              this.markVelocityChanged();
              this.health = (int)((float)this.health - amount);
  
-@@ -393,6 +443,34 @@
+@@ -393,6 +453,34 @@
              Item item = itemstack.getItem();
              int i = itemstack.getCount();
  

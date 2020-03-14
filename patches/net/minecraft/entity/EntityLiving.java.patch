@@ -8,7 +8,7 @@
  import net.minecraft.init.Blocks;
  import net.minecraft.init.Items;
  import net.minecraft.inventory.EntityEquipmentSlot;
-@@ -57,6 +58,14 @@
+@@ -57,6 +58,15 @@
  import net.minecraft.world.storage.loot.LootTable;
  import net.minecraftforge.fml.relauncher.Side;
  import net.minecraftforge.fml.relauncher.SideOnly;
@@ -20,10 +20,11 @@
 +import org.bukkit.event.entity.EntityTargetLivingEntityEvent;
 +import org.bukkit.event.entity.EntityUnleashEvent;
 +import red.mohist.common.RealTimeTicking;
++import red.mohist.configuration.MohistConfig;
  
  public abstract class EntityLiving extends EntityLivingBase
  {
-@@ -68,16 +77,16 @@
+@@ -68,16 +78,16 @@
      protected EntityJumpHelper jumpHelper;
      private final EntityBodyHelper bodyHelper;
      protected PathNavigate navigator;
@@ -46,12 +47,15 @@
      private final Map<PathNodeType, Float> mapPathPriority = Maps.newEnumMap(PathNodeType.class);
      private ResourceLocation deathLootTable;
      private long deathLootTableSeed;
-@@ -171,8 +180,37 @@
+@@ -169,10 +179,38 @@
+ 
+     public void setAttackTarget(@Nullable EntityLivingBase entitylivingbaseIn)
      {
-         this.attackTarget = entitylivingbaseIn;
-         net.minecraftforge.common.ForgeHooks.onLivingSetAttackTarget(this, entitylivingbaseIn);
+-        this.attackTarget = entitylivingbaseIn;
+-        net.minecraftforge.common.ForgeHooks.onLivingSetAttackTarget(this, entitylivingbaseIn);
 +        // CraftBukkit start - fire event
 +        setGoalTarget(entitylivingbaseIn, EntityTargetEvent.TargetReason.UNKNOWN, true);
++		net.minecraftforge.common.ForgeHooks.onLivingSetAttackTarget(this, entitylivingbaseIn);
      }
  
 +    public boolean setGoalTarget(@Nullable EntityLivingBase entityliving, EntityTargetEvent.TargetReason reason, boolean fireEvent) {
@@ -156,13 +160,17 @@
                  double d0 = entity.posX - this.posX;
                  double d1 = entity.posY - this.posY;
                  double d2 = entity.posZ - this.posZ;
-@@ -749,10 +804,17 @@
+@@ -749,10 +804,21 @@
  
      protected final void updateEntityActionState()
      {
 -        ++this.idleTime;
-+        int ticks = (int) ((RealTimeTicking) this.getEntityWorld()).getRealTimeTicks();
-+        this.idleTime += ticks;
++        if (MohistConfig.instance.RealTimeTicking()) {
++            int ticks = (int) ((RealTimeTicking) this.getEntityWorld()).getRealTimeTicks();
++            this.idleTime += ticks;
++        } else {
++            ++this.idleTime;
++        }
          this.world.profiler.startSection("checkDespawn");
          this.despawnEntity();
          this.world.profiler.endSection();
@@ -175,7 +183,7 @@
          this.world.profiler.startSection("sensing");
          this.senses.clearSensingCache();
          this.world.profiler.endSection();
-@@ -1192,12 +1254,12 @@
+@@ -1192,12 +1258,12 @@
  
      public boolean canPickUpLoot()
      {
@@ -190,7 +198,7 @@
      }
  
      public boolean isNoDespawnRequired()
-@@ -1209,6 +1271,10 @@
+@@ -1209,6 +1275,10 @@
      {
          if (this.getLeashed() && this.getLeashHolder() == player)
          {
@@ -201,7 +209,7 @@
              this.clearLeashed(true, !player.capabilities.isCreativeMode);
              return true;
          }
-@@ -1218,6 +1284,10 @@
+@@ -1218,6 +1288,10 @@
  
              if (itemstack.getItem() == Items.LEAD && this.canBeLeashedTo(player))
              {
@@ -212,7 +220,7 @@
                  this.setLeashHolder(player, true);
                  itemstack.shrink(1);
                  return true;
-@@ -1245,11 +1315,13 @@
+@@ -1245,11 +1319,13 @@
          {
              if (!this.isEntityAlive())
              {
@@ -226,7 +234,7 @@
                  this.clearLeashed(true, true);
              }
          }
-@@ -1264,7 +1336,9 @@
+@@ -1264,7 +1340,9 @@
  
              if (!this.world.isRemote && dropLead)
              {
@@ -236,7 +244,7 @@
              }
  
              if (!this.world.isRemote && sendPacket && this.world instanceof WorldServer)
-@@ -1348,6 +1422,7 @@
+@@ -1348,6 +1426,7 @@
              }
              else
              {
@@ -244,7 +252,7 @@
                  this.clearLeashed(false, true);
              }
          }
-@@ -1448,7 +1523,6 @@
+@@ -1448,7 +1527,6 @@
          ON_GROUND,
          IN_AIR,
          IN_WATER;

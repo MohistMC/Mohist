@@ -15,7 +15,7 @@
  import net.minecraft.util.EnumFacing;
  import net.minecraft.util.ITickable;
  import net.minecraft.util.NonNullList;
-@@ -31,6 +33,12 @@
+@@ -31,6 +33,14 @@
  import net.minecraft.util.math.MathHelper;
  import net.minecraftforge.fml.relauncher.Side;
  import net.minecraftforge.fml.relauncher.SideOnly;
@@ -24,15 +24,18 @@
 +import org.bukkit.entity.HumanEntity;
 +import org.bukkit.event.inventory.FurnaceBurnEvent;
 +import org.bukkit.event.inventory.FurnaceSmeltEvent;
++import red.mohist.command.MohistCommand;
 +import red.mohist.common.RealTimeTicking;
++import red.mohist.configuration.MohistConfig;
  
  public class TileEntityFurnace extends TileEntityLockable implements ITickable, ISidedInventory
  {
-@@ -44,6 +52,30 @@
+@@ -44,6 +54,31 @@
      private int totalCookTime;
      private String furnaceCustomName;
  
 +    // CraftBukkit start - add fields and methods
++    private int lastTick = MinecraftServer.currentTick;
 +    public List<HumanEntity> transaction = new java.util.ArrayList<HumanEntity>();
 +    private int maxStack = MAX_STACK;
 +    
@@ -59,7 +62,7 @@
      public int getSizeInventory()
      {
          return this.furnaceItemStacks.size();
-@@ -166,12 +198,28 @@
+@@ -166,12 +201,40 @@
  
      public void update()
      {
@@ -67,10 +70,18 @@
 +        boolean flag = (this.getBlockType() == Blocks.LIT_FURNACE); // CraftBukkit - SPIGOT-844 - Check if furnace block is lit using the block instead of burn time
          boolean flag1 = false;
  
++        // CraftBukkit start - Use wall time instead of ticks for cooking
++        int elapsedTicks = MinecraftServer.currentTick - this.lastTick;
++        this.lastTick = MinecraftServer.currentTick;
++
 +        // CraftBukkit - moved from below - edited for wall time
 +        if (this.isBurning() && this.canSmelt()) {
-+            int ticks = (int) ((RealTimeTicking) this.getWorld()).getRealTimeTicks();
-+            this.cookTime = Math.min(this.totalCookTime, this.cookTime + ticks);
++            if(MohistConfig.instance.RealTimeTicking()){
++                int ticks = (int) ((RealTimeTicking) this.getWorld()).getRealTimeTicks();
++                this.cookTime = Math.min(this.totalCookTime, this.cookTime + ticks);
++            } else {
++                this.cookTime += elapsedTicks;
++            }
 +            if (this.cookTime >= this.totalCookTime) {
 +                this.cookTime -= this.totalCookTime; // Paper
 +                this.totalCookTime = this.getCookTime((ItemStack) this.furnaceItemStacks.get(0));
@@ -85,12 +96,16 @@
          if (this.isBurning())
          {
 -            --this.furnaceBurnTime;
-+            int ticks = (int) ((RealTimeTicking) this.getWorld()).getRealTimeTicks();
-+            this.furnaceBurnTime = Math.max(0, this.furnaceBurnTime - ticks);
++            if(MohistConfig.instance.RealTimeTicking()){
++                int ticks = (int) ((RealTimeTicking) this.getWorld()).getRealTimeTicks();
++                this.furnaceBurnTime = Math.max(0, this.furnaceBurnTime - ticks);
++            } else {
++                this.furnaceBurnTime -= elapsedTicks; // CraftBukkit - use elapsedTicks in place of constant
++            }
          }
  
          if (!this.world.isRemote)
-@@ -180,13 +228,21 @@
+@@ -180,13 +243,21 @@
  
              if (this.isBurning() || !itemstack.isEmpty() && !((ItemStack)this.furnaceItemStacks.get(0)).isEmpty())
              {
@@ -118,7 +133,7 @@
                          flag1 = true;
  
                          if (!itemstack.isEmpty())
-@@ -202,33 +258,18 @@
+@@ -202,33 +273,22 @@
                          }
                      }
                  }
@@ -143,8 +158,12 @@
              else if (!this.isBurning() && this.cookTime > 0)
              {
 -                this.cookTime = MathHelper.clamp(this.cookTime - 2, 0, this.totalCookTime);
-+                int ticks = (int) ((RealTimeTicking) this.getWorld()).getRealTimeTicks();
-+                this.cookTime = MathHelper.clamp(this.cookTime - (2 * ticks), 0, this.totalCookTime);
++                if(MohistConfig.instance.RealTimeTicking()) {
++                    int ticks = (int) ((RealTimeTicking) this.getWorld()).getRealTimeTicks();
++                    this.cookTime = MathHelper.clamp(this.cookTime - (2 * ticks), 0, this.totalCookTime);
++                } else {
++                    this.cookTime = MathHelper.clamp(this.cookTime - 2, 0, this.totalCookTime);
++                }
              }
  
              if (flag != this.isBurning())
@@ -155,7 +174,7 @@
              }
          }
  
-@@ -289,6 +330,31 @@
+@@ -289,6 +349,31 @@
              ItemStack itemstack1 = FurnaceRecipes.instance().getSmeltingResult(itemstack);
              ItemStack itemstack2 = this.furnaceItemStacks.get(2);
  
@@ -187,7 +206,7 @@
              if (itemstack2.isEmpty())
              {
                  this.furnaceItemStacks.set(2, itemstack1.copy());
-@@ -297,6 +363,8 @@
+@@ -297,6 +382,8 @@
              {
                  itemstack2.grow(itemstack1.getCount());
              }
@@ -196,7 +215,7 @@
  
              if (itemstack.getItem() == Item.getItemFromBlock(Blocks.SPONGE) && itemstack.getMetadata() == 1 && !((ItemStack)this.furnaceItemStacks.get(1)).isEmpty() && ((ItemStack)this.furnaceItemStacks.get(1)).getItem() == Items.BUCKET)
              {
-@@ -533,14 +601,14 @@
+@@ -533,14 +620,14 @@
          this.furnaceItemStacks.clear();
      }
  

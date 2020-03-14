@@ -27,7 +27,7 @@
  import net.minecraft.tileentity.TileEntity;
  import net.minecraft.tileentity.TileEntityChest;
  import net.minecraft.util.ActionResult;
-@@ -25,6 +31,12 @@
+@@ -25,6 +31,13 @@
  import net.minecraft.world.ILockableContainer;
  import net.minecraft.world.World;
  import net.minecraft.world.WorldServer;
@@ -37,10 +37,11 @@
 +import org.bukkit.event.player.PlayerInteractEvent;
 +import red.mohist.Mohist;
 +import red.mohist.common.RealTimeTicking;
++import red.mohist.configuration.MohistConfig;
  
  public class PlayerInteractionManager
  {
-@@ -50,7 +62,7 @@
+@@ -50,7 +63,7 @@
          this.gameType = type;
          type.configurePlayerCapabilities(this.player.capabilities);
          this.player.sendPlayerAbilities();
@@ -49,17 +50,21 @@
          this.world.updateAllPlayersSleepingFlag();
      }
  
-@@ -81,7 +93,8 @@
+@@ -81,7 +94,12 @@
  
      public void updateBlockRemoving()
      {
 -        ++this.curblockDamage;
-+        int ticks = (int) ((RealTimeTicking) Objects.requireNonNull(this.world.getMinecraftServer())).getRealTimeTicks();
-+        this.curblockDamage += ticks;
++        if(MohistConfig.instance.RealTimeTicking()) {
++            int ticks = (int) ((RealTimeTicking) Objects.requireNonNull(this.world.getMinecraftServer())).getRealTimeTicks();
++            this.curblockDamage += ticks;
++        } else {
++            this.curblockDamage = MinecraftServer.currentTick;  // CraftBukkit
++        }
  
          if (this.receivedFinishDiggingPacket)
          {
-@@ -137,6 +150,19 @@
+@@ -137,6 +155,19 @@
  
      public void onBlockClicked(BlockPos pos, EnumFacing side)
      {
@@ -79,7 +84,7 @@
          double reachDist = player.getEntityAttribute(EntityPlayer.REACH_DISTANCE).getAttributeValue();
          net.minecraftforge.event.entity.player.PlayerInteractEvent.LeftClickBlock event = net.minecraftforge.common.ForgeHooks.onLeftClickBlock(player, pos, side, net.minecraftforge.common.ForgeHooks.rayTraceEyeHitVec(player, reachDist + 1));
          if (event.isCanceled())
-@@ -185,11 +211,24 @@
+@@ -185,11 +216,24 @@
              this.initialDamage = this.curblockDamage;
              float f = 1.0F;
  
@@ -106,7 +111,7 @@
                      this.world.extinguishFire((EntityPlayer)null, pos, side);
                  }
                  else
-@@ -200,6 +239,26 @@
+@@ -200,6 +244,26 @@
                  }
                  f = iblockstate.getPlayerRelativeBlockHardness(this.player, this.player.world, pos);
              }
@@ -133,7 +138,7 @@
              if (event.getUseItem() == net.minecraftforge.fml.common.eventhandler.Event.Result.DENY)
              {
                  if (f >= 1.0F)
-@@ -221,6 +280,7 @@
+@@ -221,6 +285,7 @@
                  this.destroyPos = pos;
                  int i = (int)(f * 10.0F);
                  this.world.sendBlockBreakProgress(this.player.getEntityId(), pos, i);
@@ -141,7 +146,7 @@
                  this.durabilityRemainingOnBlock = i;
              }
          }
-@@ -230,6 +290,7 @@
+@@ -230,6 +295,7 @@
      {
          if (pos.equals(this.destroyPos))
          {
@@ -149,7 +154,7 @@
              int i = this.curblockDamage - this.initialDamage;
              IBlockState iblockstate = this.world.getBlockState(pos);
  
-@@ -251,6 +312,15 @@
+@@ -251,6 +317,15 @@
                      this.initialBlockDamage = this.initialDamage;
                  }
              }
@@ -165,7 +170,7 @@
          }
      }
  
-@@ -279,59 +349,66 @@
+@@ -279,59 +354,66 @@
      }
  
      public boolean tryHarvestBlock(BlockPos pos)
@@ -247,7 +252,7 @@
                  }
                  return flag1;
              }
-@@ -396,105 +473,156 @@
+@@ -396,105 +478,156 @@
          }
      }
  

@@ -15,7 +15,7 @@
  import net.minecraft.inventory.ItemStackHelper;
  import net.minecraft.item.ItemStack;
  import net.minecraft.nbt.NBTTagCompound;
-@@ -27,6 +29,13 @@
+@@ -27,6 +29,14 @@
  import net.minecraft.util.math.BlockPos;
  import net.minecraft.util.math.MathHelper;
  import net.minecraft.world.World;
@@ -26,10 +26,11 @@
 +import org.bukkit.event.inventory.InventoryMoveItemEvent;
 +import org.bukkit.event.inventory.InventoryPickupItemEvent;
 +import org.bukkit.inventory.Inventory;
++import org.bukkit.inventory.InventoryHolder;
  
  public class TileEntityHopper extends TileEntityLockableLoot implements IHopper, ITickable
  {
-@@ -34,6 +43,30 @@
+@@ -34,6 +44,30 @@
      private int transferCooldown = -1;
      private long tickedGameTime;
  
@@ -60,7 +61,7 @@
      public static void registerFixesHopper(DataFixer fixer)
      {
          fixer.registerWalker(FixTypes.BLOCK_ENTITY, new ItemStackDataLists(TileEntityHopper.class, new String[] {"Items"}));
-@@ -78,7 +111,7 @@
+@@ -78,7 +112,7 @@
  
      public int getSizeInventory()
      {
@@ -69,7 +70,7 @@
      }
  
      public ItemStack decrStackSize(int index, int count)
-@@ -106,7 +139,7 @@
+@@ -106,7 +140,7 @@
  
      public int getInventoryStackLimit()
      {
@@ -78,7 +79,7 @@
      }
  
      public void update()
-@@ -119,7 +152,11 @@
+@@ -119,7 +153,11 @@
              if (!this.isOnTransferCooldown())
              {
                  this.setTransferCooldown(0);
@@ -91,7 +92,7 @@
              }
          }
      }
-@@ -144,7 +181,7 @@
+@@ -144,7 +182,7 @@
  
                  if (flag)
                  {
@@ -100,7 +101,7 @@
                      this.markDirty();
                      return true;
                  }
-@@ -358,14 +395,48 @@
+@@ -358,14 +396,49 @@
          if (!itemstack.isEmpty() && canExtractItemFromSlot(inventoryIn, itemstack, index, direction))
          {
              ItemStack itemstack1 = itemstack.copy();
@@ -113,7 +114,8 @@
 +            if (inventoryIn instanceof InventoryLargeChest) {
 +                sourceInventory = new org.bukkit.craftbukkit.v1_12_R1.inventory.CraftInventoryDoubleChest((InventoryLargeChest) inventoryIn);
 +            } else {
-+                sourceInventory = inventoryIn.getOwner() != null ? inventoryIn.getOwner().getInventory() : new CraftCustomInventory(inventoryIn).getInventory();
++                InventoryHolder owner = (inventoryIn instanceof TileEntity) ? ((TileEntity)inventoryIn).getOwner() : inventoryIn.getOwner();
++                sourceInventory = owner != null ? owner.getInventory() : new CraftCustomInventory(inventoryIn).getInventory();
 +            }
 +
 +            InventoryMoveItemEvent event = new InventoryMoveItemEvent(sourceInventory, oitemstack.clone(), hopper.getOwner().getInventory(), false);
@@ -152,7 +154,7 @@
              inventoryIn.setInventorySlotContents(index, itemstack1);
          }
  
-@@ -382,6 +453,15 @@
+@@ -382,6 +455,15 @@
          }
          else
          {
@@ -168,7 +170,7 @@
              ItemStack itemstack = entity.getItem().copy();
              ItemStack itemstack1 = putStackInInventoryAllSlots(source, destination, itemstack, (EnumFacing)null);
  
-@@ -491,7 +571,7 @@
+@@ -491,7 +573,7 @@
                              }
                          }
  
@@ -177,7 +179,7 @@
                      }
                  }
  
-@@ -525,6 +605,7 @@
+@@ -525,6 +607,7 @@
          int j = MathHelper.floor(y);
          int k = MathHelper.floor(z);
          BlockPos blockpos = new BlockPos(i, j, k);

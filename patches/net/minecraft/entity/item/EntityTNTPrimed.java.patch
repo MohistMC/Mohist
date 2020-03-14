@@ -1,49 +1,24 @@
 --- ../src-base/minecraft/net/minecraft/entity/item/EntityTNTPrimed.java
 +++ ../src-work/minecraft/net/minecraft/entity/item/EntityTNTPrimed.java
-@@ -1,5 +1,6 @@
- package net.minecraft.entity.item;
- 
-+import java.util.Random;
- import javax.annotation.Nullable;
- import net.minecraft.entity.Entity;
- import net.minecraft.entity.EntityLivingBase;
-@@ -9,7 +10,10 @@
- import net.minecraft.network.datasync.DataSerializers;
+@@ -10,6 +10,7 @@
  import net.minecraft.network.datasync.EntityDataManager;
  import net.minecraft.util.EnumParticleTypes;
-+import net.minecraft.util.math.MathHelper;
  import net.minecraft.world.World;
 +import org.bukkit.event.entity.ExplosionPrimeEvent;
-+import red.mohist.util.ThermiteRandom;
  
  public class EntityTNTPrimed extends Entity
  {
-@@ -18,6 +22,10 @@
+@@ -18,6 +19,9 @@
      private EntityLivingBase tntPlacedBy;
      private int fuse;
  
 +    public float yield = 4;
 +    public boolean isIncendiary = false;
-+    private static final Random random = new ThermiteRandom();
 +
      public EntityTNTPrimed(World worldIn)
      {
          super(worldIn);
-@@ -31,10 +39,10 @@
-     {
-         this(worldIn);
-         this.setPosition(x, y, z);
--        float f = (float)(Math.random() * (Math.PI * 2D));
--        this.motionX = (double)(-((float)Math.sin((double)f)) * 0.02F);
-+        float f = (float)(random.nextDouble() * (Math.PI * 2D));
-+        this.motionX = (double)(-(MathHelper.sin(f)) * 0.02F);
-         this.motionY = 0.20000000298023224D;
--        this.motionZ = (double)(-((float)Math.cos((double)f)) * 0.02F);
-+        this.motionZ = (double)(-(MathHelper.cos(f)) * 0.02F);
-         this.setFuse(80);
-         this.prevPosX = x;
-         this.prevPosY = y;
-@@ -59,6 +67,7 @@
+@@ -59,6 +63,7 @@
  
      public void onUpdate()
      {
@@ -51,7 +26,7 @@
          this.prevPosX = this.posX;
          this.prevPosY = this.posY;
          this.prevPosZ = this.posZ;
-@@ -69,39 +78,48 @@
+@@ -69,39 +74,48 @@
          }
  
          this.move(MoverType.SELF, this.motionX, this.motionY, this.motionZ);

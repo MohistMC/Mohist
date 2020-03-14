@@ -126,7 +126,7 @@
      private EntityLivingBase lastAttackedEntity;
      private int lastAttackedEntityTime;
      private float landMovementFactor;
-@@ -154,6 +181,23 @@
+@@ -154,6 +181,22 @@
      private DamageSource lastDamageSource;
      private long lastDamageStamp;
  
@@ -137,7 +137,6 @@
 +    public org.bukkit.craftbukkit.v1_12_R1.attribute.CraftAttributeMap craftAttributes;
 +    public boolean collides = true;
 +    public boolean canPickUpLoot;
-+    public boolean silentDeath = false; // Paper - mark entity as dying silently for cancellable death event
 +
 +    // Spigot start
 +    public void inactiveTick()
@@ -150,7 +149,7 @@
      public void onKillCommand()
      {
          this.attackEntityFrom(DamageSource.OUT_OF_WORLD, Float.MAX_VALUE);
-@@ -163,7 +207,9 @@
+@@ -163,7 +206,9 @@
      {
          super(worldIn);
          this.applyEntityAttributes();
@@ -161,7 +160,7 @@
          this.preventEntitySpawning = true;
          this.randomUnused1 = (float)((Math.random() + 1.0D) * 0.009999999776482582D);
          this.setPosition(this.posX, this.posY, this.posZ);
-@@ -207,8 +253,17 @@
+@@ -207,8 +252,17 @@
              {
                  double d0 = Math.min((double)(0.2F + f / 15.0F), 2.5D);
                  int i = (int)(150.0D * d0);
@@ -181,7 +180,7 @@
              }
          }
  
-@@ -260,43 +315,41 @@
+@@ -260,43 +314,41 @@
          {
              if (!this.isInsideOfMaterial(Material.WATER))
              {
@@ -243,7 +242,7 @@
                      this.frostWalk(blockpos);
                  }
              }
-@@ -359,6 +412,16 @@
+@@ -359,6 +411,16 @@
          this.world.profiler.endSection();
      }
  
@@ -260,7 +259,7 @@
      protected void frostWalk(BlockPos pos)
      {
          int i = EnchantmentHelper.getMaxEnchantmentLevel(Enchantments.FROST_WALKER, this);
-@@ -378,19 +441,18 @@
+@@ -378,19 +440,18 @@
      {
          ++this.deathTime;
  
@@ -286,7 +285,7 @@
  
              this.setDead();
  
-@@ -543,8 +605,8 @@
+@@ -543,8 +604,8 @@
  
      public void readEntityFromNBT(NBTTagCompound compound)
      {
@@ -297,7 +296,7 @@
          if (compound.hasKey("Attributes", 9) && this.world != null && !this.world.isRemote)
          {
              SharedMonsterAttributes.setAttributeModifiers(this.getAttributeMap(), compound.getTagList("Attributes", 10));
-@@ -566,6 +628,15 @@
+@@ -566,6 +627,15 @@
              }
          }
  
@@ -313,7 +312,7 @@
          if (compound.hasKey("Health", 99))
          {
              this.setHealth(compound.getFloat("Health"));
-@@ -592,10 +663,13 @@
+@@ -592,10 +662,13 @@
          }
      }
  
@@ -328,7 +327,7 @@
          try
          {
              while (iterator.hasNext())
-@@ -622,6 +696,16 @@
+@@ -622,6 +695,16 @@
              ;
          }
  
@@ -345,7 +344,7 @@
          if (this.potionsNeedUpdate)
          {
              if (!this.world.isRemote)
-@@ -712,6 +796,7 @@
+@@ -712,6 +795,7 @@
                  if(net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.living.PotionEvent.PotionRemoveEvent(this, effect))) continue;
  
                  this.onFinishedPotionEffect(effect);
@@ -353,7 +352,7 @@
                  iterator.remove();
              }
          }
-@@ -740,6 +825,10 @@
+@@ -740,6 +824,10 @@
  
      public void addPotionEffect(PotionEffect potioneffectIn)
      {
@@ -364,7 +363,7 @@
          if (this.isPotionApplicable(potioneffectIn))
          {
              PotionEffect potioneffect = this.activePotionsMap.get(potioneffectIn.getPotion());
-@@ -784,6 +873,10 @@
+@@ -784,6 +872,10 @@
      @Nullable
      public PotionEffect removeActivePotionEffect(@Nullable Potion potioneffectin)
      {
@@ -375,7 +374,7 @@
          return this.activePotionsMap.remove(potioneffectin);
      }
  
-@@ -830,25 +923,56 @@
+@@ -830,25 +922,56 @@
          }
      }
  
@@ -433,7 +432,7 @@
          this.dataManager.set(HEALTH, Float.valueOf(MathHelper.clamp(health, 0.0F, this.getMaxHealth())));
      }
  
-@@ -879,15 +1003,17 @@
+@@ -879,15 +1002,17 @@
              {
                  float f = amount;
  
@@ -454,7 +453,7 @@
                  {
                      this.damageShield(amount);
                      amount = 0.0F;
-@@ -912,22 +1038,36 @@
+@@ -912,22 +1037,36 @@
                  {
                      if (amount <= this.lastDamage)
                      {
@@ -493,7 +492,7 @@
                  this.attackedAtYaw = 0.0F;
                  Entity entity1 = source.getTrueSource();
  
-@@ -1008,19 +1148,14 @@
+@@ -1008,7 +1147,6 @@
                          this.attackedAtYaw = (float)((int)(Math.random() * 2.0D) * 180);
                      }
                  }
@@ -501,21 +500,7 @@
                  if (this.getHealth() <= 0.0F)
                  {
                      if (!this.checkTotemDeathProtection(source))
-                     {
--                        SoundEvent soundevent = this.getDeathSound();
-+                        this.silentDeath = !flag1; // mark entity as dying silently
- 
--                        if (flag1 && soundevent != null)
--                        {
--                            this.playSound(soundevent, this.getSoundVolume(), this.getSoundPitch());
--                        }
--
-                         this.onDeath(source);
-+                        this.silentDeath = false; // Paper - cancellable death event - reset to default
-                     }
-                 }
-                 else if (flag1)
-@@ -1065,22 +1200,28 @@
+@@ -1065,22 +1203,28 @@
          else
          {
              ItemStack itemstack = null;
@@ -550,7 +535,7 @@
                  {
                      EntityPlayerMP entityplayermp = (EntityPlayerMP)this;
                      entityplayermp.addStat(StatList.getObjectUseStats(Items.TOTEM_OF_UNDYING));
-@@ -1094,7 +1235,8 @@
+@@ -1094,7 +1238,8 @@
                  this.world.setEntityState(this, (byte)35);
              }
  
@@ -560,7 +545,7 @@
          }
      }
  
-@@ -1201,10 +1343,22 @@
+@@ -1201,10 +1346,22 @@
  
                  if (!net.minecraftforge.common.ForgeHooks.onLivingDrops(this, cause, capturedDrops, i, recentlyHit > 0))
                  {
@@ -585,7 +570,7 @@
                  }
              }
  
-@@ -1321,8 +1475,11 @@
+@@ -1321,8 +1478,11 @@
  
          if (i > 0)
          {
@@ -598,7 +583,7 @@
              int j = MathHelper.floor(this.posX);
              int k = MathHelper.floor(this.posY - 0.20000000298023224D);
              int l = MathHelper.floor(this.posZ);
-@@ -1362,7 +1519,7 @@
+@@ -1362,7 +1522,7 @@
      {
          if (!source.isUnblockable())
          {
@@ -607,7 +592,7 @@
              damage = CombatRules.getDamageAfterAbsorb(damage, (float)this.getTotalArmorValue(), (float)this.getEntityAttribute(SharedMonsterAttributes.ARMOR_TOUGHNESS).getAttributeValue());
          }
  
-@@ -1377,7 +1534,8 @@
+@@ -1377,7 +1537,8 @@
          }
          else
          {
@@ -617,7 +602,7 @@
              {
                  int i = (this.getActivePotionEffect(MobEffects.RESISTANCE).getAmplifier() + 1) * 5;
                  int j = 25 - i;
-@@ -1403,27 +1561,131 @@
+@@ -1403,27 +1564,156 @@
          }
      }
  
@@ -654,41 +639,66 @@
 +                if (f <= 0) return true;
              }
 +            float originalDamage = f;
-+            Function<Double, Double> hardHat = f12 -> {
-+                if ((damagesource == DamageSource.ANVIL || damagesource == DamageSource.FALLING_BLOCK) && !EntityLivingBase.this.getItemStackFromSlot(EntityEquipmentSlot.HEAD).isEmpty()) {
-+                    return -(f12 - (f12 * 0.75F));
-+
++            Function<Double, Double> hardHat = new Function<Double, Double>() {
++                @Override
++                public Double apply(Double f) {
++                    if ((damagesource == DamageSource.ANVIL || damagesource == DamageSource.FALLING_BLOCK) && !EntityLivingBase.this.getItemStackFromSlot(EntityEquipmentSlot.HEAD).isEmpty()) {
++                        return -(f - (f * 0.75F));
++                    }
++                    return -0.0;
 +                }
-+                return -0.0;
 +            };
 +            float hardHatModifier = hardHat.apply((double) f).floatValue();
 +            f += hardHatModifier;
 +
-+            Function<Double, Double> blocking = f13 -> -((EntityLivingBase.this.canBlockDamageSource(damagesource)) ? f13 : 0.0);
++            Function<Double, Double> blocking = new Function<Double, Double>() {
++                @Override
++                public Double apply(Double f) {
++                    return -((EntityLivingBase.this.canBlockDamageSource(damagesource)) ? f : 0.0);
++                }
++            };
 +            float blockingModifier = blocking.apply((double) f).floatValue();
 +            f += blockingModifier;
 +
-+            Function<Double, Double> armor = f14 -> -(f14 - EntityLivingBase.this.applyArmorCalculations(damagesource, f14.floatValue()));
++            Function<Double, Double> armor = new Function<Double, Double>() {
++                @Override
++                public Double apply(Double f) {
++                    return -(f - EntityLivingBase.this.applyArmorCalculations(damagesource, f.floatValue()));
++                }
++            };
 +            float armorModifier = armor.apply((double) f).floatValue();
 +            f += armorModifier;
 +
-+            Function<Double, Double> resistance = f15 -> {
-+                if (!damagesource.isDamageAbsolute() && EntityLivingBase.this.isPotionActive(MobEffects.RESISTANCE) && damagesource != DamageSource.OUT_OF_WORLD) {
-+                    int i = (EntityLivingBase.this.getActivePotionEffect(MobEffects.RESISTANCE).getAmplifier() + 1) * 5;
-+                    int j = 25 - i;
-+                    float f1 = f15.floatValue() * (float) j;
-+                    return -(f15 - (f1 / 25.0F));
++            Function<Double, Double> resistance = new Function<Double, Double>() {
++                @Override
++                public Double apply(Double f) {
++                    if (!damagesource.isDamageAbsolute() && EntityLivingBase.this.isPotionActive(MobEffects.RESISTANCE) && damagesource != DamageSource.OUT_OF_WORLD) {
++                        int i = (EntityLivingBase.this.getActivePotionEffect(MobEffects.RESISTANCE).getAmplifier() + 1) * 5;
++                        int j = 25 - i;
++                        float f1 = f.floatValue() * (float) j;
++                        return -(f - (f1 / 25.0F));
++                    }
++                    return -0.0;
 +                }
-+                return -0.0;
 +            };
 +            float resistanceModifier = resistance.apply((double) f).floatValue();
 +            f += resistanceModifier;
 +
-+            Function<Double, Double> magic = f16 -> -(f16 - EntityLivingBase.this.applyPotionDamageCalculations(damagesource, f16.floatValue()));
++            Function<Double, Double> magic = new Function<Double, Double>() {
++                @Override
++                public Double apply(Double f) {
++                    return -(f - EntityLivingBase.this.applyPotionDamageCalculations(damagesource, f.floatValue()));
++                }
++            };
 +            float magicModifier = magic.apply((double) f).floatValue();
 +            f += magicModifier;
 +
-+            Function<Double, Double> absorption = f17 -> -(Math.max(f17 - Math.max(f17 - EntityLivingBase.this.getAbsorptionAmount(), 0.0F), 0.0F));
++            Function<Double, Double> absorption = new Function<Double, Double>() {
++                @Override
++                public Double apply(Double f) {
++                    return -(Math.max(f - Math.max(f - EntityLivingBase.this.getAbsorptionAmount(), 0.0F), 0.0F));
++                }
++            };
 +            float absorptionModifier = absorption.apply((double) f).floatValue();
 +
 +            EntityDamageEvent event = CraftEventFactory.handleLivingEntityDamageEvent(this, damagesource, originalDamage, hardHatModifier, blockingModifier, armorModifier, resistanceModifier, magicModifier, absorptionModifier, hardHat, blocking, armor, resistance, magic, absorption);
@@ -766,7 +776,7 @@
      }
  
      public CombatTracker getCombatTracker()
-@@ -1605,6 +1867,7 @@
+@@ -1605,6 +1895,7 @@
          if (this.attributeMap == null)
          {
              this.attributeMap = new AttributeMap();
@@ -774,7 +784,7 @@
          }
  
          return this.attributeMap;
-@@ -1843,9 +2106,9 @@
+@@ -1843,9 +2134,9 @@
                  if (!this.isInLava() || this instanceof EntityPlayer && ((EntityPlayer)this).capabilities.isFlying)
                  {
                      if (this.isElytraFlying())
@@ -786,7 +796,7 @@
                              this.fallDistance = 1.0F;
                          }
  
-@@ -1855,27 +2118,27 @@
+@@ -1855,27 +2146,27 @@
                          double d8 = Math.sqrt(this.motionX * this.motionX + this.motionZ * this.motionZ);
                          double d1 = vec3d.lengthVector();
                          float f4 = MathHelper.cos(f);
@@ -821,7 +831,7 @@
                              this.motionX += (vec3d.x / d6 * d8 - this.motionX) * 0.1D;
                              this.motionZ += (vec3d.z / d6 * d8 - this.motionZ) * 0.1D;
                          }
-@@ -1886,21 +2149,22 @@
+@@ -1886,21 +2177,22 @@
                          this.move(MoverType.SELF, this.motionX, this.motionY, this.motionZ);
  
                          if (this.collidedHorizontally && !this.world.isRemote)
@@ -850,7 +860,7 @@
                          }
                      }
                      else
-@@ -2093,6 +2357,7 @@
+@@ -2093,6 +2385,7 @@
      public void onUpdate()
      {
          if (net.minecraftforge.common.ForgeHooks.onLivingUpdate(this)) return;
@@ -858,7 +868,7 @@
          super.onUpdate();
          this.updateActiveHand();
  
-@@ -2176,7 +2441,9 @@
+@@ -2176,7 +2469,9 @@
              }
          }
  
@@ -868,7 +878,7 @@
          double d0 = this.posX - this.prevPosX;
          double d1 = this.posZ - this.prevPosZ;
          float f3 = (float)(d0 * d0 + d1 * d1);
-@@ -2269,6 +2536,7 @@
+@@ -2269,6 +2564,7 @@
          {
              this.ticksElytraFlying = 0;
          }
@@ -876,7 +886,7 @@
      }
  
      protected float updateDistance(float p_110146_1_, float p_110146_2_)
-@@ -2345,7 +2613,7 @@
+@@ -2345,7 +2641,7 @@
          }
  
          this.world.profiler.startSection("ai");
@@ -885,7 +895,7 @@
          if (this.isMovementBlocked())
          {
              this.isJumping = false;
-@@ -2359,6 +2627,7 @@
+@@ -2359,6 +2655,7 @@
              this.updateEntityActionState();
              this.world.profiler.endSection();
          }
@@ -893,7 +903,7 @@
  
          this.world.profiler.endSection();
          this.world.profiler.startSection("jump");
-@@ -2390,10 +2659,14 @@
+@@ -2390,10 +2687,14 @@
          this.moveForward *= 0.98F;
          this.randomYawVelocity *= 0.9F;
          this.updateElytra();
@@ -908,7 +918,7 @@
          this.world.profiler.endSection();
      }
  
-@@ -2426,7 +2699,8 @@
+@@ -2426,7 +2727,8 @@
  
          if (!this.world.isRemote)
          {
@@ -918,74 +928,7 @@
          }
      }
  
-@@ -2434,38 +2708,41 @@
-     {
-     }
- 
--    protected void collideWithNearbyEntities()
--    {
-+    protected void collideWithNearbyEntities() {
-+        if (!(this instanceof EntityPlayerMP) && this.ticksExisted % MohistConfig.instance.entityCollideFrequency.getValue() == 0) {
-+            return;
-+        }
-         List<Entity> list = this.world.getEntitiesInAABBexcluding(this, this.getEntityBoundingBox(), EntitySelectors.getTeamCollisionPredicate(this));
-+        if (list.isEmpty()) {
-+            return;
-+        }
- 
--        if (!list.isEmpty())
--        {
--            int i = this.world.getGameRules().getInt("maxEntityCramming");
--
--            if (i > 0 && list.size() > i - 1 && this.rand.nextInt(4) == 0)
--            {
--                int j = 0;
--
--                for (int k = 0; k < list.size(); ++k)
--                {
--                    if (!((Entity)list.get(k)).isRiding())
--                    {
--                        ++j;
--                    }
-+        int i = this.world.getGameRules().getInt("maxEntityCramming");
-+        if (i > 0 && list.size() > i - 1 && this.rand.nextInt(4) == 0) {
-+            int j = 0;
-+            for (int k = 0; k < list.size(); ++k) {
-+                if (!((Entity) list.get(k)).isRiding()) {
-+                    ++j;
-                 }
--
--                if (j > i - 1)
--                {
--                    this.attackEntityFrom(DamageSource.CRAMMING, 6.0F);
--                }
-             }
-+            if (j > i - 1) {
-+                this.attackEntityFrom(DamageSource.CRAMMING, 6.0F);
-+            }
-+        }
- 
--            for (int l = 0; l < list.size(); ++l)
--            {
--                Entity entity = list.get(l);
--                this.collideWithEntity(entity);
-+        for (int l = 0; l < list.size(); ++l) {
-+            Entity entity = list.get(l);
-+            if (this.collisionCount > MohistConfig.instance.maxEntityCollisionsPerTick.getValue()) {
-+                break;
-             }
-+            if (!entity.canBePushed()) {
-+                continue;
-+            }
-+            entity.collisionCount++;
-+            this.collisionCount++;
-+            this.collideWithEntity(entity);
-         }
-+        this.collisionCount = 0;
-     }
- 
-     protected void collideWithEntity(Entity entityIn)
-@@ -2560,12 +2837,12 @@
+@@ -2560,12 +2862,12 @@
  
      public boolean canBeCollidedWith()
      {
@@ -1000,7 +943,7 @@
      }
  
      protected void markVelocityChanged()
-@@ -2629,7 +2906,7 @@
+@@ -2629,7 +2931,7 @@
          {
              PotionEffect effect = iterator.next();
  
@@ -1009,7 +952,7 @@
              {
                  onFinishedPotionEffect(effect);
                  iterator.remove();
-@@ -2785,8 +3062,25 @@
+@@ -2785,8 +3087,25 @@
          if (!this.activeItemStack.isEmpty() && this.isHandActive())
          {
              this.updateItemUse(this.activeItemStack, 16);
@@ -1037,7 +980,7 @@
              itemstack = net.minecraftforge.event.ForgeEventFactory.onItemUseFinish(this, activeItemStackCopy, getItemInUseCount(), itemstack);
              this.setHeldItem(this.getActiveHand(), itemstack);
              this.resetActiveHand();
-@@ -2897,11 +3191,14 @@
+@@ -2897,11 +3216,14 @@
  
              if (flag1)
              {
@@ -1057,7 +1000,7 @@
                  }
              }
          }
-@@ -2936,6 +3233,11 @@
+@@ -2936,6 +3258,11 @@
          }
      }
  
@@ -1069,7 +1012,7 @@
      public boolean canBeHitWithPotion()
      {
          return true;
-@@ -2949,7 +3251,7 @@
+@@ -2949,7 +3276,7 @@
      @SuppressWarnings("unchecked")
      @Override
      @Nullable
@@ -1078,7 +1021,7 @@
      {
          if (capability == net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABILITY)
          {
-@@ -2961,7 +3263,7 @@
+@@ -2961,7 +3288,7 @@
      }
  
      @Override
@@ -1087,7 +1030,7 @@
      {
          return capability == net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABILITY || super.hasCapability(capability, facing);
      }
-@@ -2975,7 +3277,7 @@
+@@ -2975,7 +3302,7 @@
      public void setPartying(BlockPos pos, boolean p_191987_2_)
      {
      }

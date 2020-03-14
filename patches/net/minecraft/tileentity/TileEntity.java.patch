@@ -8,7 +8,7 @@
  import net.minecraft.nbt.NBTTagCompound;
  import net.minecraft.network.play.server.SPacketUpdateTileEntity;
  import net.minecraft.util.Mirror;
-@@ -16,20 +17,28 @@
+@@ -16,20 +17,27 @@
  import net.minecraft.util.registry.RegistryNamespaced;
  import net.minecraft.util.text.ITextComponent;
  import net.minecraft.world.World;
@@ -29,7 +29,6 @@
      private static final RegistryNamespaced < ResourceLocation, Class <? extends TileEntity >> REGISTRY = new RegistryNamespaced < ResourceLocation, Class <? extends TileEntity >> ();
 -    protected World world;
 +    public World world;
-+    private boolean GC = false;
      protected BlockPos pos = BlockPos.ORIGIN;
      protected boolean tileEntityInvalid;
      private int blockMetadata = -1;
@@ -38,25 +37,7 @@
  
      public static void register(String id, Class <? extends TileEntity > clazz)
      {
-@@ -305,6 +314,17 @@
-     {
-     }
- 
-+    // KCauldron start
-+    public boolean isGC()
-+    {
-+        return this.GC; //Returns true if the chunk it is inside of has marked it for unloading
-+    }
-+
-+    public void setGC(boolean state)
-+    {
-+        this.GC = state; //Should never be touched by a mod. Would make it package-private but not sure if that would still work
-+    }
-+    // KCauldron end
-     // -- BEGIN FORGE PATCHES --
-     /**
-      * Called when you receive a TileEntityData packet for the location this
-@@ -531,4 +551,30 @@
+@@ -531,4 +539,30 @@
          register("shulker_box", TileEntityShulkerBox.class);
          register("bed", TileEntityBed.class);
      }

@@ -8,7 +8,7 @@
  import net.minecraft.entity.MoverType;
  import net.minecraft.entity.player.EntityPlayer;
  import net.minecraft.init.Enchantments;
-@@ -15,6 +16,10 @@
+@@ -15,6 +16,11 @@
  import net.minecraft.world.World;
  import net.minecraftforge.fml.relauncher.Side;
  import net.minecraftforge.fml.relauncher.SideOnly;
@@ -16,10 +16,11 @@
 +import org.bukkit.event.entity.EntityTargetEvent;
 +import org.bukkit.event.entity.EntityTargetLivingEntityEvent;
 +import red.mohist.common.RealTimeTicking;
++import red.mohist.configuration.MohistConfig;
  
  public class EntityXPOrb extends Entity
  {
-@@ -74,10 +79,12 @@
+@@ -74,10 +80,16 @@
      public void onUpdate()
      {
          super.onUpdate();
@@ -28,12 +29,16 @@
          if (this.delayBeforeCanPickup > 0)
          {
 -            --this.delayBeforeCanPickup;
-+            int ticks = (int) ((RealTimeTicking) this.getEntityWorld()).getRealTimeTicks();
-+            this.delayBeforeCanPickup = Math.max(0, this.delayBeforeCanPickup - ticks);
++            if(MohistConfig.instance.RealTimeTicking()) {
++                int ticks = (int) ((RealTimeTicking) this.getEntityWorld()).getRealTimeTicks();
++                this.delayBeforeCanPickup = Math.max(0, this.delayBeforeCanPickup - ticks);
++            } else {
++                --this.delayBeforeCanPickup;
++            }
          }
  
          this.prevPosX = this.posX;
-@@ -117,18 +124,27 @@
+@@ -117,18 +129,27 @@
  
          if (this.closestPlayer != null)
          {
@@ -72,17 +77,21 @@
              }
          }
  
-@@ -152,7 +168,8 @@
+@@ -152,7 +173,12 @@
          }
  
          ++this.xpColor;
 -        ++this.xpOrbAge;
-+        int ticks = (int) ((RealTimeTicking) this.getEntityWorld()).getRealTimeTicks();
-+        this.xpOrbAge += ticks;
++        if (MohistConfig.instance.RealTimeTicking()) {
++            int ticks = (int) ((RealTimeTicking) this.getEntityWorld()).getRealTimeTicks();
++            this.xpOrbAge += ticks;
++        } else {
++            ++this.xpOrbAge;
++        }
  
          if (this.xpOrbAge >= 6000)
          {
-@@ -195,22 +212,22 @@
+@@ -195,22 +221,22 @@
      {
          compound.setShort("Health", (short)this.xpOrbHealth);
          compound.setShort("Age", (short)this.xpOrbAge);
@@ -109,7 +118,7 @@
                  if (net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.player.PlayerPickupXpEvent(entityIn, this))) return;
                  entityIn.xpCooldown = 2;
                  entityIn.onItemPickup(this, 1);
-@@ -220,13 +237,17 @@
+@@ -220,13 +246,17 @@
                  {
                      float ratio = itemstack.getItem().getXpRepairRatio(itemstack);
                      int i = Math.min(roundAverage(this.xpValue * ratio), itemstack.getItemDamage());
@@ -130,7 +139,7 @@
                  }
  
                  this.setDead();
-@@ -296,6 +317,24 @@
+@@ -296,6 +326,24 @@
  
      public static int getXPSplit(int expValue)
      {

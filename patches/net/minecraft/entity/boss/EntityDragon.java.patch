@@ -132,19 +132,14 @@
          if (flag1)
          {
              double d0 = p_70972_1_.minX + (p_70972_1_.maxX - p_70972_1_.minX) * (double)this.rand.nextFloat();
-@@ -638,7 +693,28 @@
+@@ -638,7 +693,23 @@
  
              if (this.deathTicks == 1)
              {
 -                this.world.playBroadcastSound(1028, new BlockPos(this), 0);
 +                // CraftBukkit start - Use relative location for far away sounds
-+                // Paper start
-+                //int viewDistance = ((WorldServer) this.world).spigotConfig.viewDistance * 16;
-+                // Paper - updated to use worlds actual view distance incase we have to uncomment this due to removal of player view distance API
-+                for (EntityPlayer player : world.playerEntities) {
-+                    EntityPlayerMP playerMP = (EntityPlayerMP) player;
-+                    int viewDistance = playerMP.getViewDistance();
-+                    // Paper end
++                int viewDistance = this.world.getServer().getViewDistance() * 16;
++                for (EntityPlayerMP player : this.world.getMinecraftServer().getPlayerList().playerEntityList) {
 +                    double deltaX = this.posX - player.posX;
 +                    double deltaZ = this.posZ - player.posZ;
 +                    double distanceSquared = deltaX * deltaX + deltaZ * deltaZ;
@@ -153,9 +148,9 @@
 +                        double deltaLength = Math.sqrt(distanceSquared);
 +                        double relativeX = player.posX + (deltaX / deltaLength) * viewDistance;
 +                        double relativeZ = player.posZ + (deltaZ / deltaLength) * viewDistance;
-+                        playerMP.connection.sendPacket(new SPacketEffect(1028, new BlockPos((int) relativeX, (int) this.posY, (int) relativeZ), 0, true));
++                        player.connection.sendPacket(new SPacketEffect(1028, new BlockPos((int) relativeX, (int) this.posY, (int) relativeZ), 0, true));
 +                    } else {
-+                        playerMP.connection.sendPacket(new SPacketEffect(1028, new BlockPos((int) this.posX, (int) this.posY, (int) this.posZ), 0, true));
++                        player.connection.sendPacket(new SPacketEffect(1028, new BlockPos((int) this.posX, (int) this.posY, (int) this.posZ), 0, true));
 +                    }
 +                }
 +                // CraftBukkit end

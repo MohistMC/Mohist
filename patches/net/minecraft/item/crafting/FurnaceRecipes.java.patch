@@ -1,24 +1,15 @@
 --- ../src-base/minecraft/net/minecraft/item/crafting/FurnaceRecipes.java
 +++ ../src-work/minecraft/net/minecraft/item/crafting/FurnaceRecipes.java
-@@ -1,6 +1,6 @@
- package net.minecraft.item.crafting;
- 
--import com.google.common.collect.Maps;
-+import java.util.LinkedHashMap;
- import java.util.Map;
- import java.util.Map.Entry;
- import net.minecraft.block.Block;
 @@ -15,15 +15,18 @@
  public class FurnaceRecipes
  {
      private static final FurnaceRecipes SMELTING_BASE = new FurnaceRecipes();
 -    private final Map<ItemStack, ItemStack> smeltingList = Maps.<ItemStack, ItemStack>newHashMap();
--    private final Map<ItemStack, Float> experienceList = Maps.<ItemStack, Float>newHashMap();
-+    public Map<ItemStack, ItemStack> smeltingList = new LinkedHashMap();
-+    private final Map<ItemStack, Float> experienceList = new LinkedHashMap();
++    public Map<ItemStack, ItemStack> smeltingList = Maps.<ItemStack, ItemStack>newHashMap();
+     private final Map<ItemStack, Float> experienceList = Maps.<ItemStack, Float>newHashMap();
  
-+    public Map<ItemStack,ItemStack> customRecipes = new LinkedHashMap();
-+    public Map<ItemStack,Float> customExperience = new LinkedHashMap();
++    public Map<ItemStack,ItemStack> customRecipes = Maps.newHashMap();
++    public Map<ItemStack,Float> customExperience = Maps.newHashMap();
 +
      public static FurnaceRecipes instance()
      {

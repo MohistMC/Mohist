@@ -56,6 +56,7 @@ public class MohistConfig extends ConfigBase{
 
     public final IntSetting minChunkLoadThreads = new IntSetting(this, "settings.min-chunk-load-threads",2,"Keep people from doing stupid things with max of 6");
     public final BoolSetting keepSpawnInMemory = new BoolSetting(this, "keep-spawn-loaded", true, "Keep spawn chunk loaded");
+    public final BoolSetting RealTimeTicking = new BoolSetting(this, "realtimeticking", false, "RealTimeTicking from sponge");
 
     public final IntSetting entityTickLimit = new IntSetting(this, "entity-tick-limit", 300, "Entity maximum tick limit, entities exceeding this value will not be updated"); // by CraftDream
     public final StringSetting libraries_black_list = new StringSetting(this, "libraries_black_list", "aaaaa;bbbbbb", "libraries_black_list");
@@ -135,5 +136,9 @@ public class MohistConfig extends ConfigBase{
             ServerAPI.getNMSServer().logSevere("Could not load " + this.configFile);
             ex.printStackTrace();
         }
+    }
+
+    public boolean RealTimeTicking(){
+        return RealTimeTicking.getValue();
     }
 }
