@@ -10,12 +10,19 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.zip.GZIPOutputStream;
 import javax.net.ssl.HttpsURLConnection;
+import net.minecraft.server.MinecraftServer;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.json.simple.JSONArray;
@@ -30,76 +37,49 @@ import red.mohist.common.async.MohistThreadBox;
 public class Metrics {
 
     // The version of this bStats class
+    // The version of this bStats class
     public static final int B_STATS_VERSION = 1;
 
     // The url to which the data is sent
-    private static final String URL = "https://bStats.org/submitData/bukkit";
+    private static final String URL = "https://bStats.org/submitData/server-implementation";
+
     // Should failed requests be logged?
-    private static boolean logFailedRequests;
-    // Should the sent data be logged?
-    private static boolean logSentData;
-    // Should the response text be logged?
-    private static boolean logResponseStatusText;
+    private static boolean logFailedRequests = false;
+
+    // The name of the server software
+    private final String name;
+
     // The uuid of the server
-    private static String serverUUID;
+    private final String serverUUID;
+
     // A list with all custom charts
     private final List<CustomChart> charts = new ArrayList<>();
-    private final String pluginName = "Mohist";
-    private final String pluginVersion = Mohist.getVersion();
-    // Is bStats enabled on this server?
-    private boolean enabled;
 
-    public Metrics() {
-        // Get the config file
-        File configFile = new File("plugins/bStats", "config.yml");
-        YamlConfiguration config = YamlConfiguration.loadConfiguration(configFile);
-
-        // Check if the config file exists
-        if (!config.isSet("serverUuid")) {
-
-            // Add default values
-            config.addDefault("enabled", true);
-            // Every server gets it's unique random id.
-            config.addDefault("serverUuid", UUID.randomUUID().toString());
-            // Should failed request be logged?
-            config.addDefault("logFailedRequests", false);
-            // Should the sent data be logged?
-            config.addDefault("logSentData", false);
-            // Should the response text be logged?
-            config.addDefault("logResponseStatusText", false);
-
-            // Inform the server owners about bStats
-            config.options().header(
-                    "bStats collects some data for plugin authors like how many servers are using their plugins.\n" +
-                            "To honor their work, you should not disable it.\n" +
-                            "This has nearly no effect on the server performance!\n" +
-                            "Check out https://bStats.org/ to learn more :)"
-            ).copyDefaults(true);
-            try {
-                config.save(configFile);
-            } catch (IOException ignored) {
-            }
-        }
-
-        // Load the data
-        enabled = config.getBoolean("enabled", true);
-        serverUUID = config.getString("serverUuid");
-        logFailedRequests = config.getBoolean("logFailedRequests", false);
-        logSentData = config.getBoolean("logSentData", false);
-        logResponseStatusText = config.getBoolean("logResponseStatusText", false);
+    /**
+     * Class constructor.
+     *
+     * @param name              The name of the server software.
+     * @param serverUUID        The uuid of the server.
+     * @param logFailedRequests Whether failed requests should be logged or not.
+     * @param logger            The logger for the failed requests.
+     */
+    public Metrics(String name, String serverUUID, boolean logFailedRequests) {
+            this.name = name;
+            this.serverUUID = serverUUID;
+            Metrics.logFailedRequests = logFailedRequests;
 
         startSubmitting();
     }
 
+    /**
+     * Sends the data to the bStats server.
+     *
+     * @param data The data to send.
+     * @throws Exception If the request failed.
+     */
     private static void sendData(JSONObject data) throws Exception {
         if (data == null) {
             throw new IllegalArgumentException("Data cannot be null!");
-        }
-        if (Bukkit.isPrimaryThread()) {
-            throw new IllegalAccessException("This method must not be called from the main thread!");
-        }
-        if (logSentData) {
-            Bukkit.getLogger().info("Sending data to bStats: " + data.toString());
         }
         HttpsURLConnection connection = (HttpsURLConnection) new URL(URL).openConnection();
 
@@ -122,18 +102,7 @@ public class Metrics {
         outputStream.flush();
         outputStream.close();
 
-        InputStream inputStream = connection.getInputStream();
-        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
-
-        StringBuilder builder = new StringBuilder();
-        String line;
-        while ((line = bufferedReader.readLine()) != null) {
-            builder.append(line);
-        }
-        bufferedReader.close();
-        if (logResponseStatusText) {
-            Bukkit.getLogger().info("Sent data to bStats and received response: " + builder.toString());
-        }
+        connection.getInputStream().close(); // We don't care about the response - Just send our data :)
     }
 
     /**
@@ -155,12 +124,15 @@ public class Metrics {
     }
 
     /**
-     * Checks if bStats is enabled.
+     * Adds a custom chart.
      *
-     * @return Whether bStats is enabled or not.
+     * @param chart The chart to add.
      */
-    public boolean isEnabled() {
-        return enabled;
+    public void addCustomChart(CustomChart chart) {
+        if (chart == null) {
+            throw new IllegalArgumentException("Chart cannot be null!");
+        }
+        charts.add(chart);
     }
 
     /**
@@ -182,9 +154,8 @@ public class Metrics {
     public JSONObject getPluginData() {
         JSONObject data = new JSONObject();
 
-        data.put("pluginName", pluginName); // Append the name of the plugin
+        data.put("pluginName", name); // Append the name of the server software
         data.put("id", "3939"); // Append the id of the plugin
-        data.put("pluginVersion", pluginVersion); // Append the version of the plugin
         JSONArray customCharts = new JSONArray();
         for (CustomChart customChart : charts) {
             // Add the data of the custom charts
@@ -205,13 +176,7 @@ public class Metrics {
      * @return The server specific data.
      */
     private JSONObject getServerData() {
-        // Minecraft specific data
-        int playerAmount = Bukkit.getOnlinePlayers().size(); // Just use the new method if the Reflection failed
-        int onlineMode = Bukkit.getOnlineMode() ? 1 : 0;
-        String bukkitVersion = Bukkit.getVersion();
-
-        // OS/Java specific data
-        String javaVersion = System.getProperty("java.version");
+        // OS specific data
         String osName = System.getProperty("os.name");
         String osArch = System.getProperty("os.arch");
         String osVersion = System.getProperty("os.version");
@@ -221,11 +186,6 @@ public class Metrics {
 
         data.put("serverUUID", serverUUID);
 
-        data.put("playerAmount", playerAmount);
-        data.put("onlineMode", onlineMode);
-        data.put("bukkitVersion", bukkitVersion);
-        data.put("bukkitName", "Mohist");
-        data.put("javaVersion", javaVersion);
         data.put("osName", osName);
         data.put("osArch", osArch);
         data.put("osVersion", osVersion);
@@ -250,7 +210,7 @@ public class Metrics {
         } catch (Exception e) {
             // Something went wrong! :(
             if (logFailedRequests) {
-                Bukkit.getLogger().log(Level.WARNING, "Could not submit plugin stats of " + pluginName, e);
+                Bukkit.getLogger().log(Level.WARNING, "Could not submit plugin stats of " + name, e);
             }
         }
     }
@@ -287,7 +247,7 @@ public class Metrics {
                 chart.put("data", data);
             } catch (Throwable t) {
                 if (logFailedRequests) {
-                    Bukkit.getLogger().log(Level.WARNING, "Failed to get data for custom chart with id " + chartId, t);
+                    Mohist.LOGGER.warn("Failed to get data for custom chart with id " + chartId, t);
                 }
                 return null;
             }
@@ -296,5 +256,374 @@ public class Metrics {
 
         protected abstract JSONObject getChartData() throws Exception;
 
+    }
+
+
+    /**
+     * Represents a custom simple pie.
+     */
+    public static class SimplePie extends CustomChart {
+
+        private final Callable<String> callable;
+
+        /**
+         * Class constructor.
+         *
+         * @param chartId  The id of the chart.
+         * @param callable The callable which is used to request the chart data.
+         */
+        public SimplePie(String chartId, Callable<String> callable) {
+            super(chartId);
+            this.callable = callable;
+        }
+
+        @Override
+        protected JSONObject getChartData() throws Exception {
+            JSONObject data = new JSONObject();
+            String value = callable.call();
+            if (value == null || value.isEmpty()) {
+                // Null = skip the chart
+                return null;
+            }
+            data.put("value", value);
+            return data;
+        }
+    }
+
+    /**
+     * Represents a custom advanced pie.
+     */
+    public static class AdvancedPie extends CustomChart {
+
+        private final Callable<Map<String, Integer>> callable;
+
+        /**
+         * Class constructor.
+         *
+         * @param chartId  The id of the chart.
+         * @param callable The callable which is used to request the chart data.
+         */
+        public AdvancedPie(String chartId, Callable<Map<String, Integer>> callable) {
+            super(chartId);
+            this.callable = callable;
+        }
+
+        @Override
+        protected JSONObject getChartData() throws Exception {
+            JSONObject data = new JSONObject();
+            JSONObject values = new JSONObject();
+            Map<String, Integer> map = callable.call();
+            if (map == null || map.isEmpty()) {
+                // Null = skip the chart
+                return null;
+            }
+            boolean allSkipped = true;
+            for (Map.Entry<String, Integer> entry : map.entrySet()) {
+                if (entry.getValue() == 0) {
+                    continue; // Skip this invalid
+                }
+                allSkipped = false;
+                values.put(entry.getKey(), entry.getValue());
+            }
+            if (allSkipped) {
+                // Null = skip the chart
+                return null;
+            }
+            data.put("values", values);
+            return data;
+        }
+    }
+
+    /**
+     * Represents a custom drilldown pie.
+     */
+    public static class DrilldownPie extends CustomChart {
+
+        private final Callable<Map<String, Map<String, Integer>>> callable;
+
+        /**
+         * Class constructor.
+         *
+         * @param chartId  The id of the chart.
+         * @param callable The callable which is used to request the chart data.
+         */
+        public DrilldownPie(String chartId, Callable<Map<String, Map<String, Integer>>> callable) {
+            super(chartId);
+            this.callable = callable;
+        }
+
+        @Override
+        public JSONObject getChartData() throws Exception {
+            JSONObject data = new JSONObject();
+            JSONObject values = new JSONObject();
+            Map<String, Map<String, Integer>> map = callable.call();
+            if (map == null || map.isEmpty()) {
+                // Null = skip the chart
+                return null;
+            }
+            boolean reallyAllSkipped = true;
+            for (Map.Entry<String, Map<String, Integer>> entryValues : map.entrySet()) {
+                JSONObject value = new JSONObject();
+                boolean allSkipped = true;
+                for (Map.Entry<String, Integer> valueEntry : map.get(entryValues.getKey()).entrySet()) {
+                    value.put(valueEntry.getKey(), valueEntry.getValue());
+                    allSkipped = false;
+                }
+                if (!allSkipped) {
+                    reallyAllSkipped = false;
+                    values.put(entryValues.getKey(), value);
+                }
+            }
+            if (reallyAllSkipped) {
+                // Null = skip the chart
+                return null;
+            }
+            data.put("values", values);
+            return data;
+        }
+    }
+
+    /**
+     * Represents a custom single line chart.
+     */
+    public static class SingleLineChart extends CustomChart {
+
+        private final Callable<Integer> callable;
+
+        /**
+         * Class constructor.
+         *
+         * @param chartId  The id of the chart.
+         * @param callable The callable which is used to request the chart data.
+         */
+        public SingleLineChart(String chartId, Callable<Integer> callable) {
+            super(chartId);
+            this.callable = callable;
+        }
+
+        @Override
+        protected JSONObject getChartData() throws Exception {
+            JSONObject data = new JSONObject();
+            int value = callable.call();
+            if (value == 0) {
+                // Null = skip the chart
+                return null;
+            }
+            data.put("value", value);
+            return data;
+        }
+
+    }
+
+    /**
+     * Represents a custom multi line chart.
+     */
+    public static class MultiLineChart extends CustomChart {
+
+        private final Callable<Map<String, Integer>> callable;
+
+        /**
+         * Class constructor.
+         *
+         * @param chartId  The id of the chart.
+         * @param callable The callable which is used to request the chart data.
+         */
+        public MultiLineChart(String chartId, Callable<Map<String, Integer>> callable) {
+            super(chartId);
+            this.callable = callable;
+        }
+
+        @Override
+        protected JSONObject getChartData() throws Exception {
+            JSONObject data = new JSONObject();
+            JSONObject values = new JSONObject();
+            Map<String, Integer> map = callable.call();
+            if (map == null || map.isEmpty()) {
+                // Null = skip the chart
+                return null;
+            }
+            boolean allSkipped = true;
+            for (Map.Entry<String, Integer> entry : map.entrySet()) {
+                if (entry.getValue() == 0) {
+                    continue; // Skip this invalid
+                }
+                allSkipped = false;
+                values.put(entry.getKey(), entry.getValue());
+            }
+            if (allSkipped) {
+                // Null = skip the chart
+                return null;
+            }
+            data.put("values", values);
+            return data;
+        }
+
+    }
+
+    /**
+     * Represents a custom simple bar chart.
+     */
+    public static class SimpleBarChart extends CustomChart {
+
+        private final Callable<Map<String, Integer>> callable;
+
+        /**
+         * Class constructor.
+         *
+         * @param chartId  The id of the chart.
+         * @param callable The callable which is used to request the chart data.
+         */
+        public SimpleBarChart(String chartId, Callable<Map<String, Integer>> callable) {
+            super(chartId);
+            this.callable = callable;
+        }
+
+        @Override
+        protected JSONObject getChartData() throws Exception {
+            JSONObject data = new JSONObject();
+            JSONObject values = new JSONObject();
+            Map<String, Integer> map = callable.call();
+            if (map == null || map.isEmpty()) {
+                // Null = skip the chart
+                return null;
+            }
+            for (Map.Entry<String, Integer> entry : map.entrySet()) {
+                JSONArray categoryValues = new JSONArray();
+                categoryValues.add(entry.getValue());
+                values.put(entry.getKey(), categoryValues);
+            }
+            data.put("values", values);
+            return data;
+        }
+
+    }
+
+    /**
+     * Represents a custom advanced bar chart.
+     */
+    public static class AdvancedBarChart extends CustomChart {
+
+        private final Callable<Map<String, int[]>> callable;
+
+        /**
+         * Class constructor.
+         *
+         * @param chartId  The id of the chart.
+         * @param callable The callable which is used to request the chart data.
+         */
+        public AdvancedBarChart(String chartId, Callable<Map<String, int[]>> callable) {
+            super(chartId);
+            this.callable = callable;
+        }
+
+        @Override
+        protected JSONObject getChartData() throws Exception {
+            JSONObject data = new JSONObject();
+            JSONObject values = new JSONObject();
+            Map<String, int[]> map = callable.call();
+            if (map == null || map.isEmpty()) {
+                // Null = skip the chart
+                return null;
+            }
+            boolean allSkipped = true;
+            for (Map.Entry<String, int[]> entry : map.entrySet()) {
+                if (entry.getValue().length == 0) {
+                    continue; // Skip this invalid
+                }
+                allSkipped = false;
+                JSONArray categoryValues = new JSONArray();
+                for (int categoryValue : entry.getValue()) {
+                    categoryValues.add(categoryValue);
+                }
+                values.put(entry.getKey(), categoryValues);
+            }
+            if (allSkipped) {
+                // Null = skip the chart
+                return null;
+            }
+            data.put("values", values);
+            return data;
+        }
+
+    }
+
+    public static class MohistMetrics {
+        public static void startMetrics() {
+            // Get the config file
+            File configFile = new File(new File((File) MinecraftServer.getServerInst().options.valueOf("plugins"), "bStats"), "config.yml");
+            YamlConfiguration config = YamlConfiguration.loadConfiguration(configFile);
+
+            // Check if the config file exists
+            if (!config.isSet("serverUuid")) {
+
+                // Add default values
+                config.addDefault("enabled", true);
+                // Every server gets it's unique random id.
+                config.addDefault("serverUuid", UUID.randomUUID().toString());
+                // Should failed request be logged?
+                config.addDefault("logFailedRequests", false);
+
+                // Inform the server owners about bStats
+                config.options().header(
+                        "bStats collects some data for plugin authors like how many servers are using their plugins.\n" +
+                                "To honor their work, you should not disable it.\n" +
+                                "This has nearly no effect on the server performance!\n" +
+                                "Check out https://bStats.org/ to learn more :)"
+                ).copyDefaults(true);
+                try {
+                    config.save(configFile);
+                } catch (IOException ignored) {
+                }
+            }
+            // Load the data
+            String serverUUID = config.getString("serverUuid");
+            boolean logFailedRequests = config.getBoolean("logFailedRequests", false);
+            // Only start Metrics, if it's enabled in the config
+            if (config.getBoolean("enabled", true)) {
+                Metrics metrics = new Metrics("Mohist", serverUUID, logFailedRequests);
+
+                metrics.addCustomChart(new Metrics.SimplePie("minecraft_version", () -> {
+                    String minecraftVersion = Bukkit.getVersion();
+                    minecraftVersion = minecraftVersion.substring(minecraftVersion.indexOf("MC: ") + 4, minecraftVersion.length() - 1);
+                    return minecraftVersion;
+                }));
+
+                metrics.addCustomChart(new Metrics.SingleLineChart("players", () -> Bukkit.getOnlinePlayers().size()));
+                metrics.addCustomChart(new Metrics.SimplePie("online_mode", () -> Bukkit.getOnlineMode() ? "online" : "offline"));
+                metrics.addCustomChart(new Metrics.SimplePie("paper_version", () -> Mohist.getVersion()));
+
+                metrics.addCustomChart(new Metrics.DrilldownPie("java_version", () -> {
+                    Map<String, Map<String, Integer>> map = new HashMap<>();
+                    String javaVersion = System.getProperty("java.version");
+                    Map<String, Integer> entry = new HashMap<>();
+                    entry.put(javaVersion, 1);
+
+                    // http://openjdk.java.net/jeps/223
+                    // Java decided to change their versioning scheme and in doing so modified the java.version system
+                    // property to return $major[.$minor][.$secuity][-ea], as opposed to 1.$major.0_$identifier
+                    // we can handle pre-9 by checking if the "major" is equal to "1", otherwise, 9+
+                    String majorVersion = javaVersion.split("\\.")[0];
+                    String release;
+
+                    int indexOf = javaVersion.lastIndexOf('.');
+
+                    if (majorVersion.equals("1")) {
+                        release = "Java " + javaVersion.substring(0, indexOf);
+                    } else {
+                        // of course, it really wouldn't be all that simple if they didn't add a quirk, now would it
+                        // valid strings for the major may potentially include values such as -ea to deannotate a pre release
+                        Matcher versionMatcher = Pattern.compile("\\d+").matcher(majorVersion);
+                        if (versionMatcher.find()) {
+                            majorVersion = versionMatcher.group(0);
+                        }
+                        release = "Java " + majorVersion;
+                    }
+                    map.put(release, entry);
+
+                    return map;
+                }));
+            }
+
+        }
     }
 }

@@ -15,6 +15,7 @@ public abstract class ConfigBase
 {
     protected final File configFile;
     protected final String commandName;
+    private static boolean metricsStarted;
     
     /* ======================================================================== */
 
@@ -47,7 +48,10 @@ public abstract class ConfigBase
         {
             ServerAPI.getNMSServer().server.getCommandMap().register(entry.getKey(), this.commandName, entry.getValue());
         }
-        new Metrics();
+        if (!metricsStarted) {
+            Metrics.MohistMetrics.startMetrics();
+            metricsStarted = true;
+        }
     }
 
     public void save()
