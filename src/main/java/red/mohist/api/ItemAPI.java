@@ -1,11 +1,14 @@
 package red.mohist.api;
 
+import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.DataInput;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.util.zip.GZIPInputStream;
+import java.util.zip.GZIPOutputStream;
 import net.minecraft.nbt.NBTSizeTracker;
 import net.minecraft.nbt.NBTTagCompound;
 import org.bukkit.Material;
@@ -75,7 +78,7 @@ public class ItemAPI {
      * @param base64
      * @return
      */
-    public ItemStack NBTBase64ToBukkit(String base64) {
+    public static ItemStack NBTBase64ToBukkit(String base64) {
         DataInput input = new DataInputStream(new ByteArrayInputStream(Base64Coder.decodeLines(base64)));
         NBTTagCompound tag = new NBTTagCompound();
 
@@ -94,7 +97,7 @@ public class ItemAPI {
      * @param stack
      * @return
      */
-    public String BukkitToNBTBase64(ItemStack stack) {
+    public static String BukkitToNBTBase64(ItemStack stack) {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         try {
             CraftItemStack copy = CraftItemStack.asCraftCopy(stack);
@@ -105,5 +108,53 @@ public class ItemAPI {
             e.printStackTrace();
         }
         return Base64Coder.encodeLines(out.toByteArray());
+    }
+
+    /**
+     *
+     * Get the byte of {@link org.bukkit.inventory.ItemStack}
+     *
+     * @param iStack
+     * @return
+     */
+    public static byte[] getNBTBytes(ItemStack iStack) {
+        try{
+            net.minecraft.item.ItemStack is = CraftItemStack.asNMSCopy(iStack);
+            NBTTagCompound itemCompound = new NBTTagCompound();
+            itemCompound = is.writeToNBT(itemCompound);
+            ByteArrayOutputStream bytearrayoutputstream = new ByteArrayOutputStream();
+            DataOutputStream dataoutputstream = new DataOutputStream(new GZIPOutputStream(bytearrayoutputstream));
+            try {
+                net.minecraft.nbt.CompressedStreamTools.writeCompressed(itemCompound, dataoutputstream);
+            } finally {
+                dataoutputstream.close();
+            }
+            return bytearrayoutputstream.toByteArray();
+        }catch(Exception e){
+            return new byte[0];
+        }
+    }
+
+    /**
+     *
+     * Parse byte as {@link org.bukkit.inventory.ItemStack}
+     *
+     * @param bytes
+     * @return
+     */
+    public static ItemStack getItemStackInNBTBytes(byte[] bytes) {
+        try{
+            DataInputStream datainputstream = new DataInputStream(new BufferedInputStream(new GZIPInputStream(new ByteArrayInputStream(bytes))));
+            NBTTagCompound nbttagcompound;
+            try {
+                nbttagcompound = net.minecraft.nbt.CompressedStreamTools.read(datainputstream, null);
+            } finally {
+                datainputstream.close();
+            }
+            net.minecraft.item.ItemStack is = new net.minecraft.item.ItemStack(nbttagcompound);
+            return CraftItemStack.asBukkitCopy(is);
+        }catch(Exception e){
+            return new ItemStack(Material.AIR);
+        }
     }
 }
