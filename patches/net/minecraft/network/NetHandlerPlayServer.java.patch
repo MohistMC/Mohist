@@ -1276,7 +1276,7 @@
 +                        Vec3d target = packetIn.getHitVec();
 +                        event = new PlayerInteractAtEntityEvent((Player) this.getPlayer(), entity.getBukkitEntity(), new org.bukkit.util.Vector(target.x, target.y, target.z), (packetIn.getHand() == EnumHand.OFF_HAND) ? EquipmentSlot.OFF_HAND : EquipmentSlot.HAND);
 +                    }
-+                    Bukkit.getPluginManager().callEvent(event);
++                    this.server.getPluginManager().callEvent(event);
 +
 +                    if (triggerLeashUpdate && (event.isCancelled() || this.player.inventory.getCurrentItem() == null || this.player.inventory.getCurrentItem().getItem() != Items.LEAD)) {
 +                        // Refresh the current leash state
@@ -1574,7 +1574,7 @@
 +
 +                    event.setCancelled(cancelled);
 +                    Container oldContainer = this.player.openContainer; // SPIGOT-1224
-+                    Bukkit.getPluginManager().callEvent(event);
++                    this.server.getPluginManager().callEvent(event);
 +                    if (this.player.openContainer != oldContainer) {
 +                        return;
 +                    }
