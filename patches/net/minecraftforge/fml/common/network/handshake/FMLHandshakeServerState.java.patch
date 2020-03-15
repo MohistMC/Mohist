@@ -25,7 +25,7 @@
              FMLHandshakeMessage.ModList client = (FMLHandshakeMessage.ModList)msg;
              NetworkDispatcher dispatcher = ctx.channel().attr(NetworkDispatcher.FML_DISPATCHER).get();
 +            EntityPlayerMP mp = dispatcher.player;
-+            if (MohistForgeUtils.modsblacklist(mp, client.modListAsString())) {
++            if (MohistForgeUtils.modsblacklist(client.modListAsString())) {
 +                dispatcher.kickWithMessage(MohistConfig.instance.modsblacklistkickMessage.getValue());
 +                return;
 +            }

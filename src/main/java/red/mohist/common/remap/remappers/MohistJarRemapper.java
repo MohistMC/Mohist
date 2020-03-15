@@ -3,7 +3,6 @@ package red.mohist.common.remap.remappers;
 import java.util.Map;
 import net.md_5.specialsource.CustomRemapper;
 import net.md_5.specialsource.NodeType;
-import red.mohist.common.remap.ASMUtils;
 import red.mohist.common.remap.model.ClassMapping;
 
 /**

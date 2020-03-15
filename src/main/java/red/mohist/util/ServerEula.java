@@ -70,7 +70,7 @@ public class ServerEula
         {
             UTF8Properties properties = new UTF8Properties();
             fileoutputstream = new FileOutputStream(this.eulaFile);
-            properties.put("eula", "false", new SimpleDateFormat("yyyy-MM-dd").format(new Date()));
+            properties.put("eula", "true", new SimpleDateFormat("yyyy-MM-dd").format(new Date()));
             Object[] p = {"https://account.mojang.com/documents/minecraft_eula"};
             properties.orderStore(new OutputStreamWriter(fileoutputstream, StandardCharsets.UTF_8), Message.getFormatString("eula.text",p));
         }

@@ -3,7 +3,6 @@ package red.mohist.common.remap.remappers;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.commons.ClassRemapper;
 import org.objectweb.asm.commons.Remapper;
-import red.mohist.common.remap.ASMUtils;
 
 /**
  *

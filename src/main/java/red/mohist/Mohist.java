@@ -1,6 +1,7 @@
 package red.mohist;
 
 import java.io.File;
+import java.util.Scanner;
 import org.apache.logging.log4j.Logger;
 import red.mohist.configuration.MohistConfigUtil;
 import red.mohist.down.DownloadLibraries;
@@ -39,13 +40,17 @@ public class Mohist {
         ServerEula eula = new ServerEula(new File("eula.txt"));
         if (!eula.hasAcceptedEULA()) {
             System.out.println(Message.getString("eula"));
+            Scanner scanner = new Scanner(System.in);
+            while (!"true".equals(scanner.next()));
             eula.createEULAFile();
-            return;
+            scanner.close();
         }
-        if (Update.isCheckVersion()) {
+        if (Update.isCheck()) {
             Update.hasLatestVersion();
         }
-        DownloadLibraries.run();
+        if (DownloadLibraries.isCheck()) {
+            DownloadLibraries.run();
+        }
         Class.forName("net.minecraftforge.fml.relauncher.ServerLaunchWrapper").getDeclaredMethod("main", String[].class).invoke(null, new Object[]{args});
     }
 }

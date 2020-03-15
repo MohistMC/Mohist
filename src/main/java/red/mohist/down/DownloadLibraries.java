@@ -18,6 +18,7 @@ public class DownloadLibraries {
     public static String url = "https://www.mgazul.cn/";
 
     public static void run() throws Exception {
+        System.out.println(Message.getString("libraries.checking.start"));
         File f = new File("mohist-config", "mohist.yml");
         String path = null;
         try {
@@ -81,5 +82,11 @@ public class DownloadLibraries {
                 JarLoader.loadjar(jarLoader, filepath);
             }
         }
+        System.out.println(Message.getString("libraries.checking.end"));
+    }
+
+    public static boolean isCheck() {
+        File f = new File("mohist-config", "mohist.yml");
+        return MohistConfigUtil.getBoolean(f, "check_libraries:");
     }
 }

@@ -21,13 +21,9 @@
 # Setting: perfomance.entityCollideFrequency Default: 2   # Entity Collide Frequency
 
 console_name: Server
-perfomance:
-  maxEntityCollisionsPerTick: 8
-  entityCollideFrequency: 2
 server-type: FML
 eventCanceled:
   explosion: false
-enable_progress: true
 lang: xx_XX
 consolecolor:
   warn-level: 'e'
@@ -36,6 +32,7 @@ consolecolor:
   error-msg: 'c'
 support_nocmd: false
 check_update: true
+check_libraries: true
 config-version: 1
 forge:
   disablechunkforcesystem: false
