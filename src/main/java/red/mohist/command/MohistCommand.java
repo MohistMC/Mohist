@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
+import net.minecraft.server.MinecraftServer;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -77,8 +78,14 @@ public class MohistCommand extends Command {
                 sender.sendMessage(ChatColor.GREEN +Message.getLocale());
                 break;
             case "item":
+                if (args.length == 1) {
+                    sender.sendMessage(ChatColor.RED + "Usage: /mohist item info");
+                    return false;
+                }
                 if ("info".equals(args[1].toLowerCase(Locale.ENGLISH))){
                     ItemCommand.info(sender);
+                } else {
+                    sender.sendMessage(ChatColor.RED + "Usage: /mohist item info");
                 }
                 break;
             case "reload":

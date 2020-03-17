@@ -57,11 +57,10 @@
  import net.minecraft.world.storage.ISaveHandler;
 +import net.minecraft.world.storage.WorldInfo;
  import net.minecraftforge.event.world.WorldEvent;
--import net.minecraftforge.fml.common.FMLLog;
+ import net.minecraftforge.fml.common.FMLLog;
 +import org.bukkit.WorldCreator;
 +import org.bukkit.generator.ChunkGenerator;
 +import red.mohist.forge.ForgeInjectBukkit;
-+import red.mohist.Mohist;
 +import red.mohist.util.i18n.Message;
  
 -import javax.annotation.Nullable;
@@ -89,52 +88,32 @@
      }
  
      /**
-@@ -187,17 +196,16 @@
-                 int leakCount = leakedWorlds.count(System.identityHashCode(w));
-                 if (leakCount == 5)
-                 {
--                    FMLLog.log.debug("The world {} ({}) may have leaked: first encounter (5 occurrences).\n", Integer.toHexString(System.identityHashCode(w)), w.getWorldInfo().getWorldName());
-+                    Mohist.LOGGER.debug("The world {} ({}) may have leaked: first encounter (5 occurrences).\n", Integer.toHexString(System.identityHashCode(w)), w.getWorldInfo().getWorldName());
-                 }
-                 else if (leakCount % 5 == 0)
-                 {
--                    FMLLog.log.debug("The world {} ({}) may have leaked: seen {} times.\n", Integer.toHexString(System.identityHashCode(w)), w.getWorldInfo().getWorldName(), leakCount);
-+                    Mohist.LOGGER.debug("The world {} ({}) may have leaked: seen {} times.\n", Integer.toHexString(System.identityHashCode(w)), w.getWorldInfo().getWorldName(), leakCount);
-                 }
-             }
-         }
-         return getIDs();
-     }
--
-     public static Integer[] getIDs()
-     {
-         return worlds.keySet().toArray(new Integer[0]); // Only loaded dims, since usually used to cycle through loaded worlds
-@@ -209,14 +217,22 @@
+@@ -209,14 +218,22 @@
          {
              worlds.put(id, world);
              weakWorldMap.put(world, world);
 +            // handle all world adds here for Bukkit
-+            if (!MinecraftServer.getServerInst().worldServerList.contains(world))
++            if (!server.worldServerList.contains(world))
 +            {
-+                MinecraftServer.getServerInst().worldServerList.add(world);
++                server.worldServerList.add(world);
 +            }
              server.worldTickTimes.put(id, new long[100]);
 -            FMLLog.log.info("Loading dimension {} ({}) ({})", id, world.getWorldInfo().getWorldName(), world.getMinecraftServer());
 +            Object[] p = {id, world.getWorldInfo().getWorldName()};
-+            Mohist.LOGGER.info(Message.getFormatString("load.dimension", p));
++            FMLLog.log.info(Message.getFormatString("load.dimension", p));
          }
          else
          {
-+            MinecraftServer.getServerInst().worldServerList.remove(getWorld(id)); // Cauldron - remove world from our new world arraylist
++            server.worldServerList.remove(getWorld(id)); // Cauldron - remove world from our new world arraylist
              worlds.remove(id);
              server.worldTickTimes.remove(id);
 -            FMLLog.log.info("Unloading dimension {}", id);
 +            Object[] p = {id};
-+            Mohist.LOGGER.info(Message.getFormatString("unload.dimension", p));
++            FMLLog.log.info(Message.getFormatString("unload.dimension", p));
          }
  
          ArrayList<WorldServer> tmp = new ArrayList<WorldServer>();
-@@ -242,6 +258,7 @@
+@@ -242,6 +259,7 @@
  
      public static void initDimension(int dim)
      {
@@ -142,12 +121,12 @@
          WorldServer overworld = getWorld(0);
          if (overworld == null)
          {
-@@ -253,16 +270,49 @@
+@@ -253,16 +271,49 @@
          }
          catch (Exception e)
          {
 -            FMLLog.log.error("Cannot Hotload Dim: {}", dim, e);
-+            Mohist.LOGGER.error("Cannot Hotload Dim: {}", dim);
++            FMLLog.log.error("Cannot Hotload Dim: {}", dim);
              return; // If a provider hasn't been registered then we can't hotload the dim
          }
          MinecraftServer mcServer = overworld.getMinecraftServer();
@@ -195,24 +174,7 @@
          if (!mcServer.isSinglePlayer())
          {
              world.getWorldInfo().setGameType(mcServer.getGameType());
-@@ -303,7 +353,6 @@
-     {
-         return dimensions.keySet().toArray(new Integer[0]);
-     }
--
-     public static WorldProvider createProviderFor(int dim)
-     {
-         try
-@@ -321,7 +370,7 @@
-         }
-         catch (Exception e)
-         {
--            FMLLog.log.error("An error occurred trying to create an instance of WorldProvider {} ({})",
-+            Mohist.LOGGER.error("An error occurred trying to create an instance of WorldProvider {} ({})",
-                     dim, getProviderType(dim), e);
-             throw new RuntimeException(e);
-         }
-@@ -343,7 +392,8 @@
+@@ -343,7 +394,8 @@
          return ForgeChunkManager.getPersistentChunksFor(world).isEmpty()
                  && world.playerEntities.isEmpty()
                  && !world.provider.getDimensionType().shouldLoadSpawn()
@@ -222,21 +184,8 @@
      }
  
      /**
-@@ -357,7 +407,7 @@
- 
-         if (unloadQueue.add(id))
-         {
--            FMLLog.log.debug("Queueing dimension {} to unload", id);
-+            Mohist.LOGGER.debug("Queueing dimension {} to unload", id);;
-         }
-     }
- 
-@@ -387,23 +437,10 @@
-             // Don't unload the world if the status changed
-             if (w == null || !canUnloadWorld(w))
-             {
--                FMLLog.log.debug("Aborting unload for dimension {} as status changed", id);
-+                Mohist.LOGGER.debug("Aborting unload for dimension {} as status changed", id);
+@@ -390,20 +442,7 @@
+                 FMLLog.log.debug("Aborting unload for dimension {} as status changed", id);
                  continue;
              }
 -            try
@@ -257,7 +206,7 @@
          }
      }
  
-@@ -499,4 +536,109 @@
+@@ -499,4 +538,109 @@
              return null;
          }
      }

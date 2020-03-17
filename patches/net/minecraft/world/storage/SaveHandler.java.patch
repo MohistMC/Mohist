@@ -121,7 +121,7 @@
      {
          try
          {
-@@ -284,4 +337,63 @@
+@@ -284,4 +337,61 @@
          }
          return null;
      }
@@ -173,13 +173,11 @@
 +    // CraftBukkit end
 +
 +    // Mohist start
-+    public static void initBukkitData(WorldInfo worldInfo) {
++    public static void initBukkitData() {
 +        // inject bukkit materials before plugins load
 +        if (!initializedBukkit)
 +        {
 +            ForgeInjectBukkit.init();
-+            ((CraftServer) Bukkit.getServer()).loadPlugins();
-+            ((CraftServer) Bukkit.getServer()).enablePlugins(PluginLoadOrder.STARTUP);
 +            initializedBukkit = true;
 +        }
 +    }

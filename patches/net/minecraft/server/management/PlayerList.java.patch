@@ -446,7 +446,7 @@
 +        while (iterator.hasNext()) {
 +            entityplayer = (EntityPlayerMP) iterator.next();
 +            writePlayerData(entityplayer); // CraftBukkit - Force the player's inventory to be saved
-+            entityplayer.connection.disconnect(new TextComponentTranslation("multiplayer.disconnect.duplicate_login", new Object[0]));
++            entityplayer.connection.disconnect(Message.getString("disconnect.duplicate_login"));
 +        }
 +
 +        // Instead of kicking then returning, we need to store the kick reason
