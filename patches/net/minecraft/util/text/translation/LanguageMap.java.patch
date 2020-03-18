@@ -9,15 +9,13 @@
  
  public class LanguageMap
  {
-@@ -23,7 +25,10 @@
+@@ -23,7 +25,8 @@
  
      public LanguageMap()
      {
 -        InputStream inputstream = LanguageMap.class.getResourceAsStream("/assets/minecraft/lang/en_us.lang");
 +        String lang = Message.getLocale().toLowerCase();
-+        InputStream inputstream1 = Mohist.class.getResourceAsStream("/assets/minecraft/lang/" + lang + ".lang");
-+        InputStream inputstream2 = Mohist.class.getResourceAsStream("/assets/minecraft/lang/en_us.lang");
-+        InputStream inputstream = inputstream1 == null ? inputstream2 : inputstream1;
++        InputStream inputstream = LanguageMap.class.getResourceAsStream("/assets/minecraft/lang/" + lang + ".lang");
          try
          {
              inject(this, inputstream);
