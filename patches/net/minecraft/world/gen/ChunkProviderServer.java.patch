@@ -94,7 +94,7 @@
          }
      }
  
-@@ -203,22 +220,19 @@
+@@ -203,12 +220,12 @@
          }
          catch (IOException ioexception)
          {
@@ -110,32 +110,16 @@
      }
  
      public boolean saveChunks(boolean all)
-     {
-         int i = 0;
--        List<Chunk> list = Lists.newArrayList(this.id2ChunkMap.values());
--
--        for (int j = 0; j < list.size(); ++j)
-+        for (Chunk chunk : this.id2ChunkMap.values())
-         {
--            Chunk chunk = list.get(j);
+@@ -233,7 +250,7 @@
  
-             if (all)
-             {
-@@ -229,11 +243,10 @@
-             {
-                 this.saveChunkData(chunk);
-                 chunk.setModified(false);
--                ++i;
- 
--                if (i == 24 && !all)
-+                if (!all && ++i == 24)
+                 if (i == 24 && !all)
                  {
 -                    return false;
 +                        return false;
                  }
              }
          }
-@@ -266,17 +279,22 @@
+@@ -266,17 +283,22 @@
  
                      if (chunk != null && chunk.unloadQueued)
                      {
@@ -164,7 +148,7 @@
  
              this.chunkLoader.chunkTick();
          }
-@@ -284,6 +302,39 @@
+@@ -284,6 +306,39 @@
          return false;
      }
  

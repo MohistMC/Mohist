@@ -25,17 +25,7 @@
      private final GameProfileRepository profileRepo;
      protected final Gson gson;
      private final File usercacheFile;
-@@ -93,8 +93,7 @@
-         };
-         profileRepoIn.findProfilesByNames(new String[] {name}, Agent.MINECRAFT, profilelookupcallback);
- 
--        if (!isOnlineMode() && agameprofile[0] == null)
--        {
-+        if (!isOnlineMode() && agameprofile[0] == null && !org.apache.commons.lang3.StringUtils.isBlank(name)) { // Paper - Don't lookup a profile with a blank name
-             UUID uuid = EntityPlayer.getUUID(new GameProfile((UUID)null, name));
-             GameProfile gameprofile = new GameProfile(uuid, name);
-             profilelookupcallback.onProfileLookupSucceeded(gameprofile);
-@@ -118,7 +117,7 @@
+@@ -118,7 +118,7 @@
          this.addEntry(gameProfile, (Date)null);
      }
  
@@ -44,7 +34,7 @@
      {
          UUID uuid = gameProfile.getId();
  
-@@ -133,9 +132,9 @@
+@@ -133,9 +133,9 @@
          String s = gameProfile.getName().toLowerCase(Locale.ROOT);
          PlayerProfileCache.ProfileEntry playerprofilecache$profileentry = new PlayerProfileCache.ProfileEntry(gameProfile, expirationDate);
  
@@ -56,7 +46,7 @@
              this.usernameToProfileEntryMap.remove(playerprofilecache$profileentry1.getGameProfile().getName().toLowerCase(Locale.ROOT));
              this.gameProfiles.remove(gameProfile);
          }
-@@ -143,11 +142,11 @@
+@@ -143,11 +143,11 @@
          this.usernameToProfileEntryMap.put(gameProfile.getName().toLowerCase(Locale.ROOT), playerprofilecache$profileentry);
          this.uuidToProfileEntryMap.put(uuid, playerprofilecache$profileentry);
          this.gameProfiles.addFirst(gameProfile);
@@ -70,7 +60,7 @@
      {
          String s = username.toLowerCase(Locale.ROOT);
          PlayerProfileCache.ProfileEntry playerprofilecache$profileentry = this.usernameToProfileEntryMap.get(s);
-@@ -168,7 +167,7 @@
+@@ -168,7 +168,7 @@
          }
          else
          {
@@ -79,7 +69,7 @@
  
              if (gameprofile1 != null)
              {
-@@ -177,18 +176,26 @@
+@@ -177,18 +177,26 @@
              }
          }
  
@@ -109,7 +99,7 @@
      {
          PlayerProfileCache.ProfileEntry playerprofilecache$profileentry = this.uuidToProfileEntryMap.get(uuid);
          return playerprofilecache$profileentry == null ? null : playerprofilecache$profileentry.getGameProfile();
-@@ -245,29 +252,35 @@
+@@ -245,29 +253,35 @@
          }
      }
  
