@@ -416,18 +416,6 @@ public final class CraftServer implements Server {
         for (Plugin plugin : plugins) {
             if ((!plugin.isEnabled()) && (plugin.getDescription().getLoad() == type)) {
                 enablePlugin(plugin);
-		/* by lliioolllcn */
-                if (MinecraftServer.mohistConfig.pluginCheckBug.getValue()) {
-                    new Thread(() -> {
-                        /* Check some plugins bug */
-                        FileConfiguration f = YamlConfiguration.loadConfiguration(new InputStreamReader(plugin.getResource("plugin.yml")));
-                        String version = f.getString("version");
-                        if (PluginManagers.checkBug(plugin, version)) {
-
-                            Mohist.LOGGER.warn(Message.getString("plugin.promptbug"), plugin.getName(), version != null ? version : Message.getString("plugin.unknow"));
-                        }
-                    }).start();
-                }
             }
         }
 
@@ -830,6 +818,7 @@ public final class CraftServer implements Server {
         }
 
         org.spigotmc.SpigotConfig.init((File) console.options.valueOf("spigot-settings")); // Spigot
+        PaperMCConfig.init((File) console.options.valueOf("paper-settings"));
         for (WorldServer world : console.worlds) {
             world.worldInfo.setDifficulty(difficulty);
             world.setAllowedSpawnTypes(monsters, animals);
@@ -852,6 +841,7 @@ public final class CraftServer implements Server {
         resetRecipes();
         reloadData();
         org.spigotmc.SpigotConfig.registerCommands(); // Spigot
+        MohistConfig.registerCommands(); // Mohist
         overrideAllCommandBlockCommands = commandsConfiguration.getStringList("command-block-overrides").contains("*");
 
         int pollCount = 0;
@@ -1070,29 +1060,6 @@ public final class CraftServer implements Server {
         MinecraftForge.EVENT_BUS.post(new WorldEvent.Unload(handle)); // fire unload event before removing world
         worlds.remove(world.getName().toLowerCase(java.util.Locale.ENGLISH));
         DimensionManager.setWorld(handle.provider.getDimension(), null, FMLCommonHandler.instance().getMinecraftServerInstance()); // remove world from DimensionManager
-        File parentFolder = world.getWorldFolder().getAbsoluteFile();
-
-        // Synchronized because access to RegionFileCache.a is guarded by this lock.
-        synchronized (RegionFileCache.class) {
-            // RegionFileCache.a should be RegionFileCache.cache
-            Iterator<Map.Entry<File, RegionFile>> i = RegionFileCache.REGIONS_BY_FILE.entrySet().iterator();
-            while(i.hasNext()) {
-                Map.Entry<File, RegionFile> entry = i.next();
-                File child = entry.getKey().getAbsoluteFile();
-                while (child != null) {
-                    if (child.equals(parentFolder)) {
-                        i.remove();
-                        try {
-                            entry.getValue().close(); // Should be RegionFile.close();
-                        } catch (IOException ex) {
-                            getLogger().log(Level.SEVERE, null, ex);
-                        }
-                        break;
-                    }
-                    child = child.getParentFile();
-                }
-            }
-        }
         return true;
     }
 

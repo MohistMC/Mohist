@@ -42,7 +42,7 @@ public abstract class ConfigBase
         return settings;
     }
 
-    public void registerCommands()
+    public static void registerCommands()
     {
         for (Map.Entry<String, Command> entry : commands.entrySet())
         {
