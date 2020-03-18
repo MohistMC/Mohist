@@ -34,7 +34,7 @@ public class CraftMapRenderer extends MapRenderer {
             cursors.removeCursor(cursors.getCursor(0));
         }
 
-        for (UUID key : worldMap.mapDecorations.keySet()) { // Spigot string -> uuid.
+        for (String key : worldMap.mapDecorations.keySet()) {
             // If this cursor is for a player check visibility with vanish system
             Player other = Bukkit.getPlayer(key);
             if (other != null && !player.canSee(other)) {

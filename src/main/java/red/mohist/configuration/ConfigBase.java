@@ -14,14 +14,14 @@ import red.mohist.api.ServerAPI;
 public abstract class ConfigBase
 {
     protected final File configFile;
-    protected final String commandName;
+    protected static String commandName;
     private static boolean metricsStarted;
     
     /* ======================================================================== */
 
     public YamlConfiguration config;
     protected int version;
-    protected Map<String, Command> commands;
+    protected static Map<String, Command> commands;
     protected Map<String, Setting> settings = new HashMap<>();
 
     /* ======================================================================== */
@@ -42,11 +42,11 @@ public abstract class ConfigBase
         return settings;
     }
 
-    public void registerCommands()
+    public static void registerCommands()
     {
         for (Map.Entry<String, Command> entry : commands.entrySet())
         {
-            ServerAPI.getNMSServer().server.getCommandMap().register(entry.getKey(), this.commandName, entry.getValue());
+            ServerAPI.getNMSServer().server.getCommandMap().register(entry.getKey(), commandName, entry.getValue());
         }
         if (!metricsStarted) {
             Metrics.MohistMetrics.startMetrics();

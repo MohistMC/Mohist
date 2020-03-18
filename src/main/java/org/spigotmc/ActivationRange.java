@@ -135,6 +135,7 @@ public class ActivationRange {
     private static void activateChunkEntities(Chunk chunk) {
         for (ClassInheritanceMultiMap<Entity> slice : chunk.entityLists) {
             for (Entity entity : slice) {
+				if (entity == null) continue;
                 if (MinecraftServer.currentTick > entity.activatedTick) {
                     if (entity.defaultActivationState) {
                         entity.activatedTick = MinecraftServer.currentTick;
@@ -248,6 +249,7 @@ public class ActivationRange {
         if (isActive && !(chunk != null && chunk.areNeighborsLoaded(1))) {
             isActive = false;
         }
+		SpigotTimings.checkIfActiveTimer.stopTiming();
         return isActive;
     }
 }

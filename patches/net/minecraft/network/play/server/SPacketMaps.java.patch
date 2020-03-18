@@ -10,12 +10,3 @@
  import net.minecraft.network.Packet;
  import net.minecraft.network.PacketBuffer;
  import net.minecraft.network.play.INetHandlerPlayClient;
-@@ -117,7 +119,7 @@
-         for (int i = 0; i < this.icons.length; ++i)
-         {
-             MapDecoration mapdecoration = this.icons[i];
--            mapdataIn.mapDecorations.put("icon-" + i, mapdecoration);
-+            mapdataIn.mapDecorations.put(UUID.nameUUIDFromBytes(("icon-" + i).getBytes(Charsets.US_ASCII)), mapdecoration);
-         }
- 
-         for (int j = 0; j < this.columns; ++j)

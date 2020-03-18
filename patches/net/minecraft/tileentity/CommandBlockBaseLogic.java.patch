@@ -70,7 +70,7 @@
                      }
                      catch (Throwable throwable)
                      {
-@@ -198,6 +221,173 @@
+@@ -198,6 +221,172 @@
          }
      }
  
@@ -218,7 +218,6 @@
 +
 +    public static CommandSender unwrapSender(ICommandSender listener) {
 +        org.bukkit.command.CommandSender sender = null;
-+        while (sender == null) {
 +            if (listener instanceof DedicatedServer) {
 +                sender = ((DedicatedServer) listener).console;
 +            } else if (listener instanceof RConConsoleSource) {
@@ -236,7 +235,7 @@
 +            } else {
 +                throw new RuntimeException("Unhandled executor " + listener.getClass().getSimpleName());
 +            }
-+        }
++    
 +
 +        return sender;
 +    }

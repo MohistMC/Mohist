@@ -42,37 +42,7 @@
          if (file1.exists())
          {
              WorldInfo worldinfo = SaveFormatOld.loadAndFix(file1, this.dataFixer, this);
-@@ -208,11 +218,28 @@
-         try
-         {
-             File file1 = new File(this.playersDirectory, player.getCachedUniqueIdString() + ".dat");
--
-+            // Spigot Start
-+            boolean usingWrongFile = false;
-+            if ( !file1.exists() )
-+            {
-+                file1 = new File( this.playersDirectory, UUID.nameUUIDFromBytes( ( "OfflinePlayer:" + player.getName() ).getBytes( "UTF-8" ) ).toString() + ".dat");
-+                if (file1.exists())
-+                {
-+                    usingWrongFile = true;
-+                    org.bukkit.Bukkit.getServer().getLogger().warning( "Using offline mode UUID file for player " + player.getName() + " as it is the only copy we can find." );
-+                }
-+            }
-+            // Spigot End
-             if (file1.exists() && file1.isFile())
-             {
-                 nbttagcompound = CompressedStreamTools.readCompressed(new FileInputStream(file1));
-             }
-+            // Spigot Start
-+            if ( usingWrongFile )
-+            {
-+                file1.renameTo(new File( file1.getPath() + ".offline-read" ) );
-+            }
-+            // Spigot End
-         }
-         catch (Exception var4)
-         {
-@@ -221,6 +248,16 @@
+@@ -221,6 +231,16 @@
  
          if (nbttagcompound != null)
          {
@@ -89,7 +59,7 @@
              player.readFromNBT(this.dataFixer.process(FixTypes.PLAYER, nbttagcompound));
          }
  
-@@ -228,6 +265,22 @@
+@@ -228,6 +248,22 @@
          return nbttagcompound;
      }
  
@@ -112,7 +82,7 @@
      public IPlayerFileData getPlayerNBTManager()
      {
          return this;
-@@ -267,7 +320,7 @@
+@@ -267,7 +303,7 @@
          return this.structureTemplateManager;
      }
  
@@ -121,7 +91,7 @@
      {
          try
          {
-@@ -284,4 +337,61 @@
+@@ -284,4 +320,61 @@
          }
          return null;
      }

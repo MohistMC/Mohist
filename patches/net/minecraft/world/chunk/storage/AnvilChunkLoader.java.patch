@@ -30,15 +30,6 @@
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
  
-@@ -41,7 +41,7 @@
-     private final Set<ChunkPos> chunksBeingSaved = Collections.<ChunkPos>newSetFromMap(Maps.newConcurrentMap());
-     public final File chunkSaveLocation;
-     private final DataFixer fixer;
--    private boolean flushing;
-+    //private boolean flushing;
- 
-     public AnvilChunkLoader(File chunkSaveLocationIn, DataFixer dataFixerIn)
-     {
 @@ -58,8 +58,9 @@
      @Nullable
      public Chunk loadChunk(World worldIn, int x, int z) throws IOException
@@ -69,23 +60,7 @@
          }
  
          return this.checkedReadChunkFromNBT__Async(worldIn, x, z, nbttagcompound);
-@@ -194,9 +194,14 @@
- 
-     public boolean writeNextIO()
-     {
-+        return this.processSaveQueueEntry(false);
-+    }
-+
-+    private synchronized boolean processSaveQueueEntry(boolean logCompletion)
-+    {
-         if (this.chunksToSave.isEmpty())
-         {
--            if (this.flushing)
-+            if (logCompletion)
-             {
-                 LOGGER.info("ThreadedAnvilChunkStorage ({}): All chunks are saved", (Object)this.chunkSaveLocation.getName());
-             }
-@@ -238,9 +243,10 @@
+@@ -238,9 +238,10 @@
  
      private void writeChunkData(ChunkPos pos, NBTTagCompound compound) throws IOException
      {
@@ -99,44 +74,7 @@
      }
  
      public void saveExtraChunkData(World worldIn, Chunk chunkIn) throws IOException
-@@ -255,13 +261,18 @@
-     {
-         try
-         {
--            this.flushing = true;
-+            //this.flushing = true; // CraftBukkit
- 
--            while (this.writeNextIO());
-+            while (true) {
-+                if (this.processSaveQueueEntry(true)) { // CraftBukkit
-+                    continue;
-+                }
-+                break; // CraftBukkit - Fix infinite loop when saving chunks
-+            }
-         }
-         finally
-         {
--            this.flushing = false;
-+            //this.flushing = false; // CraftBukkit
-         }
-     }
- 
-@@ -351,10 +362,10 @@
-         chunkIn.setHasEntities(false);
-         NBTTagList nbttaglist1 = new NBTTagList();
- 
--        for (int i = 0; i < chunkIn.getEntityLists().length; ++i)
--        {
--            for (Entity entity : chunkIn.getEntityLists()[i])
--            {
-+        ClassInheritanceMultiMap<Entity>[] entityLists = chunkIn.getEntityLists();
-+        for (ClassInheritanceMultiMap<Entity> entityList : entityLists) {
-+            if (entityLists == null) continue;
-+            for (Entity entity : entityList) {
-                 NBTTagCompound nbttagcompound2 = new NBTTagCompound();
- 
-                 try
-@@ -478,6 +489,7 @@
+@@ -478,6 +479,7 @@
  
      public void loadEntities(World worldIn, NBTTagCompound compound, Chunk chunk)
      {
@@ -144,7 +82,7 @@
          NBTTagList nbttaglist1 = compound.getTagList("Entities", 10);
  
          for (int j1 = 0; j1 < nbttaglist1.tagCount(); ++j1)
-@@ -486,7 +498,8 @@
+@@ -486,7 +488,8 @@
              readChunkEntity(nbttagcompound1, worldIn, chunk);
              chunk.setHasEntities(true);
          }
@@ -154,7 +92,7 @@
          NBTTagList nbttaglist2 = compound.getTagList("TileEntities", 10);
  
          for (int k1 = 0; k1 < nbttaglist2.tagCount(); ++k1)
-@@ -499,7 +512,8 @@
+@@ -499,7 +502,8 @@
                  chunk.addTileEntity(tileentity);
              }
          }
@@ -164,7 +102,7 @@
          if (compound.hasKey("TileTicks", 9))
          {
              NBTTagList nbttaglist3 = compound.getTagList("TileTicks", 10);
-@@ -521,6 +535,7 @@
+@@ -521,6 +525,7 @@
                  worldIn.scheduleBlockUpdate(new BlockPos(nbttagcompound3.getInteger("x"), nbttagcompound3.getInteger("y"), nbttagcompound3.getInteger("z")), block, nbttagcompound3.getInteger("t"), nbttagcompound3.getInteger("p"));
              }
          }
@@ -172,7 +110,7 @@
      }
  
      @Nullable
-@@ -558,6 +573,11 @@
+@@ -558,6 +563,11 @@
      @Nullable
      public static Entity readWorldEntityPos(NBTTagCompound compound, World worldIn, double x, double y, double z, boolean attemptSpawn)
      {
@@ -184,7 +122,7 @@
          Entity entity = createEntityFromNBT(compound, worldIn);
  
          if (entity == null)
-@@ -568,7 +588,7 @@
+@@ -568,7 +578,7 @@
          {
              entity.setLocationAndAngles(x, y, z, entity.rotationYaw, entity.rotationPitch);
  
@@ -193,7 +131,7 @@
              {
                  return null;
              }
-@@ -609,8 +629,11 @@
+@@ -609,8 +619,11 @@
  
      public static void spawnEntity(Entity entityIn, World worldIn)
      {

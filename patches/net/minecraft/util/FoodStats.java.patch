@@ -108,12 +108,14 @@
                  this.addExhaustion(f);
                  this.foodTimer = 0;
              }
-@@ -66,7 +120,7 @@
+@@ -66,8 +120,8 @@
  
              if (this.foodTimer >= 80)
              {
 -                player.heal(1.0F);
-+                player.heal(1.0F, org.bukkit.event.entity.EntityRegainHealthEvent.RegainReason.SATIATED); // CraftBukkit - added RegainReason
-                 this.addExhaustion(6.0F);
+-                this.addExhaustion(6.0F);
++                player.heal(1.0F, org.bukkit.event.entity.EntityRegainHealthEvent.RegainReason.SATIATED);
++                this.addExhaustion(entityhuman == null ? 6.0F : entityhuman.world.spigotConfig.regenExhaustion); // Spigot - Change to use configurable value
                  this.foodTimer = 0;
              }
+         }

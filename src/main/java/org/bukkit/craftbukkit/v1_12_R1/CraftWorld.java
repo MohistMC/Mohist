@@ -400,8 +400,7 @@ public class CraftWorld implements World {
     }
 
     public Block getBlockAt(int x, int y, int z) {
-        Chunk chunk = getChunkAt(x >> 4, z >> 4);
-        return chunk == null ? null : chunk.getBlock(x & 0xF, y & 0xFF, z & 0xF);
+        return getChunkAt(x >> 4, z >> 4).getBlock(x & 0xF, y, z & 0xF);
     }
 
     public int getBlockTypeIdAt(int x, int y, int z) {
@@ -444,8 +443,7 @@ public class CraftWorld implements World {
     }
 
     public Chunk getChunkAt(int x, int z) {
-        net.minecraft.world.chunk.Chunk chunk = this.world.getChunkProvider().provideChunk(x, z);
-        return chunk == null ? null : chunk.bukkitChunk;
+        return this.world.getChunkProvider().provideChunk(x, z).bukkitChunk;
     }
 
     public Chunk getChunkAt(Block block) {
@@ -681,66 +679,66 @@ public class CraftWorld implements World {
 
         net.minecraft.world.gen.feature.WorldGenerator gen;
         switch (type) {
-            case BIG_TREE:
-                gen = new WorldGenBigTree(true);
-                break;
-            case BIRCH:
-                gen = new WorldGenBirchTree(true, false);
-                break;
-            case REDWOOD:
-                gen = new WorldGenTaiga2(true);
-                break;
-            case TALL_REDWOOD:
-                gen = new WorldGenTaiga1();
-                break;
-            case JUNGLE:
-                IBlockState iblockdata1 = Blocks.LOG.getDefaultState().withProperty(BlockOldLog.VARIANT, BlockPlanks.EnumType.JUNGLE);
-                IBlockState iblockdata2 = Blocks.LEAVES.getDefaultState().withProperty(BlockOldLeaf.VARIANT, BlockPlanks.EnumType.JUNGLE).withProperty(BlockLeaves.CHECK_DECAY, Boolean.FALSE);
-                gen = new WorldGenMegaJungle(true, 10, 20, iblockdata1, iblockdata2); // Magic values as in BlockSapling
-                break;
-            case SMALL_JUNGLE:
-                iblockdata1 = Blocks.LOG.getDefaultState().withProperty(BlockOldLog.VARIANT, BlockPlanks.EnumType.JUNGLE);
-                iblockdata2 = Blocks.LEAVES.getDefaultState().withProperty(BlockOldLeaf.VARIANT, BlockPlanks.EnumType.JUNGLE).withProperty(BlockLeaves.CHECK_DECAY, Boolean.FALSE);
-                gen = new WorldGenTrees(true, 4 + rand.nextInt(7), iblockdata1, iblockdata2, false);
-                break;
-            case COCOA_TREE:
-                iblockdata1 = Blocks.LOG.getDefaultState().withProperty(BlockOldLog.VARIANT, BlockPlanks.EnumType.JUNGLE);
-                iblockdata2 = Blocks.LEAVES.getDefaultState().withProperty(BlockOldLeaf.VARIANT, BlockPlanks.EnumType.JUNGLE).withProperty(BlockLeaves.CHECK_DECAY, Boolean.FALSE);
-                gen = new WorldGenTrees(true, 4 + rand.nextInt(7), iblockdata1, iblockdata2, true);
-                break;
-            case JUNGLE_BUSH:
-                iblockdata1 = Blocks.LOG.getDefaultState().withProperty(BlockOldLog.VARIANT, BlockPlanks.EnumType.JUNGLE);
-                iblockdata2 = Blocks.LEAVES.getDefaultState().withProperty(BlockOldLeaf.VARIANT, BlockPlanks.EnumType.OAK).withProperty(BlockLeaves.CHECK_DECAY, Boolean.FALSE);
-                gen = new WorldGenShrub(iblockdata1, iblockdata2);
-                break;
-            case RED_MUSHROOM:
-                gen = new WorldGenBigMushroom(Blocks.RED_MUSHROOM_BLOCK);
-                break;
-            case BROWN_MUSHROOM:
-                gen = new WorldGenBigMushroom(Blocks.BROWN_MUSHROOM_BLOCK);
-                break;
-            case SWAMP:
-                gen = new WorldGenSwamp();
-                break;
-            case ACACIA:
-                gen = new WorldGenSavannaTree(true);
-                break;
-            case DARK_OAK:
-                gen = new WorldGenCanopyTree(true);
-                break;
-            case MEGA_REDWOOD:
-                gen = new WorldGenMegaPineTree(false, rand.nextBoolean());
-                break;
-            case TALL_BIRCH:
-                gen = new WorldGenBirchTree(true, true);
-                break;
-            case CHORUS_PLANT:
-                BlockChorusFlower.generatePlant(world, pos, rand, 8);
-                return true;
-            case TREE:
-            default:
-                gen = new WorldGenTrees(true);
-                break;
+        case BIG_TREE:
+            gen = new WorldGenBigTree(true);
+            break;
+        case BIRCH:
+            gen = new WorldGenBirchTree(true, false);
+            break;
+        case REDWOOD:
+            gen = new WorldGenTaiga2(true);
+            break;
+        case TALL_REDWOOD:
+            gen = new WorldGenTaiga1();
+            break;
+        case JUNGLE:
+            IBlockState iblockdata1 = Blocks.LOG.getDefaultState().withProperty(BlockOldLog.VARIANT, BlockPlanks.EnumType.JUNGLE);
+            IBlockState iblockdata2 = Blocks.LEAVES.getDefaultState().withProperty(BlockOldLeaf.VARIANT, BlockPlanks.EnumType.JUNGLE).withProperty(BlockLeaves.CHECK_DECAY, Boolean.valueOf(false));
+            gen = new WorldGenMegaJungle(true, 10, 20, iblockdata1, iblockdata2); // Magic values as in BlockSapling
+            break;
+        case SMALL_JUNGLE:
+            iblockdata1 = Blocks.LOG.getDefaultState().withProperty(BlockOldLog.VARIANT, BlockPlanks.EnumType.JUNGLE);
+            iblockdata2 = Blocks.LEAVES.getDefaultState().withProperty(BlockOldLeaf.VARIANT, BlockPlanks.EnumType.JUNGLE).withProperty(BlockLeaves.CHECK_DECAY, Boolean.valueOf(false));
+            gen = new WorldGenTrees(true, 4 + rand.nextInt(7), iblockdata1, iblockdata2, false);
+            break;
+        case COCOA_TREE:
+            iblockdata1 = Blocks.LOG.getDefaultState().withProperty(BlockOldLog.VARIANT, BlockPlanks.EnumType.JUNGLE);
+            iblockdata2 = Blocks.LEAVES.getDefaultState().withProperty(BlockOldLeaf.VARIANT, BlockPlanks.EnumType.JUNGLE).withProperty(BlockLeaves.CHECK_DECAY, Boolean.valueOf(false));
+            gen = new WorldGenTrees(true, 4 + rand.nextInt(7), iblockdata1, iblockdata2, true);
+            break;
+        case JUNGLE_BUSH:
+            iblockdata1 = Blocks.LOG.getDefaultState().withProperty(BlockOldLog.VARIANT, BlockPlanks.EnumType.JUNGLE);
+            iblockdata2 = Blocks.LEAVES.getDefaultState().withProperty(BlockOldLeaf.VARIANT, BlockPlanks.EnumType.OAK).withProperty(BlockLeaves.CHECK_DECAY, Boolean.valueOf(false));
+            gen = new WorldGenShrub(iblockdata1, iblockdata2);
+            break;
+        case RED_MUSHROOM:
+            gen = new WorldGenBigMushroom(Blocks.RED_MUSHROOM_BLOCK);
+            break;
+        case BROWN_MUSHROOM:
+            gen = new WorldGenBigMushroom(Blocks.BROWN_MUSHROOM_BLOCK);
+            break;
+        case SWAMP:
+            gen = new WorldGenSwamp();
+            break;
+        case ACACIA:
+            gen = new WorldGenSavannaTree(true);
+            break;
+        case DARK_OAK:
+            gen = new WorldGenCanopyTree(true);
+            break;
+        case MEGA_REDWOOD:
+            gen = new WorldGenMegaPineTree(false, rand.nextBoolean());
+            break;
+        case TALL_BIRCH:
+            gen = new WorldGenBirchTree(true, true);
+            break;
+        case CHORUS_PLANT:
+            BlockChorusFlower.generatePlant(world, pos, rand, 8);
+            return true;
+        case TREE:
+        default:
+            gen = new WorldGenTrees(true);
+            break;
         }
 
         return gen.generate(world, rand, pos);
