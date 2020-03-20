@@ -72,7 +72,7 @@
                          {
                              StartupQuery.abort();
                          }
-@@ -236,8 +240,8 @@
+@@ -236,8 +240,10 @@
      @Override
      public void addModAsResource(ModContainer container)
      {
@@ -80,10 +80,32 @@
 -        String langFile2 = "assets/" + container.getModId().toLowerCase() + "/lang/en_US.lang";
 +        String langFile = "assets/" + container.getModId().toLowerCase() + "/lang/"+ Message.getLocale().toLowerCase() +".lang";
 +        String langFile2 = "assets/" + container.getModId().toLowerCase() + "/lang/"+ Message.getLocale() +".lang";
++        String langFile3 = "assets/" + container.getModId().toLowerCase() + "/lang/en_us.lang";
++        String langFile4 = "assets/" + container.getModId().toLowerCase() + "/lang/en_US.lang";
          File source = container.getSource();
          InputStream stream = null;
          ZipFile zip = null;
-@@ -265,7 +269,7 @@
+@@ -249,6 +255,10 @@
+                 if (!f.exists())
+                     f = new File(source.toURI().resolve(langFile2).getPath());
+                 if (!f.exists())
++                    f = new File(source.toURI().resolve(langFile3).getPath());
++                if (!f.exists())
++                    f = new File(source.toURI().resolve(langFile4).getPath());
++                if (!f.exists())
+                     throw new FileNotFoundException(source.toURI().resolve(langFile).getPath());
+                 stream = new FileInputStream(f);
+             }
+@@ -257,6 +267,8 @@
+                 zip = new ZipFile(source);
+                 ZipEntry entry = zip.getEntry(langFile);
+                 if (entry == null) entry = zip.getEntry(langFile2);
++                if (entry == null) entry = zip.getEntry(langFile3);
++                if (entry == null) entry = zip.getEntry(langFile4);
+                 if (entry == null) throw new FileNotFoundException(langFile);
+                 stream = zip.getInputStream(entry);
+             }
+@@ -265,7 +277,7 @@
          }
          catch (FileNotFoundException e)
          {
@@ -92,7 +114,7 @@
          }
          catch (IOException e)
          {
-@@ -285,7 +289,7 @@
+@@ -285,7 +297,7 @@
      @Override
      public String getCurrentLanguage()
      {

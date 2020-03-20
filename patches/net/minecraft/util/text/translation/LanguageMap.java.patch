@@ -9,13 +9,24 @@
  
  public class LanguageMap
  {
-@@ -23,7 +25,8 @@
+@@ -23,7 +25,10 @@
  
      public LanguageMap()
      {
 -        InputStream inputstream = LanguageMap.class.getResourceAsStream("/assets/minecraft/lang/en_us.lang");
 +        String lang = Message.getLocale().toLowerCase();
-+        InputStream inputstream = LanguageMap.class.getResourceAsStream("/assets/minecraft/lang/" + lang + ".lang");
++        InputStream inputstream1 = Mohist.class.getResourceAsStream("/assets/minecraft/lang/" + lang + ".lang");
++        InputStream inputstream2 = Mohist.class.getResourceAsStream("/assets/minecraft/lang/en_us.lang");
++        InputStream inputstream = (inputstream1 == null ? inputstream2 : inputstream1);
          try
          {
              inject(this, inputstream);
+@@ -31,6 +36,8 @@
+         finally
+         {
+             IOUtils.closeQuietly(inputstream); // Forge: close stream after use (MC-153470)
++            IOUtils.closeQuietly(inputstream1);
++            IOUtils.closeQuietly(inputstream2);
+         }
+     }
+ 
