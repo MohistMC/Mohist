@@ -40,10 +40,8 @@ public class Mohist {
         ServerEula eula = new ServerEula(new File("eula.txt"));
         if (!eula.hasAcceptedEULA()) {
             System.out.println(Message.getString("eula"));
-            Scanner scanner = new Scanner(System.in);
-            while (!"true".equals(scanner.next()));
+            while (!"true".equals(new Scanner(System.in).next()));
             eula.createEULAFile();
-            scanner.close();
         }
         if (Update.isCheck()) {
             Update.hasLatestVersion();
