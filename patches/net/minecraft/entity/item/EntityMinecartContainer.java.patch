@@ -7,10 +7,11 @@
  import java.util.Random;
  import javax.annotation.Nullable;
  import net.minecraft.entity.Entity;
-@@ -23,13 +24,52 @@
+@@ -23,13 +24,55 @@
  import net.minecraft.world.storage.loot.ILootContainer;
  import net.minecraft.world.storage.loot.LootContext;
  import net.minecraft.world.storage.loot.LootTable;
++import net.minecraftforge.cauldron.inventory.CraftCustomInventory;
 +import org.bukkit.Location;
 +import org.bukkit.craftbukkit.v1_12_R1.entity.CraftHumanEntity;
 +import org.bukkit.entity.HumanEntity;
@@ -45,8 +46,10 @@
 +    
 +    public InventoryHolder getOwner() {
 +        org.bukkit.entity.Entity cart = getBukkitEntity();
-+        if(cart instanceof InventoryHolder) return (InventoryHolder) cart;
-+        return null;
++        if (cart instanceof InventoryHolder) {
++            return (InventoryHolder) cart;
++        }
++        return new CraftCustomInventory(this);
 +    }
 +    
 +    public void setMaxStackSize(int size) {
@@ -61,7 +64,7 @@
  
      public EntityMinecartContainer(World worldIn)
      {
-@@ -134,7 +174,7 @@
+@@ -134,7 +177,7 @@
  
      public int getInventoryStackLimit()
      {
@@ -70,7 +73,7 @@
      }
  
      @Nullable
-@@ -168,7 +208,7 @@
+@@ -168,7 +211,7 @@
      protected void writeEntityToNBT(NBTTagCompound compound)
      {
          super.writeEntityToNBT(compound);

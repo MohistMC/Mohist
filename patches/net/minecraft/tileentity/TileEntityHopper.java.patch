@@ -114,7 +114,7 @@
 +            if (inventoryIn instanceof InventoryLargeChest) {
 +                sourceInventory = new org.bukkit.craftbukkit.v1_12_R1.inventory.CraftInventoryDoubleChest((InventoryLargeChest) inventoryIn);
 +            } else {
-+                InventoryHolder owner = (inventoryIn instanceof TileEntity) ? ((TileEntity)inventoryIn).getOwner() : inventoryIn.getOwner();
++                InventoryHolder owner = CraftCustomInventory.getOwner(inventoryIn);
 +                sourceInventory = owner != null ? owner.getInventory() : new CraftCustomInventory(inventoryIn).getInventory();
 +            }
 +
@@ -158,13 +158,13 @@
          }
          else
          {
-+            // CraftBukkit start
-+            if (destination.getOwner() != null && entity.getBukkitEntity() != null) {
-+                InventoryPickupItemEvent event = new InventoryPickupItemEvent(destination.getOwner().getInventory(), (org.bukkit.entity.Item) entity.getBukkitEntity());
-+                entity.world.getServer().getPluginManager().callEvent(event);
-+                if (event.isCancelled()) {
-+                    return false;
-+                }
++            InventoryHolder owner = CraftCustomInventory.getOwner(destination);
++            Inventory sourceInventory = owner != null ? owner.getInventory() : new CraftCustomInventory(destination).getInventory();
++            // CraftBukkit star
++            InventoryPickupItemEvent event = new InventoryPickupItemEvent(sourceInventory, (org.bukkit.entity.Item) entity.getBukkitEntity());
++            entity.world.getServer().getPluginManager().callEvent(event);
++            if (event.isCancelled()) {
++                return false;
 +            }
 +            // CraftBukkit end
              ItemStack itemstack = entity.getItem().copy();

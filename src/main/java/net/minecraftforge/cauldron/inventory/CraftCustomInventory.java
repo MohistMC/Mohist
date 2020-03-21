@@ -2,6 +2,7 @@ package net.minecraftforge.cauldron.inventory;
 
 import javax.annotation.Nullable;
 import net.minecraft.inventory.IInventory;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
@@ -70,5 +71,13 @@ public class CraftCustomInventory implements InventoryHolder {
     @Override
     public Inventory getInventory() {
         return this.container;
+    }
+
+    public static InventoryHolder getOwner(IInventory inventory) {
+        try {
+            return inventory.getOwner();
+        } catch (AbstractMethodError e) {
+            return (inventory instanceof TileEntity) ? ((TileEntity)inventory).getOwner() : null;
+        }
     }
 }
