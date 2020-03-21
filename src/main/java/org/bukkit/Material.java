@@ -63,6 +63,8 @@ import org.bukkit.material.Wood;
 import org.bukkit.material.WoodenStep;
 import org.bukkit.material.Wool;
 
+import javax.annotation.Nullable;
+
 /**
  * An enum of all material IDs accepted by the official server and client
  */
@@ -536,6 +538,7 @@ public enum Material {
     RECORD_12(2267, 1),;
 
     private static Material[] byId = new Material[32676];
+    private static Material[] blockById = new Material[32676];
     private static Map<String, Material> BY_NAME = Maps.newHashMap(); // Cauldron - remove final
 
     static {
@@ -674,28 +677,32 @@ public enum Material {
         return name.toUpperCase(java.util.Locale.ENGLISH).replaceAll("(:|\\s)", "_").replaceAll("\\W", "");
     }
 
-    public static Material addMaterial(int id, int limit, String name) {
-        if (byId[id] == null) {
-            String materialName = normalizeName(name);
-            Material material = EnumHelper.addEnum(Material.class, materialName, new Class[]{Integer.TYPE, Integer.TYPE}, new Object[]{id, limit});
-            byId[id] = material;
-            BY_NAME.put(materialName, material);
-            BY_NAME.put("X" + material.id, material);
+    @Nullable
+    public static Material addMaterial(Material material) {
+        if (byId[material.id] == null) {
+            byId[material.id] = material;
+            BY_NAME.put(normalizeName(material.name()), material);
+            BY_NAME.put("X" + String.valueOf(material.id), material);
             return material;
         }
         return null;
     }
 
-    public static Material addMaterial(int id, String name) {
-        if (byId[id] == null) {
-            String materialName = normalizeName(name);
-            Material material = EnumHelper.addEnum(Material.class, materialName, new Class[]{Integer.TYPE}, new Object[]{id});
-            byId[id] = material;
-            BY_NAME.put(materialName, material);
-            BY_NAME.put("X" + material.id, material);
+    @Nullable
+    public static Material addBlockMaterial(Material material) {
+        if (blockById[material.id] == null) {
+            blockById[material.id] = material;
             return material;
         }
         return null;
+    }
+
+    public static Material getBlockMaterial(final int id) {
+        if (blockById.length > id && id >= 0) {
+            return blockById[id];
+        } else {
+            return null;
+        }
     }
 
     /**
@@ -770,7 +777,7 @@ public enum Material {
      * @return true if this material is a block
      */
     public boolean isBlock() {
-        return id < 256;
+        return Arrays.stream(blockById).anyMatch(material -> this == material);
     }
 
     /**

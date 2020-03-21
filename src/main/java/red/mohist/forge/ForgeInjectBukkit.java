@@ -45,7 +45,8 @@ public class ForgeInjectBukkit {
             if(!entry.getKey().getResourceDomain().equals("minecraft")) {
                 String materialName = Material.normalizeName(entry.getKey().toString());
                 // inject item materials into Bukkit for FML
-                Material material = Material.addMaterial(Item.getIdFromItem(entry.getValue()), entry.getValue().getItemStackLimit(), materialName);
+                Item item = entry.getValue();
+                Material material = Material.addMaterial(EnumHelper.addEnum(Material.class, materialName, new Class[]{Integer.TYPE, Integer.TYPE}, new Object[]{Item.getIdFromItem(item), item.getItemStackLimit()}));
                 if (material != null) {
                     ServerAPI.injectmaterials.put(material.name(), material.getId());
                     Mohist.LOGGER.debug("Save: " + Message.getFormatString("injected.item", new Object[]{material.name(), String.valueOf(material.getId()), String.valueOf(ItemAPI.getBukkit(material).getDurability())}));
@@ -59,11 +60,18 @@ public class ForgeInjectBukkit {
             if(!entry.getKey().getResourceDomain().equals("minecraft")) {
                 String materialName = Material.normalizeName(entry.getKey().toString());
                 // inject block materials into Bukkit for FML
-                Material material = Material.addMaterial(Block.getIdFromBlock(entry.getValue()), materialName);
+                Block block = entry.getValue();
+                Material material = Material.addBlockMaterial(EnumHelper.addEnum(Material.class, materialName, new Class[]{Integer.TYPE}, new Object[]{Block.getIdFromBlock(block)}));
                 if (material != null) {
                     ServerAPI.injectblock.put(material.name(), material.getId());
                     Mohist.LOGGER.debug("Save: " + Message.getFormatString("injected.block", new Object[]{material.name(), String.valueOf(material.getId())}));
                 }
+            }
+        }
+
+        for (Material material : Material.values()) {
+            if (material.getId() < 256) {
+                Material.addBlockMaterial(material);
             }
         }
     }

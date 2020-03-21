@@ -28,7 +28,7 @@ public class CraftFallingBlock extends CraftEntity implements FallingBlock {
     }
 
     public Material getMaterial() {
-        return Material.getMaterial(getBlockId());
+        return Material.getBlockMaterial(getBlockId());
     }
 
     public int getBlockId() {

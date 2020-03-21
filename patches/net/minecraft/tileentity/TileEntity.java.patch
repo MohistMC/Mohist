@@ -8,7 +8,7 @@
  import net.minecraft.nbt.NBTTagCompound;
  import net.minecraft.network.play.server.SPacketUpdateTileEntity;
  import net.minecraft.util.Mirror;
-@@ -16,20 +17,27 @@
+@@ -16,26 +17,38 @@
  import net.minecraft.util.registry.RegistryNamespaced;
  import net.minecraft.util.text.ITextComponent;
  import net.minecraft.world.World;
@@ -37,7 +37,18 @@
  
      public static void register(String id, Class <? extends TileEntity > clazz)
      {
-@@ -531,4 +539,30 @@
+         REGISTRY.putObject(new ResourceLocation(id), clazz);
+     }
+ 
++    public static RegistryNamespaced getRegisteredTileEntities()
++    {
++        return REGISTRY;
++    }
++
+     @Nullable
+     public static ResourceLocation getKey(Class <? extends TileEntity > clazz)
+     {
+@@ -531,4 +544,30 @@
          register("shulker_box", TileEntityShulkerBox.class);
          register("bed", TileEntityBed.class);
      }

@@ -44,7 +44,7 @@
  import net.minecraft.pathfinding.PathWorldListener;
  import net.minecraft.profiler.Profiler;
  import net.minecraft.scoreboard.Scoreboard;
-@@ -52,17 +61,35 @@
+@@ -52,17 +61,36 @@
  import net.minecraft.village.VillageCollection;
  import net.minecraft.world.biome.Biome;
  import net.minecraft.world.biome.BiomeProvider;
@@ -77,10 +77,11 @@
 +import red.mohist.common.RealTimeTicking;
 +import red.mohist.common.cache.WorldCache;
 +import red.mohist.configuration.MohistConfig;
++import red.mohist.configuration.TileEntityWorldConfig;
  
  public abstract class World implements IBlockAccess, net.minecraftforge.common.capabilities.ICapabilityProvider
  {
-@@ -94,24 +121,24 @@
+@@ -94,24 +122,24 @@
      public float thunderingStrength;
      private int lastLightningBolt;
      public final Random rand = new Random();
@@ -112,7 +113,7 @@
      private boolean processingLoadedTiles;
      private final WorldBorder worldBorder;
      int[] lightUpdateBlockList;
-@@ -122,8 +149,110 @@
+@@ -122,8 +150,114 @@
      private net.minecraftforge.common.capabilities.CapabilityDispatcher capabilities;
      private net.minecraftforge.common.util.WorldCapabilityData capabilityData;
  
@@ -131,6 +132,8 @@
 +    public static boolean haveWeSilencedAPhysicsCrash;
 +    public static String blockLocation;
 +    public final Map<Explosion.CacheKey, Float> explosionDensityCache = new HashMap<>(); // Paper - Optimize explosions
++
++    public TileEntityWorldConfig tileentityConfig;
 +
 +    public CraftWorld getWorld() {
 +        return this.world;
@@ -165,6 +168,7 @@
 +        this.worldBorder = providerIn.createWorldBorder();
 +        perWorldStorage = new MapStorage((ISaveHandler)null);
 +        // Mohist start
++        this.tileentityConfig = new TileEntityWorldConfig(info.getWorldName(), MinecraftServer.tileEntityConfig);
 +        if(this.worldInfo != null) // Use saved dimension from level.dat. Fixes issues with MultiVerse
 +        {
 +            if (this.worldInfo.getDimension() != 0)
@@ -219,11 +223,12 @@
      protected World(ISaveHandler saveHandlerIn, WorldInfo info, WorldProvider providerIn, Profiler profilerIn, boolean client)
      {
 +        this.spigotConfig = new org.spigotmc.SpigotWorldConfig( info.getWorldName() ); // Spigot
++        this.tileentityConfig = new TileEntityWorldConfig(info.getWorldName(), MinecraftServer.tileEntityConfig);
 +        this.world = DimensionManager.getWorld(0) != null ? DimensionManager.getWorld(0).getWorld() : null;
          this.eventListeners = Lists.newArrayList(this.pathListener);
          this.calendar = Calendar.getInstance();
          this.worldScoreboard = new Scoreboard();
-@@ -137,6 +266,7 @@
+@@ -137,6 +271,7 @@
          this.isRemote = client;
          this.worldBorder = providerIn.createWorldBorder();
          perWorldStorage = new MapStorage((ISaveHandler)null);
@@ -231,7 +236,7 @@
      }
  
      public World init()
-@@ -298,7 +428,7 @@
+@@ -298,7 +433,7 @@
          }
      }
  
@@ -240,7 +245,7 @@
  
      public Chunk getChunkFromBlockCoords(BlockPos pos)
      {
-@@ -317,6 +447,26 @@
+@@ -317,6 +452,26 @@
  
      public boolean setBlockState(BlockPos pos, IBlockState newState, int flags)
      {
@@ -267,7 +272,7 @@
          if (this.isOutsideBuildHeight(pos))
          {
              return false;
-@@ -437,6 +587,11 @@
+@@ -437,6 +592,11 @@
      {
          if (this.worldInfo.getTerrainType() != WorldType.DEBUG_ALL_BLOCK_STATES)
          {
@@ -279,7 +284,7 @@
              this.notifyNeighborsOfStateChange(pos, blockType, p_175722_3_);
          }
      }
-@@ -488,7 +643,6 @@
+@@ -488,7 +648,6 @@
      {
          if(net.minecraftforge.event.ForgeEventFactory.onNeighborNotify(this, pos, this.getBlockState(pos), java.util.EnumSet.allOf(EnumFacing.class), updateObservers).isCanceled())
              return;
@@ -287,7 +292,7 @@
          this.neighborChanged(pos.west(), blockType, pos);
          this.neighborChanged(pos.east(), blockType, pos);
          this.neighborChanged(pos.down(), blockType, pos);
-@@ -548,6 +702,15 @@
+@@ -548,6 +707,15 @@
  
              try
              {
@@ -303,7 +308,7 @@
                  iblockstate.neighborChanged(this, pos, blockIn, fromPos);
              }
              catch (Throwable throwable)
-@@ -586,6 +749,11 @@
+@@ -586,6 +754,11 @@
                  {
                      iblockstate.getBlock().observedNeighborChange(iblockstate, this, pos, p_190529_2_, p_190529_3_);
                  }
@@ -315,7 +320,7 @@
                  catch (Throwable throwable)
                  {
                      CrashReport crashreport = CrashReport.makeCrashReport(throwable, "Exception while updating neighbours");
-@@ -596,7 +764,7 @@
+@@ -596,7 +769,7 @@
                          {
                              try
                              {
@@ -324,7 +329,7 @@
                              }
                              catch (Throwable var2)
                              {
-@@ -664,7 +832,6 @@
+@@ -664,7 +837,6 @@
              {
                  pos = new BlockPos(pos.getX(), 255, pos.getZ());
              }
@@ -332,7 +337,7 @@
              return this.getChunkFromBlockCoords(pos).getLightSubtracted(pos, 0);
          }
      }
-@@ -793,7 +960,7 @@
+@@ -793,7 +965,7 @@
              }
  
              if (!this.isValid(pos))
@@ -341,7 +346,7 @@
                  return type.defaultLightValue;
              }
              else if (!this.isBlockLoaded(pos))
-@@ -846,7 +1013,7 @@
+@@ -846,7 +1018,7 @@
          }
  
          if (!this.isValid(pos))
@@ -350,7 +355,7 @@
              return type.defaultLightValue;
          }
          else if (!this.isBlockLoaded(pos))
-@@ -863,7 +1030,7 @@
+@@ -863,7 +1035,7 @@
      public void setLightFor(EnumSkyBlock type, BlockPos pos, int lightValue)
      {
          if (this.isValid(pos))
@@ -359,7 +364,7 @@
              if (this.isBlockLoaded(pos))
              {
                  Chunk chunk = this.getChunkFromBlockCoords(pos);
-@@ -902,6 +1069,17 @@
+@@ -902,6 +1074,17 @@
  
      public IBlockState getBlockState(BlockPos pos)
      {
@@ -377,7 +382,7 @@
          if (this.isOutsideBuildHeight(pos))
          {
              return Blocks.AIR.getDefaultState();
-@@ -1181,14 +1359,66 @@
+@@ -1181,14 +1364,66 @@
  
      public boolean spawnEntity(Entity entityIn)
      {
@@ -449,7 +454,7 @@
          {
              flag = true;
          }
-@@ -1199,18 +1429,19 @@
+@@ -1199,18 +1434,19 @@
          }
          else
          {
@@ -475,7 +480,7 @@
              return true;
          }
      }
-@@ -1219,18 +1450,22 @@
+@@ -1219,18 +1455,22 @@
      {
          for (int i = 0; i < this.eventListeners.size(); ++i)
          {
@@ -500,7 +505,7 @@
      }
  
      public void removeEntity(Entity entityIn)
-@@ -1256,12 +1491,12 @@
+@@ -1256,12 +1496,12 @@
      }
  
      public void removeEntityDangerously(Entity entityIn)
@@ -515,7 +520,7 @@
              this.playerEntities.remove(entityIn);
              this.updateAllPlayersSleepingFlag();
          }
-@@ -1273,8 +1508,15 @@
+@@ -1273,8 +1513,15 @@
          {
              this.getChunkFromChunkCoords(i, j).removeEntity(entityIn);
          }
@@ -533,7 +538,7 @@
          this.onEntityRemoved(entityIn);
      }
  
-@@ -1361,6 +1603,11 @@
+@@ -1361,6 +1608,11 @@
  
      public List<AxisAlignedBB> getCollisionBoxes(@Nullable Entity entityIn, AxisAlignedBB aabb)
      {
@@ -545,7 +550,7 @@
          List<AxisAlignedBB> list = Lists.<AxisAlignedBB>newArrayList();
          this.getCollisionBoxes(entityIn, aabb, false, list);
  
-@@ -1391,6 +1638,8 @@
+@@ -1391,6 +1643,8 @@
              }
          }
          net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.world.GetCollisionBoxesEvent(this, entityIn, aabb, list));
@@ -554,7 +559,7 @@
          return list;
      }
  
-@@ -1677,7 +1926,11 @@
+@@ -1677,7 +1931,11 @@
          for (int i = 0; i < this.weatherEffects.size(); ++i)
          {
              Entity entity = this.weatherEffects.get(i);
@@ -567,7 +572,7 @@
              try
              {
                  if(entity.updateBlocked) continue;
-@@ -1737,6 +1990,8 @@
+@@ -1737,6 +1995,8 @@
          this.tickPlayers();
          this.profiler.endStartSection("regular");
  
@@ -576,7 +581,7 @@
          for (int i1 = 0; i1 < this.loadedEntityList.size(); ++i1)
          {
              Entity entity2 = this.loadedEntityList.get(i1);
-@@ -1758,9 +2013,11 @@
+@@ -1758,9 +2018,11 @@
              {
                  try
                  {
@@ -588,7 +593,7 @@
                  }
                  catch (Throwable throwable1)
                  {
-@@ -1797,7 +2054,9 @@
+@@ -1797,7 +2059,9 @@
              this.profiler.endSection();
          }
  
@@ -598,7 +603,7 @@
  
          this.processingLoadedTiles = true; //FML Move above remove to prevent CMEs
  
-@@ -1821,7 +2080,12 @@
+@@ -1821,7 +2085,12 @@
          while (iterator.hasNext())
          {
              TileEntity tileentity = iterator.next();
@@ -612,15 +617,22 @@
              if (!tileentity.isInvalid() && tileentity.hasWorld())
              {
                  BlockPos blockpos = tileentity.getPos();
-@@ -1834,6 +2098,7 @@
+@@ -1834,8 +2103,13 @@
                          {
                              return String.valueOf((Object)TileEntity.getKey(tileentity.getClass()));
                          });
 +                        tileentity.tickTimer.startTiming(); // Spigot
                          net.minecraftforge.server.timings.TimeTracker.TILE_ENTITY_UPDATE.trackStart(tileentity);
-                         ((ITickable)tileentity).update();
+-                        ((ITickable)tileentity).update();
++
++                        if (red.mohist.util.TileEntity.canTileEntityTick(tileentity, this)) {
++                            ((ITickable)tileentity).update();
++                        }
++
                          net.minecraftforge.server.timings.TimeTracker.TILE_ENTITY_UPDATE.trackEnd(tileentity);
-@@ -1853,6 +2118,12 @@
+                         this.profiler.endSection();
+                     }
+@@ -1853,6 +2127,12 @@
                          else
                          throw new ReportedException(crashreport2);
                      }
@@ -633,7 +645,7 @@
                  }
              }
  
-@@ -1871,6 +2142,8 @@
+@@ -1871,6 +2151,8 @@
              }
          }
  
@@ -642,7 +654,7 @@
          this.processingLoadedTiles = false;
          this.profiler.endStartSection("pendingBlockEntities");
  
-@@ -1882,10 +2155,12 @@
+@@ -1882,10 +2164,12 @@
  
                  if (!tileentity1.isInvalid())
                  {
@@ -655,7 +667,7 @@
  
                      if (this.isBlockLoaded(tileentity1.getPos()))
                      {
-@@ -1893,6 +2168,12 @@
+@@ -1893,6 +2177,12 @@
                          IBlockState iblockstate = chunk.getBlockState(tileentity1.getPos());
                          chunk.addTileEntity(tileentity1.getPos(), tileentity1);
                          this.notifyBlockUpdate(tileentity1.getPos(), iblockstate, iblockstate, 3);
@@ -668,7 +680,7 @@
                      }
                  }
              }
-@@ -1900,6 +2181,7 @@
+@@ -1900,6 +2190,7 @@
              this.addedTileEntityList.clear();
          }
  
@@ -676,7 +688,7 @@
          this.profiler.endSection();
          this.profiler.endSection();
      }
-@@ -1918,7 +2200,7 @@
+@@ -1918,7 +2209,7 @@
          boolean flag = this.loadedTileEntityList.add(tile);
  
          if (flag && tile instanceof ITickable)
@@ -685,7 +697,7 @@
              this.tickableTileEntities.add(tile);
          }
          tile.onLoad();
-@@ -1974,7 +2256,15 @@
+@@ -1974,7 +2265,15 @@
              {
                  return;
              }
@@ -701,7 +713,7 @@
  
          entityIn.lastTickPosX = entityIn.posX;
          entityIn.lastTickPosY = entityIn.posY;
-@@ -1994,6 +2284,7 @@
+@@ -1994,6 +2293,7 @@
              {
                  if(!entityIn.updateBlocked)
                  entityIn.onUpdate();
@@ -709,7 +721,7 @@
              }
          }
  
-@@ -2385,25 +2676,25 @@
+@@ -2385,25 +2685,25 @@
      public TileEntity getTileEntity(BlockPos pos)
      {
          if (this.isOutsideBuildHeight(pos))
@@ -741,7 +753,7 @@
                  tileentity2 = this.getPendingTileEntityAt(pos);
              }
  
-@@ -2431,7 +2722,7 @@
+@@ -2431,7 +2731,7 @@
      {
          pos = pos.toImmutable(); // Forge - prevent mutable BlockPos leaks
          if (!this.isOutsideBuildHeight(pos))
@@ -750,7 +762,7 @@
              if (tileEntityIn != null && !tileEntityIn.isInvalid())
              {
                  if (this.processingLoadedTiles)
-@@ -2454,6 +2745,7 @@
+@@ -2454,6 +2754,7 @@
                      }
  
                      toInvalidate.forEach(TileEntity::invalidate);
@@ -758,7 +770,7 @@
                      this.addedTileEntityList.add(tileEntityIn);
                  }
                  else
-@@ -2505,7 +2797,7 @@
+@@ -2505,7 +2806,7 @@
      public boolean isBlockNormalCube(BlockPos pos, boolean _default)
      {
          if (this.isOutsideBuildHeight(pos))
@@ -767,7 +779,7 @@
              return false;
          }
          else
-@@ -2662,6 +2954,11 @@
+@@ -2662,6 +2963,11 @@
                  }
  
                  this.rainingStrength = MathHelper.clamp(this.rainingStrength, 0.0F, 1.0F);
@@ -779,7 +791,7 @@
              }
          }
      }
-@@ -2851,8 +3148,11 @@
+@@ -2851,8 +3157,11 @@
  
      public boolean checkLightFor(EnumSkyBlock lightType, BlockPos pos)
      {
@@ -792,7 +804,7 @@
              return false;
          }
          else
-@@ -3013,6 +3313,11 @@
+@@ -3013,6 +3322,11 @@
  
      public List<Entity> getEntitiesInAABBexcluding(@Nullable Entity entityIn, AxisAlignedBB boundingBox, @Nullable Predicate <? super Entity > predicate)
      {
@@ -804,7 +816,7 @@
          List<Entity> list = Lists.<Entity>newArrayList();
          int j2 = MathHelper.floor((boundingBox.minX - MAX_ENTITY_RADIUS) / 16.0D);
          int k2 = MathHelper.floor((boundingBox.maxX + MAX_ENTITY_RADIUS) / 16.0D);
-@@ -3029,19 +3334,20 @@
+@@ -3029,19 +3343,20 @@
                  }
              }
          }
@@ -832,7 +844,7 @@
              }
          }
  
-@@ -3070,6 +3376,11 @@
+@@ -3070,6 +3385,11 @@
  
      public <T extends Entity> List<T> getEntitiesWithinAABB(Class <? extends T > clazz, AxisAlignedBB aabb, @Nullable Predicate <? super T > filter)
      {
@@ -844,7 +856,7 @@
          int j2 = MathHelper.floor((aabb.minX - MAX_ENTITY_RADIUS) / 16.0D);
          int k2 = MathHelper.ceil((aabb.maxX + MAX_ENTITY_RADIUS) / 16.0D);
          int l2 = MathHelper.floor((aabb.minZ - MAX_ENTITY_RADIUS) / 16.0D);
-@@ -3086,7 +3397,8 @@
+@@ -3086,7 +3406,8 @@
                  }
              }
          }
@@ -854,7 +866,7 @@
          return list;
      }
  
-@@ -3142,7 +3454,16 @@
+@@ -3142,7 +3463,16 @@
  
          for (Entity entity4 : this.loadedEntityList)
          {
@@ -872,7 +884,7 @@
              {
                  ++j2;
              }
-@@ -3157,6 +3478,9 @@
+@@ -3157,6 +3487,9 @@
          {
              if (!net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.EntityJoinWorldEvent(entity4, this)))
              {
@@ -882,7 +894,7 @@
                  loadedEntityList.add(entity4);
                  this.onEntityAdded(entity4);
              }
-@@ -3173,19 +3497,24 @@
+@@ -3173,19 +3506,24 @@
          IBlockState iblockstate1 = this.getBlockState(pos);
          AxisAlignedBB axisalignedbb = skipCollisionCheck ? null : blockIn.getDefaultState().getCollisionBoundingBox(this, pos);
  
@@ -910,7 +922,7 @@
      }
  
      public int getSeaLevel()
-@@ -3350,6 +3679,11 @@
+@@ -3350,6 +3688,11 @@
          {
              EntityPlayer entityplayer1 = this.playerEntities.get(j2);
  
@@ -922,7 +934,7 @@
              if (p_190525_9_.apply(entityplayer1))
              {
                  double d1 = entityplayer1.getDistanceSq(x, y, z);
-@@ -3367,7 +3701,7 @@
+@@ -3367,7 +3710,7 @@
  
      public boolean isAnyPlayerWithinRangeAt(double x, double y, double z, double range)
      {
@@ -931,7 +943,7 @@
          {
              EntityPlayer entityplayer = this.playerEntities.get(j2);
  
-@@ -3382,8 +3716,8 @@
+@@ -3382,8 +3725,8 @@
              }
          }
  
@@ -942,7 +954,7 @@
  
      @Nullable
      public EntityPlayer getNearestAttackablePlayer(Entity entityIn, double maxXZDistance, double maxYDistance)
-@@ -3406,7 +3740,6 @@
+@@ -3406,7 +3749,6 @@
          for (int j2 = 0; j2 < this.playerEntities.size(); ++j2)
          {
              EntityPlayer entityplayer1 = this.playerEntities.get(j2);
@@ -950,7 +962,7 @@
              if (!entityplayer1.capabilities.disableDamage && entityplayer1.isEntityAlive() && !entityplayer1.isSpectator() && (p_184150_12_ == null || p_184150_12_.apply(entityplayer1)))
              {
                  double d1 = entityplayer1.getDistanceSq(posX, entityplayer1.posY, posZ);
-@@ -3597,6 +3930,16 @@
+@@ -3597,6 +3939,16 @@
      {
      }
  
@@ -967,7 +979,7 @@
      public float getThunderStrength(float delta)
      {
          return (this.prevThunderingStrength + (this.thunderingStrength - this.prevThunderingStrength) * delta) * this.getRainStrength(delta);
-@@ -3885,7 +4228,7 @@
+@@ -3885,7 +4237,7 @@
          int j2 = x * 16 + 8 - blockpos1.getX();
          int k2 = z * 16 + 8 - blockpos1.getZ();
          int l2 = 128;
@@ -976,7 +988,7 @@
      }
  
      /* ======================================== FORGE START =====================================*/
-@@ -3933,6 +4276,10 @@
+@@ -3933,6 +4285,10 @@
  
      public Iterator<Chunk> getPersistentChunkIterable(Iterator<Chunk> chunkIterator)
      {
@@ -987,7 +999,7 @@
          return net.minecraftforge.common.ForgeChunkManager.getPersistentChunksIterableFor(this, chunkIterator);
      }
      /**
-@@ -4021,4 +4368,11 @@
+@@ -4021,4 +4377,11 @@
      {
          return null;
      }
