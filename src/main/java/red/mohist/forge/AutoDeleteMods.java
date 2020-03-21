@@ -17,6 +17,7 @@ public class AutoDeleteMods {
                 "org.dimdev.vanillafix.VanillaFix" /*VanillaFix*/,
                 "lumien.custommainmenu.CustomMainMenu" /*CustomMainMenu*/,
                 "com.performant.coremod.Performant" /*Performant*/,
+                "shadows.fastbench.proxy.BenchServerProxy" /*FastWorkbench*/,
                 "optifine.Differ" /*OptiFine*/);
     }
 }
