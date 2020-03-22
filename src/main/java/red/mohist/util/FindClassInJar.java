@@ -1,4 +1,4 @@
-package red.mohist.forge;
+package red.mohist.util;
 
 import java.io.File;
 import java.io.FileFilter;
@@ -10,11 +10,11 @@ import java.util.jar.JarFile;
  * @author Mgazul
  * @date 2019/12/15 21:42
  */
-public class FindClassInMod {
+public class FindClassInJar {
     private String m_libDir;
     private String m_classname;
 
-    public FindClassInMod(String libDir, String classname) {
+    public FindClassInJar(String libDir, String classname) {
         m_libDir = libDir;
         m_classname = classname;
     }
@@ -39,7 +39,7 @@ public class FindClassInMod {
         checkDirectory(m_libDir);
     }
 
-    private void checkDirectory(String libDir) throws Exception {
+    public void checkDirectory(String libDir) throws Exception {
         File file = new File(libDir);
         if (file.exists()) {
             if (file.isFile()) {
@@ -87,15 +87,5 @@ public class FindClassInMod {
         }
 
         return result;
-    }
-
-    public static void jar() throws Exception {
-        String libDir = "mods";
-        for (String classname : AutoDeleteMods.classlist) {
-            classname = classname.replaceAll("\\.", "/") + ".class";
-
-            FindClassInMod ins = new FindClassInMod(libDir, classname);
-            ins.checkDirectory(libDir);
-        }
     }
 }

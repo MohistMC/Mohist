@@ -6,7 +6,8 @@ import org.apache.logging.log4j.Logger;
 import red.mohist.configuration.MohistConfigUtil;
 import red.mohist.down.DownloadLibraries;
 import red.mohist.down.Update;
-import red.mohist.forge.FindClassInMod;
+import red.mohist.forge.AutoDeleteMods;
+import red.mohist.plugin.AutoDeletePlugins;
 import red.mohist.util.ServerEula;
 import red.mohist.util.i18n.Message;
 
@@ -31,7 +32,8 @@ public class Mohist {
             System.setProperty("log4j.configurationFile", "log4j2_mohist.xml");
         }
         try {
-            FindClassInMod.jar();
+            AutoDeleteMods.jar();
+            AutoDeletePlugins.jar();
         } catch (Exception e) {
             e.printStackTrace();
         }

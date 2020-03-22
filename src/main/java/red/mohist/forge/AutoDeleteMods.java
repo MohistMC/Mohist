@@ -2,6 +2,7 @@ package red.mohist.forge;
 
 import java.util.Arrays;
 import java.util.List;
+import red.mohist.util.FindClassInJar;
 
 /**
  * Why is there such a class?
@@ -19,5 +20,15 @@ public class AutoDeleteMods {
                 "com.performant.coremod.Performant" /*Performant*/,
                 "shadows.fastbench.proxy.BenchServerProxy" /*FastWorkbench*/,
                 "optifine.Differ" /*OptiFine*/);
+    }
+
+    public static void jar() throws Exception {
+        String libDir = "mods";
+        for (String classname : AutoDeleteMods.classlist) {
+            classname = classname.replaceAll("\\.", "/") + ".class";
+
+            FindClassInJar ins = new FindClassInJar(libDir, classname);
+            ins.checkDirectory(libDir);
+        }
     }
 }

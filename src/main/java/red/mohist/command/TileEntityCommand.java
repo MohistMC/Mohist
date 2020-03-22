@@ -1,15 +1,16 @@
 package red.mohist.command;
 
-import java.util.*;
-
-import net.minecraft.client.Minecraft;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Locale;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
-import red.mohist.configuration.TileEntityConfig;
 import red.mohist.util.i18n.Message;
 
 public class TileEntityCommand extends Command {

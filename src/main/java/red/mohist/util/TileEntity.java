@@ -1,12 +1,10 @@
 package red.mohist.util;
 
-import net.minecraft.server.MinecraftServer;
-import net.minecraft.world.World;
-import org.spigotmc.ActivationRange;
-import red.mohist.common.cache.TileEntityCache;
-
 import java.util.HashMap;
 import java.util.Map;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.world.World;
+import red.mohist.common.cache.TileEntityCache;
 
 public class TileEntity {
     public static Map<Class<? extends net.minecraft.tileentity.TileEntity>, TileEntityCache> tileEntityCache = new HashMap<Class<? extends net.minecraft.tileentity.TileEntity>, TileEntityCache>();

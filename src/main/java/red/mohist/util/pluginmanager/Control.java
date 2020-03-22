@@ -1,4 +1,4 @@
-package red.mohist.pluginmanager;
+package red.mohist.util.pluginmanager;
 
 import java.io.File;
 import java.io.IOException;
