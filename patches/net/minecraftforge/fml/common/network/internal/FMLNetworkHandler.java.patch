@@ -61,7 +61,7 @@
                  entityPlayerMP.getNextWindowId();
                  entityPlayerMP.closeContainer();
                  int windowId = entityPlayerMP.currentWindowId;
-@@ -154,18 +184,27 @@
+@@ -154,21 +184,30 @@
                  .filter(pair -> pair.getValue() != null)
                  .sorted(Comparator.comparing(o -> o.getKey().getName()))
                  .collect(Collectors.toList());
@@ -80,7 +80,7 @@
          {
 +            if(!hackpacks.isEmpty()) {
 +                FMLLog.info("[Mohist] Rejecting hacker %s: %s", side, hackpacks);
-+                return String.format("Hack rejections %s",hackpacks);
++                return String.format(MohistConfig.instance.rejectionsHackMessage.getValue(),hackpacks);
 +            }
              return null;
          }
@@ -94,7 +94,11 @@
 -            }
              String rejectString = String.join("\n", rejectStrings);
              FMLLog.log.info("Rejecting connection {}: {}", side, rejectString);
-             return String.format("Server Mod rejections:\n%s", rejectString);
+-            return String.format("Server Mod rejections:\n%s", rejectString);
++            return String.format(MohistConfig.instance.rejectionsServerModsMessage.getValue(), rejectString);
+         }
+     }
+ 
 @@ -210,7 +249,7 @@
      public static void enhanceStatusQuery(JsonObject jsonobject)
      {
