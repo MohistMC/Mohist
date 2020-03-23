@@ -1,6 +1,44 @@
 --- ../src-base/minecraft/net/minecraftforge/fml/common/network/internal/NetworkModHolder.java
 +++ ../src-work/minecraft/net/minecraftforge/fml/common/network/internal/NetworkModHolder.java
-@@ -251,7 +251,9 @@
+@@ -38,6 +38,7 @@
+ import com.google.common.collect.ImmutableMap;
+ import com.google.common.collect.ImmutableSet;
+ import com.google.common.collect.SetMultimap;
++import red.mohist.configuration.MohistConfig;
+ 
+ import javax.annotation.Nullable;
+ 
+@@ -111,24 +112,24 @@
+             {
+                 if (acceptableRange.hasRestrictions())
+                 {
+-                    versionString = String.format("version %s", acceptableRange.toStringFriendly());
++                    versionString = String.format(MohistConfig.instance.requirementsModVersion.getValue(), acceptableRange.toStringFriendly());
+                 }
+                 else
+                 {
+-                    versionString = String.format("version range %s", acceptableRange.toStringFriendly());
++                    versionString = String.format(MohistConfig.instance.requirementsModVersionRange.getValue(), acceptableRange.toStringFriendly());
+                 }
+             }
+             else
+             {
+-                versionString = String.format("version %s", container.getVersion());
++                versionString = String.format(MohistConfig.instance.requirementsModVersion.getValue(), container.getVersion());
+             }
+             if (version != null)
+             {
+-                return String.format("Requires %s but client has %s.", versionString, version);
++                return String.format(MohistConfig.instance.requirementsModInvalidVersion.getValue(), versionString, version);
+             }
+             else
+             {
+-                return String.format("Requires %s but mod is not found on client.", versionString);
++                return String.format(MohistConfig.instance.requirementsModNotFound.getValue(), versionString);
+             }
+         }
+ 
+@@ -251,7 +252,9 @@
              }
              catch (Exception e)
              {

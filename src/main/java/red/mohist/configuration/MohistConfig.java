@@ -23,6 +23,15 @@ public class MohistConfig extends ConfigBase{
     public final StringSetting unknownCommandMessage = new StringSetting(this, "messages.use-unknow-command", Message.getString("use.unknow.command"), "Prompt unknown command");
     public final StringSetting outdatedClientMessage = new StringSetting(this, "messages.Outdate-Client", Message.getString("outdate.client"), "Outdate Client");
     public final StringSetting outdatedServerMessage = new StringSetting(this, "messages.Outdate-Server", Message.getString("outdate.server"), "Outdate Server");
+
+    public final StringSetting rejectionsHackMessage = new StringSetting(this, "messages.Rejections-Hack", Message.getString("rejections.hack"), "Hack rejections");
+    public final StringSetting rejectionsServerModsMessage = new StringSetting(this, "messages.Rejections-Server-Mods", Message.getString("rejections.server-mods"), "Server-mods rejections");
+
+    public final StringSetting requirementsModInvalidVersion = new StringSetting(this, "messages.Requirements-Mod-Invalid-version", Message.getString("requirements.mod.invalid-version"), "Requires mod version X but client has Y");
+    public final StringSetting requirementsModNotFound = new StringSetting(this, "messages.Requirements-Mod-Not-found", Message.getString("requirements.mod.not-found"), "Requires mod version X but mod is not found on client");
+    public final StringSetting requirementsModVersion = new StringSetting(this, "messages.Requirements-Mod-Version", Message.getString("requirements.mod.version"), "version X");
+    public final StringSetting requirementsModVersionRange = new StringSetting(this, "messages.Requirements-Mod-Version-range", Message.getString("requirements.mod.version-range"), "version range X");
+
     public final StringSetting server_type = new StringSetting(this, "server-type", "FML", "Set the server type displayed in motd (FML/BUKKIT/VANILLA)");
     public final StringSetting lang = new StringSetting(this, "lang", "en_US", "Mohist internationalization language setting, will return the default system language when your settings are invalid");
     public final StringSetting console_name = new StringSetting(this, "console_name", "Server", "Front of the console, for example /say");
