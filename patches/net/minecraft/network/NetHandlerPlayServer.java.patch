@@ -1928,7 +1928,7 @@
              }
          }
          else if ("MC|PickItem".equals(s))
-@@ -1760,7 +2855,43 @@
+@@ -1760,7 +2855,24 @@
              catch (Exception exception)
              {
                  LOGGER.error("Couldn't pick item", (Throwable)exception);
@@ -1936,27 +1936,8 @@
              }
          }
 +        // CraftBukkit start
-+        else if (packetIn.getChannelName().equals("REGISTER")) {
-+            try {
-+                String channels = packetIn.getBufferData().toString(com.google.common.base.Charsets.UTF_8);
-+                for (String channel : channels.split("\0")) {
-+                    getPlayer().addChannel(channel);
-+                }
-+            } catch (Exception ex) {
-+                NetHandlerPlayServer.LOGGER.error("Couldn\'t register custom payload", ex);
-+                this.disconnect("Invalid payload REGISTER!");
-+            }
-+        } else if (packetIn.getChannelName().equals("UNREGISTER")) {
-+            try {
-+                String channels = packetIn.getBufferData().toString(com.google.common.base.Charsets.UTF_8);
-+                for (String channel : channels.split("\0")) {
-+                    getPlayer().removeChannel(channel);
-+                }
-+            } catch (Exception ex) {
-+                NetHandlerPlayServer.LOGGER.error("Couldn\'t unregister custom payload", ex);
-+                this.disconnect("Invalid payload UNREGISTER!");
-+            }
-+        } else {
++        // Mohist - bukkit registration moved to FML's ChannelRegistrationHandler
++        else {
 +            try {
 +                byte[] data = new byte[packetIn.getBufferData().readableBytes()];
 +                packetIn.getBufferData().readBytes(data);
