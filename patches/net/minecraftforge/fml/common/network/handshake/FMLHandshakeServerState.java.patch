@@ -13,7 +13,7 @@
  import io.netty.channel.ChannelFutureListener;
  import io.netty.channel.ChannelHandlerContext;
  
-@@ -59,14 +65,24 @@
+@@ -59,14 +65,28 @@
              // Hello packet first
              if (msg instanceof FMLHandshakeMessage.ClientHello)
              {
@@ -35,12 +35,16 @@
 +                PlayerAPI.mods.put(mp, client.modListSize());
 +                PlayerAPI.modlist.put(mp, client.modListAsString());
 +            }
-+            FMLLog.log.info(Message.getFormatString("client.join.mods", new Object[]{ client.modListSize() }));
-+            FMLLog.log.debug("Client attempting to join with {} mods : {}", client.modListSize(), client.modListAsString());
++            if (!MohistConfig.instance.hideJoinModsList.getValue()) {
++                FMLLog.log.info(Message.getFormatString("client.join.mods", new Object[]{ client.modListSize() }) + " : " + client.modListAsString());
++            } else {
++                FMLLog.log.info(Message.getFormatString("client.join.mods", new Object[]{client.modListSize()}));
++            }
++
              String modRejections = FMLNetworkHandler.checkModList(client, Side.CLIENT);
              if (modRejections != null)
              {
-@@ -91,6 +107,9 @@
+@@ -91,6 +111,9 @@
                  while (itr.hasNext())
                  {
                      Entry<ResourceLocation, ForgeRegistry.Snapshot> e = itr.next();

@@ -66,6 +66,8 @@ public class MohistConfig extends ConfigBase{
     public final IntSetting entityTickLimit = new IntSetting(this, "entity-tick-limit", 300, "Entity maximum tick limit, entities exceeding this value will not be updated"); // by CraftDream
     public final StringSetting libraries_black_list = new StringSetting(this, "libraries_black_list", "aaaaa;bbbbbb", "libraries_black_list");
 
+    public final BoolSetting hideJoinModsList = new BoolSetting(this, "hidejoinmodslist", false, "Hide the list of mods displayed on the console when players join the server");
+
     /* ======================================================================== */
 
     public MohistConfig()
