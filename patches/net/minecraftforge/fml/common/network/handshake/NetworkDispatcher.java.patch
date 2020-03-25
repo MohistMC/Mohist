@@ -21,25 +21,7 @@
          final TextComponentString TextComponentString = new TextComponentString(message);
          if (side == Side.CLIENT)
          {
-@@ -427,6 +427,7 @@
-             }
-         }
-         String channelName = msg.getChannelName();
-+        player.getBukkitEntity().addChannel(channelName);
-         if ("FML|HS".equals(channelName) || "REGISTER".equals(channelName) || "UNREGISTER".equals(channelName))
-         {
-             FMLProxyPacket proxy = new FMLProxyPacket(msg);
-@@ -448,6 +449,9 @@
-         else if (NetworkRegistry.INSTANCE.hasChannel(channelName, Side.SERVER))
-         {
-             FMLProxyPacket proxy = new FMLProxyPacket(msg);
-+            byte[] data = new byte[msg.getBufferData().readableBytes()];
-+            msg.getBufferData().readBytes(data);
-+            serverHandler.getCraftServer().getMessenger().dispatchIncomingMessage(player.getBukkitEntity(), msg.getChannelName(), data);
-             proxy.setDispatcher(this);
-             context.fireChannelRead(proxy);
-             return true;
-@@ -597,7 +601,7 @@
+@@ -597,7 +597,7 @@
              }
              else
              {

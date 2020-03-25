@@ -17,7 +17,6 @@ public class TileEntityCommand extends Command {
 
     public TileEntityCommand(String name) {
         super(name);
-        System.out.println("testt ttetwet");
         this.description = "TileEntity tick limiting commands";
         this.usageMessage = "/tileentity [reload|dump-all|dump-existing]";
         this.setPermission("mohist.command.mohist");

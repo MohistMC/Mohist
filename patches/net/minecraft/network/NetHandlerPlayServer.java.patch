@@ -57,7 +57,7 @@
  import net.minecraft.util.math.Vec3d;
  import net.minecraft.util.text.ChatType;
  import net.minecraft.util.text.ITextComponent;
-@@ -116,10 +123,55 @@
+@@ -116,10 +123,54 @@
  import net.minecraft.util.text.TextFormatting;
  import net.minecraft.world.DimensionType;
  import net.minecraft.world.GameType;
@@ -69,7 +69,6 @@
  import org.apache.logging.log4j.Logger;
 +import org.bukkit.Bukkit;
 +import org.bukkit.Location;
-+import org.bukkit.craftbukkit.v1_12_R1.CraftServer;
 +import org.bukkit.craftbukkit.v1_12_R1.SpigotTimings;
 +import org.bukkit.craftbukkit.v1_12_R1.entity.CraftPlayer;
 +import org.bukkit.craftbukkit.v1_12_R1.event.CraftEventFactory;
@@ -113,7 +112,7 @@
  
  public class NetHandlerPlayServer implements INetHandlerPlayServer, ITickable
  {
-@@ -131,7 +183,10 @@
+@@ -131,7 +182,10 @@
      private long field_194402_f;
      private boolean field_194403_g;
      private long field_194404_h;
@@ -125,7 +124,7 @@
      private int itemDropThreshold;
      private final IntHashMap<Short> pendingTransactions = new IntHashMap<Short>();
      private double firstGoodX;
-@@ -165,8 +220,35 @@
+@@ -165,8 +219,35 @@
          networkManagerIn.setNetHandler(this);
          this.player = playerIn;
          playerIn.connection = this;
@@ -161,7 +160,7 @@
      public void update()
      {
          this.captureCurrentPosition();
-@@ -179,8 +261,7 @@
+@@ -179,8 +260,7 @@
          {
              if (++this.floatingTickCount > 80)
              {
@@ -171,7 +170,7 @@
                  return;
              }
          }
-@@ -205,8 +286,7 @@
+@@ -205,8 +285,7 @@
              {
                  if (++this.vehicleFloatingTickCount > 80)
                  {
@@ -181,7 +180,7 @@
                      return;
                  }
              }
-@@ -226,7 +306,7 @@
+@@ -226,7 +305,7 @@
          this.serverController.profiler.startSection("keepAlive");
          long i = this.currentTimeMillis();
  
@@ -190,7 +189,7 @@
          {
              if (this.field_194403_g)
              {
-@@ -242,24 +322,33 @@
+@@ -242,24 +321,33 @@
          }
  
          this.serverController.profiler.endSection();
@@ -227,7 +226,7 @@
      {
          this.firstGoodX = this.player.posX;
          this.firstGoodY = this.player.posY;
-@@ -274,23 +363,48 @@
+@@ -274,23 +362,48 @@
          return this.netManager;
      }
  
@@ -285,7 +284,7 @@
      }
  
      public void processInput(CPacketInput packetIn)
-@@ -345,9 +459,34 @@
+@@ -345,9 +458,34 @@
                  double d9 = entity.motionX * entity.motionX + entity.motionY * entity.motionY + entity.motionZ * entity.motionZ;
                  double d10 = d6 * d6 + d7 * d7 + d8 * d8;
  
@@ -323,7 +322,7 @@
                      this.netManager.sendPacket(new SPacketMoveVehicle(entity));
                      return;
                  }
-@@ -370,12 +509,11 @@
+@@ -370,12 +508,11 @@
                  d10 = d6 * d6 + d7 * d7 + d8 * d8;
                  boolean flag1 = false;
  
@@ -338,7 +337,7 @@
                  entity.setPositionAndRotation(d3, d4, d5, f, f1);
                  this.player.setPositionAndRotation(d3, d4, d5, this.player.rotationYaw, this.player.rotationPitch); // Forge - Resync player position on vehicle moving
                  boolean flag2 = worldserver.getCollisionBoxes(entity, entity.getEntityBoundingBox().shrink(0.0625D)).isEmpty();
-@@ -388,6 +526,73 @@
+@@ -388,6 +525,73 @@
                      return;
                  }
  
@@ -412,7 +411,7 @@
                  this.serverController.getPlayerList().serverUpdateMovingPlayer(this.player);
                  this.player.addMovementStat(this.player.posX - d0, this.player.posY - d1, this.player.posZ - d2);
                  this.vehicleFloating = d11 >= -0.03125D && !this.serverController.isFlightAllowed() && !worldserver.checkBlockCollision(entity.getEntityBoundingBox().grow(0.0625D).expand(0.0D, -0.55D, 0.0D));
-@@ -402,7 +607,7 @@
+@@ -402,7 +606,7 @@
      {
          PacketThreadUtil.checkThreadAndEnqueue(packetIn, this, this.player.getServerWorld());
  
@@ -421,7 +420,7 @@
          {
              this.player.setPositionAndRotation(this.targetPos.x, this.targetPos.y, this.targetPos.z, this.player.rotationYaw, this.player.rotationPitch);
  
-@@ -461,7 +666,7 @@
+@@ -461,7 +665,7 @@
          {
              WorldServer worldserver = this.serverController.getWorld(this.player.dimension);
  
@@ -430,7 +429,7 @@
              {
                  if (this.networkTickCount == 0)
                  {
-@@ -475,6 +680,7 @@
+@@ -475,6 +679,7 @@
                          this.lastPositionUpdate = this.networkTickCount;
                          this.setPlayerLocation(this.targetPos.x, this.targetPos.y, this.targetPos.z, this.player.rotationYaw, this.player.rotationPitch);
                      }
@@ -438,7 +437,7 @@
                  }
                  else
                  {
-@@ -484,9 +690,17 @@
+@@ -484,9 +689,17 @@
                      {
                          this.player.setPositionAndRotation(this.player.posX, this.player.posY, this.player.posZ, packetIn.getYaw(this.player.rotationYaw), packetIn.getPitch(this.player.rotationPitch));
                          this.serverController.getPlayerList().serverUpdateMovingPlayer(this.player);
@@ -456,7 +455,7 @@
                          double d0 = this.player.posX;
                          double d1 = this.player.posY;
                          double d2 = this.player.posZ;
-@@ -514,19 +728,34 @@
+@@ -514,19 +727,34 @@
                              ++this.movePacketCounter;
                              int i = this.movePacketCounter - this.lastMovePacketCounter;
  
@@ -495,7 +494,7 @@
                                      this.setPlayerLocation(this.player.posX, this.player.posY, this.player.posZ, this.player.rotationYaw, this.player.rotationPitch);
                                      return;
                                  }
-@@ -539,7 +768,7 @@
+@@ -539,7 +767,7 @@
  
                              if (this.player.onGround && !packetIn.isOnGround() && d8 > 0.0D)
                              {
@@ -504,7 +503,7 @@
                              }
  
                              this.player.move(MoverType.PLAYER, d7, d8, d9);
-@@ -557,10 +786,9 @@
+@@ -557,10 +785,9 @@
                              d11 = d7 * d7 + d8 * d8 + d9 * d9;
                              boolean flag = false;
  
@@ -516,7 +515,7 @@
                              }
  
                              this.player.setPositionAndRotation(d4, d5, d6, f, f1);
-@@ -577,6 +805,69 @@
+@@ -577,6 +804,69 @@
                                  }
                              }
  
@@ -586,7 +585,7 @@
                              this.floating = d12 >= -0.03125D;
                              this.floating &= !this.serverController.isFlightAllowed() && !this.player.capabilities.allowFlying;
                              this.floating &= !this.player.isPotionActive(MobEffects.LEVITATION) && !this.player.isElytraFlying() && !worldserver.checkBlockCollision(this.player.getEntityBoundingBox().grow(0.0625D).expand(0.0D, -0.55D, 0.0D));
-@@ -598,8 +889,74 @@
+@@ -598,8 +888,74 @@
          this.setPlayerLocation(x, y, z, yaw, pitch, Collections.emptySet());
      }
  
@@ -661,7 +660,7 @@
          double d0 = relativeSet.contains(SPacketPlayerPosLook.EnumFlags.X) ? this.player.posX : 0.0D;
          double d1 = relativeSet.contains(SPacketPlayerPosLook.EnumFlags.Y) ? this.player.posY : 0.0D;
          double d2 = relativeSet.contains(SPacketPlayerPosLook.EnumFlags.Z) ? this.player.posZ : 0.0D;
-@@ -617,6 +974,14 @@
+@@ -617,6 +973,14 @@
              f1 = pitch + this.player.rotationPitch;
          }
  
@@ -676,7 +675,7 @@
          if (++this.teleportId == Integer.MAX_VALUE)
          {
              this.teleportId = 0;
-@@ -630,6 +995,7 @@
+@@ -630,6 +994,7 @@
      public void processPlayerDigging(CPacketPlayerDigging packetIn)
      {
          PacketThreadUtil.checkThreadAndEnqueue(packetIn, this, this.player.getServerWorld());
@@ -684,7 +683,7 @@
          WorldServer worldserver = this.serverController.getWorld(this.player.dimension);
          BlockPos blockpos = packetIn.getPosition();
          this.player.markPlayerActive();
-@@ -641,7 +1007,16 @@
+@@ -641,7 +1006,16 @@
                  if (!this.player.isSpectator())
                  {
                      ItemStack itemstack = this.player.getHeldItem(EnumHand.OFF_HAND);
@@ -702,7 +701,7 @@
                      this.player.setHeldItem(EnumHand.MAIN_HAND, itemstack);
                  }
  
-@@ -650,6 +1025,20 @@
+@@ -650,6 +1024,20 @@
  
                  if (!this.player.isSpectator())
                  {
@@ -723,7 +722,7 @@
                      this.player.dropItem(false);
                  }
  
-@@ -694,7 +1083,15 @@
+@@ -694,7 +1082,15 @@
                          }
                          else
                          {
@@ -739,7 +738,7 @@
                          }
                      }
                      else
-@@ -725,6 +1122,7 @@
+@@ -725,6 +1121,7 @@
      public void processTryUseItemOnBlock(CPacketPlayerTryUseItemOnBlock packetIn)
      {
          PacketThreadUtil.checkThreadAndEnqueue(packetIn, this, this.player.getServerWorld());
@@ -747,7 +746,7 @@
          WorldServer worldserver = this.serverController.getWorld(this.player.dimension);
          EnumHand enumhand = packetIn.getHand();
          ItemStack itemstack = this.player.getHeldItem(enumhand);
-@@ -738,6 +1136,13 @@
+@@ -738,6 +1135,13 @@
              dist *= dist;
              if (this.targetPos == null && this.player.getDistanceSq((double)blockpos.getX() + 0.5D, (double)blockpos.getY() + 0.5D, (double)blockpos.getZ() + 0.5D) < dist && !this.serverController.isBlockProtected(worldserver, blockpos, this.player) && worldserver.getWorldBorder().contains(blockpos))
              {
@@ -761,7 +760,7 @@
                  this.player.interactionManager.processRightClickBlock(this.player, worldserver, itemstack, enumhand, blockpos, enumfacing, packetIn.getFacingX(), packetIn.getFacingY(), packetIn.getFacingZ());
              }
          }
-@@ -755,6 +1160,7 @@
+@@ -755,6 +1159,7 @@
      public void processTryUseItem(CPacketPlayerTryUseItem packetIn)
      {
          PacketThreadUtil.checkThreadAndEnqueue(packetIn, this, this.player.getServerWorld());
@@ -769,7 +768,7 @@
          WorldServer worldserver = this.serverController.getWorld(this.player.dimension);
          EnumHand enumhand = packetIn.getHand();
          ItemStack itemstack = this.player.getHeldItem(enumhand);
-@@ -762,7 +1168,46 @@
+@@ -762,7 +1167,46 @@
  
          if (!itemstack.isEmpty())
          {
@@ -817,7 +816,7 @@
          }
      }
  
-@@ -774,7 +1219,8 @@
+@@ -774,7 +1218,8 @@
          {
              Entity entity = null;
  
@@ -827,7 +826,7 @@
              {
                  if (worldserver != null)
                  {
-@@ -791,44 +1237,17 @@
+@@ -791,44 +1236,17 @@
              {
                  this.player.setSpectatingEntity(this.player);
                  this.player.dismountRidingEntity();
@@ -877,7 +876,7 @@
      }
  
      public void processSteerBoat(CPacketSteerBoat packetIn)
-@@ -844,13 +1263,26 @@
+@@ -844,13 +1262,26 @@
  
      public void onDisconnect(ITextComponent reason)
      {
@@ -906,7 +905,7 @@
  
          if (this.serverController.isSinglePlayer() && this.player.getName().equals(this.serverController.getServerOwner()))
          {
-@@ -877,6 +1309,13 @@
+@@ -877,6 +1308,13 @@
              }
          }
  
@@ -920,7 +919,7 @@
          try
          {
              this.netManager.sendPacket(packetIn);
-@@ -899,23 +1338,42 @@
+@@ -899,23 +1337,42 @@
      public void processHeldItemChange(CPacketHeldItemChange packetIn)
      {
          PacketThreadUtil.checkThreadAndEnqueue(packetIn, this, this.player.getServerWorld());
@@ -966,7 +965,7 @@
          {
              TextComponentTranslation textcomponenttranslation = new TextComponentTranslation("chat.cannotSend", new Object[0]);
              textcomponenttranslation.getStyle().setColor(TextFormatting.RED);
-@@ -931,47 +1389,273 @@
+@@ -931,47 +1388,273 @@
              {
                  if (!ChatAllowedCharacters.isAllowedCharacter(s.charAt(i)))
                  {
@@ -1253,7 +1252,7 @@
          this.player.markPlayerActive();
  
          switch (packetIn.getAction())
-@@ -1053,8 +1737,16 @@
+@@ -1053,8 +1736,16 @@
      public void processUseEntity(CPacketUseEntity packetIn)
      {
          PacketThreadUtil.checkThreadAndEnqueue(packetIn, this, this.player.getServerWorld());
@@ -1270,7 +1269,7 @@
          this.player.markPlayerActive();
  
          if (entity != null)
-@@ -1069,20 +1761,57 @@
+@@ -1069,20 +1760,57 @@
  
              if (this.player.getDistanceSq(entity) < d0)
              {
@@ -1329,7 +1328,7 @@
                      {
                          this.disconnect(new TextComponentTranslation("multiplayer.disconnect.invalid_entity_attacked", new Object[0]));
                          this.serverController.logWarning("Player " + this.player.getName() + " tried to attack an invalid entity");
-@@ -1090,9 +1819,13 @@
+@@ -1090,9 +1818,13 @@
                      }
  
                      this.player.attackTargetEntityWithCurrentItem(entity);
@@ -1344,7 +1343,7 @@
      }
  
      public void processClientStatus(CPacketClientStatus packetIn)
-@@ -1108,7 +1841,8 @@
+@@ -1108,7 +1840,8 @@
                  if (this.player.queuedEndExit)
                  {
                      this.player.queuedEndExit = false;
@@ -1354,7 +1353,7 @@
                      CriteriaTriggers.CHANGED_DIMENSION.trigger(this.player, DimensionType.THE_END, DimensionType.OVERWORLD);
                  }
                  else
-@@ -1136,17 +1870,21 @@
+@@ -1136,17 +1869,21 @@
      public void processCloseWindow(CPacketCloseWindow packetIn)
      {
          PacketThreadUtil.checkThreadAndEnqueue(packetIn, this, this.player.getServerWorld());
@@ -1378,7 +1377,7 @@
              {
                  NonNullList<ItemStack> nonnulllist = NonNullList.<ItemStack>create();
  
-@@ -1159,9 +1897,277 @@
+@@ -1159,9 +1896,277 @@
              }
              else
              {
@@ -1658,7 +1657,7 @@
                  {
                      this.player.connection.sendPacket(new SPacketConfirmTransaction(packetIn.getWindowId(), packetIn.getActionNumber(), true));
                      this.player.isChangingQuantityOnly = true;
-@@ -1178,8 +2184,8 @@
+@@ -1178,8 +2183,8 @@
  
                      for (int j = 0; j < this.player.openContainer.inventorySlots.size(); ++j)
                      {
@@ -1669,7 +1668,7 @@
                          nonnulllist1.add(itemstack1);
                      }
  
-@@ -1203,6 +2209,7 @@
+@@ -1203,6 +2208,7 @@
      public void processEnchantItem(CPacketEnchantItem packetIn)
      {
          PacketThreadUtil.checkThreadAndEnqueue(packetIn, this, this.player.getServerWorld());
@@ -1677,7 +1676,7 @@
          this.player.markPlayerActive();
  
          if (this.player.openContainer.windowId == packetIn.getWindowId() && this.player.openContainer.getCanCraft(this.player) && !this.player.isSpectator())
-@@ -1242,8 +2249,47 @@
+@@ -1242,8 +2248,47 @@
              }
  
              boolean flag1 = packetIn.getSlotId() >= 1 && packetIn.getSlotId() <= 45;
@@ -1726,7 +1725,7 @@
              if (flag1 && flag2)
              {
                  if (itemstack.isEmpty())
-@@ -1273,6 +2319,7 @@
+@@ -1273,6 +2318,7 @@
      public void processConfirmTransaction(CPacketConfirmTransaction packetIn)
      {
          PacketThreadUtil.checkThreadAndEnqueue(packetIn, this, this.player.getServerWorld());
@@ -1734,7 +1733,7 @@
          Short oshort = this.pendingTransactions.lookup(this.player.openContainer.windowId);
  
          if (oshort != null && packetIn.getUid() == oshort.shortValue() && this.player.openContainer.windowId == packetIn.getWindowId() && !this.player.openContainer.getCanCraft(this.player) && !this.player.isSpectator())
-@@ -1284,6 +2331,7 @@
+@@ -1284,6 +2330,7 @@
      public void processUpdateSign(CPacketUpdateSign packetIn)
      {
          PacketThreadUtil.checkThreadAndEnqueue(packetIn, this, this.player.getServerWorld());
@@ -1742,7 +1741,7 @@
          this.player.markPlayerActive();
          WorldServer worldserver = this.serverController.getWorld(this.player.dimension);
          BlockPos blockpos = packetIn.getPosition();
-@@ -1300,19 +2348,35 @@
+@@ -1300,19 +2347,35 @@
  
              TileEntitySign tileentitysign = (TileEntitySign)tileentity;
  
@@ -1780,7 +1779,7 @@
              tileentitysign.markDirty();
              worldserver.notifyBlockUpdate(blockpos, iblockstate, iblockstate, 3);
          }
-@@ -1320,6 +2384,7 @@
+@@ -1320,6 +2383,7 @@
  
      public void processKeepAlive(CPacketKeepAlive packetIn)
      {
@@ -1788,7 +1787,7 @@
          if (this.field_194403_g && packetIn.getKey() == this.field_194404_h)
          {
              int i = (int)(this.currentTimeMillis() - this.field_194402_f);
-@@ -1328,7 +2393,11 @@
+@@ -1328,7 +2392,11 @@
          }
          else if (!this.player.getName().equals(this.serverController.getServerOwner()))
          {
@@ -1801,7 +1800,7 @@
          }
      }
  
-@@ -1340,20 +2409,28 @@
+@@ -1340,20 +2408,28 @@
      public void processPlayerAbilities(CPacketPlayerAbilities packetIn)
      {
          PacketThreadUtil.checkThreadAndEnqueue(packetIn, this, this.player.getServerWorld());
@@ -1838,7 +1837,7 @@
      }
  
      public void processClientSettings(CPacketClientSettings packetIn)
-@@ -1369,6 +2446,11 @@
+@@ -1369,6 +2445,11 @@
  
          if ("MC|BEdit".equals(s))
          {
@@ -1850,7 +1849,7 @@
              PacketBuffer packetbuffer = packetIn.getBufferData();
  
              try
-@@ -1395,15 +2477,22 @@
+@@ -1395,15 +2476,22 @@
                  if (itemstack.getItem() == Items.WRITABLE_BOOK && itemstack.getItem() == itemstack1.getItem())
                  {
                      itemstack1.setTagInfo("pages", itemstack.getTagCompound().getTagList("pages", 8));
@@ -1873,7 +1872,7 @@
              PacketBuffer packetbuffer1 = packetIn.getBufferData();
  
              try
-@@ -1443,12 +2532,14 @@
+@@ -1443,12 +2531,14 @@
                      }
  
                      itemstack2.setTagInfo("pages", nbttaglist);
@@ -1889,7 +1888,7 @@
              }
          }
          else if ("MC|TrSel".equals(s))
-@@ -1466,6 +2557,7 @@
+@@ -1466,6 +2556,7 @@
              catch (Exception exception5)
              {
                  LOGGER.error("Couldn't select trade", (Throwable)exception5);
@@ -1897,7 +1896,7 @@
              }
          }
          else if ("MC|AdvCmd".equals(s))
-@@ -1528,6 +2620,7 @@
+@@ -1528,6 +2619,7 @@
              catch (Exception exception4)
              {
                  LOGGER.error("Couldn't set command block", (Throwable)exception4);
@@ -1905,7 +1904,7 @@
              }
          }
          else if ("MC|AutoCmd".equals(s))
-@@ -1606,6 +2699,7 @@
+@@ -1606,6 +2698,7 @@
              catch (Exception exception3)
              {
                  LOGGER.error("Couldn't set command block", (Throwable)exception3);
@@ -1913,7 +1912,7 @@
              }
          }
          else if ("MC|Beacon".equals(s))
-@@ -1632,6 +2726,7 @@
+@@ -1632,6 +2725,7 @@
                  catch (Exception exception2)
                  {
                      LOGGER.error("Couldn't set beacon", (Throwable)exception2);
@@ -1921,7 +1920,7 @@
                  }
              }
          }
-@@ -1743,6 +2838,7 @@
+@@ -1743,6 +2837,7 @@
              catch (Exception exception1)
              {
                  LOGGER.error("Couldn't set structure block", (Throwable)exception1);
@@ -1929,7 +1928,7 @@
              }
          }
          else if ("MC|PickItem".equals(s))
-@@ -1760,7 +2856,29 @@
+@@ -1760,7 +2855,43 @@
              catch (Exception exception)
              {
                  LOGGER.error("Couldn't pick item", (Throwable)exception);
@@ -1937,8 +1936,27 @@
              }
          }
 +        // CraftBukkit start
-+        // Mohist - bukkit registration moved to FML's ChannelRegistrationHandler
-+        else {
++        else if (packetIn.getChannelName().equals("REGISTER")) {
++            try {
++                String channels = packetIn.getBufferData().toString(com.google.common.base.Charsets.UTF_8);
++                for (String channel : channels.split("\0")) {
++                    getPlayer().addChannel(channel);
++                }
++            } catch (Exception ex) {
++                NetHandlerPlayServer.LOGGER.error("Couldn\'t register custom payload", ex);
++                this.disconnect("Invalid payload REGISTER!");
++            }
++        } else if (packetIn.getChannelName().equals("UNREGISTER")) {
++            try {
++                String channels = packetIn.getBufferData().toString(com.google.common.base.Charsets.UTF_8);
++                for (String channel : channels.split("\0")) {
++                    getPlayer().removeChannel(channel);
++                }
++            } catch (Exception ex) {
++                NetHandlerPlayServer.LOGGER.error("Couldn\'t unregister custom payload", ex);
++                this.disconnect("Invalid payload UNREGISTER!");
++            }
++        } else {
 +            try {
 +                byte[] data = new byte[packetIn.getBufferData().readableBytes()];
 +                packetIn.getBufferData().readBytes(data);
@@ -1949,11 +1967,6 @@
 +            }
 +        }
      }
-+
-+    public CraftServer getCraftServer()
-+    {
-+        return this.server;
-+    }
 +
 +    public final boolean isDisconnected() {
 +		return !this.player.joining && !this.netManager.isChannelOpen();
