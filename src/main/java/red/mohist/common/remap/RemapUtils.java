@@ -140,7 +140,15 @@ public class RemapUtils {
     }
 
     public static String mapFieldName(Class<?> type, String fieldName) {
-        return jarMapping.fastMapFieldName(type, fieldName);
+        String key = reverseMap(type) + "/" + fieldName;
+        String mapped = jarMapping.fields.get(key);
+        if (mapped == null) {
+            Class<?> superClass = type.getSuperclass();
+            if (superClass != null) {
+                mapped = mapFieldName(superClass, fieldName);
+            }
+        }
+        return mapped != null ? mapped : fieldName;
     }
 
     public static String inverseMapFieldName(Class<?> type, String fieldName) {

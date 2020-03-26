@@ -48,7 +48,10 @@ public class ProxyClass {
         if (clazz == null) {
             throw new NullPointerException("call getField, but class is null.name=" + name);
         }
-        return clazz.getField(RemapUtils.mapFieldName(clazz, name));
+        if (clazz.getName().startsWith("net.minecraft.")) {
+            name = RemapUtils.mapFieldName(clazz, name);
+        }
+        return clazz.getField(name);
     }
 
     public static String getName(Class<?> clazz) {

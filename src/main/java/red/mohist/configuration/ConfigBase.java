@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import net.minecraft.server.MinecraftServer;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -46,7 +47,7 @@ public abstract class ConfigBase
     {
         for (Map.Entry<String, Command> entry : commands.entrySet())
         {
-            ServerAPI.getNMSServer().server.getCommandMap().register(entry.getKey(), commandName, entry.getValue());
+            MinecraftServer.getServerInst().server.getCommandMap().register(entry.getKey(), commandName, entry.getValue());
         }
         if (!metricsStarted) {
             Metrics.MohistMetrics.startMetrics();
