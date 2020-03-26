@@ -21,7 +21,7 @@
  import java.util.Random;
  import java.util.concurrent.TimeUnit;
  import java.util.regex.Pattern;
-@@ -43,30 +39,47 @@
+@@ -43,30 +39,48 @@
  import net.minecraft.world.World;
  import net.minecraft.world.WorldSettings;
  import net.minecraft.world.WorldType;
@@ -41,6 +41,7 @@
 +import org.bukkit.event.server.RemoteServerCommandEvent;
 +import org.bukkit.event.server.ServerCommandEvent;
 +import org.spigotmc.SpigotConfig;
++import red.mohist.Metrics;
 +import red.mohist.Mohist;
 +import red.mohist.common.async.MohistThreadBox;
 +import red.mohist.configuration.MohistConfig;
@@ -75,7 +76,7 @@
          Thread thread = new Thread("Server Infinisleeper")
          {
              {
-@@ -96,15 +109,22 @@
+@@ -96,15 +110,22 @@
          {
              public void run()
              {
@@ -105,7 +106,7 @@
                      }
                  }
                  catch (IOException ioexception1)
-@@ -113,9 +133,30 @@
+@@ -113,9 +134,30 @@
                  }
              }
          };
@@ -137,7 +138,7 @@
  
          if (Runtime.getRuntime().maxMemory() / 1024L / 1024L < 512L)
          {
-@@ -125,7 +166,7 @@
+@@ -125,7 +167,7 @@
          net.minecraftforge.fml.common.FMLCommonHandler.instance().onServerStart(this);
  
          LOGGER.info("Loading properties");
@@ -146,7 +147,7 @@
          this.eula = new ServerEula(new File("eula.txt"));
  
          if (!this.eula.hasAcceptedEULA())
-@@ -144,7 +185,7 @@
+@@ -144,7 +186,7 @@
              {
                  this.setOnlineMode(this.settings.getBooleanProperty("online-mode", true));
                  this.setPreventProxyConnections(this.settings.getBooleanProperty("prevent-proxy-connections", false));
@@ -155,7 +156,7 @@
              }
  
              this.setCanSpawnAnimals(this.settings.getBooleanProperty("spawn-animals", true));
-@@ -181,10 +222,26 @@
+@@ -181,10 +223,22 @@
                  this.setServerPort(this.settings.getIntProperty("server-port", 25565));
              }
  
@@ -169,10 +170,6 @@
 +            PaperMCConfig.init((File) options.valueOf("paper-settings"));
 +            // Paper end
 +
-+            // Mohist start
-+            mohistConfig.registerCommands();
-+            // Mohist end
-+
              LOGGER.info("Generating keypair");
              this.setKeyPair(CryptManager.generateKeyPair());
 -            LOGGER.info("Starting Minecraft server on {}:{}", this.getServerHostname().isEmpty() ? "*" : this.getServerHostname(), Integer.valueOf(this.getServerPort()));
@@ -183,7 +180,7 @@
              try
              {
                  this.getNetworkSystem().addLanEndpoint(inetaddress, this.getServerPort());
-@@ -196,15 +253,7 @@
+@@ -196,15 +250,7 @@
                  LOGGER.warn("Perhaps a server is already running on that port?");
                  return false;
              }
@@ -200,7 +197,7 @@
              if (this.convertFiles())
              {
                  this.getPlayerProfileCache().save();
-@@ -217,7 +266,7 @@
+@@ -217,7 +263,7 @@
              else
              {
                  net.minecraftforge.fml.common.FMLCommonHandler.instance().onServerStarted();
@@ -209,7 +206,7 @@
                  long j = System.nanoTime();
  
                  if (this.getFolderName() == null)
-@@ -270,9 +319,15 @@
+@@ -270,9 +316,16 @@
                  this.loadAllWorlds(this.getFolderName(), this.getFolderName(), k, worldtype, s2);
                  long i1 = System.nanoTime() - j;
                  String s3 = String.format("%.3fs", (double)i1 / 1.0E9D);
@@ -224,10 +221,11 @@
 +                Bukkit.getPluginManager().callEvent(new BukkitServerStartDoneEvent());//Mohist
 +                Object[] p1 = {this.getServerHostname().isEmpty() ? "0.0.0.0" : this.getServerHostname(), String.valueOf(this.getServerPort())};
 +                Mohist.LOGGER.info(Message.getFormatString("server.ip", p1));
++                Metrics.MohistMetrics.startMetrics();
                  if (this.settings.hasProperty("announce-player-achievements"))
                  {
                      this.worlds[0].getGameRules().setOrCreateGameRule("announceAdvancements", this.settings.getBooleanProperty("announce-player-achievements", true) ? "true" : "false");
-@@ -292,16 +347,32 @@
+@@ -292,16 +345,32 @@
                      LOGGER.info("Starting remote control listener");
                      this.rconThread = new RConThreadMain(this);
                      this.rconThread.startThread();
@@ -266,7 +264,7 @@
                  Items.AIR.getSubItems(CreativeTabs.SEARCH, NonNullList.create());
                  // <3 you Grum for this, saves us ~30 patch files! --^
                  return net.minecraftforge.fml.common.FMLCommonHandler.instance().handleServerStarting(this);
-@@ -427,11 +498,20 @@
+@@ -427,11 +496,20 @@
  
      public void executePendingCommands()
      {
@@ -291,7 +289,7 @@
      }
  
      public boolean isDedicatedServer()
-@@ -684,13 +764,66 @@
+@@ -684,13 +762,66 @@
  
      public String getPlugins()
      {

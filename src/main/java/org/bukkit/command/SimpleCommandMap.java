@@ -21,6 +21,9 @@ import org.bukkit.command.defaults.VersionCommand;
 import org.bukkit.entity.Player;
 import org.bukkit.util.StringUtil;
 import red.mohist.Mohist;
+import red.mohist.command.DumpCommand;
+import red.mohist.command.MohistCommand;
+import red.mohist.command.TileEntityCommand;
 
 public class SimpleCommandMap implements CommandMap {
     private static final Pattern PATTERN_ON_SPACE = Pattern.compile(" ", Pattern.LITERAL);
@@ -37,6 +40,10 @@ public class SimpleCommandMap implements CommandMap {
         register("bukkit", new PluginsCommand("plugins"));
         register("bukkit", new TimingsCommand("timings"));
         register("bukkit", new ReloadCommand("reload"));
+        // Mohist
+        register("mohist", new MohistCommand("mohist"));
+        register("dump", new DumpCommand("dump"));
+        register("tileentity", new TileEntityCommand("tileentity"));
     }
 
     public void setFallbackCommands() {

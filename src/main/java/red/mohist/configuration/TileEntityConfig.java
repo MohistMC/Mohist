@@ -31,15 +31,9 @@ public class TileEntityConfig extends ConfigBase
 
     public TileEntityConfig()
     {
-        super("tileentity.yml", "tileentity");
+        super("tileentity.yml");
         init();
         instance = this;
-    }
-
-    @Override
-    public void addCommands()
-    {
-        commands.put("tileentity", new TileEntityCommand("tileentity"));
     }
 
     public void init()

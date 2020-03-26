@@ -170,9 +170,9 @@
 -        this.anvilConverterForAnvilFile = new AnvilSaveConverter(anvilFileIn, dataFixerIn);
 +        // this.anvilConverterForAnvilFile = new AnvilSaveConverter(anvilFileIn, dataFixerIn); // CraftBukkit - moved to DedicatedServer.init
          this.dataFixer = dataFixerIn;
-+        this.options = options;
 +        mohistConfig = new MohistConfig();
 +        tileEntityConfig = new TileEntityConfig();
++        this.options = options;
 +        // Try to see if we're actually running in a terminal, disable jline if not
 +        if (System.console() == null && System.getProperty("jline.terminal") == null) {
 +            System.setProperty("jline.terminal", "jline.UnsupportedTerminal");

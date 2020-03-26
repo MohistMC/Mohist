@@ -15,44 +15,25 @@ import red.mohist.api.ServerAPI;
 public abstract class ConfigBase
 {
     protected final File configFile;
-    protected static String commandName;
     private static boolean metricsStarted;
     
     /* ======================================================================== */
 
     public YamlConfiguration config;
     protected int version;
-    protected static Map<String, Command> commands;
     protected Map<String, Setting> settings = new HashMap<>();
 
     /* ======================================================================== */
 
-    public ConfigBase(String fileName, String commandName)
+    public ConfigBase(String fileName)
     {
         this.configFile = new File("mohist-config", fileName);
         this.config = YamlConfiguration.loadConfiguration(configFile);
-        this.commandName = commandName;
-        this.commands = new HashMap<>();
-        this.addCommands();
     }
-
-    protected abstract void addCommands();
 
     public Map<String, Setting> getSettings()
     {
         return settings;
-    }
-
-    public static void registerCommands()
-    {
-        for (Map.Entry<String, Command> entry : commands.entrySet())
-        {
-            MinecraftServer.getServerInst().server.getCommandMap().register(entry.getKey(), commandName, entry.getValue());
-        }
-        if (!metricsStarted) {
-            Metrics.MohistMetrics.startMetrics();
-            metricsStarted = true;
-        }
     }
 
     public void save()

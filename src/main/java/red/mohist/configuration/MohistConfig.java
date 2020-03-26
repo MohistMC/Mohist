@@ -72,7 +72,7 @@ public class MohistConfig extends ConfigBase{
 
     public MohistConfig()
     {
-        super("mohist.yml", "mohist");
+        super("mohist.yml");
         init();
         instance = this;
     }
@@ -103,13 +103,6 @@ public class MohistConfig extends ConfigBase{
             }
         }
         load();
-    }
-
-    @Override
-    public void addCommands()
-    {
-        commands.put("mohist", new MohistCommand("mohist"));
-        commands.put("Dump", new DumpCommand("dump"));
     }
 
     @Override
