@@ -804,19 +804,34 @@
              return false;
          }
          else
-@@ -3013,6 +3322,11 @@
+@@ -3013,6 +3322,26 @@
  
      public List<Entity> getEntitiesInAABBexcluding(@Nullable Entity entityIn, AxisAlignedBB boundingBox, @Nullable Predicate <? super Entity > predicate)
      {
 +        // From performant and uses GPL-3.0 LICENSE
 +        List<Entity> entities = WorldCache.eeCache.get(boundingBox);
-+        if (entities != null && !entities.isEmpty() && (predicate == null || predicate.apply(entities.get(0)))) {
-+            return entities;
++        if (entities != null && !entities.isEmpty()) {
++            if (predicate == null ) {
++                return entities;
++            }
++
++            boolean allValid = true;
++
++            for (Entity entity : entities) {
++                if (!predicate.apply(entity)) {
++                    allValid = false;
++                    break;
++                }
++            }
++
++            if (allValid) {
++                return entities;
++            }
 +        }
          List<Entity> list = Lists.<Entity>newArrayList();
          int j2 = MathHelper.floor((boundingBox.minX - MAX_ENTITY_RADIUS) / 16.0D);
          int k2 = MathHelper.floor((boundingBox.maxX + MAX_ENTITY_RADIUS) / 16.0D);
-@@ -3029,19 +3343,20 @@
+@@ -3029,19 +3358,20 @@
                  }
              }
          }
@@ -844,19 +859,35 @@
              }
          }
  
-@@ -3070,6 +3385,11 @@
+@@ -3070,6 +3400,27 @@
  
      public <T extends Entity> List<T> getEntitiesWithinAABB(Class <? extends T > clazz, AxisAlignedBB aabb, @Nullable Predicate <? super T > filter)
      {
 +        // From performant and uses GPL-3.0 LICENSE
 +        List<Entity> entities = WorldCache.eeCache.get(aabb);
-+        if (entities != null && !entities.isEmpty() && clazz.isInstance(entities.get(0)) && (filter == null || filter.apply((T)entities.get(0)))) {
-+            return (List<T>) entities;
++        if (entities != null && !entities.isEmpty()) {
++            boolean allValid = true;
++
++            for (Entity entity : entities) {
++                if (!clazz.isInstance(entity)) {
++                    allValid = false;
++                    break;
++                }
++
++                if (filter != null && !filter.apply((T)entity)) {
++                    allValid = false;
++                    break;
++                }
++            }
++
++            if (allValid) {
++                return (List<T>) entities;
++            }
 +        }
          int j2 = MathHelper.floor((aabb.minX - MAX_ENTITY_RADIUS) / 16.0D);
          int k2 = MathHelper.ceil((aabb.maxX + MAX_ENTITY_RADIUS) / 16.0D);
          int l2 = MathHelper.floor((aabb.minZ - MAX_ENTITY_RADIUS) / 16.0D);
-@@ -3086,7 +3406,8 @@
+@@ -3086,7 +3437,8 @@
                  }
              }
          }
@@ -866,7 +897,7 @@
          return list;
      }
  
-@@ -3142,7 +3463,16 @@
+@@ -3142,7 +3494,16 @@
  
          for (Entity entity4 : this.loadedEntityList)
          {
@@ -884,7 +915,7 @@
              {
                  ++j2;
              }
-@@ -3157,6 +3487,9 @@
+@@ -3157,6 +3518,9 @@
          {
              if (!net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.EntityJoinWorldEvent(entity4, this)))
              {
@@ -894,7 +925,7 @@
                  loadedEntityList.add(entity4);
                  this.onEntityAdded(entity4);
              }
-@@ -3173,19 +3506,24 @@
+@@ -3173,19 +3537,24 @@
          IBlockState iblockstate1 = this.getBlockState(pos);
          AxisAlignedBB axisalignedbb = skipCollisionCheck ? null : blockIn.getDefaultState().getCollisionBoundingBox(this, pos);
  
@@ -922,7 +953,7 @@
      }
  
      public int getSeaLevel()
-@@ -3350,6 +3688,11 @@
+@@ -3350,6 +3719,11 @@
          {
              EntityPlayer entityplayer1 = this.playerEntities.get(j2);
  
@@ -934,7 +965,7 @@
              if (p_190525_9_.apply(entityplayer1))
              {
                  double d1 = entityplayer1.getDistanceSq(x, y, z);
-@@ -3367,7 +3710,7 @@
+@@ -3367,7 +3741,7 @@
  
      public boolean isAnyPlayerWithinRangeAt(double x, double y, double z, double range)
      {
@@ -943,7 +974,7 @@
          {
              EntityPlayer entityplayer = this.playerEntities.get(j2);
  
-@@ -3382,8 +3725,8 @@
+@@ -3382,8 +3756,8 @@
              }
          }
  
@@ -954,7 +985,7 @@
  
      @Nullable
      public EntityPlayer getNearestAttackablePlayer(Entity entityIn, double maxXZDistance, double maxYDistance)
-@@ -3406,7 +3749,6 @@
+@@ -3406,7 +3780,6 @@
          for (int j2 = 0; j2 < this.playerEntities.size(); ++j2)
          {
              EntityPlayer entityplayer1 = this.playerEntities.get(j2);
@@ -962,7 +993,7 @@
              if (!entityplayer1.capabilities.disableDamage && entityplayer1.isEntityAlive() && !entityplayer1.isSpectator() && (p_184150_12_ == null || p_184150_12_.apply(entityplayer1)))
              {
                  double d1 = entityplayer1.getDistanceSq(posX, entityplayer1.posY, posZ);
-@@ -3597,6 +3939,16 @@
+@@ -3597,6 +3970,16 @@
      {
      }
  
@@ -979,7 +1010,7 @@
      public float getThunderStrength(float delta)
      {
          return (this.prevThunderingStrength + (this.thunderingStrength - this.prevThunderingStrength) * delta) * this.getRainStrength(delta);
-@@ -3885,7 +4237,7 @@
+@@ -3885,7 +4268,7 @@
          int j2 = x * 16 + 8 - blockpos1.getX();
          int k2 = z * 16 + 8 - blockpos1.getZ();
          int l2 = 128;
@@ -988,7 +1019,7 @@
      }
  
      /* ======================================== FORGE START =====================================*/
-@@ -3933,6 +4285,10 @@
+@@ -3933,6 +4316,10 @@
  
      public Iterator<Chunk> getPersistentChunkIterable(Iterator<Chunk> chunkIterator)
      {
@@ -999,7 +1030,7 @@
          return net.minecraftforge.common.ForgeChunkManager.getPersistentChunksIterableFor(this, chunkIterator);
      }
      /**
-@@ -4021,4 +4377,11 @@
+@@ -4021,4 +4408,11 @@
      {
          return null;
      }
