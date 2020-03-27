@@ -667,7 +667,7 @@
 +                if (bworld == null) {
 +                    EntityPlayerMP entityPlayer = (EntityPlayerMP) this;
 +                    // Cauldron start - use CraftBukkit's fallback world code if no valid world is found.
-+                    entityPlayer.setWorld(MinecraftServer.getServerInst().getWorld(entityPlayer.dimension));
++                    entityPlayer.setWorld(MinecraftServer.getServerInst().getWorldServer(entityPlayer.dimension));
 +                }
 +                else {
 +                    this.setWorld(((CraftWorld) bworld).getHandle());
@@ -822,6 +822,15 @@
      }
  
      public boolean isEntityInvulnerable(DamageSource source)
+@@ -2540,7 +2851,7 @@
+     public Entity changeDimension(int dimensionIn)
+     {
+         if (this.world.isRemote || this.isDead) return null;
+-        return changeDimension(dimensionIn, this.getServer().getWorld(dimensionIn).getDefaultTeleporter());
++        return changeDimension(dimensionIn, this.getServer().getWorldServer(dimensionIn).getDefaultTeleporter());
+     }
+ 
+     @Nullable // Forge: Entities that require custom handling should override this method, not the other
 @@ -2551,53 +2862,67 @@
              if (!net.minecraftforge.common.ForgeHooks.onTravelToDimension(this, dimensionIn)) return null;
              this.world.profiler.startSection("changeDimension");

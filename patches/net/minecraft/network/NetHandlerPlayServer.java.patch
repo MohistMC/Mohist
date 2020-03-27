@@ -185,7 +185,7 @@
          long i = this.currentTimeMillis();
  
 -        if (i - this.field_194402_f >= 15000L)
-+        if (i - this.field_194402_f >= 30000L)
++        if (i - this.field_194402_f >= 25000L) // CraftBukkit
          {
              if (this.field_194403_g)
              {

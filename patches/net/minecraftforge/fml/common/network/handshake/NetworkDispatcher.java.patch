@@ -9,7 +9,19 @@
      private ConnectionState state;
      private ConnectionType connectionType;
      private final Side side;
-@@ -320,9 +320,9 @@
+@@ -208,6 +208,11 @@
+                 if (this.player.connection != this) return;
+                 super.update();
+             }
++
++            @Override
++            public void sendPacket(Packet<?> packetIn) {
++                super.sendPacket(packetIn);
++            }
+         };
+         this.netHandler = serverHandler;
+         // NULL the play server here - we restore it further on. If not, there are packets sent before the login
+@@ -320,9 +325,9 @@
          kickWithMessage("This is modded. No modded response received. Bye!");
      }
  
@@ -21,7 +33,7 @@
          final TextComponentString TextComponentString = new TextComponentString(message);
          if (side == Side.CLIENT)
          {
-@@ -597,7 +597,7 @@
+@@ -597,7 +602,7 @@
              }
              else
              {

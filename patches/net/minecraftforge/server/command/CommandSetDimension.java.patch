@@ -8,15 +8,3 @@
  
  public class CommandSetDimension extends CommandBase
  {
-@@ -116,5 +117,11 @@
-         {
-             entity.moveToBlockPosAndAngles(targetPos, yaw, entity.rotationPitch);
-         }
-+
-+        @Override
-+        public void placeEntity(World world, Entity entity, float yaw, TeleportCause cause)
-+        {
-+            entity.moveToBlockPosAndAngles(targetPos, yaw, entity.rotationPitch);
-+        }
-     }
- }
