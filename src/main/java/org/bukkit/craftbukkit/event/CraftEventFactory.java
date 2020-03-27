@@ -11,56 +11,55 @@ import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 import javax.annotation.Nullable;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.state.properties.NoteBlockInstrument;
-import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraft.util.text.Style;
-import net.minecraft.inventory.container.Container;
-import net.minecraft.inventory.container.MerchantContainer;
-import net.minecraft.util.DamageSource;
-import net.minecraft.world.dimension.DimensionType;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.passive.AnimalEntity;
 import net.minecraft.entity.AreaEffectCloudEntity;
-import net.minecraft.util.EntityDamageSource;
-import net.minecraft.util.IndirectEntityDamageSource;
-import net.minecraft.entity.item.EnderCrystalEntity;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.INPC;
+import net.minecraft.entity.MobEntity;
 import net.minecraft.entity.boss.dragon.EnderDragonEntity;
+import net.minecraft.entity.item.EnderCrystalEntity;
 import net.minecraft.entity.item.ExperienceOrbEntity;
 import net.minecraft.entity.item.FireworkRocketEntity;
-import net.minecraft.entity.monster.GhastEntity;
-import net.minecraft.entity.passive.GolemEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.MobEntity;
 import net.minecraft.entity.item.ItemEntity;
+import net.minecraft.entity.merchant.villager.VillagerEntity;
+import net.minecraft.entity.monster.AbstractRaiderEntity;
+import net.minecraft.entity.monster.GhastEntity;
 import net.minecraft.entity.monster.MonsterEntity;
+import net.minecraft.entity.monster.SlimeEntity;
+import net.minecraft.entity.passive.AnimalEntity;
+import net.minecraft.entity.passive.GolemEntity;
+import net.minecraft.entity.passive.SheepEntity;
+import net.minecraft.entity.passive.WaterMobEntity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.entity.projectile.PotionEntity;
-import net.minecraft.entity.passive.SheepEntity;
-import net.minecraft.entity.monster.SlimeEntity;
-import net.minecraft.entity.monster.AbstractRaiderEntity;
-import net.minecraft.entity.merchant.villager.VillagerEntity;
-import net.minecraft.entity.passive.WaterMobEntity;
-import net.minecraft.util.Direction;
-import net.minecraft.util.Hand;
 import net.minecraft.inventory.EquipmentSlotType;
-import net.minecraft.world.Explosion;
-import net.minecraft.world.IWorld;
-import net.minecraft.util.text.ITextComponent;
 import net.minecraft.inventory.IInventory;
-import net.minecraft.item.ItemUseContext;
+import net.minecraft.inventory.container.Container;
+import net.minecraft.inventory.container.MerchantContainer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.ItemUseContext;
 import net.minecraft.item.Items;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.network.play.client.CCloseWindowPacket;
 import net.minecraft.potion.EffectInstance;
-import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.state.properties.NoteBlockInstrument;
+import net.minecraft.util.DamageSource;
+import net.minecraft.util.Direction;
+import net.minecraft.util.EntityDamageSource;
+import net.minecraft.util.Hand;
+import net.minecraft.util.IndirectEntityDamageSource;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.Unit;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.util.math.EntityRayTraceResult;
-import net.minecraft.entity.INPC;
-import net.minecraft.network.play.client.CCloseWindowPacket;
-import net.minecraft.world.raid.Raid;
-import net.minecraft.util.Unit;
+import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.Style;
+import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
+import net.minecraft.world.dimension.DimensionType;
+import net.minecraft.world.raid.Raid;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -78,8 +77,8 @@ import org.bukkit.craftbukkit.block.CraftBlockState;
 import org.bukkit.craftbukkit.block.data.CraftBlockData;
 import org.bukkit.craftbukkit.entity.CraftEntity;
 import org.bukkit.craftbukkit.entity.CraftLivingEntity;
-import org.bukkit.craftbukkit.entity.CraftRaider;
 import org.bukkit.craftbukkit.entity.CraftPlayer;
+import org.bukkit.craftbukkit.entity.CraftRaider;
 import org.bukkit.craftbukkit.inventory.CraftInventoryCrafting;
 import org.bukkit.craftbukkit.inventory.CraftItemStack;
 import org.bukkit.craftbukkit.inventory.CraftMetaBook;
@@ -189,12 +188,12 @@ import org.bukkit.event.player.PlayerLevelChangeEvent;
 import org.bukkit.event.player.PlayerRecipeDiscoverEvent;
 import org.bukkit.event.player.PlayerStatisticIncrementEvent;
 import org.bukkit.event.player.PlayerUnleashEntityEvent;
+import org.bukkit.event.raid.RaidFinishEvent;
+import org.bukkit.event.raid.RaidSpawnWaveEvent;
+import org.bukkit.event.raid.RaidStopEvent;
+import org.bukkit.event.raid.RaidTriggerEvent;
 import org.bukkit.event.server.ServerListPingEvent;
 import org.bukkit.event.vehicle.VehicleCreateEvent;
-import org.bukkit.event.raid.RaidTriggerEvent;
-import org.bukkit.event.raid.RaidFinishEvent;
-import org.bukkit.event.raid.RaidStopEvent;
-import org.bukkit.event.raid.RaidSpawnWaveEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.meta.BookMeta;
@@ -679,7 +678,7 @@ public class CraftEventFactory {
         CraftBlockState state = CraftBlockState.getBlockState(world, target, flag);
         state.setData(block);
 
-        BlockSpreadEvent event = new BlockSpreadEvent(world.getWorldCB().getBlockAt(target.getX(), target.getY(), target.getZ()), world.getWorld().getBlockAt(source.getX(), source.getY(), source.getZ()), state);
+        BlockSpreadEvent event = new BlockSpreadEvent(world.getWorldCB().getBlockAt(target.getX(), target.getY(), target.getZ()), world.getWorldCB().getBlockAt(source.getX(), source.getY(), source.getZ()), state);
         Bukkit.getPluginManager().callEvent(event);
 
         if (!event.isCancelled()) {
@@ -1211,7 +1210,7 @@ public class CraftEventFactory {
 
     public static BlockIgniteEvent callBlockIgniteEvent(World world, int x, int y, int z, net.minecraft.world.Explosion explosion) {
         org.bukkit.World bukkitWorld = world.getWorldCB();
-        org.bukkit.entity.Entity igniter = explosion.source == null ? null : explosion.source.getBukkitEntity();
+        org.bukkit.entity.Entity igniter = explosion.exploder == null ? null : explosion.exploder.getBukkitEntity();
 
         BlockIgniteEvent event = new BlockIgniteEvent(bukkitWorld.getBlockAt(x, y, z), IgniteCause.EXPLOSION, igniter);
         world.getServerCB().getPluginManager().callEvent(event);
@@ -1351,7 +1350,7 @@ public class CraftEventFactory {
 
     public static PrepareAnvilEvent callPrepareAnvilEvent(InventoryView view, ItemStack item) {
         PrepareAnvilEvent event = new PrepareAnvilEvent(view, CraftItemStack.asCraftMirror(item).clone());
-        event.getView().getPlayer().getServerCB().getPluginManager().callEvent(event);
+        event.getView().getPlayer().getServer().getPluginManager().callEvent(event);
         event.getInventory().setItem(2, event.getResult());
         return event;
     }
@@ -1516,7 +1515,7 @@ public class CraftEventFactory {
         Location exit = new Location(exitWorld.getWorldCB(), exitPosition.getX(), exitPosition.getY(), exitPosition.getZ());
 
         EntityPortalEvent event = new EntityPortalEvent(bukkitEntity, enter, exit, searchRadius);
-        event.getEntity().getServerCB().getPluginManager().callEvent(event);
+        event.getEntity().getServer().getPluginManager().callEvent(event);
         if (event.isCancelled() || event.getTo() == null || event.getTo().getWorld() == null || !entity.isAlive()) {
             return null;
         }

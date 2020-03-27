@@ -615,10 +615,10 @@ class CraftMetaItem implements ItemMeta, Damageable, Repairable, BlockDataMeta {
     @Overridden
     void applyToItem(CompoundNBT itemTag) {
         if (hasDisplayName()) {
-            setDisplayTag(itemTag, NAME.NBT, StringNBT.func_229705_a_(CraftChatMessage.toJSON(displayName)));
+            setDisplayTag(itemTag, NAME.NBT, StringNBT.valueOf(CraftChatMessage.toJSON(displayName)));
         }
         if (hasLocalizedName()){
-            setDisplayTag(itemTag, LOCNAME.NBT, StringNBT.func_229705_a_(CraftChatMessage.toJSON(locName)));
+            setDisplayTag(itemTag, LOCNAME.NBT, StringNBT.valueOf(CraftChatMessage.toJSON(locName)));
         }
 
         if (hasLore()) {
@@ -675,7 +675,7 @@ class CraftMetaItem implements ItemMeta, Damageable, Repairable, BlockDataMeta {
         ListNBT tagList = new ListNBT();
         for (ITextComponent value : list) {
             // SPIGOT-5342 - horrible hack as 0 version does not go through the Mojang updater
-            tagList.add(StringNBT.func_229705_a_(version <= 0 || version >= 1803 ? CraftChatMessage.toJSON(value) : CraftChatMessage.fromComponent(value, TextFormatting.DARK_PURPLE))); // SPIGOT-4935
+            tagList.add(StringNBT.valueOf(version <= 0 || version >= 1803 ? CraftChatMessage.toJSON(value) : CraftChatMessage.fromComponent(value, TextFormatting.DARK_PURPLE))); // SPIGOT-4935
         }
 
         return tagList;

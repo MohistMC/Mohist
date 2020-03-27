@@ -6,11 +6,10 @@ import com.mojang.brigadier.tree.CommandNode;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import net.minecraft.command.Commands;
 import net.minecraft.command.CommandSource;
-import net.minecraft.server.dedicated.DedicatedServer;
-import net.minecraft.entity.item.minecart.MinecartCommandBlockEntity;
+import net.minecraft.command.Commands;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.dedicated.DedicatedServer;
 import org.apache.commons.lang.Validate;
 import org.bukkit.Location;
 import org.bukkit.command.BlockCommandSender;
@@ -42,7 +41,7 @@ public final class VanillaCommandWrapper extends BukkitCommand {
         if (!testPermission(sender)) return true;
 
         CommandSource icommandlistener = getListener(sender);
-        dispatcher.a(icommandlistener, toDispatcher(args, getName()), toDispatcher(args, commandLabel));
+        dispatcher.handleCommand(icommandlistener, toDispatcher(args, getName()), toDispatcher(args, commandLabel));
         return true;
     }
 

@@ -53,7 +53,7 @@ public class CraftFishHook extends AbstractProjectile implements FishHook {
         FishingBobberEntity hook = getHandle();
 
         if (this.biteChance == -1) {
-            if (hook.world.isRainingAt(new BlockPos(MathHelper.floor(hook.getPosX()), MathHelper.floor(hook.getPosY()) + 1, MathHelper.floor(hook.getPosZs())))) {
+            if (hook.world.isRainingAt(new BlockPos(MathHelper.floor(hook.getPosX()), MathHelper.floor(hook.getPosY()) + 1, MathHelper.floor(hook.getPosZ())))) {
                 return 1/300.0;
             }
             return 1/500.0;

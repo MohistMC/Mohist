@@ -7,31 +7,24 @@ import java.util.Collection;
 import java.util.Optional;
 import java.util.Set;
 import net.minecraft.block.BedBlock;
-import net.minecraft.block.EnchantingTableBlock;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.block.CraftingTableBlock;
+import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
-import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.block.CraftingTableBlock;
+import net.minecraft.block.EnchantingTableBlock;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityType;
+import net.minecraft.entity.item.minecart.HopperMinecartEntity;
+import net.minecraft.entity.merchant.IMerchant;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.inventory.container.Container;
 import net.minecraft.inventory.container.ContainerType;
-import net.minecraft.item.crafting.RecipeManager;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.item.minecart.HopperMinecartEntity;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.entity.EntityType;
-import net.minecraft.util.HandSide;
-import net.minecraft.block.BlockState;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.inventory.IInventory;
-import net.minecraft.entity.merchant.IMerchant;
-import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.inventory.container.INamedContainerProvider;
-import net.minecraft.util.CooldownTracker;
+import net.minecraft.item.crafting.IRecipe;
+import net.minecraft.item.crafting.RecipeManager;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.play.client.CCloseWindowPacket;
 import net.minecraft.network.play.server.SOpenWindowPacket;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.BarrelTileEntity;
 import net.minecraft.tileentity.BeaconTileEntity;
 import net.minecraft.tileentity.BlastFurnaceTileEntity;
@@ -43,7 +36,13 @@ import net.minecraft.tileentity.HopperTileEntity;
 import net.minecraft.tileentity.LecternTileEntity;
 import net.minecraft.tileentity.ShulkerBoxTileEntity;
 import net.minecraft.tileentity.SmokerTileEntity;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.CooldownTracker;
+import net.minecraft.util.HandSide;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.StringTextComponent;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -211,7 +210,7 @@ public class CraftHumanEntity extends CraftLivingEntity implements HumanEntity {
 
     @Override
     public String getName() {
-        return getHandle().getName();
+        return getHandle().getScoreboardName();
     }
 
     @Override

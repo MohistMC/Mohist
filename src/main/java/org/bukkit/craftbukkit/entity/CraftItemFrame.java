@@ -66,7 +66,7 @@ public class CraftItemFrame extends CraftHanging implements ItemFrame {
 
     @Override
     public org.bukkit.inventory.ItemStack getItem() {
-        return CraftItemStack.asBukkitCopy(getHandle().getItem());
+        return CraftItemStack.asBukkitCopy(getHandle().getDisplayedItem());
     }
 
     @Override

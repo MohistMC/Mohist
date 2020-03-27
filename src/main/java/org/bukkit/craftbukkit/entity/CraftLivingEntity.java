@@ -7,32 +7,33 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
-import net.minecraft.util.DamageSource;
+import net.minecraft.entity.MobEntity;
+import net.minecraft.entity.SharedMonsterAttributes;
+import net.minecraft.entity.boss.WitherEntity;
 import net.minecraft.entity.item.ArmorStandEntity;
+import net.minecraft.entity.item.EnderPearlEntity;
+import net.minecraft.entity.item.ExperienceBottleEntity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.AbstractArrowEntity;
+import net.minecraft.entity.projectile.ArrowEntity;
+import net.minecraft.entity.projectile.DamagingProjectileEntity;
 import net.minecraft.entity.projectile.DragonFireballEntity;
 import net.minecraft.entity.projectile.EggEntity;
-import net.minecraft.entity.item.EnderPearlEntity;
-import net.minecraft.entity.projectile.DamagingProjectileEntity;
-import net.minecraft.entity.projectile.FishingBobberEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.MobEntity;
 import net.minecraft.entity.projectile.FireballEntity;
+import net.minecraft.entity.projectile.FishingBobberEntity;
 import net.minecraft.entity.projectile.LlamaSpitEntity;
 import net.minecraft.entity.projectile.PotionEntity;
-import net.minecraft.entity.projectile.ThrowableEntity;
 import net.minecraft.entity.projectile.ShulkerBulletEntity;
 import net.minecraft.entity.projectile.SmallFireballEntity;
 import net.minecraft.entity.projectile.SnowballEntity;
 import net.minecraft.entity.projectile.SpectralArrowEntity;
-import net.minecraft.entity.item.ExperienceBottleEntity;
+import net.minecraft.entity.projectile.ThrowableEntity;
 import net.minecraft.entity.projectile.TridentEntity;
-import net.minecraft.entity.projectile.ArrowEntity;
-import net.minecraft.entity.boss.WitherEntity;
 import net.minecraft.entity.projectile.WitherSkullEntity;
-import net.minecraft.entity.SharedMonsterAttributes;
-import net.minecraft.potion.EffectInstance;
 import net.minecraft.potion.Effect;
+import net.minecraft.potion.EffectInstance;
+import net.minecraft.util.DamageSource;
+import net.minecraft.util.Hand;
 import org.apache.commons.lang.Validate;
 import org.bukkit.FluidCollisionMode;
 import org.bukkit.Location;
@@ -42,11 +43,11 @@ import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.block.Block;
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.craftbukkit.CraftWorld;
+import org.bukkit.craftbukkit.entity.memory.CraftMemoryKey;
+import org.bukkit.craftbukkit.entity.memory.CraftMemoryMapper;
 import org.bukkit.craftbukkit.inventory.CraftEntityEquipment;
 import org.bukkit.craftbukkit.inventory.CraftItemStack;
 import org.bukkit.craftbukkit.potion.CraftPotionUtil;
-import org.bukkit.craftbukkit.entity.memory.CraftMemoryKey;
-import org.bukkit.craftbukkit.entity.memory.CraftMemoryMapper;
 import org.bukkit.entity.AbstractArrow;
 import org.bukkit.entity.DragonFireball;
 import org.bukkit.entity.Egg;
@@ -585,17 +586,17 @@ public class CraftLivingEntity extends CraftEntity implements LivingEntity {
     public void attack(Entity target) {
         Preconditions.checkArgument(target != null, "target == null");
 
-        getHandle().B(((CraftEntity) target).getHandle()); // PAIL rename attack
+        getHandle().attackEntityAsMob(((CraftEntity) target).getHandle()); // PAIL rename attack
     }
 
     @Override
     public void swingMainHand() {
-        getHandle().a(EnumHand.MAIN_HAND); // PAIL rename swingHand
+        getHandle().swingArm(Hand.MAIN_HAND); // PAIL rename swingHand
     }
 
     @Override
     public void swingOffHand() {
-        getHandle().a(EnumHand.OFF_HAND); // PAIL rename swingHand
+        getHandle().swingArm(Hand.OFF_HAND); // PAIL rename swingHand
     }
 
     @Override

@@ -153,7 +153,7 @@ public class CraftArmorStand extends CraftLivingEntity implements ArmorStand {
     public void setGravity(boolean gravity) {
         super.setGravity(gravity);
         // Armor stands are special
-        getHandle().noclip = !gravity;
+        getHandle().noClip = !gravity;
     }
 
     @Override
