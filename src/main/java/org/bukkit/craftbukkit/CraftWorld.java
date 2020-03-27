@@ -373,7 +373,7 @@ public class CraftWorld implements World {
     public boolean unloadChunkRequest(int x, int z) {
         net.minecraft.world.chunk.IChunk chunk = world.getChunkProvider().getChunk(x, z, ChunkStatus.FULL, false);
         if (chunk != null) {
-            world.getChunkProvider().func_217222_b(TicketType.PLUGIN, chunk.getPos(), 1, Unit.INSTANCE);
+            world.getChunkProvider().releaseTicket(TicketType.PLUGIN, chunk.getPos(), 1, Unit.INSTANCE);
         }
 
         return true;
@@ -431,9 +431,9 @@ public class CraftWorld implements World {
         // This flags 65 blocks distributed across all the sections of the chunk, so that everything is sent, including biomes
         int height = getMaxHeight() / 16;
         for (int idx = 0; idx < 64; idx++) {
-            world.notify(new BlockPos(px + (idx / height), ((idx % height) * 16), pz), Blocks.AIR.getBlockData(), Blocks.STONE.getBlockData(), 3);
+            world.notifyBlockUpdate(new BlockPos(px + (idx / height), ((idx % height) * 16), pz), Blocks.AIR.getDefaultState(), Blocks.STONE.getDefaultState(), 3);
         }
-        world.notify(new BlockPos(px + 15, (height * 16) - 1, pz + 15), Blocks.AIR.getBlockData(), Blocks.STONE.getBlockData(), 3);
+        world.notifyBlockUpdate(new BlockPos(px + 15, (height * 16) - 1, pz + 15), Blocks.AIR.getDefaultState(), Blocks.STONE.getDefaultState(), 3);
 
         return true;
     }
@@ -445,16 +445,16 @@ public class CraftWorld implements World {
 
     @Override
     public boolean loadChunk(int x, int z, boolean generate) {
-        IChunk chunk = world.getChunkProvider().getChunkAt(x, z, generate ? ChunkStatus.FULL : ChunkStatus.EMPTY, true);
+        IChunk chunk = world.getChunkProvider().getChunk(x, z, generate ? ChunkStatus.FULL : ChunkStatus.EMPTY, true);
 
         // If generate = false, but the chunk already exists, we will get this back.
-        if (chunk instanceof ChunkPrimerExtension) {
+        if (chunk instanceof ChunkPrimerWrapper) {
             // We then cycle through again to get the full chunk immediately, rather than after the ticket addition
-            chunk = world.getChunkProvider().getChunkAt(x, z, ChunkStatus.FULL, true);
+            chunk = world.getChunkProvider().getChunk(x, z, ChunkStatus.FULL, true);
         }
 
         if (chunk instanceof net.minecraft.world.chunk.Chunk) {
-            world.getChunkProvider().addTicket(TicketType.PLUGIN, new ChunkPos(x, z), 1, Unit.INSTANCE);
+            world.getChunkProvider().registerTicket(TicketType.PLUGIN, new ChunkPos(x, z), 1, Unit.INSTANCE);
             return true;
         }
 
@@ -477,7 +477,7 @@ public class CraftWorld implements World {
         Preconditions.checkArgument(plugin != null, "null plugin");
         Preconditions.checkArgument(plugin.isEnabled(), "plugin is not enabled");
 
-        TicketManager chunkDistanceManager = this.world.getChunkProvider().playerChunkDistanceGraph.chunkDistanceManager;
+        TicketManager chunkDistanceManager = this.world.getChunkProvider().chunkManager.ticketManager;
 
         if (chunkDistanceManager.addTicketAtLevel(TicketType.PLUGIN_TICKET, new ChunkPos(x, z), 31, plugin)) { // keep in-line with force loading, add at level 31
             this.getChunkAt(x, z); // ensure loaded
@@ -491,7 +491,7 @@ public class CraftWorld implements World {
     public boolean removePluginChunkTicket(int x, int z, Plugin plugin) {
         Preconditions.checkNotNull(plugin, "null plugin");
 
-        TicketManager chunkDistanceManager = this.world.getChunkProvider().playerChunkDistanceGraph.chunkDistanceManager;
+        TicketManager chunkDistanceManager = this.world.getChunkProvider().chunkManager.ticketManager;
         return chunkDistanceManager.removeTicketAtLevel(TicketType.PLUGIN_TICKET, new ChunkPos(x, z), 31, plugin); // keep in-line with force loading, remove at level 31
     }
 
@@ -499,14 +499,14 @@ public class CraftWorld implements World {
     public void removePluginChunkTickets(Plugin plugin) {
         Preconditions.checkNotNull(plugin, "null plugin");
 
-        TicketManager chunkDistanceManager = this.world.getChunkProvider().playerChunkDistanceGraph.chunkDistanceManager;
+        TicketManager chunkDistanceManager = this.world.getChunkProvider().chunkManager.ticketManager;
         chunkDistanceManager.removeAllTicketsFor(TicketType.PLUGIN_TICKET, 31, plugin); // keep in-line with force loading, remove at level 31
     }
 
     @Override
     public Collection<Plugin> getPluginChunkTickets(int x, int z) {
-        TicketManager chunkDistanceManager = this.world.getChunkProvider().playerChunkDistanceGraph.chunkDistanceManager;
-        SortedArraySet<Ticket<?>> tickets = chunkDistanceManager.tickets.get(ChunkPos.pair(x, z));
+        TicketManager chunkDistanceManager = this.world.getChunkProvider().chunkManager.ticketManager;
+        SortedArraySet<Ticket<?>> tickets = chunkDistanceManager.tickets.get(ChunkPos.asLong(x, z));
 
         if (tickets == null) {
             return Collections.emptyList();
@@ -514,8 +514,8 @@ public class CraftWorld implements World {
 
         ImmutableList.Builder<Plugin> ret = ImmutableList.builder();
         for (Ticket<?> ticket : tickets) {
-            if (ticket.getTicketType() == TicketType.PLUGIN_TICKET) {
-                ret.add((Plugin) ticket.identifier);
+            if (ticket.getType() == TicketType.PLUGIN_TICKET) {
+                ret.add((Plugin) ticket.value);
             }
         }
 
@@ -525,7 +525,7 @@ public class CraftWorld implements World {
     @Override
     public Map<Plugin, Collection<Chunk>> getPluginChunkTickets() {
         Map<Plugin, ImmutableList.Builder<Chunk>> ret = new HashMap<>();
-        TicketManager chunkDistanceManager = this.world.getChunkProvider().playerChunkDistanceGraph.chunkDistanceManager;
+        TicketManager chunkDistanceManager = this.world.getChunkProvider().chunkManager.ticketManager;
 
         for (Long2ObjectMap.Entry<SortedArraySet<Ticket<?>>> chunkTickets : chunkDistanceManager.tickets.long2ObjectEntrySet()) {
             long chunkKey = chunkTickets.getLongKey();
@@ -533,7 +533,7 @@ public class CraftWorld implements World {
 
             Chunk chunk = null;
             for (Ticket<?> ticket : tickets) {
-                if (ticket.getTicketType() != TicketType.PLUGIN_TICKET) {
+                if (ticket.getType() != TicketType.PLUGIN_TICKET) {
                     continue;
                 }
 
@@ -541,7 +541,7 @@ public class CraftWorld implements World {
                     chunk = this.getChunkAt(ChunkPos.getX(chunkKey), ChunkPos.getZ(chunkKey));
                 }
 
-                ret.computeIfAbsent((Plugin) ticket.identifier, (key) -> ImmutableList.builder()).add(chunk);
+                ret.computeIfAbsent((Plugin) ticket.value, (key) -> ImmutableList.builder()).add(chunk);
             }
         }
 
@@ -550,19 +550,19 @@ public class CraftWorld implements World {
 
     @Override
     public boolean isChunkForceLoaded(int x, int z) {
-        return getHandle().getForceLoadedChunks().contains(ChunkPos.pair(x, z));
+        return getHandle().getForcedChunks().contains(ChunkPos.asLong(x, z));
     }
 
     @Override
     public void setChunkForceLoaded(int x, int z, boolean forced) {
-        getHandle().setForceLoaded(x, z, forced);
+        getHandle().forceChunk(x, z, forced);
     }
 
     @Override
     public Collection<Chunk> getForceLoadedChunks() {
         Set<Chunk> chunks = new HashSet<>();
 
-        for (long coord : getHandle().getForceLoadedChunks()) {
+        for (long coord : getHandle().getForcedChunks()) {
             chunks.add(getChunkAt(ChunkPos.getX(coord), ChunkPos.getZ(coord)));
         }
 
@@ -581,7 +581,7 @@ public class CraftWorld implements World {
         world.addEntity(entity, SpawnReason.CUSTOM);
         // TODO this is inconsistent with how Entity.getBukkitEntity() works.
         // However, this entity is not at the moment backed by a server entity class so it may be left.
-        return new CraftItem(world.getServer(), entity);
+        return new CraftItem(world.getServerCB(), entity);
     }
 
     @Override
@@ -653,59 +653,59 @@ public class CraftWorld implements World {
         switch (type) {
         case BIG_TREE:
             gen = Feature.FANCY_TREE;
-            conf = DefaultBiomeFeatures.field_226815_j_;
+            conf = DefaultBiomeFeatures.FANCY_TREE_CONFIG;
             break;
         case BIRCH:
             gen = Feature.NORMAL_TREE;
-            conf = DefaultBiomeFeatures.field_226812_g_;
+            conf = DefaultBiomeFeatures.BIRCH_TREE_CONFIG;
             break;
         case REDWOOD:
             gen = Feature.NORMAL_TREE;
-            conf = DefaultBiomeFeatures.field_226810_e_;
+            conf = DefaultBiomeFeatures.SPRUCE_TREE_CONFIG;
             break;
         case TALL_REDWOOD:
             gen = Feature.NORMAL_TREE;
-            conf = DefaultBiomeFeatures.field_226809_d_;
+            conf = DefaultBiomeFeatures.PINE_TREE_CONFIG;
             break;
         case JUNGLE:
             gen = Feature.MEGA_JUNGLE_TREE;
-            conf = DefaultBiomeFeatures.field_226825_t_;
+            conf = DefaultBiomeFeatures.MEGA_JUNGLE_TREE_CONFIG;
             break;
         case SMALL_JUNGLE:
             gen = Feature.NORMAL_TREE;
-            conf = DefaultBiomeFeatures.field_226808_c_;
+            conf = DefaultBiomeFeatures.JUNGLE_SAPLING_TREE_CONFIG;
             break;
         case COCOA_TREE:
             gen = Feature.NORMAL_TREE;
-            conf = DefaultBiomeFeatures.field_226792_b_;
+            conf = DefaultBiomeFeatures.JUNGLE_TREE_CONFIG;
             break;
         case JUNGLE_BUSH:
             gen = Feature.JUNGLE_GROUND_BUSH;
-            conf = DefaultBiomeFeatures.field_226821_p_;
+            conf = DefaultBiomeFeatures.JUNGLE_GROUND_BUSH_CONFIG;
             break;
         case RED_MUSHROOM:
             gen = Feature.HUGE_RED_MUSHROOM;
-            conf = DefaultBiomeFeatures.field_226767_ab_;
+            conf = DefaultBiomeFeatures.BIG_RED_MUSHROOM;
             break;
         case BROWN_MUSHROOM:
             gen = Feature.HUGE_BROWN_MUSHROOM;
-            conf = DefaultBiomeFeatures.field_226768_ac_;
+            conf = DefaultBiomeFeatures.BIG_BROWN_MUSHROOM;
             break;
         case SWAMP:
             gen = Feature.NORMAL_TREE;
-            conf = DefaultBiomeFeatures.field_226814_i_;
+            conf = DefaultBiomeFeatures.SWAMP_TREE_CONFIG;
             break;
         case ACACIA:
-            gen = Feature.field_227246_s_;
-            conf = DefaultBiomeFeatures.field_226811_f_;
+            gen = Feature.ACACIA_TREE;
+            conf = DefaultBiomeFeatures.ACACIA_TREE_CONFIG;
             break;
         case DARK_OAK:
             gen = Feature.DARK_OAK_TREE;
-            conf = DefaultBiomeFeatures.field_226822_q_;
+            conf = DefaultBiomeFeatures.DARK_OAK_TREE_CONFIG;
             break;
         case MEGA_REDWOOD:
             gen = Feature.MEGA_SPRUCE_TREE;
-            conf = DefaultBiomeFeatures.field_226824_s_;
+            conf = DefaultBiomeFeatures.MEGA_PINE_TREE_CONFIG;
             break;
         case TALL_BIRCH:
             gen = Feature.NORMAL_TREE;
@@ -717,7 +717,7 @@ public class CraftWorld implements World {
         case TREE:
         default:
             gen = Feature.NORMAL_TREE;
-            conf = DefaultBiomeFeatures.field_226739_a_;
+            conf = DefaultBiomeFeatures.OAK_TREE_CONFIG;
             break;
         }
 
@@ -798,7 +798,7 @@ public class CraftWorld implements World {
             CraftPlayer cp = (CraftPlayer) p;
             if (cp.getHandle().connection == null) continue;
 
-            cp.getHandle().connection.sendPacket(new SUpdateTimePacket(cp.getHandle().world.getTime(), cp.getHandle().getPlayerTime(), cp.getHandle().world.getGameRules().getBoolean(GameRules.DO_DAYLIGHT_CYCLE)));
+            cp.getHandle().connection.sendPacket(new SUpdateTimePacket(cp.getHandle().world.getGameTime(), cp.getHandle().getPlayerTime(), cp.getHandle().world.getGameRules().getBoolean(GameRules.DO_DAYLIGHT_CYCLE)));
         }
     }
 
@@ -888,7 +888,7 @@ public class CraftWorld implements World {
     @Override
     public int getHighestBlockYAt(int x, int z, org.bukkit.HeightMap heightMap) {
         // Transient load for this tick
-        return world.getChunkAt(x >> 4, z >> 4).a(CraftHeightMap.toNMS(heightMap), x, z);
+        return this.world.getChunk(x >> 4, z >> 4).getTopBlockY(CraftHeightMap.toNMS(heightMap), x, z);
     }
 
     @Override
@@ -913,7 +913,7 @@ public class CraftWorld implements World {
 
     @Override
     public Biome getBiome(int x, int y, int z) {
-        return CraftBlock.biomeBaseToBiome(this.world.getBiome(x >> 2, y >> 2, z >> 2));
+        return CraftBlock.biomeBaseToBiome(this.world.getNoiseBiome(x >> 2, y >> 2, z >> 2));
     }
 
     @Override
@@ -925,13 +925,13 @@ public class CraftWorld implements World {
 
     @Override
     public void setBiome(int x, int y, int z, Biome bio) {
-        Biome bb = CraftBlock.biomeToBiome(bio);
+        net.minecraft.world.biome.Biome bb = CraftBlock.biomeToBiomeBase(bio);
         BlockPos pos = new BlockPos(x, 0, z);
         if (this.world.isBlockLoaded(pos)) {
             net.minecraft.world.chunk.Chunk chunk = this.world.getChunkAt(pos);
 
             if (chunk != null) {
-                chunk.getBiomeIndex().setBiome(x >> 2, y >> 2, z >> 2, bb);
+                chunk.getBiomes().setBiome(x >> 2, y >> 2, z >> 2, bb);
 
                 chunk.markDirty(); // SPIGOT-2890
             }
@@ -946,7 +946,7 @@ public class CraftWorld implements World {
     @Override
     public double getTemperature(int x, int y, int z) {
         BlockPos pos = new BlockPos(x, y, z);
-        return this.world.getBiome(x >> 2, y >> 2, z >> 2).getAdjustedTemperature(pos);
+        return this.world.getNoiseBiome(x >> 2, y >> 2, z >> 2).getTemperature(pos);
     }
 
     @Override
@@ -956,7 +956,7 @@ public class CraftWorld implements World {
 
     @Override
     public double getHumidity(int x, int y, int z) {
-        return this.world.getBiome(x >> 2, y >> 2, z >> 2).getHumidity();
+        return this.world.getNoiseBiome(x >> 2, y >> 2, z >> 2).getDownfall();
     }
 
     @Override
@@ -1080,7 +1080,7 @@ public class CraftWorld implements World {
         Validate.notNull(boundingBox, "Bounding box is null!");
 
         AxisAlignedBB bb = new AxisAlignedBB(boundingBox.getMinX(), boundingBox.getMinY(), boundingBox.getMinZ(), boundingBox.getMaxX(), boundingBox.getMaxY(), boundingBox.getMaxZ());
-        List<net.minecraft.entity.Entity> entityList = getHandle().getEntities((net.minecraft.entity.Entity) null, bb, null);
+        List<net.minecraft.entity.Entity> entityList = getHandle().getEntitiesInAABBexcluding((net.minecraft.entity.Entity) null, bb, null);
         List<Entity> bukkitEntityList = new ArrayList<org.bukkit.entity.Entity>(entityList.size());
 
         for (net.minecraft.entity.Entity entity : entityList) {
@@ -1179,7 +1179,7 @@ public class CraftWorld implements World {
         Vector dir = direction.clone().normalize().multiply(maxDistance);
         Vec3d startPos = new Vec3d(start.getX(), start.getY(), start.getZ());
         Vec3d endPos = new Vec3d(start.getX() + dir.getX(), start.getY() + dir.getY(), start.getZ() + dir.getZ());
-        RayTraceResult nmsHitResult = this.getHandle().rayTraceBlocks(new RayTraceContext(startPos, endPos, ignorePassableBlocks ? RayTraceContext.BlockMode.COLLIDER : RayTraceContext.BlockMode.OUTLINE, CraftFluidCollisionMode.toNMS(fluidCollisionMode), null));
+        net.minecraft.util.math.RayTraceResult nmsHitResult = this.getHandle().rayTraceBlocks(new RayTraceContext(startPos, endPos, ignorePassableBlocks ? RayTraceContext.BlockMode.COLLIDER : RayTraceContext.BlockMode.OUTLINE, CraftFluidCollisionMode.toNMS(fluidCollisionMode), null));
 
         return CraftRayTraceResult.fromNMS(this, nmsHitResult);
     }
@@ -1256,7 +1256,7 @@ public class CraftWorld implements World {
 
     @Override
     public void setDifficulty(Difficulty difficulty) {
-        this.getHandle().worldInfo.setDifficulty(Difficulty.byId(difficulty.getValue()));
+        this.getHandle().worldInfo.setDifficulty(net.minecraft.world.Difficulty.byId(difficulty.getValue()));
     }
 
     @Override
@@ -1825,10 +1825,10 @@ public class CraftWorld implements World {
         // Grab the worlds spawn chunk
         BlockPos chunkcoordinates = this.world.getSpawnPoint();
         if (keepLoaded) {
-            world.getChunkProvider().func_217228_a(TicketType.START, new ChunkPos(chunkcoordinates), 11, Unit.INSTANCE);
+            world.getChunkProvider().registerTicket(TicketType.START, new ChunkPos(chunkcoordinates), 11, Unit.INSTANCE);
         } else {
             // TODO: doesn't work well if spawn changed....
-            world.getChunkProvider().func_217222_b(TicketType.START, new ChunkPos(chunkcoordinates), 11, Unit.INSTANCE);
+            world.getChunkProvider().releaseTicket(TicketType.START, new ChunkPos(chunkcoordinates), 11, Unit.INSTANCE);
         }
     }
 
@@ -2052,10 +2052,10 @@ public class CraftWorld implements World {
         }
 
         Map<String, GameRules.RuleKey<?>> gamerules = new HashMap<>();
-        GameRules.func_223590_a(new GameRules.IRuleEntryVisitor() {
+        GameRules.visitAll(new GameRules.IRuleEntryVisitor() {
             @Override
-            public <T extends GameRules.RuleValue<T>> void func_223481_a(GameRules.RuleKey<T> gamerules_gamerulekey, GameRules.RuleType<T> gamerules_gameruledefinition) {
-                gamerules.put(gamerules_gamerulekey.func_223576_a(), gamerules_gamerulekey);
+            public <T extends GameRules.RuleValue<T>> void visit(GameRules.RuleKey<T> gamerules_gamerulekey, GameRules.RuleType<T> gamerules_gameruledefinition) {
+                gamerules.put(gamerules_gamerulekey.getName(), gamerules_gamerulekey);
             }
         });
 
@@ -2069,10 +2069,10 @@ public class CraftWorld implements World {
         }
 
         Map<String, GameRules.RuleType<?>> gameruleDefinitions = new HashMap<>();
-        GameRules.func_223590_a(new GameRules.IRuleEntryVisitor() {
+        GameRules.visitAll(new GameRules.IRuleEntryVisitor() {
             @Override
-            public <T extends GameRules.RuleValue<T>> void func_223481_a(GameRules.RuleKey<T> gamerules_gamerulekey, GameRules.RuleType<T> gamerules_gameruledefinition) {
-                gameruleDefinitions.put(gamerules_gamerulekey.func_223576_a(), gamerules_gameruledefinition);
+            public <T extends GameRules.RuleValue<T>> void visit(GameRules.RuleKey<T> gamerules_gamerulekey, GameRules.RuleType<T> gamerules_gameruledefinition) {
+                gameruleDefinitions.put(gamerules_gamerulekey.getName(), gamerules_gameruledefinition);
             }
         });
 
@@ -2098,8 +2098,8 @@ public class CraftWorld implements World {
         if (!isGameRule(rule)) return false;
 
         GameRules.RuleValue<?> handle = getHandle().getGameRules().get(getGameRulesNMS().get(rule));
-        handle.func_223553_a(value);
-        handle.func_223556_a(getHandle().getServer());
+        handle.setStringValue(value);
+        handle.notifyChange(getHandle().getServer());
         return true;
     }
 
@@ -2123,7 +2123,7 @@ public class CraftWorld implements World {
     @Override
     public <T> T getGameRuleDefault(GameRule<T> rule) {
         Validate.notNull(rule, "GameRule cannot be null");
-        return convert(rule, getGameRuleDefinitions().get(rule.getName()).getValue());
+        return convert(rule, getGameRuleDefinitions().get(rule.getName()).createValue());
     }
 
     @Override
@@ -2134,8 +2134,8 @@ public class CraftWorld implements World {
         if (!isGameRule(rule.getName())) return false;
 
         GameRules.RuleValue<?> handle = getHandle().getGameRules().get(getGameRulesNMS().get(rule.getName()));
-        handle.func_223553_a(newValue.toString());
-        handle.func_223556_a(getHandle().getServer());
+        handle.setStringValue(newValue.toString());
+        handle.notifyChange(getHandle().getServer());
         return true;
     }
 
@@ -2147,7 +2147,7 @@ public class CraftWorld implements World {
         if (value instanceof GameRules.BooleanValue) {
             return rule.getType().cast(((GameRules.BooleanValue) value).get());
         } else if (value instanceof GameRules.IntegerValue) {
-            return rule.getType().cast(value.func_223557_c());
+            return rule.getType().cast(value.intValue());
         } else {
             throw new IllegalArgumentException("Invalid GameRule type (" + value + ") for GameRule " + rule.getName());
         }
