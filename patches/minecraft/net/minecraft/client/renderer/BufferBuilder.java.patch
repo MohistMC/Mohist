@@ -1,0 +1,25 @@
+--- a/net/minecraft/client/renderer/BufferBuilder.java
++++ b/net/minecraft/client/renderer/BufferBuilder.java
+@@ -121,7 +121,6 @@
+ 
+          bitset.set(l);
+       }
+-
+    }
+ 
+    private void func_227829_a_(FloatBuffer p_227829_1_, int p_227829_2_) {
+@@ -364,4 +363,14 @@
+          this.field_179018_e = p_i225907_2_;
+       }
+    }
++
++   public void putBulkData(ByteBuffer buffer) {
++      func_181670_b(buffer.limit() + this.field_179011_q.func_177338_f());
++      this.field_179001_a.position(this.field_178997_d * this.field_179011_q.func_177338_f());
++      this.field_179001_a.put(buffer);
++      this.field_178997_d += buffer.limit() / this.field_179011_q.func_177338_f();
++   }
++
++   // Forge start
++   public VertexFormat getVertexFormat() { return this.field_179011_q; }
+ }

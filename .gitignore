@@ -1,51 +1,44 @@
-# CMake
-cmake-build-*/
+#eclipse
+**/bin
+**/.settings
+**/.classpath
+*.project
 
-# File-based project format
-*.iws
+#In case people make their workspace in the repo
+/eclipse/
 
-# IntelliJ
-out/
-
-# JIRA plugin
-atlassian-ide-plugin.xml
-
-# Crashlytics plugin (for Android Studio and IntelliJ)
-com_crashlytics_export_strings.xml
-crashlytics.properties
-crashlytics-build.properties
-fabric.properties
-
-### Gradle template
-.gradle
-build/
-
-# Ignore Gradle GUI config
-gradle-app.setting
-
-# Avoid ignoring Gradle wrapper jar file (.jar files are usually ignored)
-!gradle-wrapper.jar
-
-# Cache of project
-.gradletasknamecache
-
-# We don't need those .rej files
-*.rej
-
-### Kettle
-/projects/
-/bin/
-
-### IDEs
-/.idea/
-.classpath
-.project
-/.settings/
-classes/
-
-run/
-
-Notes
+#idea
+/.idea
+/classes
 *.iml
-*.xml
 
+#gradle
+/build
+/.gradle
+/mdk/.gradle
+/mdk/build
+
+#occupational hazards
+/projects/mcp/
+/projects/clean/
+/projects/forge/
+/projects/**/build/
+/projects/**/out/
+/projects/**/run/
+/projects/**/*.launch
+/repo/
+/buildSrc
+src/generated/resources/.cache/
+
+#Patch rejects
+/patches-/
+*.patch.rej
+
+# FML changelog
+changelog.txt
+*.py
+*.7z
+/logs/
+
+gradle.properties
+!/mdk/gradle.properties
