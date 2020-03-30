@@ -2,37 +2,25 @@
 # 
 # Home: https://www.mohist.red/
 #
-# Setting: console_name Default: Server   # Front of the console, for example /say
-# Setting: remap.dumpRemapPluginClass Default: false   # dumpRemapPluginClass
-# Setting: asyn.spawnerCreature Default: false   # spawnerCreature
-# Setting: perfomance.maxEntityCollisionsPerTick Default: 8   # Max Entity Collisions PerTick
-# Setting: server-type Default: FML   # Set the server type displayed in motd (FML/BUKKIT/VANILLA)
-# Setting: remap.multiVersionRemapPlugins Default:    # Need a list of compatible plugins
-# Setting: remap.multiVersionRemap Default: false   # Compatible with multiple versions of nms
-# Setting: debug.printInvalidMapping Default: false   # printInvalidMapping
-# Setting: eventCanceled.explosion Default: false   # BlockExplosionEvent isCanceled
-# Setting: remap.printRemapPluginClass Default: false   # printRemapPluginClass
-# Setting: debug.printThreadTimeCost Default: false   # printThreadTimeCost
-# Setting: support_nocmd Default: false   # Some server tools do not recognize I18N
-# Setting: check_update Default: true   # Check Update
-# Setting: remap.reflectRemap Default: true   # Compatible reflection plugin
-# Setting: remap.nmsRemap Default: true   # Compatible with nms plugin
-# Setting: lang Default: en_US   # Mohist internationalization language setting, will return the default system language when your settings are invalid
-# Setting: perfomance.entityCollideFrequency Default: 2   # Entity Collide Frequency
 
-console_name: Server
-server-type: FML
+mohist:
+  CloseChatInConsole: false
+  check_libraries: true
+  check_update: true
+  check_update_auto_download: false
+  support_nocmd: false
+  server-type: FML
+  lang: xx_XX
+  console_name: Server
+  check_update_auto_download: false
+  realtimeticking: false
 eventCanceled:
   explosion: false
-lang: xx_XX
 consolecolor:
   warn-level: 'e'
   error-level: 'c'
   warn-msg: 'e'
   error-msg: 'c'
-support_nocmd: false
-check_update: true
-check_libraries: true
 config-version: 1
 forge:
   disablechunkforcesystem: false

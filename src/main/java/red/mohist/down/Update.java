@@ -12,6 +12,10 @@ import red.mohist.util.i18n.Message;
 
 public class Update {
 
+    public static boolean needToUpdate;
+    static String ci_sha;
+    static String jar_sha;
+
     // Why use a hard core to split a String? Because I didn't actually start Mohist before this, there is no lib load, we can't use lib.
     public static void hasLatestVersion() {
         String str = "https://ci.codemc.io/job/Mohist-Community/job/Mohist-1.12.2/lastBuild/api/json";
@@ -33,9 +37,9 @@ public class Update {
 
                 String[] ss = s0.split("\n");
                 String b = ss[0].trim().replace(" ", "").replace("\"", "");
-                String ci_sha = b.substring(5, 12);
+                ci_sha = b.substring(5, 12);
 
-                String jar_sha = Update.class.getPackage().getImplementationVersion();
+                jar_sha = Update.class.getPackage().getImplementationVersion();
 
                 String newversion = MohistConfigUtil.getUrlString(ver, Mohist.VERSION);
                 String oldversion = Mohist.VERSION;
@@ -48,6 +52,7 @@ public class Update {
                     String b1 = ss1[0].trim().replace("\"", "");
                     String time3 = b1.substring(5, 24);
                     System.out.println(Message.getFormatString("update.old", new Object[]{oldversion, newversion, ci_sha, time3, jar_sha, dl}));
+                    needToUpdate = true;
                 }
                 is.close();
             } else {
@@ -60,5 +65,10 @@ public class Update {
     public static boolean isCheck() {
         File f = new File("mohist-config", "mohist.yml");
         return MohistConfigUtil.getBoolean(f, "check_update:");
+    }
+
+    public static boolean isDownload() {
+        File f = new File("mohist-config", "mohist.yml");
+        return MohistConfigUtil.getBoolean(f, "check_update_auto_download:");
     }
 }

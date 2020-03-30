@@ -5,6 +5,7 @@ import java.util.Scanner;
 import org.apache.logging.log4j.Logger;
 import red.mohist.configuration.MohistConfigUtil;
 import red.mohist.down.DownloadLibraries;
+import red.mohist.down.DownloadNewJar;
 import red.mohist.down.Update;
 import red.mohist.forge.AutoDeleteMods;
 import red.mohist.plugin.AutoDeletePlugins;
@@ -47,6 +48,11 @@ public class Mohist {
         }
         if (Update.isCheck()) {
             Update.hasLatestVersion();
+            if(Update.needToUpdate && Update.isDownload()) {
+                System.out.println("If you want to update Mohist to the newest version, type 'yes'. If you don't want type 'no'.");
+                while (!"yes".equals(new Scanner(System.in).next()));
+                DownloadNewJar.run();
+            }
         }
         if (DownloadLibraries.isCheck()) {
             DownloadLibraries.run();
