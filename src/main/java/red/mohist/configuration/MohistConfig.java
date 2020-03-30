@@ -32,14 +32,16 @@ public class MohistConfig extends ConfigBase{
     public final StringSetting requirementsModVersion = new StringSetting(this, "messages.Requirements-Mod-Version", Message.getString("requirements.mod.version"), "version X");
     public final StringSetting requirementsModVersionRange = new StringSetting(this, "messages.Requirements-Mod-Version-range", Message.getString("requirements.mod.version-range"), "version range X");
 
-    public final StringSetting server_type = new StringSetting(this, "server-type", "FML", "Set the server type displayed in motd (FML/BUKKIT/VANILLA)");
-    public final StringSetting lang = new StringSetting(this, "lang", "en_US", "Mohist internationalization language setting, will return the default system language when your settings are invalid");
-    public final StringSetting console_name = new StringSetting(this, "console_name", "Server", "Front of the console, for example /say");
-    public final BoolSetting support_nocmd = new BoolSetting(this, "support_nocmd", false, "Some server tools do not recognize I18N");
+    public final StringSetting server_type = new StringSetting(this, "mohist.server-type", "FML", "Set the server type displayed in motd (FML/BUKKIT/VANILLA)");
+    public final StringSetting lang = new StringSetting(this, "mohist.lang", "xx_XX", "Mohist internationalization language setting, will return the default system language when your settings are invalid");
+    public final StringSetting console_name = new StringSetting(this, "mohist.console_name", "Server", "Front of the console, for example /say");
+    public final BoolSetting support_nocmd = new BoolSetting(this, "mohist.support_nocmd", false, "Some server tools do not recognize I18N");
     // Bukkit Event Canceled
     public final BoolSetting explosion_canceled = new BoolSetting(this, "eventCanceled.explosion", false, "BlockExplosionEvent isCanceled");
-    public final BoolSetting check_update = new BoolSetting(this, "check_update", true, "Check Update");
-    public final BoolSetting check_libraries = new BoolSetting(this, "check_libraries", true, "Check libraries");
+
+    public final BoolSetting check_update = new BoolSetting(this, "mohist.check_update", true, "Check the version update status of the main program");
+    public final BoolSetting needToUpdate = new BoolSetting(this, "mohist.check_update_auto_download", false, "Check new version will download automatically");
+    public final BoolSetting check_libraries = new BoolSetting(this, "mohist.check_libraries", true, "Check libraries");
 
     public final StringSetting ANSI_ERROR_LEVEL = new StringSetting(this, "consolecolor.error-level", "[31;1m", "consolecolor.error-level");
     public final StringSetting ANSI_WARN_LEVEL = new StringSetting(this, "consolecolor.warn-level", "[33;1m", "consolecolor.warn-level");
@@ -57,11 +59,11 @@ public class MohistConfig extends ConfigBase{
     public final BoolSetting fakePlayerLogin = new BoolSetting(this, "fake-players.do-login", false, "Raise login events for fake players");
     
     public final BoolSetting pluginCheckBug = new BoolSetting(this, "plugin.promptBug", false, "Prompt for possible vulnerabilities of some plugins");// by lliioollcn
-    public final BoolSetting CloseChatInConsole = new BoolSetting(this, "CloseChatInConsole", false, "Player's chat info will not be recorded in the console after opening");
+    public final BoolSetting CloseChatInConsole = new BoolSetting(this, "mohist.CloseChatInConsole", false, "Player's chat info will not be recorded in the console after opening");
 
     public final IntSetting minChunkLoadThreads = new IntSetting(this, "settings.min-chunk-load-threads",2,"Keep people from doing stupid things with max of 6");
     public final BoolSetting keepSpawnInMemory = new BoolSetting(this, "keep-spawn-loaded", true, "Keep spawn chunk loaded");
-    public final BoolSetting RealTimeTicking = new BoolSetting(this, "realtimeticking", false, "RealTimeTicking from sponge");
+    public final BoolSetting RealTimeTicking = new BoolSetting(this, "mohist.realtimeticking", false, "RealTimeTicking from sponge");
 
     public final IntSetting entityTickLimit = new IntSetting(this, "entity-tick-limit", 300, "Entity maximum tick limit, entities exceeding this value will not be updated"); // by CraftDream
     public final StringSetting libraries_black_list = new StringSetting(this, "libraries_black_list", "aaaaa;bbbbbb", "libraries_black_list");
@@ -125,7 +127,7 @@ public class MohistConfig extends ConfigBase{
             version = getInt("config-version", 2);
             set("config-version", 2);
             config.addDefault("forge.autounloadWorld_whitelist",new String[]{"0", "1", "-1"});
-            this.autounloadWorld_whitelist=config.getStringList("capture.blockNotCaptureOnMetaChange");
+            this.autounloadWorld_whitelist=config.getStringList("forge.autounloadWorld_whitelist");
 
             config.options().header(header.toString());
             config.options().copyDefaults(true);
