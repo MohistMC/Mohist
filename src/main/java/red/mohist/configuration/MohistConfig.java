@@ -55,7 +55,7 @@ public class MohistConfig extends ConfigBase{
     public final StringSetting modsblacklist = new StringSetting(this, "forge.modsblacklist.list", "aaaaa;bbbbbb", "mods black-list");
     public final StringSetting modsblacklistkickMessage = new StringSetting(this, "forge.modsblacklist.kickmessage", "Use of unauthorized mods", "mods black-list kick Message");
 
-    public List<String> autounloadWorld_whitelist=new ArrayList();
+    public List<Integer> autounloadWorld_whitelist=new ArrayList();
     public final BoolSetting fakePlayerLogin = new BoolSetting(this, "fake-players.do-login", false, "Raise login events for fake players");
     
     public final BoolSetting pluginCheckBug = new BoolSetting(this, "plugin.promptBug", false, "Prompt for possible vulnerabilities of some plugins");// by lliioollcn
@@ -127,7 +127,7 @@ public class MohistConfig extends ConfigBase{
             version = getInt("config-version", 2);
             set("config-version", 2);
             config.addDefault("forge.autounloadWorld_whitelist",new String[]{"0", "1", "-1"});
-            this.autounloadWorld_whitelist=config.getStringList("forge.autounloadWorld_whitelist");
+            this.autounloadWorld_whitelist=config.getIntegerList("forge.autounloadWorld_whitelist");
 
             config.options().header(header.toString());
             config.options().copyDefaults(true);

@@ -98,7 +98,7 @@
                  }
              }
          }
-@@ -266,17 +276,22 @@
+@@ -266,11 +276,9 @@
  
                      if (chunk != null && chunk.unloadQueued)
                      {
@@ -113,21 +113,7 @@
                          ++i;
                      }
                  }
-             }
- 
--            if (this.id2ChunkMap.isEmpty()) net.minecraftforge.common.DimensionManager.unloadWorld(this.world.provider.getDimension());
-+            if (this.id2ChunkMap.isEmpty()){
-+                int dim = this.world.provider.getDimension();
-+                for (String dim1 : MohistConfig.instance.autounloadWorld_whitelist) {
-+                    if (!dim1.equals(String.valueOf(dim))) {
-+                        net.minecraftforge.common.DimensionManager.unloadWorld(dim);
-+                    }
-+                }
-+            }
- 
-             this.chunkLoader.chunkTick();
-         }
-@@ -284,6 +299,39 @@
+@@ -284,6 +292,39 @@
          return false;
      }
  
