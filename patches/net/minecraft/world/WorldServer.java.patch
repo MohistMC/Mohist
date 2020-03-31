@@ -820,24 +820,27 @@
              return true;
          }
          else
-@@ -1164,11 +1356,12 @@
+@@ -1164,11 +1356,15 @@
  
      public Explosion newExplosion(@Nullable Entity entityIn, double x, double y, double z, float strength, boolean isFlaming, boolean isSmoking)
      {
 -        Explosion explosion = new Explosion(this, entityIn, x, y, z, strength, isFlaming, isSmoking);
--        if (net.minecraftforge.event.ForgeEventFactory.onExplosionStart(this, explosion)) return explosion;
++        Explosion explosion = super.newExplosion(entityIn, x, y, z, strength, isFlaming, isSmoking);
++        if(explosion == null) return null;
++        try{
++            if (explosion.wasCanceled)
++            {
++                return explosion;
++            }
++        }catch(Exception e){return null;}
+         if (net.minecraftforge.event.ForgeEventFactory.onExplosionStart(this, explosion)) return explosion;
 -        explosion.doExplosionA();
 -        explosion.doExplosionB(false);
-+        Explosion explosion = super.newExplosion(entityIn, x, y, z, strength, isFlaming, isSmoking);
- 
-+        if (explosion.wasCanceled) {
-+            return explosion;
-+        }
-+        if (net.minecraftforge.event.ForgeEventFactory.onExplosionStart(this, explosion)) return explosion;
+-
          if (!isSmoking)
          {
              explosion.clearAffectedBlockPositions();
-@@ -1211,7 +1404,8 @@
+@@ -1211,7 +1407,8 @@
              {
                  if (this.fireBlockEvent(blockeventdata))
                  {
@@ -847,7 +850,7 @@
                  }
              }
  
-@@ -1298,11 +1492,19 @@
+@@ -1298,11 +1495,19 @@
  
      public void spawnParticle(EnumParticleTypes particleType, boolean longDistance, double xCoord, double yCoord, double zCoord, int numberOfParticles, double xOffset, double yOffset, double zOffset, double particleSpeed, int... particleArguments)
      {
@@ -867,7 +870,7 @@
              this.sendPacketWithinDistance(entityplayermp, longDistance, xCoord, yCoord, zCoord, spacketparticles);
          }
      }
-@@ -1362,9 +1564,9 @@
+@@ -1362,9 +1567,9 @@
      }
  
      static class ServerBlockEventList extends ArrayList<BlockEventData>

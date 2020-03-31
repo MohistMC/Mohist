@@ -40,14 +40,19 @@
      public NetHandlerLoginServer(MinecraftServer serverIn, NetworkManager networkManagerIn)
      {
          this.server = serverIn;
-@@ -58,17 +66,17 @@
+@@ -58,17 +66,21 @@
  
      public void update()
      {
 -        if (this.currentLoginState == NetHandlerLoginServer.LoginState.READY_TO_ACCEPT)
 +        if (this.currentLoginState == LoginState.READY_TO_ACCEPT)
          {
-             this.tryAcceptPlayer();
+-            this.tryAcceptPlayer();
++            // Paper start - prevent logins to be processed even though disconnect was called
++            if (networkManager.isChannelOpen()) {
++                this.tryAcceptPlayer();
++            }
++            // Paper end
          }
 -        else if (this.currentLoginState == NetHandlerLoginServer.LoginState.DELAY_ACCEPT)
 +        else if (this.currentLoginState == LoginState.DELAY_ACCEPT)
@@ -61,7 +66,7 @@
                  net.minecraftforge.fml.common.network.internal.FMLNetworkHandler.fmlServerHandshake(this.server.getPlayerList(), this.networkManager, this.player);
                  this.player = null;
              }
-@@ -80,6 +88,19 @@
+@@ -80,6 +92,19 @@
          }
      }
  
@@ -81,7 +86,7 @@
      public void disconnect(ITextComponent reason)
      {
          try
-@@ -94,22 +115,43 @@
+@@ -94,22 +119,43 @@
          }
      }
  
@@ -132,7 +137,7 @@
  
              if (this.server.getNetworkCompressionThreshold() >= 0 && !this.networkManager.isLocalChannel())
              {
-@@ -127,12 +169,12 @@
+@@ -127,12 +173,12 @@
  
              if (entityplayermp != null)
              {
@@ -148,7 +153,7 @@
              }
          }
      }
-@@ -149,23 +191,35 @@
+@@ -149,23 +195,35 @@
  
      public void processLoginStart(CPacketLoginStart packetIn)
      {
@@ -188,7 +193,7 @@
          PrivateKey privatekey = this.server.getKeyPair().getPrivate();
  
          if (!Arrays.equals(this.verifyToken, packetIn.getVerifyToken(privatekey)))
-@@ -175,7 +229,7 @@
+@@ -175,7 +233,7 @@
          else
          {
              this.secretKey = packetIn.getSecretKey(privatekey);
@@ -197,7 +202,7 @@
              this.networkManager.enableEncryption(this.secretKey);
              (new Thread(net.minecraftforge.fml.common.thread.SidedThreadGroups.SERVER, "User Authenticator #" + AUTHENTICATOR_THREAD_ID.incrementAndGet())
              {
-@@ -190,14 +244,18 @@
+@@ -190,14 +248,18 @@
  
                          if (NetHandlerLoginServer.this.loginGameProfile != null)
                          {
@@ -219,7 +224,7 @@
                          }
                          else
                          {
-@@ -211,13 +269,16 @@
+@@ -211,13 +273,16 @@
                          {
                              NetHandlerLoginServer.LOGGER.warn("Authentication servers are down but will let them in anyway!");
                              NetHandlerLoginServer.this.loginGameProfile = NetHandlerLoginServer.this.getOfflineProfile(gameprofile);
@@ -238,7 +243,7 @@
                      }
                  }
                  @Nullable
-@@ -230,6 +291,55 @@
+@@ -230,6 +295,55 @@
          }
      }
  

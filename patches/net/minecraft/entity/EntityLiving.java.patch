@@ -47,15 +47,12 @@
      private final Map<PathNodeType, Float> mapPathPriority = Maps.newEnumMap(PathNodeType.class);
      private ResourceLocation deathLootTable;
      private long deathLootTableSeed;
-@@ -169,10 +179,38 @@
- 
-     public void setAttackTarget(@Nullable EntityLivingBase entitylivingbaseIn)
+@@ -171,8 +181,37 @@
      {
--        this.attackTarget = entitylivingbaseIn;
--        net.minecraftforge.common.ForgeHooks.onLivingSetAttackTarget(this, entitylivingbaseIn);
+         this.attackTarget = entitylivingbaseIn;
+         net.minecraftforge.common.ForgeHooks.onLivingSetAttackTarget(this, entitylivingbaseIn);
 +        // CraftBukkit start - fire event
 +        setGoalTarget(entitylivingbaseIn, EntityTargetEvent.TargetReason.UNKNOWN, true);
-+		net.minecraftforge.common.ForgeHooks.onLivingSetAttackTarget(this, entitylivingbaseIn);
      }
  
 +    public boolean setGoalTarget(@Nullable EntityLivingBase entityliving, EntityTargetEvent.TargetReason reason, boolean fireEvent) {
@@ -88,7 +85,7 @@
      public boolean canAttackClass(Class <? extends EntityLivingBase > cls)
      {
          return cls != EntityGhast.class;
-@@ -447,12 +485,21 @@
+@@ -447,12 +486,21 @@
      {
          super.readEntityFromNBT(compound);
  
@@ -112,7 +109,7 @@
  
          if (compound.hasKey("ArmorItems", 9))
          {
-@@ -653,8 +700,14 @@
+@@ -653,8 +701,14 @@
              }
          }
  
@@ -129,7 +126,7 @@
              double d0;
  
              switch (entityequipmentslot.getSlotType())
-@@ -671,7 +724,9 @@
+@@ -671,7 +725,9 @@
  
              if (!itemstack1.isEmpty() && (double)(this.rand.nextFloat() - 0.1F) < d0)
              {
@@ -139,7 +136,7 @@
              }
  
              this.setItemStackToSlot(entityequipmentslot, itemstack);
-@@ -696,7 +751,7 @@
+@@ -696,7 +752,7 @@
          return true;
      }
  
@@ -148,7 +145,7 @@
      {
          return true;
      }
-@@ -722,9 +777,9 @@
+@@ -722,9 +778,9 @@
          else
          {
              Entity entity = this.world.getClosestPlayerToEntity(this, -1.0D);
@@ -160,7 +157,7 @@
                  double d0 = entity.posX - this.posX;
                  double d1 = entity.posY - this.posY;
                  double d2 = entity.posZ - this.posZ;
-@@ -749,10 +804,21 @@
+@@ -749,10 +805,21 @@
  
      protected final void updateEntityActionState()
      {
@@ -183,7 +180,7 @@
          this.world.profiler.startSection("sensing");
          this.senses.clearSensingCache();
          this.world.profiler.endSection();
-@@ -1192,12 +1258,12 @@
+@@ -1192,12 +1259,12 @@
  
      public boolean canPickUpLoot()
      {
@@ -198,7 +195,7 @@
      }
  
      public boolean isNoDespawnRequired()
-@@ -1209,6 +1275,10 @@
+@@ -1209,6 +1276,10 @@
      {
          if (this.getLeashed() && this.getLeashHolder() == player)
          {
@@ -209,7 +206,7 @@
              this.clearLeashed(true, !player.capabilities.isCreativeMode);
              return true;
          }
-@@ -1218,6 +1288,10 @@
+@@ -1218,6 +1289,10 @@
  
              if (itemstack.getItem() == Items.LEAD && this.canBeLeashedTo(player))
              {
@@ -220,7 +217,7 @@
                  this.setLeashHolder(player, true);
                  itemstack.shrink(1);
                  return true;
-@@ -1245,11 +1319,13 @@
+@@ -1245,11 +1320,13 @@
          {
              if (!this.isEntityAlive())
              {
@@ -234,7 +231,7 @@
                  this.clearLeashed(true, true);
              }
          }
-@@ -1264,7 +1340,9 @@
+@@ -1264,7 +1341,9 @@
  
              if (!this.world.isRemote && dropLead)
              {
@@ -244,7 +241,7 @@
              }
  
              if (!this.world.isRemote && sendPacket && this.world instanceof WorldServer)
-@@ -1348,6 +1426,7 @@
+@@ -1348,6 +1427,7 @@
              }
              else
              {
@@ -252,7 +249,7 @@
                  this.clearLeashed(false, true);
              }
          }
-@@ -1448,7 +1527,6 @@
+@@ -1448,7 +1528,6 @@
          ON_GROUND,
          IN_AIR,
          IN_WATER;
