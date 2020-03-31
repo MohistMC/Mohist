@@ -9,6 +9,7 @@ public class MohistCorePlugin implements IFMLLoadingPlugin {
     @Override
     public String[] getASMTransformerClass() {
         return new String[]{
+                SendPacketTransformer.class.getCanonicalName()
         };
     }
 

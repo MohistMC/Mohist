@@ -13,7 +13,7 @@ public class AutoDeleteMods {
     public static final List<String> classlist;
 
     static {
-        classlist = Arrays.asList("com.tmtravlr.jaff.entities.EntityFish" /*JustAFewFish*/,
+        classlist = Arrays.asList(
                 "org.spongepowered.mod.SpongeMod" /*SpongeForge*/,
                 "org.dimdev.vanillafix.VanillaFix" /*VanillaFix*/,
                 "lumien.custommainmenu.CustomMainMenu" /*CustomMainMenu*/,

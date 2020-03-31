@@ -1,5 +1,6 @@
 package red.mohist.configuration;
 
+import java.io.File;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
@@ -43,10 +44,23 @@ public class MohistConfig extends ConfigBase{
     public final BoolSetting needToUpdate = new BoolSetting(this, "mohist.check_update_auto_download", false, "Check new version will download automatically");
     public final BoolSetting check_libraries = new BoolSetting(this, "mohist.check_libraries", true, "Check libraries");
 
-    public final StringSetting ANSI_ERROR_LEVEL = new StringSetting(this, "consolecolor.error-level", "[31;1m", "consolecolor.error-level");
-    public final StringSetting ANSI_WARN_LEVEL = new StringSetting(this, "consolecolor.warn-level", "[33;1m", "consolecolor.warn-level");
-    public final StringSetting ANSI_ERROR_MSG = new StringSetting(this, "consolecolor.error-msg", "[31;1m", "consolecolor.error-msg");
-    public final StringSetting ANSI_WARN_MSG = new StringSetting(this, "consolecolor.warn-msg", "[33;1m", "consolecolor.warn-msg");
+    public final StringSetting ANSI_ERROR_LEVEL = new StringSetting(this, "consolecolor.error-level", "c", "consolecolor.error-level");
+    public final StringSetting ANSI_WARN_LEVEL = new StringSetting(this, "consolecolor.warn-level", "e", "consolecolor.warn-level");
+    public final StringSetting ANSI_INFO_LEVEL = new StringSetting(this, "consolecolor.info-level", "2", "consolecolor.info-level");
+    public final StringSetting ANSI_FATAL_LEVEL = new StringSetting(this, "consolecolor.fatal-level", "c", "consolecolor.fatal-level");
+    public final StringSetting ANSI_TRACE_LEVEL = new StringSetting(this, "consolecolor.trace-level", "c", "consolecolor.trace-level");
+
+    public final StringSetting ANSI_ERROR_MSG = new StringSetting(this, "consolecolor.error-msg", "c", "consolecolor.error-msg");
+    public final StringSetting ANSI_WARN_MSG = new StringSetting(this, "consolecolor.warn-msg", "e", "consolecolor.warn-msg");
+    public final StringSetting ANSI_INFO_MSG = new StringSetting(this, "consolecolor.info-msg", "f", "consolecolor.info-msg");
+    public final StringSetting ANSI_FATAL_MSG = new StringSetting(this, "consolecolor.fatal-msg", "c", "consolecolor.fatal-msg");
+    public final StringSetting ANSI_TRACE_MSG = new StringSetting(this, "consolecolor.trace-msg", "c", "consolecolor.trace-msg");
+
+    public final StringSetting ANSI_ERROR_TIME = new StringSetting(this, "consolecolor.error-time", "b", "consolecolor.warn-time");
+    public final StringSetting ANSI_WARN_TIME = new StringSetting(this, "consolecolor.warn-time", "b", "consolecolor.warn-time");
+    public final StringSetting ANSI_INFO_TIME = new StringSetting(this, "consolecolor.info-time", "b", "consolecolor.info-time");
+    public final StringSetting ANSI_FATAL_TIME = new StringSetting(this, "consolecolor.fatal-time", "b", "consolecolor.fatal-time");
+    public final StringSetting ANSI_TRACE_TIME = new StringSetting(this, "consolecolor.trace-time", "b", "consolecolor.trace-time");
 
     public final BoolSetting disableForgeChunkForceSystem = new BoolSetting(this, "forge.disablechunkforcesystem", false, "Disable ForgeChunkForceSystem"); // by Goodvise
     public final BoolSetting stopserversaveworlds = new BoolSetting(this, "world.stopserversaveworlds", false, "stopserversaveworlds");
@@ -142,5 +156,13 @@ public class MohistConfig extends ConfigBase{
 
     public boolean RealTimeTicking(){
         return RealTimeTicking.getValue();
+    }
+
+
+    public static String getHighlight(String key, String def) {
+        File f = new File("mohist-config", "mohist.yml");
+        YamlConfiguration yml = YamlConfiguration.loadConfiguration(f);
+        String color = yml.getString(key, def);
+        return color;
     }
 }

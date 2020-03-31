@@ -49,6 +49,9 @@ public class ANSIColorUtils {
             case "f":
                 text = "\u001B[37;1m";
                 break;
+            case "r":
+                text = "\u001B[39;0m";
+                break;
             default:
                 text = d;
         }

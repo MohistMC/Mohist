@@ -1,26 +1,3 @@
-/*
- * TerminalConsoleAppender
- * Copyright (c) 2017 Minecrell <https://github.com/Minecrell>
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
- */
-
 package red.mohist.console.log4j;
 
 import java.io.File;
@@ -41,10 +18,14 @@ import red.mohist.configuration.MohistConfig;
 import red.mohist.configuration.MohistConfigUtil;
 import red.mohist.util.ANSIColorUtils;
 
-@Plugin(name = "highlightMsg", category = PatternConverter.CATEGORY)
-@ConverterKeys({ "highlightMsg" })
+/**
+ * @author Mgazul
+ * @date 2020/3/31 13:08
+ */
+@Plugin(name = "hTime", category = PatternConverter.CATEGORY)
+@ConverterKeys({ "hTime" })
 @PerformanceSensitive("allocation")
-public class HighlightMsgConverter extends LogEventPatternConverter
+public class HighlightTimeConverter extends LogEventPatternConverter
 {
     private static final String ANSI_RESET = "\u001B[39;0m";
     private static final String ANSI_ERROR = getError();
@@ -60,9 +41,9 @@ public class HighlightMsgConverter extends LogEventPatternConverter
      *
      * @param formatters The pattern formatters to generate the text to highlight
      */
-    protected HighlightMsgConverter(List<PatternFormatter> formatters)
+    protected HighlightTimeConverter(List<PatternFormatter> formatters)
     {
-        super("highlightMsg", null);
+        super("hTime", null);
         this.formatters = formatters;
     }
 
@@ -79,8 +60,7 @@ public class HighlightMsgConverter extends LogEventPatternConverter
         {
             format(ANSI_WARN, event, toAppendTo);
             return;
-        }
-        else if (level.isMoreSpecificThan(Level.INFO))
+        }else if (level.isMoreSpecificThan(Level.INFO))
         {
             format(ANSI_INFO, event, toAppendTo);
             return;
@@ -141,7 +121,7 @@ public class HighlightMsgConverter extends LogEventPatternConverter
     }
 
     /**
-     * Gets a new instance of the {@link HighlightMsgConverter} with the
+     * Gets a new instance of the {@link HighlightTimeConverter} with the
      * specified options.
      *
      * @param config The current configuration
@@ -149,52 +129,46 @@ public class HighlightMsgConverter extends LogEventPatternConverter
      * @return The new instance
      */
     @Nullable
-    public static HighlightMsgConverter newInstance(Configuration config, String[] options)
+    public static HighlightTimeConverter newInstance(Configuration config, String[] options)
     {
         if (options.length != 1)
         {
-            LOGGER.error("Incorrect number of options on highlightMsg. Expected 1 received " + options.length);
+            LOGGER.error("Incorrect number of options on highlightTime. Expected 1 received " + options.length);
             return null;
         }
         if (options[0] == null)
         {
-            LOGGER.error("No pattern supplied on highlightMsg");
+            LOGGER.error("No pattern supplied on highlightTime");
             return null;
         }
 
         PatternParser parser = PatternLayout.createPatternParser(config);
         List<PatternFormatter> formatters = parser.parse(options[0]);
-        return new HighlightMsgConverter(formatters);
-    }
-
-    public static String geterror() {
-        File f = new File("mohist-config", "mohist.yml");
-        String cc = MohistConfigUtil.getString(f, "error-msg:", "c");
-        return ANSIColorUtils.getColor(cc, "\u001B[31;1m");
+        return new HighlightTimeConverter(formatters);
     }
 
     public static String getError() {
-        String cc = MohistConfig.getHighlight("consolecolor.error-msg", "c");
-        return ANSIColorUtils.getColor(cc, "\u001B[31;1m");
+        String cc = MohistConfig.getHighlight("consolecolor.error-time", "b");
+        return ANSIColorUtils.getColor(cc, "\u001B[36;1m");
     }
 
     public static String getWarn() {
-        String cc = MohistConfig.getHighlight("consolecolor.warn-msg:", "e");
-        return ANSIColorUtils.getColor(cc, "\u001B[33;1m");
+        String cc = MohistConfig.getHighlight("consolecolor.warn-time:", "b");
+        return ANSIColorUtils.getColor(cc, "\u001B[36;1m");
     }
 
     public static String getInfo() {
-        String cc = MohistConfig.getHighlight("consolecolor.info-msg:", "r");
-        return ANSIColorUtils.getColor(cc, ANSI_RESET);
+        String cc = MohistConfig.getHighlight("consolecolor.info-time:", "b");
+        return ANSIColorUtils.getColor(cc, "\u001B[36;1m");
     }
 
     public static String getFatal() {
-        String cc = MohistConfig.getHighlight("consolecolor.fatal-msg:", "e");
-        return ANSIColorUtils.getColor(cc, "\u001B[31;1m");
+        String cc = MohistConfig.getHighlight("consolecolor.fatal-time:", "b");
+        return ANSIColorUtils.getColor(cc, "\u001B[36;1m");
     }
 
     public static String getTrace() {
-        String cc = MohistConfig.getHighlight("consolecolor.trace-msg:", "e");
-        return ANSIColorUtils.getColor(cc, "\u001B[31;1m");
+        String cc = MohistConfig.getHighlight("consolecolor.trace-time:", "b");
+        return ANSIColorUtils.getColor(cc, "\u001B[36;1m");
     }
 }

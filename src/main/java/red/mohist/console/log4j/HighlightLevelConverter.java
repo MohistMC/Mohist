@@ -37,6 +37,7 @@ import org.apache.logging.log4j.core.pattern.PatternConverter;
 import org.apache.logging.log4j.core.pattern.PatternFormatter;
 import org.apache.logging.log4j.core.pattern.PatternParser;
 import org.apache.logging.log4j.util.PerformanceSensitive;
+import red.mohist.configuration.MohistConfig;
 import red.mohist.configuration.MohistConfigUtil;
 import red.mohist.util.ANSIColorUtils;
 
@@ -46,8 +47,11 @@ import red.mohist.util.ANSIColorUtils;
 public class HighlightLevelConverter extends LogEventPatternConverter
 {
     private static final String ANSI_RESET = "\u001B[39;0m";
-    private static final String ANSI_ERROR = geterror();
-    private static final String ANSI_WARN = getwarn();
+    private static final String ANSI_ERROR = getError();
+    private static final String ANSI_WARN = getWarn();
+    private static final String ANSI_INFO = getInfo();
+    private static final String ANSI_FATAL = getFatal();
+    private static final String ANSI_TRACE = getTrace();
 
     private final List<PatternFormatter> formatters;
 
@@ -74,6 +78,21 @@ public class HighlightLevelConverter extends LogEventPatternConverter
         else if (level.isMoreSpecificThan(Level.WARN))
         {
             format(ANSI_WARN, event, toAppendTo);
+            return;
+        }
+        else if (level.isMoreSpecificThan(Level.INFO))
+        {
+            format(ANSI_INFO, event, toAppendTo);
+            return;
+        }
+        else if (level.isMoreSpecificThan(Level.FATAL))
+        {
+            format(ANSI_FATAL, event, toAppendTo);
+            return;
+        }
+        else if (level.isMoreSpecificThan(Level.TRACE))
+        {
+            format(ANSI_TRACE, event, toAppendTo);
             return;
         }
 
@@ -134,12 +153,12 @@ public class HighlightLevelConverter extends LogEventPatternConverter
     {
         if (options.length != 1)
         {
-            LOGGER.error("Incorrect number of options on highlightError. Expected 1 received " + options.length);
+            LOGGER.error("Incorrect number of options on highlightLevel. Expected 1 received " + options.length);
             return null;
         }
         if (options[0] == null)
         {
-            LOGGER.error("No pattern supplied on highlightError");
+            LOGGER.error("No pattern supplied on highlightLevel");
             return null;
         }
 
@@ -148,15 +167,28 @@ public class HighlightLevelConverter extends LogEventPatternConverter
         return new HighlightLevelConverter(formatters);
     }
 
-    public static String geterror() {
-        File f = new File("mohist-config", "mohist.yml");
-        String cc = MohistConfigUtil.getString(f,"error-level:", "c");
+    public static String getError() {
+        String cc = MohistConfig.getHighlight("consolecolor.error-level", "c");
         return ANSIColorUtils.getColor(cc, "\u001B[31;1m");
     }
 
-    public static String getwarn() {
-        File f = new File("mohist-config", "mohist.yml");
-        String cc = MohistConfigUtil.getString(f, "warn-level:", "e");
+    public static String getWarn() {
+        String cc = MohistConfig.getHighlight("consolecolor.warn-level:", "e");
         return ANSIColorUtils.getColor(cc, "\u001B[33;1m");
+    }
+
+    public static String getInfo() {
+        String cc = MohistConfig.getHighlight("consolecolor.info-level:", "2");
+        return ANSIColorUtils.getColor(cc, "\u001B[32;22m");
+    }
+
+    public static String getFatal() {
+        String cc = MohistConfig.getHighlight("consolecolor.fatal-level:", "e");
+        return ANSIColorUtils.getColor(cc, "\u001B[31;1m");
+    }
+
+    public static String getTrace() {
+        String cc = MohistConfig.getHighlight("consolecolor.trace-level:", "e");
+        return ANSIColorUtils.getColor(cc, "\u001B[31;1m");
     }
 }
