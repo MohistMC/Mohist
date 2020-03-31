@@ -1,0 +1,34 @@
+--- ../src-base/minecraft/net/minecraftforge/event/entity/living/LivingSpawnEvent.java
++++ ../src-work/minecraft/net/minecraftforge/event/entity/living/LivingSpawnEvent.java
+@@ -93,6 +93,7 @@
+             super(entity, world, x, y, z);
+             this.isSpawner = spawner != null;
+             this.spawner = spawner;
++            entity.spawnReason = "natural";
+         }
+ 
+         /**
+@@ -113,6 +114,7 @@
+             super(entity, world, x, y, z);
+             this.isSpawner = isSpawner;
+             spawner = null;
++            entity.spawnReason = "natural";
+         }
+ 
+         /**
+@@ -164,6 +166,7 @@
+         {
+             super(entity, world, x, y, z);
+             spawner = null;
++            entity.spawnReason = "spawner";
+         }
+ 
+         /**
+@@ -173,6 +176,7 @@
+         {
+             super(entity, world, x, y, z);
+             this.spawner = spawner;
++            entity.spawnReason = "spawner";
+         }
+ 
+         @Nullable
