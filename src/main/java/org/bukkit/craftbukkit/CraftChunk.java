@@ -4,24 +4,21 @@ import com.google.common.base.Preconditions;
 import java.lang.ref.WeakReference;
 import java.util.Arrays;
 import java.util.Collection;
-import net.minecraft.world.biome.Biome;
-import net.minecraft.world.biome.BiomeContainer;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.block.Blocks;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.NBTUtil;
+import net.minecraft.util.SharedSeedRandom;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
-import net.minecraft.world.chunk.ChunkSection;
+import net.minecraft.util.math.SectionPos;
 import net.minecraft.util.palette.PalettedContainer;
 import net.minecraft.world.LightType;
-import net.minecraft.nbt.NBTUtil;
-import net.minecraft.world.gen.Heightmap;
-import net.minecraft.world.lighting.ILightListener;
-import net.minecraft.world.lighting.LightEngine;
-import net.minecraft.world.lighting.WorldLightManager;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.world.chunk.NibbleArray;
-import net.minecraft.util.math.SectionPos;
-import net.minecraft.util.SharedSeedRandom;
+import net.minecraft.world.biome.BiomeContainer;
 import net.minecraft.world.biome.provider.BiomeProvider;
+import net.minecraft.world.chunk.ChunkSection;
+import net.minecraft.world.chunk.NibbleArray;
+import net.minecraft.world.gen.Heightmap;
+import net.minecraft.world.lighting.WorldLightManager;
 import net.minecraft.world.server.ServerWorld;
 import org.bukkit.Chunk;
 import org.bukkit.ChunkSnapshot;
@@ -288,7 +285,7 @@ public class CraftChunk implements Chunk {
         BiomeContainer biome = null;
 
         if (includeBiome|| includeBiomeTempRain) {
-            biome = chunk.func_225549_i_().func_227057_b_();
+            biome = chunk.getBiomes().clone();
         }
 
         World world = getWorld();

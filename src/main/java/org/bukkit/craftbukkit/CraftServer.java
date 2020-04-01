@@ -18,7 +18,6 @@ import com.mojang.brigadier.tree.LiteralCommandNode;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufOutputStream;
 import io.netty.buffer.Unpooled;
-import it.unimi.dsi.fastutil.objects.Object2ObjectLinkedOpenHashMap;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileInputStream;
@@ -47,6 +46,7 @@ import jline.console.ConsoleReader;
 import net.minecraft.advancements.Advancement;
 import net.minecraft.block.Block;
 import net.minecraft.command.CommandSource;
+import net.minecraft.command.Commands;
 import net.minecraft.command.arguments.EntityArgument;
 import net.minecraft.enchantment.Enchantments;
 import net.minecraft.entity.player.ServerPlayerEntity;
@@ -309,7 +309,7 @@ public final class CraftServer implements Server {
         ambientSpawn = configuration.getInt("spawn-limits.ambient");
         console.autosavePeriod = configuration.getInt("ticks-per.autosave");
         warningState = WarningState.value(configuration.getString("settings.deprecated-verbose"));
-        TicketType.PLUGIN.loadPeriod = configuration.getInt("chunk-gc.period-in-ticks");
+        TicketType.PLUGIN.lifespan = configuration.getInt("chunk-gc.period-in-ticks");
         minimumAPI = configuration.getString("settings.minimum-api");
         loadIcon();
     }
@@ -394,17 +394,17 @@ public final class CraftServer implements Server {
     }
 
     private void setVanillaCommands() {
-        CommandDispatcher dispatcher = console.vanillaCommandDispatcher;
+        Commands dispatcher = console.vanillaCommandDispatcher;
 
         // Build a list of all Vanilla commands and create wrappers
-        for (CommandNode<CommandSource> cmd : dispatcher.a().getRoot().getChildren()) {
+        for (CommandNode<CommandSource> cmd : dispatcher.getDispatcher().getRoot().getChildren()) {
             commandMap.register("minecraft", new VanillaCommandWrapper(dispatcher, cmd));
         }
     }
 
     private void syncCommands() {
         // Clear existing commands
-        CommandDispatcher dispatcher = console.commandDispatcher = new CommandDispatcher();
+        Commands dispatcher = console.commandManager = new Commands();
 
         // Register all commands, vanilla ones will be using the old dispatcher references
         for (Map.Entry<String, Command> entry : commandMap.getKnownCommands().entrySet()) {
@@ -422,15 +422,15 @@ public final class CraftServer implements Server {
                     node = clone;
                 }
 
-                dispatcher.a().getRoot().addChild(node);
+                dispatcher.getDispatcher().getRoot().addChild(node);
             } else {
-                new BukkitCommandWrapper(this, entry.getValue()).register(dispatcher.a(), label);
+                new BukkitCommandWrapper(this, entry.getValue()).register(dispatcher.getDispatcher(), label);
             }
         }
 
         // Refresh commands
         for (ServerPlayerEntity player : getHandle().players) {
-            dispatcher.a(player);
+            dispatcher.send(player);
         }
     }
 
@@ -504,13 +504,13 @@ public final class CraftServer implements Server {
     public Player getPlayerExact(String name) {
         Validate.notNull(name, "Name cannot be null");
 
-        ServerPlayerEntity player = playerList.getPlayer(name);
+        ServerPlayerEntity player = playerList.getPlayerByUsername(name);
         return (player != null) ? player.getBukkitEntity() : null;
     }
 
     @Override
     public Player getPlayer(UUID id) {
-        ServerPlayerEntity player = playerList.a(id);
+        ServerPlayerEntity player = playerList.getPlayerByUUID(id);
 
         if (player != null) {
             return player.getBukkitEntity();
@@ -730,14 +730,14 @@ public final class CraftServer implements Server {
         waterAnimalSpawn = configuration.getInt("spawn-limits.water-animals");
         ambientSpawn = configuration.getInt("spawn-limits.ambient");
         warningState = WarningState.value(configuration.getString("settings.deprecated-verbose"));
-        TicketType.PLUGIN.loadPeriod = configuration.getInt("chunk-gc.period-in-ticks");
+        TicketType.PLUGIN.lifespan = configuration.getInt("chunk-gc.period-in-ticks");
         minimumAPI = configuration.getString("settings.minimum-api");
         printSaveWarning = false;
         console.autosavePeriod = configuration.getInt("ticks-per.autosave");
         loadIcon();
 
         try {
-            playerList.getBannedIPs().load();
+            playerList.getBannedIPs().readSavedFile();
         } catch (IOException ex) {
             logger.log(Level.WARNING, "Failed to load banned-ips.json, " + ex.getMessage());
         }
@@ -968,7 +968,7 @@ public final class CraftServer implements Server {
 
         pluginManager.callEvent(new WorldInitEvent(internal.getWorldCB()));
 
-        getServer().loadSpawn(internal.getChunkProvider().chunkManager.field_219266_t, internal);
+        getServer().loadInitialChunks(internal.getChunkProvider().chunkManager.field_219266_t, internal);
 
         pluginManager.callEvent(new WorldLoadEvent(internal.getWorldCB()));
         return internal.getWorldCB();
@@ -1257,7 +1257,7 @@ public final class CraftServer implements Server {
     @Override
     @Deprecated
     public CraftMapView getMap(int id) {
-        MapData worldmap = console.getWorld(DimensionType.OVERWORLD).a("map_" + id); // TODO: a -> getMapData
+        MapData worldmap = console.getWorld(DimensionType.OVERWORLD).getMapData("map_" + id); // TODO: a -> getMapData
         if (worldmap == null) {
             return null;
         }
@@ -1499,7 +1499,7 @@ public final class CraftServer implements Server {
     @Override
     public OfflinePlayer[] getOfflinePlayers() {
         SaveHandler storage = (SaveHandler) console.getWorld(DimensionType.OVERWORLD).getSaveHandler();
-        String[] files = storage.getPlayerDir().list(new DatFileFilter());
+        String[] files = storage.getPlayerFolder().list(new DatFileFilter());
         Set<OfflinePlayer> players = new HashSet<OfflinePlayer>();
 
         for (String file : files) {
@@ -1642,7 +1642,7 @@ public final class CraftServer implements Server {
             if (pos == null) {
                 completions = getCommandMap().tabComplete(player, message);
             } else {
-                completions = getCommandMap().tabComplete(player, message, new Location(world.getWorld(), pos.x, pos.y, pos.z));
+                completions = getCommandMap().tabComplete(player, message, new Location(world.getWorldCB(), pos.x, pos.y, pos.z));
             }
         } catch (CommandException ex) {
             player.sendMessage(ChatColor.RED + "An internal error occurred while attempting to tab-complete this command");
