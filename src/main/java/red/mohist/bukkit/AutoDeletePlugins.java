@@ -1,4 +1,4 @@
-package red.mohist.plugin;
+package red.mohist.bukkit;
 
 import java.util.Arrays;
 import java.util.List;

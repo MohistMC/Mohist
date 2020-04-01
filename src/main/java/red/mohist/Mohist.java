@@ -8,7 +8,7 @@ import red.mohist.down.DownloadLibraries;
 import red.mohist.down.DownloadNewJar;
 import red.mohist.down.Update;
 import red.mohist.forge.AutoDeleteMods;
-import red.mohist.plugin.AutoDeletePlugins;
+import red.mohist.bukkit.AutoDeletePlugins;
 import red.mohist.util.ServerEula;
 import red.mohist.util.i18n.Message;
 
