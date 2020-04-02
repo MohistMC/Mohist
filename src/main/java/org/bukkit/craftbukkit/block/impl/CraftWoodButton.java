@@ -6,7 +6,7 @@ package org.bukkit.craftbukkit.block.impl;
 import net.minecraft.state.BooleanProperty;
 import net.minecraft.state.EnumProperty;
 
-public final class CraftWoodButton extends org.bukkit.craftbukkit.block.data.CraftBlockData implements org.bukkit.block.data.type.Switch, org.bukkit.block.data.Directional, org.bukkit.block.data.Powerable {
+public final class CraftWoodButton extends org.bukkit.craftbukkit.block.data.CraftBlockData implements org.bukkit.block.data.type.Switch, org.bukkit.block.data.Directional, org.bukkit.block.data.FaceAttachable, org.bukkit.block.data.Powerable {
 
     public CraftWoodButton() {
         super();
@@ -47,6 +47,20 @@ public final class CraftWoodButton extends org.bukkit.craftbukkit.block.data.Cra
     @Override
     public java.util.Set<org.bukkit.block.BlockFace> getFaces() {
         return getValues(FACING, org.bukkit.block.BlockFace.class);
+    }
+
+    // org.bukkit.craftbukkit.block.data.CraftFaceAttachable
+
+    private static final net.minecraft.state.EnumProperty<?> ATTACH_FACE = getEnum(net.minecraft.block.WoodButtonBlock.class, "face");
+
+    @Override
+    public AttachedFace getAttachedFace() {
+        return get(ATTACH_FACE, AttachedFace.class);
+    }
+
+    @Override
+    public void setAttachedFace(AttachedFace face) {
+        set(ATTACH_FACE, face);
     }
 
     // org.bukkit.craftbukkit.block.data.CraftPowerable

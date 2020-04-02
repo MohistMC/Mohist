@@ -1,5 +1,6 @@
 package org.bukkit.craftbukkit.block;
 
+import net.minecraft.block.LecternBlock;
 import net.minecraft.tileentity.LecternTileEntity;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -39,5 +40,16 @@ public class CraftLectern extends CraftBlockEntityState<LecternTileEntity> imple
         }
 
         return new CraftInventoryLectern(this.getTileEntity().field_214048_a);
+    }
+
+    @Override
+    public boolean update(boolean force, boolean applyPhysics) {
+        boolean result = super.update(force, applyPhysics);
+
+        if (result && this.isPlaced() && this.getType() == Material.LECTERN) {
+            LecternBlock.pulse(this.world.getHandle(), this.getPosition(), this.getHandle());
+        }
+
+        return result;
     }
 }

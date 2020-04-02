@@ -165,6 +165,7 @@ project(':forge') {
             name 'maven_central'
             url 'https://repo.maven.apache.org/maven2/'
         }
+        maven { url "https://hub.spigotmc.org/nexus/content/groups/public" }
     }
 
     ext {

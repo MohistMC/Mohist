@@ -11,6 +11,7 @@ import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.craftbukkit.CraftServer;
+import org.bukkit.craftbukkit.util.CraftNamespacedKey;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Villager;
 import org.bukkit.entity.ZombieVillager;
@@ -46,6 +47,17 @@ public class CraftVillagerZombie extends CraftZombie implements ZombieVillager {
     public void setVillagerProfession(Villager.Profession profession) {
         Validate.notNull(profession);
         getHandle().func_213792_a(getHandle().getVillagerData().withProfession(Registry.VILLAGER_PROFESSION.getOrDefault(new ResourceLocation(profession.name().toLowerCase(Locale.ROOT)))));
+    }
+
+    @Override
+    public Villager.Type getVillagerType() {
+        return Villager.Type.valueOf(Registry.VILLAGER_TYPE.getKey(getHandle().getVillagerData().getType()).getPath().toUpperCase(Locale.ROOT));
+    }
+
+    @Override
+    public void setVillagerType(Villager.Type type) {
+        Validate.notNull(type);
+        getHandle().func_213792_a(getHandle().getVillagerData().withType(Registry.VILLAGER_TYPE.getOrDefault(CraftNamespacedKey.toMinecraft(type.getKey()))));
     }
 
     @Override
