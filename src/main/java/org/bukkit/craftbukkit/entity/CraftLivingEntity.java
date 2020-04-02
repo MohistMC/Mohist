@@ -424,7 +424,7 @@ public class CraftLivingEntity extends CraftEntity implements LivingEntity {
             Location location = getEyeLocation();
             Vector direction = location.getDirection();
 
-            launch = EntityType.LLAMA_SPIT.create(world);
+            launch = net.minecraft.entity.EntityType.LLAMA_SPIT.create(world);
 
             ((LlamaSpitEntity) launch).owner = getHandle();
             ((LlamaSpitEntity) launch).shoot(direction.getX(), direction.getY(), direction.getZ(), 1.5F, 10.0F); // LlamaEntity

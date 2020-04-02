@@ -39,7 +39,7 @@ public class CraftVillagerZombie extends CraftZombie implements ZombieVillager {
 
     @Override
     public Villager.Profession getVillagerProfession() {
-        return Villager.Profession.valueOf(Registry.VILLAGER_PROFESSION.getKey(getHandle().getVillagerData().getProfession()).getKey().toUpperCase(Locale.ROOT));
+        return Villager.Profession.valueOf(Registry.VILLAGER_PROFESSION.getKey(getHandle().getVillagerData().getProfession()).getPath().toUpperCase(Locale.ROOT));
     }
 
     @Override
@@ -75,12 +75,12 @@ public class CraftVillagerZombie extends CraftZombie implements ZombieVillager {
 
     @Override
     public OfflinePlayer getConversionPlayer() {
-        return (getHandle().conversionPlayer == null) ? null : Bukkit.getOfflinePlayer(getHandle().conversionPlayer);
+        return (getHandle().converstionStarter == null) ? null : Bukkit.getOfflinePlayer(getHandle().converstionStarter);
     }
 
     @Override
     public void setConversionPlayer(OfflinePlayer conversionPlayer) {
         if (!this.isConverting()) return;
-        getHandle().conversionPlayer = (conversionPlayer == null) ? null : conversionPlayer.getUniqueId();
+        getHandle().converstionStarter = (conversionPlayer == null) ? null : conversionPlayer.getUniqueId();
     }
 }

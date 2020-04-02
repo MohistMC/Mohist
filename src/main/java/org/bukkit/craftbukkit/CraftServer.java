@@ -10,7 +10,6 @@ import com.google.common.collect.MapMaker;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 import com.mojang.authlib.GameProfile;
-import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.StringReader;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.tree.CommandNode;
@@ -79,6 +78,7 @@ import net.minecraft.world.storage.MapDecoration;
 import net.minecraft.world.storage.SaveHandler;
 import net.minecraft.world.storage.WorldInfo;
 import net.minecraft.world.storage.loot.LootTableManager;
+import net.minecraftforge.common.DimensionManager;
 import org.apache.commons.lang.Validate;
 import org.bukkit.BanList;
 import org.bukkit.Bukkit;
@@ -953,14 +953,14 @@ public final class CraftServer implements Server {
         }
 
         DimensionType actualDimension = DimensionType.getById(creator.environment().getId());
-        DimensionType internalDimension = DimensionType.register(name.toLowerCase(java.util.Locale.ENGLISH), new DimensionType(dimension, actualDimension.getSuffix(), actualDimension.directory, (w, manager) -> actualDimension.factory.apply(w, manager), actualDimension.hasSkyLight(), actualDimension.getMagnifier(), actualDimension));
-        ServerWorld internal = (ServerWorld) new ServerWorld(console, console.backgroundExecutor, sdm, worlddata, internalDimension, console.getProfiler(), getServer().chunkStatusListenerFactory.create(11), creator.environment(), generator);
-
+        //DimensionType internalDimension = DimensionType.register(name.toLowerCase(java.util.Locale.ENGLISH), new DimensionType(dimension, actualDimension.getSuffix(), actualDimension.directory, (w, manager) -> actualDimension.factory.apply(w, manager), actualDimension.hasSkyLight(), actualDimension.getMagnifier(), actualDimension));
+        //ServerWorld internal = (ServerWorld) new ServerWorld(console, console.backgroundExecutor, sdm, worlddata, internalDimension, console.getProfiler(), getServer().chunkStatusListenerFactory.create(11), creator.environment(), generator);
+        ServerWorld internal = DimensionManager.initWorld(console, actualDimension);
         if (!(worlds.containsKey(name.toLowerCase(java.util.Locale.ENGLISH)))) {
             return null;
         }
 
-        console.initWorld(internal, worlddata, worldSettings);
+        //console.initWorld(internal, worlddata, worldSettings);
 
         internal.worldInfo.setDifficulty(Difficulty.EASY);
         internal.setAllowedSpawnTypes(true, true);

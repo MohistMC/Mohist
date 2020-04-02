@@ -111,7 +111,7 @@ public class CraftTippedArrow extends CraftArrow implements Arrow {
 
     @Override
     public PotionData getBasePotionData() {
-        return CraftPotionUtil.toBukkit(getHandle().getType());
+        return CraftPotionUtil.toBukkit(getHandle().getTypeCB());
     }
 
     @Override

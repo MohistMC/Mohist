@@ -35,7 +35,7 @@ public class CraftCreatureSpawner extends CraftBlockEntityState<MobSpawnerTileEn
 
     @Override
     public String getCreatureTypeName() {
-        return this.getSnapshot().getSpawnerBaseLogic().getEntityId().getKey();
+        return this.getSnapshot().getSpawnerBaseLogic().getEntityId().getPath();
     }
 
     @Override
