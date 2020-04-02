@@ -3,26 +3,21 @@ package org.bukkit.craftbukkit.entity;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSet.Builder;
 import java.util.Set;
-import net.minecraft.entity.boss.dragon.phase.PhaseType;
-import net.minecraft.entity.boss.dragon.EnderDragonPartEntity;
 import net.minecraft.entity.boss.dragon.EnderDragonEntity;
+import net.minecraft.entity.boss.dragon.EnderDragonPartEntity;
+import net.minecraft.entity.boss.dragon.phase.PhaseType;
 import org.bukkit.boss.BossBar;
+import org.bukkit.boss.DragonBattle;
 import org.bukkit.craftbukkit.CraftServer;
-import org.bukkit.craftbukkit.boss.CraftBossBar;
+import org.bukkit.craftbukkit.boss.CraftDragonBattle;
 import org.bukkit.entity.ComplexEntityPart;
 import org.bukkit.entity.EnderDragon;
 import org.bukkit.entity.EntityType;
 
 public class CraftEnderDragon extends CraftComplexLivingEntity implements EnderDragon {
 
-    private BossBar bossBar;
-
     public CraftEnderDragon(CraftServer server, EnderDragonEntity entity) {
         super(server, entity);
-
-        if (entity.getFightManager() != null) {
-            this.bossBar = new CraftBossBar(entity.getFightManager().bossInfo);
-        }
     }
 
     @Override
@@ -71,6 +66,16 @@ public class CraftEnderDragon extends CraftComplexLivingEntity implements EnderD
 
     @Override
     public BossBar getBossBar() {
-        return bossBar;
+        return getDragonBattle().getBossBar();
+    }
+
+    @Override
+    public DragonBattle getDragonBattle() {
+        return new CraftDragonBattle(getHandle().getFightManager());
+    }
+
+    @Override
+    public int getDeathAnimationTicks() {
+        return getHandle().deathTicks; // PAIL rename deathAnimationTicks
     }
 }

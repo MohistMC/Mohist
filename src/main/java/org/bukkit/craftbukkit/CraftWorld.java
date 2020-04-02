@@ -75,6 +75,8 @@ import net.minecraft.world.biome.DefaultBiomeFeatures;
 import net.minecraft.world.chunk.ChunkPrimerWrapper;
 import net.minecraft.world.chunk.ChunkStatus;
 import net.minecraft.world.chunk.IChunk;
+import net.minecraft.world.dimension.Dimension;
+import net.minecraft.world.dimension.EndDimension;
 import net.minecraft.world.gen.feature.Feature;
 import net.minecraft.world.raid.RaidManager;
 import net.minecraft.world.server.ChunkHolder;
@@ -105,9 +107,11 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.data.BlockData;
+import org.bukkit.boss.DragonBattle;
 import org.bukkit.craftbukkit.block.CraftBlock;
 import org.bukkit.craftbukkit.block.CraftBlockState;
 import org.bukkit.craftbukkit.block.data.CraftBlockData;
+import org.bukkit.craftbukkit.boss.CraftDragonBattle;
 import org.bukkit.craftbukkit.entity.CraftEntity;
 import org.bukkit.craftbukkit.entity.CraftItem;
 import org.bukkit.craftbukkit.entity.CraftLightningStrike;
@@ -2263,5 +2267,15 @@ public class CraftWorld implements World {
     public List<Raid> getRaids() {
         RaidManager persistentRaid = world.getRaids();
         return persistentRaid.byId.values().stream().map(CraftRaid::new).collect(Collectors.toList());
+    }
+
+    @Override
+    public DragonBattle getEnderDragonBattle() {
+        Dimension worldProvider = getHandle().dimension;
+        if (!(worldProvider instanceof EndDimension)) {
+            return null;
+        }
+
+        return new CraftDragonBattle(((EndDimension) worldProvider).getDragonFightManager()); // PAIL rename getDragonBattle
     }
 }
