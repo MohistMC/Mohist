@@ -2,6 +2,7 @@ package red.mohist;
 
 import java.io.File;
 import java.util.Scanner;
+
 import org.apache.logging.log4j.Logger;
 import red.mohist.configuration.MohistConfigUtil;
 import red.mohist.down.DownloadLibraries;
@@ -43,14 +44,15 @@ public class Mohist {
         ServerEula eula = new ServerEula(new File("eula.txt"));
         if (!eula.hasAcceptedEULA()) {
             System.out.println(Message.getString("eula"));
-            while (!"true".equals(new Scanner(System.in).next()));
+            while (!"true".equals(new Scanner(System.in).next())) ;
             eula.createEULAFile();
         }
         if (Update.isCheck()) {
             Update.hasLatestVersion();
-            if(Update.needToUpdate && Update.isDownload()) {
-                System.out.println("If you want to update Mohist to the newest version, type 'yes'. If you don't want type 'no'.");
-                while (!"yes".equals(new Scanner(System.in).next()));
+            if (Update.needToUpdate && Update.isDownload()) {
+                //System.out.println();
+                System.out.println(Message.getString("update.select"));// i18n
+                while (!"yes".equals(new Scanner(System.in).next())) ;
                 DownloadNewJar.run();
             }
         }

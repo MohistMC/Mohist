@@ -2,7 +2,6 @@ package red.mohist.util.i18n;
 
 import java.io.File;
 import java.text.MessageFormat;
-import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.ResourceBundle;
@@ -27,7 +26,8 @@ public class Message {
         return msgs.get(key);
     }
 
-    public static String getFormatString(String key, Object[] f) {
+    public static String getFormatString(String key, Object... f) {
+        // optimize the object array
         return new MessageFormat(getString(key)).format(f);
     }
 

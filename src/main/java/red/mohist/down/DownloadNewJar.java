@@ -4,8 +4,10 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.net.URLConnection;
+
 import org.apache.commons.io.FileUtils;
 import red.mohist.Mohist;
+import red.mohist.util.i18n.Message;
 
 /**
  * @author Mgazul
@@ -14,10 +16,10 @@ import red.mohist.Mohist;
 public class DownloadNewJar {
 
     public static void run() throws IOException {
-        File serverjarold = new File("./Mohist-"+Update.jar_sha+"-server.jar");
+        File serverjarold = new File("./Mohist-" + Update.jar_sha + "-server.jar");
         String filename;
 
-        if(!new File("./Mohist-" + Update.jar_sha + "-server.jar").exists()) { //DETECT IF JAR HAVE A CUSTOM NAME (Can be useful for host which requires server.jar name for example)
+        if (!new File("./Mohist-" + Update.jar_sha + "-server.jar").exists()) { //DETECT IF JAR HAVE A CUSTOM NAME (Can be useful for host which requires server.jar name for example)
             filename = new File(Mohist.class.getProtectionDomain().getCodeSource().getLocation().getPath().substring(1)).getName();
         } else {
             filename = "./Mohist-" + Update.jar_sha + "-server.jar";
@@ -26,13 +28,15 @@ public class DownloadNewJar {
         URLConnection conn = new URL("https://ci.codemc.io/job/Mohist-Community/job/Mohist-1.12.2/lastSuccessfulBuild/artifact/build/distributions/Mohist-" + Update.ci_sha + "-server.jar").openConnection();
         conn.setRequestProperty("User-Agent", "Mohist");
         conn.connect();
-        System.out.println("Downloading new server jar... (~" + ((conn.getContentLength()/1024)/1024) + " Mo)");
+        //System.out.println("");
+        System.out.println(Message.getFormatString("update.run", ((conn.getContentLength() / 1024) / 1024) + ""));// i18n
         FileUtils.copyInputStreamToFile(conn.getInputStream(), new File(filename)); //Download
 
-        if(serverjarold.exists())
+        if (serverjarold.exists())
             serverjarold.renameTo(new File("./Mohist-" + Update.ci_sha + "-server.jar"));
 
-        System.out.println("Download Finished ! Please restart the server.");
+        //System.out.println("Download Finished ! Please restart the server.");
+        System.out.println(Message.getString("update.finished"));// i18n
         System.exit(0);
 
     }
