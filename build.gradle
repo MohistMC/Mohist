@@ -34,7 +34,6 @@ import java.security.MessageDigest
 import java.text.SimpleDateFormat
 
 plugins {
-    id 'net.minecrell.licenser' version '0.4'
     id 'org.ajoberstar.grgit' version '3.1.1'
     id 'de.undercouch.download' version '3.3.0'
     id 'com.github.ben-manes.versions' version '0.22.0'
@@ -118,7 +117,6 @@ project(':forge') {
     apply plugin: 'maven-publish'
     apply plugin: 'eclipse'
     apply plugin: 'net.minecraftforge.gradle.patcher'
-    apply plugin: 'net.minecrell.licenser'
     apply plugin: 'de.undercouch.download'
     
     compileJava.sourceCompatibility = compileJava.targetCompatibility = sourceCompatibility = targetCompatibility = '1.8' // Need this here so eclipse task generates correctly.
@@ -146,22 +144,6 @@ project(':forge') {
                 ]
             }
         }
-        test {
-            compileClasspath += sourceSets.fmllauncher.runtimeClasspath
-            runtimeClasspath += sourceSets.fmllauncher.runtimeClasspath
-            java {
-                srcDirs = [
-                    "$rootDir/src/test/java", 
-                    "$rootDir/src/fmllaunchertest/java"
-                ]
-            }
-            resources {
-                srcDirs = [
-                    "$rootDir/src/test/resources",
-                    "$rootDir/src/generated_test/resources"
-                ]
-            }
-        }
         userdev {
             compileClasspath += sourceSets.main.runtimeClasspath
             runtimeClasspath += sourceSets.main.runtimeClasspath
@@ -171,12 +153,6 @@ project(':forge') {
             resources {
                 srcDirs = ["$rootDir/src/userdev/resources"]
             }
-        }
-        userdev_test {
-            compileClasspath += sourceSets.userdev.runtimeClasspath
-            runtimeClasspath += sourceSets.userdev.runtimeClasspath
-            compileClasspath += sourceSets.test.runtimeClasspath
-            runtimeClasspath += sourceSets.test.runtimeClasspath
         }
     }
     //Eclipse adds the sourcesets twice, once where we tell it to, once in the projects folder. No idea why. So delete them
@@ -255,19 +231,6 @@ project(':forge') {
                 source sourceSets.userdev
             }
 
-            forge_test_client {
-                parent runs.forge_client
-                taskName 'forge_test_client'
-
-                environment 'MOD_CLASSES', 'dummy' // Needed to work around FG limitation, FG will replace this!
-
-                ideaModule "${rootProject.name}.${project.name}.userdev_test"
-
-                mods {
-                    TestMods { sources sourceSets.test }
-                }
-            }
-
             forge_server {
                 taskName 'forge_server'
 
@@ -287,19 +250,6 @@ project(':forge') {
 
                 source sourceSets.main
                 source sourceSets.userdev
-            }
-
-            forge_test_server {
-                parent runs.forge_server
-                taskName 'forge_test_server'
-
-                environment 'MOD_CLASSES', 'dummy' // Needed to work around FG limitation, FG will replace this!
-
-                ideaModule "${rootProject.name}.${project.name}.userdev_test"
-
-                mods {
-                    TestMods { sources sourceSets.test }
-                }
             }
 
             forge_data {
@@ -323,22 +273,6 @@ project(':forge') {
                 source sourceSets.userdev
                 
                 args '--mod', 'forge', '--all', '--output', rootProject.file('src/generated/resources/'), '--validate',
-                        '--existing', sourceSets.main.resources.srcDirs[0]
-            }
-
-            forge_test_data {
-                parent runs.forge_data
-                taskName 'forge_test_data'
-
-                environment 'MOD_CLASSES', 'dummy' // Needed to work around FG limitation, FG will replace this!
-
-                ideaModule "${rootProject.name}.${project.name}.userdev_test"
-
-                mods {
-                    tests { sources  sourceSets.test }
-                }
-                
-                args '--mod', 'data_gen_test', '--all', '--output', rootProject.file('src/generated_test/resources/'), '--validate',
                         '--existing', sourceSets.main.resources.srcDirs[0]
             }
         }
@@ -1123,27 +1057,6 @@ project(':forge') {
             }
         }
     }
-    
-    license {
-        header = file("$rootDir/LICENSE-header.txt")
-
-        include 'net/minecraftforge/'
-        exclude 'net/minecraftforge/server/terminalconsole/'
-        exclude 'net/minecraftforge/api/' // exclude API here because it's validated in the SPI build
-        exclude 'net/minecraftforge/fml/common/versioning/ComparableVersion.java'
-        exclude 'net/minecraftforge/fml/common/versioning/InvalidVersionSpecificationException.java'
-        exclude 'net/minecraftforge/fml/common/versioning/Restriction.java'
-        exclude 'net/minecraftforge/fml/common/versioning/VersionRange.java'
-
-        tasks {
-            main {
-                files = files("$rootDir/src/main/java")
-            }
-            test {
-                files = files("$rootDir/src/test/java")
-            }
-        }
-    }
 
     task userdevExtras(type:Jar) {
         dependsOn classes
@@ -1186,63 +1099,6 @@ project(':forge') {
             sources sourceSets.test.java.srcDirs
         }
         sourceSets.test.java.srcDirs.each { extractMappedNew.addTarget it }
-    }
-    
-    publishing {
-        publications {
-            mavenJava(MavenPublication) {
-                artifact universalJar
-                if (changelog.exists()) {
-                    artifact(changelog) {
-                        classifier = 'changelog'
-                    }
-                }
-                artifact installerJar
-                //TODO: installer-win
-                artifact makeMdk
-                artifact userdevJar
-                artifact sourcesJar
-                artifact launcherJar
-
-                pom {
-                    name = 'forge'
-                    description = 'Modifactions to Minecraft to enable mod developers.'
-                    url = 'https://github.com/MinecraftForge/MinecraftForge'
-
-                    scm {
-                        url = 'https://github.com/MinecraftForge/MinecraftForge'
-                        connection = 'scm:git:git://github.com/MinecraftForge/MinecraftForge.git'
-                        developerConnection = 'scm:git:git@github.com:MinecraftForge/MinecraftForge.git'
-                    }
-
-                    issueManagement {
-                        system = 'github'
-                        url = 'https://github.com/MinecraftForge/MinecraftForge/issues'
-                    }
-
-                    licenses {
-                        license {
-                            name = 'LGPL 2.1'
-                            url = 'https://github.com/MinecraftForge/MinecraftForge/blob/1.13-pre/LICENSE.txt'
-                            distribution = 'repo'
-                        }
-                    }
-                }
-            }
-        }
-        repositories {
-            maven {
-                if (project.hasProperty('forgeMavenPassword')) {
-                    credentials {
-                        username project.properties.forgeMavenUser
-                        password project.properties.forgeMavenPassword
-                    }
-                    url 'https://files.minecraftforge.net/maven/manage/upload'
-                } else {
-                    url 'file://' + rootProject.file('repo').getAbsolutePath()
-                }
-            }
-        }
     }
 }
 
@@ -1289,9 +1145,6 @@ def getArtifacts(project, config, classifiers) {
         filename += ".${art.extension}"
         def path = "${folder}${filename}"
         def url = "https://libraries.minecraft.net/${path}"
-        if (!checkExists(url)) {
-            url = "https://files.minecraftforge.net/maven/${path}"
-        }
         //TODO remove when Mojang launcher is updated
         if (!classifiers && art.classifier != null) { //Mojang launcher doesn't currently support classifiers, so... move it to part of the version, and force the extension to 'jar'
             art.version = "${art.version}-${art.classifier}"
@@ -1312,15 +1165,6 @@ def getArtifacts(project, config, classifiers) {
         ]
     }
     return ret
-}
-
-def checkExists(url) {
-    def code = new URL(url).openConnection().with {
-        requestMethod = 'HEAD'
-        connect()
-        responseCode
-    }
-    return code == 200
 }
 
 def getClasspath(project, libs, artifact) {
