@@ -1,0 +1,17 @@
+--- a/net/minecraft/entity/item/FireworkRocketEntity.java
++++ b/net/minecraft/entity/item/FireworkRocketEntity.java
+@@ -37,11 +37,11 @@
+    _interface = IRendersAsItem.class
+ )
+ public class FireworkRocketEntity extends Entity implements IRendersAsItem, IProjectile {
+-   private static final DataParameter<ItemStack> field_184566_a = EntityDataManager.func_187226_a(FireworkRocketEntity.class, DataSerializers.field_187196_f);
++   public static final DataParameter<ItemStack> field_184566_a = EntityDataManager.func_187226_a(FireworkRocketEntity.class, DataSerializers.field_187196_f);
+    private static final DataParameter<OptionalInt> field_191512_b = EntityDataManager.func_187226_a(FireworkRocketEntity.class, DataSerializers.field_218814_r);
+-   private static final DataParameter<Boolean> field_213895_d = EntityDataManager.func_187226_a(FireworkRocketEntity.class, DataSerializers.field_187198_h);
++   public static final DataParameter<Boolean> field_213895_d = EntityDataManager.func_187226_a(FireworkRocketEntity.class, DataSerializers.field_187198_h);
+    private int field_92056_a;
+-   private int field_92055_b;
++   public int field_92055_b;
+    private LivingEntity field_191513_e;
+ 
+    public FireworkRocketEntity(EntityType<? extends FireworkRocketEntity> p_i50164_1_, World p_i50164_2_) {

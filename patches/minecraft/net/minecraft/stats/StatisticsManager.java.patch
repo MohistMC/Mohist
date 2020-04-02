@@ -1,0 +1,15 @@
+--- a/net/minecraft/stats/StatisticsManager.java
++++ b/net/minecraft/stats/StatisticsManager.java
+@@ -15,6 +15,12 @@
+    }
+ 
+    public void func_150871_b(PlayerEntity p_150871_1_, Stat<?> p_150871_2_, int p_150871_3_) {
++      // CraftBukkit start - fire Statistic events
++      org.bukkit.event.Cancellable cancellable = org.bukkit.craftbukkit.event.CraftEventFactory.handleStatisticsIncrease(p_150871_1_, p_150871_2_, this.func_77444_a(p_150871_2_), p_150871_3_);
++      if (cancellable != null && cancellable.isCancelled()) {
++         return;
++      }
++      // CraftBukkit end
+       this.func_150873_a(p_150871_1_, p_150871_2_, this.func_77444_a(p_150871_2_) + p_150871_3_);
+    }
+ 

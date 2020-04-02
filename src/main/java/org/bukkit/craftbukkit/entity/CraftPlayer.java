@@ -23,47 +23,46 @@ import java.util.WeakHashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.annotation.Nullable;
-import net.minecraft.advancements.PlayerAdvancements;
 import net.minecraft.advancements.AdvancementProgress;
-import net.minecraft.entity.ai.attributes.IAttributeInstance;
+import net.minecraft.advancements.PlayerAdvancements;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.ai.attributes.AttributeMap;
+import net.minecraft.entity.ai.attributes.IAttributeInstance;
 import net.minecraft.entity.ai.attributes.ModifiableAttributeInstance;
 import net.minecraft.entity.ai.attributes.RangedAttribute;
-import net.minecraft.network.play.server.SSetExperiencePacket;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.inventory.container.Container;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.util.text.TextFormatting;
-import net.minecraft.world.GameType;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.world.storage.MapDecoration;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.inventory.container.Container;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.PacketBuffer;
+import net.minecraft.network.play.ServerPlayNetHandler;
 import net.minecraft.network.play.server.SChangeBlockPacket;
 import net.minecraft.network.play.server.SChatPacket;
 import net.minecraft.network.play.server.SCustomPayloadPlayPacket;
-import net.minecraft.network.play.server.SPlaySoundPacket;
+import net.minecraft.network.play.server.SEntityPropertiesPacket;
 import net.minecraft.network.play.server.SMapDataPacket;
 import net.minecraft.network.play.server.SPlaySoundEffectPacket;
-import net.minecraft.network.play.server.SPlayerListItemPacket;
+import net.minecraft.network.play.server.SPlaySoundEventPacket;
+import net.minecraft.network.play.server.SPlaySoundPacket;
 import net.minecraft.network.play.server.SPlayerListHeaderFooterPacket;
+import net.minecraft.network.play.server.SPlayerListItemPacket;
+import net.minecraft.network.play.server.SSetExperiencePacket;
+import net.minecraft.network.play.server.SSpawnParticlePacket;
 import net.minecraft.network.play.server.SSpawnPositionPacket;
 import net.minecraft.network.play.server.SStopSoundPacket;
 import net.minecraft.network.play.server.STitlePacket;
-import net.minecraft.network.play.server.SEntityPropertiesPacket;
 import net.minecraft.network.play.server.SUpdateHealthPacket;
-import net.minecraft.network.play.server.SPlaySoundEventPacket;
-import net.minecraft.network.play.server.SSpawnParticlePacket;
-import net.minecraft.world.server.ChunkManager;
-import net.minecraft.network.play.ServerPlayNetHandler;
-import net.minecraft.tileentity.SignTileEntity;
-import net.minecraft.util.math.Vec3d;
 import net.minecraft.server.management.WhitelistEntry;
+import net.minecraft.tileentity.SignTileEntity;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.text.TextFormatting;
+import net.minecraft.world.GameType;
+import net.minecraft.world.server.ChunkManager;
 import net.minecraft.world.server.ServerWorld;
+import net.minecraft.world.storage.MapDecoration;
 import org.apache.commons.lang.NotImplementedException;
 import org.apache.commons.lang.Validate;
 import org.bukkit.BanList;
@@ -455,7 +454,7 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
     public void playSound(Location loc, String sound, org.bukkit.SoundCategory category, float volume, float pitch) {
         if (loc == null || sound == null || category == null || getHandle().connection == null) return;
 
-        SPlaySoundPacket packet = new SPlaySoundPacket(new ResourceLocation(sound), net.minecraft.util.SoundCategory.valueOf(category.name()), new Vec3D(loc.getX(), loc.getY(), loc.getZ()), volume, pitch);
+        SPlaySoundPacket packet = new SPlaySoundPacket(new ResourceLocation(sound), net.minecraft.util.SoundCategory.valueOf(category.name()), new Vec3d(loc.getX(), loc.getY(), loc.getZ()), volume, pitch);
         getHandle().connection.sendPacket(packet);
     }
 
@@ -677,7 +676,7 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
 
     @Override
     public boolean isSneaking() {
-        return getHandle().func_225608_bj_();
+        return getHandle().isShiftKeyDown();
     }
 
     @Override
@@ -1523,7 +1522,7 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
                 break;
             }
         }
-        collection.add(new ModifiableAttributeInstance(getHandle().getAttributes(), (new RangedAttribute(null, "generic.maxHealth", scaledHealth ? healthScale : getMaxHealth(), 0.0D, Float.MAX_VALUE)).a("Max Health").a(true)));
+        collection.add(new ModifiableAttributeInstance(getHandle().getAttributes(), (new RangedAttribute(null, "generic.maxHealth", scaledHealth ? healthScale : getMaxHealth(), 0.0D, Float.MAX_VALUE)).setDescription("Max Health").setShouldWatch(true)));
     }
 
     @Override

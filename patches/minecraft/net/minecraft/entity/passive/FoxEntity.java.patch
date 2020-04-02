@@ -1,5 +1,34 @@
 --- a/net/minecraft/entity/passive/FoxEntity.java
 +++ b/net/minecraft/entity/passive/FoxEntity.java
+@@ -83,8 +83,8 @@
+ public class FoxEntity extends AnimalEntity {
+    private static final DataParameter<Integer> field_213523_bz = EntityDataManager.func_187226_a(FoxEntity.class, DataSerializers.field_187192_b);
+    private static final DataParameter<Byte> field_213524_bA = EntityDataManager.func_187226_a(FoxEntity.class, DataSerializers.field_187191_a);
+-   private static final DataParameter<Optional<UUID>> field_213509_bB = EntityDataManager.func_187226_a(FoxEntity.class, DataSerializers.field_187203_m);
+-   private static final DataParameter<Optional<UUID>> field_213510_bD = EntityDataManager.func_187226_a(FoxEntity.class, DataSerializers.field_187203_m);
++   public static final DataParameter<Optional<UUID>> field_213509_bB = EntityDataManager.func_187226_a(FoxEntity.class, DataSerializers.field_187203_m);
++   public static final DataParameter<Optional<UUID>> field_213510_bD = EntityDataManager.func_187226_a(FoxEntity.class, DataSerializers.field_187203_m);
+    private static final Predicate<ItemEntity> field_213511_bE = (p_213489_0_) -> {
+       return !p_213489_0_.func_174874_s() && p_213489_0_.func_70089_S();
+    };
+@@ -320,7 +320,7 @@
+       return FoxEntity.Type.func_221080_a(this.field_70180_af.func_187225_a(field_213523_bz));
+    }
+ 
+-   private void func_213474_a(FoxEntity.Type p_213474_1_) {
++   public void func_213474_a(FoxEntity.Type p_213474_1_) {
+       this.field_70180_af.func_187227_b(field_213523_bz, p_213474_1_.func_221083_c());
+    }
+ 
+@@ -401,7 +401,7 @@
+       return this.func_213507_r(32);
+    }
+ 
+-   private void func_213485_x(boolean p_213485_1_) {
++   public void func_213485_x(boolean p_213485_1_) {
+       this.func_213505_d(32, p_213485_1_);
+    }
+ 
 @@ -747,7 +747,7 @@
        }
  

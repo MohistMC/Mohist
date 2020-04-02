@@ -1,14 +1,127 @@
 --- a/net/minecraft/entity/MobEntity.java
 +++ b/net/minecraft/entity/MobEntity.java
-@@ -176,6 +176,7 @@
+@@ -5,6 +5,7 @@
+ import java.util.Map;
+ import java.util.Random;
+ import java.util.UUID;
++import java.util.logging.Level;
+ import javax.annotation.Nullable;
+ import net.minecraft.block.AbstractSkullBlock;
+ import net.minecraft.block.Blocks;
+@@ -26,7 +27,6 @@
+ import net.minecraft.fluid.Fluid;
+ import net.minecraft.inventory.EquipmentSlotType;
+ import net.minecraft.item.ArmorItem;
+-import net.minecraft.item.AxeItem;
+ import net.minecraft.item.BlockItem;
+ import net.minecraft.item.BowItem;
+ import net.minecraft.item.Item;
+@@ -56,7 +56,6 @@
+ import net.minecraft.util.math.MathHelper;
+ import net.minecraft.world.Difficulty;
+ import net.minecraft.world.DifficultyInstance;
+-import net.minecraft.world.GameRules;
+ import net.minecraft.world.IWorld;
+ import net.minecraft.world.IWorldReader;
+ import net.minecraft.world.World;
+@@ -64,6 +63,9 @@
+ import net.minecraft.world.storage.loot.LootContext;
+ import net.minecraftforge.api.distmarker.Dist;
+ import net.minecraftforge.api.distmarker.OnlyIn;
++import org.bukkit.craftbukkit.entity.CraftLivingEntity;
++import org.bukkit.event.entity.EntityTargetEvent;
++import org.bukkit.event.entity.EntityTargetLivingEntityEvent;
  
-    public void func_70624_b(@Nullable LivingEntity p_70624_1_) {
-       this.field_70696_bz = p_70624_1_;
-+      net.minecraftforge.common.ForgeHooks.onLivingSetAttackTarget(this, p_70624_1_);
+ public abstract class MobEntity extends LivingEntity {
+    private static final DataParameter<Byte> field_184654_a = EntityDataManager.func_187226_a(MobEntity.class, DataSerializers.field_187191_a);
+@@ -74,19 +76,19 @@
+    protected JumpController field_70767_i;
+    private final BodyController field_70762_j;
+    protected PathNavigator field_70699_by;
+-   public final GoalSelector field_70714_bg;
+-   public final GoalSelector field_70715_bh;
++   public GoalSelector field_70714_bg;
++   public GoalSelector field_70715_bh;
+    private LivingEntity field_70696_bz;
+    private final EntitySenses field_70723_bA;
+    private final NonNullList<ItemStack> field_184656_bv = NonNullList.func_191197_a(2, ItemStack.field_190927_a);
+-   protected final float[] field_82174_bp = new float[2];
++   public final float[] field_82174_bp = new float[2];
+    private final NonNullList<ItemStack> field_184657_bw = NonNullList.func_191197_a(4, ItemStack.field_190927_a);
+-   protected final float[] field_184655_bs = new float[4];
++   public final float[] field_184655_bs = new float[4];
+    private boolean field_82172_bs;
+-   private boolean field_82179_bU;
++   public boolean field_82179_bU;
+    private final Map<PathNodeType, Float> field_184658_bz = Maps.newEnumMap(PathNodeType.class);
+-   private ResourceLocation field_184659_bA;
+-   private long field_184653_bB;
++   public ResourceLocation field_184659_bA;
++   public long field_184653_bB;
+    @Nullable
+    private Entity field_110168_bw;
+    private int field_213400_bI;
+@@ -94,6 +96,7 @@
+    private CompoundNBT field_110170_bx;
+    private BlockPos field_213401_bK = BlockPos.field_177992_a;
+    private float field_213402_bL = -1.0F;
++   public boolean aware = true;
+ 
+    protected MobEntity(EntityType<? extends MobEntity> p_i48576_1_, World p_i48576_2_) {
+       super(p_i48576_1_, p_i48576_2_);
+@@ -175,9 +178,41 @@
     }
  
+    public void func_70624_b(@Nullable LivingEntity p_70624_1_) {
+-      this.field_70696_bz = p_70624_1_;
++      this.setGoalTarget(p_70624_1_, EntityTargetEvent.TargetReason.UNKNOWN, true);
+    }
+ 
++   public boolean setGoalTarget(LivingEntity entitylivingbaseIn, EntityTargetEvent.TargetReason reason, final boolean fireEvent) {
++      if (this.func_70638_az() == entitylivingbaseIn) {
++         return false;
++      }
++      if (fireEvent) {
++         if (reason == EntityTargetEvent.TargetReason.UNKNOWN && this.func_70638_az() != null && entitylivingbaseIn == null) {
++            reason = (this.func_70638_az().func_70089_S() ? EntityTargetEvent.TargetReason.FORGOT_TARGET : EntityTargetEvent.TargetReason.TARGET_DIED);
++         }
++         if (reason == EntityTargetEvent.TargetReason.UNKNOWN) {
++            this.field_70170_p.getServerCB().getLogger().log(Level.WARNING, "Unknown target reason, please report on the issue tracker", new Exception());
++         }
++         CraftLivingEntity ctarget = null;
++         if (entitylivingbaseIn != null) {
++            ctarget = (CraftLivingEntity)entitylivingbaseIn.getBukkitEntity();
++         }
++         final EntityTargetLivingEntityEvent event = new EntityTargetLivingEntityEvent(this.getBukkitEntity(), ctarget, reason);
++         this.field_70170_p.getServerCB().getPluginManager().callEvent(event);
++         if (event.isCancelled()) {
++            return false;
++         }
++         if (event.getTarget() != null) {
++            entitylivingbaseIn = ((CraftLivingEntity)event.getTarget()).getHandle();
++         }
++         else {
++            entitylivingbaseIn = null;
++         }
++      }
++      this.field_70696_bz = entitylivingbaseIn;
++      net.minecraftforge.common.ForgeHooks.onLivingSetAttackTarget(this, entitylivingbaseIn);
++      return true;
++   }
++
     public boolean func_213358_a(EntityType<?> p_213358_1_) {
-@@ -460,7 +461,7 @@
+       return p_213358_1_ != EntityType.field_200811_y;
+    }
+@@ -436,7 +471,7 @@
+       return this.field_184659_bA == null ? this.func_184647_J() : this.field_184659_bA;
+    }
+ 
+-   protected ResourceLocation func_184647_J() {
++   public ResourceLocation func_184647_J() {
+       return super.func_213346_cF();
+    }
+ 
+@@ -460,7 +495,7 @@
     public void func_70636_d() {
        super.func_70636_d();
        this.field_70170_p.func_217381_Z().func_76320_a("looting");
@@ -17,7 +130,7 @@
           for(ItemEntity itementity : this.field_70170_p.func_217357_a(ItemEntity.class, this.func_174813_aQ().func_72314_b(1.0D, 0.0D, 1.0D))) {
              if (!itementity.field_70128_L && !itementity.func_92059_d().func_190926_b() && !itementity.func_174874_s()) {
                 this.func_175445_a(itementity);
-@@ -556,6 +557,14 @@
+@@ -556,6 +591,14 @@
           this.func_70106_y();
        } else if (!this.func_104002_bU() && !this.func_213392_I()) {
           Entity entity = this.field_70170_p.func_217362_a(this, -1.0D);
@@ -32,7 +145,7 @@
           if (entity != null) {
              double d0 = entity.func_70068_e(this);
              if (d0 > 16384.0D && this.func_213397_c(d0)) {
-@@ -791,6 +800,8 @@
+@@ -791,6 +834,8 @@
     }
  
     public static EquipmentSlotType func_184640_d(ItemStack p_184640_0_) {
@@ -41,7 +154,7 @@
        Item item = p_184640_0_.func_77973_b();
        if (item != Blocks.field_196625_cS.func_199767_j() && (!(item instanceof BlockItem) || !(((BlockItem)item).func_179223_d() instanceof AbstractSkullBlock))) {
           if (item instanceof ArmorItem) {
-@@ -798,7 +809,7 @@
+@@ -798,7 +843,7 @@
           } else if (item == Items.field_185160_cR) {
              return EquipmentSlotType.CHEST;
           } else {
@@ -50,7 +163,7 @@
           }
        } else {
           return EquipmentSlotType.HEAD;
-@@ -1178,10 +1189,10 @@
+@@ -1178,10 +1223,10 @@
              PlayerEntity playerentity = (PlayerEntity)p_70652_1_;
              ItemStack itemstack = this.func_184614_ca();
              ItemStack itemstack1 = playerentity.func_184587_cr() ? playerentity.func_184607_cu() : ItemStack.field_190927_a;

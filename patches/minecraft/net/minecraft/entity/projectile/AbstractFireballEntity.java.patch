@@ -1,0 +1,11 @@
+--- a/net/minecraft/entity/projectile/AbstractFireballEntity.java
++++ b/net/minecraft/entity/projectile/AbstractFireballEntity.java
+@@ -42,7 +42,7 @@
+ 
+    }
+ 
+-   protected ItemStack func_213896_l() {
++   public ItemStack func_213896_l() {
+       return this.func_184212_Q().func_187225_a(field_213899_f);
+    }
+ 

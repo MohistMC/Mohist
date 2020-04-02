@@ -1,0 +1,22 @@
+--- a/net/minecraft/inventory/container/MerchantContainer.java
++++ b/net/minecraft/inventory/container/MerchantContainer.java
+@@ -13,6 +13,7 @@
+ import net.minecraft.util.SoundCategory;
+ import net.minecraftforge.api.distmarker.Dist;
+ import net.minecraftforge.api.distmarker.OnlyIn;
++import org.bukkit.inventory.InventoryView;
+ 
+ public class MerchantContainer extends Container {
+    private final IMerchant field_75178_e;
+@@ -105,6 +106,11 @@
+       return false;
+    }
+ 
++   @Override
++   public InventoryView getBukkitView() {
++      return null;
++   }
++
+    public ItemStack func_82846_b(PlayerEntity p_82846_1_, int p_82846_2_) {
+       ItemStack itemstack = ItemStack.field_190927_a;
+       Slot slot = this.field_75151_b.get(p_82846_2_);

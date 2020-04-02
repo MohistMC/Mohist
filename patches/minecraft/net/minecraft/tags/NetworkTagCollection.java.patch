@@ -1,0 +1,10 @@
+--- a/net/minecraft/tags/NetworkTagCollection.java
++++ b/net/minecraft/tags/NetworkTagCollection.java
+@@ -9,6 +9,7 @@
+ 
+ public class NetworkTagCollection<T> extends TagCollection<T> {
+    private final Registry<T> field_200044_a;
++   public int version;
+ 
+    public NetworkTagCollection(Registry<T> p_i49817_1_, String p_i49817_2_, String p_i49817_3_) {
+       super(p_i49817_1_::func_218349_b, p_i49817_2_, false, p_i49817_3_);

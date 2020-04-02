@@ -1,0 +1,22 @@
+--- a/net/minecraft/inventory/container/ChestContainer.java
++++ b/net/minecraft/inventory/container/ChestContainer.java
+@@ -7,6 +7,7 @@
+ import net.minecraft.item.ItemStack;
+ import net.minecraftforge.api.distmarker.Dist;
+ import net.minecraftforge.api.distmarker.OnlyIn;
++import org.bukkit.inventory.InventoryView;
+ 
+ public class ChestContainer extends Container {
+    private final IInventory field_75155_e;
+@@ -78,6 +79,11 @@
+       return this.field_75155_e.func_70300_a(p_75145_1_);
+    }
+ 
++   @Override
++   public InventoryView getBukkitView() {
++      return null;
++   }
++
+    public ItemStack func_82846_b(PlayerEntity p_82846_1_, int p_82846_2_) {
+       ItemStack itemstack = ItemStack.field_190927_a;
+       Slot slot = this.field_75151_b.get(p_82846_2_);

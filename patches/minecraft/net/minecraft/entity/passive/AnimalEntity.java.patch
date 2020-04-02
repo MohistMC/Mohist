@@ -1,0 +1,13 @@
+--- a/net/minecraft/entity/passive/AnimalEntity.java
++++ b/net/minecraft/entity/passive/AnimalEntity.java
+@@ -23,8 +23,8 @@
+ import net.minecraftforge.api.distmarker.OnlyIn;
+ 
+ public abstract class AnimalEntity extends AgeableEntity {
+-   private int field_70881_d;
+-   private UUID field_146084_br;
++   public int field_70881_d;
++   public UUID field_146084_br;
+ 
+    protected AnimalEntity(EntityType<? extends AnimalEntity> p_i48568_1_, World p_i48568_2_) {
+       super(p_i48568_1_, p_i48568_2_);

@@ -1,0 +1,42 @@
+--- a/net/minecraft/item/MerchantOffer.java
++++ b/net/minecraft/item/MerchantOffer.java
+@@ -3,19 +3,31 @@
+ import net.minecraft.nbt.CompoundNBT;
+ import net.minecraft.nbt.NBTUtil;
+ import net.minecraft.util.math.MathHelper;
++import org.bukkit.craftbukkit.inventory.CraftMerchantRecipe;
+ 
+ public class MerchantOffer {
+-   private final ItemStack field_222223_a;
+-   private final ItemStack field_222224_b;
+-   private final ItemStack field_222225_c;
+-   private int field_222226_d;
+-   private final int field_222227_e;
+-   private boolean field_222228_f = true;
++   public ItemStack field_222223_a;
++   public ItemStack field_222224_b;
++   public final ItemStack field_222225_c;
++   public int field_222226_d;
++   public int field_222227_e;
++   public boolean field_222228_f = true;
+    private int field_222229_g;
+    private int field_222230_h;
+-   private float field_222231_i;
+-   private int field_222232_j = 1;
++   public float field_222231_i;
++   public int field_222232_j = 1;
+ 
++   private CraftMerchantRecipe bukkitHandle;
++
++   public CraftMerchantRecipe asBukkit() {
++      return (this.bukkitHandle == null) ? (this.bukkitHandle = new CraftMerchantRecipe(this)) : this.bukkitHandle;
++   }
++
++   public MerchantOffer(ItemStack itemstack, ItemStack itemstack1, ItemStack itemstack2, int uses, int maxUses, int experience, float priceMultiplier, CraftMerchantRecipe bukkit) {
++      this(itemstack, itemstack1, itemstack2, uses, maxUses, experience, priceMultiplier);
++      this.bukkitHandle = bukkit;
++   }
++
+    public MerchantOffer(CompoundNBT p_i50012_1_) {
+       this.field_222223_a = ItemStack.func_199557_a(p_i50012_1_.func_74775_l("buy"));
+       this.field_222224_b = ItemStack.func_199557_a(p_i50012_1_.func_74775_l("buyB"));

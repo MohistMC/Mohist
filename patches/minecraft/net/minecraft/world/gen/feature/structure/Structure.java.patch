@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/gen/feature/structure/Structure.java
++++ b/net/minecraft/world/gen/feature/structure/Structure.java
+@@ -149,7 +149,7 @@
+ 
+       while(longiterator.hasNext()) {
+          long i = longiterator.nextLong();
+-         IStructureReader istructurereader = p_202371_1_.func_217348_a(ChunkPos.func_212578_a(i), ChunkPos.func_212579_b(i), ChunkStatus.field_222606_b);
++         IStructureReader istructurereader = p_202371_1_.func_217353_a(ChunkPos.func_212578_a(i), ChunkPos.func_212579_b(i), ChunkStatus.field_222606_b, false); // CraftBukkit - don't load chunks
+          StructureStart structurestart = istructurereader.func_201585_a(this.func_143025_a());
+          if (structurestart != null) {
+             list.add(structurestart);

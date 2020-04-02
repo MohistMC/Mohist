@@ -1,0 +1,22 @@
+--- a/net/minecraft/inventory/container/DispenserContainer.java
++++ b/net/minecraft/inventory/container/DispenserContainer.java
+@@ -5,6 +5,7 @@
+ import net.minecraft.inventory.IInventory;
+ import net.minecraft.inventory.Inventory;
+ import net.minecraft.item.ItemStack;
++import org.bukkit.inventory.InventoryView;
+ 
+ public class DispenserContainer extends Container {
+    private final IInventory field_178146_a;
+@@ -41,6 +42,11 @@
+       return this.field_178146_a.func_70300_a(p_75145_1_);
+    }
+ 
++   @Override
++   public InventoryView getBukkitView() {
++      return null;
++   }
++
+    public ItemStack func_82846_b(PlayerEntity p_82846_1_, int p_82846_2_) {
+       ItemStack itemstack = ItemStack.field_190927_a;
+       Slot slot = this.field_75151_b.get(p_82846_2_);

@@ -1,0 +1,22 @@
+--- a/net/minecraft/inventory/container/CartographyContainer.java
++++ b/net/minecraft/inventory/container/CartographyContainer.java
+@@ -14,6 +14,7 @@
+ import net.minecraft.util.SoundCategory;
+ import net.minecraft.util.SoundEvents;
+ import net.minecraft.world.storage.MapData;
++import org.bukkit.inventory.InventoryView;
+ 
+ public class CartographyContainer extends Container {
+    private final IWorldPosCallable field_216999_d;
+@@ -162,6 +163,11 @@
+       return p_94530_2_.field_75224_c != this.field_217001_f && super.func_94530_a(p_94530_1_, p_94530_2_);
+    }
+ 
++   @Override
++   public InventoryView getBukkitView() {
++      return null;
++   }
++
+    public ItemStack func_82846_b(PlayerEntity p_82846_1_, int p_82846_2_) {
+       ItemStack itemstack = ItemStack.field_190927_a;
+       Slot slot = this.field_75151_b.get(p_82846_2_);

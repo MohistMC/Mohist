@@ -1,5 +1,14 @@
 --- a/net/minecraft/block/DropperBlock.java
 +++ b/net/minecraft/block/DropperBlock.java
+@@ -29,7 +29,7 @@
+       return new DropperTileEntity();
+    }
+ 
+-   protected void func_176439_d(World p_176439_1_, BlockPos p_176439_2_) {
++   public void func_176439_d(World p_176439_1_, BlockPos p_176439_2_) {
+       ProxyBlockSource proxyblocksource = new ProxyBlockSource(p_176439_1_, p_176439_2_);
+       DispenserTileEntity dispensertileentity = proxyblocksource.func_150835_j();
+       int i = dispensertileentity.func_146017_i();
 @@ -37,7 +37,7 @@
           p_176439_1_.func_217379_c(1001, p_176439_2_, 0);
        } else {

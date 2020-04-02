@@ -1,6 +1,26 @@
 --- a/net/minecraft/entity/item/BoatEntity.java
 +++ b/net/minecraft/entity/item/BoatEntity.java
-@@ -461,7 +461,7 @@
+@@ -43,6 +43,7 @@
+ import net.minecraft.world.World;
+ import net.minecraftforge.api.distmarker.Dist;
+ import net.minecraftforge.api.distmarker.OnlyIn;
++import org.bukkit.Location;
+ 
+ public class BoatEntity extends Entity {
+    private static final DataParameter<Integer> field_184460_a = EntityDataManager.func_187226_a(BoatEntity.class, DataSerializers.field_187192_b);
+@@ -76,6 +77,11 @@
+    private float field_203061_aO;
+    private float field_203062_aP;
+    private float field_203063_aQ;
++   public double maxSpeed;
++   public double occupiedDeceleration;
++   public double unoccupiedDeceleration;
++   public boolean landBoats;
++   private Location lastLocation;
+ 
+    public BoatEntity(EntityType<? extends BoatEntity> p_i50129_1_, World p_i50129_2_) {
+       super(p_i50129_1_, p_i50129_2_);
+@@ -461,7 +467,7 @@
                          blockpos$pooledmutable.func_181079_c(l1, k2, i2);
                          BlockState blockstate = this.field_70170_p.func_180495_p(blockpos$pooledmutable);
                          if (!(blockstate.func_177230_c() instanceof LilyPadBlock) && VoxelShapes.func_197879_c(blockstate.func_196952_d(this.field_70170_p, blockpos$pooledmutable).func_197751_a((double)l1, (double)k2, (double)i2), voxelshape, IBooleanFunction.field_223238_i_)) {
@@ -9,7 +29,7 @@
                             ++k1;
                          }
                       }
-@@ -776,6 +776,16 @@
+@@ -776,6 +782,16 @@
        return new SSpawnObjectPacket(this);
     }
  

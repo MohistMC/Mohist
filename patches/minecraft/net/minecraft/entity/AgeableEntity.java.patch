@@ -1,0 +1,10 @@
+--- a/net/minecraft/entity/AgeableEntity.java
++++ b/net/minecraft/entity/AgeableEntity.java
+@@ -20,6 +20,7 @@
+    protected int field_175504_a;
+    protected int field_175502_b;
+    protected int field_175503_c;
++   public boolean ageLocked;
+ 
+    protected AgeableEntity(EntityType<? extends AgeableEntity> p_i48581_1_, World p_i48581_2_) {
+       super(p_i48581_1_, p_i48581_2_);

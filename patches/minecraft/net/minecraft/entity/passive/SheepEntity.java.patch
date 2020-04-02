@@ -1,15 +1,17 @@
 --- a/net/minecraft/entity/passive/SheepEntity.java
 +++ b/net/minecraft/entity/passive/SheepEntity.java
-@@ -55,7 +55,7 @@
+@@ -54,8 +54,9 @@
+ import net.minecraft.world.storage.loot.LootTables;
  import net.minecraftforge.api.distmarker.Dist;
  import net.minecraftforge.api.distmarker.OnlyIn;
++import org.bukkit.inventory.InventoryView;
  
 -public class SheepEntity extends AnimalEntity {
 +public class SheepEntity extends AnimalEntity implements net.minecraftforge.common.IShearable {
     private static final DataParameter<Byte> field_184774_bv = EntityDataManager.func_187226_a(SheepEntity.class, DataSerializers.field_187191_a);
     private static final Map<DyeColor, IItemProvider> field_200206_bz = Util.func_200696_a(Maps.newEnumMap(DyeColor.class), (p_203402_0_) -> {
        p_203402_0_.put(DyeColor.WHITE, Blocks.field_196556_aL);
-@@ -212,7 +212,7 @@
+@@ -212,7 +213,7 @@
  
     public boolean func_184645_a(PlayerEntity p_184645_1_, Hand p_184645_2_) {
        ItemStack itemstack = p_184645_1_.func_184586_b(p_184645_2_);
@@ -18,7 +20,7 @@
           this.func_213612_dV();
           if (!this.field_70170_p.field_72995_K) {
              itemstack.func_222118_a(1, p_184645_1_, (p_213613_1_) -> {
-@@ -226,6 +226,7 @@
+@@ -226,6 +227,7 @@
        }
     }
  
@@ -26,7 +28,19 @@
     public void func_213612_dV() {
        if (!this.field_70170_p.field_72995_K) {
           this.func_70893_e(true);
-@@ -354,4 +355,24 @@
+@@ -342,6 +344,11 @@
+ 
+    private static CraftingInventory func_213611_a(DyeColor p_213611_0_, DyeColor p_213611_1_) {
+       CraftingInventory craftinginventory = new CraftingInventory(new Container((ContainerType)null, -1) {
++         @Override
++         public InventoryView getBukkitView() {
++            return null;
++         }
++
+          public boolean func_75145_c(PlayerEntity p_75145_1_) {
+             return false;
+          }
+@@ -354,4 +361,24 @@
     protected float func_213348_b(Pose p_213348_1_, EntitySize p_213348_2_) {
        return 0.95F * p_213348_2_.field_220316_b;
     }

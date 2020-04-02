@@ -1,0 +1,11 @@
+--- a/net/minecraft/tileentity/SkullTileEntity.java
++++ b/net/minecraft/tileentity/SkullTileEntity.java
+@@ -17,7 +17,7 @@
+ import net.minecraftforge.api.distmarker.OnlyIn;
+ 
+ public class SkullTileEntity extends TileEntity implements ITickableTileEntity {
+-   private GameProfile field_152110_j;
++   public GameProfile field_152110_j;
+    private int field_184296_h;
+    private boolean field_184297_i;
+    private static PlayerProfileCache field_184298_j;

@@ -1,0 +1,11 @@
+--- a/net/minecraft/block/JukeboxBlock.java
++++ b/net/minecraft/block/JukeboxBlock.java
+@@ -45,7 +45,7 @@
+       }
+    }
+ 
+-   private void func_203419_a(World p_203419_1_, BlockPos p_203419_2_) {
++   public void func_203419_a(World p_203419_1_, BlockPos p_203419_2_) {
+       if (!p_203419_1_.field_72995_K) {
+          TileEntity tileentity = p_203419_1_.func_175625_s(p_203419_2_);
+          if (tileentity instanceof JukeboxTileEntity) {

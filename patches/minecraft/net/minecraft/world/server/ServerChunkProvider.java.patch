@@ -1,0 +1,44 @@
+--- a/net/minecraft/world/server/ServerChunkProvider.java
++++ b/net/minecraft/world/server/ServerChunkProvider.java
+@@ -58,8 +58,8 @@
+    public final ChunkManager field_217237_a;
+    private final DimensionSavedDataManager field_217244_j;
+    private long field_217245_k;
+-   private boolean field_217246_l = true;
+-   private boolean field_217247_m = true;
++   public boolean field_217246_l = true;
++   public boolean field_217247_m = true;
+    private final long[] field_222875_n = new long[4];
+    private final ChunkStatus[] field_222876_o = new ChunkStatus[4];
+    private final IChunk[] field_222877_p = new IChunk[4];
+@@ -311,12 +311,29 @@
+       this.field_217237_a.func_219177_a(p_217210_1_);
+    }
+ 
++   @Override
+    public void close() throws IOException {
+-      this.func_217210_a(true);
++      this.close(true);
++   }
++
++   public void close(final boolean save) throws IOException {
++      if (save) {
++         this.func_217210_a(true);
++      }
+       this.field_217242_h.close();
+       this.field_217237_a.close();
+    }
+ 
++   public void purgeUnload() {
++      this.field_73251_h.func_217381_Z().func_76320_a("purge");
++      this.field_217240_d.func_219340_a();
++      this.func_217235_l();
++      this.field_73251_h.func_217381_Z().func_219895_b("unload");
++      this.field_217237_a.func_219204_a(() -> true);
++      this.field_73251_h.func_217381_Z().func_76319_b();
++      this.func_222869_l();
++   }
++
+    public void func_217207_a(BooleanSupplier p_217207_1_) {
+       this.field_73251_h.func_217381_Z().func_76320_a("purge");
+       this.field_217240_d.func_219340_a();

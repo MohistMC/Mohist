@@ -1,7 +1,27 @@
 --- a/net/minecraft/entity/player/PlayerEntity.java
 +++ b/net/minecraft/entity/player/PlayerEntity.java
-@@ -109,6 +109,10 @@
+@@ -14,8 +14,6 @@
+ import java.util.function.Predicate;
+ import javax.annotation.Nullable;
+ import net.minecraft.advancements.CriteriaTriggers;
+-import net.minecraft.block.BedBlock;
+-import net.minecraft.block.Block;
+ import net.minecraft.block.BlockState;
+ import net.minecraft.block.HorizontalBlock;
+ import net.minecraft.enchantment.EnchantmentHelper;
+@@ -47,7 +45,6 @@
+ import net.minecraft.inventory.container.INamedContainerProvider;
+ import net.minecraft.inventory.container.PlayerContainer;
+ import net.minecraft.item.ArmorItem;
+-import net.minecraft.item.AxeItem;
+ import net.minecraft.item.ElytraItem;
+ import net.minecraft.item.ItemStack;
+ import net.minecraft.item.Items;
+@@ -107,8 +104,13 @@
+ import net.minecraft.world.server.ServerWorld;
+ import net.minecraftforge.api.distmarker.Dist;
  import net.minecraftforge.api.distmarker.OnlyIn;
++import org.bukkit.craftbukkit.entity.CraftHumanEntity;
  
  public abstract class PlayerEntity extends LivingEntity {
 +   public static final String PERSISTED_NBT_TAG = "PlayerPersisted";
@@ -11,7 +31,16 @@
     public static final EntitySize field_213835_bs = EntitySize.func_220314_b(0.6F, 1.8F);
     private static final Map<Pose, EntitySize> field_213836_b = ImmutableMap.<Pose, EntitySize>builder().put(Pose.STANDING, field_213835_bs).put(Pose.SLEEPING, field_213377_as).put(Pose.FALL_FLYING, EntitySize.func_220314_b(0.6F, 0.6F)).put(Pose.SWIMMING, EntitySize.func_220314_b(0.6F, 0.6F)).put(Pose.SPIN_ATTACK, EntitySize.func_220314_b(0.6F, 0.6F)).put(Pose.CROUCHING, EntitySize.func_220314_b(0.6F, 1.5F)).put(Pose.DYING, EntitySize.func_220311_c(0.2F, 0.2F)).build();
     private static final DataParameter<Float> field_184829_a = EntityDataManager.func_187226_a(PlayerEntity.class, DataSerializers.field_187193_c);
-@@ -151,6 +155,9 @@
+@@ -133,7 +135,7 @@
+    public double field_71094_bP;
+    public double field_71095_bQ;
+    public double field_71085_bR;
+-   private int field_71076_b;
++   public int field_71076_b;
+    protected boolean field_204230_bP;
+    protected BlockPos field_71077_c;
+    protected boolean field_82248_d;
+@@ -151,7 +153,21 @@
     private final CooldownTracker field_184832_bU = this.func_184815_l();
     @Nullable
     public FishingBobberEntity field_71104_cf;
@@ -19,9 +48,21 @@
 +   private final java.util.Collection<ITextComponent> prefixes = new java.util.LinkedList<ITextComponent>();
 +   private final java.util.Collection<ITextComponent> suffixes = new java.util.LinkedList<ITextComponent>();
  
++   // CraftBukkit start
++   public boolean fauxSleeping;
++   public String spawnWorld = "";
++   public int oldLevel = -1;
++
++   @Override
++   public CraftHumanEntity getBukkitEntity() {
++      return (CraftHumanEntity) super.getBukkitEntity();
++   }
++    // CraftBukkit end
++
     public PlayerEntity(World p_i45324_1_, GameProfile p_i45324_2_) {
        super(EntityType.field_200729_aH, p_i45324_1_);
-@@ -182,6 +189,7 @@
+       this.func_184221_a(func_146094_a(p_i45324_2_));
+@@ -182,6 +198,7 @@
        this.func_110148_a(SharedMonsterAttributes.field_111263_d).func_111128_a((double)0.1F);
        this.func_110140_aT().func_111150_b(SharedMonsterAttributes.field_188790_f);
        this.func_110140_aT().func_111150_b(SharedMonsterAttributes.field_188792_h);
@@ -29,7 +70,7 @@
     }
  
     protected void func_70088_a() {
-@@ -195,6 +203,7 @@
+@@ -195,6 +212,7 @@
     }
  
     public void func_70071_h_() {
@@ -37,7 +78,7 @@
        this.field_70145_X = this.func_175149_v();
        if (this.func_175149_v()) {
           this.field_70122_E = false;
-@@ -210,7 +219,7 @@
+@@ -210,7 +228,7 @@
              this.field_71076_b = 100;
           }
  
@@ -46,7 +87,7 @@
              this.func_225652_a_(false, true);
           }
        } else if (this.field_71076_b > 0) {
-@@ -268,6 +277,7 @@
+@@ -268,6 +286,7 @@
        this.func_203041_m();
        this.field_184832_bU.func_185144_a();
        this.func_213832_dB();
@@ -54,7 +95,16 @@
     }
  
     public boolean func_226563_dT_() {
-@@ -454,10 +464,10 @@
+@@ -405,7 +424,7 @@
+       return SoundCategory.PLAYERS;
+    }
+ 
+-   protected int func_190531_bD() {
++   public int func_190531_bD() {
+       return 20;
+    }
+ 
+@@ -454,10 +473,10 @@
           this.field_71107_bF = this.field_71109_bG;
           this.field_71109_bG = 0.0F;
           this.func_71015_k(this.func_226277_ct_() - d0, this.func_226278_cu_() - d1, this.func_226281_cx_() - d2);
@@ -67,7 +117,7 @@
           }
  
        }
-@@ -570,6 +580,7 @@
+@@ -570,6 +589,7 @@
     }
  
     public void func_70645_a(DamageSource p_70645_1_) {
@@ -75,7 +125,7 @@
        super.func_70645_a(p_70645_1_);
        this.func_226264_Z_();
        if (!this.func_175149_v()) {
-@@ -623,12 +634,14 @@
+@@ -623,12 +643,14 @@
     }
  
     public boolean func_225609_n_(boolean p_225609_1_) {
@@ -92,7 +142,7 @@
     }
  
     @Nullable
-@@ -662,7 +675,12 @@
+@@ -662,7 +684,12 @@
        }
     }
  
@@ -105,7 +155,7 @@
        float f = this.field_71071_by.func_184438_a(p_184813_1_);
        if (f > 1.0F) {
           int i = EnchantmentHelper.func_185293_e(this);
-@@ -704,11 +722,12 @@
+@@ -704,11 +731,12 @@
           f /= 5.0F;
        }
  
@@ -119,7 +169,7 @@
     }
  
     public void func_70037_a(CompoundNBT p_70037_1_) {
-@@ -732,6 +751,17 @@
+@@ -732,6 +760,17 @@
           this.field_82248_d = p_70037_1_.func_74767_n("SpawnForced");
        }
  
@@ -137,7 +187,7 @@
        this.field_71100_bB.func_75112_a(p_70037_1_);
        this.field_71075_bZ.func_75095_b(p_70037_1_);
        if (p_70037_1_.func_150297_b("EnderItems", 9)) {
-@@ -777,6 +807,23 @@
+@@ -777,6 +816,23 @@
           p_213281_1_.func_218657_a("ShoulderEntityRight", this.func_192025_dl());
        }
  
@@ -161,7 +211,7 @@
     }
  
     public boolean func_180431_b(DamageSource p_180431_1_) {
-@@ -794,6 +841,7 @@
+@@ -794,6 +850,7 @@
     }
  
     public boolean func_70097_a(DamageSource p_70097_1_, float p_70097_2_) {
@@ -169,7 +219,7 @@
        if (this.func_180431_b(p_70097_1_)) {
           return false;
        } else if (this.field_71075_bZ.field_75102_a && !p_70097_1_.func_76357_e()) {
-@@ -825,7 +873,7 @@
+@@ -825,7 +882,7 @@
  
     protected void func_190629_c(LivingEntity p_190629_1_) {
        super.func_190629_c(p_190629_1_);
@@ -178,7 +228,7 @@
           this.func_190777_m(true);
        }
  
-@@ -846,11 +894,12 @@
+@@ -846,11 +903,12 @@
     }
  
     protected void func_184590_k(float p_184590_1_) {
@@ -192,7 +242,7 @@
           });
           if (this.field_184627_bm.func_190926_b()) {
              if (hand == Hand.MAIN_HAND) {
-@@ -868,10 +917,13 @@
+@@ -868,10 +926,13 @@
  
     protected void func_70665_d(DamageSource p_70665_1_, float p_70665_2_) {
        if (!this.func_180431_b(p_70665_1_)) {
@@ -206,7 +256,7 @@
           float f = p_70665_2_ - f2;
           if (f > 0.0F && f < 3.4028235E37F) {
              this.func_195067_a(Stats.field_212738_J, Math.round(f * 10.0F));
-@@ -926,6 +978,8 @@
+@@ -926,6 +987,8 @@
  
           return ActionResultType.PASS;
        } else {
@@ -215,7 +265,7 @@
           ItemStack itemstack = this.func_184586_b(p_190775_2_);
           ItemStack itemstack1 = itemstack.func_77946_l();
           if (p_190775_1_.func_184230_a(this, p_190775_2_)) {
-@@ -933,6 +987,9 @@
+@@ -933,6 +996,9 @@
                 itemstack.func_190920_e(itemstack1.func_190916_E());
              }
  
@@ -225,7 +275,7 @@
              return ActionResultType.SUCCESS;
           } else {
              if (!itemstack.func_190926_b() && p_190775_1_ instanceof LivingEntity) {
-@@ -942,6 +999,7 @@
+@@ -942,6 +1008,7 @@
  
                 if (itemstack.func_111282_a(this, (LivingEntity)p_190775_1_, p_190775_2_)) {
                    if (itemstack.func_190926_b() && !this.field_71075_bZ.field_75098_d) {
@@ -233,7 +283,7 @@
                       this.func_184611_a(p_190775_2_, ItemStack.field_190927_a);
                    }
  
-@@ -1018,6 +1076,7 @@
+@@ -1018,6 +1085,7 @@
     }
  
     public void func_71059_n(Entity p_71059_1_) {
@@ -241,7 +291,7 @@
        if (p_71059_1_.func_70075_an()) {
           if (!p_71059_1_.func_85031_j(this)) {
              float f = (float)this.func_110148_a(SharedMonsterAttributes.field_111264_e).func_111126_e();
-@@ -1045,8 +1104,10 @@
+@@ -1045,8 +1113,10 @@
  
                 boolean flag2 = flag && this.field_70143_R > 0.0F && !this.field_70122_E && !this.func_70617_f_() && !this.func_70090_H() && !this.func_70644_a(Effects.field_76440_q) && !this.func_184218_aH() && p_71059_1_ instanceof LivingEntity;
                 flag2 = flag2 && !this.func_70051_ag();
@@ -253,7 +303,7 @@
                 }
  
                 f = f + f1;
-@@ -1134,8 +1195,10 @@
+@@ -1134,8 +1204,10 @@
                    }
  
                    if (!this.field_70170_p.field_72995_K && !itemstack1.func_190926_b() && entity instanceof LivingEntity) {
@@ -264,7 +314,7 @@
                          this.func_184611_a(Hand.MAIN_HAND, ItemStack.field_190927_a);
                       }
                    }
-@@ -1177,7 +1240,7 @@
+@@ -1177,7 +1249,7 @@
        }
  
        if (this.field_70146_Z.nextFloat() < f) {
@@ -273,7 +323,7 @@
           this.func_184602_cy();
           this.field_70170_p.func_72960_a(this, (byte)30);
        }
-@@ -1203,8 +1266,9 @@
+@@ -1203,8 +1275,9 @@
     public void func_71004_bE() {
     }
  
@@ -285,26 +335,61 @@
        this.field_71069_bz.func_75134_a(this);
        if (this.field_71070_bA != null) {
           this.field_71070_bA.func_75134_a(this);
-@@ -1221,6 +1285,9 @@
+@@ -1221,7 +1294,14 @@
     }
  
     public Either<PlayerEntity.SleepResult, Unit> func_213819_a(BlockPos p_213819_1_) {
-+      Optional<BlockPos> optAt = Optional.of(p_213819_1_);
+-      Direction direction = this.field_70170_p.func_180495_p(p_213819_1_).func_177229_b(HorizontalBlock.field_185512_D);
++      return this.sleep(p_213819_1_, false);
++   }
++
++   public Either<SleepResult, Unit> sleep(BlockPos at, boolean force) {
++      Optional<BlockPos> optAt = Optional.of(at);
 +      PlayerEntity.SleepResult ret = net.minecraftforge.event.ForgeEventFactory.onPlayerSleepInBed(this, optAt);
 +      if (ret != null) return Either.left(ret);
-       Direction direction = this.field_70170_p.func_180495_p(p_213819_1_).func_177229_b(HorizontalBlock.field_185512_D);
++      Direction direction = this.field_70170_p.func_180495_p(at).func_177229_b(HorizontalBlock.field_185512_D);
        if (!this.field_70170_p.field_72995_K) {
           if (this.func_70608_bn() || !this.func_70089_S()) {
-@@ -1231,7 +1298,7 @@
+             return Either.left(PlayerEntity.SleepResult.OTHER_PROBLEM);
+@@ -1231,23 +1311,23 @@
              return Either.left(PlayerEntity.SleepResult.NOT_POSSIBLE_HERE);
           }
  
 -         if (this.field_70170_p.func_72935_r()) {
+-            this.func_226560_a_(p_213819_1_, false, true);
 +         if (!net.minecraftforge.event.ForgeEventFactory.fireSleepingTimeCheck(this, optAt)) {
-             this.func_226560_a_(p_213819_1_, false, true);
++            this.func_226560_a_(at, false, true);
              return Either.left(PlayerEntity.SleepResult.NOT_POSSIBLE_NOW);
           }
-@@ -1273,6 +1340,7 @@
+ 
+-         if (!this.func_190774_a(p_213819_1_, direction)) {
++         if (!this.func_190774_a(at, direction)) {
+             return Either.left(PlayerEntity.SleepResult.TOO_FAR_AWAY);
+          }
+ 
+-         if (this.func_213828_b(p_213819_1_, direction)) {
++         if (this.func_213828_b(at, direction)) {
+             return Either.left(PlayerEntity.SleepResult.OBSTRUCTED);
+          }
+ 
+          if (!this.func_184812_l_()) {
+             double d0 = 8.0D;
+             double d1 = 5.0D;
+-            Vec3d vec3d = new Vec3d((double)p_213819_1_.func_177958_n() + 0.5D, (double)p_213819_1_.func_177956_o(), (double)p_213819_1_.func_177952_p() + 0.5D);
++            Vec3d vec3d = new Vec3d((double)at.func_177958_n() + 0.5D, (double)at.func_177956_o(), (double)at.func_177952_p() + 0.5D);
+             List<MonsterEntity> list = this.field_70170_p.func_175647_a(MonsterEntity.class, new AxisAlignedBB(vec3d.func_82615_a() - 8.0D, vec3d.func_82617_b() - 5.0D, vec3d.func_82616_c() - 8.0D, vec3d.func_82615_a() + 8.0D, vec3d.func_82617_b() + 5.0D, vec3d.func_82616_c() + 8.0D), (p_213820_1_) -> {
+                return p_213820_1_.func_191990_c(this);
+             });
+@@ -1257,7 +1337,7 @@
+          }
+       }
+ 
+-      this.func_213342_e(p_213819_1_);
++      this.func_213342_e(at);
+       this.field_71076_b = 0;
+       if (this.field_70170_p instanceof ServerWorld) {
+          ((ServerWorld)this.field_70170_p).func_72854_c();
+@@ -1273,6 +1353,7 @@
     }
  
     private boolean func_190774_a(BlockPos p_190774_1_, Direction p_190774_2_) {
@@ -312,7 +397,7 @@
        return this.func_230126_g_(p_190774_1_) || this.func_230126_g_(p_190774_1_.func_177972_a(p_190774_2_.func_176734_d()));
     }
  
-@@ -1287,6 +1355,7 @@
+@@ -1287,6 +1368,7 @@
     }
  
     public void func_225652_a_(boolean p_225652_1_, boolean p_225652_2_) {
@@ -320,7 +405,7 @@
        super.func_213366_dy();
        if (this.field_70170_p instanceof ServerWorld && p_225652_2_) {
           ((ServerWorld)this.field_70170_p).func_72854_c();
-@@ -1300,17 +1369,17 @@
+@@ -1300,17 +1382,17 @@
     }
  
     public static Optional<Vec3d> func_213822_a(IWorldReader p_213822_0_, BlockPos p_213822_1_, boolean p_213822_2_) {
@@ -342,7 +427,7 @@
        }
     }
  
-@@ -1325,15 +1394,62 @@
+@@ -1325,15 +1407,62 @@
     public void func_146105_b(ITextComponent p_146105_1_, boolean p_146105_2_) {
     }
  
@@ -407,7 +492,7 @@
        if (p_226560_1_ != null) {
           if (p_226560_3_ && !p_226560_1_.equals(this.field_71077_c)) {
              this.func_145747_a(new TranslationTextComponent("block.minecraft.bed.set_spawn"));
-@@ -1506,6 +1622,7 @@
+@@ -1506,6 +1635,7 @@
  
     public boolean func_225503_b_(float p_225503_1_, float p_225503_2_) {
        if (this.field_71075_bZ.field_75101_c) {
@@ -415,7 +500,7 @@
           return false;
        } else {
           if (p_225503_1_ >= 2.0F) {
-@@ -1560,6 +1677,10 @@
+@@ -1560,6 +1690,10 @@
     }
  
     public void func_195068_e(int p_195068_1_) {
@@ -426,7 +511,7 @@
        this.func_85039_t(p_195068_1_);
        this.field_71106_cc += (float)p_195068_1_ / (float)this.func_71050_bK();
        this.field_71067_cb = MathHelper.func_76125_a(this.field_71067_cb + p_195068_1_, 0, Integer.MAX_VALUE);
-@@ -1599,6 +1720,10 @@
+@@ -1599,6 +1733,10 @@
     }
  
     public void func_82242_a(int p_82242_1_) {
@@ -437,7 +522,7 @@
        this.field_71068_ca += p_82242_1_;
        if (this.field_71068_ca < 0) {
           this.field_71068_ca = 0;
-@@ -1789,7 +1914,10 @@
+@@ -1789,7 +1927,10 @@
     }
  
     public ITextComponent func_145748_c_() {
@@ -449,7 +534,25 @@
        return this.func_208016_c(itextcomponent);
     }
  
-@@ -2029,4 +2157,45 @@
+@@ -1922,7 +2063,7 @@
+       return this.field_70180_af.func_187225_a(field_192032_bt);
+    }
+ 
+-   protected void func_192029_h(CompoundNBT p_192029_1_) {
++   public void func_192029_h(CompoundNBT p_192029_1_) {
+       this.field_70180_af.func_187227_b(field_192032_bt, p_192029_1_);
+    }
+ 
+@@ -1930,7 +2071,7 @@
+       return this.field_70180_af.func_187225_a(field_192033_bu);
+    }
+ 
+-   protected void func_192031_i(CompoundNBT p_192031_1_) {
++   public void func_192031_i(CompoundNBT p_192031_1_) {
+       this.field_70180_af.func_187227_b(field_192033_bu, p_192031_1_);
+    }
+ 
+@@ -2029,4 +2170,45 @@
           return this.field_221260_g;
        }
     }

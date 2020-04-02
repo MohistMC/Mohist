@@ -1,0 +1,9 @@
+--- a/net/minecraft/entity/merchant/IMerchant.java
++++ b/net/minecraft/entity/merchant/IMerchant.java
+@@ -55,4 +55,6 @@
+       }
+ 
+    }
++
++   org.bukkit.craftbukkit.inventory.CraftMerchant getCraftMerchant(); // CraftBukkit
+ }

@@ -1,6 +1,35 @@
 --- a/net/minecraft/tileentity/BrewingStandTileEntity.java
 +++ b/net/minecraft/tileentity/BrewingStandTileEntity.java
-@@ -146,6 +146,7 @@
+@@ -1,6 +1,7 @@
+ package net.minecraft.tileentity;
+ 
+ import java.util.Arrays;
++import java.util.List;
+ import javax.annotation.Nullable;
+ import net.minecraft.block.BlockState;
+ import net.minecraft.block.BrewingStandBlock;
+@@ -22,16 +23,18 @@
+ import net.minecraft.util.math.BlockPos;
+ import net.minecraft.util.text.ITextComponent;
+ import net.minecraft.util.text.TranslationTextComponent;
++import org.bukkit.craftbukkit.entity.CraftHumanEntity;
++import org.bukkit.entity.HumanEntity;
+ 
+ public class BrewingStandTileEntity extends LockableTileEntity implements ISidedInventory, ITickableTileEntity {
+    private static final int[] field_145941_a = new int[]{3};
+    private static final int[] field_184277_f = new int[]{0, 1, 2, 3};
+    private static final int[] field_145947_i = new int[]{0, 1, 2, 4};
+    private NonNullList<ItemStack> field_145945_j = NonNullList.func_191197_a(5, ItemStack.field_190927_a);
+-   private int field_145946_k;
++   public int field_145946_k;
+    private boolean[] field_145943_l;
+    private Item field_145944_m;
+-   private int field_184278_m;
++   public int field_184278_m;
+    protected final IIntArray field_213954_a = new IIntArray() {
+       public int func_221476_a(int p_221476_1_) {
+          switch(p_221476_1_) {
+@@ -146,6 +149,7 @@
  
     private boolean func_145934_k() {
        ItemStack itemstack = this.field_145945_j.get(3);
@@ -8,7 +37,7 @@
        if (itemstack.func_190926_b()) {
           return false;
        } else if (!PotionBrewing.func_185205_a(itemstack)) {
-@@ -163,16 +164,16 @@
+@@ -163,16 +167,16 @@
     }
  
     private void func_145940_l() {
@@ -30,7 +59,19 @@
           if (itemstack.func_190926_b()) {
              itemstack = itemstack1;
           } else if (!this.field_145850_b.field_72995_K) {
-@@ -229,13 +230,13 @@
+@@ -219,6 +223,11 @@
+ 
+    }
+ 
++   @Override
++   public int func_70297_j_() {
++      return 0;
++   }
++
+    public boolean func_70300_a(PlayerEntity p_70300_1_) {
+       if (this.field_145850_b.func_175625_s(this.field_174879_c) != this) {
+          return false;
+@@ -229,17 +238,42 @@
  
     public boolean func_94041_b(int p_94041_1_, ItemStack p_94041_2_) {
        if (p_94041_1_ == 3) {
@@ -46,7 +87,36 @@
           }
        }
     }
-@@ -267,4 +268,27 @@
+ 
++   @Override
++   public List<ItemStack> getContents() {
++      return null;
++   }
++
++   @Override
++   public void onOpen(CraftHumanEntity who) {
++
++   }
++
++   @Override
++   public void onClose(CraftHumanEntity who) {
++
++   }
++
++   @Override
++   public List<HumanEntity> getViewers() {
++      return null;
++   }
++
++   @Override
++   public void setMaxStackSize(int size) {
++
++   }
++
+    public int[] func_180463_a(Direction p_180463_1_) {
+       if (p_180463_1_ == Direction.UP) {
+          return field_145941_a;
+@@ -267,4 +301,27 @@
     protected Container func_213906_a(int p_213906_1_, PlayerInventory p_213906_2_) {
        return new BrewingStandContainer(p_213906_1_, p_213906_2_, this, this.field_213954_a);
     }

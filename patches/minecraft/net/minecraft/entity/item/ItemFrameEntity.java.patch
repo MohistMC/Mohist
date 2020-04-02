@@ -1,5 +1,14 @@
 --- a/net/minecraft/entity/item/ItemFrameEntity.java
 +++ b/net/minecraft/entity/item/ItemFrameEntity.java
+@@ -57,7 +57,7 @@
+       this.func_184212_Q().func_187214_a(field_184526_d, 0);
+    }
+ 
+-   protected void func_174859_a(Direction p_174859_1_) {
++   public void func_174859_a(Direction p_174859_1_) {
+       Validate.notNull(p_174859_1_);
+       this.field_174860_b = p_174859_1_;
+       if (p_174859_1_.func_176740_k().func_176722_c()) {
 @@ -192,7 +192,7 @@
     }
  
@@ -9,3 +18,28 @@
           MapData mapdata = FilledMapItem.func_195950_a(p_110131_1_, this.field_70170_p);
           mapdata.func_212441_a(this.field_174861_a, this.func_145782_y());
           mapdata.func_76186_a(true);
+@@ -210,14 +210,18 @@
+    }
+ 
+    public void func_174864_a(ItemStack p_174864_1_, boolean p_174864_2_) {
+-      if (!p_174864_1_.func_190926_b()) {
+-         p_174864_1_ = p_174864_1_.func_77946_l();
+-         p_174864_1_.func_190920_e(1);
+-         p_174864_1_.func_82842_a(this);
++      this.setItem(p_174864_1_, p_174864_2_, true);
++   }
++
++   public void setItem(ItemStack stack, final boolean p_174864_2_, final boolean playSound) {
++      if (!stack.func_190926_b()) {
++         stack = stack.func_77946_l();
++         stack.func_190920_e(1);
++         stack.func_82842_a(this);
+       }
+ 
+-      this.func_184212_Q().func_187227_b(field_184525_c, p_174864_1_);
+-      if (!p_174864_1_.func_190926_b()) {
++      this.func_184212_Q().func_187227_b(field_184525_c, stack);
++      if (!stack.func_190926_b() && playSound) {
+          this.func_184185_a(SoundEvents.field_187620_cL, 1.0F, 1.0F);
+       }
+ 

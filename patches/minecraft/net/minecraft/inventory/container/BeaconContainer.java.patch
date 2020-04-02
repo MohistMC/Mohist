@@ -1,6 +1,20 @@
 --- a/net/minecraft/inventory/container/BeaconContainer.java
 +++ b/net/minecraft/inventory/container/BeaconContainer.java
-@@ -18,7 +18,7 @@
+@@ -5,20 +5,19 @@
+ import net.minecraft.entity.player.PlayerEntity;
+ import net.minecraft.inventory.IInventory;
+ import net.minecraft.inventory.Inventory;
+-import net.minecraft.item.Item;
+ import net.minecraft.item.ItemStack;
+-import net.minecraft.item.Items;
+ import net.minecraft.potion.Effect;
+ import net.minecraft.util.IIntArray;
+ import net.minecraft.util.IWorldPosCallable;
+ import net.minecraft.util.IntArray;
+ import net.minecraftforge.api.distmarker.Dist;
+ import net.minecraftforge.api.distmarker.OnlyIn;
++import org.bukkit.inventory.InventoryView;
+ 
  public class BeaconContainer extends Container {
     private final IInventory field_82866_e = new Inventory(1) {
        public boolean func_94041_b(int p_94041_1_, ItemStack p_94041_2_) {
@@ -9,7 +23,19 @@
        }
  
        public int func_70297_j_() {
-@@ -88,10 +88,8 @@
+@@ -76,6 +75,11 @@
+       this.func_75142_b();
+    }
+ 
++   @Override
++   public InventoryView getBukkitView() {
++      return null;
++   }
++
+    public ItemStack func_82846_b(PlayerEntity p_82846_1_, int p_82846_2_) {
+       ItemStack itemstack = ItemStack.field_190927_a;
+       Slot slot = this.field_75151_b.get(p_82846_2_);
+@@ -88,10 +92,8 @@
              }
  
              slot.func_75220_a(itemstack1, itemstack);
@@ -22,7 +48,7 @@
           } else if (p_82846_2_ >= 1 && p_82846_2_ < 28) {
              if (!this.func_75135_a(itemstack1, 28, 37, false)) {
                 return ItemStack.field_190927_a;
-@@ -157,8 +155,7 @@
+@@ -157,8 +159,7 @@
        }
  
        public boolean func_75214_a(ItemStack p_75214_1_) {

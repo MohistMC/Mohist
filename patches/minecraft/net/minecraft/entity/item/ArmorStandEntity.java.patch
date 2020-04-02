@@ -1,6 +1,6 @@
 --- a/net/minecraft/entity/item/ArmorStandEntity.java
 +++ b/net/minecraft/entity/item/ArmorStandEntity.java
-@@ -56,7 +56,7 @@
+@@ -56,19 +56,19 @@
     public static final DataParameter<Rotations> field_184806_f = EntityDataManager.func_187226_a(ArmorStandEntity.class, DataSerializers.field_187199_i);
     public static final DataParameter<Rotations> field_184807_g = EntityDataManager.func_187226_a(ArmorStandEntity.class, DataSerializers.field_187199_i);
     private static final Predicate<Entity> field_184798_bv = (p_200617_0_) -> {
@@ -9,3 +9,57 @@
     };
     private final NonNullList<ItemStack> field_184799_bw = NonNullList.func_191197_a(2, ItemStack.field_190927_a);
     private final NonNullList<ItemStack> field_184800_bx = NonNullList.func_191197_a(4, ItemStack.field_190927_a);
+    private boolean field_175436_h;
+    public long field_175437_i;
+    private int field_175442_bg;
+-   private Rotations field_175443_bh = field_175435_a;
+-   private Rotations field_175444_bi = field_175433_b;
+-   private Rotations field_175438_bj = field_175434_c;
+-   private Rotations field_175439_bk = field_175431_d;
+-   private Rotations field_175440_bl = field_175432_e;
+-   private Rotations field_175441_bm = field_175429_f;
++   public Rotations field_175443_bh = field_175435_a;
++   public Rotations field_175444_bi = field_175433_b;
++   public Rotations field_175438_bj = field_175434_c;
++   public Rotations field_175439_bk = field_175431_d;
++   public Rotations field_175440_bl = field_175432_e;
++   public Rotations field_175441_bm = field_175429_f;
+ 
+    public ArmorStandEntity(EntityType<? extends ArmorStandEntity> p_i50225_1_, World p_i50225_2_) {
+       super(p_i50225_1_, p_i50225_2_);
+@@ -609,7 +609,7 @@
+       return this.func_181026_s() ? PushReaction.IGNORE : super.func_184192_z();
+    }
+ 
+-   private void func_175420_a(boolean p_175420_1_) {
++   public void func_175420_a(boolean p_175420_1_) {
+       this.field_70180_af.func_187227_b(field_184801_a, this.func_184797_a(this.field_70180_af.func_187225_a(field_184801_a), 1, p_175420_1_));
+    }
+ 
+@@ -617,7 +617,7 @@
+       return (this.field_70180_af.func_187225_a(field_184801_a) & 1) != 0;
+    }
+ 
+-   private void func_175413_k(boolean p_175413_1_) {
++   public void func_175413_k(boolean p_175413_1_) {
+       this.field_70180_af.func_187227_b(field_184801_a, this.func_184797_a(this.field_70180_af.func_187225_a(field_184801_a), 4, p_175413_1_));
+    }
+ 
+@@ -625,7 +625,7 @@
+       return (this.field_70180_af.func_187225_a(field_184801_a) & 4) != 0;
+    }
+ 
+-   private void func_175426_l(boolean p_175426_1_) {
++   public void func_175426_l(boolean p_175426_1_) {
+       this.field_70180_af.func_187227_b(field_184801_a, this.func_184797_a(this.field_70180_af.func_187225_a(field_184801_a), 8, p_175426_1_));
+    }
+ 
+@@ -633,7 +633,7 @@
+       return (this.field_70180_af.func_187225_a(field_184801_a) & 8) != 0;
+    }
+ 
+-   private void func_181027_m(boolean p_181027_1_) {
++   public void func_181027_m(boolean p_181027_1_) {
+       this.field_70180_af.func_187227_b(field_184801_a, this.func_184797_a(this.field_70180_af.func_187225_a(field_184801_a), 16, p_181027_1_));
+    }
+ 

@@ -1,6 +1,22 @@
 --- a/net/minecraft/tileentity/ChestTileEntity.java
 +++ b/net/minecraft/tileentity/ChestTileEntity.java
-@@ -38,6 +38,7 @@
+@@ -1,5 +1,6 @@
+ package net.minecraft.tileentity;
+ 
++import java.util.List;
+ import net.minecraft.block.Block;
+ import net.minecraft.block.BlockState;
+ import net.minecraft.block.ChestBlock;
+@@ -27,6 +28,8 @@
+ import net.minecraft.world.World;
+ import net.minecraftforge.api.distmarker.Dist;
+ import net.minecraftforge.api.distmarker.OnlyIn;
++import org.bukkit.craftbukkit.entity.CraftHumanEntity;
++import org.bukkit.entity.HumanEntity;
+ 
+ @OnlyIn(
+    value = Dist.CLIENT,
+@@ -38,6 +41,7 @@
     protected float field_145986_n;
     protected int field_145987_o;
     private int field_145983_q;
@@ -8,7 +24,51 @@
  
     protected ChestTileEntity(TileEntityType<?> p_i48287_1_) {
        super(p_i48287_1_);
-@@ -202,7 +203,7 @@
+@@ -51,6 +55,11 @@
+       return 27;
+    }
+ 
++   @Override
++   public int func_70297_j_() {
++      return 0;
++   }
++
+    protected ITextComponent func_213907_g() {
+       return new TranslationTextComponent("container.chest");
+    }
+@@ -178,6 +187,31 @@
+ 
+    }
+ 
++   @Override
++   public List<ItemStack> getContents() {
++      return null;
++   }
++
++   @Override
++   public void onOpen(CraftHumanEntity who) {
++
++   }
++
++   @Override
++   public void onClose(CraftHumanEntity who) {
++
++   }
++
++   @Override
++   public List<HumanEntity> getViewers() {
++      return null;
++   }
++
++   @Override
++   public void setMaxStackSize(int size) {
++
++   }
++
+    protected void func_195482_p() {
+       Block block = this.func_195044_w().func_177230_c();
+       if (block instanceof ChestBlock) {
+@@ -202,7 +236,7 @@
  
     public static int func_195481_a(IBlockReader p_195481_0_, BlockPos p_195481_1_) {
        BlockState blockstate = p_195481_0_.func_180495_p(p_195481_1_);
@@ -17,7 +77,7 @@
           TileEntity tileentity = p_195481_0_.func_175625_s(p_195481_1_);
           if (tileentity instanceof ChestTileEntity) {
              return ((ChestTileEntity)tileentity).field_145987_o;
-@@ -221,4 +222,56 @@
+@@ -221,4 +255,56 @@
     protected Container func_213906_a(int p_213906_1_, PlayerInventory p_213906_2_) {
        return ChestContainer.func_216992_a(p_213906_1_, p_213906_2_, this);
     }

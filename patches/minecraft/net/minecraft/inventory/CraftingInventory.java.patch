@@ -1,0 +1,72 @@
+--- a/net/minecraft/inventory/CraftingInventory.java
++++ b/net/minecraft/inventory/CraftingInventory.java
+@@ -1,10 +1,15 @@
+ package net.minecraft.inventory;
+ 
++import java.util.List;
+ import net.minecraft.entity.player.PlayerEntity;
+ import net.minecraft.inventory.container.Container;
+ import net.minecraft.item.ItemStack;
+ import net.minecraft.item.crafting.RecipeItemHelper;
+ import net.minecraft.util.NonNullList;
++import org.bukkit.Location;
++import org.bukkit.craftbukkit.entity.CraftHumanEntity;
++import org.bukkit.entity.HumanEntity;
++import org.bukkit.inventory.InventoryHolder;
+ 
+ public class CraftingInventory implements IInventory, IRecipeHelperPopulator {
+    private final NonNullList<ItemStack> field_70466_a;
+@@ -55,6 +60,11 @@
+       this.field_70465_c.func_75130_a(this);
+    }
+ 
++   @Override
++   public int func_70297_j_() {
++      return 0;
++   }
++
+    public void func_70296_d() {
+    }
+ 
+@@ -62,6 +72,41 @@
+       return true;
+    }
+ 
++   @Override
++   public List<ItemStack> getContents() {
++      return null;
++   }
++
++   @Override
++   public void onOpen(CraftHumanEntity who) {
++
++   }
++
++   @Override
++   public void onClose(CraftHumanEntity who) {
++
++   }
++
++   @Override
++   public List<HumanEntity> getViewers() {
++      return null;
++   }
++
++   @Override
++   public InventoryHolder getOwner() {
++      return null;
++   }
++
++   @Override
++   public void setMaxStackSize(int size) {
++
++   }
++
++   @Override
++   public Location getLocation() {
++      return null;
++   }
++
+    public void func_174888_l() {
+       this.field_70466_a.clear();
+    }

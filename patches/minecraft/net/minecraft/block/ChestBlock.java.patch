@@ -1,0 +1,66 @@
+--- a/net/minecraft/block/ChestBlock.java
++++ b/net/minecraft/block/ChestBlock.java
+@@ -77,27 +77,8 @@
+    };
+    private static final TileEntityMerger.ICallback<ChestTileEntity, Optional<INamedContainerProvider>> field_220110_j = new TileEntityMerger.ICallback<ChestTileEntity, Optional<INamedContainerProvider>>() {
+       public Optional<INamedContainerProvider> func_225539_a_(final ChestTileEntity p_225539_1_, final ChestTileEntity p_225539_2_) {
+-         final IInventory iinventory = new DoubleSidedInventory(p_225539_1_, p_225539_2_);
+-         return Optional.of(new INamedContainerProvider() {
+-            @Nullable
+-            public Container createMenu(int p_createMenu_1_, PlayerInventory p_createMenu_2_, PlayerEntity p_createMenu_3_) {
+-               if (p_225539_1_.func_213904_e(p_createMenu_3_) && p_225539_2_.func_213904_e(p_createMenu_3_)) {
+-                  p_225539_1_.func_184281_d(p_createMenu_2_.field_70458_d);
+-                  p_225539_2_.func_184281_d(p_createMenu_2_.field_70458_d);
+-                  return ChestContainer.func_216984_b(p_createMenu_1_, p_createMenu_2_, iinventory);
+-               } else {
+-                  return null;
+-               }
+-            }
+-
+-            public ITextComponent func_145748_c_() {
+-               if (p_225539_1_.func_145818_k_()) {
+-                  return p_225539_1_.func_145748_c_();
+-               } else {
+-                  return (ITextComponent)(p_225539_2_.func_145818_k_() ? p_225539_2_.func_145748_c_() : new TranslationTextComponent("container.chestDouble"));
+-               }
+-            }
+-         });
++         final DoubleSidedInventory iinventory = new DoubleSidedInventory(p_225539_1_, p_225539_2_);
++         return Optional.of(new DoubleInventory(p_225539_1_, p_225539_2_, iinventory)); // CraftBukkit
+       }
+ 
+       public Optional<INamedContainerProvider> func_225538_a_(ChestTileEntity p_225538_1_) {
+@@ -333,4 +314,33 @@
+    public boolean func_196266_a(BlockState p_196266_1_, IBlockReader p_196266_2_, BlockPos p_196266_3_, PathType p_196266_4_) {
+       return false;
+    }
++
++   public static class DoubleInventory implements INamedContainerProvider
++   {
++      private final ChestTileEntity tileentitychest;
++      private final ChestTileEntity tileentitychest1;
++      public final DoubleSidedInventory inventorylargechest;
++
++      public DoubleInventory(ChestTileEntity tileentitychest, ChestTileEntity tileentitychest1, DoubleSidedInventory inventorylargechest) {
++         this.tileentitychest = tileentitychest;
++         this.tileentitychest1 = tileentitychest1;
++         this.inventorylargechest = inventorylargechest;
++      }
++
++      @Nullable
++      @Override
++      public Container createMenu(int i, PlayerInventory playerinventory, PlayerEntity entityhuman) {
++         if (this.tileentitychest.func_213904_e(entityhuman) && this.tileentitychest1.func_213904_e(entityhuman)) {
++            this.tileentitychest.func_184281_d(playerinventory.field_70458_d);
++            this.tileentitychest1.func_184281_d(playerinventory.field_70458_d);
++            return ChestContainer.func_216984_b(i, playerinventory, this.inventorylargechest);
++         }
++         return null;
++      }
++
++      @Override
++      public ITextComponent func_145748_c_() {
++         return this.tileentitychest.func_145818_k_() ? this.tileentitychest.func_145748_c_() : (this.tileentitychest1.func_145818_k_() ? this.tileentitychest1.func_145748_c_() : new TranslationTextComponent("container.chestDouble", new Object[0]));
++      }
++   }
+ }

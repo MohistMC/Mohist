@@ -1,5 +1,21 @@
 --- a/net/minecraft/entity/merchant/villager/VillagerEntity.java
 +++ b/net/minecraft/entity/merchant/villager/VillagerEntity.java
+@@ -67,7 +67,6 @@
+ import net.minecraft.util.math.BlockPos;
+ import net.minecraft.util.math.GlobalPos;
+ import net.minecraft.util.math.MathHelper;
+-import net.minecraft.util.registry.Registry;
+ import net.minecraft.util.text.ITextComponent;
+ import net.minecraft.util.text.TranslationTextComponent;
+ import net.minecraft.village.GossipManager;
+@@ -81,6 +80,7 @@
+ import net.minecraft.world.server.ServerWorld;
+ import net.minecraftforge.api.distmarker.Dist;
+ import net.minecraftforge.api.distmarker.OnlyIn;
++import org.bukkit.craftbukkit.inventory.CraftMerchant;
+ 
+ public class VillagerEntity extends AbstractVillagerEntity implements IReputationTracking, IVillagerDataHolder {
+    private static final DataParameter<VillagerData> field_213775_bC = EntityDataManager.func_187226_a(VillagerEntity.class, DataSerializers.field_218813_q);
 @@ -228,7 +228,7 @@
        if (flag) {
           itemstack.func_111282_a(p_184645_1_, this, p_184645_2_);
@@ -9,7 +25,19 @@
           if (this.func_70631_g_()) {
              this.func_213756_es();
              return super.func_184645_a(p_184645_1_, p_184645_2_);
-@@ -607,7 +607,8 @@
+@@ -296,6 +296,11 @@
+       return true;
+    }
+ 
++   @Override
++   public CraftMerchant getCraftMerchant() {
++      return null;
++   }
++
+    public void func_213766_ei() {
+       this.func_223715_ey();
+ 
+@@ -607,7 +612,8 @@
     }
  
     protected ITextComponent func_225513_by_() {

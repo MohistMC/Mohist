@@ -1,0 +1,17 @@
+--- a/net/minecraft/tileentity/EndGatewayTileEntity.java
++++ b/net/minecraft/tileentity/EndGatewayTileEntity.java
+@@ -31,11 +31,11 @@
+ 
+ public class EndGatewayTileEntity extends EndPortalTileEntity implements ITickableTileEntity {
+    private static final Logger field_195503_a = LogManager.getLogger();
+-   private long field_195504_f;
++   public long field_195504_f;
+    private int field_195505_g;
+    @Nullable
+-   private BlockPos field_195506_h;
+-   private boolean field_195507_i;
++   public BlockPos field_195506_h;
++   public boolean field_195507_i;
+ 
+    public EndGatewayTileEntity() {
+       super(TileEntityType.field_200991_v);

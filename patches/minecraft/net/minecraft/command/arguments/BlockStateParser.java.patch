@@ -1,5 +1,14 @@
 --- a/net/minecraft/command/arguments/BlockStateParser.java
 +++ b/net/minecraft/command/arguments/BlockStateParser.java
+@@ -51,7 +51,7 @@
+    private static final Function<SuggestionsBuilder, CompletableFuture<Suggestions>> field_197265_g = SuggestionsBuilder::buildFuture;
+    private final StringReader field_197266_h;
+    private final boolean field_199832_j;
+-   private final Map<IProperty<?>, Comparable<?>> field_197267_i = Maps.newHashMap();
++   private final Map<IProperty<?>, Comparable<?>> field_197267_i = Maps.newLinkedHashMap(); // CraftBukkit - stable
+    private final Map<String, String> field_200141_l = Maps.newHashMap();
+    private ResourceLocation field_197268_j = new ResourceLocation("");
+    private StateContainer<Block, BlockState> field_197269_k;
 @@ -168,13 +168,13 @@
  
     private boolean func_212598_k() {

@@ -1,5 +1,22 @@
 --- a/net/minecraft/entity/monster/ZombieEntity.java
 +++ b/net/minecraft/entity/monster/ZombieEntity.java
+@@ -69,14 +69,14 @@
+    private static final AttributeModifier field_110188_br = new AttributeModifier(field_110187_bq, "Baby speed boost", 0.5D, AttributeModifier.Operation.MULTIPLY_BASE);
+    private static final DataParameter<Boolean> field_184737_bv = EntityDataManager.func_187226_a(ZombieEntity.class, DataSerializers.field_187198_h);
+    private static final DataParameter<Integer> field_184738_bw = EntityDataManager.func_187226_a(ZombieEntity.class, DataSerializers.field_187192_b);
+-   private static final DataParameter<Boolean> field_204709_bA = EntityDataManager.func_187226_a(ZombieEntity.class, DataSerializers.field_187198_h);
++   public static final DataParameter<Boolean> field_204709_bA = EntityDataManager.func_187226_a(ZombieEntity.class, DataSerializers.field_187198_h);
+    private static final Predicate<Difficulty> field_213699_bC = (p_213697_0_) -> {
+       return p_213697_0_ == Difficulty.HARD;
+    };
+    private final BreakDoorGoal field_146075_bs = new BreakDoorGoal(this, field_213699_bC);
+    private boolean field_146076_bu;
+    private int field_204707_bD;
+-   private int field_204708_bE;
++   public int field_204708_bE;
+ 
+    public ZombieEntity(EntityType<? extends ZombieEntity> p_i48549_1_, World p_i48549_2_) {
+       super(p_i48549_1_, p_i48549_2_);
 @@ -110,7 +110,7 @@
        this.func_110148_a(SharedMonsterAttributes.field_111263_d).func_111128_a((double)0.23F);
        this.func_110148_a(SharedMonsterAttributes.field_111264_e).func_111128_a(3.0D);
@@ -9,6 +26,15 @@
     }
  
     protected void func_70088_a() {
+@@ -234,7 +234,7 @@
+       super.func_70636_d();
+    }
+ 
+-   private void func_204704_a(int p_204704_1_) {
++   public void func_204704_a(int p_204704_1_) {
+       this.field_204708_bE = p_204704_1_;
+       this.func_184212_Q().func_187227_b(field_204709_bA, true);
+    }
 @@ -315,12 +315,16 @@
              livingentity = (LivingEntity)p_70097_1_.func_76346_g();
           }

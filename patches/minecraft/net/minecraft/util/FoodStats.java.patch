@@ -1,0 +1,15 @@
+--- a/net/minecraft/util/FoodStats.java
++++ b/net/minecraft/util/FoodStats.java
+@@ -11,9 +11,9 @@
+ import net.minecraftforge.api.distmarker.OnlyIn;
+ 
+ public class FoodStats {
+-   private int field_75127_a = 20;
+-   private float field_75125_b;
+-   private float field_75126_c;
++   public int field_75127_a = 20;
++   public float field_75125_b;
++   public float field_75126_c;
+    private int field_75123_d;
+    private int field_75124_e = 20;
+ 

@@ -1,5 +1,6 @@
 package org.bukkit.craftbukkit.block.data.type;
 
+import net.minecraft.state.BooleanProperty;
 import org.bukkit.block.data.type.DaylightDetector;
 import org.bukkit.craftbukkit.block.data.CraftBlockData;
 

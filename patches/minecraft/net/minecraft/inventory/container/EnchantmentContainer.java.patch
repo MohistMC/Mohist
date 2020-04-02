@@ -1,6 +1,14 @@
 --- a/net/minecraft/inventory/container/EnchantmentContainer.java
 +++ b/net/minecraft/inventory/container/EnchantmentContainer.java
-@@ -55,7 +55,7 @@
+@@ -22,6 +22,7 @@
+ import net.minecraft.util.registry.Registry;
+ import net.minecraftforge.api.distmarker.Dist;
+ import net.minecraftforge.api.distmarker.OnlyIn;
++import org.bukkit.inventory.InventoryView;
+ 
+ public class EnchantmentContainer extends Container {
+    private final IInventory field_75168_e = new Inventory(2) {
+@@ -55,7 +56,7 @@
        });
        this.func_75146_a(new Slot(this.field_75168_e, 1, 35, 47) {
           public boolean func_75214_a(ItemStack p_75214_1_) {
@@ -9,7 +17,7 @@
           }
        });
  
-@@ -81,40 +81,28 @@
+@@ -81,40 +82,28 @@
        this.func_216958_a(IntReferenceHolder.func_221497_a(this.field_185002_i, 2));
     }
  
@@ -61,7 +69,7 @@
                          }
                       }
                    }
-@@ -123,12 +111,13 @@
+@@ -123,12 +112,13 @@
                 this.field_75169_l.setSeed((long)this.field_178149_f.func_221495_b());
  
                 for(int i1 = 0; i1 < 3; ++i1) {
@@ -76,7 +84,19 @@
                 }
  
                 for(int j1 = 0; j1 < 3; ++j1) {
-@@ -262,9 +251,8 @@
+@@ -155,6 +145,11 @@
+ 
+    }
+ 
++   @Override
++   public InventoryView getBukkitView() {
++      return null;
++   }
++
+    public boolean func_75140_a(PlayerEntity p_75140_1_, int p_75140_2_) {
+       ItemStack itemstack = this.field_75168_e.func_70301_a(0);
+       ItemStack itemstack1 = this.field_75168_e.func_70301_a(1);
+@@ -262,9 +257,8 @@
                 return ItemStack.field_190927_a;
              }
  

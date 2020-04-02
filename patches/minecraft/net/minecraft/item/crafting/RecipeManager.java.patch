@@ -1,6 +1,40 @@
 --- a/net/minecraft/item/crafting/RecipeManager.java
 +++ b/net/minecraft/item/crafting/RecipeManager.java
-@@ -50,9 +50,18 @@
+@@ -1,21 +1,22 @@
+ package net.minecraft.item.crafting;
+ 
+ import com.google.common.collect.ImmutableMap;
+-import com.google.common.collect.Maps;
+ import com.google.common.collect.ImmutableMap.Builder;
++import com.google.common.collect.Maps;
+ import com.google.gson.Gson;
+ import com.google.gson.GsonBuilder;
+ import com.google.gson.JsonObject;
+ import com.google.gson.JsonParseException;
+ import com.google.gson.JsonSyntaxException;
++import it.unimi.dsi.fastutil.objects.Object2ObjectLinkedOpenHashMap;
+ import java.util.Collection;
+ import java.util.Collections;
+ import java.util.Comparator;
+ import java.util.List;
+ import java.util.Map;
++import java.util.Map.Entry;
+ import java.util.Objects;
+ import java.util.Optional;
+-import java.util.Map.Entry;
+ import java.util.stream.Collectors;
+ import java.util.stream.Stream;
+ import net.minecraft.client.resources.JsonReloadListener;
+@@ -37,7 +38,7 @@
+ public class RecipeManager extends JsonReloadListener {
+    private static final Gson field_223401_a = (new GsonBuilder()).setPrettyPrinting().disableHtmlEscaping().create();
+    private static final Logger field_199521_c = LogManager.getLogger();
+-   private Map<IRecipeType<?>, Map<ResourceLocation, IRecipe<?>>> field_199522_d = ImmutableMap.of();
++   public Map<IRecipeType<?>, Map<ResourceLocation, IRecipe<?>>> field_199522_d = ImmutableMap.of();
+    private boolean field_199523_e;
+ 
+    public RecipeManager() {
+@@ -50,9 +51,18 @@
  
        for(Entry<ResourceLocation, JsonObject> entry : p_212853_1_.entrySet()) {
           ResourceLocation resourcelocation = entry.getKey();
@@ -19,3 +53,30 @@
              map.computeIfAbsent(irecipe.func_222127_g(), (p_223391_0_) -> {
                 return ImmutableMap.builder();
              }).put(resourcelocation, irecipe);
+@@ -67,6 +77,14 @@
+       field_199521_c.info("Loaded {} recipes", (int)map.size());
+    }
+ 
++   public void addRecipe(final IRecipe<?> irecipe) {
++      final Map<ResourceLocation, IRecipe<?>> map = this.field_199522_d.get(irecipe.func_222127_g());
++      if (map.containsKey(irecipe.func_199560_c())) {
++         throw new IllegalStateException("Duplicate recipe ignored with ID " + irecipe.func_199560_c());
++      }
++      map.put(irecipe.func_199560_c(), irecipe);
++   }
++
+    public <C extends IInventory, T extends IRecipe<C>> Optional<T> func_215371_a(IRecipeType<T> p_215371_1_, C p_215371_2_, World p_215371_3_) {
+       return this.func_215366_a(p_215371_1_).values().stream().flatMap((p_215372_3_) -> {
+          return Util.func_215081_a(p_215371_1_.func_222148_a(p_215372_3_, p_215371_3_, p_215371_2_));
+@@ -140,4 +158,11 @@
+       });
+       this.field_199522_d = ImmutableMap.copyOf(map);
+    }
++
++   public void clearRecipes() {
++      this.field_199522_d = Maps.newHashMap();
++      for (final IRecipeType<?> recipeType : Registry.field_218367_H) {
++         this.field_199522_d.put(recipeType, new Object2ObjectLinkedOpenHashMap<ResourceLocation, IRecipe<?>>());
++      }
++   }
+ }

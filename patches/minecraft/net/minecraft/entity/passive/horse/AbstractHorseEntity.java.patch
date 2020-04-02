@@ -1,6 +1,41 @@
 --- a/net/minecraft/entity/passive/horse/AbstractHorseEntity.java
 +++ b/net/minecraft/entity/passive/horse/AbstractHorseEntity.java
-@@ -263,6 +263,7 @@
+@@ -67,7 +67,7 @@
+       return p_213617_0_ instanceof AbstractHorseEntity && ((AbstractHorseEntity)p_213617_0_).func_110205_ce();
+    };
+    private static final EntityPredicate field_213618_bK = (new EntityPredicate()).func_221013_a(16.0D).func_221008_a().func_221011_b().func_221014_c().func_221012_a(field_110276_bu);
+-   protected static final IAttribute field_110271_bv = (new RangedAttribute((IAttribute)null, "horse.jumpStrength", 0.7D, 0.0D, 2.0D)).func_111117_a("Jump Strength").func_111112_a(true);
++   public static final IAttribute field_110271_bv = (new RangedAttribute((IAttribute)null, "horse.jumpStrength", 0.7D, 0.0D, 2.0D)).func_111117_a("Jump Strength").func_111112_a(true);
+    private static final DataParameter<Byte> field_184787_bE = EntityDataManager.func_187226_a(AbstractHorseEntity.class, DataSerializers.field_187191_a);
+    private static final DataParameter<Optional<UUID>> field_184790_bH = EntityDataManager.func_187226_a(AbstractHorseEntity.class, DataSerializers.field_187203_m);
+    private int field_190689_bJ;
+@@ -76,7 +76,7 @@
+    public int field_110278_bp;
+    public int field_110279_bq;
+    protected boolean field_110275_br;
+-   protected Inventory field_110296_bG;
++   public Inventory field_110296_bG;
+    protected int field_110274_bs;
+    protected float field_110277_bt;
+    private boolean field_110294_bI;
+@@ -88,6 +88,7 @@
+    private float field_110288_bO;
+    protected boolean field_190688_bE = true;
+    protected int field_110285_bP;
++   public int maxDomestication = 100; // CraftBukkit - store max domestication value
+ 
+    protected AbstractHorseEntity(EntityType<? extends AbstractHorseEntity> p_i48563_1_, World p_i48563_2_) {
+       super(p_i48563_1_, p_i48563_2_);
+@@ -246,7 +247,7 @@
+       return 2;
+    }
+ 
+-   protected void func_110226_cD() {
++   public void func_110226_cD() {
+       Inventory inventory = this.field_110296_bG;
+       this.field_110296_bG = new Inventory(this.func_190686_di());
+       if (inventory != null) {
+@@ -263,6 +264,7 @@
  
        this.field_110296_bG.func_110134_a(this);
        this.func_110232_cE();
@@ -8,7 +43,7 @@
     }
  
     protected void func_110232_cE() {
-@@ -324,9 +325,9 @@
+@@ -324,9 +326,9 @@
     protected void func_180429_a(BlockPos p_180429_1_, BlockState p_180429_2_) {
        if (!p_180429_2_.func_185904_a().func_76224_d()) {
           BlockState blockstate = this.field_70170_p.func_180495_p(p_180429_1_.func_177984_a());
@@ -20,7 +55,16 @@
           }
  
           if (this.func_184207_aI() && this.field_190688_bE) {
-@@ -947,4 +948,22 @@
+@@ -361,7 +363,7 @@
+    }
+ 
+    public int func_190676_dC() {
+-      return 100;
++      return this.maxDomestication; // CraftBukkit - return stored max domestication instead of 100
+    }
+ 
+    protected float func_70599_aP() {
+@@ -947,4 +949,22 @@
  
        return super.func_213386_a(p_213386_1_, p_213386_2_, p_213386_3_, p_213386_4_, p_213386_5_);
     }

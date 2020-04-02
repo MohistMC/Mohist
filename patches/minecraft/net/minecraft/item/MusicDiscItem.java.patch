@@ -1,0 +1,10 @@
+--- a/net/minecraft/item/MusicDiscItem.java
++++ b/net/minecraft/item/MusicDiscItem.java
+@@ -39,6 +39,7 @@
+       if (blockstate.func_177230_c() == Blocks.field_150421_aI && !blockstate.func_177229_b(JukeboxBlock.field_176432_a)) {
+          ItemStack itemstack = p_195939_1_.func_195996_i();
+          if (!world.field_72995_K) {
++            if (true) return ActionResultType.SUCCESS; // CraftBukkit - handled in ItemStack
+             ((JukeboxBlock)Blocks.field_150421_aI).func_176431_a(world, blockpos, blockstate, itemstack);
+             world.func_217378_a((PlayerEntity)null, 1010, blockpos, Item.func_150891_b(this));
+             itemstack.func_190918_g(1);

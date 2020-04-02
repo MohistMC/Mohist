@@ -1,0 +1,14 @@
+--- a/net/minecraft/item/crafting/SpecialRecipe.java
++++ b/net/minecraft/item/crafting/SpecialRecipe.java
+@@ -21,4 +21,11 @@
+    public ItemStack func_77571_b() {
+       return ItemStack.field_190927_a;
+    }
++
++   // CraftBukkit start
++   @Override
++   public org.bukkit.inventory.Recipe toBukkitRecipe() {
++      return new org.bukkit.craftbukkit.inventory.CraftComplexRecipe(this);
++   }
++   // CraftBukkit end
+ }

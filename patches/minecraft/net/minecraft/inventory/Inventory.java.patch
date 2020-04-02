@@ -1,0 +1,67 @@
+--- a/net/minecraft/inventory/Inventory.java
++++ b/net/minecraft/inventory/Inventory.java
+@@ -8,6 +8,10 @@
+ import net.minecraft.item.ItemStack;
+ import net.minecraft.item.crafting.RecipeItemHelper;
+ import net.minecraft.util.NonNullList;
++import org.bukkit.Location;
++import org.bukkit.craftbukkit.entity.CraftHumanEntity;
++import org.bukkit.entity.HumanEntity;
++import org.bukkit.inventory.InventoryHolder;
+ 
+ public class Inventory implements IInventory, IRecipeHelperPopulator {
+    private final int field_70481_b;
+@@ -101,6 +105,11 @@
+       this.func_70296_d();
+    }
+ 
++   @Override
++   public int func_70297_j_() {
++      return 0;
++   }
++
+    public int func_70302_i_() {
+       return this.field_70481_b;
+    }
+@@ -128,6 +137,41 @@
+       return true;
+    }
+ 
++   @Override
++   public List<ItemStack> getContents() {
++      return null;
++   }
++
++   @Override
++   public void onOpen(CraftHumanEntity who) {
++
++   }
++
++   @Override
++   public void onClose(CraftHumanEntity who) {
++
++   }
++
++   @Override
++   public List<HumanEntity> getViewers() {
++      return null;
++   }
++
++   @Override
++   public InventoryHolder getOwner() {
++      return null;
++   }
++
++   @Override
++   public void setMaxStackSize(int size) {
++
++   }
++
++   @Override
++   public Location getLocation() {
++      return null;
++   }
++
+    public void func_174888_l() {
+       this.field_70482_c.clear();
+       this.func_70296_d();

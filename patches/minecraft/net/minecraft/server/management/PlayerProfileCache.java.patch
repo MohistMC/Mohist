@@ -1,0 +1,11 @@
+--- a/net/minecraft/server/management/PlayerProfileCache.java
++++ b/net/minecraft/server/management/PlayerProfileCache.java
+@@ -46,7 +46,7 @@
+    private static boolean field_187322_c;
+    private final Map<String, PlayerProfileCache.ProfileEntry> field_152661_c = Maps.newHashMap();
+    private final Map<UUID, PlayerProfileCache.ProfileEntry> field_152662_d = Maps.newHashMap();
+-   private final Deque<GameProfile> field_152663_e = Lists.newLinkedList();
++   private final Deque<GameProfile> field_152663_e = new java.util.concurrent.LinkedBlockingDeque<GameProfile>(); // CraftBukkit
+    private final GameProfileRepository field_187323_g;
+    protected final Gson field_152660_b;
+    private final File field_152665_g;

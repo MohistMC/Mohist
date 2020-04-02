@@ -1,6 +1,33 @@
 --- a/net/minecraft/inventory/container/RepairContainer.java
 +++ b/net/minecraft/inventory/container/RepairContainer.java
-@@ -63,6 +63,8 @@
+@@ -22,6 +22,8 @@
+ import org.apache.commons.lang3.StringUtils;
+ import org.apache.logging.log4j.LogManager;
+ import org.apache.logging.log4j.Logger;
++import org.bukkit.craftbukkit.inventory.CraftInventoryView;
++import org.bukkit.inventory.InventoryView;
+ 
+ public class RepairContainer extends Container {
+    private static final Logger field_148326_f = LogManager.getLogger();
+@@ -32,11 +34,15 @@
+          RepairContainer.this.func_75130_a(this);
+       }
+    };
+-   private final IntReferenceHolder field_82854_e = IntReferenceHolder.func_221492_a();
++   public final IntReferenceHolder field_82854_e = IntReferenceHolder.func_221492_a();
+    private final IWorldPosCallable field_216980_g;
+    public int field_82856_l;
+-   private String field_82857_m;
++   public String field_82857_m;
+    private final PlayerEntity field_82855_n;
++   public int maximumRepairCost;
++   private int lastLevelCost;
++   private CraftInventoryView bukkitEntity;
++   private PlayerInventory playerInventory;
+ 
+    public RepairContainer(int p_i50101_1_, PlayerInventory p_i50101_2_) {
+       this(p_i50101_1_, p_i50101_2_, IWorldPosCallable.field_221489_a);
+@@ -63,6 +69,8 @@
                 p_190901_1_.func_82242_a(-RepairContainer.this.field_82854_e.func_221495_b());
              }
  
@@ -9,7 +36,7 @@
              RepairContainer.this.field_82853_g.func_70299_a(0, ItemStack.field_190927_a);
              if (RepairContainer.this.field_82856_l > 0) {
                 ItemStack itemstack = RepairContainer.this.field_82853_g.func_70301_a(1);
-@@ -79,7 +81,7 @@
+@@ -79,7 +87,7 @@
              RepairContainer.this.field_82854_e.func_221494_a(0);
              p_i50102_3_.func_221486_a((p_216931_1_, p_216931_2_) -> {
                 BlockState blockstate = p_216931_1_.func_180495_p(p_216931_2_);
@@ -18,7 +45,7 @@
                    BlockState blockstate1 = AnvilBlock.func_196433_f(blockstate);
                    if (blockstate1 == null) {
                       p_216931_1_.func_217377_a(p_216931_2_, false);
-@@ -132,8 +134,11 @@
+@@ -132,8 +140,11 @@
           Map<Enchantment, Integer> map = EnchantmentHelper.func_82781_a(itemstack1);
           j = j + itemstack.func_82838_A() + (itemstack2.func_190926_b() ? 0 : itemstack2.func_82838_A());
           this.field_82856_l = 0;
@@ -31,7 +58,7 @@
              if (itemstack1.func_77984_f() && itemstack1.func_77973_b().func_82789_a(itemstack, itemstack2)) {
                 int l2 = Math.min(itemstack1.func_77952_i(), itemstack1.func_77958_k() / 4);
                 if (l2 <= 0) {
-@@ -250,6 +255,7 @@
+@@ -250,6 +261,7 @@
              i += k;
              itemstack1.func_200302_a(new StringTextComponent(this.field_82857_m));
           }
@@ -39,7 +66,19 @@
  
           this.field_82854_e.func_221494_a(j + i);
           if (i <= 0) {
-@@ -354,4 +360,8 @@
+@@ -300,6 +312,11 @@
+       }, true);
+    }
+ 
++   @Override
++   public InventoryView getBukkitView() {
++      return null;
++   }
++
+    public ItemStack func_82846_b(PlayerEntity p_82846_1_, int p_82846_2_) {
+       ItemStack itemstack = ItemStack.field_190927_a;
+       Slot slot = this.field_75151_b.get(p_82846_2_);
+@@ -354,4 +371,8 @@
     public int func_216976_f() {
        return this.field_82854_e.func_221495_b();
     }

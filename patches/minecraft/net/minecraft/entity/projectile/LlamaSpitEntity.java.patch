@@ -1,6 +1,23 @@
 --- a/net/minecraft/entity/projectile/LlamaSpitEntity.java
 +++ b/net/minecraft/entity/projectile/LlamaSpitEntity.java
-@@ -57,7 +57,7 @@
+@@ -5,6 +5,7 @@
+ import net.minecraft.entity.Entity;
+ import net.minecraft.entity.EntityType;
+ import net.minecraft.entity.IProjectile;
++import net.minecraft.entity.LivingEntity;
+ import net.minecraft.entity.passive.horse.LlamaEntity;
+ import net.minecraft.nbt.CompoundNBT;
+ import net.minecraft.network.IPacket;
+@@ -21,7 +22,7 @@
+ import net.minecraftforge.api.distmarker.OnlyIn;
+ 
+ public class LlamaSpitEntity extends Entity implements IProjectile {
+-   public LlamaEntity field_190539_a;
++   public LivingEntity field_190539_a;
+    private CompoundNBT field_190540_b;
+ 
+    public LlamaSpitEntity(EntityType<? extends LlamaSpitEntity> p_i50162_1_, World p_i50162_2_) {
+@@ -57,7 +58,7 @@
        RayTraceResult raytraceresult = ProjectileHelper.func_221267_a(this, this.func_174813_aQ().func_216361_a(vec3d).func_186662_g(1.0D), (p_213879_1_) -> {
           return !p_213879_1_.func_175149_v() && p_213879_1_ != this.field_190539_a;
        }, RayTraceContext.BlockMode.OUTLINE, true);

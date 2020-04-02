@@ -1,0 +1,59 @@
+--- a/net/minecraft/command/CommandSource.java
++++ b/net/minecraft/command/CommandSource.java
+@@ -7,6 +7,7 @@
+ import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
+ import com.mojang.brigadier.suggestion.Suggestions;
+ import com.mojang.brigadier.suggestion.SuggestionsBuilder;
++import com.mojang.brigadier.tree.CommandNode;
+ import java.util.Collection;
+ import java.util.concurrent.CompletableFuture;
+ import java.util.function.BinaryOperator;
+@@ -27,11 +28,13 @@
+ import net.minecraft.util.text.TranslationTextComponent;
+ import net.minecraft.world.GameRules;
+ import net.minecraft.world.server.ServerWorld;
++import org.bukkit.command.CommandSender;
++import org.bukkit.craftbukkit.command.VanillaCommandWrapper;
+ 
+ public class CommandSource implements ISuggestionProvider {
+    public static final SimpleCommandExceptionType field_197039_a = new SimpleCommandExceptionType(new TranslationTextComponent("permissions.requires.player"));
+    public static final SimpleCommandExceptionType field_197040_b = new SimpleCommandExceptionType(new TranslationTextComponent("permissions.requires.entity"));
+-   private final ICommandSource field_197041_c;
++   public final ICommandSource field_197041_c;
+    private final Vec3d field_197042_d;
+    private final ServerWorld field_197043_e;
+    private final int field_197044_f;
+@@ -44,6 +47,7 @@
+    private final ResultConsumer<CommandSource> field_197050_l;
+    private final EntityAnchorArgument.Type field_201011_m;
+    private final Vec2f field_201012_n;
++   public CommandNode currentCommand;
+ 
+    public CommandSource(ICommandSource p_i49552_1_, Vec3d p_i49552_2_, Vec2f p_i49552_3_, ServerWorld p_i49552_4_, int p_i49552_5_, String p_i49552_6_, ITextComponent p_i49552_7_, MinecraftServer p_i49552_8_, @Nullable Entity p_i49552_9_) {
+       this(p_i49552_1_, p_i49552_2_, p_i49552_3_, p_i49552_4_, p_i49552_5_, p_i49552_6_, p_i49552_7_, p_i49552_8_, p_i49552_9_, false, (p_197032_0_, p_197032_1_, p_197032_2_) -> {
+@@ -130,9 +134,16 @@
+    }
+ 
+    public boolean func_197034_c(int p_197034_1_) {
++      if (this.currentCommand != null) {
++         return this.hasPermission(p_197034_1_, VanillaCommandWrapper.getPermission(this.currentCommand));
++      }
+       return this.field_197044_f >= p_197034_1_;
+    }
+ 
++   public boolean hasPermission(int i, final String bukkitPermission) {
++      return ((this.func_197023_e() == null || !this.func_197023_e().getServerCB().ignoreVanillaPermissions) && this.field_197044_f >= i) || this.getBukkitSender().hasPermission(bukkitPermission);
++   }
++
+    public Vec3d func_197036_d() {
+       return this.field_197042_d;
+    }
+@@ -234,4 +245,8 @@
+    public CompletableFuture<Suggestions> func_197009_a(CommandContext<ISuggestionProvider> p_197009_1_, SuggestionsBuilder p_197009_2_) {
+       return null;
+    }
++
++   public CommandSender getBukkitSender() {
++      return this.field_197041_c.getBukkitSender(this);
++   }
+ }

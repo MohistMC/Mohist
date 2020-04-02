@@ -3,6 +3,9 @@
  */
 package org.bukkit.craftbukkit.block.impl;
 
+import net.minecraft.state.BooleanProperty;
+import net.minecraft.state.EnumProperty;
+
 public final class CraftStairs extends org.bukkit.craftbukkit.block.data.CraftBlockData implements org.bukkit.block.data.type.Stairs, org.bukkit.block.data.Bisected, org.bukkit.block.data.Directional, org.bukkit.block.data.Waterlogged {
 
     public CraftStairs() {

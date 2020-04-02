@@ -1,5 +1,14 @@
 --- a/net/minecraft/entity/monster/ShulkerEntity.java
 +++ b/net/minecraft/entity/monster/ShulkerEntity.java
+@@ -57,7 +57,7 @@
+    protected static final DataParameter<Direction> field_184700_a = EntityDataManager.func_187226_a(ShulkerEntity.class, DataSerializers.field_187202_l);
+    protected static final DataParameter<Optional<BlockPos>> field_184701_b = EntityDataManager.func_187226_a(ShulkerEntity.class, DataSerializers.field_187201_k);
+    protected static final DataParameter<Byte> field_184702_c = EntityDataManager.func_187226_a(ShulkerEntity.class, DataSerializers.field_187191_a);
+-   protected static final DataParameter<Byte> field_190770_bw = EntityDataManager.func_187226_a(ShulkerEntity.class, DataSerializers.field_187191_a);
++   public static final DataParameter<Byte> field_190770_bw = EntityDataManager.func_187226_a(ShulkerEntity.class, DataSerializers.field_187191_a);
+    private float field_184705_bx;
+    private float field_184706_by;
+    private BlockPos field_184707_bz;
 @@ -183,7 +183,7 @@
           this.field_184708_bA = 0;
        } else if (!this.field_70170_p.field_72995_K) {

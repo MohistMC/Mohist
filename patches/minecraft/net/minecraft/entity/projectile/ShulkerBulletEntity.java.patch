@@ -1,6 +1,30 @@
 --- a/net/minecraft/entity/projectile/ShulkerBulletEntity.java
 +++ b/net/minecraft/entity/projectile/ShulkerBulletEntity.java
-@@ -255,7 +255,7 @@
+@@ -77,6 +77,23 @@
+       return SoundCategory.HOSTILE;
+    }
+ 
++   public LivingEntity getShooter() {
++      return this.field_184570_a;
++   }
++
++   public void setShooter(final LivingEntity e) {
++      this.field_184570_a = e;
++   }
++
++   public Entity getTarget() {
++      return this.field_184571_b;
++   }
++
++   public void setTarget(final Entity e) {
++      this.field_184571_b = e;
++      this.field_184573_c = Direction.UP;
++      this.func_184569_a(Direction.Axis.X);
++   }
+    protected void func_213281_b(CompoundNBT p_213281_1_) {
+       if (this.field_184570_a != null) {
+          BlockPos blockpos = new BlockPos(this.field_184570_a);
+@@ -255,7 +272,7 @@
           }
  
           RayTraceResult raytraceresult = ProjectileHelper.func_221266_a(this, true, false, this.field_184570_a, RayTraceContext.BlockMode.COLLIDER);

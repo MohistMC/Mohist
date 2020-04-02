@@ -1,6 +1,59 @@
 --- a/net/minecraft/tileentity/ShulkerBoxTileEntity.java
 +++ b/net/minecraft/tileentity/ShulkerBoxTileEntity.java
-@@ -280,6 +280,11 @@
+@@ -30,6 +30,8 @@
+ import net.minecraft.util.text.TranslationTextComponent;
+ import net.minecraftforge.api.distmarker.Dist;
+ import net.minecraftforge.api.distmarker.OnlyIn;
++import org.bukkit.craftbukkit.entity.CraftHumanEntity;
++import org.bukkit.entity.HumanEntity;
+ 
+ public class ShulkerBoxTileEntity extends LockableLootTileEntity implements ISidedInventory, ITickableTileEntity {
+    private static final int[] field_190595_a = IntStream.range(0, 27).toArray();
+@@ -162,6 +164,11 @@
+       return this.field_190596_f.size();
+    }
+ 
++   @Override
++   public int func_70297_j_() {
++      return 0;
++   }
++
+    public boolean func_145842_c(int p_145842_1_, int p_145842_2_) {
+       if (p_145842_1_ == 1) {
+          this.field_190598_h = p_145842_2_;
+@@ -211,6 +218,31 @@
+ 
+    }
+ 
++   @Override
++   public List<ItemStack> getContents() {
++      return null;
++   }
++
++   @Override
++   public void onOpen(CraftHumanEntity who) {
++
++   }
++
++   @Override
++   public void onClose(CraftHumanEntity who) {
++
++   }
++
++   @Override
++   public List<HumanEntity> getViewers() {
++      return null;
++   }
++
++   @Override
++   public void setMaxStackSize(int size) {
++
++   }
++
+    protected ITextComponent func_213907_g() {
+       return new TranslationTextComponent("container.shulkerBox");
+    }
+@@ -280,6 +312,11 @@
        return new ShulkerBoxContainer(p_213906_1_, p_213906_2_, this);
     }
  

@@ -1,0 +1,11 @@
+--- a/net/minecraft/entity/projectile/SnowballEntity.java
++++ b/net/minecraft/entity/projectile/SnowballEntity.java
+@@ -30,7 +30,7 @@
+       super(EntityType.field_200746_al, p_i1775_2_, p_i1775_4_, p_i1775_6_, p_i1775_1_);
+    }
+ 
+-   protected Item func_213885_i() {
++   public Item func_213885_i() {
+       return Items.field_151126_ay;
+    }
+ 

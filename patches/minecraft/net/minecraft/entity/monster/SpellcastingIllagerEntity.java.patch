@@ -1,0 +1,11 @@
+--- a/net/minecraft/entity/monster/SpellcastingIllagerEntity.java
++++ b/net/minecraft/entity/monster/SpellcastingIllagerEntity.java
+@@ -62,7 +62,7 @@
+       this.field_70180_af.func_187227_b(field_193088_c, (byte)p_193081_1_.field_193345_g);
+    }
+ 
+-   protected SpellcastingIllagerEntity.SpellType func_193083_dm() {
++   public SpellcastingIllagerEntity.SpellType func_193083_dm() {
+       return !this.field_70170_p.field_72995_K ? this.field_193089_bx : SpellcastingIllagerEntity.SpellType.func_193337_a(this.field_70180_af.func_187225_a(field_193088_c));
+    }
+ 

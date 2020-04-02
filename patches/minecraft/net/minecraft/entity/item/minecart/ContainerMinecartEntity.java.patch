@@ -1,5 +1,16 @@
 --- a/net/minecraft/entity/item/minecart/ContainerMinecartEntity.java
 +++ b/net/minecraft/entity/item/minecart/ContainerMinecartEntity.java
+@@ -30,8 +30,8 @@
+    private NonNullList<ItemStack> field_94113_a = NonNullList.func_191197_a(36, ItemStack.field_190927_a);
+    private boolean field_94112_b = true;
+    @Nullable
+-   private ResourceLocation field_184290_c;
+-   private long field_184291_d;
++   public ResourceLocation field_184290_c;
++   public long field_184291_d;
+ 
+    protected ContainerMinecartEntity(EntityType<?> p_i48536_1_, World p_i48536_2_) {
+       super(p_i48536_1_, p_i48536_2_);
 @@ -110,17 +110,19 @@
     }
  

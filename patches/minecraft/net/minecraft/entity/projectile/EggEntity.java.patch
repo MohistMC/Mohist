@@ -1,0 +1,11 @@
+--- a/net/minecraft/entity/projectile/EggEntity.java
++++ b/net/minecraft/entity/projectile/EggEntity.java
+@@ -65,7 +65,7 @@
+ 
+    }
+ 
+-   protected Item func_213885_i() {
++   public Item func_213885_i() {
+       return Items.field_151110_aK;
+    }
+ }

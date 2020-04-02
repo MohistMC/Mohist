@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/raid/RaidManager.java
++++ b/net/minecraft/world/raid/RaidManager.java
+@@ -27,7 +27,7 @@
+ import net.minecraft.world.storage.WorldSavedData;
+ 
+ public class RaidManager extends WorldSavedData {
+-   private final Map<Integer, Raid> field_215175_a = Maps.newHashMap();
++   public final Map<Integer, Raid> field_215175_a = Maps.newHashMap();
+    private final ServerWorld field_215176_b;
+    private int field_215177_c;
+    private int field_215178_d;

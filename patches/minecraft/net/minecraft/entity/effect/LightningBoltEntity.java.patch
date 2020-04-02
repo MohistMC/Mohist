@@ -1,6 +1,18 @@
 --- a/net/minecraft/entity/effect/LightningBoltEntity.java
 +++ b/net/minecraft/entity/effect/LightningBoltEntity.java
-@@ -80,6 +80,7 @@
+@@ -29,9 +29,11 @@
+    private final boolean field_184529_d;
+    @Nullable
+    private ServerPlayerEntity field_204810_e;
++   public boolean isEffect;
+ 
+    public LightningBoltEntity(World p_i46780_1_, double p_i46780_2_, double p_i46780_4_, double p_i46780_6_, boolean p_i46780_8_) {
+       super(EntityType.field_200728_aG, p_i46780_1_);
++      this.isEffect = p_i46780_8_;
+       this.field_70158_ak = true;
+       this.func_70012_b(p_i46780_2_, p_i46780_4_, p_i46780_6_, 0.0F, 0.0F);
+       this.field_70262_b = 2;
+@@ -80,6 +82,7 @@
              List<Entity> list = this.field_70170_p.func_175674_a(this, new AxisAlignedBB(this.func_226277_ct_() - 3.0D, this.func_226278_cu_() - 3.0D, this.func_226281_cx_() - 3.0D, this.func_226277_ct_() + 3.0D, this.func_226278_cu_() + 6.0D + 3.0D, this.func_226281_cx_() + 3.0D), Entity::func_70089_S);
  
              for(Entity entity : list) {

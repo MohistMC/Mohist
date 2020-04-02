@@ -1,0 +1,20 @@
+--- a/net/minecraft/network/rcon/RConConsoleSource.java
++++ b/net/minecraft/network/rcon/RConConsoleSource.java
+@@ -10,6 +10,7 @@
+ import net.minecraft.util.text.StringTextComponent;
+ import net.minecraft.world.dimension.DimensionType;
+ import net.minecraft.world.server.ServerWorld;
++import org.bukkit.command.CommandSender;
+ 
+ public class RConConsoleSource implements ICommandSource {
+    private final StringBuffer field_70009_b = new StringBuffer();
+@@ -47,4 +48,9 @@
+    public boolean func_195041_r_() {
+       return this.field_184171_b.func_195569_l();
+    }
++
++   @Override
++   public CommandSender getBukkitSender(CommandSource p0) {
++      return null;
++   }
+ }

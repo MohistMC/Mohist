@@ -1,11 +1,57 @@
 --- a/net/minecraft/command/Commands.java
 +++ b/net/minecraft/command/Commands.java
-@@ -194,7 +194,15 @@
+@@ -101,7 +101,7 @@
+    private static final Logger field_197061_a = LogManager.getLogger();
+    private final CommandDispatcher<CommandSource> field_197062_b = new CommandDispatcher<>();
+ 
+-   public Commands(boolean p_i49161_1_) {
++   public final Commands init(boolean isDedicatedServer) {
+       AdvancementCommand.func_198199_a(this.field_197062_b);
+       ExecuteCommand.func_198378_a(this.field_197062_b);
+       BossBarCommand.func_201413_a(this.field_197062_b);
+@@ -160,7 +160,7 @@
+          TestCommand.func_229613_a_(this.field_197062_b);
+       }
+ 
+-      if (p_i49161_1_) {
++      if (isDedicatedServer) {
+          BanIpCommand.func_198220_a(this.field_197062_b);
+          BanListCommand.func_198229_a(this.field_197062_b);
+          BanCommand.func_198235_a(this.field_197062_b);
+@@ -177,35 +177,51 @@
+       }
+ 
+       this.field_197062_b.findAmbiguities((p_201302_1_, p_201302_2_, p_201302_3_, p_201302_4_) -> {
+-         field_197061_a.warn("Ambiguity between arguments {} and {} with inputs: {}", this.field_197062_b.getPath(p_201302_2_), this.field_197062_b.getPath(p_201302_3_), p_201302_4_);
++         //LOGGER.warn("Ambiguity between arguments {} and {} with inputs: {}", this.dispatcher.getPath(p_201302_2_), this.dispatcher.getPath(p_201302_3_), p_201302_4_);
+       });
++      return this;
++   }
++
++   public Commands() {
+       this.field_197062_b.setConsumer((p_197058_0_, p_197058_1_, p_197058_2_) -> {
+          p_197058_0_.getSource().func_197038_a(p_197058_0_, p_197058_1_, p_197058_2_);
+       });
+    }
+ 
+    public int func_197059_a(CommandSource p_197059_1_, String p_197059_2_) {
+-      StringReader stringreader = new StringReader(p_197059_2_);
++      return this.handleCommand(p_197059_1_, p_197059_2_, p_197059_2_);
++   }
++
++   public int handleCommand(CommandSource source, String command, String label) {
++      StringReader stringreader = new StringReader(command);
+       if (stringreader.canRead() && stringreader.peek() == '/') {
+          stringreader.skip();
+       }
+ 
+-      p_197059_1_.func_197028_i().func_213185_aS().func_76320_a(p_197059_2_);
++      source.func_197028_i().func_213185_aS().func_76320_a(command);
  
        try {
           try {
 -            int lvt_4_3_ = this.field_197062_b.execute(stringreader, p_197059_1_);
-+            com.mojang.brigadier.ParseResults<CommandSource> parse = this.field_197062_b.parse(stringreader, p_197059_1_);
++            com.mojang.brigadier.ParseResults<CommandSource> parse = this.field_197062_b.parse(stringreader, source);
 +            net.minecraftforge.event.CommandEvent event = new net.minecraftforge.event.CommandEvent(parse);
 +            if (net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(event)) {
 +               if (event.getException() != null) {
@@ -16,4 +62,58 @@
 +            int lvt_4_3_ = this.field_197062_b.execute(event.getParseResults());
              return lvt_4_3_;
           } catch (CommandException commandexception) {
-             p_197059_1_.func_197021_a(commandexception.func_197003_a());
+-            p_197059_1_.func_197021_a(commandexception.func_197003_a());
++            source.func_197021_a(commandexception.func_197003_a());
+             byte b1 = 0;
+             return b1;
+          } catch (CommandSyntaxException commandsyntaxexception) {
+-            p_197059_1_.func_197021_a(TextComponentUtils.func_202465_a(commandsyntaxexception.getRawMessage()));
++            source.func_197021_a(TextComponentUtils.func_202465_a(commandsyntaxexception.getRawMessage()));
+             if (commandsyntaxexception.getInput() != null && commandsyntaxexception.getCursor() >= 0) {
+                int k = Math.min(commandsyntaxexception.getInput().length(), commandsyntaxexception.getCursor());
+                ITextComponent itextcomponent1 = (new StringTextComponent("")).func_211708_a(TextFormatting.GRAY).func_211710_a((p_211705_1_) -> {
+-                  p_211705_1_.func_150241_a(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, p_197059_2_));
++                  p_211705_1_.func_150241_a(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, label));
+                });
+                if (k > 10) {
+                   itextcomponent1.func_150258_a("...");
+@@ -218,12 +234,12 @@
+                }
+ 
+                itextcomponent1.func_150257_a((new TranslationTextComponent("command.context.here")).func_211709_a(new TextFormatting[]{TextFormatting.RED, TextFormatting.ITALIC}));
+-               p_197059_1_.func_197021_a(itextcomponent1);
++               source.func_197021_a(itextcomponent1);
+             }
+          } catch (Exception exception) {
+             ITextComponent itextcomponent = new StringTextComponent(exception.getMessage() == null ? exception.getClass().getName() : exception.getMessage());
+             if (field_197061_a.isDebugEnabled()) {
+-               field_197061_a.error("Command exception: {}", p_197059_2_, exception);
++               field_197061_a.error("Command exception: {}", command, exception);
+                StackTraceElement[] astacktraceelement = exception.getStackTrace();
+ 
+                for(int j = 0; j < Math.min(astacktraceelement.length, 3); ++j) {
+@@ -231,12 +247,12 @@
+                }
+             }
+ 
+-            p_197059_1_.func_197021_a((new TranslationTextComponent("command.failed")).func_211710_a((p_211704_1_) -> {
++            source.func_197021_a((new TranslationTextComponent("command.failed")).func_211710_a((p_211704_1_) -> {
+                p_211704_1_.func_150209_a(new HoverEvent(HoverEvent.Action.SHOW_TEXT, itextcomponent));
+             }));
+             if (SharedConstants.field_206244_b) {
+-               p_197059_1_.func_197021_a(new StringTextComponent(Util.func_229758_d_(exception)));
+-               field_197061_a.error("'" + p_197059_2_ + "' threw an exception", (Throwable)exception);
++               source.func_197021_a(new StringTextComponent(Util.func_229758_d_(exception)));
++               field_197061_a.error("'" + command + "' threw an exception", (Throwable)exception);
+             }
+ 
+             byte b2 = 0;
+@@ -246,7 +262,7 @@
+          byte b0 = 0;
+          return b0;
+       } finally {
+-         p_197059_1_.func_197028_i().func_213185_aS().func_76319_b();
++         source.func_197028_i().func_213185_aS().func_76319_b();
+       }
+    }
+ 

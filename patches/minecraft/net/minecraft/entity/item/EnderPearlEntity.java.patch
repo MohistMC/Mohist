@@ -1,5 +1,14 @@
 --- a/net/minecraft/entity/item/EnderPearlEntity.java
 +++ b/net/minecraft/entity/item/EnderPearlEntity.java
+@@ -42,7 +42,7 @@
+       super(EntityType.field_200752_ar, p_i1784_2_, p_i1784_4_, p_i1784_6_, p_i1784_1_);
+    }
+ 
+-   protected Item func_213885_i() {
++   public Item func_213885_i() {
+       return Items.field_151079_bi;
+    }
+ 
 @@ -85,6 +85,8 @@
           if (livingentity instanceof ServerPlayerEntity) {
              ServerPlayerEntity serverplayerentity = (ServerPlayerEntity)livingentity;

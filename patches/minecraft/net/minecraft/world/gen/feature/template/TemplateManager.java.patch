@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/gen/feature/template/TemplateManager.java
++++ b/net/minecraft/world/gen/feature/template/TemplateManager.java
+@@ -30,7 +30,7 @@
+ 
+ public class TemplateManager implements IResourceManagerReloadListener {
+    private static final Logger field_195431_a = LogManager.getLogger();
+-   private final Map<ResourceLocation, Template> field_186240_a = Maps.newHashMap();
++   private final Map<ResourceLocation, Template> field_186240_a = Maps.newConcurrentMap(); // SPIGOT-5287
+    private final DataFixer field_191154_c;
+    private final MinecraftServer field_195432_d;
+    private final Path field_195433_e;

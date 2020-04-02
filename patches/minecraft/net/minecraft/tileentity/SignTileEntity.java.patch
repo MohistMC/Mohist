@@ -1,0 +1,11 @@
+--- a/net/minecraft/tileentity/SignTileEntity.java
++++ b/net/minecraft/tileentity/SignTileEntity.java
+@@ -24,7 +24,7 @@
+ 
+ public class SignTileEntity extends TileEntity {
+    public final ITextComponent[] field_145915_a = new ITextComponent[]{new StringTextComponent(""), new StringTextComponent(""), new StringTextComponent(""), new StringTextComponent("")};
+-   private boolean field_145916_j = true;
++   public boolean field_145916_j = true;
+    private PlayerEntity field_145917_k;
+    private final String[] field_212367_h = new String[4];
+    private DyeColor field_214073_l = DyeColor.BLACK;

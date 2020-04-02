@@ -1,5 +1,14 @@
 --- a/net/minecraft/entity/boss/dragon/EnderDragonEntity.java
 +++ b/net/minecraft/entity/boss/dragon/EnderDragonEntity.java
+@@ -57,7 +57,7 @@
+    private static final EntityPredicate field_213405_bO = (new EntityPredicate()).func_221013_a(64.0D);
+    public final double[][] field_70979_e = new double[64][3];
+    public int field_70976_f = -1;
+-   private final EnderDragonPartEntity[] field_70977_g;
++   public final EnderDragonPartEntity[] field_70977_g;
+    public final EnderDragonPartEntity field_70986_h;
+    private final EnderDragonPartEntity field_184673_bv;
+    private final EnderDragonPartEntity field_70987_i;
 @@ -408,8 +408,8 @@
                 BlockPos blockpos = new BlockPos(k1, l1, i2);
                 BlockState blockstate = this.field_70170_p.func_180495_p(blockpos);

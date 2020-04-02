@@ -9,7 +9,12 @@
        boolean flag = false;
        AdvancementProgress advancementprogress = this.func_192747_a(p_192750_1_);
        boolean flag1 = advancementprogress.func_192105_a();
-@@ -199,6 +201,7 @@
+@@ -195,10 +197,12 @@
+          this.field_192761_i.add(p_192750_1_);
+          flag = true;
+          if (!flag1 && advancementprogress.func_192105_a()) {
++            this.field_192762_j.field_70170_p.getServerCB().getPluginManager().callEvent(new org.bukkit.event.player.PlayerAdvancementDoneEvent(this.field_192762_j.getBukkitEntity(), p_192750_1_.bukkit)); // CraftBukkit
+             p_192750_1_.func_192072_d().func_192113_a(this.field_192762_j);
              if (p_192750_1_.func_192068_c() != null && p_192750_1_.func_192068_c().func_193220_i() && this.field_192762_j.field_70170_p.func_82736_K().func_223586_b(GameRules.field_223620_w)) {
                 this.field_192756_d.func_184103_al().func_148539_a(new TranslationTextComponent("chat.type.advancement." + p_192750_1_.func_192068_c().func_192291_d().func_192307_a(), this.field_192762_j.func_145748_c_(), p_192750_1_.func_193123_j()));
              }

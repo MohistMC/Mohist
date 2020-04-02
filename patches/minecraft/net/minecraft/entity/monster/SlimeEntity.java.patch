@@ -1,5 +1,14 @@
 --- a/net/minecraft/entity/monster/SlimeEntity.java
 +++ b/net/minecraft/entity/monster/SlimeEntity.java
+@@ -75,7 +75,7 @@
+       this.func_110140_aT().func_111150_b(SharedMonsterAttributes.field_111264_e);
+    }
+ 
+-   protected void func_70799_a(int p_70799_1_, boolean p_70799_2_) {
++   public void func_70799_a(int p_70799_1_, boolean p_70799_2_) {
+       this.field_70180_af.func_187227_b(field_184711_bt, p_70799_1_);
+       this.func_226264_Z_();
+       this.func_213323_x_();
 @@ -129,6 +129,7 @@
        if (this.field_70122_E && !this.field_175452_bi) {
           int i = this.func_70809_q();
@@ -30,7 +39,13 @@
     }
  
     public void func_70108_f(Entity p_70108_1_) {
-@@ -262,7 +264,7 @@
+@@ -257,12 +259,12 @@
+       return this.func_189101_db() ? SoundEvents.field_187900_fz : SoundEvents.field_187886_fs;
+    }
+ 
+-   protected ResourceLocation func_184647_J() {
++   public ResourceLocation func_184647_J() {
+       return this.func_70809_q() == 1 ? this.func_200600_R().func_220348_g() : LootTables.field_186419_a;
     }
  
     public static boolean func_223366_c(EntityType<SlimeEntity> p_223366_0_, IWorld p_223366_1_, SpawnReason p_223366_2_, BlockPos p_223366_3_, Random p_223366_4_) {

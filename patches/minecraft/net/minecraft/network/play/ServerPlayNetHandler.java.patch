@@ -1,6 +1,25 @@
 --- a/net/minecraft/network/play/ServerPlayNetHandler.java
 +++ b/net/minecraft/network/play/ServerPlayNetHandler.java
-@@ -336,9 +336,11 @@
+@@ -131,6 +131,7 @@
+ import net.minecraft.world.server.ServerWorld;
+ import org.apache.logging.log4j.LogManager;
+ import org.apache.logging.log4j.Logger;
++import org.bukkit.Location;
+ 
+ public class ServerPlayNetHandler implements IServerPlayNetHandler {
+    private static final Logger field_147370_c = LogManager.getLogger();
+@@ -272,6 +273,10 @@
+       this.field_147367_d.func_213167_f(this.field_147371_a::func_179293_l);
+    }
+ 
++   public void disconnect(String s) {
++
++   }
++
+    public void func_147358_a(CInputPacket p_147358_1_) {
+       PacketThreadUtil.func_218796_a(p_147358_1_, this, this.field_147369_b.func_71121_q());
+       this.field_147369_b.func_110430_a(p_147358_1_.func_149620_c(), p_147358_1_.func_192620_b(), p_147358_1_.func_149618_e(), p_147358_1_.func_229755_e_());
+@@ -336,9 +341,11 @@
              }
  
              entity.func_70080_a(d3, d4, d5, f, f1);
@@ -12,7 +31,7 @@
                 this.field_147371_a.func_179290_a(new SMoveVehiclePacket(entity));
                 return;
              }
-@@ -845,7 +847,9 @@
+@@ -845,7 +852,9 @@
        Direction direction = blockraytraceresult.func_216354_b();
        this.field_147369_b.func_143004_u();
        if (blockpos.func_177956_o() < this.field_147367_d.func_71207_Z() - 1 || direction != Direction.UP && blockpos.func_177956_o() < this.field_147367_d.func_71207_Z()) {
@@ -23,7 +42,7 @@
              ActionResultType actionresulttype = this.field_147369_b.field_71134_c.func_219441_a(this.field_147369_b, serverworld, itemstack, hand, blockraytraceresult);
              if (actionresulttype.func_226247_b_()) {
                 this.field_147369_b.func_226292_a_(hand, true);
-@@ -968,7 +972,9 @@
+@@ -968,7 +977,9 @@
           if (s.startsWith("/")) {
              this.func_147361_d(s);
           } else {
@@ -34,7 +53,18 @@
              this.field_147367_d.func_184103_al().func_148544_a(itextcomponent, false);
           }
  
-@@ -1061,6 +1067,7 @@
+@@ -980,6 +991,10 @@
+       }
+    }
+ 
++   public void chat(String s, final boolean async) {
++
++   }
++
+    private void func_147361_d(String p_147361_1_) {
+       this.field_147367_d.func_195571_aL().func_197059_a(this.field_147369_b.func_195051_bN(), p_147361_1_);
+    }
+@@ -1061,6 +1076,7 @@
                 this.field_147369_b.func_190775_a(entity, hand);
              } else if (p_147340_1_.func_149565_c() == CUseEntityPacket.Action.INTERACT_AT) {
                 Hand hand1 = p_147340_1_.func_186994_b();
@@ -42,7 +72,7 @@
                 ActionResultType actionresulttype = entity.func_184199_a(this.field_147369_b, p_147340_1_.func_179712_b(), hand1);
                 if (actionresulttype.func_226247_b_()) {
                    this.field_147369_b.func_226292_a_(hand1, true);
-@@ -1094,7 +1101,7 @@
+@@ -1094,7 +1110,7 @@
                 return;
              }
  
@@ -51,7 +81,7 @@
              if (this.field_147367_d.func_71199_h()) {
                 this.field_147369_b.func_71033_a(GameType.SPECTATOR);
                 this.field_147369_b.func_71121_q().func_82736_K().func_223585_a(GameRules.field_223613_p).func_223570_a(false, this.field_147367_d);
-@@ -1268,6 +1275,8 @@
+@@ -1268,6 +1284,8 @@
     }
  
     public void func_147349_a(CCustomPayloadPacket p_147349_1_) {
@@ -60,3 +90,15 @@
     }
  
     public void func_217263_a(CSetDifficultyPacket p_217263_1_) {
+@@ -1283,4 +1301,11 @@
+          this.field_147367_d.func_213209_d(p_217261_1_.func_218776_b());
+       }
+    }
++
++   public void teleport(Location to) {
++   }
++
++   public boolean isDisconnected() {
++      return false;
++   }
+ }

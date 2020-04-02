@@ -1,0 +1,11 @@
+--- a/net/minecraft/entity/item/ExperienceBottleEntity.java
++++ b/net/minecraft/entity/item/ExperienceBottleEntity.java
+@@ -24,7 +24,7 @@
+       super(EntityType.field_200753_as, p_i1787_2_, p_i1787_4_, p_i1787_6_, p_i1787_1_);
+    }
+ 
+-   protected Item func_213885_i() {
++   public Item func_213885_i() {
+       return Items.field_151062_by;
+    }
+ 

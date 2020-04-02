@@ -1,0 +1,11 @@
+--- a/net/minecraft/entity/item/TNTEntity.java
++++ b/net/minecraft/entity/item/TNTEntity.java
+@@ -22,6 +22,8 @@
+    @Nullable
+    private LivingEntity field_94084_b;
+    private int field_70516_a = 80;
++   public float yield = 4; // CraftBukkit - add field
++   public boolean isIncendiary = false; // CraftBukkit - add field
+ 
+    public TNTEntity(EntityType<? extends TNTEntity> p_i50216_1_, World p_i50216_2_) {
+       super(p_i50216_1_, p_i50216_2_);

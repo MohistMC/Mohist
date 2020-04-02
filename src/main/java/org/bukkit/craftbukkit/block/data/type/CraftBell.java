@@ -1,5 +1,6 @@
 package org.bukkit.craftbukkit.block.data.type;
 
+import net.minecraft.state.EnumProperty;
 import org.bukkit.block.data.type.Bell;
 import org.bukkit.craftbukkit.block.data.CraftBlockData;
 

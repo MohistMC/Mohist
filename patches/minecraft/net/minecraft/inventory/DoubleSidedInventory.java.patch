@@ -1,0 +1,63 @@
+--- a/net/minecraft/inventory/DoubleSidedInventory.java
++++ b/net/minecraft/inventory/DoubleSidedInventory.java
+@@ -1,11 +1,16 @@
+ package net.minecraft.inventory;
+ 
++import java.util.List;
+ import net.minecraft.entity.player.PlayerEntity;
+ import net.minecraft.item.ItemStack;
++import org.bukkit.Location;
++import org.bukkit.craftbukkit.entity.CraftHumanEntity;
++import org.bukkit.entity.HumanEntity;
++import org.bukkit.inventory.InventoryHolder;
+ 
+ public class DoubleSidedInventory implements IInventory {
+-   private final IInventory field_70477_b;
+-   private final IInventory field_70478_c;
++   public final IInventory field_70477_b;
++   public final IInventory field_70478_c;
+ 
+    public DoubleSidedInventory(IInventory p_i50399_1_, IInventory p_i50399_2_) {
+       if (p_i50399_1_ == null) {
+@@ -80,6 +85,41 @@
+       return p_94041_1_ >= this.field_70477_b.func_70302_i_() ? this.field_70478_c.func_94041_b(p_94041_1_ - this.field_70477_b.func_70302_i_(), p_94041_2_) : this.field_70477_b.func_94041_b(p_94041_1_, p_94041_2_);
+    }
+ 
++   @Override
++   public List<ItemStack> getContents() {
++      return null;
++   }
++
++   @Override
++   public void onOpen(CraftHumanEntity who) {
++
++   }
++
++   @Override
++   public void onClose(CraftHumanEntity who) {
++
++   }
++
++   @Override
++   public List<HumanEntity> getViewers() {
++      return null;
++   }
++
++   @Override
++   public InventoryHolder getOwner() {
++      return null;
++   }
++
++   @Override
++   public void setMaxStackSize(int size) {
++
++   }
++
++   @Override
++   public Location getLocation() {
++      return null;
++   }
++
+    public void func_174888_l() {
+       this.field_70477_b.func_174888_l();
+       this.field_70478_c.func_174888_l();

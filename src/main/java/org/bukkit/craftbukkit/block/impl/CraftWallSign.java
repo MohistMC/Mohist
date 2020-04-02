@@ -3,6 +3,9 @@
  */
 package org.bukkit.craftbukkit.block.impl;
 
+import net.minecraft.state.BooleanProperty;
+import net.minecraft.state.EnumProperty;
+
 public final class CraftWallSign extends org.bukkit.craftbukkit.block.data.CraftBlockData implements org.bukkit.block.data.type.WallSign, org.bukkit.block.data.Directional, org.bukkit.block.data.Waterlogged {
 
     public CraftWallSign() {

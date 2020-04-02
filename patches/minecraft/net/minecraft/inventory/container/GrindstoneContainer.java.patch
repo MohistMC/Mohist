@@ -1,6 +1,14 @@
 --- a/net/minecraft/inventory/container/GrindstoneContainer.java
 +++ b/net/minecraft/inventory/container/GrindstoneContainer.java
-@@ -141,12 +141,13 @@
+@@ -17,6 +17,7 @@
+ import net.minecraft.item.Items;
+ import net.minecraft.util.IWorldPosCallable;
+ import net.minecraft.world.World;
++import org.bukkit.inventory.InventoryView;
+ 
+ public class GrindstoneContainer extends Container {
+    private final IInventory field_217013_c = new CraftResultInventory();
+@@ -141,12 +142,13 @@
              }
  
              Item item = itemstack.func_77973_b();
@@ -19,3 +27,15 @@
                 if (!ItemStack.func_77989_b(itemstack, itemstack1)) {
                    this.field_217013_c.func_70299_a(0, ItemStack.field_190927_a);
                    this.func_75142_b();
+@@ -222,6 +224,11 @@
+       return func_216963_a(this.field_217015_e, p_75145_1_, Blocks.field_222427_lP);
+    }
+ 
++   @Override
++   public InventoryView getBukkitView() {
++      return null;
++   }
++
+    public ItemStack func_82846_b(PlayerEntity p_82846_1_, int p_82846_2_) {
+       ItemStack itemstack = ItemStack.field_190927_a;
+       Slot slot = this.field_75151_b.get(p_82846_2_);

@@ -1,0 +1,11 @@
+--- a/net/minecraft/block/DispenserBlock.java
++++ b/net/minecraft/block/DispenserBlock.java
+@@ -76,7 +76,7 @@
+       }
+    }
+ 
+-   protected void func_176439_d(World p_176439_1_, BlockPos p_176439_2_) {
++   public void func_176439_d(World p_176439_1_, BlockPos p_176439_2_) {
+       ProxyBlockSource proxyblocksource = new ProxyBlockSource(p_176439_1_, p_176439_2_);
+       DispenserTileEntity dispensertileentity = proxyblocksource.func_150835_j();
+       int i = dispensertileentity.func_146017_i();

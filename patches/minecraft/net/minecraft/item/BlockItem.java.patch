@@ -28,7 +28,27 @@
     @Nullable
     public BlockItemUseContext func_219984_b(BlockItemUseContext p_219984_1_) {
        return p_219984_1_;
-@@ -189,10 +195,18 @@
+@@ -120,6 +126,19 @@
+       return blockstate;
+    }
+ 
++   public static BlockState getBlockState(BlockState iblockdata, CompoundNBT nbttagcompound) {
++      BlockState iblockdata2 = iblockdata;
++      StateContainer<Block, BlockState> blockstatelist = iblockdata.func_177230_c().func_176194_O();
++      for (String s : nbttagcompound.func_150296_c()) {
++         IProperty<?> iblockstate = blockstatelist.func_185920_a(s);
++         if (iblockstate != null) {
++            String s2 = nbttagcompound.func_74781_a(s).func_150285_a_();
++            iblockdata2 = func_219988_a(iblockdata2, iblockstate, s2);
++         }
++      }
++      return iblockdata2;
++   }
++
+    private static <T extends Comparable<T>> BlockState func_219988_a(BlockState p_219988_0_, IProperty<T> p_219988_1_, String p_219988_2_) {
+       return p_219988_1_.func_185929_b(p_219988_2_).map((p_219986_2_) -> {
+          return p_219988_0_.func_206870_a(p_219988_1_, p_219986_2_);
+@@ -189,10 +208,18 @@
     }
  
     public Block func_179223_d() {

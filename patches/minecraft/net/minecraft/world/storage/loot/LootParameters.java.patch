@@ -1,0 +1,10 @@
+--- a/net/minecraft/world/storage/loot/LootParameters.java
++++ b/net/minecraft/world/storage/loot/LootParameters.java
+@@ -20,6 +20,7 @@
+    public static final LootParameter<TileEntity> field_216288_h = func_216280_a("block_entity");
+    public static final LootParameter<ItemStack> field_216289_i = func_216280_a("tool");
+    public static final LootParameter<Float> field_216290_j = func_216280_a("explosion_radius");
++   public static final LootParameter<Integer> LOOTING_MOD = new LootParameter<>(new ResourceLocation("bukkit:looting_mod")); // CraftBukkit
+ 
+    private static <T> LootParameter<T> func_216280_a(String p_216280_0_) {
+       return new LootParameter<>(new ResourceLocation(p_216280_0_));

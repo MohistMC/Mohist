@@ -1,0 +1,29 @@
+--- a/net/minecraft/command/ICommandSource.java
++++ b/net/minecraft/command/ICommandSource.java
+@@ -1,6 +1,7 @@
+ package net.minecraft.command;
+ 
+ import net.minecraft.util.text.ITextComponent;
++import org.bukkit.command.CommandSender;
+ 
+ public interface ICommandSource {
+    ICommandSource field_213139_a_ = new ICommandSource() {
+@@ -18,6 +19,11 @@
+       public boolean func_195041_r_() {
+          return false;
+       }
++
++      @Override
++      public CommandSender getBukkitSender(final CommandSource wrapper) {
++         throw new UnsupportedOperationException("Not supported yet.");
++      }
+    };
+ 
+    void func_145747_a(ITextComponent p_145747_1_);
+@@ -27,4 +33,6 @@
+    boolean func_195040_b();
+ 
+    boolean func_195041_r_();
++
++   CommandSender getBukkitSender(final CommandSource p0);
+ }

@@ -1,6 +1,18 @@
 --- a/net/minecraft/entity/item/minecart/MinecartCommandBlockEntity.java
 +++ b/net/minecraft/entity/item/minecart/MinecartCommandBlockEntity.java
-@@ -72,6 +72,7 @@
+@@ -18,9 +18,10 @@
+ import net.minecraft.world.server.ServerWorld;
+ import net.minecraftforge.api.distmarker.Dist;
+ import net.minecraftforge.api.distmarker.OnlyIn;
++import org.bukkit.command.CommandSender;
+ 
+ public class MinecartCommandBlockEntity extends AbstractMinecartEntity {
+-   private static final DataParameter<String> field_184273_a = EntityDataManager.func_187226_a(MinecartCommandBlockEntity.class, DataSerializers.field_187194_d);
++   public static final DataParameter<String> field_184273_a = EntityDataManager.func_187226_a(MinecartCommandBlockEntity.class, DataSerializers.field_187194_d);
+    private static final DataParameter<ITextComponent> field_184274_b = EntityDataManager.func_187226_a(MinecartCommandBlockEntity.class, DataSerializers.field_187195_e);
+    private final CommandBlockLogic field_145824_a = new MinecartCommandBlockEntity.MinecartCommandLogic();
+    private int field_145823_b;
+@@ -72,6 +73,7 @@
     }
  
     public boolean func_184230_a(PlayerEntity p_184230_1_, Hand p_184230_2_) {
@@ -8,3 +20,14 @@
        this.field_145824_a.func_175574_a(p_184230_1_);
        return true;
     }
+@@ -117,5 +119,10 @@
+       public CommandSource func_195042_h() {
+          return new CommandSource(this, MinecartCommandBlockEntity.this.func_213303_ch(), MinecartCommandBlockEntity.this.func_189653_aC(), this.func_195043_d(), 2, this.func_207404_l().getString(), MinecartCommandBlockEntity.this.func_145748_c_(), this.func_195043_d().func_73046_m(), MinecartCommandBlockEntity.this);
+       }
++
++      @Override
++      public CommandSender getBukkitSender(CommandSource p0) {
++         return null;
++      }
+    }
+ }

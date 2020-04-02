@@ -1,5 +1,24 @@
 --- a/net/minecraft/entity/projectile/AbstractArrowEntity.java
 +++ b/net/minecraft/entity/projectile/AbstractArrowEntity.java
+@@ -54,15 +54,15 @@
+    private static final DataParameter<Byte> field_213876_as = EntityDataManager.func_187226_a(AbstractArrowEntity.class, DataSerializers.field_187191_a);
+    @Nullable
+    private BlockState field_195056_av;
+-   protected boolean field_70254_i;
++   public boolean field_70254_i;
+    protected int field_184552_b;
+    public AbstractArrowEntity.PickupStatus field_70251_a = AbstractArrowEntity.PickupStatus.DISALLOWED;
+    public int field_70249_b;
+    public UUID field_70250_c;
+-   private int field_70252_j;
++   public int field_70252_j;
+    private int field_70257_an;
+    private double field_70255_ao = 2.0D;
+-   private int field_70256_ap;
++   public int field_70256_ap;
+    private SoundEvent field_213877_ay = this.func_213867_k();
+    private IntOpenHashSet field_213878_az;
+    private List<Entity> field_213875_aA;
 @@ -160,7 +160,7 @@
  
        BlockPos blockpos = new BlockPos(this);

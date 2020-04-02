@@ -96,3 +96,16 @@
              ListNBT listnbt = new ListNBT();
              listnbt.add(DoubleNBT.func_229684_a_(vec3d1.field_72450_a));
              listnbt.add(DoubleNBT.func_229684_a_(vec3d1.field_72448_b));
+@@ -362,11 +401,7 @@
+    }
+ 
+    private static Optional<Entity> func_215382_a(IWorld p_215382_0_, CompoundNBT p_215382_1_) {
+-      try {
+-         return EntityType.func_220330_a(p_215382_1_, p_215382_0_.func_201672_e());
+-      } catch (Exception var3) {
+-         return Optional.empty();
+-      }
++      return EntityType.func_220330_a(p_215382_1_, p_215382_0_.func_201672_e());
+    }
+ 
+    public BlockPos func_186257_a(Rotation p_186257_1_) {

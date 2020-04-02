@@ -60,3 +60,23 @@
           ichunk.func_177425_e(p_180501_1_);
        }
  
+@@ -245,9 +245,16 @@
+    }
+ 
+    public boolean func_217376_c(Entity p_217376_1_) {
+-      int i = MathHelper.func_76128_c(p_217376_1_.func_226277_ct_() / 16.0D);
+-      int j = MathHelper.func_76128_c(p_217376_1_.func_226281_cx_() / 16.0D);
+-      this.func_212866_a_(i, j).func_76612_a(p_217376_1_);
++      // CraftBukkit start
++      return addEntity(p_217376_1_, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.DEFAULT);
++   }
++
++   @Override
++   public boolean addEntity(Entity entityIn, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason reason) {
++      // CraftBukkit end
++      int i = MathHelper.func_76128_c(entityIn.func_226277_ct_() / 16.0D);
++      int j = MathHelper.func_76128_c(entityIn.func_226281_cx_() / 16.0D);
++      this.func_212866_a_(i, j).func_76612_a(entityIn);
+       return true;
+    }
+ 

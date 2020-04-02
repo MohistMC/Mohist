@@ -1,6 +1,31 @@
 --- a/net/minecraft/server/management/PlayerList.java
 +++ b/net/minecraft/server/management/PlayerList.java
-@@ -94,6 +94,7 @@
+@@ -70,6 +70,7 @@
+ import net.minecraftforge.api.distmarker.OnlyIn;
+ import org.apache.logging.log4j.LogManager;
+ import org.apache.logging.log4j.Logger;
++import org.bukkit.Location;
+ 
+ public abstract class PlayerList {
+    public static final File field_152613_a = new File("banned-players.json");
+@@ -79,7 +80,7 @@
+    private static final Logger field_148546_d = LogManager.getLogger();
+    private static final SimpleDateFormat field_72403_e = new SimpleDateFormat("yyyy-MM-dd 'at' HH:mm:ss z");
+    private final MinecraftServer field_72400_f;
+-   private final List<ServerPlayerEntity> field_72404_b = Lists.newArrayList();
++   public final List<ServerPlayerEntity> field_72404_b = Lists.newArrayList();
+    private final Map<UUID, ServerPlayerEntity> field_177454_f = Maps.newHashMap();
+    private final BanList field_72401_g = new BanList(field_152613_a);
+    private final IPBanList field_72413_h = new IPBanList(field_152614_b);
+@@ -87,13 +88,14 @@
+    private final WhiteList field_72411_j = new WhiteList(field_152616_d);
+    private final Map<UUID, ServerStatisticsManager> field_148547_k = Maps.newHashMap();
+    private final Map<UUID, PlayerAdvancements> field_192055_p = Maps.newHashMap();
+-   private IPlayerFileData field_72412_k;
++   public IPlayerFileData field_72412_k;
+    private boolean field_72409_l;
+    protected final int field_72405_c;
+    private int field_72402_d;
     private GameType field_72410_m;
     private boolean field_72407_n;
     private int field_72408_o;
@@ -8,7 +33,7 @@
  
     public PlayerList(MinecraftServer p_i50688_1_, int p_i50688_2_) {
        this.field_72400_f = p_i50688_1_;
-@@ -109,7 +110,15 @@
+@@ -109,7 +111,15 @@
        String s = gameprofile1 == null ? gameprofile.getName() : gameprofile1.getName();
        playerprofilecache.func_152649_a(gameprofile);
        CompoundNBT compoundnbt = this.func_72380_a(p_72355_2_);
@@ -25,7 +50,7 @@
        p_72355_2_.func_70029_a(serverworld);
        p_72355_2_.field_71134_c.func_73080_a((ServerWorld)p_72355_2_.field_70170_p);
        String s1 = "local";
-@@ -121,6 +130,8 @@
+@@ -121,6 +131,8 @@
        WorldInfo worldinfo = serverworld.func_72912_H();
        this.func_72381_a(p_72355_2_, (ServerPlayerEntity)null, serverworld);
        ServerPlayNetHandler serverplaynethandler = new ServerPlayNetHandler(this.field_72400_f, p_72355_1_, p_72355_2_);
@@ -34,7 +59,7 @@
        GameRules gamerules = serverworld.func_82736_K();
        boolean flag = gamerules.func_223586_b(GameRules.field_226683_z_);
        boolean flag1 = gamerules.func_223586_b(GameRules.field_223612_o);
-@@ -145,7 +156,7 @@
+@@ -145,7 +157,7 @@
  
        this.func_148539_a(itextcomponent.func_211708_a(TextFormatting.YELLOW));
        serverplaynethandler.func_147364_a(p_72355_2_.func_226277_ct_(), p_72355_2_.func_226278_cu_(), p_72355_2_.func_226281_cx_(), p_72355_2_.field_70177_z, p_72355_2_.field_70125_A);
@@ -43,7 +68,7 @@
        this.field_177454_f.put(p_72355_2_.func_110124_au(), p_72355_2_);
        this.func_148540_a(new SPlayerListItemPacket(SPlayerListItemPacket.Action.ADD_PLAYER, p_72355_2_));
  
-@@ -166,8 +177,9 @@
+@@ -166,8 +178,9 @@
  
        if (compoundnbt != null && compoundnbt.func_150297_b("RootVehicle", 10)) {
           CompoundNBT compoundnbt1 = compoundnbt.func_74775_l("RootVehicle");
@@ -54,15 +79,19 @@
           });
           if (entity1 != null) {
              UUID uuid = compoundnbt1.func_186857_a("Attach");
-@@ -194,6 +206,7 @@
+@@ -194,9 +207,10 @@
        }
  
        p_72355_2_.func_71116_b();
 +      net.minecraftforge.fml.hooks.BasicEventHooks.firePlayerLoggedIn( p_72355_2_ );
     }
  
-    protected void func_96456_a(ServerScoreboard p_96456_1_, ServerPlayerEntity p_96456_2_) {
-@@ -255,6 +268,7 @@
+-   protected void func_96456_a(ServerScoreboard p_96456_1_, ServerPlayerEntity p_96456_2_) {
++   public void func_96456_a(ServerScoreboard p_96456_1_, ServerPlayerEntity p_96456_2_) {
+       Set<ScoreObjective> set = Sets.newHashSet();
+ 
+       for(ScorePlayerTeam scoreplayerteam : p_96456_1_.func_96525_g()) {
+@@ -255,6 +269,7 @@
           compoundnbt1 = compoundnbt;
           p_72380_1_.func_70020_e(compoundnbt);
           field_148546_d.debug("loading single player");
@@ -70,7 +99,7 @@
        } else {
           compoundnbt1 = this.field_72412_k.func_75752_b(p_72380_1_);
        }
-@@ -263,6 +277,7 @@
+@@ -263,6 +278,7 @@
     }
  
     protected void func_72391_b(ServerPlayerEntity p_72391_1_) {
@@ -78,7 +107,7 @@
        this.field_72412_k.func_75753_a(p_72391_1_);
        ServerStatisticsManager serverstatisticsmanager = this.field_148547_k.get(p_72391_1_.func_110124_au());
        if (serverstatisticsmanager != null) {
-@@ -277,6 +292,7 @@
+@@ -277,6 +293,7 @@
     }
  
     public void func_72367_e(ServerPlayerEntity p_72367_1_) {
@@ -86,7 +115,7 @@
        ServerWorld serverworld = p_72367_1_.func_71121_q();
        p_72367_1_.func_195066_a(Stats.field_75947_j);
        this.func_72391_b(p_72367_1_);
-@@ -298,7 +314,7 @@
+@@ -298,7 +315,7 @@
        p_72367_1_.func_213319_R();
        serverworld.func_217434_e(p_72367_1_);
        p_72367_1_.func_192039_O().func_192745_a();
@@ -95,7 +124,7 @@
        this.field_72400_f.func_201300_aS().func_201382_b(p_72367_1_);
        UUID uuid = p_72367_1_.func_110124_au();
        ServerPlayerEntity serverplayerentity = this.field_177454_f.get(uuid);
-@@ -367,10 +383,18 @@
+@@ -367,10 +384,18 @@
     }
  
     public ServerPlayerEntity func_72368_a(ServerPlayerEntity p_72368_1_, DimensionType p_72368_2_, boolean p_72368_3_) {
@@ -118,7 +147,7 @@
        p_72368_1_.field_71093_bK = p_72368_2_;
        PlayerInteractionManager playerinteractionmanager;
        if (this.field_72400_f.func_71242_L()) {
-@@ -382,6 +406,8 @@
+@@ -382,6 +407,8 @@
        ServerPlayerEntity serverplayerentity = new ServerPlayerEntity(this.field_72400_f, this.field_72400_f.func_71218_a(p_72368_1_.field_71093_bK), p_72368_1_.func_146103_bH(), playerinteractionmanager);
        serverplayerentity.field_71135_a = p_72368_1_.field_71135_a;
        serverplayerentity.func_193104_a(p_72368_1_, p_72368_3_);
@@ -127,7 +156,7 @@
        serverplayerentity.func_145769_d(p_72368_1_.func_145782_y());
        serverplayerentity.func_184819_a(p_72368_1_.func_184591_cq());
  
-@@ -396,7 +422,7 @@
+@@ -396,7 +423,7 @@
           if (optional.isPresent()) {
              Vec3d vec3d = optional.get();
              serverplayerentity.func_70012_b(vec3d.field_72450_a, vec3d.field_72448_b, vec3d.field_72449_c, 0.0F, 0.0F);
@@ -136,7 +165,7 @@
           } else {
              serverplayerentity.field_71135_a.func_147359_a(new SChangeGameStatePacket(0, 0.0F));
           }
-@@ -407,6 +433,7 @@
+@@ -407,6 +434,7 @@
        }
  
        WorldInfo worldinfo = serverplayerentity.field_70170_p.func_72912_H();
@@ -144,7 +173,7 @@
        serverplayerentity.field_71135_a.func_147359_a(new SRespawnPacket(serverplayerentity.field_71093_bK, WorldInfo.func_227498_c_(worldinfo.func_76063_b()), worldinfo.func_76067_t(), serverplayerentity.field_71134_c.func_73081_b()));
        BlockPos blockpos1 = serverworld.func_175694_M();
        serverplayerentity.field_71135_a.func_147364_a(serverplayerentity.func_226277_ct_(), serverplayerentity.func_226278_cu_(), serverplayerentity.func_226281_cx_(), serverplayerentity.field_70177_z, serverplayerentity.field_70125_A);
-@@ -416,10 +443,11 @@
+@@ -416,10 +444,11 @@
        this.func_72354_b(serverplayerentity, serverworld);
        this.func_187243_f(serverplayerentity);
        serverworld.func_217433_d(serverplayerentity);
@@ -157,7 +186,7 @@
        return serverplayerentity;
     }
  
-@@ -739,7 +767,7 @@
+@@ -739,7 +768,7 @@
     }
  
     public List<ServerPlayerEntity> func_181057_v() {
@@ -166,7 +195,7 @@
     }
  
     @Nullable
-@@ -769,4 +797,12 @@
+@@ -769,4 +798,15 @@
     public boolean func_206257_x() {
        return this.field_72407_n;
     }
@@ -178,4 +207,7 @@
 +   public boolean removePlayer(ServerPlayerEntity player) {
 +       return net.minecraftforge.common.DimensionManager.rebuildPlayerMap(this, this.field_72404_b.remove(player));
 +   }
++
++    public void moveToWorld(ServerPlayerEntity entity, DimensionType type, boolean b, Location to, boolean b1) {
++    }
  }

@@ -1,0 +1,63 @@
+--- a/net/minecraft/entity/AreaEffectCloudEntity.java
++++ b/net/minecraft/entity/AreaEffectCloudEntity.java
+@@ -7,8 +7,8 @@
+ import java.util.Iterator;
+ import java.util.List;
+ import java.util.Map;
+-import java.util.UUID;
+ import java.util.Map.Entry;
++import java.util.UUID;
+ import javax.annotation.Nullable;
+ import net.minecraft.block.material.PushReaction;
+ import net.minecraft.command.arguments.ParticleArgument;
+@@ -25,6 +25,7 @@
+ import net.minecraft.potion.Potion;
+ import net.minecraft.potion.PotionUtils;
+ import net.minecraft.potion.Potions;
++import net.minecraft.util.ResourceLocation;
+ import net.minecraft.util.math.MathHelper;
+ import net.minecraft.util.registry.Registry;
+ import net.minecraft.world.World;
+@@ -39,15 +40,15 @@
+    private static final DataParameter<Boolean> field_184500_c = EntityDataManager.func_187226_a(AreaEffectCloudEntity.class, DataSerializers.field_187198_h);
+    private static final DataParameter<IParticleData> field_184501_d = EntityDataManager.func_187226_a(AreaEffectCloudEntity.class, DataSerializers.field_198166_i);
+    private Potion field_184502_e = Potions.field_185229_a;
+-   private final List<EffectInstance> field_184503_f = Lists.newArrayList();
++   public final List<EffectInstance> field_184503_f = Lists.newArrayList();
+    private final Map<Entity, Integer> field_184504_g = Maps.newHashMap();
+    private int field_184505_h = 600;
+-   private int field_184506_as = 20;
+-   private int field_184507_at = 20;
++   public int field_184506_as = 20;
++   public int field_184507_at = 20;
+    private boolean field_184508_au;
+-   private int field_184509_av;
+-   private float field_184510_aw;
+-   private float field_184511_ax;
++   public int field_184509_av;
++   public float field_184510_aw;
++   public float field_184511_ax;
+    private LivingEntity field_184512_ay;
+    private UUID field_184513_az;
+ 
+@@ -113,6 +114,20 @@
+ 
+    }
+ 
++   public void refreshEffects() {
++      if (!this.field_184508_au) {
++         this.func_184212_Q().func_187227_b(AreaEffectCloudEntity.field_184499_b, PotionUtils.func_185181_a(PotionUtils.func_185186_a(this.field_184502_e, this.field_184503_f)));
++      }
++   }
++
++   public String getTypeCB() {
++      return ((ResourceLocation)Registry.field_212621_j.func_177774_c(this.field_184502_e)).toString();
++   }
++
++   public void setType(final String string) {
++      this.func_184484_a(Registry.field_212621_j.func_82594_a(new ResourceLocation(string)));
++   }
++
+    public int func_184492_k() {
+       return this.func_184212_Q().func_187225_a(field_184499_b);
+    }

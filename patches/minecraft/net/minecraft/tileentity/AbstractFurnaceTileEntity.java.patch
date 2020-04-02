@@ -1,5 +1,19 @@
 --- a/net/minecraft/tileentity/AbstractFurnaceTileEntity.java
 +++ b/net/minecraft/tileentity/AbstractFurnaceTileEntity.java
+@@ -36,10 +36,10 @@
+    private static final int[] field_214016_h = new int[]{2, 1};
+    private static final int[] field_214017_i = new int[]{1};
+    protected NonNullList<ItemStack> field_214012_a = NonNullList.func_191197_a(3, ItemStack.field_190927_a);
+-   private int field_214018_j;
++   public int field_214018_j;
+    private int field_214019_k;
+-   private int field_214020_l;
+-   private int field_214021_m;
++   public int field_214020_l;
++   public int field_214021_m;
+    protected final IIntArray field_214013_b = new IIntArray() {
+       public int func_221476_a(int p_221476_1_) {
+          switch(p_221476_1_) {
 @@ -85,6 +85,7 @@
        this.field_214014_c = p_i49964_2_;
     }
@@ -112,7 +126,7 @@
     }
  
     public int[] func_180463_a(Direction p_180463_1_) {
-@@ -462,4 +455,27 @@
+@@ -462,4 +455,29 @@
        }
  
     }
@@ -139,4 +153,6 @@
 +      for (int x = 0; x < handlers.length; x++)
 +        handlers[x].invalidate();
 +   }
++
++   public abstract void func_213995_d(PlayerEntity player, ItemStack stack, int removeCount);
  }

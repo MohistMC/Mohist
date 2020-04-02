@@ -15,7 +15,6 @@ import org.bukkit.craftbukkit.CraftChunk;
 import org.bukkit.craftbukkit.CraftWorld;
 import org.bukkit.craftbukkit.block.data.CraftBlockData;
 import org.bukkit.craftbukkit.util.CraftMagicNumbers;
-import org.bukkit.material.Attachable;
 import org.bukkit.material.MaterialData;
 import org.bukkit.metadata.MetadataValue;
 import org.bukkit.plugin.Plugin;
@@ -184,7 +183,7 @@ public class CraftBlockState implements BlockState {
         }
 
         net.minecraft.block.BlockState newBlock = this.data;
-        block.setTypeAndData(newBlock, applyPhysics);
+        block.setBlockState(newBlock, applyPhysics);
         world.getHandle().notifyBlockUpdate(
                 position,
                 block.getNMS(),

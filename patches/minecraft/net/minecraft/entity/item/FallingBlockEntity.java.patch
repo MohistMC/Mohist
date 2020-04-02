@@ -1,5 +1,14 @@
 --- a/net/minecraft/entity/item/FallingBlockEntity.java
 +++ b/net/minecraft/entity/item/FallingBlockEntity.java
+@@ -46,7 +46,7 @@
+    public int field_145812_b;
+    public boolean field_145813_c = true;
+    private boolean field_145808_f;
+-   private boolean field_145809_g;
++   public boolean field_145809_g;
+    private int field_145815_h = 40;
+    private float field_145816_i = 2.0F;
+    public CompoundNBT field_145810_d;
 @@ -153,7 +153,7 @@
                                ((FallingBlock)block).func_176502_a_(this.field_70170_p, blockpos1, this.field_175132_d, blockstate);
                             }

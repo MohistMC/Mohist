@@ -1,0 +1,68 @@
+--- a/net/minecraft/entity/item/minecart/HopperMinecartEntity.java
++++ b/net/minecraft/entity/item/minecart/HopperMinecartEntity.java
+@@ -8,6 +8,7 @@
+ import net.minecraft.entity.player.PlayerInventory;
+ import net.minecraft.inventory.container.Container;
+ import net.minecraft.inventory.container.HopperContainer;
++import net.minecraft.item.ItemStack;
+ import net.minecraft.nbt.CompoundNBT;
+ import net.minecraft.tileentity.HopperTileEntity;
+ import net.minecraft.tileentity.IHopper;
+@@ -16,6 +17,10 @@
+ import net.minecraft.util.math.BlockPos;
+ import net.minecraft.world.GameRules;
+ import net.minecraft.world.World;
++import org.bukkit.Location;
++import org.bukkit.craftbukkit.entity.CraftHumanEntity;
++import org.bukkit.entity.HumanEntity;
++import org.bukkit.inventory.InventoryHolder;
+ 
+ public class HopperMinecartEntity extends ContainerMinecartEntity implements IHopper {
+    private boolean field_96113_a = true;
+@@ -46,6 +51,46 @@
+       return 5;
+    }
+ 
++   @Override
++   public int func_70297_j_() {
++      return 0;
++   }
++
++   @Override
++   public List<ItemStack> getContents() {
++      return null;
++   }
++
++   @Override
++   public void onOpen(CraftHumanEntity who) {
++
++   }
++
++   @Override
++   public void onClose(CraftHumanEntity who) {
++
++   }
++
++   @Override
++   public List<HumanEntity> getViewers() {
++      return null;
++   }
++
++   @Override
++   public InventoryHolder getOwner() {
++      return null;
++   }
++
++   @Override
++   public void setMaxStackSize(int size) {
++
++   }
++
++   @Override
++   public Location getLocation() {
++      return null;
++   }
++
+    public void func_96095_a(int p_96095_1_, int p_96095_2_, int p_96095_3_, boolean p_96095_4_) {
+       boolean flag = !p_96095_4_;
+       if (flag != this.func_96111_ay()) {

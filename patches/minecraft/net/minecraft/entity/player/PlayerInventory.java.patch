@@ -1,6 +1,17 @@
 --- a/net/minecraft/entity/player/PlayerInventory.java
 +++ b/net/minecraft/entity/player/PlayerInventory.java
-@@ -214,7 +214,8 @@
+@@ -26,6 +26,10 @@
+ import net.minecraft.world.World;
+ import net.minecraftforge.api.distmarker.Dist;
+ import net.minecraftforge.api.distmarker.OnlyIn;
++import org.bukkit.Location;
++import org.bukkit.craftbukkit.entity.CraftHumanEntity;
++import org.bukkit.entity.HumanEntity;
++import org.bukkit.inventory.InventoryHolder;
+ 
+ public class PlayerInventory implements IInventory, INameable {
+    public final NonNullList<ItemStack> field_70462_a = NonNullList.func_191197_a(36, ItemStack.field_190927_a);
+@@ -214,7 +218,8 @@
        int i = p_191973_2_.func_190916_E();
        ItemStack itemstack = this.func_70301_a(p_191973_1_);
        if (itemstack.func_190926_b()) {
@@ -10,7 +21,7 @@
           if (p_191973_2_.func_77942_o()) {
              itemstack.func_77982_d(p_191973_2_.func_77978_p().func_74737_b());
           }
-@@ -265,7 +266,7 @@
+@@ -265,7 +270,7 @@
              }
           }
        }
@@ -19,7 +30,7 @@
     }
  
     public boolean func_70441_a(ItemStack p_70441_1_) {
-@@ -318,6 +319,8 @@
+@@ -318,6 +323,8 @@
           } catch (Throwable throwable) {
              CrashReport crashreport = CrashReport.func_85055_a(throwable, "Adding item to inventory");
              CrashReportCategory crashreportcategory = crashreport.func_85058_a("Item being added");
@@ -28,3 +39,57 @@
              crashreportcategory.func_71507_a("Item ID", Item.func_150891_b(p_191971_2_.func_77973_b()));
              crashreportcategory.func_71507_a("Item data", p_191971_2_.func_77952_i());
              crashreportcategory.func_189529_a("Item name", () -> {
+@@ -416,6 +423,11 @@
+ 
+    }
+ 
++   @Override
++   public int func_70297_j_() {
++      return 0;
++   }
++
+    public float func_184438_a(BlockState p_184438_1_) {
+       return this.field_70462_a.get(this.field_70461_c).func_150997_a(p_184438_1_);
+    }
+@@ -585,6 +597,41 @@
+       }
+    }
+ 
++   @Override
++   public List<ItemStack> getContents() {
++      return null;
++   }
++
++   @Override
++   public void onOpen(CraftHumanEntity who) {
++
++   }
++
++   @Override
++   public void onClose(CraftHumanEntity who) {
++
++   }
++
++   @Override
++   public List<HumanEntity> getViewers() {
++      return null;
++   }
++
++   @Override
++   public InventoryHolder getOwner() {
++      return null;
++   }
++
++   @Override
++   public void setMaxStackSize(int size) {
++
++   }
++
++   @Override
++   public Location getLocation() {
++      return null;
++   }
++
+    public boolean func_70431_c(ItemStack p_70431_1_) {
+       label23:
+       for(List<ItemStack> list : this.field_184440_g) {

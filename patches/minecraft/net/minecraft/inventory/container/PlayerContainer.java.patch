@@ -1,6 +1,14 @@
 --- a/net/minecraft/inventory/container/PlayerContainer.java
 +++ b/net/minecraft/inventory/container/PlayerContainer.java
-@@ -50,7 +50,7 @@
+@@ -15,6 +15,7 @@
+ import net.minecraft.util.ResourceLocation;
+ import net.minecraftforge.api.distmarker.Dist;
+ import net.minecraftforge.api.distmarker.OnlyIn;
++import org.bukkit.inventory.InventoryView;
+ 
+ public class PlayerContainer extends RecipeBookContainer<CraftingInventory> {
+    public static final ResourceLocation field_226615_c_ = new ResourceLocation("textures/atlas/blocks.png");
+@@ -50,7 +51,7 @@
              }
  
              public boolean func_75214_a(ItemStack p_75214_1_) {
@@ -9,3 +17,15 @@
              }
  
              public boolean func_82869_a(PlayerEntity p_82869_1_) {
+@@ -112,6 +113,11 @@
+       return true;
+    }
+ 
++   @Override
++   public InventoryView getBukkitView() {
++      return null;
++   }
++
+    public ItemStack func_82846_b(PlayerEntity p_82846_1_, int p_82846_2_) {
+       ItemStack itemstack = ItemStack.field_190927_a;
+       Slot slot = this.field_75151_b.get(p_82846_2_);

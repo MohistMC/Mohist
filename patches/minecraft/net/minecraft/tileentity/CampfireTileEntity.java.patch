@@ -1,0 +1,13 @@
+--- a/net/minecraft/tileentity/CampfireTileEntity.java
++++ b/net/minecraft/tileentity/CampfireTileEntity.java
+@@ -23,8 +23,8 @@
+ 
+ public class CampfireTileEntity extends TileEntity implements IClearable, ITickableTileEntity {
+    private final NonNullList<ItemStack> field_213987_a = NonNullList.func_191197_a(4, ItemStack.field_190927_a);
+-   private final int[] field_213988_b = new int[4];
+-   private final int[] field_213989_c = new int[4];
++   public final int[] field_213988_b = new int[4];
++   public final int[] field_213989_c = new int[4];
+ 
+    public CampfireTileEntity() {
+       super(TileEntityType.field_222488_F);

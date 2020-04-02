@@ -1,6 +1,41 @@
 --- a/net/minecraft/server/dedicated/PropertyManager.java
 +++ b/net/minecraft/server/dedicated/PropertyManager.java
-@@ -38,7 +38,7 @@
+@@ -13,6 +13,7 @@
+ import java.util.function.Supplier;
+ import java.util.function.UnaryOperator;
+ import javax.annotation.Nullable;
++import joptsimple.OptionSet;
+ import org.apache.logging.log4j.LogManager;
+ import org.apache.logging.log4j.Logger;
+ 
+@@ -20,10 +21,24 @@
+    private static final Logger field_164440_a = LogManager.getLogger();
+    private final Properties field_73672_b;
+ 
+-   public PropertyManager(Properties p_i50717_1_) {
+-      this.field_73672_b = p_i50717_1_;
++   // CraftBukkit start
++   private OptionSet options = null;
++
++   public PropertyManager(Properties properties, final OptionSet options) {
++      this.field_73672_b = properties;
++
++      this.options = options;
+    }
+ 
++   private String getOverride(String name, String value) {
++      if ((this.options != null) && (this.options.has(name))) {
++         return String.valueOf(this.options.valueOf(name));
++      }
++
++      return value;
++   }
++   // CraftBukkit end
++
+    public static Properties func_218969_b(Path p_218969_0_) {
+       Properties properties = new Properties();
+ 
+@@ -38,7 +53,7 @@
  
     public void func_218970_c(Path p_218970_1_) {
        try (OutputStream outputstream = Files.newOutputStream(p_218970_1_)) {
@@ -9,3 +44,21 @@
        } catch (IOException var15) {
           field_164440_a.error("Failed to store properties to file: " + p_218970_1_);
        }
+@@ -154,7 +169,7 @@
+       return properties;
+    }
+ 
+-   protected abstract T func_212857_b_(Properties p_212857_1_);
++   protected abstract T func_212857_b_(Properties properties, OptionSet optionset); // CraftBukkit
+ 
+    public class Property<V> implements Supplier<V> {
+       private final String field_219040_b;
+@@ -174,7 +189,7 @@
+       public T func_219038_a(V p_219038_1_) {
+          Properties properties = PropertyManager.this.func_218966_a();
+          properties.put(this.field_219040_b, this.field_219042_d.apply(p_219038_1_));
+-         return (T)PropertyManager.this.func_212857_b_(properties);
++         return (T)PropertyManager.this.func_212857_b_(properties, PropertyManager.this.options); // CraftBukkit
+       }
+    }
+ }

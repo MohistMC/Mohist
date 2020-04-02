@@ -1,0 +1,23 @@
+--- a/net/minecraft/tileentity/BeehiveTileEntity.java
++++ b/net/minecraft/tileentity/BeehiveTileEntity.java
+@@ -26,7 +26,8 @@
+ public class BeehiveTileEntity extends TileEntity implements ITickableTileEntity {
+    private final List<BeehiveTileEntity.Bee> field_226958_a_ = Lists.newArrayList();
+    @Nullable
+-   private BlockPos field_226959_b_ = null;
++   public BlockPos field_226959_b_ = null;
++   public int maxBees = 3;
+ 
+    public BeehiveTileEntity() {
+       super(TileEntityType.field_226985_G_);
+@@ -82,6 +83,10 @@
+    }
+ 
+    private List<Entity> func_226965_a_(BlockState p_226965_1_, BeehiveTileEntity.State p_226965_2_) {
++      return this.releaseBees(p_226965_1_, p_226965_2_, false);
++   }
++
++   public List<Entity> releaseBees(BlockState p_226965_1_, BeehiveTileEntity.State p_226965_2_, boolean force) {
+       List<Entity> list = Lists.newArrayList();
+       this.field_226958_a_.removeIf((p_226966_4_) -> {
+          return this.func_226967_a_(p_226965_1_, p_226966_4_.field_226977_a_, list, p_226965_2_);

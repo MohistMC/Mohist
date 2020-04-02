@@ -1,6 +1,64 @@
 --- a/net/minecraft/inventory/container/Container.java
 +++ b/net/minecraft/inventory/container/Container.java
-@@ -116,9 +116,11 @@
+@@ -1,5 +1,6 @@
+ package net.minecraft.inventory.container;
+ 
++import com.google.common.base.Preconditions;
+ import com.google.common.collect.Lists;
+ import com.google.common.collect.Sets;
+ import java.util.List;
+@@ -17,13 +18,17 @@
+ import net.minecraft.util.IntReferenceHolder;
+ import net.minecraft.util.NonNullList;
+ import net.minecraft.util.math.MathHelper;
++import net.minecraft.util.text.ITextComponent;
+ import net.minecraft.world.World;
+ import net.minecraftforge.api.distmarker.Dist;
+ import net.minecraftforge.api.distmarker.OnlyIn;
++import org.bukkit.craftbukkit.entity.CraftHumanEntity;
++import org.bukkit.craftbukkit.inventory.CraftInventory;
++import org.bukkit.inventory.InventoryView;
+ 
+ public abstract class Container {
+-   private final NonNullList<ItemStack> field_75153_a = NonNullList.func_191196_a();
+-   public final List<Slot> field_75151_b = Lists.newArrayList();
++   public NonNullList<ItemStack> field_75153_a = NonNullList.func_191196_a();
++   public List<Slot> field_75151_b = Lists.newArrayList();
+    private final List<IntReferenceHolder> field_216964_d = Lists.newArrayList();
+    @Nullable
+    private final ContainerType<?> field_216965_e;
+@@ -35,7 +40,30 @@
+    private final Set<Slot> field_94537_h = Sets.newHashSet();
+    private final List<IContainerListener> field_75149_d = Lists.newArrayList();
+    private final Set<PlayerEntity> field_75148_f = Sets.newHashSet();
++   public boolean checkReachable;
++   private ITextComponent title;
+ 
++   public abstract InventoryView getBukkitView();
++
++   public void transferTo(Container other, CraftHumanEntity player) {
++      InventoryView source = this.getBukkitView();
++      InventoryView destination = other.getBukkitView();
++      ((CraftInventory)source.getTopInventory()).getInventory().onClose(player);
++      ((CraftInventory)source.getBottomInventory()).getInventory().onClose(player);
++      ((CraftInventory)destination.getTopInventory()).getInventory().onOpen(player);
++      ((CraftInventory)destination.getBottomInventory()).getInventory().onOpen(player);
++   }
++
++   public final ITextComponent getTitle() {
++      Preconditions.checkState(this.title != null, (Object)"Title not set");
++      return this.title;
++   }
++
++   public final void setTitle(final ITextComponent title) {
++      Preconditions.checkState(this.title == null, (Object)"Title already set");
++      this.title = title;
++   }
++
+    protected Container(@Nullable ContainerType<?> p_i50105_1_, int p_i50105_2_) {
+       this.field_216965_e = p_i50105_1_;
+       this.field_75152_c = p_i50105_2_;
+@@ -116,9 +144,11 @@
           ItemStack itemstack = this.field_75151_b.get(i).func_75211_c();
           ItemStack itemstack1 = this.field_75153_a.get(i);
           if (!ItemStack.func_77989_b(itemstack1, itemstack)) {
@@ -12,7 +70,7 @@
              for(IContainerListener icontainerlistener : this.field_75149_d) {
                 icontainerlistener.func_71111_a(this, i, itemstack1);
              }
-@@ -476,14 +478,15 @@
+@@ -476,14 +506,15 @@
              ItemStack itemstack = slot.func_75211_c();
              if (!itemstack.func_190926_b() && func_195929_a(p_75135_1_, itemstack)) {
                 int j = itemstack.func_190916_E() + p_75135_1_.func_190916_E();
@@ -32,7 +90,7 @@
                    slot.func_75218_e();
                    flag = true;
                 }
-@@ -584,7 +587,7 @@
+@@ -584,7 +615,7 @@
           p_94525_2_.func_190920_e(1);
           break;
        case 2:

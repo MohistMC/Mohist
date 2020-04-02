@@ -1,0 +1,11 @@
+--- a/net/minecraft/server/management/BanEntry.java
++++ b/net/minecraft/server/management/BanEntry.java
+@@ -70,4 +70,8 @@
+       p_152641_1_.addProperty("expires", this.field_73692_f == null ? "forever" : field_73698_a.format(this.field_73692_f));
+       p_152641_1_.addProperty("reason", this.field_73693_g);
+    }
++
++   public Date getCreated() {
++      return this.field_73694_d;
++   }
+ }

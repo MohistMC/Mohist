@@ -1,0 +1,22 @@
+--- a/net/minecraft/inventory/container/LoomContainer.java
++++ b/net/minecraft/inventory/container/LoomContainer.java
+@@ -19,6 +19,7 @@
+ import net.minecraft.util.SoundEvents;
+ import net.minecraftforge.api.distmarker.Dist;
+ import net.minecraftforge.api.distmarker.OnlyIn;
++import org.bukkit.inventory.InventoryView;
+ 
+ public class LoomContainer extends Container {
+    private final IWorldPosCallable field_217033_c;
+@@ -112,6 +113,11 @@
+       return func_216963_a(this.field_217033_c, p_75145_1_, Blocks.field_222421_lJ);
+    }
+ 
++   @Override
++   public InventoryView getBukkitView() {
++      return null;
++   }
++
+    public boolean func_75140_a(PlayerEntity p_75140_1_, int p_75140_2_) {
+       if (p_75140_2_ > 0 && p_75140_2_ <= BannerPattern.field_222481_P) {
+          this.field_217034_d.func_221494_a(p_75140_2_);

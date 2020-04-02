@@ -1,0 +1,72 @@
+--- a/net/minecraft/entity/item/minecart/ChestMinecartEntity.java
++++ b/net/minecraft/entity/item/minecart/ChestMinecartEntity.java
+@@ -1,5 +1,6 @@
+ package net.minecraft.entity.item.minecart;
+ 
++import java.util.List;
+ import net.minecraft.block.BlockState;
+ import net.minecraft.block.Blocks;
+ import net.minecraft.block.ChestBlock;
+@@ -7,10 +8,15 @@
+ import net.minecraft.entity.player.PlayerInventory;
+ import net.minecraft.inventory.container.ChestContainer;
+ import net.minecraft.inventory.container.Container;
++import net.minecraft.item.ItemStack;
+ import net.minecraft.util.DamageSource;
+ import net.minecraft.util.Direction;
+ import net.minecraft.world.GameRules;
+ import net.minecraft.world.World;
++import org.bukkit.Location;
++import org.bukkit.craftbukkit.entity.CraftHumanEntity;
++import org.bukkit.entity.HumanEntity;
++import org.bukkit.inventory.InventoryHolder;
+ 
+ public class ChestMinecartEntity extends ContainerMinecartEntity {
+    public ChestMinecartEntity(EntityType<? extends ChestMinecartEntity> p_i50124_1_, World p_i50124_2_) {
+@@ -33,6 +39,46 @@
+       return 27;
+    }
+ 
++   @Override
++   public int func_70297_j_() {
++      return 0;
++   }
++
++   @Override
++   public List<ItemStack> getContents() {
++      return null;
++   }
++
++   @Override
++   public void onOpen(CraftHumanEntity who) {
++
++   }
++
++   @Override
++   public void onClose(CraftHumanEntity who) {
++
++   }
++
++   @Override
++   public List<HumanEntity> getViewers() {
++      return null;
++   }
++
++   @Override
++   public InventoryHolder getOwner() {
++      return null;
++   }
++
++   @Override
++   public void setMaxStackSize(int size) {
++
++   }
++
++   @Override
++   public Location getLocation() {
++      return null;
++   }
++
+    public AbstractMinecartEntity.Type func_184264_v() {
+       return AbstractMinecartEntity.Type.CHEST;
+    }

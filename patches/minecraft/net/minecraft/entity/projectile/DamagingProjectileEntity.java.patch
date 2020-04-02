@@ -1,6 +1,15 @@
 --- a/net/minecraft/entity/projectile/DamagingProjectileEntity.java
 +++ b/net/minecraft/entity/projectile/DamagingProjectileEntity.java
-@@ -81,7 +81,7 @@
+@@ -28,6 +28,8 @@
+    public double field_70232_b;
+    public double field_70233_c;
+    public double field_70230_d;
++   public float bukkitYield;
++   public boolean isIncendiary;
+ 
+    protected DamagingProjectileEntity(EntityType<? extends DamagingProjectileEntity> p_i50173_1_, World p_i50173_2_) {
+       super(p_i50173_1_, p_i50173_2_);
+@@ -81,7 +83,7 @@
  
           ++this.field_70234_an;
           RayTraceResult raytraceresult = ProjectileHelper.func_221266_a(this, true, this.field_70234_an >= 25, this.field_70235_a, RayTraceContext.BlockMode.COLLIDER);
@@ -9,3 +18,18 @@
              this.func_70227_a(raytraceresult);
           }
  
+@@ -195,4 +197,14 @@
+       int i = this.field_70235_a == null ? 0 : this.field_70235_a.func_145782_y();
+       return new SSpawnObjectPacket(this.func_145782_y(), this.func_110124_au(), this.func_226277_ct_(), this.func_226278_cu_(), this.func_226281_cx_(), this.field_70125_A, this.field_70177_z, this.func_200600_R(), i, new Vec3d(this.field_70232_b, this.field_70233_c, this.field_70230_d));
+    }
++
++    public void setDirection(double x, double y, double z) {
++       x += this.field_70146_Z.nextGaussian() * 0.4;
++       y += this.field_70146_Z.nextGaussian() * 0.4;
++       z += this.field_70146_Z.nextGaussian() * 0.4;
++       final double d3 = MathHelper.func_76133_a(x * x + y * y + z * z);
++       this.field_70232_b = x / d3 * 0.1;
++       this.field_70233_c = y / d3 * 0.1;
++       this.field_70230_d = z / d3 * 0.1;
++    }
+ }

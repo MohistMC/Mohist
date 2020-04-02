@@ -1,5 +1,31 @@
 --- a/net/minecraft/world/server/ChunkManager.java
 +++ b/net/minecraft/world/server/ChunkManager.java
+@@ -95,7 +95,7 @@
+    private static final Logger field_219250_d = LogManager.getLogger();
+    public static final int field_219249_a = 33 + ChunkStatus.func_222600_b();
+    private final Long2ObjectLinkedOpenHashMap<ChunkHolder> field_219251_e = new Long2ObjectLinkedOpenHashMap<>();
+-   private volatile Long2ObjectLinkedOpenHashMap<ChunkHolder> field_219252_f = this.field_219251_e.clone();
++   public volatile Long2ObjectLinkedOpenHashMap<ChunkHolder> field_219252_f = this.field_219251_e.clone();
+    private final Long2ObjectLinkedOpenHashMap<ChunkHolder> field_219253_g = new Long2ObjectLinkedOpenHashMap<>();
+    private final LongSet field_219254_h = new LongOpenHashSet();
+    private final ServerWorld field_219255_i;
+@@ -109,13 +109,13 @@
+    private final ChunkTaskPriorityQueueSorter field_219263_q;
+    private final ITaskExecutor<ChunkTaskPriorityQueueSorter.FunctionEntry<Runnable>> field_219264_r;
+    private final ITaskExecutor<ChunkTaskPriorityQueueSorter.FunctionEntry<Runnable>> field_219265_s;
+-   private final IChunkStatusListener field_219266_t;
+-   private final ChunkManager.ProxyTicketManager field_219267_u;
++   public final IChunkStatusListener field_219266_t;
++   public final ChunkManager.ProxyTicketManager field_219267_u;
+    private final AtomicInteger field_219268_v = new AtomicInteger();
+    private final TemplateManager field_219269_w;
+    private final File field_219270_x;
+    private final PlayerGenerationTracker field_219271_y = new PlayerGenerationTracker();
+-   private final Int2ObjectMap<ChunkManager.EntityTracker> field_219272_z = new Int2ObjectOpenHashMap<>();
++   public final Int2ObjectMap<ChunkManager.EntityTracker> field_219272_z = new Int2ObjectOpenHashMap<>();
+    private final Queue<Runnable> field_223181_A = Queues.newConcurrentLinkedQueue();
+    private int field_219247_A;
+ 
 @@ -368,6 +368,7 @@
        iprofiler.func_219895_b("chunk_unload");
        if (!this.field_219255_i.func_217402_u()) {
@@ -48,3 +74,18 @@
           if (p_219199_5_ && !p_219199_4_) {
              ChunkHolder chunkholder = this.func_219219_b(p_219199_2_.func_201841_a());
              if (chunkholder != null) {
+@@ -1056,12 +1062,12 @@
+       });
+    }
+ 
+-   class EntityTracker {
++   public class EntityTracker {
+       private final TrackedEntity field_219402_b;
+       private final Entity field_219403_c;
+       private final int field_219404_d;
+       private SectionPos field_219405_e;
+-      private final Set<ServerPlayerEntity> field_219406_f = Sets.newHashSet();
++      public final Set<ServerPlayerEntity> field_219406_f = Sets.newHashSet();
+ 
+       public EntityTracker(Entity p_i50468_2_, int p_i50468_3_, int p_i50468_4_, boolean p_i50468_5_) {
+          this.field_219402_b = new TrackedEntity(ChunkManager.this.field_219255_i, p_i50468_2_, p_i50468_4_, p_i50468_5_, this::func_219391_a);

@@ -1,0 +1,11 @@
+--- a/net/minecraft/entity/projectile/SpectralArrowEntity.java
++++ b/net/minecraft/entity/projectile/SpectralArrowEntity.java
+@@ -11,7 +11,7 @@
+ import net.minecraft.world.World;
+ 
+ public class SpectralArrowEntity extends AbstractArrowEntity {
+-   private int field_184562_f = 200;
++   public int field_184562_f = 200;
+ 
+    public SpectralArrowEntity(EntityType<? extends SpectralArrowEntity> p_i50158_1_, World p_i50158_2_) {
+       super(p_i50158_1_, p_i50158_2_);

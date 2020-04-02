@@ -1,5 +1,16 @@
 --- a/net/minecraft/entity/projectile/ThrowableEntity.java
 +++ b/net/minecraft/entity/projectile/ThrowableEntity.java
+@@ -29,8 +29,8 @@
+    private int field_145787_e = -1;
+    protected boolean field_174854_a;
+    public int field_70191_b;
+-   protected LivingEntity field_70192_c;
+-   private UUID field_200218_h;
++   public LivingEntity field_70192_c;
++   public UUID field_200218_h;
+    private Entity field_184539_c;
+    private int field_184540_av;
+ 
 @@ -130,7 +130,7 @@
        if (raytraceresult.func_216346_c() != RayTraceResult.Type.MISS) {
           if (raytraceresult.func_216346_c() == RayTraceResult.Type.BLOCK && this.field_70170_p.func_180495_p(((BlockRayTraceResult)raytraceresult).func_216350_a()).func_177230_c() == Blocks.field_150427_aO) {

@@ -1,6 +1,39 @@
 --- a/net/minecraft/world/storage/MapData.java
 +++ b/net/minecraft/world/storage/MapData.java
-@@ -216,8 +216,8 @@
+@@ -5,6 +5,7 @@
+ import java.util.Iterator;
+ import java.util.List;
+ import java.util.Map;
++import java.util.UUID;
+ import javax.annotation.Nullable;
+ import net.minecraft.entity.item.ItemFrameEntity;
+ import net.minecraft.entity.player.PlayerEntity;
+@@ -20,6 +21,9 @@
+ import net.minecraft.world.IBlockReader;
+ import net.minecraft.world.IWorld;
+ import net.minecraft.world.dimension.DimensionType;
++import org.bukkit.Bukkit;
++import org.bukkit.craftbukkit.CraftServer;
++import org.bukkit.craftbukkit.map.CraftMapView;
+ 
+ public class MapData extends WorldSavedData {
+    public int field_76201_a;
+@@ -35,9 +39,14 @@
+    private final Map<String, MapBanner> field_204270_k = Maps.newHashMap();
+    public final Map<String, MapDecoration> field_76203_h = Maps.newLinkedHashMap();
+    private final Map<String, MapFrame> field_212442_l = Maps.newHashMap();
++   public final CraftMapView mapView;
++   private CraftServer server;
++   private UUID uniqueId;
+ 
+    public MapData(String p_i2140_1_) {
+       super(p_i2140_1_);
++      this.mapView = new CraftMapView(this);
++      this.server = (CraftServer) Bukkit.getServer();
+    }
+ 
+    public void func_212440_a(int p_212440_1_, int p_212440_2_, int p_212440_3_, boolean p_212440_4_, boolean p_212440_5_, DimensionType p_212440_6_) {
+@@ -216,8 +225,8 @@
        if (f >= -63.0F && f1 >= -63.0F && f <= 63.0F && f1 <= 63.0F) {
           p_191095_8_ = p_191095_8_ + (p_191095_8_ < 0.0D ? -8.0D : 8.0D);
           b2 = (byte)((int)(p_191095_8_ * 16.0D / 360.0D));
