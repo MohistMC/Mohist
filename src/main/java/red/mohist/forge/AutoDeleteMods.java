@@ -34,7 +34,6 @@ public class AutoDeleteMods {
 
             FindClassInJar ins = new FindClassInJar(libDir, classname);
             ins.checkDirectory(libDir);
-            System.out.println(Message.getString("update.mods.ok"));
         }
     }
 }
