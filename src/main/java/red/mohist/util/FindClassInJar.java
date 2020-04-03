@@ -56,6 +56,7 @@ public class FindClassInJar {
                     } else {
                         if (checkFile(f)) {
                             f.delete();
+                            System.out.println(Message.getFormatString("update.deleting", new Object[]{f.getName()}));
                         }
                     }
                 }
