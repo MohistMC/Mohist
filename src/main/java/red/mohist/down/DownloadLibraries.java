@@ -1,62 +1,55 @@
 package red.mohist.down;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.URLClassLoader;
-import java.util.HashMap;
-import java.util.Map;
 import red.mohist.configuration.MohistConfigUtil;
 import red.mohist.util.JarLoader;
 import red.mohist.util.MD5Util;
 import red.mohist.util.i18n.Message;
 
-public class DownloadLibraries {
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.URL;
+import java.net.URLClassLoader;
+import java.net.URLConnection;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
+import java.util.Objects;
 
-    public static String url = "https://www.mgazul.cn/";
+public class DownloadLibraries {
 
     public static void run() throws Exception {
         System.out.println(Message.getString("libraries.checking.start"));
-        File f = new File("mohist-config", "mohist.yml");
-        String path = null;
+        String str;
+        String url = "https://www.mgazul.cn/";
+        if(Message.getLocale().contains("CN") || Message.getCountry().contains("CN"))
+            url = "https://mohist-community.gitee.io/mohistdown/"; //Gitee Mirror
+
         try {
-            if (Message.getLocale().contains("CN") || Message.getCountry().contains("CN")) {
-                url = "https://mohist-community.gitee.io/mohistdown/"; //Gitee Mirror
-            } else {
-                url = "https://www.mgazul.cn/"; //Github Mirror
-            }
-        } catch (Exception e) {
-            url = "https://www.mgazul.cn/"; //Github Mirror
-        }
-        InputStream listStream = DownloadLibraries.class.getClassLoader().getResourceAsStream("lib.red");
-        if (listStream == null) return;
-        Map<File, String> lib = new HashMap<>();
-        try {
-            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(listStream));
-            String str = null;
+            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(Objects.requireNonNull(DownloadLibraries.class.getClassLoader().getResourceAsStream("lib.red"))));
             while ((str = bufferedReader.readLine()) != null) {
                 String[] args = str.split("\\|");
-                if (args.length == 2) {
-                    path = args[0];
-                    String md5 = args[1];
-                    try {
-                        File file = new File(path);
-                        // Judgement files and MD5
+                if(args.length == 2) {
+                    File file = new File(args[0]); // Judgement files and MD5
+                    if((!file.exists() || !MD5Util.getMD5(file).equals(args[1]))) {
+                        file.getParentFile().mkdirs();
 
-                        if ((!file.exists() || !MD5Util.getMD5(file).equals(md5))) {
-                            String[] jar = file.getPath().replaceAll("\\\\", "/").split("/");
-                            int size = jar.length;
-                            String jarname = jar[size - 1].replace(".jar", "");
-                            String ymljar = MohistConfigUtil.getString(f, "libraries_black_list:", "xxxxx");
-                            boolean libb = ymljar.contains(jarname);
-                            if (!libb) {
-                                lib.put(file, md5);
+                        if(!MohistConfigUtil.getString(new File("mohist-config", "mohist.yml"), "libraries_black_list:", "xxxxx").contains(file.getName())) {
+                            file.createNewFile();
+                            URLConnection conn = new URL(url + args[0]).openConnection();
+                            conn.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:31.0) Gecko/20100101 Firefox/31.0");
+                            conn.connect();
+
+                            System.out.println(Message.getFormatString("file.download.start", new Object[]{url, Update.getSize(conn.getContentLength())}));
+                            try {
+                                Files.copy(new URL(url + args[0]).openStream(), Paths.get(file.getAbsolutePath()), StandardCopyOption.REPLACE_EXISTING);
+                            } catch (Exception e) {
+                                System.out.println(Message.getFormatString("file.download.nook", new Object[]{url + args[0]}));
                             }
+                            System.out.println(Message.getFormatString("file.download.ok", new Object[]{file.getName()}));
+                            JarLoader.loadjar(new JarLoader((URLClassLoader) ClassLoader.getSystemClassLoader()), file.getParent());
                         }
-                    } catch (IOException e) {
-                        System.out.println(e.toString());
                     }
                 }
             }
@@ -64,29 +57,8 @@ public class DownloadLibraries {
         } catch (IOException e) {
             System.out.println(e.toString());
         }
-        if (lib.size() > 0) {
-            for (Map.Entry<File, String> entry : lib.entrySet()) {
-
-                String[] args = entry.getKey().getPath().replaceAll("\\\\", "/").split("/");
-                int size = args.length;
-                String jarname = args[size - 1];
-                String filepath = entry.getKey().getPath().replaceAll("\\\\", "/").replace("/" + jarname, "");
-                File newfile = new File(filepath);
-                if (!newfile.exists()) {
-                    newfile.mkdirs();
-                }
-                File jar = new File(filepath, jarname);
-                new Download(url + entry.getKey().getPath().replace("\\", "/"), jar, jarname);
-                JarLoader jarLoader = new JarLoader((URLClassLoader) ClassLoader.getSystemClassLoader());
-
-                JarLoader.loadjar(jarLoader, filepath);
-            }
-        }
         System.out.println(Message.getString("libraries.checking.end"));
     }
 
-    public static boolean isCheck() {
-        File f = new File("mohist-config", "mohist.yml");
-        return MohistConfigUtil.getBoolean(f, "check_libraries:");
-    }
+    public static boolean isCheck() { return MohistConfigUtil.getBoolean(new File("mohist-config", "mohist.yml"), "check_libraries:"); }
 }
