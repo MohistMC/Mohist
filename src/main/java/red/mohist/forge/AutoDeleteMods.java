@@ -1,30 +1,34 @@
 package red.mohist.forge;
 
-import java.util.Arrays;
-import java.util.List;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonIOException;
+import com.google.gson.JsonParser;
+import com.google.gson.JsonSyntaxException;
 import red.mohist.util.FindClassInJar;
 
-/**
- * Why is there such a class?
- * Because we have included some MOD optimizations and modifications,
- * as well as some mods that are only used on the client, these cannot be loaded in Mohist
- */
-public class AutoDeleteMods {
-    public static final List<String> classlist;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.URL;
+import java.net.URLConnection;
+import java.util.ArrayList;
+import java.util.Arrays;
 
-    static {
-        classlist = Arrays.asList(
-                "org.spongepowered.mod.SpongeMod" /*SpongeForge*/,
-                "org.dimdev.vanillafix.VanillaFix" /*VanillaFix*/,
-                "lumien.custommainmenu.CustomMainMenu" /*CustomMainMenu*/,
-                "com.performant.coremod.Performant" /*Performant*/,
-                "shadows.fastbench.proxy.BenchServerProxy" /*FastWorkbench*/,
-                "optifine.Differ" /*OptiFine*/);
-    }
+public class AutoDeleteMods {
 
     public static void jar() throws Exception {
         String libDir = "mods";
-        for (String classname : AutoDeleteMods.classlist) {
+        JsonElement root = null;
+        URLConnection request;
+        try {
+            request = new URL("https://shawiizz.github.io/mods.json").openConnection();
+            request.addRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:25.0) Gecko/20100101 Firefox/25.0");
+            request.connect();
+            root = new JsonParser().parse(new InputStreamReader((InputStream) request.getContent()));
+        } catch (JsonIOException | JsonSyntaxException | IOException | NullPointerException ignored) {
+        }
+
+        for (String classname : new ArrayList<>(Arrays.asList(root.getAsJsonObject().get("list").toString().split(",")))) {
             classname = classname.replaceAll("\\.", "/") + ".class";
 
             FindClassInJar ins = new FindClassInJar(libDir, classname);
