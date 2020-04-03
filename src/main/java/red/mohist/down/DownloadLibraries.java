@@ -69,7 +69,8 @@ public class DownloadLibraries {
             System.out.println(Message.getFormatString("update.retry", new Object[]{retry}));
             run();
         } else {
-            fileChannel.close();
+            if(fileChannel != null)
+                fileChannel.close();
             System.out.println(Message.getString("libraries.checking.end"));
         }
     }
