@@ -1,7 +1,7 @@
 <img src="https://i.loli.net/2020/02/28/vZRHJACadF7rgn5.png">
 
 ## Mohist-1.12.2
-#### [English](https://github.com/Mohist-Community/Mohist/blob/1.12.2/README.md) | [中文](https://github.com/Mohist-Community/Mohist/blob/1.12.2/README-zh.md) 
+#### [中文](https://github.com/Mohist-Community/Mohist/blob/1.12.2/README-zh.md) | [Français](https://github.com/Mohist-Community/Mohist/blob/1.12.2/README-fr.md)
 
 ## It is highly recommended to use the 1.7+ version of Mohist to quickly resolve errors!
 
