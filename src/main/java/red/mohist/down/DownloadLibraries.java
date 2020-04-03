@@ -12,14 +12,17 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.net.URLConnection;
-import java.nio.file.Files;
+import java.nio.channels.Channels;
+import java.nio.channels.FileChannel;
 import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
+import java.nio.file.StandardOpenOption;
 import java.util.Objects;
 
 public class DownloadLibraries {
-    static boolean needToRecheck= false;
+    static boolean needToRecheck = false;
     static int retry = 0;
+    static FileChannel fileChannel;
+
     public static void run() throws Exception {
         System.out.println(Message.getString("libraries.checking.start"));
         String str;
@@ -37,10 +40,6 @@ public class DownloadLibraries {
                         file.getParentFile().mkdirs();
 
                         if(!MohistConfigUtil.getString(new File("mohist-config", "mohist.yml"), "libraries_black_list:", "xxxxx").contains(file.getName())) {
-                            if(file.exists())
-                                file.delete();
-                            else
-                                file.createNewFile();
 
                             URLConnection conn = new URL(url + args[0]).openConnection();
                             conn.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:31.0) Gecko/20100101 Firefox/31.0");
@@ -48,11 +47,11 @@ public class DownloadLibraries {
 
                             System.out.println(Message.getFormatString("file.download.start", new Object[]{url + args[0], Update.getSize(conn.getContentLength())}));
                             try {
-                                Files.copy(new URL(url + args[0]).openStream(), Paths.get(file.getAbsolutePath()), StandardCopyOption.REPLACE_EXISTING);
+                                fileChannel = FileChannel.open(Paths.get(file.getAbsolutePath()), StandardOpenOption.CREATE, StandardOpenOption.WRITE, StandardOpenOption.TRUNCATE_EXISTING);
+                                fileChannel.transferFrom(Channels.newChannel(conn.getInputStream()), 0L, Long.MAX_VALUE);
                             } catch (Exception e) {
                                 System.out.println(Message.getFormatString("file.download.nook", new Object[]{url + args[0]}));
                                 needToRecheck = true;
-                                file.delete();
                                 retry++;
                             }
                             System.out.println(Message.getFormatString("file.download.ok", new Object[]{file.getName()}));
@@ -70,6 +69,7 @@ public class DownloadLibraries {
             System.out.println(Message.getFormatString("update.retry", new Object[]{retry}));
             run();
         } else {
+            fileChannel.close();
             System.out.println(Message.getString("libraries.checking.end"));
         }
     }
