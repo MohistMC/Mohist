@@ -31,6 +31,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Callable;
+import joptsimple.OptionSet;
 
 public class FMLServerLaunchProvider extends FMLCommonLaunchHandler implements ILaunchHandlerService
 {
@@ -48,7 +49,7 @@ public class FMLServerLaunchProvider extends FMLCommonLaunchHandler implements I
         return () -> {
             super.beforeStart(launchClassLoader);
             launchClassLoader.addTargetPackageFilter(getPackagePredicate());
-            Class.forName("net.minecraft.server.MinecraftServer", true, launchClassLoader.getInstance()).getMethod("main", String[].class).invoke(null, (Object)arguments);
+            Class.forName("net.minecraft.server.MinecraftServer", true, launchClassLoader.getInstance()).getMethod("main", OptionSet.class).invoke(null, (Object)arguments);
             return null;
         };
     }
