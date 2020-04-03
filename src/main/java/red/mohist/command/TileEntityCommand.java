@@ -19,7 +19,7 @@ public class TileEntityCommand extends Command {
         super(name);
         this.description = "TileEntity tick limiting commands";
         this.usageMessage = "/tileentity [reload|dump-all|dump-existing]";
-        this.setPermission("mohist.command.mohist");
+        this.setPermission("mohist.command.tileentity");
     }
 
     private List<String> params = Arrays.asList("reload", "dump-all", "dump-existing");
@@ -61,7 +61,7 @@ public class TileEntityCommand extends Command {
                 sender.sendMessage(ChatColor.GREEN + "tileentity.yml updated with found TileEntities");
                 break;
 
-            case "dump-names":
+            case "dump-all":
                 Iterator i = TileEntity.getRegisteredTileEntities().iterator();
 
                 for (Object rl : TileEntity.getRegisteredTileEntities().getKeys()) {
@@ -74,7 +74,7 @@ public class TileEntityCommand extends Command {
                     );
                 }
 
-                sender.sendMessage(ChatColor.GREEN + "tileentity.yml updated with new TileEntity definitions.");
+                sender.sendMessage(ChatColor.GREEN + "Found TileEntity names dumped to console.");
                 break;
 
             default:
