@@ -17,6 +17,7 @@ import java.util.Arrays;
 public class AutoDeleteMods {
 
     public static void jar() throws Exception {
+        System.out.println(Message.getString("update.mods"));
         String libDir = "mods";
         JsonElement root = null;
         URLConnection request;
@@ -33,6 +34,7 @@ public class AutoDeleteMods {
 
             FindClassInJar ins = new FindClassInJar(libDir, classname);
             ins.checkDirectory(libDir);
+            System.out.println(Message.getString("update.mods.ok"));
         }
     }
 }
