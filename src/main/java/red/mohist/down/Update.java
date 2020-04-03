@@ -1,9 +1,7 @@
 package red.mohist.down;
 
 import com.google.gson.JsonElement;
-import com.google.gson.JsonIOException;
 import com.google.gson.JsonParser;
-import com.google.gson.JsonSyntaxException;
 import org.apache.commons.io.FileUtils;
 import red.mohist.Mohist;
 import red.mohist.configuration.MohistConfigUtil;
@@ -24,15 +22,15 @@ public class Update {
         System.out.println(Message.getString("update.check"));
         System.out.println(Message.getString("update.stopcheck"));
 
-        JsonElement root;
+        JsonElement root = null;
         URLConnection request;
-
+        
         try {
             request = new URL("https://ci.codemc.io/job/Mohist-Community/job/Mohist-1.12.2/lastSuccessfulBuild/api/json").openConnection();
             request.addRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:25.0) Gecko/20100101 Firefox/25.0");
             request.connect();
             root = new JsonParser().parse(new InputStreamReader((InputStream) request.getContent()));
-        } catch (JsonIOException | JsonSyntaxException | IOException | NullPointerException e) { return; }
+        } catch (Exception e) { System.out.println(e.toString()); }
 
         time = root.getAsJsonObject().get("changeSet").getAsJsonObject().get("items").getAsJsonArray().get(0).getAsJsonObject().get("date").toString().replace("+0800", "").replaceAll("\"", "");
         ci_sha = root.getAsJsonObject().get("changeSet").getAsJsonObject().get("items").getAsJsonArray().get(0).getAsJsonObject().get("commitId").toString().replaceAll("\"", "").substring(0, 7);
