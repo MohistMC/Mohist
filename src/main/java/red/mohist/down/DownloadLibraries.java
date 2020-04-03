@@ -18,7 +18,8 @@ import java.nio.file.StandardCopyOption;
 import java.util.Objects;
 
 public class DownloadLibraries {
-
+    static boolean needToRecheck= false;
+    static int retry = 0;
     public static void run() throws Exception {
         System.out.println(Message.getString("libraries.checking.start"));
         String str;
@@ -41,11 +42,14 @@ public class DownloadLibraries {
                             conn.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:31.0) Gecko/20100101 Firefox/31.0");
                             conn.connect();
 
-                            System.out.println(Message.getFormatString("file.download.start", new Object[]{url, Update.getSize(conn.getContentLength())}));
+                            System.out.println(Message.getFormatString("file.download.start", new Object[]{url + args[0], red.mohist.down.Update.getSize(conn.getContentLength())}));
                             try {
                                 Files.copy(new URL(url + args[0]).openStream(), Paths.get(file.getAbsolutePath()), StandardCopyOption.REPLACE_EXISTING);
                             } catch (Exception e) {
                                 System.out.println(Message.getFormatString("file.download.nook", new Object[]{url + args[0]}));
+                                needToRecheck = true;
+                                file.delete();
+                                retry++;
                             }
                             System.out.println(Message.getFormatString("file.download.ok", new Object[]{file.getName()}));
                             JarLoader.loadjar(new JarLoader((URLClassLoader) ClassLoader.getSystemClassLoader()), file.getParent());
@@ -57,7 +61,12 @@ public class DownloadLibraries {
         } catch (IOException e) {
             System.out.println(e.toString());
         }
-        System.out.println(Message.getString("libraries.checking.end"));
+        if(needToRecheck && retry < 3) {
+            needToRecheck = false;
+            run();
+        } else {
+            System.out.println(Message.getString("libraries.checking.end"));
+        }
     }
 
     public static boolean isCheck() { return MohistConfigUtil.getBoolean(new File("mohist-config", "mohist.yml"), "check_libraries:"); }
