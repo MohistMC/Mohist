@@ -63,6 +63,7 @@ public class DownloadLibraries {
         }
         if(needToRecheck && retry < 3) {
             needToRecheck = false;
+            System.out.println(Message.getFormatString("update.retry", new Object[]{retry}));
             run();
         } else {
             System.out.println(Message.getString("libraries.checking.end"));
