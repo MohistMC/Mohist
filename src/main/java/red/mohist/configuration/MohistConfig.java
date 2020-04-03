@@ -43,6 +43,8 @@ public class MohistConfig extends ConfigBase{
     public final BoolSetting check_update = new BoolSetting(this, "mohist.check_update", true, "Check the version update status of the main program");
     public final BoolSetting needToUpdate = new BoolSetting(this, "mohist.check_update_auto_download", false, "Check new version will download automatically");
     public final BoolSetting check_libraries = new BoolSetting(this, "mohist.check_libraries", true, "Check libraries");
+    public final BoolSetting disable_plugins_blacklist = new BoolSetting(this, "disable_plugins_blacklist", false, "Disable plugins blacklist. The blacklist contains plugin which not working on Mohist");
+    public final BoolSetting disable_mods_blacklist = new BoolSetting(this, "disable_mods_blacklist", false, "Disable mods blacklist. The blacklist contains mods which not working on Mohist");
 
     public final StringSetting ANSI_ERROR_LEVEL = new StringSetting(this, "consolecolor.error-level", "c", "consolecolor.error-level");
     public final StringSetting ANSI_WARN_LEVEL = new StringSetting(this, "consolecolor.warn-level", "e", "consolecolor.warn-level");
