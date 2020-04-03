@@ -1,9 +1,14 @@
 --- ../src-base/minecraft/net/minecraft/world/gen/ChunkProviderServer.java
 +++ ../src-work/minecraft/net/minecraft/world/gen/ChunkProviderServer.java
-@@ -26,11 +26,14 @@
+@@ -23,14 +23,19 @@
+ import net.minecraft.world.biome.Biome;
+ import net.minecraft.world.chunk.Chunk;
+ import net.minecraft.world.chunk.IChunkProvider;
++import net.minecraft.world.chunk.storage.AnvilChunkLoader;
  import net.minecraft.world.chunk.storage.IChunkLoader;
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
++import org.bukkit.craftbukkit.v1_12_R1.chunkio.ChunkIOExecutor;
 +import org.bukkit.event.world.ChunkUnloadEvent;
 +import red.mohist.api.ServerAPI;
 +import red.mohist.configuration.MohistConfig;
@@ -16,7 +21,7 @@
      public final IChunkGenerator chunkGenerator;
      public final IChunkLoader chunkLoader;
      public final Long2ObjectMap<Chunk> id2ChunkMap = new Long2ObjectOpenHashMap<Chunk>(8192);
-@@ -83,6 +86,11 @@
+@@ -83,6 +88,11 @@
          return chunk;
      }
  
@@ -28,7 +33,7 @@
      @Nullable
      public Chunk loadChunk(int x, int z)
      {
-@@ -106,7 +114,7 @@
+@@ -106,7 +116,7 @@
                  {
                  this.id2ChunkMap.put(ChunkPos.asLong(x, z), chunk);
                  chunk.onLoad();
@@ -37,7 +42,47 @@
                  }
  
                  loadingChunks.remove(pos);
-@@ -136,6 +144,7 @@
+@@ -132,10 +142,47 @@
+ 
+     public Chunk provideChunk(int x, int z)
+     {
++        return getChunkAt(x, z, null);
++    }
++
++    public Chunk getChunkAt(int i, int j, Runnable runnable) {
++        return getChunkAt(i, j, runnable, true);
++    }
++
++    public Chunk getChunkAt(int i, int j, Runnable runnable, boolean generate) {
++        Chunk chunk = getLoadedChunk(i, j);
++        AnvilChunkLoader loader = null;
++
++        if (this.chunkLoader instanceof AnvilChunkLoader) {
++            loader = (AnvilChunkLoader) this.chunkLoader;
++
++        }
++        // We can only use the queue for already generated chunks
++        if (chunk == null && loader != null && loader.isChunkGeneratedAt(i, j)) {
++            if (runnable != null) {
++                ChunkIOExecutor.queueChunkLoad(world, loader, this, i, j, runnable);
++                return null;
++            } else {
++                chunk = ChunkIOExecutor.syncChunkLoad(world, loader, this, i, j);
++            }
++        } else if (chunk == null && generate) {
++            chunk = originalGetChunkAt(i, j);
++        }
++
++        // If we didn't load the chunk async and have a callback run it now
++        if (runnable != null) {
++            runnable.run();
++        }
++
++        return chunk;
++    }
++
++    public Chunk originalGetChunkAt(int x, int z) {
+         Chunk chunk = this.loadChunk(x, z);
  
          if (chunk == null)
          {
@@ -45,7 +90,7 @@
              long i = ChunkPos.asLong(x, z);
  
              try
-@@ -154,7 +163,8 @@
+@@ -154,7 +201,8 @@
  
              this.id2ChunkMap.put(i, chunk);
              chunk.onLoad();
@@ -55,7 +100,7 @@
          }
  
          return chunk;
-@@ -177,7 +187,7 @@
+@@ -177,7 +225,7 @@
          }
          catch (Exception exception)
          {
@@ -64,7 +109,7 @@
              return null;
          }
      }
-@@ -190,7 +200,7 @@
+@@ -190,7 +238,7 @@
          }
          catch (Exception exception)
          {
@@ -73,7 +118,7 @@
          }
      }
  
-@@ -203,12 +213,12 @@
+@@ -203,12 +251,12 @@
          }
          catch (IOException ioexception)
          {
@@ -89,7 +134,7 @@
      }
  
      public boolean saveChunks(boolean all)
-@@ -233,7 +243,7 @@
+@@ -233,7 +281,7 @@
  
                  if (i == 24 && !all)
                  {
@@ -98,7 +143,7 @@
                  }
              }
          }
-@@ -266,11 +276,9 @@
+@@ -266,11 +314,9 @@
  
                      if (chunk != null && chunk.unloadQueued)
                      {
@@ -113,7 +158,7 @@
                          ++i;
                      }
                  }
-@@ -284,6 +292,39 @@
+@@ -284,6 +330,39 @@
          return false;
      }
  
