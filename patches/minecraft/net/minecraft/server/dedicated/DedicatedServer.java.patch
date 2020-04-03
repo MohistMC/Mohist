@@ -134,15 +134,17 @@
        thread.setDaemon(true);
        thread.setUncaughtExceptionHandler(new DefaultUncaughtExceptionHandler(field_155771_h));
        thread.start();
-@@ -118,6 +176,7 @@
+@@ -118,7 +176,9 @@
           field_155771_h.warn("To start the server with more ram, launch it as \"java -Xmx1024M -Xms1024M -jar minecraft_server.jar\"");
        }
  
 +      net.minecraftforge.fml.server.ServerModLoader.begin(this);
        field_155771_h.info("Loading properties");
++      this.field_71340_o.func_219033_a(properties -> ServerProperties.func_218985_a(java.nio.file.Paths.get("server.properties")));
        ServerProperties serverproperties = this.field_71340_o.func_219034_a();
        if (this.func_71264_H()) {
-@@ -161,6 +220,12 @@
+          this.func_71189_e("127.0.0.1");
+@@ -161,6 +221,12 @@
           return false;
        }
  
@@ -155,7 +157,7 @@
        if (!this.func_71266_T()) {
           field_155771_h.warn("**** SERVER IS RUNNING IN OFFLINE/INSECURE MODE!");
           field_155771_h.warn("The server will make no attempt to authenticate usernames. Beware.");
-@@ -175,7 +240,9 @@
+@@ -175,7 +241,9 @@
        if (!PreYggdrasilConverter.func_219587_e(this)) {
           return false;
        } else {
@@ -166,7 +168,7 @@
           long i = Util.func_211178_c();
           String s = serverproperties.field_219022_p;
           String s1 = serverproperties.field_219024_r;
-@@ -196,18 +263,25 @@
+@@ -196,18 +264,25 @@
           SkullTileEntity.func_184293_a(this.func_152358_ax());
           SkullTileEntity.func_184294_a(this.func_147130_as());
           PlayerProfileCache.func_187320_a(this.func_71266_T());
@@ -193,7 +195,7 @@
           if (serverproperties.field_219027_u != null) {
              this.func_200252_aR().func_223585_a(GameRules.field_223620_w).func_223570_a(serverproperties.field_219027_u, this);
           }
-@@ -222,6 +296,7 @@
+@@ -222,6 +297,7 @@
              field_155771_h.info("Starting remote control listener");
              this.field_71339_n = new MainThread(this);
              this.field_71339_n.func_72602_a();
@@ -201,7 +203,7 @@
           }
  
           if (this.func_175593_aQ() > 0L) {
-@@ -233,7 +308,8 @@
+@@ -233,7 +309,8 @@
           }
  
           Items.field_190931_a.func_150895_a(ItemGroup.field_78027_g, NonNullList.func_191196_a());
@@ -211,7 +213,7 @@
        }
     }
  
-@@ -316,7 +392,7 @@
+@@ -316,7 +393,7 @@
        if (this.field_71342_m != null) {
           this.field_71342_m.func_219591_b();
        }
@@ -220,7 +222,7 @@
     }
  
     public void func_71190_q(BooleanSupplier p_71190_1_) {
-@@ -345,7 +421,13 @@
+@@ -345,7 +422,13 @@
     public void func_71333_ah() {
        while(!this.field_71341_l.isEmpty()) {
           PendingCommand pendingcommand = this.field_71341_l.remove(0);
@@ -235,7 +237,7 @@
        }
  
     }
-@@ -522,13 +604,39 @@
+@@ -522,13 +605,39 @@
     }
  
     public String func_71258_A() {
@@ -277,7 +279,7 @@
        });
        return this.field_184115_n.func_70008_c();
     }
-@@ -547,4 +655,21 @@
+@@ -547,4 +656,21 @@
     public boolean func_213199_b(GameProfile p_213199_1_) {
        return false;
     }

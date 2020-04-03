@@ -333,14 +333,18 @@
  
        try {
           OptionSet optionset = optionparser.parse(p_main_0_);
-@@ -885,7 +950,6 @@
+@@ -885,10 +950,9 @@
              optionparser.printHelpOn(System.err);
              return;
           }
 -
           Path path = Paths.get("server.properties");
           ServerPropertiesProvider serverpropertiesprovider = new ServerPropertiesProvider(path);
-          serverpropertiesprovider.func_219035_b();
+-         serverpropertiesprovider.func_219035_b();
++         if (optionset.has(optionspec1) || !Files.exists(path)) serverpropertiesprovider.func_219035_b();
+          Path path1 = Paths.get("eula.txt");
+          ServerEula servereula = new ServerEula(path1);
+          if (optionset.has(optionspec1)) {
 @@ -910,7 +974,11 @@
           GameProfileRepository gameprofilerepository = yggdrasilauthenticationservice.createProfileRepository();
           PlayerProfileCache playerprofilecache = new PlayerProfileCache(gameprofilerepository, new File(s, field_152367_a.getName()));
