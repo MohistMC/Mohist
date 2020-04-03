@@ -25,6 +25,8 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Base64;
@@ -718,7 +720,8 @@ public final class CraftServer implements Server {
         configuration = YamlConfiguration.loadConfiguration(getConfigFile());
         commandsConfiguration = YamlConfiguration.loadConfiguration(getCommandsConfigFile());
 
-        console.settings = new ServerPropertiesProvider(console.options);
+        Path path = Paths.get("server.properties");
+        console.settings = new ServerPropertiesProvider(path);
         ServerProperties config = console.settings.getProperties();
 
         console.setCanSpawnAnimals(config.spawnAnimals);
