@@ -418,26 +418,24 @@ public class CraftScheduler implements BukkitScheduler {
             if (task.isSync()) {
                 currentTask = task;
                 try {
+                    task.timings.startTiming(); // Spigot
                     task.run();
+                    task.timings.stopTiming(); // Spigot
                 } catch (final Throwable throwable) {
-                    // Paper start
-                    String msg = String.format(
-                            "Task #%s for %s generated an exception",
-                            task.getTaskId(),
-                            task.getOwner().getDescription().getFullName());
                     task.getOwner().getLogger().log(
                             Level.WARNING,
-                            msg,
+                            String.format(
+                                    "Task #%s for %s generated an exception",
+                                    task.getTaskId(),
+                                    task.getOwner().getDescription().getFullName()),
                             throwable);
-                    //task.getOwner().getServer().getPluginManager().callEvent(new ServerExceptionEvent(new ServerSchedulerException(msg, throwable, task)));
-                    // Paper end
                 } finally {
                     currentTask = null;
                 }
                 parsePending();
             } else {
                 //debugTail = debugTail.setNext(new CraftAsyncDebugger(currentTick + RECENT_TICKS, task.getOwner(), task.getTaskClass())); // Paper
-                task.getOwner().getLogger().log(Level.SEVERE, "Unexpected Async Task in the Sync Scheduler. Report this to Paper"); // Paper
+                task.getOwner().getLogger().log(Level.SEVERE, "Unexpected Async Task in the Sync Scheduler. Report this to Mohist"); // Paper
                 // We don't need to parse pending
                 // (async tasks must live with race-conditions if they attempt to cancel between these few lines of code)
             }
