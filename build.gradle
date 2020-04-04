@@ -16,6 +16,7 @@ buildscript {
     }
 }
 
+
 import groovy.json.JsonBuilder
 import groovy.json.JsonSlurper
 import net.minecraftforge.gradle.common.task.ArchiveChecksum
@@ -25,7 +26,6 @@ import net.minecraftforge.gradle.common.task.SignJar
 import net.minecraftforge.gradle.patcher.task.ApplyBinPatches
 import net.minecraftforge.gradle.patcher.task.TaskReobfuscateJar
 import net.minecraftforge.gradle.userdev.tasks.RenameJar
-import org.apache.tools.ant.filters.ReplaceTokens
 import org.gradle.plugins.ide.eclipse.model.SourceFolder
 import org.objectweb.asm.ClassReader
 
@@ -111,7 +111,7 @@ project(':clean') {
     }
 }
 
-project(':forge') {    
+project(':mohist') {
     evaluationDependsOn(':clean')
     apply plugin: 'java-library'
     apply plugin: 'maven-publish'
@@ -179,23 +179,7 @@ project(':forge') {
         BINPATCH_TOOL = 'net.minecraftforge:binarypatcher:1.0.12:fatjar'
     }
 
-    def getVersion = {
-        //TAG-offset-hash
-        def raw = grgit.describe(longDescr: true, tags:true)
-        def desc = (raw == null ? '0.0-0-unknown' : grgit.describe(longDescr: true, tags:true)).split('-') as List
-        def hash = desc.remove(desc.size() - 1)
-        def offset = desc.remove(desc.size() - 1)
-        def tag = desc.join('-')
-        def branch = grgit.branch.current().name
-        if (branch in ['master', 'HEAD', MC_VERSION, MC_VERSION + '.0'])
-            branch = null
-        if (branch != null && branch.endsWith('.x') && MC_VERSION.startsWith(branch.substring(0, branch.length() - 2))) //1.13.x
-            branch = null
-        SPEC_VERSION = tag
-        return "${MC_VERSION}-${tag}.${offset}${t -> if (branch != null) t << '-' + branch}".toString() //Bake the response instead of making it dynamic
-    }
-
-    version = getVersion()
+    version = '1.15.2-' + 'git rev-parse --short HEAD'.execute().text.trim()
 
     patcher {
         exc = file("$rootDir/src/main/resources/forge.exc")
@@ -207,30 +191,6 @@ project(':forge') {
         sideAnnotationStripper = file("$rootDir/src/main/resources/forge.sas")
 
         runs {
-            forge_client {
-                taskName 'forge_client'
-
-                main 'net.minecraftforge.userdev.LaunchTesting'
-                workingDirectory project.file('run')
-
-                environment 'target', 'fmldevclient'
-                environment 'assetIndex', '{asset_index}'
-                environment 'assetDirectory', downloadAssets.output
-                environment 'nativesDirectory', extractNatives.output
-
-                environment 'MC_VERSION', MC_VERSION
-                environment 'MCP_VERSION', MCP_VERSION
-                environment 'FORGE_GROUP', project.group
-                environment 'FORGE_SPEC', SPEC_VERSION
-                environment 'FORGE_VERSION', project.version.substring(MC_VERSION.length() + 1).toString()
-                environment 'LAUNCHER_VERSION', SPEC_VERSION
-                property 'org.lwjgl.system.SharedLibraryExtractDirectory', 'lwjgl_dll'
-
-                ideaModule "${rootProject.name}.${project.name}.userdev"
-
-                source sourceSets.main
-                source sourceSets.userdev
-            }
 
             forge_server {
                 taskName 'forge_server'
@@ -390,63 +350,6 @@ project(':forge') {
         testImplementation 'org.opentest4j:opentest4j:1.0.0' // needed for junit 5
         testImplementation 'org.hamcrest:hamcrest-all:1.3' // needs advanced matching for list order
     }
-    
-    def extraTxts = [
-        rootProject.file('CREDITS.txt'),
-        rootProject.file('LICENSE.txt')
-    ]
-    
-    def changelog = rootProject.file('build/changelog.txt')
-    if (changelog.exists())
-        extraTxts += changelog
-    
-    task downloadCrowdin() {
-        ext {
-            output = file('build/crowdin_raw.zip')
-            update = file('build/crowdin.json')
-            id = 'minecraft-forge'
-        }
-        onlyIf {
-            project.hasProperty('crowdinKey') && !project.gradle.startParameter.isOffline()
-        }
-        doLast {
-            download {
-                src "https://api.crowdin.com/api/project/${id}/export?key=${project.crowdinKey}&json"
-                dest update
-                overwrite true
-            }
-            if (!update.text.contains('success')) {
-                throw new RuntimeException("Crowdin export failed, see ${update} for more info")
-            }
-            download {
-                src "https://api.crowdin.com/api/project/${id}/download/all.zip?key=${project.crowdinKey}"
-                dest output
-                overwrite true
-            }
-        }
-    }
-    
-    task crowdin(type: Zip) {
-        dependsOn downloadCrowdin
-        onlyIf {
-            !downloadCrowdin.state.skipped
-        }
-        baseName = project.name
-        version = project.version
-        classifier = 'crowdin'
-        destinationDir = file('build/distributions')
-        from(zipTree(downloadCrowdin.output)){
-            eachFile { //Tired of waiting for crowdin API, rename things myself. Remove once crowdin stops being dumb
-                    if (it.name.equals('en_us.json') && !it.path.startsWith('assets/')) {
-                        it.name = it.path.split('/')[0] + '.json'
-                        it.path = 'assets/forge/lang/' + it.name
-                    }
-                }
-                exclude { it.isDirectory() }
-                rename { it.toLowerCase() }//Minecraft needs it lowercase.
-                exclude '**/*.lang' //Pre-1.13 format
-            }
-        }
     
     // We apply the bin patches we just created to make a jar that is JUST our changes
     genClientBinPatches.tool = BINPATCH_TOOL
@@ -858,31 +761,6 @@ project(':forge') {
     }
     
     universalJar {
-        from extraTxts
-        
-        /* TODO: Annotation Cache? need to talk to cpw about his new design.
-        from(fixAnnotationsJson){
-            into 'META-INF'
-        }
-        dependsOn fixAnnotationsJson
-        */
-        
-        /* We do not actually check this anywhere, so it's 400KB of uselless data
-        // Add checksum files of clean and patched vanilla classes.
-        ['client', 'server'].each { side ->
-            ['Base', 'Patched'].each { type -> 
-                from(tasks.getByName("${side}${type}Checksum").output) {
-                    into 'checksums/'
-                }
-            }
-        }
-        dependsOn checksums
-        */
-        
-        // add crowdin locales
-        from { !crowdin.state.skipped ? zipTree(crowdin.archivePath) : null}
-        dependsOn crowdin
-
         doFirst {
             MANIFESTS.each{ pkg, values ->
                 if (pkg == '/') {
@@ -935,7 +813,6 @@ project(':forge') {
         classifier = 'installer'
         extension = 'jar' //Needs to be Zip task to not override Manifest, so set extension
         destinationDir = file('build/libs')
-        from(extraTxts)
         from(rootProject.file('/installer_logo.png')) {
             rename{'big_logo.png'}
         }
@@ -1152,7 +1029,7 @@ def getClasspath(project, libs, artifact) {
 //evaluationDependsOnChildren()
 task setup() {
     dependsOn ':clean:extractMapped'
-    dependsOn ':forge:extractMapped' //These must be strings so that we can do lazy resolution. Else we need evaluationDependsOnChildren above
+    dependsOn ':mohist:extractMapped' //These must be strings so that we can do lazy resolution. Else we need evaluationDependsOnChildren above
 }
 
 
