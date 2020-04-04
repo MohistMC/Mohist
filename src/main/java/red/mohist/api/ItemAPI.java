@@ -39,8 +39,7 @@ public class ItemAPI {
      */
     public static ItemStack Base64ToBukkit(String base64) throws IOException {
         try {
-            ByteArrayInputStream inputStream = new ByteArrayInputStream(Base64Coder.decodeLines(base64));
-            BukkitObjectInputStream dataInput = new BukkitObjectInputStream(inputStream);
+            BukkitObjectInputStream dataInput = new BukkitObjectInputStream(new ByteArrayInputStream(Base64Coder.decodeLines(base64)));
             try {
                 return (ItemStack) dataInput.readObject();
             } finally {
@@ -122,14 +121,14 @@ public class ItemAPI {
             net.minecraft.item.ItemStack is = CraftItemStack.asNMSCopy(iStack);
             NBTTagCompound itemCompound = new NBTTagCompound();
             itemCompound = is.writeToNBT(itemCompound);
-            ByteArrayOutputStream bytearrayoutputstream = new ByteArrayOutputStream();
-            DataOutputStream dataoutputstream = new DataOutputStream(new GZIPOutputStream(bytearrayoutputstream));
+            ByteArrayOutputStream byteOut = new ByteArrayOutputStream();
+            DataOutputStream dataOut = new DataOutputStream(new GZIPOutputStream(byteOut));
             try {
-                net.minecraft.nbt.CompressedStreamTools.writeCompressed(itemCompound, dataoutputstream);
+                net.minecraft.nbt.CompressedStreamTools.writeCompressed(itemCompound, dataOut);
             } finally {
-                dataoutputstream.close();
+                dataOut.close();
             }
-            return bytearrayoutputstream.toByteArray();
+            return byteOut.toByteArray();
         }catch(Exception e){
             return new byte[0];
         }
@@ -144,14 +143,14 @@ public class ItemAPI {
      */
     public static ItemStack getItemStackInNBTBytes(byte[] bytes) {
         try{
-            DataInputStream datainputstream = new DataInputStream(new BufferedInputStream(new GZIPInputStream(new ByteArrayInputStream(bytes))));
-            NBTTagCompound nbttagcompound;
+            DataInputStream dataIn = new DataInputStream(new BufferedInputStream(new GZIPInputStream(new ByteArrayInputStream(bytes))));
+            NBTTagCompound tag;
             try {
-                nbttagcompound = net.minecraft.nbt.CompressedStreamTools.read(datainputstream, null);
+                tag = net.minecraft.nbt.CompressedStreamTools.read(dataIn, null);
             } finally {
-                datainputstream.close();
+                dataIn.close();
             }
-            net.minecraft.item.ItemStack is = new net.minecraft.item.ItemStack(nbttagcompound);
+            net.minecraft.item.ItemStack is = new net.minecraft.item.ItemStack(tag);
             return CraftItemStack.asBukkitCopy(is);
         }catch(Exception e){
             return new ItemStack(Material.AIR);

@@ -10,56 +10,63 @@ import org.bukkit.entity.Player;
 public class ChatComponentAPI {
 
     public static void sendHoverChat(Player player, String message, String hover) {
-        TextComponent component = new TextComponent(ChatColor.translateAlternateColorCodes('&', message));
-        component.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(ChatColor.translateAlternateColorCodes('&', hover)).create()));
-        player.spigot().sendMessage(component);
+        player.spigot().sendMessage(getHoverChat(message, hover));
     }
 
-    public static TextComponent sendHoverChat(String message, String hover) {
-        TextComponent component = new TextComponent(ChatColor.translateAlternateColorCodes('&', message));
-        component.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(ChatColor.translateAlternateColorCodes('&', hover)).create()));
-        return component;
+    public static TextComponent getHoverChat(String message, String hover) {
+        return new ChatComponent(message).setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(ChatColor.translateAlternateColorCodes('&', hover)).create())).create();
     }
 
     public static void sendClickChat(Player player, String message, String hover, String command) {
-        TextComponent component = new TextComponent(ChatColor.translateAlternateColorCodes('&', message));
-        component.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(ChatColor.translateAlternateColorCodes('&', hover)).create()));
-        component.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, command));
-        player.spigot().sendMessage(component);
+        player.spigot().sendMessage(getClickChat(message, hover, command));
     }
 
-    public static TextComponent sendClickChat(String message, String hover, String command) {
-        TextComponent component = new TextComponent(ChatColor.translateAlternateColorCodes('&', message));
-        component.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(ChatColor.translateAlternateColorCodes('&', hover)).create()));
-        component.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, command));
-        return component;
+    public static TextComponent getClickChat(String message, String hover, String command) {
+        return new ChatComponent(getHoverChat(message, hover)).setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, command)).create();
     }
 
     public static void sendClickOpenURLChat(Player player, String message, String hover, String url) {
-        TextComponent component = new TextComponent(ChatColor.translateAlternateColorCodes('&', message));
-        component.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(ChatColor.translateAlternateColorCodes('&', hover)).create()));
-        component.setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, url));
-        player.spigot().sendMessage(component);
+        player.spigot().sendMessage(getClickOpenURLChat(message, hover, url));
     }
 
-    public static TextComponent sendClickOpenURLChat(String message, String hover, String url) {
-        TextComponent component = new TextComponent(ChatColor.translateAlternateColorCodes('&', message));
-        component.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(ChatColor.translateAlternateColorCodes('&', hover)).create()));
-        component.setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, url));
-        return component;
+    public static TextComponent getClickOpenURLChat(String message, String hover, String url) {
+        return new ChatComponent(getHoverChat(message, hover)).setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, url)).create();
     }
 
     public static void sendSuggestCommand(Player player, String message, String hover, String command) {
-        TextComponent component = new TextComponent(ChatColor.translateAlternateColorCodes('&', message));
-        component.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(ChatColor.translateAlternateColorCodes('&', hover)).create()));
-        component.setClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, command));
-        player.spigot().sendMessage(component);
+        player.spigot().sendMessage(getSuggestCommand(message, hover, command));
     }
 
-    public static TextComponent sendSuggestCommand(String message, String hover, String command) {
-        TextComponent component = new TextComponent(ChatColor.translateAlternateColorCodes('&', message));
-        component.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(ChatColor.translateAlternateColorCodes('&', hover)).create()));
-        component.setClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, command));
-        return component;
+    public static TextComponent getSuggestCommand(String message, String hover, String command) {
+        return new ChatComponent(getHoverChat(message, hover)).setClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, command)).create();
+    }
+
+    private static class ChatComponent{
+
+        private TextComponent component;
+
+        public ChatComponent(TextComponent component){
+            this.component = component;
+        }
+
+        public ChatComponent(String message){
+            this(new TextComponent(message));
+        }
+
+        public ChatComponent setHoverEvent(HoverEvent event){
+            this.component.setHoverEvent(event);
+            return this;
+        }
+
+        public ChatComponent setClickEvent(ClickEvent event){
+            this.component.setClickEvent(event);
+            return this;
+        }
+
+        public TextComponent create(){
+            return component;
+        }
     }
 }
+
+

@@ -19,8 +19,7 @@ public class PlayerAPI {
      * @param player org.bukkit.entity.player
      */
     public static String getPing(Player player) {
-        int ping = getNMSPlayer(player).ping;
-        return String.valueOf(ping);
+        return String.valueOf(getNMSPlayer(player).ping);
     }
 
     public static EntityPlayerMP getNMSPlayer(Player player) {
