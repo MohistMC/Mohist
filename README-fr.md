@@ -1,9 +1,9 @@
 <img src="https://i.loli.net/2020/02/28/vZRHJACadF7rgn5.png">
 
 ## Mohist-1.12.2
-#### [中文](https://github.com/Mohist-Community/Mohist/blob/1.12.2/README-zh.md) | [Français](https://github.com/Mohist-Community/Mohist/blob/1.12.2/README-fr.md)
+#### [English](https://github.com/Mohist-Community/Mohist/blob/1.12.2/README.md) | [中文](https://github.com/Mohist-Community/Mohist/blob/1.12.2/README-zh.md) 
 
-## It is highly recommended to use the 1.7+ version of Mohist to quickly resolve errors!
+## Il est très recommandé d'utiliser les dernières versions de Mohist pour résoudre rapidement les erreures !
 
 [![](https://ci.codemc.org/buildStatus/icon?job=Mohist-Community%2FMohist-1.12.2)](https://ci.codemc.org/job/Mohist-Community/job/Mohist-1.12.2/)
 ![](https://img.shields.io/github/stars/Mohist-Community/Mohist.svg?label=Stars)
@@ -18,58 +18,58 @@
 [![Mohist Stats](https://bstats.org/signatures/server-implementation/Mohist.svg)](https://bstats.org/plugin/server-implementation/Mohist/6762)
 [![Mohist Stats](https://bstats.org/signatures/bukkit/Mohist.svg)](https://bstats.org/plugin/bukkit/Mohist/3939)
 
-Getting Help
+Obtenir de l'aide
 ------
-   [**Home**](https://mohist.red/)
+   [**Site**](https://mohist.red/)
    [**Discord**](https://discord.gg/ZgXjHGd)
    [**QQ**](https://jq.qq.com/?_wv=1027&k=5YIRYnH)  
    
-Download
+Téléchargement
 ------
 * [**Jenkins**](https://ci.codemc.org/job/Mohist-Community/job/Mohist-1.12.2/)
 
-Install
+Installation
 ------
-This software requires Java 8.
+Mohist requiert Java 8.
 
-[Download](https://ci.codemc.org/job/Mohist-Community/job/Mohist-1.12.2/) and place the server jar in an empty directory. Now launch it using the `java` command:
+[Télécharges ce fichier](https://ci.codemc.org/job/Mohist-Community/job/Mohist-1.12.2/) et places le jar dans un dossier vide. Ensuite lances ton serveur avec la commande `java` ci dessous :
 ```sh
-java -jar yourJar.jar
+java -jar tonJar.jar
 ```
 
-Building
+Build
 ------
-* Checkout project
-  * You can use IDE or clone from console:
+* Vérification du projet
+  * Tu peux utiliser ton IDE ou clone depuis git / invite de commande :
   `git clone https://github.com/Mohist-Community/Mohist.git`
-* Setup
-  * Download submodules:
+* Configuration
+  * Télécharger les sous-modules (très important) :
   `git submodule update --init --recursive`
-* Building
-  * Build with Linux:
+* Build
+  * Build avec Linux :
   `bash gradlew launch4j`
-  * Build with Windows:
+  * Build avec Windows :
   `gradlew.bat launch4j `
 
-All builds will be in `.\build\distributions\` 
-`Mohist-xxxxx-server.jar` is the server file that you should run
+Tous les builds seront dans `.\build\distributions\` 
+`Mohist-xxxxx-server.jar` est le fichier jar que tu devras lancer.
 
-Plugin development
+Développement de plugins
 ------
- [**Mohist Remap Guide**](https://github.com/Mohist-Community/MohistRemapGuide)
+ [**Guide de remap de Mohist**](https://github.com/Mohist-Community/MohistRemapGuide)
 
-Thanks for the following project
+Merci aux projets suivants
 ------
-* [**Bukkit**](https://hub.spigotmc.org/stash/scm/spigot/bukkit.git) - plugin support.
-* [**Paper**](https://github.com/PaperMC/Paper.git) - performance optimizations.
-* [**CraftBukkit**](https://hub.spigotmc.org/stash/scm/spigot/craftbukkit.git) - plugin support.
-* [**Spigot**](https://hub.spigotmc.org/stash/scm/spigot/spigot.git) - plugin support.
-* [**MinecraftForge**](https://github.com/MinecraftForge/MinecraftForge.git) - mod support.
-* [**Atom**](https://gitlab.com/divinecode/atom/Atom.git) - Partial code source.
-* [**Thermos**](https://github.com/CyberdyneCC/Thermos.git) - Partial code source.
-* [**um_bukkit**](https://github.com/TechCatOther/um_bukkit.git) - Partial code source.
+* [**Bukkit**](https://hub.spigotmc.org/stash/scm/spigot/bukkit.git) - Support des plugins.
+* [**Paper**](https://github.com/PaperMC/Paper.git) - Performances et Optimisations.
+* [**CraftBukkit**](https://hub.spigotmc.org/stash/scm/spigot/craftbukkit.git) - Support des plugins.
+* [**Spigot**](https://hub.spigotmc.org/stash/scm/spigot/spigot.git) - Support des plugins.
+* [**MinecraftForge**](https://github.com/MinecraftForge/MinecraftForge.git) - Support des mods.
+* [**Atom**](https://gitlab.com/divinecode/atom/Atom.git) - Code source partiel.
+* [**Thermos**](https://github.com/CyberdyneCC/Thermos.git) - Code source partiel.
+* [**um_bukkit**](https://github.com/TechCatOther/um_bukkit.git) - Code source partiel.
 
-Special Thanks To:
+Nous remercions tout particulièrement :
 -------------
 <a href="https://serverjars.com/"><img src="https://serverjars.com/assets/img/logo_white.svg" width="200"></a>
 <a href="https://ci.codemc.io/"><img src="https://i.loli.net/2020/03/11/YNicj3PLkU5BZJT.png" width="200"></a>
