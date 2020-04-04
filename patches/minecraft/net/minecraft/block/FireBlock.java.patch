@@ -1,6 +1,45 @@
 --- a/net/minecraft/block/FireBlock.java
 +++ b/net/minecraft/block/FireBlock.java
-@@ -64,13 +64,13 @@
+@@ -8,6 +8,7 @@
+ import net.minecraft.item.BlockItemUseContext;
+ import net.minecraft.particles.ParticleTypes;
+ import net.minecraft.state.BooleanProperty;
++import net.minecraft.state.IProperty;
+ import net.minecraft.state.IntegerProperty;
+ import net.minecraft.state.StateContainer;
+ import net.minecraft.state.properties.BlockStateProperties;
+@@ -29,6 +30,10 @@
+ import net.minecraft.world.server.ServerWorld;
+ import net.minecraftforge.api.distmarker.Dist;
+ import net.minecraftforge.api.distmarker.OnlyIn;
++import org.bukkit.craftbukkit.block.CraftBlockState;
++import org.bukkit.craftbukkit.event.CraftEventFactory;
++import org.bukkit.event.block.BlockBurnEvent;
++import org.bukkit.event.block.BlockFadeEvent;
+ 
+ public class FireBlock extends Block {
+    public static final IntegerProperty field_176543_a = BlockStateProperties.field_208171_X;
+@@ -53,7 +58,18 @@
+    }
+ 
+    public BlockState func_196271_a(BlockState p_196271_1_, Direction p_196271_2_, BlockState p_196271_3_, IWorld p_196271_4_, BlockPos p_196271_5_, BlockPos p_196271_6_) {
+-      return this.func_196260_a(p_196271_1_, p_196271_4_, p_196271_5_) ? this.func_196448_a(p_196271_4_, p_196271_5_).func_206870_a(field_176543_a, p_196271_1_.func_177229_b(field_176543_a)) : Blocks.field_150350_a.func_176223_P();
++      // CraftBukkit start
++      if (!p_196271_1_.func_196955_c(p_196271_4_, p_196271_5_)) {
++         final CraftBlockState blockState = CraftBlockState.getBlockState(p_196271_4_, p_196271_5_);
++         blockState.setData(Blocks.field_150350_a.func_176223_P());
++         final BlockFadeEvent event = new BlockFadeEvent(blockState.getBlock(), blockState);
++         p_196271_4_.func_201672_e().func_73046_m().server.getPluginManager().callEvent(event);
++         if (!event.isCancelled()) {
++            return blockState.getHandle();
++         }
++      }
++      return this.func_196448_a(p_196271_4_, p_196271_5_).func_206870_a(FireBlock.field_176543_a, p_196271_1_.func_177229_b(FireBlock.field_176543_a));
++      // CraftBukkit end
+    }
+ 
+    @Nullable
+@@ -64,13 +80,13 @@
     public BlockState func_196448_a(IBlockReader p_196448_1_, BlockPos p_196448_2_) {
        BlockPos blockpos = p_196448_2_.func_177977_b();
        BlockState blockstate = p_196448_1_.func_180495_p(blockpos);
@@ -16,7 +55,7 @@
              }
           }
  
-@@ -91,12 +91,14 @@
+@@ -91,15 +107,17 @@
  
     public void func_225534_a_(BlockState p_225534_1_, ServerWorld p_225534_2_, BlockPos p_225534_3_, Random p_225534_4_) {
        if (p_225534_2_.func_82736_K().func_223586_b(GameRules.field_223598_a)) {
@@ -31,17 +70,29 @@
 +         boolean flag = other.isFireSource(p_225534_2_, p_225534_3_.func_177977_b(), Direction.UP);
           int i = p_225534_1_.func_177229_b(field_176543_a);
           if (!flag && p_225534_2_.func_72896_J() && this.func_176537_d(p_225534_2_, p_225534_3_) && p_225534_4_.nextFloat() < 0.2F + (float)i * 0.03F) {
-             p_225534_2_.func_217377_a(p_225534_3_, false);
-@@ -118,7 +120,7 @@
+-            p_225534_2_.func_217377_a(p_225534_3_, false);
++            fireExtinguished(p_225534_2_, p_225534_3_); // CraftBukkit - invalid place location
+          } else {
+             int j = Math.min(15, i + p_225534_4_.nextInt(3) / 2);
+             if (i != j) {
+@@ -112,26 +130,26 @@
+                if (!this.func_196447_a(p_225534_2_, p_225534_3_)) {
+                   BlockPos blockpos = p_225534_3_.func_177977_b();
+                   if (!p_225534_2_.func_180495_p(blockpos).func_224755_d(p_225534_2_, blockpos, Direction.UP) || i > 3) {
+-                     p_225534_2_.func_217377_a(p_225534_3_, false);
++                     fireExtinguished(p_225534_2_, p_225534_3_); // CraftBukkit
+                   }
+ 
                    return;
                 }
  
 -               if (i == 15 && p_225534_4_.nextInt(4) == 0 && !this.func_196446_i(p_225534_2_.func_180495_p(p_225534_3_.func_177977_b()))) {
+-                  p_225534_2_.func_217377_a(p_225534_3_, false);
 +               if (i == 15 && p_225534_4_.nextInt(4) == 0 && !this.canCatchFire(p_225534_2_, p_225534_3_.func_177977_b(), Direction.UP)) {
-                   p_225534_2_.func_217377_a(p_225534_3_, false);
++                  fireExtinguished(p_225534_2_, p_225534_3_); // CraftBukkit
                    return;
                 }
-@@ -126,12 +128,12 @@
+             }
  
              boolean flag1 = p_225534_2_.func_180502_D(p_225534_3_);
              int k = flag1 ? -50 : 0;
@@ -60,7 +111,22 @@
              BlockPos.Mutable blockpos$mutable = new BlockPos.Mutable();
  
              for(int l = -1; l <= 1; ++l) {
-@@ -169,16 +171,18 @@
+@@ -153,7 +171,13 @@
+ 
+                            if (i2 > 0 && p_225534_4_.nextInt(k1) <= i2 && (!p_225534_2_.func_72896_J() || !this.func_176537_d(p_225534_2_, blockpos$mutable))) {
+                               int j2 = Math.min(15, i + p_225534_4_.nextInt(5) / 4);
+-                              p_225534_2_.func_180501_a(blockpos$mutable, this.func_196448_a(p_225534_2_, blockpos$mutable).func_206870_a(field_176543_a, Integer.valueOf(j2)), 3);
++                              // CraftBukkit start - Call to stop spread of fire
++                              if (p_225534_2_.func_180495_p(blockpos$mutable).func_177230_c() != Blocks.field_150480_ab) {
++                                 if (!CraftEventFactory.callBlockIgniteEvent(p_225534_2_, blockpos$mutable, p_225534_3_).isCancelled()) {
++                                    CraftEventFactory.handleBlockSpreadEvent(p_225534_2_, p_225534_3_, blockpos$mutable, (this.func_196448_a(p_225534_2_, blockpos$mutable)).func_206870_a(FireBlock.field_176543_a, Integer.valueOf(j2)), 3);
++                                 }
++                              }
++                              // CraftBukkit end
+                            }
+                         }
+                      }
+@@ -169,18 +193,32 @@
        return p_176537_1_.func_175727_C(p_176537_2_) || p_176537_1_.func_175727_C(p_176537_2_.func_177976_e()) || p_176537_1_.func_175727_C(p_176537_2_.func_177974_f()) || p_176537_1_.func_175727_C(p_176537_2_.func_177978_c()) || p_176537_1_.func_175727_C(p_176537_2_.func_177968_d());
     }
  
@@ -78,12 +144,26 @@
  
 -   private void func_176536_a(World p_176536_1_, BlockPos p_176536_2_, int p_176536_3_, Random p_176536_4_, int p_176536_5_) {
 -      int i = this.func_220274_q(p_176536_1_.func_180495_p(p_176536_2_));
-+   private void tryCatchFire(World p_176536_1_, BlockPos p_176536_2_, int p_176536_3_, Random p_176536_4_, int p_176536_5_, Direction face) {
++   private void tryCatchFire(World p_176536_1_, BlockPos p_176536_2_, int p_176536_3_, Random p_176536_4_, int p_176536_5_, Direction face /*, BlockPosition sourceposition*/) {  // CraftBukkit add sourceposition  Mohist use offset
 +      int i = p_176536_1_.func_180495_p(p_176536_2_).getFlammability(p_176536_1_, p_176536_2_, face);
        if (p_176536_4_.nextInt(p_176536_3_) < i) {
           BlockState blockstate = p_176536_1_.func_180495_p(p_176536_2_);
++
++         // CraftBukkit start
++         BlockPos sourceposition = p_176536_2_.func_177972_a(face); // Mohist
++         org.bukkit.block.Block theBlock = p_176536_1_.getWorldCB().getBlockAt(p_176536_2_.func_177958_n(), p_176536_2_.func_177956_o(), p_176536_2_.func_177952_p());
++         org.bukkit.block.Block sourceBlock = p_176536_1_.getWorldCB().getBlockAt(sourceposition.func_177958_n(), sourceposition.func_177956_o(), sourceposition.func_177952_p());
++         BlockBurnEvent event = new BlockBurnEvent(theBlock, sourceBlock);
++         p_176536_1_.getServerCB().getPluginManager().callEvent(event);
++         if (event.isCancelled()) {
++            return;
++         }
++         // CraftBukkit end
++
           if (p_176536_4_.nextInt(p_176536_5_ + 10) < 5 && !p_176536_1_.func_175727_C(p_176536_2_)) {
-@@ -188,18 +192,14 @@
+             int j = Math.min(p_176536_5_ + p_176536_4_.nextInt(5) / 4, 15);
+             p_176536_1_.func_180501_a(p_176536_2_, this.func_196448_a(p_176536_1_, p_176536_2_).func_206870_a(field_176543_a, Integer.valueOf(j)), 3);
+@@ -188,18 +226,14 @@
              p_176536_1_.func_217377_a(p_176536_2_, false);
           }
  
@@ -104,7 +184,7 @@
              return true;
           }
        }
-@@ -215,13 +215,14 @@
+@@ -215,22 +249,24 @@
  
           for(Direction direction : Direction.values()) {
              BlockState blockstate = p_176538_1_.func_180495_p(p_176538_2_.func_177972_a(direction));
@@ -120,7 +200,19 @@
     public boolean func_196446_i(BlockState p_196446_1_) {
        return this.func_220275_r(p_196446_1_) > 0;
     }
-@@ -246,8 +247,8 @@
+ 
+    public void func_220082_b(BlockState p_220082_1_, World p_220082_2_, BlockPos p_220082_3_, BlockState p_220082_4_, boolean p_220082_5_) {
+       if (p_220082_4_.func_177230_c() != p_220082_1_.func_177230_c()) {
+-         if (p_220082_2_.field_73011_w.func_186058_p() != DimensionType.field_223227_a_ && p_220082_2_.field_73011_w.func_186058_p() != DimensionType.field_223228_b_ || !((NetherPortalBlock)Blocks.field_150427_aO).func_176548_d(p_220082_2_, p_220082_3_)) {
++         // CraftBukkit - getType()
++         if (p_220082_2_.field_73011_w.func_186058_p().getType() != DimensionType.field_223227_a_ && p_220082_2_.field_73011_w.func_186058_p().getType() != DimensionType.field_223228_b_ || !((NetherPortalBlock)Blocks.field_150427_aO).func_176548_d(p_220082_2_, p_220082_3_)) {
+             if (!p_220082_1_.func_196955_c(p_220082_2_, p_220082_3_)) {
+-               p_220082_2_.func_217377_a(p_220082_3_, false);
++               this.fireExtinguished(p_220082_2_, p_220082_3_); // CraftBukkit - fuel block broke
+             } else {
+                p_220082_2_.func_205220_G_().func_205360_a(p_220082_3_, this, this.func_149738_a(p_220082_2_) + p_220082_2_.field_73012_v.nextInt(10));
+             }
+@@ -246,8 +282,8 @@
  
        BlockPos blockpos = p_180655_3_.func_177977_b();
        BlockState blockstate = p_180655_2_.func_180495_p(blockpos);
@@ -131,7 +223,7 @@
              for(int j = 0; j < 2; ++j) {
                 double d3 = (double)p_180655_3_.func_177958_n() + p_180655_4_.nextDouble() * (double)0.1F;
                 double d8 = (double)p_180655_3_.func_177956_o() + p_180655_4_.nextDouble();
-@@ -256,7 +257,7 @@
+@@ -256,7 +292,7 @@
              }
           }
  
@@ -140,7 +232,7 @@
              for(int k = 0; k < 2; ++k) {
                 double d4 = (double)(p_180655_3_.func_177958_n() + 1) - p_180655_4_.nextDouble() * (double)0.1F;
                 double d9 = (double)p_180655_3_.func_177956_o() + p_180655_4_.nextDouble();
-@@ -265,7 +266,7 @@
+@@ -265,7 +301,7 @@
              }
           }
  
@@ -149,7 +241,7 @@
              for(int l = 0; l < 2; ++l) {
                 double d5 = (double)p_180655_3_.func_177958_n() + p_180655_4_.nextDouble();
                 double d10 = (double)p_180655_3_.func_177956_o() + p_180655_4_.nextDouble();
-@@ -274,7 +275,7 @@
+@@ -274,7 +310,7 @@
              }
           }
  
@@ -158,7 +250,7 @@
              for(int i1 = 0; i1 < 2; ++i1) {
                 double d6 = (double)p_180655_3_.func_177958_n() + p_180655_4_.nextDouble();
                 double d11 = (double)p_180655_3_.func_177956_o() + p_180655_4_.nextDouble();
-@@ -283,7 +284,7 @@
+@@ -283,7 +319,7 @@
              }
           }
  
@@ -167,7 +259,7 @@
              for(int j1 = 0; j1 < 2; ++j1) {
                 double d7 = (double)p_180655_3_.func_177958_n() + p_180655_4_.nextDouble();
                 double d12 = (double)(p_180655_3_.func_177956_o() + 1) - p_180655_4_.nextDouble() * (double)0.1F;
-@@ -307,10 +308,23 @@
+@@ -307,10 +343,23 @@
     }
  
     public void func_180686_a(Block p_180686_1_, int p_180686_2_, int p_180686_3_) {
@@ -191,3 +283,16 @@
     public static void func_149843_e() {
        FireBlock fireblock = (FireBlock)Blocks.field_150480_ab;
        fireblock.func_180686_a(Blocks.field_196662_n, 5, 20);
+@@ -441,4 +490,12 @@
+       fireblock.func_180686_a(Blocks.field_226906_mb_, 5, 20);
+       fireblock.func_180686_a(Blocks.field_226905_ma_, 30, 20);
+    }
++
++   // CraftBukkit start
++   private void fireExtinguished(IWorld world, BlockPos position) {
++      if (!CraftEventFactory.callBlockFadeEvent(world, position, Blocks.field_150350_a.func_176223_P()).isCancelled()) {
++         world.func_217377_a(position, false);
++      }
++   }
++   // CraftBukkit end
+ }

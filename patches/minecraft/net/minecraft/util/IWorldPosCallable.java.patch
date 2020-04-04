@@ -1,0 +1,41 @@
+--- a/net/minecraft/util/IWorldPosCallable.java
++++ b/net/minecraft/util/IWorldPosCallable.java
+@@ -5,6 +5,7 @@
+ import java.util.function.BiFunction;
+ import net.minecraft.util.math.BlockPos;
+ import net.minecraft.world.World;
++import org.bukkit.Location;
+ 
+ public interface IWorldPosCallable {
+    IWorldPosCallable field_221489_a = new IWorldPosCallable() {
+@@ -13,8 +14,30 @@
+       }
+    };
+ 
++   default World getWorld() {
++      throw new UnsupportedOperationException("Not supported yet.");
++   }
++
++   default BlockPos getPosition() {
++      throw new UnsupportedOperationException("Not supported yet.");
++   }
++
++   default Location getLocation() {
++      return new Location(this.getWorld().getWorldCB(), this.getPosition().func_177958_n(), this.getPosition().func_177956_o(), this.getPosition().func_177952_p());
++   }
++
+    static IWorldPosCallable func_221488_a(final World p_221488_0_, final BlockPos p_221488_1_) {
+       return new IWorldPosCallable() {
++         @Override
++         public World getWorld() {
++            return p_221488_0_;
++         }
++
++         @Override
++         public BlockPos getPosition() {
++            return p_221488_1_;
++         }
++
+          public <T> Optional<T> func_221484_a(BiFunction<World, BlockPos, T> p_221484_1_) {
+             return Optional.of(p_221484_1_.apply(p_221488_0_, p_221488_1_));
+          }
