@@ -22,6 +22,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.util.StringUtil;
 import red.mohist.Mohist;
 import red.mohist.command.DumpCommand;
+import red.mohist.command.EntityCommand;
 import red.mohist.command.MohistCommand;
 import red.mohist.command.TileEntityCommand;
 
@@ -43,6 +44,7 @@ public class SimpleCommandMap implements CommandMap {
         // Mohist
         register("mohist", new MohistCommand("mohist"));
         register("dump", new DumpCommand("dump"));
+        register("entity", new EntityCommand("entity"));
         register("tileentity", new TileEntityCommand("tileentity"));
     }
 

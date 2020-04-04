@@ -2,27 +2,27 @@ package red.mohist.configuration;
 
 import net.minecraft.server.MinecraftServer;
 import org.bukkit.configuration.file.YamlConfiguration;
-import red.mohist.common.cache.TileEntityCache;
-import red.mohist.util.TileEntity;
+import red.mohist.common.cache.EntityCache;
+import red.mohist.util.Entity;
 
-public class TileEntityConfig extends ConfigBase
+public class EntityConfig extends ConfigBase
 {
-    private final String HEADER = "This is the main configuration file for TileEntities.\n"
+    private final String HEADER = "This is the main configuration file for Entities.\n"
             + "Use carefully, it may break some mechanics";
 
-    public static TileEntityConfig instance;
-    public final BoolSetting skipTileEntityTicks = new BoolSetting(this, "settings.skip-tileentity-ticks", true, "If enabled, turns on tileentity tick skip feature.");
+    public static EntityConfig instance;
+    public final BoolSetting skipEntityTicks = new BoolSetting(this, "settings.skip-entity-ticks", true, "If enabled, turns on entity tick skip feature.");
 
-    public TileEntityConfig()
+    public EntityConfig()
     {
-        super("tileentity.yml");
+        super("entity.yml");
         init();
         instance = this;
     }
 
     public void init()
     {
-        settings.put(skipTileEntityTicks.path, skipTileEntityTicks);
+        settings.put(skipEntityTicks.path, skipEntityTicks);
         load();
     }
 
@@ -46,10 +46,9 @@ public class TileEntityConfig extends ConfigBase
             version = getInt("config-version", 1);
             set("config-version", 1);
 
-            for (TileEntityCache teCache : TileEntity.tileEntityCache.values())
+            for (EntityCache cache : Entity.entityCache.values())
             {
-                teCache.tickNoPlayers = config.getBoolean( "world-settings." + teCache.worldName + "." + teCache.configPath + ".tick-no-players", config.getBoolean( "world-settings.default." + teCache.configPath + ".tick-no-players") );
-                teCache.tickInterval = config.getInt( "world-settings." + teCache.worldName + "." + teCache.configPath + ".tick-interval", config.getInt( "world-settings.default." + teCache.configPath + ".tick-interval") );
+                cache.tickInterval = config.getInt( "world-settings." + cache.worldName + "." + cache.configPath + ".tick-interval", config.getInt( "world-settings.default." + cache.configPath + ".tick-interval") );
             }
             this.save();
         }
