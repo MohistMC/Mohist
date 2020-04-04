@@ -13,6 +13,7 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.Arrays;
+import red.mohist.util.i18n.Message;
 
 public class AutoDeletePlugins {
 

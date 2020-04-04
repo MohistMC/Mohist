@@ -5,6 +5,7 @@ import java.io.FileFilter;
 import java.util.Enumeration;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
+import red.mohist.util.i18n.Message;
 
 /**
  * @author Mgazul
