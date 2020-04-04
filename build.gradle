@@ -979,35 +979,6 @@ project(':forge') {
         t.finalizedBy(tasks.getByName("sign${t.name.capitalize()}"))
     }
     
-    task makeMdk(type: Zip) {
-        baseName = project.name
-        classifier = 'mdk'
-        version = project.version
-        destinationDir = file('build/libs')
-
-        from rootProject.file('gradlew')
-        from rootProject.file('gradlew.bat')
-        from extraTxts
-        from(rootProject.file('gradle/')){
-            into('gradle/')
-        }
-        from(rootProject.file('mdk/')){
-            rootProject.file('mdk/gitignore.txt').eachLine{
-                if (!it.trim().isEmpty() && !it.trim().startsWith('#'))
-                    exclude it
-            }
-            filter(ReplaceTokens, tokens: [
-                FORGE_VERSION: project.version,
-                FORGE_GROUP: project.group,
-                FORGE_NAME: project.name,
-                MC_VERSION: MC_VERSION,
-                MAPPING_CHANNEL: MAPPING_CHANNEL,
-                MAPPING_VERSION: MAPPING_VERSION
-            ])
-            rename 'gitignore\\.txt', '.gitignore'
-        }
-    }
-    
     userdevConfig {
         def artifacts = getArtifacts(project, project.configurations.installer, true)
         artifacts.each { key, lib ->
