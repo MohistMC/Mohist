@@ -15,10 +15,8 @@ public class ClassJarUtil {
             if(f.getJarEntry(classname.replaceAll("\\.", "/") + ".class") != null) {
                 f.close();
                 file.delete();
-                if(!implementation)
-                    System.out.println(Message.getFormatString("update.deleting", new Object[]{file.getName(), libDir}));
-                else
-                    System.out.println(Message.getFormatString("update.implementation", new Object[]{file.getName()}));
+                if(!implementation) System.out.println(Message.getFormatString("update.deleting", new Object[]{file.getName(), libDir}));
+                else System.out.println(Message.getFormatString("update.implementation", new Object[]{file.getName()}));
                 break;
             }
         }

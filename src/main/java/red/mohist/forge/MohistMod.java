@@ -42,7 +42,6 @@ public class MohistMod extends DummyModContainer {
                 "  \"dependencies\": []\n" +
                 "}\n" +
                 "]";
-        InputStream inputStrem = new ByteArrayInputStream(info.getBytes());
-        return inputStrem;
+        return new ByteArrayInputStream(info.getBytes());
     }
 }

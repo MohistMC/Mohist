@@ -2,16 +2,11 @@ package red.mohist.configuration;
 
 import red.mohist.Mohist;
 import red.mohist.util.FileUtil;
-import red.mohist.util.IOUtil;
-import red.mohist.util.Number;
+import red.mohist.util.NumberUtils;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
-import java.net.URLConnection;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 
@@ -42,35 +37,13 @@ public class MohistConfigUtil {
         return defaultreturn;
     }
 
-    public static String getUrlString(String urlkey, String defaultreturn) {
-        try {
-            URL url = new URL(urlkey);
-            URLConnection conn = url.openConnection();
-            conn.setConnectTimeout(10*1000);
-            conn.setReadTimeout(10*1000);
-            InputStream is = conn.getInputStream();
-
-            String s = IOUtil.readContent(is);
-            is.close();
-            return s;
-
-        } catch (IOException e) {
-            System.out.println("");
-        }
-        return defaultreturn;
-    }
-
     public static boolean getBoolean(File f, String key) {
-        String s = getString(f, key, "true");
-        if (s.equals("false")) {
-            return false;
-        }
-        return true;
+        return !getString(f, key, "true").equals("false");
     }
 
     public static int getInt(File f, String key, String defaultreturn) {
         String s = getString(f, key, defaultreturn);
-        if (Number.isInteger(s)) {
+        if (NumberUtils.isInteger(s)) {
             return Integer.parseInt(s);
         }
         return Integer.parseInt(defaultreturn);
@@ -82,9 +55,7 @@ public class MohistConfigUtil {
             if (!configfile.exists()) {
                 configfile.mkdirs();
 
-                InputStream jarin = Mohist.class.getClassLoader().getResourceAsStream("configurations/mohist.yml");
-                Path currentDir = Paths.get("mohist-config", "mohist.yml");
-                Files.copy(jarin, currentDir, StandardCopyOption.REPLACE_EXISTING);
+                Files.copy(Mohist.class.getClassLoader().getResourceAsStream("configurations/mohist.yml"), Paths.get("mohist-config", "mohist.yml"), StandardCopyOption.REPLACE_EXISTING);
             }
         } catch (Exception e) {
             System.out.println("File copy exception!");

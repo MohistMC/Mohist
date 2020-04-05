@@ -10,9 +10,7 @@ public class MohistForgeUtils {
         String[] mod = mbl.split(";");
         Collection list = java.util.Arrays.asList(mod);
         for (Object str : list) {
-            if(str.toString().length() > 0 && modslist.contains(str.toString())){
-                return true;
-            }
+            if(str.toString().length() > 0 && modslist.contains(str.toString())) return true;
         }
         return false;
     }
