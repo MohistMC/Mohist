@@ -1,11 +1,14 @@
 package red.mohist.configuration;
 
 import red.mohist.Mohist;
-import red.mohist.util.FileUtil;
+import red.mohist.util.IOUtil;
 import red.mohist.util.NumberUtils;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
@@ -24,7 +27,7 @@ public class MohistConfigUtil {
 
     public static String getString(File f, String key, String defaultreturn) {
         try {
-            String s = FileUtil.readContent(f);
+            String s = IOUtil.readContent(new InputStreamReader(new FileInputStream(f), StandardCharsets.UTF_8));
             if (s.contains(key)) {
                 String string = s.substring(s.indexOf(key));
                 String s1 = (string.substring(string.indexOf(": ") + 2));
@@ -54,7 +57,6 @@ public class MohistConfigUtil {
             File configfile = new File("mohist-config");
             if (!configfile.exists()) {
                 configfile.mkdirs();
-
                 Files.copy(Mohist.class.getClassLoader().getResourceAsStream("configurations/mohist.yml"), Paths.get("mohist-config", "mohist.yml"), StandardCopyOption.REPLACE_EXISTING);
             }
         } catch (Exception e) {

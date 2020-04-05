@@ -23,13 +23,8 @@ public class Entity {
 
     public static boolean canEntityTick(net.minecraft.entity.Entity entity, World world)
     {
-        if (entity == null) {
-            return false;
-        }
-
-        if (world.entityConfig == null) {
-            return true;
-        }
+        if (entity == null) return false;
+        if (world.entityConfig == null) return true;
 
         if (MinecraftServer.entityConfig.skipEntityTicks.getValue())
         {
@@ -45,11 +40,7 @@ public class Entity {
             // @TODO not implemented yet
 
             // Skip tick interval
-            if (eCache.tickInterval > 0 && (world.getWorldInfo().getWorldTotalTime() % eCache.tickInterval == 0L))
-            {
-                return true;
-            }
-
+            if (eCache.tickInterval > 0 && (world.getWorldInfo().getWorldTotalTime() % eCache.tickInterval == 0L)) return true;
             return false;
         }
 
