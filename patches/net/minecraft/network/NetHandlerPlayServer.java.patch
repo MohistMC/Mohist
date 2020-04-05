@@ -1105,7 +1105,7 @@
 +            // Mohist end
 +            Player player = this.getPlayer();
 +            AsyncPlayerChatEvent event = new AsyncPlayerChatEvent(async, player, s, new LazyPlayerSet(serverController));
-+            event.setCancelled(itextcomponent == null);
++            // event.setCancelled(itextcomponent == null);
 +            this.server.getPluginManager().callEvent(event);
 +
 +            if (PlayerChatEvent.getHandlerList().getRegisteredListeners().length != 0) {
