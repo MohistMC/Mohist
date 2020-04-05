@@ -1,6 +1,14 @@
 --- a/net/minecraft/block/RedstoneWireBlock.java
 +++ b/net/minecraft/block/RedstoneWireBlock.java
-@@ -123,7 +123,7 @@
+@@ -30,6 +30,7 @@
+ import net.minecraft.world.World;
+ import net.minecraftforge.api.distmarker.Dist;
+ import net.minecraftforge.api.distmarker.OnlyIn;
++import org.bukkit.event.block.BlockRedstoneEvent;
+ 
+ public class RedstoneWireBlock extends Block {
+    public static final EnumProperty<RedstoneSide> field_176348_a = BlockStateProperties.field_208160_M;
+@@ -123,7 +124,7 @@
        BlockState blockstate1 = p_208074_1_.func_180495_p(blockpos1);
        if (!blockstate1.func_215686_e(p_208074_1_, blockpos1)) {
           boolean flag = blockstate.func_224755_d(p_208074_1_, blockpos, Direction.UP) || blockstate.func_177230_c() == Blocks.field_150438_bZ;
@@ -9,7 +17,7 @@
              if (blockstate.func_224756_o(p_208074_1_, blockpos)) {
                 return RedstoneSide.UP;
              }
-@@ -132,7 +132,7 @@
+@@ -132,7 +133,7 @@
           }
        }
  
@@ -18,7 +26,23 @@
     }
  
     public boolean func_196260_a(BlockState p_196260_1_, IWorldReader p_196260_2_, BlockPos p_196260_3_) {
-@@ -257,7 +257,7 @@
+@@ -178,8 +179,14 @@
+       if (j > l) {
+          l = j;
+       }
+-
++      // CraftBukkit start
+       if (i != l) {
++         BlockRedstoneEvent event = new BlockRedstoneEvent(p_212568_1_.getWorldCB().getBlockAt(p_212568_2_.func_177958_n(), p_212568_2_.func_177956_o(), p_212568_2_.func_177952_p()), i, l);
++         p_212568_1_.getServerCB().getPluginManager().callEvent(event);
++         l = event.getNewCurrent();
++      }
++      // CraftBukkit end
++      if (i != l) {
+          p_212568_3_ = p_212568_3_.func_206870_a(field_176351_O, Integer.valueOf(l));
+          if (p_212568_1_.func_180495_p(p_212568_2_) == blockstate) {
+             p_212568_1_.func_180501_a(p_212568_2_, p_212568_3_, 2);
+@@ -257,7 +264,7 @@
        }
     }
  
@@ -27,7 +51,7 @@
        if (p_212567_2_.func_177230_c() != this) {
           return p_212567_1_;
        } else {
-@@ -315,26 +315,18 @@
+@@ -315,26 +322,18 @@
        boolean flag = blockstate.func_215686_e(p_176339_1_, blockpos);
        BlockPos blockpos1 = p_176339_2_.func_177984_a();
        boolean flag1 = p_176339_1_.func_180495_p(blockpos1).func_215686_e(p_176339_1_, blockpos1);
@@ -58,7 +82,7 @@
        Block block = p_176343_0_.func_177230_c();
        if (block == Blocks.field_150488_af) {
           return true;
-@@ -344,7 +336,7 @@
+@@ -344,7 +343,7 @@
        } else if (Blocks.field_190976_dk == p_176343_0_.func_177230_c()) {
           return p_176343_1_ == p_176343_0_.func_177229_b(ObserverBlock.field_176387_N);
        } else {
