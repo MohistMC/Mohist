@@ -90,7 +90,7 @@
 +   // CraftBukkit start
 +   public int expToDrop;
 +   public int maxAirTicks = 300;
-+   boolean forceDrops;
++   public boolean forceDrops;
 +   ArrayList<org.bukkit.inventory.ItemStack> drops = new ArrayList<org.bukkit.inventory.ItemStack>();
 +   public org.bukkit.craftbukkit.attribute.CraftAttributeMap craftAttributes;
 +   public boolean collides = true;

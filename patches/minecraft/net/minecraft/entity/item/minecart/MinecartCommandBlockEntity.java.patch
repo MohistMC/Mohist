@@ -20,14 +20,16 @@
        this.field_145824_a.func_175574_a(p_184230_1_);
        return true;
     }
-@@ -117,5 +119,10 @@
+@@ -117,5 +119,12 @@
        public CommandSource func_195042_h() {
           return new CommandSource(this, MinecartCommandBlockEntity.this.func_213303_ch(), MinecartCommandBlockEntity.this.func_189653_aC(), this.func_195043_d(), 2, this.func_207404_l().getString(), MinecartCommandBlockEntity.this.func_145748_c_(), this.func_195043_d().func_73046_m(), MinecartCommandBlockEntity.this);
        }
 +
++      // CraftBukkit start
 +      @Override
 +      public CommandSender getBukkitSender(CommandSource p0) {
-+         return null;
++         return (org.bukkit.craftbukkit.entity.CraftMinecartCommand) MinecartCommandBlockEntity.this.getBukkitEntity();
 +      }
++      // CraftBukkit end
     }
  }

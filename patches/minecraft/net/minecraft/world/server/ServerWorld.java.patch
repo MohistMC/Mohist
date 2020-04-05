@@ -1,11 +1,12 @@
 --- a/net/minecraft/world/server/ServerWorld.java
 +++ b/net/minecraft/world/server/ServerWorld.java
-@@ -136,11 +136,13 @@
+@@ -136,11 +136,14 @@
  import net.minecraftforge.api.distmarker.OnlyIn;
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
 +import org.bukkit.craftbukkit.event.CraftEventFactory;
 +import org.bukkit.event.entity.CreatureSpawnEvent;
++import org.bukkit.event.weather.LightningStrikeEvent;
  
 -public class ServerWorld extends World {
 +public class ServerWorld extends World implements net.minecraftforge.common.extensions.IForgeWorldServer {
@@ -16,7 +17,7 @@
     private final Map<UUID, Entity> field_175741_N = Maps.newHashMap();
     private final Queue<Entity> field_217499_z = Queues.newArrayDeque();
     private final List<ServerPlayerEntity> field_217491_A = Lists.newArrayList();
-@@ -163,10 +165,13 @@
+@@ -163,10 +166,13 @@
     private boolean field_211159_Q;
     @Nullable
     private final WanderingTraderSpawner field_217496_L;
@@ -31,7 +32,7 @@
              return p_i50703_1_.func_71218_a(DimensionType.field_223227_a_).func_217481_x();
           });
        }, p_i50703_6_, false);
-@@ -184,6 +189,7 @@
+@@ -184,6 +190,7 @@
        }
  
        this.field_217496_L = this.field_73011_w.func_186058_p() == DimensionType.field_223227_a_ ? new WanderingTraderSpawner(this) : null;
@@ -39,7 +40,7 @@
     }
  
     public Biome func_225604_a_(int p_225604_1_, int p_225604_2_, int p_225604_3_) {
-@@ -197,6 +203,7 @@
+@@ -197,6 +204,7 @@
        this.func_175723_af().func_212673_r();
        iprofiler.func_219895_b("weather");
        boolean flag = this.func_72896_J();
@@ -47,7 +48,7 @@
        if (this.field_73011_w.func_191066_m()) {
           if (this.func_82736_K().func_223586_b(GameRules.field_223617_t)) {
              int i = this.field_72986_A.func_176133_A();
-@@ -258,6 +265,7 @@
+@@ -258,6 +266,7 @@
  
           this.field_73004_o = MathHelper.func_76131_a(this.field_73004_o, 0.0F, 1.0F);
        }
@@ -55,7 +56,7 @@
  
        if (this.field_73003_n != this.field_73004_o) {
           this.field_73061_a.func_184103_al().func_148537_a(new SChangeGameStatePacket(7, this.field_73004_o), this.field_73011_w.func_186058_p());
-@@ -267,15 +275,19 @@
+@@ -267,15 +276,19 @@
           this.field_73061_a.func_184103_al().func_148537_a(new SChangeGameStatePacket(8, this.field_73017_q), this.field_73011_w.func_186058_p());
        }
  
@@ -79,7 +80,7 @@
        }
  
        if (this.func_72912_H().func_76093_s() && this.func_175659_aa() != Difficulty.HARD) {
-@@ -287,8 +299,8 @@
+@@ -287,8 +300,8 @@
        })) {
           this.field_73068_P = false;
           if (this.func_82736_K().func_223586_b(GameRules.field_223607_j)) {
@@ -90,7 +91,7 @@
           }
  
           this.func_229856_ab_();
-@@ -330,6 +342,7 @@
+@@ -330,6 +343,7 @@
              Entity entity = this.field_217497_w.get(i1);
              this.func_217390_a((p_229858_0_) -> {
                 ++p_229858_0_.field_70173_aa;
@@ -98,7 +99,7 @@
                 p_229858_0_.func_70071_h_();
              }, entity);
              if (entity.field_70128_L) {
-@@ -395,7 +408,7 @@
+@@ -395,7 +409,7 @@
              if (entity2.field_70128_L) {
                 this.func_217454_n(entity2);
                 objectiterator.remove();
@@ -107,7 +108,7 @@
              }
  
              iprofiler.func_76319_b();
-@@ -418,7 +431,7 @@
+@@ -418,7 +432,7 @@
        int j = chunkpos.func_180333_d();
        IProfiler iprofiler = this.func_217381_Z();
        iprofiler.func_76320_a("thunder");
@@ -116,7 +117,7 @@
           BlockPos blockpos = this.func_175736_a(this.func_217383_a(i, 0, j, 15));
           if (this.func_175727_C(blockpos)) {
              DifficultyInstance difficultyinstance = this.func_175649_E(blockpos);
-@@ -436,10 +449,11 @@
+@@ -436,10 +450,11 @@
        }
  
        iprofiler.func_219895_b("iceandsnow");
@@ -129,7 +130,7 @@
           if (biome.func_201848_a(this, blockpos3)) {
              this.func_175656_a(blockpos3, Blocks.field_150432_aD.func_176223_P());
           }
-@@ -526,10 +540,7 @@
+@@ -526,10 +541,7 @@
     }
  
     private void func_73051_P() {
@@ -141,7 +142,7 @@
     }
  
     @OnlyIn(Dist.CLIENT)
-@@ -542,7 +553,7 @@
+@@ -542,7 +554,7 @@
        int j = this.field_72986_A.func_76074_e();
        int k = 0;
  
@@ -150,7 +151,7 @@
           i += this.field_73012_v.nextInt(8) - this.field_73012_v.nextInt(8);
           j += this.field_73012_v.nextInt(8) - this.field_73012_v.nextInt(8);
           ++k;
-@@ -584,8 +595,9 @@
+@@ -584,8 +596,9 @@
              ++p_217479_1_.field_70173_aa;
              IProfiler iprofiler = this.func_217381_Z();
              iprofiler.func_194340_a(() -> {
@@ -161,7 +162,7 @@
              iprofiler.func_230035_c_("tickNonPassenger");
              p_217479_1_.func_70071_h_();
              iprofiler.func_76319_b();
-@@ -652,6 +664,11 @@
+@@ -652,6 +665,11 @@
     }
  
     public boolean func_175660_a(PlayerEntity p_175660_1_, BlockPos p_175660_2_) {
@@ -173,7 +174,7 @@
        return !this.field_73061_a.func_175579_a(this, p_175660_2_, p_175660_1_) && this.func_175723_af().func_177746_a(p_175660_2_);
     }
  
-@@ -661,6 +678,7 @@
+@@ -661,6 +679,7 @@
        } else if (this.field_72986_A.func_76067_t() == WorldType.field_180272_g) {
           this.field_72986_A.func_176143_a(BlockPos.field_177992_a.func_177984_a());
        } else {
@@ -181,7 +182,7 @@
           BiomeProvider biomeprovider = this.func_72863_F().func_201711_g().func_202090_b();
           List<Biome> list = biomeprovider.func_76932_a();
           Random random = new Random(this.func_72905_C());
-@@ -734,6 +752,7 @@
+@@ -734,6 +753,7 @@
              p_217445_1_.func_200209_c(new TranslationTextComponent("menu.savingChunks"));
           }
  
@@ -189,7 +190,7 @@
           serverchunkprovider.func_217210_a(p_217445_2_);
        }
     }
-@@ -809,7 +828,7 @@
+@@ -809,7 +829,7 @@
              }
           }
  
@@ -198,7 +199,7 @@
           if (entityclassification != EntityClassification.MISC && this.func_72863_F().func_223435_b(entity)) {
              object2intmap.mergeInt(entityclassification, 1, Integer::sum);
           }
-@@ -817,13 +836,25 @@
+@@ -817,13 +837,25 @@
     }
  
     public boolean func_217376_c(Entity p_217376_1_) {
@@ -226,7 +227,7 @@
     public void func_217460_e(Entity p_217460_1_) {
        boolean flag = p_217460_1_.field_98038_p;
        p_217460_1_.field_98038_p = true;
-@@ -851,6 +882,7 @@
+@@ -851,6 +883,7 @@
     }
  
     private void func_217448_f(ServerPlayerEntity p_217448_1_) {
@@ -234,7 +235,7 @@
        Entity entity = this.field_175741_N.get(p_217448_1_.func_110124_au());
        if (entity != null) {
           field_147491_a.warn("Force-added player with duplicate UUID {}", (Object)p_217448_1_.func_110124_au().toString());
-@@ -869,18 +901,23 @@
+@@ -869,18 +902,23 @@
     }
  
     private boolean func_72838_d(Entity p_72838_1_) {
@@ -264,7 +265,7 @@
              return true;
           }
        }
-@@ -890,6 +927,7 @@
+@@ -890,6 +928,7 @@
        if (this.func_217478_l(p_217440_1_)) {
           return false;
        } else {
@@ -272,7 +273,7 @@
           this.func_217465_m(p_217440_1_);
           return true;
        }
-@@ -925,12 +963,17 @@
+@@ -925,12 +964,17 @@
  
     }
  
@@ -291,7 +292,7 @@
  
        this.field_175741_N.remove(p_217484_1_.func_110124_au());
        this.func_72863_F().func_217226_b(p_217484_1_);
-@@ -944,6 +987,7 @@
+@@ -944,6 +988,7 @@
           this.field_217495_I.remove(((MobEntity)p_217484_1_).func_70661_as());
        }
  
@@ -299,7 +300,7 @@
     }
  
     private void func_217465_m(Entity p_217465_1_) {
-@@ -964,15 +1008,19 @@
+@@ -964,15 +1009,19 @@
           }
        }
  
@@ -320,7 +321,7 @@
        }
     }
  
-@@ -985,8 +1033,11 @@
+@@ -985,8 +1034,11 @@
     }
  
     public void func_217434_e(ServerPlayerEntity p_217434_1_) {
@@ -334,7 +335,18 @@
        this.func_72854_c();
     }
  
-@@ -1010,10 +1061,20 @@
+@@ -995,6 +1047,10 @@
+       this.field_73061_a.func_184103_al().func_148543_a((PlayerEntity)null, p_217468_1_.func_226277_ct_(), p_217468_1_.func_226278_cu_(), p_217468_1_.func_226281_cx_(), 512.0D, this.field_73011_w.func_186058_p(), new SSpawnGlobalEntityPacket(p_217468_1_));
+    }
+ 
++   public void strikeLightning(LightningBoltEntity entitylightning, LightningStrikeEvent.Cause cause) {
++
++   }
++
+    public void func_175715_c(int p_175715_1_, BlockPos p_175715_2_, int p_175715_3_) {
+       for(ServerPlayerEntity serverplayerentity : this.field_73061_a.func_184103_al().func_181057_v()) {
+          if (serverplayerentity != null && serverplayerentity.field_70170_p == this && serverplayerentity.func_145782_y() != p_175715_1_) {
+@@ -1010,10 +1066,20 @@
     }
  
     public void func_184148_a(@Nullable PlayerEntity p_184148_1_, double p_184148_2_, double p_184148_4_, double p_184148_6_, SoundEvent p_184148_8_, SoundCategory p_184148_9_, float p_184148_10_, float p_184148_11_) {
@@ -355,7 +367,7 @@
        this.field_73061_a.func_184103_al().func_148543_a(p_217384_1_, p_217384_2_.func_226277_ct_(), p_217384_2_.func_226278_cu_(), p_217384_2_.func_226281_cx_(), p_217384_5_ > 1.0F ? (double)(16.0F * p_217384_5_) : 16.0D, this.field_73011_w.func_186058_p(), new SSpawnMovingSoundEffectPacket(p_217384_3_, p_217384_4_, p_217384_2_, p_217384_5_, p_217384_6_));
     }
  
-@@ -1049,6 +1110,7 @@
+@@ -1049,6 +1115,7 @@
  
     public Explosion func_217401_a(@Nullable Entity p_217401_1_, @Nullable DamageSource p_217401_2_, double p_217401_3_, double p_217401_5_, double p_217401_7_, float p_217401_9_, boolean p_217401_10_, Explosion.Mode p_217401_11_) {
        Explosion explosion = new Explosion(this, p_217401_1_, p_217401_3_, p_217401_5_, p_217401_7_, p_217401_9_, p_217401_10_, p_217401_11_);
@@ -363,7 +375,7 @@
        if (p_217401_2_ != null) {
           explosion.func_199592_a(p_217401_2_);
        }
-@@ -1377,4 +1439,18 @@
+@@ -1377,4 +1444,18 @@
           return p_229854_1_.func_175898_b(p_229855_1_.func_180328_a());
        });
     }

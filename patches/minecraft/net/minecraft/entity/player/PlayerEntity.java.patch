@@ -31,6 +31,15 @@
     public static final EntitySize field_213835_bs = EntitySize.func_220314_b(0.6F, 1.8F);
     private static final Map<Pose, EntitySize> field_213836_b = ImmutableMap.<Pose, EntitySize>builder().put(Pose.STANDING, field_213835_bs).put(Pose.SLEEPING, field_213377_as).put(Pose.FALL_FLYING, EntitySize.func_220314_b(0.6F, 0.6F)).put(Pose.SWIMMING, EntitySize.func_220314_b(0.6F, 0.6F)).put(Pose.SPIN_ATTACK, EntitySize.func_220314_b(0.6F, 0.6F)).put(Pose.CROUCHING, EntitySize.func_220314_b(0.6F, 1.5F)).put(Pose.DYING, EntitySize.func_220311_c(0.2F, 0.2F)).build();
     private static final DataParameter<Float> field_184829_a = EntityDataManager.func_187226_a(PlayerEntity.class, DataSerializers.field_187193_c);
+@@ -119,7 +121,7 @@
+    protected static final DataParameter<CompoundNBT> field_192033_bu = EntityDataManager.func_187226_a(PlayerEntity.class, DataSerializers.field_192734_n);
+    private long field_223730_e;
+    public final PlayerInventory field_71071_by = new PlayerInventory(this);
+-   protected EnderChestInventory field_71078_a = new EnderChestInventory();
++   protected EnderChestInventory field_71078_a = new EnderChestInventory(this);
+    public final PlayerContainer field_71069_bz;
+    public Container field_71070_bA;
+    protected FoodStats field_71100_bB = new FoodStats();
 @@ -133,7 +135,7 @@
     public double field_71094_bP;
     public double field_71095_bQ;

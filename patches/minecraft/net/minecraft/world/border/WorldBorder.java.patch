@@ -1,6 +1,26 @@
 --- a/net/minecraft/world/border/WorldBorder.java
 +++ b/net/minecraft/world/border/WorldBorder.java
-@@ -134,6 +134,10 @@
+@@ -11,6 +11,7 @@
+ import net.minecraft.util.math.shapes.IBooleanFunction;
+ import net.minecraft.util.math.shapes.VoxelShape;
+ import net.minecraft.util.math.shapes.VoxelShapes;
++import net.minecraft.world.server.ServerWorld;
+ import net.minecraft.world.storage.WorldInfo;
+ import net.minecraftforge.api.distmarker.Dist;
+ import net.minecraftforge.api.distmarker.OnlyIn;
+@@ -25,6 +26,7 @@
+    private double field_177757_c;
+    private int field_177762_h = 29999984;
+    private WorldBorder.IBorderInfo field_212674_i = new WorldBorder.StationaryBorderInfo(6.0E7D);
++   public ServerWorld world; // CraftBukkit
+ 
+    public boolean func_177746_a(BlockPos p_177746_1_) {
+       return (double)(p_177746_1_.func_177958_n() + 1) > this.func_177726_b() && (double)p_177746_1_.func_177958_n() < this.func_177728_d() && (double)(p_177746_1_.func_177952_p() + 1) > this.func_177736_c() && (double)p_177746_1_.func_177952_p() < this.func_177733_e();
+@@ -131,9 +133,14 @@
+    }
+ 
+    public void func_177737_a(IBorderListener p_177737_1_) {
++      if (this.field_177758_a.contains(p_177737_1_)) return; // CraftBukkit
        this.field_177758_a.add(p_177737_1_);
     }
  

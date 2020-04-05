@@ -1,0 +1,19 @@
+--- a/net/minecraft/block/SilverfishBlock.java
++++ b/net/minecraft/block/SilverfishBlock.java
+@@ -10,6 +10,7 @@
+ import net.minecraft.util.math.BlockPos;
+ import net.minecraft.world.GameRules;
+ import net.minecraft.world.World;
++import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
+ 
+ public class SilverfishBlock extends Block {
+    private final Block field_196469_a;
+@@ -34,7 +35,7 @@
+       if (!p_220062_2_.field_72995_K && p_220062_2_.func_82736_K().func_223586_b(GameRules.field_223603_f) && EnchantmentHelper.func_77506_a(Enchantments.field_185306_r, p_220062_4_) == 0) {
+          SilverfishEntity silverfishentity = EntityType.field_200740_af.func_200721_a(p_220062_2_);
+          silverfishentity.func_70012_b((double)p_220062_3_.func_177958_n() + 0.5D, (double)p_220062_3_.func_177956_o(), (double)p_220062_3_.func_177952_p() + 0.5D, 0.0F, 0.0F);
+-         p_220062_2_.func_217376_c(silverfishentity);
++         p_220062_2_.addEntity(silverfishentity, SpawnReason.SILVERFISH_BLOCK); // CraftBukkit - add SpawnReason
+          silverfishentity.func_70656_aK();
+       }
+ 

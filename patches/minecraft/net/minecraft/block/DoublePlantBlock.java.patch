@@ -17,3 +17,15 @@
           return blockstate.func_177230_c() == this && blockstate.func_177229_b(field_176492_b) == DoubleBlockHalf.LOWER;
        }
     }
+@@ -65,6 +66,11 @@
+    }
+ 
+    public void func_176208_a(World p_176208_1_, BlockPos p_176208_2_, BlockState p_176208_3_, PlayerEntity p_176208_4_) {
++      // CraftBukkit start
++      if (org.bukkit.craftbukkit.event.CraftEventFactory.callBlockPhysicsEvent(p_176208_1_, p_176208_2_).isCancelled()) {
++         return;
++      }
++      // CraftBukkit end
+       DoubleBlockHalf doubleblockhalf = p_176208_3_.func_177229_b(field_176492_b);
+       BlockPos blockpos = doubleblockhalf == DoubleBlockHalf.LOWER ? p_176208_2_.func_177984_a() : p_176208_2_.func_177977_b();
+       BlockState blockstate = p_176208_1_.func_180495_p(blockpos);

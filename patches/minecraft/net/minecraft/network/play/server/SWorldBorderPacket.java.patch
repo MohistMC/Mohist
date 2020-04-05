@@ -1,0 +1,23 @@
+--- a/net/minecraft/network/play/server/SWorldBorderPacket.java
++++ b/net/minecraft/network/play/server/SWorldBorderPacket.java
+@@ -5,6 +5,7 @@
+ import net.minecraft.network.IPacket;
+ import net.minecraft.network.PacketBuffer;
+ import net.minecraft.world.border.WorldBorder;
++import net.minecraft.world.dimension.NetherDimension;
+ import net.minecraftforge.api.distmarker.Dist;
+ import net.minecraftforge.api.distmarker.OnlyIn;
+ 
+@@ -24,8 +25,10 @@
+ 
+    public SWorldBorderPacket(WorldBorder p_i46921_1_, SWorldBorderPacket.Action p_i46921_2_) {
+       this.field_179795_a = p_i46921_2_;
+-      this.field_179794_c = p_i46921_1_.func_177731_f();
+-      this.field_179791_d = p_i46921_1_.func_177721_g();
++      // CraftBukkit start - multiply out nether border
++      this.field_179794_c = p_i46921_1_.func_177731_f() * (p_i46921_1_.world != null &&(p_i46921_1_.world.field_73011_w instanceof NetherDimension) ? 8 : 1);
++      this.field_179791_d = p_i46921_1_.func_177721_g() * (p_i46921_1_.world != null &&(p_i46921_1_.world.field_73011_w instanceof NetherDimension) ? 8 : 1);
++      // CraftBukkit end
+       this.field_179789_f = p_i46921_1_.func_177741_h();
+       this.field_179792_e = p_i46921_1_.func_177751_j();
+       this.field_179790_g = p_i46921_1_.func_177732_i();
