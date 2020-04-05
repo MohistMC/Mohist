@@ -1,5 +1,6 @@
 package org.bukkit.craftbukkit.inventory;
 
+import net.minecraft.inventory.container.MerchantContainer;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.inventory.container.Container;
 import net.minecraft.inventory.container.RepairContainer;
@@ -42,7 +43,7 @@ public class CraftContainer extends Container {
     private final int cachedSize;
 
     public CraftContainer(InventoryView view, PlayerEntity player, int id) {
-        super(getNotchInventoryType(view.getType()), id);
+        super(getNotchInventoryType(view.getTopInventory()), id);
         this.view = view;
         // TODO: Do we need to check that it really is a CraftInventory?
         IInventory top = ((CraftInventory) view.getTopInventory()).getInventory();
@@ -104,7 +105,7 @@ public class CraftContainer extends Container {
         cachedTitle = view.getTitle();
         if (view.getPlayer() instanceof CraftPlayer) {
             CraftPlayer player = (CraftPlayer) view.getPlayer();
-            ContainerType type = getNotchInventoryType(cachedType);
+            ContainerType<?> type = getNotchInventoryType(view.getTopInventory());
             IInventory top = ((CraftInventory) view.getTopInventory()).getInventory();
             PlayerInventory bottom = (PlayerInventory) ((CraftInventory) view.getBottomInventory()).getInventory();
             this.inventoryItemStacks.clear();
@@ -119,8 +120,29 @@ public class CraftContainer extends Container {
         return true;
     }
 
-    public static ContainerType getNotchInventoryType(InventoryType type) {
-        switch (type) {
+    public static ContainerType getNotchInventoryType(Inventory inventory) {
+        switch (inventory.getType()) {
+            case PLAYER:
+            case CHEST:
+            case ENDER_CHEST:
+            case BARREL:
+                switch(inventory.getSize()) {
+                    case 9:
+                        return ContainerType.GENERIC_9X1;
+                    case 18:
+                        return ContainerType.GENERIC_9X2;
+                    case 27:
+                        return ContainerType.GENERIC_9X3;
+                    case 36:
+                    case 41: // PLAYER
+                        return ContainerType.GENERIC_9X4;
+                    case 45:
+                        return ContainerType.GENERIC_9X5;
+                    case 54:
+                        return ContainerType.GENERIC_9X6;
+                    default:
+                        throw new IllegalArgumentException("Unsupported custom inventory size " + inventory.getSize());
+                }
             case WORKBENCH:
                 return ContainerType.CRAFTING;
             case FURNACE:
@@ -155,7 +177,12 @@ public class CraftContainer extends Container {
                 return ContainerType.GRINDSTONE;
             case STONECUTTER:
                 return ContainerType.STONECUTTER;
+            case CREATIVE:
+            case CRAFTING:
+            case MERCHANT:
+                throw new IllegalArgumentException("Can't open a " + inventory.getType() + " inventory!");
             default:
+                // TODO: If it reaches the default case, should we throw an error?
                 return ContainerType.GENERIC_9X3;
         }
     }
@@ -221,6 +248,9 @@ public class CraftContainer extends Container {
             case STONECUTTER:
                 delegate = new StonecutterContainer(windowId, bottom);
                 break;
+            case MERCHANT:
+                delegate = new MerchantContainer(windowId, bottom);
+                break;
         }
 
         if (delegate != null) {
@@ -271,6 +301,6 @@ public class CraftContainer extends Container {
 
     @Override
     public ContainerType<?> getType() {
-        return getNotchInventoryType(cachedType);
+        return getNotchInventoryType(view.getTopInventory());
     }
 }

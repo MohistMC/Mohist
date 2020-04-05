@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
+import net.minecraft.entity.Entity;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.block.RedstoneWireBlock;
@@ -35,6 +36,7 @@ import org.bukkit.block.data.BlockData;
 import org.bukkit.craftbukkit.CraftFluidCollisionMode;
 import org.bukkit.craftbukkit.CraftWorld;
 import org.bukkit.craftbukkit.block.data.CraftBlockData;
+import org.bukkit.craftbukkit.entity.CraftEntity;
 import org.bukkit.craftbukkit.inventory.CraftItemStack;
 import org.bukkit.craftbukkit.util.CraftMagicNumbers;
 import org.bukkit.craftbukkit.util.CraftRayTraceResult;
@@ -609,12 +611,17 @@ public class CraftBlock implements Block {
 
     @Override
     public Collection<ItemStack> getDrops(ItemStack item) {
+        return getDrops(item, null);
+    }
+
+    @Override
+    public Collection<ItemStack> getDrops(ItemStack item, org.bukkit.entity.Entity entity) {
         net.minecraft.block.BlockState iblockdata = getNMS();
         net.minecraft.item.ItemStack nms = CraftItemStack.asNMSCopy(item);
 
         // Modelled off PlayerEntity#hasBlock
         if (iblockdata.getMaterial().isToolNotRequired() || nms.canHarvestBlock(iblockdata)) {
-            return net.minecraft.block.Block.getDrops(iblockdata, (ServerWorld) world.getWorld(), position, world.getTileEntity(position), null, nms)
+            return net.minecraft.block.Block.getDrops(iblockdata, (ServerWorld) world.getWorld(), position, world.getTileEntity(position), entity == null ? null : ((CraftEntity) entity).getHandle(), nms)
                     .stream().map(CraftItemStack::asBukkitCopy).collect(Collectors.toList());
         } else {
             return Collections.emptyList();

@@ -99,15 +99,16 @@
        } else {
           compoundnbt1 = this.field_72412_k.func_75752_b(p_72380_1_);
        }
-@@ -263,6 +278,7 @@
+@@ -263,6 +278,8 @@
     }
  
     protected void func_72391_b(ServerPlayerEntity p_72391_1_) {
++      if (!p_72391_1_.getBukkitEntity().isPersistent()) return; // CraftBukkit
 +      if (p_72391_1_.field_71135_a == null) return;
        this.field_72412_k.func_75753_a(p_72391_1_);
        ServerStatisticsManager serverstatisticsmanager = this.field_148547_k.get(p_72391_1_.func_110124_au());
        if (serverstatisticsmanager != null) {
-@@ -277,6 +293,7 @@
+@@ -277,6 +294,7 @@
     }
  
     public void func_72367_e(ServerPlayerEntity p_72367_1_) {
@@ -115,7 +116,7 @@
        ServerWorld serverworld = p_72367_1_.func_71121_q();
        p_72367_1_.func_195066_a(Stats.field_75947_j);
        this.func_72391_b(p_72367_1_);
-@@ -298,7 +315,7 @@
+@@ -298,7 +316,7 @@
        p_72367_1_.func_213319_R();
        serverworld.func_217434_e(p_72367_1_);
        p_72367_1_.func_192039_O().func_192745_a();
@@ -124,7 +125,7 @@
        this.field_72400_f.func_201300_aS().func_201382_b(p_72367_1_);
        UUID uuid = p_72367_1_.func_110124_au();
        ServerPlayerEntity serverplayerentity = this.field_177454_f.get(uuid);
-@@ -367,10 +384,18 @@
+@@ -367,10 +385,18 @@
     }
  
     public ServerPlayerEntity func_72368_a(ServerPlayerEntity p_72368_1_, DimensionType p_72368_2_, boolean p_72368_3_) {
@@ -147,7 +148,7 @@
        p_72368_1_.field_71093_bK = p_72368_2_;
        PlayerInteractionManager playerinteractionmanager;
        if (this.field_72400_f.func_71242_L()) {
-@@ -382,6 +407,8 @@
+@@ -382,6 +408,8 @@
        ServerPlayerEntity serverplayerentity = new ServerPlayerEntity(this.field_72400_f, this.field_72400_f.func_71218_a(p_72368_1_.field_71093_bK), p_72368_1_.func_146103_bH(), playerinteractionmanager);
        serverplayerentity.field_71135_a = p_72368_1_.field_71135_a;
        serverplayerentity.func_193104_a(p_72368_1_, p_72368_3_);
@@ -156,7 +157,7 @@
        serverplayerentity.func_145769_d(p_72368_1_.func_145782_y());
        serverplayerentity.func_184819_a(p_72368_1_.func_184591_cq());
  
-@@ -396,7 +423,7 @@
+@@ -396,7 +424,7 @@
           if (optional.isPresent()) {
              Vec3d vec3d = optional.get();
              serverplayerentity.func_70012_b(vec3d.field_72450_a, vec3d.field_72448_b, vec3d.field_72449_c, 0.0F, 0.0F);
@@ -165,7 +166,7 @@
           } else {
              serverplayerentity.field_71135_a.func_147359_a(new SChangeGameStatePacket(0, 0.0F));
           }
-@@ -407,6 +434,7 @@
+@@ -407,6 +435,7 @@
        }
  
        WorldInfo worldinfo = serverplayerentity.field_70170_p.func_72912_H();
@@ -173,7 +174,7 @@
        serverplayerentity.field_71135_a.func_147359_a(new SRespawnPacket(serverplayerentity.field_71093_bK, WorldInfo.func_227498_c_(worldinfo.func_76063_b()), worldinfo.func_76067_t(), serverplayerentity.field_71134_c.func_73081_b()));
        BlockPos blockpos1 = serverworld.func_175694_M();
        serverplayerentity.field_71135_a.func_147364_a(serverplayerentity.func_226277_ct_(), serverplayerentity.func_226278_cu_(), serverplayerentity.func_226281_cx_(), serverplayerentity.field_70177_z, serverplayerentity.field_70125_A);
-@@ -416,10 +444,11 @@
+@@ -416,10 +445,11 @@
        this.func_72354_b(serverplayerentity, serverworld);
        this.func_187243_f(serverplayerentity);
        serverworld.func_217433_d(serverplayerentity);
@@ -186,7 +187,34 @@
        return serverplayerentity;
     }
  
-@@ -739,7 +768,7 @@
+@@ -712,6 +742,26 @@
+       return serverstatisticsmanager;
+    }
+ 
++   public ServerStatisticsManager getStatisticManager(UUID uuid, String displayName) {
++      ServerPlayerEntity player = func_177451_a(uuid);
++      ServerStatisticsManager serverstatisticsmanager = player == null ? null : player.func_147099_x();
++      if (serverstatisticsmanager == null) {
++         File file1 = new File(this.field_72400_f.func_71218_a(DimensionType.field_223227_a_).func_217485_w().func_75765_b(), "stats");
++         File file2 = new File(file1, uuid + ".json");
++         if (!file2.exists()) {
++            File file3 = new File(file1, displayName + ".json"); // CraftBukkit
++            if (file3.exists() && file3.isFile()) {
++               file3.renameTo(file2);
++            }
++         }
++
++         serverstatisticsmanager = new ServerStatisticsManager(this.field_72400_f, file2);
++         //this.playerStatFiles.put(uuid, serverstatisticsmanager); // CraftBukkit
++      }
++
++      return serverstatisticsmanager;
++   }
++
+    public PlayerAdvancements func_192054_h(ServerPlayerEntity p_192054_1_) {
+       UUID uuid = p_192054_1_.func_110124_au();
+       PlayerAdvancements playeradvancements = this.field_192055_p.get(uuid);
+@@ -739,7 +789,7 @@
     }
  
     public List<ServerPlayerEntity> func_181057_v() {
@@ -195,7 +223,7 @@
     }
  
     @Nullable
-@@ -769,4 +798,15 @@
+@@ -769,4 +819,15 @@
     public boolean func_206257_x() {
        return this.field_72407_n;
     }

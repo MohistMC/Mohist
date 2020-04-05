@@ -34,6 +34,7 @@ import net.minecraft.tileentity.DropperTileEntity;
 import net.minecraft.tileentity.FurnaceTileEntity;
 import net.minecraft.tileentity.HopperTileEntity;
 import net.minecraft.tileentity.LecternTileEntity;
+import net.minecraft.tileentity.LockableTileEntity;
 import net.minecraft.tileentity.ShulkerBoxTileEntity;
 import net.minecraft.tileentity.SmokerTileEntity;
 import net.minecraft.tileentity.TileEntity;
@@ -108,7 +109,7 @@ public class CraftHumanEntity extends CraftLivingEntity implements HumanEntity {
 
     @Override
     public MainHand getMainHand() {
-        return getHandle().getPrimaryHand()== HandSide.LEFT ? MainHand.LEFT : MainHand.RIGHT;
+        return getHandle().getPrimaryHand() == HandSide.LEFT ? MainHand.LEFT : MainHand.RIGHT;
     }
 
     @Override
@@ -315,9 +316,8 @@ public class CraftHumanEntity extends CraftLivingEntity implements HumanEntity {
 
     @Override
     public InventoryView openInventory(Inventory inventory) {
-        if(!(getHandle() instanceof ServerPlayerEntity)) return null;
+        if (!(getHandle() instanceof ServerPlayerEntity)) return null;
         ServerPlayerEntity player = (ServerPlayerEntity) getHandle();
-        InventoryType type = inventory.getType();
         Container formerContainer = getHandle().openContainer;
 
         INamedContainerProvider iinventory = null;
@@ -339,150 +339,13 @@ public class CraftHumanEntity extends CraftLivingEntity implements HumanEntity {
             }
         }
 
-        switch (type) {
-            case PLAYER:
-            case CHEST:
-            case ENDER_CHEST:
-                if (iinventory instanceof INamedContainerProvider) {
-                    getHandle().openContainer((INamedContainerProvider) iinventory);
-                } else {
-                    ContainerType customSize;
-                    switch (inventory.getSize()) {
-                        case 9:
-                            customSize = ContainerType.GENERIC_9X1;
-                            break;
-                        case 18:
-                            customSize = ContainerType.GENERIC_9X2;
-                            break;
-                        case 27:
-                            customSize = ContainerType.GENERIC_9X3;
-                            break;
-                        case 36:
-                        case 41: // PLAYER
-                            customSize = ContainerType.GENERIC_9X4;
-                            break;
-                        case 45:
-                            customSize = ContainerType.GENERIC_9X5;
-                            break;
-                        case 54:
-                            customSize = ContainerType.GENERIC_9X6;
-                            break;
-                        default:
-                            throw new IllegalArgumentException("Unsupported custom inventory size " + inventory.getSize());
-                    }
-                    openCustomInventory(inventory, player, customSize);
-                }
-                break;
-            case DISPENSER:
-                if (iinventory instanceof DispenserTileEntity) {
-                    getHandle().openContainer((DispenserTileEntity) iinventory);
-                } else {
-                    openCustomInventory(inventory, player, ContainerType.GENERIC_3X3);
-                }
-                break;
-            case DROPPER:
-                if (iinventory instanceof DropperTileEntity) {
-                    getHandle().openContainer((DropperTileEntity) iinventory);
-                } else {
-                    openCustomInventory(inventory, player, ContainerType.GENERIC_3X3);
-                }
-                break;
-            case FURNACE:
-                if (iinventory instanceof FurnaceTileEntity) {
-                    getHandle().openContainer((FurnaceTileEntity) iinventory);
-                } else {
-                    openCustomInventory(inventory, player, ContainerType.FURNACE);
-                }
-                break;
-            case WORKBENCH:
-                openCustomInventory(inventory, player, ContainerType.CRAFTING);
-                break;
-            case BREWING:
-                if (iinventory instanceof BrewingStandTileEntity) {
-                    getHandle().openContainer((BrewingStandTileEntity) iinventory);
-                } else {
-                    openCustomInventory(inventory, player, ContainerType.BREWING_STAND);
-                }
-                break;
-            case ENCHANTING:
-                openCustomInventory(inventory, player, ContainerType.ENCHANTMENT);
-                break;
-            case HOPPER:
-                if (iinventory instanceof HopperTileEntity) {
-                    getHandle().openContainer((HopperTileEntity) iinventory);
-                } else if (iinventory instanceof HopperMinecartEntity) {
-                    getHandle().openContainer((HopperMinecartEntity) iinventory);
-                } else {
-                    openCustomInventory(inventory, player, ContainerType.HOPPER);
-                }
-                break;
-            case BEACON:
-                if (iinventory instanceof BeaconTileEntity) {
-                    getHandle().openContainer((BeaconTileEntity) iinventory);
-                } else {
-                    openCustomInventory(inventory, player, ContainerType.BEACON);
-                }
-                break;
-            case ANVIL:
-                if (iinventory instanceof INamedContainerProvider) {
-                    getHandle().openContainer((INamedContainerProvider) iinventory);
-                } else {
-                    openCustomInventory(inventory, player, ContainerType.ANVIL);
-                }
-                break;
-            case SHULKER_BOX:
-                if (iinventory instanceof ShulkerBoxTileEntity) {
-                    getHandle().openContainer((ShulkerBoxTileEntity) iinventory);
-                } else {
-                    openCustomInventory(inventory, player, ContainerType.SHULKER_BOX);
-                }
-                break;
-            case BARREL:
-                if (iinventory instanceof BarrelTileEntity) {
-                    getHandle().openContainer((BarrelTileEntity) iinventory);
-                } else {
-                    openCustomInventory(inventory, player, ContainerType.GENERIC_9X3);
-                }
-                break;
-            case BLAST_FURNACE:
-                if (iinventory instanceof BlastFurnaceTileEntity) {
-                    getHandle().openContainer((BlastFurnaceTileEntity) iinventory);
-                } else {
-                    openCustomInventory(inventory, player, ContainerType.BLAST_FURNACE);
-                }
-                break;
-            case LECTERN:
-                if (iinventory instanceof LecternTileEntity) {
-                    getHandle().openContainer((LecternTileEntity) iinventory);
-                } else {
-                    openCustomInventory(inventory, player, ContainerType.LECTERN);
-                }
-                break;
-            case SMOKER:
-                if (iinventory instanceof SmokerTileEntity) {
-                    getHandle().openContainer((SmokerTileEntity) iinventory);
-                } else {
-                    openCustomInventory(inventory, player, ContainerType.SMOKER);
-                }
-                break;
-            case STONECUTTER:
-                openCustomInventory(inventory, player, ContainerType.STONECUTTER);
-                break;
-            case LOOM:
-                openCustomInventory(inventory, player, ContainerType.LOOM);
-                break;
-            case CARTOGRAPHY:
-                openCustomInventory(inventory, player, ContainerType.field_226625_v_);
-                break;
-            case GRINDSTONE:
-                openCustomInventory(inventory, player, ContainerType.GRINDSTONE);
-                break;
-            case CREATIVE:
-            case CRAFTING:
-            case MERCHANT:
-            default:
-                throw new IllegalArgumentException("Can't open a " + type + " inventory!");
+        ContainerType<?> container = CraftContainer.getNotchInventoryType(inventory);
+        if (iinventory instanceof LockableTileEntity) {
+            getHandle().openContainer(iinventory);
+        } else {
+            openCustomInventory(inventory, player, container);
         }
+
         if (getHandle().openContainer == formerContainer) {
             return null;
         }
@@ -496,7 +359,7 @@ public class CraftHumanEntity extends CraftLivingEntity implements HumanEntity {
         Container container = new CraftContainer(inventory, this.getHandle(), player.nextContainerCounter());
 
         container = CraftEventFactory.callInventoryOpenEvent(player, container);
-        if(container == null) return;
+        if (container == null) return;
 
         String title = container.getBukkitView().getTitle();
 
@@ -551,7 +414,7 @@ public class CraftHumanEntity extends CraftLivingEntity implements HumanEntity {
         if (((ServerPlayerEntity) getHandle()).connection == null) return;
         if (getHandle().openContainer != getHandle().container) {
             // fire INVENTORY_CLOSE if one already open
-            ((ServerPlayerEntity)getHandle()).connection.processCloseWindow(new CCloseWindowPacket(getHandle().openContainer.windowId));
+            ((ServerPlayerEntity) getHandle()).connection.processCloseWindow(new CCloseWindowPacket(getHandle().openContainer.windowId));
         }
         ServerPlayerEntity player = (ServerPlayerEntity) getHandle();
         Container container;
@@ -568,8 +431,7 @@ public class CraftHumanEntity extends CraftLivingEntity implements HumanEntity {
         }
 
         // Now open the window
-        InventoryType type = inventory.getType();
-        ContainerType<?> windowType = CraftContainer.getNotchInventoryType(type);
+        ContainerType<?> windowType = CraftContainer.getNotchInventoryType(inventory.getTopInventory());
         String title = inventory.getTitle();
         player.connection.sendPacket(new SOpenWindowPacket(container.windowId, windowType, new StringTextComponent(title)));
         player.openContainer = container;

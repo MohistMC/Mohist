@@ -718,126 +718,92 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
 
     @Override
     public void incrementStatistic(Statistic statistic) {
-        incrementStatistic(statistic, 1);
+        CraftStatistic.incrementStatistic(getHandle().getStats(), statistic);
     }
 
     @Override
     public void decrementStatistic(Statistic statistic) {
-        decrementStatistic(statistic, 1);
+        CraftStatistic.decrementStatistic(getHandle().getStats(), statistic);
     }
 
     @Override
     public int getStatistic(Statistic statistic) {
-        Validate.notNull(statistic, "Statistic cannot be null");
-        Validate.isTrue(statistic.getType() == Type.UNTYPED, "Must supply additional paramater for this statistic");
-        return getHandle().getStats().getValue(CraftStatistic.getNMSStatistic(statistic));
+        return CraftStatistic.getStatistic(getHandle().getStats(), statistic);
     }
 
     @Override
     public void incrementStatistic(Statistic statistic, int amount) {
-        Validate.isTrue(amount > 0, "Amount must be greater than 0");
-        setStatistic(statistic, getStatistic(statistic) + amount);
+        CraftStatistic.incrementStatistic(getHandle().getStats(), statistic, amount);
     }
 
     @Override
     public void decrementStatistic(Statistic statistic, int amount) {
-        Validate.isTrue(amount > 0, "Amount must be greater than 0");
-        setStatistic(statistic, getStatistic(statistic) - amount);
+        CraftStatistic.decrementStatistic(getHandle().getStats(), statistic, amount);
     }
 
     @Override
     public void setStatistic(Statistic statistic, int newValue) {
-        Validate.notNull(statistic, "Statistic cannot be null");
-        Validate.isTrue(statistic.getType() == Type.UNTYPED, "Must supply additional paramater for this statistic");
-        Validate.isTrue(newValue >= 0, "Value must be greater than or equal to 0");
-        net.minecraft.stats.Stat nmsStatistic = CraftStatistic.getNMSStatistic(statistic);
-        getHandle().getStats().setValue(getHandle(), nmsStatistic, newValue);
+        CraftStatistic.setStatistic(getHandle().getStats(), statistic, newValue);
     }
 
     @Override
     public void incrementStatistic(Statistic statistic, Material material) {
-        incrementStatistic(statistic, material, 1);
+        CraftStatistic.incrementStatistic(getHandle().getStats(), statistic, material);
     }
 
     @Override
     public void decrementStatistic(Statistic statistic, Material material) {
-        decrementStatistic(statistic, material, 1);
+        CraftStatistic.decrementStatistic(getHandle().getStats(), statistic, material);
     }
 
     @Override
     public int getStatistic(Statistic statistic, Material material) {
-        Validate.notNull(statistic, "Statistic cannot be null");
-        Validate.notNull(material, "Material cannot be null");
-        Validate.isTrue(statistic.getType() == Type.BLOCK || statistic.getType() == Type.ITEM, "This statistic does not take a Material parameter");
-        net.minecraft.stats.Stat nmsStatistic = CraftStatistic.getMaterialStatistic(statistic, material);
-        Validate.notNull(nmsStatistic, "The supplied Material does not have a corresponding statistic");
-        return getHandle().getStats().getValue(nmsStatistic);
+        return CraftStatistic.getStatistic(getHandle().getStats(), statistic, material);
     }
 
     @Override
     public void incrementStatistic(Statistic statistic, Material material, int amount) {
-        Validate.isTrue(amount > 0, "Amount must be greater than 0");
-        setStatistic(statistic, material, getStatistic(statistic, material) + amount);
+        CraftStatistic.incrementStatistic(getHandle().getStats(), statistic, material, amount);
     }
 
     @Override
     public void decrementStatistic(Statistic statistic, Material material, int amount) {
-        Validate.isTrue(amount > 0, "Amount must be greater than 0");
-        setStatistic(statistic, material, getStatistic(statistic, material) - amount);
+        CraftStatistic.decrementStatistic(getHandle().getStats(), statistic, material, amount);
     }
 
     @Override
     public void setStatistic(Statistic statistic, Material material, int newValue) {
-        Validate.notNull(statistic, "Statistic cannot be null");
-        Validate.notNull(material, "Material cannot be null");
-        Validate.isTrue(newValue >= 0, "Value must be greater than or equal to 0");
-        Validate.isTrue(statistic.getType() == Type.BLOCK || statistic.getType() == Type.ITEM, "This statistic does not take a Material parameter");
-        net.minecraft.stats.Stat nmsStatistic = CraftStatistic.getMaterialStatistic(statistic, material);
-        Validate.notNull(nmsStatistic, "The supplied Material does not have a corresponding statistic");
-        getHandle().getStats().setValue(getHandle(), nmsStatistic, newValue);
+        CraftStatistic.setStatistic(getHandle().getStats(), statistic, material, newValue);
     }
 
     @Override
     public void incrementStatistic(Statistic statistic, EntityType entityType) {
-        incrementStatistic(statistic, entityType, 1);
+        CraftStatistic.incrementStatistic(getHandle().getStats(), statistic, entityType);
     }
 
     @Override
     public void decrementStatistic(Statistic statistic, EntityType entityType) {
-        decrementStatistic(statistic, entityType, 1);
+        CraftStatistic.decrementStatistic(getHandle().getStats(), statistic, entityType);
     }
 
     @Override
     public int getStatistic(Statistic statistic, EntityType entityType) {
-        Validate.notNull(statistic, "Statistic cannot be null");
-        Validate.notNull(entityType, "EntityType cannot be null");
-        Validate.isTrue(statistic.getType() == Type.ENTITY, "This statistic does not take an EntityType parameter");
-        net.minecraft.stats.Stat nmsStatistic = CraftStatistic.getEntityStatistic(statistic, entityType);
-        Validate.notNull(nmsStatistic, "The supplied EntityType does not have a corresponding statistic");
-        return getHandle().getStats().getValue(nmsStatistic);
+        return CraftStatistic.getStatistic(getHandle().getStats(), statistic, entityType);
     }
 
     @Override
     public void incrementStatistic(Statistic statistic, EntityType entityType, int amount) {
-        Validate.isTrue(amount > 0, "Amount must be greater than 0");
-        setStatistic(statistic, entityType, getStatistic(statistic, entityType) + amount);
+        CraftStatistic.incrementStatistic(getHandle().getStats(), statistic, entityType, amount);
     }
 
     @Override
     public void decrementStatistic(Statistic statistic, EntityType entityType, int amount) {
-        Validate.isTrue(amount > 0, "Amount must be greater than 0");
-        setStatistic(statistic, entityType, getStatistic(statistic, entityType) - amount);
+        CraftStatistic.decrementStatistic(getHandle().getStats(), statistic, entityType, amount);
     }
 
     @Override
     public void setStatistic(Statistic statistic, EntityType entityType, int newValue) {
-        Validate.notNull(statistic, "Statistic cannot be null");
-        Validate.notNull(entityType, "EntityType cannot be null");
-        Validate.isTrue(newValue >= 0, "Value must be greater than or equal to 0");
-        Validate.isTrue(statistic.getType() == Type.ENTITY, "This statistic does not take an EntityType parameter");
-        net.minecraft.stats.Stat nmsStatistic = CraftStatistic.getEntityStatistic(statistic, entityType);
-        Validate.notNull(nmsStatistic, "The supplied EntityType does not have a corresponding statistic");
-        getHandle().getStats().setValue(getHandle(), nmsStatistic, newValue);
+        CraftStatistic.setStatistic(getHandle().getStats(), statistic, entityType, newValue);
     }
 
     @Override
