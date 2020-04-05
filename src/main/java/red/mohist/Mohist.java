@@ -35,6 +35,7 @@ public class Mohist {
             while (!"true".equals(new Scanner(System.in).next())) ;
             eula.createEULAFile();
         }
+        System.out.println("test");
         if (DownloadLibraries.isCheck()) DownloadLibraries.run();
         if (Update.isCheck()) Update.versionCheck();
         if (!MohistConfigUtil.getBoolean(new File("mohist-config", "mohist.yml"), "disable_plugins_blacklist:")) AutoDeletePlugins.jar();
