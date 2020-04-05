@@ -169,7 +169,7 @@ public class HighlightMsgConverter extends LogEventPatternConverter
 
     public static String geterror() {
         File f = new File("mohist-config", "mohist.yml");
-        String cc = MohistConfigUtil.getString(f, "error-msg:", "c");
+        String cc = MohistConfigUtil.getTranslation(f, "error-msg:", "c");
         return ANSIColorUtils.getColor(cc, "\u001B[31;1m");
     }
 

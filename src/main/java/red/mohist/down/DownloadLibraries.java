@@ -37,7 +37,7 @@ public class DownloadLibraries {
                 String[] args = str.split("\\|");
                 if(args.length == 2) {
                     File file = new File(args[0]); // Judgement files and MD5
-                    if((!file.exists() || !DatatypeConverter.printHexBinary(MessageDigest.getInstance("MD5").digest(Files.readAllBytes(file.toPath()))).toLowerCase().equals(args[1])) && !MohistConfigUtil.getString(new File("mohist-config", "mohist.yml"), "libraries_black_list:", "xxxxx").contains(file.getName())) {
+                    if((!file.exists() || !DatatypeConverter.printHexBinary(MessageDigest.getInstance("MD5").digest(Files.readAllBytes(file.toPath()))).toLowerCase().equals(args[1])) && !MohistConfigUtil.getTranslation(new File("mohist-config", "mohist.yml"), "libraries_black_list:", "xxxxx").contains(file.getName())) {
                         file.getParentFile().mkdirs();
 
                         URLConnection conn = new URL(url + args[0]).openConnection();

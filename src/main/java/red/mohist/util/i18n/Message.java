@@ -20,7 +20,7 @@ public class Message {
 
     public static String getLocale(int key) {
         File f = new File("mohist-config", "mohist.yml");
-        String locale = MohistConfigUtil.getString(f, "lang:", "xx");
+        String locale = MohistConfigUtil.getTranslation(f, "lang:", "xx");
         if (locale.length() == 5) {
             String language = locale.substring(0, 2);
             String country = locale.substring(3, 5);
