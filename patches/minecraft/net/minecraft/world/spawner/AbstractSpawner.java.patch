@@ -31,7 +31,15 @@
        String s = this.field_98282_f.func_185277_b().func_74779_i("id");
  
        try {
-@@ -128,7 +128,7 @@
+@@ -59,6 +59,7 @@
+ 
+    public void func_200876_a(EntityType<?> p_200876_1_) {
+       this.field_98282_f.func_185277_b().func_74778_a("id", Registry.field_212629_r.func_177774_c(p_200876_1_).toString());
++      this.field_98285_e.clear(); // CraftBukkit - SPIGOT-3496, MC-92282
+    }
+ 
+    private boolean func_98279_f() {
+@@ -128,7 +129,7 @@
                    entity.func_70012_b(entity.func_226277_ct_(), entity.func_226278_cu_(), entity.func_226281_cx_(), world.field_73012_v.nextFloat() * 360.0F, 0.0F);
                    if (entity instanceof MobEntity) {
                       MobEntity mobentity = (MobEntity)entity;
@@ -40,7 +48,16 @@
                          continue;
                       }
  
-@@ -285,4 +285,9 @@
+@@ -156,7 +157,7 @@
+    }
+ 
+    private void func_221409_a(Entity p_221409_1_) {
+-      if (this.func_98271_a().func_217376_c(p_221409_1_)) {
++      if (this.func_98271_a().addEntity(p_221409_1_, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.SPAWNER)) { // CraftBukkit
+          for(Entity entity : p_221409_1_.func_184188_bt()) {
+             this.func_221409_a(entity);
+          }
+@@ -285,4 +286,9 @@
     public double func_177223_e() {
        return this.field_98284_d;
     }

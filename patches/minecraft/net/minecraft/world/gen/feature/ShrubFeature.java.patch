@@ -1,6 +1,16 @@
 --- a/net/minecraft/world/gen/feature/ShrubFeature.java
 +++ b/net/minecraft/world/gen/feature/ShrubFeature.java
-@@ -16,7 +16,7 @@
+@@ -6,6 +6,9 @@
+ import java.util.function.Function;
+ import net.minecraft.util.math.BlockPos;
+ import net.minecraft.util.math.MutableBoundingBox;
++import net.minecraft.world.IWorld;
++import net.minecraft.world.gen.ChunkGenerator;
++import net.minecraft.world.gen.GenerationSettings;
+ import net.minecraft.world.gen.Heightmap;
+ import net.minecraft.world.gen.IWorldGenerationReader;
+ 
+@@ -16,7 +19,7 @@
  
     public boolean func_225557_a_(IWorldGenerationReader p_225557_1_, Random p_225557_2_, BlockPos p_225557_3_, Set<BlockPos> p_225557_4_, Set<BlockPos> p_225557_5_, MutableBoundingBox p_225557_6_, BaseTreeFeatureConfig p_225557_7_) {
        p_225557_3_ = p_225557_1_.func_205770_a(Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, p_225557_3_).func_177977_b();
@@ -9,3 +19,18 @@
           p_225557_3_ = p_225557_3_.func_177984_a();
           this.func_227216_a_(p_225557_1_, p_225557_2_, p_225557_3_, p_225557_4_, p_225557_6_, p_225557_7_);
  
+@@ -31,8 +34,14 @@
+                }
+             }
+          }
++      } else {
++         return false;
+       }
+ 
+       return true;
+    }
++
++   public boolean generate(IWorld generatoraccess, ChunkGenerator<? extends GenerationSettings> chunkgenerator, Random random, BlockPos blockposition, BaseTreeFeatureConfig fc) {
++      return super.func_212245_a(generatoraccess, chunkgenerator, random, blockposition, fc);
++   }
+ }

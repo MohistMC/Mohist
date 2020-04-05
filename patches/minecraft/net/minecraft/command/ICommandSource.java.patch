@@ -14,7 +14,7 @@
        }
 +
 +      @Override
-+      public CommandSender getBukkitSender(final CommandSource wrapper) {
++      public CommandSender getBukkitSender(CommandSource wrapper) {
 +         throw new UnsupportedOperationException("Not supported yet.");
 +      }
     };
@@ -25,5 +25,5 @@
  
     boolean func_195041_r_();
 +
-+   CommandSender getBukkitSender(final CommandSource p0);
++   CommandSender getBukkitSender(CommandSource p0);
  }

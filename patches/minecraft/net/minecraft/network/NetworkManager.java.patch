@@ -25,6 +25,15 @@
        }
  
        if (this.field_150746_k.eventLoop().inEventLoop()) {
+@@ -245,7 +247,7 @@
+ 
+    public void func_150718_a(ITextComponent p_150718_1_) {
+       if (this.field_150746_k.isOpen()) {
+-         this.field_150746_k.close().awaitUninterruptibly();
++         this.field_150746_k.close(); // We can't wait as this may be called from an event loop.
+          this.field_150742_o = p_150718_1_;
+       }
+ 
 @@ -257,7 +259,9 @@
  
     @OnlyIn(Dist.CLIENT)

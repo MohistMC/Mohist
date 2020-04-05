@@ -1,0 +1,11 @@
+--- a/net/minecraft/entity/projectile/TridentEntity.java
++++ b/net/minecraft/entity/projectile/TridentEntity.java
+@@ -147,7 +147,7 @@
+          if (this.field_70170_p.func_226660_f_(blockpos)) {
+             LightningBoltEntity lightningboltentity = new LightningBoltEntity(this.field_70170_p, (double)blockpos.func_177958_n() + 0.5D, (double)blockpos.func_177956_o(), (double)blockpos.func_177952_p() + 0.5D, false);
+             lightningboltentity.func_204809_d(entity1 instanceof ServerPlayerEntity ? (ServerPlayerEntity)entity1 : null);
+-            ((ServerWorld)this.field_70170_p).func_217468_a(lightningboltentity);
++            ((ServerWorld)this.field_70170_p).strikeLightning(lightningboltentity, org.bukkit.event.weather.LightningStrikeEvent.Cause.TRIDENT); // CraftBukkit
+             soundevent = SoundEvents.field_203275_iq;
+             f1 = 5.0F;
+          }
