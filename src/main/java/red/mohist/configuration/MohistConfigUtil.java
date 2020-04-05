@@ -1,5 +1,10 @@
 package red.mohist.configuration;
 
+import red.mohist.Mohist;
+import red.mohist.util.FileUtil;
+import red.mohist.util.IOUtil;
+import red.mohist.util.Number;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -9,11 +14,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
-import red.mohist.Mohist;
-import red.mohist.util.FileUtil;
-import red.mohist.util.IOUtil;
-import red.mohist.util.JarTool;
-import red.mohist.util.Number;
 
 public class MohistConfigUtil {
 
@@ -91,8 +91,4 @@ public class MohistConfigUtil {
         }
     }
 
-    public static String getMohistJarPath() {
-        String f = JarTool.getJarDir();
-        return f + "/";
-    }
 }

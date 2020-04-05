@@ -4,16 +4,14 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonIOException;
 import com.google.gson.JsonParser;
 import com.google.gson.JsonSyntaxException;
-import red.mohist.util.FindClassInJar;
+import red.mohist.util.ClassJarUtil;
+import red.mohist.util.i18n.Message;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
-import java.util.ArrayList;
-import java.util.Arrays;
-import red.mohist.util.i18n.Message;
 
 public class AutoDeletePlugins {
 
@@ -30,11 +28,8 @@ public class AutoDeletePlugins {
         } catch (JsonIOException | JsonSyntaxException | IOException | NullPointerException ignored) {
         }
 
-        for (String classname : new ArrayList<>(Arrays.asList(root.getAsJsonObject().get("list").toString().split(",")))) {
-            classname = classname.replaceAll("\\.", "/") + ".class";
-
-            FindClassInJar ins = new FindClassInJar(libDir, classname);
-            ins.checkDirectory(libDir);
+        for (String classname : root.getAsJsonObject().get("list").toString().replaceAll("\"", "").split(",")) {
+            ClassJarUtil.checkFiles(libDir, classname, false);
         }
     }
 }
