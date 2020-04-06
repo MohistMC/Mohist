@@ -14,6 +14,9 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.Scanner;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 public class Update {
     static String ci_sha, jar_sha, time;
@@ -41,8 +44,12 @@ public class Update {
         } else {
             System.out.println(Message.getFormatString("update.detect", new Object[]{ci_sha, jar_sha, time.substring(0, 10), time.substring(11, 19)}));
             if(isDownload()) {
-                System.out.println(Message.getString("update.select"));
-                if(new Scanner(System.in).next().equals("yes")) {
+                if(!MohistConfigUtil.getBoolean(new File("mohist-config", "mohist.yml"), "download_new_jar_directly:")) {
+                    System.out.println(Message.getString("update.select"));
+                    if(new Scanner(System.in).next().equals("yes")) {
+                        downloadLatestJar();
+                    }
+                } else {
                     downloadLatestJar();
                 }
             }
@@ -54,8 +61,13 @@ public class Update {
         conn.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:31.0) Gecko/20100101 Firefox/31.0");
         conn.connect();
         System.out.println(Message.getFormatString("update.dl", new Object[]{getSize(conn.getContentLength())}));
-        FileUtils.copyInputStreamToFile(conn.getInputStream(), new File(new File(Mohist.class.getProtectionDomain().getCodeSource().getLocation().getPath().substring(1)).getName())); //Download
-
+        File f = new File(new File(Mohist.class.getProtectionDomain().getCodeSource().getLocation().getPath().substring(1)).getName());
+        if(!f.exists()) f.createNewFile();
+        Runnable percentage = () -> System.out.println(String.valueOf((float) f.length()/conn.getContentLength()*100).substring(0, 2).replace(".", "")+"%");
+        ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
+        executor.scheduleAtFixedRate(percentage, 0, 500, TimeUnit.MILLISECONDS);
+        FileUtils.copyInputStreamToFile(conn.getInputStream(), f); //Download
+        executor.shutdown();
         System.out.println(Message.getString("update.finish"));
         System.exit(0);
     }

@@ -37,8 +37,8 @@ public class Mohist {
         }
         if(DownloadLibraries.isCheck()) DownloadLibraries.run();
         if(Update.isCheck()) Update.versionCheck();
-        if (!MohistConfigUtil.getBoolean(new File("mohist-config", "mohist.yml"), "disable_plugins_blacklist:")) AutoDeletePlugins.jar();
-        if (!MohistConfigUtil.getBoolean(new File("mohist-config", "mohist.yml"), "disable_mods_blacklist:")) AutoDeleteMods.jar();
+        if(!MohistConfigUtil.getBoolean(new File("mohist-config", "mohist.yml"), "disable_plugins_blacklist:")) AutoDeletePlugins.jar();
+        if(!MohistConfigUtil.getBoolean(new File("mohist-config", "mohist.yml"), "disable_mods_blacklist:")) AutoDeleteMods.jar();
         AutoDeleteMods.jarDisabled();
 
         Class.forName("net.minecraftforge.fml.relauncher.ServerLaunchWrapper").getDeclaredMethod("main", String[].class).invoke(null, new Object[]{args});
