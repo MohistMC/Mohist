@@ -1029,7 +1029,7 @@ def getClasspath(project, libs, artifact) {
 //evaluationDependsOnChildren()
 task setup() {
     dependsOn ':clean:extractMapped'
-    dependsOn ':mohist:extractMapped' //These must be strings so that we can do lazy resolution. Else we need evaluationDependsOnChildren above
+    dependsOn ':forge:extractMapped' //These must be strings so that we can do lazy resolution. Else we need evaluationDependsOnChildren above
 }
 
 
