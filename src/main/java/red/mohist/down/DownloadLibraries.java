@@ -23,6 +23,7 @@ import java.util.TimerTask;
 public class DownloadLibraries {
     static boolean needToRecheck = false;
     static int retry = 0;
+    static FileChannel fileChannel;
 
     public static void run() throws Exception {
         System.out.println(Message.getString("libraries.checking.start"));
@@ -55,7 +56,8 @@ public class DownloadLibraries {
                     }, 2000, 3000);
 
                     try {
-                        FileChannel.open(Paths.get(file.getAbsolutePath()), StandardOpenOption.CREATE, StandardOpenOption.WRITE, StandardOpenOption.TRUNCATE_EXISTING).transferFrom(Channels.newChannel(conn.getInputStream()), 0L, Long.MAX_VALUE);
+                        fileChannel = FileChannel.open(Paths.get(file.getAbsolutePath()), StandardOpenOption.CREATE, StandardOpenOption.WRITE, StandardOpenOption.TRUNCATE_EXISTING);
+                        fileChannel.transferFrom(Channels.newChannel(conn.getInputStream()), 0L, Long.MAX_VALUE);
                     } catch (Exception e) {
                         System.out.println(Message.getFormatString("file.download.nook", new Object[]{url + args[0]}));
                         needToRecheck = true;
@@ -68,13 +70,14 @@ public class DownloadLibraries {
             }
         }
         b.close();
-
         /*FINISHED | RECHECK IF A FILE FAILED*/
         if(needToRecheck && retry < 3) {
             needToRecheck = false;
             System.out.println(Message.getFormatString("update.retry", new Object[]{retry}));
             run();
         } else {
+            if(fileChannel != null)
+                fileChannel.close();
             System.out.println(Message.getString("libraries.checking.end"));
         }
     }
