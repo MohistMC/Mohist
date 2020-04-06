@@ -2,8 +2,8 @@ rootProject.name = 'Mohist'
 
 include ':mcp'
 include ':clean'
-include ':mohist'
+include ':forge'
 
 project(":mcp").projectDir = file("projects/mcp")
 project(":clean").projectDir = file("projects/clean")
-project(":mohist").projectDir = file("projects/mohist")
+project(":forge").projectDir = file("projects/mohist")

@@ -67,7 +67,7 @@ public abstract class FMLCommonLaunchHandler
     }
 
     public Path[] getMCPaths(final String mcVersion, final String mcpVersion, final String forgeVersion, final String forgeGroup) {
-        return LibraryFinder.getMCPaths(mcVersion, mcpVersion, forgeVersion, forgeGroup, getDist().isClient() ? "client" : "server");
+        return LibraryFinder.getMCPaths(mcVersion, mcpVersion, forgeVersion, forgeGroup, "server");
     }
 
     public void configureTransformationClassLoader(final ITransformingClassLoaderBuilder builder) {

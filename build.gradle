@@ -111,7 +111,7 @@ project(':clean') {
     }
 }
 
-project(':mohist') {
+project(':forge') {
     evaluationDependsOn(':clean')
     apply plugin: 'java-library'
     apply plugin: 'maven-publish'
