@@ -86,6 +86,7 @@ public class MohistConfig extends ConfigBase{
 
     public final BoolSetting hideJoinModsList = new BoolSetting(this, "hidejoinmodslist", false, "Hide the list of mods displayed on the console when players join the server");
 
+    public List<Integer> dimensionsNotLoaded =new ArrayList();
     /* ======================================================================== */
 
     public MohistConfig()
@@ -142,9 +143,10 @@ public class MohistConfig extends ConfigBase{
 
             version = getInt("config-version", 2);
             set("config-version", 2);
-            config.addDefault("forge.autounloadWorld_whitelist",new String[]{"0", "1", "-1"});
-            this.autounloadWorld_whitelist=config.getIntegerList("forge.autounloadWorld_whitelist");
-
+            config.addDefault("forge.autounloadWorld_whitelist", new String[]{"0", "1", "-1"});
+            this.autounloadWorld_whitelist = config.getIntegerList("forge.autounloadWorld_whitelist");
+            config.addDefault("world.dimensionsNotLoaded", new String[]{"1111111111111"});
+            this.dimensionsNotLoaded = config.getIntegerList("world.dimensionsNotLoaded");
             config.options().header(header.toString());
             config.options().copyDefaults(true);
             this.save();

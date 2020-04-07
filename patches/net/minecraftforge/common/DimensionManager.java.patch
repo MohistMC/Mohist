@@ -77,7 +77,19 @@
  
      /**
       * Returns a list of dimensions associated with this DimensionType.
-@@ -138,6 +143,11 @@
+@@ -129,6 +134,11 @@
+     public static void registerDimension(int id, DimensionType type)
+     {
+         DimensionType.getById(type.getId()); //Check if type is invalid {will throw an error} No clue how it would be invalid tho...
++        for (Integer dim : MohistConfig.instance.dimensionsNotLoaded) {
++            if (id != 0 && dim.intValue() == id) {
++                return;
++            }
++        }
+         if (dimensions.containsKey(id))
+         {
+             throw new IllegalArgumentException(String.format("Failed to register dimension for id %d, One is already registered", id));
+@@ -138,6 +148,11 @@
          {
              usedIds.add(id);
          }
@@ -89,7 +101,7 @@
      }
  
      /**
-@@ -209,14 +219,22 @@
+@@ -209,14 +224,22 @@
          {
              worlds.put(id, world);
              weakWorldMap.put(world, world);
@@ -114,7 +126,7 @@
          }
  
          ArrayList<WorldServer> tmp = new ArrayList<WorldServer>();
-@@ -242,6 +260,7 @@
+@@ -242,6 +265,7 @@
  
      public static void initDimension(int dim)
      {
@@ -122,7 +134,7 @@
          WorldServer overworld = getWorld(0);
          if (overworld == null)
          {
-@@ -253,16 +272,49 @@
+@@ -253,16 +277,49 @@
          }
          catch (Exception e)
          {
@@ -175,7 +187,7 @@
          if (!mcServer.isSinglePlayer())
          {
              world.getWorldInfo().setGameType(mcServer.getGameType());
-@@ -343,7 +395,8 @@
+@@ -343,7 +400,8 @@
          return ForgeChunkManager.getPersistentChunksFor(world).isEmpty()
                  && world.playerEntities.isEmpty()
                  && !world.provider.getDimensionType().shouldLoadSpawn()
@@ -185,7 +197,7 @@
      }
  
      /**
-@@ -354,6 +407,11 @@
+@@ -354,6 +412,11 @@
      {
          WorldServer world = worlds.get(id);
          if (world == null || !canUnloadWorld(world)) return;
@@ -197,7 +209,7 @@
  
          if (unloadQueue.add(id))
          {
-@@ -390,20 +448,7 @@
+@@ -390,20 +453,7 @@
                  FMLLog.log.debug("Aborting unload for dimension {} as status changed", id);
                  continue;
              }
@@ -219,7 +231,7 @@
          }
      }
  
-@@ -499,4 +544,109 @@
+@@ -499,4 +549,109 @@
              return null;
          }
      }
