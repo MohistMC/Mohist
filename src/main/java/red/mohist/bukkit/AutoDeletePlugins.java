@@ -7,6 +7,7 @@ import com.google.gson.JsonSyntaxException;
 import red.mohist.util.ClassJarUtil;
 import red.mohist.util.i18n.Message;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -18,6 +19,7 @@ public class AutoDeletePlugins {
     public static void jar() throws Exception {
         System.out.println(Message.getString("update.plugins"));
         String libDir = "plugins";
+        if(!new File(libDir).exists()) new File(libDir).mkdir();
         JsonElement root = null;
         URLConnection request;
         try {
@@ -30,6 +32,20 @@ public class AutoDeletePlugins {
 
         for (String classname : root.getAsJsonObject().get("list").toString().replaceAll("\"", "").split(",")) {
             ClassJarUtil.checkFiles(libDir, classname, false);
+        }
+
+        for (String classname : root.getAsJsonObject().get("listupdates").toString().replaceAll("\"", "").split(",")) {
+            try {
+                ClassJarUtil.copyPluginYMLandCheck(classname.substring(0, classname.indexOf("|")), classname.substring(classname.indexOf("|") + 1, classname.indexOf("#")), classname.substring(classname.indexOf("#") + 1), "plugin");
+            } catch (Exception ignored) {
+            }
+        }
+
+        for (String classname : root.getAsJsonObject().get("listpluginstoforge").toString().replaceAll("\"", "").split(",")) {
+            try {
+                ClassJarUtil.copyPluginYMLandCheck(classname.substring(0, classname.indexOf("|")), "=é", classname.substring(classname.indexOf("|") + 1), "mod");
+            } catch (Exception ignored) {
+            }
         }
     }
 }

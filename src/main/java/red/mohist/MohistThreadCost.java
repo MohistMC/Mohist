@@ -1,11 +1,12 @@
 package red.mohist;
 
+import red.mohist.util.i18n.Message;
+
 import java.lang.management.ManagementFactory;
 import java.lang.management.ThreadMXBean;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-import red.mohist.util.i18n.Message;
 
 public class MohistThreadCost {
     static ThreadMXBean threadMXBean = ManagementFactory.getThreadMXBean();
@@ -32,9 +33,7 @@ public class MohistThreadCost {
     }
 
     public static class ThreadCpuTime {
-        private long id;
-        private long cpuTime;
-        private long userTime;
+        private long id, cpuTime, userTime;
         private String name;
     }
 }

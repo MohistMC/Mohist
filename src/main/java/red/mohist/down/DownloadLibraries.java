@@ -37,21 +37,22 @@ public class DownloadLibraries {
             String[] args = str.split("\\|");
             if(args.length == 2) {
                 File file = new File(args[0]); // Judgement files and MD5
-                if((!file.exists() || !DatatypeConverter.printHexBinary(MessageDigest.getInstance("MD5").digest(Files.readAllBytes(file.toPath()))).toLowerCase().equals(args[1])) && !MohistConfigUtil.getTranslation(new File("mohist-config", "mohist.yml"), "libraries_black_list:", "xxxxx").contains(file.getName())) {
+                if((!file.exists() || !DatatypeConverter.printHexBinary(MessageDigest.getInstance("MD5").digest(Files.readAllBytes(file.toPath()))).toLowerCase().equals(args[1])) && !MohistConfigUtil.getString(new File("mohist-config", "mohist.yml"), "libraries_black_list:", "xxxxx").contains(file.getName())) {
                     file.getParentFile().mkdirs();
 
                     URLConnection conn = new URL(url + args[0]).openConnection(); //MAKE CONNECTION TO GET THE CONTENT LENGTH
                     conn.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:31.0) Gecko/20100101 Firefox/31.0");
                     conn.connect();
 
-                    System.out.println(Message.getFormatString("file.download.start", new Object[]{file.getName(), Update.getSize(conn.getContentLength())})); //Starting download a file
-                    System.out.println("Global percentage » " + String.valueOf((float) getSizeOfDirectory(new File("libraries")) / 75705160 * 100).substring(0, 2).replace(".", "") + "%"); //Global percentage
+                    System.out.println(Message.getFormatString("file.download.start", new Object[]{file.getName(), UpdateUtils.getSize(conn.getContentLength())})); //Starting download a file
+                    System.out.println("Global percentage » " + String.valueOf((float) UpdateUtils.getSizeOfDirectory(new File("libraries")) / 75705160 * 100).substring(0, 2).replace(".", "") + "%"); //Global percentage
 
                     Timer t = new Timer(); //Displaying percentage if it's a file > 1Mo to show the user the file is downloading
                     t.schedule(new TimerTask() {
                         @Override
                         public void run() {
-                            if(file.length() > 900000) System.out.println("Downloading " + file.getName() + " » " + String.valueOf((float) file.length() / conn.getContentLength() * 100).substring(0, 2).replace(".", "") + "%");
+                            if(file.length() > 900000)
+                                System.out.println("Downloading " + file.getName() + " » " + String.valueOf((float) file.length() / conn.getContentLength() * 100).substring(0, 2).replace(".", "") + "%");
                         }
                     }, 2000, 3000);
 
@@ -81,18 +82,4 @@ public class DownloadLibraries {
             System.out.println(Message.getString("libraries.checking.end"));
         }
     }
-
-    /*GET THE SIZE OF THE LIBRARIES DIRECTORY TO MAKE GLOBAL PERCENTAGE*/
-    public static long getSizeOfDirectory(File file) {
-        long size = 0;
-        if(file.isDirectory()) {
-            File[] files = file.listFiles();
-            for (File value : files) {
-                size += getSizeOfDirectory(value);
-            }
-        } else size += file.length();
-        return size;
-    }
-
-    public static boolean isCheck() { return MohistConfigUtil.getBoolean(new File("mohist-config", "mohist.yml"), "check_libraries:"); }
 }

@@ -15,8 +15,8 @@ import java.nio.file.StandardCopyOption;
 
 public class MohistConfigUtil {
 
-    public static String getTranslation(String s, String key, String defaultreturn) {
-        if (s.contains(key)) {
+    public static String getString(String s, String key, String defaultreturn) {
+        if(s.contains(key)) {
             String string = s.substring(s.indexOf(key));
             String s1 = (string.substring(string.indexOf(": ") + 2));
             String[] ss = s1.split("\n");
@@ -25,23 +25,21 @@ public class MohistConfigUtil {
         return defaultreturn;
     }
 
-    public static String getTranslation(File f, String key, String defaultreturn) {
+    public static String getString(File f, String key, String defaultreturn) {
         try {
-            return getTranslation(IOUtil.readContent(new InputStreamReader(new FileInputStream(f), StandardCharsets.UTF_8)), key, defaultreturn);
+            return getString(IOUtil.readContent(new InputStreamReader(new FileInputStream(f), StandardCharsets.UTF_8)), key, defaultreturn);
         } catch (IOException e) {
             return defaultreturn;
         }
     }
 
     public static boolean getBoolean(File f, String key) {
-        return !getTranslation(f, key, "true").equals("false");
+        return !getString(f, key, "true").equals("false");
     }
 
     public static int getInt(File f, String key, String defaultreturn) {
-        String s = getTranslation(f, key, defaultreturn);
-        if (NumberUtils.isInteger(s)) {
-            return Integer.parseInt(s);
-        }
+        String s = getString(f, key, defaultreturn);
+        if(NumberUtils.isInteger(s)) return Integer.parseInt(s);
         return Integer.parseInt(defaultreturn);
     }
 

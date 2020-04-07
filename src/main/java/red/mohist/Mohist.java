@@ -4,7 +4,7 @@ import org.apache.logging.log4j.Logger;
 import red.mohist.bukkit.AutoDeletePlugins;
 import red.mohist.configuration.MohistConfigUtil;
 import red.mohist.down.DownloadLibraries;
-import red.mohist.down.Update;
+import red.mohist.down.UpdateUtils;
 import red.mohist.forge.AutoDeleteMods;
 import red.mohist.util.EulaUtil;
 import red.mohist.util.i18n.Message;
@@ -27,7 +27,8 @@ public class Mohist {
             System.exit(0);
         }
 
-        if (System.getProperty("log4j.configurationFile") == null) System.setProperty("log4j.configurationFile", "log4j2_mohist.xml");
+        if(System.getProperty("log4j.configurationFile") == null)
+            System.setProperty("log4j.configurationFile", "log4j2_mohist.xml");
         MohistConfigUtil.copyMohistConfig();
 
         if(!EulaUtil.hasAcceptedEULA()) {
@@ -35,10 +36,12 @@ public class Mohist {
             while (!"true".equals(new Scanner(System.in).next())) ;
             EulaUtil.writeInfos();
         }
-        if(DownloadLibraries.isCheck()) DownloadLibraries.run();
-        if(Update.isCheck()) Update.versionCheck();
-        if(!MohistConfigUtil.getBoolean(new File("mohist-config", "mohist.yml"), "disable_plugins_blacklist:")) AutoDeletePlugins.jar();
-        if(!MohistConfigUtil.getBoolean(new File("mohist-config", "mohist.yml"), "disable_mods_blacklist:")) AutoDeleteMods.jar();
+        if(UpdateUtils.isCheckLibs()) DownloadLibraries.run();
+        if(UpdateUtils.isCheckUpdate()) UpdateUtils.versionCheck();
+        if(!MohistConfigUtil.getBoolean(new File("mohist-config", "mohist.yml"), "disable_plugins_blacklist:"))
+            AutoDeletePlugins.jar();
+        if(!MohistConfigUtil.getBoolean(new File("mohist-config", "mohist.yml"), "disable_mods_blacklist:"))
+            AutoDeleteMods.jar();
         AutoDeleteMods.jarDisabled();
 
         Class.forName("net.minecraftforge.fml.relauncher.ServerLaunchWrapper").getDeclaredMethod("main", String[].class).invoke(null, new Object[]{args});

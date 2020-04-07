@@ -1,7 +1,7 @@
 package red.mohist.util;
 
-import java.io.*;
-import java.nio.charset.StandardCharsets;
+import java.io.IOException;
+import java.io.InputStreamReader;
 
 public class IOUtil {
 
@@ -12,6 +12,7 @@ public class IOUtil {
         while ((readCount = pIPSReader.read(tBuff)) != -1) {
             tSB.append(tBuff, 0, readCount);
         }
+        pIPSReader.close();
         return tSB.toString();
     }
 

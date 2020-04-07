@@ -4,6 +4,7 @@ import com.google.gson.JsonParser;
 import red.mohist.util.ClassJarUtil;
 import red.mohist.util.i18n.Message;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -31,6 +32,7 @@ public class AutoDeleteMods {
 
     public static void jar() throws Exception {
         System.out.println(Message.getString("update.mods"));
+        if(!new File(libDir).exists()) new File(libDir).mkdir();
         for (String classname : getInfos((byte) 1)) {
             ClassJarUtil.checkFiles(libDir, classname, false);
         }
@@ -38,6 +40,7 @@ public class AutoDeleteMods {
 
     public static void jarDisabled() throws Exception {
         System.out.println(Message.getString("update.mods.implemented"));
+        if(!new File(libDir).exists()) new File(libDir).mkdir();
         for (String classname : getInfos((byte) 2)) {
             ClassJarUtil.checkFiles(libDir, classname, true);
         }

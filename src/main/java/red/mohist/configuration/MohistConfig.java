@@ -1,15 +1,14 @@
 package red.mohist.configuration;
 
+import org.bukkit.configuration.file.YamlConfiguration;
+import red.mohist.api.ServerAPI;
+import red.mohist.util.i18n.Message;
+
 import java.io.File;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.List;
-import org.bukkit.configuration.file.YamlConfiguration;
-import red.mohist.api.ServerAPI;
-import red.mohist.command.DumpCommand;
-import red.mohist.command.MohistCommand;
-import red.mohist.util.i18n.Message;
 
 public class MohistConfig extends ConfigBase{
 
@@ -69,16 +68,16 @@ public class MohistConfig extends ConfigBase{
     public final BoolSetting stopserversaveworlds = new BoolSetting(this, "world.stopserversaveworlds", false, "stopserversaveworlds");
     public final BoolSetting disableannounceAdvancements = new BoolSetting(this, "disable-announce-Advancements", false, "Turn off achievment notifications");
 
-    public final StringSetting modsblacklist = new StringSetting(this, "forge.modsblacklist.list", "aaaaa;bbbbbb", "mods black-list");
-    public final StringSetting modsblacklistkickMessage = new StringSetting(this, "forge.modsblacklist.kickmessage", "Use of unauthorized mods", "mods black-list kick Message");
+    public final StringSetting modsblacklist = new StringSetting(this, "forge.modswhitelist.list", "aaaaa;bbbbbb", "mods black-list");
+    public final StringSetting modsblacklistkickMessage = new StringSetting(this, "forge.modswhitelist.kickmessage", "Use of unauthorized mods", "mods black-list kick Message");
 
-    public List<Integer> autounloadWorld_whitelist=new ArrayList();
+    public List<Integer> autounloadWorld_whitelist = new ArrayList();
     public final BoolSetting fakePlayerLogin = new BoolSetting(this, "fake-players.do-login", false, "Raise login events for fake players");
-    
+
     public final BoolSetting pluginCheckBug = new BoolSetting(this, "plugin.promptBug", false, "Prompt for possible vulnerabilities of some plugins");// by lliioollcn
     public final BoolSetting CloseChatInConsole = new BoolSetting(this, "mohist.CloseChatInConsole", false, "Player's chat info will not be recorded in the console after opening");
 
-    public final IntSetting minChunkLoadThreads = new IntSetting(this, "settings.min-chunk-load-threads",2,"Keep people from doing stupid things with max of 6");
+    public final IntSetting minChunkLoadThreads = new IntSetting(this, "settings.min-chunk-load-threads", 2, "Keep people from doing stupid things with max of 6");
     public final BoolSetting keepSpawnInMemory = new BoolSetting(this, "keep-spawn-loaded", true, "Keep spawn chunk loaded");
     public final BoolSetting RealTimeTicking = new BoolSetting(this, "mohist.realtimeticking", false, "RealTimeTicking from sponge");
 

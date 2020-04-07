@@ -1,29 +1,25 @@
 package red.mohist;
 
-import java.io.ByteArrayOutputStream;
-import java.io.DataOutputStream;
-import java.io.File;
-import java.io.IOException;
-import java.net.URL;
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-import java.util.concurrent.Callable;
-import java.util.concurrent.TimeUnit;
-import java.util.logging.Level;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import java.util.zip.GZIPOutputStream;
-import javax.net.ssl.HttpsURLConnection;
 import net.minecraft.server.MinecraftServer;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import red.mohist.common.async.MohistThreadBox;
+
+import javax.net.ssl.HttpsURLConnection;
+import java.io.ByteArrayOutputStream;
+import java.io.DataOutputStream;
+import java.io.File;
+import java.io.IOException;
+import java.net.URL;
+import java.nio.charset.StandardCharsets;
+import java.util.*;
+import java.util.concurrent.Callable;
+import java.util.concurrent.TimeUnit;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.zip.GZIPOutputStream;
 
 /**
  * bStats collects some data for plugin authors.
@@ -32,7 +28,6 @@ import red.mohist.common.async.MohistThreadBox;
  */
 public class Metrics {
 
-    private static boolean logFailedRequests = false;
     private final String name;
     private final String serverUUID;
     private final List<CustomChart> charts = new ArrayList<>();
@@ -40,7 +35,6 @@ public class Metrics {
     public Metrics(String name, String serverUUID, boolean logFailedRequests) {
             this.name = name;
             this.serverUUID = serverUUID;
-            Metrics.logFailedRequests = logFailedRequests;
 
         startSubmitting();
     }
