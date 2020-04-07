@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import net.minecraft.server.MinecraftServer;
+import net.minecraftforge.fml.common.registry.GameRegistry;
 import org.apache.commons.io.FileUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.block.Biome;
@@ -26,11 +27,11 @@ public class DumpCommand extends Command {
     public DumpCommand(String name) {
         super(name);
         this.description = "Universal Dump, which will print the information you need locally!";
-        this.usageMessage = "/dump [potions|enchants|cbcmds|modscmds|entitytypes|biomes|pattern]";
+        this.usageMessage = "/dump [potions|enchants|cbcmds|modscmds|entitytypes|biomes|pattern|worldgen]";
         this.setPermission("mohist.command.dump");
     }
 
-    private List<String> params = Arrays.asList("potions", "enchants", "cbcmds", "modscmds", "entitytypes", "biomes", "pattern");
+    private List<String> params = Arrays.asList("potions", "enchants", "cbcmds", "modscmds", "entitytypes", "biomes", "pattern", "worldgen");
 
     @Override
     public List<String> tabComplete(CommandSender sender, String alias, String[] args) throws IllegalArgumentException {
@@ -77,6 +78,9 @@ public class DumpCommand extends Command {
                 break;
             case "pattern":
                 dumpPattern(sender);
+                break;
+            case "worldgen":
+                dumpWorldGen(sender);
                 break;
             default:
                 sender.sendMessage(ChatColor.RED + "Usage: " + usageMessage);
@@ -191,6 +195,22 @@ public class DumpCommand extends Command {
             File file = new File("dump", "pattern.red");
             FileUtils.writeByteArrayToFile(file, sb.toString().getBytes(StandardCharsets.UTF_8));
             dumpmsg(sender, file, "pattern");
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    private void dumpWorldGen(CommandSender sender){
+        StringBuilder sb = new StringBuilder();
+        for (Map.Entry<String, String> entry : GameRegistry.worldGenMap.entrySet()) {
+                String key = entry.getKey();
+                String value = entry.getValue();
+                sb.append("worldgen-" + value + "-" + key).append("\n");
+        }
+        try {
+            File file = new File("dump", "worldgen.red");
+            FileUtils.writeByteArrayToFile(file, sb.toString().getBytes(StandardCharsets.UTF_8));
+            dumpmsg(sender, file, "worldgen");
         } catch (IOException ex) {
             ex.printStackTrace();
         }

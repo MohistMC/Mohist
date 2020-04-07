@@ -13,7 +13,7 @@
      private static List<IEntitySelectorFactory> entitySelectorFactories = Lists.newArrayList();
  
 +    private static Map<String, Boolean> configWorldGenCache = Maps.newHashMap();
-+    private static Map<String, String> worldGenMap = Maps.newHashMap();
++    public static Map<String, String> worldGenMap = Maps.newHashMap();
 +
      /**
       * Register a world generator - something that inserts new block types into the world
