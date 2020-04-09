@@ -41,7 +41,7 @@ public class ClassJarUtil {
                     jarfile.close();
                     if(!MohistConfigUtil.getString(new File("plugins", "check.yml"), "version:", "xxxxx").equals(ver)) {
                         new File("plugins/check.yml").delete();
-
+                        System.gc();
                         if(what.contains("mod")) {
                             System.out.println(Message.getFormatString("update.pluginversionforge", new Object[]{file.getName().replace(".jar", ""), link}));
                             System.out.println(Message.getFormatString("update.downloadpluginversion", new Object[]{file.getName().replace(".jar", "")}));
