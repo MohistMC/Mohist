@@ -443,6 +443,15 @@
          this.sleepTimer = immediately ? 0 : 100;
  
          if (setSpawn)
+@@ -1723,7 +1877,7 @@
+         return this.sleeping && this.sleepTimer >= 100;
+     }
+ 
+-    @SideOnly(Side.CLIENT)
++    //@SideOnly(Side.CLIENT) Mohist - Allow DeltaHardMode to use this method
+     public int getSleepTimer()
+     {
+         return this.sleepTimer;
 @@ -1757,11 +1911,13 @@
          {
              this.spawnPos = pos;
