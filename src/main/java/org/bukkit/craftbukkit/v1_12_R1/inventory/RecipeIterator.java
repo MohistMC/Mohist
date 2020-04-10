@@ -4,8 +4,9 @@ import java.util.Iterator;
 import net.minecraft.item.crafting.CraftingManager;
 import net.minecraft.item.crafting.FurnaceRecipes;
 import net.minecraft.item.crafting.IRecipe;
-import net.minecraftforge.cauldron.inventory.CustomModRecipe;
 import org.bukkit.inventory.Recipe;
+import red.mohist.recipe.CustomModRecipe;
+import red.mohist.recipe.RecipeUtils;
 
 public class RecipeIterator implements Iterator<Recipe> {
     private final Iterator<IRecipe> recipes;
@@ -28,12 +29,7 @@ public class RecipeIterator implements Iterator<Recipe> {
             removeFrom = recipes;
             // Cauldron start - handle custom recipe classes without Bukkit API equivalents
             IRecipe recipe = recipes.next();
-            try {
-                return recipe.toBukkitRecipe();
-            } catch (AbstractMethodError ex) {
-                // No Bukkit wrapper provided
-                return new CustomModRecipe(recipe, recipe.getRegistryName());
-            }
+            return RecipeUtils.toBukkitRecipe(recipe);
             // Cauldron end
         } else {
             net.minecraft.item.ItemStack item;

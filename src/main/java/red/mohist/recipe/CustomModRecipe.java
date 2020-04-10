@@ -1,4 +1,4 @@
-package net.minecraftforge.cauldron.inventory;
+package red.mohist.recipe;
 
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.util.ResourceLocation;
@@ -11,6 +11,8 @@ import org.bukkit.inventory.Recipe;
 
 /**
  * Bukkit API wrapper for non-vanilla IRecipe classes
+ *
+ * Form net.minecraftforge.cauldron.inventory.CustomModRecipe
  */
 public class CustomModRecipe implements Recipe, Keyed {
     private final IRecipe iRecipe;

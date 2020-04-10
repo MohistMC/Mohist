@@ -5,10 +5,11 @@ import java.util.List;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.crafting.IRecipe;
-import net.minecraftforge.cauldron.inventory.CustomModRecipe;
 import org.bukkit.inventory.CraftingInventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.Recipe;
+import red.mohist.recipe.CustomModRecipe;
+import red.mohist.recipe.RecipeUtils;
 
 public class CraftInventoryCrafting extends CraftInventory implements CraftingInventory {
     private final IInventory resultInventory;
@@ -119,11 +120,7 @@ public class CraftInventoryCrafting extends CraftInventory implements CraftingIn
     public Recipe getRecipe() {
         IRecipe recipe = ((InventoryCrafting) getInventory()).currentRecipe;
         // Cauldron start - handle custom recipe classes without Bukkit API equivalents
-        try {
-            return recipe == null ? null : recipe.toBukkitRecipe();
-        } catch (AbstractMethodError ex) {
-            return new CustomModRecipe(recipe, recipe.getRegistryName());
-        }
+        return RecipeUtils.toBukkitRecipe(recipe);
         // Cauldron end
     }
 }

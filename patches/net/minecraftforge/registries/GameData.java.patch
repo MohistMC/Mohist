@@ -1,18 +1,11 @@
 --- ../src-base/minecraft/net/minecraftforge/registries/GameData.java
 +++ ../src-work/minecraft/net/minecraftforge/registries/GameData.java
-@@ -47,6 +47,7 @@
- import net.minecraft.util.registry.RegistryNamespacedDefaultedByKey;
- import net.minecraft.world.World;
- import net.minecraft.world.biome.Biome;
-+import net.minecraftforge.cauldron.inventory.CustomModRecipe;
- import net.minecraftforge.common.MinecraftForge;
- import net.minecraftforge.event.RegistryEvent;
- import net.minecraftforge.event.RegistryEvent.MissingMappings;
-@@ -84,6 +85,7 @@
+@@ -84,6 +84,8 @@
  
  import org.apache.commons.lang3.Validate;
  import org.apache.logging.log4j.Level;
 +import org.bukkit.inventory.Recipe;
++import red.mohist.recipe.CustomModRecipe;
  
  /**
   * INTERNAL ONLY

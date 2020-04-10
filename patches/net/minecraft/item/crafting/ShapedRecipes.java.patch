@@ -4,10 +4,10 @@
  import net.minecraft.util.NonNullList;
  import net.minecraft.util.ResourceLocation;
  import net.minecraft.world.World;
-+import net.minecraftforge.cauldron.inventory.CustomModRecipe;
 +import org.bukkit.craftbukkit.v1_12_R1.inventory.CraftItemStack;
 +import org.bukkit.craftbukkit.v1_12_R1.inventory.CraftShapedRecipe;
 +import org.bukkit.inventory.Recipe;
++import red.mohist.recipe.CustomModRecipe;
  
  public class ShapedRecipes extends net.minecraftforge.registries.IForgeRegistryEntry.Impl<IRecipe> implements net.minecraftforge.common.crafting.IShapedRecipe
  {

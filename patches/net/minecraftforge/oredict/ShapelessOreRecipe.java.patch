@@ -1,18 +1,11 @@
 --- ../src-base/minecraft/net/minecraftforge/oredict/ShapelessOreRecipe.java
 +++ ../src-work/minecraft/net/minecraftforge/oredict/ShapelessOreRecipe.java
-@@ -31,6 +31,7 @@
- import net.minecraft.util.NonNullList;
- import net.minecraft.util.ResourceLocation;
- import net.minecraft.world.World;
-+import net.minecraftforge.cauldron.inventory.CustomModRecipe;
- import net.minecraftforge.common.crafting.CraftingHelper;
- import net.minecraftforge.common.crafting.JsonContext;
- import net.minecraftforge.common.util.RecipeMatcher;
-@@ -42,6 +43,7 @@
+@@ -42,6 +42,8 @@
  import com.google.gson.JsonElement;
  import com.google.gson.JsonObject;
  import com.google.gson.JsonParseException;
 +import org.bukkit.inventory.Recipe;
++import red.mohist.recipe.CustomModRecipe;
  
  public class ShapelessOreRecipe extends IForgeRegistryEntry.Impl<IRecipe> implements IRecipe
  {
