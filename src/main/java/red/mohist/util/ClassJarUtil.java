@@ -46,19 +46,19 @@ public class ClassJarUtil {
                             System.out.println(Message.getFormatString("update.pluginversionforge", new Object[]{file.getName().replace(".jar", ""), link}));
                             System.out.println(Message.getFormatString("update.downloadpluginversion", new Object[]{file.getName().replace(".jar", "")}));
                             if(new Scanner(System.in).next().equals("yes")) {
+                                file.delete();
                                 System.out.println(Message.getFormatString("update.dl", new Object[]{UpdateUtils.getSize(UpdateUtils.getConnLength(link)), file.getName()}));
                                 UpdateUtils.downloadFile(link, new File("mods/" + file.getName()));
                                 System.out.println(Message.getString("update.finish"));
-                                file.delete();
                             }
                         } else {
                             System.out.println(Message.getFormatString("update.pluginversion", new Object[]{file.getName().replace(".jar", ""), ver, link, ""}));
                             System.out.println(Message.getFormatString("update.downloadpluginversion", new Object[]{file.getName().replace(".jar", "")}));
                             if(new Scanner(System.in).next().equals("yes")) {
+                                file.delete();
                                 System.out.println(Message.getFormatString("update.dl", new Object[]{UpdateUtils.getSize(UpdateUtils.getConnLength(link)), file.getName()}));
                                 UpdateUtils.downloadFile(link, new File("plugins/" + file.getName()));
                                 System.out.println(Message.getString("update.finish"));
-                                file.delete();
                             }
                         }
                     }

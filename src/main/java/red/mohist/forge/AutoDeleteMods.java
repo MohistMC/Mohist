@@ -26,7 +26,7 @@ public class AutoDeleteMods {
         if(type == 1)
             l = new JsonParser().parse(new InputStreamReader((InputStream) request.getContent())).getAsJsonObject().get("list").toString().replaceAll("\"", "").split(",");
         if(type == 2)
-            l = new JsonParser().parse(new InputStreamReader((InputStream) request.getContent())).getAsJsonObject().get("disabled").toString().replaceAll("\"", "").split(",");
+            l = new JsonParser().parse(new InputStreamReader((InputStream) request.getContent())).getAsJsonObject().get("implemented").toString().replaceAll("\"", "").split(",");
         return l;
     }
 
