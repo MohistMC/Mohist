@@ -24,7 +24,7 @@ import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
-import red.mohist.util.CauldronUtils;
+import red.mohist.inventory.InventoryOwner;
 
 public class CraftInventory implements Inventory {
     protected final IInventory inventory;
@@ -493,15 +493,7 @@ public class CraftInventory implements Inventory {
     }
 
     public InventoryHolder getHolder() {
-        try {
-            return inventory.getOwner();
-        } catch (AbstractMethodError e) {
-            if (inventory instanceof net.minecraft.tileentity.TileEntity) {
-                return CauldronUtils.getOwner((net.minecraft.tileentity.TileEntity) inventory);
-            } else {
-                return null;
-            }
-        }
+        return InventoryOwner.get(inventory);
     }
 
     public int getMaxStackSize() {

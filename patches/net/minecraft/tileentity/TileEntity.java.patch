@@ -8,11 +8,11 @@
  import net.minecraft.nbt.NBTTagCompound;
  import net.minecraft.network.play.server.SPacketUpdateTileEntity;
  import net.minecraft.util.Mirror;
-@@ -16,26 +17,38 @@
+@@ -16,26 +17,39 @@
  import net.minecraft.util.registry.RegistryNamespaced;
  import net.minecraft.util.text.ITextComponent;
  import net.minecraft.world.World;
-+import net.minecraftforge.cauldron.inventory.CraftCustomInventory;
++import red.mohist.inventory.CraftCustomInventory;
  import net.minecraftforge.fml.relauncher.Side;
  import net.minecraftforge.fml.relauncher.SideOnly;
  import org.apache.logging.log4j.LogManager;
@@ -22,6 +22,7 @@
 +import org.bukkit.inventory.InventoryHolder;
 +import org.spigotmc.CustomTimingsHandler;
 +import red.mohist.Mohist;
++import red.mohist.inventory.InventoryOwner;
  
  public abstract class TileEntity implements net.minecraftforge.common.capabilities.ICapabilitySerializable<NBTTagCompound>
  {
@@ -48,7 +49,7 @@
      @Nullable
      public static ResourceLocation getKey(Class <? extends TileEntity > clazz)
      {
-@@ -531,4 +544,30 @@
+@@ -531,4 +545,11 @@
          register("shulker_box", TileEntityShulkerBox.class);
          register("bed", TileEntityBed.class);
      }
@@ -56,26 +57,7 @@
 +    // CraftBukkit start - add method
 +    @Nullable
 +    public InventoryHolder getOwner() {
-+        if (world == null) return null;
-+        // Spigot start
-+        org.bukkit.block.Block block = this.world.getWorld().getBlockAt(this.pos.getX(), this.pos.getY(), this.pos.getZ());
-+        if (block == null) {
-+            Mohist.LOGGER.warn("No block for owner at %s %d %d %d", new Object[] { this.world.getWorld(), this.pos.getX(), this.pos.getY(), this.pos.getZ() });
-+            return null;
-+        }
-+        // Spigot end
-+        org.bukkit.block.BlockState state = block.getState();
-+        if (state instanceof InventoryHolder)
-+        {
-+            return (InventoryHolder) state;
-+        }
-+        if (state instanceof CraftBlockEntityState) {
-+            TileEntity te = ((CraftBlockEntityState)state).getTileEntity();
-+            if (te instanceof IInventory) {
-+                return new CraftCustomInventory((IInventory)te);
-+            }
-+        }
-+        return null;
++        return InventoryOwner.get(world, pos);
 +    }
 +    // CraftBukkit end
  }

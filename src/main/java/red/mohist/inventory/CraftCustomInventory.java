@@ -1,4 +1,4 @@
-package net.minecraftforge.cauldron.inventory;
+package red.mohist.inventory;
 
 import javax.annotation.Nullable;
 import net.minecraft.inventory.IInventory;
@@ -71,13 +71,5 @@ public class CraftCustomInventory implements InventoryHolder {
     @Override
     public Inventory getInventory() {
         return this.container;
-    }
-
-    public static InventoryHolder getOwner(IInventory inventory) {
-        try {
-            return inventory.getOwner();
-        } catch (AbstractMethodError e) {
-            return (inventory instanceof TileEntity) ? ((TileEntity)inventory).getOwner() : null;
-        }
     }
 }

@@ -8,11 +8,11 @@
  import net.minecraft.item.ItemStack;
  import net.minecraft.tileentity.IHopper;
  import net.minecraft.tileentity.TileEntity;
-@@ -31,11 +32,16 @@
+@@ -31,11 +32,17 @@
  import net.minecraft.util.math.BlockPos;
  import net.minecraft.util.math.MathHelper;
  import net.minecraft.world.World;
-+import net.minecraftforge.cauldron.inventory.CraftCustomInventory;
++import red.mohist.inventory.CraftCustomInventory;
  import org.apache.commons.lang3.tuple.ImmutablePair;
  import org.apache.commons.lang3.tuple.Pair;
 +import org.bukkit.craftbukkit.v1_12_R1.inventory.CraftItemStack;
@@ -22,10 +22,11 @@
  import javax.annotation.Nonnull;
  import javax.annotation.Nullable;
 +import org.bukkit.inventory.InventoryHolder;
++import red.mohist.inventory.InventoryOwner;
  
  public class VanillaInventoryCodeHooks
  {
-@@ -49,6 +55,8 @@
+@@ -49,6 +56,8 @@
          Pair<IItemHandler, Object> itemHandlerResult = getItemHandler(dest, EnumFacing.UP);
          if (itemHandlerResult == null)
              return null;
@@ -34,7 +35,7 @@
  
          IItemHandler handler = itemHandlerResult.getKey();
  
-@@ -96,10 +104,22 @@
+@@ -96,10 +105,23 @@
          {
              IItemHandler itemHandler = destinationResult.getKey();
              Object destination = destinationResult.getValue();
@@ -43,11 +44,12 @@
 +            CraftItemStack oitemstack = CraftItemStack.asCraftMirror(stack.copy().splitStack(1));
  
 -            if (remainder.isEmpty())
-+            TileEntity te = (TileEntity) destination;
-+            Inventory destinationInventory = te.getOwner() != null ? te.getOwner().getInventory() : CraftCustomInventory.inventoryFromForge(itemHandler);
++            InventoryHolder owner = InventoryOwner.get((TileEntity) destination);
++            Inventory destinationInventory = owner != null ? owner.getInventory() : CraftCustomInventory.inventoryFromForge(itemHandler);
 +
-+            InventoryHolder owner = CraftCustomInventory.getOwner(dropper);
-+            Inventory sourceInventory = owner != null ? owner.getInventory() : new CraftCustomInventory(dropper).getInventory();
++
++            InventoryHolder sourceowner = InventoryOwner.get((IInventory)dropper);
++            Inventory sourceInventory = (sourceowner != null ? owner.getInventory() : new CraftCustomInventory(dropper).getInventory());
 +            InventoryMoveItemEvent event = new InventoryMoveItemEvent(sourceInventory, oitemstack.clone(), destinationInventory, true);
 +            if (destinationInventory != null) world.getServer().getPluginManager().callEvent(event);
 +
@@ -60,7 +62,7 @@
              {
                  remainder = stack.copy();
                  remainder.shrink(1);
-@@ -140,13 +160,32 @@
+@@ -140,13 +162,33 @@
                      if (!hopper.getStackInSlot(i).isEmpty())
                      {
                          ItemStack originalSlotContents = hopper.getStackInSlot(i).copy();
@@ -70,10 +72,11 @@
  
 -                        if (remainder.isEmpty())
 +                        TileEntity te = (TileEntity) destination;
-+                        Inventory destinationInventory = te.getOwner() != null ? te.getOwner().getInventory() : CraftCustomInventory.inventoryFromForge(itemHandler);
++                        InventoryHolder destinationowner = InventoryOwner.get(te);
++                        Inventory destinationInventory = destinationowner != null ? destinationowner.getInventory() : CraftCustomInventory.inventoryFromForge(itemHandler);
 +
-+                        InventoryHolder owner = CraftCustomInventory.getOwner(hopper);
-+                        Inventory sourceInventory = owner != null ? owner.getInventory() : new CraftCustomInventory(hopper).getInventory();
++                        InventoryHolder sourceowner = InventoryOwner.get((IInventory)hopper);
++                        Inventory sourceInventory = (sourceowner != null ? sourceowner.getInventory() : new CraftCustomInventory(hopper).getInventory());
 +                        InventoryMoveItemEvent event = new InventoryMoveItemEvent(hopper.getOwner().getInventory(), remainder.clone(), destinationInventory, true);
 +                        if (destinationInventory != null) hopper.getWorld().getServer().getPluginManager().callEvent(event);
 +                        if (event.isCancelled()) {
