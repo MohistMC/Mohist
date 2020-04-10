@@ -42,9 +42,6 @@ Building
 * Checkout project
   * You can use IDE or clone from console:
   `git clone https://github.com/Mohist-Community/Mohist.git`
-* Setup
-  * Download submodules:
-  `git submodule update --init --recursive`
 * Building
   * Build with Linux:
   `bash gradlew launch4j`

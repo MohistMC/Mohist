@@ -42,9 +42,6 @@ Build
 * Vérification du projet
   * Tu peux utiliser ton IDE ou clone depuis git / invite de commande :
   `git clone https://github.com/Mohist-Community/Mohist.git`
-* Configuration
-  * Télécharger les sous-modules (très important) :
-  `git submodule update --init --recursive`
 * Build
   * Build avec Linux :
   `bash gradlew launch4j`

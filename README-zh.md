@@ -29,9 +29,6 @@
 * 查看工程
   * 你可以使用集成开发环境(IDE)或是从控制台克隆一份源码:
   `git clone https://github.com/Mohist-Community/Mohist.git`
-* 步骤
-  * 设置子模块:
-  `git submodule update --init --recursive`
 * 构建
   * 在Linux上构建Mohist:
   `./gradlew launch4j`
