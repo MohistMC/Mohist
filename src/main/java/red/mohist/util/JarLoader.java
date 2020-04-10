@@ -23,9 +23,7 @@ public class JarLoader {
         File libdir = new File(path);
         if(libdir.isDirectory()) {
 
-            File[] listFiles = libdir.listFiles(file -> file.exists() && file.isFile() && file.getName().endsWith(".jar"));
-
-            for (File file : listFiles) {
+            for (File file : libdir.listFiles(file -> file.exists() && file.isFile() && file.getName().endsWith(".jar"))) {
                 jarLoader.loadJar(file.toURI().toURL());
             }
 
