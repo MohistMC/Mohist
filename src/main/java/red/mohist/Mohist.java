@@ -9,7 +9,7 @@ import red.mohist.forge.AutoDeleteMods;
 import red.mohist.util.EulaUtil;
 import red.mohist.util.i18n.Message;
 
-import java.io.*;
+import java.io.File;
 import java.util.Scanner;
 
 public class Mohist {
@@ -25,12 +25,6 @@ public class Mohist {
         if(Float.parseFloat(System.getProperty("java.class.version")) != 52.0) {
             System.out.println(Message.getString("unsupported.java.version"));
             System.exit(0);
-        }
-
-        try {
-            System.setOut(new PrintStream(new FileOutputStream(FileDescriptor.out), true, "Cp850"));
-        } catch (UnsupportedEncodingException e) {
-            throw new InternalError("VM does not support mandatory encoding UTF-8");
         }
 
         if(System.getProperty("log4j.configurationFile") == null)
