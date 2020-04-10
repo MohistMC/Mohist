@@ -21,11 +21,9 @@ public class JarLoader {
 
     public static void loadjar(JarLoader jarLoader, String path) throws Exception {
         File libdir = new File(path);
-        if (libdir != null && libdir.isDirectory()) {
+        if(libdir.isDirectory()) {
 
-            File[] listFiles = libdir.listFiles(file -> file.exists() && file.isFile() && file.getName().endsWith(".jar"));
-
-            for (File file : listFiles) {
+            for (File file : libdir.listFiles(file -> file.exists() && file.isFile() && file.getName().endsWith(".jar"))) {
                 jarLoader.loadJar(file.toURI().toURL());
             }
 
