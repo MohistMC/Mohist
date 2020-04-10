@@ -301,7 +301,18 @@
      }
  
      public boolean wasTicked()
-@@ -1548,8 +1720,8 @@
+@@ -1463,6 +1635,10 @@
+         return this.entityLists;
+     }
+ 
++    public List<Entity>[] getEntitySlices() {
++        return getEntitySlices();
++    }
++
+     public boolean isTerrainPopulated()
+     {
+         return this.isTerrainPopulated;
+@@ -1548,8 +1724,8 @@
              net.minecraftforge.fml.common.FMLLog.log.debug(format, "Minecraft", this.getPos(), this.world.provider.getDimension(), this.world.provider.getDimensionType().getName(), populating);
              net.minecraftforge.fml.common.FMLLog.log.debug("Consider setting 'fixVanillaCascading' to 'true' in the Forge config to fix many cases where this occurs in the base game.");
          } else {
