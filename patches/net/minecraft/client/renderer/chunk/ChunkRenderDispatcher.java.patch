@@ -1,0 +1,19 @@
+--- ../src-base/minecraft/net/minecraft/client/renderer/chunk/ChunkRenderDispatcher.java
++++ ../src-work/minecraft/net/minecraft/client/renderer/chunk/ChunkRenderDispatcher.java
+@@ -44,9 +44,15 @@
+ 
+     public ChunkRenderDispatcher()
+     {
++        this(-1);
++    }
++
++    public ChunkRenderDispatcher(int countRenderBuilders)
++    {
+         int i = Math.max(1, (int)((double)Runtime.getRuntime().maxMemory() * 0.3D) / 10485760);
+         int j = Math.max(1, MathHelper.clamp(Runtime.getRuntime().availableProcessors(), 1, i / 5));
+-        this.countRenderBuilders = MathHelper.clamp(j * 10, 1, i);
++        if(countRenderBuilders < 0) countRenderBuilders = MathHelper.clamp(j * 10, 1, i);
++        this.countRenderBuilders = countRenderBuilders;
+ 
+         if (j > 1)
+         {

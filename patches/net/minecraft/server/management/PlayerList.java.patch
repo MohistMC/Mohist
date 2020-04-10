@@ -100,7 +100,7 @@
      private boolean whiteListEnforced;
      protected int maxPlayers;
      private int viewDistance;
-@@ -92,14 +125,22 @@
+@@ -92,21 +125,29 @@
      private boolean commandsAllowedForAll;
      private int playerPingIndex;
  
@@ -125,10 +125,28 @@
          this.mcServer = server;
          this.bannedPlayers.setLanServer(false);
          this.bannedIPs.setLanServer(false);
-@@ -125,6 +166,13 @@
-             playerIn.setPosition(spawnPoint.getX(), spawnPoint.getY(), spawnPoint.getZ());
-         }
+         this.maxPlayers = 8;
+     }
  
+-    public void initializeConnectionToPlayer(NetworkManager netManager, EntityPlayerMP playerIn)
++    public void initializeConnectionToPlayer(NetworkManager netManager, EntityPlayerMP playerIn, NetHandlerPlayServer nethandlerplayserver)
+     {
+         GameProfile gameprofile = playerIn.getGameProfile();
+         PlayerProfileCache playerprofilecache = this.mcServer.getPlayerProfileCache();
+@@ -115,6 +156,24 @@
+         playerprofilecache.addEntry(gameprofile);
+         NBTTagCompound nbttagcompound = this.readPlayerDataFromFile(playerIn);
+         playerIn.setWorld(this.mcServer.getWorld(playerIn.dimension));
++
++        World playerWorld = this.mcServer.getWorld(playerIn.dimension);
++        if (playerWorld == null)
++        {
++            playerIn.dimension = 0;
++            playerWorld = this.mcServer.getWorld(0);
++            BlockPos spawnPoint = playerWorld.provider.getRandomizedSpawnPoint();
++            playerIn.setPosition(spawnPoint.getX(), spawnPoint.getY(), spawnPoint.getZ());
++        }
++
 +        // CraftBukkit start - Better rename detection
 +        if (nbttagcompound != null && nbttagcompound.hasKey("bukkit")) {
 +            NBTTagCompound bukkit = nbttagcompound.getCompoundTag("bukkit");
@@ -136,10 +154,11 @@
 +        }
 +        // CraftBukkit end
 +
-         playerIn.setWorld(playerWorld);
++        playerIn.setWorld(playerWorld);
          playerIn.interactionManager.setWorld((WorldServer)playerIn.world);
          String s1 = "local";
-@@ -134,36 +182,66 @@
+ 
+@@ -123,35 +182,66 @@
              s1 = netManager.getRemoteAddress().toString();
          }
  
@@ -166,7 +185,9 @@
          WorldServer worldserver = this.mcServer.getWorld(playerIn.dimension);
          WorldInfo worldinfo = worldserver.getWorldInfo();
          this.setPlayerGameTypeBasedOnOther(playerIn, (EntityPlayerMP)null, worldserver);
-         playerIn.connection = nethandlerplayserver;
+-        NetHandlerPlayServer nethandlerplayserver = new NetHandlerPlayServer(this.mcServer, netManager, playerIn);
+-        nethandlerplayserver.sendPacket(new SPacketJoinGame(playerIn.getEntityId(), playerIn.interactionManager.getGameType(), worldinfo.isHardcoreModeEnabled(), worldserver.provider.getDimensionType().getId(), worldserver.getDifficulty(), this.getMaxPlayers(), worldinfo.getTerrainType(), worldserver.getGameRules().getBoolean("reducedDebugInfo")));
++        playerIn.connection = nethandlerplayserver;
 +        if (DimensionManager.isBukkitDimension(playerIn.dimension))
 +        {
 +            FMLEmbeddedChannel serverChannel = ForgeNetworkHandler.getServerChannel();
@@ -174,8 +195,8 @@
 +            serverChannel.attr(FMLOutboundHandler.FML_MESSAGETARGETARGS).set(playerIn);
 +            serverChannel.writeOutbound(new ForgeMessage.DimensionRegisterMessage(playerIn.dimension, DimensionManager.getProviderType(playerIn.dimension).name()));
 +        }
-         net.minecraftforge.fml.common.FMLCommonHandler.instance().fireServerConnectionEvent(netManager);
-         nethandlerplayserver.sendPacket(new SPacketJoinGame(playerIn.getEntityId(), playerIn.interactionManager.getGameType(), worldinfo.isHardcoreModeEnabled(), worldserver.provider.getDimension(), worldserver.getDifficulty(), this.getMaxPlayers(), worldinfo.getTerrainType(), worldserver.getGameRules().getBoolean("reducedDebugInfo")));
++        net.minecraftforge.fml.common.FMLCommonHandler.instance().fireServerConnectionEvent(netManager);
++        nethandlerplayserver.sendPacket(new SPacketJoinGame(playerIn.getEntityId(), playerIn.interactionManager.getGameType(), worldinfo.isHardcoreModeEnabled(), worldserver.provider.getDimension(), worldserver.getDifficulty(), this.getMaxPlayers(), worldinfo.getTerrainType(), worldserver.getGameRules().getBoolean("reducedDebugInfo")));
 +        playerIn.getBukkitEntity().sendSupportedChannels(); // CraftBukkit
          nethandlerplayserver.sendPacket(new SPacketCustomPayload("MC|Brand", (new PacketBuffer(Unpooled.buffer())).writeString(this.getServerInstance().getServerModName())));
          nethandlerplayserver.sendPacket(new SPacketServerDifficulty(worldinfo.getDifficulty(), worldinfo.isDifficultyLocked()));
@@ -214,10 +235,11 @@
          nethandlerplayserver.setPlayerLocation(playerIn.posX, playerIn.posY, playerIn.posZ, playerIn.rotationYaw, playerIn.rotationPitch);
          this.updateTimeAndWeatherForPlayer(playerIn, worldserver);
  
-@@ -217,9 +295,11 @@
+@@ -204,9 +294,12 @@
+         }
  
          playerIn.addSelfToInternalCraftingInventory();
-         net.minecraftforge.fml.common.FMLCommonHandler.instance().firePlayerLoggedIn(playerIn);
++        net.minecraftforge.fml.common.FMLCommonHandler.instance().firePlayerLoggedIn(playerIn);
 +        // CraftBukkit - Moved from above, added world
 +        PlayerList.LOGGER.info(playerIn.getName() + "[" + s1 + "] logged in with entity id " + playerIn.getEntityId() + " at ([" + playerIn.world.worldInfo.getWorldName() + "]" + playerIn.posX + ", " + playerIn.posY + ", " + playerIn.posZ + ")");
      }
@@ -227,7 +249,7 @@
      {
          Set<ScoreObjective> set = Sets.<ScoreObjective>newHashSet();
  
-@@ -246,28 +326,29 @@
+@@ -233,28 +326,29 @@
  
      public void setPlayerManager(WorldServer[] worldServers)
      {
@@ -262,11 +284,35 @@
              }
              public void onDamageAmountChanged(WorldBorder border, double newAmount)
              {
-@@ -344,16 +425,16 @@
+@@ -304,6 +398,7 @@
+             nbttagcompound1 = nbttagcompound;
+             playerIn.readFromNBT(nbttagcompound);
+             LOGGER.debug("loading single player");
++            net.minecraftforge.event.ForgeEventFactory.firePlayerLoadingEvent(playerIn, this.playerDataManager, playerIn.getUniqueID().toString());
+         }
+         else
+         {
+@@ -313,17 +408,33 @@
+         return nbttagcompound1;
+     }
+ 
++    public NBTTagCompound getPlayerNBT(EntityPlayerMP player)
++    {
++        // Hacky method to allow loading the NBT for a player prior to login
++        NBTTagCompound nbttagcompound = this.mcServer.worlds[0].getWorldInfo().getPlayerNBTTagCompound();
++        if (player.getName().equals(this.mcServer.getServerOwner()) && nbttagcompound != null)
++        {
++            return nbttagcompound;
++        }
++        else
++        {
++            return ((net.minecraft.world.storage.SaveHandler)this.playerDataManager).getPlayerNBT(player);
++        }
++    }
++
      protected void writePlayerData(EntityPlayerMP playerIn)
      {
-         if (playerIn.connection == null) return;
--
++        if (playerIn.connection == null) return;
 +        playerIn.lastSave = MinecraftServer.currentTick; // Paper
          this.playerDataManager.writePlayerData(playerIn);
 -        StatisticsManagerServer statisticsmanagerserver = this.playerStatFiles.get(playerIn.getUniqueID());
@@ -282,7 +328,12 @@
  
          if (playeradvancements != null)
          {
-@@ -378,16 +459,88 @@
+@@ -343,19 +454,93 @@
+             playerIn.connection.sendPacket(new SPacketPlayerListItem(SPacketPlayerListItem.Action.ADD_PLAYER, new EntityPlayerMP[] {this.playerEntityList.get(i)}));
+         }
+ 
++        net.minecraftforge.common.chunkio.ChunkIOExecutor.adjustPoolSize(this.getCurrentPlayerCount());
+         worldserver.spawnEntity(playerIn);
          this.preparePlayer(playerIn, (WorldServer)null);
      }
  
@@ -354,7 +405,7 @@
 +    public void playerLoggedOut(EntityPlayerMP playerIn) // CraftBukkit - return string
 +    {
 +        String quitMessage = null;
-         net.minecraftforge.fml.common.FMLCommonHandler.instance().firePlayerLoggedOut(playerIn);
++        net.minecraftforge.fml.common.FMLCommonHandler.instance().firePlayerLoggedOut(playerIn);
          WorldServer worldserver = playerIn.getServerWorld();
          playerIn.addStat(StatList.LEAVE_GAME);
 +
@@ -372,7 +423,15 @@
          this.writePlayerData(playerIn);
  
          if (playerIn.isRiding())
-@@ -420,11 +573,30 @@
+@@ -376,6 +561,7 @@
+                 worldserver.getChunkFromChunkCoords(playerIn.chunkCoordX, playerIn.chunkCoordZ).markDirty();
+             }
+         }
++        net.minecraftforge.common.chunkio.ChunkIOExecutor.adjustPoolSize(this.getCurrentPlayerCount());
+ 
+         worldserver.removeEntity(playerIn);
+         worldserver.getPlayerChunkMap().removePlayer(playerIn);
+@@ -387,11 +573,30 @@
          if (entityplayermp == playerIn)
          {
              this.uuidToPlayerMap.remove(uuid);
@@ -406,7 +465,7 @@
      }
  
      public String allowUserToConnect(SocketAddress address, GameProfile profile)
-@@ -463,6 +635,86 @@
+@@ -430,6 +635,86 @@
          }
      }
  
@@ -493,7 +552,7 @@
      public EntityPlayerMP createPlayerForUser(GameProfile profile)
      {
          UUID uuid = EntityPlayer.getUUID(profile);
-@@ -487,7 +739,7 @@
+@@ -454,7 +739,7 @@
  
          for (EntityPlayerMP entityplayermp1 : list)
          {
@@ -502,7 +561,7 @@
          }
  
          PlayerInteractionManager playerinteractionmanager;
-@@ -504,39 +756,180 @@
+@@ -471,30 +756,183 @@
          return new EntityPlayerMP(this.mcServer, this.mcServer.getWorld(0), profile, playerinteractionmanager);
      }
  
@@ -515,27 +574,27 @@
      {
 +        Location location = null;
 +        playerIn.dismountRidingEntity(); // CraftBukkit
-         World world = mcServer.getWorld(dimension);
-         if (world == null)
-         {
-             dimension = playerIn.getSpawnDimension();
-         }
--        else if (!world.provider.canRespawnHere())
++        World world = mcServer.getWorld(dimension);
++        if (world == null)
++        {
++            dimension = playerIn.getSpawnDimension();
++        }
 +        else if (location == null && !world.provider.canRespawnHere())
-         {
-             dimension = world.provider.getRespawnDimension(playerIn);
-         }
-         if (mcServer.getWorld(dimension) == null) dimension = 0;
- 
++        {
++            dimension = world.provider.getRespawnDimension(playerIn);
++        }
++        if (mcServer.getWorld(dimension) == null) dimension = 0;
++
          playerIn.getServerWorld().getEntityTracker().removePlayerFromTrackers(playerIn);
 -        playerIn.getServerWorld().getEntityTracker().untrack(playerIn);
          playerIn.getServerWorld().getPlayerChunkMap().removePlayer(playerIn);
          this.playerEntityList.remove(playerIn);
          this.mcServer.getWorld(playerIn.dimension).removeEntityDangerously(playerIn);
-         BlockPos blockpos = playerIn.getBedLocation(dimension);
--        boolean flag = playerIn.isSpawnForced(dimension);
+-        BlockPos blockpos = playerIn.getBedLocation();
+-        boolean flag = playerIn.isSpawnForced();
 -        playerIn.dimension = dimension;
 -        PlayerInteractionManager playerinteractionmanager;
++        BlockPos blockpos = playerIn.getBedLocation(dimension);
 +        boolean flag1 = playerIn.isSpawnForced(dimension);
  
 -        if (this.mcServer.isDemo())
@@ -692,8 +751,11 @@
 +
          entityplayermp.connection = playerIn.connection;
          entityplayermp.copyFrom(playerIn, conqueredEnd);
-         entityplayermp.dimension = dimension;
-@@ -549,48 +942,177 @@
++        entityplayermp.dimension = dimension;
+         entityplayermp.setEntityId(playerIn.getEntityId());
+         entityplayermp.setCommandStats(playerIn);
+         entityplayermp.setPrimaryHand(playerIn.getPrimaryHand());
+@@ -504,47 +942,177 @@
              entityplayermp.addTag(s);
          }
  
@@ -821,7 +883,7 @@
 +            this.writePlayerData(playerIn);
 +        }
 +        // CraftBukkit end
-         net.minecraftforge.fml.common.FMLCommonHandler.instance().firePlayerRespawnEvent(entityplayermp, conqueredEnd);
++        net.minecraftforge.fml.common.FMLCommonHandler.instance().firePlayerRespawnEvent(entityplayermp, conqueredEnd);
          return entityplayermp;
      }
  
@@ -892,27 +954,113 @@
      public void updatePermissionLevel(EntityPlayerMP player)
      {
          GameProfile gameprofile = player.getGameProfile();
-@@ -617,7 +1139,7 @@
+@@ -556,15 +1124,26 @@
+ 
+     public void changePlayerDimension(EntityPlayerMP player, int dimensionIn)
+     {
++        transferPlayerToDimension(player, dimensionIn, mcServer.getWorld(dimensionIn).getDefaultTeleporter());
++    }
++
++    // TODO: Remove (1.13)
++    public void transferPlayerToDimension(EntityPlayerMP player, int dimensionIn, net.minecraft.world.Teleporter teleporter)
++    {
++        transferPlayerToDimension(player, dimensionIn, (net.minecraftforge.common.util.ITeleporter) teleporter);
++    }
++
++    public void transferPlayerToDimension(EntityPlayerMP player, int dimensionIn, net.minecraftforge.common.util.ITeleporter teleporter)
++    {
+         int i = player.dimension;
          WorldServer worldserver = this.mcServer.getWorld(player.dimension);
          player.dimension = dimensionIn;
          WorldServer worldserver1 = this.mcServer.getWorld(player.dimension);
--        player.connection.sendPacket(new SPacketRespawn(player.dimension, worldserver1.getDifficulty(), worldserver1.getWorldInfo().getTerrainType(), player.interactionManager.getGameType())); // Forge: Use new dimensions information
+-        player.connection.sendPacket(new SPacketRespawn(player.dimension, player.world.getDifficulty(), player.world.getWorldInfo().getTerrainType(), player.interactionManager.getGameType()));
 +        player.connection.sendPacket(new SPacketRespawn(player.dimension, worldserver1.getDifficulty(), worldserver1.getWorldInfo().getTerrainType(), player.interactionManager.getGameType()));
          this.updatePermissionLevel(player);
          worldserver.removeEntityDangerously(player);
          player.isDead = false;
-@@ -642,7 +1164,9 @@
+-        this.transferEntityToWorld(player, i, worldserver, worldserver1);
++        this.transferEntityToWorld(player, i, worldserver, worldserver1, teleporter);
+         this.preparePlayer(player, worldserver);
+         player.connection.setPlayerLocation(player.posX, player.posY, player.posZ, player.rotationYaw, player.rotationPitch);
+         player.interactionManager.setWorld(worldserver1);
+@@ -576,17 +1155,36 @@
+         {
+             player.connection.sendPacket(new SPacketEntityEffect(player.getEntityId(), potioneffect));
+         }
++        // Fix MC-88179: on non-death SPacketRespawn, also resend attributes
++        net.minecraft.entity.ai.attributes.AttributeMap attributemap = (net.minecraft.entity.ai.attributes.AttributeMap) player.getAttributeMap();
++        java.util.Collection<net.minecraft.entity.ai.attributes.IAttributeInstance> watchedAttribs = attributemap.getWatchedAttributes();
++        if (!watchedAttribs.isEmpty()) player.connection.sendPacket(new net.minecraft.network.play.server.SPacketEntityProperties(player.getEntityId(), watchedAttribs));
++        net.minecraftforge.fml.common.FMLCommonHandler.instance().firePlayerChangedDimensionEvent(player, i, dimensionIn);
+     }
  
      public void transferEntityToWorld(Entity entityIn, int lastDimension, WorldServer oldWorldIn, WorldServer toWorldIn)
      {
--        transferEntityToWorld(entityIn, lastDimension, oldWorldIn, toWorldIn, toWorldIn.getDefaultTeleporter());
+-        double d0 = entityIn.posX;
+-        double d1 = entityIn.posZ;
 +        // transferEntityToWorld(entityIn, lastDimension, oldWorldIn, toWorldIn, toWorldIn.getDefaultTeleporter());
 +        Location exit = this.calculateTarget(entityIn.getBukkitEntity().getLocation(), toWorldIn);
 +        this.repositionEntity(entityIn, exit, true);
-     }
++    }
++
++    // TODO: Remove (1.13)
++    public void transferEntityToWorld(Entity entityIn, int lastDimension, WorldServer oldWorldIn, WorldServer toWorldIn, net.minecraft.world.Teleporter teleporter)
++    {
++        transferEntityToWorld(entityIn, lastDimension, oldWorldIn, toWorldIn, (net.minecraftforge.common.util.ITeleporter) teleporter);
++    }
++
++    public void transferEntityToWorld(Entity entityIn, int lastDimension, WorldServer oldWorldIn, WorldServer toWorldIn, net.minecraftforge.common.util.ITeleporter teleporter)
++    {
++        double moveFactor = oldWorldIn.provider.getMovementFactor() / toWorldIn.provider.getMovementFactor();
++        double d0 = MathHelper.clamp(entityIn.posX * moveFactor, toWorldIn.getWorldBorder().minX() + 16.0D, toWorldIn.getWorldBorder().maxX() - 16.0D);
++        double d1 = MathHelper.clamp(entityIn.posZ * moveFactor, toWorldIn.getWorldBorder().minZ() + 16.0D, toWorldIn.getWorldBorder().maxZ() - 16.0D);
+         double d2 = 8.0D;
+         float f = entityIn.rotationYaw;
+         oldWorldIn.profiler.startSection("moving");
  
-     // TODO: Remove (1.13)
-@@ -729,11 +1253,106 @@
+-        if (entityIn.dimension == -1)
++        if (false && entityIn.dimension == -1)
+         {
+             d0 = MathHelper.clamp(d0 / 8.0D, toWorldIn.getWorldBorder().minX() + 16.0D, toWorldIn.getWorldBorder().maxX() - 16.0D);
+             d1 = MathHelper.clamp(d1 / 8.0D, toWorldIn.getWorldBorder().minZ() + 16.0D, toWorldIn.getWorldBorder().maxZ() - 16.0D);
+@@ -597,7 +1195,7 @@
+                 oldWorldIn.updateEntityWithOptionalForce(entityIn, false);
+             }
+         }
+-        else if (entityIn.dimension == 0)
++        else if (false && entityIn.dimension == 0)
+         {
+             d0 = MathHelper.clamp(d0 * 8.0D, toWorldIn.getWorldBorder().minX() + 16.0D, toWorldIn.getWorldBorder().maxX() - 16.0D);
+             d1 = MathHelper.clamp(d1 * 8.0D, toWorldIn.getWorldBorder().minZ() + 16.0D, toWorldIn.getWorldBorder().maxZ() - 16.0D);
+@@ -608,7 +1206,7 @@
+                 oldWorldIn.updateEntityWithOptionalForce(entityIn, false);
+             }
+         }
+-        else
++        if (entityIn.dimension == 1 && teleporter.isVanilla())
+         {
+             BlockPos blockpos;
+ 
+@@ -634,7 +1232,7 @@
+ 
+         oldWorldIn.profiler.endSection();
+ 
+-        if (lastDimension != 1)
++        if (lastDimension != 1 || !teleporter.isVanilla())
+         {
+             oldWorldIn.profiler.startSection("placing");
+             d0 = (double)MathHelper.clamp((int)d0, -29999872, 29999872);
+@@ -643,7 +1241,8 @@
+             if (entityIn.isEntityAlive())
+             {
+                 entityIn.setLocationAndAngles(d0, entityIn.posY, d1, entityIn.rotationYaw, entityIn.rotationPitch);
+-                toWorldIn.getDefaultTeleporter().placeInPortal(entityIn, f);
++                oldWorldIn.updateEntityWithOptionalForce(entityIn, false);
++                teleporter.placeEntity(toWorldIn, entityIn, f);
+                 toWorldIn.spawnEntity(entityIn);
+                 toWorldIn.updateEntityWithOptionalForce(entityIn, false);
+             }
+@@ -654,11 +1253,106 @@
          entityIn.setWorld(toWorldIn);
      }
  
@@ -1020,7 +1168,7 @@
              this.playerPingIndex = 0;
          }
      }
-@@ -746,6 +1365,24 @@
+@@ -671,6 +1365,24 @@
          }
      }
  
@@ -1045,7 +1193,7 @@
      public void sendPacketToAllPlayersInDimension(Packet<?> packetIn, int dimension)
      {
          for (int i = 0; i < this.playerEntityList.size(); ++i)
-@@ -861,12 +1498,20 @@
+@@ -786,12 +1498,20 @@
          int i = this.mcServer.getOpPermissionLevel();
          this.ops.addEntry(new UserListOpsEntry(profile, this.mcServer.getOpPermissionLevel(), this.ops.bypassesPlayerLimit(profile)));
          this.sendPlayerPermissionLevel(this.getPlayerByUUID(profile.getId()), i);
@@ -1066,7 +1214,7 @@
      }
  
      private void sendPlayerPermissionLevel(EntityPlayerMP player, int permLevel)
-@@ -918,11 +1563,31 @@
+@@ -843,11 +1563,31 @@
  
      public void sendToAllNearExcept(@Nullable EntityPlayer except, double x, double y, double z, double radius, int dimension, Packet<?> packetIn)
      {
@@ -1102,7 +1250,7 @@
              {
                  double d0 = x - entityplayermp.posX;
                  double d1 = y - entityplayermp.posY;
-@@ -938,12 +1603,24 @@
+@@ -863,12 +1603,24 @@
  
      public void saveAllPlayerData()
      {
@@ -1131,7 +1279,7 @@
      public void addWhitelistedPlayer(GameProfile profile)
      {
          this.whiteListedPlayers.addEntry(new UserListWhitelistEntry(profile));
-@@ -988,16 +1665,21 @@
+@@ -913,16 +1665,21 @@
  
          if (worldIn.isRaining())
          {
@@ -1157,7 +1305,7 @@
          playerIn.connection.sendPacket(new SPacketHeldItemChange(playerIn.inventory.currentItem));
      }
  
-@@ -1079,17 +1761,26 @@
+@@ -1004,17 +1761,26 @@
  
      public void removeAllPlayers()
      {
@@ -1188,7 +1336,7 @@
      }
  
      public void sendMessage(ITextComponent component)
-@@ -1097,10 +1788,19 @@
+@@ -1022,10 +1788,19 @@
          this.sendMessage(component, true);
      }
  
@@ -1210,7 +1358,7 @@
  
          if (statisticsmanagerserver == null)
          {
-@@ -1119,7 +1819,7 @@
+@@ -1044,7 +1819,7 @@
  
              statisticsmanagerserver = new StatisticsManagerServer(this.mcServer, file2);
              statisticsmanagerserver.readStatFile();
@@ -1219,7 +1367,7 @@
          }
  
          return statisticsmanagerserver;
-@@ -1128,14 +1828,14 @@
+@@ -1053,14 +1828,14 @@
      public PlayerAdvancements getPlayerAdvancements(EntityPlayerMP p_192054_1_)
      {
          UUID uuid = p_192054_1_.getUniqueID();
@@ -1236,7 +1384,7 @@
          }
  
          playeradvancements.setPlayer(p_192054_1_);
-@@ -1148,7 +1848,7 @@
+@@ -1073,7 +1848,7 @@
  
          if (this.mcServer.worlds != null)
          {
@@ -1245,7 +1393,7 @@
              {
                  if (worldserver != null)
                  {
-@@ -1176,9 +1876,10 @@
+@@ -1101,9 +1876,10 @@
  
      public void reloadResources()
      {

@@ -26,10 +26,24 @@
  public abstract class EntityMinecart extends Entity implements IWorldNameable
  {
      private static final DataParameter<Integer> ROLLING_AMPLITUDE = EntityDataManager.<Integer>createKey(EntityMinecart.class, DataSerializers.VARINT);
-@@ -73,6 +78,17 @@
-     protected float maxSpeedAirVertical = defaultMaxSpeedAirVertical;
-     protected double dragAir = defaultDragAir;
+@@ -59,6 +64,31 @@
+     @SideOnly(Side.CLIENT)
+     private double velocityZ;
  
++    /* Forge: Minecart Compatibility Layer Integration. */
++    public static float defaultMaxSpeedAirLateral = 0.4f;
++    public static float defaultMaxSpeedAirVertical = -1f;
++    public static double defaultDragAir = 0.94999998807907104D;
++    protected boolean canUseRail = true;
++    protected boolean canBePushed = true;
++    private static net.minecraftforge.common.IMinecartCollisionHandler collisionHandler = null;
++
++    /* Instance versions of the above physics properties */
++    private float currentSpeedRail = getMaxCartSpeedOnRail();
++    protected float maxSpeedAirLateral = defaultMaxSpeedAirLateral;
++    protected float maxSpeedAirVertical = defaultMaxSpeedAirVertical;
++    protected double dragAir = defaultDragAir;
++
 +    // CraftBukkit start - Use Forge vars from above
 +    public boolean slowWhenEmpty = true;
 +    private double derailedX = 0.5;
@@ -44,7 +58,29 @@
      public EntityMinecart(World worldIn)
      {
          super(worldIn);
-@@ -162,6 +178,17 @@
+@@ -105,18 +135,20 @@
+     @Nullable
+     public AxisAlignedBB getCollisionBox(Entity entityIn)
+     {
++        if (getCollisionHandler() != null) return getCollisionHandler().getCollisionBox(this, entityIn);
+         return entityIn.canBePushed() ? entityIn.getEntityBoundingBox() : null;
+     }
+ 
+     @Nullable
+     public AxisAlignedBB getCollisionBoundingBox()
+     {
++        if (getCollisionHandler() != null) return getCollisionHandler().getBoundingBox(this);
+         return null;
+     }
+ 
+     public boolean canBePushed()
+     {
+-        return true;
++        return canBePushed;
+     }
+ 
+     public EntityMinecart(World worldIn, double x, double y, double z)
+@@ -146,6 +178,17 @@
              }
              else
              {
@@ -62,7 +98,7 @@
                  this.setRollingDirection(-this.getRollingDirection());
                  this.setRollingAmplitude(10);
                  this.markVelocityChanged();
-@@ -170,6 +197,13 @@
+@@ -154,6 +197,13 @@
  
                  if (flag || this.getDamage() > 40.0F)
                  {
@@ -76,7 +112,7 @@
                      this.removePassengers();
  
                      if (flag && !this.hasCustomName())
-@@ -228,6 +262,11 @@
+@@ -212,6 +262,11 @@
  
      public void onUpdate()
      {
@@ -88,7 +124,7 @@
          if (this.getRollingAmplitude() > 0)
          {
              this.setRollingAmplitude(this.getRollingAmplitude() - 1);
-@@ -243,58 +282,6 @@
+@@ -227,58 +282,6 @@
              this.outOfWorld();
          }
  
@@ -147,10 +183,24 @@
          if (this.world.isRemote)
          {
              if (this.turnProgress > 0)
-@@ -381,6 +368,16 @@
-             if (getCollisionHandler() != null) box = getCollisionHandler().getMinecartCollisionBox(this);
-             else                               box = this.getEntityBoundingBox().grow(0.20000000298023224D, 0.0D, 0.20000000298023224D);
+@@ -322,7 +325,7 @@
+             BlockPos blockpos = new BlockPos(k, l, i1);
+             IBlockState iblockstate = this.world.getBlockState(blockpos);
  
+-            if (BlockRailBase.isRailBlock(iblockstate))
++            if (canUseRail() && BlockRailBase.isRailBlock(iblockstate))
+             {
+                 this.moveAlongTrack(blockpos, iblockstate);
+ 
+@@ -361,9 +364,23 @@
+ 
+             this.setRotation(this.rotationYaw, this.rotationPitch);
+ 
+-            if (this.getType() == EntityMinecart.Type.RIDEABLE && this.motionX * this.motionX + this.motionZ * this.motionZ > 0.01D)
++            AxisAlignedBB box;
++            if (getCollisionHandler() != null) box = getCollisionHandler().getMinecartCollisionBox(this);
++            else                               box = this.getEntityBoundingBox().grow(0.20000000298023224D, 0.0D, 0.20000000298023224D);
++
 +            org.bukkit.World bworld = this.world.getWorld();
 +            Location from = new Location(bworld, prevX, prevY, prevZ, prevYaw, prevPitch);
 +            Location to = new Location(bworld, this.posX, this.posY, this.posZ, this.rotationYaw, this.rotationPitch);
@@ -161,10 +211,14 @@
 +            if (!from.equals(to)) {
 +                this.world.getServer().getPluginManager().callEvent(new org.bukkit.event.vehicle.VehicleMoveEvent(vehicle, from, to));
 +            }
-             if (canBeRidden() && this.motionX * this.motionX + this.motionZ * this.motionZ > 0.01D)
++            if (canBeRidden() && this.motionX * this.motionX + this.motionZ * this.motionZ > 0.01D)
              {
-                 List<Entity> list = this.world.getEntitiesInAABBexcluding(this, box, EntitySelectors.getTeamCollisionPredicate(this));
-@@ -393,10 +390,22 @@
+-                List<Entity> list = this.world.getEntitiesInAABBexcluding(this, this.getEntityBoundingBox().grow(0.20000000298023224D, 0.0D, 0.20000000298023224D), EntitySelectors.getTeamCollisionPredicate(this));
++                List<Entity> list = this.world.getEntitiesInAABBexcluding(this, box, EntitySelectors.getTeamCollisionPredicate(this));
+ 
+                 if (!list.isEmpty())
+                 {
+@@ -373,10 +390,22 @@
  
                          if (!(entity1 instanceof EntityPlayer) && !(entity1 instanceof EntityIronGolem) && !(entity1 instanceof EntityMinecart) && !this.isBeingRidden() && !entity1.isRiding())
                          {
@@ -187,7 +241,12 @@
                              entity1.applyEntityCollision(this);
                          }
                      }
-@@ -408,6 +417,12 @@
+@@ -384,22 +413,30 @@
+             }
+             else
+             {
+-                for (Entity entity : this.world.getEntitiesWithinAABBExcludingEntity(this, this.getEntityBoundingBox().grow(0.20000000298023224D, 0.0D, 0.20000000298023224D)))
++                for (Entity entity : this.world.getEntitiesWithinAABBExcludingEntity(this, box))
                  {
                      if (!this.isPassenger(entity) && entity.canBePushed() && entity instanceof EntityMinecart)
                      {
@@ -200,7 +259,12 @@
                          entity.applyEntityCollision(this);
                      }
                  }
-@@ -420,7 +435,8 @@
+             }
+ 
+             this.handleWaterMovement();
++            net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.minecart.MinecartUpdateEvent(this, this.getCurrentRailPosition()));
+         }
+     }
  
      protected double getMaximumSpeed()
      {
@@ -210,8 +274,26 @@
      }
  
      public void onActivatorRailPass(int x, int y, int z, boolean receivingPower)
-@@ -446,18 +462,28 @@
+@@ -408,24 +445,45 @@
  
+     protected void moveDerailedMinecart()
+     {
+-        double d0 = this.getMaximumSpeed();
++        double d0 = onGround ? this.getMaximumSpeed() : getMaxSpeedAirLateral();
+         this.motionX = MathHelper.clamp(this.motionX, -d0, d0);
+         this.motionZ = MathHelper.clamp(this.motionZ, -d0, d0);
+ 
++        double moveY = motionY;
++        if(getMaxSpeedAirVertical() > 0 && motionY > getMaxSpeedAirVertical())
++        {
++            moveY = getMaxSpeedAirVertical();
++            if(Math.abs(motionX) < 0.3f && Math.abs(motionZ) < 0.3f)
++            {
++                moveY = 0.15f;
++                motionY = moveY;
++            }
++        }
++
          if (this.onGround)
          {
 -            this.motionX *= 0.5D;
@@ -227,13 +309,14 @@
 +            // CraftBukkit end
          }
  
-         this.move(MoverType.SELF, this.motionX, moveY, this.motionZ);
+-        this.move(MoverType.SELF, this.motionX, this.motionY, this.motionZ);
++        this.move(MoverType.SELF, this.motionX, moveY, this.motionZ);
  
          if (!this.onGround)
          {
--            this.motionX *= getDragAir();
--            this.motionY *= getDragAir();
--            this.motionZ *= getDragAir();
+-            this.motionX *= 0.949999988079071D;
+-            this.motionY *= 0.949999988079071D;
+-            this.motionZ *= 0.949999988079071D;
 +            // CraftBukkit start - replace magic numbers with our variables
 +            // this.motionX *= getDragAir();
 +            // this.motionY *= getDragAir();
@@ -245,7 +328,39 @@
          }
      }
  
-@@ -522,7 +548,7 @@
+@@ -445,25 +503,25 @@
+             flag1 = !flag;
+         }
+ 
+-        double d0 = 0.0078125D;
+-        BlockRailBase.EnumRailDirection blockrailbase$enumraildirection = (BlockRailBase.EnumRailDirection)state.getValue(blockrailbase.getShapeProperty());
++        double slopeAdjustment = getSlopeAdjustment();
++        BlockRailBase.EnumRailDirection blockrailbase$enumraildirection = blockrailbase.getRailDirection(world, pos, state, this);
+ 
+         switch (blockrailbase$enumraildirection)
+         {
+             case ASCENDING_EAST:
+-                this.motionX -= 0.0078125D;
++                this.motionX -= slopeAdjustment;
+                 ++this.posY;
+                 break;
+             case ASCENDING_WEST:
+-                this.motionX += 0.0078125D;
++                this.motionX += slopeAdjustment;
+                 ++this.posY;
+                 break;
+             case ASCENDING_NORTH:
+-                this.motionZ += 0.0078125D;
++                this.motionZ += slopeAdjustment;
+                 ++this.posY;
+                 break;
+             case ASCENDING_SOUTH:
+-                this.motionZ -= 0.0078125D;
++                this.motionZ -= slopeAdjustment;
+                 ++this.posY;
+         }
+ 
+@@ -490,7 +548,7 @@
          this.motionZ = d5 * d2 / d3;
          Entity entity = this.getPassengers().isEmpty() ? null : (Entity)this.getPassengers().get(0);
  
@@ -254,7 +369,54 @@
          {
              double d6 = (double)((EntityLivingBase)entity).moveForward;
  
-@@ -668,7 +694,7 @@
+@@ -509,7 +567,7 @@
+             }
+         }
+ 
+-        if (flag1)
++        if (flag1 && shouldDoRailFunctions())
+         {
+             double d17 = Math.sqrt(this.motionX * this.motionX + this.motionZ * this.motionZ);
+ 
+@@ -555,20 +613,8 @@
+         this.posX = d18 + d1 * d10;
+         this.posZ = d19 + d2 * d10;
+         this.setPosition(this.posX, this.posY, this.posZ);
+-        double d22 = this.motionX;
+-        double d23 = this.motionZ;
++        this.moveMinecartOnRail(pos);
+ 
+-        if (this.isBeingRidden())
+-        {
+-            d22 *= 0.75D;
+-            d23 *= 0.75D;
+-        }
+-
+-        double d13 = this.getMaximumSpeed();
+-        d22 = MathHelper.clamp(d22, -d13, d13);
+-        d23 = MathHelper.clamp(d23, -d13, d13);
+-        this.move(MoverType.SELF, d22, 0.0D, d23);
+-
+         if (aint[0][1] != 0 && MathHelper.floor(this.posX) - pos.getX() == aint[0][0] && MathHelper.floor(this.posZ) - pos.getZ() == aint[0][2])
+         {
+             this.setPosition(this.posX, this.posY + (double)aint[0][1], this.posZ);
+@@ -605,8 +651,14 @@
+             this.motionZ = d5 * (double)(i - pos.getZ());
+         }
+ 
+-        if (flag)
++
++        if(shouldDoRailFunctions())
+         {
++            ((BlockRailBase)state.getBlock()).onMinecartPass(world, this, pos);
++        }
++
++        if (flag && shouldDoRailFunctions())
++        {
+             double d15 = Math.sqrt(this.motionX * this.motionX + this.motionZ * this.motionZ);
+ 
+             if (d15 > 0.01D)
+@@ -642,7 +694,7 @@
  
      protected void applyDrag()
      {
@@ -263,7 +425,37 @@
          {
              this.motionX *= 0.996999979019165D;
              this.motionY *= 0.0D;
-@@ -868,6 +894,12 @@
+@@ -683,7 +735,7 @@
+ 
+         if (BlockRailBase.isRailBlock(iblockstate))
+         {
+-            BlockRailBase.EnumRailDirection blockrailbase$enumraildirection = (BlockRailBase.EnumRailDirection)iblockstate.getValue(((BlockRailBase)iblockstate.getBlock()).getShapeProperty());
++            BlockRailBase.EnumRailDirection blockrailbase$enumraildirection = ((BlockRailBase)iblockstate.getBlock()).getRailDirection(world, new BlockPos(i, j, k), iblockstate, this);
+             y = (double)j;
+ 
+             if (blockrailbase$enumraildirection.isAscending())
+@@ -733,7 +785,7 @@
+ 
+         if (BlockRailBase.isRailBlock(iblockstate))
+         {
+-            BlockRailBase.EnumRailDirection blockrailbase$enumraildirection = (BlockRailBase.EnumRailDirection)iblockstate.getValue(((BlockRailBase)iblockstate.getBlock()).getShapeProperty());
++            BlockRailBase.EnumRailDirection blockrailbase$enumraildirection = ((BlockRailBase)iblockstate.getBlock()).getRailDirection(world, new BlockPos(i, j, k), iblockstate, this);
+             int[][] aint = MATRIX[blockrailbase$enumraildirection.getMetadata()];
+             double d0 = (double)i + 0.5D + (double)aint[0][0] * 0.5D;
+             double d1 = (double)j + 0.0625D + (double)aint[0][1] * 0.5D;
+@@ -830,12 +882,24 @@
+ 
+     public void applyEntityCollision(Entity entityIn)
+     {
++        net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.minecart.MinecartCollisionEvent(this, entityIn));
++        if (getCollisionHandler() != null)
++        {
++            getCollisionHandler().onEntityCollision(this, entityIn);
++            return;
++        }
+         if (!this.world.isRemote)
+         {
+             if (!entityIn.noClip && !this.noClip)
              {
                  if (!this.isPassenger(entityIn))
                  {
@@ -276,17 +468,266 @@
                      double d0 = entityIn.posX - this.posX;
                      double d1 = entityIn.posZ - this.posZ;
                      double d2 = d0 * d0 + d1 * d1;
-@@ -1260,6 +1292,9 @@
-     public void setDragAir(double value)
+@@ -877,7 +941,7 @@
+                             double d7 = entityIn.motionX + this.motionX;
+                             double d8 = entityIn.motionZ + this.motionZ;
+ 
+-                            if (((EntityMinecart)entityIn).getType() == EntityMinecart.Type.FURNACE && this.getType() != EntityMinecart.Type.FURNACE)
++                            if (((EntityMinecart)entityIn).isPoweredCart() && !isPoweredCart())
+                             {
+                                 this.motionX *= 0.20000000298023224D;
+                                 this.motionZ *= 0.20000000298023224D;
+@@ -885,7 +949,7 @@
+                                 entityIn.motionX *= 0.949999988079071D;
+                                 entityIn.motionZ *= 0.949999988079071D;
+                             }
+-                            else if (((EntityMinecart)entityIn).getType() != EntityMinecart.Type.FURNACE && this.getType() == EntityMinecart.Type.FURNACE)
++                            else if (!((EntityMinecart)entityIn).isPoweredCart() && isPoweredCart())
+                             {
+                                 entityIn.motionX *= 0.20000000298023224D;
+                                 entityIn.motionZ *= 0.20000000298023224D;
+@@ -1014,7 +1078,240 @@
      {
-         dragAir = value;
+         this.getDataManager().set(SHOW_BLOCK, Boolean.valueOf(showBlock));
+     }
++    
++    @Override
++    public boolean processInitialInteract(EntityPlayer player, net.minecraft.util.EnumHand hand)
++    {
++        return net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.minecart.MinecartInteractEvent(this, player, hand));
++    }
+ 
++    /* =================================== FORGE START ===========================================*/
++    private BlockPos getCurrentRailPosition()
++    {
++        int x = MathHelper.floor(this.posX);
++        int y = MathHelper.floor(this.posY);
++        int z = MathHelper.floor(this.posZ);
++
++        if (BlockRailBase.isRailBlock(this.world, new BlockPos(x, y - 1, z))) y--;
++        return new BlockPos(x, y, z);
++    }
++
++    protected double getMaxSpeed()
++    {
++        if (!canUseRail()) return getMaximumSpeed();
++        BlockPos pos = this.getCurrentRailPosition();
++        IBlockState state = this.world.getBlockState(pos);
++        if (!BlockRailBase.isRailBlock(state)) return getMaximumSpeed();
++
++        float railMaxSpeed = ((BlockRailBase)state.getBlock()).getRailMaxSpeed(world, this, pos);
++        return Math.min(railMaxSpeed, getCurrentCartSpeedCapOnRail());
++    }
++
++    /**
++     * Moved to allow overrides.
++     * This code handles minecart movement and speed capping when on a rail.
++     */
++    public void moveMinecartOnRail(BlockPos pos)
++    {
++        double mX = this.motionX;
++        double mZ = this.motionZ;
++
++        if (this.isBeingRidden())
++        {
++            mX *= 0.75D;
++            mZ *= 0.75D;
++        }
++
++        double max = this.getMaxSpeed();
++        mX = MathHelper.clamp(mX, -max, max);
++        mZ = MathHelper.clamp(mZ, -max, max);
++        this.move(MoverType.SELF, mX, 0.0D, mZ);
++    }
++
++    /**
++     * Gets the current global Minecart Collision handler if none
++     * is registered, returns null
++     * @return The collision handler or null
++     */
++    @Nullable
++    public static net.minecraftforge.common.IMinecartCollisionHandler getCollisionHandler()
++    {
++        return collisionHandler;
++    }
++
++    /**
++     * Sets the global Minecart Collision handler, overwrites any
++     * that is currently set.
++     * @param handler The new handler
++     */
++    public static void setCollisionHandler(net.minecraftforge.common.IMinecartCollisionHandler handler)
++    {
++        collisionHandler = handler;
++    }
++
++    /**
++     * This function returns an ItemStack that represents this cart.
++     * This should be an ItemStack that can be used by the player to place the cart,
++     * but is not necessary the item the cart drops when destroyed.
++     * @return An ItemStack that can be used to place the cart.
++     */
++    public ItemStack getCartItem()
++    {
++        if (this instanceof EntityMinecartFurnace)
++        {
++            return new ItemStack(Items.FURNACE_MINECART);
++        }
++        else if (this instanceof EntityMinecartChest)
++        {
++            return new ItemStack(Items.CHEST_MINECART);
++        }
++        else if (this instanceof EntityMinecartTNT)
++        {
++            return new ItemStack(Items.TNT_MINECART);
++        }
++        else if (this instanceof EntityMinecartHopper)
++        {
++            return new ItemStack(Items.HOPPER_MINECART);
++        }
++        else if (this instanceof EntityMinecartCommandBlock)
++        {
++            return new ItemStack(Items.COMMAND_BLOCK_MINECART);
++        }
++        return new ItemStack(Items.MINECART);
++    }
++
++    /**
++     * Returns true if this cart can currently use rails.
++     * This function is mainly used to gracefully detach a minecart from a rail.
++     * @return True if the minecart can use rails.
++     */
++    public boolean canUseRail()
++    {
++        return canUseRail;
++    }
++
++    /**
++     * Set whether the minecart can use rails.
++     * This function is mainly used to gracefully detach a minecart from a rail.
++     * @param use Whether the minecart can currently use rails.
++     */
++    public void setCanUseRail(boolean use)
++    {
++        canUseRail = use;
++    }
++
++    /**
++     * Return false if this cart should not call onMinecartPass() and should ignore Powered Rails.
++     * @return True if this cart should call onMinecartPass().
++     */
++    public boolean shouldDoRailFunctions()
++    {
++        return true;
++    }
++
++    /**
++     * Returns true if this cart is self propelled.
++     * @return True if powered.
++     */
++    public boolean isPoweredCart()
++    {
++        return getType() == EntityMinecart.Type.FURNACE;
++    }
++
++    /**
++     * Returns true if this cart can be ridden by an Entity.
++     * @return True if this cart can be ridden.
++     */
++    public boolean canBeRidden()
++    {
++        return this.getType() == EntityMinecart.Type.RIDEABLE;
++    }
++
++    /**
++     * Getters/setters for physics variables
++     */
++
++    /**
++     * Returns the carts max speed when traveling on rails. Carts going faster
++     * than 1.1 cause issues with chunk loading. Carts cant traverse slopes or
++     * corners at greater than 0.5 - 0.6. This value is compared with the rails
++     * max speed and the carts current speed cap to determine the carts current
++     * max speed. A normal rail's max speed is 0.4.
++     *
++     * @return Carts max speed.
++     */
++    public float getMaxCartSpeedOnRail()
++    {
++        return 1.2f;
++    }
++
++    /**
++     * Returns the current speed cap for the cart when traveling on rails. This
++     * functions differs from getMaxCartSpeedOnRail() in that it controls
++     * current movement and cannot be overridden. The value however can never be
++     * higher than getMaxCartSpeedOnRail().
++     *
++     * @return
++     */
++    public final float getCurrentCartSpeedCapOnRail()
++    {
++        return currentSpeedRail;
++    }
++
++    public final void setCurrentCartSpeedCapOnRail(float value)
++    {
++        value = Math.min(value, getMaxCartSpeedOnRail());
++        currentSpeedRail = value;
++    }
++
++    public float getMaxSpeedAirLateral()
++    {
++        return maxSpeedAirLateral;
++    }
++
++    public void setMaxSpeedAirLateral(float value)
++    {
++        maxSpeedAirLateral = value;
++    }
++
++    public float getMaxSpeedAirVertical()
++    {
++        return maxSpeedAirVertical;
++    }
++
++    public void setMaxSpeedAirVertical(float value)
++    {
++        maxSpeedAirVertical = value;
++    }
++
++    public double getDragAir()
++    {
++        return dragAir;
++    }
++
++    public void setDragAir(double value)
++    {
++        dragAir = value;
 +        flyingX = dragAir;
 +        flyingY = dragAir;
 +        flyingZ = dragAir;
-     }
- 
-     public double getSlopeAdjustment()
-@@ -1322,4 +1357,26 @@
++    }
++
++    public double getSlopeAdjustment()
++    {
++        return 0.0078125D;
++    }
++
++    /**
++     * Called from Detector Rails to retrieve a redstone power level for comparators.
++     */
++    public int getComparatorLevel()
++    {
++        return -1;
++    }
++
++    /* =================================== FORGE END ===========================================*/
++
+     public static enum Type
+     {
+         RIDEABLE(0, "MinecartRideable"),
+@@ -1060,4 +1357,26 @@
              }
          }
      }

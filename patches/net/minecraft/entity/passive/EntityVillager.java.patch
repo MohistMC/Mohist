@@ -23,9 +23,10 @@
      private boolean needsInitilization;
      private boolean isWillingToMate;
 -    private int wealth;
-+    public int wealth;
-     private java.util.UUID lastBuyingPlayer;
+-    private String lastBuyingPlayer;
 -    private int careerId;
++    public int wealth;
++    private java.util.UUID lastBuyingPlayer;
 +    public int careerId;
      private int careerLevel;
      private boolean isLookingForHome;
@@ -84,7 +85,39 @@
                          }
                      }
  
-@@ -392,7 +420,7 @@
+@@ -255,7 +283,7 @@
+             itemstack.interactWithEntity(player, this, hand);
+             return true;
+         }
+-        else if (!this.holdingSpawnEggOfClass(itemstack, this.getClass()) && this.isEntityAlive() && !this.isTrading() && !this.isChild())
++        else if (!this.holdingSpawnEggOfClass(itemstack, this.getClass()) && this.isEntityAlive() && !this.isTrading() && !this.isChild() && !player.isSneaking())
+         {
+             if (this.buyingList == null)
+             {
+@@ -327,6 +355,7 @@
+     {
+         super.writeEntityToNBT(compound);
+         compound.setInteger("Profession", this.getProfession());
++        compound.setString("ProfessionName", this.getProfessionForge().getRegistryName().toString());
+         compound.setInteger("Riches", this.wealth);
+         compound.setInteger("Career", this.careerId);
+         compound.setInteger("CareerLevel", this.careerLevel);
+@@ -356,6 +385,14 @@
+     {
+         super.readEntityFromNBT(compound);
+         this.setProfession(compound.getInteger("Profession"));
++        if (compound.hasKey("ProfessionName"))
++        {
++            net.minecraftforge.fml.common.registry.VillagerRegistry.VillagerProfession p =
++                net.minecraftforge.fml.common.registry.ForgeRegistries.VILLAGER_PROFESSIONS.getValue(new net.minecraft.util.ResourceLocation(compound.getString("ProfessionName")));
++            if (p == null)
++                p = net.minecraftforge.fml.common.registry.ForgeRegistries.VILLAGER_PROFESSIONS.getValue(new net.minecraft.util.ResourceLocation("minecraft:farmer"));
++            this.setProfession(p);
++        }
+         this.wealth = compound.getInteger("Riches");
+         this.careerId = compound.getInteger("Career");
+         this.careerLevel = compound.getInteger("CareerLevel");
+@@ -383,7 +420,7 @@
          this.setAdditionalAItasks();
      }
  
@@ -93,20 +126,121 @@
      {
          return false;
      }
-@@ -654,7 +682,7 @@
-         return net.minecraftforge.event.ForgeEventFactory.listTradeOffers(this, player, buyingList);
+@@ -412,13 +449,43 @@
+     public void setProfession(int professionId)
+     {
+         this.dataManager.set(PROFESSION, Integer.valueOf(professionId));
++        net.minecraftforge.fml.common.registry.VillagerRegistry.onSetProfession(this, professionId);
+     }
+ 
++    @Deprecated //Use Forge Variant below
+     public int getProfession()
+     {
+-        return Math.max(((Integer)this.dataManager.get(PROFESSION)).intValue() % 6, 0);
++        return Math.max(((Integer)this.dataManager.get(PROFESSION)).intValue(), 0);
+     }
+ 
++    private net.minecraftforge.fml.common.registry.VillagerRegistry.VillagerProfession prof;
++    public void setProfession(net.minecraftforge.fml.common.registry.VillagerRegistry.VillagerProfession prof)
++    {
++        this.prof = prof;
++        this.setProfession(net.minecraftforge.fml.common.registry.VillagerRegistry.getId(prof));
++    }
++
++    public net.minecraftforge.fml.common.registry.VillagerRegistry.VillagerProfession getProfessionForge()
++    {
++        if (this.prof == null)
++        {
++            this.prof = net.minecraftforge.fml.common.registry.VillagerRegistry.getById(this.getProfession());
++            if (this.prof == null)
++                return net.minecraftforge.fml.common.registry.VillagerRegistry.getById(0); //Farmer
++        }
++        return this.prof;
++    }
++
++    @Override
++    public void notifyDataManagerChange(DataParameter<?> key)
++    {
++        super.notifyDataManagerChange(key);
++        if (key.equals(PROFESSION))
++        {
++            net.minecraftforge.fml.common.registry.VillagerRegistry.onSetProfession(this, this.dataManager.get(PROFESSION));
++        }
++    }
++
+     public boolean isMating()
+     {
+         return this.isMating;
+@@ -456,7 +523,7 @@
+                     i = -3;
+                 }
+ 
+-                this.village.modifyPlayerReputation(livingBase.getName(), i);
++                this.village.modifyPlayerReputation(livingBase.getUniqueID(), i);
+ 
+                 if (this.isEntityAlive())
+                 {
+@@ -476,7 +543,7 @@
+             {
+                 if (entity instanceof EntityPlayer)
+                 {
+-                    this.village.modifyPlayerReputation(entity.getName(), -2);
++                    this.village.modifyPlayerReputation(entity.getUniqueID(), -2);
+                 }
+                 else if (entity instanceof IMob)
+                 {
+@@ -569,7 +636,7 @@
+ 
+             if (this.buyingPlayer != null)
+             {
+-                this.lastBuyingPlayer = this.buyingPlayer.getName();
++                this.lastBuyingPlayer = this.buyingPlayer.getUniqueID();
+             }
+             else
+             {
+@@ -612,20 +679,18 @@
+             this.populateBuyingList();
+         }
+ 
+-        return this.buyingList;
++        return net.minecraftforge.event.ForgeEventFactory.listTradeOffers(this, player, buyingList);
      }
  
 -    private void populateBuyingList()
 +    public void populateBuyingList()
      {
+-        EntityVillager.ITradeList[][][] aentityvillager$itradelist = DEFAULT_TRADE_LIST_MAP[this.getProfession()];
+-
          if (this.careerId != 0 && this.careerLevel != 0)
          {
-@@ -679,7 +707,20 @@
+             ++this.careerLevel;
+         }
+         else
          {
-             for (EntityVillager.ITradeList entityvillager$itradelist : trades)
+-            this.careerId = this.rand.nextInt(aentityvillager$itradelist.length) + 1;
++            this.careerId = this.getProfessionForge().getRandomCareer(this.rand) + 1;
+             this.careerLevel = 1;
+         }
+ 
+@@ -636,19 +701,26 @@
+ 
+         int i = this.careerId - 1;
+         int j = this.careerLevel - 1;
++        java.util.List<EntityVillager.ITradeList> trades = this.getProfessionForge().getCareer(i).getTrades(j);
+ 
+-        if (i >= 0 && i < aentityvillager$itradelist.length)
++        if (trades != null)
+         {
+-            EntityVillager.ITradeList[][] aentityvillager$itradelist1 = aentityvillager$itradelist[i];
+-
+-            if (j >= 0 && j < aentityvillager$itradelist1.length)
++            for (EntityVillager.ITradeList entityvillager$itradelist : trades)
              {
--                entityvillager$itradelist.addMerchantRecipe(this, this.buyingList, this.rand);
+-                EntityVillager.ITradeList[] aentityvillager$itradelist2 = aentityvillager$itradelist1[j];
+-
+-                for (EntityVillager.ITradeList entityvillager$itradelist : aentityvillager$itradelist2)
+-                {
+-                    entityvillager$itradelist.addMerchantRecipe(this, this.buyingList, this.rand);
 +                // CraftBukkit start
 +                // this is a hack. this must be done because otherwise, if
 +                // mojang adds a new type of villager merchant option, it will need to
@@ -119,12 +253,41 @@
 +                    if (!event.isCancelled()) {
 +                        this.buyingList.add(CraftMerchantRecipe.fromBukkit(event.getRecipe()).toMinecraft());
 +                    }
-+                }
+                 }
 +                // CraftBukkit end
              }
          }
      }
-@@ -895,7 +936,7 @@
+@@ -758,7 +830,7 @@
+                     s1 = "nitwit";
+             }
+ 
+-            if (s1 != null)
++            s1 = this.getProfessionForge().getCareer(this.careerId-1).getName();
+             {
+                 ITextComponent itextcomponent = new TextComponentTranslation("entity.Villager." + s1, new Object[0]);
+                 itextcomponent.getStyle().setHoverEvent(this.getHoverEvent());
+@@ -771,10 +843,6 @@
+ 
+                 return itextcomponent;
+             }
+-            else
+-            {
+-                return super.getDisplayName();
+-            }
+         }
+     }
+ 
+@@ -828,7 +896,7 @@
+ 
+         if (p_190672_3_)
+         {
+-            this.setProfession(this.world.rand.nextInt(6));
++            net.minecraftforge.fml.common.registry.VillagerRegistry.setRandomProfession(this, this.world.rand);
+         }
+ 
+         this.setAdditionalAItasks();
+@@ -868,7 +936,7 @@
                  entitywitch.setAlwaysRenderNameTag(this.getAlwaysRenderNameTag());
              }
  
@@ -133,3 +296,13 @@
              this.setDead();
          }
      }
+@@ -1089,6 +1157,9 @@
+                 recipeList.add(new MerchantRecipe(itemstack, itemstack1));
+             }
+         }
++    //MODDERS DO NOT USE OR EDIT THIS IN ANY WAY IT WILL HAVE NO EFFECT, THIS IS JUST IN HERE TO ALLOW FORGE TO ACCESS IT
++    @Deprecated
++    public static ITradeList[][][][] GET_TRADES_DONT_USE(){ return DEFAULT_TRADE_LIST_MAP; }
+ 
+     public static class ListItemForEmeralds implements EntityVillager.ITradeList
+         {

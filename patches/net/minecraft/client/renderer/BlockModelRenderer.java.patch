@@ -1,0 +1,54 @@
+--- ../src-base/minecraft/net/minecraft/client/renderer/BlockModelRenderer.java
++++ ../src-work/minecraft/net/minecraft/client/renderer/BlockModelRenderer.java
+@@ -40,7 +40,7 @@
+ 
+     public boolean renderModel(IBlockAccess worldIn, IBakedModel modelIn, IBlockState stateIn, BlockPos posIn, BufferBuilder buffer, boolean checkSides, long rand)
+     {
+-        boolean flag = Minecraft.isAmbientOcclusionEnabled() && stateIn.getLightValue() == 0 && modelIn.isAmbientOcclusion();
++        boolean flag = Minecraft.isAmbientOcclusionEnabled() && stateIn.getLightValue(worldIn, posIn) == 0 && modelIn.isAmbientOcclusion(stateIn);
+ 
+         try
+         {
+@@ -128,7 +128,14 @@
+             aoFace.updateVertexBrightness(blockAccessIn, stateIn, posIn, bakedquad.getFace(), quadBounds, bitSet);
+             buffer.addVertexData(bakedquad.getVertexData());
+             buffer.putBrightness4(aoFace.vertexBrightness[0], aoFace.vertexBrightness[1], aoFace.vertexBrightness[2], aoFace.vertexBrightness[3]);
+-
++            if(bakedquad.shouldApplyDiffuseLighting())
++            {
++                float diffuse = net.minecraftforge.client.model.pipeline.LightUtil.diffuseLight(bakedquad.getFace());
++                aoFace.vertexColorMultiplier[0] *= diffuse;
++                aoFace.vertexColorMultiplier[1] *= diffuse;
++                aoFace.vertexColorMultiplier[2] *= diffuse;
++                aoFace.vertexColorMultiplier[3] *= diffuse;
++            }
+             if (bakedquad.hasTintIndex())
+             {
+                 int k = this.blockColors.colorMultiplier(stateIn, blockAccessIn, posIn, bakedquad.getTintIndex());
+@@ -262,11 +269,26 @@
+                 float f = (float)(k >> 16 & 255) / 255.0F;
+                 float f1 = (float)(k >> 8 & 255) / 255.0F;
+                 float f2 = (float)(k & 255) / 255.0F;
++                if(bakedquad.shouldApplyDiffuseLighting())
++                {
++                    float diffuse = net.minecraftforge.client.model.pipeline.LightUtil.diffuseLight(bakedquad.getFace());
++                    f *= diffuse;
++                    f1 *= diffuse;
++                    f2 *= diffuse;
++                }
+                 buffer.putColorMultiplier(f, f1, f2, 4);
+                 buffer.putColorMultiplier(f, f1, f2, 3);
+                 buffer.putColorMultiplier(f, f1, f2, 2);
+                 buffer.putColorMultiplier(f, f1, f2, 1);
+             }
++            else if(bakedquad.shouldApplyDiffuseLighting())
++            {
++                float diffuse = net.minecraftforge.client.model.pipeline.LightUtil.diffuseLight(bakedquad.getFace());
++                buffer.putColorMultiplier(diffuse, diffuse, diffuse, 4);
++                buffer.putColorMultiplier(diffuse, diffuse, diffuse, 3);
++                buffer.putColorMultiplier(diffuse, diffuse, diffuse, 2);
++                buffer.putColorMultiplier(diffuse, diffuse, diffuse, 1);
++            }
+ 
+             buffer.putPosition(d0, d1, d2);
+         }

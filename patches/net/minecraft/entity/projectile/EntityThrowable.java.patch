@@ -28,8 +28,12 @@
                  {
                      this.ignoreEntity = entity1;
                      flag = true;
-@@ -247,6 +248,9 @@
-             else if (!net.minecraftforge.event.ForgeEventFactory.onProjectileImpact(this, raytraceresult))
+@@ -244,9 +245,12 @@
+             {
+                 this.setPortal(raytraceresult.getBlockPos());
+             }
+-            else
++            else if (!net.minecraftforge.event.ForgeEventFactory.onProjectileImpact(this, raytraceresult))
              {
                  this.onImpact(raytraceresult);
 +                if (this.isDead) {

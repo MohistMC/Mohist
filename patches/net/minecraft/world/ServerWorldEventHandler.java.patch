@@ -4,7 +4,7 @@
  
      public void playSoundToAllNearExcept(@Nullable EntityPlayer player, SoundEvent soundIn, SoundCategory category, double x, double y, double z, float volume, float pitch)
      {
--        this.mcServer.getPlayerList().sendToAllNearExcept(player, x, y, z, volume > 1.0F ? (double)(16.0F * volume) : 16.0D, this.world.provider.getDimension(), new SPacketSoundEffect(soundIn, category, x, y, z, volume, pitch));
+-        this.mcServer.getPlayerList().sendToAllNearExcept(player, x, y, z, volume > 1.0F ? (double)(16.0F * volume) : 16.0D, this.world.provider.getDimensionType().getId(), new SPacketSoundEffect(soundIn, category, x, y, z, volume, pitch));
 -    }
 +        // CraftBukkit - this.world.dimension, // Paper - this.world.dimension -> this.world
 +        this.mcServer.getPlayerList().sendToAllNearExcept(player, x, y, z, volume > 1.0F ? (double)(16.0F * volume) : 16.0D, this.world, new SPacketSoundEffect(soundIn, category, x, y, z, volume, pitch));
@@ -16,7 +16,7 @@
  
      public void playEvent(EntityPlayer player, int type, BlockPos blockPosIn, int data)
      {
--        this.mcServer.getPlayerList().sendToAllNearExcept(player, (double)blockPosIn.getX(), (double)blockPosIn.getY(), (double)blockPosIn.getZ(), 64.0D, this.world.provider.getDimension(), new SPacketEffect(type, blockPosIn, data, false));
+-        this.mcServer.getPlayerList().sendToAllNearExcept(player, (double)blockPosIn.getX(), (double)blockPosIn.getY(), (double)blockPosIn.getZ(), 64.0D, this.world.provider.getDimensionType().getId(), new SPacketEffect(type, blockPosIn, data, false));
 +        this.mcServer.getPlayerList().sendToAllNearExcept(player, (double)blockPosIn.getX(), (double)blockPosIn.getY(), (double)blockPosIn.getZ(), 64.0D, this.world, new SPacketEffect(type, blockPosIn, data, false));
      }
  

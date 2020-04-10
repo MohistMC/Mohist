@@ -1,6 +1,14 @@
 --- ../src-base/minecraft/net/minecraft/util/text/Style.java
 +++ ../src-work/minecraft/net/minecraft/util/text/Style.java
-@@ -361,15 +361,17 @@
+@@ -238,7 +238,6 @@
+         return this;
+     }
+ 
+-    @SideOnly(Side.CLIENT)
+     public String getFormattingCode()
+     {
+         if (this.isEmpty())
+@@ -362,15 +361,17 @@
  
      public int hashCode()
      {

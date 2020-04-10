@@ -29,6 +29,15 @@
          this.addSlotToContainer(new SlotCrafting(playerInventory.player, this.craftMatrix, this.craftResult, 0, 154, 28));
  
          for (int i = 0; i < 2; ++i)
+@@ -43,7 +54,7 @@
+                 }
+                 public boolean isItemValid(ItemStack stack)
+                 {
+-                    return entityequipmentslot == EntityLiving.getSlotForItemStack(stack);
++                    return stack.getItem().isValidArmor(stack, entityequipmentslot, player);
+                 }
+                 public boolean canTakeStack(EntityPlayer playerIn)
+                 {
 @@ -202,4 +213,17 @@
      {
          return slotIn.inventory != this.craftResult && super.canMergeSlot(stack, slotIn);

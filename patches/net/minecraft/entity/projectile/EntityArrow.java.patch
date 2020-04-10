@@ -76,6 +76,15 @@
                  {
                      this.setDead();
                  }
+@@ -262,7 +280,7 @@
+                 }
+             }
+ 
+-            if (raytraceresult != null)
++            if (raytraceresult != null && !net.minecraftforge.event.ForgeEventFactory.onProjectileImpact(this, raytraceresult))
+             {
+                 this.onHit(raytraceresult);
+             }
 @@ -339,7 +357,7 @@
      protected void onHit(RayTraceResult raytraceResultIn)
      {

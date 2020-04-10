@@ -8,7 +8,27 @@
  import net.minecraft.nbt.NBTUtil;
  import net.minecraft.tileentity.TileEntity;
  import net.minecraft.tileentity.TileEntitySkull;
-@@ -72,6 +73,12 @@
+@@ -43,13 +44,18 @@
+         }
+         else
+         {
++            if (worldIn.getBlockState(pos).getBlock().isReplaceable(worldIn, pos))
++            {
++                facing = EnumFacing.UP;
++                pos = pos.down();
++            }
+             IBlockState iblockstate = worldIn.getBlockState(pos);
+             Block block = iblockstate.getBlock();
+             boolean flag = block.isReplaceable(worldIn, pos);
+ 
+             if (!flag)
+             {
+-                if (!worldIn.getBlockState(pos).getMaterial().isSolid())
++                if (!worldIn.getBlockState(pos).getMaterial().isSolid() && !worldIn.isSideSolid(pos, facing, true))
+                 {
+                     return EnumActionResult.FAIL;
+                 }
+@@ -67,6 +73,12 @@
                  }
                  else
                  {
@@ -21,7 +41,7 @@
                      worldIn.setBlockState(pos, Blocks.SKULL.getDefaultState().withProperty(BlockSkull.FACING, facing), 11);
                      int i = 0;
  
-@@ -182,19 +189,34 @@
+@@ -177,19 +189,34 @@
          return super.getItemStackDisplayName(stack);
      }
  

@@ -162,7 +162,41 @@
  
      private void updateSegmentColors()
      {
-@@ -285,8 +351,12 @@
+@@ -130,17 +196,21 @@
+             {
+                 if (iblockstate.getBlock() != Blocks.STAINED_GLASS_PANE)
+                 {
+-                    if (iblockstate.getLightOpacity() >= 15 && iblockstate.getBlock() != Blocks.BEDROCK)
++                    if (iblockstate.getLightOpacity(world, blockpos$mutableblockpos) >= 15 && iblockstate.getBlock() != Blocks.BEDROCK)
+                     {
+                         this.isComplete = false;
+                         this.beamSegments.clear();
+                         break;
+                     }
+-
++                    float[] customColor = iblockstate.getBlock().getBeaconColorMultiplier(iblockstate, this.world, blockpos$mutableblockpos, getPos());
++                    if (customColor != null)
++                        afloat = customColor;
++                    else {
+                     tileentitybeacon$beamsegment.incrementHeight();
+                     continue;
++                    }
+                 }
+-
++                else
+                 afloat = ((EnumDyeColor)iblockstate.getValue(BlockStainedGlassPane.COLOR)).getColorComponentValues();
+             }
+ 
+@@ -181,7 +251,7 @@
+                     {
+                         Block block = this.world.getBlockState(new BlockPos(j1, i2, k1)).getBlock();
+ 
+-                        if (block != Blocks.EMERALD_BLOCK && block != Blocks.GOLD_BLOCK && block != Blocks.DIAMOND_BLOCK && block != Blocks.IRON_BLOCK)
++                        if (!block.isBeaconBase(this.world, new BlockPos(j1, i2, k1), getPos()))
+                         {
+                             flag1 = false;
+                             break;
+@@ -281,8 +351,12 @@
      public void readFromNBT(NBTTagCompound compound)
      {
          super.readFromNBT(compound);
@@ -177,3 +211,12 @@
          this.levels = compound.getInteger("Levels");
      }
  
+@@ -395,7 +469,7 @@
+ 
+     public boolean isItemValidForSlot(int index, ItemStack stack)
+     {
+-        return stack.getItem() == Items.EMERALD || stack.getItem() == Items.DIAMOND || stack.getItem() == Items.GOLD_INGOT || stack.getItem() == Items.IRON_INGOT;
++        return stack.getItem() != null && stack.getItem().isBeaconPayment(stack);
+     }
+ 
+     public String getGuiID()

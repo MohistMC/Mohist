@@ -39,6 +39,15 @@
              }
          }
      }
+@@ -89,7 +103,7 @@
+             }
+             else
+             {
+-                return worldIn.getLight(pos) < 13 && this.canSustainBush(iblockstate);
++                return worldIn.getLight(pos) < 13 && iblockstate.getBlock().canSustainPlant(iblockstate, worldIn, pos.down(), net.minecraft.util.EnumFacing.UP, this);
+             }
+         }
+         else
 @@ -105,10 +119,12 @@
  
          if (this == Blocks.BROWN_MUSHROOM)

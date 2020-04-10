@@ -49,3 +49,13 @@
      }
  
      public boolean receiveClientEvent(int id, int type)
+@@ -422,4 +448,9 @@
+         OPENED,
+         CLOSING;
+     }
++
++    protected net.minecraftforge.items.IItemHandler createUnSidedHandler()
++    {
++        return new net.minecraftforge.items.wrapper.SidedInvWrapper(this, EnumFacing.UP);
++    }
+ }

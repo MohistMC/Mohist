@@ -42,7 +42,14 @@
      public void addSmeltingRecipeForBlock(Block input, ItemStack stack, float experience)
      {
          this.addSmelting(Item.getItemFromBlock(input), stack, experience);
-@@ -120,6 +128,14 @@
+@@ -113,12 +121,21 @@
+ 
+     public void addSmeltingRecipe(ItemStack input, ItemStack stack, float experience)
+     {
++        if (getSmeltingResult(input) != ItemStack.EMPTY) { net.minecraftforge.fml.common.FMLLog.log.info("Ignored smelting recipe with conflicting input: {} = {}", input, stack); return; }
+         this.smeltingList.put(input, stack);
+         this.experienceList.put(stack, Float.valueOf(experience));
+     }
  
      public ItemStack getSmeltingResult(ItemStack stack)
      {
@@ -57,10 +64,13 @@
          for (Entry<ItemStack, ItemStack> entry : this.smeltingList.entrySet())
          {
              if (this.compareItemStacks(stack, entry.getKey()))
-@@ -146,6 +162,14 @@
-         float ret = stack.getItem().getSmeltingExperience(stack);
-         if (ret != -1) return ret;
+@@ -142,6 +159,17 @@
  
+     public float getSmeltingExperience(ItemStack stack)
+     {
++        float ret = stack.getItem().getSmeltingExperience(stack);
++        if (ret != -1) return ret;
++
 +        for (Entry<ItemStack, Float> entry : this.customExperience.entrySet())
 +        {
 +            if (this.compareItemStacks(stack, entry.getKey()))

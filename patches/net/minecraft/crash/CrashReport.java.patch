@@ -70,7 +70,7 @@
          {
              public String call()
              {
-@@ -109,13 +112,14 @@
+@@ -109,13 +112,15 @@
                  return String.format("%d total; %s", i, stringbuilder.toString());
              }
          });
@@ -83,10 +83,11 @@
              }
          });
 +        this.systemDetailsCategory.addDetail(Message.getString("minecraft.crashreport9"), (ICrashReportDetail) new org.bukkit.craftbukkit.v1_12_R1.CraftCrashReport());
-         net.minecraftforge.fml.common.FMLCommonHandler.instance().enhanceCrashReport(this, this.systemDetailsCategory);
++        net.minecraftforge.fml.common.FMLCommonHandler.instance().enhanceCrashReport(this, this.systemDetailsCategory);
      }
  
-@@ -138,9 +142,9 @@
+     public String getDescription()
+@@ -137,9 +142,9 @@
  
          if (this.stacktrace != null && this.stacktrace.length > 0)
          {
@@ -99,15 +100,15 @@
  
              for (StackTraceElement stacktraceelement : this.stacktrace)
              {
-@@ -205,19 +209,17 @@
+@@ -204,18 +209,17 @@
      public String getCompleteReport()
      {
          StringBuilder stringbuilder = new StringBuilder();
 -        stringbuilder.append("---- Minecraft Crash Report ----\n");
-+        stringbuilder.append(Message.getString("minecraft.crashreport13") + "\n");
-         net.minecraftforge.fml.relauncher.CoreModManager.onCrash(stringbuilder);
 -        stringbuilder.append("// ");
 -        stringbuilder.append(getWittyComment());
++        stringbuilder.append(Message.getString("minecraft.crashreport13") + "\n");
++        net.minecraftforge.fml.relauncher.CoreModManager.onCrash(stringbuilder);
          stringbuilder.append("\n\n");
 -        stringbuilder.append("Time: ");
 +        stringbuilder.append(Message.getString("minecraft.crashreport14") + ": ");
@@ -123,7 +124,7 @@
  
          for (int i = 0; i < 87; ++i)
          {
-@@ -261,7 +263,7 @@
+@@ -259,7 +263,7 @@
              }
              catch (Throwable throwable)
              {
@@ -132,7 +133,7 @@
                  flag1 = false;
              }
              finally
-@@ -332,20 +334,6 @@
+@@ -330,20 +334,6 @@
          return crashreportcategory;
      }
  

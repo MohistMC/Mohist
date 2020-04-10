@@ -24,9 +24,11 @@
          if (entityID != null && EntityList.ENTITY_EGGS.containsKey(entityID))
          {
              Entity entity = null;
-@@ -236,8 +244,15 @@
+@@ -234,9 +242,17 @@
+                     entity.setLocationAndAngles(x, y, z, MathHelper.wrapDegrees(worldIn.rand.nextFloat() * 360.0F), 0.0F);
+                     entityliving.rotationYawHead = entityliving.rotationYaw;
                      entityliving.renderYawOffset = entityliving.rotationYaw;
-                     if (net.minecraftforge.event.ForgeEventFactory.doSpecialSpawn(entityliving, worldIn, (float) x, (float) y, (float) z, null)) return null;
++                    if (net.minecraftforge.event.ForgeEventFactory.doSpecialSpawn(entityliving, worldIn, (float) x, (float) y, (float) z, null)) return null;
                      entityliving.onInitialSpawn(worldIn.getDifficultyForLocation(new BlockPos(entityliving)), (IEntityLivingData)null);
 -                    worldIn.spawnEntity(entity);
 -                    entityliving.playLivingSound();

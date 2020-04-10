@@ -17,6 +17,15 @@
      private NBTTagCompound ownerNbt;
  
      public EntityLlamaSpit(World worldIn)
+@@ -80,7 +81,7 @@
+             raytraceresult = new RayTraceResult(entity);
+         }
+ 
+-        if (raytraceresult != null)
++        if (raytraceresult != null && !net.minecraftforge.event.ForgeEventFactory.onProjectileImpact(this, raytraceresult))
+         {
+             this.onHit(raytraceresult);
+         }
 @@ -211,6 +212,7 @@
  
      public void onHit(RayTraceResult p_190536_1_)

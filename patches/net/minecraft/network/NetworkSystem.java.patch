@@ -9,6 +9,31 @@
  import net.minecraft.client.network.NetHandlerHandshakeMemory;
  import net.minecraft.crash.CrashReport;
  import net.minecraft.crash.CrashReportCategory;
+@@ -49,21 +51,21 @@
+     {
+         protected NioEventLoopGroup load()
+         {
+-            return new NioEventLoopGroup(0, (new ThreadFactoryBuilder()).setNameFormat("Netty Server IO #%d").setDaemon(true).build());
++            return new NioEventLoopGroup(0, (new ThreadFactoryBuilder()).setNameFormat("Netty Server IO #%d").setDaemon(true).setThreadFactory(net.minecraftforge.fml.common.thread.SidedThreadGroups.SERVER).build());
+         }
+     };
+     public static final LazyLoadBase<EpollEventLoopGroup> SERVER_EPOLL_EVENTLOOP = new LazyLoadBase<EpollEventLoopGroup>()
+     {
+         protected EpollEventLoopGroup load()
+         {
+-            return new EpollEventLoopGroup(0, (new ThreadFactoryBuilder()).setNameFormat("Netty Epoll Server IO #%d").setDaemon(true).build());
++            return new EpollEventLoopGroup(0, (new ThreadFactoryBuilder()).setNameFormat("Netty Epoll Server IO #%d").setDaemon(true).setThreadFactory(net.minecraftforge.fml.common.thread.SidedThreadGroups.SERVER).build());
+         }
+     };
+     public static final LazyLoadBase<LocalEventLoopGroup> SERVER_LOCAL_EVENTLOOP = new LazyLoadBase<LocalEventLoopGroup>()
+     {
+         protected LocalEventLoopGroup load()
+         {
+-            return new LocalEventLoopGroup(0, (new ThreadFactoryBuilder()).setNameFormat("Netty Local Server IO #%d").setDaemon(true).build());
++            return new LocalEventLoopGroup(0, (new ThreadFactoryBuilder()).setNameFormat("Netty Local Server IO #%d").setDaemon(true).setThreadFactory(net.minecraftforge.fml.common.thread.SidedThreadGroups.CLIENT).build());
+         }
+     };
+     private final MinecraftServer mcServer;
 @@ -71,6 +73,9 @@
      private final List<ChannelFuture> endpoints = Collections.<ChannelFuture>synchronizedList(Lists.newArrayList());
      private final List<NetworkManager> networkManagers = Collections.<NetworkManager>synchronizedList(Lists.newArrayList());
@@ -19,9 +44,20 @@
      public NetworkSystem(MinecraftServer server)
      {
          this.mcServer = server;
-@@ -113,7 +118,8 @@
+@@ -79,6 +84,7 @@
  
-                     p_initChannel_1_.pipeline().addLast("timeout", new ReadTimeoutHandler(net.minecraftforge.fml.common.network.internal.FMLNetworkHandler.READ_TIMEOUT)).addLast("legacy_query", new LegacyPingHandler(NetworkSystem.this)).addLast("splitter", new NettyVarint21FrameDecoder()).addLast("decoder", new NettyPacketDecoder(EnumPacketDirection.SERVERBOUND)).addLast("prepender", new NettyVarint21FrameEncoder()).addLast("encoder", new NettyPacketEncoder(EnumPacketDirection.CLIENTBOUND));
+     public void addLanEndpoint(InetAddress address, int port) throws IOException
+     {
++        if (address instanceof java.net.Inet6Address) System.setProperty("java.net.preferIPv4Stack", "false");
+         synchronized (this.endpoints)
+         {
+             Class <? extends ServerSocketChannel > oclass;
+@@ -110,9 +116,10 @@
+                         ;
+                     }
+ 
+-                    p_initChannel_1_.pipeline().addLast("timeout", new ReadTimeoutHandler(30)).addLast("legacy_query", new LegacyPingHandler(NetworkSystem.this)).addLast("splitter", new NettyVarint21FrameDecoder()).addLast("decoder", new NettyPacketDecoder(EnumPacketDirection.SERVERBOUND)).addLast("prepender", new NettyVarint21FrameEncoder()).addLast("encoder", new NettyPacketEncoder(EnumPacketDirection.CLIENTBOUND));
++                    p_initChannel_1_.pipeline().addLast("timeout", new ReadTimeoutHandler(net.minecraftforge.fml.common.network.internal.FMLNetworkHandler.READ_TIMEOUT)).addLast("legacy_query", new LegacyPingHandler(NetworkSystem.this)).addLast("splitter", new NettyVarint21FrameDecoder()).addLast("decoder", new NettyPacketDecoder(EnumPacketDirection.SERVERBOUND)).addLast("prepender", new NettyVarint21FrameEncoder()).addLast("encoder", new NettyPacketEncoder(EnumPacketDirection.CLIENTBOUND));
                      NetworkManager networkmanager = new NetworkManager(EnumPacketDirection.SERVERBOUND);
 -                    NetworkSystem.this.networkManagers.add(networkmanager);
 +                    if (processing) { stack.add(networkmanager); } // Thermos (Robotia) -- syncy time
@@ -29,7 +65,7 @@
                      p_initChannel_1_.pipeline().addLast("packet_handler", networkmanager);
                      networkmanager.setNetHandler(new NetHandlerHandshakeTCP(NetworkSystem.this.mcServer, networkmanager));
                  }
-@@ -134,7 +140,8 @@
+@@ -133,7 +140,8 @@
                  {
                      NetworkManager networkmanager = new NetworkManager(EnumPacketDirection.SERVERBOUND);
                      networkmanager.setNetHandler(new NetHandlerHandshakeMemory(NetworkSystem.this.mcServer, networkmanager));
@@ -39,7 +75,7 @@
                      p_initChannel_1_.pipeline().addLast("packet_handler", networkmanager);
                  }
              }).group(SERVER_NIO_EVENTLOOP.getValue()).localAddress(LocalAddress.ANY)).bind().syncUninterruptibly();
-@@ -163,8 +170,16 @@
+@@ -162,8 +170,16 @@
  
      public void networkTick()
      {
@@ -56,7 +92,7 @@
              Iterator<NetworkManager> iterator = this.networkManagers.iterator();
  
              while (iterator.hasNext())
-@@ -209,12 +224,18 @@
+@@ -208,12 +224,18 @@
                      }
                      else
                      {

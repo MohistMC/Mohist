@@ -1,6 +1,12 @@
 --- ../src-base/minecraft/net/minecraft/world/BossInfo.java
 +++ ../src-work/minecraft/net/minecraft/world/BossInfo.java
-@@ -6,10 +6,10 @@
+@@ -2,16 +2,14 @@
+ 
+ import java.util.UUID;
+ import net.minecraft.util.text.ITextComponent;
+-import net.minecraftforge.fml.relauncher.Side;
+-import net.minecraftforge.fml.relauncher.SideOnly;
+ 
  public abstract class BossInfo
  {
      private final UUID uniqueId;
@@ -15,3 +21,19 @@
      protected boolean darkenSky;
      protected boolean playEndBossMusic;
      protected boolean createFog;
+@@ -55,7 +53,6 @@
+         return this.color;
+     }
+ 
+-    @SideOnly(Side.CLIENT)
+     public void setColor(BossInfo.Color colorIn)
+     {
+         this.color = colorIn;
+@@ -66,7 +63,6 @@
+         return this.overlay;
+     }
+ 
+-    @SideOnly(Side.CLIENT)
+     public void setOverlay(BossInfo.Overlay overlayIn)
+     {
+         this.overlay = overlayIn;

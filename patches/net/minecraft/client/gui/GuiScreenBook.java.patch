@@ -1,0 +1,10 @@
+--- ../src-base/minecraft/net/minecraft/client/gui/GuiScreenBook.java
++++ ../src-work/minecraft/net/minecraft/client/gui/GuiScreenBook.java
+@@ -69,6 +69,7 @@
+ 
+             if (this.bookTotalPages < 1)
+             {
++                this.bookPages.appendTag(new NBTTagString("")); // Forge: fix MC-1685
+                 this.bookTotalPages = 1;
+             }
+         }

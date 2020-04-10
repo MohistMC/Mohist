@@ -9,6 +9,24 @@
  
  public class ItemMinecart extends Item
  {
+@@ -30,7 +32,7 @@
+             double d2 = source.getZ() + (double)enumfacing.getFrontOffsetZ() * 1.125D;
+             BlockPos blockpos = source.getBlockPos().offset(enumfacing);
+             IBlockState iblockstate = world.getBlockState(blockpos);
+-            BlockRailBase.EnumRailDirection blockrailbase$enumraildirection = iblockstate.getBlock() instanceof BlockRailBase ? (BlockRailBase.EnumRailDirection)iblockstate.getValue(((BlockRailBase)iblockstate.getBlock()).getShapeProperty()) : BlockRailBase.EnumRailDirection.NORTH_SOUTH;
++            BlockRailBase.EnumRailDirection blockrailbase$enumraildirection = iblockstate.getBlock() instanceof BlockRailBase ? ((BlockRailBase)iblockstate.getBlock()).getRailDirection(world, blockpos, iblockstate, null) : BlockRailBase.EnumRailDirection.NORTH_SOUTH;
+             double d3;
+ 
+             if (BlockRailBase.isRailBlock(iblockstate))
+@@ -52,7 +54,7 @@
+                 }
+ 
+                 IBlockState iblockstate1 = world.getBlockState(blockpos.down());
+-                BlockRailBase.EnumRailDirection blockrailbase$enumraildirection1 = iblockstate1.getBlock() instanceof BlockRailBase ? (BlockRailBase.EnumRailDirection)iblockstate1.getValue(((BlockRailBase)iblockstate1.getBlock()).getShapeProperty()) : BlockRailBase.EnumRailDirection.NORTH_SOUTH;
++                BlockRailBase.EnumRailDirection blockrailbase$enumraildirection1 = iblockstate1.getBlock() instanceof BlockRailBase ? ((BlockRailBase)iblockstate1.getBlock()).getRailDirection(world, blockpos.down(), iblockstate1, null) : BlockRailBase.EnumRailDirection.NORTH_SOUTH;
+ 
+                 if (enumfacing != EnumFacing.DOWN && blockrailbase$enumraildirection1.isAscending())
+                 {
 @@ -64,15 +66,41 @@
                  }
              }
@@ -54,6 +72,15 @@
              return stack;
          }
          protected void playDispenseSound(IBlockSource source)
+@@ -104,7 +132,7 @@
+ 
+             if (!worldIn.isRemote)
+             {
+-                BlockRailBase.EnumRailDirection blockrailbase$enumraildirection = iblockstate.getBlock() instanceof BlockRailBase ? (BlockRailBase.EnumRailDirection)iblockstate.getValue(((BlockRailBase)iblockstate.getBlock()).getShapeProperty()) : BlockRailBase.EnumRailDirection.NORTH_SOUTH;
++                BlockRailBase.EnumRailDirection blockrailbase$enumraildirection = iblockstate.getBlock() instanceof BlockRailBase ? ((BlockRailBase)iblockstate.getBlock()).getRailDirection(worldIn, pos, iblockstate, null) : BlockRailBase.EnumRailDirection.NORTH_SOUTH;
+                 double d0 = 0.0D;
+ 
+                 if (blockrailbase$enumraildirection.isAscending())
 @@ -119,7 +147,9 @@
                      entityminecart.setCustomNameTag(itemstack.getDisplayName());
                  }

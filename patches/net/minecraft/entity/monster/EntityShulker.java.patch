@@ -18,7 +18,15 @@
      public static final EnumDyeColor DEFAULT_COLOR = EnumDyeColor.PURPLE;
      private float prevPeekAmount;
      private float peekAmount;
-@@ -419,9 +421,15 @@
+@@ -311,6 +313,7 @@
+             this.posX = (double)blockpos.getX() + 0.5D;
+             this.posY = (double)blockpos.getY();
+             this.posZ = (double)blockpos.getZ() + 0.5D;
++            if (this.isAddedToWorld() && !this.world.isRemote) this.world.updateEntityWithOptionalForce(this, false); // Forge - Process chunk registration after moving.
+             this.prevPosX = this.posX;
+             this.prevPosY = this.posY;
+             this.prevPosZ = this.posZ;
+@@ -418,14 +421,27 @@
                      {
                          if (this.world.isBlockNormalCube(blockpos1.offset(enumfacing), false))
                          {
@@ -37,3 +45,15 @@
                          }
                      }
  
+                     if (flag)
+                     {
++                        net.minecraftforge.event.entity.living.EnderTeleportEvent event = new net.minecraftforge.event.entity.living.EnderTeleportEvent(this, blockpos1.getX(), blockpos1.getY(), blockpos1.getZ(), 0);
++                        if (net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(event)) flag = false;
++                        blockpos1 = new BlockPos(event.getTargetX(), event.getTargetY(), event.getTargetZ());
++                    }
++
++                    if (flag)
++                    {
+                         this.playSound(SoundEvents.ENTITY_SHULKER_TELEPORT, 1.0F, 1.0F);
+                         this.dataManager.set(ATTACHED_BLOCK_POS, Optional.of(blockpos1));
+                         this.dataManager.set(PEEK_TICK, Byte.valueOf((byte)0));

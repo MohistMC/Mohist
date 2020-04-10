@@ -29,10 +29,21 @@
          {
              this.writeShort(-1);
          }
-@@ -359,6 +360,9 @@
+@@ -336,7 +337,7 @@
+ 
+             if (stack.getItem().isDamageable() || stack.getItem().getShareTag())
+             {
+-                nbttagcompound = stack.getTagCompound();
++                nbttagcompound = stack.getItem().getNBTShareTag(stack);
+             }
+ 
+             this.writeCompoundTag(nbttagcompound);
+@@ -358,7 +359,10 @@
+             int j = this.readByte();
              int k = this.readShort();
              ItemStack itemstack = new ItemStack(Item.getItemById(i), j, k);
-             itemstack.getItem().readNBTShareTag(itemstack, this.readCompoundTag());
+-            itemstack.setTagCompound(this.readCompoundTag());
++            itemstack.getItem().readNBTShareTag(itemstack, this.readCompoundTag());
 +            if (itemstack.getTagCompound() != null) {
 +                CraftItemStack.setItemMeta(itemstack, CraftItemStack.getItemMeta(itemstack));
 +            }

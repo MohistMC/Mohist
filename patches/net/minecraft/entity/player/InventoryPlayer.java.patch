@@ -92,7 +92,40 @@
      public int getFirstEmptyStack()
      {
          for (int i = 0; i < this.mainInventory.size(); ++i)
-@@ -725,7 +790,7 @@
+@@ -292,7 +357,8 @@
+ 
+         if (itemstack.isEmpty())
+         {
+-            itemstack = new ItemStack(item, 0, p_191973_2_.getMetadata());
++            itemstack = p_191973_2_.copy(); // Forge: Replace Item clone above to preserve item capabilities when picking the item up.
++            itemstack.setCount(0);
+ 
+             if (p_191973_2_.hasTagCompound())
+             {
+@@ -363,6 +429,13 @@
+                 }
+             }
+         }
++        for (ItemStack is : armorInventory) // FORGE: Tick armor on animation ticks
++        {
++            if (!is.isEmpty())
++            {
++                is.getItem().onArmorTick(player.world, player, is);
++            }
++        }
+     }
+ 
+     public boolean addItemStackToInventory(ItemStack itemStackIn)
+@@ -444,6 +517,8 @@
+                 CrashReportCategory crashreportcategory = crashreport.makeCategory("Item being added");
+                 crashreportcategory.addCrashSection("Item ID", Integer.valueOf(Item.getIdFromItem(p_191971_2_.getItem())));
+                 crashreportcategory.addCrashSection("Item data", Integer.valueOf(p_191971_2_.getMetadata()));
++                crashreportcategory.addDetail("Registry Name", () -> String.valueOf(p_191971_2_.getItem().getRegistryName()));
++                crashreportcategory.addDetail("Item Class", () -> p_191971_2_.getItem().getClass().getName());
+                 crashreportcategory.addDetail("Item name", new ICrashReportDetail<String>()
+                 {
+                     public String call() throws Exception
+@@ -715,7 +790,7 @@
  
      public int getInventoryStackLimit()
      {
@@ -101,7 +134,7 @@
      }
  
      public boolean canHarvestBlock(IBlockState state)
-@@ -802,6 +867,11 @@
+@@ -792,6 +867,11 @@
  
      public ItemStack getItemStack()
      {

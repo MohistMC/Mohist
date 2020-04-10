@@ -105,7 +105,7 @@
      private boolean seenCredits;
      private final RecipeBookServer recipeBook = new RecipeBookServer();
      private Vec3d levitationStartPos;
-@@ -152,6 +173,18 @@
+@@ -152,15 +173,27 @@
      public boolean isChangingQuantityOnly;
      public int ping;
      public boolean queuedEndExit;
@@ -124,6 +124,17 @@
  
      public EntityPlayerMP(MinecraftServer server, WorldServer worldIn, GameProfile profile, PlayerInteractionManager interactionManagerIn)
      {
+         super(worldIn, profile);
+         interactionManagerIn.player = this;
+         this.interactionManager = interactionManagerIn;
+-        BlockPos blockpos = worldIn.getSpawnPoint();
++        BlockPos blockpos = worldIn.provider.getRandomizedSpawnPoint();
+ 
+-        if (worldIn.provider.hasSkyLight() && worldIn.getWorldInfo().getGameType() != GameType.ADVENTURE)
++        if (false && worldIn.provider.hasSkyLight() && worldIn.getWorldInfo().getGameType() != GameType.ADVENTURE)
+         {
+             int i = Math.max(0, server.getSpawnRadius(worldIn));
+             int j = MathHelper.floor(worldIn.getWorldBorder().getClosestDistance((double)blockpos.getX(), (double)blockpos.getZ()));
 @@ -188,8 +221,33 @@
          {
              this.setPosition(this.posX, this.posY + 1.0D, this.posZ);
@@ -211,6 +222,15 @@
          this.interactionManager.updateBlockRemoving();
          --this.respawnInvulnerabilityTicks;
  
+@@ -323,7 +411,7 @@
+ 
+         this.openContainer.detectAndSendChanges();
+ 
+-        if (!this.world.isRemote && !this.openContainer.canInteractWith(this))
++        if (!this.world.isRemote && this.openContainer != null && !this.openContainer.canInteractWith(this))
+         {
+             this.closeScreen();
+             this.openContainer = this.inventoryContainer;
 @@ -398,7 +486,7 @@
  
              if (this.getHealth() != this.lastHealth || this.lastFoodLevel != this.foodStats.getFoodLevel() || this.foodStats.getSaturationLevel() == 0.0F != this.wasHungry)
@@ -250,7 +270,7 @@
          }
          catch (Throwable throwable)
          {
-@@ -462,9 +566,9 @@
+@@ -462,50 +566,89 @@
  
      private void updateScorePoints(IScoreCriteria criteria, int points)
      {
@@ -262,8 +282,10 @@
              score.setScorePoints(points);
          }
      }
-@@ -474,38 +578,59 @@
-         if (net.minecraftforge.common.ForgeHooks.onLivingDeath(this, cause)) return;
+ 
+     public void onDeath(DamageSource cause)
+     {
++        if (net.minecraftforge.common.ForgeHooks.onLivingDeath(this, cause)) return;
          boolean flag = this.world.getGameRules().getBoolean("showDeathMessages");
          this.connection.sendPacket(new SPacketCombatEvent(this.getCombatTracker(), SPacketCombatEvent.Event.ENTITY_DIED, flag));
 +        if (this.dead) {
@@ -332,17 +354,16 @@
  
          if (!this.world.getGameRules().getBoolean("keepInventory") && !this.isSpectator())
          {
--            captureDrops = true;
--            capturedDrops.clear();
 -            this.destroyVanishingCursedItems();
 -            this.inventory.dropAllItems();
--
--            captureDrops = false;
-             net.minecraftforge.event.entity.player.PlayerDropsEvent event = new net.minecraftforge.event.entity.player.PlayerDropsEvent(this, cause, capturedDrops, recentlyHit > 0);
-             if (!net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(event))
-             {
-@@ -516,9 +641,14 @@
-             }
++            net.minecraftforge.event.entity.player.PlayerDropsEvent event = new net.minecraftforge.event.entity.player.PlayerDropsEvent(this, cause, capturedDrops, recentlyHit > 0);
++            if (!net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(event))
++            {
++                for (net.minecraft.entity.item.EntityItem item : capturedDrops)
++                {
++                    this.world.spawnEntity(item);
++                }
++            }
          }
  
 -        for (ScoreObjective scoreobjective : this.world.getScoreboard().getObjectivesFromCriteria(IScoreCriteria.DEATH_COUNT))
@@ -358,7 +379,7 @@
              score.incrementScore();
          }
  
-@@ -549,23 +679,28 @@
+@@ -536,23 +679,28 @@
          {
              super.awardKillScore(p_191956_1_, p_191956_2_, p_191956_3_);
              this.addScore(p_191956_2_);
@@ -393,7 +414,7 @@
              }
  
              CriteriaTriggers.PLAYER_KILLED_ENTITY.trigger(this, p_191956_1_, p_191956_3_);
-@@ -606,6 +741,43 @@
+@@ -593,6 +741,43 @@
          return Lists.<ScoreObjective>newArrayList();
      }
  
@@ -437,7 +458,7 @@
      public boolean attackEntityFrom(DamageSource source, float amount)
      {
          if (this.isEntityInvulnerable(source))
-@@ -654,14 +826,15 @@
+@@ -641,13 +826,15 @@
  
      private boolean canPlayersAttack()
      {
@@ -447,28 +468,31 @@
      }
  
      @Nullable
-     public Entity changeDimension(int dimensionIn, net.minecraftforge.common.util.ITeleporter teleporter)
+-    public Entity changeDimension(int dimensionIn)
++    public Entity changeDimension(int dimensionIn, net.minecraftforge.common.util.ITeleporter teleporter)
      {
--        if (!net.minecraftforge.common.ForgeHooks.onTravelToDimension(this, dimensionIn)) return this;
 -        this.invulnerableDimensionChange = true;
 +        if (!net.minecraftforge.common.ForgeHooks.onTravelToDimension(this, dimensionIn) || this.isPlayerSleeping()) return this; // CraftBukkit - SPIGOT-3154
 +        // this.invulnerableDimensionChange = true; // CraftBukkit - Moved down and into PlayerList#changeDimension
  
          if (this.dimension == 0 && dimensionIn == -1)
          {
-@@ -674,6 +847,7 @@
+@@ -658,8 +845,9 @@
+             this.enteredNetherPosition = null;
+         }
  
-         if (this.dimension == 1 && dimensionIn == 1 && teleporter.isVanilla())
+-        if (this.dimension == 1 && dimensionIn == 1)
++        if (this.dimension == 1 && dimensionIn == 1 && teleporter.isVanilla())
          {
 +            this.invulnerableDimensionChange = true; // CraftBukkit - Moved down from above
              this.world.removeEntity(this);
  
              if (!this.queuedEndExit)
-@@ -692,8 +866,23 @@
+@@ -678,8 +866,23 @@
                  dimensionIn = 1;
              }
  
--            this.mcServer.getPlayerList().transferPlayerToDimension(this, dimensionIn, teleporter);
+-            this.mcServer.getPlayerList().changePlayerDimension(this, dimensionIn);
 +            // this.mcServer.getPlayerList().transferPlayerToDimension(this, dimensionIn, teleporter);
 +            World oldWorld = this.world;
 +            double moveFactor = oldWorld.provider.getMovementFactor() / this.world.provider.getMovementFactor();
@@ -489,7 +513,7 @@
              this.lastExperience = -1;
              this.lastHealth = -1.0F;
              this.lastFoodLevel = -1;
-@@ -751,6 +940,7 @@
+@@ -737,6 +940,7 @@
  
      public void wakeUpPlayer(boolean immediately, boolean updateWorldFlag, boolean setSpawn)
      {
@@ -497,7 +521,16 @@
          if (this.isPlayerSleeping())
          {
              this.getServerWorld().getEntityTracker().sendToTrackingAndSelf(this, new SPacketAnimation(this, 2));
-@@ -844,6 +1034,12 @@
+@@ -808,7 +1012,7 @@
+         BlockPos blockpos = new BlockPos(i, j, k);
+         IBlockState iblockstate = this.world.getBlockState(blockpos);
+ 
+-        if (iblockstate.getMaterial() == Material.AIR)
++        if (iblockstate.getBlock().isAir(iblockstate, this.world, blockpos))
+         {
+             BlockPos blockpos1 = blockpos.down();
+             IBlockState iblockstate1 = this.world.getBlockState(blockpos1);
+@@ -830,6 +1034,12 @@
          this.connection.sendPacket(new SPacketSignEditorOpen(signTile.getPos()));
      }
  
@@ -510,7 +543,7 @@
      public void getNextWindowId()
      {
          this.currentWindowId = this.currentWindowId % 100 + 1;
-@@ -851,15 +1047,22 @@
+@@ -837,22 +1047,53 @@
  
      public void displayGui(IInteractionObject guiOwner)
      {
@@ -534,8 +567,9 @@
 +            // this.openContainer = guiOwner.createContainer(this.inventory, this);
              this.openContainer.windowId = this.currentWindowId;
              this.openContainer.addListener(this);
-             net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.player.PlayerContainerEvent.Open(this, this.openContainer));
-@@ -868,6 +1071,29 @@
++            net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.player.PlayerContainerEvent.Open(this, this.openContainer));
+         }
+     }
  
      public void displayGUIChest(IInventory chestInventory)
      {
@@ -565,7 +599,7 @@
          if (chestInventory instanceof ILootContainer && ((ILootContainer)chestInventory).getLootTable() != null && this.isSpectator())
          {
              this.sendStatusMessage((new TextComponentTranslation("container.spectatorCantOpen", new Object[0])).setStyle((new Style()).setColor(TextFormatting.RED)), true);
-@@ -887,6 +1113,7 @@
+@@ -872,6 +1113,7 @@
                  {
                      this.connection.sendPacket(new SPacketChat(new TextComponentTranslation("container.isLocked", new Object[] {chestInventory.getDisplayName()}), ChatType.GAME_INFO));
                      this.connection.sendPacket(new SPacketSoundEffect(SoundEvents.BLOCK_CHEST_LOCKED, SoundCategory.BLOCKS, this.posX, this.posY, this.posZ, 1.0F, 1.0F));
@@ -573,7 +607,7 @@
                      return;
                  }
              }
-@@ -896,12 +1123,14 @@
+@@ -881,25 +1123,36 @@
              if (chestInventory instanceof IInteractionObject)
              {
                  this.connection.sendPacket(new SPacketOpenWindow(this.currentWindowId, ((IInteractionObject)chestInventory).getGuiID(), chestInventory.getDisplayName(), chestInventory.getSizeInventory()));
@@ -590,7 +624,10 @@
              }
  
              this.openContainer.windowId = this.currentWindowId;
-@@ -912,8 +1141,15 @@
+             this.openContainer.addListener(this);
++            net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.player.PlayerContainerEvent.Open(this, this.openContainer));
+         }
+     }
  
      public void displayVillagerTradeGui(IMerchant villager)
      {
@@ -606,8 +643,11 @@
 +        this.openContainer = container;
          this.openContainer.windowId = this.currentWindowId;
          this.openContainer.addListener(this);
-         net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.player.PlayerContainerEvent.Open(this, this.openContainer));
-@@ -933,6 +1169,13 @@
++        net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.player.PlayerContainerEvent.Open(this, this.openContainer));
+         IInventory iinventory = ((ContainerMerchant)this.openContainer).getMerchantInventory();
+         ITextComponent itextcomponent = villager.getDisplayName();
+         this.connection.sendPacket(new SPacketOpenWindow(this.currentWindowId, "minecraft:villager", itextcomponent, iinventory.getSizeInventory()));
+@@ -916,6 +1169,13 @@
  
      public void openGuiHorseInventory(AbstractHorse horse, IInventory inventoryIn)
      {
@@ -621,7 +661,7 @@
          if (this.openContainer != this.inventoryContainer)
          {
              this.closeScreen();
-@@ -940,7 +1183,8 @@
+@@ -923,7 +1183,8 @@
  
          this.getNextWindowId();
          this.connection.sendPacket(new SPacketOpenWindow(this.currentWindowId, "EntityHorse", inventoryIn.getDisplayName(), inventoryIn.getSizeInventory(), horse.getEntityId()));
@@ -631,7 +671,7 @@
          this.openContainer.windowId = this.currentWindowId;
          this.openContainer.addListener(this);
      }
-@@ -988,6 +1232,12 @@
+@@ -971,6 +1232,12 @@
      {
          this.connection.sendPacket(new SPacketWindowItems(containerToSend.windowId, itemsList));
          this.connection.sendPacket(new SPacketSetSlot(-1, -1, this.inventory.getItemStack()));
@@ -644,7 +684,7 @@
      }
  
      public void sendWindowProperty(Container containerIn, int varToUpdate, int newValue)
-@@ -1005,6 +1255,7 @@
+@@ -988,6 +1255,7 @@
  
      public void closeScreen()
      {
@@ -652,7 +692,15 @@
          this.connection.sendPacket(new SPacketCloseWindow(this.openContainer.windowId));
          this.closeContainer();
      }
-@@ -1080,6 +1331,10 @@
+@@ -1003,6 +1271,7 @@
+     public void closeContainer()
+     {
+         this.openContainer.onContainerClosed(this);
++        net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.player.PlayerContainerEvent.Close(this, this.openContainer));
+         this.openContainer = this.inventoryContainer;
+     }
+ 
+@@ -1062,6 +1331,10 @@
  
          for (ResourceLocation resourcelocation : p_193102_1_)
          {
@@ -663,7 +711,7 @@
              list.add(CraftingManager.getRecipe(resourcelocation));
          }
  
-@@ -1110,8 +1365,16 @@
+@@ -1092,8 +1365,16 @@
      public void setPlayerHealthUpdated()
      {
          this.lastHealth = -1.0E8F;
@@ -680,7 +728,7 @@
      public void sendStatusMessage(ITextComponent chatComponent, boolean actionBar)
      {
          this.connection.sendPacket(new SPacketChat(chatComponent, actionBar ? ChatType.GAME_INFO : ChatType.CHAT));
-@@ -1156,7 +1419,7 @@
+@@ -1138,12 +1419,29 @@
          this.lastExperience = -1;
          this.lastHealth = -1.0F;
          this.lastFoodLevel = -1;
@@ -689,7 +737,29 @@
          this.entityRemoveQueue.addAll(that.entityRemoveQueue);
          this.seenCredits = that.seenCredits;
          this.enteredNetherPosition = that.enteredNetherPosition;
-@@ -1246,6 +1509,15 @@
+         this.setLeftShoulderEntity(that.getLeftShoulderEntity());
+         this.setRightShoulderEntity(that.getRightShoulderEntity());
++
++        this.spawnChunkMap = that.spawnChunkMap;
++        this.spawnForcedMap = that.spawnForcedMap;
++        if(that.dimension != 0)
++        {
++            this.spawnPos = that.spawnPos;
++            this.spawnForced = that.spawnForced;
++        }
++
++        //Copy over a section of the Entity Data from the old player.
++        //Allows mods to specify data that persists after players respawn.
++        NBTTagCompound old = that.getEntityData();
++        if (old.hasKey(PERSISTED_NBT_TAG))
++        {
++            getEntityData().setTag(PERSISTED_NBT_TAG, old.getCompoundTag(PERSISTED_NBT_TAG));
++        }
++        net.minecraftforge.event.ForgeEventFactory.onPlayerClone(this, that, !keepEverything);
+     }
+ 
+     protected void onNewPotionEffect(PotionEffect id)
+@@ -1211,6 +1509,15 @@
  
      public void setGameType(GameType gameType)
      {
@@ -705,7 +775,7 @@
          this.interactionManager.setGameType(gameType);
          this.connection.sendPacket(new SPacketChangeGameState(3, (float)gameType.getID()));
  
-@@ -1280,34 +1552,32 @@
+@@ -1245,34 +1552,32 @@
  
      public boolean canUseCommand(int permLevel, String commandName)
      {
@@ -761,7 +831,7 @@
      }
  
      public String getPlayerIP()
-@@ -1320,6 +1590,14 @@
+@@ -1285,6 +1590,14 @@
  
      public void handleClientSettings(CPacketClientSettings packetIn)
      {
@@ -776,7 +846,7 @@
          this.language = packetIn.getLang();
          this.chatVisibility = packetIn.getChatVisibility();
          this.chatColours = packetIn.isColorsEnabled();
-@@ -1327,7 +1605,7 @@
+@@ -1292,7 +1605,7 @@
          this.getDataManager().set(MAIN_HAND, Byte.valueOf((byte)(packetIn.getMainHand() == EnumHandSide.LEFT ? 0 : 1)));
      }
  
@@ -785,7 +855,7 @@
      {
          return this.chatVisibility;
      }
-@@ -1402,7 +1680,7 @@
+@@ -1367,7 +1680,7 @@
          if (entity != this.spectatingEntity)
          {
              this.connection.sendPacket(new SPacketCamera(this.spectatingEntity));
@@ -794,7 +864,7 @@
          }
      }
  
-@@ -1410,7 +1688,12 @@
+@@ -1375,7 +1688,12 @@
      {
          if (this.timeUntilPortal > 0 && !this.invulnerableDimensionChange)
          {
@@ -808,7 +878,7 @@
          }
      }
  
-@@ -1434,7 +1717,8 @@
+@@ -1399,7 +1717,8 @@
      @Nullable
      public ITextComponent getTabListDisplayName()
      {
@@ -818,7 +888,7 @@
      }
  
      public void swingArm(EnumHand hand)
-@@ -1455,13 +1739,16 @@
+@@ -1420,13 +1739,16 @@
  
      public void setElytraFlying()
      {
@@ -838,7 +908,7 @@
      }
  
      public PlayerAdvancements getAdvancements()
-@@ -1474,4 +1761,145 @@
+@@ -1439,4 +1761,145 @@
      {
          return this.enteredNetherPosition;
      }

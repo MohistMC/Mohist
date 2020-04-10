@@ -9,7 +9,7 @@
  import net.minecraft.world.storage.SaveHandler;
  import net.minecraft.world.storage.ThreadedFileIOBase;
  import net.minecraft.world.storage.WorldInfo;
-@@ -21,8 +19,11 @@
+@@ -21,23 +19,21 @@
      public IChunkLoader getChunkLoader(WorldProvider provider)
      {
          File file1 = this.getWorldDirectory();
@@ -17,12 +17,20 @@
 +        // we won't be generating a DIMXX folder for chunk loaders since this name is already generated
 +        // for the world container with provider.getSaveFolder().
  
--        if (provider.getSaveFolder() != null)
+-        if (provider instanceof WorldProviderHell)
 +        /*if (provider.getSaveFolder() != null)
          {
-             File file3 = new File(file1, provider.getSaveFolder());
+-            File file3 = new File(file1, "DIM-1");
++            File file3 = new File(file1, provider.getSaveFolder());
              file3.mkdirs();
-@@ -31,7 +32,8 @@
+             return new AnvilChunkLoader(file3, this.dataFixer);
+         }
+-        else if (provider instanceof WorldProviderEnd)
+-        {
+-            File file2 = new File(file1, "DIM1");
+-            file2.mkdirs();
+-            return new AnvilChunkLoader(file2, this.dataFixer);
+-        }
          else
          {
              return new AnvilChunkLoader(file1, this.dataFixer);

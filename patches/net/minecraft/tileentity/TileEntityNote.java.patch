@@ -1,6 +1,16 @@
 --- ../src-base/minecraft/net/minecraft/tileentity/TileEntityNote.java
 +++ ../src-work/minecraft/net/minecraft/tileentity/TileEntityNote.java
-@@ -44,7 +44,7 @@
+@@ -32,7 +32,9 @@
+ 
+     public void changePitch()
+     {
++        byte old = note;
+         this.note = (byte)((this.note + 1) % 25);
++        if (!net.minecraftforge.common.ForgeHooks.onNoteChange(this, old)) return;
+         this.markDirty();
+     }
+ 
+@@ -42,7 +44,7 @@
          {
              IBlockState iblockstate = worldIn.getBlockState(posIn.down());
              Material material = iblockstate.getMaterial();
@@ -9,7 +19,7 @@
  
              if (material == Material.ROCK)
              {
-@@ -93,7 +93,12 @@
+@@ -91,7 +93,12 @@
                  i = 9;
              }
  

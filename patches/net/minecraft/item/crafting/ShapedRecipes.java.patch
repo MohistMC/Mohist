@@ -1,17 +1,22 @@
 --- ../src-base/minecraft/net/minecraft/item/crafting/ShapedRecipes.java
 +++ ../src-work/minecraft/net/minecraft/item/crafting/ShapedRecipes.java
-@@ -19,6 +19,10 @@
+@@ -19,10 +19,12 @@
  import net.minecraft.util.NonNullList;
  import net.minecraft.util.ResourceLocation;
  import net.minecraft.world.World;
+-import net.minecraftforge.fml.relauncher.Side;
+-import net.minecraftforge.fml.relauncher.SideOnly;
 +import org.bukkit.craftbukkit.v1_12_R1.inventory.CraftItemStack;
 +import org.bukkit.craftbukkit.v1_12_R1.inventory.CraftShapedRecipe;
 +import org.bukkit.inventory.Recipe;
 +import red.mohist.recipe.CustomModRecipe;
  
- public class ShapedRecipes extends net.minecraftforge.registries.IForgeRegistryEntry.Impl<IRecipe> implements net.minecraftforge.common.crafting.IShapedRecipe
+-public class ShapedRecipes implements IRecipe
++public class ShapedRecipes extends net.minecraftforge.registries.IForgeRegistryEntry.Impl<IRecipe> implements net.minecraftforge.common.crafting.IShapedRecipe
  {
-@@ -28,6 +32,8 @@
+     public final int recipeWidth;
+     public final int recipeHeight;
+@@ -30,6 +32,8 @@
      private final ItemStack recipeOutput;
      private final String group;
  
@@ -20,10 +25,63 @@
      public ShapedRecipes(String group, int width, int height, NonNullList<Ingredient> ingredients, ItemStack result)
      {
          this.group = group;
-@@ -373,6 +379,73 @@
-         }
+@@ -39,7 +43,6 @@
+         this.recipeOutput = result;
      }
  
+-    @SideOnly(Side.CLIENT)
+     public String getGroup()
+     {
+         return this.group;
+@@ -58,10 +61,7 @@
+         {
+             ItemStack itemstack = inv.getStackInSlot(i);
+ 
+-            if (itemstack.getItem().hasContainerItem())
+-            {
+-                nonnulllist.set(i, new ItemStack(itemstack.getItem().getContainerItem()));
+-            }
++            nonnulllist.set(i, net.minecraftforge.common.ForgeHooks.getContainerItem(itemstack));
+         }
+ 
+         return nonnulllist;
+@@ -72,7 +72,6 @@
+         return this.recipeItems;
+     }
+ 
+-    @SideOnly(Side.CLIENT)
+     public boolean canFit(int width, int height)
+     {
+         return width >= this.recipeWidth && height >= this.recipeHeight;
+@@ -80,9 +79,9 @@
+ 
+     public boolean matches(InventoryCrafting inv, World worldIn)
+     {
+-        for (int i = 0; i <= 3 - this.recipeWidth; ++i)
++        for (int i = 0; i <= inv.getWidth() - this.recipeWidth; ++i)
+         {
+-            for (int j = 0; j <= 3 - this.recipeHeight; ++j)
++            for (int j = 0; j <= inv.getHeight() - this.recipeHeight; ++j)
+             {
+                 if (this.checkMatch(inv, i, j, true))
+                 {
+@@ -101,9 +100,9 @@
+ 
+     private boolean checkMatch(InventoryCrafting p_77573_1_, int p_77573_2_, int p_77573_3_, boolean p_77573_4_)
+     {
+-        for (int i = 0; i < 3; ++i)
++        for (int i = 0; i < p_77573_1_.getWidth(); ++i)
+         {
+-            for (int j = 0; j < 3; ++j)
++            for (int j = 0; j < p_77573_1_.getHeight(); ++j)
+             {
+                 int k = i - p_77573_2_;
+                 int l = j - p_77573_3_;
+@@ -379,4 +378,83 @@
+             return new ItemStack(item, j, i);
+         }
+     }
++
 +    @Override
 +    public Recipe toBukkitRecipe() {
 +        if (this.recipeHeight < 1 || this.recipeHeight > 3 || this.recipeWidth < 1 || this.recipeWidth > 3) {
@@ -91,6 +149,15 @@
 +        this.key = key;
 +    }
 +
-     //================================================ FORGE START ================================================
-     @Override
-     public int getRecipeWidth()
++    //================================================ FORGE START ================================================
++    @Override
++    public int getRecipeWidth()
++    {
++        return this.getWidth();
++    }
++    @Override
++    public int getRecipeHeight()
++    {
++        return this.getHeight();
++    }
+ }

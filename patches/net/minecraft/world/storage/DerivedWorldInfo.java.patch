@@ -10,10 +10,31 @@
      }
  
      public int getSaveVersion()
-@@ -239,4 +240,12 @@
+@@ -218,13 +219,33 @@
      {
-         return this.delegate.getDimensionData(dimensionID);
      }
+ 
++    @Deprecated
+     public void setDimensionData(DimensionType dimensionIn, NBTTagCompound compound)
+     {
+         this.delegate.setDimensionData(dimensionIn, compound);
+     }
+ 
++    @Deprecated
+     public NBTTagCompound getDimensionData(DimensionType dimensionIn)
+     {
+         return this.delegate.getDimensionData(dimensionIn);
+     }
++
++    public void setDimensionData(int dimensionID, NBTTagCompound compound)
++    {
++        this.delegate.setDimensionData(dimensionID, compound);
++    }
++
++    public NBTTagCompound getDimensionData(int dimensionID)
++    {
++        return this.delegate.getDimensionData(dimensionID);
++    }
 +
 +    public int getDimension() {
 +        return this.delegate.getDimension();

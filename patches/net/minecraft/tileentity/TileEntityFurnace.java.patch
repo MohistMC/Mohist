@@ -62,6 +62,32 @@
      public int getSizeInventory()
      {
          return this.furnaceItemStacks.size();
+@@ -121,9 +156,9 @@
+         super.readFromNBT(compound);
+         this.furnaceItemStacks = NonNullList.<ItemStack>withSize(this.getSizeInventory(), ItemStack.EMPTY);
+         ItemStackHelper.loadAllItems(compound, this.furnaceItemStacks);
+-        this.furnaceBurnTime = compound.getShort("BurnTime");
+-        this.cookTime = compound.getShort("CookTime");
+-        this.totalCookTime = compound.getShort("CookTimeTotal");
++        this.furnaceBurnTime = compound.getInteger("BurnTime");
++        this.cookTime = compound.getInteger("CookTime");
++        this.totalCookTime = compound.getInteger("CookTimeTotal");
+         this.currentItemBurnTime = getItemBurnTime(this.furnaceItemStacks.get(1));
+ 
+         if (compound.hasKey("CustomName", 8))
+@@ -135,9 +170,9 @@
+     public NBTTagCompound writeToNBT(NBTTagCompound compound)
+     {
+         super.writeToNBT(compound);
+-        compound.setShort("BurnTime", (short)this.furnaceBurnTime);
+-        compound.setShort("CookTime", (short)this.cookTime);
+-        compound.setShort("CookTimeTotal", (short)this.totalCookTime);
++        compound.setInteger("BurnTime", (short)this.furnaceBurnTime);
++        compound.setInteger("CookTime", (short)this.cookTime);
++        compound.setInteger("CookTimeTotal", (short)this.totalCookTime);
+         ItemStackHelper.saveAllItems(compound, this.furnaceItemStacks);
+ 
+         if (this.hasCustomName())
 @@ -166,12 +201,40 @@
  
      public void update()
@@ -133,7 +159,15 @@
                          flag1 = true;
  
                          if (!itemstack.isEmpty())
-@@ -202,33 +273,22 @@
+@@ -196,39 +267,28 @@
+ 
+                             if (itemstack.isEmpty())
+                             {
+-                                Item item1 = item.getContainerItem();
+-                                this.furnaceItemStacks.set(1, item1 == null ? ItemStack.EMPTY : new ItemStack(item1));
++                                ItemStack item1 = item.getContainerItem(itemstack);
++                                this.furnaceItemStacks.set(1, item1);
+                             }
                          }
                      }
                  }
@@ -174,7 +208,23 @@
              }
          }
  
-@@ -289,6 +349,31 @@
+@@ -269,13 +329,13 @@
+                 {
+                     return false;
+                 }
+-                else if (itemstack1.getCount() < this.getInventoryStackLimit() && itemstack1.getCount() < itemstack1.getMaxStackSize())
++                else if (itemstack1.getCount() + itemstack.getCount() <= this.getInventoryStackLimit() && itemstack1.getCount() + itemstack.getCount() <= itemstack1.getMaxStackSize())  // Forge fix: make furnace respect stack sizes in furnace recipes
+                 {
+                     return true;
+                 }
+                 else
+                 {
+-                    return itemstack1.getCount() < itemstack.getMaxStackSize();
++                    return itemstack1.getCount() + itemstack.getCount() <= itemstack.getMaxStackSize(); // Forge fix: make furnace respect stack sizes in furnace recipes
+                 }
+             }
+         }
+@@ -289,14 +349,41 @@
              ItemStack itemstack1 = FurnaceRecipes.instance().getSmeltingResult(itemstack);
              ItemStack itemstack2 = this.furnaceItemStacks.get(2);
  
@@ -206,31 +256,47 @@
              if (itemstack2.isEmpty())
              {
                  this.furnaceItemStacks.set(2, itemstack1.copy());
-@@ -297,6 +382,8 @@
+             }
+             else if (itemstack2.getItem() == itemstack1.getItem())
              {
-                 itemstack2.grow(itemstack1.getCount());
+-                itemstack2.grow(1);
++                itemstack2.grow(itemstack1.getCount());
              }
 +            */
 +            // CraftBukkit end
  
              if (itemstack.getItem() == Item.getItemFromBlock(Blocks.SPONGE) && itemstack.getMetadata() == 1 && !((ItemStack)this.furnaceItemStacks.get(1)).isEmpty() && ((ItemStack)this.furnaceItemStacks.get(1)).getItem() == Items.BUCKET)
              {
-@@ -533,14 +620,14 @@
+@@ -315,6 +402,8 @@
+         }
+         else
+         {
++            int burnTime = net.minecraftforge.event.ForgeEventFactory.getItemBurnTime(stack);
++            if (burnTime >= 0) return burnTime;
+             Item item = stack.getItem();
+ 
+             if (item == Item.getItemFromBlock(Blocks.WOODEN_SLAB))
+@@ -530,4 +619,23 @@
+     {
          this.furnaceItemStacks.clear();
      }
- 
--    net.minecraftforge.items.IItemHandler handlerTop = new net.minecraftforge.items.wrapper.SidedInvWrapper(this, net.minecraft.util.EnumFacing.UP);
--    net.minecraftforge.items.IItemHandler handlerBottom = new net.minecraftforge.items.wrapper.SidedInvWrapper(this, net.minecraft.util.EnumFacing.DOWN);
--    net.minecraftforge.items.IItemHandler handlerSide = new net.minecraftforge.items.wrapper.SidedInvWrapper(this, net.minecraft.util.EnumFacing.WEST);
++
 +    net.minecraftforge.items.IItemHandler handlerTop = new net.minecraftforge.items.wrapper.SidedInvWrapper(this, EnumFacing.UP);
 +    net.minecraftforge.items.IItemHandler handlerBottom = new net.minecraftforge.items.wrapper.SidedInvWrapper(this, EnumFacing.DOWN);
 +    net.minecraftforge.items.IItemHandler handlerSide = new net.minecraftforge.items.wrapper.SidedInvWrapper(this, EnumFacing.WEST);
- 
-     @SuppressWarnings("unchecked")
-     @Override
-     @javax.annotation.Nullable
--    public <T> T getCapability(net.minecraftforge.common.capabilities.Capability<T> capability, @javax.annotation.Nullable net.minecraft.util.EnumFacing facing)
++
++    @SuppressWarnings("unchecked")
++    @Override
++    @javax.annotation.Nullable
 +    public <T> T getCapability(net.minecraftforge.common.capabilities.Capability<T> capability, @javax.annotation.Nullable EnumFacing facing)
-     {
-         if (facing != null && capability == net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABILITY)
-             if (facing == EnumFacing.DOWN)
++    {
++        if (facing != null && capability == net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABILITY)
++            if (facing == EnumFacing.DOWN)
++                return (T) handlerBottom;
++            else if (facing == EnumFacing.UP)
++                return (T) handlerTop;
++            else
++                return (T) handlerSide;
++        return super.getCapability(capability, facing);
++    }
+ }

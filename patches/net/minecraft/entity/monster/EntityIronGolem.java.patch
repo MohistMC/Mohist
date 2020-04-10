@@ -9,3 +9,12 @@
          }
  
          super.collideWithEntity(entityIn);
+@@ -294,7 +294,7 @@
+     {
+         if (!this.isPlayerCreated() && this.attackingPlayer != null && this.village != null)
+         {
+-            this.village.modifyPlayerReputation(this.attackingPlayer.getName(), -5);
++            this.village.modifyPlayerReputation(this.attackingPlayer.getUniqueID(), -5);
+         }
+ 
+         super.onDeath(cause);

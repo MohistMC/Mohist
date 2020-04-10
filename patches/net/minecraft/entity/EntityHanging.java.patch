@@ -150,7 +150,17 @@
                  this.setDead();
                  this.onBroken((Entity)null);
              }
-@@ -183,6 +213,20 @@
+@@ -144,6 +174,9 @@
+                     blockpos$mutableblockpos.setPos(blockpos).move(enumfacing, k + i1).move(EnumFacing.UP, l + j1);
+                     IBlockState iblockstate = this.world.getBlockState(blockpos$mutableblockpos);
+ 
++                    if (iblockstate.isSideSolid(this.world, blockpos$mutableblockpos, this.facingDirection))
++                        continue;
++
+                     if (!iblockstate.getMaterial().isSolid() && !BlockRedstoneDiode.isDiode(iblockstate))
+                     {
+                         return false;
+@@ -180,6 +213,20 @@
          {
              if (!this.isDead && !this.world.isRemote)
              {
@@ -171,7 +181,7 @@
                  this.setDead();
                  this.markVelocityChanged();
                  this.onBroken(source.getTrueSource());
-@@ -196,6 +240,15 @@
+@@ -193,6 +240,15 @@
      {
          if (!this.world.isRemote && !this.isDead && x * x + y * y + z * z > 0.0D)
          {
@@ -187,7 +197,7 @@
              this.setDead();
              this.onBroken((Entity)null);
          }
-@@ -203,7 +256,7 @@
+@@ -200,7 +256,7 @@
  
      public void addVelocity(double x, double y, double z)
      {
@@ -196,7 +206,7 @@
          {
              this.setDead();
              this.onBroken((Entity)null);
-@@ -296,7 +349,7 @@
+@@ -293,7 +349,7 @@
          return this.getRotatedYaw(transformMirror.toRotation(this.facingDirection));
      }
  

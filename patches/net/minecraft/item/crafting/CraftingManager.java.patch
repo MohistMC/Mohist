@@ -4,7 +4,7 @@
  {
      private static final Logger LOGGER = LogManager.getLogger();
      private static int nextAvailableId;
--    public static final RegistryNamespaced<ResourceLocation, IRecipe> REGISTRY = net.minecraftforge.registries.GameData.getWrapper(IRecipe.class);
+-    public static final RegistryNamespaced<ResourceLocation, IRecipe> REGISTRY = new RegistryNamespaced<ResourceLocation, IRecipe>();
 +    public static RegistryNamespaced<ResourceLocation, IRecipe> REGISTRY = net.minecraftforge.registries.GameData.getWrapper(IRecipe.class);
  
      public static boolean init()
@@ -55,7 +55,24 @@
              flag1 = false;
              return flag1;
          }
-@@ -188,6 +189,7 @@
+@@ -173,12 +174,14 @@
+         }
+     }
+ 
+-    public static void register(String name, IRecipe recipe)
++    //Forge: Made private use GameData/Registry events!
++    private static void register(String name, IRecipe recipe)
+     {
+         register(new ResourceLocation(name), recipe);
+     }
+ 
+-    public static void register(ResourceLocation name, IRecipe recipe)
++    //Forge: Made private use GameData/Registry events!
++    private static void register(ResourceLocation name, IRecipe recipe)
+     {
+         if (REGISTRY.containsKey(name))
+         {
+@@ -186,6 +189,7 @@
          }
          else
          {
@@ -63,7 +80,7 @@
              REGISTRY.register(nextAvailableId++, name, recipe);
          }
      }
-@@ -201,7 +203,7 @@
+@@ -199,7 +203,7 @@
                  return irecipe.getCraftingResult(craftMatrix);
              }
          }
@@ -72,7 +89,7 @@
          return ItemStack.EMPTY;
      }
  
-@@ -212,10 +214,12 @@
+@@ -210,10 +214,12 @@
          {
              if (irecipe.matches(craftMatrix, worldIn))
              {
@@ -85,3 +102,17 @@
          return null;
      }
  
+@@ -243,11 +249,13 @@
+         return REGISTRY.getObject(name);
+     }
+ 
++    @Deprecated //DO NOT USE THIS
+     public static int getIDForRecipe(IRecipe recipe)
+     {
+         return REGISTRY.getIDForObject(recipe);
+     }
+ 
++    @Deprecated //DO NOT USE THIS
+     @Nullable
+     public static IRecipe getRecipeById(int id)
+     {

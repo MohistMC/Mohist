@@ -34,7 +34,11 @@
                  {
                      this.world.setBlockToAir(blockpos);
                  }
-@@ -170,7 +170,7 @@
+@@ -166,10 +166,11 @@
+                 {
+                     IBlockState iblockstate = this.world.getBlockState(blockpos1);
+ 
++                    if (this.world.isAirBlock(new BlockPos(this.posX, this.posY - 0.009999999776482582D, this.posZ))) //Forge: Don't indent below.
                      if (!flag1 && BlockFalling.canFallThrough(this.world.getBlockState(new BlockPos(this.posX, this.posY - 0.009999999776482582D, this.posZ))))
                      {
                          this.onGround = false;
@@ -43,11 +47,11 @@
                      }
  
                      this.motionX *= 0.699999988079071D;
-@@ -183,8 +183,12 @@
+@@ -182,14 +183,18 @@
  
                          if (!this.dontSetBlock)
                          {
--                            if (this.world.mayPlace(block, blockpos1, true, EnumFacing.UP, this) && (flag1 || !BlockFalling.canFallThrough(this.world.getBlockState(blockpos1.down()))) && this.world.setBlockState(blockpos1, this.fallTile, 3))
+-                            if (this.world.mayPlace(block, blockpos1, true, EnumFacing.UP, (Entity)null) && (flag1 || !BlockFalling.canFallThrough(this.world.getBlockState(blockpos1.down()))) && this.world.setBlockState(blockpos1, this.fallTile, 3))
 +                            if (this.world.mayPlace(block, blockpos1, true, EnumFacing.UP, this) && (flag1 || !BlockFalling.canFallThrough(this.world.getBlockState(blockpos1.down()))))
                              {
 +                                if (CraftEventFactory.callEntityChangeBlockEvent(this, blockpos1, this.fallTile.getBlock(), this.fallTile.getBlock().getMetaFromState(this.fallTile)).isCancelled()) {
@@ -57,7 +61,14 @@
                                  if (block instanceof BlockFalling)
                                  {
                                      ((BlockFalling)block).onEndFalling(this.world, blockpos1, this.fallTile, iblockstate);
-@@ -248,7 +252,9 @@
+                                 }
+ 
+-                                if (this.tileEntityData != null && block instanceof ITileEntityProvider)
++                                if (this.tileEntityData != null && block.hasTileEntity(this.fallTile))
+                                 {
+                                     TileEntity tileentity = this.world.getTileEntity(blockpos1);
+ 
+@@ -247,7 +252,9 @@
  
                  for (Entity entity : list)
                  {

@@ -16,6 +16,15 @@
  
  public class EntityWitherSkull extends EntityFireball
  {
+@@ -62,7 +62,7 @@
+         float f = super.getExplosionResistance(explosionIn, worldIn, pos, blockStateIn);
+         Block block = blockStateIn.getBlock();
+ 
+-        if (this.isInvulnerable() && EntityWither.canDestroyBlock(block))
++        if (this.isInvulnerable() && block.canEntityDestroy(blockStateIn, worldIn, pos, this) && net.minecraftforge.event.ForgeEventFactory.onEntityDestroyBlock(this.shootingEntity, pos, blockStateIn))
+         {
+             f = Math.min(0.8F, f);
+         }
 @@ -78,7 +78,7 @@
              {
                  if (this.shootingEntity != null)
@@ -38,7 +47,7 @@
                  }
              }
  
--            this.world.newExplosion(this, this.posX, this.posY, this.posZ, 1.0F, false, net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(this.world, this.shootingEntity));
+-            this.world.newExplosion(this, this.posX, this.posY, this.posZ, 1.0F, false, this.world.getGameRules().getBoolean("mobGriefing"));
 +            // this.world.newExplosion(this, this.posX, this.posY, this.posZ, 1.0F, false, net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(this.world, this.shootingEntity));
 +            ExplosionPrimeEvent event = new ExplosionPrimeEvent(this.getBukkitEntity(), 1.0F, false);
 +            this.world.getServer().getPluginManager().callEvent(event);

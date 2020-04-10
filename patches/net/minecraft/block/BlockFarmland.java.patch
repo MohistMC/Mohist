@@ -21,8 +21,9 @@
  
      public void onFallenUpon(World worldIn, BlockPos pos, Entity entityIn, float fallDistance)
      {
+-        if (!worldIn.isRemote && worldIn.rand.nextFloat() < fallDistance - 0.5F && entityIn instanceof EntityLivingBase && (entityIn instanceof EntityPlayer || worldIn.getGameRules().getBoolean("mobGriefing")) && entityIn.width * entityIn.width * entityIn.height > 0.512F)
 +        super.onFallenUpon(worldIn, pos, entityIn, fallDistance); // CraftBukkit - moved here as game rules / events shouldn't affect fall damage.
-         if (net.minecraftforge.common.ForgeHooks.onFarmlandTrample(worldIn, pos, Blocks.DIRT.getDefaultState(), fallDistance, entityIn)) // Forge: Move logic to Entity#canTrample
++        if (net.minecraftforge.common.ForgeHooks.onFarmlandTrample(worldIn, pos, Blocks.DIRT.getDefaultState(), fallDistance, entityIn)) // Forge: Move logic to Entity#canTrample
          {
 +            org.bukkit.event.Cancellable cancellable;
 +            if (entityIn instanceof EntityPlayer) {
@@ -67,8 +68,17 @@
      private boolean hasCrops(World worldIn, BlockPos pos)
      {
          Block block = worldIn.getBlockState(pos.up()).getBlock();
--        return block instanceof net.minecraftforge.common.IPlantable && canSustainPlant(worldIn.getBlockState(pos), worldIn, pos, net.minecraft.util.EnumFacing.UP, (net.minecraftforge.common.IPlantable)block);
+-        return block instanceof BlockCrops || block instanceof BlockStem;
 +        return block instanceof net.minecraftforge.common.IPlantable && canSustainPlant(worldIn.getBlockState(pos), worldIn, pos, EnumFacing.UP, (net.minecraftforge.common.IPlantable)block);
      }
  
      private boolean hasWater(World worldIn, BlockPos pos)
+@@ -108,7 +129,7 @@
+             }
+         }
+ 
+-        return false;
++        return net.minecraftforge.common.FarmlandWaterManager.hasBlockWaterTicket(worldIn, pos);
+     }
+ 
+     public void neighborChanged(IBlockState state, World worldIn, BlockPos pos, Block blockIn, BlockPos fromPos)

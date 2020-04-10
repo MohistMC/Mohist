@@ -23,7 +23,7 @@
  
  public class Explosion
  {
-@@ -34,15 +41,17 @@
+@@ -34,14 +41,17 @@
      private final boolean damagesTerrain;
      private final Random random;
      private final World world;
@@ -38,14 +38,14 @@
      private final float size;
      private final List<BlockPos> affectedBlockPositions;
      private final Map<EntityPlayer, Vec3d> playerKnockbackMap;
-     private final Vec3d position;
++    private final Vec3d position;
  
 +    public boolean wasCanceled = MohistConfig.instance.explosion_canceled.getValue();
 +
      @SideOnly(Side.CLIENT)
      public Explosion(World worldIn, Entity entityIn, double x, double y, double z, float size, List<BlockPos> affectedPositions)
      {
-@@ -63,7 +72,8 @@
+@@ -62,16 +72,21 @@
          this.playerKnockbackMap = Maps.<EntityPlayer, Vec3d>newHashMap();
          this.world = worldIn;
          this.exploder = entityIn;
@@ -55,7 +55,10 @@
          this.x = x;
          this.y = y;
          this.z = z;
-@@ -74,6 +84,9 @@
+         this.causesFire = flaming;
+         this.damagesTerrain = damagesTerrain;
++        this.position = new Vec3d(this.x, this.y, this.z);
+     }
  
      public void doExplosionA()
      {
@@ -65,7 +68,12 @@
          Set<BlockPos> set = Sets.<BlockPos>newHashSet();
          int i = 16;
  
-@@ -108,7 +121,7 @@
+@@ -102,11 +117,11 @@
+ 
+                             if (iblockstate.getMaterial() != Material.AIR)
+                             {
+-                                float f2 = this.exploder != null ? this.exploder.getExplosionResistance(this, this.world, blockpos, iblockstate) : iblockstate.getBlock().getExplosionResistance((Entity)null);
++                                float f2 = this.exploder != null ? this.exploder.getExplosionResistance(this, this.world, blockpos, iblockstate) : iblockstate.getBlock().getExplosionResistance(world, blockpos, (Entity)null, this);
                                  f -= (f2 + 0.3F) * 0.3F;
                              }
  
@@ -74,7 +82,15 @@
                              {
                                  set.add(blockpos);
                              }
-@@ -154,9 +167,16 @@
+@@ -129,6 +144,7 @@
+         int j2 = MathHelper.floor(this.z - (double)f3 - 1.0D);
+         int j1 = MathHelper.floor(this.z + (double)f3 + 1.0D);
+         List<Entity> list = this.world.getEntitiesWithinAABBExcludingEntity(this.exploder, new AxisAlignedBB((double)k1, (double)i2, (double)j2, (double)l1, (double)i1, (double)j1));
++        net.minecraftforge.event.ForgeEventFactory.onExplosionDetonate(this.world, this, list, f3);
+         Vec3d vec3d = new Vec3d(this.x, this.y, this.z);
+ 
+         for (int k2 = 0; k2 < list.size(); ++k2)
+@@ -151,9 +167,16 @@
                          d5 = d5 / d13;
                          d7 = d7 / d13;
                          d9 = d9 / d13;
@@ -93,7 +109,7 @@
                          double d11 = d10;
  
                          if (entity instanceof EntityLivingBase)
-@@ -198,6 +218,48 @@
+@@ -195,6 +218,48 @@
  
          if (this.damagesTerrain)
          {
@@ -142,7 +158,7 @@
              for (BlockPos blockpos : this.affectedBlockPositions)
              {
                  IBlockState iblockstate = this.world.getBlockState(blockpos);
-@@ -228,7 +290,9 @@
+@@ -225,11 +290,12 @@
                  {
                      if (block.canDropFromExplosion(this))
                      {
@@ -152,8 +168,13 @@
 +                        block.dropBlockAsItemWithChance(this.world, blockpos, this.world.getBlockState(blockpos), yield, 0);
                      }
  
-                     block.onBlockExploded(this.world, blockpos, this);
-@@ -242,7 +306,12 @@
+-                    this.world.setBlockState(blockpos, Blocks.AIR.getDefaultState(), 3);
+-                    block.onBlockDestroyedByExplosion(this.world, blockpos, this);
++                    block.onBlockExploded(this.world, blockpos, this);
+                 }
+             }
+         }
+@@ -240,7 +306,12 @@
              {
                  if (this.world.getBlockState(blockpos1).getMaterial() == Material.AIR && this.world.getBlockState(blockpos1.down()).isFullBlock() && this.random.nextInt(3) == 0)
                  {
@@ -167,7 +188,7 @@
                  }
              }
          }
-@@ -266,7 +335,8 @@
+@@ -264,7 +335,8 @@
          }
          else
          {
@@ -177,10 +198,12 @@
          }
      }
  
-@@ -281,4 +351,82 @@
+@@ -277,4 +349,84 @@
+     {
+         return this.affectedBlockPositions;
      }
- 
-     public Vec3d getPosition(){ return this.position; }
++
++    public Vec3d getPosition(){ return this.position; }
 +
 +    // Paper start - Optimize explosions
 +    private float getBlockDensity(Vec3d vec3d, AxisAlignedBB aabb) {

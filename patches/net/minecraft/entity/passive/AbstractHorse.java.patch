@@ -48,7 +48,15 @@
          this.horseChest.setCustomName(this.getName());
  
          if (containerhorsechest != null)
-@@ -465,7 +468,7 @@
+@@ -312,6 +315,7 @@
+ 
+         this.horseChest.addInventoryChangeListener(this);
+         this.updateHorseSlots();
++        this.itemHandler = new net.minecraftforge.items.wrapper.InvWrapper(this.horseChest);
+     }
+ 
+     protected void updateHorseSlots()
+@@ -464,7 +468,7 @@
  
      public int getMaxTemper()
      {
@@ -57,7 +65,7 @@
      }
  
      protected float getSoundVolume()
-@@ -545,7 +548,7 @@
+@@ -544,7 +548,7 @@
  
          if (this.getHealth() < this.getMaxHealth() && f > 0.0F)
          {
@@ -66,7 +74,7 @@
              flag = true;
          }
  
-@@ -609,7 +612,7 @@
+@@ -608,7 +612,7 @@
  
      public void onDeath(DamageSource cause)
      {
@@ -75,7 +83,7 @@
  
          if (!this.world.isRemote && this.horseChest != null)
          {
-@@ -623,6 +626,7 @@
+@@ -622,6 +626,7 @@
                  }
              }
          }
@@ -83,7 +91,7 @@
      }
  
      public void onLivingUpdate()
-@@ -638,7 +642,7 @@
+@@ -637,7 +642,7 @@
          {
              if (this.rand.nextInt(900) == 0 && this.deathTime == 0)
              {
@@ -92,7 +100,7 @@
              }
  
              if (this.canEatGrass())
-@@ -941,7 +945,7 @@
+@@ -940,7 +945,7 @@
          {
              compound.setString("OwnerUUID", this.getOwnerUniqueId().toString());
          }
@@ -101,7 +109,7 @@
          if (!this.horseChest.getStackInSlot(0).isEmpty())
          {
              compound.setTag("SaddleItem", this.horseChest.getStackInSlot(0).writeToNBT(new NBTTagCompound()));
-@@ -971,6 +975,9 @@
+@@ -970,6 +975,9 @@
          {
              this.setOwnerUniqueId(UUID.fromString(s));
          }
@@ -111,7 +119,7 @@
  
          IAttributeInstance iattributeinstance = this.getAttributeMap().getAttributeInstanceByName("Speed");
  
-@@ -1074,6 +1081,18 @@
+@@ -1073,6 +1081,18 @@
  
      public void handleStartJump(int p_184775_1_)
      {
@@ -130,3 +138,26 @@
          this.allowStandSliding = true;
          this.makeHorseRear();
      }
+@@ -1227,4 +1247,22 @@
+ 
+         return livingdata;
+     }
++
++    // FORGE
++    private net.minecraftforge.items.IItemHandler itemHandler = null; // Initialized by initHorseChest above.
++
++    @SuppressWarnings("unchecked")
++    @Override
++    @Nullable
++    public <T> T getCapability(net.minecraftforge.common.capabilities.Capability<T> capability, @Nullable net.minecraft.util.EnumFacing facing)
++    {
++        if (capability == net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) return (T) itemHandler;
++        return super.getCapability(capability, facing);
++    }
++
++    @Override
++    public boolean hasCapability(net.minecraftforge.common.capabilities.Capability<?> capability, @Nullable net.minecraft.util.EnumFacing facing)
++    {
++        return capability == net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABILITY || super.hasCapability(capability, facing);
++    }
+ }

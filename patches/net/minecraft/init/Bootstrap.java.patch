@@ -153,7 +153,7 @@
                  return stack;
              }
              protected void playDispenseSound(IBlockSource source)
-@@ -257,9 +342,52 @@
+@@ -257,13 +342,59 @@
              private final BehaviorDefaultDispenseItem dispenseBehavior = new BehaviorDefaultDispenseItem();
              public ItemStack dispenseStack(IBlockSource source, ItemStack stack)
              {
@@ -208,7 +208,14 @@
              }
          };
          BlockDispenser.DISPENSE_BEHAVIOR_REGISTRY.putObject(Items.LAVA_BUCKET, ibehaviordispenseitem);
-@@ -293,6 +421,26 @@
+         BlockDispenser.DISPENSE_BEHAVIOR_REGISTRY.putObject(Items.WATER_BUCKET, ibehaviordispenseitem);
++        BlockDispenser.DISPENSE_BEHAVIOR_REGISTRY.putObject(Items.MILK_BUCKET, net.minecraftforge.fluids.DispenseFluidContainer.getInstance());
++        BlockDispenser.DISPENSE_BEHAVIOR_REGISTRY.putObject(Items.BUCKET, net.minecraftforge.fluids.DispenseFluidContainer.getInstance());
++        if (false)
+         BlockDispenser.DISPENSE_BEHAVIOR_REGISTRY.putObject(Items.BUCKET, new BehaviorDefaultDispenseItem()
+         {
+             private final BehaviorDefaultDispenseItem dispenseBehavior = new BehaviorDefaultDispenseItem();
+@@ -290,6 +421,26 @@
                      item = Items.LAVA_BUCKET;
                  }
  
@@ -235,7 +242,7 @@
                  world.setBlockToAir(blockpos);
                  stack.shrink(1);
  
-@@ -316,16 +464,37 @@
+@@ -313,16 +464,37 @@
              protected ItemStack dispenseStack(IBlockSource source, ItemStack stack)
              {
                  World world = source.getWorld();
@@ -278,7 +285,7 @@
                      }
                  }
                  else if (world.getBlockState(blockpos).getBlock() == Blocks.TNT)
-@@ -351,7 +520,28 @@
+@@ -348,7 +520,28 @@
                  {
                      World world = source.getWorld();
                      BlockPos blockpos = source.getBlockPos().offset((EnumFacing)source.getBlockState().getValue(BlockDispenser.FACING));
@@ -307,7 +314,7 @@
                      if (ItemDye.applyBonemeal(stack, world, blockpos))
                      {
                          if (!world.isRemote)
-@@ -364,6 +554,28 @@
+@@ -361,6 +554,28 @@
                          this.successful = false;
                      }
  
@@ -336,7 +343,7 @@
                      return stack;
                  }
                  else
-@@ -378,10 +590,34 @@
+@@ -375,10 +590,34 @@
              {
                  World world = source.getWorld();
                  BlockPos blockpos = source.getBlockPos().offset((EnumFacing)source.getBlockState().getValue(BlockDispenser.FACING));
@@ -373,7 +380,7 @@
                  return stack;
              }
          });
-@@ -393,6 +629,27 @@
+@@ -390,6 +629,27 @@
                  EnumFacing enumfacing = (EnumFacing)source.getBlockState().getValue(BlockDispenser.FACING);
                  BlockPos blockpos = source.getBlockPos().offset(enumfacing);
                  BlockSkull blockskull = Blocks.SKULL;
@@ -401,7 +408,7 @@
                  this.successful = true;
  
                  if (world.isAirBlock(blockpos) && blockskull.canDispenserPlace(world, blockpos, stack))
-@@ -456,6 +713,27 @@
+@@ -453,6 +713,27 @@
                  World world = source.getWorld();
                  BlockPos blockpos = source.getBlockPos().offset((EnumFacing)source.getBlockState().getValue(BlockDispenser.FACING));
                  BlockPumpkin blockpumpkin = (BlockPumpkin)Blocks.PUMPKIN;
@@ -429,7 +436,24 @@
                  this.successful = true;
  
                  if (world.isAirBlock(blockpos) && blockpumpkin.canDispenserPlace(world, blockpos))
-@@ -588,11 +866,37 @@
+@@ -489,6 +770,7 @@
+         if (!alreadyRegistered)
+         {
+             alreadyRegistered = true;
++            if (false) // skip redirectOutputToLog, Forge already redirects stdout and stderr output to log so that they print with more context
+             redirectOutputToLog();
+             SoundEvent.registerSounds();
+             Block.registerBlocks();
+@@ -524,6 +806,8 @@
+                     LOGGER.error("Errors with built-in loot tables");
+                 }
+             }
++
++            net.minecraftforge.registries.GameData.vanillaSnapshot();
+         }
+     }
+ 
+@@ -582,11 +866,37 @@
                      d3 = 0.0D;
                  }
  
@@ -470,7 +494,7 @@
                  return stack;
              }
  
-@@ -624,6 +928,27 @@
+@@ -618,6 +928,27 @@
                  World world = source.getWorld();
                  EnumFacing enumfacing = (EnumFacing)source.getBlockState().getValue(BlockDispenser.FACING);
                  BlockPos blockpos = source.getBlockPos().offset(enumfacing);

@@ -37,8 +37,12 @@
          accelX = accelX + this.rand.nextGaussian() * 0.4D;
          accelY = accelY + this.rand.nextGaussian() * 0.4D;
          accelZ = accelZ + this.rand.nextGaussian() * 0.4D;
-@@ -96,6 +106,9 @@
-             if (raytraceresult != null && !net.minecraftforge.event.ForgeEventFactory.onProjectileImpact(this, raytraceresult))
+@@ -93,9 +103,12 @@
+             ++this.ticksInAir;
+             RayTraceResult raytraceresult = ProjectileHelper.forwardsRaycast(this, true, this.ticksInAir >= 25, this.shootingEntity);
+ 
+-            if (raytraceresult != null)
++            if (raytraceresult != null && !net.minecraftforge.event.ForgeEventFactory.onProjectileImpact(this, raytraceresult))
              {
                  this.onImpact(raytraceresult);
 +                if (this.isDead) {

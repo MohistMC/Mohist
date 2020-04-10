@@ -30,6 +30,15 @@
      protected void writeEntityToNBT(NBTTagCompound compound)
      {
          if (this.owner != null)
+@@ -310,7 +331,7 @@
+ 
+                 RayTraceResult raytraceresult = ProjectileHelper.forwardsRaycast(this, true, false, this.owner);
+ 
+-                if (raytraceresult != null)
++                if (raytraceresult != null && !net.minecraftforge.event.ForgeEventFactory.onProjectileImpact(this, raytraceresult))
+                 {
+                     this.bulletHit(raytraceresult);
+                 }
 @@ -382,6 +403,7 @@
  
      protected void bulletHit(RayTraceResult result)

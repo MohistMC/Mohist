@@ -33,3 +33,10 @@
              while (i > 0)
              {
                  int k = EntityXPOrb.getXPSplit(i);
+@@ -79,5 +97,6 @@
+         }
+ 
+         this.removeCount = 0;
++        net.minecraftforge.fml.common.FMLCommonHandler.instance().firePlayerSmeltedEvent(player, stack);
+     }
+ }

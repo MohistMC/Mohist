@@ -8,7 +8,7 @@
  import net.minecraft.block.BlockPortal;
  import net.minecraft.block.state.IBlockState;
  import net.minecraft.block.state.pattern.BlockPattern;
-@@ -14,6 +15,11 @@
+@@ -14,8 +15,13 @@
  import net.minecraft.util.math.BlockPos;
  import net.minecraft.util.math.ChunkPos;
  import net.minecraft.util.math.MathHelper;
@@ -18,8 +18,11 @@
 +import org.bukkit.util.Vector;
 +import red.mohist.Mohist;
  
- public class Teleporter implements net.minecraftforge.common.util.ITeleporter
+-public class Teleporter
++public class Teleporter implements net.minecraftforge.common.util.ITeleporter
  {
+     protected final WorldServer world;
+     protected final Random random;
 @@ -33,61 +39,93 @@
          {
              if (!this.placeInExistingPortal(entityIn, rotationYaw))
@@ -545,3 +548,17 @@
  
                  if (teleporter$portalposition == null || teleporter$portalposition.lastUpdateTime < i)
                  {
+@@ -428,4 +776,13 @@
+             this.lastUpdateTime = lastUpdate;
+         }
+     }
++
++    @Override
++    public void placeEntity(World world, Entity entity, float yaw)
++    {
++        if (entity instanceof EntityPlayerMP)
++            placeInPortal(entity, yaw);
++        else
++            placeInExistingPortal(entity, yaw);
++    }
+ }

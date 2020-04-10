@@ -17,6 +17,15 @@
      {
          this.dataManager.set(SLIME_SIZE, Integer.valueOf(size));
          this.setSize(0.51000005F * (float)size, 0.51000005F * (float)size);
+@@ -137,7 +138,7 @@
+         if (this.onGround && !this.wasOnGround)
+         {
+             int i = this.getSlimeSize();
+-
++            if (spawnCustomParticles()) { i = 0; } // don't spawn particles if it's handled by the implementation itself
+             for (int j = 0; j < i * 8; ++j)
+             {
+                 float f = this.rand.nextFloat() * ((float)Math.PI * 2F);
 @@ -204,6 +205,16 @@
          {
              int j = 2 + this.rand.nextInt(3);
@@ -43,6 +52,15 @@
              }
          }
  
+@@ -304,7 +315,7 @@
+         BlockPos blockpos = new BlockPos(MathHelper.floor(this.posX), 0, MathHelper.floor(this.posZ));
+         Chunk chunk = this.world.getChunkFromBlockCoords(blockpos);
+ 
+-        if (this.world.getWorldInfo().getTerrainType() == WorldType.FLAT && this.rand.nextInt(4) != 1)
++        if (this.world.getWorldInfo().getTerrainType().handleSlimeSpawnReduction(rand, world))
+         {
+             return false;
+         }
 @@ -319,7 +330,7 @@
                      return super.getCanSpawnHere();
                  }
@@ -52,3 +70,18 @@
                  {
                      return super.getCanSpawnHere();
                  }
+@@ -370,6 +381,14 @@
+         return this.isSmallSlime() ? SoundEvents.ENTITY_SMALL_SLIME_JUMP : SoundEvents.ENTITY_SLIME_JUMP;
+     }
+ 
++    /* ======================================== FORGE START =====================================*/
++    /**
++     * Called when the slime spawns particles on landing, see onUpdate.
++     * Return true to prevent the spawning of the default particles.
++     */
++    protected boolean spawnCustomParticles() { return false; }
++    /* ======================================== FORGE END   =====================================*/
++
+     static class AISlimeAttack extends EntityAIBase
+         {
+             private final EntitySlime slime;

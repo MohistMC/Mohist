@@ -18,8 +18,12 @@
                  this.dropItemOrSelf(source.getTrueSource(), false);
                  this.playSound(SoundEvents.ENTITY_ITEMFRAME_REMOVE_ITEM, 1.0F, 1.0F);
                  this.setDisplayedItem(ItemStack.EMPTY);
-@@ -143,7 +148,7 @@
-             if (stack.getItem() instanceof net.minecraft.item.ItemMap)
+@@ -140,13 +145,14 @@
+     {
+         if (!stack.isEmpty())
+         {
+-            if (stack.getItem() == Items.FILLED_MAP)
++            if (stack.getItem() instanceof net.minecraft.item.ItemMap)
              {
                  MapData mapdata = ((ItemMap)stack.getItem()).getMapData(stack, this.world);
 -                mapdata.mapDecorations.remove("frame-" + this.getEntityId());
@@ -27,3 +31,7 @@
              }
  
              stack.setItemFrame((EntityItemFrame)null);
++            this.setDisplayedItem(ItemStack.EMPTY); //Forge: Fix MC-124833 Pistons duplicating Items.
+         }
+     }
+ 

@@ -10,16 +10,20 @@
  import net.minecraft.util.DamageSource;
  import net.minecraft.util.ResourceLocation;
  import net.minecraft.util.StringUtils;
-@@ -21,6 +23,8 @@
+@@ -21,16 +23,18 @@
  import net.minecraft.util.registry.RegistryNamespaced;
  import net.minecraftforge.fml.relauncher.Side;
  import net.minecraftforge.fml.relauncher.SideOnly;
 +import org.bukkit.craftbukkit.v1_12_R1.event.CraftEventFactory;
 +import org.bukkit.event.entity.EntityRegainHealthEvent.RegainReason;
  
- public class Potion extends net.minecraftforge.registries.IForgeRegistryEntry.Impl<Potion>
+-public class Potion
++public class Potion extends net.minecraftforge.registries.IForgeRegistryEntry.Impl<Potion>
  {
-@@ -30,7 +34,7 @@
+-    public static final RegistryNamespaced<ResourceLocation, Potion> REGISTRY = new RegistryNamespaced<ResourceLocation, Potion>();
++    public static final RegistryNamespaced<ResourceLocation, Potion> REGISTRY = net.minecraftforge.registries.GameData.getWrapper(Potion.class);
+     private final Map<IAttribute, AttributeModifier> attributeModifierMap = Maps.<IAttribute, AttributeModifier>newHashMap();
+     private final boolean isBadEffect;
      private final int liquidColor;
      private String name = "";
      private int statusIconIndex = -1;
@@ -75,3 +79,134 @@
          }
      }
  
+@@ -222,7 +238,6 @@
+         return this.statusIconIndex;
+     }
+ 
+-    @SideOnly(Side.CLIENT)
+     public boolean isBadEffect()
+     {
+         return this.isBadEffect;
+@@ -293,7 +308,122 @@
+         return modifier.getAmount() * (double)(amplifier + 1);
+     }
+ 
++    /* ======================================== FORGE START =====================================*/
++
++    /**
++     * If the Potion effect should be displayed in the players inventory
++     * @param effect the active PotionEffect
++     * @return true to display it (default), false to hide it.
++     */
++    public boolean shouldRender(PotionEffect effect) { return true; }
++
++    /**
++     * If the standard PotionEffect text (name and duration) should be drawn when this potion is active.
++     * @param effect the active PotionEffect
++     * @return true to draw the standard text
++     */
++    public boolean shouldRenderInvText(PotionEffect effect)
++    {
++        return true;
++    }
++
++    /**
++     * If the Potion effect should be displayed in the player's ingame HUD
++     * @param effect the active PotionEffect
++     * @return true to display it (default), false to hide it.
++     */
++    public boolean shouldRenderHUD(PotionEffect effect)
++    {
++        return true;
++    }
++
++    /**
++     * Called to draw the this Potion onto the player's inventory when it's active.
++     * This can be used to e.g. render Potion icons from your own texture.
++     * @param x the x coordinate
++     * @param y the y coordinate
++     * @param effect the active PotionEffect
++     * @param mc the Minecraft instance, for convenience
++     * @deprecated use {@link #renderInventoryEffect(PotionEffect, net.minecraft.client.gui.Gui, int, int, float)}
++     */
+     @SideOnly(Side.CLIENT)
++    @Deprecated // TODO: remove
++    public void renderInventoryEffect(int x, int y, PotionEffect effect, net.minecraft.client.Minecraft mc) { }
++
++    /**
++     * Called to draw the this Potion onto the player's inventory when it's active.
++     * This can be used to e.g. render Potion icons from your own texture.
++     *
++     * @param effect the active PotionEffect
++     * @param gui the gui instance
++     * @param x the x coordinate
++     * @param y the y coordinate
++     * @param z the z level
++     */
++    @SideOnly(Side.CLIENT)
++    public void renderInventoryEffect(PotionEffect effect, net.minecraft.client.gui.Gui gui, int x, int y, float z)
++    {
++        renderInventoryEffect(x, y, effect, net.minecraft.client.Minecraft.getMinecraft());
++    }
++
++    /**
++     * Called to draw the this Potion onto the player's ingame HUD when it's active.
++     * This can be used to e.g. render Potion icons from your own texture.
++     * @param x the x coordinate
++     * @param y the y coordinate
++     * @param effect the active PotionEffect
++     * @param mc the Minecraft instance, for convenience
++     * @param alpha the alpha value, blinks when the potion is about to run out
++     * @deprecated use {@link #renderHUDEffect(PotionEffect, net.minecraft.client.gui.Gui, int, int, float, float)}
++     */
++    @SideOnly(Side.CLIENT)
++    @Deprecated // TODO: remove
++    public void renderHUDEffect(int x, int y, PotionEffect effect, net.minecraft.client.Minecraft mc, float alpha) { }
++
++    /**
++     * Called to draw the this Potion onto the player's ingame HUD when it's active.
++     * This can be used to e.g. render Potion icons from your own texture.
++     *
++     * @param effect the active PotionEffect
++     * @param gui the gui instance
++     * @param x the x coordinate
++     * @param y the y coordinate
++     * @param z the z level
++     * @param alpha the alpha value, blinks when the potion is about to run out
++     */
++    @SideOnly(Side.CLIENT)
++    public void renderHUDEffect(PotionEffect effect, net.minecraft.client.gui.Gui gui, int x, int y, float z, float alpha)
++    {
++        renderHUDEffect(x, y, effect, net.minecraft.client.Minecraft.getMinecraft(), alpha);
++    }
++
++    /**
++     * Get a fresh list of items that can cure this Potion.
++     * All new PotionEffects created from this Potion will call this to initialize the default curative items
++     * @see PotionEffect#getCurativeItems
++     * @return A list of items that can cure this Potion
++     */
++    public java.util.List<net.minecraft.item.ItemStack> getCurativeItems()
++    {
++        java.util.ArrayList<net.minecraft.item.ItemStack> ret = new java.util.ArrayList<net.minecraft.item.ItemStack>();
++        ret.add(new net.minecraft.item.ItemStack(net.minecraft.init.Items.MILK_BUCKET));
++        return ret;
++    }
++    
++    /**
++     * Used for determining {@code PotionEffect} sort order in GUIs.
++     * Defaults to the {@code PotionEffect}'s liquid color.
++     * @param potionEffect the {@code PotionEffect} instance containing the potion
++     * @return a value used to sort {@code PotionEffect}s in GUIs 
++     */
++    public int getGuiSortColor(PotionEffect potionEffect)
++    {
++        return this.getLiquidColor();
++    }
++
++    /* ======================================== FORGE END =====================================*/
++
++    @SideOnly(Side.CLIENT)
+     public boolean isBeneficial()
+     {
+         return this.beneficial;

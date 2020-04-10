@@ -23,7 +23,16 @@
      public IBlockState get(int x, int y, int z)
      {
          return this.data.get(x, y, z);
-@@ -65,7 +81,8 @@
+@@ -34,6 +50,8 @@
+ 
+     public void set(int x, int y, int z, IBlockState state)
+     {
++        if (state instanceof net.minecraftforge.common.property.IExtendedBlockState)
++            state = ((net.minecraftforge.common.property.IExtendedBlockState) state).getClean();
+         IBlockState iblockstate = this.get(x, y, z);
+         Block block = iblockstate.getBlock();
+         Block block1 = state.getBlock();
+@@ -63,7 +81,8 @@
  
      public boolean isEmpty()
      {
@@ -33,7 +42,7 @@
      }
  
      public boolean needsRandomTick()
-@@ -80,11 +97,17 @@
+@@ -78,11 +97,17 @@
  
      public void setSkyLight(int x, int y, int z, int value)
      {

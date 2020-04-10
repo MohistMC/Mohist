@@ -25,16 +25,21 @@
  
  public class WorldInfo
  {
-@@ -67,6 +73,8 @@
+@@ -63,9 +69,12 @@
+     private double borderDamagePerBlock = 0.2D;
+     private int borderWarningDistance = 5;
+     private int borderWarningTime = 15;
+-    private final Map<DimensionType, NBTTagCompound> dimensionData = Maps.newEnumMap(DimensionType.class);
++    private final Map<Integer, NBTTagCompound> dimensionData = Maps.newHashMap();
      private GameRules gameRules = new GameRules();
-     private java.util.Map<String, net.minecraft.nbt.NBTBase> additionalProperties;
++    private java.util.Map<String, net.minecraft.nbt.NBTBase> additionalProperties;
  
 +    public WorldServer world;
 +
      protected WorldInfo()
      {
      }
-@@ -161,6 +169,7 @@
+@@ -160,6 +169,7 @@
          this.thunderTime = nbt.getInteger("thunderTime");
          this.thundering = nbt.getBoolean("thundering");
          this.hardcore = nbt.getBoolean("hardcore");
@@ -42,15 +47,40 @@
  
          if (nbt.hasKey("initialized", 99))
          {
-@@ -376,6 +385,7 @@
+@@ -251,7 +261,7 @@
+ 
+             for (String s : nbttagcompound1.getKeySet())
+             {
+-                this.dimensionData.put(DimensionType.getById(Integer.parseInt(s)), nbttagcompound1.getCompoundTag(s));
++                this.dimensionData.put(Integer.parseInt(s), nbttagcompound1.getCompoundTag(s));
+             }
+         }
+     }
+@@ -366,6 +376,7 @@
+         nbt.setDouble("BorderSizeLerpTarget", this.borderSizeLerpTarget);
+         nbt.setDouble("BorderWarningBlocks", (double)this.borderWarningDistance);
+         nbt.setDouble("BorderWarningTime", (double)this.borderWarningTime);
++        net.minecraftforge.fml.common.FMLCommonHandler.instance().getDataFixer().writeVersionData(nbt);
+ 
+         if (this.difficulty != null)
+         {
+@@ -374,11 +385,13 @@
  
          nbt.setBoolean("DifficultyLocked", this.difficultyLocked);
          nbt.setTag("GameRules", this.gameRules.writeToNBT());
 +        nbt.setInteger("dimension", this.dimension);
          NBTTagCompound nbttagcompound1 = new NBTTagCompound();
  
-         for (Entry<Integer, NBTTagCompound> entry : this.dimensionData.entrySet())
-@@ -511,6 +521,14 @@
+-        for (Entry<DimensionType, NBTTagCompound> entry : this.dimensionData.entrySet())
++        for (Entry<Integer, NBTTagCompound> entry : this.dimensionData.entrySet())
+         {
+-            nbttagcompound1.setTag(String.valueOf(((DimensionType)entry.getKey()).getId()), entry.getValue());
++            if (entry.getValue() == null || entry.getValue().hasNoTags()) continue;
++            nbttagcompound1.setTag(String.valueOf(entry.getKey()), entry.getValue());
+         }
+ 
+         nbt.setTag("DimensionData", nbttagcompound1);
+@@ -508,6 +521,14 @@
  
      public void setThundering(boolean thunderingIn)
      {
@@ -65,7 +95,7 @@
          this.thundering = thunderingIn;
      }
  
-@@ -531,6 +549,14 @@
+@@ -528,6 +549,14 @@
  
      public void setRaining(boolean isRaining)
      {
@@ -80,9 +110,11 @@
          this.raining = isRaining;
      }
  
-@@ -713,6 +739,12 @@
+@@ -708,7 +737,14 @@
+ 
+     public void setDifficulty(EnumDifficulty newDifficulty)
      {
-         net.minecraftforge.common.ForgeHooks.onDifficultyChange(newDifficulty, this.difficulty);
++        net.minecraftforge.common.ForgeHooks.onDifficultyChange(newDifficulty, this.difficulty);
          this.difficulty = newDifficulty;
 +        SPacketServerDifficulty packet = new SPacketServerDifficulty(this.getDifficulty(), this.isDifficultyLocked());
 +        if(world != null && world.playerEntities!=null && !world.playerEntities.isEmpty()) {
@@ -93,7 +125,58 @@
      }
  
      public boolean isDifficultyLocked()
-@@ -869,4 +901,25 @@
+@@ -805,18 +841,49 @@
+             }
+         });
+     }
++    /**
++     * Allow access to additional mod specific world based properties
++     * Used by FML to store mod list associated with a world, and maybe an id map
++     * Used by Forge to store the dimensions available to a world
++     * @param additionalProperties
++     */
++    public void setAdditionalProperties(java.util.Map<String,net.minecraft.nbt.NBTBase> additionalProperties)
++    {
++        // one time set for this
++        if (this.additionalProperties == null)
++        {
++            this.additionalProperties = additionalProperties;
++        }
++    }
+ 
++    public net.minecraft.nbt.NBTBase getAdditionalProperty(String additionalProperty)
++    {
++        return this.additionalProperties!=null? this.additionalProperties.get(additionalProperty) : null;
++    }
++
++    @Deprecated //Use the int version below, and pass in dimension id NOT TYPE id
+     public NBTTagCompound getDimensionData(DimensionType dimensionIn)
+     {
++        return getDimensionData(dimensionIn.getId());
++    }
++    public NBTTagCompound getDimensionData(int dimensionIn)
++    {
+         NBTTagCompound nbttagcompound = this.dimensionData.get(dimensionIn);
+         return nbttagcompound == null ? new NBTTagCompound() : nbttagcompound;
+     }
+ 
++    @Deprecated //Use the int version below, and pass in dimension id NOT TYPE id
+     public void setDimensionData(DimensionType dimensionIn, NBTTagCompound compound)
+     {
+-        this.dimensionData.put(dimensionIn, compound);
++        this.setDimensionData(dimensionIn.getId(), compound);
+     }
+ 
++    //Dimension numerical ID version of setter, as two dimensions could in theory have the same DimensionType. ID should be grabbed from the world NOT the Type
++    public void setDimensionData(int dimensionID, NBTTagCompound compound)
++    {
++        this.dimensionData.put(dimensionID, compound);
++    }
++
+     @SideOnly(Side.CLIENT)
+     public int getVersionId()
+     {
+@@ -834,4 +901,25 @@
      {
          return this.versionName;
      }

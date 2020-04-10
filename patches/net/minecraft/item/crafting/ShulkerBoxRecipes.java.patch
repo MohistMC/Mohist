@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/item/crafting/ShulkerBoxRecipes.java
 +++ ../src-work/minecraft/net/minecraft/item/crafting/ShulkerBoxRecipes.java
-@@ -2,17 +2,23 @@
+@@ -2,19 +2,23 @@
  
  import net.minecraft.block.Block;
  import net.minecraft.block.BlockShulkerBox;
@@ -11,10 +11,12 @@
  import net.minecraft.item.ItemStack;
  import net.minecraft.util.NonNullList;
  import net.minecraft.world.World;
+-import net.minecraftforge.fml.relauncher.Side;
+-import net.minecraftforge.fml.relauncher.SideOnly;
  
  public class ShulkerBoxRecipes
  {
--    public static class ShulkerBoxColoring extends net.minecraftforge.registries.IForgeRegistryEntry.Impl<IRecipe> implements IRecipe
+-    public static class ShulkerBoxColoring implements IRecipe
 +    public static class ShulkerBoxColoring extends ShapelessRecipes implements IRecipe
          {
 +            // CraftBukkit start - Delegate to new parent class with bogus info
@@ -26,3 +28,37 @@
              public boolean matches(InventoryCrafting inv, World worldIn)
              {
                  int i = 0;
+@@ -32,7 +36,7 @@
+                         }
+                         else
+                         {
+-                            if (itemstack.getItem() != Items.DYE)
++                            if (!net.minecraftforge.oredict.DyeUtils.isDye(itemstack))
+                             {
+                                 return false;
+                             }
+@@ -65,14 +69,14 @@
+                         {
+                             itemstack = itemstack2;
+                         }
+-                        else if (itemstack2.getItem() == Items.DYE)
++                        else if (net.minecraftforge.oredict.DyeUtils.isDye(itemstack2))
+                         {
+                             itemstack1 = itemstack2;
+                         }
+                     }
+                 }
+ 
+-                ItemStack itemstack3 = BlockShulkerBox.getColoredItemStack(EnumDyeColor.byDyeDamage(itemstack1.getMetadata()));
++                ItemStack itemstack3 = BlockShulkerBox.getColoredItemStack(net.minecraftforge.oredict.DyeUtils.colorFromStack(itemstack1).get());
+ 
+                 if (itemstack.hasTagCompound())
+                 {
+@@ -109,7 +113,6 @@
+                 return true;
+             }
+ 
+-            @SideOnly(Side.CLIENT)
+             public boolean canFit(int width, int height)
+             {
+                 return width * height >= 2;

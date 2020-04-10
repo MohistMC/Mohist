@@ -42,12 +42,21 @@
  
              if (!this.world.isRemote)
              {
--                if (this.rand.nextInt(3) == 0 && !net.minecraftforge.event.ForgeEventFactory.onAnimalTame(this, player))
+-                if (this.rand.nextInt(3) == 0)
 +                // CraftBukkit - added event call and isCancelled check
 +                if (this.rand.nextInt(3) == 0 && !net.minecraftforge.event.ForgeEventFactory.onAnimalTame(this, player) && !org.bukkit.craftbukkit.v1_12_R1.event.CraftEventFactory.callEntityTameEvent(this, player).isCancelled())
                  {
                      this.setTamedBy(player);
                      this.setTameSkin(1 + this.world.rand.nextInt(3));
+@@ -320,7 +322,7 @@
+             IBlockState iblockstate = this.world.getBlockState(blockpos.down());
+             Block block = iblockstate.getBlock();
+ 
+-            if (block == Blocks.GRASS || iblockstate.getMaterial() == Material.LEAVES)
++            if (block == Blocks.GRASS || block.isLeaves(iblockstate, this.world, blockpos.down()))
+             {
+                 return true;
+             }
 @@ -361,14 +363,14 @@
      {
          livingdata = super.onInitialSpawn(difficulty, livingdata);

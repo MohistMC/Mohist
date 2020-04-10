@@ -20,6 +20,15 @@
  
  public class EntityArmorStand extends EntityLivingBase
  {
+@@ -58,7 +63,7 @@
+     {
+         public boolean apply(@Nullable Entity p_apply_1_)
+         {
+-            return p_apply_1_ instanceof EntityMinecart && ((EntityMinecart)p_apply_1_).getType() == EntityMinecart.Type.RIDEABLE;
++            return p_apply_1_ instanceof EntityMinecart && ((EntityMinecart)p_apply_1_).canBeRidden();
+         }
+     };
+     private final NonNullList<ItemStack> handItems;
 @@ -67,12 +72,12 @@
      public long punchCooldown;
      private int disabledSlots;

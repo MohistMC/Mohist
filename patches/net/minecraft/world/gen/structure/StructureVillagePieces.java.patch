@@ -1,20 +1,97 @@
 --- ../src-base/minecraft/net/minecraft/world/gen/structure/StructureVillagePieces.java
 +++ ../src-work/minecraft/net/minecraft/world/gen/structure/StructureVillagePieces.java
-@@ -1782,7 +1782,7 @@
+@@ -68,6 +68,7 @@
+         list.add(new StructureVillagePieces.PieceWeight(StructureVillagePieces.Field2.class, 3, MathHelper.getInt(random, 2 + size, 4 + size * 2)));
+         list.add(new StructureVillagePieces.PieceWeight(StructureVillagePieces.House2.class, 15, MathHelper.getInt(random, 0, 1 + size)));
+         list.add(new StructureVillagePieces.PieceWeight(StructureVillagePieces.House3.class, 8, MathHelper.getInt(random, 0 + size, 3 + size * 2)));
++        net.minecraftforge.fml.common.registry.VillagerRegistry.addExtraVillageComponents(list, random, size);
+         Iterator<StructureVillagePieces.PieceWeight> iterator = list.iterator();
+ 
+         while (iterator.hasNext())
+@@ -140,6 +141,10 @@
+         {
+             structurevillagepieces$village = StructureVillagePieces.House3.createPiece(start, structureComponents, rand, structureMinX, structureMinY, structureMinZ, facing, componentType);
+         }
++        else
++        {
++            structurevillagepieces$village = net.minecraftforge.fml.common.registry.VillagerRegistry.getVillageComponent(weight, start , structureComponents, rand, structureMinX, structureMinY, structureMinZ, facing, componentType);
++        }
+ 
+         return structurevillagepieces$village;
+     }
+@@ -1539,6 +1544,7 @@
+             public List<StructureVillagePieces.PieceWeight> structureVillageWeightedPieceList;
+             public List<StructureComponent> pendingHouses = Lists.<StructureComponent>newArrayList();
+             public List<StructureComponent> pendingRoads = Lists.<StructureComponent>newArrayList();
++            public Biome biome;
+ 
+             public Start()
+             {
+@@ -1551,6 +1557,8 @@
+                 this.structureVillageWeightedPieceList = p_i2104_6_;
+                 this.terrainType = p_i2104_7_;
+                 Biome biome = biomeProviderIn.getBiome(new BlockPos(p_i2104_4_, 0, p_i2104_5_), Biomes.DEFAULT);
++                this.biome = biome;
++                this.startPiece = this;
+ 
+                 if (biome instanceof BiomeDesert)
+                 {
+@@ -1623,6 +1631,7 @@
+             private int villagersSpawned;
+             protected int structureType;
+             protected boolean isZombieInfested;
++            protected StructureVillagePieces.Start startPiece;
+ 
+             public Village()
+             {
+@@ -1636,6 +1645,7 @@
+                 {
+                     this.structureType = start.structureType;
+                     this.isZombieInfested = start.isZombieInfested;
++                    startPiece = start;
+                 }
+             }
+ 
+@@ -1770,29 +1780,38 @@
+                             EntityZombieVillager entityzombievillager = new EntityZombieVillager(worldIn);
+                             entityzombievillager.setLocationAndAngles((double)j + 0.5D, (double)k, (double)l + 0.5D, 0.0F, 0.0F);
                              entityzombievillager.onInitialSpawn(worldIn.getDifficultyForLocation(new BlockPos(entityzombievillager)), (IEntityLivingData)null);
-                             entityzombievillager.setForgeProfession(this.chooseForgeProfession(i, net.minecraftforge.fml.common.registry.VillagerRegistry.FARMER));
+-                            entityzombievillager.setProfession(this.chooseProfession(i, 0));
++                            entityzombievillager.setForgeProfession(this.chooseForgeProfession(i, net.minecraftforge.fml.common.registry.VillagerRegistry.FARMER));
                              entityzombievillager.enablePersistence();
 -                            worldIn.spawnEntity(entityzombievillager);
 +                            worldIn.addEntity(entityzombievillager, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.CHUNK_GEN);
                          }
                          else
                          {
-@@ -1791,7 +1791,7 @@
-                             net.minecraftforge.fml.common.registry.VillagerRegistry.setRandomProfession(entityvillager, worldIn.rand);
-                             entityvillager.setProfession(this.chooseForgeProfession(i, entityvillager.getProfessionForge()));
+                             EntityVillager entityvillager = new EntityVillager(worldIn);
+                             entityvillager.setLocationAndAngles((double)j + 0.5D, (double)k, (double)l + 0.5D, 0.0F, 0.0F);
+-                            entityvillager.setProfession(this.chooseProfession(i, worldIn.rand.nextInt(6)));
++                            net.minecraftforge.fml.common.registry.VillagerRegistry.setRandomProfession(entityvillager, worldIn.rand);
++                            entityvillager.setProfession(this.chooseForgeProfession(i, entityvillager.getProfessionForge()));
                              entityvillager.finalizeMobSpawn(worldIn.getDifficultyForLocation(new BlockPos(entityvillager)), (IEntityLivingData)null, false);
 -                            worldIn.spawnEntity(entityvillager);
 +                            worldIn.addEntity(entityvillager, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.CHUNK_GEN);
                          }
                      }
                  }
+             }
+ 
++            @Deprecated // Use Forge version below.
+             protected int chooseProfession(int villagersSpawnedIn, int currentVillagerProfession)
+             {
+                 return currentVillagerProfession;
+             }
++            protected net.minecraftforge.fml.common.registry.VillagerRegistry.VillagerProfession chooseForgeProfession(int count, net.minecraftforge.fml.common.registry.VillagerRegistry.VillagerProfession prof)
++            {
++                return net.minecraftforge.fml.common.registry.VillagerRegistry.getById(chooseProfession(count, net.minecraftforge.fml.common.registry.VillagerRegistry.getId(prof)));
++            }
+ 
+             protected IBlockState getBiomeSpecificBlockState(IBlockState blockstateIn)
+             {
++                net.minecraftforge.event.terraingen.BiomeEvent.GetVillageBlockID event = new net.minecraftforge.event.terraingen.BiomeEvent.GetVillageBlockID(startPiece == null ? null : startPiece.biome, blockstateIn);
++                net.minecraftforge.common.MinecraftForge.TERRAIN_GEN_BUS.post(event);
++                if (event.getResult() == net.minecraftforge.fml.common.eventhandler.Event.Result.DENY) return event.getReplacement();
+                 if (this.structureType == 1)
+                 {
+                     if (blockstateIn.getBlock() == Blocks.LOG || blockstateIn.getBlock() == Blocks.LOG2)

@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/network/NetworkManager.java
 +++ ../src-work/minecraft/net/minecraft/network/NetworkManager.java
-@@ -76,13 +76,23 @@
+@@ -76,23 +76,39 @@
      private final EnumPacketDirection direction;
      private final Queue<NetworkManager.InboundHandlerTuplePacketListener> outboundPacketsQueue = Queues.<NetworkManager.InboundHandlerTuplePacketListener>newConcurrentLinkedQueue();
      private final ReentrantReadWriteLock readWriteLock = new ReentrantReadWriteLock();
@@ -26,7 +26,15 @@
      public NetworkManager(EnumPacketDirection packetDirection)
      {
          this.direction = packetDirection;
-@@ -98,6 +108,7 @@
+     }
+ 
++    public EnumPacketDirection getDirection()
++    {
++        return this.direction;
++    }
++
+     public void channelActive(ChannelHandlerContext p_channelActive_1_) throws Exception
+     {
          super.channelActive(p_channelActive_1_);
          this.channel = p_channelActive_1_.channel();
          this.socketAddress = this.channel.remoteAddress();
@@ -34,7 +42,34 @@
  
          try
          {
-@@ -298,9 +309,12 @@
+@@ -204,7 +220,7 @@
+         final EnumConnectionState enumconnectionstate = EnumConnectionState.getFromPacket(inPacket);
+         final EnumConnectionState enumconnectionstate1 = (EnumConnectionState)this.channel.attr(PROTOCOL_ATTRIBUTE_KEY).get();
+ 
+-        if (enumconnectionstate1 != enumconnectionstate)
++        if (enumconnectionstate1 != enumconnectionstate && !( inPacket instanceof net.minecraftforge.fml.common.network.internal.FMLProxyPacket))
+         {
+             LOGGER.debug("Disabled auto read");
+             this.channel.config().setAutoRead(false);
+@@ -212,7 +228,7 @@
+ 
+         if (this.channel.eventLoop().inEventLoop())
+         {
+-            if (enumconnectionstate != enumconnectionstate1)
++            if (enumconnectionstate != enumconnectionstate1 && !( inPacket instanceof net.minecraftforge.fml.common.network.internal.FMLProxyPacket))
+             {
+                 this.setConnectionState(enumconnectionstate);
+             }
+@@ -232,7 +248,7 @@
+             {
+                 public void run()
+                 {
+-                    if (enumconnectionstate != enumconnectionstate1)
++                    if (enumconnectionstate != enumconnectionstate1  && !( inPacket instanceof net.minecraftforge.fml.common.network.internal.FMLProxyPacket))
+                     {
+                         NetworkManager.this.setConnectionState(enumconnectionstate);
+                     }
+@@ -293,9 +309,12 @@
  
      public void closeChannel(ITextComponent message)
      {
@@ -48,7 +83,15 @@
              this.terminationReason = message;
          }
      }
-@@ -410,7 +424,7 @@
+@@ -308,6 +327,7 @@
+     @SideOnly(Side.CLIENT)
+     public static NetworkManager createNetworkManagerAndConnect(InetAddress address, int serverPort, boolean useNativeTransport)
+     {
++        if (address instanceof java.net.Inet6Address) System.setProperty("java.net.preferIPv4Stack", "false");
+         final NetworkManager networkmanager = new NetworkManager(EnumPacketDirection.CLIENTBOUND);
+         Class <? extends SocketChannel > oclass;
+         LazyLoadBase <? extends EventLoopGroup > lazyloadbase;
+@@ -404,7 +424,7 @@
              }
              else
              {
@@ -57,7 +100,19 @@
              }
  
              if (this.channel.pipeline().get("compress") instanceof NettyCompressionEncoder)
-@@ -476,4 +490,12 @@
+@@ -454,6 +474,11 @@
+         }
+     }
+ 
++    public Channel channel()
++    {
++        return channel;
++    }
++
+     static class InboundHandlerTuplePacketListener
+         {
+             private final Packet<?> packet;
+@@ -465,4 +490,12 @@
                  this.futureListeners = inFutureListeners;
              }
          }

@@ -29,7 +29,7 @@
 +        worldMain.setData(s, mapdata);
          mapdata.scale = scale;
          mapdata.calculateMapCenter(worldX, worldZ, mapdata.scale);
--        mapdata.dimension = worldIn.provider.getDimension();
+-        mapdata.dimension = (byte)worldIn.provider.getDimensionType().getId();
 +        // mapdata.dimension = worldIn.provider.getDimension();
 +        mapdata.dimension = ((WorldServer) worldIn).dimension;  // CraftBukkit - use bukkit dimension
          mapdata.trackingPosition = trackingPosition;
@@ -57,7 +57,7 @@
              mapdata = new MapData(s);
              mapdata.scale = 3;
              mapdata.calculateMapCenter((double)worldIn.getWorldInfo().getSpawnX(), (double)worldIn.getWorldInfo().getSpawnZ(), mapdata.scale);
--            mapdata.dimension = worldIn.provider.getDimension();
+-            mapdata.dimension = (byte)worldIn.provider.getDimensionType().getId();
 +            // mapdata.dimension = worldIn.provider.getDimension();
 +            mapdata.dimension = ((WorldServer) worldIn).dimension; // CraftBukkit - fixes Bukkit multiworld maps
              mapdata.markDirty();
@@ -73,12 +73,29 @@
  
      public void updateMapData(World worldIn, Entity viewer, MapData data)
      {
--        if (worldIn.provider.getDimension() == data.dimension && viewer instanceof EntityPlayer)
+-        if (worldIn.provider.getDimensionType().getId() == data.dimension && viewer instanceof EntityPlayer)
 +        // CraftBukkit - world.provider -> ((WorldServer) world)
 +        if (((WorldServer) worldIn).dimension == data.dimension && viewer instanceof EntityPlayer)
          {
              int i = 1 << data.scale;
              int j = data.xCenter;
+@@ -251,13 +265,13 @@
+ 
+     public static void renderBiomePreviewMap(World worldIn, ItemStack map)
+     {
+-        if (map.getItem() == Items.FILLED_MAP)
++        if (map.getItem() instanceof ItemMap)
+         {
+-            MapData mapdata = Items.FILLED_MAP.getMapData(map, worldIn);
++            MapData mapdata = ((ItemMap) map.getItem()).getMapData(map, worldIn);
+ 
+             if (mapdata != null)
+             {
+-                if (worldIn.provider.getDimensionType().getId() == mapdata.dimension)
++                if (worldIn.provider.getDimension() == mapdata.dimension)
+                 {
+                     int i = 1 << mapdata.scale;
+                     int j = mapdata.xCenter;
 @@ -425,6 +439,7 @@
      protected static void scaleMap(ItemStack p_185063_0_, World p_185063_1_, int p_185063_2_)
      {

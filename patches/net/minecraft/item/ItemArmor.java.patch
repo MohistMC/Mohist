@@ -38,3 +38,73 @@
              entitylivingbase.setItemStackToSlot(entityequipmentslot, itemstack);
  
              if (entitylivingbase instanceof EntityLiving)
+@@ -187,7 +211,9 @@
+ 
+     public boolean getIsRepairable(ItemStack toRepair, ItemStack repair)
+     {
+-        return this.material.getRepairItem() == repair.getItem() ? true : super.getIsRepairable(toRepair, repair);
++        ItemStack mat = this.material.getRepairItemStack();
++        if (!mat.isEmpty() && net.minecraftforge.oredict.OreDictionary.itemMatches(mat,repair,false)) return true;
++        return super.getIsRepairable(toRepair, repair);
+     }
+ 
+     public ActionResult<ItemStack> onItemRightClick(World worldIn, EntityPlayer playerIn, EnumHand handIn)
+@@ -221,6 +247,19 @@
+         return multimap;
+     }
+ 
++    /**
++     * Determines if this armor will be rendered with the secondary 'overlay' texture.
++     * If this is true, the first texture will be rendered using a tint of the color
++     * specified by getColor(ItemStack)
++     *
++     * @param stack The stack
++     * @return true/false
++     */
++    public boolean hasOverlay(ItemStack stack)
++    {
++        return this.material == ItemArmor.ArmorMaterial.LEATHER || getColor(stack) != 0x00FFFFFF;
++    }
++
+     public static enum ArmorMaterial
+     {
+         LEATHER("leather", 5, new int[]{1, 2, 3, 1}, 15, SoundEvents.ITEM_ARMOR_EQUIP_LEATHER, 0.0F),
+@@ -235,6 +274,8 @@
+         private final int enchantability;
+         private final SoundEvent soundEvent;
+         private final float toughness;
++        //Added by forge for custom Armor materials.
++        public ItemStack repairMaterial = ItemStack.EMPTY;
+ 
+         private ArmorMaterial(String nameIn, int maxDamageFactorIn, int[] damageReductionAmountArrayIn, int enchantabilityIn, SoundEvent soundEventIn, float toughnessIn)
+         {
+@@ -266,6 +307,7 @@
+             return this.soundEvent;
+         }
+ 
++        @Deprecated // Use getRepairItemStack below
+         public Item getRepairItem()
+         {
+             if (this == LEATHER)
+@@ -300,5 +342,21 @@
+         {
+             return this.toughness;
+         }
++
++        public ArmorMaterial setRepairItem(ItemStack stack)
++        {
++            if (!this.repairMaterial.isEmpty()) throw new RuntimeException("Repair material has already been set");
++            if (this == LEATHER || this == CHAIN || this == GOLD || this == IRON || this == DIAMOND) throw new RuntimeException("Can not change vanilla armor repair materials");
++            this.repairMaterial = stack;
++            return this;
++        }
++
++        public ItemStack getRepairItemStack()
++        {
++            if (!repairMaterial.isEmpty()) return repairMaterial;
++            Item ret = this.getRepairItem();
++            if (ret != null) repairMaterial = new ItemStack(ret,1,net.minecraftforge.oredict.OreDictionary.WILDCARD_VALUE);
++            return repairMaterial;
++        }
+     }
+ }

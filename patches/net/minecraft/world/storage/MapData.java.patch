@@ -12,7 +12,7 @@
  import javax.annotation.Nullable;
  import net.minecraft.entity.item.EntityItemFrame;
  import net.minecraft.entity.player.EntityPlayer;
-@@ -15,6 +17,9 @@
+@@ -15,23 +17,32 @@
  import net.minecraft.util.math.BlockPos;
  import net.minecraft.util.math.MathHelper;
  import net.minecraft.world.World;
@@ -22,7 +22,11 @@
  
  public class MapData extends WorldSavedData
  {
-@@ -25,13 +30,19 @@
+     public int xCenter;
+     public int zCenter;
+-    public byte dimension;
++    public int dimension; //FML byte -> int
+     public boolean trackingPosition;
      public boolean unlimitedTracking;
      public byte scale;
      public byte[] colors = new byte[16384];
@@ -48,7 +52,7 @@
  
      public void readFromNBT(NBTTagCompound nbt)
      {
--        this.dimension = nbt.getInteger("dimension");
+-        this.dimension = nbt.getByte("dimension");
 +        // this.dimension = nbt.getInteger("dimension");
 +        // CraftBukkit start
 +        int dimension = nbt.getInteger("dimension");
@@ -77,10 +81,11 @@
          this.xCenter = nbt.getInteger("xCenter");
          this.zCenter = nbt.getInteger("zCenter");
          this.scale = nbt.getByte("scale");
-@@ -97,6 +132,25 @@
+@@ -97,7 +132,26 @@
  
      public NBTTagCompound writeToNBT(NBTTagCompound compound)
      {
+-        compound.setByte("dimension", this.dimension);
 +        // CraftBukkit start
 +        if (this.dimension >= 10) {
 +            if (this.uniqueId == null) {
@@ -100,9 +105,10 @@
 +            }
 +        }
 +        // CraftBukkit end
-         compound.setInteger("dimension", this.dimension);
++        compound.setInteger("dimension", this.dimension);
          compound.setInteger("xCenter", this.xCenter);
          compound.setInteger("zCenter", this.zCenter);
+         compound.setByte("scale", this.scale);
 @@ -113,7 +167,7 @@
      {
          if (!this.playersHashMap.containsKey(player))
@@ -121,6 +127,18 @@
  
              if (!mapdata$mapinfo1.player.isDead && (mapdata$mapinfo1.player.inventory.hasItemStack(mapStack) || mapStack.isOnItemFrame()))
              {
+@@ -208,9 +262,9 @@
+             rotationIn = rotationIn + (rotationIn < 0.0D ? -8.0D : 8.0D);
+             b2 = (byte)((int)(rotationIn * 16.0D / 360.0D));
+ 
+-            if (this.dimension < 0)
++            if (worldIn.provider.shouldMapSpin(decorationName, worldX, worldZ, rotationIn))
+             {
+-                int l = (int)(worldIn.getWorldInfo().getWorldTime() / 10L);
++                int l = (int)(worldIn.getWorldTime() / 10L);
+                 b2 = (byte)(l * l * 34187121 + l * 121 >> 15 & 15);
+             }
+         }
 @@ -268,7 +322,7 @@
      @Nullable
      public Packet<?> getMapPacket(ItemStack mapStack, World worldIn, EntityPlayer player)

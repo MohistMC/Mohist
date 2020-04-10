@@ -8,20 +8,32 @@
  import net.minecraft.util.BlockRenderLayer;
  import net.minecraft.util.DamageSource;
  import net.minecraft.util.EnumFacing;
-@@ -19,6 +18,7 @@
+@@ -19,8 +18,9 @@
  import net.minecraft.world.World;
  import net.minecraftforge.fml.relauncher.Side;
  import net.minecraftforge.fml.relauncher.SideOnly;
 +import org.bukkit.craftbukkit.v1_12_R1.event.CraftEventFactory;
  
- public class BlockCactus extends Block implements net.minecraftforge.common.IPlantable
+-public class BlockCactus extends Block
++public class BlockCactus extends Block implements net.minecraftforge.common.IPlantable
  {
-@@ -54,10 +54,11 @@
+     public static final PropertyInteger AGE = PropertyInteger.create("age", 0, 15);
+     protected static final AxisAlignedBB CACTUS_COLLISION_AABB = new AxisAlignedBB(0.0625D, 0.0D, 0.0625D, 0.9375D, 0.9375D, 0.9375D);
+@@ -36,6 +36,7 @@
  
-                 if(net.minecraftforge.common.ForgeHooks.onCropsGrowPre(worldIn, blockpos, state, true))
-                 {
+     public void updateTick(World worldIn, BlockPos pos, IBlockState state, Random rand)
+     {
++        if (!worldIn.isAreaLoaded(pos, 1)) return; // Forge: prevent growing cactus from loading unloaded chunks with block update
+         BlockPos blockpos = pos.up();
+ 
+         if (worldIn.isAirBlock(blockpos))
+@@ -51,10 +52,13 @@
+             {
+                 int j = ((Integer)state.getValue(AGE)).intValue();
+ 
 -                if (j == 15)
--                {
++                if(net.minecraftforge.common.ForgeHooks.onCropsGrowPre(worldIn, blockpos, state, true))
+                 {
 -                    worldIn.setBlockState(blockpos, this.getDefaultState());
 +                    if (j >= (byte)Block.range(3.0f, ((100.0f / worldIn.spigotConfig.cactusModifier) * 15.0f) + 0.5f, 15.0f))
 +                    {
@@ -31,7 +43,24 @@
                      worldIn.setBlockState(pos, iblockstate, 4);
                      iblockstate.neighborChanged(worldIn, blockpos, this, pos);
                  }
-@@ -123,7 +124,9 @@
+@@ -62,6 +66,8 @@
+                 {
+                     worldIn.setBlockState(pos, state.withProperty(AGE, Integer.valueOf(j + 1)), 4);
+                 }
++                net.minecraftforge.common.ForgeHooks.onCropsGrowPost(worldIn, pos, state, worldIn.getBlockState(pos));
++                }
+             }
+         }
+     }
+@@ -112,13 +118,15 @@
+             }
+         }
+ 
+-        Block block = worldIn.getBlockState(pos.down()).getBlock();
+-        return block == Blocks.CACTUS || block == Blocks.SAND && !worldIn.getBlockState(pos.up()).getMaterial().isLiquid();
++        IBlockState state = worldIn.getBlockState(pos.down());
++        return state.getBlock().canSustainPlant(state, worldIn, pos.down(), EnumFacing.UP, this) && !worldIn.getBlockState(pos.up()).getMaterial().isLiquid();
+     }
  
      public void onEntityCollidedWithBlock(World worldIn, BlockPos pos, IBlockState state, Entity entityIn)
      {
@@ -41,3 +70,22 @@
      }
  
      public IBlockState getStateFromMeta(int meta)
+@@ -137,6 +145,18 @@
+         return ((Integer)state.getValue(AGE)).intValue();
+     }
+ 
++    @Override
++    public net.minecraftforge.common.EnumPlantType getPlantType(net.minecraft.world.IBlockAccess world, BlockPos pos)
++    {
++        return net.minecraftforge.common.EnumPlantType.Desert;
++    }
++
++    @Override
++    public IBlockState getPlant(net.minecraft.world.IBlockAccess world, BlockPos pos)
++    {
++        return getDefaultState();
++    }
++
+     protected BlockStateContainer createBlockState()
+     {
+         return new BlockStateContainer(this, new IProperty[] {AGE});

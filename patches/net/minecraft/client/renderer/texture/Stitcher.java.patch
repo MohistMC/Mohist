@@ -1,0 +1,45 @@
+--- ../src-base/minecraft/net/minecraft/client/renderer/texture/Stitcher.java
++++ ../src-work/minecraft/net/minecraft/client/renderer/texture/Stitcher.java
+@@ -56,18 +56,24 @@
+     {
+         Stitcher.Holder[] astitcher$holder = (Stitcher.Holder[])this.setStitchHolders.toArray(new Stitcher.Holder[this.setStitchHolders.size()]);
+         Arrays.sort((Object[])astitcher$holder);
++        net.minecraftforge.fml.common.ProgressManager.ProgressBar bar = net.minecraftforge.fml.common.ProgressManager.push("Texture stitching", astitcher$holder.length);
+ 
+         for (Stitcher.Holder stitcher$holder : astitcher$holder)
+         {
++            bar.step(stitcher$holder.getAtlasSprite().getIconName());
+             if (!this.allocateSlot(stitcher$holder))
+             {
+                 String s = String.format("Unable to fit: %s - size: %dx%d - Maybe try a lowerresolution resourcepack?", stitcher$holder.getAtlasSprite().getIconName(), stitcher$holder.getAtlasSprite().getIconWidth(), stitcher$holder.getAtlasSprite().getIconHeight());
++                net.minecraftforge.fml.common.FMLLog.log.info(s);
++                for (Stitcher.Holder h : astitcher$holder)
++                    net.minecraftforge.fml.common.FMLLog.log.info("  {}", h);
+                 throw new StitcherException(stitcher$holder, s);
+             }
+         }
+ 
+         this.currentWidth = MathHelper.smallestEncompassingPowerOfTwo(this.currentWidth);
+         this.currentHeight = MathHelper.smallestEncompassingPowerOfTwo(this.currentHeight);
++        net.minecraftforge.fml.common.ProgressManager.pop(bar);
+     }
+ 
+     public List<TextureAtlasSprite> getStichSlots()
+@@ -148,7 +154,7 @@
+ 
+             if (flag3 ^ flag4)
+             {
+-                flag = flag3;
++                flag = !flag3 && flag1; //Forge: Fix stitcher not expanding entire height before growing width, and {potentially} growing larger then the max size.
+             }
+             else
+             {
+@@ -240,7 +246,7 @@
+ 
+             public String toString()
+             {
+-                return "Holder{width=" + this.width + ", height=" + this.height + '}';
++                return "Holder{width=" + this.width + ", height=" + this.height + ", name=" + this.sprite.getIconName() + '}';
+             }
+ 
+             public int compareTo(Stitcher.Holder p_compareTo_1_)

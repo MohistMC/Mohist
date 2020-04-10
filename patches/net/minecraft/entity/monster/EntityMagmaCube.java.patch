@@ -9,3 +9,11 @@
      {
          super.setSlimeSize(size, resetHealth);
          this.getEntityAttribute(SharedMonsterAttributes.ARMOR).setBaseValue((double)(size * 3));
+@@ -96,6 +96,7 @@
+     {
+         this.motionY = (double)(0.42F + (float)this.getSlimeSize() * 0.1F);
+         this.isAirBorne = true;
++        net.minecraftforge.common.ForgeHooks.onLivingJump(this);
+     }
+ 
+     protected void handleJumpLava()

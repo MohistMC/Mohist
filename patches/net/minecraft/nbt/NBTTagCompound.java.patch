@@ -48,3 +48,27 @@
      void read(DataInput input, int depth, NBTSizeTracker sizeTracker) throws IOException
      {
          sizeTracker.read(384L);
+@@ -82,6 +93,7 @@
+ 
+     public void setTag(String key, NBTBase value)
+     {
++        if (value == null) throw new IllegalArgumentException("Invalid null NBT value with key " + key);
+         this.tagMap.put(key, value);
+     }
+ 
+@@ -477,6 +489,7 @@
+ 
+     private static byte readType(DataInput input, NBTSizeTracker sizeTracker) throws IOException
+     {
++        sizeTracker.read(8);
+         return input.readByte();
+     }
+ 
+@@ -487,6 +500,7 @@
+ 
+     static NBTBase readNBT(byte id, String key, DataInput input, int depth, NBTSizeTracker sizeTracker) throws IOException
+     {
++        sizeTracker.read(32); //Forge: 4 extra bytes for the object allocation.
+         NBTBase nbtbase = NBTBase.createNewByType(id);
+ 
+         try

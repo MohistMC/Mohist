@@ -1,0 +1,39 @@
+--- ../src-base/minecraft/net/minecraft/block/BlockSlab.java
++++ ../src-work/minecraft/net/minecraft/block/BlockSlab.java
+@@ -80,6 +80,19 @@
+         return this.isDouble();
+     }
+ 
++    @Override
++    public boolean doesSideBlockRendering(IBlockState state, IBlockAccess world, BlockPos pos, EnumFacing face)
++    {
++        if (net.minecraftforge.common.ForgeModContainer.disableStairSlabCulling)
++            return super.doesSideBlockRendering(state, world, pos, face);
++
++        if ( state.isOpaqueCube() )
++            return true;
++
++        EnumBlockHalf side = state.getValue(HALF);
++        return (side == EnumBlockHalf.TOP && face == EnumFacing.UP) || (side == EnumBlockHalf.BOTTOM && face == EnumFacing.DOWN);
++    }
++
+     public IBlockState getStateForPlacement(World worldIn, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer)
+     {
+         IBlockState iblockstate = super.getStateForPlacement(worldIn, pos, facing, hitX, hitY, hitZ, meta, placer).withProperty(HALF, BlockSlab.EnumBlockHalf.BOTTOM);
+@@ -115,7 +128,7 @@
+         {
+             return false;
+         }
+-        else
++        else if (false) // Forge: Additional logic breaks doesSideBlockRendering and is no longer useful.
+         {
+             IBlockState iblockstate = blockAccess.getBlockState(pos.offset(side));
+             boolean flag = isHalfSlab(iblockstate) && iblockstate.getValue(HALF) == BlockSlab.EnumBlockHalf.TOP;
+@@ -149,6 +162,7 @@
+                 return !isHalfSlab(iblockstate) || flag;
+             }
+         }
++        return super.shouldSideBeRendered(blockState, blockAccess, pos, side);
+     }
+ 
+     @SideOnly(Side.CLIENT)

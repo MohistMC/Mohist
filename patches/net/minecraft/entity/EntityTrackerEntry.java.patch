@@ -28,7 +28,7 @@
  
  public class EntityTrackerEntry
  {
-@@ -148,21 +151,19 @@
+@@ -148,23 +151,21 @@
          if (!list.equals(this.passengers))
          {
              this.passengers = list;
@@ -45,15 +45,19 @@
 -            if (itemstack.getItem() instanceof ItemMap)
 +            if (this.updateCounter % 10 == 0 && itemstack.getItem() instanceof ItemMap)// CraftBukkit - Moved this.updateCounter % 10 logic here so item frames do not enter the other blocks
              {
-                 MapData mapdata = ((ItemMap) itemstack.getItem()).getMapData(itemstack, this.trackedEntity.world);
+-                MapData mapdata = Items.FILLED_MAP.getMapData(itemstack, this.trackedEntity.world);
 -
 -                for (EntityPlayer entityplayer : players)
++                MapData mapdata = ((ItemMap) itemstack.getItem()).getMapData(itemstack, this.trackedEntity.world);
 +                for (EntityPlayerMP entityplayermp : trackingPlayers)
                  {
 -                    EntityPlayerMP entityplayermp = (EntityPlayerMP)entityplayer;
                      mapdata.updateVisiblePlayers(entityplayermp, itemstack);
-                     Packet<?> packet = ((ItemMap) itemstack.getItem()).createMapDataPacket(itemstack, this.trackedEntity.world, entityplayermp);
+-                    Packet<?> packet = Items.FILLED_MAP.createMapDataPacket(itemstack, this.trackedEntity.world, entityplayermp);
++                    Packet<?> packet = ((ItemMap) itemstack.getItem()).createMapDataPacket(itemstack, this.trackedEntity.world, entityplayermp);
  
+                     if (packet != null)
+                     {
 @@ -211,7 +212,20 @@
                  Packet<?> packet1 = null;
                  boolean flag = j * j + k * k + l * l >= 128L || this.updateCounter % 60 == 0;
@@ -194,7 +198,23 @@
                      if (this.trackedEntity instanceof EntityLivingBase)
                      {
                          EntityLivingBase entitylivingbase = (EntityLivingBase)this.trackedEntity;
-@@ -491,11 +545,14 @@
+@@ -457,6 +511,7 @@
+ 
+                     this.trackedEntity.addTrackingPlayer(playerMP);
+                     playerMP.addEntity(this.trackedEntity);
++                    net.minecraftforge.event.ForgeEventFactory.onStartEntityTracking(trackedEntity, playerMP);
+                 }
+             }
+             else if (this.trackingPlayers.contains(playerMP))
+@@ -464,6 +519,7 @@
+                 this.trackingPlayers.remove(playerMP);
+                 this.trackedEntity.removeTrackingPlayer(playerMP);
+                 playerMP.removeEntity(this.trackedEntity);
++                net.minecraftforge.event.ForgeEventFactory.onStopEntityTracking(trackedEntity, playerMP);
+             }
+         }
+     }
+@@ -489,13 +545,19 @@
          }
      }
  
@@ -209,8 +229,13 @@
 +            return null;
          }
  
-         Packet pkt = net.minecraftforge.fml.common.network.internal.FMLNetworkHandler.getEntitySpawningPacket(this.trackedEntity);
-@@ -656,7 +713,8 @@
++        Packet pkt = net.minecraftforge.fml.common.network.internal.FMLNetworkHandler.getEntitySpawningPacket(this.trackedEntity);
++        if (pkt != null) return pkt;
++
+         if (this.trackedEntity instanceof EntityPlayerMP)
+         {
+             return new SPacketSpawnPlayer((EntityPlayer)this.trackedEntity);
+@@ -651,7 +713,8 @@
          }
          else
          {

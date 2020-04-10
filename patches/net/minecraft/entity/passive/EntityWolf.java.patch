@@ -64,7 +64,7 @@
  
              if (!this.world.isRemote)
              {
--                if (this.rand.nextInt(3) == 0 && !net.minecraftforge.event.ForgeEventFactory.onAnimalTame(this, player))
+-                if (this.rand.nextInt(3) == 0)
 +                // CraftBukkit - added event call and isCancelled check.
 +                if (this.rand.nextInt(3) == 0 && !net.minecraftforge.event.ForgeEventFactory.onAnimalTame(this, player) && !CraftEventFactory.callEntityTameEvent(this, player).isCancelled())
                  {

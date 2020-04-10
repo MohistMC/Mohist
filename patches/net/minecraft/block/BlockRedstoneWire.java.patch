@@ -8,7 +8,36 @@
  
  public class BlockRedstoneWire extends Block
  {
-@@ -220,6 +221,12 @@
+@@ -99,15 +100,15 @@
+         BlockPos blockpos = pos.offset(direction);
+         IBlockState iblockstate = worldIn.getBlockState(pos.offset(direction));
+ 
+-        if (!canConnectTo(worldIn.getBlockState(blockpos), direction) && (iblockstate.isNormalCube() || !canConnectUpwardsTo(worldIn.getBlockState(blockpos.down()))))
++        if (!canConnectTo(worldIn.getBlockState(blockpos), direction, worldIn, blockpos) && (iblockstate.isNormalCube() || !canConnectUpwardsTo(worldIn, blockpos.down())))
+         {
+             IBlockState iblockstate1 = worldIn.getBlockState(pos.up());
+ 
+             if (!iblockstate1.isNormalCube())
+             {
+-                boolean flag = worldIn.getBlockState(blockpos).isTopSolid() || worldIn.getBlockState(blockpos).getBlock() == Blocks.GLOWSTONE;
++                boolean flag = worldIn.getBlockState(blockpos).isSideSolid(worldIn, blockpos, EnumFacing.UP) || worldIn.getBlockState(blockpos).getBlock() == Blocks.GLOWSTONE;
+ 
+-                if (flag && canConnectUpwardsTo(worldIn.getBlockState(blockpos.up())))
++                if (flag && canConnectUpwardsTo(worldIn, blockpos.up()))
+                 {
+                     if (iblockstate.isBlockNormalCube())
+                     {
+@@ -144,7 +145,8 @@
+ 
+     public boolean canPlaceBlockAt(World worldIn, BlockPos pos)
+     {
+-        return worldIn.getBlockState(pos.down()).isTopSolid() || worldIn.getBlockState(pos.down()).getBlock() == Blocks.GLOWSTONE;
++        IBlockState downState = worldIn.getBlockState(pos.down());
++        return downState.isTopSolid() || downState.getBlockFaceShape(worldIn, pos.down(), EnumFacing.UP) == BlockFaceShape.SOLID || worldIn.getBlockState(pos.down()).getBlock() == Blocks.GLOWSTONE;
+     }
+ 
+     private IBlockState updateSurroundingRedstone(World worldIn, BlockPos pos, IBlockState state)
+@@ -219,6 +221,12 @@
              j = k;
          }
  
@@ -21,7 +50,7 @@
          if (i != j)
          {
              state = state.withProperty(POWER, Integer.valueOf(j));
-@@ -319,7 +326,7 @@
+@@ -318,7 +326,7 @@
          }
      }
  
@@ -30,3 +59,40 @@
      {
          if (worldIn.getBlockState(pos).getBlock() != this)
          {
+@@ -414,7 +422,7 @@
+         {
+             return true;
+         }
+-        else if (canConnectTo(iblockstate, side))
++        else if (canConnectTo(iblockstate, side, worldIn, pos))
+         {
+             return true;
+         }
+@@ -430,16 +438,11 @@
+ 
+     protected static boolean canConnectUpwardsTo(IBlockAccess worldIn, BlockPos pos)
+     {
+-        return canConnectUpwardsTo(worldIn.getBlockState(pos));
++        return canConnectTo(worldIn.getBlockState(pos), null, worldIn, pos);
+     }
+ 
+-    protected static boolean canConnectUpwardsTo(IBlockState state)
++    protected static boolean canConnectTo(IBlockState blockState, @Nullable EnumFacing side, IBlockAccess world, BlockPos pos)
+     {
+-        return canConnectTo(state, (EnumFacing)null);
+-    }
+-
+-    protected static boolean canConnectTo(IBlockState blockState, @Nullable EnumFacing side)
+-    {
+         Block block = blockState.getBlock();
+ 
+         if (block == Blocks.REDSTONE_WIRE)
+@@ -457,7 +460,7 @@
+         }
+         else
+         {
+-            return blockState.canProvidePower() && side != null;
++            return blockState.getBlock().canConnectRedstone(blockState, world, pos, side);
+         }
+     }
+ 

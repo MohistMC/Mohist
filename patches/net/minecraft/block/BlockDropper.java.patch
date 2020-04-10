@@ -9,6 +9,15 @@
      {
          BlockSourceImpl blocksourceimpl = new BlockSourceImpl(worldIn, pos);
          TileEntityDispenser tileentitydispenser = (TileEntityDispenser)blocksourceimpl.getBlockTileEntity();
+@@ -43,7 +43,7 @@
+             {
+                 ItemStack itemstack = tileentitydispenser.getStackInSlot(i);
+ 
+-                if (!itemstack.isEmpty())
++                if (!itemstack.isEmpty() && net.minecraftforge.items.VanillaInventoryCodeHooks.dropperInsertHook(worldIn, pos, tileentitydispenser, i, itemstack))
+                 {
+                     EnumFacing enumfacing = (EnumFacing)worldIn.getBlockState(pos).getValue(FACING);
+                     BlockPos blockpos = pos.offset(enumfacing);
 @@ -57,9 +57,9 @@
                      else
                      {

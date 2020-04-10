@@ -1,0 +1,10 @@
+--- ../src-base/minecraft/net/minecraft/world/biome/BiomeSavanna.java
++++ ../src-work/minecraft/net/minecraft/world/biome/BiomeSavanna.java
+@@ -39,6 +39,7 @@
+     {
+         DOUBLE_PLANT_GENERATOR.setPlantType(BlockDoublePlant.EnumPlantType.GRASS);
+ 
++        if(net.minecraftforge.event.terraingen.TerrainGen.decorate(worldIn, rand, new net.minecraft.util.math.ChunkPos(pos), net.minecraftforge.event.terraingen.DecorateBiomeEvent.Decorate.EventType.GRASS))
+         for (int i = 0; i < 7; ++i)
+         {
+             int j = rand.nextInt(16) + 8;

@@ -15,6 +15,15 @@
  
      protected void initEntityAI()
      {
+@@ -551,7 +557,7 @@
+             {
+                 if (this.runDelay <= 0)
+                 {
+-                    if (!this.rabbit.world.getGameRules().getBoolean("mobGriefing"))
++                    if (!net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(this.rabbit.world, this.rabbit))
+                     {
+                         return false;
+                     }
 @@ -587,11 +593,23 @@
  
                          if (integer.intValue() == 0)

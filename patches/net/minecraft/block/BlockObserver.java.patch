@@ -29,3 +29,16 @@
              worldIn.setBlockState(pos, state.withProperty(POWERED, Boolean.valueOf(true)), 2);
              worldIn.scheduleUpdate(pos, this, 2);
          }
+@@ -145,4 +156,12 @@
+     {
+         return this.getDefaultState().withProperty(FACING, EnumFacing.getFront(meta & 7));
+     }
++
++    /* ======================================== FORGE START =====================================*/
++    @Override
++    public void observedNeighborChange(IBlockState observerState, World world, BlockPos observerPos, Block changedBlock, BlockPos changedBlockPos)
++    {
++        observedNeighborChanged(observerState, world, observerPos, changedBlock, changedBlockPos);
++    }
++    /* ========================================= FORGE END ======================================*/
+ }

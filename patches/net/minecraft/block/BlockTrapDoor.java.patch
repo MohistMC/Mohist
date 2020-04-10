@@ -27,3 +27,22 @@
                  boolean flag1 = ((Boolean)state.getValue(OPEN)).booleanValue();
  
                  if (flag1 != flag)
+@@ -250,6 +263,18 @@
+         return (face == EnumFacing.UP && state.getValue(HALF) == BlockTrapDoor.DoorHalf.TOP || face == EnumFacing.DOWN && state.getValue(HALF) == BlockTrapDoor.DoorHalf.BOTTOM) && !((Boolean)state.getValue(OPEN)).booleanValue() ? BlockFaceShape.SOLID : BlockFaceShape.UNDEFINED;
+     }
+ 
++    @Override
++    public boolean isLadder(IBlockState state, IBlockAccess world, BlockPos pos, EntityLivingBase entity)
++    {
++        if (state.getValue(OPEN))
++        {
++            IBlockState down = world.getBlockState(pos.down());
++            if (down.getBlock() == net.minecraft.init.Blocks.LADDER)
++                return down.getValue(BlockLadder.FACING) == state.getValue(FACING);
++        }
++        return false;
++    }
++
+     public static enum DoorHalf implements IStringSerializable
+     {
+         TOP("top"),

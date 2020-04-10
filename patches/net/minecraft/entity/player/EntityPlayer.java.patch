@@ -24,7 +24,7 @@
  import net.minecraft.item.ItemElytra;
  import net.minecraft.item.ItemStack;
  import net.minecraft.item.ItemSword;
-@@ -92,6 +89,16 @@
+@@ -92,10 +89,26 @@
  import net.minecraft.world.WorldServer;
  import net.minecraftforge.fml.relauncher.Side;
  import net.minecraftforge.fml.relauncher.SideOnly;
@@ -41,7 +41,17 @@
  
  @SuppressWarnings("incomplete-switch")
  public abstract class EntityPlayer extends EntityLivingBase
-@@ -109,10 +116,11 @@
+ {
++    public static final String PERSISTED_NBT_TAG = "PlayerPersisted";
++    protected java.util.HashMap<Integer, BlockPos> spawnChunkMap = new java.util.HashMap<Integer, BlockPos>();
++    protected java.util.HashMap<Integer, Boolean> spawnForcedMap = new java.util.HashMap<Integer, Boolean>();
++    public float eyeHeight = this.getDefaultEyeHeight();
++    public static final net.minecraft.entity.ai.attributes.IAttribute REACH_DISTANCE = new net.minecraft.entity.ai.attributes.RangedAttribute(null, "generic.reachDistance", 5.0D, 0.0D, 1024.0D).setShouldWatch(true);
++
+     private static final DataParameter<Float> ABSORPTION = EntityDataManager.<Float>createKey(EntityPlayer.class, DataSerializers.FLOAT);
+     private static final DataParameter<Integer> PLAYER_SCORE = EntityDataManager.<Integer>createKey(EntityPlayer.class, DataSerializers.VARINT);
+     protected static final DataParameter<Byte> PLAYER_MODEL_FLAG = EntityDataManager.<Byte>createKey(EntityPlayer.class, DataSerializers.BYTE);
+@@ -103,10 +116,11 @@
      protected static final DataParameter<NBTTagCompound> LEFT_SHOULDER_ENTITY = EntityDataManager.<NBTTagCompound>createKey(EntityPlayer.class, DataSerializers.COMPOUND_TAG);
      protected static final DataParameter<NBTTagCompound> RIGHT_SHOULDER_ENTITY = EntityDataManager.<NBTTagCompound>createKey(EntityPlayer.class, DataSerializers.COMPOUND_TAG);
      public InventoryPlayer inventory = new InventoryPlayer(this);
@@ -55,7 +65,7 @@
      protected int flyToggleTimer;
      public float prevCameraYaw;
      public float cameraYaw;
-@@ -123,9 +131,9 @@
+@@ -117,9 +131,9 @@
      public double chasingPosX;
      public double chasingPosY;
      public double chasingPosZ;
@@ -67,7 +77,7 @@
      public float renderOffsetX;
      @SideOnly(Side.CLIENT)
      public float renderOffsetY;
-@@ -147,6 +155,15 @@
+@@ -141,6 +155,15 @@
      @Nullable
      public EntityFishHook fishEntity;
  
@@ -83,7 +93,7 @@
      protected CooldownTracker createCooldownTracker()
      {
          return new CooldownTracker();
-@@ -162,6 +179,9 @@
+@@ -156,6 +179,9 @@
          BlockPos blockpos = worldIn.getSpawnPoint();
          this.setLocationAndAngles((double)blockpos.getX() + 0.5D, (double)(blockpos.getY() + 1), (double)blockpos.getZ() + 0.5D, 0.0F, 0.0F);
          this.unused180 = 180.0F;
@@ -93,7 +103,40 @@
      }
  
      protected void applyEntityAttributes()
-@@ -408,7 +428,7 @@
+@@ -165,6 +191,7 @@
+         this.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(0.10000000149011612D);
+         this.getAttributeMap().registerAttribute(SharedMonsterAttributes.ATTACK_SPEED);
+         this.getAttributeMap().registerAttribute(SharedMonsterAttributes.LUCK);
++        this.getAttributeMap().registerAttribute(REACH_DISTANCE);
+     }
+ 
+     protected void entityInit()
+@@ -180,6 +207,7 @@
+ 
+     public void onUpdate()
+     {
++        net.minecraftforge.fml.common.FMLCommonHandler.instance().onPlayerPreTick(this);
+         this.noClip = this.isSpectator();
+ 
+         if (this.isSpectator())
+@@ -207,7 +235,7 @@
+                 {
+                     this.wakeUpPlayer(true, true, false);
+                 }
+-                else if (this.world.isDaytime())
++                else if (!net.minecraftforge.event.ForgeEventFactory.fireSleepingTimeCheck(this, this.bedLocation))
+                 {
+                     this.wakeUpPlayer(false, true, true);
+                 }
+@@ -367,6 +395,7 @@
+                 this.setSize(f, f1);
+             }
+         }
++        net.minecraftforge.fml.common.FMLCommonHandler.instance().onPlayerPostTick(this);
+     }
+ 
+     public int getMaxInPortalTime()
+@@ -399,7 +428,7 @@
          return SoundCategory.PLAYERS;
      }
  
@@ -102,7 +145,21 @@
      {
          return 20;
      }
-@@ -499,7 +519,8 @@
+@@ -454,11 +483,11 @@
+             this.cameraYaw = 0.0F;
+             this.addMountedMovementStat(this.posX - d0, this.posY - d1, this.posZ - d2);
+ 
+-            if (this.getRidingEntity() instanceof EntityPig)
++            if (this.getRidingEntity() instanceof EntityLivingBase && ((EntityLivingBase)this.getRidingEntity()).shouldRiderFaceForward(this))
+             {
+                 this.rotationPitch = f1;
+                 this.rotationYaw = f;
+-                this.renderYawOffset = ((EntityPig)this.getRidingEntity()).renderYawOffset;
++                this.renderYawOffset = ((EntityLivingBase)this.getRidingEntity()).renderYawOffset;
+             }
+         }
+     }
+@@ -490,7 +519,8 @@
          {
              if (this.getHealth() < this.getMaxHealth() && this.ticksExisted % 20 == 0)
              {
@@ -112,7 +169,7 @@
              }
  
              if (this.foodStats.needFood() && this.ticksExisted % 10 == 0)
-@@ -527,7 +548,7 @@
+@@ -518,7 +548,7 @@
  
          this.setAIMoveSpeed((float)iattributeinstance.getAttributeValue());
          float f = MathHelper.sqrt(this.motionX * this.motionX + this.motionZ * this.motionZ);
@@ -121,15 +178,61 @@
  
          if (f > 0.1F)
          {
-@@ -691,6 +712,7 @@
+@@ -609,11 +639,15 @@
+ 
+     public void onDeath(DamageSource cause)
+     {
++        if (net.minecraftforge.common.ForgeHooks.onLivingDeath(this,  cause)) return;
+         super.onDeath(cause);
+         this.setSize(0.2F, 0.2F);
+         this.setPosition(this.posX, this.posY, this.posZ);
+         this.motionY = 0.10000000149011612D;
+ 
++        captureDrops = true;
++        capturedDrops.clear();
++
+         if ("Notch".equals(this.getName()))
+         {
+             this.dropItem(new ItemStack(Items.APPLE, 1), true, false);
+@@ -625,6 +659,9 @@
+             this.inventory.dropAllItems();
+         }
+ 
++        captureDrops = false;
++        if (!world.isRemote) net.minecraftforge.event.ForgeEventFactory.onPlayerDrops(this, cause, capturedDrops, recentlyHit > 0);
++
+         if (cause != null)
+         {
+             this.motionX = (double)(-MathHelper.cos((this.attackedAtYaw + this.rotationYaw) * 0.017453292F) * 0.1F);
+@@ -675,13 +712,25 @@
      @Nullable
      public EntityItem dropItem(boolean dropAll)
      {
+-        return this.dropItem(this.inventory.decrStackSize(this.inventory.currentItem, dropAll && !this.inventory.getCurrentItem().isEmpty() ? this.inventory.getCurrentItem().getCount() : 1), false, true);
 +        // Called only when dropped by Q or CTRL-Q
-         ItemStack stack = inventory.getCurrentItem();
++        ItemStack stack = inventory.getCurrentItem();
++
++        if (stack.isEmpty())
++        {
++            return null;
++        }
++        if (stack.getItem().onDroppedByPlayer(stack, this))
++        {
++            int count = dropAll ? this.inventory.getCurrentItem().getCount() : 1;
++            return net.minecraftforge.common.ForgeHooks.onPlayerTossEvent(this, inventory.decrStackSize(inventory.currentItem, count), true);
++        }
++        return null;
+     }
  
-         if (stack.isEmpty())
-@@ -750,6 +772,30 @@
+     @Nullable
+     public EntityItem dropItem(ItemStack itemStackIn, boolean unused)
+     {
+-        return this.dropItem(itemStackIn, false, unused);
++        return net.minecraftforge.common.ForgeHooks.onPlayerTossEvent(this, itemStackIn, false);
+     }
+ 
+     @Nullable
+@@ -723,6 +772,30 @@
                  entityitem.motionZ += Math.sin((double)f3) * (double)f2;
              }
  
@@ -160,7 +263,44 @@
              ItemStack itemstack = this.dropItemAndGetStack(entityitem);
  
              if (traceItem)
-@@ -893,6 +939,11 @@
+@@ -741,12 +814,20 @@
+ 
+     public ItemStack dropItemAndGetStack(EntityItem p_184816_1_)
+     {
++        if (captureDrops) capturedDrops.add(p_184816_1_);
++        else // Forge: Don't indent to keep patch smaller.
+         this.world.spawnEntity(p_184816_1_);
+         return p_184816_1_.getItem();
+     }
+ 
++    @Deprecated //Use location sensitive version below
+     public float getDigSpeed(IBlockState state)
+     {
++        return getDigSpeed(state, null);
++    }
++
++    public float getDigSpeed(IBlockState state, BlockPos pos)
++    {
+         float f = this.inventory.getDestroySpeed(state);
+ 
+         if (f > 1.0F)
+@@ -798,12 +879,13 @@
+             f /= 5.0F;
+         }
+ 
+-        return f;
++        f = net.minecraftforge.event.ForgeEventFactory.getBreakSpeed(this, state, f, pos);
++        return (f < 0 ? 0 : f);
+     }
+ 
+     public boolean canHarvestBlock(IBlockState state)
+     {
+-        return this.inventory.canHarvestBlock(state);
++        return net.minecraftforge.event.ForgeEventFactory.doPlayerHarvestCheck(this, state, this.inventory.canHarvestBlock(state));
+     }
+ 
+     public static void registerFixesPlayer(DataFixer fixer)
+@@ -857,12 +939,28 @@
              this.wakeUpPlayer(true, true, false);
          }
  
@@ -172,7 +312,60 @@
          if (compound.hasKey("SpawnX", 99) && compound.hasKey("SpawnY", 99) && compound.hasKey("SpawnZ", 99))
          {
              this.spawnPos = new BlockPos(compound.getInteger("SpawnX"), compound.getInteger("SpawnY"), compound.getInteger("SpawnZ"));
-@@ -987,6 +1038,7 @@
+             this.spawnForced = compound.getBoolean("SpawnForced");
+         }
+ 
++        NBTTagList spawnlist = null;
++        spawnlist = compound.getTagList("Spawns", 10);
++        for (int i = 0; i < spawnlist.tagCount(); i++)
++        {
++            NBTTagCompound spawndata = (NBTTagCompound)spawnlist.getCompoundTagAt(i);
++            int spawndim = spawndata.getInteger("Dim");
++            this.spawnChunkMap.put(spawndim, new BlockPos(spawndata.getInteger("SpawnX"), spawndata.getInteger("SpawnY"), spawndata.getInteger("SpawnZ")));
++            this.spawnForcedMap.put(spawndim, spawndata.getBoolean("SpawnForced"));
++        }
++        this.spawnDimension = compound.getBoolean("HasSpawnDimensionSet") ? compound.getInteger("SpawnDimension") : null;
++
+         this.foodStats.readNBT(compound);
+         this.capabilities.readCapabilitiesFromNBT(compound);
+ 
+@@ -896,6 +994,7 @@
+         compound.setInteger("XpTotal", this.experienceTotal);
+         compound.setInteger("XpSeed", this.xpSeed);
+         compound.setInteger("Score", this.getScore());
++        net.minecraftforge.fml.common.FMLCommonHandler.instance().getDataFixer().writeVersionData(compound); //Moved down so it doesn't keep missing every MC update.
+ 
+         if (this.spawnPos != null)
+         {
+@@ -905,6 +1004,27 @@
+             compound.setBoolean("SpawnForced", this.spawnForced);
+         }
+ 
++        NBTTagList spawnlist = new NBTTagList();
++        for (java.util.Map.Entry<Integer, BlockPos> entry : this.spawnChunkMap.entrySet())
++        {
++            BlockPos spawn = entry.getValue();
++            if (spawn == null) continue;
++            Boolean forced = spawnForcedMap.get(entry.getKey());
++            if (forced == null) forced = false;
++            NBTTagCompound spawndata = new NBTTagCompound();
++            spawndata.setInteger("Dim", entry.getKey());
++            spawndata.setInteger("SpawnX", spawn.getX());
++            spawndata.setInteger("SpawnY", spawn.getY());
++            spawndata.setInteger("SpawnZ", spawn.getZ());
++            spawndata.setBoolean("SpawnForced", forced);
++            spawnlist.appendTag(spawndata);
++        }
++        compound.setTag("Spawns", spawnlist);
++
++        compound.setBoolean("HasSpawnDimensionSet", this.hasSpawnDimension());
++        if (this.hasSpawnDimension())
++            compound.setInteger("SpawnDimension", this.getSpawnDimension());
++
+         this.foodStats.writeNBT(compound);
+         this.capabilities.writeCapabilitiesToNBT(compound);
+         compound.setTag("EnderItems", this.enderChest.saveInventoryToNBT());
+@@ -918,10 +1038,12 @@
          {
              compound.setTag("ShoulderEntityRight", this.getRightShoulderEntity());
          }
@@ -180,7 +373,12 @@
      }
  
      public boolean attackEntityFrom(DamageSource source, float amount)
-@@ -1015,13 +1067,13 @@
+     {
++        if (!net.minecraftforge.common.ForgeHooks.onPlayerAttack(this, source, amount)) return false;
+         if (this.isEntityInvulnerable(source))
+         {
+             return false;
+@@ -945,13 +1067,13 @@
                      this.wakeUpPlayer(true, true, false);
                  }
  
@@ -196,7 +394,7 @@
                      }
  
                      if (this.world.getDifficulty() == EnumDifficulty.EASY)
-@@ -1035,7 +1087,14 @@
+@@ -965,7 +1087,14 @@
                      }
                  }
  
@@ -212,7 +410,16 @@
              }
          }
      }
-@@ -1052,17 +1111,29 @@
+@@ -974,7 +1103,7 @@
+     {
+         super.blockUsingShield(p_190629_1_);
+ 
+-        if (p_190629_1_.getHeldItemMainhand().getItem() instanceof ItemAxe)
++        if (p_190629_1_.getHeldItemMainhand().getItem().canDisableShield(p_190629_1_.getHeldItemMainhand(), this.getActiveItemStack(), this, p_190629_1_))
+         {
+             this.disableShield(true);
+         }
+@@ -982,17 +1111,29 @@
  
      public boolean canAttackPlayer(EntityPlayer other)
      {
@@ -251,7 +458,25 @@
      }
  
      protected void damageArmor(float damage)
-@@ -1113,10 +1184,12 @@
+@@ -1002,14 +1143,16 @@
+ 
+     protected void damageShield(float damage)
+     {
+-        if (damage >= 3.0F && this.activeItemStack.getItem() == Items.SHIELD)
++        if (damage >= 3.0F && this.activeItemStack.getItem().isShield(this.activeItemStack, this))
+         {
++            ItemStack copyBeforeUse = this.activeItemStack.copy();
+             int i = 1 + MathHelper.floor(damage);
+             this.activeItemStack.damageItem(i, this);
+ 
+             if (this.activeItemStack.isEmpty())
+             {
+                 EnumHand enumhand = this.getActiveHand();
++                net.minecraftforge.event.ForgeEventFactory.onPlayerDestroyItem(this, copyBeforeUse, enumhand);
+ 
+                 if (enumhand == EnumHand.MAIN_HAND)
+                 {
+@@ -1041,15 +1184,21 @@
          return (float)i / (float)this.inventory.armorInventory.size();
      }
  
@@ -259,16 +484,26 @@
 -    {
 -        if (!this.isEntityInvulnerable(damageSrc))
 -        {
+-            damageAmount = this.applyArmorCalculations(damageSrc, damageAmount);
 +    // vanilla compatibility Fix AppleCore
 +    protected void damageEntity(DamageSource damageSrc, float damageAmount) {
 +        if (true) {
 +            this.damageEntity_CB(damageSrc, damageAmount);
 +        }
 +        if (!this.isEntityInvulnerable(damageSrc)) {
-             damageAmount = net.minecraftforge.common.ForgeHooks.onLivingHurt(this, damageSrc, damageAmount);
-             if (damageAmount <= 0) return;
-             damageAmount = net.minecraftforge.common.ISpecialArmor.ArmorProperties.applyArmor(this, inventory.armorInventory, damageSrc, damageAmount);
-@@ -1140,8 +1213,14 @@
++            damageAmount = net.minecraftforge.common.ForgeHooks.onLivingHurt(this, damageSrc, damageAmount);
++            if (damageAmount <= 0) return;
++            damageAmount = net.minecraftforge.common.ISpecialArmor.ArmorProperties.applyArmor(this, inventory.armorInventory, damageSrc, damageAmount);
++            if (damageAmount <= 0) return;
+             damageAmount = this.applyPotionDamageCalculations(damageSrc, damageAmount);
+             float f = damageAmount;
+             damageAmount = Math.max(damageAmount - this.getAbsorptionAmount(), 0.0F);
+             this.setAbsorptionAmount(this.getAbsorptionAmount() - (f - damageAmount));
++            damageAmount = net.minecraftforge.common.ForgeHooks.onLivingDamage(this, damageSrc, damageAmount);
+ 
+             if (damageAmount != 0.0F)
+             {
+@@ -1064,8 +1213,14 @@
                  }
              }
          }
@@ -283,7 +518,57 @@
      public void openEditSign(TileEntitySign signTile)
      {
      }
-@@ -1317,8 +1396,17 @@
+@@ -1115,6 +1270,8 @@
+         }
+         else
+         {
++            EnumActionResult cancelResult = net.minecraftforge.common.ForgeHooks.onInteractEntity(this, p_190775_1_, p_190775_2_);
++            if (cancelResult != null) return cancelResult;
+             ItemStack itemstack = this.getHeldItem(p_190775_2_);
+             ItemStack itemstack1 = itemstack.isEmpty() ? ItemStack.EMPTY : itemstack.copy();
+ 
+@@ -1124,7 +1281,10 @@
+                 {
+                     itemstack.setCount(itemstack1.getCount());
+                 }
+-
++                if (!this.capabilities.isCreativeMode && itemstack.isEmpty())
++                {
++                    net.minecraftforge.event.ForgeEventFactory.onPlayerDestroyItem(this, itemstack1, p_190775_2_);
++                }
+                 return EnumActionResult.SUCCESS;
+             }
+             else
+@@ -1140,6 +1300,7 @@
+                     {
+                         if (itemstack.isEmpty() && !this.capabilities.isCreativeMode)
+                         {
++                            net.minecraftforge.event.ForgeEventFactory.onPlayerDestroyItem(this, itemstack1, p_190775_2_);
+                             this.setHeldItem(p_190775_2_, ItemStack.EMPTY);
+                         }
+ 
+@@ -1165,6 +1326,7 @@
+ 
+     public void attackTargetEntityWithCurrentItem(Entity targetEntity)
+     {
++        if (!net.minecraftforge.common.ForgeHooks.onPlayerAttackTarget(this, targetEntity)) return;
+         if (targetEntity.canBeAttackedWithItem())
+         {
+             if (!targetEntity.hitByEntity(this))
+@@ -1203,9 +1365,11 @@
+                     boolean flag2 = flag && this.fallDistance > 0.0F && !this.onGround && !this.isOnLadder() && !this.isInWater() && !this.isPotionActive(MobEffects.BLINDNESS) && !this.isRiding() && targetEntity instanceof EntityLivingBase;
+                     flag2 = flag2 && !this.isSprinting();
+ 
++                    net.minecraftforge.event.entity.player.CriticalHitEvent hitResult = net.minecraftforge.common.ForgeHooks.getCriticalHit(this, targetEntity, flag2, flag2 ? 1.5F : 1.0F);
++                    flag2 = hitResult != null;
+                     if (flag2)
+                     {
+-                        f *= 1.5F;
++                        f *= hitResult.getDamageModifier();
+                     }
+ 
+                     f = f + f1;
+@@ -1232,8 +1396,17 @@
  
                          if (j > 0 && !targetEntity.isBurning())
                          {
@@ -303,7 +588,7 @@
                          }
                      }
  
-@@ -1342,7 +1430,7 @@
+@@ -1257,7 +1430,7 @@
  
                              this.motionX *= 0.6D;
                              this.motionZ *= 0.6D;
@@ -312,7 +597,7 @@
                          }
  
                          if (flag3)
-@@ -1353,8 +1441,10 @@
+@@ -1268,8 +1441,10 @@
                              {
                                  if (entitylivingbase != this && entitylivingbase != targetEntity && !this.isOnSameTeam(entitylivingbase) && this.getDistanceSq(entitylivingbase) < 9.0D)
                                  {
@@ -325,7 +610,7 @@
                                  }
                              }
  
-@@ -1364,11 +1454,28 @@
+@@ -1279,11 +1454,28 @@
  
                          if (targetEntity instanceof EntityPlayerMP && targetEntity.velocityChanged)
                          {
@@ -359,7 +644,20 @@
                          }
  
                          if (flag2)
-@@ -1434,7 +1541,14 @@
+@@ -1332,10 +1524,12 @@
+ 
+                         if (!itemstack1.isEmpty() && entity instanceof EntityLivingBase)
+                         {
++                            ItemStack beforeHitCopy = itemstack1.copy();
+                             itemstack1.hitEntity((EntityLivingBase)entity, this);
+ 
+                             if (itemstack1.isEmpty())
+                             {
++                                net.minecraftforge.event.ForgeEventFactory.onPlayerDestroyItem(this, beforeHitCopy, EnumHand.MAIN_HAND);
+                                 this.setHeldItem(EnumHand.MAIN_HAND, ItemStack.EMPTY);
+                             }
+                         }
+@@ -1347,7 +1541,14 @@
  
                              if (j > 0)
                              {
@@ -375,7 +673,7 @@
                              }
  
                              if (this.world instanceof WorldServer && f5 > 2.0F)
-@@ -1454,6 +1568,11 @@
+@@ -1367,6 +1568,11 @@
                          {
                              targetEntity.extinguish();
                          }
@@ -387,7 +685,16 @@
                      }
                  }
              }
-@@ -1527,6 +1646,10 @@
+@@ -1384,7 +1590,7 @@
+ 
+         if (this.rand.nextFloat() < f)
+         {
+-            this.getCooldownTracker().setCooldown(Items.SHIELD, 100);
++            this.getCooldownTracker().setCooldown(this.getActiveItemStack().getItem(), 100);
+             this.resetActiveHand();
+             this.world.setEntityState(this, (byte)30);
+         }
+@@ -1440,9 +1646,17 @@
          return this.gameProfile;
      }
  
@@ -397,8 +704,25 @@
 +
      public EntityPlayer.SleepResult trySleep(BlockPos bedLocation)
      {
-         EntityPlayer.SleepResult ret = net.minecraftforge.event.ForgeEventFactory.onPlayerSleepInBed(this, bedLocation);
-@@ -1572,6 +1695,20 @@
+-        EnumFacing enumfacing = (EnumFacing)this.world.getBlockState(bedLocation).getValue(BlockHorizontal.FACING);
++        EntityPlayer.SleepResult ret = net.minecraftforge.event.ForgeEventFactory.onPlayerSleepInBed(this, bedLocation);
++        if (ret != null) return ret;
++        final IBlockState state = this.world.isBlockLoaded(bedLocation) ? this.world.getBlockState(bedLocation) : null;
++        final boolean isBed = state != null && state.getBlock().isBed(state, this.world, bedLocation, this);
++        final EnumFacing enumfacing = isBed && state.getBlock() instanceof BlockHorizontal ? (EnumFacing)state.getValue(BlockHorizontal.FACING) : null;
+ 
+         if (!this.world.isRemote)
+         {
+@@ -1456,7 +1670,7 @@
+                 return EntityPlayer.SleepResult.NOT_POSSIBLE_HERE;
+             }
+ 
+-            if (this.world.isDaytime())
++            if (!net.minecraftforge.event.ForgeEventFactory.fireSleepingTimeCheck(this, bedLocation))
+             {
+                 return EntityPlayer.SleepResult.NOT_POSSIBLE_NOW;
+             }
+@@ -1481,11 +1695,24 @@
              this.dismountRidingEntity();
          }
  
@@ -419,7 +743,51 @@
          this.spawnShoulderEntities();
          this.setSize(0.2F, 0.2F);
  
-@@ -1651,6 +1788,23 @@
+-        if (this.world.isBlockLoaded(bedLocation))
+-        {
++        if (enumfacing != null) {
+             float f1 = 0.5F + (float)enumfacing.getFrontOffsetX() * 0.4F;
+             float f = 0.5F + (float)enumfacing.getFrontOffsetZ() * 0.4F;
+             this.setRenderOffsetForSleep(enumfacing);
+@@ -1517,6 +1744,7 @@
+         {
+             return true;
+         }
++        else if (p_190774_2_ == null) return false;
+         else
+         {
+             BlockPos blockpos = p_190774_1_.offset(p_190774_2_.getOpposite());
+@@ -1532,13 +1760,14 @@
+ 
+     public void wakeUpPlayer(boolean immediately, boolean updateWorldFlag, boolean setSpawn)
+     {
++        net.minecraftforge.event.ForgeEventFactory.onPlayerWakeup(this, immediately, updateWorldFlag, setSpawn);
+         this.setSize(0.6F, 1.8F);
+-        IBlockState iblockstate = this.world.getBlockState(this.bedLocation);
++        IBlockState iblockstate = this.bedLocation == null ? null : this.world.getBlockState(this.bedLocation);
+ 
+-        if (this.bedLocation != null && iblockstate.getBlock() == Blocks.BED)
++        if (this.bedLocation != null && iblockstate.getBlock().isBed(iblockstate, world, bedLocation, this))
+         {
+-            this.world.setBlockState(this.bedLocation, iblockstate.withProperty(BlockBed.OCCUPIED, Boolean.valueOf(false)), 4);
+-            BlockPos blockpos = BlockBed.getSafeExitLocation(this.world, this.bedLocation, 0);
++            iblockstate.getBlock().setBedOccupied(world, bedLocation, this, false);
++            BlockPos blockpos = iblockstate.getBlock().getBedSpawnPosition(iblockstate, world, bedLocation, this);
+ 
+             if (blockpos == null)
+             {
+@@ -1547,6 +1776,10 @@
+ 
+             this.setPosition((double)((float)blockpos.getX() + 0.5F), (double)((float)blockpos.getY() + 0.1F), (double)((float)blockpos.getZ() + 0.5F));
+         }
++        else
++        {
++            setSpawn = false;
++        }
+ 
+         this.sleeping = false;
+ 
+@@ -1555,6 +1788,23 @@
              this.world.updateAllPlayersSleepingFlag();
          }
  
@@ -443,7 +811,48 @@
          this.sleepTimer = immediately ? 0 : 100;
  
          if (setSpawn)
-@@ -1723,7 +1877,7 @@
+@@ -1565,15 +1815,16 @@
+ 
+     private boolean isInBed()
+     {
+-        return this.world.getBlockState(this.bedLocation).getBlock() == Blocks.BED;
++        return net.minecraftforge.event.ForgeEventFactory.fireSleepingLocationCheck(this, this.bedLocation);
+     }
+ 
+     @Nullable
+     public static BlockPos getBedSpawnLocation(World worldIn, BlockPos bedLocation, boolean forceSpawn)
+     {
+-        Block block = worldIn.getBlockState(bedLocation).getBlock();
++        IBlockState state = worldIn.getBlockState(bedLocation);
++        Block block = state.getBlock();
+ 
+-        if (block != Blocks.BED)
++        if (!block.isBed(state, worldIn, bedLocation, null))
+         {
+             if (!forceSpawn)
+             {
+@@ -1588,16 +1839,17 @@
+         }
+         else
+         {
+-            return BlockBed.getSafeExitLocation(worldIn, bedLocation, 0);
++            return block.getBedSpawnPosition(state, worldIn, bedLocation, null);
+         }
+     }
+ 
+     @SideOnly(Side.CLIENT)
+     public float getBedOrientationInDegrees()
+     {
+-        if (this.bedLocation != null)
++        IBlockState state = this.bedLocation == null ? null : this.world.getBlockState(bedLocation);
++        if (state != null && state.getBlock().isBed(state, world, bedLocation, this))
+         {
+-            EnumFacing enumfacing = (EnumFacing)this.world.getBlockState(this.bedLocation).getValue(BlockHorizontal.FACING);
++            EnumFacing enumfacing = state.getBlock().getBedDirection(state, world, bedLocation);
+ 
+             switch (enumfacing)
+             {
+@@ -1625,7 +1877,7 @@
          return this.sleeping && this.sleepTimer >= 100;
      }
  
@@ -452,7 +861,31 @@
      public int getSleepTimer()
      {
          return this.sleepTimer;
-@@ -1757,11 +1911,13 @@
+@@ -1637,25 +1889,35 @@
+ 
+     public BlockPos getBedLocation()
+     {
+-        return this.spawnPos;
++        return getBedLocation(this.dimension);
+     }
+ 
++    @Deprecated // Use dimension-sensitive version.
+     public boolean isSpawnForced()
+     {
+-        return this.spawnForced;
++        return isSpawnForced(this.dimension);
+     }
+ 
+     public void setSpawnPoint(BlockPos pos, boolean forced)
+     {
++        if(net.minecraftforge.event.ForgeEventFactory.onPlayerSpawnSet(this, pos, forced)) return;
++        if (this.dimension != 0)
++        {
++            setSpawnChunk(pos, forced, this.dimension);
++            return;
++        }
++
+         if (pos != null)
          {
              this.spawnPos = pos;
              this.spawnForced = forced;
@@ -466,7 +899,7 @@
          }
      }
  
-@@ -1820,7 +1976,10 @@
+@@ -1714,7 +1976,10 @@
              this.motionY = d3 * 0.6D;
              this.jumpMovementFactor = f;
              this.fallDistance = 0.0F;
@@ -478,7 +911,18 @@
          }
          else
          {
-@@ -2225,10 +2384,12 @@
+@@ -1839,6 +2104,10 @@
+ 
+             super.fall(distance, damageMultiplier);
+         }
++        else
++        {
++            net.minecraftforge.event.ForgeEventFactory.onPlayerFall(this, distance, damageMultiplier);
++        }
+     }
+ 
+     protected void doWaterSplashEffect()
+@@ -2115,10 +2384,12 @@
  
      protected void spawnShoulderEntities()
      {
@@ -495,7 +939,7 @@
      }
  
      private void spawnShoulderEntity(@Nullable NBTTagCompound p_192026_1_)
-@@ -2247,6 +2408,23 @@
+@@ -2137,6 +2408,23 @@
          }
      }
  
@@ -519,7 +963,28 @@
      @SideOnly(Side.CLIENT)
      public boolean isInvisibleToPlayer(EntityPlayer player)
      {
-@@ -2481,7 +2659,7 @@
+@@ -2176,7 +2464,10 @@
+ 
+     public ITextComponent getDisplayName()
+     {
+-        ITextComponent itextcomponent = new TextComponentString(ScorePlayerTeam.formatPlayerName(this.getTeam(), this.getName()));
++        ITextComponent itextcomponent = new TextComponentString("");
++        if (!prefixes.isEmpty()) for (ITextComponent prefix : prefixes) itextcomponent.appendSibling(prefix);
++        itextcomponent.appendSibling(new TextComponentString(ScorePlayerTeam.formatPlayerName(this.getTeam(), this.getDisplayNameString())));
++        if (!suffixes.isEmpty()) for (ITextComponent suffix : suffixes) itextcomponent.appendSibling(suffix);
+         itextcomponent.getStyle().setClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/msg " + this.getName() + " "));
+         itextcomponent.getStyle().setHoverEvent(this.getHoverEvent());
+         itextcomponent.getStyle().setInsertion(this.getName());
+@@ -2185,7 +2476,7 @@
+ 
+     public float getEyeHeight()
+     {
+-        float f = 1.62F;
++        float f = eyeHeight;
+ 
+         if (this.isPlayerSleeping())
+         {
+@@ -2368,7 +2659,7 @@
          return (NBTTagCompound)this.dataManager.get(LEFT_SHOULDER_ENTITY);
      }
  
@@ -528,7 +993,7 @@
      {
          this.dataManager.set(LEFT_SHOULDER_ENTITY, tag);
      }
-@@ -2491,7 +2669,7 @@
+@@ -2378,7 +2669,7 @@
          return (NBTTagCompound)this.dataManager.get(RIGHT_SHOULDER_ENTITY);
      }
  
@@ -537,7 +1002,7 @@
      {
          this.dataManager.set(RIGHT_SHOULDER_ENTITY, tag);
      }
-@@ -2531,7 +2709,7 @@
+@@ -2418,9 +2709,171 @@
  
      public boolean canUseCommandBlock()
      {
@@ -545,4 +1010,168 @@
 +        return this.capabilities.isCreativeMode && (this.canUseCommand(2, "") || this.canUseCommand(2, "", "minecraft"));
      }
  
-     /**
++    /**
++     * Opens a GUI with this player, uses FML's IGuiHandler system.
++     * Allows for extension by modders.
++     *
++     * @param mod The mod trying to open a GUI
++     * @param modGuiId GUI ID
++     * @param world Current World
++     * @param x Passed directly to IGuiHandler, data meaningless Typically world X position
++     * @param y Passed directly to IGuiHandler, data meaningless Typically world Y position
++     * @param z Passed directly to IGuiHandler, data meaningless Typically world Z position
++     */
++    public void openGui(Object mod, int modGuiId, World world, int x, int y, int z)
++    {
++        net.minecraftforge.fml.common.network.internal.FMLNetworkHandler.openGui(this, mod, modGuiId, world, x, y, z);
++    }
++
++
++    /* ======================================== FORGE START =====================================*/
++    /**
++     * A dimension aware version of getBedLocation.
++     * @param dimension The dimension to get the bed spawn for
++     * @return The player specific spawn location for the dimension.  May be null.
++     */
++    public BlockPos getBedLocation(int dimension)
++    {
++        return dimension == 0 ? spawnPos : spawnChunkMap.get(dimension);
++    }
++
++    /**
++     * A dimension aware version of isSpawnForced.
++     * Noramally isSpawnForced is used to determine if the respawn system should check for a bed or not.
++     * This just extends that to be dimension aware.
++     * @param dimension The dimension to get whether to check for a bed before spawning for
++     * @return The player specific spawn location for the dimension.  May be null.
++     */
++    public boolean isSpawnForced(int dimension)
++    {
++        if (dimension == 0) return this.spawnForced;
++        Boolean forced = this.spawnForcedMap.get(dimension);
++        return forced == null ? false : forced;
++    }
++
++    /**
++     * A dimension aware version of setSpawnChunk.
++     * This functions identically, but allows you to specify which dimension to affect, rather than affecting the player's current dimension.
++     * @param pos The spawn point to set as the player-specific spawn point for the dimension
++     * @param forced Whether or not the respawn code should check for a bed at this location (true means it won't check for a bed)
++     * @param dimension Which dimension to apply the player-specific respawn point to
++     */
++    public void setSpawnChunk(BlockPos pos, boolean forced, int dimension)
++    {
++        if (dimension == 0)
++        {
++            if (pos != null)
++            {
++                spawnPos = pos;
++                spawnForced = forced;
++            }
++            else
++            {
++                spawnPos = null;
++                spawnForced = false;
++            }
++            return;
++        }
++
++        if (pos != null)
++        {
++            spawnChunkMap.put(dimension, pos);
++            spawnForcedMap.put(dimension, forced);
++        }
++        else
++        {
++            spawnChunkMap.remove(dimension);
++            spawnForcedMap.remove(dimension);
++        }
++    }
++
++    private String displayname;
++
++    /**
++     * Returns the default eye height of the player
++     * @return player default eye height
++     */
++    public float getDefaultEyeHeight()
++    {
++        return 1.62F;
++    }
++
++    /**
++     * Get the currently computed display name, cached for efficiency.
++     * @return the current display name
++     */
++    public String getDisplayNameString()
++    {
++        if(this.displayname == null)
++        {
++            this.displayname = net.minecraftforge.event.ForgeEventFactory.getPlayerDisplayName(this, this.getName());
++        }
++        return this.displayname;
++    }
++
++    /**
++     * Force the displayed name to refresh
++     */
++    public void refreshDisplayName()
++    {
++        this.displayname = net.minecraftforge.event.ForgeEventFactory.getPlayerDisplayName(this, this.getName());
++    }
++
++    private final java.util.Collection<ITextComponent> prefixes = new java.util.LinkedList<ITextComponent>();
++    private final java.util.Collection<ITextComponent> suffixes = new java.util.LinkedList<ITextComponent>();
++
++    /**
++     * Add a prefix to the player's username in chat
++     * @param prefix The prefix
++     */
++    public void addPrefix(ITextComponent prefix) { prefixes.add(prefix); }
++
++    /**
++     * Add a suffix to the player's username in chat
++     * @param suffix The suffix
++     */
++    public void addSuffix(ITextComponent suffix) { suffixes.add(suffix); }
++
++    public java.util.Collection<ITextComponent> getPrefixes() { return this.prefixes; }
++    public java.util.Collection<ITextComponent> getSuffixes() { return this.suffixes; }
++
++    private final net.minecraftforge.items.IItemHandler playerMainHandler = new net.minecraftforge.items.wrapper.PlayerMainInvWrapper(inventory);
++    private final net.minecraftforge.items.IItemHandler playerEquipmentHandler = new net.minecraftforge.items.wrapper.CombinedInvWrapper(
++                    new net.minecraftforge.items.wrapper.PlayerArmorInvWrapper(inventory),
++                    new net.minecraftforge.items.wrapper.PlayerOffhandInvWrapper(inventory));
++    private final net.minecraftforge.items.IItemHandler playerJoinedHandler = new net.minecraftforge.items.wrapper.PlayerInvWrapper(inventory);
++
++    @SuppressWarnings("unchecked")
++    @Override
++    @Nullable
++    public <T> T getCapability(net.minecraftforge.common.capabilities.Capability<T> capability, @Nullable net.minecraft.util.EnumFacing facing)
++    {
++        if (capability == net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABILITY)
++        {
++            if (facing == null) return (T) playerJoinedHandler;
++            else if (facing.getAxis().isVertical()) return (T) playerMainHandler;
++            else if (facing.getAxis().isHorizontal()) return (T) playerEquipmentHandler;
++        }
++        return super.getCapability(capability, facing);
++    }
++
++    @Override
++    public boolean hasCapability(net.minecraftforge.common.capabilities.Capability<?> capability, @Nullable net.minecraft.util.EnumFacing facing)
++    {
++        return capability == net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABILITY || super.hasCapability(capability, facing);
++    }
++
++    @Nullable
++    private Integer spawnDimension;
++    public boolean hasSpawnDimension() { return spawnDimension != null; }
++    public int getSpawnDimension() { return spawnDimension != null ? spawnDimension : 0; }
++    public void setSpawnDimension(@Nullable Integer dimension) { this.spawnDimension = dimension; }
++
++    /* ======================================== FORGE END  =====================================*/
++
+     public static enum EnumChatVisibility
+     {
+         FULL(0, "options.chat.visibility.full"),

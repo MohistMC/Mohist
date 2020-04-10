@@ -27,7 +27,14 @@
      public NetHandlerHandshakeTCP(MinecraftServer serverIn, NetworkManager netManager)
      {
          this.server = serverIn;
-@@ -29,21 +37,104 @@
+@@ -22,26 +30,111 @@
+ 
+     public void processHandshake(C00Handshake packetIn)
+     {
++        if (!net.minecraftforge.fml.common.FMLCommonHandler.instance().handleServerHandshake(packetIn, this.networkManager)) return;
++
+         switch (packetIn.getRequestedState())
+         {
              case LOGIN:
                  this.networkManager.setConnectionState(EnumConnectionState.LOGIN);
  

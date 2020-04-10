@@ -37,9 +37,10 @@
                  this.applyEnchantments(this.shootingEntity, result.entityHit);
              }
  
-+            // TODO: Reimplement with correct `flag` usage below
-             boolean flag = net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(this.world, this.shootingEntity);
+-            boolean flag = this.world.getGameRules().getBoolean("mobGriefing");
 -            this.world.newExplosion((Entity)null, this.posX, this.posY, this.posZ, (float)this.explosionPower, flag, flag);
++            // TODO: Reimplement with correct `flag` usage below
++            boolean flag = net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(this.world, this.shootingEntity);
 +            // this.world.newExplosion((Entity)null, this.posX, this.posY, this.posZ, (float)this.explosionPower, flag, flag);
 +            // CraftBukkit start - fire ExplosionPrimeEvent
 +            ExplosionPrimeEvent event = new ExplosionPrimeEvent((org.bukkit.entity.Explosive) org.bukkit.craftbukkit.v1_12_R1.entity.CraftEntity.getEntity(this.world.getServer(), this));

@@ -43,6 +43,15 @@
      public EntityAgeable(World worldIn)
      {
          super(worldIn);
+@@ -38,7 +67,7 @@
+         {
+             if (!this.world.isRemote)
+             {
+-                Class <? extends Entity > oclass = (Class)EntityList.REGISTRY.getObject(ItemMonsterPlacer.getNamedIdFrom(itemstack));
++                Class <? extends Entity > oclass = EntityList.getClass(ItemMonsterPlacer.getNamedIdFrom(itemstack));
+ 
+                 if (oclass != null && this.getClass() == oclass)
+                 {
 @@ -48,7 +77,7 @@
                      {
                          entityageable.setGrowingAge(-24000);
@@ -52,6 +61,15 @@
  
                          if (itemstack.hasDisplayName())
                          {
+@@ -79,7 +108,7 @@
+         }
+         else
+         {
+-            Class <? extends Entity > oclass = (Class)EntityList.REGISTRY.getObject(ItemMonsterPlacer.getNamedIdFrom(stack));
++            Class <? extends Entity > oclass = EntityList.getClass(ItemMonsterPlacer.getNamedIdFrom(stack));
+             return oclass != null && entityClass == oclass;
+         }
+     }
 @@ -154,6 +183,7 @@
          super.writeEntityToNBT(compound);
          compound.setInteger("Age", this.getGrowingAge());

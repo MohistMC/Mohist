@@ -42,8 +42,12 @@
                      }
                  }
              }
-@@ -60,13 +70,15 @@
-                     flag1 = net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(this.world, this.shootingEntity);
+@@ -57,16 +67,18 @@
+ 
+                 if (this.shootingEntity != null && this.shootingEntity instanceof EntityLiving)
+                 {
+-                    flag1 = this.world.getGameRules().getBoolean("mobGriefing");
++                    flag1 = net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(this.world, this.shootingEntity);
                  }
  
 -                if (flag1)

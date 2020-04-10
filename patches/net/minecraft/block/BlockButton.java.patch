@@ -17,6 +17,15 @@
  
  public abstract class BlockButton extends BlockDirectional
  {
+@@ -98,7 +99,7 @@
+ 
+         if (direction == EnumFacing.UP)
+         {
+-            return block == Blocks.HOPPER || !isExceptionBlockForAttaching(block) && flag;
++            return iblockstate.isTopSolid() || !isExceptionBlockForAttaching(block) && flag;
+         }
+         else
+         {
 @@ -165,6 +166,17 @@
          }
          else

@@ -35,6 +35,22 @@
              }
  
              if (entityIn instanceof EntityPlayer)
+@@ -120,13 +127,13 @@
+                 ItemStack itemstack = this.getHeldItemMainhand();
+                 ItemStack itemstack1 = entityplayer.isHandActive() ? entityplayer.getActiveItemStack() : ItemStack.EMPTY;
+ 
+-                if (!itemstack.isEmpty() && !itemstack1.isEmpty() && itemstack.getItem() instanceof ItemAxe && itemstack1.getItem() == Items.SHIELD)
++                if (!itemstack.isEmpty() && !itemstack1.isEmpty() && itemstack.getItem().canDisableShield(itemstack, itemstack1, entityplayer, this) && itemstack1.getItem().isShield(itemstack1, entityplayer))
+                 {
+                     float f1 = 0.25F + (float)EnchantmentHelper.getEfficiencyModifier(this) * 0.05F;
+ 
+                     if (this.rand.nextFloat() < f1)
+                     {
+-                        entityplayer.getCooldownTracker().setCooldown(Items.SHIELD, 100);
++                        entityplayer.getCooldownTracker().setCooldown(itemstack1.getItem(), 100);
+                         this.world.setEntityState(entityplayer, (byte)30);
+                     }
+                 }
 @@ -161,6 +168,7 @@
                  this.world.setSkylightSubtracted(10);
                  i = this.world.getLightFromNeighbors(blockpos);

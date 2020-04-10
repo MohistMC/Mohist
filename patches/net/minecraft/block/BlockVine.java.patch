@@ -1,18 +1,21 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockVine.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockVine.java
-@@ -27,6 +27,7 @@
+@@ -27,8 +27,9 @@
  import net.minecraft.world.World;
  import net.minecraftforge.fml.relauncher.Side;
  import net.minecraftforge.fml.relauncher.SideOnly;
 +import org.bukkit.craftbukkit.v1_12_R1.event.CraftEventFactory;
  
- public class BlockVine extends Block implements net.minecraftforge.common.IShearable
+-public class BlockVine extends Block
++public class BlockVine extends Block implements net.minecraftforge.common.IShearable
  {
+     public static final PropertyBool UP = PropertyBool.create("up");
+     public static final PropertyBool NORTH = PropertyBool.create("north");
 @@ -185,7 +186,7 @@
      {
          if (!worldIn.isRemote)
          {
--            if (worldIn.rand.nextInt(4) == 0 && worldIn.isAreaLoaded(pos, 4)) // Forge: check area to prevent loading unloaded chunks
+-            if (worldIn.rand.nextInt(4) == 0)
 +            if (worldIn.rand.nextInt(Math.max(1, (int)(100.0f / worldIn.spigotConfig.vineModifier) * 4)) == 0 && worldIn.isAreaLoaded(pos, 4)) // Forge: check area to prevent loading unloaded chunks
              {
                  int i = 4;
@@ -30,6 +33,15 @@
                      }
                  }
                  else if (enumfacing1.getAxis().isHorizontal() && !((Boolean)state.getValue(getPropertyFor(enumfacing1))).booleanValue())
+@@ -244,7 +249,7 @@
+                         IBlockState iblockstate3 = worldIn.getBlockState(blockpos4);
+                         Block block1 = iblockstate3.getBlock();
+ 
+-                        if (block1.blockMaterial == Material.AIR)
++                        if (block1.isAir(iblockstate3, worldIn, blockpos4))
+                         {
+                             EnumFacing enumfacing3 = enumfacing1.rotateY();
+                             EnumFacing enumfacing4 = enumfacing1.rotateYCCW();
 @@ -253,21 +258,30 @@
                              BlockPos blockpos = blockpos4.offset(enumfacing3);
                              BlockPos blockpos1 = blockpos4.offset(enumfacing4);
@@ -77,3 +89,21 @@
                              }
                          }
                          else if (block == this)
+@@ -459,7 +476,17 @@
+ 
+         return i;
+     }
++    /*************************FORGE START***********************************/
++    @Override public boolean isLadder(IBlockState state, IBlockAccess world, BlockPos pos, EntityLivingBase entity){ return true; }
++    @Override public boolean isShearable(ItemStack item, IBlockAccess world, BlockPos pos){ return true; }
++    @Override
++    public java.util.List<ItemStack> onSheared(ItemStack item, IBlockAccess world, BlockPos pos, int fortune)
++    {
++        return java.util.Arrays.asList(new ItemStack(this, 1));
++    }
++    /*************************FORGE END***********************************/
+ 
++
+     public BlockFaceShape getBlockFaceShape(IBlockAccess worldIn, IBlockState state, BlockPos pos, EnumFacing face)
+     {
+         return BlockFaceShape.UNDEFINED;

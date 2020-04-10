@@ -15,3 +15,11 @@
          public void updateCommand()
          {
              EntityMinecartCommandBlock.this.getDataManager().set(EntityMinecartCommandBlock.COMMAND, this.getCommand());
+@@ -147,6 +150,7 @@
+ 
+     public boolean processInitialInteract(EntityPlayer player, EnumHand hand)
+     {
++        if (super.processInitialInteract(player, hand)) return true;
+         this.commandBlockLogic.tryOpenEditCommandBlock(player);
+         return false;
+     }

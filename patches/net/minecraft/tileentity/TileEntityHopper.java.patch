@@ -102,7 +102,24 @@
                      this.markDirty();
                      return true;
                  }
-@@ -358,14 +397,49 @@
+@@ -191,6 +230,7 @@
+ 
+     private boolean transferItemsOut()
+     {
++        if (net.minecraftforge.items.VanillaInventoryCodeHooks.insertHook(this)) { return true; }
+         IInventory iinventory = this.getInventoryForHopperTransfer();
+ 
+         if (iinventory == null)
+@@ -297,6 +337,8 @@
+ 
+     public static boolean pullItems(IHopper hopper)
+     {
++        Boolean ret = net.minecraftforge.items.VanillaInventoryCodeHooks.extractHook(hopper);
++        if (ret != null) return ret;
+         IInventory iinventory = getSourceInventory(hopper);
+ 
+         if (iinventory != null)
+@@ -355,14 +397,49 @@
          if (!itemstack.isEmpty() && canExtractItemFromSlot(inventoryIn, itemstack, index, direction))
          {
              ItemStack itemstack1 = itemstack.copy();
@@ -155,7 +172,7 @@
              inventoryIn.setInventorySlotContents(index, itemstack1);
          }
  
-@@ -382,6 +456,15 @@
+@@ -379,6 +456,15 @@
          }
          else
          {
@@ -171,7 +188,20 @@
              ItemStack itemstack = entity.getItem().copy();
              ItemStack itemstack1 = putStackInInventoryAllSlots(source, destination, itemstack, (EnumFacing)null);
  
-@@ -491,7 +574,7 @@
+@@ -396,6 +482,12 @@
+         }
+     }
+ 
++
++    protected net.minecraftforge.items.IItemHandler createUnSidedHandler()
++    {
++        return new net.minecraftforge.items.VanillaHopperItemHandler(this);
++    }
++
+     public static ItemStack putStackInInventoryAllSlots(IInventory source, IInventory destination, ItemStack stack, @Nullable EnumFacing direction)
+     {
+         if (destination instanceof ISidedInventory && direction != null)
+@@ -482,7 +574,7 @@
                              }
                          }
  
@@ -180,11 +210,24 @@
                      }
                  }
  
-@@ -525,6 +608,7 @@
+@@ -516,9 +608,11 @@
          int j = MathHelper.floor(y);
          int k = MathHelper.floor(z);
          BlockPos blockpos = new BlockPos(i, j, k);
+-        Block block = worldIn.getBlockState(blockpos).getBlock();
 +		if (!worldIn.isBlockLoaded(blockpos)) return null; // Spigot
-         net.minecraft.block.state.IBlockState state = worldIn.getBlockState(blockpos);
-         Block block = state.getBlock();
++        net.minecraft.block.state.IBlockState state = worldIn.getBlockState(blockpos);
++        Block block = state.getBlock();
  
+-        if (block.hasTileEntity())
++        if (block.hasTileEntity(state))
+         {
+             TileEntity tileentity = worldIn.getTileEntity(blockpos);
+ 
+@@ -611,4 +705,6 @@
+     {
+         return this.inventory;
+     }
++
++    public long getLastUpdateTime() { return tickedGameTime; } // Forge
+ }

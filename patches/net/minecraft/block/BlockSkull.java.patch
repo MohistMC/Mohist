@@ -9,10 +9,12 @@
  
  public class BlockSkull extends BlockContainer
  {
-@@ -128,6 +130,30 @@
+@@ -128,9 +130,29 @@
          return new ItemStack(Items.SKULL, 1, i);
      }
  
+-    public void dropBlockAsItemWithChance(World worldIn, BlockPos pos, IBlockState state, float chance, int fortune)
+-    {
 +    // CraftBukkit start - Special case dropping so we can get info from the tile entity
 +    @Override
 +    public void dropBlockAsItemWithChance(World worldIn, BlockPos pos, IBlockState state, float chance, int fortune) {
@@ -34,15 +36,27 @@
 +                spawnAsEntity(worldIn, pos, itemstack);
 +            }
 +        }
-+    }
+     }
 +    // CraftBukkit end
-+
+ 
      public void onBlockHarvested(World worldIn, BlockPos pos, IBlockState state, EntityPlayer player)
      {
-         if (player.capabilities.isCreativeMode)
-@@ -147,7 +173,9 @@
-     public void getDrops(net.minecraft.util.NonNullList<ItemStack> drops, IBlockAccess worldIn, BlockPos pos, IBlockState state, int fortune)
+@@ -139,22 +161,28 @@
+             state = state.withProperty(NODROP, Boolean.valueOf(true));
+             worldIn.setBlockState(pos, state, 4);
+         }
++        this.dropBlockAsItem(worldIn, pos, state, 0);
+ 
+         super.onBlockHarvested(worldIn, pos, state, player);
+     }
+ 
+     public void breakBlock(World worldIn, BlockPos pos, IBlockState state)
      {
+-        if (!worldIn.isRemote)
++        super.breakBlock(worldIn, pos, state);
++    }
++    public void getDrops(net.minecraft.util.NonNullList<ItemStack> drops, IBlockAccess worldIn, BlockPos pos, IBlockState state, int fortune)
++    {
          {
 -            if (!((Boolean)state.getValue(NODROP)).booleanValue())
 +            // CraftBukkit start - Drop item in code above, not here
@@ -51,7 +65,28 @@
              {
                  TileEntity tileentity = worldIn.getTileEntity(pos);
  
-@@ -189,6 +217,7 @@
+                 if (tileentity instanceof TileEntitySkull)
+                 {
+                     TileEntitySkull tileentityskull = (TileEntitySkull)tileentity;
+-                    ItemStack itemstack = this.getItem(worldIn, pos, state);
++                    ItemStack itemstack = new ItemStack(Items.SKULL, 1, tileentityskull.getSkullType());
+ 
+                     if (tileentityskull.getSkullType() == 3 && tileentityskull.getPlayerProfile() != null)
+                     {
+@@ -164,11 +192,9 @@
+                         itemstack.getTagCompound().setTag("SkullOwner", nbttagcompound);
+                     }
+ 
+-                    spawnAsEntity(worldIn, pos, itemstack);
++                    drops.add(itemstack);
+                 }
+             }
+-
+-            super.breakBlock(worldIn, pos, state);
+         }
+     }
+ 
+@@ -191,6 +217,7 @@
  
      public void checkWitherSpawn(World worldIn, BlockPos pos, TileEntitySkull te)
      {
@@ -59,7 +94,7 @@
          if (te.getSkullType() == 1 && pos.getY() >= 2 && worldIn.getDifficulty() != EnumDifficulty.PEACEFUL && !worldIn.isRemote)
          {
              BlockPattern blockpattern = this.getWitherPattern();
-@@ -196,10 +225,14 @@
+@@ -198,10 +225,14 @@
  
              if (blockpattern$patternhelper != null)
              {
@@ -75,7 +110,7 @@
                  }
  
                  for (int j = 0; j < blockpattern.getPalmLength(); ++j)
-@@ -207,7 +240,10 @@
+@@ -209,7 +240,10 @@
                      for (int k = 0; k < blockpattern.getThumbLength(); ++k)
                      {
                          BlockWorldState blockworldstate1 = blockpattern$patternhelper.translateOffset(j, k, 0);
@@ -87,7 +122,7 @@
                      }
                  }
  
-@@ -217,25 +253,24 @@
+@@ -219,25 +253,24 @@
                  entitywither.setLocationAndAngles((double)blockpos1.getX() + 0.5D, (double)blockpos1.getY() + 0.55D, (double)blockpos1.getZ() + 0.5D, blockpattern$patternhelper.getForwards().getAxis() == EnumFacing.Axis.X ? 0.0F : 90.0F, 0.0F);
                  entitywither.renderYawOffset = blockpattern$patternhelper.getForwards().getAxis() == EnumFacing.Axis.X ? 0.0F : 90.0F;
                  entitywither.ignite();

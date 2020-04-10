@@ -60,7 +60,8 @@
 +import red.mohist.common.RealTimeTicking;
 +import red.mohist.configuration.MohistConfig;
  
- public abstract class Entity implements ICommandSender, net.minecraftforge.common.capabilities.ICapabilitySerializable<NBTTagCompound>
+-public abstract class Entity implements ICommandSender
++public abstract class Entity implements ICommandSender, net.minecraftforge.common.capabilities.ICapabilitySerializable<NBTTagCompound>
  {
 +    // CraftBukkit start
 +    private static final int CURRENT_LEVEL = 2;
@@ -103,7 +104,7 @@
      public int hurtResistantTime;
      protected boolean firstUpdate;
      protected boolean isImmuneToFire;
-@@ -172,7 +213,7 @@
+@@ -172,12 +213,40 @@
      protected UUID entityUniqueID;
      protected String cachedUniqueIdString;
      private final CommandResultStats cmdResultStats;
@@ -112,9 +113,11 @@
      private final Set<String> tags;
      private boolean isPositionDirty;
      private final double[] pistonDeltas;
-@@ -182,6 +223,30 @@
-      */
-     public boolean updateBlocked;
+     private long pistonDeltasGameTime;
++    /**
++     * Setting this to true will prevent the world from calling {@link #onUpdate()} for this entity.
++     */
++    public boolean updateBlocked;
  
 +    // CraftBukkit start
 +    public boolean valid;
@@ -143,7 +146,7 @@
      public Entity(World worldIn)
      {
          this.entityId = nextEntityID++;
-@@ -194,7 +259,7 @@
+@@ -190,7 +259,7 @@
          this.rand = new Random();
          this.fire = -this.getFireImmuneTicks();
          this.firstUpdate = true;
@@ -152,10 +155,12 @@
          this.cachedUniqueIdString = this.entityUniqueID.toString();
          this.cmdResultStats = new CommandResultStats();
          this.tags = Sets.<String>newHashSet();
-@@ -205,7 +270,12 @@
+@@ -200,8 +269,13 @@
+ 
          if (worldIn != null)
          {
-             this.dimension = worldIn.provider.getDimension();
+-            this.dimension = worldIn.provider.getDimensionType().getId();
++            this.dimension = worldIn.provider.getDimension();
 +            // Spigot start
 +            this.defaultActivationState = org.spigotmc.ActivationRange.initializeEntityActivationState(this, world.spigotConfig);
 +        } else {
@@ -165,28 +170,26 @@
  
          this.dataManager = new EntityDataManager(this);
          this.dataManager.register(FLAGS, Byte.valueOf((byte)0));
-@@ -215,15 +285,17 @@
+@@ -211,8 +285,18 @@
          this.dataManager.register(SILENT, Boolean.valueOf(false));
          this.dataManager.register(NO_GRAVITY, Boolean.valueOf(false));
          this.entityInit();
--        net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.EntityEvent.EntityConstructing(this));
--        capabilities = net.minecraftforge.event.ForgeEventFactory.gatherCapabilities(this);
 +        if(!(this instanceof EntityPlayer)) { // Mohist - move to EntityPlayer
 +            net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.EntityEvent.EntityConstructing(this));
 +            capabilities = net.minecraftforge.event.ForgeEventFactory.gatherCapabilities(this);
 +        }
      }
  
-     /** Forge: Used to store custom data for each entity. */
-     private NBTTagCompound customEntityData;
-     public boolean captureDrops = false;
-     public java.util.ArrayList<EntityItem> capturedDrops = new java.util.ArrayList<EntityItem>();
--    private net.minecraftforge.common.capabilities.CapabilityDispatcher capabilities;
++    /** Forge: Used to store custom data for each entity. */
++    private NBTTagCompound customEntityData;
++    public boolean captureDrops = false;
++    public java.util.ArrayList<EntityItem> capturedDrops = new java.util.ArrayList<EntityItem>();
 +    public net.minecraftforge.common.capabilities.CapabilityDispatcher capabilities; // Mohist - private -> public
- 
++
      public int getEntityId()
      {
-@@ -301,7 +373,7 @@
+         return this.entityId;
+@@ -289,7 +373,7 @@
                      break;
                  }
  
@@ -195,7 +198,7 @@
              }
  
              this.motionX = 0.0D;
-@@ -345,8 +417,35 @@
+@@ -333,8 +417,35 @@
          }
      }
  
@@ -232,7 +235,15 @@
          this.rotationYaw = yaw % 360.0F;
          this.rotationPitch = pitch % 360.0F;
      }
-@@ -389,72 +488,40 @@
+@@ -344,6 +455,7 @@
+         this.posX = x;
+         this.posY = y;
+         this.posZ = z;
++        if (this.isAddedToWorld() && !this.world.isRemote) this.world.updateEntityWithOptionalForce(this, false); // Forge - Process chunk registration after moving.
+         float f = this.width / 2.0F;
+         float f1 = this.height;
+         this.setEntityBoundingBox(new AxisAlignedBB(x - (double)f, y, z - (double)f, x + (double)f, y + (double)f1, z + (double)f));
+@@ -376,72 +488,40 @@
          this.onEntityUpdate();
      }
  
@@ -321,7 +332,7 @@
                      this.portalCounter = 0;
                  }
              }
-@@ -462,7 +529,33 @@
+@@ -449,7 +529,33 @@
              this.decrementTimeUntilPortal();
              this.world.profiler.endSection();
          }
@@ -355,7 +366,7 @@
          this.spawnRunningParticles();
          this.handleWaterMovement();
  
-@@ -530,6 +623,28 @@
+@@ -517,6 +623,28 @@
          if (!this.isImmuneToFire)
          {
              this.attackEntityFrom(DamageSource.LAVA, 4.0F);
@@ -384,7 +395,7 @@
              this.setFire(15);
          }
      }
-@@ -572,6 +687,7 @@
+@@ -559,6 +687,7 @@
  
      public void move(MoverType type, double x, double y, double z)
      {
@@ -392,7 +403,7 @@
          if (this.noClip)
          {
              this.setEntityBoundingBox(this.getEntityBoundingBox().offset(x, y, z));
-@@ -579,6 +695,25 @@
+@@ -566,6 +695,25 @@
          }
          else
          {
@@ -418,7 +429,7 @@
              if (type == MoverType.PISTON)
              {
                  long i = this.world.getTotalWorldTime();
-@@ -648,10 +783,6 @@
+@@ -635,10 +783,6 @@
                  this.motionZ = 0.0D;
              }
  
@@ -429,7 +440,7 @@
              if ((type == MoverType.SELF || type == MoverType.PLAYER) && this.onGround && this.isSneaking() && this instanceof EntityPlayer)
              {
                  for (double d5 = 0.05D; x != 0.0D && this.world.getCollisionBoxes(this, this.getEntityBoundingBox().offset(x, (double)(-this.stepHeight), 0.0D)).isEmpty(); d2 = x)
-@@ -912,6 +1043,26 @@
+@@ -899,6 +1043,26 @@
                  block.onLanded(this.world, this);
              }
  
@@ -456,7 +467,7 @@
              if (this.canTriggerWalking() && (!this.onGround || !this.isSneaking() || !(this instanceof EntityPlayer)) && !this.isRiding())
              {
                  double d15 = this.posX - d10;
-@@ -959,18 +1110,6 @@
+@@ -946,18 +1110,6 @@
                  }
              }
  
@@ -475,7 +486,7 @@
              boolean flag1 = this.isWet();
  
              if (this.world.isFlammableWithin(this.getEntityBoundingBox().shrink(0.001D)))
-@@ -983,7 +1122,13 @@
+@@ -970,7 +1122,13 @@
  
                      if (this.fire == 0)
                      {
@@ -490,7 +501,7 @@
                      }
                  }
              }
-@@ -1000,6 +1145,7 @@
+@@ -987,6 +1145,7 @@
  
              this.world.profiler.endSection();
          }
@@ -498,16 +509,15 @@
      }
  
      public void resetPositionToBB()
-@@ -1008,7 +1154,7 @@
+@@ -995,6 +1154,7 @@
          this.posX = (axisalignedbb.minX + axisalignedbb.maxX) / 2.0D;
          this.posY = axisalignedbb.minY;
          this.posZ = (axisalignedbb.minZ + axisalignedbb.maxZ) / 2.0D;
--        if (this.isAddedToWorld() && !this.world.isRemote) this.world.updateEntityWithOptionalForce(this, false); // Forge - Process chunk registration after moving.
 +        if (this.isAddedToWorld && !this.world.isRemote) this.world.updateEntityWithOptionalForce(this, false); // Forge - Process chunk registration after moving.
      }
  
      protected SoundEvent getSwimSound()
-@@ -1041,8 +1187,13 @@
+@@ -1027,8 +1187,13 @@
  
                          try
                          {
@@ -523,7 +533,16 @@
                          }
                          catch (Throwable throwable)
                          {
-@@ -1154,6 +1305,14 @@
+@@ -1053,7 +1218,7 @@
+ 
+     protected void playStepSound(BlockPos pos, Block blockIn)
+     {
+-        SoundType soundtype = blockIn.getSoundType();
++        SoundType soundtype = blockIn.getSoundType(world.getBlockState(pos), world, pos, this);
+ 
+         if (this.world.getBlockState(pos.up()).getBlock() == Blocks.SNOW_LAYER)
+         {
+@@ -1140,6 +1305,14 @@
          }
      }
  
@@ -538,7 +557,32 @@
      public final boolean isImmuneToFire()
      {
          return this.isImmuneToFire;
-@@ -1308,7 +1467,12 @@
+@@ -1259,6 +1432,7 @@
+         BlockPos blockpos = new BlockPos(i, j, k);
+         IBlockState iblockstate = this.world.getBlockState(blockpos);
+ 
++        if(!iblockstate.getBlock().addRunningEffects(iblockstate, world, blockpos, this))
+         if (iblockstate.getRenderType() != EnumBlockRenderType.INVISIBLE)
+         {
+             this.world.spawnParticle(EnumParticleTypes.BLOCK_CRACK, this.posX + ((double)this.rand.nextFloat() - 0.5D) * (double)this.width, this.getEntityBoundingBox().minY + 0.1D, this.posZ + ((double)this.rand.nextFloat() - 0.5D) * (double)this.width, -this.motionX * 4.0D, 1.5D, -this.motionZ * 4.0D, Block.getStateId(iblockstate));
+@@ -1277,12 +1451,12 @@
+             BlockPos blockpos = new BlockPos(this.posX, d0, this.posZ);
+             IBlockState iblockstate = this.world.getBlockState(blockpos);
+ 
++            Boolean result = iblockstate.getBlock().isEntityInsideMaterial(this.world, blockpos, iblockstate, this, d0, materialIn, true);
++            if (result != null) return result;
++
+             if (iblockstate.getMaterial() == materialIn)
+             {
+-                float f = BlockLiquid.getLiquidHeightPercent(iblockstate.getBlock().getMetaFromState(iblockstate)) - 0.11111111F;
+-                float f1 = (float)(blockpos.getY() + 1) - f;
+-                boolean flag = d0 < (double)f1;
+-                return !flag && this instanceof EntityPlayer ? false : flag;
++                return net.minecraftforge.common.ForgeHooks.isInsideOfMaterial(materialIn, this, blockpos);
+             }
+             else
+             {
+@@ -1293,7 +1467,12 @@
  
      public boolean isInLava()
      {
@@ -552,7 +596,7 @@
      }
  
      public void moveRelative(float strafe, float up, float forward, float friction)
-@@ -1369,6 +1533,11 @@
+@@ -1354,6 +1533,11 @@
  
      public void setWorld(World worldIn)
      {
@@ -564,7 +608,15 @@
          this.world = worldIn;
      }
  
-@@ -1687,6 +1856,16 @@
+@@ -1382,6 +1566,7 @@
+             this.prevRotationYaw -= 360.0F;
+         }
+ 
++        if (!this.world.isRemote) this.world.getChunkFromChunkCoords((int) Math.floor(this.posX) >> 4, (int) Math.floor(this.posZ) >> 4); // Forge - ensure target chunk is loaded.
+         this.setPosition(this.posX, this.posY, this.posZ);
+         this.setRotation(yaw, pitch);
+     }
+@@ -1671,6 +1856,16 @@
          {
              compound.setTag("Pos", this.newDoubleNBTList(this.posX, this.posY, this.posZ));
              compound.setTag("Motion", this.newDoubleNBTList(this.motionX, this.motionY, this.motionZ));
@@ -581,7 +633,7 @@
              compound.setTag("Rotation", this.newFloatNBTList(this.rotationYaw, this.rotationPitch));
              compound.setFloat("FallDistance", this.fallDistance);
              compound.setShort("Fire", (short)this.fire);
-@@ -1696,7 +1875,17 @@
+@@ -1680,7 +1875,17 @@
              compound.setBoolean("Invulnerable", this.invulnerable);
              compound.setInteger("PortalCooldown", this.timeUntilPortal);
              compound.setUniqueId("UUID", this.getUniqueID());
@@ -600,7 +652,25 @@
              if (this.hasCustomName())
              {
                  compound.setString("CustomName", this.getCustomNameTag());
-@@ -1761,7 +1950,6 @@
+@@ -1707,6 +1912,7 @@
+             {
+                 compound.setBoolean("Glowing", this.glowing);
+             }
++            compound.setBoolean("UpdateBlocked", updateBlocked);
+ 
+             if (!this.tags.isEmpty())
+             {
+@@ -1720,6 +1926,9 @@
+                 compound.setTag("Tags", nbttaglist);
+             }
+ 
++            if (customEntityData != null) compound.setTag("ForgeData", customEntityData);
++            if (this.capabilities != null) compound.setTag("ForgeCaps", this.capabilities.serializeNBT());
++
+             this.writeEntityToNBT(compound);
+ 
+             if (this.isBeingRidden())
+@@ -1741,7 +1950,6 @@
                      compound.setTag("Passengers", nbttaglist1);
                  }
              }
@@ -608,7 +678,7 @@
              return compound;
          }
          catch (Throwable throwable)
-@@ -1784,21 +1972,6 @@
+@@ -1764,21 +1972,6 @@
              this.motionY = nbttaglist2.getDoubleAt(1);
              this.motionZ = nbttaglist2.getDoubleAt(2);
  
@@ -630,7 +700,19 @@
              this.posX = nbttaglist.getDoubleAt(0);
              this.posY = nbttaglist.getDoubleAt(1);
              this.posZ = nbttaglist.getDoubleAt(2);
-@@ -1869,6 +2042,72 @@
+@@ -1826,7 +2019,11 @@
+             this.setSilent(compound.getBoolean("Silent"));
+             this.setNoGravity(compound.getBoolean("NoGravity"));
+             this.setGlowing(compound.getBoolean("Glowing"));
++            updateBlocked = compound.getBoolean("UpdateBlocked");
+ 
++            if (compound.hasKey("ForgeData")) customEntityData = compound.getCompoundTag("ForgeData");
++            if (this.capabilities != null && compound.hasKey("ForgeCaps")) this.capabilities.deserializeNBT(compound.getCompoundTag("ForgeCaps"));
++
+             if (compound.hasKey("Tags", 9))
+             {
+                 this.tags.clear();
+@@ -1845,6 +2042,72 @@
              {
                  this.setPosition(this.posX, this.posY, this.posZ);
              }
@@ -703,7 +785,7 @@
          }
          catch (Throwable throwable)
          {
-@@ -1885,7 +2124,7 @@
+@@ -1861,7 +2124,7 @@
      }
  
      @Nullable
@@ -712,7 +794,43 @@
      {
          ResourceLocation resourcelocation = EntityList.getKey(this);
          return resourcelocation == null ? null : resourcelocation.toString();
-@@ -2110,6 +2349,28 @@
+@@ -1918,7 +2181,10 @@
+         {
+             EntityItem entityitem = new EntityItem(this.world, this.posX, this.posY + (double)offsetY, this.posZ, stack);
+             entityitem.setDefaultPickupDelay();
+-            this.world.spawnEntity(entityitem);
++            if (captureDrops)
++                this.capturedDrops.add(entityitem);
++            else
++                this.world.spawnEntity(entityitem);
+             return entityitem;
+         }
+     }
+@@ -1985,6 +2251,7 @@
+             this.motionX = 0.0D;
+             this.motionY = 0.0D;
+             this.motionZ = 0.0D;
++            if(!updateBlocked)
+             this.onUpdate();
+ 
+             if (this.isRiding())
+@@ -2032,6 +2299,7 @@
+             }
+         }
+ 
++        if (!net.minecraftforge.event.ForgeEventFactory.canMountEntity(this, entityIn, true)) return false;
+         if (force || this.canBeRidden(entityIn) && entityIn.canFitPassenger(this))
+         {
+             if (this.isRiding())
+@@ -2067,6 +2335,7 @@
+         if (this.ridingEntity != null)
+         {
+             Entity entity = this.ridingEntity;
++            if (!net.minecraftforge.event.ForgeEventFactory.canMountEntity(this, entity, false)) return;
+             this.ridingEntity = null;
+             entity.removePassenger(this);
+         }
+@@ -2080,6 +2349,28 @@
          }
          else
          {
@@ -741,7 +859,7 @@
              if (!this.world.isRemote && passenger instanceof EntityPlayer && !(this.getControllingPassenger() instanceof EntityPlayer))
              {
                  this.riddenByEntities.add(0, passenger);
-@@ -2129,6 +2390,27 @@
+@@ -2099,6 +2390,27 @@
          }
          else
          {
@@ -769,7 +887,7 @@
              this.riddenByEntities.remove(passenger);
              passenger.rideCooldown = 60;
          }
-@@ -2325,12 +2607,12 @@
+@@ -2295,12 +2607,12 @@
          this.setFlag(5, invisible);
      }
  
@@ -784,7 +902,7 @@
      {
          byte b0 = ((Byte)this.dataManager.get(FLAGS)).byteValue();
  
-@@ -2351,17 +2633,52 @@
+@@ -2321,17 +2633,52 @@
  
      public void setAir(int air)
      {
@@ -839,7 +957,7 @@
          }
      }
  
-@@ -2502,7 +2819,7 @@
+@@ -2472,7 +2819,7 @@
  
      public String toString()
      {
@@ -848,17 +966,20 @@
      }
  
      public boolean isEntityInvulnerable(DamageSource source)
-@@ -2540,7 +2857,7 @@
+@@ -2509,57 +2856,79 @@
+     @Nullable
      public Entity changeDimension(int dimensionIn)
      {
-         if (this.world.isRemote || this.isDead) return null;
--        return changeDimension(dimensionIn, this.getServer().getWorld(dimensionIn).getDefaultTeleporter());
++        if (this.world.isRemote || this.isDead) return null;
 +        return changeDimension(dimensionIn, this.getServer().getWorldServer(dimensionIn).getDefaultTeleporter());
-     }
- 
-     @Nullable // Forge: Entities that require custom handling should override this method, not the other
-@@ -2551,53 +2868,67 @@
-             if (!net.minecraftforge.common.ForgeHooks.onTravelToDimension(this, dimensionIn)) return null;
++    }
++
++    @Nullable // Forge: Entities that require custom handling should override this method, not the other
++    public Entity changeDimension(int dimensionIn, net.minecraftforge.common.util.ITeleporter teleporter)
++    {
+         if (!this.world.isRemote && !this.isDead)
+         {
++            if (!net.minecraftforge.common.ForgeHooks.onTravelToDimension(this, dimensionIn)) return null;
              this.world.profiler.startSection("changeDimension");
              MinecraftServer minecraftserver = this.getServer();
 -            int i = this.dimension;
@@ -866,7 +987,7 @@
 -            WorldServer worldserver1 = minecraftserver.getWorld(dimensionIn);
 -            this.dimension = dimensionIn;
 -
--            if (i == 1 && dimensionIn == 1 && teleporter.isVanilla())
+-            if (i == 1 && dimensionIn == 1)
 -            {
 -                worldserver1 = minecraftserver.getWorld(0);
 -                this.dimension = 0;
@@ -889,7 +1010,7 @@
 -            this.world.profiler.startSection("reposition");
 -            BlockPos blockpos;
 -
--            if (dimensionIn == 1 && teleporter.isVanilla())
+-            if (dimensionIn == 1)
 -            {
 -                blockpos = worldserver1.getSpawnCoordinate();
 +            BlockPos blockposition = null; // PAIL: CHECK
@@ -904,21 +1025,20 @@
              }
 -            else
 -            {
--                double moveFactor = worldserver.provider.getMovementFactor() / worldserver1.provider.getMovementFactor();
--                double d0 = MathHelper.clamp(this.posX * moveFactor, worldserver1.getWorldBorder().minX() + 16.0D, worldserver1.getWorldBorder().maxX() - 16.0D);
--                double d1 = MathHelper.clamp(this.posZ * moveFactor, worldserver1.getWorldBorder().minZ() + 16.0D, worldserver1.getWorldBorder().maxZ() - 16.0D);
+-                double d0 = this.posX;
+-                double d1 = this.posZ;
 -                double d2 = 8.0D;
 +            else {
 +                exit = null;
 +            }
 +            boolean useTravelAgent = exitWorld != null && !(this.dimension == 1 && exitWorld.dimension == 1); // don't use agent for custom worlds or return from THE_END
  
--                if (false && dimensionIn == -1)
+-                if (dimensionIn == -1)
 -                {
 -                    d0 = MathHelper.clamp(d0 / 8.0D, worldserver1.getWorldBorder().minX() + 16.0D, worldserver1.getWorldBorder().maxX() - 16.0D);
 -                    d1 = MathHelper.clamp(d1 / 8.0D, worldserver1.getWorldBorder().minZ() + 16.0D, worldserver1.getWorldBorder().maxZ() - 16.0D);
 -                }
--                else if (false && dimensionIn == 0)
+-                else if (dimensionIn == 0)
 -                {
 -                    d0 = MathHelper.clamp(d0 * 8.0D, worldserver1.getWorldBorder().minX() + 16.0D, worldserver1.getWorldBorder().maxX() - 16.0D);
 -                    d1 = MathHelper.clamp(d1 * 8.0D, worldserver1.getWorldBorder().minZ() + 16.0D, worldserver1.getWorldBorder().maxZ() - 16.0D);
@@ -931,7 +1051,8 @@
 -                d1 = (double)MathHelper.clamp((int)d1, -29999872, 29999872);
 -                float f = this.rotationYaw;
 -                this.setLocationAndAngles(d0, this.posY, d1, 90.0F, 0.0F);
--                teleporter.placeEntity(worldserver1, this, f);
+-                Teleporter teleporter = worldserver1.getDefaultTeleporter();
+-                teleporter.placeInExistingPortal(this, f);
 -                blockpos = new BlockPos(this);
 +            EntityPortalEvent event = new EntityPortalEvent(this.getBukkitEntity(), enter, exit, agent);
 +            event.useTravelAgent(useTravelAgent);
@@ -965,11 +1086,11 @@
              this.world.profiler.endStartSection("reloading");
              Entity entity = EntityList.newEntity(this.getClass(), worldserver1);
  
-@@ -2605,28 +2936,26 @@
+@@ -2567,28 +2936,26 @@
              {
                  entity.copyDataFromOld(this);
  
--                if (i == 1 && dimensionIn == 1 && teleporter.isVanilla())
+-                if (i == 1 && dimensionIn == 1)
 -                {
 -                    BlockPos blockpos1 = worldserver1.getTopSolidOrLiquidBlock(worldserver1.getSpawnPoint());
 -                    entity.moveToBlockPosAndAngles(blockpos1, entity.rotationYaw, entity.rotationPitch);
@@ -1003,7 +1124,16 @@
              return entity;
          }
          else
-@@ -2755,6 +3084,11 @@
+@@ -2604,7 +2971,7 @@
+ 
+     public float getExplosionResistance(Explosion explosionIn, World worldIn, BlockPos pos, IBlockState blockStateIn)
+     {
+-        return blockStateIn.getBlock().getExplosionResistance(this);
++        return blockStateIn.getBlock().getExplosionResistance(worldIn, pos, this, explosionIn);
+     }
+ 
+     public boolean canExplosionDestroyBlock(Explosion explosionIn, World worldIn, BlockPos pos, IBlockState blockStateIn, float p_174816_5_)
+@@ -2717,6 +3084,11 @@
  
      public void setCustomNameTag(String name)
      {
@@ -1015,7 +1145,7 @@
          this.dataManager.set(CUSTOM_NAME, name);
      }
  
-@@ -2838,7 +3172,25 @@
+@@ -2800,7 +3172,25 @@
  
      public void setEntityBoundingBox(AxisAlignedBB bb)
      {
@@ -1042,7 +1172,7 @@
      }
  
      public float getEyeHeight()
-@@ -2870,6 +3222,11 @@
+@@ -2832,6 +3222,11 @@
          return true;
      }
  
@@ -1054,7 +1184,7 @@
      public BlockPos getPosition()
      {
          return new BlockPos(this.posX, this.posY + 0.5D, this.posZ);
-@@ -2897,11 +3254,11 @@
+@@ -2859,11 +3254,11 @@
  
      public void setCommandStat(CommandResultStats.Type type, int amount)
      {
@@ -1070,41 +1200,225 @@
  
      @Nullable
      public MinecraftServer getServer()
-@@ -2974,7 +3331,6 @@
-     public void onRemovedFromWorld() {
-         this.isAddedToWorld = false;
+@@ -2901,6 +3296,217 @@
+         EnchantmentHelper.applyArthropodEnchantments(entityLivingBaseIn, entityIn);
      }
--
-     /**
-      * Returns a NBTTagCompound that can be used to store custom data for this entity.
-      * It will be written, and read from disc, so it persists over world saves.
-@@ -3030,7 +3386,7 @@
-         {
-             return ((net.minecraft.entity.item.EntityMinecart)this).getCartItem();
-         }
--        else if (this instanceof net.minecraft.entity.item.EntityBoat)
+ 
++    /* ================================== Forge Start =====================================*/
++    /**
++     * Internal use for keeping track of entities that are tracked by a world, to
++     * allow guarantees that entity position changes will force a chunk load, avoiding
++     * potential issues with entity desyncing and bad chunk data.
++     */
++    private boolean isAddedToWorld;
++
++    /**
++     * Gets whether this entity has been added to a world (for tracking). Specifically
++     * between the times when an entity is added to a world and the entity being removed
++     * from the world's tracked lists. See {@link World#onEntityAdded(Entity)} and
++     * {@link World#onEntityRemoved(Entity)}.
++     *
++     * @return True if this entity is being tracked by a world
++     */
++    public final boolean isAddedToWorld() { return this.isAddedToWorld; }
++
++    /**
++     * Called after the entity has been added to the world's
++     * ticking list. Can be overriden, but needs to call super
++     * to prevent MC-136995.
++     */
++    public void onAddedToWorld() {
++        this.isAddedToWorld = true;
++    }
++
++    /**
++     * Called after the entity has been removed to the world's
++     * ticking list. Can be overriden, but needs to call super
++     * to prevent MC-136995.
++     */
++    public void onRemovedFromWorld() {
++        this.isAddedToWorld = false;
++    }
++    /**
++     * Returns a NBTTagCompound that can be used to store custom data for this entity.
++     * It will be written, and read from disc, so it persists over world saves.
++     * @return A NBTTagCompound
++     */
++    public NBTTagCompound getEntityData()
++    {
++        if (customEntityData == null)
++        {
++            customEntityData = new NBTTagCompound();
++        }
++        return customEntityData;
++    }
++
++    /**
++     * Used in model rendering to determine if the entity riding this entity should be in the 'sitting' position.
++     * @return false to prevent an entity that is mounted to this entity from displaying the 'sitting' animation.
++     */
++    public boolean shouldRiderSit()
++    {
++        return true;
++    }
++
++    /**
++     * Called when a user uses the creative pick block button on this entity.
++     *
++     * @param target The full target the player is looking at
++     * @return A ItemStack to add to the player's inventory, empty ItemStack if nothing should be added.
++     */
++    public ItemStack getPickedResult(RayTraceResult target)
++    {
++        if (this instanceof net.minecraft.entity.item.EntityPainting)
++        {
++            return new ItemStack(net.minecraft.init.Items.PAINTING);
++        }
++        else if (this instanceof EntityLeashKnot)
++        {
++            return new ItemStack(net.minecraft.init.Items.LEAD);
++        }
++        else if (this instanceof net.minecraft.entity.item.EntityItemFrame)
++        {
++            ItemStack held = ((net.minecraft.entity.item.EntityItemFrame)this).getDisplayedItem();
++            if (held.isEmpty())
++            {
++                return new ItemStack(net.minecraft.init.Items.ITEM_FRAME);
++            }
++            else
++            {
++                return held.copy();
++            }
++        }
++        else if (this instanceof net.minecraft.entity.item.EntityMinecart)
++        {
++            return ((net.minecraft.entity.item.EntityMinecart)this).getCartItem();
++        }
 +        else if (this instanceof EntityBoat)
-         {
-             return new ItemStack(((EntityBoat)this).getItemBoat());
-         }
-@@ -3109,14 +3465,14 @@
-     }
- 
-     @Override
--    public boolean hasCapability(net.minecraftforge.common.capabilities.Capability<?> capability, @Nullable net.minecraft.util.EnumFacing facing)
++        {
++            return new ItemStack(((EntityBoat)this).getItemBoat());
++        }
++        else if (this instanceof net.minecraft.entity.item.EntityArmorStand)
++        {
++            return new ItemStack(net.minecraft.init.Items.ARMOR_STAND);
++        }
++        else if (this instanceof net.minecraft.entity.item.EntityEnderCrystal)
++        {
++            return new ItemStack(net.minecraft.init.Items.END_CRYSTAL);
++        }
++        else
++        {
++            ResourceLocation name = EntityList.getKey(this);
++            if (name != null && EntityList.ENTITY_EGGS.containsKey(name))
++            {
++                ItemStack stack = new ItemStack(net.minecraft.init.Items.SPAWN_EGG);
++                net.minecraft.item.ItemMonsterPlacer.applyEntityIdToItemStack(stack, name);
++                return stack;
++            }
++        }
++        return ItemStack.EMPTY;
++    }
++
++    public UUID getPersistentID()
++    {
++        return entityUniqueID;
++    }
++
++    /**
++     * Reset the entity ID to a new value. Not to be used from Mod code
++     */
++    @Deprecated // TODO: remove (1.13?)
++    public final void resetEntityId()
++    {
++        this.entityId = nextEntityID++;
++    }
++
++    public boolean shouldRenderInPass(int pass)
++    {
++        return pass == 0;
++    }
++
++    /**
++     * Returns true if the entity is of the @link{EnumCreatureType} provided
++     * @param type The EnumCreatureType type this entity is evaluating
++     * @param forSpawnCount If this is being invoked to check spawn count caps.
++     * @return If the creature is of the type provided
++     */
++    public boolean isCreatureType(EnumCreatureType type, boolean forSpawnCount)
++    {
++        if (forSpawnCount && (this instanceof EntityLiving) && ((EntityLiving)this).isNoDespawnRequired()) return false;
++        return type.getCreatureClass().isAssignableFrom(this.getClass());
++    }
++
++    /**
++     * If a rider of this entity can interact with this entity. Should return true on the
++     * ridden entity if so.
++     *
++     * @return if the entity can be interacted with from a rider
++     */
++    public boolean canRiderInteract()
++    {
++        return false;
++    }
++
++    /**
++     * If the rider should be dismounted from the entity when the entity goes under water
++     *
++     * @param rider The entity that is riding
++     * @return if the entity should be dismounted when under water
++     */
++    public boolean shouldDismountInWater(Entity rider)
++    {
++        return this instanceof EntityLivingBase;
++    }
++
++    @Override
 +    public boolean hasCapability(net.minecraftforge.common.capabilities.Capability<?> capability, @Nullable EnumFacing facing)
-     {
-         return capabilities != null && capabilities.hasCapability(capability, facing);
-     }
- 
-     @Override
-     @Nullable
--    public <T> T getCapability(net.minecraftforge.common.capabilities.Capability<T> capability, @Nullable net.minecraft.util.EnumFacing facing)
++    {
++        return capabilities != null && capabilities.hasCapability(capability, facing);
++    }
++
++    @Override
++    @Nullable
 +    public <T> T getCapability(net.minecraftforge.common.capabilities.Capability<T> capability, @Nullable EnumFacing facing)
++    {
++        return capabilities == null ? null : capabilities.getCapability(capability, facing);
++    }
++
++    public void deserializeNBT(NBTTagCompound nbt)
++    {
++        this.readFromNBT(nbt);
++    }
++
++    public NBTTagCompound serializeNBT()
++    {
++        NBTTagCompound ret = new NBTTagCompound();
++        ret.setString("id", this.getEntityString());
++        return this.writeToNBT(ret);
++    }
++
++    /**
++     * Checks if this {@link Entity} can trample a {@link Block}.
++     *
++     * @param world The world in which the block will be trampled
++     * @param block The block being tested
++     * @param pos The block pos
++     * @param fallDistance The fall distance
++     * @return {@code true} if this entity can trample, {@code false} otherwise
++     */
++    public boolean canTrample(World world, Block block, BlockPos pos, float fallDistance)
++    {
++        return world.rand.nextFloat() < fallDistance - 0.5F
++            && this instanceof EntityLivingBase
++            && (this instanceof EntityPlayer || net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(world, this))
++            && this.width * this.width * this.height > 0.512F;
++    }
++    /* ================================== Forge End =====================================*/
++
+     public void addTrackingPlayer(EntityPlayerMP player)
      {
-         return capabilities == null ? null : capabilities.getCapability(capability, facing);
      }
-@@ -3319,7 +3675,7 @@
+@@ -3069,7 +3675,7 @@
          return SoundCategory.NEUTRAL;
      }
  

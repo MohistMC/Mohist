@@ -53,7 +53,7 @@
      public TileEntityChest()
      {
      }
-@@ -109,7 +137,7 @@
+@@ -109,13 +137,14 @@
  
      public int getInventoryStackLimit()
      {
@@ -62,7 +62,22 @@
      }
  
      public void updateContainingBlockInfo()
-@@ -325,8 +353,21 @@
+     {
+         super.updateContainingBlockInfo();
+         this.adjacentChestChecked = false;
++        doubleChestHandler = null;
+     }
+ 
+     @SuppressWarnings("incomplete-switch")
+@@ -167,6 +196,7 @@
+     {
+         if (!this.adjacentChestChecked)
+         {
++            if (this.world == null || !this.world.isAreaLoaded(this.pos, 1)) return; // Forge: prevent loading unloaded chunks when checking neighbors
+             this.adjacentChestChecked = true;
+             this.adjacentChestXNeg = this.getAdjacentChest(EnumFacing.WEST);
+             this.adjacentChestXPos = this.getAdjacentChest(EnumFacing.EAST);
+@@ -323,8 +353,21 @@
                  this.numPlayersUsing = 0;
              }
  
@@ -84,7 +99,7 @@
              this.world.notifyNeighborsOfStateChange(this.pos, this.getBlockType(), false);
  
              if (this.getChestType() == BlockChest.Type.TRAP)
-@@ -340,14 +381,21 @@
+@@ -338,17 +381,47 @@
      {
          if (!player.isSpectator() && this.getBlockType() instanceof BlockChest)
          {
@@ -106,3 +121,29 @@
          }
      }
  
++    public net.minecraftforge.items.VanillaDoubleChestItemHandler doubleChestHandler;
++
++    @SuppressWarnings("unchecked")
++    @Override
++    @Nullable
++    public <T> T getCapability(net.minecraftforge.common.capabilities.Capability<T> capability, @Nullable net.minecraft.util.EnumFacing facing)
++    {
++        if (capability == net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABILITY)
++        {
++            if(doubleChestHandler == null || doubleChestHandler.needsRefresh())
++                doubleChestHandler = net.minecraftforge.items.VanillaDoubleChestItemHandler.get(this);
++            if (doubleChestHandler != null && doubleChestHandler != net.minecraftforge.items.VanillaDoubleChestItemHandler.NO_ADJACENT_CHESTS_INSTANCE)
++                return (T) doubleChestHandler;
++        }
++        return super.getCapability(capability, facing);
++    }
++
++    public net.minecraftforge.items.IItemHandler getSingleChestHandler()
++    {
++        return super.getCapability(net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
++    }
++
++
+     public void invalidate()
+     {
+         super.invalidate();

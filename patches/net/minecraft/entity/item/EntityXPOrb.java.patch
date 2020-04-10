@@ -77,7 +77,18 @@
              }
          }
  
-@@ -152,7 +173,12 @@
+@@ -137,7 +158,9 @@
+ 
+         if (this.onGround)
+         {
+-            f = this.world.getBlockState(new BlockPos(MathHelper.floor(this.posX), MathHelper.floor(this.getEntityBoundingBox().minY) - 1, MathHelper.floor(this.posZ))).getBlock().slipperiness * 0.98F;
++            BlockPos underPos = new BlockPos(MathHelper.floor(this.posX), MathHelper.floor(this.getEntityBoundingBox().minY) - 1, MathHelper.floor(this.posZ));
++            net.minecraft.block.state.IBlockState underState = this.world.getBlockState(underPos);
++            f = underState.getBlock().getSlipperiness(underState, this.world, underPos, this) * 0.98F;
+         }
+ 
+         this.motionX *= (double)f;
+@@ -150,7 +173,12 @@
          }
  
          ++this.xpColor;
@@ -91,7 +102,15 @@
  
          if (this.xpOrbAge >= 6000)
          {
-@@ -195,22 +221,22 @@
+@@ -170,6 +198,7 @@
+ 
+     public boolean attackEntityFrom(DamageSource source, float amount)
+     {
++        if (this.world.isRemote || this.isDead) return false; //Forge: Fixes MC-53850
+         if (this.isEntityInvulnerable(source))
+         {
+             return false;
+@@ -192,36 +221,42 @@
      {
          compound.setShort("Health", (short)this.xpOrbHealth);
          compound.setShort("Age", (short)this.xpOrbAge);
@@ -115,15 +134,18 @@
 -            {
 +            if (this.delayBeforeCanPickup == 0 && entityIn.xpCooldown == 0 )
 +			{
-                 if (net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.player.PlayerPickupXpEvent(entityIn, this))) return;
++                if (net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.player.PlayerPickupXpEvent(entityIn, this))) return;
                  entityIn.xpCooldown = 2;
                  entityIn.onItemPickup(this, 1);
-@@ -220,13 +246,17 @@
+                 ItemStack itemstack = EnchantmentHelper.getEnchantedItem(Enchantments.MENDING, entityIn);
+ 
+                 if (!itemstack.isEmpty() && itemstack.isItemDamaged())
                  {
-                     float ratio = itemstack.getItem().getXpRepairRatio(itemstack);
-                     int i = Math.min(roundAverage(this.xpValue * ratio), itemstack.getItemDamage());
--                    this.xpValue -= roundAverage(i / ratio);
+-                    int i = Math.min(this.xpToDurability(this.xpValue), itemstack.getItemDamage());
+-                    this.xpValue -= this.durabilityToXp(i);
 -                    itemstack.setItemDamage(itemstack.getItemDamage() - i);
++                    float ratio = itemstack.getItem().getXpRepairRatio(itemstack);
++                    int i = Math.min(roundAverage(this.xpValue * ratio), itemstack.getItemDamage());
 +                    org.bukkit.event.player.PlayerItemMendEvent event = CraftEventFactory.callPlayerItemMendEvent(entityIn, this, itemstack, i);
 +                    i = event.getRepairAmount();
 +                    if (!event.isCancelled()) {
@@ -139,7 +161,7 @@
                  }
  
                  this.setDead();
-@@ -296,6 +326,24 @@
+@@ -291,6 +326,24 @@
  
      public static int getXPSplit(int expValue)
      {
@@ -164,3 +186,14 @@
          if (expValue >= 2477)
          {
              return 2477;
+@@ -337,4 +390,10 @@
+     {
+         return false;
+     }
++
++    private static int roundAverage(float value)
++    {
++        double floor = Math.floor(value);
++        return (int) floor + (Math.random() < value - floor ? 1 : 0);
++    }
+ }

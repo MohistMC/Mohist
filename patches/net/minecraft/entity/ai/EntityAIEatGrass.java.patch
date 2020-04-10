@@ -13,7 +13,7 @@
  
              if (IS_TALL_GRASS.apply(this.entityWorld.getBlockState(blockpos)))
              {
--                if (net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(this.entityWorld, this.grassEaterEntity))
+-                if (this.entityWorld.getGameRules().getBoolean("mobGriefing"))
 +                if (!CraftEventFactory.callEntityChangeBlockEvent(this.grassEaterEntity, this.grassEaterEntity.world.getWorld().getBlockAt(blockpos.getX(), blockpos.getY(), blockpos.getZ()), Material.AIR, !net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(this.entityWorld, this.grassEaterEntity)).isCancelled())
                  {
                      this.entityWorld.destroyBlock(blockpos, false);
@@ -22,7 +22,7 @@
  
                  if (this.entityWorld.getBlockState(blockpos1).getBlock() == Blocks.GRASS)
                  {
--                    if (net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(this.entityWorld, this.grassEaterEntity))
+-                    if (this.entityWorld.getGameRules().getBoolean("mobGriefing"))
 +                    if (!CraftEventFactory.callEntityChangeBlockEvent(this.grassEaterEntity, this.grassEaterEntity.world.getWorld().getBlockAt(blockpos.getX(), blockpos.getY(), blockpos.getZ()), Material.AIR, !net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(this.entityWorld, this.grassEaterEntity)).isCancelled())
                      {
                          this.entityWorld.playEvent(2001, blockpos1, Block.getIdFromBlock(Blocks.GRASS));

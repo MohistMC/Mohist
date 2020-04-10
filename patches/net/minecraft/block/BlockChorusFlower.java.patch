@@ -8,6 +8,15 @@
  
  public class BlockChorusFlower extends Block
  {
+@@ -55,7 +56,7 @@
+             {
+                 int i = ((Integer)state.getValue(AGE)).intValue();
+ 
+-                if (i < 5 && rand.nextInt(1) == 0)
++                if (i < 5 &&  net.minecraftforge.common.ForgeHooks.onCropsGrowPre(worldIn, blockpos, state, rand.nextInt(1) == 0))
+                 {
+                     boolean flag = false;
+                     boolean flag1 = false;
 @@ -106,8 +107,18 @@
  
                      if (flag && areAllNeighborsEmpty(worldIn, blockpos, (EnumFacing)null) && worldIn.isAirBlock(pos.up(2)))
@@ -48,7 +57,7 @@
                                  flag2 = true;
                              }
                          }
-@@ -137,12 +158,32 @@
+@@ -137,13 +158,34 @@
                          }
                          else
                          {
@@ -81,5 +90,7 @@
 +                            worldIn.playEvent(1034, pos, 0);
 +                        }
                      }
-                     net.minecraftforge.common.ForgeHooks.onCropsGrowPost(worldIn, pos, state, worldIn.getBlockState(pos));
++                    net.minecraftforge.common.ForgeHooks.onCropsGrowPost(worldIn, pos, state, worldIn.getBlockState(pos));
                  }
+             }
+         }

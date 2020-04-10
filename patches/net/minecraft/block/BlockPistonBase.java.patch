@@ -39,13 +39,22 @@
                      }
                  }
  
--                if (!flag1 && !iblockstate.getBlock().isAir(iblockstate, worldIn, blockpos) && canPush(iblockstate, worldIn, blockpos, enumfacing.getOpposite(), false, enumfacing) && (iblockstate.getMobilityFlag() == EnumPushReaction.NORMAL || block == Blocks.PISTON || block == Blocks.STICKY_PISTON))
+-                if (!flag1 && iblockstate.getMaterial() != Material.AIR && canPush(iblockstate, worldIn, blockpos, enumfacing.getOpposite(), false, enumfacing) && (iblockstate.getMobilityFlag() == EnumPushReaction.NORMAL || block == Blocks.PISTON || block == Blocks.STICKY_PISTON))
 +                // CraftBukkit - remove '!iblockstate.getBlock().isAir(iblockstate, worldIn, blockpos)' condition
 +                if (!flag1 && canPush(iblockstate, worldIn, blockpos, enumfacing.getOpposite(), false, enumfacing) && (iblockstate.getMobilityFlag() == EnumPushReaction.NORMAL || block == Blocks.PISTON || block == Blocks.STICKY_PISTON))
                  {
                      this.doMove(worldIn, pos, enumfacing, false);
                  }
-@@ -349,6 +364,71 @@
+@@ -307,7 +322,7 @@
+                     return false;
+                 }
+ 
+-                return !block.hasTileEntity();
++                return !block.hasTileEntity(blockStateIn);
+             }
+             else
+             {
+@@ -349,11 +364,78 @@
              IBlockState[] aiblockstate = new IBlockState[k];
              EnumFacing enumfacing = extending ? direction : direction.getOpposite();
  
@@ -117,3 +126,25 @@
              for (int j = list2.size() - 1; j >= 0; --j)
              {
                  BlockPos blockpos1 = list2.get(j);
+                 IBlockState iblockstate = worldIn.getBlockState(blockpos1);
+-                iblockstate.getBlock().dropBlockAsItem(worldIn, blockpos1, iblockstate, 0);
++                // Forge: With our change to how snowballs are dropped this needs to disallow to mimic vanilla behavior.
++                float chance = iblockstate.getBlock() instanceof BlockSnow ? -1.0f : 1.0f;
++                iblockstate.getBlock().dropBlockAsItemWithChance(worldIn, blockpos1, iblockstate, chance, 0);
+                 worldIn.setBlockState(blockpos1, Blocks.AIR.getDefaultState(), 4);
+                 --k;
+                 aiblockstate[k] = iblockstate;
+@@ -434,6 +516,13 @@
+         return new BlockStateContainer(this, new IProperty[] {FACING, EXTENDED});
+     }
+ 
++    /* ======================================== FORGE START =====================================*/
++    public boolean rotateBlock(World world, BlockPos pos, EnumFacing axis)
++    {
++        IBlockState state = world.getBlockState(pos);
++        return !state.getValue(EXTENDED) && super.rotateBlock(world, pos, axis);
++    }
++
+     public BlockFaceShape getBlockFaceShape(IBlockAccess worldIn, IBlockState state, BlockPos pos, EnumFacing face)
+     {
+         state = this.getActualState(state, worldIn, pos);

@@ -1,0 +1,10 @@
+--- ../src-base/minecraft/net/minecraft/util/text/ITextComponent.java
++++ ../src-work/minecraft/net/minecraft/util/text/ITextComponent.java
+@@ -34,7 +34,6 @@
+ 
+     String getUnformattedText();
+ 
+-    @SideOnly(Side.CLIENT)
+     String getFormattedText();
+ 
+     List<ITextComponent> getSiblings();

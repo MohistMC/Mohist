@@ -60,7 +60,16 @@
      {
          return SHAPE;
      }
-@@ -197,13 +205,13 @@
+@@ -163,6 +171,8 @@
+     {
+         if (((Boolean)blockState.getValue(POWERED)).booleanValue())
+         {
++            List<EntityMinecart> carts = this.findMinecarts(worldIn, pos, EntityMinecart.class);
++            if (!carts.isEmpty() && carts.get(0).getComparatorLevel() > -1) return carts.get(0).getComparatorLevel();
+             List<EntityMinecartCommandBlock> list = this.<EntityMinecartCommandBlock>findMinecarts(worldIn, pos, EntityMinecartCommandBlock.class);
+ 
+             if (!list.isEmpty())
+@@ -195,13 +205,13 @@
  
      public IBlockState getStateFromMeta(int meta)
      {
@@ -76,7 +85,7 @@
  
          if (((Boolean)state.getValue(POWERED)).booleanValue())
          {
-@@ -220,76 +228,76 @@
+@@ -218,76 +228,76 @@
          {
              case CLOCKWISE_180:
  
@@ -184,7 +193,7 @@
                  }
  
              default:
-@@ -300,7 +308,7 @@
+@@ -298,7 +308,7 @@
      @SuppressWarnings("incomplete-switch")
      public IBlockState withMirror(IBlockState state, Mirror mirrorIn)
      {
@@ -193,7 +202,7 @@
  
          switch (mirrorIn)
          {
-@@ -309,17 +317,17 @@
+@@ -307,17 +317,17 @@
                  switch (blockrailbase$enumraildirection)
                  {
                      case ASCENDING_NORTH:
@@ -217,7 +226,7 @@
                      default:
                          return super.withMirror(state, mirrorIn);
                  }
-@@ -329,21 +337,21 @@
+@@ -327,21 +337,21 @@
                  switch (blockrailbase$enumraildirection)
                  {
                      case ASCENDING_EAST:

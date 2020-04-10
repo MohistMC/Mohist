@@ -26,3 +26,13 @@
          this.listeners.add(listener);
      }
  
+@@ -284,4 +289,9 @@
+             iborderlistener.onWarningDistanceChanged(this, warningDistance);
+         }
+     }
++
++    public void removeListener(IBorderListener listener)
++    {
++        this.listeners.remove(listener);
++    }
+ }

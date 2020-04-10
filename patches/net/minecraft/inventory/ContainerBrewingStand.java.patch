@@ -65,8 +65,30 @@
                  {
                      if (!this.mergeItemStack(itemstack1, 4, 5, false))
                      {
-@@ -242,4 +247,15 @@
-                 return net.minecraftforge.common.brewing.BrewingRecipeRegistry.isValidInput(stack);
+@@ -197,7 +202,7 @@
+ 
+             public boolean isItemValid(ItemStack stack)
+             {
+-                return PotionHelper.isReagent(stack);
++                return net.minecraftforge.common.brewing.BrewingRecipeRegistry.isValidIngredient(stack);
+             }
+ 
+             public int getSlotStackLimit()
+@@ -229,6 +234,7 @@
+ 
+                 if (thePlayer instanceof EntityPlayerMP)
+                 {
++                    net.minecraftforge.event.ForgeEventFactory.onPlayerBrewedPotion(thePlayer, stack);
+                     CriteriaTriggers.BREWED_POTION.trigger((EntityPlayerMP)thePlayer, potiontype);
+                 }
+ 
+@@ -238,8 +244,18 @@
+ 
+             public static boolean canHoldPotion(ItemStack stack)
+             {
+-                Item item = stack.getItem();
+-                return item == Items.POTIONITEM || item == Items.SPLASH_POTION || item == Items.LINGERING_POTION || item == Items.GLASS_BOTTLE;
++                return net.minecraftforge.common.brewing.BrewingRecipeRegistry.isValidInput(stack);
              }
          }
 +

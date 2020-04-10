@@ -16,11 +16,10 @@
  
  public class EntityEnderPearl extends EntityThrowable
  {
-@@ -100,24 +107,37 @@
+@@ -98,22 +105,39 @@
+ 
+                 if (entityplayermp.connection.getNetworkManager().isChannelOpen() && entityplayermp.world == this.world && !entityplayermp.isPlayerSleeping())
                  {
-                     net.minecraftforge.event.entity.living.EnderTeleportEvent event = new net.minecraftforge.event.entity.living.EnderTeleportEvent(entityplayermp, this.posX, this.posY, this.posZ, 5.0F);
-                     if (!net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(event))
--                    { // Don't indent to lower patch size
 -                    if (this.rand.nextFloat() < 0.05F && this.world.getGameRules().getBoolean("doMobSpawning"))
 -                    {
 -                        EntityEndermite entityendermite = new EntityEndermite(this.world);
@@ -28,6 +27,8 @@
 -                        entityendermite.setLocationAndAngles(entitylivingbase.posX, entitylivingbase.posY, entitylivingbase.posZ, entitylivingbase.rotationYaw, entitylivingbase.rotationPitch);
 -                        this.world.spawnEntity(entityendermite);
 -                    }
++                    net.minecraftforge.event.entity.living.EnderTeleportEvent event = new net.minecraftforge.event.entity.living.EnderTeleportEvent(entityplayermp, this.posX, this.posY, this.posZ, 5.0F);
++                    if (!net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(event))
 +					{ // Don't indent to lower patch size
  
 -                    if (entitylivingbase.isRiding())
@@ -40,9 +41,9 @@
 +                    location.setPitch(player.getLocation().getPitch());
 +                    location.setYaw(player.getLocation().getYaw());
  
--                    entitylivingbase.setPositionAndUpdate(event.getTargetX(), event.getTargetY(), event.getTargetZ());
+-                    entitylivingbase.setPositionAndUpdate(this.posX, this.posY, this.posZ);
 -                    entitylivingbase.fallDistance = 0.0F;
--                    entitylivingbase.attackEntityFrom(DamageSource.FALL, event.getAttackDamage());
+-                    entitylivingbase.attackEntityFrom(DamageSource.FALL, 5.0F);
 +                    PlayerTeleportEvent teleEvent = new PlayerTeleportEvent(player, player.getLocation(), location, PlayerTeleportEvent.TeleportCause.ENDER_PEARL);
 +                    Bukkit.getPluginManager().callEvent(teleEvent);
 +
@@ -63,9 +64,25 @@
 +                        CraftEventFactory.entityDamage = this;
 +                        entitylivingbase.attackEntityFrom(DamageSource.FALL, 5.0F);
 +                        CraftEventFactory.entityDamage = null;
-                     }
++                    }
 +                        // CraftBukkit end
 +					}
                  }
              }
              else if (entitylivingbase != null)
+@@ -141,13 +165,13 @@
+     }
+ 
+     @Nullable
+-    public Entity changeDimension(int dimensionIn)
++    public Entity changeDimension(int dimensionIn, net.minecraftforge.common.util.ITeleporter teleporter)
+     {
+         if (this.thrower.dimension != dimensionIn)
+         {
+             this.thrower = null;
+         }
+ 
+-        return super.changeDimension(dimensionIn);
++        return super.changeDimension(dimensionIn, teleporter);
+     }
+ }

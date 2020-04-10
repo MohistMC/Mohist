@@ -24,9 +24,12 @@
          this.stats.writeStatsToNBT(compound);
          return compound;
      }
-@@ -61,6 +67,10 @@
+@@ -59,8 +65,12 @@
+             }
+             public boolean canUseCommand(int permLevel, String commandName)
              {
-                 return permLevel <= 2; //Forge: Fixes  MC-75630 - Exploit with signs and command blocks
+-                return true;
++                return permLevel <= 2; //Forge: Fixes  MC-75630 - Exploit with signs and command blocks
              }
 +            public boolean canUseCommand(int permLevel, String commandName, String perm)
 +            {

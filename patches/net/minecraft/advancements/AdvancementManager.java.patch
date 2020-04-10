@@ -11,7 +11,15 @@
      private boolean hasErrored;
  
      public AdvancementManager(@Nullable File advancementsDirIn)
-@@ -109,7 +109,7 @@
+@@ -66,6 +66,7 @@
+         ADVANCEMENT_LIST.clear();
+         Map<ResourceLocation, Advancement.Builder> map = this.loadCustomAdvancements();
+         this.loadBuiltInAdvancements(map);
++        this.hasErrored |= net.minecraftforge.common.ForgeHooks.loadAdvancements(map);
+         ADVANCEMENT_LIST.loadAdvancements(map);
+ 
+         for (Advancement advancement : ADVANCEMENT_LIST.getRoots())
+@@ -108,7 +109,7 @@
  
                          if (advancement$builder == null)
                          {
@@ -20,7 +28,7 @@
                          }
                          else
                          {
-@@ -118,12 +118,12 @@
+@@ -117,12 +118,12 @@
                      }
                      catch (IllegalArgumentException | JsonParseException jsonparseexception)
                      {
@@ -35,7 +43,7 @@
                          this.hasErrored = true;
                      }
                  }
-@@ -153,7 +153,7 @@
+@@ -152,7 +153,7 @@
                  {
                      if (!"jar".equals(uri.getScheme()))
                      {
@@ -44,7 +52,7 @@
                          this.hasErrored = true;
                          return;
                      }
-@@ -173,7 +173,11 @@
+@@ -172,7 +173,11 @@
                          Path path2 = path.relativize(path1);
                          String s = FilenameUtils.removeExtension(path2.toString()).replaceAll("\\\\", "/");
                          ResourceLocation resourcelocation = new ResourceLocation("minecraft", s);
@@ -57,7 +65,7 @@
                          if (!map.containsKey(resourcelocation))
                          {
                              BufferedReader bufferedreader = null;
-@@ -186,12 +190,12 @@
+@@ -185,12 +190,12 @@
                              }
                              catch (JsonParseException jsonparseexception)
                              {
@@ -72,7 +80,7 @@
                                  this.hasErrored = true;
                              }
                              finally
-@@ -205,12 +209,12 @@
+@@ -204,12 +209,12 @@
                  return;
              }
  

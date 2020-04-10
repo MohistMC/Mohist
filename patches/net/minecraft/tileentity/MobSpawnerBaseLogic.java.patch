@@ -38,7 +38,16 @@
          }
      }
  
-@@ -132,7 +133,13 @@
+@@ -124,14 +125,21 @@
+                     EntityLiving entityliving = entity instanceof EntityLiving ? (EntityLiving)entity : null;
+                     entity.setLocationAndAngles(entity.posX, entity.posY, entity.posZ, world.rand.nextFloat() * 360.0F, 0.0F);
+ 
+-                    if (entityliving == null || entityliving.getCanSpawnHere() && entityliving.isNotColliding())
++                    if (entityliving == null || net.minecraftforge.event.ForgeEventFactory.canEntitySpawnSpawner(entityliving, getSpawnerWorld(), (float)entity.posX, (float)entity.posY, (float)entity.posZ, this))
+                     {
+                         if (this.spawnData.getNbt().getSize() == 1 && this.spawnData.getNbt().hasKey("id", 8) && entity instanceof EntityLiving)
+                         {
++                            if (!net.minecraftforge.event.ForgeEventFactory.doSpecialSpawn(entityliving, this.getSpawnerWorld(), (float)entity.posX, (float)entity.posY, (float)entity.posZ, this))
                              ((EntityLiving)entity).onInitialSpawn(world.getDifficultyForLocation(new BlockPos(entity)), (IEntityLivingData)null);
                          }
  
@@ -53,3 +62,11 @@
                          world.playEvent(2004, blockpos, 0);
  
                          if (entityliving != null)
+@@ -307,4 +315,7 @@
+     {
+         return this.prevMobRotation;
+     }
++
++    /* ======================================== FORGE START =====================================*/
++    @Nullable public Entity getSpawnerEntity() { return null; }
+ }

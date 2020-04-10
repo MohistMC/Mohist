@@ -40,7 +40,7 @@
      public NetHandlerLoginServer(MinecraftServer serverIn, NetworkManager networkManagerIn)
      {
          this.server = serverIn;
-@@ -58,17 +66,21 @@
+@@ -58,18 +66,22 @@
  
      public void update()
      {
@@ -62,10 +62,12 @@
              if (entityplayermp == null)
              {
 -                this.currentLoginState = NetHandlerLoginServer.LoginState.READY_TO_ACCEPT;
+-                this.server.getPlayerList().initializeConnectionToPlayer(this.networkManager, this.player);
 +                this.currentLoginState = LoginState.READY_TO_ACCEPT;
-                 net.minecraftforge.fml.common.network.internal.FMLNetworkHandler.fmlServerHandshake(this.server.getPlayerList(), this.networkManager, this.player);
++                net.minecraftforge.fml.common.network.internal.FMLNetworkHandler.fmlServerHandshake(this.server.getPlayerList(), this.networkManager, this.player);
                  this.player = null;
              }
+         }
 @@ -80,6 +92,19 @@
          }
      }
@@ -148,7 +150,7 @@
              }
              else
              {
--                net.minecraftforge.fml.common.network.internal.FMLNetworkHandler.fmlServerHandshake(this.server.getPlayerList(), this.networkManager, this.server.getPlayerList().createPlayerForUser(this.loginGameProfile));
+-                this.server.getPlayerList().initializeConnectionToPlayer(this.networkManager, this.server.getPlayerList().createPlayerForUser(this.loginGameProfile));
 +                net.minecraftforge.fml.common.network.internal.FMLNetworkHandler.fmlServerHandshake(this.server.getPlayerList(), this.networkManager, this.server.getPlayerList().createPlayerForUser(this.loginGameProfile, s));
              }
          }
@@ -193,15 +195,18 @@
          PrivateKey privatekey = this.server.getKeyPair().getPrivate();
  
          if (!Arrays.equals(this.verifyToken, packetIn.getVerifyToken(privatekey)))
-@@ -175,7 +233,7 @@
+@@ -175,9 +233,9 @@
          else
          {
              this.secretKey = packetIn.getSecretKey(privatekey);
 -            this.currentLoginState = NetHandlerLoginServer.LoginState.AUTHENTICATING;
 +            this.currentLoginState = LoginState.AUTHENTICATING;
              this.networkManager.enableEncryption(this.secretKey);
-             (new Thread(net.minecraftforge.fml.common.thread.SidedThreadGroups.SERVER, "User Authenticator #" + AUTHENTICATOR_THREAD_ID.incrementAndGet())
+-            (new Thread("User Authenticator #" + AUTHENTICATOR_THREAD_ID.incrementAndGet())
++            (new Thread(net.minecraftforge.fml.common.thread.SidedThreadGroups.SERVER, "User Authenticator #" + AUTHENTICATOR_THREAD_ID.incrementAndGet())
              {
+                 public void run()
+                 {
 @@ -190,14 +248,18 @@
  
                          if (NetHandlerLoginServer.this.loginGameProfile != null)

@@ -109,3 +109,12 @@
                      }
                  }
              }
+@@ -136,7 +139,7 @@
+ 
+     public boolean canPlaceBlockAt(World worldIn, BlockPos pos)
+     {
+-        return worldIn.getBlockState(pos).getBlock().blockMaterial.isReplaceable() && worldIn.getBlockState(pos.down()).isTopSolid();
++        return worldIn.getBlockState(pos).getBlock().isReplaceable(worldIn, pos) && worldIn.isSideSolid(pos.down(), EnumFacing.UP);
+     }
+ 
+     public IBlockState withRotation(IBlockState state, Rotation rot)

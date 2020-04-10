@@ -125,16 +125,21 @@
      protected Slot addSlotToContainer(Slot slotIn)
      {
          slotIn.slotNumber = this.inventorySlots.size();
-@@ -79,7 +176,7 @@
+@@ -79,17 +176,20 @@
              ItemStack itemstack = ((Slot)this.inventorySlots.get(i)).getStack();
              ItemStack itemstack1 = this.inventoryItemStacks.get(i);
  
 -            if (!ItemStack.areItemStacksEqual(itemstack1, itemstack))
 +            if (!ItemStack.fastMatches(itemstack1, itemstack) || (tickCount % org.spigotmc.SpigotConfig.itemDirtyTicks == 0 && !ItemStack.areItemStacksEqual(itemstack1, itemstack))) // Spigot
              {
-                 boolean clientStackChanged = !ItemStack.areItemStacksEqualUsingNBTShareTag(itemstack1, itemstack);
++                boolean clientStackChanged = !ItemStack.areItemStacksEqualUsingNBTShareTag(itemstack1, itemstack);
                  itemstack1 = itemstack.isEmpty() ? ItemStack.EMPTY : itemstack.copy();
-@@ -92,6 +189,7 @@
+                 this.inventoryItemStacks.set(i, itemstack1);
+ 
++                if (clientStackChanged)
+                 for (int j = 0; j < this.listeners.size(); ++j)
+                 {
+                     ((IContainerListener)this.listeners.get(j)).sendSlotContents(this, i, itemstack1);
                  }
              }
          }
@@ -142,7 +147,7 @@
      }
  
      public boolean enchantItem(EntityPlayer playerIn, int id)
-@@ -174,7 +272,7 @@
+@@ -172,7 +272,7 @@
                  {
                      ItemStack itemstack9 = inventoryplayer.getItemStack().copy();
                      int k1 = inventoryplayer.getItemStack().getCount();
@@ -151,7 +156,7 @@
                      for (Slot slot8 : this.dragSlots)
                      {
                          ItemStack itemstack13 = inventoryplayer.getItemStack();
-@@ -192,12 +290,50 @@
+@@ -190,12 +290,50 @@
                              }
  
                              k1 -= itemstack14.getCount() - j3;
@@ -205,7 +210,7 @@
                  }
  
                  this.resetDrag();
-@@ -219,8 +355,9 @@
+@@ -217,8 +355,9 @@
                  {
                      if (dragType == 0)
                      {
@@ -216,7 +221,7 @@
                      }
  
                      if (dragType == 1)
-@@ -348,6 +485,15 @@
+@@ -346,6 +485,15 @@
                      }
  
                      slot6.onSlotChanged();
@@ -232,7 +237,40 @@
                  }
              }
          }
-@@ -797,7 +943,9 @@
+@@ -589,18 +737,19 @@
+                 if (!itemstack.isEmpty() && itemstack.getItem() == stack.getItem() && (!stack.getHasSubtypes() || stack.getMetadata() == itemstack.getMetadata()) && ItemStack.areItemStackTagsEqual(stack, itemstack))
+                 {
+                     int j = itemstack.getCount() + stack.getCount();
++                    int maxSize = Math.min(slot.getSlotStackLimit(), stack.getMaxStackSize());
+ 
+-                    if (j <= stack.getMaxStackSize())
++                    if (j <= maxSize)
+                     {
+                         stack.setCount(0);
+                         itemstack.setCount(j);
+                         slot.onSlotChanged();
+                         flag = true;
+                     }
+-                    else if (itemstack.getCount() < stack.getMaxStackSize())
++                    else if (itemstack.getCount() < maxSize)
+                     {
+-                        stack.shrink(stack.getMaxStackSize() - itemstack.getCount());
+-                        itemstack.setCount(stack.getMaxStackSize());
++                        stack.shrink(maxSize - itemstack.getCount());
++                        itemstack.setCount(maxSize);
+                         slot.onSlotChanged();
+                         flag = true;
+                     }
+@@ -738,7 +887,7 @@
+                 stack.setCount(1);
+                 break;
+             case 2:
+-                stack.setCount(stack.getItem().getItemStackLimit());
++                stack.setCount(stack.getMaxStackSize());
+         }
+ 
+         stack.grow(slotStackSize);
+@@ -794,7 +943,9 @@
                  p_192389_4_.setRecipeUsed(irecipe);
                  itemstack = irecipe.getCraftingResult(p_192389_3_);
              }

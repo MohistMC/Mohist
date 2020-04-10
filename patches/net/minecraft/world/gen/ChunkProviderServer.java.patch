@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/world/gen/ChunkProviderServer.java
 +++ ../src-work/minecraft/net/minecraft/world/gen/ChunkProviderServer.java
-@@ -23,14 +23,19 @@
+@@ -23,18 +23,24 @@
  import net.minecraft.world.biome.Biome;
  import net.minecraft.world.chunk.Chunk;
  import net.minecraft.world.chunk.IChunkProvider;
@@ -21,7 +21,12 @@
      public final IChunkGenerator chunkGenerator;
      public final IChunkLoader chunkLoader;
      public final Long2ObjectMap<Chunk> id2ChunkMap = new Long2ObjectOpenHashMap<Chunk>(8192);
-@@ -83,6 +88,11 @@
+     public final WorldServer world;
++    private final Set<Long> loadingChunks = com.google.common.collect.Sets.newHashSet();
+ 
+     public ChunkProviderServer(WorldServer worldObjIn, IChunkLoader chunkLoaderIn, IChunkGenerator chunkGeneratorIn)
+     {
+@@ -82,32 +88,78 @@
          return chunk;
      }
  
@@ -33,16 +38,54 @@
      @Nullable
      public Chunk loadChunk(int x, int z)
      {
-@@ -106,7 +116,7 @@
-                 {
+-        Chunk chunk = this.getLoadedChunk(x, z);
++        return loadChunk(x, z, null);
++    }
+ 
++    @Nullable
++    public Chunk loadChunk(int x, int z, @Nullable Runnable runnable)
++    {
++        Chunk chunk = this.getLoadedChunk(x, z);
+         if (chunk == null)
+         {
+-            chunk = this.loadChunkFromFile(x, z);
+-
+-            if (chunk != null)
++            long pos = ChunkPos.asLong(x, z);
++            chunk = net.minecraftforge.common.ForgeChunkManager.fetchDormantChunk(pos, this.world);
++            if (chunk != null || !(this.chunkLoader instanceof net.minecraft.world.chunk.storage.AnvilChunkLoader))
+             {
++                if (!loadingChunks.add(pos)) net.minecraftforge.fml.common.FMLLog.bigWarning("There is an attempt to load a chunk ({},{}) in dimension {} that is already being loaded. This will cause weird chunk breakages.", x, z, this.world.provider.getDimension());
++                if (chunk == null) chunk = this.loadChunkFromFile(x, z);
++
++                if (chunk != null)
++                {
                  this.id2ChunkMap.put(ChunkPos.asLong(x, z), chunk);
                  chunk.onLoad();
 -                chunk.populate(this, this.chunkGenerator);
 +                chunk.populateCB(this, this.chunkGenerator, false);
-                 }
++                }
++
++                loadingChunks.remove(pos);
+             }
++            else
++            {
++                net.minecraft.world.chunk.storage.AnvilChunkLoader loader = (net.minecraft.world.chunk.storage.AnvilChunkLoader) this.chunkLoader;
++                if (runnable == null || !net.minecraftforge.common.ForgeChunkManager.asyncChunkLoading)
++                    chunk = net.minecraftforge.common.chunkio.ChunkIOExecutor.syncChunkLoad(this.world, loader, this, x, z);
++                else if (loader.isChunkGeneratedAt(x, z))
++                {
++                    // We can only use the async queue for already generated chunks
++                    net.minecraftforge.common.chunkio.ChunkIOExecutor.queueChunkLoad(this.world, loader, this, x, z, runnable);
++                    return null;
++                }
++            }
+         }
  
-                 loadingChunks.remove(pos);
-@@ -132,10 +142,24 @@
++        // If we didn't load the chunk async and have a callback run it now
++        if (runnable != null) runnable.run();
+         return chunk;
+     }
  
      public Chunk provideChunk(int x, int z)
      {
@@ -67,7 +110,7 @@
              long i = ChunkPos.asLong(x, z);
  
              try
-@@ -154,7 +178,8 @@
+@@ -126,7 +178,8 @@
  
              this.id2ChunkMap.put(i, chunk);
              chunk.onLoad();
@@ -77,7 +120,7 @@
          }
  
          return chunk;
-@@ -177,7 +202,7 @@
+@@ -149,7 +202,7 @@
          }
          catch (Exception exception)
          {
@@ -86,7 +129,7 @@
              return null;
          }
      }
-@@ -190,7 +215,7 @@
+@@ -162,7 +215,7 @@
          }
          catch (Exception exception)
          {
@@ -95,7 +138,7 @@
          }
      }
  
-@@ -203,12 +228,12 @@
+@@ -175,12 +228,12 @@
          }
          catch (IOException ioexception)
          {
@@ -111,7 +154,7 @@
      }
  
      public boolean saveChunks(boolean all)
-@@ -233,7 +258,7 @@
+@@ -205,7 +258,7 @@
  
                  if (i == 24 && !all)
                  {
@@ -120,12 +163,23 @@
                  }
              }
          }
-@@ -266,11 +291,9 @@
+@@ -224,6 +277,11 @@
+         {
+             if (!this.droppedChunksSet.isEmpty())
+             {
++                for (ChunkPos forced : this.world.getPersistentChunks().keySet())
++                {
++                    this.droppedChunksSet.remove(ChunkPos.asLong(forced.x, forced.z));
++                }
++
+                 Iterator<Long> iterator = this.droppedChunksSet.iterator();
+ 
+                 for (int i = 0; i < 100 && iterator.hasNext(); iterator.remove())
+@@ -233,21 +291,55 @@
  
                      if (chunk != null && chunk.unloadQueued)
                      {
 -                        chunk.onUnload();
--                        net.minecraftforge.common.ForgeChunkManager.putDormantChunk(ChunkPos.asLong(chunk.x, chunk.z), chunk);
 -                        this.saveChunkData(chunk);
 -                        this.saveChunkExtraData(chunk);
 -                        this.id2ChunkMap.remove(olong);
@@ -135,7 +189,13 @@
                          ++i;
                      }
                  }
-@@ -284,6 +307,39 @@
+             }
+ 
++            if (this.id2ChunkMap.isEmpty()) net.minecraftforge.common.DimensionManager.unloadWorld(this.world.provider.getDimension());
++
+             this.chunkLoader.chunkTick();
+         }
+ 
          return false;
      }
  

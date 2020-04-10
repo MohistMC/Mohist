@@ -1,0 +1,13 @@
+--- ../src-base/minecraft/net/minecraft/client/renderer/ItemModelMesher.java
++++ ../src-work/minecraft/net/minecraft/client/renderer/ItemModelMesher.java
+@@ -33,7 +33,9 @@
+ 
+     public TextureAtlasSprite getParticleIcon(Item item, int meta)
+     {
+-        return this.getItemModel(new ItemStack(item, 1, meta)).getParticleTexture();
++        ItemStack stack = new ItemStack(item, 1, meta);
++        IBakedModel model = this.getItemModel(stack);
++        return model.getOverrides().handleItemState(model, stack, null, null).getParticleTexture();
+     }
+ 
+     public IBakedModel getItemModel(ItemStack stack)

@@ -63,6 +63,15 @@
          {
              BlockPos blockpos = pos.down();
              IBlockState iblockstate = worldIn.getBlockState(blockpos);
+@@ -203,7 +204,7 @@
+                 flag1 = true;
+             }
+ 
+-            if (!worldIn.getBlockState(pos.down()).isTopSolid())
++            if (!worldIn.getBlockState(pos.down()).isSideSolid(worldIn,  pos.down(), EnumFacing.UP))
+             {
+                 worldIn.setBlockToAir(pos);
+                 flag1 = true;
 @@ -223,17 +224,27 @@
              }
              else
@@ -98,7 +107,7 @@
                      }
                  }
              }
-@@ -242,7 +253,7 @@
+@@ -242,18 +253,19 @@
  
      public Item getItemDropped(IBlockState state, Random rand, int fortune)
      {
@@ -107,7 +116,21 @@
      }
  
      public boolean canPlaceBlockAt(World worldIn, BlockPos pos)
-@@ -317,12 +328,12 @@
+     {
+-        if (pos.getY() >= 255)
++        if (pos.getY() >= worldIn.getHeight() - 1)
+         {
+             return false;
+         }
+         else
+         {
+-            return worldIn.getBlockState(pos.down()).isTopSolid() && super.canPlaceBlockAt(worldIn, pos) && super.canPlaceBlockAt(worldIn, pos.up());
++            IBlockState state = worldIn.getBlockState(pos.down());
++            return (state.isTopSolid() || state.getBlockFaceShape(worldIn, pos.down(), EnumFacing.UP) == BlockFaceShape.SOLID) && super.canPlaceBlockAt(worldIn, pos) && super.canPlaceBlockAt(worldIn, pos.up());
+         }
+     }
+ 
+@@ -316,12 +328,12 @@
          BlockPos blockpos = pos.down();
          BlockPos blockpos1 = pos.up();
  
@@ -122,7 +145,7 @@
          {
              if (player.capabilities.isCreativeMode)
              {
-@@ -341,7 +352,7 @@
+@@ -340,7 +352,7 @@
  
      public IBlockState getActualState(IBlockState state, IBlockAccess worldIn, BlockPos pos)
      {
@@ -131,7 +154,7 @@
          {
              IBlockState iblockstate = worldIn.getBlockState(pos.up());
  
-@@ -365,7 +376,7 @@
+@@ -364,7 +376,7 @@
  
      public IBlockState withRotation(IBlockState state, Rotation rot)
      {
@@ -140,7 +163,7 @@
      }
  
      public IBlockState withMirror(IBlockState state, Mirror mirrorIn)
-@@ -375,18 +386,18 @@
+@@ -374,18 +386,18 @@
  
      public IBlockState getStateFromMeta(int meta)
      {

@@ -11,7 +11,16 @@
  
  public class ItemBucket extends Item
  {
-@@ -72,17 +76,27 @@
+@@ -40,6 +44,8 @@
+         boolean flag = this.containedBlock == Blocks.AIR;
+         ItemStack itemstack = playerIn.getHeldItem(handIn);
+         RayTraceResult raytraceresult = this.rayTrace(worldIn, playerIn, flag);
++        ActionResult<ItemStack> ret = net.minecraftforge.event.ForgeEventFactory.onBucketUse(playerIn, worldIn, itemstack, raytraceresult);
++        if (ret != null) return ret;
+ 
+         if (raytraceresult == null)
+         {
+@@ -70,17 +76,27 @@
  
                      if (material == Material.WATER && ((Integer)iblockstate.getValue(BlockLiquid.LEVEL)).intValue() == 0)
                      {
@@ -41,7 +50,7 @@
                      }
                      else
                      {
-@@ -99,7 +113,7 @@
+@@ -97,7 +113,7 @@
                  {
                      return new ActionResult<ItemStack>(EnumActionResult.FAIL, itemstack);
                  }
@@ -50,7 +59,7 @@
                  {
                      if (playerIn instanceof EntityPlayerMP)
                      {
-@@ -143,8 +157,45 @@
+@@ -141,8 +157,45 @@
          }
      }
  
@@ -96,7 +105,7 @@
          if (this.containedBlock == Blocks.AIR)
          {
              return false;
-@@ -162,6 +213,14 @@
+@@ -160,6 +213,14 @@
              }
              else
              {
@@ -111,3 +120,20 @@
                  if (worldIn.provider.doesWaterVaporize() && this.containedBlock == Blocks.FLOWING_WATER)
                  {
                      int l = posIn.getX();
+@@ -188,4 +249,16 @@
+             }
+         }
+     }
++
++    @Override
++    public net.minecraftforge.common.capabilities.ICapabilityProvider initCapabilities(ItemStack stack, @Nullable net.minecraft.nbt.NBTTagCompound nbt) {
++        if (this.getClass() == ItemBucket.class)
++        {
++            return new net.minecraftforge.fluids.capability.wrappers.FluidBucketWrapper(stack);
++        }
++        else
++        {
++            return super.initCapabilities(stack, nbt);
++        }
++    }
+ }

@@ -64,7 +64,7 @@
  
      public EntityMinecartContainer(World worldIn)
      {
-@@ -134,7 +177,7 @@
+@@ -134,14 +177,14 @@
  
      public int getInventoryStackLimit()
      {
@@ -73,6 +73,15 @@
      }
  
      @Nullable
+-    public Entity changeDimension(int dimensionIn)
++    public Entity changeDimension(int dimensionIn, net.minecraftforge.common.util.ITeleporter teleporter)
+     {
+         this.dropContentsWhenDead = false;
+-        return super.changeDimension(dimensionIn);
++        return super.changeDimension(dimensionIn, teleporter);
+     }
+ 
+     public void setDead()
 @@ -168,7 +211,7 @@
      protected void writeEntityToNBT(NBTTagCompound compound)
      {
@@ -82,3 +91,51 @@
          if (this.lootTable != null)
          {
              compound.setString("LootTable", this.lootTable.toString());
+@@ -202,6 +245,7 @@
+ 
+     public boolean processInitialInteract(EntityPlayer player, EnumHand hand)
+     {
++        if (super.processInitialInteract(player, hand)) return true;
+         if (!this.world.isRemote)
+         {
+             player.displayGUIChest(this);
+@@ -270,17 +314,37 @@
+                 random = new Random(this.lootTableSeed);
+             }
+ 
+-            LootContext.Builder lootcontext$builder = new LootContext.Builder((WorldServer)this.world);
++            LootContext.Builder lootcontext$builder = new LootContext.Builder((WorldServer)this.world).withLootedEntity(this); // Forge: add looted entity to LootContext
+ 
+             if (player != null)
+             {
+-                lootcontext$builder.withLuck(player.getLuck());
++                lootcontext$builder.withLuck(player.getLuck()).withPlayer(player); // Forge: add player to LootContext
+             }
+ 
+             loottable.fillInventory(this, random, lootcontext$builder.build());
+         }
+     }
+ 
++    public net.minecraftforge.items.IItemHandler itemHandler = new net.minecraftforge.items.wrapper.InvWrapper(this);
++
++    @SuppressWarnings("unchecked")
++    @Override
++    @Nullable
++    public <T> T getCapability(net.minecraftforge.common.capabilities.Capability<T> capability, @Nullable net.minecraft.util.EnumFacing facing)
++    {
++        if (capability == net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABILITY)
++        {
++            return (T) itemHandler;
++        }
++        return super.getCapability(capability, facing);
++    }
++
++    @Override
++    public boolean hasCapability(net.minecraftforge.common.capabilities.Capability<?> capability, @Nullable net.minecraft.util.EnumFacing facing)
++    {
++        return capability == net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABILITY || super.hasCapability(capability, facing);
++    }
++
+     public void clear()
+     {
+         this.addLoot((EntityPlayer)null);

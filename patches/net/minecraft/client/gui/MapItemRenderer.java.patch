@@ -1,0 +1,11 @@
+--- ../src-base/minecraft/net/minecraft/client/gui/MapItemRenderer.java
++++ ../src-work/minecraft/net/minecraft/client/gui/MapItemRenderer.java
+@@ -139,6 +139,8 @@
+             {
+                 if (!noOverlayRendering || mapdecoration.renderOnFrame())
+                 {
++                    if (mapdecoration.render(k)) { k++; continue; }
++                    MapItemRenderer.this.textureManager.bindTexture(MapItemRenderer.TEXTURE_MAP_ICONS); // Rebind in case custom render changes it
+                     GlStateManager.pushMatrix();
+                     GlStateManager.translate(0.0F + (float)mapdecoration.getX() / 2.0F + 64.0F, 0.0F + (float)mapdecoration.getY() / 2.0F + 64.0F, -0.02F);
+                     GlStateManager.rotate((float)(mapdecoration.getRotation() * 360) / 16.0F, 0.0F, 0.0F, 1.0F);

@@ -1,6 +1,16 @@
 --- ../src-base/minecraft/net/minecraft/util/ClassInheritanceMultiMap.java
 +++ ../src-work/minecraft/net/minecraft/util/ClassInheritanceMultiMap.java
-@@ -140,7 +140,7 @@
+@@ -13,7 +13,8 @@
+ 
+ public class ClassInheritanceMultiMap<T> extends AbstractSet<T>
+ {
+-    private static final Set < Class<? >> ALL_KNOWN = Sets. < Class<? >> newHashSet();
++    // Forge: Use concurrent collection to allow creating chunks from multiple threads safely
++    private static final Set < Class<? >> ALL_KNOWN = java.util.Collections.newSetFromMap(new java.util.concurrent.ConcurrentHashMap<Class<?>, Boolean>());
+     private final Map < Class<?>, List<T >> map = Maps. < Class<?>, List<T >> newHashMap();
+     private final Set < Class<? >> knownKeys = Sets. < Class<? >> newIdentityHashSet();
+     private final Class<T> baseClass;
+@@ -139,7 +140,7 @@
  
      public Iterator<T> iterator()
      {

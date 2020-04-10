@@ -1,6 +1,43 @@
 --- ../src-base/minecraft/net/minecraft/world/chunk/BlockStateContainer.java
 +++ ../src-work/minecraft/net/minecraft/world/chunk/BlockStateContainer.java
-@@ -164,7 +164,18 @@
+@@ -30,6 +30,10 @@
+ 
+     private void setBits(int bitsIn)
+     {
++        setBits(bitsIn, false);
++    }
++    private void setBits(int bitsIn, boolean forceBits)
++    {
+         if (bitsIn != this.bits)
+         {
+             this.bits = bitsIn;
+@@ -47,6 +51,8 @@
+             {
+                 this.palette = REGISTRY_BASED_PALETTE;
+                 this.bits = MathHelper.log2DeBruijn(Block.BLOCK_STATE_IDS.size());
++                if (forceBits)
++                    this.bits = bitsIn;
+             }
+ 
+             this.palette.idFor(AIR_BLOCK_STATE);
+@@ -102,11 +108,15 @@
+ 
+         if (this.bits != i)
+         {
+-            this.setBits(i);
++            this.setBits(i, true); //Forge, Force bit density to fix network issues, resize below if needed.
+         }
+ 
+         this.palette.read(buf);
+         buf.readLongArray(this.storage.getBackingLongArray());
++
++        int regSize = MathHelper.log2DeBruijn(Block.BLOCK_STATE_IDS.size());
++        if (this.palette == REGISTRY_BASED_PALETTE && this.bits != regSize) // Resize bits to fit registry.
++            this.onResize(regSize, AIR_BLOCK_STATE);
+     }
+ 
+     public void write(PacketBuffer buf)
+@@ -154,7 +164,18 @@
              int l = i >> 4 & 15;
              int i1 = blockIdExtension == null ? 0 : blockIdExtension.get(j, k, l);
              int j1 = i1 << 12 | (blockIds[i] & 255) << 4 | data.get(j, k, l);

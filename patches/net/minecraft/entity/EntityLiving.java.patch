@@ -47,10 +47,11 @@
      private final Map<PathNodeType, Float> mapPathPriority = Maps.newEnumMap(PathNodeType.class);
      private ResourceLocation deathLootTable;
      private long deathLootTableSeed;
-@@ -171,8 +181,37 @@
+@@ -170,8 +180,38 @@
+     public void setAttackTarget(@Nullable EntityLivingBase entitylivingbaseIn)
      {
          this.attackTarget = entitylivingbaseIn;
-         net.minecraftforge.common.ForgeHooks.onLivingSetAttackTarget(this, entitylivingbaseIn);
++        net.minecraftforge.common.ForgeHooks.onLivingSetAttackTarget(this, entitylivingbaseIn);
 +        // CraftBukkit start - fire event
 +        setGoalTarget(entitylivingbaseIn, EntityTargetEvent.TargetReason.UNKNOWN, true);
      }
@@ -85,7 +86,7 @@
      public boolean canAttackClass(Class <? extends EntityLivingBase > cls)
      {
          return cls != EntityGhast.class;
-@@ -447,12 +486,21 @@
+@@ -446,12 +486,21 @@
      {
          super.readEntityFromNBT(compound);
  
@@ -109,7 +110,16 @@
  
          if (compound.hasKey("ArmorItems", 9))
          {
-@@ -653,8 +701,14 @@
+@@ -576,7 +625,7 @@
+         super.onLivingUpdate();
+         this.world.profiler.startSection("looting");
+ 
+-        if (!this.world.isRemote && this.canPickUpLoot() && !this.dead && this.world.getGameRules().getBoolean("mobGriefing"))
++        if (!this.world.isRemote && this.canPickUpLoot() && !this.dead && net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(this.world, this))
+         {
+             for (EntityItem entityitem : this.world.getEntitiesWithinAABB(EntityItem.class, this.getEntityBoundingBox().grow(1.0D, 0.0D, 1.0D)))
+             {
+@@ -652,8 +701,14 @@
              }
          }
  
@@ -126,7 +136,7 @@
              double d0;
  
              switch (entityequipmentslot.getSlotType())
-@@ -671,7 +725,9 @@
+@@ -670,7 +725,9 @@
  
              if (!itemstack1.isEmpty() && (double)(this.rand.nextFloat() - 0.1F) < d0)
              {
@@ -136,7 +146,7 @@
              }
  
              this.setItemStackToSlot(entityequipmentslot, itemstack);
-@@ -696,7 +752,7 @@
+@@ -695,23 +752,35 @@
          return true;
      }
  
@@ -145,7 +155,25 @@
      {
          return true;
      }
-@@ -722,9 +778,9 @@
+ 
+     protected void despawnEntity()
+     {
++        net.minecraftforge.fml.common.eventhandler.Event.Result result = null;
+         if (this.persistenceRequired)
+         {
+             this.idleTime = 0;
+         }
++        else if ((this.idleTime & 0x1F) == 0x1F && (result = net.minecraftforge.event.ForgeEventFactory.canEntityDespawn(this)) != net.minecraftforge.fml.common.eventhandler.Event.Result.DEFAULT)
++        {
++            if (result == net.minecraftforge.fml.common.eventhandler.Event.Result.DENY)
++            {
++                this.idleTime = 0;
++            }
++            else
++            {
++                this.setDead();
++            }
++        }
          else
          {
              Entity entity = this.world.getClosestPlayerToEntity(this, -1.0D);
@@ -157,7 +185,7 @@
                  double d0 = entity.posX - this.posX;
                  double d1 = entity.posY - this.posY;
                  double d2 = entity.posZ - this.posZ;
-@@ -749,10 +805,21 @@
+@@ -736,10 +805,21 @@
  
      protected final void updateEntityActionState()
      {
@@ -180,7 +208,33 @@
          this.world.profiler.startSection("sensing");
          this.senses.clearSensingCache();
          this.world.profiler.endSection();
-@@ -1192,12 +1259,12 @@
+@@ -839,7 +919,6 @@
+         return !this.world.containsAnyLiquid(this.getEntityBoundingBox()) && this.world.getCollisionBoxes(this, this.getEntityBoundingBox()).isEmpty() && this.world.checkNoEntityCollision(this.getEntityBoundingBox(), this);
+     }
+ 
+-    @SideOnly(Side.CLIENT)
+     public float getRenderSizeModifier()
+     {
+         return 1.0F;
+@@ -991,6 +1070,8 @@
+ 
+     public static EntityEquipmentSlot getSlotForItemStack(ItemStack stack)
+     {
++        final EntityEquipmentSlot slot = stack.getItem().getEquipmentSlot(stack);
++        if (slot != null) return slot; // FORGE: Allow modders to set a non-default equipment slot for a stack; e.g. a non-armor chestplate-slot item
+         if (stack.getItem() != Item.getItemFromBlock(Blocks.PUMPKIN) && stack.getItem() != Items.SKULL)
+         {
+             if (stack.getItem() instanceof ItemArmor)
+@@ -1003,7 +1084,7 @@
+             }
+             else
+             {
+-                return stack.getItem() == Items.SHIELD ? EntityEquipmentSlot.OFFHAND : EntityEquipmentSlot.MAINHAND;
++                return stack.getItem().isShield(stack, null) ? EntityEquipmentSlot.OFFHAND : EntityEquipmentSlot.MAINHAND;
+             }
+         }
+         else
+@@ -1178,12 +1259,12 @@
  
      public boolean canPickUpLoot()
      {
@@ -195,7 +249,7 @@
      }
  
      public boolean isNoDespawnRequired()
-@@ -1209,6 +1276,10 @@
+@@ -1195,6 +1276,10 @@
      {
          if (this.getLeashed() && this.getLeashHolder() == player)
          {
@@ -206,7 +260,7 @@
              this.clearLeashed(true, !player.capabilities.isCreativeMode);
              return true;
          }
-@@ -1218,6 +1289,10 @@
+@@ -1204,6 +1289,10 @@
  
              if (itemstack.getItem() == Items.LEAD && this.canBeLeashedTo(player))
              {
@@ -217,7 +271,7 @@
                  this.setLeashHolder(player, true);
                  itemstack.shrink(1);
                  return true;
-@@ -1245,11 +1320,13 @@
+@@ -1231,11 +1320,13 @@
          {
              if (!this.isEntityAlive())
              {
@@ -231,7 +285,7 @@
                  this.clearLeashed(true, true);
              }
          }
-@@ -1264,7 +1341,9 @@
+@@ -1250,7 +1341,9 @@
  
              if (!this.world.isRemote && dropLead)
              {
@@ -241,7 +295,7 @@
              }
  
              if (!this.world.isRemote && sendPacket && this.world instanceof WorldServer)
-@@ -1348,6 +1427,7 @@
+@@ -1334,6 +1427,7 @@
              }
              else
              {
@@ -249,11 +303,22 @@
                  this.clearLeashed(false, true);
              }
          }
-@@ -1448,7 +1528,6 @@
+@@ -1434,5 +1528,18 @@
          ON_GROUND,
          IN_AIR,
          IN_WATER;
--
-         private final java.util.function.BiPredicate<net.minecraft.world.IBlockAccess, BlockPos> spawnPredicate;
- 
-         SpawnPlacementType() { this.spawnPredicate = null; }
++        private final java.util.function.BiPredicate<net.minecraft.world.IBlockAccess, BlockPos> spawnPredicate;
++
++        SpawnPlacementType() { this.spawnPredicate = null; }
++
++        SpawnPlacementType(java.util.function.BiPredicate<net.minecraft.world.IBlockAccess, BlockPos> spawnPredicate)
++        {
++            this.spawnPredicate = spawnPredicate;
++        }
++
++        public boolean canSpawnAt(World world, BlockPos pos)
++        {
++            return this.spawnPredicate != null ? this.spawnPredicate.test(world, pos) : net.minecraft.world.WorldEntitySpawner.canCreatureTypeSpawnBody(this, world, pos);
++        }
+     }
+ }

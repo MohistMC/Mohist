@@ -17,3 +17,12 @@
      }
  
      public List<String> getTabCompletions(MinecraftServer server, ICommandSender sender, String[] args, @Nullable BlockPos targetPos)
+@@ -393,7 +394,7 @@
+                 itextcomponent.appendText(" ");
+             }
+ 
+-            ITextComponent itextcomponent1 = new TextComponentString(args[i]);
++            ITextComponent itextcomponent1 = net.minecraftforge.common.ForgeHooks.newChatWithLinks(args[i]); // Forge: links for messages
+ 
+             if (p_147176_3_)
+             {

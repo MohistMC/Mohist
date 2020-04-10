@@ -8,21 +8,50 @@
  
  public class BlockCocoa extends BlockHorizontal implements IGrowable
  {
-@@ -48,9 +49,11 @@
+@@ -44,13 +45,16 @@
+         {
+             this.dropBlock(worldIn, pos, state);
+         }
+-        else if (worldIn.rand.nextInt(5) == 0)
++        else
          {
              int i = ((Integer)state.getValue(AGE)).intValue();
  
--            if (i < 2 && net.minecraftforge.common.ForgeHooks.onCropsGrowPre(worldIn, pos, state, rand.nextInt(5) == 0))
+-            if (i < 2)
 +            if (i < 2 && net.minecraftforge.common.ForgeHooks.onCropsGrowPre(worldIn, pos, state, rand.nextInt(Math.max(1, (int)(100.0f / worldIn.spigotConfig.cocoaModifier) * 5)) == 0)) // Spigot
 +
              {
 -                worldIn.setBlockState(pos, state.withProperty(AGE, Integer.valueOf(i + 1)), 2);
 +                IBlockState data = state.withProperty(AGE, i + 1);
 +                CraftEventFactory.handleBlockGrowEvent(worldIn, pos.getX(), pos.getY(), pos.getZ(), this, getMetaFromState(data));
-                 net.minecraftforge.common.ForgeHooks.onCropsGrowPost(worldIn, pos, state, worldIn.getBlockState(pos));
++                net.minecraftforge.common.ForgeHooks.onCropsGrowPost(worldIn, pos, state, worldIn.getBlockState(pos));
              }
          }
-@@ -171,7 +174,8 @@
+     }
+@@ -132,6 +136,13 @@
+ 
+     public void dropBlockAsItemWithChance(World worldIn, BlockPos pos, IBlockState state, float chance, int fortune)
+     {
++        super.dropBlockAsItemWithChance(worldIn, pos, state, chance, fortune);
++    }
++
++    @Override
++    public void getDrops(net.minecraft.util.NonNullList<ItemStack> drops, IBlockAccess world, BlockPos pos, IBlockState state, int fortune)
++    {
++        super.getDrops(drops, world, pos, state, fortune);
+         int i = ((Integer)state.getValue(AGE)).intValue();
+         int j = 1;
+ 
+@@ -142,7 +153,7 @@
+ 
+         for (int k = 0; k < j; ++k)
+         {
+-            spawnAsEntity(worldIn, pos, new ItemStack(Items.DYE, 1, EnumDyeColor.BROWN.getDyeDamage()));
++            drops.add(new ItemStack(Items.DYE, 1, EnumDyeColor.BROWN.getDyeDamage()));
+         }
+     }
+ 
+@@ -163,7 +174,8 @@
  
      public void grow(World worldIn, Random rand, BlockPos pos, IBlockState state)
      {

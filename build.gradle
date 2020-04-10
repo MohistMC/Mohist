@@ -109,6 +109,7 @@ sourceSets {
     // Fix idea can't import module automatically
     main.java.srcDir 'src/main/java/'
     main.java.srcDir 'projects/Mohist/src/main/java/'
+    main.java.srcDir 'projects/Mohist/src/main/start/'
 }
 
 configurations.all {
@@ -135,22 +136,11 @@ minecraft {
     }
 
     projects {
-        forge {
-            rootDir "forge/"
-            patchDir "forge/patches/minecraft/"
-            patchAfter "clean"
-            genPatchesFrom "clean"
-            genMcpPatches = false
-            applyMcpPatches = false
-            s2sKeepImports = true
-            with common
-        }
-
         mohist {
             rootDir "."
             patchDir "patches/"
-            patchAfter "forge"
-            genPatchesFrom "forge"
+            patchAfter "clean"
+            genPatchesFrom "clean"
             genMcpPatches = true
             applyMcpPatches = true
             s2sKeepImports = true
@@ -224,6 +214,9 @@ processJson {
             "@timestamp@": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ"),
     ])
 }
+
+extractMohistSources { exclude "**/SideOnly.java", "**/Side.java" }
+extractMohistResources { exclude "**/log4j2.xml" }
 
 genGradleProjects {
     addCompileDep "junit:junit:4.12"
