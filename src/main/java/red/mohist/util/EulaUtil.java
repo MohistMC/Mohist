@@ -1,5 +1,7 @@
 package red.mohist.util;
 
+import java.nio.charset.StandardCharsets;
+import org.apache.commons.io.FileUtils;
 import red.mohist.util.i18n.Message;
 
 import java.io.*;
@@ -17,11 +19,8 @@ public class EulaUtil {
     }
 
     public static boolean hasAcceptedEULA() throws IOException {
-        boolean b;
         if(new File("eula.txt").exists())
-            b = Boolean.parseBoolean(Files.readAllLines(Paths.get("eula.txt")).get(2).replace("eula=", ""));
-        else
-            b = false;
-        return b;
+            return FileUtils.readFileToString(new File("eula.txt"), StandardCharsets.UTF_8).contains("eula=true");
+        return false;
     }
 }
