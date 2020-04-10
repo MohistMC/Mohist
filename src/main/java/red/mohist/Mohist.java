@@ -30,13 +30,12 @@ public class Mohist {
         if(System.getProperty("log4j.configurationFile") == null)
             System.setProperty("log4j.configurationFile", "log4j2_mohist.xml");
         MohistConfigUtil.copyMohistConfig();
-
+        if(UpdateUtils.isCheckLibs()) DownloadLibraries.run();
         if(!EulaUtil.hasAcceptedEULA()) {
             System.out.println(Message.getString("eula"));
             while (!"true".equals(new Scanner(System.in).next())) ;
             EulaUtil.writeInfos();
         }
-        if(UpdateUtils.isCheckLibs()) DownloadLibraries.run();
         if(UpdateUtils.isCheckUpdate()) UpdateUtils.versionCheck();
         if(!MohistConfigUtil.getBoolean(new File("mohist-config", "mohist.yml"), "disable_plugins_blacklist:"))
             AutoDeletePlugins.jar();
