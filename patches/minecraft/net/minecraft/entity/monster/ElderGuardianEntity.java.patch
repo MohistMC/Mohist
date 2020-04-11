@@ -1,0 +1,11 @@
+--- a/net/minecraft/entity/monster/ElderGuardianEntity.java
++++ b/net/minecraft/entity/monster/ElderGuardianEntity.java
+@@ -69,7 +69,7 @@
+          for(ServerPlayerEntity serverplayerentity : list) {
+             if (!serverplayerentity.func_70644_a(effect) || serverplayerentity.func_70660_b(effect).func_76458_c() < 2 || serverplayerentity.func_70660_b(effect).func_76459_b() < 1200) {
+                serverplayerentity.field_71135_a.func_147359_a(new SChangeGameStatePacket(10, 0.0F));
+-               serverplayerentity.func_195064_c(new EffectInstance(effect, 6000, 2));
++               serverplayerentity.addEffect(new EffectInstance(effect, 6000, 2), org.bukkit.event.entity.EntityPotionEffectEvent.Cause.ATTACK); // CraftBukkit
+             }
+          }
+       }

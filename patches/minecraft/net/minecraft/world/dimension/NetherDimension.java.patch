@@ -1,6 +1,16 @@
 --- a/net/minecraft/world/dimension/NetherDimension.java
 +++ b/net/minecraft/world/dimension/NetherDimension.java
-@@ -74,8 +74,4 @@
+@@ -66,16 +66,12 @@
+    public WorldBorder func_177501_r() {
+       return new WorldBorder() {
+          public double func_177731_f() {
+-            return super.func_177731_f() / 8.0D;
++            return super.func_177731_f(); // CraftBukkit
+          }
+ 
+          public double func_177721_g() {
+-            return super.func_177721_g() / 8.0D;
++            return super.func_177721_g(); // CraftBukkit
           }
        };
     }

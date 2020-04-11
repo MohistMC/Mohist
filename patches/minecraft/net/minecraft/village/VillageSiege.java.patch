@@ -20,3 +20,12 @@
              zombieentity.func_213386_a(p_75530_1_, p_75530_1_.func_175649_E(new BlockPos(zombieentity)), SpawnReason.EVENT, (ILivingEntityData)null, (CompoundNBT)null);
           } catch (Exception exception) {
              exception.printStackTrace();
+@@ -102,7 +104,7 @@
+          }
+ 
+          zombieentity.func_70012_b(vec3d.field_72450_a, vec3d.field_72448_b, vec3d.field_72449_c, p_75530_1_.field_73012_v.nextFloat() * 360.0F, 0.0F);
+-         p_75530_1_.func_217376_c(zombieentity);
++         p_75530_1_.addEntity(zombieentity, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.VILLAGE_INVASION); // CraftBukkit
+       }
+    }
+ 

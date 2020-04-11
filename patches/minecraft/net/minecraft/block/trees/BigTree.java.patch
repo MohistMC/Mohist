@@ -1,0 +1,10 @@
+--- a/net/minecraft/block/trees/BigTree.java
++++ b/net/minecraft/block/trees/BigTree.java
+@@ -33,6 +33,7 @@
+       if (configuredfeature == null) {
+          return false;
+       } else {
++         setTreeType(configuredfeature); // CraftBukkit
+          BlockState blockstate = Blocks.field_150350_a.func_176223_P();
+          p_227017_1_.func_180501_a(p_227017_3_.func_177982_a(p_227017_6_, 0, p_227017_7_), blockstate, 4);
+          p_227017_1_.func_180501_a(p_227017_3_.func_177982_a(p_227017_6_ + 1, 0, p_227017_7_), blockstate, 4);

@@ -1,0 +1,14 @@
+--- a/net/minecraft/block/SnowBlock.java
++++ b/net/minecraft/block/SnowBlock.java
+@@ -72,6 +72,11 @@
+ 
+    public void func_225534_a_(BlockState p_225534_1_, ServerWorld p_225534_2_, BlockPos p_225534_3_, Random p_225534_4_) {
+       if (p_225534_2_.func_226658_a_(LightType.BLOCK, p_225534_3_) > 11) {
++         // CraftBukkit start
++         if (org.bukkit.craftbukkit.event.CraftEventFactory.callBlockFadeEvent(p_225534_2_, p_225534_3_, Blocks.field_150350_a.func_176223_P()).isCancelled()) {
++            return;
++         }
++         // CraftBukkit end
+          func_220075_c(p_225534_1_, p_225534_2_, p_225534_3_);
+          p_225534_2_.func_217377_a(p_225534_3_, false);
+       }

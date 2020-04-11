@@ -1,0 +1,93 @@
+--- a/net/minecraft/world/chunk/storage/ChunkLoader.java
++++ b/net/minecraft/world/chunk/storage/ChunkLoader.java
+@@ -1,5 +1,6 @@
+ package net.minecraft.world.chunk.storage;
+ 
++import com.google.common.base.Preconditions;
+ import com.mojang.datafixers.DataFixer;
+ import java.io.File;
+ import java.io.IOException;
+@@ -10,9 +11,14 @@
+ import net.minecraft.util.SharedConstants;
+ import net.minecraft.util.datafix.DefaultTypeReferences;
+ import net.minecraft.util.math.ChunkPos;
++import net.minecraft.world.IWorld;
++import net.minecraft.world.chunk.ChunkStatus;
+ import net.minecraft.world.dimension.DimensionType;
+ import net.minecraft.world.gen.feature.structure.LegacyStructureDataUtil;
++import net.minecraft.world.server.ServerChunkProvider;
++import net.minecraft.world.server.ServerWorld;
+ import net.minecraft.world.storage.DimensionSavedDataManager;
++import org.bukkit.Bukkit;
+ 
+ public class ChunkLoader implements AutoCloseable {
+    private final IOWorker field_227077_a_;
+@@ -25,26 +31,59 @@
+       this.field_227077_a_ = new IOWorker(new RegionFileCache(p_i49939_1_), "chunk");
+    }
+ 
+-   public CompoundNBT func_219166_a(DimensionType p_219166_1_, Supplier<DimensionSavedDataManager> p_219166_2_, CompoundNBT p_219166_3_) {
+-      int i = func_219165_a(p_219166_3_);
++   // CraftBukkit start
++   private boolean check(ServerChunkProvider cps, int x, int z) throws IOException {
++      ChunkPos pos = new ChunkPos(x, z);
++      if (cps != null) {
++         Preconditions.checkState(Bukkit.isPrimaryThread(), "primary thread");
++         if (cps.func_73149_a(x, z)) {
++            return true;
++         }
++      }
++      CompoundNBT nbt = this.func_227078_e_(pos);
++      if (nbt != null) {
++         CompoundNBT level = nbt.func_74775_l("Level");
++         if (level.func_74767_n("TerrainPopulated")) {
++            return true;
++         }
++         ChunkStatus status = ChunkStatus.func_222591_a(level.func_74779_i("Status"));
++         if (status != null && status.func_209003_a(ChunkStatus.field_222613_i)) {
++            return true;
++         }
++      }
++      return false;
++   }
++   // CraftBukkit end
++
++   public CompoundNBT updateChunkData(DimensionType p_219166_1_, Supplier<DimensionSavedDataManager> savedDataManager, CompoundNBT chunkData, ChunkPos pos, @Nullable IWorld generatoraccess) throws IOException {
++      int i = func_219165_a(chunkData);
+       int j = 1493;
++      if (i < 1466) {
++         CompoundNBT level = chunkData.func_74775_l("Level");
++         if (level.func_74767_n("TerrainPopulated") && !level.func_74767_n("LightPopulated")) {
++            ServerChunkProvider cps = (generatoraccess == null) ? null : ((ServerWorld)generatoraccess).func_72863_F();
++            if (this.check(cps, pos.field_77276_a - 1, pos.field_77275_b) && this.check(cps, pos.field_77276_a - 1, pos.field_77275_b - 1) && this.check(cps, pos.field_77276_a, pos.field_77275_b - 1)) {
++               level.func_74757_a("LightPopulated", true);
++            }
++         }
++      }
+       if (i < 1493) {
+-         p_219166_3_ = NBTUtil.func_210821_a(this.field_219168_b, DefaultTypeReferences.CHUNK, p_219166_3_, i, 1493);
+-         if (p_219166_3_.func_74775_l("Level").func_74767_n("hasLegacyStructureData")) {
++         chunkData = NBTUtil.func_210821_a(this.field_219168_b, DefaultTypeReferences.CHUNK, chunkData, i, 1493);
++         if (chunkData.func_74775_l("Level").func_74767_n("hasLegacyStructureData")) {
+             if (this.field_219167_a == null) {
+-               this.field_219167_a = LegacyStructureDataUtil.func_215130_a(p_219166_1_, p_219166_2_.get());
++               this.field_219167_a = LegacyStructureDataUtil.func_215130_a(p_219166_1_.getType(), savedDataManager.get());
+             }
+ 
+-            p_219166_3_ = this.field_219167_a.func_212181_a(p_219166_3_);
++            chunkData = this.field_219167_a.func_212181_a(chunkData);
+          }
+       }
+ 
+-      p_219166_3_ = NBTUtil.func_210822_a(this.field_219168_b, DefaultTypeReferences.CHUNK, p_219166_3_, Math.max(1493, i));
++      chunkData = NBTUtil.func_210822_a(this.field_219168_b, DefaultTypeReferences.CHUNK, chunkData, Math.max(1493, i));
+       if (i < SharedConstants.func_215069_a().getWorldVersion()) {
+-         p_219166_3_.func_74768_a("DataVersion", SharedConstants.func_215069_a().getWorldVersion());
++         chunkData.func_74768_a("DataVersion", SharedConstants.func_215069_a().getWorldVersion());
+       }
+ 
+-      return p_219166_3_;
++      return chunkData;
+    }
+ 
+    public static int func_219165_a(CompoundNBT p_219165_0_) {

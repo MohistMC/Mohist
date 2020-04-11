@@ -1,0 +1,11 @@
+--- a/net/minecraft/entity/monster/PhantomEntity.java
++++ b/net/minecraft/entity/monster/PhantomEntity.java
+@@ -223,7 +223,7 @@
+ 
+                for(PlayerEntity playerentity : list) {
+                   if (PhantomEntity.this.func_213344_a(playerentity, EntityPredicate.field_221016_a)) {
+-                     PhantomEntity.this.func_70624_b(playerentity);
++                     PhantomEntity.this.setGoalTarget(playerentity, org.bukkit.event.entity.EntityTargetEvent.TargetReason.CLOSEST_PLAYER, true); // CraftBukkit - reason
+                      return true;
+                   }
+                }
