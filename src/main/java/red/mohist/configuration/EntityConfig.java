@@ -12,6 +12,7 @@ public class EntityConfig extends ConfigBase
 
     public static EntityConfig instance;
     public final BoolSetting skipEntityTicks = new BoolSetting(this, "settings.skip-entity-ticks", true, "If enabled, turns on entity tick skip feature.");
+    public final BoolSetting skipActivationRange = new BoolSetting(this, "settings.skip-activation-range", false, "If enabled, skips entity activation range checks.");
 
     public EntityConfig()
     {
@@ -23,6 +24,7 @@ public class EntityConfig extends ConfigBase
     public void init()
     {
         settings.put(skipEntityTicks.path, skipEntityTicks);
+        settings.put(skipActivationRange.path, skipActivationRange);
         load();
     }
 

@@ -218,6 +218,10 @@ public class ActivationRange {
      * @return
      */
     public static boolean checkIfActive(Entity entity) {
+        if (MinecraftServer.entityConfig != null
+            && MinecraftServer.entityConfig.skipActivationRange.getValue())
+            return true;
+
         SpigotTimings.checkIfActiveTimer.startTiming();
         // Never safe to skip fireworks or entities not yet added to chunk
         // PAIL: inChunk
