@@ -105,13 +105,6 @@ targetCompatibility = '1.8'
 sourceCompatibility = '1.8'
 compileJava.options.encoding = 'UTF-8'
 
-sourceSets {
-    // Fix idea can't import module automatically
-    main.java.srcDir 'src/main/java/'
-    main.java.srcDir 'projects/Mohist/src/main/java/'
-    main.java.srcDir 'projects/Mohist/src/main/start/'
-}
-
 configurations.all {
     transitive = false
 }
