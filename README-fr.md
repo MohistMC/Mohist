@@ -48,8 +48,15 @@ Build
   * Build avec Windows :
   `gradlew.bat launch4j `
 
-Tous les builds seront dans `.\build\distributions\` 
-`Mohist-xxxxx-server.jar` est le fichier jar que tu devras lancer.
+Plugin development
+------
+* Building
+   * Build with Linux:
+   `bash gradlew reobfToSRG`
+   * Build with Windows:
+   `gradlew.bat reobfToSRG`
+
+All builds will be in `.\build\mohist_srg.jar` Is the development frontend you need
 
 Développement de plugins
 ------

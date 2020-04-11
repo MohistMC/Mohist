@@ -16,7 +16,7 @@ plugins {
     id "edu.sc.seis.launch4j" version "2.4.6"
 }
 
-apply plugin: 'net.minecraftforge.gradle.patcher'
+def patcher_plugin = plugins.apply('net.minecraftforge.gradle.patcher')
 
 group = 'red.mohist'
 version = versioning.info.build
@@ -123,7 +123,7 @@ minecraft {
     workspaceDir = "projects"
     versionJson = "jsons/${minecraft.version}-mohist-dev.json"
     buildUserdev = true
-    buildInstaller = false
+    buildInstaller = true
     installerVersion = "1.5"
 
     def common = {
@@ -180,7 +180,7 @@ launch4j {
     jar = installer.archiveFile.get().asFile.canonicalPath
     outfile = file("build/distributions/${project.name}-${project.version}-installer-win.exe").canonicalPath
     icon = file('icon.ico').canonicalPath
-    manifest = file('forge/l4jManifest.xml').canonicalPath
+    manifest = file('l4jManifest.xml').canonicalPath
     jreMinVersion = '1.8.0_101'
     initialHeapPercent = 5
     maxHeapPercent = 100
@@ -189,6 +189,17 @@ tasks.createExe.dependsOn installer
 tasks.compileJava.enabled = false
 tasks.compileTestJava.enabled = false
 tasks.build.dependsOn 'launch4j'
+
+task reobfToSRG(type: net.minecraftforge.gradle.patcher.TaskReobfuscate, dependsOn: reobfuscate) {
+    srg = patcher_plugin.delayedFile('{CACHE_DIR}/de/oceanlabs/mcp/mcp_{MAPPING_CHANNEL}/{MAPPING_VERSION}/{MC_VERSION}/srgs/mcp-srg.srg')
+    exc = reobfuscate.exc
+    preFFJar = reobfuscate.preFFJar
+    methodsCsv = reobfuscate.methodsCsv
+    fieldsCsv = reobfuscate.fieldsCsv
+    addLibs reobfuscate.libs
+    inJar = patcher_plugin.delayedFile('{BUILD_DIR}/localCache/Mohist/recompiled.jar')
+    outJar = 'build/mohist_srg.jar'
+}
 
 outputJar {
     archiveClassifier = 'server'
@@ -242,4 +253,9 @@ String getServerClasspath(File file) {
     }
     out += "libraries/net/minecraft/1.12.2/minecraft_server.${minecraft.version}.jar"
     return out.toString()
+}
+
+task dumpLibs(type: Copy) {
+    into "libraries"
+    from configurations.compile
 }

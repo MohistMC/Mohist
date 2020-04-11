@@ -46,14 +46,20 @@ Building
   * Build with Linux:
   `bash gradlew launch4j`
   * Build with Windows:
-  `gradlew.bat launch4j `
+  `gradlew.bat launch4j`
 
 All builds will be in `.\build\distributions\` 
 `Mohist-xxxxx-server.jar` is the server file that you should run
 
 Plugin development
 ------
- [**Mohist Remap Guide**](https://github.com/Mohist-Community/MohistRemapGuide)
+* Building
+   * Build with Linux:
+   `bash gradlew reobfToSRG`
+   * Build with Windows:
+   `gradlew.bat reobfToSRG`
+
+All builds will be in `.\build\mohist_srg.jar` Is the development frontend you need
 
 Thanks for the following project
 ------

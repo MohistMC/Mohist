@@ -38,8 +38,15 @@
 所有构建都将出现在 `.\Mohist\build\distributions\` 
 Mohist-xxxxx-server.jar - 这是你应该运行的Jar
 
-### 插件开发者看的
- [**MohistRemapGuide**](https://github.com/Mohist-Community/MohistRemapGuide)
+Plugin development
+------
+* Building
+   * Build with Linux:
+   `bash gradlew reobfToSRG`
+   * Build with Windows:
+   `gradlew.bat reobfToSRG`
+
+All builds will be in `.\build\mohist_srg.jar` Is the development frontend you need
 
 ### 感谢以下项目
 * [**Bukkit**](https://hub.spigotmc.org/stash/scm/spigot/bukkit.git) - 插件支持.
