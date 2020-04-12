@@ -28,6 +28,9 @@ import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
+import red.mohist.forge.ForgeInjectBukkit;
 
 /**
  * Default implementation of PermissionAPI.
@@ -50,6 +53,7 @@ public enum DefaultPermissionHandler implements IPermissionHandler
         {
             DESCRIPTION_MAP.put(node, desc);
         }
+        ForgeInjectBukkit.registerDefaultPermission(node, level, desc);
     }
 
     @Override
@@ -61,19 +65,8 @@ public enum DefaultPermissionHandler implements IPermissionHandler
     @Override
     public boolean hasPermission(GameProfile profile, String node, @Nullable IContext context)
     {
-        DefaultPermissionLevel level = getDefaultPermissionLevel(node);
-
-        if(level == DefaultPermissionLevel.NONE)
-        {
-            return false;
-        }
-        else if(level == DefaultPermissionLevel.ALL)
-        {
-            return true;
-        }
-
-        MinecraftServer server = FMLCommonHandler.instance().getMinecraftServerInstance();
-        return server != null && server.getPlayerList().canSendCommands(profile);
+        Player player = Bukkit.getServer().getPlayer(profile.getId());
+        return player != null && player.hasPermission(node);
     }
 
     @Override

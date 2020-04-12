@@ -14,6 +14,7 @@ import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 import net.minecraftforge.fml.common.registry.EntityRegistry;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import net.minecraftforge.registries.GameData;
+import net.minecraftforge.server.permission.DefaultPermissionLevel;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.WorldType;
@@ -22,7 +23,10 @@ import org.bukkit.block.banner.PatternType;
 import org.bukkit.craftbukkit.v1_12_R1.enchantments.CraftEnchantment;
 import org.bukkit.craftbukkit.v1_12_R1.potion.CraftPotionEffectType;
 import org.bukkit.entity.EntityType;
+import org.bukkit.permissions.Permission;
+import org.bukkit.permissions.PermissionDefault;
 import org.bukkit.potion.PotionEffectType;
+import org.bukkit.util.permissions.DefaultPermissions;
 import red.mohist.Mohist;
 import red.mohist.api.ItemAPI;
 import red.mohist.api.ServerAPI;
@@ -143,5 +147,19 @@ public class ForgeInjectBukkit {
             NAME_MAP.put(name.toLowerCase(), bukkitType);
             ID_MAP.put((short)typeId, bukkitType);
         }
+    }
+
+    public static void registerDefaultPermission(String name, DefaultPermissionLevel level, String desc) {
+        PermissionDefault permissionDefault = PermissionDefault.FALSE;
+        switch (level) {
+            case ALL:
+                permissionDefault = PermissionDefault.TRUE;
+            case OP:
+                permissionDefault = PermissionDefault.OP;
+            case NONE:
+                permissionDefault = PermissionDefault.FALSE;
+        }
+        Permission permission = new Permission(name, desc, permissionDefault);
+        DefaultPermissions.registerPermission(permission, false);
     }
 }
