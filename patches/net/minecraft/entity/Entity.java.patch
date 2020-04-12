@@ -1172,19 +1172,7 @@
      }
  
      public float getEyeHeight()
-@@ -2832,6 +3222,11 @@
-         return true;
-     }
- 
-+    public boolean canUseCommand(int permLevel, String commandName, String perm)
-+    {
-+        return true;
-+    }
-+
-     public BlockPos getPosition()
-     {
-         return new BlockPos(this.posX, this.posY + 0.5D, this.posZ);
-@@ -2859,11 +3254,11 @@
+@@ -2859,11 +3249,11 @@
  
      public void setCommandStat(CommandResultStats.Type type, int amount)
      {
@@ -1200,7 +1188,7 @@
  
      @Nullable
      public MinecraftServer getServer()
-@@ -2901,6 +3296,217 @@
+@@ -2901,6 +3291,217 @@
          EnchantmentHelper.applyArthropodEnchantments(entityLivingBaseIn, entityIn);
      }
  
@@ -1418,7 +1406,7 @@
      public void addTrackingPlayer(EntityPlayerMP player)
      {
      }
-@@ -3069,7 +3675,7 @@
+@@ -3069,7 +3670,7 @@
          return SoundCategory.NEUTRAL;
      }
  

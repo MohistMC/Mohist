@@ -14,15 +14,11 @@
          public String getName()
          {
              return FunctionManager.this.currentGameLoopFunctionId;
-@@ -39,6 +43,11 @@
+@@ -39,6 +43,7 @@
          {
              return permLevel <= 2;
          }
 +
-+        public boolean canUseCommand(int permLevel, String commandName, String perm)
-+        {
-+            return permLevel <= 2;
-+        }
          public World getEntityWorld()
          {
              return FunctionManager.this.server.worlds[0];

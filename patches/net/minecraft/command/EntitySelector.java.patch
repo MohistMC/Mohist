@@ -12,7 +12,7 @@
          Matcher matcher = TOKEN_PATTERN.matcher(token);
  
 -        if (matcher.matches() && sender.canUseCommand(1, "@"))
-+        if (matcher.matches() && (sender.canUseCommand(1, "@") || sender.canUseCommand(1, "@", "minecraft")))
++        if (matcher.matches() && (sender.canUseCommand(1, "@")))
          {
              Map<String, String> map = getArgumentMap(matcher.group(2));
  

@@ -6,4 +6,3 @@
  * /dump entitytypes  - Get all entity types in bukkit, including those registered by forge
  * /dump biomes  - Get all biome types in bukkit, including those registered by forge
  * /dump cbcmds  - Get the command and corresponding permission nodes registered by the bukkit plugin
- * /dump modscmds  - Get the command and corresponding permission nodes registered by the forge mod

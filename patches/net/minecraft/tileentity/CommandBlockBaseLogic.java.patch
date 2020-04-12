@@ -48,19 +48,7 @@
  
      public int getSuccessCount()
      {
-@@ -122,6 +139,11 @@
-         return permLevel <= 2;
-     }
- 
-+    public boolean canUseCommand(int permLevel, String commandName, String perm)
-+    {
-+        return permLevel <= 2;
-+    }
-+
-     public void setCommand(String command)
-     {
-         this.commandStored = command;
-@@ -152,7 +174,8 @@
+@@ -152,7 +169,8 @@
                      try
                      {
                          this.lastOutput = null;
@@ -70,7 +58,7 @@
                      }
                      catch (Throwable throwable)
                      {
-@@ -198,6 +221,172 @@
+@@ -198,6 +216,172 @@
          }
      }
  

@@ -1,13 +1,9 @@
 --- ../src-base/minecraft/net/minecraft/command/CommandResultStats.java
 +++ ../src-work/minecraft/net/minecraft/command/CommandResultStats.java
-@@ -45,6 +45,11 @@
+@@ -45,6 +45,7 @@
                  {
                      sender.sendMessage(component);
                  }
-+                public boolean canUseCommand(int permLevel, String commandName, String perm)
-+                {
-+                    return true;
-+                }
 +
                  public boolean canUseCommand(int permLevel, String commandName)
                  {

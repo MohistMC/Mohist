@@ -24,21 +24,16 @@
          this.stats.writeStatsToNBT(compound);
          return compound;
      }
-@@ -59,8 +65,12 @@
+@@ -59,7 +65,7 @@
              }
              public boolean canUseCommand(int permLevel, String commandName)
              {
 -                return true;
 +                return permLevel <= 2; //Forge: Fixes  MC-75630 - Exploit with signs and command blocks
              }
-+            public boolean canUseCommand(int permLevel, String commandName, String perm)
-+            {
-+                return permLevel <= 2; //Forge: Fixes  MC-75630 - Exploit with signs and command blocks
-+            }
              public BlockPos getPosition()
              {
-                 return TileEntitySign.this.pos;
-@@ -79,19 +89,38 @@
+@@ -79,19 +85,38 @@
              }
          };
  
@@ -83,7 +78,7 @@
          }
  
          this.stats.readStatsFromNBT(compound);
-@@ -131,7 +160,10 @@
+@@ -131,7 +156,10 @@
  
      public void setPlayer(EntityPlayer playerIn)
      {
@@ -95,19 +90,7 @@
      }
  
      public EntityPlayer getPlayer()
-@@ -158,6 +190,11 @@
-             {
-                 return permLevel <= 2;
-             }
-+
-+            public boolean canUseCommand(int permLevel, String commandName, String perm)
-+            {
-+                return permLevel <= 2;
-+            }
-             public BlockPos getPosition()
-             {
-                 return TileEntitySign.this.pos;
-@@ -201,7 +238,14 @@
+@@ -201,7 +229,14 @@
  
                  if (clickevent.getAction() == ClickEvent.Action.RUN_COMMAND)
                  {
