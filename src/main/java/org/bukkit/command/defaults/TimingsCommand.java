@@ -100,7 +100,7 @@ public class TimingsCommand extends BukkitCommand {
 
     @Override
     public boolean execute(CommandSender sender, String currentAlias, String[] args) {
-        if (!sender.isOp() || !testPermission(sender)) return true;
+        if (!testPermission(sender)) return true;
         if (args.length < 1)  { // Spigot
             sender.sendMessage(ChatColor.RED + "Usage: " + usageMessage);
             return false;
