@@ -1,6 +1,42 @@
 --- a/net/minecraft/world/storage/WorldInfo.java
 +++ b/net/minecraft/world/storage/WorldInfo.java
-@@ -362,6 +362,7 @@
+@@ -14,11 +14,13 @@
+ import net.minecraft.command.TimerCallbackManager;
+ import net.minecraft.command.TimerCallbackSerializers;
+ import net.minecraft.crash.CrashReportCategory;
++import net.minecraft.entity.player.ServerPlayerEntity;
+ import net.minecraft.nbt.CompoundNBT;
+ import net.minecraft.nbt.ListNBT;
+ import net.minecraft.nbt.NBTDynamicOps;
+ import net.minecraft.nbt.NBTUtil;
+ import net.minecraft.nbt.StringNBT;
++import net.minecraft.network.play.server.SServerDifficultyPacket;
+ import net.minecraft.server.MinecraftServer;
+ import net.minecraft.util.SharedConstants;
+ import net.minecraft.util.Util;
+@@ -30,8 +32,13 @@
+ import net.minecraft.world.WorldSettings;
+ import net.minecraft.world.WorldType;
+ import net.minecraft.world.dimension.DimensionType;
++import net.minecraft.world.server.ServerWorld;
+ import net.minecraftforge.api.distmarker.Dist;
+ import net.minecraftforge.api.distmarker.OnlyIn;
++import org.bukkit.Bukkit;
++import org.bukkit.World;
++import org.bukkit.event.weather.ThunderChangeEvent;
++import org.bukkit.event.weather.WeatherChangeEvent;
+ 
+ public class WorldInfo {
+    private String field_186349_b;
+@@ -89,6 +96,7 @@
+    private boolean field_230142_Y_;
+    private final GameRules field_82577_x = new GameRules();
+    private final TimerCallbackManager<MinecraftServer> field_215769_Z = new TimerCallbackManager<>(TimerCallbackSerializers.field_216342_a);
++   public ServerWorld world; // CraftBukkit
+ 
+    protected WorldInfo() {
+       this.field_209226_o = null;
+@@ -362,6 +370,7 @@
        CompoundNBT compoundnbt1 = new CompoundNBT();
  
        for(Entry<DimensionType, CompoundNBT> entry : this.field_186348_N.entrySet()) {
@@ -8,3 +44,78 @@
           compoundnbt1.func_218657_a(String.valueOf(entry.getKey().func_186068_a()), entry.getValue());
        }
  
+@@ -396,7 +405,7 @@
+       if (this.field_215768_X != null) {
+          p_76064_1_.func_74778_a("WanderingTraderId", this.field_215768_X.toString());
+       }
+-
++      p_76064_1_.func_74778_a("Bukkit.Version", String.valueOf(Bukkit.getName()) + "/" + Bukkit.getVersion() + "/" + Bukkit.getBukkitVersion());
+    }
+ 
+    public long func_76063_b() {
+@@ -509,6 +518,19 @@
+    }
+ 
+    public void func_76069_a(boolean p_76069_1_) {
++      // CraftBukkit start
++      if (this.field_76102_o == p_76069_1_) {
++         return;
++      }
++      World world = Bukkit.getWorld(this.func_76065_j());
++      if (world != null) {
++         ThunderChangeEvent thunder = new ThunderChangeEvent(world, p_76069_1_);
++         Bukkit.getServer().getPluginManager().callEvent(thunder);
++         if (thunder.isCancelled()) {
++            return;
++         }
++      }
++      // CraftBukkit end
+       this.field_76102_o = p_76069_1_;
+    }
+ 
+@@ -525,6 +547,19 @@
+    }
+ 
+    public void func_76084_b(boolean p_76084_1_) {
++      // CraftBukkit start
++      if (this.field_76104_m == p_76084_1_) {
++         return;
++      }
++      World world = Bukkit.getWorld(this.func_76065_j());
++      if (world != null) {
++         WeatherChangeEvent weather = new WeatherChangeEvent(world, p_76084_1_);
++         Bukkit.getServer().getPluginManager().callEvent(weather);
++         if (weather.isCancelled()) {
++            return;
++         }
++      }
++      // CraftBukkit end
+       this.field_76104_m = p_76084_1_;
+    }
+ 
+@@ -674,6 +709,12 @@
+ 
+    public void func_176144_a(Difficulty p_176144_1_) {
+       this.field_176158_z = p_176144_1_;
++      // CraftBukkit start
++      SServerDifficultyPacket packet = new SServerDifficultyPacket(this.func_176130_y(), this.func_176123_z());
++      for (ServerPlayerEntity player : this.world.func_217369_A()) {
++         player.field_71135_a.func_147359_a(packet);
++      }
++      // CraftBukkit end
+    }
+ 
+    public boolean func_176123_z() {
+@@ -803,4 +844,12 @@
+       this.field_230141_X_.add(p_230145_1_);
+       this.field_230142_Y_ |= p_230145_2_;
+    }
++
++   // CraftBukkit start
++   public void checkName(final String name) {
++      if (!this.field_76106_k.equals(name)) {
++         this.field_76106_k = name;
++      }
++   }
++   // CraftBukkit end
+ }

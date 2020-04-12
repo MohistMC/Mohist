@@ -1,0 +1,14 @@
+--- a/net/minecraft/util/WorldOptimizer.java
++++ b/net/minecraft/util/WorldOptimizer.java
+@@ -121,9 +121,9 @@
+                      CompoundNBT compoundnbt = chunkloader.func_227078_e_(chunkpos);
+                      if (compoundnbt != null) {
+                         int j = ChunkLoader.func_219165_a(compoundnbt);
+-                        CompoundNBT compoundnbt1 = chunkloader.func_219166_a(dimensiontype2, () -> {
++                        CompoundNBT compoundnbt1 = chunkloader.updateChunkData(dimensiontype2, () -> {
+                            return this.field_219960_q;
+-                        }, compoundnbt);
++                        }, compoundnbt, chunkpos, null); // CraftBukkit
+                         CompoundNBT compoundnbt2 = compoundnbt1.func_74775_l("Level");
+                         ChunkPos chunkpos1 = new ChunkPos(compoundnbt2.func_74762_e("xPos"), compoundnbt2.func_74762_e("zPos"));
+                         if (!chunkpos1.equals(chunkpos)) {

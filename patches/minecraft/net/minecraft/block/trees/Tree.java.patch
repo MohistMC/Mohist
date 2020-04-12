@@ -1,0 +1,88 @@
+--- a/net/minecraft/block/trees/Tree.java
++++ b/net/minecraft/block/trees/Tree.java
+@@ -4,12 +4,15 @@
+ import javax.annotation.Nullable;
+ import net.minecraft.block.BlockState;
+ import net.minecraft.block.Blocks;
++import net.minecraft.block.SaplingBlock;
+ import net.minecraft.tags.BlockTags;
+ import net.minecraft.util.math.BlockPos;
+ import net.minecraft.world.IWorld;
++import net.minecraft.world.biome.DefaultBiomeFeatures;
+ import net.minecraft.world.gen.ChunkGenerator;
+ import net.minecraft.world.gen.feature.ConfiguredFeature;
+ import net.minecraft.world.gen.feature.TreeFeatureConfig;
++import org.bukkit.TreeType;
+ 
+ public abstract class Tree {
+    @Nullable
+@@ -20,6 +23,7 @@
+       if (configuredfeature == null) {
+          return false;
+       } else {
++         setTreeType(configuredfeature); // CraftBukkit
+          p_225545_1_.func_180501_a(p_225545_3_, Blocks.field_150350_a.func_176223_P(), 4);
+          ((TreeFeatureConfig)configuredfeature.field_222738_b).func_227373_a_();
+          if (configuredfeature.func_222734_a(p_225545_1_, p_225545_2_, p_225545_5_, p_225545_3_)) {
+@@ -40,4 +44,61 @@
+ 
+       return false;
+    }
++
++   protected void setTreeType(final ConfiguredFeature<?, ?> worldgentreeabstract) {
++      if (worldgentreeabstract.field_222738_b == DefaultBiomeFeatures.field_226739_a_ || worldgentreeabstract.field_222738_b == DefaultBiomeFeatures.field_226816_k_) {
++         SaplingBlock.treeType = TreeType.TREE;
++      }
++      else if (worldgentreeabstract.field_222738_b == DefaultBiomeFeatures.field_226767_ab_) {
++         SaplingBlock.treeType = TreeType.RED_MUSHROOM;
++      }
++      else if (worldgentreeabstract.field_222738_b == DefaultBiomeFeatures.field_226768_ac_) {
++         SaplingBlock.treeType = TreeType.BROWN_MUSHROOM;
++      }
++      else if (worldgentreeabstract.field_222738_b == DefaultBiomeFeatures.field_226792_b_) {
++         SaplingBlock.treeType = TreeType.COCOA_TREE;
++      }
++      else if (worldgentreeabstract.field_222738_b == DefaultBiomeFeatures.field_226808_c_) {
++         SaplingBlock.treeType = TreeType.SMALL_JUNGLE;
++      }
++      else if (worldgentreeabstract.field_222738_b == DefaultBiomeFeatures.field_226809_d_) {
++         SaplingBlock.treeType = TreeType.TALL_REDWOOD;
++      }
++      else if (worldgentreeabstract.field_222738_b == DefaultBiomeFeatures.field_226810_e_) {
++         SaplingBlock.treeType = TreeType.REDWOOD;
++      }
++      else if (worldgentreeabstract.field_222738_b == DefaultBiomeFeatures.field_226811_f_) {
++         SaplingBlock.treeType = TreeType.ACACIA;
++      }
++      else if (worldgentreeabstract.field_222738_b == DefaultBiomeFeatures.field_226812_g_ || worldgentreeabstract.field_222738_b == DefaultBiomeFeatures.field_230136_s_) {
++         SaplingBlock.treeType = TreeType.BIRCH;
++      }
++      else if (worldgentreeabstract.field_222738_b == DefaultBiomeFeatures.field_230130_i_) {
++         SaplingBlock.treeType = TreeType.TALL_BIRCH;
++      }
++      else if (worldgentreeabstract.field_222738_b == DefaultBiomeFeatures.field_226814_i_) {
++         SaplingBlock.treeType = TreeType.SWAMP;
++      }
++      else if (worldgentreeabstract.field_222738_b == DefaultBiomeFeatures.field_226815_j_ || worldgentreeabstract.field_222738_b == DefaultBiomeFeatures.field_226817_l_) {
++         SaplingBlock.treeType = TreeType.BIG_TREE;
++      }
++      else if (worldgentreeabstract.field_222738_b == DefaultBiomeFeatures.field_226821_p_) {
++         SaplingBlock.treeType = TreeType.JUNGLE_BUSH;
++      }
++      else if (worldgentreeabstract.field_222738_b == DefaultBiomeFeatures.field_226822_q_) {
++         SaplingBlock.treeType = TreeType.DARK_OAK;
++      }
++      else if (worldgentreeabstract.field_222738_b == DefaultBiomeFeatures.field_226823_r_) {
++         SaplingBlock.treeType = TreeType.MEGA_REDWOOD;
++      }
++      else if (worldgentreeabstract.field_222738_b == DefaultBiomeFeatures.field_226824_s_) {
++         SaplingBlock.treeType = TreeType.MEGA_REDWOOD;
++      }
++      else {
++         if (worldgentreeabstract.field_222738_b != DefaultBiomeFeatures.field_226825_t_) {
++            throw new IllegalArgumentException("Unknown tree generator " + worldgentreeabstract);
++         }
++         SaplingBlock.treeType = TreeType.JUNGLE;
++      }
++   }
+ }

@@ -1,0 +1,11 @@
+--- a/net/minecraft/entity/monster/WitchEntity.java
++++ b/net/minecraft/entity/monster/WitchEntity.java
+@@ -120,7 +120,7 @@
+                   List<EffectInstance> list = PotionUtils.func_185189_a(itemstack);
+                   if (list != null) {
+                      for(EffectInstance effectinstance : list) {
+-                        this.func_195064_c(new EffectInstance(effectinstance));
++                        this.addEffect(new EffectInstance(effectinstance), org.bukkit.event.entity.EntityPotionEffectEvent.Cause.ATTACK); // CraftBukkit
+                      }
+                   }
+                }

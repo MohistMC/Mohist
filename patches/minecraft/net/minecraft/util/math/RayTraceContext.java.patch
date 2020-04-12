@@ -1,0 +1,11 @@
+--- a/net/minecraft/util/math/RayTraceContext.java
++++ b/net/minecraft/util/math/RayTraceContext.java
+@@ -21,7 +21,7 @@
+       this.field_222255_b = p_i50009_2_;
+       this.field_222256_c = p_i50009_3_;
+       this.field_222257_d = p_i50009_4_;
+-      this.field_222258_e = ISelectionContext.func_216374_a(p_i50009_5_);
++      this.field_222258_e = (p_i50009_5_ == null) ? ISelectionContext.func_216377_a() : ISelectionContext.func_216374_a(p_i50009_5_); // CraftBukkit
+    }
+ 
+    public Vec3d func_222250_a() {
