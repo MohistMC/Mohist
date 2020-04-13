@@ -23,7 +23,7 @@
        synchronized(this.field_151274_e) {
           Class<? extends ServerSocketChannel> oclass;
           LazyValue<? extends EventLoopGroup> lazyvalue;
-@@ -80,7 +82,7 @@
+@@ -80,13 +82,13 @@
                    ;
                 }
  
@@ -32,3 +32,26 @@
                 NetworkManager networkmanager = new NetworkManager(PacketDirection.SERVERBOUND);
                 NetworkSystem.this.field_151272_f.add(networkmanager);
                 p_initChannel_1_.pipeline().addLast("packet_handler", networkmanager);
+                networkmanager.func_150719_a(new ServerHandshakeNetHandler(NetworkSystem.this.field_151273_d, networkmanager));
+             }
+-         }).group(lazyvalue.func_179281_c()).localAddress(p_151265_1_, p_151265_2_).bind().syncUninterruptibly());
++         }).group(lazyvalue.func_179281_c()).localAddress(p_151265_1_, p_151265_2_).option(ChannelOption.AUTO_READ, false).bind().syncUninterruptibly()); // CraftBukkit
+       }
+    }
+ 
+@@ -108,6 +110,15 @@
+       return channelfuture.channel().localAddress();
+    }
+ 
++   public void acceptConnections() {
++      synchronized (this.field_151274_e) {
++         for (final ChannelFuture future : this.field_151274_e) {
++            future.channel().config().setAutoRead(true);
++         }
++      }
++      // monitorexit(this.endpoints)
++   }
++
+    public void func_151268_b() {
+       this.field_151277_a = false;
+ 

@@ -9,3 +9,23 @@
        return Items.field_151062_by;
     }
  
+@@ -34,9 +34,18 @@
+ 
+    protected void func_70184_a(RayTraceResult p_70184_1_) {
+       if (!this.field_70170_p.field_72995_K) {
+-         this.field_70170_p.func_217379_c(2002, new BlockPos(this), PotionUtils.func_185183_a(Potions.field_185230_b));
++         // CraftBukkit - moved to after event
++         // this.world.playEvent(2002, new BlockPos(this), PotionUtils.getPotionColor(Potions.WATER));
+          int i = 3 + this.field_70170_p.field_73012_v.nextInt(5) + this.field_70170_p.field_73012_v.nextInt(5);
+ 
++         // CraftBukkit start
++         org.bukkit.event.entity.ExpBottleEvent event = org.bukkit.craftbukkit.event.CraftEventFactory.callExpBottleEvent(this, i);
++         i = event.getExperience();
++         if (event.getShowEffect()) {
++            this.field_70170_p.func_217379_c(2002, new BlockPos(this), PotionUtils.func_185183_a(Potions.field_185230_b));
++         }
++         // CraftBukkit end
++
+          while(i > 0) {
+             int j = ExperienceOrbEntity.func_70527_a(i);
+             i -= j;
