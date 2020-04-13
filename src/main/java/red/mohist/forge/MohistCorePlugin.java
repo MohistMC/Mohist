@@ -3,13 +3,15 @@ package red.mohist.forge;
 import java.util.Map;
 import javax.annotation.Nullable;
 import net.minecraftforge.fml.relauncher.IFMLLoadingPlugin;
+import red.mohist.bukkit.MyPetTransformer;
 
 @IFMLLoadingPlugin.MCVersion("1.12.2")
 public class MohistCorePlugin implements IFMLLoadingPlugin {
     @Override
     public String[] getASMTransformerClass() {
         return new String[]{
-                SendPacketTransformer.class.getCanonicalName()
+                SendPacketTransformer.class.getCanonicalName(),
+                MyPetTransformer.class.getCanonicalName()
         };
     }
 
