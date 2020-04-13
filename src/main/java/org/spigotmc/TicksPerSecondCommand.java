@@ -26,7 +26,7 @@ public class TicksPerSecondCommand extends Command {
 
     @Override
     public boolean execute(CommandSender sender, String currentAlias, String[] args) {
-        if (!sender.isOp() || !testPermission(sender)) {
+        if (!testPermission(sender)) {
             sender.sendMessage(Message.getString("command.nopermission"));
             return true;
         }

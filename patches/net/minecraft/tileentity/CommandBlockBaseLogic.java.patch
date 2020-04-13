@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/tileentity/CommandBlockBaseLogic.java
 +++ ../src-work/minecraft/net/minecraft/tileentity/CommandBlockBaseLogic.java
-@@ -1,23 +1,39 @@
+@@ -1,23 +1,40 @@
  package net.minecraft.tileentity;
  
 +import com.google.common.base.Joiner;
@@ -34,13 +34,14 @@
  import net.minecraftforge.fml.relauncher.Side;
  import net.minecraftforge.fml.relauncher.SideOnly;
 +import org.bukkit.command.CommandSender;
++import org.bukkit.craftbukkit.v1_12_R1.command.CraftRemoteConsoleCommandSender;
 +import org.bukkit.craftbukkit.v1_12_R1.command.VanillaCommandWrapper;
 +import org.bukkit.event.server.ServerCommandEvent;
 +import red.mohist.Mohist;
  
  public abstract class CommandBlockBaseLogic implements ICommandSender
  {
-@@ -30,6 +46,7 @@
+@@ -30,6 +47,7 @@
      private String commandStored = "";
      private String customName = "@";
      private final CommandResultStats resultStats = new CommandResultStats();
@@ -48,7 +49,7 @@
  
      public int getSuccessCount()
      {
-@@ -152,7 +169,8 @@
+@@ -152,7 +170,8 @@
                      try
                      {
                          this.lastOutput = null;
@@ -58,7 +59,7 @@
                      }
                      catch (Throwable throwable)
                      {
-@@ -198,6 +216,172 @@
+@@ -198,6 +217,173 @@
          }
      }
  
@@ -206,24 +207,25 @@
 +
 +    public static CommandSender unwrapSender(ICommandSender listener) {
 +        org.bukkit.command.CommandSender sender = null;
-+            if (listener instanceof DedicatedServer) {
-+                sender = ((DedicatedServer) listener).console;
-+            } else if (listener instanceof RConConsoleSource) {
-+                sender = ((RConConsoleSource) listener).getServer().remoteConsole;
-+            } else if (listener instanceof CommandBlockBaseLogic) {
-+                sender = ((CommandBlockBaseLogic) listener).sender;
-+            } else if (listener instanceof FunctionManager.CustomFunctionListener) {
-+                sender = ((FunctionManager.CustomFunctionListener) listener).sender;
-+            } else if (listener instanceof CommandSenderWrapper) {
-+                listener = ((CommandSenderWrapper) listener).delegate; // Search deeper
-+            } else if (VanillaCommandWrapper.lastSender != null) {
-+                sender = VanillaCommandWrapper.lastSender;
-+            } else if (listener.getCommandSenderEntity() != null) {
-+                sender = listener.getCommandSenderEntity().getBukkitEntity();
-+            } else {
-+                throw new RuntimeException("Unhandled executor " + listener.getClass().getSimpleName());
-+            }
-+    
++        if (listener instanceof DedicatedServer) {
++            sender = ((DedicatedServer) listener).console;
++        } else if (listener instanceof RConConsoleSource) {
++            sender = new CraftRemoteConsoleCommandSender((RConConsoleSource) listener);
++        } else if (listener instanceof CommandBlockBaseLogic) {
++            sender = ((CommandBlockBaseLogic) listener).sender;
++        } else if (listener instanceof FunctionManager.CustomFunctionListener) {
++            sender = ((FunctionManager.CustomFunctionListener) listener).sender;
++        } else if (listener instanceof CommandSenderWrapper) {
++            sender = unwrapSender(((CommandSenderWrapper) listener).delegate); // Search deeper
++        } else if (VanillaCommandWrapper.lastSender != null) {
++            sender = VanillaCommandWrapper.lastSender;
++        } else if (listener.getCommandSenderEntity() != null) {
++            sender = listener.getCommandSenderEntity().getBukkitEntity();
++        } else if (listener instanceof net.minecraft.entity.Entity) {
++            sender = ((net.minecraft.entity.Entity) sender).getBukkitEntity();
++        } else {
++            throw new RuntimeException("Unhandled executor " + listener.getClass().getSimpleName());
++        }
 +
 +        return sender;
 +    }
