@@ -1,0 +1,14 @@
+--- a/net/minecraft/item/ArmorStandItem.java
++++ b/net/minecraft/item/ArmorStandItem.java
+@@ -47,6 +47,11 @@
+                   armorstandentity.func_70012_b(d0 + 0.5D, d1, d2 + 0.5D, f, 0.0F);
+                   this.func_179221_a(armorstandentity, world.field_73012_v);
+                   EntityType.func_208048_a(world, p_195939_1_.func_195999_j(), armorstandentity, itemstack.func_77978_p());
++                  // CraftBukkit start
++                  if (org.bukkit.craftbukkit.event.CraftEventFactory.callEntityPlaceEvent(p_195939_1_, armorstandentity).isCancelled()) {
++                     return ActionResultType.FAIL;
++                  }
++                  // CraftBukkit end
+                   world.func_217376_c(armorstandentity);
+                   world.func_184148_a((PlayerEntity)null, armorstandentity.func_226277_ct_(), armorstandentity.func_226278_cu_(), armorstandentity.func_226281_cx_(), SoundEvents.field_187710_m, SoundCategory.BLOCKS, 0.75F, 0.8F);
+                }

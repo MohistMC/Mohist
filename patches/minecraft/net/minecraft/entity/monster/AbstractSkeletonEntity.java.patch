@@ -9,7 +9,7 @@
              int i = 20;
              if (this.field_70170_p.func_175659_aa() != Difficulty.HARD) {
                 i = 40;
-@@ -172,6 +172,8 @@
+@@ -172,13 +172,25 @@
     public void func_82196_d(LivingEntity p_82196_1_, float p_82196_2_) {
        ItemStack itemstack = this.func_213356_f(this.func_184586_b(ProjectileHelper.func_221274_a(this, Items.field_151031_f)));
        AbstractArrowEntity abstractarrowentity = this.func_213624_b(itemstack, p_82196_2_);
@@ -18,3 +18,21 @@
        double d0 = p_82196_1_.func_226277_ct_() - this.func_226277_ct_();
        double d1 = p_82196_1_.func_226283_e_(0.3333333333333333D) - abstractarrowentity.func_226278_cu_();
        double d2 = p_82196_1_.func_226281_cx_() - this.func_226281_cx_();
+       double d3 = (double)MathHelper.func_76133_a(d0 * d0 + d2 * d2);
+       abstractarrowentity.func_70186_c(d0, d1 + d3 * (double)0.2F, d2, 1.6F, (float)(14 - this.field_70170_p.func_175659_aa().func_151525_a() * 4));
++      // CraftBukkit start
++      org.bukkit.event.entity.EntityShootBowEvent event = org.bukkit.craftbukkit.event.CraftEventFactory.callEntityShootBowEvent(this, this.func_184614_ca(), abstractarrowentity, 0.8f);
++      if (event.isCancelled()) {
++         event.getProjectile().remove();
++         return;
++      }
++      if (event.getProjectile() == abstractarrowentity.getBukkitEntity()) {
++         this.field_70170_p.func_217376_c(abstractarrowentity);
++      }
++      // CraftBukkit end
+       this.func_184185_a(SoundEvents.field_187866_fi, 1.0F, 1.0F / (this.func_70681_au().nextFloat() * 0.4F + 0.8F));
+-      this.field_70170_p.func_217376_c(abstractarrowentity);
++      // this.world.addEntity(abstractarrowentity); // CraftBukkit - moved up
+    }
+ 
+    protected AbstractArrowEntity func_213624_b(ItemStack p_213624_1_, float p_213624_2_) {

@@ -1,6 +1,27 @@
 --- a/net/minecraft/item/FlintAndSteelItem.java
 +++ b/net/minecraft/item/FlintAndSteelItem.java
-@@ -65,7 +65,8 @@
+@@ -14,6 +14,7 @@
+ import net.minecraft.util.SoundEvents;
+ import net.minecraft.util.math.BlockPos;
+ import net.minecraft.world.IWorld;
++import net.minecraft.world.World;
+ 
+ public class FlintAndSteelItem extends Item {
+    public FlintAndSteelItem(Item.Properties p_i48493_1_) {
+@@ -38,6 +39,12 @@
+       } else {
+          BlockPos blockpos1 = blockpos.func_177972_a(p_195939_1_.func_196000_l());
+          if (func_219996_a(iworld.func_180495_p(blockpos1), iworld, blockpos1)) {
++            // CraftBukkit start
++            if (org.bukkit.craftbukkit.event.CraftEventFactory.callBlockIgniteEvent((World) iworld, blockpos1, org.bukkit.event.block.BlockIgniteEvent.IgniteCause.FLINT_AND_STEEL, playerentity).isCancelled()) {
++               p_195939_1_.func_195996_i().func_222118_a(1, playerentity, entityhuman1 -> entityhuman1.func_213334_d(p_195939_1_.func_221531_n()));
++               return ActionResultType.PASS;
++            }
++            // CraftBukkit end
+             iworld.func_184133_a(playerentity, blockpos1, SoundEvents.field_187649_bu, SoundCategory.BLOCKS, 1.0F, field_77697_d.nextFloat() * 0.4F + 0.8F);
+             BlockState blockstate1 = ((FireBlock)Blocks.field_150480_ab).func_196448_a(iworld, blockpos1);
+             iworld.func_180501_a(blockpos1, blockstate1, 11);
+@@ -65,7 +72,8 @@
        boolean flag = false;
  
        for(Direction direction : Direction.Plane.HORIZONTAL) {

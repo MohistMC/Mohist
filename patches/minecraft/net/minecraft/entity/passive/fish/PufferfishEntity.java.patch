@@ -1,0 +1,20 @@
+--- a/net/minecraft/entity/passive/fish/PufferfishEntity.java
++++ b/net/minecraft/entity/passive/fish/PufferfishEntity.java
+@@ -126,7 +126,7 @@
+    private void func_205719_a(MobEntity p_205719_1_) {
+       int i = this.func_203715_dA();
+       if (p_205719_1_.func_70097_a(DamageSource.func_76358_a(this), (float)(1 + i))) {
+-         p_205719_1_.func_195064_c(new EffectInstance(Effects.field_76436_u, 60 * i, 0));
++         p_205719_1_.addEffect(new EffectInstance(Effects.field_76436_u, 60 * i, 0), org.bukkit.event.entity.EntityPotionEffectEvent.Cause.ATTACK); // CraftBukkit
+          this.func_184185_a(SoundEvents.field_203830_gs, 1.0F, 1.0F);
+       }
+ 
+@@ -136,7 +136,7 @@
+       int i = this.func_203715_dA();
+       if (p_70100_1_ instanceof ServerPlayerEntity && i > 0 && p_70100_1_.func_70097_a(DamageSource.func_76358_a(this), (float)(1 + i))) {
+          ((ServerPlayerEntity)p_70100_1_).field_71135_a.func_147359_a(new SChangeGameStatePacket(9, 0.0F));
+-         p_70100_1_.func_195064_c(new EffectInstance(Effects.field_76436_u, 60 * i, 0));
++         p_70100_1_.addEffect(new EffectInstance(Effects.field_76436_u, 60 * i, 0), org.bukkit.event.entity.EntityPotionEffectEvent.Cause.ATTACK); // CraftBukkit
+       }
+ 
+    }
