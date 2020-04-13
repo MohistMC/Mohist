@@ -1,25 +1,34 @@
 --- a/net/minecraft/inventory/container/HorseInventoryContainer.java
 +++ b/net/minecraft/inventory/container/HorseInventoryContainer.java
-@@ -9,8 +9,9 @@
+@@ -9,13 +9,30 @@
  import net.minecraft.item.Items;
  import net.minecraftforge.api.distmarker.Dist;
  import net.minecraftforge.api.distmarker.OnlyIn;
++// CraftBukkit start
++import org.bukkit.craftbukkit.inventory.CraftInventoryView;
 +import org.bukkit.inventory.InventoryView;
++// CraftBukkit end
  
 -public class HorseInventoryContainer extends Container {
 +public  class HorseInventoryContainer extends Container {
     private final IInventory field_111243_a;
     private final AbstractHorseEntity field_111242_f;
- 
-@@ -69,6 +70,11 @@
-       return this.field_111243_a.func_70300_a(p_75145_1_) && this.field_111242_f.func_70089_S() && this.field_111242_f.func_70032_d(p_75145_1_) < 8.0F;
-    }
++   // CraftBukkit start
++   CraftInventoryView bukkitEntity;
++   PlayerInventory player;
  
 +   @Override
 +   public InventoryView getBukkitView() {
-+      return null;
++      if (this.bukkitEntity != null) {
++         return this.bukkitEntity;
++      }
++      return this.bukkitEntity = new CraftInventoryView(this.player.field_70458_d.getBukkitEntity(), this.field_111243_a.getOwner().getInventory(), this);
 +   }
 +
-    public ItemStack func_82846_b(PlayerEntity p_82846_1_, int p_82846_2_) {
-       ItemStack itemstack = ItemStack.field_190927_a;
-       Slot slot = this.field_75151_b.get(p_82846_2_);
+    public HorseInventoryContainer(int p_i50077_1_, PlayerInventory p_i50077_2_, IInventory p_i50077_3_, final AbstractHorseEntity p_i50077_4_) {
+       super((ContainerType<?>)null, p_i50077_1_);
++      player = p_i50077_2_;
++      // CraftBukkit end
+       this.field_111243_a = p_i50077_3_;
+       this.field_111242_f = p_i50077_4_;
+       int i = 3;
