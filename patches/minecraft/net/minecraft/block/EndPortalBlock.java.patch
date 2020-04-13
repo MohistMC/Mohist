@@ -1,0 +1,35 @@
+--- a/net/minecraft/block/EndPortalBlock.java
++++ b/net/minecraft/block/EndPortalBlock.java
+@@ -2,6 +2,7 @@
+ 
+ import java.util.Random;
+ import net.minecraft.entity.Entity;
++import net.minecraft.entity.player.ServerPlayerEntity;
+ import net.minecraft.fluid.Fluid;
+ import net.minecraft.item.ItemStack;
+ import net.minecraft.particles.ParticleTypes;
+@@ -17,6 +18,9 @@
+ import net.minecraft.world.dimension.DimensionType;
+ import net.minecraftforge.api.distmarker.Dist;
+ import net.minecraftforge.api.distmarker.OnlyIn;
++import org.bukkit.Location;
++import org.bukkit.event.entity.EntityPortalEnterEvent;
++import org.bukkit.event.player.PlayerTeleportEvent;
+ 
+ public class EndPortalBlock extends ContainerBlock {
+    protected static final VoxelShape field_196323_a = Block.func_208617_a(0.0D, 0.0D, 0.0D, 16.0D, 12.0D, 16.0D);
+@@ -35,7 +39,13 @@
+ 
+    public void func_196262_a(BlockState p_196262_1_, World p_196262_2_, BlockPos p_196262_3_, Entity p_196262_4_) {
+       if (!p_196262_2_.field_72995_K && !p_196262_4_.func_184218_aH() && !p_196262_4_.func_184207_aI() && p_196262_4_.func_184222_aU() && VoxelShapes.func_197879_c(VoxelShapes.func_197881_a(p_196262_4_.func_174813_aQ().func_72317_d((double)(-p_196262_3_.func_177958_n()), (double)(-p_196262_3_.func_177956_o()), (double)(-p_196262_3_.func_177952_p()))), p_196262_1_.func_196954_c(p_196262_2_, p_196262_3_), IBooleanFunction.field_223238_i_)) {
+-         p_196262_4_.func_212321_a(p_196262_2_.field_73011_w.func_186058_p() == DimensionType.field_223229_c_ ? DimensionType.field_223227_a_ : DimensionType.field_223229_c_);
++         final EntityPortalEnterEvent event = new EntityPortalEnterEvent(p_196262_4_.getBukkitEntity(), new Location(p_196262_2_.getWorldCB(), p_196262_3_.func_177958_n(), p_196262_3_.func_177956_o(), p_196262_3_.func_177952_p()));
++         p_196262_2_.getServerCB().getPluginManager().callEvent(event);
++         if (p_196262_4_ instanceof ServerPlayerEntity) {
++            ((ServerPlayerEntity)p_196262_4_).changeDimension((p_196262_2_.field_73011_w.func_186058_p().getType() == DimensionType.field_223229_c_) ? DimensionType.field_223227_a_ : DimensionType.field_223229_c_, PlayerTeleportEvent.TeleportCause.END_PORTAL);
++            return;
++         }
++         p_196262_4_.func_212321_a((p_196262_2_.field_73011_w.func_186058_p().getType() == DimensionType.field_223229_c_) ? DimensionType.field_223227_a_ : DimensionType.field_223229_c_);
+       }
+ 
+    }
