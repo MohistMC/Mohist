@@ -1,22 +1,36 @@
 --- a/net/minecraft/inventory/container/ShulkerBoxContainer.java
 +++ b/net/minecraft/inventory/container/ShulkerBoxContainer.java
-@@ -5,6 +5,7 @@
+@@ -5,10 +5,25 @@
  import net.minecraft.inventory.IInventory;
  import net.minecraft.inventory.Inventory;
  import net.minecraft.item.ItemStack;
++import org.bukkit.craftbukkit.inventory.CraftInventory;
++import org.bukkit.craftbukkit.inventory.CraftInventoryView;
 +import org.bukkit.inventory.InventoryView;
  
  public class ShulkerBoxContainer extends Container {
     private final IInventory field_190899_a;
-@@ -43,6 +44,11 @@
-       return this.field_190899_a.func_70300_a(p_75145_1_);
-    }
++   // CraftBukkit start
++   private CraftInventoryView bukkitEntity;
++   private PlayerInventory player;
  
 +   @Override
-+   public InventoryView getBukkitView() {
-+      return null;
++   public CraftInventoryView getBukkitView() {
++      if (this.bukkitEntity != null) {
++         return this.bukkitEntity;
++      }
++      return this.bukkitEntity = new CraftInventoryView(this.player.field_70458_d.getBukkitEntity(), new CraftInventory(this.field_190899_a), this);
 +   }
++   // CraftBukkit end
 +
-    public ItemStack func_82846_b(PlayerEntity p_82846_1_, int p_82846_2_) {
-       ItemStack itemstack = ItemStack.field_190927_a;
-       Slot slot = this.field_75151_b.get(p_82846_2_);
+    public ShulkerBoxContainer(int p_i50065_1_, PlayerInventory p_i50065_2_) {
+       this(p_i50065_1_, p_i50065_2_, new Inventory(27));
+    }
+@@ -17,6 +32,7 @@
+       super(ContainerType.field_221526_t, p_i50066_1_);
+       func_216962_a(p_i50066_3_, 27);
+       this.field_190899_a = p_i50066_3_;
++      this.player = p_i50066_2_; // CraftBukkit - save player
+       p_i50066_3_.func_174889_b(p_i50066_2_.field_70458_d);
+       int i = 3;
+       int j = 9;
