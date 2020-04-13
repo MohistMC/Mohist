@@ -125,7 +125,17 @@
      protected Slot addSlotToContainer(Slot slotIn)
      {
          slotIn.slotNumber = this.inventorySlots.size();
-@@ -79,17 +176,20 @@
+@@ -44,7 +141,8 @@
+     {
+         if (this.listeners.contains(listener))
+         {
+-            throw new IllegalArgumentException("Listener already listening");
++            listener.sendAllContents(this, this.getInventory());
++            this.detectAndSendChanges();
+         }
+         else
+         {
+@@ -79,17 +177,20 @@
              ItemStack itemstack = ((Slot)this.inventorySlots.get(i)).getStack();
              ItemStack itemstack1 = this.inventoryItemStacks.get(i);
  
@@ -147,7 +157,7 @@
      }
  
      public boolean enchantItem(EntityPlayer playerIn, int id)
-@@ -172,7 +272,7 @@
+@@ -172,7 +273,7 @@
                  {
                      ItemStack itemstack9 = inventoryplayer.getItemStack().copy();
                      int k1 = inventoryplayer.getItemStack().getCount();
@@ -156,7 +166,7 @@
                      for (Slot slot8 : this.dragSlots)
                      {
                          ItemStack itemstack13 = inventoryplayer.getItemStack();
-@@ -190,12 +290,50 @@
+@@ -190,12 +291,50 @@
                              }
  
                              k1 -= itemstack14.getCount() - j3;
@@ -210,7 +220,7 @@
                  }
  
                  this.resetDrag();
-@@ -217,8 +355,9 @@
+@@ -217,8 +356,9 @@
                  {
                      if (dragType == 0)
                      {
@@ -221,7 +231,7 @@
                      }
  
                      if (dragType == 1)
-@@ -346,6 +485,15 @@
+@@ -346,6 +486,15 @@
                      }
  
                      slot6.onSlotChanged();
@@ -237,7 +247,7 @@
                  }
              }
          }
-@@ -589,18 +737,19 @@
+@@ -589,18 +738,19 @@
                  if (!itemstack.isEmpty() && itemstack.getItem() == stack.getItem() && (!stack.getHasSubtypes() || stack.getMetadata() == itemstack.getMetadata()) && ItemStack.areItemStackTagsEqual(stack, itemstack))
                  {
                      int j = itemstack.getCount() + stack.getCount();
@@ -261,7 +271,7 @@
                          slot.onSlotChanged();
                          flag = true;
                      }
-@@ -738,7 +887,7 @@
+@@ -738,7 +888,7 @@
                  stack.setCount(1);
                  break;
              case 2:
@@ -270,7 +280,7 @@
          }
  
          stack.grow(slotStackSize);
-@@ -794,7 +943,9 @@
+@@ -794,7 +944,9 @@
                  p_192389_4_.setRecipeUsed(irecipe);
                  itemstack = irecipe.getCraftingResult(p_192389_3_);
              }
