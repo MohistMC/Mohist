@@ -1,6 +1,17 @@
 --- a/net/minecraft/item/FilledMapItem.java
 +++ b/net/minecraft/item/FilledMapItem.java
-@@ -52,6 +52,16 @@
+@@ -33,6 +33,10 @@
+ import net.minecraft.world.storage.MapData;
+ import net.minecraftforge.api.distmarker.Dist;
+ import net.minecraftforge.api.distmarker.OnlyIn;
++// CraftBukkit start
++import org.bukkit.Bukkit;
++import org.bukkit.event.server.MapInitializeEvent;
++// CraftBukkit end
+ 
+ public class FilledMapItem extends AbstractMapItem {
+    public FilledMapItem(Item.Properties p_i48482_1_) {
+@@ -52,6 +56,16 @@
  
     @Nullable
     public static MapData func_195950_a(ItemStack p_195950_0_, World p_195950_1_) {
@@ -17,3 +28,23 @@
        MapData mapdata = func_219994_a(p_195950_0_, p_195950_1_);
        if (mapdata == null && !p_195950_1_.field_72995_K) {
           mapdata = func_195951_a(p_195950_0_, p_195950_1_, p_195950_1_.func_72912_H().func_76079_c(), p_195950_1_.func_72912_H().func_76074_e(), 3, false, false, p_195950_1_.field_73011_w.func_186058_p());
+@@ -62,7 +76,7 @@
+ 
+    public static int func_195949_f(ItemStack p_195949_0_) {
+       CompoundNBT compoundnbt = p_195949_0_.func_77978_p();
+-      return compoundnbt != null && compoundnbt.func_150297_b("map", 99) ? compoundnbt.func_74762_e("map") : 0;
++      return compoundnbt != null && compoundnbt.func_150297_b("map", 99) ? compoundnbt.func_74762_e("map") : -1; // CraftBukkit - make new maps for no tag
+    }
+ 
+    private static MapData func_195951_a(ItemStack p_195951_0_, World p_195951_1_, int p_195951_2_, int p_195951_3_, int p_195951_4_, boolean p_195951_5_, boolean p_195951_6_, DimensionType p_195951_7_) {
+@@ -71,6 +85,10 @@
+       mapdata.func_212440_a(p_195951_2_, p_195951_3_, p_195951_4_, p_195951_5_, p_195951_6_, p_195951_7_);
+       p_195951_1_.func_217399_a(mapdata);
+       p_195951_0_.func_196082_o().func_74768_a("map", i);
++      // CraftBukkit start
++      MapInitializeEvent event = new MapInitializeEvent(mapdata.mapView);
++      Bukkit.getServer().getPluginManager().callEvent(event);
++      // CraftBukkit end
+       return mapdata;
+    }
+ 

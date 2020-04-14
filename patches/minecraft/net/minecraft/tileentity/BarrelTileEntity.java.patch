@@ -7,7 +7,7 @@
  import net.minecraft.block.BarrelBlock;
  import net.minecraft.block.BlockState;
  import net.minecraft.block.Blocks;
-@@ -17,6 +18,8 @@
+@@ -17,8 +18,45 @@
  import net.minecraft.util.math.Vec3i;
  import net.minecraft.util.text.ITextComponent;
  import net.minecraft.util.text.TranslationTextComponent;
@@ -15,48 +15,41 @@
 +import org.bukkit.entity.HumanEntity;
  
  public class BarrelTileEntity extends LockableLootTileEntity {
-    private NonNullList<ItemStack> field_213966_a = NonNullList.func_191197_a(27, ItemStack.field_190927_a);
-@@ -52,6 +55,11 @@
-       return 27;
-    }
- 
-+   @Override
-+   public int func_70297_j_() {
-+      return 0;
-+   }
++   // CraftBukkit start
++   public List<HumanEntity> transaction;
++   private int maxStack;
 +
-    protected NonNullList<ItemStack> func_190576_q() {
-       return this.field_213966_a;
-    }
-@@ -121,6 +129,31 @@
- 
-    }
- 
 +   @Override
 +   public List<ItemStack> getContents() {
-+      return null;
++      return this.field_213966_a;
 +   }
 +
 +   @Override
-+   public void onOpen(CraftHumanEntity who) {
-+
++   public void onOpen(final CraftHumanEntity who) {
++      this.transaction.add(who);
 +   }
 +
 +   @Override
-+   public void onClose(CraftHumanEntity who) {
-+
++   public void onClose(final CraftHumanEntity who) {
++      this.transaction.remove(who);
 +   }
 +
 +   @Override
 +   public List<HumanEntity> getViewers() {
-+      return null;
++      return this.transaction;
 +   }
 +
 +   @Override
-+   public void setMaxStackSize(int size) {
-+
++   public int func_70297_j_() {
++      return this.maxStack;
 +   }
 +
-    private void func_213963_a(BlockState p_213963_1_, boolean p_213963_2_) {
-       this.field_145850_b.func_180501_a(this.func_174877_v(), p_213963_1_.func_206870_a(BarrelBlock.field_220093_b, Boolean.valueOf(p_213963_2_)), 3);
-    }
++   @Override
++   public void setMaxStackSize(final int i) {
++      this.maxStack = i;
++   }
++   // CraftBukkit end
++
+    private NonNullList<ItemStack> field_213966_a = NonNullList.func_191197_a(27, ItemStack.field_190927_a);
+    private int field_213967_b;
+ 
