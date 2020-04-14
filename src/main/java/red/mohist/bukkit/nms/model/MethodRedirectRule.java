@@ -1,4 +1,4 @@
-package red.mohist.common.remap.model;
+package red.mohist.bukkit.nms.model;
 
 /**
  * @author pyz

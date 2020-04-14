@@ -1,4 +1,4 @@
-package red.mohist.common.remap;
+package red.mohist.bukkit.nms;
 
 import java.util.LinkedList;
 

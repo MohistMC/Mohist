@@ -1,4 +1,4 @@
-package red.mohist.common.remap;
+package red.mohist.bukkit.nms;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -15,13 +15,13 @@ import org.objectweb.asm.Type;
 import org.objectweb.asm.commons.ClassRemapper;
 import org.objectweb.asm.commons.Remapper;
 import org.objectweb.asm.tree.ClassNode;
-import red.mohist.common.remap.model.ClassMapping;
-import red.mohist.common.remap.remappers.ClassRemapperSupplier;
-import red.mohist.common.remap.remappers.MohistInheritanceMap;
-import red.mohist.common.remap.remappers.MohistInheritanceProvider;
-import red.mohist.common.remap.remappers.MohistJarMapping;
-import red.mohist.common.remap.remappers.MohistJarRemapper;
-import red.mohist.common.remap.remappers.ReflectRemapper;
+import red.mohist.bukkit.nms.model.ClassMapping;
+import red.mohist.bukkit.nms.remappers.ClassRemapperSupplier;
+import red.mohist.bukkit.nms.remappers.MohistInheritanceMap;
+import red.mohist.bukkit.nms.remappers.MohistInheritanceProvider;
+import red.mohist.bukkit.nms.remappers.MohistJarMapping;
+import red.mohist.bukkit.nms.remappers.MohistJarRemapper;
+import red.mohist.bukkit.nms.remappers.ReflectRemapper;
 import sun.reflect.Reflection;
 
 /**

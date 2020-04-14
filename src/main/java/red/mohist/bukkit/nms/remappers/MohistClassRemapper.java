@@ -1,11 +1,11 @@
-package red.mohist.common.remap.remappers;
+package red.mohist.bukkit.nms.remappers;
 
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.FieldVisitor;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.commons.ClassRemapper;
 import org.objectweb.asm.commons.Remapper;
-import red.mohist.common.remap.proxy.DelegateURLClassLoder;
+import red.mohist.bukkit.nms.proxy.DelegateURLClassLoder;
 
 /**
  *

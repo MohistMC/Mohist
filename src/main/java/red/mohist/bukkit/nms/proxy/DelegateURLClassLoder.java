@@ -1,4 +1,4 @@
-package red.mohist.common.remap.proxy;
+package red.mohist.bukkit.nms.proxy;
 
 import java.io.InputStream;
 import java.net.JarURLConnection;
@@ -15,7 +15,7 @@ import org.apache.commons.io.IOUtils;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.plugin.java.JavaPlugin;
-import red.mohist.common.remap.RemapUtils;
+import red.mohist.bukkit.nms.RemapUtils;
 
 /**
  *

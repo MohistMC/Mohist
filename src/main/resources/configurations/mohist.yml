@@ -3,43 +3,56 @@
 # Home: https://www.mohist.red/
 #
 
+entity-tick-limit: 300
+hidejoinmodslist: false
+forge:
+  modswhitelist:
+    kickmessage: Use of unauthorized mods
+    list: aaaaa;bbbbbb
+  disable_mods_whitelist: false
+  disablechunkforcesystem: false
+  autounloadWorld_whitelist:
+    - '0'
+    - '1'
+    - '-1'
+  modsblacklist:
+    list: []
+    kickmessage: Use of unauthorized mods
 mohist:
-  CloseChatInConsole: false
-  check_libraries: true
   check_update: true
-  check_update_auto_download: false
-  support_nocmd: false
+  download_new_jar_directly: false
   server-type: FML
   lang: xx_XX
   console_name: Server
+  CloseChatInConsole: false
+  check_libraries: true
+  support_nocmd: false
+  disable_mods_blacklist: false
+  disable_plugins_blacklist: false
   check_update_auto_download: false
   realtimeticking: false
 eventCanceled:
   explosion: false
 consolecolor:
-  info-level: '2'
-  warn-time: b
-  fatal-msg: c
   info-time: b
   trace-level: c
-  error-time: b
-  trace-time: b
-  fatal-level: c
   fatal-time: b
-  warn-msg: '3'
-  warn-level: '2'
   info-msg: r
   error-level: c
   error-msg: c
+  info-level: '2'
+  warn-time: b
+  fatal-msg: c
+  error-time: b
+  trace-time: b
+  fatal-level: c
+  warn-msg: '3'
+  warn-level: '2'
   trace-msg: c
-config-version: 1
-forge:
-  disablechunkforcesystem: false
-  modsblacklist:
-    list: []
-    kickmessage: Use of unauthorized mods
+libraries_black_list: aaaaa;bbbbbb
 world:
   stopserversaveworlds: false
+  dimensionsNotLoaded: []
 disable-announce-Advancements: false
 CloseChatInConsole: false
 settings:

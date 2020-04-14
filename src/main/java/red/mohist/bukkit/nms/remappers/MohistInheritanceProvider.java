@@ -1,11 +1,11 @@
-package red.mohist.common.remap.remappers;
+package red.mohist.bukkit.nms.remappers;
 
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 import net.md_5.specialsource.provider.InheritanceProvider;
 import org.objectweb.asm.tree.ClassNode;
-import red.mohist.common.remap.RemapUtils;
+import red.mohist.bukkit.nms.RemapUtils;
 
 public class MohistInheritanceProvider implements InheritanceProvider {
     @Override

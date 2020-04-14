@@ -1,11 +1,11 @@
-package red.mohist.common.remap.remappers;
+package red.mohist.bukkit.nms.remappers;
 
 import java.io.IOException;
 import java.io.InputStream;
 import net.md_5.specialsource.repo.CachingRepo;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.tree.ClassNode;
-import red.mohist.common.remap.ClassLoaderContext;
+import red.mohist.bukkit.nms.ClassLoaderContext;
 
 /**
  *

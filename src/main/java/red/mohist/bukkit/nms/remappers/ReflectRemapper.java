@@ -1,4 +1,4 @@
-package red.mohist.common.remap.remappers;
+package red.mohist.bukkit.nms.remappers;
 
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.commons.ClassRemapper;

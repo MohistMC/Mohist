@@ -1,4 +1,4 @@
-package red.mohist.common.remap.remappers;
+package red.mohist.bukkit.nms.remappers;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.BiMap;

@@ -57,11 +57,13 @@ import net.minecraft.world.chunk.storage.AnvilSaveHandler;
 import net.minecraft.world.storage.ISaveHandler;
 import net.minecraft.world.storage.WorldInfo;
 import net.minecraftforge.event.world.WorldEvent;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.FMLLog;
 import org.bukkit.WorldCreator;
 import org.bukkit.generator.ChunkGenerator;
 import red.mohist.configuration.MohistConfig;
 import red.mohist.forge.ForgeInjectBukkit;
+import red.mohist.forge.ModCompatibleFixUtils;
 import red.mohist.util.i18n.Message;
 
 public class DimensionManager
@@ -266,6 +268,7 @@ public class DimensionManager
     public static void initDimension(int dim)
     {
         if (dim == 0) return;
+        ModCompatibleFixUtils.fixPortalEnter(dim);
         WorldServer overworld = getWorld(0);
         if (overworld == null)
         {

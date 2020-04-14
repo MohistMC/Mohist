@@ -1,4 +1,4 @@
-package red.mohist.common.remap.proxy;
+package red.mohist.bukkit.nms.proxy;
 
 import java.io.InputStream;
 import java.io.InputStreamReader;
