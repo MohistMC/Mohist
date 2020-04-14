@@ -1,4 +1,4 @@
-package red.mohist.common.remap.remappers;
+package red.mohist.bukkit.nms.remappers;
 
 import com.google.common.collect.BiMap;
 import java.io.BufferedReader;
@@ -18,7 +18,7 @@ import net.md_5.specialsource.transformer.MappingTransformer;
 import net.md_5.specialsource.transformer.MavenShade;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.commons.Remapper;
-import red.mohist.common.remap.model.ClassMapping;
+import red.mohist.bukkit.nms.model.ClassMapping;
 
 /**
  *

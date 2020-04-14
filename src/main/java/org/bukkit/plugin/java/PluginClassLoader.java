@@ -17,8 +17,8 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.Validate;
 import org.bukkit.plugin.InvalidPluginException;
 import org.bukkit.plugin.PluginDescriptionFile;
-import red.mohist.common.remap.ClassLoaderContext;
-import red.mohist.common.remap.RemapUtils;
+import red.mohist.bukkit.nms.ClassLoaderContext;
+import red.mohist.bukkit.nms.RemapUtils;
 
 /**
  * A ClassLoader for plugins, to allow shared classes across multiple plugins

@@ -1,12 +1,12 @@
-package red.mohist.common.remap.proxy;
+package red.mohist.bukkit.nms.proxy;
 
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.Objects;
-import red.mohist.common.remap.ASMUtils;
-import red.mohist.common.remap.RemapUtils;
+import red.mohist.bukkit.nms.ASMUtils;
+import red.mohist.bukkit.nms.RemapUtils;
 
 /**
  *

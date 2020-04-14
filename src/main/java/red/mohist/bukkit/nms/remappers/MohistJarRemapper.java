@@ -1,9 +1,9 @@
-package red.mohist.common.remap.remappers;
+package red.mohist.bukkit.nms.remappers;
 
 import java.util.Map;
 import net.md_5.specialsource.CustomRemapper;
 import net.md_5.specialsource.NodeType;
-import red.mohist.common.remap.model.ClassMapping;
+import red.mohist.bukkit.nms.model.ClassMapping;
 
 /**
  *

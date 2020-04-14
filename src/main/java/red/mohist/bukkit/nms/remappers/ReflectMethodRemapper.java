@@ -1,4 +1,4 @@
-package red.mohist.common.remap.remappers;
+package red.mohist.bukkit.nms.remappers;
 
 import java.io.InputStream;
 import java.lang.invoke.MethodHandle;
@@ -15,17 +15,17 @@ import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.commons.MethodRemapper;
 import org.objectweb.asm.commons.Remapper;
-import red.mohist.common.remap.ASMUtils;
-import red.mohist.common.remap.model.MethodRedirectRule;
-import red.mohist.common.remap.proxy.DelegateURLClassLoder;
-import red.mohist.common.remap.proxy.ProxyClass;
-import red.mohist.common.remap.proxy.ProxyClassLoader;
-import red.mohist.common.remap.proxy.ProxyField;
-import red.mohist.common.remap.proxy.ProxyMethod;
-import red.mohist.common.remap.proxy.ProxyMethodHandles_Lookup;
-import red.mohist.common.remap.proxy.ProxyMethodType;
-import red.mohist.common.remap.proxy.ProxyYamlConfiguration;
-import red.mohist.common.remap.proxy.asm.ProxyClassWriter;
+import red.mohist.bukkit.nms.ASMUtils;
+import red.mohist.bukkit.nms.model.MethodRedirectRule;
+import red.mohist.bukkit.nms.proxy.DelegateURLClassLoder;
+import red.mohist.bukkit.nms.proxy.ProxyClass;
+import red.mohist.bukkit.nms.proxy.ProxyClassLoader;
+import red.mohist.bukkit.nms.proxy.ProxyField;
+import red.mohist.bukkit.nms.proxy.ProxyMethod;
+import red.mohist.bukkit.nms.proxy.ProxyMethodHandles_Lookup;
+import red.mohist.bukkit.nms.proxy.ProxyMethodType;
+import red.mohist.bukkit.nms.proxy.ProxyYamlConfiguration;
+import red.mohist.bukkit.nms.proxy.asm.ProxyClassWriter;
 
 /**
  *
@@ -135,7 +135,7 @@ public class ReflectMethodRemapper extends MethodRemapper {
             Type r = Type.getReturnType(desc);
             Type[] args = Type.getArgumentTypes(desc);
             Type[] newArgs = new Type[args.length + 1];
-            if ("red/mohist/common/remap/proxy/ProxyClassLoader".equals(rule.getRemapOwner()) && "loadClass".equals(name)) {
+            if ("red/mohist/bukkit/nms/proxy/ProxyClassLoader".equals(rule.getRemapOwner()) && "loadClass".equals(name)) {
                 newArgs[0] = Type.getObjectType("java/lang/ClassLoader");
             } else {
                 newArgs[0] = Type.getObjectType(owner);

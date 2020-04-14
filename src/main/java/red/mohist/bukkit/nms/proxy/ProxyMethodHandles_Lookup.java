@@ -1,10 +1,10 @@
-package red.mohist.common.remap.proxy;
+package red.mohist.bukkit.nms.proxy;
 
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodType;
 import java.lang.reflect.Method;
-import red.mohist.common.remap.RemapUtils;
+import red.mohist.bukkit.nms.RemapUtils;
 
 /**
  *

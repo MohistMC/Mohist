@@ -1,7 +1,7 @@
-package red.mohist.common.remap.proxy.asm;
+package red.mohist.bukkit.nms.proxy.asm;
 
 import java.io.IOException;
-import red.mohist.common.remap.RemapUtils;
+import red.mohist.bukkit.nms.RemapUtils;
 
 /**
  *
