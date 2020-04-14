@@ -1,0 +1,41 @@
+--- a/net/minecraft/item/FireChargeItem.java
++++ b/net/minecraft/item/FireChargeItem.java
+@@ -10,6 +10,8 @@
+ import net.minecraft.util.SoundEvents;
+ import net.minecraft.util.math.BlockPos;
+ import net.minecraft.world.World;
++import org.bukkit.craftbukkit.event.CraftEventFactory;
++import org.bukkit.event.block.BlockIgniteEvent;
+ 
+ public class FireChargeItem extends Item {
+    public FireChargeItem(Item.Properties p_i48499_1_) {
+@@ -23,6 +25,14 @@
+       boolean flag = false;
+       if (blockstate.func_177230_c() == Blocks.field_222433_lV) {
+          if (!blockstate.func_177229_b(CampfireBlock.field_220101_b) && !blockstate.func_177229_b(CampfireBlock.field_220103_d)) {
++            // CraftBukkit start - fire BlockIgniteEvent
++            if (CraftEventFactory.callBlockIgniteEvent(world, blockpos, BlockIgniteEvent.IgniteCause.FIREBALL, p_195939_1_.func_195999_j()).isCancelled()) {
++               if (!p_195939_1_.func_195999_j().field_71075_bZ.field_75098_d) {
++                  p_195939_1_.func_195996_i().func_190918_g(1);
++               }
++               return ActionResultType.PASS;
++            }
++            // CraftBukkit end
+             this.func_219995_a(world, blockpos);
+             world.func_175656_a(blockpos, blockstate.func_206870_a(CampfireBlock.field_220101_b, Boolean.valueOf(true)));
+             flag = true;
+@@ -30,6 +40,14 @@
+       } else {
+          blockpos = blockpos.func_177972_a(p_195939_1_.func_196000_l());
+          if (world.func_180495_p(blockpos).func_196958_f()) {
++            // CraftBukkit start - fire BlockIgniteEvent
++            if (CraftEventFactory.callBlockIgniteEvent(world, blockpos, BlockIgniteEvent.IgniteCause.FIREBALL, p_195939_1_.func_195999_j()).isCancelled()) {
++               if (!p_195939_1_.func_195999_j().field_71075_bZ.field_75098_d) {
++                  p_195939_1_.func_195996_i().func_190918_g(1);
++               }
++               return ActionResultType.PASS;
++            }
++            // CraftBukkit end
+             this.func_219995_a(world, blockpos);
+             world.func_175656_a(blockpos, ((FireBlock)Blocks.field_150480_ab).func_196448_a(world, blockpos));
+             flag = true;

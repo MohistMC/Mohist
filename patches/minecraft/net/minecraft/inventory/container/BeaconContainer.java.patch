@@ -1,7 +1,10 @@
 --- a/net/minecraft/inventory/container/BeaconContainer.java
 +++ b/net/minecraft/inventory/container/BeaconContainer.java
-@@ -5,20 +5,19 @@
+@@ -3,22 +3,25 @@
+ import javax.annotation.Nullable;
+ import net.minecraft.block.Blocks;
  import net.minecraft.entity.player.PlayerEntity;
++import net.minecraft.entity.player.PlayerInventory;
  import net.minecraft.inventory.IInventory;
  import net.minecraft.inventory.Inventory;
 -import net.minecraft.item.Item;
@@ -13,6 +16,9 @@
  import net.minecraft.util.IntArray;
  import net.minecraftforge.api.distmarker.Dist;
  import net.minecraftforge.api.distmarker.OnlyIn;
++import org.bukkit.craftbukkit.inventory.CraftInventory;
++import org.bukkit.craftbukkit.inventory.CraftInventoryBeacon;
++import org.bukkit.craftbukkit.inventory.CraftInventoryView;
 +import org.bukkit.inventory.InventoryView;
  
  public class BeaconContainer extends Container {
@@ -23,19 +29,50 @@
        }
  
        public int func_70297_j_() {
-@@ -76,6 +75,11 @@
+@@ -28,6 +31,10 @@
+    private final BeaconContainer.BeaconSlot field_82864_f;
+    private final IWorldPosCallable field_216971_e;
+    private final IIntArray field_216972_f;
++   // CraftBukkit start
++   private CraftInventoryView bukkitEntity = null;
++   private PlayerInventory player;
++    // CraftBukkit end
+ 
+    public BeaconContainer(int p_i50099_1_, IInventory p_i50099_2_) {
+       this(p_i50099_1_, p_i50099_2_, new IntArray(3), IWorldPosCallable.field_221489_a);
+@@ -35,6 +42,7 @@
+ 
+    public BeaconContainer(int p_i50100_1_, IInventory p_i50100_2_, IIntArray p_i50100_3_, IWorldPosCallable p_i50100_4_) {
+       super(ContainerType.field_221515_i, p_i50100_1_);
++      player = (PlayerInventory) p_i50100_2_; // CraftBukkit - TODO: check this
+       func_216959_a(p_i50100_3_, 3);
+       this.field_216972_f = p_i50100_3_;
+       this.field_216971_e = p_i50100_4_;
+@@ -68,6 +76,7 @@
+    }
+ 
+    public boolean func_75145_c(PlayerEntity p_75145_1_) {
++      if (!this.checkReachable) return true; // CraftBukkit
+       return func_216963_a(this.field_216971_e, p_75145_1_, Blocks.field_150461_bJ);
+    }
+ 
+@@ -76,6 +85,15 @@
        this.func_75142_b();
     }
  
 +   @Override
 +   public InventoryView getBukkitView() {
-+      return null;
++      if (this.bukkitEntity != null) {
++         return this.bukkitEntity;
++      }
++      CraftInventory inventory = new CraftInventoryBeacon(this.field_82866_e);
++      return this.bukkitEntity = new CraftInventoryView(this.player.field_70458_d.getBukkitEntity(), inventory, this);
 +   }
 +
     public ItemStack func_82846_b(PlayerEntity p_82846_1_, int p_82846_2_) {
        ItemStack itemstack = ItemStack.field_190927_a;
        Slot slot = this.field_75151_b.get(p_82846_2_);
-@@ -88,10 +92,8 @@
+@@ -88,10 +106,8 @@
              }
  
              slot.func_75220_a(itemstack1, itemstack);
@@ -48,7 +85,7 @@
           } else if (p_82846_2_ >= 1 && p_82846_2_ < 28) {
              if (!this.func_75135_a(itemstack1, 28, 37, false)) {
                 return ItemStack.field_190927_a;
-@@ -157,8 +159,7 @@
+@@ -157,8 +173,7 @@
        }
  
        public boolean func_75214_a(ItemStack p_75214_1_) {
