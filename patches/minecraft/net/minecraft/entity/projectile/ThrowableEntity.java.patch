@@ -11,12 +11,35 @@
     private Entity field_184539_c;
     private int field_184540_av;
  
-@@ -130,7 +130,7 @@
+@@ -47,6 +47,7 @@
+       this(p_i48542_1_, p_i48542_2_.func_226277_ct_(), p_i48542_2_.func_226280_cw_() - (double)0.1F, p_i48542_2_.func_226281_cx_(), p_i48542_3_);
+       this.field_70192_c = p_i48542_2_;
+       this.field_200218_h = p_i48542_2_.func_110124_au();
++      this.projectileSource = (org.bukkit.entity.LivingEntity)p_i48542_2_.getBukkitEntity(); // CraftBukkit
+    }
+ 
+    @OnlyIn(Dist.CLIENT)
+@@ -113,7 +114,7 @@
+             break;
+          }
+ 
+-         if (this.field_70192_c != null && this.field_70173_aa < 2 && this.field_184539_c == null) {
++         if (this.field_70192_c != null && this.field_70173_aa < 2 && this.field_184539_c == null && this.field_70192_c == entity) { // CraftBukkit - MC-88491
+             this.field_184539_c = entity;
+             this.field_184540_av = 3;
+             break;
+@@ -130,8 +131,13 @@
        if (raytraceresult.func_216346_c() != RayTraceResult.Type.MISS) {
           if (raytraceresult.func_216346_c() == RayTraceResult.Type.BLOCK && this.field_70170_p.func_180495_p(((BlockRayTraceResult)raytraceresult).func_216350_a()).func_177230_c() == Blocks.field_150427_aO) {
              this.func_181015_d(((BlockRayTraceResult)raytraceresult).func_216350_a());
 -         } else {
 +         } else if (!net.minecraftforge.event.ForgeEventFactory.onProjectileImpact(this, raytraceresult)){
              this.func_70184_a(raytraceresult);
++            // CraftBukkit start
++            if (this.field_70128_L) {
++               org.bukkit.craftbukkit.event.CraftEventFactory.callProjectileHitEvent(this, raytraceresult);
++            }
++            // CraftBukkit end
           }
        }
+ 
