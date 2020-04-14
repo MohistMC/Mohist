@@ -1,0 +1,32 @@
+--- a/net/minecraft/tileentity/CommandBlockLogic.java
++++ b/net/minecraft/tileentity/CommandBlockLogic.java
+@@ -20,6 +20,7 @@
+ import net.minecraft.world.server.ServerWorld;
+ import net.minecraftforge.api.distmarker.Dist;
+ import net.minecraftforge.api.distmarker.OnlyIn;
++import org.bukkit.command.CommandSender;
+ 
+ public abstract class CommandBlockLogic implements ICommandSource {
+    private static final SimpleDateFormat field_145766_a = new SimpleDateFormat("HH:mm:ss");
+@@ -32,6 +33,11 @@
+    private String field_145763_e = "";
+    private ITextComponent field_145761_f = field_226655_c_;
+ 
++   // CraftBukkit start
++   @Override
++   public abstract CommandSender getBukkitSender(CommandSource commandSource);
++   // CraftBukkit end
++
+    public int func_145760_g() {
+       return this.field_145764_b;
+    }
+@@ -121,7 +127,9 @@
+                      }
+ 
+                   });
++                  // TODO: seems already changed logic, duplicate with nms-patches/CommandBlockListenerAbstract.patch
+                   minecraftserver.func_195571_aL().func_197059_a(commandsource, this.field_145763_e);
++                  // minecraftserver.getCommandDispatcher().dispatchServerCommand(commandlistenerwrapper, this.command); // CraftBukkit
+                } catch (Throwable throwable) {
+                   CrashReport crashreport = CrashReport.func_85055_a(throwable, "Executing command block");
+                   CrashReportCategory crashreportcategory = crashreport.func_85058_a("Command to be executed");

@@ -1,6 +1,15 @@
 --- a/net/minecraft/block/CocoaBlock.java
 +++ b/net/minecraft/block/CocoaBlock.java
-@@ -30,10 +30,11 @@
+@@ -16,6 +16,8 @@
+ import net.minecraft.world.IWorldReader;
+ import net.minecraft.world.World;
+ import net.minecraft.world.server.ServerWorld;
++import org.bukkit.block.data.type.Cocoa;
++import org.bukkit.craftbukkit.event.CraftEventFactory;
+ 
+ public class CocoaBlock extends HorizontalBlock implements IGrowable {
+    public static final IntegerProperty field_176501_a = BlockStateProperties.field_208167_T;
+@@ -30,10 +32,10 @@
     }
  
     public void func_225534_a_(BlockState p_225534_1_, ServerWorld p_225534_2_, BlockPos p_225534_3_, Random p_225534_4_) {
@@ -8,9 +17,18 @@
 +      if (true) {
           int i = p_225534_1_.func_177229_b(field_176501_a);
 -         if (i < 2) {
+-            p_225534_2_.func_180501_a(p_225534_3_, p_225534_1_.func_206870_a(field_176501_a, Integer.valueOf(i + 1)), 2);
 +         if (i < 2 && net.minecraftforge.common.ForgeHooks.onCropsGrowPre(p_225534_2_, p_225534_3_, p_225534_1_, p_225534_2_.field_73012_v.nextInt(5) == 0)) {
-             p_225534_2_.func_180501_a(p_225534_3_, p_225534_1_.func_206870_a(field_176501_a, Integer.valueOf(i + 1)), 2);
-+            net.minecraftforge.common.ForgeHooks.onCropsGrowPost(p_225534_2_, p_225534_3_, p_225534_1_);
++            CraftEventFactory.handleBlockGrowEvent(p_225534_2_, p_225534_3_,  p_225534_1_.func_206870_a(CocoaBlock.field_176501_a, i + 1), 2); // CraftBukkkit
           }
        }
  
+@@ -90,7 +92,7 @@
+    }
+ 
+    public void func_225535_a_(ServerWorld p_225535_1_, Random p_225535_2_, BlockPos p_225535_3_, BlockState p_225535_4_) {
+-      p_225535_1_.func_180501_a(p_225535_3_, p_225535_4_.func_206870_a(field_176501_a, Integer.valueOf(p_225535_4_.func_177229_b(field_176501_a) + 1)), 2);
++      CraftEventFactory.handleBlockGrowEvent(p_225535_1_, p_225535_3_, p_225535_4_.func_206870_a(CocoaBlock.field_176501_a, (Integer) p_225535_4_.func_177229_b(CocoaBlock.field_176501_a) + 1), 2); // CraftBukkit
+    }
+ 
+    protected void func_206840_a(StateContainer.Builder<Block, BlockState> p_206840_1_) {
