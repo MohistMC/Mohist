@@ -105,7 +105,7 @@ public class UpdateUtils {
     }
 
     public static boolean isCheckLibs() {
-        return MohistConfigUtil.getBoolean(new File("mohist-config", "mohist.yml"), "check_update:");
+        return MohistConfigUtil.getBoolean(new File("mohist-config", "mohist.yml"), "check_libraries:");
     }
 
     public static boolean isCheckUpdate() {
