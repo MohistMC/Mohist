@@ -4,15 +4,14 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonIOException;
 import com.google.gson.JsonParser;
 import com.google.gson.JsonSyntaxException;
-import red.mohist.util.ClassJarUtil;
-import red.mohist.util.i18n.Message;
-
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
+import red.mohist.util.ClassJarUtil;
+import red.mohist.util.i18n.Message;
 
 public class AutoDeletePlugins {
 

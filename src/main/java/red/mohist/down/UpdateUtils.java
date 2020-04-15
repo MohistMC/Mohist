@@ -2,11 +2,6 @@ package red.mohist.down;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
-import org.apache.commons.io.FileUtils;
-import red.mohist.Mohist;
-import red.mohist.configuration.MohistConfigUtil;
-import red.mohist.util.i18n.Message;
-
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -17,6 +12,10 @@ import java.util.Scanner;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import org.apache.commons.io.FileUtils;
+import red.mohist.Mohist;
+import red.mohist.configuration.MohistConfigUtil;
+import red.mohist.util.i18n.Message;
 
 public class UpdateUtils {
     static String ci_sha, jar_sha, time;
@@ -44,12 +43,8 @@ public class UpdateUtils {
         } else {
             System.out.println(Message.getFormatString("update.detect", new Object[]{ci_sha, jar_sha, time.substring(0, 10), time.substring(11, 19)}));
             if(isDownload()) {
-                if(!MohistConfigUtil.getBoolean(new File("mohist-config", "mohist.yml"), "download_new_jar_directly:")) {
-                    System.out.println(Message.getString("update.select"));
-                    if(new Scanner(System.in).next().equals("yes")) {
-                        downloadNewJar();
-                    }
-                } else {
+                System.out.println(Message.getString("update.select"));
+                if(new Scanner(System.in).next().equals("yes")) {
                     downloadNewJar();
                 }
             }

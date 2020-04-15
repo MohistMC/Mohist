@@ -1,15 +1,14 @@
 package red.mohist.forge;
 
 import com.google.gson.JsonParser;
-import red.mohist.util.ClassJarUtil;
-import red.mohist.util.i18n.Message;
-
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
+import red.mohist.util.ClassJarUtil;
+import red.mohist.util.i18n.Message;
 
 public class AutoDeleteMods {
     private static String libDir = "mods";

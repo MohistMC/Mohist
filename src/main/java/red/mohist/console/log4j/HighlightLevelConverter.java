@@ -23,7 +23,6 @@
 
 package red.mohist.console.log4j;
 
-import java.io.File;
 import java.util.List;
 import javax.annotation.Nullable;
 import org.apache.logging.log4j.Level;
@@ -38,7 +37,6 @@ import org.apache.logging.log4j.core.pattern.PatternFormatter;
 import org.apache.logging.log4j.core.pattern.PatternParser;
 import org.apache.logging.log4j.util.PerformanceSensitive;
 import red.mohist.configuration.MohistConfig;
-import red.mohist.configuration.MohistConfigUtil;
 import red.mohist.util.ANSIColorUtils;
 
 @Plugin(name = "highlightLevel", category = PatternConverter.CATEGORY)

@@ -1,10 +1,9 @@
 package red.mohist.forge;
 
+import java.io.File;
 import java.util.Collection;
 import red.mohist.configuration.MohistConfig;
 import red.mohist.configuration.MohistConfigUtil;
-
-import java.io.File;
 
 public class MohistForgeUtils {
 

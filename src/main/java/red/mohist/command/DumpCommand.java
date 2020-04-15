@@ -20,7 +20,6 @@ import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.EntityType;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.potion.PotionType;
-import red.mohist.api.ServerAPI;
 import red.mohist.util.i18n.Message;
 
 public class DumpCommand extends Command {

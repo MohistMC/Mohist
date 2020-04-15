@@ -1,9 +1,5 @@
 package red.mohist.configuration;
 
-import red.mohist.Mohist;
-import red.mohist.util.IOUtil;
-import red.mohist.util.NumberUtils;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -12,6 +8,9 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import red.mohist.Mohist;
+import red.mohist.util.IOUtil;
+import red.mohist.util.NumberUtils;
 
 public class MohistConfigUtil {
 

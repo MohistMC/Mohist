@@ -1,10 +1,5 @@
 package red.mohist.down;
 
-import red.mohist.configuration.MohistConfigUtil;
-import red.mohist.util.JarLoader;
-import red.mohist.util.i18n.Message;
-
-import javax.xml.bind.DatatypeConverter;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.InputStreamReader;
@@ -19,6 +14,10 @@ import java.nio.file.StandardOpenOption;
 import java.security.MessageDigest;
 import java.util.Timer;
 import java.util.TimerTask;
+import javax.xml.bind.DatatypeConverter;
+import red.mohist.configuration.MohistConfigUtil;
+import red.mohist.util.JarLoader;
+import red.mohist.util.i18n.Message;
 
 public class DownloadLibraries {
     static boolean needToRecheck = false;

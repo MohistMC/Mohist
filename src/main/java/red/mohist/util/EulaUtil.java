@@ -1,14 +1,15 @@
 package red.mohist.util;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.nio.charset.StandardCharsets;
-import org.apache.commons.io.FileUtils;
-import red.mohist.util.i18n.Message;
-
-import java.io.*;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import org.apache.commons.io.FileUtils;
+import red.mohist.util.i18n.Message;
 
 public class EulaUtil {
     public static void writeInfos() throws IOException {

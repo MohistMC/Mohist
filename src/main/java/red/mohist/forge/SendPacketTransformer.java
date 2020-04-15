@@ -1,6 +1,5 @@
 package red.mohist.forge;
 
-import akka.dispatch.sysmsg.Create;
 import net.minecraft.launchwrapper.IClassTransformer;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;

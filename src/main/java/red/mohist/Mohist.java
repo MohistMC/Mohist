@@ -1,5 +1,7 @@
 package red.mohist;
 
+import java.io.File;
+import java.util.Scanner;
 import org.apache.logging.log4j.Logger;
 import red.mohist.bukkit.AutoDeletePlugins;
 import red.mohist.configuration.MohistConfigUtil;
@@ -8,9 +10,6 @@ import red.mohist.down.UpdateUtils;
 import red.mohist.forge.AutoDeleteMods;
 import red.mohist.util.EulaUtil;
 import red.mohist.util.i18n.Message;
-
-import java.io.File;
-import java.util.Scanner;
 
 public class Mohist {
 
@@ -42,7 +41,6 @@ public class Mohist {
         if(!MohistConfigUtil.getBoolean(new File("mohist-config", "mohist.yml"), "disable_mods_blacklist:"))
             AutoDeleteMods.jar();
         AutoDeleteMods.jarDisabled();
-
         Class.forName("net.minecraftforge.fml.relauncher.ServerLaunchWrapper").getDeclaredMethod("main", String[].class).invoke(null, new Object[]{args});
     }
 }

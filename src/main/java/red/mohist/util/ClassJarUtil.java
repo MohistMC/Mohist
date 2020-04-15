@@ -1,9 +1,5 @@
 package red.mohist.util;
 
-import red.mohist.configuration.MohistConfigUtil;
-import red.mohist.down.UpdateUtils;
-import red.mohist.util.i18n.Message;
-
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -13,6 +9,9 @@ import java.util.Scanner;
 import java.util.jar.JarFile;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipException;
+import red.mohist.configuration.MohistConfigUtil;
+import red.mohist.down.UpdateUtils;
+import red.mohist.util.i18n.Message;
 
 public class ClassJarUtil {
 
