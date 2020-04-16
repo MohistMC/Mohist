@@ -22,26 +22,27 @@ public class AutoDeleteMods {
             request.connect();
         } catch (Exception ignored) {
         }
-        if(type == 1)
-            l = new JsonParser().parse(new InputStreamReader((InputStream) request.getContent())).getAsJsonObject().get("list").toString().replaceAll("\"", "").split(",");
-        if(type == 2)
-            l = new JsonParser().parse(new InputStreamReader((InputStream) request.getContent())).getAsJsonObject().get("implemented").toString().replaceAll("\"", "").split(",");
+        try {
+            if(type == 1) {l = new JsonParser().parse(new InputStreamReader((InputStream) request.getContent())).getAsJsonObject().get("list").toString().replaceAll("\"", "").split(",");}
+            if(type == 2) {l = new JsonParser().parse(new InputStreamReader((InputStream) request.getContent())).getAsJsonObject().get("implemented").toString().replaceAll("\"", "").split(",");}
+        }catch (Throwable e){e.printStackTrace();}
+
         return l;
     }
 
     public static void jar() throws Exception {
         System.out.println(Message.getString("update.mods"));
         if(!new File(libDir).exists()) new File(libDir).mkdir();
-        for (String classname : getInfos((byte) 1)) {
+        try{for (String classname : getInfos((byte) 1)) {
             ClassJarUtil.checkFiles(libDir, classname, false);
-        }
+        }}catch (Throwable e){e.printStackTrace();}
     }
 
     public static void jarDisabled() throws Exception {
         System.out.println(Message.getString("update.mods.implemented"));
         if(!new File(libDir).exists()) new File(libDir).mkdir();
-        for (String classname : getInfos((byte) 2)) {
+        try{for (String classname : getInfos((byte) 2)) {
             ClassJarUtil.checkFiles(libDir, classname, true);
-        }
+        }}catch (Throwable e){e.printStackTrace();System.out.println("[!] Cannot connect to GitHub to check incompatible mods!");}
     }
 }

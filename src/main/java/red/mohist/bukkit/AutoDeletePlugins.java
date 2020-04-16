@@ -29,22 +29,22 @@ public class AutoDeletePlugins {
         } catch (JsonIOException | JsonSyntaxException | IOException | NullPointerException ignored) {
         }
 
-        for (String classname : root.getAsJsonObject().get("list").toString().replaceAll("\"", "").split(",")) {
+        try{for (String classname : root.getAsJsonObject().get("list").toString().replaceAll("\"", "").split(",")) {
             ClassJarUtil.checkFiles(libDir, classname, false);
-        }
+        }}catch (Throwable e){e.printStackTrace();}
 
-        for (String classname : root.getAsJsonObject().get("listupdates").toString().replaceAll("\"", "").split(",")) {
+        try{for (String classname : root.getAsJsonObject().get("listupdates").toString().replaceAll("\"", "").split(",")) {
             try {
                 ClassJarUtil.copyPluginYMLandCheck(classname.substring(0, classname.indexOf("|")), classname.substring(classname.indexOf("|") + 1, classname.indexOf("#")), classname.substring(classname.indexOf("#") + 1), "plugin");
             } catch (Exception ignored) {
             }
-        }
+        }}catch (Throwable e){e.printStackTrace();}
 
-        for (String classname : root.getAsJsonObject().get("listpluginstoforge").toString().replaceAll("\"", "").split(",")) {
+        try{for (String classname : root.getAsJsonObject().get("listpluginstoforge").toString().replaceAll("\"", "").split(",")) {
             try {
                 ClassJarUtil.copyPluginYMLandCheck(classname.substring(0, classname.indexOf("|")), "=é", classname.substring(classname.indexOf("|") + 1), "mod");
             } catch (Exception ignored) {
             }
-        }
+        }}catch (Throwable e){e.printStackTrace();System.out.println("[!] Cannot connect to GitHub to check incompatible plugins!");}
     }
 }

@@ -32,12 +32,13 @@ public class UpdateUtils {
             request.addRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:25.0) Gecko/20100101 Firefox/25.0");
             request.connect();
             root = new JsonParser().parse(new InputStreamReader((InputStream) request.getContent()));
-        } catch (Exception e) { System.out.println(e.toString()); }
-
-        time = root.getAsJsonObject().get("changeSet").getAsJsonObject().get("items").getAsJsonArray().get(0).getAsJsonObject().get("date").toString().replace("+0800", "").replaceAll("\"", "");
-        ci_sha = root.getAsJsonObject().get("changeSet").getAsJsonObject().get("items").getAsJsonArray().get(0).getAsJsonObject().get("commitId").toString().replaceAll("\"", "").substring(0, 7);
-        jar_sha = UpdateUtils.class.getPackage().getImplementationVersion();
-
+        } catch (Exception e) { System.out.println(e.toString());System.out.println("[!] Cannot connect to Jenkins server to check updates!");}
+        try {
+            time = root.getAsJsonObject().get("changeSet").getAsJsonObject().get("items").getAsJsonArray().get(0).getAsJsonObject().get("date").toString().replace("+0800", "").replaceAll("\"", "");
+            ci_sha = root.getAsJsonObject().get("changeSet").getAsJsonObject().get("items").getAsJsonArray().get(0).getAsJsonObject().get("commitId").toString().replaceAll("\"", "").substring(0, 7);
+            jar_sha = UpdateUtils.class.getPackage().getImplementationVersion();
+        }catch (Throwable e){e.printStackTrace();}
+        try{
         if(jar_sha.equals(ci_sha)) {
             System.out.println(Message.getFormatString("update.latest", new Object[]{"1.7", jar_sha, ci_sha}));
         } else {
@@ -48,7 +49,7 @@ public class UpdateUtils {
                     downloadNewJar();
                 }
             }
-        }
+        }}catch (Throwable e){e.printStackTrace();}
     }
 
     private static void downloadNewJar() throws IOException {
