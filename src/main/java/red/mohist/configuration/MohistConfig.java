@@ -108,7 +108,7 @@ public class MohistConfig extends ConfigBase {
                     }
                     settings.put(setting.path, setting);
                 }
-                catch (ClassCastException e)
+                catch (ClassCastException ignored)
                 {
 
                 }

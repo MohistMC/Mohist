@@ -3,10 +3,11 @@ package red.mohist.bukkit.nms.proxy;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.util.Arrays;
-import java.util.Objects;
-import red.mohist.bukkit.nms.ASMUtils;
-import red.mohist.bukkit.nms.RemapUtils;
+import org.objectweb.asm.Type;
+import red.mohist.bukkit.nms.ClassUtils;
+import red.mohist.bukkit.nms.MappingLoader;
+import red.mohist.bukkit.nms.remappers.ReflectionUtils;
+import red.mohist.bukkit.nms.remappers.RemapUtils;
 
 /**
  *
@@ -16,52 +17,51 @@ import red.mohist.bukkit.nms.RemapUtils;
 public class ProxyClass {
 
     public static Class<?> forName(String className) throws ClassNotFoundException {
-        return forName(className, true, RemapUtils.getCallerClassLoder());
+        return forName(className, true, ReflectionUtils.getCallerClassloader());
     }
 
-    public static Class<?> forName(String className, boolean initialize, ClassLoader loader) throws ClassNotFoundException {
-        return Class.forName(ASMUtils.toClassName(RemapUtils.map(className.replace('.', '/'))), initialize, loader);
+    public static Class<?> forName(String className, boolean initialize, ClassLoader classLoader) throws ClassNotFoundException {
+        if (ClassUtils.isNMSClass(className))
+            className = ClassUtils.toClassName(MappingLoader.jarMapping.classes.getOrDefault(ClassUtils.getInternalName(className), className));
+        return Class.forName(className, initialize, classLoader);
     }
 
     public static Method getDeclaredMethod(Class<?> clazz, String name, Class<?>... parameterTypes) throws NoSuchMethodException, SecurityException {
-        if (clazz == null) {
-            throw new NullPointerException("call getDeclaredMethod, but class is null.methodname=" + name + ",parameters=" + Arrays.toString(parameterTypes));
+        if (ClassUtils.isClassNeedRemap(clazz, true))
+            name = RemapUtils.mapMethod(clazz, name, parameterTypes);
+        try {
+            return clazz.getDeclaredMethod(name, parameterTypes);
+        } catch (NoClassDefFoundError e) {
+            throw new NoSuchMethodException(e.toString());
         }
-        return clazz.getDeclaredMethod(RemapUtils.mapMethodName(clazz, name, parameterTypes), parameterTypes);
     }
 
     public static Method getMethod(Class<?> clazz, String name, Class<?>... parameterTypes) throws NoSuchMethodException, SecurityException {
-        if (clazz == null) {
-            throw new NullPointerException("call getMethod, but class is null.methodname=" + name + ",parameters=" + Arrays.toString(parameterTypes));
+        if (ClassUtils.isClassNeedRemap(clazz, true))
+            name = RemapUtils.mapMethod(clazz, name, parameterTypes);
+        try {
+            return clazz.getMethod(name, parameterTypes);
+        } catch (NoClassDefFoundError e) {
+            throw new NoSuchMethodException(e.toString());
         }
-        return clazz.getMethod(RemapUtils.mapMethodName(clazz, name, parameterTypes), parameterTypes);
     }
 
     public static Field getDeclaredField(Class<?> clazz, String name) throws NoSuchFieldException, SecurityException {
-        if (clazz == null) {
-            throw new NullPointerException("call getDeclaredField, but class is null.name=" + name);
-        }
-        return clazz.getDeclaredField(RemapUtils.mapFieldName(clazz, name));
+        if (ClassUtils.isClassNeedRemap(clazz, false))
+            name = MappingLoader.remapper.mapFieldName(RemapUtils.reverseMap(Type.getInternalName(clazz)), name, null);
+        return clazz.getDeclaredField(name);
     }
 
     public static Field getField(Class<?> clazz, String name) throws NoSuchFieldException, SecurityException {
-        if (clazz == null) {
-            throw new NullPointerException("call getField, but class is null.name=" + name);
-        }
-        if (clazz.getName().startsWith("net.minecraft.")) {
+        if (ClassUtils.isClassNeedRemap(clazz, true))
             name = RemapUtils.mapFieldName(clazz, name);
-        }
         return clazz.getField(name);
     }
 
-    public static String getName(Class<?> clazz) {
-        Objects.requireNonNull(clazz);
-        return RemapUtils.inverseMapName(clazz);
-    }
-
     public static String getSimpleName(Class<?> clazz) {
-        Objects.requireNonNull(clazz);
-        return RemapUtils.inverseMapSimpleName(clazz);
+        if (!ClassUtils.isClassNeedRemap(clazz, false)) return clazz.getSimpleName();
+        String[] name = RemapUtils.reverseMapExternal(clazz).split("\\.");
+        return name[name.length - 1];
     }
 
     public static Method[] getDeclaredMethods(Class<?> inst) {

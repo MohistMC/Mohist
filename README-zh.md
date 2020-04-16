@@ -57,3 +57,4 @@ All builds will be in `.\build\mohist_srg.jar` Is the development frontend you n
 * [**Atom**](https://gitlab.com/divinecode/atom/Atom.git) - 部分源代码.
 * [**Thermos**](https://github.com/CyberdyneCC/Thermos.git) - 部分源代码.
 * [**um_bukkit**](https://github.com/TechCatOther/um_bukkit.git) - 部分源代码.
+* [**ReflectionRemapper**](https://github.com/Maxqia/ReflectionRemapper.git) - 提供重映射框架。

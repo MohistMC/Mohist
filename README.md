@@ -71,6 +71,7 @@ Thanks for the following project
 * [**Atom**](https://gitlab.com/divinecode/atom/Atom.git) - Partial code source.
 * [**Thermos**](https://github.com/CyberdyneCC/Thermos.git) - Partial code source.
 * [**um_bukkit**](https://github.com/TechCatOther/um_bukkit.git) - Partial code source.
+* [**ReflectionRemapper**](https://github.com/Maxqia/ReflectionRemapper.git) - Provide a remapping framework.
 
 Special Thanks To:
 -------------
