@@ -32,24 +32,27 @@ public class UpdateUtils {
             request.addRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:25.0) Gecko/20100101 Firefox/25.0");
             request.connect();
             root = new JsonParser().parse(new InputStreamReader((InputStream) request.getContent()));
-        } catch (Exception e) { System.out.println(e.toString());System.out.println("[!] Cannot connect to Jenkins server to check updates!");}
+        } catch (Exception e) {
+            System.out.println("[!] Cannot connect to Jenkins server to check updates! " + e.toString());
+        }
         try {
             time = root.getAsJsonObject().get("changeSet").getAsJsonObject().get("items").getAsJsonArray().get(0).getAsJsonObject().get("date").toString().replace("+0800", "").replaceAll("\"", "");
             ci_sha = root.getAsJsonObject().get("changeSet").getAsJsonObject().get("items").getAsJsonArray().get(0).getAsJsonObject().get("commitId").toString().replaceAll("\"", "").substring(0, 7);
             jar_sha = UpdateUtils.class.getPackage().getImplementationVersion();
-        }catch (Throwable e){e.printStackTrace();}
-        try{
-        if(jar_sha.equals(ci_sha)) {
-            System.out.println(Message.getFormatString("update.latest", new Object[]{"1.7", jar_sha, ci_sha}));
-        } else {
-            System.out.println(Message.getFormatString("update.detect", new Object[]{ci_sha, jar_sha, time.substring(0, 10), time.substring(11, 19)}));
-            if(isDownload()) {
-                System.out.println(Message.getString("update.select"));
-                if(new Scanner(System.in).next().equals("yes")) {
-                    downloadNewJar();
+        } catch (Throwable e) {}
+        try {
+            if (jar_sha.equals(ci_sha)) {
+                System.out.println(Message.getFormatString("update.latest", new Object[]{"1.7", jar_sha, ci_sha}));
+            } else {
+                System.out.println(Message.getFormatString("update.detect", new Object[]{ci_sha, jar_sha, time.substring(0, 10), time.substring(11, 19)}));
+                if (isDownload()) {
+                    System.out.println(Message.getString("update.select"));
+                    if (new Scanner(System.in).next().equals("yes")) {
+                        downloadNewJar();
+                    }
                 }
             }
-        }}catch (Throwable e){e.printStackTrace();}
+        } catch (Throwable e) {}
     }
 
     private static void downloadNewJar() throws IOException {
@@ -71,15 +74,15 @@ public class UpdateUtils {
 
     //GET THE CORRECT SIZE OF A FILE
     public static String getSize(long size) {
-        if(size >= 1048576L) return (float) size / 1048576.0F + " MB";
-        if(size >= 1024) return (float) size / 1024.0F + " KB";
+        if (size >= 1048576L) return (float) size / 1048576.0F + " MB";
+        if (size >= 1024) return (float) size / 1024.0F + " KB";
         return size + " B";
     }
 
     /*GET THE SIZE OF THE LIBRARIES DIRECTORY TO MAKE GLOBAL PERCENTAGE*/
     public static long getSizeOfDirectory(File file) {
         long size = 0;
-        if(file.isDirectory()) {
+        if (file.isDirectory()) {
             File[] files = file.listFiles();
             for (File value : files) {
                 size += getSizeOfDirectory(value);
@@ -92,7 +95,7 @@ public class UpdateUtils {
         URLConnection conn = new URL(URL).openConnection();
         conn.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:31.0) Gecko/20100101 Firefox/31.0");
         conn.connect();
-        if(!f.exists()) f.createNewFile();
+        if (!f.exists()) f.createNewFile();
         Runnable percentage = () -> System.out.println(String.valueOf((float) f.length() / conn.getContentLength() * 100).substring(0, 2).replace(".", "") + "%");
         ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
         executor.scheduleAtFixedRate(percentage, 0, 500, TimeUnit.MILLISECONDS);
