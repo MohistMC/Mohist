@@ -18,7 +18,7 @@ public class AutoDeletePlugins {
     public static void jar() throws Exception {
         System.out.println(Message.getString("update.plugins"));
         String libDir = "plugins";
-        if(!new File(libDir).exists()) new File(libDir).mkdir();
+        if (!new File(libDir).exists()) new File(libDir).mkdir();
         JsonElement root = null;
         URLConnection request;
         try {
@@ -29,22 +29,31 @@ public class AutoDeletePlugins {
         } catch (JsonIOException | JsonSyntaxException | IOException | NullPointerException ignored) {
         }
 
-        for (String classname : root.getAsJsonObject().get("list").toString().replaceAll("\"", "").split(",")) {
-            ClassJarUtil.checkFiles(libDir, classname, false);
+        try {
+            for (String classname : root.getAsJsonObject().get("list").toString().replaceAll("\"", "").split(",")) {
+                ClassJarUtil.checkFiles(libDir, classname, false);
+            }
+        } catch (Throwable e) {
         }
 
-        for (String classname : root.getAsJsonObject().get("listupdates").toString().replaceAll("\"", "").split(",")) {
-            try {
-                ClassJarUtil.copyPluginYMLandCheck(classname.substring(0, classname.indexOf("|")), classname.substring(classname.indexOf("|") + 1, classname.indexOf("#")), classname.substring(classname.indexOf("#") + 1), "plugin");
-            } catch (Exception ignored) {
+        try {
+            for (String classname : root.getAsJsonObject().get("listupdates").toString().replaceAll("\"", "").split(",")) {
+                try {
+                    ClassJarUtil.copyPluginYMLandCheck(classname.substring(0, classname.indexOf("|")), classname.substring(classname.indexOf("|") + 1, classname.indexOf("#")), classname.substring(classname.indexOf("#") + 1), "plugin");
+                } catch (Exception ignored) {
+                }
             }
-        }
+        } catch (Throwable e) {}
 
-        for (String classname : root.getAsJsonObject().get("listpluginstoforge").toString().replaceAll("\"", "").split(",")) {
-            try {
-                ClassJarUtil.copyPluginYMLandCheck(classname.substring(0, classname.indexOf("|")), "=é", classname.substring(classname.indexOf("|") + 1), "mod");
-            } catch (Exception ignored) {
+        try {
+            for (String classname : root.getAsJsonObject().get("listpluginstoforge").toString().replaceAll("\"", "").split(",")) {
+                try {
+                    ClassJarUtil.copyPluginYMLandCheck(classname.substring(0, classname.indexOf("|")), "=é", classname.substring(classname.indexOf("|") + 1), "mod");
+                } catch (Exception ignored) {
+                }
             }
+        } catch (Throwable e) {
+            System.out.println("[!] Cannot connect to GitHub to check incompatible plugins!");
         }
     }
 }
