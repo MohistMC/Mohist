@@ -83,7 +83,7 @@
     }
  
     boolean func_219243_d(ChunkPos p_219243_1_) {
-@@ -1056,12 +1062,12 @@
+@@ -1056,15 +1062,15 @@
        });
     }
  
@@ -97,4 +97,8 @@
 +      public final Set<ServerPlayerEntity> field_219406_f = Sets.newHashSet();
  
        public EntityTracker(Entity p_i50468_2_, int p_i50468_3_, int p_i50468_4_, boolean p_i50468_5_) {
-          this.field_219402_b = new TrackedEntity(ChunkManager.this.field_219255_i, p_i50468_2_, p_i50468_4_, p_i50468_5_, this::func_219391_a);
+-         this.field_219402_b = new TrackedEntity(ChunkManager.this.field_219255_i, p_i50468_2_, p_i50468_4_, p_i50468_5_, this::func_219391_a);
++         this.field_219402_b = new TrackedEntity(ChunkManager.this.field_219255_i, p_i50468_2_, p_i50468_4_, p_i50468_5_, this::func_219391_a, field_219406_f);
+          this.field_219403_c = p_i50468_2_;
+          this.field_219404_d = p_i50468_3_;
+          this.field_219405_e = SectionPos.func_218157_a(p_i50468_2_);

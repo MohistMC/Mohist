@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/server/TicketManager.java
 +++ b/net/minecraft/world/server/TicketManager.java
-@@ -9,11 +9,11 @@
+@@ -9,14 +9,15 @@
  import it.unimi.dsi.fastutil.longs.Long2IntMaps;
  import it.unimi.dsi.fastutil.longs.Long2IntOpenHashMap;
  import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
@@ -13,7 +13,11 @@
  import it.unimi.dsi.fastutil.objects.ObjectIterator;
  import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
  import it.unimi.dsi.fastutil.objects.ObjectSet;
-@@ -37,7 +37,7 @@
++import java.util.Iterator;
+ import java.util.Set;
+ import java.util.concurrent.CompletableFuture;
+ import java.util.concurrent.Executor;
+@@ -37,7 +38,7 @@
     private static final Logger field_219373_a = LogManager.getLogger();
     private static final int field_219374_b = 33 + ChunkStatus.func_222599_a(ChunkStatus.field_222617_m) - 2;
     private final Long2ObjectMap<ObjectSet<ServerPlayerEntity>> field_219375_c = new Long2ObjectOpenHashMap<>();
@@ -22,7 +26,36 @@
     private final TicketManager.ChunkTicketTracker field_219378_f = new TicketManager.ChunkTicketTracker();
     private final TicketManager.PlayerChunkTracker field_219381_i = new TicketManager.PlayerChunkTracker(8);
     private final TicketManager.PlayerTicketTracker field_219382_j = new TicketManager.PlayerTicketTracker(33);
-@@ -146,6 +146,17 @@
+@@ -99,10 +100,26 @@
+       }
+ 
+       if (!this.field_219383_k.isEmpty()) {
+-         this.field_219383_k.forEach((p_219343_1_) -> {
++         // CraftBukkit Start
++         Iterator<ChunkHolder> iter = this.field_219383_k.iterator();
++         int expectedSize = this.field_219383_k.size();
++         do {
++            final ChunkHolder playerchunk = iter.next();
++            iter.remove();
++            --expectedSize;
++            playerchunk.func_219291_a(p_219353_1_);
++            if (this.field_219383_k.size() != expectedSize) {
++               expectedSize = this.field_219383_k.size();
++               iter = this.field_219383_k.iterator();
++            }
++         } while (iter.hasNext());
++         // CraftBukkit end
++         /*
++         this.chunkHolders.forEach((p_219343_1_) -> {
+             p_219343_1_.func_219291_a(p_219353_1_);
+          });
+-         this.field_219383_k.clear();
++         this.chunkHolders.clear();
++          */
+          return true;
+       } else {
+          if (!this.field_219387_o.isEmpty()) {
+@@ -146,6 +163,17 @@
  
     }
  
@@ -40,7 +73,7 @@
     private void func_219349_b(long p_219349_1_, Ticket<?> p_219349_3_) {
        SortedArraySet<Ticket<?>> sortedarrayset = this.func_229848_e_(p_219349_1_);
        if (sortedarrayset.remove(p_219349_3_)) {
-@@ -159,6 +170,23 @@
+@@ -159,6 +187,23 @@
        this.field_219378_f.func_215491_b(p_219349_1_, func_229844_a_(sortedarrayset), false);
     }
  
@@ -64,7 +97,7 @@
     public <T> void func_219356_a(TicketType<T> p_219356_1_, ChunkPos p_219356_2_, int p_219356_3_, T p_219356_4_) {
        this.func_219347_a(p_219356_2_.func_201841_a(), new Ticket<>(p_219356_1_, p_219356_3_, p_219356_4_));
     }
-@@ -167,6 +195,10 @@
+@@ -167,6 +212,10 @@
        Ticket<T> ticket = new Ticket<>(p_219345_1_, p_219345_3_, p_219345_4_);
        this.func_219349_b(p_219345_2_.func_201841_a(), ticket);
     }
@@ -75,7 +108,7 @@
  
     public <T> void func_219331_c(TicketType<T> p_219331_1_, ChunkPos p_219331_2_, int p_219331_3_, T p_219331_4_) {
        this.func_219347_a(p_219331_2_.func_201841_a(), new Ticket<>(p_219331_1_, 33 - p_219331_3_, p_219331_4_));
-@@ -244,6 +276,22 @@
+@@ -244,6 +293,22 @@
        return this.field_219384_l.func_225396_a();
     }
  
