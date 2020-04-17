@@ -1,9 +1,15 @@
 --- a/net/minecraft/tags/NetworkTagManager.java
 +++ b/net/minecraft/tags/NetworkTagManager.java
-@@ -69,6 +69,7 @@
+@@ -69,6 +69,13 @@
           ItemTags.func_199902_a(this.field_199720_b);
           FluidTags.func_206953_a(this.field_205705_c);
           EntityTypeTags.func_219759_a(this.field_215299_d);
++         // CraftBukkit start
++         this.field_199719_a.version++;
++         this.field_199720_b.version++;
++         this.field_205705_c.version++;
++         this.field_215299_d.version++;
++         // CraftBukkit end
 +         net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.TagsUpdatedEvent(this));
        }, p_215226_6_);
     }
