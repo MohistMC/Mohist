@@ -81,7 +81,7 @@ public class RemapperProcessor {  // This is kinda like RemapperProcessor from S
                             }
                         }
                     } else if (insn.getOpcode() == Opcodes.INVOKESTATIC) {
-                        switch (insn.owner + ";" + method.name) {
+                        switch (insn.owner + ";" + insn.name) {
                             case "java/lang/Class;forName":
                                 insn.owner = Type.getInternalName(ProxyClass.class);
                                 break;
