@@ -1,15 +1,17 @@
 --- a/net/minecraft/entity/EntityType.java
 +++ b/net/minecraft/entity/EntityType.java
-@@ -135,7 +135,7 @@
+@@ -134,8 +134,9 @@
+ import net.minecraftforge.api.distmarker.OnlyIn;
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
++import org.bukkit.event.entity.CreatureSpawnEvent;
  
 -public class EntityType<T extends Entity> {
 +public class EntityType<T extends Entity> extends net.minecraftforge.registries.ForgeRegistryEntry<EntityType<?>> {
     private static final Logger field_200731_aJ = LogManager.getLogger();
     public static final EntityType<AreaEffectCloudEntity> field_200788_b = func_200712_a("area_effect_cloud", EntityType.Builder.<AreaEffectCloudEntity>func_220322_a(AreaEffectCloudEntity::new, EntityClassification.MISC).func_220320_c().func_220321_a(6.0F, 0.5F));
     public static final EntityType<ArmorStandEntity> field_200789_c = func_200712_a("armor_stand", EntityType.Builder.<ArmorStandEntity>func_220322_a(ArmorStandEntity::new, EntityClassification.MISC).func_220321_a(0.5F, 1.975F));
-@@ -254,6 +254,12 @@
+@@ -254,6 +255,12 @@
     private ResourceLocation field_220358_bg;
     private final EntitySize field_220359_bi;
  
@@ -22,7 +24,7 @@
     private static <T extends Entity> EntityType<T> func_200712_a(String p_200712_0_, EntityType.Builder<T> p_200712_1_) {
        return Registry.func_218325_a(Registry.field_212629_r, p_200712_0_, p_200712_1_.func_206830_a(p_200712_0_));
     }
-@@ -266,7 +272,11 @@
+@@ -266,7 +273,11 @@
        return Registry.field_212629_r.func_218349_b(ResourceLocation.func_208304_a(p_220327_0_));
     }
  
@@ -34,7 +36,7 @@
        this.field_200732_aK = p_i51559_1_;
        this.field_220355_ba = p_i51559_2_;
        this.field_225438_be = p_i51559_6_;
-@@ -274,6 +284,10 @@
+@@ -274,18 +285,24 @@
        this.field_200734_aM = p_i51559_4_;
        this.field_220357_bd = p_i51559_5_;
        this.field_220359_bi = p_i51559_7_;
@@ -45,15 +47,26 @@
     }
  
     @Nullable
-@@ -284,6 +298,7 @@
-    @Nullable
-    public T func_220342_a(World p_220342_1_, @Nullable CompoundNBT p_220342_2_, @Nullable ITextComponent p_220342_3_, @Nullable PlayerEntity p_220342_4_, BlockPos p_220342_5_, SpawnReason p_220342_6_, boolean p_220342_7_, boolean p_220342_8_) {
-       T t = this.func_220349_b(p_220342_1_, p_220342_2_, p_220342_3_, p_220342_4_, p_220342_5_, p_220342_6_, p_220342_7_, p_220342_8_);
-+      if (t instanceof net.minecraft.entity.MobEntity && net.minecraftforge.event.ForgeEventFactory.doSpecialSpawn((net.minecraft.entity.MobEntity) t, p_220342_1_, p_220342_5_.func_177958_n(), p_220342_5_.func_177956_o(), p_220342_5_.func_177952_p(), null, p_220342_6_)) return null;
-       p_220342_1_.func_217376_c(t);
-       return t;
+    public Entity func_220331_a(World p_220331_1_, @Nullable ItemStack p_220331_2_, @Nullable PlayerEntity p_220331_3_, BlockPos p_220331_4_, SpawnReason p_220331_5_, boolean p_220331_6_, boolean p_220331_7_) {
+-      return this.func_220342_a(p_220331_1_, p_220331_2_ == null ? null : p_220331_2_.func_77978_p(), p_220331_2_ != null && p_220331_2_.func_82837_s() ? p_220331_2_.func_200301_q() : null, p_220331_3_, p_220331_4_, p_220331_5_, p_220331_6_, p_220331_7_);
++      // CraftBukkit start
++      return this.spawnCreature(p_220331_1_, p_220331_2_ == null ? null : p_220331_2_.func_77978_p(), p_220331_2_ != null && p_220331_2_.func_82837_s() ? p_220331_2_.func_200301_q() : null, p_220331_3_, p_220331_4_, p_220331_5_, p_220331_6_, p_220331_7_, CreatureSpawnEvent.SpawnReason.SPAWNER_EGG);
     }
-@@ -466,6 +481,9 @@
+ 
+    @Nullable
+-   public T func_220342_a(World p_220342_1_, @Nullable CompoundNBT p_220342_2_, @Nullable ITextComponent p_220342_3_, @Nullable PlayerEntity p_220342_4_, BlockPos p_220342_5_, SpawnReason p_220342_6_, boolean p_220342_7_, boolean p_220342_8_) {
+-      T t = this.func_220349_b(p_220342_1_, p_220342_2_, p_220342_3_, p_220342_4_, p_220342_5_, p_220342_6_, p_220342_7_, p_220342_8_);
+-      p_220342_1_.func_217376_c(t);
+-      return t;
++   public T spawnCreature(World worldIn, @Nullable CompoundNBT compound, @Nullable ITextComponent customName, @Nullable PlayerEntity playerIn, BlockPos pos, SpawnReason reason, boolean p_220342_7_, boolean p_220342_8_, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason spawnReason) {
++      T t = this.func_220349_b(worldIn, compound, customName, playerIn, pos, reason, p_220342_7_, p_220342_8_);
++      // if (t instanceof net.minecraft.entity.MobEntity && net.minecraftforge.event.ForgeEventFactory.doSpecialSpawn((net.minecraft.entity.MobEntity) t, worldIn, pos.getX(), pos.getY(), pos.getZ(), null, reason)) return null;
++      return worldIn.addEntity(t, spawnReason) ? t : null;// Don't return an entity when CreatureSpawnEvent is canceled
++      // CraftBukkit end
+    }
+ 
+    @Nullable
+@@ -466,6 +483,9 @@
     }
  
     public int func_220345_k() {
@@ -63,17 +76,18 @@
        if (this == field_200729_aH) {
           return 32;
        } else if (this == field_200801_o) {
-@@ -478,6 +496,9 @@
+@@ -478,6 +498,10 @@
     }
  
     public int func_220332_l() {
-+      return updateIntervalSupplier.applyAsInt(this);
++      // CraftBukkit - SPIGOT-3729: track area effect clouds
++      return this != EntityType.field_200729_aH && this != EntityType.field_200805_s ? (this == EntityType.field_200808_v ? 4 : (this == EntityType.field_200730_aI ? 5 : (this != EntityType.field_200744_aj && this != EntityType.field_200799_m && this != EntityType.field_200767_G && this != EntityType.field_200723_aB && this != EntityType.field_200746_al && this != EntityType.field_200770_J && this != EntityType.field_200752_ar && this != EntityType.field_200751_aq && this != EntityType.field_200754_at && this != EntityType.field_200753_as && this != EntityType.field_200810_x && this != EntityType.field_200735_aa ? (this != EntityType.field_200790_d && this != EntityType.field_200747_am && this != EntityType.field_203098_aL && this != EntityType.field_200765_E && this != EntityType.field_200809_w && this != EntityType.field_200807_u ? (this != EntityType.field_200766_F && this != EntityType.field_200768_H && this != EntityType.field_200782_V && this != EntityType.field_200801_o ? 3 : Integer.MAX_VALUE) : 20) : 10))) : 2;
 +   }
 +   private int defaultUpdateIntervalSupplier() {
        if (this != field_200729_aH && this != field_200805_s) {
           if (this == field_200808_v) {
              return 4;
-@@ -498,6 +519,9 @@
+@@ -498,6 +522,9 @@
     }
  
     public boolean func_220340_m() {
@@ -83,7 +97,7 @@
        return this != field_200729_aH && this != field_200770_J && this != field_200760_az && this != field_200791_e && this != field_200766_F && this != field_200768_H && this != field_200782_V && this != field_200801_o && this != field_200805_s;
     }
  
-@@ -505,12 +529,30 @@
+@@ -505,12 +532,30 @@
        return p_220341_1_.func_199685_a_(this);
     }
  
@@ -114,7 +128,7 @@
        private boolean field_225436_f;
        private EntitySize field_220326_f = EntitySize.func_220314_b(0.6F, 1.8F);
  
-@@ -555,11 +597,35 @@
+@@ -555,11 +600,35 @@
           return this;
        }
  
@@ -151,7 +165,7 @@
                 if (SharedConstants.field_206244_b) {
                    throw illegalstateexception;
                 }
-@@ -568,7 +634,7 @@
+@@ -568,7 +637,7 @@
              }
           }
  
