@@ -1,15 +1,60 @@
 --- a/net/minecraft/block/NetherPortalBlock.java
 +++ b/net/minecraft/block/NetherPortalBlock.java
-@@ -69,7 +69,7 @@
+@@ -30,6 +30,11 @@
+ import net.minecraft.world.server.ServerWorld;
+ import net.minecraftforge.api.distmarker.Dist;
+ import net.minecraftforge.api.distmarker.OnlyIn;
++import org.bukkit.craftbukkit.block.CraftBlock;
++import org.bukkit.craftbukkit.block.CraftBlockState;
++import org.bukkit.event.entity.CreatureSpawnEvent;
++import org.bukkit.event.entity.EntityPortalEnterEvent;
++import org.bukkit.event.world.PortalCreateEvent;
+ 
+ public class NetherPortalBlock extends Block {
+    public static final EnumProperty<Direction.Axis> field_176550_a = BlockStateProperties.field_208199_z;
+@@ -58,7 +63,8 @@
+          }
+ 
+          if (p_225534_2_.func_180495_p(p_225534_3_).func_215688_a(p_225534_2_, p_225534_3_, EntityType.field_200785_Y)) {
+-            Entity entity = EntityType.field_200785_Y.func_220342_a(p_225534_2_, (CompoundNBT)null, (ITextComponent)null, (PlayerEntity)null, p_225534_3_.func_177984_a(), SpawnReason.STRUCTURE, false, false);
++            // CraftBukkit - set spawn reason to NETHER_PORTAL
++            Entity entity = EntityType.field_200785_Y.spawnCreature(p_225534_2_, (CompoundNBT)null, (ITextComponent)null, (PlayerEntity)null, p_225534_3_.func_177984_a(), SpawnReason.STRUCTURE, false, false, CreatureSpawnEvent.SpawnReason.NETHER_PORTAL);
+             if (entity != null) {
+                entity.field_71088_bW = entity.func_82147_ab();
+             }
+@@ -69,9 +75,9 @@
  
     public boolean func_176548_d(IWorld p_176548_1_, BlockPos p_176548_2_) {
        NetherPortalBlock.Size netherportalblock$size = this.func_201816_b(p_176548_1_, p_176548_2_);
 -      if (netherportalblock$size != null) {
+-         netherportalblock$size.func_150859_c();
+-         return true;
 +      if (netherportalblock$size != null && !net.minecraftforge.event.ForgeEventFactory.onTrySpawnPortal(p_176548_1_, p_176548_2_, netherportalblock$size)) {
-          netherportalblock$size.func_150859_c();
-          return true;
++         // CraftBukkit start - return portalcreator
++         return netherportalblock$size.placePortalBlocks();
        } else {
-@@ -241,13 +241,13 @@
+          return false;
+       }
+@@ -97,6 +103,10 @@
+ 
+    public void func_196262_a(BlockState p_196262_1_, World p_196262_2_, BlockPos p_196262_3_, Entity p_196262_4_) {
+       if (!p_196262_4_.func_184218_aH() && !p_196262_4_.func_184207_aI() && p_196262_4_.func_184222_aU()) {
++         // CraftBukkit start - Entity in portal
++         EntityPortalEnterEvent event = new EntityPortalEnterEvent(p_196262_4_.getBukkitEntity(), new org.bukkit.Location(p_196262_2_.getWorldCB(), p_196262_3_.func_177958_n(), p_196262_3_.func_177956_o(), p_196262_3_.func_177952_p()));
++         p_196262_2_.getServerCB().getPluginManager().callEvent(event);
++         // CraftBukkit end
+          p_196262_4_.func_181015_d(p_196262_3_);
+       }
+ 
+@@ -205,6 +215,7 @@
+       private BlockPos field_150861_f;
+       private int field_150862_g;
+       private int field_150868_h;
++      java.util.List<org.bukkit.block.BlockState> blocks = new java.util.ArrayList<org.bukkit.block.BlockState>(); // CraftBukkit - add field;
+ 
+       public Size(IWorld p_i48740_1_, BlockPos p_i48740_2_, Direction.Axis p_i48740_3_) {
+          this.field_150867_a = p_i48740_1_;
+@@ -241,13 +252,13 @@
           int i;
           for(i = 0; i < 22; ++i) {
              BlockPos blockpos = p_180120_1_.func_177967_a(p_180120_2_, i);
@@ -26,7 +71,17 @@
        }
  
        public int func_181100_a() {
-@@ -274,13 +274,13 @@
+@@ -259,6 +270,9 @@
+       }
+ 
+       protected int func_150858_a() {
++         // CraftBukkit start
++         this.blocks.clear();
++         // CraftBukkit end
+          label56:
+          for(this.field_150862_g = 0; this.field_150862_g < 21; ++this.field_150862_g) {
+             for(int i = 0; i < this.field_150868_h; ++i) {
+@@ -274,23 +288,39 @@
                 }
  
                 if (i == 0) {
@@ -35,6 +90,11 @@
 +                  BlockPos framePos = blockpos.func_177972_a(this.field_150863_d);
 +                  if (!this.field_150867_a.func_180495_p(framePos).isPortalFrame(this.field_150867_a, framePos)) {
                       break label56;
++                     // CraftBukkit start - add the block to our list
++                  } else {
++                     BlockPos pos = blockpos.func_177972_a(this.field_150863_d);
++                     this.blocks.add(CraftBlock.at(this.field_150867_a, pos).getState());
++                     // CraftBukkit end
                    }
                 } else if (i == this.field_150868_h - 1) {
 -                  block = this.field_150867_a.func_180495_p(blockpos.func_177972_a(this.field_150866_c)).func_177230_c();
@@ -42,9 +102,14 @@
 +                  BlockPos framePos = blockpos.func_177972_a(this.field_150866_c);
 +                  if (!this.field_150867_a.func_180495_p(framePos).isPortalFrame(this.field_150867_a, framePos)) {
                       break label56;
++                     // CraftBukkit start - add the block to our list
++                  } else {
++                     BlockPos pos = blockpos.func_177972_a(this.field_150866_c);
++                     this.blocks.add(CraftBlock.at(this.field_150867_a, pos).getState());
++                     // CraftBukkit end
                    }
                 }
-@@ -288,7 +288,8 @@
+             }
           }
  
           for(int j = 0; j < this.field_150868_h; ++j) {
@@ -53,4 +118,50 @@
 +            if (!this.field_150867_a.func_180495_p(framePos).isPortalFrame(this.field_150867_a, framePos)) {
                 this.field_150862_g = 0;
                 break;
++               // CraftBukkit start - add the block to our list
++            } else {
++               BlockPos pos = this.field_150861_f.func_177967_a(this.field_150866_c, j).func_177981_b(this.field_150862_g);
++               this.blocks.add(CraftBlock.at(this.field_150867_a, pos).getState());
++               // CraftBukkit end
              }
+          }
+ 
+@@ -313,7 +343,28 @@
+          return this.field_150861_f != null && this.field_150868_h >= 2 && this.field_150868_h <= 21 && this.field_150862_g >= 3 && this.field_150862_g <= 21;
+       }
+ 
+-      public void func_150859_c() {
++      // CraftBukkit start - return boolean
++      public boolean placePortalBlocks() {
++         org.bukkit.World bworld = this.field_150867_a.func_201672_e().getWorldCB();
++
++         // Copy below for loop
++         for (int i = 0; i < this.field_150868_h; ++i) {
++            final BlockPos blockposition = this.field_150861_f.func_177967_a(this.field_150866_c, i);
++            for (int j = 0; j < this.field_150862_g; ++j) {
++               BlockPos pos = blockposition.func_177981_b(j);
++               CraftBlockState state = CraftBlockState.getBlockState(this.field_150867_a.func_201672_e(), pos, 18);
++               state.setData((Blocks.field_150427_aO.func_176223_P()).func_206870_a(NetherPortalBlock.field_176550_a, this.field_150865_b));
++               this.blocks.add(state);
++            }
++         }
++
++         PortalCreateEvent event = new PortalCreateEvent(blocks, bworld, null, PortalCreateEvent.CreateReason.FIRE);
++         this.field_150867_a.func_201672_e().func_73046_m().server.getPluginManager().callEvent(event);
++         if (event.isCancelled()) {
++            return false;
++         }
++         // CraftBukkit end
++
+          for(int i = 0; i < this.field_150868_h; ++i) {
+             BlockPos blockpos = this.field_150861_f.func_177967_a(this.field_150866_c, i);
+ 
+@@ -321,7 +372,7 @@
+                this.field_150867_a.func_180501_a(blockpos.func_177981_b(j), Blocks.field_150427_aO.func_176223_P().func_206870_a(NetherPortalBlock.field_176550_a, this.field_150865_b), 18);
+             }
+          }
+-
++         return true; // CraftBukkit
+       }
+ 
+       private boolean func_196899_f() {

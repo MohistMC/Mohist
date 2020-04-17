@@ -1,0 +1,28 @@
+--- a/net/minecraft/world/spawner/WanderingTraderSpawner.java
++++ b/net/minecraft/world/spawner/WanderingTraderSpawner.java
+@@ -20,6 +20,7 @@
+ import net.minecraft.world.gen.Heightmap;
+ import net.minecraft.world.server.ServerWorld;
+ import net.minecraft.world.storage.WorldInfo;
++import org.bukkit.event.entity.CreatureSpawnEvent;
+ 
+ public class WanderingTraderSpawner {
+    private final Random field_221246_a = new Random();
+@@ -88,7 +89,7 @@
+                return false;
+             }
+ 
+-            WanderingTraderEntity wanderingtraderentity = EntityType.field_220351_aK.func_220342_a(this.field_221247_b, (CompoundNBT)null, (ITextComponent)null, (PlayerEntity)null, blockpos2, SpawnReason.EVENT, false, false);
++            WanderingTraderEntity wanderingtraderentity = EntityType.field_220351_aK.spawnCreature(this.field_221247_b, (CompoundNBT)null, (ITextComponent)null, (PlayerEntity)null, blockpos2, SpawnReason.EVENT, false, false, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.NATURAL); // CraftBukkit
+             if (wanderingtraderentity != null) {
+                for(int j = 0; j < 2; ++j) {
+                   this.func_221243_a(wanderingtraderentity, 4);
+@@ -109,7 +110,7 @@
+    private void func_221243_a(WanderingTraderEntity p_221243_1_, int p_221243_2_) {
+       BlockPos blockpos = this.func_221244_a(new BlockPos(p_221243_1_), p_221243_2_);
+       if (blockpos != null) {
+-         TraderLlamaEntity traderllamaentity = EntityType.field_220354_ax.func_220342_a(this.field_221247_b, (CompoundNBT)null, (ITextComponent)null, (PlayerEntity)null, blockpos, SpawnReason.EVENT, false, false);
++         TraderLlamaEntity traderllamaentity = EntityType.field_220354_ax.spawnCreature(this.field_221247_b, (CompoundNBT)null, (ITextComponent)null, (PlayerEntity)null, blockpos, SpawnReason.EVENT, false, false, CreatureSpawnEvent.SpawnReason.NATURAL); // CraftBukkit
+          if (traderllamaentity != null) {
+             traderllamaentity.func_110162_b(p_221243_1_, true);
+          }
