@@ -150,14 +150,18 @@ public class ForgeInjectBukkit {
     }
 
     public static void registerDefaultPermission(String name, DefaultPermissionLevel level, String desc) {
-        PermissionDefault permissionDefault = PermissionDefault.FALSE;
+        PermissionDefault permissionDefault;
         switch (level) {
             case ALL:
                 permissionDefault = PermissionDefault.TRUE;
+                break;
             case OP:
                 permissionDefault = PermissionDefault.OP;
+                break;
             case NONE:
+            default:
                 permissionDefault = PermissionDefault.FALSE;
+                break;
         }
         Permission permission = new Permission(name, desc, permissionDefault);
         DefaultPermissions.registerPermission(permission, false);
