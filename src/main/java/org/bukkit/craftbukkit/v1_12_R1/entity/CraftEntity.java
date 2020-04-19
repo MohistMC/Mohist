@@ -210,6 +210,8 @@ public abstract class CraftEntity implements org.bukkit.entity.Entity {
                                 return new CraftMule(server, (EntityMule) entity);
                             } else if (entity instanceof EntityLlama) {
                                 return new CraftLlama(server, (EntityLlama) entity);
+                            } else {
+                                return new CraftAnimals(server, (EntityAnimal) entity);
                             }
                         } else if (entity instanceof EntityHorse) {
                             return new CraftHorse(server, (EntityHorse) entity);
@@ -217,6 +219,8 @@ public abstract class CraftEntity implements org.bukkit.entity.Entity {
                             return new CraftSkeletonHorse(server, (EntitySkeletonHorse) entity);
                         } else if (entity instanceof EntityZombieHorse) {
                             return new CraftZombieHorse(server, (EntityZombieHorse) entity);
+                        } else {
+                            return new CraftAnimals(server, (EntityAnimal) entity);
                         }
                     } else if (entity instanceof EntityRabbit) {
                         return new CraftRabbit(server, (EntityRabbit) entity);
