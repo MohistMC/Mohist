@@ -10,10 +10,11 @@ import java.util.Objects;
  */
 public class ClassUtils {
 
-    private static final String NM_PREFIX = "net.minecraft.";
+    public static final String NM_PREFIX = "net.minecraft.";
     public static final String NMS_PREFIX = "net/minecraft/server/";
     public static final String NMS_PREFIX1 = "net.minecraft.server";
     public static final String NMS_PREFIX2 = "net.minecraft.server.v1_12_R1";
+    public static final String NMS_PREFIX3 = "net/minecraft/server/v1_12_R1/";
     public static final String NMS_VERSION = "v1_12_R1";
 
     public static boolean isNeedRemap(String className) {
@@ -42,23 +43,5 @@ public class ClassUtils {
 
     public static BufferedReader getSrgBufferedReader(){
         return new BufferedReader(new InputStreamReader(Objects.requireNonNull(MappingLoader.class.getClassLoader().getResourceAsStream("mappings/nms.srg"))));
-    }
-
-    public static boolean isClassNeedRemap(Class<?> clazz, boolean checkSuperClass) {
-        while (clazz != null && clazz.getClassLoader() != null) {
-            if (isNMClass(clazz)) {
-                return true;
-            }
-            if (checkSuperClass) {
-                for (Class<?> interfaceClass : clazz.getInterfaces()) {
-                    if (isClassNeedRemap(interfaceClass, true))
-                        return true;
-                }
-                clazz = clazz.getSuperclass();
-            } else {
-                return false;
-            }
-        }
-        return false;
     }
 }

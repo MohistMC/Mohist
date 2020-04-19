@@ -1,5 +1,12 @@
 package red.mohist.bukkit.nms.proxy;
 
+import net.md_5.specialsource.JarMapping;
+import net.md_5.specialsource.provider.ClassLoaderProvider;
+import net.md_5.specialsource.provider.JointProvider;
+import net.md_5.specialsource.repo.RuntimeRepo;
+import net.minecraft.launchwrapper.LaunchClassLoader;
+import net.minecraft.server.MinecraftServer;
+
 import java.io.InputStream;
 import java.net.JarURLConnection;
 import java.net.URL;
@@ -9,31 +16,28 @@ import java.security.CodeSigner;
 import java.security.CodeSource;
 import java.util.HashMap;
 import java.util.Map;
-import net.md_5.specialsource.JarMapping;
-import net.md_5.specialsource.repo.RuntimeRepo;
-import net.minecraft.launchwrapper.LaunchClassLoader;
-import red.mohist.Mohist;
 import red.mohist.bukkit.nms.ClassUtils;
-import red.mohist.bukkit.nms.remappers.RemapUtils;
-import red.mohist.bukkit.nms.remappers.RemapperProcessor;
+import red.mohist.bukkit.nms.MappingLoader;
+import red.mohist.bukkit.nms.remappers.MohistInheritanceProvider;
 import red.mohist.bukkit.nms.remappers.MohistJarRemapper;
+import red.mohist.bukkit.nms.remappers.RemapperProcessor;
 
-/**
- *
- * @author pyz
- * @date 2019/7/1 8:41 PM
- */
-public class ProxyCustomURLClassLoder extends URLClassLoader {
+public class ProxyCustomURLClassLoder extends URLClassLoader
+{
 
-    private final JarMapping jarMapping;
-    private final MohistJarRemapper remapper;
+    private JarMapping jarMapping;
+    private MohistJarRemapper remapper;
     private final Map<String, Class<?>> classes = new HashMap<>();
-    private final LaunchClassLoader launchClassLoader;
+    private LaunchClassLoader launchClassLoader;
 
     {
-        this.jarMapping = RemapUtils.loadJarMapping(this, true);
-        this.remapper = RemapUtils.loadRemapper(this , true);
-        this.launchClassLoader = (LaunchClassLoader) Mohist.class.getClassLoader();
+        this.launchClassLoader = (LaunchClassLoader) MinecraftServer.getServerInst().getClass().getClassLoader();
+        this.jarMapping = MappingLoader.loadMapping();
+        final JointProvider provider = new JointProvider();
+        provider.add(new MohistInheritanceProvider());
+        provider.add(new ClassLoaderProvider(this));
+        this.jarMapping.setFallbackInheritanceProvider(provider);
+        this.remapper = new MohistJarRemapper(this.jarMapping);
     }
 
     public ProxyCustomURLClassLoder(final URL[] urls, final ClassLoader parent) {
@@ -50,7 +54,8 @@ public class ProxyCustomURLClassLoder extends URLClassLoader {
 
     protected Class<?> findClass(final String name) throws ClassNotFoundException {
         if (ClassUtils.isNeedRemap(name)) {
-            return launchClassLoader.findClass(RemapUtils.remappedClass(jarMapping, name));
+            final String remappedClass = this.jarMapping.classes.get(name.replaceAll("\\.", "\\/"));
+            return launchClassLoader.findClass(remappedClass);
         }
 
         Class<?> result = this.classes.get(name);
@@ -88,13 +93,13 @@ public class ProxyCustomURLClassLoder extends URLClassLoader {
     private Class<?> remappedFindClass(final String name) throws ClassNotFoundException {
         Class<?> result = null;
         try {
-            final String path = ClassUtils.getInternalName(name).concat(".class");
+            final String path = name.replace('.', '/').concat(".class");
             final URL url = this.findResource(path);
             if (url != null) {
                 final InputStream stream = url.openStream();
                 if (stream != null) {
                     byte[] bytecode;
-                    bytecode = remapper.remapClassFile(stream, RuntimeRepo.getInstance());
+                    bytecode = this.remapper.remapClassFile(stream, RuntimeRepo.getInstance());
                     bytecode = RemapperProcessor.transform(bytecode);
                     final JarURLConnection jarURLConnection = (JarURLConnection)url.openConnection();
                     final URL jarURL = jarURLConnection.getJarFileURL();

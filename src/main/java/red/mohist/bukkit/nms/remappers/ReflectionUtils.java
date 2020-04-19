@@ -6,10 +6,14 @@ package red.mohist.bukkit.nms.remappers;
  */
 public class ReflectionUtils {
 
-    private static final SecurityManager sm = new SecurityManager();
+    private static SecurityManager sm = new SecurityManager();
+
+    public static Class<?> getCallerClass(int skip) {
+        return sm.getCallerClass(skip);
+    }
 
     public static ClassLoader getCallerClassloader() {
-        return sm.getCallerClass(3).getClassLoader(); // added one due to it being the caller of the caller;
+        return ReflectionUtils.getCallerClass(3).getClassLoader(); // added one due to it being the caller of the caller;
     }
 
     static class SecurityManager extends java.lang.SecurityManager {

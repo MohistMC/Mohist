@@ -1,19 +1,28 @@
 package red.mohist.bukkit.nms.proxy;
 
-import java.security.ProtectionDomain;
+import net.md_5.specialsource.JarMapping;
+import net.md_5.specialsource.provider.ClassLoaderProvider;
+import net.md_5.specialsource.provider.JointProvider;
 import net.md_5.specialsource.repo.RuntimeRepo;
-import red.mohist.bukkit.nms.remappers.RemapUtils;
-import red.mohist.bukkit.nms.remappers.RemapperProcessor;
+
+import java.security.ProtectionDomain;
+import red.mohist.bukkit.nms.MappingLoader;
+import red.mohist.bukkit.nms.remappers.MohistInheritanceProvider;
 import red.mohist.bukkit.nms.remappers.MohistJarRemapper;
+import red.mohist.bukkit.nms.remappers.RemapperProcessor;
 
-public class ProxyCustomClassLoder extends ClassLoader{
-
-    public static MohistJarRemapper remapper;
+public class ProxyCustomClassLoder extends ClassLoader {
+    private JarMapping jarMapping;
+    private MohistJarRemapper remapper;
 
     {
-        remapper = RemapUtils.loadRemapper(this , true);
+        this.jarMapping = MappingLoader.loadMapping();
+        final JointProvider provider = new JointProvider();
+        provider.add(new MohistInheritanceProvider());
+        provider.add(new ClassLoaderProvider(this));
+        this.jarMapping.setFallbackInheritanceProvider(provider);
+        this.remapper = new MohistJarRemapper(this.jarMapping);
     }
-
 
     protected ProxyCustomClassLoder() {
         super();
@@ -47,7 +56,7 @@ public class ProxyCustomClassLoder extends ClassLoader{
     }
 
     private Class<?> remappedFindClass(String name, byte[] stream, ProtectionDomain protectionDomain) throws ClassFormatError {
-        Class<?> result;
+        Class<?> result = null;
 
         try {
             byte[] bytecode = remapper.remapClassFile(stream, RuntimeRepo.getInstance());

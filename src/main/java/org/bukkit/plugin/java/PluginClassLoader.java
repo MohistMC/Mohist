@@ -14,21 +14,24 @@ import java.util.Set;
 import java.util.jar.JarFile;
 import java.util.jar.Manifest;
 import net.md_5.specialsource.JarMapping;
+import net.md_5.specialsource.provider.ClassLoaderProvider;
+import net.md_5.specialsource.provider.JointProvider;
 import net.md_5.specialsource.repo.RuntimeRepo;
 import net.minecraft.launchwrapper.LaunchClassLoader;
+import net.minecraft.server.MinecraftServer;
 import org.apache.commons.lang.Validate;
 import org.bukkit.plugin.InvalidPluginException;
 import org.bukkit.plugin.PluginDescriptionFile;
-import red.mohist.Mohist;
 import red.mohist.bukkit.nms.ClassUtils;
-import red.mohist.bukkit.nms.remappers.RemapUtils;
-import red.mohist.bukkit.nms.remappers.RemapperProcessor;
+import red.mohist.bukkit.nms.MappingLoader;
+import red.mohist.bukkit.nms.remappers.MohistInheritanceProvider;
 import red.mohist.bukkit.nms.remappers.MohistJarRemapper;
+import red.mohist.bukkit.nms.remappers.RemapperProcessor;
 
 /**
  * A ClassLoader for plugins, to allow shared classes across multiple plugins
  */
-public final class PluginClassLoader extends URLClassLoader {
+final class PluginClassLoader extends URLClassLoader {
     final JavaPlugin plugin;
     private final JavaPluginLoader loader;
     private final Map<String, Class<?>> classes = new HashMap<>();
@@ -56,9 +59,13 @@ public final class PluginClassLoader extends URLClassLoader {
         this.manifest = jar.getManifest();
         this.url = file.toURI().toURL();
 
-        this.jarMapping = RemapUtils.loadJarMapping(this, true);
-        this.remapper = RemapUtils.loadRemapper(this , true);
-        this.launchClassLoader = parent instanceof LaunchClassLoader ? (LaunchClassLoader)parent : (LaunchClassLoader) Mohist.class.getClassLoader();
+        this.launchClassLoader = parent instanceof LaunchClassLoader ? (LaunchClassLoader)parent : (LaunchClassLoader) MinecraftServer.getServerInst().getClass().getClassLoader();
+        this.jarMapping = MappingLoader.loadMapping();
+        JointProvider provider = new JointProvider();
+        provider.add(new MohistInheritanceProvider());
+        provider.add(new ClassLoaderProvider(this));
+        this.jarMapping.setFallbackInheritanceProvider(provider);
+        this.remapper = new MohistJarRemapper(jarMapping);
 
         try {
             Class<?> jarClass;
@@ -84,20 +91,20 @@ public final class PluginClassLoader extends URLClassLoader {
     }
 
     @Override
-    public Class<?> findClass(String name) throws ClassNotFoundException {
+    protected Class<?> findClass(String name) throws ClassNotFoundException {
         return findClass(name, true);
     }
 
     Class<?> findClass(String name, boolean checkGlobal) throws ClassNotFoundException {
-        Class<?> result;
         if (ClassUtils.isNeedRemap(name)) {
-            return launchClassLoader.findClass(RemapUtils.remappedClass(jarMapping, name));
+            String remappedClass = jarMapping.classes.get(name.replaceAll("\\.", "\\/"));
+            return launchClassLoader.findClass(remappedClass);
         }
 
         if (name.startsWith("org.bukkit.")) {
             throw new ClassNotFoundException(name);
         }
-        result = classes.get(name);
+        Class<?> result = classes.get(name);
         synchronized (name.intern()) {
             if (result == null) {
                 if (checkGlobal) {
@@ -109,6 +116,14 @@ public final class PluginClassLoader extends URLClassLoader {
 
                     if (result != null) {
                         loader.setClass(name, result);
+                    }
+                }
+
+                if (result == null) {
+                    try {
+                        result = launchClassLoader.getClass().getClassLoader().loadClass(name);
+                    } catch (Throwable throwable) {
+                        throw new ClassNotFoundException(name, throwable);
                     }
                 }
 
@@ -153,15 +168,13 @@ public final class PluginClassLoader extends URLClassLoader {
 
         try {
             // Load the resource to the name
-            String path = ClassUtils.getInternalName(name).concat(".class");
+            String path = name.replace('.', '/').concat(".class");
             URL url = this.findResource(path);
             if (url != null) {
                 InputStream stream = url.openStream();
                 if (stream != null) {
-                    byte[] bytecode = null;
-
                     // Remap the classes
-                    bytecode = remapper.remapClassFile(stream, RuntimeRepo.getInstance());
+                    byte[] bytecode = remapper.remapClassFile(stream, RuntimeRepo.getInstance());
                     bytecode = RemapperProcessor.transform(bytecode);
                     JarURLConnection jarURLConnection = (JarURLConnection) url.openConnection(); // parses only
                     URL jarURL = jarURLConnection.getJarFileURL();

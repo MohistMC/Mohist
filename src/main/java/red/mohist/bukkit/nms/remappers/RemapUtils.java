@@ -1,30 +1,30 @@
 package red.mohist.bukkit.nms.remappers;
 
-import java.util.ArrayList;
-import java.util.Arrays;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.util.Collection;
-import net.md_5.specialsource.JarMapping;
-import net.md_5.specialsource.provider.ClassLoaderProvider;
-import net.md_5.specialsource.provider.JointProvider;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import net.md_5.specialsource.JarRemapper;
 import org.objectweb.asm.Type;
-import red.mohist.bukkit.nms.MappingLoader;
-import red.mohist.bukkit.nms.cache.ClassMapping;
-import red.mohist.bukkit.nms.remappers.MohistInheritanceProvider;
-import red.mohist.bukkit.nms.remappers.MohistJarRemapper;
+import red.mohist.bukkit.nms.ClassUtils;
+import red.mohist.bukkit.nms.remappers.RemapperProcessor;
 
 public class RemapUtils {
 
+    private static Map<String, Boolean> classNeedRemap = new ConcurrentHashMap<>();
+
     // Classes
     public static String reverseMapExternal(Class<?> name) {
-        return reverseMap(Type.getInternalName(name)).replace('$', '.').replace('/', '.');
+        return reverseMap(name).replace('$', '.').replace('/', '.');
+    }
+
+    public static String reverseMap(Class<?> name) {
+        return reverseMap(Type.getInternalName(name));
     }
 
     public static String reverseMap(String check) {
-        return ClassMapping.classDeMapping.getOrDefault(check, check);
-    }
-
-    public static String remappedClass(JarMapping jarMapping, String className){
-        return jarMapping.classes.get(className.replaceAll("\\.", "\\/"));
+        return RemapperProcessor.classDeMapping.getOrDefault(check, check);
     }
 
     // Methods
@@ -40,9 +40,9 @@ public class RemapUtils {
      * Recursive method for finding a method from superclasses/interfaces
      */
     public static String mapMethodInternal(Class<?> inst, String name, Class<?>... parameterTypes) {
-        String match = reverseMap(Type.getInternalName(inst)) + "/" + name;
+        String match = reverseMap(inst) + "/" + name;
 
-        Collection<String> colls = ClassMapping.methodFastMapping.get(match);
+        Collection<String> colls = RemapperProcessor.methodFastMapping.get(match);
         for (String value : colls) {
             String[] str = value.split("\\s+");
             int i = 0;
@@ -56,31 +56,28 @@ public class RemapUtils {
             }
 
             if (i >= parameterTypes.length)
-                return MappingLoader.jarMapping.methods.get(value);
+                return RemapperProcessor.jarMapping.methods.get(value);
         }
 
         // Search superclass
-        ArrayList<Class<?>> parents = new ArrayList<>();
-        parents.add(inst.getSuperclass());
-        for (Class<?> superClass : parents) {
-            if (superClass == null) continue;
-            return mapMethodInternal(superClass, name, parameterTypes);
+        Class<?> superClass = inst.getSuperclass();
+        if (superClass != null) {
+            String superMethodName = mapMethodInternal(superClass, name, parameterTypes);
+            if (superMethodName != null) return superMethodName;
         }
 
         // Search interfaces
-        ArrayList<Class<?>> interfaces = new ArrayList<>();
-        interfaces.addAll(Arrays.asList(inst.getInterfaces()));
-        for (Class<?> interfaceClass : interfaces) {
-            if (interfaceClass == null) continue;
-            return mapMethodInternal(interfaceClass, name, parameterTypes);
+        for (Class<?> interfaceClass : inst.getInterfaces()) {
+            String superMethodName = mapMethodInternal(interfaceClass, name, parameterTypes);
+            if (superMethodName != null) return superMethodName;
         }
 
         return null;
     }
 
     public static String mapFieldName(Class<?> inst, String name) {
-        String key = reverseMap(Type.getInternalName(inst)) + "/" + name;
-        String mapped = MappingLoader.jarMapping.fields.get(key);
+        String key = reverseMap(inst) + "/" + name;
+        String mapped = RemapperProcessor.jarMapping.fields.get(key);
         if (mapped == null) {
             Class<?> superClass = inst.getSuperclass();
             if (superClass != null) {
@@ -90,16 +87,70 @@ public class RemapUtils {
         return mapped != null ? mapped : name;
     }
 
-    public static JarMapping loadJarMapping(ClassLoader classLoader, boolean isClassLoader){
-        JarMapping jarMapping = MappingLoader.loadMapping();
-        JointProvider provider = new JointProvider();
-        provider.add(new MohistInheritanceProvider());
-        if (isClassLoader) provider.add(new ClassLoaderProvider(classLoader));
-        jarMapping.setFallbackInheritanceProvider(provider);
-        return jarMapping;
+    public static String mapClass(String className) {
+        String remapped = JarRemapper.mapTypeName(className, RemapperProcessor.jarMapping.packages, RemapperProcessor.jarMapping.classes, className);
+        if (remapped.equals(className) && className.startsWith(ClassUtils.NMS_PREFIX) && !className.contains(ClassUtils.NMS_VERSION)) {
+            String[] cn = className.split("/");
+            return JarRemapper.mapTypeName(ClassUtils.NMS_PREFIX3 + cn[cn.length - 1], RemapperProcessor.jarMapping.packages, RemapperProcessor.jarMapping.classes, className);
+        }
+        return remapped;
     }
 
-    public static MohistJarRemapper loadRemapper(ClassLoader classLoader, boolean isClassLoader){
-        return new MohistJarRemapper(loadJarMapping(classLoader, isClassLoader));
+    public static String demapFieldName(Field field) {
+        String name = field.getName();
+        String match = reverseMap(field.getDeclaringClass()) + "/";
+
+        Collection<String> colls = RemapperProcessor.fieldDeMapping.get(name);
+
+        for (String value : colls) {
+            if (value.startsWith(match)) {
+                String[] matched = value.split("\\/");
+                String rtr =  matched[matched.length - 1];
+                return rtr;
+            }
+        }
+
+        return name;
+    }
+
+    public static String demapMethodName(Method method) {
+        String name = method.getName();
+        String match = reverseMap(method.getDeclaringClass()) + "/";
+
+        Collection<String> colls = RemapperProcessor.methodDeMapping.get(name);
+
+        for (String value : colls) {
+            if (value.startsWith(match)) {
+                String[] matched = value.split("\\s+")[0].split("\\/");
+                String rtr =  matched[matched.length - 1];
+                return rtr;
+            }
+        }
+
+        return name;
+    }
+
+    public static boolean isClassNeedRemap(Class<?> clazz, boolean checkSuperClass) {
+        final String className = clazz.getName();
+        Boolean cache = classNeedRemap.get(className);
+        if (cache != null) return cache;
+
+        while (clazz != null && clazz.getClassLoader() != null) {
+            if (ClassUtils.isNMClass(clazz)) {
+                classNeedRemap.put(className, true);
+                return true;
+            }
+            if (checkSuperClass) {
+                for (Class<?> interfaceClass : clazz.getInterfaces()) {
+                    if (isClassNeedRemap(interfaceClass, true))
+                        return true;
+                }
+                clazz = clazz.getSuperclass();
+            } else {
+                return false;
+            }
+        }
+        classNeedRemap.put(className, false);
+        return false;
     }
 }
