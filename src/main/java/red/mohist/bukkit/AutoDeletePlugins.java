@@ -15,7 +15,7 @@ import red.mohist.util.i18n.Message;
 
 public class AutoDeletePlugins {
 
-    public static void jar() throws Exception {
+    public static void jar() {
         System.out.println(Message.getString("update.plugins"));
         String libDir = "plugins";
         if (!new File(libDir).exists()) new File(libDir).mkdir();
@@ -33,7 +33,7 @@ public class AutoDeletePlugins {
             for (String classname : root.getAsJsonObject().get("list").toString().replaceAll("\"", "").split(",")) {
                 ClassJarUtil.checkFiles(libDir, classname, false);
             }
-        } catch (Throwable e) {
+        } catch (Throwable ignored) {
         }
 
         try {
@@ -43,7 +43,7 @@ public class AutoDeletePlugins {
                 } catch (Exception ignored) {
                 }
             }
-        } catch (Throwable e) {}
+        } catch (Throwable ignored) {}
 
         try {
             for (String classname : root.getAsJsonObject().get("listpluginstoforge").toString().replaceAll("\"", "").split(",")) {

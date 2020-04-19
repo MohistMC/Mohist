@@ -46,10 +46,7 @@ public class UpdateUtils {
             } else {
                 System.out.println(Message.getFormatString("update.detect", new Object[]{ci_sha, jar_sha, time.substring(0, 10), time.substring(11, 19)}));
                 if (isDownload()) {
-                    System.out.println(Message.getString("update.select"));
-                    if (new Scanner(System.in).next().equals("yes")) {
-                        downloadNewJar();
-                    }
+                    downloadNewJar();
                 }
             }
         } catch (Throwable e) {}
