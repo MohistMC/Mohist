@@ -116,7 +116,9 @@ import net.minecraft.entity.projectile.EntityTippedArrow;
 import net.minecraft.entity.projectile.EntityWitherSkull;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.DamageSource;
-import net.minecraftforge.cauldron.entity.CraftCustomEntity;
+import red.mohist.entity.CraftCustomAbstractHorse;
+import red.mohist.entity.CraftCustomChestHorse;
+import red.mohist.entity.CraftCustomEntity;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.util.FakePlayerFactory;
 import org.bukkit.EntityEffect;
@@ -136,7 +138,7 @@ import org.bukkit.permissions.PermissionAttachmentInfo;
 import org.bukkit.permissions.ServerOperator;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.util.Vector;
-import red.mohist.thermos.CustomProjectileEntity;
+import red.mohist.entity.CustomProjectileEntity;
 
 public abstract class CraftEntity implements org.bukkit.entity.Entity {
     private static PermissibleBase perm;
@@ -211,7 +213,7 @@ public abstract class CraftEntity implements org.bukkit.entity.Entity {
                             } else if (entity instanceof EntityLlama) {
                                 return new CraftLlama(server, (EntityLlama) entity);
                             } else {
-                                return new CraftAnimals(server, (EntityAnimal) entity);
+                                return new CraftCustomChestHorse(server, (AbstractChestHorse) entity);
                             }
                         } else if (entity instanceof EntityHorse) {
                             return new CraftHorse(server, (EntityHorse) entity);
@@ -220,7 +222,7 @@ public abstract class CraftEntity implements org.bukkit.entity.Entity {
                         } else if (entity instanceof EntityZombieHorse) {
                             return new CraftZombieHorse(server, (EntityZombieHorse) entity);
                         } else {
-                            return new CraftAnimals(server, (EntityAnimal) entity);
+                            return new CraftCustomAbstractHorse(server, (AbstractHorse) entity);
                         }
                     } else if (entity instanceof EntityRabbit) {
                         return new CraftRabbit(server, (EntityRabbit) entity);

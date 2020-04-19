@@ -1,9 +1,10 @@
-package red.mohist.thermos;
+package red.mohist.entity;
 
 import com.mojang.authlib.GameProfile;
 import java.util.UUID;
 import net.minecraft.entity.Entity;
-import net.minecraftforge.cauldron.entity.CraftCustomEntity;
+import org.bukkit.entity.EntityType;
+import red.mohist.entity.CraftCustomEntity;
 import org.bukkit.craftbukkit.v1_12_R1.CraftServer;
 import org.bukkit.entity.Projectile;
 import org.bukkit.projectiles.ProjectileSource;
@@ -36,6 +37,16 @@ public class CustomProjectileEntity extends CraftCustomEntity implements Project
     @Override
     public void setBounce(boolean doesBounce) {
         this.doesBounce = doesBounce;
+    }
+
+    @Override
+    public EntityType getType() {
+        EntityType type = EntityType.fromName(this.entityName);
+        if (type != null) {
+            return type;
+        } else {
+            return EntityType.FORGE_MOD_PROJECTILE;
+        }
     }
 
     @Override

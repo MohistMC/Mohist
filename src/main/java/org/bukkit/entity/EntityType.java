@@ -2,7 +2,9 @@ package org.bukkit.entity;
 
 import java.util.HashMap;
 import java.util.Map;
-import net.minecraftforge.cauldron.entity.CraftCustomEntity;
+import red.mohist.entity.CraftCustomAbstractHorse;
+import red.mohist.entity.CraftCustomChestHorse;
+import red.mohist.entity.CraftCustomEntity;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.minecart.CommandMinecart;
@@ -14,6 +16,7 @@ import org.bukkit.entity.minecart.SpawnerMinecart;
 import org.bukkit.entity.minecart.StorageMinecart;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffectType;
+import red.mohist.entity.CustomProjectileEntity;
 
 public enum EntityType {
 
@@ -266,7 +269,10 @@ public enum EntityType {
      * An unknown entity without an Entity Class
      */
     UNKNOWN(null, null, -1, false),
-    FORGE_MOD("forge_mod", CraftCustomEntity.class, -1, false);
+    FORGE_MOD("forge_mod", CraftCustomEntity.class, -1, false),
+    FORGE_MOD_PROJECTILE("forge_mod_projectile", CustomProjectileEntity.class, -1, false),
+    FORGE_MOD_CHEST_HORSE("forge_mod_chest_horse", CraftCustomChestHorse.class, -1, false),
+    FORGE_MOD_HORSE("forge_mod_horse", CraftCustomAbstractHorse.class, -1, false);
 
     private static final Map<String, EntityType> NAME_MAP = new HashMap<>();
     private static final Map<Short, EntityType> ID_MAP = new HashMap<>();

@@ -1,4 +1,4 @@
-package net.minecraftforge.cauldron.entity;
+package red.mohist.entity;
 
 import net.minecraftforge.fml.common.registry.EntityRegistry;
 import org.bukkit.craftbukkit.v1_12_R1.CraftServer;
@@ -33,7 +33,7 @@ public class CraftCustomEntity extends CraftEntity {
         if (type != null) {
             return type;
         } else {
-            return EntityType.UNKNOWN;
+            return EntityType.FORGE_MOD;
         }
     }
 
