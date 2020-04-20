@@ -69,8 +69,8 @@ public class MohistConfig extends ConfigBase {
     public final StringSetting modsblacklist = new StringSetting(this, "forge.modswhitelist.list", "aaaaa;bbbbbb", Message.getString("mohistsettings.modsblacklist"));
     public final StringSetting modsblacklistkickMessage = new StringSetting(this, "forge.modswhitelist.kickmessage", "Use of unauthorized mods", Message.getString("mohistsettings.modsblacklistkickMessage"));
     public final BoolSetting modswhitelistdisable = new BoolSetting(this, "forge.disable_mods_whitelist", false, Message.getString("mohistsettings.modswhitelistdisable"));
-    public final IntSetting frogeversionmajor = new IntSetting(this, "forge.version.major", 14, "forge.version.major");
-    public final IntSetting forgeversonminor = new IntSetting(this, "forge.version.minor", 23, "forge.version.minor");
+    public final IntSetting forgeversionmajor = new IntSetting(this, "forge.version.major", 14, "forge.version.major");
+    public final IntSetting forgeversionminor = new IntSetting(this, "forge.version.minor", 23, "forge.version.minor");
     public final IntSetting forgeversionrevision = new IntSetting(this, "forge.version.revision", 5, "forge.version.revision");
     public final IntSetting forgeversionbuild = new IntSetting(this, "forge.version.build", 2854, "forge.version.build");
 
