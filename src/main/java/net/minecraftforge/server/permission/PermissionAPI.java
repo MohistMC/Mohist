@@ -30,6 +30,9 @@ import net.minecraftforge.server.permission.context.PlayerContext;
 import org.apache.logging.log4j.Level;
 
 import javax.annotation.Nullable;
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
+import red.mohist.forge.ForgeInjectBukkit;
 
 public class PermissionAPI
 {
@@ -66,6 +69,7 @@ public class PermissionAPI
         Preconditions.checkArgument(!node.isEmpty(), "Permission node can't be empty!");
         Preconditions.checkState(Loader.instance().getLoaderState().ordinal() > LoaderState.PREINITIALIZATION.ordinal(), "Can't register permission nodes before Init!");
         permissionHandler.registerNode(node, level, desc);
+        ForgeInjectBukkit.registerDefaultPermission(node, level, desc);
         return node;
     }
 
@@ -81,7 +85,9 @@ public class PermissionAPI
         Preconditions.checkNotNull(profile, "GameProfile can't be null!");
         Preconditions.checkNotNull(node, "Permission node can't be null!");
         Preconditions.checkArgument(!node.isEmpty(), "Permission node can't be empty!");
-        return permissionHandler.hasPermission(profile, node, context);
+        Player player = Bukkit.getServer().getPlayer(profile.getId());
+        return player != null && player.hasPermission(node);
+        //return permissionHandler.hasPermission(profile, node, context);
     }
 
     /**
@@ -92,6 +98,8 @@ public class PermissionAPI
     public static boolean hasPermission(EntityPlayer player, String node)
     {
         Preconditions.checkNotNull(player, "Player can't be null!");
-        return hasPermission(player.getGameProfile(), node, new PlayerContext(player));
+        //return hasPermission(player.getGameProfile(), node, new PlayerContext(player));
+        Player cbplayer = (Player) player.getBukkitEntity();
+        return cbplayer.hasPermission(node);
     }
 }

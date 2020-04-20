@@ -53,7 +53,6 @@ public enum DefaultPermissionHandler implements IPermissionHandler
         {
             DESCRIPTION_MAP.put(node, desc);
         }
-        ForgeInjectBukkit.registerDefaultPermission(node, level, desc);
     }
 
     @Override
@@ -65,8 +64,19 @@ public enum DefaultPermissionHandler implements IPermissionHandler
     @Override
     public boolean hasPermission(GameProfile profile, String node, @Nullable IContext context)
     {
-        Player player = Bukkit.getServer().getPlayer(profile.getId());
-        return player != null && player.hasPermission(node);
+        DefaultPermissionLevel level = getDefaultPermissionLevel(node);
+
+        if(level == DefaultPermissionLevel.NONE)
+        {
+            return false;
+        }
+        else if(level == DefaultPermissionLevel.ALL)
+        {
+            return true;
+        }
+
+        MinecraftServer server = FMLCommonHandler.instance().getMinecraftServerInstance();
+        return server != null && server.getPlayerList().canSendCommands(profile);
     }
 
     @Override
