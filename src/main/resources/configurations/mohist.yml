@@ -12,12 +12,17 @@ forge:
   disable_mods_whitelist: false
   disablechunkforcesystem: false
   autounloadWorld_whitelist:
-    - '0'
-    - '1'
-    - '-1'
+    - 0
+    - 1
+    - -1
   modsblacklist:
     list: []
     kickmessage: Use of unauthorized mods
+  version:
+    major: 14
+    minor: 23
+    revision: 5
+    build: 2854
 mohist:
   check_update: true
   server-type: FML
@@ -39,14 +44,14 @@ consolecolor:
   info-msg: r
   error-level: c
   error-msg: c
-  info-level: '2'
+  info-level: 2
   warn-time: b
   fatal-msg: c
   error-time: b
   trace-time: b
   fatal-level: c
-  warn-msg: '3'
-  warn-level: '2'
+  warn-msg: 3
+  warn-level: 2
   trace-msg: c
 libraries_black_list: aaaaa;bbbbbb
 world:
