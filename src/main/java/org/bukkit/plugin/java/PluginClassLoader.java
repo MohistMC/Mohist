@@ -31,8 +31,8 @@ import red.mohist.bukkit.nms.remappers.RemapperProcessor;
 /**
  * A ClassLoader for plugins, to allow shared classes across multiple plugins
  */
-final class PluginClassLoader extends URLClassLoader {
-    final JavaPlugin plugin;
+public final class PluginClassLoader extends URLClassLoader {
+    JavaPlugin plugin;
     private final JavaPluginLoader loader;
     private final Map<String, Class<?>> classes = new HashMap<>();
     private final PluginDescriptionFile description;
