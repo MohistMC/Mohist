@@ -105,6 +105,13 @@ targetCompatibility = '1.8'
 sourceCompatibility = '1.8'
 compileJava.options.encoding = 'UTF-8'
 
+sourceSets {
+    // Fix idea can't import module automatically
+    main.java.srcDir 'src/main/java/'
+    main.java.srcDir 'projects/Mohist/src/main/java/'
+    main.java.srcDir 'projects/Mohist/src/main/start/'
+}
+
 configurations.all {
     transitive = false
 }
@@ -179,8 +186,6 @@ launch4j {
     maxHeapPercent = 100
 }
 tasks.createExe.dependsOn installer
-tasks.compileJava.enabled = false
-tasks.compileTestJava.enabled = false
 tasks.build.dependsOn 'launch4j'
 
 task reobfToSRG(type: net.minecraftforge.gradle.patcher.TaskReobfuscate, dependsOn: reobfuscate) {
