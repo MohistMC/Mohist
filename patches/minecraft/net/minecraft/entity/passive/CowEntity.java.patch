@@ -1,0 +1,37 @@
+--- a/net/minecraft/entity/passive/CowEntity.java
++++ b/net/minecraft/entity/passive/CowEntity.java
+@@ -24,6 +24,10 @@
+ import net.minecraft.util.SoundEvents;
+ import net.minecraft.util.math.BlockPos;
+ import net.minecraft.world.World;
++// CraftBukkit start
++import org.bukkit.craftbukkit.event.CraftEventFactory;
++import org.bukkit.craftbukkit.inventory.CraftItemStack;
++// CraftBukkit end
+ 
+ public class CowEntity extends AnimalEntity {
+    public CowEntity(EntityType<? extends CowEntity> p_i48567_1_, World p_i48567_2_) {
+@@ -70,13 +74,20 @@
+    public boolean func_184645_a(PlayerEntity p_184645_1_, Hand p_184645_2_) {
+       ItemStack itemstack = p_184645_1_.func_184586_b(p_184645_2_);
+       if (itemstack.func_77973_b() == Items.field_151133_ar && !p_184645_1_.field_71075_bZ.field_75098_d && !this.func_70631_g_()) {
++         // CraftBukkit start - Got milk?
++         org.bukkit.event.player.PlayerBucketFillEvent event = CraftEventFactory.callPlayerBucketFillEvent(p_184645_1_.field_70170_p, p_184645_1_, this.func_180425_c(), this.func_180425_c(), null, itemstack, Items.field_151117_aB);
++         if (event.isCancelled()) {
++            return false;
++         }
++         ItemStack result = CraftItemStack.asNMSCopy(event.getItemStack());
+          p_184645_1_.func_184185_a(SoundEvents.field_187564_an, 1.0F, 1.0F);
+          itemstack.func_190918_g(1);
+          if (itemstack.func_190926_b()) {
+-            p_184645_1_.func_184611_a(p_184645_2_, new ItemStack(Items.field_151117_aB));
+-         } else if (!p_184645_1_.field_71071_by.func_70441_a(new ItemStack(Items.field_151117_aB))) {
+-            p_184645_1_.func_71019_a(new ItemStack(Items.field_151117_aB), false);
++            p_184645_1_.func_184611_a(p_184645_2_, result);
++         } else if (!p_184645_1_.field_71071_by.func_70441_a(result)) {
++            p_184645_1_.func_71019_a(result, false);
+          }
++         // CraftBukkit end
+ 
+          return true;
+       } else {
