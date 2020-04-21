@@ -19,7 +19,7 @@ plugins {
 def patcher_plugin = plugins.apply('net.minecraftforge.gradle.patcher')
 
 group = 'red.mohist'
-version = versioning.info.build
+version = '1.12.2-' + versioning.info.build
 
 repositories {
     mavenCentral()
@@ -99,6 +99,7 @@ dependencies {
 
     compile "org.cache2k:cache2k-api:1.3.1.Alpha"
     compile "org.cache2k:cache2k-core:1.3.1.Alpha"
+    compile "org.slf4j:slf4j-api:1.7.30"
 }
 
 targetCompatibility = '1.8'
@@ -203,7 +204,7 @@ outputJar {
     archiveClassifier = 'server'
 
     manifest.attributes([
-            "Manifest-Version": "1.7",
+            "Manifest-Version": "1.8",
             "Implementation-Title": "Mohist",
             "Implementation-Version": project.version,
             "Main-Class": "red.mohist.Mohist",

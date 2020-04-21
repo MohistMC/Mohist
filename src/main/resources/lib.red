@@ -31,3 +31,4 @@ libraries/org/xerial/sqlite-jdbc/3.21.0.1/sqlite-jdbc-3.21.0.1.jar|ae5064ef5ef50
 libraries/org/yaml/snakeyaml/1.19/snakeyaml-1.19.jar|95472b5a0ded8761545342a087e82117
 libraries/org/cache2k/cache2k-api/1.3.1.Alpha/cache2k-api-1.3.1.Alpha.jar|6646194a67c3ffd53acda6d16f8c17a0
 libraries/org/cache2k/cache2k-core/1.3.1.Alpha/cache2k-core-1.3.1.Alpha.jar|fd13bcf2add15f3ead58f5b0cd7f20f9
+libraries/org/slf4j/slf4j-api/1.7.30/slf4j-api-1.7.30.jar|f8be00da99bc4ab64c79ab1e2be7cb7c
