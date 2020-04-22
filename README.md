@@ -2,7 +2,7 @@
 
 ## Mohist-1.15.2(In development)
 
-[![](https://ci.codemc.org/buildStatus/icon?job=Mohist-Community%2FMohist-1.15)](https://ci.codemc.org/job/Mohist-Community/job/Mohist-1.15/)
+[![](https://ci.codemc.org/buildStatus/icon?job=Mohist-Community%2FMohist-1.15.2)](https://ci.codemc.org/job/Mohist-Community/job/Mohist-1.15.2/)
 ![](https://img.shields.io/github/stars/Mohist-Community/Mohist.svg?label=Stars)
 ![](https://img.shields.io/github/license/Mohist-Community/Mohist.svg)
 [![](https://img.shields.io/badge/Paper-1.15.2-brightgreen.svg?colorB=DC3340)](https://papermc.io/downloads#Paper-1.15.2)
