@@ -1,6 +1,14 @@
 --- a/net/minecraft/entity/ai/goal/BreedGoal.java
 +++ b/net/minecraft/entity/ai/goal/BreedGoal.java
-@@ -80,6 +80,17 @@
+@@ -8,6 +8,7 @@
+ import net.minecraft.entity.EntityPredicate;
+ import net.minecraft.entity.item.ExperienceOrbEntity;
+ import net.minecraft.entity.passive.AnimalEntity;
++import net.minecraft.entity.passive.TameableEntity;
+ import net.minecraft.entity.player.ServerPlayerEntity;
+ import net.minecraft.stats.Stats;
+ import net.minecraft.world.GameRules;
+@@ -80,12 +81,37 @@
  
     protected void func_75388_i() {
        AgeableEntity ageableentity = this.field_75390_d.func_90011_a(this.field_75391_e);
@@ -16,5 +24,42 @@
 +         return;
 +      }
        if (ageableentity != null) {
++         // CraftBukkit start - set persistence for tame animals
++         if (ageableentity instanceof TameableEntity && ((TameableEntity) ageableentity).func_70909_n()) {
++            ageableentity.field_82179_bU = true;
++         }
++         // CraftBukkit end
           ServerPlayerEntity serverplayerentity = this.field_75390_d.func_191993_do();
           if (serverplayerentity == null && this.field_75391_e.func_191993_do() != null) {
+             serverplayerentity = this.field_75391_e.func_191993_do();
+          }
+ 
++         // CraftBukkit start - call EntityBreedEvent
++         int experience = this.field_75390_d.func_70681_au().nextInt(7) + 1;
++         org.bukkit.event.entity.EntityBreedEvent entityBreedEvent = org.bukkit.craftbukkit.event.CraftEventFactory.callEntityBreedEvent(ageableentity, this.field_75390_d, this.field_75391_e, serverplayerentity, this.field_75390_d.breedItem, experience);
++         if (entityBreedEvent.isCancelled()) {
++            return;
++         }
++         experience = entityBreedEvent.getExperience();
++         // CraftBukkit end
++
+          if (serverplayerentity != null) {
+             serverplayerentity.func_195066_a(Stats.field_151186_x);
+             CriteriaTriggers.field_192134_n.func_192168_a(serverplayerentity, this.field_75390_d, this.field_75391_e, ageableentity);
+@@ -97,10 +123,14 @@
+          this.field_75391_e.func_70875_t();
+          ageableentity.func_70873_a(-24000);
+          ageableentity.func_70012_b(this.field_75390_d.func_226277_ct_(), this.field_75390_d.func_226278_cu_(), this.field_75390_d.func_226281_cx_(), 0.0F, 0.0F);
+-         this.field_75394_a.func_217376_c(ageableentity);
++         this.field_75394_a.addEntity(ageableentity, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.BREEDING); // CraftBukkit - added SpawnReason
+          this.field_75394_a.func_72960_a(this.field_75390_d, (byte)18);
+          if (this.field_75394_a.func_82736_K().func_223586_b(GameRules.field_223602_e)) {
+-            this.field_75394_a.func_217376_c(new ExperienceOrbEntity(this.field_75394_a, this.field_75390_d.func_226277_ct_(), this.field_75390_d.func_226278_cu_(), this.field_75390_d.func_226281_cx_(), this.field_75390_d.func_70681_au().nextInt(7) + 1));
++            // CraftBukkit start - use event experience
++            if (experience > 0) {
++               this.field_75394_a.func_217376_c(new ExperienceOrbEntity(this.field_75394_a, this.field_75390_d.func_226277_ct_(), this.field_75390_d.func_226278_cu_(), this.field_75390_d.func_226281_cx_(), experience));
++            }
++            // CraftBukkit end
+          }
+ 
+       }

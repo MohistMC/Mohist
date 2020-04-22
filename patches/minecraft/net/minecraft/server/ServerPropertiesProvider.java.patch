@@ -1,0 +1,11 @@
+--- a/net/minecraft/server/ServerPropertiesProvider.java
++++ b/net/minecraft/server/ServerPropertiesProvider.java
+@@ -10,7 +10,7 @@
+ 
+    public ServerPropertiesProvider(Path p_i50718_1_) {
+       this.field_219036_a = p_i50718_1_;
+-      this.field_219037_b = ServerProperties.func_218985_a(p_i50718_1_);
++      this.field_219037_b = ServerProperties.func_218985_a(this.field_219036_a);
+    }
+ 
+    public ServerProperties func_219034_a() {
