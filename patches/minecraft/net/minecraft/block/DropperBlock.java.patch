@@ -1,6 +1,25 @@
 --- a/net/minecraft/block/DropperBlock.java
 +++ b/net/minecraft/block/DropperBlock.java
-@@ -29,7 +29,7 @@
+@@ -3,6 +3,7 @@
+ import net.minecraft.dispenser.DefaultDispenseItemBehavior;
+ import net.minecraft.dispenser.IDispenseItemBehavior;
+ import net.minecraft.dispenser.ProxyBlockSource;
++import net.minecraft.inventory.DoubleSidedInventory;
+ import net.minecraft.inventory.IInventory;
+ import net.minecraft.item.ItemStack;
+ import net.minecraft.tileentity.DispenserTileEntity;
+@@ -13,6 +14,10 @@
+ import net.minecraft.util.math.BlockPos;
+ import net.minecraft.world.IBlockReader;
+ import net.minecraft.world.World;
++// CraftBukkit start
++import org.bukkit.craftbukkit.inventory.CraftItemStack;
++import org.bukkit.event.inventory.InventoryMoveItemEvent;
++// CraftBukkit end
+ 
+ public class DropperBlock extends DispenserBlock {
+    private static final IDispenseItemBehavior field_149947_P = new DefaultDispenseItemBehavior();
+@@ -29,7 +34,7 @@
        return new DropperTileEntity();
     }
  
@@ -9,7 +28,7 @@
        ProxyBlockSource proxyblocksource = new ProxyBlockSource(p_176439_1_, p_176439_2_);
        DispenserTileEntity dispensertileentity = proxyblocksource.func_150835_j();
        int i = dispensertileentity.func_146017_i();
-@@ -37,7 +37,7 @@
+@@ -37,15 +42,31 @@
           p_176439_1_.func_217379_c(1001, p_176439_2_, 0);
        } else {
           ItemStack itemstack = dispensertileentity.func_70301_a(i);
@@ -18,3 +37,29 @@
              Direction direction = p_176439_1_.func_180495_p(p_176439_2_).func_177229_b(field_176441_a);
              IInventory iinventory = HopperTileEntity.func_195484_a(p_176439_1_, p_176439_2_.func_177972_a(direction));
              ItemStack itemstack1;
+             if (iinventory == null) {
+                itemstack1 = field_149947_P.dispense(proxyblocksource, itemstack);
+             } else {
+-               itemstack1 = HopperTileEntity.func_174918_a(dispensertileentity, iinventory, itemstack.func_77946_l().func_77979_a(1), direction.func_176734_d());
+-               if (itemstack1.func_190926_b()) {
++               // CraftBukkit start - Fire event when pushing items into other inventories
++               CraftItemStack oitemstack = CraftItemStack.asCraftMirror(itemstack.func_77946_l().func_77979_a(1));
++               org.bukkit.inventory.Inventory destinationInventory;
++               // Have to special case large chests as they work oddly
++               if (iinventory instanceof DoubleSidedInventory) {
++                  destinationInventory = new org.bukkit.craftbukkit.inventory.CraftInventoryDoubleChest((DoubleSidedInventory) iinventory);
++               } else {
++                  destinationInventory = iinventory.getOwner().getInventory();
++               }
++
++               InventoryMoveItemEvent event = new InventoryMoveItemEvent(dispensertileentity.getOwner().getInventory(), oitemstack.clone(), destinationInventory, true);
++               p_176439_1_.getServerCB().getPluginManager().callEvent(event);
++               if (event.isCancelled()) {
++                  return;
++               }
++               itemstack1 = HopperTileEntity.func_174918_a(dispensertileentity, iinventory, CraftItemStack.asNMSCopy(event.getItem()), direction.func_176734_d());
++               if (event.getItem().equals(oitemstack) && itemstack1.func_190926_b()) {
++                  // CraftBukkit end
+                   itemstack1 = itemstack.func_77946_l();
+                   itemstack1.func_190918_g(1);
+                } else {
