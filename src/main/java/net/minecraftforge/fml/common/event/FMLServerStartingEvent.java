@@ -19,10 +19,13 @@
 
 package net.minecraftforge.fml.common.event;
 
+import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandHandler;
 import net.minecraft.command.ICommand;
 import net.minecraft.server.MinecraftServer;
+import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.LoaderState.ModState;
+import red.mohist.api.ServerAPI;
 
 /**
  * Called after {@link FMLServerAboutToStartEvent} and before {@link FMLServerStartedEvent}.
@@ -56,6 +59,11 @@ public class FMLServerStartingEvent extends FMLStateEvent
     public void registerServerCommand(ICommand command)
     {
         CommandHandler ch = (CommandHandler) getServer().getCommandManager();
+        if (command instanceof CommandBase) {
+            String per = Loader.instance().activeModContainer().getModId() + ".command." + command.getName();
+            ((CommandBase) command).permissionNode = per;
+            ServerAPI.forgecmdper.put(command.getName(), per);
+        }
         ch.registerCommand(command);
     }
 }

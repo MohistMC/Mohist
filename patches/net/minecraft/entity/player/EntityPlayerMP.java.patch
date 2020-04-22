@@ -778,7 +778,7 @@
          this.interactionManager.setGameType(gameType);
          this.connection.sendPacket(new SPacketChangeGameState(3, (float)gameType.getID()));
  
-@@ -1245,34 +1549,15 @@
+@@ -1245,36 +1549,28 @@
  
      public boolean canUseCommand(int permLevel, String commandName)
      {
@@ -793,7 +793,14 @@
 -            if (this.mcServer.getPlayerList().canSendCommands(this.getGameProfile()))
 -            {
 -                UserListOpsEntry userlistopsentry = (UserListOpsEntry)this.mcServer.getPlayerList().getOppedPlayers().getEntry(this.getGameProfile());
--
++        if ("".equals(commandName)) {
++            return getBukkitEntity().isOp();
++        }
++        return getBukkitEntity().hasPermission("minecraft.command." + commandName);
++        
++        // CraftBukkit end
++    }
+ 
 -                if (userlistopsentry != null)
 -                {
 -                    return userlistopsentry.getPermissionLevel() >= permLevel;
@@ -807,20 +814,24 @@
 -            {
 -                return false;
 -            }
-+        if ("".equals(commandName)) {
-+            return getBukkitEntity().isOp();
++    public boolean canUseCommand(int permLevel, String commandName, String perm) {
++        if ("@".equals(commandName)) {
++            return getBukkitEntity().hasPermission("minecraft.command.selector");
          }
 -        else
 -        {
 -            return true;
--        }
-+        return getBukkitEntity().hasPermission("minecraft.command." + commandName);
-+        
-+        // CraftBukkit end
++        if ("".equals(commandName)) {
++            return getBukkitEntity().isOp();
+         }
++        return getBukkitEntity().hasPermission(perm);
      }
  
++
      public String getPlayerIP()
-@@ -1285,6 +1570,14 @@
+     {
+         String s = this.connection.netManager.getRemoteAddress().toString();
+@@ -1285,6 +1581,14 @@
  
      public void handleClientSettings(CPacketClientSettings packetIn)
      {
@@ -835,7 +846,7 @@
          this.language = packetIn.getLang();
          this.chatVisibility = packetIn.getChatVisibility();
          this.chatColours = packetIn.isColorsEnabled();
-@@ -1292,7 +1585,7 @@
+@@ -1292,7 +1596,7 @@
          this.getDataManager().set(MAIN_HAND, Byte.valueOf((byte)(packetIn.getMainHand() == EnumHandSide.LEFT ? 0 : 1)));
      }
  
@@ -844,7 +855,7 @@
      {
          return this.chatVisibility;
      }
-@@ -1367,7 +1660,7 @@
+@@ -1367,7 +1671,7 @@
          if (entity != this.spectatingEntity)
          {
              this.connection.sendPacket(new SPacketCamera(this.spectatingEntity));
@@ -853,7 +864,7 @@
          }
      }
  
-@@ -1375,7 +1668,12 @@
+@@ -1375,7 +1679,12 @@
      {
          if (this.timeUntilPortal > 0 && !this.invulnerableDimensionChange)
          {
@@ -867,7 +878,7 @@
          }
      }
  
-@@ -1399,7 +1697,8 @@
+@@ -1399,7 +1708,8 @@
      @Nullable
      public ITextComponent getTabListDisplayName()
      {
@@ -877,7 +888,7 @@
      }
  
      public void swingArm(EnumHand hand)
-@@ -1420,13 +1719,16 @@
+@@ -1420,13 +1730,16 @@
  
      public void setElytraFlying()
      {
@@ -897,7 +908,7 @@
      }
  
      public PlayerAdvancements getAdvancements()
-@@ -1439,4 +1741,145 @@
+@@ -1439,4 +1752,145 @@
      {
          return this.enteredNetherPosition;
      }

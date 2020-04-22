@@ -9,7 +9,7 @@
          boolean flag = false;
  
          for (ResourceLocation resourcelocation : this.loot)
-@@ -89,56 +89,69 @@
+@@ -89,56 +89,73 @@
  
          if (functionobject != null)
          {
@@ -89,6 +89,10 @@
 +        }
 +
 +        public boolean canUseCommand(int permLevel, String commandName) {
++            return permLevel <= 2;
++        }
++
++        public boolean canUseCommand(int permLevel, String commandName, String perm) {
 +            return permLevel <= 2;
 +        }
 +

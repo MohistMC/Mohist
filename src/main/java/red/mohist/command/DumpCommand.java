@@ -20,17 +20,18 @@ import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.EntityType;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.potion.PotionType;
+import red.mohist.api.ServerAPI;
 import red.mohist.util.i18n.Message;
 
 public class DumpCommand extends Command {
     public DumpCommand(String name) {
         super(name);
         this.description = "Universal Dump, which will print the information you need locally!";
-        this.usageMessage = "/dump [potions|enchants|cbcmds|entitytypes|biomes|pattern|worldgen]";
+        this.usageMessage = "/dump [potions|enchants|cbcmds|modscmds|entitytypes|biomes|pattern|worldgen]";
         this.setPermission("mohist.command.dump");
     }
 
-    private List<String> params = Arrays.asList("potions", "enchants", "cbcmds", "entitytypes", "biomes", "pattern", "worldgen");
+    private List<String> params = Arrays.asList("potions", "enchants", "cbcmds", "modscmds", "entitytypes", "biomes", "pattern", "worldgen");
 
     @Override
     public List<String> tabComplete(CommandSender sender, String alias, String[] args) throws IllegalArgumentException {
@@ -65,6 +66,9 @@ public class DumpCommand extends Command {
                 break;
             case "cbcmds":
                 dumpCBCommands(sender);
+                break;
+            case "modscmds":
+                dumpModsCommands(sender);
                 break;
             case "entitytypes":
                 dumpEntityTypes(sender);
@@ -148,6 +152,20 @@ public class DumpCommand extends Command {
             File file = new File("dump", "cbcommands.red");
             FileUtils.writeByteArrayToFile(file, sb.toString().getBytes(StandardCharsets.UTF_8));
             dumpmsg(sender, file, "cbcommands");
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    private void dumpModsCommands(CommandSender sender) {
+        StringBuilder sb = new StringBuilder();
+        for(Map.Entry<String,String> m: ServerAPI.forgecmdper.entrySet()){
+            sb.append(m.getKey()).append(": ").append(m.getValue()).append("\n");
+        }
+        try {
+            File file = new File("dump", "modscommands.red");
+            FileUtils.writeByteArrayToFile(file, sb.toString().getBytes(StandardCharsets.UTF_8));
+            dumpmsg(sender, file, "modscommands");
         } catch (IOException ex) {
             ex.printStackTrace();
         }

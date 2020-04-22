@@ -1007,7 +1007,7 @@
      public boolean canUseCommandBlock()
      {
 -        return this.capabilities.isCreativeMode && this.canUseCommand(2, "");
-+        return this.capabilities.isCreativeMode && (this.canUseCommand(2, ""));
++        return this.capabilities.isCreativeMode && (this.canUseCommand(2, "") || this.canUseCommand(2, "", "minecraft"));
      }
  
 +    /**

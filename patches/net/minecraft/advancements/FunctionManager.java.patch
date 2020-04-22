@@ -14,10 +14,15 @@
          public String getName()
          {
              return FunctionManager.this.currentGameLoopFunctionId;
-@@ -39,9 +43,10 @@
+@@ -39,9 +43,15 @@
          {
              return permLevel <= 2;
          }
++
++        @Override
++        public boolean canUseCommand(int permLevel, String commandName, String permissionNode) {
++            return permLevel <= 2;
++        }
 +
          public World getEntityWorld()
          {
@@ -26,7 +31,7 @@
          }
          public MinecraftServer getServer()
          {
-@@ -69,7 +74,7 @@
+@@ -69,7 +79,7 @@
  
      public int getMaxCommandChainLength()
      {
@@ -35,7 +40,7 @@
      }
  
      public Map<ResourceLocation, FunctionObject> getFunctions()
-@@ -79,7 +84,7 @@
+@@ -79,7 +89,7 @@
  
      public void update()
      {
