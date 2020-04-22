@@ -1,0 +1,19 @@
+--- a/net/minecraft/server/management/UserList.java
++++ b/net/minecraft/server/management/UserList.java
+@@ -102,10 +102,16 @@
+       this.func_152684_c(p_199042_1_.func_152640_f());
+    }
+ 
++   // CraftBukkit start
+    public String[] func_152685_a() {
+       return this.field_152696_d.keySet().toArray(new String[this.field_152696_d.size()]);
+    }
++   // CraftBukkit end
+ 
++   public Collection<V> getValues() {
++      return this.field_152696_d.values();
++   }
++
+    public boolean func_152690_d() {
+       return this.field_152696_d.size() < 1;
+    }

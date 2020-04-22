@@ -200,7 +200,16 @@
     }
  
     protected void func_70670_a(EffectInstance p_70670_1_) {
-@@ -1207,15 +1261,17 @@
+@@ -1202,20 +1256,26 @@
+       return this.field_192042_bX;
+    }
+ 
++   public void teleport(ServerWorld newWorld, double x, double y, double z, float yaw, float pitch, PlayerTeleportEvent.TeleportCause cause) {
++
++   }
++
+    public void func_200619_a(ServerWorld p_200619_1_, double p_200619_2_, double p_200619_4_, double p_200619_6_, float p_200619_8_, float p_200619_9_) {
+       this.func_175399_e(this);
        this.func_184210_p();
        if (p_200619_1_ == this.field_70170_p) {
           this.field_71135_a.func_147364_a(p_200619_2_, p_200619_4_, p_200619_6_, p_200619_8_, p_200619_9_);
@@ -221,7 +230,7 @@
           this.func_70012_b(p_200619_2_, p_200619_4_, p_200619_6_, p_200619_8_, p_200619_9_);
           this.func_70029_a(p_200619_1_);
           p_200619_1_.func_217446_a(this);
-@@ -1224,6 +1280,7 @@
+@@ -1224,6 +1284,7 @@
           this.field_71134_c.func_73080_a(p_200619_1_);
           this.field_71133_b.func_184103_al().func_72354_b(this, p_200619_1_);
           this.field_71133_b.func_184103_al().func_72385_f(this);
@@ -229,7 +238,7 @@
        }
  
     }
-@@ -1261,6 +1318,8 @@
+@@ -1261,6 +1322,8 @@
        if (itementity == null) {
           return null;
        } else {
@@ -238,7 +247,7 @@
           this.field_70170_p.func_217376_c(itementity);
           ItemStack itemstack = itementity.func_92059_d();
           if (p_146097_3_) {
-@@ -1274,4 +1333,27 @@
+@@ -1274,4 +1337,27 @@
           return itementity;
        }
     }

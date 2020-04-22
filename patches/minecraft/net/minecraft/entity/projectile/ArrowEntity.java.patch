@@ -17,10 +17,11 @@
     private boolean field_191509_at;
  
     public ArrowEntity(EntityType<? extends ArrowEntity> p_i50172_1_, World p_i50172_2_) {
-@@ -122,11 +123,28 @@
+@@ -122,11 +123,30 @@
        }
     }
  
++   // CraftBukkit start accessor methods
 +   public void refreshEffects() {
 +      this.func_184212_Q().func_187227_b(ArrowEntity.field_184559_f, PotionUtils.func_185181_a(PotionUtils.func_185186_a(this.field_184560_g, this.field_184561_h)));
 +   }
@@ -37,6 +38,7 @@
 +   public boolean isTipped() {
 +      return !this.field_184561_h.isEmpty() || this.field_184560_g != Potions.field_185229_a;
 +   }
++   // CraftBukkit end
 +
     public int func_184557_n() {
        return this.field_70180_af.func_187225_a(field_184559_f);
@@ -47,3 +49,18 @@
        this.field_191509_at = true;
        this.field_70180_af.func_187227_b(field_184559_f, p_191507_1_);
     }
+@@ -175,12 +195,12 @@
+       super.func_184548_a(p_184548_1_);
+ 
+       for(EffectInstance effectinstance : this.field_184560_g.func_185170_a()) {
+-         p_184548_1_.func_195064_c(new EffectInstance(effectinstance.func_188419_a(), Math.max(effectinstance.func_76459_b() / 8, 1), effectinstance.func_76458_c(), effectinstance.func_82720_e(), effectinstance.func_188418_e()));
++         p_184548_1_.addEffect(new EffectInstance(effectinstance.func_188419_a(), Math.max(effectinstance.func_76459_b() / 8, 1), effectinstance.func_76458_c(), effectinstance.func_82720_e(), effectinstance.func_188418_e()), org.bukkit.event.entity.EntityPotionEffectEvent.Cause.ARROW); // CraftBukkit
+       }
+ 
+       if (!this.field_184561_h.isEmpty()) {
+          for(EffectInstance effectinstance1 : this.field_184561_h) {
+-            p_184548_1_.func_195064_c(effectinstance1);
++            p_184548_1_.addEffect(effectinstance1, org.bukkit.event.entity.EntityPotionEffectEvent.Cause.ARROW); // CraftBukkit
+          }
+       }
+ 

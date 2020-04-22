@@ -9,3 +9,21 @@
        double d0 = p_82196_1_.func_226277_ct_() - this.func_226277_ct_();
        double d1 = p_82196_1_.func_226283_e_(0.3333333333333333D) - abstractarrowentity.func_226278_cu_();
        double d2 = p_82196_1_.func_226281_cx_() - this.func_226281_cx_();
+@@ -235,7 +237,7 @@
+       }
+ 
+       protected void func_190868_j() {
+-         IllusionerEntity.this.func_70638_az().func_195064_c(new EffectInstance(Effects.field_76440_q, 400));
++         IllusionerEntity.this.func_70638_az().addEffect(new EffectInstance(Effects.field_76440_q, 400), org.bukkit.event.entity.EntityPotionEffectEvent.Cause.ATTACK); // CraftBukkit
+       }
+ 
+       protected SoundEvent func_190871_k() {
+@@ -268,7 +270,7 @@
+       }
+ 
+       protected void func_190868_j() {
+-         IllusionerEntity.this.func_195064_c(new EffectInstance(Effects.field_76441_p, 1200));
++         IllusionerEntity.this.addEffect(new EffectInstance(Effects.field_76441_p, 1200), org.bukkit.event.entity.EntityPotionEffectEvent.Cause.ILLUSION); // CraftBukkit
+       }
+ 
+       @Nullable

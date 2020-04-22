@@ -26,7 +26,18 @@
     private Raid.Status field_221360_x;
     private int field_221361_y;
     private Optional<BlockPos> field_221362_z = Optional.empty();
-@@ -770,6 +770,12 @@
+@@ -145,6 +145,10 @@
+       return this.field_221360_x == Raid.Status.LOSS;
+    }
+ 
++   public boolean isInProgress() {
++      return this.field_221360_x == Status.ONGOING;
++   }
++
+    public World func_221316_i() {
+       return this.field_221348_l;
+    }
+@@ -770,6 +774,12 @@
        }
     }
  
