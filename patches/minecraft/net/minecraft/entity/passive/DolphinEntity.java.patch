@@ -1,0 +1,41 @@
+--- a/net/minecraft/entity/passive/DolphinEntity.java
++++ b/net/minecraft/entity/passive/DolphinEntity.java
+@@ -217,6 +217,11 @@
+       if (this.func_184582_a(EquipmentSlotType.MAINHAND).func_190926_b()) {
+          ItemStack itemstack = p_175445_1_.func_92059_d();
+          if (this.func_175448_a(itemstack)) {
++            // CraftBukkit start - call EntityPickupItemEvent
++            if (org.bukkit.craftbukkit.event.CraftEventFactory.callEntityPickupItemEvent(this, p_175445_1_, 0, false).isCancelled()) {
++               return;
++            }
++            // CraftBukkit end
+             this.func_184201_a(EquipmentSlotType.MAINHAND, itemstack);
+             this.field_82174_bp[EquipmentSlotType.MAINHAND.func_188454_b()] = 2.0F;
+             this.func_71001_a(p_175445_1_, itemstack.func_190916_E());
+@@ -473,7 +478,7 @@
+       }
+ 
+       public boolean func_75250_a() {
+-         return this.field_208057_a.func_208011_dD() && this.field_208057_a.func_70086_ai() >= 100;
++         return this.field_208057_a.func_208011_dD() && this.field_208057_a.func_70086_ai() >= 100 && this.field_208057_a.field_70170_p.getWorldCB().canGenerateStructures(); // MC-151364, SPIGOT-5494: hangs if generate-structures=false
+       }
+ 
+       public boolean func_75253_b() {
+@@ -565,7 +570,7 @@
+       }
+ 
+       public void func_75249_e() {
+-         this.field_206836_c.func_195064_c(new EffectInstance(Effects.field_206827_D, 100));
++         this.field_206836_c.addEffect(new EffectInstance(Effects.field_206827_D, 100), org.bukkit.event.entity.EntityPotionEffectEvent.Cause.DOLPHIN); // CraftBukkit
+       }
+ 
+       public void func_75251_c() {
+@@ -582,7 +587,7 @@
+          }
+ 
+          if (this.field_206836_c.func_203007_ba() && this.field_206836_c.field_70170_p.field_73012_v.nextInt(6) == 0) {
+-            this.field_206836_c.func_195064_c(new EffectInstance(Effects.field_206827_D, 100));
++            this.field_206836_c.addEffect(new EffectInstance(Effects.field_206827_D, 100), org.bukkit.event.entity.EntityPotionEffectEvent.Cause.DOLPHIN); // CraftBukkit
+          }
+ 
+       }
