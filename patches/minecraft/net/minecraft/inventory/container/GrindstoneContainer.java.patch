@@ -1,14 +1,56 @@
 --- a/net/minecraft/inventory/container/GrindstoneContainer.java
 +++ b/net/minecraft/inventory/container/GrindstoneContainer.java
-@@ -17,6 +17,7 @@
+@@ -17,14 +17,40 @@
  import net.minecraft.item.Items;
  import net.minecraft.util.IWorldPosCallable;
  import net.minecraft.world.World;
-+import org.bukkit.inventory.InventoryView;
++// CraftBukkit start
++import org.bukkit.Location;
++import org.bukkit.craftbukkit.inventory.CraftInventoryGrindstone;
++import org.bukkit.craftbukkit.inventory.CraftInventoryView;
++import org.bukkit.entity.Player;
++// CraftBukkit end
  
  public class GrindstoneContainer extends Container {
++   // CraftBukkit start
++   private CraftInventoryView bukkitEntity = null;
++   private Player player;
++
++   @Override
++   public CraftInventoryView getBukkitView() {
++      if (bukkitEntity != null) {
++         return bukkitEntity;
++      }
++      CraftInventoryGrindstone inventory = new CraftInventoryGrindstone(this.field_217014_d, this.field_217013_c);
++      bukkitEntity = new CraftInventoryView(this.player, inventory, this);
++      return bukkitEntity;
++   }
++   // CraftBukkit end
     private final IInventory field_217013_c = new CraftResultInventory();
-@@ -141,12 +142,13 @@
+    private final IInventory field_217014_d = new Inventory(2) {
+       public void func_70296_d() {
+          super.func_70296_d();
+          GrindstoneContainer.this.func_75130_a(this);
+       }
++      // CraftBukkit start
++      @Override
++      public Location getLocation() {
++         return field_217015_e.getLocation();
++      }
++      // CraftBukkit end
+    };
+    private final IWorldPosCallable field_217015_e;
+ 
+@@ -104,7 +130,7 @@
+       for(int k = 0; k < 9; ++k) {
+          this.func_75146_a(new Slot(p_i50081_2_, k, 8 + k * 18, 142));
+       }
+-
++      this.player = (Player) p_i50081_2_.field_70458_d.getBukkitEntity(); // CraftBukkit
+    }
+ 
+    public void func_75130_a(IInventory p_75130_1_) {
+@@ -141,12 +167,13 @@
              }
  
              Item item = itemstack.func_77973_b();
@@ -27,15 +69,11 @@
                 if (!ItemStack.func_77989_b(itemstack, itemstack1)) {
                    this.field_217013_c.func_70299_a(0, ItemStack.field_190927_a);
                    this.func_75142_b();
-@@ -222,6 +224,11 @@
+@@ -219,6 +246,7 @@
+    }
+ 
+    public boolean func_75145_c(PlayerEntity p_75145_1_) {
++      if (!this.checkReachable) return true; // CraftBukkit
        return func_216963_a(this.field_217015_e, p_75145_1_, Blocks.field_222427_lP);
     }
  
-+   @Override
-+   public InventoryView getBukkitView() {
-+      return null;
-+   }
-+
-    public ItemStack func_82846_b(PlayerEntity p_82846_1_, int p_82846_2_) {
-       ItemStack itemstack = ItemStack.field_190927_a;
-       Slot slot = this.field_75151_b.get(p_82846_2_);
