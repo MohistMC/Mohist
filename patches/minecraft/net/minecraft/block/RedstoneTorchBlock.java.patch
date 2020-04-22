@@ -1,0 +1,52 @@
+--- a/net/minecraft/block/RedstoneTorchBlock.java
++++ b/net/minecraft/block/RedstoneTorchBlock.java
+@@ -17,6 +17,7 @@
+ import net.minecraft.world.server.ServerWorld;
+ import net.minecraftforge.api.distmarker.Dist;
+ import net.minecraftforge.api.distmarker.OnlyIn;
++import org.bukkit.event.block.BlockRedstoneEvent;
+ 
+ public class RedstoneTorchBlock extends TorchBlock {
+    public static final BooleanProperty field_196528_a = BlockStateProperties.field_208190_q;
+@@ -66,8 +67,25 @@
+          list.remove(0);
+       }
+ 
++      // CraftBukkit start
++      org.bukkit.plugin.PluginManager manager = p_196527_1_.getServerCB().getPluginManager();
++      org.bukkit.block.Block block = p_196527_1_.getWorldCB().getBlockAt(p_196527_2_.func_177958_n(), p_196527_2_.func_177956_o(), p_196527_2_.func_177952_p());
++      int oldCurrent = ((Boolean) p_196527_0_.func_177229_b(field_196528_a)).booleanValue() ? 15 : 0;
++
++      BlockRedstoneEvent event = new BlockRedstoneEvent(block, oldCurrent, oldCurrent);
++      // CraftBukkit end
++
+       if (p_196527_0_.func_177229_b(field_196528_a)) {
+          if (p_196527_4_) {
++            // CraftBukkit start
++            if (oldCurrent != 0) {
++               event.setNewCurrent(0);
++               manager.callEvent(event);
++               if (event.getNewCurrent() != 0) {
++                  return;
++               }
++            }
++            // CraftBukkit end
+             p_196527_1_.func_180501_a(p_196527_2_, p_196527_0_.func_206870_a(field_196528_a, Boolean.valueOf(false)), 3);
+             if (func_176598_a(p_196527_1_, p_196527_2_, true)) {
+                p_196527_1_.func_217379_c(1502, p_196527_2_, 0);
+@@ -75,6 +93,15 @@
+             }
+          }
+       } else if (!p_196527_4_ && !func_176598_a(p_196527_1_, p_196527_2_, false)) {
++         // CraftBukkit start
++         if (oldCurrent != 15) {
++            event.setNewCurrent(15);
++            manager.callEvent(event);
++            if (event.getNewCurrent() != 15) {
++               return;
++            }
++         }
++         // CraftBukkit end
+          p_196527_1_.func_180501_a(p_196527_2_, p_196527_0_.func_206870_a(field_196528_a, Boolean.valueOf(true)), 3);
+       }
+ 
