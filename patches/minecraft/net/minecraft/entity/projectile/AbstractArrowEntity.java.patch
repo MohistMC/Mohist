@@ -1,6 +1,28 @@
 --- a/net/minecraft/entity/projectile/AbstractArrowEntity.java
 +++ b/net/minecraft/entity/projectile/AbstractArrowEntity.java
-@@ -54,15 +54,15 @@
+@@ -17,6 +17,7 @@
+ import net.minecraft.entity.IProjectile;
+ import net.minecraft.entity.LivingEntity;
+ import net.minecraft.entity.Pose;
++import net.minecraft.entity.item.ItemEntity;
+ import net.minecraft.entity.player.PlayerEntity;
+ import net.minecraft.entity.player.ServerPlayerEntity;
+ import net.minecraft.item.ItemStack;
+@@ -47,6 +48,13 @@
+ import net.minecraft.world.server.ServerWorld;
+ import net.minecraftforge.api.distmarker.Dist;
+ import net.minecraftforge.api.distmarker.OnlyIn;
++// CraftBukkit start
++import org.bukkit.craftbukkit.entity.CraftItem;
++import org.bukkit.entity.AbstractArrow;
++import org.bukkit.entity.Player;
++import org.bukkit.event.entity.EntityCombustByEntityEvent;
++import org.bukkit.event.player.PlayerPickupArrowEvent;
++// CraftBukkit end
+ 
+ public abstract class AbstractArrowEntity extends Entity implements IProjectile {
+    private static final DataParameter<Byte> field_184554_g = EntityDataManager.func_187226_a(AbstractArrowEntity.class, DataSerializers.field_187191_a);
+@@ -54,15 +62,15 @@
     private static final DataParameter<Byte> field_213876_as = EntityDataManager.func_187226_a(AbstractArrowEntity.class, DataSerializers.field_187191_a);
     @Nullable
     private BlockState field_195056_av;
@@ -19,7 +41,7 @@
     private SoundEvent field_213877_ay = this.func_213867_k();
     private IntOpenHashSet field_213878_az;
     private List<Entity> field_213875_aA;
-@@ -160,7 +160,7 @@
+@@ -160,7 +168,7 @@
  
        BlockPos blockpos = new BlockPos(this);
        BlockState blockstate = this.field_70170_p.func_180495_p(blockpos);
@@ -28,7 +50,7 @@
           VoxelShape voxelshape = blockstate.func_196952_d(this.field_70170_p, blockpos);
           if (!voxelshape.func_197766_b()) {
              Vec3d vec3d1 = this.func_213303_ch();
-@@ -218,7 +218,7 @@
+@@ -218,7 +226,7 @@
                 }
              }
  
@@ -37,3 +59,56 @@
                 this.func_184549_a(raytraceresult);
                 this.field_70160_al = true;
              }
+@@ -299,6 +307,7 @@
+    }
+ 
+    protected void func_184549_a(RayTraceResult p_184549_1_) {
++      org.bukkit.craftbukkit.event.CraftEventFactory.callProjectileHitEvent(this, p_184549_1_); // CraftBukkit - Call event
+       RayTraceResult.Type raytraceresult$type = p_184549_1_.func_216346_c();
+       if (raytraceresult$type == RayTraceResult.Type.ENTITY) {
+          this.func_213868_a((EntityRayTraceResult)p_184549_1_);
+@@ -373,7 +382,13 @@
+       boolean flag = entity.func_200600_R() == EntityType.field_200803_q;
+       int j = entity.func_223314_ad();
+       if (this.func_70027_ad() && !flag) {
+-         entity.func_70015_d(5);
++         // CraftBukkit start
++         EntityCombustByEntityEvent combustEvent = new EntityCombustByEntityEvent(this.getBukkitEntity(), entity.getBukkitEntity(), 5);
++         org.bukkit.Bukkit.getPluginManager().callEvent(combustEvent);
++         if (!combustEvent.isCancelled()) {
++            entity.setOnFire(combustEvent.getDuration(), false);
++         }
++         // CraftBukkit end
+       }
+ 
+       if (entity.func_70097_a(damagesource, (float)i)) {
+@@ -510,6 +525,7 @@
+ 
+    public void func_212361_a(@Nullable Entity p_212361_1_) {
+       this.field_70250_c = p_212361_1_ == null ? null : p_212361_1_.func_110124_au();
++      this.projectileSource = p_212361_1_ == null ? null : (org.bukkit.entity.LivingEntity)p_212361_1_.getBukkitEntity(); // CraftBukkit
+       if (p_212361_1_ instanceof PlayerEntity) {
+          this.field_70251_a = ((PlayerEntity)p_212361_1_).field_71075_bZ.field_75098_d ? AbstractArrowEntity.PickupStatus.CREATIVE_ONLY : AbstractArrowEntity.PickupStatus.ALLOWED;
+       }
+@@ -523,8 +539,20 @@
+ 
+    public void func_70100_b_(PlayerEntity p_70100_1_) {
+       if (!this.field_70170_p.field_72995_K && (this.field_70254_i || this.func_203047_q()) && this.field_70249_b <= 0) {
++         // CraftBukkit start
++         ItemStack itemstack = this.func_184550_j();
++         if (this.field_70251_a == PickupStatus.ALLOWED && !itemstack.func_190926_b() && p_70100_1_.field_71071_by.canHold(itemstack) > 0) {
++            ItemEntity item = new ItemEntity(this.field_70170_p, this.func_226277_ct_(), this.func_226278_cu_(), this.func_226281_cx_(), itemstack);
++            PlayerPickupArrowEvent event = new PlayerPickupArrowEvent((Player)p_70100_1_.getBukkitEntity(), new CraftItem(this.field_70170_p.getServerCB(), this, item), (AbstractArrow)this.getBukkitEntity());
++            this.field_70170_p.getServerCB().getPluginManager().callEvent(event);
++            if (event.isCancelled()) {
++               return;
++            }
++            itemstack = item.func_92059_d();
++         }
+          boolean flag = this.field_70251_a == AbstractArrowEntity.PickupStatus.ALLOWED || this.field_70251_a == AbstractArrowEntity.PickupStatus.CREATIVE_ONLY && p_70100_1_.field_71075_bZ.field_75098_d || this.func_203047_q() && this.func_212360_k().func_110124_au() == p_70100_1_.func_110124_au();
+-         if (this.field_70251_a == AbstractArrowEntity.PickupStatus.ALLOWED && !p_70100_1_.field_71071_by.func_70441_a(this.func_184550_j())) {
++         if (this.field_70251_a == AbstractArrowEntity.PickupStatus.ALLOWED && !p_70100_1_.field_71071_by.func_70441_a(itemstack)) {
++            // CraftBukkit end
+             flag = false;
+          }
+ 
