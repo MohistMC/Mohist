@@ -1,6 +1,11 @@
 --- a/net/minecraft/entity/AreaEffectCloudEntity.java
 +++ b/net/minecraft/entity/AreaEffectCloudEntity.java
-@@ -7,8 +7,8 @@
+@@ -4,11 +4,13 @@
+ import com.google.common.collect.Maps;
+ import com.mojang.brigadier.StringReader;
+ import com.mojang.brigadier.exceptions.CommandSyntaxException;
++
++import java.awt.geom.Area;
  import java.util.Iterator;
  import java.util.List;
  import java.util.Map;
@@ -10,7 +15,7 @@
  import javax.annotation.Nullable;
  import net.minecraft.block.material.PushReaction;
  import net.minecraft.command.arguments.ParticleArgument;
-@@ -25,6 +25,7 @@
+@@ -25,12 +27,14 @@
  import net.minecraft.potion.Potion;
  import net.minecraft.potion.PotionUtils;
  import net.minecraft.potion.Potions;
@@ -18,7 +23,14 @@
  import net.minecraft.util.math.MathHelper;
  import net.minecraft.util.registry.Registry;
  import net.minecraft.world.World;
-@@ -39,15 +40,15 @@
+ import net.minecraft.world.server.ServerWorld;
+ import org.apache.logging.log4j.LogManager;
+ import org.apache.logging.log4j.Logger;
++import org.bukkit.craftbukkit.entity.CraftLivingEntity;
+ 
+ public class AreaEffectCloudEntity extends Entity {
+    private static final Logger field_195060_a = LogManager.getLogger();
+@@ -39,15 +43,15 @@
     private static final DataParameter<Boolean> field_184500_c = EntityDataManager.func_187226_a(AreaEffectCloudEntity.class, DataSerializers.field_187198_h);
     private static final DataParameter<IParticleData> field_184501_d = EntityDataManager.func_187226_a(AreaEffectCloudEntity.class, DataSerializers.field_198166_i);
     private Potion field_184502_e = Potions.field_185229_a;
@@ -40,10 +52,11 @@
     private LivingEntity field_184512_ay;
     private UUID field_184513_az;
  
-@@ -113,6 +114,20 @@
+@@ -113,6 +117,22 @@
  
     }
  
++   // CraftBukkit start accessor methods
 +   public void refreshEffects() {
 +      if (!this.field_184508_au) {
 +         this.func_184212_Q().func_187227_b(AreaEffectCloudEntity.field_184499_b, PotionUtils.func_185181_a(PotionUtils.func_185186_a(this.field_184502_e, this.field_184503_f)));
@@ -57,7 +70,42 @@
 +   public void setType(final String string) {
 +      this.func_184484_a(Registry.field_212621_j.func_82594_a(new ResourceLocation(string)));
 +   }
++   // CraftBukkit end
 +
     public int func_184492_k() {
        return this.func_184212_Q().func_187225_a(field_184499_b);
     }
+@@ -236,19 +256,31 @@
+             } else {
+                List<LivingEntity> list = this.field_70170_p.func_217357_a(LivingEntity.class, this.func_174813_aQ());
+                if (!list.isEmpty()) {
++                  List<org.bukkit.entity.LivingEntity> entities = new java.util.ArrayList<>(); // CraftBukkit
+                   for(LivingEntity livingentity : list) {
+                      if (!this.field_184504_g.containsKey(livingentity) && livingentity.func_184603_cC()) {
+                         double d0 = livingentity.func_226277_ct_() - this.func_226277_ct_();
+                         double d1 = livingentity.func_226281_cx_() - this.func_226281_cx_();
+                         double d2 = d0 * d0 + d1 * d1;
+-                        if (d2 <= (double)(f * f)) {
++                        if (d2 <= (double) (f * f)) {
++                           // CraftBukkit start
++                           entities.add((org.bukkit.entity.LivingEntity) livingentity.getBukkitEntity());
++                        }
++                     }
++                  }
++                  org.bukkit.event.entity.AreaEffectCloudApplyEvent event = org.bukkit.craftbukkit.event.CraftEventFactory.callAreaEffectCloudApplyEvent(this, entities);
++                  if (!event.isCancelled()) {
++                     for(org.bukkit.entity.LivingEntity entity : event.getAffectedEntities()) {
++                        if (entity instanceof CraftLivingEntity) {
++                           LivingEntity livingentity = ((CraftLivingEntity) entity).getHandle();
++                           // CraftBukkit end
+                            this.field_184504_g.put(livingentity, this.field_70173_aa + this.field_184507_at);
+ 
+                            for(EffectInstance effectinstance : effects) {
+                               if (effectinstance.func_188419_a().func_76403_b()) {
+                                  effectinstance.func_188419_a().func_180793_a(this, this.func_184494_w(), livingentity, effectinstance.func_76458_c(), 0.5D);
+                               } else {
+-                                 livingentity.func_195064_c(new EffectInstance(effectinstance));
++                                 livingentity.addEffect(new EffectInstance(effectinstance), org.bukkit.event.entity.EntityPotionEffectEvent.Cause.AREA_EFFECT_CLOUD); // CraftBukkit
+                               }
+                            }
+ 

@@ -1,6 +1,13 @@
 --- a/net/minecraft/entity/passive/horse/AbstractHorseEntity.java
 +++ b/net/minecraft/entity/passive/horse/AbstractHorseEntity.java
-@@ -67,7 +67,7 @@
+@@ -61,13 +61,14 @@
+ import net.minecraft.world.World;
+ import net.minecraftforge.api.distmarker.Dist;
+ import net.minecraftforge.api.distmarker.OnlyIn;
++import org.bukkit.event.entity.EntityRegainHealthEvent; // CraftBukkit
+ 
+ public abstract class AbstractHorseEntity extends AnimalEntity implements IInventoryChangedListener, IJumpingMount {
+    private static final Predicate<LivingEntity> field_110276_bu = (p_213617_0_) -> {
        return p_213617_0_ instanceof AbstractHorseEntity && ((AbstractHorseEntity)p_213617_0_).func_110205_ce();
     };
     private static final EntityPredicate field_213618_bK = (new EntityPredicate()).func_221013_a(16.0D).func_221008_a().func_221011_b().func_221014_c().func_221012_a(field_110276_bu);
@@ -9,7 +16,7 @@
     private static final DataParameter<Byte> field_184787_bE = EntityDataManager.func_187226_a(AbstractHorseEntity.class, DataSerializers.field_187191_a);
     private static final DataParameter<Optional<UUID>> field_184790_bH = EntityDataManager.func_187226_a(AbstractHorseEntity.class, DataSerializers.field_187203_m);
     private int field_190689_bJ;
-@@ -76,7 +76,7 @@
+@@ -76,7 +77,7 @@
     public int field_110278_bp;
     public int field_110279_bq;
     protected boolean field_110275_br;
@@ -18,7 +25,7 @@
     protected int field_110274_bs;
     protected float field_110277_bt;
     private boolean field_110294_bI;
-@@ -88,6 +88,7 @@
+@@ -88,6 +89,7 @@
     private float field_110288_bO;
     protected boolean field_190688_bE = true;
     protected int field_110285_bP;
@@ -26,16 +33,19 @@
  
     protected AbstractHorseEntity(EntityType<? extends AbstractHorseEntity> p_i48563_1_, World p_i48563_2_) {
        super(p_i48563_1_, p_i48563_2_);
-@@ -246,7 +247,7 @@
+@@ -246,9 +248,9 @@
        return 2;
     }
  
 -   protected void func_110226_cD() {
 +   public void func_110226_cD() {
        Inventory inventory = this.field_110296_bG;
-       this.field_110296_bG = new Inventory(this.func_190686_di());
+-      this.field_110296_bG = new Inventory(this.func_190686_di());
++      this.field_110296_bG = new Inventory(this.func_190686_di(), (org.bukkit.entity.AbstractHorse) this.getBukkitEntity()); // CraftBukkit
        if (inventory != null) {
-@@ -263,6 +264,7 @@
+          inventory.func_110132_b(this);
+          int i = Math.min(inventory.func_70302_i_(), this.field_110296_bG.func_70302_i_());
+@@ -263,6 +265,7 @@
  
        this.field_110296_bG.func_110134_a(this);
        this.func_110232_cE();
@@ -43,7 +53,7 @@
     }
  
     protected void func_110232_cE() {
-@@ -324,9 +326,9 @@
+@@ -324,9 +327,9 @@
     protected void func_180429_a(BlockPos p_180429_1_, BlockState p_180429_2_) {
        if (!p_180429_2_.func_185904_a().func_76224_d()) {
           BlockState blockstate = this.field_70170_p.func_180495_p(p_180429_1_.func_177984_a());
@@ -55,7 +65,7 @@
           }
  
           if (this.func_184207_aI() && this.field_190688_bE) {
-@@ -361,7 +363,7 @@
+@@ -361,7 +364,7 @@
     }
  
     public int func_190676_dC() {
@@ -64,7 +74,64 @@
     }
  
     protected float func_70599_aP() {
-@@ -947,4 +949,22 @@
+@@ -419,7 +422,7 @@
+       }
+ 
+       if (this.func_110143_aJ() < this.func_110138_aP() && f > 0.0F) {
+-         this.func_70691_i(f);
++         this.heal(f, EntityRegainHealthEvent.RegainReason.EATING); // CraftBukkit
+          flag = true;
+       }
+ 
+@@ -490,7 +493,7 @@
+       super.func_70636_d();
+       if (!this.field_70170_p.field_72995_K && this.func_70089_S()) {
+          if (this.field_70146_Z.nextInt(900) == 0 && this.field_70725_aQ == 0) {
+-            this.func_70691_i(1.0F);
++            this.heal(1.0F, EntityRegainHealthEvent.RegainReason.REGEN); // CraftBukkit
+          }
+ 
+          if (this.func_190684_dE()) {
+@@ -725,6 +728,7 @@
+       if (this.func_184780_dh() != null) {
+          p_213281_1_.func_74778_a("OwnerUUID", this.func_184780_dh().toString());
+       }
++      p_213281_1_.func_74768_a("Bukkit.MaxDomestication", this.maxDomestication); // CraftBukkit
+ 
+       if (!this.field_110296_bG.func_70301_a(0).func_190926_b()) {
+          p_213281_1_.func_218657_a("SaddleItem", this.field_110296_bG.func_70301_a(0).func_77955_b(new CompoundNBT()));
+@@ -749,6 +753,11 @@
+       if (!s.isEmpty()) {
+          this.func_184779_b(UUID.fromString(s));
+       }
++      // CraftBukkit start
++      if (p_70037_1_.func_186855_b("Bukkit.MaxDomestication")) {
++         this.maxDomestication = p_70037_1_.func_74762_e("Bukkit.MaxDomestication");
++      }
++      // CraftBukkit end
+ 
+       IAttributeInstance iattributeinstance = this.func_110140_aT().func_111152_a("Speed");
+       if (iattributeinstance != null) {
+@@ -830,6 +839,18 @@
+    }
+ 
+    public void func_184775_b(int p_184775_1_) {
++      // CraftBukkit start
++      float power;
++      if (p_184775_1_ >= 90) {
++         power = 1.0F;
++      } else {
++         power = 0.4F + 0.4F * (float) p_184775_1_ / 90.0F;
++      }
++      org.bukkit.event.entity.HorseJumpEvent event = org.bukkit.craftbukkit.event.CraftEventFactory.callHorseJumpEvent(this, power);
++      if (event.isCancelled()) {
++         return;
++      }
++      // CraftBukkit end
+       this.field_110294_bI = true;
+       this.func_110220_cK();
+    }
+@@ -947,4 +968,22 @@
  
        return super.func_213386_a(p_213386_1_, p_213386_2_, p_213386_3_, p_213386_4_, p_213386_5_);
     }
