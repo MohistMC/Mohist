@@ -1,6 +1,6 @@
 --- a/net/minecraft/inventory/container/WorkbenchContainer.java
 +++ b/net/minecraft/inventory/container/WorkbenchContainer.java
-@@ -18,6 +18,7 @@
+@@ -18,11 +18,12 @@
  import net.minecraft.world.World;
  import net.minecraftforge.api.distmarker.Dist;
  import net.minecraftforge.api.distmarker.OnlyIn;
@@ -8,6 +8,12 @@
  
  public class WorkbenchContainer extends RecipeBookContainer<CraftingInventory> {
     private final CraftingInventory field_75162_e = new CraftingInventory(this, 3, 3);
+    private final CraftResultInventory field_75160_f = new CraftResultInventory();
+-   private final IWorldPosCallable field_217070_e;
++   public final IWorldPosCallable field_217070_e;
+    private final PlayerEntity field_192390_i;
+ 
+    public WorkbenchContainer(int p_i50089_1_, PlayerInventory p_i50089_2_) {
 @@ -100,6 +101,11 @@
        return func_216963_a(this.field_217070_e, p_75145_1_, Blocks.field_150462_ai);
     }

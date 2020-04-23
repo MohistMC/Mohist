@@ -1,0 +1,39 @@
+--- a/net/minecraft/entity/ai/goal/TriggerSkeletonTrapGoal.java
++++ b/net/minecraft/entity/ai/goal/TriggerSkeletonTrapGoal.java
+@@ -32,14 +32,15 @@
+       this.field_188516_a.func_190691_p(false);
+       this.field_188516_a.func_110234_j(true);
+       this.field_188516_a.func_70873_a(0);
+-      ((ServerWorld)this.field_188516_a.field_70170_p).func_217468_a(new LightningBoltEntity(this.field_188516_a.field_70170_p, this.field_188516_a.func_226277_ct_(), this.field_188516_a.func_226278_cu_(), this.field_188516_a.func_226281_cx_(), true));
++      ((ServerWorld)this.field_188516_a.field_70170_p).strikeLightning(new LightningBoltEntity(this.field_188516_a.field_70170_p, this.field_188516_a.func_226277_ct_(), this.field_188516_a.func_226278_cu_(), this.field_188516_a.func_226281_cx_(), true), org.bukkit.event.weather.LightningStrikeEvent.Cause.TRAP); // CraftBukkit
+       SkeletonEntity skeletonentity = this.func_188514_a(difficultyinstance, this.field_188516_a);
+-      skeletonentity.func_184220_m(this.field_188516_a);
++      if (skeletonentity != null) skeletonentity.func_184220_m(this.field_188516_a); // CraftBukkit
+ 
+       for(int i = 0; i < 3; ++i) {
+          AbstractHorseEntity abstracthorseentity = this.func_188515_a(difficultyinstance);
++         if (abstracthorseentity == null) continue; // CraftBukkit
+          SkeletonEntity skeletonentity1 = this.func_188514_a(difficultyinstance, abstracthorseentity);
+-         skeletonentity1.func_184220_m(abstracthorseentity);
++         if (skeletonentity1 != null) skeletonentity1.func_184220_m(abstracthorseentity); // CraftBukkit
+          abstracthorseentity.func_70024_g(this.field_188516_a.func_70681_au().nextGaussian() * 0.5D, 0.0D, this.field_188516_a.func_70681_au().nextGaussian() * 0.5D);
+       }
+ 
+@@ -53,7 +54,7 @@
+       skeletonhorseentity.func_110163_bv();
+       skeletonhorseentity.func_110234_j(true);
+       skeletonhorseentity.func_70873_a(0);
+-      skeletonhorseentity.field_70170_p.func_217376_c(skeletonhorseentity);
++      if (!skeletonhorseentity.field_70170_p.addEntity(skeletonhorseentity, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.TRAP)) return null; // CraftBukkit
+       return skeletonhorseentity;
+    }
+ 
+@@ -69,7 +70,7 @@
+ 
+       skeletonentity.func_184201_a(EquipmentSlotType.MAINHAND, EnchantmentHelper.func_77504_a(skeletonentity.func_70681_au(), skeletonentity.func_184614_ca(), (int)(5.0F + p_188514_1_.func_180170_c() * (float)skeletonentity.func_70681_au().nextInt(18)), false));
+       skeletonentity.func_184201_a(EquipmentSlotType.HEAD, EnchantmentHelper.func_77504_a(skeletonentity.func_70681_au(), skeletonentity.func_184582_a(EquipmentSlotType.HEAD), (int)(5.0F + p_188514_1_.func_180170_c() * (float)skeletonentity.func_70681_au().nextInt(18)), false));
+-      skeletonentity.field_70170_p.func_217376_c(skeletonentity);
++      if (!skeletonentity.field_70170_p.addEntity(skeletonentity, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.JOCKEY)) return null; // CraftBukkit
+       return skeletonentity;
+    }
+ }

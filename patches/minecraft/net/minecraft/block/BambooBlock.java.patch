@@ -1,0 +1,45 @@
+--- a/net/minecraft/block/BambooBlock.java
++++ b/net/minecraft/block/BambooBlock.java
+@@ -8,6 +8,7 @@
+ import net.minecraft.item.SwordItem;
+ import net.minecraft.pathfinding.PathType;
+ import net.minecraft.state.EnumProperty;
++import net.minecraft.state.IProperty;
+ import net.minecraft.state.IntegerProperty;
+ import net.minecraft.state.StateContainer;
+ import net.minecraft.state.properties.BambooLeaves;
+@@ -156,13 +157,17 @@
+       BlockPos blockpos = p_220258_3_.func_177979_c(2);
+       BlockState blockstate1 = p_220258_2_.func_180495_p(blockpos);
+       BambooLeaves bambooleaves = BambooLeaves.NONE;
++      boolean shouldUpdateOthers = false; // CraftBukkit
+       if (p_220258_5_ >= 1) {
+          if (blockstate.func_177230_c() == Blocks.field_222405_kQ && blockstate.func_177229_b(field_220265_e) != BambooLeaves.NONE) {
+             if (blockstate.func_177230_c() == Blocks.field_222405_kQ && blockstate.func_177229_b(field_220265_e) != BambooLeaves.NONE) {
+                bambooleaves = BambooLeaves.LARGE;
+                if (blockstate1.func_177230_c() == Blocks.field_222405_kQ) {
+-                  p_220258_2_.func_180501_a(p_220258_3_.func_177977_b(), blockstate.func_206870_a(field_220265_e, BambooLeaves.SMALL), 3);
+-                  p_220258_2_.func_180501_a(blockpos, blockstate1.func_206870_a(field_220265_e, BambooLeaves.NONE), 3);
++                  // CraftBukkit start - moved down
++                  // worldIn.setBlockState(posIn.down(), blockstate.with(PROPERTY_BAMBOO_LEAVES, BambooLeaves.SMALL), 3);
++                  // worldIn.setBlockState(blockpos, blockstate1.with(PROPERTY_BAMBOO_LEAVES, BambooLeaves.NONE), 3);
++                  shouldUpdateOthers = true;
++                  // CraftBukkit end
+                }
+             }
+          } else {
+@@ -173,6 +178,14 @@
+       int i = p_220258_1_.func_177229_b(field_220264_d) != 1 && blockstate1.func_177230_c() != Blocks.field_222405_kQ ? 0 : 1;
+       int j = (p_220258_5_ < 11 || !(p_220258_4_.nextFloat() < 0.25F)) && p_220258_5_ != 15 ? 0 : 1;
+       p_220258_2_.func_180501_a(p_220258_3_.func_177984_a(), this.func_176223_P().func_206870_a(field_220264_d, Integer.valueOf(i)).func_206870_a(field_220265_e, bambooleaves).func_206870_a(field_220266_f, Integer.valueOf(j)), 3);
++      // CraftBukkit start
++      if (org.bukkit.craftbukkit.event.CraftEventFactory.handleBlockSpreadEvent(p_220258_2_, blockpos, blockpos.func_177984_a(), this.func_176223_P().func_206870_a(BambooBlock.field_220264_d, i).func_206870_a(BambooBlock.field_220265_e, bambooleaves).func_206870_a(BambooBlock.field_220266_f, j), 3)) {
++         if (shouldUpdateOthers) {
++            p_220258_2_.func_180501_a(p_220258_3_.func_177977_b(), blockstate.func_206870_a(field_220265_e, BambooLeaves.SMALL), 3);
++            p_220258_2_.func_180501_a(blockpos, blockstate1.func_206870_a(field_220265_e, BambooLeaves.NONE), 3);
++         }
++      }
++      // CraftBukkit end
+    }
+ 
+    protected int func_220259_a(IBlockReader p_220259_1_, BlockPos p_220259_2_) {
