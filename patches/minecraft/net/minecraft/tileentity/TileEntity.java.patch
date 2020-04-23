@@ -30,25 +30,33 @@
     }
  
     @Nullable
-@@ -47,6 +57,8 @@
+@@ -47,6 +57,13 @@
  
     public void func_145839_a(CompoundNBT p_145839_1_) {
        this.field_174879_c = new BlockPos(p_145839_1_.func_74762_e("x"), p_145839_1_.func_74762_e("y"), p_145839_1_.func_74762_e("z"));
 +      if (p_145839_1_.func_74764_b("ForgeData")) this.customTileData = p_145839_1_.func_74775_l("ForgeData");
 +      if (getCapabilities() != null && p_145839_1_.func_74764_b("ForgeCaps")) deserializeCaps(p_145839_1_.func_74775_l("ForgeCaps"));
++      this.persistentDataContainer = new CraftPersistentDataContainer(TileEntity.DATA_TYPE_REGISTRY);
++      CompoundNBT persistentDataTag = p_145839_1_.func_74775_l("PublicBukkitValues");
++      if (persistentDataTag != null) {
++         this.persistentDataContainer.putAll(persistentDataTag);
++      }
     }
  
     public CompoundNBT func_189515_b(CompoundNBT p_189515_1_) {
-@@ -62,6 +74,8 @@
+@@ -62,6 +79,11 @@
           p_189516_1_.func_74768_a("x", this.field_174879_c.func_177958_n());
           p_189516_1_.func_74768_a("y", this.field_174879_c.func_177956_o());
           p_189516_1_.func_74768_a("z", this.field_174879_c.func_177952_p());
 +         if (this.customTileData != null) p_189516_1_.func_218657_a("ForgeData", this.customTileData);
 +         if (getCapabilities() != null) p_189516_1_.func_218657_a("ForgeCaps", serializeCaps());
++         if (this.persistentDataContainer != null && !this.persistentDataContainer.isEmpty()) {
++            p_189516_1_.func_218657_a("PublicBukkitValues", this.persistentDataContainer.toTagCompound());
++         }
           return p_189516_1_;
        }
     }
-@@ -94,7 +108,7 @@
+@@ -94,7 +116,7 @@
        if (this.field_145850_b != null) {
           this.field_195045_e = this.field_145850_b.func_180495_p(this.field_174879_c);
           this.field_145850_b.func_175646_b(this.field_174879_c, this);
@@ -57,7 +65,7 @@
              this.field_145850_b.func_175666_e(this.field_174879_c, this.field_195045_e.func_177230_c());
           }
        }
-@@ -140,6 +154,8 @@
+@@ -140,6 +162,8 @@
  
     public void func_145843_s() {
        this.field_145846_f = true;
@@ -66,7 +74,7 @@
     }
  
     public void func_145829_t() {
-@@ -182,6 +198,13 @@
+@@ -182,6 +206,13 @@
        return this.field_200663_e;
     }
  
@@ -80,19 +88,21 @@
     public void func_222814_r() {
        if (!this.field_222816_g) {
           this.field_222816_g = true;
-@@ -190,4 +213,15 @@
+@@ -190,4 +221,17 @@
           }, this::func_174877_v);
        }
     }
 +
++   // CraftBukkit start - add method
 +   public InventoryHolder getOwner() {
 +      if (this.field_145850_b == null) {
 +         return null;
 +      }
-+      final org.bukkit.block.BlockState state = this.field_145850_b.getWorldCB().getBlockAt(this.field_174879_c.func_177958_n(), this.field_174879_c.func_177956_o(), this.field_174879_c.func_177952_p()).getState();
++      org.bukkit.block.BlockState state = this.field_145850_b.getWorldCB().getBlockAt(this.field_174879_c.func_177958_n(), this.field_174879_c.func_177956_o(), this.field_174879_c.func_177952_p()).getState();
 +      if (state instanceof InventoryHolder) {
 +         return (InventoryHolder)state;
 +      }
 +      return null;
 +   }
++   // CraftBukkit end
  }

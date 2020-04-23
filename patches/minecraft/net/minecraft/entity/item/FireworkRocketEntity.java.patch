@@ -1,6 +1,13 @@
 --- a/net/minecraft/entity/item/FireworkRocketEntity.java
 +++ b/net/minecraft/entity/item/FireworkRocketEntity.java
-@@ -37,11 +37,11 @@
+@@ -31,17 +31,18 @@
+ import net.minecraft.world.World;
+ import net.minecraftforge.api.distmarker.Dist;
+ import net.minecraftforge.api.distmarker.OnlyIn;
++import org.bukkit.craftbukkit.event.CraftEventFactory;
+ 
+ @OnlyIn(
+    value = Dist.CLIENT,
     _interface = IRendersAsItem.class
  )
  public class FireworkRocketEntity extends Entity implements IRendersAsItem, IProjectile {
@@ -15,3 +22,62 @@
     private LivingEntity field_191513_e;
  
     public FireworkRocketEntity(EntityType<? extends FireworkRocketEntity> p_i50164_1_, World p_i50164_2_) {
+@@ -175,7 +176,11 @@
+       }
+ 
+       if (!this.field_70170_p.field_72995_K && this.field_92056_a > this.field_92055_b) {
+-         this.func_213893_k();
++         // CraftBukkit start
++         if (!org.bukkit.craftbukkit.event.CraftEventFactory.callFireworkExplodeEvent(this).isCancelled()) {
++            this.func_213893_k();
++         }
++         // CraftBukkit end
+       }
+ 
+    }
+@@ -188,7 +193,11 @@
+ 
+    protected void func_213892_a(RayTraceResult p_213892_1_) {
+       if (p_213892_1_.func_216346_c() == RayTraceResult.Type.ENTITY && !this.field_70170_p.field_72995_K) {
+-         this.func_213893_k();
++         // CraftBukkit start
++         if (!org.bukkit.craftbukkit.event.CraftEventFactory.callFireworkExplodeEvent(this).isCancelled()) {
++            this.func_213893_k();
++         }
++         // CraftBukkit end
+       } else if (this.field_70132_H) {
+          BlockPos blockpos;
+          if (p_213892_1_.func_216346_c() == RayTraceResult.Type.BLOCK) {
+@@ -199,7 +208,11 @@
+ 
+          this.field_70170_p.func_180495_p(blockpos).func_196950_a(this.field_70170_p, blockpos, this);
+          if (this.func_213894_l()) {
+-            this.func_213893_k();
++            // CraftBukkit start
++            if (!org.bukkit.craftbukkit.event.CraftEventFactory.callFireworkExplodeEvent(this).isCancelled()) {
++               this.func_213893_k();
++            }
++            // CraftBukkit end
+          }
+       }
+ 
+@@ -223,7 +236,9 @@
+ 
+       if (f > 0.0F) {
+          if (this.field_191513_e != null) {
++            CraftEventFactory.entityDamage = this; // CraftBukkit
+             this.field_191513_e.func_70097_a(DamageSource.field_191552_t, 5.0F + (float)(listnbt.size() * 2));
++            CraftEventFactory.entityDamage = null; // CraftBukkit
+          }
+ 
+          double d0 = 5.0D;
+@@ -244,7 +259,9 @@
+ 
+                if (flag) {
+                   float f1 = f * (float)Math.sqrt((5.0D - (double)this.func_70032_d(livingentity)) / 5.0D);
++                  CraftEventFactory.entityDamage = this; // CraftBukkit
+                   livingentity.func_70097_a(DamageSource.field_191552_t, f1);
++                  CraftEventFactory.entityDamage = null; // CraftBukkit
+                }
+             }
+          }

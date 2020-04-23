@@ -1,6 +1,18 @@
 --- a/net/minecraft/entity/monster/ShulkerEntity.java
 +++ b/net/minecraft/entity/monster/ShulkerEntity.java
-@@ -57,7 +57,7 @@
+@@ -48,8 +48,11 @@
+ import net.minecraft.world.DifficultyInstance;
+ import net.minecraft.world.IWorld;
+ import net.minecraft.world.World;
++import net.minecraft.world.server.ServerWorld;
+ import net.minecraftforge.api.distmarker.Dist;
+ import net.minecraftforge.api.distmarker.OnlyIn;
++import org.bukkit.Location;
++import org.bukkit.event.entity.EntityTeleportEvent;
+ 
+ public class ShulkerEntity extends GolemEntity implements IMob {
+    private static final UUID field_184703_bv = UUID.fromString("7E0292F2-9434-48D5-A29F-9583AF7DF27F");
+@@ -57,7 +60,7 @@
     protected static final DataParameter<Direction> field_184700_a = EntityDataManager.func_187226_a(ShulkerEntity.class, DataSerializers.field_187202_l);
     protected static final DataParameter<Optional<BlockPos>> field_184701_b = EntityDataManager.func_187226_a(ShulkerEntity.class, DataSerializers.field_187201_k);
     protected static final DataParameter<Byte> field_184702_c = EntityDataManager.func_187226_a(ShulkerEntity.class, DataSerializers.field_187191_a);
@@ -9,7 +21,7 @@
     private float field_184705_bx;
     private float field_184706_by;
     private BlockPos field_184707_bz;
-@@ -183,7 +183,7 @@
+@@ -183,7 +186,7 @@
           this.field_184708_bA = 0;
        } else if (!this.field_70170_p.field_72995_K) {
           BlockState blockstate = this.field_70170_p.func_180495_p(blockpos);
@@ -18,7 +30,7 @@
              if (blockstate.func_177230_c() == Blocks.field_196603_bb) {
                 Direction direction = blockstate.func_177229_b(PistonBlock.field_176387_N);
                 if (this.field_70170_p.func_175623_d(blockpos.func_177972_a(direction))) {
-@@ -249,6 +249,7 @@
+@@ -249,6 +252,7 @@
           this.func_226286_f_((double)blockpos.func_177958_n() + 0.5D, (double)blockpos.func_177956_o(), (double)blockpos.func_177952_p() + 0.5D);
           double d0 = 0.5D - (double)MathHelper.func_76126_a((0.5F + this.field_184706_by) * (float)Math.PI) * 0.5D;
           double d1 = 0.5D - (double)MathHelper.func_76126_a((0.5F + this.field_184705_bx) * (float)Math.PI) * 0.5D;
@@ -26,7 +38,24 @@
           Direction direction3 = this.func_184696_cZ().func_176734_d();
           this.func_174826_a((new AxisAlignedBB(this.func_226277_ct_() - 0.5D, this.func_226278_cu_(), this.func_226281_cx_() - 0.5D, this.func_226277_ct_() + 0.5D, this.func_226278_cu_() + 1.0D, this.func_226281_cx_() + 0.5D)).func_72321_a((double)direction3.func_82601_c() * d0, (double)direction3.func_96559_d() * d0, (double)direction3.func_82599_e() * d0));
           double d2 = d0 - d1;
-@@ -307,6 +308,12 @@
+@@ -300,13 +304,27 @@
+ 
+                for(Direction direction : Direction.values()) {
+                   if (this.field_70170_p.func_217400_a(blockpos1.func_177972_a(direction), this)) {
+-                     this.field_70180_af.func_187227_b(field_184700_a, direction);
+-                     flag = true;
++                     // CraftBukkit start
++                     EntityTeleportEvent teleport = new EntityTeleportEvent(this.getBukkitEntity(), this.getBukkitEntity().getLocation(), new Location(this.field_70170_p.getWorldCB(), blockpos1.func_177958_n(), blockpos1.func_177956_o(), blockpos1.func_177952_p()));
++                     this.field_70170_p.getServerCB().getPluginManager().callEvent(teleport);
++                     if (!teleport.isCancelled()) {
++                        Location to = teleport.getTo();
++                        blockpos1 = new BlockPos(to.getX(), to.getY(), to.getZ());
++                        this.field_70180_af.func_187227_b(field_184700_a, direction);
++                        flag = true;
++                     }
++                     // CraftBukkit end
+                      break;
+                   }
                 }
  
                 if (flag) {
@@ -39,3 +68,11 @@
                    this.func_184185_a(SoundEvents.field_187791_eX, 1.0F, 1.0F);
                    this.field_70180_af.func_187227_b(field_184701_b, Optional.of(blockpos1));
                    this.field_70180_af.func_187227_b(field_184702_c, (byte)0);
+@@ -341,6 +359,7 @@
+             }
+ 
+             this.func_226286_f_((double)blockpos.func_177958_n() + 0.5D, (double)blockpos.func_177956_o(), (double)blockpos.func_177952_p() + 0.5D);
++            if (valid) ((ServerWorld) field_70170_p).func_217464_b(this); // CraftBukkit
+          }
+       }
+ 

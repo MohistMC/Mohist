@@ -1,6 +1,26 @@
 --- a/net/minecraft/entity/monster/SlimeEntity.java
 +++ b/net/minecraft/entity/monster/SlimeEntity.java
-@@ -75,7 +75,7 @@
+@@ -1,6 +1,8 @@
+ package net.minecraft.entity.monster;
+ 
++import java.util.ArrayList;
+ import java.util.EnumSet;
++import java.util.List;
+ import java.util.Random;
+ import javax.annotation.Nullable;
+ import net.minecraft.entity.Entity;
+@@ -41,6 +43,10 @@
+ import net.minecraft.world.biome.Biome;
+ import net.minecraft.world.biome.Biomes;
+ import net.minecraft.world.storage.loot.LootTables;
++import org.bukkit.craftbukkit.event.CraftEventFactory;
++import org.bukkit.event.entity.CreatureSpawnEvent;
++import org.bukkit.event.entity.EntityTransformEvent;
++import org.bukkit.event.entity.SlimeSplitEvent;
+ 
+ public class SlimeEntity extends MobEntity implements IMob {
+    private static final DataParameter<Integer> field_184711_bt = EntityDataManager.func_187226_a(SlimeEntity.class, DataSerializers.field_187192_b);
+@@ -75,7 +81,7 @@
        this.func_110140_aT().func_111150_b(SharedMonsterAttributes.field_111264_e);
     }
  
@@ -9,7 +29,7 @@
        this.field_70180_af.func_187227_b(field_184711_bt, p_70799_1_);
        this.func_226264_Z_();
        this.func_213323_x_();
-@@ -129,6 +129,7 @@
+@@ -129,6 +135,7 @@
        if (this.field_70122_E && !this.field_175452_bi) {
           int i = this.func_70809_q();
  
@@ -17,7 +37,7 @@
           for(int j = 0; j < i * 8; ++j) {
              float f = this.field_70146_Z.nextFloat() * ((float)Math.PI * 2F);
              float f1 = this.field_70146_Z.nextFloat() * 0.5F + 0.5F;
-@@ -180,9 +181,10 @@
+@@ -180,11 +187,23 @@
        return (EntityType<? extends SlimeEntity>) super.func_200600_R();
     }
  
@@ -28,10 +48,36 @@
 -      if (!this.field_70170_p.field_72995_K && i > 1 && this.func_110143_aJ() <= 0.0F) {
 +      if (!this.field_70170_p.field_72995_K && i > 1 && this.func_110143_aJ() <= 0.0F && !this.field_70128_L) {
           int j = 2 + this.field_70146_Z.nextInt(3);
++         // CraftBukkit start
++         SlimeSplitEvent event = new SlimeSplitEvent((org.bukkit.entity.Slime) this.getBukkitEntity(), j);
++         this.field_70170_p.getServerCB().getPluginManager().callEvent(event);
  
++         if (!event.isCancelled() && event.getCount() > 0) {
++            j = event.getCount();
++         } else {
++            super.func_70106_y();
++            return;
++         }
++         List<LivingEntity> slimes = new ArrayList<>(j);
++         // CraftBukkit end
           for(int k = 0; k < j; ++k) {
-@@ -204,7 +206,7 @@
+             float f = ((float)(k % 2) - 0.5F) * (float)i / 4.0F;
+             float f1 = ((float)(k / 2) - 0.5F) * (float)i / 4.0F;
+@@ -200,11 +219,19 @@
+             slimeentity.func_184224_h(this.func_190530_aW());
+             slimeentity.func_70799_a(i / 2, true);
+             slimeentity.func_70012_b(this.func_226277_ct_() + (double)f, this.func_226278_cu_() + 0.5D, this.func_226281_cx_() + (double)f1, this.field_70146_Z.nextFloat() * 360.0F, 0.0F);
+-            this.field_70170_p.func_217376_c(slimeentity);
++            slimes.add(slimeentity); // CraftBukkit
           }
++         // CraftBukkit start
++         if (CraftEventFactory.callEntityTransformEvent(this, slimes, EntityTransformEvent.TransformReason.SPLIT).isCancelled()) {
++            return;
++         }
++         for (LivingEntity living : slimes) {
++            this.field_70170_p.addEntity(living, CreatureSpawnEvent.SpawnReason.SLIME_SPLIT); // CraftBukkit - SpawnReason
++         }
++         // CraftBukkit end
        }
  
 -      super.func_70106_y();
@@ -39,7 +85,7 @@
     }
  
     public void func_70108_f(Entity p_70108_1_) {
-@@ -257,12 +259,12 @@
+@@ -257,12 +284,12 @@
        return this.func_189101_db() ? SoundEvents.field_187900_fz : SoundEvents.field_187886_fs;
     }
  
@@ -54,7 +100,7 @@
           return false;
        } else {
           if (p_223366_1_.func_175659_aa() != Difficulty.PEACEFUL) {
-@@ -320,6 +322,12 @@
+@@ -320,6 +347,12 @@
        return super.func_213305_a(p_213305_1_).func_220313_a(0.255F * (float)this.func_70809_q());
     }
  
