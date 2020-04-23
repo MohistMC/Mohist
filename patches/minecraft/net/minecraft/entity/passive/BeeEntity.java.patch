@@ -5,7 +5,7 @@
     private int field_226362_bB_;
     private int field_226363_bC_;
 -   private int field_226364_bD_;
-+   public int field_226364_bD_;
++   public int field_226364_bD_; // PAIL private -> pblic
     private int field_226365_bE_;
     private int field_226366_bF_ = 0;
     private int field_226367_bG_ = 0;
@@ -17,6 +17,21 @@
     private BeeEntity.PollinateGoal field_226370_bJ_;
     private BeeEntity.FindBeehiveGoal field_226371_bK_;
     private BeeEntity.FindFlowerGoal field_226372_bL_;
+@@ -209,12 +209,12 @@
+             }
+ 
+             if (i > 0) {
+-               ((LivingEntity)p_70652_1_).func_195064_c(new EffectInstance(Effects.field_76436_u, i * 20, 0));
++               ((LivingEntity)p_70652_1_).addEffect(new EffectInstance(Effects.field_76436_u, i * 20, 0), org.bukkit.event.entity.EntityPotionEffectEvent.Cause.ATTACK); // CraftBukkit
+             }
+          }
+ 
+          this.func_226449_s_(true);
+-         this.func_70624_b((LivingEntity)null);
++         this.setGoalTarget((LivingEntity)null, org.bukkit.event.entity.EntityTargetEvent.TargetReason.FORGOT_TARGET, true); // CraftBukkit
+          this.func_184185_a(SoundEvents.field_226128_ac_, 1.0F, 1.0F);
+       }
+ 
 @@ -366,11 +366,11 @@
        return this.func_226418_eL_() > 0;
     }
@@ -49,3 +64,39 @@
        this.func_226404_d_(4, p_226449_1_);
     }
  
+@@ -580,12 +580,17 @@
+          return false;
+       } else {
+          Entity entity = p_70097_1_.func_76346_g();
++         // CraftBukkit start
++         // TODO: use result after LivingEntity.attackEntityFrom has been updated
++         // boolean result = super.damageEntity(source, amount);
++         // if (result && !this.world.isRemote && entity instanceof PlayerEntity && !((PlayerEntity)entity).isCreative() && this.canEntityBeSeen(entity) && !this.isAIDisabled()) {
+          if (!this.field_70170_p.field_72995_K && entity instanceof PlayerEntity && !((PlayerEntity)entity).func_184812_l_() && this.func_70685_l(entity) && !this.func_175446_cd()) {
+             this.field_226370_bJ_.func_226504_l_();
+             this.func_226391_a_(entity);
+          }
+ 
+          return super.func_70097_a(p_70097_1_, p_70097_2_);
++         // return result;
+       }
+    }
+ 
+@@ -608,7 +613,7 @@
+ 
+       protected void func_220793_a(MobEntity p_220793_1_, LivingEntity p_220793_2_) {
+          if (p_220793_1_ instanceof BeeEntity && this.field_75299_d.func_70685_l(p_220793_2_) && ((BeeEntity)p_220793_1_).func_226391_a_(p_220793_2_)) {
+-            p_220793_1_.func_70624_b(p_220793_2_);
++            p_220793_1_.setGoalTarget(p_220793_2_, org.bukkit.event.entity.EntityTargetEvent.TargetReason.TARGET_ATTACKED_ENTITY, true); // CraftBukkit - reason
+          }
+ 
+       }
+@@ -884,7 +889,7 @@
+                      }
+                   }
+ 
+-                  if (flag) {
++                  if (flag && !org.bukkit.craftbukkit.event.CraftEventFactory.callEntityChangeBlockEvent(BeeEntity.this, blockpos, blockstate.func_206870_a(integerproperty, (Integer) blockstate.func_177229_b(integerproperty) + 1)).isCancelled()) { // Spigot
+                      BeeEntity.this.field_70170_p.func_217379_c(2005, blockpos, 0);
+                      BeeEntity.this.field_70170_p.func_175656_a(blockpos, blockstate.func_206870_a(integerproperty, Integer.valueOf(blockstate.func_177229_b(integerproperty) + 1)));
+                      BeeEntity.this.func_226421_eO_();

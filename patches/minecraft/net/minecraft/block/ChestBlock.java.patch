@@ -30,11 +30,12 @@
        }
  
        public Optional<INamedContainerProvider> func_225538_a_(ChestTileEntity p_225538_1_) {
-@@ -333,4 +314,33 @@
+@@ -333,4 +314,35 @@
     public boolean func_196266_a(BlockState p_196266_1_, IBlockReader p_196266_2_, BlockPos p_196266_3_, PathType p_196266_4_) {
        return false;
     }
 +
++   // CraftBukkit start
 +   public static class DoubleInventory implements INamedContainerProvider
 +   {
 +      private final ChestTileEntity tileentitychest;
@@ -63,4 +64,5 @@
 +         return this.tileentitychest.func_145818_k_() ? this.tileentitychest.func_145748_c_() : (this.tileentitychest1.func_145818_k_() ? this.tileentitychest1.func_145748_c_() : new TranslationTextComponent("container.chestDouble", new Object[0]));
 +      }
 +   }
++   // CraftBukkit end
  }
