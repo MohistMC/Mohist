@@ -1,35 +1,77 @@
 --- a/net/minecraft/entity/projectile/DamagingProjectileEntity.java
 +++ b/net/minecraft/entity/projectile/DamagingProjectileEntity.java
-@@ -28,6 +28,8 @@
+@@ -20,6 +20,7 @@
+ import net.minecraft.world.World;
+ import net.minecraftforge.api.distmarker.Dist;
+ import net.minecraftforge.api.distmarker.OnlyIn;
++import org.bukkit.craftbukkit.event.CraftEventFactory; // CraftBukkit
+ 
+ public abstract class DamagingProjectileEntity extends Entity {
+    public LivingEntity field_70235_a;
+@@ -28,6 +29,8 @@
     public double field_70232_b;
     public double field_70233_c;
     public double field_70230_d;
-+   public float bukkitYield;
-+   public boolean isIncendiary;
++   public float bukkitYield; // CraftBukkit
++   public boolean isIncendiary; // CraftBukkit
  
     protected DamagingProjectileEntity(EntityType<? extends DamagingProjectileEntity> p_i50173_1_, World p_i50173_2_) {
        super(p_i50173_1_, p_i50173_2_);
-@@ -81,7 +83,7 @@
+@@ -46,9 +49,16 @@
+    public DamagingProjectileEntity(EntityType<? extends DamagingProjectileEntity> p_i50175_1_, LivingEntity p_i50175_2_, double p_i50175_3_, double p_i50175_5_, double p_i50175_7_, World p_i50175_9_) {
+       this(p_i50175_1_, p_i50175_9_);
+       this.field_70235_a = p_i50175_2_;
++      this.projectileSource = (org.bukkit.entity.LivingEntity) p_i50175_2_.getBukkitEntity(); // CraftBukkit
+       this.func_70012_b(p_i50175_2_.func_226277_ct_(), p_i50175_2_.func_226278_cu_(), p_i50175_2_.func_226281_cx_(), p_i50175_2_.field_70177_z, p_i50175_2_.field_70125_A);
+       this.func_226264_Z_();
+       this.func_213317_d(Vec3d.field_186680_a);
++      // CraftBukkit start - Added setDirection method
++      this.setDirection(p_i50175_3_, p_i50175_5_, p_i50175_7_);
++   }
++
++   public void setDirection(double p_i50175_3_, double p_i50175_5_, double p_i50175_7_) {
++      // CraftBukkit end
+       p_i50175_3_ = p_i50175_3_ + this.field_70146_Z.nextGaussian() * 0.4D;
+       p_i50175_5_ = p_i50175_5_ + this.field_70146_Z.nextGaussian() * 0.4D;
+       p_i50175_7_ = p_i50175_7_ + this.field_70146_Z.nextGaussian() * 0.4D;
+@@ -81,8 +91,13 @@
  
           ++this.field_70234_an;
           RayTraceResult raytraceresult = ProjectileHelper.func_221266_a(this, true, this.field_70234_an >= 25, this.field_70235_a, RayTraceContext.BlockMode.COLLIDER);
 -         if (raytraceresult.func_216346_c() != RayTraceResult.Type.MISS) {
 +         if (raytraceresult.func_216346_c() != RayTraceResult.Type.MISS && !net.minecraftforge.event.ForgeEventFactory.onProjectileImpact(this, raytraceresult)) {
              this.func_70227_a(raytraceresult);
++            // CraftBukkit start - Fire ProjectileHitEvent
++            if (this.field_70128_L) {
++               CraftEventFactory.callProjectileHitEvent(this, raytraceresult);
++            }
++            // CraftBukkit end
           }
  
-@@ -195,4 +197,14 @@
+          Vec3d vec3d = this.func_213322_ci();
+@@ -171,6 +186,11 @@
+       } else {
+          this.func_70018_K();
+          if (p_70097_1_.func_76346_g() != null) {
++            // CraftBukkit start
++            if (CraftEventFactory.handleNonLivingEntityDamageEvent(this, p_70097_1_, p_70097_2_)) {
++               return false;
++            }
++            // CraftBukkit end
+             Vec3d vec3d = p_70097_1_.func_76346_g().func_70040_Z();
+             this.func_213317_d(vec3d);
+             this.field_70232_b = vec3d.field_72450_a * 0.1D;
+@@ -178,6 +198,7 @@
+             this.field_70230_d = vec3d.field_72449_c * 0.1D;
+             if (p_70097_1_.func_76346_g() instanceof LivingEntity) {
+                this.field_70235_a = (LivingEntity)p_70097_1_.func_76346_g();
++               this.projectileSource = (org.bukkit.projectiles.ProjectileSource) this.field_70235_a.getBukkitEntity(); // CraftBukkit
+             }
+ 
+             return true;
+@@ -195,4 +216,5 @@
        int i = this.field_70235_a == null ? 0 : this.field_70235_a.func_145782_y();
        return new SSpawnObjectPacket(this.func_145782_y(), this.func_110124_au(), this.func_226277_ct_(), this.func_226278_cu_(), this.func_226281_cx_(), this.field_70125_A, this.field_70177_z, this.func_200600_R(), i, new Vec3d(this.field_70232_b, this.field_70233_c, this.field_70230_d));
     }
 +
-+    public void setDirection(double x, double y, double z) {
-+       x += this.field_70146_Z.nextGaussian() * 0.4;
-+       y += this.field_70146_Z.nextGaussian() * 0.4;
-+       z += this.field_70146_Z.nextGaussian() * 0.4;
-+       final double d3 = MathHelper.func_76133_a(x * x + y * y + z * z);
-+       this.field_70232_b = x / d3 * 0.1;
-+       this.field_70233_c = y / d3 * 0.1;
-+       this.field_70230_d = z / d3 * 0.1;
-+    }
  }
