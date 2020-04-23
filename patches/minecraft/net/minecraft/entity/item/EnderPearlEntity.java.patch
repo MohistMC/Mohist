@@ -1,6 +1,19 @@
 --- a/net/minecraft/entity/item/EnderPearlEntity.java
 +++ b/net/minecraft/entity/item/EnderPearlEntity.java
-@@ -42,7 +42,7 @@
+@@ -24,6 +24,12 @@
+ import net.minecraft.world.dimension.DimensionType;
+ import net.minecraftforge.api.distmarker.Dist;
+ import net.minecraftforge.api.distmarker.OnlyIn;
++// CraftBukkit start
++import org.bukkit.Bukkit;
++import org.bukkit.craftbukkit.event.CraftEventFactory;
++import org.bukkit.event.entity.CreatureSpawnEvent;
++import org.bukkit.event.player.PlayerTeleportEvent;
++// CraftBukkit end
+ 
+ public class EnderPearlEntity extends ProjectileItemEntity {
+    private LivingEntity field_181555_c;
+@@ -42,7 +48,7 @@
        super(EntityType.field_200752_ar, p_i1784_2_, p_i1784_4_, p_i1784_6_, p_i1784_1_);
     }
  
@@ -9,29 +22,55 @@
        return Items.field_151079_bi;
     }
  
-@@ -85,6 +85,8 @@
+@@ -85,20 +91,35 @@
           if (livingentity instanceof ServerPlayerEntity) {
              ServerPlayerEntity serverplayerentity = (ServerPlayerEntity)livingentity;
              if (serverplayerentity.field_71135_a.func_147298_b().func_150724_d() && serverplayerentity.field_70170_p == this.field_70170_p && !serverplayerentity.func_70608_bn()) {
+-               if (this.field_70146_Z.nextFloat() < 0.05F && this.field_70170_p.func_82736_K().func_223586_b(GameRules.field_223601_d)) {
+-                  EndermiteEntity endermiteentity = EntityType.field_200804_r.func_200721_a(this.field_70170_p);
+-                  endermiteentity.func_175496_a(true);
+-                  endermiteentity.func_70012_b(livingentity.func_226277_ct_(), livingentity.func_226278_cu_(), livingentity.func_226281_cx_(), livingentity.field_70177_z, livingentity.field_70125_A);
+-                  this.field_70170_p.func_217376_c(endermiteentity);
+-               }
 +               net.minecraftforge.event.entity.living.EnderTeleportEvent event = new net.minecraftforge.event.entity.living.EnderTeleportEvent(serverplayerentity, this.func_226277_ct_(), this.func_226278_cu_(), this.func_226281_cx_(), 5.0F);
 +               if (!net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(event)) { // Don't indent to lower patch size
-                if (this.field_70146_Z.nextFloat() < 0.05F && this.field_70170_p.func_82736_K().func_223586_b(GameRules.field_223601_d)) {
-                   EndermiteEntity endermiteentity = EntityType.field_200804_r.func_200721_a(this.field_70170_p);
-                   endermiteentity.func_175496_a(true);
-@@ -96,9 +98,10 @@
-                   livingentity.func_184210_p();
-                }
++                  // CraftBukkit start - Fire PlayerTeleport Event
++                  org.bukkit.craftbukkit.entity.CraftPlayer player = serverplayerentity.getBukkitEntity();
++                  org.bukkit.Location location = getBukkitEntity().getLocation();
++                  location.setPitch(player.getLocation().getPitch());
++                  location.setYaw(player.getLocation().getYaw());
+ 
+-               if (livingentity.func_184218_aH()) {
+-                  livingentity.func_184210_p();
+-               }
++                  PlayerTeleportEvent teleEvent = new PlayerTeleportEvent(player, player.getLocation(), location, PlayerTeleportEvent.TeleportCause.ENDER_PEARL);
++                  Bukkit.getPluginManager().callEvent(teleEvent);
  
 -               livingentity.func_70634_a(this.func_226277_ct_(), this.func_226278_cu_(), this.func_226281_cx_());
-+               livingentity.func_70634_a(event.getTargetX(), event.getTargetY(), event.getTargetZ());
-                livingentity.field_70143_R = 0.0F;
+-               livingentity.field_70143_R = 0.0F;
 -               livingentity.func_70097_a(DamageSource.field_76379_h, 5.0F);
-+               livingentity.func_70097_a(DamageSource.field_76379_h, event.getAttackDamage());
++                  if (!teleEvent.isCancelled() && !serverplayerentity.field_71135_a.isDisconnected()) {
++                     if (this.field_70146_Z.nextFloat() < 0.05F && this.field_70170_p.func_82736_K().func_223586_b(GameRules.field_223601_d)) {
++                        EndermiteEntity entityendermite = (EndermiteEntity) EntityType.field_200804_r.func_200721_a(this.field_70170_p);
++                        entityendermite.func_175496_a(true);
++                        entityendermite.func_70012_b(livingentity.func_226277_ct_(), livingentity.func_226278_cu_(), livingentity.func_226281_cx_(), livingentity.field_70177_z, livingentity.field_70125_A);
++                        this.field_70170_p.addEntity(entityendermite, CreatureSpawnEvent.SpawnReason.ENDER_PEARL);
++                     }
++                     if (livingentity.func_184218_aH()) {
++                        livingentity.func_184210_p();
++                     }
++                     serverplayerentity.field_71135_a.teleport(teleEvent.getTo());
++                     livingentity.field_70143_R = 0.0f;
++                     CraftEventFactory.entityDamage = this;
++                     livingentity.func_70097_a(DamageSource.field_76379_h, 5.0f);
++                     CraftEventFactory.entityDamage = null;
++                  }
++               // CraftBukkit end
 +               } //Forge: End
              }
           } else if (livingentity != null) {
              livingentity.func_70634_a(this.func_226277_ct_(), this.func_226278_cu_(), this.func_226281_cx_());
-@@ -121,11 +124,11 @@
+@@ -121,11 +142,11 @@
     }
  
     @Nullable

@@ -1,6 +1,21 @@
 --- a/net/minecraft/tileentity/EndGatewayTileEntity.java
 +++ b/net/minecraft/tileentity/EndGatewayTileEntity.java
-@@ -31,11 +31,11 @@
+@@ -7,6 +7,7 @@
+ import net.minecraft.block.BlockState;
+ import net.minecraft.block.Blocks;
+ import net.minecraft.entity.Entity;
++import net.minecraft.entity.player.ServerPlayerEntity;
+ import net.minecraft.nbt.CompoundNBT;
+ import net.minecraft.nbt.NBTUtil;
+ import net.minecraft.network.play.server.SUpdateTileEntityPacket;
+@@ -28,14 +29,18 @@
+ import net.minecraftforge.api.distmarker.OnlyIn;
+ import org.apache.logging.log4j.LogManager;
+ import org.apache.logging.log4j.Logger;
++// CraftBukkit start
++import org.bukkit.Bukkit;
++import org.bukkit.event.player.PlayerTeleportEvent;
++// CraftBukkit end
  
  public class EndGatewayTileEntity extends EndPortalTileEntity implements ITickableTileEntity {
     private static final Logger field_195503_a = LogManager.getLogger();
@@ -15,3 +30,25 @@
  
     public EndGatewayTileEntity() {
        super(TileEntityType.field_200991_v);
+@@ -147,6 +152,21 @@
+ 
+          if (this.field_195506_h != null) {
+             BlockPos blockpos = this.field_195507_i ? this.field_195506_h : this.func_195502_i();
++            if (p_195496_1_ instanceof ServerPlayerEntity) {
++               org.bukkit.craftbukkit.entity.CraftPlayer player = (org.bukkit.craftbukkit.entity.CraftPlayer)p_195496_1_.getBukkitEntity();
++               org.bukkit.Location location = new org.bukkit.Location(this.field_145850_b.getWorldCB(), blockpos.func_177958_n() + 0.5, blockpos.func_177956_o() + 0.5, blockpos.func_177952_p() + 0.5);
++               location.setPitch(player.getLocation().getPitch());
++               location.setYaw(player.getLocation().getYaw());
++               PlayerTeleportEvent teleEvent = new PlayerTeleportEvent(player, player.getLocation(), location, PlayerTeleportEvent.TeleportCause.END_GATEWAY);
++               Bukkit.getPluginManager().callEvent(teleEvent);
++               if (teleEvent.isCancelled()) {
++                  return;
++               }
++               ((ServerPlayerEntity)p_195496_1_).field_71135_a.teleport(teleEvent.getTo());
++               this.func_195500_d(); // CraftBukkit - call at end of method
++               return;
++            }
++            // CraftBukkit end
+             p_195496_1_.func_223102_j((double)blockpos.func_177958_n() + 0.5D, (double)blockpos.func_177956_o() + 0.5D, (double)blockpos.func_177952_p() + 0.5D);
+          }
+ 
