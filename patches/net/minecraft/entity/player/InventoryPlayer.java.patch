@@ -17,7 +17,7 @@
  
  public class InventoryPlayer implements IInventory
  {
-@@ -38,6 +42,50 @@
+@@ -38,6 +42,49 @@
      private ItemStack itemStack;
      private int timesChanged;
  
@@ -62,13 +62,12 @@
 +    public Location getLocation() {
 +        return player.getBukkitEntity().getLocation();
 +    }
-+
 +    // CraftBukkit end
 +
      public InventoryPlayer(EntityPlayer playerIn)
      {
          this.allInventories = Arrays.<NonNullList<ItemStack>>asList(this.mainInventory, this.armorInventory, this.offHandInventory);
-@@ -65,6 +113,23 @@
+@@ -65,6 +112,23 @@
          return stack1.getItem() == stack2.getItem() && (!stack1.getHasSubtypes() || stack1.getMetadata() == stack2.getMetadata()) && ItemStack.areItemStackTagsEqual(stack1, stack2);
      }
  
@@ -92,7 +91,7 @@
      public int getFirstEmptyStack()
      {
          for (int i = 0; i < this.mainInventory.size(); ++i)
-@@ -292,7 +357,8 @@
+@@ -292,7 +356,8 @@
  
          if (itemstack.isEmpty())
          {
@@ -102,7 +101,7 @@
  
              if (p_191973_2_.hasTagCompound())
              {
-@@ -363,6 +429,13 @@
+@@ -363,6 +428,13 @@
                  }
              }
          }
@@ -116,7 +115,7 @@
      }
  
      public boolean addItemStackToInventory(ItemStack itemStackIn)
-@@ -444,6 +517,8 @@
+@@ -444,6 +516,8 @@
                  CrashReportCategory crashreportcategory = crashreport.makeCategory("Item being added");
                  crashreportcategory.addCrashSection("Item ID", Integer.valueOf(Item.getIdFromItem(p_191971_2_.getItem())));
                  crashreportcategory.addCrashSection("Item data", Integer.valueOf(p_191971_2_.getMetadata()));
@@ -125,7 +124,7 @@
                  crashreportcategory.addDetail("Item name", new ICrashReportDetail<String>()
                  {
                      public String call() throws Exception
-@@ -715,7 +790,7 @@
+@@ -715,7 +789,7 @@
  
      public int getInventoryStackLimit()
      {
@@ -134,7 +133,7 @@
      }
  
      public boolean canHarvestBlock(IBlockState state)
-@@ -792,6 +867,11 @@
+@@ -792,6 +866,11 @@
  
      public ItemStack getItemStack()
      {

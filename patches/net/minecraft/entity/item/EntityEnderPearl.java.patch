@@ -16,7 +16,7 @@
  
  public class EntityEnderPearl extends EntityThrowable
  {
-@@ -98,22 +105,39 @@
+@@ -98,22 +105,42 @@
  
                  if (entityplayermp.connection.getNetworkManager().isChannelOpen() && entityplayermp.world == this.world && !entityplayermp.isPlayerSleeping())
                  {
@@ -26,17 +26,20 @@
 -                        entityendermite.setSpawnedByPlayer(true);
 -                        entityendermite.setLocationAndAngles(entitylivingbase.posX, entitylivingbase.posY, entitylivingbase.posZ, entitylivingbase.rotationYaw, entitylivingbase.rotationPitch);
 -                        this.world.spawnEntity(entityendermite);
--                    }
 +                    net.minecraftforge.event.entity.living.EnderTeleportEvent event = new net.minecraftforge.event.entity.living.EnderTeleportEvent(entityplayermp, this.posX, this.posY, this.posZ, 5.0F);
-+                    if (!net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(event))
-+					{ // Don't indent to lower patch size
++                    // Cauldron start - invert condition; return if cancelled otherwise fall through to CB event
++                    if (net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(event)) {
++                        this.setDead();
++                        return;
+                     }
++                    // Cauldron end
  
 -                    if (entitylivingbase.isRiding())
 -                    {
 -                        entitylivingbase.dismountRidingEntity();
 -                    }
 +                    // CraftBukkit start - Fire PlayerTeleportEvent
-+                    org.bukkit.craftbukkit.v1_12_R1.entity.CraftPlayer player = (CraftPlayer)entityplayermp.getBukkitEntity();
++                    org.bukkit.craftbukkit.v1_12_R1.entity.CraftPlayer player = entityplayermp.getBukkitEntity();
 +                    org.bukkit.Location location = getBukkitEntity().getLocation();
 +                    location.setPitch(player.getLocation().getPitch());
 +                    location.setYaw(player.getLocation().getYaw());
@@ -65,12 +68,11 @@
 +                        entitylivingbase.attackEntityFrom(DamageSource.FALL, 5.0F);
 +                        CraftEventFactory.entityDamage = null;
 +                    }
-+                        // CraftBukkit end
-+					}
++                    // CraftBukkit end
                  }
              }
              else if (entitylivingbase != null)
-@@ -141,13 +165,13 @@
+@@ -141,13 +168,13 @@
      }
  
      @Nullable
