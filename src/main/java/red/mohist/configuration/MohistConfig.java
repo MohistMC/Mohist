@@ -84,6 +84,7 @@ public class MohistConfig extends ConfigBase {
     public final IntSetting minChunkLoadThreads = new IntSetting(this, "settings.min-chunk-load-threads", 2, Message.getString("mohistsettings.minChunkLoadThreads"));
     public final BoolSetting keepSpawnInMemory = new BoolSetting(this, "keep-spawn-loaded", true, Message.getString("mohistsettings.keepSpawnInMemory"));
     public final BoolSetting RealTimeTicking = new BoolSetting(this, "mohist.realtimeticking", false, Message.getString("mohistsettings.RealTimeTicking"));
+    public final BoolSetting FailOnUnresolvedGameProfile = new BoolSetting(this, "mohist.fail-on-unresolved-gameprofile", true, Message.getString("mohistsettings.FailOnUnresolvedGameProfile"));
 
     public final IntSetting entityTickLimit = new IntSetting(this, "entity-tick-limit", 300, Message.getString("mohistsettings.entityTickLimit")); // by CraftDream
     public final StringSetting libraries_black_list = new StringSetting(this, "libraries_black_list", "aaaaa;bbbbbb", Message.getString("mohistsettings.libraries_black_list"));

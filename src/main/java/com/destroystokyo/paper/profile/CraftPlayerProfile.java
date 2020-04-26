@@ -16,6 +16,7 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.management.PlayerProfileCache;
 import org.bukkit.craftbukkit.v1_12_R1.entity.CraftPlayer;
 import org.spigotmc.SpigotConfig;
+import red.mohist.configuration.MohistConfig;
 
 public class CraftPlayerProfile implements PlayerProfile {
 
@@ -217,9 +218,17 @@ public class CraftPlayerProfile implements PlayerProfile {
         boolean isOnlineMode = server.isServerInOnlineMode() || (SpigotConfig.bungee);
         boolean isCompleteFromCache = this.completeFromCache(true);
         if (isOnlineMode && (!isCompleteFromCache || textures && !hasTextures())) {
-            GameProfile result = server.getMinecraftSessionService().fillProfileProperties(profile, true);
-            if (result != null) {
-                this.profile = result;
+            try {
+                GameProfile result = server.getMinecraftSessionService().fillProfileProperties(this.profile, true);
+                if (result != null) {
+                    this.profile = result;
+                }
+            }
+            catch (Exception e) {
+                if (MohistConfig.instance.FailOnUnresolvedGameProfile.getValue()) {
+                    e.printStackTrace();
+                    throw e;
+                }
             }
         }
         return profile.isComplete() && (!isOnlineMode || !textures || hasTextures());
