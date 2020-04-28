@@ -13,26 +13,18 @@ import java.util.Map;
 import java.util.Set;
 import java.util.jar.JarFile;
 import java.util.jar.Manifest;
-import net.md_5.specialsource.JarMapping;
-import net.md_5.specialsource.provider.ClassLoaderProvider;
-import net.md_5.specialsource.provider.JointProvider;
-import net.md_5.specialsource.repo.RuntimeRepo;
-import net.minecraft.launchwrapper.LaunchClassLoader;
-import net.minecraft.server.MinecraftServer;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.Validate;
 import org.bukkit.plugin.InvalidPluginException;
 import org.bukkit.plugin.PluginDescriptionFile;
-import red.mohist.bukkit.nms.ClassUtils;
-import red.mohist.bukkit.nms.MappingLoader;
-import red.mohist.bukkit.nms.remappers.MohistInheritanceProvider;
-import red.mohist.bukkit.nms.remappers.MohistJarRemapper;
-import red.mohist.bukkit.nms.remappers.RemapperProcessor;
+import red.mohist.bukkit.nms.ClassLoaderContext;
+import red.mohist.bukkit.nms.RemapUtils;
 
 /**
  * A ClassLoader for plugins, to allow shared classes across multiple plugins
  */
 public final class PluginClassLoader extends URLClassLoader {
-    JavaPlugin plugin;
+    final JavaPlugin plugin;
     private final JavaPluginLoader loader;
     private final Map<String, Class<?>> classes = new HashMap<>();
     private final PluginDescriptionFile description;
@@ -44,10 +36,6 @@ public final class PluginClassLoader extends URLClassLoader {
     private JavaPlugin pluginInit;
     private IllegalStateException pluginState;
 
-    private final JarMapping jarMapping;
-    private final MohistJarRemapper remapper;
-    private final LaunchClassLoader launchClassLoader;
-
     PluginClassLoader(final JavaPluginLoader loader, final ClassLoader parent, final PluginDescriptionFile description, final File dataFolder, final File file) throws IOException, InvalidPluginException {
         super(new URL[]{file.toURI().toURL()}, parent);
         Validate.notNull(loader, "Loader cannot be null");
@@ -58,14 +46,6 @@ public final class PluginClassLoader extends URLClassLoader {
         this.jar = new JarFile(file);
         this.manifest = jar.getManifest();
         this.url = file.toURI().toURL();
-
-        this.launchClassLoader = parent instanceof LaunchClassLoader ? (LaunchClassLoader)parent : (LaunchClassLoader) MinecraftServer.getServerInst().getClass().getClassLoader();
-        this.jarMapping = MappingLoader.loadMapping();
-        JointProvider provider = new JointProvider();
-        provider.add(new MohistInheritanceProvider());
-        provider.add(new ClassLoaderProvider(this));
-        this.jarMapping.setFallbackInheritanceProvider(provider);
-        this.remapper = new MohistJarRemapper(jarMapping);
 
         try {
             Class<?> jarClass;
@@ -91,48 +71,46 @@ public final class PluginClassLoader extends URLClassLoader {
     }
 
     @Override
-    protected Class<?> findClass(String name) throws ClassNotFoundException {
+    public Class<?> findClass(String name) throws ClassNotFoundException {
         return findClass(name, true);
     }
 
     Class<?> findClass(String name, boolean checkGlobal) throws ClassNotFoundException {
-        if (ClassUtils.isNeedRemap(name)) {
-            String remappedClass = jarMapping.classes.get(name.replaceAll("\\.", "\\/"));
-            return launchClassLoader.findClass(remappedClass);
-        }
-
-        if (name.startsWith("org.bukkit.")) {
-            throw new ClassNotFoundException(name);
-        }
-        Class<?> result = classes.get(name);
-        synchronized (name.intern()) {
-            if (result == null) {
-                if (checkGlobal) {
-                    result = loader.getClassByName(name);
-                }
-
-                if (result == null) {
-                    result = remappedFindClass(name);
-
-                    if (result != null) {
-                        loader.setClass(name, result);
-                    }
-                }
-
-                if (result == null) {
-                    try {
-                        result = launchClassLoader.getClass().getClassLoader().loadClass(name);
-                    } catch (Throwable throwable) {
-                        throw new ClassNotFoundException(name, throwable);
-                    }
-                }
-
-                if (result == null) {
-                    throw new ClassNotFoundException(name);
-                }
-
-                classes.put(name, result);
+        ClassLoaderContext.put(this);
+        Class<?> result;
+        try {
+            if (name.replace("/", ".").startsWith("net.minecraft.server.v1_12_R1")) {
+                String remappedClass = RemapUtils.jarMapping.byNMSName.get(name).getMcpName();
+                return Class.forName(remappedClass);
             }
+
+            if (name.startsWith("org.bukkit.")) {
+                throw new ClassNotFoundException(name);
+            }
+            result = classes.get(name);
+            synchronized (name.intern()) {
+                if (result == null) {
+                    if (checkGlobal) {
+                        result = loader.getClassByName(name);
+                    }
+
+                    if (result == null) {
+                        result = remappedFindClass(name);
+
+                        if (result != null) {
+                            loader.setClass(name, result);
+                        }
+                    }
+
+                    if (result == null) {
+                        throw new ClassNotFoundException(name);
+                    }
+
+                    classes.put(name, result);
+                }
+            }
+        } finally {
+            ClassLoaderContext.pop();
         }
         return result;
     }
@@ -173,9 +151,14 @@ public final class PluginClassLoader extends URLClassLoader {
             if (url != null) {
                 InputStream stream = url.openStream();
                 if (stream != null) {
-                    // Remap the classes
-                    byte[] bytecode = remapper.remapClassFile(stream, RuntimeRepo.getInstance());
-                    bytecode = RemapperProcessor.transform(bytecode);
+//                  remap
+                    byte[] bytecode = IOUtils.toByteArray(stream);
+                    bytecode = RemapUtils.remapFindClass(bytecode);
+                    // Define (create) the class using the modified byte code
+                    // The top-child class loader is used for this to prevent access violations
+                    // Set the codesource to the jar, not within the jar, for compatibility with
+                    // plugins that do new File(getClass().getProtectionDomain().getCodeSource().getLocation().toURI()))
+                    // instead of using getResourceAsStream - see https://github.com/MinecraftPortCentral/Cauldron-Plus/issues/75
                     JarURLConnection jarURLConnection = (JarURLConnection) url.openConnection(); // parses only
                     URL jarURL = jarURLConnection.getJarFileURL();
                     CodeSource codeSource = new CodeSource(jarURL, new CodeSigner[0]);

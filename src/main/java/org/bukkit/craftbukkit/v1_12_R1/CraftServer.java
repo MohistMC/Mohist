@@ -36,6 +36,7 @@ import javax.annotation.Nullable;
 import javax.imageio.ImageIO;
 import jline.console.ConsoleReader;
 import net.md_5.bungee.api.chat.BaseComponent;
+import net.md_5.specialsource.RemapperProcessor;
 import net.minecraft.advancements.Advancement;
 import net.minecraft.advancements.AdvancementRewards;
 import net.minecraft.command.CommandBase;
@@ -168,8 +169,8 @@ import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.SafeConstructor;
 import org.yaml.snakeyaml.error.MarkedYAMLException;
 import red.mohist.Mohist;
-import red.mohist.bukkit.nms.remappers.RemapperProcessor;
 import red.mohist.configuration.MohistConfig;
+import red.mohist.forge.MohistForgeUtils;
 import red.mohist.util.i18n.Message;
 
 public final class CraftServer implements Server {
@@ -381,7 +382,6 @@ public final class CraftServer implements Server {
     }
 
     public void loadPlugins() {
-        RemapperProcessor.init();
         pluginManager.registerInterface(JavaPluginLoader.class);
 
         File pluginFolder = (File) console.options.valueOf("plugins");
@@ -984,7 +984,8 @@ public final class CraftServer implements Server {
         WorldServer internal = DimensionManager.initDimension(creator, worldSettings);
 
         pluginManager.callEvent(new WorldInitEvent(internal.getWorld()));
-        System.out.println("Preparing start region for level " + (console.worldServerList.size() - 1) + " (Seed: " + internal.getSeed() + ")");
+        MohistForgeUtils.craftWorldLoading = true;
+        System.out.print("Preparing start region for level " + (console.worldServerList.size() - 1) + " (Dimension: " + internal.provider.getDimension() + ", Seed: " + internal.getSeed() + ")"); // Cauldron - log dimension
 
         if (internal.getWorld().getKeepSpawnInMemory()) {
             short short1 = 196;

@@ -64,6 +64,7 @@ import org.bukkit.generator.ChunkGenerator;
 import red.mohist.configuration.MohistConfig;
 import red.mohist.forge.ForgeInjectBukkit;
 import red.mohist.forge.ModCompatibleFixUtils;
+import red.mohist.forge.MohistForgeUtils;
 import red.mohist.util.i18n.Message;
 
 public class DimensionManager
@@ -276,6 +277,12 @@ public class DimensionManager
         }
         try
         {
+            // Mohist start - Fixes MultiVerse issue when mods such as Twilight Forest try to hotload their dimension when using its WorldProvider
+            if(MohistForgeUtils.craftWorldLoading)
+            {
+                return;
+            }
+            // Mohist end
             DimensionManager.getProviderType(dim);
         }
         catch (Exception e)
@@ -286,6 +293,7 @@ public class DimensionManager
         MinecraftServer mcServer = overworld.getMinecraftServer();
         ISaveHandler savehandler = overworld.getSaveHandler();
         WorldSettings worldSettings = new WorldSettings(overworld.getWorldInfo());
+
         String worldType;
         String name;
         org.bukkit.World.Environment env = org.bukkit.World.Environment.getEnvironment(dim);
@@ -625,11 +633,12 @@ public class DimensionManager
 
     }
 
-    public static org.bukkit.World.Environment registerBukkitDimension(int dim, String worldType) {
+    // Cauldron start - add registration for Bukkit Environments
+    public static org.bukkit.World.Environment registerBukkitDimension(int dim, String providerName) {
         org.bukkit.World.Environment env = org.bukkit.World.Environment.getEnvironment(dim);
         if(env == null){
-            worldType = worldType.replace("WorldProvider","");
-            env = ForgeInjectBukkit.addEnumEnvironment(dim,worldType.toUpperCase());
+            providerName = providerName.replace("WorldProvider","");
+            env = ForgeInjectBukkit.addEnumEnvironment(dim,providerName.toUpperCase());
             org.bukkit.World.Environment.registerEnvironment(env);
         }
         return env;

@@ -18,7 +18,7 @@ public class ProxyYamlConfiguration {
     private static final Charset otherCharse = defaultCharset.name().equalsIgnoreCase("GBK") ? StandardCharsets.UTF_8 : GBK;
 
     public static YamlConfiguration loadConfiguration(InputStream inputStream) {
-        ReaderException readerException;
+        ReaderException readerException = null;
         try {
             return YamlConfiguration.loadConfiguration(new InputStreamReader(inputStream, defaultCharset));
         } catch (ReaderException e) {
