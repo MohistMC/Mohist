@@ -19,14 +19,13 @@
 
 package net.minecraftforge.client;
 
+import javax.annotation.Nullable;
 import net.minecraft.client.audio.MusicTicker;
+import net.minecraft.client.settings.GameSettings.Options;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.Util.EnumOS;
 import net.minecraft.world.GameType;
-import net.minecraft.client.settings.GameSettings.Options;
 import net.minecraftforge.common.util.EnumHelper;
-
-import javax.annotation.Nullable;
 
 public class EnumHelperClient extends EnumHelper
 {

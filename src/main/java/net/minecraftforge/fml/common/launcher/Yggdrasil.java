@@ -19,15 +19,13 @@
 
 package net.minecraftforge.fml.common.launcher;
 
-import java.net.Proxy;
-import java.util.Map;
-
-import org.apache.logging.log4j.LogManager;
-
 import com.mojang.authlib.Agent;
 import com.mojang.authlib.exceptions.AuthenticationException;
 import com.mojang.authlib.yggdrasil.YggdrasilAuthenticationService;
 import com.mojang.authlib.yggdrasil.YggdrasilUserAuthentication;
+import java.net.Proxy;
+import java.util.Map;
+import org.apache.logging.log4j.LogManager;
 
 /**
  * Basic implementation of Mojang's 'Yggdrasil' login system, purely intended as a dev time bare bones login.

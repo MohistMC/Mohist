@@ -19,10 +19,15 @@
 
 package net.minecraftforge.fml.common.network.internal;
 
+import com.google.common.base.Preconditions;
+import com.google.common.base.Strings;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.SetMultimap;
 import java.lang.reflect.Method;
 import java.util.Map;
 import java.util.Set;
-
+import javax.annotation.Nullable;
 import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.ModContainer;
 import net.minecraftforge.fml.common.discovery.ASMDataTable;
@@ -32,15 +37,7 @@ import net.minecraftforge.fml.common.versioning.DefaultArtifactVersion;
 import net.minecraftforge.fml.common.versioning.InvalidVersionSpecificationException;
 import net.minecraftforge.fml.common.versioning.VersionRange;
 import net.minecraftforge.fml.relauncher.Side;
-
-import com.google.common.base.Preconditions;
-import com.google.common.base.Strings;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.SetMultimap;
 import red.mohist.configuration.MohistConfig;
-
-import javax.annotation.Nullable;
 
 public class NetworkModHolder
 {

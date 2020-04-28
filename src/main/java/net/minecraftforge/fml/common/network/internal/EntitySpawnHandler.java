@@ -21,14 +21,12 @@ package net.minecraftforge.fml.common.network.internal;
 
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
-
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityTracker;
 import net.minecraft.util.IThreadListener;
-import net.minecraft.world.World;
 import net.minecraftforge.fml.client.FMLClientHandler;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.FMLLog;
@@ -37,9 +35,9 @@ import net.minecraftforge.fml.common.ModContainer;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.network.internal.FMLMessage.EntityMessage;
 import net.minecraftforge.fml.common.registry.EntityRegistry;
+import net.minecraftforge.fml.common.registry.EntityRegistry.EntityRegistration;
 import net.minecraftforge.fml.common.registry.IEntityAdditionalSpawnData;
 import net.minecraftforge.fml.common.registry.IThrowableEntity;
-import net.minecraftforge.fml.common.registry.EntityRegistry.EntityRegistration;
 
 public class EntitySpawnHandler extends SimpleChannelInboundHandler<FMLMessage.EntityMessage> {
     @Override

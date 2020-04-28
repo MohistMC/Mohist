@@ -19,15 +19,13 @@
 
 package net.minecraftforge.event.brewing;
 
+import javax.annotation.Nonnull;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntityBrewingStand;
 import net.minecraft.util.NonNullList;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.Cancelable;
 import net.minecraftforge.fml.common.eventhandler.Event;
-import net.minecraftforge.fml.common.eventhandler.Event.HasResult;
-
-import javax.annotation.Nonnull;
 
 
 public class PotionBrewEvent extends Event

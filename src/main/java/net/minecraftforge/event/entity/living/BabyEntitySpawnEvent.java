@@ -19,6 +19,7 @@
 
 package net.minecraftforge.event.entity.living;
 
+import javax.annotation.Nullable;
 import net.minecraft.entity.EntityAgeable;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.ai.EntityAIMate;
@@ -28,7 +29,6 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.Cancelable;
 import net.minecraftforge.fml.common.eventhandler.Event;
-import javax.annotation.Nullable;
 
 /**
  * BabyEntitySpawnEvent is fired just before a baby entity is about to be spawned. <br>

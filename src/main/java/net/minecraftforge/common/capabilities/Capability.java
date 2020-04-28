@@ -19,14 +19,11 @@
 
 package net.minecraftforge.common.capabilities;
 
-import java.util.concurrent.Callable;
-
 import com.google.common.base.Throwables;
-
+import java.util.concurrent.Callable;
+import javax.annotation.Nullable;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.util.EnumFacing;
-
-import javax.annotation.Nullable;
 
 /**
  * This is the core holder object Capabilities.

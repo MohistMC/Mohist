@@ -19,6 +19,14 @@
 
 package net.minecraftforge.client.model.b3d;
 
+import com.google.common.base.Joiner;
+import com.google.common.collect.HashBasedTable;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableMultimap;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.ImmutableTable;
+import com.google.common.collect.Table;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -34,15 +42,15 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
-
+import java.util.function.Function;
 import javax.annotation.Nullable;
 import javax.vecmath.Matrix4f;
 import javax.vecmath.Quat4f;
 import javax.vecmath.Vector2f;
 import javax.vecmath.Vector3f;
 import javax.vecmath.Vector4f;
-
 import net.minecraftforge.common.ForgeVersion;
 import net.minecraftforge.common.model.TRSRTransformation;
 import org.apache.commons.io.IOUtils;
@@ -50,17 +58,6 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.lang3.tuple.Triple;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
-import java.util.function.Function;
-import com.google.common.base.Joiner;
-import java.util.Optional;
-import com.google.common.collect.HashBasedTable;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableMultimap;
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.ImmutableTable;
-import com.google.common.collect.Table;
 
 public class B3DModel
 {

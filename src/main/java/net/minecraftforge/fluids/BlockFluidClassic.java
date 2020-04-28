@@ -19,13 +19,13 @@
 
 package net.minecraftforge.fluids;
 
+import com.google.common.primitives.Ints;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
-
-import com.google.common.primitives.Ints;
-
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import net.minecraft.block.material.MapColor;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
@@ -35,9 +35,6 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.event.ForgeEventFactory;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 /**
  * This is a fluid block implementation which emulates vanilla Minecraft fluid behavior.

@@ -19,12 +19,11 @@
 
 package net.minecraftforge.items.wrapper;
 
+import javax.annotation.Nonnull;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.ItemHandlerHelper;
-
-import javax.annotation.Nonnull;
 
 public class InvWrapper implements IItemHandlerModifiable
 {

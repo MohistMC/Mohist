@@ -19,11 +19,10 @@
 
 package net.minecraftforge.event.brewing;
 
+import javax.annotation.Nonnull;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.event.entity.player.PlayerEvent;
-
-import javax.annotation.Nonnull;
 
 /**
  * This event is called when a player picks up a potion from a brewing stand.

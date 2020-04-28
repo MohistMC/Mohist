@@ -19,12 +19,11 @@
 
 package net.minecraftforge.common.brewing;
 
+import javax.annotation.Nonnull;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.potion.PotionHelper;
-
-import javax.annotation.Nonnull;
 
 /**
  * Used in BrewingRecipeRegistry to maintain the vanilla behaviour.

@@ -19,19 +19,15 @@
 
 package net.minecraftforge.fml.common.network.simpleimpl;
 
-import org.apache.logging.log4j.Level;
-
+import com.google.common.base.Preconditions;
+import io.netty.channel.ChannelFutureListener;
+import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.SimpleChannelInboundHandler;
 import net.minecraft.network.INetHandler;
 import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.network.FMLOutboundHandler;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.relauncher.Side;
-
-import com.google.common.base.Preconditions;
-
-import io.netty.channel.ChannelFutureListener;
-import io.netty.channel.ChannelHandlerContext;
-import io.netty.channel.SimpleChannelInboundHandler;
 
 public class SimpleChannelHandlerWrapper<REQ extends IMessage, REPLY extends IMessage> extends SimpleChannelInboundHandler<REQ> {
     private final IMessageHandler<? super REQ, ? extends REPLY> messageHandler;

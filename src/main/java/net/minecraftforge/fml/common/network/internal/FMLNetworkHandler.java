@@ -20,16 +20,17 @@
 package net.minecraftforge.fml.common.network.internal;
 
 import com.google.common.collect.Lists;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 import io.netty.channel.ChannelPipeline;
 import io.netty.channel.embedded.EmbeddedChannel;
-
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-
+import javax.annotation.Nullable;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -37,7 +38,6 @@ import net.minecraft.inventory.Container;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.Packet;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.management.PlayerList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
@@ -50,8 +50,8 @@ import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.ModContainer;
 import net.minecraftforge.fml.common.network.FMLEmbeddedChannel;
 import net.minecraftforge.fml.common.network.FMLOutboundHandler;
-import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.network.FMLOutboundHandler.OutboundTarget;
+import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.network.handshake.FMLHandshakeMessage;
 import net.minecraftforge.fml.common.network.handshake.NetworkDispatcher;
 import net.minecraftforge.fml.common.network.internal.FMLMessage.CompleteHandshake;
@@ -59,9 +59,6 @@ import net.minecraftforge.fml.common.registry.EntityRegistry;
 import net.minecraftforge.fml.common.registry.EntityRegistry.EntityRegistration;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
 import org.apache.commons.lang3.tuple.Pair;
 import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.v1_12_R1.event.CraftEventFactory;
@@ -69,8 +66,6 @@ import org.bukkit.craftbukkit.v1_12_R1.inventory.CraftInventory;
 import org.bukkit.craftbukkit.v1_12_R1.inventory.CraftInventoryView;
 import org.bukkit.event.inventory.InventoryType;
 import red.mohist.configuration.MohistConfig;
-
-import javax.annotation.Nullable;
 
 public class FMLNetworkHandler
 {

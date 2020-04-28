@@ -19,13 +19,11 @@
 
 package net.minecraftforge.common.capabilities;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import com.google.common.collect.Lists;
 import java.util.List;
 import java.util.Map;
-
-import com.google.common.collect.Lists;
-
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;

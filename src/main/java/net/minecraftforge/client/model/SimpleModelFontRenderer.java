@@ -19,15 +19,10 @@
 
 package net.minecraftforge.client.model;
 
+import com.google.common.collect.ImmutableList;
 import javax.vecmath.Matrix4f;
 import javax.vecmath.Vector3f;
 import javax.vecmath.Vector4f;
-
-import net.minecraftforge.client.model.pipeline.UnpackedBakedQuad;
-import net.minecraftforge.common.model.TRSRTransformation;
-
-import com.google.common.collect.ImmutableList;
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.block.model.BakedQuad;
@@ -38,6 +33,8 @@ import net.minecraft.client.resources.IResourceManager;
 import net.minecraft.client.settings.GameSettings;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.client.model.pipeline.UnpackedBakedQuad;
+import net.minecraftforge.common.model.TRSRTransformation;
 
 public abstract class SimpleModelFontRenderer extends FontRenderer {
 

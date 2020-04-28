@@ -19,10 +19,9 @@
 
 package net.minecraftforge.items.wrapper;
 
+import javax.annotation.Nonnull;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.items.IItemHandlerModifiable;
-
-import javax.annotation.Nonnull;
 
 // combines multiple IItemHandlerModifiable into one interface
 public class CombinedInvWrapper implements IItemHandlerModifiable

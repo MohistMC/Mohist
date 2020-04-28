@@ -19,13 +19,12 @@
 
 package net.minecraftforge.client.event;
 
+import java.awt.image.BufferedImage;
+import java.io.File;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraftforge.fml.common.eventhandler.Cancelable;
 import net.minecraftforge.fml.common.eventhandler.Event;
-
-import java.awt.image.BufferedImage;
-import java.io.File;
 
 /**
  * This event is fired before and after a screenshot is taken

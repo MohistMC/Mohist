@@ -22,7 +22,6 @@ package net.minecraftforge.server.command;
 import java.io.IOException;
 import java.util.ArrayDeque;
 import java.util.Queue;
-
 import net.minecraft.command.ICommandSender;
 import net.minecraft.server.management.PlayerChunkMapEntry;
 import net.minecraft.util.math.BlockPos;

@@ -19,16 +19,15 @@
 
 package net.minecraftforge.fml.common.discovery;
 
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
 import java.io.File;
 import java.util.List;
-
 import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.LoaderException;
 import net.minecraftforge.fml.common.ModClassLoader;
 import net.minecraftforge.fml.common.ModContainer;
 import net.minecraftforge.fml.relauncher.CoreModManager;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Lists;
 
 public class ModDiscoverer
 {

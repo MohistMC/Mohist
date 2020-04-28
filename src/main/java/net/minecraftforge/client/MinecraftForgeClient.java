@@ -19,6 +19,9 @@
 
 package net.minecraftforge.client;
 
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.BitSet;
@@ -26,9 +29,7 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
-
 import javax.annotation.Nonnull;
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.TextureUtil;
 import net.minecraft.client.resources.IResource;
@@ -38,12 +39,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.ChunkCache;
 import net.minecraft.world.World;
-
 import org.apache.commons.lang3.tuple.Pair;
-
-import com.google.common.cache.CacheBuilder;
-import com.google.common.cache.CacheLoader;
-import com.google.common.cache.LoadingCache;
 
 public class MinecraftForgeClient
 {

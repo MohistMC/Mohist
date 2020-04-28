@@ -19,12 +19,10 @@
 
 package net.minecraftforge.common.property;
 
-import java.util.Collection;
-
-import net.minecraft.block.state.IBlockState;
-
-import java.util.Optional;
 import com.google.common.collect.ImmutableMap;
+import java.util.Collection;
+import java.util.Optional;
+import net.minecraft.block.state.IBlockState;
 
 public interface IExtendedBlockState extends IBlockState
 {

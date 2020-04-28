@@ -19,12 +19,16 @@
 
 package net.minecraftforge.client.model;
 
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParser;
 import java.util.Collection;
 import java.util.List;
-
+import java.util.Optional;
+import java.util.function.Function;
 import javax.annotation.Nullable;
 import javax.vecmath.Matrix4f;
-
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.IBakedModel;
@@ -42,15 +46,7 @@ import net.minecraftforge.common.ForgeVersion;
 import net.minecraftforge.common.model.IModelState;
 import net.minecraftforge.common.model.TRSRTransformation;
 import net.minecraftforge.fml.common.FMLLog;
-
 import org.apache.commons.lang3.tuple.Pair;
-
-import java.util.function.Function;
-import java.util.Optional;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonParser;
 
 public final class MultiLayerModel implements IModel
 {

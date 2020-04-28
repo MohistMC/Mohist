@@ -20,10 +20,8 @@
 package net.minecraftforge.common.capabilities;
 
 import java.util.Map;
-
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-
 import net.minecraft.util.EnumFacing;
 
 public interface ICapabilityProvider

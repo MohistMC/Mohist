@@ -24,16 +24,14 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.util.text.TextFormatting;
-import net.minecraftforge.fml.common.FMLLog;
-
 import static net.minecraftforge.fml.client.config.GuiUtils.RESET_CHAR;
 import static net.minecraftforge.fml.client.config.GuiUtils.UNDO_CHAR;
+import net.minecraftforge.fml.common.FMLLog;
 
 /**
  * This class provides a screen that allows the user to select a value from a list.

@@ -19,32 +19,29 @@
 
 package net.minecraftforge.event.world;
 
+import com.google.common.collect.ImmutableList;
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
-
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import net.minecraft.block.BlockPortal;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.BlockSnapshot;
 import net.minecraftforge.fml.common.eventhandler.Cancelable;
 import net.minecraftforge.fml.common.eventhandler.Event;
-
-import com.google.common.collect.ImmutableList;
 import org.bukkit.block.BlockState;
 import org.bukkit.craftbukkit.v1_12_R1.block.CraftBlockState;
 import org.bukkit.craftbukkit.v1_12_R1.event.CraftEventFactory;
 import org.bukkit.event.block.BlockMultiPlaceEvent;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 public class BlockEvent extends Event
 {

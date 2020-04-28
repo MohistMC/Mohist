@@ -22,8 +22,8 @@ package net.minecraftforge.fml.common.versioning;
  * under the License.
  */
 
-import net.minecraft.util.text.translation.I18n; //Forge: Added imports
 import javax.annotation.Nullable;
+import net.minecraft.util.text.translation.I18n;
 
 /**
  * Describes a restriction in versioning.

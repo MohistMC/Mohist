@@ -35,7 +35,6 @@ import net.minecraftforge.common.model.animation.CapabilityAnimation;
 import net.minecraftforge.common.model.animation.IAnimationStateMachine;
 import net.minecraftforge.common.property.IExtendedBlockState;
 import net.minecraftforge.common.property.Properties;
-
 import org.apache.commons.lang3.tuple.Pair;
 
 /**

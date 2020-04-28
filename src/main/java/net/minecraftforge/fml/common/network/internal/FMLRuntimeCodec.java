@@ -19,15 +19,13 @@
 
 package net.minecraftforge.fml.common.network.internal;
 
+import com.google.common.base.Splitter;
+import io.netty.buffer.ByteBuf;
+import io.netty.channel.ChannelHandlerContext;
 import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.FMLIndexedMessageToMessageCodec;
 import net.minecraftforge.fml.common.network.FMLNetworkException;
-
-import com.google.common.base.Splitter;
-
-import io.netty.buffer.ByteBuf;
-import io.netty.channel.ChannelHandlerContext;
 
 public class FMLRuntimeCodec extends FMLIndexedMessageToMessageCodec<FMLMessage> {
     public FMLRuntimeCodec()

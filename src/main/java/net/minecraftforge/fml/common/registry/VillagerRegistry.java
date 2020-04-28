@@ -19,15 +19,14 @@
 
 package net.minecraftforge.fml.common.registry;
 
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
+import javax.annotation.Nullable;
 import net.minecraft.entity.monster.EntityZombieVillager;
-import org.apache.commons.lang3.Validate;
-
 import net.minecraft.entity.passive.EntityVillager;
 import net.minecraft.entity.passive.EntityVillager.ITradeList;
 import net.minecraft.util.EnumFacing;
@@ -40,8 +39,7 @@ import net.minecraft.world.gen.structure.StructureVillagePieces.Village;
 import net.minecraftforge.fml.common.registry.GameRegistry.ObjectHolder;
 import net.minecraftforge.registries.GameData;
 import net.minecraftforge.registries.IForgeRegistryEntry;
-
-import javax.annotation.Nullable;
+import org.apache.commons.lang3.Validate;
 
 /**
  * Registry for villager trading control

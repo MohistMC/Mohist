@@ -19,17 +19,16 @@
 
 package net.minecraftforge.common.chunkio;
 
+import java.io.IOException;
+import java.util.concurrent.ConcurrentLinkedQueue;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.math.ChunkPos;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.storage.AnvilChunkLoader;
 import net.minecraft.world.gen.ChunkProviderServer;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.math.ChunkPos;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.world.ChunkDataEvent;
 import org.bukkit.Server;
-
-import java.io.IOException;
-import java.util.concurrent.ConcurrentLinkedQueue;
 
 class ChunkIOProvider implements Runnable
 {

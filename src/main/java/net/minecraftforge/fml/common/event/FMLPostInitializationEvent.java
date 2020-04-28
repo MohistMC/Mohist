@@ -19,15 +19,13 @@
 
 package net.minecraftforge.fml.common.event;
 
+import java.lang.reflect.Constructor;
 import java.util.Arrays;
 import java.util.Objects;
 import java.util.Optional;
-
 import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.LoaderState.ModState;
-
-import java.lang.reflect.Constructor;
 
 /**
  * Called after {@link FMLInitializationEvent} has been dispatched on every mod. This is the third and last

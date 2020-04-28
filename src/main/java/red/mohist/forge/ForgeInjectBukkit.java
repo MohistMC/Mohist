@@ -8,7 +8,6 @@ import net.minecraft.item.Item;
 import net.minecraft.potion.Potion;
 import net.minecraft.tileentity.BannerPattern;
 import net.minecraft.util.ResourceLocation;
-import red.mohist.entity.CraftCustomEntity;
 import net.minecraftforge.common.util.EnumHelper;
 import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 import net.minecraftforge.fml.common.registry.EntityRegistry;
@@ -30,6 +29,7 @@ import org.bukkit.util.permissions.DefaultPermissions;
 import red.mohist.Mohist;
 import red.mohist.api.ItemAPI;
 import red.mohist.api.ServerAPI;
+import red.mohist.entity.CraftCustomEntity;
 import red.mohist.util.i18n.Message;
 
 public class ForgeInjectBukkit {

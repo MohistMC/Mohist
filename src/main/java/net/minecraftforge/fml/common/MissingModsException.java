@@ -19,16 +19,14 @@
 
 package net.minecraftforge.fml.common;
 
-import javax.annotation.Nullable;
+import com.google.common.base.Preconditions;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
-
-import com.google.common.base.Preconditions;
-
+import javax.annotation.Nullable;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraftforge.fml.client.GuiModsMissing;
 import net.minecraftforge.fml.client.IDisplayableError;

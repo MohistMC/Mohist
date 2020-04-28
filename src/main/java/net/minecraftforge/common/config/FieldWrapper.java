@@ -19,21 +19,25 @@
 
 package net.minecraftforge.common.config;
 
+import com.google.common.collect.Lists;
 import java.lang.reflect.Field;
 import java.lang.reflect.GenericArrayType;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
-import java.util.*;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.regex.Pattern;
-
-import com.google.common.collect.Lists;
-
 import net.minecraftforge.common.config.Config.RangeDouble;
 import net.minecraftforge.common.config.Config.RangeInt;
+import static net.minecraftforge.common.config.ConfigManager.ADAPTERS;
+import static net.minecraftforge.common.config.ConfigManager.ARRAY_REMAP;
+import static net.minecraftforge.common.config.ConfigManager.NEW_LINE;
+import static net.minecraftforge.common.config.ConfigManager.PIPE;
 import org.apache.commons.lang3.StringUtils;
-
-import static net.minecraftforge.common.config.ConfigManager.*;
 
 public abstract class FieldWrapper implements IFieldWrapper
 {

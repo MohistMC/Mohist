@@ -20,10 +20,9 @@
 package net.minecraftforge.items.wrapper;
 
 import com.google.common.base.Preconditions;
+import javax.annotation.Nonnull;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.items.IItemHandlerModifiable;
-
-import javax.annotation.Nonnull;
 
 /**
  * A wrapper that composes another IItemHandlerModifiable, exposing only a range of the composed slots.

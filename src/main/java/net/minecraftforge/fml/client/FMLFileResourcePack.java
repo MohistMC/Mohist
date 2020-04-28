@@ -24,14 +24,10 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
-
-import net.minecraftforge.fml.common.FMLLog;
-import org.apache.logging.log4j.LogManager;
-
 import javax.imageio.ImageIO;
-
 import net.minecraft.client.resources.FileResourcePack;
 import net.minecraftforge.fml.common.FMLContainerHolder;
+import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.ModContainer;
 
 public class FMLFileResourcePack extends FileResourcePack implements FMLContainerHolder {

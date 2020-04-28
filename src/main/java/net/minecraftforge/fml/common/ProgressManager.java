@@ -19,11 +19,10 @@
 
 package net.minecraftforge.fml.common;
 
+import com.google.common.base.Joiner;
 import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
-
-import com.google.common.base.Joiner;
 
 /**
  * Not a fully fleshed out API, may change in future MC versions.

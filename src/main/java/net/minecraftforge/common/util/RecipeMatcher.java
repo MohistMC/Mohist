@@ -19,12 +19,11 @@
 
 package net.minecraftforge.common.util;
 
+import com.google.common.base.Predicate;
 import java.util.BitSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
-
-import com.google.common.base.Predicate;
 
 public class RecipeMatcher
 {

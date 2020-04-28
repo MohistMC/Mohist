@@ -20,14 +20,13 @@
 package net.minecraftforge.common.util;
 
 import com.google.common.collect.Streams;
-import org.apache.commons.lang3.StringUtils;
-
-import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
+import javax.annotation.Nonnull;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * Utility to format data into a textual (markdown-compliant) table.

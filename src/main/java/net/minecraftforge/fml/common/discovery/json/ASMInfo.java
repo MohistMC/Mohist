@@ -19,19 +19,15 @@
 
 package net.minecraftforge.fml.common.discovery.json;
 
-import java.util.List;
-import java.util.Map;
-import java.util.function.Function;
-
-import org.apache.commons.lang3.Validate;
-import org.objectweb.asm.Type;
-
 import com.google.common.base.MoreObjects;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-
+import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
 import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.discovery.asm.ModAnnotation.EnumHolder;
+import org.objectweb.asm.Type;
 
 //Package private, modders shouldn't access this. Do it through ASMDataTable.
 class ASMInfo

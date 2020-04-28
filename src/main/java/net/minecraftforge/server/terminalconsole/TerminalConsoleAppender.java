@@ -23,11 +23,10 @@
 
 package net.minecraftforge.server.terminalconsole;
 
-import javax.annotation.Nullable;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.io.Serializable;
-
+import javax.annotation.Nullable;
 import org.apache.logging.log4j.core.Appender;
 import org.apache.logging.log4j.core.Core;
 import org.apache.logging.log4j.core.Filter;

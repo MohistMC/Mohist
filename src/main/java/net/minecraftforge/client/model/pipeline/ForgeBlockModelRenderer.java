@@ -20,7 +20,6 @@
 package net.minecraftforge.client.model.pipeline;
 
 import java.util.List;
-
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.BlockModelRenderer;
 import net.minecraft.client.renderer.BufferBuilder;

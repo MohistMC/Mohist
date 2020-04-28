@@ -19,6 +19,8 @@
 
 package net.minecraftforge.client.model.pipeline;
 
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.block.model.BakedQuad;
@@ -29,9 +31,6 @@ import net.minecraft.client.renderer.vertex.VertexFormatElement.EnumUsage;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.client.ForgeHooksClient;
 import org.apache.commons.lang3.tuple.Pair;
-
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
 
 public class LightUtil
 {

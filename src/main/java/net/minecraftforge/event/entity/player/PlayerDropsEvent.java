@@ -20,14 +20,12 @@
 package net.minecraftforge.event.entity.player;
 
 import java.util.List;
-
-import net.minecraftforge.common.ForgeHooks;
-import net.minecraftforge.fml.common.eventhandler.Cancelable;
-
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.DamageSource;
+import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.event.entity.living.LivingDropsEvent;
+import net.minecraftforge.fml.common.eventhandler.Cancelable;
 
 /**
  * Child class of LivingDropEvent that is fired specifically when a

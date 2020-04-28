@@ -19,14 +19,13 @@
 
 package net.minecraftforge.event.entity.player;
 
+import javax.annotation.Nonnull;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.eventhandler.Cancelable;
 import net.minecraftforge.fml.common.eventhandler.Event;
-
-import javax.annotation.Nonnull;
 
 /**
  * This event is fired when a player attempts to use a Hoe on a block, it

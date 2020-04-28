@@ -19,7 +19,7 @@
 
 package net.minecraftforge.server.command;
 
-import javax.annotation.Nullable;
+import com.google.common.collect.Maps;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -27,8 +27,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
-
-import com.google.common.collect.Maps;
+import javax.annotation.Nullable;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;

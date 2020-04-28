@@ -19,25 +19,6 @@
 
 package net.minecraftforge.fml.common.asm.transformers.deobf;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import net.minecraft.launchwrapper.LaunchClassLoader;
-import net.minecraftforge.fml.common.FMLLog;
-import net.minecraftforge.fml.common.patcher.ClassPatchManager;
-
-import org.objectweb.asm.ClassReader;
-import org.objectweb.asm.commons.Remapper;
-import org.objectweb.asm.tree.ClassNode;
-import org.objectweb.asm.tree.FieldNode;
-
 import com.google.common.base.CharMatcher;
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
@@ -52,8 +33,23 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.google.common.io.CharSource;
 import com.google.common.io.Files;
-
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import javax.annotation.Nullable;
+import net.minecraft.launchwrapper.LaunchClassLoader;
+import net.minecraftforge.fml.common.FMLLog;
+import net.minecraftforge.fml.common.patcher.ClassPatchManager;
+import org.objectweb.asm.ClassReader;
+import org.objectweb.asm.commons.Remapper;
+import org.objectweb.asm.tree.ClassNode;
+import org.objectweb.asm.tree.FieldNode;
 
 public class FMLDeobfuscatingRemapper extends Remapper {
     public static final FMLDeobfuscatingRemapper INSTANCE = new FMLDeobfuscatingRemapper();

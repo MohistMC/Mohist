@@ -19,16 +19,13 @@
 
 package net.minecraftforge.fml.common.network.handshake;
 
-import io.netty.channel.ChannelFutureListener;
-import io.netty.channel.ChannelHandlerContext;
-
-import java.util.Map;
-import java.util.function.Consumer;
-
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 import com.google.common.util.concurrent.Futures;
-
+import io.netty.channel.ChannelFutureListener;
+import io.netty.channel.ChannelHandlerContext;
+import java.util.Map;
+import java.util.function.Consumer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.FMLLog;

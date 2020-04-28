@@ -21,18 +21,15 @@ package net.minecraftforge.common;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-
-import net.minecraft.util.CombatRules;
-import net.minecraft.util.DamageSource;
+import javax.annotation.Nonnull;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemArmor;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.CombatRules;
+import net.minecraft.util.DamageSource;
 import net.minecraft.util.NonNullList;
-
-import javax.annotation.Nonnull;
 
 /**
  * This interface is to be implemented by ItemArmor classes. It will allow to

@@ -19,13 +19,13 @@
 
 package net.minecraftforge.event;
 
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.network.NetHandlerPlayServer;
 import net.minecraft.network.play.client.CPacketChatMessage;
+import net.minecraft.util.text.ITextComponent;
 import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.fml.common.eventhandler.Cancelable;
 import net.minecraftforge.fml.common.eventhandler.Event;
-import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.util.text.ITextComponent;
 
 /**
  * ServerChatEvent is fired whenever a C01PacketChatMessage is processed. <br>

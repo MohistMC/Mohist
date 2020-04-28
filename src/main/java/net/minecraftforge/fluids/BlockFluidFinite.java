@@ -20,18 +20,16 @@
 package net.minecraftforge.fluids;
 
 import java.util.Random;
-
+import javax.annotation.Nonnull;
 import net.minecraft.block.material.MapColor;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.EnumFacing;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
-
-import javax.annotation.Nonnull;
 
 /**
  * This is a cellular-automata based finite fluid block implementation.

@@ -19,10 +19,9 @@
 
 package net.minecraftforge.common.ticket;
 
+import javax.annotation.Nonnull;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.Vec3d;
-
-import javax.annotation.Nonnull;
 
 public class AABBTicket extends SimpleTicket<Vec3d>
 {

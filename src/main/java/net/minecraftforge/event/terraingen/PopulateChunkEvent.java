@@ -20,7 +20,6 @@
 package net.minecraftforge.event.terraingen;
 
 import java.util.Random;
-
 import net.minecraft.world.World;
 import net.minecraft.world.gen.IChunkGenerator;
 import net.minecraftforge.common.MinecraftForge;

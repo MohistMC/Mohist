@@ -19,15 +19,14 @@
 
 package net.minecraftforge.fml.common.versioning;
 
+import com.google.common.base.Splitter;
+import com.google.common.base.Strings;
+import com.google.common.collect.ImmutableList;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
-
-import com.google.common.base.Splitter;
-import com.google.common.base.Strings;
-import com.google.common.collect.ImmutableList;
 import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.LoaderException;
 import net.minecraftforge.fml.relauncher.Side;

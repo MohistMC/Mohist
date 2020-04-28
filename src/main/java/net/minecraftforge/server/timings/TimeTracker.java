@@ -19,14 +19,12 @@
 
 package net.minecraftforge.server.timings;
 
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.MapMaker;
 import java.lang.ref.WeakReference;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
-
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.MapMaker;
-
 import net.minecraft.entity.Entity;
 import net.minecraft.tileentity.TileEntity;
 

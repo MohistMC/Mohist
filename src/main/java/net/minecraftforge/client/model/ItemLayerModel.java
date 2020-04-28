@@ -19,8 +19,14 @@
 
 package net.minecraftforge.client.model;
 
-import net.minecraftforge.common.ForgeVersion;
-
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
+import java.util.Arrays;
+import java.util.BitSet;
+import java.util.Collection;
+import java.util.EnumMap;
+import java.util.Optional;
+import java.util.function.Function;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms.TransformType;
@@ -34,18 +40,9 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.model.pipeline.IVertexConsumer;
 import net.minecraftforge.client.model.pipeline.TRSRTransformer;
 import net.minecraftforge.client.model.pipeline.UnpackedBakedQuad;
+import net.minecraftforge.common.ForgeVersion;
 import net.minecraftforge.common.model.IModelState;
 import net.minecraftforge.common.model.TRSRTransformation;
-
-import java.util.Arrays;
-import java.util.BitSet;
-import java.util.Collection;
-import java.util.EnumMap;
-import java.util.Optional;
-import java.util.function.Function;
-
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
 
 public final class ItemLayerModel implements IModel
 {

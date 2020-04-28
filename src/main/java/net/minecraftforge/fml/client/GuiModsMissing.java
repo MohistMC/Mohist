@@ -20,7 +20,6 @@
 package net.minecraftforge.fml.client;
 
 import java.util.List;
-
 import net.minecraft.client.resources.I18n;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.fml.common.Loader;

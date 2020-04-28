@@ -19,21 +19,27 @@
 
 package net.minecraftforge.fml.common.eventhandler;
 
-import static org.objectweb.asm.Opcodes.*;
-
+import com.google.common.collect.Maps;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.ParameterizedType;
 import java.util.HashMap;
-
 import net.minecraftforge.fml.common.ModContainer;
-
 import org.apache.logging.log4j.ThreadContext;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.MethodVisitor;
+import static org.objectweb.asm.Opcodes.ACC_PUBLIC;
+import static org.objectweb.asm.Opcodes.ACC_SUPER;
+import static org.objectweb.asm.Opcodes.ALOAD;
+import static org.objectweb.asm.Opcodes.CHECKCAST;
+import static org.objectweb.asm.Opcodes.GETFIELD;
+import static org.objectweb.asm.Opcodes.INVOKESPECIAL;
+import static org.objectweb.asm.Opcodes.INVOKESTATIC;
+import static org.objectweb.asm.Opcodes.INVOKEVIRTUAL;
+import static org.objectweb.asm.Opcodes.PUTFIELD;
+import static org.objectweb.asm.Opcodes.RETURN;
+import static org.objectweb.asm.Opcodes.V1_6;
 import org.objectweb.asm.Type;
-
-import com.google.common.collect.Maps;
 
 public class ASMEventHandler implements IEventListener
 {

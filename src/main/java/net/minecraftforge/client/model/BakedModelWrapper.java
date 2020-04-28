@@ -19,10 +19,9 @@
 
 package net.minecraftforge.client.model;
 
+import java.util.List;
 import javax.annotation.Nullable;
 import javax.vecmath.Matrix4f;
-import java.util.List;
-
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.IBakedModel;

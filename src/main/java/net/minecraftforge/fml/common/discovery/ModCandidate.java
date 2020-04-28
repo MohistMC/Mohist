@@ -19,14 +19,12 @@
 
 package net.minecraftforge.fml.common.discovery;
 
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import java.io.File;
 import java.util.List;
 import java.util.Set;
-
 import net.minecraftforge.fml.common.ModContainer;
-
-import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 
 
 public class ModCandidate

@@ -19,13 +19,16 @@
 
 package net.minecraftforge.fluids;
 
+import com.google.common.base.Strings;
+import com.google.common.collect.BiMap;
+import com.google.common.collect.HashBiMap;
+import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
-
-import net.minecraftforge.fml.common.LoaderState;
-
+import javax.annotation.Nullable;
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 import net.minecraft.nbt.NBTTagCompound;
@@ -34,20 +37,12 @@ import net.minecraft.nbt.NBTTagString;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.translation.I18n;
 import net.minecraftforge.common.MinecraftForge;
-
-import com.google.common.base.Strings;
-import com.google.common.collect.BiMap;
-import com.google.common.collect.HashBiMap;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
-
 import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.Loader;
+import net.minecraftforge.fml.common.LoaderState;
 import net.minecraftforge.fml.common.ModContainer;
 import net.minecraftforge.fml.common.eventhandler.Event;
 import net.minecraftforge.registries.IRegistryDelegate;
-
-import javax.annotation.Nullable;
 
 /**
  * Handles Fluid registrations. Fluids MUST be registered in order to function.

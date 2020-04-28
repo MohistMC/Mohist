@@ -19,7 +19,8 @@
 
 package net.minecraftforge.fml.client;
 
-import java.awt.Dimension;
+import com.google.common.base.Strings;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
@@ -28,28 +29,28 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map.Entry;
-
 import javax.annotation.Nullable;
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.client.gui.GuiUtilRenderComponents;
+import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.client.renderer.texture.TextureUtil;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.resources.IResourcePack;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.StringUtils;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TextComponentString;
+import static net.minecraft.util.text.TextFormatting.RED;
+import static net.minecraft.util.text.TextFormatting.WHITE;
 import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.ForgeVersion;
 import net.minecraftforge.common.ForgeVersion.CheckResult;
@@ -59,11 +60,7 @@ import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.ModContainer;
 import net.minecraftforge.fml.common.ModContainer.Disableable;
 import net.minecraftforge.fml.common.versioning.ComparableVersion;
-import static net.minecraft.util.text.TextFormatting.*;
-
 import org.lwjgl.input.Mouse;
-
-import com.google.common.base.Strings;
 import org.lwjgl.opengl.GL11;
 
 /**

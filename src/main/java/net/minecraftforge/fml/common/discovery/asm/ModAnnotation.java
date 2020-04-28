@@ -19,16 +19,13 @@
 
 package net.minecraftforge.fml.common.discovery.asm;
 
-import java.util.ArrayList;
-import java.util.Map;
-
-import net.minecraftforge.fml.common.discovery.asm.ASMModParser.AnnotationType;
-
-import org.objectweb.asm.Type;
-
 import com.google.common.base.MoreObjects;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import java.util.ArrayList;
+import java.util.Map;
+import net.minecraftforge.fml.common.discovery.asm.ASMModParser.AnnotationType;
+import org.objectweb.asm.Type;
 
 public class ModAnnotation
 {

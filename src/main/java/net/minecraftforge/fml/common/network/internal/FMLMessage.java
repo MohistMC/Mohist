@@ -21,11 +21,9 @@ package net.minecraftforge.fml.common.network.internal;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
-
 import java.io.IOException;
 import java.util.List;
 import java.util.UUID;
-
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.network.PacketBuffer;

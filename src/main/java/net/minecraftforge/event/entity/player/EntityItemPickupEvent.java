@@ -19,10 +19,10 @@
 
 package net.minecraftforge.event.entity.player;
 
-import net.minecraftforge.fml.common.eventhandler.Cancelable;
-import net.minecraftforge.fml.common.eventhandler.Event;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraftforge.fml.common.eventhandler.Cancelable;
+import net.minecraftforge.fml.common.eventhandler.Event;
 
 /**
  * This event is called when a player collides with a EntityItem on the ground.

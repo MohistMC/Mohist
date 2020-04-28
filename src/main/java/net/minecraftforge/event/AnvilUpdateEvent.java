@@ -19,11 +19,10 @@
 
 package net.minecraftforge.event;
 
+import javax.annotation.Nonnull;
+import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.common.eventhandler.Cancelable;
 import net.minecraftforge.fml.common.eventhandler.Event;
-import net.minecraft.item.ItemStack;
-
-import javax.annotation.Nonnull;
 
 /**
  * 

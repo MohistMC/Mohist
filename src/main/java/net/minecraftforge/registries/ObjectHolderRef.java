@@ -25,14 +25,11 @@ import java.lang.reflect.Modifier;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.Queue;
-
+import javax.annotation.Nullable;
 import net.minecraft.util.ResourceLocation;
-
 import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.common.registry.GameRegistry.ObjectHolder;
-
-import javax.annotation.Nullable;
 
 /**
  * Internal class used in tracking {@link ObjectHolder} references

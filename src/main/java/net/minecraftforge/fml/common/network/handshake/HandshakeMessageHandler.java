@@ -19,11 +19,10 @@
 
 package net.minecraftforge.fml.common.network.handshake;
 
-import net.minecraftforge.fml.common.FMLLog;
-
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.util.AttributeKey;
+import net.minecraftforge.fml.common.FMLLog;
 
 public class HandshakeMessageHandler<S extends Enum<S> & IHandshakeState<S>> extends SimpleChannelInboundHandler<FMLHandshakeMessage> {
     private static final AttributeKey<IHandshakeState<?>> STATE = AttributeKey.valueOf("fml:handshake-state");

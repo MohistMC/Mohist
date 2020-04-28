@@ -19,21 +19,52 @@
 
 package net.minecraftforge.common;
 
-import java.util.*;
+import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableList;
+import java.util.ArrayDeque;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Deque;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
-
 import javax.annotation.Nonnull;
-
 import net.minecraft.init.Biomes;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.world.biome.*;
-import static net.minecraftforge.common.BiomeDictionary.Type.*;
+import net.minecraft.world.biome.Biome;
+import static net.minecraftforge.common.BiomeDictionary.Type.BEACH;
+import static net.minecraftforge.common.BiomeDictionary.Type.COLD;
+import static net.minecraftforge.common.BiomeDictionary.Type.CONIFEROUS;
+import static net.minecraftforge.common.BiomeDictionary.Type.DENSE;
+import static net.minecraftforge.common.BiomeDictionary.Type.DRY;
+import static net.minecraftforge.common.BiomeDictionary.Type.END;
+import static net.minecraftforge.common.BiomeDictionary.Type.FOREST;
+import static net.minecraftforge.common.BiomeDictionary.Type.HILLS;
+import static net.minecraftforge.common.BiomeDictionary.Type.HOT;
+import static net.minecraftforge.common.BiomeDictionary.Type.JUNGLE;
+import static net.minecraftforge.common.BiomeDictionary.Type.MESA;
+import static net.minecraftforge.common.BiomeDictionary.Type.MOUNTAIN;
+import static net.minecraftforge.common.BiomeDictionary.Type.MUSHROOM;
+import static net.minecraftforge.common.BiomeDictionary.Type.NETHER;
+import static net.minecraftforge.common.BiomeDictionary.Type.OCEAN;
+import static net.minecraftforge.common.BiomeDictionary.Type.PLAINS;
+import static net.minecraftforge.common.BiomeDictionary.Type.RARE;
+import static net.minecraftforge.common.BiomeDictionary.Type.RIVER;
+import static net.minecraftforge.common.BiomeDictionary.Type.SANDY;
+import static net.minecraftforge.common.BiomeDictionary.Type.SAVANNA;
+import static net.minecraftforge.common.BiomeDictionary.Type.SNOWY;
+import static net.minecraftforge.common.BiomeDictionary.Type.SPARSE;
+import static net.minecraftforge.common.BiomeDictionary.Type.SPOOKY;
+import static net.minecraftforge.common.BiomeDictionary.Type.SWAMP;
+import static net.minecraftforge.common.BiomeDictionary.Type.VOID;
+import static net.minecraftforge.common.BiomeDictionary.Type.WASTELAND;
+import static net.minecraftforge.common.BiomeDictionary.Type.WET;
 import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
-
-import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableList;
 
 public class BiomeDictionary
 {

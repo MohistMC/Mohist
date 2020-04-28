@@ -19,23 +19,20 @@
 
 package net.minecraftforge.fml.common.launcher;
 
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import java.io.File;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-
 import net.minecraft.launchwrapper.ITweaker;
 import net.minecraft.launchwrapper.Launch;
 import net.minecraft.launchwrapper.LaunchClassLoader;
 import net.minecraftforge.fml.relauncher.FMLLaunchHandler;
 import net.minecraftforge.fml.relauncher.FMLSecurityManager;
-
 import org.apache.logging.log4j.LogManager;
-
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 
 public class FMLTweaker implements ITweaker {
     private File gameDir;

@@ -19,12 +19,10 @@
 
 package net.minecraftforge.server;
 
-import java.lang.ref.WeakReference;
-import java.util.Map;
-
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.MapMaker;
-
+import java.lang.ref.WeakReference;
+import java.util.Map;
 import net.minecraft.entity.Entity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.server.timings.TimeTracker;

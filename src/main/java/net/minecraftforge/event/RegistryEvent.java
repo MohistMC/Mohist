@@ -19,12 +19,9 @@
 
 package net.minecraftforge.event;
 
+import com.google.common.collect.ImmutableList;
 import java.util.Collection;
 import java.util.stream.Collectors;
-
-import org.apache.commons.lang3.Validate;
-
-import com.google.common.collect.ImmutableList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.ModContainer;
 import net.minecraftforge.fml.common.eventhandler.Event;
@@ -32,6 +29,7 @@ import net.minecraftforge.fml.common.eventhandler.GenericEvent;
 import net.minecraftforge.fml.common.eventhandler.IContextSetter;
 import net.minecraftforge.registries.IForgeRegistry;
 import net.minecraftforge.registries.IForgeRegistryEntry;
+import org.apache.commons.lang3.Validate;
 
 
 /**

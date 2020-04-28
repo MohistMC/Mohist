@@ -25,20 +25,6 @@
 
 package net.minecraftforge.fml.repackage.com.nothome.delta;
 
-import org.apache.commons.io.IOUtils;
-
-import static net.minecraftforge.fml.repackage.com.nothome.delta.GDiffWriter.COPY_INT_INT;
-import static net.minecraftforge.fml.repackage.com.nothome.delta.GDiffWriter.COPY_INT_UBYTE;
-import static net.minecraftforge.fml.repackage.com.nothome.delta.GDiffWriter.COPY_INT_USHORT;
-import static net.minecraftforge.fml.repackage.com.nothome.delta.GDiffWriter.COPY_LONG_INT;
-import static net.minecraftforge.fml.repackage.com.nothome.delta.GDiffWriter.COPY_USHORT_INT;
-import static net.minecraftforge.fml.repackage.com.nothome.delta.GDiffWriter.COPY_USHORT_UBYTE;
-import static net.minecraftforge.fml.repackage.com.nothome.delta.GDiffWriter.COPY_USHORT_USHORT;
-import static net.minecraftforge.fml.repackage.com.nothome.delta.GDiffWriter.DATA_INT;
-import static net.minecraftforge.fml.repackage.com.nothome.delta.GDiffWriter.DATA_MAX;
-import static net.minecraftforge.fml.repackage.com.nothome.delta.GDiffWriter.DATA_USHORT;
-import static net.minecraftforge.fml.repackage.com.nothome.delta.GDiffWriter.EOF;
-
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
@@ -52,6 +38,18 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.RandomAccessFile;
 import java.nio.ByteBuffer;
+import static net.minecraftforge.fml.repackage.com.nothome.delta.GDiffWriter.COPY_INT_INT;
+import static net.minecraftforge.fml.repackage.com.nothome.delta.GDiffWriter.COPY_INT_UBYTE;
+import static net.minecraftforge.fml.repackage.com.nothome.delta.GDiffWriter.COPY_INT_USHORT;
+import static net.minecraftforge.fml.repackage.com.nothome.delta.GDiffWriter.COPY_LONG_INT;
+import static net.minecraftforge.fml.repackage.com.nothome.delta.GDiffWriter.COPY_USHORT_INT;
+import static net.minecraftforge.fml.repackage.com.nothome.delta.GDiffWriter.COPY_USHORT_UBYTE;
+import static net.minecraftforge.fml.repackage.com.nothome.delta.GDiffWriter.COPY_USHORT_USHORT;
+import static net.minecraftforge.fml.repackage.com.nothome.delta.GDiffWriter.DATA_INT;
+import static net.minecraftforge.fml.repackage.com.nothome.delta.GDiffWriter.DATA_MAX;
+import static net.minecraftforge.fml.repackage.com.nothome.delta.GDiffWriter.DATA_USHORT;
+import static net.minecraftforge.fml.repackage.com.nothome.delta.GDiffWriter.EOF;
+import org.apache.commons.io.IOUtils;
 
 /**
  * This class patches an input file with a GDIFF patch file.

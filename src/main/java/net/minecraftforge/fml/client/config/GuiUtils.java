@@ -19,24 +19,21 @@
 
 package net.minecraftforge.fml.client.config;
 
+import java.util.ArrayList;
+import java.util.List;
+import javax.annotation.Nonnull;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
+import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.event.RenderTooltipEvent;
 import net.minecraftforge.common.MinecraftForge;
-
 import org.lwjgl.opengl.GL11;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.annotation.Nonnull;
 
 /**
  * This class provides several methods and constants used by the Config GUI classes.

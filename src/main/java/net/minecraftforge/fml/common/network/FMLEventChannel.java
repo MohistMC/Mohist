@@ -21,9 +21,8 @@ package net.minecraftforge.fml.common.network;
 
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
-
 import java.util.EnumMap;
-
+import javax.annotation.Nullable;
 import net.minecraft.client.network.NetHandlerPlayClient;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -33,8 +32,6 @@ import net.minecraftforge.fml.common.eventhandler.EventBus;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.network.internal.FMLProxyPacket;
 import net.minecraftforge.fml.relauncher.Side;
-
-import javax.annotation.Nullable;
 
 /**
  * An event driven network channel, using {@link FMLNetworkEvent.CustomPacketEvent} and {@link FMLNetworkEvent.CustomNetworkEvent}

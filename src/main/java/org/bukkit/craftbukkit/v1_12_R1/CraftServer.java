@@ -36,7 +36,6 @@ import javax.annotation.Nullable;
 import javax.imageio.ImageIO;
 import jline.console.ConsoleReader;
 import net.md_5.bungee.api.chat.BaseComponent;
-import net.md_5.specialsource.RemapperProcessor;
 import net.minecraft.advancements.Advancement;
 import net.minecraft.advancements.AdvancementRewards;
 import net.minecraft.command.CommandBase;

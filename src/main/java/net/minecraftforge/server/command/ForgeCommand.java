@@ -20,7 +20,6 @@
 package net.minecraftforge.server.command;
 
 import net.minecraft.command.ICommand;
-
 import net.minecraft.command.ICommandSender;
 import net.minecraft.server.MinecraftServer;
 

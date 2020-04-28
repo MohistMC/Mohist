@@ -20,13 +20,12 @@
 package net.minecraftforge.server.permission.context;
 
 import com.google.common.base.Preconditions;
+import javax.annotation.Nullable;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
-
-import javax.annotation.Nullable;
 
 public class BlockPosContext extends PlayerContext
 {

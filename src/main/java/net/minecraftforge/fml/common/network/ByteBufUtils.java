@@ -19,12 +19,15 @@
 
 package net.minecraftforge.fml.common.network;
 
+import com.google.common.collect.ImmutableList;
+import io.netty.buffer.ByteBuf;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
-
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
@@ -34,15 +37,7 @@ import net.minecraftforge.registries.ForgeRegistry;
 import net.minecraftforge.registries.IForgeRegistry;
 import net.minecraftforge.registries.IForgeRegistryEntry;
 import net.minecraftforge.registries.RegistryManager;
-
 import org.apache.commons.lang3.Validate;
-
-import io.netty.buffer.ByteBuf;
-
-import javax.annotation.Nullable;
-import javax.annotation.Nonnull;
-
-import com.google.common.collect.ImmutableList;
 
 /**
  * Utilities for interacting with {@link ByteBuf}.

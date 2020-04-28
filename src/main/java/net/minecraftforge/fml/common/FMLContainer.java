@@ -19,10 +19,15 @@
 
 package net.minecraftforge.fml.common;
 
+import com.google.common.collect.Maps;
+import com.google.common.collect.Multimap;
+import com.google.common.eventbus.EventBus;
+import com.google.common.eventbus.Subscribe;
 import java.io.File;
 import java.security.cert.Certificate;
 import java.util.Arrays;
 import java.util.Map;
+import javax.annotation.Nullable;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -42,16 +47,8 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.registries.ForgeRegistry;
 import net.minecraftforge.registries.GameData;
 import net.minecraftforge.registries.RegistryManager;
-
 import org.apache.logging.log4j.LogManager;
-
-import com.google.common.collect.Maps;
-import com.google.common.collect.Multimap;
-import com.google.common.eventbus.EventBus;
-import com.google.common.eventbus.Subscribe;
 import org.apache.logging.log4j.Logger;
-
-import javax.annotation.Nullable;
 
 /**
  * @author cpw

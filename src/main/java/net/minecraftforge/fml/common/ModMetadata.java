@@ -19,15 +19,13 @@
 
 package net.minecraftforge.fml.common;
 
-import java.util.List;
-import java.util.Set;
-
-import net.minecraftforge.fml.common.versioning.ArtifactVersion;
-
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.google.gson.annotations.SerializedName;
+import java.util.List;
+import java.util.Set;
+import net.minecraftforge.fml.common.versioning.ArtifactVersion;
 
 /**
  * @author cpw

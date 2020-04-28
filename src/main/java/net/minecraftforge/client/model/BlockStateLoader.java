@@ -19,6 +19,11 @@
 
 package net.minecraftforge.client.model;
 
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -29,7 +34,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
-
+import javax.annotation.Nullable;
 import net.minecraft.client.renderer.block.model.ModelBlockDefinition;
 import net.minecraft.client.renderer.block.model.ModelRotation;
 import net.minecraft.client.renderer.block.model.Variant;
@@ -37,18 +42,9 @@ import net.minecraft.client.renderer.block.model.VariantList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.model.IModelState;
 import net.minecraftforge.common.model.TRSRTransformation;
-
 import net.minecraftforge.fml.common.FMLLog;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.tuple.Pair;
-
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-
-import javax.annotation.Nullable;
 
 public class BlockStateLoader
 {

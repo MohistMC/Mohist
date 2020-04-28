@@ -19,14 +19,11 @@
 
 package net.minecraftforge.common.crafting;
 
-import java.util.Map;
-
-import javax.annotation.Nullable;
-
 import com.google.common.collect.Maps;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSyntaxException;
-
+import java.util.Map;
+import javax.annotation.Nullable;
 import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.util.JsonUtils;
 

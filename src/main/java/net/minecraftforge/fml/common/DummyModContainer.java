@@ -19,6 +19,8 @@
 
 package net.minecraftforge.fml.common;
 
+import com.google.common.collect.ImmutableList;
+import com.google.common.eventbus.EventBus;
 import java.io.File;
 import java.net.URL;
 import java.security.cert.Certificate;
@@ -26,15 +28,10 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
+import javax.annotation.Nullable;
 import net.minecraftforge.fml.common.versioning.ArtifactVersion;
 import net.minecraftforge.fml.common.versioning.DefaultArtifactVersion;
 import net.minecraftforge.fml.common.versioning.VersionRange;
-
-import com.google.common.collect.ImmutableList;
-import com.google.common.eventbus.EventBus;
-
-import javax.annotation.Nullable;
 
 public class DummyModContainer implements ModContainer
 {

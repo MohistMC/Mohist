@@ -1,6 +1,5 @@
 package org.bukkit.craftbukkit.v1_12_R1.map;
 
-import java.util.UUID;
 import net.minecraft.world.storage.MapData;
 import net.minecraft.world.storage.MapDecoration;
 import org.bukkit.Bukkit;

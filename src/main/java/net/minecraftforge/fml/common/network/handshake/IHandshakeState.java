@@ -20,9 +20,7 @@
 package net.minecraftforge.fml.common.network.handshake;
 
 import io.netty.channel.ChannelHandlerContext;
-
 import java.util.function.Consumer;
-
 import javax.annotation.Nullable;
 
 public interface IHandshakeState<S> {

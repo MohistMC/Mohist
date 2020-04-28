@@ -19,20 +19,17 @@
 
 package net.minecraftforge.items;
 
+import com.google.common.base.Objects;
+import java.lang.ref.WeakReference;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityChest;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-
-import java.lang.ref.WeakReference;
-
-import com.google.common.base.Objects;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 public class VanillaDoubleChestItemHandler extends WeakReference<TileEntityChest> implements IItemHandlerModifiable
 {

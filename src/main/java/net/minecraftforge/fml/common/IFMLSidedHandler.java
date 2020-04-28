@@ -22,7 +22,6 @@ package net.minecraftforge.fml.common;
 import java.io.File;
 import java.util.List;
 import java.util.Set;
-
 import net.minecraft.network.INetHandler;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.server.MinecraftServer;

@@ -19,6 +19,10 @@
 
 package net.minecraftforge.fml.common.patcher;
 
+import com.google.common.hash.Hashing;
+import com.google.common.io.ByteArrayDataOutput;
+import com.google.common.io.ByteStreams;
+import com.google.common.io.Files;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -27,19 +31,11 @@ import java.util.List;
 import java.util.Locale;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
-
+import javax.annotation.Nullable;
 import net.minecraftforge.fml.common.asm.transformers.deobf.FMLDeobfuscatingRemapper;
 import net.minecraftforge.fml.repackage.com.nothome.delta.Delta;
-
 import org.apache.logging.log4j.LogManager;
-
-import com.google.common.hash.Hashing;
-import com.google.common.io.ByteArrayDataOutput;
-import com.google.common.io.ByteStreams;
-import com.google.common.io.Files;
 import org.apache.logging.log4j.Logger;
-
-import javax.annotation.Nullable;
 
 public class GenDiffSet {
 

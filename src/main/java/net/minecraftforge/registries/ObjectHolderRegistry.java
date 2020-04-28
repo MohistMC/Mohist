@@ -19,12 +19,14 @@
 
 package net.minecraftforge.registries;
 
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
+import javax.annotation.Nullable;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.Mod;
@@ -32,11 +34,6 @@ import net.minecraftforge.fml.common.discovery.ASMDataTable;
 import net.minecraftforge.fml.common.discovery.ASMDataTable.ASMData;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.common.registry.GameRegistry.ObjectHolder;
-
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-
-import javax.annotation.Nullable;
 
 /**
  * Internal registry for tracking {@link ObjectHolder} references

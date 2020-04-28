@@ -5,7 +5,6 @@ import net.minecraft.item.crafting.CraftingManager;
 import net.minecraft.item.crafting.FurnaceRecipes;
 import net.minecraft.item.crafting.IRecipe;
 import org.bukkit.inventory.Recipe;
-import red.mohist.recipe.CustomModRecipe;
 import red.mohist.recipe.RecipeUtils;
 
 public class RecipeIterator implements Iterator<Recipe> {

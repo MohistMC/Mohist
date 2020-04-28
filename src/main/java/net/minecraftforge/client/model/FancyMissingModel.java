@@ -19,13 +19,19 @@
 
 package net.minecraftforge.client.model;
 
-import java.util.function.Function;
-import java.util.Optional;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
+import java.util.Collection;
+import java.util.List;
+import java.util.Optional;
+import java.util.function.Function;
+import javax.annotation.Nullable;
+import javax.vecmath.Matrix4f;
+import javax.vecmath.Quat4f;
+import javax.vecmath.Vector3f;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.BakedQuad;
@@ -41,13 +47,6 @@ import net.minecraftforge.common.ForgeModContainer;
 import net.minecraftforge.common.model.IModelState;
 import net.minecraftforge.common.model.TRSRTransformation;
 import org.apache.commons.lang3.tuple.Pair;
-
-import javax.annotation.Nullable;
-import javax.vecmath.Matrix4f;
-import javax.vecmath.Quat4f;
-import javax.vecmath.Vector3f;
-import java.util.Collection;
-import java.util.List;
 
 final class FancyMissingModel implements IModel
 {

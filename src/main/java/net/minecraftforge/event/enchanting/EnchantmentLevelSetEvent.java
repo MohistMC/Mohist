@@ -19,12 +19,11 @@
 
 package net.minecraftforge.event.enchanting;
 
+import javax.annotation.Nonnull;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.eventhandler.Event;
-
-import javax.annotation.Nonnull;
 
 /**
  * Fired when the enchantment level is set for each of the three potential enchantments in the enchanting table.

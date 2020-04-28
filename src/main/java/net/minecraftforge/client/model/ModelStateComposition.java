@@ -20,11 +20,10 @@
 package net.minecraftforge.client.model;
 
 import com.google.common.base.Objects;
+import java.util.Optional;
 import net.minecraftforge.common.model.IModelPart;
 import net.minecraftforge.common.model.IModelState;
 import net.minecraftforge.common.model.TRSRTransformation;
-
-import java.util.Optional;
 
 public class ModelStateComposition implements IModelState
 {

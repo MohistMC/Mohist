@@ -19,14 +19,12 @@
 
 package net.minecraftforge.fluids.capability.templates;
 
+import javax.annotation.Nullable;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidTankProperties;
-
-import javax.annotation.Nullable;
-
 import static net.minecraftforge.fluids.capability.templates.EmptyFluidHandler.EMPTY_TANK_INFO;
 import static net.minecraftforge.fluids.capability.templates.EmptyFluidHandler.EMPTY_TANK_PROPERTIES_ARRAY;
 

@@ -19,18 +19,13 @@
 
 package net.minecraftforge.event.entity.minecart;
 
-import net.minecraft.entity.item.EntityMinecartContainer;
-import net.minecraft.entity.item.EntityMinecartEmpty;
-import net.minecraft.entity.item.EntityMinecartFurnace;
-import net.minecraft.entity.item.EntityMinecartHopper;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fml.common.eventhandler.Cancelable;
+import javax.annotation.Nonnull;
 import net.minecraft.entity.item.EntityMinecart;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumHand;
-
-import javax.annotation.Nonnull;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fml.common.eventhandler.Cancelable;
 
 /**
  * MinecartInteractEvent is fired when a player interacts with a minecart. <br>

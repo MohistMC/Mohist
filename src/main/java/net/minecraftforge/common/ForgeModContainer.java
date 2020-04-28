@@ -19,11 +19,10 @@
 
 package net.minecraftforge.common;
 
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.world.biome.Biome;
-import static net.minecraftforge.common.config.Configuration.CATEGORY_CLIENT;
-import static net.minecraftforge.common.config.Configuration.CATEGORY_GENERAL;
-
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
+import com.google.common.eventbus.EventBus;
+import com.google.common.eventbus.Subscribe;
 import java.io.File;
 import java.io.InputStream;
 import java.net.MalformedURLException;
@@ -34,17 +33,15 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-
-import org.apache.commons.io.IOUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
+import javax.annotation.Nullable;
 import net.minecraft.crash.ICrashReportDetail;
 import net.minecraft.item.Item;
 import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.stats.StatList;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.biome.Biome;
 import net.minecraft.world.storage.SaveHandler;
 import net.minecraft.world.storage.WorldInfo;
 import net.minecraftforge.classloading.FMLForgePlugin;
@@ -53,6 +50,8 @@ import net.minecraftforge.common.config.Config;
 import net.minecraftforge.common.config.ConfigCategory;
 import net.minecraftforge.common.config.ConfigManager;
 import net.minecraftforge.common.config.Configuration;
+import static net.minecraftforge.common.config.Configuration.CATEGORY_CLIENT;
+import static net.minecraftforge.common.config.Configuration.CATEGORY_GENERAL;
 import net.minecraftforge.common.config.Property;
 import net.minecraftforge.common.model.animation.CapabilityAnimation;
 import net.minecraftforge.common.network.ForgeNetworkHandler;
@@ -61,19 +60,8 @@ import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.event.RegistryEvent.MissingMappings;
 import net.minecraftforge.event.terraingen.DeferredBiomeDecorator;
 import net.minecraftforge.fluids.FluidRegistry;
-import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
-import net.minecraftforge.fml.common.registry.ForgeRegistries;
-import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.fluids.UniversalBucket;
-import net.minecraftforge.oredict.OreDictionary;
-import net.minecraftforge.oredict.RecipeSorter;
-import net.minecraftforge.server.command.ForgeCommand;
-
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Lists;
-import com.google.common.eventbus.EventBus;
-import com.google.common.eventbus.Subscribe;
-
+import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fml.client.FMLFileResourcePack;
 import net.minecraftforge.fml.client.FMLFolderResourcePack;
 import net.minecraftforge.fml.client.event.ConfigChangedEvent.OnConfigChangedEvent;
@@ -98,9 +86,15 @@ import net.minecraftforge.fml.common.event.FMLServerStoppingEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
+import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import net.minecraftforge.fml.relauncher.Side;
-
-import javax.annotation.Nullable;
+import net.minecraftforge.items.CapabilityItemHandler;
+import net.minecraftforge.oredict.OreDictionary;
+import net.minecraftforge.oredict.RecipeSorter;
+import net.minecraftforge.server.command.ForgeCommand;
+import org.apache.commons.io.IOUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 @EventBusSubscriber(modid = "forge")
 public class ForgeModContainer extends DummyModContainer implements WorldAccessContainer

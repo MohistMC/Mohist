@@ -19,6 +19,25 @@
 
 package net.minecraftforge.fml.client;
 
+import com.google.common.base.CharMatcher;
+import com.google.common.base.MoreObjects;
+import com.google.common.base.Strings;
+import com.google.common.base.Throwables;
+import com.google.common.collect.BiMap;
+import com.google.common.collect.HashBasedTable;
+import com.google.common.collect.HashBiMap;
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableMap.Builder;
+import com.google.common.collect.Maps;
+import com.google.common.collect.SetMultimap;
+import com.google.common.collect.Sets;
+import com.google.common.collect.Table;
+import com.google.common.util.concurrent.ListenableFuture;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -34,7 +53,7 @@ import java.util.Set;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Predicate;
-
+import javax.annotation.Nullable;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.gui.Gui;
@@ -53,7 +72,6 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.resources.AbstractResourcePack;
 import net.minecraft.client.resources.FallbackResourceManager;
 import net.minecraft.client.resources.IReloadableResourceManager;
-import net.minecraft.client.resources.IResource;
 import net.minecraft.client.resources.IResourcePack;
 import net.minecraft.client.resources.LegacyV2Adapter;
 import net.minecraft.client.resources.SimpleReloadableResourceManager;
@@ -81,8 +99,8 @@ import net.minecraft.util.IThreadListener;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.StringUtils;
 import net.minecraft.world.WorldSettings;
-import net.minecraft.world.storage.WorldSummary;
 import net.minecraft.world.storage.SaveFormatOld;
+import net.minecraft.world.storage.WorldSummary;
 import net.minecraftforge.client.CloudRenderer;
 import net.minecraftforge.client.IRenderHandler;
 import net.minecraftforge.client.event.ModelRegistryEvent;
@@ -103,9 +121,9 @@ import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.LoaderException;
 import net.minecraftforge.fml.common.MetadataCollection;
 import net.minecraftforge.fml.common.MissingModsException;
-import net.minecraftforge.fml.common.MultipleModsErrored;
 import net.minecraftforge.fml.common.ModContainer;
 import net.minecraftforge.fml.common.ModMetadata;
+import net.minecraftforge.fml.common.MultipleModsErrored;
 import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 import net.minecraftforge.fml.common.StartupQuery;
 import net.minecraftforge.fml.common.WrongMinecraftVersionException;
@@ -115,35 +133,12 @@ import net.minecraftforge.fml.common.network.internal.FMLNetworkHandler;
 import net.minecraftforge.fml.common.toposort.ModSortingException;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.registries.GameData;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.message.FormattedMessage;
 import org.lwjgl.LWJGLUtil;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
-
-import com.google.common.base.CharMatcher;
-import com.google.common.base.MoreObjects;
-import com.google.common.base.Strings;
-import com.google.common.base.Throwables;
-import com.google.common.collect.BiMap;
-import com.google.common.collect.HashBasedTable;
-import com.google.common.collect.HashBiMap;
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableMap.Builder;
-import com.google.common.collect.Maps;
-import com.google.common.collect.SetMultimap;
-import com.google.common.collect.Sets;
-import com.google.common.collect.Table;
-import com.google.common.util.concurrent.ListenableFuture;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-
-import javax.annotation.Nullable;
 
 
 /**

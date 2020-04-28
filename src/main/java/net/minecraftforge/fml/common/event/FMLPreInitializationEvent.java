@@ -23,17 +23,14 @@ import java.io.File;
 import java.security.CodeSource;
 import java.security.cert.Certificate;
 import java.util.Properties;
-
+import javax.annotation.Nullable;
 import net.minecraftforge.fml.common.FMLModContainer;
+import net.minecraftforge.fml.common.LoaderState.ModState;
 import net.minecraftforge.fml.common.ModContainer;
 import net.minecraftforge.fml.common.ModMetadata;
-import net.minecraftforge.fml.common.LoaderState.ModState;
 import net.minecraftforge.fml.common.discovery.ASMDataTable;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
-import javax.annotation.Nullable;
 
 /**
  * Called before {@link FMLInitializationEvent} during mod startup.

@@ -25,7 +25,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
 import net.minecraftforge.fml.common.FMLLog;
 
 public class LinkRepository extends Repository

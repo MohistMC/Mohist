@@ -19,6 +19,11 @@
 
 package net.minecraftforge.fml.common.eventhandler;
 
+import com.google.common.base.Preconditions;
+import com.google.common.base.Throwables;
+import com.google.common.collect.MapMaker;
+import com.google.common.collect.Sets;
+import com.google.common.reflect.TypeToken;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -26,18 +31,10 @@ import java.util.ArrayList;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
-
 import javax.annotation.Nonnull;
-
 import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.ModContainer;
-
-import com.google.common.base.Preconditions;
-import com.google.common.base.Throwables;
-import com.google.common.collect.MapMaker;
-import com.google.common.collect.Sets;
-import com.google.common.reflect.TypeToken;
 import org.bukkit.Bukkit;
 import red.mohist.api.event.BukkitHookForgeEvent;
 

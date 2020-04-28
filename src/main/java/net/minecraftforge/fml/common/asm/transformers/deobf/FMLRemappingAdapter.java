@@ -19,6 +19,8 @@
 
 package net.minecraftforge.fml.common.asm.transformers.deobf;
 
+import java.util.Arrays;
+import java.util.List;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.FieldVisitor;
 import org.objectweb.asm.Handle;
@@ -28,9 +30,6 @@ import org.objectweb.asm.Type;
 import org.objectweb.asm.commons.Remapper;
 import org.objectweb.asm.commons.RemappingClassAdapter;
 import org.objectweb.asm.commons.RemappingMethodAdapter;
-
-import java.util.Arrays;
-import java.util.List;
 
 public class FMLRemappingAdapter extends RemappingClassAdapter {
     public FMLRemappingAdapter(ClassVisitor cv)

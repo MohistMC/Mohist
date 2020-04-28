@@ -19,13 +19,11 @@
 
 package net.minecraftforge.fml.common.versioning;
 
-import java.util.List;
-
-import net.minecraftforge.fml.common.LoaderException;
-
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
+import java.util.List;
+import net.minecraftforge.fml.common.LoaderException;
 
 /**
  * Parses version strings according to the specification here:

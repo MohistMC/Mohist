@@ -19,11 +19,9 @@
 
 package net.minecraftforge.common.config;
 
-import static net.minecraftforge.common.config.Property.Type.BOOLEAN;
-import static net.minecraftforge.common.config.Property.Type.DOUBLE;
-import static net.minecraftforge.common.config.Property.Type.INTEGER;
-import static net.minecraftforge.common.config.Property.Type.STRING;
-
+import com.google.common.base.CharMatcher;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.primitives.Floats;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -46,11 +44,10 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import com.google.common.base.CharMatcher;
-import com.google.common.collect.ImmutableSet;
-
-import com.google.common.primitives.Floats;
+import static net.minecraftforge.common.config.Property.Type.BOOLEAN;
+import static net.minecraftforge.common.config.Property.Type.DOUBLE;
+import static net.minecraftforge.common.config.Property.Type.INTEGER;
+import static net.minecraftforge.common.config.Property.Type.STRING;
 import net.minecraftforge.fml.client.config.GuiConfig;
 import net.minecraftforge.fml.client.config.GuiConfigEntries;
 import net.minecraftforge.fml.client.config.GuiConfigEntries.IConfigEntry;

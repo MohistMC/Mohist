@@ -1,14 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/world/WorldProvider.java
 +++ ../src-work/minecraft/net/minecraft/world/WorldProvider.java
-@@ -1,5 +1,7 @@
- package net.minecraft.world;
- 
-+import com.google.common.base.Charsets;
-+import java.util.UUID;
- import javax.annotation.Nullable;
- import net.minecraft.entity.player.EntityPlayerMP;
- import net.minecraft.init.Biomes;
-@@ -9,13 +11,9 @@
+@@ -9,12 +9,7 @@
  import net.minecraft.util.math.Vec3d;
  import net.minecraft.world.biome.Biome;
  import net.minecraft.world.biome.BiomeProvider;
@@ -19,11 +11,9 @@
 -import net.minecraft.world.gen.ChunkGeneratorOverworld;
 -import net.minecraft.world.gen.FlatGeneratorInfo;
  import net.minecraft.world.gen.IChunkGenerator;
-+import net.minecraftforge.common.DimensionManager;
  import net.minecraftforge.fml.relauncher.Side;
  import net.minecraftforge.fml.relauncher.SideOnly;
- 
-@@ -55,37 +53,12 @@
+@@ -55,37 +50,12 @@
      protected void init()
      {
          this.hasSkyLight = true;
@@ -63,7 +53,7 @@
      }
  
      public boolean canCoordinateBeSpawn(int x, int z)
-@@ -179,7 +152,7 @@
+@@ -179,7 +149,7 @@
      @SideOnly(Side.CLIENT)
      public float getCloudHeight()
      {
@@ -72,7 +62,7 @@
      }
  
      @SideOnly(Side.CLIENT)
-@@ -196,13 +169,13 @@
+@@ -196,13 +166,13 @@
  
      public int getAverageGroundLevel()
      {
@@ -88,7 +78,7 @@
      }
  
      @SideOnly(Side.CLIENT)
-@@ -241,6 +214,381 @@
+@@ -241,6 +211,381 @@
          return new WorldBorder();
      }
  

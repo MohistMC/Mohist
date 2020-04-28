@@ -28,8 +28,6 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
 import net.minecraftforge.common.capabilities.CapabilityManager;
 
-import java.util.concurrent.Callable;
-
 public class CapabilityItemHandler
 {
     @CapabilityInject(IItemHandler.class)

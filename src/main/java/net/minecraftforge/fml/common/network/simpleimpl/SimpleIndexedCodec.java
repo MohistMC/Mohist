@@ -19,9 +19,9 @@
 
 package net.minecraftforge.fml.common.network.simpleimpl;
 
-import net.minecraftforge.fml.common.network.FMLIndexedMessageToMessageCodec;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
+import net.minecraftforge.fml.common.network.FMLIndexedMessageToMessageCodec;
 
 public class SimpleIndexedCodec extends FMLIndexedMessageToMessageCodec<IMessage> {
     @Override

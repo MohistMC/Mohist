@@ -19,16 +19,12 @@
 
 package net.minecraftforge.common.util;
 
-import java.lang.ref.WeakReference;
-import java.nio.charset.StandardCharsets;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.UUID;
-
 import com.google.common.collect.Maps;
 import com.mojang.authlib.GameProfile;
-
+import java.lang.ref.WeakReference;
+import java.nio.charset.StandardCharsets;
+import java.util.Map;
+import java.util.UUID;
 import net.minecraft.world.WorldServer;
 
 //To be expanded for generic Mod fake players?

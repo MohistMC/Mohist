@@ -19,6 +19,7 @@
 
 package net.minecraftforge.client.model.b3d;
 
+import com.google.common.collect.ImmutableSet;
 import net.minecraftforge.client.model.b3d.B3DLoader.NodeJoint;
 import net.minecraftforge.client.model.b3d.B3DModel.Key;
 import net.minecraftforge.client.model.b3d.B3DModel.Node;
@@ -28,8 +29,6 @@ import net.minecraftforge.common.model.animation.IClip;
 import net.minecraftforge.common.model.animation.IJoint;
 import net.minecraftforge.common.model.animation.IJointClip;
 import net.minecraftforge.common.model.animation.JointClips;
-
-import com.google.common.collect.ImmutableSet;
 
 // FIXME: is this fast enough?
 public enum B3DClip implements IClip

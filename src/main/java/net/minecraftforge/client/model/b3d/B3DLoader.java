@@ -19,20 +19,29 @@
 
 package net.minecraftforge.client.model.b3d;
 
+import com.google.common.base.Objects;
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
+import com.google.common.collect.Collections2;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParser;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
-
+import java.util.function.Function;
 import javax.annotation.Nullable;
 import javax.vecmath.Matrix4f;
 import javax.vecmath.Vector3f;
-
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.IBakedModel;
@@ -66,27 +75,11 @@ import net.minecraftforge.common.model.TRSRTransformation;
 import net.minecraftforge.common.model.animation.IClip;
 import net.minecraftforge.common.model.animation.IJoint;
 import net.minecraftforge.common.property.IExtendedBlockState;
-import net.minecraftforge.common.property.IUnlistedProperty;
 import net.minecraftforge.common.property.Properties;
 import net.minecraftforge.fml.common.FMLLog;
-
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.lang3.tuple.Triple;
-
-import java.util.function.Function;
-import com.google.common.base.Objects;
-import java.util.Optional;
-import com.google.common.base.Predicate;
-import com.google.common.cache.CacheBuilder;
-import com.google.common.cache.CacheLoader;
-import com.google.common.cache.LoadingCache;
-import com.google.common.collect.Collections2;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableSet;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonParser;
 
 /*
  * Loader for Blitz3D models.

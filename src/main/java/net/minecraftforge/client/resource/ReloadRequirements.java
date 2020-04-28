@@ -19,13 +19,11 @@
 
 package net.minecraftforge.client.resource;
 
+import com.google.common.collect.Sets;
 import java.util.Set;
 import java.util.function.Predicate;
-
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-
-import com.google.common.collect.Sets;
 
 /**
  * Holds methods to create standard predicates to select {@link IResourceType}s that should be reloaded.

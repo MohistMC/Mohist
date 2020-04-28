@@ -19,13 +19,11 @@
 
 package net.minecraftforge.fml.client.registry;
 
+import com.google.common.collect.Maps;
 import java.util.Map;
-
 import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.entity.Entity;
-
-import com.google.common.collect.Maps;
 
 public class RenderingRegistry
 {

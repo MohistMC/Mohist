@@ -20,6 +20,7 @@
 package net.minecraftforge.server.command;
 
 import it.unimi.dsi.fastutil.ints.IntSortedSet;
+import java.util.Map;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
@@ -27,8 +28,6 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.DimensionType;
 import net.minecraftforge.common.DimensionManager;
-
-import java.util.Map;
 
 public class CommandDimensions extends CommandBase
 {

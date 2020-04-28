@@ -21,7 +21,7 @@ package net.minecraftforge.common.util;
 
 import java.lang.ref.WeakReference;
 import java.util.Objects;
-
+import javax.annotation.Nullable;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
@@ -30,8 +30,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
-
-import javax.annotation.Nullable;
 
 /**
  * Represents a captured snapshot of a block which will not change

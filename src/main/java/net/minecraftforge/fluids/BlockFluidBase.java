@@ -19,15 +19,12 @@
 
 package net.minecraftforge.fluids;
 
-import java.util.Map;
-import java.util.Random;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Maps;
-
+import java.util.Map;
+import java.util.Random;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockLiquid;
 import net.minecraft.block.BlockStairs;

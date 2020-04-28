@@ -19,10 +19,10 @@
 
 package net.minecraftforge.event.entity.living;
 
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.fml.common.eventhandler.Cancelable;
-import net.minecraft.entity.EntityLivingBase;
 
 /**
  * LivingHealEvent is fired when an Entity is set to be healed. <br>

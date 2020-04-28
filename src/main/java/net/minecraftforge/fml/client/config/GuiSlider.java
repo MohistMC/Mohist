@@ -19,9 +19,8 @@
 
 package net.minecraftforge.fml.client.config;
 
-import net.minecraft.client.Minecraft;
-
 import javax.annotation.Nullable;
+import net.minecraft.client.Minecraft;
 
 /**
  * This class is blatantly stolen from iChunUtils with permission.

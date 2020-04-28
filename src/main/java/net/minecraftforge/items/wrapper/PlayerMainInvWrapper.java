@@ -19,11 +19,10 @@
 
 package net.minecraftforge.items.wrapper;
 
+import javax.annotation.Nonnull;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.item.ItemStack;
-
-import javax.annotation.Nonnull;
 
 /**
  * Exposes the player inventory WITHOUT the armor inventory as IItemHandler.

@@ -19,12 +19,11 @@
 
 package net.minecraftforge.client;
 
+import javax.annotation.Nonnull;
 import net.minecraft.client.renderer.color.IItemColor;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidUtil;
-
-import javax.annotation.Nonnull;
 
 public class FluidContainerColorer implements IItemColor
 {

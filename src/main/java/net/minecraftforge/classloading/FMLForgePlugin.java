@@ -21,10 +21,8 @@ package net.minecraftforge.classloading;
 
 import java.io.File;
 import java.util.Map;
-
-import net.minecraftforge.fml.relauncher.IFMLLoadingPlugin;
-
 import javax.annotation.Nullable;
+import net.minecraftforge.fml.relauncher.IFMLLoadingPlugin;
 
 public class FMLForgePlugin implements IFMLLoadingPlugin
 {

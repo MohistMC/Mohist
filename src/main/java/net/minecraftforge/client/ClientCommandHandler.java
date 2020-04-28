@@ -20,7 +20,6 @@
 package net.minecraftforge.client;
 
 import java.util.List;
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiChat;
 import net.minecraft.command.CommandException;
@@ -29,14 +28,15 @@ import net.minecraft.command.ICommand;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.command.WrongUsageException;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraft.util.text.TextFormatting;
+import static net.minecraft.util.text.TextFormatting.GRAY;
+import static net.minecraft.util.text.TextFormatting.RED;
+import static net.minecraft.util.text.TextFormatting.RESET;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.CommandEvent;
 import net.minecraftforge.fml.client.FMLClientHandler;
-import net.minecraft.util.text.TextComponentTranslation;
-import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.fml.common.FMLLog;
-
-import static net.minecraft.util.text.TextFormatting.*;
 
 /**
  * The class that handles client-side chat commands. You should register any

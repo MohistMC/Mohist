@@ -19,9 +19,12 @@
 
 package net.minecraftforge.client.model;
 
-import java.util.EnumMap;
-import java.util.Optional;
 import com.google.common.collect.ImmutableMap;
+import java.util.EnumMap;
+import java.util.List;
+import java.util.Optional;
+import javax.annotation.Nullable;
+import javax.vecmath.Matrix4f;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.IBakedModel;
@@ -32,10 +35,6 @@ import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.model.IModelState;
 import net.minecraftforge.common.model.TRSRTransformation;
 import org.apache.commons.lang3.tuple.Pair;
-
-import javax.annotation.Nullable;
-import javax.vecmath.Matrix4f;
-import java.util.List;
 
 public class PerspectiveMapWrapper implements IBakedModel
 {

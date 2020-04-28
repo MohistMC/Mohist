@@ -19,13 +19,11 @@
 
 package net.minecraftforge.client.model;
 
-import javax.annotation.Nullable;
-import javax.vecmath.Matrix4f;
-
-import java.util.List;
-
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+import java.util.List;
+import javax.annotation.Nullable;
+import javax.vecmath.Matrix4f;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.IBakedModel;

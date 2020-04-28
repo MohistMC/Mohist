@@ -23,12 +23,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Pattern;
-
+import javax.annotation.Nullable;
 import net.minecraft.client.resources.I18n;
 import net.minecraftforge.fml.client.config.GuiConfigEntries.IConfigEntry;
 import net.minecraftforge.fml.client.config.GuiEditArrayEntries.IArrayEntry;
-
-import javax.annotation.Nullable;
 
 
 /**

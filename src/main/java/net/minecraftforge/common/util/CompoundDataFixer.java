@@ -19,14 +19,12 @@
 
 package net.minecraftforge.common.util;
 
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
-
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.datafix.DataFixer;
 import net.minecraft.util.datafix.FixTypes;

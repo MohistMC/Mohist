@@ -27,7 +27,6 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.Cancelable;
 import net.minecraftforge.fml.common.eventhandler.Event;
-import net.minecraftforge.fml.common.eventhandler.Event.HasResult;
 
 /**
  * VillageSiegeEvent is fired just before a zombie siege finds a successful location in

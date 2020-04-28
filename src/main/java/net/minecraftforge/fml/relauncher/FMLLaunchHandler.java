@@ -20,13 +20,11 @@
 package net.minecraftforge.fml.relauncher;
 
 import java.io.File;
-
 import net.minecraft.launchwrapper.LaunchClassLoader;
 import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.TracingPrintStream;
 import net.minecraftforge.fml.common.launcher.FMLTweaker;
 import net.minecraftforge.fml.relauncher.libraries.LibraryManager;
-
 import org.apache.logging.log4j.LogManager;
 
 public class FMLLaunchHandler

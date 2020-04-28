@@ -20,7 +20,6 @@
 package net.minecraftforge.common.crafting;
 
 import javax.annotation.Nullable;
-
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.Ingredient;
 

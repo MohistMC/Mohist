@@ -19,20 +19,18 @@
 
 package net.minecraftforge.common.config;
 
-import java.io.File;
-import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
-
 import com.google.common.base.Joiner;
 import com.google.common.base.Strings;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
-
+import java.io.File;
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
 import net.minecraftforge.common.config.Config.Comment;
 import net.minecraftforge.common.config.Config.LangKey;
 import net.minecraftforge.common.config.Config.Name;
@@ -43,7 +41,6 @@ import net.minecraftforge.fml.common.LoaderState;
 import net.minecraftforge.fml.common.discovery.ASMDataTable;
 import net.minecraftforge.fml.common.discovery.ASMDataTable.ASMData;
 import net.minecraftforge.fml.common.discovery.asm.ModAnnotation.EnumHolder;
-
 import org.apache.commons.lang3.StringUtils;
 
 public class ConfigManager

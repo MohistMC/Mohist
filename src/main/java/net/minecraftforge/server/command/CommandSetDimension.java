@@ -19,6 +19,9 @@
 
 package net.minecraftforge.server.command;
 
+import java.util.Collections;
+import java.util.List;
+import javax.annotation.Nullable;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
@@ -29,11 +32,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.util.ITeleporter;
-
-import javax.annotation.Nullable;
-import java.util.Collections;
-import java.util.List;
-import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 
 public class CommandSetDimension extends CommandBase
 {

@@ -19,6 +19,11 @@
 
 package net.minecraftforge.fml.common.asm.transformers;
 
+import net.minecraft.launchwrapper.IClassTransformer;
+import net.minecraftforge.fml.common.FMLLog;
+import net.minecraftforge.fml.common.eventhandler.Event;
+import org.objectweb.asm.ClassReader;
+import org.objectweb.asm.ClassWriter;
 import static org.objectweb.asm.ClassWriter.COMPUTE_FRAMES;
 import static org.objectweb.asm.Opcodes.ACC_PRIVATE;
 import static org.objectweb.asm.Opcodes.ACC_PROTECTED;
@@ -29,24 +34,17 @@ import static org.objectweb.asm.Opcodes.ARETURN;
 import static org.objectweb.asm.Opcodes.DUP;
 import static org.objectweb.asm.Opcodes.F_SAME;
 import static org.objectweb.asm.Opcodes.GETSTATIC;
+import static org.objectweb.asm.Opcodes.ICONST_1;
 import static org.objectweb.asm.Opcodes.IFNULL;
 import static org.objectweb.asm.Opcodes.INVOKESPECIAL;
+import static org.objectweb.asm.Opcodes.IRETURN;
 import static org.objectweb.asm.Opcodes.NEW;
 import static org.objectweb.asm.Opcodes.PUTSTATIC;
 import static org.objectweb.asm.Opcodes.RETURN;
-import static org.objectweb.asm.Opcodes.IRETURN;
-import static org.objectweb.asm.Opcodes.ICONST_1;
-import static org.objectweb.asm.Type.VOID_TYPE;
-import static org.objectweb.asm.Type.BOOLEAN_TYPE;
-import static org.objectweb.asm.Type.getMethodDescriptor;
-
-import net.minecraft.launchwrapper.IClassTransformer;
-import net.minecraftforge.fml.common.FMLLog;
-import net.minecraftforge.fml.common.eventhandler.Event;
-
-import org.objectweb.asm.ClassReader;
-import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.Type;
+import static org.objectweb.asm.Type.BOOLEAN_TYPE;
+import static org.objectweb.asm.Type.VOID_TYPE;
+import static org.objectweb.asm.Type.getMethodDescriptor;
 import org.objectweb.asm.tree.AnnotationNode;
 import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.FieldInsnNode;

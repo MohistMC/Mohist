@@ -19,12 +19,24 @@
 
 package net.minecraftforge.common.model.animation;
 
+import com.google.common.base.Objects;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Ordering;
+import com.google.gson.Gson;
+import com.google.gson.TypeAdapter;
+import com.google.gson.TypeAdapterFactory;
+import com.google.gson.reflect.TypeToken;
+import com.google.gson.stream.JsonReader;
+import com.google.gson.stream.JsonWriter;
 import java.io.IOException;
-
+import java.util.Optional;
+import java.util.function.Function;
+import javax.annotation.Nullable;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.util.IStringSerializable;
-import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.client.model.IModel;
 import net.minecraftforge.client.model.ModelLoaderRegistry;
 import net.minecraftforge.common.animation.Event;
@@ -35,24 +47,8 @@ import net.minecraftforge.common.model.TRSRTransformation;
 import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-
 import org.apache.commons.lang3.NotImplementedException;
 import org.apache.commons.lang3.tuple.Pair;
-
-import java.util.function.Function;
-import com.google.common.base.Objects;
-import java.util.Optional;
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Ordering;
-import com.google.gson.Gson;
-import com.google.gson.TypeAdapter;
-import com.google.gson.TypeAdapterFactory;
-import com.google.gson.reflect.TypeToken;
-import com.google.gson.stream.JsonReader;
-import com.google.gson.stream.JsonWriter;
-
-import javax.annotation.Nullable;
 
 /**
  * Various implementations of IClip, and utility methods.

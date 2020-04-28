@@ -19,6 +19,13 @@
 
 package net.minecraftforge.fml.relauncher;
 
+import com.google.common.base.Strings;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import com.google.common.collect.ObjectArrays;
+import com.google.common.collect.Sets;
+import com.google.common.primitives.Ints;
 import java.io.Closeable;
 import java.io.File;
 import java.io.FileFilter;
@@ -40,7 +47,6 @@ import java.util.function.ToIntFunction;
 import java.util.jar.Attributes;
 import java.util.jar.JarFile;
 import java.util.jar.Manifest;
-
 import net.minecraft.launchwrapper.ITweaker;
 import net.minecraft.launchwrapper.Launch;
 import net.minecraft.launchwrapper.LaunchClassLoader;
@@ -58,14 +64,6 @@ import net.minecraftforge.fml.relauncher.IFMLLoadingPlugin.TransformerExclusions
 import net.minecraftforge.fml.relauncher.libraries.Artifact;
 import net.minecraftforge.fml.relauncher.libraries.LibraryManager;
 import net.minecraftforge.fml.relauncher.libraries.Repository;
-
-import com.google.common.base.Strings;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import com.google.common.collect.ObjectArrays;
-import com.google.common.collect.Sets;
-import com.google.common.primitives.Ints;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.core.LoggerContext;
 

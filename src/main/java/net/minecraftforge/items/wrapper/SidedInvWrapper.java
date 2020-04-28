@@ -19,16 +19,14 @@
 
 package net.minecraftforge.items.wrapper;
 
+import java.util.Objects;
+import javax.annotation.Nonnull;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.ItemHandlerHelper;
-
-import java.util.Objects;
-
-import javax.annotation.Nonnull;
 
 public class SidedInvWrapper implements IItemHandlerModifiable
 {

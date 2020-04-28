@@ -19,24 +19,19 @@
 
 package net.minecraftforge.oredict;
 
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import it.unimi.dsi.fastutil.ints.IntOpenHashSet;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
-
-import net.minecraft.block.BlockPrismarine;
-import net.minecraft.util.NonNullList;
-import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.fml.common.ModContainer;
-import net.minecraftforge.registries.IRegistryDelegate;
-import org.apache.logging.log4j.Level;
-
+import javax.annotation.Nonnull;
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockPrismarine;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
@@ -46,20 +41,14 @@ import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.item.crafting.ShapedRecipes;
 import net.minecraft.item.crafting.ShapelessRecipes;
+import net.minecraft.util.NonNullList;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.MinecraftForge;
-
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-
 import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.Loader;
+import net.minecraftforge.fml.common.ModContainer;
 import net.minecraftforge.fml.common.eventhandler.Event;
-import net.minecraftforge.fml.common.registry.ForgeRegistries;
-import net.minecraftforge.registries.GameData;
 import red.mohist.util.i18n.Message;
-
-import javax.annotation.Nonnull;
 
 public class OreDictionary
 {

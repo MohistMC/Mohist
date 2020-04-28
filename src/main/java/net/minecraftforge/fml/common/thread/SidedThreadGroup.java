@@ -19,11 +19,9 @@
 
 package net.minecraftforge.fml.common.thread;
 
-import net.minecraftforge.fml.relauncher.Side;
-
 import java.util.concurrent.ThreadFactory;
-
 import javax.annotation.Nonnull;
+import net.minecraftforge.fml.relauncher.Side;
 
 /**
  * A thread group and factory combination which belongs to a {@link Side}.

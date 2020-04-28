@@ -19,6 +19,8 @@
 
 package net.minecraftforge.fml.relauncher.libraries;
 
+import com.google.common.io.ByteStreams;
+import com.google.common.io.Files;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -44,16 +46,12 @@ import java.util.jar.JarFile;
 import java.util.jar.Manifest;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
-
-import org.apache.commons.lang3.tuple.Pair;
-import org.apache.maven.artifact.versioning.ArtifactVersion;
-
-import com.google.common.io.ByteStreams;
-import com.google.common.io.Files;
 import net.minecraft.launchwrapper.Launch;
 import net.minecraftforge.common.ForgeVersion;
 import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.relauncher.FMLLaunchHandler;
+import org.apache.commons.lang3.tuple.Pair;
+import org.apache.maven.artifact.versioning.ArtifactVersion;
 
 public class LibraryManager
 {

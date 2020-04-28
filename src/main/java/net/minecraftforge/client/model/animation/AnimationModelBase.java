@@ -20,30 +20,28 @@
 package net.minecraftforge.client.model.animation;
 
 import java.util.List;
-
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.block.model.BakedQuad;
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.renderer.block.model.IBakedModel;
+import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.entity.Entity;
 import net.minecraft.init.Blocks;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.client.model.IModel;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.client.model.ModelLoaderRegistry;
-import net.minecraftforge.client.model.pipeline.VertexLighterFlat;
 import net.minecraftforge.client.model.pipeline.VertexBufferConsumer;
+import net.minecraftforge.client.model.pipeline.VertexLighterFlat;
 import net.minecraftforge.common.animation.Event;
 import net.minecraftforge.common.animation.IEventHandler;
 import net.minecraftforge.common.model.IModelState;
 import net.minecraftforge.common.model.animation.CapabilityAnimation;
-
 import net.minecraftforge.common.model.animation.IAnimationStateMachine;
 import org.apache.commons.lang3.tuple.Pair;
 import org.lwjgl.opengl.GL11;

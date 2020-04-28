@@ -20,20 +20,16 @@
 package net.minecraftforge.common.command;
 
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Map.Entry;
 import java.util.NavigableMap;
 import java.util.TreeMap;
-
-import org.apache.commons.lang3.ArrayUtils;
-
 import net.minecraft.command.CommandException;
 import net.minecraft.command.EntitySelector;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.Entity;
 import net.minecraftforge.fml.common.Loader;
+import org.apache.commons.lang3.ArrayUtils;
 
 /**
  * Allows registration of custom selector types by assigning a {@link SelectorHandler} to a prefix

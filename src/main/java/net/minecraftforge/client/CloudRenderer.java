@@ -19,14 +19,9 @@
 
 package net.minecraftforge.client;
 
-import javax.annotation.Nonnull;
 import java.nio.ByteBuffer;
 import java.util.function.Predicate;
-
-import net.minecraftforge.client.resource.IResourceType;
-import net.minecraftforge.client.resource.VanillaResourceType;
-import org.lwjgl.opengl.GL11;
-
+import javax.annotation.Nonnull;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.EntityRenderer;
@@ -44,8 +39,11 @@ import net.minecraft.entity.Entity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
-import net.minecraftforge.common.ForgeModContainer;
+import net.minecraftforge.client.resource.IResourceType;
 import net.minecraftforge.client.resource.ISelectiveResourceReloadListener;
+import net.minecraftforge.client.resource.VanillaResourceType;
+import net.minecraftforge.common.ForgeModContainer;
+import org.lwjgl.opengl.GL11;
 
 public class CloudRenderer implements ISelectiveResourceReloadListener
 {

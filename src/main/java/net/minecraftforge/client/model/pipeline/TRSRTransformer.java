@@ -19,10 +19,9 @@
 
 package net.minecraftforge.client.model.pipeline;
 
-import net.minecraftforge.common.model.TRSRTransformation;
-
 import javax.vecmath.Vector3f;
 import javax.vecmath.Vector4f;
+import net.minecraftforge.common.model.TRSRTransformation;
 
 public class TRSRTransformer extends VertexTransformer
 {

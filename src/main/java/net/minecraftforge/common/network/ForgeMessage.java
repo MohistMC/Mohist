@@ -19,20 +19,17 @@
 
 package net.minecraftforge.common.network;
 
-import java.nio.charset.StandardCharsets;
-import java.util.Map;
-import java.util.Set;
-
-import net.minecraftforge.fluids.Fluid;
-import net.minecraftforge.fluids.FluidRegistry;
-
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.google.common.collect.Sets;
-
+import io.netty.buffer.ByteBuf;
+import java.nio.charset.StandardCharsets;
+import java.util.Map;
+import java.util.Set;
+import net.minecraftforge.fluids.Fluid;
+import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
-import io.netty.buffer.ByteBuf;
 
 public abstract class ForgeMessage {
     public static class DimensionRegisterMessage extends ForgeMessage {

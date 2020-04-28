@@ -2,9 +2,6 @@ package org.bukkit.entity;
 
 import java.util.HashMap;
 import java.util.Map;
-import red.mohist.entity.CraftCustomAbstractHorse;
-import red.mohist.entity.CraftCustomChestHorse;
-import red.mohist.entity.CraftCustomEntity;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.minecart.CommandMinecart;
@@ -16,6 +13,9 @@ import org.bukkit.entity.minecart.SpawnerMinecart;
 import org.bukkit.entity.minecart.StorageMinecart;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffectType;
+import red.mohist.entity.CraftCustomAbstractHorse;
+import red.mohist.entity.CraftCustomChestHorse;
+import red.mohist.entity.CraftCustomEntity;
 import red.mohist.entity.CustomProjectileEntity;
 
 public enum EntityType {

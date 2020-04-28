@@ -19,14 +19,13 @@
 
 package net.minecraftforge.fml.client;
 
+import java.awt.*;
+import java.io.File;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiErrorScreen;
 import net.minecraft.client.resources.I18n;
 import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.Loader;
-
-import java.awt.*;
-import java.io.File;
 
 public class GuiErrorBase extends GuiErrorScreen
 {

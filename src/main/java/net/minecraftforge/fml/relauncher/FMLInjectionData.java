@@ -22,7 +22,6 @@ package net.minecraftforge.fml.relauncher;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-
 import net.minecraft.launchwrapper.LaunchClassLoader;
 import net.minecraftforge.common.ForgeVersion;
 

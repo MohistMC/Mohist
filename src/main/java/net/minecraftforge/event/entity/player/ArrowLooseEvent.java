@@ -19,15 +19,14 @@
 
 package net.minecraftforge.event.entity.player;
 
+import javax.annotation.Nonnull;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.item.ItemBow;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fml.common.eventhandler.Cancelable;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemBow;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
-
-import javax.annotation.Nonnull;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fml.common.eventhandler.Cancelable;
 
 /**
  * ArrowLooseEvent is fired when a player stops using a bow.<br>

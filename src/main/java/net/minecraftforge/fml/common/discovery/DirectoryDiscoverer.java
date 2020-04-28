@@ -19,6 +19,7 @@
 
 package net.minecraftforge.fml.common.discovery;
 
+import com.google.common.collect.Lists;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.FileInputStream;
@@ -26,19 +27,14 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Matcher;
-
+import javax.annotation.Nullable;
 import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.LoaderException;
 import net.minecraftforge.fml.common.MetadataCollection;
 import net.minecraftforge.fml.common.ModContainer;
 import net.minecraftforge.fml.common.ModContainerFactory;
 import net.minecraftforge.fml.common.discovery.asm.ASMModParser;
-
 import org.apache.commons.io.IOUtils;
-
-import com.google.common.collect.Lists;
-
-import javax.annotation.Nullable;
 
 public class DirectoryDiscoverer implements ITypeDiscoverer
 {

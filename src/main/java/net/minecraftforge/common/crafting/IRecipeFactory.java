@@ -20,7 +20,6 @@
 package net.minecraftforge.common.crafting;
 
 import com.google.gson.JsonObject;
-
 import net.minecraft.item.crafting.IRecipe;
 
 public interface IRecipeFactory {

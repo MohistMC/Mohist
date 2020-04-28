@@ -21,7 +21,6 @@ package net.minecraftforge.common;
 
 import java.util.ArrayList;
 import java.util.Random;
-
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.WeightedRandom;
 

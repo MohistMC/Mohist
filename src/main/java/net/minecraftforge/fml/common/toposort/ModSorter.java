@@ -19,19 +19,17 @@
 
 package net.minecraftforge.fml.common.toposort;
 
+import com.google.common.collect.Maps;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import net.minecraftforge.fml.common.DummyModContainer;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.ModAPIManager;
 import net.minecraftforge.fml.common.ModContainer;
 import net.minecraftforge.fml.common.toposort.TopologicalSort.DirectedGraph;
 import net.minecraftforge.fml.common.versioning.ArtifactVersion;
-
-import com.google.common.collect.Maps;
 
 /**
  * @author cpw

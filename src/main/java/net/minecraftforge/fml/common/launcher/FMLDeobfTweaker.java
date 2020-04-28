@@ -22,7 +22,6 @@ package net.minecraftforge.fml.common.launcher;
 import java.io.File;
 import java.lang.reflect.Method;
 import java.util.List;
-
 import net.minecraft.launchwrapper.ITweaker;
 import net.minecraft.launchwrapper.LaunchClassLoader;
 import net.minecraftforge.fml.common.FMLLog;

@@ -19,16 +19,12 @@
 
 package net.minecraftforge.fml.client.config;
 
-import static net.minecraftforge.fml.client.config.GuiUtils.RESET_CHAR;
-import static net.minecraftforge.fml.client.config.GuiUtils.UNDO_CHAR;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-
+import javax.annotation.Nullable;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
@@ -38,16 +34,15 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.ConfigElement;
 import net.minecraftforge.common.config.ConfigManager;
 import net.minecraftforge.fml.client.config.GuiConfigEntries.IConfigEntry;
+import static net.minecraftforge.fml.client.config.GuiUtils.RESET_CHAR;
+import static net.minecraftforge.fml.client.config.GuiUtils.UNDO_CHAR;
 import net.minecraftforge.fml.client.event.ConfigChangedEvent;
 import net.minecraftforge.fml.client.event.ConfigChangedEvent.OnConfigChangedEvent;
 import net.minecraftforge.fml.client.event.ConfigChangedEvent.PostConfigChangedEvent;
 import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.eventhandler.Event.Result;
-
 import org.lwjgl.input.Keyboard;
-
-import javax.annotation.Nullable;
 
 /**
  * This class is the base GuiScreen for all config GUI screens. It can be extended by mods to provide the top-level config screen

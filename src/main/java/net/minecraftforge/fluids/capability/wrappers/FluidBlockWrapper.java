@@ -20,15 +20,14 @@
 package net.minecraftforge.fluids.capability.wrappers;
 
 import javax.annotation.Nullable;
-
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.capability.FluidTankProperties;
 import net.minecraftforge.fluids.IFluidBlock;
-import net.minecraftforge.fluids.capability.IFluidTankProperties;
+import net.minecraftforge.fluids.capability.FluidTankProperties;
 import net.minecraftforge.fluids.capability.IFluidHandler;
+import net.minecraftforge.fluids.capability.IFluidTankProperties;
 
 /**
  * Wrapper to handle {@link IFluidBlock} as an IFluidHandler

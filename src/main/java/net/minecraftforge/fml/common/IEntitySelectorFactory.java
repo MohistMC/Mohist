@@ -20,15 +20,14 @@
 package net.minecraftforge.fml.common;
 
 import com.google.common.base.Predicate;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import javax.annotation.Nonnull;
 import net.minecraft.command.EntitySelector;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.math.Vec3d;
-
-import javax.annotation.Nonnull;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
 
 /**
  * Allows mods to create custom selectors in commands.

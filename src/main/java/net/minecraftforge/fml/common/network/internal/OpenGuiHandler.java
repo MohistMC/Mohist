@@ -19,6 +19,8 @@
 
 package net.minecraftforge.fml.common.network.internal;
 
+import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.SimpleChannelInboundHandler;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.IThreadListener;
 import net.minecraftforge.fml.client.FMLClientHandler;
@@ -26,8 +28,6 @@ import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.network.internal.FMLMessage.OpenGui;
-import io.netty.channel.ChannelHandlerContext;
-import io.netty.channel.SimpleChannelInboundHandler;
 
 public class OpenGuiHandler extends SimpleChannelInboundHandler<FMLMessage.OpenGui> {
     @Override

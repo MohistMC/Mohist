@@ -20,12 +20,14 @@
 package net.minecraftforge.fluids.capability.templates;
 
 import com.google.common.collect.Lists;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.capability.IFluidTankProperties;
 import net.minecraftforge.fluids.capability.IFluidHandler;
-
-import java.util.*;
+import net.minecraftforge.fluids.capability.IFluidTankProperties;
 
 /**
  * FluidHandlerFluidMap is a template class for concatenating multiple handlers into one,

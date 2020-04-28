@@ -19,12 +19,22 @@
 
 package net.minecraftforge.oredict;
 
+import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonSyntaxException;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
+import javax.annotation.Nonnull;
 import net.minecraft.block.Block;
-import net.minecraft.item.crafting.IRecipe;
-import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.crafting.IRecipe;
+import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.util.JsonUtils;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
@@ -32,21 +42,8 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.crafting.CraftingHelper;
 import net.minecraftforge.common.crafting.CraftingHelper.ShapedPrimer;
 import net.minecraftforge.common.crafting.IShapedRecipe;
-import net.minecraftforge.registries.IForgeRegistryEntry;
 import net.minecraftforge.common.crafting.JsonContext;
-
-import java.util.Map;
-import java.util.Set;
-import java.util.Map.Entry;
-
-import javax.annotation.Nonnull;
-
-import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonSyntaxException;
+import net.minecraftforge.registries.IForgeRegistryEntry;
 import org.bukkit.inventory.Recipe;
 import red.mohist.recipe.CustomModRecipe;
 

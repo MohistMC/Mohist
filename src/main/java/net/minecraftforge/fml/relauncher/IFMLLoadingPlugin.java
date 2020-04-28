@@ -19,12 +19,12 @@
 
 package net.minecraftforge.fml.relauncher;
 
-import javax.annotation.Nullable;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import java.util.Map;
+import javax.annotation.Nullable;
 
 /**
  * The base plugin that provides class name meta information to FML to

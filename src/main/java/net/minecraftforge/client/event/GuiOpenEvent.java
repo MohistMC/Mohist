@@ -19,9 +19,9 @@
 
 package net.minecraftforge.client.event;
 
+import net.minecraft.client.gui.GuiScreen;
 import net.minecraftforge.fml.common.eventhandler.Cancelable;
 import net.minecraftforge.fml.common.eventhandler.Event;
-import net.minecraft.client.gui.GuiScreen;
 
 /**
  * This event is called before any Gui will open.

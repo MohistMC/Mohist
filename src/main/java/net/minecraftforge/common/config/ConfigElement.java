@@ -19,15 +19,13 @@
 
 package net.minecraftforge.common.config;
 
+import com.google.common.base.Strings;
+import com.google.common.collect.Lists;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.regex.Pattern;
-
-import com.google.common.base.Strings;
-import com.google.common.collect.Lists;
-
 import net.minecraftforge.fml.client.config.ConfigGuiType;
 import net.minecraftforge.fml.client.config.DummyConfigElement.DummyCategoryElement;
 import net.minecraftforge.fml.client.config.GuiConfigEntries.IConfigEntry;

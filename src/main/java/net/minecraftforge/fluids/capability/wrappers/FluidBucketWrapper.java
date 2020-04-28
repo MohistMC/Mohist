@@ -21,7 +21,6 @@ package net.minecraftforge.fluids.capability.wrappers;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBucketMilk;
@@ -34,10 +33,10 @@ import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidUtil;
+import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.FluidTankProperties;
 import net.minecraftforge.fluids.capability.IFluidHandlerItem;
 import net.minecraftforge.fluids.capability.IFluidTankProperties;
-import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 
 /**
  * Wrapper for vanilla and forge buckets.

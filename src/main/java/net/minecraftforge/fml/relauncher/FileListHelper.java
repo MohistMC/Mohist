@@ -19,11 +19,11 @@
 
 package net.minecraftforge.fml.relauncher;
 
-import javax.annotation.Nullable;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.util.Arrays;
 import java.util.Comparator;
+import javax.annotation.Nullable;
 
 public final class FileListHelper {
     private enum CaseInsensitiveFileComparator implements Comparator<File>

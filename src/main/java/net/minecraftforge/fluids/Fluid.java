@@ -19,24 +19,23 @@
 
 package net.minecraftforge.fluids;
 
-import javax.annotation.Nullable;
-
-import java.awt.Color;
+import java.awt.*;
 import java.util.Locale;
+import javax.annotation.Nullable;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.SoundEvents;
+import net.minecraft.item.EnumRarity;
 import net.minecraft.util.EnumParticleTypes;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.translation.I18n;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldProvider;
 import net.minecraftforge.fml.common.FMLLog;
-import net.minecraft.item.EnumRarity;
 
 /**
  * Minecraft Forge Fluid Implementation

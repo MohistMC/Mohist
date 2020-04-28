@@ -19,6 +19,15 @@
 
 package net.minecraftforge.fml.common.patcher;
 
+import LZMA.LzmaInputStream;
+import com.google.common.base.Joiner;
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.ListMultimap;
+import com.google.common.collect.Maps;
+import com.google.common.hash.Hashing;
+import com.google.common.io.ByteArrayDataInput;
+import com.google.common.io.ByteStreams;
+import com.google.common.io.Files;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -32,22 +41,11 @@ import java.util.jar.JarInputStream;
 import java.util.jar.JarOutputStream;
 import java.util.jar.Pack200;
 import java.util.regex.Pattern;
-
 import net.minecraft.launchwrapper.LaunchClassLoader;
 import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.relauncher.FMLLaunchHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.repackage.com.nothome.delta.GDiffPatcher;
-import LZMA.LzmaInputStream;
-
-import com.google.common.base.Joiner;
-import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.ListMultimap;
-import com.google.common.collect.Maps;
-import com.google.common.hash.Hashing;
-import com.google.common.io.ByteArrayDataInput;
-import com.google.common.io.ByteStreams;
-import com.google.common.io.Files;
 import org.apache.commons.io.IOUtils;
 
 public class ClassPatchManager {

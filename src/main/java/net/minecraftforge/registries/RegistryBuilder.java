@@ -19,14 +19,16 @@
 
 package net.minecraftforge.registries;
 
-import java.util.List;
-
 import com.google.common.collect.Lists;
-
-import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.registries.IForgeRegistry.*;
-
+import java.util.List;
 import javax.annotation.Nullable;
+import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.registries.IForgeRegistry.AddCallback;
+import net.minecraftforge.registries.IForgeRegistry.ClearCallback;
+import net.minecraftforge.registries.IForgeRegistry.CreateCallback;
+import net.minecraftforge.registries.IForgeRegistry.DummyFactory;
+import net.minecraftforge.registries.IForgeRegistry.MissingFactory;
+import net.minecraftforge.registries.IForgeRegistry.ValidateCallback;
 
 public class RegistryBuilder<T extends IForgeRegistryEntry<T>>
 {

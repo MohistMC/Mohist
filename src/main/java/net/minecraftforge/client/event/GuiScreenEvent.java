@@ -21,19 +21,16 @@ package net.minecraftforge.client.event;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.InventoryEffectRenderer;
-import org.lwjgl.input.Mouse;
-
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.ScaledResolution;
-
+import net.minecraft.client.renderer.InventoryEffectRenderer;
 import net.minecraftforge.fml.common.eventhandler.Cancelable;
 import net.minecraftforge.fml.common.eventhandler.Event;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import org.lwjgl.input.Mouse;
 
 /**
  * Event classes for GuiScreen events.

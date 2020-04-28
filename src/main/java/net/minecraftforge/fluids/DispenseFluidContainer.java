@@ -20,7 +20,6 @@
 package net.minecraftforge.fluids;
 
 import javax.annotation.Nonnull;
-
 import net.minecraft.block.BlockDispenser;
 import net.minecraft.dispenser.BehaviorDefaultDispenseItem;
 import net.minecraft.dispenser.IBlockSource;

@@ -22,7 +22,6 @@ package net.minecraftforge.event.entity;
 import net.minecraft.entity.Entity;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.Event.HasResult;
-import net.minecraftforge.fml.common.eventhandler.Event.Result;
 
 /**
  * EntityMobGriefingEvent is fired when mob griefing is about to occur and allows an event listener to specify whether it should or not.<br>

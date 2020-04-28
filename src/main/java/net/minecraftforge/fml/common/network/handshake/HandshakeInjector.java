@@ -19,10 +19,10 @@
 
 package net.minecraftforge.fml.common.network.handshake;
 
-import net.minecraftforge.fml.common.network.internal.FMLProxyPacket;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelOutboundHandlerAdapter;
 import io.netty.channel.ChannelPromise;
+import net.minecraftforge.fml.common.network.internal.FMLProxyPacket;
 
 public class HandshakeInjector extends ChannelOutboundHandlerAdapter {
 

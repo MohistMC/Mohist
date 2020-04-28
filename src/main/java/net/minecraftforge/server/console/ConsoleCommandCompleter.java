@@ -20,15 +20,12 @@
 package net.minecraftforge.server.console;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
-
+import net.minecraft.server.dedicated.DedicatedServer;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
-import net.minecraft.server.dedicated.DedicatedServer;
 import org.jline.reader.Candidate;
 import org.jline.reader.Completer;
 import org.jline.reader.LineReader;

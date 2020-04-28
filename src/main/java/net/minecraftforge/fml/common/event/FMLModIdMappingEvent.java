@@ -19,14 +19,13 @@
 
 package net.minecraftforge.fml.common.event;
 
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
 import net.minecraft.util.ResourceLocation;
 
 /**

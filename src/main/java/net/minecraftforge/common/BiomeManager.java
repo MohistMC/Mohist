@@ -19,21 +19,18 @@
 
 package net.minecraftforge.common;
 
+import com.google.common.collect.ImmutableList;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
-
-import com.google.common.collect.ImmutableList;
-
+import javax.annotation.Nullable;
 import net.minecraft.init.Biomes;
 import net.minecraft.util.WeightedRandom;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.biome.BiomeProvider;
 import net.minecraft.world.gen.structure.MapGenVillage;
 import net.minecraftforge.common.util.EnumHelper;
-
-import javax.annotation.Nullable;
 
 public class BiomeManager
 {

@@ -19,14 +19,19 @@
 
 package net.minecraftforge.client.model;
 
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Maps;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Map;
-
+import java.util.Objects;
+import java.util.Optional;
+import java.util.function.Function;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.vecmath.Quat4f;
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.IBakedModel;
@@ -43,6 +48,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
+import static net.minecraftforge.client.model.ModelDynBucket.LoaderDynBucket.getResource;
 import net.minecraftforge.common.ForgeVersion;
 import net.minecraftforge.common.model.IModelState;
 import net.minecraftforge.common.model.TRSRTransformation;
@@ -50,19 +56,7 @@ import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidUtil;
-
-import java.util.Objects;
-import java.util.function.Function;
-import java.util.Optional;
-
-import static net.minecraftforge.client.model.ModelDynBucket.LoaderDynBucket.getResource;
-
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Maps;
 import net.minecraftforge.fml.common.FMLLog;
-import org.apache.commons.io.IOUtils;
 
 public final class ModelDynBucket implements IModel
 {

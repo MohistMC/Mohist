@@ -19,11 +19,10 @@
 
 package net.minecraftforge.fml.common.event;
 
-import net.minecraftforge.fml.common.ModClassLoader;
-import net.minecraftforge.fml.common.LoaderState.ModState;
-import net.minecraftforge.fml.common.discovery.ASMDataTable;
-
 import com.google.common.collect.ListMultimap;
+import net.minecraftforge.fml.common.LoaderState.ModState;
+import net.minecraftforge.fml.common.ModClassLoader;
+import net.minecraftforge.fml.common.discovery.ASMDataTable;
 
 /**
  * An internal FML event used to signal the construction of mods. Should not be used by mods.

@@ -19,9 +19,8 @@
 
 package net.minecraftforge.client.resource;
 
-import javax.annotation.Nullable;
 import java.util.function.Predicate;
-
+import javax.annotation.Nullable;
 import net.minecraftforge.common.ForgeModContainer;
 
 /**

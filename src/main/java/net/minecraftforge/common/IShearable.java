@@ -20,12 +20,10 @@
 package net.minecraftforge.common;
 
 import java.util.List;
-
+import javax.annotation.Nonnull;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
-
-import javax.annotation.Nonnull;
 
 /**
  *

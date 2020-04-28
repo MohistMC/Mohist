@@ -22,7 +22,6 @@ package net.minecraftforge.fml.common.registry;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.common.FMLLog;
 

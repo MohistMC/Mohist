@@ -25,15 +25,12 @@ import io.netty.channel.ChannelHandler.Sharable;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.MessageToMessageCodec;
 import io.netty.util.AttributeKey;
-
-import java.lang.ref.WeakReference;
-import java.util.List;
-
 import it.unimi.dsi.fastutil.bytes.Byte2ObjectMap;
 import it.unimi.dsi.fastutil.bytes.Byte2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2ByteMap;
 import it.unimi.dsi.fastutil.objects.Object2ByteOpenHashMap;
-
+import java.lang.ref.WeakReference;
+import java.util.List;
 import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.network.internal.FMLProxyPacket;

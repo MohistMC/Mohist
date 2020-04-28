@@ -19,12 +19,11 @@
 
 package net.minecraftforge.oredict;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntComparators;
 import it.unimi.dsi.fastutil.ints.IntList;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import net.minecraft.client.util.RecipeItemHelper;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.ItemStack;

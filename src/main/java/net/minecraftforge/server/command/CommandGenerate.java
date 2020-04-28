@@ -19,10 +19,9 @@
 
 package net.minecraftforge.server.command;
 
-import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.List;
-
+import javax.annotation.Nullable;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;

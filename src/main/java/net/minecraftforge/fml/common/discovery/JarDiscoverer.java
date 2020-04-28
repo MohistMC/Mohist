@@ -19,6 +19,8 @@
 
 package net.minecraftforge.fml.common.discovery;
 
+import com.google.common.collect.Lists;
+import com.google.common.collect.Multimap;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Constructor;
@@ -26,7 +28,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.jar.JarFile;
-
+import java.util.regex.Matcher;
+import java.util.zip.ZipEntry;
 import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.LoaderException;
 import net.minecraftforge.fml.common.MetadataCollection;
@@ -35,14 +38,7 @@ import net.minecraftforge.fml.common.ModContainerFactory;
 import net.minecraftforge.fml.common.discovery.ASMDataTable.ASMData;
 import net.minecraftforge.fml.common.discovery.asm.ASMModParser;
 import net.minecraftforge.fml.common.discovery.json.JsonAnnotationLoader;
-
-import java.util.regex.Matcher;
-import java.util.zip.ZipEntry;
-
 import org.objectweb.asm.Type;
-
-import com.google.common.collect.Lists;
-import com.google.common.collect.Multimap;
 
 public class JarDiscoverer implements ITypeDiscoverer
 {

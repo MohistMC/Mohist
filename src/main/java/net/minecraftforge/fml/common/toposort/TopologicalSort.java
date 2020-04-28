@@ -19,6 +19,8 @@
 
 package net.minecraftforge.fml.common.toposort;
 
+import com.google.common.collect.Sets;
+import com.google.common.collect.Sets.SetView;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -31,11 +33,7 @@ import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
-
 import net.minecraftforge.fml.common.FMLLog;
-
-import com.google.common.collect.Sets;
-import com.google.common.collect.Sets.SetView;
 
 /**
  * Topological sort for mod loading

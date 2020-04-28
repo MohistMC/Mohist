@@ -20,7 +20,6 @@
 package net.minecraftforge.server.command;
 
 import java.text.DecimalFormat;
-
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;

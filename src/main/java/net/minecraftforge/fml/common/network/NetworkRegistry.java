@@ -19,17 +19,18 @@
 
 package net.minecraftforge.fml.common.network;
 
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Maps;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.MessageToMessageCodec;
 import io.netty.util.AttributeKey;
-
 import java.util.Collection;
 import java.util.EnumMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
-
+import javax.annotation.Nullable;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.inventory.Container;
@@ -45,11 +46,6 @@ import net.minecraftforge.fml.common.network.internal.FMLProxyPacket;
 import net.minecraftforge.fml.common.network.internal.NetworkModHolder;
 import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import net.minecraftforge.fml.relauncher.Side;
-
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Maps;
-
-import javax.annotation.Nullable;
 
 /**
  * @author cpw

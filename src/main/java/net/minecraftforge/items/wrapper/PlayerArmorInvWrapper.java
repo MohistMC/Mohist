@@ -19,11 +19,10 @@
 
 package net.minecraftforge.items.wrapper;
 
+import javax.annotation.Nonnull;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemStack;
-
-import javax.annotation.Nonnull;
 
 public class PlayerArmorInvWrapper extends RangedWrapper
 {

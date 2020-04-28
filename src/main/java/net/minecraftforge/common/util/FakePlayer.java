@@ -19,12 +19,11 @@
 
 package net.minecraftforge.common.util;
 
-import javax.annotation.Nullable;
-
 import com.mojang.authlib.GameProfile;
-
+import java.net.InetAddress;
+import java.util.ArrayList;
+import javax.annotation.Nullable;
 import net.minecraft.entity.Entity;
-import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.network.play.client.CPacketClientSettings;
@@ -32,18 +31,16 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.management.PlayerInteractionManager;
 import net.minecraft.stats.StatBase;
 import net.minecraft.util.DamageSource;
-import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.text.ITextComponent;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 import org.bukkit.Bukkit;
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
 import org.bukkit.event.player.PlayerLoginEvent;
 import org.bukkit.event.player.PlayerPreLoginEvent;
 import red.mohist.Mohist;
-
-import java.net.InetAddress;
-import java.util.ArrayList;
 
 //Preliminary, simple Fake Player class
 public class FakePlayer extends EntityPlayerMP

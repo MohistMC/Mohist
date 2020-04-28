@@ -19,9 +19,8 @@
 
 package net.minecraftforge.client.model.animation;
 
-import net.minecraft.world.World;
-
 import java.lang.ref.WeakReference;
+import net.minecraft.world.World;
 
 public enum Animation
 {

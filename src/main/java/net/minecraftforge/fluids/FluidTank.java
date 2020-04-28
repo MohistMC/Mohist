@@ -20,7 +20,6 @@
 package net.minecraftforge.fluids;
 
 import javax.annotation.Nullable;
-
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.fluids.capability.FluidTankPropertiesWrapper;

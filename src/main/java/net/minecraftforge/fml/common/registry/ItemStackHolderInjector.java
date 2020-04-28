@@ -19,17 +19,15 @@
 
 package net.minecraftforge.fml.common.registry;
 
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import java.lang.reflect.Field;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
 import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.discovery.ASMDataTable;
 import net.minecraftforge.fml.common.discovery.ASMDataTable.ASMData;
-
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 
 public enum ItemStackHolderInjector
 {

@@ -20,7 +20,6 @@
 package net.minecraftforge.fluids.capability;
 
 import javax.annotation.Nullable;
-
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTankInfo;
 

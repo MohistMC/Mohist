@@ -19,29 +19,6 @@
 
 package net.minecraftforge.fml.common;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
-import net.minecraftforge.common.util.TextTable;
-import net.minecraftforge.fml.common.LoaderState.ModState;
-import net.minecraftforge.fml.common.ProgressManager.ProgressBar;
-import net.minecraftforge.fml.common.event.FMLEvent;
-import net.minecraftforge.fml.common.event.FMLLoadEvent;
-import net.minecraftforge.fml.common.event.FMLModDisabledEvent;
-import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
-import net.minecraftforge.fml.common.event.FMLStateEvent;
-import net.minecraftforge.fml.common.eventhandler.FMLThrowingEventBus;
-import net.minecraftforge.fml.common.versioning.ArtifactVersion;
-
-import org.apache.logging.log4j.ThreadContext;
-import org.apache.logging.log4j.message.FormattedMessage;
-
 import com.google.common.base.Throwables;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.BiMap;
@@ -56,8 +33,27 @@ import com.google.common.collect.Multimap;
 import com.google.common.collect.MultimapBuilder;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
-
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import javax.annotation.Nullable;
+import net.minecraftforge.common.util.TextTable;
+import net.minecraftforge.fml.common.LoaderState.ModState;
+import net.minecraftforge.fml.common.ProgressManager.ProgressBar;
+import net.minecraftforge.fml.common.event.FMLEvent;
+import net.minecraftforge.fml.common.event.FMLLoadEvent;
+import net.minecraftforge.fml.common.event.FMLModDisabledEvent;
+import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLStateEvent;
+import net.minecraftforge.fml.common.eventhandler.FMLThrowingEventBus;
+import net.minecraftforge.fml.common.versioning.ArtifactVersion;
+import org.apache.logging.log4j.ThreadContext;
+import org.apache.logging.log4j.message.FormattedMessage;
 
 public class LoadController
 {

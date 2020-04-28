@@ -19,20 +19,13 @@
 
 package net.minecraftforge.fml.common.network.handshake;
 
-import net.minecraft.entity.player.EntityPlayerMP;
-import red.mohist.api.PlayerAPI;
-import red.mohist.configuration.MohistConfig;
-import red.mohist.forge.MohistForgeUtils;
-import red.mohist.forge.ForgeVersion;
-import red.mohist.util.i18n.Message;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
-
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.function.Consumer;
-
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.Loader;
@@ -42,6 +35,11 @@ import net.minecraftforge.fml.common.network.internal.FMLNetworkHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.registries.ForgeRegistry;
 import net.minecraftforge.registries.RegistryManager;
+import red.mohist.api.PlayerAPI;
+import red.mohist.configuration.MohistConfig;
+import red.mohist.forge.ForgeVersion;
+import red.mohist.forge.MohistForgeUtils;
+import red.mohist.util.i18n.Message;
 
 enum FMLHandshakeServerState implements IHandshakeState<FMLHandshakeServerState>
 {

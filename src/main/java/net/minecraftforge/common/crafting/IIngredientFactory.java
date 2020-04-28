@@ -19,10 +19,8 @@
 
 package net.minecraftforge.common.crafting;
 
-import javax.annotation.Nonnull;
-
 import com.google.gson.JsonObject;
-
+import javax.annotation.Nonnull;
 import net.minecraft.item.crafting.Ingredient;
 
 public interface IIngredientFactory

@@ -19,10 +19,10 @@
 
 package net.minecraftforge.fml.common.eventhandler;
 
-import java.util.*;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
-
+import java.util.ArrayList;
+import java.util.List;
 import javax.annotation.Nullable;
 
 

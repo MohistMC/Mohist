@@ -20,19 +20,16 @@
 package net.minecraftforge.fml.common.network.simpleimpl;
 
 import io.netty.channel.ChannelFutureListener;
-
-import java.lang.reflect.Method;
-import java.util.EnumMap;
-
-import net.minecraft.entity.Entity;
-import net.minecraft.util.IThreadListener;
-
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelPipeline;
+import java.lang.reflect.Method;
+import java.util.EnumMap;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.network.INetHandler;
 import net.minecraft.network.Packet;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.IThreadListener;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.network.FMLEmbeddedChannel;

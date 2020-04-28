@@ -21,12 +21,10 @@ package net.minecraftforge.fml.common.launcher;
 
 import java.io.File;
 import java.util.List;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.core.LoggerContext;
-
 import net.minecraft.launchwrapper.LaunchClassLoader;
 import net.minecraftforge.fml.relauncher.FMLLaunchHandler;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.core.LoggerContext;
 
 public class FMLServerTweaker extends FMLTweaker {
 

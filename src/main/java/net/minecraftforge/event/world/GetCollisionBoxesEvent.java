@@ -19,14 +19,13 @@
 
 package net.minecraftforge.event.world;
 
+import java.util.List;
+import javax.annotation.Nullable;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.Cancelable;
-
-import javax.annotation.Nullable;
-import java.util.List;
 
 /**
  * This event is fired during {@link World#collidesWithAnyBlock(AxisAlignedBB)}

@@ -19,14 +19,12 @@
 
 package net.minecraftforge.oredict;
 
-import net.minecraft.item.EnumDyeColor;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import org.apache.commons.lang3.ArrayUtils;
-
 import java.util.Arrays;
 import java.util.Optional;
 import java.util.OptionalInt;
+import net.minecraft.item.EnumDyeColor;
+import net.minecraft.item.ItemStack;
+import org.apache.commons.lang3.ArrayUtils;
 
 /**
  * Utility class for working with ore dictionary dyes.

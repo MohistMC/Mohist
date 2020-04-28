@@ -20,9 +20,7 @@
 package net.minecraftforge.event.terraingen;
 
 import java.util.Random;
-
 import javax.annotation.Nullable;
-
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.world.World;

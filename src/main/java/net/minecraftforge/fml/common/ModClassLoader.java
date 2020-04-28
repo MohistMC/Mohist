@@ -19,6 +19,8 @@
 
 package net.minecraftforge.fml.common;
 
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URI;
@@ -29,16 +31,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
-
 import net.minecraft.launchwrapper.IClassTransformer;
 import net.minecraft.launchwrapper.LaunchClassLoader;
 import net.minecraftforge.fml.common.asm.transformers.ModAPITransformer;
 import net.minecraftforge.fml.common.discovery.ASMDataTable;
-
-import org.apache.logging.log4j.Level;
-
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Lists;
 
 /**
  * A simple delegating class loader used to load mods into the system

@@ -20,14 +20,12 @@
 package net.minecraftforge.event.entity.player;
 
 import java.util.List;
-
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 public class ItemTooltipEvent extends PlayerEvent
 {

@@ -19,11 +19,12 @@
 
 package net.minecraftforge.common.model;
 
+import com.google.common.base.MoreObjects;
+import com.google.common.collect.Maps;
 import java.util.EnumMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
-
 import javax.annotation.Nullable;
 import javax.vecmath.AxisAngle4f;
 import javax.vecmath.Matrix3f;
@@ -34,7 +35,6 @@ import javax.vecmath.Tuple3f;
 import javax.vecmath.Tuple4f;
 import javax.vecmath.Vector3f;
 import javax.vecmath.Vector4f;
-
 import net.minecraft.client.renderer.block.model.ItemTransformVec3f;
 import net.minecraft.client.renderer.block.model.ModelRotation;
 import net.minecraft.util.EnumFacing;
@@ -42,12 +42,8 @@ import net.minecraft.util.math.Vec3i;
 import net.minecraftforge.client.ForgeHooksClient;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.lang3.tuple.Triple;
-
-import com.google.common.base.MoreObjects;
-import com.google.common.collect.Maps;
 
 /*
  * Interpolation-friendly affine transformation.

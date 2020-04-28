@@ -19,10 +19,9 @@
 
 package net.minecraftforge.event.entity.player;
 
+import javax.annotation.Nonnull;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
-
-import javax.annotation.Nonnull;
 
 /**
  * Fired when the player removes a "repaired" item from the Anvil's Output slot.

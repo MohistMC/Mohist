@@ -21,7 +21,6 @@ package net.minecraftforge.fml.client;
 
 import java.io.File;
 import java.io.IOException;
-
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.GuiYesNo;

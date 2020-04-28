@@ -19,8 +19,8 @@
 
 package net.minecraftforge.common;
 
-import static net.minecraftforge.common.ForgeVersion.Status.*;
-
+import com.google.common.io.ByteStreams;
+import com.google.gson.Gson;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
@@ -34,20 +34,20 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
-import com.google.common.io.ByteStreams;
-import com.google.gson.Gson;
-
+import javax.annotation.Nullable;
+import static net.minecraftforge.common.ForgeVersion.Status.AHEAD;
+import static net.minecraftforge.common.ForgeVersion.Status.BETA;
+import static net.minecraftforge.common.ForgeVersion.Status.BETA_OUTDATED;
+import static net.minecraftforge.common.ForgeVersion.Status.FAILED;
+import static net.minecraftforge.common.ForgeVersion.Status.OUTDATED;
+import static net.minecraftforge.common.ForgeVersion.Status.PENDING;
+import static net.minecraftforge.common.ForgeVersion.Status.UP_TO_DATE;
 import net.minecraftforge.fml.common.InjectedModContainer;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.ModContainer;
 import net.minecraftforge.fml.common.versioning.ComparableVersion;
-
-import javax.annotation.Nullable;
-import red.mohist.configuration.MohistConfig;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class ForgeVersion
 {

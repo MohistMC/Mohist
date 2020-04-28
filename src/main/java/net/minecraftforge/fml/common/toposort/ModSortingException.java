@@ -20,7 +20,6 @@
 package net.minecraftforge.fml.common.toposort;
 
 import java.util.Set;
-
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraftforge.fml.client.GuiSortingProblem;
 import net.minecraftforge.fml.client.IDisplayableError;

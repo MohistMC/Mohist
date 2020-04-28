@@ -19,14 +19,13 @@
 
 package net.minecraftforge.client.settings;
 
-import net.minecraft.client.settings.KeyBinding;
-import net.minecraft.util.IntHashMap;
-
-import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.EnumMap;
 import java.util.List;
+import javax.annotation.Nullable;
+import net.minecraft.client.settings.KeyBinding;
+import net.minecraft.util.IntHashMap;
 
 public class KeyBindingMap
 {

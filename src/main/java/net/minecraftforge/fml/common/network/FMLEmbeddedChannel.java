@@ -21,9 +21,8 @@ package net.minecraftforge.fml.common.network;
 
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.embedded.EmbeddedChannel;
-
 import java.util.Map.Entry;
-
+import javax.annotation.Nullable;
 import net.minecraft.network.Packet;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.ModContainer;
@@ -31,8 +30,6 @@ import net.minecraftforge.fml.common.network.FMLOutboundHandler.OutboundTarget;
 import net.minecraftforge.fml.common.network.handshake.NetworkDispatcher;
 import net.minecraftforge.fml.common.network.internal.FMLProxyPacket;
 import net.minecraftforge.fml.relauncher.Side;
-
-import javax.annotation.Nullable;
 
 /**
  * Utility wrapper around {@link EmbeddedChannel}. Provides some convenience methods

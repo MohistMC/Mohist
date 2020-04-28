@@ -23,7 +23,6 @@ import java.io.File;
 import java.text.ParseException;
 import java.util.Date;
 import java.util.Locale;
-
 import org.apache.maven.artifact.versioning.ComparableVersion;
 
 public class Artifact implements Comparable<Artifact>

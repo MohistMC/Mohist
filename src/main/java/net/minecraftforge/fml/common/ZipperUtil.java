@@ -19,6 +19,7 @@
 
 package net.minecraftforge.fml.common;
 
+import com.google.common.io.Files;
 import java.io.Closeable;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -29,10 +30,6 @@ import java.util.Deque;
 import java.util.LinkedList;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
-
-import org.apache.logging.log4j.Level;
-
-import com.google.common.io.Files;
 
 /**
  * Copied from http://stackoverflow.com/questions/1399126/java-util-zip-recreating-directory-structure

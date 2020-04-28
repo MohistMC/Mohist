@@ -19,6 +19,16 @@
 
 package net.minecraftforge.fml.common;
 
+import com.google.common.base.Strings;
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.ListMultimap;
+import com.google.common.collect.Maps;
+import com.google.common.collect.SetMultimap;
+import com.google.common.eventbus.EventBus;
+import com.google.common.eventbus.Subscribe;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -36,15 +46,18 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
-
+import java.util.function.Function;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
+import javax.annotation.Nullable;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Config;
 import net.minecraftforge.common.config.ConfigManager;
 import net.minecraftforge.fml.common.Mod.Instance;
 import net.minecraftforge.fml.common.Mod.Metadata;
 import net.minecraftforge.fml.common.discovery.ASMDataTable;
-import net.minecraftforge.fml.common.discovery.ModCandidate;
 import net.minecraftforge.fml.common.discovery.ASMDataTable.ASMData;
+import net.minecraftforge.fml.common.discovery.ModCandidate;
 import net.minecraftforge.fml.common.event.FMLConstructionEvent;
 import net.minecraftforge.fml.common.event.FMLEvent;
 import net.minecraftforge.fml.common.event.FMLFingerprintViolationEvent;
@@ -55,27 +68,9 @@ import net.minecraftforge.fml.common.versioning.DependencyParser;
 import net.minecraftforge.fml.common.versioning.VersionParser;
 import net.minecraftforge.fml.common.versioning.VersionRange;
 import net.minecraftforge.fml.relauncher.Side;
-
 import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.Level;
-
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
-
-import java.util.function.Function;
-import com.google.common.base.Strings;
-import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.ListMultimap;
-import com.google.common.collect.Maps;
-import com.google.common.collect.SetMultimap;
-import com.google.common.eventbus.EventBus;
-import com.google.common.eventbus.Subscribe;
 import org.apache.logging.log4j.message.FormattedMessage;
-
-import javax.annotation.Nullable;
 
 public class FMLModContainer implements ModContainer
 {

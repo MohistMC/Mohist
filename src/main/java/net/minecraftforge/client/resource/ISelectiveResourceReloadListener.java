@@ -20,7 +20,6 @@
 package net.minecraftforge.client.resource;
 
 import java.util.function.Predicate;
-
 import net.minecraft.client.resources.IResourceManager;
 import net.minecraft.client.resources.IResourceManagerReloadListener;
 

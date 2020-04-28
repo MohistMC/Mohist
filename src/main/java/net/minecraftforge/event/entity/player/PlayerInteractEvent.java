@@ -20,6 +20,8 @@
 package net.minecraftforge.event.entity.player;
 
 import com.google.common.base.Preconditions;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -31,13 +33,9 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.Cancelable;
-import net.minecraftforge.fml.relauncher.Side;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
 import static net.minecraftforge.fml.common.eventhandler.Event.Result.DEFAULT;
 import static net.minecraftforge.fml.common.eventhandler.Event.Result.DENY;
+import net.minecraftforge.fml.relauncher.Side;
 
 /**
  * PlayerInteractEvent is fired when a player interacts in some way.

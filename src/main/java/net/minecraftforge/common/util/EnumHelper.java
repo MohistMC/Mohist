@@ -19,15 +19,15 @@
 
 package net.minecraftforge.common.util;
 
-import java.lang.reflect.*;
-import java.util.*;
-import java.util.function.BiPredicate;
-
 import com.google.common.base.Predicate;
 import com.google.common.collect.Lists;
-
-import net.minecraftforge.fml.common.EnhancedRuntimeException;
-import net.minecraftforge.fml.common.FMLLog;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
+import java.util.List;
+import java.util.function.BiPredicate;
+import javax.annotation.Nullable;
 import net.minecraft.block.BlockPressurePlate.Sensitivity;
 import net.minecraft.block.material.Material;
 import net.minecraft.enchantment.EnumEnchantmentType;
@@ -51,9 +51,9 @@ import net.minecraft.world.EnumSkyBlock;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.gen.structure.StructureStrongholdPieces.Stronghold.Door;
 import net.minecraftforge.classloading.FMLForgePlugin;
+import net.minecraftforge.fml.common.EnhancedRuntimeException;
+import net.minecraftforge.fml.common.FMLLog;
 import org.apache.commons.lang3.ArrayUtils;
-
-import javax.annotation.Nullable;
 
 public class EnumHelper
 {

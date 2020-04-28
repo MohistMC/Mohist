@@ -19,29 +19,23 @@
 
 package net.minecraftforge.common;
 
+import com.google.common.collect.Lists;
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
+import javax.annotation.Nonnull;
+import net.minecraft.crash.CrashReport;
+import net.minecraft.crash.ICrashReportDetail;
+import net.minecraft.item.ItemStack;
+import net.minecraftforge.common.ForgeHooks.SeedEntry;
+import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.ICrashCallable;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.discovery.ASMDataTable;
 import net.minecraftforge.fml.common.discovery.ASMDataTable.ASMData;
 import net.minecraftforge.fml.common.eventhandler.EventBus;
-
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
-
-import org.apache.logging.log4j.Level;
-
-import com.google.common.collect.Lists;
-
-import net.minecraft.crash.CrashReport;
-import net.minecraft.crash.ICrashReportDetail;
-import net.minecraft.item.ItemStack;
-import net.minecraftforge.common.ForgeHooks.SeedEntry;
-import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.oredict.OreDictionary;
-
-import javax.annotation.Nonnull;
 
 public class MinecraftForge
 {

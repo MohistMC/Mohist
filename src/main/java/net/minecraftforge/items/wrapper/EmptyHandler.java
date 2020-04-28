@@ -19,11 +19,10 @@
 
 package net.minecraftforge.items.wrapper;
 
+import javax.annotation.Nonnull;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
-
-import javax.annotation.Nonnull;
 
 public class EmptyHandler implements IItemHandlerModifiable
 {

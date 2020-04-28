@@ -19,11 +19,17 @@
 
 package net.minecraftforge.fml.common.registry;
 
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.BiMap;
+import com.google.common.collect.HashBiMap;
+import com.google.common.collect.ListMultimap;
 import com.google.common.collect.Maps;
-import net.minecraft.entity.EntityList;
-import net.minecraftforge.fml.common.Loader;
-
+import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+import javax.annotation.Nullable;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityList;
 import net.minecraft.entity.EntityList.EntityEggInfo;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityTracker;
@@ -34,19 +40,10 @@ import net.minecraft.world.biome.Biome;
 import net.minecraft.world.biome.Biome.SpawnListEntry;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.FMLLog;
+import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.ModContainer;
 import net.minecraftforge.fml.common.network.internal.FMLMessage.EntitySpawnMessage;
 import net.minecraftforge.registries.GameData;
-
-import java.util.List;
-import java.util.Map;
-import java.util.function.Function;
-import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.BiMap;
-import com.google.common.collect.HashBiMap;
-import com.google.common.collect.ListMultimap;
-
-import javax.annotation.Nullable;
 
 public class EntityRegistry
 {

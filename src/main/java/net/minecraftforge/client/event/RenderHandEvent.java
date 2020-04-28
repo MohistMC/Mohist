@@ -19,9 +19,9 @@
 
 package net.minecraftforge.client.event;
 
+import net.minecraft.client.renderer.RenderGlobal;
 import net.minecraftforge.fml.common.eventhandler.Cancelable;
 import net.minecraftforge.fml.common.eventhandler.Event;
-import net.minecraft.client.renderer.RenderGlobal;
 
 /**
  * This event is fired on {@link net.minecraftforge.common.MinecraftForge#EVENT_BUS}

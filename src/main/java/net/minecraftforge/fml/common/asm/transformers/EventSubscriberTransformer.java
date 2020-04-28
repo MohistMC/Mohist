@@ -19,20 +19,17 @@
 
 package net.minecraftforge.fml.common.asm.transformers;
 
+import com.google.common.base.Predicate;
+import com.google.common.collect.Iterables;
 import java.lang.reflect.Modifier;
 import java.util.List;
-
 import net.minecraft.launchwrapper.IClassTransformer;
-
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.AnnotationNode;
 import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.MethodNode;
-
-import com.google.common.base.Predicate;
-import com.google.common.collect.Iterables;
 
 public class EventSubscriberTransformer implements IClassTransformer
 {

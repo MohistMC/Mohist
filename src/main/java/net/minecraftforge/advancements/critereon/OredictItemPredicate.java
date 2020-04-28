@@ -21,12 +21,11 @@ package net.minecraftforge.advancements.critereon;
 
 
 import com.google.gson.JsonObject;
-import net.minecraft.util.JsonUtils;
-import org.apache.commons.lang3.ArrayUtils;
-
 import net.minecraft.advancements.critereon.ItemPredicate;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.JsonUtils;
 import net.minecraftforge.oredict.OreDictionary;
+import org.apache.commons.lang3.ArrayUtils;
 
 /**
  * An {@link ItemPredicate} that matches oredicts.

@@ -19,8 +19,11 @@
 
 package net.minecraftforge.fml.common.event;
 
-import java.util.function.Function;
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.ImmutableList;
 import java.util.Optional;
+import java.util.function.Function;
+import javax.annotation.Nonnull;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
@@ -28,13 +31,8 @@ import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.LoaderState;
-import net.minecraftforge.fml.common.ModContainer;
 import net.minecraftforge.fml.common.Mod.Instance;
-
-import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.ImmutableList;
-
-import javax.annotation.Nonnull;
+import net.minecraftforge.fml.common.ModContainer;
 
 /**
  * Simple intermod communications to receive simple messages directed at you

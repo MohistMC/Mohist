@@ -19,25 +19,22 @@
 
 package net.minecraftforge.fml.common.discovery.json;
 
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.nio.charset.StandardCharsets;
-import java.util.Map;
-import java.util.Map.Entry;
-
-import org.objectweb.asm.Type;
-
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
-
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
+import java.util.Map;
+import java.util.Map.Entry;
 import net.minecraftforge.fml.common.discovery.ASMDataTable;
 import net.minecraftforge.fml.common.discovery.ASMDataTable.ASMData;
 import net.minecraftforge.fml.common.discovery.ModCandidate;
 import net.minecraftforge.fml.common.discovery.json.ASMInfo.Annotation;
 import net.minecraftforge.fml.common.discovery.json.ASMInfo.TargetType;
+import org.objectweb.asm.Type;
 
 public class JsonAnnotationLoader
 {

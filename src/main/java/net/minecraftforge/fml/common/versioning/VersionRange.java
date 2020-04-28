@@ -22,12 +22,11 @@ package net.minecraftforge.fml.common.versioning;
  * under the License.
  */
 
+import com.google.common.base.Joiner;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
-
-import com.google.common.base.Joiner; //Forge: Add Imports
 import javax.annotation.Nullable;
 
 /**

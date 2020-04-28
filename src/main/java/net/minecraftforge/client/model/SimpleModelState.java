@@ -19,12 +19,11 @@
 
 package net.minecraftforge.client.model;
 
+import com.google.common.collect.ImmutableMap;
+import java.util.Optional;
 import net.minecraftforge.common.model.IModelPart;
 import net.minecraftforge.common.model.IModelState;
 import net.minecraftforge.common.model.TRSRTransformation;
-
-import java.util.Optional;
-import com.google.common.collect.ImmutableMap;
 
 /*
  * Simple implementation of IModelState via a map and a default value.

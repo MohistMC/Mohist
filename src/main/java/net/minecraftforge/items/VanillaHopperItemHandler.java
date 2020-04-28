@@ -19,11 +19,10 @@
 
 package net.minecraftforge.items;
 
+import javax.annotation.Nonnull;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntityHopper;
 import net.minecraftforge.items.wrapper.InvWrapper;
-
-import javax.annotation.Nonnull;
 
 public class VanillaHopperItemHandler extends InvWrapper
 {

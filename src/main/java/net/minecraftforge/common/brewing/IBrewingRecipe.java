@@ -19,9 +19,8 @@
 
 package net.minecraftforge.common.brewing;
 
-import net.minecraft.item.ItemStack;
-
 import javax.annotation.Nonnull;
+import net.minecraft.item.ItemStack;
 
 public interface IBrewingRecipe {
 

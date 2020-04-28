@@ -19,10 +19,14 @@
 
 package net.minecraftforge.client.model;
 
+import com.google.common.base.Joiner;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Maps;
+import com.google.common.collect.Queues;
+import com.google.common.collect.Sets;
 import java.util.Deque;
 import java.util.Map;
 import java.util.Set;
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.resources.IReloadableResourceManager;
@@ -36,12 +40,6 @@ import net.minecraftforge.common.animation.ITimeValue;
 import net.minecraftforge.common.model.animation.AnimationStateMachine;
 import net.minecraftforge.common.model.animation.IAnimationStateMachine;
 import net.minecraftforge.fml.common.FMLLog;
-
-import com.google.common.base.Joiner;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Queues;
-import com.google.common.collect.Sets;
 
 /*
  * Central hub for custom model loaders.

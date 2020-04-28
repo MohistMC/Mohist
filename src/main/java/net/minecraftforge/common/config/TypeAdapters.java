@@ -22,7 +22,6 @@ package net.minecraftforge.common.config;
 //=========================================================
 // Run away thar' be dragons!
 //=========================================================
-import java.util.Arrays;
 
 import com.google.common.primitives.Booleans;
 import com.google.common.primitives.Bytes;
@@ -30,7 +29,7 @@ import com.google.common.primitives.Doubles;
 import com.google.common.primitives.Floats;
 import com.google.common.primitives.Ints;
 import com.google.common.primitives.Shorts;
-
+import java.util.Arrays;
 import net.minecraftforge.common.config.Property.Type;
 
 class TypeAdapters

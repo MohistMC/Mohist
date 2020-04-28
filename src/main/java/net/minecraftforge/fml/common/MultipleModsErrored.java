@@ -20,7 +20,6 @@
 package net.minecraftforge.fml.common;
 
 import java.util.List;
-
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraftforge.fml.client.GuiMultipleModsErrored;
 import net.minecraftforge.fml.client.IDisplayableError;

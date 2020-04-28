@@ -19,6 +19,7 @@
 
 package net.minecraftforge.fml.common.asm;
 
+import com.google.common.io.ByteStreams;
 import java.io.File;
 import java.io.InputStream;
 import java.net.URLDecoder;
@@ -28,20 +29,16 @@ import java.security.cert.Certificate;
 import java.util.Map;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
-
-import net.minecraftforge.fml.common.FMLLog;
-import org.apache.commons.io.IOUtils;
-
 import net.minecraft.launchwrapper.LaunchClassLoader;
 import net.minecraftforge.fml.common.CertificateHelper;
 import net.minecraftforge.fml.common.FMLCommonHandler;
+import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.asm.transformers.deobf.FMLDeobfuscatingRemapper;
 import net.minecraftforge.fml.common.patcher.ClassPatchManager;
 import net.minecraftforge.fml.relauncher.FMLLaunchHandler;
 import net.minecraftforge.fml.relauncher.IFMLCallHook;
 import net.minecraftforge.fml.relauncher.Side;
-
-import com.google.common.io.ByteStreams;
+import org.apache.commons.io.IOUtils;
 
 public class FMLSanityChecker implements IFMLCallHook
 {

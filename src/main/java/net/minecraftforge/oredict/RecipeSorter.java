@@ -19,38 +19,34 @@
 
 package net.minecraftforge.oredict;
 
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-
-import net.minecraftforge.fml.common.FMLLog;
-import net.minecraftforge.fml.common.toposort.TopologicalSort;
-import net.minecraftforge.fml.common.toposort.TopologicalSort.DirectedGraph;
-import net.minecraft.item.crafting.CraftingManager;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import javax.annotation.Nullable;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.item.crafting.RecipeBookCloning;
 import net.minecraft.item.crafting.RecipeFireworks;
 import net.minecraft.item.crafting.RecipeRepairItem;
 import net.minecraft.item.crafting.RecipeTippedArrow;
 import net.minecraft.item.crafting.RecipesArmorDyes;
+import net.minecraft.item.crafting.RecipesBanners.RecipeAddPattern;
+import net.minecraft.item.crafting.RecipesBanners.RecipeDuplicatePattern;
 import net.minecraft.item.crafting.RecipesMapCloning;
 import net.minecraft.item.crafting.RecipesMapExtending;
 import net.minecraft.item.crafting.ShapedRecipes;
 import net.minecraft.item.crafting.ShapelessRecipes;
 import net.minecraft.item.crafting.ShieldRecipes;
-import net.minecraft.item.crafting.RecipesBanners.RecipeAddPattern;
-import net.minecraft.item.crafting.RecipesBanners.RecipeDuplicatePattern;
-
-import javax.annotation.Nullable;
-
-import static net.minecraftforge.oredict.RecipeSorter.Category.*;
+import net.minecraftforge.fml.common.FMLLog;
+import net.minecraftforge.fml.common.toposort.TopologicalSort;
+import net.minecraftforge.fml.common.toposort.TopologicalSort.DirectedGraph;
+import static net.minecraftforge.oredict.RecipeSorter.Category.SHAPED;
+import static net.minecraftforge.oredict.RecipeSorter.Category.SHAPELESS;
+import static net.minecraftforge.oredict.RecipeSorter.Category.UNKNOWN;
 @Deprecated //DO NOT USE IN 1.12 UNTIL THIS DEPRECATION MARKER IS REMOVED THIS WILL MOST LIKELY BE DELETED YOU HAVE BEEN WARNED
 public class RecipeSorter implements Comparator<IRecipe>
 {

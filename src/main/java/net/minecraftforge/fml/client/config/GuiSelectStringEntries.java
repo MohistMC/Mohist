@@ -26,7 +26,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiListExtended;
 import net.minecraftforge.fml.client.config.GuiConfigEntries.SelectValueEntry;

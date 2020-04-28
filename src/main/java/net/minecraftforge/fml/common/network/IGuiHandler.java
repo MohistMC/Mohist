@@ -19,10 +19,9 @@
 
 package net.minecraftforge.fml.common.network;
 
+import javax.annotation.Nullable;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.world.World;
-
-import javax.annotation.Nullable;
 
 public interface IGuiHandler
 {

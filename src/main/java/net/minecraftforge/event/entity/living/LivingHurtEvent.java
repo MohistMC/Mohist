@@ -19,12 +19,12 @@
 
 package net.minecraftforge.event.entity.living;
 
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.util.DamageSource;
 import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.Cancelable;
-import net.minecraft.util.DamageSource;
-import net.minecraft.entity.EntityLivingBase;
 
 /**
  * LivingHurtEvent is fired when an Entity is set to be hurt. <br>

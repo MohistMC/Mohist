@@ -24,7 +24,6 @@ import net.minecraft.world.Teleporter;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldProvider;
 import org.bukkit.craftbukkit.v1_12_R1.CraftTravelAgent;
-import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 
 /**
  * Interface for handling the placement of entities during dimension change.

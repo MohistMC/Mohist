@@ -4,7 +4,7 @@ import com.google.common.collect.Maps;
 import java.lang.reflect.Constructor;
 import java.util.Arrays;
 import java.util.Map;
-import net.minecraftforge.common.util.EnumHelper;
+import javax.annotation.Nullable;
 import org.apache.commons.lang.Validate;
 import org.bukkit.map.MapView;
 import org.bukkit.material.Banner;
@@ -62,8 +62,6 @@ import org.bukkit.material.Vine;
 import org.bukkit.material.Wood;
 import org.bukkit.material.WoodenStep;
 import org.bukkit.material.Wool;
-
-import javax.annotation.Nullable;
 
 /**
  * An enum of all material IDs accepted by the official server and client

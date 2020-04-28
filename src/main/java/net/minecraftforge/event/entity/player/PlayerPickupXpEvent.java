@@ -19,9 +19,9 @@
 
 package net.minecraftforge.event.entity.player;
 
-import net.minecraftforge.fml.common.eventhandler.Cancelable;
 import net.minecraft.entity.item.EntityXPOrb;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraftforge.fml.common.eventhandler.Cancelable;
 
 /**
  * This event is called when a player collides with a EntityXPOrb on the ground.

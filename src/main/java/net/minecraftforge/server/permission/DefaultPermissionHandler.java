@@ -20,17 +20,13 @@
 package net.minecraftforge.server.permission;
 
 import com.mojang.authlib.GameProfile;
-import net.minecraft.server.MinecraftServer;
-import net.minecraftforge.fml.common.FMLCommonHandler;
-import net.minecraftforge.server.permission.context.IContext;
-
-import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
-import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
-import red.mohist.forge.ForgeInjectBukkit;
+import javax.annotation.Nullable;
+import net.minecraft.server.MinecraftServer;
+import net.minecraftforge.fml.common.FMLCommonHandler;
+import net.minecraftforge.server.permission.context.IContext;
 
 /**
  * Default implementation of PermissionAPI.

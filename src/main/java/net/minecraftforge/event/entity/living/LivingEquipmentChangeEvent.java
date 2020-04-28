@@ -19,13 +19,12 @@
 
 package net.minecraftforge.event.entity.living;
 
+import javax.annotation.Nonnull;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.Cancelable;
-
-import javax.annotation.Nonnull;
 
 /**
  * {@link LivingEquipmentChangeEvent} is fired when the Equipment of a Entity changes. <br>

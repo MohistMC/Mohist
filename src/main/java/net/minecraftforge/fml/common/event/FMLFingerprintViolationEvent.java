@@ -19,10 +19,9 @@
 
 package net.minecraftforge.fml.common.event;
 
+import com.google.common.collect.ImmutableSet;
 import java.io.File;
 import java.util.Set;
-
-import com.google.common.collect.ImmutableSet;
 import net.minecraftforge.fml.common.Mod;
 
 

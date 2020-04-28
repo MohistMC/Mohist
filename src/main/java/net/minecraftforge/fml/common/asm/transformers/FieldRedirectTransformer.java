@@ -20,9 +20,7 @@
 package net.minecraftforge.fml.common.asm.transformers;
 
 import java.util.ListIterator;
-
 import net.minecraft.launchwrapper.IClassTransformer;
-
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.Opcodes;

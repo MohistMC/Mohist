@@ -20,18 +20,16 @@
 package net.minecraftforge.fml.client.registry;
 
 import com.google.common.collect.Maps;
-import net.minecraft.entity.Entity;
-import net.minecraft.util.ResourceLocation;
-import org.apache.commons.lang3.ArrayUtils;
-
+import java.util.Map;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.client.settings.KeyBinding;
+import net.minecraft.entity.Entity;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.registry.GameRegistry;
-
-import java.util.Map;
+import org.apache.commons.lang3.ArrayUtils;
 
 public class ClientRegistry
 {

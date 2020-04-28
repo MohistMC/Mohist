@@ -20,19 +20,18 @@
 package net.minecraftforge.client.gui;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.resources.I18n;
 import net.minecraftforge.common.ForgeChunkManager;
 import net.minecraftforge.common.ForgeModContainer;
+import static net.minecraftforge.common.ForgeModContainer.VERSION_CHECK_CAT;
 import net.minecraftforge.common.ForgeVersion;
 import net.minecraftforge.common.config.ConfigCategory;
 import net.minecraftforge.common.config.ConfigElement;
@@ -44,14 +43,13 @@ import net.minecraftforge.fml.client.config.DummyConfigElement;
 import net.minecraftforge.fml.client.config.DummyConfigElement.DummyCategoryElement;
 import net.minecraftforge.fml.client.config.GuiConfig;
 import net.minecraftforge.fml.client.config.GuiConfigEntries;
+import net.minecraftforge.fml.client.config.GuiConfigEntries.BooleanEntry;
 import net.minecraftforge.fml.client.config.GuiConfigEntries.CategoryEntry;
 import net.minecraftforge.fml.client.config.GuiConfigEntries.IConfigEntry;
 import net.minecraftforge.fml.client.config.GuiConfigEntries.SelectValueEntry;
-import net.minecraftforge.fml.client.config.GuiConfigEntries.BooleanEntry;
 import net.minecraftforge.fml.client.config.IConfigElement;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.ModContainer;
-import static net.minecraftforge.common.ForgeModContainer.VERSION_CHECK_CAT;
 
 /**
  * This is the base GuiConfig screen class that all the other Forge-specific config screens will be called from.

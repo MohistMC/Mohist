@@ -23,7 +23,6 @@ import net.minecraft.entity.Entity;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.Cancelable;
-import net.minecraftforge.fml.common.eventhandler.Event.HasResult;
 
 /**
  * This event gets fired whenever a entity mounts/dismounts another entity.<br>

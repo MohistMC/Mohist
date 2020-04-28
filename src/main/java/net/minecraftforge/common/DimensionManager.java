@@ -57,7 +57,6 @@ import net.minecraft.world.chunk.storage.AnvilSaveHandler;
 import net.minecraft.world.storage.ISaveHandler;
 import net.minecraft.world.storage.WorldInfo;
 import net.minecraftforge.event.world.WorldEvent;
-import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.FMLLog;
 import org.bukkit.WorldCreator;
 import org.bukkit.generator.ChunkGenerator;
@@ -294,27 +293,16 @@ public class DimensionManager
         ISaveHandler savehandler = overworld.getSaveHandler();
         WorldSettings worldSettings = new WorldSettings(overworld.getWorldInfo());
 
-        String worldType;
-        String name;
+        String name = "DIM" + dim;
         org.bukkit.World.Environment env = org.bukkit.World.Environment.getEnvironment(dim);
         if (dim >= -1 && dim <= 1)
         {
             if ((dim == -1 && !mcServer.getAllowNether()) || (dim == 1 && !mcServer.server.getAllowEnd()))
                 return;
-            worldType = env.toString().toLowerCase();
-            name = "DIM" + dim;
         } else {
-            WorldProvider provider = createProviderFor(dim);
-            worldType = provider.getClass().getSimpleName().toLowerCase();
-            worldType = worldType.replace("worldprovider", "");
-            worldType = worldType.replace("provider", "");
-
             if(org.bukkit.World.Environment.getEnvironment(DimensionManager.getProviderType(dim).getId()) == null){
-                env = DimensionManager.registerBukkitDimension(DimensionManager.getProviderType(dim).getId(), worldType);
+                env = DimensionManager.registerBukkitDimension(DimensionManager.getProviderType(dim).getId(), DimensionManager.getProviderType(dim).getName());
             }
-
-            name = provider.getSaveFolder();
-            if (name == null) name = "DIM0";
         }
 
         ChunkGenerator gen = mcServer.server.getGenerator(name);
@@ -596,7 +584,7 @@ public class DimensionManager
                 dim = savedDim;
             }
         }
-        if (dim == 0)
+        if (dim == 0 || worlds.containsKey(dim))
         {
             dim = getNextFreeDimId();
         }

@@ -20,14 +20,12 @@
 package net.minecraftforge.event.village;
 
 import javax.annotation.Nullable;
-
 import net.minecraft.entity.IMerchant;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.village.MerchantRecipeList;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.Cancelable;
 import net.minecraftforge.fml.common.eventhandler.Event;
-import net.minecraftforge.fml.common.eventhandler.Event.HasResult;
 
 /**
  * MerchantTradeOffersEvent is fired when a list of villager trade offers is presented in

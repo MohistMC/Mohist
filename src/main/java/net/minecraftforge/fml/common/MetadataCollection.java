@@ -19,15 +19,6 @@
 
 package net.minecraftforge.fml.common;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.nio.charset.StandardCharsets;
-import java.util.Map;
-
-import net.minecraftforge.fml.common.versioning.ArtifactVersion;
-import net.minecraftforge.fml.common.versioning.VersionParser;
-
 import com.google.common.collect.Maps;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -38,8 +29,14 @@ import com.google.gson.JsonParser;
 import com.google.gson.TypeAdapter;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonWriter;
-
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
+import java.util.Map;
 import javax.annotation.Nullable;
+import net.minecraftforge.fml.common.versioning.ArtifactVersion;
+import net.minecraftforge.fml.common.versioning.VersionParser;
 
 public class MetadataCollection
 {

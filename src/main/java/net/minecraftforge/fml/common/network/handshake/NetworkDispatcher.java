@@ -28,7 +28,6 @@ import io.netty.channel.embedded.EmbeddedChannel;
 import io.netty.util.AttributeKey;
 import io.netty.util.concurrent.Future;
 import io.netty.util.concurrent.GenericFutureListener;
-
 import java.io.IOException;
 import java.net.SocketAddress;
 import java.nio.channels.ClosedChannelException;
@@ -36,7 +35,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.EnumConnectionState;
@@ -47,9 +45,9 @@ import net.minecraft.network.Packet;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.network.play.INetHandlerPlayClient;
 import net.minecraft.network.play.client.CPacketCustomPayload;
-import net.minecraft.network.play.server.SPacketJoinGame;
 import net.minecraft.network.play.server.SPacketCustomPayload;
 import net.minecraft.network.play.server.SPacketDisconnect;
+import net.minecraft.network.play.server.SPacketJoinGame;
 import net.minecraft.server.management.PlayerList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TextComponentString;

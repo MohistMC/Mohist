@@ -19,10 +19,9 @@
 
 package net.minecraftforge.common.brewing;
 
+import javax.annotation.Nonnull;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.oredict.OreDictionary;
-
-import javax.annotation.Nonnull;
 
 public class BrewingRecipe extends AbstractBrewingRecipe<ItemStack> {
 

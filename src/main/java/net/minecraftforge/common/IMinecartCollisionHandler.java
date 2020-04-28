@@ -19,9 +19,9 @@
 
 package net.minecraftforge.common;
 
-import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityMinecart;
+import net.minecraft.util.math.AxisAlignedBB;
 
 /**
  * This class defines a replacement for the default minecart collision code.

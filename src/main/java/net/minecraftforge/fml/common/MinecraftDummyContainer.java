@@ -19,16 +19,14 @@
 
 package net.minecraftforge.fml.common;
 
+import com.google.common.eventbus.EventBus;
 import java.io.File;
 import java.security.cert.Certificate;
-
-import com.google.common.eventbus.EventBus;
+import javax.annotation.Nullable;
 import net.minecraftforge.fml.common.versioning.VersionParser;
 import net.minecraftforge.fml.common.versioning.VersionRange;
 import net.minecraftforge.fml.relauncher.FMLLaunchHandler;
 import net.minecraftforge.fml.relauncher.Side;
-
-import javax.annotation.Nullable;
 
 public class MinecraftDummyContainer extends DummyModContainer
 {

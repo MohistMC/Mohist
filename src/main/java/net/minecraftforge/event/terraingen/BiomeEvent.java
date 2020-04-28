@@ -19,12 +19,12 @@
 
 package net.minecraftforge.event.terraingen;
 
+import net.minecraft.block.state.IBlockState;
+import net.minecraft.world.biome.Biome;
+import net.minecraft.world.biome.BiomeDecorator;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.Cancelable;
 import net.minecraftforge.fml.common.eventhandler.Event;
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.world.biome.BiomeDecorator;
-import net.minecraft.world.biome.Biome;
 
 /**
  * BiomeEvent is fired whenever an event involving biomes occurs.<br>

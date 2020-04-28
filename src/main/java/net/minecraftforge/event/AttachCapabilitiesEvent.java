@@ -19,11 +19,9 @@
 
 package net.minecraftforge.event;
 
+import com.google.common.collect.Maps;
 import java.util.Collections;
 import java.util.Map;
-
-import com.google.common.collect.Maps;
-
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.fml.common.eventhandler.GenericEvent;

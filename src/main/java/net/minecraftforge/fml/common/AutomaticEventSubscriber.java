@@ -21,17 +21,14 @@ package net.minecraftforge.fml.common;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.SetMultimap;
-
+import java.util.EnumSet;
+import java.util.List;
+import java.util.Set;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.discovery.ASMDataTable;
 import net.minecraftforge.fml.common.discovery.ASMDataTable.ASMData;
 import net.minecraftforge.fml.common.discovery.asm.ModAnnotation;
 import net.minecraftforge.fml.relauncher.Side;
-import org.apache.logging.log4j.Level;
-
-import java.util.EnumSet;
-import java.util.List;
-import java.util.Set;
 
 /**
  * Automatic eventbus subscriber - reads {@link net.minecraftforge.fml.common.Mod.EventBusSubscriber}

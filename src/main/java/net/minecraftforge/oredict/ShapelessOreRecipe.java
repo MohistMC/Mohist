@@ -19,14 +19,19 @@
 
 package net.minecraftforge.oredict;
 
+import com.google.common.collect.Lists;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParseException;
 import java.util.List;
+import javax.annotation.Nonnull;
 import net.minecraft.block.Block;
 import net.minecraft.client.util.RecipeItemHelper;
-import net.minecraft.item.crafting.IRecipe;
-import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.crafting.IRecipe;
+import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.util.JsonUtils;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
@@ -35,13 +40,6 @@ import net.minecraftforge.common.crafting.CraftingHelper;
 import net.minecraftforge.common.crafting.JsonContext;
 import net.minecraftforge.common.util.RecipeMatcher;
 import net.minecraftforge.registries.IForgeRegistryEntry;
-
-import javax.annotation.Nonnull;
-
-import com.google.common.collect.Lists;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParseException;
 import org.bukkit.inventory.Recipe;
 import red.mohist.recipe.CustomModRecipe;
 

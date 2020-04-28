@@ -19,6 +19,12 @@
 
 package net.minecraftforge.fml.common.registry;
 
+import com.google.common.base.Predicate;
+import com.google.common.base.Strings;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -29,8 +35,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
-
-import com.google.common.base.Predicate;
+import javax.annotation.Nonnull;
 import net.minecraft.block.Block;
 import net.minecraft.command.EntitySelector;
 import net.minecraft.command.ICommandSender;
@@ -55,6 +60,7 @@ import net.minecraftforge.common.crafting.CraftingHelper.ShapedPrimer;
 import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.event.furnace.FurnaceFuelBurnTimeEvent;
 import net.minecraftforge.fml.common.FMLLog;
+import net.minecraftforge.fml.common.IEntitySelectorFactory;
 import net.minecraftforge.fml.common.IFuelHandler;
 import net.minecraftforge.fml.common.IWorldGenerator;
 import net.minecraftforge.fml.common.Loader;
@@ -62,15 +68,6 @@ import net.minecraftforge.registries.GameData;
 import net.minecraftforge.registries.IForgeRegistry;
 import net.minecraftforge.registries.IForgeRegistryEntry;
 import net.minecraftforge.registries.RegistryManager;
-import net.minecraftforge.fml.common.IEntitySelectorFactory;
-
-import com.google.common.base.Strings;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
-
-import javax.annotation.Nonnull;
 
 public class GameRegistry
 {

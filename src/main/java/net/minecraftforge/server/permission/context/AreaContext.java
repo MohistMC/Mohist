@@ -20,10 +20,9 @@
 package net.minecraftforge.server.permission.context;
 
 import com.google.common.base.Preconditions;
+import javax.annotation.Nullable;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.math.AxisAlignedBB;
-
-import javax.annotation.Nullable;
 
 public class AreaContext extends PlayerContext
 {

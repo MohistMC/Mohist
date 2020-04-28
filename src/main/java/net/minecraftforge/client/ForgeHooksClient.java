@@ -19,30 +19,22 @@
 
 package net.minecraftforge.client;
 
-import static net.minecraftforge.client.event.RenderGameOverlayEvent.ElementType.BOSSINFO;
-import static net.minecraftforge.common.ForgeVersion.Status.BETA;
-import static net.minecraftforge.common.ForgeVersion.Status.BETA_OUTDATED;
-
+import com.google.common.collect.Maps;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.lang.reflect.Field;
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
-import java.util.ArrayDeque;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Deque;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
-
+import java.util.function.Predicate;
 import javax.annotation.Nonnull;
 import javax.vecmath.Matrix3f;
 import javax.vecmath.Matrix4f;
 import javax.vecmath.Vector3f;
 import javax.vecmath.Vector4f;
-
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
@@ -62,7 +54,6 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.RenderGlobal;
 import net.minecraft.client.renderer.RenderItem;
-import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.BlockFaceUV;
@@ -78,7 +69,6 @@ import net.minecraft.client.renderer.color.ItemColors;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.client.renderer.texture.TextureMap;
-import net.minecraft.client.renderer.texture.TextureUtil;
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
@@ -122,6 +112,7 @@ import net.minecraftforge.client.event.InputUpdateEvent;
 import net.minecraftforge.client.event.ModelBakeEvent;
 import net.minecraftforge.client.event.MouseEvent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
+import static net.minecraftforge.client.event.RenderGameOverlayEvent.ElementType.BOSSINFO;
 import net.minecraftforge.client.event.RenderHandEvent;
 import net.minecraftforge.client.event.RenderSpecificHandEvent;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
@@ -131,13 +122,15 @@ import net.minecraftforge.client.event.sound.PlaySoundEvent;
 import net.minecraftforge.client.model.ModelDynBucket;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.client.model.animation.Animation;
+import net.minecraftforge.client.model.pipeline.QuadGatheringTransformer;
 import net.minecraftforge.client.resource.IResourceType;
 import net.minecraftforge.client.resource.SelectiveReloadStateHandler;
 import net.minecraftforge.client.resource.VanillaResourceType;
-import net.minecraftforge.client.model.pipeline.QuadGatheringTransformer;
 import net.minecraftforge.common.ForgeModContainer;
 import net.minecraftforge.common.ForgeVersion;
 import net.minecraftforge.common.ForgeVersion.Status;
+import static net.minecraftforge.common.ForgeVersion.Status.BETA;
+import static net.minecraftforge.common.ForgeVersion.Status.BETA_OUTDATED;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.model.IModelPart;
 import net.minecraftforge.common.model.ITransformation;
@@ -145,18 +138,12 @@ import net.minecraftforge.common.model.TRSRTransformation;
 import net.minecraftforge.fml.client.FMLClientHandler;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.common.FMLLog;
-
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.core.async.ThreadNameCachingStrategy;
 import org.apache.logging.log4j.core.impl.ReusableLogEventFactory;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL20;
-
-import java.util.function.Predicate;
-
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 
 public class ForgeHooksClient
 {

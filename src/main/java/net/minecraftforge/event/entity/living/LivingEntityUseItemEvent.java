@@ -19,11 +19,10 @@
 
 package net.minecraftforge.event.entity.living;
 
+import javax.annotation.Nonnull;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.common.eventhandler.Cancelable;
-
-import javax.annotation.Nonnull;
 
 public class LivingEntityUseItemEvent extends LivingEvent
 {

@@ -19,23 +19,19 @@
 
 package net.minecraftforge.common;
 
+import com.google.common.io.Files;
 import java.io.File;
 import java.io.IOException;
 import java.util.UUID;
-
-import net.minecraft.world.gen.structure.template.TemplateManager;
-import org.apache.logging.log4j.Level;
-
-import com.google.common.io.Files;
-
-import net.minecraft.world.chunk.storage.IChunkLoader;
-import net.minecraft.world.storage.IPlayerFileData;
-import net.minecraft.world.storage.ISaveHandler;
-import net.minecraft.world.MinecraftException;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.world.storage.WorldInfo;
+import net.minecraft.world.MinecraftException;
 import net.minecraft.world.WorldProvider;
 import net.minecraft.world.WorldServer;
+import net.minecraft.world.chunk.storage.IChunkLoader;
+import net.minecraft.world.gen.structure.template.TemplateManager;
+import net.minecraft.world.storage.IPlayerFileData;
+import net.minecraft.world.storage.ISaveHandler;
+import net.minecraft.world.storage.WorldInfo;
 import net.minecraftforge.fml.common.FMLLog;
 
 //Class used internally to provide the world specific data directories.

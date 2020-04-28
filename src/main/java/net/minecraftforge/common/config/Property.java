@@ -22,7 +22,6 @@ package net.minecraftforge.common.config;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.regex.Pattern;
-
 import net.minecraftforge.fml.client.config.GuiConfig;
 import net.minecraftforge.fml.client.config.GuiConfigEntries;
 import net.minecraftforge.fml.client.config.GuiConfigEntries.IConfigEntry;

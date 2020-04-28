@@ -20,10 +20,8 @@
 package net.minecraftforge.registries;
 
 import com.google.common.reflect.TypeToken;
-
-import net.minecraft.util.ResourceLocation;
-
 import javax.annotation.Nullable;
+import net.minecraft.util.ResourceLocation;
 
 public interface IForgeRegistryEntry<V>
 {

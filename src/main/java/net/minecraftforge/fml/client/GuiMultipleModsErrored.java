@@ -19,6 +19,8 @@
 
 package net.minecraftforge.fml.client;
 
+import java.io.IOException;
+import java.util.List;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.renderer.Tessellator;
@@ -32,9 +34,6 @@ import net.minecraftforge.fml.common.WrongMinecraftVersionException;
 import net.minecraftforge.fml.common.versioning.ArtifactVersion;
 import net.minecraftforge.fml.common.versioning.DefaultArtifactVersion;
 import org.lwjgl.input.Mouse;
-
-import java.io.IOException;
-import java.util.List;
 
 public class GuiMultipleModsErrored extends GuiErrorBase
 {

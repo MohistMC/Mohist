@@ -19,10 +19,9 @@
 
 package net.minecraftforge.fml.client.event;
 
+import javax.annotation.Nullable;
 import net.minecraftforge.fml.common.eventhandler.Event;
 import net.minecraftforge.fml.common.eventhandler.Event.HasResult;
-
-import javax.annotation.Nullable;
 
 /**
  * These events are posted from the GuiConfig screen when the done button is pressed. The events are only posted

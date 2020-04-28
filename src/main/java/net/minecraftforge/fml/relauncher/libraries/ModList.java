@@ -19,6 +19,11 @@
 
 package net.minecraftforge.fml.relauncher.libraries;
 
+import com.google.common.collect.ImmutableList;
+import com.google.common.io.Files;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonSyntaxException;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -29,13 +34,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
-
-import com.google.common.collect.ImmutableList;
-import com.google.common.io.Files;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonSyntaxException;
-
 import net.minecraft.launchwrapper.Launch;
 import net.minecraftforge.common.ForgeVersion;
 import net.minecraftforge.fml.common.FMLLog;

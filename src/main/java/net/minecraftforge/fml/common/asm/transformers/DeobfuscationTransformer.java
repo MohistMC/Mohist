@@ -20,14 +20,11 @@
 package net.minecraftforge.fml.common.asm.transformers;
 
 import java.util.Arrays;
-
 import net.minecraft.launchwrapper.IClassNameTransformer;
 import net.minecraft.launchwrapper.IClassTransformer;
 import net.minecraft.launchwrapper.Launch;
-
 import net.minecraftforge.fml.common.asm.transformers.deobf.FMLDeobfuscatingRemapper;
 import net.minecraftforge.fml.common.asm.transformers.deobf.FMLRemappingAdapter;
-
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.commons.RemappingClassAdapter;

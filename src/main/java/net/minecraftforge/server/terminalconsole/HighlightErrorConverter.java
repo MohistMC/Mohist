@@ -23,8 +23,8 @@
 
 package net.minecraftforge.server.terminalconsole;
 
+import java.util.List;
 import javax.annotation.Nullable;
-
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.core.LogEvent;
 import org.apache.logging.log4j.core.config.Configuration;
@@ -37,8 +37,6 @@ import org.apache.logging.log4j.core.pattern.PatternConverter;
 import org.apache.logging.log4j.core.pattern.PatternFormatter;
 import org.apache.logging.log4j.core.pattern.PatternParser;
 import org.apache.logging.log4j.util.PerformanceSensitive;
-
-import java.util.List;
 
 /**
  * A simplified version of {@link HighlightConverter} that uses

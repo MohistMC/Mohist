@@ -22,19 +22,16 @@ package net.minecraftforge.fml.client.config;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiListExtended;
 import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.fml.client.config.GuiConfigEntries.ArrayEntry;
-import net.minecraftforge.fml.common.FMLLog;
-
-import org.lwjgl.input.Keyboard;
-
 import static net.minecraftforge.fml.client.config.GuiUtils.INVALID;
 import static net.minecraftforge.fml.client.config.GuiUtils.VALID;
+import net.minecraftforge.fml.common.FMLLog;
+import org.lwjgl.input.Keyboard;
 
 /**
  * This class implements the scrolling list functionality of the GuiEditList screen. It also provides all the default controls

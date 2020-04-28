@@ -19,9 +19,9 @@
 
 package net.minecraftforge.common.network;
 
-import net.minecraftforge.fml.common.network.NetworkHandshakeEstablished;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
+import net.minecraftforge.fml.common.network.NetworkHandshakeEstablished;
 
 public class ServerToClientConnectionEstablishedHandler extends ChannelInboundHandlerAdapter {
     @Override

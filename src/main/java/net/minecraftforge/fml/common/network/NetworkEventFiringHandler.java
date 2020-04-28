@@ -19,14 +19,11 @@
 
 package net.minecraftforge.fml.common.network;
 
-import net.minecraftforge.fml.common.FMLLog;
-import net.minecraftforge.fml.common.network.internal.FMLProxyPacket;
-
-import org.apache.logging.log4j.Level;
-
 import io.netty.channel.ChannelHandler.Sharable;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
+import net.minecraftforge.fml.common.FMLLog;
+import net.minecraftforge.fml.common.network.internal.FMLProxyPacket;
 
 /**
  * Use this handler as the only thing in your channel, to receive network events

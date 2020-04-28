@@ -19,10 +19,9 @@
 
 package net.minecraftforge.server.permission.context;
 
+import javax.annotation.Nullable;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
-
-import javax.annotation.Nullable;
 
 public class TargetContext extends PlayerContext
 {

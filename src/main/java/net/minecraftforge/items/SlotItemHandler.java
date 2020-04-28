@@ -19,13 +19,12 @@
 
 package net.minecraftforge.items;
 
+import javax.annotation.Nonnull;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.InventoryBasic;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
-
-import javax.annotation.Nonnull;
 
 public class SlotItemHandler extends Slot
 {

@@ -22,7 +22,6 @@ package net.minecraftforge.event.world;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.client.network.NetHandlerPlayClient;

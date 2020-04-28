@@ -19,17 +19,16 @@
 
 package net.minecraftforge.fluids;
 
+import com.google.common.base.Preconditions;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-
-import com.google.common.base.Preconditions;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockLiquid;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemBucket;
 import net.minecraft.init.Items;
+import net.minecraft.item.ItemBucket;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;

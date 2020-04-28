@@ -19,6 +19,8 @@
 
 package net.minecraftforge.items;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockDropper;
 import net.minecraft.block.BlockHopper;
@@ -32,16 +34,13 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
-import red.mohist.inventory.CraftCustomInventory;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.bukkit.craftbukkit.v1_12_R1.inventory.CraftItemStack;
 import org.bukkit.event.inventory.InventoryMoveItemEvent;
 import org.bukkit.inventory.Inventory;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import org.bukkit.inventory.InventoryHolder;
+import red.mohist.inventory.CraftCustomInventory;
 import red.mohist.inventory.InventoryOwner;
 
 public class VanillaInventoryCodeHooks

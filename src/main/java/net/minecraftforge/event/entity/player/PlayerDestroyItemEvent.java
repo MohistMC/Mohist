@@ -19,12 +19,17 @@
 
 package net.minecraftforge.event.entity.player;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.multiplayer.PlayerControllerMP;
 import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
 import net.minecraft.server.management.PlayerInteractionManager;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
@@ -32,12 +37,6 @@ import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.fml.common.eventhandler.Cancelable;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.EnumHand;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 /**
  * PlayerDestroyItemEvent is fired when a player destroys an item.<br>

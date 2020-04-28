@@ -19,14 +19,14 @@
 
 package net.minecraftforge.event.entity.living;
 
-import net.minecraftforge.fml.common.eventhandler.Cancelable;
-import net.minecraftforge.fml.common.eventhandler.Event;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.monster.EntityMagmaCube;
 import net.minecraft.entity.passive.EntityHorse;
 import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.EntityEvent;
+import net.minecraftforge.fml.common.eventhandler.Cancelable;
+import net.minecraftforge.fml.common.eventhandler.Event;
 
 /**
  * LivingEvent is fired whenever an event involving Living entities occurs.<br>

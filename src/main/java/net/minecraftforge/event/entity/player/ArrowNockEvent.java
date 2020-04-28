@@ -19,6 +19,7 @@
 
 package net.minecraftforge.event.entity.player;
 
+import javax.annotation.Nonnull;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemBow;
 import net.minecraft.item.ItemStack;
@@ -26,8 +27,6 @@ import net.minecraft.util.ActionResult;
 import net.minecraft.util.EnumHand;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
-
-import javax.annotation.Nonnull;
 
 /**
  * ArrowNockEvent is fired when a player begins using a bow.<br>

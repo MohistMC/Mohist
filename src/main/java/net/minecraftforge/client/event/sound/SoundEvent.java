@@ -19,9 +19,9 @@
 
 package net.minecraftforge.client.event.sound;
 
-import net.minecraftforge.fml.common.eventhandler.Event;
 import net.minecraft.client.audio.ISound;
 import net.minecraft.client.audio.SoundManager;
+import net.minecraftforge.fml.common.eventhandler.Event;
 
 public class SoundEvent extends Event
 {

@@ -20,10 +20,8 @@
 package net.minecraftforge.fml.relauncher;
 
 import java.lang.reflect.Method;
-
 import java.util.Objects;
 import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.core.LoggerContext;
 import red.mohist.Mohist;
 import red.mohist.util.i18n.Message;
 

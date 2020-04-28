@@ -19,6 +19,17 @@
 
 package net.minecraftforge.client.model.animation;
 
+import com.google.common.collect.ImmutableCollection;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableMultimap;
+import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
+import com.google.common.collect.UnmodifiableIterator;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonParseException;
+import com.google.gson.annotations.SerializedName;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -30,13 +41,11 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.TreeMap;
-
 import javax.annotation.Nullable;
 import javax.vecmath.AxisAngle4f;
 import javax.vecmath.Matrix4f;
 import javax.vecmath.Quat4f;
 import javax.vecmath.Vector3f;
-
 import net.minecraft.client.renderer.block.model.BlockPart;
 import net.minecraft.client.resources.IResource;
 import net.minecraft.client.resources.IResourceManager;
@@ -54,18 +63,6 @@ import net.minecraftforge.common.model.animation.IJointClip;
 import net.minecraftforge.common.model.animation.JointClips;
 import net.minecraftforge.common.util.JsonUtils;
 import net.minecraftforge.fml.common.FMLLog;
-
-import com.google.common.collect.ImmutableCollection;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableMultimap;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
-import com.google.common.collect.UnmodifiableIterator;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonParseException;
-import com.google.gson.annotations.SerializedName;
 
 public class ModelBlockAnimation
 {

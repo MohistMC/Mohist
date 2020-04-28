@@ -23,8 +23,8 @@
 
 package net.minecraftforge.server.terminalconsole;
 
+import java.util.List;
 import javax.annotation.Nullable;
-
 import org.apache.logging.log4j.core.LogEvent;
 import org.apache.logging.log4j.core.config.Configuration;
 import org.apache.logging.log4j.core.config.plugins.Plugin;
@@ -36,8 +36,6 @@ import org.apache.logging.log4j.core.pattern.PatternFormatter;
 import org.apache.logging.log4j.core.pattern.PatternParser;
 import org.apache.logging.log4j.util.PerformanceSensitive;
 import org.apache.logging.log4j.util.PropertiesUtil;
-
-import java.util.List;
 
 /**
  * Replaces Minecraft formatting codes in the result of a pattern with

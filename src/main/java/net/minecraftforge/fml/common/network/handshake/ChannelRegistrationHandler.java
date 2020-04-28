@@ -19,20 +19,17 @@
 
 package net.minecraftforge.fml.common.network.handshake;
 
+import com.google.common.collect.ImmutableSet;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
-
 import java.nio.charset.StandardCharsets;
 import java.util.Set;
-
 import net.minecraft.network.NetHandlerPlayServer;
 import net.minecraft.network.NetworkManager;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.network.internal.FMLProxyPacket;
 import net.minecraftforge.fml.relauncher.Side;
-
-import com.google.common.collect.ImmutableSet;
 import org.bukkit.craftbukkit.v1_12_R1.entity.CraftPlayer;
 
 public class ChannelRegistrationHandler extends SimpleChannelInboundHandler<FMLProxyPacket> {

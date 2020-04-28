@@ -19,13 +19,12 @@
 
 package net.minecraftforge.event.entity;
 
+import java.util.Collection;
+import net.minecraft.entity.Entity;
+import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.Cancelable;
-import net.minecraft.entity.Entity;
-import net.minecraft.world.World;
-
-import java.util.Collection;
 
 /**
  * EntityJoinWorldEvent is fired when an Entity joins the world. <br>

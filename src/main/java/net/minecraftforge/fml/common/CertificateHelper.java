@@ -20,7 +20,6 @@
 package net.minecraftforge.fml.common;
 
 import com.google.common.collect.ImmutableList;
-
 import java.nio.ByteBuffer;
 import java.security.MessageDigest;
 import java.security.cert.Certificate;

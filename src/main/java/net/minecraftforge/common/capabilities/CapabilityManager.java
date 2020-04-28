@@ -19,23 +19,20 @@
 
 package net.minecraftforge.common.capabilities;
 
+import com.google.common.base.Preconditions;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.concurrent.Callable;
-
-import org.objectweb.asm.Type;
-
 import java.util.function.Function;
-import com.google.common.base.Preconditions;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-
 import net.minecraftforge.common.util.EnumHelper;
 import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.discovery.ASMDataTable;
+import org.objectweb.asm.Type;
 
 public enum CapabilityManager
 {

@@ -19,9 +19,9 @@
 
 package net.minecraftforge.event.world;
 
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.chunk.storage.AnvilChunkLoader;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.Cancelable;

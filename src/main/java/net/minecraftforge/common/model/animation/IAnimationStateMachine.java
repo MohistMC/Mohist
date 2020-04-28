@@ -21,7 +21,6 @@ package net.minecraftforge.common.model.animation;
 
 import net.minecraftforge.common.animation.Event;
 import net.minecraftforge.common.model.IModelState;
-
 import org.apache.commons.lang3.tuple.Pair;
 
 /**

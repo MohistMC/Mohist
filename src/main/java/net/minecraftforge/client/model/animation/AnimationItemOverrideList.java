@@ -20,7 +20,8 @@
 package net.minecraftforge.client.model.animation;
 
 import java.util.List;
-
+import java.util.function.Function;
+import javax.annotation.Nullable;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.block.model.ItemOverride;
@@ -36,10 +37,6 @@ import net.minecraftforge.client.model.ModelStateComposition;
 import net.minecraftforge.common.model.IModelState;
 import net.minecraftforge.common.model.animation.CapabilityAnimation;
 import net.minecraftforge.common.model.animation.IAnimationStateMachine;
-
-import java.util.function.Function;
-
-import javax.annotation.Nullable;
 
 public final class AnimationItemOverrideList extends ItemOverrideList
 {

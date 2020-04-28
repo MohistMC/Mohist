@@ -21,7 +21,6 @@ package net.minecraftforge.event.entity.living;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;

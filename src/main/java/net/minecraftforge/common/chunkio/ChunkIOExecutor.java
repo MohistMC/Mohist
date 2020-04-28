@@ -19,6 +19,7 @@
 
 package net.minecraftforge.common.chunkio;
 
+import com.google.common.collect.Maps;
 import com.google.common.util.concurrent.ListenableFuture;
 import java.util.Iterator;
 import java.util.Map;
@@ -28,9 +29,6 @@ import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
-
-import com.google.common.collect.Maps;
-
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;

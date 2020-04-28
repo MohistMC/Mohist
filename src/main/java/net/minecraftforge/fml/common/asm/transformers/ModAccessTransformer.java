@@ -19,6 +19,9 @@
 
 package net.minecraftforge.fml.common.asm.transformers;
 
+import com.google.common.collect.Maps;
+import com.google.common.io.ByteSource;
+import com.google.common.io.CharSource;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Field;
@@ -28,10 +31,6 @@ import java.util.jar.Attributes;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import net.minecraftforge.fml.common.FMLLog;
-
-import com.google.common.collect.Maps;
-import com.google.common.io.ByteSource;
-import com.google.common.io.CharSource;
 
 public class ModAccessTransformer extends AccessTransformer
 {

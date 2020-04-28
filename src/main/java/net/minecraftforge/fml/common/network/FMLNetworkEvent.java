@@ -19,10 +19,8 @@
 
 package net.minecraftforge.fml.common.network;
 
-import java.util.Set;
-
 import com.google.common.collect.ImmutableSet;
-
+import java.util.Set;
 import net.minecraft.network.INetHandler;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.INetHandlerPlayClient;

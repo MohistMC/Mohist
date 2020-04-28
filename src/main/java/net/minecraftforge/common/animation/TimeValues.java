@@ -19,12 +19,6 @@
 
 package net.minecraftforge.common.animation;
 
-import java.io.IOException;
-import java.util.regex.Pattern;
-
-import net.minecraft.util.IStringSerializable;
-
-import java.util.function.Function;
 import com.google.common.base.Objects;
 import com.google.common.collect.ImmutableList;
 import com.google.gson.Gson;
@@ -32,10 +26,12 @@ import com.google.gson.TypeAdapter;
 import com.google.gson.TypeAdapterFactory;
 import com.google.gson.reflect.TypeToken;
 import com.google.gson.stream.JsonReader;
-import com.google.gson.stream.JsonToken;
 import com.google.gson.stream.JsonWriter;
-
+import java.io.IOException;
+import java.util.function.Function;
+import java.util.regex.Pattern;
 import javax.annotation.Nullable;
+import net.minecraft.util.IStringSerializable;
 
 /**
  * Various implementations of ITimeValue.

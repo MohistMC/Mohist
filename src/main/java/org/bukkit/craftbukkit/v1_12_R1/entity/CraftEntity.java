@@ -116,9 +116,6 @@ import net.minecraft.entity.projectile.EntityTippedArrow;
 import net.minecraft.entity.projectile.EntityWitherSkull;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.DamageSource;
-import red.mohist.entity.CraftCustomAbstractHorse;
-import red.mohist.entity.CraftCustomChestHorse;
-import red.mohist.entity.CraftCustomEntity;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.util.FakePlayerFactory;
 import org.bukkit.EntityEffect;
@@ -138,6 +135,9 @@ import org.bukkit.permissions.PermissionAttachmentInfo;
 import org.bukkit.permissions.ServerOperator;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.util.Vector;
+import red.mohist.entity.CraftCustomAbstractHorse;
+import red.mohist.entity.CraftCustomChestHorse;
+import red.mohist.entity.CraftCustomEntity;
 import red.mohist.entity.CustomProjectileEntity;
 
 public abstract class CraftEntity implements org.bukkit.entity.Entity {

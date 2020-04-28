@@ -19,20 +19,15 @@
 
 package net.minecraftforge.fml.common;
 
+import com.google.common.collect.Maps;
 import java.io.File;
 import java.lang.reflect.Constructor;
 import java.util.Map;
-import java.util.regex.Pattern;
-
+import javax.annotation.Nullable;
 import net.minecraftforge.fml.common.discovery.ModCandidate;
 import net.minecraftforge.fml.common.discovery.asm.ASMModParser;
 import net.minecraftforge.fml.common.discovery.asm.ModAnnotation;
-
 import org.objectweb.asm.Type;
-
-import com.google.common.collect.Maps;
-
-import javax.annotation.Nullable;
 
 public class ModContainerFactory
 {

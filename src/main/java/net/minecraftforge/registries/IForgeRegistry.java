@@ -23,11 +23,9 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
-
-import net.minecraft.util.ResourceLocation;
-
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import net.minecraft.util.ResourceLocation;
 
 /**
  * Main interface for the registry system. Use this to query the registry system.

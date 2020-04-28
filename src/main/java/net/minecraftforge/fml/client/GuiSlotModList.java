@@ -20,7 +20,6 @@
 package net.minecraftforge.fml.client;
 
 import java.util.ArrayList;
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.Gui;

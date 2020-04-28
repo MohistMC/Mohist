@@ -19,6 +19,8 @@
 
 package net.minecraftforge.fml.client;
 
+import java.io.IOException;
+import java.util.List;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiButton;
@@ -30,9 +32,6 @@ import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraftforge.fml.client.config.GuiUtils;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
-
-import java.io.IOException;
-import java.util.List;
 
 public abstract class GuiScrollingList
 {

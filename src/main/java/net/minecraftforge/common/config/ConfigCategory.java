@@ -19,10 +19,10 @@
 
 package net.minecraftforge.common.config;
 
-import static net.minecraftforge.common.config.Configuration.COMMENT_SEPARATOR;
-import static net.minecraftforge.common.config.Configuration.NEW_LINE;
-import static net.minecraftforge.common.config.Configuration.allowedProperties;
-
+import com.google.common.base.Splitter;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -31,12 +31,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
-
-import com.google.common.base.Splitter;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableSet;
-
+import static net.minecraftforge.common.config.Configuration.COMMENT_SEPARATOR;
+import static net.minecraftforge.common.config.Configuration.NEW_LINE;
+import static net.minecraftforge.common.config.Configuration.allowedProperties;
 import net.minecraftforge.fml.client.config.GuiConfigEntries.IConfigEntry;
 
 public class ConfigCategory implements Map<String, Property>
