@@ -43,7 +43,7 @@ public class CraftBeehive extends CraftBlockEntityState<BeehiveTileEntity> imple
 
     @Override
     public boolean isSedated() {
-        return isPlaced() && getSnapshot().func_226972_k_(); // PAIL rename isSedated
+        return isPlaced() && getTileEntity().func_226972_k_(); // PAIL rename isSedated
     }
 
     @Override

@@ -9,6 +9,8 @@ import net.minecraft.util.DamageSource;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.IInventory;
+import net.minecraft.world.storage.loot.LootParameter;
+import net.minecraft.world.storage.loot.LootParameterSet;
 import net.minecraft.world.storage.loot.LootParameterSets;
 import net.minecraft.world.storage.loot.LootParameters;
 import net.minecraft.world.storage.loot.LootTable;
@@ -88,10 +90,28 @@ public class CraftLootTable implements org.bukkit.loot.LootTable {
                 builder.withParameter(LootParameters.KILLER_ENTITY, nmsKiller);
                 // If there is a player killer, damage source should reflect that in case loot tables use that information
                 builder.withParameter(LootParameters.DAMAGE_SOURCE, DamageSource.causePlayerDamage(nmsKiller));
+                builder.withParameter(LootParameters.LAST_DAMAGE_PLAYER, nmsKiller); // SPIGOT-5603 - Set minecraft:killed_by_player
+            }
+
+            // SPIGOT-5603 - Use LootContext#lootingModifier
+            if (context.getLootingModifier() != LootContext.DEFAULT_LOOT_MODIFIER) {
+                builder.withParameter(LootParameters.LOOTING_MOD, context.getLootingModifier());
             }
         }
 
-        return builder.build(getHandle().getParameterSet());
+        // SPIGOT-5603 - Avoid IllegalArgumentException in LootTableInfo#build()
+        LootParameterSet.Builder nmsBuilder = new LootParameterSet.Builder(); // PAIL rename Builder
+        for (LootParameter<?> param : getHandle().getParameterSet().getRequiredParameters()) { // PAIL rename required
+            nmsBuilder.optional(param); // PAIL rename addRequired
+        }
+        for (LootParameter<?> param : getHandle().getParameterSet().getAllParameters()) { // PAIL rename optional
+            if (!getHandle().getParameterSet().getRequiredParameters().contains(param)) { // PAIL rename required
+                nmsBuilder.required(param); // PAIL rename addOptional
+            }
+        }
+        nmsBuilder.required(LootParameters.LOOTING_MOD); // PAIL rename addOptional
+
+        return builder.build(nmsBuilder.build()); // PAIL rename build
     }
 
     @Override
