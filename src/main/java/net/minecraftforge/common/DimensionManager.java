@@ -64,6 +64,7 @@ import red.mohist.configuration.MohistConfig;
 import red.mohist.forge.ForgeInjectBukkit;
 import red.mohist.forge.ModCompatibleFixUtils;
 import red.mohist.forge.MohistForgeUtils;
+import red.mohist.util.NumberUtils;
 import red.mohist.util.i18n.Message;
 
 public class DimensionManager
@@ -276,12 +277,14 @@ public class DimensionManager
         }
         try
         {
+            /*
             // Mohist start - Fixes MultiVerse issue when mods such as Twilight Forest try to hotload their dimension when using its WorldProvider
             if(MohistForgeUtils.craftWorldLoading)
             {
                 return;
             }
             // Mohist end
+             */
             DimensionManager.getProviderType(dim);
         }
         catch (Exception e)
@@ -411,8 +414,8 @@ public class DimensionManager
     {
         WorldServer world = worlds.get(id);
         if (world == null || !canUnloadWorld(world)) return;
-        for (Integer dim1 : MohistConfig.instance.autounloadWorld_whitelist) {
-            if (dim1.intValue() == id) {
+        for (String dim1 : MohistConfig.instance.autounloadWorld_whitelist) {
+            if (dim1.equals("*") || (NumberUtils.isInteger(dim1) && Integer.valueOf(dim1).intValue() == id)) {
                 return;
             }
         }
