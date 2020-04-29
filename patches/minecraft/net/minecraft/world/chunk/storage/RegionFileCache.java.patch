@@ -27,16 +27,22 @@
           this.field_219102_c.putAndMoveToFirst(i, regionfile1);
           return regionfile1;
        }
-@@ -41,7 +47,7 @@
+@@ -41,8 +47,12 @@
  
     @Nullable
     public CompoundNBT func_219099_e(ChunkPos p_219099_1_) throws IOException {
 -      RegionFile regionfile = this.func_219098_a(p_219099_1_);
-+      RegionFile regionfile = this.loadFile(p_219099_1_, false); // CraftBukkit
- 
+-
++      // CraftBukkit start - SPIGOT-5680: There's no good reason to preemptively create files on read, save that for writing
++      RegionFile regionfile = this.loadFile(p_219099_1_, true);
++      if (regionfile == null) {
++         return null;
++      }
++      // CraftBukkit end
        CompoundNBT compoundnbt;
        try (DataInputStream datainputstream = regionfile.func_222666_a(p_219099_1_)) {
-@@ -57,7 +63,7 @@
+          if (datainputstream != null) {
+@@ -57,7 +67,7 @@
     }
  
     protected void func_219100_a(ChunkPos p_219100_1_, CompoundNBT p_219100_2_) throws IOException {
@@ -45,15 +51,3 @@
  
        try (DataOutputStream dataoutputstream = regionfile.func_222661_c(p_219100_1_)) {
           CompressedStreamTools.func_74800_a(p_219100_2_, dataoutputstream);
-@@ -71,4 +77,11 @@
-       }
- 
-    }
-+
-+   // CraftBukkit start
-+   public boolean chunkExists(final ChunkPos pos) throws IOException {
-+      RegionFile regionfile = loadFile(pos, true);
-+      return regionfile != null && regionfile.func_222667_d(pos);
-+   }
-+   // CraftBukkit end
- }
