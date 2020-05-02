@@ -1,9 +1,9 @@
-<img src="https://i.loli.net/2020/02/28/vZRHJACadF7rgn5.png">
+l<img src="https://i.loli.net/2020/02/28/vZRHJACadF7rgn5.png">
 
 ## Mohist-1.12.2
 #### [中文](https://github.com/Mohist-Community/Mohist/blob/1.12.2/README-zh.md) | [Français](https://github.com/Mohist-Community/Mohist/blob/1.12.2/README-fr.md)
 
-## It is highly recommended to use the 1.7+ version of Mohist to quickly resolve errors!
+## It is highly recommended to use the 1.8+ version of Mohist to quickly resolve errors!
 
 [![](https://ci.codemc.org/buildStatus/icon?job=Mohist-Community%2FMohist-1.12.2)](https://ci.codemc.org/job/Mohist-Community/job/Mohist-1.12.2/)
 ![](https://img.shields.io/github/stars/Mohist-Community/Mohist.svg?label=Stars)
@@ -71,7 +71,6 @@ Thanks for the following project
 * [**Atom**](https://gitlab.com/divinecode/atom/Atom.git) - Partial code source.
 * [**Thermos**](https://github.com/CyberdyneCC/Thermos.git) - Partial code source.
 * [**um_bukkit**](https://github.com/TechCatOther/um_bukkit.git) - Partial code source.
-* [**ReflectionRemapper**](https://github.com/Maxqia/ReflectionRemapper.git) - Provide a remapping framework.
 
 Special Thanks To:
 -------------

@@ -3,7 +3,7 @@
 ## Mohist-1.12.2 
 #### [English](https://github.com/Mohist-Community/Mohist/blob/1.12.2/README.md) | [Français](https://github.com/Mohist-Community/Mohist/blob/1.12.2/README-fr.md) 
 
-## 强烈建议使用1.7+版本来快速解决已知和未知错误！
+## 强烈建议使用1.8+版本来快速解决已知和未知错误！
 
 [![](https://ci.codemc.org/buildStatus/icon?job=Mohist-Community%2FMohist-1.12.2)](https://ci.codemc.org/job/Mohist-Community/job/Mohist-1.12.2/)
 ![](https://img.shields.io/github/stars/Mohist-Community/Mohist.svg?label=Stars)
@@ -57,4 +57,3 @@ All builds will be in `.\build\mohist_srg.jar` Is the development frontend you n
 * [**Atom**](https://gitlab.com/divinecode/atom/Atom.git) - 部分源代码.
 * [**Thermos**](https://github.com/CyberdyneCC/Thermos.git) - 部分源代码.
 * [**um_bukkit**](https://github.com/TechCatOther/um_bukkit.git) - 部分源代码.
-* [**ReflectionRemapper**](https://github.com/Maxqia/ReflectionRemapper.git) - 提供重映射框架。
