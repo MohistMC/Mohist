@@ -538,6 +538,7 @@ public enum Material {
     private static Material[] byId = new Material[32676];
     private static Material[] blockById = new Material[32676];
     private static Map<String, Material> BY_NAME = Maps.newHashMap(); // Cauldron - remove final
+    private static Map<String, Material> BLOCK_BY_NAME = Maps.newHashMap();
 
     static {
         for (Material material : values()) {
@@ -647,26 +648,6 @@ public enum Material {
             // Cauldron end
         }
 
-        /*/ Cauldron start - Try the ore dictionary
-        if (result == null) {
-            BukkitOreDictionary dict = net.minecraftforge.cauldron.api.Cauldron.getOreDictionary();
-            OreDictionaryEntry entry = dict.getOreEntry(name);
-            if (entry != null) {
-                List<ItemStack> items = dict.getDefinitions(entry);
-                if (items.size() > 0) {
-                    // TODO check sanity on multiple item results
-                    ItemStack item = items.get(0);
-                    if (item.getDurability() == 0 || item.getDurability() == Short.MAX_VALUE) {
-                        result = item.getType();
-                    } else {
-                        // bad! we have an item with data!
-                    }
-                }
-            }
-        }
-        // Cauldron end
-         */
-
         return result;
     }
 
@@ -690,6 +671,8 @@ public enum Material {
     public static Material addBlockMaterial(Material material) {
         if (blockById[material.id] == null) {
             blockById[material.id] = material;
+            BLOCK_BY_NAME.put(normalizeName(material.name()), material);
+            BLOCK_BY_NAME.put("X" + String.valueOf(material.id), material);
             return material;
         }
         return null;
@@ -701,6 +684,10 @@ public enum Material {
         } else {
             return null;
         }
+    }
+
+    public static Material getBlockMaterial(final String name) {
+        return BLOCK_BY_NAME.get(name);
     }
 
     /**
