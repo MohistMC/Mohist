@@ -40,6 +40,8 @@ plugins {
 }
 apply plugin: 'eclipse'
 
+println('Java: ' + System.getProperty('java.version') + ' JVM: ' + System.getProperty('java.vm.version'))
+
 ext {
     JAR_SIGNER = null
     if (project.hasProperty('keystore')) {
@@ -179,7 +181,8 @@ project(':forge') {
         BINPATCH_TOOL = 'net.minecraftforge:binarypatcher:1.0.12:fatjar'
     }
 
-    version = '1.15.2-' + 'git rev-parse --short HEAD'.execute().text.trim()
+    version = '1.15.2-31.1.63'
+    println('Forge Version: ' + version)
 
     patcher {
         exc = file("$rootDir/src/main/resources/forge.exc")
@@ -191,6 +194,31 @@ project(':forge') {
         sideAnnotationStripper = file("$rootDir/src/main/resources/forge.sas")
 
         runs {
+            forge_client {
+                taskName 'forge_client'
+
+                main 'net.minecraftforge.userdev.LaunchTesting'
+                workingDirectory project.file('run')
+
+                environment 'target', 'fmldevclient'
+                environment 'assetIndex', '{asset_index}'
+                environment 'assetDirectory', downloadAssets.output
+                environment 'nativesDirectory', extractNatives.output
+
+                environment 'MC_VERSION', MC_VERSION
+                environment 'MCP_VERSION', MCP_VERSION
+                environment 'FORGE_GROUP', project.group
+                environment 'FORGE_SPEC', SPEC_VERSION
+                environment 'FORGE_VERSION', project.version.substring(MC_VERSION.length() + 1).toString()
+                environment 'LAUNCHER_VERSION', SPEC_VERSION
+                property 'org.lwjgl.system.SharedLibraryExtractDirectory', 'lwjgl_dll'
+
+                ideaModule "${rootProject.name}.${project.name}.userdev"
+
+                source sourceSets.main
+                source sourceSets.userdev
+            }
+
 
             forge_server {
                 taskName 'forge_server'
@@ -994,6 +1022,9 @@ def getArtifacts(project, config, classifiers) {
         filename += ".${art.extension}"
         def path = "${folder}${filename}"
         def url = "https://libraries.minecraft.net/${path}"
+        if (!checkExists(url)) {
+            url = "https://files.minecraftforge.net/maven/${path}"
+        }
         //TODO remove when Mojang launcher is updated
         if (!classifiers && art.classifier != null) { //Mojang launcher doesn't currently support classifiers, so... move it to part of the version, and force the extension to 'jar'
             art.version = "${art.version}-${art.classifier}"
@@ -1014,6 +1045,21 @@ def getArtifacts(project, config, classifiers) {
         ]
     }
     return ret
+}
+
+def checkExists(url) {
+    try {
+        def code = new URL(url).openConnection().with {
+            requestMethod = 'HEAD'
+            connect()
+            responseCode
+        }
+        return code == 200
+    } catch (Exception e) {
+        if (e.toString().contains('unable to find valid certification path to requested target'))
+            throw new RuntimeException('Failed to connect to ' + url + ': Missing certificate root authority, try updating java')
+        throw e
+    }
 }
 
 def getClasspath(project, libs, artifact) {

@@ -1,4 +1,4 @@
-rootProject.name = 'Mohist'
+rootProject.name = 'Forge'
 
 include ':mcp'
 include ':clean'
@@ -6,4 +6,4 @@ include ':forge'
 
 project(":mcp").projectDir = file("projects/mcp")
 project(":clean").projectDir = file("projects/clean")
-project(":forge").projectDir = file("projects/mohist")
+project(":forge").projectDir = file("projects/forge")
