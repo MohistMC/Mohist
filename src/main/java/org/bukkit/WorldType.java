@@ -14,7 +14,7 @@ public enum WorldType {
     AMPLIFIED("AMPLIFIED"),
     CUSTOMIZED("CUSTOMIZED");
 
-    private final static Map<String, WorldType> BY_NAME = Maps.newHashMap();
+    public static Map<String, WorldType> BY_NAME = Maps.newHashMap();
 
     static {
         for (WorldType type : values()) {

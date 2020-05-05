@@ -3,6 +3,7 @@ buildscript {
         mavenLocal()
         mavenCentral()
         maven { url 'https://files.minecraftforge.net/maven' }
+        // maven { url 'http://bmclapi2.bangbang93.com/maven' }
     }
     dependencies {
         classpath 'net.minecraftforge.gradle:ForgeGradle:2.3-SNAPSHOT'
@@ -24,6 +25,7 @@ version = '1.12.2-' + versioning.info.build
 repositories {
     mavenCentral()
     maven { url 'https://files.minecraftforge.net/maven' }
+    // maven { url 'http://bmclapi2.bangbang93.com/maven' }
     maven { url 'https://hub.spigotmc.org/nexus/content/groups/public/' }
     maven { url 'https://oss.sonatype.org/content/repositories/snapshots/' }
     maven { url 'https://libraries.minecraft.net/' }
@@ -111,10 +113,6 @@ sourceSets {
     main.java.srcDir 'src/main/java/'
     main.java.srcDir 'projects/Mohist/src/main/java/'
     main.java.srcDir 'projects/Mohist/src/main/start/'
-}
-
-configurations.all {
-    transitive = false
 }
 
 minecraft.version = "1.12.2"

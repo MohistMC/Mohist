@@ -31,7 +31,12 @@
  import net.minecraft.server.management.PlayerProfileCache;
  import net.minecraft.util.EnumFacing;
  import net.minecraft.util.ITickable;
-@@ -22,13 +37,65 @@
+@@ -18,17 +33,65 @@
+ import net.minecraft.util.StringUtils;
+ import net.minecraftforge.fml.relauncher.Side;
+ import net.minecraftforge.fml.relauncher.SideOnly;
++import red.mohist.common.async.MohistThreadBox;
+ 
  public class TileEntitySkull extends TileEntity implements ITickable
  {
      private int skullType;
@@ -43,11 +48,6 @@
      private static PlayerProfileCache profileCache;
      private static MinecraftSessionService sessionService;
 +    // Spigot start
-+    public static final ExecutorService executor = Executors.newFixedThreadPool(3,
-+            new ThreadFactoryBuilder()
-+                    .setNameFormat("Head Conversion Thread - %1$d")
-+                    .build()
-+    );
 +    public static final LoadingCache<String, GameProfile> skinCache = CacheBuilder.newBuilder()
 +            .maximumSize( 5000 )
 +            .expireAfterAccess( 60, TimeUnit.MINUTES )
@@ -98,7 +98,7 @@
      public static void setProfileCache(PlayerProfileCache profileCacheIn)
      {
          profileCache = profileCacheIn;
-@@ -134,49 +201,90 @@
+@@ -134,49 +197,90 @@
  
      private void updatePlayerProfile()
      {
@@ -182,7 +182,7 @@
 +                            throw new RuntimeException(ex); // Not possible
 +                        }
 +                    } else {
-+                        return executor.submit(callable);
++                        return MohistThreadBox.Head.submit(callable);
                      }
  
 -                    return gameprofile;

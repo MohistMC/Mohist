@@ -151,15 +151,9 @@ public final class PluginClassLoader extends URLClassLoader {
             if (url != null) {
                 InputStream stream = url.openStream();
                 if (stream != null) {
-//                  remap
                     byte[] bytecode = IOUtils.toByteArray(stream);
                     bytecode = RemapUtils.remapFindClass(bytecode);
-                    // Define (create) the class using the modified byte code
-                    // The top-child class loader is used for this to prevent access violations
-                    // Set the codesource to the jar, not within the jar, for compatibility with
-                    // plugins that do new File(getClass().getProtectionDomain().getCodeSource().getLocation().toURI()))
-                    // instead of using getResourceAsStream - see https://github.com/MinecraftPortCentral/Cauldron-Plus/issues/75
-                    JarURLConnection jarURLConnection = (JarURLConnection) url.openConnection(); // parses only
+                    JarURLConnection jarURLConnection = (JarURLConnection) url.openConnection();
                     URL jarURL = jarURLConnection.getJarFileURL();
                     CodeSource codeSource = new CodeSource(jarURL, new CodeSigner[0]);
 
