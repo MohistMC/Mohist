@@ -969,7 +969,7 @@
      }
  
      public boolean isEntityInvulnerable(DamageSource source)
-@@ -2509,57 +2859,79 @@
+@@ -2509,57 +2859,62 @@
      @Nullable
      public Entity changeDimension(int dimensionIn)
      {
@@ -989,52 +989,48 @@
 -            WorldServer worldserver = minecraftserver.getWorld(i);
 -            WorldServer worldserver1 = minecraftserver.getWorld(dimensionIn);
 -            this.dimension = dimensionIn;
--
--            if (i == 1 && dimensionIn == 1)
--            {
--                worldserver1 = minecraftserver.getWorld(0);
--                this.dimension = 0;
 +            // CraftBukkit start - Move logic into new function "teleportTo(Location,boolean)"
 +            // int i = this.dimension;
 +            // WorldServer worldserver = minecraftserver.getWorld(i);
 +            // WorldServer worldserver1 = minecraftserver.getWorld(dimensionIn);
-+            WorldServer exitWorld = null;
-+            if (this.dimension < CraftWorld.CUSTOM_DIMENSION_OFFSET) { // Plugins must specify exit from custom Bukkit worlds
-+                // Only target existing worlds (compensate for allow-nether/allow-end as false)
-+                for (WorldServer world : minecraftserver.worlds) {
-+                    if (world.dimension == dimensionIn) {
-+                        exitWorld = world;
-+                    }
-+                }
-             }
++            // Cauldron start - Allow Forge hotloading on teleport
++			WorldServer exitWorld = minecraftserver.getWorldServer(dimensionIn);
+ 
+-            if (i == 1 && dimensionIn == 1)
+-            {
+-                worldserver1 = minecraftserver.getWorld(0);
+-                this.dimension = 0;
+-            }
++            Location enter = this.getBukkitEntity().getLocation();
++            Location exit = exitWorld != null ? minecraftserver.getPlayerList().calculateTarget(enter, minecraftserver.getWorldServer(dimensionIn)) : null;
++            boolean useTravelAgent = exitWorld != null && !(this.dimension == 1 && exitWorld.dimension == 1); // don't use agent for custom worlds or return from THE_END
  
 -            this.world.removeEntity(this);
 -            this.isDead = false;
 -            this.world.profiler.startSection("reposition");
 -            BlockPos blockpos;
--
++            TravelAgent agent = exit != null ? (TravelAgent) ((CraftWorld) exit.getWorld()).getHandle().getDefaultTeleporter() : org.bukkit.craftbukkit.v1_12_R1.CraftTravelAgent.DEFAULT; // return arbitrary TA to compensate for implementation dependent plugins
++            // Cauldron end
++            boolean oldCanCreate = agent.getCanCreatePortal();
++            agent.setCanCreatePortal(false); // General entities cannot create portals
+ 
 -            if (dimensionIn == 1)
 -            {
 -                blockpos = worldserver1.getSpawnCoordinate();
-+            BlockPos blockposition = null; // PAIL: CHECK
-+            Location enter = this.getBukkitEntity().getLocation();
-+            Location exit;
-+            if (exitWorld != null) {
-+                if (blockposition != null) {
-+                    exit = new Location(exitWorld.getWorld(), blockposition.getX(), blockposition.getY(), blockposition.getZ());
-+                } else {
-+                    exit = minecraftserver.getPlayerList().calculateTarget(enter, minecraftserver.getWorld(dimensionIn));
-+                }
++            EntityPortalEvent event = new EntityPortalEvent(this.getBukkitEntity(), enter, exit, agent);
++            event.useTravelAgent(useTravelAgent);
++            event.getEntity().getServer().getPluginManager().callEvent(event);
++            if (event.isCancelled() || event.getTo() == null || event.getTo().getWorld() == null || !this.isEntityAlive()) {
++                agent.setCanCreatePortal(oldCanCreate);
++                return null;
              }
 -            else
 -            {
 -                double d0 = this.posX;
 -                double d1 = this.posZ;
 -                double d2 = 8.0D;
-+            else {
-+                exit = null;
-+            }
-+            boolean useTravelAgent = exitWorld != null && !(this.dimension == 1 && exitWorld.dimension == 1); // don't use agent for custom worlds or return from THE_END
++            exit = event.useTravelAgent() ? event.getPortalTravelAgent().findOrCreate(event.getTo()) : event.getTo();
++            agent.setCanCreatePortal(oldCanCreate);
  
 -                if (dimensionIn == -1)
 -                {
@@ -1046,9 +1042,13 @@
 -                    d0 = MathHelper.clamp(d0 * 8.0D, worldserver1.getWorldBorder().minX() + 16.0D, worldserver1.getWorldBorder().maxX() - 16.0D);
 -                    d1 = MathHelper.clamp(d1 * 8.0D, worldserver1.getWorldBorder().minZ() + 16.0D, worldserver1.getWorldBorder().maxZ() - 16.0D);
 -                }
-+            TravelAgent agent = exit != null ? (TravelAgent) ((CraftWorld) exit.getWorld()).getHandle().getDefaultTeleporter() : org.bukkit.craftbukkit.v1_12_R1.CraftTravelAgent.DEFAULT; // return arbitrary TA to compensate for implementation dependent plugins
-+            boolean oldCanCreate = agent.getCanCreatePortal();
-+            agent.setCanCreatePortal(false); // General entities cannot create portals
++            // Need to make sure the profiler state is reset afterwards (but we still want to time the call)
++            Entity entity = this.teleportTo(exit, true);
++            this.world.profiler.endSection();
++            return entity;
++        }
++        return null;
++    }
  
 -                d0 = (double)MathHelper.clamp((int)d0, -29999872, 29999872);
 -                d1 = (double)MathHelper.clamp((int)d1, -29999872, 29999872);
@@ -1057,25 +1057,9 @@
 -                Teleporter teleporter = worldserver1.getDefaultTeleporter();
 -                teleporter.placeInExistingPortal(this, f);
 -                blockpos = new BlockPos(this);
-+            EntityPortalEvent event = new EntityPortalEvent(this.getBukkitEntity(), enter, exit, agent);
-+            event.useTravelAgent(useTravelAgent);
-+            event.getEntity().getServer().getPluginManager().callEvent(event);
-+            if (event.isCancelled() || event.getTo() == null || event.getTo().getWorld() == null || !this.isEntityAlive()) {
-+                agent.setCanCreatePortal(oldCanCreate);
-+                return null;
-             }
-+            exit = event.useTravelAgent() ? event.getPortalTravelAgent().findOrCreate(event.getTo()) : event.getTo();
-+            agent.setCanCreatePortal(oldCanCreate);
- 
+-            }
+-
 -            worldserver.updateEntityWithOptionalForce(this, false);
-+            // Need to make sure the profiler state is reset afterwards (but we still want to time the call)
-+            Entity entity = this.teleportTo(exit, true);
-+            this.world.profiler.endSection();
-+            return entity;
-+        }
-+        return null;
-+    }
-+
 +    public Entity teleportTo(Location exit, boolean portal) {
 +        if (true) { // Paper
 +            WorldServer worldserver = ((CraftWorld) getBukkitEntity().getLocation().getWorld()).getHandle();
@@ -1089,7 +1073,7 @@
              this.world.profiler.endStartSection("reloading");
              Entity entity = EntityList.newEntity(this.getClass(), worldserver1);
  
-@@ -2567,28 +2939,26 @@
+@@ -2567,28 +2922,26 @@
              {
                  entity.copyDataFromOld(this);
  
@@ -1127,7 +1111,7 @@
              return entity;
          }
          else
-@@ -2604,7 +2974,7 @@
+@@ -2604,7 +2957,7 @@
  
      public float getExplosionResistance(Explosion explosionIn, World worldIn, BlockPos pos, IBlockState blockStateIn)
      {
@@ -1136,7 +1120,7 @@
      }
  
      public boolean canExplosionDestroyBlock(Explosion explosionIn, World worldIn, BlockPos pos, IBlockState blockStateIn, float p_174816_5_)
-@@ -2717,6 +3087,11 @@
+@@ -2717,6 +3070,11 @@
  
      public void setCustomNameTag(String name)
      {
@@ -1148,7 +1132,7 @@
          this.dataManager.set(CUSTOM_NAME, name);
      }
  
-@@ -2800,7 +3175,25 @@
+@@ -2800,7 +3158,25 @@
  
      public void setEntityBoundingBox(AxisAlignedBB bb)
      {
@@ -1175,7 +1159,7 @@
      }
  
      public float getEyeHeight()
-@@ -2832,6 +3225,11 @@
+@@ -2832,6 +3208,11 @@
          return true;
      }
  
@@ -1187,7 +1171,7 @@
      public BlockPos getPosition()
      {
          return new BlockPos(this.posX, this.posY + 0.5D, this.posZ);
-@@ -2859,11 +3257,11 @@
+@@ -2859,11 +3240,11 @@
  
      public void setCommandStat(CommandResultStats.Type type, int amount)
      {
@@ -1203,7 +1187,7 @@
  
      @Nullable
      public MinecraftServer getServer()
-@@ -2901,6 +3299,217 @@
+@@ -2901,6 +3282,217 @@
          EnchantmentHelper.applyArthropodEnchantments(entityLivingBaseIn, entityIn);
      }
  
@@ -1421,7 +1405,7 @@
      public void addTrackingPlayer(EntityPlayerMP player)
      {
      }
-@@ -3069,7 +3678,7 @@
+@@ -3069,7 +3661,7 @@
          return SoundCategory.NEUTRAL;
      }
  

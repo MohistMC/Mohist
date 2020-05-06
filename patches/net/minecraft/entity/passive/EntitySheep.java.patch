@@ -49,7 +49,17 @@
          {
              if (!this.world.isRemote)
              {
-@@ -348,6 +357,13 @@
+@@ -198,7 +207,9 @@
+ 
+                 for (int j = 0; j < i; ++j)
+                 {
++                    this.forceDrops = true;
+                     EntityItem entityitem = this.entityDropItem(new ItemStack(Item.getItemFromBlock(Blocks.WOOL), 1, this.getFleeceColor().getMetadata()), 1.0F);
++                    this.forceDrops = false;
+                     entityitem.motionY += (double)(this.rand.nextFloat() * 0.05F);
+                     entityitem.motionX += (double)((this.rand.nextFloat() - this.rand.nextFloat()) * 0.1F);
+                     entityitem.motionZ += (double)((this.rand.nextFloat() - this.rand.nextFloat()) * 0.1F);
+@@ -348,6 +359,13 @@
  
      public void eatGrassBonus()
      {
@@ -63,7 +73,7 @@
          this.setSheared(false);
  
          if (this.isChild())
-@@ -364,6 +380,21 @@
+@@ -364,6 +382,21 @@
          return livingdata;
      }
  

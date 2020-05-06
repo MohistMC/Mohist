@@ -18,7 +18,7 @@
 -            state = state.withProperty(AGE, Integer.valueOf(i + 1));
 -            worldIn.setBlockState(pos, state, 2);
 +            IBlockState newState = state.withProperty(AGE, Integer.valueOf(i + 1));
-+//            worldIn.setBlockState(pos, newState, 2);
++			// worldIn.setBlockState(pos, newState, 2);
 +            org.bukkit.craftbukkit.v1_12_R1.event.CraftEventFactory.handleBlockGrowEvent(worldIn, pos.getX(), pos.getY(), pos.getZ(), this, getMetaFromState(newState));
 +            net.minecraftforge.common.ForgeHooks.onCropsGrowPost(worldIn, pos, state, newState);
          }

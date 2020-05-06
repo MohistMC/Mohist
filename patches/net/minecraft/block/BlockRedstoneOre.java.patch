@@ -9,7 +9,7 @@
  
  public class BlockRedstoneOre extends Block
  {
-@@ -40,19 +42,33 @@
+@@ -40,19 +42,31 @@
  
      public void onBlockClicked(World worldIn, BlockPos pos, EntityPlayer playerIn)
      {
@@ -22,8 +22,6 @@
      {
 -        this.activate(worldIn, pos);
 -        super.onEntityWalk(worldIn, pos, entityIn);
-+//        this.activate(worldIn, pos);
-+//        super.onEntityWalk(worldIn, pos, entityIn);
 +        if (entityIn instanceof EntityPlayer) {
 +            org.bukkit.event.player.PlayerInteractEvent event = org.bukkit.craftbukkit.v1_12_R1.event.CraftEventFactory.callPlayerInteractEvent((EntityPlayer) entityIn, org.bukkit.event.block.Action.PHYSICAL, pos, null, null, null);
 +            if (!event.isCancelled()) {
@@ -47,7 +45,7 @@
          return super.onBlockActivated(worldIn, pos, state, playerIn, hand, facing, hitX, hitY, hitZ);
      }
  
-@@ -66,10 +82,26 @@
+@@ -66,10 +80,26 @@
          }
      }
  
@@ -74,7 +72,7 @@
              worldIn.setBlockState(pos, Blocks.REDSTONE_ORE.getDefaultState());
          }
      }
-@@ -92,12 +124,16 @@
+@@ -92,12 +122,16 @@
      public void dropBlockAsItemWithChance(World worldIn, BlockPos pos, IBlockState state, float chance, int fortune)
      {
          super.dropBlockAsItemWithChance(worldIn, pos, state, chance, fortune);

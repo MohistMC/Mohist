@@ -154,7 +154,14 @@
                  this.sendToTrackingAndSelf(new SPacketEntityProperties(this.trackedEntity.getEntityId(), set));
              }
  
-@@ -376,6 +407,16 @@
+@@ -370,12 +401,23 @@
+ 
+     public void updatePlayerEntity(EntityPlayerMP playerMP)
+     {
++        org.spigotmc.AsyncCatcher.catchOp("player tracker update"); // Spigot
+         if (playerMP != this.trackedEntity)
+         {
+             if (this.isVisibleTo(playerMP))
              {
                  if (!this.trackingPlayers.contains(playerMP) && (this.isPlayerWatchingThisChunk(playerMP) || this.trackedEntity.forceSpawn))
                  {
@@ -171,7 +178,7 @@
                      this.trackingPlayers.add(playerMP);
                      Packet<?> packet = this.createSpawnPacket();
                      playerMP.connection.sendPacket(packet);
-@@ -392,6 +433,14 @@
+@@ -392,6 +434,14 @@
                          AttributeMap attributemap = (AttributeMap)((EntityLivingBase)this.trackedEntity).getAttributeMap();
                          Collection<IAttributeInstance> collection = attributemap.getWatchedAttributes();
  
@@ -186,7 +193,7 @@
                          if (!collection.isEmpty())
                          {
                              playerMP.connection.sendPacket(new SPacketEntityProperties(this.trackedEntity.getEntityId(), collection));
-@@ -435,6 +484,11 @@
+@@ -435,6 +485,11 @@
                          }
                      }
  
@@ -198,7 +205,7 @@
                      if (this.trackedEntity instanceof EntityLivingBase)
                      {
                          EntityLivingBase entitylivingbase = (EntityLivingBase)this.trackedEntity;
-@@ -457,6 +511,7 @@
+@@ -457,6 +512,7 @@
  
                      this.trackedEntity.addTrackingPlayer(playerMP);
                      playerMP.addEntity(this.trackedEntity);
@@ -206,7 +213,7 @@
                  }
              }
              else if (this.trackingPlayers.contains(playerMP))
-@@ -464,6 +519,7 @@
+@@ -464,6 +520,7 @@
                  this.trackingPlayers.remove(playerMP);
                  this.trackedEntity.removeTrackingPlayer(playerMP);
                  playerMP.removeEntity(this.trackedEntity);
@@ -214,7 +221,7 @@
              }
          }
      }
-@@ -489,13 +545,19 @@
+@@ -489,13 +546,19 @@
          }
      }
  
@@ -235,7 +242,7 @@
          if (this.trackedEntity instanceof EntityPlayerMP)
          {
              return new SPacketSpawnPlayer((EntityPlayer)this.trackedEntity);
-@@ -651,7 +713,8 @@
+@@ -651,12 +714,14 @@
          }
          else
          {
@@ -245,3 +252,9 @@
          }
      }
  
+     public void removeTrackedPlayerSymmetric(EntityPlayerMP playerMP)
+     {
++		org.spigotmc.AsyncCatcher.catchOp( "player tracker clear"); // Spigot
+         if (this.trackingPlayers.contains(playerMP))
+         {
+             this.trackingPlayers.remove(playerMP);

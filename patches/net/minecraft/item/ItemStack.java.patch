@@ -10,7 +10,7 @@
  import javax.annotation.Nullable;
  import net.minecraft.advancements.CriteriaTriggers;
  import net.minecraft.block.Block;
-@@ -49,23 +49,28 @@
+@@ -49,14 +49,15 @@
  import net.minecraft.world.World;
  import net.minecraftforge.fml.relauncher.Side;
  import net.minecraftforge.fml.relauncher.SideOnly;
@@ -29,15 +29,12 @@
      private NBTTagCompound stackTagCompound;
      private boolean isEmpty;
      int itemDamage;
--    private EntityItemFrame itemFrame;
-+    private transient EntityItemFrame itemFrame;
-     private Block canDestroyCacheBlock;
-     private boolean canDestroyCacheResult;
+@@ -66,6 +67,10 @@
      private Block canPlaceOnCacheBlock;
      private boolean canPlaceOnCacheResult;
  
 +    private net.minecraftforge.registries.IRegistryDelegate<Item> delegate;
-+    private net.minecraftforge.common.capabilities.CapabilityDispatcher capabilities;
++    public net.minecraftforge.common.capabilities.CapabilityDispatcher capabilities;
 +    private NBTTagCompound capNBT;
 +
      public ItemStack(Block blockIn)
@@ -527,10 +524,10 @@
 +
 +    // Spigot start
 +    public static boolean fastMatches(ItemStack itemstack, ItemStack itemstack1) {
-+        if (itemstack.isEmpty() && itemstack1.isEmpty()) {
++        if (itemstack == null && itemstack1 == null) {
 +            return true;
 +        }
-+        if (!itemstack.isEmpty() && !itemstack1.isEmpty()) {
++        if (itemstack != null && itemstack1 != null) {
 +            return itemstack.stackSize == itemstack1.stackSize && itemstack.item == itemstack1.item && itemstack.itemDamage == itemstack1.itemDamage;
 +        }
 +        return false;

@@ -314,11 +314,8 @@ public class DimensionManager
         }
         WorldInfo worldInfo = new WorldInfo(worldSettings, name);
         WorldServer world = (dim == 0 ? overworld : (WorldServer)(new WorldServerMulti(mcServer, new AnvilSaveHandler(mcServer.server.getWorldContainer(), name, true, mcServer.getDataFixer()), dim, overworld, mcServer.profiler, worldInfo, env, gen).init()));
-        if (gen != null)
-        {
-            world.getWorld().getPopulators().addAll(gen.getDefaultPopulators(world.getWorld()));
-        }
-        mcServer.getPlayerList().setPlayerManager(mcServer.worldServerList.toArray(new WorldServer[mcServer.worldServerList.size()]));
+
+        mcServer.getPlayerList().setPlayerManager(mcServer.worldServerList.toArray(new WorldServer[0]));
         world.addEventListener(new ServerWorldEventHandler(mcServer, world));
         MinecraftForge.EVENT_BUS.post(new WorldEvent.Load(world));
         mcServer.server.getPluginManager().callEvent(new org.bukkit.event.world.WorldLoadEvent(world.getWorld()));
@@ -607,11 +604,13 @@ public class DimensionManager
             worldinfo = new WorldInfo(worldSettings,name);
         }
         worldinfo.setWorldName(name);
+        worldinfo.setDimension(dim);
+
         WorldServer world = (WorldServer) new WorldServer(mcServer, saveHandler, worldinfo, dim, mcServer.profiler, env, gen).init();
         world.initialize(worldSettings);
 
         world.provider.setDimension(dim); // Fix for TerrainControl injecting their own WorldProvider
-        mcServer.getPlayerList().setPlayerManager(mcServer.worldServerList.toArray(new WorldServer[mcServer.worldServerList.size()]));
+        mcServer.getPlayerList().setPlayerManager(mcServer.worldServerList.toArray(new WorldServer[0]));
 
         world.addEventListener(new ServerWorldEventHandler(mcServer, world));
         MinecraftForge.EVENT_BUS.post(new WorldEvent.Load(world));

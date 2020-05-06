@@ -1747,7 +1747,7 @@ public class CraftWorld implements World {
         double z = loc.getZ();
 
         SPacketCustomSound packet = new SPacketCustomSound(sound, SoundCategory.valueOf(category.name()), x, y, z, volume, pitch);
-        world.getMinecraftServer().getPlayerList().sendToAllNearExcept(null, x, y, z, volume > 1.0F ? 16.0F * volume : 16.0D, this.world, packet);  // Paper - this.world.dimension -> this.world
+        world.getMinecraftServer().getPlayerList().sendToAllNearExcept(null, x, y, z, volume > 1.0F ? 16.0F * volume : 16.0D, this.world.dimension, packet);
     }
 
     public String getGameRuleValue(String rule) {

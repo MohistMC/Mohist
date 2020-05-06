@@ -291,7 +291,7 @@
          if (this.worldPointer.getBlockState(this.position).getBlock() != Blocks.ENCHANTING_TABLE)
          {
              return false;
-@@ -400,14 +475,17 @@
+@@ -400,10 +475,9 @@
                      return ItemStack.EMPTY;
                  }
  
@@ -304,16 +304,7 @@
                  }
                  else if (!itemstack1.isEmpty())
                  {
--                    ((Slot)this.inventorySlots.get(0)).putStack(new ItemStack(itemstack1.getItem(), 1, itemstack1.getMetadata()));
-+                    // Spigot start
-+                    ItemStack clone = itemstack1.copy();
-+                    clone.setCount(1);
-+                    ((Slot) this.inventorySlots.get(0)).putStack(clone);
-+                    // Spigot end
-                     itemstack1.shrink(1);
-                 }
-             }
-@@ -431,4 +509,15 @@
+@@ -431,4 +505,15 @@
  
          return itemstack;
      }

@@ -13,7 +13,7 @@
      protected int computeRedstoneStrength(World worldIn, BlockPos pos)
      {
 -        int i = Math.min(worldIn.getEntitiesWithinAABB(Entity.class, PRESSURE_AABB.offset(pos)).size(), this.maxWeight);
-+//        int i = Math.min(worldIn.getEntitiesWithinAABB(Entity.class, PRESSURE_AABB.offset(pos)).size(), this.maxWeight);
++		// int i = Math.min(worldIn.getEntitiesWithinAABB(Entity.class, PRESSURE_AABB.offset(pos)).size(), this.maxWeight);
 +        int i = 0;
  
 +        for (Entity entity : worldIn.getEntitiesWithinAABB(Entity.class, BlockPressurePlateWeighted.PRESSURE_AABB.offset(pos))) {

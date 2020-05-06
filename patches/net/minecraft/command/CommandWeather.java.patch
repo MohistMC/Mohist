@@ -13,7 +13,7 @@
  
              World world = server.worlds[0];
 -            WorldInfo worldinfo = world.getWorldInfo();
-+            WorldInfo worldinfo = sender instanceof EntityPlayerMP ? sender.getEntityWorld().getWorldInfo() : world.getWorldInfo();;
++            WorldInfo worldinfo = sender instanceof EntityPlayerMP ? sender.getEntityWorld().getWorldInfo() : world.getWorldInfo();
  
              if ("clear".equalsIgnoreCase(args[0]))
              {

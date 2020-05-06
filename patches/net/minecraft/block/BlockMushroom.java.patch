@@ -25,7 +25,7 @@
              if (worldIn.isAirBlock(blockpos1) && this.canBlockStay(worldIn, blockpos1, this.getDefaultState()))
              {
 -                worldIn.setBlockState(blockpos1, this.getDefaultState(), 2);
-+//                worldIn.setBlockState(blockpos1, this.getDefaultState(), 2);
++				// worldIn.setBlockState(blockpos1, this.getDefaultState(), 2);
 +                org.bukkit.World bworld = worldIn.getWorld();
 +                BlockState blockState = bworld.getBlockAt(blockpos1.getX(), blockpos1.getY(), blockpos1.getZ()).getState();
 +                blockState.setType(org.bukkit.craftbukkit.v1_12_R1.util.CraftMagicNumbers.getMaterial(this)); // nms: this.id, 0, 2

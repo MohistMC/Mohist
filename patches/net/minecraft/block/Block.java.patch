@@ -147,7 +147,7 @@
                  }
              }
          }
-@@ -589,20 +583,40 @@
+@@ -589,18 +583,33 @@
  
      public static void spawnAsEntity(World worldIn, BlockPos pos, ItemStack stack)
      {
@@ -182,15 +182,8 @@
 +
      public void dropXpOnBlockBreak(World worldIn, BlockPos pos, int amount)
      {
-+        dropXpOnBlockBreak(worldIn, pos, amount, null);
-+    }
-+
-+    public void dropXpOnBlockBreak(World worldIn, BlockPos pos, int amount, EntityPlayerMP player)
-+    {
          if (!worldIn.isRemote && worldIn.getGameRules().getBoolean("doTileDrops"))
-         {
-             while (amount > 0)
-@@ -619,6 +633,7 @@
+@@ -619,6 +628,7 @@
          return 0;
      }
  
@@ -198,7 +191,7 @@
      public float getExplosionResistance(Entity exploder)
      {
          return this.blockResistance / 5.0F;
-@@ -657,7 +672,7 @@
+@@ -657,7 +667,7 @@
  
      public boolean canPlaceBlockAt(World worldIn, BlockPos pos)
      {
@@ -207,7 +200,7 @@
      }
  
      public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ)
-@@ -669,6 +684,8 @@
+@@ -669,6 +679,8 @@
      {
      }
  
@@ -216,7 +209,7 @@
      public IBlockState getStateForPlacement(World worldIn, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer)
      {
          return this.getStateFromMeta(meta);
-@@ -710,21 +727,35 @@
+@@ -710,21 +722,35 @@
          player.addStat(StatList.getBlockStats(this));
          player.addExhaustion(0.005F);
  
@@ -255,7 +248,7 @@
      }
  
      protected ItemStack getSilkTouchDrop(IBlockState state)
-@@ -810,6 +841,7 @@
+@@ -810,6 +836,7 @@
          entityIn.motionY = 0.0D;
      }
  
@@ -263,7 +256,7 @@
      public ItemStack getItem(World worldIn, BlockPos pos, IBlockState state)
      {
          return new ItemStack(Item.getItemFromBlock(this), 1, this.damageDropped(state));
-@@ -919,6 +951,7 @@
+@@ -919,6 +946,7 @@
          }
      }
  
@@ -271,7 +264,7 @@
      public SoundType getSoundType()
      {
          return this.blockSoundType;
-@@ -934,6 +967,1383 @@
+@@ -934,6 +962,1388 @@
      {
      }
  
@@ -887,13 +880,18 @@
 +     */
 +    public boolean canPlaceTorchOnTop(IBlockState state, IBlockAccess world, BlockPos pos)
 +    {
-+        if (state.isTopSolid() || state.getBlockFaceShape(world, pos, EnumFacing.UP) == BlockFaceShape.SOLID)
++        if (this == Blocks.END_GATEWAY || this == Blocks.LIT_PUMPKIN)
 +        {
-+            return this != Blocks.END_GATEWAY && this != Blocks.LIT_PUMPKIN;
++            return false;
++        }
++        else if (state.isTopSolid() || this instanceof BlockFence || this == Blocks.GLASS || this == Blocks.COBBLESTONE_WALL || this == Blocks.STAINED_GLASS)
++        {
++            return true;
 +        }
 +        else
 +        {
-+            return this instanceof BlockFence || this == Blocks.GLASS || this == Blocks.COBBLESTONE_WALL || this == Blocks.STAINED_GLASS;
++            BlockFaceShape shape = state.getBlockFaceShape(world, pos, EnumFacing.UP);
++            return (shape == BlockFaceShape.SOLID || shape == BlockFaceShape.CENTER || shape == BlockFaceShape.CENTER_BIG) && !isExceptionBlockForAttaching(this);
 +        }
 +    }
 +
@@ -960,7 +958,7 @@
 +     * texture sheets for different sides/locations in the world.
 +     *
 +     * @param state The current state
-+     * @param world The current world
++     * @param worldObj The current world
 +     * @param target The target the player is looking at {x/y/z/side/sub}
 +     * @param manager A reference to the current particle manager.
 +     * @return True to prevent vanilla digging particles form spawning.

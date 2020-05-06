@@ -119,7 +119,7 @@
          IInventory iinventory = getSourceInventory(hopper);
  
          if (iinventory != null)
-@@ -355,14 +397,49 @@
+@@ -355,14 +397,52 @@
          if (!itemstack.isEmpty() && canExtractItemFromSlot(inventoryIn, itemstack, index, direction))
          {
              ItemStack itemstack1 = itemstack.copy();
@@ -133,10 +133,13 @@
 +                sourceInventory = new org.bukkit.craftbukkit.v1_12_R1.inventory.CraftInventoryDoubleChest((InventoryLargeChest) inventoryIn);
 +            } else {
 +                InventoryHolder owner = InventoryOwner.get(inventoryIn);
-+                sourceInventory = owner != null ? owner.getInventory() : new CraftCustomInventory(inventoryIn).getInventory();
++                sourceInventory = (owner != null ? owner.getInventory() : new CraftCustomInventory(inventoryIn).getInventory());
 +            }
 +
-+            InventoryMoveItemEvent event = new InventoryMoveItemEvent(sourceInventory, oitemstack.clone(), hopper.getOwner().getInventory(), false);
++            InventoryHolder owner = InventoryOwner.get(hopper);
++            Inventory hopperOwner = (owner != null ? owner.getInventory() : new CraftCustomInventory(hopper).getInventory());
++
++            InventoryMoveItemEvent event = new InventoryMoveItemEvent(sourceInventory, oitemstack.clone(), hopperOwner, false);
 +
 +            if (sourceInventory != null) {
 +                hopper.getWorld().getServer().getPluginManager().callEvent(event); // Mohist
@@ -172,7 +175,7 @@
              inventoryIn.setInventorySlotContents(index, itemstack1);
          }
  
-@@ -379,6 +456,15 @@
+@@ -379,6 +459,15 @@
          }
          else
          {
@@ -188,7 +191,7 @@
              ItemStack itemstack = entity.getItem().copy();
              ItemStack itemstack1 = putStackInInventoryAllSlots(source, destination, itemstack, (EnumFacing)null);
  
-@@ -396,6 +482,12 @@
+@@ -396,6 +485,12 @@
          }
      }
  
@@ -201,7 +204,7 @@
      public static ItemStack putStackInInventoryAllSlots(IInventory source, IInventory destination, ItemStack stack, @Nullable EnumFacing direction)
      {
          if (destination instanceof ISidedInventory && direction != null)
-@@ -482,7 +574,7 @@
+@@ -482,7 +577,7 @@
                              }
                          }
  
@@ -210,7 +213,7 @@
                      }
                  }
  
-@@ -516,9 +608,11 @@
+@@ -516,9 +611,11 @@
          int j = MathHelper.floor(y);
          int k = MathHelper.floor(z);
          BlockPos blockpos = new BlockPos(i, j, k);
@@ -224,7 +227,7 @@
          {
              TileEntity tileentity = worldIn.getTileEntity(blockpos);
  
-@@ -611,4 +705,6 @@
+@@ -611,4 +708,6 @@
      {
          return this.inventory;
      }

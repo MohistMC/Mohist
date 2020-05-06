@@ -21,7 +21,7 @@
 +                    if (j >= (byte)Block.range(3.0f, 100.0f / worldIn.spigotConfig.caneModifier * 15.0f + 0.5f, 15.0f))
 +                    {
 +
-+                        //worldIn.setBlockState(pos.up(), this.getDefaultState());
++                        // worldIn.setBlockState(pos.up(), this.getDefaultState());
 +                        BlockPos upPos = pos.up();
 +                        org.bukkit.craftbukkit.v1_12_R1.event.CraftEventFactory.handleBlockGrowEvent(worldIn, upPos.getX(), upPos.getY(), upPos.getZ(), this, 0);
                          worldIn.setBlockState(pos, state.withProperty(AGE, Integer.valueOf(0)), 4);

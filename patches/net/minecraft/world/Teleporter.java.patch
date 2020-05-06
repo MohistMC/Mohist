@@ -78,7 +78,7 @@
              }
 +        }
 +		// CraftBukkit start
-+        return new BlockPos(i, k, k);
++        return new BlockPos(i, j, k);
 +    }
  
 -            entityIn.setLocationAndAngles((double)i, (double)j, (double)k, entityIn.rotationYaw, 0.0F);

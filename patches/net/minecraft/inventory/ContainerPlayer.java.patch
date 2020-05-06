@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/inventory/ContainerPlayer.java
 +++ ../src-work/minecraft/net/minecraft/inventory/ContainerPlayer.java
-@@ -9,6 +9,8 @@
+@@ -9,19 +9,30 @@
  import net.minecraft.item.ItemStack;
  import net.minecraftforge.fml.relauncher.Side;
  import net.minecraftforge.fml.relauncher.SideOnly;
@@ -9,7 +9,11 @@
  
  public class ContainerPlayer extends Container
  {
-@@ -18,10 +20,19 @@
+     private static final EntityEquipmentSlot[] VALID_EQUIPMENT_SLOTS = new EntityEquipmentSlot[] {EntityEquipmentSlot.HEAD, EntityEquipmentSlot.CHEST, EntityEquipmentSlot.LEGS, EntityEquipmentSlot.FEET};
+-    public InventoryCrafting craftMatrix = new InventoryCrafting(this, 2, 2);
+-    public InventoryCraftResult craftResult = new InventoryCraftResult();
++    public InventoryCrafting craftMatrix; // CraftBukkit - move initialization into constructor
++    public InventoryCraftResult craftResult; // CraftBukkit - move initialization into constructor
      public boolean isLocalWorld;
      private final EntityPlayer player;
  

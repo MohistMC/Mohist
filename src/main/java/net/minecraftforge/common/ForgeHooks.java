@@ -583,10 +583,9 @@ public class ForgeHooks
     public static ITextComponent onServerChatEvent(NetHandlerPlayServer net, String raw, ITextComponent comp)
     {
         ServerChatEvent event = new ServerChatEvent(net.player, raw, comp);
-        synchronized (ServerChatEvent.class) {
-            if (MinecraftForge.EVENT_BUS.post(event)) {
-                return null;
-            }
+        if (MinecraftForge.EVENT_BUS.post(event))
+        {
+            return null;
         }
         return event.getComponent();
     }

@@ -346,7 +346,7 @@
 +                // Drop experience
 +                if (!this.isCreative() && flag1 && exp > 0)
 +				{
-+                    iblockstate.getBlock().dropXpOnBlockBreak(world, pos, exp, this.player);
++                    iblockstate.getBlock().dropXpOnBlockBreak(world, pos, exp);
 +                }
                  return flag1;
              }

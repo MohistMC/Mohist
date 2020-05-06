@@ -45,7 +45,7 @@
      private String commandStored = "";
      private String customName = "@";
      private final CommandResultStats resultStats = new CommandResultStats();
-+    protected org.bukkit.command.CommandSender sender;
++    protected org.bukkit.command.CommandSender sender = new org.bukkit.craftbukkit.v1_12_R1.command.CraftBlockCommandSender(this);
  
      public int getSuccessCount()
      {

@@ -42,7 +42,7 @@
 +        ((Entity) iprojectile).projectileSource = new org.bukkit.craftbukkit.v1_12_R1.projectiles.CraftBlockProjectileSource(source.getBlockTileEntity());
          world.spawnEntity((Entity)iprojectile);
 -        stack.shrink(1);
-+        //stack.shrink(1); // CraftBukkit - Handled during event processing
++        // stack.shrink(1); // CraftBukkit - Handled during event processing
          return stack;
      }
  

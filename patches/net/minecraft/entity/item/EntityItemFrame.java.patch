@@ -26,8 +26,7 @@
 +            if (stack.getItem() instanceof net.minecraft.item.ItemMap)
              {
                  MapData mapdata = ((ItemMap)stack.getItem()).getMapData(stack, this.world);
--                mapdata.mapDecorations.remove("frame-" + this.getEntityId());
-+                mapdata.mapDecorations.remove(UUID.nameUUIDFromBytes(("frame-" + this.getEntityId()).getBytes(Charsets.US_ASCII))); // Spigot
+                 mapdata.mapDecorations.remove("frame-" + this.getEntityId());
              }
  
              stack.setItemFrame((EntityItemFrame)null);

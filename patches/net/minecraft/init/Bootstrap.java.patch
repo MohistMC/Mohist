@@ -314,7 +314,7 @@
                      if (ItemDye.applyBonemeal(stack, world, blockpos))
                      {
                          if (!world.isRemote)
-@@ -361,6 +554,28 @@
+@@ -361,6 +554,27 @@
                          this.successful = false;
                      }
  
@@ -323,9 +323,8 @@
 +                        TreeType treeType = BlockSapling.treeType;
 +                        BlockSapling.treeType = null;
 +                        Location location = new Location(world.getWorld(), blockpos.getX(), blockpos.getY(), blockpos.getZ());
-+                        List<net.minecraftforge.common.util.BlockSnapshot> blocks = (List) world.capturedBlockSnapshots.clone();
 +                        List<BlockState> blockstates = new java.util.ArrayList();
-+                        for (net.minecraftforge.common.util.BlockSnapshot snapshot : blocks) {
++                        for (net.minecraftforge.common.util.BlockSnapshot snapshot : world.capturedBlockSnapshots) {
 +                            blockstates.add(new org.bukkit.craftbukkit.v1_12_R1.block.CraftBlockState(snapshot));
 +                        }
 +                        world.capturedBlockSnapshots.clear();
@@ -343,7 +342,7 @@
                      return stack;
                  }
                  else
-@@ -375,10 +590,34 @@
+@@ -375,10 +589,34 @@
              {
                  World world = source.getWorld();
                  BlockPos blockpos = source.getBlockPos().offset((EnumFacing)source.getBlockState().getValue(BlockDispenser.FACING));
@@ -380,7 +379,7 @@
                  return stack;
              }
          });
-@@ -390,6 +629,27 @@
+@@ -390,6 +628,27 @@
                  EnumFacing enumfacing = (EnumFacing)source.getBlockState().getValue(BlockDispenser.FACING);
                  BlockPos blockpos = source.getBlockPos().offset(enumfacing);
                  BlockSkull blockskull = Blocks.SKULL;
@@ -408,7 +407,7 @@
                  this.successful = true;
  
                  if (world.isAirBlock(blockpos) && blockskull.canDispenserPlace(world, blockpos, stack))
-@@ -453,6 +713,27 @@
+@@ -453,6 +712,27 @@
                  World world = source.getWorld();
                  BlockPos blockpos = source.getBlockPos().offset((EnumFacing)source.getBlockState().getValue(BlockDispenser.FACING));
                  BlockPumpkin blockpumpkin = (BlockPumpkin)Blocks.PUMPKIN;
@@ -436,7 +435,7 @@
                  this.successful = true;
  
                  if (world.isAirBlock(blockpos) && blockpumpkin.canDispenserPlace(world, blockpos))
-@@ -489,6 +770,7 @@
+@@ -489,6 +769,7 @@
          if (!alreadyRegistered)
          {
              alreadyRegistered = true;
@@ -444,7 +443,7 @@
              redirectOutputToLog();
              SoundEvent.registerSounds();
              Block.registerBlocks();
-@@ -524,6 +806,8 @@
+@@ -524,6 +805,8 @@
                      LOGGER.error("Errors with built-in loot tables");
                  }
              }
@@ -453,7 +452,7 @@
          }
      }
  
-@@ -582,11 +866,37 @@
+@@ -582,11 +865,37 @@
                      d3 = 0.0D;
                  }
  
@@ -494,7 +493,7 @@
                  return stack;
              }
  
-@@ -618,6 +928,27 @@
+@@ -618,6 +927,27 @@
                  World world = source.getWorld();
                  EnumFacing enumfacing = (EnumFacing)source.getBlockState().getValue(BlockDispenser.FACING);
                  BlockPos blockpos = source.getBlockPos().offset(enumfacing);

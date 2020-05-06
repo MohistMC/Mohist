@@ -64,7 +64,7 @@
      protected boolean processInteract(EntityPlayer player, EnumHand hand)
      {
          ItemStack itemstack = player.getHeldItem(hand);
-@@ -265,12 +280,23 @@
+@@ -265,12 +280,19 @@
      {
          if (!this.world.isRemote)
          {
@@ -75,10 +75,6 @@
 -            this.world.createExplosion(this, this.posX, this.posY, this.posZ, (float)this.explosionRadius * f, flag);
 -            this.setDead();
 -            this.spawnLingeringCloud();
-+//            this.dead = true;
-+//            this.world.createExplosion(this, this.posX, this.posY, this.posZ, (float)this.explosionRadius * f, flag);
-+//            this.setDead();
-+//            this.spawnLingeringCloud();
 +            ExplosionPrimeEvent event = new ExplosionPrimeEvent(this.getBukkitEntity(), this.explosionRadius * f, false);
 +            this.world.getServer().getPluginManager().callEvent(event);
 +            if (!event.isCancelled()) {
@@ -93,7 +89,7 @@
          }
      }
  
-@@ -281,6 +307,7 @@
+@@ -281,6 +303,7 @@
          if (!collection.isEmpty())
          {
              EntityAreaEffectCloud entityareaeffectcloud = new EntityAreaEffectCloud(this.world, this.posX, this.posY, this.posZ);

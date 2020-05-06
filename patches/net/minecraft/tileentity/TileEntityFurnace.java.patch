@@ -109,7 +109,7 @@
 +                this.cookTime += elapsedTicks;
 +            }
 +            if (this.cookTime >= this.totalCookTime) {
-+                this.cookTime -= this.totalCookTime; // Paper
++                this.cookTime = 0;
 +                this.totalCookTime = this.getCookTime((ItemStack) this.furnaceItemStacks.get(0));
 +                this.smeltItem();
 +                flag1 = true;

@@ -1,18 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/item/ItemMonsterPlacer.java
 +++ ../src-work/minecraft/net/minecraft/item/ItemMonsterPlacer.java
-@@ -152,7 +152,10 @@
- 
-                 NBTTagCompound nbttagcompound1 = targetEntity.writeToNBT(new NBTTagCompound());
-                 UUID uuid = targetEntity.getUniqueID();
--                nbttagcompound1.merge(nbttagcompound.getCompoundTag("EntityTag"));
-+                NBTTagCompound entityTag = nbttagcompound.getCompoundTag("EntityTag");
-+                entityTag.removeTag("Pos");
-+                entityTag.removeTag("Motion");
-+                nbttagcompound1.merge(entityTag);
-                 targetEntity.setUniqueId(uuid);
-                 targetEntity.readFromNBT(nbttagcompound1);
-             }
-@@ -220,6 +223,11 @@
+@@ -220,6 +220,11 @@
      @Nullable
      public static Entity spawnCreature(World worldIn, @Nullable ResourceLocation entityID, double x, double y, double z)
      {
@@ -24,7 +12,7 @@
          if (entityID != null && EntityList.ENTITY_EGGS.containsKey(entityID))
          {
              Entity entity = null;
-@@ -234,9 +242,17 @@
+@@ -234,9 +239,17 @@
                      entity.setLocationAndAngles(x, y, z, MathHelper.wrapDegrees(worldIn.rand.nextFloat() * 360.0F), 0.0F);
                      entityliving.rotationYawHead = entityliving.rotationYaw;
                      entityliving.renderYawOffset = entityliving.rotationYaw;
