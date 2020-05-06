@@ -36,6 +36,7 @@ public class PluginManagers {
             sender.sendMessage(Message.getFormatString("pluginscommand.load", f));
             return true;
         }
+        Object[] objects = new Object[] {split[1]};
         String jarName = split[1] + (split[1].endsWith(".jar") ? "" : ".jar");
         File toLoad = new File("plugins" + File.separator + jarName);
 
@@ -43,8 +44,7 @@ public class PluginManagers {
             jarName = split[1] + (split[1].endsWith(".jar") ? ".unloaded" : ".jar.unloaded");
             toLoad = new File("plugins" + File.separator + jarName);
             if (!toLoad.exists()) {
-                Object[] f = {split[1]};
-                sender.sendMessage(Message.getFormatString("pluginscommand.nofile", f));
+                sender.sendMessage(Message.getFormatString("pluginscommand.nofile",  objects));
                 return true;
             } else {
                 String fileName = jarName.substring(0, jarName.length() - (".unloaded".length()));
@@ -56,27 +56,23 @@ public class PluginManagers {
 
         PluginDescriptionFile desc = Control.getDescription(toLoad);
         if (desc == null) {
-            Object[] f = {split[1]};
-            sender.sendMessage(Message.getFormatString("pluginscommand.noyml", f));
+            sender.sendMessage(Message.getFormatString("pluginscommand.noyml",  objects));
             return true;
         }
         Plugin[] pl = Bukkit.getPluginManager().getPlugins();
         ArrayList<Plugin> plugins = new ArrayList<>(java.util.Arrays.asList(pl));
         for (Plugin p : plugins) {
             if (desc.getName().equals(p.getName())) {
-                Object[] f = {desc.getName()};
-                sender.sendMessage(Message.getFormatString("pluginscommand.alreadyloaded", f));
+                sender.sendMessage(Message.getFormatString("pluginscommand.alreadyloaded", new Object[] {desc.getName()}));
                 return true;
             }
         }
-        Plugin p = null;
-        if ((p = Control.loadPlugin(toLoad)) != null) {
-            Control.enablePlugin(p);
-            Object[] d = {p.getDescription().getName(), p.getDescription().getVersion()};
-            sender.sendMessage(Message.getFormatString("pluginscommand.loaded", d));
+        Plugin p = Control.loadPlugin(toLoad);
+        if (p != null) {
+            Bukkit.getServer().getPluginManager().enablePlugin(p);
+            sender.sendMessage(Message.getFormatString("pluginscommand.loaded", new Object[] {p.getDescription().getName(), p.getDescription().getVersion()}));
         } else {
-            Object[] d = {split[1]};
-            sender.sendMessage(Message.getFormatString("pluginscommand.notload", d));
+            sender.sendMessage(Message.getFormatString("pluginscommand.notload", objects));
         }
 
         return true;
@@ -88,23 +84,20 @@ public class PluginManagers {
         }
 
         if (split.length < 2) {
-            Object[] f = {label};
-            sender.sendMessage(Message.getFormatString("pluginscommand.unload", f));
+            sender.sendMessage(Message.getFormatString("pluginscommand.unload", new Object[] {label}));
             return true;
         }
 
         Plugin p = Bukkit.getServer().getPluginManager().getPlugin(split[1]);
+        Object[] objects = new Object[] {split[1]};
 
         if (p == null) {
-            Object[] f = {split[1]};
-            sender.sendMessage(Message.getFormatString("pluginscommand.noplugin", f));
+            sender.sendMessage(Message.getFormatString("pluginscommand.noplugin", objects));
         } else {
-            if (Control.unloadPlugin(p, true)) {
-                Object[] d = {p.getDescription().getName(), p.getDescription().getVersion()};
-                sender.sendMessage(Message.getFormatString("pluginscommand.unloaded", d));
+            if (Control.unloadPlugin(p)) {
+                sender.sendMessage(Message.getFormatString("pluginscommand.unloaded", new Object[] {p.getDescription().getName(), p.getDescription().getVersion()}));
             } else {
-                Object[] d = {split[1]};
-                sender.sendMessage(Message.getFormatString("pluginscommand.notunload", d));
+                sender.sendMessage(Message.getFormatString("pluginscommand.notunload", objects));
             }
         }
 
@@ -117,71 +110,34 @@ public class PluginManagers {
         }
 
         if (split.length < 2) {
-            Object[] f = {label};
-            sender.sendMessage(Message.getFormatString("pluginscommand.reload", f));
+            sender.sendMessage(Message.getFormatString("pluginscommand.reload", new Object[] {label}));
             return true;
         }
 
         Plugin p = Bukkit.getServer().getPluginManager().getPlugin(split[1]);
+        Object[] objects = new Object[] {split[1]};
 
         if (p == null) {
-            Object[] f = {split[1]};
-            sender.sendMessage(Message.getFormatString("pluginscommand.noplugin", f));
+            sender.sendMessage(Message.getFormatString("pluginscommand.noplugin", objects));
         } else {
             File file = Control.getFile((JavaPlugin) p);
 
             if (file == null) {
-                Object[] f = {p.getName()};
-                sender.sendMessage(Message.getFormatString("pluginscommand.nojar", f));
+                sender.sendMessage(Message.getFormatString("pluginscommand.nojar", new Object[] {p.getName()}));
                 return true;
             }
 
             File name = new File("plugins" + File.separator + file.getName());
             JavaPlugin loaded = null;
-            if (!Control.unloadPlugin(p, false)) {
-                Object[] f = {split[1]};
-                sender.sendMessage(Message.getFormatString("pluginscommand.unloaderror", f));
+            if (!Control.unloadPlugin(p)) {
+                sender.sendMessage(Message.getFormatString("pluginscommand.unloaderror", objects));
             } else if ((loaded = (JavaPlugin) Control.loadPlugin(name)) == null) {
-                Object[] f = {split[1]};
-                sender.sendMessage(Message.getFormatString("pluginscommand.nojar", f));
+                sender.sendMessage(Message.getFormatString("pluginscommand.nojar", objects));
             }
 
-            Control.enablePlugin(loaded);
-            Object[] d = {split[1], loaded.getDescription().getVersion()};
-            sender.sendMessage(Message.getFormatString("pluginscommand.reloaded", d));
+            Bukkit.getPluginManager().enablePlugin(loaded);
+            sender.sendMessage(Message.getFormatString("pluginscommand.reloaded", new Object[] {split[1], loaded.getDescription().getVersion()}));
         }
         return true;
-    }
-    
-    private static Map<String, List<String>> plugins = new HashMap<String, List<String>>() {{
-        /* Indicates that the 1.0 and 2.0 versions of the example plugin have this vulnerability */
-        /*
-        put("example", new ArrayList<String>() {{
-            add("1.0");
-            add("2.0");
-        }});
-
-         */
-        /* Indicates that all versions of the example1 plugin have this vulnerability */
-        /*
-        put("example1", new ArrayList<String>() {{
-            add("all");
-        }});
-         */
-
-        put("example", new ArrayList<String>() {{
-            add("all");
-        }});
-        put("example1", new ArrayList<String>() {{
-            add("1.0");
-        }});
-        put("example2", new ArrayList<String>() {{
-            add("1.0");
-            add("2.0");
-        }});
-    }};
-
-    public static synchronized boolean checkBug(Plugin plugin, String version) {
-        return !plugins.isEmpty() ? (plugins.containsKey(plugin.getName()) && (plugins.get(plugin.getName()).contains("all") || plugins.get(plugin.getName()).contains(version))) : false;
     }
 }

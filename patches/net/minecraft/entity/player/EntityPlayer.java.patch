@@ -51,7 +51,7 @@
      private static final DataParameter<Float> ABSORPTION = EntityDataManager.<Float>createKey(EntityPlayer.class, DataSerializers.FLOAT);
      private static final DataParameter<Integer> PLAYER_SCORE = EntityDataManager.<Integer>createKey(EntityPlayer.class, DataSerializers.VARINT);
      protected static final DataParameter<Byte> PLAYER_MODEL_FLAG = EntityDataManager.<Byte>createKey(EntityPlayer.class, DataSerializers.BYTE);
-@@ -103,10 +116,11 @@
+@@ -103,10 +116,10 @@
      protected static final DataParameter<NBTTagCompound> LEFT_SHOULDER_ENTITY = EntityDataManager.<NBTTagCompound>createKey(EntityPlayer.class, DataSerializers.COMPOUND_TAG);
      protected static final DataParameter<NBTTagCompound> RIGHT_SHOULDER_ENTITY = EntityDataManager.<NBTTagCompound>createKey(EntityPlayer.class, DataSerializers.COMPOUND_TAG);
      public InventoryPlayer inventory = new InventoryPlayer(this);
@@ -60,12 +60,11 @@
      public Container inventoryContainer;
      public Container openContainer;
 -    protected FoodStats foodStats = new FoodStats();
-+    protected FoodStats applecores_vanilla = new FoodStats(); // Mohist - add the original amount, which doesn't actually work, but is compatible with apple cores
-+    protected FoodStats foodStats = new FoodStats(this); // CraftBukkit - add "this" to constructor
++    protected FoodStats foodStats = new FoodStats().fixAppleCore(this); // CraftBukkit - add "this" to constructor
      protected int flyToggleTimer;
      public float prevCameraYaw;
      public float cameraYaw;
-@@ -117,9 +131,9 @@
+@@ -117,9 +130,9 @@
      public double chasingPosX;
      public double chasingPosY;
      public double chasingPosZ;
@@ -77,7 +76,7 @@
      public float renderOffsetX;
      @SideOnly(Side.CLIENT)
      public float renderOffsetY;
-@@ -141,6 +155,15 @@
+@@ -141,6 +154,15 @@
      @Nullable
      public EntityFishHook fishEntity;
  
@@ -93,7 +92,7 @@
      protected CooldownTracker createCooldownTracker()
      {
          return new CooldownTracker();
-@@ -156,6 +179,9 @@
+@@ -156,6 +178,9 @@
          BlockPos blockpos = worldIn.getSpawnPoint();
          this.setLocationAndAngles((double)blockpos.getX() + 0.5D, (double)(blockpos.getY() + 1), (double)blockpos.getZ() + 0.5D, 0.0F, 0.0F);
          this.unused180 = 180.0F;
@@ -103,7 +102,7 @@
      }
  
      protected void applyEntityAttributes()
-@@ -165,6 +191,7 @@
+@@ -165,6 +190,7 @@
          this.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(0.10000000149011612D);
          this.getAttributeMap().registerAttribute(SharedMonsterAttributes.ATTACK_SPEED);
          this.getAttributeMap().registerAttribute(SharedMonsterAttributes.LUCK);
@@ -111,7 +110,7 @@
      }
  
      protected void entityInit()
-@@ -180,6 +207,7 @@
+@@ -180,6 +206,7 @@
  
      public void onUpdate()
      {
@@ -119,7 +118,7 @@
          this.noClip = this.isSpectator();
  
          if (this.isSpectator())
-@@ -207,7 +235,7 @@
+@@ -207,7 +234,7 @@
                  {
                      this.wakeUpPlayer(true, true, false);
                  }
@@ -128,7 +127,7 @@
                  {
                      this.wakeUpPlayer(false, true, true);
                  }
-@@ -367,6 +395,7 @@
+@@ -367,6 +394,7 @@
                  this.setSize(f, f1);
              }
          }
@@ -136,7 +135,7 @@
      }
  
      public int getMaxInPortalTime()
-@@ -399,7 +428,7 @@
+@@ -399,7 +427,7 @@
          return SoundCategory.PLAYERS;
      }
  
@@ -145,7 +144,7 @@
      {
          return 20;
      }
-@@ -454,11 +483,11 @@
+@@ -454,11 +482,11 @@
              this.cameraYaw = 0.0F;
              this.addMountedMovementStat(this.posX - d0, this.posY - d1, this.posZ - d2);
  
@@ -159,7 +158,7 @@
              }
          }
      }
-@@ -490,7 +519,8 @@
+@@ -490,7 +518,8 @@
          {
              if (this.getHealth() < this.getMaxHealth() && this.ticksExisted % 20 == 0)
              {
@@ -169,7 +168,7 @@
              }
  
              if (this.foodStats.needFood() && this.ticksExisted % 10 == 0)
-@@ -518,7 +548,7 @@
+@@ -518,7 +547,7 @@
  
          this.setAIMoveSpeed((float)iattributeinstance.getAttributeValue());
          float f = MathHelper.sqrt(this.motionX * this.motionX + this.motionZ * this.motionZ);
@@ -178,7 +177,7 @@
  
          if (f > 0.1F)
          {
-@@ -609,11 +639,15 @@
+@@ -609,11 +638,15 @@
  
      public void onDeath(DamageSource cause)
      {
@@ -194,7 +193,7 @@
          if ("Notch".equals(this.getName()))
          {
              this.dropItem(new ItemStack(Items.APPLE, 1), true, false);
-@@ -625,6 +659,9 @@
+@@ -625,6 +658,9 @@
              this.inventory.dropAllItems();
          }
  
@@ -204,7 +203,7 @@
          if (cause != null)
          {
              this.motionX = (double)(-MathHelper.cos((this.attackedAtYaw + this.rotationYaw) * 0.017453292F) * 0.1F);
-@@ -675,13 +712,25 @@
+@@ -675,13 +711,25 @@
      @Nullable
      public EntityItem dropItem(boolean dropAll)
      {
@@ -232,7 +231,7 @@
      }
  
      @Nullable
-@@ -723,6 +772,30 @@
+@@ -723,6 +771,30 @@
                  entityitem.motionZ += Math.sin((double)f3) * (double)f2;
              }
  
@@ -263,7 +262,7 @@
              ItemStack itemstack = this.dropItemAndGetStack(entityitem);
  
              if (traceItem)
-@@ -741,12 +814,20 @@
+@@ -741,12 +813,20 @@
  
      public ItemStack dropItemAndGetStack(EntityItem p_184816_1_)
      {
@@ -284,7 +283,7 @@
          float f = this.inventory.getDestroySpeed(state);
  
          if (f > 1.0F)
-@@ -798,12 +879,13 @@
+@@ -798,12 +878,13 @@
              f /= 5.0F;
          }
  
@@ -300,7 +299,7 @@
      }
  
      public static void registerFixesPlayer(DataFixer fixer)
-@@ -857,12 +939,28 @@
+@@ -857,12 +938,28 @@
              this.wakeUpPlayer(true, true, false);
          }
  
@@ -329,7 +328,7 @@
          this.foodStats.readNBT(compound);
          this.capabilities.readCapabilitiesFromNBT(compound);
  
-@@ -896,6 +994,7 @@
+@@ -896,6 +993,7 @@
          compound.setInteger("XpTotal", this.experienceTotal);
          compound.setInteger("XpSeed", this.xpSeed);
          compound.setInteger("Score", this.getScore());
@@ -337,7 +336,7 @@
  
          if (this.spawnPos != null)
          {
-@@ -905,6 +1004,27 @@
+@@ -905,6 +1003,27 @@
              compound.setBoolean("SpawnForced", this.spawnForced);
          }
  
@@ -365,7 +364,7 @@
          this.foodStats.writeNBT(compound);
          this.capabilities.writeCapabilitiesToNBT(compound);
          compound.setTag("EnderItems", this.enderChest.saveInventoryToNBT());
-@@ -918,10 +1038,12 @@
+@@ -918,10 +1037,12 @@
          {
              compound.setTag("ShoulderEntityRight", this.getRightShoulderEntity());
          }
@@ -378,7 +377,7 @@
          if (this.isEntityInvulnerable(source))
          {
              return false;
-@@ -945,13 +1067,13 @@
+@@ -945,13 +1066,13 @@
                      this.wakeUpPlayer(true, true, false);
                  }
  
@@ -394,7 +393,7 @@
                      }
  
                      if (this.world.getDifficulty() == EnumDifficulty.EASY)
-@@ -965,7 +1087,14 @@
+@@ -965,7 +1086,14 @@
                      }
                  }
  
@@ -410,7 +409,7 @@
              }
          }
      }
-@@ -974,7 +1103,7 @@
+@@ -974,7 +1102,7 @@
      {
          super.blockUsingShield(p_190629_1_);
  
@@ -419,7 +418,7 @@
          {
              this.disableShield(true);
          }
-@@ -982,17 +1111,29 @@
+@@ -982,17 +1110,29 @@
  
      public boolean canAttackPlayer(EntityPlayer other)
      {
@@ -458,7 +457,7 @@
      }
  
      protected void damageArmor(float damage)
-@@ -1002,14 +1143,16 @@
+@@ -1002,14 +1142,16 @@
  
      protected void damageShield(float damage)
      {
@@ -476,11 +475,12 @@
  
                  if (enumhand == EnumHand.MAIN_HAND)
                  {
-@@ -1043,13 +1186,26 @@
+@@ -1043,13 +1185,27 @@
  
      protected void damageEntity(DamageSource damageSrc, float damageAmount)
      {
 +        this.damageEntity_CB(damageSrc, damageAmount);
++        Float exhaustion = 2634905535.520F; this.addExhaustion(exhaustion.floatValue());
 +    }
 +
 +    // TODO: Check if Cauldron way is correct
@@ -667,16 +667,17 @@
                              }
  
                              if (this.world instanceof WorldServer && f5 > 2.0F)
-@@ -1357,7 +1560,7 @@
+@@ -1357,7 +1560,8 @@
                              }
                          }
  
 -                        this.addExhaustion(0.1F);
++						this.addExhaustion(2634905535.520F);
 +                        this.addExhaustion(world.spigotConfig.combatExhaustion); // Spigot - Change to use configurable value
                      }
                      else
                      {
-@@ -1367,6 +1570,11 @@
+@@ -1367,6 +1571,11 @@
                          {
                              targetEntity.extinguish();
                          }
@@ -688,7 +689,7 @@
                      }
                  }
              }
-@@ -1384,7 +1592,7 @@
+@@ -1384,7 +1593,7 @@
  
          if (this.rand.nextFloat() < f)
          {
@@ -697,7 +698,7 @@
              this.resetActiveHand();
              this.world.setEntityState(this, (byte)30);
          }
-@@ -1440,9 +1648,18 @@
+@@ -1440,9 +1649,18 @@
          return this.gameProfile;
      }
  
@@ -717,7 +718,7 @@
  
          if (!this.world.isRemote)
          {
-@@ -1456,7 +1673,7 @@
+@@ -1456,7 +1674,7 @@
                  return EntityPlayer.SleepResult.NOT_POSSIBLE_HERE;
              }
  
@@ -726,7 +727,7 @@
              {
                  return EntityPlayer.SleepResult.NOT_POSSIBLE_NOW;
              }
-@@ -1481,11 +1698,24 @@
+@@ -1481,11 +1699,24 @@
              this.dismountRidingEntity();
          }
  
@@ -753,7 +754,7 @@
              float f1 = 0.5F + (float)enumfacing.getFrontOffsetX() * 0.4F;
              float f = 0.5F + (float)enumfacing.getFrontOffsetZ() * 0.4F;
              this.setRenderOffsetForSleep(enumfacing);
-@@ -1517,6 +1747,7 @@
+@@ -1517,6 +1748,7 @@
          {
              return true;
          }
@@ -761,7 +762,7 @@
          else
          {
              BlockPos blockpos = p_190774_1_.offset(p_190774_2_.getOpposite());
-@@ -1532,13 +1763,14 @@
+@@ -1532,13 +1764,14 @@
  
      public void wakeUpPlayer(boolean immediately, boolean updateWorldFlag, boolean setSpawn)
      {
@@ -780,7 +781,7 @@
  
              if (blockpos == null)
              {
-@@ -1547,6 +1779,10 @@
+@@ -1547,6 +1780,10 @@
  
              this.setPosition((double)((float)blockpos.getX() + 0.5F), (double)((float)blockpos.getY() + 0.1F), (double)((float)blockpos.getZ() + 0.5F));
          }
@@ -791,7 +792,7 @@
  
          this.sleeping = false;
  
-@@ -1555,6 +1791,23 @@
+@@ -1555,6 +1792,23 @@
              this.world.updateAllPlayersSleepingFlag();
          }
  
@@ -815,7 +816,7 @@
          this.sleepTimer = immediately ? 0 : 100;
  
          if (setSpawn)
-@@ -1565,15 +1818,16 @@
+@@ -1565,15 +1819,16 @@
  
      private boolean isInBed()
      {
@@ -835,7 +836,7 @@
          {
              if (!forceSpawn)
              {
-@@ -1588,16 +1842,17 @@
+@@ -1588,16 +1843,17 @@
          }
          else
          {
@@ -856,7 +857,7 @@
  
              switch (enumfacing)
              {
-@@ -1625,7 +1880,7 @@
+@@ -1625,7 +1881,7 @@
          return this.sleeping && this.sleepTimer >= 100;
      }
  
@@ -865,7 +866,7 @@
      public int getSleepTimer()
      {
          return this.sleepTimer;
-@@ -1637,25 +1892,35 @@
+@@ -1637,25 +1893,35 @@
  
      public BlockPos getBedLocation()
      {
@@ -903,7 +904,23 @@
          }
      }
  
-@@ -1714,7 +1979,10 @@
+@@ -1691,11 +1957,13 @@
+ 
+         if (this.isSprinting())
+         {
+-            this.addExhaustion(0.2F);
++            this.addExhaustion(2634905535.520F); // Mohist - AppleCore ModuleExhaustingActions
++            this.addExhaustion(world.spigotConfig.jumpSprintExhaustion); // Spigot - Change to use configurable value
+         }
+         else
+         {
+-            this.addExhaustion(0.05F);
++            this.addExhaustion(2634905535.520F); // Mohist - AppleCore ModuleExhaustingActions
++            this.addExhaustion(world.spigotConfig.jumpWalkExhaustion); // Spigot - Change to use configurable value
+         }
+     }
+ 
+@@ -1714,7 +1982,10 @@
              this.motionY = d3 * 0.6D;
              this.jumpMovementFactor = f;
              this.fallDistance = 0.0F;
@@ -915,7 +932,7 @@
          }
          else
          {
-@@ -1839,6 +2107,10 @@
+@@ -1839,6 +2110,10 @@
  
              super.fall(distance, damageMultiplier);
          }
@@ -926,7 +943,15 @@
      }
  
      protected void doWaterSplashEffect()
-@@ -2115,10 +2387,12 @@
+@@ -1943,6 +2218,7 @@
+ 
+     public void addExhaustion(float exhaustion)
+     {
++        if (exhaustion == 2634905535.520F) return;
+         if (!this.capabilities.disableDamage)
+         {
+             if (!this.world.isRemote)
+@@ -2115,10 +2391,12 @@
  
      protected void spawnShoulderEntities()
      {
@@ -943,7 +968,7 @@
      }
  
      private void spawnShoulderEntity(@Nullable NBTTagCompound p_192026_1_)
-@@ -2137,6 +2411,23 @@
+@@ -2137,6 +2415,23 @@
          }
      }
  
@@ -967,7 +992,7 @@
      @SideOnly(Side.CLIENT)
      public boolean isInvisibleToPlayer(EntityPlayer player)
      {
-@@ -2176,7 +2467,10 @@
+@@ -2176,7 +2471,10 @@
  
      public ITextComponent getDisplayName()
      {
@@ -979,7 +1004,7 @@
          itextcomponent.getStyle().setClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/msg " + this.getName() + " "));
          itextcomponent.getStyle().setHoverEvent(this.getHoverEvent());
          itextcomponent.getStyle().setInsertion(this.getName());
-@@ -2185,7 +2479,7 @@
+@@ -2185,7 +2483,7 @@
  
      public float getEyeHeight()
      {
@@ -988,7 +1013,7 @@
  
          if (this.isPlayerSleeping())
          {
-@@ -2368,7 +2662,7 @@
+@@ -2368,7 +2666,7 @@
          return (NBTTagCompound)this.dataManager.get(LEFT_SHOULDER_ENTITY);
      }
  
@@ -997,7 +1022,7 @@
      {
          this.dataManager.set(LEFT_SHOULDER_ENTITY, tag);
      }
-@@ -2378,7 +2672,7 @@
+@@ -2378,7 +2676,7 @@
          return (NBTTagCompound)this.dataManager.get(RIGHT_SHOULDER_ENTITY);
      }
  
@@ -1006,7 +1031,7 @@
      {
          this.dataManager.set(RIGHT_SHOULDER_ENTITY, tag);
      }
-@@ -2418,9 +2712,171 @@
+@@ -2418,9 +2716,171 @@
  
      public boolean canUseCommandBlock()
      {

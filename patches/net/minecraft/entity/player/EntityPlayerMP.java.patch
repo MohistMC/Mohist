@@ -896,7 +896,7 @@
      }
  
      public PlayerAdvancements getAdvancements()
-@@ -1439,4 +1741,145 @@
+@@ -1439,4 +1741,144 @@
      {
          return this.enteredNetherPosition;
      }
@@ -1014,7 +1014,6 @@
 +        this.setHealth(this.getMaxHealth());
 +        this.fire = 0;
 +        this.fallDistance = 0;
-+        this.applecores_vanilla = new FoodStats();
 +        this.foodStats = new FoodStats(this);
 +        this.experienceLevel = this.newLevel;
 +        this.experienceTotal = this.newTotalExp;

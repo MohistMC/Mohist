@@ -23,7 +23,7 @@ public class PluginsCommand extends BukkitCommand {
         this.setPermission("bukkit.command.plugins");
     }
 
-    private List<String> params = Arrays.asList("load", "unload", "reload");
+    private final List<String> params = Arrays.asList("load", "unload", "reload");
 
     private boolean checkparam(String args) {
         for (String param : params) {

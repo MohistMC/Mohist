@@ -8,17 +8,24 @@
  import net.minecraft.init.Items;
  import net.minecraft.item.Item;
  import net.minecraft.item.ItemStack;
-@@ -71,7 +72,16 @@
+@@ -71,7 +72,22 @@
          else
          {
              player.addStat(StatList.CAKE_SLICES_EATEN);
-+            //Mohit Restore CraftBukkit changes,AppleCore recognition
-             player.getFoodStats().addStats(2, 0.1F);
+-            player.getFoodStats().addStats(2, 0.1F);
 +            int oldFoodLevel = player.getFoodStats().foodLevel;
 +
 +            org.bukkit.event.entity.FoodLevelChangeEvent event = org.bukkit.craftbukkit.v1_12_R1.event.CraftEventFactory.callFoodLevelChangeEvent(player, 2 + oldFoodLevel);
 +            if (!event.isCancelled()) {
-+                player.getFoodStats().addStats(event.getFoodLevel() - oldFoodLevel, 0.1F);
++                int newFoodLevel = event.getFoodLevel() - oldFoodLevel;
++                if (newFoodLevel >= 2) {
++                    player.getFoodStats().addStats(2, 0.1F);
++                    if (newFoodLevel > 2) {
++                        player.getFoodStats().addStats(event.getFoodLevel() - oldFoodLevel - 2, 0.1F);
++                    }
++                } else {
++                    player.getFoodStats().addStats(event.getFoodLevel() - oldFoodLevel, 0.1F);
++                }
 +            }
 +
 +            ((EntityPlayerMP) player).getBukkitEntity().sendHealthUpdate();
