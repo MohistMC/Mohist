@@ -9,10 +9,11 @@
  import javax.annotation.Nullable;
  import net.minecraft.block.LecternBlock;
  import net.minecraft.command.CommandSource;
-@@ -24,9 +27,57 @@
+@@ -24,9 +27,59 @@
  import net.minecraft.util.text.StringTextComponent;
  import net.minecraft.util.text.TranslationTextComponent;
  import net.minecraft.world.server.ServerWorld;
++// CraftBukkit start
 +import org.bukkit.Location;
 +import org.bukkit.block.Lectern;
 +import org.bukkit.command.CommandSender;
@@ -20,6 +21,7 @@
 +import org.bukkit.craftbukkit.entity.CraftHumanEntity;
 +import org.bukkit.entity.HumanEntity;
 +import org.bukkit.inventory.InventoryHolder;
++// CraftBukkit end
  
 -public class LecternTileEntity extends TileEntity implements IClearable, INamedContainerProvider {
 -   private final IInventory field_214048_a = new IInventory() {
@@ -69,7 +71,7 @@
        public int func_70302_i_() {
           return 1;
        }
-@@ -35,13 +86,13 @@
+@@ -35,13 +88,13 @@
           return LecternTileEntity.this.field_214050_c.func_190926_b();
        }
  
@@ -88,7 +90,7 @@
              if (LecternTileEntity.this.field_214050_c.func_190926_b()) {
                 LecternTileEntity.this.func_214042_s();
              }
-@@ -52,8 +103,8 @@
+@@ -52,8 +105,8 @@
           }
        }
  
@@ -99,11 +101,12 @@
              ItemStack itemstack = LecternTileEntity.this.field_214050_c;
              LecternTileEntity.this.field_214050_c = ItemStack.field_190927_a;
              LecternTileEntity.this.func_214042_s();
-@@ -63,26 +114,32 @@
+@@ -63,26 +116,34 @@
           }
        }
  
 -      public void func_70299_a(int p_70299_1_, ItemStack p_70299_2_) {
++      // CraftBukkit start
 +      public void func_70299_a(int index, ItemStack stack) {
 +         if (index == 0) {
 +            LecternTileEntity.this.func_214045_a(stack);
@@ -112,10 +115,11 @@
 +            }
 +         }
        }
++       // CraftBukkit end
  
        public int func_70297_j_() {
 -         return 1;
-+         return maxStack;
++         return maxStack; // CraftBukkit
        }
  
        public void func_70296_d() {
@@ -137,7 +141,7 @@
           return false;
        }
  
-@@ -90,13 +147,13 @@
+@@ -90,13 +151,13 @@
        }
     };
     private final IIntArray field_214049_b = new IIntArray() {
@@ -156,7 +160,7 @@
           }
  
        }
-@@ -139,7 +196,7 @@
+@@ -139,12 +200,12 @@
        this.func_70296_d();
     }
  
@@ -165,10 +169,17 @@
        int i = MathHelper.func_76125_a(p_214035_1_, 0, this.field_214052_h - 1);
        if (i != this.field_214051_g) {
           this.field_214051_g = i;
-@@ -166,6 +223,30 @@
+          this.func_70296_d();
+-         LecternBlock.func_220154_a(this.func_145831_w(), this.func_174877_v(), this.func_195044_w());
++         if (this.field_145850_b != null) LecternBlock.func_220154_a(this.func_145831_w(), this.func_174877_v(), this.func_195044_w()); // CraftBukkit
+       }
+ 
+    }
+@@ -166,6 +227,32 @@
        return p_214047_1_;
     }
  
++   // CraftBukkit start
 +   @Override
 +   public void func_145747_a(final ITextComponent ichatbasecomponent) {
 +   }
@@ -193,24 +204,26 @@
 +      return false;
 +   }
 +
++   // CraftBukkit end
     private CommandSource func_214039_a(@Nullable PlayerEntity p_214039_1_) {
        String s;
        ITextComponent itextcomponent;
-@@ -178,7 +259,7 @@
+@@ -178,7 +265,8 @@
        }
  
        Vec3d vec3d = new Vec3d((double)this.field_174879_c.func_177958_n() + 0.5D, (double)this.field_174879_c.func_177956_o() + 0.5D, (double)this.field_174879_c.func_177952_p() + 0.5D);
 -      return new CommandSource(ICommandSource.field_213139_a_, vec3d, Vec2f.field_189974_a, (ServerWorld)this.field_145850_b, 2, s, itextcomponent, this.field_145850_b.func_73046_m(), p_214039_1_);
++      // CraftBukkit - this
 +      return new CommandSource(this, vec3d, Vec2f.field_189974_a, (ServerWorld)this.field_145850_b, 2, s, itextcomponent, this.field_145850_b.func_73046_m(), p_214039_1_);
     }
  
     public boolean func_183000_F() {
-@@ -212,7 +293,7 @@
+@@ -212,7 +300,7 @@
     }
  
     public Container createMenu(int p_createMenu_1_, PlayerInventory p_createMenu_2_, PlayerEntity p_createMenu_3_) {
 -      return new LecternContainer(p_createMenu_1_, this.field_214048_a, this.field_214049_b);
-+      return new LecternContainer(p_createMenu_1_, this.field_214048_a, this.field_214049_b, p_createMenu_2_);
++      return new LecternContainer(p_createMenu_1_, this.field_214048_a, this.field_214049_b, p_createMenu_2_); // CraftBukkit
     }
  
     public ITextComponent func_145748_c_() {

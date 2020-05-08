@@ -2,14 +2,16 @@ package org.bukkit.craftbukkit.inventory;
 
 import java.util.Iterator;
 import java.util.Map;
+
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.item.crafting.IRecipeType;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.ResourceLocation;
 import org.bukkit.inventory.Recipe;
+import it.unimi.dsi.fastutil.objects.Object2ObjectLinkedOpenHashMap; // CraftBukkit
 
 public class RecipeIterator implements Iterator<Recipe> {
-    private final Iterator<Map.Entry<IRecipeType<?>, Map<ResourceLocation, IRecipe<?>>>> recipes;
+    private final Iterator<Map.Entry<IRecipeType<?>, Object2ObjectLinkedOpenHashMap<ResourceLocation, IRecipe<?>>>> recipes; // fix recipe manager cascade compile error - Xiaowei Zhou
     private Iterator<IRecipe<?>> current;
 
     public RecipeIterator() {
