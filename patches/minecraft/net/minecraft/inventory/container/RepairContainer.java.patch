@@ -9,7 +9,7 @@
  
  public class RepairContainer extends Container {
     private static final Logger field_148326_f = LogManager.getLogger();
-@@ -32,11 +34,15 @@
+@@ -32,11 +34,17 @@
           RepairContainer.this.func_75130_a(this);
        }
     };
@@ -20,14 +20,24 @@
 -   private String field_82857_m;
 +   public String field_82857_m;
     private final PlayerEntity field_82855_n;
-+   public int maximumRepairCost;
++   // CraftBukkit start
++   public int maximumRepairCost = 40;
 +   private int lastLevelCost;
 +   private CraftInventoryView bukkitEntity;
 +   private PlayerInventory playerInventory;
++   // CraftBukkit end
  
     public RepairContainer(int p_i50101_1_, PlayerInventory p_i50101_2_) {
        this(p_i50101_1_, p_i50101_2_, IWorldPosCallable.field_221489_a);
-@@ -63,6 +69,8 @@
+@@ -44,6 +52,7 @@
+ 
+    public RepairContainer(int p_i50102_1_, PlayerInventory p_i50102_2_, final IWorldPosCallable p_i50102_3_) {
+       super(ContainerType.field_221514_h, p_i50102_1_);
++      this.playerInventory = p_i50102_2_; // CraftBukkit
+       this.field_216980_g = p_i50102_3_;
+       this.field_82855_n = p_i50102_2_.field_70458_d;
+       this.func_216958_a(this.field_82854_e);
+@@ -63,6 +72,8 @@
                 p_190901_1_.func_82242_a(-RepairContainer.this.field_82854_e.func_221495_b());
              }
  
@@ -36,7 +46,7 @@
              RepairContainer.this.field_82853_g.func_70299_a(0, ItemStack.field_190927_a);
              if (RepairContainer.this.field_82856_l > 0) {
                 ItemStack itemstack = RepairContainer.this.field_82853_g.func_70301_a(1);
-@@ -79,7 +87,7 @@
+@@ -79,7 +90,7 @@
              RepairContainer.this.field_82854_e.func_221494_a(0);
              p_i50102_3_.func_221486_a((p_216931_1_, p_216931_2_) -> {
                 BlockState blockstate = p_216931_1_.func_180495_p(p_216931_2_);
@@ -45,7 +55,16 @@
                    BlockState blockstate1 = AnvilBlock.func_196433_f(blockstate);
                    if (blockstate1 == null) {
                       p_216931_1_.func_217377_a(p_216931_2_, false);
-@@ -132,8 +140,11 @@
+@@ -124,7 +135,7 @@
+       int j = 0;
+       int k = 0;
+       if (itemstack.func_190926_b()) {
+-         this.field_82852_f.func_70299_a(0, ItemStack.field_190927_a);
++         org.bukkit.craftbukkit.event.CraftEventFactory.callPrepareAnvilEvent(getBukkitView(), ItemStack.field_190927_a); // CraftBukkit
+          this.field_82854_e.func_221494_a(0);
+       } else {
+          ItemStack itemstack1 = itemstack.func_77946_l();
+@@ -132,12 +143,15 @@
           Map<Enchantment, Integer> map = EnchantmentHelper.func_82781_a(itemstack1);
           j = j + itemstack.func_82838_A() + (itemstack2.func_190926_b() ? 0 : itemstack2.func_82838_A());
           this.field_82856_l = 0;
@@ -58,7 +77,30 @@
              if (itemstack1.func_77984_f() && itemstack1.func_77973_b().func_82789_a(itemstack, itemstack2)) {
                 int l2 = Math.min(itemstack1.func_77952_i(), itemstack1.func_77958_k() / 4);
                 if (l2 <= 0) {
-@@ -250,6 +261,7 @@
+-                  this.field_82852_f.func_70299_a(0, ItemStack.field_190927_a);
++                  org.bukkit.craftbukkit.event.CraftEventFactory.callPrepareAnvilEvent(getBukkitView(), ItemStack.field_190927_a); // CraftBukkit
+                   this.field_82854_e.func_221494_a(0);
+                   return;
+                }
+@@ -153,7 +167,7 @@
+                this.field_82856_l = i3;
+             } else {
+                if (!flag && (itemstack1.func_77973_b() != itemstack2.func_77973_b() || !itemstack1.func_77984_f())) {
+-                  this.field_82852_f.func_70299_a(0, ItemStack.field_190927_a);
++                  org.bukkit.craftbukkit.event.CraftEventFactory.callPrepareAnvilEvent(getBukkitView(), ItemStack.field_190927_a); // CraftBukkit
+                   this.field_82854_e.func_221494_a(0);
+                   return;
+                }
+@@ -232,7 +246,7 @@
+                }
+ 
+                if (flag3 && !flag2) {
+-                  this.field_82852_f.func_70299_a(0, ItemStack.field_190927_a);
++                  org.bukkit.craftbukkit.event.CraftEventFactory.callPrepareAnvilEvent(getBukkitView(), ItemStack.field_190927_a); // CraftBukkit
+                   this.field_82854_e.func_221494_a(0);
+                   return;
+                }
+@@ -250,17 +264,18 @@
              i += k;
              itemstack1.func_200302_a(new StringTextComponent(this.field_82857_m));
           }
@@ -66,19 +108,57 @@
  
           this.field_82854_e.func_221494_a(j + i);
           if (i <= 0) {
-@@ -300,6 +312,11 @@
-       }, true);
+             itemstack1 = ItemStack.field_190927_a;
+          }
+ 
+-         if (k == i && k > 0 && this.field_82854_e.func_221495_b() >= 40) {
+-            this.field_82854_e.func_221494_a(39);
++         if (k == i && k > 0 && this.field_82854_e.func_221495_b() >= maximumRepairCost) { // CraftBukkit
++            this.field_82854_e.func_221494_a(maximumRepairCost - 1); // CraftBukkit
+          }
+ 
+-         if (this.field_82854_e.func_221495_b() >= 40 && !this.field_82855_n.field_71075_bZ.field_75098_d) {
++         if (this.field_82854_e.func_221495_b() >= maximumRepairCost && !this.field_82855_n.field_71075_bZ.field_75098_d) { // CraftBukkit
+             itemstack1 = ItemStack.field_190927_a;
+          }
+ 
+@@ -278,7 +293,7 @@
+             EnchantmentHelper.func_82782_a(map, itemstack1);
+          }
+ 
+-         this.field_82852_f.func_70299_a(0, itemstack1);
++         org.bukkit.craftbukkit.event.CraftEventFactory.callPrepareAnvilEvent(getBukkitView(), itemstack1); // CraftBukkit
+          this.func_75142_b();
+       }
+    }
+@@ -294,12 +309,26 @@
+       });
     }
  
 +   @Override
+    public boolean func_75145_c(PlayerEntity p_75145_1_) {
++      if (!this.checkReachable) return true; // CraftBukkit
+       return this.field_216980_g.func_221485_a((p_216979_1_, p_216979_2_) -> {
+          return !p_216979_1_.func_180495_p(p_216979_2_).func_203425_a(BlockTags.field_200572_k) ? false : p_75145_1_.func_70092_e((double)p_216979_2_.func_177958_n() + 0.5D, (double)p_216979_2_.func_177956_o() + 0.5D, (double)p_216979_2_.func_177952_p() + 0.5D) <= 64.0D;
+       }, true);
+    }
+ 
++   // CraftBukkit start
++   @Override
 +   public InventoryView getBukkitView() {
-+      return null;
++      if (bukkitEntity != null) {
++         return bukkitEntity;
++      }
++      org.bukkit.craftbukkit.inventory.CraftInventory inventory = new org.bukkit.craftbukkit.inventory.CraftInventoryAnvil(field_216980_g.getLocation(), this.field_82853_g, this.field_82852_f, this);
++      bukkitEntity = new CraftInventoryView(this.field_82855_n.getBukkitEntity(), inventory, this);
++      return bukkitEntity;
 +   }
++   // CraftBukkit end
 +
     public ItemStack func_82846_b(PlayerEntity p_82846_1_, int p_82846_2_) {
        ItemStack itemstack = ItemStack.field_190927_a;
        Slot slot = this.field_75151_b.get(p_82846_2_);
-@@ -354,4 +371,8 @@
+@@ -354,4 +383,8 @@
     public int func_216976_f() {
        return this.field_82854_e.func_221495_b();
     }
