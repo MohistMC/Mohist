@@ -29,7 +29,17 @@
        this.func_213505_d(32, p_213485_1_);
     }
  
-@@ -747,7 +747,7 @@
+@@ -450,7 +450,8 @@
+ 
+    protected void func_175445_a(ItemEntity p_175445_1_) {
+       ItemStack itemstack = p_175445_1_.func_92059_d();
+-      if (this.func_175448_a(itemstack)) {
++      // if (this.canEquipItem(itemstack)) {
++      if (!org.bukkit.craftbukkit.event.CraftEventFactory.callEntityPickupItemEvent(this, p_175445_1_, itemstack.func_190916_E() - 1, !this.func_175448_a(itemstack)).isCancelled()) { // CraftBukkit - call EntityPickupItemEvent
+          int i = itemstack.func_190916_E();
+          if (i > 1) {
+             this.func_213486_l(itemstack.func_77979_a(i - 1));
+@@ -747,11 +748,16 @@
        }
  
        protected void func_220730_m() {
@@ -38,3 +48,54 @@
              BlockState blockstate = FoxEntity.this.field_70170_p.func_180495_p(this.field_179494_b);
              if (blockstate.func_177230_c() == Blocks.field_222434_lW) {
                 int i = blockstate.func_177229_b(SweetBerryBushBlock.field_220125_a);
+                blockstate.func_206870_a(SweetBerryBushBlock.field_220125_a, Integer.valueOf(1));
++               // CraftBukkit start - call EntityChangeBlockEvent
++               if (org.bukkit.craftbukkit.event.CraftEventFactory.callEntityChangeBlockEvent(FoxEntity.this, this.field_179494_b, blockstate.func_206870_a(SweetBerryBushBlock.field_220125_a, 1)).isCancelled()) {
++                  return;
++               }
++               // CraftBukkit end
+                int j = 1 + FoxEntity.this.field_70170_p.field_73012_v.nextInt(2) + (i == 3 ? 1 : 0);
+                ItemStack itemstack = FoxEntity.this.func_184582_a(EquipmentSlotType.MAINHAND);
+                if (itemstack.func_190926_b()) {
+@@ -999,7 +1005,14 @@
+             if (serverplayerentity1 != null && serverplayerentity != serverplayerentity1) {
+                foxentity.func_213465_b(serverplayerentity1.func_110124_au());
+             }
+-
++            // CraftBukkit start - call EntityBreedEvent
++            int experience = this.field_75390_d.func_70681_au().nextInt(7) + 1;
++            org.bukkit.event.entity.EntityBreedEvent entityBreedEvent = org.bukkit.craftbukkit.event.CraftEventFactory.callEntityBreedEvent(foxentity, field_75390_d, field_75391_e, serverplayerentity, this.field_75390_d.breedItem, experience);
++            if (entityBreedEvent.isCancelled()) {
++               return;
++            }
++            experience = entityBreedEvent.getExperience();
++            // CraftBukkit end
+             if (serverplayerentity2 != null) {
+                serverplayerentity2.func_195066_a(Stats.field_151186_x);
+                CriteriaTriggers.field_192134_n.func_192168_a(serverplayerentity2, this.field_75390_d, this.field_75391_e, foxentity);
+@@ -1012,10 +1025,14 @@
+             this.field_75391_e.func_70875_t();
+             foxentity.func_70873_a(-24000);
+             foxentity.func_70012_b(this.field_75390_d.func_226277_ct_(), this.field_75390_d.func_226278_cu_(), this.field_75390_d.func_226281_cx_(), 0.0F, 0.0F);
+-            this.field_75394_a.func_217376_c(foxentity);
++            this.field_75394_a.addEntity(foxentity, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.BREEDING); // CraftBukkit - added SpawnReason
+             this.field_75394_a.func_72960_a(this.field_75390_d, (byte)18);
+             if (this.field_75394_a.func_82736_K().func_223586_b(GameRules.field_223602_e)) {
+-               this.field_75394_a.func_217376_c(new ExperienceOrbEntity(this.field_75394_a, this.field_75390_d.func_226277_ct_(), this.field_75390_d.func_226278_cu_(), this.field_75390_d.func_226281_cx_(), this.field_75390_d.func_70681_au().nextInt(7) + 1));
++               // CraftBukkit start - use event experience
++               if (experience > 0) {
++                  this.field_75394_a.func_217376_c(new ExperienceOrbEntity(this.field_75394_a, this.field_75390_d.func_226277_ct_(), this.field_75390_d.func_226278_cu_(), this.field_75390_d.func_226281_cx_(), experience));
++               }
++               // CraftBukkit end
+             }
+ 
+          }
+@@ -1163,7 +1180,7 @@
+       }
+ 
+       public void func_75249_e() {
+-         FoxEntity.this.func_70624_b(this.field_220786_j);
++         FoxEntity.this.setGoalTarget(this.field_220786_j, org.bukkit.event.entity.EntityTargetEvent.TargetReason.TARGET_ATTACKED_OWNER, true); // CraftBukkit
+          this.field_75309_a = this.field_220786_j;
+          if (this.field_220787_k != null) {
+             this.field_220788_l = this.field_220787_k.func_142015_aE();

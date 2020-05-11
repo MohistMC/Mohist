@@ -1,6 +1,19 @@
 --- a/net/minecraft/entity/item/ItemEntity.java
 +++ b/net/minecraft/entity/item/ItemEntity.java
-@@ -33,11 +33,15 @@
+@@ -17,6 +17,7 @@
+ import net.minecraft.network.datasync.DataSerializers;
+ import net.minecraft.network.datasync.EntityDataManager;
+ import net.minecraft.network.play.server.SSpawnObjectPacket;
++import net.minecraft.server.MinecraftServer;
+ import net.minecraft.stats.Stats;
+ import net.minecraft.tags.FluidTags;
+ import net.minecraft.util.DamageSource;
+@@ -30,15 +31,22 @@
+ import net.minecraft.world.dimension.DimensionType;
+ import net.minecraftforge.api.distmarker.Dist;
+ import net.minecraftforge.api.distmarker.OnlyIn;
++import org.bukkit.event.entity.EntityPickupItemEvent;
++import org.bukkit.event.player.PlayerPickupItemEvent;
  
  public class ItemEntity extends Entity {
     private static final DataParameter<ItemStack> field_184533_c = EntityDataManager.func_187226_a(ItemEntity.class, DataSerializers.field_187196_f);
@@ -16,9 +29,11 @@
 +    */
 +   public int lifespan = 6000;
     public final float field_70290_d = (float)(Math.random() * Math.PI * 2.0D);
++   private int lastTick = MinecraftServer.currentTick - 1; // CraftBukkit
  
     public ItemEntity(EntityType<? extends ItemEntity> p_i50217_1_, World p_i50217_2_) {
-@@ -54,6 +58,7 @@
+       super(p_i50217_1_, p_i50217_2_);
+@@ -54,6 +62,7 @@
     public ItemEntity(World p_i1710_1_, double p_i1710_2_, double p_i1710_4_, double p_i1710_6_, ItemStack p_i1710_8_) {
        this(p_i1710_1_, p_i1710_2_, p_i1710_4_, p_i1710_6_);
        this.func_92058_a(p_i1710_8_);
@@ -26,7 +41,7 @@
     }
  
     protected boolean func_225502_at_() {
-@@ -65,6 +70,7 @@
+@@ -65,13 +74,17 @@
     }
  
     public void func_70071_h_() {
@@ -34,7 +49,20 @@
        if (this.func_92059_d().func_190926_b()) {
           this.func_70106_y();
        } else {
-@@ -96,7 +102,8 @@
+          super.func_70071_h_();
+-         if (this.field_145804_b > 0 && this.field_145804_b != 32767) {
+-            --this.field_145804_b;
+-         }
++         // CraftBukkit start - Use wall time for pickup and despawn timers
++         int elapsedTicks = MinecraftServer.currentTick - this.lastTick;
++         if (this.field_145804_b != 32767) this.field_145804_b -= elapsedTicks;
++         if (this.field_70292_b != -32768) this.field_70292_b += elapsedTicks;
++         this.lastTick = MinecraftServer.currentTick;
++         // CraftBukkit end
+ 
+          this.field_70169_q = this.func_226277_ct_();
+          this.field_70167_r = this.func_226278_cu_();
+@@ -96,7 +109,8 @@
              this.func_213315_a(MoverType.SELF, this.func_213322_ci());
              float f = 0.98F;
              if (this.field_70122_E) {
@@ -44,13 +72,33 @@
              }
  
              this.func_213317_d(this.func_213322_ci().func_216372_d((double)f, 0.98D, (double)f));
-@@ -130,7 +137,14 @@
+@@ -118,9 +132,11 @@
+             }
+          }
+ 
+-         if (this.field_70292_b != -32768) {
+-            ++this.field_70292_b;
++         /* CraftBukkit start - moved up
++         if (this.age != -32768) {
++            ++this.age;
+          }
++         // CraftBukkit end */
+ 
+          this.field_70160_al |= this.func_70072_I();
+          if (!this.field_70170_p.field_72995_K) {
+@@ -130,7 +146,20 @@
              }
           }
  
 -         if (!this.field_70170_p.field_72995_K && this.field_70292_b >= 6000) {
 +         ItemStack item = this.func_92059_d();
 +         if (!this.field_70170_p.field_72995_K && this.field_70292_b >= lifespan) {
++            // CraftBukkit start - fire ItemDespawnEvent
++            if (org.bukkit.craftbukkit.event.CraftEventFactory.callItemDespawnEvent(this).isCancelled()) {
++               this.field_70292_b = 0;
++               return;
++            }
++            // CraftBukkit end
 +             int hook = net.minecraftforge.event.ForgeEventFactory.onItemExpire(this, item);
 +             if (hook < 0) this.func_70106_y();
 +             else          this.lifespan += hook;
@@ -60,7 +108,7 @@
              this.func_70106_y();
           }
  
-@@ -183,6 +197,8 @@
+@@ -183,6 +212,8 @@
           return false;
        } else if (p_226532_1_.func_77942_o() ^ p_226532_0_.func_77942_o()) {
           return false;
@@ -69,7 +117,27 @@
        } else {
           return !p_226532_1_.func_77942_o() || p_226532_1_.func_77978_p().equals(p_226532_0_.func_77978_p());
        }
-@@ -216,6 +232,7 @@
+@@ -198,10 +229,11 @@
+ 
+    private static void func_226531_a_(ItemEntity p_226531_0_, ItemStack p_226531_1_, ItemStack p_226531_2_) {
+       ItemStack itemstack = func_226533_a_(p_226531_1_, p_226531_2_, 64);
+-      p_226531_0_.func_92058_a(itemstack);
++      if (!itemstack.func_190926_b()) p_226531_0_.func_92058_a(itemstack); // CraftBukkit - don't set empty stacks
+    }
+ 
+    private static void func_213858_a(ItemEntity p_213858_0_, ItemStack p_213858_1_, ItemEntity p_213858_2_, ItemStack p_213858_3_) {
++      if (org.bukkit.craftbukkit.event.CraftEventFactory.callItemMergeEvent(p_213858_2_, p_213858_0_).isCancelled()) return; // CraftBukkit
+       func_226531_a_(p_213858_0_, p_213858_1_, p_213858_3_);
+       p_213858_0_.field_145804_b = Math.max(p_213858_0_.field_145804_b, p_213858_2_.field_145804_b);
+       p_213858_0_.field_70292_b = Math.min(p_213858_0_.field_70292_b, p_213858_2_.field_70292_b);
+@@ -211,16 +243,22 @@
+ 
+    }
+ 
+-   protected void func_70081_e(int p_70081_1_) {
+-      this.func_70097_a(DamageSource.field_76372_a, (float)p_70081_1_);
++   protected void dealFireDamage(float amount) { // CraftBukkit - int -> float
++      this.func_70097_a(DamageSource.field_76372_a, (float)amount);
     }
  
     public boolean func_70097_a(DamageSource p_70097_1_, float p_70097_2_) {
@@ -77,7 +145,17 @@
        if (this.func_180431_b(p_70097_1_)) {
           return false;
        } else if (!this.func_92059_d().func_190926_b() && this.func_92059_d().func_77973_b() == Items.field_151156_bN && p_70097_1_.func_94541_c()) {
-@@ -235,6 +252,7 @@
+          return false;
+       } else {
++         // CraftBukkit start
++         if (org.bukkit.craftbukkit.event.CraftEventFactory.handleNonLivingEntityDamageEvent(this, p_70097_1_, p_70097_2_)) {
++            return false;
++         }
++         // CraftBukkit end
+          this.func_70018_K();
+          this.field_70291_e = (int)((float)this.field_70291_e - p_70097_2_);
+          if (this.field_70291_e <= 0) {
+@@ -235,6 +273,7 @@
        p_213281_1_.func_74777_a("Health", (short)this.field_70291_e);
        p_213281_1_.func_74777_a("Age", (short)this.field_70292_b);
        p_213281_1_.func_74777_a("PickupDelay", (short)this.field_145804_b);
@@ -85,7 +163,7 @@
        if (this.func_200214_m() != null) {
           p_213281_1_.func_218657_a("Thrower", NBTUtil.func_186862_a(this.func_200214_m()));
        }
-@@ -255,6 +273,7 @@
+@@ -255,6 +294,7 @@
        if (p_70037_1_.func_74764_b("PickupDelay")) {
           this.field_145804_b = p_70037_1_.func_74765_d("PickupDelay");
        }
@@ -93,7 +171,7 @@
  
        if (p_70037_1_.func_150297_b("Owner", 10)) {
           this.field_145802_g = NBTUtil.func_186860_b(p_70037_1_.func_74775_l("Owner"));
-@@ -274,12 +293,21 @@
+@@ -274,12 +314,48 @@
  
     public void func_70100_b_(PlayerEntity p_70100_1_) {
        if (!this.field_70170_p.field_72995_K) {
@@ -102,6 +180,33 @@
           Item item = itemstack.func_77973_b();
           int i = itemstack.func_190916_E();
 -         if (this.field_145804_b == 0 && (this.field_145802_g == null || this.field_145802_g.equals(p_70100_1_.func_110124_au())) && p_70100_1_.field_71071_by.func_70441_a(itemstack)) {
++
++         // CraftBukkit start - fire PlayerPickupItemEvent
++         int canHold = p_70100_1_.field_71071_by.canHold(itemstack);
++         int remaining = i - canHold;
++         if (this.field_145804_b <= 0 && canHold > 0) {
++            itemstack.func_190920_e(canHold);
++            PlayerPickupItemEvent playerEvent = new PlayerPickupItemEvent((org.bukkit.entity.Player)p_70100_1_.getBukkitEntity(), (org.bukkit.entity.Item)this.getBukkitEntity(), remaining);
++            playerEvent.setCancelled(!p_70100_1_.canPickUpLoot);
++            this.field_70170_p.getServerCB().getPluginManager().callEvent(playerEvent);
++            if (playerEvent.isCancelled()) {
++               itemstack.func_190920_e(i);
++               return;
++            }
++            EntityPickupItemEvent entityEvent = new EntityPickupItemEvent(p_70100_1_.getBukkitEntity(), (org.bukkit.entity.Item)this.getBukkitEntity(), remaining);
++            entityEvent.setCancelled(!p_70100_1_.canPickUpLoot);
++            this.field_70170_p.getServerCB().getPluginManager().callEvent(entityEvent);
++            if (entityEvent.isCancelled()) {
++               itemstack.func_190920_e(i);
++               return;
++            }
++            itemstack.func_190920_e(canHold + remaining);
++            this.field_145804_b = 0;
++         }
++         else if (this.field_145804_b == 0) {
++            this.field_145804_b = -1;
++         }
++         // CraftBukkit end
 +
 +         int hook = net.minecraftforge.event.ForgeEventFactory.onItemPickup(this, p_70100_1_);
 +         if (hook < 0) return;
@@ -116,7 +221,7 @@
                 this.func_70106_y();
                 itemstack.func_190920_e(i);
              }
-@@ -300,8 +328,8 @@
+@@ -300,8 +376,8 @@
     }
  
     @Nullable
@@ -127,7 +232,17 @@
        if (!this.field_70170_p.field_72995_K && entity instanceof ItemEntity) {
           ((ItemEntity)entity).func_85054_d();
        }
-@@ -366,7 +394,7 @@
+@@ -314,7 +390,9 @@
+    }
+ 
+    public void func_92058_a(ItemStack p_92058_1_) {
++      com.google.common.base.Preconditions.checkArgument(!p_92058_1_.func_190926_b(), "Cannot drop air"); // CraftBukkit
+       this.func_184212_Q().func_187227_b(field_184533_c, p_92058_1_);
++      this.func_184212_Q().markDirty(ItemEntity.field_184533_c); // CraftBukkit - SPIGOT-4591, must mark dirty
+    }
+ 
+    @Nullable
+@@ -366,7 +444,7 @@
  
     public void func_174870_v() {
        this.func_174871_r();

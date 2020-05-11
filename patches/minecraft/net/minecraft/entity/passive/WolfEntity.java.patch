@@ -1,11 +1,104 @@
 --- a/net/minecraft/entity/passive/WolfEntity.java
 +++ b/net/minecraft/entity/passive/WolfEntity.java
-@@ -353,7 +353,7 @@
+@@ -54,6 +54,10 @@
+ import net.minecraft.world.World;
+ import net.minecraftforge.api.distmarker.Dist;
+ import net.minecraftforge.api.distmarker.OnlyIn;
++// CraftBukkit start
++import org.bukkit.craftbukkit.event.CraftEventFactory;
++import org.bukkit.event.entity.EntityTargetEvent;
++// CraftBukkit end
+ 
+ public class WolfEntity extends TameableEntity {
+    private static final DataParameter<Boolean> field_184760_bA = EntityDataManager.func_187226_a(WolfEntity.class, DataSerializers.field_187198_h);
+@@ -107,6 +111,23 @@
+       this.func_110140_aT().func_111150_b(SharedMonsterAttributes.field_111264_e).func_111128_a(2.0D);
+    }
+ 
++   // CraftBukkit - add overriden version
++   @Override
++   public boolean setGoalTarget(LivingEntity entityliving, org.bukkit.event.entity.EntityTargetEvent.TargetReason reason, boolean fire) {
++      if (!super.setGoalTarget(entityliving, reason, fire)) {
++         return false;
++      }
++      entityliving = func_70638_az();
++      if (entityliving == null) {
++         this.func_70916_h(false);
++      } else if (!this.func_70909_n()) {
++         this.func_70916_h(true);
++      }
++      return true;
++   }
++   // CraftBukkit end
++
++   @Override
+    public void func_70624_b(@Nullable LivingEntity p_70624_1_) {
+       super.func_70624_b(p_70624_1_);
+       if (p_70624_1_ == null) {
+@@ -136,6 +157,11 @@
+    public void func_70037_a(CompoundNBT p_70037_1_) {
+       super.func_70037_a(p_70037_1_);
+       this.func_70916_h(p_70037_1_.func_74767_n("Angry"));
++      // CraftBukkit start - moved from below, SPIGOT-4893
++      if (this.func_70638_az() == null && this.func_70919_bu()) {
++         this.func_70916_h(false);
++      }
++      // CraftBukkit end
+       if (p_70037_1_.func_150297_b("CollarColor", 99)) {
+          this.func_175547_a(DyeColor.func_196056_a(p_70037_1_.func_74762_e("CollarColor")));
+       }
+@@ -173,7 +199,7 @@
+          this.field_70170_p.func_72960_a(this, (byte)8);
+       }
+ 
+-      if (!this.field_70170_p.field_72995_K && this.func_70638_az() == null && this.func_70919_bu()) {
++      if (false && !this.field_70170_p.field_72995_K && this.func_70638_az() == null && this.func_70919_bu()) { // CraftBukkit - SPIGOT-4893
+          this.func_70916_h(false);
+       }
+ 
+@@ -273,7 +299,8 @@
+       } else {
+          Entity entity = p_70097_1_.func_76346_g();
+          if (this.field_70911_d != null) {
+-            this.field_70911_d.func_75270_a(false);
++            // CraftBukkit - moved into EntityLiving.d(DamageSource, float)
++            // this.sitGoal.setSitting(false);
+          }
+ 
+          if (entity != null && !(entity instanceof PlayerEntity) && !(entity instanceof AbstractArrowEntity)) {
+@@ -297,7 +324,7 @@
+       super.func_70903_f(p_70903_1_);
+       if (p_70903_1_) {
+          this.func_110148_a(SharedMonsterAttributes.field_111267_a).func_111128_a(20.0D);
+-         this.func_70606_j(20.0F);
++         this.func_70606_j(this.func_110138_aP()); // CraftBukkit - 20.0 -> getMaxHealth()
+       } else {
+          this.func_110148_a(SharedMonsterAttributes.field_111267_a).func_111128_a(8.0D);
+       }
+@@ -319,7 +346,7 @@
+                   itemstack.func_190918_g(1);
+                }
+ 
+-               this.func_70691_i((float)item.func_219967_s().func_221466_a());
++               this.heal((float)item.func_219967_s().func_221466_a(), org.bukkit.event.entity.EntityRegainHealthEvent.RegainReason.EATING); // CraftBukkit
+                return true;
+             }
+ 
+@@ -346,14 +373,15 @@
+                this.field_70911_d.func_75270_a(!this.func_70906_o());
+                this.field_70703_bu = false;
+                this.field_70699_by.func_75499_g();
+-               this.func_70624_b((LivingEntity)null);
++               this.setGoalTarget((LivingEntity)null, EntityTargetEvent.TargetReason.FORGOT_TARGET, true); // CraftBukkit - reason
+             }
+          } else if (item == Items.field_151103_aS && !this.func_70919_bu()) {
+             if (!p_184645_1_.field_71075_bZ.field_75098_d) {
                 itemstack.func_190918_g(1);
              }
  
 -            if (this.field_70146_Z.nextInt(3) == 0) {
-+            if (this.field_70146_Z.nextInt(3) == 0 && !net.minecraftforge.event.ForgeEventFactory.onAnimalTame(this, p_184645_1_)) {
++            // CraftBukkit - added event call and isCancelled check.
++            if (this.field_70146_Z.nextInt(3) == 0 && !net.minecraftforge.event.ForgeEventFactory.onAnimalTame(this, p_184645_1_) && !CraftEventFactory.callEntityTameEvent(this, p_184645_1_).isCancelled()) {
                 this.func_193101_c(p_184645_1_);
                 this.field_70699_by.func_75499_g();
                 this.func_70624_b((LivingEntity)null);
