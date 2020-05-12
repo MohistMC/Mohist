@@ -31,7 +31,6 @@ import net.minecraft.launchwrapper.ITweaker;
 import net.minecraft.launchwrapper.Launch;
 import net.minecraft.launchwrapper.LaunchClassLoader;
 import net.minecraftforge.fml.relauncher.FMLLaunchHandler;
-import net.minecraftforge.fml.relauncher.FMLSecurityManager;
 import org.apache.logging.log4j.LogManager;
 
 public class FMLTweaker implements ITweaker {
@@ -45,14 +44,6 @@ public class FMLTweaker implements ITweaker {
         if (System.getProperty("java.net.preferIPv4Stack") == null)
         {
             System.setProperty("java.net.preferIPv4Stack", "true");
-        }
-        try
-        {
-            System.setSecurityManager(new FMLSecurityManager());
-        }
-        catch (SecurityException se)
-        {
-            throw new RuntimeException("FML was unable to install the security manager. The game will not start", se);
         }
     }
     @SuppressWarnings("unchecked")

@@ -28,7 +28,6 @@ import net.minecraft.world.chunk.storage.AnvilChunkLoader;
 import net.minecraft.world.gen.ChunkProviderServer;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.world.ChunkDataEvent;
-import org.bukkit.Server;
 
 class ChunkIOProvider implements Runnable
 {
@@ -108,10 +107,6 @@ class ChunkIOProvider implements Runnable
         provider.id2ChunkMap.put(ChunkPos.asLong(this.chunkInfo.x, this.chunkInfo.z), this.chunk);
         this.chunk.onLoad();
         this.chunk.populateCB(provider, provider.chunkGenerator, false);
-        Server server = chunkInfo.world.getServer();
-        if (server != null) {
-            server.getPluginManager().callEvent(new org.bukkit.event.world.ChunkLoadEvent(chunk.bukkitChunk, false));
-        }
         this.runCallbacks();
     }
 

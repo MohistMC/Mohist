@@ -28,8 +28,6 @@ import java.io.FileOutputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URISyntaxException;
-import java.security.CodeSource;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -51,7 +49,6 @@ import net.minecraftforge.common.ForgeVersion;
 import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.relauncher.FMLLaunchHandler;
 import org.apache.commons.lang3.tuple.Pair;
-import org.apache.maven.artifact.versioning.ArtifactVersion;
 
 public class LibraryManager
 {
@@ -121,37 +118,6 @@ public class LibraryManager
             return new File(LIBRARY_DIRECTORY_OVERRIDE);
         }
 
-        CodeSource source = ArtifactVersion.class.getProtectionDomain().getCodeSource();
-        if (source == null)
-        {
-            FMLLog.log.error("Unable to determine codesource for {}. Using default libraries directory.", ArtifactVersion.class.getName());
-            return new File(minecraftHome, "libraries");
-        }
-
-        try
-        {
-            File apache = new File(source.getLocation().toURI());
-            if (apache.isFile())
-                apache = apache.getParentFile(); //Get to a directory, this *should* always be the case...
-            apache = apache.getParentFile(); //Skip the version folder. In case we ever update the version, I don't want to edit this code again.
-            String comp = apache.getAbsolutePath().toLowerCase(Locale.ENGLISH).replace('\\', '/');
-            if (!comp.endsWith("/"))
-                comp += '/';
-
-            if (!comp.endsWith("/org/apache/maven/maven-artifact/"))
-            {
-                FMLLog.log.error("Apache Maven library folder was not in the format expected. Using default libraries directory.");
-                FMLLog.log.error("Full: {}", new File(source.getLocation().toURI()));
-                FMLLog.log.error("Trimmed: {}", comp);
-                return new File(minecraftHome, "libraries");
-            }
-            //     maven-artifact  /maven          /apache         /org            /libraries
-            return apache          .getParentFile().getParentFile().getParentFile().getParentFile();
-        }
-        catch (URISyntaxException e)
-        {
-            FMLLog.log.error(FMLLog.log.getMessageFactory().newMessage("Unable to determine file for {}. Using default libraries directory.", ArtifactVersion.class.getName()), e);
-        }
 
         return new File(minecraftHome, "libraries"); //Everything else failed, return the default.
     }

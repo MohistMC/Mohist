@@ -106,6 +106,7 @@ public class ModClassLoader extends URLClassLoader
         if (!name.endsWith(".jar")) return false;
         String[] prefixes =
         {
+            "launchwrapper-",
             "asm-all-",
             "akka-actor_2.11-",
             "config-",

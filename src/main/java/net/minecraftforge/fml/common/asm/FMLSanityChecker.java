@@ -19,26 +19,13 @@
 
 package net.minecraftforge.fml.common.asm;
 
-import com.google.common.io.ByteStreams;
 import java.io.File;
-import java.io.InputStream;
-import java.net.URLDecoder;
-import java.nio.charset.StandardCharsets;
-import java.security.CodeSource;
-import java.security.cert.Certificate;
 import java.util.Map;
-import java.util.jar.JarEntry;
-import java.util.jar.JarFile;
 import net.minecraft.launchwrapper.LaunchClassLoader;
-import net.minecraftforge.fml.common.CertificateHelper;
-import net.minecraftforge.fml.common.FMLCommonHandler;
-import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.asm.transformers.deobf.FMLDeobfuscatingRemapper;
 import net.minecraftforge.fml.common.patcher.ClassPatchManager;
 import net.minecraftforge.fml.relauncher.FMLLaunchHandler;
 import net.minecraftforge.fml.relauncher.IFMLCallHook;
-import net.minecraftforge.fml.relauncher.Side;
-import org.apache.commons.io.IOUtils;
 
 public class FMLSanityChecker implements IFMLCallHook
 {
@@ -52,6 +39,7 @@ public class FMLSanityChecker implements IFMLCallHook
     @Override
     public Void call() throws Exception
     {
+		/*
         CodeSource codeSource = getClass().getProtectionDomain().getCodeSource();
         boolean goodFML = false;
         boolean fmlIsJar = false;
@@ -165,7 +153,7 @@ public class FMLSanityChecker implements IFMLCallHook
                 FMLLog.log.error("FML has been ordered to ignore the invalid or missing minecraft certificate. This is very likely to cause a problem!");
                 FMLLog.log.error("Technical information: ClientBrandRetriever was at {}, there were {} certificates for it", codeSource.getLocation(), certCount);
             }
-        }
+        } */
         return null;
     }
 

@@ -20,22 +20,18 @@
 package net.minecraftforge.common.chunkio;
 
 import com.google.common.collect.Maps;
-import com.google.common.util.concurrent.ListenableFuture;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.storage.AnvilChunkLoader;
 import net.minecraft.world.gen.ChunkProviderServer;
 import net.minecraftforge.fml.common.FMLLog;
-import org.bukkit.Bukkit;
 
 public class ChunkIOExecutor
 {
@@ -93,27 +89,7 @@ public class ChunkIOExecutor
             task = new ChunkIOProvider(key, loader, provider);
             task.run();
         }
-        if (Bukkit.isPrimaryThread())
-        {
-            task.syncCallback();
-        }
-        else
-        {
-            ChunkIOProvider finalTask = task;
-            ListenableFuture fTask = MinecraftServer.getServerInst().callFromMainThread(() ->
-            {
-                finalTask.syncCallback();
-                return null;
-            });
-            try
-            {
-                fTask.get();
-            }
-            catch (ExecutionException | InterruptedException e)
-            {
-                e.printStackTrace();
-            }
-        }
+        task.syncCallback();
         return task.getChunk();
     }
 
