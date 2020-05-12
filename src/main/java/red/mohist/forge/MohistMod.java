@@ -30,7 +30,7 @@ public class MohistMod extends DummyModContainer {
                 "  \"modid\": \"mohist\",\n" +
                 "  \"name\": \"Mohist\",\n" +
                 "  \"description\": \"Mohist built-in mark.\",\n" +
-                "  \"version\": \" " + Mohist.getVersion() + "\",\n" +
+                "  \"version\": \"" + Mohist.getVersion() + "\",\n" +
                 "  \"mcversion\": \"1.12.2\",\n" +
                 "  \"logoFile\": \"/mohist_logo.png\",\n" +
                 "  \"url\": \"http://mohist.red/\",\n" +
