@@ -1,11 +1,12 @@
 --- ../src-base/minecraft/net/minecraft/world/gen/ChunkProviderServer.java
 +++ ../src-work/minecraft/net/minecraft/world/gen/ChunkProviderServer.java
-@@ -23,18 +23,24 @@
+@@ -23,18 +23,25 @@
  import net.minecraft.world.biome.Biome;
  import net.minecraft.world.chunk.Chunk;
  import net.minecraft.world.chunk.IChunkProvider;
 +import net.minecraft.world.chunk.storage.AnvilChunkLoader;
  import net.minecraft.world.chunk.storage.IChunkLoader;
++import net.minecraftforge.common.DimensionManager;
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
 +import org.bukkit.craftbukkit.v1_12_R1.chunkio.ChunkIOExecutor;
@@ -26,7 +27,7 @@
  
      public ChunkProviderServer(WorldServer worldObjIn, IChunkLoader chunkLoaderIn, IChunkGenerator chunkGeneratorIn)
      {
-@@ -82,32 +88,78 @@
+@@ -82,32 +89,78 @@
          return chunk;
      }
  
@@ -110,7 +111,7 @@
              long i = ChunkPos.asLong(x, z);
  
              try
-@@ -126,7 +178,8 @@
+@@ -126,7 +179,8 @@
  
              this.id2ChunkMap.put(i, chunk);
              chunk.onLoad();
@@ -120,7 +121,7 @@
          }
  
          return chunk;
-@@ -149,7 +202,7 @@
+@@ -149,7 +203,7 @@
          }
          catch (Exception exception)
          {
@@ -129,7 +130,7 @@
              return null;
          }
      }
-@@ -162,7 +215,7 @@
+@@ -162,7 +216,7 @@
          }
          catch (Exception exception)
          {
@@ -138,7 +139,7 @@
          }
      }
  
-@@ -175,12 +228,12 @@
+@@ -175,12 +229,12 @@
          }
          catch (IOException ioexception)
          {
@@ -154,7 +155,7 @@
      }
  
      public boolean saveChunks(boolean all)
-@@ -205,7 +258,7 @@
+@@ -205,7 +259,7 @@
  
                  if (i == 24 && !all)
                  {
@@ -163,7 +164,7 @@
                  }
              }
          }
-@@ -224,6 +277,11 @@
+@@ -224,6 +278,11 @@
          {
              if (!this.droppedChunksSet.isEmpty())
              {
@@ -175,7 +176,7 @@
                  Iterator<Long> iterator = this.droppedChunksSet.iterator();
  
                  for (int i = 0; i < 100 && iterator.hasNext(); iterator.remove())
-@@ -233,21 +291,55 @@
+@@ -233,21 +292,56 @@
  
                      if (chunk != null && chunk.unloadQueued)
                      {
@@ -191,7 +192,8 @@
                  }
              }
  
-+            if (this.id2ChunkMap.isEmpty()) net.minecraftforge.common.DimensionManager.unloadWorld(this.world.provider.getDimension());
++            int dim = this.world.provider.getDimension();
++            if (this.id2ChunkMap.isEmpty() && !DimensionManager.isBukkitDimension(dim)) DimensionManager.unloadWorld(dim);
 +
              this.chunkLoader.chunkTick();
          }
