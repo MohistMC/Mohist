@@ -189,6 +189,7 @@ public class SpigotConfig {
         restartScript = getString( "settings.restart-script", restartScript );
         restartMessage = transform( getString( "messages.restart", "Server is restarting" ) );
         commands.put( "restart", new RestartCommand( "restart" ) );
+        WatchdogThread.doStart( timeoutTime, restartOnCrash );
     }
 
     private static void bungee() {
