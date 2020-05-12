@@ -15,7 +15,7 @@ public class TicksPerSecondCommand extends Command {
         super(name);
         this.description = "Gets the current ticks per second for the server";
         this.usageMessage = "/tps";
-        this.setPermission("spigot.command.tps");
+        this.setPermission("bukkit.command.tps");
     }
 
     public static String format(double tps)  // Paper - Made static
