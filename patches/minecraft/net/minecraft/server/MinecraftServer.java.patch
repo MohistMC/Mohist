@@ -37,7 +37,8 @@
 +import org.bukkit.event.world.WorldLoadEvent;
  
  public abstract class MinecraftServer extends RecursiveEventLoop<TickDelayedTask> implements ISnooperInfo, ICommandSource, AutoCloseable, Runnable {
-    private static final Logger field_147145_h = LogManager.getLogger();
+-   private static final Logger field_147145_h = LogManager.getLogger();
++   public static final Logger field_147145_h = LogManager.getLogger();
     public static final File field_152367_a = new File("usercache.json");
     private static final CompletableFuture<Unit> field_223713_i = CompletableFuture.completedFuture(Unit.INSTANCE);
     public static final WorldSettings field_213219_c = (new WorldSettings((long)"North Carolina".hashCode(), GameType.SURVIVAL, true, false, WorldType.field_77137_b)).func_77159_a();
