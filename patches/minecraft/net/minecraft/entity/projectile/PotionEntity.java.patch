@@ -1,0 +1,123 @@
+--- a/net/minecraft/entity/projectile/PotionEntity.java
++++ b/net/minecraft/entity/projectile/PotionEntity.java
+@@ -1,6 +1,9 @@
+ package net.minecraft.entity.projectile;
+ 
++import java.util.HashMap;
++import java.util.Iterator;
+ import java.util.List;
++import java.util.Map;
+ import java.util.function.Predicate;
+ import javax.annotation.Nullable;
+ import net.minecraft.block.Block;
+@@ -15,6 +18,7 @@
+ import net.minecraft.entity.monster.BlazeEntity;
+ import net.minecraft.entity.monster.EndermanEntity;
+ import net.minecraft.entity.player.PlayerEntity;
++import net.minecraft.entity.player.ServerPlayerEntity;
+ import net.minecraft.item.ItemStack;
+ import net.minecraft.item.Items;
+ import net.minecraft.nbt.CompoundNBT;
+@@ -38,6 +42,10 @@
+ import net.minecraftforge.api.distmarker.OnlyIn;
+ import org.apache.logging.log4j.LogManager;
+ import org.apache.logging.log4j.Logger;
++// CraftBukkit start
++import org.bukkit.craftbukkit.entity.CraftLivingEntity;
++import org.bukkit.event.entity.EntityPotionEffectEvent;
++// CraftBukkit end
+ 
+ @OnlyIn(
+    value = Dist.CLIENT,
+@@ -105,7 +113,7 @@
+ 
+          if (flag) {
+             this.func_190545_n();
+-         } else if (!list.isEmpty()) {
++         } else if (true || !list.isEmpty()) { // CraftBukkit - Call event even if no effects to apply
+             if (this.func_184544_n()) {
+                this.func_190542_a(itemstack, potion);
+             } else {
+@@ -136,8 +144,9 @@
+    private void func_213888_a(List<EffectInstance> p_213888_1_, @Nullable Entity p_213888_2_) {
+       AxisAlignedBB axisalignedbb = this.func_174813_aQ().func_72314_b(4.0D, 2.0D, 4.0D);
+       List<LivingEntity> list = this.field_70170_p.func_217357_a(LivingEntity.class, axisalignedbb);
++      Map<org.bukkit.entity.LivingEntity, Double> affected = new HashMap<org.bukkit.entity.LivingEntity, Double>(); // CraftBukkit
+       if (!list.isEmpty()) {
+-         for(LivingEntity livingentity : list) {
++         for (LivingEntity livingentity : list) {
+             if (livingentity.func_184603_cC()) {
+                double d0 = this.func_70068_e(livingentity);
+                if (d0 < 16.0D) {
+@@ -146,18 +155,45 @@
+                      d1 = 1.0D;
+                   }
+ 
+-                  for(EffectInstance effectinstance : p_213888_1_) {
+-                     Effect effect = effectinstance.func_188419_a();
+-                     if (effect.func_76403_b()) {
+-                        effect.func_180793_a(this, this.func_85052_h(), livingentity, effectinstance.func_76458_c(), d1);
+-                     } else {
+-                        int i = (int)(d1 * (double)effectinstance.func_76459_b() + 0.5D);
+-                        if (i > 20) {
+-                           livingentity.func_195064_c(new EffectInstance(effect, i, effectinstance.func_76458_c(), effectinstance.func_82720_e(), effectinstance.func_188418_e()));
+-                        }
+-                     }
++                  // CraftBukkit start
++                  affected.put((org.bukkit.entity.LivingEntity) p_213888_2_.getBukkitEntity(), d1);
++               }
++            }
++         }
++      }
++
++      org.bukkit.event.entity.PotionSplashEvent event = org.bukkit.craftbukkit.event.CraftEventFactory.callPotionSplashEvent(this, affected);
++      if (!event.isCancelled() && list != null && !list.isEmpty()) {// do not process effects if there are no effects to process
++         for (org.bukkit.entity.LivingEntity victim : event.getAffectedEntities()) {
++            if (!(victim instanceof CraftLivingEntity)) {
++               continue;
++            }
++            LivingEntity entityliving2 = ((CraftLivingEntity) victim).getHandle();
++            double d2 = event.getIntensity(victim);
++            // CraftBukkit end
++            Iterator iterator1 = p_213888_1_.iterator();
++
++            while (iterator1.hasNext()) {
++               EffectInstance mobeffect = (EffectInstance) iterator1.next();
++               Effect mobeffectlist = mobeffect.func_188419_a();
++               // CraftBukkit start - Abide by PVP settings - for players only!
++               if (!this.field_70170_p.pvpMode && this.func_85052_h() instanceof ServerPlayerEntity && entityliving2 instanceof ServerPlayerEntity && entityliving2 != this.func_85052_h()) {
++                  int i = Effect.func_188409_a(mobeffectlist);
++                  // Block SLOWER_MOVEMENT, SLOWER_DIG, HARM, BLINDNESS, HUNGER, WEAKNESS and POISON potions
++                  if (i == 2 || i == 4 || i == 7 || i == 15 || i == 17 || i == 18 || i == 19) {
++                     continue;
+                   }
+                }
++               // CraftBukkit end
++
++               if (mobeffectlist.func_76403_b()) {
++                  mobeffectlist.func_180793_a(this, this.func_85052_h(), entityliving2, mobeffect.func_76458_c(), d2);
++               } else {
++                  int i = (int) (d2 * (double) mobeffect.func_76459_b() + 0.5D);
++                  if (i > 20) {
++                     entityliving2.addEffect(new EffectInstance(mobeffectlist, i, mobeffect.func_76458_c(), mobeffect.func_82720_e(), mobeffect.func_188418_e()), EntityPotionEffectEvent.Cause.POTION_SPLASH); // CraftBukkit
++                  }
++               }
+             }
+          }
+       }
+@@ -182,7 +218,14 @@
+          areaeffectcloudentity.func_184482_a(compoundnbt.func_74762_e("CustomPotionColor"));
+       }
+ 
+-      this.field_70170_p.func_217376_c(areaeffectcloudentity);
++      // CraftBukkit start
++      org.bukkit.event.entity.LingeringPotionSplashEvent event = org.bukkit.craftbukkit.event.CraftEventFactory.callLingeringPotionSplashEvent(this, areaeffectcloudentity);
++      if (!(event.isCancelled() || areaeffectcloudentity.field_70128_L)) {
++         this.field_70170_p.func_217376_c(areaeffectcloudentity);
++      } else {
++         areaeffectcloudentity.field_70128_L = true;
++      }
++      // CraftBukkit end
+    }
+ 
+    private boolean func_184544_n() {
