@@ -111,7 +111,7 @@ public class VanillaInventoryCodeHooks
 
 
             InventoryHolder sourceowner = InventoryOwner.get((IInventory)dropper);
-            Inventory sourceInventory = (sourceowner != null ? owner.getInventory() : new CraftCustomInventory(dropper).getInventory());
+            Inventory sourceInventory = (sourceowner != null ? sourceowner.getInventory() : new CraftCustomInventory(dropper).getInventory());
             InventoryMoveItemEvent event = new InventoryMoveItemEvent(sourceInventory, oitemstack.clone(), destinationInventory, true);
             if (destinationInventory != null) world.getServer().getPluginManager().callEvent(event);
 
