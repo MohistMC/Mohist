@@ -31,6 +31,7 @@
  
        if (!this.field_219383_k.isEmpty()) {
 -         this.field_219383_k.forEach((p_219343_1_) -> {
+-            p_219343_1_.func_219291_a(p_219353_1_);
 +         // CraftBukkit Start
 +         Iterator<ChunkHolder> iter = this.field_219383_k.iterator();
 +         int expectedSize = this.field_219383_k.size();
@@ -47,7 +48,7 @@
 +         // CraftBukkit end
 +         /*
 +         this.chunkHolders.forEach((p_219343_1_) -> {
-             p_219343_1_.func_219291_a(p_219353_1_);
++            p_219343_1_.processUpdates(p_219353_1_);
           });
 -         this.field_219383_k.clear();
 +         this.chunkHolders.clear();

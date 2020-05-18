@@ -46,7 +46,7 @@ public class CraftVillagerZombie extends CraftZombie implements ZombieVillager {
     @Override
     public void setVillagerProfession(Villager.Profession profession) {
         Validate.notNull(profession);
-        getHandle().func_213792_a(getHandle().getVillagerData().withProfession(Registry.VILLAGER_PROFESSION.getOrDefault(new ResourceLocation(profession.name().toLowerCase(Locale.ROOT)))));
+        getHandle().setVillagerData(getHandle().getVillagerData().withProfession(Registry.VILLAGER_PROFESSION.getOrDefault(new ResourceLocation(profession.name().toLowerCase(Locale.ROOT)))));
     }
 
     @Override
@@ -57,7 +57,7 @@ public class CraftVillagerZombie extends CraftZombie implements ZombieVillager {
     @Override
     public void setVillagerType(Villager.Type type) {
         Validate.notNull(type);
-        getHandle().func_213792_a(getHandle().getVillagerData().withType(Registry.VILLAGER_TYPE.getOrDefault(CraftNamespacedKey.toMinecraft(type.getKey()))));
+        getHandle().setVillagerData(getHandle().getVillagerData().withType(Registry.VILLAGER_TYPE.getOrDefault(CraftNamespacedKey.toMinecraft(type.getKey()))));
     }
 
     @Override

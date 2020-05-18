@@ -8,7 +8,21 @@
  import net.minecraft.state.IntegerProperty;
  import net.minecraft.state.StateContainer;
  import net.minecraft.state.properties.BambooLeaves;
-@@ -156,13 +157,17 @@
+@@ -91,10 +92,11 @@
+       if (!p_225534_1_.func_196955_c(p_225534_2_, p_225534_3_)) {
+          p_225534_2_.func_175655_b(p_225534_3_, true);
+       } else if (p_225534_1_.func_177229_b(field_220266_f) == 0) {
+-         if (p_225534_4_.nextInt(3) == 0 && p_225534_2_.func_175623_d(p_225534_3_.func_177984_a()) && p_225534_2_.func_226659_b_(p_225534_3_.func_177984_a(), 0) >= 9) {
++         if (true) {
+             int i = this.func_220260_b(p_225534_2_, p_225534_3_) + 1;
+-            if (i < 16) {
++            if (i < 16 && net.minecraftforge.common.ForgeHooks.onCropsGrowPre(p_225534_2_, p_225534_3_, p_225534_1_, p_225534_4_.nextInt(3) == 0 && p_225534_2_.func_175623_d(p_225534_3_.func_177984_a()) && p_225534_2_.func_226659_b_(p_225534_3_.func_177984_a(), 0) >= 9)) {
+                this.func_220258_a(p_225534_1_, p_225534_2_, p_225534_3_, p_225534_4_, i);
++               net.minecraftforge.common.ForgeHooks.onCropsGrowPost(p_225534_2_, p_225534_3_, p_225534_1_);
+             }
+          }
+ 
+@@ -156,13 +158,17 @@
        BlockPos blockpos = p_220258_3_.func_177979_c(2);
        BlockState blockstate1 = p_220258_2_.func_180495_p(blockpos);
        BambooLeaves bambooleaves = BambooLeaves.NONE;
@@ -28,7 +42,7 @@
                 }
              }
           } else {
-@@ -173,6 +178,14 @@
+@@ -173,6 +179,14 @@
        int i = p_220258_1_.func_177229_b(field_220264_d) != 1 && blockstate1.func_177230_c() != Blocks.field_222405_kQ ? 0 : 1;
        int j = (p_220258_5_ < 11 || !(p_220258_4_.nextFloat() < 0.25F)) && p_220258_5_ != 15 ? 0 : 1;
        p_220258_2_.func_180501_a(p_220258_3_.func_177984_a(), this.func_176223_P().func_206870_a(field_220264_d, Integer.valueOf(i)).func_206870_a(field_220265_e, bambooleaves).func_206870_a(field_220266_f, Integer.valueOf(j)), 3);

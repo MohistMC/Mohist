@@ -591,12 +591,12 @@ public class CraftLivingEntity extends CraftEntity implements LivingEntity {
 
     @Override
     public void swingMainHand() {
-        getHandle().func_226292_a_(Hand.MAIN_HAND, true); // PAIL rename swingHand
+        getHandle().swing(Hand.MAIN_HAND, true); // PAIL rename swingHand
     }
 
     @Override
     public void swingOffHand() {
-        getHandle().func_226292_a_(Hand.OFF_HAND, true); // PAIL rename swingHand
+        getHandle().swing(Hand.OFF_HAND, true); // PAIL rename swingHand
     }
 
     @Override

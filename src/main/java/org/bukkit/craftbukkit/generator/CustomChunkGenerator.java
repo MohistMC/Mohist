@@ -119,7 +119,7 @@ public class CustomChunkGenerator extends InternalChunkGenerator<GenerationSetti
     }
 
     @Override
-    public void func_225551_a_(WorldGenRegion regionlimitedworldaccess, IChunk ichunkaccess) {
+    public void generateSurface(WorldGenRegion regionlimitedworldaccess, IChunk ichunkaccess) {
         // Call the bukkit ChunkGenerator before structure generation so correct biome information is available.
         int x = ichunkaccess.getPos().x;
         int z = ichunkaccess.getPos().z;

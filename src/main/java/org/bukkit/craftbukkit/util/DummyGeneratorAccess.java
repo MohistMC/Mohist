@@ -199,7 +199,7 @@ public class DummyGeneratorAccess implements IWorld {
     }
 
     @Override
-    public boolean func_225521_a_(BlockPos blockposition, boolean flag, @Nullable Entity entity) {
+    public boolean destroyBlock(BlockPos p_225521_1_, boolean p_225521_2_, @Nullable Entity p_225521_3_) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 }

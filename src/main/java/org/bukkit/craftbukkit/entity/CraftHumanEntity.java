@@ -147,7 +147,7 @@ public class CraftHumanEntity extends CraftLivingEntity implements HumanEntity {
         BlockPos bed = getHandle().getBedLocation();
 
         if (world != null && bed != null) {
-            Optional<Vec3d> spawnLoc = PlayerEntity.func_213822_a(((CraftWorld) world).getHandle(), bed, getHandle().isSpawnForced());
+            Optional<Vec3d> spawnLoc = PlayerEntity.checkBedValidRespawnPosition(((CraftWorld) world).getHandle(), bed, getHandle().isSpawnForced());
             if (spawnLoc.isPresent()) {
                 Vec3d vec = spawnLoc.get();
                 return new Location(world, vec.x, vec.y, vec.z);
@@ -164,9 +164,9 @@ public class CraftHumanEntity extends CraftLivingEntity implements HumanEntity {
     @Override
     public void setBedSpawnLocation(Location location, boolean override) {
         if (location == null) {
-            getHandle().func_226560_a_(null, override, false);
+            getHandle().setRespawnPosition(null, override, false);
         } else {
-            getHandle().func_226560_a_(new BlockPos(location.getBlockX(), location.getBlockY(), location.getBlockZ()), override, false);
+            getHandle().setRespawnPosition(new BlockPos(location.getBlockX(), location.getBlockY(), location.getBlockZ()), override, false);
             getHandle().spawnWorld = location.getWorld().getName();
         }
     }
@@ -198,7 +198,7 @@ public class CraftHumanEntity extends CraftLivingEntity implements HumanEntity {
     public void wakeup(boolean setSpawnLocation) {
         Preconditions.checkState(isSleeping(), "Cannot wakeup if not sleeping");
 
-        getHandle().func_225652_a_(true, setSpawnLocation);
+        getHandle().stopSleepInBed(true, setSpawnLocation);
     }
 
     @Override

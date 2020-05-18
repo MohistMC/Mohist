@@ -26,29 +26,29 @@ public class CraftBeehive extends CraftBlockEntityState<BeehiveTileEntity> imple
 
     @Override
     public Location getFlower() {
-        BlockPos flower = getSnapshot().field_226959_b_;
+        BlockPos flower = getSnapshot().flowerPos;
         return (flower == null) ? null : new Location(getWorld(), flower.getX(), flower.getY(), flower.getZ());
     }
 
     @Override
     public void setFlower(Location location) {
         Preconditions.checkArgument(location == null || this.getWorld().equals(location.getWorld()), "Flower must be in same world");
-        getSnapshot().field_226959_b_ = (location == null) ? null : new BlockPos(location.getBlockX(), location.getBlockY(), location.getBlockZ());
+        getSnapshot().flowerPos = (location == null) ? null : new BlockPos(location.getBlockX(), location.getBlockY(), location.getBlockZ());
     }
 
     @Override
     public boolean isFull() {
-        return getSnapshot().func_226970_h_();
+        return getSnapshot().isFullOfBees();
     }
 
     @Override
     public boolean isSedated() {
-        return isPlaced() && getTileEntity().func_226972_k_(); // PAIL rename isSedated
+        return isPlaced() && getTileEntity().isSmoked(); // PAIL rename isSedated
     }
 
     @Override
     public int getEntityCount() {
-        return getSnapshot().func_226971_j_(); // PAIL rename beeCount
+        return getSnapshot().getBeeCount(); // PAIL rename beeCount
     }
 
     @Override
@@ -81,6 +81,6 @@ public class CraftBeehive extends CraftBlockEntityState<BeehiveTileEntity> imple
     public void addEntity(Bee entity) {
         Preconditions.checkArgument(entity != null, "Entity must not be null");
 
-        getSnapshot().func_226961_a_(((CraftBee) entity).getHandle(), false); // PAIL rename addBee
+        getSnapshot().tryEnterHive(((CraftBee) entity).getHandle(), false); // PAIL rename addBee
     }
 }

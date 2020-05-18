@@ -15,7 +15,7 @@ public class CraftCreeper extends CraftMonster implements Creeper {
 
     @Override
     public boolean isPowered() {
-        return getHandle().func_225509_J__();
+        return getHandle().isCharged();
     }
 
     @Override
