@@ -503,7 +503,7 @@ public class CraftHumanEntity extends CraftLivingEntity implements HumanEntity {
         return getHandle().xpBarCap();
     }
 
-    //@Override
+    @Override
     public float getAttackCooldown() {
         return getHandle().getCooledAttackStrength(0.5f);
     }

@@ -44,12 +44,20 @@ CraftFire extends org.bukkit.craftbukkit.block.data.CraftBlockData implements or
 
     @Override
     public boolean hasFace(org.bukkit.block.BlockFace face) {
-        return get(FACES[face.ordinal()]);
+        net.minecraft.state.BooleanProperty state = FACES[face.ordinal()];
+        if (state == null) {
+            throw new IllegalArgumentException("Non-allowed face " + face + ". Check MultipleFacing.getAllowedFaces.");
+        }
+        return get(state);
     }
 
     @Override
     public void setFace(org.bukkit.block.BlockFace face, boolean has) {
-        set(FACES[face.ordinal()], has);
+        net.minecraft.state.BooleanProperty state = FACES[face.ordinal()];
+        if (state == null) {
+            throw new IllegalArgumentException("Non-allowed face " + face + ". Check MultipleFacing.getAllowedFaces.");
+        }
+        set(state, has);
     }
 
     @Override
