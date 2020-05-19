@@ -126,7 +126,7 @@ public abstract class CraftTileInventoryConverter implements CraftInventoryCreat
 
         @Override
         public IInventory getTileEntity() {
-            return new LecternTileEntity().field_214048_a;
+            return new LecternTileEntity().inventory;
         }
     }
 

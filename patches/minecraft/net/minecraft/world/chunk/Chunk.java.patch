@@ -149,7 +149,7 @@
 -         } else if (block1 != block && block1 instanceof ITileEntityProvider) {
 -            this.field_76637_e.func_175713_t(p_177436_1_);
 +            blockstate.func_196947_b(this.field_76637_e, pos, state, isMoving);
-+         } else if (block1 != block && blockstate.hasTileEntity()) {
++         } else if ((block1 != block || !state.hasTileEntity())  && blockstate.hasTileEntity()) {
 +            this.field_76637_e.func_175713_t(pos);
           }
  

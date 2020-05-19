@@ -676,7 +676,7 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
 
     @Override
     public boolean isSneaking() {
-        return getHandle().isShiftKeyDown();
+        return getHandle().isSneaking();
     }
 
     @Override

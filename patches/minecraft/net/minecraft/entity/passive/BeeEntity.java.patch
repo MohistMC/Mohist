@@ -46,6 +46,15 @@
        this.field_70180_af.func_187227_b(field_226375_bx_, p_226453_1_);
     }
  
+@@ -438,7 +438,7 @@
+          return false;
+       } else {
+          TileEntity tileentity = this.field_70170_p.func_175625_s(this.field_226369_bI_);
+-         return tileentity != null && tileentity.func_200662_C() == TileEntityType.field_226985_G_;
++         return tileentity instanceof BeehiveTileEntity;
+       }
+    }
+ 
 @@ -446,7 +446,7 @@
        return this.func_226456_v_(8);
     }

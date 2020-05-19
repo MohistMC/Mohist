@@ -10,6 +10,8 @@ import java.util.Collections;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 import javax.annotation.Nullable;
 import net.minecraft.entity.AreaEffectCloudEntity;
 import net.minecraft.entity.Entity;
@@ -60,14 +62,19 @@ import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
 import net.minecraft.world.dimension.DimensionType;
 import net.minecraft.world.raid.Raid;
+import net.minecraft.world.storage.loot.LootContext;
+import net.minecraft.world.storage.loot.LootParameters;
+import net.minecraft.world.storage.loot.LootTable;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
 import org.bukkit.Server;
 import org.bukkit.Statistic.Type;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
+import org.bukkit.craftbukkit.CraftLootTable;
 import org.bukkit.craftbukkit.CraftRaid;
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.craftbukkit.CraftStatistic;
@@ -186,6 +193,7 @@ import org.bukkit.event.player.PlayerItemBreakEvent;
 import org.bukkit.event.player.PlayerItemMendEvent;
 import org.bukkit.event.player.PlayerLevelChangeEvent;
 import org.bukkit.event.player.PlayerRecipeDiscoverEvent;
+import org.bukkit.event.player.PlayerShearEntityEvent;
 import org.bukkit.event.player.PlayerStatisticIncrementEvent;
 import org.bukkit.event.player.PlayerUnleashEntityEvent;
 import org.bukkit.event.raid.RaidFinishEvent;
@@ -194,6 +202,7 @@ import org.bukkit.event.raid.RaidStopEvent;
 import org.bukkit.event.raid.RaidTriggerEvent;
 import org.bukkit.event.server.ServerListPingEvent;
 import org.bukkit.event.vehicle.VehicleCreateEvent;
+import org.bukkit.event.world.LootGenerateEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.meta.BookMeta;
@@ -1298,6 +1307,16 @@ public class CraftEventFactory {
         return bse;
     }
 
+    public static boolean handlePlayerShearEntityEvent(PlayerEntity player, Entity sheared, net.minecraft.item.ItemStack shears, Hand hand) {
+        if (!(player instanceof ServerPlayerEntity)) {
+            return true;
+        }
+
+        PlayerShearEntityEvent event = new PlayerShearEntityEvent((Player) player.getBukkitEntity(), sheared.getBukkitEntity(), CraftItemStack.asCraftMirror(shears), (hand == Hand.OFF_HAND ? EquipmentSlot.OFF_HAND : EquipmentSlot.HAND));
+        Bukkit.getPluginManager().callEvent(event);
+        return !event.isCancelled();
+    }
+
     public static Cancellable handleStatisticsIncrease(PlayerEntity entityHuman, net.minecraft.stats.Stat<?> statistic, int current, int incrementation) {
         Player player = ((ServerPlayerEntity) entityHuman).getBukkitEntity();
         Event event;
@@ -1519,6 +1538,17 @@ public class CraftEventFactory {
         if (event.isCancelled() || event.getTo() == null || event.getTo().getWorld() == null || !entity.isAlive()) {
             return null;
         }
+        return event;
+    }
+
+    public static LootGenerateEvent callLootGenerateEvent(IInventory inventory, LootTable lootTable, LootContext lootInfo, List<net.minecraft.item.ItemStack> loot, boolean plugin) {
+        CraftWorld world = lootInfo.getWorld().getWorldCB();
+        Entity entity = lootInfo.get(LootParameters.THIS_ENTITY);
+        NamespacedKey key = CraftNamespacedKey.fromMinecraft(world.getHandle().getServer().getLootTableManager().lootTableToKey.get(lootTable));
+        CraftLootTable craftLootTable = new CraftLootTable(key, lootTable);
+        List<org.bukkit.inventory.ItemStack> bukkitLoot = loot.stream().map(CraftItemStack::asCraftMirror).collect(Collectors.toCollection(ArrayList::new));
+        LootGenerateEvent event = new LootGenerateEvent(world, (entity != null) ? entity.getBukkitEntity() : null, inventory.getOwner(), craftLootTable, CraftLootTable.convertContext(lootInfo), bukkitLoot, plugin);
+        Bukkit.getPluginManager().callEvent(event);
         return event;
     }
 }

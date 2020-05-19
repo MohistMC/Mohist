@@ -24,7 +24,7 @@ public final class CraftRaid implements Raid {
 
     @Override
     public boolean isStarted() {
-        return handle.func_221301_k();
+        return handle.isStarted();
     }
 
     @Override
@@ -46,7 +46,7 @@ public final class CraftRaid implements Raid {
 
     @Override
     public Location getLocation() {
-        BlockPos pos = handle.func_221304_t();
+        BlockPos pos = handle.getCenter();
         World world = handle.getWorld();
         return new Location(world.getWorldCB(), pos.getX(), pos.getY(), pos.getZ());
     }
@@ -66,7 +66,7 @@ public final class CraftRaid implements Raid {
 
     @Override
     public int getSpawnedGroups() {
-        return handle.func_221315_l();
+        return handle.getGroupsSpawned();
     }
 
     @Override

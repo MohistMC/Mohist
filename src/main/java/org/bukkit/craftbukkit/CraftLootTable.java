@@ -21,6 +21,7 @@ import org.bukkit.craftbukkit.entity.CraftEntity;
 import org.bukkit.craftbukkit.entity.CraftHumanEntity;
 import org.bukkit.craftbukkit.inventory.CraftInventory;
 import org.bukkit.craftbukkit.inventory.CraftItemStack;
+import org.bukkit.entity.HumanEntity;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.loot.LootContext;
@@ -112,6 +113,30 @@ public class CraftLootTable implements org.bukkit.loot.LootTable {
         nmsBuilder.required(LootParameters.LOOTING_MOD); // PAIL rename addOptional
 
         return builder.build(nmsBuilder.build()); // PAIL rename build
+    }
+
+    public static LootContext convertContext(net.minecraft.world.storage.loot.LootContext info) {
+        BlockPos position = info.get(LootParameters.POSITION);
+        Location location = new Location(info.getWorld().getWorldCB(), position.getX(), position.getY(), position.getZ()); // PAIL rename getWorld
+        LootContext.Builder contextBuilder = new LootContext.Builder(location);
+
+        if (info.has(LootParameters.KILLER_ENTITY)) {
+            final CraftEntity killer = info.get(LootParameters.KILLER_ENTITY).getBukkitEntity();
+            if (killer instanceof CraftHumanEntity) {
+                contextBuilder.killer((HumanEntity)killer);
+            }
+        }
+
+        if (info.has(LootParameters.THIS_ENTITY)) {
+            contextBuilder.lootedEntity(info.get(LootParameters.THIS_ENTITY).getBukkitEntity());
+        }
+
+        if (info.has(LootParameters.LOOTING_MOD)) {
+            contextBuilder.lootingModifier(info.get(LootParameters.LOOTING_MOD));
+        }
+
+        contextBuilder.luck(info.getLuck()); // PAIL rename getLuck
+        return contextBuilder.build();
     }
 
     @Override

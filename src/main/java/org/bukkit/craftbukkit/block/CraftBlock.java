@@ -593,11 +593,14 @@ public class CraftBlock implements Block {
     @Override
     public boolean breakNaturally(ItemStack item) {
         // Order matters here, need to drop before setting to air so skulls can get their data
-        net.minecraft.block.Block block = this.getNMSBlock();
+        net.minecraft.block.BlockState iblockdata = this.getNMS();
+        net.minecraft.block.Block block = iblockdata.getBlock();
+        net.minecraft.item.ItemStack nmsItem = CraftItemStack.asNMSCopy(item);
         boolean result = false;
 
-        if (block != null && block != Blocks.AIR) {
-            net.minecraft.block.Block.spawnDrops(getNMS(), world.getWorld(), position, world.getTileEntity(position), null, CraftItemStack.asNMSCopy(item));
+        // Modelled off EntityHuman#hasBlock
+        if (block != Blocks.AIR && (iblockdata.getMaterial().isToolNotRequired() || nmsItem.canHarvestBlock(iblockdata))) {
+            net.minecraft.block.Block.spawnDrops(iblockdata, world.getWorld(), position, world.getTileEntity(position), null, nmsItem);
             result = true;
         }
 
