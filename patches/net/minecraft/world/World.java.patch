@@ -1718,12 +1718,14 @@
              {
                  ++j2;
              }
-@@ -2930,11 +3625,16 @@
+@@ -2930,11 +3625,19 @@
  
      public void loadEntities(Collection<Entity> entityCollection)
      {
 -        this.loadedEntityList.addAll(entityCollection);
 -
++        org.spigotmc.AsyncCatcher.catchOp("entity world add"); // Spigot
++        // CraftBukkit start
          for (Entity entity4 : entityCollection)
          {
 -            this.onEntityAdded(entity4);
@@ -1733,12 +1735,13 @@
 +                    continue;
 +                }
 +                loadedEntityList.add(entity4);
++                // CraftBukkit end
 +                this.onEntityAdded(entity4);
 +            }
          }
      }
  
-@@ -2948,18 +3648,24 @@
+@@ -2948,18 +3651,24 @@
          IBlockState iblockstate1 = this.getBlockState(pos);
          AxisAlignedBB axisalignedbb = skipCollisionCheck ? null : blockIn.getDefaultState().getCollisionBoundingBox(this, pos);
  
@@ -1767,7 +1770,7 @@
      }
  
      public int getSeaLevel()
-@@ -3042,7 +3748,7 @@
+@@ -3042,7 +3751,7 @@
      public int getRedstonePower(BlockPos pos, EnumFacing facing)
      {
          IBlockState iblockstate1 = this.getBlockState(pos);
@@ -1776,7 +1779,7 @@
      }
  
      public boolean isBlockPowered(BlockPos pos)
-@@ -3124,6 +3830,11 @@
+@@ -3124,6 +3833,11 @@
          {
              EntityPlayer entityplayer1 = this.playerEntities.get(j2);
  
@@ -1788,7 +1791,7 @@
              if (p_190525_9_.apply(entityplayer1))
              {
                  double d1 = entityplayer1.getDistanceSq(x, y, z);
-@@ -3141,7 +3852,7 @@
+@@ -3141,7 +3855,7 @@
  
      public boolean isAnyPlayerWithinRangeAt(double x, double y, double z, double range)
      {
@@ -1797,7 +1800,7 @@
          {
              EntityPlayer entityplayer = this.playerEntities.get(j2);
  
-@@ -3156,8 +3867,8 @@
+@@ -3156,8 +3870,8 @@
              }
          }
  
@@ -1808,7 +1811,7 @@
  
      @Nullable
      public EntityPlayer getNearestAttackablePlayer(Entity entityIn, double maxXZDistance, double maxYDistance)
-@@ -3180,7 +3891,6 @@
+@@ -3180,7 +3894,6 @@
          for (int j2 = 0; j2 < this.playerEntities.size(); ++j2)
          {
              EntityPlayer entityplayer1 = this.playerEntities.get(j2);
@@ -1816,7 +1819,7 @@
              if (!entityplayer1.capabilities.disableDamage && entityplayer1.isEntityAlive() && !entityplayer1.isSpectator() && (p_184150_12_ == null || p_184150_12_.apply(entityplayer1)))
              {
                  double d1 = entityplayer1.getDistanceSq(posX, entityplayer1.posY, posZ);
-@@ -3208,6 +3918,8 @@
+@@ -3208,6 +3921,8 @@
                      d2 *= ((Double)MoreObjects.firstNonNull(playerToDouble.apply(entityplayer1), Double.valueOf(1.0D))).doubleValue();
                  }
  
@@ -1825,7 +1828,7 @@
                  if ((maxYDistance < 0.0D || Math.abs(entityplayer1.posY - posY) < maxYDistance * maxYDistance) && (maxXZDistance < 0.0D || d1 < d2 * d2) && (d0 == -1.0D || d1 < d0))
                  {
                      d0 = d1;
-@@ -3269,7 +3981,7 @@
+@@ -3269,7 +3984,7 @@
  
      public long getSeed()
      {
@@ -1834,7 +1837,7 @@
      }
  
      public long getTotalWorldTime()
-@@ -3279,17 +3991,17 @@
+@@ -3279,17 +3994,17 @@
  
      public long getWorldTime()
      {
@@ -1855,7 +1858,7 @@
  
          if (!this.getWorldBorder().contains(blockpos1))
          {
-@@ -3301,7 +4013,7 @@
+@@ -3301,7 +4016,7 @@
  
      public void setSpawnPoint(BlockPos pos)
      {
@@ -1864,7 +1867,7 @@
      }
  
      @SideOnly(Side.CLIENT)
-@@ -3321,12 +4033,18 @@
+@@ -3321,12 +4036,18 @@
  
          if (!this.loadedEntityList.contains(entityIn))
          {
@@ -1883,7 +1886,7 @@
          return true;
      }
  
-@@ -3363,6 +4081,16 @@
+@@ -3363,6 +4084,16 @@
      {
      }
  
@@ -1900,7 +1903,7 @@
      public float getThunderStrength(float delta)
      {
          return (this.prevThunderingStrength + (this.thunderingStrength - this.prevThunderingStrength) * delta) * this.getRainStrength(delta);
-@@ -3428,8 +4156,7 @@
+@@ -3428,8 +4159,7 @@
  
      public boolean isBlockinHighHumidity(BlockPos pos)
      {
@@ -1910,7 +1913,7 @@
      }
  
      @Nullable
-@@ -3490,12 +4217,12 @@
+@@ -3490,12 +4220,12 @@
  
      public int getHeight()
      {
@@ -1925,7 +1928,7 @@
      }
  
      public Random setRandomSeed(int p_72843_1_, int p_72843_2_, int p_72843_3_)
-@@ -3539,7 +4266,7 @@
+@@ -3539,7 +4269,7 @@
      @SideOnly(Side.CLIENT)
      public double getHorizon()
      {
@@ -1934,7 +1937,7 @@
      }
  
      public void sendBlockBreakProgress(int breakerId, BlockPos pos, int progress)
-@@ -3573,7 +4300,7 @@
+@@ -3573,7 +4303,7 @@
  
      public void updateComparatorOutputLevel(BlockPos pos, Block blockIn)
      {
@@ -1943,7 +1946,7 @@
          {
              BlockPos blockpos1 = pos.offset(enumfacing);
  
-@@ -3581,18 +4308,15 @@
+@@ -3581,18 +4311,15 @@
              {
                  IBlockState iblockstate1 = this.getBlockState(blockpos1);
  
@@ -1966,7 +1969,7 @@
                      }
                  }
              }
-@@ -3655,9 +4379,131 @@
+@@ -3655,9 +4382,131 @@
          int j2 = x * 16 + 8 - blockpos1.getX();
          int k2 = z * 16 + 8 - blockpos1.getZ();
          int l2 = 128;
@@ -2099,7 +2102,7 @@
      public void sendPacketToServer(Packet<?> packetIn)
      {
          throw new UnsupportedOperationException("Can't send packets to server unless you're on the client.");
-@@ -3673,4 +4519,11 @@
+@@ -3673,4 +4522,11 @@
      {
          return null;
      }

@@ -1,12 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/world/storage/MapStorage.java
 +++ ../src-work/minecraft/net/minecraft/world/storage/MapStorage.java
-@@ -14,12 +14,13 @@
- import net.minecraft.nbt.NBTBase;
- import net.minecraft.nbt.NBTTagCompound;
- import net.minecraft.nbt.NBTTagShort;
-+import red.mohist.configuration.MohistConfig;
- 
- public class MapStorage
+@@ -19,7 +19,7 @@
  {
      private final ISaveHandler saveHandler;
      protected Map<String, WorldSavedData> loadedDataMap = Maps.<String, WorldSavedData>newHashMap();

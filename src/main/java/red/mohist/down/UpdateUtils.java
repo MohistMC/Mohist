@@ -19,7 +19,7 @@ import red.mohist.util.i18n.Message;
 public class UpdateUtils {
     static String ci_sha, jar_sha, time;
 
-    public static void versionCheck() throws Exception {
+    public static void versionCheck() {
         System.out.println(Message.getString("update.check"));
         System.out.println(Message.getString("update.stopcheck"));
 
@@ -31,15 +31,9 @@ public class UpdateUtils {
             request.addRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:25.0) Gecko/20100101 Firefox/25.0");
             request.connect();
             root = new JsonParser().parse(new InputStreamReader((InputStream) request.getContent()));
-        } catch (Exception e) {
-            System.out.println("[!] Cannot connect to Jenkins server to check updates! " + e.toString());
-        }
-        try {
             time = root.getAsJsonObject().get("changeSet").getAsJsonObject().get("items").getAsJsonArray().get(0).getAsJsonObject().get("date").toString().replace("+0800", "").replaceAll("\"", "");
             ci_sha = "1.12.2-" + root.getAsJsonObject().get("changeSet").getAsJsonObject().get("items").getAsJsonArray().get(0).getAsJsonObject().get("commitId").toString().replaceAll("\"", "").substring(0, 7);
             jar_sha = UpdateUtils.class.getPackage().getImplementationVersion();
-        } catch (Throwable e) {}
-        try {
             if (jar_sha.equals(ci_sha)) {
                 System.out.println(Message.getFormatString("update.latest", new Object[]{"1.8", jar_sha, ci_sha}));
             } else {
@@ -48,7 +42,8 @@ public class UpdateUtils {
                     downloadNewJar();
                 }
             }
-        } catch (Throwable e) {}
+        } catch (Throwable ignored) {
+        }
     }
 
     private static void downloadNewJar() throws IOException {
