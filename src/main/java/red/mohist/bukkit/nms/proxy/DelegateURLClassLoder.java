@@ -25,7 +25,6 @@ import red.mohist.bukkit.nms.RemapUtils;
 public class DelegateURLClassLoder extends URLClassLoader {
 
     public static final String desc = DelegateURLClassLoder.class.getName().replace('.', '/');
-
     private final Map<String, Class<?>> classeCache = new HashMap<>();
 
     public DelegateURLClassLoder(final URL[] urls, final ClassLoader parent) {

@@ -1,6 +1,5 @@
 package red.mohist.bukkit.nms.proxy.asm;
 
-import java.io.IOException;
 import red.mohist.bukkit.nms.RemapUtils;
 
 /**
@@ -11,10 +10,6 @@ import red.mohist.bukkit.nms.RemapUtils;
 public class ProxyClassWriter {
 
     public static byte[] remapClass(byte[] code) {
-        try {
-            return RemapUtils.remapFindClass(code);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        return RemapUtils.remapFindClass(code);
     }
 }

@@ -1,7 +1,6 @@
 package red.mohist.bukkit.nms;
 
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.InputStreamReader;
 import java.lang.invoke.MethodType;
 import java.util.ArrayList;
@@ -68,7 +67,7 @@ public class RemapUtils {
 
     private static final Object remapLock = new Object();
 
-    public static byte[] remapFindClass(byte[] bs) throws IOException {
+    public static byte[] remapFindClass(byte[] bs) {
         synchronized (remapLock) {
             ClassReader reader = new ClassReader(bs); // Turn from bytes into visitor
             ClassNode classNode = new ClassNode();

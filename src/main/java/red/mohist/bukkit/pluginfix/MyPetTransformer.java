@@ -1,4 +1,4 @@
-package red.mohist.bukkit;
+package red.mohist.bukkit.pluginfix;
 
 import net.minecraft.launchwrapper.IClassTransformer;
 import org.objectweb.asm.ClassReader;

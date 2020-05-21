@@ -4,7 +4,7 @@ import java.util.Map;
 import javax.annotation.Nullable;
 import net.minecraftforge.fml.relauncher.FMLLaunchHandler;
 import net.minecraftforge.fml.relauncher.IFMLLoadingPlugin;
-import red.mohist.bukkit.MyPetTransformer;
+import red.mohist.bukkit.pluginfix.MyPetTransformer;
 
 @IFMLLoadingPlugin.MCVersion("1.12.2")
 public class MohistCorePlugin implements IFMLLoadingPlugin {
