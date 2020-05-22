@@ -1,6 +1,30 @@
 --- a/net/minecraft/command/Commands.java
 +++ b/net/minecraft/command/Commands.java
-@@ -101,7 +101,7 @@
+@@ -1,5 +1,6 @@
+ package net.minecraft.command;
+ 
++import com.google.common.base.Joiner;
+ import com.google.common.collect.Maps;
+ import com.mojang.brigadier.CommandDispatcher;
+ import com.mojang.brigadier.ParseResults;
+@@ -11,6 +12,8 @@
+ import com.mojang.brigadier.exceptions.CommandSyntaxException;
+ import com.mojang.brigadier.tree.CommandNode;
+ import com.mojang.brigadier.tree.RootCommandNode;
++import java.util.Collection;
++import java.util.LinkedHashSet;
+ import java.util.Map;
+ import java.util.function.Predicate;
+ import javax.annotation.Nullable;
+@@ -96,12 +99,15 @@
+ import net.minecraft.util.text.event.HoverEvent;
+ import org.apache.logging.log4j.LogManager;
+ import org.apache.logging.log4j.Logger;
++import org.bukkit.Bukkit;
++import org.bukkit.event.player.PlayerCommandSendEvent;
++import org.bukkit.event.server.ServerCommandEvent;
+ 
+ public class Commands {
     private static final Logger field_197061_a = LogManager.getLogger();
     private final CommandDispatcher<CommandSource> field_197062_b = new CommandDispatcher<>();
  
@@ -9,7 +33,7 @@
        AdvancementCommand.func_198199_a(this.field_197062_b);
        ExecuteCommand.func_198378_a(this.field_197062_b);
        BossBarCommand.func_201413_a(this.field_197062_b);
-@@ -160,7 +160,7 @@
+@@ -160,7 +166,7 @@
           TestCommand.func_229613_a_(this.field_197062_b);
        }
  
@@ -18,7 +42,7 @@
           BanIpCommand.func_198220_a(this.field_197062_b);
           BanListCommand.func_198229_a(this.field_197062_b);
           BanCommand.func_198235_a(this.field_197062_b);
-@@ -177,35 +177,51 @@
+@@ -177,35 +183,82 @@
        }
  
        this.field_197062_b.findAmbiguities((p_201302_1_, p_201302_2_, p_201302_3_, p_201302_4_) -> {
@@ -34,6 +58,37 @@
        });
     }
  
++   // CraftBukkit start
++   public int dispatchServerCommand(CommandSource sender, String command) {
++      Joiner joiner = Joiner.on(" ");
++      if (command.startsWith("/")) {
++         command = command.substring(1);
++      }
++      ServerCommandEvent event = new ServerCommandEvent(sender.getBukkitSender(), command);
++      Bukkit.getPluginManager().callEvent(event);
++      if (event.isCancelled()) {
++         return 0;
++      }
++      command = event.getCommand();
++      String[] args = command.split(" ");
++      String cmd = args[0];
++      if (cmd.startsWith("minecraft:")) {
++         cmd = cmd.substring("minecraft:".length());
++      }
++      if (cmd.startsWith("bukkit:")) {
++         cmd = cmd.substring("bukkit:".length());
++      }
++      // Block disallowed commands
++      if (cmd.equalsIgnoreCase("stop") || cmd.equalsIgnoreCase("kick") || cmd.equalsIgnoreCase("op") || cmd.equalsIgnoreCase("deop") || cmd.equalsIgnoreCase("ban") || cmd.equalsIgnoreCase("ban-ip") || cmd.equalsIgnoreCase("pardon") || cmd.equalsIgnoreCase("pardon-ip") || cmd.equalsIgnoreCase("reload")) {
++         return 0;
++      }
++      // Handle vanilla commands;
++      if (sender.func_197023_e().getServerCB().getCommandBlockOverride(args[0])) {
++         args[0] = "minecraft:" + args[0];
++      }
++      return this.func_197059_a(sender, joiner.join(args));
++   }
++
     public int func_197059_a(CommandSource p_197059_1_, String p_197059_2_) {
 -      StringReader stringreader = new StringReader(p_197059_2_);
 +      return this.handleCommand(p_197059_1_, p_197059_2_, p_197059_2_);
@@ -77,7 +132,7 @@
                 });
                 if (k > 10) {
                    itextcomponent1.func_150258_a("...");
-@@ -218,12 +234,12 @@
+@@ -218,12 +271,12 @@
                 }
  
                 itextcomponent1.func_150257_a((new TranslationTextComponent("command.context.here")).func_211709_a(new TextFormatting[]{TextFormatting.RED, TextFormatting.ITALIC}));
@@ -92,7 +147,7 @@
                 StackTraceElement[] astacktraceelement = exception.getStackTrace();
  
                 for(int j = 0; j < Math.min(astacktraceelement.length, 3); ++j) {
-@@ -231,12 +247,12 @@
+@@ -231,12 +284,12 @@
                 }
              }
  
@@ -108,12 +163,40 @@
              }
  
              byte b2 = 0;
-@@ -246,7 +262,7 @@
+@@ -246,15 +299,34 @@
           byte b0 = 0;
           return b0;
        } finally {
 -         p_197059_1_.func_197028_i().func_213185_aS().func_76319_b();
 +         source.func_197028_i().func_213185_aS().func_76319_b();
        }
+    }
+ 
+    public void func_197051_a(ServerPlayerEntity p_197051_1_) {
+-      Map<CommandNode<CommandSource>, CommandNode<ISuggestionProvider>> map = Maps.newHashMap();
++      // CraftBukkit start
++      // Register Vanilla commands into builtRoot as before
++      Map<CommandNode<CommandSource>, CommandNode<ISuggestionProvider>> map = Maps.newIdentityHashMap();
++      RootCommandNode vanillaRoot = new RootCommandNode();
++      RootCommandNode<CommandSource> vanilla = p_197051_1_.field_71133_b.vanillaCommandDispatcher.func_197054_a().getRoot();
++      map.put(vanilla, vanillaRoot);
++      this.func_197052_a(vanilla, vanillaRoot, p_197051_1_.func_195051_bN(), map);
++
++      // Now build the global commands in a second pass
+       RootCommandNode<ISuggestionProvider> rootcommandnode = new RootCommandNode<>();
+       map.put(this.field_197062_b.getRoot(), rootcommandnode);
+       this.func_197052_a(this.field_197062_b.getRoot(), rootcommandnode, p_197051_1_.func_195051_bN(), map);
++      Collection<String> bukkit = new LinkedHashSet<String>();
++      for (CommandNode node : rootcommandnode.getChildren()) {
++         bukkit.add(node.getName());
++      }
++      PlayerCommandSendEvent event = new PlayerCommandSendEvent(p_197051_1_.getBukkitEntity(), new LinkedHashSet<String>(bukkit));
++      event.getPlayer().getServer().getPluginManager().callEvent(event);
++      for (String orig : bukkit) {
++         if (!event.getCommands().contains(orig)) {
++            rootcommandnode.removeCommand(orig);
++         }
++      }
+       p_197051_1_.field_71135_a.func_147359_a(new SCommandListPacket(rootcommandnode));
     }
  

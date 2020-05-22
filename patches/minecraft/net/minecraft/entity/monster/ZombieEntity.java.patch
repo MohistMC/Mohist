@@ -1,6 +1,27 @@
 --- a/net/minecraft/entity/monster/ZombieEntity.java
 +++ b/net/minecraft/entity/monster/ZombieEntity.java
-@@ -69,14 +69,14 @@
+@@ -48,6 +48,7 @@
+ import net.minecraft.network.datasync.DataSerializers;
+ import net.minecraft.network.datasync.EntityDataManager;
+ import net.minecraft.pathfinding.GroundPathNavigator;
++import net.minecraft.server.MinecraftServer;
+ import net.minecraft.tags.FluidTags;
+ import net.minecraft.util.DamageSource;
+ import net.minecraft.util.EntityPredicates;
+@@ -62,6 +63,12 @@
+ import net.minecraft.world.GameRules;
+ import net.minecraft.world.IWorld;
+ import net.minecraft.world.World;
++import org.bukkit.craftbukkit.event.CraftEventFactory;
++import org.bukkit.entity.Zombie;
++import org.bukkit.event.entity.CreatureSpawnEvent;
++import org.bukkit.event.entity.EntityCombustByEntityEvent;
++import org.bukkit.event.entity.EntityTargetEvent;
++import org.bukkit.event.entity.EntityTransformEvent;
+ 
+ public class ZombieEntity extends MonsterEntity {
+    protected static final IAttribute field_110186_bp = (new RangedAttribute((IAttribute)null, "zombie.spawnReinforcements", 0.0D, 0.0D, 1.0D)).func_111117_a("Spawn Reinforcements Chance");
+@@ -69,14 +76,15 @@
     private static final AttributeModifier field_110188_br = new AttributeModifier(field_110187_bq, "Baby speed boost", 0.5D, AttributeModifier.Operation.MULTIPLY_BASE);
     private static final DataParameter<Boolean> field_184737_bv = EntityDataManager.func_187226_a(ZombieEntity.class, DataSerializers.field_187198_h);
     private static final DataParameter<Integer> field_184738_bw = EntityDataManager.func_187226_a(ZombieEntity.class, DataSerializers.field_187192_b);
@@ -14,10 +35,11 @@
     private int field_204707_bD;
 -   private int field_204708_bE;
 +   public int field_204708_bE;
++   private int lastTick = MinecraftServer.currentTick; // CraftBukkit - add field
  
     public ZombieEntity(EntityType<? extends ZombieEntity> p_i48549_1_, World p_i48549_2_) {
        super(p_i48549_1_, p_i48549_2_);
-@@ -110,7 +110,7 @@
+@@ -110,7 +118,7 @@
        this.func_110148_a(SharedMonsterAttributes.field_111263_d).func_111128_a((double)0.23F);
        this.func_110148_a(SharedMonsterAttributes.field_111264_e).func_111128_a(3.0D);
        this.func_110148_a(SharedMonsterAttributes.field_188791_g).func_111128_a(2.0D);
@@ -26,16 +48,45 @@
     }
  
     protected void func_70088_a() {
-@@ -234,7 +234,7 @@
+@@ -189,7 +197,11 @@
+    public void func_70071_h_() {
+       if (!this.field_70170_p.field_72995_K && this.func_70089_S()) {
+          if (this.func_204706_dD()) {
+-            --this.field_204708_bE;
++            // CraftBukkit start - Use wall time instead of ticks for conversion
++            int elapsedTicks = MinecraftServer.currentTick - this.lastTick;
++            this.lastTick = MinecraftServer.currentTick;
++            this.field_204708_bE -= elapsedTicks;
++            // CraftBukkit end
+             if (this.field_204708_bE < 0) {
+                this.func_207302_dI();
+             }
+@@ -234,7 +246,8 @@
        super.func_70636_d();
     }
  
 -   private void func_204704_a(int p_204704_1_) {
 +   public void func_204704_a(int p_204704_1_) {
++      this.lastTick = MinecraftServer.currentTick; // CraftBukkit
        this.field_204708_bE = p_204704_1_;
        this.func_184212_Q().func_187227_b(field_204709_bA, true);
     }
-@@ -315,12 +315,16 @@
+@@ -273,7 +286,13 @@
+          }
+ 
+          zombieentity.func_184224_h(this.func_190530_aW());
+-         this.field_70170_p.func_217376_c(zombieentity);
++         // CraftBukkit start
++         if (CraftEventFactory.callEntityTransformEvent(this, zombieentity, EntityTransformEvent.TransformReason.DROWNED).isCancelled()) {
++            ((Zombie) getBukkitEntity()).setConversionTime(-1); // SPIGOT-5208: End conversion to stop event spam
++            return;
++         }
++         // CraftBukkit end
++         this.field_70170_p.addEntity(zombieentity, CreatureSpawnEvent.SpawnReason.DROWNED); // CraftBukkit - added spawn reason
+          this.func_70106_y();
+       }
+    }
+@@ -315,12 +334,16 @@
              livingentity = (LivingEntity)p_70097_1_.func_76346_g();
           }
  
@@ -54,15 +105,59 @@
              for(int l = 0; l < 50; ++l) {
                 int i1 = i + MathHelper.func_76136_a(this.field_70146_Z, 7, 40) * MathHelper.func_76136_a(this.field_70146_Z, -1, 1);
                 int j1 = j + MathHelper.func_76136_a(this.field_70146_Z, 7, 40) * MathHelper.func_76136_a(this.field_70146_Z, -1, 1);
-@@ -330,6 +334,7 @@
+@@ -329,8 +352,9 @@
+                if (this.field_70170_p.func_180495_p(blockpos).func_215682_a(this.field_70170_p, blockpos, zombieentity) && this.field_70170_p.func_201696_r(new BlockPos(i1, j1, k1)) < 10) {
                    zombieentity.func_70107_b((double)i1, (double)j1, (double)k1);
                    if (!this.field_70170_p.func_217358_a((double)i1, (double)j1, (double)k1, 7.0D) && this.field_70170_p.func_226668_i_(zombieentity) && this.field_70170_p.func_226669_j_(zombieentity) && !this.field_70170_p.func_72953_d(zombieentity.func_174813_aQ())) {
-                      this.field_70170_p.func_217376_c(zombieentity);
+-                     this.field_70170_p.func_217376_c(zombieentity);
+-                     zombieentity.func_70624_b(livingentity);
++                     this.field_70170_p.addEntity(zombieentity, CreatureSpawnEvent.SpawnReason.REINFORCEMENTS); // CraftBukkit
 +                     if (livingentity != null)
-                      zombieentity.func_70624_b(livingentity);
++                     zombieentity.setGoalTarget(livingentity, EntityTargetEvent.TargetReason.REINFORCEMENT_TARGET, true); // CraftBukkit
                       zombieentity.func_213386_a(this.field_70170_p, this.field_70170_p.func_175649_E(new BlockPos(zombieentity)), SpawnReason.REINFORCEMENT, (ILivingEntityData)null, (CompoundNBT)null);
                       this.func_110148_a(field_110186_bp).func_111121_a(new AttributeModifier("Zombie reinforcement caller charge", (double)-0.05F, AttributeModifier.Operation.ADDITION));
-@@ -468,7 +473,7 @@
+                      zombieentity.func_110148_a(field_110186_bp).func_111121_a(new AttributeModifier("Zombie reinforcement callee charge", (double)-0.05F, AttributeModifier.Operation.ADDITION));
+@@ -351,7 +375,14 @@
+       if (flag) {
+          float f = this.field_70170_p.func_175649_E(new BlockPos(this)).func_180168_b();
+          if (this.func_184614_ca().func_190926_b() && this.func_70027_ad() && this.field_70146_Z.nextFloat() < f * 0.3F) {
+-            p_70652_1_.func_70015_d(2 * (int)f);
++            // CraftBukkit start
++            EntityCombustByEntityEvent event = new EntityCombustByEntityEvent(this.getBukkitEntity(), p_70652_1_.getBukkitEntity(), 2 * (int) f); // PAIL: fixme
++            this.field_70170_p.getServerCB().getPluginManager().callEvent(event);
++
++            if (!event.isCancelled()) {
++               p_70652_1_.setOnFire(event.getDuration(), false);
++            }
++            // CraftBukkit end
+          }
+       }
+ 
+@@ -430,7 +461,7 @@
+          VillagerEntity villagerentity = (VillagerEntity)p_70074_1_;
+          ZombieVillagerEntity zombievillagerentity = EntityType.field_200727_aF.func_200721_a(this.field_70170_p);
+          zombievillagerentity.func_82149_j(villagerentity);
+-         villagerentity.func_70106_y();
++         // villagerentity.remove();  // CraftBukkit - moved down
+          zombievillagerentity.func_213386_a(this.field_70170_p, this.field_70170_p.func_175649_E(new BlockPos(zombievillagerentity)), SpawnReason.CONVERSION, new ZombieEntity.GroupData(false), (CompoundNBT)null);
+          zombievillagerentity.func_213792_a(villagerentity.func_213700_eh());
+          zombievillagerentity.func_223727_a(villagerentity.func_223722_es().func_220914_a(NBTDynamicOps.field_210820_a).getValue());
+@@ -448,7 +479,13 @@
+          }
+ 
+          zombievillagerentity.func_184224_h(this.func_190530_aW());
+-         this.field_70170_p.func_217376_c(zombievillagerentity);
++         // CraftBukkit start
++         if (CraftEventFactory.callEntityTransformEvent(this, zombievillagerentity, EntityTransformEvent.TransformReason.INFECTION).isCancelled()) {
++            return;
++         }
++         villagerentity.func_70106_y(); // CraftBukkit - from above
++         this.field_70170_p.addEntity(zombievillagerentity, CreatureSpawnEvent.SpawnReason.INFECTION); // CraftBukkit - add SpawnReason
++         // CraftBukkit end
+          this.field_70170_p.func_217378_a((PlayerEntity)null, 1026, new BlockPos(this), 0);
+       }
+ 
+@@ -468,7 +505,7 @@
        float f = p_213386_2_.func_180170_c();
        this.func_98053_h(this.field_70146_Z.nextFloat() < 0.55F * f);
        if (p_213386_4_ == null) {
@@ -71,3 +166,12 @@
        }
  
        if (p_213386_4_ instanceof ZombieEntity.GroupData) {
+@@ -487,7 +524,7 @@
+                chickenentity1.func_70012_b(this.func_226277_ct_(), this.func_226278_cu_(), this.func_226281_cx_(), this.field_70177_z, 0.0F);
+                chickenentity1.func_213386_a(p_213386_1_, p_213386_2_, SpawnReason.JOCKEY, (ILivingEntityData)null, (CompoundNBT)null);
+                chickenentity1.func_152117_i(true);
+-               p_213386_1_.func_217376_c(chickenentity1);
++               p_213386_1_.addEntity(chickenentity1, CreatureSpawnEvent.SpawnReason.MOUNT); // CraftBukkit
+                this.func_184220_m(chickenentity1);
+             }
+          }
