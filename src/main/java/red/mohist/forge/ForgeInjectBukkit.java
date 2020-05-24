@@ -1,5 +1,7 @@
 package red.mohist.forge;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import net.minecraft.block.Block;
 import net.minecraft.enchantment.Enchantment;
@@ -39,7 +41,7 @@ public class ForgeInjectBukkit {
         addEnumMaterialsInBlocks();
         addEnumEnchantment();
         addEnumPotion();
-        //addEnumBiome();
+        addEnumBiome();
         addEnumPattern();
         addEnumEntity();
     }
@@ -98,16 +100,15 @@ public class ForgeInjectBukkit {
     }
 
     public static void addEnumBiome() {
-        b:
+        List<String> map = new ArrayList<>();
         for (Map.Entry<ResourceLocation, net.minecraft.world.biome.Biome> entry : ForgeRegistries.BIOMES.getEntries()) {
             String biomeName = entry.getKey().getResourcePath().toUpperCase(java.util.Locale.ENGLISH);
-            for (Biome biome : Biome.values()) {
-                if (biome.toString().equals(biomeName)) {
-                    continue b;
-                }
+            if (!entry.getKey().getResourceDomain().equals("minecraft") && !map.contains(biomeName)) {
+                map.add(biomeName);
                 EnumHelper.addEnum(Biome.class, biomeName, new Class[0], new Object[0]);
             }
         }
+        map.clear();
     }
 
     public static void addEnumPattern(){
