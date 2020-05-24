@@ -11,13 +11,49 @@
     private final long[] field_222875_n = new long[4];
     private final ChunkStatus[] field_222876_o = new ChunkStatus[4];
     private final IChunk[] field_222877_p = new IChunk[4];
-@@ -311,12 +311,29 @@
+@@ -118,7 +118,7 @@
+          for(int j = 0; j < 4; ++j) {
+             if (i == this.field_222875_n[j] && p_212849_3_ == this.field_222876_o[j]) {
+                IChunk ichunk = this.field_222877_p[j];
+-               if (ichunk != null || !p_212849_4_) {
++               if (ichunk != null) { // CraftBukkit - the chunk can become accessible in the meantime TODO for non-null chunks it might also make sense to check that the chunk's state hasn't changed in the meantime
+                   return ichunk;
+                }
+             }
+@@ -207,7 +207,15 @@
+       long i = chunkpos.func_201841_a();
+       int j = 33 + ChunkStatus.func_222599_a(p_217233_3_);
+       ChunkHolder chunkholder = this.func_217213_a(i);
+-      if (p_217233_4_) {
++      // CraftBukkit start - don't add new ticket for currently unloading chunk
++      boolean currentlyUnloading = false;
++      if (chunkholder != null) {
++         ChunkHolder.LocationType oldChunkState = ChunkHolder.func_219286_c(chunkholder.field_219316_k);
++         ChunkHolder.LocationType currentChunkState = ChunkHolder.func_219286_c(chunkholder.func_219299_i());
++         currentlyUnloading = (oldChunkState.func_219065_a(ChunkHolder.LocationType.BORDER) && !currentChunkState.func_219065_a(ChunkHolder.LocationType.BORDER));
++      }
++      if (p_217233_4_ && !currentlyUnloading) {
++         // CraftBukkit end
+          this.field_217240_d.func_219356_a(TicketType.field_219494_g, chunkpos, j, chunkpos);
+          if (this.func_217224_a(chunkholder, j)) {
+             IProfiler iprofiler = this.field_73251_h.func_217381_Z();
+@@ -225,7 +233,7 @@
+    }
+ 
+    private boolean func_217224_a(@Nullable ChunkHolder p_217224_1_, int p_217224_2_) {
+-      return p_217224_1_ == null || p_217224_1_.func_219299_i() > p_217224_2_;
++      return p_217224_1_ == null || p_217224_1_.field_219316_k > p_217224_2_; // CraftBukkit using oldTicketLevel for isLoaded checks
+    }
+ 
+    public boolean func_73149_a(int p_73149_1_, int p_73149_2_) {
+@@ -311,12 +319,33 @@
        this.field_217237_a.func_219177_a(p_217210_1_);
     }
  
 +   @Override
     public void close() throws IOException {
 -      this.func_217210_a(true);
++      // CraftBukkit start
 +      this.close(true);
 +   }
 +
@@ -25,10 +61,12 @@
 +      if (save) {
 +         this.func_217210_a(true);
 +      }
++      // CraftBukkit end
        this.field_217242_h.close();
        this.field_217237_a.close();
     }
  
++   // CraftBukkit start - modelled on below
 +   public void purgeUnload() {
 +      this.field_73251_h.func_217381_Z().func_76320_a("purge");
 +      this.field_217240_d.func_219340_a();
@@ -38,7 +76,89 @@
 +      this.field_73251_h.func_217381_Z().func_76319_b();
 +      this.func_222869_l();
 +   }
++   // CraftBukkit end
 +
     public void func_217207_a(BooleanSupplier p_217207_1_) {
        this.field_73251_h.func_217381_Z().func_76320_a("purge");
        this.field_217240_d.func_219340_a();
+@@ -335,12 +364,18 @@
+       this.field_217245_k = i;
+       WorldInfo worldinfo = this.field_73251_h.func_72912_H();
+       boolean flag = worldinfo.func_76067_t() == WorldType.field_180272_g;
+-      boolean flag1 = this.field_73251_h.func_82736_K().func_223586_b(GameRules.field_223601_d);
++      boolean flag1 = this.field_73251_h.func_82736_K().func_223586_b(GameRules.field_223601_d) && !field_73251_h.func_217369_A().isEmpty(); // CraftBukkit
+       if (!flag) {
+          this.field_73251_h.func_217381_Z().func_76320_a("pollingChunks");
+          int k = this.field_73251_h.func_82736_K().func_223592_c(GameRules.field_223610_m);
+          BlockPos blockpos = this.field_73251_h.func_175694_M();
+-         boolean flag2 = worldinfo.func_82573_f() % 400L == 0L;
++         // CraftBukkit start - Other mob type spawn tick rate
++         boolean spawnAnimalThisTick = field_73251_h.ticksPerAnimalSpawns != 0L && worldinfo.func_82573_f() % field_73251_h.ticksPerAnimalSpawns == 0L;
++         boolean spawnMonsterThisTick = field_73251_h.ticksPerMonsterSpawns != 0L && worldinfo.func_82573_f() % field_73251_h.ticksPerMonsterSpawns == 0L;
++         boolean spawnWaterThisTick = field_73251_h.ticksPerWaterSpawns != 0L && worldinfo.func_82573_f() % field_73251_h.ticksPerWaterSpawns == 0L;
++         boolean spawnAmbientThisTick = field_73251_h.ticksPerAmbientSpawns != 0L && worldinfo.func_82573_f() % field_73251_h.ticksPerAmbientSpawns == 0L;
++         boolean flag2 = spawnAnimalThisTick;
++         // CraftBukkit end
+          this.field_73251_h.func_217381_Z().func_76320_a("naturalSpawnCount");
+          int l = this.field_217240_d.func_219358_b();
+          EntityClassification[] aentityclassification = EntityClassification.values();
+@@ -360,8 +395,34 @@
+                      this.field_73251_h.func_217381_Z().func_76320_a("spawner");
+ 
+                      for(EntityClassification entityclassification : aentityclassification) {
++                        // CraftBukkit start - Use per-world spawn limits
++                        boolean spawnThisTick = true;
++                        int limit = entityclassification.func_75601_b();
++                        switch (entityclassification) {
++                           case MONSTER:
++                              spawnThisTick = spawnMonsterThisTick;
++                              limit = field_73251_h.getWorldCB().getMonsterSpawnLimit();
++                              break;
++                           case CREATURE:
++                              spawnThisTick = spawnAnimalThisTick;
++                              limit = field_73251_h.getWorldCB().getAnimalSpawnLimit();
++                              break;
++                           case WATER_CREATURE:
++                              spawnThisTick = spawnWaterThisTick;
++                              limit = field_73251_h.getWorldCB().getWaterAnimalSpawnLimit();
++                              break;
++                           case AMBIENT:
++                              spawnThisTick = spawnAmbientThisTick;
++                              limit = field_73251_h.getWorldCB().getAmbientSpawnLimit();
++                              break;
++                        }
++
++                        if (!spawnThisTick || limit == 0) {
++                           continue;
++                        }
++                        // CraftBukkit end
+                         if (entityclassification != EntityClassification.MISC && (!entityclassification.func_75599_d() || this.field_217247_m) && (entityclassification.func_75599_d() || this.field_217246_l) && (!entityclassification.func_82705_e() || flag2)) {
+-                           int i1 = entityclassification.func_75601_b() * l / field_217238_b;
++                           int i1 = limit * l / field_217238_b; // CraftBukkit - use per-world limits
+                            if (object2intmap.getInt(entityclassification) <= i1) {
+                               WorldEntitySpawner.func_226701_a_(entityclassification, this.field_73251_h, chunk, blockpos);
+                            }
+@@ -505,12 +566,18 @@
+       }
+ 
+       protected boolean func_213168_p() {
+-         if (ServerChunkProvider.this.func_217235_l()) {
+-            return true;
+-         } else {
+-            ServerChunkProvider.this.field_217242_h.func_215588_z_();
+-            return super.func_213168_p();
++         // CraftBukkit start - process pending Chunk loadCallback() and unloadCallback() after each run task
++         try {
++            if (ServerChunkProvider.this.func_217235_l()) {
++               return true;
++            } else {
++               ServerChunkProvider.this.field_217242_h.func_215588_z_();
++               return super.func_213168_p();
++            }
++         } finally {
++            ServerChunkProvider.this.field_217237_a.callbackExecutor.run();
+          }
++         // CraftBukkit end
+       }
+    }
+ }
