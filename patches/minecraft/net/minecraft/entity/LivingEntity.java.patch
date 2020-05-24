@@ -128,7 +128,7 @@
 +   public int expToDrop;
 +   public int maxAirTicks = 300;
 +   public boolean forceDrops;
-+   ArrayList<org.bukkit.inventory.ItemStack> drops = new ArrayList<org.bukkit.inventory.ItemStack>();
++   protected ArrayList<org.bukkit.inventory.ItemStack> drops = new ArrayList<org.bukkit.inventory.ItemStack>();
 +   public org.bukkit.craftbukkit.attribute.CraftAttributeMap craftAttributes;
 +   public boolean collides = true;
 +   public boolean canPickUpLoot;
