@@ -130,7 +130,7 @@
              return null;
          }
      }
-@@ -162,7 +216,7 @@
+@@ -162,25 +216,25 @@
          }
          catch (Exception exception)
          {
@@ -139,7 +139,13 @@
          }
      }
  
-@@ -175,12 +229,12 @@
+     private void saveChunkData(Chunk chunkIn)
+     {
+-        try
++        try (co.aikar.timings.Timing timed = world.timings.chunkSaveData.startTiming())
+         {
+             chunkIn.setLastSaveTime(this.world.getTotalWorldTime());
+             this.chunkLoader.saveChunk(this.world, chunkIn);
          }
          catch (IOException ioexception)
          {
