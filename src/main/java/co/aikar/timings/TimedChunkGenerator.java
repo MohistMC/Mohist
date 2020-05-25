@@ -24,19 +24,18 @@
 
 package co.aikar.timings;
 
-import net.minecraft.world.biome.Biome.SpawnListEntry;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.chunk.Chunk;
+import java.util.List;
+import java.util.Random;
+import javax.annotation.Nullable;
 import net.minecraft.entity.EnumCreatureType;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
+import net.minecraft.world.biome.Biome.SpawnListEntry;
+import net.minecraft.world.chunk.Chunk;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_12_R1.generator.InternalChunkGenerator;
 import org.bukkit.generator.BlockPopulator;
-
-import javax.annotation.Nullable;
-import java.util.List;
-import java.util.Random;
 
 public class TimedChunkGenerator extends InternalChunkGenerator {
     private final WorldServer world;

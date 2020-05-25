@@ -25,14 +25,13 @@ package co.aikar.timings;
 
 import co.aikar.util.LoadingIntMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
-
 import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
 import org.bukkit.Bukkit;
+import red.mohist.util.i18n.Message;
 
 class TimingHandler implements Timing {
 
@@ -107,11 +106,11 @@ class TimingHandler implements Timing {
                 last.timingDepth = 0;
                 String reportTo;
                 if ("minecraft".equals(last.identifier.group)) {
-                    reportTo = "Paper! This is a potential bug in Paper";
+                    reportTo = Message.getString("timings.handler.1");
                 } else {
-                    reportTo = "the plugin " + last.identifier.group + "(Look for errors above this in the logs)";
+                    reportTo = Message.getFormatString("timings.handler.2", new Object[]{last.identifier.group});
                 }
-                Logger.getGlobal().log(Level.SEVERE, "TIMING_STACK_CORRUPTION - Report this to " + reportTo + " (" + last.identifier +" did not stopTiming)", new Throwable());
+                Logger.getGlobal().log(Level.SEVERE, Message.getFormatString("timings.handler.3", new Object[]{reportTo, last.identifier}), new Throwable());
             }
             addDiff(System.nanoTime() - start, TIMING_STACK.peekLast());
 

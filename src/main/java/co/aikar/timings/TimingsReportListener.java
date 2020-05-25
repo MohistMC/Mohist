@@ -1,14 +1,13 @@
 package co.aikar.timings;
 
 import com.google.common.collect.Lists;
+import java.util.List;
 import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.command.MessageCommandSender;
 import org.bukkit.command.RemoteConsoleCommandSender;
-
-import java.util.List;
 
 @SuppressWarnings("WeakerAccess")
 public class TimingsReportListener implements MessageCommandSender {

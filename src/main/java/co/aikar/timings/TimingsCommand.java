@@ -24,14 +24,14 @@
 package co.aikar.timings;
 
 import com.google.common.collect.ImmutableList;
+import java.util.ArrayList;
+import java.util.List;
 import org.apache.commons.lang.Validate;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.defaults.BukkitCommand;
 import org.bukkit.util.StringUtil;
-
-import java.util.ArrayList;
-import java.util.List;
+import red.mohist.util.i18n.Message;
 
 
 public class TimingsCommand extends BukkitCommand {
@@ -40,7 +40,7 @@ public class TimingsCommand extends BukkitCommand {
 
     public TimingsCommand(String name) {
         super(name);
-        this.description = "Manages Spigot Timings data to see performance of the server.";
+        this.description = Message.getString("timings.command.1");
         this.usageMessage = "/timings <reset|report|on|off|verbon|verboff>";
         this.setPermission("bukkit.command.timings");
     }
@@ -57,39 +57,39 @@ public class TimingsCommand extends BukkitCommand {
         final String arg = args[0];
         if ("on".equalsIgnoreCase(arg)) {
             Timings.setTimingsEnabled(true);
-            sender.sendMessage("Enabled Timings & Reset");
+            sender.sendMessage(Message.getString("timings.command.2"));
             return true;
         } else if ("off".equalsIgnoreCase(arg)) {
             Timings.setTimingsEnabled(false);
-            sender.sendMessage("Disabled Timings");
+            sender.sendMessage(Message.getString("timings.command.3"));
             return true;
         }
 
         if (!Timings.isTimingsEnabled()) {
-            sender.sendMessage("Please enable timings by typing /timings on");
+            sender.sendMessage(Message.getString("timings.command.4"));
             return true;
         }
 
         long now = System.currentTimeMillis();
         if ("verbon".equalsIgnoreCase(arg)) {
             Timings.setVerboseTimingsEnabled(true);
-            sender.sendMessage("Enabled Verbose Timings");
+            sender.sendMessage(Message.getString("timings.command.5"));
             return true;
         } else if ("verboff".equalsIgnoreCase(arg)) {
             Timings.setVerboseTimingsEnabled(false);
-            sender.sendMessage("Disabled Verbose Timings");
+            sender.sendMessage(Message.getString("timings.command.6"));
             return true;
         } else if ("reset".equalsIgnoreCase(arg)) {
             if (now - lastResetAttempt < 30000) {
                 TimingsManager.reset();
-                sender.sendMessage(ChatColor.RED + "Timings reset. Please wait 5-10 minutes before using /timings report.");
+                sender.sendMessage(ChatColor.RED + Message.getString("timings.command.7"));
             } else {
                 lastResetAttempt = now;
-                sender.sendMessage(ChatColor.RED + "WARNING: Timings v2 should not be reset. If you are encountering lag, please wait 3 minutes and then issue a report. The best timings will include 10+ minutes, with data before and after your lag period. If you really want to reset, run this command again within 30 seconds.");
+                sender.sendMessage(ChatColor.RED + Message.getString("timings.command.8"));
             }
 
         } else if ("cost".equals(arg)) {
-            sender.sendMessage("Timings cost: " + TimingsExport.getCost());
+            sender.sendMessage(Message.getString("timings.command.9") + ": " + TimingsExport.getCost());
         } else  if (
             "paste".equalsIgnoreCase(arg) ||
                 "report".equalsIgnoreCase(arg) ||

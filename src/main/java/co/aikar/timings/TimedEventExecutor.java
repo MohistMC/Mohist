@@ -23,14 +23,13 @@
  */
 package co.aikar.timings;
 
+import java.lang.reflect.Method;
 import org.bukkit.Bukkit;
 import org.bukkit.event.Event;
 import org.bukkit.event.EventException;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.EventExecutor;
 import org.bukkit.plugin.Plugin;
-
-import java.lang.reflect.Method;
 
 public class TimedEventExecutor implements EventExecutor {
 

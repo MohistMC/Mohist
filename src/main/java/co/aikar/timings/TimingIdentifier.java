@@ -24,7 +24,6 @@
 package co.aikar.timings;
 
 import co.aikar.util.LoadingMap;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;

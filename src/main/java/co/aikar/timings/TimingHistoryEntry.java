@@ -23,11 +23,9 @@
  */
 package co.aikar.timings;
 
-import com.google.common.base.Function;
-
-import java.util.List;
-
 import static co.aikar.util.JSONUtil.toArrayMapper;
+import com.google.common.base.Function;
+import java.util.List;
 
 class TimingHistoryEntry {
     final TimingData data;

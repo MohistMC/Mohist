@@ -25,13 +25,12 @@ package co.aikar.timings;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.EvictingQueue;
+import java.util.Queue;
+import java.util.logging.Level;
 import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.Plugin;
-
-import java.util.Queue;
-import java.util.logging.Level;
 
 @SuppressWarnings({"UnusedDeclaration", "WeakerAccess", "SameParameterValue"})
 public final class Timings {

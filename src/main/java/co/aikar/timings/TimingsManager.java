@@ -25,18 +25,17 @@ package co.aikar.timings;
 
 import co.aikar.util.LoadingMap;
 import com.google.common.collect.EvictingQueue;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.logging.Level;
 import org.bukkit.Bukkit;
 import org.bukkit.Server;
 import org.bukkit.command.Command;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.PluginClassLoader;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.logging.Level;
+import red.mohist.util.i18n.Message;
 
 public final class TimingsManager {
     static final Map<TimingIdentifier, TimingHandler> TIMING_MAP = LoadingMap.of(
@@ -108,7 +107,7 @@ public final class TimingsManager {
                     timings.reset(true);
                 }
             }
-            Bukkit.getLogger().log(Level.INFO, "Timings Reset");
+            Bukkit.getLogger().log(Level.INFO, Message.getString("timings.manager"));
             HISTORY.clear();
             needsFullReset = false;
             needsRecheckEnabled = false;

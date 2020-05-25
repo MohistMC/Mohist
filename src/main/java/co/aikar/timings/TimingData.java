@@ -23,9 +23,8 @@
  */
 package co.aikar.timings;
 
-import java.util.List;
-
 import static co.aikar.util.JSONUtil.toArray;
+import java.util.List;
 
 /**
  * <p>Lightweight object for tracking timing data</p>
