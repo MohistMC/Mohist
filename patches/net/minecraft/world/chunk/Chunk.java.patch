@@ -383,7 +383,7 @@
          i = MathHelper.clamp(i, 0, this.entityLists.length - 1);
          j = MathHelper.clamp(j, 0, this.entityLists.length - 1);
  
-@@ -995,8 +1088,70 @@
+@@ -995,8 +1088,72 @@
          }
      }
  
@@ -414,6 +414,8 @@
 +                }
 +            }
 +        }
++        world.timings.syncChunkLoadPostTimer.stopTiming(); // Paper
++        world.timings.syncChunkLoadPopulateNeighbors.startTiming(); // Paper
 +        Chunk chunk = chunkProvider.getLoadedChunk(this.x, this.z - 1);
 +        Chunk chunk1 = chunkProvider.getLoadedChunk(this.x + 1, this.z);
 +        Chunk chunk2 = chunkProvider.getLoadedChunk(this.x, this.z + 1);
@@ -443,7 +445,7 @@
 +                chunk4.populate(chunkGenrator);
 +            }
 +        }
-+        world.timings.syncChunkLoadPostTimer.stopTiming(); // Spigot
++        world.timings.syncChunkLoadPopulateNeighbors.stopTiming(); // Paper
 +    }
 +
      protected void populate(IChunkGenerator generator)
@@ -454,7 +456,7 @@
          if (this.isTerrainPopulated())
          {
              if (generator.generateStructures(this, this.x, this.z))
-@@ -1008,8 +1163,30 @@
+@@ -1008,8 +1165,30 @@
          {
              this.checkLight();
              generator.populate(this.x, this.z);
@@ -485,7 +487,7 @@
      }
  
      public BlockPos getPrecipitationHeight(BlockPos pos)
-@@ -1064,7 +1241,7 @@
+@@ -1064,7 +1243,7 @@
          {
              BlockPos blockpos = this.tileEntityPosQueue.poll();
  
@@ -494,7 +496,7 @@
              {
                  TileEntity tileentity = this.createNewTileEntity(blockpos);
                  this.world.setTileEntity(blockpos, tileentity);
-@@ -1075,7 +1252,7 @@
+@@ -1075,7 +1254,7 @@
  
      public boolean isPopulated()
      {
@@ -503,7 +505,7 @@
      }
  
      public boolean wasTicked()
-@@ -1128,6 +1305,13 @@
+@@ -1128,6 +1307,13 @@
      @SideOnly(Side.CLIENT)
      public void read(PacketBuffer buf, int availableSections, boolean groundUpContinuous)
      {
@@ -517,7 +519,7 @@
          boolean flag = this.world.provider.hasSkyLight();
  
          for (int i = 0; i < this.storageArrays.length; ++i)
-@@ -1176,10 +1360,16 @@
+@@ -1176,10 +1362,16 @@
          this.isTerrainPopulated = true;
          this.generateHeightMap();
  
@@ -534,7 +536,7 @@
      }
  
      public Biome getBiome(BlockPos pos, BiomeProvider provider)
-@@ -1190,7 +1380,12 @@
+@@ -1190,7 +1382,12 @@
  
          if (k == 255)
          {
@@ -548,7 +550,7 @@
              k = Biome.getIdForBiome(biome);
              this.blockBiomeArray[j << 4 | i] = (byte)(k & 255);
          }
-@@ -1244,13 +1439,13 @@
+@@ -1244,13 +1441,13 @@
                      BlockPos blockpos1 = blockpos.add(k, (j << 4) + i1, l);
                      boolean flag = i1 == 0 || i1 == 15 || k == 0 || k == 15 || l == 0 || l == 15;
  
@@ -564,7 +566,23 @@
                              {
                                  this.world.checkLight(blockpos2);
                              }
-@@ -1381,7 +1576,7 @@
+@@ -1265,6 +1462,7 @@
+ 
+     public void checkLight()
+     {
++        world.timings.lightChunk.startTiming(); // Paper
+         this.isTerrainPopulated = true;
+         this.isLightPopulated = true;
+         BlockPos blockpos = new BlockPos(this.x << 4, 0, this.z << 4);
+@@ -1303,6 +1501,7 @@
+                 this.isLightPopulated = false;
+             }
+         }
++        world.timings.lightChunk.stopTiming(); // Paper
+     }
+ 
+     private void setSkylightUpdated()
+@@ -1381,7 +1580,7 @@
          {
              blockpos$mutableblockpos.setPos(blockpos$mutableblockpos.getX(), l, blockpos$mutableblockpos.getZ());
  
@@ -573,7 +591,7 @@
              {
                  this.world.checkLight(blockpos$mutableblockpos);
              }
-@@ -1420,6 +1615,7 @@
+@@ -1420,6 +1619,7 @@
          else
          {
              System.arraycopy(newHeightMap, 0, this.heightMap, 0, this.heightMap.length);
@@ -581,7 +599,7 @@
          }
      }
  
-@@ -1433,6 +1629,10 @@
+@@ -1433,6 +1633,10 @@
          return this.entityLists;
      }
  
@@ -592,7 +610,7 @@
      public boolean isTerrainPopulated()
      {
          return this.isTerrainPopulated;
-@@ -1489,4 +1689,55 @@
+@@ -1489,4 +1693,55 @@
          QUEUED,
          CHECK;
      }

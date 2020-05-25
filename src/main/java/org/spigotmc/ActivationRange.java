@@ -1,5 +1,6 @@
 package org.spigotmc;
 
+import co.aikar.timings.MinecraftTimings;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityCreature;
 import net.minecraft.entity.EntityLiving;
@@ -28,7 +29,6 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.common.DimensionManager;
-import org.bukkit.craftbukkit.v1_12_R1.SpigotTimings;
 
 public class ActivationRange {
 
@@ -94,7 +94,7 @@ public class ActivationRange {
      * @param world
      */
     public static void activateEntities(World world) {
-        SpigotTimings.entityActivationCheckTimer.startTiming();
+        MinecraftTimings.entityActivationCheckTimer.startTiming();
         final int miscActivationRange = world.spigotConfig.miscActivationRange;
         final int animalActivationRange = world.spigotConfig.animalActivationRange;
         final int monsterActivationRange = world.spigotConfig.monsterActivationRange;
@@ -124,7 +124,7 @@ public class ActivationRange {
                 }
             }
         }
-        SpigotTimings.entityActivationCheckTimer.stopTiming();
+        MinecraftTimings.entityActivationCheckTimer.stopTiming();
     }
 
     /**
@@ -222,11 +222,9 @@ public class ActivationRange {
             && MinecraftServer.entityConfig.skipActivationRange.getValue())
             return true;
 
-        SpigotTimings.checkIfActiveTimer.startTiming();
         // Never safe to skip fireworks or entities not yet added to chunk
         // PAIL: inChunk
         if (!entity.addedToChunk || entity instanceof EntityFireworkRocket) {
-            SpigotTimings.checkIfActiveTimer.stopTiming();
             return true;
         }
 
@@ -253,7 +251,6 @@ public class ActivationRange {
         if (isActive && !(chunk != null && chunk.areNeighborsLoaded(1))) {
             isActive = false;
         }
-		SpigotTimings.checkIfActiveTimer.stopTiming();
         return isActive;
     }
 }

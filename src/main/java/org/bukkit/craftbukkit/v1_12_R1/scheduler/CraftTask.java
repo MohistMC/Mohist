@@ -1,24 +1,21 @@
 package org.bukkit.craftbukkit.v1_12_R1.scheduler;
 
 import org.bukkit.Bukkit;
-import org.bukkit.craftbukkit.v1_12_R1.SpigotTimings;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitTask;
-import org.spigotmc.CustomTimingsHandler;
 
-public class CraftTask implements BukkitTask, Runnable {
 
+import co.aikar.timings.MinecraftTimings;
+import co.aikar.timings.Timing;
+
+public class CraftTask implements BukkitTask, Runnable { // Spigot
+
+    private volatile CraftTask next = null;
     public static final int ERROR = 0;
     public static final int NO_REPEATING = -1;
     public static final int CANCEL = -2;
     public static final int PROCESS_FOR_FUTURE = -3;
     public static final int DONE_FOR_FUTURE = -4;
-    private final Runnable task;
-    private final Plugin plugin;
-    private final int id;
-    // Spigot start
-    public String timingName = null;
-    private volatile CraftTask next = null;
     /**
      * -1 means no repeating <br>
      * -2 means cancel <br>
@@ -29,8 +26,11 @@ public class CraftTask implements BukkitTask, Runnable {
      */
     private volatile long period;
     private long nextRun;
+    public final Runnable task; // Paper
+    public Timing timings; // Paper
+    private final Plugin plugin;
+    private final int id;
 
-    final CustomTimingsHandler timings; // Spigot
     CraftTask() {
         this(null, null, CraftTask.NO_REPEATING, CraftTask.NO_REPEATING);
     }
@@ -39,26 +39,12 @@ public class CraftTask implements BukkitTask, Runnable {
         this(null, task, CraftTask.NO_REPEATING, CraftTask.NO_REPEATING);
     }
 
-    CraftTask(String timingName) {
-        this(timingName, null, null, -1, -1);
-    }
-
-    CraftTask(String timingName, final Runnable task) {
-        this(timingName, null, task, -1, -1);
-    }
-
-    CraftTask(String timingName, final Plugin plugin, final Runnable task, final int id, final long period) {
+    CraftTask(final Plugin plugin, final Runnable task, final int id, final long period) { // Paper
         this.plugin = plugin;
         this.task = task;
         this.id = id;
         this.period = period;
-        this.timingName = timingName == null && task == null ? "Unknown" : timingName;
-        timings = this.isSync() ? SpigotTimings.getPluginTaskTimings(this, period) : null;
-    }
-
-    CraftTask(final Plugin plugin, final Runnable task, final int id, final long period) {
-        this(null, plugin, task, id, period);
-        // Spigot end
+        timings = task != null ? MinecraftTimings.getPluginTaskTimings(this, period) : null; // Paper
     }
 
     public final int getTaskId() {
@@ -74,7 +60,9 @@ public class CraftTask implements BukkitTask, Runnable {
     }
 
     public void run() {
+        if (timings != null && isSync()) timings.startTiming(); // Paper
         task.run();
+        if (timings != null && isSync()) timings.stopTiming(); // Paper
     }
 
     long getPeriod() {
@@ -123,13 +111,4 @@ public class CraftTask implements BukkitTask, Runnable {
         setPeriod(CraftTask.CANCEL);
         return true;
     }
-
-    // Spigot start
-    public String getTaskName() {
-        if (timingName != null) {
-            return timingName;
-        }
-        return task.getClass().getName();
-    }
-    // Spigot end
 }

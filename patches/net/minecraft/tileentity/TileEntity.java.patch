@@ -1,27 +1,18 @@
 --- ../src-base/minecraft/net/minecraft/tileentity/TileEntity.java
 +++ ../src-work/minecraft/net/minecraft/tileentity/TileEntity.java
-@@ -7,6 +7,7 @@
- import net.minecraft.crash.CrashReportCategory;
- import net.minecraft.crash.ICrashReportDetail;
- import net.minecraft.init.Blocks;
-+import net.minecraft.inventory.IInventory;
- import net.minecraft.nbt.NBTTagCompound;
- import net.minecraft.network.play.server.SPacketUpdateTileEntity;
- import net.minecraft.util.Mirror;
-@@ -16,26 +17,39 @@
- import net.minecraft.util.registry.RegistryNamespaced;
- import net.minecraft.util.text.ITextComponent;
- import net.minecraft.world.World;
-+import red.mohist.inventory.CraftCustomInventory;
- import net.minecraftforge.fml.relauncher.Side;
+@@ -1,5 +1,7 @@
+ package net.minecraft.tileentity;
+ 
++import co.aikar.timings.MinecraftTimings;
++import co.aikar.timings.Timing;
+ import javax.annotation.Nullable;
+ import net.minecraft.block.Block;
+ import net.minecraft.block.BlockJukebox;
+@@ -20,22 +22,30 @@
  import net.minecraftforge.fml.relauncher.SideOnly;
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
-+import org.bukkit.craftbukkit.v1_12_R1.SpigotTimings;
-+import org.bukkit.craftbukkit.v1_12_R1.block.CraftBlockEntityState;
 +import org.bukkit.inventory.InventoryHolder;
-+import org.spigotmc.CustomTimingsHandler;
-+import red.mohist.Mohist;
 +import red.mohist.inventory.InventoryOwner;
  
 -public abstract class TileEntity
@@ -35,7 +26,7 @@
      protected boolean tileEntityInvalid;
      private int blockMetadata = -1;
      protected Block blockType;
-+    public CustomTimingsHandler tickTimer = SpigotTimings.getTileEntityTimings(this); // Spigot
++    public Timing tickTimer = MinecraftTimings.getTileEntityTimings(this); // Paper
  
      public static void register(String id, Class <? extends TileEntity > clazz)
      {
@@ -50,7 +41,7 @@
      @Nullable
      public static ResourceLocation getKey(Class <? extends TileEntity > clazz)
      {
-@@ -60,6 +74,8 @@
+@@ -60,6 +70,8 @@
      public void readFromNBT(NBTTagCompound compound)
      {
          this.pos = new BlockPos(compound.getInteger("x"), compound.getInteger("y"), compound.getInteger("z"));
@@ -59,7 +50,7 @@
      }
  
      public NBTTagCompound writeToNBT(NBTTagCompound compound)
-@@ -81,6 +97,8 @@
+@@ -81,6 +93,8 @@
              compound.setInteger("x", this.pos.getX());
              compound.setInteger("y", this.pos.getY());
              compound.setInteger("z", this.pos.getZ());
@@ -68,7 +59,7 @@
              return compound;
          }
      }
-@@ -90,10 +108,11 @@
+@@ -90,10 +104,11 @@
      {
          TileEntity tileentity = null;
          String s = compound.getString("id");
@@ -81,7 +72,7 @@
  
              if (oclass != null)
              {
-@@ -103,6 +122,8 @@
+@@ -103,6 +118,8 @@
          catch (Throwable throwable1)
          {
              LOGGER.error("Failed to create block entity {}", s, throwable1);
@@ -90,7 +81,7 @@
          }
  
          if (tileentity != null)
-@@ -115,6 +136,8 @@
+@@ -115,6 +132,8 @@
              catch (Throwable throwable)
              {
                  LOGGER.error("Failed to load data for block entity {}", s, throwable);
@@ -99,7 +90,7 @@
                  tileentity = null;
              }
          }
-@@ -156,7 +179,6 @@
+@@ -156,7 +175,6 @@
          }
      }
  
@@ -107,7 +98,7 @@
      public double getDistanceSq(double x, double y, double z)
      {
          double d0 = (double)this.pos.getX() + 0.5D - x;
-@@ -244,7 +266,7 @@
+@@ -244,7 +262,7 @@
  
                      try
                      {
@@ -116,7 +107,7 @@
                      }
                      catch (Throwable var3)
                      {
-@@ -297,6 +319,204 @@
+@@ -297,6 +315,204 @@
      {
      }
  
@@ -321,7 +312,7 @@
      static
      {
          register("furnace", TileEntityFurnace.class);
-@@ -325,4 +545,11 @@
+@@ -325,4 +541,11 @@
          register("shulker_box", TileEntityShulkerBox.class);
          register("bed", TileEntityBed.class);
      }

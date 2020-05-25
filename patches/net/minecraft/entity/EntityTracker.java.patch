@@ -57,7 +57,34 @@
          if (entityIn instanceof EntityPlayerMP)
          {
              EntityPlayerMP entityplayermp = (EntityPlayerMP)entityIn;
-@@ -339,6 +344,25 @@
+@@ -284,7 +289,7 @@
+     public void tick()
+     {
+         List<EntityPlayerMP> list = Lists.<EntityPlayerMP>newArrayList();
+-
++        world.timings.tracker1.startTiming(); // Spigot
+         for (EntityTrackerEntry entitytrackerentry : this.entries)
+         {
+             entitytrackerentry.updatePlayerList(this.world.playerEntities);
+@@ -299,7 +304,9 @@
+                 }
+             }
+         }
++        world.timings.tracker1.stopTiming(); // Spigot
+ 
++        world.timings.tracker2.startTiming(); // Spigot
+         for (int i = 0; i < list.size(); ++i)
+         {
+             EntityPlayerMP entityplayermp = list.get(i);
+@@ -312,6 +319,7 @@
+                 }
+             }
+         }
++        world.timings.tracker2.stopTiming(); // Spigot
+     }
+ 
+     public void updateVisibility(EntityPlayerMP player)
+@@ -339,6 +347,25 @@
          }
      }
  

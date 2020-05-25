@@ -1,157 +1,104 @@
+/*
+ * This file is licensed under the MIT License (MIT).
+ *
+ * Copyright (c) 2014 Daniel Ennis <http://aikar.co>
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
 package org.spigotmc;
 
-import java.io.PrintStream;
-import java.util.Queue;
-import java.util.concurrent.ConcurrentLinkedQueue;
 import org.bukkit.Bukkit;
-import org.bukkit.World;
-import org.bukkit.command.defaults.TimingsCommand;
+import org.bukkit.plugin.AuthorNagException;
+import org.bukkit.plugin.Plugin;
+import co.aikar.timings.NullTimingHandler;
+import co.aikar.timings.Timing;
+import co.aikar.timings.Timings;
+import co.aikar.timings.TimingsManager;
+
+import java.lang.reflect.Method;
+import java.util.logging.Level;
 
 /**
- * Provides custom timing sections for /timings merged.
+ * This is here for legacy purposes incase any plugin used it.
+ *
+ * If you use this, migrate ASAP as this will be removed in the future!
+ *
+ * @deprecated
+ * @see Timings#of
  */
-public class CustomTimingsHandler
-{
+@Deprecated
+public final class CustomTimingsHandler {
+    private final Timing handler;
+    private static Boolean sunReflectAvailable;
+    private static Method getCallerClass;
 
-    private static Queue<CustomTimingsHandler> HANDLERS = new ConcurrentLinkedQueue<CustomTimingsHandler>();
-    /*========================================================================*/
-    private final String name;
-    private final CustomTimingsHandler parent;
-    private long count = 0;
-    private long start = 0;
-    private long timingDepth = 0;
-    private long totalTime = 0;
-    private long curTickTotal = 0;
-    private long violations = 0;
+    public CustomTimingsHandler(String name) {
+        if (sunReflectAvailable == null) {
+            String javaVer = System.getProperty("java.version");
+            String[] elements = javaVer.split("\\.");
 
-    public CustomTimingsHandler(String name)
-    {
-        this( name, null );
-    }
+            int major = Integer.parseInt(elements.length >= 2 ? elements[1] : javaVer);
+            if (major <= 8) {
+                sunReflectAvailable = true;
 
-    public CustomTimingsHandler(String name, CustomTimingsHandler parent)
-    {
-        this.name = name;
-        this.parent = parent;
-        HANDLERS.add( this );
-    }
-
-    /**
-     * Prints the timings and extra data to the given stream.
-     *
-     * @param printStream
-     */
-    public static void printTimings(PrintStream printStream)
-    {
-        printStream.println( "Minecraft" );
-        for ( CustomTimingsHandler timings : HANDLERS )
-        {
-            long time = timings.totalTime;
-            long count = timings.count;
-            if ( count == 0 )
-            {
-                continue;
-            }
-            long avg = time / count;
-
-            printStream.println( "    " + timings.name + " Time: " + time + " Count: " + count + " Avg: " + avg + " Violations: " + timings.violations );
-        }
-        printStream.println( "# Version " + Bukkit.getVersion() );
-        int entities = 0;
-        int livingEntities = 0;
-        for ( World world : Bukkit.getWorlds() )
-        {
-            entities += world.getEntities().size();
-            livingEntities += world.getLivingEntities().size();
-        }
-        printStream.println( "# Entities " + entities );
-        printStream.println( "# LivingEntities " + livingEntities );
-    }
-
-    /**
-     * Resets all timings.
-     */
-    public static void reload()
-    {
-        if ( Bukkit.getPluginManager().useTimings() )
-        {
-            for ( CustomTimingsHandler timings : HANDLERS )
-            {
-                timings.reset();
-            }
-        }
-        TimingsCommand.timingStart = System.nanoTime();
-    }
-
-    /**
-     * Ticked every tick by CraftBukkit to count the number of times a timer
-     * caused TPS loss.
-     */
-    public static void tick()
-    {
-        if ( Bukkit.getPluginManager().useTimings() )
-        {
-            for ( CustomTimingsHandler timings : HANDLERS )
-            {
-                if ( timings.curTickTotal > 50000000 )
-                {
-                    timings.violations += Math.ceil( timings.curTickTotal / 50000000 );
+                try {
+                    Class<?> reflection = Class.forName("sun.reflect.Reflection");
+                    getCallerClass = reflection.getMethod("getCallerClass", int.class);
+                } catch (ClassNotFoundException | NoSuchMethodException ignored) {
                 }
-                timings.curTickTotal = 0;
-                timings.timingDepth = 0; // incase reset messes this up
+            } else {
+                sunReflectAvailable = false;
             }
         }
-    }
 
-    /**
-     * Starts timing to track a section of code.
-     */
-    public void startTiming()
-    {
-        // If second condtion fails we are already timing
-        if ( Bukkit.getPluginManager().useTimings() && ++timingDepth == 1 )
-        {
-            start = System.nanoTime();
-            if ( parent != null && ++parent.timingDepth == 1 )
-            {
-                parent.start = start;
+        Class calling = null;
+        if (sunReflectAvailable) {
+            try {
+                calling = (Class) getCallerClass.invoke(null, 2);
+            } catch (IllegalAccessException | java.lang.reflect.InvocationTargetException ignored) {
             }
         }
-    }
 
-    /**
-     * Stops timing a section of code.
-     */
-    public void stopTiming()
-    {
-        if ( Bukkit.getPluginManager().useTimings() )
-        {
-            if ( --timingDepth != 0 || start == 0 )
-            {
-                return;
-            }
-            long diff = System.nanoTime() - start;
-            totalTime += diff;
-            curTickTotal += diff;
-            count++;
-            start = 0;
-            if ( parent != null )
-            {
-                parent.stopTiming();
+        Timing timing;
+
+        Plugin plugin = null;
+        try {
+            plugin = TimingsManager.getPluginByClassloader(calling);
+        } catch (Exception ignored) {}
+
+        new AuthorNagException("Deprecated use of CustomTimingsHandler. Please Switch to Timings.of ASAP").printStackTrace();
+        if (plugin != null) {
+            timing = Timings.of(plugin, "(Deprecated API) " + name);
+        } else {
+            try {
+                final Method ofSafe = TimingsManager.class.getMethod("getHandler", String.class, String.class, Timing.class);
+                ofSafe.setAccessible(true);
+                timing = (Timing) ofSafe.invoke(null, "Minecraft", "(Deprecated API) " + name, null);
+            } catch (Exception e) {
+                Bukkit.getLogger().log(Level.SEVERE, "This handler could not be registered");
+                timing = Timings.NULL_HANDLER;
             }
         }
+        handler = timing;
     }
 
-    /**
-     * Reset this timer, setting all values to zero.
-     */
-    public void reset()
-    {
-        count = 0;
-        violations = 0;
-        curTickTotal = 0;
-        totalTime = 0;
-        start = 0;
-        timingDepth = 0;
-    }
+    public void startTiming() { handler.startTiming(); }
+    public void stopTiming() { handler.stopTiming(); }
+
 }

@@ -36,7 +36,7 @@
      public static final AxisAlignedBB FULL_BLOCK_AABB = new AxisAlignedBB(0.0D, 0.0D, 0.0D, 1.0D, 1.0D, 1.0D);
      @Nullable
      public static final AxisAlignedBB NULL_AABB = null;
-@@ -75,6 +75,7 @@
+@@ -75,11 +75,22 @@
      public float blockParticleGravity;
      protected final Material blockMaterial;
      protected final MapColor blockMapColor;
@@ -44,7 +44,22 @@
      public float slipperiness;
      protected final BlockStateContainer blockState;
      private IBlockState defaultBlockState;
-@@ -319,7 +320,7 @@
+     private String unlocalizedName;
+ 
++    // Paper start
++    public co.aikar.timings.Timing timing;
++    public co.aikar.timings.Timing getTiming() {
++        if (timing == null) {
++            timing = co.aikar.timings.MinecraftTimings.getBlockTiming(this);
++        }
++        return timing;
++    }
++    // Paper end
++
+     public static int getIdFromBlock(Block blockIn)
+     {
+         return REGISTRY.getIDForObject(blockIn);
+@@ -319,7 +330,7 @@
  
      public boolean isReplaceable(IBlockAccess worldIn, BlockPos pos)
      {
@@ -53,7 +68,7 @@
      }
  
      public Block setHardness(float hardness)
-@@ -357,9 +358,10 @@
+@@ -357,9 +368,10 @@
          return this.needsRandomTick;
      }
  
@@ -65,7 +80,7 @@
      }
  
      @Deprecated
-@@ -372,13 +374,13 @@
+@@ -372,13 +384,13 @@
      @SideOnly(Side.CLIENT)
      public int getPackedLightmapCoords(IBlockState state, IBlockAccess source, BlockPos pos)
      {
@@ -81,7 +96,7 @@
          }
          else
          {
-@@ -442,7 +444,7 @@
+@@ -442,7 +454,7 @@
                  }
          }
  
@@ -90,7 +105,7 @@
      }
  
      @Deprecated
-@@ -534,6 +536,10 @@
+@@ -534,6 +546,10 @@
  
      public void breakBlock(World worldIn, BlockPos pos, IBlockState state)
      {
@@ -101,7 +116,7 @@
      }
  
      public int quantityDropped(Random random)
-@@ -549,16 +555,7 @@
+@@ -549,16 +565,7 @@
      @Deprecated
      public float getPlayerRelativeBlockHardness(IBlockState state, EntityPlayer player, World worldIn, BlockPos pos)
      {
@@ -119,7 +134,7 @@
      }
  
      public final void dropBlockAsItem(World worldIn, BlockPos pos, IBlockState state, int fortune)
-@@ -568,20 +565,17 @@
+@@ -568,20 +575,17 @@
  
      public void dropBlockAsItemWithChance(World worldIn, BlockPos pos, IBlockState state, float chance, int fortune)
      {
@@ -147,7 +162,7 @@
                  }
              }
          }
-@@ -589,18 +583,33 @@
+@@ -589,18 +593,33 @@
  
      public static void spawnAsEntity(World worldIn, BlockPos pos, ItemStack stack)
      {
@@ -183,7 +198,7 @@
      public void dropXpOnBlockBreak(World worldIn, BlockPos pos, int amount)
      {
          if (!worldIn.isRemote && worldIn.getGameRules().getBoolean("doTileDrops"))
-@@ -619,6 +628,7 @@
+@@ -619,6 +638,7 @@
          return 0;
      }
  
@@ -191,7 +206,7 @@
      public float getExplosionResistance(Entity exploder)
      {
          return this.blockResistance / 5.0F;
-@@ -657,7 +667,7 @@
+@@ -657,7 +677,7 @@
  
      public boolean canPlaceBlockAt(World worldIn, BlockPos pos)
      {
@@ -200,7 +215,7 @@
      }
  
      public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ)
-@@ -669,6 +679,8 @@
+@@ -669,6 +689,8 @@
      {
      }
  
@@ -209,7 +224,7 @@
      public IBlockState getStateForPlacement(World worldIn, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer)
      {
          return this.getStateFromMeta(meta);
-@@ -710,21 +722,35 @@
+@@ -710,21 +732,35 @@
          player.addStat(StatList.getBlockStats(this));
          player.addExhaustion(0.005F);
  
@@ -248,7 +263,7 @@
      }
  
      protected ItemStack getSilkTouchDrop(IBlockState state)
-@@ -810,6 +836,7 @@
+@@ -810,6 +846,7 @@
          entityIn.motionY = 0.0D;
      }
  
@@ -256,7 +271,7 @@
      public ItemStack getItem(World worldIn, BlockPos pos, IBlockState state)
      {
          return new ItemStack(Item.getItemFromBlock(this), 1, this.damageDropped(state));
-@@ -919,6 +946,7 @@
+@@ -919,6 +956,7 @@
          }
      }
  
@@ -264,7 +279,7 @@
      public SoundType getSoundType()
      {
          return this.blockSoundType;
-@@ -934,6 +962,1388 @@
+@@ -934,6 +972,1388 @@
      {
      }
  
@@ -1653,7 +1668,7 @@
      public static void registerBlocks()
      {
          registerBlock(0, AIR_ID, (new BlockAir()).setUnlocalizedName("air"));
-@@ -1105,7 +2515,7 @@
+@@ -1105,7 +2525,7 @@
          Block block11 = (new BlockQuartz()).setSoundType(SoundType.STONE).setHardness(0.8F).setUnlocalizedName("quartzBlock");
          registerBlock(155, "quartz_block", block11);
          registerBlock(156, "quartz_stairs", (new BlockStairs(block11.getDefaultState().withProperty(BlockQuartz.VARIANT, BlockQuartz.EnumType.DEFAULT))).setUnlocalizedName("stairsQuartz"));
@@ -1662,7 +1677,7 @@
          registerBlock(158, "dropper", (new BlockDropper()).setHardness(3.5F).setSoundType(SoundType.STONE).setUnlocalizedName("dropper"));
          registerBlock(159, "stained_hardened_clay", (new BlockStainedHardenedClay()).setHardness(1.25F).setResistance(7.0F).setSoundType(SoundType.STONE).setUnlocalizedName("clayHardenedStained"));
          registerBlock(160, "stained_glass_pane", (new BlockStainedGlassPane()).setHardness(0.3F).setSoundType(SoundType.GLASS).setUnlocalizedName("thinStainedGlass"));
-@@ -1230,31 +2640,6 @@
+@@ -1230,31 +2650,6 @@
                  block15.useNeighborBrightness = flag;
              }
          }
@@ -1694,7 +1709,7 @@
      }
  
      private static void registerBlock(int id, ResourceLocation textualID, Block block_)
-@@ -1267,6 +2652,18 @@
+@@ -1267,6 +2662,18 @@
          registerBlock(id, new ResourceLocation(textualID), block_);
      }
  
