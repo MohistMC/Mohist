@@ -6,6 +6,7 @@ import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.Objects;
 import red.mohist.bukkit.nms.ASMUtils;
+import red.mohist.bukkit.nms.ReflectionUtils;
 import red.mohist.bukkit.nms.RemapUtils;
 
 /**
@@ -16,7 +17,7 @@ import red.mohist.bukkit.nms.RemapUtils;
 public class ProxyClass {
 
     public static Class<?> forName(String className) throws ClassNotFoundException {
-        return forName(className, true, RemapUtils.getCallerClassLoder());
+        return forName(className, true, ReflectionUtils.getCallerClassLoader());
     }
 
     public static Class<?> forName(String className, boolean initialize, ClassLoader loader) throws ClassNotFoundException {

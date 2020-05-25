@@ -21,7 +21,6 @@ import red.mohist.bukkit.nms.remappers.MohistInheritanceProvider;
 import red.mohist.bukkit.nms.remappers.MohistJarMapping;
 import red.mohist.bukkit.nms.remappers.MohistJarRemapper;
 import red.mohist.bukkit.nms.remappers.ReflectRemapper;
-import sun.reflect.Reflection;
 
 /**
  *
@@ -152,10 +151,6 @@ public class RemapUtils {
 
     public static String inverseMapFieldName(Class<?> type, String fieldName) {
         return jarMapping.fastReverseMapFieldName(type, fieldName);
-    }
-
-    public static ClassLoader getCallerClassLoder() {
-        return Reflection.getCallerClass(3).getClassLoader();
     }
 
     public static String inverseMapName(Class<?> clazz) {
