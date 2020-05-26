@@ -75,11 +75,13 @@
     private static final DataParameter<Integer> field_184633_f = EntityDataManager.func_187226_a(LivingEntity.class, DataSerializers.field_187192_b);
     private static final DataParameter<Boolean> field_184634_g = EntityDataManager.func_187226_a(LivingEntity.class, DataSerializers.field_187198_h);
     private static final DataParameter<Integer> field_184635_h = EntityDataManager.func_187226_a(LivingEntity.class, DataSerializers.field_187192_b);
-@@ -120,7 +125,7 @@
+@@ -119,8 +124,8 @@
+    private static final DataParameter<Optional<BlockPos>> field_213379_bs = EntityDataManager.func_187226_a(LivingEntity.class, DataSerializers.field_187201_k);
     protected static final EntitySize field_213377_as = EntitySize.func_220311_c(0.2F, 0.2F);
     private AbstractAttributeMap field_110155_d;
-    private final CombatTracker field_94063_bt = new CombatTracker(this);
+-   private final CombatTracker field_94063_bt = new CombatTracker(this);
 -   private final Map<Effect, EffectInstance> field_70713_bf = Maps.newHashMap();
++   public CombatTracker field_94063_bt = new CombatTracker(this);
 +   public final Map<Effect, EffectInstance> field_70713_bf = Maps.newHashMap();
     private final NonNullList<ItemStack> field_184630_bs = NonNullList.func_191197_a(2, ItemStack.field_190927_a);
     private final NonNullList<ItemStack> field_184631_bt = NonNullList.func_191197_a(4, ItemStack.field_190927_a);
@@ -111,11 +113,16 @@
     protected boolean field_70703_bu;
     public float field_70702_br;
     public float field_70701_bs;
-@@ -172,7 +177,7 @@
-    private boolean field_70752_e = true;
+@@ -169,10 +174,10 @@
+    protected double field_70709_bj;
+    protected double field_208001_bq;
+    protected int field_208002_br;
+-   private boolean field_70752_e = true;
++   public boolean field_70752_e = true;
     @Nullable
-    private LivingEntity field_70755_b;
+-   private LivingEntity field_70755_b;
 -   private int field_70756_c;
++   public LivingEntity field_70755_b;
 +   public int field_70756_c;
     private LivingEntity field_110150_bn;
     private int field_142016_bo;

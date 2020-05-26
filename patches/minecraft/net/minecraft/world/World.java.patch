@@ -155,27 +155,27 @@
 +      this.func_175723_af().func_177737_a(new IBorderListener() {
 +         @Override
 +         public void func_177694_a(final WorldBorder worldborder, final double d0) {
-+            World.this.getServerCB().getHandle().sendPacketToAllPlayers(new SWorldBorderPacket(worldborder, SWorldBorderPacket.Action.SET_SIZE), worldborder.world);
++            World.this.getServerCB().getHandle().sendAll(new SWorldBorderPacket(worldborder, SWorldBorderPacket.Action.SET_SIZE), worldborder.world);
 +         }
 +
 +         @Override
 +         public void func_177692_a(final WorldBorder worldborder, final double d0, final double d1, final long i) {
-+            World.this.getServerCB().getHandle().sendPacketToAllPlayers(new SWorldBorderPacket(worldborder, SWorldBorderPacket.Action.LERP_SIZE), worldborder.world);
++            World.this.getServerCB().getHandle().sendAll(new SWorldBorderPacket(worldborder, SWorldBorderPacket.Action.LERP_SIZE), worldborder.world);
 +         }
 +
 +         @Override
 +         public void func_177693_a(final WorldBorder worldborder, final double d0, final double d1) {
-+            World.this.getServerCB().getHandle().sendPacketToAllPlayers(new SWorldBorderPacket(worldborder, SWorldBorderPacket.Action.SET_CENTER), worldborder.world);
++            World.this.getServerCB().getHandle().sendAll(new SWorldBorderPacket(worldborder, SWorldBorderPacket.Action.SET_CENTER), worldborder.world);
 +         }
 +
 +         @Override
 +         public void func_177691_a(final WorldBorder worldborder, final int i) {
-+            World.this.getServerCB().getHandle().sendPacketToAllPlayers(new SWorldBorderPacket(worldborder, SWorldBorderPacket.Action.SET_WARNING_TIME), worldborder.world);
++            World.this.getServerCB().getHandle().sendAll(new SWorldBorderPacket(worldborder, SWorldBorderPacket.Action.SET_WARNING_TIME), worldborder.world);
 +         }
 +
 +         @Override
 +         public void func_177690_b(final WorldBorder worldborder, final int i) {
-+            World.this.getServerCB().getHandle().sendPacketToAllPlayers(new SWorldBorderPacket(worldborder, SWorldBorderPacket.Action.SET_WARNING_BLOCKS), worldborder.world);
++            World.this.getServerCB().getHandle().sendAll(new SWorldBorderPacket(worldborder, SWorldBorderPacket.Action.SET_WARNING_BLOCKS), worldborder.world);
 +         }
 +
 +         @Override

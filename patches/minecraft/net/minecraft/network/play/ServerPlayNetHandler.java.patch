@@ -90,6 +90,15 @@
              ActionResultType actionresulttype = this.field_147369_b.field_71134_c.func_219441_a(this.field_147369_b, serverworld, itemstack, hand, blockraytraceresult);
              if (actionresulttype.func_226247_b_()) {
                 this.field_147369_b.func_226292_a_(hand, true);
+@@ -902,7 +924,7 @@
+       this.field_147367_d.func_147132_au();
+       this.field_147367_d.func_184103_al().func_148539_a((new TranslationTextComponent("multiplayer.player.left", this.field_147369_b.func_145748_c_())).func_211708_a(TextFormatting.YELLOW));
+       this.field_147369_b.func_71123_m();
+-      this.field_147367_d.func_184103_al().func_72367_e(this.field_147369_b);
++      this.field_147367_d.func_184103_al().playerLoggedOut(this.field_147369_b);
+       if (this.func_217264_d()) {
+          field_147370_c.info("Stopping singleplayer server as player logged out");
+          this.field_147367_d.func_71263_m(false);
 @@ -968,7 +990,9 @@
           if (s.startsWith("/")) {
              this.func_147361_d(s);

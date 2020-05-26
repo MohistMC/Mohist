@@ -103,7 +103,7 @@
     public boolean field_70128_L;
     public float field_70141_P;
     public float field_70140_Q;
-@@ -153,7 +197,7 @@
+@@ -153,14 +197,14 @@
     public float field_70144_Y;
     protected final Random field_70146_Z = new Random();
     public int field_70173_aa;
@@ -112,6 +112,14 @@
     protected boolean field_70171_ac;
     protected double field_211517_W;
     protected boolean field_205013_W;
+    protected boolean field_213329_S;
+    public int field_70172_ad;
+    protected boolean field_70148_d = true;
+-   protected final EntityDataManager field_70180_af;
++   public final EntityDataManager field_70180_af;
+    protected static final DataParameter<Byte> field_184240_ax = EntityDataManager.func_187226_a(Entity.class, DataSerializers.field_187191_a);
+    private static final DataParameter<Integer> field_184241_ay = EntityDataManager.func_187226_a(Entity.class, DataSerializers.field_187192_b);
+    private static final DataParameter<Optional<ITextComponent>> field_184242_az = EntityDataManager.func_187226_a(Entity.class, DataSerializers.field_200544_f);
 @@ -187,15 +231,30 @@
     private boolean field_83001_bt;
     protected UUID field_96093_i = MathHelper.func_180182_a(this.field_70146_Z);
