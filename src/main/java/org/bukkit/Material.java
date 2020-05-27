@@ -538,7 +538,7 @@ public enum Material {
     private static Material[] byId = new Material[32676];
     private static Material[] blockById = new Material[32676];
     private static Map<String, Material> BY_NAME = Maps.newHashMap(); // Cauldron - remove final
-    private static Map<String, Material> BLOCK_BY_NAME = Maps.newHashMap();
+    public static Map<String, Material> BLOCK_BY_NAME = Maps.newHashMap();
 
     static {
         for (Material material : values()) {
@@ -602,6 +602,9 @@ public enum Material {
         if (byId.length > id && id >= 0) {
             return byId[id];
         } else {
+            if (blockById.length > id && id >= 0) {
+                return blockById[id];
+            }
             return null;
         }
     }
@@ -616,7 +619,7 @@ public enum Material {
      * @return Material if found, or null
      */
     public static Material getMaterial(final String name) {
-        return BY_NAME.get(name);
+        return BLOCK_BY_NAME.containsKey(name) ? BLOCK_BY_NAME.get(name) : BY_NAME.get(name);
     }
 
     /**
@@ -645,13 +648,7 @@ public enum Material {
             // Cauldron start - extract to normalizeName()
             String filtered = normalizeName(name);
             // Mohist - use BLOCK_BY_NAME to get blocks of mods
-            if (BLOCK_BY_NAME.containsKey(filtered))
-            {
-                result = BLOCK_BY_NAME.get(filtered);
-            } else {
-                result = BY_NAME.get(filtered);
-            }
-
+            result = BLOCK_BY_NAME.containsKey(name) ? BLOCK_BY_NAME.get(name) : BY_NAME.get(name);
             // Cauldron end
         }
 

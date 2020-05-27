@@ -3,6 +3,7 @@ package red.mohist.forge;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import net.minecraft.block.Block;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.entity.Entity;
@@ -52,7 +53,7 @@ public class ForgeInjectBukkit {
                 String materialName = Material.normalizeName(entry.getKey().toString());
                 // inject item materials into Bukkit for FML
                 Item item = entry.getValue();
-                Material material = Material.addMaterial(EnumHelper.addEnum(Material.class, materialName, new Class[]{Integer.TYPE, Integer.TYPE}, new Object[]{Item.getIdFromItem(item), item.getItemStackLimit()}));
+                Material material = Material.addMaterial(Objects.requireNonNull(EnumHelper.addEnum(Material.class, materialName, new Class[]{Integer.TYPE, Integer.TYPE}, Item.getIdFromItem(item), item.getItemStackLimit())));
                 if (material != null) {
                     ServerAPI.injectmaterials.put(material.name(), material.getId());
                     Mohist.LOGGER.debug("Save: " + Message.getFormatString("injected.item", new Object[]{material.name(), String.valueOf(material.getId()), String.valueOf(ItemAPI.getBukkit(material).getDurability())}));
@@ -67,7 +68,7 @@ public class ForgeInjectBukkit {
                 String materialName = Material.normalizeName(entry.getKey().toString());
                 // inject block materials into Bukkit for FML
                 Block block = entry.getValue();
-                Material material = Material.addBlockMaterial(EnumHelper.addEnum(Material.class, materialName, new Class[]{Integer.TYPE}, new Object[]{Block.getIdFromBlock(block)}));
+                Material material = Material.addBlockMaterial(Objects.requireNonNull(EnumHelper.addEnum(Material.class, materialName, new Class[]{Integer.TYPE}, Block.getIdFromBlock(block))));
                 if (material != null) {
                     ServerAPI.injectblock.put(material.name(), material.getId());
                     Mohist.LOGGER.debug("Save: " + Message.getFormatString("injected.block", new Object[]{material.name(), String.valueOf(material.getId())}));
@@ -105,7 +106,7 @@ public class ForgeInjectBukkit {
             String biomeName = entry.getKey().getResourcePath().toUpperCase(java.util.Locale.ENGLISH);
             if (!entry.getKey().getResourceDomain().equals("minecraft") && !map.contains(biomeName)) {
                 map.add(biomeName);
-                EnumHelper.addEnum(Biome.class, biomeName, new Class[0], new Object[0]);
+                EnumHelper.addEnum(Biome.class, biomeName, new Class[0]);
             }
         }
         map.clear();
@@ -117,7 +118,7 @@ public class ForgeInjectBukkit {
             String p_i47246_3_ = bannerpattern.name();
             String hashname = bannerpattern.getHashname();
             if (PatternType.getByIdentifier(hashname) == null) {
-                PatternType patternType = EnumHelper.addEnum(PatternType.class, p_i47246_3_, new Class[]{String.class}, new Object[]{hashname});
+                PatternType patternType = EnumHelper.addEnum(PatternType.class, p_i47246_3_, new Class[]{String.class}, hashname);
                 PATTERN_MAP.put(hashname, patternType);
             }
         }
@@ -129,7 +130,7 @@ public class ForgeInjectBukkit {
 
     public static WorldType addEnumWorldType(String name)
     {
-        WorldType worldType = EnumHelper.addEnum(WorldType.class, name, new Class [] { String.class }, new Object[] { name });
+        WorldType worldType = EnumHelper.addEnum(WorldType.class, name, new Class [] { String.class }, name);
         Map<String, WorldType> BY_NAME = ObfuscationReflectionHelper.getPrivateValue(WorldType.class, null, "BY_NAME");
         BY_NAME.put(name.toUpperCase(), worldType);
         return worldType;
@@ -143,7 +144,7 @@ public class ForgeInjectBukkit {
             String name = entity.getKey();
             String entityType = name.replace("-", "_").toUpperCase();
             int typeId = GameData.getEntityRegistry().getID(EntityRegistry.getEntry(entity.getValue()));
-            EntityType bukkitType = EnumHelper.addEnum(EntityType.class, entityType, new Class[] { String.class, Class.class, Integer.TYPE, Boolean.TYPE }, new Object[] { name, CraftCustomEntity.class, typeId, false });
+            EntityType bukkitType = EnumHelper.addEnum(EntityType.class, entityType, new Class[] { String.class, Class.class, Integer.TYPE, Boolean.TYPE }, name, CraftCustomEntity.class, typeId, false);
 
             NAME_MAP.put(name.toLowerCase(), bukkitType);
             ID_MAP.put((short)typeId, bukkitType);
