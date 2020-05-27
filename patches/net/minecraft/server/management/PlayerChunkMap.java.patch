@@ -31,7 +31,15 @@
  
  public class PlayerChunkMap
  {
-@@ -52,7 +57,7 @@
+@@ -45,6 +50,7 @@
+     private final List<PlayerChunkMapEntry> entriesWithoutChunks = Lists.<PlayerChunkMapEntry>newLinkedList();
+     private final List<PlayerChunkMapEntry> entries = Lists.<PlayerChunkMapEntry>newArrayList();
+     private int playerViewRadius;
++    public int getViewDistance() { return playerViewRadius; } // Paper OBFHELPER
+     private long previousTotalWorldTime;
+     private boolean sortMissingChunks = true;
+     private boolean sortSendToPlayers = true;
+@@ -52,7 +58,7 @@
      public PlayerChunkMap(WorldServer serverWorld)
      {
          this.world = serverWorld;
@@ -40,7 +48,7 @@
      }
  
      public WorldServer getWorldServer()
-@@ -109,6 +114,7 @@
+@@ -109,6 +115,7 @@
  
          if (i - this.previousTotalWorldTime > 8000L)
          {
@@ -48,7 +56,7 @@
              this.previousTotalWorldTime = i;
  
              for (int j = 0; j < this.entries.size(); ++j)
-@@ -117,21 +123,25 @@
+@@ -117,21 +124,25 @@
                  playerchunkmapentry.update();
                  playerchunkmapentry.updateChunkInhabitedTime();
              }
@@ -74,7 +82,7 @@
              Collections.sort(this.entriesWithoutChunks, new Comparator<PlayerChunkMapEntry>()
              {
                  public int compare(PlayerChunkMapEntry p_compare_1_, PlayerChunkMapEntry p_compare_2_)
-@@ -139,11 +149,13 @@
+@@ -139,11 +150,13 @@
                      return ComparisonChain.start().compare(p_compare_1_.getClosestPlayerDistance(), p_compare_2_.getClosestPlayerDistance()).result();
                  }
              });
@@ -88,7 +96,7 @@
              Collections.sort(this.pendingSendToPlayers, new Comparator<PlayerChunkMapEntry>()
              {
                  public int compare(PlayerChunkMapEntry p_compare_1_, PlayerChunkMapEntry p_compare_2_)
-@@ -151,10 +163,12 @@
+@@ -151,10 +164,12 @@
                      return ComparisonChain.start().compare(p_compare_1_.getClosestPlayerDistance(), p_compare_2_.getClosestPlayerDistance()).result();
                  }
              });
@@ -101,7 +109,7 @@
              long l = System.nanoTime() + 50000000L;
              int k = 49;
              Iterator<PlayerChunkMapEntry> iterator = this.entriesWithoutChunks.iterator();
-@@ -183,13 +197,18 @@
+@@ -183,13 +198,18 @@
                              break;
                          }
                      }
@@ -120,7 +128,7 @@
              Iterator<PlayerChunkMapEntry> iterator1 = this.pendingSendToPlayers.iterator();
  
              while (iterator1.hasNext())
-@@ -207,16 +226,19 @@
+@@ -207,16 +227,19 @@
                      }
                  }
              }
@@ -141,7 +149,7 @@
          }
      }
  
-@@ -257,6 +279,16 @@
+@@ -257,6 +280,16 @@
          return playerchunkmapentry;
      }
  
@@ -158,18 +166,23 @@
      public void markBlockForUpdate(BlockPos pos)
      {
          int i = pos.getX() >> 4;
-@@ -276,14 +308,23 @@
+@@ -276,14 +309,26 @@
          player.managedPosX = player.posX;
          player.managedPosZ = player.posZ;
  
+-        for (int k = i - this.playerViewRadius; k <= i + this.playerViewRadius; ++k)
 +        // CraftBukkit start - Load nearby chunks first
 +        List<ChunkPos> chunkList = new LinkedList<>();
 +
-         for (int k = i - this.playerViewRadius; k <= i + this.playerViewRadius; ++k)
++        // Paper start - Player view distance API
++        int viewDistance = player.getViewDistance();
++        for (int k = i - viewDistance; k <= i + viewDistance; ++k)
          {
-             for (int l = j - this.playerViewRadius; l <= j + this.playerViewRadius; ++l)
+-            for (int l = j - this.playerViewRadius; l <= j + this.playerViewRadius; ++l)
++            for (int l = j - viewDistance; l <= j + viewDistance; ++l)
              {
 -                this.getOrCreateEntry(k, l).addPlayer(player);
++                // Paper end
 +                chunkList.add(new ChunkPos(k, l));
              }
          }
@@ -183,7 +196,29 @@
          this.players.add(player);
          this.markSortPending();
      }
-@@ -341,6 +382,8 @@
+@@ -293,10 +338,13 @@
+         int i = (int)player.managedPosX >> 4;
+         int j = (int)player.managedPosZ >> 4;
+ 
+-        for (int k = i - this.playerViewRadius; k <= i + this.playerViewRadius; ++k)
++        // Paper start - Player view distance API
++        int viewDistance = player.getViewDistance();
++        for (int k = i - viewDistance; k <= i + viewDistance; ++k)
+         {
+-            for (int l = j - this.playerViewRadius; l <= j + this.playerViewRadius; ++l)
++            for (int l = j - viewDistance; l <= j + viewDistance; ++l)
+             {
++                // Paper end
+                 PlayerChunkMapEntry playerchunkmapentry = this.getEntry(k, l);
+ 
+                 if (playerchunkmapentry != null)
+@@ -337,19 +385,23 @@
+         {
+             int k = (int)player.managedPosX >> 4;
+             int l = (int)player.managedPosZ >> 4;
+-            int i1 = this.playerViewRadius;
++            final int viewDistance = player.getViewDistance(); // Paper - Player view distance API
++            int i1 = Math.max(getViewDistance(), viewDistance); // Paper - Player view distance API
              int j1 = i - k;
              int k1 = j - l;
  
@@ -192,9 +227,11 @@
              if (j1 != 0 || k1 != 0)
              {
                  for (int l1 = i - i1; l1 <= i + i1; ++l1)
-@@ -349,7 +392,8 @@
+                 {
+                     for (int i2 = j - i1; i2 <= j + i1; ++i2)
                      {
-                         if (!this.overlaps(l1, i2, k, l, i1))
+-                        if (!this.overlaps(l1, i2, k, l, i1))
++                        if (!this.overlaps(l1, i2, k, l, viewDistance)) // Paper - Player view distance API
                          {
 -                            this.getOrCreateEntry(l1, i2).addPlayer(player);
 +                            // this.getOrCreateEntry(l1, i2).addPlayer(player);
@@ -202,7 +239,7 @@
                          }
  
                          if (!this.overlaps(l1 - j1, i2 - k1, i, j, i1))
-@@ -367,6 +411,12 @@
+@@ -367,6 +419,12 @@
                  player.managedPosX = player.posX;
                  player.managedPosZ = player.posZ;
                  this.markSortPending();
@@ -215,15 +252,96 @@
              }
          }
      }
-@@ -424,6 +474,7 @@
-             this.markSortPending();
+@@ -377,6 +435,7 @@
+         return playerchunkmapentry != null && playerchunkmapentry.containsPlayer(player) && playerchunkmapentry.isSentToPlayers();
+     }
+ 
++    public final void setViewDistanceForAll(int viewDistance) { this.setPlayerViewRadius(viewDistance); } // Paper - OBFHELPER
+     public void setPlayerViewRadius(int radius)
+     {
+         radius = MathHelper.clamp(radius, 3, 32);
+@@ -387,43 +446,54 @@
+ 
+             for (EntityPlayerMP entityplayermp : Lists.newArrayList(this.players))
+             {
+-                int j = (int)entityplayermp.posX >> 4;
+-                int k = (int)entityplayermp.posZ >> 4;
++                this.setViewDistance(entityplayermp, radius, false); // Paper - Split, don't mark sort pending, we'll handle it after
++            }
+ 
+-                if (i > 0)
+-                {
+-                    for (int j1 = j - radius; j1 <= j + radius; ++j1)
+-                    {
+-                        for (int k1 = k - radius; k1 <= k + radius; ++k1)
+-                        {
+-                            PlayerChunkMapEntry playerchunkmapentry = this.getOrCreateEntry(j1, k1);
++            this.playerViewRadius = radius;
++            this.markSortPending();
++        }
++    }
+ 
+-                            if (!playerchunkmapentry.containsPlayer(entityplayermp))
+-                            {
+-                                playerchunkmapentry.addPlayer(entityplayermp);
+-                            }
++    public void setViewDistance(EntityPlayerMP entityplayer, int i)
++    {
++        this.setViewDistance(entityplayer, i, true); // Mark sort pending by default so we don't have to remember to do so all the time
++    }
++
++    public void setViewDistance(EntityPlayerMP entityplayer, int i, boolean markSort)
++    {
++        i = MathHelper.clamp(i, 3, 32);
++        int oldViewDistance = entityplayer.getViewDistance();
++        if (i != oldViewDistance){
++            int j = i - oldViewDistance;
++            int k = (int)entityplayer.posX >> 4;
++            int l = (int)entityplayer.posZ >> 4;
++            int i1;
++            int j1;
++            if (j > 0) {
++                for(i1 = k - i; i1 <= k + i; ++i1) {
++                    for(j1 = l - i; j1 <= l + i; ++j1) {
++                        PlayerChunkMapEntry playerchunk = this.getOrCreateEntry(i1, j1);
++                        if (!playerchunk.containsPlayer(entityplayer)) {
++                            playerchunk.addPlayer(entityplayer);
+                         }
+                     }
+                 }
+-                else
+-                {
+-                    for (int l = j - this.playerViewRadius; l <= j + this.playerViewRadius; ++l)
+-                    {
+-                        for (int i1 = k - this.playerViewRadius; i1 <= k + this.playerViewRadius; ++i1)
+-                        {
+-                            if (!this.overlaps(l, i1, j, k, radius))
+-                            {
+-                                this.getOrCreateEntry(l, i1).removePlayer(entityplayermp);
+-                            }
++            } else {
++                for(i1 = k - oldViewDistance; i1 <= k + oldViewDistance; ++i1) {
++                    for(j1 = l - oldViewDistance; j1 <= l + oldViewDistance; ++j1) {
++                        if (!this.overlaps(i1, j1, k, l, i)) {
++                            this.getOrCreateEntry(i1, j1).removePlayer(entityplayer);
+                         }
+                     }
+                 }
+-            }
+ 
+-            this.playerViewRadius = radius;
+-            this.markSortPending();
++                if (markSort) {
++                    this.markSortPending();
++                }
++            }
          }
      }
 +    // Paper end
  
      private void markSortPending()
      {
-@@ -456,11 +507,48 @@
+@@ -456,11 +526,73 @@
          this.dirtyEntries.remove(entry);
          this.pendingSendToPlayers.remove(entry);
          this.entriesWithoutChunks.remove(entry);
@@ -275,4 +393,29 @@
 +        }
      }
 +    // CraftBukkit end
++
++    // Paper start - Player view distance API
++    public void updateViewDistance(EntityPlayerMP player, int distanceIn) {
++        final int oldViewDistance = player.getViewDistance();
++
++        // This represents the view distance that we will set on the player
++        // It can exist as a negative value
++        int playerViewDistance = MathHelper.clamp(distanceIn, 3, 32);
++
++        // This value is the one we actually use to update the chunk map
++        // We don't ever want this to be a negative
++        int toSet = playerViewDistance;
++
++        if (distanceIn < 0) {
++            playerViewDistance = -1;
++            toSet = world.getPlayerChunkMap().getViewDistance();
++        }
++
++        if (toSet != oldViewDistance) {
++            // Order matters
++            this.setViewDistance(player, toSet);
++            player.setViewDistance(playerViewDistance);
++        }
++    }
++    // Paper end
  }

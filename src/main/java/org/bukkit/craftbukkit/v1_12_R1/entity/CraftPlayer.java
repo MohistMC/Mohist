@@ -1770,6 +1770,16 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
         return getHandle().language;
     }
 
+    @Override
+    public int getViewDistance() {
+        return getHandle().getViewDistance();
+    }
+
+    @Override
+    public void setViewDistance(int viewDistance) {
+        ((WorldServer) getHandle().world).getPlayerChunkMap().updateViewDistance(getHandle(), viewDistance);
+    }
+
     public Player.Spigot spigot() {
         return spigot;
     }

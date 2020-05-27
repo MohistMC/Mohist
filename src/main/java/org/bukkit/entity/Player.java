@@ -1450,6 +1450,20 @@ public interface Player extends HumanEntity, Conversable, CommandSender, Offline
      */
     public String getLocale();
 
+    /**
+     * Gets the view distance for this player
+     *
+     * @return the player's view distance
+     */
+    public int getViewDistance();
+
+    /**
+     * Sets the view distance for this player
+     *
+     * @param viewDistance the player's view distance
+     */
+    public void setViewDistance(int viewDistance);
+
     @Override
     Spigot spigot();
 
