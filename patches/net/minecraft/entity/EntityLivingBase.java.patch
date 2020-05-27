@@ -873,8 +873,8 @@
 +                return false;
 +            }
 +
-+            if (human && event.getDamage() > 0.0) {
-+                float damage = ISpecialArmor.ArmorProperties.applyArmor(this, (NonNullList)((EntityPlayer)this).inventory.armorInventory, damagesource, event.getDamage());
++            if (human && event.getDamage() > 0) {
++                float damage = ISpecialArmor.ArmorProperties.applyArmor(EntityLivingBase.this, ((EntityPlayer) EntityLivingBase.this).inventory.armorInventory, damagesource, event.getDamage());
 +                event.setDamage(damage);
 +            }
 +

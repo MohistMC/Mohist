@@ -722,6 +722,8 @@ public class ForgeHooks
             nbt = itemstack.getTagCompound().copy();
         }
 
+        boolean blockReplaceable = world.getBlockState(pos).getMaterial().isReplaceable();
+
         if (!(itemstack.getItem() instanceof ItemBucket)) // if not bucket
         {
             world.captureBlockSnapshots = true;
@@ -736,13 +738,14 @@ public class ForgeHooks
 
         EnumActionResult ret = itemstack.getItem().onItemUse(player, world, pos, hand, side, hitX, hitY, hitZ);
         world.captureBlockSnapshots = false;
-        List<BlockState> blocks = new ArrayList();
-        for (net.minecraftforge.common.util.BlockSnapshot snapshot : (List<net.minecraftforge.common.util.BlockSnapshot>) world.capturedBlockSnapshots.clone()) {
-            blocks.add(new CraftBlockState(snapshot));
-        }
 
-		int newCount = itemstack.getCount();
+        int newCount = itemstack.getCount();
         if (ret == EnumActionResult.SUCCESS && world.captureTreeGeneration && world.capturedBlockSnapshots.size() > 0) {
+            List<BlockState> blocks = new ArrayList();
+            for (net.minecraftforge.common.util.BlockSnapshot snapshot : world.capturedBlockSnapshots) {
+                blocks.add(new CraftBlockState(snapshot));
+            }
+
             world.captureTreeGeneration = false;
             Location location = new Location(world.getWorld(), pos.getX(), pos.getY(), pos.getZ());
             TreeType treeType = BlockSapling.treeType;
@@ -840,7 +843,7 @@ public class ForgeHooks
 
                 if (itemstack.item == Items.SKULL) {
                     BlockPos bp = pos;
-                    if (!world.getBlockState(pos).getMaterial().isReplaceable()) {
+                    if (!blockReplaceable) {
                         if (!world.getBlockState(pos).getMaterial().isSolid()) {
                             bp = null;
                         } else {
@@ -859,18 +862,6 @@ public class ForgeHooks
         world.capturedBlockSnapshots.clear();
 
         return ret;
-    }
-
-    private static BlockState toBlockState(World world, BlockSnapshot blockSnapshot) {
-        return new CraftBlockState(world.getWorld().getBlockAt(blockSnapshot.getPos().getX(), blockSnapshot.getPos().getY(), blockSnapshot.getPos().getZ()), blockSnapshot.getFlag());
-    }
-
-    public static List<BlockState> toBlockStates(World world, List<BlockSnapshot> blockSnapshots) {
-        List<BlockState> blockStates = new ArrayList<>(blockSnapshots.size());
-        for (BlockSnapshot blockSnapshot : blockSnapshots) {
-            blockStates.add(new CraftBlockState(world.getWorld().getBlockAt(blockSnapshot.getPos().getX(), blockSnapshot.getPos().getY(), blockSnapshot.getPos().getZ()), blockSnapshot.getFlag()));
-        }
-        return blockStates;
     }
 
     public static boolean onAnvilChange(ContainerRepair container, @Nonnull ItemStack left, @Nonnull ItemStack right, IInventory outputSlot, String name, int baseCost)
