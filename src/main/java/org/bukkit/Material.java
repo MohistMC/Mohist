@@ -644,7 +644,14 @@ public enum Material {
         if (result == null) {
             // Cauldron start - extract to normalizeName()
             String filtered = normalizeName(name);
-            result = BY_NAME.get(filtered);
+            // Mohist - use BLOCK_BY_NAME to get blocks of mods
+            if (BLOCK_BY_NAME.containsKey(filtered))
+            {
+                result = BLOCK_BY_NAME.get(filtered);
+            } else {
+                result = BY_NAME.get(filtered);
+            }
+
             // Cauldron end
         }
 
