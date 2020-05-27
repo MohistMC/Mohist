@@ -426,7 +426,7 @@
              {
 +                CraftWorld world = ((WorldServer) this).getWorld();
 +                if (world != null) {
-+                    BlockPhysicsEvent event = new BlockPhysicsEvent(world.getBlockAt(pos.getX(), pos.getY(), pos.getZ()), CraftMagicNumbers.getId(blockIn));
++                    BlockPhysicsEvent event = new BlockPhysicsEvent(world.getBlockAt(pos.getX(), pos.getY(), pos.getZ()), CraftMagicNumbers.getId(blockIn), fromPos.getX(), fromPos.getY(), fromPos.getZ()); // Paper - add source block
 +                    this.getServer().getPluginManager().callEvent(event);
 +
 +                    if (event.isCancelled()) {
