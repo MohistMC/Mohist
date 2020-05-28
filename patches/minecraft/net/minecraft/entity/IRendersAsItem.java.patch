@@ -1,0 +1,11 @@
+--- a/net/minecraft/entity/IRendersAsItem.java
++++ b/net/minecraft/entity/IRendersAsItem.java
+@@ -4,7 +4,7 @@
+ import net.minecraftforge.api.distmarker.Dist;
+ import net.minecraftforge.api.distmarker.OnlyIn;
+ 
+-@OnlyIn(Dist.CLIENT)
++//@OnlyIn(Dist.CLIENT)
+ public interface IRendersAsItem {
+    ItemStack func_184543_l();
+ }
