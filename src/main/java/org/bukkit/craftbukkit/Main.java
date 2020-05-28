@@ -18,10 +18,15 @@ public class Main {
     public static boolean useJline = true;
     public static boolean useConsole = true;
 
-    public static void main(String[] args) {
+    public static OptionSet main(String[] args) {
         // Todo: Installation script
         OptionParser parser = new OptionParser() {
             {
+                acceptsAll(asList("gameDir"))
+                        .withRequiredArg()
+                        .ofType(File.class)
+                        .defaultsTo(new File(".")); //Forge: Consume this argument, we use it in the launcher,
+
                 acceptsAll(asList("?", "help"), "Show the help");
 
                 acceptsAll(asList("c", "config"), "Properties file to use")
@@ -143,13 +148,7 @@ public class Main {
             String path = new File(".").getAbsolutePath();
             if (path.contains("!") || path.contains("+")) {
                 System.err.println("Cannot run server in a directory with ! or + in the pathname. Please rename the affected folders and try again.");
-                return;
-            }
-
-            float javaVersion = Float.parseFloat(System.getProperty("java.class.version"));
-            if (javaVersion > 58.0) {
-                System.err.println("Unsupported Java detected (" + javaVersion + "). Only up to Java 13 is supported.");
-                return;
+                return null;
             }
 
             try {
@@ -176,25 +175,14 @@ public class Main {
                     useConsole = false;
                 }
 
-                if (Main.class.getPackage().getImplementationVendor() != null && System.getProperty("IReallyKnowWhatIAmDoingISwear") == null) {
-                    Date buildDate = new Date(Integer.parseInt(Main.class.getPackage().getImplementationVendor()) * 1000L);
-
-                    Calendar deadline = Calendar.getInstance();
-                    deadline.add(Calendar.DAY_OF_YEAR, -21);
-                    if (buildDate.before(deadline.getTime())) {
-                        System.err.println("*** Error, this build is outdated ***");
-                        System.err.println("*** Please download a new build as per instructions from https://www.spigotmc.org/go/outdated-spigot ***");
-                        System.err.println("*** Server will start in 20 seconds ***");
-                        Thread.sleep(TimeUnit.SECONDS.toMillis(20));
-                    }
-                }
-
                 System.out.println("Loading libraries, please wait...");
                 //MinecraftServer.main(options); //Mohist
             } catch (Throwable t) {
                 t.printStackTrace();
             }
+            return options;
         }
+        return null;
     }
 
     private static List<String> asList(String... params) {
