@@ -3,6 +3,7 @@ package org.bukkit.craftbukkit.v1_12_R1;
 import java.lang.ref.WeakReference;
 import java.util.Arrays;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.WorldServer;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.biome.BiomeProvider;
 import net.minecraft.world.chunk.NibbleArray;
@@ -24,7 +25,8 @@ public class CraftChunk implements Chunk {
         Arrays.fill(emptySkyLight, (byte) 0xFF);
     }
 
-    private final net.minecraft.world.World worldServer;
+    private final net.minecraft.world.World world;
+    private final WorldServer worldServer;
     private final int x;
     private final int z;
     private WeakReference<net.minecraft.world.chunk.Chunk> weakChunk;
@@ -32,7 +34,8 @@ public class CraftChunk implements Chunk {
     public CraftChunk(net.minecraft.world.chunk.Chunk chunk) {
         this.weakChunk = new WeakReference<>(chunk);
 
-        worldServer = getHandle().world instanceof net.minecraft.world.World ? (net.minecraft.world.World) getHandle().world : null;
+        world = getHandle().world;
+        worldServer = world instanceof WorldServer ? (WorldServer) world : null;
         x = getHandle().x;
         z = getHandle().z;
     }
@@ -108,7 +111,7 @@ public class CraftChunk implements Chunk {
     }
 
     public World getWorld() {
-        return worldServer.getWorld();
+        return world.getWorld();
     }
 
     public CraftWorld getCraftWorld() {
@@ -119,7 +122,7 @@ public class CraftChunk implements Chunk {
         net.minecraft.world.chunk.Chunk c = weakChunk.get();
 
         if (c == null) {
-            c = worldServer.getChunkFromChunkCoords(x, z);
+            c = world.getChunkFromChunkCoords(x, z);
 
             weakChunk = new WeakReference<>(c);
         }
@@ -183,7 +186,7 @@ public class CraftChunk implements Chunk {
                 continue;
             }
 
-            entities[index++] = worldServer.getWorld().getBlockAt(pos.getX(), pos.getY(), pos.getZ()).getState();
+            entities[index++] = world.getWorld().getBlockAt(pos.getX(), pos.getY(), pos.getZ()).getState();
         }
 
         return entities;
@@ -208,7 +211,7 @@ public class CraftChunk implements Chunk {
     @Override
     public boolean isSlimeChunk() {
         // 987234911L is deterimined in EntitySlime when seeing if a slime can spawn in a chunk
-        return getHandle().getRandomWithSeed(987234911L).nextInt(10) == 0;
+        return getHandle().getRandomWithSeed(world.spigotConfig.slimeSeed).nextInt(10) == 0;
     }
 
     public boolean unload(boolean save) {
