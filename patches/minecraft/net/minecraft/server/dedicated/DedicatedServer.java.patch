@@ -168,7 +168,7 @@
           long i = Util.func_211178_c();
           String s = serverproperties.field_219022_p;
           String s1 = serverproperties.field_219024_r;
-@@ -196,18 +264,25 @@
+@@ -196,18 +264,27 @@
           SkullTileEntity.func_184293_a(this.func_152358_ax());
           SkullTileEntity.func_184294_a(this.func_147130_as());
           PlayerProfileCache.func_187320_a(this.func_71266_T());
@@ -179,12 +179,14 @@
              jsonobject.addProperty("flat_world_options", s1);
           } else if (!s1.isEmpty()) {
 -            jsonobject = JSONUtils.func_212745_a(s1);
++            // CraftBukkit start
 +            try {
 +               jsonobject = JSONUtils.func_212745_a(s1);
 +            }
 +            catch (Exception ex) {
 +               DedicatedServer.field_155771_h.warn("Invalid generator-settings, ignoring", ex);
 +            }
++            // CraftBukkit end
           }
  
           this.func_71247_a(this.func_71270_I(), this.func_71270_I(), j, worldtype, jsonobject);
@@ -195,7 +197,7 @@
           if (serverproperties.field_219027_u != null) {
              this.func_200252_aR().func_223585_a(GameRules.field_223620_w).func_223570_a(serverproperties.field_219027_u, this);
           }
-@@ -222,6 +297,7 @@
+@@ -222,6 +299,7 @@
              field_155771_h.info("Starting remote control listener");
              this.field_71339_n = new MainThread(this);
              this.field_71339_n.func_72602_a();
@@ -203,7 +205,7 @@
           }
  
           if (this.func_175593_aQ() > 0L) {
-@@ -233,7 +309,8 @@
+@@ -233,7 +311,8 @@
           }
  
           Items.field_190931_a.func_150895_a(ItemGroup.field_78027_g, NonNullList.func_191196_a());
@@ -213,7 +215,7 @@
        }
     }
  
-@@ -316,7 +393,7 @@
+@@ -316,7 +395,7 @@
        if (this.field_71342_m != null) {
           this.field_71342_m.func_219591_b();
        }
@@ -222,11 +224,12 @@
     }
  
     public void func_71190_q(BooleanSupplier p_71190_1_) {
-@@ -345,7 +422,13 @@
+@@ -345,7 +424,15 @@
     public void func_71333_ah() {
        while(!this.field_71341_l.isEmpty()) {
           PendingCommand pendingcommand = this.field_71341_l.remove(0);
 -         this.func_195571_aL().func_197059_a(pendingcommand.field_73701_b, pendingcommand.field_73702_a);
++         // CraftBukkit start - ServerCommand for preprocessing
 +         ServerCommandEvent event = new ServerCommandEvent(this.console, pendingcommand.field_73702_a);
 +         this.server.getPluginManager().callEvent(event);
 +         if (event.isCancelled()) {
@@ -234,10 +237,11 @@
 +         }
 +         pendingcommand = new PendingCommand(event.getCommand(), pendingcommand.field_73701_b);
 +         this.server.dispatchServerCommand(this.console, pendingcommand);
++         // CraftBukkit end
        }
  
     }
-@@ -522,13 +605,39 @@
+@@ -522,13 +609,39 @@
     }
  
     public String func_71258_A() {
@@ -279,7 +283,7 @@
        });
        return this.field_184115_n.func_70008_c();
     }
-@@ -547,4 +656,21 @@
+@@ -547,4 +660,21 @@
     public boolean func_213199_b(GameProfile p_213199_1_) {
        return false;
     }

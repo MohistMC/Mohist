@@ -28,12 +28,13 @@
  import joptsimple.OptionParser;
  import joptsimple.OptionSet;
  import joptsimple.OptionSpec;
-@@ -137,25 +139,28 @@
+@@ -137,25 +139,29 @@
  import org.apache.commons.lang3.Validate;
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
 +import org.bukkit.Bukkit;
 +import org.bukkit.craftbukkit.CraftServer;
++import org.bukkit.craftbukkit.Main;
 +import org.bukkit.event.world.WorldLoadEvent;
  
  public abstract class MinecraftServer extends RecursiveEventLoop<TickDelayedTask> implements ISnooperInfo, ICommandSource, AutoCloseable, Runnable {
@@ -63,7 +64,7 @@
     private PlayerList field_71318_t;
     private volatile boolean field_71317_u = true;
     private boolean field_71316_v;
-@@ -196,7 +201,7 @@
+@@ -196,7 +202,7 @@
     private final GameProfileRepository field_152365_W;
     private final PlayerProfileCache field_152366_X;
     private long field_147142_T;
@@ -72,7 +73,7 @@
        p_213187_0_.setUncaughtExceptionHandler((p_213206_0_, p_213206_1_) -> {
           field_147145_h.error(p_213206_1_);
        });
-@@ -210,7 +215,7 @@
+@@ -210,7 +216,7 @@
     private final ResourcePackList<ResourcePackInfo> field_195577_ad = new ResourcePackList<>(ResourcePackInfo::new);
     @Nullable
     private FolderPackFinder field_195578_ae;
@@ -81,7 +82,7 @@
     private final RecipeManager field_199530_ag = new RecipeManager();
     private final NetworkTagManager field_199736_ah = new NetworkTagManager();
     private final ServerScoreboard field_200255_ai = new ServerScoreboard(this);
-@@ -221,34 +226,49 @@
+@@ -221,37 +227,77 @@
     private final LootTableManager field_200256_aj = new LootTableManager(this.field_229734_an_);
     private final AdvancementManager field_200257_ak = new AdvancementManager();
     private final FunctionManager field_200258_al = new FunctionManager(this);
@@ -136,8 +137,36 @@
 +      field_195576_ac.func_219534_a(lootManager);
        this.field_213217_au = Util.func_215072_e();
        this.field_71294_K = p_i50590_10_;
++      // CraftBukkit start
++      this.options = options;
++      // Try to see if we're actually running in a terminal, disable jline if not
++      if (System.console() == null && System.getProperty("jline.terminal") == null) {
++         System.setProperty("jline.terminal", "jline.UnsupportedTerminal");
++         Main.useJline = false;
++      }
++
++      try {
++         reader = new ConsoleReader(System.in, System.out);
++         reader.setExpandEvents(false); // Avoid parsing exceptions for uncommonly used event designators
++      } catch (Throwable e) {
++         try {
++            // Try again with jline disabled for Windows users without C++ 2008 Redistributable
++            System.setProperty("jline.terminal", "jline.UnsupportedTerminal");
++            System.setProperty("user.language", "en");
++            Main.useJline = false;
++            reader = new ConsoleReader(System.in, System.out);
++            reader.setExpandEvents(false);
++         } catch (IOException ex) {
++            field_147145_h.warn((String) null, ex);
++         }
++      }
++      Runtime.getRuntime().addShutdownHook(new org.bukkit.craftbukkit.util.ServerShutdownThread(this));
     }
-@@ -261,7 +281,7 @@
++   // CraftBukkit end
+ 
+    private void func_213204_a(DimensionSavedDataManager p_213204_1_) {
+       ScoreboardSaveData scoreboardsavedata = p_213204_1_.func_215752_a(ScoreboardSaveData::new, "scoreboard");
+@@ -261,7 +307,7 @@
  
     protected abstract boolean func_71197_b() throws IOException;
  
@@ -146,7 +175,7 @@
        if (this.func_71254_M().func_75801_b(p_71237_1_)) {
           field_147145_h.info("Converting map!");
           this.func_200245_b(new TranslationTextComponent("menu.convertingLevel"));
-@@ -336,6 +356,8 @@
+@@ -336,6 +382,8 @@
        this.func_200245_b(new TranslationTextComponent("menu.loadingLevel"));
        SaveHandler savehandler = this.func_71254_M().func_197715_a(p_71247_1_, this);
        this.func_175584_a(this.func_71270_I(), savehandler);
@@ -155,7 +184,7 @@
        WorldInfo worldinfo = savehandler.func_75757_d();
        WorldSettings worldsettings;
        if (worldinfo == null) {
-@@ -357,13 +379,16 @@
+@@ -357,13 +405,16 @@
  
        worldinfo.func_230145_a_(this.getServerModName(), this.func_230045_q_().isPresent());
        this.func_195560_a(savehandler.func_75765_b(), worldinfo);
@@ -174,7 +203,7 @@
        if (this.func_71242_L()) {
           p_213194_2_.func_176127_a(field_213219_c);
        }
-@@ -407,6 +432,7 @@
+@@ -407,6 +458,7 @@
           if (dimensiontype != DimensionType.field_223227_a_) {
              this.field_71305_c.put(dimensiontype, new ServerMultiWorld(serverworld1, this, this.field_213217_au, p_213194_1_, dimensiontype, this.field_71304_b, p_213194_4_));
           }
@@ -182,7 +211,7 @@
        }
  
     }
-@@ -446,7 +472,7 @@
+@@ -446,7 +498,7 @@
        this.func_229737_ba_();
     }
  
@@ -191,7 +220,7 @@
        this.func_200245_b(new TranslationTextComponent("menu.generatingTerrain"));
        ServerWorld serverworld = this.func_71218_a(DimensionType.field_223227_a_);
        field_147145_h.info("Preparing start region for dimension " + DimensionType.func_212678_a(serverworld.field_73011_w.func_186058_p()));
-@@ -540,8 +566,27 @@
+@@ -540,8 +592,27 @@
        this.func_71260_j();
     }
  
@@ -219,7 +248,7 @@
        if (this.func_147137_ag() != null) {
           this.func_147137_ag().func_151268_b();
        }
-@@ -565,6 +610,7 @@
+@@ -565,6 +636,7 @@
        for(ServerWorld serverworld1 : this.func_212370_w()) {
           if (serverworld1 != null) {
              try {
@@ -227,7 +256,7 @@
                 serverworld1.close();
              } catch (IOException ioexception) {
                 field_147145_h.error("Exception closing the level", (Throwable)ioexception);
-@@ -605,6 +651,7 @@
+@@ -605,6 +677,7 @@
     public void run() {
        try {
           if (this.func_71197_b()) {
@@ -235,7 +264,7 @@
              this.field_211151_aa = Util.func_211177_b();
              this.field_147147_p.func_151315_a(new StringTextComponent(this.field_71286_C));
              this.field_147147_p.func_151321_a(new ServerStatusResponse.Version(SharedConstants.func_215069_a().getName(), SharedConstants.func_215069_a().getProtocolVersion()));
-@@ -636,9 +683,15 @@
+@@ -636,9 +709,15 @@
                 this.field_71304_b.func_219897_b();
                 this.field_71296_Q = true;
              }
@@ -251,7 +280,7 @@
        } catch (Throwable throwable1) {
           field_147145_h.error("Encountered an unexpected exception", throwable1);
           CrashReport crashreport;
-@@ -655,6 +708,7 @@
+@@ -655,6 +734,7 @@
              field_147145_h.error("We were unable to save this crash report to disk.");
           }
  
@@ -259,7 +288,7 @@
           this.func_71228_a(crashreport);
        } finally {
           try {
-@@ -663,6 +717,7 @@
+@@ -663,6 +743,7 @@
           } catch (Throwable throwable) {
              field_147145_h.error("Exception stopping the server", throwable);
           } finally {
@@ -267,7 +296,7 @@
              this.func_71240_o();
           }
  
-@@ -764,6 +819,7 @@
+@@ -764,6 +845,7 @@
  
     protected void func_71217_p(BooleanSupplier p_71217_1_) {
        long i = Util.func_211178_c();
@@ -275,7 +304,7 @@
        ++this.field_71315_w;
        this.func_71190_q(p_71217_1_);
        if (i - this.field_147142_T >= 5000000000L) {
-@@ -778,6 +834,7 @@
+@@ -778,6 +860,7 @@
  
           Collections.shuffle(Arrays.asList(agameprofile));
           this.field_147147_p.func_151318_b().func_151330_a(agameprofile);
@@ -283,7 +312,7 @@
        }
  
        if (this.field_71315_w % 6000 == 0) {
-@@ -805,6 +862,7 @@
+@@ -805,6 +888,7 @@
        long i1 = Util.func_211178_c();
        this.field_213215_ap.func_181747_a(i1 - i);
        this.field_71304_b.func_76319_b();
@@ -291,7 +320,7 @@
     }
  
     protected void func_71190_q(BooleanSupplier p_71190_1_) {
-@@ -812,7 +870,8 @@
+@@ -812,7 +896,8 @@
        this.func_193030_aL().func_73660_a();
        this.field_71304_b.func_219895_b("levels");
  
@@ -301,7 +330,7 @@
           if (serverworld.field_73011_w.func_186058_p() == DimensionType.field_223227_a_ || this.func_71255_r()) {
              this.field_71304_b.func_194340_a(() -> {
                 return serverworld.func_72912_H().func_76065_j() + " " + Registry.field_212622_k.func_177774_c(serverworld.field_73011_w.func_186058_p());
-@@ -824,6 +883,7 @@
+@@ -824,6 +909,7 @@
              }
  
              this.field_71304_b.func_76320_a("tick");
@@ -309,7 +338,7 @@
  
              try {
                 serverworld.func_72835_b(p_71190_1_);
-@@ -832,12 +892,16 @@
+@@ -832,12 +918,16 @@
                 serverworld.func_72914_a(crashreport);
                 throw new ReportedException(crashreport);
              }
@@ -326,7 +355,7 @@
        this.field_71304_b.func_219895_b("connection");
        this.func_147137_ag().func_151269_c();
        this.field_71304_b.func_219895_b("players");
-@@ -878,6 +942,7 @@
+@@ -878,6 +968,7 @@
        OptionSpec<Integer> optionspec10 = optionparser.accepts("port").withRequiredArg().ofType(Integer.class).defaultsTo(-1);
        OptionSpec<String> optionspec11 = optionparser.accepts("serverId").withRequiredArg();
        OptionSpec<String> optionspec12 = optionparser.nonOptions();
@@ -334,7 +363,7 @@
  
        try {
           OptionSet optionset = optionparser.parse(p_main_0_);
-@@ -885,10 +950,9 @@
+@@ -885,10 +976,9 @@
              optionparser.printHelpOn(System.err);
              return;
           }
@@ -346,7 +375,7 @@
           Path path1 = Paths.get("eula.txt");
           ServerEula servereula = new ServerEula(path1);
           if (optionset.has(optionspec1)) {
-@@ -910,7 +974,11 @@
+@@ -910,7 +1000,11 @@
           GameProfileRepository gameprofilerepository = yggdrasilauthenticationservice.createProfileRepository();
           PlayerProfileCache playerprofilecache = new PlayerProfileCache(gameprofilerepository, new File(s, field_152367_a.getName()));
           String s1 = Optional.ofNullable(optionset.valueOf(optionspec9)).orElse(serverpropertiesprovider.func_219034_a().field_219021_o);
@@ -359,7 +388,7 @@
           dedicatedserver.func_71224_l(optionset.valueOf(optionspec7));
           dedicatedserver.func_71208_b(optionset.valueOf(optionspec10));
           dedicatedserver.func_71204_b(optionset.has(optionspec2));
-@@ -927,6 +995,7 @@
+@@ -927,6 +1021,7 @@
           Thread thread = new Thread("Server Shutdown Thread") {
              public void run() {
                 dedicatedserver.func_71263_m(true);
@@ -367,7 +396,7 @@
              }
           };
           thread.setUncaughtExceptionHandler(new DefaultUncaughtExceptionHandler(field_147145_h));
-@@ -971,7 +1040,7 @@
+@@ -971,7 +1066,7 @@
     }
  
     public ServerWorld func_71218_a(DimensionType p_71218_1_) {
@@ -376,7 +405,7 @@
     }
  
     public Iterable<ServerWorld> func_212370_w() {
-@@ -1010,7 +1079,7 @@
+@@ -1010,7 +1105,7 @@
     }
  
     public String getServerModName() {
@@ -385,7 +414,7 @@
     }
  
     public CrashReport func_71230_b(CrashReport p_71230_1_) {
-@@ -1396,6 +1465,10 @@
+@@ -1396,6 +1491,10 @@
     public FunctionManager func_193030_aL() {
        return this.field_200258_al;
     }
@@ -396,7 +425,7 @@
  
     public void func_193031_aM() {
        if (!this.func_213162_bc()) {
-@@ -1567,6 +1640,31 @@
+@@ -1567,6 +1666,31 @@
  
     public abstract boolean func_213199_b(GameProfile p_213199_1_);
  
@@ -428,7 +457,7 @@
     public void func_223711_a(Path p_223711_1_) throws IOException {
        Path path = p_223711_1_.resolve("levels");
  
-@@ -1651,4 +1749,16 @@
+@@ -1651,4 +1775,16 @@
     private void func_229737_ba_() {
        Block.field_176229_d.forEach(BlockState::func_215692_c);
     }
