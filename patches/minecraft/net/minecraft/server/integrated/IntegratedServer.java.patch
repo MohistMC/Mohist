@@ -39,7 +39,8 @@
        worldinfo.func_230145_a_(this.getServerModName(), this.func_230045_q_().isPresent());
        this.func_195560_a(savehandler.func_75765_b(), worldinfo);
 -      IChunkStatusListener ichunkstatuslistener = this.field_213220_d.create(11);
-       this.func_213194_a(savehandler, worldinfo, this.field_71350_m, ichunkstatuslistener);
+-      this.func_213194_a(savehandler, worldinfo, this.field_71350_m, ichunkstatuslistener);
++      this.func_71247_a(p_71247_1_, p_71247_2_, p_71247_3_, this.field_71350_m.func_77165_h(), this.field_71350_m.func_205391_j());
        if (this.func_71218_a(DimensionType.field_223227_a_).func_72912_H().func_176130_y() == null) {
           this.func_147139_a(this.field_71349_l.field_71474_y.field_74318_M, true);
        }

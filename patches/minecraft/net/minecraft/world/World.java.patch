@@ -44,7 +44,7 @@
  import net.minecraft.world.border.WorldBorder;
  import net.minecraft.world.chunk.AbstractChunkProvider;
  import net.minecraft.world.chunk.Chunk;
-@@ -55,20 +54,31 @@
+@@ -55,21 +54,32 @@
  import net.minecraft.world.gen.Heightmap;
  import net.minecraft.world.lighting.WorldLightManager;
  import net.minecraft.world.server.ChunkHolder;
@@ -74,10 +74,12 @@
     public final List<TileEntity> field_175730_i = Lists.newArrayList();
     protected final List<TileEntity> field_147484_a = Lists.newArrayList();
 -   protected final List<TileEntity> field_147483_b = Lists.newArrayList();
+-   private final Thread field_217407_c;
 +   protected final java.util.Set<TileEntity> field_147483_b = java.util.Collections.newSetFromMap(new java.util.IdentityHashMap<>()); // Forge: faster "contains" makes removal much more efficient
-    private final Thread field_217407_c;
++   public final Thread field_217407_c;
     private int field_73008_k;
     protected int field_73005_l = (new Random()).nextInt();
+    protected final int field_73006_m = 1013904223;
 @@ -80,14 +90,47 @@
     public final Random field_73012_v = new Random();
     public final Dimension field_73011_w;

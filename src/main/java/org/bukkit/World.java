@@ -2282,6 +2282,10 @@ public interface World extends PluginMessageRecipient, Metadatable {
             this.id = id;
         }
 
+        public static void registerEnvironment(Environment env) {
+            lookup.put(env.getId(), env);
+        }
+
         /**
          * Gets the dimension ID of this environment
          *
