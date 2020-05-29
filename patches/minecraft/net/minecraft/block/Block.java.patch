@@ -13,6 +13,15 @@
     private static final Direction[] field_212556_a = new Direction[]{Direction.WEST, Direction.EAST, Direction.NORTH, Direction.SOUTH, Direction.DOWN, Direction.UP};
     private static final LoadingCache<VoxelShape, Boolean> field_223006_b = CacheBuilder.newBuilder().maximumSize(512L).weakKeys().build(new CacheLoader<VoxelShape, Boolean>() {
        public Boolean load(VoxelShape p_load_1_) {
+@@ -90,7 +91,7 @@
+    protected final float field_149782_v;
+    protected final float field_149781_w;
+    protected final boolean field_149789_z;
+-   protected final SoundType field_149762_H;
++   public final SoundType field_149762_H;
+    protected final Material field_149764_J;
+    protected final MaterialColor field_181083_K;
+    private final float field_149765_K;
 @@ -151,7 +152,7 @@
  
     @Deprecated

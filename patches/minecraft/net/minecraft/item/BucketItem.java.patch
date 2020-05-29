@@ -30,7 +30,8 @@
 +// CraftBukkit end
  
  public class BucketItem extends Item {
-    private final Fluid field_77876_a;
+-   private final Fluid field_77876_a;
++   public final Fluid field_77876_a;
  
 +   // Forge: Use the other constructor that takes a Supplier
 +   @Deprecated
