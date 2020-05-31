@@ -42,11 +42,11 @@
 +      return this.field_70460_b;
 +   }
 +
-+   public void onOpen(final CraftHumanEntity who) {
++   public void onOpen(CraftHumanEntity who) {
 +      this.transaction.add(who);
 +   }
 +
-+   public void onClose(final CraftHumanEntity who) {
++   public void onClose(CraftHumanEntity who) {
 +      this.transaction.remove(who);
 +   }
 +

@@ -130,9 +130,9 @@
 +   }
 +
     private void func_190923_F() {
-+      if (this.field_190928_g && this == ItemStack.field_190927_a) {
-+         throw new AssertionError((Object)"TRAP"); // CraftBukkit
-+      }
++      //if (this.isEmpty && this == ItemStack.EMPTY) {
++      //  throw new AssertionError((Object)"TRAP"); // CraftBukkit
++      //}
        this.field_190928_g = false;
        this.field_190928_g = this.func_190926_b();
     }
