@@ -197,12 +197,14 @@ import org.bukkit.util.permissions.DefaultPermissions;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.SafeConstructor;
 import org.yaml.snakeyaml.error.MarkedYAMLException;
+import red.mohist.Metrics;
+import red.mohist.Mohist;
 
 public final class CraftServer implements Server {
-    private final String serverName = "CraftBukkit";
+    private final String serverName = "Mohist";
     private final String serverVersion;
     private final String bukkitVersion = Versioning.getBukkitVersion();
-    private final Logger logger = Logger.getLogger("Minecraft");
+    private final Logger logger = Logger.getLogger("CraftServer");
     private final ServicesManager servicesManager = new SimpleServicesManager();
     private final CraftScheduler scheduler = new CraftScheduler();
     private final CraftCommandMap commandMap = new CraftCommandMap(this);
@@ -249,9 +251,10 @@ public final class CraftServer implements Server {
                 return player.getBukkitEntity();
             }
         }));
-        this.serverVersion = CraftServer.class.getPackage().getImplementationVersion();
+        this.serverVersion = "git-Mohist-" + Mohist.getVersion();
 
         Bukkit.setServer(this);
+        Metrics.MohistMetrics.startMetrics();
 
         // Register all the Enchantments and PotionTypes now so we can stop new registration immediately after
         Enchantments.SHARPNESS.getClass();

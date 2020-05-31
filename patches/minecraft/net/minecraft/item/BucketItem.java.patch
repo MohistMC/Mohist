@@ -1,6 +1,15 @@
 --- a/net/minecraft/item/BucketItem.java
 +++ b/net/minecraft/item/BucketItem.java
-@@ -11,33 +11,50 @@
+@@ -1,6 +1,8 @@
+ package net.minecraft.item;
+ 
+ import javax.annotation.Nullable;
++import lombok.Getter;
++import lombok.Setter;
+ import net.minecraft.advancements.CriteriaTriggers;
+ import net.minecraft.block.BlockState;
+ import net.minecraft.block.IBucketPickupHandler;
+@@ -11,33 +13,51 @@
  import net.minecraft.fluid.FlowingFluid;
  import net.minecraft.fluid.Fluid;
  import net.minecraft.fluid.Fluids;
@@ -30,8 +39,8 @@
 +// CraftBukkit end
  
  public class BucketItem extends Item {
--   private final Fluid field_77876_a;
-+   public final Fluid field_77876_a;
++   @Getter
+    private final Fluid field_77876_a;
  
 +   // Forge: Use the other constructor that takes a Supplier
 +   @Deprecated
@@ -58,7 +67,7 @@
        if (raytraceresult.func_216346_c() == RayTraceResult.Type.MISS) {
           return ActionResult.func_226250_c_(itemstack);
        } else if (raytraceresult.func_216346_c() != RayTraceResult.Type.BLOCK) {
-@@ -51,11 +68,23 @@
+@@ -51,11 +71,23 @@
              if (this.field_77876_a == Fluids.field_204541_a) {
                 BlockState blockstate1 = p_77659_1_.func_180495_p(blockpos);
                 if (blockstate1.func_177230_c() instanceof IBucketPickupHandler) {
@@ -84,7 +93,7 @@
                       if (!p_77659_1_.field_72995_K) {
                          CriteriaTriggers.field_204813_j.func_204817_a((ServerPlayerEntity)p_77659_2_, new ItemStack(fluid.func_204524_b()));
                       }
-@@ -67,8 +96,8 @@
+@@ -67,8 +99,8 @@
                 return ActionResult.func_226251_d_(itemstack);
              } else {
                 BlockState blockstate = p_77659_1_.func_180495_p(blockpos);
@@ -95,7 +104,7 @@
                    this.func_203792_a(p_77659_1_, itemstack, blockpos2);
                    if (p_77659_2_ instanceof ServerPlayerEntity) {
                       CriteriaTriggers.field_193137_x.func_193173_a((ServerPlayerEntity)p_77659_2_, blockpos2, itemstack);
-@@ -93,62 +122,98 @@
+@@ -93,62 +125,98 @@
     public void func_203792_a(World p_203792_1_, ItemStack p_203792_2_, BlockPos p_203792_3_) {
     }
  

@@ -181,7 +181,7 @@
 +            int z = blockpos.func_177952_p();
 +            BlockState iblockdata = world.func_180495_p(blockpos);
 +            Material material = iblockdata.func_185904_a();
-+            if (world.func_175623_d(blockpos) || !material.func_76220_a() || material.func_76222_j() || (iblockdata.func_177230_c() instanceof ILiquidContainer && ((ILiquidContainer)iblockdata.func_177230_c()).func_204510_a(world, blockpos, iblockdata, bucketitem.field_77876_a))) {
++            if (world.func_175623_d(blockpos) || !material.func_76220_a() || material.func_76222_j() || (iblockdata.func_177230_c() instanceof ILiquidContainer && ((ILiquidContainer)iblockdata.func_177230_c()).func_204510_a(world, blockpos, iblockdata, bucketitem.getContainedBlock()))) {
 +               org.bukkit.block.Block block = world.getWorldCB().getBlockAt(p_82487_1_.func_180699_d().func_177958_n(), p_82487_1_.func_180699_d().func_177956_o(), p_82487_1_.func_180699_d().func_177952_p());
 +               final CraftItemStack craftItem = CraftItemStack.asCraftMirror(p_82487_2_);
 +               final BlockDispenseEvent event = new BlockDispenseEvent(block, craftItem.clone(), new Vector(x, y, z));
