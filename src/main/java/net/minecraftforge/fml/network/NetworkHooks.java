@@ -190,7 +190,7 @@ public class NetworkHooks
     {
         if (player.world.isRemote) return;
         player.closeContainer();
-        player.getNextWindowId();
+        player.nextContainerCounter();
         int openContainerId = player.currentWindowId;
         PacketBuffer extraData = new PacketBuffer(Unpooled.buffer());
         extraDataWriter.accept(extraData);

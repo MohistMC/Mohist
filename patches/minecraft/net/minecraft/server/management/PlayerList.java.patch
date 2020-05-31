@@ -639,7 +639,7 @@
     }
  
 +   // CraftBukkit start - add a world/entity limited version
-+   public void sendAll(IPacket packetIn, HumanEntity entityhuman) {
++   public void sendAll(IPacket packetIn, PlayerEntity entityhuman) {
 +      for (int i = 0; i < this.field_72404_b.size(); ++i) {
 +         ServerPlayerEntity entityplayer = this.field_72404_b.get(i);
 +         if (entityhuman != null && entityhuman instanceof ServerPlayerEntity && !entityplayer.getBukkitEntity().canSee(((ServerPlayerEntity)entityhuman).getBukkitEntity())) {

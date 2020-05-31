@@ -1,0 +1,11 @@
+--- a/net/minecraft/network/play/server/SSpawnPositionPacket.java
++++ b/net/minecraft/network/play/server/SSpawnPositionPacket.java
+@@ -9,7 +9,7 @@
+ import net.minecraftforge.api.distmarker.OnlyIn;
+ 
+ public class SSpawnPositionPacket implements IPacket<IClientPlayNetHandler> {
+-   private BlockPos field_179801_a;
++   public BlockPos field_179801_a;
+ 
+    public SSpawnPositionPacket() {
+    }

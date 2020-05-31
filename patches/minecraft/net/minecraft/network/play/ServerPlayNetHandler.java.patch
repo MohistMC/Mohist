@@ -1,20 +1,175 @@
 --- a/net/minecraft/network/play/ServerPlayNetHandler.java
 +++ b/net/minecraft/network/play/ServerPlayNetHandler.java
-@@ -131,6 +131,10 @@
+@@ -1,41 +1,53 @@
+ package net.minecraft.network.play;
+ 
++import com.google.common.base.Charsets;
+ import com.google.common.primitives.Doubles;
+ import com.google.common.primitives.Floats;
+ import com.mojang.brigadier.ParseResults;
+ import com.mojang.brigadier.StringReader;
++import com.mojang.brigadier.suggestion.Suggestions;
+ import io.netty.util.concurrent.Future;
+ import io.netty.util.concurrent.GenericFutureListener;
+ import it.unimi.dsi.fastutil.ints.Int2ShortMap;
+ import it.unimi.dsi.fastutil.ints.Int2ShortOpenHashMap;
+ import java.util.Collections;
+ import java.util.Set;
++import java.util.concurrent.ExecutionException;
++import java.util.concurrent.atomic.AtomicIntegerFieldUpdater;
++import java.util.logging.Level;
+ import javax.annotation.Nullable;
+ import net.minecraft.advancements.Advancement;
+ import net.minecraft.advancements.CriteriaTriggers;
+ import net.minecraft.block.BlockState;
+ import net.minecraft.block.Blocks;
+ import net.minecraft.block.CommandBlockBlock;
++import net.minecraft.command.CommandException;
+ import net.minecraft.command.CommandSource;
+ import net.minecraft.crash.CrashReport;
+ import net.minecraft.crash.CrashReportCategory;
+ import net.minecraft.crash.ReportedException;
+ import net.minecraft.entity.Entity;
+ import net.minecraft.entity.IJumpingMount;
++import net.minecraft.entity.LivingEntity;
++import net.minecraft.entity.MobEntity;
+ import net.minecraft.entity.MoverType;
+ import net.minecraft.entity.item.BoatEntity;
+ import net.minecraft.entity.item.ExperienceOrbEntity;
+ import net.minecraft.entity.item.ItemEntity;
++import net.minecraft.entity.passive.fish.AbstractFishEntity;
+ import net.minecraft.entity.passive.horse.AbstractHorseEntity;
+ import net.minecraft.entity.player.ChatVisibility;
+ import net.minecraft.entity.player.PlayerInventory;
+ import net.minecraft.entity.player.ServerPlayerEntity;
+ import net.minecraft.entity.projectile.AbstractArrowEntity;
++import net.minecraft.inventory.EquipmentSlotType;
+ import net.minecraft.inventory.container.BeaconContainer;
+ import net.minecraft.inventory.container.Container;
+ import net.minecraft.inventory.container.MerchantContainer;
+ import net.minecraft.inventory.container.RecipeBookContainer;
+ import net.minecraft.inventory.container.RepairContainer;
++import net.minecraft.inventory.container.Slot;
++import net.minecraft.item.Item;
+ import net.minecraft.item.ItemStack;
+ import net.minecraft.item.Items;
+ import net.minecraft.item.WritableBookItem;
+@@ -93,12 +105,16 @@
+ import net.minecraft.network.play.server.SChatPacket;
+ import net.minecraft.network.play.server.SConfirmTransactionPacket;
+ import net.minecraft.network.play.server.SDisconnectPacket;
++import net.minecraft.network.play.server.SEntityMetadataPacket;
+ import net.minecraft.network.play.server.SHeldItemChangePacket;
+ import net.minecraft.network.play.server.SKeepAlivePacket;
++import net.minecraft.network.play.server.SMountEntityPacket;
+ import net.minecraft.network.play.server.SMoveVehiclePacket;
+ import net.minecraft.network.play.server.SPlayerPositionLookPacket;
+ import net.minecraft.network.play.server.SQueryNBTResponsePacket;
+ import net.minecraft.network.play.server.SSetSlotPacket;
++import net.minecraft.network.play.server.SSpawnMobPacket;
++import net.minecraft.network.play.server.SSpawnPositionPacket;
+ import net.minecraft.network.play.server.STabCompletePacket;
+ import net.minecraft.potion.Effects;
+ import net.minecraft.server.MinecraftServer;
+@@ -118,6 +134,9 @@
+ import net.minecraft.util.Util;
+ import net.minecraft.util.math.BlockPos;
+ import net.minecraft.util.math.BlockRayTraceResult;
++import net.minecraft.util.math.MathHelper;
++import net.minecraft.util.math.RayTraceContext;
++import net.minecraft.util.math.RayTraceResult;
+ import net.minecraft.util.math.Vec3d;
+ import net.minecraft.util.text.ChatType;
+ import net.minecraft.util.text.ITextComponent;
+@@ -131,6 +150,51 @@
  import net.minecraft.world.server.ServerWorld;
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
++import org.bukkit.Bukkit;
++import org.bukkit.ChatColor;
++import org.bukkit.GameMode;
 +import org.bukkit.Location;
++import org.bukkit.craftbukkit.block.CraftSign;
 +import org.bukkit.craftbukkit.entity.CraftPlayer;
++import org.bukkit.craftbukkit.event.CraftEventFactory;
++import org.bukkit.craftbukkit.inventory.CraftItemStack;
++import org.bukkit.craftbukkit.util.CraftChatMessage;
++import org.bukkit.craftbukkit.util.CraftMagicNumbers;
++import org.bukkit.craftbukkit.util.LazyPlayerSet;
++import org.bukkit.craftbukkit.util.Waitable;
 +import org.bukkit.entity.Player;
++import org.bukkit.event.Event;
++import org.bukkit.event.block.Action;
++import org.bukkit.event.block.SignChangeEvent;
++import org.bukkit.event.inventory.ClickType;
++import org.bukkit.event.inventory.CraftItemEvent;
++import org.bukkit.event.inventory.InventoryAction;
++import org.bukkit.event.inventory.InventoryClickEvent;
++import org.bukkit.event.inventory.InventoryCreativeEvent;
++import org.bukkit.event.inventory.InventoryType;
++import org.bukkit.event.player.AsyncPlayerChatEvent;
++import org.bukkit.event.player.PlayerAnimationEvent;
++import org.bukkit.event.player.PlayerChatEvent;
++import org.bukkit.event.player.PlayerCommandPreprocessEvent;
++import org.bukkit.event.player.PlayerInteractAtEntityEvent;
++import org.bukkit.event.player.PlayerInteractEntityEvent;
++import org.bukkit.event.player.PlayerInteractEvent;
++import org.bukkit.event.player.PlayerItemHeldEvent;
++import org.bukkit.event.player.PlayerKickEvent;
++import org.bukkit.event.player.PlayerMoveEvent;
++import org.bukkit.event.player.PlayerResourcePackStatusEvent;
++import org.bukkit.event.player.PlayerSwapHandItemsEvent;
 +import org.bukkit.event.player.PlayerTeleportEvent;
++import org.bukkit.event.player.PlayerToggleFlightEvent;
++import org.bukkit.event.player.PlayerToggleSneakEvent;
++import org.bukkit.event.player.PlayerToggleSprintEvent;
++import org.bukkit.inventory.CraftingInventory;
++import org.bukkit.inventory.EquipmentSlot;
++import org.bukkit.inventory.Inventory;
++import org.bukkit.inventory.InventoryView;
++import org.bukkit.inventory.Recipe;
++import org.bukkit.util.NumberConversions;
++import org.bukkit.util.Vector;
  
  public class ServerPlayNetHandler implements IServerPlayNetHandler {
     private static final Logger field_147370_c = LogManager.getLogger();
-@@ -175,6 +179,10 @@
+@@ -141,7 +205,10 @@
+    private long field_194402_f;
+    private boolean field_194403_g;
+    private long field_194404_h;
+-   private int field_147374_l;
++   // CraftBukkit start - multithreaded fields
++   private volatile int field_147374_l;
++   private static final AtomicIntegerFieldUpdater chatSpamField = AtomicIntegerFieldUpdater.newUpdater(ServerPlayNetHandler.class, "field_147374_l");
++   // CraftBukkit end
+    private int field_147375_m;
+    private final Int2ShortMap field_147372_n = new Int2ShortOpenHashMap();
+    private double field_184349_l;
+@@ -173,8 +240,31 @@
+       p_i1530_2_.func_150719_a(this);
+       this.field_147369_b = p_i1530_3_;
        p_i1530_3_.field_71135_a = this;
++      this.cbserver = p_i1530_1_.server;
     }
  
++   private final org.bukkit.craftbukkit.CraftServer cbserver;
++   public boolean processedDisconnect;
++   private int lastTick = MinecraftServer.currentTick;
++   private int allowedPlayerTicks = 1;
++   private int lastDropTick = MinecraftServer.currentTick;
++   private int lastBookTick  = MinecraftServer.currentTick;
++   private int dropCount = 0;
++   private static final int SURVIVAL_PLACE_DISTANCE_SQUARED = 6 * 6;
++   private static final int CREATIVE_PLACE_DISTANCE_SQUARED = 7 * 7;
++
++   // Get position of last block hit for BlockDamageLevel.STOPPED
++   private double lastPosX = Double.MAX_VALUE;
++   private double lastPosY = Double.MAX_VALUE;
++   private double lastPosZ = Double.MAX_VALUE;
++   private float lastPitch = Float.MAX_VALUE;
++   private float lastYaw = Float.MAX_VALUE;
++   private boolean justTeleported = false;
++
 +   public CraftPlayer getPlayer() {
 +      return (this.field_147369_b == null) ? null : this.field_147369_b.getBukkitEntity();
 +   }
@@ -22,18 +177,105 @@
     public void func_73660_a() {
        this.func_184342_d();
        this.field_147369_b.field_70169_q = this.field_147369_b.func_226277_ct_();
-@@ -272,6 +280,10 @@
-       this.field_147367_d.func_213167_f(this.field_147371_a::func_179293_l);
+@@ -221,7 +311,7 @@
+ 
+       this.field_147367_d.func_213185_aS().func_76320_a("keepAlive");
+       long i = Util.func_211177_b();
+-      if (i - this.field_194402_f >= 15000L) {
++      if (i - this.field_194402_f >= 25000L) { // CraftBukkit
+          if (this.field_194403_g) {
+             this.func_194028_b(new TranslationTextComponent("disconnect.timeout"));
+          } else {
+@@ -233,15 +323,14 @@
+       }
+ 
+       this.field_147367_d.func_213185_aS().func_76319_b();
+-      if (this.field_147374_l > 0) {
+-         --this.field_147374_l;
+-      }
++      for (int spam; (spam = this.field_147374_l) > 0 && !chatSpamField.compareAndSet(this, spam, spam - 1); ) ;
+ 
+       if (this.field_147375_m > 0) {
+          --this.field_147375_m;
+       }
+ 
+       if (this.field_147369_b.func_154331_x() > 0L && this.field_147367_d.func_143007_ar() > 0 && Util.func_211177_b() - this.field_147369_b.func_154331_x() > (long)(this.field_147367_d.func_143007_ar() * 1000 * 60)) {
++         this.field_147369_b.func_143004_u(); // CraftBukkit - SPIGOT-854
+          this.func_194028_b(new TranslationTextComponent("multiplayer.disconnect.idling"));
+       }
+ 
+@@ -264,12 +353,32 @@
+       return this.field_147367_d.func_213199_b(this.field_147369_b.func_146103_bH());
     }
  
-+   public void disconnect(String s) {
-+
+-   public void func_194028_b(ITextComponent p_194028_1_) {
+-      this.field_147371_a.func_201058_a(new SDisconnectPacket(p_194028_1_), (p_210161_2_) -> {
+-         this.field_147371_a.func_150718_a(p_194028_1_);
+-      });
++   @Deprecated
++   public void func_194028_b(final ITextComponent p_194028_1_) {
++      this.disconnect(CraftChatMessage.fromComponent(p_194028_1_, TextFormatting.WHITE));
 +   }
 +
++   public void disconnect(String s) {
++      if (this.processedDisconnect) {
++         return;
++      }
++      String leaveMessage = TextFormatting.YELLOW + this.field_147369_b.func_195047_I_() + " left the game.";
++      PlayerKickEvent event = new PlayerKickEvent(this.cbserver.getPlayer(this.field_147369_b), s, leaveMessage);
++      if (this.field_147367_d.getServer().func_71278_l()) {
++         this.cbserver.getPluginManager().callEvent(event);
++      }
++      if (event.isCancelled()) {
++         return;
++      }
++      s = event.getReason();
++      StringTextComponent ichatbasecomponent = new StringTextComponent(s);
++      this.field_147371_a.func_201058_a(new SDisconnectPacket(ichatbasecomponent), future -> this.field_147371_a.func_150718_a(ichatbasecomponent));
++      this.func_147231_a(ichatbasecomponent);
+       this.field_147371_a.func_150721_g();
+-      this.field_147367_d.func_213167_f(this.field_147371_a::func_179293_l);
++      MinecraftServer minecraftserver = this.field_147367_d;
++      NetworkManager networkmanager = this.field_147371_a;
++      this.field_147371_a.getClass();
++      minecraftserver.func_212875_d_(networkmanager::func_179293_l);
+    }
+ 
     public void func_147358_a(CInputPacket p_147358_1_) {
-       PacketThreadUtil.func_218796_a(p_147358_1_, this, this.field_147369_b.func_71121_q());
-       this.field_147369_b.func_110430_a(p_147358_1_.func_149620_c(), p_147358_1_.func_192620_b(), p_147358_1_.func_149618_e(), p_147358_1_.func_229755_e_());
-@@ -336,9 +348,11 @@
+@@ -310,7 +419,31 @@
+             double d8 = d5 - this.field_184358_u;
+             double d9 = entity.func_213322_ci().func_189985_c();
+             double d10 = d6 * d6 + d7 * d7 + d8 * d8;
+-            if (d10 - d9 > 100.0D && !this.func_217264_d()) {
++
++            this.allowedPlayerTicks += (int)(System.currentTimeMillis() / 50L - this.lastTick);
++            this.allowedPlayerTicks = Math.max(this.allowedPlayerTicks, 1);
++            this.lastTick = (int)(System.currentTimeMillis() / 50L);
++            ++this.field_184347_F;
++            int i = this.field_184347_F - this.field_184348_G;
++            if (i > Math.max(this.allowedPlayerTicks, 5)) {
++               ServerPlayNetHandler.field_147370_c.debug(String.valueOf(this.field_147369_b.func_195047_I_()) + " is sending move packets too frequently (" + i + " packets since last tick)");
++               i = 1;
++            }
++            if (d10 > 0.0) {
++               --this.allowedPlayerTicks;
++            }
++            else {
++               this.allowedPlayerTicks = 20;
++            }
++            double speed;
++            if (this.field_147369_b.field_71075_bZ.field_75100_b) {
++               speed = this.field_147369_b.field_71075_bZ.field_75096_f * 20.0f;
++            }
++            else {
++               speed = this.field_147369_b.field_71075_bZ.field_75097_g * 10.0f;
++            }
++            speed *= 2.0;
++            if (d10 - d9 > Math.max(100.0, Math.pow(10.0f * i * speed, 2.0)) && !this.func_217264_d()) {
+                field_147370_c.warn("{} (vehicle of {}) moved too quickly! {},{},{}", entity.func_200200_C_().getString(), this.field_147369_b.func_200200_C_().getString(), d6, d7, d8);
+                this.field_147371_a.func_179290_a(new SMoveVehiclePacket(entity));
+                return;
+@@ -336,13 +469,48 @@
              }
  
              entity.func_70080_a(d3, d4, d5, f, f1);
@@ -45,9 +287,231 @@
                 this.field_147371_a.func_179290_a(new SMoveVehiclePacket(entity));
                 return;
              }
-@@ -781,19 +795,25 @@
+-
++            Player player = this.getPlayer();
++            Location from = new Location(player.getWorld(), this.lastPosX, this.lastPosY, this.lastPosZ, this.lastYaw, this.lastPitch);
++            Location to = player.getLocation().clone();
++            to.setX(p_184338_1_.func_187004_a());
++            to.setY(p_184338_1_.func_187002_b());
++            to.setZ(p_184338_1_.func_187003_c());
++            to.setYaw(p_184338_1_.func_187006_d());
++            to.setPitch(p_184338_1_.func_187005_e());
++            double delta = Math.pow(this.lastPosX - to.getX(), 2.0) + Math.pow(this.lastPosY - to.getY(), 2.0) + Math.pow(this.lastPosZ - to.getZ(), 2.0);
++            float deltaAngle = Math.abs(this.lastYaw - to.getYaw()) + Math.abs(this.lastPitch - to.getPitch());
++            if ((delta > 0.00390625 || deltaAngle > 10.0f) && !this.field_147369_b.func_70610_aX()) {
++               this.lastPosX = to.getX();
++               this.lastPosY = to.getY();
++               this.lastPosZ = to.getZ();
++               this.lastYaw = to.getYaw();
++               this.lastPitch = to.getPitch();
++               if (from.getX() != Double.MAX_VALUE) {
++                  Location oldTo = to.clone();
++                  PlayerMoveEvent event = new PlayerMoveEvent(player, from, to);
++                  this.cbserver.getPluginManager().callEvent(event);
++                  if (event.isCancelled()) {
++                     this.teleport(from);
++                     return;
++                  }
++                  if (!oldTo.equals(event.getTo()) && !event.isCancelled()) {
++                     this.field_147369_b.getBukkitEntity().teleport(event.getTo(), PlayerTeleportEvent.TeleportCause.PLUGIN);
++                     return;
++                  }
++                  if (!from.equals(this.getPlayer().getLocation()) && this.justTeleported) {
++                     this.justTeleported = false;
++                     return;
++                  }
++               }
++            }
+             this.field_147369_b.func_71121_q().func_72863_F().func_217221_a(this.field_147369_b);
+             this.field_147369_b.func_71000_j(this.field_147369_b.func_226277_ct_() - d0, this.field_147369_b.func_226278_cu_() - d1, this.field_147369_b.func_226281_cx_() - d2);
+             this.field_184345_D = d7 >= -0.03125D && !this.field_147367_d.func_71231_X() && !serverworld.func_72829_c(entity.func_174813_aQ().func_186662_g(0.0625D).func_72321_a(0.0D, -0.55D, 0.0D));
+@@ -356,7 +524,7 @@
+ 
+    public void func_184339_a(CConfirmTeleportPacket p_184339_1_) {
+       PacketThreadUtil.func_218796_a(p_184339_1_, this, this.field_147369_b.func_71121_q());
+-      if (p_184339_1_.func_186987_a() == this.field_184363_z) {
++      if (p_184339_1_.func_186987_a() == this.field_184363_z && this.field_184362_y != null) {
+          this.field_147369_b.func_70080_a(this.field_184362_y.field_72450_a, this.field_184362_y.field_72448_b, this.field_184362_y.field_72449_c, this.field_147369_b.field_70177_z, this.field_147369_b.field_70125_A);
+          this.field_184352_o = this.field_184362_y.field_72450_a;
+          this.field_184353_p = this.field_184362_y.field_72448_b;
+@@ -366,6 +534,7 @@
+          }
+ 
+          this.field_184362_y = null;
++         this.field_147369_b.func_71121_q().func_72863_F().func_217221_a(this.field_147369_b);
+       }
+ 
+    }
+@@ -401,6 +570,10 @@
+ 
+    public void func_195518_a(CTabCompletePacket p_195518_1_) {
+       PacketThreadUtil.func_218796_a(p_195518_1_, this, this.field_147369_b.func_71121_q());
++      if (ServerPlayNetHandler.chatSpamField.addAndGet(this, 1) > 500 && !this.field_147367_d.func_184103_al().func_152596_g(this.field_147369_b.func_146103_bH())) {
++         this.func_194028_b(new TranslationTextComponent("disconnect.spam", new Object[0]));
++         return;
++      }
+       StringReader stringreader = new StringReader(p_195518_1_.func_197707_b());
+       if (stringreader.canRead() && stringreader.peek() == '/') {
+          stringreader.skip();
+@@ -408,6 +581,7 @@
+ 
+       ParseResults<CommandSource> parseresults = this.field_147367_d.func_195571_aL().func_197054_a().parse(stringreader, this.field_147369_b.func_195051_bN());
+       this.field_147367_d.func_195571_aL().func_197054_a().getCompletionSuggestions(parseresults).thenAccept((p_195519_2_) -> {
++         if ( p_195519_2_.isEmpty()) return; // CraftBukkit - don't send through empty suggestions - prevents [<args>] from showing for plugins with nothing more to offer
+          this.field_147371_a.func_179290_a(new STabCompletePacket(p_195518_1_.func_197709_a(), p_195519_2_));
+       });
+    }
+@@ -598,6 +772,7 @@
+       Container container = this.field_147369_b.field_71070_bA;
+       if (container instanceof MerchantContainer) {
+          MerchantContainer merchantcontainer = (MerchantContainer)container;
++         CraftEventFactory.callTradeSelectEvent(this.field_147369_b, i, merchantcontainer);
+          merchantcontainer.func_75175_c(i);
+          merchantcontainer.func_217046_g(i);
+       }
+@@ -606,6 +781,12 @@
+ 
+    public void func_210156_a(CEditBookPacket p_210156_1_) {
+       PacketThreadUtil.func_218796_a(p_210156_1_, this, this.field_147369_b.func_71121_q());
++      if (this.lastBookTick + 20 > MinecraftServer.currentTick) {
++         this.disconnect("Book edited too quickly!");
++         return;
++      }
++      this.lastBookTick = MinecraftServer.currentTick;
++      EquipmentSlotType enumitemslot = (p_210156_1_.func_212644_d() == Hand.MAIN_HAND) ? EquipmentSlotType.MAINHAND : EquipmentSlotType.OFFHAND;
+       ItemStack itemstack = p_210156_1_.func_210346_a();
+       if (!itemstack.func_190926_b()) {
+          if (WritableBookItem.func_150930_a(itemstack.func_77978_p())) {
+@@ -630,9 +811,11 @@
+                   }
+ 
+                   itemstack2.func_77983_a("pages", listnbt);
+-                  this.field_147369_b.func_184611_a(p_210156_1_.func_212644_d(), itemstack2);
++                  this.field_147369_b.func_184611_a(p_210156_1_.func_212644_d(), CraftEventFactory.handleEditBookEvent(field_147369_b, enumitemslot, itemstack1, itemstack2)); // CraftBukkit
+                } else {
++                  ItemStack old = itemstack1.func_77946_l(); // CraftBukkit
+                   itemstack1.func_77983_a("pages", itemstack.func_77978_p().func_150295_c("pages", 8));
++                  CraftEventFactory.handleEditBookEvent(field_147369_b, enumitemslot, old, itemstack1); // CraftBukkit
+                }
+             }
+ 
+@@ -667,7 +850,7 @@
+          this.func_194028_b(new TranslationTextComponent("multiplayer.disconnect.invalid_player_movement"));
+       } else {
+          ServerWorld serverworld = this.field_147367_d.func_71218_a(this.field_147369_b.field_71093_bK);
+-         if (!this.field_147369_b.field_71136_j) {
++         if (!this.field_147369_b.field_71136_j && !this.field_147369_b.func_70610_aX()) {
+             if (this.field_147368_e == 0) {
+                this.func_184342_d();
+             }
+@@ -677,13 +860,18 @@
+                   this.field_184343_A = this.field_147368_e;
+                   this.func_147364_a(this.field_184362_y.field_72450_a, this.field_184362_y.field_72448_b, this.field_184362_y.field_72449_c, this.field_147369_b.field_70177_z, this.field_147369_b.field_70125_A);
+                }
+-
++               this.allowedPlayerTicks = 20;
+             } else {
+                this.field_184343_A = this.field_147368_e;
+                if (this.field_147369_b.func_184218_aH()) {
+                   this.field_147369_b.func_70080_a(this.field_147369_b.func_226277_ct_(), this.field_147369_b.func_226278_cu_(), this.field_147369_b.func_226281_cx_(), p_147347_1_.func_186999_a(this.field_147369_b.field_70177_z), p_147347_1_.func_186998_b(this.field_147369_b.field_70125_A));
+                   this.field_147369_b.func_71121_q().func_72863_F().func_217221_a(this.field_147369_b);
++                  this.allowedPlayerTicks = 20;
+                } else {
++                  double prevX = this.field_147369_b.func_226277_ct_();
++                  double prevY = this.field_147369_b.func_226278_cu_();
++                  double prevZ = this.field_147369_b.func_226281_cx_();
++                  float prevYaw = this.field_147369_b.field_70177_z;
+                   double d0 = this.field_147369_b.func_226277_ct_();
+                   double d1 = this.field_147369_b.func_226278_cu_();
+                   double d2 = this.field_147369_b.func_226281_cx_();
+@@ -706,14 +894,29 @@
+                   } else {
+                      ++this.field_184347_F;
+                      int i = this.field_184347_F - this.field_184348_G;
+-                     if (i > 5) {
++                     this.allowedPlayerTicks += (int)(System.currentTimeMillis() / 50L - this.lastTick);
++                     this.allowedPlayerTicks = Math.max(this.allowedPlayerTicks, 1);
++                     this.lastTick = (int)(System.currentTimeMillis() / 50L);
++                     if (i > Math.max(this.allowedPlayerTicks, 5)) {
+                         field_147370_c.debug("{} is sending move packets too frequently ({} packets since last tick)", this.field_147369_b.func_200200_C_().getString(), i);
+                         i = 1;
+                      }
+-
++                     if (p_147347_1_.field_149481_i || d11 > 0.0) {
++                        --this.allowedPlayerTicks;
++                     }
++                     else {
++                        this.allowedPlayerTicks = 20;
++                     }
++                     double speed;
++                     if (this.field_147369_b.field_71075_bZ.field_75100_b) {
++                        speed = this.field_147369_b.field_71075_bZ.field_75096_f * 20.0f;
++                     }
++                     else {
++                        speed = this.field_147369_b.field_71075_bZ.field_75097_g * 10.0f;
++                     }
+                      if (!this.field_147369_b.func_184850_K() && (!this.field_147369_b.func_71121_q().func_82736_K().func_223586_b(GameRules.field_223615_r) || !this.field_147369_b.func_184613_cA())) {
+                         float f2 = this.field_147369_b.func_184613_cA() ? 300.0F : 100.0F;
+-                        if (d11 - d10 > (double)(f2 * (float)i) && !this.func_217264_d()) {
++                        if (d11 - d10 > Math.max(f2, Math.pow((double) (10.0F * (float) i * speed), 2)) && !this.func_217264_d()) {
+                            field_147370_c.warn("{} moved too quickly! {},{},{}", this.field_147369_b.func_200200_C_().getString(), d7, d8, d9);
+                            this.func_147364_a(this.field_147369_b.func_226277_ct_(), this.field_147369_b.func_226278_cu_(), this.field_147369_b.func_226281_cx_(), this.field_147369_b.field_70177_z, this.field_147369_b.field_70125_A);
+                            return;
+@@ -757,6 +960,45 @@
+                            return;
+                         }
+                      }
++                     final Player player = this.getPlayer();
++                     final Location from = new Location(player.getWorld(), this.lastPosX, this.lastPosY, this.lastPosZ, this.lastYaw, this.lastPitch);
++                     final Location to = player.getLocation().clone();
++                     if (p_147347_1_.field_149480_h) {
++                        to.setX(p_147347_1_.field_149479_a);
++                        to.setY(p_147347_1_.field_149477_b);
++                        to.setZ(p_147347_1_.field_149478_c);
++                     }
++                     if (p_147347_1_.field_149481_i) {
++                        to.setYaw(p_147347_1_.field_149476_e);
++                        to.setPitch(p_147347_1_.field_149473_f);
++                     }
++                     final double delta = Math.pow(this.lastPosX - to.getX(), 2.0) + Math.pow(this.lastPosY - to.getY(), 2.0) + Math.pow(this.lastPosZ - to.getZ(), 2.0);
++                     final float deltaAngle = Math.abs(this.lastYaw - to.getYaw()) + Math.abs(this.lastPitch - to.getPitch());
++                     if ((delta > 0.00390625 || deltaAngle > 10.0f) && !this.field_147369_b.func_70610_aX()) {
++                        this.lastPosX = to.getX();
++                        this.lastPosY = to.getY();
++                        this.lastPosZ = to.getZ();
++                        this.lastYaw = to.getYaw();
++                        this.lastPitch = to.getPitch();
++                        if (from.getX() != Double.MAX_VALUE) {
++                           final Location oldTo = to.clone();
++                           final PlayerMoveEvent event = new PlayerMoveEvent(player, from, to);
++                           this.cbserver.getPluginManager().callEvent(event);
++                           if (event.isCancelled()) {
++                              this.teleport(from);
++                              return;
++                           }
++                           if (!oldTo.equals(event.getTo()) && !event.isCancelled()) {
++                              this.field_147369_b.getBukkitEntity().teleport(event.getTo(), PlayerTeleportEvent.TeleportCause.PLUGIN);
++                              return;
++                           }
++                           if (!from.equals(this.getPlayer().getLocation()) && this.justTeleported) {
++                              this.justTeleported = false;
++                              return;
++                           }
++                        }
++                     }
++                     this.field_147369_b.func_70080_a(d5, d6, d7, f, f1);
+ 
+                      this.field_184344_B = d8 >= -0.03125D && this.field_147369_b.field_71134_c.func_73081_b() != GameType.SPECTATOR && !this.field_147367_d.func_71231_X() && !this.field_147369_b.field_71075_bZ.field_75101_c && !this.field_147369_b.func_70644_a(Effects.field_188424_y) && !this.field_147369_b.func_184613_cA() && !serverworld.func_72829_c(this.field_147369_b.func_174813_aQ().func_186662_g(0.0625D).func_72321_a(0.0D, -0.55D, 0.0D));
+                      this.field_147369_b.field_70122_E = p_147347_1_.func_149465_i();
+@@ -780,24 +1022,79 @@
+       this.func_175089_a(p_147364_1_, p_147364_3_, p_147364_5_, p_147364_7_, p_147364_8_, Collections.emptySet());
     }
  
++
++   public void setPlayerLocation(double d0, double d1, double d2, float f, float f1, PlayerTeleportEvent.TeleportCause cause) {
++      this.setPlayerLocation(d0, d1, d2, f, f1, Collections.emptySet(), cause);
++   }
++
     public void func_175089_a(double p_175089_1_, double p_175089_3_, double p_175089_5_, float p_175089_7_, float p_175089_8_, Set<SPlayerPositionLookPacket.Flags> p_175089_9_) {
 -      double d0 = p_175089_9_.contains(SPlayerPositionLookPacket.Flags.X) ? this.field_147369_b.func_226277_ct_() : 0.0D;
 -      double d1 = p_175089_9_.contains(SPlayerPositionLookPacket.Flags.Y) ? this.field_147369_b.func_226278_cu_() : 0.0D;
@@ -58,9 +522,45 @@
 +      this.setPlayerLocation(p_175089_1_, p_175089_3_, p_175089_5_, p_175089_7_, p_175089_8_, p_175089_9_, PlayerTeleportEvent.TeleportCause.UNKNOWN);
 +   }
 +
-+   public void setPlayerLocation(double x, double y, double z, float yaw, float pitch, Set<SPlayerPositionLookPacket.Flags> relativeSet, final PlayerTeleportEvent.TeleportCause cause) {
++   public void setPlayerLocation(double d0, double d1, double d2, float f, float f1, Set<SPlayerPositionLookPacket.Flags> set, final PlayerTeleportEvent.TeleportCause cause) {
 +      Player player = this.getPlayer();
 +      Location from = player.getLocation();
++      double x = d0;
++      double y = d1;
++      double z = d2;
++      float yaw = f;
++      float pitch = f1;
++      Location to = new Location(this.getPlayer().getWorld(), x, y, z, yaw, pitch);
++      if (from.equals(to)) {
++         this.internalTeleport(d0, d1, d2, f, f1, set);
++         return;
++      }
++      PlayerTeleportEvent event = new PlayerTeleportEvent(player, from.clone(), to.clone(), cause);
++      this.cbserver.getPluginManager().callEvent(event);
++      if (event.isCancelled() || !to.equals(event.getTo())) {
++         set.clear();
++         to = (event.isCancelled() ? event.getFrom() : event.getTo());
++         d0 = to.getX();
++         d1 = to.getY();
++         d2 = to.getZ();
++         f = to.getYaw();
++         f1 = to.getPitch();
++      }
++      this.internalTeleport(d0, d1, d2, f, f1, set);
++   }
++
++   public void teleport(final Location dest) {
++      this.internalTeleport(dest.getX(), dest.getY(), dest.getZ(), dest.getYaw(), dest.getPitch(), Collections.emptySet());
++   }
++
++   private void internalTeleport(double x, double y, double z, float yaw, float pitch, Set<SPlayerPositionLookPacket.Flags> relativeSet) {
++      if (Float.isNaN(yaw)) {
++         yaw = 0.0f;
++      }
++      if (Float.isNaN(pitch)) {
++         pitch = 0.0f;
++      }
++      this.justTeleported = true;
 +      double d0 = relativeSet.contains(SPlayerPositionLookPacket.Flags.X) ? this.field_147369_b.func_226277_ct_() : 0.0D;
 +      double d1 = relativeSet.contains(SPlayerPositionLookPacket.Flags.Y) ? this.field_147369_b.func_226278_cu_() : 0.0D;
 +      double d2 = relativeSet.contains(SPlayerPositionLookPacket.Flags.Z) ? this.field_147369_b.func_226281_cx_() : 0.0D;
@@ -71,6 +571,11 @@
           this.field_184363_z = 0;
        }
  
++      this.lastPosX = this.field_184362_y.field_72450_a;
++      this.lastPosY = this.field_184362_y.field_72448_b;
++      this.lastPosZ = this.field_184362_y.field_72449_c;
++      this.lastYaw = yaw;
++      this.lastPitch = pitch;
        this.field_184343_A = this.field_147368_e;
 -      this.field_147369_b.func_70080_a(p_175089_1_, p_175089_3_, p_175089_5_, p_175089_7_, p_175089_8_);
 -      this.field_147369_b.field_71135_a.func_147359_a(new SPlayerPositionLookPacket(p_175089_1_ - d0, p_175089_3_ - d1, p_175089_5_ - d2, p_175089_7_ - f, p_175089_8_ - f1, p_175089_9_, this.field_184363_z));
@@ -79,7 +584,71 @@
     }
  
     public void func_147345_a(CPlayerDiggingPacket p_147345_1_) {
-@@ -845,7 +865,9 @@
+       PacketThreadUtil.func_218796_a(p_147345_1_, this, this.field_147369_b.func_71121_q());
++      if (this.field_147369_b.func_70610_aX()) {
++         return;
++      }
+       BlockPos blockpos = p_147345_1_.func_179715_a();
+       this.field_147369_b.func_143004_u();
+       CPlayerDiggingPacket.Action cplayerdiggingpacket$action = p_147345_1_.func_180762_c();
+@@ -805,13 +1102,44 @@
+       case SWAP_HELD_ITEMS:
+          if (!this.field_147369_b.func_175149_v()) {
+             ItemStack itemstack = this.field_147369_b.func_184586_b(Hand.OFF_HAND);
+-            this.field_147369_b.func_184611_a(Hand.OFF_HAND, this.field_147369_b.func_184586_b(Hand.MAIN_HAND));
+-            this.field_147369_b.func_184611_a(Hand.MAIN_HAND, itemstack);
++            // CraftBukkit start - inspiration taken from DispenserRegistry (See SpigotCraft#394)
++            CraftItemStack mainHand = CraftItemStack.asCraftMirror(itemstack);
++            CraftItemStack offHand = CraftItemStack.asCraftMirror(this.field_147369_b.func_184586_b(Hand.MAIN_HAND));
++            PlayerSwapHandItemsEvent swapItemsEvent = new PlayerSwapHandItemsEvent(this.getPlayer(), mainHand.clone(), offHand.clone());
++            this.cbserver.getPluginManager().callEvent(swapItemsEvent);
++            if (swapItemsEvent.isCancelled()) {
++               return;
++            }
++            if (swapItemsEvent.getOffHandItem().equals(offHand)) {
++               this.field_147369_b.func_184611_a(Hand.OFF_HAND, this.field_147369_b.func_184586_b(Hand.MAIN_HAND));
++            }
++            else {
++               this.field_147369_b.func_184611_a(Hand.OFF_HAND, CraftItemStack.asNMSCopy(swapItemsEvent.getOffHandItem()));
++            }
++            if (swapItemsEvent.getMainHandItem().equals(mainHand)) {
++               this.field_147369_b.func_184611_a(Hand.MAIN_HAND, itemstack);
++            }
++            else {
++               this.field_147369_b.func_184611_a(Hand.MAIN_HAND, CraftItemStack.asNMSCopy(swapItemsEvent.getMainHandItem()));
++            }
++            // CraftBukkit end
+          }
+ 
+          return;
+       case DROP_ITEM:
+          if (!this.field_147369_b.func_175149_v()) {
++            if (this.lastDropTick != MinecraftServer.currentTick) {
++               this.dropCount = 0;
++               this.lastDropTick = MinecraftServer.currentTick;
++            }
++            else {
++               ++this.dropCount;
++               if (this.dropCount >= 20) {
++                  field_147370_c.warn(String.valueOf(this.field_147369_b.func_195047_I_()) + " dropped their items too quickly!");
++                  this.disconnect("You dropped your items too quickly (Hacking?)");
++                  return;
++               }
++            }
+             this.field_147369_b.func_225609_n_(false);
+          }
+ 
+@@ -837,6 +1165,9 @@
+ 
+    public void func_184337_a(CPlayerTryUseItemOnBlockPacket p_184337_1_) {
+       PacketThreadUtil.func_218796_a(p_184337_1_, this, this.field_147369_b.func_71121_q());
++      if (this.field_147369_b.func_70610_aX()) {
++         return;
++      }
+       ServerWorld serverworld = this.field_147367_d.func_71218_a(this.field_147369_b.field_71093_bK);
+       Hand hand = p_184337_1_.func_187022_c();
+       ItemStack itemstack = this.field_147369_b.func_184586_b(hand);
+@@ -845,7 +1176,15 @@
        Direction direction = blockraytraceresult.func_216354_b();
        this.field_147369_b.func_143004_u();
        if (blockpos.func_177956_o() < this.field_147367_d.func_71207_Z() - 1 || direction != Direction.UP && blockpos.func_177956_o() < this.field_147367_d.func_71207_Z()) {
@@ -87,21 +656,215 @@
 +         double dist = field_147369_b.func_110148_a(net.minecraft.entity.player.PlayerEntity.REACH_DISTANCE).func_111126_e() + 3;
 +         dist *= dist;
 +         if (this.field_184362_y == null && this.field_147369_b.func_70092_e((double)blockpos.func_177958_n() + 0.5D, (double)blockpos.func_177956_o() + 0.5D, (double)blockpos.func_177952_p() + 0.5D) < dist && serverworld.func_175660_a(this.field_147369_b, blockpos)) {
++            Location eyeLoc = this.getPlayer().getEyeLocation();
++            double reachDistance = NumberConversions.square(eyeLoc.getX() - blockpos.func_177958_n()) + NumberConversions.square(eyeLoc.getY() - blockpos.func_177956_o()) + NumberConversions.square(eyeLoc.getZ() - blockpos.func_177952_p());
++            if (reachDistance > ((this.getPlayer().getGameMode() == GameMode.CREATIVE) ? 49 : 36)) {
++               return;
++            }
++            this.field_147369_b.func_184597_cx();
              ActionResultType actionresulttype = this.field_147369_b.field_71134_c.func_219441_a(this.field_147369_b, serverworld, itemstack, hand, blockraytraceresult);
              if (actionresulttype.func_226247_b_()) {
                 this.field_147369_b.func_226292_a_(hand, true);
-@@ -902,7 +924,7 @@
-       this.field_147367_d.func_147132_au();
-       this.field_147367_d.func_184103_al().func_148539_a((new TranslationTextComponent("multiplayer.player.left", this.field_147369_b.func_145748_c_())).func_211708_a(TextFormatting.YELLOW));
+@@ -862,12 +1201,49 @@
+ 
+    public void func_147346_a(CPlayerTryUseItemPacket p_147346_1_) {
+       PacketThreadUtil.func_218796_a(p_147346_1_, this, this.field_147369_b.func_71121_q());
++      if (this.field_147369_b.func_70610_aX()) {
++         return;
++      }
+       ServerWorld serverworld = this.field_147367_d.func_71218_a(this.field_147369_b.field_71093_bK);
+       Hand hand = p_147346_1_.func_187028_a();
+       ItemStack itemstack = this.field_147369_b.func_184586_b(hand);
+       this.field_147369_b.func_143004_u();
+       if (!itemstack.func_190926_b()) {
+-         this.field_147369_b.field_71134_c.func_187250_a(this.field_147369_b, serverworld, itemstack, hand);
++         float f1 = this.field_147369_b.field_70125_A;
++         float f2 = this.field_147369_b.field_70177_z;
++         double d0 = this.field_147369_b.func_226277_ct_();
++         double d2 = this.field_147369_b.func_226278_cu_() + this.field_147369_b.func_70047_e();
++         double d3 = this.field_147369_b.func_226281_cx_();
++         Vec3d vec3d = new Vec3d(d0, d2, d3);
++         float f3 = MathHelper.func_76134_b(-f2 * 0.017453292f - 3.1415927f);
++         float f4 = MathHelper.func_76126_a(-f2 * 0.017453292f - 3.1415927f);
++         float f5 = -MathHelper.func_76134_b(-f1 * 0.017453292f);
++         float f6 = MathHelper.func_76126_a(-f1 * 0.017453292f);
++         float f7 = f4 * f5;
++         float f8 = f3 * f5;
++         double d4 = (this.field_147369_b.field_71134_c.func_73081_b() == GameType.CREATIVE) ? 5.0 : 4.5;
++         Vec3d vec3d2 = vec3d.func_72441_c(f7 * d4, f6 * d4, f8 * d4);
++         RayTraceResult movingobjectposition = this.field_147369_b.field_70170_p.func_217299_a(new RayTraceContext(vec3d, vec3d2, RayTraceContext.BlockMode.OUTLINE, RayTraceContext.FluidMode.NONE, this.field_147369_b));
++         boolean cancelled;
++         if (movingobjectposition == null || movingobjectposition.func_216346_c() != RayTraceResult.Type.BLOCK) {
++            final PlayerInteractEvent event = CraftEventFactory.callPlayerInteractEvent(this.field_147369_b, Action.RIGHT_CLICK_AIR, itemstack, hand);
++            cancelled = (event.useItemInHand() == Event.Result.DENY);
++         }
++         else if (this.field_147369_b.field_71134_c.firedInteract) {
++            this.field_147369_b.field_71134_c.firedInteract = false;
++            cancelled = this.field_147369_b.field_71134_c.interactResult;
++         }
++         else {
++            BlockRayTraceResult movingobjectpositionblock = (BlockRayTraceResult)movingobjectposition;
++            PlayerInteractEvent event2 = CraftEventFactory.callPlayerInteractEvent(this.field_147369_b, Action.RIGHT_CLICK_BLOCK, movingobjectpositionblock.func_216350_a(), movingobjectpositionblock.func_216354_b(), itemstack, true, hand);
++            cancelled = (event2.useItemInHand() == Event.Result.DENY);
++         }
++         if (cancelled) {
++            this.field_147369_b.getBukkitEntity().updateInventory();
++         }
++         else {
++            this.field_147369_b.field_71134_c.func_187250_a(this.field_147369_b, serverworld, itemstack, hand);
++         }
+       }
+    }
+ 
+@@ -877,7 +1253,7 @@
+          for(ServerWorld serverworld : this.field_147367_d.func_212370_w()) {
+             Entity entity = p_175088_1_.func_179727_a(serverworld);
+             if (entity != null) {
+-               this.field_147369_b.func_200619_a(serverworld, entity.func_226277_ct_(), entity.func_226278_cu_(), entity.func_226281_cx_(), entity.field_70177_z, entity.field_70125_A);
++               this.field_147369_b.teleport(serverworld, entity.func_226277_ct_(), entity.func_226278_cu_(), entity.func_226281_cx_(), entity.field_70177_z, entity.field_70125_A, org.bukkit.event.player.PlayerTeleportEvent.TeleportCause.SPECTATE); // CraftBukkit
+                return;
+             }
+          }
+@@ -886,6 +1262,8 @@
+    }
+ 
+    public void func_175086_a(CResourcePackStatusPacket p_175086_1_) {
++      PacketThreadUtil.func_218796_a(p_175086_1_, this, this.field_147369_b.func_71121_q());
++      this.cbserver.getPluginManager().callEvent(new PlayerResourcePackStatusEvent(this.getPlayer(), PlayerResourcePackStatusEvent.Status.values()[p_175086_1_.field_179719_b.ordinal()]));
+    }
+ 
+    public void func_184340_a(CSteerBoatPacket p_184340_1_) {
+@@ -898,11 +1276,15 @@
+    }
+ 
+    public void func_147231_a(ITextComponent p_147231_1_) {
++      if (this.processedDisconnect) {
++         return;
++      }
+       field_147370_c.info("{} lost connection: {}", this.field_147369_b.func_200200_C_().getString(), p_147231_1_.getString());
+-      this.field_147367_d.func_147132_au();
+-      this.field_147367_d.func_184103_al().func_148539_a((new TranslationTextComponent("multiplayer.player.left", this.field_147369_b.func_145748_c_())).func_211708_a(TextFormatting.YELLOW));
        this.field_147369_b.func_71123_m();
 -      this.field_147367_d.func_184103_al().func_72367_e(this.field_147369_b);
-+      this.field_147367_d.func_184103_al().playerLoggedOut(this.field_147369_b);
++      String quitMessage = this.field_147367_d.func_184103_al().playerLoggedOut(this.field_147369_b);
++      if (quitMessage != null && quitMessage.length() > 0) {
++         this.field_147367_d.func_184103_al().sendMessage(CraftChatMessage.fromString(quitMessage));
++      }
        if (this.func_217264_d()) {
           field_147370_c.info("Stopping singleplayer server as player logged out");
           this.field_147367_d.func_71263_m(false);
-@@ -968,7 +990,9 @@
-          if (s.startsWith("/")) {
-             this.func_147361_d(s);
+@@ -926,7 +1308,12 @@
+             return;
+          }
+       }
+-
++      if (p_211148_1_ == null) {
++         return;
++      } else if (p_211148_1_ instanceof SSpawnPositionPacket) {
++         final SSpawnPositionPacket packet2 = (SSpawnPositionPacket)p_211148_1_;
++         this.field_147369_b.compassTarget = new Location(this.getPlayer().getWorld(), packet2.field_179801_a.func_177958_n(), packet2.field_179801_a.func_177956_o(), packet2.field_179801_a.func_177952_p());
++      }
+       try {
+          this.field_147371_a.func_201058_a(p_211148_1_, p_211148_2_);
+       } catch (Throwable throwable) {
+@@ -941,17 +1328,34 @@
+ 
+    public void func_147355_a(CHeldItemChangePacket p_147355_1_) {
+       PacketThreadUtil.func_218796_a(p_147355_1_, this, this.field_147369_b.func_71121_q());
++      if (this.field_147369_b.func_70610_aX()) {
++         return;
++      }
+       if (p_147355_1_.func_149614_c() >= 0 && p_147355_1_.func_149614_c() < PlayerInventory.func_70451_h()) {
++         PlayerItemHeldEvent event = new PlayerItemHeldEvent(this.getPlayer(), this.field_147369_b.field_71071_by.field_70461_c, p_147355_1_.func_149614_c());
++         this.cbserver.getPluginManager().callEvent(event);
++         if (event.isCancelled()) {
++            this.func_147359_a(new SHeldItemChangePacket(this.field_147369_b.field_71071_by.field_70461_c));
++            this.field_147369_b.func_143004_u();
++            return;
++         }
+          this.field_147369_b.field_71071_by.field_70461_c = p_147355_1_.func_149614_c();
+          this.field_147369_b.func_143004_u();
+       } else {
+          field_147370_c.warn("{} tried to set an invalid carried item", (Object)this.field_147369_b.func_200200_C_().getString());
++         this.disconnect("Invalid hotbar selection (Hacking?)");
+       }
+    }
+ 
+    public void func_147354_a(CChatMessagePacket p_147354_1_) {
+-      PacketThreadUtil.func_218796_a(p_147354_1_, this, this.field_147369_b.func_71121_q());
+-      if (this.field_147369_b.func_147096_v() == ChatVisibility.HIDDEN) {
++      if (this.field_147367_d.func_71241_aa()) {
++         return;
++      }
++      boolean isSync = p_147354_1_.func_149439_c().startsWith("/");
++      if (p_147354_1_.func_149439_c().startsWith("/")) {
++         PacketThreadUtil.func_218796_a(p_147354_1_, this, this.field_147369_b.func_71121_q());
++      }
++      if (this.field_147369_b.field_70128_L || this.field_147369_b.func_147096_v() == ChatVisibility.HIDDEN) {
+          this.func_147359_a(new SChatPacket((new TranslationTextComponent("chat.cannotSend")).func_211708_a(TextFormatting.RED)));
+       } else {
+          this.field_147369_b.func_143004_u();
+@@ -960,38 +1364,247 @@
+ 
+          for(int i = 0; i < s.length(); ++i) {
+             if (!SharedConstants.func_71566_a(s.charAt(i))) {
+-               this.func_194028_b(new TranslationTextComponent("multiplayer.disconnect.illegal_characters"));
++               if (!isSync) {
++                  Waitable waitable = new Waitable() {
++                     @Override
++                     protected Object evaluate() {
++                        ServerPlayNetHandler.this.func_194028_b(new TranslationTextComponent("multiplayer.disconnect.illegal_characters", new Object[0]));
++                        return null;
++                     }
++                  };
++                  this.field_147367_d.processQueue.add(waitable);
++                  try {
++                     waitable.get();
++                     return;
++                  }
++                  catch (InterruptedException e3) {
++                     Thread.currentThread().interrupt();
++                     return;
++                  }
++                  catch (ExecutionException e) {
++                     throw new RuntimeException(e);
++                  }
++               }
+                return;
+             }
+          }
+ 
+-         if (s.startsWith("/")) {
+-            this.func_147361_d(s);
++         if (isSync) {
++            try {
++               this.field_147367_d.server.playerCommandState = true;
++               this.func_147361_d(s);
++            }
++            finally {
++               this.field_147367_d.server.playerCommandState = false;
++            }
++            this.field_147367_d.server.playerCommandState = false;
++         }
++         else if (s.isEmpty()) {
++            ServerPlayNetHandler.field_147370_c.warn(String.valueOf(this.field_147369_b.func_195047_I_()) + " tried to send an empty message");
++         }
++         else if (this.getPlayer().isConversing()) {
++            final String conversationInput = s;
++            this.field_147367_d.processQueue.add(new Runnable() {
++               @Override
++               public void run() {
++                  ServerPlayNetHandler.this.getPlayer().acceptConversationInput(conversationInput);
++               }
++            });
++         }
++         else if (this.field_147369_b.func_147096_v() == ChatVisibility.SYSTEM) {
++            final TranslationTextComponent chatmessage = new TranslationTextComponent("chat.cannotSend", new Object[0]);
++            chatmessage.func_150256_b().func_150238_a(TextFormatting.RED);
++            this.func_147359_a(new SChatPacket(chatmessage));
++         }
++         else if (true) {
++            this.chat(s, true);
           } else {
 -            ITextComponent itextcomponent = new TranslationTextComponent("chat.type.text", this.field_147369_b.func_145748_c_(), s);
 +            ITextComponent itextcomponent = new TranslationTextComponent("chat.type.text", this.field_147369_b.func_145748_c_(), net.minecraftforge.common.ForgeHooks.newChatWithLinks(s));
@@ -110,26 +873,265 @@
              this.field_147367_d.func_184103_al().func_148544_a(itextcomponent, false);
           }
  
-@@ -980,6 +1004,10 @@
+          this.field_147374_l += 20;
+-         if (this.field_147374_l > 200 && !this.field_147367_d.func_184103_al().func_152596_g(this.field_147369_b.func_146103_bH())) {
+-            this.func_194028_b(new TranslationTextComponent("disconnect.spam"));
++         if (ServerPlayNetHandler.chatSpamField.addAndGet(this, 20) > 200 && !this.field_147367_d.func_184103_al().func_152596_g(this.field_147369_b.func_146103_bH())) {
++            if (!isSync) {
++               final Waitable waitable2 = new Waitable() {
++                  @Override
++                  protected Object evaluate() {
++                     ServerPlayNetHandler.this.func_194028_b(new TranslationTextComponent("disconnect.spam", new Object[0]));
++                     return null;
++                  }
++               };
++               this.field_147367_d.processQueue.add(waitable2);
++               try {
++                  waitable2.get();
++                  return;
++               }
++               catch (InterruptedException e4) {
++                  Thread.currentThread().interrupt();
++                  return;
++               }
++               catch (ExecutionException e2) {
++                  throw new RuntimeException(e2);
++               }
++            } else {
++               this.func_194028_b(new TranslationTextComponent("disconnect.spam", new Object[0]));
++            }
+          }
+ 
        }
     }
  
 +   public void chat(String s, final boolean async) {
-+
++      if (s.isEmpty() || this.field_147369_b.func_147096_v() == ChatVisibility.HIDDEN) {
++         return;
++      }
++      if (!async && s.startsWith("/")) {
++         this.func_147361_d(s);
++      }
++      else if (this.field_147369_b.func_147096_v() != ChatVisibility.SYSTEM) {
++         Player player = this.getPlayer();
++         AsyncPlayerChatEvent event = new AsyncPlayerChatEvent(async, player, s, new LazyPlayerSet(this.field_147367_d));
++         this.cbserver.getPluginManager().callEvent(event);
++         if (PlayerChatEvent.getHandlerList().getRegisteredListeners().length != 0) {
++            PlayerChatEvent queueEvent = new PlayerChatEvent(player, event.getMessage(), event.getFormat(), event.getRecipients());
++            queueEvent.setCancelled(event.isCancelled());
++             Waitable waitable = new Waitable() {
++               @Override
++               protected Object evaluate() {
++                  Bukkit.getPluginManager().callEvent(queueEvent);
++                  if (queueEvent.isCancelled()) {
++                     return null;
++                  }
++                  String message = String.format(queueEvent.getFormat(), queueEvent.getPlayer().getDisplayName(), queueEvent.getMessage());
++                  ServerPlayNetHandler.this.field_147367_d.console.sendMessage(message);
++                  if (((LazyPlayerSet)queueEvent.getRecipients()).isLazy()) {
++                     for (Object player : ServerPlayNetHandler.this.field_147367_d.func_184103_al().field_72404_b) {
++                        ((ServerPlayerEntity)player).sendMessage(CraftChatMessage.fromString(message));
++                     }
++                  }
++                  else {
++                     for (Player player2 : queueEvent.getRecipients()) {
++                        player2.sendMessage(message);
++                     }
++                  }
++                  return null;
++               }
++            };
++            if (async) {
++               this.field_147367_d.processQueue.add(waitable);
++            }
++            else {
++               waitable.run();
++            }
++            try {
++               waitable.get();
++               return;
++            }
++            catch (InterruptedException e2) {
++               Thread.currentThread().interrupt();
++               return;
++            }
++            catch (ExecutionException e) {
++               throw new RuntimeException("Exception processing chat event", e.getCause());
++            }
++         }
++         if (event.isCancelled()) {
++            return;
++         }
++         s = String.format(event.getFormat(), event.getPlayer().getDisplayName(), event.getMessage());
++         this.field_147367_d.console.sendMessage(s);
++         if (((LazyPlayerSet)event.getRecipients()).isLazy()) {
++            for (final Object recipient : this.field_147367_d.func_184103_al().field_72404_b) {
++               ((ServerPlayerEntity)recipient).sendMessage(CraftChatMessage.fromString(s));
++            }
++         }
++         else {
++            for (final Player recipient2 : event.getRecipients()) {
++               recipient2.sendMessage(s);
++            }
++         }
++      }
 +   }
-+
     private void func_147361_d(String p_147361_1_) {
-       this.field_147367_d.func_195571_aL().func_197059_a(this.field_147369_b.func_195051_bN(), p_147361_1_);
+-      this.field_147367_d.func_195571_aL().func_197059_a(this.field_147369_b.func_195051_bN(), p_147361_1_);
++      ServerPlayNetHandler.field_147370_c.info(String.valueOf(this.field_147369_b.func_195047_I_()) + " issued server command: " + p_147361_1_);
++      CraftPlayer player = this.getPlayer();
++      PlayerCommandPreprocessEvent event = new PlayerCommandPreprocessEvent(player, p_147361_1_, new LazyPlayerSet(this.field_147367_d));
++      this.cbserver.getPluginManager().callEvent(event);
++      if (event.isCancelled()) {
++         return;
++      }
++      try {
++         if (this.cbserver.dispatchCommand(event.getPlayer(), event.getMessage().substring(1))) {
++            return;
++         }
++      }
++      catch (org.bukkit.command.CommandException ex) {
++         player.sendMessage(ChatColor.RED + "An internal error occurred while attempting to perform this command");
++         java.util.logging.Logger.getLogger(ServerPlayNetHandler.class.getName()).log(Level.SEVERE, null, ex);
++         return;
++      }
     }
-@@ -1061,6 +1089,7 @@
+ 
+    public void func_175087_a(CAnimateHandPacket p_175087_1_) {
+       PacketThreadUtil.func_218796_a(p_175087_1_, this, this.field_147369_b.func_71121_q());
++      if (this.field_147369_b.func_70610_aX()) {
++         return;
++      }
+       this.field_147369_b.func_143004_u();
++      // CraftBukkit start - Raytrace to look for 'rogue armswings'
++      float f1 = this.field_147369_b.field_70125_A;
++      float f2 = this.field_147369_b.field_70177_z;
++      double d0 = this.field_147369_b.func_226277_ct_();
++      double d2 = this.field_147369_b.func_226278_cu_() + this.field_147369_b.func_70047_e();
++      double d3 = this.field_147369_b.func_226281_cx_();
++      Vec3d vec3d = new Vec3d(d0, d2, d3);
++      float f3 = MathHelper.func_76134_b(-f2 * 0.017453292f - 3.1415927f);
++      float f4 = MathHelper.func_76126_a(-f2 * 0.017453292f - 3.1415927f);
++      float f5 = -MathHelper.func_76134_b(-f1 * 0.017453292f);
++      float f6 = MathHelper.func_76126_a(-f1 * 0.017453292f);
++      float f7 = f4 * f5;
++      float f8 = f3 * f5;
++      double d4 = (this.field_147369_b.field_71134_c.func_73081_b() == GameType.CREATIVE) ? 5.0 : 4.5;
++      Vec3d vec3d2 = vec3d.func_72441_c(f7 * d4, f6 * d4, f8 * d4);
++      RayTraceResult movingobjectposition = this.field_147369_b.field_70170_p.func_217299_a(new RayTraceContext(vec3d, vec3d2, RayTraceContext.BlockMode.OUTLINE, RayTraceContext.FluidMode.NONE, this.field_147369_b));
++      if (movingobjectposition == null || movingobjectposition.func_216346_c() != RayTraceResult.Type.BLOCK) {
++         CraftEventFactory.callPlayerInteractEvent(this.field_147369_b, Action.LEFT_CLICK_AIR, this.field_147369_b.field_71071_by.func_70448_g(), Hand.MAIN_HAND);
++      }
++      PlayerAnimationEvent event = new PlayerAnimationEvent(this.getPlayer());
++      this.cbserver.getPluginManager().callEvent(event);
++      if (event.isCancelled()) {
++         return;
++      }
++      // CraftBukkit end
+       this.field_147369_b.func_184609_a(p_175087_1_.func_187018_a());
+    }
+ 
+    public void func_147357_a(CEntityActionPacket p_147357_1_) {
+       PacketThreadUtil.func_218796_a(p_147357_1_, this, this.field_147369_b.func_71121_q());
++      if (this.field_147369_b.field_70128_L) {
++         return;
++      }
++      switch (p_147357_1_.func_180764_b()) {
++         case PRESS_SHIFT_KEY:
++         case RELEASE_SHIFT_KEY: {
++            final PlayerToggleSneakEvent event = new PlayerToggleSneakEvent(this.getPlayer(), p_147357_1_.func_180764_b() == CEntityActionPacket.Action.PRESS_SHIFT_KEY);
++            this.cbserver.getPluginManager().callEvent(event);
++            if (event.isCancelled()) {
++               return;
++            }
++            break;
++         }
++         case START_SPRINTING:
++         case STOP_SPRINTING: {
++            final PlayerToggleSprintEvent e2 = new PlayerToggleSprintEvent(this.getPlayer(), p_147357_1_.func_180764_b() == CEntityActionPacket.Action.START_SPRINTING);
++            this.cbserver.getPluginManager().callEvent(e2);
++            if (e2.isCancelled()) {
++               return;
++            }
++            break;
++         }
++      }
+       this.field_147369_b.func_143004_u();
+       switch(p_147357_1_.func_180764_b()) {
+       case PRESS_SHIFT_KEY:
+@@ -1045,6 +1658,9 @@
+ 
+    public void func_147340_a(CUseEntityPacket p_147340_1_) {
+       PacketThreadUtil.func_218796_a(p_147340_1_, this, this.field_147369_b.func_71121_q());
++      if (this.field_147369_b.func_70610_aX()) {
++         return;
++      }
+       ServerWorld serverworld = this.field_147367_d.func_71218_a(this.field_147369_b.field_71093_bK);
+       Entity entity = p_147340_1_.func_149564_a(serverworld);
+       this.field_147369_b.func_143004_u();
+@@ -1056,23 +1672,60 @@
+          }
+ 
+          if (this.field_147369_b.func_70068_e(entity) < d0) {
++            final ItemStack itemInHand = this.field_147369_b.func_184586_b((p_147340_1_.func_186994_b() == null) ? Hand.MAIN_HAND : p_147340_1_.func_186994_b());
++            if (p_147340_1_.func_149565_c() == CUseEntityPacket.Action.INTERACT || p_147340_1_.func_149565_c() == CUseEntityPacket.Action.INTERACT_AT) {
++               boolean triggerLeashUpdate = itemInHand != null && itemInHand.func_77973_b() == Items.field_151058_ca && entity instanceof MobEntity;
++               final Item origItem = (this.field_147369_b.field_71071_by.func_70448_g() == null) ? null : this.field_147369_b.field_71071_by.func_70448_g().func_77973_b();
++               PlayerInteractEntityEvent event;
++               if (p_147340_1_.func_149565_c() == CUseEntityPacket.Action.INTERACT) {
++                  event = new PlayerInteractEntityEvent(this.getPlayer(), entity.getBukkitEntity(), (p_147340_1_.func_186994_b() == Hand.OFF_HAND) ? EquipmentSlot.OFF_HAND : EquipmentSlot.HAND);
++               }
++               else {
++                  final Vec3d target = p_147340_1_.func_179712_b();
++                  event = new PlayerInteractAtEntityEvent(this.getPlayer(), entity.getBukkitEntity(), new Vector(target.field_72450_a, target.field_72448_b, target.field_72449_c), (p_147340_1_.func_186994_b() == Hand.OFF_HAND) ? EquipmentSlot.OFF_HAND : EquipmentSlot.HAND);
++               }
++               this.cbserver.getPluginManager().callEvent(event);
++               if (entity instanceof AbstractFishEntity && origItem != null && origItem.func_199767_j() == Items.field_151131_as && (event.isCancelled() || this.field_147369_b.field_71071_by.func_70448_g() == null || this.field_147369_b.field_71071_by.func_70448_g().func_77973_b() != origItem)) {
++                  this.func_147359_a(new SSpawnMobPacket((LivingEntity)entity));
++                  this.field_147369_b.func_71120_a(this.field_147369_b.field_71070_bA);
++               }
++               if (triggerLeashUpdate && (event.isCancelled() || this.field_147369_b.field_71071_by.func_70448_g() == null || this.field_147369_b.field_71071_by.func_70448_g().func_77973_b() != origItem)) {
++                  this.func_147359_a(new SMountEntityPacket(entity, ((MobEntity)entity).func_110166_bE()));
++               }
++               if (event.isCancelled() || this.field_147369_b.field_71071_by.func_70448_g() == null || this.field_147369_b.field_71071_by.func_70448_g().func_77973_b() != origItem) {
++                  this.func_147359_a(new SEntityMetadataPacket(entity.func_145782_y(), entity.field_70180_af, true));
++               }
++               if (event.isCancelled()) {
++                  return;
++               }
++            }
+             if (p_147340_1_.func_149565_c() == CUseEntityPacket.Action.INTERACT) {
+                Hand hand = p_147340_1_.func_186994_b();
                 this.field_147369_b.func_190775_a(entity, hand);
++               if (!itemInHand.func_190926_b() && itemInHand.func_190916_E() <= -1) {
++                  this.field_147369_b.func_71120_a(this.field_147369_b.field_71070_bA);
++               }
              } else if (p_147340_1_.func_149565_c() == CUseEntityPacket.Action.INTERACT_AT) {
                 Hand hand1 = p_147340_1_.func_186994_b();
 +               if (net.minecraftforge.common.ForgeHooks.onInteractEntityAt(field_147369_b, entity, p_147340_1_.func_179712_b(), hand1) != null) return;
                 ActionResultType actionresulttype = entity.func_184199_a(this.field_147369_b, p_147340_1_.func_179712_b(), hand1);
                 if (actionresulttype.func_226247_b_()) {
                    this.field_147369_b.func_226292_a_(hand1, true);
-@@ -1094,7 +1123,7 @@
+                }
++               if (!itemInHand.func_190926_b() && itemInHand.func_190916_E() <= -1) {
++                  this.field_147369_b.func_71120_a(this.field_147369_b.field_71070_bA);
++               }
+             } else if (p_147340_1_.func_149565_c() == CUseEntityPacket.Action.ATTACK) {
+-               if (entity instanceof ItemEntity || entity instanceof ExperienceOrbEntity || entity instanceof AbstractArrowEntity || entity == this.field_147369_b) {
++               if (entity instanceof ItemEntity || entity instanceof ExperienceOrbEntity || entity instanceof AbstractArrowEntity || (entity == this.field_147369_b && !this.field_147369_b.func_175149_v())) {
+                   this.func_194028_b(new TranslationTextComponent("multiplayer.disconnect.invalid_entity_attacked"));
+                   this.field_147367_d.func_71236_h("Player " + this.field_147369_b.func_200200_C_().getString() + " tried to attack an invalid entity");
+                   return;
+                }
+ 
+                this.field_147369_b.func_71059_n(entity);
++               if (!itemInHand.func_190926_b() && itemInHand.func_190916_E() <= -1) {
++                  this.field_147369_b.func_71120_a(this.field_147369_b.field_71070_bA);
++               }
+             }
+          }
+       }
+@@ -1094,7 +1747,7 @@
                 return;
              }
  
@@ -138,24 +1140,526 @@
              if (this.field_147367_d.func_71199_h()) {
                 this.field_147369_b.func_71033_a(GameType.SPECTATOR);
                 this.field_147369_b.func_71121_q().func_82736_K().func_223585_a(GameRules.field_223613_p).func_223570_a(false, this.field_147367_d);
-@@ -1268,6 +1297,8 @@
+@@ -1109,14 +1762,22 @@
+ 
+    public void func_147356_a(CCloseWindowPacket p_147356_1_) {
+       PacketThreadUtil.func_218796_a(p_147356_1_, this, this.field_147369_b.func_71121_q());
++      if (this.field_147369_b.func_70610_aX()) {
++         return;
++      }
++      CraftEventFactory.handleInventoryCloseEvent(this.field_147369_b);
+       this.field_147369_b.func_71128_l();
     }
  
-    public void func_147349_a(CCustomPayloadPacket p_147349_1_) {
-+      PacketThreadUtil.func_218796_a(p_147349_1_, this, this.field_147369_b.func_71121_q());
-+      net.minecraftforge.fml.network.NetworkHooks.onCustomPayload(p_147349_1_, this.field_147371_a);
+    public void func_147351_a(CClickWindowPacket p_147351_1_) {
+       PacketThreadUtil.func_218796_a(p_147351_1_, this, this.field_147369_b.func_71121_q());
++      if (this.field_147369_b.func_70610_aX()) {
++         return;
++      }
+       this.field_147369_b.func_143004_u();
+-      if (this.field_147369_b.field_71070_bA.field_75152_c == p_147351_1_.func_149548_c() && this.field_147369_b.field_71070_bA.func_75129_b(this.field_147369_b)) {
+-         if (this.field_147369_b.func_175149_v()) {
++      if (this.field_147369_b.field_71070_bA.field_75152_c == p_147351_1_.func_149548_c() && this.field_147369_b.field_71070_bA.func_75129_b(this.field_147369_b) && this.field_147369_b.field_71070_bA.func_75145_c(this.field_147369_b)) {
++         boolean cancelled = this.field_147369_b.func_175149_v(); // CraftBukkit - see below if
++         if (false) {
+             NonNullList<ItemStack> nonnulllist = NonNullList.func_191196_a();
+ 
+             for(int i = 0; i < this.field_147369_b.field_71070_bA.field_75151_b.size(); ++i) {
+@@ -1125,8 +1786,296 @@
+ 
+             this.field_147369_b.func_71110_a(this.field_147369_b.field_71070_bA, nonnulllist);
+          } else {
+-            ItemStack itemstack1 = this.field_147369_b.field_71070_bA.func_184996_a(p_147351_1_.func_149544_d(), p_147351_1_.func_149543_e(), p_147351_1_.func_186993_f(), this.field_147369_b);
+-            if (ItemStack.func_77989_b(p_147351_1_.func_149546_g(), itemstack1)) {
++            if (p_147351_1_.func_149544_d() < -1 && p_147351_1_.func_149544_d() != -999) {
++               return;
++            }
++            InventoryView inventory = this.field_147369_b.field_71070_bA.getBukkitView();
++            InventoryType.SlotType type = inventory.getSlotType(p_147351_1_.func_149544_d());
++            ClickType click = ClickType.UNKNOWN;
++            InventoryAction action = InventoryAction.UNKNOWN;
++            ItemStack itemstack = ItemStack.field_190927_a;
++            switch (p_147351_1_.func_186993_f()) {
++               case PICKUP: {
++                  if (p_147351_1_.func_149543_e() == 0) {
++                     click = ClickType.LEFT;
++                  }
++                  else if (p_147351_1_.func_149543_e() == 1) {
++                     click = ClickType.RIGHT;
++                  }
++                  if (p_147351_1_.func_149543_e() != 0 && p_147351_1_.func_149543_e() != 1) {
++                     break;
++                  }
++                  action = InventoryAction.NOTHING;
++                  if (p_147351_1_.func_149544_d() == -999) {
++                     if (!this.field_147369_b.field_71071_by.func_70445_o().func_190926_b()) {
++                        action = ((p_147351_1_.func_149543_e() == 0) ? InventoryAction.DROP_ALL_CURSOR : InventoryAction.DROP_ONE_CURSOR);
++                        break;
++                     }
++                     break;
++                  }
++                  else {
++                     if (p_147351_1_.func_149544_d() < 0) {
++                        action = InventoryAction.NOTHING;
++                        break;
++                     }
++                     Slot slot = this.field_147369_b.field_71070_bA.func_75139_a(p_147351_1_.func_149544_d());
++                     if (slot == null) {
++                        break;
++                     }
++                     ItemStack clickedItem = slot.func_75211_c();
++                     ItemStack cursor = this.field_147369_b.field_71071_by.func_70445_o();
++                     if (clickedItem.func_190926_b()) {
++                        if (!cursor.func_190926_b()) {
++                           action = ((p_147351_1_.func_149543_e() == 0) ? InventoryAction.PLACE_ALL : InventoryAction.PLACE_ONE);
++                           break;
++                        }
++                        break;
++                     }
++                     else {
++                        if (!slot.func_82869_a(this.field_147369_b)) {
++                           break;
++                        }
++                        if (cursor.func_190926_b()) {
++                           action = ((p_147351_1_.func_149543_e() == 0) ? InventoryAction.PICKUP_ALL : InventoryAction.PICKUP_HALF);
++                           break;
++                        }
++                        if (slot.func_75214_a(cursor)) {
++                           if (clickedItem.func_77969_a(cursor) && ItemStack.func_77970_a(clickedItem, cursor)) {
++                              int toPlace = (p_147351_1_.func_149543_e() == 0) ? cursor.func_190916_E() : 1;
++                              toPlace = Math.min(toPlace, clickedItem.func_77976_d() - clickedItem.func_190916_E());
++                              toPlace = Math.min(toPlace, slot.field_75224_c.func_70297_j_() - clickedItem.func_190916_E());
++                              if (toPlace == 1) {
++                                 action = InventoryAction.PLACE_ONE;
++                                 break;
++                              }
++                              if (toPlace == cursor.func_190916_E()) {
++                                 action = InventoryAction.PLACE_ALL;
++                                 break;
++                              }
++                              if (toPlace < 0) {
++                                 action = ((toPlace != -1) ? InventoryAction.PICKUP_SOME : InventoryAction.PICKUP_ONE);
++                                 break;
++                              }
++                              if (toPlace != 0) {
++                                 action = InventoryAction.PLACE_SOME;
++                                 break;
++                              }
++                              break;
++                           }
++                           else {
++                              if (cursor.func_190916_E() <= slot.func_75219_a()) {
++                                 action = InventoryAction.SWAP_WITH_CURSOR;
++                                 break;
++                              }
++                              break;
++                           }
++                        }
++                        else {
++                           if (cursor.func_77973_b() == clickedItem.func_77973_b() && ItemStack.func_77970_a(cursor, clickedItem) && clickedItem.func_190916_E() >= 0 && clickedItem.func_190916_E() + cursor.func_190916_E() <= cursor.func_77976_d()) {
++                              action = InventoryAction.PICKUP_ALL;
++                              break;
++                           }
++                           break;
++                        }
++                     }
++                  }
++               }
++               case QUICK_MOVE: {
++                  if (p_147351_1_.func_149543_e() == 0) {
++                     click = ClickType.SHIFT_LEFT;
++                  }
++                  else if (p_147351_1_.func_149543_e() == 1) {
++                     click = ClickType.SHIFT_RIGHT;
++                  }
++                  if (p_147351_1_.func_149543_e() != 0 && p_147351_1_.func_149543_e() != 1) {
++                     break;
++                  }
++                  if (p_147351_1_.func_149544_d() < 0) {
++                     action = InventoryAction.NOTHING;
++                     break;
++                  }
++                  Slot slot = this.field_147369_b.field_71070_bA.func_75139_a(p_147351_1_.func_149544_d());
++                  if (slot != null && slot.func_82869_a(this.field_147369_b) && slot.func_75216_d()) {
++                     action = InventoryAction.MOVE_TO_OTHER_INVENTORY;
++                     break;
++                  }
++                  action = InventoryAction.NOTHING;
++                  break;
++               }
++               case SWAP: {
++                  if (p_147351_1_.func_149543_e() < 0 || p_147351_1_.func_149543_e() >= 9) {
++                     break;
++                  }
++                  click = ClickType.NUMBER_KEY;
++                  final Slot clickedSlot = this.field_147369_b.field_71070_bA.func_75139_a(p_147351_1_.func_149544_d());
++                  if (!clickedSlot.func_82869_a(this.field_147369_b)) {
++                     action = InventoryAction.NOTHING;
++                     break;
++                  }
++                  ItemStack hotbar = this.field_147369_b.field_71071_by.func_70301_a(p_147351_1_.func_149543_e());
++                  boolean canCleanSwap = hotbar.func_190926_b() || (clickedSlot.field_75224_c == this.field_147369_b.field_71071_by && clickedSlot.func_75214_a(hotbar));
++                  if (clickedSlot.func_75216_d()) {
++                     if (canCleanSwap) {
++                        action = InventoryAction.HOTBAR_SWAP;
++                        break;
++                     }
++                     action = InventoryAction.HOTBAR_MOVE_AND_READD;
++                     break;
++                  }
++                  else {
++                     if (!clickedSlot.func_75216_d() && !hotbar.func_190926_b() && clickedSlot.func_75214_a(hotbar)) {
++                        action = InventoryAction.HOTBAR_SWAP;
++                        break;
++                     }
++                     action = InventoryAction.NOTHING;
++                     break;
++                  }
++               }
++               case CLONE: {
++                  if (p_147351_1_.func_149543_e() != 2) {
++                     click = ClickType.UNKNOWN;
++                     action = InventoryAction.UNKNOWN;
++                     break;
++                  }
++                  click = ClickType.MIDDLE;
++                  if (p_147351_1_.func_149544_d() < 0) {
++                     action = InventoryAction.NOTHING;
++                     break;
++                  }
++                  Slot slot = this.field_147369_b.field_71070_bA.func_75139_a(p_147351_1_.func_149544_d());
++                  if (slot != null && slot.func_75216_d() && this.field_147369_b.field_71075_bZ.field_75098_d && this.field_147369_b.field_71071_by.func_70445_o().func_190926_b()) {
++                     action = InventoryAction.CLONE_STACK;
++                     break;
++                  }
++                  action = InventoryAction.NOTHING;
++                  break;
++               }
++               case THROW: {
++                  if (p_147351_1_.func_149544_d() < 0) {
++                     click = ClickType.LEFT;
++                     if (p_147351_1_.func_149543_e() == 1) {
++                        click = ClickType.RIGHT;
++                     }
++                     action = InventoryAction.NOTHING;
++                     break;
++                  }
++                  if (p_147351_1_.func_149543_e() == 0) {
++                     click = ClickType.DROP;
++                     Slot slot = this.field_147369_b.field_71070_bA.func_75139_a(p_147351_1_.func_149544_d());
++                     if (slot != null && slot.func_75216_d() && slot.func_82869_a(this.field_147369_b) && !slot.func_75211_c().func_190926_b() && slot.func_75211_c().func_77973_b() != Item.func_150898_a(Blocks.field_150350_a)) {
++                        action = InventoryAction.DROP_ONE_SLOT;
++                        break;
++                     }
++                     action = InventoryAction.NOTHING;
++                     break;
++                  }
++                  else {
++                     if (p_147351_1_.func_149543_e() != 1) {
++                        break;
++                     }
++                     click = ClickType.CONTROL_DROP;
++                     Slot slot = this.field_147369_b.field_71070_bA.func_75139_a(p_147351_1_.func_149544_d());
++                     if (slot != null && slot.func_75216_d() && slot.func_82869_a(this.field_147369_b) && !slot.func_75211_c().func_190926_b() && slot.func_75211_c().func_77973_b() != Item.func_150898_a(Blocks.field_150350_a)) {
++                        action = InventoryAction.DROP_ALL_SLOT;
++                        break;
++                     }
++                     action = InventoryAction.NOTHING;
++                     break;
++                  }
++               }
++               case QUICK_CRAFT: {
++                  itemstack = this.field_147369_b.field_71070_bA.func_184996_a(p_147351_1_.func_149544_d(), p_147351_1_.func_149543_e(), p_147351_1_.func_186993_f(), this.field_147369_b);
++                  break;
++               }
++               case PICKUP_ALL: {
++                  click = ClickType.DOUBLE_CLICK;
++                  action = InventoryAction.NOTHING;
++                  if (p_147351_1_.func_149544_d() < 0 || this.field_147369_b.field_71071_by.func_70445_o().func_190926_b()) {
++                     break;
++                  }
++                  final ItemStack cursor2 = this.field_147369_b.field_71071_by.func_70445_o();
++                  action = InventoryAction.NOTHING;
++                  if (inventory.getTopInventory().contains(CraftMagicNumbers.getMaterial(cursor2.func_77973_b())) || inventory.getBottomInventory().contains(CraftMagicNumbers.getMaterial(cursor2.func_77973_b()))) {
++                     action = InventoryAction.COLLECT_TO_CURSOR;
++                     break;
++                  }
++                  break;
++               }
++            }
++            if (p_147351_1_.func_186993_f() != net.minecraft.inventory.container.ClickType.QUICK_CRAFT) {
++               InventoryClickEvent event;
++               if (click == ClickType.NUMBER_KEY) {
++                  event = new InventoryClickEvent(inventory, type, p_147351_1_.func_149544_d(), click, action, p_147351_1_.func_149543_e());
++               }
++               else {
++                  event = new InventoryClickEvent(inventory, type, p_147351_1_.func_149544_d(), click, action);
++               }
++               Inventory top = inventory.getTopInventory();
++               if (p_147351_1_.func_149544_d() == 0 && top instanceof CraftingInventory) {
++                  Recipe recipe = ((CraftingInventory)top).getRecipe();
++                  if (recipe != null) {
++                     if (click == ClickType.NUMBER_KEY) {
++                        event = new CraftItemEvent(recipe, inventory, type, p_147351_1_.func_149544_d(), click, action, p_147351_1_.func_149543_e());
++                     }
++                     else {
++                        event = new CraftItemEvent(recipe, inventory, type, p_147351_1_.func_149544_d(), click, action);
++                     }
++                  }
++               }
++               event.setCancelled(cancelled);
++               Container oldContainer = this.field_147369_b.field_71070_bA;
++               this.cbserver.getPluginManager().callEvent(event);
++               if (this.field_147369_b.field_71070_bA != oldContainer) {
++                  return;
++               }
++               switch (event.getResult()) {
++                  case DEFAULT:
++                  case ALLOW: {
++                     itemstack = this.field_147369_b.field_71070_bA.func_184996_a(p_147351_1_.func_149544_d(), p_147351_1_.func_149543_e(), p_147351_1_.func_186993_f(), this.field_147369_b);
++                     break;
++                  }
++                  case DENY: {
++                     switch (action) {
++                        case PICKUP_ALL:
++                        case MOVE_TO_OTHER_INVENTORY:
++                        case HOTBAR_MOVE_AND_READD:
++                        case HOTBAR_SWAP:
++                        case COLLECT_TO_CURSOR:
++                        case UNKNOWN: {
++                           this.field_147369_b.func_71120_a(this.field_147369_b.field_71070_bA);
++                           break;
++                        }
++                        case PICKUP_SOME:
++                        case PICKUP_HALF:
++                        case PICKUP_ONE:
++                        case PLACE_ALL:
++                        case PLACE_SOME:
++                        case PLACE_ONE:
++                        case SWAP_WITH_CURSOR: {
++                           this.field_147369_b.field_71135_a.func_147359_a(new SSetSlotPacket(-1, -1, this.field_147369_b.field_71071_by.func_70445_o()));
++                           this.field_147369_b.field_71135_a.func_147359_a(new SSetSlotPacket(this.field_147369_b.field_71070_bA.field_75152_c, p_147351_1_.func_149544_d(), this.field_147369_b.field_71070_bA.func_75139_a(p_147351_1_.func_149544_d()).func_75211_c()));
++                           break;
++                        }
++                        case DROP_ALL_SLOT:
++                        case DROP_ONE_SLOT: {
++                           this.field_147369_b.field_71135_a.func_147359_a(new SSetSlotPacket(this.field_147369_b.field_71070_bA.field_75152_c, p_147351_1_.func_149544_d(), this.field_147369_b.field_71070_bA.func_75139_a(p_147351_1_.func_149544_d()).func_75211_c()));
++                           break;
++                        }
++                        case DROP_ALL_CURSOR:
++                        case DROP_ONE_CURSOR:
++                        case CLONE_STACK: {
++                           this.field_147369_b.field_71135_a.func_147359_a(new SSetSlotPacket(-1, -1, this.field_147369_b.field_71071_by.func_70445_o()));
++                           break;
++                        }
++                     }
++                     return;
++                  }
++               }
++               if (event instanceof CraftItemEvent) {
++                  this.field_147369_b.func_71120_a(this.field_147369_b.field_71070_bA);
++               }
++            }
++            if (ItemStack.func_77989_b(p_147351_1_.func_149546_g(), itemstack)) {
+                this.field_147369_b.field_71135_a.func_147359_a(new SConfirmTransactionPacket(p_147351_1_.func_149548_c(), p_147351_1_.func_149547_f(), true));
+                this.field_147369_b.field_71137_h = true;
+                this.field_147369_b.field_71070_bA.func_75142_b();
+@@ -1139,8 +2088,8 @@
+                NonNullList<ItemStack> nonnulllist1 = NonNullList.func_191196_a();
+ 
+                for(int j = 0; j < this.field_147369_b.field_71070_bA.field_75151_b.size(); ++j) {
+-                  ItemStack itemstack = this.field_147369_b.field_71070_bA.field_75151_b.get(j).func_75211_c();
+-                  nonnulllist1.add(itemstack.func_190926_b() ? ItemStack.field_190927_a : itemstack);
++                  ItemStack itemstack1 = this.field_147369_b.field_71070_bA.field_75151_b.get(j).func_75211_c();
++                  nonnulllist1.add(itemstack1.func_190926_b() ? ItemStack.field_190927_a : itemstack1);
+                }
+ 
+                this.field_147369_b.func_71110_a(this.field_147369_b.field_71070_bA, nonnulllist1);
+@@ -1162,6 +2111,7 @@
+ 
+    public void func_147338_a(CEnchantItemPacket p_147338_1_) {
+       PacketThreadUtil.func_218796_a(p_147338_1_, this, this.field_147369_b.func_71121_q());
++      if (this.field_147369_b.func_70610_aX()) return; // CraftBukkit
+       this.field_147369_b.func_143004_u();
+       if (this.field_147369_b.field_71070_bA.field_75152_c == p_147338_1_.func_149539_c() && this.field_147369_b.field_71070_bA.func_75129_b(this.field_147369_b) && !this.field_147369_b.func_175149_v()) {
+          this.field_147369_b.field_71070_bA.func_75140_a(this.field_147369_b, p_147338_1_.func_149537_d());
+@@ -1190,6 +2140,37 @@
+ 
+          boolean flag1 = p_147344_1_.func_149627_c() >= 1 && p_147344_1_.func_149627_c() <= 45;
+          boolean flag2 = itemstack.func_190926_b() || itemstack.func_77952_i() >= 0 && itemstack.func_190916_E() <= 64 && !itemstack.func_190926_b();
++         if (flag || (flag1 && !ItemStack.func_77989_b(this.field_147369_b.field_71069_bz.func_75139_a(p_147344_1_.func_149627_c()).func_75211_c(), p_147344_1_.func_149625_d()))) {
++            InventoryView inventory = this.field_147369_b.field_71069_bz.getBukkitView();
++            org.bukkit.inventory.ItemStack item = CraftItemStack.asBukkitCopy(p_147344_1_.func_149625_d());
++            InventoryType.SlotType type = InventoryType.SlotType.QUICKBAR;
++            if (flag) {
++               type = InventoryType.SlotType.OUTSIDE;
++            }
++            else if (p_147344_1_.func_149627_c() < 36) {
++               if (p_147344_1_.func_149627_c() >= 5 && p_147344_1_.func_149627_c() < 9) {
++                  type = InventoryType.SlotType.ARMOR;
++               }
++               else {
++                  type = InventoryType.SlotType.CONTAINER;
++               }
++            }
++            InventoryCreativeEvent event = new InventoryCreativeEvent(inventory, type, flag ? -999 : p_147344_1_.func_149627_c(), item);
++            this.cbserver.getPluginManager().callEvent(event);
++            itemstack = CraftItemStack.asNMSCopy(event.getCursor());
++            switch (event.getResult()) {
++               case ALLOW: {
++                  flag2 = true;
++               }
++               case DENY: {
++                  if (p_147344_1_.func_149627_c() >= 0) {
++                     this.field_147369_b.field_71135_a.func_147359_a(new SSetSlotPacket(this.field_147369_b.field_71069_bz.field_75152_c, p_147344_1_.func_149627_c(), this.field_147369_b.field_71069_bz.func_75139_a(p_147344_1_.func_149627_c()).func_75211_c()));
++                     this.field_147369_b.field_71135_a.func_147359_a(new SSetSlotPacket(-1, -1, ItemStack.field_190927_a));
++                  }
++                  return;
++               }
++            }
++         }
+          if (flag1 && flag2) {
+             if (itemstack.func_190926_b()) {
+                this.field_147369_b.field_71069_bz.func_75141_a(p_147344_1_.func_149627_c(), ItemStack.field_190927_a);
+@@ -1209,6 +2190,9 @@
+ 
+    public void func_147339_a(CConfirmTransactionPacket p_147339_1_) {
+       PacketThreadUtil.func_218796_a(p_147339_1_, this, this.field_147369_b.func_71121_q());
++      if (this.field_147369_b.func_70610_aX()) {
++         return;
++      }
+       int i = this.field_147369_b.field_71070_bA.field_75152_c;
+       if (i == p_147339_1_.func_149532_c() && this.field_147372_n.getOrDefault(i, (short)(p_147339_1_.func_149533_d() + 1)) == p_147339_1_.func_149533_d() && !this.field_147369_b.field_71070_bA.func_75129_b(this.field_147369_b) && !this.field_147369_b.func_175149_v()) {
+          this.field_147369_b.field_71070_bA.func_75128_a(this.field_147369_b, true);
+@@ -1218,6 +2202,9 @@
+ 
+    public void func_147343_a(CUpdateSignPacket p_147343_1_) {
+       PacketThreadUtil.func_218796_a(p_147343_1_, this, this.field_147369_b.func_71121_q());
++      if (this.field_147369_b.func_70610_aX()) {
++         return;
++      }
+       this.field_147369_b.func_143004_u();
+       ServerWorld serverworld = this.field_147367_d.func_71218_a(this.field_147369_b.field_71093_bK);
+       BlockPos blockpos = p_147343_1_.func_179722_a();
+@@ -1231,15 +2218,25 @@
+          SignTileEntity signtileentity = (SignTileEntity)tileentity;
+          if (!signtileentity.func_145914_a() || signtileentity.func_145911_b() != this.field_147369_b) {
+             this.field_147367_d.func_71236_h("Player " + this.field_147369_b.func_200200_C_().getString() + " just tried to change non-editable sign");
++            this.func_147359_a(tileentity.func_189518_D_());
+             return;
+          }
+ 
+          String[] astring = p_147343_1_.func_187017_b();
+-
++         Player player = this.cbserver.getPlayer(this.field_147369_b);
++         int x = p_147343_1_.func_179722_a().func_177958_n();
++         int y = p_147343_1_.func_179722_a().func_177956_o();
++         int z = p_147343_1_.func_179722_a().func_177952_p();
++         String[] lines = new String[4];
+          for(int i = 0; i < astring.length; ++i) {
+-            signtileentity.func_212365_a(i, new StringTextComponent(TextFormatting.func_110646_a(astring[i])));
++            lines[i] = TextFormatting.func_110646_a(new StringTextComponent(TextFormatting.func_110646_a(lines[i])).getString());
+          }
+-
++         SignChangeEvent event = new SignChangeEvent((org.bukkit.craftbukkit.block.CraftBlock) player.getWorld().getBlockAt(x, y, z), this.cbserver.getPlayer(this.field_147369_b), astring);
++         this.cbserver.getPluginManager().callEvent(event);
++         if (!event.isCancelled()) {
++            System.arraycopy(CraftSign.sanitizeLines(event.getLines()), 0, signtileentity.field_145915_a, 0, 4);
++            signtileentity.field_145916_j = false;
++         }
+          signtileentity.func_70296_d();
+          serverworld.func_184138_a(blockpos, blockstate, blockstate, 3);
+       }
+@@ -1247,6 +2244,7 @@
     }
  
+    public void func_147353_a(CKeepAlivePacket p_147353_1_) {
++      PacketThreadUtil.func_218796_a(p_147353_1_, this, this.field_147369_b.func_71121_q());
+       if (this.field_194403_g && p_147353_1_.func_149460_c() == this.field_194404_h) {
+          int i = (int)(Util.func_211177_b() - this.field_194402_f);
+          this.field_147369_b.field_71138_i = (this.field_147369_b.field_71138_i * 3 + i) / 4;
+@@ -1259,7 +2257,16 @@
+ 
+    public void func_147348_a(CPlayerAbilitiesPacket p_147348_1_) {
+       PacketThreadUtil.func_218796_a(p_147348_1_, this, this.field_147369_b.func_71121_q());
+-      this.field_147369_b.field_71075_bZ.field_75100_b = p_147348_1_.func_149488_d() && this.field_147369_b.field_71075_bZ.field_75101_c;
++      if (this.field_147369_b.field_71075_bZ.field_75101_c && this.field_147369_b.field_71075_bZ.field_75100_b != p_147348_1_.func_149488_d()) {
++         PlayerToggleFlightEvent event = new PlayerToggleFlightEvent(this.cbserver.getPlayer(this.field_147369_b), p_147348_1_.func_149488_d());
++         this.cbserver.getPluginManager().callEvent(event);
++         if (!event.isCancelled()) {
++            this.field_147369_b.field_71075_bZ.field_75100_b = p_147348_1_.func_149488_d();
++         }
++         else {
++            this.field_147369_b.func_71016_p();
++         }
++      }
+    }
+ 
+    public void func_147352_a(CClientSettingsPacket p_147352_1_) {
+@@ -1267,9 +2274,6 @@
+       this.field_147369_b.func_147100_a(p_147352_1_);
+    }
+ 
+-   public void func_147349_a(CCustomPayloadPacket p_147349_1_) {
+-   }
+-
     public void func_217263_a(CSetDifficultyPacket p_217263_1_) {
-@@ -1283,4 +1314,11 @@
+       PacketThreadUtil.func_218796_a(p_217263_1_, this, this.field_147369_b.func_71121_q());
+       if (this.field_147369_b.func_211513_k(2) || this.func_217264_d()) {
+@@ -1283,4 +2287,56 @@
           this.field_147367_d.func_213209_d(p_217261_1_.func_218776_b());
        }
     }
 +
-+   public void teleport(Location to) {
++   private static final ResourceLocation CUSTOM_REGISTER = new ResourceLocation("register");
++   private static final ResourceLocation CUSTOM_UNREGISTER = new ResourceLocation("unregister");
++
++   @Override
++   public void func_147349_a(CCustomPayloadPacket p_147349_1_) {
++      PacketThreadUtil.func_218796_a(p_147349_1_, this, this.field_147369_b.func_71121_q());
++      net.minecraftforge.fml.network.NetworkHooks.onCustomPayload(p_147349_1_, this.field_147371_a);
++      if (p_147349_1_.field_149562_a.equals(ServerPlayNetHandler.CUSTOM_REGISTER)) {
++         try {
++            final String channels = p_147349_1_.field_149561_c.toString(Charsets.UTF_8);
++            String[] split;
++            for (int length = (split = channels.split("\u0000")).length, i = 0; i < length; ++i) {
++               final String channel = split[i];
++               this.getPlayer().addChannel(channel);
++            }
++         }
++         catch (Exception ex) {
++            ServerPlayNetHandler.field_147370_c.error("Couldn't register custom payload", ex);
++            this.disconnect("Invalid payload REGISTER!");
++         }
++      }
++      else if (p_147349_1_.field_149562_a.equals(ServerPlayNetHandler.CUSTOM_UNREGISTER)) {
++         try {
++            final String channels = p_147349_1_.field_149561_c.toString(Charsets.UTF_8);
++            String[] split2;
++            for (int length2 = (split2 = channels.split("\u0000")).length, j = 0; j < length2; ++j) {
++               final String channel = split2[j];
++               this.getPlayer().removeChannel(channel);
++            }
++         }
++         catch (Exception ex) {
++            ServerPlayNetHandler.field_147370_c.error("Couldn't unregister custom payload", ex);
++            this.disconnect("Invalid payload UNREGISTER!");
++         }
++      }
++      else {
++         try {
++            final byte[] data = new byte[p_147349_1_.field_149561_c.readableBytes()];
++            p_147349_1_.field_149561_c.readBytes(data);
++            this.cbserver.getMessenger().dispatchIncomingMessage(this.field_147369_b.getBukkitEntity(), p_147349_1_.field_149562_a.toString(), data);
++         }
++         catch (Exception ex) {
++            ServerPlayNetHandler.field_147370_c.error("Couldn't dispatch custom payload", ex);
++            this.disconnect("Invalid custom payload!");
++         }
++      }
 +   }
 +
-+   public boolean isDisconnected() {
-+      return false;
++   public final boolean isDisconnected() {
++      return !this.field_147369_b.joining && !this.field_147371_a.func_150724_d();
 +   }
  }
