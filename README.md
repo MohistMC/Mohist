@@ -8,10 +8,14 @@
 [![](https://img.shields.io/badge/Paper-1.15.2-brightgreen.svg?colorB=DC3340)](https://papermc.io/downloads#Paper-1.15.2)
 ![](https://img.shields.io/badge/OracleJdk-8u251-brightgreen.svg?colorB=469C00)
 ![](https://img.shields.io/badge/Gradle-4.10.3-brightgreen.svg?colorB=469C00)
+[![](https://img.shields.io/bstats/servers/6762?label=bStats%20Button)](https://bstats.org/plugin/server-implementation/Mohist/6762)
+
+[![Mohist Stats](https://bstats.org/signatures/server-implementation/Mohist.svg)](https://bstats.org/plugin/server-implementation/Mohist/6762)
+[![Mohist Stats](https://bstats.org/signatures/bukkit/Mohist.svg)](https://bstats.org/plugin/bukkit/Mohist/3939)
 
 ### Getting Help
    [**Home**](https://mohist.red/)
-   [**bStats**](https://bstats.org/plugin/bukkit/Mohist)
+   [**Discord**](https://discord.gg/ZgXjHGd)
    [**QQ**](https://jq.qq.com/?_wv=1027&k=5YIRYnH)  
    
 Download
