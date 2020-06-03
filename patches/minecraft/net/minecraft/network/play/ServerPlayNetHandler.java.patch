@@ -140,7 +140,7 @@
 -   private int field_147374_l;
 +   // CraftBukkit start - multithreaded fields
 +   private volatile int field_147374_l;
-+   private static final AtomicIntegerFieldUpdater chatSpamField = AtomicIntegerFieldUpdater.newUpdater(ServerPlayNetHandler.class, "field_147374_l");
++   private static final AtomicIntegerFieldUpdater chatSpamField = AtomicIntegerFieldUpdater.newUpdater(ServerPlayNetHandler.class, "chatSpamThresholdCount");
 +   // CraftBukkit end
     private int field_147375_m;
     private final Int2ShortMap field_147372_n = new Int2ShortOpenHashMap();
