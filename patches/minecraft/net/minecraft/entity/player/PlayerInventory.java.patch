@@ -27,7 +27,7 @@
     private int field_194017_h;
  
 +   // CraftBukkit start - add fields and methods
-+   public List<HumanEntity> transaction;
++   public List<HumanEntity> transaction = new java.util.ArrayList<HumanEntity>();
 +   private int maxStack = MAX_STACK;
 +
 +   public List<ItemStack> getContents() {
