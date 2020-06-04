@@ -28,9 +28,7 @@ public class DownloadLibraries {
         System.out.println(Message.getString("libraries.checking.start"));
         String str;
         String url = "https://www.mgazul.cn/";
-        if(Message.getLocale().contains("CN") || Message.getCountry().contains("CN"))
-            url = "https://mohist-community.gitee.io/mohistdown/"; //Gitee Mirror
-
+        if(Message.isCN()) url = "https://mohist-community.gitee.io/mohistdown/"; //Gitee Mirror
         BufferedReader b = new BufferedReader(new InputStreamReader(DownloadLibraries.class.getClassLoader().getResourceAsStream("lib.red")));
         while ((str = b.readLine()) != null) {
             String[] args = str.split("\\|");

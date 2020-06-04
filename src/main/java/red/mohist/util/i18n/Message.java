@@ -40,4 +40,8 @@ public class Message {
     public static String getLocale() {
         return Message.rb.getLocale().toString();
     }
+
+    public static boolean isCN(){
+        return Message.getLocale().contains("CN") || Message.getCountry().contains("CN");
+    }
 }

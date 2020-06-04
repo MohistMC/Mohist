@@ -1,6 +1,8 @@
 package red.mohist.bukkit.nms;
 
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.InputStreamReader;
 import java.lang.invoke.MethodType;
 import java.util.ArrayList;
@@ -8,12 +10,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import net.md_5.specialsource.transformer.MavenShade;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.commons.ClassRemapper;
 import org.objectweb.asm.commons.Remapper;
 import org.objectweb.asm.tree.ClassNode;
+import red.mohist.Mohist;
 import red.mohist.bukkit.nms.model.ClassMapping;
 import red.mohist.bukkit.nms.remappers.ClassRemapperSupplier;
 import red.mohist.bukkit.nms.remappers.MohistInheritanceMap;
@@ -51,8 +55,14 @@ public class RemapUtils {
 
         relocations.put("net.minecraft.server", "net.minecraft.server.v1_12_R1");
         try {
+            File nms = new File("libraries/red/mohist/mappings", "nms12.red");
+            if (!nms.exists()) {
+                Mohist.LOGGER.error("Unable to find remapping dependencies, please re-download the libraries file!");
+                FMLCommonHandler.instance().exitJava(1, true);
+            }
+            FileInputStream fos = new FileInputStream(nms);
             jarMapping.loadMappings(
-                    new BufferedReader(new InputStreamReader(RemapUtils.class.getClassLoader().getResourceAsStream("mappings/nms.srg"))),
+                    new BufferedReader(new InputStreamReader(fos)),
                     new MavenShade(relocations),
                     null, false);
         } catch (Exception e) {
