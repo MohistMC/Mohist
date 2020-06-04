@@ -120,7 +120,7 @@ public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
         MinecraftForge.EVENT_BUS.register(MinecraftForge.INTERNAL_HANDLER);
         MinecraftForge.EVENT_BUS.register(this);
 
-        VersionChecker.startVersionCheck();
+        // VersionChecker.startVersionCheck();
 
         /*
          * We can't actually add any of these, because vanilla clients will choke on unknown argument types
