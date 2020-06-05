@@ -593,6 +593,19 @@ public class DimensionManager
             registerDimension(dim, type);
             addBukkitDimension(dim);
         }
+        if (env == null) {
+            try {
+                env = org.bukkit.World.Environment.getEnvironment(DimensionManager.createProviderFor(dim).getDimension());
+            }
+            catch (Exception e)
+            {
+                // do nothing
+            }
+
+            if (env == null) {
+                env = org.bukkit.World.Environment.NORMAL;
+            }
+        }
         ChunkGenerator gen = creator.generator();
         if (mcServer instanceof DedicatedServer) {
             worldSettings.setGeneratorOptions(((DedicatedServer) mcServer).getStringProperty("generator-settings", ""));

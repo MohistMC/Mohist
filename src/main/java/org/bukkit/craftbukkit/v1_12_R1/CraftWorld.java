@@ -859,6 +859,7 @@ public class CraftWorld implements World {
     }
 
     public void setEnvironment(Environment env) {
+        if (env == null) return;
         if (environment != env) {
             environment = env;
             world.provider = DimensionManager.createProviderFor(environment.getId());

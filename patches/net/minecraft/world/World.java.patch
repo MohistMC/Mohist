@@ -133,7 +133,7 @@
 +
 +    private final CraftWorld world;
 +    public boolean pvpMode;
-+    public boolean keepSpawnInMemory = true;
++    public boolean keepSpawnInMemory = false;
 +    public ChunkGenerator generator;
 +    public boolean captureTreeGeneration = false;
 +    public List<EntityItem> captureDrops;

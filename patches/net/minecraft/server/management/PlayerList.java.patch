@@ -778,7 +778,7 @@
          return entityplayermp;
      }
  
-@@ -556,37 +947,129 @@
+@@ -556,37 +947,148 @@
  
      public void changePlayerDimension(EntityPlayerMP player, int dimensionIn)
      {
@@ -816,7 +816,26 @@
 +        }
 +
 +        // allow forge mods to be the teleporter
-+        TravelAgent agent = exit != null ? (TravelAgent) ((CraftWorld) exit.getWorld()).getHandle().getDefaultTeleporter() : org.bukkit.craftbukkit.v1_12_R1.CraftTravelAgent.DEFAULT; // return arbitrary TA to compensate for implementation dependent plugins
++        TravelAgent agent = null;
++        if (exit != null && teleporter == null)
++        {
++            teleporter = ((CraftWorld) exit.getWorld()).getHandle().getDefaultTeleporter();
++            if (teleporter instanceof TravelAgent)
++            {
++                agent = (TravelAgent) teleporter;
++            }
++        }
++        else
++        {
++            if (teleporter instanceof TravelAgent)
++            {
++                agent = (TravelAgent) teleporter;
++            }
++        }
++        if (agent == null) // mod teleporter such as Twilight Forest
++        {
++            agent = org.bukkit.craftbukkit.v1_12_R1.CraftTravelAgent.DEFAULT; // return arbitrary TA to compensate for implementation dependent plugins
++        }
 +        PlayerPortalEvent event = new PlayerPortalEvent(player.getBukkitEntity(), enter, exit, agent, cause);
 +        event.useTravelAgent(useTravelAgent);
 +        Bukkit.getServer().getPluginManager().callEvent(event);
@@ -920,7 +939,7 @@
          {
              d0 = MathHelper.clamp(d0 / 8.0D, toWorldIn.getWorldBorder().minX() + 16.0D, toWorldIn.getWorldBorder().maxX() - 16.0D);
              d1 = MathHelper.clamp(d1 / 8.0D, toWorldIn.getWorldBorder().minZ() + 16.0D, toWorldIn.getWorldBorder().maxZ() - 16.0D);
-@@ -597,7 +1080,7 @@
+@@ -597,7 +1099,7 @@
                  oldWorldIn.updateEntityWithOptionalForce(entityIn, false);
              }
          }
@@ -929,7 +948,7 @@
          {
              d0 = MathHelper.clamp(d0 * 8.0D, toWorldIn.getWorldBorder().minX() + 16.0D, toWorldIn.getWorldBorder().maxX() - 16.0D);
              d1 = MathHelper.clamp(d1 * 8.0D, toWorldIn.getWorldBorder().minZ() + 16.0D, toWorldIn.getWorldBorder().maxZ() - 16.0D);
-@@ -608,7 +1091,7 @@
+@@ -608,7 +1110,7 @@
                  oldWorldIn.updateEntityWithOptionalForce(entityIn, false);
              }
          }
@@ -938,7 +957,7 @@
          {
              BlockPos blockpos;
  
-@@ -634,7 +1117,7 @@
+@@ -634,7 +1136,7 @@
  
          oldWorldIn.profiler.endSection();
  
@@ -947,7 +966,7 @@
          {
              oldWorldIn.profiler.startSection("placing");
              d0 = (double)MathHelper.clamp((int)d0, -29999872, 29999872);
-@@ -643,7 +1126,8 @@
+@@ -643,7 +1145,8 @@
              if (entityIn.isEntityAlive())
              {
                  entityIn.setLocationAndAngles(d0, entityIn.posY, d1, entityIn.rotationYaw, entityIn.rotationPitch);
@@ -957,7 +976,7 @@
                  toWorldIn.spawnEntity(entityIn);
                  toWorldIn.updateEntityWithOptionalForce(entityIn, false);
              }
-@@ -654,11 +1138,106 @@
+@@ -654,11 +1157,106 @@
          entityIn.setWorld(toWorldIn);
      }
  
@@ -1065,7 +1084,7 @@
              this.playerPingIndex = 0;
          }
      }
-@@ -671,6 +1250,24 @@
+@@ -671,6 +1269,24 @@
          }
      }
  
@@ -1090,7 +1109,7 @@
      public void sendPacketToAllPlayersInDimension(Packet<?> packetIn, int dimension)
      {
          for (int i = 0; i < this.playerEntityList.size(); ++i)
-@@ -786,12 +1383,20 @@
+@@ -786,12 +1402,20 @@
          int i = this.mcServer.getOpPermissionLevel();
          this.ops.addEntry(new UserListOpsEntry(profile, this.mcServer.getOpPermissionLevel(), this.ops.bypassesPlayerLimit(profile)));
          this.sendPlayerPermissionLevel(this.getPlayerByUUID(profile.getId()), i);
@@ -1111,7 +1130,7 @@
      }
  
      private void sendPlayerPermissionLevel(EntityPlayerMP player, int permLevel)
-@@ -847,6 +1452,12 @@
+@@ -847,6 +1471,12 @@
          {
              EntityPlayerMP entityplayermp = this.playerEntityList.get(i);
  
@@ -1124,7 +1143,7 @@
              if (entityplayermp != except && entityplayermp.dimension == dimension)
              {
                  double d0 = x - entityplayermp.posX;
-@@ -863,12 +1474,26 @@
+@@ -863,12 +1493,26 @@
  
      public void saveAllPlayerData()
      {
@@ -1155,7 +1174,7 @@
      public void addWhitelistedPlayer(GameProfile profile)
      {
          this.whiteListedPlayers.addEntry(new UserListWhitelistEntry(profile));
-@@ -913,16 +1538,21 @@
+@@ -913,16 +1557,21 @@
  
          if (worldIn.isRaining())
          {
@@ -1181,7 +1200,7 @@
          playerIn.connection.sendPacket(new SPacketHeldItemChange(playerIn.inventory.currentItem));
      }
  
-@@ -1004,17 +1634,26 @@
+@@ -1004,17 +1653,26 @@
  
      public void removeAllPlayers()
      {
@@ -1212,7 +1231,7 @@
      }
  
      public void sendMessage(ITextComponent component)
-@@ -1022,10 +1661,19 @@
+@@ -1022,10 +1680,19 @@
          this.sendMessage(component, true);
      }
  
@@ -1234,7 +1253,7 @@
  
          if (statisticsmanagerserver == null)
          {
-@@ -1044,7 +1692,7 @@
+@@ -1044,7 +1711,7 @@
  
              statisticsmanagerserver = new StatisticsManagerServer(this.mcServer, file2);
              statisticsmanagerserver.readStatFile();
@@ -1243,7 +1262,7 @@
          }
  
          return statisticsmanagerserver;
-@@ -1053,14 +1701,14 @@
+@@ -1053,14 +1720,14 @@
      public PlayerAdvancements getPlayerAdvancements(EntityPlayerMP p_192054_1_)
      {
          UUID uuid = p_192054_1_.getUniqueID();
@@ -1260,7 +1279,7 @@
          }
  
          playeradvancements.setPlayer(p_192054_1_);
-@@ -1073,7 +1721,7 @@
+@@ -1073,7 +1740,7 @@
  
          if (this.mcServer.worlds != null)
          {
@@ -1269,7 +1288,7 @@
              {
                  if (worldserver != null)
                  {
-@@ -1101,9 +1749,10 @@
+@@ -1101,9 +1768,10 @@
  
      public void reloadResources()
      {

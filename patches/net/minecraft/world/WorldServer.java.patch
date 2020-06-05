@@ -358,17 +358,6 @@
      public void tick()
      {
          super.tick();
-@@ -179,8 +403,8 @@
-         {
-             if (this.getGameRules().getBoolean("doDaylightCycle"))
-             {
--                long i = this.worldInfo.getWorldTime() + 24000L;
--                this.worldInfo.setWorldTime(i - i % 24000L);
-+                long i = this.getWorldTime() + 24000L;
-+                this.setWorldTime(i - i % 24000L);
-             }
- 
-             this.wakeAllPlayers();
 @@ -188,11 +412,17 @@
  
          this.profiler.startSection("mobSpawner");
@@ -791,15 +780,7 @@
          }
      }
  
-@@ -745,6 +1003,7 @@
-         int j = i + 16 + 2;
-         int k = (chunkpos.z << 4) - 2;
-         int l = k + 16 + 2;
-+
-         return this.getPendingBlockUpdates(new StructureBoundingBox(i, 0, k, j, 256, l), remove);
-     }
- 
-@@ -796,21 +1055,6 @@
+@@ -796,21 +1054,6 @@
          return list;
      }
  
@@ -821,7 +802,7 @@
      private boolean canSpawnNPCs()
      {
          return this.mcServer.getCanSpawnNPCs();
-@@ -824,11 +1068,59 @@
+@@ -824,11 +1067,59 @@
      protected IChunkProvider createChunkProvider()
      {
          IChunkLoader ichunkloader = this.saveHandler.getChunkLoader(this.provider);
@@ -882,7 +863,7 @@
          return !this.mcServer.isBlockProtected(this, pos, player) && this.getWorldBorder().contains(pos);
      }
  
-@@ -894,7 +1186,24 @@
+@@ -894,7 +1185,24 @@
          }
          else
          {
@@ -907,7 +888,7 @@
              BiomeProvider biomeprovider = this.provider.getBiomeProvider();
              List<Biome> list = biomeprovider.getBiomesToSpawnIn();
              Random random = new Random(this.getSeed());
-@@ -915,7 +1224,7 @@
+@@ -915,7 +1223,7 @@
  
              int l = 0;
  
@@ -916,30 +897,16 @@
              {
                  i += random.nextInt(64) - random.nextInt(64);
                  k += random.nextInt(64) - random.nextInt(64);
-@@ -961,32 +1270,30 @@
-     }
- 
-     public void saveAllChunks(boolean all, @Nullable IProgressUpdate progressCallback) throws MinecraftException
--    {
-+	{
-         ChunkProviderServer chunkproviderserver = this.getChunkProvider();
+@@ -966,6 +1274,8 @@
  
          if (chunkproviderserver.canSave())
--        {
-+		{
+         {
 +            org.bukkit.Bukkit.getPluginManager().callEvent(new org.bukkit.event.world.WorldSaveEvent(getWorld())); // CraftBukkit
 +            timings.worldSave.startTiming(); // Paper
              if (progressCallback != null)
--            {
-+			{
+             {
                  progressCallback.displaySavingString("Saving level");
-             }
- 
-             this.saveLevel();
- 
-             if (progressCallback != null)
--            {
-+			{
+@@ -978,15 +1288,11 @@
                  progressCallback.displayLoadingString("Saving chunks");
              }
  
@@ -959,7 +926,7 @@
          }
      }
  
-@@ -1002,6 +1309,7 @@
+@@ -1002,6 +1308,7 @@
  
      protected void saveLevel() throws MinecraftException
      {
@@ -967,7 +934,7 @@
          this.checkSessionLock();
  
          for (WorldServer worldserver : this.mcServer.worlds)
-@@ -1012,6 +1320,12 @@
+@@ -1012,6 +1319,12 @@
              }
          }
  
@@ -980,7 +947,7 @@
          this.worldInfo.setBorderSize(this.getWorldBorder().getDiameter());
          this.worldInfo.getBorderCenterX(this.getWorldBorder().getCenterX());
          this.worldInfo.getBorderCenterZ(this.getWorldBorder().getCenterZ());
-@@ -1023,18 +1337,21 @@
+@@ -1023,18 +1336,21 @@
          this.worldInfo.setBorderLerpTime(this.getWorldBorder().getTimeUntilTarget());
          this.saveHandler.saveWorldInfoWithPlayer(this.worldInfo, this.mcServer.getPlayerList().getHostPlayerData());
          this.mapStorage.saveAllData();
@@ -1006,7 +973,7 @@
              {
                  this.loadedEntityList.add(entity);
                  this.onEntityAdded(entity);
-@@ -1046,7 +1363,6 @@
+@@ -1046,7 +1362,6 @@
      {
          if (entityIn.isDead)
          {
@@ -1014,7 +981,7 @@
              return false;
          }
          else
-@@ -1057,7 +1373,7 @@
+@@ -1057,7 +1372,7 @@
              {
                  Entity entity = this.entitiesByUuid.get(uuid);
  
@@ -1023,7 +990,7 @@
                  {
                      this.unloadedEntityList.remove(entity);
                  }
-@@ -1065,7 +1381,6 @@
+@@ -1065,7 +1380,6 @@
                  {
                      if (!(entityIn instanceof EntityPlayer))
                      {
@@ -1031,7 +998,7 @@
                          return false;
                      }
  
-@@ -1113,9 +1428,17 @@
+@@ -1113,9 +1427,17 @@
  
      public boolean addWeatherEffect(Entity entityIn)
      {
@@ -1050,7 +1017,7 @@
              return true;
          }
          else
-@@ -1136,10 +1459,15 @@
+@@ -1136,10 +1458,15 @@
  
      public Explosion newExplosion(@Nullable Entity entityIn, double x, double y, double z, float strength, boolean isFlaming, boolean isSmoking)
      {
@@ -1070,7 +1037,7 @@
          if (!isSmoking)
          {
              explosion.clearAffectedBlockPositions();
-@@ -1182,7 +1510,8 @@
+@@ -1182,7 +1509,8 @@
              {
                  if (this.fireBlockEvent(blockeventdata))
                  {
@@ -1080,7 +1047,7 @@
                  }
              }
  
-@@ -1208,27 +1537,31 @@
+@@ -1208,27 +1536,31 @@
  
          if (this.prevRainingStrength != this.rainingStrength)
          {
@@ -1118,7 +1085,7 @@
          }
      }
  
-@@ -1265,11 +1598,19 @@
+@@ -1265,11 +1597,19 @@
  
      public void spawnParticle(EnumParticleTypes particleType, boolean longDistance, double xCoord, double yCoord, double zCoord, int numberOfParticles, double xOffset, double yOffset, double zOffset, double particleSpeed, int... particleArguments)
      {
@@ -1138,7 +1105,7 @@
              this.sendPacketWithinDistance(entityplayermp, longDistance, xCoord, yCoord, zCoord, spacketparticles);
          }
      }
-@@ -1323,10 +1664,15 @@
+@@ -1323,6 +1663,11 @@
          return this.functionManager;
      }
  
@@ -1148,12 +1115,5 @@
 +    }
 +
      static class ServerBlockEventList extends ArrayList<BlockEventData>
-+    {
-+        private ServerBlockEventList()
          {
--            private ServerBlockEventList()
--            {
--            }
-         }
-+    }
- }
+             private ServerBlockEventList()
