@@ -7,6 +7,7 @@ import java.nio.channels.Channels;
 import java.nio.channels.FileChannel;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
+import red.mohist.util.JarTool;
 import red.mohist.util.MD5Util;
 import red.mohist.util.i18n.Message;
 
@@ -19,7 +20,7 @@ public class MappingFix {
     static FileChannel fileChannel;
 
     public static void init() throws Exception {
-        File nms = new File("libraries/red/mohist/mappings", "nms12.red");
+        File nms = new File(JarTool.getJarDir() + "/libraries/red/mohist/mappings", "nms12.red");
         String p = "libraries/red/mohist/mappings/nms12.red";
         String url = "https://www.mgazul.cn/";
         if (!nms.exists() || MD5Util.md5CheckSum(nms, "6e2b64361122a2eb7c045c43aa3f3c76")) {

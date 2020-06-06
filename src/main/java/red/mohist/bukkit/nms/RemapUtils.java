@@ -25,6 +25,7 @@ import red.mohist.bukkit.nms.remappers.MohistInheritanceProvider;
 import red.mohist.bukkit.nms.remappers.MohistJarMapping;
 import red.mohist.bukkit.nms.remappers.MohistJarRemapper;
 import red.mohist.bukkit.nms.remappers.ReflectRemapper;
+import red.mohist.util.JarTool;
 
 /**
  *
@@ -55,7 +56,25 @@ public class RemapUtils {
 
         relocations.put("net.minecraft.server", "net.minecraft.server.v1_12_R1");
         try {
-            File nms = new File("libraries/red/mohist/mappings", "nms12.red");
+            String f = JarTool.getJarDir();
+            String f1 = f
+                    .replace("file:\\", "") // win
+                    .replace("file:/", "") // linux
+                    .replace("\\red\\mohist\\util", "") // win
+                    .replace("/red/mohist/util", ""); // linux
+            String jarname = f1.substring(f1.lastIndexOf("\\")+1,f1.lastIndexOf("."));
+            String jarname1 = f1.substring(f1.lastIndexOf("/")+1,f1.lastIndexOf("."));
+            String path = f1
+                    .replace("\\" + jarname + ".jar!", "")
+                    .replace("/" + jarname1 + ".jar!", "");
+            String fName;
+            String os = System.getProperty("os.name");
+            if (os.toLowerCase().startsWith("win")) {
+                fName = path + "/libraries/red/mohist/mappings/nms12.red";
+            } else {
+                fName = "/" + path + "/libraries/red/mohist/mappings/nms12.red";
+            }
+            File nms = new File(fName);
             if (!nms.exists()) {
                 Mohist.LOGGER.error("Unable to find remapping dependencies, please re-download the libraries file!");
                 FMLCommonHandler.instance().exitJava(1, true);
