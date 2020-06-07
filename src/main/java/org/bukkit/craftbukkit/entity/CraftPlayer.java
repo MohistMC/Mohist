@@ -1225,7 +1225,6 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
     }
 
     public void addChannel(String channel) {
-        Preconditions.checkState(channels.size() < 128, "Cannot register channel '%s'. Too many channels registered!", channel);
         channel = StandardMessenger.validateAndCorrectChannel(channel);
         if (channels.add(channel)) {
             server.getPluginManager().callEvent(new PlayerRegisterChannelEvent(this, channel));

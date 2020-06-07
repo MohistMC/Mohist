@@ -301,7 +301,7 @@
 +
 +      // CraftBukkit start - Quitting must be before we do final save of data, in case plugins need to modify it
 +      CraftEventFactory.handleInventoryCloseEvent(playerIn);
-+      final PlayerQuitEvent playerQuitEvent = new PlayerQuitEvent(this.cserver.getPlayer(playerIn), "Â§e" + playerIn.func_195047_I_() + " left the game");
++      PlayerQuitEvent playerQuitEvent = new PlayerQuitEvent(this.cserver.getPlayer(playerIn), "§e" + playerIn.func_195047_I_() + " left the game");
 +      this.cserver.getPluginManager().callEvent(playerQuitEvent);
 +      playerIn.getBukkitEntity().disconnect(playerQuitEvent.getQuitMessage());
 +      playerIn.func_71127_g(); // SPIGOT-924

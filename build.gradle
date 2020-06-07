@@ -843,7 +843,7 @@ project(':forge') {
         classifier = 'installer'
         extension = 'jar' //Needs to be Zip task to not override Manifest, so set extension
         destinationDir = file('build/libs')
-        from(rootProject.file('/installer_logo.png')) {
+        from(rootProject.file('/mohist_logo.png')) {
             rename{'big_logo.png'}
         }
         from(rootProject.file('/src/main/resources/url.png'))

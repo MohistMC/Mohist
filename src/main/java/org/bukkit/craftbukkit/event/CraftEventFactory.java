@@ -10,7 +10,6 @@ import java.util.Collections;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import javax.annotation.Nullable;
 import net.minecraft.entity.AreaEffectCloudEntity;
@@ -784,10 +783,12 @@ public class CraftEventFactory {
 
             if (source instanceof IndirectEntityDamageSource) {
                 damager = ((IndirectEntityDamageSource) source).getProximateDamageSource();
-                if (damager.getBukkitEntity() instanceof ThrownPotion) {
-                    cause = DamageCause.MAGIC;
-                } else if (damager.getBukkitEntity() instanceof Projectile) {
-                    cause = DamageCause.PROJECTILE;
+                if (damager != null) {
+                    if (damager.getBukkitEntity() instanceof ThrownPotion) {
+                        cause = DamageCause.MAGIC;
+                    } else if (damager.getBukkitEntity() instanceof Projectile) {
+                        cause = DamageCause.PROJECTILE;
+                    }
                 }
             } else if ("thorns".equals(source.damageType)) {
                 cause = DamageCause.THORNS;

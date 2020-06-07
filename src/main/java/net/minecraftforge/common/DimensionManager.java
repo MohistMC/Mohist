@@ -543,4 +543,26 @@ public class DimensionManager
         }
         return env;
     }
+
+    public static void addBukkitDimension(int dim)
+    {
+        if (!bukkitDims.contains(dim))
+            bukkitDims.add(dim);
+    }
+
+    public static void removeBukkitDimension(int dim)
+    {
+        if (bukkitDims.contains(dim))
+            bukkitDims.remove(bukkitDims.indexOf(dim));
+    }
+
+    public static ArrayList<Integer> getBukkitDimensionIDs()
+    {
+        return bukkitDims;
+    }
+
+    public static boolean isBukkitDimension(int dim)
+    {
+        return bukkitDims.contains(dim);
+    }
 }
