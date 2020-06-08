@@ -25,7 +25,7 @@ Download
 Install
 ------
  1. This software requires Java 8.  
- 2. [Download Installer](https://ci.codemc.org/job/Mohist-Community/job/Mohist-1.15.2/) and [Download libraries](https://github.com/Mohist-Community/Mohist/raw/1.15.2/libraries.zip).  
+ 2. [Download Installer](https://ci.codemc.org/job/Mohist-Community/job/Mohist-1.15.2/)  
  3. Unzip libraries to a new directory  
  4. Like installing forge, run Installer and select server and select the directory where the libraries are located  
  5. Now launch it using the `java` command:
