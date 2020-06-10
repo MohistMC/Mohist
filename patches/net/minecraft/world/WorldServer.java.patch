@@ -947,7 +947,7 @@
          this.worldInfo.setBorderSize(this.getWorldBorder().getDiameter());
          this.worldInfo.getBorderCenterX(this.getWorldBorder().getCenterX());
          this.worldInfo.getBorderCenterZ(this.getWorldBorder().getCenterZ());
-@@ -1023,18 +1336,21 @@
+@@ -1023,18 +1336,27 @@
          this.worldInfo.setBorderLerpTime(this.getWorldBorder().getTimeUntilTarget());
          this.saveHandler.saveWorldInfoWithPlayer(this.worldInfo, this.mcServer.getPlayerList().getHostPlayerData());
          this.mapStorage.saveAllData();
@@ -955,15 +955,19 @@
 +        timings.worldSaveLevel.stopTiming(); // Paper
      }
  
--    public boolean spawnEntity(Entity entityIn)
--    {
+     public boolean spawnEntity(Entity entityIn)
+     {
 -        return this.canAddEntity(entityIn) ? super.spawnEntity(entityIn) : false;
++        // CraftBukkit start - Used for entities other than creatures
++        return addEntity(entityIn, CreatureSpawnEvent.SpawnReason.DEFAULT);
+     }
+ 
 +    public boolean addEntity(Entity entityIn, CreatureSpawnEvent.SpawnReason spawnReason) {
 +        // World.spawnEntity(Entity) will call this, and we still want to perform
 +        // existing entity checking when it's called with a SpawnReason
 +        return this.canAddEntity(entityIn) ? super.addEntity(entityIn, spawnReason) : false;
-     }
- 
++    }
++
      public void loadEntities(Collection<Entity> entityCollection)
      {
          for (Entity entity : Lists.newArrayList(entityCollection))
@@ -973,7 +977,7 @@
              {
                  this.loadedEntityList.add(entity);
                  this.onEntityAdded(entity);
-@@ -1046,7 +1362,6 @@
+@@ -1046,7 +1368,6 @@
      {
          if (entityIn.isDead)
          {
@@ -981,7 +985,7 @@
              return false;
          }
          else
-@@ -1057,7 +1372,7 @@
+@@ -1057,7 +1378,7 @@
              {
                  Entity entity = this.entitiesByUuid.get(uuid);
  
@@ -990,7 +994,7 @@
                  {
                      this.unloadedEntityList.remove(entity);
                  }
-@@ -1065,7 +1380,6 @@
+@@ -1065,7 +1386,6 @@
                  {
                      if (!(entityIn instanceof EntityPlayer))
                      {
@@ -998,7 +1002,7 @@
                          return false;
                      }
  
-@@ -1113,9 +1427,17 @@
+@@ -1113,9 +1433,17 @@
  
      public boolean addWeatherEffect(Entity entityIn)
      {
@@ -1017,7 +1021,7 @@
              return true;
          }
          else
-@@ -1136,10 +1458,15 @@
+@@ -1136,10 +1464,15 @@
  
      public Explosion newExplosion(@Nullable Entity entityIn, double x, double y, double z, float strength, boolean isFlaming, boolean isSmoking)
      {
@@ -1037,7 +1041,7 @@
          if (!isSmoking)
          {
              explosion.clearAffectedBlockPositions();
-@@ -1182,7 +1509,8 @@
+@@ -1182,7 +1515,8 @@
              {
                  if (this.fireBlockEvent(blockeventdata))
                  {
@@ -1047,7 +1051,7 @@
                  }
              }
  
-@@ -1208,27 +1536,31 @@
+@@ -1208,27 +1542,31 @@
  
          if (this.prevRainingStrength != this.rainingStrength)
          {
@@ -1085,7 +1089,7 @@
          }
      }
  
-@@ -1265,11 +1597,19 @@
+@@ -1265,11 +1603,19 @@
  
      public void spawnParticle(EnumParticleTypes particleType, boolean longDistance, double xCoord, double yCoord, double zCoord, int numberOfParticles, double xOffset, double yOffset, double zOffset, double particleSpeed, int... particleArguments)
      {
@@ -1105,7 +1109,7 @@
              this.sendPacketWithinDistance(entityplayermp, longDistance, xCoord, yCoord, zCoord, spacketparticles);
          }
      }
-@@ -1323,6 +1663,11 @@
+@@ -1323,6 +1669,11 @@
          return this.functionManager;
      }
  
