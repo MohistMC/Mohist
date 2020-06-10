@@ -10,6 +10,8 @@ import java.nio.file.StandardOpenOption;
 import red.mohist.util.JarTool;
 import red.mohist.util.MD5Util;
 import red.mohist.util.i18n.Message;
+import red.mohist.util.Decoder;
+import red.mohist.util.Downloader;
 
 /**
  * @author Mgazul
@@ -20,19 +22,30 @@ public class MappingFix {
     static FileChannel fileChannel;
 
     public static void init() throws Exception {
-        File nms = new File(JarTool.getJarDir() + "/libraries/red/mohist/mappings", "nms12.red");
-        String p = "libraries/red/mohist/mappings/nms12.red";
-        String url = "https://www.mgazul.cn/";
-        if (!nms.exists() || MD5Util.md5CheckSum(nms, "6e2b64361122a2eb7c045c43aa3f3c76")) {
-            nms.getParentFile().mkdirs();
-            if(Message.isCN()) url = "https://mohist-community.gitee.io/mohistdown/"; //Gitee Mirror
-            URLConnection conn = new URL(url + p).openConnection(); //MAKE CONNECTION TO GET THE CONTENT LENGTH
-            conn.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:31.0) Gecko/20100101 Firefox/31.0");
-            conn.connect();
-
-            fileChannel = FileChannel.open(Paths.get(nms.getAbsolutePath()), StandardOpenOption.CREATE, StandardOpenOption.WRITE, StandardOpenOption.TRUNCATE_EXISTING);
-            fileChannel.transferFrom(Channels.newChannel(conn.getInputStream()), 0L, Long.MAX_VALUE);
-            if(fileChannel != null) fileChannel.close();
+        Decoder dc = new Decoder();
+        Downloader dw = new Downloader();
+        //specify the dir
+        String basedir = JarTool.getJarDir();
+        File lib = new File(basedir + "/libraries/red/mohist/mappings/nms.srg");
+        if (!lib.exists()){
+            //start download
+            dw.execute(basedir);
+            // File map = new File("resources/mappings/map.srg");
+            File joined = new File(basedir + "/joined.srg");
+            boolean directory = new File(basedir + "/libraries/red/mohist/mappings").mkdirs();
+            if (directory)  {
+                System.out.println("/mappings created");
+            }
+            File nms = new File(basedir + "/libraries/red/mohist/mappings/nms.srg");
+            if (nms.createNewFile()) {
+                System.out.println("File nms is created!");
+            }
+            //start decode
+            System.out.println("Start decoding");
+            System.out.println("######Powered by MCP######");
+            dc.Decode( joined, nms);
+            System.out.println("Decoding Completed");
+            joined.delete();
         }
     }
 }
