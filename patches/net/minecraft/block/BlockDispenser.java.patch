@@ -1,6 +1,14 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockDispenser.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockDispenser.java
-@@ -50,8 +50,8 @@
+@@ -38,6 +38,7 @@
+     public static final PropertyBool TRIGGERED = PropertyBool.create("triggered");
+     public static final RegistryDefaulted<Item, IBehaviorDispenseItem> DISPENSE_BEHAVIOR_REGISTRY = new RegistryDefaulted<Item, IBehaviorDispenseItem>(new BehaviorDefaultDispenseItem());
+     protected Random rand = new Random();
++    public static boolean eventFired = false; // CraftBukkit
+ 
+     protected BlockDispenser()
+     {
+@@ -50,8 +51,8 @@
      {
          return 4;
      }
@@ -11,7 +19,7 @@
      {
          super.onBlockAdded(worldIn, pos, state);
          this.setDefaultDirection(worldIn, pos, state);
-@@ -115,12 +115,11 @@
+@@ -115,12 +116,11 @@
                      playerIn.addStat(StatList.DISPENSER_INSPECTED);
                  }
              }
@@ -25,3 +33,11 @@
      {
          BlockSourceImpl blocksourceimpl = new BlockSourceImpl(worldIn, pos);
          TileEntityDispenser tileentitydispenser = (TileEntityDispenser)blocksourceimpl.getBlockTileEntity();
+@@ -140,6 +140,7 @@
+ 
+                 if (ibehaviordispenseitem != IBehaviorDispenseItem.DEFAULT_BEHAVIOR)
+                 {
++                    eventFired = false; // CraftBukkit - reset event status
+                     tileentitydispenser.setInventorySlotContents(i, ibehaviordispenseitem.dispense(blocksourceimpl, itemstack));
+                 }
+             }

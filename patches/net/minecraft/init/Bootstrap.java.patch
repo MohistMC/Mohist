@@ -37,7 +37,7 @@
  
  public class Bootstrap
  {
-@@ -193,15 +200,41 @@
+@@ -193,15 +200,43 @@
                  double d0 = source.getX() + (double)enumfacing.getFrontOffsetX();
                  double d1 = (double)((float)(source.getBlockPos().getY() + enumfacing.getFrontOffsetY()) + 0.2F);
                  double d2 = source.getZ() + (double)enumfacing.getFrontOffsetZ();
@@ -50,7 +50,9 @@
 +                CraftItemStack craftItem = CraftItemStack.asCraftMirror(itemstack1);
 +
 +                BlockDispenseEvent event = new BlockDispenseEvent(block, craftItem.clone(), new org.bukkit.util.Vector(d0, d1, d2));
-+                world.getServer().getPluginManager().callEvent(event);
++                if (!BlockDispenser.eventFired) {
++                    world.getServer().getPluginManager().callEvent(event);
++                }
 +                if (event.isCancelled()) {
 +                    stack.grow(1);
 +                    return stack;
@@ -81,7 +83,7 @@
                  return stack;
              }
          });
-@@ -213,7 +246,33 @@
+@@ -213,9 +248,36 @@
                  double d0 = source.getX() + (double)enumfacing.getFrontOffsetX();
                  double d1 = (double)((float)source.getBlockPos().getY() + 0.2F);
                  double d2 = source.getZ() + (double)enumfacing.getFrontOffsetZ();
@@ -93,8 +95,9 @@
 +                CraftItemStack craftItem = CraftItemStack.asCraftMirror(itemstack1);
 +
 +                BlockDispenseEvent event = new BlockDispenseEvent(block, craftItem.clone(), new org.bukkit.util.Vector(d0, d1, d2));
-+                world.getServer().getPluginManager().callEvent(event);
-+
++                if (!BlockDispenser.eventFired) {
++                    world.getServer().getPluginManager().callEvent(event);
++                }
 +                if (event.isCancelled()) {
 +                    stack.grow(1);
 +                    return stack;
@@ -114,9 +117,12 @@
 +                itemstack1 = CraftItemStack.asNMSCopy(event.getItem());
 +                EntityFireworkRocket entityfireworkrocket = new EntityFireworkRocket(source.getWorld(), event.getVelocity().getX(), event.getVelocity().getY(), event.getVelocity().getZ(), itemstack1);
                  source.getWorld().spawnEntity(entityfireworkrocket);
-                 stack.shrink(1);
+-                stack.shrink(1);
++                // stack.shrink(1);
                  return stack;
-@@ -237,8 +296,34 @@
+             }
+             protected void playDispenseSound(IBlockSource source)
+@@ -237,8 +299,35 @@
                  double d3 = random.nextGaussian() * 0.05D + (double)enumfacing.getFrontOffsetX();
                  double d4 = random.nextGaussian() * 0.05D + (double)enumfacing.getFrontOffsetY();
                  double d5 = random.nextGaussian() * 0.05D + (double)enumfacing.getFrontOffsetZ();
@@ -128,8 +134,9 @@
 +                CraftItemStack craftItem = CraftItemStack.asCraftMirror(itemstack1);
 +
 +                BlockDispenseEvent event = new BlockDispenseEvent(block, craftItem.clone(), new org.bukkit.util.Vector(d3, d4, d5));
-+                world.getServer().getPluginManager().callEvent(event);
-+
++                if (!BlockDispenser.eventFired) {
++                    world.getServer().getPluginManager().callEvent(event);
++                }
 +                if (event.isCancelled()) {
 +                    stack.grow(1);
 +                    return stack;
@@ -148,12 +155,12 @@
 +
 +                EntitySmallFireball fireball = new EntitySmallFireball(world, d0, d1, d2, event.getVelocity().getX(), event.getVelocity().getY(), event.getVelocity().getZ());
 +                fireball.projectileSource = new org.bukkit.craftbukkit.v1_12_R1.projectiles.CraftBlockProjectileSource((TileEntityDispenser) source.getBlockTileEntity());
-+
++                world.spawnEntity(fireball);
 +                // stack.shrink(1);
                  return stack;
              }
              protected void playDispenseSound(IBlockSource source)
-@@ -257,13 +342,59 @@
+@@ -257,13 +346,61 @@
              private final BehaviorDefaultDispenseItem dispenseBehavior = new BehaviorDefaultDispenseItem();
              public ItemStack dispenseStack(IBlockSource source, ItemStack stack)
              {
@@ -171,7 +178,9 @@
 +                    CraftItemStack craftItem = CraftItemStack.asCraftMirror(stack);
 +
 +                    BlockDispenseEvent event = new BlockDispenseEvent(block, craftItem.clone(), new org.bukkit.util.Vector(x, y, z));
-+                    world.getServer().getPluginManager().callEvent(event);
++                    if (!BlockDispenser.eventFired) {
++                        world.getServer().getPluginManager().callEvent(event);
++                    }
 +
 +                    if (event.isCancelled()) {
 +                        return stack;
@@ -215,7 +224,7 @@
          BlockDispenser.DISPENSE_BEHAVIOR_REGISTRY.putObject(Items.BUCKET, new BehaviorDefaultDispenseItem()
          {
              private final BehaviorDefaultDispenseItem dispenseBehavior = new BehaviorDefaultDispenseItem();
-@@ -290,6 +421,26 @@
+@@ -290,6 +427,28 @@
                      item = Items.LAVA_BUCKET;
                  }
  
@@ -223,7 +232,9 @@
 +                CraftItemStack craftItem = CraftItemStack.asCraftMirror(stack);
 +
 +                BlockDispenseEvent event = new BlockDispenseEvent(bukkitBlock, craftItem.clone(), new org.bukkit.util.Vector(blockpos.getX(), blockpos.getY(), blockpos.getZ()));
-+                world.getServer().getPluginManager().callEvent(event);
++                if (!BlockDispenser.eventFired) {
++                    world.getServer().getPluginManager().callEvent(event);
++                }
 +
 +                if (event.isCancelled()) {
 +                    return stack;
@@ -242,7 +253,7 @@
                  world.setBlockToAir(blockpos);
                  stack.shrink(1);
  
-@@ -313,16 +464,37 @@
+@@ -313,16 +472,39 @@
              protected ItemStack dispenseStack(IBlockSource source, ItemStack stack)
              {
                  World world = source.getWorld();
@@ -251,7 +262,9 @@
 +                CraftItemStack craftItem = CraftItemStack.asCraftMirror(stack);
 +
 +                BlockDispenseEvent event = new BlockDispenseEvent(block, craftItem.clone(), new org.bukkit.util.Vector(0, 0, 0));
-+                world.getServer().getPluginManager().callEvent(event);
++                if (!BlockDispenser.eventFired) {
++                    world.getServer().getPluginManager().callEvent(event);
++                }
 +
 +                if (event.isCancelled()) {
 +                    return stack;
@@ -285,7 +298,7 @@
                      }
                  }
                  else if (world.getBlockState(blockpos).getBlock() == Blocks.TNT)
-@@ -348,7 +520,28 @@
+@@ -348,7 +530,30 @@
                  {
                      World world = source.getWorld();
                      BlockPos blockpos = source.getBlockPos().offset((EnumFacing)source.getBlockState().getValue(BlockDispenser.FACING));
@@ -293,7 +306,9 @@
 +                    CraftItemStack craftItem = CraftItemStack.asCraftMirror(stack);
  
 +                    BlockDispenseEvent event = new BlockDispenseEvent(block, craftItem.clone(), new org.bukkit.util.Vector(0, 0, 0));
-+                    world.getServer().getPluginManager().callEvent(event);
++                    if (!BlockDispenser.eventFired) {
++                        world.getServer().getPluginManager().callEvent(event);
++                    }
 +
 +                    if (event.isCancelled()) {
 +                        return stack;
@@ -314,7 +329,7 @@
                      if (ItemDye.applyBonemeal(stack, world, blockpos))
                      {
                          if (!world.isRemote)
-@@ -361,6 +554,27 @@
+@@ -361,6 +566,27 @@
                          this.successful = false;
                      }
  
@@ -342,7 +357,7 @@
                      return stack;
                  }
                  else
-@@ -375,10 +589,34 @@
+@@ -375,10 +601,36 @@
              {
                  World world = source.getWorld();
                  BlockPos blockpos = source.getBlockPos().offset((EnumFacing)source.getBlockState().getValue(BlockDispenser.FACING));
@@ -353,7 +368,9 @@
 +                CraftItemStack craftItem = CraftItemStack.asCraftMirror(itemstack1);
 +
 +                BlockDispenseEvent event = new BlockDispenseEvent(block, craftItem.clone(), new org.bukkit.util.Vector((double) blockpos.getX() + 0.5D, (double) blockpos.getY(), (double) blockpos.getZ() + 0.5D));
-+                world.getServer().getPluginManager().callEvent(event);
++                if (!BlockDispenser.eventFired) {
++                    world.getServer().getPluginManager().callEvent(event);
++                }
 +
 +                if (event.isCancelled()) {
 +                    stack.grow(1);
@@ -379,7 +396,7 @@
                  return stack;
              }
          });
-@@ -390,6 +628,27 @@
+@@ -390,6 +642,29 @@
                  EnumFacing enumfacing = (EnumFacing)source.getBlockState().getValue(BlockDispenser.FACING);
                  BlockPos blockpos = source.getBlockPos().offset(enumfacing);
                  BlockSkull blockskull = Blocks.SKULL;
@@ -388,7 +405,9 @@
 +                CraftItemStack craftItem = CraftItemStack.asCraftMirror(stack);
 +
 +                BlockDispenseEvent event = new BlockDispenseEvent(bukkitBlock, craftItem.clone(), new org.bukkit.util.Vector(blockpos.getX(), blockpos.getY(), blockpos.getZ()));
-+                world.getServer().getPluginManager().callEvent(event);
++                if (!BlockDispenser.eventFired) {
++                    world.getServer().getPluginManager().callEvent(event);
++                }
 +
 +                if (event.isCancelled()) {
 +                    return stack;
@@ -407,7 +426,7 @@
                  this.successful = true;
  
                  if (world.isAirBlock(blockpos) && blockskull.canDispenserPlace(world, blockpos, stack))
-@@ -453,6 +712,27 @@
+@@ -453,6 +728,29 @@
                  World world = source.getWorld();
                  BlockPos blockpos = source.getBlockPos().offset((EnumFacing)source.getBlockState().getValue(BlockDispenser.FACING));
                  BlockPumpkin blockpumpkin = (BlockPumpkin)Blocks.PUMPKIN;
@@ -416,7 +435,9 @@
 +                CraftItemStack craftItem = CraftItemStack.asCraftMirror(stack);
 +
 +                BlockDispenseEvent event = new BlockDispenseEvent(bukkitBlock, craftItem.clone(), new org.bukkit.util.Vector(blockpos.getX(), blockpos.getY(), blockpos.getZ()));
-+                world.getServer().getPluginManager().callEvent(event);
++                if (!BlockDispenser.eventFired) {
++                    world.getServer().getPluginManager().callEvent(event);
++                }
 +
 +                if (event.isCancelled()) {
 +                    return stack;
@@ -435,7 +456,7 @@
                  this.successful = true;
  
                  if (world.isAirBlock(blockpos) && blockpumpkin.canDispenserPlace(world, blockpos))
-@@ -489,6 +769,7 @@
+@@ -489,6 +787,7 @@
          if (!alreadyRegistered)
          {
              alreadyRegistered = true;
@@ -443,7 +464,7 @@
              redirectOutputToLog();
              SoundEvent.registerSounds();
              Block.registerBlocks();
-@@ -524,6 +805,8 @@
+@@ -524,6 +823,8 @@
                      LOGGER.error("Errors with built-in loot tables");
                  }
              }
@@ -452,7 +473,7 @@
          }
      }
  
-@@ -582,11 +865,37 @@
+@@ -582,11 +883,39 @@
                      d3 = 0.0D;
                  }
  
@@ -463,7 +484,9 @@
 +                CraftItemStack craftItem = CraftItemStack.asCraftMirror(itemstack1);
 +
 +                BlockDispenseEvent event = new BlockDispenseEvent(block, craftItem.clone(), new org.bukkit.util.Vector(d0, d1 + d3, d2));
-+                world.getServer().getPluginManager().callEvent(event);
++                if (!BlockDispenser.eventFired) {
++                    world.getServer().getPluginManager().callEvent(event);
++                }
 +
 +                if (event.isCancelled()) {
 +                    stack.grow(1);
@@ -493,7 +516,7 @@
                  return stack;
              }
  
-@@ -618,6 +927,27 @@
+@@ -618,6 +947,29 @@
                  World world = source.getWorld();
                  EnumFacing enumfacing = (EnumFacing)source.getBlockState().getValue(BlockDispenser.FACING);
                  BlockPos blockpos = source.getBlockPos().offset(enumfacing);
@@ -502,7 +525,9 @@
 +                CraftItemStack craftItem = CraftItemStack.asCraftMirror(stack);
 +
 +                BlockDispenseEvent event = new BlockDispenseEvent(bukkitBlock, craftItem.clone(), new org.bukkit.util.Vector(blockpos.getX(), blockpos.getY(), blockpos.getZ()));
-+                world.getServer().getPluginManager().callEvent(event);
++                if (!BlockDispenser.eventFired) {
++                    world.getServer().getPluginManager().callEvent(event);
++                }
 +
 +                if (event.isCancelled()) {
 +                    return stack;

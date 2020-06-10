@@ -9,7 +9,7 @@
  
  public class ItemArmor extends Item
  {
-@@ -63,6 +65,28 @@
+@@ -63,6 +65,30 @@
              EntityLivingBase entitylivingbase = list.get(0);
              EntityEquipmentSlot entityequipmentslot = EntityLiving.getSlotForItemStack(stack);
              ItemStack itemstack = stack.splitStack(1);
@@ -18,7 +18,9 @@
 +            CraftItemStack craftItem = CraftItemStack.asCraftMirror(itemstack);
 +
 +            BlockDispenseEvent event = new BlockDispenseEvent(block, craftItem.clone(), new org.bukkit.util.Vector(0, 0, 0));
-+            world.getServer().getPluginManager().callEvent(event);
++            if (!BlockDispenser.eventFired) {
++                world.getServer().getPluginManager().callEvent(event);
++            }
 +
 +            if (event.isCancelled()) {
 +                itemstack.grow(1);
@@ -38,7 +40,7 @@
              entitylivingbase.setItemStackToSlot(entityequipmentslot, itemstack);
  
              if (entitylivingbase instanceof EntityLiving)
-@@ -187,7 +211,9 @@
+@@ -187,7 +213,9 @@
  
      public boolean getIsRepairable(ItemStack toRepair, ItemStack repair)
      {
@@ -49,7 +51,7 @@
      }
  
      public ActionResult<ItemStack> onItemRightClick(World worldIn, EntityPlayer playerIn, EnumHand handIn)
-@@ -221,6 +247,19 @@
+@@ -221,6 +249,19 @@
          return multimap;
      }
  
@@ -69,7 +71,7 @@
      public static enum ArmorMaterial
      {
          LEATHER("leather", 5, new int[]{1, 2, 3, 1}, 15, SoundEvents.ITEM_ARMOR_EQUIP_LEATHER, 0.0F),
-@@ -235,6 +274,8 @@
+@@ -235,6 +276,8 @@
          private final int enchantability;
          private final SoundEvent soundEvent;
          private final float toughness;
@@ -78,7 +80,7 @@
  
          private ArmorMaterial(String nameIn, int maxDamageFactorIn, int[] damageReductionAmountArrayIn, int enchantabilityIn, SoundEvent soundEventIn, float toughnessIn)
          {
-@@ -266,6 +307,7 @@
+@@ -266,6 +309,7 @@
              return this.soundEvent;
          }
  
@@ -86,7 +88,7 @@
          public Item getRepairItem()
          {
              if (this == LEATHER)
-@@ -300,5 +342,21 @@
+@@ -300,5 +344,21 @@
          {
              return this.toughness;
          }

@@ -27,7 +27,7 @@
  
                  if (enumfacing != EnumFacing.DOWN && blockrailbase$enumraildirection1.isAscending())
                  {
-@@ -64,15 +66,41 @@
+@@ -64,15 +66,43 @@
                  }
              }
  
@@ -38,7 +38,9 @@
 +            CraftItemStack craftItem = CraftItemStack.asCraftMirror(itemstack1);
  
 +            BlockDispenseEvent event = new BlockDispenseEvent(block2, craftItem.clone(), new org.bukkit.util.Vector(d0, d1 + d3, d2));
-+            world.getServer().getPluginManager().callEvent(event);
++            if (!BlockDispenser.eventFired) {
++                world.getServer().getPluginManager().callEvent(event);
++            }
 +
 +            if (event.isCancelled()) {
 +                stack.grow(1);
@@ -72,7 +74,7 @@
              return stack;
          }
          protected void playDispenseSound(IBlockSource source)
-@@ -104,7 +132,7 @@
+@@ -104,7 +134,7 @@
  
              if (!worldIn.isRemote)
              {
@@ -81,7 +83,7 @@
                  double d0 = 0.0D;
  
                  if (blockrailbase$enumraildirection.isAscending())
-@@ -119,7 +147,9 @@
+@@ -119,7 +149,9 @@
                      entityminecart.setCustomNameTag(itemstack.getDisplayName());
                  }
  

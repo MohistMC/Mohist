@@ -20,7 +20,7 @@
          return stack;
      }
  
-@@ -51,6 +55,62 @@
+@@ -51,6 +55,66 @@
          worldIn.spawnEntity(entityitem);
      }
  
@@ -49,12 +49,15 @@
 +        entityitem.motionX += worldIn.rand.nextGaussian() * 0.007499999832361937D * (double)speed;
 +        entityitem.motionY += worldIn.rand.nextGaussian() * 0.007499999832361937D * (double)speed;
 +        entityitem.motionZ += worldIn.rand.nextGaussian() * 0.007499999832361937D * (double)speed;
-+
++        // CraftBukkit start
 +        org.bukkit.block.Block block = worldIn.getWorld().getBlockAt(source.getBlockPos().getX(), source.getBlockPos().getY(), source.getBlockPos().getZ());
 +        CraftItemStack craftItem = CraftItemStack.asCraftMirror(stack);
 +
 +        BlockDispenseEvent event = new BlockDispenseEvent(block, craftItem.clone(), new org.bukkit.util.Vector(entityitem.motionX, entityitem.motionY, entityitem.motionZ));
-+        worldIn.getServer().getPluginManager().callEvent(event);
++
++        if (!BlockDispenser.eventFired) {
++            worldIn.getServer().getPluginManager().callEvent(event);
++        }
 +
 +        if (event.isCancelled()) {
 +            return false;
@@ -68,7 +71,7 @@
 +        if (!event.getItem().getType().equals(craftItem.getType())) {
 +            // Chain to handler for new item
 +            ItemStack eventStack = CraftItemStack.asNMSCopy(event.getItem());
-+            IBehaviorDispenseItem idispensebehavior = BlockDispenser.DISPENSE_BEHAVIOR_REGISTRY.getObject(eventStack.getItem());
++            IBehaviorDispenseItem idispensebehavior = (IBehaviorDispenseItem) BlockDispenser.DISPENSE_BEHAVIOR_REGISTRY.getObject(eventStack.getItem());
 +            if (idispensebehavior != IBehaviorDispenseItem.DEFAULT_BEHAVIOR && idispensebehavior.getClass() != BehaviorDefaultDispenseItem.class) {
 +                idispensebehavior.dispense(source, eventStack);
 +            } else {
@@ -78,6 +81,7 @@
 +        }
 +        worldIn.spawnEntity(entityitem);
 +        return true;
++        // CraftBukkit end
 +    }
 +
      protected void playDispenseSound(IBlockSource source)
