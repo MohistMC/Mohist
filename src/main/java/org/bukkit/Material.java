@@ -648,7 +648,7 @@ public enum Material {
             // Cauldron start - extract to normalizeName()
             String filtered = normalizeName(name);
             // Mohist - use BLOCK_BY_NAME to get blocks of mods
-            result = BLOCK_BY_NAME.containsKey(name) ? BLOCK_BY_NAME.get(name) : BY_NAME.get(name);
+            result = BLOCK_BY_NAME.containsKey(filtered) ? BLOCK_BY_NAME.get(filtered) : BY_NAME.get(filtered);
             // Cauldron end
         }
 
