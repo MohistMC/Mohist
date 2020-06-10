@@ -15,49 +15,29 @@ public class Decoder {
     
     public void Decode(File key, File nms) throws IOException {
 
-
-
         InputStream map = Decoder.class.getClassLoader().getResourceAsStream("mappings/map.srg");
         InputStream joined = new FileInputStream(key);
-
         int j = 0;
-
-
-//Create the file
-
-
         List<String> lines = new BufferedReader(new InputStreamReader(map, StandardCharsets.UTF_8)).lines()
                 .filter(l -> !l.isEmpty())
                 .collect(Collectors.toList());
-
         List<String> controls = new BufferedReader(new InputStreamReader(joined, StandardCharsets.UTF_8)).lines()
                 .filter(l -> !l.isEmpty())
                 .collect(Collectors.toList());
-
         FileOutputStream fos = new FileOutputStream(nms);
-
         BufferedWriter fwriter = new BufferedWriter(new OutputStreamWriter(fos));
-        SrgWriter Out = new SrgWriter();
-
+        SrgWriter out = new SrgWriter();
 
         for (String line : lines) {
             String[] pts = line.split(" ");
             switch (pts[0]) {
                 case "CL:":
-
                     for (String MCP : controls) {
-
                         String[] cnt = MCP.split(" ");
-
-
                         if (cnt[0].equals("CL:")) {
-
-
                             if (cnt[1].equals(pts[2])) {
-                                Out.WriteCL(fwriter, pts[1], cnt[2]);
+                                out.WriteCL(fwriter, pts[1], cnt[2]);
                                 break;
-
-
                             }
                         }
                     }
@@ -65,80 +45,41 @@ public class Decoder {
 
                 case "FD:":
                     for (String MCP : controls) {
-
                         String[] cnt = MCP.split(" ");
-
-
                         if (cnt[0].equals("FD:")) {
-
-
                             if (cnt[1].equals(pts[2])) {
-                                Out.WriteFD(fwriter, pts[1], cnt[2]);
+                                out.WriteFD(fwriter, pts[1], cnt[2]);
                                 j = 1;
-
-
                                 break;
-
-
                             }
-
-
                         }
-
-
                     }
                     //catching Extra cases
                     if (j != 1) {
-                        Out.WriteFD(fwriter, pts[1], pts[2]);
-                        //System.out.println(pts[2]);
-
+                        out.WriteFD(fwriter, pts[1], pts[2]);
                     }
                     j = 0;
                     break;
 
                 case "MD:":
                     for (String MCP : controls) {
-
                         String[] cnt = MCP.split(" ");
-
-
                         if (cnt[0].equals("MD:")) {
-
-
                             if (cnt[1].equals(pts[3]) && cnt[2].equals(pts[4])) {
-                                Out.WriteMD(fwriter, pts[1], pts[2], cnt[3], cnt[4]);
+                                out.WriteMD(fwriter, pts[1], pts[2], cnt[3], cnt[4]);
                                 j = 1;
-
-
                                 break;
-
-
                             }
-
-
                         }
-
-
                     }
                     //catching Extra cases
                     if (j != 1) {
-                        Out.WriteMD(fwriter, pts[1], pts[2], pts[3], pts[4]);
-
-
+                        out.WriteMD(fwriter, pts[1], pts[2], pts[3], pts[4]);
                     }
                     j = 0;
                     break;
-
-
             }
-
-
         }
         fwriter.close();
-
     }
-
-        
-
-
 }
