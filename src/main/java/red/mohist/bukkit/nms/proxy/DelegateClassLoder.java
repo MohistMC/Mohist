@@ -1,7 +1,7 @@
 package red.mohist.bukkit.nms.proxy;
 
 import java.security.ProtectionDomain;
-import red.mohist.bukkit.nms.RemapUtils;
+import red.mohist.bukkit.nms.utils.RemapUtils;
 
 public class DelegateClassLoder extends ClassLoader{
 

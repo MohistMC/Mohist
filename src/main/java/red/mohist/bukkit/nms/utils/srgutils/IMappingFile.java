@@ -17,7 +17,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package net.minecraftforge.srgutils;
+package red.mohist.bukkit.nms.utils.srgutils;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -26,9 +26,7 @@ import java.io.InputStream;
 import java.nio.file.Path;
 import java.util.Collection;
 import java.util.Locale;
-
 import javax.annotation.Nullable;
-
 
 public interface IMappingFile {
     public static IMappingFile load(File path) throws IOException {

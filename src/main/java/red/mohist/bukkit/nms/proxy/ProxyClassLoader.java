@@ -1,7 +1,7 @@
 package red.mohist.bukkit.nms.proxy;
 
-import red.mohist.bukkit.nms.ASMUtils;
-import red.mohist.bukkit.nms.RemapUtils;
+import red.mohist.bukkit.nms.utils.ASMUtils;
+import red.mohist.bukkit.nms.utils.RemapUtils;
 
 /**
  *

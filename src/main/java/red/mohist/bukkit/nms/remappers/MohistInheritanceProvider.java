@@ -5,7 +5,7 @@ import java.util.Objects;
 import java.util.Set;
 import net.md_5.specialsource.provider.InheritanceProvider;
 import org.objectweb.asm.tree.ClassNode;
-import red.mohist.bukkit.nms.RemapUtils;
+import red.mohist.bukkit.nms.utils.RemapUtils;
 
 public class MohistInheritanceProvider implements InheritanceProvider {
     @Override

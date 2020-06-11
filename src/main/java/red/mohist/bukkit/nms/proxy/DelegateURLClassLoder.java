@@ -15,7 +15,7 @@ import org.apache.commons.io.IOUtils;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.plugin.java.JavaPlugin;
-import red.mohist.bukkit.nms.RemapUtils;
+import red.mohist.bukkit.nms.utils.RemapUtils;
 
 /**
  *

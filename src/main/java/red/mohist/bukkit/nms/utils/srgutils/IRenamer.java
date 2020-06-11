@@ -17,12 +17,12 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package net.minecraftforge.srgutils;
+package red.mohist.bukkit.nms.utils.srgutils;
 
-import net.minecraftforge.srgutils.IMappingFile.IClass;
-import net.minecraftforge.srgutils.IMappingFile.IField;
-import net.minecraftforge.srgutils.IMappingFile.IMethod;
-import net.minecraftforge.srgutils.IMappingFile.IPackage;
+import red.mohist.bukkit.nms.utils.srgutils.IMappingFile.IClass;
+import red.mohist.bukkit.nms.utils.srgutils.IMappingFile.IField;
+import red.mohist.bukkit.nms.utils.srgutils.IMappingFile.IMethod;
+import red.mohist.bukkit.nms.utils.srgutils.IMappingFile.IPackage;
 
 public interface IRenamer {
     default String rename(IPackage value) {

@@ -42,7 +42,6 @@ public class DownloadLibraries {
                     conn.connect();
 
                     System.out.println(Message.getFormatString("file.download.start", new Object[]{file.getName(), UpdateUtils.getSize(conn.getContentLength())})); //Starting download a file
-                    System.out.println("Global percentage » " + String.valueOf((float) UpdateUtils.getSizeOfDirectory(new File("libraries")) / 75705160 * 100).substring(0, 2).replace(".", "") + "%"); //Global percentage
 
                     Timer t = new Timer(); //Displaying percentage if it's a file > 1Mo to show the user the file is downloading
                     t.schedule(new TimerTask() {

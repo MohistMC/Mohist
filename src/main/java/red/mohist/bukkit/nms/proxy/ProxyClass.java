@@ -5,9 +5,9 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.Objects;
-import red.mohist.bukkit.nms.ASMUtils;
-import red.mohist.bukkit.nms.ReflectionUtils;
-import red.mohist.bukkit.nms.RemapUtils;
+import red.mohist.bukkit.nms.utils.ASMUtils;
+import red.mohist.bukkit.nms.utils.ReflectionUtils;
+import red.mohist.bukkit.nms.utils.RemapUtils;
 
 /**
  *

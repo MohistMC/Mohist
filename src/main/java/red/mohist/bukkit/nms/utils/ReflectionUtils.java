@@ -1,4 +1,4 @@
-package red.mohist.bukkit.nms;
+package red.mohist.bukkit.nms.utils;
 
 public class ReflectionUtils {
     private static final SecurityManager securityManager = new SecurityManager();

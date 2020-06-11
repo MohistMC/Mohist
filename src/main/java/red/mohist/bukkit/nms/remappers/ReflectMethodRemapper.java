@@ -15,7 +15,6 @@ import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.commons.MethodRemapper;
 import org.objectweb.asm.commons.Remapper;
-import red.mohist.bukkit.nms.ASMUtils;
 import red.mohist.bukkit.nms.model.MethodRedirectRule;
 import red.mohist.bukkit.nms.proxy.DelegateURLClassLoder;
 import red.mohist.bukkit.nms.proxy.ProxyClass;
@@ -26,6 +25,7 @@ import red.mohist.bukkit.nms.proxy.ProxyMethodHandles_Lookup;
 import red.mohist.bukkit.nms.proxy.ProxyMethodType;
 import red.mohist.bukkit.nms.proxy.ProxyYamlConfiguration;
 import red.mohist.bukkit.nms.proxy.asm.ProxyClassWriter;
+import red.mohist.bukkit.nms.utils.ASMUtils;
 
 /**
  *

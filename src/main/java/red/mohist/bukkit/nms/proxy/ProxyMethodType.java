@@ -1,7 +1,7 @@
 package red.mohist.bukkit.nms.proxy;
 
 import java.lang.invoke.MethodType;
-import red.mohist.bukkit.nms.RemapUtils;
+import red.mohist.bukkit.nms.utils.RemapUtils;
 
 /**
  *

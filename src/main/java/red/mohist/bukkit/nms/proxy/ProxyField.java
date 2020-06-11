@@ -1,7 +1,7 @@
 package red.mohist.bukkit.nms.proxy;
 
 import java.lang.reflect.Field;
-import red.mohist.bukkit.nms.RemapUtils;
+import red.mohist.bukkit.nms.utils.RemapUtils;
 
 /**
  *

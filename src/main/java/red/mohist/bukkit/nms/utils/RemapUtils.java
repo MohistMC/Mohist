@@ -1,4 +1,4 @@
-package red.mohist.bukkit.nms;
+package red.mohist.bukkit.nms.utils;
 
 import java.io.BufferedReader;
 import java.io.File;

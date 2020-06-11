@@ -17,7 +17,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package net.minecraftforge.srgutils;
+package red.mohist.bukkit.nms.utils.srgutils;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -32,7 +32,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
 import javax.annotation.Nullable;
 
 class MappingFile implements IMappingFile {
