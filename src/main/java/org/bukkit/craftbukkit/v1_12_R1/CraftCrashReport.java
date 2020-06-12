@@ -19,7 +19,7 @@ public class CraftCrashReport implements ICrashReportDetail<Object> {
             value.append("\n   Plugins: {");
             for (Plugin plugin : Bukkit.getPluginManager().getPlugins()) {
                 PluginDescriptionFile description = plugin.getDescription();
-                value.append(' ').append(description.getFullName()).append(' ').append(description.getMain()).append(' ').append(Arrays.toString(description.getAuthors().toArray())).append(',');
+                value.append(' ').append(description.getFullName()).append(' ').append(description.getMain()).append(' ').append(Arrays.toString(description.getAuthors().toArray())).append(',').append("\n");
             }
             value.append("}\n   Warnings: ").append(Bukkit.getWarningState().name());
             value.append("\n   Reload Count: ").append(String.valueOf(MinecraftServer.getServerInst().server.reloadCount));

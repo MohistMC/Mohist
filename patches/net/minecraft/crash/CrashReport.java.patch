@@ -1,10 +1,9 @@
 --- ../src-base/minecraft/net/minecraft/crash/CrashReport.java
 +++ ../src-work/minecraft/net/minecraft/crash/CrashReport.java
-@@ -21,13 +21,16 @@
+@@ -21,13 +21,15 @@
  import org.apache.commons.lang3.ArrayUtils;
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
-+import org.bukkit.Bukkit;
 +import red.mohist.Mohist;
 +import red.mohist.util.i18n.Message;
  
@@ -18,7 +17,7 @@
      private final List<CrashReportCategory> crashReportSections = Lists.<CrashReportCategory>newArrayList();
      private File crashReportFile;
      private boolean firstCategoryInCrashReport = true;
-@@ -42,35 +45,35 @@
+@@ -42,35 +44,35 @@
  
      private void populateEnvironment()
      {
@@ -61,7 +60,7 @@
          {
              public String call()
              {
-@@ -84,7 +87,7 @@
+@@ -84,7 +86,7 @@
                  return k + " bytes (" + j1 + " MB) / " + j + " bytes (" + i1 + " MB) up to " + i + " bytes (" + l + " MB)";
              }
          });
@@ -70,7 +69,7 @@
          {
              public String call()
              {
-@@ -109,13 +112,15 @@
+@@ -109,13 +111,15 @@
                  return String.format("%d total; %s", i, stringbuilder.toString());
              }
          });
@@ -87,7 +86,7 @@
      }
  
      public String getDescription()
-@@ -137,9 +142,9 @@
+@@ -137,9 +141,9 @@
  
          if (this.stacktrace != null && this.stacktrace.length > 0)
          {
@@ -100,7 +99,7 @@
  
              for (StackTraceElement stacktraceelement : this.stacktrace)
              {
-@@ -204,18 +209,17 @@
+@@ -204,18 +208,17 @@
      public String getCompleteReport()
      {
          StringBuilder stringbuilder = new StringBuilder();
@@ -124,7 +123,7 @@
  
          for (int i = 0; i < 87; ++i)
          {
-@@ -259,7 +263,7 @@
+@@ -259,7 +262,7 @@
              }
              catch (Throwable throwable)
              {
@@ -133,24 +132,3 @@
                  flag1 = false;
              }
              finally
-@@ -330,20 +334,6 @@
-         return crashreportcategory;
-     }
- 
--    private static String getWittyComment()
--    {
--        String[] astring = new String[] {"Who set us up the TNT?", "Everything's going to plan. No, really, that was supposed to happen.", "Uh... Did I do that?", "Oops.", "Why did you do that?", "I feel sad now :(", "My bad.", "I'm sorry, Dave.", "I let you down. Sorry :(", "On the bright side, I bought you a teddy bear!", "Daisy, daisy...", "Oh - I know what I did wrong!", "Hey, that tickles! Hehehe!", "I blame Dinnerbone.", "You should try our sister game, Minceraft!", "Don't be sad. I'll do better next time, I promise!", "Don't be sad, have a hug! <3", "I just don't know what went wrong :(", "Shall we play a game?", "Quite honestly, I wouldn't worry myself about that.", "I bet Cylons wouldn't have this problem.", "Sorry :(", "Surprise! Haha. Well, this is awkward.", "Would you like a cupcake?", "Hi. I'm Minecraft, and I'm a crashaholic.", "Ooh. Shiny.", "This doesn't make any sense!", "Why is it breaking :(", "Don't do that.", "Ouch. That hurt :(", "You're mean.", "This is a token for 1 free hug. Redeem at your nearest Mojangsta: [~~HUG~~]", "There are four lights!", "But it works on my machine."};
--
--        try
--        {
--            return astring[(int)(System.nanoTime() % (long)astring.length)];
--        }
--        catch (Throwable var2)
--        {
--            return "Witty comment unavailable :(";
--        }
--    }
--
-     public static CrashReport makeCrashReport(Throwable causeIn, String descriptionIn)
-     {
-         CrashReport crashreport;
