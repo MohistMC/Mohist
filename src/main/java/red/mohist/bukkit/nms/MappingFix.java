@@ -19,7 +19,7 @@ public class MappingFix {
         //specify the dir
         String basedir = JarTool.getJarDir();
         File lib = new File(basedir + "/libraries/red/mohist/mappings/nms.srg");
-        if (!lib.exists() || !MD5Util.md5CheckSum(lib, "b74eae233657e89bb98b8bbf737a9f51")){
+        if (!lib.exists() || lib.length() < 4100100 || !MD5Util.md5CheckSum(lib, "b74eae233657e89bb98b8bbf737a9f51")){
             //start download
             dw.execute(basedir);
             // File map = new File("resources/mappings/map.srg");
