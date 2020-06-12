@@ -31,10 +31,12 @@ public class Downloader {
 
     public void execute(String temppath) throws IOException {
 
+        String url = "https://files.minecraftforge.net/maven/";
         System.out.println(Message.getString("mcp.download"));
         File mcptool = new File(temppath + "/mcp.zip");
-        String url = "https://files.minecraftforge.net/maven/de/oceanlabs/mcp/mcp_config/1.12.2-20200226.224830/mcp_config-1.12.2-20200226.224830.zip";
-        ReadableByteChannel readChannel = Channels.newChannel(new URL(url).openStream());
+        if(Message.isCN()) url = "http://bmclapi2.bangbang93.com/maven/";
+        String newurl = url + "de/oceanlabs/mcp/mcp_config/1.12.2-20200226.224830/mcp_config-1.12.2-20200226.224830.zip";
+        ReadableByteChannel readChannel = Channels.newChannel(new URL(newurl).openStream());
         FileOutputStream fileOS = new FileOutputStream(mcptool);
         System.out.println(Message.getString("mcp.extract"));
         FileChannel writeChannel = fileOS.getChannel();
