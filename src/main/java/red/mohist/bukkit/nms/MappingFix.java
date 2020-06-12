@@ -1,6 +1,8 @@
 package red.mohist.bukkit.nms;
 
 import java.io.File;
+import java.util.Arrays;
+import java.util.List;
 import red.mohist.bukkit.nms.utils.Decoder;
 import red.mohist.bukkit.nms.utils.Downloader;
 import red.mohist.util.JarTool;
@@ -19,7 +21,7 @@ public class MappingFix {
         //specify the dir
         String basedir = JarTool.getJarDir();
         File lib = new File(basedir + "/libraries/red/mohist/mappings/nms.srg");
-        if (!lib.exists() || lib.length() < 4100100 || !MD5Util.md5CheckSum(lib, "b74eae233657e89bb98b8bbf737a9f51")){
+        if (!lib.exists() || lib.length() < 4000000 || !checkMD5(lib)){
             //start download
             dw.execute(basedir);
             // File map = new File("resources/mappings/map.srg");
@@ -41,4 +43,10 @@ public class MappingFix {
             joined.delete();
         }
     }
+
+    public static boolean checkMD5(File lib) throws Exception {
+        List<String> md5 = Arrays.asList(new String[]{"c55c10c1a5b56e1a1929cecc5027e49b", "b74eae233657e89bb98b8bbf737a9f51"});
+        return md5.contains(MD5Util.getMD5(lib));
+    }
 }
+
