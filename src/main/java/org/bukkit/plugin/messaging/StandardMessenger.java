@@ -8,7 +8,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
@@ -500,9 +499,9 @@ public class StandardMessenger implements Messenger {
         if (channel.length() > Messenger.MAX_CHANNEL_SIZE) {
             throw new ChannelNameTooLongException(channel);
         }
-        if (channel.indexOf(':') == -1) {
-            throw new IllegalArgumentException("Channel must contain : separator (attempted to use " + channel + ")");
-        }
+        //if (channel.indexOf(':') == -1) {
+        //    throw new IllegalArgumentException("Channel must contain : separator (attempted to use " + channel + ")");
+        //}
         if (!channel.toLowerCase(Locale.ROOT).equals(channel)) {
             // TODO: use NamespacedKey validation here
             throw new IllegalArgumentException("Channel must be entirely lowercase (attempted to use " + channel + ")");
