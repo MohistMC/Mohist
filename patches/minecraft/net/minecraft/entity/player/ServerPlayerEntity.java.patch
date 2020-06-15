@@ -560,7 +560,7 @@
           }
  
           serverworld.func_217381_Z().func_76319_b();
-+         final PlayerTeleportEvent tpEvent = new PlayerTeleportEvent(this.getBukkitEntity(), enter, exit, cause);
++         PlayerTeleportEvent tpEvent = new PlayerTeleportEvent(this.getBukkitEntity(), enter, exit, cause);
 +         Bukkit.getServer().getPluginManager().callEvent(tpEvent);
 +         if (tpEvent.isCancelled() || tpEvent.getTo() == null) {
 +            return null;

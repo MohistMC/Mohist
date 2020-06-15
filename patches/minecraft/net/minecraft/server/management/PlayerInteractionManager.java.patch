@@ -96,7 +96,7 @@
              if (!this.field_73092_a.func_175660_a(this.field_73090_b, p_225416_1_)) {
 +               CraftEventFactory.callPlayerInteractEvent(this.field_73090_b, Action.LEFT_CLICK_BLOCK, p_225416_1_, p_225416_3_, this.field_73090_b.field_71071_by.func_70448_g(), Hand.MAIN_HAND);
                 this.field_73090_b.field_71135_a.func_147359_a(new SPlayerDiggingPacket(p_225416_1_, this.field_73092_a.func_180495_p(p_225416_1_), p_225416_2_, false, "may not interact"));
-+               final TileEntity tileentity = this.field_73092_a.func_175625_s(p_225416_1_);
++               TileEntity tileentity = field_73092_a.func_175625_s(p_225416_1_);
 +               if (tileentity != null) {
 +                  this.field_73090_b.field_71135_a.func_147359_a(tileentity.func_189518_D_());
 +               }
@@ -105,7 +105,7 @@
 +            PlayerInteractEvent cbevent = CraftEventFactory.callPlayerInteractEvent(this.field_73090_b, Action.LEFT_CLICK_BLOCK, p_225416_1_, p_225416_3_, this.field_73090_b.field_71071_by.func_70448_g(), Hand.MAIN_HAND);
 +            if (cbevent.isCancelled()) {
 +               this.field_73090_b.field_71135_a.func_147359_a(new SChangeBlockPacket(this.field_73092_a, p_225416_1_));
-+               final TileEntity tileentity2 = this.field_73092_a.func_175625_s(p_225416_1_);
++               TileEntity tileentity2 = this.field_73092_a.func_175625_s(p_225416_1_);
 +               if (tileentity2 != null) {
 +                  this.field_73090_b.field_71135_a.func_147359_a(tileentity2.func_189518_D_());
 +               }
@@ -114,7 +114,7 @@
  
              if (this.func_73083_d()) {
                 if (!this.field_73092_a.func_175719_a((PlayerEntity)null, p_225416_1_, p_225416_3_)) {
-@@ -142,16 +180,41 @@
+@@ -142,16 +180,42 @@
                 return;
              }
  
@@ -125,9 +125,9 @@
              BlockState blockstate = this.field_73092_a.func_180495_p(p_225416_1_);
 -            if (!blockstate.func_196958_f()) {
 +            if (cbevent.useInteractedBlock() == Event.Result.DENY) {
-+               final BlockState data = this.field_73092_a.func_180495_p(p_225416_1_);
++               BlockState data = this.field_73092_a.func_180495_p(p_225416_1_);
 +               if (data.func_177230_c() instanceof DoorBlock) {
-+                  final boolean bottom = data.func_177229_b(DoorBlock.field_176523_O) == DoubleBlockHalf.LOWER;
++                  boolean bottom = data.func_177229_b(DoorBlock.field_176523_O) == DoubleBlockHalf.LOWER;
 +                  this.field_73090_b.field_71135_a.func_147359_a(new SChangeBlockPacket(this.field_73092_a, p_225416_1_));
 +                  this.field_73090_b.field_71135_a.func_147359_a(new SChangeBlockPacket(this.field_73092_a, bottom ? p_225416_1_.func_177984_a() : p_225416_1_.func_177977_b()));
 +               }
@@ -136,6 +136,7 @@
 +               }
 +            }
 +            else if (!blockstate.func_196958_f()) {
++			   if (event.getUseBlock() != net.minecraftforge.eventbus.api.Event.Result.DENY)
                 blockstate.func_196942_a(this.field_73092_a, p_225416_1_, this.field_73090_b);
                 f = blockstate.func_185903_a(this.field_73090_b, this.field_73090_b.field_70170_p, p_225416_1_);
 +               this.field_73092_a.func_175719_a(null, p_225416_1_, p_225416_3_);
@@ -148,7 +149,7 @@
 +               }
 +               return;
 +            }
-+            final BlockDamageEvent blockEvent = CraftEventFactory.callBlockDamageEvent(this.field_73090_b, p_225416_1_.func_177958_n(), p_225416_1_.func_177956_o(), p_225416_1_.func_177952_p(), this.field_73090_b.field_71071_by.func_70448_g(), f >= 1.0f);
++            BlockDamageEvent blockEvent = CraftEventFactory.callBlockDamageEvent(this.field_73090_b, p_225416_1_.func_177958_n(), p_225416_1_.func_177956_o(), p_225416_1_.func_177952_p(), this.field_73090_b.field_71071_by.func_70448_g(), f >= 1.0f);
 +            if (blockEvent.isCancelled()) {
 +               this.field_73090_b.field_71135_a.func_147359_a(new SChangeBlockPacket(this.field_73092_a, p_225416_1_));
 +               return;
@@ -160,7 +161,7 @@
                 this.func_229860_a_(p_225416_1_, p_225416_2_, "insta mine");
              } else {
                 if (this.field_73088_d) {
-@@ -191,7 +254,7 @@
+@@ -191,7 +255,7 @@
           } else if (p_225416_2_ == CPlayerDiggingPacket.Action.ABORT_DESTROY_BLOCK) {
              this.field_73088_d = false;
              if (!Objects.equals(this.field_180240_f, p_225416_1_)) {
@@ -169,7 +170,7 @@
                 this.field_73092_a.func_175715_c(this.field_73090_b.func_145782_y(), this.field_180240_f, -1);
                 this.field_73090_b.field_71135_a.func_147359_a(new SPlayerDiggingPacket(this.field_180240_f, this.field_73092_a.func_180495_p(this.field_180240_f), p_225416_2_, true, "aborted mismatched destroying"));
              }
-@@ -207,53 +270,121 @@
+@@ -207,53 +271,124 @@
        if (this.func_180237_b(p_229860_1_)) {
           this.field_73090_b.field_71135_a.func_147359_a(new SPlayerDiggingPacket(p_229860_1_, this.field_73092_a.func_180495_p(p_229860_1_), p_229860_2_, true, p_229860_3_));
        } else {
@@ -194,7 +195,9 @@
 +            this.field_73090_b.field_71135_a.func_147359_a(packet);
 +         }
 +         event = new BlockBreakEvent(bblock, this.field_73090_b.getBukkitEntity());
++         // Sword + Creative mode pre-cancel
 +         event.setCancelled(isSwordNoBreak);
++         // Calculate default block experience
 +         BlockState nmsData = this.field_73092_a.func_180495_p(p_180237_1_);
 +         net.minecraft.block.Block nmsBlock = nmsData.func_177230_c();
 +         ItemStack itemstack = this.field_73090_b.func_184582_a(EquipmentSlotType.MAINHAND);
@@ -206,12 +209,13 @@
 +            if (isSwordNoBreak) {
 +               return false;
 +            }
++            // Let the client know the block still exists
 +            this.field_73090_b.field_71135_a.func_147359_a(new SChangeBlockPacket(this.field_73092_a, p_180237_1_));
-+            Direction[] values;
-+            for (int length = (values = Direction.values()).length, i = 0; i < length; ++i) {
-+               Direction dir = values[i];
-+               this.field_73090_b.field_71135_a.func_147359_a(new SChangeBlockPacket(this.field_73092_a, p_180237_1_.func_177972_a(dir)));
++            // Brute force all possible updates
++            for (Direction dir : Direction.values()) {
++               this.field_73090_b.field_71135_a.func_147359_a(new SChangeBlockPacket(field_73092_a, p_180237_1_.func_177972_a(dir)));
 +            }
++            // Update any tile entity data for this block
 +            TileEntity tileentity = this.field_73092_a.func_175625_s(p_180237_1_);
 +            if (tileentity != null) {
 +               this.field_73090_b.field_71135_a.func_147359_a(tileentity.func_189518_D_());
@@ -220,7 +224,7 @@
 +         }
 +      }
 +      int exp = net.minecraftforge.common.ForgeHooks.onBlockBreakEvent(field_73092_a, field_73091_c, field_73090_b, p_180237_1_);
-+      if (exp == -1) {
++      if (false && exp == -1) { // CraftBukkit false
           return false;
        } else {
 +         blockstate = this.field_73092_a.func_180495_p(p_180237_1_); // CraftBukkit - update state from plugins
@@ -302,7 +306,7 @@
           int i = p_187250_3_.func_190916_E();
           int j = p_187250_3_.func_77952_i();
           ActionResult<ItemStack> actionresult = p_187250_3_.func_77957_a(p_187250_2_, p_187250_1_, p_187250_4_);
-@@ -284,11 +415,39 @@
+@@ -284,11 +419,39 @@
        }
     }
  
@@ -342,7 +346,7 @@
           if (inamedcontainerprovider != null) {
              p_219441_1_.func_213829_a(inamedcontainerprovider);
              return ActionResultType.SUCCESS;
-@@ -296,29 +455,37 @@
+@@ -296,29 +459,37 @@
              return ActionResultType.PASS;
           }
        } else {

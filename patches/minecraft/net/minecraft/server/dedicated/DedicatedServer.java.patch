@@ -63,7 +63,7 @@
        Thread thread = new Thread("Server console handler") {
           public void run() {
 -            BufferedReader bufferedreader = new BufferedReader(new InputStreamReader(System.in, StandardCharsets.UTF_8));
-+            //if (net.minecraftforge.server.console.TerminalHandler.handleCommands(DedicatedServer.this)) return;
++            if (net.minecraftforge.server.console.TerminalHandler.handleCommands(DedicatedServer.this)) return;
 +            //BufferedReader bufferedreader = new BufferedReader(new InputStreamReader(System.in, StandardCharsets.UTF_8));
 +            // CraftBukkit start
 +            if (!org.bukkit.craftbukkit.Main.useConsole) {

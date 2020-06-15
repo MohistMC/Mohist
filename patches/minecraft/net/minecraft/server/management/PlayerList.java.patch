@@ -500,9 +500,10 @@
 +      playerIn.func_71121_q().removePlayer(playerIn, true); // Forge: keep data until copyFrom called
 +      BlockPos blockpos = playerIn.getBedLocation(dimension);
 +      boolean flag = playerIn.isSpawnForced(dimension);
-+      final ServerPlayerEntity serverplayerentity = playerIn;
-+      final org.bukkit.World fromWorld = playerIn.getBukkitEntity().getWorld();
++      org.bukkit.World fromWorld = playerIn.getBukkitEntity().getWorld();
++      ServerPlayerEntity serverplayerentity = playerIn;
 +      playerIn.field_71136_j = false;
++
 +      serverplayerentity.field_71135_a = playerIn.field_71135_a;
 +      serverplayerentity.func_193104_a(playerIn, conqueredEnd);
 +      playerIn.remove(false); // Forge: clone event had a chance to see old data, now discard it
@@ -529,9 +530,9 @@
 +         boolean isBedSpawn = false;
 +         CraftWorld cworld = (CraftWorld)this.field_72400_f.server.getWorld(playerIn.spawnWorld);
 +         if (cworld != null && blockpos != null) {
-+            final Optional<Vec3d> optional = PlayerEntity.func_213822_a(cworld.getHandle(), blockpos, flag);
++            Optional<Vec3d> optional = PlayerEntity.func_213822_a(cworld.getHandle(), blockpos, flag);
 +            if (optional.isPresent()) {
-+               final Vec3d vec3d = optional.get();
++               Vec3d vec3d = optional.get();
 +               isBedSpawn = true;
 +               location = new Location(cworld, vec3d.field_72450_a, vec3d.field_72448_b, vec3d.field_72449_c);
 +            }
@@ -556,43 +557,40 @@
 +      else {
 +         location.setWorld(this.field_72400_f.func_71218_a(dimension).getWorldCB());
 +      }
-+      ServerWorld worldserver = ((CraftWorld)location.getWorld()).getHandle();
++      ServerWorld serverworld = ((CraftWorld)location.getWorld()).getHandle();
 +      serverplayerentity.forceSetPositionRotation(location.getX(), location.getY(), location.getZ(), location.getYaw(), location.getPitch());
  
 -      while(!serverworld.func_226669_j_(serverplayerentity) && serverplayerentity.func_226278_cu_() < 256.0D) {
-+
-+      while(avoidSuffocation && !worldserver.func_226669_j_(serverplayerentity) && serverplayerentity.func_226278_cu_() < 256.0) {
++      while(avoidSuffocation && !serverworld.func_226669_j_(serverplayerentity) && serverplayerentity.func_226278_cu_() < 256.0) {
           serverplayerentity.func_70107_b(serverplayerentity.func_226277_ct_(), serverplayerentity.func_226278_cu_() + 1.0D, serverplayerentity.func_226281_cx_());
        }
-+      if (fromWorld.getEnvironment() == worldserver.getWorldCB().getEnvironment()) {
-+         serverplayerentity.field_71135_a.func_147359_a(new SRespawnPacket((worldserver.field_73011_w.func_186058_p().func_186068_a() >= 0) ? DimensionType.field_223228_b_ : DimensionType.field_223227_a_, WorldInfo.func_227498_c_(worldserver.func_72912_H().func_76063_b()), worldserver.func_72912_H().func_76067_t(), playerIn.field_71134_c.func_73081_b()));
++      if (fromWorld.getEnvironment() == serverworld.getWorldCB().getEnvironment()) {
++         serverplayerentity.field_71135_a.func_147359_a(new SRespawnPacket((serverworld.field_73011_w.func_186058_p().func_186068_a() >= 0) ? DimensionType.field_223228_b_ : DimensionType.field_223227_a_, WorldInfo.func_227498_c_(serverworld.func_72912_H().func_76063_b()), serverworld.func_72912_H().func_76067_t(), playerIn.field_71134_c.func_73081_b()));
 +      }
  
 -      WorldInfo worldinfo = serverplayerentity.field_70170_p.func_72912_H();
 -      serverplayerentity.field_71135_a.func_147359_a(new SRespawnPacket(serverplayerentity.field_71093_bK, WorldInfo.func_227498_c_(worldinfo.func_76063_b()), worldinfo.func_76067_t(), serverplayerentity.field_71134_c.func_73081_b()));
--      BlockPos blockpos1 = serverworld.func_175694_M();
--      serverplayerentity.field_71135_a.func_147364_a(serverplayerentity.func_226277_ct_(), serverplayerentity.func_226278_cu_(), serverplayerentity.func_226281_cx_(), serverplayerentity.field_70177_z, serverplayerentity.field_70125_A);
-+      WorldInfo worldinfo = worldserver.func_72912_H();
++      WorldInfo worldinfo = serverworld.func_72912_H();
 +      net.minecraftforge.fml.network.NetworkHooks.sendDimensionDataPacket(serverplayerentity.field_71135_a.field_147371_a, serverplayerentity);
-+      serverplayerentity.field_71135_a.func_147359_a(new SRespawnPacket(worldserver.field_73011_w.func_186058_p().getType(), WorldInfo.func_227498_c_(worldserver.func_72912_H().func_76063_b()), worldserver.func_72912_H().func_76067_t(), serverplayerentity.field_71134_c.func_73081_b()));
-+      serverplayerentity.func_70029_a(worldserver);
++      serverplayerentity.field_71135_a.func_147359_a(new SRespawnPacket(serverworld.field_73011_w.func_186058_p().getType(), WorldInfo.func_227498_c_(serverworld.func_72912_H().func_76063_b()), serverworld.func_72912_H().func_76067_t(), serverplayerentity.field_71134_c.func_73081_b()));
++      serverplayerentity.func_70029_a(serverworld);
 +      serverplayerentity.field_70128_L = false;
-+      serverplayerentity.field_71135_a.teleport(new Location(worldserver.getWorldCB(), serverplayerentity.func_226277_ct_(), serverplayerentity.func_226278_cu_(), serverplayerentity.func_226281_cx_(), serverplayerentity.field_70177_z, serverplayerentity.field_70125_A));
++      serverplayerentity.field_71135_a.teleport(new Location(serverworld.getWorldCB(), serverplayerentity.func_226277_ct_(), serverplayerentity.func_226278_cu_(), serverplayerentity.func_226281_cx_(), serverplayerentity.field_70177_z, serverplayerentity.field_70125_A));
 +      serverplayerentity.func_226284_e_(false);
-+      BlockPos blockpos1 = worldserver.func_175694_M();
+       BlockPos blockpos1 = serverworld.func_175694_M();
+-      serverplayerentity.field_71135_a.func_147364_a(serverplayerentity.func_226277_ct_(), serverplayerentity.func_226278_cu_(), serverplayerentity.func_226281_cx_(), serverplayerentity.field_70177_z, serverplayerentity.field_70125_A);
 +      // serverplayerentity.connection.setPlayerLocation(serverplayerentity.getPosX(), serverplayerentity.getPosY(), serverplayerentity.getPosZ(), serverplayerentity.rotationYaw, serverplayerentity.rotationPitch);
        serverplayerentity.field_71135_a.func_147359_a(new SSpawnPositionPacket(blockpos1));
        serverplayerentity.field_71135_a.func_147359_a(new SServerDifficultyPacket(worldinfo.func_176130_y(), worldinfo.func_176123_z()));
        serverplayerentity.field_71135_a.func_147359_a(new SSetExperiencePacket(serverplayerentity.field_71106_cc, serverplayerentity.field_71067_cb, serverplayerentity.field_71068_ca));
--      this.func_72354_b(serverplayerentity, serverworld);
-+      this.func_72354_b(serverplayerentity, worldserver);
+       this.func_72354_b(serverplayerentity, serverworld);
        this.func_187243_f(serverplayerentity);
 -      serverworld.func_217433_d(serverplayerentity);
 -      this.field_72404_b.add(serverplayerentity);
 -      this.field_177454_f.put(serverplayerentity.func_110124_au(), serverplayerentity);
 -      serverplayerentity.func_71116_b();
 +      if (!playerIn.field_71135_a.isDisconnected()) {
-+         worldserver.func_217433_d(serverplayerentity);
++         serverworld.func_217433_d(serverplayerentity);
 +         this.field_72404_b.add(serverplayerentity);
 +         this.field_177454_f.put(serverplayerentity.func_110124_au(), serverplayerentity);
 +      }

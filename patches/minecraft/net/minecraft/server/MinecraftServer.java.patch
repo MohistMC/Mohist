@@ -925,7 +925,7 @@
 +   // CraftBukkit start
 +   @Override
 +   public boolean func_213162_bc() {
-+      return super.func_213162_bc() || this.func_71241_aa(); // CraftBukkit - MC-142590
++      return super.func_213162_bc() /*|| this.isServerStopped()*/; // CraftBukkit - MC-142590
 +   }
 +
 +   public static MinecraftServer getServer() {
