@@ -13,7 +13,7 @@
 [![](https://img.shields.io/badge/AdoptOpenJDK-8u252-brightgreen.svg?colorB=469C00&style=for-the-badge&logo=java)](https://adoptopenjdk.net/?variant=openjdk8&jvmVariant=hotspot)
 [![](https://img.shields.io/badge/Gradle-5.6.4-brightgreen.svg?colorB=469C00&style=for-the-badge&logo=gradle)](https://docs.gradle.org/5.6.4/release-notes.html)
 [![](https://img.shields.io/bstats/servers/6762?label=bStats&style=for-the-badge)](https://bstats.org/plugin/server-implementation/Mohist/6762)
-[![](https://badges.crowdin.net/mohist/localized.svg&style=for-the-badge)](https://crowdin.com/project/mohist)
+[![](https://badges.crowdin.net/mohist/localized.svg)](https://crowdin.com/project/mohist)
 
 <a href="https://github.com/Mohist-Community/Mohist/blob/1.12.2/README-zh.md">中文</a> | <a href="https://github.com/Mohist-Community/Mohist/blob/1.12.2/README-fr.md">Français</a>
 
