@@ -1,0 +1,219 @@
+From 453be3f1188db58bb46216aab82eef8707e0c624 Mon Sep 17 00:00:00 2001
+From: Thinkofdeath <thethinkofdeath@gmail.com>
+Date: Sun, 20 Apr 2014 13:18:55 +0100
+Subject: [PATCH] Convert player skulls async
+
+
+diff --git a/src/main/java/net/minecraft/server/ItemSkullPlayer.java b/src/main/java/net/minecraft/server/ItemSkullPlayer.java
+index ea5b49f1e..4e4162dc4 100644
+--- a/src/main/java/net/minecraft/server/ItemSkullPlayer.java
++++ b/src/main/java/net/minecraft/server/ItemSkullPlayer.java
+@@ -40,8 +40,16 @@ public class ItemSkullPlayer extends ItemBlockWallable {
+         if (nbttagcompound.hasKeyOfType("SkullOwner", 8) && !StringUtils.isBlank(nbttagcompound.getString("SkullOwner"))) {
+             GameProfile gameprofile = new GameProfile((UUID) null, nbttagcompound.getString("SkullOwner"));
+ 
+-            gameprofile = TileEntitySkull.b(gameprofile);
+-            nbttagcompound.set("SkullOwner", GameProfileSerializer.serialize(new NBTTagCompound(), gameprofile));
++            // Spigot start
++            TileEntitySkull.b(gameprofile, new com.google.common.base.Predicate<GameProfile>() {
++
++                @Override
++                public boolean apply(GameProfile gameprofile) {
++                    nbttagcompound.set("SkullOwner", GameProfileSerializer.serialize(new NBTTagCompound(), gameprofile));
++                    return false;
++                }
++            }, false);
++            // Spigot end
+             return true;
+         } else {
+             // CraftBukkit start
+diff --git a/src/main/java/net/minecraft/server/TileEntitySkull.java b/src/main/java/net/minecraft/server/TileEntitySkull.java
+index 895a8dfb8..99442bb13 100644
+--- a/src/main/java/net/minecraft/server/TileEntitySkull.java
++++ b/src/main/java/net/minecraft/server/TileEntitySkull.java
+@@ -7,6 +7,23 @@ import com.mojang.authlib.properties.Property;
+ import java.util.UUID;
+ import javax.annotation.Nullable;
+ 
++// Spigot start
++import com.google.common.base.Predicate;
++import com.google.common.cache.LoadingCache;
++import com.google.common.cache.CacheBuilder;
++import com.google.common.cache.CacheLoader;
++import com.google.common.util.concurrent.Futures;
++import java.util.concurrent.Executors;
++import java.util.concurrent.ExecutorService;
++import java.util.concurrent.Future;
++import java.util.concurrent.TimeUnit;
++
++import com.google.common.util.concurrent.ThreadFactoryBuilder;
++import com.mojang.authlib.Agent;
++import com.mojang.authlib.ProfileLookupCallback;
++import java.util.concurrent.Callable;
++// Spigot end
++
+ public class TileEntitySkull extends TileEntity implements ITickable {
+ 
+     public GameProfile gameProfile;
+@@ -14,6 +31,58 @@ public class TileEntitySkull extends TileEntity implements ITickable {
+     private boolean c;
+     private static UserCache userCache;
+     private static MinecraftSessionService sessionService;
++    // Spigot start
++    public static final ExecutorService executor = Executors.newFixedThreadPool(3,
++            new ThreadFactoryBuilder()
++                    .setNameFormat("Head Conversion Thread - %1$d")
++                    .build()
++    );
++    public static final LoadingCache<String, GameProfile> skinCache = CacheBuilder.newBuilder()
++            .maximumSize( 5000 )
++            .expireAfterAccess( 60, TimeUnit.MINUTES )
++            .build( new CacheLoader<String, GameProfile>()
++            {
++                @Override
++                public GameProfile load(String key) throws Exception
++                {
++                    final GameProfile[] profiles = new GameProfile[1];
++                    ProfileLookupCallback gameProfileLookup = new ProfileLookupCallback() {
++
++                        @Override
++                        public void onProfileLookupSucceeded(GameProfile gp) {
++                            profiles[0] = gp;
++                        }
++
++                        @Override
++                        public void onProfileLookupFailed(GameProfile gp, Exception excptn) {
++                            profiles[0] = gp;
++                        }
++                    };
++
++                    MinecraftServer.getServer().getGameProfileRepository().findProfilesByNames(new String[] { key }, Agent.MINECRAFT, gameProfileLookup);
++
++                    GameProfile profile = profiles[ 0 ];
++                    if (profile == null) {
++                        UUID uuid = EntityHuman.a(new GameProfile(null, key));
++                        profile = new GameProfile(uuid, key);
++
++                        gameProfileLookup.onProfileLookupSucceeded(profile);
++                    } else
++                    {
++
++                        Property property = Iterables.getFirst( profile.getProperties().get( "textures" ), null );
++
++                        if ( property == null )
++                        {
++                            profile = TileEntitySkull.sessionService.fillProfileProperties( profile, true );
++                        }
++                    }
++
++
++                    return profile;
++                }
++            } );
++    // Spigot end
+ 
+     public TileEntitySkull() {
+         super(TileEntityTypes.SKULL);
+@@ -87,33 +156,68 @@ public class TileEntitySkull extends TileEntity implements ITickable {
+     }
+ 
+     private void f() {
+-        this.gameProfile = b(this.gameProfile);
+-        this.update();
++        // Spigot start
++        GameProfile profile = this.gameProfile;
++        b(profile, new Predicate<GameProfile>() {
++
++            @Override
++            public boolean apply(GameProfile input) {
++                gameProfile = input;
++                update();
++                return false;
++            }
++        }, false);
++        // Spigot end
+     }
+ 
+-    public static GameProfile b(GameProfile gameprofile) {
++    // Spigot start - Support async lookups
++    public static Future<GameProfile> b(final GameProfile gameprofile, final Predicate<GameProfile> callback, boolean sync) {
+         if (gameprofile != null && !UtilColor.b(gameprofile.getName())) {
+             if (gameprofile.isComplete() && gameprofile.getProperties().containsKey("textures")) {
+-                return gameprofile;
+-            } else if (TileEntitySkull.userCache != null && TileEntitySkull.sessionService != null) {
+-                GameProfile gameprofile1 = TileEntitySkull.userCache.getProfile(gameprofile.getName());
++                callback.apply(gameprofile);
++            } else if (MinecraftServer.getServer() == null) {
++                callback.apply(gameprofile);
++            } else {
++                GameProfile profile = skinCache.getIfPresent(gameprofile.getName().toLowerCase(java.util.Locale.ROOT));
++                if (profile != null && Iterables.getFirst(profile.getProperties().get("textures"), (Object) null) != null) {
++                    callback.apply(profile);
+ 
+-                if (gameprofile1 == null) {
+-                    return gameprofile;
++                    return Futures.immediateFuture(profile);
+                 } else {
+-                    Property property = (Property) Iterables.getFirst(gameprofile1.getProperties().get("textures"), (Object) null);
+-
+-                    if (property == null) {
+-                        gameprofile1 = TileEntitySkull.sessionService.fillProfileProperties(gameprofile1, true);
++                    Callable<GameProfile> callable = new Callable<GameProfile>() {
++                        @Override
++                        public GameProfile call() {
++                            final GameProfile profile = skinCache.getUnchecked(gameprofile.getName().toLowerCase(java.util.Locale.ROOT));
++                            MinecraftServer.getServer().processQueue.add(new Runnable() {
++                                @Override
++                                public void run() {
++                                    if (profile == null) {
++                                        callback.apply(gameprofile);
++                                    } else {
++                                        callback.apply(profile);
++                                    }
++                                }
++                            });
++                            return profile;
++                        }
++                    };
++                    if (sync) {
++                        try {
++                            return Futures.immediateFuture(callable.call());
++                        } catch (Exception ex) {
++                            com.google.common.base.Throwables.throwIfUnchecked(ex);
++                            throw new RuntimeException(ex); // Not possible
++                        }
++                    } else {
++                        return executor.submit(callable);
+                     }
+-
+-                    return gameprofile1;
+                 }
+-            } else {
+-                return gameprofile;
+             }
+         } else {
+-            return gameprofile;
++            callback.apply(gameprofile);
+         }
++
++        return Futures.immediateFuture(gameprofile);
+     }
++    // Spigot end
+ }
+diff --git a/src/main/java/org/bukkit/craftbukkit/inventory/CraftMetaSkull.java b/src/main/java/org/bukkit/craftbukkit/inventory/CraftMetaSkull.java
+index bb48da605..a6e95a909 100644
+--- a/src/main/java/org/bukkit/craftbukkit/inventory/CraftMetaSkull.java
++++ b/src/main/java/org/bukkit/craftbukkit/inventory/CraftMetaSkull.java
+@@ -81,7 +81,8 @@ class CraftMetaSkull extends CraftMetaItem implements SkullMeta {
+ 
+         if (profile != null) {
+             // Fill in textures
+-            setProfile(TileEntitySkull.b(profile));
++            // Must be done sync due to way client handles textures
++            setProfile(com.google.common.util.concurrent.Futures.getUnchecked(TileEntitySkull.b(profile, com.google.common.base.Predicates.alwaysTrue(), true))); // Spigot
+ 
+             tag.set(SKULL_OWNER.NBT, serializedProfile);
+         }
+-- 
+2.25.1
+

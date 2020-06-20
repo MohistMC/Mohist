@@ -1,0 +1,75 @@
+From d482e1583c73f9ce621fecd983c5ef05c3c40f64 Mon Sep 17 00:00:00 2001
+From: md_5 <md_5@live.com.au>
+Date: Fri, 21 Jun 2013 18:05:54 +1000
+Subject: [PATCH] Allow Disabling of Command TabComplete
+
+
+diff --git a/src/main/java/net/minecraft/server/CommandDispatcher.java b/src/main/java/net/minecraft/server/CommandDispatcher.java
+index 37df72320..37b1a7947 100644
+--- a/src/main/java/net/minecraft/server/CommandDispatcher.java
++++ b/src/main/java/net/minecraft/server/CommandDispatcher.java
+@@ -238,6 +238,7 @@ public class CommandDispatcher {
+     }
+ 
+     public void a(EntityPlayer entityplayer) {
++        if ( org.spigotmc.SpigotConfig.tabComplete < 0 ) return; // Spigot
+         // CraftBukkit start
+         // Register Vanilla commands into builtRoot as before
+         Map<CommandNode<CommandListenerWrapper>, CommandNode<ICompletionProvider>> map = Maps.newIdentityHashMap(); // Use identity to prevent aliasing issues
+@@ -276,6 +277,7 @@ public class CommandDispatcher {
+ 
+         while (iterator.hasNext()) {
+             CommandNode<CommandListenerWrapper> commandnode2 = (CommandNode) iterator.next();
++            if ( !org.spigotmc.SpigotConfig.sendNamespaced && commandnode2.getName().contains( ":" ) ) continue; // Spigot
+ 
+             if (commandnode2.canUse(commandlistenerwrapper)) {
+                 ArgumentBuilder argumentbuilder = commandnode2.createBuilder(); // CraftBukkit - decompile error
+diff --git a/src/main/java/org/bukkit/craftbukkit/CraftServer.java b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
+index a57715832..0839b4968 100644
+--- a/src/main/java/org/bukkit/craftbukkit/CraftServer.java
++++ b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
+@@ -1636,6 +1636,13 @@ public final class CraftServer implements Server {
+     }
+ 
+     public List<String> tabCompleteCommand(Player player, String message, WorldServer world, Vec3D pos) {
++        // Spigot Start
++        if ( (org.spigotmc.SpigotConfig.tabComplete < 0 || message.length() <= org.spigotmc.SpigotConfig.tabComplete) && !message.contains( " " ) )
++        {
++            return ImmutableList.of();
++        }
++        // Spigot End
++
+         List<String> completions = null;
+         try {
+             if (message.startsWith("/")) {
+diff --git a/src/main/java/org/spigotmc/SpigotConfig.java b/src/main/java/org/spigotmc/SpigotConfig.java
+index 1e393421c..fed02c9b1 100644
+--- a/src/main/java/org/spigotmc/SpigotConfig.java
++++ b/src/main/java/org/spigotmc/SpigotConfig.java
+@@ -156,4 +156,23 @@ public class SpigotConfig
+     {
+         logCommands = getBoolean( "commands.log", true );
+     }
++
++    public static int tabComplete;
++    public static boolean sendNamespaced;
++    private static void tabComplete()
++    {
++        if ( version < 6 )
++        {
++            boolean oldValue = getBoolean( "commands.tab-complete", true );
++            if ( oldValue )
++            {
++                set( "commands.tab-complete", 0 );
++            } else
++            {
++                set( "commands.tab-complete", -1 );
++            }
++        }
++        tabComplete = getInt( "commands.tab-complete", 0 );
++        sendNamespaced = getBoolean( "commands.send-namespaced", true );
++    }
+ }
+-- 
+2.25.1
+

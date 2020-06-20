@@ -1,0 +1,44 @@
+From 4da48f3cafb99cd8b4a36d3c5823cf64e6546e97 Mon Sep 17 00:00:00 2001
+From: md_5 <md_5@live.com.au>
+Date: Thu, 27 Jun 2013 17:26:09 +1000
+Subject: [PATCH] Properly Close Inventories
+
+Properly close inventories when unloading and switching worlds.
+
+diff --git a/src/main/java/net/minecraft/server/WorldServer.java b/src/main/java/net/minecraft/server/WorldServer.java
+index c3a6848ef..cbbef96e5 100644
+--- a/src/main/java/net/minecraft/server/WorldServer.java
++++ b/src/main/java/net/minecraft/server/WorldServer.java
+@@ -1021,6 +1021,15 @@ public class WorldServer extends World {
+     }
+ 
+     public void unloadChunk(Chunk chunk) {
++        // Spigot Start
++        for (TileEntity tileentity : chunk.getTileEntities().values()) {
++            if (tileentity instanceof IInventory) {
++                for (org.bukkit.entity.HumanEntity h : Lists.newArrayList(((IInventory) tileentity).getViewers())) {
++                    h.closeInventory();
++                }
++            }
++        }
++        // Spigot End
+         this.tileEntityListUnload.addAll(chunk.getTileEntities().values());
+         EntitySlice[] aentityslice = chunk.getEntitySlices();
+         int i = aentityslice.length;
+@@ -1047,6 +1056,13 @@ public class WorldServer extends World {
+ 
+     public void unregisterEntity(Entity entity) {
+         org.spigotmc.AsyncCatcher.catchOp("entity unregister"); // Spigot
++        // Spigot Start
++        if (entity.getBukkitEntity() instanceof org.bukkit.inventory.InventoryHolder) {
++            for (org.bukkit.entity.HumanEntity h : Lists.newArrayList(((org.bukkit.inventory.InventoryHolder) entity.getBukkitEntity()).getInventory().getViewers())) {
++                h.closeInventory();
++            }
++        }
++        // Spigot End
+         if (entity instanceof EntityEnderDragon) {
+             EntityComplexPart[] aentitycomplexpart = ((EntityEnderDragon) entity).eo();
+             int i = aentitycomplexpart.length;
+-- 
+2.25.1
+

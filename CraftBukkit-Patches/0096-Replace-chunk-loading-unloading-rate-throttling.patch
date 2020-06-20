@@ -1,0 +1,177 @@
+From 33f991280697f332e4587789a75a7c9786923ed0 Mon Sep 17 00:00:00 2001
+From: Geoff Crossland <gcrossland+bukkit@gmail.com>
+Date: Thu, 26 Jan 2017 20:54:55 +0000
+Subject: [PATCH] Replace chunk loading / unloading rate throttling.
+
+Uses a scheme based on estimated tick slack time.
+See https://hub.spigotmc.org/stash/projects/SPIGOT/repos/spigot/pull-requests/71/overview
+
+diff --git a/src/main/java/net/minecraft/server/MinecraftServer.java b/src/main/java/net/minecraft/server/MinecraftServer.java
+index c0371515b..b4a0bd795 100644
+--- a/src/main/java/net/minecraft/server/MinecraftServer.java
++++ b/src/main/java/net/minecraft/server/MinecraftServer.java
+@@ -64,6 +64,7 @@ import org.bukkit.craftbukkit.Main;
+ import org.bukkit.event.server.ServerLoadEvent;
+ // CraftBukkit end
+ import org.bukkit.craftbukkit.SpigotTimings; // Spigot
++import org.spigotmc.SlackActivityAccountant; // Spigot
+ 
+ public abstract class MinecraftServer extends IAsyncTaskHandlerReentrant<TickTask> implements IMojangStatistics, ICommandListener, AutoCloseable, Runnable {
+ 
+@@ -171,6 +172,7 @@ public abstract class MinecraftServer extends IAsyncTaskHandlerReentrant<TickTas
+     public static final int TICK_TIME = 1000000000 / TPS;
+     private static final int SAMPLE_INTERVAL = 100;
+     public final double[] recentTps = new double[ 3 ];
++    public final SlackActivityAccountant slackActivityAccountant = new SlackActivityAccountant();
+     // Spigot end
+ 
+     public MinecraftServer(OptionSet options, Proxy proxy, DataFixer datafixer, CommandDispatcher commanddispatcher, YggdrasilAuthenticationService yggdrasilauthenticationservice, MinecraftSessionService minecraftsessionservice, GameProfileRepository gameprofilerepository, UserCache usercache, WorldLoadListenerFactory worldloadlistenerfactory, String s) {
+@@ -975,6 +977,7 @@ public abstract class MinecraftServer extends IAsyncTaskHandlerReentrant<TickTas
+ 
+     protected void a(BooleanSupplier booleansupplier) {
+         SpigotTimings.serverTickTimer.startTiming(); // Spigot
++        this.slackActivityAccountant.tickStarted(); // Spigot
+         long i = SystemUtils.getMonotonicNanos();
+ 
+         ++this.ticks;
+@@ -1023,6 +1026,7 @@ public abstract class MinecraftServer extends IAsyncTaskHandlerReentrant<TickTas
+         this.circularTimer.a(i1 - i);
+         this.methodProfiler.exit();
+         org.spigotmc.WatchdogThread.tick(); // Spigot
++        this.slackActivityAccountant.tickEnded(l); // Spigot
+         SpigotTimings.serverTickTimer.stopTiming(); // Spigot
+         org.spigotmc.CustomTimingsHandler.tick(); // Spigot
+     }
+diff --git a/src/main/java/net/minecraft/server/PlayerChunkMap.java b/src/main/java/net/minecraft/server/PlayerChunkMap.java
+index 5feb9e517..7ad30548e 100644
+--- a/src/main/java/net/minecraft/server/PlayerChunkMap.java
++++ b/src/main/java/net/minecraft/server/PlayerChunkMap.java
+@@ -337,6 +337,9 @@ public class PlayerChunkMap extends IChunkLoader implements PlayerChunk.d {
+         }
+ 
+     }
++
++    private static final double UNLOAD_QUEUE_RESIZE_FACTOR = 0.96; // Spigot
++
+     protected void unloadChunks(BooleanSupplier booleansupplier) {
+         GameProfilerFiller gameprofilerfiller = this.world.getMethodProfiler();
+ 
+@@ -352,18 +355,28 @@ public class PlayerChunkMap extends IChunkLoader implements PlayerChunk.d {
+ 
+     private void b(BooleanSupplier booleansupplier) {
+         LongIterator longiterator = this.unloadQueue.iterator();
+-
+-        for (int i = 0; longiterator.hasNext() && (booleansupplier.getAsBoolean() || i < 200 || this.unloadQueue.size() > 2000); longiterator.remove()) {
++        // Spigot start
++        org.spigotmc.SlackActivityAccountant activityAccountant = this.world.getMinecraftServer().slackActivityAccountant;
++        activityAccountant.startActivity(0.5);
++        int targetSize = (int) (this.unloadQueue.size() * UNLOAD_QUEUE_RESIZE_FACTOR);
++        // Spigot end
++        while (longiterator.hasNext()) { // Spigot
+             long j = longiterator.nextLong();
++            longiterator.remove(); // Spigot
+             PlayerChunk playerchunk = (PlayerChunk) this.updatingChunks.remove(j);
+ 
+             if (playerchunk != null) {
+                 this.pendingUnload.put(j, playerchunk);
+                 this.updatingChunksModified = true;
+-                ++i;
++                // Spigot start
++                if (!booleansupplier.getAsBoolean() && this.unloadQueue.size() <= targetSize && activityAccountant.activityTimeIsExhausted()) {
++                    break;
++                }
++                // Spigot end
+                 this.a(j, playerchunk);
+             }
+         }
++        activityAccountant.endActivity(); // Spigot
+ 
+         Runnable runnable;
+ 
+diff --git a/src/main/java/org/spigotmc/SlackActivityAccountant.java b/src/main/java/org/spigotmc/SlackActivityAccountant.java
+new file mode 100644
+index 000000000..aabc7ad20
+--- /dev/null
++++ b/src/main/java/org/spigotmc/SlackActivityAccountant.java
+@@ -0,0 +1,78 @@
++package org.spigotmc;
++
++/**
++ * Keeps track of the time spent doing main thread activities that can be spread across ticks,
++ * so that such work doesn't exceed the current tick's estimated available slack time. Each
++ * activity is allotted a proportion of the expected slack time according to its weight, versus the
++ * estimated total weight of all activities.
++ */
++public class SlackActivityAccountant {
++    private double prevTickSlackWeightReciprocal = 1 / MIN_SLACK_WEIGHT;
++    private static final double MIN_SLACK_WEIGHT = 1 / 65536.0;
++    private double averageTickNonSlackNanos = 0;
++    private static final double AVERAGING_FACTOR = 0.375;
++
++    private long currentActivityStartNanos;
++    private static final long OFF = -1;
++    private long currentActivityEndNanos;
++    private double tickSlackWeight;
++    private long tickSlackNanos;
++
++    private double getSlackFraction(double slackWeight) {
++        return Math.min(slackWeight * this.prevTickSlackWeightReciprocal, 1);
++    }
++
++    private int getEstimatedSlackNanos() {
++        return (int) Math.max(net.minecraft.server.MinecraftServer.TICK_TIME - (long) this.averageTickNonSlackNanos, 0);
++    }
++
++    public void tickStarted() {
++        this.currentActivityStartNanos = OFF;
++        this.tickSlackWeight = 0;
++        this.tickSlackNanos = 0;
++    }
++
++    public void startActivity(double slackWeight) {
++        double slackFraction0 = getSlackFraction(this.tickSlackWeight);
++        this.tickSlackWeight += slackWeight;
++        double slackFraction1 = getSlackFraction(this.tickSlackWeight);
++
++        long t = System.nanoTime();
++        this.currentActivityStartNanos = t;
++        this.currentActivityEndNanos = t + ((int) ((slackFraction1 - slackFraction0) * this.getEstimatedSlackNanos()));
++    }
++
++    private void endActivity(long endNanos) {
++        this.tickSlackNanos += endNanos - this.currentActivityStartNanos;
++        this.currentActivityStartNanos = OFF;
++    }
++
++    public boolean activityTimeIsExhausted() {
++        if (this.currentActivityStartNanos == OFF) {
++            return true;
++        }
++
++        long t = System.nanoTime();
++        if (t <= this.currentActivityEndNanos) {
++            return false;
++        } else {
++            this.endActivity(this.currentActivityEndNanos);
++            return true;
++        }
++    }
++
++    public void endActivity() {
++        if (this.currentActivityStartNanos == OFF) {
++            return;
++        }
++
++        this.endActivity(Math.min(System.nanoTime(), this.currentActivityEndNanos));
++    }
++
++    public void tickEnded(long tickNanos) {
++        this.prevTickSlackWeightReciprocal = 1 / Math.max(this.tickSlackWeight, MIN_SLACK_WEIGHT);
++
++        long tickNonSlackNanos = tickNanos - this.tickSlackNanos;
++        this.averageTickNonSlackNanos = this.averageTickNonSlackNanos * (1 - AVERAGING_FACTOR) + tickNonSlackNanos * AVERAGING_FACTOR;
++    }
++}
+-- 
+2.25.1
+

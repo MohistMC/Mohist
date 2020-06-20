@@ -1,0 +1,27 @@
+From 5ec5bd13614b1d45367c00981a84bfb8c7724283 Mon Sep 17 00:00:00 2001
+From: md_5 <md_5@live.com.au>
+Date: Sun, 3 Feb 2013 09:20:19 +1100
+Subject: [PATCH] Handle Null Tile Entities
+
+
+diff --git a/src/main/java/net/minecraft/server/World.java b/src/main/java/net/minecraft/server/World.java
+index 3717444bc..e48cb6991 100644
+--- a/src/main/java/net/minecraft/server/World.java
++++ b/src/main/java/net/minecraft/server/World.java
+@@ -577,6 +577,13 @@ public abstract class World implements GeneratorAccess, AutoCloseable {
+ 
+         while (iterator.hasNext()) {
+             TileEntity tileentity = (TileEntity) iterator.next();
++            // Spigot start
++            if (tileentity == null) {
++                getServer().getLogger().severe("Spigot has detected a null entity and has removed it, preventing a crash");
++                iterator.remove();
++                continue;
++            }
++            // Spigot end
+ 
+             if (!tileentity.isRemoved() && tileentity.hasWorld()) {
+                 BlockPosition blockposition = tileentity.getPosition();
+-- 
+2.25.1
+
