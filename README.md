@@ -2,7 +2,6 @@
 
 <div align="center">
   <h1>Mohist 1.12.2</h1>
-  <a href="https://github.com/Mohist-Community/Mohist/blob/1.12.2/README-zh.md">中文</a> | <a href="https://github.com/Mohist-Community/Mohist/blob/1.12.2/README-fr.md">Français</a>
 
 ### Minecraft Forge Hybrid server implementing the Paper/Spigot/Bukkit API(1.12.2/1.15.2), formerly known as Thermos/Kettle/Cauldron/MCPC+
 
@@ -18,6 +17,8 @@
 
 [![Mohist Stats](https://bstats.org/signatures/server-implementation/Mohist.svg)](https://bstats.org/plugin/server-implementation/Mohist/6762)
 [![Mohist Stats](https://bstats.org/signatures/bukkit/Mohist.svg)](https://bstats.org/plugin/bukkit/Mohist/3939)
+
+<a href="https://github.com/Mohist-Community/Mohist/blob/1.12.2/README-zh.md">中文</a> | <a href="https://github.com/Mohist-Community/Mohist/blob/1.12.2/README-fr.md">Français</a>
 </div>
 
 Notice
