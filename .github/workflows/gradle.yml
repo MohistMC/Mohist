@@ -29,5 +29,5 @@ jobs:
     - name: Upload a Build Artifact
       uses: actions/upload-artifact@v2.0.1
       with:
-        name: Mohist-1.12.2--*.jar
+        name: Mohist-1.12.2--server.jar
         path: build/distributions
