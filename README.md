@@ -27,7 +27,11 @@ If you have corresponding type of server development experience or are familiar 
 And willing to participate in this project。  
 You can send an email to 3293876954@qq.com to inform me.  
   
-Now we urgently need new devs to inject new impetus into this project to make it more excellent and lasting.  
+**Note:**  
+**Mohist project did not stop updating, only the main developers changed, and nothing more.**  
+**we will develop as before.**  
+  
+Now we urgently need new devs to inject new impetus into this project to make it more excellent and lasting :D.
       
 Getting Help
 ------
