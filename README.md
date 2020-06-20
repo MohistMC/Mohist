@@ -60,16 +60,19 @@ java -jar yourJar.jar
 Building
 ------
 * Checkout project
-  * You can use IDE or clone from console:
+  * Clone Mohist:
   `git clone https://github.com/Mohist-Community/Mohist.git`
-* Building
+* Build Mohist
   * Build with Linux:
   `bash gradlew launch4j`
   * Build with Windows:
   `gradlew.bat launch4j`
 
 All builds will be in `.\build\distributions\`
-`Mohist-xxxxx-server.jar` Is the server file that you should run
+
+The Mohist server jar file is located at `.\build\distributions\Mohist-xxxxx-server.jar`
+
+This is the jarfile that you should run.
 
 Plugin development
 ------
