@@ -1,9 +1,8 @@
 <img src="https://i.loli.net/2020/02/28/vZRHJACadF7rgn5.png">
 
 <div align="center">
-## Mohist-1.12.2
-
-<a href="https://github.com/Mohist-Community/Mohist/blob/1.12.2/README-zh.md">中文</a> | <a href="https://github.com/Mohist-Community/Mohist/blob/1.12.2/README-fr.md">Français</a>
+  <h1>Mohist-1.12.2</h1>
+  <a href="https://github.com/Mohist-Community/Mohist/blob/1.12.2/README-zh.md">中文</a> | <a href="https://github.com/Mohist-Community/Mohist/blob/1.12.2/README-fr.md">Français</a>
 
 ## It is highly recommended to use the 1.8+ version of Mohist to quickly resolve errors!
 
