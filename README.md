@@ -2,7 +2,6 @@
 
 <div align="center">
 ## Mohist-1.12.2
-#### [中文](https://github.com/Mohist-Community/Mohist/blob/1.12.2/README-zh.md) | [Français](https://github.com/Mohist-Community/Mohist/blob/1.12.2/README-fr.md)
 
 <a href="https://github.com/Mohist-Community/Mohist/blob/1.12.2/README-zh.md">中文</a> | <a href="https://github.com/Mohist-Community/Mohist/blob/1.12.2/README-fr.md">Français</a>
 
