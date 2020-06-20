@@ -18,6 +18,17 @@
 [![Mohist Stats](https://bstats.org/signatures/server-implementation/Mohist.svg)](https://bstats.org/plugin/server-implementation/Mohist/6762)
 [![Mohist Stats](https://bstats.org/signatures/bukkit/Mohist.svg)](https://bstats.org/plugin/bukkit/Mohist/3939)
 
+Notice
+------
+The original owner and devs stopped participating in Mohist development due to family and personal reasons.  
+Now, the Mohist development team is undergoing reorganization.  
+After the new development team is stabilized, we will continue maintenance and development as usual.  
+If you have corresponding type of server development experience or are familiar with BukkitAPI,  
+And willing to participate in this project。  
+You can send an email to 3293876954@qq.com to inform me.  
+  
+Now we urgently need new devs to inject new impetus into this project to make it more excellent and lasting.  
+      
 Getting Help
 ------
    [**Home**](https://mohist.red/)
