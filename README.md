@@ -1,5 +1,6 @@
 <img src="https://i.loli.net/2020/02/28/vZRHJACadF7rgn5.png">
 
+<div align="center">
 ## Mohist-1.12.2
 #### [中文](https://github.com/Mohist-Community/Mohist/blob/1.12.2/README-zh.md) | [Français](https://github.com/Mohist-Community/Mohist/blob/1.12.2/README-fr.md)
 
@@ -17,6 +18,7 @@
 
 [![Mohist Stats](https://bstats.org/signatures/server-implementation/Mohist.svg)](https://bstats.org/plugin/server-implementation/Mohist/6762)
 [![Mohist Stats](https://bstats.org/signatures/bukkit/Mohist.svg)](https://bstats.org/plugin/bukkit/Mohist/3939)
+</div>
 
 Notice
 ------
