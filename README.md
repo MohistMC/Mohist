@@ -4,6 +4,8 @@
 ## Mohist-1.12.2
 #### [中文](https://github.com/Mohist-Community/Mohist/blob/1.12.2/README-zh.md) | [Français](https://github.com/Mohist-Community/Mohist/blob/1.12.2/README-fr.md)
 
+<a href="https://github.com/Mohist-Community/Mohist/blob/1.12.2/README-zh.md">中文</a> | <a href="https://github.com/Mohist-Community/Mohist/blob/1.12.2/README-fr.md">Français</a>
+
 ## It is highly recommended to use the 1.8+ version of Mohist to quickly resolve errors!
 
 [![](https://ci.codemc.org/buildStatus/icon?job=Mohist-Community%2FMohist-1.12.2)](https://ci.codemc.org/job/Mohist-Community/job/Mohist-1.12.2/)
