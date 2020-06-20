@@ -53,7 +53,7 @@ This software requires Java 8.
 
 Now launch it using the `java` command:
 
-```sh
+```bash
 java -jar yourJar.jar
 ```
 
