@@ -10,7 +10,7 @@
 ![](https://img.shields.io/github/license/Mohist-Community/Mohist.svg)
 [![](https://img.shields.io/badge/Forge-1.12.2--14.23.5.2854-brightgreen.svg?colorB=26303d)](http://files.minecraftforge.net/maven/net/minecraftforge/forge/index_1.12.2.html)
 [![](https://img.shields.io/badge/Paper-1.12.2-brightgreen.svg?colorB=DC3340)](https://papermc.io/downloads#Paper-1.12)
-![](https://img.shields.io/badge/AdoptOpenJDK-8u242-brightgreen.svg?colorB=469C00)
+![](https://img.shields.io/badge/AdoptOpenJDK-8u252-brightgreen.svg?colorB=469C00)
 ![](https://img.shields.io/badge/Gradle-5.6.4-brightgreen.svg?colorB=469C00)
 [![](https://img.shields.io/bstats/servers/6762?label=bStats)](https://bstats.org/plugin/server-implementation/Mohist/6762)
 [![](https://badges.crowdin.net/mohist/localized.svg)](https://crowdin.com/project/mohist)
