@@ -84,7 +84,7 @@ Plugin development
 
 `.\build\mohist_srg.jar` Is the development frontend you need
 
-Thanks for the following project
+Thanks to the following projects
 ------
 * [**Bukkit**](https://hub.spigotmc.org/stash/scm/spigot/bukkit.git) - plugin support.
 * [**Paper**](https://github.com/PaperMC/Paper.git) - performance optimizations.
@@ -95,7 +95,7 @@ Thanks for the following project
 * [**Thermos**](https://github.com/CyberdyneCC/Thermos.git) - Partial code source.
 * [**um_bukkit**](https://github.com/TechCatOther/um_bukkit.git) - Partial code source.
 
-Special Thanks To:
+A Special Thanks To:
 -------------
 <a href="https://serverjars.com/"><img src="https://serverjars.com/assets/img/logo_white.svg" width="200"></a>
 <a href="https://ci.codemc.io/"><img src="https://i.loli.net/2020/03/11/YNicj3PLkU5BZJT.png" width="200"></a>
