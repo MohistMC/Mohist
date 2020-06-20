@@ -35,7 +35,9 @@ We urgently need new devs to inject new impetus into this project to make it mor
 Getting Help
 ------
    [**Home**](https://mohist.red/)
+   
    [**Discord**](https://discord.gg/ZgXjHGd)
+   
    [**QQ**](https://jq.qq.com/?_wv=1027&k=5YIRYnH)  
    
 Download
