@@ -21,8 +21,13 @@ jobs:
         git submodule update --init --recursive
         chmod +x ./gradlew
         ./gradlew launch4j
-    - name: Upload artifact
-      uses: actions/upload-artifact@v1.0.0
+#    - name: Upload artifact
+#      uses: actions/upload-artifact@v1.0.0
+#      with:
+#        name: Mohist-1.12.2--server
+#        path: build/distributions 
+    - name: Upload a Build Artifact
+      uses: actions/upload-artifact@v2.0.1
       with:
-        name: Mohist-1.12.2--server
+        name: Mohist-1.12.2--*.jar
         path: build/distributions
