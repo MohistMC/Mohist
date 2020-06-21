@@ -1,12 +1,11 @@
 package org.spigotmc;
 
 /**
- * Keeps track of the time spent doing main thread activities that can be spread across ticks,
- * so that such work doesn't exceed the current tick's estimated available slack time. Each
- * activity is allotted a proportion of the expected slack time according to its weight, versus the
- * estimated total weight of all activities.
+ * Keeps track of the time spent doing main thread activities that can be spread across ticks, so that such work doesn't exceed the current tick's estimated available slack time. Each activity is
+ * allotted a proportion of the expected slack time according to its weight, versus the estimated total weight of all activities.
  */
 public class SlackActivityAccountant {
+
     private double prevTickSlackWeightReciprocal = 1 / MIN_SLACK_WEIGHT;
     private static final double MIN_SLACK_WEIGHT = 1 / 65536.0;
     private double averageTickNonSlackNanos = 0;
