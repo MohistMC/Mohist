@@ -1,6 +1,9 @@
 package red.mohist.util;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
 
 /**
  * @Author Mgazul
@@ -42,5 +45,10 @@ public class JarTool {
             return null;
         }
         return new File(path);
+    }
+
+    public static void inputStreamFile(InputStream inputStream, String targetFilePath) {
+        File file = new File(targetFilePath);
+
     }
 }
