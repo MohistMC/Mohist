@@ -32,28 +32,33 @@ You can send an email to 3293876954@qq.com to inform me.
 **we will develop as before.**  
   
 Now we urgently need new devs to inject new impetus into this project to make it more excellent and lasting :D.
-      
+
 Getting Help
 ------
+
    [**Home**](https://mohist.red/)
    [**Discord**](https://discord.gg/ZgXjHGd)
    [**QQ**](https://jq.qq.com/?_wv=1027&k=5YIRYnH)  
    
 Download
 ------
+
 * [**Jenkins**](https://ci.codemc.org/job/Mohist-Community/job/Mohist-1.12.2/)
 
 Install
 ------
+
 This software requires Java 8.
 
 [Download](https://ci.codemc.org/job/Mohist-Community/job/Mohist-1.12.2/) and place the server jar in an empty directory. Now launch it using the `java` command:
+
 ```sh
 java -jar yourJar.jar
 ```
 
 Building
 ------
+
 * Checkout project
   * You can use IDE or clone from console:
   `git clone https://github.com/Mohist-Community/Mohist.git`
@@ -68,16 +73,18 @@ All builds will be in `.\build\distributions\`
 
 Plugin development
 ------
+
 * Building
-   * Build with Linux:
+  * Build with Linux:
    `bash gradlew reobfToSRG`
-   * Build with Windows:
+  * Build with Windows:
    `gradlew.bat reobfToSRG`
 
 `.\build\mohist_srg.jar` Is the development frontend you need
 
 Thanks for the following project
 ------
+
 * [**Bukkit**](https://hub.spigotmc.org/stash/scm/spigot/bukkit.git) - plugin support.
 * [**Paper**](https://github.com/PaperMC/Paper.git) - performance optimizations.
 * [**CraftBukkit**](https://hub.spigotmc.org/stash/scm/spigot/craftbukkit.git) - plugin support.
@@ -87,8 +94,9 @@ Thanks for the following project
 * [**Thermos**](https://github.com/CyberdyneCC/Thermos.git) - Partial code source.
 * [**um_bukkit**](https://github.com/TechCatOther/um_bukkit.git) - Partial code source.
 
-Special Thanks To:
+Special Thanks To
 -------------
+
 <a href="https://serverjars.com/"><img src="https://serverjars.com/assets/img/logo_white.svg" width="200"></a>
 <a href="https://ci.codemc.io/"><img src="https://i.loli.net/2020/03/11/YNicj3PLkU5BZJT.png" width="200"></a>
 
