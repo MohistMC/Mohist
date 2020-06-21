@@ -21,6 +21,7 @@ public class TitleAPI {
         NetHandlerPlayServer connection = ((CraftPlayer) player).getHandle().connection;
         SPacketTitle packetPlayOutTimes = new SPacketTitle(Type.TIMES, null, fadeIn, stay, fadeOut);
         connection.sendPacket(packetPlayOutTimes);
+
         ITextComponent titleMain = ITextComponent.Serializer.fromJsonLenient("{\"text\": \"" + title + "\"}");
         SPacketTitle SPacketTitle = new SPacketTitle(Type.TIMES, titleMain);
         connection.sendPacket(SPacketTitle);
@@ -33,6 +34,7 @@ public class TitleAPI {
         ITextComponent titleSub = ITextComponent.Serializer.fromJsonLenient("{\"text\": \"" + subTitle + "\"}");
         SPacketTitle packetPlayOutSubTitle = new SPacketTitle(Type.SUBTITLE, titleSub);
         connection.sendPacket(packetPlayOutSubTitle);
+
         ITextComponent titleMain = ITextComponent.Serializer.fromJsonLenient("{\"text\": \"\"}");
         SPacketTitle SPacketTitle = new SPacketTitle(Type.TITLE, titleMain);
         connection.sendPacket(SPacketTitle);
