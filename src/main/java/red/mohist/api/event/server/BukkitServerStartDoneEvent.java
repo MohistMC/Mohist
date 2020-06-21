@@ -8,7 +8,6 @@ public class BukkitServerStartDoneEvent extends Event {
     private static final HandlerList handlers = new HandlerList();
 
     public BukkitServerStartDoneEvent() {
-        new FMLEvent().getClass().cast("null");
     }
 
     public static HandlerList getHandlerList() {
