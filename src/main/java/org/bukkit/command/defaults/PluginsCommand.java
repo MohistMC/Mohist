@@ -26,6 +26,7 @@ public class PluginsCommand extends BukkitCommand {
     private final List<String> params = Arrays.asList("load", "unload", "reload");
 
     private boolean checkparam(String args) {
+        //TODO
         for (String param : params) {
             if (args.equalsIgnoreCase(param)) {
                 return true;
