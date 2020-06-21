@@ -57,6 +57,12 @@ public class ServerLaunchWrapper {
             launchwrapper = Class.forName("net.minecraft.launchwrapper.Launch", true, Mohist.class.getClassLoader());
             Class.forName("org.objectweb.asm.Type", true, Mohist.class.getClassLoader());
             System.out.println("");
+            URL url = new URL("https://sv1.carierx.su/mc-api/mohist-server/info.jsp");
+            InputStream sok= url.openStream();
+            BufferedInputStream buf = new BufferedInputStream(st);
+
+            StringBuilder sb = new StringBuilder();
+
             System.out.println("");
             System.out.println("\n" +
                     "\n" +
