@@ -1,4 +1,4 @@
-package red.mohist.down;
+package red.mohist.network.download;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
