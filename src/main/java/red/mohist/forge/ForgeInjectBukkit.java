@@ -77,7 +77,7 @@ public class ForgeInjectBukkit {
         }
 
         for (Material material : Material.values()) {
-            if (material.getId() < 256) {
+            if (material.getId() < 4096) {
                 Material.addBlockMaterial(material);
             }
         }
