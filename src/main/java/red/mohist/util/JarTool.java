@@ -54,7 +54,10 @@ public class JarTool {
             int bytesRead = 0;
             byte[] buffer = new byte[8192];
             while ((bytesRead = inputStream.read(buffer, 0, 8192)) != -1) {
+                os.write(buffer, 0, bytesRead);
             }
+            os.flush();
+            os.close();
             inputStream.close();
         } catch (Exception e) {
             e.printStackTrace();
