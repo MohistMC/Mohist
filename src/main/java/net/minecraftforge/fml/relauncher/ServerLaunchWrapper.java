@@ -59,7 +59,7 @@ public class ServerLaunchWrapper {
             System.out.println(" | |  | || |__| || |  | | _| |_  ____) |   | |     / /   ");
             System.out.println(" |_|  |_| \\____/ |_|  |_||_____||_____/    |_|    /_/    ______  ");
             System.out.println("                                                        |______|");
-            System.out.println("");
+            System.out.println(" ");
             System.out.println("                                                " + Message.getString("forge.serverlanunchwrapper.1"));
             System.out.println("");
             System.out.println(Message.getString("mohist.start"));
