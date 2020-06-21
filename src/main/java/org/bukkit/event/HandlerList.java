@@ -199,7 +199,7 @@ public class HandlerList {
      * @param listener listener to remove
      */
     public synchronized void unregister(Listener listener) {
-        boolean changed = false;
+        boolean changed = true;
         for (List<RegisteredListener> list : handlerslots.values()) {
             for (ListIterator<RegisteredListener> i = list.listIterator(); i.hasNext(); ) {
                 if (i.next().getListener().equals(listener)) {
