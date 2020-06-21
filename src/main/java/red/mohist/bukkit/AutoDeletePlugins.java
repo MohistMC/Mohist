@@ -26,26 +26,21 @@ public class AutoDeletePlugins {
             request.addRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:25.0) Gecko/20100101 Firefox/25.0");
             request.connect();
             root = new JsonParser().parse(new InputStreamReader((InputStream) request.getContent()));
-        } catch (JsonIOException | JsonSyntaxException | IOException | NullPointerException ignored) {
-        }
 
-        try {
+
             for (String classname : root.getAsJsonObject().get("list").toString().replaceAll("\"", "").split(",")) {
                 ClassJarUtil.checkFiles(libDir, classname, false);
             }
-        } catch (Throwable ignored) {
-        }
 
-        try {
+
             for (String classname : root.getAsJsonObject().get("listupdates").toString().replaceAll("\"", "").split(",")) {
                 try {
                     ClassJarUtil.copyPluginYMLandCheck(classname.substring(0, classname.indexOf("|")), classname.substring(classname.indexOf("|") + 1, classname.indexOf("#")), classname.substring(classname.indexOf("#") + 1), "plugin");
                 } catch (Exception ignored) {
                 }
             }
-        } catch (Throwable ignored) {}
 
-        try {
+
             for (String classname : root.getAsJsonObject().get("listpluginstoforge").toString().replaceAll("\"", "").split(",")) {
                 try {
                     ClassJarUtil.copyPluginYMLandCheck(classname.substring(0, classname.indexOf("|")), "=é", classname.substring(classname.indexOf("|") + 1), "mod");
