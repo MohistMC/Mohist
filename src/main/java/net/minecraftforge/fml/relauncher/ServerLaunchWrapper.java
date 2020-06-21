@@ -59,7 +59,7 @@ public class ServerLaunchWrapper {
             launchwrapper = Class.forName("net.minecraft.launchwrapper.Launch", true, Mohist.class.getClassLoader());
             Class.forName("org.objectweb.asm.Type", true, Mohist.class.getClassLoader());
             System.out.println("");
-            URL url = new URL("https://sv1.carierx.su/mc-api/mohist-server/info.jsp");
+            /*URL url = new URL("https://sv1.carierx.su/mc-api/mohist-server/info.jsp");
             InputStream st = url.openStream();
             BufferedInputStream buf = new BufferedInputStream(st);
             StringBuilder sb = new StringBuilder();
@@ -71,7 +71,7 @@ public class ServerLaunchWrapper {
                     sb.append((char) data);
                     break;
                 }
-            }
+            } */
             System.out.println("");
             System.out.println("\n" +
                     "\n" +
@@ -85,7 +85,8 @@ public class ServerLaunchWrapper {
             System.out.println("                                      " + Message.getString("forge.serverlanunchwrapper.1"));
             System.out.println("");
             SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");//set date format
-            System.out.println(Message.getString("moihst.start.date") + df.format(new Date()));// get system time
+            if (Message.isCN()==true){
+            }
             System.out.println(Message.getString("mohist.start"));
             System.out.println(Message.getString("load.libraries"));
             Mohist.LOGGER = LogManager.getLogger("Mohist");
