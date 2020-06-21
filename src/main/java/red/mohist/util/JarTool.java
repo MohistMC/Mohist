@@ -49,6 +49,15 @@ public class JarTool {
 
     public static void inputStreamFile(InputStream inputStream, String targetFilePath) {
         File file = new File(targetFilePath);
-
+        try {
+            OutputStream os = new FileOutputStream(file);
+            int bytesRead = 0;
+            byte[] buffer = new byte[8192];
+            while ((bytesRead = inputStream.read(buffer, 0, 8192)) != -1) {
+            }
+            inputStream.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }
