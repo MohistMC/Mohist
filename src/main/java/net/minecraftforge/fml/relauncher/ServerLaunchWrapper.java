@@ -26,6 +26,8 @@ import red.mohist.util.i18n.Message;
 import java.io.*;
 import java.lang.reflect.Method;
 import java.net.URL;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Objects;
 
 import static red.mohist.util.JarTool.inputStreamFile;
@@ -82,6 +84,8 @@ public class ServerLaunchWrapper {
                     "\n");
             System.out.println("                                      " + Message.getString("forge.serverlanunchwrapper.1"));
             System.out.println("");
+            SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");//set date format
+            System.out.println(Message.getString("moihst.start.date") + df.format(new Date()));// get system time
             System.out.println(Message.getString("mohist.start"));
             System.out.println(Message.getString("load.libraries"));
             Mohist.LOGGER = LogManager.getLogger("Mohist");
