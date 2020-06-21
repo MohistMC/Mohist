@@ -184,6 +184,7 @@ public class HandlerList {
                 if (i.next().getPlugin().equals(plugin)) {
                     i.remove();
                     changed = true;
+                    //TODO
                 }
             }
         }
