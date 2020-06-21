@@ -13,11 +13,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
-import net.minecraft.server.AttributeRanged;
-import net.minecraft.server.GenericAttributes;
-import net.minecraft.server.IRegistry;
-import net.minecraft.server.MinecraftKey;
+import net.minecraft.entity.SharedMonsterAttributes;
+import net.minecraft.entity.ai.attributes.RangedAttribute;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.registry.Registry;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.core.LoggerContext;
 import org.apache.logging.log4j.core.config.Configuration;
@@ -27,9 +27,9 @@ import org.bukkit.command.Command;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.magmafoundation.magma.Metrics;
 
-public class SpigotConfig
-{
+public class SpigotConfig {
 
     private static File CONFIG_FILE;
     private static final String HEADER = "This is the main configuration file for Spigot.\n"
@@ -50,117 +50,88 @@ public class SpigotConfig
     /*========================================================================*/
     private static Metrics metrics;
 
-    public static void init(File configFile)
-    {
+    public static void init(File configFile) {
         CONFIG_FILE = configFile;
         config = new YamlConfiguration();
-        try
-        {
-            config.load( CONFIG_FILE );
-        } catch ( IOException ex )
-        {
-        } catch ( InvalidConfigurationException ex )
-        {
-            Bukkit.getLogger().log( Level.SEVERE, "Could not load spigot.yml, please correct your syntax errors", ex );
-            throw Throwables.propagate( ex );
+        try {
+            config.load(CONFIG_FILE);
+        } catch (IOException ex) {
+        } catch (InvalidConfigurationException ex) {
+            Bukkit.getLogger().log(Level.SEVERE, "Could not load spigot.yml, please correct your syntax errors", ex);
+            throw Throwables.propagate(ex);
         }
 
-        config.options().header( HEADER );
-        config.options().copyDefaults( true );
+        config.options().header(HEADER);
+        config.options().copyDefaults(true);
 
         commands = new HashMap<String, Command>();
-        commands.put( "spigot", new SpigotCommand( "spigot" ) );
+        commands.put("spigot", new SpigotCommand("spigot"));
 
-        version = getInt( "config-version", 12 );
-        set( "config-version", 12 );
-        readConfig( SpigotConfig.class, null );
+        version = getInt("config-version", 12);
+        set("config-version", 12);
+        readConfig(SpigotConfig.class, null);
     }
 
-    public static void registerCommands()
-    {
-        for ( Map.Entry<String, Command> entry : commands.entrySet() )
-        {
-            MinecraftServer.getServer().server.getCommandMap().register( entry.getKey(), "Spigot", entry.getValue() );
+    public static void registerCommands() {
+        for (Map.Entry<String, Command> entry : commands.entrySet()) {
+            MinecraftServer.getServer().server.getCommandMap().register(entry.getKey(), "Spigot", entry.getValue());
         }
-
         if ( metrics == null )
         {
-            try
-            {
-                metrics = new Metrics();
-                metrics.start();
-            } catch ( IOException ex )
-            {
-                Bukkit.getServer().getLogger().log( Level.SEVERE, "Could not start metrics service", ex );
-            }
+            metrics = new Metrics();
         }
     }
 
-    static void readConfig(Class<?> clazz, Object instance)
-    {
-        for ( Method method : clazz.getDeclaredMethods() )
-        {
-            if ( Modifier.isPrivate( method.getModifiers() ) )
-            {
-                if ( method.getParameterTypes().length == 0 && method.getReturnType() == Void.TYPE )
-                {
-                    try
-                    {
-                        method.setAccessible( true );
-                        method.invoke( instance );
-                    } catch ( InvocationTargetException ex )
-                    {
-                        throw Throwables.propagate( ex.getCause() );
-                    } catch ( Exception ex )
-                    {
-                        Bukkit.getLogger().log( Level.SEVERE, "Error invoking " + method, ex );
+    static void readConfig(Class<?> clazz, Object instance) {
+        for (Method method : clazz.getDeclaredMethods()) {
+            if (Modifier.isPrivate(method.getModifiers())) {
+                if (method.getParameterTypes().length == 0 && method.getReturnType() == Void.TYPE) {
+                    try {
+                        method.setAccessible(true);
+                        method.invoke(instance);
+                    } catch (InvocationTargetException ex) {
+                        throw Throwables.propagate(ex.getCause());
+                    } catch (Exception ex) {
+                        Bukkit.getLogger().log(Level.SEVERE, "Error invoking " + method, ex);
                     }
                 }
             }
         }
 
-        try
-        {
-            config.save( CONFIG_FILE );
-        } catch ( IOException ex )
-        {
-            Bukkit.getLogger().log( Level.SEVERE, "Could not save " + CONFIG_FILE, ex );
+        try {
+            config.save(CONFIG_FILE);
+        } catch (IOException ex) {
+            Bukkit.getLogger().log(Level.SEVERE, "Could not save " + CONFIG_FILE, ex);
         }
     }
 
-    private static void set(String path, Object val)
-    {
-        config.set( path, val );
+    private static void set(String path, Object val) {
+        config.set(path, val);
     }
 
-    private static boolean getBoolean(String path, boolean def)
-    {
-        config.addDefault( path, def );
-        return config.getBoolean( path, config.getBoolean( path ) );
+    private static boolean getBoolean(String path, boolean def) {
+        config.addDefault(path, def);
+        return config.getBoolean(path, config.getBoolean(path));
     }
 
-    private static int getInt(String path, int def)
-    {
-        config.addDefault( path, def );
-        return config.getInt( path, config.getInt( path ) );
+    private static int getInt(String path, int def) {
+        config.addDefault(path, def);
+        return config.getInt(path, config.getInt(path));
     }
 
-    private static <T> List getList(String path, T def)
-    {
-        config.addDefault( path, def );
-        return (List<T>) config.getList( path, config.getList( path ) );
+    private static <T> List getList(String path, T def) {
+        config.addDefault(path, def);
+        return (List<T>) config.getList(path, config.getList(path));
     }
 
-    private static String getString(String path, String def)
-    {
-        config.addDefault( path, def );
-        return config.getString( path, config.getString( path ) );
+    private static String getString(String path, String def) {
+        config.addDefault(path, def);
+        return config.getString(path, config.getString(path));
     }
 
-    private static double getDouble(String path, double def)
-    {
-        config.addDefault( path, def );
-        return config.getDouble( path, config.getDouble( path ) );
+    private static double getDouble(String path, double def) {
+        config.addDefault(path, def);
+        return config.getDouble(path, config.getDouble(path));
     }
 
     public static boolean logCommands;
@@ -204,7 +175,6 @@ public class SpigotConfig
             set( "messages.outdated-client", outdatedClientMessage );
             set( "messages.outdated-server", outdatedServerMessage );
         }
-
         whitelistMessage = transform( getString( "messages.whitelist", "You are not whitelisted on this server!" ) );
         unknownCommandMessage = transform( getString( "messages.unknown-command", "Unknown command. Type \"/help\" for help." ) );
         serverFullMessage = transform( getString( "messages.server-full", "The server is full!" ) );
@@ -244,15 +214,13 @@ public class SpigotConfig
     }
 
     public static boolean disableStatSaving;
-    public static Map<MinecraftKey, Integer> forcedStats = new HashMap<>();
+    public static Map<ResourceLocation, Integer> forcedStats = new HashMap<>();
     private static void stats()
     {
         disableStatSaving = getBoolean( "stats.disable-saving", false );
-
         if ( !config.contains( "stats.forced-stats" ) ) {
             config.createSection( "stats.forced-stats" );
         }
-
         ConfigurationSection section = config.getConfigurationSection( "stats.forced-stats" );
         for ( String name : section.getKeys( true ) )
         {
@@ -260,8 +228,8 @@ public class SpigotConfig
             {
                 try
                 {
-                    MinecraftKey key = new MinecraftKey( name );
-                    if ( IRegistry.CUSTOM_STAT.get( key ) == null )
+                    ResourceLocation key = new ResourceLocation( name );
+                    if ( Registry.CUSTOM_STAT.getValue( key ) == null )
                     {
                         Bukkit.getLogger().log(Level.WARNING, "Ignoring non existent stats.forced-stats " + name);
                         continue;
@@ -297,9 +265,9 @@ public class SpigotConfig
     private static void spamExclusions()
     {
         spamExclusions = getList( "commands.spam-exclusions", Arrays.asList( new String[]
-        {
+            {
                 "/skill"
-        } ) );
+            } ) );
     }
 
     public static boolean silentCommandBlocks;
@@ -317,7 +285,7 @@ public class SpigotConfig
             config.set( "replace-commands", null );
         }
         replaceCommands = new HashSet<String>( (List<String>) getList( "commands.replace-commands",
-                Arrays.asList( "setblock", "summon", "testforblock", "tellraw" ) ) );
+            Arrays.asList( "setblock", "summon", "testforblock", "tellraw" ) ) );
     }
 
     public static int userCacheCap;
@@ -350,18 +318,17 @@ public class SpigotConfig
     private static void attributeMaxes()
     {
         maxHealth = getDouble( "settings.attribute.maxHealth.max", maxHealth );
-        ( (AttributeRanged) GenericAttributes.MAX_HEALTH ).maximum = maxHealth;
+        ( (RangedAttribute) SharedMonsterAttributes.MAX_HEALTH ).maximumValue = maxHealth;
         movementSpeed = getDouble( "settings.attribute.movementSpeed.max", movementSpeed );
-        ( (AttributeRanged) GenericAttributes.MOVEMENT_SPEED ).maximum = movementSpeed;
+        ( (RangedAttribute) SharedMonsterAttributes.MOVEMENT_SPEED ).maximumValue = movementSpeed;
         attackDamage = getDouble( "settings.attribute.attackDamage.max", attackDamage );
-        ( (AttributeRanged) GenericAttributes.ATTACK_DAMAGE ).maximum = attackDamage;
+        ( (RangedAttribute) SharedMonsterAttributes.ATTACK_DAMAGE ).maximumValue = attackDamage;
     }
 
     public static boolean debug;
     private static void debug()
     {
         debug = getBoolean( "settings.debug", false );
-
         if ( debug && !LogManager.getRootLogger().isTraceEnabled() )
         {
             // Enable debug logging
@@ -370,7 +337,6 @@ public class SpigotConfig
             conf.getLoggerConfig( LogManager.ROOT_LOGGER_NAME ).setLevel( org.apache.logging.log4j.Level.ALL );
             ctx.updateLoggers( conf );
         }
-
         if ( LogManager.getRootLogger().isTraceEnabled() )
         {
             Bukkit.getLogger().info( "Debug logging is enabled" );

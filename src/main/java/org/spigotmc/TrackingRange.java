@@ -1,50 +1,37 @@
 package org.spigotmc;
 
-import net.minecraft.server.Entity;
-import net.minecraft.server.EntityExperienceOrb;
-import net.minecraft.server.EntityGhast;
-import net.minecraft.server.EntityItem;
-import net.minecraft.server.EntityItemFrame;
-import net.minecraft.server.EntityPainting;
-import net.minecraft.server.EntityPlayer;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.item.ExperienceOrbEntity;
+import net.minecraft.entity.item.ItemEntity;
+import net.minecraft.entity.item.ItemFrameEntity;
+import net.minecraft.entity.item.PaintingEntity;
+import net.minecraft.entity.monster.GhastEntity;
+import net.minecraft.entity.player.PlayerEntity;
 
-public class TrackingRange
-{
+public class TrackingRange {
 
     /**
-     * Gets the range an entity should be 'tracked' by players and visible in
-     * the client.
+     * Gets the range an entity should be 'tracked' by players and visible in the client.
      *
-     * @param entity
      * @param defaultRange Default range defined by Mojang
-     * @return
      */
-    public static int getEntityTrackingRange(Entity entity, int defaultRange)
-    {
+    public static int getEntityTrackingRange(Entity entity, int defaultRange) {
         SpigotWorldConfig config = entity.world.spigotConfig;
-        if ( entity instanceof EntityPlayer )
-        {
+        if (entity instanceof PlayerEntity) {
             return config.playerTrackingRange;
-        }  else if ( entity.activationType == ActivationRange.ActivationType.MONSTER || entity.activationType == ActivationRange.ActivationType.RAIDER )
-        {
+        } else if (entity.activationType == ActivationRange.ActivationType.MONSTER || entity.activationType == ActivationRange.ActivationType.RAIDER) {
             return config.monsterTrackingRange;
-        } else if ( entity instanceof EntityGhast )
-        {
-            if ( config.monsterTrackingRange > config.monsterActivationRange )
-            {
+        } else if (entity instanceof GhastEntity) {
+            if (config.monsterTrackingRange > config.monsterActivationRange) {
                 return config.monsterTrackingRange;
-            } else
-            {
+            } else {
                 return config.monsterActivationRange;
             }
-        } else if ( entity.activationType == ActivationRange.ActivationType.ANIMAL )
-        {
+        } else if (entity.activationType == ActivationRange.ActivationType.ANIMAL) {
             return config.animalTrackingRange;
-        } else if ( entity instanceof EntityItemFrame || entity instanceof EntityPainting || entity instanceof EntityItem || entity instanceof EntityExperienceOrb )
-        {
+        } else if (entity instanceof ItemFrameEntity || entity instanceof PaintingEntity || entity instanceof ItemEntity || entity instanceof ExperienceOrbEntity) {
             return config.miscTrackingRange;
-        } else
-        {
+        } else {
             return config.otherTrackingRange;
         }
     }

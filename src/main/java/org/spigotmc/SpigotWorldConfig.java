@@ -1,83 +1,69 @@
 package org.spigotmc;
 
 import java.util.List;
+
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.YamlConfiguration;
 
-public class SpigotWorldConfig
-{
-
+public class SpigotWorldConfig {
     private final String worldName;
     private final YamlConfiguration config;
     private boolean verbose;
 
-    public SpigotWorldConfig(String worldName)
-    {
+    public SpigotWorldConfig(String worldName) {
         this.worldName = worldName;
         this.config = SpigotConfig.config;
         init();
     }
 
-    public void init()
-    {
-        this.verbose = getBoolean( "verbose", true );
-
-        log( "-------- World Settings For [" + worldName + "] --------" );
-        SpigotConfig.readConfig( SpigotWorldConfig.class, this );
+    public void init() {
+        this.verbose = getBoolean("verbose", true);
+        log("-------- World Settings For [" + worldName + "] --------");
+        SpigotConfig.readConfig(SpigotWorldConfig.class, this);
     }
 
-    private void log(String s)
-    {
-        if ( verbose )
-        {
-            Bukkit.getLogger().info( s );
+    private void log(String s) {
+        if (verbose) {
+            Bukkit.getLogger().info(s);
         }
     }
 
-    private void set(String path, Object val)
-    {
-        config.set( "world-settings.default." + path, val );
+    private void set(String path, Object val) {
+        config.set("world-settings.default." + path, val);
     }
 
-    private boolean getBoolean(String path, boolean def)
-    {
-        config.addDefault( "world-settings.default." + path, def );
-        return config.getBoolean( "world-settings." + worldName + "." + path, config.getBoolean( "world-settings.default." + path ) );
+    private boolean getBoolean(String path, boolean def) {
+        config.addDefault("world-settings.default." + path, def);
+        return config.getBoolean("world-settings." + worldName + "." + path, config.getBoolean("world-settings.default." + path));
     }
 
-    private double getDouble(String path, double def)
-    {
-        config.addDefault( "world-settings.default." + path, def );
-        return config.getDouble( "world-settings." + worldName + "." + path, config.getDouble( "world-settings.default." + path ) );
+    private double getDouble(String path, double def) {
+        config.addDefault("world-settings.default." + path, def);
+        return config.getDouble("world-settings." + worldName + "." + path, config.getDouble("world-settings.default." + path));
     }
 
-    private int getInt(String path)
-    {
-        return config.getInt( "world-settings." + worldName + "." + path );
+    private int getInt(String path) {
+        return config.getInt("world-settings." + worldName + "." + path);
     }
 
-    private int getInt(String path, int def)
-    {
-        config.addDefault( "world-settings.default." + path, def );
-        return config.getInt( "world-settings." + worldName + "." + path, config.getInt( "world-settings.default." + path ) );
+    private int getInt(String path, int def) {
+        config.addDefault("world-settings.default." + path, def);
+        return config.getInt("world-settings." + worldName + "." + path, config.getInt("world-settings.default." + path));
     }
 
-    private <T> List getList(String path, T def)
-    {
-        config.addDefault( "world-settings.default." + path, def );
-        return (List<T>) config.getList( "world-settings." + worldName + "." + path, config.getList( "world-settings.default." + path ) );
+    private <T> List getList(String path, T def) {
+        config.addDefault("world-settings.default." + path, def);
+        return (List<T>) config.getList("world-settings." + worldName + "." + path, config.getList("world-settings.default." + path));
     }
 
-    private String getString(String path, String def)
-    {
-        config.addDefault( "world-settings.default." + path, def );
-        return config.getString( "world-settings." + worldName + "." + path, config.getString( "world-settings.default." + path ) );
+    private String getString(String path, String def) {
+        config.addDefault("world-settings.default." + path, def);
+        return config.getString("world-settings." + worldName + "." + path, config.getString("world-settings.default." + path));
     }
 
-    private Object get(String path, Object def)
-    {
-        config.addDefault( "world-settings.default." + path, def );
-        return config.get( "world-settings." + worldName + "." + path, config.get( "world-settings.default." + path ) );
+    private Object get(String path, Object def) {
+        config.addDefault("world-settings.default." + path, def);
+        return config.get("world-settings." + worldName + "." + path, config.get("world-settings.default." + path));
     }
 
     // Crop growth rates
@@ -106,7 +92,6 @@ public class SpigotWorldConfig
             modifier = 100;
         }
         log( crop + " Growth Modifier: " + modifier + "%" );
-
         return modifier;
     }
     private void growthModifiers()
@@ -135,7 +120,6 @@ public class SpigotWorldConfig
         itemMerge = getDouble("merge-radius.item", 2.5 );
         log( "Item Merge Radius: " + itemMerge );
     }
-
     public double expMerge;
     private void expMerge()
     {
@@ -150,14 +134,12 @@ public class SpigotWorldConfig
         {
             set( "view-distance", null );
         }
-
         Object viewDistanceObject = get( "view-distance", "default" );
         viewDistance = ( viewDistanceObject ) instanceof Number ? ( (Number) viewDistanceObject ).intValue() : -1;
         if ( viewDistance <= 0 )
         {
             viewDistance = Bukkit.getViewDistance();
         }
-
         viewDistance = Math.max( Math.min( viewDistance,  32 ), 3 );
         log( "View Distance: " + viewDistance );
     }
@@ -257,13 +239,11 @@ public class SpigotWorldConfig
     {
         dragonDeathSoundRadius = getInt( "dragon-death-sound-radius", 0 );
     }
-
     public int witherSpawnSoundRadius;
     private void witherSpawnSoundRadius()
     {
         witherSpawnSoundRadius = getInt( "wither-spawn-sound-radius", 0 );
     }
-
     public int endPortalSoundRadius;
     private void endPortalSoundRadius()
     {
@@ -313,7 +293,6 @@ public class SpigotWorldConfig
             set( "hunger.combat-exhaustion", 0.1 );
             set( "hunger.regen-exhaustion", 6.0 );
         }
-
         jumpWalkExhaustion = (float) getDouble( "hunger.jump-walk-exhaustion", 0.05 );
         jumpSprintExhaustion = (float) getDouble( "hunger.jump-sprint-exhaustion", 0.2 );
         combatExhaustion = (float) getDouble( "hunger.combat-exhaustion", 0.1 );

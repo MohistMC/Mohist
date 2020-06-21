@@ -10,6 +10,7 @@ import org.jetbrains.annotations.NotNull;
  * Called when player is about to spawn in a world after joining the server.
  */
 public class PlayerSpawnLocationEvent extends PlayerEvent {
+
     private static final HandlerList handlers = new HandlerList();
     private Location spawnLocation;
 
@@ -20,9 +21,8 @@ public class PlayerSpawnLocationEvent extends PlayerEvent {
 
 
     /**
-     * Gets player's spawn location.
-     * If the player {@link Player#hasPlayedBefore()}, it's going to default to the location inside player.dat file.
-     * For new players, the default spawn location is spawn of the main Bukkit world.
+     * Gets player's spawn location. If the player {@link Player#hasPlayedBefore()}, it's going to default to the location inside player.dat file. For new players, the default spawn location is spawn
+     * of the main Bukkit world.
      *
      * @return the spawn location
      */
@@ -30,6 +30,7 @@ public class PlayerSpawnLocationEvent extends PlayerEvent {
     public Location getSpawnLocation() {
         return spawnLocation;
     }
+
 
     /**
      * Sets player's spawn location.
@@ -40,11 +41,13 @@ public class PlayerSpawnLocationEvent extends PlayerEvent {
         this.spawnLocation = location;
     }
 
+
     @NotNull
     @Override
     public HandlerList getHandlers() {
         return handlers;
     }
+
 
     @NotNull
     public static HandlerList getHandlerList() {
