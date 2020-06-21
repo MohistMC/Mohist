@@ -63,12 +63,9 @@ public class DownloadLibraries {
                         t.cancel();
                         System.out.println(Message.getFormatString("file.download.ok", new Object[]{file.getName()}));
                         JarLoader.loadjar(new JarLoader((URLClassLoader) ClassLoader.getSystemClassLoader()), file.getParent());
-                    } catch (Throwable e) {
-                        if (Message.isCN()) {
-                            System.out.println("[X] 下载或更新库文件失败，请检查网络连接！");
-                        } else {
-                            System.out.println("[X] Failed to download or update libraries! Please check your network connection!");
-                        }
+                    } catch (Exception e) {
+                        System.out.println(Message.getString("download.libraries.error"));
+                        e.printStackTrace();
                         System.exit(-1);
                     }
                 }
