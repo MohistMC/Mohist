@@ -1,0 +1,46 @@
+From a27ee9781e6af421e7dc4da8dabc99d5d698f75f Mon Sep 17 00:00:00 2001
+From: md_5 <git@md-5.net>
+Date: Tue, 19 Feb 2019 22:30:00 +1100
+Subject: [PATCH] Allow Reading Old Large Chunks
+
+The size of chunks in the region format is overdetermined. In particular their size on disk is indicated by both a sector count in the header, and actual size in the body.
+If their size would overflow the header field (>= 255 sectors), it can just be read directly from the body instead.
+
+This code/concept was adapted from MinecraftForge.
+
+diff --git a/src/main/java/net/minecraft/server/RegionFile.java b/src/main/java/net/minecraft/server/RegionFile.java
+index e81000007..7b6e0e86b 100644
+--- a/src/main/java/net/minecraft/server/RegionFile.java
++++ b/src/main/java/net/minecraft/server/RegionFile.java
+@@ -65,6 +65,14 @@ public class RegionFile implements AutoCloseable {
+                     if (k != 0) {
+                         int l = b(k);
+                         int i1 = a(k);
++                        // Spigot start
++                        if (i1 == 255) {
++                            // We're maxed out, so we need to read the proper length from the section
++                            ByteBuffer realLen = ByteBuffer.allocate(4);
++                            this.dataFile.read(realLen, l * 4096);
++                            i1 = (realLen.getInt(0) + 4) / 4096 + 1;
++                        }
++                        // Spigot end
+ 
+                         this.freeSectors.a(l, i1);
+                     }
+@@ -89,6 +97,13 @@ public class RegionFile implements AutoCloseable {
+         } else {
+             int j = b(i);
+             int k = a(i);
++            // Spigot start
++            if (k == 255) {
++                ByteBuffer realLen = ByteBuffer.allocate(4);
++                this.dataFile.read(realLen, j * 4096);
++                k = (realLen.getInt(0) + 4) / 4096 + 1;
++            }
++            // Spigot end
+             int l = k * 4096;
+             ByteBuffer bytebuffer = ByteBuffer.allocate(l);
+ 
+-- 
+2.25.1
+

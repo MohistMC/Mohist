@@ -1,0 +1,127 @@
+From 07ead3dfc42ff92ca93982f1d54b85c9e649fcc0 Mon Sep 17 00:00:00 2001
+From: md_5 <md_5@live.com.au>
+Date: Tue, 2 Jul 2013 20:32:53 +1000
+Subject: [PATCH] Entity Mount and Dismount Events
+
+
+diff --git a/src/main/java/org/spigotmc/event/entity/EntityDismountEvent.java b/src/main/java/org/spigotmc/event/entity/EntityDismountEvent.java
+new file mode 100644
+index 00000000..00d8ec81
+--- /dev/null
++++ b/src/main/java/org/spigotmc/event/entity/EntityDismountEvent.java
+@@ -0,0 +1,48 @@
++package org.spigotmc.event.entity;
++
++import org.bukkit.entity.Entity;
++import org.bukkit.event.Cancellable;
++import org.bukkit.event.HandlerList;
++import org.bukkit.event.entity.EntityEvent;
++import org.jetbrains.annotations.NotNull;
++
++/**
++ * Called when an entity stops riding another entity.
++ */
++public class EntityDismountEvent extends EntityEvent implements Cancellable {
++
++    private static final HandlerList handlers = new HandlerList();
++    private boolean cancelled;
++    private final Entity dismounted;
++
++    public EntityDismountEvent(@NotNull Entity what, @NotNull Entity dismounted) {
++        super(what);
++        this.dismounted = dismounted;
++    }
++
++    @NotNull
++    public Entity getDismounted() {
++        return dismounted;
++    }
++
++    @Override
++    public boolean isCancelled() {
++        return cancelled;
++    }
++
++    @Override
++    public void setCancelled(boolean cancel) {
++        this.cancelled = cancel;
++    }
++
++    @NotNull
++    @Override
++    public HandlerList getHandlers() {
++        return handlers;
++    }
++
++    @NotNull
++    public static HandlerList getHandlerList() {
++        return handlers;
++    }
++}
+diff --git a/src/main/java/org/spigotmc/event/entity/EntityMountEvent.java b/src/main/java/org/spigotmc/event/entity/EntityMountEvent.java
+new file mode 100644
+index 00000000..de9c41ef
+--- /dev/null
++++ b/src/main/java/org/spigotmc/event/entity/EntityMountEvent.java
+@@ -0,0 +1,48 @@
++package org.spigotmc.event.entity;
++
++import org.bukkit.entity.Entity;
++import org.bukkit.event.Cancellable;
++import org.bukkit.event.HandlerList;
++import org.bukkit.event.entity.EntityEvent;
++import org.jetbrains.annotations.NotNull;
++
++/**
++ * Called when an entity attempts to ride another entity.
++ */
++public class EntityMountEvent extends EntityEvent implements Cancellable {
++
++    private static final HandlerList handlers = new HandlerList();
++    private boolean cancelled;
++    private final Entity mount;
++
++    public EntityMountEvent(@NotNull Entity what, @NotNull Entity mount) {
++        super(what);
++        this.mount = mount;
++    }
++
++    @NotNull
++    public Entity getMount() {
++        return mount;
++    }
++
++    @Override
++    public boolean isCancelled() {
++        return cancelled;
++    }
++
++    @Override
++    public void setCancelled(boolean cancel) {
++        this.cancelled = cancel;
++    }
++
++    @NotNull
++    @Override
++    public HandlerList getHandlers() {
++        return handlers;
++    }
++
++    @NotNull
++    public static HandlerList getHandlerList() {
++        return handlers;
++    }
++}
+diff --git a/src/main/java/org/spigotmc/event/entity/package-info.java b/src/main/java/org/spigotmc/event/entity/package-info.java
+new file mode 100644
+index 00000000..264664eb
+--- /dev/null
++++ b/src/main/java/org/spigotmc/event/entity/package-info.java
+@@ -0,0 +1,4 @@
++/**
++ * Spigot-specific entity events.
++ */
++package org.spigotmc.event.entity;
+-- 
+2.25.1
+

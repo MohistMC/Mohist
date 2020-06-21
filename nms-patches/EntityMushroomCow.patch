@@ -1,0 +1,45 @@
+--- a/net/minecraft/server/EntityMushroomCow.java
++++ b/net/minecraft/server/EntityMushroomCow.java
+@@ -3,6 +3,10 @@
+ import java.util.Random;
+ import java.util.UUID;
+ import org.apache.commons.lang3.tuple.Pair;
++// CraftBukkit start
++import org.bukkit.craftbukkit.event.CraftEventFactory;
++import org.bukkit.event.entity.EntityTransformEvent;
++// CraftBukkit end
+ 
+ public class EntityMushroomCow extends EntityCow {
+ 
+@@ -81,9 +85,14 @@
+             int i;
+ 
+             if (itemstack.getItem() == Items.SHEARS && !this.isBaby()) {
++                // CraftBukkit start
++                if (!CraftEventFactory.handlePlayerShearEntityEvent(entityhuman, this, itemstack, enumhand)) {
++                    return false;
++                }
++                // CraftBukkit end
+                 this.world.addParticle(Particles.EXPLOSION, this.locX(), this.e(0.5D), this.locZ(), 0.0D, 0.0D, 0.0D);
+                 if (!this.world.isClientSide) {
+-                    this.die();
++                    // this.die(); // CraftBukkit - moved down
+                     EntityCow entitycow = (EntityCow) EntityTypes.COW.a(this.world);
+ 
+                     entitycow.setPositionRotation(this.locX(), this.locY(), this.locZ(), this.yaw, this.pitch);
+@@ -99,7 +108,14 @@
+                     }
+ 
+                     entitycow.setInvulnerable(this.isInvulnerable());
+-                    this.world.addEntity(entitycow);
++                    // CraftBukkit start
++                    if (CraftEventFactory.callEntityTransformEvent(this, entitycow, EntityTransformEvent.TransformReason.SHEARED).isCancelled()) {
++                        return false;
++                    }
++                    this.world.addEntity(entitycow, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.SHEARED);
++
++                    this.die(); // CraftBukkit - from above
++                    // CraftBukkit end
+ 
+                     for (i = 0; i < 5; ++i) {
+                         this.world.addEntity(new EntityItem(this.world, this.locX(), this.e(1.0D), this.locZ(), new ItemStack(this.getVariant().d.getBlock())));

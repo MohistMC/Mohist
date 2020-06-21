@@ -1,0 +1,69 @@
+From 157d650f47ff91aaeebcb02831efcad19a348081 Mon Sep 17 00:00:00 2001
+From: Minecrell <dev@minecrell.net>
+Date: Sun, 17 Aug 2014 12:42:53 +0200
+Subject: [PATCH] Make debug logging togglable.
+
+
+diff --git a/src/main/java/org/spigotmc/SpigotConfig.java b/src/main/java/org/spigotmc/SpigotConfig.java
+index eb975a3c9..bba2b7adb 100644
+--- a/src/main/java/org/spigotmc/SpigotConfig.java
++++ b/src/main/java/org/spigotmc/SpigotConfig.java
+@@ -18,6 +18,9 @@ import net.minecraft.server.GenericAttributes;
+ import net.minecraft.server.IRegistry;
+ import net.minecraft.server.MinecraftKey;
+ import net.minecraft.server.MinecraftServer;
++import org.apache.logging.log4j.LogManager;
++import org.apache.logging.log4j.core.LoggerContext;
++import org.apache.logging.log4j.core.config.Configuration;
+ import org.bukkit.Bukkit;
+ import org.bukkit.ChatColor;
+ import org.bukkit.command.Command;
+@@ -353,4 +356,27 @@ public class SpigotConfig
+         attackDamage = getDouble( "settings.attribute.attackDamage.max", attackDamage );
+         ( (AttributeRanged) GenericAttributes.ATTACK_DAMAGE ).maximum = attackDamage;
+     }
++
++    public static boolean debug;
++    private static void debug()
++    {
++        debug = getBoolean( "settings.debug", false );
++
++        if ( debug && !LogManager.getRootLogger().isTraceEnabled() )
++        {
++            // Enable debug logging
++            LoggerContext ctx = (LoggerContext) LogManager.getContext( false );
++            Configuration conf = ctx.getConfiguration();
++            conf.getLoggerConfig( LogManager.ROOT_LOGGER_NAME ).setLevel( org.apache.logging.log4j.Level.ALL );
++            ctx.updateLoggers( conf );
++        }
++
++        if ( LogManager.getRootLogger().isTraceEnabled() )
++        {
++            Bukkit.getLogger().info( "Debug logging is enabled" );
++        } else
++        {
++            Bukkit.getLogger().info( "Debug logging is disabled" );
++        }
++    }
+ }
+diff --git a/src/main/resources/log4j2.xml b/src/main/resources/log4j2.xml
+index 40be2a968..722ca8496 100644
+--- a/src/main/resources/log4j2.xml
++++ b/src/main/resources/log4j2.xml
+@@ -24,10 +24,10 @@
+             <filters>
+                 <MarkerFilter marker="NETWORK_PACKETS" onMatch="DENY" onMismatch="NEUTRAL" />
+             </filters>
+-            <AppenderRef ref="SysOut"/>
++            <AppenderRef ref="SysOut" level="info"/>
+             <AppenderRef ref="File"/>
+-            <AppenderRef ref="ServerGuiConsole"/>
+-            <AppenderRef ref="TerminalConsole"/>
++            <AppenderRef ref="ServerGuiConsole" level="info"/>
++            <AppenderRef ref="TerminalConsole" level="info"/>
+         </Root>
+     </Loggers>
+ </Configuration>
+-- 
+2.25.1
+
