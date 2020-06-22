@@ -30,7 +30,6 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
-import org.bukkit.craftbukkit.v1_15_R1.SpigotTimings;
 
 public class ActivationRange {
 

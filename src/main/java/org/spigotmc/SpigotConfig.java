@@ -27,7 +27,7 @@ import org.bukkit.command.Command;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.magmafoundation.magma.Metrics;
+import red.mohist.Metrics;
 
 public class SpigotConfig {
 
@@ -74,11 +74,7 @@ public class SpigotConfig {
 
     public static void registerCommands() {
         for (Map.Entry<String, Command> entry : commands.entrySet()) {
-            MinecraftServer.getServer().server.getCommandMap().register(entry.getKey(), "Spigot", entry.getValue());
-        }
-        if ( metrics == null )
-        {
-            metrics = new Metrics();
+            MinecraftServer.getServer().server.getCommandMap().register( entry.getKey(), "Spigot", entry.getValue() );
         }
     }
 
@@ -310,19 +306,6 @@ public class SpigotConfig {
     private static void movedTooQuicklyMultiplier()
     {
         movedTooQuicklyMultiplier = getDouble( "settings.moved-too-quickly-multiplier", 10.0D );
-    }
-
-    public static double maxHealth = 2048;
-    public static double movementSpeed = 2048;
-    public static double attackDamage = 2048;
-    private static void attributeMaxes()
-    {
-        maxHealth = getDouble( "settings.attribute.maxHealth.max", maxHealth );
-        ( (RangedAttribute) SharedMonsterAttributes.MAX_HEALTH ).maximumValue = maxHealth;
-        movementSpeed = getDouble( "settings.attribute.movementSpeed.max", movementSpeed );
-        ( (RangedAttribute) SharedMonsterAttributes.MOVEMENT_SPEED ).maximumValue = movementSpeed;
-        attackDamage = getDouble( "settings.attribute.attackDamage.max", attackDamage );
-        ( (RangedAttribute) SharedMonsterAttributes.ATTACK_DAMAGE ).maximumValue = attackDamage;
     }
 
     public static boolean debug;
