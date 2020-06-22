@@ -1,0 +1,24 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Paul1365972 <paul1365972@gmail.com>
+Date: Sun, 19 Apr 2020 21:33:08 +0200
+Subject: [PATCH] Purpur ItemMonsterEgg fix
+
+
+diff --git a/src/main/java/net/minecraft/server/ItemMonsterEgg.java b/src/main/java/net/minecraft/server/ItemMonsterEgg.java
+index a169993eaa77465c0c662dea66f42732716e4cbb..8d66e6fbb619aea084dbd90013972fc1260c4752 100644
+--- a/src/main/java/net/minecraft/server/ItemMonsterEgg.java
++++ b/src/main/java/net/minecraft/server/ItemMonsterEgg.java
+@@ -48,11 +48,11 @@ public class ItemMonsterEgg extends Item {
+ 
+                     // Purpur start
+                     org.bukkit.block.Block bukkitBlock = world.getWorld().getBlockAt(blockposition.getX(), blockposition.getY(), blockposition.getZ());
+-                    PlayerSetSpawnerTypeWithEggEvent event = new PlayerSetSpawnerTypeWithEggEvent((Player) itemactioncontext.b.getBukkitEntity(), bukkitBlock, (CreatureSpawner) bukkitBlock.getState(), EntityType.fromName(entitytypes.getName()));
++                    PlayerSetSpawnerTypeWithEggEvent event = new PlayerSetSpawnerTypeWithEggEvent((Player) itemactioncontext.b.getBukkitEntity(), bukkitBlock, (CreatureSpawner) bukkitBlock.getState(), EntityType.fromName(IRegistry.ENTITY_TYPE.getKey(entitytypes).getKey())); //Ibento
+                     if (!event.callEvent()) {
+                         return EnumInteractionResult.FAIL;
+                     }
+-                    entitytypes = EntityTypes.getFromKey(new MinecraftKey(event.getEntityType().getKey().toString()));
++                    entitytypes = EntityTypes.a(event.getEntityType().getKey().toString()).get(); // Ibento
+                     // Purpur end
+ 
+                     mobspawnerabstract.setMobName(entitytypes);

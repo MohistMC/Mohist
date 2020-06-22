@@ -1,0 +1,36 @@
+From a4c2d20385129c920d4a9cfa74f27d5a3dbd31cb Mon Sep 17 00:00:00 2001
+From: Phoenix616 <mail@moep.tv>
+Date: Sat, 16 May 2020 23:13:20 +0100
+Subject: [PATCH] Don't call teleport event on push move
+
+---
+ .../java/net/minecraft/server/PlayerConnection.java  | 12 +++++++++---
+ 1 file changed, 9 insertions(+), 3 deletions(-)
+
+diff --git a/src/main/java/net/minecraft/server/PlayerConnection.java b/src/main/java/net/minecraft/server/PlayerConnection.java
+index dce888954d..423bb080cd 100644
+--- a/src/main/java/net/minecraft/server/PlayerConnection.java
++++ b/src/main/java/net/minecraft/server/PlayerConnection.java
+@@ -1101,10 +1101,16 @@ public class PlayerConnection implements PacketListenerPlayIn {
+                             this.player.setLocation(d4, d5, d6, f, f1);
+                             this.player.checkMovement(this.player.locX() - d0, this.player.locY() - d1, this.player.locZ() - d2);
+                             if (!this.player.noclip && !this.player.isSleeping()) {
+-                                boolean flag2 = this.a((IWorldReader) worldserver);
++                                // Origami start - don't call teleport event on push move
++                                boolean isColliding = this.a((IWorldReader) worldserver);
+ 
+-                                if (flag && (flag1 || !flag2)) {
+-                                    this.a(d0, d1, d2, f, f1);
++                                if (flag && (flag1 || !isColliding)) {
++                                    if (isColliding) {
++                                        internalTeleport(d0, d1, d2, f, f1, Collections.emptySet()); // use internal to not call teleport event
++                                    } else {
++                                        this.a(d0, d1, d2, f, f1);
++                                    }
++                                    // Origami end
+                                     return;
+                                 }
+                             }
+-- 
+2.25.1.windows.1
+

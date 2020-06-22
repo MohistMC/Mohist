@@ -1,0 +1,144 @@
+From afced8c2634fd0f2fe6413d9aac0c782255e9d39 Mon Sep 17 00:00:00 2001
+From: tr7zw <tr7zw@live.de>
+Date: Thu, 2 Apr 2020 18:49:56 +0200
+Subject: [PATCH] Add NBT-API as first-class lib
+
+---
+ pom.xml                                       | 16 +++++++++++++++
+ src/main/java/org/bukkit/block/TileState.java | 10 ++++++++++
+ src/main/java/org/bukkit/entity/Entity.java   | 10 ++++++++++
+ .../java/org/bukkit/inventory/ItemStack.java  | 20 +++++++++++++++++++
+ 4 files changed, 56 insertions(+)
+
+diff --git a/pom.xml b/pom.xml
+index 9b9e8c5c..bd1fc68a 100644
+--- a/pom.xml
++++ b/pom.xml
+@@ -44,6 +44,11 @@
+             <id>mojang</id>
+             <url>https://libraries.minecraft.net/</url>
+         </repository>
++        <!-- CodeMC -->
++        <repository>
++            <id>codemc-repo</id>
++            <url>https://repo.codemc.org/repository/maven-public/</url>
++        </repository>
+     </repositories>
+ 
+     <pluginRepositories>
+@@ -158,6 +163,11 @@
+             <artifactId>asm-commons</artifactId>
+             <version>8.0.1</version>
+         </dependency>
++        <dependency>
++            <groupId>de.tr7zw</groupId>
++            <artifactId>item-nbt-api</artifactId>
++            <version>2.4.0-SNAPSHOT</version>
++        </dependency>
+     </dependencies>
+ 
+     <build>
+@@ -228,6 +238,12 @@
+                     <dependencyReducedPomLocation>${project.build.directory}/dependency-reduced-pom.xml</dependencyReducedPomLocation>
+                     <!-- when downloading via Maven we can pull depends individually -->
+                     <shadedArtifactAttached>true</shadedArtifactAttached>
++                    <relocations>
++                        <relocation>
++                            <pattern>de.tr7zw.changeme.nbtapi</pattern>
++                            <shadedPattern>de.tr7zw.nbtapi</shadedPattern>
++                        </relocation>
++                    </relocations>
+                 </configuration>
+             </plugin>
+         </plugins>
+diff --git a/src/main/java/org/bukkit/block/TileState.java b/src/main/java/org/bukkit/block/TileState.java
+index 3b10fcc1..acb13596 100644
+--- a/src/main/java/org/bukkit/block/TileState.java
++++ b/src/main/java/org/bukkit/block/TileState.java
+@@ -4,6 +4,8 @@ import org.bukkit.persistence.PersistentDataContainer;
+ import org.bukkit.persistence.PersistentDataHolder;
+ import org.jetbrains.annotations.NotNull;
+ 
++import de.tr7zw.changeme.nbtapi.NBTTileEntity;
++
+ /**
+  * Represents a block state that also hosts a tile entity at the given location.
+  *
+@@ -36,4 +38,12 @@ public interface TileState extends BlockState, PersistentDataHolder {
+     @NotNull
+     @Override
+     PersistentDataContainer getPersistentDataContainer();
++    
++    // YAPFA start
++    
++    public default NBTTileEntity getNBT() {
++    	return new NBTTileEntity(this);
++    }
++    
++    // YAPFA end
+ }
+diff --git a/src/main/java/org/bukkit/entity/Entity.java b/src/main/java/org/bukkit/entity/Entity.java
+index 3f0f3803..771e7ea7 100644
+--- a/src/main/java/org/bukkit/entity/Entity.java
++++ b/src/main/java/org/bukkit/entity/Entity.java
+@@ -23,6 +23,8 @@ import org.jetbrains.annotations.Contract;
+ import org.jetbrains.annotations.NotNull;
+ import org.jetbrains.annotations.Nullable;
+ 
++import de.tr7zw.changeme.nbtapi.NBTEntity;
++
+ /**
+  * Represents a base entity in the world
+  */
+@@ -659,4 +661,12 @@ public interface Entity extends Metadatable, CommandSender, Nameable, Persistent
+     @NotNull
+     org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason getEntitySpawnReason();
+     // Paper end
++    
++    // YAPFA start
++    
++    public default NBTEntity getNBT() {
++    	return new NBTEntity(this);
++    }
++    
++    // YAPFA end
+ }
+diff --git a/src/main/java/org/bukkit/inventory/ItemStack.java b/src/main/java/org/bukkit/inventory/ItemStack.java
+index eed5110b..69d90f7d 100644
+--- a/src/main/java/org/bukkit/inventory/ItemStack.java
++++ b/src/main/java/org/bukkit/inventory/ItemStack.java
+@@ -1,6 +1,10 @@
+ package org.bukkit.inventory;
+ 
+ import com.google.common.collect.ImmutableMap;
++
++import de.tr7zw.changeme.nbtapi.NBTItem;
++import de.tr7zw.changeme.nbtapi.NBTType;
++
+ import java.util.LinkedHashMap;
+ import java.util.List; // Paper
+ import java.util.Map;
+@@ -855,4 +859,20 @@ public class ItemStack implements Cloneable, ConfigurationSerializable {
+         return itemMeta.hasItemFlag(flag);
+     }
+     // Paper end
++    
++    // YAPFA start
++    
++    public NBTItem getNBT() {
++    	return new NBTItem(this);
++    }
++    
++    public void setNBT(NBTItem nbt) {
++    	ItemStack nbtItem = nbt.getItem();
++    	setType(nbtItem.getType());
++    	setAmount(nbtItem.getAmount());
++    	setData(nbtItem.getData());
++    	setItemMeta(nbtItem.getItemMeta());
++    }
++    
++    // YAPFA end
+ }
+-- 
+2.25.1.windows.1
+

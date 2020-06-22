@@ -1,0 +1,18 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Aikar <aikar@aikar.co>
+Date: Sun, 19 May 2013 21:09:31 -0400
+Subject: [PATCH] EMC ArrowHitBlock Event
+
+
+diff --git a/src/main/java/net/minecraft/server/EntityArrow.java b/src/main/java/net/minecraft/server/EntityArrow.java
+index 9c97edf9c9e9a8cdf029264f6b563090142c686b..4dc53d3fa128a27fd7c1ad6c86ffe709330c0a8b 100644
+--- a/src/main/java/net/minecraft/server/EntityArrow.java
++++ b/src/main/java/net/minecraft/server/EntityArrow.java
+@@ -308,6 +308,7 @@ public abstract class EntityArrow extends Entity implements IProjectile {
+             this.a(SoundEffects.ENTITY_ARROW_HIT);
+             this.o(false);
+             this.w();
++            if (new com.destroystokyo.paper.event.entity.ArrowHitBlockEvent((org.bukkit.entity.AbstractArrow) this.getBukkitEntity(), world.getWorld().getBlockAt(movingobjectpositionblock.getBlockPosition().getX(), movingobjectpositionblock.getBlockPosition().getY(), movingobjectpositionblock.getBlockPosition().getZ())).callEvent()) // Paper
+             iblockdata.a(this.world, iblockdata, movingobjectpositionblock, this);
+         }
+ 

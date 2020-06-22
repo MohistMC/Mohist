@@ -1,0 +1,49 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Spottedleaf <spottedleaf@spottedleaf.dev>
+Date: Mon, 18 May 2020 00:30:48 -0700
+Subject: [PATCH] Improve async tp to not load chunks when crossing worlds
+
+Fixes an issue where a getCubes call would load neighbouring chunks.
+
+diff --git a/src/main/java/org/bukkit/craftbukkit/entity/CraftEntity.java b/src/main/java/org/bukkit/craftbukkit/entity/CraftEntity.java
+index d16d3fe58e6a45e3023946174d2e137a0670e455..5a7b714cca8651684be42809225585253c2e7cb4 100644
+--- a/src/main/java/org/bukkit/craftbukkit/entity/CraftEntity.java
++++ b/src/main/java/org/bukkit/craftbukkit/entity/CraftEntity.java
+@@ -519,6 +519,37 @@ public abstract class CraftEntity implements org.bukkit.entity.Entity {
+         return true;
+     }
+ 
++    // Tuinity start - implement teleportAsync better
++    @Override
++    public java.util.concurrent.CompletableFuture<Boolean> teleportAsync(Location location, TeleportCause cause) {
++        Preconditions.checkArgument(location != null, "location");
++        location.checkFinite();
++        Location locationClone = location.clone(); // clone so we don't need to worry about mutations after this call.
++
++        net.minecraft.server.WorldServer world = ((CraftWorld)locationClone.getWorld()).getHandle();
++        java.util.concurrent.CompletableFuture<Boolean> ret = new java.util.concurrent.CompletableFuture<>();
++
++        world.loadChunksForMoveAsync(getHandle().getBoundingBoxAt(locationClone.getX(), locationClone.getY(), locationClone.getZ()), location.getX(), location.getZ(), (list) -> {
++            net.minecraft.server.ChunkProviderServer chunkProviderServer = world.getChunkProvider();
++            for (net.minecraft.server.IChunkAccess chunk : list) {
++                chunkProviderServer.addTicketAtLevel(net.minecraft.server.TicketType.POST_TELEPORT, chunk.getPos(), 33, CraftEntity.this.getEntityId());
++            }
++            net.minecraft.server.MinecraftServer.getServer().scheduleOnMain(() -> {
++                try {
++                    ret.complete(CraftEntity.this.teleport(locationClone, cause) ? Boolean.TRUE : Boolean.FALSE);
++                } catch (Throwable throwable) {
++                    if (throwable instanceof ThreadDeath) {
++                        throw (ThreadDeath)throwable;
++                    }
++                    ret.completeExceptionally(throwable);
++                }
++            });
++        });
++
++        return ret;
++    }
++    // Tuinity end - implement teleportAsync better
++
+     @Override
+     public boolean teleport(org.bukkit.entity.Entity destination) {
+         return teleport(destination.getLocation());

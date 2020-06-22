@@ -1,0 +1,61 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: chickeneer <emcchickeneer@gmail.com>
+Date: Fri, 29 Nov 2019 02:47:35 -0600
+Subject: [PATCH] EMC Add a PlayerThrowTrident event
+
+
+diff --git a/src/main/java/com/destroystokyo/paper/event/player/PlayerThrowTridentEvent.java b/src/main/java/com/destroystokyo/paper/event/player/PlayerThrowTridentEvent.java
+new file mode 100644
+index 0000000000000000000000000000000000000000..1ee88dcf349db690cf1a44eb871e7677999d95f1
+--- /dev/null
++++ b/src/main/java/com/destroystokyo/paper/event/player/PlayerThrowTridentEvent.java
+@@ -0,0 +1,49 @@
++package com.destroystokyo.paper.event.player;
++
++import org.bukkit.entity.Entity;
++import org.bukkit.entity.Player;
++import org.bukkit.event.HandlerList;
++import org.bukkit.event.player.PlayerEvent;
++import org.bukkit.inventory.ItemStack;
++import org.jetbrains.annotations.NotNull;
++
++/**
++ * Called when a Player throws a trident
++ */
++public class PlayerThrowTridentEvent extends PlayerEvent {
++    private static final HandlerList handlers = new HandlerList();
++    private final Entity projectile;
++    private final ItemStack tridentItem;
++
++    @NotNull
++    public ItemStack getTridentItem() {
++        return tridentItem;
++    }
++
++    public PlayerThrowTridentEvent(@NotNull final Player shooter, @NotNull ItemStack tridentItem, @NotNull final Entity projectile) {
++        super(shooter);
++        this.tridentItem = tridentItem;
++        this.projectile = projectile;
++    }
++
++    /**
++     * Gets the projectile which will be launched by this event
++     *
++     * @return the launched projectile
++     */
++    @NotNull
++    public Entity getProjectile() {
++        return projectile;
++    }
++
++    @NotNull
++    @Override
++    public HandlerList getHandlers() {
++        return handlers;
++    }
++
++    @NotNull
++    public static HandlerList getHandlerList() {
++        return handlers;
++    }
++}

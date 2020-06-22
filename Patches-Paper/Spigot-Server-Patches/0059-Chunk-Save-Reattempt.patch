@@ -1,0 +1,51 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Aikar <aikar@aikar.co>
+Date: Mon, 4 Mar 2013 23:46:10 -0500
+Subject: [PATCH] Chunk Save Reattempt
+
+We commonly have "Stream Closed" errors on chunk saving, so this code should re-try to save the chunk in the event of failure and hopefully prevent rollbacks.
+
+diff --git a/src/main/java/net/minecraft/server/RegionFile.java b/src/main/java/net/minecraft/server/RegionFile.java
+index c2312a227c60417c02fc028047e1e4562bbfccff..cee1ea8f43e3135cd72a67c1c8067174feaf956e 100644
+--- a/src/main/java/net/minecraft/server/RegionFile.java
++++ b/src/main/java/net/minecraft/server/RegionFile.java
+@@ -241,7 +241,7 @@ public class RegionFile implements AutoCloseable {
+                     return true;
+                 }
+             } catch (IOException ioexception) {
+-                com.destroystokyo.paper.exception.ServerInternalException.reportInternalException(ioexception); // Paper
++                com.destroystokyo.paper.util.SneakyThrow.sneaky(ioexception); // Paper - we want the upper try/catch to retry this
+                 return false;
+             }
+         }
+diff --git a/src/main/java/net/minecraft/server/RegionFileCache.java b/src/main/java/net/minecraft/server/RegionFileCache.java
+index a164aee8805580069cc4b6daee7f2ad9137d34e0..fd46da95e0342c0004d82a36a164f3a18f9edac6 100644
+--- a/src/main/java/net/minecraft/server/RegionFileCache.java
++++ b/src/main/java/net/minecraft/server/RegionFileCache.java
+@@ -85,6 +85,7 @@ public final class RegionFileCache implements AutoCloseable {
+ 
+     protected void write(ChunkCoordIntPair chunkcoordintpair, NBTTagCompound nbttagcompound) throws IOException {
+         RegionFile regionfile = this.getFile(chunkcoordintpair, false); // CraftBukkit
++        int attempts = 0; Exception laste = null; while (attempts++ < 5) { try { // Paper
+         DataOutputStream dataoutputstream = regionfile.c(chunkcoordintpair);
+         Throwable throwable = null;
+ 
+@@ -108,6 +109,18 @@ public final class RegionFileCache implements AutoCloseable {
+ 
+         }
+ 
++            // Paper start
++            return;
++        } catch (Exception ex)  {
++            laste = ex;
++        }
++        }
++
++        if (laste != null) {
++            com.destroystokyo.paper.exception.ServerInternalException.reportInternalException(laste);
++            MinecraftServer.LOGGER.error("Failed to save chunk", laste);
++        }
++        // Paper end
+     }
+ 
+     public void close() throws IOException {

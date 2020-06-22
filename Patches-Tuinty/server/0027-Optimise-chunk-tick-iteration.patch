@@ -1,0 +1,109 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Spottedleaf <spottedleaf@spottedleaf.dev>
+Date: Thu, 7 May 2020 05:48:54 -0700
+Subject: [PATCH] Optimise chunk tick iteration
+
+Use a dedicated list of entity ticking chunks to reduce the cost
+
+diff --git a/src/main/java/net/minecraft/server/ChunkProviderServer.java b/src/main/java/net/minecraft/server/ChunkProviderServer.java
+index ea9d007fef10697456b0139421d623d25ce589cc..165284fbf8329f1c33c1b009f36724eb3db63df4 100644
+--- a/src/main/java/net/minecraft/server/ChunkProviderServer.java
++++ b/src/main/java/net/minecraft/server/ChunkProviderServer.java
+@@ -904,6 +904,16 @@ public class ChunkProviderServer extends IChunkProvider {
+         this.clearCache();
+     }
+ 
++    // Tuinity start - optimise chunk tick iteration
++    // We need this here because since we remove the COW op for chunk map, we also remove
++    // the iterator safety of the visible map - meaning the only way for us to still
++    // iterate is to use a copy. Not acceptable at all, so here we hack in an iterable safe
++    // chunk map that will give the same behaviour as previous - without COW.
++    final com.destroystokyo.paper.util.maplist.ChunkList entityTickingChunks = new com.destroystokyo.paper.util.maplist.ChunkList();
++    boolean isTickingChunks;
++    final it.unimi.dsi.fastutil.objects.Object2BooleanLinkedOpenHashMap<Chunk> pendingEntityTickingChunkChanges = new it.unimi.dsi.fastutil.objects.Object2BooleanLinkedOpenHashMap<>(16, 0.8f);
++    // Tuinity end - optimise chunk tick iteration
++
+     private void tickChunks() {
+         long i = this.world.getTime();
+         long j = i - this.lastTickTime;
+@@ -979,11 +989,12 @@ public class ChunkProviderServer extends IChunkProvider {
+             this.world.timings.countNaturalMobs.stopTiming(); // Paper - timings
+             this.world.getMethodProfiler().exit();
+             // Paper - replaced by above
+-            final int[] chunksTicked = {0}; this.playerChunkMap.forEachVisibleChunk((playerchunk) -> { // Paper - safe iterator incase chunk loads, also no wrapping
+-                Optional<Chunk> optional = ((Either) playerchunk.b().getNow(PlayerChunk.UNLOADED_CHUNK)).left();
+-
+-                if (optional.isPresent()) {
+-                    Chunk chunk = (Chunk) optional.get();
++            // Tuinity start - optimise chunk tick iteration
++            this.isTickingChunks = true;
++            for (Chunk chunk : this.entityTickingChunks) {
++                PlayerChunk playerchunk = chunk.playerChunk;
++                if (playerchunk != null) { // make sure load event has been called along with the load logic we put there
++                    // Tuinity end - optimise chunk tick iteration
+ 
+                     this.world.getMethodProfiler().enter("broadcast");
+                     this.world.timings.broadcastChunkUpdates.startTiming(); // Paper - timings
+@@ -1065,7 +1076,23 @@ public class ChunkProviderServer extends IChunkProvider {
+                         MinecraftServer.getServer().executeMidTickTasks(); // Tuinity - exec chunk tasks during world tick
+                     }
+                 }
+-            });
++            } // Tuinity start - optimise chunk tick iteration
++            this.isTickingChunks = false;
++            if (!this.pendingEntityTickingChunkChanges.isEmpty()) {
++                // iterate backwards: fastutil maps have better remove times when iterating backwards
++                // (this is due to the fact that we likely wont shift entries on remove calls)
++                for (it.unimi.dsi.fastutil.objects.ObjectBidirectionalIterator<it.unimi.dsi.fastutil.objects.Object2BooleanMap.Entry<Chunk>> iterator = this.pendingEntityTickingChunkChanges.object2BooleanEntrySet().fastIterator(this.pendingEntityTickingChunkChanges.object2BooleanEntrySet().last()); iterator.hasPrevious();) {
++                    it.unimi.dsi.fastutil.objects.Object2BooleanMap.Entry<Chunk> entry = iterator.previous();
++
++                    if (entry.getBooleanValue()) {
++                        this.entityTickingChunks.add(entry.getKey());
++                    } else {
++                        this.entityTickingChunks.remove(entry.getKey());
++                    }
++                    iterator.remove();
++                }
++            }
++            // Tuinity end - optimise chunk tick iteration
+             this.world.getMethodProfiler().enter("customSpawners");
+             if (flag1) {
+                 try (co.aikar.timings.Timing ignored = this.world.timings.miscMobSpawning.startTiming()) { // Paper - timings
+diff --git a/src/main/java/net/minecraft/server/PlayerChunk.java b/src/main/java/net/minecraft/server/PlayerChunk.java
+index 08e124015ed171738fbfb02599e2a3f748cb88a4..554703fc57652cdab1e71aaa39dcef1a7989985f 100644
+--- a/src/main/java/net/minecraft/server/PlayerChunk.java
++++ b/src/main/java/net/minecraft/server/PlayerChunk.java
+@@ -701,7 +701,14 @@ public class PlayerChunk {
+                     // note: Here is a very good place to add callbacks to logic waiting on this.
+                     Chunk entityTickingChunk = either.left().get();
+                     PlayerChunk.this.isEntityTickingReady = true;
+-
++                    // Tuinity start - optimise chunk tick iteration
++                    ChunkProviderServer chunkProvider = PlayerChunk.this.chunkMap.world.getChunkProvider();
++                    if (chunkProvider.isTickingChunks) {
++                        chunkProvider.pendingEntityTickingChunkChanges.put(entityTickingChunk, true);
++                    } else {
++                        chunkProvider.entityTickingChunks.add(entityTickingChunk);
++                    }
++                    // Tuinity end - optimise chunk tick iteration
+ 
+ 
+ 
+@@ -713,6 +720,17 @@ public class PlayerChunk {
+ 
+         if (flag6 && !flag7) {
+             this.entityTickingFuture.complete(PlayerChunk.UNLOADED_CHUNK); this.isEntityTickingReady = false; // Paper - cache chunk ticking stage
++            // Tuinity start - optimise chunk tick iteration
++            ChunkProviderServer chunkProvider = PlayerChunk.this.chunkMap.world.getChunkProvider();
++            Chunk chunk = this.getFullChunkIfCached();
++            if (chunk != null) {
++                if (chunkProvider.isTickingChunks) {
++                    chunkProvider.pendingEntityTickingChunkChanges.put(chunk, false);
++                } else {
++                    chunkProvider.entityTickingChunks.remove(chunk);
++                }
++            }
++            // Tuinity end - optimise chunk tick iteration
+             this.entityTickingFuture = PlayerChunk.UNLOADED_CHUNK_FUTURE;
+         }
+         // Paper start - raise IO/load priority if priority changes, use our preferred priority

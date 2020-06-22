@@ -1,0 +1,30 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: chickeneer <emcchickeneer@gmail.com>
+Date: Fri, 17 Jan 2020 21:32:10 -0600
+Subject: [PATCH] EMC Add the BlockHarvestBeehiveEvent
+
+
+diff --git a/src/main/java/net/minecraft/server/IDispenseBehavior.java b/src/main/java/net/minecraft/server/IDispenseBehavior.java
+index 3af686c7f1e483afd4dbf5e2b27c484e2ef321d0..df0501b65e4c07289e9d55bc84dbdfe834770e93 100644
+--- a/src/main/java/net/minecraft/server/IDispenseBehavior.java
++++ b/src/main/java/net/minecraft/server/IDispenseBehavior.java
+@@ -4,6 +4,7 @@ import java.util.Iterator;
+ import java.util.List;
+ import java.util.Random;
+ // CraftBukkit start
++import com.empireminecraft.customevents.BlockHarvestBeehiveEvent;
+ import org.bukkit.Location;
+ import org.bukkit.TreeType;
+ import org.bukkit.craftbukkit.event.CraftEventFactory;
+@@ -861,6 +862,11 @@ public interface IDispenseBehavior {
+                             int k = (Integer) iblockdata.get(BlockBeehive.c);
+ 
+                             if (k >= 5) {
++                                // EMC start
++                                if (!(new BlockHarvestBeehiveEvent(bukkitBlock, MCUtil.toBukkitBlock(world, blockposition), craftItem).callEvent())) {
++                                    return itemstack;
++                                }
++                                // EMC end
+                                 if (itemstack.isDamaged(1, world.random, (EntityPlayer) null)) {
+                                     itemstack.setCount(0);
+                                 }

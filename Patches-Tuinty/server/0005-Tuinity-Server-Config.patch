@@ -1,0 +1,331 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Spottedleaf <Spottedleaf@users.noreply.github.com>
+Date: Sun, 3 Mar 2019 18:25:06 -0800
+Subject: [PATCH] Tuinity Server Config
+
+
+diff --git a/src/main/java/co/aikar/timings/TimingsExport.java b/src/main/java/co/aikar/timings/TimingsExport.java
+index a3b41ce5fc70948d4804659a472cb622bb9bbc07..b09981e9bd2d24a0f0e291fabfbbbf0b3887a80b 100644
+--- a/src/main/java/co/aikar/timings/TimingsExport.java
++++ b/src/main/java/co/aikar/timings/TimingsExport.java
+@@ -229,7 +229,8 @@ public class TimingsExport extends Thread {
+         parent.put("config", createObject(
+             pair("spigot", mapAsJSON(Bukkit.spigot().getSpigotConfig(), null)),
+             pair("bukkit", mapAsJSON(Bukkit.spigot().getBukkitConfig(), null)),
+-            pair("paper", mapAsJSON(Bukkit.spigot().getPaperConfig(), null))
++            pair("paper", mapAsJSON(Bukkit.spigot().getPaperConfig(), null)), // Tuinity - add config to timings report
++            pair("tuinity", mapAsJSON(Bukkit.spigot().getTuinityConfig(), null)) // Tuinity - add config to timings report
+         ));
+ 
+         new TimingsExport(listeners, parent, history).start();
+diff --git a/src/main/java/com/tuinity/tuinity/config/TuinityConfig.java b/src/main/java/com/tuinity/tuinity/config/TuinityConfig.java
+new file mode 100644
+index 0000000000000000000000000000000000000000..775e7dbc5af5ba6245d1486ca686b29013ee72da
+--- /dev/null
++++ b/src/main/java/com/tuinity/tuinity/config/TuinityConfig.java
+@@ -0,0 +1,218 @@
++package com.tuinity.tuinity.config;
++
++import com.destroystokyo.paper.util.SneakyThrow;
++import org.bukkit.Bukkit;
++import org.bukkit.configuration.ConfigurationSection;
++import org.bukkit.configuration.file.YamlConfiguration;
++import java.io.File;
++import java.lang.reflect.Method;
++import java.lang.reflect.Modifier;
++import java.util.List;
++import java.util.logging.Level;
++
++public final class TuinityConfig {
++
++    public static final String CONFIG_HEADER = "Configuration file for Tuinity.";
++    public static final int CURRENT_CONFIG_VERSION = 2;
++
++    private static final Object[] EMPTY = new Object[0];
++
++    private static File configFile;
++    public static YamlConfiguration config;
++    private static int configVersion;
++
++    public static void init(final File file) {
++        // TODO remove this in the future...
++        final File tuinityConfig = new File(file.getParent(), "tuinity.yml");
++        if (!tuinityConfig.exists()) {
++            final File oldConfig = new File(file.getParent(), "concrete.yml");
++            oldConfig.renameTo(tuinityConfig);
++        }
++        TuinityConfig.configFile = file;
++        final YamlConfiguration config = new YamlConfiguration();
++        config.options().header(CONFIG_HEADER);
++        config.options().copyDefaults(true);
++
++        if (!file.exists()) {
++            try {
++                file.createNewFile();
++            } catch (final Exception ex) {
++                Bukkit.getLogger().log(Level.SEVERE, "Failure to create tuinity config", ex);
++            }
++        } else {
++            try {
++                config.load(file);
++            } catch (final Exception ex) {
++                Bukkit.getLogger().log(Level.SEVERE, "Failure to load tuinity config", ex);
++                SneakyThrow.sneaky(ex); /* Rethrow, this is critical */
++                throw new RuntimeException(ex); // unreachable
++            }
++        }
++
++        TuinityConfig.load(config);
++    }
++
++    public static void load(final YamlConfiguration config) {
++        TuinityConfig.config = config;
++        TuinityConfig.configVersion = TuinityConfig.getInt("config-version-please-do-not-modify-me", CURRENT_CONFIG_VERSION);
++        TuinityConfig.set("config-version-please-do-not-modify-me", CURRENT_CONFIG_VERSION);
++
++        for (final Method method : TuinityConfig.class.getDeclaredMethods()) {
++            if (method.getReturnType() != void.class || method.getParameterCount() != 0 ||
++                    !Modifier.isPrivate(method.getModifiers()) || !Modifier.isStatic(method.getModifiers())) {
++                continue;
++            }
++
++            try {
++                method.setAccessible(true);
++                method.invoke(null, EMPTY);
++            } catch (final Exception ex) {
++                SneakyThrow.sneaky(ex); /* Rethrow, this is critical */
++                throw new RuntimeException(ex); // unreachable
++            }
++        }
++
++        /* We re-save to add new options */
++        try {
++            config.save(TuinityConfig.configFile);
++        } catch (final Exception ex) {
++            Bukkit.getLogger().log(Level.SEVERE, "Unable to save tuinity config", ex);
++        }
++    }
++
++    static void set(final String path, final Object value) {
++        TuinityConfig.config.set(path, value);
++    }
++
++    static boolean getBoolean(final String path, final boolean dfl) {
++        TuinityConfig.config.addDefault(path, Boolean.valueOf(dfl));
++        return TuinityConfig.config.getBoolean(path, dfl);
++    }
++
++    static int getInt(final String path, final int dfl) {
++        TuinityConfig.config.addDefault(path, Integer.valueOf(dfl));
++        return TuinityConfig.config.getInt(path, dfl);
++    }
++
++    static long getLong(final String path, final long dfl) {
++        TuinityConfig.config.addDefault(path, Long.valueOf(dfl));
++        return TuinityConfig.config.getLong(path, dfl);
++    }
++
++    static double getDouble(final String path, final double dfl) {
++        TuinityConfig.config.addDefault(path, Double.valueOf(dfl));
++        return TuinityConfig.config.getDouble(path, dfl);
++    }
++
++    public static final class WorldConfig {
++
++        public final String worldName;
++        public ConfigurationSection config;
++        ConfigurationSection worldDefaults;
++
++        public WorldConfig(final String worldName) {
++            this.worldName = worldName;
++            this.init();
++        }
++
++        public void init() {
++            this.worldDefaults = TuinityConfig.config.getConfigurationSection("world-settings.default");
++            if (this.worldDefaults == null) {
++                this.worldDefaults = TuinityConfig.config.createSection("world-settings.default");
++            }
++
++            String worldSectionPath = TuinityConfig.configVersion < 1 ? this.worldName : "world-settings.".concat(this.worldName);
++            ConfigurationSection section = TuinityConfig.config.getConfigurationSection(worldSectionPath);
++            if (section == null) {
++                section = TuinityConfig.config.createSection(worldSectionPath);
++            }
++            TuinityConfig.config.set(worldSectionPath, section);
++
++            this.load(section);
++        }
++
++        public void load(final ConfigurationSection config) {
++            this.config = config;
++
++            for (final Method method : TuinityConfig.WorldConfig.class.getDeclaredMethods()) {
++                if (method.getReturnType() != void.class || method.getParameterCount() != 0 ||
++                        !Modifier.isPrivate(method.getModifiers()) || Modifier.isStatic(method.getModifiers())) {
++                    continue;
++                }
++
++                try {
++                    method.setAccessible(true);
++                    method.invoke(this, EMPTY);
++                } catch (final Exception ex) {
++                    SneakyThrow.sneaky(ex); /* Rethrow, this is critical */
++                    throw new RuntimeException(ex); // unreachable
++                }
++            }
++
++            if (TuinityConfig.configVersion < 1) {
++                ConfigurationSection oldSection = TuinityConfig.config.getConfigurationSection(this.worldName);
++                TuinityConfig.config.set("world-settings.".concat(this.worldName), oldSection);
++                TuinityConfig.config.set(this.worldName, null);
++            }
++
++            /* We re-save to add new options */
++            try {
++                TuinityConfig.config.save(TuinityConfig.configFile);
++            } catch (final Exception ex) {
++                Bukkit.getLogger().log(Level.SEVERE, "Unable to save tuinity config", ex);
++            }
++        }
++
++        /**
++         * update world defaults for the specified path, but also sets this world's config value for the path
++         * if it exists
++         */
++        void set(final String path, final Object val) {
++            this.worldDefaults.set(path, val);
++            if (this.config.get(path) != null) {
++                this.config.set(path, val);
++            }
++        }
++
++        boolean getBoolean(final String path, final boolean dfl) {
++            this.worldDefaults.addDefault(path, Boolean.valueOf(dfl));
++            if (TuinityConfig.configVersion < 1) {
++                if (this.config.getBoolean(path) == dfl) {
++                    this.config.set(path, null);
++                }
++            }
++            return this.config.getBoolean(path, this.worldDefaults.getBoolean(path));
++        }
++
++        int getInt(final String path, final int dfl) {
++            this.worldDefaults.addDefault(path, Integer.valueOf(dfl));
++            if (TuinityConfig.configVersion < 1) {
++                if (this.config.getInt(path) == dfl) {
++                    this.config.set(path, null);
++                }
++            }
++            return this.config.getInt(path, this.worldDefaults.getInt(path));
++        }
++
++        long getLong(final String path, final long dfl) {
++            this.worldDefaults.addDefault(path, Long.valueOf(dfl));
++            if (TuinityConfig.configVersion < 1) {
++                if (this.config.getLong(path) == dfl) {
++                    this.config.set(path, null);
++                }
++            }
++            return this.config.getLong(path, this.worldDefaults.getLong(path));
++        }
++
++        double getDouble(final String path, final double dfl) {
++            this.worldDefaults.addDefault(path, Double.valueOf(dfl));
++            if (TuinityConfig.configVersion < 1) {
++                if (this.config.getDouble(path) == dfl) {
++                    this.config.set(path, null);
++                }
++            }
++            return this.config.getDouble(path, this.worldDefaults.getDouble(path));
++        }
++    }
++
++}
+\ No newline at end of file
+diff --git a/src/main/java/net/minecraft/server/DedicatedServer.java b/src/main/java/net/minecraft/server/DedicatedServer.java
+index 32cd645abb236b355f4f4f0f810e56342ee6cc06..1f1243ae8371a3e76ebfdee91b327db832767c4a 100644
+--- a/src/main/java/net/minecraft/server/DedicatedServer.java
++++ b/src/main/java/net/minecraft/server/DedicatedServer.java
+@@ -194,6 +194,7 @@ public class DedicatedServer extends MinecraftServer implements IMinecraftServer
+         com.destroystokyo.paper.PaperConfig.registerCommands();
+         com.destroystokyo.paper.VersionHistoryManager.INSTANCE.getClass(); // load version history now
+         // Paper end
++        com.tuinity.tuinity.config.TuinityConfig.init((File) options.valueOf("tuinity-settings")); // Tuinity - Server Config
+ 
+         this.setSpawnAnimals(dedicatedserverproperties.spawnAnimals);
+         this.setSpawnNPCs(dedicatedserverproperties.spawnNpcs);
+diff --git a/src/main/java/net/minecraft/server/World.java b/src/main/java/net/minecraft/server/World.java
+index 032b7acee8c8af70c0283f5551ce2875607f6c98..e8a8e35de58691e5bf6846640f56753b4772c271 100644
+--- a/src/main/java/net/minecraft/server/World.java
++++ b/src/main/java/net/minecraft/server/World.java
+@@ -88,6 +88,8 @@ public abstract class World implements GeneratorAccess, AutoCloseable {
+     public final com.destroystokyo.paper.PaperWorldConfig paperConfig; // Paper
+     public final ChunkPacketBlockController chunkPacketBlockController; // Paper - Anti-Xray
+ 
++    public final com.tuinity.tuinity.config.TuinityConfig.WorldConfig tuinityConfig; // Tuinity - Server Config
++
+     public final co.aikar.timings.WorldTimingsHandler timings; // Paper
+     public static BlockPosition lastPhysicsProblem; // Spigot
+     private org.spigotmc.TickLimiter entityLimiter;
+@@ -137,6 +139,7 @@ public abstract class World implements GeneratorAccess, AutoCloseable {
+         this.spigotConfig = new org.spigotmc.SpigotWorldConfig( worlddata.getName() ); // Spigot
+         this.paperConfig = new com.destroystokyo.paper.PaperWorldConfig(worlddata.getName(), this.spigotConfig); // Paper
+         this.chunkPacketBlockController = this.paperConfig.antiXray ? new ChunkPacketBlockControllerAntiXray(this.paperConfig, executor) : ChunkPacketBlockController.NO_OPERATION_INSTANCE; // Paper - Anti-Xray
++        this.tuinityConfig = new com.tuinity.tuinity.config.TuinityConfig.WorldConfig(worlddata.getName()); // Tuinity - Server Config
+         this.generator = gen;
+         if (dimensionmanager.world == null) dimensionmanager.world = (WorldServer) this; // Paper
+         this.world = new CraftWorld((WorldServer) this, gen, env);
+diff --git a/src/main/java/org/bukkit/craftbukkit/CraftServer.java b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
+index 9badb83c55d1331cb627bbdb5258f02939789f7e..7438208110aa746bf0ac7b348c5f0147bb3fbd30 100644
+--- a/src/main/java/org/bukkit/craftbukkit/CraftServer.java
++++ b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
+@@ -815,6 +815,7 @@ public final class CraftServer implements Server {
+ 
+         org.spigotmc.SpigotConfig.init((File) console.options.valueOf("spigot-settings")); // Spigot
+         com.destroystokyo.paper.PaperConfig.init((File) console.options.valueOf("paper-settings")); // Paper
++        com.tuinity.tuinity.config.TuinityConfig.init((File) console.options.valueOf("tuinity-settings")); // Tuinity - Server Config
+         for (WorldServer world : console.getWorlds()) {
+             world.worldData.setDifficulty(config.difficulty);
+             world.setSpawnFlags(config.spawnMonsters, config.spawnAnimals);
+@@ -843,6 +844,7 @@ public final class CraftServer implements Server {
+             }
+             world.spigotConfig.init(); // Spigot
+             world.paperConfig.init(); // Paper
++            world.tuinityConfig.init(); // Tuinity - Server Config
+         }
+ 
+         Plugin[] pluginClone = pluginManager.getPlugins().clone(); // Paper
+@@ -2134,6 +2136,14 @@ public final class CraftServer implements Server {
+             return com.destroystokyo.paper.PaperConfig.config;
+         }
+ 
++        // Tuinity start - add config to timings report
++        @Override
++        public YamlConfiguration getTuinityConfig()
++        {
++            return com.tuinity.tuinity.config.TuinityConfig.config;
++        }
++        // Tuinity end - add config to timings report
++
+         @Override
+         public void restart() {
+             org.spigotmc.RestartCommand.restart();
+diff --git a/src/main/java/org/bukkit/craftbukkit/Main.java b/src/main/java/org/bukkit/craftbukkit/Main.java
+index 3b75698f1643f4974486f2b394b444937e11f4aa..90a2f8fea7a291cd77b6625079b8081fb3aebe2e 100644
+--- a/src/main/java/org/bukkit/craftbukkit/Main.java
++++ b/src/main/java/org/bukkit/craftbukkit/Main.java
+@@ -138,6 +138,13 @@ public class Main {
+                         .defaultsTo(new File("paper.yml"))
+                         .describedAs("Yml file");
+                 // Paper end
++                // Tuinity Start - Server Config
++                acceptsAll(asList("tuinity", "tuinity-settings"), "File for tuinity settings")
++                        .withRequiredArg()
++                        .ofType(File.class)
++                        .defaultsTo(new File("tuinity.yml"))
++                        .describedAs("Yml file");
++                /* Conctete End - Server Config */
+ 
+                 // Paper start
+                 acceptsAll(asList("server-name"), "Name of the server")

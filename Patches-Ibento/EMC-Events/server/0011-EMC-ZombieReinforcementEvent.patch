@@ -1,0 +1,31 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Aikar <aikar@aikar.co>
+Date: Sat, 22 Mar 2014 23:52:54 -0400
+Subject: [PATCH] EMC ZombieReinforcementEvent
+
+Control when a zombie reinforcement event should occur (modify chance)
+also makes it run on all difficulty levels
+
+diff --git a/src/main/java/net/minecraft/server/EntityZombie.java b/src/main/java/net/minecraft/server/EntityZombie.java
+index 07ebc1d81610bc506e51c7bbffefdcf676a2bb85..7524fd75cb0ff283f17b26cd9a7c342922c82479 100644
+--- a/src/main/java/net/minecraft/server/EntityZombie.java
++++ b/src/main/java/net/minecraft/server/EntityZombie.java
+@@ -322,7 +322,17 @@ public class EntityZombie extends EntityMonster {
+                 entityliving = (EntityLiving) damagesource.getEntity();
+             }
+ 
+-            if (entityliving != null && this.world.getDifficulty() == EnumDifficulty.HARD && (double) this.random.nextFloat() < this.getAttributeInstance(EntityZombie.d).getValue() && this.world.getGameRules().getBoolean(GameRules.DO_MOB_SPAWNING)) {
++            // EMC start
++            boolean spawnReinforcements = false;
++            if (entityliving != null && this.world.getGameRules().getBoolean(GameRules.DO_MOB_SPAWNING)) {
++                final double chance = this.getAttributeInstance(EntityZombie.d).getValue();
++                com.empireminecraft.customevents.ZombieReinforcementEvent event = new com.empireminecraft.customevents.ZombieReinforcementEvent( this.getBukkitEntity(), (org.bukkit.entity.LivingEntity) entityliving.getBukkitEntity(), chance);
++                if (event.callEvent()) {
++                    spawnReinforcements = this.random.nextFloat() < event.getChance();
++                }
++            }
++            if (spawnReinforcements) {
++                // EMC end
+                 int i = MathHelper.floor(this.locX());
+                 int j = MathHelper.floor(this.locY());
+                 int k = MathHelper.floor(this.locZ());

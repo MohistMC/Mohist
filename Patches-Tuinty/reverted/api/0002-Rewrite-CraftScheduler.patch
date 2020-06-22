@@ -1,0 +1,139 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Spottedleaf <Spottedleaf@users.noreply.github.com>
+Date: Wed, 13 Feb 2019 09:43:56 -0800
+Subject: [PATCH] Rewrite CraftScheduler
+
+API additions for BukkitScheduler:
+- adds cancelAllTasks() for convenience
+- adds getTaskById(int) to return a BukkitTask for a given id
+- adds getTickCount() to retrieve the scheduler's current tick
+- adds hasCompleted(int) to check if a task is completed, useful for
+asynchronous tasks where isRunning or isQueued is racey
+
+API additions for BukkitTask:
+- adds isPending() for convenience
+- adds getWorkers() for convenience
+- adds isRunning() for convenience
+- adds hasCompleted() for convenience
+
+The API additions to BukkitTask offer a more efficient way to poll information
+about a task (given Concrete's implementation).
+
+diff --git a/src/main/java/org/bukkit/scheduler/BukkitScheduler.java b/src/main/java/org/bukkit/scheduler/BukkitScheduler.java
+index ac140fc2c638e22e06b2920db3e376ab9e8c3733..42ca5e8a7cac5a859f1cbcd33ee59d5814292792 100644
+--- a/src/main/java/org/bukkit/scheduler/BukkitScheduler.java
++++ b/src/main/java/org/bukkit/scheduler/BukkitScheduler.java
+@@ -458,4 +458,53 @@ public interface BukkitScheduler {
+     @Deprecated
+     @NotNull
+     public BukkitTask runTaskTimerAsynchronously(@NotNull Plugin plugin, @NotNull BukkitRunnable task, long delay, long period) throws IllegalArgumentException;
+-}
++
++    /* Concrete start - Add more API to scheduler */
++    /**
++     * Cancels all tasks currently scheduled.
++     *
++     * @throws UnsupportedOperationException if this operation is not supported
++     */
++    default public void cancelAllTasks() throws UnsupportedOperationException {
++        throw new UnsupportedOperationException();
++    }
++
++    /**
++     * Returns the {@link BukkitTask} associated with the specified id. A {@code null} return value indicates the id
++     * is invalid or a task with the specified id has completed. However this does not exclude a non-null return value
++     * to be not-completed.
++     *
++     * @param id The specified id.
++     * @return The {@link BukkitTask} for the id, or {@code null} if no task exists for the id.
++     * @throws UnsupportedOperationException if this operation is not supported
++     * @see BukkitTask#hasCompleted()
++     */
++    @org.jetbrains.annotations.Nullable
++    default public BukkitTask getTaskById(final int id) throws UnsupportedOperationException {
++        throw new UnsupportedOperationException();
++    }
++
++    /**
++     * Returns the number of ticks the scheduler has processed. Note that the starting value is arbitrary, and as such
++     * is not guaranteed to be {@code 0}. The return value is only valid for tasks executed synchronously.
++     *
++     * @return The number of ticks the scheduler has processed.
++     * @throws UnsupportedOperationException if this operation is not supported
++     */
++    default public long getTickCount() throws UnsupportedOperationException {
++        throw new UnsupportedOperationException();
++    }
++
++    /**
++     * Returns {@code true} if the task with the specified id has completed, or if no such task exists with the id. This
++     * method is not subject to race conditions for asynchronous tasks like {@link BukkitTask#hasCompleted()}.
++     * @param id The specified id.
++     * @return {@code true} if no task exists with the specified id or if a task with the specified id has completed.
++     * @throws UnsupportedOperationException if this operation is not supported
++     * @see BukkitTask#hasCompleted()
++     */
++    default public boolean hasCompleted(final int id) throws UnsupportedOperationException {
++        throw new UnsupportedOperationException();
++    }
++    /* Concrete end - Add more API to scheduler */
++}
+\ No newline at end of file
+diff --git a/src/main/java/org/bukkit/scheduler/BukkitTask.java b/src/main/java/org/bukkit/scheduler/BukkitTask.java
+index 51251584937f2d184c88d5e1394125ec53779083..b54c4cc73de0aac6c3635f8550e3351792b77d57 100644
+--- a/src/main/java/org/bukkit/scheduler/BukkitTask.java
++++ b/src/main/java/org/bukkit/scheduler/BukkitTask.java
+@@ -41,4 +41,50 @@ public interface BukkitTask {
+      * Will attempt to cancel this task.
+      */
+     public void cancel();
++
++    /* Concrete start - Add more API to scheduler */
++    /**
++     * Returns {@code true} if and only if this task is pending for execution.
++     *
++     * @return {@code true} if pending, {@code false} otherwise.
++     * @throws UnsupportedOperationException if this operation is not supported
++     */
++    default public boolean isPending() throws UnsupportedOperationException {
++        throw new UnsupportedOperationException();
++    }
++
++    /**
++     * Returns a snapshot of the workers executing this task. The returned list may be unmodifiable.
++     *
++     * @return a snapshot containing the workers executing this task.
++     * @throws UnsupportedOperationException if this operation is not supported
++     * @throws IllegalStateException if this task is sync
++     */
++    @NotNull
++    default public java.util.List<BukkitWorker> getBukkitWorkers() throws UnsupportedOperationException, IllegalStateException {
++        throw new UnsupportedOperationException();
++    }
++
++    /**
++     * Returns whether this task is currently executing.
++     *
++     * @return whether this task is currently executing.
++     * @throws UnsupportedOperationException if this operation is not supported
++     */
++    default public boolean isRunning() throws UnsupportedOperationException {
++        throw new UnsupportedOperationException();
++    }
++
++    /**
++     * Returns whether this task is not running or is not queued for execution, specifically, whether this task
++     * will not run again. This operation is not subject to race conditions for asynchronous tasks, unlike checking
++     * {@link #isPending()} and {@link #isRunning()}.
++     *
++     * @return {@code true} if this task is not running or queued for execution, {@code false} otherwise.
++     * @throws UnsupportedOperationException if this operation is not supported
++     */
++    default public boolean hasCompleted() throws UnsupportedOperationException {
++        throw new UnsupportedOperationException();
++    }
++    /* Concrete end - Add more API to scheduler */
+ }
+-- 
+2.22.1
+

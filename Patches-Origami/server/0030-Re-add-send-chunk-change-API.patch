@@ -1,0 +1,35 @@
+From f42ff7fde41c3b6452b4cfa472ca328ece41f24c Mon Sep 17 00:00:00 2001
+From: Phoenix616 <mail@moep.tv>
+Date: Thu, 14 May 2020 20:47:39 +0100
+Subject: [PATCH] Re-add send chunk change API
+
+---
+ .../org/bukkit/craftbukkit/entity/CraftPlayer.java   | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
+
+diff --git a/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java b/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
+index bd4d5184b6..a5994bef2c 100644
+--- a/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
++++ b/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
+@@ -717,6 +717,18 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
+         throw new NotImplementedException("Chunk changes do not yet work"); // TODO: Chunk changes.
+     }
+ 
++    // Origami start - implement chunk change API
++    @Override
++    public boolean sendChunkChange(org.bukkit.Chunk chunk) {
++        if (getHandle().playerConnection == null) return false;
++
++        net.minecraft.server.PacketPlayOutMapChunk packet = new net.minecraft.server.PacketPlayOutMapChunk(((org.bukkit.craftbukkit.CraftChunk) chunk).getHandle(), 65535);
++
++        getHandle().playerConnection.sendPacket(packet);
++        return true;
++    }
++    // Origami end
++
+     @Override
+     public void sendMap(MapView map) {
+         if (getHandle().playerConnection == null) return;
+-- 
+2.25.1.windows.1
+

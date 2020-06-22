@@ -1,0 +1,39 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Aikar <aikar@aikar.co>
+Date: Mon, 31 Dec 2012 01:25:46 -0500
+Subject: [PATCH] EMC Anvil Event
+
+Fire an event for anvil usage, remove cap from server, send level to client
+
+diff --git a/src/main/java/net/minecraft/server/ContainerAnvil.java b/src/main/java/net/minecraft/server/ContainerAnvil.java
+index 286b930ddb7224fa3929cb0ef0b94f5f5205b104..49c264b38a6180d0b5237573cc2b386a13270fd3 100644
+--- a/src/main/java/net/minecraft/server/ContainerAnvil.java
++++ b/src/main/java/net/minecraft/server/ContainerAnvil.java
+@@ -7,6 +7,10 @@ import org.apache.logging.log4j.LogManager;
+ import org.apache.logging.log4j.Logger;
+ 
+ // CraftBukkit start
++import com.empireminecraft.customevents.AnvilEvent; // EMC
++import org.bukkit.Bukkit; // EMC
++import org.bukkit.entity.Player; // EMC
++import org.bukkit.craftbukkit.inventory.CraftItemStack; // EMC
+ import org.bukkit.craftbukkit.inventory.CraftInventoryView;
+ // CraftBukkit end
+ 
+@@ -298,6 +302,16 @@ public class ContainerAnvil extends Container {
+             if (this.levelCost.get() >= maximumRepairCost && !this.player.abilities.canInstantlyBuild) { // CraftBukkit
+                 itemstack1 = ItemStack.a;
+             }
++            // EMC start
++            AnvilEvent event = new AnvilEvent((Player) player.getBukkitEntity(), CraftItemStack.asBukkitCopy(itemstack), CraftItemStack.asBukkitCopy(itemstack2), CraftItemStack.asBukkitCopy(itemstack1), this.levelCost.get());
++            Bukkit.getPluginManager().callEvent(event);
++            if (event.isCancelled()) {
++                itemstack1 = ItemStack.NULL_ITEM;
++            } else {
++                itemstack1 = CraftItemStack.asNMSCopy(event.getResult());
++                this.levelCost.set(event.getCost());
++            }
++            // EMC end
+ 
+             if (!itemstack1.isEmpty()) {
+                 int k2 = itemstack1.getRepairCost();

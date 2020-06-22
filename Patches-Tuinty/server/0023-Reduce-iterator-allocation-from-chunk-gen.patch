@@ -1,0 +1,65 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Spottedleaf <spottedleaf@spottedleaf.dev>
+Date: Sun, 26 Apr 2020 21:52:13 -0700
+Subject: [PATCH] Reduce iterator allocation from chunk gen
+
+Replace via iterating over an array
+
+diff --git a/src/main/java/net/minecraft/server/ChunkStatus.java b/src/main/java/net/minecraft/server/ChunkStatus.java
+index 40ce30cdc2a07b7a9c2d1f33070e87259f27cd27..3ba8481de74092143fb6357a72daaf292a47b2af 100644
+--- a/src/main/java/net/minecraft/server/ChunkStatus.java
++++ b/src/main/java/net/minecraft/server/ChunkStatus.java
+@@ -103,7 +103,7 @@ public class ChunkStatus {
+     private final ChunkStatus.c w;
+     private final int x;
+     private final ChunkStatus.Type y;
+-    private final EnumSet<HeightMap.Type> z;
++    private final EnumSet<HeightMap.Type> z; public final HeightMap.Type[] heightMaps; // Tuinity
+ 
+     private static CompletableFuture<Either<IChunkAccess, PlayerChunk.Failure>> a(ChunkStatus chunkstatus, LightEngineThreaded lightenginethreaded, IChunkAccess ichunkaccess) {
+         boolean flag = a(chunkstatus, ichunkaccess);
+@@ -165,7 +165,7 @@ public class ChunkStatus {
+         this.w = chunkstatus_c;
+         this.x = i;
+         this.y = chunkstatus_type;
+-        this.z = enumset;
++        this.z = enumset; this.heightMaps = new java.util.ArrayList<>(this.z).toArray(new HeightMap.Type[0]); // Tuinity
+         this.t = chunkstatus == null ? 0 : chunkstatus.c() + 1;
+     }
+ 
+diff --git a/src/main/java/net/minecraft/server/ProtoChunk.java b/src/main/java/net/minecraft/server/ProtoChunk.java
+index 2eb14bbf888f5e5601441743cb7642da6ee1249c..2be0b0803ee5b17f8e90fbf4edb34a744ca4a505 100644
+--- a/src/main/java/net/minecraft/server/ProtoChunk.java
++++ b/src/main/java/net/minecraft/server/ProtoChunk.java
+@@ -179,14 +179,11 @@ public class ProtoChunk implements IChunkAccess {
+                     lightengine.a(blockposition);
+                 }
+ 
+-                EnumSet<HeightMap.Type> enumset = this.getChunkStatus().h();
++                HeightMap.Type[] enumset = this.getChunkStatus().heightMaps; // Tuinity - reduce iterator creation
+                 EnumSet<HeightMap.Type> enumset1 = null;
+-                Iterator iterator = enumset.iterator();
++                // Tuinity - reduce iterator creation
+ 
+-                HeightMap.Type heightmap_type;
+-
+-                while (iterator.hasNext()) {
+-                    heightmap_type = (HeightMap.Type) iterator.next();
++                for (HeightMap.Type heightmap_type : enumset) { // Tuinity - reduce iterator creation
+                     HeightMap heightmap = (HeightMap) this.f.get(heightmap_type);
+ 
+                     if (heightmap == null) {
+@@ -202,10 +199,9 @@ public class ProtoChunk implements IChunkAccess {
+                     HeightMap.a(this, enumset1);
+                 }
+ 
+-                iterator = enumset.iterator();
+-
+-                while (iterator.hasNext()) {
+-                    heightmap_type = (HeightMap.Type) iterator.next();
++                // Tuinity start - reduce iterator creation
++                for (HeightMap.Type heightmap_type : enumset) {
++                    // Tuinity end - reduce iterator creation
+                     ((HeightMap) this.f.get(heightmap_type)).a(i & 15, j, k & 15, iblockdata);
+                 }
+ 

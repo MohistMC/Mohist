@@ -1,0 +1,41 @@
+From 3f7f02d0d9e68b60c6c92144fc458afd99a64eb2 Mon Sep 17 00:00:00 2001
+From: tr7zw <tr7zw@live.de>
+Date: Wed, 26 Feb 2020 17:03:06 +0100
+Subject: [PATCH] Modify POM
+
+---
+ pom.xml | 11 ++++++-----
+ 1 file changed, 6 insertions(+), 5 deletions(-)
+
+diff --git a/pom.xml b/pom.xml
+index bab0b017..4bb7efe9 100644
+--- a/pom.xml
++++ b/pom.xml
+@@ -3,18 +3,19 @@
+          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+     <modelVersion>4.0.0</modelVersion>
+     <parent>
+-        <groupId>com.tuinity</groupId>
+-        <artifactId>tuinity-parent</artifactId>
++        <groupId>de.tr7zw.yapfa</groupId>
++        <artifactId>yapfa-parent</artifactId>
+         <version>dev-SNAPSHOT</version>
+         <relativePath>../pom.xml</relativePath>
+     </parent>
+ 
+-    <artifactId>tuinity-api</artifactId>
++    <groupId>de.tr7zw.yapfa</groupId>
++    <artifactId>yapfa-api</artifactId>
+     <version>1.15.2-R0.1-SNAPSHOT</version>
+     <packaging>jar</packaging>
+ 
+-    <name>Tuinity-API</name>
+-    <url>https://github.com/Spottedleaf/Tuinity</url>
++    <name>YAPFA-API</name>
++    <url>https://github.com/tr7zw/YAPFA</url>
+     <description>An enhanced plugin API for Minecraft servers.</description>
+ 
+     <properties>
+-- 
+2.25.1.windows.1
+

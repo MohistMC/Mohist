@@ -1,0 +1,67 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Spottedleaf <spottedleaf@spottedleaf.dev>
+Date: Wed, 3 Jun 2020 11:49:45 -0700
+Subject: [PATCH] Optimise biome conversion
+
+Avoids the string conversions + map lookup
+
+diff --git a/src/main/java/net/minecraft/server/BiomeBase.java b/src/main/java/net/minecraft/server/BiomeBase.java
+index 0102a170dc333fb4af01efa0aaa66df85271f1e0..ef6c85557c217f1cb7f78ffbd87c094a7fd77482 100644
+--- a/src/main/java/net/minecraft/server/BiomeBase.java
++++ b/src/main/java/net/minecraft/server/BiomeBase.java
+@@ -61,6 +61,18 @@ public abstract class BiomeBase {
+         return new WorldGenCarverWrapper<>(worldgencarverabstract, c0);
+     }
+ 
++    // Tuinity start - optimise biome conversion
++    private org.bukkit.block.Biome bukkitBiome;
++
++    public final org.bukkit.block.Biome getBukkitBiome() {
++        if (this.bukkitBiome == null) {
++            this.bukkitBiome = org.bukkit.block.Biome.valueOf(IRegistry.BIOME.getKey(this).getKey().toUpperCase(java.util.Locale.ENGLISH));
++        }
++
++        return this.bukkitBiome;
++    }
++    // Tuinity end - optimise biome conversion
++
+     protected BiomeBase(BiomeBase.a biomebase_a) {
+         if (biomebase_a.a != null && biomebase_a.b != null && biomebase_a.c != null && biomebase_a.d != null && biomebase_a.e != null && biomebase_a.f != null && biomebase_a.g != null && biomebase_a.h != null && biomebase_a.i != null) {
+             this.n = biomebase_a.a;
+diff --git a/src/main/java/org/bukkit/craftbukkit/block/CraftBlock.java b/src/main/java/org/bukkit/craftbukkit/block/CraftBlock.java
+index 11554202d7a5836e048544bfbe299800e50b0b49..197c2ffab0015decc89bf32679a7a9ba6ecea5bc 100644
+--- a/src/main/java/org/bukkit/craftbukkit/block/CraftBlock.java
++++ b/src/main/java/org/bukkit/craftbukkit/block/CraftBlock.java
+@@ -500,15 +500,30 @@ public class CraftBlock implements Block {
+             return null;
+         }
+ 
+-        return Biome.valueOf(IRegistry.BIOME.getKey(base).getKey().toUpperCase(java.util.Locale.ENGLISH));
++        return base.getBukkitBiome(); // Tuinity - optimise biome conversion
+     }
+ 
++    private static final java.util.EnumMap<Biome, BiomeBase> BUKKIT_BIOME_TO_NMS_CACHE = new java.util.EnumMap<>(Biome.class);  // Tuinity - optimise biome conversion
++
+     public static BiomeBase biomeToBiomeBase(Biome bio) {
+         if (bio == null) {
+             return null;
+         }
+ 
+-        return IRegistry.BIOME.get(new MinecraftKey(bio.name().toLowerCase(java.util.Locale.ENGLISH)));
++        // Tuinity start - optimise biome conversion
++        BiomeBase cached = BUKKIT_BIOME_TO_NMS_CACHE.get(bio);
++
++        if (cached != null) {
++            return cached;
++        }
++
++        BiomeBase ret = IRegistry.BIOME.get(new MinecraftKey(bio.name().toLowerCase(java.util.Locale.ENGLISH)));
++        synchronized (BUKKIT_BIOME_TO_NMS_CACHE) {
++            BUKKIT_BIOME_TO_NMS_CACHE.put(bio, ret);
++        }
++
++        return ret;
++        // Tuinity end - optimise biome conversion
+     }
+ 
+     @Override

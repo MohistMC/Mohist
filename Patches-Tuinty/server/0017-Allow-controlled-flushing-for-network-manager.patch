@@ -1,0 +1,130 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Spottedleaf <spottedleaf@spottedleaf.dev>
+Date: Sat, 4 Apr 2020 15:27:44 -0700
+Subject: [PATCH] Allow controlled flushing for network manager
+
+Only make one flush call when emptying the packet queue too
+
+This patch will be used to optimise out flush calls in later
+patches.
+
+diff --git a/src/main/java/net/minecraft/server/NetworkManager.java b/src/main/java/net/minecraft/server/NetworkManager.java
+index 32886109d03f9991446381160d5406056d2bf860..5578818a0a3b10fa04ad9937bb3602350782df48 100644
+--- a/src/main/java/net/minecraft/server/NetworkManager.java
++++ b/src/main/java/net/minecraft/server/NetworkManager.java
+@@ -70,6 +70,39 @@ public class NetworkManager extends SimpleChannelInboundHandler<Packet<?>> {
+     EnumProtocol protocol;
+     // Paper end
+ 
++    // Tuinity start - allow controlled flushing
++    volatile boolean canFlush = true;
++    private final java.util.concurrent.atomic.AtomicInteger packetWrites = new java.util.concurrent.atomic.AtomicInteger();
++    private int flushPacketsStart;
++    private final Object flushLock = new Object();
++
++    void disableAutomaticFlush() {
++        synchronized (this.flushLock) {
++            this.flushPacketsStart = this.packetWrites.get(); // must be volatile and before canFlush = false
++            this.canFlush = false;
++        }
++    }
++
++    void enableAutomaticFlush() {
++        synchronized (this.flushLock) {
++            this.canFlush = true;
++            if (this.packetWrites.get() != this.flushPacketsStart) { // must be after canFlush = true
++                this.flush(); // only make the flush call if we need to
++            }
++        }
++    }
++
++    private final void flush() {
++        if (this.channel.eventLoop().inEventLoop()) {
++            this.channel.flush();
++        } else {
++            this.channel.eventLoop().execute(() -> {
++                this.channel.flush();
++            });
++        }
++    }
++    // Tuinity end - allow controlled flushing
++
+     public NetworkManager(EnumProtocolDirection enumprotocoldirection) {
+         this.h = enumprotocoldirection;
+     }
+@@ -217,7 +250,7 @@ public class NetworkManager extends SimpleChannelInboundHandler<Packet<?>> {
+             MCUtil.isMainThread() && packet.isReady() && this.packetQueue.isEmpty() &&
+             (packet.getExtraPackets() == null || packet.getExtraPackets().isEmpty())
+         ))) {
+-            this.dispatchPacket(packet, genericfuturelistener);
++            this.writePacket(packet, genericfuturelistener, null); // Tuinity
+             return;
+         }
+         // write the packets to the queue, then flush - antixray hooks there already
+@@ -243,6 +276,14 @@ public class NetworkManager extends SimpleChannelInboundHandler<Packet<?>> {
+ 
+     private void dispatchPacket(Packet<?> packet, @Nullable GenericFutureListener<? extends Future<? super Void>> genericFutureListener) { this.b(packet, genericFutureListener); } // Paper - OBFHELPER
+     private void b(Packet<?> packet, @Nullable GenericFutureListener<? extends Future<? super Void>> genericfuturelistener) {
++        // Tuinity start - add flush parameter
++        this.writePacket(packet, genericfuturelistener, Boolean.TRUE);
++    }
++    private void writePacket(Packet<?> packet, @Nullable GenericFutureListener<? extends Future<? super Void>> genericfuturelistener, Boolean flushConditional) {
++        this.packetWrites.getAndIncrement(); // must be befeore using canFlush
++        boolean effectiveFlush = flushConditional == null ? this.canFlush : flushConditional.booleanValue();
++        final boolean flush = effectiveFlush || packet instanceof PacketPlayOutKeepAlive || packet instanceof PacketPlayOutKickDisconnect; // no delay for certain packets
++        // Tuinity end - add flush parameter
+         EnumProtocol enumprotocol = EnumProtocol.a(packet);
+         EnumProtocol enumprotocol1 = (EnumProtocol) this.channel.attr(NetworkManager.c).get();
+ 
+@@ -265,7 +306,7 @@ public class NetworkManager extends SimpleChannelInboundHandler<Packet<?>> {
+             try {
+                 // Paper end
+ 
+-            ChannelFuture channelfuture = this.channel.writeAndFlush(packet);
++            ChannelFuture channelfuture = (flush) ? this.channel.writeAndFlush(packet) : this.channel.write(packet); // Tuinity - add flush parameter
+ 
+             if (genericfuturelistener != null) {
+                 channelfuture.addListener(genericfuturelistener);
+@@ -297,7 +338,7 @@ public class NetworkManager extends SimpleChannelInboundHandler<Packet<?>> {
+                 }
+                 try {
+                     // Paper end
+-                ChannelFuture channelfuture1 = this.channel.writeAndFlush(packet);
++                ChannelFuture channelfuture1 = (flush) ? this.channel.writeAndFlush(packet) : this.channel.write(packet); // Tuinity - add flush parameter
+ 
+ 
+                 if (genericfuturelistener != null) {
+@@ -340,6 +381,8 @@ public class NetworkManager extends SimpleChannelInboundHandler<Packet<?>> {
+     }
+     private boolean processQueue() {
+         if (this.packetQueue.isEmpty()) return true;
++        final boolean needsFlush = this.canFlush; // Tuinity - make only one flush call per sendPacketQueue() call
++        boolean hasWrotePacket = false;
+         // If we are on main, we are safe here in that nothing else should be processing queue off main anymore
+         // But if we are not on main due to login/status, the parent is synchronized on packetQueue
+         java.util.Iterator<QueuedPacket> iterator = this.packetQueue.iterator();
+@@ -347,16 +390,22 @@ public class NetworkManager extends SimpleChannelInboundHandler<Packet<?>> {
+             NetworkManager.QueuedPacket queued = iterator.next(); // poll -> peek
+ 
+             // Fix NPE (Spigot bug caused by handleDisconnection())
+-            if (queued == null) {
++            if (false && queued == null) { // Tuinity - diff on change, this logic is redundant: iterator guarantees ret of an element - on change, hook the flush logic here
+                 return true;
+             }
+ 
+             Packet<?> packet = queued.getPacket();
+             if (!packet.isReady()) {
++                // Tuinity start - make only one flush call per sendPacketQueue() call
++                if (hasWrotePacket && (needsFlush || this.canFlush)) {
++                    this.flush();
++                }
++                // Tuinity end - make only one flush call per sendPacketQueue() call
+                 return false;
+             } else {
+                 iterator.remove();
+-                this.dispatchPacket(packet, queued.getGenericFutureListener());
++                this.writePacket(packet, queued.getGenericFutureListener(), (!iterator.hasNext() && (needsFlush || this.canFlush)) ? Boolean.TRUE : Boolean.FALSE); // Tuinity - make only one flush call per sendPacketQueue() call
++                hasWrotePacket = true; // Tuinity - make only one flush call per sendPacketQueue() call
+             }
+         }
+         return true;

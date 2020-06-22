@@ -1,0 +1,80 @@
+From c039767145f9433af59eb08bf2626977d772cd21 Mon Sep 17 00:00:00 2001
+From: tr7zw <tr7zw@live.de>
+Date: Mon, 11 May 2020 21:37:44 +0200
+Subject: [PATCH] lithium enum_values
+
+---
+ src/main/java/net/minecraft/server/BlockPiston.java       | 8 ++++----
+ src/main/java/net/minecraft/server/EntityLiving.java      | 6 +++++-
+ .../java/net/minecraft/server/PistonExtendsChecker.java   | 4 +++-
+ 3 files changed, 12 insertions(+), 6 deletions(-)
+
+diff --git a/src/main/java/net/minecraft/server/BlockPiston.java b/src/main/java/net/minecraft/server/BlockPiston.java
+index 8cfe54791..b6df5256b 100644
+--- a/src/main/java/net/minecraft/server/BlockPiston.java
++++ b/src/main/java/net/minecraft/server/BlockPiston.java
+@@ -138,8 +138,9 @@ public class BlockPiston extends BlockDirectional {
+ 
+     }
+ 
++    private final static EnumDirection[] aenumdirection = EnumDirection.values(); // YAPFA - don't recreate
++    
+     private boolean a(World world, BlockPosition blockposition, EnumDirection enumdirection) {
+-        EnumDirection[] aenumdirection = EnumDirection.values();
+         int i = aenumdirection.length;
+ 
+         int j;
+@@ -156,12 +157,11 @@ public class BlockPiston extends BlockDirectional {
+             return true;
+         } else {
+             BlockPosition blockposition1 = blockposition.up();
+-            EnumDirection[] aenumdirection1 = EnumDirection.values();
+ 
+-            j = aenumdirection1.length;
++            j = aenumdirection.length;
+ 
+             for (int k = 0; k < j; ++k) {
+-                EnumDirection enumdirection2 = aenumdirection1[k];
++                EnumDirection enumdirection2 = aenumdirection[k];
+ 
+                 if (enumdirection2 != EnumDirection.DOWN && world.isBlockFacePowered(blockposition1.shift(enumdirection2), enumdirection2)) {
+                     return true;
+diff --git a/src/main/java/net/minecraft/server/EntityLiving.java b/src/main/java/net/minecraft/server/EntityLiving.java
+index 1d66afe9b..2b3e264ed 100644
+--- a/src/main/java/net/minecraft/server/EntityLiving.java
++++ b/src/main/java/net/minecraft/server/EntityLiving.java
+@@ -2499,9 +2499,13 @@ public abstract class EntityLiving extends Entity {
+         }
+     }
+ 
++    /**
++     * @reason Avoid cloning enum values
++     */
++    private final static EnumItemSlot[] aenumitemslot = EnumItemSlot.values();
++    
+     // Paper start - split into own method from above
+     public void updateEntityEquipment() {
+-        EnumItemSlot[] aenumitemslot = EnumItemSlot.values();
+         int k = aenumitemslot.length;
+         for (int l = 0; l < k; ++l) {
+             EnumItemSlot enumitemslot = aenumitemslot[l];
+diff --git a/src/main/java/net/minecraft/server/PistonExtendsChecker.java b/src/main/java/net/minecraft/server/PistonExtendsChecker.java
+index de1c98cca..1ac3e5a37 100644
+--- a/src/main/java/net/minecraft/server/PistonExtendsChecker.java
++++ b/src/main/java/net/minecraft/server/PistonExtendsChecker.java
+@@ -167,9 +167,11 @@ public class PistonExtendsChecker {
+         this.f.addAll(list2);
+     }
+ 
++    private final static EnumDirection[] aenumdirection = EnumDirection.values(); // YAPFA - don't recreate
++    
+     private boolean a(BlockPosition blockposition) {
+         IBlockData iblockdata = this.a.getType(blockposition);
+-        EnumDirection[] aenumdirection = EnumDirection.values();
++
+         int i = aenumdirection.length;
+ 
+         for (int j = 0; j < i; ++j) {
+-- 
+2.25.1.windows.1
+

@@ -1,0 +1,23 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Aikar <aikar@aikar.co>
+Date: Sat, 28 Sep 2013 22:01:47 -0400
+Subject: [PATCH] EMC MovedTooQuickly event
+
+also make creative immune to this event
+
+diff --git a/src/main/java/net/minecraft/server/PlayerConnection.java b/src/main/java/net/minecraft/server/PlayerConnection.java
+index d52fbda79fe1c52d3ddb53c0f1c1f521d7620702..98f1eaede4997006708fcdd4ef7cea88510f05e9 100644
+--- a/src/main/java/net/minecraft/server/PlayerConnection.java
++++ b/src/main/java/net/minecraft/server/PlayerConnection.java
+@@ -1033,9 +1033,11 @@ public class PlayerConnection implements PacketListenerPlayIn {
+ 
+                                 if (d11 - d10 > Math.max(f2, Math.pow((double) (org.spigotmc.SpigotConfig.movedTooQuicklyMultiplier * (float) i * speed), 2)) && !this.isExemptPlayer()) {
+                                 // CraftBukkit end
++                                    if (new com.empireminecraft.customevents.MovedTooQuicklyEvent(d10, getPlayer()).callEvent()) { // EMC
+                                     PlayerConnection.LOGGER.warn("{} moved too quickly! {},{},{}", this.player.getDisplayName().getString(), d7, d8, d9);
+                                     this.a(this.player.locX(), this.player.locY(), this.player.locZ(), this.player.yaw, this.player.pitch);
+                                     return;
++                                    } // EMC
+                                 }
+                             }
+ 

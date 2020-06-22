@@ -1,0 +1,91 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Spottedleaf <spottedleaf@spottedleaf.dev>
+Date: Wed, 10 Jun 2020 15:17:15 -0700
+Subject: [PATCH] Rework PlayerChunk main thread checks
+
+These need to fail instead of continuing, as hiding these errors
+the way paper has is just going to allow unexpected reordering
+of callbacks.
+
+For example, thanks to this patch incorrect future
+completion (completion of the world gen future,
+PlayerChunkMap#b(PlayerChunk, ChunkStatus)) was detected and fixed.
+
+diff --git a/src/main/java/net/minecraft/server/PlayerChunk.java b/src/main/java/net/minecraft/server/PlayerChunk.java
+index 554703fc57652cdab1e71aaa39dcef1a7989985f..7e24de37b64695fbd6a5406b52ca27b65aa33aed 100644
+--- a/src/main/java/net/minecraft/server/PlayerChunk.java
++++ b/src/main/java/net/minecraft/server/PlayerChunk.java
+@@ -560,6 +560,7 @@ public class PlayerChunk {
+     }
+ 
+     protected void a(PlayerChunkMap playerchunkmap) {
++        com.tuinity.tuinity.util.TickThread.ensureTickThread("Async ticket level update"); // Tuinity
+         ChunkStatus chunkstatus = getChunkStatus(this.oldTicketLevel);
+         ChunkStatus chunkstatus1 = getChunkStatus(this.ticketLevel);
+         boolean flag = this.oldTicketLevel <= PlayerChunkMap.GOLDEN_TICKET;
+@@ -569,7 +570,8 @@ public class PlayerChunk {
+         // CraftBukkit start
+         // ChunkUnloadEvent: Called before the chunk is unloaded: isChunkLoaded is still true and chunk can still be modified by plugins.
+         if (playerchunk_state.isAtLeast(PlayerChunk.State.BORDER) && !playerchunk_state1.isAtLeast(PlayerChunk.State.BORDER)) {
+-            this.getStatusFutureUncheckedMain(ChunkStatus.FULL).thenAccept((either) -> { // Paper - ensure main
++            this.getStatusFutureUnchecked(ChunkStatus.FULL).thenAccept((either) -> { // Paper - ensure main // Tuinity - is always on main
++                com.tuinity.tuinity.util.TickThread.ensureTickThread("Async full status chunk future completion"); // Tuinity
+                 Chunk chunk = (Chunk)either.left().orElse(null);
+                 if (chunk != null) {
+                     playerchunkmap.callbackExecutor.execute(() -> {
+@@ -634,7 +636,8 @@ public class PlayerChunk {
+         if (!flag2 && flag3) {
+             // Paper start - cache ticking ready status
+             int expectCreateCount = ++this.fullChunkCreateCount;
+-            this.fullChunkFuture = playerchunkmap.b(this); MCUtil.ensureMain(this.fullChunkFuture).thenAccept((either) -> { // Paper - ensure main
++            this.fullChunkFuture = playerchunkmap.b(this); this.fullChunkFuture.thenAccept((either) -> { // Paper - ensure main // Tuinity - always fired on main
++                com.tuinity.tuinity.util.TickThread.ensureTickThread("Async full chunk future completion"); // Tuinity
+                 if (either.left().isPresent() && PlayerChunk.this.fullChunkCreateCount == expectCreateCount) {
+                     // note: Here is a very good place to add callbacks to logic waiting on this.
+                     Chunk fullChunk = either.left().get();
+@@ -665,7 +668,8 @@ public class PlayerChunk {
+ 
+         if (!flag4 && flag5) {
+             // Paper start - cache ticking ready status
+-            this.tickingFuture = playerchunkmap.a(this); MCUtil.ensureMain(this.tickingFuture).thenAccept((either) -> { // Paper - ensure main
++            this.tickingFuture = playerchunkmap.a(this); this.tickingFuture.thenAccept((either) -> { // Paper - ensure main // Tuinity - always completed on main
++                com.tuinity.tuinity.util.TickThread.ensureTickThread("Async ticking chunk future completion"); // Tuinity
+                 if (either.left().isPresent()) {
+                     // note: Here is a very good place to add callbacks to logic waiting on this.
+                     Chunk tickingChunk = either.left().get();
+@@ -696,7 +700,8 @@ public class PlayerChunk {
+             }
+ 
+             // Paper start - cache ticking ready status
+-            this.entityTickingFuture = playerchunkmap.b(this.location); MCUtil.ensureMain(this.entityTickingFuture).thenAccept((either) -> { // Paper ensureMain
++            this.entityTickingFuture = playerchunkmap.b(this.location); this.entityTickingFuture.thenAccept((either) -> { // Paper ensureMain // Tuinity - always completed on main
++                com.tuinity.tuinity.util.TickThread.ensureTickThread("Async entity ticking chunk future completion"); // Tuinity
+                 if (either.left().isPresent()) {
+                     // note: Here is a very good place to add callbacks to logic waiting on this.
+                     Chunk entityTickingChunk = either.left().get();
+@@ -756,7 +761,8 @@ public class PlayerChunk {
+         // CraftBukkit start
+         // ChunkLoadEvent: Called after the chunk is loaded: isChunkLoaded returns true and chunk is ready to be modified by plugins.
+         if (!playerchunk_state.isAtLeast(PlayerChunk.State.BORDER) && playerchunk_state1.isAtLeast(PlayerChunk.State.BORDER)) {
+-            this.getStatusFutureUncheckedMain(ChunkStatus.FULL).thenAccept((either) -> { // Paper - ensure main
++            this.getStatusFutureUnchecked(ChunkStatus.FULL).thenAccept((either) -> { // Paper - ensure main // Tuinity - is always on main
++                com.tuinity.tuinity.util.TickThread.ensureTickThread("Async full status chunk future completion"); // Tuinity
+                 Chunk chunk = (Chunk)either.left().orElse(null);
+                 if (chunk != null) {
+                     playerchunkmap.callbackExecutor.execute(() -> {
+diff --git a/src/main/java/net/minecraft/server/PlayerChunkMap.java b/src/main/java/net/minecraft/server/PlayerChunkMap.java
+index 59d0464e439716d9fb2e0c2f016d87456c8b8596..13f5857aedc1d47a014ff020a31ce7a84ddeffc5 100644
+--- a/src/main/java/net/minecraft/server/PlayerChunkMap.java
++++ b/src/main/java/net/minecraft/server/PlayerChunkMap.java
+@@ -1203,7 +1203,10 @@ public class PlayerChunkMap extends IChunkLoader implements PlayerChunk.d {
+             }
+             // Paper end
+             this.mailboxWorldGen.a(ChunkTaskQueueSorter.a(playerchunk, runnable)); // CraftBukkit - decompile error
+-        });
++        }).thenComposeAsync((either) -> { // Tuinity start - force competion on the main thread
++            return CompletableFuture.completedFuture(either);
++        }, this.mainInvokingExecutor);
++        // Tuinity end - force competion on the main thread
+     }
+ 
+     protected void c(ChunkCoordIntPair chunkcoordintpair) {

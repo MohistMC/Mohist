@@ -1,0 +1,60 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Aikar <aikar@aikar.co>
+Date: Sat, 18 Aug 2018 22:03:33 -0400
+Subject: [PATCH] EMC SpawnEggMeta#setSpawnedEntity API
+
+lets you copy an entities data into a spawn egg.
+Partial data is supported through a predicate, letting MC
+follow normal spawn behavior in the summon phase.
+
+diff --git a/src/main/java/org/bukkit/craftbukkit/inventory/CraftMetaSpawnEgg.java b/src/main/java/org/bukkit/craftbukkit/inventory/CraftMetaSpawnEgg.java
+index 0634fb36ddb7eb551ac34c0ba277e0f6dee61365..24ac98e4d559e0deba78b4eddb05bcdd6670a6c1 100644
+--- a/src/main/java/org/bukkit/craftbukkit/inventory/CraftMetaSpawnEgg.java
++++ b/src/main/java/org/bukkit/craftbukkit/inventory/CraftMetaSpawnEgg.java
+@@ -2,6 +2,9 @@ package org.bukkit.craftbukkit.inventory;
+ 
+ import com.google.common.collect.ImmutableMap.Builder;
+ import java.util.Map;
++
++import net.minecraft.server.DataConverterTypes; // EMC
++import net.minecraft.server.DataConverters; // EMC
+ import net.minecraft.server.MinecraftKey;
+ import net.minecraft.server.NBTBase;
+ import net.minecraft.server.NBTTagCompound;
+@@ -75,9 +78,9 @@ public class CraftMetaSpawnEgg extends CraftMetaItem implements SpawnEggMeta {
+             }
+ 
+             // Tag still has some other data, lets try our luck with a conversion
+-            if (!entityTag.isEmpty()) {
++            if (!entityTag.isEmpty() && getVersion() > 0) { // EMC
+                 // SPIGOT-4128: This is hopeless until we start versioning stacks. RIP data.
+-                // entityTag = (NBTTagCompound) MinecraftServer.getServer().dataConverterManager.update(DataConverterTypes.ENTITY, new Dynamic(DynamicOpsNBT.a, entityTag), -1, CraftMagicNumbers.DATA_VERSION).getValue();
++                entityTag = DataConverters.convert(DataConverterTypes.ENTITY, entityTag, getVersion()); // EMC
+             }
+ 
+             // See if we can read a converted ID tag
+@@ -188,6 +191,24 @@ public class CraftMetaSpawnEgg extends CraftMetaItem implements SpawnEggMeta {
+         return spawnedType != null;
+     }
+ 
++    // Paper start
++    private static final String[] removeKeys = {
++        "UUIDLeast", "UUIDMost", "Pos", "PortalCooldown", "Paper.Origin", "Paper.FromMobSpawner", "Passengers", "Dimension"
++    };
++
++    @Override
++    public void setSpawnedEntity(org.bukkit.entity.Entity entity, java.util.function.Predicate<String> keyFilter) {
++        entityTag = ((org.bukkit.craftbukkit.entity.CraftEntity) entity).getHandle().save(new NBTTagCompound());
++        for (String removeKey : removeKeys) {
++            entityTag.remove(removeKey);
++        }
++        if (keyFilter != null) {
++            entityTag.map.keySet().removeIf(keyFilter);
++        }
++        entityTag.setBoolean("Paper.CustomSpawnEgg", true);
++    }
++    // Paper end
++
+     @Override
+     public EntityType getSpawnedType() {
+         throw new UnsupportedOperationException("Must check item type to get spawned type");

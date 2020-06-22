@@ -1,0 +1,181 @@
+From 69302590d112bd297266978c75f954203df1ef4e Mon Sep 17 00:00:00 2001
+From: tr7zw <tr7zw@live.de>
+Date: Fri, 19 Jun 2020 19:21:35 +0200
+Subject: [PATCH] Option for simpler Villagers
+
+Option to extremly simplefy the villager AI.
+---
+ src/main/java/de/tr7zw/yapfa/YapfaConfig.java | 10 +++
+ .../net/minecraft/server/EntityVillager.java  | 84 ++++++++++++++++++-
+ 2 files changed, 91 insertions(+), 3 deletions(-)
+
+diff --git a/src/main/java/de/tr7zw/yapfa/YapfaConfig.java b/src/main/java/de/tr7zw/yapfa/YapfaConfig.java
+index 78d21c2ea..5af955493 100644
+--- a/src/main/java/de/tr7zw/yapfa/YapfaConfig.java
++++ b/src/main/java/de/tr7zw/yapfa/YapfaConfig.java
+@@ -231,4 +231,14 @@ public class YapfaConfig {
+     	itemStuckSleepTicks = getInt("settings.itemStuckSleepTicks", 1);
+     }
+     
++    public static boolean simplerVillagerBehavior = false;
++    private static void simplerVillagerBehavior() {
++    	simplerVillagerBehavior = getBoolean("settings.villager.simplerVillagerBehavior", false);
++    }
++    	
++    public static boolean villagersHideAtNight = false;
++    private static void villagersHideAtNight() {
++        villagersHideAtNight = getBoolean("settings.villager.villagersHideAtNight", false);
++    }
++    
+ }
+\ No newline at end of file
+diff --git a/src/main/java/net/minecraft/server/EntityVillager.java b/src/main/java/net/minecraft/server/EntityVillager.java
+index 7da267d28..f875494b5 100644
+--- a/src/main/java/net/minecraft/server/EntityVillager.java
++++ b/src/main/java/net/minecraft/server/EntityVillager.java
+@@ -6,6 +6,8 @@ import com.google.common.collect.ImmutableSet;
+ import com.mojang.datafixers.Dynamic;
+ import com.mojang.datafixers.types.DynamicOps;
+ import com.mojang.datafixers.util.Pair;
++
++import de.tr7zw.yapfa.YapfaConfig;
+ import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
+ import java.util.Iterator;
+ import java.util.List;
+@@ -29,6 +31,9 @@ import org.bukkit.event.entity.VillagerReplenishTradeEvent;
+ 
+ public class EntityVillager extends EntityVillagerAbstract implements ReputationHandler, VillagerDataHolder {
+ 
++	//YAPFA
++	private boolean simplerVillagerBehavior = YapfaConfig.simplerVillagerBehavior; //get this during villager creation so a reloaded config doesn't get them into an invalid state
++	
+     private static final DataWatcherObject<VillagerData> bz = DataWatcher.a(EntityVillager.class, DataWatcherRegistry.q);
+     public static final Map<Item, Integer> bx = ImmutableMap.of(Items.BREAD, 4, Items.POTATO, 1, Items.CARROT, 1, Items.BEETROOT, 1);
+     private static final Set<Item> bA = ImmutableSet.of(Items.BREAD, Items.POTATO, Items.CARROT, Items.WHEAT, Items.WHEAT_SEEDS, Items.BEETROOT, new Item[]{Items.BEETROOT_SEEDS});
+@@ -61,13 +66,51 @@ public class EntityVillager extends EntityVillagerAbstract implements Reputation
+     public EntityVillager(EntityTypes<? extends EntityVillager> entitytypes, World world, VillagerType villagertype) {
+         super(entitytypes, world);
+         this.bG = new Reputation();
+-        ((Navigation) this.getNavigation()).a(true);
+-        this.getNavigation().d(true);
++        if(!simplerVillagerBehavior) {
++	        ((Navigation) this.getNavigation()).a(true);
++	        this.getNavigation().d(true);
++        }else {
++        	initPathfinder();
++        }
+         this.setCanPickupLoot(true);
+         this.setVillagerData(this.getVillagerData().withType(villagertype).withProfession(VillagerProfession.NONE));
+         this.bo = this.a(new Dynamic(DynamicOpsNBT.a, new NBTTagCompound()));
++        
+     }
+ 
++    //YAPFA start
++    @Override
++    protected void initPathfinder() {
++    	if(!simplerVillagerBehavior)return;
++        this.goalSelector.a(0, new PathfinderGoalFloat(this));
++        if(YapfaConfig.villagersHideAtNight) {
++            this.goalSelector.a(0, new PathfinderGoalUseItem<>(this, PotionUtil.a(new ItemStack(Items.POTION), Potions.INVISIBILITY), SoundEffects.ENTITY_WANDERING_TRADER_DISAPPEARED, (entityvillagertrader) -> {
++                return !this.world.isDay() && !entityvillagertrader.isInvisible();
++            }));
++            this.goalSelector.a(0, new PathfinderGoalUseItem<>(this, new ItemStack(Items.MILK_BUCKET), SoundEffects.ENTITY_WANDERING_TRADER_REAPPEARED, (entityvillagertrader) -> {
++                return this.world.isDay() && entityvillagertrader.isInvisible();
++            }));
++        }
++        this.goalSelector.a(1, new PathfinderGoalTradeWithPlayer(this));
++        this.goalSelector.a(1, new PathfinderGoalAvoidTarget<>(this, EntityZombie.class, 8.0F, 0.5D, 0.5D));
++        this.goalSelector.a(1, new PathfinderGoalAvoidTarget<>(this, EntityEvoker.class, 12.0F, 0.5D, 0.5D));
++        this.goalSelector.a(1, new PathfinderGoalAvoidTarget<>(this, EntityVindicator.class, 8.0F, 0.5D, 0.5D));
++        this.goalSelector.a(1, new PathfinderGoalAvoidTarget<>(this, EntityVex.class, 8.0F, 0.5D, 0.5D));
++        this.goalSelector.a(1, new PathfinderGoalAvoidTarget<>(this, EntityPillager.class, 15.0F, 0.5D, 0.5D));
++        this.goalSelector.a(1, new PathfinderGoalAvoidTarget<>(this, EntityIllagerIllusioner.class, 12.0F, 0.5D, 0.5D));
++        this.goalSelector.a(1, new PathfinderGoalPanic(this, 0.5D));
++        this.goalSelector.a(1, new PathfinderGoalLookAtTradingPlayer(this));
++        this.goalSelector.a(2, new PathfinderGoalStrollVillage(this, 0.6D));
++        this.goalSelector.a(3, new PathfinderGoalMoveThroughVillage(this, 0.6D, false, 4, () -> {
++            return false;
++        }));
++        this.goalSelector.a(4, new PathfinderGoalMoveTowardsRestriction(this, 0.35D));
++        this.goalSelector.a(8, new PathfinderGoalRandomStrollLand(this, 0.35D));
++        this.goalSelector.a(9, new PathfinderGoalInteract(this, EntityHuman.class, 3.0F, 1.0F));
++        this.goalSelector.a(10, new PathfinderGoalLookAtPlayer(this, EntityInsentient.class, 8.0F));
++    }
++    //YAPFA end
++    
+     @Override
+     public BehaviorController<EntityVillager> getBehaviorController() {
+         return (BehaviorController<EntityVillager>) super.getBehaviorController(); // CraftBukkit - decompile error
+@@ -75,6 +118,7 @@ public class EntityVillager extends EntityVillagerAbstract implements Reputation
+ 
+     @Override
+     protected BehaviorController<?> a(Dynamic<?> dynamic) {
++    	if(simplerVillagerBehavior)return super.a(dynamic); //YAPFA Don't use behaviorcontroller for simple Villagers
+         BehaviorController<EntityVillager> behaviorcontroller = new BehaviorController<>(EntityVillager.bN, EntityVillager.bO, dynamic);
+ 
+         this.a(behaviorcontroller);
+@@ -153,12 +197,44 @@ public class EntityVillager extends EntityVillagerAbstract implements Reputation
+     }
+     // Spigot End
+ 
++    // YAPFA start
++    private VillagerProfession getRandomProfession() {
++    	int type = random.nextInt(13);
++    	switch(type) {
++    	case 0: return VillagerProfession.ARMORER;
++    	case 1: return VillagerProfession.BUTCHER;
++    	case 2: return VillagerProfession.CARTOGRAPHER;
++    	case 3: return VillagerProfession.CLERIC;
++    	case 4: return VillagerProfession.FARMER;
++    	case 5: return VillagerProfession.FISHERMAN;
++    	case 6: return VillagerProfession.FLETCHER;
++    	case 7: return VillagerProfession.LEATHERWORKER;
++    	case 8: return VillagerProfession.LIBRARIAN;
++    	case 9: return VillagerProfession.MASON;
++    	case 10: return VillagerProfession.SHEPHERD;
++    	case 11: return VillagerProfession.TOOLSMITH;
++    	case 12: return VillagerProfession.WEAPONSMITH;
++    	default: return VillagerProfession.FARMER;
++    	}
++    }
++    
++    // YAPFA end
++    
+     @Override // Paper start - tick trades while inactive
+     protected void mobTick() { mobTick(false); }
+     protected void mobTick(boolean inactive) {
+         // Paper end
++    	// YAPFA start
++    	if(simplerVillagerBehavior && this.getVillagerData().getProfession() == VillagerProfession.NONE)
++    		this.setVillagerData(this.getVillagerData().withProfession(getRandomProfession()));
++    	if(simplerVillagerBehavior) {
++    		if (eF()) {
++    			eE();
++    		}
++    	}
++    	// YAPFA end
+         this.world.getMethodProfiler().enter("brain");
+-        if (!inactive) this.getBehaviorController().a((WorldServer) this.world, this); // CraftBukkit - decompile error // Paper
++        if(!simplerVillagerBehavior) if (!inactive) this.getBehaviorController().a((WorldServer) this.world, this); // CraftBukkit - decompile error // Paper // YAPFA
+         this.world.getMethodProfiler().exit();
+         if (!this.et() && this.bB > 0) {
+             --this.bB;
+@@ -556,6 +632,7 @@ public class EntityVillager extends EntityVillagerAbstract implements Reputation
+     }
+ 
+     private void a(Entity entity) {
++    	if(simplerVillagerBehavior)return; // YAPFA
+         if (this.world instanceof WorldServer) {
+             Optional<List<EntityLiving>> optional = this.bo.getMemory(MemoryModuleType.VISIBLE_MOBS);
+ 
+@@ -572,6 +649,7 @@ public class EntityVillager extends EntityVillagerAbstract implements Reputation
+     }
+ 
+     public void a(MemoryModuleType<GlobalPos> memorymoduletype) {
++    	if(simplerVillagerBehavior)return; // YAPFA
+         if (this.world instanceof WorldServer) {
+             MinecraftServer minecraftserver = ((WorldServer) this.world).getMinecraftServer();
+ 
+-- 
+2.25.1.windows.1
+

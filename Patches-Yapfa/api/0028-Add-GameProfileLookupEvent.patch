@@ -1,0 +1,94 @@
+From aba0196f0a9ca36a5c8a5d126543a73dd5535019 Mon Sep 17 00:00:00 2001
+From: tr7zw <tr7zw@live.de>
+Date: Wed, 26 Feb 2020 22:21:14 +0100
+Subject: [PATCH] Add GameProfileLookupEvent
+
+---
+ pom.xml                                       | 11 +++++
+ .../yapfa/events/GameProfileLookupEvent.java  | 45 +++++++++++++++++++
+ 2 files changed, 56 insertions(+)
+ create mode 100644 src/main/java/de/tr7zw/yapfa/events/GameProfileLookupEvent.java
+
+diff --git a/pom.xml b/pom.xml
+index b9d51523..9b9e8c5c 100644
+--- a/pom.xml
++++ b/pom.xml
+@@ -40,6 +40,10 @@
+             <id>sonatype</id>
+             <url>https://oss.sonatype.org/content/groups/public/</url>
+         </repository>
++        <repository>
++            <id>mojang</id>
++            <url>https://libraries.minecraft.net/</url>
++        </repository>
+     </repositories>
+ 
+     <pluginRepositories>
+@@ -50,6 +54,13 @@
+     </pluginRepositories>
+ 
+     <dependencies>
++    	<!-- Authlib for Gameprofiles -->
++        <dependency>
++            <groupId>com.mojang</groupId>
++            <artifactId>authlib</artifactId>
++            <version>1.5.25</version>
++            <scope>provided</scope>
++        </dependency>
+         <dependency>
+             <groupId>it.unimi.dsi</groupId>
+             <artifactId>fastutil</artifactId>
+diff --git a/src/main/java/de/tr7zw/yapfa/events/GameProfileLookupEvent.java b/src/main/java/de/tr7zw/yapfa/events/GameProfileLookupEvent.java
+new file mode 100644
+index 00000000..4ab5fd19
+--- /dev/null
++++ b/src/main/java/de/tr7zw/yapfa/events/GameProfileLookupEvent.java
+@@ -0,0 +1,45 @@
++package de.tr7zw.yapfa.events;
++
++import java.util.UUID;
++
++import org.bukkit.event.Event;
++import org.bukkit.event.HandlerList;
++
++import com.mojang.authlib.GameProfile;
++
++public class GameProfileLookupEvent extends Event {
++    private static final HandlerList handlers = new HandlerList();
++    private GameProfile gameProfile = null;
++    private final UUID uuid;
++    private final String name;
++
++	public GameProfileLookupEvent(boolean async, UUID uuid, String name) {
++		super(async);
++		this.uuid = uuid;
++		this.name = name;
++	}
++
++	public GameProfile getGameProfile() {
++		return gameProfile;
++	}
++
++	public void setGameProfile(GameProfile gameProfile) {
++		this.gameProfile = gameProfile;
++	}
++
++	public UUID getUuid() {
++		return uuid;
++	}
++
++	public String getName() {
++		return name;
++	}
++
++	public HandlerList getHandlers() {
++        return handlers;
++    }
++
++    public static HandlerList getHandlerList() {
++        return handlers;
++    }
++}
+-- 
+2.25.1.windows.1
+

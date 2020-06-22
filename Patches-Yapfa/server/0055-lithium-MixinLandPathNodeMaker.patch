@@ -1,0 +1,116 @@
+From 11bf200704bdb29ad198eaa55e04d52ac083afd6 Mon Sep 17 00:00:00 2001
+From: tr7zw <tr7zw@live.de>
+Date: Mon, 11 May 2020 22:56:27 +0200
+Subject: [PATCH] lithium MixinLandPathNodeMaker
+
+---
+ .../minecraft/server/PathfinderNormal.java    | 66 +++++++++++++++----
+ 1 file changed, 55 insertions(+), 11 deletions(-)
+
+diff --git a/src/main/java/net/minecraft/server/PathfinderNormal.java b/src/main/java/net/minecraft/server/PathfinderNormal.java
+index f406abd84..cbe9b6439 100644
+--- a/src/main/java/net/minecraft/server/PathfinderNormal.java
++++ b/src/main/java/net/minecraft/server/PathfinderNormal.java
+@@ -1,6 +1,10 @@
+ package net.minecraft.server;
+ 
+ import com.google.common.collect.Sets;
++
++import it.unimi.dsi.fastutil.objects.Reference2ReferenceMap;
++import it.unimi.dsi.fastutil.objects.Reference2ReferenceOpenHashMap;
++
+ import java.util.EnumSet;
+ import java.util.Iterator;
+ import java.util.Set;
+@@ -8,6 +12,12 @@ import javax.annotation.Nullable;
+ 
+ public class PathfinderNormal extends PathfinderAbstract {
+ 
++	// YAPFA start
++
++    // This is not thread-safe!
++    private static final Reference2ReferenceMap<IBlockData, PathType> commonTypes = new Reference2ReferenceOpenHashMap<>();
++	// YAPFA end
++	
+     protected float j;
+ 
+     public PathfinderNormal() {}
+@@ -455,12 +465,48 @@ public class PathfinderNormal extends PathfinderAbstract {
+         // Tuinity end - reduce blockpos allocation
+         IBlockData iblockdata = iblockaccess.getTypeIfLoaded(blockposition); // Paper
+         if (iblockdata == null) return PathType.BLOCKED; // Paper
+-        Block block = iblockdata.getBlock();
+-        Material material = iblockdata.getMaterial();
++        // Check early if the block is air as it will always be open regardless of other conditions
++        if(iblockdata.isAir())return PathType.OPEN;
++        
++        // Get the cached type for this block state
++        PathType type = commonTypes.get(iblockdata);
++
++        // No result has been cached for this block state yet, so calculate and cache it
++        if (type == null) {
++            commonTypes.put(iblockdata, type = getPathType(iblockaccess, blockposition, iblockdata));
++        }
++        // If the node type is open, it means that we were unable to determine a more specific type, so we need
++        // to check the fallback path.
++        if (type == PathType.OPEN) {
++            // This is only ever called in vanilla after all other possibilities are exhausted, but before fluid checks
++            // It should be safe to perform it last in actuality and take advantage of the cache for fluid types as well
++            // since fluids will always pass this check.
++            if (!iblockdata.a(iblockaccess, blockposition, PathMode.LAND)) {
++                return PathType.BLOCKED;
++            }
+ 
+-        if (iblockdata.isAir()) {
++            // All checks succeed, this path node really is open!
+             return PathType.OPEN;
+-        } else if (!block.a(TagsBlock.TRAPDOORS) && block != Blocks.LILY_PAD) {
++        }
++
++        // Return the cached value since we found an obstacle earlier
++        return type;
++        
++        
++        
++        // Tuinity start - reduce blockpos allocation
++        } finally {
++            blockposition.close();
++        }
++        // Tuinity end - reduce blockpos allocation
++    }
++
++	private static PathType getPathType(IBlockAccess iblockaccess, BlockPosition.PooledBlockPosition blockposition,
++			IBlockData iblockdata) {
++		Block block = iblockdata.getBlock();
++        Material material = iblockdata.getMaterial();
++
++        if (!block.a(TagsBlock.TRAPDOORS) && block != Blocks.LILY_PAD) {
+             if (block == Blocks.FIRE) {
+                 return PathType.DAMAGE_FIRE;
+             } else if (block == Blocks.CACTUS) {
+@@ -484,17 +530,15 @@ public class PathfinderNormal extends PathfinderAbstract {
+             } else if (!block.a(TagsBlock.FENCES) && !block.a(TagsBlock.WALLS) && (!(block instanceof BlockFenceGate) || (Boolean) iblockdata.get(BlockFenceGate.OPEN))) {
+                 Fluid fluid = iblockdata.getFluid(); // Tuinity - optimise out world#getFluid
+ 
+-                return fluid.a(TagsFluid.WATER) ? PathType.WATER : (fluid.a(TagsFluid.LAVA) ? PathType.LAVA : (iblockdata.a(iblockaccess, blockposition, PathMode.LAND) ? PathType.OPEN : PathType.BLOCKED));
++                if(fluid.a(TagsFluid.WATER))return PathType.WATER;
++                if(fluid.a(TagsFluid.LAVA))return PathType.LAVA;
++
++                return PathType.OPEN;
+             } else {
+                 return PathType.FENCE;
+             }
+         } else {
+             return PathType.TRAPDOOR;
+         }
+-        // Tuinity start - reduce blockpos allocation
+-        } finally {
+-            blockposition.close();
+-        }
+-        // Tuinity end - reduce blockpos allocation
+-    }
++	}
+ }
+-- 
+2.25.1.windows.1
+

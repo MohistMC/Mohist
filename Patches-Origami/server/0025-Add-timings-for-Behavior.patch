@@ -1,0 +1,60 @@
+From a24a772faeae6290b6a2c78ecd84a351a0a9685b Mon Sep 17 00:00:00 2001
+From: Phoenix616 <mail@moep.tv>
+Date: Mon, 20 Apr 2020 17:41:09 +0100
+Subject: [PATCH] Add timings for Behavior
+
+---
+ src/main/java/co/aikar/timings/WorldTimingsHandler.java | 6 ++++++
+ src/main/java/net/minecraft/server/Behavior.java        | 6 ++++++
+ 2 files changed, 12 insertions(+)
+
+diff --git a/src/main/java/co/aikar/timings/WorldTimingsHandler.java b/src/main/java/co/aikar/timings/WorldTimingsHandler.java
+index a94ebf7c76..671f7ab7ec 100644
+--- a/src/main/java/co/aikar/timings/WorldTimingsHandler.java
++++ b/src/main/java/co/aikar/timings/WorldTimingsHandler.java
+@@ -139,4 +139,10 @@ public class WorldTimingsHandler {
+     public static Timing getTickList(WorldServer worldserver, String timingsType) {
+         return Timings.ofSafe(worldserver.getWorldData().getName() + " - Scheduled " + timingsType);
+     }
++
++    // Origami start - behavior timings
++    public static Timing getBehaviorTimings(String behaviourType) {
++        return Timings.ofSafe("Behavior - " + behaviourType);
++    }
++    // Origami end
+ }
+diff --git a/src/main/java/net/minecraft/server/Behavior.java b/src/main/java/net/minecraft/server/Behavior.java
+index 8d2f63052f..e7754bca9b 100644
+--- a/src/main/java/net/minecraft/server/Behavior.java
++++ b/src/main/java/net/minecraft/server/Behavior.java
+@@ -14,6 +14,7 @@ public abstract class Behavior<E extends EntityLiving> {
+     private final String configKey;
+     private static final String RATE_TYPE = "behavior";
+     // Origami end
++    co.aikar.timings.Timing timing; // Origami - behavior timing
+ 
+     public Behavior(Map<MemoryModuleType<?>, MemoryStatus> map) {
+         this(map, 60);
+@@ -36,6 +37,9 @@ public abstract class Behavior<E extends EntityLiving> {
+         }
+         this.configKey = key;
+         // Origami end
++        // Origami start - behavior timing
++        timing = co.aikar.timings.WorldTimingsHandler.getBehaviorTimings(key);
++        // Origami end
+     }
+ 
+     public Behavior.Status getStatus() { return a();} // Origami - OBFHELPER
+@@ -56,7 +60,9 @@ public abstract class Behavior<E extends EntityLiving> {
+             int j = this.d + worldserver.getRandom().nextInt(this.e + 1 - this.d);
+ 
+             this.c = i + (long) j;
++            timing.startTiming(); // Origami - behavior timing
+             this.a(worldserver, e0, i);
++            timing.stopTiming(); // Origami - behavior timing
+             return true;
+         } else {
+             return false;
+-- 
+2.25.1.windows.1
+

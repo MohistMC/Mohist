@@ -1,0 +1,44 @@
+From 470801f8dfe8fc52a61b2fa3ba012f5ad0ab64f1 Mon Sep 17 00:00:00 2001
+From: Phoenix616 <mail@moep.tv>
+Date: Thu, 23 Apr 2020 18:03:57 +0100
+Subject: [PATCH] Don't wake up entities when damage event is cancelled
+
+---
+ .../java/net/minecraft/server/EntityLiving.java    | 14 +++++++++++---
+ 1 file changed, 11 insertions(+), 3 deletions(-)
+
+diff --git a/src/main/java/net/minecraft/server/EntityLiving.java b/src/main/java/net/minecraft/server/EntityLiving.java
+index a77aa71c11..56f52c7d9a 100644
+--- a/src/main/java/net/minecraft/server/EntityLiving.java
++++ b/src/main/java/net/minecraft/server/EntityLiving.java
+@@ -995,9 +995,12 @@ public abstract class EntityLiving extends Entity {
+         } else if (damagesource.isFire() && this.hasEffect(MobEffects.FIRE_RESISTANCE)) {
+             return false;
+         } else {
+-            if (this.isSleeping() && !this.world.isClientSide) {
+-                this.entityWakeup();
+-            }
++            // Origami start - Don't wake up entities when damage event is cancelled
++            // moved down into damageEntity0
++            //if (this.isSleeping() && !this.world.isClientSide) {
++            //    this.entityWakeup();
++            //}
++            // Origami end
+ 
+             this.ticksFarFromPlayer = 0;
+             float f1 = f;
+@@ -1706,6 +1709,11 @@ public abstract class EntityLiving extends Entity {
+             if (event.isCancelled()) {
+                 return false;
+             }
++            // Origami start - Don't wake up entities when damage event is cancelled
++            if (this.isSleeping() && !this.world.isClientSide) {
++                this.entityWakeup();
++            }
++            // Origami end
+ 
+             f = (float) event.getFinalDamage();
+ 
+-- 
+2.25.1.windows.1
+

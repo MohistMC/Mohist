@@ -1,0 +1,21 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Spottedleaf <spottedleaf@spottedleaf.dev>
+Date: Fri, 19 Jun 2020 00:49:45 -0700
+Subject: [PATCH] Prevent log spam for "Block is water but TE is chest"
+
+Happens when breaking a waterlogged chest.
+Fix is to just not validate the TE while the chest is being removed.
+
+diff --git a/src/main/java/net/minecraft/server/BlockChest.java b/src/main/java/net/minecraft/server/BlockChest.java
+index 8688ff0f8fb1e0abecff0dc0d21d8d2b16cf41d2..6ea29ffc01441663d67abf7d5e766800e295f2dd 100644
+--- a/src/main/java/net/minecraft/server/BlockChest.java
++++ b/src/main/java/net/minecraft/server/BlockChest.java
+@@ -195,7 +195,7 @@ public class BlockChest extends BlockChestAbstract<TileEntityChest> implements I
+     @Override
+     public void remove(IBlockData iblockdata, World world, BlockPosition blockposition, IBlockData iblockdata1, boolean flag) {
+         if (iblockdata.getBlock() != iblockdata1.getBlock()) {
+-            TileEntity tileentity = world.getTileEntity(blockposition);
++            TileEntity tileentity = world.getTileEntity(blockposition, false); // Tuinity - block has since changed.
+ 
+             if (tileentity instanceof IInventory) {
+                 InventoryUtils.dropInventory(world, blockposition, (IInventory) tileentity);

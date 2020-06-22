@@ -1,0 +1,39 @@
+From e3a40a230fbd580397b5367362f884b0d258dd52 Mon Sep 17 00:00:00 2001
+From: tr7zw <tr7zw@live.de>
+Date: Tue, 21 Apr 2020 16:14:10 +0200
+Subject: [PATCH] Modify default configs
+
+---
+ src/main/java/com/destroystokyo/paper/PaperConfig.java      | 2 +-
+ src/main/java/com/destroystokyo/paper/PaperWorldConfig.java | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/src/main/java/com/destroystokyo/paper/PaperConfig.java b/src/main/java/com/destroystokyo/paper/PaperConfig.java
+index f0284e81d..575d664a5 100644
+--- a/src/main/java/com/destroystokyo/paper/PaperConfig.java
++++ b/src/main/java/com/destroystokyo/paper/PaperConfig.java
+@@ -202,7 +202,7 @@ public class PaperConfig {
+ 
+     public static String timingsServerName;
+     private static void timings() {
+-        boolean timings = getBoolean("timings.enabled", true);
++        boolean timings = getBoolean("timings.enabled", false); // YAPFA don't profile by default
+         boolean verboseTimings = getBoolean("timings.verbose", true);
+         TimingsManager.privacy = getBoolean("timings.server-name-privacy", false);
+         TimingsManager.hiddenConfigs = getList("timings.hidden-config-entries", Lists.newArrayList("database", "settings.bungeecord-addresses"));
+diff --git a/src/main/java/com/destroystokyo/paper/PaperWorldConfig.java b/src/main/java/com/destroystokyo/paper/PaperWorldConfig.java
+index ecacb72b9..340502d92 100644
+--- a/src/main/java/com/destroystokyo/paper/PaperWorldConfig.java
++++ b/src/main/java/com/destroystokyo/paper/PaperWorldConfig.java
+@@ -648,7 +648,7 @@ public class PaperWorldConfig {
+     }
+ 
+     public boolean cooldownHopperWhenFull = true;
+-    public boolean disableHopperMoveEvents = false;
++    public boolean disableHopperMoveEvents = true; // YAPFA disable by default
+     private void hopperOptimizations() {
+         cooldownHopperWhenFull = getBoolean("hopper.cooldown-when-full", cooldownHopperWhenFull);
+         log("Cooldown Hoppers when Full: " + (cooldownHopperWhenFull ? "enabled" : "disabled"));
+-- 
+2.25.1.windows.1
+

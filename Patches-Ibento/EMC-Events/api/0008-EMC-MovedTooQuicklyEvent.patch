@@ -1,0 +1,61 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Aikar <aikar@aikar.co>
+Date: Sun, 4 Dec 2016 01:19:22 -0500
+Subject: [PATCH] EMC MovedTooQuicklyEvent
+
+
+diff --git a/src/main/java/com/empireminecraft/customevents/MovedTooQuicklyEvent.java b/src/main/java/com/empireminecraft/customevents/MovedTooQuicklyEvent.java
+new file mode 100644
+index 0000000000000000000000000000000000000000..9c69b6da7a7f6ce89bc741845f48f12ea60f45c9
+--- /dev/null
++++ b/src/main/java/com/empireminecraft/customevents/MovedTooQuicklyEvent.java
+@@ -0,0 +1,49 @@
++package com.empireminecraft.customevents;
++
++import org.bukkit.entity.Player;
++import org.bukkit.event.Cancellable;
++import org.bukkit.event.Event;
++import org.bukkit.event.HandlerList;
++
++public class MovedTooQuicklyEvent extends Event implements Cancellable {
++
++
++    private static final HandlerList handlers = new HandlerList();
++    private final double speed;
++    private final Player player;
++    private boolean cancelled = false;
++
++    public MovedTooQuicklyEvent(double speed,
++                                Player player) {
++
++
++        this.speed = speed;
++        this.player = player;
++    }
++
++    public HandlerList getHandlers() {
++        return handlers;
++    }
++
++    public static HandlerList getHandlerList() {
++        return handlers;
++    }
++
++    public Player getPlayer() {
++        return player;
++    }
++
++    public double getSpeed() {
++        return speed;
++    }
++
++    @Override
++    public boolean isCancelled() {
++        return cancelled;
++    }
++
++    @Override
++    public void setCancelled(boolean cancel) {
++        cancelled = cancel;
++    }
++}

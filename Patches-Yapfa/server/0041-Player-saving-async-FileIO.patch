@@ -1,0 +1,370 @@
+From a6f3af7f18b15bf4392e981295142edeef218c35 Mon Sep 17 00:00:00 2001
+From: tr7zw <tr7zw@live.de>
+Date: Sat, 4 Apr 2020 23:23:04 +0200
+Subject: [PATCH] Player saving async FileIO
+
+---
+ .../server/AdvancementDataPlayer.java         | 106 ++++++++++--------
+ .../net/minecraft/server/EntityHuman.java     |  16 ++-
+ .../java/net/minecraft/server/PlayerList.java |  28 ++++-
+ .../server/ServerStatisticManager.java        |  20 +++-
+ .../net/minecraft/server/WorldNBTStorage.java |  33 ++++--
+ 5 files changed, 139 insertions(+), 64 deletions(-)
+
+diff --git a/src/main/java/net/minecraft/server/AdvancementDataPlayer.java b/src/main/java/net/minecraft/server/AdvancementDataPlayer.java
+index 79e11eebb..8d08c91fe 100644
+--- a/src/main/java/net/minecraft/server/AdvancementDataPlayer.java
++++ b/src/main/java/net/minecraft/server/AdvancementDataPlayer.java
+@@ -26,6 +26,8 @@ import java.util.List;
+ import java.util.Map;
+ import java.util.Set;
+ import java.util.Map.Entry;
++import java.util.concurrent.ExecutorService;
++import java.util.concurrent.Executors;
+ import java.util.stream.Collectors;
+ import java.util.stream.Stream;
+ import javax.annotation.Nullable;
+@@ -50,6 +52,7 @@ public class AdvancementDataPlayer {
+     @Nullable
+     private Advancement k;
+     private boolean l = true;
++    public static ExecutorService saveThread = Executors.newSingleThreadExecutor(); // YAPFA
+ 
+     public AdvancementDataPlayer(MinecraftServer minecraftserver, File file, EntityPlayer entityplayer) {
+         this.d = minecraftserver;
+@@ -222,53 +225,66 @@ public class AdvancementDataPlayer {
+ 
+         jsonelement.getAsJsonObject().addProperty("DataVersion", SharedConstants.getGameVersion().getWorldVersion());
+ 
++        // YAPFA start
++        String gson = null;
+         try {
+-            FileOutputStream fileoutputstream = new FileOutputStream(this.e);
+-            Throwable throwable = null;
+-
+-            try {
+-                OutputStreamWriter outputstreamwriter = new OutputStreamWriter(fileoutputstream, Charsets.UTF_8.newEncoder());
+-                Throwable throwable1 = null;
+-
+-                try {
+-                    AdvancementDataPlayer.b.toJson(jsonelement, outputstreamwriter);
+-                } catch (Throwable throwable2) {
+-                    throwable1 = throwable2;
+-                    throw throwable2;
+-                } finally {
+-                    if (outputstreamwriter != null) {
+-                        if (throwable1 != null) {
+-                            try {
+-                                outputstreamwriter.close();
+-                            } catch (Throwable throwable3) {
+-                                throwable1.addSuppressed(throwable3);
+-                            }
+-                        } else {
+-                            outputstreamwriter.close();
+-                        }
+-                    }
+-
+-                }
+-            } catch (Throwable throwable4) {
+-                throwable = throwable4;
+-                throw throwable4;
+-            } finally {
+-                if (fileoutputstream != null) {
+-                    if (throwable != null) {
+-                        try {
+-                            fileoutputstream.close();
+-                        } catch (Throwable throwable5) {
+-                            throwable.addSuppressed(throwable5);
+-                        }
+-                    } else {
+-                        fileoutputstream.close();
+-                    }
+-                }
+-
+-            }
+-        } catch (IOException ioexception) {
+-            AdvancementDataPlayer.LOGGER.error("Couldn't save player advancements to {}", this.e, ioexception);
++        	gson = AdvancementDataPlayer.b.toJson(jsonelement);
++        } catch (Throwable throwable) {
++            throw throwable;
++        }
++        if(gson != null) {
++        	final String fGson = gson;
++        	saveThread.submit(() -> {
++		        try {
++		            FileOutputStream fileoutputstream = new FileOutputStream(this.e);
++		            Throwable throwable = null;
++		
++		            try {
++		                OutputStreamWriter outputstreamwriter = new OutputStreamWriter(fileoutputstream, Charsets.UTF_8.newEncoder());
++		                Throwable throwable1 = null;
++		
++		                try {
++		                    outputstreamwriter.write(fGson);
++		                } catch (Throwable throwable2) {
++		                    throwable1 = throwable2;
++		                    throw throwable2;
++		                } finally {
++		                    if (outputstreamwriter != null) {
++		                        if (throwable1 != null) {
++		                            try {
++		                                outputstreamwriter.close();
++		                            } catch (Throwable throwable3) {
++		                                throwable1.addSuppressed(throwable3);
++		                            }
++		                        } else {
++		                            outputstreamwriter.close();
++		                        }
++		                    }
++		
++		                }
++		            } catch (Throwable throwable4) {
++		                throwable = throwable4;
++		                throw throwable4;
++		            } finally {
++		                if (fileoutputstream != null) {
++		                    if (throwable != null) {
++		                        try {
++		                            fileoutputstream.close();
++		                        } catch (Throwable throwable5) {
++		                            throwable.addSuppressed(throwable5);
++		                        }
++		                    } else {
++		                        fileoutputstream.close();
++		                    }
++		                }
++		
++		            }
++		        } catch (IOException ioexception) {
++		            AdvancementDataPlayer.LOGGER.error("Couldn't save player advancements to {}", this.e, ioexception);
++		        }
++        	});
+         }
++        // YAPFA end
+ 
+     }
+ 
+diff --git a/src/main/java/net/minecraft/server/EntityHuman.java b/src/main/java/net/minecraft/server/EntityHuman.java
+index c1e8ff6ab..db4f62883 100644
+--- a/src/main/java/net/minecraft/server/EntityHuman.java
++++ b/src/main/java/net/minecraft/server/EntityHuman.java
+@@ -733,11 +733,23 @@ public abstract class EntityHuman extends EntityLiving {
+ 
+     }
+ 
++    // YAPFA start
++    private NBTTagList inventorySnapshot = null;
++    private NBTTagList enderchestSnapshot = null;
++    
++    
++    public void takeInventorySnapshot() {
++    	inventorySnapshot = this.inventory.a(new NBTTagList());
++    	enderchestSnapshot = this.enderChest.f();
++    }
++    
++    // YAPFA end
++    
+     @Override
+     public void b(NBTTagCompound nbttagcompound) {
+         super.b(nbttagcompound);
+         nbttagcompound.setInt("DataVersion", SharedConstants.getGameVersion().getWorldVersion());
+-        nbttagcompound.set("Inventory", this.inventory.a(new NBTTagList()));
++        nbttagcompound.set("Inventory", inventorySnapshot != null ? inventorySnapshot : this.inventory.a(new NBTTagList())); inventorySnapshot = null;// YAPFA
+         nbttagcompound.setInt("SelectedItemSlot", this.inventory.itemInHandIndex);
+         nbttagcompound.setShort("SleepTimer", (short) this.sleepTicks);
+         nbttagcompound.setFloat("XpP", this.exp);
+@@ -754,7 +766,7 @@ public abstract class EntityHuman extends EntityLiving {
+ 
+         this.foodData.b(nbttagcompound);
+         this.abilities.a(nbttagcompound);
+-        nbttagcompound.set("EnderItems", this.enderChest.f());
++        nbttagcompound.set("EnderItems", enderchestSnapshot != null ? enderchestSnapshot : this.enderChest.f()); enderchestSnapshot = null;// YAPFA
+         if (!this.getShoulderEntityLeft().isEmpty()) {
+             nbttagcompound.set("ShoulderEntityLeft", this.getShoulderEntityLeft());
+         }
+diff --git a/src/main/java/net/minecraft/server/PlayerList.java b/src/main/java/net/minecraft/server/PlayerList.java
+index 54f6dfcaa..cbd2486a4 100644
+--- a/src/main/java/net/minecraft/server/PlayerList.java
++++ b/src/main/java/net/minecraft/server/PlayerList.java
+@@ -17,6 +17,8 @@ import java.util.Optional;
+ import java.util.Set;
+ import java.util.UUID;
+ import java.util.concurrent.CompletableFuture;
++import java.util.concurrent.TimeUnit;
++
+ import javax.annotation.Nullable;
+ import org.apache.logging.log4j.LogManager;
+ import org.apache.logging.log4j.Logger;
+@@ -1209,6 +1211,28 @@ public abstract class PlayerList {
+             if (team != null) scoreboard.removeTeam(team);
+         }
+         // Paper end
++        
++        // YAPFA start - make sure all saves are done
++        try {
++            ((WorldNBTStorage)playerFileData).saveThread.shutdown();
++			boolean done = ((WorldNBTStorage)playerFileData).saveThread.awaitTermination(60, TimeUnit.SECONDS);
++			if(!done) {
++				LOGGER.error("Players did not save completly!");
++			}
++			ServerStatisticManager.saveThread.shutdown();
++			done = ServerStatisticManager.saveThread.awaitTermination(60, TimeUnit.SECONDS);
++			if(!done) {
++				LOGGER.error("Stats did not save completly!");
++			}
++			AdvancementDataPlayer.saveThread.shutdown();
++			done = AdvancementDataPlayer.saveThread.awaitTermination(60, TimeUnit.SECONDS);
++			if(!done) {
++				LOGGER.error("Advancements did not save completly!");
++			}
++		} catch (InterruptedException e) {
++			e.printStackTrace();
++		}
++        // YAPFA end
+     }
+     // Paper end
+ 
+@@ -1248,13 +1272,13 @@ public abstract class PlayerList {
+             File file = new File(this.server.getWorldServer(DimensionManager.OVERWORLD).getDataManager().getDirectory(), "stats");
+             File file1 = new File(file, uuid + ".json");
+ 
+-            if (!file1.exists()) {
++            /*if (!file1.exists()) { // YAPFA dont check for old stats files with sync File IO
+                 File file2 = new File(file, displayName + ".json"); // CraftBukkit
+ 
+                 if (file2.exists() && file2.isFile()) {
+                     file2.renameTo(file1);
+                 }
+-            }
++            }*/
+ 
+             serverstatisticmanager = new ServerStatisticManager(this.server, file1);
+             // this.o.put(uuid, serverstatisticmanager); // CraftBukkit
+diff --git a/src/main/java/net/minecraft/server/ServerStatisticManager.java b/src/main/java/net/minecraft/server/ServerStatisticManager.java
+index b3c9a5a84..edeb8b4fb 100644
+--- a/src/main/java/net/minecraft/server/ServerStatisticManager.java
++++ b/src/main/java/net/minecraft/server/ServerStatisticManager.java
+@@ -20,6 +20,9 @@ import java.util.Map;
+ import java.util.Optional;
+ import java.util.Set;
+ import java.util.Map.Entry;
++import java.util.concurrent.ExecutorService;
++import java.util.concurrent.Executors;
++
+ import org.apache.logging.log4j.LogManager;
+ import org.apache.logging.log4j.Logger;
+ 
+@@ -30,6 +33,7 @@ public class ServerStatisticManager extends StatisticManager {
+     private final File d;
+     private final Set<Statistic<?>> e = Sets.newHashSet();
+     private int f = -300;
++    public static ExecutorService saveThread = Executors.newSingleThreadExecutor(); // YAPFA
+ 
+     public ServerStatisticManager(MinecraftServer minecraftserver, File file) {
+         this.c = minecraftserver;
+@@ -40,7 +44,9 @@ public class ServerStatisticManager extends StatisticManager {
+             Statistic<MinecraftKey> wrapper = StatisticList.CUSTOM.b( entry.getKey() );
+             this.a.put( wrapper, entry.getValue().intValue() );
+         }
+-        // Spigot end
++        // Spigot ends
++        // YAPFA start
++        saveThread.submit(() -> {
+         if (file.isFile()) {
+             try {
+                 this.a(minecraftserver.aC(), org.apache.commons.io.FileUtils.readFileToString(file));
+@@ -50,17 +56,21 @@ public class ServerStatisticManager extends StatisticManager {
+                 ServerStatisticManager.LOGGER.error("Couldn't parse statistics file {}", file, jsonparseexception);
+             }
+         }
+-
++        });
+     }
+ 
+     public void a() {
+         if ( org.spigotmc.SpigotConfig.disableStatSaving ) return; // Spigot
++        // YAPFA start
++        String str = this.b();
++        saveThread.submit(() -> {
+         try {
+-            org.apache.commons.io.FileUtils.writeStringToFile(this.d, this.b());
++            org.apache.commons.io.FileUtils.writeStringToFile(this.d, str);
+         } catch (IOException ioexception) {
+             ServerStatisticManager.LOGGER.error("Couldn't save stats", ioexception);
+         }
+-
++        });
++        // YAPFA end
+     }
+ 
+     @Override
+@@ -111,7 +121,7 @@ public class ServerStatisticManager extends StatisticManager {
+ 
+                                         if (nbttagcompound2.hasKeyOfType(s2, 99)) {
+                                             SystemUtils.a(this.a(statisticwrapper, s2), (statistic) -> {
+-                                                this.a.put(statistic, nbttagcompound2.getInt(s2));
++                                                this.a.put(statistic, nbttagcompound2.getInt(s2) + this.a.getOrDefault(statistic, 0)); // YAPFA fix async load
+                                             }, () -> {
+                                                 //ServerStatisticManager.LOGGER.warn("Invalid statistic in {}: Don't know what {} is", this.d, s2); // EMC
+                                             });
+diff --git a/src/main/java/net/minecraft/server/WorldNBTStorage.java b/src/main/java/net/minecraft/server/WorldNBTStorage.java
+index 350ac42d6..c80673770 100644
+--- a/src/main/java/net/minecraft/server/WorldNBTStorage.java
++++ b/src/main/java/net/minecraft/server/WorldNBTStorage.java
+@@ -15,6 +15,9 @@ import org.apache.logging.log4j.Logger;
+ 
+ // CraftBukkit start
+ import java.util.UUID;
++import java.util.concurrent.ExecutorService;
++import java.util.concurrent.Executors;
++
+ import org.bukkit.craftbukkit.entity.CraftPlayer;
+ // CraftBukkit end
+ 
+@@ -28,6 +31,7 @@ public class WorldNBTStorage implements IPlayerFileData {
+     private final DefinedStructureManager g;
+     protected final DataFixer a;
+     private UUID uuid = null; // CraftBukkit
++    public ExecutorService saveThread = Executors.newSingleThreadExecutor(); // YAPFA
+ 
+     public WorldNBTStorage(File file, String s, @Nullable MinecraftServer minecraftserver, DataFixer datafixer) {
+         this.a = datafixer;
+@@ -140,16 +144,25 @@ public class WorldNBTStorage implements IPlayerFileData {
+     public void save(EntityHuman entityhuman) {
+         if(!com.destroystokyo.paper.PaperConfig.savePlayerData) return; // Paper - Make player data saving configurable
+         try {
+-            NBTTagCompound nbttagcompound = entityhuman.save(new NBTTagCompound());
+-            File file = new File(this.playerDir, entityhuman.getUniqueIDString() + ".dat.tmp");
+-            File file1 = new File(this.playerDir, entityhuman.getUniqueIDString() + ".dat");
+-
+-            NBTCompressedStreamTools.a(nbttagcompound, (OutputStream) (new FileOutputStream(file)));
+-            if (file1.exists()) {
+-                file1.delete();
+-            }
+-
+-            file.renameTo(file1);
++        	// YAPFA start
++        	entityhuman.takeInventorySnapshot(); // Take a sync inventory/enderchest snapshot to prevent duping
++            saveThread.submit(() -> { // Save the tag async
++            	try {
++            		NBTTagCompound nbttagcompound = entityhuman.save(new NBTTagCompound());
++		            File file = new File(this.playerDir, entityhuman.getUniqueIDString() + ".dat.tmp");
++		            File file1 = new File(this.playerDir, entityhuman.getUniqueIDString() + ".dat");
++		
++		            NBTCompressedStreamTools.a(nbttagcompound, (OutputStream) (new FileOutputStream(file)));
++		            if (file1.exists()) {
++		                file1.delete();
++		            }
++		
++		            file.renameTo(file1);
++            	} catch (Exception exception) {
++                    WorldNBTStorage.LOGGER.error("Failed to save player data for {}", entityhuman.getName(), exception); // Paper
++                }
++            });
++            // YAPFA end
+         } catch (Exception exception) {
+             WorldNBTStorage.LOGGER.error("Failed to save player data for {}", entityhuman.getName(), exception); // Paper
+         }
+-- 
+2.25.1.windows.1
+

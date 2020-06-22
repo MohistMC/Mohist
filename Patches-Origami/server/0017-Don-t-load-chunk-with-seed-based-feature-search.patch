@@ -1,0 +1,48 @@
+From 81a3bf3a226f44f0b58c0fcd10404b34ee46546b Mon Sep 17 00:00:00 2001
+From: Phoenix616 <mail@moep.tv>
+Date: Mon, 13 Jan 2020 01:00:49 +0100
+Subject: [PATCH] Don't load chunk with seed based feature search
+
+---
+ src/main/java/de/minebench/origami/OrigamiConfig.java     | 8 ++++++++
+ .../java/net/minecraft/server/StructureGenerator.java     | 5 +++++
+ 2 files changed, 13 insertions(+)
+
+diff --git a/src/main/java/de/minebench/origami/OrigamiConfig.java b/src/main/java/de/minebench/origami/OrigamiConfig.java
+index ad34239e8..9b9d54608 100644
+--- a/src/main/java/de/minebench/origami/OrigamiConfig.java
++++ b/src/main/java/de/minebench/origami/OrigamiConfig.java
+@@ -116,6 +116,14 @@ public final class OrigamiConfig {
+             return config.getDouble("worlds." + worldName + "." + path, config.getDouble("worlds.default." + path, dfl));
+         }
+ 
++        public boolean fastFeatureSearchDontLoad = true;
++        private void fastFeatureSearch() {
++            fastFeatureSearchDontLoad = getBoolean("fast-feature-search-dont-load-chunk", fastFeatureSearchDontLoad);
++            if (fastFeatureSearchDontLoad) {
++                Bukkit.getLogger().info("Returning matching chunk rom fast search directly instead of loading it.");
++            }
++        }
++
+         public boolean onlyFindGeneratedFeatures = false;
+         private void onlyGetGeneratedFeatures() {
+             onlyFindGeneratedFeatures = getBoolean("only-find-generated-features", onlyFindGeneratedFeatures);
+diff --git a/src/main/java/net/minecraft/server/StructureGenerator.java b/src/main/java/net/minecraft/server/StructureGenerator.java
+index b4eb1f592..bcce50217 100644
+--- a/src/main/java/net/minecraft/server/StructureGenerator.java
++++ b/src/main/java/net/minecraft/server/StructureGenerator.java
+@@ -116,6 +116,11 @@ public abstract class StructureGenerator<C extends WorldGenFeatureConfiguration>
+                                     if (!shouldGenerate(biomeManager, chunkgenerator, seededrandom, chunkcoordintpair.x, chunkcoordintpair.z, biomeBase)) {
+                                         continue;
+                                     }
++                                    // Origami start - seed based feature search doesn't load
++                                    if (world.origamiConfig.fastFeatureSearchDontLoad) {
++                                        return chunkcoordintpair.l();
++                                    }
++                                    // Origami end
+                                 }
+                                 // Paper end
+                                 // Origami start - option to only find generated features to not generate new chunks
+-- 
+2.25.1.windows.1
+

@@ -1,0 +1,73 @@
+From 5f3baa2ff650d8740f13db6e332b0d561eae7aae Mon Sep 17 00:00:00 2001
+From: Phoenix616 <mail@moep.tv>
+Date: Sun, 24 Nov 2019 22:51:07 +0100
+Subject: [PATCH] Log and abort if WorldUpgrader gets stuck on chunk
+
+---
+ .../net/minecraft/server/MinecraftServer.java | 22 +++++++++++++++++++
+ .../net/minecraft/server/WorldUpgrader.java   |  2 ++
+ 2 files changed, 24 insertions(+)
+
+diff --git a/src/main/java/net/minecraft/server/MinecraftServer.java b/src/main/java/net/minecraft/server/MinecraftServer.java
+index 14f0c995a..f084b0c90 100644
+--- a/src/main/java/net/minecraft/server/MinecraftServer.java
++++ b/src/main/java/net/minecraft/server/MinecraftServer.java
+@@ -292,6 +292,11 @@ public abstract class MinecraftServer extends IAsyncTaskHandlerReentrant<TickTas
+                 WorldUpgrader worldupgrader = new WorldUpgrader(s, this.getConvertable(), worlddata, this.eraseCache); // CraftBukkit
+                 IChatBaseComponent ichatbasecomponent = null;
+ 
++                // Origami start - Abort stuck WorldUpgrader
++                int last = -1;
++                int tries = 0;
++                // Origami end - Abort stuck WorldUpgrader
++
+                 while (!worldupgrader.b()) {
+                     IChatBaseComponent ichatbasecomponent1 = worldupgrader.g();
+ 
+@@ -306,6 +311,23 @@ public abstract class MinecraftServer extends IAsyncTaskHandlerReentrant<TickTas
+                         int j = worldupgrader.e() + worldupgrader.f();
+ 
+                         MinecraftServer.LOGGER.info("{}% completed ({} / {} chunks)...", MathHelper.d((float) j / (float) i * 100.0F), j, i);
++                        // Origami start - Abort stuck WorldUpgrader
++                        if (last != j) {
++                            last = j;
++                            tries = 0;
++                        } else {
++                            tries++;
++                            if (tries % 10 == 0) {
++                                if (worldupgrader.currentChunk != null) {
++                                    MinecraftServer.LOGGER.info("WorldUpgrader stuck at {} {} {}. Trying to stop...", s, worldupgrader.currentChunk.x, worldupgrader.currentChunk.z);
++                                    worldupgrader.a();
++                                } else if (tries % 100 == 0) {
++                                    MinecraftServer.LOGGER.info("WorldUpgrader failed to start! Trying to stop...");
++                                    worldupgrader.a();
++                                }
++                            }
++                        }
++                        // Origami end - Abort stuck WorldUpgrader
+                     }
+ 
+                     if (this.isStopped()) {
+diff --git a/src/main/java/net/minecraft/server/WorldUpgrader.java b/src/main/java/net/minecraft/server/WorldUpgrader.java
+index 3030c347e..39d4ad175 100644
+--- a/src/main/java/net/minecraft/server/WorldUpgrader.java
++++ b/src/main/java/net/minecraft/server/WorldUpgrader.java
+@@ -39,6 +39,7 @@ public class WorldUpgrader {
+     private volatile IChatBaseComponent o = new ChatMessage("optimizeWorld.stage.counting", new Object[0]);
+     private static final Pattern p = Pattern.compile("^r\\.(-?[0-9]+)\\.(-?[0-9]+)\\.mca$");
+     private final WorldPersistentData q;
++    public ChunkCoordIntPair currentChunk = null; // Origami - Abort stuck WorldUpgrader
+ 
+     public WorldUpgrader(String s, Convertable convertable, WorldData worlddata, boolean flag) {
+         this.c = worlddata.getName();
+@@ -115,6 +116,7 @@ public class WorldUpgrader {
+ 
+                     if (listiterator.hasNext()) {
+                         ChunkCoordIntPair chunkcoordintpair = (ChunkCoordIntPair) listiterator.next();
++                        currentChunk = chunkcoordintpair; // Origami - Abort stuck WorldUpgrader
+                         boolean flag1 = false;
+ 
+                         try {
+-- 
+2.25.1.windows.1
+

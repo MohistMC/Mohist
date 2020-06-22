@@ -1,0 +1,80 @@
+From c244713cc3fe52b12671a4b2194f118de83d2872 Mon Sep 17 00:00:00 2001
+From: tr7zw <tr7zw@live.de>
+Date: Thu, 5 Mar 2020 21:13:33 +0100
+Subject: [PATCH] Add getLastTickMs() api
+
+---
+ src/main/java/net/minecraft/server/MinecraftServer.java | 7 +++++++
+ src/main/java/org/bukkit/craftbukkit/CraftServer.java   | 9 +++++++++
+ src/main/java/org/spigotmc/TicksPerSecondCommand.java   | 2 +-
+ 3 files changed, 17 insertions(+), 1 deletion(-)
+
+diff --git a/src/main/java/net/minecraft/server/MinecraftServer.java b/src/main/java/net/minecraft/server/MinecraftServer.java
+index 16535da3e..f41584b85 100644
+--- a/src/main/java/net/minecraft/server/MinecraftServer.java
++++ b/src/main/java/net/minecraft/server/MinecraftServer.java
+@@ -901,6 +901,8 @@ public abstract class MinecraftServer extends IAsyncTaskHandlerReentrant<TickTas
+     private static final java.math.BigDecimal TPS_BASE = new java.math.BigDecimal(1E9).multiply(new java.math.BigDecimal(SAMPLE_INTERVAL));
+     // Paper End
+     // Spigot End
++    
++    public static long lastTickMs = 0; // YAPFA
+ 
+     public void run() {
+         try {
+@@ -965,9 +967,13 @@ public abstract class MinecraftServer extends IAsyncTaskHandlerReentrant<TickTas
+                         this.methodProfiler.d().d();
+                     }
+ 
++                    
++                    
+                     this.methodProfiler.a();
+                     this.methodProfiler.enter("tick");
++                    long tickStart = System.currentTimeMillis(); // YAPFA
+                     this.a(this::canSleepForTick);
++                    lastTickMs = System.currentTimeMillis() - tickStart; // YAPFA
+                     this.methodProfiler.exitEnter("nextTickWait");
+                     this.ac = true;
+                     this.ab = Math.max(SystemUtils.getMonotonicMillis() + 50L, this.nextTick);
+@@ -975,6 +981,7 @@ public abstract class MinecraftServer extends IAsyncTaskHandlerReentrant<TickTas
+                     this.methodProfiler.exit();
+                     this.methodProfiler.b();
+                     this.hasTicked = true;
++                    
+                 }
+             } else {
+                 this.a((CrashReport) null);
+diff --git a/src/main/java/org/bukkit/craftbukkit/CraftServer.java b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
+index 206165c13..0998fcaaa 100644
+--- a/src/main/java/org/bukkit/craftbukkit/CraftServer.java
++++ b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
+@@ -2285,4 +2285,13 @@ public final class CraftServer implements Server {
+         return mobGoals;
+     }
+     // Paper end
++
++    // YAPFA start
++    
++	@Override
++	public long getLastTickMs() {
++		return net.minecraft.server.MinecraftServer.lastTickMs;
++	}
++	
++	// YAPFA end
+ }
+diff --git a/src/main/java/org/spigotmc/TicksPerSecondCommand.java b/src/main/java/org/spigotmc/TicksPerSecondCommand.java
+index 387af9d5c..159c95eb8 100644
+--- a/src/main/java/org/spigotmc/TicksPerSecondCommand.java
++++ b/src/main/java/org/spigotmc/TicksPerSecondCommand.java
+@@ -30,7 +30,7 @@ public class TicksPerSecondCommand extends Command
+         for ( int i = 0; i < tps.length; i++) {
+             tpsAvg[i] = format( tps[i] );
+         }
+-        sender.sendMessage( ChatColor.GOLD + "TPS from last 1m, 5m, 15m: " + org.apache.commons.lang.StringUtils.join(tpsAvg, ", "));
++        sender.sendMessage( ChatColor.GOLD + "TPS from last 1m, 5m, 15m: " + org.apache.commons.lang.StringUtils.join(tpsAvg, ", ") + " Last tick time: " + org.bukkit.Bukkit.getLastTickMs() + "ms"); // YAPFA
+         // Paper end
+ 
+         return true;
+-- 
+2.25.1.windows.1
+

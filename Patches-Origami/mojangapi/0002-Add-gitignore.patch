@@ -1,0 +1,51 @@
+From 1fdc1b1d552c2b97c9a782c671930e1e9e88e037 Mon Sep 17 00:00:00 2001
+From: Phoenix616 <mail@moep.tv>
+Date: Tue, 5 May 2020 01:42:23 +0100
+Subject: [PATCH] Add gitignore
+
+---
+ .gitignore | 32 ++++++++++++++++++++++++++++++++
+ 1 file changed, 32 insertions(+)
+ create mode 100644 .gitignore
+
+diff --git a/.gitignore b/.gitignore
+new file mode 100644
+index 0000000..e431e34
+--- /dev/null
++++ b/.gitignore
+@@ -0,0 +1,32 @@
++# Eclipse stuff
++/.classpath
++/.project
++/.settings
++
++# netbeans
++/nbproject
++/nb-configuration.xml
++
++# we use maven!
++/build.xml
++
++# maven
++/target
++
++# vim
++.*.sw[a-p]
++
++# various other potential build files
++/build
++/bin
++/dist
++/manifest.mf
++
++# Mac filesystem dust
++.DS_Store
++
++# intellij
++*.iml
++*.ipr
++*.iws
++.idea/
+-- 
+2.25.1.windows.1
+

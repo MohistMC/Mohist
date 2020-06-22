@@ -1,0 +1,91 @@
+From 4ac14a8c3d34b3d6eb61df437521afdbf42e8708 Mon Sep 17 00:00:00 2001
+From: tr7zw <tr7zw@live.de>
+Date: Wed, 26 Feb 2020 22:22:02 +0100
+Subject: [PATCH] Add GameProfileLookupEvent
+
+---
+ .../paper/profile/CraftPlayerProfile.java     | 22 ++++++++++++++-----
+ .../net/minecraft/server/TileEntitySkull.java | 15 ++++++++++++-
+ 2 files changed, 31 insertions(+), 6 deletions(-)
+
+diff --git a/src/main/java/com/destroystokyo/paper/profile/CraftPlayerProfile.java b/src/main/java/com/destroystokyo/paper/profile/CraftPlayerProfile.java
+index f98f4d55b..fd7bd1f50 100644
+--- a/src/main/java/com/destroystokyo/paper/profile/CraftPlayerProfile.java
++++ b/src/main/java/com/destroystokyo/paper/profile/CraftPlayerProfile.java
+@@ -5,8 +5,12 @@ import com.google.common.base.Charsets;
+ import com.mojang.authlib.GameProfile;
+ import com.mojang.authlib.properties.Property;
+ import com.mojang.authlib.properties.PropertyMap;
++
++import de.tr7zw.yapfa.events.GameProfileLookupEvent;
+ import net.minecraft.server.MinecraftServer;
+ import net.minecraft.server.UserCache;
++
++import org.bukkit.Bukkit;
+ import org.bukkit.craftbukkit.entity.CraftPlayer;
+ import org.spigotmc.SpigotConfig;
+ 
+@@ -174,11 +178,19 @@ public class CraftPlayerProfile implements PlayerProfile {
+         boolean isOnlineMode = server.getOnlineMode() || (SpigotConfig.bungee && PaperConfig.bungeeOnlineMode);
+         boolean isCompleteFromCache = this.completeFromCache(true);
+         if (isOnlineMode && (!isCompleteFromCache || textures && !hasTextures())) {
+-            GameProfile result = server.getSessionService().fillProfileProperties(profile, true);
+-            if (result != null) {
+-                copyProfileProperties(result, this.profile, true);
+-            }
+-            server.getUserCache().saveProfile(this.profile);
++        	// YAPFA start
++        	GameProfileLookupEvent event = new GameProfileLookupEvent(!Bukkit.isPrimaryThread(), profile.getId(), profile.getName());
++        	Bukkit.getServer().getPluginManager().callEvent(event);
++        	if (event.getGameProfile() != null) {
++        		this.profile = event.getGameProfile();
++        	} else {
++        		GameProfile result = server.getSessionService().fillProfileProperties(profile, true);
++        		if (result != null) {
++        			copyProfileProperties(result, this.profile, true);
++        		}
++                server.getUserCache().saveProfile(this.profile);
++        	}
++        	// YAPFA end
+         }
+         return profile.isComplete() && (!isOnlineMode || !textures || hasTextures());
+     }
+diff --git a/src/main/java/net/minecraft/server/TileEntitySkull.java b/src/main/java/net/minecraft/server/TileEntitySkull.java
+index a1f432d6a..3b678192f 100644
+--- a/src/main/java/net/minecraft/server/TileEntitySkull.java
++++ b/src/main/java/net/minecraft/server/TileEntitySkull.java
+@@ -4,9 +4,14 @@ import com.google.common.collect.Iterables;
+ import com.mojang.authlib.GameProfile;
+ import com.mojang.authlib.minecraft.MinecraftSessionService;
+ import com.mojang.authlib.properties.Property;
++
++import de.tr7zw.yapfa.events.GameProfileLookupEvent;
++
+ import java.util.UUID;
+ import javax.annotation.Nullable;
+ 
++import org.bukkit.Bukkit;
++
+ // Spigot start
+ import com.google.common.base.Predicate;
+ import com.google.common.cache.LoadingCache;
+@@ -74,7 +79,15 @@ public class TileEntitySkull extends TileEntity /*implements ITickable*/ { // Pa
+ 
+                         if ( property == null )
+                         {
+-                            profile = TileEntitySkull.sessionService.fillProfileProperties( profile, true );
++                        	// YAPFA start
++                        	GameProfileLookupEvent event = new GameProfileLookupEvent(!Bukkit.isPrimaryThread(), profile.getId(), profile.getName());
++                        	Bukkit.getServer().getPluginManager().callEvent(event);
++                        	if (event.getGameProfile() != null) {
++                        		profile = event.getGameProfile();
++                        	} else {
++                        		profile = TileEntitySkull.sessionService.fillProfileProperties( profile, true );
++                        	}
++                        	// YAPFA end
+                         }
+                     }
+ 
+-- 
+2.25.1.windows.1
+

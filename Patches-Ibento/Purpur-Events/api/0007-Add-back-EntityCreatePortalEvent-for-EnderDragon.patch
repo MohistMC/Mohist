@@ -1,0 +1,40 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: William Blake Galbreath <blake.galbreath@gmail.com>
+Date: Sat, 19 Oct 2019 03:53:46 -0500
+Subject: [PATCH] Add back EntityCreatePortalEvent for EnderDragon
+
+
+diff --git a/src/main/java/org/bukkit/PortalType.java b/src/main/java/org/bukkit/PortalType.java
+index 427cfbb8b542215c5d9993056e0cadf18ab9bd4b..e235653237aaf29a5406cc47459142f39e06c71b 100644
+--- a/src/main/java/org/bukkit/PortalType.java
++++ b/src/main/java/org/bukkit/PortalType.java
+@@ -15,6 +15,13 @@ public enum PortalType {
+      */
+     ENDER,
+ 
++    // Purpur start
++    /**
++     * This is an End Gateway portal
++     */
++    END_GATEWAY,
++    // Purpur end
++
+     /**
+      * This is a custom Plugin portal.
+      */
+diff --git a/src/main/java/org/bukkit/event/entity/EntityCreatePortalEvent.java b/src/main/java/org/bukkit/event/entity/EntityCreatePortalEvent.java
+index 397baaefd2fb45ae9d50b7b9bd5276e6ad980f20..7456240b41de2b4c7b855110e5681251b4a2720b 100644
+--- a/src/main/java/org/bukkit/event/entity/EntityCreatePortalEvent.java
++++ b/src/main/java/org/bukkit/event/entity/EntityCreatePortalEvent.java
+@@ -11,10 +11,8 @@ import org.jetbrains.annotations.NotNull;
+ 
+ /**
+  * Thrown when a Living Entity creates a portal in a world.
+- *
+- * @deprecated Use {@link PortalCreateEvent}
+  */
+-@Deprecated
++// Purpur - un-deprecate
+ public class EntityCreatePortalEvent extends EntityEvent implements Cancellable {
+     private static final HandlerList handlers = new HandlerList();
+     private final List<BlockState> blocks;

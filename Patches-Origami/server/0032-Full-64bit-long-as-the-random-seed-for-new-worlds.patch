@@ -1,0 +1,25 @@
+From 004be7da173b02a5b9b15bb5ff0b3aa5d20da307 Mon Sep 17 00:00:00 2001
+From: Phoenix616 <mail@moep.tv>
+Date: Mon, 25 May 2020 18:31:34 +0100
+Subject: [PATCH] Full 64bit long as the random seed for new worlds
+
+---
+ src/main/java/net/minecraft/server/DedicatedServer.java | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/main/java/net/minecraft/server/DedicatedServer.java b/src/main/java/net/minecraft/server/DedicatedServer.java
+index 504a6722b..59425f864 100644
+--- a/src/main/java/net/minecraft/server/DedicatedServer.java
++++ b/src/main/java/net/minecraft/server/DedicatedServer.java
+@@ -261,7 +261,7 @@ public class DedicatedServer extends MinecraftServer implements IMinecraftServer
+             long i = SystemUtils.getMonotonicNanos();
+             String s = dedicatedserverproperties.levelSeed;
+             String s1 = dedicatedserverproperties.generatorSettings;
+-            long j = (new Random()).nextLong();
++            long j = java.util.concurrent.ThreadLocalRandom.current().nextLong(); // Origami - use random seed with all possible bits
+ 
+             if (!s.isEmpty()) {
+                 try {
+-- 
+2.25.1.windows.1
+

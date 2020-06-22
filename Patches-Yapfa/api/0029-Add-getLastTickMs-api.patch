@@ -1,0 +1,52 @@
+From f3a626fc997204282faf6653efaba8bde639dc2a Mon Sep 17 00:00:00 2001
+From: tr7zw <tr7zw@live.de>
+Date: Thu, 5 Mar 2020 21:13:14 +0100
+Subject: [PATCH] Add getLastTickMs() api
+
+---
+ src/main/java/org/bukkit/Bukkit.java |  8 ++++++++
+ src/main/java/org/bukkit/Server.java | 11 +++++++++++
+ 2 files changed, 19 insertions(+)
+
+diff --git a/src/main/java/org/bukkit/Bukkit.java b/src/main/java/org/bukkit/Bukkit.java
+index a9c10228..53589303 100644
+--- a/src/main/java/org/bukkit/Bukkit.java
++++ b/src/main/java/org/bukkit/Bukkit.java
+@@ -1712,6 +1712,14 @@ public final class Bukkit {
+         return server.getMobGoals();
+     }
+     // Paper end
++    
++    // YAPFA start
++    
++    public static long getLastTickMs() {
++    	return server.getLastTickMs();
++    }
++    
++    // YAPFA end
+ 
+     @NotNull
+     public static Server.Spigot spigot() {
+diff --git a/src/main/java/org/bukkit/Server.java b/src/main/java/org/bukkit/Server.java
+index cf20e754..771827d8 100644
+--- a/src/main/java/org/bukkit/Server.java
++++ b/src/main/java/org/bukkit/Server.java
+@@ -1504,4 +1504,15 @@ public interface Server extends PluginMessageRecipient {
+     @NotNull
+     com.destroystokyo.paper.entity.ai.MobGoals getMobGoals();
+     // Paper end
++    
++    // YAPFA start
++    
++    /**
++     * Get the ms the last servertick took
++     *
++     * @return Last ticks ms
++     */
++    long getLastTickMs();
++    
++    // YAPFA end
+ }
+-- 
+2.25.1.windows.1
+

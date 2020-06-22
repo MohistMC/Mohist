@@ -1,0 +1,148 @@
+From 246cfe03a925008d8ee164cbcfa91e1beec0c3b9 Mon Sep 17 00:00:00 2001
+From: willies952002 <admin@domnian.com>
+Date: Fri, 16 Aug 2019 22:18:35 -0400
+Subject: [PATCH] EMC Fix Bukkit.createInventory() with type LECTERN
+
+This fixes an issue with Bukkit which makes it possible to open a Lectern interface, but not be able to interact with it (e.g.: change pages). The following changes had to be made:
+
+nms.TileEntityLectern:
+- Add `virtual` flag, this is used to stop calls that would attempt to update a block which we do not have, as well as used in the following change.
+
+nms.TileEntityLectern$LecternInventory
+- in `a(EntityHuman)`, add `(TileEntityLectern.this.virtual && TileEntityLectern.this.hasBook()) ||` to short-circuit the "can use" logic
+- Add `getLectern()` method for use in the following change.
+
+obc.e.CraftHumanEntity#openInventory(Inventory):
+- Check if the wrapped inventory is a TileEntityLectern.LecternInventory, and get the Lectern from that
+
+obc.i.u.CraftTileInventoryConverter$Lectern:
+- Mark the created lectern as "virtual"
+- Override `getInventory(IInventory)` to return a CraftInventoryLectern.
+
+This patch is licensed under the MIT License.
+License: https://opensource.org/licenses/MIT
+---
+ .../net/minecraft/server/TileEntityLectern.java    | 14 +++++++++++---
+ .../craftbukkit/entity/CraftHumanEntity.java       |  6 ++++++
+ .../util/CraftTileInventoryConverter.java          | 13 ++++++++++++-
+ 3 files changed, 29 insertions(+), 4 deletions(-)
+
+diff --git a/src/main/java/net/minecraft/server/TileEntityLectern.java b/src/main/java/net/minecraft/server/TileEntityLectern.java
+index c3b854b6a..2fa24a386 100644
+--- a/src/main/java/net/minecraft/server/TileEntityLectern.java
++++ b/src/main/java/net/minecraft/server/TileEntityLectern.java
+@@ -18,6 +18,11 @@ public class TileEntityLectern extends TileEntity implements Clearable, ITileInv
+     // CraftBukkit start - add fields and methods
+     public IInventory inventory = new LecternInventory(); // Tuinity - need non-final for `createCopyForPush`
+     public class LecternInventory implements IInventory {
++        // EMC start
++        public TileEntityLectern getLectern() {
++            return TileEntityLectern.this;
++        }
++        // EMC end
+ 
+         public List<HumanEntity> transaction = new ArrayList<>();
+         private int maxStack = 1;
+@@ -75,7 +80,7 @@ public class TileEntityLectern extends TileEntity implements Clearable, ITileInv
+ 
+         @Override
+         public ItemStack splitStack(int i, int j) {
+-            if (i == 0) {
++            if (i == 0 && !TileEntityLectern.this.virtual) { // EMC
+                 ItemStack itemstack = TileEntityLectern.this.book.cloneAndSubtract(j);
+ 
+                 if (TileEntityLectern.this.book.isEmpty()) {
+@@ -90,7 +95,7 @@ public class TileEntityLectern extends TileEntity implements Clearable, ITileInv
+ 
+         @Override
+         public ItemStack splitWithoutUpdate(int i) {
+-            if (i == 0) {
++            if (i == 0 && !TileEntityLectern.this.virtual) { // EMC
+                 ItemStack itemstack = TileEntityLectern.this.book;
+ 
+                 TileEntityLectern.this.book = ItemStack.a;
+@@ -125,7 +130,7 @@ public class TileEntityLectern extends TileEntity implements Clearable, ITileInv
+ 
+         @Override
+         public boolean a(EntityHuman entityhuman) {
+-            return TileEntityLectern.this.world.getTileEntity(TileEntityLectern.this.position) != TileEntityLectern.this ? false : (entityhuman.g((double) TileEntityLectern.this.position.getX() + 0.5D, (double) TileEntityLectern.this.position.getY() + 0.5D, (double) TileEntityLectern.this.position.getZ() + 0.5D) > 64.0D ? false : TileEntityLectern.this.hasBook());
++            return (TileEntityLectern.this.virtual && TileEntityLectern.this.hasBook()) || TileEntityLectern.this.world.getTileEntity(TileEntityLectern.this.position) != TileEntityLectern.this ? false : (entityhuman.g((double) TileEntityLectern.this.position.getX() + 0.5D, (double) TileEntityLectern.this.position.getY() + 0.5D, (double) TileEntityLectern.this.position.getZ() + 0.5D) > 64.0D ? false : TileEntityLectern.this.hasBook());
+         }
+ 
+         @Override
+@@ -165,6 +170,7 @@ public class TileEntityLectern extends TileEntity implements Clearable, ITileInv
+     private ItemStack book;
+     private int page;
+     private int maxPage;
++    public boolean virtual = false; // EMC
+ 
+     // Tuinity start - pushable TE's
+     @Override
+@@ -198,6 +204,7 @@ public class TileEntityLectern extends TileEntity implements Clearable, ITileInv
+     }
+ 
+     private void k() {
++        if (this.virtual) return; // EMC
+         this.page = 0;
+         this.maxPage = 0;
+         BlockLectern.setHasBook(this.getWorld(), this.getPosition(), this.getBlock(), false);
+@@ -215,6 +222,7 @@ public class TileEntityLectern extends TileEntity implements Clearable, ITileInv
+ 
+         if (j != this.page) {
+             this.page = j;
++            if (this.virtual) return; // EMC
+             this.update();
+             if (this.world != null) BlockLectern.a(this.getWorld(), this.getPosition(), this.getBlock()); // CraftBukkit
+         }
+diff --git a/src/main/java/org/bukkit/craftbukkit/entity/CraftHumanEntity.java b/src/main/java/org/bukkit/craftbukkit/entity/CraftHumanEntity.java
+index faa65ef20..74b9c4516 100644
+--- a/src/main/java/org/bukkit/craftbukkit/entity/CraftHumanEntity.java
++++ b/src/main/java/org/bukkit/craftbukkit/entity/CraftHumanEntity.java
+@@ -31,6 +31,7 @@ import net.minecraft.server.PacketPlayInCloseWindow;
+ import net.minecraft.server.PacketPlayOutOpenWindow;
+ import net.minecraft.server.TileEntity;
+ import net.minecraft.server.TileEntityContainer;
++import net.minecraft.server.TileEntityLectern.LecternInventory;
+ import net.minecraft.server.Vec3D;
+ import org.bukkit.GameMode;
+ import org.bukkit.Location;
+@@ -328,6 +329,11 @@ public class CraftHumanEntity extends CraftLivingEntity implements HumanEntity {
+             if (craft.getInventory() instanceof ITileInventory) {
+                 iinventory = (ITileInventory) craft.getInventory();
+             }
++            // EMC start
++            if (craft.getInventory() instanceof LecternInventory) {
++                iinventory = ((LecternInventory)craft.getInventory()).getLectern();
++            }
++            // EMC end
+         }
+ 
+         if (iinventory instanceof ITileInventory) {
+diff --git a/src/main/java/org/bukkit/craftbukkit/inventory/util/CraftTileInventoryConverter.java b/src/main/java/org/bukkit/craftbukkit/inventory/util/CraftTileInventoryConverter.java
+index 32b36c70a..f0c1d6110 100644
+--- a/src/main/java/org/bukkit/craftbukkit/inventory/util/CraftTileInventoryConverter.java
++++ b/src/main/java/org/bukkit/craftbukkit/inventory/util/CraftTileInventoryConverter.java
+@@ -126,8 +126,19 @@ public abstract class CraftTileInventoryConverter implements CraftInventoryCreat
+ 
+         @Override
+         public IInventory getTileEntity() {
+-            return new TileEntityLectern().inventory;
++            // EMC start
++            TileEntityLectern lectern = new TileEntityLectern();
++            lectern.virtual = true;
++            return lectern.inventory;
++            // EMC end
+         }
++
++        // EMC start
++        @Override
++        public Inventory getInventory(IInventory tileEntity) {
++            return new org.bukkit.craftbukkit.inventory.CraftInventoryLectern(tileEntity);
++        }
++        // EMC end
+     }
+ 
+     public static class Smoker extends CraftTileInventoryConverter {
+-- 
+2.25.1.windows.1
+

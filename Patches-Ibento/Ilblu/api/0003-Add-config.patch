@@ -1,0 +1,24 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Paul1365972 <paul1365972@gmail.com>
+Date: Thu, 9 Apr 2020 15:54:34 +0200
+Subject: [PATCH] Add config
+
+
+diff --git a/src/main/java/org/bukkit/Server.java b/src/main/java/org/bukkit/Server.java
+index cc06492f46ba5776221cd2614c1dcd8f33cc8faf..f7a6e13475c2048b801b7967c74e9d54b180aa7c 100644
+--- a/src/main/java/org/bukkit/Server.java
++++ b/src/main/java/org/bukkit/Server.java
+@@ -1396,6 +1396,13 @@ public interface Server extends PluginMessageRecipient {
+         }
+         // Paper end
+ 
++        // Ilblu start
++        @NotNull
++        public org.bukkit.configuration.file.YamlConfiguration getIlbluConfig() {
++            throw new UnsupportedOperationException("Not supported yet.");
++        }
++        // Ilblu end
++
+         /**
+          * Sends the component to the player
+          *
