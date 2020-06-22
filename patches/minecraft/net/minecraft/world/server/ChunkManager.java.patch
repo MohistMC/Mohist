@@ -340,3 +340,13 @@
                 if (flag1 && this.field_219406_f.add(p_219400_1_)) {
                    this.field_219402_b.func_219455_b(p_219400_1_);
                 }
+@@ -1156,6 +1215,9 @@
+          }
+ 
+       }
++
++       public void removeTracker(ServerPlayerEntity handle) {
++       }
+    }
+ 
+    class ProxyTicketManager extends TicketManager {
