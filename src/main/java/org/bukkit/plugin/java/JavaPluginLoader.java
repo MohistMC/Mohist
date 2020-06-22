@@ -55,7 +55,6 @@ public final class JavaPluginLoader implements PluginLoader {
     private final List<PluginClassLoader> loaders = new CopyOnWriteArrayList<PluginClassLoader>();
     public static final CustomTimingsHandler pluginParentTimer = new CustomTimingsHandler("** Plugins"); // Spigot
 
-
     /**
      * This class was not meant to be constructed explicitly
      *
@@ -315,7 +314,6 @@ public final class JavaPluginLoader implements PluginLoader {
                         if (!isAsync) timings.startTiming();
                         method.invoke(listener, event);
                         if (!isAsync) timings.stopTiming();
-                        // Spigot end
                     } catch (InvocationTargetException ex) {
                         throw new EventException(ex.getCause());
                     } catch (Throwable t) {

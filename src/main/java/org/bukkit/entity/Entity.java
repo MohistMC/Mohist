@@ -592,7 +592,6 @@ public interface Entity extends Metadatable, CommandSender, Nameable, Persistent
     // Spigot start
     public class Spigot extends CommandSender.Spigot {
     }
-
     @NotNull
     @Override
     Spigot spigot();

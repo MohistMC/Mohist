@@ -1291,11 +1291,25 @@ public interface Server extends PluginMessageRecipient {
     @Deprecated
     @NotNull
     UnsafeValues getUnsafe();
+
     // Spigot start
     public class Spigot {
 
-        @NotNull
-        public org.bukkit.configuration.file.YamlConfiguration getConfig() {
+        /**
+         * Sends the component to the player
+         *
+         * @param component the components to send
+         */
+        public void broadcast(@NotNull net.md_5.bungee.api.chat.BaseComponent component) {
+            throw new UnsupportedOperationException("Not supported yet.");
+        }
+
+        /**
+         * Sends an array of components as a single message to the player
+         *
+         * @param components the components to send
+         */
+        public void broadcast(@NotNull net.md_5.bungee.api.chat.BaseComponent... components) {
             throw new UnsupportedOperationException("Not supported yet.");
         }
 
@@ -1305,9 +1319,15 @@ public interface Server extends PluginMessageRecipient {
         public void restart() {
             throw new UnsupportedOperationException("Not supported yet.");
         }
+        
+        @NotNull
+        public org.bukkit.configuration.file.YamlConfiguration getConfig() {
+            throw new UnsupportedOperationException("Not supported yet.");
+        }
     }
-
     @NotNull
     Spigot spigot();
     // Spigot end
+
+
 }
