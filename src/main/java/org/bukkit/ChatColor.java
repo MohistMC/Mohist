@@ -1,3 +1,4 @@
+
 package org.bukkit;
 
 import com.google.common.collect.Maps;
