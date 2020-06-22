@@ -5,10 +5,15 @@ import java.util.regex.Pattern;
 
 
 /**
- * some Regular
- */
+ * DESC:
+ * some regular rules
+ * Cairerx(Wan Can guDinnerbone) 2020/6/22 8:46
+ *
+ **/
 public class RegularExpressionUtil
 {
+
+
     //pwd strong check
     public final static Pattern password = Pattern.compile("^(?=.*\\\\d)(?=.*[a-z])(?=.*[A-Z]).{8,10}$");
     //
