@@ -15,7 +15,7 @@
 [![](https://img.shields.io/bstats/servers/6762?label=bStats&style=for-the-badge)](https://bstats.org/plugin/server-implementation/Mohist/6762)
 [![](https://badges.crowdin.net/mohist/localized.svg)](https://crowdin.com/project/mohist)
 
-<a href="https://github.com/Mohist-Community/Mohist/blob/1.12.2/README-zh.md">中文</a> | <a href="https://github.com/Mohist-Community/Mohist/blob/1.12.2/README-fr.md">Français</a>
+<a href="https://github.com/Mohist-Community/Mohist/blob/1.12.2/README.md">English</a> | <a href="https://github.com/Mohist-Community/Mohist/blob/1.12.2/README-fr.md">Français</a>
 
 [![Mohist Stats](https://bstats.org/signatures/server-implementation/Mohist.svg)](https://bstats.org/plugin/server-implementation/Mohist/6762)
 [![Mohist Stats](https://bstats.org/signatures/bukkit/Mohist.svg)](https://bstats.org/plugin/bukkit/Mohist/3939)
@@ -51,7 +51,7 @@ Mohist服务端原所有者和开发者因个人原因暂时停止参与Mohist�
 ------
 本服务端需要 JRE 1.8.0作为前置及以后版本才可作为生产环境进行运行（推荐Oracle的JRE，第三方可能存在问题）
 
-[下载Mohist](https://ci.codemc.org/job/Mohist-Community/job/Mohist-1.12.2/) and place the server jar in an empty directory.
+[下载Mohist](https://ci.codemc.org/job/Mohist-Community/job/Mohist-1.12.2/) 然后把服务端JAR文件放入一个空目录当中.
 
 启动它需要如下代码（Demo）
 
