@@ -1,0 +1,23 @@
+--- a/net/minecraft/world/gen/feature/structure/ShipwreckStructure.java
++++ b/net/minecraft/world/gen/feature/structure/ShipwreckStructure.java
+@@ -5,6 +5,7 @@
+ import net.minecraft.util.Rotation;
+ import net.minecraft.util.math.BlockPos;
+ import net.minecraft.util.math.MutableBoundingBox;
++import net.minecraft.world.World;
+ import net.minecraft.world.biome.Biome;
+ import net.minecraft.world.gen.ChunkGenerator;
+ import net.minecraft.world.gen.feature.Feature;
+@@ -27,8 +28,10 @@
+       return ShipwreckStructure.Start::new;
+    }
+ 
+-   protected int func_202382_c() {
+-      return 165745295;
++   // Spigot start
++   protected int getSeedModifier(World world) {
++      return  world.spigotConfig.shipwreckSeed;
++      // Spigot end
+    }
+ 
+    protected int func_204030_a(ChunkGenerator<?> p_204030_1_) {

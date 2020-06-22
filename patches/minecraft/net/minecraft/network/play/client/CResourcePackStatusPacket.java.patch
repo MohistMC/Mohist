@@ -5,7 +5,7 @@
  
  public class CResourcePackStatusPacket implements IPacket<IServerPlayNetHandler> {
 -   private CResourcePackStatusPacket.Action field_179719_b;
-+   public CResourcePackStatusPacket.Action field_179719_b;
++   public CResourcePackStatusPacket.Action field_179719_b; // CraftBukkit private->public
  
     public CResourcePackStatusPacket() {
     }

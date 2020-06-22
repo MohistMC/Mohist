@@ -4,15 +4,14 @@
  import net.minecraft.util.math.MathHelper;
  import net.minecraft.util.math.Vec3d;
  import net.minecraft.world.World;
-+import org.bukkit.craftbukkit.event.CraftEventFactory;
++import org.bukkit.craftbukkit.v1_15_R1.event.CraftEventFactory;
  
  public class PigEntity extends AnimalEntity {
     private static final DataParameter<Boolean> field_184763_bv = EntityDataManager.func_187226_a(PigEntity.class, DataSerializers.field_187198_h);
-@@ -171,8 +172,13 @@
-          zombiepigmanentity.func_200203_b(this.func_200201_e());
+@@ -172,7 +173,13 @@
           zombiepigmanentity.func_174805_g(this.func_174833_aM());
        }
--
+ 
 -      this.field_70170_p.func_217376_c(zombiepigmanentity);
 +      // CraftBukkit start
 +      if (CraftEventFactory.callPigZapEvent(this, p_70077_1_, zombiepigmanentity).isCancelled()) {

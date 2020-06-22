@@ -33,8 +33,7 @@
  
 +   // CraftBukkit start
     public interface IFactory<T extends Container> {
--      @OnlyIn(Dist.CLIENT)
-+      // @OnlyIn(Dist.CLIENT)
+       @OnlyIn(Dist.CLIENT)
        T create(int p_create_1_, PlayerInventory p_create_2_);
     }
 +   // CraftBukkit end

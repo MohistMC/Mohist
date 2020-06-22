@@ -1,24 +1,47 @@
 --- a/net/minecraft/entity/passive/CowEntity.java
 +++ b/net/minecraft/entity/passive/CowEntity.java
-@@ -24,6 +24,9 @@
+@@ -1,19 +1,8 @@
+ package net.minecraft.entity.passive;
+ 
+ import net.minecraft.block.BlockState;
+-import net.minecraft.entity.AgeableEntity;
+-import net.minecraft.entity.EntitySize;
+-import net.minecraft.entity.EntityType;
+-import net.minecraft.entity.Pose;
+-import net.minecraft.entity.SharedMonsterAttributes;
+-import net.minecraft.entity.ai.goal.BreedGoal;
+-import net.minecraft.entity.ai.goal.FollowParentGoal;
+-import net.minecraft.entity.ai.goal.LookAtGoal;
+-import net.minecraft.entity.ai.goal.LookRandomlyGoal;
+-import net.minecraft.entity.ai.goal.PanicGoal;
+-import net.minecraft.entity.ai.goal.SwimGoal;
+-import net.minecraft.entity.ai.goal.TemptGoal;
+-import net.minecraft.entity.ai.goal.WaterAvoidingRandomWalkingGoal;
++import net.minecraft.entity.*;
++import net.minecraft.entity.ai.goal.*;
+ import net.minecraft.entity.player.PlayerEntity;
+ import net.minecraft.item.ItemStack;
+ import net.minecraft.item.Items;
+@@ -24,6 +13,9 @@
  import net.minecraft.util.SoundEvents;
  import net.minecraft.util.math.BlockPos;
  import net.minecraft.world.World;
-+import org.bukkit.craftbukkit.event.CraftEventFactory;
-+import org.bukkit.craftbukkit.inventory.CraftItemStack;
++import org.bukkit.craftbukkit.v1_15_R1.event.CraftEventFactory;
++import org.bukkit.craftbukkit.v1_15_R1.inventory.CraftItemStack;
 +import org.bukkit.event.player.PlayerBucketFillEvent;
  
  public class CowEntity extends AnimalEntity {
     public CowEntity(EntityType<? extends CowEntity> p_i48567_1_, World p_i48567_2_) {
-@@ -70,13 +73,20 @@
+@@ -70,13 +62,21 @@
     public boolean func_184645_a(PlayerEntity p_184645_1_, Hand p_184645_2_) {
        ItemStack itemstack = p_184645_1_.func_184586_b(p_184645_2_);
        if (itemstack.func_77973_b() == Items.field_151133_ar && !p_184645_1_.field_71075_bZ.field_75098_d && !this.func_70631_g_()) {
 +         // CraftBukkit start - Got milk?
 +         PlayerBucketFillEvent event = CraftEventFactory.callPlayerBucketFillEvent(p_184645_1_.field_70170_p, p_184645_1_, this.func_180425_c(), this.func_180425_c(), null, itemstack, Items.field_151117_aB);
-+         if (event.isCancelled()) {
++         if(event.isCancelled()){
 +            return false;
 +         }
++
 +         ItemStack result = CraftItemStack.asNMSCopy(event.getItemStack());
           p_184645_1_.func_184185_a(SoundEvents.field_187564_an, 1.0F, 1.0F);
           itemstack.func_190918_g(1);

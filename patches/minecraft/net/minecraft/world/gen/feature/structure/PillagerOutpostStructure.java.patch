@@ -1,0 +1,23 @@
+--- a/net/minecraft/world/gen/feature/structure/PillagerOutpostStructure.java
++++ b/net/minecraft/world/gen/feature/structure/PillagerOutpostStructure.java
+@@ -9,6 +9,7 @@
+ import net.minecraft.util.math.BlockPos;
+ import net.minecraft.util.math.ChunkPos;
+ import net.minecraft.util.math.MutableBoundingBox;
++import net.minecraft.world.World;
+ import net.minecraft.world.biome.Biome;
+ import net.minecraft.world.biome.BiomeManager;
+ import net.minecraft.world.gen.ChunkGenerator;
+@@ -66,8 +67,10 @@
+       return PillagerOutpostStructure.Start::new;
+    }
+ 
+-   protected int func_202382_c() {
+-      return 165745296;
++   // Spigot start
++   protected int getSeedModifier(World world) {
++      return  world.spigotConfig.outpostSeed;
++      // Spigot end
+    }
+ 
+    public static class Start extends MarginedStructureStart {

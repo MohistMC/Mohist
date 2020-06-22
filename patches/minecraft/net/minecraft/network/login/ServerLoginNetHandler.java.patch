@@ -1,14 +1,6 @@
 --- a/net/minecraft/network/login/ServerLoginNetHandler.java
 +++ b/net/minecraft/network/login/ServerLoginNetHandler.java
-@@ -8,6 +8,7 @@
- import java.net.SocketAddress;
- import java.security.PrivateKey;
- import java.util.Arrays;
-+import java.util.HashMap;
- import java.util.Random;
- import java.util.UUID;
- import java.util.concurrent.atomic.AtomicInteger;
-@@ -27,12 +28,17 @@
+@@ -27,10 +27,15 @@
  import net.minecraft.util.CryptManager;
  import net.minecraft.util.DefaultUncaughtExceptionHandler;
  import net.minecraft.util.text.ITextComponent;
@@ -17,16 +9,14 @@
  import org.apache.commons.lang3.Validate;
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
-+import org.bukkit.craftbukkit.util.Waitable;
++import org.bukkit.craftbukkit.v1_15_R1.util.Waitable;
++import org.bukkit.craftbukkit.v1_15_R1.CraftServer;
 +import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
 +import org.bukkit.event.player.PlayerPreLoginEvent;
  
  public class ServerLoginNetHandler implements IServerLoginNetHandler {
-+
     private static final AtomicInteger field_147331_b = new AtomicInteger(0);
-    private static final Logger field_147332_c = LogManager.getLogger();
-    private static final Random field_147329_d = new Random();
-@@ -45,6 +51,7 @@
+@@ -45,6 +50,7 @@
     private final String field_147334_j = "";
     private SecretKey field_147335_k;
     private ServerPlayerEntity field_181025_l;
@@ -34,7 +24,7 @@
  
     public ServerLoginNetHandler(MinecraftServer p_i45298_1_, NetworkManager p_i45298_2_) {
        this.field_147327_f = p_i45298_1_;
-@@ -53,7 +60,13 @@
+@@ -53,7 +59,13 @@
     }
  
     public void func_73660_a() {
@@ -49,7 +39,7 @@
           this.func_147326_c();
        } else if (this.field_147328_g == ServerLoginNetHandler.State.DELAY_ACCEPT) {
           ServerPlayerEntity serverplayerentity = this.field_147327_f.func_184103_al().func_177451_a(this.field_147337_i.getId());
-@@ -70,6 +83,21 @@
+@@ -70,6 +82,21 @@
  
     }
  
@@ -71,9 +61,43 @@
     public NetworkManager func_147298_b() {
        return this.field_147333_a;
     }
-@@ -90,9 +118,11 @@
-          this.field_147337_i = this.func_152506_a(this.field_147337_i);
+@@ -85,14 +112,43 @@
+ 
+    }
+ 
++   // Spigot start
++   public void initUUID() {
++      UUID uuid;
++      if ( field_147333_a.spoofedUUID != null )
++      {
++         uuid = field_147333_a.spoofedUUID;
++      } else
++      {
++         uuid = PlayerEntity.func_175147_b( this.field_147337_i.getName() );
++      }
++
++      this.field_147337_i = new GameProfile(uuid, this.field_147337_i.getName());
++
++      if (field_147333_a.spoofedProfile != null)
++      {
++         for ( com.mojang.authlib.properties.Property property : field_147333_a.spoofedProfile )
++         {
++            this.field_147337_i.getProperties().put( property.getName(), property );
++         }
++      }
++   }
++   // Spigot end
++
+    public void func_147326_c() {
+-      if (!this.field_147337_i.isComplete()) {
+-         this.field_147337_i = this.func_152506_a(this.field_147337_i);
++      // Spigot start - Moved to initUUID
++      /*
++      if (!this.loginGameProfile.isComplete()) {
++         this.loginGameProfile = this.getOfflineProfile(this.loginGameProfile);
        }
++       */
++      // Spigot end
  
 -      ITextComponent itextcomponent = this.field_147327_f.func_184103_al().func_206258_a(this.field_147333_a.func_74430_c(), this.field_147337_i);
 -      if (itextcomponent != null) {
@@ -86,7 +110,7 @@
        } else {
           this.field_147328_g = ServerLoginNetHandler.State.ACCEPTED;
           if (this.field_147327_f.func_175577_aI() >= 0 && !this.field_147333_a.func_150731_c()) {
-@@ -105,9 +135,9 @@
+@@ -105,9 +161,9 @@
           ServerPlayerEntity serverplayerentity = this.field_147327_f.func_184103_al().func_177451_a(this.field_147337_i.getId());
           if (serverplayerentity != null) {
              this.field_147328_g = ServerLoginNetHandler.State.DELAY_ACCEPT;
@@ -98,16 +122,30 @@
           }
        }
  
-@@ -128,7 +158,7 @@
+@@ -128,7 +184,21 @@
           this.field_147328_g = ServerLoginNetHandler.State.KEY;
           this.field_147333_a.func_179290_a(new SEncryptionRequestPacket("", this.field_147327_f.func_71250_E().getPublic(), this.field_147330_e));
        } else {
 -         this.field_147328_g = ServerLoginNetHandler.State.READY_TO_ACCEPT;
 +         this.field_147328_g = ServerLoginNetHandler.State.NEGOTIATING;
++         // Spigot start
++         new Thread("User Authenticator #" + field_147331_b.incrementAndGet()) {
++            @Override
++            public void run() {
++               try {
++                  initUUID();
++                  new LoginHandler().fireEvents();
++               } catch (Exception ex) {
++                  disconnect("Failed to verify username!");
++                  field_147327_f.server.getLogger().log(java.util.logging.Level.WARNING, "Exception verifying " + field_147337_i.getName(), ex);
++               }
++            }
++         }.start();
++         // Spigot end
        }
  
     }
-@@ -142,7 +172,7 @@
+@@ -142,20 +212,24 @@
           this.field_147335_k = p_147315_1_.func_149300_a(privatekey);
           this.field_147328_g = ServerLoginNetHandler.State.AUTHENTICATING;
           this.field_147333_a.func_150727_a(this.field_147335_k);
@@ -116,50 +154,19 @@
              public void run() {
                 GameProfile gameprofile = ServerLoginNetHandler.this.field_147337_i;
  
-@@ -150,12 +180,49 @@
+                try {
                    String s = (new BigInteger(CryptManager.func_75895_a("", ServerLoginNetHandler.this.field_147327_f.func_71250_E().getPublic(), ServerLoginNetHandler.this.field_147335_k))).toString(16);
-                   ServerLoginNetHandler.this.field_147337_i = ServerLoginNetHandler.this.field_147327_f.func_147130_as().hasJoinedServer(new GameProfile((UUID)null, gameprofile.getName()), s, this.func_191235_a());
+-                  ServerLoginNetHandler.this.field_147337_i = ServerLoginNetHandler.this.field_147327_f.func_147130_as().hasJoinedServer(new GameProfile((UUID)null, gameprofile.getName()), s, this.func_191235_a());
++                  ServerLoginNetHandler.this.field_147337_i = ServerLoginNetHandler.this.field_147327_f.func_147130_as().hasJoinedServer(new GameProfile((UUID)null, gameprofile.getName()), s, this.getAddress());
                    if (ServerLoginNetHandler.this.field_147337_i != null) {
+-                     ServerLoginNetHandler.field_147332_c.info("UUID of player {} is {}", ServerLoginNetHandler.this.field_147337_i.getName(), ServerLoginNetHandler.this.field_147337_i.getId());
+-                     ServerLoginNetHandler.this.field_147328_g = ServerLoginNetHandler.State.READY_TO_ACCEPT;
 +                     // CraftBukkit start - fire PlayerPreLoginEvent
 +                     if (!field_147333_a.func_150724_d()) {
 +                        return;
 +                     }
 +
-+                     String playerName = field_147337_i.getName();
-+                     java.net.InetAddress address = ((java.net.InetSocketAddress) field_147333_a.func_74430_c()).getAddress();
-+                     java.util.UUID uniqueId = field_147337_i.getId();
-+                     final org.bukkit.craftbukkit.CraftServer server = ServerLoginNetHandler.this.field_147327_f.server;
-+
-+                     AsyncPlayerPreLoginEvent asyncEvent = new AsyncPlayerPreLoginEvent(playerName, address, uniqueId);
-+                     server.getPluginManager().callEvent(asyncEvent);
-+
-+                     if (PlayerPreLoginEvent.getHandlerList().getRegisteredListeners().length != 0) {
-+                        final PlayerPreLoginEvent event = new PlayerPreLoginEvent(playerName, address, uniqueId);
-+                        if (asyncEvent.getResult() != PlayerPreLoginEvent.Result.ALLOWED) {
-+                           event.disallow(asyncEvent.getResult(), asyncEvent.getKickMessage());
-+                        }
-+                        Waitable<PlayerPreLoginEvent.Result> waitable = new Waitable<PlayerPreLoginEvent.Result>() {
-+                           @Override
-+                           protected PlayerPreLoginEvent.Result evaluate() {
-+                              server.getPluginManager().callEvent(event);
-+                              return event.getResult();
-+                           }};
-+
-+                        ServerLoginNetHandler.this.field_147327_f.processQueue.add(waitable);
-+                        if (waitable.get() != PlayerPreLoginEvent.Result.ALLOWED) {
-+                           disconnect(event.getKickMessage());
-+                           return;
-+                        }
-+                     } else {
-+                        if (asyncEvent.getLoginResult() != AsyncPlayerPreLoginEvent.Result.ALLOWED) {
-+                           disconnect(asyncEvent.getKickMessage());
-+                           return;
-+                        }
-+                     }
-+                     // CraftBukkit end
-                      ServerLoginNetHandler.field_147332_c.info("UUID of player {} is {}", ServerLoginNetHandler.this.field_147337_i.getName(), ServerLoginNetHandler.this.field_147337_i.getId());
--                     ServerLoginNetHandler.this.field_147328_g = ServerLoginNetHandler.State.READY_TO_ACCEPT;
-+                     ServerLoginNetHandler.this.field_147328_g = ServerLoginNetHandler.State.NEGOTIATING;
++                     new LoginHandler().fireEvents();
                    } else if (ServerLoginNetHandler.this.field_147327_f.func_71264_H()) {
                       ServerLoginNetHandler.field_147332_c.warn("Failed to verify username but will let them in anyway!");
                       ServerLoginNetHandler.this.field_147337_i = ServerLoginNetHandler.this.func_152506_a(gameprofile);
@@ -168,7 +175,7 @@
                    } else {
                       ServerLoginNetHandler.this.func_194026_b(new TranslationTextComponent("multiplayer.disconnect.unverified_username"));
                       ServerLoginNetHandler.field_147332_c.error("Username '{}' tried to join with an invalid session", (Object)gameprofile.getName());
-@@ -164,11 +231,16 @@
+@@ -164,17 +238,22 @@
                    if (ServerLoginNetHandler.this.field_147327_f.func_71264_H()) {
                       ServerLoginNetHandler.field_147332_c.warn("Authentication servers are down but will let them in anyway!");
                       ServerLoginNetHandler.this.field_147337_i = ServerLoginNetHandler.this.func_152506_a(gameprofile);
@@ -186,9 +193,55 @@
                 }
  
              }
-@@ -185,6 +257,7 @@
+ 
+             @Nullable
+-            private InetAddress func_191235_a() {
++            private InetAddress getAddress() {
+                SocketAddress socketaddress = ServerLoginNetHandler.this.field_147333_a.func_74430_c();
+                return ServerLoginNetHandler.this.field_147327_f.func_190518_ac() && socketaddress instanceof InetSocketAddress ? ((InetSocketAddress)socketaddress).getAddress() : null;
+             }
+@@ -184,7 +263,46 @@
+       }
     }
  
++   // Spigot start
++   public class LoginHandler {
++      public void fireEvents() throws Exception {
++         String playerName = field_147337_i.getName();
++         java.net.InetAddress address = ((java.net.InetSocketAddress) field_147333_a.func_74430_c()).getAddress();
++         java.util.UUID uniqueId = field_147337_i.getId();
++         final CraftServer server = ServerLoginNetHandler.this.field_147327_f.server;
++         AsyncPlayerPreLoginEvent asyncEvent = new AsyncPlayerPreLoginEvent(playerName, address, uniqueId);
++         server.getPluginManager().callEvent(asyncEvent);
++         if (PlayerPreLoginEvent.getHandlerList().getRegisteredListeners().length != 0) {
++            final PlayerPreLoginEvent event = new PlayerPreLoginEvent(playerName, address, uniqueId);
++            if (asyncEvent.getResult() != PlayerPreLoginEvent.Result.ALLOWED) {
++               event.disallow(asyncEvent.getResult(), asyncEvent.getKickMessage());
++            }
++            Waitable<PlayerPreLoginEvent.Result> waitable = new Waitable<PlayerPreLoginEvent.Result>() {
++               @Override
++               protected PlayerPreLoginEvent.Result evaluate() {
++                  server.getPluginManager().callEvent(event);
++                  return event.getResult();
++               }};
++            ServerLoginNetHandler.this.field_147327_f.processQueue.add(waitable);
++            if (waitable.get() != PlayerPreLoginEvent.Result.ALLOWED) {
++               disconnect(event.getKickMessage());
++               return;
++            }
++         } else {
++            if (asyncEvent.getLoginResult() != AsyncPlayerPreLoginEvent.Result.ALLOWED) {
++               disconnect(asyncEvent.getKickMessage());
++               return;
++            }
++         }
++         // CraftBukkit end
++         ServerLoginNetHandler.field_147332_c.info("UUID of player {} is {}", ServerLoginNetHandler.this.field_147337_i.getName(), ServerLoginNetHandler.this.field_147337_i.getId());
++         ServerLoginNetHandler.this.field_147328_g = State.READY_TO_ACCEPT;
++      }
++   }
++   // Spigot end
++
     public void func_209526_a(CCustomPayloadLoginPacket p_209526_1_) {
 +      if (!net.minecraftforge.fml.network.NetworkHooks.onCustomPayload(p_209526_1_, this.field_147333_a))
        this.func_194026_b(new TranslationTextComponent("multiplayer.disconnect.unexpected_query_response"));

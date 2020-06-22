@@ -1,6 +1,19 @@
 --- a/net/minecraft/command/impl/SpreadPlayersCommand.java
 +++ b/net/minecraft/command/impl/SpreadPlayersCommand.java
-@@ -26,6 +26,8 @@
+@@ -7,11 +7,7 @@
+ import com.mojang.brigadier.arguments.FloatArgumentType;
+ import com.mojang.brigadier.exceptions.CommandSyntaxException;
+ import com.mojang.brigadier.exceptions.Dynamic4CommandExceptionType;
+-import java.util.Collection;
+-import java.util.Locale;
+-import java.util.Map;
+-import java.util.Random;
+-import java.util.Set;
++import java.util.*;
+ import net.minecraft.block.BlockState;
+ import net.minecraft.block.material.Material;
+ import net.minecraft.command.CommandSource;
+@@ -26,6 +22,8 @@
  import net.minecraft.util.math.Vec2f;
  import net.minecraft.util.text.TranslationTextComponent;
  import net.minecraft.world.IBlockReader;
@@ -9,7 +22,7 @@
  import net.minecraft.world.server.ServerWorld;
  
  public class SpreadPlayersCommand {
-@@ -242,7 +244,7 @@
+@@ -242,7 +240,7 @@
  
           while(blockpos.func_177956_o() > 0) {
              blockpos = blockpos.func_177977_b();
@@ -18,14 +31,23 @@
                 return blockpos.func_177956_o() + 1;
              }
           }
-@@ -269,5 +271,12 @@
+@@ -255,7 +253,7 @@
+ 
+          while(blockpos.func_177956_o() > 0) {
+             blockpos = blockpos.func_177977_b();
+-            BlockState blockstate = p_198706_1_.func_180495_p(blockpos);
++            BlockState blockstate = getType(p_198706_1_, blockpos);
+             if (!blockstate.func_196958_f()) {
+                Material material = blockstate.func_185904_a();
+                return !material.func_76224_d() && material != Material.field_151581_o;
+@@ -269,5 +267,12 @@
           this.field_198713_a = MathHelper.func_82716_a(p_198711_1_, p_198711_2_, p_198711_6_);
           this.field_198714_b = MathHelper.func_82716_a(p_198711_1_, p_198711_4_, p_198711_8_);
        }
 +
 +      // CraftBukkit start - add a version of getType which force loads chunks
 +      private static BlockState getType(IBlockReader iblockaccess, BlockPos position) {
-+         ((ServerChunkProvider)((World)iblockaccess).func_72863_F()).func_217205_a(position.func_177958_n() >> 4, position.func_177952_p() >> 4, true);
++         ((ServerChunkProvider) ((World) iblockaccess).field_73020_y).func_217205_a(position.func_177958_n() >> 4, position.func_177952_p() >> 4, true);
 +         return iblockaccess.func_180495_p(position);
 +      }
 +      // CraftBukkit end

@@ -1,12 +1,12 @@
 --- a/net/minecraft/util/DamageSource.java
 +++ b/net/minecraft/util/DamageSource.java
-@@ -44,7 +44,19 @@
-    private boolean field_82730_x;
+@@ -45,6 +45,19 @@
     private boolean field_76378_k;
     public final String field_76373_n;
+ 
 +   // CraftBukkit start
 +   private boolean sweep;
- 
++
 +   public boolean isSweep() {
 +      return sweep;
 +   }

@@ -1,0 +1,13 @@
+--- a/net/minecraft/util/EntityDamageSource.java
++++ b/net/minecraft/util/EntityDamageSource.java
+@@ -47,4 +47,10 @@
+    public Vec3d func_188404_v() {
+       return this.field_76386_o != null ? this.field_76386_o.func_213303_ch() : null;
+    }
++
++   // CraftBukkit start
++   public Entity getProximateDamageSource() {
++      return super.func_76346_g();
++   }
++   // CraftBukkit end
+ }

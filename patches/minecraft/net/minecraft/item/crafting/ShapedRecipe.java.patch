@@ -1,13 +1,12 @@
 --- a/net/minecraft/item/crafting/ShapedRecipe.java
 +++ b/net/minecraft/item/crafting/ShapedRecipe.java
-@@ -20,8 +20,26 @@
+@@ -20,8 +20,25 @@
  import net.minecraft.util.ResourceLocation;
  import net.minecraft.util.registry.Registry;
  import net.minecraft.world.World;
-+import org.bukkit.craftbukkit.inventory.CraftItemStack;
-+import org.bukkit.craftbukkit.inventory.CraftRecipe;
-+import org.bukkit.craftbukkit.inventory.CraftShapedRecipe;
-+import org.bukkit.inventory.Recipe;
++import org.bukkit.craftbukkit.v1_15_R1.inventory.CraftItemStack;
++import org.bukkit.craftbukkit.v1_15_R1.inventory.CraftRecipe;
++import org.bukkit.craftbukkit.v1_15_R1.inventory.CraftShapedRecipe;
 +import org.bukkit.inventory.RecipeChoice;
  
 -public class ShapedRecipe implements ICraftingRecipe {
@@ -28,7 +27,7 @@
     private final int field_77576_b;
     private final int field_77577_c;
     private final NonNullList<Ingredient> field_77574_d;
-@@ -38,6 +56,78 @@
+@@ -38,6 +55,78 @@
        this.field_77575_e = p_i48162_6_;
     }
  
@@ -107,7 +106,7 @@
     public ResourceLocation func_199560_c() {
        return this.field_199561_e;
     }
-@@ -109,10 +199,20 @@
+@@ -109,10 +198,20 @@
        return this.field_77576_b;
     }
  
@@ -128,7 +127,7 @@
     private static NonNullList<Ingredient> func_192402_a(String[] p_192402_0_, Map<String, Ingredient> p_192402_1_, int p_192402_2_, int p_192402_3_) {
        NonNullList<Ingredient> nonnulllist = NonNullList.func_191197_a(p_192402_2_ * p_192402_3_, Ingredient.field_193370_a);
        Set<String> set = Sets.newHashSet(p_192402_1_.keySet());
-@@ -194,15 +294,15 @@
+@@ -194,15 +293,15 @@
  
     private static String[] func_192407_a(JsonArray p_192407_0_) {
        String[] astring = new String[p_192407_0_.size()];
@@ -148,7 +147,7 @@
              }
  
              if (i > 0 && astring[0].length() != s.length()) {
-@@ -244,11 +344,12 @@
+@@ -244,11 +343,12 @@
           throw new JsonParseException("Disallowed data tag found");
        } else {
           int i = JSONUtils.func_151208_a(p_199798_0_, "count", 1);

@@ -4,14 +4,15 @@
  import net.minecraft.util.math.AxisAlignedBB;
  import net.minecraft.util.math.BlockPos;
  import net.minecraft.world.World;
-+import org.bukkit.event.hanging.HangingPlaceEvent; // CraftBukkit
++import org.bukkit.event.hanging.HangingPlaceEvent;
  
  public class LeadItem extends Item {
     public LeadItem(Item.Properties p_i48484_1_) {
-@@ -43,8 +44,18 @@
+@@ -43,7 +44,19 @@
           if (mobentity.func_110166_bE() == p_226641_0_) {
              if (leashknotentity == null) {
                 leashknotentity = LeashKnotEntity.func_213855_a(p_226641_1_, p_226641_2_);
++
 +               // CraftBukkit start - fire HangingPlaceEvent
 +               HangingPlaceEvent event = new HangingPlaceEvent((org.bukkit.entity.Hanging)leashknotentity.getBukkitEntity(), (p_226641_0_ != null) ? ((org.bukkit.entity.Player)p_226641_0_.getBukkitEntity()) : null, p_226641_1_.getWorldCB().getBlockAt(i, j, k), org.bukkit.block.BlockFace.SELF);
 +               p_226641_1_.getServerCB().getPluginManager().callEvent(event);
@@ -20,11 +21,10 @@
 +                  return ActionResultType.PASS;
 +               }
              }
--
-+            if (org.bukkit.craftbukkit.event.CraftEventFactory.callPlayerLeashEntityEvent(mobentity, leashknotentity, p_226641_0_).isCancelled()) {
++            if (org.bukkit.craftbukkit.v1_15_R1.event.CraftEventFactory.callPlayerLeashEntityEvent(mobentity, leashknotentity, p_226641_0_).isCancelled()) {
 +               continue;
 +            }
 +            // CraftBukkit end
+ 
              mobentity.func_110162_b(leashknotentity, true);
              flag = true;
-          }

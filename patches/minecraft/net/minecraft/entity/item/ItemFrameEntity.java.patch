@@ -5,11 +5,11 @@
     }
  
 -   protected void func_174859_a(Direction p_174859_1_) {
-+   public void func_174859_a(Direction p_174859_1_) {
++   public void func_174859_a(Direction p_174859_1_) { // protected->public CraftBukkit
        Validate.notNull(p_174859_1_);
        this.field_174860_b = p_174859_1_;
        if (p_174859_1_.func_176740_k().func_176722_c()) {
-@@ -75,16 +75,25 @@
+@@ -75,15 +75,24 @@
  
     protected void func_174856_o() {
        if (this.field_174860_b != null) {
@@ -22,7 +22,6 @@
 -         double d5 = (double)this.func_82330_g();
 -         double d6 = (double)this.func_82329_d();
 -         Direction.Axis direction$axis = this.field_174860_b.func_176740_k();
--         switch(direction$axis) {
 +         // CraftBukkit start code moved in to calculateBoundingBox
 +         this.func_174826_a(calculateBoundingBox(this, this.field_174861_a, this.field_174860_b, this.func_82329_d(), this.func_82330_g()));
 +      }
@@ -41,43 +40,34 @@
 +      double d5 = height;
 +      double d6 = width;
 +      final Direction.Axis direction$axis = direction.func_176740_k();
-+      switch(direction$axis) {
+          switch(direction$axis) {
           case X:
              d4 = 1.0D;
-             break;
-@@ -93,14 +102,13 @@
-             break;
-          case Z:
-             d6 = 1.0D;
--         }
--
--         d4 = d4 / 32.0D;
--         d5 = d5 / 32.0D;
--         d6 = d6 / 32.0D;
+@@ -98,9 +107,9 @@
+          d4 = d4 / 32.0D;
+          d5 = d5 / 32.0D;
+          d6 = d6 / 32.0D;
 -         this.func_174826_a(new AxisAlignedBB(d1 - d4, d2 - d5, d3 - d6, d1 + d4, d2 + d5, d3 + d6));
-       }
-+      d4 = d4 / 32.0D;
-+      d5 = d5 / 32.0D;
-+      d6 = d6 / 32.0D;
 +         return new AxisAlignedBB(d1 - d4, d2 - d5, d3 - d6, d1 + d4, d2 + d5, d3 + d6);
-    }
+       }
+-   }
 +   // CraftBukkit end
  
     public boolean func_70518_d() {
        if (!this.field_70170_p.func_226669_j_(this)) {
-@@ -125,6 +133,11 @@
+@@ -125,6 +134,11 @@
           return false;
        } else if (!p_70097_1_.func_94541_c() && !this.func_82335_i().func_190926_b()) {
           if (!this.field_70170_p.field_72995_K) {
 +            // CraftBukkit start - fire EntityDamageEvent
-+            if (org.bukkit.craftbukkit.event.CraftEventFactory.handleNonLivingEntityDamageEvent(this, p_70097_1_, p_70097_2_, false) || this.field_70128_L) {
++            if (org.bukkit.craftbukkit.v1_15_R1.event.CraftEventFactory.handleNonLivingEntityDamageEvent(this, p_70097_1_, p_70097_2_, false) || this.field_70128_L) {
 +               return true;
 +            }
 +            // CraftBukkit end
              this.func_146065_b(p_70097_1_.func_76346_g(), false);
              this.func_184185_a(SoundEvents.field_187629_cO, 1.0F, 1.0F);
           }
-@@ -192,7 +205,7 @@
+@@ -192,7 +206,7 @@
     }
  
     private void func_110131_b(ItemStack p_110131_1_) {
@@ -86,7 +76,7 @@
           MapData mapdata = FilledMapItem.func_195950_a(p_110131_1_, this.field_70170_p);
           mapdata.func_212441_a(this.field_174861_a, this.func_145782_y());
           mapdata.func_76186_a(true);
-@@ -210,14 +223,24 @@
+@@ -210,14 +224,24 @@
     }
  
     public void func_174864_a(ItemStack p_174864_1_, boolean p_174864_2_) {

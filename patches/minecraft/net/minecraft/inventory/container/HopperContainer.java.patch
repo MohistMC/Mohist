@@ -1,11 +1,11 @@
 --- a/net/minecraft/inventory/container/HopperContainer.java
 +++ b/net/minecraft/inventory/container/HopperContainer.java
-@@ -5,10 +5,28 @@
+@@ -5,10 +5,18 @@
  import net.minecraft.inventory.IInventory;
  import net.minecraft.inventory.Inventory;
  import net.minecraft.item.ItemStack;
-+import org.bukkit.craftbukkit.inventory.CraftInventory;
-+import org.bukkit.craftbukkit.inventory.CraftInventoryView;
++import org.bukkit.craftbukkit.v1_15_R1.inventory.CraftInventory;
++import org.bukkit.craftbukkit.v1_15_R1.inventory.CraftInventoryView;
 +import org.bukkit.inventory.InventoryView;
  
  public class HopperContainer extends Container {
@@ -14,9 +14,26 @@
 +   // CraftBukkit start
 +   private CraftInventoryView bukkitEntity = null;
 +   private PlayerInventory player;
++   // CraftBukkit stop
 +
+    public HopperContainer(int p_i50078_1_, PlayerInventory p_i50078_2_) {
+       this(p_i50078_1_, p_i50078_2_, new Inventory(5));
+    }
+@@ -16,6 +24,7 @@
+    public HopperContainer(int p_i50079_1_, PlayerInventory p_i50079_2_, IInventory p_i50079_3_) {
+       super(ContainerType.field_221522_p, p_i50079_1_);
+       this.field_94538_a = p_i50079_3_;
++      this.player = p_i50079_2_; // CraftBukkit - save player
+       func_216962_a(p_i50079_3_, 5);
+       p_i50079_3_.func_174889_b(p_i50079_2_.field_70458_d);
+       int i = 51;
+@@ -36,7 +45,20 @@
+ 
+    }
+ 
++   // CraftBukkit start
 +   @Override
-+   public CraftInventoryView getBukkitView() {
++   public InventoryView getBukkitView() {
 +      if (bukkitEntity != null) {
 +         return bukkitEntity;
 +      }
@@ -26,26 +43,8 @@
 +   }
 +   // CraftBukkit end
 +
-    public HopperContainer(int p_i50078_1_, PlayerInventory p_i50078_2_) {
-       this(p_i50078_1_, p_i50078_2_, new Inventory(5));
-    }
-@@ -16,6 +34,7 @@
-    public HopperContainer(int p_i50079_1_, PlayerInventory p_i50079_2_, IInventory p_i50079_3_) {
-       super(ContainerType.field_221522_p, p_i50079_1_);
-       this.field_94538_a = p_i50079_3_;
-+      this.player = p_i50079_2_; // CraftBukkit - save player
-       func_216962_a(p_i50079_3_, 5);
-       p_i50079_3_.func_174889_b(p_i50079_2_.field_70458_d);
-       int i = 51;
-@@ -37,9 +56,11 @@
-    }
- 
     public boolean func_75145_c(PlayerEntity p_75145_1_) {
 +      if (!this.checkReachable) return true; // CraftBukkit
        return this.field_94538_a.func_70300_a(p_75145_1_);
     }
  
-+
-    public ItemStack func_82846_b(PlayerEntity p_82846_1_, int p_82846_2_) {
-       ItemStack itemstack = ItemStack.field_190927_a;
-       Slot slot = this.field_75151_b.get(p_82846_2_);

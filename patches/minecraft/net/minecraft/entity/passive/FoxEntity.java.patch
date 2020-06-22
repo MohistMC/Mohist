@@ -1,45 +1,111 @@
 --- a/net/minecraft/entity/passive/FoxEntity.java
 +++ b/net/minecraft/entity/passive/FoxEntity.java
-@@ -83,8 +83,8 @@
+@@ -1,13 +1,7 @@
+ package net.minecraft.entity.passive;
+ 
+ import com.google.common.collect.Lists;
+-import java.util.Arrays;
+-import java.util.Comparator;
+-import java.util.EnumSet;
+-import java.util.List;
+-import java.util.Map;
+-import java.util.Optional;
+-import java.util.UUID;
++import java.util.*;
+ import java.util.function.Predicate;
+ import java.util.stream.Collectors;
+ import javax.annotation.Nullable;
+@@ -16,31 +10,10 @@
+ import net.minecraft.block.BlockState;
+ import net.minecraft.block.Blocks;
+ import net.minecraft.block.SweetBerryBushBlock;
+-import net.minecraft.entity.AgeableEntity;
+-import net.minecraft.entity.Entity;
+-import net.minecraft.entity.EntityPredicate;
+-import net.minecraft.entity.EntitySize;
+-import net.minecraft.entity.EntityType;
+-import net.minecraft.entity.ILivingEntityData;
+-import net.minecraft.entity.LivingEntity;
+-import net.minecraft.entity.MobEntity;
+-import net.minecraft.entity.Pose;
+-import net.minecraft.entity.SharedMonsterAttributes;
+-import net.minecraft.entity.SpawnReason;
++import net.minecraft.entity.*;
+ import net.minecraft.entity.ai.controller.LookController;
+ import net.minecraft.entity.ai.controller.MovementController;
+-import net.minecraft.entity.ai.goal.AvoidEntityGoal;
+-import net.minecraft.entity.ai.goal.BreedGoal;
+-import net.minecraft.entity.ai.goal.FleeSunGoal;
+-import net.minecraft.entity.ai.goal.FollowParentGoal;
+-import net.minecraft.entity.ai.goal.Goal;
+-import net.minecraft.entity.ai.goal.LeapAtTargetGoal;
+-import net.minecraft.entity.ai.goal.LookAtGoal;
+-import net.minecraft.entity.ai.goal.MeleeAttackGoal;
+-import net.minecraft.entity.ai.goal.MoveThroughVillageAtNightGoal;
+-import net.minecraft.entity.ai.goal.MoveToBlockGoal;
+-import net.minecraft.entity.ai.goal.NearestAttackableTargetGoal;
+-import net.minecraft.entity.ai.goal.WaterAvoidingRandomWalkingGoal;
++import net.minecraft.entity.ai.goal.*;
+ import net.minecraft.entity.item.ExperienceOrbEntity;
+ import net.minecraft.entity.item.ItemEntity;
+ import net.minecraft.entity.monster.MonsterEntity;
+@@ -69,22 +42,21 @@
+ import net.minecraft.util.math.BlockPos;
+ import net.minecraft.util.math.MathHelper;
+ import net.minecraft.util.math.Vec3d;
+-import net.minecraft.world.DifficultyInstance;
+-import net.minecraft.world.GameRules;
+-import net.minecraft.world.IWorld;
+-import net.minecraft.world.IWorldReader;
+-import net.minecraft.world.World;
++import net.minecraft.world.*;
+ import net.minecraft.world.biome.Biome;
+ import net.minecraft.world.biome.Biomes;
+ import net.minecraft.world.server.ServerWorld;
+ import net.minecraftforge.api.distmarker.Dist;
+ import net.minecraftforge.api.distmarker.OnlyIn;
++import org.bukkit.craftbukkit.v1_15_R1.event.CraftEventFactory;
++import org.bukkit.event.entity.CreatureSpawnEvent;
++import org.bukkit.event.entity.EntityTargetEvent.TargetReason;
+ 
  public class FoxEntity extends AnimalEntity {
     private static final DataParameter<Integer> field_213523_bz = EntityDataManager.func_187226_a(FoxEntity.class, DataSerializers.field_187192_b);
     private static final DataParameter<Byte> field_213524_bA = EntityDataManager.func_187226_a(FoxEntity.class, DataSerializers.field_187191_a);
 -   private static final DataParameter<Optional<UUID>> field_213509_bB = EntityDataManager.func_187226_a(FoxEntity.class, DataSerializers.field_187203_m);
 -   private static final DataParameter<Optional<UUID>> field_213510_bD = EntityDataManager.func_187226_a(FoxEntity.class, DataSerializers.field_187203_m);
-+   public static final DataParameter<Optional<UUID>> field_213509_bB = EntityDataManager.func_187226_a(FoxEntity.class, DataSerializers.field_187203_m);
-+   public static final DataParameter<Optional<UUID>> field_213510_bD = EntityDataManager.func_187226_a(FoxEntity.class, DataSerializers.field_187203_m);
++   public static final DataParameter<Optional<UUID>> field_213509_bB = EntityDataManager.func_187226_a(FoxEntity.class, DataSerializers.field_187203_m); // private->public CraftBukkit
++   public static final DataParameter<Optional<UUID>> field_213510_bD = EntityDataManager.func_187226_a(FoxEntity.class, DataSerializers.field_187203_m); // private->public CraftBukkit
     private static final Predicate<ItemEntity> field_213511_bE = (p_213489_0_) -> {
        return !p_213489_0_.func_174874_s() && p_213489_0_.func_70089_S();
     };
-@@ -320,7 +320,7 @@
+@@ -320,7 +292,7 @@
        return FoxEntity.Type.func_221080_a(this.field_70180_af.func_187225_a(field_213523_bz));
     }
  
 -   private void func_213474_a(FoxEntity.Type p_213474_1_) {
-+   public void func_213474_a(FoxEntity.Type p_213474_1_) {
++   public void func_213474_a(FoxEntity.Type p_213474_1_) { // private->public CraftBukkit
        this.field_70180_af.func_187227_b(field_213523_bz, p_213474_1_.func_221083_c());
     }
  
-@@ -401,7 +401,7 @@
+@@ -401,7 +373,7 @@
        return this.func_213507_r(32);
     }
  
 -   private void func_213485_x(boolean p_213485_1_) {
-+   public void func_213485_x(boolean p_213485_1_) {
++   public void func_213485_x(boolean p_213485_1_) { // private->public CraftBukkit
        this.func_213505_d(32, p_213485_1_);
     }
  
-@@ -450,7 +450,8 @@
+@@ -450,7 +422,7 @@
  
     protected void func_175445_a(ItemEntity p_175445_1_) {
        ItemStack itemstack = p_175445_1_.func_92059_d();
 -      if (this.func_175448_a(itemstack)) {
-+      // if (this.canEquipItem(itemstack)) {
-+      if (!org.bukkit.craftbukkit.event.CraftEventFactory.callEntityPickupItemEvent(this, p_175445_1_, itemstack.func_190916_E() - 1, !this.func_175448_a(itemstack)).isCancelled()) { // CraftBukkit - call EntityPickupItemEvent
++      if (!CraftEventFactory.callEntityPickupItemEvent(this, p_175445_1_, itemstack.func_190916_E() -1, this.func_175448_a(itemstack)).isCancelled()) { // CraftBukkit - call EntityPickupItemEvent
           int i = itemstack.func_190916_E();
           if (i > 1) {
              this.func_213486_l(itemstack.func_77979_a(i - 1));
-@@ -747,11 +748,16 @@
+@@ -747,11 +719,16 @@
        }
  
        protected void func_220730_m() {
@@ -50,35 +116,35 @@
                 int i = blockstate.func_177229_b(SweetBerryBushBlock.field_220125_a);
                 blockstate.func_206870_a(SweetBerryBushBlock.field_220125_a, Integer.valueOf(1));
 +               // CraftBukkit start - call EntityChangeBlockEvent
-+               if (org.bukkit.craftbukkit.event.CraftEventFactory.callEntityChangeBlockEvent(FoxEntity.this, this.field_179494_b, blockstate.func_206870_a(SweetBerryBushBlock.field_220125_a, 1)).isCancelled()) {
++               if (org.bukkit.craftbukkit.v1_15_R1.event.CraftEventFactory.callEntityChangeBlockEvent(FoxEntity.this, this.field_179494_b, blockstate.func_206870_a(SweetBerryBushBlock.field_220125_a, Integer.valueOf(1))).isCancelled()) {
 +                  return;
 +               }
 +               // CraftBukkit end
                 int j = 1 + FoxEntity.this.field_70170_p.field_73012_v.nextInt(2) + (i == 3 ? 1 : 0);
                 ItemStack itemstack = FoxEntity.this.func_184582_a(EquipmentSlotType.MAINHAND);
                 if (itemstack.func_190926_b()) {
-@@ -999,7 +1005,14 @@
-             if (serverplayerentity1 != null && serverplayerentity != serverplayerentity1) {
+@@ -1000,6 +977,15 @@
                 foxentity.func_213465_b(serverplayerentity1.func_110124_au());
              }
--
+ 
 +            // CraftBukkit start - call EntityBreedEvent
 +            int experience = this.field_75390_d.func_70681_au().nextInt(7) + 1;
-+            org.bukkit.event.entity.EntityBreedEvent entityBreedEvent = org.bukkit.craftbukkit.event.CraftEventFactory.callEntityBreedEvent(foxentity, field_75390_d, field_75391_e, serverplayerentity, this.field_75390_d.breedItem, experience);
++            org.bukkit.event.entity.EntityBreedEvent entityBreedEvent = org.bukkit.craftbukkit.v1_15_R1.event.CraftEventFactory.callEntityBreedEvent(foxentity, field_75390_d, field_75391_e, serverplayerentity2, this.field_75390_d.breedItem, experience);
 +            if (entityBreedEvent.isCancelled()) {
 +               return;
 +            }
 +            experience = entityBreedEvent.getExperience();
 +            // CraftBukkit end
++
              if (serverplayerentity2 != null) {
                 serverplayerentity2.func_195066_a(Stats.field_151186_x);
                 CriteriaTriggers.field_192134_n.func_192168_a(serverplayerentity2, this.field_75390_d, this.field_75391_e, foxentity);
-@@ -1012,10 +1025,14 @@
+@@ -1012,12 +998,15 @@
              this.field_75391_e.func_70875_t();
              foxentity.func_70873_a(-24000);
              foxentity.func_70012_b(this.field_75390_d.func_226277_ct_(), this.field_75390_d.func_226278_cu_(), this.field_75390_d.func_226281_cx_(), 0.0F, 0.0F);
 -            this.field_75394_a.func_217376_c(foxentity);
-+            this.field_75394_a.addEntity(foxentity, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.BREEDING); // CraftBukkit - added SpawnReason
++            this.field_75394_a.addEntity(foxentity, CreatureSpawnEvent.SpawnReason.BREEDING); // CraftBukkit - added SpawnReason
              this.field_75394_a.func_72960_a(this.field_75390_d, (byte)18);
              if (this.field_75394_a.func_82736_K().func_223586_b(GameRules.field_223602_e)) {
 -               this.field_75394_a.func_217376_c(new ExperienceOrbEntity(this.field_75394_a, this.field_75390_d.func_226277_ct_(), this.field_75390_d.func_226278_cu_(), this.field_75390_d.func_226281_cx_(), this.field_75390_d.func_70681_au().nextInt(7) + 1));
@@ -88,14 +154,16 @@
 +               }
 +               // CraftBukkit end
              }
- 
+-
           }
-@@ -1163,7 +1180,7 @@
+       }
+    }
+@@ -1163,7 +1152,7 @@
        }
  
        public void func_75249_e() {
 -         FoxEntity.this.func_70624_b(this.field_220786_j);
-+         FoxEntity.this.setGoalTarget(this.field_220786_j, org.bukkit.event.entity.EntityTargetEvent.TargetReason.TARGET_ATTACKED_OWNER, true); // CraftBukkit
++         FoxEntity.this.setAttackTarget(this.field_220786_j, TargetReason.TARGET_ATTACKED_OWNER, true); // CraftBukkit\
           this.field_75309_a = this.field_220786_j;
           if (this.field_220787_k != null) {
              this.field_220788_l = this.field_220787_k.func_142015_aE();

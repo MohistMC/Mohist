@@ -1,31 +1,53 @@
 --- a/net/minecraft/command/impl/TeleportCommand.java
 +++ b/net/minecraft/command/impl/TeleportCommand.java
-@@ -28,6 +28,9 @@
+@@ -10,24 +10,19 @@
+ import javax.annotation.Nullable;
+ import net.minecraft.command.CommandSource;
+ import net.minecraft.command.Commands;
+-import net.minecraft.command.arguments.EntityAnchorArgument;
+-import net.minecraft.command.arguments.EntityArgument;
+-import net.minecraft.command.arguments.ILocationArgument;
+-import net.minecraft.command.arguments.LocationInput;
+-import net.minecraft.command.arguments.RotationArgument;
+-import net.minecraft.command.arguments.Vec3Argument;
++import net.minecraft.command.arguments.*;
+ import net.minecraft.entity.Entity;
+ import net.minecraft.entity.LivingEntity;
+ import net.minecraft.entity.player.ServerPlayerEntity;
+ import net.minecraft.network.play.server.SPlayerPositionLookPacket;
+-import net.minecraft.util.math.BlockPos;
+-import net.minecraft.util.math.ChunkPos;
+-import net.minecraft.util.math.MathHelper;
+-import net.minecraft.util.math.Vec2f;
+-import net.minecraft.util.math.Vec3d;
++import net.minecraft.util.math.*;
  import net.minecraft.util.text.TranslationTextComponent;
  import net.minecraft.world.server.ServerWorld;
  import net.minecraft.world.server.TicketType;
 +import org.bukkit.Location;
-+import org.bukkit.craftbukkit.CraftWorld;
++import org.bukkit.craftbukkit.v1_15_R1.CraftWorld;
 +import org.bukkit.event.entity.EntityTeleportEvent;
++import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
  
  public class TeleportCommand {
     public static void func_198809_a(CommandDispatcher<CommandSource> p_198809_0_) {
-@@ -125,9 +128,9 @@
+@@ -125,9 +120,9 @@
           }
  
           if (p_201127_2_ == p_201127_1_.field_70170_p) {
 -            ((ServerPlayerEntity)p_201127_1_).field_71135_a.func_175089_a(p_201127_3_, p_201127_5_, p_201127_7_, p_201127_10_, p_201127_11_, p_201127_9_);
-+            ((ServerPlayerEntity)p_201127_1_).field_71135_a.setPlayerLocation(p_201127_3_, p_201127_5_, p_201127_7_, p_201127_10_, p_201127_11_, p_201127_9_, org.bukkit.event.player.PlayerTeleportEvent.TeleportCause.COMMAND); // CraftBukkit
++            ((ServerPlayerEntity)p_201127_1_).field_71135_a.setPlayerLocation(p_201127_3_, p_201127_5_, p_201127_7_, p_201127_10_, p_201127_11_, p_201127_9_, TeleportCause.COMMAND); // CraftBukkit
           } else {
 -            ((ServerPlayerEntity)p_201127_1_).func_200619_a(p_201127_2_, p_201127_3_, p_201127_5_, p_201127_7_, p_201127_10_, p_201127_11_);
-+            ((ServerPlayerEntity)p_201127_1_).teleport(p_201127_2_, p_201127_3_, p_201127_5_, p_201127_7_, p_201127_10_, p_201127_11_, org.bukkit.event.player.PlayerTeleportEvent.TeleportCause.COMMAND); // CraftBukkit
++            ((ServerPlayerEntity)p_201127_1_).teleport(p_201127_2_, p_201127_3_, p_201127_5_, p_201127_7_, p_201127_10_, p_201127_11_, TeleportCause.COMMAND); // CraftBukkit
           }
  
           p_201127_1_.func_70034_d(p_201127_10_);
-@@ -135,6 +138,20 @@
+@@ -135,6 +130,22 @@
           float f1 = MathHelper.func_76142_g(p_201127_10_);
           float f = MathHelper.func_76142_g(p_201127_11_);
           f = MathHelper.func_76131_a(f, -90.0F, 90.0F);
++
 +         // CraftBukkit start - Teleport event
 +         Location to = new Location(p_201127_2_.getWorldCB(), p_201127_3_, p_201127_5_, p_201127_7_, f1, f);
 +         EntityTeleportEvent event = new EntityTeleportEvent(p_201127_1_.getBukkitEntity(), p_201127_1_.getBukkitEntity().getLocation(), to);
@@ -38,12 +60,13 @@
 +         p_201127_7_ = to.getZ();
 +         f1 = to.getYaw();
 +         f = to.getPitch();
-+         p_201127_2_ = ((CraftWorld)to.getWorld()).getHandle();
++         p_201127_2_ = ((CraftWorld) to.getWorld()).getHandle();
 +         // CraftBukkit end
++
           if (p_201127_2_ == p_201127_1_.field_70170_p) {
              p_201127_1_.func_70012_b(p_201127_3_, p_201127_5_, p_201127_7_, f1, f);
              p_201127_1_.func_70034_d(f1);
-@@ -151,7 +168,6 @@
+@@ -151,7 +162,6 @@
              p_201127_1_.func_70012_b(p_201127_3_, p_201127_5_, p_201127_7_, f1, f);
              p_201127_1_.func_70034_d(f1);
              p_201127_2_.func_217460_e(p_201127_1_);

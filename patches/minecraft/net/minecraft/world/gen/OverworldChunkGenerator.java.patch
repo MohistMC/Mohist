@@ -1,15 +1,15 @@
 --- a/net/minecraft/world/gen/OverworldChunkGenerator.java
 +++ b/net/minecraft/world/gen/OverworldChunkGenerator.java
-@@ -90,7 +90,11 @@
-                f4 = 1.0F + f4 * 2.0F;
+@@ -91,6 +91,12 @@
                 f5 = 1.0F + f5 * 4.0F;
              }
--
+ 
 +            // CraftBukkit start - fix MC-54738
 +            if (f4 < -1.8F) {
 +               f4 = -1.8F;
 +            }
 +            // CraftBukkit end
++
              float f6 = field_222576_h[k + 2 + (l + 2) * 5] / (f4 + 2.0F);
              if (biome.func_185355_j() > f3) {
                 f6 /= 2.0F;

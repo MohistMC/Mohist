@@ -6,8 +6,8 @@
  public class CooldownTracker {
 -   private final Map<Item, CooldownTracker.Cooldown> field_185147_a = Maps.newHashMap();
 -   private int field_185148_b;
-+   public final Map<Item, CooldownTracker.Cooldown> field_185147_a = Maps.newHashMap();
-+   public int field_185148_b;
++   public final Map<Item, CooldownTracker.Cooldown> field_185147_a = Maps.newHashMap(); // private->public CraftBukkit
++   public int field_185148_b; // private->public CraftBukkit
  
     public boolean func_185141_a(Item p_185141_1_) {
        return this.func_185143_a(p_185141_1_, 0.0F) > 0.0F;
@@ -16,10 +16,10 @@
     }
  
 -   class Cooldown {
-+   public class Cooldown {
++   public class Cooldown { // private->public CraftBukkit
        private final int field_185137_a;
 -      private final int field_185138_b;
-+      public final int field_185138_b;
++      public final int field_185138_b; // private->public CraftBukkit
  
        private Cooldown(int p_i47037_2_, int p_i47037_3_) {
           this.field_185137_a = p_i47037_2_;

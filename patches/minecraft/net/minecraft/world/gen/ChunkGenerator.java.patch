@@ -1,24 +1,27 @@
 --- a/net/minecraft/world/gen/ChunkGenerator.java
 +++ b/net/minecraft/world/gen/ChunkGenerator.java
-@@ -158,6 +158,17 @@
+@@ -158,6 +158,20 @@
              ChunkPos chunkpos = p_227058_2_.func_76632_l();
              StructureStart structurestart1 = StructureStart.field_214630_a;
              Biome biome = p_227058_1_.func_226836_a_(new BlockPos(chunkpos.func_180334_c() + 9, 0, chunkpos.func_180333_d() + 9));
++
++
 +            // CraftBukkit start
 +            if (structure == Feature.field_202335_m) {
 +               synchronized (structure) {
 +                  if (structure.func_225558_a_(p_227058_1_, p_227058_3_, sharedseedrandom, chunkpos.field_77276_a, chunkpos.field_77275_b, biome)) {
 +                     StructureStart structurestart2 = structure.func_214557_a().create(structure, chunkpos.field_77276_a, chunkpos.field_77275_b, MutableBoundingBox.func_78887_a(), i, p_227058_3_.func_202089_c());
 +                     structurestart2.func_214625_a(this, p_227058_4_, chunkpos.field_77276_a, chunkpos.field_77275_b, biome);
-+                     structurestart1 = (structurestart2.func_75069_d() ? structurestart2 : StructureStart.field_214630_a);
++                     structurestart1 = structurestart2.func_75069_d() ? structurestart2 : StructureStart.field_214630_a;
 +                  }
 +               }
 +            } else
-+            // CraftBukkit end
++               // CraftBukkit end
++
              if (structure.func_225558_a_(p_227058_1_, p_227058_3_, sharedseedrandom, chunkpos.field_77276_a, chunkpos.field_77275_b, biome)) {
                 StructureStart structurestart2 = structure.func_214557_a().create(structure, chunkpos.field_77276_a, chunkpos.field_77275_b, MutableBoundingBox.func_78887_a(), i, p_227058_3_.func_202089_c());
                 structurestart2.func_214625_a(this, p_227058_4_, chunkpos.field_77276_a, chunkpos.field_77275_b, biome);
-@@ -196,7 +207,7 @@
+@@ -196,7 +210,7 @@
     public abstract void func_222537_b(IWorld p_222537_1_, IChunk p_222537_2_);
  
     public int func_222530_f() {
@@ -27,3 +30,14 @@
     }
  
     public abstract int func_222529_a(int p_222529_1_, int p_222529_2_, Heightmap.Type p_222529_3_);
+@@ -208,4 +222,10 @@
+    public int func_222531_c(int p_222531_1_, int p_222531_2_, Heightmap.Type p_222531_3_) {
+       return this.func_222529_a(p_222531_1_, p_222531_2_, p_222531_3_) - 1;
+    }
++
++   // Spigot start
++   public World getWorld() {
++      return this.field_222540_a.func_201672_e();
++   }
++   // Spigot end
+ }

@@ -1,48 +1,57 @@
 --- a/net/minecraft/inventory/container/AbstractFurnaceContainer.java
 +++ b/net/minecraft/inventory/container/AbstractFurnaceContainer.java
-@@ -18,13 +18,30 @@
+@@ -13,11 +13,15 @@
+ import net.minecraft.item.crafting.RecipeItemHelper;
+ import net.minecraft.item.crafting.ServerRecipePlacerFurnace;
+ import net.minecraft.tileentity.AbstractFurnaceTileEntity;
++import net.minecraft.tileentity.FurnaceTileEntity;
+ import net.minecraft.util.IIntArray;
+ import net.minecraft.util.IntArray;
  import net.minecraft.world.World;
  import net.minecraftforge.api.distmarker.Dist;
  import net.minecraftforge.api.distmarker.OnlyIn;
-+import org.bukkit.craftbukkit.inventory.CraftInventoryFurnace;
-+import org.bukkit.craftbukkit.inventory.CraftInventoryView;
++import org.bukkit.craftbukkit.v1_15_R1.inventory.CraftInventoryFurnace;
++import org.bukkit.craftbukkit.v1_15_R1.inventory.CraftInventoryView;
++import org.bukkit.inventory.InventoryView;
  
  public abstract class AbstractFurnaceContainer extends RecipeBookContainer<IInventory> {
     private final IInventory field_217063_d;
-    private final IIntArray field_217064_e;
+@@ -25,6 +29,11 @@
     protected final World field_217062_c;
     private final IRecipeType<? extends AbstractCookingRecipe> field_217065_f;
+ 
 +   // CraftBukkit start
 +   private CraftInventoryView bukkitEntity = null;
 +   private PlayerInventory player;
++   // CraftBukkit stop
++
+    protected AbstractFurnaceContainer(ContainerType<?> p_i50103_1_, IRecipeType<? extends AbstractCookingRecipe> p_i50103_2_, int p_i50103_3_, PlayerInventory p_i50103_4_) {
+       this(p_i50103_1_, p_i50103_2_, p_i50103_3_, p_i50103_4_, new Inventory(3), new IntArray(4));
+    }
+@@ -37,6 +46,7 @@
+       this.field_217063_d = p_i50104_5_;
+       this.field_217064_e = p_i50104_6_;
+       this.field_217062_c = p_i50104_4_.field_70458_d.field_70170_p;
++      this.player = p_i50104_4_; // CraftBukkit - save player
+       this.func_75146_a(new Slot(p_i50104_5_, 0, 56, 17));
+       this.func_75146_a(new FurnaceFuelSlot(this, p_i50104_5_, 1, 56, 53));
+       this.func_75146_a(new FurnaceResultSlot(p_i50104_4_.field_70458_d, p_i50104_5_, 2, 116, 35));
+@@ -90,7 +100,20 @@
+       return 3;
+    }
  
++   // CraftBukkit start
 +   @Override
-+   public CraftInventoryView getBukkitView() {
++   public InventoryView getBukkitView() {
 +      if (bukkitEntity != null) {
 +         return bukkitEntity;
 +      }
-+
 +      CraftInventoryFurnace inventory = new CraftInventoryFurnace((AbstractFurnaceTileEntity) this.field_217063_d);
 +      bukkitEntity = new CraftInventoryView(this.player.field_70458_d.getBukkitEntity(), inventory, this);
 +      return bukkitEntity;
 +   }
 +   // CraftBukkit end
 +
-    protected AbstractFurnaceContainer(ContainerType<?> p_i50103_1_, IRecipeType<? extends AbstractCookingRecipe> p_i50103_2_, int p_i50103_3_, PlayerInventory p_i50103_4_) {
-       this(p_i50103_1_, p_i50103_2_, p_i50103_3_, p_i50103_4_, new Inventory(3), new IntArray(4));
-    }
-@@ -40,7 +57,7 @@
-       this.func_75146_a(new Slot(p_i50104_5_, 0, 56, 17));
-       this.func_75146_a(new FurnaceFuelSlot(this, p_i50104_5_, 1, 56, 53));
-       this.func_75146_a(new FurnaceResultSlot(p_i50104_4_.field_70458_d, p_i50104_5_, 2, 116, 35));
--
-+      this.player = p_i50104_4_; // CraftBukkit - save player
-       for(int i = 0; i < 3; ++i) {
-          for(int j = 0; j < 9; ++j) {
-             this.func_75146_a(new Slot(p_i50104_4_, j + i * 9 + 9, 8 + j * 18, 84 + i * 18));
-@@ -91,6 +108,7 @@
-    }
- 
     public boolean func_75145_c(PlayerEntity p_75145_1_) {
 +      if (!this.checkReachable) return true; // CraftBukkit
        return this.field_217063_d.func_70300_a(p_75145_1_);

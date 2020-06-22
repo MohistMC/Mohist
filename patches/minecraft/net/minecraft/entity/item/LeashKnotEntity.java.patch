@@ -18,20 +18,16 @@
 +import net.minecraft.world.server.ServerWorld;
  import net.minecraftforge.api.distmarker.Dist;
  import net.minecraftforge.api.distmarker.OnlyIn;
-+import org.bukkit.craftbukkit.event.CraftEventFactory; // CraftBukkit
++import org.bukkit.craftbukkit.v1_15_R1.event.CraftEventFactory;
  
  public class LeashKnotEntity extends HangingEntity {
     public LeashKnotEntity(EntityType<? extends LeashKnotEntity> p_i50223_1_, World p_i50223_2_) {
-@@ -39,10 +43,12 @@
- 
-    public void func_70107_b(double p_70107_1_, double p_70107_3_, double p_70107_5_) {
-       super.func_70107_b((double)MathHelper.func_76128_c(p_70107_1_) + 0.5D, (double)MathHelper.func_76128_c(p_70107_3_) + 0.5D, (double)MathHelper.func_76128_c(p_70107_5_) + 0.5D);
-+      if (valid) ((ServerWorld) field_70170_p).func_217464_b(this); // CraftBukkit
-    }
+@@ -43,6 +47,8 @@
  
     protected void func_174856_o() {
        this.func_226288_n_((double)this.field_174861_a.func_177958_n() + 0.5D, (double)this.field_174861_a.func_177956_o() + 0.5D, (double)this.field_174861_a.func_177952_p() + 0.5D);
 +      if (this.isAddedToWorld() && this.field_70170_p instanceof net.minecraft.world.server.ServerWorld) ((net.minecraft.world.server.ServerWorld)this.field_70170_p).func_217464_b(this); // Forge - Process chunk registration after moving.
++      if(valid) ((ServerWorld) field_70170_p).func_217464_b(this); // CraftBukkit
     }
  
     public void func_174859_a(Direction p_174859_1_) {
@@ -54,7 +50,7 @@
 -            this.func_70106_y();
 -            if (p_184230_1_.field_71075_bZ.field_75098_d) {
 +            // CraftBukkit start - Move below
-+            // this.remove();
++//            this.remove();
 +            boolean die = true;
 +            // CraftBukkit end
 +            if (true || p_184230_1_.field_71075_bZ.field_75098_d) { // CraftBukkit - Process for non-creative as well
@@ -66,12 +62,12 @@
 +                        die = false;
 +                        continue;
 +                     }
-+                     mobentity1.func_110160_i(true, !p_184230_1_.field_71075_bZ.field_75098_d); // false -> survival mode boolean
++                     mobentity1.func_110160_i(true,!p_184230_1_.field_71075_bZ.field_75098_d); // flase -> survival mode boolean
 +                     // CraftBukkit end
                    }
                 }
 +               // CraftBukkit start
-+               if (die) {
++               if(die){
 +                  this.func_70106_y();
 +               }
 +               // CraftBukkit end

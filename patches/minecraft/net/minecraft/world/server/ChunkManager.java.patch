@@ -1,6 +1,68 @@
 --- a/net/minecraft/world/server/ChunkManager.java
 +++ b/net/minecraft/world/server/ChunkManager.java
-@@ -90,12 +90,14 @@
+@@ -1,28 +1,19 @@
+ package net.minecraft.world.server;
+ 
+-import com.google.common.collect.ImmutableList;
+-import com.google.common.collect.Iterables;
+-import com.google.common.collect.Lists;
+-import com.google.common.collect.Queues;
+-import com.google.common.collect.Sets;
++import com.google.common.collect.*;
+ import com.mojang.datafixers.DataFixer;
+ import com.mojang.datafixers.util.Either;
+ import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
+ import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
+ import it.unimi.dsi.fastutil.longs.Long2ObjectLinkedOpenHashMap;
++import it.unimi.dsi.fastutil.longs.Long2ObjectMap.Entry;
+ import it.unimi.dsi.fastutil.longs.LongIterator;
+ import it.unimi.dsi.fastutil.longs.LongOpenHashSet;
+ import it.unimi.dsi.fastutil.longs.LongSet;
+-import it.unimi.dsi.fastutil.longs.Long2ObjectMap.Entry;
+ import java.io.File;
+ import java.io.IOException;
+ import java.io.Writer;
+-import java.util.Collection;
+-import java.util.List;
+-import java.util.Objects;
+-import java.util.Optional;
+-import java.util.Queue;
+-import java.util.Set;
++import java.util.*;
+ import java.util.concurrent.CancellationException;
+ import java.util.concurrent.CompletableFuture;
+ import java.util.concurrent.CompletionException;
+@@ -48,11 +39,7 @@
+ import net.minecraft.nbt.CompoundNBT;
+ import net.minecraft.network.DebugPacketSender;
+ import net.minecraft.network.IPacket;
+-import net.minecraft.network.play.server.SChunkDataPacket;
+-import net.minecraft.network.play.server.SMountEntityPacket;
+-import net.minecraft.network.play.server.SSetPassengersPacket;
+-import net.minecraft.network.play.server.SUpdateChunkPositionPacket;
+-import net.minecraft.network.play.server.SUpdateLightPacket;
++import net.minecraft.network.play.server.*;
+ import net.minecraft.profiler.IProfiler;
+ import net.minecraft.util.CSVWriter;
+ import net.minecraft.util.ClassInheritanceMultiMap;
+@@ -68,15 +55,7 @@
+ import net.minecraft.village.PointOfInterestManager;
+ import net.minecraft.world.GameRules;
+ import net.minecraft.world.TrackedEntity;
+-import net.minecraft.world.chunk.Chunk;
+-import net.minecraft.world.chunk.ChunkPrimer;
+-import net.minecraft.world.chunk.ChunkPrimerWrapper;
+-import net.minecraft.world.chunk.ChunkStatus;
+-import net.minecraft.world.chunk.ChunkTaskPriorityQueue;
+-import net.minecraft.world.chunk.ChunkTaskPriorityQueueSorter;
+-import net.minecraft.world.chunk.IChunk;
+-import net.minecraft.world.chunk.IChunkLightProvider;
+-import net.minecraft.world.chunk.PlayerGenerationTracker;
++import net.minecraft.world.chunk.*;
+ import net.minecraft.world.chunk.listener.IChunkStatusListener;
+ import net.minecraft.world.chunk.storage.ChunkLoader;
+ import net.minecraft.world.chunk.storage.ChunkSerializer;
+@@ -90,12 +69,14 @@
  import org.apache.commons.lang3.mutable.MutableBoolean;
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
@@ -12,30 +74,34 @@
     public static final int field_219249_a = 33 + ChunkStatus.func_222600_b();
     private final Long2ObjectLinkedOpenHashMap<ChunkHolder> field_219251_e = new Long2ObjectLinkedOpenHashMap<>();
 -   private volatile Long2ObjectLinkedOpenHashMap<ChunkHolder> field_219252_f = this.field_219251_e.clone();
-+   public volatile Long2ObjectLinkedOpenHashMap<ChunkHolder> field_219252_f = this.field_219251_e.clone();
++   public volatile Long2ObjectLinkedOpenHashMap<ChunkHolder> field_219252_f = this.field_219251_e.clone(); // private->public CraftBukkit
     private final Long2ObjectLinkedOpenHashMap<ChunkHolder> field_219253_g = new Long2ObjectLinkedOpenHashMap<>();
     private final LongSet field_219254_h = new LongOpenHashSet();
     private final ServerWorld field_219255_i;
-@@ -109,16 +111,40 @@
+@@ -109,16 +90,44 @@
     private final ChunkTaskPriorityQueueSorter field_219263_q;
     private final ITaskExecutor<ChunkTaskPriorityQueueSorter.FunctionEntry<Runnable>> field_219264_r;
     private final ITaskExecutor<ChunkTaskPriorityQueueSorter.FunctionEntry<Runnable>> field_219265_s;
 -   private final IChunkStatusListener field_219266_t;
 -   private final ChunkManager.ProxyTicketManager field_219267_u;
-+   public final IChunkStatusListener field_219266_t;
-+   public final ChunkManager.ProxyTicketManager field_219267_u;
++   public final IChunkStatusListener field_219266_t; // private->public CraftBukkit
++   public final ChunkManager.ProxyTicketManager field_219267_u; // private->public CraftBukkit7
     private final AtomicInteger field_219268_v = new AtomicInteger();
     private final TemplateManager field_219269_w;
     private final File field_219270_x;
     private final PlayerGenerationTracker field_219271_y = new PlayerGenerationTracker();
 -   private final Int2ObjectMap<ChunkManager.EntityTracker> field_219272_z = new Int2ObjectOpenHashMap<>();
-+   public final Int2ObjectMap<ChunkManager.EntityTracker> field_219272_z = new Int2ObjectOpenHashMap<>();
++   public final Int2ObjectMap<ChunkManager.EntityTracker> field_219272_z = new Int2ObjectOpenHashMap<>(); // private->public CraftBukkit
     private final Queue<Runnable> field_223181_A = Queues.newConcurrentLinkedQueue();
     private int field_219247_A;
  
++   private static final double UNLOAD_QUEUE_RESIZE_FACTOR = 0.96; // Spigot
++
 +   // CraftBukkit start - recursion-safe executor for Chunk loadCallback() and unloadCallback()
 +   public final CallbackExecutor callbackExecutor = new CallbackExecutor();
++
 +   public static final class CallbackExecutor implements java.util.concurrent.Executor, Runnable {
++
 +      private Runnable queued;
 +
 +      @Override
@@ -60,7 +126,7 @@
     public ChunkManager(ServerWorld p_i51538_1_, File p_i51538_2_, DataFixer p_i51538_3_, TemplateManager p_i51538_4_, Executor p_i51538_5_, ThreadTaskExecutor<Runnable> p_i51538_6_, IChunkLightProvider p_i51538_7_, ChunkGenerator<?> p_i51538_8_, IChunkStatusListener p_i51538_9_, Supplier<DimensionSavedDataManager> p_i51538_10_, int p_i51538_11_) {
        super(new File(p_i51538_1_.func_201675_m().func_186058_p().func_212679_a(p_i51538_2_), "region"), p_i51538_3_);
        this.field_219269_w = p_i51538_4_;
-@@ -368,6 +394,7 @@
+@@ -368,6 +377,7 @@
        iprofiler.func_219895_b("chunk_unload");
        if (!this.field_219255_i.func_217402_u()) {
           this.func_223155_b(p_219204_1_);
@@ -68,7 +134,37 @@
        }
  
        iprofiler.func_76319_b();
-@@ -404,6 +431,7 @@
+@@ -376,16 +386,27 @@
+    private void func_223155_b(BooleanSupplier p_223155_1_) {
+       LongIterator longiterator = this.field_219261_o.iterator();
+ 
+-      for(int i = 0; longiterator.hasNext() && (p_223155_1_.getAsBoolean() || i < 200 || this.field_219261_o.size() > 2000); longiterator.remove()) {
++      // Spigot start
++      org.spigotmc.SlackActivityAccountant activityAccountant = this.field_219255_i.func_73046_m().slackActivityAccountant;
++      activityAccountant.startActivity(0.5);
++      int targetSize = (int) (this.field_219261_o.size() * UNLOAD_QUEUE_RESIZE_FACTOR);
++      // Spigot end
++      while (longiterator.hasNext()) { // Spigot
+          long j = longiterator.nextLong();
++         longiterator.remove(); // Spigot
+          ChunkHolder chunkholder = this.field_219251_e.remove(j);
+          if (chunkholder != null) {
+             this.field_219253_g.put(j, chunkholder);
+             this.field_219262_p = true;
+-            ++i;
++            // Spigot start
++            if (!p_223155_1_.getAsBoolean() && this.field_219261_o.size() <= targetSize && activityAccountant.activityTimeIsExhausted()) {
++               break;
++            }
++            // Spigot end
+             this.func_219212_a(j, chunkholder);
+          }
+       }
++      activityAccountant.endActivity(); // Spigot
+ 
+       Runnable runnable;
+       while((p_223155_1_.getAsBoolean() || this.field_223181_A.size() > 2000) && (runnable = this.field_223181_A.poll()) != null) {
+@@ -404,6 +425,7 @@
              if (this.field_219253_g.remove(p_219212_1_, p_219212_3_) && p_219185_5_ != null) {
                 if (p_219185_5_ instanceof Chunk) {
                    ((Chunk)p_219185_5_).func_177417_c(false);
@@ -76,7 +172,7 @@
                 }
  
                 this.func_219229_a(p_219185_5_);
-@@ -482,6 +510,7 @@
+@@ -482,6 +504,7 @@
                 if (flag) {
                    IChunk ichunk = ChunkSerializer.func_222656_a(this.field_219255_i, this.field_219269_w, this.field_219260_n, p_223172_1_, compoundnbt);
                    ichunk.func_177432_b(this.field_219255_i.func_82737_E());
@@ -84,7 +180,13 @@
                    return Either.left(ichunk);
                 }
  
-@@ -581,7 +610,14 @@
+@@ -576,12 +599,19 @@
+                chunk.func_177417_c(true);
+                this.field_219255_i.func_147448_a(chunk.func_177434_r().values());
+                List<Entity> list = null;
+-               ClassInheritanceMultiMap<Entity>[] aclassinheritancemultimap = chunk.func_177429_s();
++               List<Entity>[] aclassinheritancemultimap = chunk.getEntityLists(); // Spigot
+                int i = aclassinheritancemultimap.length;
  
                 for(int j = 0; j < i; ++j) {
                    for(Entity entity : aclassinheritancemultimap[j]) {
@@ -100,7 +202,7 @@
                          if (list == null) {
                             list = Lists.newArrayList(entity);
                          } else {
-@@ -594,6 +630,7 @@
+@@ -594,6 +624,7 @@
                 if (list != null) {
                    list.forEach(chunk::func_76622_b);
                 }
@@ -108,15 +210,16 @@
              }
  
              return chunk;
-@@ -679,6 +716,7 @@
+@@ -679,6 +710,8 @@
  
              this.field_219255_i.func_217381_Z().func_230035_c_("chunkSave");
              CompoundNBT compoundnbt1 = ChunkSerializer.func_222645_a(this.field_219255_i, p_219229_1_);
-+            net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.world.ChunkDataEvent.Save(p_219229_1_, compoundnbt1));
++            net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.world.ChunkDataEvent.Save(p_219229_1_, p_219229_1_.getWorldForge() != null ? p_219229_1_.getWorldForge() : this.field_219255_i, compoundnbt1));
++
              this.func_219100_a(chunkpos, compoundnbt1);
              return true;
           } catch (Exception exception) {
-@@ -711,6 +749,7 @@
+@@ -711,6 +744,7 @@
  
     protected void func_219199_a(ServerPlayerEntity p_219199_1_, ChunkPos p_219199_2_, IPacket<?>[] p_219199_3_, boolean p_219199_4_, boolean p_219199_5_) {
        if (p_219199_1_.field_70170_p == this.field_219255_i) {
@@ -124,7 +227,16 @@
           if (p_219199_5_ && !p_219199_4_) {
              ChunkHolder chunkholder = this.func_219219_b(p_219199_2_.func_201841_a());
              if (chunkholder != null) {
-@@ -779,7 +818,7 @@
+@@ -753,7 +787,7 @@
+             return p_225407_0_ instanceof Chunk ? Optional.of((Chunk)p_225407_0_) : Optional.empty();
+          });
+          csvwriter.func_225426_a(chunkpos.field_77276_a, chunkpos.field_77275_b, chunkholder.func_219299_i(), optional.isPresent(), optional.map(IChunk::func_201589_g).orElse((ChunkStatus)null), optional1.map(Chunk::func_217321_u).orElse((ChunkHolder.LocationType)null), func_225402_a(chunkholder.func_223492_c()), func_225402_a(chunkholder.func_219296_a()), func_225402_a(chunkholder.func_219297_b()), this.field_219267_u.func_225413_c(entry.getLongKey()), !this.func_219243_d(chunkpos), optional1.map((p_225401_0_) -> {
+-            return Stream.of(p_225401_0_.func_177429_s()).mapToInt(ClassInheritanceMultiMap::size).sum();
++            return Stream.of(p_225401_0_.getEntityLists()).mapToInt(List::size).sum(); // Spigot
+          }).orElse(0), optional1.map((p_225405_0_) -> {
+             return p_225405_0_.func_177434_r().size();
+          }).orElse(0));
+@@ -779,13 +813,24 @@
     @Nullable
     private CompoundNBT func_219178_f(ChunkPos p_219178_1_) throws IOException {
        CompoundNBT compoundnbt = this.func_227078_e_(p_219178_1_);
@@ -133,7 +245,47 @@
     }
  
     boolean func_219243_d(ChunkPos p_219243_1_) {
-@@ -1056,15 +1095,15 @@
+-      long i = p_219243_1_.func_201841_a();
++      // Spigot start
++      return isOutsideOfRange(p_219243_1_, false);
++   }
++
++   boolean isOutsideOfRange(ChunkPos chunkPosIn, boolean reducedRange) {
++      int chunkRange = field_219255_i.spigotConfig.mobSpawnRange;
++      chunkRange = (chunkRange > field_219255_i.spigotConfig.viewDistance) ? (byte) field_219255_i.spigotConfig.viewDistance : chunkRange;
++      chunkRange = (chunkRange > 8) ? 8 : chunkRange;
++      double blockRange = (reducedRange) ? Math.pow(chunkRange << 4, 2) : 16384.0D;
++      // Spigot end
++
++      long i = chunkPosIn.func_201841_a();
+       return !this.field_219267_u.func_223494_d(i) ? true : this.field_219271_y.func_219444_a(i).noneMatch((p_219201_1_) -> {
+-         return !p_219201_1_.func_175149_v() && func_219217_a(p_219243_1_, p_219201_1_) < 16384.0D;
++         return !p_219201_1_.func_175149_v() && func_219217_a(chunkPosIn, p_219201_1_) < blockRange; // Spigot
+       });
+    }
+ 
+@@ -919,10 +964,12 @@
+    }
+ 
+    protected void func_219210_a(Entity p_219210_1_) {
++      org.spigotmc.AsyncCatcher.catchOp("entity track"); // Spigot
+       if (!(p_219210_1_ instanceof EnderDragonPartEntity)) {
+          if (!(p_219210_1_ instanceof LightningBoltEntity)) {
+             EntityType<?> entitytype = p_219210_1_.func_200600_R();
+             int i = entitytype.func_220345_k() * 16;
++            i = org.spigotmc.TrackingRange.getEntityTrackingRange(p_219210_1_, i); // Spigot
+             int j = entitytype.func_220332_l();
+             if (this.field_219272_z.containsKey(p_219210_1_.func_145782_y())) {
+                throw (IllegalStateException)Util.func_229757_c_(new IllegalStateException("Entity is already tracked!"));
+@@ -947,6 +994,7 @@
+    }
+ 
+    protected void func_219231_b(Entity p_219231_1_) {
++      org.spigotmc.AsyncCatcher.catchOp("entity untrack"); // Spigot
+       if (p_219231_1_ instanceof ServerPlayerEntity) {
+          ServerPlayerEntity serverplayerentity = (ServerPlayerEntity)p_219231_1_;
+          this.func_219234_a(serverplayerentity, false);
+@@ -1056,15 +1104,15 @@
        });
     }
  
@@ -144,7 +296,7 @@
        private final int field_219404_d;
        private SectionPos field_219405_e;
 -      private final Set<ServerPlayerEntity> field_219406_f = Sets.newHashSet();
-+      public final Set<ServerPlayerEntity> field_219406_f = Sets.newHashSet();
++      public final Set<ServerPlayerEntity> field_219406_f = Sets.newHashSet(); // private->public CraftBukkit
  
        public EntityTracker(Entity p_i50468_2_, int p_i50468_3_, int p_i50468_4_, boolean p_i50468_5_) {
 -         this.field_219402_b = new TrackedEntity(ChunkManager.this.field_219255_i, p_i50468_2_, p_i50468_4_, p_i50468_5_, this::func_219391_a);
@@ -152,30 +304,39 @@
           this.field_219403_c = p_i50468_2_;
           this.field_219404_d = p_i50468_3_;
           this.field_219405_e = SectionPos.func_218157_a(p_i50468_2_);
-@@ -1113,7 +1152,7 @@
+@@ -1105,6 +1153,7 @@
+       }
+ 
+       public void func_219399_a(ServerPlayerEntity p_219399_1_) {
++         org.spigotmc.AsyncCatcher.catchOp("player tracker clear"); // Spigot
+          if (this.field_219406_f.remove(p_219399_1_)) {
+             this.field_219402_b.func_219454_a(p_219399_1_);
+          }
+@@ -1112,8 +1161,9 @@
+       }
  
        public void func_219400_b(ServerPlayerEntity p_219400_1_) {
++         org.spigotmc.AsyncCatcher.catchOp("player tracker update"); // Spigot
           if (p_219400_1_ != this.field_219403_c) {
 -            Vec3d vec3d = p_219400_1_.func_213303_ch().func_178788_d(this.field_219402_b.func_219456_b());
 +            Vec3d vec3d = p_219400_1_.func_213303_ch().func_178788_d(this.field_219402_b.func_219456_b()); // MC-155077, SPIGOT-5113
              int i = Math.min(this.func_229843_b_(), (ChunkManager.this.field_219247_A - 1) * 16);
              boolean flag = vec3d.field_72450_a >= (double)(-i) && vec3d.field_72450_a <= (double)i && vec3d.field_72449_c >= (double)(-i) && vec3d.field_72449_c <= (double)i && this.field_219403_c.func_174827_a(p_219400_1_);
              if (flag) {
-@@ -1126,6 +1165,17 @@
+@@ -1125,7 +1175,16 @@
+                      flag1 = ChunkManager.func_219215_b(chunkpos, p_219400_1_, false) <= ChunkManager.this.field_219247_A;
                    }
                 }
- 
 +               // CraftBukkit start - respect vanish API
 +               if (this.field_219403_c instanceof ServerPlayerEntity) {
-+                  Player player = ((ServerPlayerEntity) this.field_219403_c).getBukkitEntity();
-+                  if (!p_219400_1_.getBukkitEntity().canSee(player)) {
++                  Player player1 = ((ServerPlayerEntity) this.field_219403_c).getBukkitEntity();
++                  if (!p_219400_1_.getBukkitEntity().canSee(player1)) {
 +                     flag1 = false;
 +                  }
 +               }
-+
+ 
 +               p_219400_1_.field_71130_g.remove(Integer.valueOf(this.field_219403_c.func_145782_y()));
 +               // CraftBukkit end
-+
                 if (flag1 && this.field_219406_f.add(p_219400_1_)) {
                    this.field_219402_b.func_219455_b(p_219400_1_);
                 }

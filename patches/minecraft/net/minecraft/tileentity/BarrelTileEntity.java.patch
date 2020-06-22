@@ -7,17 +7,20 @@
  import net.minecraft.block.BarrelBlock;
  import net.minecraft.block.BlockState;
  import net.minecraft.block.Blocks;
-@@ -17,8 +18,45 @@
+@@ -17,11 +18,48 @@
  import net.minecraft.util.math.Vec3i;
  import net.minecraft.util.text.ITextComponent;
  import net.minecraft.util.text.TranslationTextComponent;
-+import org.bukkit.craftbukkit.entity.CraftHumanEntity;
++import org.bukkit.craftbukkit.v1_15_R1.entity.CraftHumanEntity;
 +import org.bukkit.entity.HumanEntity;
  
  public class BarrelTileEntity extends LockableLootTileEntity {
-+   // CraftBukkit start
-+   public List<HumanEntity> transaction;
-+   private int maxStack;
+    private NonNullList<ItemStack> field_213966_a = NonNullList.func_191197_a(27, ItemStack.field_190927_a);
+    private int field_213967_b;
+ 
++   // CraftBukkit start - add fields and methods
++   public List<HumanEntity> transaction = new java.util.ArrayList<HumanEntity>();
++   private int maxStack = MAX_STACK;
 +
 +   @Override
 +   public List<ItemStack> getContents() {
@@ -25,31 +28,31 @@
 +   }
 +
 +   @Override
-+   public void onOpen(final CraftHumanEntity who) {
++   public void onOpen(CraftHumanEntity who) {
 +      this.transaction.add(who);
 +   }
 +
 +   @Override
-+   public void onClose(final CraftHumanEntity who) {
++   public void onClose(CraftHumanEntity who) {
 +      this.transaction.remove(who);
 +   }
 +
 +   @Override
 +   public List<HumanEntity> getViewers() {
-+      return this.transaction;
++      return transaction;
++   }
++
++   @Override
++   public void setMaxStackSize(int size) {
++      this.maxStack = size;
 +   }
 +
 +   @Override
 +   public int func_70297_j_() {
 +      return this.maxStack;
 +   }
-+
-+   @Override
-+   public void setMaxStackSize(final int i) {
-+      this.maxStack = i;
-+   }
 +   // CraftBukkit end
 +
-    private NonNullList<ItemStack> field_213966_a = NonNullList.func_191197_a(27, ItemStack.field_190927_a);
-    private int field_213967_b;
- 
+    private BarrelTileEntity(TileEntityType<?> p_i49963_1_) {
+       super(p_i49963_1_);
+    }

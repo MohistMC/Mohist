@@ -8,22 +8,24 @@
  
  public interface ICommandSource {
     ICommandSource field_213139_a_ = new ICommandSource() {
-@@ -18,6 +19,11 @@
+@@ -18,6 +19,13 @@
        public boolean func_195041_r_() {
           return false;
        }
 +
++      // CraftBukkit start
 +      @Override
-+      public CommandSender getBukkitSender(CommandSource wrapper) {
++      public CommandSender getBukkitSender(final CommandSource wrapper) {
 +         throw new UnsupportedOperationException("Not supported yet.");
 +      }
++      // CraftBukkit end
     };
  
     void func_145747_a(ITextComponent p_145747_1_);
-@@ -27,4 +33,6 @@
+@@ -27,4 +35,6 @@
     boolean func_195040_b();
  
     boolean func_195041_r_();
 +
-+   CommandSender getBukkitSender(CommandSource p0);
++   CommandSender getBukkitSender(final CommandSource p0); // CraftBukkit
  }

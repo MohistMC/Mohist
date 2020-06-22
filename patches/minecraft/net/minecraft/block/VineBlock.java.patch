@@ -4,19 +4,19 @@
  import net.minecraft.world.IWorld;
  import net.minecraft.world.IWorldReader;
  import net.minecraft.world.server.ServerWorld;
-+import org.bukkit.craftbukkit.event.CraftEventFactory; // CraftBukkit
++import org.bukkit.craftbukkit.v1_15_R1.event.CraftEventFactory;
  
 -public class VineBlock extends Block {
 +public class VineBlock extends Block implements net.minecraftforge.common.IShearable {
     public static final BooleanProperty field_176277_a = SixWayBlock.field_196496_z;
     public static final BooleanProperty field_176273_b = SixWayBlock.field_196488_a;
     public static final BooleanProperty field_176278_M = SixWayBlock.field_196490_b;
-@@ -152,33 +153,37 @@
+@@ -152,33 +153,38 @@
              p_225534_2_.func_217377_a(p_225534_3_, false);
           }
  
 -      } else if (p_225534_2_.field_73012_v.nextInt(4) == 0) {
-+      } else if (p_225534_2_.field_73012_v.nextInt(4) == 0 && p_225534_2_.isAreaLoaded(p_225534_3_, 4)) { // Forge: check area to prevent loading unloaded chunks
++      } else if (p_225534_2_.field_73012_v.nextInt(Math.max(1, (int) (100.0F / p_225534_2_.spigotConfig.vineModifier) * 4)) == 0 && p_225534_2_.isAreaLoaded(p_225534_3_, 4)) { // Forge: check area to prevent loading unloaded chunks // Spigot
           Direction direction = Direction.func_176741_a(p_225534_4_);
           BlockPos blockpos = p_225534_3_.func_177984_a();
           if (direction.func_176740_k().func_176722_c() && !p_225534_1_.func_177229_b(func_176267_a(direction))) {
@@ -34,29 +34,30 @@
 +
 +                  // CraftBukkit start - Call BlockSpreadEvent
 +                  BlockPos source = p_225534_3_;
++
                    if (flag && func_196542_b(p_225534_2_, blockpos2, direction3)) {
 -                     p_225534_2_.func_180501_a(blockpos4, this.func_176223_P().func_206870_a(func_176267_a(direction3), Boolean.valueOf(true)), 2);
-+                     CraftEventFactory.handleBlockSpreadEvent(p_225534_2_, source, blockpos4, this.func_176223_P().func_206870_a(func_176267_a(direction3), true), 2);
++                     CraftEventFactory.handleBlockSpreadEvent(p_225534_2_, source, blockpos4, this.func_176223_P().func_206870_a(func_176267_a(direction3), Boolean.valueOf(true)), 2);
                    } else if (flag1 && func_196542_b(p_225534_2_, blockpos3, direction4)) {
 -                     p_225534_2_.func_180501_a(blockpos4, this.func_176223_P().func_206870_a(func_176267_a(direction4), Boolean.valueOf(true)), 2);
-+                     CraftEventFactory.handleBlockSpreadEvent(p_225534_2_, source, blockpos4, this.func_176223_P().func_206870_a(func_176267_a(direction4), true), 2);
++                     CraftEventFactory.handleBlockSpreadEvent(p_225534_2_, source, blockpos4, this.func_176223_P().func_206870_a(func_176267_a(direction4), Boolean.valueOf(true)), 2);
                    } else {
                       Direction direction1 = direction.func_176734_d();
                       if (flag && p_225534_2_.func_175623_d(blockpos2) && func_196542_b(p_225534_2_, p_225534_3_.func_177972_a(direction3), direction1)) {
 -                        p_225534_2_.func_180501_a(blockpos2, this.func_176223_P().func_206870_a(func_176267_a(direction1), Boolean.valueOf(true)), 2);
-+                        CraftEventFactory.handleBlockSpreadEvent(p_225534_2_, source, blockpos2, this.func_176223_P().func_206870_a(func_176267_a(direction1), true), 2);
++                        CraftEventFactory.handleBlockSpreadEvent(p_225534_2_, source, blockpos2, this.func_176223_P().func_206870_a(func_176267_a(direction1), Boolean.valueOf(true)), 2);
                       } else if (flag1 && p_225534_2_.func_175623_d(blockpos3) && func_196542_b(p_225534_2_, p_225534_3_.func_177972_a(direction4), direction1)) {
 -                        p_225534_2_.func_180501_a(blockpos3, this.func_176223_P().func_206870_a(func_176267_a(direction1), Boolean.valueOf(true)), 2);
-+                        CraftEventFactory.handleBlockSpreadEvent(p_225534_2_, source, blockpos3, this.func_176223_P().func_206870_a(func_176267_a(direction1), true), 2);
++                        CraftEventFactory.handleBlockSpreadEvent(p_225534_2_, source, blockpos3, this.func_176223_P().func_206870_a(func_176267_a(direction1), Boolean.valueOf(true)), 2);
                       } else if ((double)p_225534_2_.field_73012_v.nextFloat() < 0.05D && func_196542_b(p_225534_2_, blockpos4.func_177984_a(), Direction.UP)) {
 -                        p_225534_2_.func_180501_a(blockpos4, this.func_176223_P().func_206870_a(field_176277_a, Boolean.valueOf(true)), 2);
-+                        CraftEventFactory.handleBlockSpreadEvent(p_225534_2_, source, blockpos4, this.func_176223_P().func_206870_a(func_176267_a(direction3), true), 2);
++                        CraftEventFactory.handleBlockSpreadEvent(p_225534_2_, source, blockpos4, this.func_176223_P().func_206870_a(field_176277_a, Boolean.valueOf(true)), 2);
                       }
 +                     // CraftBukkit end
                    }
                 } else if (func_196542_b(p_225534_2_, blockpos4, direction)) {
                    p_225534_2_.func_180501_a(p_225534_3_, p_225534_1_.func_206870_a(func_176267_a(direction), Boolean.valueOf(true)), 2);
-@@ -206,7 +211,7 @@
+@@ -206,7 +212,7 @@
                    }
  
                    if (this.func_196540_x(blockstate4)) {
@@ -65,7 +66,7 @@
                    }
  
                    return;
-@@ -216,11 +221,11 @@
+@@ -216,11 +222,11 @@
              if (p_225534_3_.func_177956_o() > 0) {
                 BlockPos blockpos1 = p_225534_3_.func_177977_b();
                 BlockState blockstate1 = p_225534_2_.func_180495_p(blockpos1);
@@ -76,11 +77,11 @@
                    BlockState blockstate3 = this.func_196544_a(p_225534_1_, blockstate2, p_225534_4_);
                    if (blockstate2 != blockstate3 && this.func_196540_x(blockstate3)) {
 -                     p_225534_2_.func_180501_a(blockpos1, blockstate3, 2);
-+                     CraftEventFactory.handleBlockSpreadEvent(p_225534_2_, p_225534_3_, blockpos1, blockstate3, 2); // CraftBukkit
++                     CraftEventFactory.handleBlockSpreadEvent(p_225534_2_, p_225534_3_, blockpos, blockstate3, 2); // CraftBukkit
                    }
                 }
              }
-@@ -322,4 +327,6 @@
+@@ -322,4 +328,6 @@
     public static BooleanProperty func_176267_a(Direction p_176267_0_) {
        return field_196546_A.get(p_176267_0_);
     }

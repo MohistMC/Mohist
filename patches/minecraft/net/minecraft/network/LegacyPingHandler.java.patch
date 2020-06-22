@@ -4,7 +4,7 @@
  import net.minecraft.server.MinecraftServer;
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
-+import org.bukkit.craftbukkit.event.CraftEventFactory;
++import org.bukkit.craftbukkit.v1_15_R1.event.CraftEventFactory;
 +import org.bukkit.event.server.ServerListPingEvent;
  
  public class LegacyPingHandler extends ChannelInboundHandlerAdapter {

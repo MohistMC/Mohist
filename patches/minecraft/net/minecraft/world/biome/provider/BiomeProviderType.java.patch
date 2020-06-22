@@ -9,3 +9,12 @@
     public static final BiomeProviderType<CheckerboardBiomeProviderSettings, CheckerboardBiomeProvider> field_205460_b = func_226841_a_("checkerboard", CheckerboardBiomeProvider::new, CheckerboardBiomeProviderSettings::new);
     public static final BiomeProviderType<SingleBiomeProviderSettings, SingleBiomeProvider> field_205461_c = func_226841_a_("fixed", SingleBiomeProvider::new, SingleBiomeProviderSettings::new);
     public static final BiomeProviderType<OverworldBiomeProviderSettings, OverworldBiomeProvider> field_206859_d = func_226841_a_("vanilla_layered", OverworldBiomeProvider::new, OverworldBiomeProviderSettings::new);
+@@ -16,7 +16,7 @@
+       return Registry.func_218325_a(Registry.field_212625_n, p_226841_0_, new BiomeProviderType<>(p_226841_1_, p_226841_2_));
+    }
+ 
+-   public BiomeProviderType(Function<C, T> p_i225746_1_, Function<WorldInfo, C> p_i225746_2_) {
++   private BiomeProviderType(Function<C, T> p_i225746_1_, Function<WorldInfo, C> p_i225746_2_) {
+       this.field_205465_g = p_i225746_1_;
+       this.field_205466_h = p_i225746_2_;
+    }

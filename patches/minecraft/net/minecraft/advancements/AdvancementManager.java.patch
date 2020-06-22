@@ -5,18 +5,24 @@
  public class AdvancementManager extends JsonReloadListener {
     private static final Logger field_192782_a = LogManager.getLogger();
 -   private static final Gson field_192783_b = (new GsonBuilder()).registerTypeHierarchyAdapter(Advancement.Builder.class, (JsonDeserializer<Advancement.Builder>)(p_210124_0_, p_210124_1_, p_210124_2_) -> {
-+   public static final Gson field_192783_b = (new GsonBuilder()).registerTypeHierarchyAdapter(Advancement.Builder.class, (JsonDeserializer<Advancement.Builder>)(p_210124_0_, p_210124_1_, p_210124_2_) -> {
++   public static final Gson field_192783_b = (new GsonBuilder()).registerTypeHierarchyAdapter(Advancement.Builder.class, (JsonDeserializer<Advancement.Builder>)(p_210124_0_, p_210124_1_, p_210124_2_) -> { // private->public Bukkit
        JsonObject jsonobject = JSONUtils.func_151210_l(p_210124_0_, "advancement");
        return Advancement.Builder.func_192059_a(jsonobject, p_210124_2_);
     }).registerTypeAdapter(AdvancementRewards.class, new AdvancementRewards.Deserializer()).registerTypeHierarchyAdapter(ITextComponent.class, new ITextComponent.Serializer()).registerTypeHierarchyAdapter(Style.class, new Style.Serializer()).registerTypeAdapterFactory(new EnumTypeAdapterFactory()).create();
 -   private AdvancementList field_223388_c = new AdvancementList();
-+   public AdvancementList field_223388_c = new AdvancementList();
++   public AdvancementList field_223388_c = new AdvancementList(); // private->public Bukkit
  
     public AdvancementManager() {
        super(field_192783_b, "advancements");
-@@ -36,7 +36,11 @@
+@@ -35,8 +35,17 @@
+    protected void func_212853_a_(Map<ResourceLocation, JsonObject> p_212853_1_, IResourceManager p_212853_2_, IProfiler p_212853_3_) {
        Map<ResourceLocation, Advancement.Builder> map = Maps.newHashMap();
        p_212853_1_.forEach((p_223387_1_, p_223387_2_) -> {
++         // Spigot start
++         if (org.spigotmc.SpigotConfig.disabledAdvancements != null && (org.spigotmc.SpigotConfig.disabledAdvancements.contains("*") || org.spigotmc.SpigotConfig.disabledAdvancements.contains(p_223387_1_.toString()))) {
++            return;
++         }
++         // Spigot end
           try {
 -            Advancement.Builder advancement$builder = field_192783_b.fromJson(p_223387_2_, Advancement.Builder.class);
 +            Advancement.Builder advancement$builder = net.minecraftforge.common.crafting.ConditionalAdvancement.read(field_192783_b, p_223387_1_, p_223387_2_);

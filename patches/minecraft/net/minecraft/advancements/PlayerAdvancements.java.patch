@@ -1,6 +1,19 @@
 --- a/net/minecraft/advancements/PlayerAdvancements.java
 +++ b/net/minecraft/advancements/PlayerAdvancements.java
-@@ -154,6 +154,7 @@
+@@ -141,7 +141,11 @@
+             for(Entry<ResourceLocation, AdvancementProgress> entry : stream.collect(Collectors.toList())) {
+                Advancement advancement = this.field_192756_d.func_191949_aK().func_192778_a(entry.getKey());
+                if (advancement == null) {
+-                  field_192753_a.warn("Ignored advancement '{}' in progress file {} - it doesn't exist anymore?", entry.getKey(), this.field_192757_e);
++                  // CraftBukkit start
++                  if(entry.getKey().func_110624_b().equals("minecraft")){
++                     field_192753_a.warn("Ignored advancement '{}' in progress file {} - it doesn't exist anymore?", entry.getKey(), this.field_192757_e);
++                  }
++                  // CraftBukkit end
+                } else {
+                   this.func_192743_a(advancement, entry.getValue());
+                }
+@@ -154,11 +158,13 @@
        }
  
        this.func_192748_e();
@@ -8,7 +21,13 @@
        this.func_192752_d();
        this.func_192751_c();
     }
-@@ -187,6 +188,8 @@
+ 
+    public void func_192749_b() {
++      if (org.spigotmc.SpigotConfig.disableAdvancementSaving) return;
+       Map<ResourceLocation, AdvancementProgress> map = Maps.newHashMap();
+ 
+       for(Entry<Advancement, AdvancementProgress> entry : this.field_192758_f.entrySet()) {
+@@ -187,6 +193,8 @@
     }
  
     public boolean func_192750_a(Advancement p_192750_1_, String p_192750_2_) {
@@ -17,7 +36,7 @@
        boolean flag = false;
        AdvancementProgress advancementprogress = this.func_192747_a(p_192750_1_);
        boolean flag1 = advancementprogress.func_192105_a();
-@@ -195,10 +198,12 @@
+@@ -195,10 +203,12 @@
           this.field_192761_i.add(p_192750_1_);
           flag = true;
           if (!flag1 && advancementprogress.func_192105_a()) {

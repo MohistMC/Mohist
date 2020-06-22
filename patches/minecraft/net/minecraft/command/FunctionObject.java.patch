@@ -1,0 +1,11 @@
+--- a/net/minecraft/command/FunctionObject.java
++++ b/net/minecraft/command/FunctionObject.java
+@@ -47,7 +47,7 @@
+             }
+ 
+             try {
+-               ParseResults<CommandSource> parseresults = p_197000_1_.func_195450_a().func_195571_aL().func_197054_a().parse(stringreader, p_197000_1_.func_223402_g());
++               ParseResults<CommandSource> parseresults = p_197000_1_.func_195446_d().parse(stringreader, p_197000_1_.func_223402_g()); // CraftBukkit
+                if (parseresults.getReader().canRead()) {
+                   throw Commands.func_227481_a_(parseresults);
+                }
