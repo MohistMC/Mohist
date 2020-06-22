@@ -1,6 +1,6 @@
 --- a/net/minecraft/block/DispenserBlock.java
 +++ b/net/minecraft/block/DispenserBlock.java
-@@ -41,9 +41,10 @@
+@@ -41,10 +41,12 @@
  public class DispenserBlock extends ContainerBlock {
     public static final DirectionProperty field_176441_a = DirectionalBlock.field_176387_N;
     public static final BooleanProperty field_176440_b = BlockStateProperties.field_208197_x;
@@ -8,12 +8,14 @@
 +   public static final Map<Item, IDispenseItemBehavior> field_149943_a = Util.func_200696_a(new Object2ObjectOpenHashMap<>(), (p_212564_0_) -> {
        p_212564_0_.defaultReturnValue(new DefaultDispenseItemBehavior());
 -   });
-+   }); // CraftBukkit - Change from private to public for access
-+   public static boolean eventFired = false; // CraftBukkit
++   }); // CraftBukkit private->public
  
++   public static boolean eventFired = false; // CraftBukkit
++
     public static void func_199774_a(IItemProvider p_199774_0_, IDispenseItemBehavior p_199774_1_) {
        field_149943_a.put(p_199774_0_.func_199767_j(), p_199774_1_);
-@@ -76,7 +77,7 @@
+    }
+@@ -76,7 +78,7 @@
        }
     }
  
@@ -22,7 +24,7 @@
        ProxyBlockSource proxyblocksource = new ProxyBlockSource(p_176439_1_, p_176439_2_);
        DispenserTileEntity dispensertileentity = proxyblocksource.func_150835_j();
        int i = dispensertileentity.func_146017_i();
-@@ -86,6 +87,7 @@
+@@ -86,6 +88,7 @@
           ItemStack itemstack = dispensertileentity.func_70301_a(i);
           IDispenseItemBehavior idispenseitembehavior = this.func_149940_a(itemstack);
           if (idispenseitembehavior != IDispenseItemBehavior.field_223216_a_) {

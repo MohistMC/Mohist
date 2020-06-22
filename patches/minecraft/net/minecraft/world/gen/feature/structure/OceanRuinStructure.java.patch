@@ -1,0 +1,23 @@
+--- a/net/minecraft/world/gen/feature/structure/OceanRuinStructure.java
++++ b/net/minecraft/world/gen/feature/structure/OceanRuinStructure.java
+@@ -8,6 +8,7 @@
+ import net.minecraft.util.Rotation;
+ import net.minecraft.util.math.BlockPos;
+ import net.minecraft.util.math.MutableBoundingBox;
++import net.minecraft.world.World;
+ import net.minecraft.world.biome.Biome;
+ import net.minecraft.world.gen.ChunkGenerator;
+ import net.minecraft.world.gen.feature.Feature;
+@@ -38,8 +39,10 @@
+       return OceanRuinStructure.Start::new;
+    }
+ 
+-   protected int func_202382_c() {
+-      return 14357621;
++   // Spigot start
++   protected int getSeedModifier(World world) {
++      return  world.spigotConfig.oceanSeed;
++      // Spigot end
+    }
+ 
+    public static class Start extends StructureStart {

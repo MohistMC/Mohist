@@ -1,11 +1,19 @@
 --- a/net/minecraft/block/GrassBlock.java
 +++ b/net/minecraft/block/GrassBlock.java
-@@ -56,7 +56,7 @@
+@@ -9,6 +9,7 @@
+ import net.minecraft.world.gen.feature.DecoratedFeatureConfig;
+ import net.minecraft.world.gen.feature.FlowersFeature;
+ import net.minecraft.world.server.ServerWorld;
++import org.bukkit.craftbukkit.v1_15_R1.event.CraftEventFactory;
+ 
+ public class GrassBlock extends SpreadableSnowyDirtBlock implements IGrowable {
+    public GrassBlock(Block.Properties p_i48388_1_) {
+@@ -56,7 +57,7 @@
                 }
  
                 if (blockstate1.func_196955_c(p_225535_1_, blockpos1)) {
 -                  p_225535_1_.func_180501_a(blockpos1, blockstate1, 3);
-+                  org.bukkit.craftbukkit.event.CraftEventFactory.handleBlockGrowEvent(p_225535_1_, blockpos1, blockstate1, 3); // CraftBukkit
++                  CraftEventFactory.handleBlockGrowEvent(p_225535_1_, blockpos1, blockstate1, 3); // CraftBukkit
                 }
                 break;
              }

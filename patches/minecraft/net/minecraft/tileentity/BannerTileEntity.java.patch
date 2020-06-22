@@ -5,10 +5,10 @@
     private ITextComponent field_190617_a;
     @Nullable
 -   private DyeColor field_175120_a = DyeColor.WHITE;
-+   public DyeColor field_175120_a = DyeColor.WHITE;
++   public DyeColor field_175120_a = DyeColor.WHITE; // private->public CraftBukkit
     @Nullable
 -   private ListNBT field_175118_f;
-+   public ListNBT field_175118_f;
++   public ListNBT field_175118_f; // private->public CraftBukkit
     private boolean field_175119_g;
     @Nullable
     private List<Pair<BannerPattern, DyeColor>> field_175122_h;

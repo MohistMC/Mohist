@@ -43,25 +43,26 @@
                    abstractarrowentity.func_184547_a(playerentity, playerentity.field_70125_A, playerentity.field_70177_z, 0.0F, f * 3.0F, 1.0F);
                    if (f == 1.0F) {
                       abstractarrowentity.func_70243_d(true);
-@@ -64,7 +70,13 @@
-                   if (EnchantmentHelper.func_77506_a(Enchantments.field_185311_w, p_77615_1_) > 0) {
+@@ -65,6 +71,14 @@
                       abstractarrowentity.func_70015_d(100);
                    }
--
+ 
 +                  // CraftBukkit start
-+                  org.bukkit.event.entity.EntityShootBowEvent event = org.bukkit.craftbukkit.event.CraftEventFactory.callEntityShootBowEvent(playerentity, itemstack, abstractarrowentity, f);
++                  org.bukkit.event.entity.EntityShootBowEvent event = org.bukkit.craftbukkit.v1_15_R1.event.CraftEventFactory.callEntityShootBowEvent(playerentity, itemstack, abstractarrowentity, f);
 +                  if (event.isCancelled()) {
 +                     event.getProjectile().remove();
 +                     return;
 +                  }
 +                  // CraftBukkit end
++
                    p_77615_1_.func_222118_a(1, playerentity, (p_220009_1_) -> {
                       p_220009_1_.func_213334_d(playerentity.func_184600_cs());
                    });
-@@ -73,6 +85,16 @@
+@@ -72,7 +86,16 @@
+                      abstractarrowentity.field_70251_a = AbstractArrowEntity.PickupStatus.CREATIVE_ONLY;
                    }
  
-                   p_77615_2_.func_217376_c(abstractarrowentity);
+-                  p_77615_2_.func_217376_c(abstractarrowentity);
 +                  // CraftBukkit start
 +                  if (event.getProjectile() == abstractarrowentity.getBukkitEntity()) {
 +                     if (!p_77615_2_.func_217376_c(abstractarrowentity)) {
@@ -75,7 +76,7 @@
                 }
  
                 p_77615_2_.func_184148_a((PlayerEntity)null, playerentity.func_226277_ct_(), playerentity.func_226278_cu_(), playerentity.func_226281_cx_(), SoundEvents.field_187737_v, SoundCategory.PLAYERS, 1.0F, 1.0F / (field_77697_d.nextFloat() * 0.4F + 1.2F) + f * 0.5F);
-@@ -110,6 +132,10 @@
+@@ -110,6 +133,10 @@
     public ActionResult<ItemStack> func_77659_a(World p_77659_1_, PlayerEntity p_77659_2_, Hand p_77659_3_) {
        ItemStack itemstack = p_77659_2_.func_184586_b(p_77659_3_);
        boolean flag = !p_77659_2_.func_213356_f(itemstack).func_190926_b();
@@ -86,7 +87,7 @@
        if (!p_77659_2_.field_71075_bZ.field_75098_d && !flag) {
           return ActionResult.func_226251_d_(itemstack);
        } else {
-@@ -121,4 +147,8 @@
+@@ -121,4 +148,8 @@
     public Predicate<ItemStack> func_220004_b() {
        return field_220007_a;
     }

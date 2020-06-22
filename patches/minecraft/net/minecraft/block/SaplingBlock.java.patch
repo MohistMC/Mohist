@@ -8,11 +8,10 @@
  import java.util.Random;
  import net.minecraft.block.trees.Tree;
  import net.minecraft.state.IntegerProperty;
-@@ -11,11 +13,16 @@
+@@ -11,11 +13,15 @@
  import net.minecraft.world.IBlockReader;
  import net.minecraft.world.World;
  import net.minecraft.world.server.ServerWorld;
-+import org.bukkit.Bukkit;
 +import org.bukkit.Location;
 +import org.bukkit.TreeType;
 +import org.bukkit.event.world.StructureGrowEvent;
@@ -21,42 +20,42 @@
     public static final IntegerProperty field_176479_b = BlockStateProperties.field_208137_al;
     protected static final VoxelShape field_196386_b = Block.func_208617_a(2.0D, 0.0D, 2.0D, 14.0D, 12.0D, 14.0D);
     private final Tree field_196387_c;
-+   public static TreeType treeType;
++   public static TreeType treeType; // CraftBukkit
  
     protected SaplingBlock(Tree p_i48337_1_, Block.Properties p_i48337_2_) {
        super(p_i48337_2_);
-@@ -29,8 +36,30 @@
+@@ -29,8 +35,29 @@
  
     public void func_225534_a_(BlockState p_225534_1_, ServerWorld p_225534_2_, BlockPos p_225534_3_, Random p_225534_4_) {
        super.func_225534_a_(p_225534_1_, p_225534_2_, p_225534_3_, p_225534_4_);
+-      if (p_225534_2_.func_201696_r(p_225534_3_.func_177984_a()) >= 9 && p_225534_4_.nextInt(7) == 0) {
 +      if (!p_225534_2_.isAreaLoaded(p_225534_3_, 1)) return; // Forge: prevent loading unloaded chunks when checking neighbor's light
-       if (p_225534_2_.func_201696_r(p_225534_3_.func_177984_a()) >= 9 && p_225534_4_.nextInt(7) == 0) {
++      if (p_225534_2_.func_201696_r(p_225534_3_.func_177984_a()) >= 9 && p_225534_4_.nextInt(Math.max(2, (int) (((100.0F / p_225534_2_.spigotConfig.saplingModifier) * 7) + 0.5F))) == 0) { // Spigot
 +         // CraftBukkit start
 +         p_225534_2_.captureTreeGeneration = true;
++         // CraftBukkit end
           this.func_226942_a_(p_225534_2_, p_225534_3_, p_225534_1_, p_225534_4_);
-+         p_225534_2_.captureTreeGeneration = false;
-+         if (p_225534_2_.capturedBlockStates.size() > 0) {
++         // CraftBukkit start
++         if(p_225534_2_.capturedBlockStates.size() > 0){
 +            TreeType treeType = SaplingBlock.treeType;
 +            SaplingBlock.treeType = null;
 +            Location location = new Location(p_225534_2_.getWorldCB(), p_225534_3_.func_177958_n(), p_225534_3_.func_177956_o(), p_225534_3_.func_177952_p());
-+            List<org.bukkit.block.BlockState> blocks = new ArrayList<org.bukkit.block.BlockState>(p_225534_2_.capturedBlockStates.values());
++            List<org.bukkit.block.BlockState> blocks = new ArrayList<>(p_225534_2_.capturedBlockStates.values());
 +            p_225534_2_.capturedBlockStates.clear();
 +            StructureGrowEvent event = null;
-+            if (treeType != null) {
++            if(treeType != null){
 +               event = new StructureGrowEvent(location, treeType, false, null, blocks);
-+               Bukkit.getPluginManager().callEvent(event);
++               p_225534_2_.getServerCB().getPluginManager().callEvent(event);
 +            }
-+            if (event == null || !event.isCancelled()) {
-+               for (org.bukkit.block.BlockState blockstate : blocks) {
-+                  blockstate.update(true);
-+               }
++            if(event == null || !event.isCancelled()){
++               blocks.forEach(org.bukkit.block.BlockState::update);
 +            }
 +         }
-+         // CraftBukkit end
++         // CraftBukkit stop
        }
  
     }
-@@ -39,6 +68,7 @@
+@@ -39,6 +66,7 @@
        if (p_226942_3_.func_177229_b(field_176479_b) == 0) {
           p_226942_1_.func_180501_a(p_226942_2_, p_226942_3_.func_177231_a(field_176479_b), 4);
        } else {

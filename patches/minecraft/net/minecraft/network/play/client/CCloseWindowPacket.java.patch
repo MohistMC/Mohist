@@ -5,7 +5,7 @@
     }
  
 -   @OnlyIn(Dist.CLIENT)
-+   //@OnlyIn(Dist.CLIENT) Mohist and CraftBukkit
++   //@OnlyIn(Dist.CLIENT) CraftBukkit
     public CCloseWindowPacket(int p_i46881_1_) {
        this.field_149556_a = p_i46881_1_;
     }

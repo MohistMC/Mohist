@@ -13,25 +13,26 @@
  import net.minecraft.world.GameRules;
  import net.minecraft.world.server.ServerWorld;
 +import org.bukkit.command.CommandSender;
-+import org.bukkit.craftbukkit.command.VanillaCommandWrapper;
++import org.bukkit.craftbukkit.v1_15_R1.command.VanillaCommandWrapper;
  
  public class CommandSource implements ISuggestionProvider {
     public static final SimpleCommandExceptionType field_197039_a = new SimpleCommandExceptionType(new TranslationTextComponent("permissions.requires.player"));
     public static final SimpleCommandExceptionType field_197040_b = new SimpleCommandExceptionType(new TranslationTextComponent("permissions.requires.entity"));
 -   private final ICommandSource field_197041_c;
-+   public final ICommandSource field_197041_c;
++   public final ICommandSource field_197041_c; // private->public CraftBukkit
     private final Vec3d field_197042_d;
     private final ServerWorld field_197043_e;
     private final int field_197044_f;
-@@ -44,6 +47,7 @@
-    private final ResultConsumer<CommandSource> field_197050_l;
+@@ -45,6 +48,8 @@
     private final EntityAnchorArgument.Type field_201011_m;
     private final Vec2f field_201012_n;
-+   public CommandNode currentCommand; // CraftBukkit
  
++   public CommandNode currentCommand; // CraftBukkit
++
     public CommandSource(ICommandSource p_i49552_1_, Vec3d p_i49552_2_, Vec2f p_i49552_3_, ServerWorld p_i49552_4_, int p_i49552_5_, String p_i49552_6_, ITextComponent p_i49552_7_, MinecraftServer p_i49552_8_, @Nullable Entity p_i49552_9_) {
        this(p_i49552_1_, p_i49552_2_, p_i49552_3_, p_i49552_4_, p_i49552_5_, p_i49552_6_, p_i49552_7_, p_i49552_8_, p_i49552_9_, false, (p_197032_0_, p_197032_1_, p_197032_2_) -> {
-@@ -130,9 +134,20 @@
+       }, EntityAnchorArgument.Type.FEET);
+@@ -130,9 +135,20 @@
     }
  
     public boolean func_197034_c(int p_197034_1_) {
@@ -52,21 +53,30 @@
     public Vec3d func_197036_d() {
        return this.field_197042_d;
     }
-@@ -189,7 +204,7 @@
+@@ -189,13 +205,13 @@
        ITextComponent itextcomponent = (new TranslationTextComponent("chat.type.admin", this.func_197019_b(), p_197020_1_)).func_211709_a(new TextFormatting[]{TextFormatting.GRAY, TextFormatting.ITALIC});
        if (this.field_197047_i.func_200252_aR().func_223586_b(GameRules.field_223611_n)) {
           for(ServerPlayerEntity serverplayerentity : this.field_197047_i.func_184103_al().func_181057_v()) {
 -            if (serverplayerentity != this.field_197041_c && this.field_197047_i.func_184103_al().func_152596_g(serverplayerentity.func_146103_bH())) {
-+            if (serverplayerentity != this.field_197041_c && serverplayerentity.getBukkitEntity().hasPermission("minecraft.admin.command_feedback")) { // CraftBukkit
++            if (serverplayerentity != this.field_197041_c && field_197049_k.getBukkitEntity().hasPermission("minecraft.admin.command_feedback")) { // CraftBukkit
                 serverplayerentity.func_145747_a(itextcomponent);
              }
           }
-@@ -234,4 +249,8 @@
+       }
+ 
+-      if (this.field_197041_c != this.field_197047_i && this.field_197047_i.func_200252_aR().func_223586_b(GameRules.field_223608_k)) {
++      if (this.field_197041_c != this.field_197047_i && this.field_197047_i.func_200252_aR().func_223586_b(GameRules.field_223608_k) && !org.spigotmc.SpigotConfig.silentCommandBlocks) { // Spigot
+          this.field_197047_i.func_145747_a(itextcomponent);
+       }
+ 
+@@ -234,4 +250,10 @@
     public CompletableFuture<Suggestions> func_197009_a(CommandContext<ISuggestionProvider> p_197009_1_, SuggestionsBuilder p_197009_2_) {
        return null;
     }
 +
++   // CraftBukkit start
 +   public CommandSender getBukkitSender() {
-+      return field_197041_c.getBukkitSender(this);
++      return this.field_197041_c.getBukkitSender(this);
 +   }
++   // CraftBukkit end
  }

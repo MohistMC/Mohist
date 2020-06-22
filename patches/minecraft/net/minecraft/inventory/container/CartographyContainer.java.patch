@@ -1,59 +1,71 @@
 --- a/net/minecraft/inventory/container/CartographyContainer.java
 +++ b/net/minecraft/inventory/container/CartographyContainer.java
-@@ -14,8 +14,15 @@
+@@ -14,16 +14,34 @@
  import net.minecraft.util.SoundCategory;
  import net.minecraft.util.SoundEvents;
  import net.minecraft.world.storage.MapData;
 +import org.bukkit.Location;
-+import org.bukkit.craftbukkit.inventory.CraftInventoryCartography;
-+import org.bukkit.craftbukkit.inventory.CraftInventoryView;
++import org.bukkit.craftbukkit.v1_15_R1.inventory.CraftInventoryCartography;
++import org.bukkit.craftbukkit.v1_15_R1.inventory.CraftInventoryView;
 +import org.bukkit.entity.Player;
 +import org.bukkit.inventory.InventoryView;
  
  public class CartographyContainer extends Container {
-+   private CraftInventoryView bukkitEntity;
-+   private Player player;
     private final IWorldPosCallable field_216999_d;
     private boolean field_217000_e;
     private long field_226605_f_;
-@@ -24,6 +31,10 @@
++
++   // CraftBukkit start
++   private CraftInventoryView bukkitEntity = null;
++   private Player player;
++   // CraftBukkit end
++
+    public final IInventory field_216998_c = new Inventory(2) {
+       public void func_70296_d() {
           CartographyContainer.this.func_75130_a(this);
           super.func_70296_d();
        }
++
++      // CraftBukkit start
 +      @Override
 +      public Location getLocation() {
-+         return field_216999_d.getLocation();
++         return field_216998_c.getLocation();
 +      }
++      // CraftBukkit end
     };
     private final CraftResultInventory field_217001_f = new CraftResultInventory() {
        public void func_70296_d() {
-@@ -32,6 +43,16 @@
-       }
-    };
- 
-+
-+   @Override
-+   public CraftInventoryView getBukkitView() {
-+      if (this.bukkitEntity != null) {
-+         return this.bukkitEntity;
-+      }
-+      final CraftInventoryCartography inventory = new CraftInventoryCartography(this.field_216998_c, this.field_217001_f);
-+      return this.bukkitEntity = new CraftInventoryView(this.player, inventory, this);
-+   }
-+
-    public CartographyContainer(int p_i50093_1_, PlayerInventory p_i50093_2_) {
-       this(p_i50093_1_, p_i50093_2_, IWorldPosCallable.field_221489_a);
-    }
-@@ -101,10 +122,11 @@
-       for(int k = 0; k < 9; ++k) {
+@@ -102,9 +120,23 @@
           this.func_75146_a(new Slot(p_i50094_2_, k, 8 + k * 18, 142));
        }
--
-+      player = (Player) p_i50094_2_.field_70458_d.getBukkitEntity(); // CraftBukkit
+ 
++      player = (Player) p_i50094_2_.field_70458_d.getBukkitEntity();
     }
  
++   // CraftBukkit start
++   @Override
++   public InventoryView getBukkitView() {
++      if (bukkitEntity != null) {
++         return bukkitEntity;
++      }
++      CraftInventoryCartography inventory = new CraftInventoryCartography(this.field_216998_c, this.field_217001_f);
++      bukkitEntity = new CraftInventoryView(this.player, inventory, this);
++      return bukkitEntity;
++   }
++   // CraftBukkit end
++
     public boolean func_75145_c(PlayerEntity p_75145_1_) {
 +      if (!this.checkReachable) return true; // CraftBukkit
        return func_216963_a(this.field_216999_d, p_75145_1_, Blocks.field_222425_lN);
+    }
+ 
+@@ -153,8 +185,8 @@
+                this.field_217001_f.func_70299_a(2, itemstack);
+                this.func_75142_b();
+             }
+-
+          }
++
+       });
     }
  

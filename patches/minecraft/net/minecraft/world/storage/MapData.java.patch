@@ -18,12 +18,12 @@
  import net.minecraft.world.IWorld;
  import net.minecraft.world.dimension.DimensionType;
 +import org.bukkit.Bukkit;
-+import org.bukkit.craftbukkit.CraftServer;
-+import org.bukkit.craftbukkit.CraftWorld;
-+import org.bukkit.craftbukkit.entity.CraftPlayer;
-+import org.bukkit.craftbukkit.map.CraftMapView;
-+import org.bukkit.craftbukkit.map.RenderData;
-+import org.bukkit.craftbukkit.util.CraftChatMessage;
++import org.bukkit.craftbukkit.v1_15_R1.CraftServer;
++import org.bukkit.craftbukkit.v1_15_R1.CraftWorld;
++import org.bukkit.craftbukkit.v1_15_R1.entity.CraftPlayer;
++import org.bukkit.craftbukkit.v1_15_R1.map.CraftMapView;
++import org.bukkit.craftbukkit.v1_15_R1.map.RenderData;
++import org.bukkit.craftbukkit.v1_15_R1.util.CraftChatMessage;
 +import org.bukkit.map.MapCursor;
  
  public class MapData extends WorldSavedData {

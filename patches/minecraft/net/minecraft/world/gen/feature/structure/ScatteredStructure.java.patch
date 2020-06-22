@@ -1,0 +1,26 @@
+--- a/net/minecraft/world/gen/feature/structure/ScatteredStructure.java
++++ b/net/minecraft/world/gen/feature/structure/ScatteredStructure.java
+@@ -5,6 +5,7 @@
+ import java.util.function.Function;
+ import net.minecraft.util.SharedSeedRandom;
+ import net.minecraft.util.math.ChunkPos;
++import net.minecraft.world.World;
+ import net.minecraft.world.biome.Biome;
+ import net.minecraft.world.biome.BiomeManager;
+ import net.minecraft.world.gen.ChunkGenerator;
+@@ -24,7 +25,7 @@
+       int j1 = l < 0 ? l - i + 1 : l;
+       int k1 = i1 / i;
+       int l1 = j1 / i;
+-      ((SharedSeedRandom)p_211744_2_).func_202427_a(p_211744_1_.func_202089_c(), k1, l1, this.func_202382_c());
++      ((SharedSeedRandom)p_211744_2_).func_202427_a(p_211744_1_.func_202089_c(), k1, l1, this.getSeedModifier(p_211744_1_.getWorld()));
+       k1 = k1 * i;
+       l1 = l1 * i;
+       k1 = k1 + p_211744_2_.nextInt(i - j);
+@@ -45,5 +46,5 @@
+       return p_211745_1_.func_201496_a_().func_211731_i();
+    }
+ 
+-   protected abstract int func_202382_c();
++   protected abstract int getSeedModifier(World world); // Spigot
+ }

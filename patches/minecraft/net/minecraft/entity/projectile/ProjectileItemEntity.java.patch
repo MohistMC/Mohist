@@ -12,10 +12,10 @@
     }
  
 -   protected abstract Item func_213885_i();
-+   public abstract Item func_213885_i();
++   public abstract Item func_213885_i(); // protected->public CraftBukkit
  
 -   protected ItemStack func_213882_k() {
-+   public ItemStack func_213882_k() {
++   public ItemStack func_213882_k() { // protected->public CraftBukkit
        return this.func_184212_Q().func_187225_a(field_213886_e);
     }
  

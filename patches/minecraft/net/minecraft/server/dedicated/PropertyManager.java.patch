@@ -1,14 +1,25 @@
 --- a/net/minecraft/server/dedicated/PropertyManager.java
 +++ b/net/minecraft/server/dedicated/PropertyManager.java
-@@ -19,7 +19,6 @@
+@@ -13,16 +13,16 @@
+ import java.util.function.Supplier;
+ import java.util.function.UnaryOperator;
+ import javax.annotation.Nullable;
++import joptsimple.OptionSet;
+ import org.apache.logging.log4j.LogManager;
+ import org.apache.logging.log4j.Logger;
+ 
  public abstract class PropertyManager<T extends PropertyManager<T>> {
     private static final Logger field_164440_a = LogManager.getLogger();
     private final Properties field_73672_b;
 -
     public PropertyManager(Properties p_i50717_1_) {
        this.field_73672_b = p_i50717_1_;
-    }
-@@ -37,8 +36,14 @@
+-   }
++      }
+ 
+    public static Properties func_218969_b(Path p_218969_0_) {
+       Properties properties = new Properties();
+@@ -37,8 +37,14 @@
     }
  
     public void func_218970_c(Path p_218970_1_) {
@@ -16,7 +27,7 @@
 -         this.field_73672_b.store(outputstream, "Minecraft server properties");
 +      try {
 +         // CraftBukkit start - Don't attempt writing to file if it's read only
-+         if (p_218970_1_.toFile().exists() && ! p_218970_1_.toFile().canWrite()) {
++         if (p_218970_1_.toFile().exists() && !p_218970_1_.toFile().canWrite()) {
 +            return;
 +         }
 +         // CraftBukkit end
@@ -25,7 +36,7 @@
        } catch (IOException var15) {
           field_164440_a.error("Failed to store properties to file: " + p_218970_1_);
        }
-@@ -67,7 +72,7 @@
+@@ -67,7 +73,7 @@
  
     @Nullable
     private String func_218976_c(String p_218976_1_) {

@@ -39,19 +39,45 @@
        }
     }
  
-@@ -108,6 +110,15 @@
+@@ -108,6 +110,16 @@
        return channelfuture.channel().localAddress();
     }
  
++   // CraftBukkit start
 +   public void acceptConnections() {
 +      synchronized (this.field_151274_e) {
 +         for (final ChannelFuture future : this.field_151274_e) {
 +            future.channel().config().setAutoRead(true);
 +         }
 +      }
-+      // monitorexit(this.endpoints)
 +   }
++   // CraftBukkit end
 +
     public void func_151268_b() {
        this.field_151277_a = false;
  
+@@ -123,6 +135,13 @@
+ 
+    public void func_151269_c() {
+       synchronized(this.field_151272_f) {
++         // Spigot Start
++         // This prevents players from 'gaming' the server, and strategically relogging to increase their position in the tick order
++         if ( org.spigotmc.SpigotConfig.playerShuffle > 0 && MinecraftServer.currentTick % org.spigotmc.SpigotConfig.playerShuffle == 0 )
++         {
++            Collections.shuffle( this.field_151272_f );
++         }
++         // Spigot End
+          Iterator<NetworkManager> iterator = this.field_151272_f.iterator();
+ 
+          while(iterator.hasNext()) {
+@@ -147,6 +166,10 @@
+                      networkmanager.func_150721_g();
+                   }
+                } else {
++                  // Spigot Start
++                  // Fix a race condition where a NetworkManager could be unregistered just before connection.
++                  if (networkmanager.preparing) continue;
++                  // Spigot End
+                   iterator.remove();
+                   networkmanager.func_179293_l();
+                }

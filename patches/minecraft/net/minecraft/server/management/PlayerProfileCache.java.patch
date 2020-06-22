@@ -1,11 +1,70 @@
 --- a/net/minecraft/server/management/PlayerProfileCache.java
 +++ b/net/minecraft/server/management/PlayerProfileCache.java
-@@ -46,7 +46,7 @@
+@@ -36,17 +36,19 @@
+ import java.util.Locale;
+ import java.util.Map;
+ import java.util.UUID;
++import java.util.concurrent.LinkedBlockingDeque;
+ import javax.annotation.Nullable;
+ import net.minecraft.entity.player.PlayerEntity;
+ import net.minecraft.util.JSONUtils;
+ import org.apache.commons.io.IOUtils;
++import org.spigotmc.SpigotConfig;
+ 
+ public class PlayerProfileCache {
+    public static final SimpleDateFormat field_152659_a = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss Z");
     private static boolean field_187322_c;
     private final Map<String, PlayerProfileCache.ProfileEntry> field_152661_c = Maps.newHashMap();
     private final Map<UUID, PlayerProfileCache.ProfileEntry> field_152662_d = Maps.newHashMap();
 -   private final Deque<GameProfile> field_152663_e = Lists.newLinkedList();
-+   private final Deque<GameProfile> field_152663_e = new java.util.concurrent.LinkedBlockingDeque<GameProfile>(); // CraftBukkit
++   private final Deque<GameProfile> field_152663_e = new LinkedBlockingDeque<GameProfile>(); // CraftBukkit
     private final GameProfileRepository field_187323_g;
     protected final Gson field_152660_b;
     private final File field_152665_g;
+@@ -125,7 +127,7 @@
+       this.field_152661_c.put(p_152651_1_.getName().toLowerCase(Locale.ROOT), playerprofilecache$profileentry1);
+       this.field_152662_d.put(uuid, playerprofilecache$profileentry1);
+       this.field_152663_e.addFirst(p_152651_1_);
+-      this.func_152658_c();
++      if( !org.spigotmc.SpigotConfig.saveUserCacheOnStopOnly ) this.func_152658_c();  // Spigot - skip saving if disabled
+    }
+ 
+    @Nullable
+@@ -144,14 +146,14 @@
+          this.field_152663_e.remove(gameprofile);
+          this.field_152663_e.addFirst(gameprofile);
+       } else {
+-         GameProfile gameprofile1 = func_187319_a(this.field_187323_g, s);
++         GameProfile gameprofile1 = func_187319_a(this.field_187323_g, p_152655_1_); // Spigot - use correct case for offline players
+          if (gameprofile1 != null) {
+             this.func_152649_a(gameprofile1);
+             playerprofilecache$profileentry = this.field_152661_c.get(s);
+          }
+       }
+ 
+-      this.func_152658_c();
++      if( !org.spigotmc.SpigotConfig.saveUserCacheOnStopOnly ) this.func_152658_c(); // Spigot - skip saving if disabled
+       return playerprofilecache$profileentry == null ? null : playerprofilecache$profileentry.func_152668_a();
+    }
+ 
+@@ -190,6 +192,11 @@
+          }
+       } catch (FileNotFoundException var9) {
+          ;
++         // Spigot Start
++      } catch (com.google.gson.JsonSyntaxException ex) {
++         UserList.field_152693_a.warn( "Usercache.json is corrupted or has bad formatting. Deleting it to prevent further issues." );
++         this.field_152665_g.delete();
++         // Spigot End
+       } catch (JsonParseException var10) {
+          ;
+       } finally {
+@@ -199,7 +206,7 @@
+    }
+ 
+    public void func_152658_c() {
+-      String s = this.field_152660_b.toJson(this.func_152656_a(1000));
++      String s = this.field_152660_b.toJson(this.func_152656_a(SpigotConfig.userCacheCap));
+       BufferedWriter bufferedwriter = null;
+ 
+       try {

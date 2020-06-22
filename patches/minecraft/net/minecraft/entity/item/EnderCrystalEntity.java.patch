@@ -4,7 +4,7 @@
  import net.minecraft.world.end.DragonFightManager;
  import net.minecraftforge.api.distmarker.Dist;
  import net.minecraftforge.api.distmarker.OnlyIn;
-+import org.bukkit.craftbukkit.event.CraftEventFactory;
++import org.bukkit.craftbukkit.v1_15_R1.event.CraftEventFactory;
 +import org.bukkit.event.entity.ExplosionPrimeEvent;
  
  public class EnderCrystalEntity extends Entity {
@@ -33,7 +33,6 @@
 +            // CraftBukkit end
              this.func_70106_y();
              if (!p_70097_1_.func_94541_c()) {
--               this.field_70170_p.func_217385_a((Entity)null, this.func_226277_ct_(), this.func_226278_cu_(), this.func_226281_cx_(), 6.0F, Explosion.Mode.DESTROY);
 +               // CraftBukkit start
 +               ExplosionPrimeEvent event = new ExplosionPrimeEvent(this.getBukkitEntity(), 6.0F, false);
 +               this.field_70170_p.getServerCB().getPluginManager().callEvent(event);
@@ -41,7 +40,7 @@
 +                  this.field_70128_L = false;
 +                  return false;
 +               }
-+               this.field_70170_p.func_217398_a(this, this.func_226277_ct_(), this.func_226278_cu_(), this.func_226281_cx_(), event.getRadius(), event.getFire(), Explosion.Mode.DESTROY);
+                this.field_70170_p.func_217385_a((Entity)null, this.func_226277_ct_(), this.func_226278_cu_(), this.func_226281_cx_(), 6.0F, Explosion.Mode.DESTROY);
 +               // CraftBukkit end
              }
  

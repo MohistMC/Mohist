@@ -12,13 +12,13 @@
  import net.minecraft.item.crafting.RecipeItemHelper;
  import net.minecraft.util.NonNullList;
 +import org.bukkit.Location;
-+import org.bukkit.craftbukkit.entity.CraftHumanEntity;
++import org.bukkit.craftbukkit.v1_15_R1.entity.CraftHumanEntity;
 +import org.bukkit.entity.HumanEntity;
-+import org.bukkit.inventory.InventoryHolder;
++import org.bukkit.event.inventory.InventoryType;
  
  public class CraftingInventory implements IInventory, IRecipeHelperPopulator {
     private final NonNullList<ItemStack> field_70466_a;
-@@ -12,6 +19,18 @@
+@@ -12,6 +19,68 @@
     private final int field_174924_c;
     private final Container field_70465_c;
  
@@ -29,64 +29,43 @@
 +   private PlayerEntity owner;
 +   private int maxStack = MAX_STACK;
 +
-+   public CraftingInventory(Container container, int width, int height, PlayerEntity player) {
-+      this(container, width, height);
-+      this.owner = player;
-+   }
-+
-    public CraftingInventory(Container p_i1807_1_, int p_i1807_2_, int p_i1807_3_) {
-       this.field_70466_a = NonNullList.func_191197_a(p_i1807_2_ * p_i1807_3_, ItemStack.field_190927_a);
-       this.field_70465_c = p_i1807_1_;
-@@ -55,6 +74,11 @@
-       this.field_70465_c.func_75130_a(this);
-    }
- 
-+   @Override
-+   public int func_70297_j_() {
-+      return this.maxStack;
-+   }
-+
-    public void func_70296_d() {
-    }
- 
-@@ -62,6 +86,52 @@
-       return true;
-    }
- 
-+   @Override
 +   public List<ItemStack> getContents() {
 +      return this.field_70466_a;
 +   }
 +
-+   @Override
 +   public void onOpen(CraftHumanEntity who) {
 +      transaction.add(who);
 +   }
 +
-+   @Override
++   public InventoryType getInvType() {
++      return field_70466_a.size() == 4 ? InventoryType.CRAFTING : InventoryType.WORKBENCH;
++   }
++
 +   public void onClose(CraftHumanEntity who) {
 +      transaction.remove(who);
 +   }
 +
-+   @Override
 +   public List<HumanEntity> getViewers() {
 +      return transaction;
 +   }
 +
-+   @Override
-+   public InventoryHolder getOwner() {
-+      return (this.owner == null) ? null : this.owner.getBukkitEntity();
++   public org.bukkit.inventory.InventoryHolder getOwner() {
++      return (owner == null) ? null : owner.getBukkitEntity();
 +   }
 +
 +   @Override
++   public int func_70297_j_() {
++      return maxStack;
++   }
++
 +   public void setMaxStackSize(int size) {
-+      this.maxStack = size;
-+      this.resultInventory.setMaxStackSize(size);
++      maxStack = size;
++      resultInventory.setMaxStackSize(size);
 +   }
 +
 +   @Override
 +   public Location getLocation() {
-+      return (this.field_70465_c instanceof WorkbenchContainer) ? ((WorkbenchContainer)this.field_70465_c).field_217070_e.getLocation() : this.owner.getBukkitEntity().getLocation();
++      return field_70465_c instanceof WorkbenchContainer ? ((WorkbenchContainer) field_70465_c).field_75160_f.getLocation() : owner.getBukkitEntity().getLocation();
 +   }
 +
 +   @Override
@@ -99,6 +78,12 @@
 +      this.currentRecipe = currentRecipe;
 +   }
 +
-    public void func_174888_l() {
-       this.field_70466_a.clear();
-    }
++   public CraftingInventory(Container container, int i, int j, PlayerEntity player) {
++      this(container, i, j);
++      this.owner = player;
++   }
++   // CraftBukkit end
++
+    public CraftingInventory(Container p_i1807_1_, int p_i1807_2_, int p_i1807_3_) {
+       this.field_70466_a = NonNullList.func_191197_a(p_i1807_2_ * p_i1807_3_, ItemStack.field_190927_a);
+       this.field_70465_c = p_i1807_1_;

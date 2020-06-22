@@ -4,11 +4,11 @@
  import net.minecraft.world.IWorldReader;
  import net.minecraft.world.World;
  import net.minecraft.world.server.ServerWorld;
-+import org.bukkit.craftbukkit.event.CraftEventFactory; // CraftBukkit
++import org.bukkit.craftbukkit.v1_15_R1.event.CraftEventFactory;
  
  public class CocoaBlock extends HorizontalBlock implements IGrowable {
     public static final IntegerProperty field_176501_a = BlockStateProperties.field_208167_T;
-@@ -30,10 +31,10 @@
+@@ -30,10 +31,11 @@
     }
  
     public void func_225534_a_(BlockState p_225534_1_, ServerWorld p_225534_2_, BlockPos p_225534_3_, Random p_225534_4_) {
@@ -17,17 +17,18 @@
           int i = p_225534_1_.func_177229_b(field_176501_a);
 -         if (i < 2) {
 -            p_225534_2_.func_180501_a(p_225534_3_, p_225534_1_.func_206870_a(field_176501_a, Integer.valueOf(i + 1)), 2);
-+         if (i < 2 && net.minecraftforge.common.ForgeHooks.onCropsGrowPre(p_225534_2_, p_225534_3_, p_225534_1_, p_225534_2_.field_73012_v.nextInt(5) == 0)) {
-+            CraftEventFactory.handleBlockGrowEvent(p_225534_2_, p_225534_3_, p_225534_1_.func_206870_a(CocoaBlock.field_176501_a, i + 1), 2); // CraftBukkkit
++         if (i < 2 && net.minecraftforge.common.ForgeHooks.onCropsGrowPre(p_225534_2_, p_225534_3_, p_225534_1_, p_225534_2_.field_73012_v.nextInt(Math.max(1, (int) (100.0F / p_225534_2_.spigotConfig.cocoaModifier) * 5)) == 0)) { // Spigot
++            CraftEventFactory.handleBlockGrowEvent(p_225534_2_, p_225534_3_, p_225534_1_.func_206870_a(field_176501_a, Integer.valueOf(i + 1)), 2); // CraftBukkit
++            net.minecraftforge.common.ForgeHooks.onCropsGrowPost(p_225534_2_, p_225534_3_, p_225534_1_);
           }
        }
  
-@@ -90,7 +91,7 @@
+@@ -90,7 +92,7 @@
     }
  
     public void func_225535_a_(ServerWorld p_225535_1_, Random p_225535_2_, BlockPos p_225535_3_, BlockState p_225535_4_) {
 -      p_225535_1_.func_180501_a(p_225535_3_, p_225535_4_.func_206870_a(field_176501_a, Integer.valueOf(p_225535_4_.func_177229_b(field_176501_a) + 1)), 2);
-+      CraftEventFactory.handleBlockGrowEvent(p_225535_1_, p_225535_3_, p_225535_4_.func_206870_a(CocoaBlock.field_176501_a, (Integer) p_225535_4_.func_177229_b(CocoaBlock.field_176501_a) + 1), 2); // CraftBukkit
++      CraftEventFactory.handleBlockGrowEvent(p_225535_1_, p_225535_3_, p_225535_4_.func_206870_a(field_176501_a, Integer.valueOf(p_225535_4_.func_177229_b(field_176501_a) + 1)), 2); // CraftBukkit
     }
  
     protected void func_206840_a(StateContainer.Builder<Block, BlockState> p_206840_1_) {

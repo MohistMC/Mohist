@@ -1,17 +1,15 @@
 --- a/net/minecraft/dispenser/ShulkerBoxDispenseBehavior.java
 +++ b/net/minecraft/dispenser/ShulkerBoxDispenseBehavior.java
-@@ -8,6 +8,10 @@
+@@ -8,6 +8,8 @@
  import net.minecraft.util.ActionResultType;
  import net.minecraft.util.Direction;
  import net.minecraft.util.math.BlockPos;
-+// CraftBukkit start
-+import org.bukkit.craftbukkit.inventory.CraftItemStack;
++import org.bukkit.craftbukkit.v1_15_R1.inventory.CraftItemStack;
 +import org.bukkit.event.block.BlockDispenseEvent;
-+// CraftBukkit end
  
  public class ShulkerBoxDispenseBehavior extends OptionalDispenseBehavior {
     protected ItemStack func_82487_b(IBlockSource p_82487_1_, ItemStack p_82487_2_) {
-@@ -17,6 +21,31 @@
+@@ -17,6 +19,31 @@
           Direction direction = p_82487_1_.func_189992_e().func_177229_b(DispenserBlock.field_176441_a);
           BlockPos blockpos = p_82487_1_.func_180699_d().func_177972_a(direction);
           Direction direction1 = p_82487_1_.func_197524_h().func_175623_d(blockpos.func_177977_b()) ? direction : Direction.UP;

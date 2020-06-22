@@ -8,16 +8,19 @@
  import net.minecraft.entity.passive.horse.LlamaEntity;
  import net.minecraft.nbt.CompoundNBT;
  import net.minecraft.network.IPacket;
-@@ -21,7 +22,7 @@
+@@ -19,9 +20,10 @@
+ import net.minecraft.world.World;
+ import net.minecraftforge.api.distmarker.Dist;
  import net.minecraftforge.api.distmarker.OnlyIn;
++import org.bukkit.craftbukkit.v1_15_R1.event.CraftEventFactory;
  
  public class LlamaSpitEntity extends Entity implements IProjectile {
 -   public LlamaEntity field_190539_a;
-+   public LivingEntity field_190539_a; // CraftBukkit - type
++   public LivingEntity field_190539_a;
     private CompoundNBT field_190540_b;
  
     public LlamaSpitEntity(EntityType<? extends LlamaSpitEntity> p_i50162_1_, World p_i50162_2_) {
-@@ -57,7 +58,7 @@
+@@ -57,7 +59,7 @@
        RayTraceResult raytraceresult = ProjectileHelper.func_221267_a(this, this.func_174813_aQ().func_216361_a(vec3d).func_186662_g(1.0D), (p_213879_1_) -> {
           return !p_213879_1_.func_175149_v() && p_213879_1_ != this.field_190539_a;
        }, RayTraceContext.BlockMode.OUTLINE, true);
@@ -26,11 +29,11 @@
           this.func_190536_a(raytraceresult);
        }
  
-@@ -126,6 +127,7 @@
+@@ -126,6 +128,7 @@
     }
  
     public void func_190536_a(RayTraceResult p_190536_1_) {
-+      org.bukkit.craftbukkit.event.CraftEventFactory.callProjectileHitEvent(this, p_190536_1_); // CraftBukkit - Call event
++      CraftEventFactory.callProjectileHitEvent(this, p_190536_1_); // CraftBukkit - Call event
        RayTraceResult.Type raytraceresult$type = p_190536_1_.func_216346_c();
        if (raytraceresult$type == RayTraceResult.Type.ENTITY && this.field_190539_a != null) {
           ((EntityRayTraceResult)p_190536_1_).func_216348_a().func_70097_a(DamageSource.func_188403_a(this, this.field_190539_a).func_76349_b(), 1.0F);

@@ -168,6 +168,7 @@ project(':forge') {
             url 'https://repo.maven.apache.org/maven2/'
         }
         maven { url "https://hub.spigotmc.org/nexus/content/groups/public" }
+        maven { url "https://repo.hexeption.dev/repository/magma/" }
     }
 
     ext {
@@ -366,6 +367,8 @@ project(':forge') {
         installer 'org.jetbrains:annotations:18.0.0'
         installer 'commons-lang:commons-lang:2.6'
         installer 'org.yaml:snakeyaml:1.25'
+        installer 'net.md-5:bungeecord-chat:1.15'
+        installer 'net.md-5:SpecialSource:1.8.5'
 
         compile 'org.projectlombok:lombok:1.18.12'
 

@@ -1,6 +1,6 @@
 --- a/net/minecraft/inventory/EnderChestInventory.java
 +++ b/net/minecraft/inventory/EnderChestInventory.java
-@@ -5,12 +5,27 @@
+@@ -5,12 +5,28 @@
  import net.minecraft.nbt.CompoundNBT;
  import net.minecraft.nbt.ListNBT;
  import net.minecraft.tileentity.EnderChestTileEntity;
@@ -9,12 +9,13 @@
  
  public class EnderChestInventory extends Inventory {
     private EnderChestTileEntity field_70488_a;
-+   // CraftBukkit start
-+   private final PlayerEntity owner;
  
 -   public EnderChestInventory() {
-+   public InventoryHolder getBukkitOwner() {
-+      return this.owner.getBukkitEntity();
++   // CraftBukkit start
++   private final PlayerEntity owner;
++
++   public InventoryHolder getBukkitOwner(){
++      return owner.getBukkitEntity();
 +   }
 +
 +   @Override

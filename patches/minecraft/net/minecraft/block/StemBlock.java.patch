@@ -4,7 +4,7 @@
  import net.minecraft.world.server.ServerWorld;
  import net.minecraftforge.api.distmarker.Dist;
  import net.minecraftforge.api.distmarker.OnlyIn;
-+import org.bukkit.craftbukkit.event.CraftEventFactory; // CraftBukkit
++import org.bukkit.craftbukkit.v1_15_R1.event.CraftEventFactory;
  
  public class StemBlock extends BushBlock implements IGrowable {
     public static final IntegerProperty field_176484_a = BlockStateProperties.field_208170_W;
@@ -16,7 +16,7 @@
        if (p_225534_2_.func_226659_b_(p_225534_3_, 0) >= 9) {
           float f = CropsBlock.func_180672_a(this, p_225534_2_, p_225534_3_);
 -         if (p_225534_4_.nextInt((int)(25.0F / f) + 1) == 0) {
-+         if (net.minecraftforge.common.ForgeHooks.onCropsGrowPre(p_225534_2_, p_225534_3_, p_225534_1_, p_225534_4_.nextInt((int)(25.0F / f) + 1) == 0)) {
++         if (net.minecraftforge.common.ForgeHooks.onCropsGrowPre(p_225534_2_, p_225534_3_, p_225534_1_, p_225534_4_.nextInt((int) ((100.0F / (this == Blocks.field_150393_bb ? p_225534_2_.spigotConfig.pumpkinModifier : p_225534_2_.spigotConfig.melonModifier)) * (25.0F / f)) + 1) == 0)) { // Spigot
              int i = p_225534_1_.func_177229_b(field_176484_a);
              if (i < 7) {
 -               p_225534_1_ = p_225534_1_.func_206870_a(field_176484_a, Integer.valueOf(i + 1));
@@ -43,16 +43,17 @@
           }
  
        }
-@@ -87,7 +94,7 @@
+@@ -87,7 +94,8 @@
     public void func_225535_a_(ServerWorld p_225535_1_, Random p_225535_2_, BlockPos p_225535_3_, BlockState p_225535_4_) {
        int i = Math.min(7, p_225535_4_.func_177229_b(field_176484_a) + MathHelper.func_76136_a(p_225535_1_.field_73012_v, 2, 5));
        BlockState blockstate = p_225535_4_.func_206870_a(field_176484_a, Integer.valueOf(i));
 -      p_225535_1_.func_180501_a(p_225535_3_, blockstate, 2);
 +      CraftEventFactory.handleBlockGrowEvent(p_225535_1_, p_225535_3_, blockstate, 2); // CraftBukkit
++
        if (i == 7) {
           blockstate.func_227033_a_(p_225535_1_, p_225535_3_, p_225535_1_.field_73012_v);
        }
-@@ -101,4 +108,10 @@
+@@ -101,4 +109,10 @@
     public StemGrownBlock func_208486_d() {
        return this.field_149877_a;
     }

@@ -4,14 +4,14 @@
  import net.minecraft.util.SoundCategory;
  import net.minecraft.util.SoundEvents;
  import net.minecraft.util.math.BlockPos;
-+import org.bukkit.event.entity.CreatureSpawnEvent; // CraftBukkit
++import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
  
  public class BeehiveTileEntity extends TileEntity implements ITickableTileEntity {
     private final List<BeehiveTileEntity.Bee> field_226958_a_ = Lists.newArrayList();
     @Nullable
 -   private BlockPos field_226959_b_ = null;
-+   public BlockPos field_226959_b_ = null;
-+   public int maxBees = 3; // CraftBukkit - allow setting max amount of bees a hive can hold
++   public BlockPos field_226959_b_ = null; // private->public CraftBukkit
++   public int maxBees = 3; // CraftBukkit
  
     public BeehiveTileEntity() {
        super(TileEntityType.field_226985_G_);
@@ -24,12 +24,11 @@
     }
  
     public void func_226963_a_(@Nullable PlayerEntity p_226963_1_, BlockState p_226963_2_, BeehiveTileEntity.State p_226963_3_) {
-@@ -81,10 +83,16 @@
- 
+@@ -82,9 +84,15 @@
     }
  
-+   // CraftBukkit start - This allows us to bypass the night/rain/emergency check
     private List<Entity> func_226965_a_(BlockState p_226965_1_, BeehiveTileEntity.State p_226965_2_) {
++      // CraftBukkit start - This allows us to bypass the night/rain/emergency check
 +      return this.releaseBees(p_226965_1_, p_226965_2_, false);
 +   }
 +
@@ -50,7 +49,7 @@
 +      if (this.field_226958_a_.size() < this.maxBees) { // CraftBukkit
 +         // CraftBukkit start
 +         if (this.field_145850_b != null) {
-+            org.bukkit.event.entity.EntityEnterBlockEvent event = new org.bukkit.event.entity.EntityEnterBlockEvent(p_226962_1_.getBukkitEntity(), org.bukkit.craftbukkit.block.CraftBlock.at(field_145850_b, func_174877_v()));
++            org.bukkit.event.entity.EntityEnterBlockEvent event = new org.bukkit.event.entity.EntityEnterBlockEvent(p_226962_1_.getBukkitEntity(), org.bukkit.craftbukkit.v1_15_R1.block.CraftBlock.at(field_145850_b, func_174877_v()));
 +            org.bukkit.Bukkit.getPluginManager().callEvent(event);
 +            if (event.isCancelled()) {
 +               if (p_226962_1_ instanceof BeeEntity) {
@@ -67,9 +66,8 @@
        }
     }
  
--   private boolean func_226967_a_(BlockState p_226967_1_, CompoundNBT p_226967_2_, @Nullable List<Entity> p_226967_3_, BeehiveTileEntity.State p_226967_4_) {
 +   // CraftBukkit start - This allows us to bypass the night/rain/emergency check
-+   private boolean func_226967_a_(BlockState p_226967_1_, CompoundNBT p_226967_2_, @Nullable List<Entity> p_226967_3_, BeehiveTileEntity.State p_226967_4_) { // PAIL rename releaseBee
+    private boolean func_226967_a_(BlockState p_226967_1_, CompoundNBT p_226967_2_, @Nullable List<Entity> p_226967_3_, BeehiveTileEntity.State p_226967_4_) {
 +      return releaseBee(p_226967_1_, p_226967_2_, p_226967_3_, p_226967_4_, false);
 +   }
 +
@@ -77,7 +75,7 @@
        BlockPos blockpos = this.func_174877_v();
 -      if ((this.field_145850_b.func_226690_K_() || this.field_145850_b.func_72896_J()) && p_226967_4_ != BeehiveTileEntity.State.EMERGENCY) {
 +      if (!force && (this.field_145850_b.func_226690_K_() || this.field_145850_b.func_72896_J()) && p_226967_4_ != BeehiveTileEntity.State.EMERGENCY) {
-+         // CraftBukkit end
++         // CraftBukkit
           return false;
        } else {
           p_226967_2_.func_82580_o("Passengers");
@@ -85,7 +83,7 @@
                 if (!entity.func_200600_R().func_220341_a(EntityTypeTags.field_226155_c_)) {
                    return false;
                 } else {
-+                  if (!this.field_145850_b.addEntity(entity, CreatureSpawnEvent.SpawnReason.BEEHIVE)) return false; // CraftBukkit - SpawnReason, moved from below
++                  if(!this.field_145850_b.addEntity(entity, SpawnReason.BEEHIVE)) return false; // CraftBukkit - SpawnReason, moved from below
                    if (entity instanceof BeeEntity) {
                       BeeEntity beeentity = (BeeEntity)entity;
                       if (this.func_226975_x_() && !beeentity.func_226425_er_() && this.field_145850_b.field_73012_v.nextFloat() < 0.9F) {

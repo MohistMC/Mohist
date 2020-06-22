@@ -1,0 +1,23 @@
+--- a/net/minecraft/world/gen/feature/structure/SwampHutStructure.java
++++ b/net/minecraft/world/gen/feature/structure/SwampHutStructure.java
+@@ -8,6 +8,7 @@
+ import net.minecraft.util.math.BlockPos;
+ import net.minecraft.util.math.MutableBoundingBox;
+ import net.minecraft.world.IWorld;
++import net.minecraft.world.World;
+ import net.minecraft.world.biome.Biome;
+ import net.minecraft.world.gen.ChunkGenerator;
+ import net.minecraft.world.gen.feature.NoFeatureConfig;
+@@ -33,8 +34,10 @@
+       return SwampHutStructure.Start::new;
+    }
+ 
+-   protected int func_202382_c() {
+-      return 14357620;
++   // Spigot start
++   protected int getSeedModifier(World world) {
++      return world.spigotConfig.swampSeed;
++      // Spigot end
+    }
+ 
+    public List<Biome.SpawnListEntry> func_202279_e() {

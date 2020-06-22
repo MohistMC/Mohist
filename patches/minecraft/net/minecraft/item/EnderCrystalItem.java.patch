@@ -1,14 +1,16 @@
 --- a/net/minecraft/item/EnderCrystalItem.java
 +++ b/net/minecraft/item/EnderCrystalItem.java
-@@ -38,6 +38,11 @@
+@@ -38,6 +38,13 @@
                 if (!world.field_72995_K) {
                    EnderCrystalEntity endercrystalentity = new EnderCrystalEntity(world, d0 + 0.5D, d1, d2 + 0.5D);
                    endercrystalentity.func_184517_a(false);
++
 +                  // CraftBukkit start
-+                  if (org.bukkit.craftbukkit.event.CraftEventFactory.callEntityPlaceEvent(p_195939_1_, endercrystalentity).isCancelled()) {
++                  if (org.bukkit.craftbukkit.v1_15_R1.event.CraftEventFactory.callEntityPlaceEvent(p_195939_1_, endercrystalentity).isCancelled()) {
 +                     return ActionResultType.FAIL;
 +                  }
 +                  // CraftBukkit end
++
                    world.func_217376_c(endercrystalentity);
                    if (world.field_73011_w instanceof EndDimension) {
                       DragonFightManager dragonfightmanager = ((EndDimension)world.field_73011_w).func_186063_s();

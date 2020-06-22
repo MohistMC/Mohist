@@ -1,6 +1,16 @@
 --- a/net/minecraft/entity/player/PlayerEntity.java
 +++ b/net/minecraft/entity/player/PlayerEntity.java
-@@ -14,8 +14,6 @@
+@@ -5,29 +5,14 @@
+ import com.mojang.authlib.GameProfile;
+ import com.mojang.datafixers.util.Either;
+ import java.nio.charset.StandardCharsets;
+-import java.util.Collection;
+-import java.util.List;
+-import java.util.Map;
+-import java.util.Optional;
+-import java.util.OptionalInt;
+-import java.util.UUID;
++import java.util.*;
  import java.util.function.Predicate;
  import javax.annotation.Nullable;
  import net.minecraft.advancements.CriteriaTriggers;
@@ -9,36 +19,91 @@
  import net.minecraft.block.BlockState;
  import net.minecraft.block.HorizontalBlock;
  import net.minecraft.enchantment.EnchantmentHelper;
-@@ -47,7 +45,6 @@
+-import net.minecraft.entity.CreatureAttribute;
+-import net.minecraft.entity.Entity;
+-import net.minecraft.entity.EntitySize;
+-import net.minecraft.entity.EntityType;
+-import net.minecraft.entity.LivingEntity;
+-import net.minecraft.entity.MobEntity;
+-import net.minecraft.entity.MoverType;
+-import net.minecraft.entity.Pose;
+-import net.minecraft.entity.SharedMonsterAttributes;
++import net.minecraft.entity.*;
+ import net.minecraft.entity.ai.attributes.IAttributeInstance;
+ import net.minecraft.entity.boss.dragon.EnderDragonPartEntity;
+ import net.minecraft.entity.item.ArmorStandEntity;
+@@ -46,14 +31,7 @@
+ import net.minecraft.inventory.container.Container;
  import net.minecraft.inventory.container.INamedContainerProvider;
  import net.minecraft.inventory.container.PlayerContainer;
- import net.minecraft.item.ArmorItem;
+-import net.minecraft.item.ArmorItem;
 -import net.minecraft.item.AxeItem;
- import net.minecraft.item.ElytraItem;
- import net.minecraft.item.ItemStack;
- import net.minecraft.item.Items;
-@@ -104,11 +101,30 @@
- import net.minecraft.world.GameType;
- import net.minecraft.world.IWorldReader;
- import net.minecraft.world.World;
-+import net.minecraft.world.biome.Biomes;
+-import net.minecraft.item.ElytraItem;
+-import net.minecraft.item.ItemStack;
+-import net.minecraft.item.Items;
+-import net.minecraft.item.MerchantOffers;
+-import net.minecraft.item.ShootableItem;
+-import net.minecraft.item.SwordItem;
++import net.minecraft.item.*;
+ import net.minecraft.item.crafting.IRecipe;
+ import net.minecraft.nbt.CompoundNBT;
+ import net.minecraft.nbt.ListNBT;
+@@ -68,29 +46,11 @@
+ import net.minecraft.potion.Effects;
+ import net.minecraft.scoreboard.ScorePlayerTeam;
+ import net.minecraft.scoreboard.Scoreboard;
+-import net.minecraft.scoreboard.Team;
+ import net.minecraft.stats.Stat;
+ import net.minecraft.stats.Stats;
+ import net.minecraft.tags.FluidTags;
+-import net.minecraft.tileentity.CommandBlockLogic;
+-import net.minecraft.tileentity.CommandBlockTileEntity;
+-import net.minecraft.tileentity.JigsawTileEntity;
+-import net.minecraft.tileentity.SignTileEntity;
+-import net.minecraft.tileentity.StructureBlockTileEntity;
+-import net.minecraft.util.ActionResultType;
+-import net.minecraft.util.CachedBlockInfo;
+-import net.minecraft.util.CooldownTracker;
+-import net.minecraft.util.DamageSource;
+-import net.minecraft.util.Direction;
+-import net.minecraft.util.FoodStats;
+-import net.minecraft.util.Hand;
+-import net.minecraft.util.HandSide;
+-import net.minecraft.util.ResourceLocation;
+-import net.minecraft.util.SharedConstants;
+-import net.minecraft.util.SoundCategory;
+-import net.minecraft.util.SoundEvent;
+-import net.minecraft.util.SoundEvents;
+-import net.minecraft.util.Unit;
++import net.minecraft.tileentity.*;
++import net.minecraft.util.*;
+ import net.minecraft.util.math.AxisAlignedBB;
+ import net.minecraft.util.math.BlockPos;
+ import net.minecraft.util.math.MathHelper;
+@@ -99,16 +59,27 @@
+ import net.minecraft.util.text.StringTextComponent;
+ import net.minecraft.util.text.TranslationTextComponent;
+ import net.minecraft.util.text.event.ClickEvent;
+-import net.minecraft.world.Difficulty;
+-import net.minecraft.world.GameRules;
+-import net.minecraft.world.GameType;
+-import net.minecraft.world.IWorldReader;
+-import net.minecraft.world.World;
++import net.minecraft.world.*;
  import net.minecraft.world.server.ServerWorld;
  import net.minecraftforge.api.distmarker.Dist;
  import net.minecraftforge.api.distmarker.OnlyIn;
-+import org.bukkit.Bukkit;
-+import org.bukkit.OfflinePlayer;
-+import org.bukkit.block.Block;
-+import org.bukkit.craftbukkit.entity.CraftHumanEntity;
-+import org.bukkit.craftbukkit.event.CraftEventFactory;
-+import org.bukkit.craftbukkit.util.CraftVector;
++import org.bukkit.craftbukkit.v1_15_R1.entity.CraftHumanEntity;
++import org.bukkit.craftbukkit.v1_15_R1.util.CraftVector;
 +import org.bukkit.entity.Item;
 +import org.bukkit.entity.Player;
 +import org.bukkit.event.entity.CreatureSpawnEvent;
 +import org.bukkit.event.entity.EntityCombustByEntityEvent;
++import org.bukkit.event.entity.EntityPotionEffectEvent.Cause;
++import org.bukkit.event.entity.EntityRegainHealthEvent.RegainReason;
 +import org.bukkit.event.player.PlayerBedLeaveEvent;
 +import org.bukkit.event.player.PlayerDropItemEvent;
 +import org.bukkit.event.player.PlayerVelocityEvent;
-+import org.bukkit.util.Vector;
  
  public abstract class PlayerEntity extends LivingEntity {
 +   public static final String PERSISTED_NBT_TAG = "PlayerPersisted";
@@ -48,30 +113,29 @@
     public static final EntitySize field_213835_bs = EntitySize.func_220314_b(0.6F, 1.8F);
     private static final Map<Pose, EntitySize> field_213836_b = ImmutableMap.<Pose, EntitySize>builder().put(Pose.STANDING, field_213835_bs).put(Pose.SLEEPING, field_213377_as).put(Pose.FALL_FLYING, EntitySize.func_220314_b(0.6F, 0.6F)).put(Pose.SWIMMING, EntitySize.func_220314_b(0.6F, 0.6F)).put(Pose.SPIN_ATTACK, EntitySize.func_220314_b(0.6F, 0.6F)).put(Pose.CROUCHING, EntitySize.func_220314_b(0.6F, 1.5F)).put(Pose.DYING, EntitySize.func_220311_c(0.2F, 0.2F)).build();
     private static final DataParameter<Float> field_184829_a = EntityDataManager.func_187226_a(PlayerEntity.class, DataSerializers.field_187193_c);
-@@ -119,10 +135,10 @@
+@@ -119,10 +90,10 @@
     protected static final DataParameter<CompoundNBT> field_192033_bu = EntityDataManager.func_187226_a(PlayerEntity.class, DataSerializers.field_192734_n);
     private long field_223730_e;
     public final PlayerInventory field_71071_by = new PlayerInventory(this);
 -   protected EnderChestInventory field_71078_a = new EnderChestInventory();
--   public final PlayerContainer field_71069_bz;
-+   protected EnderChestInventory field_71078_a = new EnderChestInventory(this);
-+   public PlayerContainer field_71069_bz;
++   protected EnderChestInventory field_71078_a = new EnderChestInventory(this); // CraftBukkit - add "this" to constructor
+    public final PlayerContainer field_71069_bz;
     public Container field_71070_bA;
 -   protected FoodStats field_71100_bB = new FoodStats();
-+   protected FoodStats field_71100_bB = new FoodStats(this); // CraftBukkit - add "this" to constructor
++   protected FoodStats field_71100_bB = new FoodStats(this);
     protected int field_71101_bC;
     public float field_71107_bF;
     public float field_71109_bG;
-@@ -133,7 +149,7 @@
+@@ -133,7 +104,7 @@
     public double field_71094_bP;
     public double field_71095_bQ;
     public double field_71085_bR;
 -   private int field_71076_b;
-+   public int field_71076_b;
++   public int field_71076_b; // private->public CraftBukkit
     protected boolean field_204230_bP;
     protected BlockPos field_71077_c;
     protected boolean field_82248_d;
-@@ -151,7 +167,21 @@
+@@ -151,7 +122,21 @@
     private final CooldownTracker field_184832_bU = this.func_184815_l();
     @Nullable
     public FishingBobberEntity field_71104_cf;
@@ -93,7 +157,7 @@
     public PlayerEntity(World p_i45324_1_, GameProfile p_i45324_2_) {
        super(EntityType.field_200729_aH, p_i45324_1_);
        this.func_184221_a(func_146094_a(p_i45324_2_));
-@@ -182,6 +212,7 @@
+@@ -182,6 +167,7 @@
        this.func_110148_a(SharedMonsterAttributes.field_111263_d).func_111128_a((double)0.1F);
        this.func_110140_aT().func_111150_b(SharedMonsterAttributes.field_188790_f);
        this.func_110140_aT().func_111150_b(SharedMonsterAttributes.field_188792_h);
@@ -101,7 +165,7 @@
     }
  
     protected void func_70088_a() {
-@@ -195,6 +226,7 @@
+@@ -195,6 +181,7 @@
     }
  
     public void func_70071_h_() {
@@ -109,7 +173,7 @@
        this.field_70145_X = this.func_175149_v();
        if (this.func_175149_v()) {
           this.field_70122_E = false;
-@@ -210,7 +242,7 @@
+@@ -210,7 +197,7 @@
              this.field_71076_b = 100;
           }
  
@@ -118,7 +182,7 @@
              this.func_225652_a_(false, true);
           }
        } else if (this.field_71076_b > 0) {
-@@ -268,6 +300,7 @@
+@@ -268,6 +255,7 @@
        this.func_203041_m();
        this.field_184832_bU.func_185144_a();
        this.func_213832_dB();
@@ -126,16 +190,16 @@
     }
  
     public boolean func_226563_dT_() {
-@@ -290,7 +323,7 @@
+@@ -290,7 +278,7 @@
     private void func_203041_m() {
        ItemStack itemstack = this.func_184582_a(EquipmentSlotType.HEAD);
        if (itemstack.func_77973_b() == Items.field_203179_ao && !this.func_208600_a(FluidTags.field_206959_a)) {
 -         this.func_195064_c(new EffectInstance(Effects.field_76427_o, 200, 0, false, false, true));
-+         this.addEffect(new EffectInstance(Effects.field_76427_o, 200, 0, false, false, true), org.bukkit.event.entity.EntityPotionEffectEvent.Cause.TURTLE_HELMET); // CraftBukkit
++         this.addPotionEffect(new EffectInstance(Effects.field_76427_o, 200, 0, false, false, true), Cause.TURTLE_HELMET); // CraftBukkit
        }
  
     }
-@@ -405,7 +438,7 @@
+@@ -405,7 +393,7 @@
        return SoundCategory.PLAYERS;
     }
  
@@ -144,7 +208,7 @@
        return 20;
     }
  
-@@ -454,10 +487,10 @@
+@@ -454,10 +442,10 @@
           this.field_71107_bF = this.field_71109_bG;
           this.field_71109_bG = 0.0F;
           this.func_71015_k(this.func_226277_ct_() - d0, this.func_226278_cu_() - d1, this.func_226281_cx_() - d2);
@@ -157,17 +221,17 @@
           }
  
        }
-@@ -484,7 +517,8 @@
+@@ -484,7 +472,8 @@
  
        if (this.field_70170_p.func_175659_aa() == Difficulty.PEACEFUL && this.field_70170_p.func_82736_K().func_223586_b(GameRules.field_223606_i)) {
           if (this.func_110143_aJ() < this.func_110138_aP() && this.field_70173_aa % 20 == 0) {
 -            this.func_70691_i(1.0F);
 +            // CraftBukkit - added regain reason of "REGEN" for filtering purposes.
-+            this.heal(1.0F, org.bukkit.event.entity.EntityRegainHealthEvent.RegainReason.REGEN);
++            this.heal(1.0F, RegainReason.REGEN);
           }
  
           if (this.field_71100_bB.func_75121_c() && this.field_70173_aa % 10 == 0) {
-@@ -570,6 +604,7 @@
+@@ -570,6 +559,7 @@
     }
  
     public void func_70645_a(DamageSource p_70645_1_) {
@@ -175,7 +239,7 @@
        super.func_70645_a(p_70645_1_);
        this.func_226264_Z_();
        if (!this.func_175149_v()) {
-@@ -623,12 +658,14 @@
+@@ -623,12 +613,14 @@
     }
  
     public boolean func_225609_n_(boolean p_225609_1_) {
@@ -192,31 +256,32 @@
     }
  
     @Nullable
-@@ -657,12 +694,36 @@
-             float f6 = 0.02F * this.field_70146_Z.nextFloat();
+@@ -658,11 +650,38 @@
              itementity.func_213293_j((double)(-f3 * f2 * 0.3F) + Math.cos((double)f5) * (double)f6, (double)(-f8 * 0.3F + 0.1F + (this.field_70146_Z.nextFloat() - this.field_70146_Z.nextFloat()) * 0.1F), (double)(f4 * f2 * 0.3F) + Math.sin((double)f5) * (double)f6);
           }
--
+ 
 +         // CraftBukkit start - fire PlayerDropItemEvent
-+         Player player = (Player)this.getBukkitEntity();
-+         Item drop = (Item)itementity.getBukkitEntity();
++         Player player = (Player) this.getBukkitEntity();
++         Item drop = (Item) itementity.getBukkitEntity();
 +         PlayerDropItemEvent event = new PlayerDropItemEvent(player, drop);
 +         this.field_70170_p.getServerCB().getPluginManager().callEvent(event);
 +         if (event.isCancelled()) {
 +            org.bukkit.inventory.ItemStack cur = player.getInventory().getItemInHand();
-+            if (p_146097_3_ && (cur == null || cur.getAmount() == 0)) {
++            if (p_146097_2_ && (cur == null || cur.getAmount() == 0)) {
++               // The complete stack was dropped
 +               player.getInventory().setItemInHand(drop.getItemStack());
-+            }
-+            else if (p_146097_3_ && cur.isSimilar(drop.getItemStack()) && cur.getAmount() < cur.getMaxStackSize() && drop.getItemStack().getAmount() == 1) {
++            } else if (p_146097_2_ && cur.isSimilar(drop.getItemStack()) && cur.getAmount() < cur.getMaxStackSize() && drop.getItemStack().getAmount() == 1) {
++               // Only one item is dropped
 +               cur.setAmount(cur.getAmount() + 1);
 +               player.getInventory().setItemInHand(cur);
-+            }
-+            else {
++            } else {
++               // Fallback
 +               player.getInventory().addItem(drop.getItemStack());
 +            }
 +            return null;
 +         }
 +         // CraftBukkit end
++
           return itementity;
        }
     }
@@ -230,7 +295,7 @@
        float f = this.field_71071_by.func_184438_a(p_184813_1_);
        if (f > 1.0F) {
           int i = EnchantmentHelper.func_185293_e(this);
-@@ -704,11 +765,12 @@
+@@ -704,11 +723,12 @@
           f /= 5.0F;
        }
  
@@ -244,16 +309,18 @@
     }
  
     public void func_70037_a(CompoundNBT p_70037_1_) {
-@@ -727,11 +789,28 @@
+@@ -727,11 +747,30 @@
        }
  
        this.func_85040_s(p_70037_1_.func_74762_e("Score"));
++
 +      // CraftBukkit start
 +      this.spawnWorld = p_70037_1_.func_74779_i("SpawnWorld");
-+      if ("".equals(this.spawnWorld)) {
++      if ("".equals(spawnWorld)) {
 +         this.spawnWorld = this.field_70170_p.getServerCB().getWorlds().get(0).getName();
 +      }
 +      // CraftBukkit end
++
        if (p_70037_1_.func_150297_b("SpawnX", 99) && p_70037_1_.func_150297_b("SpawnY", 99) && p_70037_1_.func_150297_b("SpawnZ", 99)) {
           this.field_71077_c = new BlockPos(p_70037_1_.func_74762_e("SpawnX"), p_70037_1_.func_74762_e("SpawnY"), p_70037_1_.func_74762_e("SpawnZ"));
           this.field_82248_d = p_70037_1_.func_74767_n("SpawnForced");
@@ -273,7 +340,15 @@
        this.field_71100_bB.func_75112_a(p_70037_1_);
        this.field_71075_bZ.func_75095_b(p_70037_1_);
        if (p_70037_1_.func_150297_b("EnderItems", 9)) {
-@@ -777,6 +856,23 @@
+@@ -745,6 +784,7 @@
+       if (p_70037_1_.func_150297_b("ShoulderEntityRight", 10)) {
+          this.func_192031_i(p_70037_1_.func_74775_l("ShoulderEntityRight"));
+       }
++      p_70037_1_.func_74778_a("SpawnWorld", spawnWorld); // CraftBukkit - fixes bed spawns for multiworld worlds
+ 
+    }
+ 
+@@ -777,6 +817,23 @@
           p_213281_1_.func_218657_a("ShoulderEntityRight", this.func_192025_dl());
        }
  
@@ -293,11 +368,11 @@
 +      if (spawnDimension != net.minecraft.world.dimension.DimensionType.field_223227_a_) {
 +         p_213281_1_.func_74778_a("SpawnDimension", spawnDimension.getRegistryName().toString());
 +      }
-+      p_213281_1_.func_74778_a("SpawnWorld", this.spawnWorld); // CraftBukkit - fixes bed spawns for multiworld worlds
++
     }
  
     public boolean func_180431_b(DamageSource p_180431_1_) {
-@@ -794,19 +890,21 @@
+@@ -794,16 +851,18 @@
     }
  
     public boolean func_70097_a(DamageSource p_70097_1_, float p_70097_2_) {
@@ -305,7 +380,7 @@
        if (this.func_180431_b(p_70097_1_)) {
           return false;
        } else if (this.field_71075_bZ.field_75102_a && !p_70097_1_.func_76357_e()) {
-+         this.forceExplosionKnockback = true;
++         this.forceExplosionKnockback = true; // SPIGOT-5258 - Make invulnerable players get knockback from explosions
           return false;
        } else {
           this.field_70708_bq = 0;
@@ -313,21 +388,17 @@
              return false;
           } else {
 -            this.func_192030_dh();
-+            // this.spawnShoulderEntities(); // CraftBukkit - moved down
++//            this.spawnShoulderEntities(); // CraftBukkit - moved down
              if (p_70097_1_.func_76350_n()) {
                 if (this.field_70170_p.func_175659_aa() == Difficulty.PEACEFUL) {
--                  p_70097_2_ = 0.0F;
-+                  return false; // CraftBukkit - f = 0.0f -> return false
-                }
- 
-                if (this.field_70170_p.func_175659_aa() == Difficulty.EASY) {
-@@ -818,27 +916,47 @@
+                   p_70097_2_ = 0.0F;
+@@ -818,27 +877,49 @@
                 }
              }
  
 -            return p_70097_2_ == 0.0F ? false : super.func_70097_a(p_70097_1_, p_70097_2_);
 +            // CraftBukkit start - Don't filter out 0 damage
-+            boolean damaged = super.func_70097_a(p_70097_1_, p_70097_2_);
++            boolean damaged = super.damageEntityCB(p_70097_1_, p_70097_2_);
 +            if (damaged) {
 +               this.func_192030_dh();
 +            }
@@ -351,33 +422,34 @@
 -      Team team1 = p_96122_1_.func_96124_cp();
 -      if (team == null) {
 -         return true;
--      } else {
--         return !team.func_142054_a(team1) ? true : team.func_96665_g();
 +      // CraftBukkit start - Change to check OTHER player's scoreboard team according to API
 +      // To summarize this method's logic, it's "Can parameter hurt this"
 +      org.bukkit.scoreboard.Team team;
 +      if (p_96122_1_ instanceof ServerPlayerEntity) {
-+         ServerPlayerEntity thatPlayer = (ServerPlayerEntity)p_96122_1_;
++         ServerPlayerEntity thatPlayer = (ServerPlayerEntity) p_96122_1_;
 +         team = thatPlayer.getBukkitEntity().getScoreboard().getPlayerTeam(thatPlayer.getBukkitEntity());
 +         if (team == null || team.allowFriendlyFire()) {
 +            return true;
 +         }
-       }
-+      else {
-+         OfflinePlayer thisPlayer = p_96122_1_.field_70170_p.getServerCB().getOfflinePlayer(p_96122_1_.func_195047_I_());
+       } else {
+-         return !team.func_142054_a(team1) ? true : team.func_96665_g();
++         // This should never be called, but is implemented anyway
++         org.bukkit.OfflinePlayer thisPlayer = p_96122_1_.field_70170_p.getServerCB().getOfflinePlayer(p_96122_1_.func_110124_au());
 +         team = p_96122_1_.field_70170_p.getServerCB().getScoreboardManager().getMainScoreboard().getPlayerTeam(thisPlayer);
 +         if (team == null || team.allowFriendlyFire()) {
 +            return true;
 +         }
-+      }
+       }
++
 +      if (this instanceof ServerPlayerEntity) {
-+         return !team.hasPlayer(((ServerPlayerEntity)this).getBukkitEntity());
++         return !team.hasPlayer(((ServerPlayerEntity) this).getBukkitEntity());
 +      }
-+      return !team.hasPlayer(this.field_70170_p.getServerCB().getOfflinePlayer(this.func_195047_I_()));
++      return !team.hasPlayer(this.field_70170_p.getServerCB().getOfflinePlayer(this.func_110124_au()));
++      // CraftBukkit end
     }
  
     protected void func_70675_k(float p_70675_1_) {
-@@ -846,11 +964,12 @@
+@@ -846,11 +927,12 @@
     }
  
     protected void func_184590_k(float p_184590_1_) {
@@ -391,53 +463,41 @@
           });
           if (this.field_184627_bm.func_190926_b()) {
              if (hand == Hand.MAIN_HAND) {
-@@ -866,28 +985,36 @@
+@@ -866,12 +948,19 @@
  
     }
  
--   protected void func_70665_d(DamageSource p_70665_1_, float p_70665_2_) {
--      if (!this.func_180431_b(p_70665_1_)) {
--         p_70665_2_ = this.func_70655_b(p_70665_1_, p_70665_2_);
--         p_70665_2_ = this.func_70672_c(p_70665_1_, p_70665_2_);
--         float f2 = Math.max(p_70665_2_ - this.func_110139_bj(), 0.0F);
--         this.func_110149_m(this.func_110139_bj() - (p_70665_2_ - f2));
--         float f = p_70665_2_ - f2;
-+   protected boolean damageEntity_CB(DamageSource damageSrc, float damageAmount) { // void -> boolean
++   // vanilla compatibility - Magma
+    protected void func_70665_d(DamageSource p_70665_1_, float p_70665_2_) {
 +      if (true) {
-+         return super.damageEntity_CB(damageSrc, damageAmount);
++         this.damageEntityCB(p_70665_1_, p_70665_2_);
 +      }
-+      // CraftBukkit end
-+      if (!this.func_180431_b(damageSrc)) {
-+         damageAmount = net.minecraftforge.common.ForgeHooks.onLivingHurt(this, damageSrc, damageAmount);
-+         if (damageAmount <= 0) return false;
-+         damageAmount = this.func_70655_b(damageSrc, damageAmount);
-+         damageAmount = this.func_70672_c(damageSrc, damageAmount);
-+         float f2 = Math.max(damageAmount - this.func_110139_bj(), 0.0F);
-+         this.func_110149_m(this.func_110139_bj() - (damageAmount - f2));
-+         f2 = net.minecraftforge.common.ForgeHooks.onLivingDamage(this, damageSrc, f2);
-+         float f = damageAmount - f2;
+       if (!this.func_180431_b(p_70665_1_)) {
++         p_70665_2_ = net.minecraftforge.common.ForgeHooks.onLivingHurt(this, p_70665_1_, p_70665_2_);
++         if (p_70665_2_ <= 0) return;
+          p_70665_2_ = this.func_70655_b(p_70665_1_, p_70665_2_);
+          p_70665_2_ = this.func_70672_c(p_70665_1_, p_70665_2_);
+          float f2 = Math.max(p_70665_2_ - this.func_110139_bj(), 0.0F);
+          this.func_110149_m(this.func_110139_bj() - (p_70665_2_ - f2));
++         f2 = net.minecraftforge.common.ForgeHooks.onLivingDamage(this, p_70665_1_, f2);
+          float f = p_70665_2_ - f2;
           if (f > 0.0F && f < 3.4028235E37F) {
              this.func_195067_a(Stats.field_212738_J, Math.round(f * 10.0F));
-          }
- 
-          if (f2 != 0.0F) {
--            this.func_71020_j(p_70665_1_.func_76345_d());
-+            this.func_71020_j(damageSrc.func_76345_d());
-             float f1 = this.func_110143_aJ();
-             this.func_70606_j(this.func_110143_aJ() - f2);
--            this.func_110142_aN().func_94547_a(p_70665_1_, f1, f2);
-+            this.func_110142_aN().func_94547_a(damageSrc, f1, f2);
-             if (f2 < 3.4028235E37F) {
-                this.func_195067_a(Stats.field_188112_z, Math.round(f2 * 10.0F));
-             }
- 
-          }
+@@ -890,6 +979,13 @@
        }
-+      return false; // CraftBukkit
     }
  
++   // CraftBukkit start - Magma
++   @Override
++   protected boolean damageEntityCB(DamageSource damageSrc, float damageAmount) { // void -> boolean
++      return super.damageEntityCB(damageSrc, damageAmount);
++   }
++   // CraftBukkit end
++
     public void func_175141_a(SignTileEntity p_175141_1_) {
-@@ -926,6 +1053,8 @@
+    }
+ 
+@@ -926,6 +1022,8 @@
  
           return ActionResultType.PASS;
        } else {
@@ -446,7 +506,7 @@
           ItemStack itemstack = this.func_184586_b(p_190775_2_);
           ItemStack itemstack1 = itemstack.func_77946_l();
           if (p_190775_1_.func_184230_a(this, p_190775_2_)) {
-@@ -933,6 +1062,9 @@
+@@ -933,6 +1031,9 @@
                 itemstack.func_190920_e(itemstack1.func_190916_E());
              }
  
@@ -456,7 +516,7 @@
              return ActionResultType.SUCCESS;
           } else {
              if (!itemstack.func_190926_b() && p_190775_1_ instanceof LivingEntity) {
-@@ -942,6 +1074,7 @@
+@@ -942,6 +1043,7 @@
  
                 if (itemstack.func_111282_a(this, (LivingEntity)p_190775_1_, p_190775_2_)) {
                    if (itemstack.func_190926_b() && !this.field_71075_bZ.field_75098_d) {
@@ -464,7 +524,7 @@
                       this.func_184611_a(p_190775_2_, ItemStack.field_190927_a);
                    }
  
-@@ -1018,6 +1151,7 @@
+@@ -1018,6 +1120,7 @@
     }
  
     public void func_71059_n(Entity p_71059_1_) {
@@ -472,16 +532,7 @@
        if (p_71059_1_.func_70075_an()) {
           if (!p_71059_1_.func_85031_j(this)) {
              float f = (float)this.func_110148_a(SharedMonsterAttributes.field_111264_e).func_111126_e();
-@@ -1031,7 +1165,7 @@
-             float f2 = this.func_184825_o(0.5F);
-             f = f * (0.2F + f2 * f2 * 0.8F);
-             f1 = f1 * f2;
--            this.func_184821_cY();
-+            // this.resetCooldown(); // CraftBukkit - Moved to EntityLiving to reset the cooldown after the damage is dealt
-             if (f > 0.0F || f1 > 0.0F) {
-                boolean flag = f2 > 0.9F;
-                boolean flag1 = false;
-@@ -1045,8 +1179,10 @@
+@@ -1045,8 +1148,10 @@
  
                 boolean flag2 = flag && this.field_70143_R > 0.0F && !this.field_70122_E && !this.func_70617_f_() && !this.func_70090_H() && !this.func_70644_a(Effects.field_76440_q) && !this.func_184218_aH() && p_71059_1_ instanceof LivingEntity;
                 flag2 = flag2 && !this.func_70051_ag();
@@ -493,7 +544,7 @@
                 }
  
                 f = f + f1;
-@@ -1065,8 +1201,14 @@
+@@ -1065,8 +1170,14 @@
                 if (p_71059_1_ instanceof LivingEntity) {
                    f4 = ((LivingEntity)p_71059_1_).func_110143_aJ();
                    if (j > 0 && !p_71059_1_.func_70027_ad()) {
@@ -501,7 +552,7 @@
 -                     p_71059_1_.func_70015_d(1);
 +                     // CraftBukkit start - Call a combust event when somebody hits with a fire enchanted item
 +                     EntityCombustByEntityEvent combustEvent = new EntityCombustByEntityEvent(this.getBukkitEntity(), p_71059_1_.getBukkitEntity(), 1);
-+                     Bukkit.getPluginManager().callEvent(combustEvent);
++                     org.bukkit.Bukkit.getPluginManager().callEvent(combustEvent);
 +                     if (!combustEvent.isCancelled()) {
 +                        flag4 = true;
 +                        p_71059_1_.setOnFire(combustEvent.getDuration(), false);
@@ -510,21 +561,21 @@
                    }
                 }
  
-@@ -1089,8 +1231,11 @@
+@@ -1089,8 +1200,11 @@
  
                       for(LivingEntity livingentity : this.field_70170_p.func_217357_a(LivingEntity.class, p_71059_1_.func_174813_aQ().func_72314_b(1.0D, 0.25D, 1.0D))) {
                          if (livingentity != this && livingentity != p_71059_1_ && !this.func_184191_r(livingentity) && (!(livingentity instanceof ArmorStandEntity) || !((ArmorStandEntity)livingentity).func_181026_s()) && this.func_70068_e(livingentity) < 9.0D) {
 -                           livingentity.func_70653_a(this, 0.4F, (double)MathHelper.func_76126_a(this.field_70177_z * ((float)Math.PI / 180F)), (double)(-MathHelper.func_76134_b(this.field_70177_z * ((float)Math.PI / 180F))));
 -                           livingentity.func_70097_a(DamageSource.func_76365_a(this), f3);
 +                           // CraftBukkit start - Only apply knockback if the damage hits
-+                           if (livingentity.func_70097_a(DamageSource.func_76365_a(this).sweep(), f3)) {
++                           if (livingentity.func_70097_a(DamageSource.func_76365_a(this).sweep(), f4)) {
 +                              livingentity.func_70653_a(this, 0.4F, (double) MathHelper.func_76126_a(this.field_70177_z * ((float) Math.PI / 180F)), (double) (-MathHelper.func_76134_b(this.field_70177_z * ((float) Math.PI / 180F))));
 +                           }
 +                           // CraftBukkit end
                          }
                       }
  
-@@ -1099,9 +1244,24 @@
+@@ -1099,9 +1213,23 @@
                    }
  
                    if (p_71059_1_ instanceof ServerPlayerEntity && p_71059_1_.field_70133_I) {
@@ -533,14 +584,13 @@
 -                     p_71059_1_.func_213317_d(vec3d);
 +                     // CraftBukkit start - Add Velocity Event
 +                     boolean cancelled = false;
-+                     Player player = (Player)p_71059_1_.getBukkitEntity();
-+                     Vector velocity = CraftVector.toBukkit(vec3d);
++                     Player player = (Player) p_71059_1_.getBukkitEntity();
++                     org.bukkit.util.Vector velocity = CraftVector.toBukkit(vec3d);
 +                     PlayerVelocityEvent event = new PlayerVelocityEvent(player, velocity.clone());
-+                     this.field_70170_p.getServerCB().getPluginManager().callEvent(event);
++                     field_70170_p.getServerCB().getPluginManager().callEvent(event);
 +                     if (event.isCancelled()) {
 +                        cancelled = true;
-+                     }
-+                     else if (!velocity.equals(event.getVelocity())) {
++                     } else if (!velocity.equals(event.getVelocity())) {
 +                        player.setVelocity(event.getVelocity());
 +                     }
 +                     if (!cancelled) {
@@ -552,7 +602,7 @@
                    }
  
                    if (flag2) {
-@@ -1134,8 +1294,10 @@
+@@ -1134,8 +1262,10 @@
                    }
  
                    if (!this.field_70170_p.field_72995_K && !itemstack1.func_190926_b() && entity instanceof LivingEntity) {
@@ -563,34 +613,41 @@
                          this.func_184611_a(Hand.MAIN_HAND, ItemStack.field_190927_a);
                       }
                    }
-@@ -1144,7 +1306,13 @@
+@@ -1144,7 +1274,13 @@
                       float f5 = f4 - ((LivingEntity)p_71059_1_).func_110143_aJ();
                       this.func_195067_a(Stats.field_188111_y, Math.round(f5 * 10.0F));
                       if (j > 0) {
 -                        p_71059_1_.func_70015_d(j * 4);
 +                        // CraftBukkit start - Call a combust event when somebody hits with a fire enchanted item
-+                        EntityCombustByEntityEvent combustEvent2 = new EntityCombustByEntityEvent(this.getBukkitEntity(), p_71059_1_.getBukkitEntity(), j * 4);
-+                        Bukkit.getPluginManager().callEvent(combustEvent2);
-+                        if (!combustEvent2.isCancelled()) {
-+                           p_71059_1_.setOnFire(combustEvent2.getDuration(), false);
++                        EntityCombustByEntityEvent combustEvent = new EntityCombustByEntityEvent(this.getBukkitEntity(), entity.getBukkitEntity(), j * 4);
++                        org.bukkit.Bukkit.getPluginManager().callEvent(combustEvent);
++                        if (!combustEvent.isCancelled()) {
++                           entity.setOnFire(combustEvent.getDuration(), false);
 +                        }
 +                        // CraftBukkit end
                       }
  
                       if (this.field_70170_p instanceof ServerWorld && f5 > 2.0F) {
-@@ -1159,6 +1327,11 @@
+@@ -1153,12 +1289,17 @@
+                      }
+                   }
+ 
+-                  this.func_71020_j(0.1F);
++                  this.func_71020_j(field_70170_p.spigotConfig.combatExhaustion); // Spigot - Change to use configurable value
+                } else {
+                   this.field_70170_p.func_184148_a((PlayerEntity)null, this.func_226277_ct_(), this.func_226278_cu_(), this.func_226281_cx_(), SoundEvents.field_187724_dU, this.func_184176_by(), 1.0F, 1.0F);
                    if (flag4) {
                       p_71059_1_.func_70066_B();
                    }
 +                  // CraftBukkit start - resync on cancelled event
 +                  if (this instanceof ServerPlayerEntity) {
-+                     ((ServerPlayerEntity)this).getBukkitEntity().updateInventory();
++                     ((ServerPlayerEntity) this).getBukkitEntity().updateInventory();
 +                  }
 +                  // CraftBukkit end
                 }
              }
  
-@@ -1177,7 +1350,7 @@
+@@ -1177,7 +1318,7 @@
        }
  
        if (this.field_70146_Z.nextFloat() < f) {
@@ -599,7 +656,7 @@
           this.func_184602_cy();
           this.field_70170_p.func_72960_a(this, (byte)30);
        }
-@@ -1203,8 +1376,9 @@
+@@ -1203,8 +1344,9 @@
     public void func_71004_bE() {
     }
  
@@ -611,94 +668,63 @@
        this.field_71069_bz.func_75134_a(this);
        if (this.field_71070_bA != null) {
           this.field_71070_bA.func_75134_a(this);
-@@ -1220,44 +1394,61 @@
-       return this.field_146106_i;
+@@ -1221,7 +1363,16 @@
     }
  
--   public Either<PlayerEntity.SleepResult, Unit> func_213819_a(BlockPos p_213819_1_) {
+    public Either<PlayerEntity.SleepResult, Unit> func_213819_a(BlockPos p_213819_1_) {
 -      Direction direction = this.field_70170_p.func_180495_p(p_213819_1_).func_177229_b(HorizontalBlock.field_185512_D);
-+   private Either<SleepResult, Unit> getBedResult(BlockPos blockposition, Direction enumdirection) {
-+      Optional<BlockPos> optAt = Optional.of(blockposition);
-+      PlayerEntity.SleepResult ret = net.minecraftforge.event.ForgeEventFactory.onPlayerSleepInBed(this, optAt);
-+      if (ret != null) return Either.left(ret);
-       if (!this.field_70170_p.field_72995_K) {
-          if (this.func_70608_bn() || !this.func_70089_S()) {
--            return Either.left(PlayerEntity.SleepResult.OTHER_PROBLEM);
-+            return Either.left(SleepResult.OTHER_PROBLEM);
-          }
--
--         if (!this.field_70170_p.field_73011_w.func_76569_d()) {
--            return Either.left(PlayerEntity.SleepResult.NOT_POSSIBLE_HERE);
-+         if (!this.field_70170_p.field_73011_w.func_76567_e() || this.field_70170_p.func_226691_t_(blockposition) == Biomes.field_76778_j || !this.field_70170_p.field_73011_w.func_76569_d()) {
-+            return Either.left(SleepResult.NOT_POSSIBLE_HERE);
-          }
--
--         if (this.field_70170_p.func_72935_r()) {
--            this.func_226560_a_(p_213819_1_, false, true);
--            return Either.left(PlayerEntity.SleepResult.NOT_POSSIBLE_NOW);
-+         if (!net.minecraftforge.event.ForgeEventFactory.fireSleepingTimeCheck(this, optAt)) {
-+            this.func_226560_a_(blockposition, false, true);
-+            return Either.left(SleepResult.NOT_POSSIBLE_NOW);
-          }
--
--         if (!this.func_190774_a(p_213819_1_, direction)) {
--            return Either.left(PlayerEntity.SleepResult.TOO_FAR_AWAY);
-+         if (!this.func_190774_a(blockposition, enumdirection)) {
-+            return Either.left(SleepResult.TOO_FAR_AWAY);
-          }
--
--         if (this.func_213828_b(p_213819_1_, direction)) {
--            return Either.left(PlayerEntity.SleepResult.OBSTRUCTED);
-+         if (this.func_213828_b(blockposition, enumdirection)) {
-+            return Either.left(SleepResult.OBSTRUCTED);
-          }
--
-          if (!this.func_184812_l_()) {
--            double d0 = 8.0D;
--            double d1 = 5.0D;
--            Vec3d vec3d = new Vec3d((double)p_213819_1_.func_177958_n() + 0.5D, (double)p_213819_1_.func_177956_o(), (double)p_213819_1_.func_177952_p() + 0.5D);
--            List<MonsterEntity> list = this.field_70170_p.func_175647_a(MonsterEntity.class, new AxisAlignedBB(vec3d.func_82615_a() - 8.0D, vec3d.func_82617_b() - 5.0D, vec3d.func_82616_c() - 8.0D, vec3d.func_82615_a() + 8.0D, vec3d.func_82617_b() + 5.0D, vec3d.func_82616_c() + 8.0D), (p_213820_1_) -> {
--               return p_213820_1_.func_191990_c(this);
--            });
-+            double d0 = 8.0;
-+            double d2 = 5.0;
-+            Vec3d vec3d = new Vec3d(blockposition.func_177958_n() + 0.5, blockposition.func_177956_o(), blockposition.func_177952_p() + 0.5);
-+            List<MonsterEntity> list = this.field_70170_p.func_175647_a(MonsterEntity.class, new AxisAlignedBB(vec3d.func_82615_a() - 8.0, vec3d.func_82617_b() - 5.0, vec3d.func_82616_c() - 8.0, vec3d.func_82615_a() + 8.0, vec3d.func_82617_b() + 5.0, vec3d.func_82616_c() + 8.0), entitymonster -> entitymonster.func_191990_c(this));
-             if (!list.isEmpty()) {
--               return Either.left(PlayerEntity.SleepResult.NOT_SAFE);
-+               return Either.left(SleepResult.NOT_SAFE);
-             }
-          }
-       }
-+      return Either.right(Unit.INSTANCE);
-+   }
- 
--      this.func_213342_e(p_213819_1_);
-+   public Either<PlayerEntity.SleepResult, Unit> func_213819_a(BlockPos p_213819_1_) {
-+      // CraftBukkit start - moved checks into separate method above, add force
++      // CraftBukkit start
 +      return this.sleep(p_213819_1_, false);
 +   }
 +
 +   public Either<SleepResult, Unit> sleep(BlockPos at, boolean force) {
++      // CraftBukkit end
++      Optional<BlockPos> optAt = Optional.of(at);
++      PlayerEntity.SleepResult ret = net.minecraftforge.event.ForgeEventFactory.onPlayerSleepInBed(this, optAt);
++      if (ret != null) return Either.left(ret);
 +      Direction direction = this.field_70170_p.func_180495_p(at).func_177229_b(HorizontalBlock.field_185512_D);
-+      Either<SleepResult, Unit> bedResult = this.getBedResult(at, direction);
-+      if (bedResult.left().orElse(null) == SleepResult.OTHER_PROBLEM) {
-+         return bedResult;
-+      }
-+      if (force) {
-+         bedResult = Either.right(Unit.INSTANCE);
-+      }
-+      if (this.getBukkitEntity() instanceof Player) {
-+         bedResult = CraftEventFactory.callPlayerBedEnterEvent(this, at, bedResult);
-+         if (bedResult.left().isPresent()) {
-+            return bedResult;
-+         }
-+      }
+       if (!this.field_70170_p.field_72995_K) {
+          if (this.func_70608_bn() || !this.func_70089_S()) {
+             return Either.left(PlayerEntity.SleepResult.OTHER_PROBLEM);
+@@ -1231,23 +1382,23 @@
+             return Either.left(PlayerEntity.SleepResult.NOT_POSSIBLE_HERE);
+          }
+ 
+-         if (this.field_70170_p.func_72935_r()) {
+-            this.func_226560_a_(p_213819_1_, false, true);
++         if (!net.minecraftforge.event.ForgeEventFactory.fireSleepingTimeCheck(this, optAt)) {
++            this.func_226560_a_(at, false, true);
+             return Either.left(PlayerEntity.SleepResult.NOT_POSSIBLE_NOW);
+          }
+ 
+-         if (!this.func_190774_a(p_213819_1_, direction)) {
++         if (!this.func_190774_a(at, direction)) {
+             return Either.left(PlayerEntity.SleepResult.TOO_FAR_AWAY);
+          }
+ 
+-         if (this.func_213828_b(p_213819_1_, direction)) {
++         if (this.func_213828_b(at, direction)) {
+             return Either.left(PlayerEntity.SleepResult.OBSTRUCTED);
+          }
+ 
+          if (!this.func_184812_l_()) {
+             double d0 = 8.0D;
+             double d1 = 5.0D;
+-            Vec3d vec3d = new Vec3d((double)p_213819_1_.func_177958_n() + 0.5D, (double)p_213819_1_.func_177956_o(), (double)p_213819_1_.func_177952_p() + 0.5D);
++            Vec3d vec3d = new Vec3d((double)at.func_177958_n() + 0.5D, (double)at.func_177956_o(), (double)at.func_177952_p() + 0.5D);
+             List<MonsterEntity> list = this.field_70170_p.func_175647_a(MonsterEntity.class, new AxisAlignedBB(vec3d.func_82615_a() - 8.0D, vec3d.func_82617_b() - 5.0D, vec3d.func_82616_c() - 8.0D, vec3d.func_82615_a() + 8.0D, vec3d.func_82617_b() + 5.0D, vec3d.func_82616_c() + 8.0D), (p_213820_1_) -> {
+                return p_213820_1_.func_191990_c(this);
+             });
+@@ -1257,7 +1408,7 @@
+          }
+       }
+ 
+-      this.func_213342_e(p_213819_1_);
 +      this.func_213342_e(at);
        this.field_71076_b = 0;
        if (this.field_70170_p instanceof ServerWorld) {
           ((ServerWorld)this.field_70170_p).func_72854_c();
-@@ -1273,6 +1464,7 @@
+@@ -1273,6 +1424,7 @@
     }
  
     private boolean func_190774_a(BlockPos p_190774_1_, Direction p_190774_2_) {
@@ -706,35 +732,35 @@
        return this.func_230126_g_(p_190774_1_) || this.func_230126_g_(p_190774_1_.func_177972_a(p_190774_2_.func_176734_d()));
     }
  
-@@ -1287,11 +1479,26 @@
+@@ -1287,11 +1439,27 @@
     }
  
     public void func_225652_a_(boolean p_225652_1_, boolean p_225652_2_) {
++      BlockPos bedPosition = this.func_213374_dv().orElse(null); // CraftBukkit
 +      net.minecraftforge.event.ForgeEventFactory.onPlayerWakeup(this, p_225652_1_, p_225652_2_);
-+      BlockPos bedPosition = this.func_213374_dv().orElse(null);
        super.func_213366_dy();
        if (this.field_70170_p instanceof ServerWorld && p_225652_2_) {
           ((ServerWorld)this.field_70170_p).func_72854_c();
        }
--
+ 
 +      // CraftBukkit start - fire PlayerBedLeaveEvent
 +      if (this.getBukkitEntity() instanceof Player) {
-+         Player player = (Player)this.getBukkitEntity();
-+         Block bed;
++         Player player = (Player) this.getBukkitEntity();
++         org.bukkit.block.Block bed;
 +         if (bedPosition != null) {
 +            bed = this.field_70170_p.getWorldCB().getBlockAt(bedPosition.func_177958_n(), bedPosition.func_177956_o(), bedPosition.func_177952_p());
-+         }
-+         else {
++         } else {
 +            bed = this.field_70170_p.getWorldCB().getBlockAt(player.getLocation());
 +         }
-+         final PlayerBedLeaveEvent event = new PlayerBedLeaveEvent(player, bed, true);
++         PlayerBedLeaveEvent event = new PlayerBedLeaveEvent(player, bed, true);
 +         this.field_70170_p.getServerCB().getPluginManager().callEvent(event);
 +      }
 +      // CraftBukkit end
++
        this.field_71076_b = p_225652_1_ ? 0 : 100;
     }
  
-@@ -1300,17 +1507,17 @@
+@@ -1300,17 +1468,17 @@
     }
  
     public static Optional<Vec3d> func_213822_a(IWorldReader p_213822_0_, BlockPos p_213822_1_, boolean p_213822_2_) {
@@ -756,7 +782,7 @@
        }
     }
  
-@@ -1325,15 +1532,62 @@
+@@ -1325,15 +1493,62 @@
     public void func_146105_b(ITextComponent p_146105_1_, boolean p_146105_2_) {
     }
  
@@ -821,30 +847,77 @@
        if (p_226560_1_ != null) {
           if (p_226560_3_ && !p_226560_1_.equals(this.field_71077_c)) {
              this.func_145747_a(new TranslationTextComponent("block.minecraft.bed.set_spawn"));
-@@ -1341,9 +1595,11 @@
+@@ -1341,9 +1556,11 @@
  
           this.field_71077_c = p_226560_1_;
           this.field_82248_d = p_226560_2_;
-+         this.spawnWorld = this.field_70170_p.field_72986_A.func_76065_j();
++         this.spawnWorld = this.field_70170_p.field_72986_A.func_76065_j(); // CraftBukkit
        } else {
           this.field_71077_c = null;
           this.field_82248_d = false;
-+         this.spawnWorld = "";
++         this.spawnWorld = ""; // CraftBukkit
        }
  
     }
-@@ -1410,7 +1666,9 @@
+@@ -1381,9 +1598,9 @@
+       super.func_70664_aZ();
+       this.func_195066_a(Stats.field_75953_u);
+       if (this.func_70051_ag()) {
+-         this.func_71020_j(0.2F);
++         this.func_71020_j(field_70170_p.spigotConfig.jumpSprintExhaustion); // Spigot - Change to use configurable value
+       } else {
+-         this.func_71020_j(0.05F);
++         this.func_71020_j(field_70170_p.spigotConfig.jumpWalkExhaustion); // Spigot - Change to use configurable value
+       }
+ 
+    }
+@@ -1410,7 +1627,11 @@
           this.func_213293_j(vec3d.field_72450_a, d5 * 0.6D, vec3d.field_72449_c);
           this.field_70747_aH = f;
           this.field_70143_R = 0.0F;
 -         this.func_70052_a(7, false);
-+         if (this.func_70083_f(7) && !CraftEventFactory.callToggleGlideEvent(this, false).isCancelled()) {
++         // CraftBukkit start
++         if (func_70083_f(7) && !org.bukkit.craftbukkit.v1_15_R1.event.CraftEventFactory.callToggleGlideEvent(this, false).isCancelled()) {
 +            this.func_70052_a(7, false);
 +         }
++         // CraftBukkit end
        } else {
           super.func_213352_e(p_213352_1_);
        }
-@@ -1506,6 +1764,7 @@
+@@ -1441,13 +1662,13 @@
+             int i = Math.round(MathHelper.func_76133_a(p_71000_1_ * p_71000_1_ + p_71000_3_ * p_71000_3_ + p_71000_5_ * p_71000_5_) * 100.0F);
+             if (i > 0) {
+                this.func_195067_a(Stats.field_75946_m, i);
+-               this.func_71020_j(0.01F * (float)i * 0.01F);
++               this.func_71020_j(field_70170_p.spigotConfig.swimMultiplier * (float)i * 0.01F); // Spigot
+             }
+          } else if (this.func_213290_a(FluidTags.field_206959_a, true)) {
+             int j = Math.round(MathHelper.func_76133_a(p_71000_1_ * p_71000_1_ + p_71000_3_ * p_71000_3_ + p_71000_5_ * p_71000_5_) * 100.0F);
+             if (j > 0) {
+                this.func_195067_a(Stats.field_211756_w, j);
+-               this.func_71020_j(0.01F * (float)j * 0.01F);
++               this.func_71020_j(field_70170_p.spigotConfig.swimMultiplier * (float)j * 0.01F); // Spigot
+             }
+          } else if (this.func_70090_H()) {
+             int k = Math.round(MathHelper.func_76133_a(p_71000_1_ * p_71000_1_ + p_71000_5_ * p_71000_5_) * 100.0F);
+@@ -1464,13 +1685,13 @@
+             if (l > 0) {
+                if (this.func_70051_ag()) {
+                   this.func_195067_a(Stats.field_188102_l, l);
+-                  this.func_71020_j(0.1F * (float)l * 0.01F);
++                  this.func_71020_j(field_70170_p.spigotConfig.sprintMultiplier * (float)l * 0.01F); // Spigot
+                } else if (this.func_213453_ef()) {
+                   this.func_195067_a(Stats.field_188101_k, l);
+-                  this.func_71020_j(0.0F * (float)l * 0.01F);
++                  this.func_71020_j(field_70170_p.spigotConfig.otherMultiplier * (float)l * 0.01F); // Spigot
+                } else {
+                   this.func_195067_a(Stats.field_188100_j, l);
+-                  this.func_71020_j(0.0F * (float)l * 0.01F);
++                  this.func_71020_j(field_70170_p.spigotConfig.otherMultiplier * (float)l * 0.01F); // Spigot
+                }
+             }
+          } else if (this.func_184613_cA()) {
+@@ -1506,6 +1727,7 @@
  
     public boolean func_225503_b_(float p_225503_1_, float p_225503_2_) {
        if (this.field_71075_bZ.field_75101_c) {
@@ -852,31 +925,35 @@
           return false;
        } else {
           if (p_225503_1_ >= 2.0F) {
-@@ -1529,12 +1788,20 @@
+@@ -1529,12 +1751,24 @@
     }
  
     public void func_226567_ej_() {
 -      this.func_70052_a(7, true);
-+      if (!CraftEventFactory.callToggleGlideEvent(this, true).isCancelled()) {
++      // CraftBukkit start
++      if (!org.bukkit.craftbukkit.v1_15_R1.event.CraftEventFactory.callToggleGlideEvent(this, true).isCancelled()) {
 +         this.func_70052_a(7, true);
-+      }
-+      else {
++      } else {
++         // SPIGOT-5542: must toggle like below
 +         this.func_70052_a(7, true);
 +         this.func_70052_a(7, false);
 +      }
++      // CraftBukkit end
     }
  
     public void func_226568_ek_() {
 -      this.func_70052_a(7, true);
 -      this.func_70052_a(7, false);
-+      if (!CraftEventFactory.callToggleGlideEvent(this, false).isCancelled()) {
++      // CraftBukkit start
++      if (!org.bukkit.craftbukkit.v1_15_R1.event.CraftEventFactory.callToggleGlideEvent(this, false).isCancelled()) {
 +         this.func_70052_a(7, true);
 +         this.func_70052_a(7, false);
 +      }
++      // CraftBukkit end
     }
  
     protected void func_71061_d_() {
-@@ -1560,6 +1827,10 @@
+@@ -1560,6 +1794,10 @@
     }
  
     public void func_195068_e(int p_195068_1_) {
@@ -887,7 +964,7 @@
        this.func_85039_t(p_195068_1_);
        this.field_71106_cc += (float)p_195068_1_ / (float)this.func_71050_bK();
        this.field_71067_cb = MathHelper.func_76125_a(this.field_71067_cb + p_195068_1_, 0, Integer.MAX_VALUE);
-@@ -1588,7 +1859,7 @@
+@@ -1588,7 +1826,7 @@
     }
  
     public void func_192024_a(ItemStack p_192024_1_, int p_192024_2_) {
@@ -896,7 +973,7 @@
        if (this.field_71068_ca < 0) {
           this.field_71068_ca = 0;
           this.field_71106_cc = 0.0F;
-@@ -1599,6 +1870,10 @@
+@@ -1599,6 +1837,10 @@
     }
  
     public void func_82242_a(int p_82242_1_) {
@@ -907,7 +984,7 @@
        this.field_71068_ca += p_82242_1_;
        if (this.field_71068_ca < 0) {
           this.field_71068_ca = 0;
-@@ -1750,26 +2025,27 @@
+@@ -1750,26 +1992,34 @@
  
     protected void func_192030_dh() {
        if (this.field_223730_e + 20L < this.field_70170_p.func_82737_E()) {
@@ -915,40 +992,45 @@
 -         this.func_192029_h(new CompoundNBT());
 -         this.func_192026_k(this.func_192025_dl());
 -         this.func_192031_i(new CompoundNBT());
++//         this.spawnShoulderEntity(this.getLeftShoulderEntity());
++//         this.setLeftShoulderEntity(new CompoundNBT());
++//         this.spawnShoulderEntity(this.getRightShoulderEntity());
++//         this.setRightShoulderEntity(new CompoundNBT());
++         // CraftBukkit start
 +         if (this.spawnShoulderEntity(this.func_192023_dk())) {
 +            this.func_192029_h(new CompoundNBT());
 +         }
 +         if (this.spawnShoulderEntity(this.func_192025_dl())) {
 +            this.func_192031_i(new CompoundNBT());
 +         }
++         // CraftBukkit end
        }
  
     }
  
 -   private void func_192026_k(CompoundNBT p_192026_1_) {
-+   private boolean spawnShoulderEntity(CompoundNBT p_192026_1_) {
++   private boolean spawnShoulderEntity(CompoundNBT p_192026_1_) { // CraftBukkit void->boolean
        if (!this.field_70170_p.field_72995_K && !p_192026_1_.isEmpty()) {
 -         EntityType.func_220330_a(p_192026_1_, this.field_70170_p).ifPresent((p_226562_1_) -> {
--            if (p_226562_1_ instanceof TameableEntity) {
++         return EntityType.func_220330_a(p_192026_1_, this.field_70170_p).map((p_226562_1_) -> {
+             if (p_226562_1_ instanceof TameableEntity) {
 -               ((TameableEntity)p_226562_1_).func_184754_b(this.field_96093_i);
-+         return EntityType.func_220330_a(p_192026_1_, this.field_70170_p).map((entity) -> {
-+            if (entity instanceof TameableEntity) {
-+               ((TameableEntity) entity).func_184754_b(this.field_96093_i);
++               ((TameableEntity) p_226562_1_).func_184754_b(this.field_96093_i);
              }
--
+ 
 -            p_226562_1_.func_70107_b(this.func_226277_ct_(), this.func_226278_cu_() + (double)0.7F, this.func_226281_cx_());
 -            ((ServerWorld)this.field_70170_p).func_217470_d(p_226562_1_);
 -         });
-+            entity.func_70107_b(this.func_226277_ct_(), this.func_226278_cu_() + 0.699999988079071, this.func_226281_cx_());
-+            return ((ServerWorld)this.field_70170_p).addEntitySerialized(entity, CreatureSpawnEvent.SpawnReason.SHOULDER_ENTITY);
-+         }).orElse(true);
++            p_226562_1_.func_70107_b(this.func_226277_ct_(), this.func_226278_cu_() + (double) 0.7F, this.func_226281_cx_());
++            return ((ServerWorld) this.field_70170_p).addEntitySerialized(p_226562_1_, CreatureSpawnEvent.SpawnReason.SHOULDER_ENTITY); // CraftBillot
++         }).orElse(true); // CraftBukkit
        }
 -
 +      return true; // CraftBukkit
     }
  
     public abstract boolean func_175149_v();
-@@ -1789,7 +2065,10 @@
+@@ -1789,7 +2039,10 @@
     }
  
     public ITextComponent func_145748_c_() {
@@ -960,7 +1042,7 @@
        return this.func_208016_c(itextcomponent);
     }
  
-@@ -1922,7 +2201,7 @@
+@@ -1922,7 +2175,7 @@
        return this.field_70180_af.func_187225_a(field_192032_bt);
     }
  
@@ -969,7 +1051,7 @@
        this.field_70180_af.func_187227_b(field_192032_bt, p_192029_1_);
     }
  
-@@ -1930,7 +2209,7 @@
+@@ -1930,7 +2183,7 @@
        return this.field_70180_af.func_187225_a(field_192033_bu);
     }
  
@@ -978,7 +1060,7 @@
        this.field_70180_af.func_187227_b(field_192033_bu, p_192031_1_);
     }
  
-@@ -2029,4 +2308,45 @@
+@@ -2029,4 +2282,45 @@
           return this.field_221260_g;
        }
     }

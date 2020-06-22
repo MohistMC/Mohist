@@ -5,7 +5,7 @@
                    this.func_179221_a(armorstandentity, world.field_73012_v);
                    EntityType.func_208048_a(world, p_195939_1_.func_195999_j(), armorstandentity, itemstack.func_77978_p());
 +                  // CraftBukkit start
-+                  if (org.bukkit.craftbukkit.event.CraftEventFactory.callEntityPlaceEvent(p_195939_1_, armorstandentity).isCancelled()) {
++                  if (org.bukkit.craftbukkit.v1_15_R1.event.CraftEventFactory.callEntityPlaceEvent(p_195939_1_, armorstandentity).isCancelled()) {
 +                     return ActionResultType.FAIL;
 +                  }
 +                  // CraftBukkit end

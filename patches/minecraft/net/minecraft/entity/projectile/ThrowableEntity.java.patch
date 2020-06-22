@@ -1,25 +1,39 @@
 --- a/net/minecraft/entity/projectile/ThrowableEntity.java
 +++ b/net/minecraft/entity/projectile/ThrowableEntity.java
-@@ -29,8 +29,8 @@
+@@ -12,12 +12,7 @@
+ import net.minecraft.network.IPacket;
+ import net.minecraft.network.play.server.SSpawnObjectPacket;
+ import net.minecraft.particles.ParticleTypes;
+-import net.minecraft.util.math.AxisAlignedBB;
+-import net.minecraft.util.math.BlockRayTraceResult;
+-import net.minecraft.util.math.MathHelper;
+-import net.minecraft.util.math.RayTraceContext;
+-import net.minecraft.util.math.RayTraceResult;
+-import net.minecraft.util.math.Vec3d;
++import net.minecraft.util.math.*;
+ import net.minecraft.world.World;
+ import net.minecraft.world.server.ServerWorld;
+ import net.minecraftforge.api.distmarker.Dist;
+@@ -29,8 +24,8 @@
     private int field_145787_e = -1;
     protected boolean field_174854_a;
     public int field_70191_b;
 -   protected LivingEntity field_70192_c;
 -   private UUID field_200218_h;
-+   public LivingEntity field_70192_c;
-+   public UUID field_200218_h;
++   public LivingEntity field_70192_c; // protected->public CraftBukkit
++   public UUID field_200218_h; // private->public CraftBukkit
     private Entity field_184539_c;
     private int field_184540_av;
  
-@@ -47,6 +47,7 @@
+@@ -47,6 +42,7 @@
        this(p_i48542_1_, p_i48542_2_.func_226277_ct_(), p_i48542_2_.func_226280_cw_() - (double)0.1F, p_i48542_2_.func_226281_cx_(), p_i48542_3_);
        this.field_70192_c = p_i48542_2_;
        this.field_200218_h = p_i48542_2_.func_110124_au();
-+      this.projectileSource = (org.bukkit.entity.LivingEntity)p_i48542_2_.getBukkitEntity(); // CraftBukkit
++      this.projectileSource = (org.bukkit.entity.LivingEntity) p_i48542_2_.getBukkitEntity(); // CraftBukkit
     }
  
     @OnlyIn(Dist.CLIENT)
-@@ -113,7 +114,7 @@
+@@ -113,7 +109,7 @@
              break;
           }
  
@@ -28,7 +42,7 @@
              this.field_184539_c = entity;
              this.field_184540_av = 3;
              break;
-@@ -130,8 +131,13 @@
+@@ -130,8 +126,13 @@
        if (raytraceresult.func_216346_c() != RayTraceResult.Type.MISS) {
           if (raytraceresult.func_216346_c() == RayTraceResult.Type.BLOCK && this.field_70170_p.func_180495_p(((BlockRayTraceResult)raytraceresult).func_216350_a()).func_177230_c() == Blocks.field_150427_aO) {
              this.func_181015_d(((BlockRayTraceResult)raytraceresult).func_216350_a());
@@ -37,7 +51,7 @@
              this.func_70184_a(raytraceresult);
 +            // CraftBukkit start
 +            if (this.field_70128_L) {
-+               org.bukkit.craftbukkit.event.CraftEventFactory.callProjectileHitEvent(this, raytraceresult);
++               org.bukkit.craftbukkit.v1_15_R1.event.CraftEventFactory.callProjectileHitEvent(this, raytraceresult);
 +            }
 +            // CraftBukkit end
           }

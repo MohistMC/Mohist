@@ -24,11 +24,12 @@
           p_225545_1_.func_180501_a(p_225545_3_, Blocks.field_150350_a.func_176223_P(), 4);
           ((TreeFeatureConfig)configuredfeature.field_222738_b).func_227373_a_();
           if (configuredfeature.func_222734_a(p_225545_1_, p_225545_2_, p_225545_5_, p_225545_3_)) {
-@@ -40,4 +44,61 @@
+@@ -40,4 +44,63 @@
  
        return false;
     }
 +
++   // CraftBukkit start
 +   protected void setTreeType(final ConfiguredFeature<?, ?> worldgentreeabstract) {
 +      if (worldgentreeabstract.field_222738_b == DefaultBiomeFeatures.field_226739_a_ || worldgentreeabstract.field_222738_b == DefaultBiomeFeatures.field_226816_k_) {
 +         SaplingBlock.treeType = TreeType.TREE;
@@ -85,4 +86,5 @@
 +         SaplingBlock.treeType = TreeType.JUNGLE;
 +      }
 +   }
++   // CraftBukkit start
  }

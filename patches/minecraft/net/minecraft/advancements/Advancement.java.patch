@@ -4,7 +4,7 @@
     private final String[][] field_192081_f;
     private final Set<Advancement> field_192082_g = Sets.newLinkedHashSet();
     private final ITextComponent field_193125_h;
-+   public final org.bukkit.advancement.Advancement bukkit = new org.bukkit.craftbukkit.advancement.CraftAdvancement(this); // CraftBukkit
++   public final org.bukkit.advancement.Advancement bukkit = new org.bukkit.craftbukkit.v1_15_R1.advancement.CraftAdvancement(this); // CraftBukkit
  
     public Advancement(ResourceLocation p_i47472_1_, @Nullable Advancement p_i47472_2_, @Nullable DisplayInfo p_i47472_3_, AdvancementRewards p_i47472_4_, Map<String, Criterion> p_i47472_5_, String[][] p_i47472_6_) {
        this.field_192079_d = p_i47472_1_;

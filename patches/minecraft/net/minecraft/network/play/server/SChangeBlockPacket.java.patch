@@ -5,7 +5,7 @@
  public class SChangeBlockPacket implements IPacket<IClientPlayNetHandler> {
     private BlockPos field_179828_a;
 -   private BlockState field_197686_b;
-+   public BlockState field_197686_b;
++   public BlockState field_197686_b; // private->public CraftBukkit
  
     public SChangeBlockPacket() {
     }

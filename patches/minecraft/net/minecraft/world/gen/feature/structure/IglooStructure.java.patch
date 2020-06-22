@@ -1,0 +1,23 @@
+--- a/net/minecraft/world/gen/feature/structure/IglooStructure.java
++++ b/net/minecraft/world/gen/feature/structure/IglooStructure.java
+@@ -5,6 +5,7 @@
+ import net.minecraft.util.Rotation;
+ import net.minecraft.util.math.BlockPos;
+ import net.minecraft.util.math.MutableBoundingBox;
++import net.minecraft.world.World;
+ import net.minecraft.world.biome.Biome;
+ import net.minecraft.world.gen.ChunkGenerator;
+ import net.minecraft.world.gen.feature.Feature;
+@@ -28,8 +29,10 @@
+       return IglooStructure.Start::new;
+    }
+ 
+-   protected int func_202382_c() {
+-      return 14357618;
++   // Spigot start
++   protected int getSeedModifier(World world) {
++      return  world.spigotConfig.iglooSeed;
++      // Spigot end
+    }
+ 
+    public static class Start extends StructureStart {
