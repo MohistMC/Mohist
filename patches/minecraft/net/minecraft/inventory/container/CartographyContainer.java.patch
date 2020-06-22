@@ -35,6 +35,15 @@
     };
     private final CraftResultInventory field_217001_f = new CraftResultInventory() {
        public void func_70296_d() {
+@@ -37,7 +55,7 @@
+    }
+ 
+    public CartographyContainer(int p_i50094_1_, PlayerInventory p_i50094_2_, final IWorldPosCallable p_i50094_3_) {
+-      super(ContainerType.field_226625_v_, p_i50094_1_);
++      super(ContainerType.CARTOGRAPHY_TABLE, p_i50094_1_);
+       this.field_216999_d = p_i50094_3_;
+       this.func_75146_a(new Slot(this.field_216998_c, 0, 15, 15) {
+          public boolean func_75214_a(ItemStack p_75214_1_) {
 @@ -102,9 +120,23 @@
           this.func_75146_a(new Slot(p_i50094_2_, k, 8 + k * 18, 142));
        }

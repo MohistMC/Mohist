@@ -1,6 +1,6 @@
 --- a/net/minecraft/block/FlowerPotBlock.java
 +++ b/net/minecraft/block/FlowerPotBlock.java
-@@ -23,12 +23,39 @@
+@@ -23,10 +23,37 @@
     protected static final VoxelShape field_196450_a = Block.func_208617_a(5.0D, 0.0D, 5.0D, 11.0D, 6.0D, 11.0D);
     private final Block field_196452_c;
  
@@ -10,15 +10,12 @@
 +
 +   @Deprecated // Mods should use the constructor below
     public FlowerPotBlock(Block p_i48395_1_, Block.Properties p_i48395_2_) {
--      super(p_i48395_2_);
--      this.field_196452_c = p_i48395_1_;
--      field_196451_b.put(p_i48395_1_, this);
 +      this(Blocks.field_150457_bL == null ? null : () -> (FlowerPotBlock) Blocks.field_150457_bL.delegate.get(), () -> p_i48395_1_.delegate.get(), p_i48395_2_);
 +      if (Blocks.field_150457_bL != null) {
 +         ((FlowerPotBlock)Blocks.field_150457_bL).addPlant(p_i48395_1_.getRegistryName(), () -> this);
 +      }
-    }
- 
++   }
++
 +   /**
 +    * For mod use, eliminates the need to extend this class, and prevents modded
 +    * flower pots from altering vanilla behavior.
@@ -27,10 +24,12 @@
 +    * @param blockIn The flower block.
 +    * @param properties
 +    */
-+   public FlowerPotBlock(@javax.annotation.Nullable java.util.function.Supplier<FlowerPotBlock> emptyPot, java.util.function.Supplier<? extends Block> blockIn, Block.Properties properties) {
-+      super(properties);
++   public FlowerPotBlock(@javax.annotation.Nullable java.util.function.Supplier<FlowerPotBlock> emptyPot, java.util.function.Supplier<? extends Block> p_i48395_1_, Block.Properties p_i48395_2_) {
+       super(p_i48395_2_);
+-      this.field_196452_c = p_i48395_1_;
+-      field_196451_b.put(p_i48395_1_, this);
 +      this.field_196452_c = null; // Unused, redirected by coremod
-+      this.flowerDelegate = blockIn;
++      this.flowerDelegate = p_i48395_1_;
 +      if (emptyPot == null) {
 +         this.fullPots = Maps.newHashMap();
 +         this.emptyPot = null;
@@ -38,11 +37,9 @@
 +         this.fullPots = java.util.Collections.emptyMap();
 +         this.emptyPot = emptyPot;
 +      }
-+   }
-+
-    public VoxelShape func_220053_a(BlockState p_220053_1_, IBlockReader p_220053_2_, BlockPos p_220053_3_, ISelectionContext p_220053_4_) {
-       return field_196450_a;
     }
+ 
+    public VoxelShape func_220053_a(BlockState p_220053_1_, IBlockReader p_220053_2_, BlockPos p_220053_3_, ISelectionContext p_220053_4_) {
 @@ -40,7 +67,7 @@
     public ActionResultType func_225533_a_(BlockState p_225533_1_, World p_225533_2_, BlockPos p_225533_3_, PlayerEntity p_225533_4_, Hand p_225533_5_, BlockRayTraceResult p_225533_6_) {
        ItemStack itemstack = p_225533_4_.func_184586_b(p_225533_5_);
