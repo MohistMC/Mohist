@@ -1,0 +1,50 @@
+From fa8b297bda7ff645d6ea8a02e42563d36ac61ce4 Mon Sep 17 00:00:00 2001
+From: Aikar <aikar@aikar.co>
+Date: Wed, 20 Jun 2018 22:35:39 -0400
+Subject: [PATCH] EMC Tweak Explosions
+
+---
+ src/main/java/net/minecraft/server/Explosion.java | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/src/main/java/net/minecraft/server/Explosion.java b/src/main/java/net/minecraft/server/Explosion.java
+index 2552f860f..cfe37b7ff 100644
+--- a/src/main/java/net/minecraft/server/Explosion.java
++++ b/src/main/java/net/minecraft/server/Explosion.java
+@@ -97,6 +97,7 @@ public class Explosion {
+         int i;
+         int j;
+ 
++        if (this.a || this.b != Effect.NONE) { // EMC - don't run block processing if neither flag is set
+         for (int k = 0; k < 16; ++k) {
+             for (i = 0; i < 16; ++i) {
+                 for (j = 0; j < 16; ++j) {
+@@ -142,6 +143,7 @@ public class Explosion {
+                 }
+             }
+         }
++        } // EMC - don't run block processing if neither flag is set
+ 
+         this.blocks.addAll(set);
+         float f3 = this.size * 2.0F;
+@@ -156,7 +158,7 @@ public class Explosion {
+         List<Entity> list = this.world.getEntities(this.source, new AxisAlignedBB((double) i, (double) l, (double) j1, (double) j, (double) i1, (double) k1), new com.google.common.base.Predicate<Entity>() {
+             @Override
+             public boolean apply(Entity entity) {
+-                return IEntitySelector.canAITarget().test(entity) && !entity.dead;
++                return IEntitySelector.canAITarget().test(entity) && !entity.dead && !(entity instanceof EntityItem); // EMC
+             }
+         });
+         // Paper end
+@@ -220,7 +222,7 @@ public class Explosion {
+         boolean flag1 = this.b != Explosion.Effect.NONE;
+ 
+         if (flag) {
+-            if (this.size >= 2.0F && flag1) {
++            if (this.size >= 2.0F/* && flag1*/) { // EMC - don't care about block breaks flag for animation
+                 this.world.addParticle(Particles.EXPLOSION_EMITTER, this.posX, this.posY, this.posZ, 1.0D, 0.0D, 0.0D);
+             } else {
+                 this.world.addParticle(Particles.EXPLOSION, this.posX, this.posY, this.posZ, 1.0D, 0.0D, 0.0D);
+-- 
+2.25.1.windows.1
+

@@ -1,0 +1,223 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Paul1365972 <paul1365972@gmail.com>
+Date: Thu, 16 Apr 2020 20:56:04 +0200
+Subject: [PATCH] Tokenify everything
+
+
+diff --git a/src/main/java/com/destroystokyo/paper/PaperVersionFetcher.java b/src/main/java/com/destroystokyo/paper/PaperVersionFetcher.java
+index 5c15e85875fe06fb50bfa9084089941805285be8..7fa3db0d8fb5c63f4a7b8692daa73df802c7f279 100644
+--- a/src/main/java/com/destroystokyo/paper/PaperVersionFetcher.java
++++ b/src/main/java/com/destroystokyo/paper/PaperVersionFetcher.java
+@@ -13,7 +13,7 @@ import java.net.URL;
+ 
+ public class PaperVersionFetcher implements VersionFetcher {
+     private static final java.util.regex.Pattern VER_PATTERN = java.util.regex.Pattern.compile("^([0-9\\.]*)\\-.*R"); // R is an anchor, will always give '-R' at end
+-    private static final String GITHUB_BRANCH_NAME = "master";
++    private static final String GITHUB_BRANCH_NAME = "@BRANCH@"; // Ilblu
+     private static @Nullable String mcVer;
+ 
+     @Override
+@@ -25,8 +25,8 @@ public class PaperVersionFetcher implements VersionFetcher {
+     @Override
+     public String getVersionMessage(@Nonnull String serverVersion) {
+         // TODO propertyfy
+-        String[] parts = serverVersion.substring("git-Ilblu-".length()).split("[-\\s]"); // Ilblu
+-        String updateMessage = getUpdateStatusMessage("Paul1365972/Ilblu", GITHUB_BRANCH_NAME, parts[0]); // Ilbu
++        String[] parts = serverVersion.substring("git-@FORK_NAME@-".length()).split("[-\\s]"); // Ilblu
++        String updateMessage = getUpdateStatusMessage("@GITHUB@", GITHUB_BRANCH_NAME, parts[0]); // Ilbu
+         String history = getHistory();
+ 
+         return history != null ? history + "\n" + updateMessage : updateMessage;
+@@ -50,7 +50,7 @@ public class PaperVersionFetcher implements VersionFetcher {
+ 
+     private static String getUpdateStatusMessage(@Nonnull String repo, @Nonnull String branch, @Nonnull String versionInfo) {
+         int distance;
+-        // Ilblu start - No jenkins, yet
++        // Ilblu start - Disable jenkins for now
+         /*
+         try {
+             int jenkinsBuild = Integer.parseInt(versionInfo);
+diff --git a/src/main/java/io/github/paul1365972/ilblu/IlbluCommand.java b/src/main/java/io/github/paul1365972/ilblu/IlbluCommand.java
+index dd3f520bd6e0fec8184d05aaddb0ba50cb3d93f6..d9761fcbf3c57008dab47c528fe494e010d3e6ee 100644
+--- a/src/main/java/io/github/paul1365972/ilblu/IlbluCommand.java
++++ b/src/main/java/io/github/paul1365972/ilblu/IlbluCommand.java
+@@ -17,9 +17,9 @@ public class IlbluCommand extends Command {
+ 
+     public IlbluCommand(String name) {
+         super(name);
+-        this.description = "Ilblu related commands";
+-        this.usageMessage = "/ilblu [reload | version]";
+-        this.setPermission("bukkit.command.ilblu");
++        this.description = "@FORK_NAME@ related commands";
++        this.usageMessage = "/@FORK_NAME_@ [reload | version]";
++        this.setPermission("bukkit.command.@FORK_NAME_@");
+     }
+ 
+     @Override
+@@ -46,13 +46,13 @@ public class IlbluCommand extends Command {
+             Command.broadcastCommandMessage(sender, ChatColor.RED + "If you encounter any issues please use the /stop command to restart your server.");
+ 
+             MinecraftServer console = MinecraftServer.getServer();
+-            IlbluConfig.init((File) console.options.valueOf("ilblu-settings"));
++            IlbluConfig.init((File) console.options.valueOf("@FORK_NAME_@-settings"));
+             for (WorldServer world : console.getWorlds()) {
+                 world.ilbluConfig.init();
+             }
+             console.server.reloadCount++;
+ 
+-            Command.broadcastCommandMessage(sender, ChatColor.GREEN + "Ilblu config reload complete.");
++            Command.broadcastCommandMessage(sender, ChatColor.GREEN + "@FORK_NAME@ config reload complete.");
+         } else if (args[0].equalsIgnoreCase("version")) {
+             Command verCmd = org.bukkit.Bukkit.getServer().getCommandMap().getCommand("version");
+             if (verCmd != null) {
+diff --git a/src/main/java/io/github/paul1365972/ilblu/IlbluConfig.java b/src/main/java/io/github/paul1365972/ilblu/IlbluConfig.java
+index a0f1f9c0af1ee77b1829d86a155c669615a28aea..ec2f273bb723de9e75847458c7b4edc7217b9787 100644
+--- a/src/main/java/io/github/paul1365972/ilblu/IlbluConfig.java
++++ b/src/main/java/io/github/paul1365972/ilblu/IlbluConfig.java
+@@ -22,7 +22,7 @@ import java.util.regex.Pattern;
+ public class IlbluConfig {
+ 
+     private static File CONFIG_FILE;
+-    private static final String HEADER = "This is the main configuration file for Ilblu.\n";
++    private static final String HEADER = "This is the main configuration file for @FORK_NAME@.\n";
+     /*========================================================================*/
+     public static YamlConfiguration config;
+     static int version;
+@@ -39,7 +39,7 @@ public class IlbluConfig {
+             config.load(CONFIG_FILE);
+         } catch (IOException ex) {
+         } catch (InvalidConfigurationException ex) {
+-            Bukkit.getLogger().log(Level.SEVERE, "Could not load ilblu.yml, please correct your syntax errors", ex);
++            Bukkit.getLogger().log(Level.SEVERE, "Could not load @FORK_NAME_@.yml, please correct your syntax errors", ex);
+             throw Throwables.propagate(ex);
+         }
+         config.options().header(HEADER);
+@@ -47,7 +47,7 @@ public class IlbluConfig {
+         verbose = getBoolean("verbose", false);
+ 
+         commands = new HashMap<String, Command>();
+-        commands.put("ilblu", new IlbluCommand("ilblu"));
++        commands.put("@FORK_NAME_@", new IlbluCommand("@FORK_NAME_@"));
+ 
+         version = getInt("config-version", 1);
+         set("config-version", 1);
+@@ -60,7 +60,7 @@ public class IlbluConfig {
+ 
+     protected static void fatal(String s) {
+         fatalError = true;
+-        throw new RuntimeException("Fatal ilblu.yml config error: " + s);
++        throw new RuntimeException("Fatal @FORK_NAME_@.yml config error: " + s);
+     }
+ 
+     protected static void log(String s) {
+@@ -71,7 +71,7 @@ public class IlbluConfig {
+ 
+     public static void registerCommands() {
+         for (Map.Entry<String, Command> entry : commands.entrySet()) {
+-            MinecraftServer.getServer().server.getCommandMap().register(entry.getKey(), "Ilblu", entry.getValue());
++            MinecraftServer.getServer().server.getCommandMap().register(entry.getKey(), "@FORK_NAME@", entry.getValue());
+         }
+ 
+         if (!metricsStarted) {
+diff --git a/src/main/java/io/github/paul1365972/ilblu/Metrics.java b/src/main/java/io/github/paul1365972/ilblu/Metrics.java
+index a80560854e7e01aa31908e3829417f6f60a4d656..a10cda96c08ff60f018a8e5c5749c6108f1d0845 100644
+--- a/src/main/java/io/github/paul1365972/ilblu/Metrics.java
++++ b/src/main/java/io/github/paul1365972/ilblu/Metrics.java
+@@ -578,7 +578,7 @@ public class Metrics {
+ 			boolean logFailedRequests = config.getBoolean("logFailedRequests", false);
+ 			// Only start Metrics, if it's enabled in the config
+ 			if (config.getBoolean("enabled", true)) {
+-				Metrics metrics = new Metrics("Ilblu", serverUUID, logFailedRequests, Bukkit.getLogger());
++				Metrics metrics = new Metrics("@FORK_NAME@", serverUUID, logFailedRequests, Bukkit.getLogger());
+ 				
+ 				metrics.addCustomChart(new Metrics.SimplePie("minecraft_version", () -> {
+ 					String minecraftVersion = Bukkit.getVersion();
+@@ -588,7 +588,7 @@ public class Metrics {
+ 				
+ 				metrics.addCustomChart(new Metrics.SingleLineChart("players", () -> Bukkit.getOnlinePlayers().size()));
+ 				metrics.addCustomChart(new Metrics.SimplePie("online_mode", () -> Bukkit.getOnlineMode() ? "online" : "offline"));
+-				metrics.addCustomChart(new Metrics.SimplePie("ilblu_version", () -> (Metrics.class.getPackage().getImplementationVersion() != null) ? Metrics.class.getPackage().getImplementationVersion() : "unknown"));
++				metrics.addCustomChart(new Metrics.SimplePie("@FORK_NAME_@_version", () -> (Metrics.class.getPackage().getImplementationVersion() != null) ? Metrics.class.getPackage().getImplementationVersion() : "unknown"));
+ 				
+ 				metrics.addCustomChart(new Metrics.DrilldownPie("java_version", () -> {
+ 					Map<String, Map<String, Integer>> map = new HashMap<>();
+diff --git a/src/main/java/net/minecraft/server/DedicatedServer.java b/src/main/java/net/minecraft/server/DedicatedServer.java
+index dfaddbd46ca100f049ec71f69bc689ffec07dab7..7de07f4efd2c6e0037dbbc37bcaf31483d5f4b09 100644
+--- a/src/main/java/net/minecraft/server/DedicatedServer.java
++++ b/src/main/java/net/minecraft/server/DedicatedServer.java
+@@ -194,7 +194,7 @@ public class DedicatedServer extends MinecraftServer implements IMinecraftServer
+         com.destroystokyo.paper.PaperConfig.registerCommands();
+         // Ilblu start
+         try {
+-            io.github.paul1365972.ilblu.IlbluConfig.init((File) options.valueOf("ilblu-settings"));
++            io.github.paul1365972.ilblu.IlbluConfig.init((File) options.valueOf("@FORK_NAME_@-settings"));
+         } catch (Exception e) {
+             DedicatedServer.LOGGER.error("Unable to load server configuration", e);
+             return false;
+diff --git a/src/main/java/net/minecraft/server/MinecraftServer.java b/src/main/java/net/minecraft/server/MinecraftServer.java
+index 453d6f267163bf7bf0442357f199beb5a931d1ea..64ad625307a4efba8bdeb069a6fb5018388211c2 100644
+--- a/src/main/java/net/minecraft/server/MinecraftServer.java
++++ b/src/main/java/net/minecraft/server/MinecraftServer.java
+@@ -1570,7 +1570,7 @@ public abstract class MinecraftServer extends IAsyncTaskHandlerReentrant<TickTas
+     }
+ 
+     public String getServerModName() {
+-        return "Ilblu"; //Ilblu - Ilblu > //Paper - Paper > // Spigot - Spigot > // CraftBukkit - cb > vanilla!
++        return "@FORK_NAME@"; //Ilblu - Ilblu > //Paper - Paper > // Spigot - Spigot > // CraftBukkit - cb > vanilla!
+     }
+ 
+     public CrashReport b(CrashReport crashreport) {
+diff --git a/src/main/java/org/bukkit/craftbukkit/CraftServer.java b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
+index d2e650709365a8ca674eee0c53524b2ae0d70258..ee6f5d602b5514da87c76fc1bc970b1d869c3e93 100644
+--- a/src/main/java/org/bukkit/craftbukkit/CraftServer.java
++++ b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
+@@ -205,7 +205,7 @@ import javax.annotation.Nullable; // Paper
+ import javax.annotation.Nonnull; // Paper
+ 
+ public final class CraftServer implements Server {
+-    private final String serverName = "Ilblu"; // Ilblu // Paper
++    private final String serverName = "@FORK_NAME@"; // Ilblu // Paper
+     private final String serverVersion;
+     private final String bukkitVersion = Versioning.getBukkitVersion();
+     private final Logger logger = Logger.getLogger("Minecraft");
+@@ -815,7 +815,7 @@ public final class CraftServer implements Server {
+ 
+         org.spigotmc.SpigotConfig.init((File) console.options.valueOf("spigot-settings")); // Spigot
+         com.destroystokyo.paper.PaperConfig.init((File) console.options.valueOf("paper-settings")); // Paper
+-        io.github.paul1365972.ilblu.IlbluConfig.init((File) console.options.valueOf("ilblu-settings")); // Ilblu
++        io.github.paul1365972.ilblu.IlbluConfig.init((File) console.options.valueOf("@FORK_NAME_@-settings")); // Ilblu
+         for (WorldServer world : console.getWorlds()) {
+             world.worldData.setDifficulty(config.difficulty);
+             world.setSpawnFlags(config.spawnMonsters, config.spawnAnimals);
+diff --git a/src/main/java/org/bukkit/craftbukkit/Main.java b/src/main/java/org/bukkit/craftbukkit/Main.java
+index 71495749f81877e034001b709d3f1749a6687756..f14a5252bad3326db2c452c91270548b5f00c2f0 100644
+--- a/src/main/java/org/bukkit/craftbukkit/Main.java
++++ b/src/main/java/org/bukkit/craftbukkit/Main.java
+@@ -148,10 +148,10 @@ public class Main {
+                 // Paper end
+ 
+                 // Ilblu Start
+-                acceptsAll(asList("ilblu", "ilblu-settings"), "File for ilblu settings")
++                acceptsAll(asList("@FORK_NAME_@", "@FORK_NAME_@-settings"), "File for @FORK_NAME_@ settings")
+                         .withRequiredArg()
+                         .ofType(File.class)
+-                        .defaultsTo(new File("ilblu.yml"))
++                        .defaultsTo(new File("@FORK_NAME_@.yml"))
+                         .describedAs("Yml file");
+                 // Ilblu end
+             }
+diff --git a/src/main/java/org/bukkit/craftbukkit/util/Versioning.java b/src/main/java/org/bukkit/craftbukkit/util/Versioning.java
+index 18f031d0b35a77115edd60efb31d22ef41a3ca23..16ca2dcd1a49eeed142fb824cc63ca05f09866f9 100644
+--- a/src/main/java/org/bukkit/craftbukkit/util/Versioning.java
++++ b/src/main/java/org/bukkit/craftbukkit/util/Versioning.java
+@@ -10,8 +10,8 @@ import org.bukkit.Bukkit;
+ public final class Versioning {
+     public static String getBukkitVersion() {
+         String result = "Unknown-Version";
+-
+-        InputStream stream = Bukkit.class.getClassLoader().getResourceAsStream("META-INF/maven/io.github.paul1365972/ilblu-api/pom.properties"); // Ilblu
++        
++        InputStream stream = Bukkit.class.getClassLoader().getResourceAsStream("META-INF/maven/@GROUP@/@FORK_NAME_@-api/pom.properties"); // Ilblu
+         Properties properties = new Properties();
+ 
+         if (stream != null) {

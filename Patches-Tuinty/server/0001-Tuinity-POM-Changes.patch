@@ -1,0 +1,80 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Spottedleaf <Spottedleaf@users.noreply.github.com>
+Date: Fri, 14 Dec 2018 21:53:58 -0800
+Subject: [PATCH] Tuinity POM Changes
+
+
+diff --git a/pom.xml b/pom.xml
+index e4c63bb76cb598545f9d215a8859724d6e7f8b81..66517f30fc00b86d1e3539e700f8c643aaada85e 100644
+--- a/pom.xml
++++ b/pom.xml
+@@ -1,12 +1,11 @@
+-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
++ <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+     <modelVersion>4.0.0</modelVersion>
+-    <artifactId>paper</artifactId>
++    <artifactId>tuinity</artifactId>
+     <packaging>jar</packaging>
+     <version>1.15.2-R0.1-SNAPSHOT</version>
+-    <name>Paper</name>
+-    <url>https://papermc.io</url>
+-
++    <name>Tuinity-Server</name>
++    <url>https://github.com/Spottedleaf/Tuinity</url>
+     <properties>
+         <!-- <skipTests>true</skipTests> Paper - This [was] not going to end well -->
+         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+@@ -18,16 +17,16 @@
+     </properties>
+ 
+     <parent>
+-        <groupId>com.destroystokyo.paper</groupId>
+-        <artifactId>paper-parent</artifactId>
++        <groupId>com.tuinity</groupId>
++        <artifactId>tuinity-parent</artifactId>
+         <version>dev-SNAPSHOT</version>
+         <relativePath>../pom.xml</relativePath>
+     </parent>
+ 
+     <dependencies>
+         <dependency>
+-            <groupId>com.destroystokyo.paper</groupId>
+-            <artifactId>paper-api</artifactId>
++            <groupId>com.tuinity</groupId>
++            <artifactId>tuinity-api</artifactId>
+             <version>${project.version}</version>
+             <scope>compile</scope>
+         </dependency>
+@@ -164,15 +163,15 @@
+ 
+     <!-- This builds a completely 'ready to start' jar with all dependencies inside -->
+     <build>
+-        <finalName>paper-${minecraft.version}</finalName>
+-        <defaultGoal>clean install</defaultGoal> <!-- Paper -->
++        <finalName>tuinity-${minecraft.version}</finalName>
++        <defaultGoal>install</defaultGoal> <!-- Paper -->
+         <plugins>
+             <plugin>
+                 <groupId>com.lukegb.mojo</groupId>
+                 <artifactId>gitdescribe-maven-plugin</artifactId>
+                 <version>1.3</version>
+                 <configuration>
+-                    <outputPrefix>git-Paper-</outputPrefix>
++                    <outputPrefix>git-Tuinity-</outputPrefix> <!-- Tuinity -->
+                     <scmDirectory>..</scmDirectory>
+                 </configuration>
+                 <executions>
+diff --git a/src/main/java/org/bukkit/craftbukkit/util/Versioning.java b/src/main/java/org/bukkit/craftbukkit/util/Versioning.java
+index 674096cab190d62622f9947853b056f57d43a2a5..001b1e5197eaa51bfff9031aa6c69876c9a47960 100644
+--- a/src/main/java/org/bukkit/craftbukkit/util/Versioning.java
++++ b/src/main/java/org/bukkit/craftbukkit/util/Versioning.java
+@@ -11,7 +11,7 @@ public final class Versioning {
+     public static String getBukkitVersion() {
+         String result = "Unknown-Version";
+ 
+-        InputStream stream = Bukkit.class.getClassLoader().getResourceAsStream("META-INF/maven/com.destroystokyo.paper/paper-api/pom.properties");
++        InputStream stream = Bukkit.class.getClassLoader().getResourceAsStream("META-INF/maven/com.tuinity/tuinity-api/pom.properties"); // Tuinity
+         Properties properties = new Properties();
+ 
+         if (stream != null) {

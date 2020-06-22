@@ -1,0 +1,48 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Spottedleaf <spottedleaf@spottedleaf.dev>
+Date: Sun, 10 May 2020 13:27:30 -0700
+Subject: [PATCH] Force load chunks for getCube calls
+
+The behaviour is tricky to get right and I'm tired of dealing
+with issues related with this.
+
+diff --git a/src/main/java/net/minecraft/server/ICollisionAccess.java b/src/main/java/net/minecraft/server/ICollisionAccess.java
+index bee8fb6dace0b27bd5c93cd0116f61e34e0526ec..2001c2a396aaf6f1f63e03086a51c17287221e08 100644
+--- a/src/main/java/net/minecraft/server/ICollisionAccess.java
++++ b/src/main/java/net/minecraft/server/ICollisionAccess.java
+@@ -116,26 +116,15 @@ public interface ICollisionAccess extends IBlockAccess {
+                     int j2 = cursorposition.e();
+ 
+                     if (j2 != 3) {
+-                        // Paper start - ensure we don't load chunks
+-                        //int k2 = k1 >> 4;
+-                        //int l2 = i2 >> 4;
+-                        boolean far = entity != null && MCUtil.distanceSq(entity.locX(), y, entity.locZ(), x, y, z) > 14;
+-                        blockposition_mutableblockposition.setValues(x, y, z);
+-
+-                        boolean isRegionLimited = ICollisionAccess.this instanceof RegionLimitedWorldAccess;
+-                        IBlockData iblockdata = isRegionLimited ? Blocks.VOID_AIR.getBlockData() : ((!far && entity instanceof EntityPlayer) || (entity != null && entity.collisionLoadChunks)
+-                            ? ICollisionAccess.this.getType(blockposition_mutableblockposition)
+-                            : ICollisionAccess.this.getTypeIfLoaded(blockposition_mutableblockposition)
+-                        );
+-                        if (iblockdata == null) {
+-                            if (!(entity instanceof EntityPlayer) || entity.world.paperConfig.preventMovingIntoUnloadedChunks) {
+-                                collisions.add(VoxelShapes.of(far ? entity.getBoundingBox() : new AxisAlignedBB(new BlockPosition(x, y, z))));
+-                                if (returnFast) return collisions;
+-                            }
+-                        } else {
+-                            //blockposition_mutableblockposition.d(k1, l1, i2); // moved up
+-                            //IBlockData iblockdata = iblockaccess.getType(blockposition_mutableblockposition); // moved up
+-                            // Paper end
++                        // Tuinity start - revert to vanilla
++                        int k2 = k1 >> 4;
++                        int l2 = i2 >> 4;
++                        IBlockAccess iblockaccess = ICollisionAccess.this.c(k2, l2);
++
++                        if (iblockaccess != null) {
++                            blockposition_mutableblockposition.d(k1, l1, i2);
++                            IBlockData iblockdata = iblockaccess.getType(blockposition_mutableblockposition);
++                            // Tuinity end - revert to vanilla
+ 
+                             if (!iblockdata.isAir() && (j2 != 1 || iblockdata.f()) && (j2 != 2 || iblockdata.getBlock() == Blocks.MOVING_PISTON)) { // Paper - fast track air
+                                 VoxelShape voxelshape2 = iblockdata.b((IBlockAccess) ICollisionAccess.this, blockposition_mutableblockposition, voxelshapecollision);

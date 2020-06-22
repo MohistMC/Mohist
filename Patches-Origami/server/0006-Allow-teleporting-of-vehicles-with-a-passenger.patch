@@ -1,0 +1,41 @@
+From b4dabdefd7499c0ca03ab81bc3f39151d8f592ff Mon Sep 17 00:00:00 2001
+From: Phoenix616 <mail@moep.tv>
+Date: Sun, 24 Nov 2019 22:56:23 +0100
+Subject: [PATCH] Allow teleporting of vehicles with a passenger
+
+---
+ src/main/java/de/minebench/origami/OrigamiConfig.java        | 5 +++++
+ src/main/java/org/bukkit/craftbukkit/entity/CraftEntity.java | 2 +-
+ 2 files changed, 6 insertions(+), 1 deletion(-)
+
+diff --git a/src/main/java/de/minebench/origami/OrigamiConfig.java b/src/main/java/de/minebench/origami/OrigamiConfig.java
+index cf633866bf..59e861e6c3 100644
+--- a/src/main/java/de/minebench/origami/OrigamiConfig.java
++++ b/src/main/java/de/minebench/origami/OrigamiConfig.java
+@@ -112,4 +112,9 @@ public final class OrigamiConfig {
+         }
+     }
+ 
++    public static boolean teleportingOfVehiclesWithPassenger = true;
++    private static void teleportingOfVehiclesWithPassenger() {
++        teleportingOfVehiclesWithPassenger = getBoolean("teleporting-of-vehicles-with-passenger-via-api", teleportingOfVehiclesWithPassenger);
++    }
++
+ }
+\ No newline at end of file
+diff --git a/src/main/java/org/bukkit/craftbukkit/entity/CraftEntity.java b/src/main/java/org/bukkit/craftbukkit/entity/CraftEntity.java
+index d16d3fe58e..6213923e86 100644
+--- a/src/main/java/org/bukkit/craftbukkit/entity/CraftEntity.java
++++ b/src/main/java/org/bukkit/craftbukkit/entity/CraftEntity.java
+@@ -497,7 +497,7 @@ public abstract class CraftEntity implements org.bukkit.entity.Entity {
+         Preconditions.checkArgument(location != null, "location");
+         location.checkFinite();
+ 
+-        if (entity.isVehicle() || entity.dead) {
++        if ((!de.minebench.origami.OrigamiConfig.teleportingOfVehiclesWithPassenger && entity.isVehicle()) || entity.dead) { // Origami - allow teleporting of vehicles
+             return false;
+         }
+ 
+-- 
+2.25.1.windows.1
+

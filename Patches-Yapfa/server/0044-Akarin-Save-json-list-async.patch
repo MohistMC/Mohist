@@ -1,0 +1,40 @@
+From fa2e86c54f1a5db2b91cdecbc68e72e6ff4c915f Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?=E3=84=97=E3=84=A0=CB=8B=20=E3=84=91=E3=84=A7=CB=8A?=
+ <tsao-chi@the-lingo.org>
+Date: Thu, 2 Apr 2020 11:16:18 +0800
+Subject: [PATCH] Akarin Save json list async
+
+---
+ src/main/java/net/minecraft/server/JsonList.java | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
+
+diff --git a/src/main/java/net/minecraft/server/JsonList.java b/src/main/java/net/minecraft/server/JsonList.java
+index c97be42dd..370841cad 100644
+--- a/src/main/java/net/minecraft/server/JsonList.java
++++ b/src/main/java/net/minecraft/server/JsonList.java
+@@ -168,6 +168,7 @@ public class JsonList<K, V extends JsonListEntry<K>> {
+     }
+ 
+     public void save() throws IOException {
++        Runnable runnable = () -> { // Akarin - Save json list async
+         this.removeStaleEntries(); // Paper - remove expired values before saving
+         Collection<V> collection = this.d.values();
+         String s = this.b.toJson(collection);
+@@ -176,10 +177,13 @@ public class JsonList<K, V extends JsonListEntry<K>> {
+         try {
+             bufferedwriter = Files.newWriter(this.c, StandardCharsets.UTF_8);
+             bufferedwriter.write(s);
++        } catch (IOException e) { // Akarin - Save json list async
++            JsonList.LOGGER.warn("Failed to save " + this.c, e); // Akarin - Save json list async
+         } finally {
+             IOUtils.closeQuietly(bufferedwriter);
+         }
+-
++        }; // Akarin - Save json list async
++        MCUtil.scheduleAsyncTask(runnable); // Akarin - Save json list async
+     }
+ 
+     public void load() throws FileNotFoundException {
+-- 
+2.25.1.windows.1
+

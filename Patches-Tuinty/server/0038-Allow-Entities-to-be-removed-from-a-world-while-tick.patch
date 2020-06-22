@@ -1,0 +1,178 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Spottedleaf <spottedleaf@spottedleaf.dev>
+Date: Thu, 18 Jun 2020 10:04:26 -0700
+Subject: [PATCH] Allow Entities to be removed from a world while ticking
+
+Fixes issues like disconnecting players while ticking them, or
+issues where teleporting players across worlds while ticking.
+
+Also allows us to run mid tick while ticking entities.
+
+diff --git a/src/main/java/net/minecraft/server/WorldServer.java b/src/main/java/net/minecraft/server/WorldServer.java
+index 8bfe482924f0389acda682c05b93168ab259dd73..24cd10c960a5460aef769d2937d02e7921dec9ce 100644
+--- a/src/main/java/net/minecraft/server/WorldServer.java
++++ b/src/main/java/net/minecraft/server/WorldServer.java
+@@ -55,7 +55,7 @@ public class WorldServer extends World {
+ 
+     private static final Logger LOGGER = LogManager.getLogger();
+     private final List<Entity> globalEntityList = Lists.newArrayList();
+-    public final Int2ObjectMap<Entity> entitiesById = new Int2ObjectLinkedOpenHashMap();
++    public final Int2ObjectMap<Entity> entitiesById = new Int2ObjectLinkedOpenHashMap(); final com.tuinity.tuinity.util.maplist.IteratorSafeOrderedReferenceSet<Entity> entitiesForIteration = new com.tuinity.tuinity.util.maplist.IteratorSafeOrderedReferenceSet<>(2048, 0.5f, 2048, 0.2); // Tuinity - make removing entities while ticking safe
+     private final Map<UUID, Entity> entitiesByUUID = Maps.newHashMap();
+     private final Queue<Entity> entitiesToAdd = Queues.newArrayDeque();
+     public final List<EntityPlayer> players = Lists.newArrayList(); // Paper - private -> public
+@@ -79,7 +79,7 @@ public class WorldServer extends World {
+     private final PortalTravelAgent portalTravelAgent;
+     private final TickListServer<Block> nextTickListBlock;
+     private final TickListServer<FluidType> nextTickListFluid;
+-    private final Set<NavigationAbstract> navigators;
++    private final Set<NavigationAbstract> navigators; final com.tuinity.tuinity.util.maplist.IteratorSafeOrderedReferenceSet<NavigationAbstract> navigatorsForIteration = new com.tuinity.tuinity.util.maplist.IteratorSafeOrderedReferenceSet<>(2048, 0.5f, 2048, 0.2); // Tuinity - make removing entities while ticking safe
+     protected final PersistentRaid persistentRaid;
+     private final ObjectLinkedOpenHashSet<BlockActionData> I;
+     private boolean ticking;
+@@ -930,14 +930,13 @@ public class WorldServer extends World {
+ 
+             gameprofilerfiller.exitEnter("regular");
+             this.tickingEntities = true;
+-            ObjectIterator objectiterator = this.entitiesById.int2ObjectEntrySet().iterator();
++            com.tuinity.tuinity.util.maplist.IteratorSafeOrderedReferenceSet.Iterator<Entity> objectiterator = this.entitiesForIteration.iterator(); // Tuinity
+ 
+             org.spigotmc.ActivationRange.activateEntities(this); // Spigot
+             timings.entityTick.startTiming(); // Spigot
+             TimingHistory.entityTicks += this.globalEntityList.size(); // Paper
+             while (objectiterator.hasNext()) {
+-                Entry<Entity> entry = (Entry) objectiterator.next();
+-                Entity entity1 = (Entity) entry.getValue();
++                Entity entity1 = (Entity) objectiterator.next(); // Tuinity
+                 Entity entity2 = entity1.getVehicle();
+ 
+                 /* CraftBukkit start - We prevent spawning in general, so this butchering is not needed
+@@ -973,7 +972,7 @@ public class WorldServer extends World {
+                 gameprofilerfiller.enter("remove");
+                 if (entity1.dead) {
+                     this.removeEntityFromChunk(entity1);
+-                    objectiterator.remove();
++                    this.entitiesById.remove(entity1.getId()); // Tuinity
+                     this.unregisterEntity(entity1);
+                 }
+ 
+@@ -981,6 +980,7 @@ public class WorldServer extends World {
+             }
+             timings.entityTick.stopTiming(); // Spigot
+ 
++            objectiterator.finishedIterating(); // Tuinity
+             this.tickingEntities = false;
+             // Paper start
+             for (java.lang.Runnable run : this.afterEntityTickingTasks) {
+@@ -1801,7 +1801,7 @@ public class WorldServer extends World {
+                 Entity entity = (Entity) iterator.next();
+ 
+                 if (!(entity instanceof EntityPlayer)) {
+-                    if (this.tickingEntities) {
++                    if (false && this.tickingEntities) { // Tuinity
+                         throw (IllegalStateException) SystemUtils.c(new IllegalStateException("Removing entity while ticking!"));
+                     }
+ 
+@@ -1829,6 +1829,7 @@ public class WorldServer extends World {
+ 
+     public void unregisterEntity(Entity entity) {
+         org.spigotmc.AsyncCatcher.catchOp("entity unregister"); // Spigot
++        this.entitiesForIteration.remove(entity); // Tuinity
+         // Paper start - fix entity registration issues
+         if (entity instanceof EntityComplexPart) {
+             // Usually this is a no-op for complex parts, and ID's should be removed, but go ahead and remove it anyways
+@@ -1895,12 +1896,16 @@ public class WorldServer extends World {
+         this.getScoreboard().a(entity);
+         // CraftBukkit start - SPIGOT-5278
+         if (entity instanceof EntityDrowned) {
+-            this.navigators.remove(((EntityDrowned) entity).navigationWater);
+-            this.navigators.remove(((EntityDrowned) entity).navigationLand);
++            // Tuinity start
++            this.navigators.remove(((EntityDrowned) entity).navigationWater); this.navigatorsForIteration.remove(((EntityDrowned) entity).navigationWater);
++            this.navigators.remove(((EntityDrowned) entity).navigationLand); this.navigatorsForIteration.remove(((EntityDrowned) entity).navigationLand);
++            // Tuinity end
+         } else
+         // CraftBukkit end
+         if (entity instanceof EntityInsentient) {
+-            this.navigators.remove(((EntityInsentient) entity).getNavigation());
++            // Tuinity start
++            this.navigators.remove(((EntityInsentient) entity).getNavigation()); this.navigatorsForIteration.remove(((EntityInsentient) entity).getNavigation());
++            // Tuinity end
+         }
+         new com.destroystokyo.paper.event.entity.EntityRemoveFromWorldEvent(entity.getBukkitEntity()).callEvent(); // Paper - fire while valid
+         entity.valid = false; // CraftBukkit
+@@ -1916,7 +1921,7 @@ public class WorldServer extends World {
+             return;
+         }
+         // Paper end
+-        if (this.tickingEntities) {
++        if (false && this.tickingEntities) { // Tuinity
+             if (!entity.isQueuedForRegister) { // Paper
+                 this.entitiesToAdd.add(entity);
+                 entity.isQueuedForRegister = true; // Paper
+@@ -1924,6 +1929,7 @@ public class WorldServer extends World {
+         } else {
+             entity.isQueuedForRegister = false; // Paper
+             this.entitiesById.put(entity.getId(), entity);
++            this.entitiesForIteration.add(entity); // Tuinity
+             if (entity instanceof EntityEnderDragon) {
+                 EntityComplexPart[] aentitycomplexpart = ((EntityEnderDragon) entity).eo();
+                 int i = aentitycomplexpart.length;
+@@ -1932,6 +1938,7 @@ public class WorldServer extends World {
+                     EntityComplexPart entitycomplexpart = aentitycomplexpart[j];
+ 
+                     this.entitiesById.put(entitycomplexpart.getId(), entitycomplexpart);
++                    this.entitiesForIteration.add(entitycomplexpart); // Tuinity
+                 }
+             }
+ 
+@@ -1956,12 +1963,16 @@ public class WorldServer extends World {
+             // this.getChunkProvider().addEntity(entity); // Paper - moved down below valid=true
+             // CraftBukkit start - SPIGOT-5278
+             if (entity instanceof EntityDrowned) {
+-                this.navigators.add(((EntityDrowned) entity).navigationWater);
+-                this.navigators.add(((EntityDrowned) entity).navigationLand);
++                // Tuinity start
++                this.navigators.add(((EntityDrowned) entity).navigationWater); this.navigatorsForIteration.add(((EntityDrowned) entity).navigationWater);
++                this.navigators.add(((EntityDrowned) entity).navigationLand); this.navigatorsForIteration.add(((EntityDrowned) entity).navigationLand);
++                // Tuinity end
+             } else
+             // CraftBukkit end
+             if (entity instanceof EntityInsentient) {
+-                this.navigators.add(((EntityInsentient) entity).getNavigation());
++                // Tuinity start
++                this.navigators.add(((EntityInsentient) entity).getNavigation()); this.navigatorsForIteration.add(((EntityInsentient) entity).getNavigation());
++                // Tuinity end
+             }
+             entity.valid = true; // CraftBukkit
+             this.getChunkProvider().addEntity(entity); // Paper - from above to be below valid=true
+@@ -1977,7 +1988,7 @@ public class WorldServer extends World {
+     }
+ 
+     public void removeEntity(Entity entity) {
+-        if (this.tickingEntities) {
++        if (false && this.tickingEntities) { // Tuinity
+             throw (IllegalStateException) SystemUtils.c(new IllegalStateException("Removing entity while ticking!"));
+         } else {
+             this.removeEntityFromChunk(entity);
+@@ -2079,7 +2090,9 @@ public class WorldServer extends World {
+ 
+         if (VoxelShapes.c(voxelshape, voxelshape1, OperatorBoolean.NOT_SAME)) {
+             boolean wasTicking = this.tickingEntities; this.tickingEntities = true; // Paper
+-            Iterator iterator = this.navigators.iterator();
++            // Tuinity start
++            com.tuinity.tuinity.util.maplist.IteratorSafeOrderedReferenceSet.Iterator iterator = this.navigatorsForIteration.iterator();
++            try { // Tuinity end
+ 
+             while (iterator.hasNext()) {
+                 NavigationAbstract navigationabstract = (NavigationAbstract) iterator.next();
+@@ -2088,6 +2101,9 @@ public class WorldServer extends World {
+                     navigationabstract.b(blockposition);
+                 }
+             }
++            } finally { // Tuinity start
++                iterator.finishedIterating();
++            } // Tuinity end
+ 
+             this.tickingEntities = wasTicking; // Paper
+         }

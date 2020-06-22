@@ -1,0 +1,79 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Spottedleaf <Spottedleaf@users.noreply.github.com>
+Date: Sun, 3 Mar 2019 20:55:07 -0800
+Subject: [PATCH] Multi-Threaded ticking CraftBukkit
+
+These are the changes to CB
+
+Currently a placeholder patch.
+
+diff --git a/src/main/java/com/tuinity/tuinity/config/TuinityConfig.java b/src/main/java/com/tuinity/tuinity/config/TuinityConfig.java
+index 775e7dbc5af5ba6245d1486ca686b29013ee72da..67e9a32c2b56e0ca70ef138873b1dc9dc215e452 100644
+--- a/src/main/java/com/tuinity/tuinity/config/TuinityConfig.java
++++ b/src/main/java/com/tuinity/tuinity/config/TuinityConfig.java
+@@ -104,6 +104,19 @@ public final class TuinityConfig {
+         return TuinityConfig.config.getDouble(path, dfl);
+     }
+ 
++    public static boolean tickWorldsInParallel;
++
++    /**
++     * if tickWorldsInParallel == true, then this value is used as a default only for worlds
++     */
++    public static int tickThreads;
++
++    /*
++    private static void worldticking() {
++        tickWorldsInParallel = TuinityConfig.getBoolean("tick-worlds-in-parallel", false);
++        tickThreads = TuinityConfig.getInt("server-tick-threads", 1); // will be 4 in the future
++    }*/
++
+     public static final class WorldConfig {
+ 
+         public final String worldName;
+@@ -213,6 +226,15 @@ public final class TuinityConfig {
+             }
+             return this.config.getDouble(path, this.worldDefaults.getDouble(path));
+         }
++
++        /** ignored if {@link TuinityConfig#tickWorldsInParallel} == false */
++        public int threads;
++
++        /*
++        private void worldthreading() {
++            final int threads = this.getInt("tick-threads", -1);
++            this.threads = threads == -1 ? TuinityConfig.tickThreads : threads;
++        }*/
+     }
+ 
+ }
+\ No newline at end of file
+diff --git a/src/main/java/org/bukkit/craftbukkit/CraftServer.java b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
+index 7438208110aa746bf0ac7b348c5f0147bb3fbd30..760752eaeb07af551cd3cfd36be064c048a05d5b 100644
+--- a/src/main/java/org/bukkit/craftbukkit/CraftServer.java
++++ b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
+@@ -1749,7 +1749,10 @@ public final class CraftServer implements Server {
+ 
+     @Override
+     public boolean isPrimaryThread() {
+-        return Thread.currentThread().equals(console.serverThread) || Thread.currentThread().equals(net.minecraft.server.MinecraftServer.getServer().shutdownThread); // Paper - Fix issues with detecting main thread properly, the only time Watchdog will be used is during a crash shutdown which is a "try our best" scenario
++        // Tuinity start
++        final Thread currThread = Thread.currentThread();
++        return currThread == console.serverThread || currThread instanceof com.tuinity.tuinity.util.TickThread || currThread.equals(net.minecraft.server.MinecraftServer.getServer().shutdownThread); // Paper - Fix issues with detecting main thread properly, the only time Watchdog will be used is during a crash shutdown which is a "try our best" scenario
++        // Tuinity End
+     }
+ 
+     @Override
+diff --git a/src/main/java/org/spigotmc/AsyncCatcher.java b/src/main/java/org/spigotmc/AsyncCatcher.java
+index 9f7d2ef932ab41cef5d3d0736d20a7c7e4a2c888..10606ed03e88e4e467de2d5424df12466c4e7873 100644
+--- a/src/main/java/org/spigotmc/AsyncCatcher.java
++++ b/src/main/java/org/spigotmc/AsyncCatcher.java
+@@ -10,7 +10,7 @@ public class AsyncCatcher
+ 
+     public static void catchOp(String reason)
+     {
+-        if ( enabled && Thread.currentThread() != MinecraftServer.getServer().serverThread )
++        if ( enabled && !org.bukkit.Bukkit.isPrimaryThread() ) // Tuinity
+         {
+             throw new IllegalStateException( "Asynchronous " + reason + "!" );
+         }

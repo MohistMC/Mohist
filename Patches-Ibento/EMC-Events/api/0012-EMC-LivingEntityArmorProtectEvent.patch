@@ -1,0 +1,50 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Aikar <aikar@aikar.co>
+Date: Sun, 4 Dec 2016 15:09:48 -0500
+Subject: [PATCH] EMC LivingEntityArmorProtectEvent
+
+
+diff --git a/src/main/java/com/empireminecraft/customevents/LivingEntityArmorProtectEvent.java b/src/main/java/com/empireminecraft/customevents/LivingEntityArmorProtectEvent.java
+new file mode 100644
+index 0000000000000000000000000000000000000000..07e095737ee1bebd507b7b4f8f0c9e255c9d2468
+--- /dev/null
++++ b/src/main/java/com/empireminecraft/customevents/LivingEntityArmorProtectEvent.java
+@@ -0,0 +1,38 @@
++package com.empireminecraft.customevents;
++
++import org.bukkit.entity.LivingEntity;
++import org.bukkit.event.HandlerList;
++import org.bukkit.event.entity.EntityEvent;
++
++public class LivingEntityArmorProtectEvent extends EntityEvent {
++
++    private static final HandlerList handlers = new HandlerList();
++    private final LivingEntity entity;
++
++    private double armorValue = 0;
++
++    public LivingEntityArmorProtectEvent(LivingEntity entity, double armorValue) {
++        super(entity);
++        this.entity = entity;
++        this.armorValue = armorValue;
++    }
++    public double getArmorValue() {
++        return armorValue;
++    }
++
++    public void setArmorValue(double armorValue) {
++        this.armorValue = armorValue;
++    }
++
++    public LivingEntity getEntity() {
++        return entity;
++    }
++
++    public HandlerList getHandlers() {
++        return handlers;
++    }
++
++    public static HandlerList getHandlerList() {
++        return handlers;
++    }
++}

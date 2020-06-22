@@ -1,0 +1,26 @@
+From ea63c5b08bcb99f430f5ddf65a25bfd34479efe4 Mon Sep 17 00:00:00 2001
+From: tr7zw <tr7zw@live.de>
+Date: Wed, 26 Feb 2020 21:39:58 +0100
+Subject: [PATCH] Don't save Fireworks and Arrows
+
+---
+ src/main/java/net/minecraft/server/Entity.java | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/src/main/java/net/minecraft/server/Entity.java b/src/main/java/net/minecraft/server/Entity.java
+index 37f854764..6d62a1af5 100644
+--- a/src/main/java/net/minecraft/server/Entity.java
++++ b/src/main/java/net/minecraft/server/Entity.java
+@@ -1763,7 +1763,8 @@ public abstract class Entity implements INamableTileEntity, ICommandListener, Ke
+     }
+ 
+     public boolean c(NBTTagCompound nbttagcompound) {
+-        String s = this.getSaveID();
++    	if(this instanceof EntityFireworks || this instanceof EntityArrow)return false; // YAPFA
++    	String s = this.getSaveID();
+ 
+         if (this.persist && !this.dead && s != null) { // CraftBukkit - persist flag
+             nbttagcompound.setString("id", s);
+-- 
+2.25.1.windows.1
+

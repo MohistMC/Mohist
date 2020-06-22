@@ -1,0 +1,37 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Aikar <aikar@aikar.co>
+Date: Fri, 6 Dec 2013 20:54:23 -0500
+Subject: [PATCH] EMC AchievementBroadcastEvent
+
+Used to control who sees achievement message
+
+diff --git a/src/main/java/net/minecraft/server/AdvancementDataPlayer.java b/src/main/java/net/minecraft/server/AdvancementDataPlayer.java
+index c41e1384724ab150f43dc43fe2a453c9b1262e48..79e11eebb70816fc40a6c33c98b3025062249625 100644
+--- a/src/main/java/net/minecraft/server/AdvancementDataPlayer.java
++++ b/src/main/java/net/minecraft/server/AdvancementDataPlayer.java
+@@ -31,6 +31,8 @@ import java.util.stream.Stream;
+ import javax.annotation.Nullable;
+ import org.apache.logging.log4j.LogManager;
+ import org.apache.logging.log4j.Logger;
++import org.bukkit.craftbukkit.entity.CraftPlayer;
++import org.bukkit.entity.Player;
+ 
+ public class AdvancementDataPlayer {
+ 
+@@ -289,7 +291,15 @@ public class AdvancementDataPlayer {
+                 this.player.world.getServer().getPluginManager().callEvent(new org.bukkit.event.player.PlayerAdvancementDoneEvent(this.player.getBukkitEntity(), advancement.bukkit)); // CraftBukkit
+                 advancement.d().a(this.player);
+                 if (advancement.c() != null && advancement.c().i() && this.player.world.getGameRules().getBoolean(GameRules.ANNOUNCE_ADVANCEMENTS)) {
+-                    this.d.getPlayerList().sendMessage(new ChatMessage("chat.type.advancement." + advancement.c().e().a(), new Object[]{this.player.getScoreboardDisplayName(), advancement.j()}));
++                    // EMC start
++                    ChatMessage achv = new ChatMessage("chat.type.advancement." + advancement.c().e().a(), new Object[] { this.player.getScoreboardDisplayName(), advancement.j()});
++                    com.empireminecraft.customevents.AchievementBroadcastEvent event = new com.empireminecraft.customevents.AchievementBroadcastEvent(this.player.getBukkitEntity());
++                    event.callEvent();
++                    for (Player player : event.getReceivers()) {
++                        ((CraftPlayer) player).getHandle().sendMessage(achv);
++                    }
++                    //this.d.getPlayerList().sendMessage(new ChatMessage("chat.type.advancement." + advancement.c().e().a(), new Object[]{this.player.getScoreboardDisplayName(), advancement.j()}));
++                    // EMC end
+                 }
+             }
+         }

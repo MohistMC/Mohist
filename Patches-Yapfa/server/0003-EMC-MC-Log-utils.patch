@@ -1,0 +1,96 @@
+From 02a0c772887e055ffacd10374480110a073c285b Mon Sep 17 00:00:00 2001
+From: Aikar <aikar@aikar.co>
+Date: Sat, 10 Dec 2016 14:00:25 -0500
+Subject: [PATCH] EMC MC Log utils
+
+---
+ src/main/java/net/minecraft/server/MCLog.java | 77 +++++++++++++++++++
+ 1 file changed, 77 insertions(+)
+ create mode 100644 src/main/java/net/minecraft/server/MCLog.java
+
+diff --git a/src/main/java/net/minecraft/server/MCLog.java b/src/main/java/net/minecraft/server/MCLog.java
+new file mode 100644
+index 00000000..bf28f00d
+--- /dev/null
++++ b/src/main/java/net/minecraft/server/MCLog.java
+@@ -0,0 +1,77 @@
++/*
++ * Copyright (c) 2016 Starlis LLC / Daniel Ennis (Aikar) - MIT License
++ *
++ *  Permission is hereby granted, free of charge, to any person obtaining
++ *  a copy of this software and associated documentation files (the
++ *  "Software"), to deal in the Software without restriction, including
++ *  without limitation the rights to use, copy, modify, merge, publish,
++ *  distribute, sublicense, and/or sell copies of the Software, and to
++ *  permit persons to whom the Software is furnished to do so, subject to
++ *  the following conditions:
++ *
++ *  The above copyright notice and this permission notice shall be
++ *  included in all copies or substantial portions of the Software.
++ *
++ *  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
++ *  EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
++ *  MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
++ *  NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
++ *  LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
++ *  OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
++ *  WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
++ */
++
++package net.minecraft.server;
++
++import org.apache.commons.lang.exception.ExceptionUtils;
++
++import java.util.logging.Logger;
++import java.util.regex.Pattern;
++
++public class MCLog {
++    private static final Logger LOGGER = Logger.getLogger("NMS");
++    private static final Pattern NEWLINE = Pattern.compile("\n");
++
++    private MCLog() {}
++
++
++    public static void log(String message) {
++        info(message);
++    }
++    
++
++    public static void info(String message) {
++        for (String s : NEWLINE.split(message)) {
++            LOGGER.info(s);
++        }
++    }
++
++    public static void warn(String message) {
++        for (String s : NEWLINE.split(message)) {
++            LOGGER.warning(s);
++        }
++    }
++
++    public static void severe(String message) {
++        for (String s : NEWLINE.split(message)) {
++            LOGGER.severe(s);
++        }
++    }
++
++    public static void exception(String msg) {
++        exception(new Throwable(msg));
++    }
++
++    public static void exception(Throwable e) {
++        exception(e.getMessage(), e);
++    }
++
++    public static void exception(String msg, Throwable e) {
++        if (msg != null) {
++            severe(msg);
++        }
++        severe(ExceptionUtils.getFullStackTrace(e));
++    }
++
++
++}
+-- 
+2.25.1.windows.1
+

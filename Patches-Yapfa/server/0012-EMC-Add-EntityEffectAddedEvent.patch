@@ -1,0 +1,33 @@
+From c04e0f7adac7c8e5f5472107918b2d3e67a126b7 Mon Sep 17 00:00:00 2001
+From: Aikar <aikar@aikar.co>
+Date: Fri, 21 Feb 2014 00:50:46 -0500
+Subject: [PATCH] EMC Add EntityEffectAddedEvent
+
+---
+ src/main/java/net/minecraft/server/EntityLiving.java | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
+
+diff --git a/src/main/java/net/minecraft/server/EntityLiving.java b/src/main/java/net/minecraft/server/EntityLiving.java
+index 671fa069..6ea927dc 100644
+--- a/src/main/java/net/minecraft/server/EntityLiving.java
++++ b/src/main/java/net/minecraft/server/EntityLiving.java
+@@ -803,6 +803,16 @@ public abstract class EntityLiving extends Entity {
+         }
+         // CraftBukkit end
+ 
++        // EMC start
++        com.empireminecraft.customevents.EntityEffectAddedEvent addedEvent = new com.empireminecraft.customevents.EntityEffectAddedEvent((org.bukkit.entity.LivingEntity) this.getBukkitEntity(), new org.bukkit.potion.PotionEffect(
++            org.bukkit.potion.PotionEffectType.getById(MobEffectList.getId(mobeffect.getMobEffect())),
++            mobeffect.getDuration(), mobeffect.getAmplifier(), mobeffect.isAmbient(), mobeffect.isShowParticles(), mobeffect.isShowIcon()));
++        if (!addedEvent.callEvent()) {
++            return false;
++        }
++        final org.bukkit.potion.PotionEffect effect = addedEvent.getEffect();
++        mobeffect = new MobEffect(MobEffectList.fromId(effect.getType().getId()), effect.getDuration(), effect.getAmplifier(), effect.isAmbient(), effect.hasParticles(), effect.hasIcon());
++        // EMC end
+         if (!this.d(mobeffect)) {
+             return false;
+         } else {
+-- 
+2.25.1.windows.1
+

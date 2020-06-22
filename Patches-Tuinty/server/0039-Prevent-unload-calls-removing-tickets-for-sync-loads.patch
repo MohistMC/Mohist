@@ -1,0 +1,66 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Spottedleaf <spottedleaf@spottedleaf.dev>
+Date: Thu, 18 Jun 2020 18:23:20 -0700
+Subject: [PATCH] Prevent unload() calls removing tickets for sync loads
+
+
+diff --git a/src/main/java/net/minecraft/server/ChunkProviderServer.java b/src/main/java/net/minecraft/server/ChunkProviderServer.java
+index 165284fbf8329f1c33c1b009f36724eb3db63df4..24af59962c7979cdaca0adf5d0a4b66f58cab47b 100644
+--- a/src/main/java/net/minecraft/server/ChunkProviderServer.java
++++ b/src/main/java/net/minecraft/server/ChunkProviderServer.java
+@@ -690,6 +690,8 @@ public class ChunkProviderServer extends IChunkProvider {
+         Arrays.fill(this.cacheChunk, (Object) null);
+     }
+ 
++    private long syncLoadCounter; // Tuinity - prevent plugin unloads from removing our ticket
++
+     private CompletableFuture<Either<IChunkAccess, PlayerChunk.Failure>> getChunkFutureMainThread(int i, int j, ChunkStatus chunkstatus, boolean flag) {
+         // Paper start - add isUrgent - old sig left in place for dirty nms plugins
+         return getChunkFutureMainThread(i, j, chunkstatus, flag, false);
+@@ -708,9 +710,12 @@ public class ChunkProviderServer extends IChunkProvider {
+             PlayerChunk.State currentChunkState = PlayerChunk.getChunkState(playerchunk.getTicketLevel());
+             currentlyUnloading = (oldChunkState.isAtLeast(PlayerChunk.State.BORDER) && !currentChunkState.isAtLeast(PlayerChunk.State.BORDER));
+         }
++        final Long identifier; // Tuinity - prevent plugin unloads from removing our ticket
+         if (flag && !currentlyUnloading) {
+             // CraftBukkit end
+             this.chunkMapDistance.a(TicketType.UNKNOWN, chunkcoordintpair, l, chunkcoordintpair);
++            identifier = Long.valueOf(this.syncLoadCounter++); // Tuinity - prevent plugin unloads from removing our ticket
++            this.chunkMapDistance.addTicketAtLevel(TicketType.REQUIRED_LOAD, chunkcoordintpair, l, identifier); // Tuinity - prevent plugin unloads from removing our ticket
+             if (isUrgent) this.chunkMapDistance.markUrgent(chunkcoordintpair); // Paper
+             if (this.a(playerchunk, l)) {
+                 GameProfilerFiller gameprofilerfiller = this.world.getMethodProfiler();
+@@ -721,12 +726,20 @@ public class ChunkProviderServer extends IChunkProvider {
+                 playerchunk = this.getChunk(k);
+                 gameprofilerfiller.exit();
+                 if (this.a(playerchunk, l)) {
++                    this.chunkMapDistance.removeTicketAtLevel(TicketType.REQUIRED_LOAD, chunkcoordintpair, l, identifier); // Tuinity
+                     throw (IllegalStateException) SystemUtils.c(new IllegalStateException("No chunk holder after ticket has been added"));
+                 }
+             }
+-        }
++        } else { identifier = null; } // Tuinity - prevent plugin unloads from removing our ticket
+         // Paper start
+         CompletableFuture<Either<IChunkAccess, PlayerChunk.Failure>> future = this.a(playerchunk, l) ? PlayerChunk.UNLOADED_CHUNK_ACCESS_FUTURE : playerchunk.a(chunkstatus, this.playerChunkMap);
++        // Tuinity start - prevent plugin unloads from removing our ticket
++        if (flag && !currentlyUnloading) {
++            future.thenAcceptAsync((either) -> {
++                ChunkProviderServer.this.chunkMapDistance.removeTicketAtLevel(TicketType.REQUIRED_LOAD, chunkcoordintpair, l, identifier);
++            }, ChunkProviderServer.this.serverThreadQueue);
++        }
++        // Tuinity end - prevent plugin unloads from removing our ticket
+         if (isUrgent) {
+             future.thenAccept(either -> this.chunkMapDistance.clearUrgent(chunkcoordintpair));
+         }
+diff --git a/src/main/java/net/minecraft/server/TicketType.java b/src/main/java/net/minecraft/server/TicketType.java
+index 358d87102eddd5bb11ca9b33c484fb36ca1b823c..4657b05a4213c534a653aefd991645e27a6a4b3b 100644
+--- a/src/main/java/net/minecraft/server/TicketType.java
++++ b/src/main/java/net/minecraft/server/TicketType.java
+@@ -27,6 +27,7 @@ public class TicketType<T> {
+     public static final TicketType<ChunkCoordIntPair> PRIORITY = a("priority", Comparator.comparingLong(ChunkCoordIntPair::pair), 300); // Paper
+     public static final TicketType<ChunkCoordIntPair> URGENT = a("urgent", Comparator.comparingLong(ChunkCoordIntPair::pair), 300); // Paper
+     public static final TicketType<Long> DELAYED_UNLOAD = a("delayed_unload", Long::compareTo); // Tuinity - delay chunk unloads
++    public static final TicketType<Long> REQUIRED_LOAD = a("required_load", Long::compareTo); // Tuinity - make sure getChunkAt does not fail
+ 
+     public static <T> TicketType<T> a(String s, Comparator<T> comparator) {
+         return new TicketType<>(s, comparator, 0L);

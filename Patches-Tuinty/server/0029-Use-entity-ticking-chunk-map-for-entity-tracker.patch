@@ -1,0 +1,46 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Spottedleaf <spottedleaf@spottedleaf.dev>
+Date: Wed, 13 May 2020 09:59:12 -0700
+Subject: [PATCH] Use entity ticking chunk map for entity tracker
+
+Should bring us back in-line with tracker performance
+before the loaded entity list reversion.
+
+diff --git a/src/main/java/net/minecraft/server/PlayerChunkMap.java b/src/main/java/net/minecraft/server/PlayerChunkMap.java
+index 7ab6cf4c20673ad918089ed1b35df8c242c7726b..59d0464e439716d9fb2e0c2f016d87456c8b8596 100644
+--- a/src/main/java/net/minecraft/server/PlayerChunkMap.java
++++ b/src/main/java/net/minecraft/server/PlayerChunkMap.java
+@@ -1975,23 +1975,20 @@ public class PlayerChunkMap extends IChunkLoader implements PlayerChunk.d {
+     private final void processTrackQueue() {
+         this.world.timings.tracker1.startTiming();
+         try {
+-            for (EntityTracker tracker : this.trackedEntities.values()) {
+-                // update tracker entry
+-                tracker.updatePlayers(tracker.tracker.getPlayersInTrackRange());
++            for (Chunk chunk : this.world.getChunkProvider().entityTickingChunks) {
++                Entity[] entities = chunk.entities.getRawData();
++                for (int i = 0, len = chunk.entities.size(); i < len; ++i) {
++                    Entity entity = entities[i];
++                    EntityTracker tracker = this.trackedEntities.get(entity.getId());
++                    if (tracker != null) {
++                        tracker.updatePlayers(tracker.tracker.getPlayersInTrackRange());
++                        tracker.trackerEntry.tick();
++                    }
++                }
+             }
+         } finally {
+             this.world.timings.tracker1.stopTiming();
+         }
+-
+-
+-        this.world.timings.tracker2.startTiming();
+-        try {
+-            for (EntityTracker tracker : this.trackedEntities.values()) {
+-                tracker.trackerEntry.tick();
+-            }
+-        } finally {
+-            this.world.timings.tracker2.stopTiming();
+-        }
+     }
+     // Paper end - optimised tracker
+ 

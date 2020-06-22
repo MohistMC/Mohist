@@ -1,0 +1,25 @@
+From 02d9b38339dc6ede5934765b8480fff37f947d2d Mon Sep 17 00:00:00 2001
+From: Phoenix616 <mail@moep.tv>
+Date: Tue, 14 Apr 2020 15:31:23 +0100
+Subject: [PATCH] Force tile entity ID to lowercase when creating it
+
+---
+ src/main/java/net/minecraft/server/TileEntity.java | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/main/java/net/minecraft/server/TileEntity.java b/src/main/java/net/minecraft/server/TileEntity.java
+index a8e64dfda..f9fbc068f 100644
+--- a/src/main/java/net/minecraft/server/TileEntity.java
++++ b/src/main/java/net/minecraft/server/TileEntity.java
+@@ -116,7 +116,7 @@ public abstract class TileEntity implements KeyedObject { // Paper
+ 
+     @Nullable
+     public static TileEntity create(NBTTagCompound nbttagcompound) {
+-        String s = nbttagcompound.getString("id");
++        String s = nbttagcompound.getString("id").toLowerCase(java.util.Locale.ROOT); // Origami - force ID to lowercase
+ 
+         return (TileEntity) IRegistry.BLOCK_ENTITY_TYPE.getOptional(new MinecraftKey(s)).map((tileentitytypes) -> {
+             try {
+-- 
+2.25.1.windows.1
+

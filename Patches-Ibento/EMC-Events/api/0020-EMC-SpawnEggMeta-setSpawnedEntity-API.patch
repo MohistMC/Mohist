@@ -1,0 +1,59 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Aikar <aikar@aikar.co>
+Date: Sat, 18 Aug 2018 21:09:39 -0400
+Subject: [PATCH] EMC SpawnEggMeta#setSpawnedEntity API
+
+lets you copy an entities data into a spawn egg.
+Partial data is supported through a predicate, letting MC
+follow normal spawn behavior in the summon phase.
+
+diff --git a/src/main/java/org/bukkit/inventory/meta/SpawnEggMeta.java b/src/main/java/org/bukkit/inventory/meta/SpawnEggMeta.java
+index 9ae84de43018e2dc9df5e1a56244d8812c2ffbb8..f6ee31cd644163f4441e8570cb265bd14293fc6e 100644
+--- a/src/main/java/org/bukkit/inventory/meta/SpawnEggMeta.java
++++ b/src/main/java/org/bukkit/inventory/meta/SpawnEggMeta.java
+@@ -9,6 +9,45 @@ import org.jetbrains.annotations.NotNull;
+  */
+ public interface SpawnEggMeta extends ItemMeta {
+ 
++    // Paper start
++
++    /**
++     * Copies the Entity as is into the spawn egg.
++     *
++     * All non positional data properties will be saved
++ * @param entity
++     */
++    default void setSpawnedEntity(org.bukkit.entity.Entity entity) {
++        setSpawnedEntity(entity, null);
++    }
++    /**
++     * Copies the Entity into the spawn egg, giving you
++     * control over which NBT Tags are to be saved.
++     *
++     * Note that while Mojang has made data properties more
++     * of a user facing detail, there is no guarantee that
++     * they will not change names between versions.
++     *
++     * If a key is filtered out, it will assume the default
++     * value upon spawn as a normal spawned entity of this type
++     * might receive. If one key is fitlered that has a strong
++     * relationship to another key, such as Villager Professions
++     * and Careers, you should filter them both/all to avoid buggy
++     * behavior in spawning the entity.
++     *
++     * Filtering by values is not supported.
++     *
++     * Certain keys such as "UUIDLeast", "UUIDMost", "Pos",
++     * "PortalCooldown", "Dimension"
++     *
++     * are default filtered.
++     *
++     * @param entity
++     * @param keyFilter
++     */
++    void setSpawnedEntity(org.bukkit.entity.Entity entity, java.util.function.Predicate<String> keyFilter);
++    // Paper end
++
+     /**
+      * Get the type of entity this egg will spawn.
+      *

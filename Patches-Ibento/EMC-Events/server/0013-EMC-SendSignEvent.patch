@@ -1,0 +1,88 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Aikar <aikar@aikar.co>
+Date: Mon, 8 Jun 2015 23:55:20 -0400
+Subject: [PATCH] EMC SendSignEvent
+
+
+diff --git a/src/main/java/com/empireminecraft/api/SendSignEventImpl.java b/src/main/java/com/empireminecraft/api/SendSignEventImpl.java
+new file mode 100644
+index 0000000000000000000000000000000000000000..9f3cb62ffbd625d4774c059fba486552b044be79
+--- /dev/null
++++ b/src/main/java/com/empireminecraft/api/SendSignEventImpl.java
+@@ -0,0 +1,42 @@
++package com.empireminecraft.api;
++
++import com.empireminecraft.customevents.SendSignEvent;
++import net.minecraft.server.BlockPosition;
++import net.minecraft.server.ChatComponentText;
++import net.minecraft.server.IChatBaseComponent;
++import net.minecraft.server.World;
++import org.bukkit.block.Block;
++import org.bukkit.craftbukkit.util.CraftChatMessage;
++import org.bukkit.event.Event;
++import org.bukkit.event.HandlerList;
++
++public class SendSignEventImpl extends SendSignEvent {
++    public final IChatBaseComponent[] lines;
++    private final String[] slines;
++    private final Block block;
++
++    public SendSignEventImpl(World world, BlockPosition position, IChatBaseComponent[] lines) {
++        this.block = world.getWorld().getBlockAt(position.getX(), position.getY(), position.getZ());
++        this.lines = new IChatBaseComponent[lines.length];
++        this.slines = new String[lines.length];
++        for (int i = 0; i < lines.length; i++) {
++            this.lines[i] = lines[i];
++            slines[i] = CraftChatMessage.fromComponent(lines[i]);
++        }
++    }
++
++    public Block getBlock() {
++        return block;
++    }
++
++    public String[] getLines() {
++        return slines;
++    }
++    public void setLine(int i,  String line) {
++        slines[i] = line;
++        lines[i] = new ChatComponentText("");
++        for (IChatBaseComponent comp : CraftChatMessage.fromString(line)) {
++            lines[i].addSibling(comp);
++        }
++    }
++}
+diff --git a/src/main/java/net/minecraft/server/TileEntitySign.java b/src/main/java/net/minecraft/server/TileEntitySign.java
+index 0e9a90b70f84b8da530814ac0b9b4b5fef458729..6323fe55948db7759e3511838bfde6e5e4d4e90e 100644
+--- a/src/main/java/net/minecraft/server/TileEntitySign.java
++++ b/src/main/java/net/minecraft/server/TileEntitySign.java
+@@ -20,10 +20,15 @@ public class TileEntitySign extends TileEntity implements ICommandListener { //
+ 
+     @Override
+     public NBTTagCompound save(NBTTagCompound nbttagcompound) {
++        // EMC start
++        return save(nbttagcompound, this.lines);
++    }
++    public NBTTagCompound save(NBTTagCompound nbttagcompound, IChatBaseComponent[] lines) {
++        // EMC end
+         super.save(nbttagcompound);
+ 
+         for (int i = 0; i < 4; ++i) {
+-            String s = IChatBaseComponent.ChatSerializer.a(this.lines[i]);
++            String s = IChatBaseComponent.ChatSerializer.a(lines[i]); // EMC
+ 
+             nbttagcompound.setString("Text" + (i + 1), s);
+         }
+@@ -97,7 +102,11 @@ public class TileEntitySign extends TileEntity implements ICommandListener { //
+ 
+     @Override
+     public NBTTagCompound b() {
+-        return this.save(new NBTTagCompound());
++        // EMC start
++        com.empireminecraft.api.SendSignEventImpl event = new com.empireminecraft.api.SendSignEventImpl(this.world, this.getPosition(), this.lines);
++        event.callEvent();
++        return this.save(new NBTTagCompound(), event.lines);
++        // EMC end
+     }
+ 
+     @Override

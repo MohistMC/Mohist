@@ -1,0 +1,199 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Aikar <aikar@aikar.co>
+Date: Wed, 20 Dec 2017 21:55:16 -0500
+Subject: [PATCH] EMC EntityAttackedEntityEvent
+
+For when you need to know one Entity has attacked another entity
+and that the damage event was not cancelled.
+
+diff --git a/src/main/java/com/destroystokyo/paper/event/entity/EntityAttackedEntityEvent.java b/src/main/java/com/destroystokyo/paper/event/entity/EntityAttackedEntityEvent.java
+new file mode 100644
+index 0000000000000000000000000000000000000000..0f32f157b90107397d14543c1e30ccf4fe13da72
+--- /dev/null
++++ b/src/main/java/com/destroystokyo/paper/event/entity/EntityAttackedEntityEvent.java
+@@ -0,0 +1,92 @@
++/*
++ * Copyright (c) 2017 Daniel Ennis (Aikar) MIT License
++ *
++ *  Permission is hereby granted, free of charge, to any person obtaining
++ *  a copy of this software and associated documentation files (the
++ *  "Software"), to deal in the Software without restriction, including
++ *  without limitation the rights to use, copy, modify, merge, publish,
++ *  distribute, sublicense, and/or sell copies of the Software, and to
++ *  permit persons to whom the Software is furnished to do so, subject to
++ *  the following conditions:
++ *
++ *  The above copyright notice and this permission notice shall be
++ *  included in all copies or substantial portions of the Software.
++ *
++ *  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
++ *  EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
++ *  MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
++ *  NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
++ *  LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
++ *  OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
++ *  WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
++ */
++
++package com.destroystokyo.paper.event.entity;
++
++import org.bukkit.entity.Entity;
++import org.bukkit.entity.LivingEntity;
++import org.bukkit.entity.Player;
++import org.bukkit.event.Cancellable;
++import org.bukkit.event.Event;
++import org.bukkit.event.HandlerList;
++import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
++import org.bukkit.event.entity.EntityEvent;
++
++public class EntityAttackedEntityEvent extends EntityEvent implements Cancellable {
++    private final Entity victim;
++    private final DamageCause cause;
++    private final double damage;
++
++    public EntityAttackedEntityEvent(Entity attacker, Entity victim, final DamageCause cause, final double damage) {
++        super(attacker);
++        this.victim = victim;
++        this.cause = cause;
++        this.damage = damage;
++    }
++
++    public Entity getVictim() {
++        return victim;
++    }
++
++    public DamageCause getCause() {
++        return cause;
++    }
++
++    public double getDamage() {
++        return damage;
++    }
++
++    private static final HandlerList handlers = new HandlerList();
++
++    public HandlerList getHandlers() {
++        return handlers;
++    }
++
++    public static HandlerList getHandlerList() {
++        return handlers;
++    }
++
++    private boolean cancelled = false;
++
++    @Override
++    public boolean isCancelled() {
++        return cancelled;
++    }
++
++    @Override
++    public void setCancelled(boolean cancel) {
++        cancelled = cancel;
++    }
++
++    public static boolean callEvent(Entity attacker, Entity victim, DamageCause cause, double damage) {
++        EntityAttackedEntityEvent event;
++        if (attacker instanceof Player) {
++            event = new PlayerAttackedEntityEvent((Player) attacker, victim, cause, damage);
++        } else if (victim instanceof Player) {
++            event = new EntityAttackedPlayerEvent(attacker, (Player) victim, cause, damage);
++        } else {
++            event = new EntityAttackedEntityEvent(attacker, victim, cause, damage);
++        }
++        return event.callEvent();
++    }
++}
+diff --git a/src/main/java/com/destroystokyo/paper/event/entity/EntityAttackedPlayerEvent.java b/src/main/java/com/destroystokyo/paper/event/entity/EntityAttackedPlayerEvent.java
+new file mode 100644
+index 0000000000000000000000000000000000000000..8ce33f32d398c6c16fe2f144ce83bcc65b958805
+--- /dev/null
++++ b/src/main/java/com/destroystokyo/paper/event/entity/EntityAttackedPlayerEvent.java
+@@ -0,0 +1,40 @@
++/*
++ * Copyright (c) 2017 Daniel Ennis (Aikar) MIT License
++ *
++ *  Permission is hereby granted, free of charge, to any person obtaining
++ *  a copy of this software and associated documentation files (the
++ *  "Software"), to deal in the Software without restriction, including
++ *  without limitation the rights to use, copy, modify, merge, publish,
++ *  distribute, sublicense, and/or sell copies of the Software, and to
++ *  permit persons to whom the Software is furnished to do so, subject to
++ *  the following conditions:
++ *
++ *  The above copyright notice and this permission notice shall be
++ *  included in all copies or substantial portions of the Software.
++ *
++ *  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
++ *  EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
++ *  MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
++ *  NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
++ *  LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
++ *  OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
++ *  WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
++ */
++
++package com.destroystokyo.paper.event.entity;
++
++import org.bukkit.entity.Entity;
++import org.bukkit.entity.Player;
++import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
++
++public class EntityAttackedPlayerEvent extends EntityAttackedEntityEvent {
++    public EntityAttackedPlayerEvent(Entity attacker, Player victim,
++                                     DamageCause cause, double damage) {
++        super(attacker, victim, cause, damage);
++    }
++
++    @Override
++    public Player getVictim() {
++        return (Player) super.getVictim();
++    }
++}
+diff --git a/src/main/java/com/destroystokyo/paper/event/entity/PlayerAttackedEntityEvent.java b/src/main/java/com/destroystokyo/paper/event/entity/PlayerAttackedEntityEvent.java
+new file mode 100644
+index 0000000000000000000000000000000000000000..134a7e02d6d8cf4832d1dfef6d86dd7a2d0361e0
+--- /dev/null
++++ b/src/main/java/com/destroystokyo/paper/event/entity/PlayerAttackedEntityEvent.java
+@@ -0,0 +1,41 @@
++/*
++ * Copyright (c) 2017 Daniel Ennis (Aikar) MIT License
++ *
++ *  Permission is hereby granted, free of charge, to any person obtaining
++ *  a copy of this software and associated documentation files (the
++ *  "Software"), to deal in the Software without restriction, including
++ *  without limitation the rights to use, copy, modify, merge, publish,
++ *  distribute, sublicense, and/or sell copies of the Software, and to
++ *  permit persons to whom the Software is furnished to do so, subject to
++ *  the following conditions:
++ *
++ *  The above copyright notice and this permission notice shall be
++ *  included in all copies or substantial portions of the Software.
++ *
++ *  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
++ *  EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
++ *  MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
++ *  NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
++ *  LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
++ *  OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
++ *  WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
++ */
++
++package com.destroystokyo.paper.event.entity;
++
++import org.bukkit.entity.Entity;
++import org.bukkit.entity.Player;
++import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
++
++public class PlayerAttackedEntityEvent extends EntityAttackedEntityEvent {
++
++    public PlayerAttackedEntityEvent(Player player, Entity victim,
++                                     DamageCause cause, double damage) {
++        super(player, victim, cause, damage);
++    }
++
++    @Override
++    public Player getEntity() {
++        return (Player) super.getEntity();
++    }
++}

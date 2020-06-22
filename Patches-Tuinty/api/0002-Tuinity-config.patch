@@ -1,0 +1,26 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Spottedleaf <spottedleaf@spottedleaf.dev>
+Date: Sat, 21 Mar 2020 20:12:48 -0700
+Subject: [PATCH] Tuinity config
+
+API to retrieve raw YamlConfiguration + timing exports
+
+diff --git a/src/main/java/org/bukkit/Server.java b/src/main/java/org/bukkit/Server.java
+index cc06492f46ba5776221cd2614c1dcd8f33cc8faf..cf20e75419b011e819c63fc8453f250b849cb2c7 100644
+--- a/src/main/java/org/bukkit/Server.java
++++ b/src/main/java/org/bukkit/Server.java
+@@ -1396,6 +1396,14 @@ public interface Server extends PluginMessageRecipient {
+         }
+         // Paper end
+ 
++        // Tuinity start - add config to timings report
++        @NotNull
++        public org.bukkit.configuration.file.YamlConfiguration getTuinityConfig()
++        {
++            throw new UnsupportedOperationException("Not supported yet.");
++        }
++        // Tuinity end - add config to timings report
++
+         /**
+          * Sends the component to the player
+          *

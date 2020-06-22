@@ -1,0 +1,598 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Spottedleaf <Spottedleaf@users.noreply.github.com>
+Date: Sat, 18 May 2019 12:25:19 -0700
+Subject: [PATCH] Util patch
+
+
+diff --git a/src/main/java/com/tuinity/tuinity/util/maplist/IteratorSafeOrderedReferenceSet.java b/src/main/java/com/tuinity/tuinity/util/maplist/IteratorSafeOrderedReferenceSet.java
+new file mode 100644
+index 0000000000000000000000000000000000000000..e12d096456965c0f9e152a31f4c2c602184dd7fa
+--- /dev/null
++++ b/src/main/java/com/tuinity/tuinity/util/maplist/IteratorSafeOrderedReferenceSet.java
+@@ -0,0 +1,265 @@
++package com.tuinity.tuinity.util.maplist;
++
++import it.unimi.dsi.fastutil.objects.Reference2IntLinkedOpenHashMap;
++import it.unimi.dsi.fastutil.objects.Reference2IntMap;
++import it.unimi.dsi.fastutil.objects.ReferenceLinkedOpenHashSet;
++import java.util.Arrays;
++import java.util.NoSuchElementException;
++
++public final class IteratorSafeOrderedReferenceSet<E> {
++
++    protected final Reference2IntLinkedOpenHashMap<E> indexMap;
++    protected int firstInvalidIndex = -1;
++
++    protected final ReferenceLinkedOpenHashSet<E> pendingAdditions;
++
++    /* list impl */
++    protected E[] listElements;
++    protected int listSize;
++
++    protected final double maxFragFactor;
++
++    protected int iteratorCount;
++
++    public IteratorSafeOrderedReferenceSet() {
++        this(16, 0.75f, 16, 0.2);
++    }
++
++    public IteratorSafeOrderedReferenceSet(final int setCapacity, final float setLoadFactor, final int arrayCapacity, final double maxFragFactor) {
++        this.indexMap = new Reference2IntLinkedOpenHashMap<>(setCapacity, setLoadFactor);
++        this.indexMap.defaultReturnValue(-1);
++        this.pendingAdditions = new ReferenceLinkedOpenHashSet<>();
++        this.maxFragFactor = maxFragFactor;
++        this.listElements = (E[])new Object[arrayCapacity];
++    }
++
++    protected final double getFragFactor() {
++        return 1.0 - ((double)this.indexMap.size() / (double)this.listSize);
++    }
++
++    public int createRawIterator() {
++        ++this.iteratorCount;
++        if (this.indexMap.isEmpty()) {
++            return -1;
++        } else {
++            return this.firstInvalidIndex == 0 ? this.indexMap.getInt(this.indexMap.firstKey()) : 0;
++        }
++    }
++
++    public int advanceRawIterator(final int index) {
++        final E[] elements = this.listElements;
++        int ret = index + 1;
++        for (int len = this.listSize; ret < len; ++ret) {
++            if (elements[ret] != null) {
++                return ret;
++            }
++        }
++
++        return -1;
++    }
++
++    public void finishRawIterator() {
++        if (--this.iteratorCount == 0) {
++            if (this.getFragFactor() >= this.maxFragFactor) {
++                this.defrag();
++            }
++            if (!this.pendingAdditions.isEmpty()) {
++                int index = this.listSize;
++                int neededLen = index + this.pendingAdditions.size();
++
++                if (neededLen < 0) {
++                    throw new IllegalStateException("Too large");
++                }
++
++                if (neededLen > this.listElements.length) {
++                    this.listElements = Arrays.copyOf(this.listElements, neededLen * 2);
++                }
++
++                final E[] elements = this.listElements;
++                java.util.Iterator<E> iterator = this.pendingAdditions.iterator();
++                for (int i = index; i < neededLen; ++i) {
++                    final E element = iterator.next();
++                    elements[i] = element;
++                    this.indexMap.put(element, i);
++                }
++
++                this.pendingAdditions.clear();
++                this.listSize = neededLen;
++            }
++        }
++    }
++
++    public boolean remove(final E element) {
++        final int index = this.indexMap.removeInt(element);
++        if (index >= 0) {
++            if (this.firstInvalidIndex < 0 || index < this.firstInvalidIndex) {
++                this.firstInvalidIndex = index;
++            }
++            this.listElements[index] = null;
++            return true;
++        } else {
++            return this.pendingAdditions.remove(element);
++        }
++    }
++
++    public boolean add(final E element) {
++        if (this.iteratorCount > 0) {
++            if (this.indexMap.containsKey(element)) {
++                return true;
++            }
++            return this.pendingAdditions.add(element);
++        } else {
++            final int listSize = this.listSize;
++
++            final int previous = this.indexMap.putIfAbsent(element, listSize);
++            if (previous != -1) {
++                return false;
++            }
++
++            if (listSize >= this.listElements.length) {
++                this.listElements = Arrays.copyOf(this.listElements, listSize * 2);
++            }
++            this.listElements[listSize] = element;
++            this.listSize = listSize + 1;
++
++            return true;
++        }
++    }
++
++    protected void defrag() {
++        if (this.firstInvalidIndex < 0) {
++            return; // nothing to do
++        }
++
++        if (this.indexMap.isEmpty()) {
++            Arrays.fill(this.listElements, 0, this.listSize, null);
++            this.listSize = 0;
++            this.firstInvalidIndex = -1;
++            return;
++        }
++
++        final E[] backingArray = this.listElements;
++
++        int lastValidIndex;
++        java.util.Iterator<Reference2IntMap.Entry<E>> iterator;
++
++        if (this.firstInvalidIndex == 0) {
++            iterator = this.indexMap.reference2IntEntrySet().fastIterator();
++            lastValidIndex = 0;
++        } else {
++            lastValidIndex = this.firstInvalidIndex;
++            final E key = backingArray[lastValidIndex - 1];
++            iterator = this.indexMap.reference2IntEntrySet().fastIterator(new Reference2IntMap.Entry<E>() {
++                @Override
++                public int getIntValue() {
++                    throw new UnsupportedOperationException();
++                }
++
++                @Override
++                public int setValue(int i) {
++                    throw new UnsupportedOperationException();
++                }
++
++                @Override
++                public E getKey() {
++                    return key;
++                }
++            });
++        }
++
++        while (iterator.hasNext()) {
++            final Reference2IntMap.Entry<E> entry = iterator.next();
++
++            final int newIndex = lastValidIndex++;
++            backingArray[newIndex] = entry.getKey();
++            entry.setValue(newIndex);
++        }
++
++        // cleanup end
++        Arrays.fill(backingArray, lastValidIndex, this.listSize, null);
++        this.listSize = lastValidIndex;
++        this.firstInvalidIndex = -1;
++    }
++
++    public E rawGet(final int index) {
++        return this.listElements[index];
++    }
++
++    public int size() {
++        // always returns the correct amount - listSize can be different
++        return this.indexMap.size();
++    }
++
++    public IteratorSafeOrderedReferenceSet.Iterator<E> iterator() {
++        ++this.iteratorCount;
++        return new BaseIterator<>(this);
++    }
++
++    public static interface Iterator<E> extends java.util.Iterator<E> {
++
++        public void finishedIterating();
++
++    }
++
++    protected static final class BaseIterator<E> implements IteratorSafeOrderedReferenceSet.Iterator<E> {
++
++        protected final IteratorSafeOrderedReferenceSet<E> set;
++        protected int nextIndex;
++        protected E currentValue;
++        protected boolean finished;
++
++        protected BaseIterator(final IteratorSafeOrderedReferenceSet<E> set) {
++            this.set = set;
++        }
++
++        @Override
++        public boolean hasNext() {
++            if (this.finished) {
++                return false;
++            }
++            if (this.currentValue != null) {
++                return true;
++            }
++
++            final E[] elements = this.set.listElements;
++            int index, len;
++            for (index = this.nextIndex, len = this.set.listSize; index < len; ++index) {
++                final E element = elements[index];
++                if (element != null) {
++                    this.currentValue = element;
++                    this.nextIndex = index + 1;
++                    return true;
++                }
++            }
++
++            this.nextIndex = index;
++            return false;
++        }
++
++        @Override
++        public E next() {
++            if (!this.hasNext()) {
++                throw new NoSuchElementException();
++            }
++            final E ret = this.currentValue;
++
++            this.currentValue = null;
++
++            return ret;
++        }
++
++        @Override
++        public void remove() {
++            throw new UnsupportedOperationException();
++        }
++
++        @Override
++        public void finishedIterating() {
++            if (this.finished) {
++                throw new IllegalStateException();
++            }
++            this.finished = true;
++            this.set.finishRawIterator();
++        }
++    }
++}
+diff --git a/src/main/java/net/minecraft/server/ChunkProviderServer.java b/src/main/java/net/minecraft/server/ChunkProviderServer.java
+index 75c22a3f4e2df9cf7f2d22cafbde9acce01589e1..0566b3a62391c077150000c26cb47bfcc3fa2253 100644
+--- a/src/main/java/net/minecraft/server/ChunkProviderServer.java
++++ b/src/main/java/net/minecraft/server/ChunkProviderServer.java
+@@ -118,7 +118,7 @@ public class ChunkProviderServer extends IChunkProvider {
+         return (Chunk)this.getChunkAt(x, z, ChunkStatus.FULL, true);
+     }
+ 
+-    private long chunkFutureAwaitCounter;
++    long chunkFutureAwaitCounter; // Tuinity - private -> package private
+ 
+     public void getEntityTickingChunkAsync(int x, int z, java.util.function.Consumer<Chunk> onLoad) {
+         if (Thread.currentThread() != this.serverThread) {
+@@ -207,6 +207,163 @@ public class ChunkProviderServer extends IChunkProvider {
+     }
+     // Paper end - rewrite ticklistserver
+ 
++    // Tuinity start
++    // this will try to avoid chunk neighbours for lighting
++    public final IChunkAccess getFullStatusChunkAt(int chunkX, int chunkZ) {
++        Chunk ifLoaded = this.getChunkAtIfLoadedImmediately(chunkX, chunkZ);
++        if (ifLoaded != null) {
++            return ifLoaded;
++        }
++
++        IChunkAccess empty = this.getChunkAt(chunkX, chunkZ, ChunkStatus.EMPTY, true);
++        if (empty != null && empty.getChunkStatus() == ChunkStatus.FULL) {
++            return empty;
++        }
++        return this.getChunkAt(chunkX, chunkZ, ChunkStatus.FULL, true);
++    }
++
++    public final IChunkAccess getFullStatusChunkAtIfLoaded(int chunkX, int chunkZ) {
++        Chunk ifLoaded = this.getChunkAtIfLoadedImmediately(chunkX, chunkZ);
++        if (ifLoaded != null) {
++            return ifLoaded;
++        }
++
++        IChunkAccess ret = this.getChunkAtImmediately(chunkX, chunkZ);
++        if (ret != null && ret.getChunkStatus() == ChunkStatus.FULL) {
++            return ret;
++        } else {
++            return null;
++        }
++    }
++
++    void getChunkAtAsynchronously(int chunkX, int chunkZ, int ticketLevel,
++                                          java.util.function.Consumer<IChunkAccess> consumer) {
++        this.getChunkAtAsynchronously(chunkX, chunkZ, ticketLevel, (PlayerChunk playerChunk) -> {
++            if (ticketLevel <= 33) {
++                return (CompletableFuture)playerChunk.getFullChunkFuture();
++            } else {
++                return playerChunk.getOrCreateFuture(PlayerChunk.getChunkStatus(ticketLevel), ChunkProviderServer.this.playerChunkMap);
++            }
++        }, consumer);
++    }
++
++    void getChunkAtAsynchronously(int chunkX, int chunkZ, int ticketLevel,
++                                          java.util.function.Function<PlayerChunk, CompletableFuture<Either<IChunkAccess, PlayerChunk.Failure>>> function,
++                                          java.util.function.Consumer<IChunkAccess> consumer) {
++        if (Thread.currentThread() != this.serverThread) {
++            throw new IllegalStateException();
++        }
++        ChunkCoordIntPair chunkPos = new ChunkCoordIntPair(chunkX, chunkZ);
++        Long identifier = Long.valueOf(this.chunkFutureAwaitCounter++);
++        this.addTicketAtLevel(TicketType.FUTURE_AWAIT, chunkPos, ticketLevel, identifier);
++        this.tickDistanceManager();
++
++        PlayerChunk chunk = this.playerChunkMap.getUpdatingChunk(chunkPos.pair());
++
++        if (chunk == null) {
++            throw new IllegalStateException("Expected playerchunk " + chunkPos + " in world '" + this.world.getWorld().getName() + "'");
++        }
++
++        CompletableFuture<Either<IChunkAccess, PlayerChunk.Failure>> future = function.apply(chunk);
++
++        future.whenCompleteAsync((either, throwable) -> {
++            try {
++                if (throwable != null) {
++                    if (throwable instanceof ThreadDeath) {
++                        throw (ThreadDeath)throwable;
++                    }
++                    MinecraftServer.LOGGER.fatal("Failed to complete future await for chunk " + chunkPos.toString() + " in world '" + ChunkProviderServer.this.world.getWorld().getName() + "'", throwable);
++                } else if (either.right().isPresent()) {
++                    MinecraftServer.LOGGER.fatal("Failed to complete future await for chunk " + chunkPos.toString() + " in world '" + ChunkProviderServer.this.world.getWorld().getName() + "': " + either.right().get().toString());
++                }
++
++                try {
++                    if (consumer != null) {
++                        consumer.accept(either == null ? null : either.left().orElse(null)); // indicate failure to the callback.
++                    }
++                } catch (Throwable thr) {
++                    if (thr instanceof ThreadDeath) {
++                        throw (ThreadDeath)thr;
++                    }
++                    MinecraftServer.LOGGER.fatal("Load callback for future await failed " + chunkPos.toString() + " in world '" + ChunkProviderServer.this.world.getWorld().getName() + "'", thr);
++                    return;
++                }
++            } finally {
++                // due to odd behaviour with CB unload implementation we need to have these AFTER the load callback.
++                ChunkProviderServer.this.addTicketAtLevel(TicketType.UNKNOWN, chunkPos, ticketLevel, chunkPos);
++                ChunkProviderServer.this.removeTicketAtLevel(TicketType.FUTURE_AWAIT, chunkPos, ticketLevel, identifier);
++            }
++        }, this.serverThreadQueue);
++    }
++
++    void chunkLoadAccept(int chunkX, int chunkZ, IChunkAccess chunk, java.util.function.Consumer<IChunkAccess> consumer) {
++        try {
++            consumer.accept(chunk);
++        } catch (Throwable throwable) {
++            if (throwable instanceof ThreadDeath) {
++                throw (ThreadDeath)throwable;
++            }
++            MinecraftServer.LOGGER.error("Load callback for chunk " + chunkX + "," + chunkZ + " in world '" + this.world.getWorld().getName() + "' threw an exception", throwable);
++        }
++    }
++
++    public final void getChunkAtAsynchronously(int chunkX, int chunkZ, ChunkStatus status, boolean gen, boolean allowSubTicketLevel, java.util.function.Consumer<IChunkAccess> onLoad) {
++        // try to fire sync
++        int chunkStatusTicketLevel = 33 + ChunkStatus.getTicketLevelOffset(status);
++        IChunkAccess immediate = this.getChunkAtImmediately(chunkX, chunkZ);
++        if (immediate != null) {
++            if (allowSubTicketLevel || this.playerChunkMap.getUpdatingChunk(MCUtil.getCoordinateKey(chunkX, chunkZ)).getTicketLevel() <= chunkStatusTicketLevel) {
++                if (immediate.getChunkStatus().isAtLeastStatus(status)) {
++                    this.chunkLoadAccept(chunkX, chunkZ, immediate, onLoad);
++                } else {
++                    if (gen) {
++                        this.getChunkAtAsynchronously(chunkX, chunkZ, chunkStatusTicketLevel, onLoad);
++                    } else {
++                        this.chunkLoadAccept(chunkX, chunkZ, null, onLoad);
++                    }
++                }
++            } else {
++                if (gen || immediate.getChunkStatus().isAtLeastStatus(status)) {
++                    this.getChunkAtAsynchronously(chunkX, chunkZ, chunkStatusTicketLevel, onLoad);
++                } else {
++                    this.chunkLoadAccept(chunkX, chunkZ, null, onLoad);
++                }
++            }
++            return;
++        }
++
++        // need to fire async
++
++        if (gen && !allowSubTicketLevel) {
++            this.getChunkAtAsynchronously(chunkX, chunkZ, chunkStatusTicketLevel, onLoad);
++            return;
++        }
++
++        this.getChunkAtAsynchronously(chunkX, chunkZ, 33 + ChunkStatus.getTicketLevelOffset(ChunkStatus.EMPTY), (IChunkAccess chunk) -> {
++            if (chunk == null) {
++                throw new IllegalStateException("Chunk cannot be null");
++            }
++
++            if (!chunk.getChunkStatus().isAtLeastStatus(status)) {
++                if (gen) {
++                    this.getChunkAtAsynchronously(chunkX, chunkZ, chunkStatusTicketLevel, onLoad);
++                    return;
++                } else {
++                    ChunkProviderServer.this.chunkLoadAccept(chunkX, chunkZ, null, onLoad);
++                    return;
++                }
++            } else {
++                if (allowSubTicketLevel) {
++                    ChunkProviderServer.this.chunkLoadAccept(chunkX, chunkZ, chunk, onLoad);
++                    return;
++                } else {
++                    this.getChunkAtAsynchronously(chunkX, chunkZ, chunkStatusTicketLevel, onLoad);
++                    return;
++                }
++            }
++        });
++    }
++    // Tuinity end
+ 
+     public ChunkProviderServer(WorldServer worldserver, File file, DataFixer datafixer, DefinedStructureManager definedstructuremanager, Executor executor, ChunkGenerator<?> chunkgenerator, int i, WorldLoadListener worldloadlistener, Supplier<WorldPersistentData> supplier) {
+         this.world = worldserver;
+diff --git a/src/main/java/net/minecraft/server/Entity.java b/src/main/java/net/minecraft/server/Entity.java
+index e0ab058bf947ea10b37eadf6122292e708bd3809..373701273780d26bb2d9edf982aef1910a1c5bc5 100644
+--- a/src/main/java/net/minecraft/server/Entity.java
++++ b/src/main/java/net/minecraft/server/Entity.java
+@@ -211,6 +211,14 @@ public abstract class Entity implements INamableTileEntity, ICommandListener, Ke
+     }
+     // CraftBukkit end
+ 
++    // Tuinity start
++    public final AxisAlignedBB getBoundingBoxAt(double x, double y, double z) {
++        double widthHalf = (double)this.size.width / 2.0;
++        double height = (double)this.size.height;
++        return new AxisAlignedBB(x - widthHalf, y, z - widthHalf, x + widthHalf, y + height, z + widthHalf);
++    }
++    // Tuinity end
++
+     // Paper start
+     /**
+      * Overriding this field will cause memory leaks.
+diff --git a/src/main/java/net/minecraft/server/HeightMap.java b/src/main/java/net/minecraft/server/HeightMap.java
+index 8a272ae1b800e31aab6431b647e5b349430b2634..aa73396100adbf741ed52f457284a78c73d658c3 100644
+--- a/src/main/java/net/minecraft/server/HeightMap.java
++++ b/src/main/java/net/minecraft/server/HeightMap.java
+@@ -119,6 +119,7 @@ public class HeightMap {
+         }
+     }
+ 
++    public final int get(int x, int z) { return this.a(x, z); } // Tuinity - OBFHELPER
+     public int a(int i, int j) {
+         return this.a(c(i, j));
+     }
+diff --git a/src/main/java/net/minecraft/server/PlayerChunk.java b/src/main/java/net/minecraft/server/PlayerChunk.java
+index 9c1be2e2d42701a96e8c40b377d13f5c0e92bf06..08e124015ed171738fbfb02599e2a3f748cb88a4 100644
+--- a/src/main/java/net/minecraft/server/PlayerChunk.java
++++ b/src/main/java/net/minecraft/server/PlayerChunk.java
+@@ -504,6 +504,7 @@ public class PlayerChunk {
+         // Paper end - per player view distance
+     }
+ 
++    public final CompletableFuture<Either<IChunkAccess, PlayerChunk.Failure>> getOrCreateFuture(ChunkStatus chunkstatus, PlayerChunkMap playerchunkmap) { return this.a(chunkstatus, playerchunkmap); } // Tuinity - OBFHELPER
+     public CompletableFuture<Either<IChunkAccess, PlayerChunk.Failure>> a(ChunkStatus chunkstatus, PlayerChunkMap playerchunkmap) {
+         int i = chunkstatus.c();
+         CompletableFuture<Either<IChunkAccess, PlayerChunk.Failure>> completablefuture = (CompletableFuture) this.statusFutures.get(i);
+diff --git a/src/main/java/net/minecraft/server/WorldServer.java b/src/main/java/net/minecraft/server/WorldServer.java
+index 46e261b6513b52f5562387b661de4a409ea515a3..3fce6c778f0d28b993a32addef2d85cd68c06ea6 100644
+--- a/src/main/java/net/minecraft/server/WorldServer.java
++++ b/src/main/java/net/minecraft/server/WorldServer.java
+@@ -190,6 +190,96 @@ public class WorldServer extends World {
+     }
+     // Paper end - rewrite ticklistserver
+ 
++    // Tuinity start
++    public final boolean areChunksLoadedForMove(AxisAlignedBB axisalignedbb) {
++        // copied code from collision methods, so that we can guarantee that they wont load chunks (we don't override
++        // ICollisionAccess methods for VoxelShapes)
++        // be more strict too, add a block (dumb plugins in move events?)
++        int minBlockX = MathHelper.floor(axisalignedbb.minX - 1.0E-7D) - 3;
++        int maxBlockX = MathHelper.floor(axisalignedbb.maxX + 1.0E-7D) + 3;
++
++        int minBlockZ = MathHelper.floor(axisalignedbb.minZ - 1.0E-7D) - 3;
++        int maxBlockZ = MathHelper.floor(axisalignedbb.maxZ + 1.0E-7D) + 3;
++
++        int minChunkX = minBlockX >> 4;
++        int maxChunkX = maxBlockX >> 4;
++
++        int minChunkZ = minBlockZ >> 4;
++        int maxChunkZ = maxBlockZ >> 4;
++
++        ChunkProviderServer chunkProvider = this.getChunkProvider();
++
++        for (int cx = minChunkX; cx <= maxChunkX; ++cx) {
++            for (int cz = minChunkZ; cz <= maxChunkZ; ++cz) {
++                if (chunkProvider.getChunkAtIfLoadedImmediately(cx, cz) == null) {
++                    return false;
++                }
++            }
++        }
++
++        return true;
++    }
++
++    public final void loadChunksForMoveAsync(AxisAlignedBB axisalignedbb, double toX, double toZ,
++                                             java.util.function.Consumer<List<IChunkAccess>> onLoad) {
++        if (Thread.currentThread() != this.serverThread) {
++            this.getChunkProvider().serverThreadQueue.execute(() -> {
++                this.loadChunksForMoveAsync(axisalignedbb, toX, toZ, onLoad);
++            });
++            return;
++        }
++        List<IChunkAccess> ret = new java.util.ArrayList<>();
++        it.unimi.dsi.fastutil.ints.IntArrayList ticketLevels = new it.unimi.dsi.fastutil.ints.IntArrayList();
++
++        int minBlockX = MathHelper.floor(axisalignedbb.minX - 1.0E-7D) - 3;
++        int maxBlockX = MathHelper.floor(axisalignedbb.maxX + 1.0E-7D) + 3;
++
++        int minBlockZ = MathHelper.floor(axisalignedbb.minZ - 1.0E-7D) - 3;
++        int maxBlockZ = MathHelper.floor(axisalignedbb.maxZ + 1.0E-7D) + 3;
++
++        int minChunkX = minBlockX >> 4;
++        int maxChunkX = maxBlockX >> 4;
++
++        int minChunkZ = minBlockZ >> 4;
++        int maxChunkZ = maxBlockZ >> 4;
++
++        ChunkProviderServer chunkProvider = this.getChunkProvider();
++
++        int requiredChunks = (maxChunkX - minChunkX + 1) * (maxChunkZ - minChunkZ + 1);
++        int[] loadedChunks = new int[1];
++
++        Long holderIdentifier = Long.valueOf(chunkProvider.chunkFutureAwaitCounter++);
++
++        java.util.function.Consumer<IChunkAccess> consumer = (IChunkAccess chunk) -> {
++            if (chunk != null) {
++                int ticketLevel = Math.max(33, chunkProvider.playerChunkMap.getUpdatingChunk(chunk.getPos().pair()).getTicketLevel());
++                ret.add(chunk);
++                ticketLevels.add(ticketLevel);
++                chunkProvider.addTicketAtLevel(TicketType.FUTURE_AWAIT, chunk.getPos(), ticketLevel, holderIdentifier);
++            }
++            if (++loadedChunks[0] == requiredChunks) {
++                try {
++                    onLoad.accept(java.util.Collections.unmodifiableList(ret));
++                } finally {
++                    for (int i = 0, len = ret.size(); i < len; ++i) {
++                        ChunkCoordIntPair chunkPos = ret.get(i).getPos();
++                        int ticketLevel = ticketLevels.getInt(i);
++
++                        chunkProvider.addTicketAtLevel(TicketType.UNKNOWN, chunkPos, ticketLevel, chunkPos);
++                        chunkProvider.removeTicketAtLevel(TicketType.FUTURE_AWAIT, chunkPos, ticketLevel, holderIdentifier);
++                    }
++                }
++            }
++        };
++
++        for (int cx = minChunkX; cx <= maxChunkX; ++cx) {
++            for (int cz = minChunkZ; cz <= maxChunkZ; ++cz) {
++                chunkProvider.getChunkAtAsynchronously(cx, cz, ChunkStatus.FULL, true, false, consumer);
++            }
++        }
++    }
++    // Tuinity end
++
+     // Add env and gen to constructor
+     public WorldServer(MinecraftServer minecraftserver, Executor executor, WorldNBTStorage worldnbtstorage, WorldData worlddata, DimensionManager dimensionmanager, GameProfilerFiller gameprofilerfiller, WorldLoadListener worldloadlistener, org.bukkit.World.Environment env, org.bukkit.generator.ChunkGenerator gen) {
+         super(worlddata, dimensionmanager, executor, (world, worldprovider) -> { // Paper - pass executor down

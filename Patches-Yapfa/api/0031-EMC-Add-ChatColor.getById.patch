@@ -1,0 +1,51 @@
+From 6928e8e7293741f6783b964517e9b2b10949ffac Mon Sep 17 00:00:00 2001
+From: Aikar <aikar@aikar.co>
+Date: Mon, 24 Apr 2017 20:27:23 -0400
+Subject: [PATCH] EMC Add ChatColor.getById
+
+Bukkit has had a map of this for years and it was totally unused...
+---
+ src/main/java/org/bukkit/ChatColor.java | 20 ++++++++++++++++++++
+ 1 file changed, 20 insertions(+)
+
+diff --git a/src/main/java/org/bukkit/ChatColor.java b/src/main/java/org/bukkit/ChatColor.java
+index a0ef2a82..eb60aedb 100644
+--- a/src/main/java/org/bukkit/ChatColor.java
++++ b/src/main/java/org/bukkit/ChatColor.java
+@@ -263,6 +263,15 @@ public enum ChatColor {
+         return net.md_5.bungee.api.ChatColor.RESET;
+     };
+ 
++    /**
++     * Gets the numeric ID associated with this color
++     *
++     * @return An int value of this color code
++     */
++    public int getId() {
++        return intCode;
++    }
++
+     /**
+      * Gets the char value associated with this color
+      *
+@@ -296,6 +305,17 @@ public enum ChatColor {
+         return !isFormat && this != RESET;
+     }
+ 
++    /**
++     * Gets the color represented by the specified color ID
++     *
++     * @param id Code to check
++     * @return Associative {@link org.bukkit.ChatColor} with the given id,
++     *     or null if it doesn't exist
++     */
++    public static ChatColor getById(int id) {
++        return BY_ID.get(id);
++    }
++
+     /**
+      * Gets the color represented by the specified color code
+      *
+-- 
+2.25.1.windows.1
+

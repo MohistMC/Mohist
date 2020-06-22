@@ -1,0 +1,93 @@
+From 5459ef6caa77a7ec69b6e86e8cb8a633be73b0fe Mon Sep 17 00:00:00 2001
+From: Phoenix616 <mail@moep.tv>
+Date: Wed, 29 Apr 2020 22:53:49 +0100
+Subject: [PATCH] Allow Mending to try another item if random one isn't
+ suitable
+
+---
+ src/main/java/de/minebench/origami/OrigamiConfig.java |  5 +++++
+ .../java/net/minecraft/server/EnchantmentManager.java | 11 +++++++++--
+ .../net/minecraft/server/EntityExperienceOrb.java     | 10 +++++++---
+ 3 files changed, 21 insertions(+), 5 deletions(-)
+
+diff --git a/src/main/java/de/minebench/origami/OrigamiConfig.java b/src/main/java/de/minebench/origami/OrigamiConfig.java
+index 777fdbaae6..45b8766c02 100644
+--- a/src/main/java/de/minebench/origami/OrigamiConfig.java
++++ b/src/main/java/de/minebench/origami/OrigamiConfig.java
+@@ -209,4 +209,9 @@ public final class OrigamiConfig {
+         getHolderReturnsSnapshot = getBoolean("inventory-get-holder-returns-snapshot", getHolderReturnsSnapshot);
+     }
+ 
++    public static boolean mendingTriesAllItems = true;
++    private static void mendingTriesAllItems() {
++        mendingTriesAllItems = getBoolean("mending-tries-all-items", mendingTriesAllItems);
++    }
++
+ }
+\ No newline at end of file
+diff --git a/src/main/java/net/minecraft/server/EnchantmentManager.java b/src/main/java/net/minecraft/server/EnchantmentManager.java
+index d96c03a1a1..628c93898b 100644
+--- a/src/main/java/net/minecraft/server/EnchantmentManager.java
++++ b/src/main/java/net/minecraft/server/EnchantmentManager.java
+@@ -253,10 +253,17 @@ public class EnchantmentManager {
+     }
+     @Nullable
+     public static Entry<EnumItemSlot, ItemStack> b(Enchantment enchantment, EntityLiving entityliving) {
++        // Origami start - allow Mending to try another item
++        List<Entry<EnumItemSlot, ItemStack>> list = getItemsWithEnchantment(enchantment, entityliving);
++        return list.isEmpty() ? null : list.get(entityliving.getRandom().nextInt(list.size())); // from below
++    }
++
++    public static List<Entry<EnumItemSlot, ItemStack>> getItemsWithEnchantment(Enchantment enchantment, EntityLiving entityliving) {
++        // Origami end
+         Map<EnumItemSlot, ItemStack> map = enchantment.a(entityliving);
+ 
+         if (map.isEmpty()) {
+-            return null;
++            return java.util.Collections.emptyList(); // Origami - allow Mending to try another item
+         } else {
+             List<Entry<EnumItemSlot, ItemStack>> list = Lists.newArrayList();
+             Iterator iterator = map.entrySet().iterator();
+@@ -270,7 +277,7 @@ public class EnchantmentManager {
+                 }
+             }
+ 
+-            return list.isEmpty() ? null : (Entry) list.get(entityliving.getRandom().nextInt(list.size()));
++            return list; // Origami - allow Mending to try another item
+         }
+     }
+ 
+diff --git a/src/main/java/net/minecraft/server/EntityExperienceOrb.java b/src/main/java/net/minecraft/server/EntityExperienceOrb.java
+index 53c6c33892..ed6e78da19 100644
+--- a/src/main/java/net/minecraft/server/EntityExperienceOrb.java
++++ b/src/main/java/net/minecraft/server/EntityExperienceOrb.java
+@@ -225,9 +225,11 @@ public class EntityExperienceOrb extends Entity {
+             if (this.d == 0 && entityhuman.bC == 0 && new com.destroystokyo.paper.event.player.PlayerPickupExperienceEvent(((EntityPlayer) entityhuman).getBukkitEntity(), (org.bukkit.entity.ExperienceOrb) this.getBukkitEntity()).callEvent()) { // Paper
+                 entityhuman.bC = 2;
+                 entityhuman.receive(this, 1);
+-                Entry<EnumItemSlot, ItemStack> entry = EnchantmentManager.b(Enchantments.MENDING, (EntityLiving) entityhuman);
+-
+-                if (entry != null) {
++                // Origami start - allow Mending to try another item
++                java.util.List<Entry<EnumItemSlot, ItemStack>> entryList = EnchantmentManager.getItemsWithEnchantment(Enchantments.MENDING, (EntityLiving) entityhuman);
++                java.util.Collections.shuffle(entryList);
++                for (Entry<EnumItemSlot, ItemStack> entry : entryList) {
++                    // Origami end
+                     ItemStack itemstack = (ItemStack) entry.getValue();
+ 
+                     if (!itemstack.isEmpty() && itemstack.f()) {
+@@ -239,9 +241,11 @@ public class EntityExperienceOrb extends Entity {
+                         if (!event.isCancelled()) {
+                             this.value -= this.b(i);
+                             itemstack.setDamage(itemstack.getDamage() - i);
++                            break; // Origami - allow Mending to try another item
+                         }
+                         // CraftBukkit end
+                     }
++                    if (!de.minebench.origami.OrigamiConfig.mendingTriesAllItems) break; // Origami - allow Mending to try another item
+                 }
+ 
+                 if (this.value > 0) {
+-- 
+2.25.1.windows.1
+

@@ -1,0 +1,68 @@
+From 0834f49226f00fe4b09d8d0ac44675b067b4fb2a Mon Sep 17 00:00:00 2001
+From: Phoenix616 <mail@moep.tv>
+Date: Fri, 3 Jan 2020 16:28:31 +0100
+Subject: [PATCH] Call PreCreatureSpawnEvent for more spawn reasons
+
+---
+ .../java/net/minecraft/server/EntityTypes.java   | 10 ++++++++++
+ .../net/minecraft/server/EntityVillager.java     | 16 ++++++++++++++++
+ 2 files changed, 26 insertions(+)
+
+diff --git a/src/main/java/net/minecraft/server/EntityTypes.java b/src/main/java/net/minecraft/server/EntityTypes.java
+index 0f04bcc8b7..b11cbdf065 100644
+--- a/src/main/java/net/minecraft/server/EntityTypes.java
++++ b/src/main/java/net/minecraft/server/EntityTypes.java
+@@ -167,6 +167,16 @@ public class EntityTypes<T extends Entity> {
+ 
+     @Nullable
+     public T spawnCreature(World world, @Nullable NBTTagCompound nbttagcompound, @Nullable IChatBaseComponent ichatbasecomponent, @Nullable EntityHuman entityhuman, BlockPosition blockposition, EnumMobSpawn enummobspawn, boolean flag, boolean flag1, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason spawnReason) {
++        // Origami start - Call PreCreatureSpawnEvent for more spawn reasons
++        org.bukkit.entity.EntityType type = org.bukkit.entity.EntityType.fromName(EntityTypes.getName(this).getKey());
++        if (type != null) {
++            if (!new com.destroystokyo.paper.event.entity.PreCreatureSpawnEvent(
++                    MCUtil.toLocation(world, blockposition), type, spawnReason
++            ).callEvent()) {
++                return null;
++            }
++        }
++        // Origami end
+         T t0 = this.createCreature(world, nbttagcompound, ichatbasecomponent, entityhuman, blockposition, enummobspawn, flag, flag1);
+ 
+         return world.addEntity(t0, spawnReason) ? t0 : null; // Don't return an entity when CreatureSpawnEvent is canceled
+diff --git a/src/main/java/net/minecraft/server/EntityVillager.java b/src/main/java/net/minecraft/server/EntityVillager.java
+index 7da267d287..31f0edbed4 100644
+--- a/src/main/java/net/minecraft/server/EntityVillager.java
++++ b/src/main/java/net/minecraft/server/EntityVillager.java
+@@ -865,6 +865,7 @@ public class EntityVillager extends EntityVillagerAbstract implements Reputation
+         }
+     }
+ 
++    private void setGolemLastSeen(long time) { b(time); } // Origami - OBFHELPER
+     private void b(long i) {
+         this.bo.setMemory(MemoryModuleType.GOLEM_LAST_SEEN_TIME, i); // CraftBukkit - decompile error
+     }
+@@ -911,6 +912,21 @@ public class EntityVillager extends EntityVillagerAbstract implements Reputation
+                 }
+ 
+                 BlockPosition blockposition2 = blockposition.a(d0, d2, d1);
++                // Origami start - Call PreCreatureSpawnEvent for more spawn reasons
++                org.bukkit.entity.EntityType type = org.bukkit.entity.EntityType.fromName(EntityTypes.getName(EntityTypes.IRON_GOLEM).getKey());
++                if (type != null) {
++                    com.destroystokyo.paper.event.entity.PreCreatureSpawnEvent event = new com.destroystokyo.paper.event.entity.PreCreatureSpawnEvent(
++                            MCUtil.toLocation(world, blockposition), type, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.VILLAGE_DEFENSE
++                    );
++                    if (!event.callEvent()) {
++                        if (event.shouldAbortSpawn()) {
++                            this.setGolemLastSeen(world.getTime());
++                            return null;
++                        }
++                        break;
++                    }
++                }
++                // Origami end
+                 EntityIronGolem entityirongolem = (EntityIronGolem) EntityTypes.IRON_GOLEM.createCreature(this.world, (NBTTagCompound) null, (IChatBaseComponent) null, (EntityHuman) null, blockposition2, EnumMobSpawn.MOB_SUMMONED, false, false);
+ 
+                 if (entityirongolem != null) {
+-- 
+2.25.1.windows.1
+

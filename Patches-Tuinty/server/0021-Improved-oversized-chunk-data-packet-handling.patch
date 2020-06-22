@@ -1,0 +1,196 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Spottedleaf <spottedleaf@spottedleaf.dev>
+Date: Mon, 3 Feb 2020 20:37:44 -0800
+Subject: [PATCH] Improved oversized chunk data packet handling
+
+Now target all TE data, except for TE's that do not have
+update packets.
+
+This patch relies upon the improve extra packet handling
+patch, as we now use PacketPlayOutMapChunk as an extra packet.
+See its patch notes for further details.
+
+diff --git a/src/main/java/net/minecraft/server/PacketPlayOutMapChunk.java b/src/main/java/net/minecraft/server/PacketPlayOutMapChunk.java
+index 9b608d73869bd2907f705562c8378bc2f205767b..bf24cb0d2a457ddc37a6d6d3b3879bf54768aee6 100644
+--- a/src/main/java/net/minecraft/server/PacketPlayOutMapChunk.java
++++ b/src/main/java/net/minecraft/server/PacketPlayOutMapChunk.java
+@@ -19,7 +19,7 @@ public class PacketPlayOutMapChunk implements Packet<PacketListenerPlayOut> {
+     @Nullable
+     private BiomeStorage e;
+     private byte[] f; private byte[] getData() { return this.f; } // Paper - OBFHELPER
+-    private List<NBTTagCompound> g;
++    private List<NBTTagCompound> g; private List<NBTTagCompound> getTileEntityData() { return this.g; } // Tuinity - OBFHELPER
+     private boolean h;
+     private volatile boolean ready; // Paper - Async-Anti-Xray - Ready flag for the network manager
+ 
+@@ -31,14 +31,16 @@ public class PacketPlayOutMapChunk implements Packet<PacketListenerPlayOut> {
+ 
+     // Paper start
+     private final java.util.List<Packet> extraPackets = new java.util.ArrayList<>();
+-    private static final int TE_LIMIT = Integer.getInteger("Paper.excessiveTELimit", 750);
++    private static final int TE_LIMIT = Integer.getInteger("tuinity.excessive-te-limit", 750); // Tuinity - handle oversized chunk data packets more robustly
++    private static final int TE_SPLIT_LIMIT = Math.max(4096 + 1, Integer.getInteger("tuinity.te-split-limit", 15_000)); // Tuinity - handle oversized chunk data packets more robustly
++    private boolean mustSplit; // Tuinity - handle oversized chunk data packets more robustly
+ 
+     @Override
+     public java.util.List<Packet> getExtraPackets() {
+         return extraPackets;
+     }
+     // Paper end
+-    public PacketPlayOutMapChunk(Chunk chunk, int i) {
++    public PacketPlayOutMapChunk(Chunk chunk, int i) { final int chunkSectionBitSet = i; // Tuinity - handle oversized chunk data packets more robustly
+         ChunkPacketInfo<IBlockData> chunkPacketInfo = chunk.world.chunkPacketBlockController.getChunkPacketInfo(this, chunk, i); // Paper - Anti-Xray - Add chunk packet info
+         ChunkCoordIntPair chunkcoordintpair = chunk.getPos();
+ 
+@@ -46,31 +48,12 @@ public class PacketPlayOutMapChunk implements Packet<PacketListenerPlayOut> {
+         this.b = chunkcoordintpair.z;
+         this.h = i == 65535;
+         this.d = new NBTTagCompound();
+-        Iterator iterator = chunk.f().iterator();
+-
+-        Entry entry;
+-
+-        while (iterator.hasNext()) {
+-            entry = (Entry) iterator.next();
+-            if (((HeightMap.Type) entry.getKey()).b()) {
+-                this.d.set(((HeightMap.Type) entry.getKey()).a(), new NBTTagLongArray(((HeightMap) entry.getValue()).a()));
+-            }
+-        }
+-
+-        if (this.h) {
+-            this.e = chunk.getBiomeIndex().b();
+-        }
+-
+-        this.f = new byte[this.a(chunk, i)];
+-        // Paper start - Anti-Xray - Add chunk packet info
+-        if (chunkPacketInfo != null) {
+-            chunkPacketInfo.setData(this.getData());
+-        }
+-        this.c = this.writeChunk(new PacketDataSerializer(this.j()), chunk, i, chunkPacketInfo);
+-        // Paper end
++        // Tuinity start - improve oversized chunk data packet handling
++        // move the TE code up here so we can decide whether to split before writing
+         this.g = Lists.newArrayList();
+-        iterator = chunk.getTileEntities().entrySet().iterator();
+-        int totalTileEntities = 0; // Paper
++        Iterator iterator = chunk.getTileEntities().entrySet().iterator();
++        Entry entry;
++        int totalTileEntities = 0; // Paper // Tuinity
+ 
+         while (iterator.hasNext()) {
+             entry = (Entry) iterator.next();
+@@ -79,14 +62,23 @@ public class PacketPlayOutMapChunk implements Packet<PacketListenerPlayOut> {
+             int j = blockposition.getY() >> 4;
+ 
+             if (this.f() || (i & 1 << j) != 0) {
+-                // Paper start - improve oversized chunk data packet handling
+-                if (++totalTileEntities > TE_LIMIT) {
++                // Paper start - send signs separately
++                // Tuinity start - improve oversized chunk data packet handling
++                ++totalTileEntities;
++                if (totalTileEntities > TE_SPLIT_LIMIT) {
++                    this.mustSplit = true;
++                    this.getTileEntityData().clear();
++                    this.extraPackets.clear();
++                    break;
++                }
++                if (totalTileEntities > TE_LIMIT) {
+                     PacketPlayOutTileEntityData updatePacket = tileentity.getUpdatePacket();
+                     if (updatePacket != null) {
+                         this.extraPackets.add(updatePacket);
+                         continue;
+                     }
+                 }
++                // Tuinity end
+                 // Paper end
+                 NBTTagCompound nbttagcompound = tileentity.b();
+                 if (tileentity instanceof TileEntitySkull) { TileEntitySkull.sanitizeTileEntityUUID(nbttagcompound); } // Paper
+@@ -94,7 +86,70 @@ public class PacketPlayOutMapChunk implements Packet<PacketListenerPlayOut> {
+                 this.g.add(nbttagcompound);
+             }
+         }
++        iterator = chunk.f().iterator();
++        // Tuinity end
++
++        while (iterator.hasNext()) {
++            entry = (Entry) iterator.next();
++            if (((HeightMap.Type) entry.getKey()).b()) {
++                this.d.set(((HeightMap.Type) entry.getKey()).a(), new NBTTagLongArray(((HeightMap) entry.getValue()).a()));
++            }
++        }
++
++        if (this.h) {
++            this.e = chunk.getBiomeIndex().b();
++        }
++
++        this.f = new byte[this.a(chunk, i)];
++        // Paper start - Anti-Xray - Add chunk packet info
++        if (chunkPacketInfo != null) {
++            chunkPacketInfo.setData(this.getData());
++        }
++        this.c = this.writeChunk(new PacketDataSerializer(this.j()), chunk, i, chunkPacketInfo);
++        // Paper end
++        // Tuinity start - improve oversized chunk data packet handling
++        // move the TE code up here so we can decide whether to split before writing
++//        this.g = Lists.newArrayList();
++//        iterator = chunk.getTileEntities().entrySet().iterator();
++//        int totalTileEntities = 0; // Paper
++//
++//        while (iterator.hasNext()) {
++//            entry = (Entry) iterator.next();
++//            BlockPosition blockposition = (BlockPosition) entry.getKey();
++//            TileEntity tileentity = (TileEntity) entry.getValue();
++//            int j = blockposition.getY() >> 4;
++//
++//            if (this.f() || (i & 1 << j) != 0) {
++//                // Paper start - improve oversized chunk data packet handling
++//                if (++totalTileEntities > TE_LIMIT) {
++//                    PacketPlayOutTileEntityData updatePacket = tileentity.getUpdatePacket();
++//                    if (updatePacket != null) {
++//                        this.extraPackets.add(updatePacket);
++//                        continue;
++//                    }
++//                }
++//                // Paper end
++//                NBTTagCompound nbttagcompound = tileentity.b();
++//                if (tileentity instanceof TileEntitySkull) { TileEntitySkull.sanitizeTileEntityUUID(nbttagcompound); } // Paper
++//
++//                this.g.add(nbttagcompound);
++//            }
++//        }
++        // Tuinity end - improve oversized chunk data packet handling
+         chunk.world.chunkPacketBlockController.modifyBlocks(this, chunkPacketInfo); // Paper - Anti-Xray - Modify blocks
++        // Tuinity start - improve oversized chunk data packet handling
++        if (this.mustSplit) {
++            int chunkSectionBitSetCopy = chunkSectionBitSet;
++            for (int a = 0, len = Integer.bitCount(chunkSectionBitSet); a < len; ++a) {
++                int trailingBit = com.destroystokyo.paper.util.math.IntegerUtil.getTrailingBit(chunkSectionBitSetCopy);
++                int sectionIndex = Integer.numberOfTrailingZeros(trailingBit);
++                chunkSectionBitSetCopy ^= trailingBit; // move on to the next
++
++                if (chunk.getSections()[sectionIndex] != null) {
++                    this.extraPackets.add(new PacketPlayOutMapChunk(chunk, trailingBit));
++                }
++            }
++        } // Tuinity end - improve oversized chunk data packet handling
+     }
+ 
+     // Paper start - Async-Anti-Xray - Getter and Setter for the ready flag
+@@ -185,7 +240,7 @@ public class PacketPlayOutMapChunk implements Packet<PacketListenerPlayOut> {
+         for (int l = achunksection.length; k < l; ++k) {
+             ChunkSection chunksection = achunksection[k];
+ 
+-            if (chunksection != Chunk.a && (!this.f() || !chunksection.c()) && (i & 1 << k) != 0) {
++            if ((!this.mustSplit && chunksection != Chunk.a) && (!this.f() || !chunksection.c()) && (i & 1 << k) != 0) { // Tuinity - improve oversized chunk data packet handling
+                 j |= 1 << k;
+                 chunksection.writeChunkSection(packetdataserializer, chunkPacketInfo); // Paper - Anti-Xray - Add chunk packet info
+             }
+@@ -202,7 +257,7 @@ public class PacketPlayOutMapChunk implements Packet<PacketListenerPlayOut> {
+         for (int l = achunksection.length; k < l; ++k) {
+             ChunkSection chunksection = achunksection[k];
+ 
+-            if (chunksection != Chunk.a && (!this.f() || !chunksection.c()) && (i & 1 << k) != 0) {
++            if ((!this.mustSplit && chunksection != Chunk.a) && (!this.f() || !chunksection.c()) && (i & 1 << k) != 0) {
+                 j += chunksection.j();
+             }
+         }

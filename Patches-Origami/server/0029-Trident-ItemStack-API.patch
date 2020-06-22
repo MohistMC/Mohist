@@ -1,0 +1,29 @@
+From 64441e241bd462bb8af874e03dad07fbb2bf022d Mon Sep 17 00:00:00 2001
+From: Phoenix616 <mail@moep.tv>
+Date: Wed, 6 May 2020 00:51:25 +0100
+Subject: [PATCH] Trident ItemStack API
+
+---
+ .../java/org/bukkit/craftbukkit/entity/CraftTrident.java    | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+diff --git a/src/main/java/org/bukkit/craftbukkit/entity/CraftTrident.java b/src/main/java/org/bukkit/craftbukkit/entity/CraftTrident.java
+index 0518e6c683..1c5debb216 100644
+--- a/src/main/java/org/bukkit/craftbukkit/entity/CraftTrident.java
++++ b/src/main/java/org/bukkit/craftbukkit/entity/CraftTrident.java
+@@ -10,6 +10,12 @@ public class CraftTrident extends CraftArrow implements Trident {
+     public CraftTrident(CraftServer server, EntityThrownTrident entity) {
+         super(server, entity);
+     }
++    // Origami start - get trident ItemStack
++    @Override
++    public org.bukkit.inventory.ItemStack getItem() {
++        return getHandle().trident.asBukkitMirror();
++    }
++    // Origami end
+ 
+     @Override
+     public EntityThrownTrident getHandle() {
+-- 
+2.25.1.windows.1
+

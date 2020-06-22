@@ -1,0 +1,61 @@
+From 301a8ff369253d6b17b40ce00207c50c4787bca1 Mon Sep 17 00:00:00 2001
+From: Aikar <aikar@aikar.co>
+Date: Sun, 16 Mar 2014 20:44:46 -0400
+Subject: [PATCH] EMC EntityKnockbackEvent
+
+Control knockback power of entity attacks
+---
+ .../java/net/minecraft/server/EnchantmentManager.java    | 9 +++++++--
+ src/main/java/net/minecraft/server/EntityHuman.java      | 2 +-
+ src/main/java/net/minecraft/server/EntityInsentient.java | 2 +-
+ 3 files changed, 9 insertions(+), 4 deletions(-)
+
+diff --git a/src/main/java/net/minecraft/server/EnchantmentManager.java b/src/main/java/net/minecraft/server/EnchantmentManager.java
+index d96c03a1a1..9fc637f96a 100644
+--- a/src/main/java/net/minecraft/server/EnchantmentManager.java
++++ b/src/main/java/net/minecraft/server/EnchantmentManager.java
+@@ -186,8 +186,13 @@ public class EnchantmentManager {
+         }
+     }
+ 
+-    public static int b(EntityLiving entityliving) {
+-        return a(Enchantments.KNOCKBACK, entityliving);
++    // EMC start - rename and add target
++    public static int getKnockbackEnchantmentLevel(EntityLiving entityliving, EntityLiving target) { // EMC - OBF HELPER
++        int level = a(Enchantments.KNOCKBACK, entityliving);
++        com.empireminecraft.customevents.EntityKnockbackEvent event = new com.empireminecraft.customevents.EntityKnockbackEvent((org.bukkit.entity.LivingEntity) entityliving.getBukkitEntity(), target != null ? (org.bukkit.entity.LivingEntity) target.getBukkitEntity() : null, level);
++        event.callEvent();
++        return event.getLevel();
++        // EMC end
+     }
+ 
+     public static int getFireAspectEnchantmentLevel(EntityLiving entityliving) {
+diff --git a/src/main/java/net/minecraft/server/EntityHuman.java b/src/main/java/net/minecraft/server/EntityHuman.java
+index 7df24be46e..8f4bb71b16 100644
+--- a/src/main/java/net/minecraft/server/EntityHuman.java
++++ b/src/main/java/net/minecraft/server/EntityHuman.java
+@@ -1062,7 +1062,7 @@ public abstract class EntityHuman extends EntityLiving {
+                     boolean flag = f2 > 0.9F;
+                     boolean flag1 = false;
+                     byte b0 = 0;
+-                    int i = b0 + EnchantmentManager.b((EntityLiving) this);
++                    int i = b0 + EnchantmentManager.getKnockbackEnchantmentLevel(this, entity instanceof EntityLiving ? (EntityLiving) entity : null); // EMC
+ 
+                     if (this.isSprinting() && flag) {
+                         sendSoundEffect(this, this.locX(), this.locY(), this.locZ(), SoundEffects.ENTITY_PLAYER_ATTACK_KNOCKBACK, this.getSoundCategory(), 1.0F, 1.0F); // Paper - send while respecting visibility
+diff --git a/src/main/java/net/minecraft/server/EntityInsentient.java b/src/main/java/net/minecraft/server/EntityInsentient.java
+index 5aca7a9131..eec4343741 100644
+--- a/src/main/java/net/minecraft/server/EntityInsentient.java
++++ b/src/main/java/net/minecraft/server/EntityInsentient.java
+@@ -1308,7 +1308,7 @@ public abstract class EntityInsentient extends EntityLiving {
+ 
+         if (entity instanceof EntityLiving) {
+             f += EnchantmentManager.a(this.getItemInMainHand(), ((EntityLiving) entity).getMonsterType());
+-            f1 += (float) EnchantmentManager.b((EntityLiving) this);
++            f1 += EnchantmentManager.getKnockbackEnchantmentLevel(this, (EntityLiving) entity); // EMC
+         }
+ 
+         int i = EnchantmentManager.getFireAspectEnchantmentLevel(this);
+-- 
+2.25.1.windows.1
+

@@ -1,0 +1,109 @@
+From e3fccee2e50a3688084616b1b025455e8f16b911 Mon Sep 17 00:00:00 2001
+From: tr7zw <tr7zw@live.de>
+Date: Mon, 11 May 2020 21:50:18 +0200
+Subject: [PATCH] lithium MixinAxisCycleDirection
+
+---
+ .../net/minecraft/server/EnumAxisCycle.java   | 90 +++++++++++++++++++
+ 1 file changed, 90 insertions(+)
+ create mode 100644 src/main/java/net/minecraft/server/EnumAxisCycle.java
+
+diff --git a/src/main/java/net/minecraft/server/EnumAxisCycle.java b/src/main/java/net/minecraft/server/EnumAxisCycle.java
+new file mode 100644
+index 000000000..d05cddcc9
+--- /dev/null
++++ b/src/main/java/net/minecraft/server/EnumAxisCycle.java
+@@ -0,0 +1,90 @@
++package net.minecraft.server;
++
++public enum EnumAxisCycle {
++
++    NONE {
++        @Override
++        public int a(int i, int j, int k, EnumDirection.EnumAxis enumdirection_enumaxis) {
++            return enumdirection_enumaxis.a(i, j, k);
++        }
++
++        @Override
++        public EnumDirection.EnumAxis a(EnumDirection.EnumAxis enumdirection_enumaxis) {
++            return enumdirection_enumaxis;
++        }
++
++        @Override
++        public EnumAxisCycle a() {
++            return this;
++        }
++    },
++    FORWARD {
++        @Override
++        public int a(int i, int j, int k, EnumDirection.EnumAxis enumdirection_enumaxis) {
++            return enumdirection_enumaxis.a(k, i, j);
++        }
++
++        /**
++         * The JVM has difficulty optimizing these functions due to the use of dynamic dispatch. They can trivially be
++         * implemented as a simple switch lookup table.
++         */
++        @Override
++        public EnumDirection.EnumAxis a(EnumDirection.EnumAxis enumdirection_enumaxis) {
++			switch (enumdirection_enumaxis) {
++			case X:
++				return EnumDirection.EnumAxis.Y;
++			case Y:
++				return EnumDirection.EnumAxis.Z;
++			case Z:
++				return EnumDirection.EnumAxis.X;
++			}
++
++			throw new IllegalArgumentException();
++        }
++
++        @Override
++        public EnumAxisCycle a() {
++            return BACKWARD;
++        }
++    },
++    BACKWARD {
++        @Override
++        public int a(int i, int j, int k, EnumDirection.EnumAxis enumdirection_enumaxis) {
++            return enumdirection_enumaxis.a(j, k, i);
++        }
++
++        @Override
++        public EnumDirection.EnumAxis a(EnumDirection.EnumAxis enumdirection_enumaxis) {
++			switch (enumdirection_enumaxis) {
++			case X:
++				return EnumDirection.EnumAxis.Z;
++			case Y:
++				return EnumDirection.EnumAxis.X;
++			case Z:
++				return EnumDirection.EnumAxis.Y;
++			}
++
++			throw new IllegalArgumentException();
++        }
++
++        @Override
++        public EnumAxisCycle a() {
++            return FORWARD;
++        }
++    };
++
++    public static final EnumDirection.EnumAxis[] d = EnumDirection.EnumAxis.values();
++    public static final EnumAxisCycle[] e = values();
++
++    private EnumAxisCycle() {}
++
++    public abstract int a(int i, int j, int k, EnumDirection.EnumAxis enumdirection_enumaxis);
++
++    public abstract EnumDirection.EnumAxis a(EnumDirection.EnumAxis enumdirection_enumaxis);
++
++    public abstract EnumAxisCycle a();
++
++    public static EnumAxisCycle a(EnumDirection.EnumAxis enumdirection_enumaxis, EnumDirection.EnumAxis enumdirection_enumaxis1) {
++        return EnumAxisCycle.e[Math.floorMod(enumdirection_enumaxis1.ordinal() - enumdirection_enumaxis.ordinal(), 3)];
++    }
++}
+-- 
+2.25.1.windows.1
+

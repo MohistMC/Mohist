@@ -1,0 +1,36 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: chickeneer <emcchickeneer@gmail.com>
+Date: Sun, 14 Jul 2019 13:50:53 -0500
+Subject: [PATCH] EMC ConduitNewTargetEvent and remove target for cancelled
+ damage events
+
+
+diff --git a/src/main/java/net/minecraft/server/TileEntityConduit.java b/src/main/java/net/minecraft/server/TileEntityConduit.java
+index 07f265b299fe352e26d94f9932a5a91bd1933638..b6ad68fcbf4fa3c3a641b788999e43cc87bb63d6 100644
+--- a/src/main/java/net/minecraft/server/TileEntityConduit.java
++++ b/src/main/java/net/minecraft/server/TileEntityConduit.java
+@@ -182,7 +182,14 @@ public class TileEntityConduit extends TileEntity implements ITickable {
+             List<EntityLiving> list = this.world.a(EntityLiving.class, this.m(), (java.util.function.Predicate<EntityLiving>) (entityliving1) -> { // CraftBukkit - decompile error
+                 return entityliving1 instanceof IMonster && entityliving1.isInWaterOrRain();
+             });
+-
++            // EMC start
++            List<org.bukkit.entity.LivingEntity> bukkitEntities = Lists.newArrayListWithCapacity(list.size());
++            for (EntityLiving entity : list) {
++                bukkitEntities.add(entity.getBukkitLivingEntity());
++            }
++            new com.empireminecraft.customevents.ConduitNewTargetEvent(bukkitEntities, CraftBlock.at(this.world, this.position)).callEvent();
++            list.removeIf(entityLiving -> !bukkitEntities.contains(entityLiving.getBukkitLivingEntity()));
++            // EMC end
+             if (!list.isEmpty()) {
+                 this.target = (EntityLiving) list.get(this.world.random.nextInt(list.size()));
+             }
+@@ -195,7 +202,7 @@ public class TileEntityConduit extends TileEntity implements ITickable {
+             CraftEventFactory.blockDamage = CraftBlock.at(this.world, this.position);
+             if (this.target.damageEntity(DamageSource.MAGIC, 4.0F)) {
+                 this.world.playSound((EntityHuman) null, this.target.locX(), this.target.locY(), this.target.locZ(), SoundEffects.BLOCK_CONDUIT_ATTACK_TARGET, SoundCategory.BLOCKS, 1.0F, 1.0F);
+-            }
++            } else { this.target = null; } // EMC
+             CraftEventFactory.blockDamage = null;
+             // CraftBukkit end
+         }

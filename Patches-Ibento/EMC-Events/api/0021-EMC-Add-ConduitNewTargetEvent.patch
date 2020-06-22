@@ -1,0 +1,51 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: chickeneer <emcchickeneer@gmail.com>
+Date: Sun, 14 Jul 2019 13:50:18 -0500
+Subject: [PATCH] EMC Add ConduitNewTargetEvent
+
+
+diff --git a/src/main/java/com/empireminecraft/customevents/ConduitNewTargetEvent.java b/src/main/java/com/empireminecraft/customevents/ConduitNewTargetEvent.java
+new file mode 100644
+index 0000000000000000000000000000000000000000..c3de31cf53fa52169fa65db3034adbf45f67cf68
+--- /dev/null
++++ b/src/main/java/com/empireminecraft/customevents/ConduitNewTargetEvent.java
+@@ -0,0 +1,39 @@
++package com.empireminecraft.customevents;
++
++import org.bukkit.block.Block;
++import org.bukkit.entity.LivingEntity;
++import org.bukkit.event.HandlerList;
++import org.bukkit.event.block.BlockEvent;
++import org.jetbrains.annotations.NotNull;
++
++import java.util.List;
++
++public class ConduitNewTargetEvent extends BlockEvent {
++    private static final HandlerList handlers = new HandlerList();
++    private final List<LivingEntity> entities;
++
++    public ConduitNewTargetEvent(List<LivingEntity> entities, @NotNull Block theBlock) {
++        super(theBlock);
++        this.entities = entities;
++    }
++
++    /**
++     * Remove entities from this list to remove them from the potential targets of the conduit.
++     * Implementation will not use any additions to this list.
++     *
++     * @return
++     */
++    public List<LivingEntity> potentialTargets() {
++        return entities;
++    }
++
++    @NotNull
++    @Override
++    public HandlerList getHandlers() {
++        return handlers;
++    }
++
++    public static HandlerList getHandlerList() {
++        return handlers;
++    }
++}

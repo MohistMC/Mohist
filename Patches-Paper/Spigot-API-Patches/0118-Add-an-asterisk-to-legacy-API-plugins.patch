@@ -1,0 +1,63 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Zach Brown <zach.brown@destroystokyo.com>
+Date: Thu, 19 Jul 2018 22:07:02 +0200
+Subject: [PATCH] Add an asterisk to legacy API plugins
+
+Not here to name and shame, only so server admins can be aware of which
+plugins have and haven't been updated.
+
+diff --git a/src/main/java/org/bukkit/UnsafeValues.java b/src/main/java/org/bukkit/UnsafeValues.java
+index 98df287bcb1462fa42b7d4a706a68d36927fbc1c..6f5601639c472db62120bab8d903620ee87f7e5c 100644
+--- a/src/main/java/org/bukkit/UnsafeValues.java
++++ b/src/main/java/org/bukkit/UnsafeValues.java
+@@ -84,5 +84,11 @@ public interface UnsafeValues {
+     default com.destroystokyo.paper.util.VersionFetcher getVersionFetcher() {
+         return new com.destroystokyo.paper.util.VersionFetcher.DummyVersionFetcher();
+     }
++
++    boolean isSupportedApiVersion(String apiVersion);
++
++    static boolean isLegacyPlugin(org.bukkit.plugin.Plugin plugin) {
++        return !Bukkit.getUnsafe().isSupportedApiVersion(plugin.getDescription().getAPIVersion());
++    }
+     // Paper end
+ }
+diff --git a/src/main/java/org/bukkit/command/defaults/PluginsCommand.java b/src/main/java/org/bukkit/command/defaults/PluginsCommand.java
+index a1071e3178a298f3fc1d6c960f4d8a6d3a3d0277..3dcecf3a543646327c277ee2698106159b2cbc84 100644
+--- a/src/main/java/org/bukkit/command/defaults/PluginsCommand.java
++++ b/src/main/java/org/bukkit/command/defaults/PluginsCommand.java
+@@ -59,7 +59,13 @@ public class PluginsCommand extends BukkitCommand {
+ 
+ 
+             pluginList.append(plugin.isEnabled() ? ChatColor.GREEN : ChatColor.RED);
+-            pluginList.append(plugin.getDescription().getName());
++            // Paper start - Add an asterisk to legacy plugins (so admins are aware)
++            String pluginName = plugin.getDescription().getName();
++            if (org.bukkit.UnsafeValues.isLegacyPlugin(plugin)) {
++                pluginName += "*";
++            }
++            pluginList.append(pluginName);
++            // Paper end
+         }
+ 
+         return "(" + plugins.size() + "): " + pluginList.toString();
+diff --git a/src/main/java/org/bukkit/plugin/java/JavaPluginLoader.java b/src/main/java/org/bukkit/plugin/java/JavaPluginLoader.java
+index 32ec68b489ab1933b4375a339c77c05a3e235202..8ff228ced356eb509b93abb7a0d3d9a26dd3e057 100644
+--- a/src/main/java/org/bukkit/plugin/java/JavaPluginLoader.java
++++ b/src/main/java/org/bukkit/plugin/java/JavaPluginLoader.java
+@@ -315,7 +315,14 @@ public final class JavaPluginLoader implements PluginLoader {
+         Validate.isTrue(plugin instanceof JavaPlugin, "Plugin is not associated with this PluginLoader");
+ 
+         if (!plugin.isEnabled()) {
+-            plugin.getLogger().info("Enabling " + plugin.getDescription().getFullName());
++            // Paper start - Add an asterisk to legacy plugins (so admins are aware)
++            String enableMsg = "Enabling " + plugin.getDescription().getFullName();
++            if (org.bukkit.UnsafeValues.isLegacyPlugin(plugin)) {
++                enableMsg += "*";
++            }
++
++            plugin.getLogger().info(enableMsg);
++            // Paper end
+ 
+             JavaPlugin jPlugin = (JavaPlugin) plugin;
+ 

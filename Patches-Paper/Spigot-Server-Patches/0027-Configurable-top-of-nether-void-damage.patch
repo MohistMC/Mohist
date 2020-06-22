@@ -1,0 +1,97 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Zach Brown <zach.brown@destroystokyo.com>
+Date: Tue, 1 Mar 2016 23:58:50 -0600
+Subject: [PATCH] Configurable top of nether void damage
+
+
+diff --git a/src/main/java/com/destroystokyo/paper/PaperWorldConfig.java b/src/main/java/com/destroystokyo/paper/PaperWorldConfig.java
+index d59b82b7bb1f6d1b231f4e394e0a67a3d154d7be..f7a0a33e49cadf9b2bd43f118c106937760da762 100644
+--- a/src/main/java/com/destroystokyo/paper/PaperWorldConfig.java
++++ b/src/main/java/com/destroystokyo/paper/PaperWorldConfig.java
+@@ -129,4 +129,19 @@ public class PaperWorldConfig {
+         if (fallingBlockHeightNerf != 0) log("Falling Block Height Limit set to Y: " + fallingBlockHeightNerf);
+         if (entityTNTHeightNerf != 0) log("TNT Entity Height Limit set to Y: " + entityTNTHeightNerf);
+     }
++
++    public int netherVoidTopDamageHeight;
++    public boolean doNetherTopVoidDamage() { return netherVoidTopDamageHeight > 0; }
++    private void netherVoidTopDamageHeight() {
++        netherVoidTopDamageHeight = getInt("nether-ceiling-void-damage-height", 0);
++        log("Top of the nether void damage height: " + netherVoidTopDamageHeight);
++
++        if (PaperConfig.version < 18) {
++            boolean legacy = getBoolean("nether-ceiling-void-damage", false);
++            if (legacy) {
++                netherVoidTopDamageHeight = 128;
++                set("nether-ceiling-void-damage-height", netherVoidTopDamageHeight);
++            }
++        }
++    }
+ }
+diff --git a/src/main/java/net/minecraft/server/Entity.java b/src/main/java/net/minecraft/server/Entity.java
+index 7e400f4c281a02f038834ac984df4ce35a6a7ec3..94b74e0c0eb9495f9b2cb066c86bdedbe247a0cd 100644
+--- a/src/main/java/net/minecraft/server/Entity.java
++++ b/src/main/java/net/minecraft/server/Entity.java
+@@ -406,9 +406,16 @@ public abstract class Entity implements INamableTileEntity, ICommandListener, Ke
+             this.fallDistance *= 0.5F;
+         }
+ 
++        // Paper start - Configurable nether ceiling damage
++
++        // Extracted to own function
++        /*
+         if (this.locY() < -64.0D) {
+             this.af();
+         }
++        */
++        this.performVoidDamage();
++        // Paper end
+ 
+         if (!this.world.isClientSide) {
+             this.setFlag(0, this.fireTicks > 0);
+@@ -418,6 +425,17 @@ public abstract class Entity implements INamableTileEntity, ICommandListener, Ke
+         this.world.getMethodProfiler().exit();
+     }
+ 
++    // Paper start
++    protected void performVoidDamage() {
++        if (this.locY < -64.0D || (this.world.getWorld().getEnvironment() == org.bukkit.World.Environment.NETHER
++            && world.paperConfig.doNetherTopVoidDamage()
++            && this.locY >= world.paperConfig.netherVoidTopDamageHeight)) {
++
++            this.doVoidDamage();
++        }
++    }
++    // Paper end
++
+     protected void E() {
+         if (this.portalCooldown > 0) {
+             --this.portalCooldown;
+@@ -493,6 +511,7 @@ public abstract class Entity implements INamableTileEntity, ICommandListener, Ke
+         this.fireTicks = 0;
+     }
+ 
++    protected final void doVoidDamage() { this.af(); } // Paper - OBFHELPER
+     protected void af() {
+         this.die();
+     }
+diff --git a/src/main/java/net/minecraft/server/EntityMinecartAbstract.java b/src/main/java/net/minecraft/server/EntityMinecartAbstract.java
+index e4d1f37f9f93a62602753e82caa128111abeec4d..c2843d5d607c3d19806b673c76289a8bee035e70 100644
+--- a/src/main/java/net/minecraft/server/EntityMinecartAbstract.java
++++ b/src/main/java/net/minecraft/server/EntityMinecartAbstract.java
+@@ -210,9 +210,15 @@ public abstract class EntityMinecartAbstract extends Entity {
+             this.setDamage(this.getDamage() - 1.0F);
+         }
+ 
++        // Paper start - Configurable nether ceiling damage
++        // Extracted to own function
++        /*
+         if (this.locY() < -64.0D) {
+             this.af();
+         }
++        */
++        this.performVoidDamage();
++        // Paper end
+ 
+         // this.doPortalTick(); // CraftBukkit - handled in postTick
+         if (this.world.isClientSide) {

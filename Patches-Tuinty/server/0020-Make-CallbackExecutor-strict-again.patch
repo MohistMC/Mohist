@@ -1,0 +1,83 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Spottedleaf <spottedleaf@spottedleaf.dev>
+Date: Fri, 24 Apr 2020 09:06:15 -0700
+Subject: [PATCH] Make CallbackExecutor strict again
+
+The correct fix for double scheduling is to avoid it. The reason
+this class is used is because double scheduling causes issues
+elsewhere, and it acts as an explicit detector of what double
+schedules. Effectively, use the callback executor as a tool of
+finding issues rather than hiding these issues.
+
+This patch also reverts incorrect use(s) of the class by paper.
+
+- getChunkFutureAsynchronously
+  There is no risk at all of recursion. The future is executed on
+  the chunk provider's thread queue, the same place general plugin
+  load callbacks are executed on. Forcing the task execution into
+  the callback executor also prevents the future from catching
+  any exception thrown from it.
+
+diff --git a/src/main/java/net/minecraft/server/ChunkProviderServer.java b/src/main/java/net/minecraft/server/ChunkProviderServer.java
+index 0af78da5260fc5324b23801be5b1a911ce54cd35..ea9d007fef10697456b0139421d623d25ce589cc 100644
+--- a/src/main/java/net/minecraft/server/ChunkProviderServer.java
++++ b/src/main/java/net/minecraft/server/ChunkProviderServer.java
+@@ -180,9 +180,9 @@ public class ChunkProviderServer extends IChunkProvider {
+ 
+                 try {
+                     if (onLoad != null) {
+-                        playerChunkMap.callbackExecutor.execute(() -> {
++                        // Tuinity - revert incorrect use of callback executor
+                             onLoad.accept(either == null ? null : either.left().orElse(null)); // indicate failure to the callback.
+-                        });
++                        // Tuinity - revert incorrect use of callback executor
+                     }
+                 } catch (Throwable thr) {
+                     if (thr instanceof ThreadDeath) {
+diff --git a/src/main/java/net/minecraft/server/PlayerChunkMap.java b/src/main/java/net/minecraft/server/PlayerChunkMap.java
+index ba37f58f18923aa43608ddc72ffe72ef9fa838a9..7ab6cf4c20673ad918089ed1b35df8c242c7726b 100644
+--- a/src/main/java/net/minecraft/server/PlayerChunkMap.java
++++ b/src/main/java/net/minecraft/server/PlayerChunkMap.java
+@@ -117,31 +117,28 @@ public class PlayerChunkMap extends IChunkLoader implements PlayerChunk.d {
+     // CraftBukkit start - recursion-safe executor for Chunk loadCallback() and unloadCallback()
+     public final CallbackExecutor callbackExecutor = new CallbackExecutor();
+     public static final class CallbackExecutor implements java.util.concurrent.Executor, Runnable {
+-
+-        // Paper start - replace impl with recursive safe multi entry queue
+-        // it's possible to schedule multiple tasks currently, so it's vital we change this impl
+-        // If we recurse into the executor again, we will append to another queue, ensuring task order consistency
+-        private java.util.ArrayDeque<Runnable> queued = new java.util.ArrayDeque<>();
++        // Tuinity start - revert paper's change
++        private Runnable queued;
+ 
+         @Override
+         public void execute(Runnable runnable) {
+             AsyncCatcher.catchOp("Callback Executor execute");
+-            if (queued == null) {
+-                queued = new java.util.ArrayDeque<>();
++            if (queued != null) {
++                MinecraftServer.LOGGER.fatal("Failed to schedule runnable", new IllegalStateException("Already queued")); // Paper - make sure this is printed
++                throw new IllegalStateException("Already queued");
+             }
+-            queued.add(runnable);
++            queued = runnable;
+         }
++        // Tuinity end - revert paper's change
+ 
+         @Override
+         public void run() {
+             AsyncCatcher.catchOp("Callback Executor run");
+-            if (queued == null) {
+-                return;
+-            }
+-            java.util.ArrayDeque<Runnable> queue = queued;
++            // Tuinity start - revert paper's change
++            Runnable task = queued;
+             queued = null;
+-            Runnable task;
+-            while ((task = queue.pollFirst()) != null) {
++            if (task != null) {
++                // Tuinity end - revert paper's change
+                 task.run();
+             }
+         }

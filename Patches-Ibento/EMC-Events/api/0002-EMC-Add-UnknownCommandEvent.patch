@@ -1,0 +1,84 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Aikar <aikar@aikar.co>
+Date: Sun, 3 Jan 2016 22:02:53 -0500
+Subject: [PATCH] EMC Add UnknownCommandEvent
+
+
+diff --git a/src/main/java/com/empireminecraft/customevents/UnknownCommandEvent.java b/src/main/java/com/empireminecraft/customevents/UnknownCommandEvent.java
+new file mode 100644
+index 0000000000000000000000000000000000000000..071ca87dda1c8c588563456b6c71c5be80e91ebb
+--- /dev/null
++++ b/src/main/java/com/empireminecraft/customevents/UnknownCommandEvent.java
+@@ -0,0 +1,59 @@
++/*
++ * Copyright (c) 2016. Starlis LLC / dba Empire Minecraft
++ *
++ * This source code is proprietary software and must not be redistributed without Starlis LLC's approval
++ *
++ */
++
++package com.empireminecraft.customevents;
++
++import org.bukkit.command.CommandSender;
++import org.bukkit.event.Cancellable;
++import org.bukkit.event.Event;
++import org.bukkit.event.HandlerList;
++
++public class UnknownCommandEvent extends Event implements Cancellable {
++    private final CommandSender sender;
++    private final String sentCommandLabel;
++    private final String commandLine;
++
++    public UnknownCommandEvent(CommandSender sender, String sentCommandLabel, String commandLine) {
++        this.sender = sender;
++        this.sentCommandLabel = sentCommandLabel;
++        this.commandLine = commandLine;
++    }
++
++    public CommandSender getSender() {
++        return sender;
++    }
++
++    public String getSentCommandLabel() {
++        return sentCommandLabel;
++    }
++
++    public String getCommandLine() {
++        return commandLine;
++    }
++
++    private static final HandlerList handlers = new HandlerList();
++
++    public HandlerList getHandlers() {
++        return handlers;
++    }
++
++    public static HandlerList getHandlerList() {
++        return handlers;
++    }
++
++    private boolean cancelled = false;
++
++    @Override
++    public boolean isCancelled() {
++        return cancelled;
++    }
++
++    @Override
++    public void setCancelled(boolean cancel) {
++        cancelled = cancel;
++    }
++}
+diff --git a/src/main/java/org/bukkit/command/SimpleCommandMap.java b/src/main/java/org/bukkit/command/SimpleCommandMap.java
+index 460fda05a62b12db2edcfb7ea8b2a5dd8e4b110d..349ff926326ae6451b0664490e2688a7413d0279 100644
+--- a/src/main/java/org/bukkit/command/SimpleCommandMap.java
++++ b/src/main/java/org/bukkit/command/SimpleCommandMap.java
+@@ -144,7 +144,7 @@ public class SimpleCommandMap implements CommandMap {
+         Command target = getCommand(sentCommandLabel);
+ 
+         if (target == null) {
+-            return false;
++            return !(new com.empireminecraft.customevents.UnknownCommandEvent(sender, sentCommandLabel, commandLine).callEvent()); // EMC
+         }
+ 
+         // Paper start - Plugins do weird things to workaround normal registration

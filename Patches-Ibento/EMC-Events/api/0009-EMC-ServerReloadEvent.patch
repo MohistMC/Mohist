@@ -1,0 +1,32 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Aikar <aikar@aikar.co>
+Date: Sun, 4 Dec 2016 01:19:32 -0500
+Subject: [PATCH] EMC ServerReloadEvent
+
+
+diff --git a/src/main/java/com/empireminecraft/customevents/ServerReloadEvent.java b/src/main/java/com/empireminecraft/customevents/ServerReloadEvent.java
+new file mode 100644
+index 0000000000000000000000000000000000000000..2a5b39d8bbd958c104e73cae027cc72afe155c63
+--- /dev/null
++++ b/src/main/java/com/empireminecraft/customevents/ServerReloadEvent.java
+@@ -0,0 +1,20 @@
++package com.empireminecraft.customevents;
++
++import org.bukkit.event.Event;
++import org.bukkit.event.HandlerList;
++
++public class ServerReloadEvent extends Event {
++    public ServerReloadEvent() {
++    }
++
++
++    private static final HandlerList handlers = new HandlerList();
++
++    public HandlerList getHandlers() {
++        return handlers;
++    }
++
++    public static HandlerList getHandlerList() {
++        return handlers;
++    }
++}

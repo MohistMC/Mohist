@@ -1,0 +1,24 @@
+From fa4dc4a355819d26a5502092ed3daf593b9dba48 Mon Sep 17 00:00:00 2001
+From: Aikar <aikar@aikar.co>
+Date: Thu, 25 Jun 2015 21:00:09 -0400
+Subject: [PATCH] EMC ServerReloadEvent
+
+---
+ src/main/java/org/bukkit/craftbukkit/CraftServer.java | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/src/main/java/org/bukkit/craftbukkit/CraftServer.java b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
+index 6181f5886..206165c13 100644
+--- a/src/main/java/org/bukkit/craftbukkit/CraftServer.java
++++ b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
+@@ -780,6 +780,7 @@ public final class CraftServer implements Server {
+     @Override
+     public void reload() {
+         org.spigotmc.WatchdogThread.hasStarted = false; // Paper - Disable watchdog early timeout on reload
++        new com.empireminecraft.customevents.ServerReloadEvent().callEvent(); // EMC
+         reloadCount++;
+         configuration = YamlConfiguration.loadConfiguration(getConfigFile());
+         commandsConfiguration = YamlConfiguration.loadConfiguration(getCommandsConfigFile());
+-- 
+2.25.1.windows.1
+

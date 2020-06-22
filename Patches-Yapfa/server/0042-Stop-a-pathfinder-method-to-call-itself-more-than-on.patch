@@ -1,0 +1,97 @@
+From 72d490aa3f032ded718782998e49bb1f643f06ad Mon Sep 17 00:00:00 2001
+From: tr7zw <tr7zw@live.de>
+Date: Mon, 6 Apr 2020 01:05:08 +0200
+Subject: [PATCH] Stop a pathfinder method to call itself more than once
+
+This miiiight help to fix the pathfinder from going nuts. Only time will tell.
+---
+ .../minecraft/server/PathfinderNormal.java    | 24 +++++++++++--------
+ 1 file changed, 14 insertions(+), 10 deletions(-)
+
+diff --git a/src/main/java/net/minecraft/server/PathfinderNormal.java b/src/main/java/net/minecraft/server/PathfinderNormal.java
+index 61e4dbcd4..f406abd84 100644
+--- a/src/main/java/net/minecraft/server/PathfinderNormal.java
++++ b/src/main/java/net/minecraft/server/PathfinderNormal.java
+@@ -96,49 +96,49 @@ public class PathfinderNormal extends PathfinderAbstract {
+         }
+ 
+         double d0 = a((IBlockAccess) this.a, new BlockPosition(pathpoint.a, pathpoint.b, pathpoint.c));
+-        PathPoint pathpoint1 = this.a(pathpoint.a, pathpoint.b, pathpoint.c + 1, j, d0, EnumDirection.SOUTH);
++        PathPoint pathpoint1 = this.a(pathpoint.a, pathpoint.b, pathpoint.c + 1, j, d0, EnumDirection.SOUTH, 0); // YAPFA
+ 
+         if (pathpoint1 != null && !pathpoint1.i && pathpoint1.k >= 0.0F) {
+             apathpoint[i++] = pathpoint1;
+         }
+ 
+-        PathPoint pathpoint2 = this.a(pathpoint.a - 1, pathpoint.b, pathpoint.c, j, d0, EnumDirection.WEST);
++        PathPoint pathpoint2 = this.a(pathpoint.a - 1, pathpoint.b, pathpoint.c, j, d0, EnumDirection.WEST, 0); // YAPFA
+ 
+         if (pathpoint2 != null && !pathpoint2.i && pathpoint2.k >= 0.0F) {
+             apathpoint[i++] = pathpoint2;
+         }
+ 
+-        PathPoint pathpoint3 = this.a(pathpoint.a + 1, pathpoint.b, pathpoint.c, j, d0, EnumDirection.EAST);
++        PathPoint pathpoint3 = this.a(pathpoint.a + 1, pathpoint.b, pathpoint.c, j, d0, EnumDirection.EAST, 0); // YAPFA
+ 
+         if (pathpoint3 != null && !pathpoint3.i && pathpoint3.k >= 0.0F) {
+             apathpoint[i++] = pathpoint3;
+         }
+ 
+-        PathPoint pathpoint4 = this.a(pathpoint.a, pathpoint.b, pathpoint.c - 1, j, d0, EnumDirection.NORTH);
++        PathPoint pathpoint4 = this.a(pathpoint.a, pathpoint.b, pathpoint.c - 1, j, d0, EnumDirection.NORTH, 0); // YAPFA
+ 
+         if (pathpoint4 != null && !pathpoint4.i && pathpoint4.k >= 0.0F) {
+             apathpoint[i++] = pathpoint4;
+         }
+ 
+-        PathPoint pathpoint5 = this.a(pathpoint.a - 1, pathpoint.b, pathpoint.c - 1, j, d0, EnumDirection.NORTH);
++        PathPoint pathpoint5 = this.a(pathpoint.a - 1, pathpoint.b, pathpoint.c - 1, j, d0, EnumDirection.NORTH, 0); // YAPFA
+ 
+         if (this.a(pathpoint, pathpoint2, pathpoint4, pathpoint5)) {
+             apathpoint[i++] = pathpoint5;
+         }
+ 
+-        PathPoint pathpoint6 = this.a(pathpoint.a + 1, pathpoint.b, pathpoint.c - 1, j, d0, EnumDirection.NORTH);
++        PathPoint pathpoint6 = this.a(pathpoint.a + 1, pathpoint.b, pathpoint.c - 1, j, d0, EnumDirection.NORTH, 0); // YAPFA
+ 
+         if (this.a(pathpoint, pathpoint3, pathpoint4, pathpoint6)) {
+             apathpoint[i++] = pathpoint6;
+         }
+ 
+-        PathPoint pathpoint7 = this.a(pathpoint.a - 1, pathpoint.b, pathpoint.c + 1, j, d0, EnumDirection.SOUTH);
++        PathPoint pathpoint7 = this.a(pathpoint.a - 1, pathpoint.b, pathpoint.c + 1, j, d0, EnumDirection.SOUTH, 0); // YAPFA
+ 
+         if (this.a(pathpoint, pathpoint2, pathpoint1, pathpoint7)) {
+             apathpoint[i++] = pathpoint7;
+         }
+ 
+-        PathPoint pathpoint8 = this.a(pathpoint.a + 1, pathpoint.b, pathpoint.c + 1, j, d0, EnumDirection.SOUTH);
++        PathPoint pathpoint8 = this.a(pathpoint.a + 1, pathpoint.b, pathpoint.c + 1, j, d0, EnumDirection.SOUTH, 0); // YAPFA
+ 
+         if (this.a(pathpoint, pathpoint3, pathpoint1, pathpoint8)) {
+             apathpoint[i++] = pathpoint8;
+@@ -159,7 +159,11 @@ public class PathfinderNormal extends PathfinderAbstract {
+     }
+ 
+     @Nullable
+-    private PathPoint a(int i, int j, int k, int l, double d0, EnumDirection enumdirection) {
++    private PathPoint a(int i, int j, int k, int l, double d0, EnumDirection enumdirection, int tries) { // YAPFA
++    	if(tries > 1) {
++    		System.out.println("Stopped an entity falling into a Pathfinder loop. This might or might not be right! " + super.b.toString());
++    		return null; // YAPFA - This might stop the Pathfinder from going nuts
++    	}
+         PathPoint pathpoint = null;
+         BlockPosition blockposition = new BlockPosition(i, j, k);
+         double d1 = a((IBlockAccess) this.a, blockposition);
+@@ -181,7 +185,7 @@ public class PathfinderNormal extends PathfinderAbstract {
+                 return pathpoint;
+             } else {
+                 if ((pathpoint == null || pathpoint.k < 0.0F) && l > 0 && pathtype != PathType.FENCE && pathtype != PathType.TRAPDOOR) {
+-                    pathpoint = this.a(i, j + 1, k, l - 1, d0, enumdirection);
++                    pathpoint = this.a(i, j + 1, k, l - 1, d0, enumdirection, ++tries);
+                     if (pathpoint != null && (pathpoint.l == PathType.OPEN || pathpoint.l == PathType.WALKABLE) && this.b.getWidth() < 1.0F) {
+                         double d3 = (double) (i - enumdirection.getAdjacentX()) + 0.5D;
+                         double d4 = (double) (k - enumdirection.getAdjacentZ()) + 0.5D;
+-- 
+2.25.1.windows.1
+

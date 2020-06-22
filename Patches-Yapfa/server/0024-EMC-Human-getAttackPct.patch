@@ -1,0 +1,46 @@
+From fcd5d6a2277dadeb29dae1a4e3a4cf8a9ceb1bcd Mon Sep 17 00:00:00 2001
+From: Aikar <aikar@aikar.co>
+Date: Sun, 17 Jun 2018 02:09:37 -0400
+Subject: [PATCH] EMC Human#getAttackPct
+
+---
+ src/main/java/net/minecraft/server/EntityHuman.java             | 2 ++
+ .../java/org/bukkit/craftbukkit/entity/CraftHumanEntity.java    | 2 ++
+ 2 files changed, 4 insertions(+)
+
+diff --git a/src/main/java/net/minecraft/server/EntityHuman.java b/src/main/java/net/minecraft/server/EntityHuman.java
+index 8f4bb71b1..c1e8ff6ab 100644
+--- a/src/main/java/net/minecraft/server/EntityHuman.java
++++ b/src/main/java/net/minecraft/server/EntityHuman.java
+@@ -79,6 +79,7 @@ public abstract class EntityHuman extends EntityLiving {
+     public boolean fauxSleeping;
+     public String spawnWorld = "";
+     public int oldLevel = -1;
++    public float lastAttackPct = 0; // EMC
+ 
+     @Override
+     public CraftHumanEntity getBukkitEntity() {
+@@ -1054,6 +1055,7 @@ public abstract class EntityHuman extends EntityLiving {
+                 }
+ 
+                 float f2 = this.s(0.5F);
++                this.lastAttackPct = f2; // EMC
+ 
+                 f *= 0.2F + f2 * f2 * 0.8F;
+                 f1 *= f2;
+diff --git a/src/main/java/org/bukkit/craftbukkit/entity/CraftHumanEntity.java b/src/main/java/org/bukkit/craftbukkit/entity/CraftHumanEntity.java
+index a2815073b..faa65ef20 100644
+--- a/src/main/java/org/bukkit/craftbukkit/entity/CraftHumanEntity.java
++++ b/src/main/java/org/bukkit/craftbukkit/entity/CraftHumanEntity.java
+@@ -72,6 +72,8 @@ public class CraftHumanEntity extends CraftLivingEntity implements HumanEntity {
+     private boolean op;
+     private GameMode mode;
+ 
++    @Override public float getAttackPct() { return getHandle().lastAttackPct; } // EMC
++
+     public CraftHumanEntity(final CraftServer server, final EntityHuman entity) {
+         super(server, entity);
+         mode = server.getDefaultGameMode();
+-- 
+2.25.1.windows.1
+

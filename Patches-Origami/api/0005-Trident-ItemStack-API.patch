@@ -1,0 +1,31 @@
+From 4aab736b93b816f43392664d2cc6b28d7a35c0da Mon Sep 17 00:00:00 2001
+From: Phoenix616 <mail@moep.tv>
+Date: Wed, 6 May 2020 00:51:18 +0100
+Subject: [PATCH] Trident ItemStack API
+
+---
+ src/main/java/org/bukkit/entity/Trident.java | 11 ++++++++++-
+ 1 file changed, 10 insertions(+), 1 deletion(-)
+
+diff --git a/src/main/java/org/bukkit/entity/Trident.java b/src/main/java/org/bukkit/entity/Trident.java
+index 3379ef9ba..c16d3c9fe 100644
+--- a/src/main/java/org/bukkit/entity/Trident.java
++++ b/src/main/java/org/bukkit/entity/Trident.java
+@@ -3,4 +3,13 @@ package org.bukkit.entity;
+ /**
+  * Represents a thrown trident.
+  */
+-public interface Trident extends AbstractArrow { }
++public interface Trident extends AbstractArrow {
++    // Origami start - get trident ItemStack
++    /**
++     * Get the ItemStack of this Trident
++     * @return The trident as an ItemStack
++     */
++    @org.jetbrains.annotations.NotNull
++    org.bukkit.inventory.ItemStack getItem();
++    // Origami end
++}
+-- 
+2.25.1.windows.1
+

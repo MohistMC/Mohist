@@ -1,0 +1,197 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Spottedleaf <Spottedleaf@users.noreply.github.com>
+Date: Sun, 3 Mar 2019 20:53:18 -0800
+Subject: [PATCH] Multi-Threaded Server Ticking Vanilla
+
+This patch is the vanilla server changes
+
+Currently a placeholder patch.
+
+diff --git a/src/main/java/com/tuinity/tuinity/chunk/SingleThreadChunkRegionManager.java b/src/main/java/com/tuinity/tuinity/chunk/SingleThreadChunkRegionManager.java
+new file mode 100644
+index 0000000000000000000000000000000000000000..97c4100c5d60de7babfc3b7b6a4352101b21aac9
+--- /dev/null
++++ b/src/main/java/com/tuinity/tuinity/chunk/SingleThreadChunkRegionManager.java
+@@ -0,0 +1,159 @@
++package com.tuinity.tuinity.chunk;
++
++import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
++import it.unimi.dsi.fastutil.longs.LongIterator;
++import it.unimi.dsi.fastutil.longs.LongOpenHashSet;
++import net.minecraft.server.MCUtil;
++import net.minecraft.server.WorldServer;
++import java.util.List;
++
++public final class SingleThreadChunkRegionManager {
++
++    static final int REGION_SECTION_MERGE_RADIUS = 1;
++
++    static final int REGION_SECTION_CHUNK_SIZE       = 8;
++    static final int REGION_SECTION_CHUNK_SIZE_SHIFT = 3;
++
++    final Long2ObjectOpenHashMap<SingleThreadChunkRegionManager.ChunkRegion> regionsBySection = new Long2ObjectOpenHashMap<>(4096, 0.25f);
++    final LongOpenHashSet chunks = new LongOpenHashSet(8192, 0.25f);
++
++    public final WorldServer world;
++
++    public SingleThreadChunkRegionManager(final WorldServer world) {
++        this.world = world;
++    }
++
++    public void addChunk(final int chunkX, final int chunkZ) {
++        this.addChunk(chunkX, chunkZ, true);
++    }
++
++    void addChunk(final int chunkX, final int chunkZ, boolean addToChunks) {
++        final long coordinate = MCUtil.getCoordinateKey(chunkX, chunkZ);
++        final long sectionPos = MCUtil.getCoordinateKey(chunkX >> REGION_SECTION_CHUNK_SIZE_SHIFT, chunkZ >> REGION_SECTION_CHUNK_SIZE_SHIFT);
++        if (addToChunks) {
++            this.chunks.add(coordinate);
++        }
++
++        // merge nearby regions first
++
++        // gather regions to merge
++
++        SingleThreadChunkRegionManager.ChunkRegion mergeIntoCandidate = null;
++        int mergeCandidateChunkCount = -1;
++
++        List<SingleThreadChunkRegionManager.ChunkRegion> toMerge = null;
++
++        final int regionSectionX = chunkX >> REGION_SECTION_CHUNK_SIZE_SHIFT;
++        final int regionSectionZ = chunkZ >> REGION_SECTION_CHUNK_SIZE_SHIFT;
++
++        final int checkXStart = regionSectionX - REGION_SECTION_MERGE_RADIUS;
++        final int checkZStart = regionSectionZ - REGION_SECTION_MERGE_RADIUS;
++        final int checkXEnd = regionSectionX + REGION_SECTION_MERGE_RADIUS;
++        final int checkZEnd = regionSectionZ + REGION_SECTION_MERGE_RADIUS;
++
++        // select the ideal region to merge into
++        for (int checkX = checkXStart; checkX <= checkXEnd; ++checkX) {
++            for (int checkZ = checkZStart; checkZ <= checkZEnd; ++checkZ) {
++                final SingleThreadChunkRegionManager.ChunkRegion region = this.regionsBySection.get(MCUtil.getCoordinateKey(checkX, checkZ));
++                if (region == null) {
++                    continue;
++                }
++
++                final int coordinateSize = region.coordinates.size();
++                if (coordinateSize > mergeCandidateChunkCount) {
++                    mergeIntoCandidate = region;
++                    mergeCandidateChunkCount = coordinateSize;
++                }
++                if (toMerge == null) {
++                    toMerge = new java.util.ArrayList<>(4);
++                    toMerge.add(region);
++                }
++            }
++        }
++
++        // merge
++        if (toMerge != null) {
++            for (int i = 0, len = toMerge.size(); i < len; ++i) {
++                final SingleThreadChunkRegionManager.ChunkRegion needsMerge = toMerge.get(i);
++                if (needsMerge == mergeIntoCandidate) {
++                    continue;
++                }
++                // this function forwards the sections
++                needsMerge.mergeInto(this, mergeIntoCandidate);
++            }
++        } else {
++            mergeIntoCandidate = new ChunkRegion();
++        }
++
++        mergeIntoCandidate.addChunk(coordinate);
++        if (mergeIntoCandidate.addSection(sectionPos)) {
++            this.regionsBySection.put(sectionPos, mergeIntoCandidate);
++        }
++    }
++
++    public void removeChunk(final int chunkX, final int chunkZ) {
++        final long coordinate = MCUtil.getCoordinateKey(chunkX, chunkZ);
++        final long sectionPos = MCUtil.getCoordinateKey(chunkX >> REGION_SECTION_CHUNK_SIZE_SHIFT, chunkZ >> REGION_SECTION_CHUNK_SIZE_SHIFT);
++        this.chunks.remove(coordinate);
++
++        final SingleThreadChunkRegionManager.ChunkRegion region = this.regionsBySection.get(sectionPos);
++        if (region == null) {
++            throw new IllegalStateException("Cannot remove chunk form no region");
++        }
++
++        if (!region.removeChunk(coordinate)) {
++            throw new IllegalStateException("Cannot remove chunk from region, has no chunk");
++        }
++    }
++
++    public void recalculateRegions() {
++        this.regionsBySection.clear();
++        for (final LongIterator iterator = this.chunks.iterator(); iterator.hasNext();) {
++            final long coordinate = iterator.nextLong();
++            this.addChunk(MCUtil.getCoordinateX(coordinate), MCUtil.getCoordinateZ(coordinate), false);
++        }
++    }
++
++    static final class ChunkRegion {
++        private final LongOpenHashSet coordinates = new LongOpenHashSet();
++        private final LongOpenHashSet sections = new LongOpenHashSet();
++        private boolean dead;
++
++        public void mergeInto(final SingleThreadChunkRegionManager regionManager, final ChunkRegion region) {
++            if (region.dead) {
++                throw new IllegalStateException("Attempting to merge into a dead region");
++            } else if (this.dead) {
++                throw new IllegalStateException("Attempting to merge from a dead region");
++            }
++
++            for (final LongIterator iterator = this.coordinates.iterator(); iterator.hasNext();) {
++                final long coordinate = iterator.nextLong();
++                if (!region.addChunk(coordinate)) {
++                    throw new IllegalStateException("Regions cannot share chunks");
++                }
++            }
++
++            for (final LongIterator iterator = this.sections.iterator(); iterator.hasNext();) {
++                regionManager.regionsBySection.replace(iterator.nextLong(), region);
++            }
++
++            this.dead = true;
++        }
++
++        boolean addSection(final long sectionPos) {
++            return this.sections.add(sectionPos);
++        }
++
++        boolean removeSection(final long sectionPos) {
++            return this.sections.remove(sectionPos);
++        }
++
++        boolean addChunk(final long coordinate) {
++            return this.coordinates.add(coordinate);
++        }
++
++        boolean removeChunk(final long coordinate) {
++            return this.coordinates.remove(coordinate);
++        }
++    }
++}
+\ No newline at end of file
+diff --git a/src/main/java/com/tuinity/tuinity/util/TickThread.java b/src/main/java/com/tuinity/tuinity/util/TickThread.java
+new file mode 100644
+index 0000000000000000000000000000000000000000..033548a58d27f64d3954206d267783c0437d4019
+--- /dev/null
++++ b/src/main/java/com/tuinity/tuinity/util/TickThread.java
+@@ -0,0 +1,15 @@
++package com.tuinity.tuinity.util;
++
++public final class TickThread extends Thread {
++
++    public final int id; /* We don't override getId as the spec requires that it be unique (with respect to all other threads) */
++
++    public TickThread(final Runnable run, final String name, final int id) {
++        super(run, name);
++        this.id = id;
++    }
++
++    public static TickThread getCurrentTickThread() {
++        return (TickThread)Thread.currentThread();
++    }
++}
+\ No newline at end of file

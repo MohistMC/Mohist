@@ -1,0 +1,31 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Spottedleaf <spottedleaf@spottedleaf.dev>
+Date: Sun, 17 May 2020 23:52:38 -0700
+Subject: [PATCH] Improve paper prevent moving into unloaded chunk check
+
+Check the AABB of the move
+
+diff --git a/src/main/java/net/minecraft/server/PlayerConnection.java b/src/main/java/net/minecraft/server/PlayerConnection.java
+index c17dbddcbddc7854b7061adae1d83b23adb35066..1859cd296bbe0ea12cd32366e84ce31caf71d9a3 100644
+--- a/src/main/java/net/minecraft/server/PlayerConnection.java
++++ b/src/main/java/net/minecraft/server/PlayerConnection.java
+@@ -369,7 +369,9 @@ public class PlayerConnection implements PacketListenerPlayIn {
+                 speed *= 2f; // TODO: Get the speed of the vehicle instead of the player
+ 
+                 // Paper start - Prevent moving into unloaded chunks
+-                if (player.world.paperConfig.preventMovingIntoUnloadedChunks && worldserver.getChunkIfLoadedImmediately((int) Math.floor(packetplayinvehiclemove.getX()) >> 4, (int) Math.floor(packetplayinvehiclemove.getZ()) >> 4) == null) {
++                if (player.world.paperConfig.preventMovingIntoUnloadedChunks // Tuinity - improve this check
++                        && (!worldserver.areChunksLoadedForMove(this.player.getBoundingBoxAt(this.player.locX(), this.player.locY(), this.player.locZ()).expand(toX - this.player.locX(), toY - this.player.locY(), toZ - this.player.locZ()))) // Tuinity - improve this check
++                    || !worldserver.areChunksLoadedForMove(entity.getBoundingBoxAt(entity.locX(), entity.locY(), entity.locZ()).expand(toX - entity.locX(), toY - entity.locY(), toZ - entity.locZ()))) { // Tuinity - improve this check
+                     this.networkManager.sendPacket(new PacketPlayOutVehicleMove(entity));
+                     return;
+                 }
+@@ -1032,7 +1034,7 @@ public class PlayerConnection implements PacketListenerPlayIn {
+                                 speed = player.abilities.walkSpeed * 10f;
+                             }
+                             // Paper start - Prevent moving into unloaded chunks
+-                            if (player.world.paperConfig.preventMovingIntoUnloadedChunks && (this.player.locX() != toX || this.player.locZ() != toZ) && worldserver.getChunkIfLoadedImmediately((int) Math.floor(toX) >> 4, (int) Math.floor(toZ) >> 4) == null) { // Paper - use getIfLoadedImmediately
++                            if (player.world.paperConfig.preventMovingIntoUnloadedChunks && !((WorldServer)this.player.world).areChunksLoadedForMove(this.player.getBoundingBoxAt(this.player.locX(), this.player.locY(), this.player.locZ()).expand(toX - this.player.locX(), toY - this.player.locY(), toZ - this.player.locZ()))) { // Paper - use getIfLoadedImmediately // Tuinity - improve this check
+                                 this.internalTeleport(this.player.locX(), this.player.locY(), this.player.locZ(), this.player.yaw, this.player.pitch, Collections.emptySet());
+                                 return;
+                             }

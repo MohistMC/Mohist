@@ -1,0 +1,51 @@
+From 9a13cede03f5813070099171e44548e9e8555d65 Mon Sep 17 00:00:00 2001
+From: Phoenix616 <mail@moep.tv>
+Date: Tue, 5 May 2020 00:58:28 +0100
+Subject: [PATCH] Origami POM changes
+
+---
+ pom.xml | 15 +++++++--------
+ 1 file changed, 7 insertions(+), 8 deletions(-)
+
+diff --git a/pom.xml b/pom.xml
+index d0da7da..fad07e9 100644
+--- a/pom.xml
++++ b/pom.xml
+@@ -3,18 +3,17 @@
+          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+     <modelVersion>4.0.0</modelVersion>
+     <parent>
+-        <groupId>com.destroystokyo.paper</groupId>
+-        <artifactId>paper-parent</artifactId>
++        <groupId>de.minebench.origami</groupId>
++        <artifactId>origami-parent</artifactId>
+         <version>dev-SNAPSHOT</version>
+     </parent>
+ 
+-    <groupId>com.destroystokyo.paper</groupId>
+-    <artifactId>paper-mojangapi</artifactId>
++    <artifactId>origami-mojangapi</artifactId>
+     <version>1.15.2-R0.1-SNAPSHOT</version>
+     <packaging>jar</packaging>
+ 
+-    <name>Paper-MojangAPI</name>
+-    <url>https://github.com/PaperMC/Paper</url>
++    <name>Origami-MojangAPI</name>
++    <url>https://minebench.de</url>
+     <description>API additions that utilize Mojang Specific API's</description>
+ 
+     <properties>
+@@ -49,8 +48,8 @@
+ 
+     <dependencies>
+         <dependency>
+-            <groupId>com.destroystokyo.paper</groupId>
+-            <artifactId>paper-api</artifactId>
++            <groupId>de.minebench.origami</groupId>
++            <artifactId>origami-api</artifactId>
+             <version>${project.version}</version>
+             <scope>provided</scope>
+         </dependency>
+-- 
+2.25.1.windows.1
+

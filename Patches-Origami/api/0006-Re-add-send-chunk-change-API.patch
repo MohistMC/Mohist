@@ -1,0 +1,34 @@
+From 422ec4932d51acbba272b2452cda4d98a4f1bf4c Mon Sep 17 00:00:00 2001
+From: Phoenix616 <mail@moep.tv>
+Date: Thu, 14 May 2020 20:47:40 +0100
+Subject: [PATCH] Re-add send chunk change API
+
+---
+ src/main/java/org/bukkit/entity/Player.java | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
+
+diff --git a/src/main/java/org/bukkit/entity/Player.java b/src/main/java/org/bukkit/entity/Player.java
+index 787bb144b..43e31ef8c 100644
+--- a/src/main/java/org/bukkit/entity/Player.java
++++ b/src/main/java/org/bukkit/entity/Player.java
+@@ -403,6 +403,17 @@ public interface Player extends HumanEntity, Conversable, OfflinePlayer, PluginM
+     @Deprecated
+     public boolean sendChunkChange(@NotNull Location loc, int sx, int sy, int sz, @NotNull byte[] data);
+ 
++    // Origami start - Chunk change API
++    /**
++     * Send a chunk change. This fakes a chunk change packet for a user.
++     * This will not actually change the world in any way.
++     *
++     * @param chunk The chunk to send
++     * @return true if the chunk change packet was sent
++     */
++    public boolean sendChunkChange(@NotNull org.bukkit.Chunk chunk);
++    // Origami end
++
+     /**
+      * Send a sign change. This fakes a sign change packet for a user at
+      * a certain location. This will not actually change the world in any way.
+-- 
+2.25.1.windows.1
+

@@ -1,0 +1,59 @@
+From e206188201a0cddf8a68148ebeec4702b3931451 Mon Sep 17 00:00:00 2001
+From: tr7zw <tr7zw@live.de>
+Date: Mon, 11 May 2020 21:02:57 +0200
+Subject: [PATCH] lithium MixinBox
+
+---
+ .../net/minecraft/server/AxisAlignedBB.java   | 34 ++++++++++++++++---
+ 1 file changed, 30 insertions(+), 4 deletions(-)
+
+diff --git a/src/main/java/net/minecraft/server/AxisAlignedBB.java b/src/main/java/net/minecraft/server/AxisAlignedBB.java
+index 688c5b1bd..e78e27588 100644
+--- a/src/main/java/net/minecraft/server/AxisAlignedBB.java
++++ b/src/main/java/net/minecraft/server/AxisAlignedBB.java
+@@ -150,12 +150,38 @@ public class AxisAlignedBB {
+         return new AxisAlignedBB((double) structureboundingbox.a, (double) structureboundingbox.b, (double) structureboundingbox.c, (double) (structureboundingbox.d + 1), (double) (structureboundingbox.e + 1), (double) (structureboundingbox.f + 1));
+     }
+ 
++    /**
++     * @reason Simplify the code to better help the JVM optimize it
++     * @author JellySquid
++     */
+     public double a(EnumDirection.EnumAxis enumdirection_enumaxis) {
+-        return enumdirection_enumaxis.a(this.minX, this.minY, this.minZ);
+-    }
+-
++		switch (enumdirection_enumaxis) {
++		case X:
++			return this.minX;
++		case Y:
++			return this.minY;
++		case Z:
++			return this.minZ;
++		}
++
++		throw new IllegalArgumentException();
++    }
++
++    /**
++     * @reason Simplify the code to better help the JVM optimize it
++     * @author JellySquid
++     */
+     public double b(EnumDirection.EnumAxis enumdirection_enumaxis) {
+-        return enumdirection_enumaxis.a(this.maxX, this.maxY, this.maxZ);
++		switch (enumdirection_enumaxis) {
++		case X:
++			return this.maxX;
++		case Y:
++			return this.maxY;
++		case Z:
++			return this.maxZ;
++		}
++
++		throw new IllegalArgumentException();
+     }
+ 
+     public boolean equals(Object object) {
+-- 
+2.25.1.windows.1
+

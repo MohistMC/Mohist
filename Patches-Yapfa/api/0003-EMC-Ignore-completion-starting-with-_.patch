@@ -1,0 +1,25 @@
+From d4186dbbc8621facafd0c7b2dd02260435577000 Mon Sep 17 00:00:00 2001
+From: Aikar <aikar@aikar.co>
+Date: Wed, 3 Jun 2015 21:39:34 -0400
+Subject: [PATCH] EMC Ignore completion starting with _
+
+---
+ src/main/java/org/bukkit/command/SimpleCommandMap.java | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/main/java/org/bukkit/command/SimpleCommandMap.java b/src/main/java/org/bukkit/command/SimpleCommandMap.java
+index 460fda05..a8e33960 100644
+--- a/src/main/java/org/bukkit/command/SimpleCommandMap.java
++++ b/src/main/java/org/bukkit/command/SimpleCommandMap.java
+@@ -218,7 +218,7 @@ public class SimpleCommandMap implements CommandMap {
+ 
+                 String name = commandEntry.getKey(); // Use the alias, not command name
+ 
+-                if (StringUtil.startsWithIgnoreCase(name, cmdLine)) {
++                if (name.charAt(0) != '_' && StringUtil.startsWithIgnoreCase(name, cmdLine)) { // EMC
+                     completions.add(prefix + name);
+                 }
+             }
+-- 
+2.25.1.windows.1
+

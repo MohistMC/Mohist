@@ -1,0 +1,30 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Spottedleaf <spottedleaf@spottedleaf.dev>
+Date: Mon, 27 Apr 2020 03:01:42 -0700
+Subject: [PATCH] Prevent long map entry creation in light engine
+
+Use fastiterator to prevent it
+
+diff --git a/src/main/java/net/minecraft/server/LightEngineStorage.java b/src/main/java/net/minecraft/server/LightEngineStorage.java
+index f2575fb69714397bb8e1f9d402689c7816d73b6c..89985a61e4ee596f3ceb075f0f11207bd56b6b5d 100644
+--- a/src/main/java/net/minecraft/server/LightEngineStorage.java
++++ b/src/main/java/net/minecraft/server/LightEngineStorage.java
+@@ -23,7 +23,8 @@ public abstract class LightEngineStorage<M extends LightEngineStorageArray<M>> e
+     protected final M f; protected final M updating; // Paper - diff on change, should be "updating"
+     protected final LongSet g = new LongOpenHashSet();
+     protected final LongSet h = new LongOpenHashSet(); LongSet dirty = h; // Paper - OBFHELPER
+-    protected final Long2ObjectMap<NibbleArray> i = Long2ObjectMaps.synchronize(new Long2ObjectOpenHashMap());
++    protected final Long2ObjectOpenHashMap<NibbleArray> i_synchronized_map_real = new Long2ObjectOpenHashMap<>(); // Tuinity - store wrapped map, we need fastIterator
++    protected final Long2ObjectMap<NibbleArray> i = Long2ObjectMaps.synchronize(this.i_synchronized_map_real); // Tuinity - store wrapped map, we need fastIterator
+     private final LongSet n = new LongOpenHashSet();
+     private final LongSet o = new LongOpenHashSet();
+     protected volatile boolean j;
+@@ -246,7 +247,7 @@ public abstract class LightEngineStorage<M extends LightEngineStorageArray<M>> e
+ 
+             this.o.clear();
+             this.j = false;
+-            ObjectIterator<Long2ObjectMap.Entry<NibbleArray>> objectiterator = Long2ObjectMaps.fastIterator(this.i); // Paper
++            ObjectIterator objectiterator = this.i_synchronized_map_real.long2ObjectEntrySet().fastIterator(); // Tuinity - use fast iterator to reduce entry creation - remove paper diff, it's ineffective
+ 
+             Entry entry;
+             long j;
