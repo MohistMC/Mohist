@@ -1,0 +1,336 @@
+From: Jedediah Smith <jedediah@silencegreys.com>
+Date: Sun, 9 Oct 2016 08:04:12 -0400
+Subject: [PATCH] Fix several block rotation data values
+
+
+diff --git a/src/main/java/org/bukkit/material/Alignable.java b/src/main/java/org/bukkit/material/Alignable.java
+new file mode 100644
+index 0000000..c9ad81e
+--- /dev/null
++++ b/src/main/java/org/bukkit/material/Alignable.java
+@@ -0,0 +1,8 @@
++package org.bukkit.material;
++
++import org.bukkit.util.Axis;
++
++public interface Alignable {
++
++    Axis getAxis();
++}
+diff --git a/src/main/java/org/bukkit/material/Banner.java b/src/main/java/org/bukkit/material/Banner.java
+--- a/src/main/java/org/bukkit/material/Banner.java
++++ b/src/main/java/org/bukkit/material/Banner.java
+@@ -56,6 +56,7 @@ public class Banner extends MaterialData implements Attachable {
+                     return BlockFace.SOUTH;
+ 
+                 case 0x3:
++                default:
+                     return BlockFace.NORTH;
+ 
+                 case 0x4:
+@@ -64,8 +65,6 @@ public class Banner extends MaterialData implements Attachable {
+                 case 0x5:
+                     return BlockFace.WEST;
+             }
+-
+-            return null;
+         } else {
+             return BlockFace.DOWN;
+         }
+diff --git a/src/main/java/org/bukkit/material/Button.java b/src/main/java/org/bukkit/material/Button.java
+--- a/src/main/java/org/bukkit/material/Button.java
++++ b/src/main/java/org/bukkit/material/Button.java
+@@ -83,6 +83,7 @@ public class Button extends SimpleAttachableMaterialData implements Redstone {
+             return BlockFace.EAST;
+ 
+         case 0x3:
++        default:
+             return BlockFace.NORTH;
+ 
+         case 0x4:
+@@ -91,8 +92,6 @@ public class Button extends SimpleAttachableMaterialData implements Redstone {
+         case 0x5:
+             return BlockFace.DOWN;
+         }
+-
+-        return null;
+     }
+ 
+     /**
+diff --git a/src/main/java/org/bukkit/material/CocoaPlant.java b/src/main/java/org/bukkit/material/CocoaPlant.java
+--- a/src/main/java/org/bukkit/material/CocoaPlant.java
++++ b/src/main/java/org/bukkit/material/CocoaPlant.java
+@@ -114,11 +114,11 @@ public class CocoaPlant extends MaterialData implements Directional, Attachable
+             case 1:
+                 return BlockFace.WEST;
+             case 2:
++            default:
+                 return BlockFace.NORTH;
+             case 3:
+                 return BlockFace.EAST;
+         }
+-        return null;
+     }
+ 
+     @Override
+diff --git a/src/main/java/org/bukkit/material/DirectionalContainer.java b/src/main/java/org/bukkit/material/DirectionalContainer.java
+--- a/src/main/java/org/bukkit/material/DirectionalContainer.java
++++ b/src/main/java/org/bukkit/material/DirectionalContainer.java
+@@ -68,6 +68,7 @@ public class DirectionalContainer extends MaterialData implements Directional {
+         byte data = getData();
+ 
+         switch (data) {
++        default:
+         case 0x2:
+             return BlockFace.NORTH;
+ 
+@@ -78,7 +79,6 @@ public class DirectionalContainer extends MaterialData implements Directional {
+             return BlockFace.WEST;
+ 
+         case 0x5:
+-        default:
+             return BlockFace.EAST;
+         }
+     }
+diff --git a/src/main/java/org/bukkit/material/Gate.java b/src/main/java/org/bukkit/material/Gate.java
+--- a/src/main/java/org/bukkit/material/Gate.java
++++ b/src/main/java/org/bukkit/material/Gate.java
+@@ -31,16 +31,16 @@ public class Gate extends MaterialData implements Directional, Openable {
+ 
+         switch (face) {
+             default:
+-            case EAST:
++            case SOUTH:
+                 data |= GATE_SOUTH;
+                 break;
+-            case SOUTH:
++            case WEST:
+                 data |= GATE_WEST;
+                 break;
+-            case WEST:
++            case NORTH:
+                 data |= GATE_NORTH;
+                 break;
+-            case NORTH:
++            case EAST:
+                 data |= GATE_EAST;
+                 break;
+         }
+@@ -51,13 +51,13 @@ public class Gate extends MaterialData implements Directional, Openable {
+     public BlockFace getFacing() {
+         switch (getData() & DIR_BIT) {
+             case GATE_SOUTH:
+-                return BlockFace.EAST;
+-            case GATE_WEST:
+                 return BlockFace.SOUTH;
+-            case GATE_NORTH:
++            case GATE_WEST:
+                 return BlockFace.WEST;
+-            case GATE_EAST:
++            case GATE_NORTH:
+                 return BlockFace.NORTH;
++            case GATE_EAST:
++                return BlockFace.EAST;
+         }
+ 
+         return BlockFace.EAST;
+diff --git a/src/main/java/org/bukkit/material/Ladder.java b/src/main/java/org/bukkit/material/Ladder.java
+--- a/src/main/java/org/bukkit/material/Ladder.java
++++ b/src/main/java/org/bukkit/material/Ladder.java
+@@ -54,6 +54,7 @@ public class Ladder extends SimpleAttachableMaterialData {
+ 
+         switch (data) {
+         case 0x2:
++            default:
+             return BlockFace.SOUTH;
+ 
+         case 0x3:
+@@ -65,8 +66,6 @@ public class Ladder extends SimpleAttachableMaterialData {
+         case 0x5:
+             return BlockFace.WEST;
+         }
+-
+-        return null;
+     }
+ 
+     /**
+@@ -76,19 +75,19 @@ public class Ladder extends SimpleAttachableMaterialData {
+         byte data = (byte) 0x0;
+ 
+         switch (face) {
+-        case SOUTH:
++        case NORTH:
+             data = 0x2;
+             break;
+ 
+-        case NORTH:
++        case SOUTH:
+             data = 0x3;
+             break;
+ 
+-        case EAST:
++        case WEST:
+             data = 0x4;
+             break;
+ 
+-        case WEST:
++        case EAST:
+             data = 0x5;
+             break;
+         }
+diff --git a/src/main/java/org/bukkit/material/Lever.java b/src/main/java/org/bukkit/material/Lever.java
+--- a/src/main/java/org/bukkit/material/Lever.java
++++ b/src/main/java/org/bukkit/material/Lever.java
+@@ -2,11 +2,12 @@ package org.bukkit.material;
+ 
+ import org.bukkit.block.BlockFace;
+ import org.bukkit.Material;
++import org.bukkit.util.Axis;
+ 
+ /**
+  * Represents a lever
+  */
+-public class Lever extends SimpleAttachableMaterialData implements Redstone {
++public class Lever extends SimpleAttachableMaterialData implements Redstone, Alignable {
+     public Lever() {
+         super(Material.LEVER);
+     }
+@@ -101,56 +102,62 @@ public class Lever extends SimpleAttachableMaterialData implements Redstone {
+      * Sets the direction this lever is pointing in
+      */
+     public void setFacingDirection(BlockFace face) {
++        setFacingDirection(face, Axis.Z);
++    }
++
++    /**
++     * Set the direction this lever is facing, and the axis that it moves along, if it is facing vertically.
++     */
++    public void setFacingDirection(BlockFace facing, Axis axis) {
+         byte data = (byte) (getData() & 0x8);
+-        BlockFace attach = getAttachedFace();
+-
+-        if (attach == BlockFace.DOWN) {
+-            switch (face) {
+-            case SOUTH:
+-            case NORTH:
+-                data |= 0x5;
+-                break;
+-
+-            case EAST:
+-            case WEST:
+-                data |= 0x6;
+-                break;
+-            }
+-        } else if (attach == BlockFace.UP) {
+-            switch (face) {
+-            case SOUTH:
+-            case NORTH:
+-                data |= 0x7;
+-                break;
+-
+-            case EAST:
+-            case WEST:
+-                data |= 0x0;
+-                break;
+-            }
+-        } else {
+-            switch (face) {
+-            case EAST:
+-                data |= 0x1;
+-                break;
+-
+-            case WEST:
+-                data |= 0x2;
+-                break;
+-
+-            case SOUTH:
+-                data |= 0x3;
+-                break;
+-
+-            case NORTH:
+-                data |= 0x4;
+-                break;
+-            }
++
++        switch (facing) {
++        case EAST:
++            data |= 0x1;
++            break;
++
++        case WEST:
++            data |= 0x2;
++            break;
++
++        case SOUTH:
++            data |= 0x3;
++            break;
++
++        case NORTH:
++            data |= 0x4;
++            break;
++
++        case UP:
++            data |= axis == Axis.Z ? 0x5 : 0x6;
++            break;
++
++        case DOWN:
++            data |= axis == Axis.Z ? 0x7 : 0x0;
++            break;
+         }
++
+         setData(data);
+     }
+ 
+     @Override
++    public Axis getAxis() {
++        final byte data = (byte) (getData() & 0x7);
++        switch(data) {
++            case 5:
++            case 7:
++                return Axis.Z;
++
++            case 0:
++            case 6:
++                return Axis.X;
++
++            default:
++                return Axis.Y;
++        }
++    }
++
++    @Override
+     public String toString() {
+         return super.toString() + " facing " + getFacing() + " " + (isPowered() ? "" : "NOT ") + "POWERED";
+     }
+diff --git a/src/main/java/org/bukkit/material/Sign.java b/src/main/java/org/bukkit/material/Sign.java
+--- a/src/main/java/org/bukkit/material/Sign.java
++++ b/src/main/java/org/bukkit/material/Sign.java
+@@ -65,6 +65,7 @@ public class Sign extends MaterialData implements Attachable {
+ 
+             switch (data) {
+             case 0x2:
++                default:
+                 return BlockFace.SOUTH;
+ 
+             case 0x3:
+@@ -76,8 +77,6 @@ public class Sign extends MaterialData implements Attachable {
+             case 0x5:
+                 return BlockFace.WEST;
+             }
+-
+-            return null;
+         } else {
+             return BlockFace.DOWN;
+         }
+diff --git a/src/main/java/org/bukkit/material/Stairs.java b/src/main/java/org/bukkit/material/Stairs.java
+--- a/src/main/java/org/bukkit/material/Stairs.java
++++ b/src/main/java/org/bukkit/material/Stairs.java
+@@ -76,7 +76,7 @@ public class Stairs extends MaterialData implements Directional {
+     public void setFacingDirection(BlockFace face) {
+         byte data;
+ 
+-        switch (face) {
++        switch (face.getOppositeFace()) {
+         case NORTH:
+             data = 0x3;
+             break;

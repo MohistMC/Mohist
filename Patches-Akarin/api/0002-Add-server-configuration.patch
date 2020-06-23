@@ -1,0 +1,26 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?=E3=84=97=E3=84=A0=CB=8B=20=E3=84=91=E3=84=A7=CB=8A?=
+ <tsao-chi@the-lingo.org>
+Date: Fri, 3 Apr 2020 15:18:38 +0800
+Subject: [PATCH] Add server configuration
+
+
+diff --git a/src/main/java/org/bukkit/Server.java b/src/main/java/org/bukkit/Server.java
+index cf20e75419b011e819c63fc8453f250b849cb2c7..c90456e198afdacc21b6980c415c3048fdc7f7a2 100644
+--- a/src/main/java/org/bukkit/Server.java
++++ b/src/main/java/org/bukkit/Server.java
+@@ -1404,6 +1404,14 @@ public interface Server extends PluginMessageRecipient {
+         }
+         // Tuinity end - add config to timings report
+ 
++        // Akarin start - Server config
++        @NotNull
++        public org.bukkit.configuration.file.YamlConfiguration getAkarinConfig()
++        {
++            throw new UnsupportedOperationException("Not supported yet.");
++        }
++        // Akarin end - Server config
++
+         /**
+          * Sends the component to the player
+          *

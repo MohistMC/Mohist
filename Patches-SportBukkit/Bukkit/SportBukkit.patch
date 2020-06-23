@@ -1,0 +1,130 @@
+From: Jedediah Smith <jedediah@silencegreys.com>
+Date: Tue, 17 Jan 2017 07:10:05 -0500
+Subject: [PATCH] SportBukkit
+
+
+diff --git a/README.md b/README.md
+--- a/README.md
++++ b/README.md
+@@ -1,4 +1,4 @@
+-Bukkit
++SportBukkit-API
+ ======
+ A plugin API for [Minecraft](https://minecraft.net/) servers, currently maintained by [SpigotMC](http://www.spigotmc.org/).
+ 
+diff --git a/src/main/java/org/bukkit/OfflinePlayer.java b/src/main/java/org/bukkit/OfflinePlayer.java
+--- a/src/main/java/org/bukkit/OfflinePlayer.java
++++ b/src/main/java/org/bukkit/OfflinePlayer.java
+@@ -9,8 +9,9 @@ import org.bukkit.entity.Player;
+ import org.bukkit.event.player.PlayerLoginEvent;
+ import org.bukkit.event.player.PlayerQuitEvent;
+ import org.bukkit.permissions.ServerOperator;
++import tc.oc.minecraft.api.user.User;
+ 
+-public interface OfflinePlayer extends ServerOperator, AnimalTamer, ConfigurationSerializable {
++public interface OfflinePlayer extends ServerOperator, AnimalTamer, ConfigurationSerializable, User {
+ 
+     /**
+      * Checks if this player is currently online
+diff --git a/src/main/java/org/bukkit/Server.java b/src/main/java/org/bukkit/Server.java
+--- a/src/main/java/org/bukkit/Server.java
++++ b/src/main/java/org/bukkit/Server.java
+@@ -674,6 +674,11 @@ public interface Server extends PluginMessageRecipient, BukkitRuntime, tc.oc.min
+      */
+     public void shutdown();
+ 
++    @Override
++    default void stop() {
++        shutdown();
++    }
++
+     /**
+      * Broadcasts the specified message to every user with the given
+      * permission name.
+diff --git a/src/main/java/org/bukkit/ServerModule.java b/src/main/java/org/bukkit/ServerModule.java
+--- a/src/main/java/org/bukkit/ServerModule.java
++++ b/src/main/java/org/bukkit/ServerModule.java
+@@ -18,6 +18,7 @@ import org.bukkit.scoreboard.ScoreboardManager;
+ import tc.oc.inject.SingletonModule;
+ import tc.oc.minecraft.api.plugin.PluginFinder;
+ import tc.oc.minecraft.api.server.LocalServer;
++import tc.oc.minecraft.api.server.MinecraftServerModule;
+ 
+ /**
+  * Bindings for things that belong to a {@link Server}.
+@@ -31,6 +32,7 @@ public class ServerModule extends SingletonModule {
+     @Override
+     protected void configure() {
+         install(new BukkitModule());
++        install(new MinecraftServerModule());
+ 
+         bind(tc.oc.minecraft.api.server.Server.class).to(LocalServer.class);
+         bind(LocalServer.class).to(Server.class);
+diff --git a/src/main/java/org/bukkit/entity/Player.java b/src/main/java/org/bukkit/entity/Player.java
+--- a/src/main/java/org/bukkit/entity/Player.java
++++ b/src/main/java/org/bukkit/entity/Player.java
+@@ -1,7 +1,6 @@
+ package org.bukkit.entity;
+ 
+ import java.net.InetSocketAddress;
+-import java.util.List;
+ import java.util.Set;
+ 
+ import net.md_5.bungee.api.chat.BaseComponent;
+diff --git a/src/main/java/org/bukkit/event/server/ServerListPingEvent.java b/src/main/java/org/bukkit/event/server/ServerListPingEvent.java
+--- a/src/main/java/org/bukkit/event/server/ServerListPingEvent.java
++++ b/src/main/java/org/bukkit/event/server/ServerListPingEvent.java
+@@ -1,7 +1,9 @@
+ package org.bukkit.event.server;
+ 
+ import java.net.InetAddress;
++import java.util.HashMap;
+ import java.util.Iterator;
++import java.util.Map;
+ 
+ import org.apache.commons.lang.Validate;
+ import org.bukkit.entity.Player;
+@@ -19,6 +21,7 @@ public class ServerListPingEvent extends ServerEvent implements Iterable<Player>
+     private String motd;
+     private final int numPlayers;
+     private int maxPlayers;
++    private final Map<String, Object> extra = new HashMap<>();
+ 
+     public ServerListPingEvent(final InetAddress address, final String motd, final int numPlayers, final int maxPlayers) {
+         Validate.isTrue(numPlayers >= 0, "Cannot have negative number of players online", numPlayers);
+@@ -119,6 +122,14 @@ public class ServerListPingEvent extends ServerEvent implements Iterable<Player>
+         throw new UnsupportedOperationException();
+     }
+ 
++    /**
++     * Return a mutable {@link Map} of all custom fields that will be included
++     * in the JSON response. This can be modified to add/remove fields.
++     */
++    public Map<String, Object> getExtra() {
++        return extra;
++    }
++
+     @Override
+     public HandlerList getHandlers() {
+         return handlers;
+diff --git a/src/main/java/org/bukkit/plugin/PluginDescriptionFile.java b/src/main/java/org/bukkit/plugin/PluginDescriptionFile.java
+--- a/src/main/java/org/bukkit/plugin/PluginDescriptionFile.java
++++ b/src/main/java/org/bukkit/plugin/PluginDescriptionFile.java
+@@ -24,6 +24,7 @@ import org.yaml.snakeyaml.nodes.Tag;
+ import com.google.common.collect.ImmutableList;
+ import com.google.common.collect.ImmutableMap;
+ import com.google.common.collect.ImmutableSet;
++import tc.oc.collection.ConcatenatedList;
+ 
+ /**
+  * This type is the runtime-container for the information in the plugin.yml.
+@@ -958,7 +959,8 @@ public final class PluginDescriptionFile implements tc.oc.minecraft.api.plugin.P
+             classLoaderOf = map.get("class-loader-of").toString();
+         }
+ 
+-        depend = makePluginNameList(map, "depend");
++        depend = ConcatenatedList.of(makePluginNameList(map, "depend"),
++                                     makePluginNameList(map, "depends"));
+         softDepend = makePluginNameList(map, "softdepend");
+         loadBefore = makePluginNameList(map, "loadbefore");
+ 

@@ -1,0 +1,74 @@
+From d4160cf2195181a73288a7ca9517178d1385aed4 Mon Sep 17 00:00:00 2001
+From: cswhite2000 <18whitechristop@gmail.com>
+Date: Fri, 17 Aug 2018 23:30:04 -0700
+Subject: [PATCH] Add ProtocolVersion API
+
+
+diff --git a/src/main/java/net/minecraft/server/EntityPlayer.java b/src/main/java/net/minecraft/server/EntityPlayer.java
+index 2ec19bfb..49a2227c 100644
+--- a/src/main/java/net/minecraft/server/EntityPlayer.java
++++ b/src/main/java/net/minecraft/server/EntityPlayer.java
+@@ -72,6 +72,7 @@ public class EntityPlayer extends EntityHuman implements ICrafting {
+     public boolean collidesWithEntities = true;
+     public int viewDistance; // PaperSpigot - Player view distance API
+     private int containerUpdateDelay; // PaperSpigot
++    public int protocolVersion;//Paper
+ 
+     @Override
+     public boolean ad()
+diff --git a/src/main/java/net/minecraft/server/HandshakeListener.java b/src/main/java/net/minecraft/server/HandshakeListener.java
+index 215648ec..5454f2b5 100644
+--- a/src/main/java/net/minecraft/server/HandshakeListener.java
++++ b/src/main/java/net/minecraft/server/HandshakeListener.java
+@@ -71,6 +71,7 @@ public class HandshakeListener implements PacketHandshakingInListener {
+                 this.b.handle(new PacketLoginOutDisconnect(chatcomponenttext));
+                 this.b.close(chatcomponenttext);
+             } else {
++                this.b.protocolVersion = packethandshakinginsetprotocol.b();
+                 this.b.a((PacketListener) (new LoginListener(this.a, this.b)));
+                 // Spigot Start
+                 if (org.spigotmc.SpigotConfig.bungee) {
+diff --git a/src/main/java/net/minecraft/server/NetworkManager.java b/src/main/java/net/minecraft/server/NetworkManager.java
+index 9d23c6c0..9e35715a 100644
+--- a/src/main/java/net/minecraft/server/NetworkManager.java
++++ b/src/main/java/net/minecraft/server/NetworkManager.java
+@@ -74,6 +74,7 @@ public class NetworkManager extends SimpleChannelInboundHandler<Packet> {
+     private IChatBaseComponent n;
+     private boolean o;
+     private boolean p;
++    public int protocolVersion; // Paper
+ 
+     public NetworkManager(EnumProtocolDirection enumprotocoldirection) {
+         this.h = enumprotocoldirection;
+diff --git a/src/main/java/net/minecraft/server/PlayerList.java b/src/main/java/net/minecraft/server/PlayerList.java
+index 6ee82db5..9f103901 100644
+--- a/src/main/java/net/minecraft/server/PlayerList.java
++++ b/src/main/java/net/minecraft/server/PlayerList.java
+@@ -444,6 +444,8 @@ public abstract class PlayerList {
+         SocketAddress socketaddress = loginlistener.networkManager.getSocketAddress();
+ 
+         EntityPlayer entity = new EntityPlayer(server, server.getWorldServer(0), gameprofile, new PlayerInteractManager(server.getWorldServer(0)));
++        entity.protocolVersion = loginlistener.networkManager.protocolVersion;
++
+         Player player = entity.getBukkitEntity();
+         PlayerLoginEvent event = new PlayerLoginEvent(player, hostname, ((java.net.InetSocketAddress) socketaddress).getAddress(), ((java.net.InetSocketAddress) loginlistener.networkManager.getRawAddress()).getAddress());
+         String s;
+diff --git a/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java b/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
+index 712f18fe..b85669b8 100644
+--- a/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
++++ b/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
+@@ -1822,6 +1822,11 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
+         return getTargetedBlock(getBlockReach(), nonSolids, liquids);
+     }
+ 
++    @Override
++    public int getProtocolVersion() {
++        return getHandle().protocolVersion;
++    }
++
+     // Spigot start
+     private final Player.Spigot spigot = new Player.Spigot()
+     {
+-- 
+2.19.0
+

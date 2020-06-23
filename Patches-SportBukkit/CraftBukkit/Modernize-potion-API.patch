@@ -1,0 +1,419 @@
+From: Jedediah Smith <jedediah@silencegreys.com>
+Date: Thu, 10 Mar 2016 15:10:18 -0500
+Subject: [PATCH] Modernize potion API
+
+
+diff --git a/src/main/java/net/minecraft/server/MobEffectList.java b/src/main/java/net/minecraft/server/MobEffectList.java
+--- a/src/main/java/net/minecraft/server/MobEffectList.java
++++ b/src/main/java/net/minecraft/server/MobEffectList.java
+@@ -224,10 +224,5 @@ public class MobEffectList {
+         MobEffectList.REGISTRY.a(25, new MinecraftKey("levitation"), (new MobEffectList(true, 13565951)).c("effect.levitation").b(3, 2));
+         MobEffectList.REGISTRY.a(26, new MinecraftKey("luck"), (new MobEffectList(false, 3381504)).c("effect.luck").b(5, 2).j().a(GenericAttributes.i, "03C3C89D-7037-4B42-869F-B146BCB64D2E", 1.0D, 0));
+         MobEffectList.REGISTRY.a(27, new MinecraftKey("unluck"), (new MobEffectList(true, 12624973)).c("effect.unluck").b(6, 2).a(GenericAttributes.i, "CC5AF142-2BD2-4215-B636-2605AED11727", -1.0D, 0));
+-        // CraftBukkit start
+-        for (Object effect : REGISTRY) {
+-            org.bukkit.potion.PotionEffectType.registerPotionEffectType(new org.bukkit.craftbukkit.potion.CraftPotionEffectType((MobEffectList) effect));
+-        }
+-        // CraftBukkit end
+     }
+ }
+diff --git a/src/main/java/org/bukkit/CraftBukkitRuntime.java b/src/main/java/org/bukkit/CraftBukkitRuntime.java
+--- a/src/main/java/org/bukkit/CraftBukkitRuntime.java
++++ b/src/main/java/org/bukkit/CraftBukkitRuntime.java
+@@ -2,7 +2,11 @@ package org.bukkit;
+ 
+ import net.minecraft.server.DispenserRegistry;
+ import org.bukkit.craftbukkit.inventory.CraftItemFactory;
++import org.bukkit.craftbukkit.potion.CraftPotionEffectRegistry;
++import org.bukkit.craftbukkit.potion.CraftPotionBrewRegistry;
+ import org.bukkit.craftbukkit.registry.CraftKey;
++import org.bukkit.potion.PotionEffectRegistry;
++import org.bukkit.potion.PotionBrewRegistry;
+ import org.bukkit.registry.Key;
+ 
+ public class CraftBukkitRuntime implements BukkitRuntime {
+@@ -20,6 +24,9 @@ public class CraftBukkitRuntime implements BukkitRuntime {
+         }
+     }
+ 
++    private final PotionBrewRegistry potionBrewRegistry = new CraftPotionBrewRegistry();
++    private final PotionEffectRegistry potionEffectRegistry = new CraftPotionEffectRegistry();
++
+     public CraftBukkitRuntime() {
+         DispenserRegistry.c();
+     }
+@@ -38,4 +45,14 @@ public class CraftBukkitRuntime implements BukkitRuntime {
+     public CraftItemFactory getItemFactory() {
+         return CraftItemFactory.instance();
+     }
++
++    @Override
++    public PotionBrewRegistry potionRegistry() {
++        return potionBrewRegistry;
++    }
++
++    @Override
++    public PotionEffectRegistry potionEffectRegistry() {
++        return potionEffectRegistry;
++    }
+ }
+diff --git a/src/main/java/org/bukkit/craftbukkit/inventory/CraftMetaPotion.java b/src/main/java/org/bukkit/craftbukkit/inventory/CraftMetaPotion.java
+--- a/src/main/java/org/bukkit/craftbukkit/inventory/CraftMetaPotion.java
++++ b/src/main/java/org/bukkit/craftbukkit/inventory/CraftMetaPotion.java
+@@ -10,10 +10,13 @@ import net.minecraft.server.NBTTagInt;
+ import net.minecraft.server.NBTTagList;
+ 
+ import org.apache.commons.lang.Validate;
++import org.bukkit.Bukkit;
+ import org.bukkit.Color;
+ import org.bukkit.Material;
+ import org.bukkit.configuration.serialization.DelegateDeserialization;
+ import org.bukkit.inventory.meta.PotionMeta;
++import org.bukkit.potion.PotionBrew;
++import org.bukkit.potion.PotionBrewRegistry;
+ import org.bukkit.potion.PotionData;
+ import org.bukkit.potion.PotionEffect;
+ import org.bukkit.potion.PotionEffectType;
+@@ -35,9 +38,7 @@ class CraftMetaPotion extends CraftMetaItem implements PotionMeta {
+     static final ItemMetaKey ID = new ItemMetaKey("Id", "potion-id");
+     static final ItemMetaKey DEFAULT_POTION = new ItemMetaKey("Potion", "potion-type");
+ 
+-    // Having an initial "state" in ItemMeta seems bit dirty but the UNCRAFTABLE potion type
+-    // is treated as the empty form of the meta because it represents an empty potion with no effect
+-    private PotionData type = new PotionData(PotionType.UNCRAFTABLE, false, false);
++    private PotionData type = CraftPotionUtil.DEFAULT;
+     private List<PotionEffect> customEffects;
+     private Color color;
+ 
+@@ -70,6 +71,7 @@ class CraftMetaPotion extends CraftMetaItem implements PotionMeta {
+             for (int i = 0; i < length; i++) {
+                 NBTTagCompound effect = list.get(i);
+                 PotionEffectType type = PotionEffectType.getById(effect.getByte(ID.NBT));
++                if(type == null) continue;
+                 int amp = effect.getByte(AMPLIFIER.NBT);
+                 int duration = effect.getInt(DURATION.NBT);
+                 boolean ambient = effect.getBoolean(AMBIENT.NBT);
+@@ -133,7 +135,7 @@ class CraftMetaPotion extends CraftMetaItem implements PotionMeta {
+     }
+ 
+     boolean isPotionEmpty() {
+-        return (type.getType() == PotionType.UNCRAFTABLE) && !(hasCustomEffects() || hasColor());
++        return type.getType() == CraftPotionUtil.DEFAULT.getType() && !(hasCustomEffects() || hasColor());
+     }
+ 
+     @Override
+@@ -170,6 +172,19 @@ class CraftMetaPotion extends CraftMetaItem implements PotionMeta {
+         return type;
+     }
+ 
++    @Override
++    public void setPotionBrew(PotionBrew brew) {
++        this.type = CraftPotionUtil.toBukkit(brew.key().toString());
++    }
++
++    @Override
++    public PotionBrew getPotionBrew() {
++        final PotionBrewRegistry registry = Bukkit.potionRegistry();
++        if(this.type == null) return registry.getFallback();
++        final PotionBrew brew = registry.get(Bukkit.key(CraftPotionUtil.fromBukkit(this.type)));
++        return brew != null ? brew : registry.getFallback();
++    }
++
+     public boolean hasCustomEffects() {
+         return customEffects != null;
+     }
+@@ -283,8 +298,8 @@ class CraftMetaPotion extends CraftMetaItem implements PotionMeta {
+     int applyHash() {
+         final int original;
+         int hash = original = super.applyHash();
+-        if (type.getType() != PotionType.UNCRAFTABLE) {
+-            hash = 73 * hash + type.hashCode();
++        if (type.getType() != CraftPotionUtil.DEFAULT.getType()) {
++        	hash = 73 * hash + type.hashCode();
+         }
+         if (hasColor()) {
+             hash = 73 * hash + color.hashCode();
+@@ -318,7 +333,7 @@ class CraftMetaPotion extends CraftMetaItem implements PotionMeta {
+     @Override
+     Builder<String, Object> serialize(Builder<String, Object> builder) {
+         super.serialize(builder);
+-        if (type.getType() != PotionType.UNCRAFTABLE) {
++        if (type.getType() != CraftPotionUtil.DEFAULT.getType()) {
+             builder.put(DEFAULT_POTION.BUKKIT, CraftPotionUtil.fromBukkit(type));
+         }
+ 
+diff --git a/src/main/java/org/bukkit/craftbukkit/potion/CraftPotionBrew.java b/src/main/java/org/bukkit/craftbukkit/potion/CraftPotionBrew.java
+new file mode 100644
+index 0000000..be7b0d2
+--- /dev/null
++++ b/src/main/java/org/bukkit/craftbukkit/potion/CraftPotionBrew.java
+@@ -0,0 +1,36 @@
++package org.bukkit.craftbukkit.potion;
++
++import java.util.List;
++
++import com.google.common.base.Function;
++import com.google.common.collect.Lists;
++import net.minecraft.server.MobEffect;
++import net.minecraft.server.PotionRegistry;
++import org.bukkit.craftbukkit.registry.CraftKey;
++import org.bukkit.potion.PotionEffect;
++import org.bukkit.potion.PotionBrew;
++import org.bukkit.registry.Key;
++
++public class CraftPotionBrew implements PotionBrew {
++
++    private final PotionRegistry handle;
++
++    public CraftPotionBrew(PotionRegistry handle) {
++        this.handle = handle;
++    }
++
++    @Override
++    public Key key() {
++        return CraftKey.get(PotionRegistry.a.b(handle));
++    }
++
++    @Override
++    public List<PotionEffect> effects() {
++        return Lists.transform(handle.a(), new Function<MobEffect, PotionEffect>() {
++            @Override
++            public PotionEffect apply(MobEffect nms) {
++                return CraftPotionUtils.toBukkit(nms);
++            }
++        });
++    }
++}
+diff --git a/src/main/java/org/bukkit/craftbukkit/potion/CraftPotionBrewRegistry.java b/src/main/java/org/bukkit/craftbukkit/potion/CraftPotionBrewRegistry.java
+new file mode 100644
+index 0000000..c9fbaf2
+--- /dev/null
++++ b/src/main/java/org/bukkit/craftbukkit/potion/CraftPotionBrewRegistry.java
+@@ -0,0 +1,24 @@
++package org.bukkit.craftbukkit.potion;
++
++import net.minecraft.server.PotionRegistry;
++import org.bukkit.craftbukkit.registry.CraftKey;
++import org.bukkit.craftbukkit.registry.CraftRegistry;
++import org.bukkit.potion.PotionBrew;
++import org.bukkit.potion.PotionBrewRegistry;
++
++public class CraftPotionBrewRegistry extends CraftRegistry<PotionBrew, PotionRegistry> implements PotionBrewRegistry {
++
++    public CraftPotionBrewRegistry() {
++        super(PotionBrew.class, PotionRegistry.a);
++    }
++
++    @Override
++    protected PotionBrew createBukkit(PotionRegistry nms) {
++        return new CraftPotionBrew(nms);
++    }
++
++    @Override
++    public PotionBrew getFallback() {
++        return need(CraftKey.get("minecraft:empty"));
++    }
++}
+diff --git a/src/main/java/org/bukkit/craftbukkit/potion/CraftPotionEffectRegistry.java b/src/main/java/org/bukkit/craftbukkit/potion/CraftPotionEffectRegistry.java
+new file mode 100644
+index 0000000..94e0a5f
+--- /dev/null
++++ b/src/main/java/org/bukkit/craftbukkit/potion/CraftPotionEffectRegistry.java
+@@ -0,0 +1,37 @@
++package org.bukkit.craftbukkit.potion;
++
++import net.minecraft.server.MobEffectList;
++import org.bukkit.craftbukkit.registry.CraftRegistry;
++import org.bukkit.potion.PotionEffectRegistry;
++import org.bukkit.potion.PotionEffectType;
++
++public class CraftPotionEffectRegistry extends CraftRegistry<PotionEffectType, MobEffectList> implements PotionEffectRegistry {
++
++    public CraftPotionEffectRegistry() {
++        super(PotionEffectType.class, MobEffectList.REGISTRY);
++    }
++
++    @Override
++    protected PotionEffectType createBukkit(MobEffectList nms) {
++        return new CraftPotionEffectType(nms);
++    }
++
++    @Override
++    public PotionEffectType getFallback() {
++        return null;
++    }
++
++    @Override
++    public PotionEffectType forLegacyId(int legacyId) {
++        final MobEffectList nms = MobEffectList.fromId(legacyId);
++        return nms == null ? null : toBukkit(nms);
++    }
++
++    @Override
++    public PotionEffectType forLegacyName(String legacyName) {
++        for(PotionEffectType type : this) {
++            if(legacyName.equals(type.getName())) return type;
++        }
++        return null;
++    }
++}
+diff --git a/src/main/java/org/bukkit/craftbukkit/potion/CraftPotionEffectType.java b/src/main/java/org/bukkit/craftbukkit/potion/CraftPotionEffectType.java
+--- a/src/main/java/org/bukkit/craftbukkit/potion/CraftPotionEffectType.java
++++ b/src/main/java/org/bukkit/craftbukkit/potion/CraftPotionEffectType.java
+@@ -1,15 +1,15 @@
+ package org.bukkit.craftbukkit.potion;
+ 
+ import net.minecraft.server.MobEffectList;
+-
++import org.bukkit.craftbukkit.registry.CraftKey;
+ import org.bukkit.Color;
+ import org.bukkit.potion.PotionEffectType;
++import org.bukkit.registry.Key;
+ 
+ public class CraftPotionEffectType extends PotionEffectType {
+     private final MobEffectList handle;
+ 
+     public CraftPotionEffectType(MobEffectList handle) {
+-        super(MobEffectList.getId(handle));
+         this.handle = handle;
+     }
+ 
+@@ -23,6 +23,16 @@ public class CraftPotionEffectType extends PotionEffectType {
+     }
+ 
+     @Override
++    public Key key() {
++        return CraftKey.get(MobEffectList.REGISTRY.b(handle));
++    }
++
++    @Override
++    public int getId() {
++        return MobEffectList.getId(handle);
++    }
++
++    @Override
+     public String getName() {
+         switch (getId()) {
+         case 1:
+diff --git a/src/main/java/org/bukkit/craftbukkit/potion/CraftPotionUtil.java b/src/main/java/org/bukkit/craftbukkit/potion/CraftPotionUtil.java
+--- a/src/main/java/org/bukkit/craftbukkit/potion/CraftPotionUtil.java
++++ b/src/main/java/org/bukkit/craftbukkit/potion/CraftPotionUtil.java
+@@ -7,92 +7,44 @@ import com.google.common.collect.ImmutableBiMap;
+ import net.minecraft.server.MobEffect;
+ import net.minecraft.server.MobEffectList;
+ 
++import org.bukkit.Bukkit;
+ import org.bukkit.potion.PotionEffect;
+ import org.bukkit.potion.PotionEffectType;
+ import org.bukkit.potion.PotionType;
+ import org.bukkit.potion.PotionData;
++import org.bukkit.registry.Key;
+ 
+ public class CraftPotionUtil {
+ 
+-    private static final BiMap<PotionType, String> regular = ImmutableBiMap.<PotionType, String>builder()
+-            .put(PotionType.UNCRAFTABLE, "empty")
+-            .put(PotionType.WATER, "water")
+-            .put(PotionType.MUNDANE, "mundane")
+-            .put(PotionType.THICK, "thick")
+-            .put(PotionType.AWKWARD, "awkward")
+-            .put(PotionType.NIGHT_VISION, "night_vision")
+-            .put(PotionType.INVISIBILITY, "invisibility")
+-            .put(PotionType.JUMP, "leaping")
+-            .put(PotionType.FIRE_RESISTANCE, "fire_resistance")
+-            .put(PotionType.SPEED, "swiftness")
+-            .put(PotionType.SLOWNESS, "slowness")
+-            .put(PotionType.WATER_BREATHING, "water_breathing")
+-            .put(PotionType.INSTANT_HEAL, "healing")
+-            .put(PotionType.INSTANT_DAMAGE, "harming")
+-            .put(PotionType.POISON, "poison")
+-            .put(PotionType.REGEN, "regeneration")
+-            .put(PotionType.STRENGTH, "strength")
+-            .put(PotionType.WEAKNESS, "weakness")
+-            .put(PotionType.LUCK, "luck")
+-            .build();
+-    private static final BiMap<PotionType, String> upgradeable = ImmutableBiMap.<PotionType, String>builder()
+-            .put(PotionType.JUMP, "strong_leaping")
+-            .put(PotionType.SPEED, "strong_swiftness")
+-            .put(PotionType.INSTANT_HEAL, "strong_healing")
+-            .put(PotionType.INSTANT_DAMAGE, "strong_harming")
+-            .put(PotionType.POISON, "strong_poison")
+-            .put(PotionType.REGEN, "strong_regeneration")
+-            .put(PotionType.STRENGTH, "strong_strength")
+-            .build();
+-    private static final BiMap<PotionType, String> extendable = ImmutableBiMap.<PotionType, String>builder()
+-            .put(PotionType.NIGHT_VISION, "long_night_vision")
+-            .put(PotionType.INVISIBILITY, "long_invisibility")
+-            .put(PotionType.JUMP, "long_leaping")
+-            .put(PotionType.FIRE_RESISTANCE, "long_fire_resistance")
+-            .put(PotionType.SPEED, "long_swiftness")
+-            .put(PotionType.SLOWNESS, "long_slowness")
+-            .put(PotionType.WATER_BREATHING, "long_water_breathing")
+-            .put(PotionType.POISON, "long_poison")
+-            .put(PotionType.REGEN, "long_regeneration")
+-            .put(PotionType.STRENGTH, "long_strength")
+-            .put(PotionType.WEAKNESS, "long_weakness")
+-            .build();
++    // Matches the default returned by Mojang's registry
++    public static final PotionData DEFAULT = new PotionData(PotionType.WATER, false, false);
+ 
+-    public static String fromBukkit(PotionData data) {
+-        String type;
+-        if (data.isUpgraded()) {
+-            type = upgradeable.get(data.getType());
+-        } else if (data.isExtended()) {
+-            type = extendable.get(data.getType());
+-        } else {
+-            type = regular.get(data.getType());
++    private static BiMap<Key, PotionData> map;
++    private static BiMap<Key, PotionData> map() {
++        if(map == null) {
++            final ImmutableBiMap.Builder<Key, PotionData> builder = ImmutableBiMap.builder();
++            for(PotionType type : PotionType.values()) {
++                builder.put(type.baseKey(), new PotionData(type, false, false));
++                if(type.isExtendable()) {
++                    builder.put(type.longKey(), new PotionData(type, true, false));
++                }
++                if(type.isUpgradeable()) {
++                    builder.put(type.strongKey(), new PotionData(type, false, true));
++                }
++            }
++            map = builder.build();
+         }
+-        Preconditions.checkNotNull(type, "Unknown potion type from data " + data);
++        return map;
++    }
+ 
+-        return "minecraft:" + type;
++    public static String fromBukkit(PotionData data) {
++        return Preconditions.checkNotNull(map().inverse().get(data), "Unknown potion type from data %s", data).toString();
+     }
+ 
+-    public static PotionData toBukkit(String type) {
+-        if (type == null) {
+-            return new PotionData(PotionType.UNCRAFTABLE, false, false);
+-        }
+-        if (type.startsWith("minecraft:")) {
+-            type = type.substring(10);
+-        }
+-        PotionType potionType = null;
+-        potionType = extendable.inverse().get(type);
+-        if (potionType != null) {
+-            return new PotionData(potionType, true, false);
+-        }
+-        potionType = upgradeable.inverse().get(type);
+-        if (potionType != null) {
+-            return new PotionData(potionType, false, true);
+-        }
+-        potionType = regular.inverse().get(type);
+-        if (potionType != null) {
+-            return new PotionData(potionType, false, false);
+-        }
+-        return new PotionData(PotionType.UNCRAFTABLE, false, false);
++    public static PotionData toBukkit(String key) {
++        if (key == null) return DEFAULT;
++        final PotionData data = map().get(Bukkit.key(key));
++        return data != null ? data : DEFAULT;
+     }
+ 
+     public static MobEffect fromBukkit(PotionEffect effect) {

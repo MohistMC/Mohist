@@ -1,0 +1,269 @@
+From a3d665215878387a140bdb9e4eb880f42c7081d0 Mon Sep 17 00:00:00 2001
+From: Ashcon Partovi <ashcon@partovi.net>
+Date: Sat, 20 Jun 2020 09:07:01 -0700
+Subject: [PATCH] Deprecate improved Permissible API
+
+
+diff --git a/src/main/java/org/bukkit/permissions/Permissible.java b/src/main/java/org/bukkit/permissions/Permissible.java
+index a7c0ef58..04317452 100644
+--- a/src/main/java/org/bukkit/permissions/Permissible.java
++++ b/src/main/java/org/bukkit/permissions/Permissible.java
+@@ -1,6 +1,7 @@
+ package org.bukkit.permissions;
+ 
+ import java.util.Collection;
++import java.util.Collections;
+ import java.util.Set;
+ import org.bukkit.plugin.Plugin;
+ 
+@@ -105,37 +106,54 @@ public interface Permissible extends ServerOperator {
+      */
+     public void removeAttachment(PermissionAttachment attachment);
+ 
++    // SportPaper - start
+     /**
+      * Remove from this object all of the {@link PermissionAttachment}s belonging to the given {@link Plugin}.
+      * @return true if anything was removed, false if nothing changed
+      */
+-    boolean removeAttachments(Plugin plugin);
++    @Deprecated
++    default boolean removeAttachments(Plugin plugin) {
++        return false;
++    }
+ 
+     /**
+      * Remove from this object all of the {@link PermissionAttachment}s that apply to the given permission.
+      * @return true if anything was removed, false if nothing changed
+      */
+-    boolean removeAttachments(String name);
++    @Deprecated
++    default boolean removeAttachments(String name) {
++        return false;
++    }
+ 
+     /**
+      * Remove from this object all of the {@link PermissionAttachment}s that apply to the given {@link Permission}.
+      * @return true if anything was removed, false if nothing changed
+      */
+-    boolean removeAttachments(Permission permission);
++    @Deprecated
++    default boolean removeAttachments(Permission permission) {
++        return false;
++    }
+ 
+     /**
+      * Remove from this object all of the {@link PermissionAttachment}s belonging to the given {@link Plugin}
+      * and applying to the given permission.
+      * @return true if anything was removed, false if nothing changed
+      */
+-    boolean removeAttachments(Plugin plugin, String name);
++    @Deprecated
++    default boolean removeAttachments(Plugin plugin, String name) {
++        return false;
++    }
+ 
+     /**
+      * Remove from this object all of the {@link PermissionAttachment}s belonging to the given {@link Plugin}
+      * and applying to the given {@link Permission}.
+      * @return true if anything was removed, false if nothing changed
+      */
+-    boolean removeAttachments(Plugin plugin, Permission permission);
++    @Deprecated
++    default boolean removeAttachments(Plugin plugin, Permission permission) {
++        return false;
++    }
++    // SportPaper - end
+ 
+     /**
+      * Recalculates the permissions for this object, if the attachments have
+@@ -153,37 +171,60 @@ public interface Permissible extends ServerOperator {
+      */
+     public Set<PermissionAttachmentInfo> getEffectivePermissions();
+ 
+-    PermissionAttachmentInfo getEffectivePermission(String name);
++    // SportPaper - start
++    @Deprecated
++    default PermissionAttachmentInfo getEffectivePermission(String name) {
++        return null;
++    }
+ 
+     /**
+      * @return Info about all {@link PermissionAttachment}s attached to this object, effective or not.
+      */
+-    Collection<PermissionAttachmentInfo> getAttachments();
++    @Deprecated
++    default Collection<PermissionAttachmentInfo> getAttachments() {
++        return Collections.emptyList();
++    }
+ 
+     /**
+      * @return Info about all attached {@link PermissionAttachment}s belonging to the given {@link Plugin}.
+      */
+-    Collection<PermissionAttachmentInfo> getAttachments(Plugin plugin);
++    @Deprecated
++    default Collection<PermissionAttachmentInfo> getAttachments(Plugin plugin) {
++        return Collections.emptyList();
++    }
+ 
+     /**
+      * @return Info about all attached {@link PermissionAttachment}s applying to the given permission.
+      */
+-    Collection<PermissionAttachmentInfo> getAttachments(String name);
++    @Deprecated
++    default Collection<PermissionAttachmentInfo> getAttachments(String name) {
++        return Collections.emptyList();
++    }
+ 
+     /**
+      * @return Info about all attached {@link PermissionAttachment}s applying to the given {@link Permission}.
+      */
+-    Collection<PermissionAttachmentInfo> getAttachments(Permission permission);
++    @Deprecated
++    default Collection<PermissionAttachmentInfo> getAttachments(Permission permission) {
++        return Collections.emptyList();
++    }
+ 
+     /**
+      * @return Info about all attached {@link PermissionAttachment}s belonging to the given {@link Plugin}
+      * and applying to the given permission.
+      */
+-    Collection<PermissionAttachmentInfo> getAttachments(Plugin plugin, String name);
++    @Deprecated
++    default Collection<PermissionAttachmentInfo> getAttachments(Plugin plugin, String name) {
++        return Collections.emptyList();
++    }
+ 
+     /**
+      * @return Info about all attached {@link PermissionAttachment}s belonging to the given {@link Plugin}
+      * and applying to the given {@link Permission}.
+      */
+-    Collection<PermissionAttachmentInfo> getAttachments(Plugin plugin, Permission permission);
++    @Deprecated
++    default Collection<PermissionAttachmentInfo> getAttachments(Plugin plugin, Permission permission) {
++        return Collections.emptyList();
++    }
++    // SportPaper - end
+ }
+diff --git a/src/main/java/org/bukkit/permissions/PermissibleBase.java b/src/main/java/org/bukkit/permissions/PermissibleBase.java
+index 7a617309..ed093a16 100644
+--- a/src/main/java/org/bukkit/permissions/PermissibleBase.java
++++ b/src/main/java/org/bukkit/permissions/PermissibleBase.java
+@@ -1,19 +1,17 @@
+ package org.bukkit.permissions;
+ 
+ import java.util.Collection;
++import java.util.Collections;
+ import java.util.HashMap;
+ import java.util.HashSet;
+ import java.util.Iterator;
+-import java.util.LinkedHashSet;
+ import java.util.LinkedList;
+ import java.util.List;
+ import java.util.Map;
+ import java.util.Set;
+ import java.util.logging.Level;
+ 
+-import com.google.common.collect.ArrayListMultimap;
+ import com.google.common.collect.ImmutableList;
+-import com.google.common.collect.ListMultimap;
+ import org.bukkit.Bukkit;
+ import org.bukkit.plugin.Plugin;
+ 
+@@ -23,8 +21,8 @@ import org.bukkit.plugin.Plugin;
+ public class PermissibleBase implements Permissible {
+     private ServerOperator opable = null;
+     private Permissible parent = this;
+-    private final Set<PermissionAttachment> attachments = new LinkedHashSet<PermissionAttachment>();
+-    private final ListMultimap<String, PermissionAttachmentInfo> permissions = ArrayListMultimap.create();
++    private final List<PermissionAttachment> attachments = new LinkedList<>();
++    private final Map<String, PermissionAttachmentInfo> permissions = new HashMap<>();
+ 
+     public PermissibleBase(ServerOperator opable) {
+         this.opable = opable;
+@@ -168,13 +166,15 @@ public class PermissibleBase implements Permissible {
+ 
+     @Override
+     public boolean removeAttachments(String name) {
+-        boolean changed = false;
+-        for(PermissionAttachmentInfo info : permissions.get(name.toLowerCase())) {
+-            attachments.remove(info.getAttachment());
+-            changed = true;
++        final PermissionAttachmentInfo info = permissions.get(name);
++        if (info == null || info.getAttachment() == null) return false;
++
++        try {
++            removeAttachment(info.getAttachment());
++            return true;
++        } catch(IllegalArgumentException e) {
++            return false;
+         }
+-        if(changed) recalculatePermissions();
+-        return changed;
+     }
+ 
+     @Override
+@@ -184,15 +184,15 @@ public class PermissibleBase implements Permissible {
+ 
+     @Override
+     public boolean removeAttachments(Plugin plugin, String name) {
+-        boolean changed = false;
+-        for(PermissionAttachmentInfo info : permissions.get(name.toLowerCase())) {
+-            if(info.getAttachment().getPlugin() == plugin) {
+-                attachments.remove(info.getAttachment());
+-                changed = true;
+-            }
++        final PermissionAttachmentInfo info = permissions.get(name);
++        if (info == null || info.getAttachment() == null || info.getAttachment().getPlugin() != plugin) return false;
++
++        try {
++            removeAttachment(info.getAttachment());
++            return true;
++        } catch(IllegalArgumentException e) {
++            return false;
+         }
+-        if(changed) recalculatePermissions();
+-        return changed;
+     }
+ 
+     @Override
+@@ -293,8 +293,7 @@ public class PermissibleBase implements Permissible {
+ 
+     @Override
+     public PermissionAttachmentInfo getEffectivePermission(String name) {
+-        List<PermissionAttachmentInfo> list = permissions.get(name.toLowerCase());
+-        return list.isEmpty() ? null : list.get(list.size() - 1);
++        return permissions.get(name.toLowerCase());
+     }
+ 
+     @Override
+@@ -315,7 +314,7 @@ public class PermissibleBase implements Permissible {
+ 
+     @Override
+     public Collection<PermissionAttachmentInfo> getAttachments(String name) {
+-        return ImmutableList.copyOf(permissions.get(name.toLowerCase()));
++        return Collections.singleton(permissions.get(name.toLowerCase()));
+     }
+ 
+     @Override
+@@ -325,13 +324,12 @@ public class PermissibleBase implements Permissible {
+ 
+     @Override
+     public Collection<PermissionAttachmentInfo> getAttachments(Plugin plugin, String name) {
+-        ImmutableList.Builder<PermissionAttachmentInfo> builder = ImmutableList.builder();
+-        for(PermissionAttachmentInfo info : permissions.get(name.toLowerCase())) {
+-            if(info.getAttachment() != null && info.getAttachment().getPlugin() == plugin) {
+-                builder.add(info);
+-            }
++        final PermissionAttachmentInfo info = permissions.get(name.toLowerCase());
++        if (info == null || info.getAttachment() == null || info.getAttachment().getPlugin() != plugin) {
++            return Collections.emptyList();
+         }
+-        return builder.build();
++
++        return Collections.singleton(info);
+     }
+ 
+     @Override
+-- 
+2.26.1
+

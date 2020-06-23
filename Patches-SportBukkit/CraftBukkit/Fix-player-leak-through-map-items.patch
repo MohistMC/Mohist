@@ -1,0 +1,44 @@
+From: Jedediah Smith <jedediah@silencegreys.com>
+Date: Sat, 21 Jan 2017 04:16:04 -0500
+Subject: [PATCH] Fix player leak through map items
+
+
+diff --git a/src/main/java/net/minecraft/server/World.java b/src/main/java/net/minecraft/server/World.java
+--- a/src/main/java/net/minecraft/server/World.java
++++ b/src/main/java/net/minecraft/server/World.java
+@@ -1060,6 +1060,16 @@ public abstract class World implements IBlockAccess {
+             ((IWorldAccess) this.u.get(i)).b(entity);
+         }
+ 
++        // SportBukkit start - clean up players from maps
++        if(entity instanceof EntityHuman) {
++            for(PersistentBase map : this.worldMaps.a.values()) {
++                if(map instanceof WorldMap) {
++                    ((WorldMap) map).remove((EntityHuman) entity);
++                }
++            }
++        }
++        // SportBukkit end
++
+         entity.valid = false; // CraftBukkit
+     }
+ 
+diff --git a/src/main/java/net/minecraft/server/WorldMap.java b/src/main/java/net/minecraft/server/WorldMap.java
+--- a/src/main/java/net/minecraft/server/WorldMap.java
++++ b/src/main/java/net/minecraft/server/WorldMap.java
+@@ -34,6 +34,15 @@ public class WorldMap extends PersistentBase {
+     private UUID uniqueId = null;
+     // CraftBukkit end
+ 
++    // SportBukkit start
++    public void remove(EntityHuman player) {
++        final WorldMapHumanTracker tracker = k.remove(player);
++        if(tracker != null) {
++            i.remove(tracker);
++        }
++    }
++    // SportBukkit end
++
+     public WorldMap(String s) {
+         super(s);
+         // CraftBukkit start

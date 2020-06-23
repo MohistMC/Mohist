@@ -1,0 +1,145 @@
+From 7683a5ab540fa44395fdc8d85356c25e741184ed Mon Sep 17 00:00:00 2001
+From: Andrew Steinborn <git@steinborn.me>
+Date: Thu, 19 Mar 2020 04:32:11 -0400
+Subject: [PATCH] Allow delaying chunk unloading
+
+
+diff --git a/pom.xml b/pom.xml
+index bc115871..0760f87c 100644
+--- a/pom.xml
++++ b/pom.xml
+@@ -26,6 +26,10 @@
+       <id>bukkit-repo</id>
+       <url>https://repo.canyonmodded.com</url> <!-- Canyon: replace repo -->
+     </repository>
++    <repository>
++      <id>canyon-local-repo</id>
++      <url>file://${basedir}/../work/local-repo</url>
++    </repository>
+   </repositories>
+   <pluginRepositories>
+     <pluginRepository>
+@@ -107,6 +111,13 @@
+       <scope>compile</scope>
+       <classifier>osx-x86_64</classifier>
+     </dependency>
++    <!-- Canyon - include fastutil -->
++    <dependency>
++      <groupId>it.unimi.dsi</groupId>
++      <artifactId>fastutil</artifactId>
++      <version>8.3.1</version>
++      <scope>compile</scope>
++    </dependency>
+   </dependencies>
+   <!-- This builds a completely 'ready to start' jar with all dependencies inside -->
+   <build>
+@@ -196,13 +207,6 @@
+             <goals>
+               <goal>shade</goal>
+             </goals>
+-            <configuration>
+-              <artifactSet>
+-                <excludes>
+-                  <exclude>junit:junit</exclude>
+-                </excludes>
+-              </artifactSet>
+-            </configuration>
+           </execution>
+         </executions>
+       </plugin>
+diff --git a/src/main/java/com/canyonmodded/config/CanyonConfig.java b/src/main/java/com/canyonmodded/config/CanyonConfig.java
+index fa641f27..b575f54b 100644
+--- a/src/main/java/com/canyonmodded/config/CanyonConfig.java
++++ b/src/main/java/com/canyonmodded/config/CanyonConfig.java
+@@ -12,6 +12,7 @@ public class CanyonConfig {
+     public static int arrowDespawnRate = 1200;
+     public static int itemDespawnRate = 6000;
+     public static boolean randomizeInitialSpawn = true;
++    public static int unloadInactiveChunksAfter = 0;
+ 
+     public static void loadConfiguration(File file) {
+         Configuration configuration = new Configuration(file);
+@@ -24,6 +25,7 @@ public class CanyonConfig {
+         arrowDespawnRate = configuration.getInt("optimization.arrow-despawn-rate", arrowDespawnRate);
+         itemDespawnRate = configuration.getInt("optimization.item-despawn-rate", itemDespawnRate);
+         randomizeInitialSpawn = configuration.getBoolean("settings.randomize-initial-spawn", true);
++        unloadInactiveChunksAfter = configuration.getInt("optimization.unload-inactive-chunks-after", unloadInactiveChunksAfter);
+ 
+         configuration.save();
+     }
+diff --git a/src/main/java/net/minecraft/server/ChunkProviderServer.java b/src/main/java/net/minecraft/server/ChunkProviderServer.java
+index b39098b4..24cd96e0 100644
+--- a/src/main/java/net/minecraft/server/ChunkProviderServer.java
++++ b/src/main/java/net/minecraft/server/ChunkProviderServer.java
+@@ -11,6 +11,7 @@ import java.util.Set;
+ // CraftBukkit start
+ import java.util.Random;
+ import org.bukkit.craftbukkit.CraftChunk;
++import org.bukkit.craftbukkit.util.LongHash; // Canyon
+ import org.bukkit.craftbukkit.util.LongHashset;
+ import org.bukkit.craftbukkit.util.LongHashtable;
+ import org.bukkit.event.world.ChunkLoadEvent;
+@@ -32,7 +33,7 @@ public class ChunkProviderServer implements IChunkProvider {
+     // Canyon end
+ 
+     // CraftBukkit start
+-    public LongHashset unloadQueue = new LongHashset();
++    public it.unimi.dsi.fastutil.longs.Long2LongMap unloadQueue = new it.unimi.dsi.fastutil.longs.Long2LongOpenHashMap(); // Canyon
+     public Chunk emptyChunk;
+     public IChunkProvider chunkProvider; // CraftBukkit
+     private IChunkLoader e;
+@@ -60,7 +61,10 @@ public class ChunkProviderServer implements IChunkProvider {
+         short short1 = 128;
+ 
+         if (k < -short1 || k > short1 || l < -short1 || l > short1 || !(this.world.keepSpawnInMemory)) { // CraftBukkit - added 'this.world.keepSpawnInMemory'
+-            this.unloadQueue.add(i, j); // CraftBukkit
++            // Canyon Start
++            long targetUnload = MinecraftServer.currentTick + com.canyonmodded.config.CanyonConfig.unloadInactiveChunksAfter;
++            this.unloadQueue.put(LongHash.toLong(i, j), targetUnload); // CraftBukkit
++            // Canyon End
+         }
+     }
+ 
+@@ -75,7 +79,7 @@ public class ChunkProviderServer implements IChunkProvider {
+     }
+     public java.util.concurrent.CompletableFuture<Chunk> getChunkAtAsync(int i, int j, boolean immediate) {
+         // CraftBukkit start
+-        this.unloadQueue.remove(i, j);
++        this.unloadQueue.remove(LongHash.toLong(i, j));
+         Chunk chunk = (Chunk) this.chunks.get(i, j);
+         //boolean newChunk = false; // Canyon - move
+         // CraftBukkit end
+@@ -282,8 +286,15 @@ public class ChunkProviderServer implements IChunkProvider {
+         if (!this.world.canSave) {
+             // CraftBukkit start
+             org.bukkit.Server server = this.world.getServer();
+-            for (int i = 0; i < 50 && !this.unloadQueue.isEmpty(); i++) {
+-                long chunkcoordinates = this.unloadQueue.popFirst();
++            // Canyon start - delayed chunk unloading
++            it.unimi.dsi.fastutil.longs.LongIterator it = this.unloadQueue.keySet().iterator();
++            for (int i = 0; i < 50 && it.hasNext(); i++) {
++                long chunkcoordinates = it.nextLong();
++                if (this.unloadQueue.get(chunkcoordinates) > MinecraftServer.currentTick) {
++                    continue;
++                }
++                it.remove();
++                // Canyon end
+                 Chunk chunk = this.chunks.get(chunkcoordinates);
+                 if (chunk == null) continue;
+ 
+diff --git a/src/main/java/org/bukkit/craftbukkit/util/LongHash.java b/src/main/java/org/bukkit/craftbukkit/util/LongHash.java
+index f3fc7d19..de15f8c3 100644
+--- a/src/main/java/org/bukkit/craftbukkit/util/LongHash.java
++++ b/src/main/java/org/bukkit/craftbukkit/util/LongHash.java
+@@ -10,7 +10,7 @@ package org.bukkit.craftbukkit.util;
+  * @author Nathan
+  */
+ public abstract class LongHash {
+-    static long toLong(int msw, int lsw) {
++    public static long toLong(int msw, int lsw) { // Canyon - make public
+         return ((long) msw << 32) + lsw - Integer.MIN_VALUE;
+     }
+ 
+-- 
+2.26.2
+

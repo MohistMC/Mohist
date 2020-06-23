@@ -1,0 +1,48 @@
+From: Jedediah Smith <jedediah@silencegreys.com>
+Date: Wed, 7 Dec 2016 04:08:52 -0500
+Subject: [PATCH] More ways to spawn FallingBlocks
+
+
+diff --git a/src/main/java/org/bukkit/craftbukkit/CraftWorld.java b/src/main/java/org/bukkit/craftbukkit/CraftWorld.java
+--- a/src/main/java/org/bukkit/craftbukkit/CraftWorld.java
++++ b/src/main/java/org/bukkit/craftbukkit/CraftWorld.java
+@@ -934,25 +934,32 @@ public class CraftWorld implements World {
+     }
+ 
+     @Override
+-    public FallingBlock spawnFallingBlock(Location location, MaterialData data) throws IllegalArgumentException {
++    public FallingBlock spawnFallingBlock(Vec3 position, MaterialData data) throws IllegalArgumentException {
+         Validate.notNull(data, "MaterialData cannot be null");
+-        return spawnFallingBlock(location, data.getItemType(), data.getData());
++        return spawnFallingBlock(position, data.getItemType(), data.getData());
+     }
+ 
+-    public FallingBlock spawnFallingBlock(Location location, org.bukkit.Material material, byte data) throws IllegalArgumentException {
+-        Validate.notNull(location, "Location cannot be null");
++    @Override
++    public FallingBlock spawnFallingBlockAligned(Vec3 position, MaterialData data) throws IllegalArgumentException {
++        return spawnFallingBlock(position.blockCenter().minus(0, 0.5, 0), data);
++    }
++
++    @Override
++    public FallingBlock spawnFallingBlock(Vec3 position, org.bukkit.Material material, byte data) throws IllegalArgumentException {
++        Validate.notNull(position, "Position cannot be null");
+         Validate.notNull(material, "Material cannot be null");
+         Validate.isTrue(material.isBlock(), "Material must be a block");
+ 
+-        EntityFallingBlock entity = new EntityFallingBlock(world, location.getX(), location.getY(), location.getZ(), CraftMagicNumbers.getBlock(material).fromLegacyData(data));
++        EntityFallingBlock entity = new EntityFallingBlock(world, position.fineX(), position.fineY(), position.fineZ(), CraftMagicNumbers.getBlock(material).fromLegacyData(data));
+         entity.ticksLived = 1;
+ 
+         world.addEntity(entity, SpawnReason.CUSTOM);
+         return (FallingBlock) entity.getBukkitEntity();
+     }
+ 
+-    public FallingBlock spawnFallingBlock(Location location, int blockId, byte blockData) throws IllegalArgumentException {
+-        return spawnFallingBlock(location, org.bukkit.Material.getMaterial(blockId), blockData);
++    @Override
++    public FallingBlock spawnFallingBlock(Vec3 position, int blockId, byte blockData) throws IllegalArgumentException {
++        return spawnFallingBlock(position, org.bukkit.Material.getMaterial(blockId), blockData);
+     }
+ 
+     @SuppressWarnings("unchecked")

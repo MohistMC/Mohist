@@ -1,0 +1,129 @@
+From b1ba53bedadc1abe033bed3b6a5b00cb52375cc1 Mon Sep 17 00:00:00 2001
+From: Andrew Steinborn <git@steinborn.me>
+Date: Sat, 1 Jun 2019 03:06:56 -0400
+Subject: [PATCH] Fix up mc-dev
+
+
+diff --git a/src/main/java/net/minecraft/server/MinecraftServer.java b/src/main/java/net/minecraft/server/MinecraftServer.java
+index c232801a..59358fbd 100644
+--- a/src/main/java/net/minecraft/server/MinecraftServer.java
++++ b/src/main/java/net/minecraft/server/MinecraftServer.java
+@@ -146,7 +146,14 @@ public class MinecraftServer implements Runnable, ICommandListener {
+         }
+ 
+         log.info("Preparing level \"" + s1 + "\"");
+-        this.a(new WorldLoaderServer(new File(".")), s1, k);
++        // Canyon Start - fix decompile
++        try {
++            this.a(new WorldLoaderServer(new File(".")), s1, k);
++        } catch (IOException e) {
++            e.printStackTrace();
++            return false;
++        }
++        // Canyon End
+ 
+         // CraftBukkit start
+         long elapsed = System.nanoTime() - j;
+@@ -162,7 +169,7 @@ public class MinecraftServer implements Runnable, ICommandListener {
+         return true;
+     }
+ 
+-    private void a(Convertable convertable, String s, long i) {
++    private void a(Convertable convertable, String s, long i) throws IOException {
+         if (convertable.isConvertable(s)) {
+             log.info("Converting map!");
+             convertable.convert(s, new ConvertProgressUpdater(this));
+diff --git a/src/main/java/net/minecraft/server/NextTickListEntry.java b/src/main/java/net/minecraft/server/NextTickListEntry.java
+index d67d6bd9..b461a80f 100644
+--- a/src/main/java/net/minecraft/server/NextTickListEntry.java
++++ b/src/main/java/net/minecraft/server/NextTickListEntry.java
+@@ -1,6 +1,6 @@
+ package net.minecraft.server;
+ 
+-public class NextTickListEntry implements Comparable {
++public class NextTickListEntry implements Comparable<NextTickListEntry> { // Canyon - fix decompile error
+ 
+     private static long f = 0L;
+     public int a;
+diff --git a/src/main/java/net/minecraft/server/Packet10Flying.java b/src/main/java/net/minecraft/server/Packet10Flying.java
+index 505e0ea6..7bf2f671 100644
+--- a/src/main/java/net/minecraft/server/Packet10Flying.java
++++ b/src/main/java/net/minecraft/server/Packet10Flying.java
+@@ -21,11 +21,11 @@ public class Packet10Flying extends Packet {
+         nethandler.a(this);
+     }
+ 
+-    public void a(DataInputStream datainputstream) {
++    public void a(DataInputStream datainputstream) throws java.io.IOException { // Canyon - fix decompile
+         this.g = datainputstream.read() != 0;
+     }
+ 
+-    public void a(DataOutputStream dataoutputstream) {
++    public void a(DataOutputStream dataoutputstream) throws java.io.IOException { // Canyon - fix decompile
+         dataoutputstream.write(this.g ? 1 : 0);
+     }
+ 
+diff --git a/src/main/java/net/minecraft/server/RegionFile.java b/src/main/java/net/minecraft/server/RegionFile.java
+index 8e49cbc4..1aca87dd 100644
+--- a/src/main/java/net/minecraft/server/RegionFile.java
++++ b/src/main/java/net/minecraft/server/RegionFile.java
+@@ -245,7 +245,7 @@ public class RegionFile {
+         }
+     }
+ 
+-    private void a(int i, byte[] abyte, int j) {
++    private void a(int i, byte[] abyte, int j) throws IOException {
+         this.b(" " + i);
+         this.c.seek((long) (i * 4096));
+         this.c.writeInt(j + 1);
+@@ -265,19 +265,19 @@ public class RegionFile {
+         return this.e(i, j) != 0;
+     }
+ 
+-    private void a(int i, int j, int k) {
++    private void a(int i, int j, int k) throws IOException { // Canyon - fix decompile
+         this.d[i + j * 32] = k;
+         this.c.seek((long) ((i + j * 32) * 4));
+         this.c.writeInt(k);
+     }
+ 
+-    private void b(int i, int j, int k) {
++    private void b(int i, int j, int k) throws IOException { // Canyon - fix decompile
+         this.e[i + j * 32] = k;
+         this.c.seek((long) (4096 + (i + j * 32) * 4));
+         this.c.writeInt(k);
+     }
+ 
+-    public void b() {
++    public void b() throws IOException { // Canyon - fix decompile
+         this.c.close();
+     }
+ }
+diff --git a/src/main/java/org/bukkit/craftbukkit/CraftServer.java b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
+index 038afed5..e5c92b7f 100644
+--- a/src/main/java/org/bukkit/craftbukkit/CraftServer.java
++++ b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
+@@ -483,10 +483,17 @@ public final class CraftServer implements Server {
+         }
+ 
+         Convertable converter = new WorldLoaderServer(folder);
+-        if (converter.isConvertable(name)) {
+-            getLogger().info("Converting world '" + name + "'");
+-            converter.convert(name, new ConvertProgressUpdater(console));
++        // Canyon Start - fix decompile
++        try {
++            if (converter.isConvertable(name)) {
++                getLogger().info("Converting world '" + name + "'");
++                converter.convert(name, new ConvertProgressUpdater(console));
++            }
++        } catch (IOException e) {
++            // launder the exception
++            throw new RuntimeException(e);
+         }
++        // Canyon End
+ 
+         int dimension = 10 + console.worlds.size();
+         WorldServer internal = new WorldServer(console, new ServerNBTManager(new File("."), name, true), name, dimension, seed, environment, generator);
+-- 
+2.25.1
+

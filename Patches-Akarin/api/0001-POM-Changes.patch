@@ -1,0 +1,35 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?=E3=84=97=E3=84=A0=CB=8B=20=E3=84=91=E3=84=A7=CB=8A?=
+ <tsao-chi@the-lingo.org>
+Date: Fri, 14 Dec 2018 21:52:29 -0800
+Subject: [PATCH] POM Changes
+
+
+diff --git a/pom.xml b/pom.xml
+index a2387a667efba33135197d40efe879fc9f635d2f..13d0bb7355a8f6c1a33feb3be60f61aa60dd5f9c 100644
+--- a/pom.xml
++++ b/pom.xml
+@@ -3,18 +3,18 @@
+          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+     <modelVersion>4.0.0</modelVersion>
+     <parent>
+-        <groupId>com.tuinity</groupId>
+-        <artifactId>tuinity-parent</artifactId>
++        <groupId>io.akarin.server</groupId>
++        <artifactId>akarin-parent</artifactId>
+         <version>dev-SNAPSHOT</version>
+         <relativePath>../pom.xml</relativePath>
+     </parent>
+ 
+-    <artifactId>tuinity-api</artifactId>
++    <artifactId>akarin-api</artifactId>
+     <version>1.15.2-R0.1-SNAPSHOT</version>
+     <packaging>jar</packaging>
+ 
+-    <name>Tuinity-API</name>
+-    <url>https://github.com/Spottedleaf/Tuinity</url>
++    <name>Akarin-API</name>
++    <url>https://github.com/Akarin-project/Akarin</url>
+     <description>An enhanced plugin API for Minecraft servers.</description>
+ 
+     <properties>

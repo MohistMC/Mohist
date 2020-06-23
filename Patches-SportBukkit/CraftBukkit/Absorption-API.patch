@@ -1,0 +1,25 @@
+From: Jedediah Smith <jedediah@silencegreys.com>
+Date: Fri, 4 Mar 2016 05:57:50 -0500
+Subject: [PATCH] Absorption API
+
+
+diff --git a/src/main/java/org/bukkit/craftbukkit/entity/CraftLivingEntity.java b/src/main/java/org/bukkit/craftbukkit/entity/CraftLivingEntity.java
+--- a/src/main/java/org/bukkit/craftbukkit/entity/CraftLivingEntity.java
++++ b/src/main/java/org/bukkit/craftbukkit/entity/CraftLivingEntity.java
+@@ -270,6 +270,16 @@ public class CraftLivingEntity extends CraftEntity implements LivingEntity {
+     }
+ 
+     @Override
++    public float getAbsorption() {
++        return getHandle().getAbsorptionHearts();
++    }
++
++    @Override
++    public void setAbsorption(float absorption) {
++        getHandle().setAbsorptionHearts(absorption);
++    }
++
++    @Override
+     public EntityLiving getHandle() {
+         return (EntityLiving) entity;
+     }

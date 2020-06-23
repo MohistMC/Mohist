@@ -1,0 +1,66 @@
+From 69999353e07157fb24604fd3b5984959cd487d75 Mon Sep 17 00:00:00 2001
+From: cswhite2000 <18whitechristop@gmail.com>
+Date: Sat, 4 Aug 2018 21:07:04 -0700
+Subject: [PATCH] Fire PlayerInteractEvent when anyone steps on a pressure
+ plate
+
+
+diff --git a/src/main/java/net/minecraft/server/BlockPressurePlateBinary.java b/src/main/java/net/minecraft/server/BlockPressurePlateBinary.java
+index ada3875a5..136056fdd 100644
+--- a/src/main/java/net/minecraft/server/BlockPressurePlateBinary.java
++++ b/src/main/java/net/minecraft/server/BlockPressurePlateBinary.java
+@@ -9,6 +9,7 @@ public class BlockPressurePlateBinary extends BlockPressurePlateAbstract {
+ 
+     public static final BlockStateBoolean POWERED = BlockStateBoolean.of("powered");
+     private final BlockPressurePlateBinary.EnumMobType b;
++    public java.util.Map<Object, Boolean> entities = new java.util.HashMap<Object, Boolean>(); // SportBukkit
+ 
+     protected BlockPressurePlateBinary(Material material, BlockPressurePlateBinary.EnumMobType blockpressureplatebinary_enummobtype) {
+         super(material);
+@@ -41,6 +42,8 @@ public class BlockPressurePlateBinary extends BlockPressurePlateAbstract {
+             return 0;
+         }
+ 
++        this.entities.keySet().retainAll(list); // CraftBukkit
++
+         if (!list.isEmpty()) {
+             Iterator iterator = list.iterator();
+ 
+@@ -48,11 +51,21 @@ public class BlockPressurePlateBinary extends BlockPressurePlateAbstract {
+                 Entity entity = (Entity) iterator.next();
+ 
+                 // CraftBukkit start - Call interact event when turning on a pressure plate
+-                if (this.e(world.getType(blockposition)) == 0) {
++                Boolean result = this.entities.get(entity);
++
++                if (true || this.e(world.getType(blockposition)) == 0) {
+                     org.bukkit.World bworld = world.getWorld();
+                     org.bukkit.plugin.PluginManager manager = world.getServer().getPluginManager();
+                     org.bukkit.event.Cancellable cancellable;
+ 
++                    if (entity == null) {
++                        continue;
++                    }
++
++                    if (!entity.aI() && result != null) {
++                        return result ? 15 : 0;
++                    }
++
+                     if (entity instanceof EntityHuman) {
+                         cancellable = org.bukkit.craftbukkit.event.CraftEventFactory.callPlayerInteractEvent((EntityHuman) entity, org.bukkit.event.block.Action.PHYSICAL, blockposition, null, null);
+                     } else {
+@@ -65,9 +78,9 @@ public class BlockPressurePlateBinary extends BlockPressurePlateAbstract {
+                         continue;
+                     }
+                 }
+-                // CraftBukkit end
+ 
+-                if (!entity.aI()) {
++                if (!entity.aI() && (result == null || result)) {
++                    // CraftBukkit end
+                     return 15;
+                 }
+             }
+-- 
+2.18.0
+

@@ -1,0 +1,58 @@
+From 8dfe097a21379377ba559e793d0b6d9735c8ff2b Mon Sep 17 00:00:00 2001
+From: cswhite2000 <18whitechristop@gmail.com>
+Date: Sun, 5 Aug 2018 19:59:31 -0700
+Subject: [PATCH] Fix deadlock during shutdown
+
+
+diff --git a/src/main/java/net/minecraft/server/ServerConnection.java b/src/main/java/net/minecraft/server/ServerConnection.java
+index f13182c18..eb2231062 100644
+--- a/src/main/java/net/minecraft/server/ServerConnection.java
++++ b/src/main/java/net/minecraft/server/ServerConnection.java
+@@ -20,6 +20,7 @@ import io.netty.util.concurrent.Future;
+ import io.netty.util.concurrent.GenericFutureListener;
+ import java.io.IOException;
+ import java.net.InetAddress;
++import java.util.ArrayList;
+ import java.util.Collections;
+ import java.util.Iterator;
+ import java.util.List;
+@@ -107,15 +108,33 @@ public class ServerConnection {
+         this.d = false;
+         Iterator iterator = this.g.iterator();
+ 
++        // CraftBukkit start - handle processQueue while closing channels to prevent deadlock
++        ArrayList<ChannelFuture> futures = new ArrayList<ChannelFuture>();
++
+         while (iterator.hasNext()) {
+             ChannelFuture channelfuture = (ChannelFuture) iterator.next();
+ 
++            futures.add(channelfuture.channel().close());
++        }
++
++        for(;;) {
++            for(Iterator<ChannelFuture> iter = futures.iterator(); iter.hasNext();) {
++                if(iter.next().isDone()) iter.remove();
++            }
++
++            while(!f.processQueue.isEmpty()) {
++                f.processQueue.remove().run();
++            }
++
++            if(futures.isEmpty()) break;
++
+             try {
+-                channelfuture.channel().close().sync();
+-            } catch (InterruptedException interruptedexception) {
+-                ServerConnection.e.error("Interrupted whilst closing channel");
++                Thread.sleep(50);
++            } catch(InterruptedException e) {
++                e.printStackTrace();
+             }
+         }
++        // CraftBukkit end
+ 
+     }
+ 
+-- 
+2.18.0
+

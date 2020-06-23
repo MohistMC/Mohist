@@ -1,0 +1,91 @@
+From 894a0782417af0776689f9bbb57a832fef006956 Mon Sep 17 00:00:00 2001
+From: md_5 <md_5@live.com.au>
+Date: Sat, 23 Mar 2013 09:52:41 +1100
+Subject: [PATCH] View Distance
+
+This commit allows the user to select per world view distances.
+
+diff --git a/src/main/java/net/minecraft/server/PlayerList.java b/src/main/java/net/minecraft/server/PlayerList.java
+index f999f3b83..46fbf941c 100644
+--- a/src/main/java/net/minecraft/server/PlayerList.java
++++ b/src/main/java/net/minecraft/server/PlayerList.java
+@@ -125,7 +125,8 @@ public abstract class PlayerList {
+         boolean flag1 = gamerules.getBoolean(GameRules.REDUCED_DEBUG_INFO);
+ 
+         // CraftBukkit - getType()
+-        playerconnection.sendPacket(new PacketPlayOutLogin(entityplayer.getId(), entityplayer.playerInteractManager.getGameMode(), WorldData.c(worlddata.getSeed()), worlddata.isHardcore(), worldserver.worldProvider.getDimensionManager().getType(), this.getMaxPlayers(), worlddata.getType(), this.viewDistance, flag1, !flag));
++        // Spigot - view distance
++        playerconnection.sendPacket(new PacketPlayOutLogin(entityplayer.getId(), entityplayer.playerInteractManager.getGameMode(), WorldData.c(worlddata.getSeed()), worlddata.isHardcore(), worldserver.worldProvider.getDimensionManager().getType(), this.getMaxPlayers(), worlddata.getType(), worldserver.spigotConfig.viewDistance, flag1, !flag));
+         entityplayer.getBukkitEntity().sendSupportedChannels(); // CraftBukkit
+         playerconnection.sendPacket(new PacketPlayOutCustomPayload(PacketPlayOutCustomPayload.a, (new PacketDataSerializer(Unpooled.buffer())).a(this.getServer().getServerModName())));
+         playerconnection.sendPacket(new PacketPlayOutServerDifficulty(worlddata.getDifficulty(), worlddata.isDifficultyLocked()));
+@@ -635,6 +636,7 @@ public abstract class PlayerList {
+         WorldData worlddata = worldserver.getWorldData();
+ 
+         entityplayer1.playerConnection.sendPacket(new PacketPlayOutRespawn(worldserver.worldProvider.getDimensionManager().getType(),  WorldData.c(worldserver.getWorldData().getSeed()), worldserver.getWorldData().getType(), entityplayer1.playerInteractManager.getGameMode()));
++        entityplayer1.playerConnection.sendPacket(new PacketPlayOutViewDistance(worldserver.spigotConfig.viewDistance)); // Spigot
+         entityplayer1.spawnIn(worldserver);
+         entityplayer1.dead = false;
+         entityplayer1.playerConnection.teleport(new Location(worldserver.getWorld(), entityplayer1.locX(), entityplayer1.locY(), entityplayer1.locZ(), entityplayer1.yaw, entityplayer1.pitch));
+diff --git a/src/main/java/net/minecraft/server/WorldServer.java b/src/main/java/net/minecraft/server/WorldServer.java
+index bbe5a08f2..9fc569a14 100644
+--- a/src/main/java/net/minecraft/server/WorldServer.java
++++ b/src/main/java/net/minecraft/server/WorldServer.java
+@@ -86,7 +86,7 @@ public class WorldServer extends World {
+                 chunkGenerator = worldprovider.getChunkGenerator();
+             }
+ 
+-            return new ChunkProviderServer((WorldServer) world, worldnbtstorage.getDirectory(), worldnbtstorage.getDataFixer(), worldnbtstorage.f(), executor, chunkGenerator, minecraftserver.getPlayerList().getViewDistance(), worldloadlistener, () -> {
++            return new ChunkProviderServer((WorldServer) world, worldnbtstorage.getDirectory(), worldnbtstorage.getDataFixer(), worldnbtstorage.f(), executor, chunkGenerator, world.spigotConfig.viewDistance, worldloadlistener, () -> { // Spigot
+                 return minecraftserver.getWorldServer(DimensionManager.OVERWORLD).getWorldPersistentData();
+             });
+             // CraftBukkit end
+diff --git a/src/main/java/org/bukkit/craftbukkit/CraftWorld.java b/src/main/java/org/bukkit/craftbukkit/CraftWorld.java
+index c44e40bb4..7aefdbc9a 100644
+--- a/src/main/java/org/bukkit/craftbukkit/CraftWorld.java
++++ b/src/main/java/org/bukkit/craftbukkit/CraftWorld.java
+@@ -2293,6 +2293,13 @@ public class CraftWorld implements World {
+         return new CraftDragonBattle(((WorldProviderTheEnd) worldProvider).o()); // PAIL rename getDragonBattle
+     }
+ 
++    // Spigot start
++    @Override
++    public int getViewDistance() {
++        return world.spigotConfig.viewDistance;
++    }
++    // Spigot end
++
+     // Spigot start
+     private final Spigot spigot = new Spigot()
+     {
+diff --git a/src/main/java/org/spigotmc/SpigotWorldConfig.java b/src/main/java/org/spigotmc/SpigotWorldConfig.java
+index 8c855cf9b..be0540352 100644
+--- a/src/main/java/org/spigotmc/SpigotWorldConfig.java
++++ b/src/main/java/org/spigotmc/SpigotWorldConfig.java
+@@ -142,4 +142,23 @@ public class SpigotWorldConfig
+         expMerge = getDouble("merge-radius.exp", 3.0 );
+         log( "Experience Merge Radius: " + expMerge );
+     }
++
++    public int viewDistance;
++    private void viewDistance()
++    {
++        if ( SpigotConfig.version < 12 )
++        {
++            set( "view-distance", null );
++        }
++
++        Object viewDistanceObject = get( "view-distance", "default" );
++        viewDistance = ( viewDistanceObject ) instanceof Number ? ( (Number) viewDistanceObject ).intValue() : -1;
++        if ( viewDistance <= 0 )
++        {
++            viewDistance = Bukkit.getViewDistance();
++        }
++
++        viewDistance = Math.max( Math.min( viewDistance,  32 ), 3 );
++        log( "View Distance: " + viewDistance );
++    }
+ }
+-- 
+2.25.1
+

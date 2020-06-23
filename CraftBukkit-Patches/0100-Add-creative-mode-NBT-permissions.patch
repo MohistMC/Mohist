@@ -1,0 +1,65 @@
+From d3d698a927a5ff6d2bb03bc3118f9c9984a72888 Mon Sep 17 00:00:00 2001
+From: md_5 <git@md-5.net>
+Date: Mon, 25 Feb 2019 19:26:56 +1100
+Subject: [PATCH] Add creative mode NBT permissions
+
+
+diff --git a/src/main/java/net/minecraft/server/ItemBlock.java b/src/main/java/net/minecraft/server/ItemBlock.java
+index df2068e32..ab875a736 100644
+--- a/src/main/java/net/minecraft/server/ItemBlock.java
++++ b/src/main/java/net/minecraft/server/ItemBlock.java
+@@ -166,7 +166,7 @@ public class ItemBlock extends Item {
+                 TileEntity tileentity = world.getTileEntity(blockposition);
+ 
+                 if (tileentity != null) {
+-                    if (!world.isClientSide && tileentity.isFilteredNBT() && (entityhuman == null || !entityhuman.isCreativeAndOp())) {
++                    if (!world.isClientSide && tileentity.isFilteredNBT() && (entityhuman == null || !(entityhuman.isCreativeAndOp() || (entityhuman.abilities.canInstantlyBuild && entityhuman.getBukkitEntity().hasPermission("minecraft.nbt.place"))))) { // Spigot - add permission
+                         return false;
+                     }
+ 
+diff --git a/src/main/java/net/minecraft/server/ItemDebugStick.java b/src/main/java/net/minecraft/server/ItemDebugStick.java
+index a67f89bc3..1a7fdb686 100644
+--- a/src/main/java/net/minecraft/server/ItemDebugStick.java
++++ b/src/main/java/net/minecraft/server/ItemDebugStick.java
+@@ -38,7 +38,7 @@ public class ItemDebugStick extends Item {
+     }
+ 
+     private void a(EntityHuman entityhuman, IBlockData iblockdata, GeneratorAccess generatoraccess, BlockPosition blockposition, boolean flag, ItemStack itemstack) {
+-        if (entityhuman.isCreativeAndOp()) {
++        if (entityhuman.isCreativeAndOp() || (entityhuman.abilities.canInstantlyBuild && entityhuman.getBukkitEntity().hasPermission("minecraft.debugstick")) || entityhuman.getBukkitEntity().hasPermission("minecraft.debugstick.always")) { // Spigot
+             Block block = iblockdata.getBlock();
+             BlockStateList<Block, IBlockData> blockstatelist = block.getStates();
+             Collection<IBlockState<?>> collection = blockstatelist.d();
+diff --git a/src/main/java/net/minecraft/server/PlayerConnection.java b/src/main/java/net/minecraft/server/PlayerConnection.java
+index e685b7085..0c496ee0a 100644
+--- a/src/main/java/net/minecraft/server/PlayerConnection.java
++++ b/src/main/java/net/minecraft/server/PlayerConnection.java
+@@ -2269,7 +2269,7 @@ public class PlayerConnection implements PacketListenerPlayIn {
+             ItemStack itemstack = packetplayinsetcreativeslot.getItemStack();
+             NBTTagCompound nbttagcompound = itemstack.b("BlockEntityTag");
+ 
+-            if (!itemstack.isEmpty() && nbttagcompound != null && nbttagcompound.hasKey("x") && nbttagcompound.hasKey("y") && nbttagcompound.hasKey("z")) {
++            if (!itemstack.isEmpty() && nbttagcompound != null && nbttagcompound.hasKey("x") && nbttagcompound.hasKey("y") && nbttagcompound.hasKey("z") && this.player.getBukkitEntity().hasPermission("minecraft.nbt.copy")) { // Spigot
+                 BlockPosition blockposition = new BlockPosition(nbttagcompound.getInt("x"), nbttagcompound.getInt("y"), nbttagcompound.getInt("z"));
+                 TileEntity tileentity = this.player.world.getTileEntity(blockposition);
+ 
+diff --git a/src/main/java/org/bukkit/craftbukkit/util/permissions/CraftDefaultPermissions.java b/src/main/java/org/bukkit/craftbukkit/util/permissions/CraftDefaultPermissions.java
+index 75f8d47a2..525ebf961 100644
+--- a/src/main/java/org/bukkit/craftbukkit/util/permissions/CraftDefaultPermissions.java
++++ b/src/main/java/org/bukkit/craftbukkit/util/permissions/CraftDefaultPermissions.java
+@@ -11,6 +11,12 @@ public final class CraftDefaultPermissions {
+     public static void registerCorePermissions() {
+         Permission parent = DefaultPermissions.registerPermission(ROOT, "Gives the user the ability to use all vanilla utilities and commands");
+         CommandPermissions.registerPermissions(parent);
++        // Spigot start
++        DefaultPermissions.registerPermission(ROOT + ".nbt.place", "Gives the user the ability to place restricted blocks with NBT in creative", org.bukkit.permissions.PermissionDefault.OP, parent);
++        DefaultPermissions.registerPermission(ROOT + ".nbt.copy", "Gives the user the ability to copy NBT in creative", org.bukkit.permissions.PermissionDefault.TRUE, parent);
++        DefaultPermissions.registerPermission(ROOT + ".debugstick", "Gives the user the ability to use the debug stick in creative", org.bukkit.permissions.PermissionDefault.OP, parent);
++        DefaultPermissions.registerPermission(ROOT + ".debugstick.always", "Gives the user the ability to use the debug stick in all game modes", org.bukkit.permissions.PermissionDefault.FALSE, parent);
++        // Spigot end
+         parent.recalculatePermissibles();
+     }
+ }
+-- 
+2.25.1
+

@@ -1,0 +1,154 @@
+From 347a6d865c1d7e36f5f4547d0bfa8058ffdf1baa Mon Sep 17 00:00:00 2001
+From: Austin Mayes <austin@avicus.net>
+Date: Wed, 26 Sep 2018 23:03:50 -0500
+Subject: [PATCH] Improve locale API and add methods for translating components
+
+
+diff --git a/src/main/java/network/stratus/sportpaper/api/text/TranslatableComponent.java b/src/main/java/network/stratus/sportpaper/api/text/TranslatableComponent.java
+new file mode 100644
+index 0000000..2c4ebfc
+--- /dev/null
++++ b/src/main/java/network/stratus/sportpaper/api/text/TranslatableComponent.java
+@@ -0,0 +1,18 @@
++package network.stratus.sportpaper.api.text;
++
++import java.util.Locale;
++import net.md_5.bungee.api.chat.BaseComponent;
++
++/**
++ * A component which can be translated using a {@link Locale}.
++ */
++public interface TranslatableComponent {
++
++	/**
++	 * Translate this component into a {@link BaseComponent} in the specified {@link Locale}.
++	 *
++	 * @param locale the locale to translate this component into
++	 * @return the translated component
++	 */
++	BaseComponent translate(Locale locale);
++}
+\ No newline at end of file
+diff --git a/src/main/java/org/bukkit/Bukkit.java b/src/main/java/org/bukkit/Bukkit.java
+index 55b2bec..0d835e4 100644
+--- a/src/main/java/org/bukkit/Bukkit.java
++++ b/src/main/java/org/bukkit/Bukkit.java
+@@ -12,6 +12,7 @@ import java.util.Set;
+ import java.util.UUID;
+ import java.util.logging.Logger;
+ 
++import network.stratus.sportpaper.api.text.TranslatableComponent;
+ import org.bukkit.Warning.WarningState;
+ import org.bukkit.command.CommandException;
+ import org.bukkit.command.CommandMap;
+@@ -1200,6 +1201,18 @@ public final class Bukkit {
+         return server.runOnMainThread(plugin, priority, task);
+     }
+ 
++    // SportPaper start
++    /**
++     * Broadcasts a translatable component to all {@link Player}s using their {@link CommandSender#getLocale() locale}.
++     *
++     * @param translatable the translatable component
++     * @see Server#broadcast(TranslatableComponent)
++     */
++    public static void broadcast(TranslatableComponent translatable) {
++        server.broadcast(translatable);
++    }
++    // SportPaper end
++
+     public static Server.Spigot spigot()
+     {
+         return server.spigot();
+diff --git a/src/main/java/org/bukkit/Server.java b/src/main/java/org/bukkit/Server.java
+index 6777fbc..e787891 100644
+--- a/src/main/java/org/bukkit/Server.java
++++ b/src/main/java/org/bukkit/Server.java
+@@ -14,6 +14,7 @@ import java.util.Set;
+ import java.util.UUID;
+ import java.util.logging.Logger;
+ 
++import network.stratus.sportpaper.api.text.TranslatableComponent;
+ import org.bukkit.Warning.WarningState;
+ import org.bukkit.command.CommandException;
+ import org.bukkit.command.CommandMap;
+@@ -1084,6 +1085,19 @@ public interface Server extends PluginMessageRecipient {
+      */
+     int interruptions();
+ 
++    // SportPaper start
++    /**
++     * Broadcasts a translatable component to all {@link Player}s using their {@link CommandSender#getLocale() locale}.
++     *
++     * @param translatable the translatable component
++     */
++    default void broadcast(TranslatableComponent translatable) {
++        for (Player player : this.getOnlinePlayers()) {
++            player.sendMessage(translatable.translate(player.getLocale()));
++        }
++    }
++    // SportPaper end
++
+     public class Spigot
+     {
+         @Deprecated
+diff --git a/src/main/java/org/bukkit/command/CommandSender.java b/src/main/java/org/bukkit/command/CommandSender.java
+index f6ae012..7bc56a8 100644
+--- a/src/main/java/org/bukkit/command/CommandSender.java
++++ b/src/main/java/org/bukkit/command/CommandSender.java
+@@ -1,5 +1,7 @@
+ package org.bukkit.command;
+ 
++import java.util.Locale;
++import network.stratus.sportpaper.api.text.TranslatableComponent;
+ import org.bukkit.Server;
+ import org.bukkit.permissions.Permissible;
+ 
+@@ -64,4 +66,27 @@ public interface CommandSender extends Permissible {
+         this.sendMessage(new net.md_5.bungee.api.chat.TextComponent(components).toLegacyText());
+     }
+     // Paper end
++
++    // SportPaper start
++
++    /**
++     * Gets the locale this command source is currently using.
++     *
++     * <p>This is {@link java.util.Locale#US} by default.</p>
++     *
++     * @return the locale
++     */
++    default java.util.Locale getLocale() {
++        return Locale.ENGLISH;
++    }
++
++    /**
++     * Sends a translatable component to this command source using its {@link #getLocale() locale}.
++     *
++     * @param translatable the translatable component
++    */
++    default void sendMessage(TranslatableComponent translatable) {
++        this.sendMessage(translatable.translate(this.getLocale()));
++    }
++    // SportPaper end
+ }
+diff --git a/src/main/java/org/bukkit/entity/Player.java b/src/main/java/org/bukkit/entity/Player.java
+index c6d1043..05c98d2 100644
+--- a/src/main/java/org/bukkit/entity/Player.java
++++ b/src/main/java/org/bukkit/entity/Player.java
+@@ -1536,4 +1536,12 @@ public interface Player extends HumanEntity, Conversable, CommandSender, Offline
+ 
+     Spigot spigot();
+     // Spigot end
++
++    /**
++     * Gets the locale this command source is currently using.
++     *
++     * @return the locale
++     */
++    @Override
++    java.util.Locale getLocale();
+ }
+-- 
+2.6.4
+

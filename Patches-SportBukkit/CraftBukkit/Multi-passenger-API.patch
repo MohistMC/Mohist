@@ -1,0 +1,106 @@
+From: Jedediah Smith <jedediah@silencegreys.com>
+Date: Mon, 21 Mar 2016 01:42:17 -0400
+Subject: [PATCH] Multi-passenger API
+
+
+diff --git a/src/main/java/net/minecraft/server/Entity.java b/src/main/java/net/minecraft/server/Entity.java
+--- a/src/main/java/net/minecraft/server/Entity.java
++++ b/src/main/java/net/minecraft/server/Entity.java
+@@ -1840,6 +1840,7 @@ public abstract class Entity implements ICommandListener {
+         return this.j <= 0;
+     }
+ 
++    public void ejectAllPassengers() { this.az(); } // SportBukkit - alias for following method
+     public void az() {
+         for (int i = this.passengers.size() - 1; i >= 0; --i) {
+             ((Entity) this.passengers.get(i)).stopRiding();
+@@ -2682,6 +2683,7 @@ public abstract class Entity implements ICommandListener {
+         return null;
+     }
+ 
++    public List<Entity> getPassengers() { return bx(); } // SportBukkit - alias
+     public List<Entity> bx() {
+         return (List) (this.passengers.isEmpty() ? Collections.emptyList() : Lists.newArrayList(this.passengers));
+     }
+diff --git a/src/main/java/org/bukkit/craftbukkit/entity/CraftEntity.java b/src/main/java/org/bukkit/craftbukkit/entity/CraftEntity.java
+--- a/src/main/java/org/bukkit/craftbukkit/entity/CraftEntity.java
++++ b/src/main/java/org/bukkit/craftbukkit/entity/CraftEntity.java
+@@ -1,11 +1,17 @@
+ package org.bukkit.craftbukkit.entity;
+ 
++import com.google.common.base.Function;
+ import com.google.common.base.Preconditions;
++
++import java.util.ArrayList;
+ import java.util.Collection;
++import java.util.Collections;
+ import java.util.List;
+ import java.util.Set;
+ import java.util.UUID;
+ 
++import com.google.common.collect.ImmutableList;
++import com.google.common.collect.Lists;
+ import net.md_5.bungee.api.chat.BaseComponent;
+ import net.minecraft.server.*;
+ 
+@@ -382,6 +388,47 @@ public abstract class CraftEntity implements org.bukkit.entity.Entity {
+         return true;
+     }
+ 
++    @Override
++    public boolean hasPassenger(org.bukkit.entity.Entity passenger) {
++        return equals(passenger.getVehicle());
++    }
++
++    @Override
++    public List<org.bukkit.entity.Entity> getPassengers() {
++        return Lists.transform(getHandle().getPassengers(), new Function<Entity, org.bukkit.entity.Entity>() {
++            @Override
++            public org.bukkit.entity.Entity apply(Entity passenger) {
++                return passenger.getBukkitEntity();
++            }
++        });
++    }
++
++    @Override
++    public List<org.bukkit.entity.Entity> setPassengers(List<org.bukkit.entity.Entity> passengers) {
++        for(org.bukkit.entity.Entity currentPassenger : ImmutableList.copyOf(getPassengers())) {
++            if(!passengers.contains(currentPassenger)) {
++                currentPassenger.leaveVehicle();
++            }
++        }
++
++        List<org.bukkit.entity.Entity> rejected = null;
++        for(org.bukkit.entity.Entity passenger : passengers) {
++            if(!passenger.enterVehicle(this)) {
++                if(rejected == null) {
++                    rejected = new ArrayList<org.bukkit.entity.Entity>();
++                }
++                rejected.add(passenger);
++            }
++        }
++
++        return rejected != null ? rejected : Collections.<org.bukkit.entity.Entity>emptyList();
++    }
++
++    @Override
++    public void ejectAll() {
++        getHandle().ejectAllPassengers();
++    }
++
+     public float getFallDistance() {
+         return getHandle().fallDistance;
+     }
+@@ -474,6 +521,12 @@ public abstract class CraftEntity implements org.bukkit.entity.Entity {
+         return getHandle().isPassenger();
+     }
+ 
++    @Override
++    public boolean enterVehicle(org.bukkit.entity.Entity vehicle) {
++        leaveVehicle();
++        return getHandle().startRiding(((CraftEntity) vehicle).getHandle());
++    }
++
+     public boolean leaveVehicle() {
+         if (!isInsideVehicle()) {
+             return false;

@@ -1,0 +1,144 @@
+From 6a9c45184ac58c56a97aca73c2e60646cf77863c Mon Sep 17 00:00:00 2001
+From: Ashcon Partovi <ashcon@partovi.net>
+Date: Sat, 27 Apr 2019 15:28:42 -0700
+Subject: [PATCH] Rebrand and bump version to 1.8-SNAPSHOT
+
+
+diff --git a/pom.xml b/pom.xml
+index ee562d2e5..6a9d969e7 100644
+--- a/pom.xml
++++ b/pom.xml
+@@ -20,9 +20,9 @@
+     </properties>
+ 
+     <parent>
+-        <groupId>network.stratus</groupId>
++        <groupId>app.ashcon</groupId>
+         <artifactId>sportpaper-parent</artifactId>
+-        <version>dev-1.8-SNAPSHOT</version>
++        <version>1.8-SNAPSHOT</version>
+         <relativePath>../pom.xml</relativePath>
+     </parent>
+ 
+@@ -38,7 +38,7 @@
+             <version>3.0.3</version>
+         </dependency>
+         <dependency>
+-            <groupId>network.stratus</groupId>
++            <groupId>app.ashcon</groupId>
+             <artifactId>sportpaper-api</artifactId>
+             <version>${project.version}</version>
+             <type>jar</type>
+diff --git a/src/main/java/network/stratus/sportpaper/server/WorldGenSettingsManager.java b/src/main/java/app/ashcon/sportpaper/server/WorldGenSettingsManager.java
+similarity index 88%
+rename from src/main/java/network/stratus/sportpaper/server/WorldGenSettingsManager.java
+rename to src/main/java/app/ashcon/sportpaper/server/WorldGenSettingsManager.java
+index 1933225e1..09dba14f9 100644
+--- a/src/main/java/network/stratus/sportpaper/server/WorldGenSettingsManager.java
++++ b/src/main/java/app/ashcon/sportpaper/server/WorldGenSettingsManager.java
+@@ -1,11 +1,11 @@
+-package network.stratus.sportpaper.server;
++package app.ashcon.sportpaper.server;
+ 
+ import net.minecraft.server.NBTTagCompound;
+-import network.stratus.sportpaper.api.world.CustomizedGenerationSettings;
++import app.ashcon.sportpaper.api.world.CustomizedGenerationSettings;
+ 
+ /**
+  * Acts as a bridge between {@link
+- * network.stratus.sportpaper.api.world.CustomizedGenerationSettings} and NMS classes.
++ * CustomizedGenerationSettings} and NMS classes.
+  *
+  * @author Rafi Baum
+  */
+diff --git a/src/main/java/net/minecraft/server/WorldData.java b/src/main/java/net/minecraft/server/WorldData.java
+index 4c011acf6..571aff2a8 100644
+--- a/src/main/java/net/minecraft/server/WorldData.java
++++ b/src/main/java/net/minecraft/server/WorldData.java
+@@ -2,8 +2,8 @@ package net.minecraft.server;
+ 
+ import java.util.concurrent.Callable;
+ // CraftBukkit start
+-import network.stratus.sportpaper.api.world.CustomizedGenerationSettings;
+-import network.stratus.sportpaper.server.WorldGenSettingsManager;
++import app.ashcon.sportpaper.api.world.CustomizedGenerationSettings;
++import app.ashcon.sportpaper.server.WorldGenSettingsManager;
+ import org.bukkit.Bukkit;
+ import org.bukkit.event.weather.ThunderChangeEvent;
+ import org.bukkit.event.weather.WeatherChangeEvent;
+diff --git a/src/main/java/net/minecraft/server/WorldSettings.java b/src/main/java/net/minecraft/server/WorldSettings.java
+index 0acf487df..faaab1735 100644
+--- a/src/main/java/net/minecraft/server/WorldSettings.java
++++ b/src/main/java/net/minecraft/server/WorldSettings.java
+@@ -1,6 +1,6 @@
+ package net.minecraft.server;
+ 
+-import network.stratus.sportpaper.server.WorldGenSettingsManager;
++import app.ashcon.sportpaper.server.WorldGenSettingsManager;
+ 
+ public final class WorldSettings {
+ 
+diff --git a/src/main/java/org/bukkit/craftbukkit/CraftServer.java b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
+index 310ccac21..b9e8e4f21 100644
+--- a/src/main/java/org/bukkit/craftbukkit/CraftServer.java
++++ b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
+@@ -27,7 +27,7 @@ import javax.imageio.ImageIO;
+ 
+ import net.minecraft.server.*;
+ 
+-import network.stratus.sportpaper.server.WorldGenSettingsManager;
++import app.ashcon.sportpaper.server.WorldGenSettingsManager;
+ import org.bukkit.BanList;
+ import org.bukkit.Bukkit;
+ import org.bukkit.ChatColor;
+@@ -47,7 +47,6 @@ import org.bukkit.command.ConsoleCommandSender;
+ import org.bukkit.command.PluginCommand;
+ import org.bukkit.command.SimpleCommandMap;
+ import org.bukkit.configuration.ConfigurationSection;
+-import org.bukkit.configuration.InvalidConfigurationException;
+ import org.bukkit.configuration.file.YamlConfiguration;
+ import org.bukkit.configuration.serialization.ConfigurationSerialization;
+ import org.bukkit.conversations.Conversable;
+@@ -55,12 +54,8 @@ import org.bukkit.craftbukkit.command.VanillaCommandWrapper;
+ import org.bukkit.craftbukkit.entity.CraftPlayer;
+ import org.bukkit.craftbukkit.generator.CraftChunkData;
+ import org.bukkit.craftbukkit.help.SimpleHelpMap;
+-import org.bukkit.craftbukkit.inventory.CraftFurnaceRecipe;
+ import org.bukkit.craftbukkit.inventory.CraftInventoryCustom;
+ import org.bukkit.craftbukkit.inventory.CraftItemFactory;
+-import org.bukkit.craftbukkit.inventory.CraftRecipe;
+-import org.bukkit.craftbukkit.inventory.CraftShapedRecipe;
+-import org.bukkit.craftbukkit.inventory.CraftShapelessRecipe;
+ import org.bukkit.craftbukkit.inventory.RecipeIterator;
+ import org.bukkit.craftbukkit.map.CraftMapView;
+ import org.bukkit.craftbukkit.metadata.EntityMetadataStore;
+@@ -82,13 +77,10 @@ import org.bukkit.event.world.WorldLoadEvent;
+ import org.bukkit.event.world.WorldUnloadEvent;
+ import org.bukkit.generator.ChunkGenerator;
+ import org.bukkit.help.HelpMap;
+-import org.bukkit.inventory.FurnaceRecipe;
+ import org.bukkit.inventory.ItemStack;
+ import org.bukkit.inventory.Inventory;
+ import org.bukkit.inventory.InventoryHolder;
+ import org.bukkit.inventory.Recipe;
+-import org.bukkit.inventory.ShapedRecipe;
+-import org.bukkit.inventory.ShapelessRecipe;
+ import org.bukkit.permissions.Permissible;
+ import org.bukkit.permissions.Permission;
+ import org.bukkit.plugin.IllegalPluginAccessException;
+diff --git a/src/main/java/org/bukkit/craftbukkit/CraftWorld.java b/src/main/java/org/bukkit/craftbukkit/CraftWorld.java
+index d358ea582..87cb3be2a 100644
+--- a/src/main/java/org/bukkit/craftbukkit/CraftWorld.java
++++ b/src/main/java/org/bukkit/craftbukkit/CraftWorld.java
+@@ -15,7 +15,7 @@ import java.util.UUID;
+ import net.md_5.bungee.api.chat.BaseComponent;
+ import net.minecraft.server.*;
+ 
+-import network.stratus.sportpaper.api.text.PersonalizedComponent;
++import app.ashcon.sportpaper.api.text.PersonalizedComponent;
+ import org.apache.commons.lang.Validate;
+ import org.bukkit.BlockChangeDelegate;
+ import org.bukkit.Bukkit;
+-- 
+2.20.1
+

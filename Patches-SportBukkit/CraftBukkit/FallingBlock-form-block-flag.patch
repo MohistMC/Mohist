@@ -1,0 +1,43 @@
+From: Jedediah Smith <jedediah@silencegreys.com>
+Date: Wed, 7 Dec 2016 04:29:32 -0500
+Subject: [PATCH] FallingBlock form block flag
+
+
+diff --git a/src/main/java/net/minecraft/server/EntityFallingBlock.java b/src/main/java/net/minecraft/server/EntityFallingBlock.java
+--- a/src/main/java/net/minecraft/server/EntityFallingBlock.java
++++ b/src/main/java/net/minecraft/server/EntityFallingBlock.java
+@@ -19,6 +19,8 @@ public class EntityFallingBlock extends Entity {
+     public NBTTagCompound tileEntityData;
+     protected static final DataWatcherObject<BlockPosition> d = DataWatcher.a(EntityFallingBlock.class, DataWatcherRegistry.j);
+ 
++    public boolean formBlock = true; // SportBukkit
++
+     public EntityFallingBlock(World world) {
+         super(world);
+     }
+@@ -99,6 +101,7 @@ public class EntityFallingBlock extends Entity {
+                     if (iblockdata.getBlock() != Blocks.PISTON_EXTENSION) {
+                         this.die();
+                         if (!this.f) {
++                            if(!formBlock) return; // SportBukkit
+                             // CraftBukkit start
+                             if (this.world.a(block, blockposition, true, EnumDirection.UP, (Entity) null) && !BlockFalling.i(this.world.getType(blockposition.down()))) {
+                                 if (CraftEventFactory.callEntityChangeBlockEvent(this, blockposition, this.block.getBlock(), this.block.getBlock().toLegacyData(this.block)).isCancelled()) {
+diff --git a/src/main/java/org/bukkit/craftbukkit/entity/CraftFallingBlock.java b/src/main/java/org/bukkit/craftbukkit/entity/CraftFallingBlock.java
+--- a/src/main/java/org/bukkit/craftbukkit/entity/CraftFallingBlock.java
++++ b/src/main/java/org/bukkit/craftbukkit/entity/CraftFallingBlock.java
+@@ -65,4 +65,14 @@ public class CraftFallingBlock extends CraftEntity implements FallingBlock {
+         // Second field for EntityFallingBlock
+         getHandle().ticksLived = value;
+     }
++
++    @Override
++    public boolean canFormBlock() {
++        return getHandle().formBlock;
++    }
++
++    @Override
++    public void setFormBlock(boolean formBlock) {
++        getHandle().formBlock = formBlock;
++    }
+ }

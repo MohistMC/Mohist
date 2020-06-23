@@ -1,0 +1,53 @@
+From: Jedediah Smith <jedediah@silencegreys.com>
+Date: Sat, 19 Mar 2016 00:58:08 -0400
+Subject: [PATCH] Legacy potion support
+
+
+diff --git a/src/main/java/net/minecraft/server/ItemStack.java b/src/main/java/net/minecraft/server/ItemStack.java
+--- a/src/main/java/net/minecraft/server/ItemStack.java
++++ b/src/main/java/net/minecraft/server/ItemStack.java
+@@ -17,6 +17,9 @@ import org.bukkit.craftbukkit.block.CraftBlockState;
+ import org.bukkit.craftbukkit.util.CraftMagicNumbers;
+ import org.bukkit.entity.Player;
+ import org.bukkit.event.world.StructureGrowEvent;
++import org.bukkit.potion.Potion;
++import org.bukkit.potion.PotionType;
++import org.bukkit.registry.Key;
+ // CraftBukkit end
+ 
+ public final class ItemStack {
+@@ -104,6 +107,34 @@ public final class ItemStack {
+                 // CraftBukkit end
+             }
+         }
++
++        // SportBukkit start - convert legacy potions
++        if(this.item == Items.POTION && this.damage != 0 && (tag == null || !tag.hasKey("Potion"))) {
++            // Calculate a Potion from the damage value, and then set it to 0
++            final Potion potion = Potion.fromDamage(this.damage);
++            final PotionType type = potion.getType();
++            this.damage = 0;
++            if(potion.isSplash()) this.item = Items.SPLASH_POTION;
++            if(tag == null) {
++                this.tag = new NBTTagCompound();
++            }
++            // Custom effects used to replace the defaults, so recreate that behavior
++            // by only setting a potion type if there are no custom effects.
++            final List<MobEffect> customEffects = new java.util.ArrayList<MobEffect>();
++            PotionUtil.a(this.tag, customEffects);
++            if(customEffects.isEmpty()) {
++                final Key key;
++                if(potion.hasExtendedDuration()) {
++                    key = type.longKey();
++                } else if(potion.getLevel() > 1) {
++                    key = type.strongKey();
++                } else {
++                    key = type.baseKey();
++                }
++                tag.setString("Potion", key.toString());
++            }
++        }
++        // SportBukkit end
+     }
+ 
+     public ItemStack(NBTTagCompound nbttagcompound) {

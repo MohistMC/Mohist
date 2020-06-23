@@ -1,0 +1,151 @@
+From c25cc1dd8b2b84471432ef25c8928f3b1b509b96 Mon Sep 17 00:00:00 2001
+From: cswhite2000 <18whitechristop@gmail.com>
+Date: Wed, 8 Aug 2018 21:54:00 -0700
+Subject: [PATCH] Localize inventory titles
+
+
+diff --git a/src/main/java/org/bukkit/craftbukkit/entity/CraftHumanEntity.java b/src/main/java/org/bukkit/craftbukkit/entity/CraftHumanEntity.java
+index d165d5c63..4e5db758a 100644
+--- a/src/main/java/org/bukkit/craftbukkit/entity/CraftHumanEntity.java
++++ b/src/main/java/org/bukkit/craftbukkit/entity/CraftHumanEntity.java
+@@ -320,7 +320,12 @@ public class CraftHumanEntity extends CraftLivingEntity implements HumanEntity {
+         container = CraftEventFactory.callInventoryOpenEvent(player, container);
+         if(container == null) return;
+ 
+-        String title = container.getBukkitView().getTitle();
++        IChatBaseComponent title;
++        if(inventory instanceof CraftInventory) {
++            title = ((CraftInventory) inventory).getInventory().getScoreboardDisplayName();
++        } else {
++            title = new ChatComponentText(inventory.getTitle());
++        }
+         int size = container.getBukkitView().getTopInventory().getSize();
+ 
+         // Special cases
+@@ -331,7 +336,7 @@ public class CraftHumanEntity extends CraftLivingEntity implements HumanEntity {
+             size = 0;
+         }
+ 
+-        player.playerConnection.sendPacket(new PacketPlayOutOpenWindow(container.windowId, windowType, new ChatComponentText(title), size));
++        player.playerConnection.sendPacket(new PacketPlayOutOpenWindow(container.windowId, windowType, title, size));
+         getHandle().activeContainer = container;
+         getHandle().activeContainer.addSlotListener(player);
+     }
+diff --git a/src/main/java/org/bukkit/craftbukkit/inventory/CraftInventory.java b/src/main/java/org/bukkit/craftbukkit/inventory/CraftInventory.java
+index 694da655f..43c2ec472 100644
+--- a/src/main/java/org/bukkit/craftbukkit/inventory/CraftInventory.java
++++ b/src/main/java/org/bukkit/craftbukkit/inventory/CraftInventory.java
+@@ -4,11 +4,15 @@ import java.util.HashMap;
+ import java.util.List;
+ import java.util.ListIterator;
+ 
++import net.md_5.bungee.api.chat.BaseComponent;
++import net.md_5.bungee.api.chat.TextComponent;
++import net.md_5.bungee.api.chat.TranslatableComponent;
+ import net.minecraft.server.IHopper;
+ import net.minecraft.server.IInventory;
+ import net.minecraft.server.InventoryCrafting;
+ import net.minecraft.server.InventoryEnderChest;
+ import net.minecraft.server.InventoryMerchant;
++import net.minecraft.server.LocaleI18n;
+ import net.minecraft.server.PlayerInventory;
+ import net.minecraft.server.TileEntityBeacon;
+ import net.minecraft.server.TileEntityBrewingStand;
+@@ -41,7 +45,21 @@ public class CraftInventory implements Inventory {
+     }
+ 
+     public String getName() {
+-        return getInventory().getName();
++        return getInventory().hasCustomName() ? getInventory().getName() : LocaleI18n.get(getInventory().getName());
++    }
++
++    @Override
++    public boolean hasCustomName() {
++        return getInventory().hasCustomName();
++    }
++
++    @Override
++    public BaseComponent getLocalizedName() {
++        if(getInventory().hasCustomName()) {
++            return new TextComponent(getInventory().getName());
++        } else {
++            return new TranslatableComponent(getInventory().getName());
++        }
+     }
+ 
+     public ItemStack getItem(int index) {
+@@ -423,7 +441,7 @@ public class CraftInventory implements Inventory {
+     }
+ 
+     public String getTitle() {
+-        return inventory.getName();
++        return getName();
+     }
+ 
+     public InventoryType getType() {
+diff --git a/src/main/java/org/bukkit/craftbukkit/inventory/CraftInventoryCustom.java b/src/main/java/org/bukkit/craftbukkit/inventory/CraftInventoryCustom.java
+index e99b8ccae..86834e501 100644
+--- a/src/main/java/org/bukkit/craftbukkit/inventory/CraftInventoryCustom.java
++++ b/src/main/java/org/bukkit/craftbukkit/inventory/CraftInventoryCustom.java
+@@ -4,6 +4,7 @@ import java.util.ArrayList;
+ import java.util.List;
+ import net.minecraft.server.ChatComponentText;
+ 
++import net.minecraft.server.ChatMessage;
+ import net.minecraft.server.IChatBaseComponent;
+ import org.apache.commons.lang.Validate;
+ import org.bukkit.craftbukkit.entity.CraftHumanEntity;
+@@ -41,7 +42,7 @@ public class CraftInventoryCustom extends CraftInventory {
+         private final InventoryHolder owner;
+ 
+         public MinecraftInventory(InventoryHolder owner, InventoryType type) {
+-            this(owner, type.getDefaultSize(), type.getDefaultTitle());
++            this(owner, type.getDefaultSize(), null);
+             this.type = type;
+         }
+ 
+@@ -51,11 +52,11 @@ public class CraftInventoryCustom extends CraftInventory {
+         }
+ 
+         public MinecraftInventory(InventoryHolder owner, int size) {
+-            this(owner, size, "Chest");
++            this(owner, size, null);
+         }
+ 
+         public MinecraftInventory(InventoryHolder owner, int size, String title) {
+-            Validate.notNull(title, "Title cannot be null");
++            Validate.isTrue(title == null || title.length() <= 32, "Title cannot be longer than 32 characters");
+             this.items = new ItemStack[size];
+             this.title = title;
+             this.viewers = new ArrayList<HumanEntity>();
+@@ -179,9 +180,17 @@ public class CraftInventoryCustom extends CraftInventory {
+ 
+         }
+ 
++        private String getDefaultTitle() {
++            if(type == InventoryType.CHEST && getSize() > InventoryType.CHEST.getDefaultSize()) {
++                return "container.chestDouble";
++            } else {
++                return type.getLocalizedTitle();
++            }
++        }
++
+         @Override
+         public String getName() {
+-            return title;
++            return title != null ? title : getDefaultTitle();
+         }
+ 
+         @Override
+@@ -191,7 +200,7 @@ public class CraftInventoryCustom extends CraftInventory {
+ 
+         @Override
+         public IChatBaseComponent getScoreboardDisplayName() {
+-            return new ChatComponentText(title);
++            return title != null ? new ChatComponentText(title) : new ChatMessage(getDefaultTitle());
+         }
+     }
+ }
+-- 
+2.18.0
+

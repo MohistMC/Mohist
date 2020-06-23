@@ -1,0 +1,311 @@
+From 1ec5ce679c3e4c819b486a48ac3d5057e88de025 Mon Sep 17 00:00:00 2001
+From: cswhite2000 <18whitechristop@gmail.com>
+Date: Mon, 27 Aug 2018 21:43:24 -0700
+Subject: [PATCH] Server suspend API
+
+
+diff --git a/src/main/java/org/bukkit/Server.java b/src/main/java/org/bukkit/Server.java
+index fddd7bed..6777fbc6 100644
+--- a/src/main/java/org/bukkit/Server.java
++++ b/src/main/java/org/bukkit/Server.java
+@@ -3,6 +3,8 @@ package org.bukkit;
+ import java.awt.image.BufferedImage;
+ import java.io.File;
+ import java.io.Serializable;
++import java.time.Duration;
++import java.time.Instant;
+ import java.util.Collection;
+ import java.util.Collections;
+ import java.util.Iterator;
+@@ -45,6 +47,8 @@ import org.bukkit.generator.ChunkGenerator;
+ import org.bukkit.inventory.ItemFactory;
+ import org.bukkit.inventory.meta.ItemMeta;
+ 
++import javax.annotation.Nullable;
++
+ /**
+  * Represents a server implementation.
+  */
+@@ -129,6 +133,12 @@ public interface Server extends PluginMessageRecipient {
+      */
+     public Collection<? extends Player> getOnlinePlayers();
+ 
++    /**
++     * If the server is currently empty of players, return the {@link Instant}
++     * that the last player disconnected. If the server is not empty, return null.
++     */
++    @Nullable Instant emptySince();
++
+     /**
+      * Get the maximum amount of players which can login to this server.
+      *
+@@ -322,6 +332,13 @@ public interface Server extends PluginMessageRecipient {
+      */
+     public int getTicksPerMonsterSpawns();
+ 
++    /**
++     * Time to wait before automatically suspending an empty server.
++     *
++     * @see #setSuspended(boolean)
++     */
++    @Nullable Duration getEmptyServerSuspendDelay();
++
+     /**
+      * Gets a player object by the given username.
+      * <p>
+@@ -1006,6 +1023,66 @@ public interface Server extends PluginMessageRecipient {
+      */
+     boolean runOnMainThread(Plugin plugin, boolean priority, Runnable task);
+ 
++    /**
++     * Suspend or resume the server.
++     *
++     * A suspended server does not tick or run scheduled tasks. However, it does
++     * execute console commands, and tasks submitted to {@link #postToMainThread},
++     * while remaining suspended.
++     *
++     * The server can only be suspended when no players are connected. The server
++     * will resume when a player successfully logs in. Failed logins due to bans
++     * or whitelisting do not cause the server to resume.
++     *
++     * @param suspend true to suspend the server, false to resume
++     *
++     * @return true if the suspended state of the server changed,
++     *         false if the state did not change, because the server was already
++     *         in the given state, or because the change is not currently possible.
++     *
++     * @see org.bukkit.event.server.ServerSuspendEvent
++     */
++    boolean setSuspended(boolean suspend);
++
++    /**
++     * Can the server be suspended right now?
++     *
++     * The server can be suspended only when it has no players connected,
++     * and is not in the process of shutting down. This method returns
++     * true if the server is already suspended.
++     *
++     * @see #setSuspended(boolean)
++     */
++    boolean canSuspend();
++
++    /**
++     * Is the server currently suspended?
++     *
++     * @see #setSuspended(boolean)
++     */
++    boolean isSuspended();
++
++    /**
++     * The {@link Instant} that the server entered the suspended state,
++     * or null if the server is not currently suspended.
++     *
++     * @see #setSuspended(boolean)
++     */
++    @Nullable Instant suspendedAt();
++
++    /**
++     * The number of times the server has been interrupted from suspension.
++     *
++     * If the server is not currently suspended, returns 0.
++     *
++     * Interruptions are caused by tasks posted to the main thread through
++     * {@link #postToMainThread}, console commands, and various internal events.
++     * Internal interruptions should be rare. If the server is being interrupted
++     * frequently, it is likely caused by a plugin.
++     *
++     * @see #setSuspended(boolean)
++     */
++    int interruptions();
+ 
+     public class Spigot
+     {
+diff --git a/src/main/java/org/bukkit/command/SimpleCommandMap.java b/src/main/java/org/bukkit/command/SimpleCommandMap.java
+index f35bc092..10d07114 100644
+--- a/src/main/java/org/bukkit/command/SimpleCommandMap.java
++++ b/src/main/java/org/bukkit/command/SimpleCommandMap.java
+@@ -36,6 +36,7 @@ public class SimpleCommandMap implements CommandMap {
+         register("bukkit", new ReloadCommand("reload"));
+         register("bukkit", new PluginsCommand("plugins"));
+         register("bukkit", new co.aikar.timings.TimingsCommand("timings")); // Spigot
++        register("bukkit", new SuspendCommand());
+     }
+ 
+     public void setFallbackCommands() {
+diff --git a/src/main/java/org/bukkit/command/defaults/SuspendCommand.java b/src/main/java/org/bukkit/command/defaults/SuspendCommand.java
+new file mode 100644
+index 00000000..bec311ed
+--- /dev/null
++++ b/src/main/java/org/bukkit/command/defaults/SuspendCommand.java
+@@ -0,0 +1,53 @@
++package org.bukkit.command.defaults;
++
++import java.time.Duration;
++import java.time.Instant;
++import java.util.Collections;
++
++import net.md_5.bungee.api.ChatColor;
++import net.md_5.bungee.api.chat.ComponentBuilder;
++import org.bukkit.Server;
++import org.bukkit.command.CommandSender;
++
++public class SuspendCommand extends BukkitCommand {
++
++    public SuspendCommand() {
++        super(
++            "suspend",
++            "Suspends the server, if no players are connected",
++            "/suspend [true|false]",
++            Collections.emptyList()
++        );
++    }
++
++    @Override
++    public boolean execute(CommandSender sender, String commandLabel, String[] args) {
++        if(!testPermission(sender)) return true;
++        final Server server = sender.getServer();
++        if(args.length == 0) {
++            final Instant at = server.suspendedAt();
++            if(at == null) {
++                sender.sendMessage(new ComponentBuilder("Server is not suspended").color(ChatColor.WHITE).create());
++            } else {
++                final Duration dur = Duration.between(at, Instant.now());
++                sender.sendMessage(new ComponentBuilder(
++                    "Server suspended for " + dur +
++                        " and interrupted " + server.interruptions() + " times"
++                ).color(ChatColor.WHITE).create());
++            }
++        } else if("true".equals(args[0])) {
++            if(server.isSuspended()) {
++                sender.sendMessage(new ComponentBuilder("Server is already suspended").color(ChatColor.RED).create());
++                return true;
++            }
++            if(!server.setSuspended(true)) {
++                sender.sendMessage(new ComponentBuilder("Server cannot be suspended while players are connected").color(ChatColor.RED).create());
++            }
++        } else if("false".equals(args[0])) {
++            if(!server.setSuspended(false)) {
++                sender.sendMessage(new ComponentBuilder("Server is not currently suspended").color(ChatColor.RED).create());
++            }
++        }
++        return true;
++    }
++}
+diff --git a/src/main/java/org/bukkit/event/EventCallback.java b/src/main/java/org/bukkit/event/EventCallback.java
+index 306fd4e3..c63ec819 100644
+--- a/src/main/java/org/bukkit/event/EventCallback.java
++++ b/src/main/java/org/bukkit/event/EventCallback.java
+@@ -3,6 +3,7 @@ package org.bukkit.event;
+ /**
+  * Something that is called with an {@link Event}, has several uses.
+  */
++@FunctionalInterface
+ public interface EventCallback {
+     void callEvent(Event event) throws Exception;
+ }
+diff --git a/src/main/java/org/bukkit/event/server/ServerSuspendEvent.java b/src/main/java/org/bukkit/event/server/ServerSuspendEvent.java
+new file mode 100644
+index 00000000..31a7cd21
+--- /dev/null
++++ b/src/main/java/org/bukkit/event/server/ServerSuspendEvent.java
+@@ -0,0 +1,16 @@
++package org.bukkit.event.server;
++
++import org.bukkit.Server;
++import org.bukkit.event.HandlerList;
++
++/**
++ * Fired when the server transitions to a suspended state, which can happen from an
++ * explicit call to {@link org.bukkit.Server#setSuspended(boolean)}, or automatically
++ * due to {@link Server#getEmptyServerSuspendDelay()}.
++ *
++ * The suspension happens entirely within the event. A call to {@link #yield()}
++ * will not return until the server has resumed.
++ */
++public class ServerSuspendEvent extends ServerEvent {
++    private static final HandlerList handlers = new HandlerList();
++}
+diff --git a/src/test/java/org/bukkit/BukkitMirrorTest.java b/src/test/java/org/bukkit/BukkitMirrorTest.java
+deleted file mode 100644
+index 219788fb..00000000
+--- a/src/test/java/org/bukkit/BukkitMirrorTest.java
++++ /dev/null
+@@ -1,75 +0,0 @@
+-package org.bukkit;
+-
+-import static org.hamcrest.Matchers.*;
+-import static org.junit.Assert.*;
+-
+-import java.lang.reflect.Method;
+-import java.lang.reflect.Modifier;
+-import java.util.Arrays;
+-import java.util.List;
+-
+-import org.junit.Before;
+-import org.junit.Test;
+-import org.junit.runner.RunWith;
+-import org.junit.runners.Parameterized;
+-import org.junit.runners.Parameterized.Parameter;
+-import org.junit.runners.Parameterized.Parameters;
+-
+-import com.google.common.base.Function;
+-import com.google.common.collect.Lists;
+-
+-@RunWith(Parameterized.class)
+-public class BukkitMirrorTest {
+-
+-    @Parameters(name="{index}: {1}")
+-    public static List<Object[]> data() {
+-        return Lists.transform(Arrays.asList(Server.class.getDeclaredMethods()), new Function<Method, Object[]>() {
+-            @Override
+-            public Object[] apply(Method input) {
+-                return new Object[] {
+-                    input,
+-                    input.toGenericString().substring("public abstract ".length()).replace("(", "{").replace(")", "}")
+-                    };
+-            }
+-        });
+-    }
+-
+-    @Parameter(0)
+-    public Method server;
+-
+-    @Parameter(1)
+-    public String name;
+-
+-    private Method bukkit;
+-
+-    @Before
+-    public void makeBukkit() throws Throwable {
+-        bukkit = Bukkit.class.getDeclaredMethod(server.getName(), server.getParameterTypes());
+-    }
+-
+-    @Test
+-    public void isStatic() throws Throwable {
+-        assertThat(Modifier.isStatic(bukkit.getModifiers()), is(true));
+-    }
+-
+-    @Test
+-    public void isDeprecated() throws Throwable {
+-        assertThat(bukkit.isAnnotationPresent(Deprecated.class), is(server.isAnnotationPresent(Deprecated.class)));
+-    }
+-
+-    @Test
+-    public void returnType() throws Throwable {
+-        assertThat(bukkit.getReturnType(), is((Object) server.getReturnType()));
+-        assertThat(bukkit.getGenericReturnType(), is(server.getGenericReturnType()));
+-    }
+-
+-    @Test
+-    public void parameterTypes() throws Throwable {
+-        assertThat(bukkit.getGenericParameterTypes(), is(server.getGenericParameterTypes()));
+-    }
+-
+-    @Test
+-    public void declaredException() throws Throwable {
+-        assertThat(bukkit.getGenericExceptionTypes(), is(server.getGenericExceptionTypes()));
+-    }
+-}
+-- 
+2.19.0
+

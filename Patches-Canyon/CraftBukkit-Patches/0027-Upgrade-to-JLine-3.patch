@@ -1,0 +1,273 @@
+From d6d223723a395d991cc178529c6e20962579eb9f Mon Sep 17 00:00:00 2001
+From: Andrew Steinborn <git@steinborn.me>
+Date: Thu, 19 Mar 2020 01:47:18 -0400
+Subject: [PATCH] Upgrade to JLine 3
+
+
+diff --git a/pom.xml b/pom.xml
+index 017a7ce1..f7f5257e 100644
+--- a/pom.xml
++++ b/pom.xml
+@@ -55,10 +55,18 @@
+       <type>jar</type>
+       <scope>compile</scope>
+     </dependency>
++    <!-- Canyon - bump JLine version -->
+     <dependency>
+-      <groupId>jline</groupId>
++      <groupId>org.jline</groupId>
+       <artifactId>jline</artifactId>
+-      <version>0.9.94</version>
++      <version>3.14.0</version>
++      <type>jar</type>
++      <scope>compile</scope>
++    </dependency>
++    <dependency>
++      <groupId>org.jline</groupId>
++      <artifactId>jline-terminal-jansi</artifactId>
++      <version>3.14.0</version>
+       <type>jar</type>
+       <scope>compile</scope>
+     </dependency>
+diff --git a/src/main/java/net/minecraft/server/MinecraftServer.java b/src/main/java/net/minecraft/server/MinecraftServer.java
+index 380a3374..645430ae 100644
+--- a/src/main/java/net/minecraft/server/MinecraftServer.java
++++ b/src/main/java/net/minecraft/server/MinecraftServer.java
+@@ -16,7 +16,7 @@ import java.net.UnknownHostException;
+ import com.canyonmodded.network.NettyBootstrap;
+ import io.netty.util.concurrent.FastThreadLocalThread;
+ import com.canyonmodded.scheduler.CanyonScheduler;
+-import jline.ConsoleReader;
++// import jline.ConsoleReader; // Canyon
+ import joptsimple.OptionSet;
+ import org.bukkit.World.Environment;
+ import org.bukkit.craftbukkit.CraftServer;
+@@ -60,7 +60,7 @@ public class MinecraftServer implements Runnable, ICommandListener {
+     public CraftServer server;
+     public OptionSet options;
+     public ColouredConsoleSender console;
+-    public ConsoleReader reader;
++    public org.jline.reader.LineReader reader; // Canyon
+     public static int currentTick;
+     // CraftBukkit end
+ 
+@@ -129,11 +129,14 @@ public class MinecraftServer implements Runnable, ICommandListener {
+ 
+         // CraftBukkit start
+         this.options = options;
+-        try {
+-            this.reader = new ConsoleReader();
+-        } catch (IOException ex) {
+-            Logger.getLogger(MinecraftServer.class.getName()).log(Level.SEVERE, null, ex);
+-        }
++        // Canyon Start
++        //try {
++            this.reader = org.jline.reader.LineReaderBuilder.builder()
++                    .appName("Canyon")
++                    .build();
++        //} catch (IOException ex) {
++        //    Logger.getLogger(MinecraftServer.class.getName()).log(Level.SEVERE, null, ex);
++        //}
+         Runtime.getRuntime().addShutdownHook(new ServerShutdownThread(this));
+         // CraftBukkit end
+     }
+diff --git a/src/main/java/net/minecraft/server/ThreadCommandReader.java b/src/main/java/net/minecraft/server/ThreadCommandReader.java
+index 821cf660..d2deab00 100644
+--- a/src/main/java/net/minecraft/server/ThreadCommandReader.java
++++ b/src/main/java/net/minecraft/server/ThreadCommandReader.java
+@@ -13,10 +13,10 @@ public class ThreadCommandReader extends Thread {
+     }
+ 
+     public void run() {
+-        jline.ConsoleReader bufferedreader = this.server.reader; // CraftBukkit
++        org.jline.reader.LineReader bufferedreader = this.server.reader; // CraftBukkit // Canyon
+         String s = null;
+ 
+-        try {
++        //try {
+             // CraftBukkit start - JLine disabling compatibility
+             while (!this.server.isStopped && MinecraftServer.isRunning(this.server)) {
+                 if (org.bukkit.craftbukkit.Main.useJline) {
+@@ -29,9 +29,9 @@ public class ThreadCommandReader extends Thread {
+                 }
+                 // CraftBukkit end
+             }
+-        } catch (IOException ioexception) {
++        //} catch (IOException ioexception) {
+             // CraftBukkit
+-            java.util.logging.Logger.getLogger(ThreadCommandReader.class.getName()).log(java.util.logging.Level.SEVERE, null, ioexception);
+-        }
++        //    java.util.logging.Logger.getLogger(ThreadCommandReader.class.getName()).log(java.util.logging.Level.SEVERE, null, ioexception);
++        //}
+     }
+ }
+diff --git a/src/main/java/org/bukkit/craftbukkit/CraftServer.java b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
+index 08d1406f..9b69e680 100644
+--- a/src/main/java/org/bukkit/craftbukkit/CraftServer.java
++++ b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
+@@ -34,7 +34,7 @@ import java.util.UUID;
+ import java.util.Set;
+ import java.util.logging.Level;
+ import java.util.logging.Logger;
+-import jline.ConsoleReader;
++// import jline.ConsoleReader; // Canyon
+ import net.minecraft.server.ChunkCoordinates;
+ import net.minecraft.server.ConvertProgressUpdater;
+ import net.minecraft.server.Convertable;
+@@ -626,7 +626,7 @@ public final class CraftServer implements Server {
+         return MinecraftServer.log;
+     }
+ 
+-    public ConsoleReader getReader() {
++    public org.jline.reader.LineReader getReader() { // Canyon
+         return console.reader;
+     }
+ 
+diff --git a/src/main/java/org/bukkit/craftbukkit/command/ColouredConsoleSender.java b/src/main/java/org/bukkit/craftbukkit/command/ColouredConsoleSender.java
+index 4dabe6f0..2abb2c0b 100644
+--- a/src/main/java/org/bukkit/craftbukkit/command/ColouredConsoleSender.java
++++ b/src/main/java/org/bukkit/craftbukkit/command/ColouredConsoleSender.java
+@@ -2,45 +2,56 @@ package org.bukkit.craftbukkit.command;
+ 
+ import java.util.EnumMap;
+ import java.util.Map;
+-import jline.ANSIBuffer.ANSICodes;
+-import jline.ConsoleReader;
+-import jline.Terminal;
++// Canyon Start
++//import jline.ANSIBuffer.ANSICodes;
++//import jline.ConsoleReader;
++//import jline.Terminal;
++// Canyon End
+ import org.bukkit.ChatColor;
+ import org.bukkit.command.ConsoleCommandSender;
+ import org.bukkit.craftbukkit.CraftServer;
+ 
+ public class ColouredConsoleSender extends ConsoleCommandSender {
+-    private final ConsoleReader reader;
+-    private final Terminal terminal;
++    private final org.jline.reader.LineReader reader; // Canyon
++    private final org.jline.terminal.Terminal terminal; // Canyon
+     private final Map<ChatColor, String> replacements = new EnumMap<ChatColor, String>(ChatColor.class);
+     private final ChatColor[] colors = ChatColor.values();
+ 
++    // Canyon start - allow use of ANSI attributes
++    private static final char ESC = 27;
++    public static String attrib(final int attr) {
++        return ESC + "[" + attr + "m";
++    }
++    // Canyon end
++
+     public ColouredConsoleSender(CraftServer server) {
+         super(server);
+         this.reader = server.getReader();
+         this.terminal = reader.getTerminal();
+ 
+-        replacements.put(ChatColor.BLACK, ANSICodes.attrib(0));
+-        replacements.put(ChatColor.DARK_BLUE, ANSICodes.attrib(34));
+-        replacements.put(ChatColor.DARK_GREEN, ANSICodes.attrib(32));
+-        replacements.put(ChatColor.DARK_AQUA, ANSICodes.attrib(36));
+-        replacements.put(ChatColor.DARK_RED, ANSICodes.attrib(31));
+-        replacements.put(ChatColor.DARK_PURPLE, ANSICodes.attrib(35));
+-        replacements.put(ChatColor.GOLD, ANSICodes.attrib(33));
+-        replacements.put(ChatColor.GRAY, ANSICodes.attrib(37));
+-        replacements.put(ChatColor.DARK_GRAY, ANSICodes.attrib(0));
+-        replacements.put(ChatColor.BLUE, ANSICodes.attrib(34));
+-        replacements.put(ChatColor.GREEN, ANSICodes.attrib(32));
+-        replacements.put(ChatColor.AQUA, ANSICodes.attrib(36));
+-        replacements.put(ChatColor.RED, ANSICodes.attrib(31));
+-        replacements.put(ChatColor.LIGHT_PURPLE, ANSICodes.attrib(35));
+-        replacements.put(ChatColor.YELLOW, ANSICodes.attrib(33));
+-        replacements.put(ChatColor.WHITE, ANSICodes.attrib(37));
++        // Canyon start - use extracted JLine 0.9.x function
++        replacements.put(ChatColor.BLACK, attrib(0));
++        replacements.put(ChatColor.DARK_BLUE, attrib(34));
++        replacements.put(ChatColor.DARK_GREEN, attrib(32));
++        replacements.put(ChatColor.DARK_AQUA, attrib(36));
++        replacements.put(ChatColor.DARK_RED, attrib(31));
++        replacements.put(ChatColor.DARK_PURPLE, attrib(35));
++        replacements.put(ChatColor.GOLD, attrib(33));
++        replacements.put(ChatColor.GRAY, attrib(37));
++        replacements.put(ChatColor.DARK_GRAY, attrib(0));
++        replacements.put(ChatColor.BLUE, attrib(34));
++        replacements.put(ChatColor.GREEN, attrib(32));
++        replacements.put(ChatColor.AQUA, attrib(36));
++        replacements.put(ChatColor.RED, attrib(31));
++        replacements.put(ChatColor.LIGHT_PURPLE, attrib(35));
++        replacements.put(ChatColor.YELLOW, attrib(33));
++        replacements.put(ChatColor.WHITE, attrib(37));
++        // Canyon end
+     }
+ 
+     @Override
+     public void sendMessage(String message) {
+-        if (terminal.isANSISupported()) {
++        if (terminal != null && !(terminal instanceof org.jline.terminal.impl.DumbTerminal)) {
+             String result = message;
+ 
+             for (ChatColor color : colors) {
+@@ -50,7 +61,7 @@ public class ColouredConsoleSender extends ConsoleCommandSender {
+                     result = result.replaceAll(color.toString(), "");
+                 }
+             }
+-            System.out.println(result + ANSICodes.attrib(0));
++            System.out.println(result + attrib(0));
+         } else {
+             super.sendMessage(message);
+         }
+diff --git a/src/main/java/org/bukkit/craftbukkit/util/TerminalConsoleHandler.java b/src/main/java/org/bukkit/craftbukkit/util/TerminalConsoleHandler.java
+index 111123f5..7b7ae23e 100644
+--- a/src/main/java/org/bukkit/craftbukkit/util/TerminalConsoleHandler.java
++++ b/src/main/java/org/bukkit/craftbukkit/util/TerminalConsoleHandler.java
+@@ -1,20 +1,26 @@
+ package org.bukkit.craftbukkit.util;
+ 
+ import java.io.IOException;
++import java.io.OutputStream;
+ import java.util.logging.ConsoleHandler;
+ import java.util.logging.Level;
+ import java.util.logging.Logger;
+-import jline.ConsoleReader;
++// import jline.ConsoleReader; // Canyon
+ import org.bukkit.craftbukkit.Main;
+ 
+ public class TerminalConsoleHandler extends ConsoleHandler {
+-    private final ConsoleReader reader;
++    // Canyon start - JLine 3
++    private final org.jline.reader.LineReader reader;
+ 
+-    public TerminalConsoleHandler(ConsoleReader reader) {
++    public TerminalConsoleHandler(org.jline.reader.LineReader reader) {
+         super();
++        if (Main.useJline) {
++            this.setOutputStream(new JLineOutputStream());
++        }
+         this.reader = reader;
+     }
+ 
++    /*
+     @Override
+     public synchronized void flush() {
+         try {
+@@ -35,4 +41,18 @@ public class TerminalConsoleHandler extends ConsoleHandler {
+             Logger.getLogger(TerminalConsoleHandler.class.getName()).log(Level.SEVERE, null, ex);
+         }
+     }
++    */
++
++    private class JLineOutputStream extends java.io.ByteArrayOutputStream {
++        private JLineOutputStream() {
++            super(1024);
++        }
++
++        @Override
++        public synchronized void flush() throws IOException {
++            reader.printAbove(this.toString("UTF-8"));
++            this.count = 0;
++        }
++    }
++    // Canyon end
+ }
+-- 
+2.25.1
+

@@ -1,0 +1,55 @@
+From 6fb8bafb7703e1577217c5a94a88b69611c0ee97 Mon Sep 17 00:00:00 2001
+From: cswhite2000 <18whitechristop@gmail.com>
+Date: Sat, 25 Aug 2018 18:36:56 -0700
+Subject: [PATCH] Remove the reload command
+
+
+diff --git a/src/main/java/org/bukkit/Bukkit.java b/src/main/java/org/bukkit/Bukkit.java
+index a2eb9bdb..e1cf3885 100644
+--- a/src/main/java/org/bukkit/Bukkit.java
++++ b/src/main/java/org/bukkit/Bukkit.java
+@@ -582,7 +582,7 @@ public final class Bukkit {
+      * Reloads the server, refreshing settings and plugin information.
+      */
+     public static void reload() {
+-        server.reload();
++        throw new IllegalStateException("Reloading has been removed in Sportpaper!");
+     }
+ 
+     /**
+diff --git a/src/main/java/org/bukkit/Server.java b/src/main/java/org/bukkit/Server.java
+index 693b21be..53484fd2 100644
+--- a/src/main/java/org/bukkit/Server.java
++++ b/src/main/java/org/bukkit/Server.java
+@@ -489,11 +489,6 @@ public interface Server extends PluginMessageRecipient {
+      */
+     public MapView createMap(World world);
+ 
+-    /**
+-     * Reloads the server, refreshing settings and plugin information.
+-     */
+-    public void reload();
+-
+     /**
+      * Returns the primary logger associated with this server instance.
+      *
+diff --git a/src/main/java/org/bukkit/command/defaults/ReloadCommand.java b/src/main/java/org/bukkit/command/defaults/ReloadCommand.java
+index c70d5129..fc8d1895 100644
+--- a/src/main/java/org/bukkit/command/defaults/ReloadCommand.java
++++ b/src/main/java/org/bukkit/command/defaults/ReloadCommand.java
+@@ -19,11 +19,7 @@ public class ReloadCommand extends BukkitCommand {
+     @Override
+     public boolean execute(CommandSender sender, String currentAlias, String[] args) {
+         if (!testPermission(sender)) return true;
+-
+-        Command.broadcastCommandMessage(sender, ChatColor.RED + "Please note that this command is not supported and may cause issues when using some plugins.");
+-        Command.broadcastCommandMessage(sender, ChatColor.RED + "If you encounter any issues please use the /stop command to restart your server.");
+-        Bukkit.reload();
+-        Command.broadcastCommandMessage(sender, ChatColor.GREEN + "Reload complete.");
++        Command.broadcastCommandMessage(sender, ChatColor.RED + "This command has been removed by SportPaper");
+ 
+         return true;
+     }
+-- 
+2.19.0
+

@@ -1,0 +1,24 @@
+From 1bf968532c8527919f5607784d62fee1b8cee607 Mon Sep 17 00:00:00 2001
+From: cswhite2000 <18whitechristop@gmail.com>
+Date: Sat, 4 Aug 2018 02:54:39 -0700
+Subject: [PATCH] Fire ServerCommandEvent for command block cmds. Addresses
+
+
+diff --git a/src/main/java/net/minecraft/server/CommandBlockListenerAbstract.java b/src/main/java/net/minecraft/server/CommandBlockListenerAbstract.java
+index 78202570..946f5aa2 100644
+--- a/src/main/java/net/minecraft/server/CommandBlockListenerAbstract.java
++++ b/src/main/java/net/minecraft/server/CommandBlockListenerAbstract.java
+@@ -208,6 +208,10 @@ public abstract class CommandBlockListenerAbstract implements ICommandListener {
+         // Now dispatch all of the commands we ended up with
+         for (int i = 0; i < commands.size(); i++) {
+             try {
++                String commandLine = joiner.join(java.util.Arrays.asList(commands.get(i)));
++                org.bukkit.event.server.ServerCommandEvent event = new org.bukkit.event.server.ServerCommandEvent(bSender, commandLine);
++                bSender.getServer().getPluginManager().callEvent(event);
++
+                 if (commandMap.dispatch(bSender, joiner.join(java.util.Arrays.asList(commands.get(i))))) {
+                     completed++;
+                 }
+-- 
+2.18.0
+

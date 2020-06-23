@@ -1,0 +1,152 @@
+From bd7ae89992325547c99eb695ff7784b04104817d Mon Sep 17 00:00:00 2001
+From: cswhite2000 <18whitechristop@gmail.com>
+Date: Wed, 8 Aug 2018 13:03:10 -0700
+Subject: [PATCH] Add ExplosionPrimeByEntityEvent
+
+
+diff --git a/src/main/java/net/minecraft/server/BlockTNT.java b/src/main/java/net/minecraft/server/BlockTNT.java
+index 8676196a4..9fc46d831 100644
+--- a/src/main/java/net/minecraft/server/BlockTNT.java
++++ b/src/main/java/net/minecraft/server/BlockTNT.java
+@@ -3,6 +3,7 @@ package net.minecraft.server;
+ public class BlockTNT extends Block {
+ 
+     boolean removeBlock = false; // CraftBukkit
++    Entity primer; // SportBukkit
+ 
+     public static final BlockStateBoolean EXPLODE = BlockStateBoolean.of("explode");
+ 
+@@ -39,7 +40,12 @@ public class BlockTNT extends Block {
+             // PaperSpigot end
+ 
+             // CraftBukkit start - allow exploded TNT to cancel priming
+-            org.bukkit.event.entity.ExplosionPrimeEvent event = new org.bukkit.event.entity.ExplosionPrimeEvent((org.bukkit.entity.Explosive) entitytntprimed.getBukkitEntity());
++            org.bukkit.event.entity.ExplosionPrimeEvent event;
++            if(explosion.source != null) {
++                event = new org.bukkit.event.entity.ExplosionPrimeByEntityEvent((org.bukkit.entity.Explosive) entitytntprimed.getBukkitEntity(), explosion.source.getBukkitEntity());
++            } else {
++                event = new org.bukkit.event.entity.ExplosionPrimeEvent((org.bukkit.entity.Explosive) entitytntprimed.getBukkitEntity());
++            }
+             world.getServer().getPluginManager().callEvent(event);
+ 
+             if (!event.isCancelled()) {
+@@ -68,7 +74,12 @@ public class BlockTNT extends Block {
+                 // PaperSpigot end
+ 
+                 // CraftBukkit start - fire ExplosionPrimeEvent
+-                org.bukkit.event.entity.ExplosionPrimeEvent event = new org.bukkit.event.entity.ExplosionPrimeEvent((org.bukkit.entity.Explosive) entitytntprimed.getBukkitEntity());
++                org.bukkit.event.entity.ExplosionPrimeEvent event;
++                if(primer != null) {
++                    event = new org.bukkit.event.entity.ExplosionPrimeByEntityEvent((org.bukkit.entity.Explosive) entitytntprimed.getBukkitEntity(), primer.getBukkitEntity());
++                } else {
++                    event = new org.bukkit.event.entity.ExplosionPrimeEvent((org.bukkit.entity.Explosive) entitytntprimed.getBukkitEntity());
++                }
+                 world.getServer().getPluginManager().callEvent(event);
+                 if (event.isCancelled()) {
+                     removeBlock = false;
+@@ -87,7 +98,9 @@ public class BlockTNT extends Block {
+             Item item = entityhuman.bZ().getItem();
+ 
+             if (item == Items.FLINT_AND_STEEL || item == Items.FIRE_CHARGE) {
++                try { primer = entityhuman; // SportBukkit
+                 this.a(world, blockposition, iblockdata.set(BlockTNT.EXPLODE, Boolean.valueOf(true)), (EntityLiving) entityhuman);
++                } finally { primer = null; } // SportBukkit
+                 // CraftBukkit start - don't remove block if TNT priming is cancelled
+                 if (removeBlock) {
+                     world.setAir(blockposition);
+@@ -116,7 +129,9 @@ public class BlockTNT extends Block {
+                     return;
+                 }
+                 // CraftBukkit end
++                try { primer = entityarrow; // SportBukkit
+                 this.a(world, blockposition, world.getType(blockposition).set(BlockTNT.EXPLODE, Boolean.valueOf(true)), entityarrow.shooter instanceof EntityLiving ? (EntityLiving) entityarrow.shooter : null);
++                } finally { primer = null; } // SportBukkit
+                 world.setAir(blockposition);
+             }
+         }
+diff --git a/src/main/java/net/minecraft/server/EntityCreeper.java b/src/main/java/net/minecraft/server/EntityCreeper.java
+index af6df0546..8c33db47b 100644
+--- a/src/main/java/net/minecraft/server/EntityCreeper.java
++++ b/src/main/java/net/minecraft/server/EntityCreeper.java
+@@ -3,6 +3,8 @@ package net.minecraft.server;
+ // CraftBukkit start
+ import org.bukkit.craftbukkit.event.CraftEventFactory;
+ import org.bukkit.event.entity.ExplosionPrimeEvent;
++import org.bukkit.event.entity.ExplosionPrimeByEntityEvent;
++
+ // CraftBukkit end
+ 
+ public class EntityCreeper extends EntityMonster {
+@@ -13,6 +15,7 @@ public class EntityCreeper extends EntityMonster {
+     private int explosionRadius = 3;
+     private int bn = 0;
+     private int record = -1; // CraftBukkit
++    private Entity primer; // SportBukkit
+ 
+     public EntityCreeper(World world) {
+         super(world);
+@@ -93,7 +96,12 @@ public class EntityCreeper extends EntityMonster {
+             float radius = this.isPowered() ? 6.0F : 3.0F;
+ 
+             if (i > 0 && this.fuseTicks == 0) {
+-                ExplosionPrimeEvent event = new ExplosionPrimeEvent(this.getBukkitEntity(), radius, false);
++                ExplosionPrimeEvent event;
++                if(primer != null) {
++                    event = new ExplosionPrimeByEntityEvent(this.getBukkitEntity(), radius, false, primer.getBukkitEntity());
++                } else {
++                    event = new ExplosionPrimeEvent(this.getBukkitEntity(), radius, false);
++                }
+                 this.world.getServer().getPluginManager().callEvent(event);
+                 if (event.isCancelled()) {
+                     i = 0;
+@@ -206,6 +214,7 @@ public class EntityCreeper extends EntityMonster {
+             this.world.makeSound(this.locX + 0.5D, this.locY + 0.5D, this.locZ + 0.5D, "fire.ignite", 1.0F, this.random.nextFloat() * 0.4F + 0.8F);
+             entityhuman.bw();
+             if (!this.world.isClientSide) {
++                this.primer = entityhuman; // SportBukkit
+                 this.co();
+                 itemstack.damage(1, entityhuman);
+                 return true;
+@@ -220,7 +229,12 @@ public class EntityCreeper extends EntityMonster {
+             boolean flag = this.world.getGameRules().getBoolean("mobGriefing");
+             float f = this.isPowered() ? 2.0F : 1.0F;
+ 
+-            ExplosionPrimeEvent event = new ExplosionPrimeEvent(this.getBukkitEntity(), this.explosionRadius * f, false);
++            ExplosionPrimeEvent event;
++            if(primer != null) {
++                event = new ExplosionPrimeByEntityEvent(this.getBukkitEntity(), this.explosionRadius * f, false, primer.getBukkitEntity());
++            } else {
++                event = new ExplosionPrimeEvent(this.getBukkitEntity(), this.explosionRadius * f, false);
++            }
+             this.world.getServer().getPluginManager().callEvent(event);
+             if (!event.isCancelled()) {
+                 this.world.createExplosion(this, this.locX, this.locY, this.locZ, event.getRadius(), event.getFire(), flag);
+diff --git a/src/main/java/net/minecraft/server/EntityEnderCrystal.java b/src/main/java/net/minecraft/server/EntityEnderCrystal.java
+index 07533e4a6..0e348cf4b 100644
+--- a/src/main/java/net/minecraft/server/EntityEnderCrystal.java
++++ b/src/main/java/net/minecraft/server/EntityEnderCrystal.java
+@@ -3,6 +3,7 @@ package net.minecraft.server;
+ // CraftBukkit start
+ import org.bukkit.craftbukkit.event.CraftEventFactory;
+ import org.bukkit.event.entity.ExplosionPrimeEvent;
++import org.bukkit.event.entity.ExplosionPrimeByEntityEvent;
+ // CraftBukkit end
+ 
+ public class EntityEnderCrystal extends Entity {
+@@ -69,7 +70,12 @@ public class EntityEnderCrystal extends Entity {
+                     this.die();
+                     if (!this.world.isClientSide) {
+                         // CraftBukkit start
+-                        ExplosionPrimeEvent event = new ExplosionPrimeEvent(this.getBukkitEntity(), 6.0F, false);
++                        ExplosionPrimeEvent event;
++                        if(damagesource.getEntity() != null) {
++                            event = new ExplosionPrimeByEntityEvent(this.getBukkitEntity(), 6.0F, false, ((Entity) damagesource.getEntity()).getBukkitEntity());
++                        } else {
++                            event = new ExplosionPrimeEvent(this.getBukkitEntity(), 6.0F, false);
++                        }
+                         this.world.getServer().getPluginManager().callEvent(event);
+                         if (event.isCancelled()) {
+                             this.dead = false;
+-- 
+2.18.0
+

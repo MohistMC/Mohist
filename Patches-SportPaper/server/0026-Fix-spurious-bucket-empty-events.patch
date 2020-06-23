@@ -1,0 +1,66 @@
+From d832fa0dd561f7f8ca88abf21e9974d3deb00dc8 Mon Sep 17 00:00:00 2001
+From: cswhite2000 <18whitechristop@gmail.com>
+Date: Sun, 5 Aug 2018 14:58:17 -0700
+Subject: [PATCH] Fix spurious bucket empty events
+
+
+diff --git a/src/main/java/net/minecraft/server/ItemBucket.java b/src/main/java/net/minecraft/server/ItemBucket.java
+index b62ea42fc..f3bdce536 100644
+--- a/src/main/java/net/minecraft/server/ItemBucket.java
++++ b/src/main/java/net/minecraft/server/ItemBucket.java
+@@ -86,29 +86,33 @@ public class ItemBucket extends Item {
+                     }
+ 
+                     // CraftBukkit start
+-                    PlayerBucketEmptyEvent event = CraftEventFactory.callPlayerBucketEmptyEvent(entityhuman, blockposition.getX(), blockposition.getY(), blockposition.getZ(), movingobjectposition.direction, itemstack);
+-
+-                    if (event.isCancelled()) {
+-                        return itemstack;
+-                    }
+-                    // CraftBukkit end
++                    // Check that the bucket can be emptied before firing the event
++                    if (world.isEmpty(blockposition1) || !world.getType(blockposition1).getBlock().getMaterial().isBuildable()) {
++                        PlayerBucketEmptyEvent event = CraftEventFactory.callPlayerBucketEmptyEvent(entityhuman, blockposition.getX(), blockposition.getY(), blockposition.getZ(), movingobjectposition.direction, itemstack);
++                        if (event.isCancelled()) {
++                            return itemstack;
++                        }
+ 
+-                    if (this.a(world, blockposition1) && !entityhuman.abilities.canInstantlyBuild) {
+-                        entityhuman.b(StatisticList.USE_ITEM_COUNT[Item.getId(this)]);
+-                        // PaperSpigot start - Stackable Buckets
+-                        if ((this == Items.LAVA_BUCKET && PaperSpigotConfig.stackableLavaBuckets) ||
+-                                (this == Items.WATER_BUCKET && PaperSpigotConfig.stackableWaterBuckets)) {
+-                            if (--itemstack.count <= 0) {
+-                                return CraftItemStack.asNMSCopy(event.getItemStack());
++                        if (this.a(world, blockposition1) && !entityhuman.abilities.canInstantlyBuild) {
++                            entityhuman.b(StatisticList.USE_ITEM_COUNT[Item.getId(this)]);
++                            // PaperSpigot start - Stackable Buckets
++                            if ((this == Items.LAVA_BUCKET && PaperSpigotConfig.stackableLavaBuckets) ||
++                                    (this == Items.WATER_BUCKET && PaperSpigotConfig.stackableWaterBuckets)) {
++                                if (--itemstack.count <= 0) {
++                                    return CraftItemStack.asNMSCopy(event.getItemStack());
++                                }
++                                if (!entityhuman.inventory.pickup(CraftItemStack.asNMSCopy(event.getItemStack()))) {
++                                    entityhuman.drop(CraftItemStack.asNMSCopy(event.getItemStack()), false);
++                                }
++                                return itemstack;
+                             }
+-                            if (!entityhuman.inventory.pickup(CraftItemStack.asNMSCopy(event.getItemStack()))) {
+-                                entityhuman.drop(CraftItemStack.asNMSCopy(event.getItemStack()), false);
+-                            }
+-                            return itemstack;
++                            // PaperSpigot end
++                            return CraftItemStack.asNMSCopy(event.getItemStack()); // CraftBukkit
+                         }
+-                        // PaperSpigot end
+-                        return CraftItemStack.asNMSCopy(event.getItemStack()); // CraftBukkit
++
+                     }
++                    // CraftBukkit end
++
+                 }
+             }
+ 
+-- 
+2.18.0
+

@@ -1,0 +1,69 @@
+From 53219d008e1b02524601d823317deb303e4afd9e Mon Sep 17 00:00:00 2001
+From: cswhite2000 <18whitechristop@gmail.com>
+Date: Tue, 14 Aug 2018 15:46:13 -0700
+Subject: [PATCH] Add EntityZapEvent
+
+
+diff --git a/src/main/java/net/minecraft/server/EntityPig.java b/src/main/java/net/minecraft/server/EntityPig.java
+index 3f2ce15f..33d83cd4 100644
+--- a/src/main/java/net/minecraft/server/EntityPig.java
++++ b/src/main/java/net/minecraft/server/EntityPig.java
+@@ -114,6 +114,12 @@ public class EntityPig extends EntityAnimal {
+         if (!this.world.isClientSide && !this.dead) {
+             EntityPigZombie entitypigzombie = new EntityPigZombie(this.world);
+ 
++            // Paper start
++            if (CraftEventFactory.callEntityZapEvent(this, entitylightning, entitypigzombie).isCancelled()) {
++                return;
++            }
++            // Paper end
++
+             // CraftBukkit start
+             if (CraftEventFactory.callPigZapEvent(this, entitylightning, entitypigzombie).isCancelled()) {
+                 return;
+diff --git a/src/main/java/net/minecraft/server/EntityVillager.java b/src/main/java/net/minecraft/server/EntityVillager.java
+index f1c905aa..3bdb9b10 100644
+--- a/src/main/java/net/minecraft/server/EntityVillager.java
++++ b/src/main/java/net/minecraft/server/EntityVillager.java
+@@ -509,6 +509,12 @@ public class EntityVillager extends EntityAgeable implements IMerchant, NPC {
+         if (!this.world.isClientSide && !this.dead) {
+             EntityWitch entitywitch = new EntityWitch(this.world);
+ 
++            // Paper start
++            if (org.bukkit.craftbukkit.event.CraftEventFactory.callEntityZapEvent(this, entitylightning, entitywitch).isCancelled()) {
++                return;
++            }
++            // Paper end
++
+             entitywitch.setPositionRotation(this.locX, this.locY, this.locZ, this.yaw, this.pitch);
+             entitywitch.prepare(this.world.E(new BlockPosition(entitywitch)), (GroupDataEntity) null);
+             entitywitch.k(this.ce());
+diff --git a/src/main/java/org/bukkit/craftbukkit/event/CraftEventFactory.java b/src/main/java/org/bukkit/craftbukkit/event/CraftEventFactory.java
+index e0300247..7d97dd1b 100644
+--- a/src/main/java/org/bukkit/craftbukkit/event/CraftEventFactory.java
++++ b/src/main/java/org/bukkit/craftbukkit/event/CraftEventFactory.java
+@@ -61,6 +61,7 @@ import org.bukkit.event.player.*;
+ import org.bukkit.event.server.ServerListPingEvent;
+ import org.bukkit.inventory.InventoryView;
+ import org.bukkit.inventory.meta.BookMeta;
++import org.github.paperspigot.event.entity.EntityZapEvent;
+ 
+ public class CraftEventFactory {
+     public static final DamageSource MELTING = CraftDamageSource.copyOf(DamageSource.BURN);
+@@ -648,6 +649,13 @@ public class CraftEventFactory {
+         return event;
+     }
+ 
++    // Paper start
++    public static EntityZapEvent callEntityZapEvent (Entity entity, Entity lightning, Entity changedEntity) {
++        EntityZapEvent event = new EntityZapEvent(entity.getBukkitEntity(), (LightningStrike) lightning.getBukkitEntity(), changedEntity.getBukkitEntity());
++        entity.getBukkitEntity().getServer().getPluginManager().callEvent(event);
++        return event;
++    }
++    // Paper end
+     public static HorseJumpEvent callHorseJumpEvent(Entity horse, float power) {
+         HorseJumpEvent event = new HorseJumpEvent((Horse) horse.getBukkitEntity(), power);
+         horse.getBukkitEntity().getServer().getPluginManager().callEvent(event);
+-- 
+2.19.0
+

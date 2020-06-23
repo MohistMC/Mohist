@@ -1,0 +1,77 @@
+From: Jedediah Smith <jedediah@silencegreys.com>
+Date: Thu, 6 Aug 2015 22:18:57 -0400
+Subject: [PATCH] Skull skin API
+
+
+diff --git a/src/main/java/org/bukkit/craftbukkit/block/CraftSkull.java b/src/main/java/org/bukkit/craftbukkit/block/CraftSkull.java
+--- a/src/main/java/org/bukkit/craftbukkit/block/CraftSkull.java
++++ b/src/main/java/org/bukkit/craftbukkit/block/CraftSkull.java
+@@ -14,6 +14,10 @@ import org.bukkit.block.BlockFace;
+ import org.bukkit.block.Skull;
+ import org.bukkit.craftbukkit.CraftWorld;
+ 
++import java.util.UUID;
++import org.bukkit.Skin;
++import org.bukkit.craftbukkit.util.Skins;
++
+ public class CraftSkull extends CraftBlockState implements Skull {
+     private static final int MAX_OWNER_LENGTH = 16;
+     private final TileEntitySkull skull;
+@@ -205,6 +209,18 @@ public class CraftSkull extends CraftBlockState implements Skull {
+         this.profile = new GameProfile(player.getUniqueId(), player.getName());
+     }
+ 
++    @Override
++    public void setOwner(String name, UUID uuid, Skin skin) {
++        profile = new GameProfile(uuid, name);
++        Skins.setProperties(skin, profile.getProperties());
++        skullType = SkullType.PLAYER;
++    }
++
++    @Override
++    public void clearOwner() {
++        profile = null;
++    }
++
+     public BlockFace getRotation() {
+     	return getBlockFace(rotation);
+     }
+diff --git a/src/main/java/org/bukkit/craftbukkit/inventory/CraftMetaSkull.java b/src/main/java/org/bukkit/craftbukkit/inventory/CraftMetaSkull.java
+--- a/src/main/java/org/bukkit/craftbukkit/inventory/CraftMetaSkull.java
++++ b/src/main/java/org/bukkit/craftbukkit/inventory/CraftMetaSkull.java
+@@ -1,14 +1,17 @@
+ package org.bukkit.craftbukkit.inventory;
+ 
+ import java.util.Map;
++import java.util.UUID;
+ 
+ import net.minecraft.server.GameProfileSerializer;
+ import net.minecraft.server.NBTBase;
+ import net.minecraft.server.NBTTagCompound;
+ 
+ import org.bukkit.Material;
++import org.bukkit.Skin;
+ import org.bukkit.configuration.serialization.DelegateDeserialization;
+ import org.bukkit.craftbukkit.inventory.CraftMetaItem.SerializableMeta;
++import org.bukkit.craftbukkit.util.Skins;
+ import org.bukkit.inventory.meta.SkullMeta;
+ 
+ import com.google.common.collect.ImmutableMap.Builder;
+@@ -125,6 +128,17 @@ class CraftMetaSkull extends CraftMetaItem implements SkullMeta {
+     }
+ 
+     @Override
++    public void setOwner(String name, UUID uuid, Skin skin) {
++        profile = new GameProfile(uuid, name);
++        Skins.setProperties(skin, profile.getProperties());
++    }
++
++    @Override
++    public void clearOwner() {
++        profile = null;
++    }
++
++    @Override
+     int applyHash() {
+         final int original;
+         int hash = original = super.applyHash();

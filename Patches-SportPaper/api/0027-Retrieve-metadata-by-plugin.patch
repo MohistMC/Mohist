@@ -1,0 +1,68 @@
+From 174eb280ef817ca6f65a71ecc109f6ae2726d25c Mon Sep 17 00:00:00 2001
+From: cswhite2000 <18whitechristop@gmail.com>
+Date: Wed, 8 Aug 2018 13:22:15 -0700
+Subject: [PATCH] Retrieve metadata by plugin
+
+
+diff --git a/src/main/java/org/bukkit/metadata/MetadataStore.java b/src/main/java/org/bukkit/metadata/MetadataStore.java
+index 700d0bfb..1be17ad4 100644
+--- a/src/main/java/org/bukkit/metadata/MetadataStore.java
++++ b/src/main/java/org/bukkit/metadata/MetadataStore.java
+@@ -16,6 +16,16 @@ public interface MetadataStore<T> {
+      */
+     public void setMetadata(T subject, String metadataKey, MetadataValue newMetadataValue);
+ 
++    /**
++     * Returns the metadata value attached to an object and belonging to the given plugin.
++     *
++     * @param subject the object being interrogated.
++     * @param metadataKey the unique metadata key being sought.
++     * @param owningPlugin the plugin that owns the metadata
++     * @return a metadata value, or null if the given plugin has not set a value for the given key
++     */
++    public MetadataValue getMetadata(T subject, String metadataKey, Plugin owningPlugin);
++
+     /**
+      * Returns all metadata values attached to an object. If multiple plugins
+      * have attached metadata, each will value will be included.
+diff --git a/src/main/java/org/bukkit/metadata/MetadataStoreBase.java b/src/main/java/org/bukkit/metadata/MetadataStoreBase.java
+index 093c1445..6db06169 100644
+--- a/src/main/java/org/bukkit/metadata/MetadataStoreBase.java
++++ b/src/main/java/org/bukkit/metadata/MetadataStoreBase.java
+@@ -43,6 +43,12 @@ public abstract class MetadataStoreBase<T> {
+         entry.put(owningPlugin, newMetadataValue);
+     }
+ 
++    public synchronized MetadataValue getMetadata(T subject, String metadataKey, Plugin owningPlugin) {
++        String key = disambiguate(subject, metadataKey);
++        Map<Plugin, MetadataValue> values = metadataMap.get(key);
++        return values == null ? null : values.get(owningPlugin);
++    }
++
+     /**
+      * Returns all metadata values attached to an object. If multiple
+      * have attached metadata, each will value will be included.
+diff --git a/src/main/java/org/bukkit/metadata/Metadatable.java b/src/main/java/org/bukkit/metadata/Metadatable.java
+index b47cf2b0..b1df863a 100644
+--- a/src/main/java/org/bukkit/metadata/Metadatable.java
++++ b/src/main/java/org/bukkit/metadata/Metadatable.java
+@@ -19,6 +19,16 @@ public interface Metadatable {
+      */
+     public void setMetadata(String metadataKey, MetadataValue newMetadataValue);
+ 
++    /**
++     * Returns a metadata value set by a specific plugin from the implementing
++     * object's metadata store.
++     *
++     * @param metadataKey the unique metadata key being sought.
++     * @param owningPlugin the plugin that owns the metadata
++     * @return A metadata value, or null if the given plugin has not set a value
++     */
++    public MetadataValue getMetadata(String metadataKey, Plugin owningPlugin);
++
+     /**
+      * Returns a list of previously set metadata values from the implementing
+      * object's metadata store.
+-- 
+2.19.0
+

@@ -1,0 +1,61 @@
+From c99d106af50781e034442476124a3444a9b9fc6b Mon Sep 17 00:00:00 2001
+From: cswhite2000 <18whitechristop@gmail.com>
+Date: Sun, 5 Aug 2018 16:02:05 -0700
+Subject: [PATCH] Add knockback reduction
+
+
+diff --git a/src/main/java/net/minecraft/server/EntityLiving.java b/src/main/java/net/minecraft/server/EntityLiving.java
+index 1c3677a46..a8f49e4cf 100644
+--- a/src/main/java/net/minecraft/server/EntityLiving.java
++++ b/src/main/java/net/minecraft/server/EntityLiving.java
+@@ -907,9 +907,15 @@ public abstract class EntityLiving extends Entity {
+             float f1 = MathHelper.sqrt(d0 * d0 + d1 * d1);
+             float f2 = 0.4F;
+ 
+-            this.motX /= 2.0D;
+-            this.motY /= 2.0D;
+-            this.motZ /= 2.0D;
++            // CraftBukkit start
++            double knockbackReduction = this.getBukkitEntity().getKnockbackReduction();
++            double friction = 2.0d - knockbackReduction;
++            f2 *= (1d - knockbackReduction);
++
++            this.motX /= friction;
++            this.motY /= friction;
++            this.motZ /= friction;
++            // CraftBukkit end
+             this.motX -= d0 / (double) f1 * (double) f2;
+             this.motY += (double) f2;
+             this.motZ -= d1 / (double) f1 * (double) f2;
+diff --git a/src/main/java/org/bukkit/craftbukkit/entity/CraftEntity.java b/src/main/java/org/bukkit/craftbukkit/entity/CraftEntity.java
+index 4f9179908..a2024f7e3 100644
+--- a/src/main/java/org/bukkit/craftbukkit/entity/CraftEntity.java
++++ b/src/main/java/org/bukkit/craftbukkit/entity/CraftEntity.java
+@@ -44,6 +44,7 @@ public abstract class CraftEntity implements org.bukkit.entity.Entity {
+     protected final CraftServer server;
+     protected Entity entity;
+     private EntityDamageEvent lastDamageEvent;
++    private float knockbackReduction;
+ 
+     public CraftEntity(final CraftServer server, final Entity entity) {
+         this.server = server;
+@@ -221,6 +222,16 @@ public abstract class CraftEntity implements org.bukkit.entity.Entity {
+         entity.velocityChanged = true;
+     }
+ 
++    @Override
++    public void setKnockbackReduction(float n) {
++        this.knockbackReduction = n;
++    }
++
++    @Override
++    public float getKnockbackReduction() {
++        return this.knockbackReduction;
++    }
++
+     public boolean isOnGround() {
+         if (entity instanceof EntityArrow) {
+             return ((EntityArrow) entity).isInGround();
+-- 
+2.18.0
+

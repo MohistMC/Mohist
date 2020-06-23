@@ -1,0 +1,74 @@
+From 01d4b555082afad954bb5d4de3cb0fe5b8ce800d Mon Sep 17 00:00:00 2001
+From: cswhite2000 <18whitechristop@gmail.com>
+Date: Wed, 8 Aug 2018 14:41:33 -0700
+Subject: [PATCH] Custom replacement for eaten items
+
+
+diff --git a/src/main/java/net/minecraft/server/EntityHuman.java b/src/main/java/net/minecraft/server/EntityHuman.java
+index 0ad4edb83..9bc418b1a 100644
+--- a/src/main/java/net/minecraft/server/EntityHuman.java
++++ b/src/main/java/net/minecraft/server/EntityHuman.java
+@@ -300,7 +300,7 @@ public abstract class EntityHuman extends EntityLiving {
+             if (event.isCancelled()) {
+                 // Update client
+                 if (this instanceof EntityPlayer) {
+-                    ((EntityPlayer) this).playerConnection.sendPacket(new PacketPlayOutSetSlot((byte) 0, activeContainer.getSlot((IInventory) this.inventory, this.inventory.itemInHandIndex).index, this.g));
++                    ((EntityPlayer) this).playerConnection.sendPacket(new PacketPlayOutSetSlot((byte) 0, activeContainer.getSlot((IInventory) this.inventory, this.inventory.itemInHandIndex).rawSlotIndex, this.g));
+                     // Spigot Start
+                     ((EntityPlayer) this).getBukkitEntity().updateInventory();
+                     ((EntityPlayer) this).getBukkitEntity().updateScaledHealth();
+@@ -309,19 +309,43 @@ public abstract class EntityHuman extends EntityLiving {
+                 return;
+             }
+ 
+-            // Plugin modified the item, process it but don't remove it
++            // Save the original consumed item and check if it was changed through the event
++            ItemStack defaultConsumed = this.g;
+             if (!craftItem.equals(event.getItem())) {
+-                CraftItemStack.asNMSCopy(event.getItem()).b(this.world, this);
++                this.g = CraftItemStack.asNMSCopy(event.getItem());
++            }
++            // CraftBukkit end
+ 
+-                // Update client
+-                if (this instanceof EntityPlayer) {
+-                    ((EntityPlayer) this).playerConnection.sendPacket(new PacketPlayOutSetSlot((byte) 0, activeContainer.getSlot((IInventory) this.inventory, this.inventory.itemInHandIndex).index, this.g));
++            ItemStack itemstack = this.g.b(this.world, this);
++
++            // CraftBukkit start
++            // Save the default replacement item and check if we need to change it
++            ItemStack defaultReplacement = itemstack;
++            if(event.getReplacement() != null) {
++                // If an explicit replacement was set through the event, use it
++                itemstack = CraftItemStack.asNMSCopy(event.getReplacement());
++
++                // If the replacement was AIR, then itemstack will be null, which will cause an NPE later,
++                // so instead we use the default replacement with zero count, which is handled properly.
++                if(itemstack == null) {
++                    itemstack = defaultReplacement.cloneItemStack();
++                    itemstack.count = 0;
+                 }
+-                return;
++            } else if(this.g != defaultConsumed) {
++                // If the consumed item was changed, don't replace the original item at all.
++                // We don't know what the original item would have been replaced with, so
++                // this is the most sensible thing we can do.
++                itemstack = defaultConsumed;
++            }
++
++            // Restore the original consumed item
++            this.g = defaultConsumed;
++
++            // If the replacement is anything but the default, update the client
++            if(itemstack != defaultReplacement && this instanceof EntityPlayer) {
++                ((EntityPlayer) this).playerConnection.sendPacket(new PacketPlayOutSetSlot((byte) 0, activeContainer.getSlot((IInventory) this.inventory, this.inventory.itemInHandIndex).rawSlotIndex, itemstack));
+             }
+             // CraftBukkit end
+-            
+-            ItemStack itemstack = this.g.b(this.world, this);
+ 
+             if (itemstack != this.g || itemstack != null && itemstack.count != i) {
+                 this.inventory.items[this.inventory.itemInHandIndex] = itemstack;
+-- 
+2.18.0
+

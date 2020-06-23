@@ -1,0 +1,168 @@
+From a39994330d14b9b77403fd812142c2aece6c9282 Mon Sep 17 00:00:00 2001
+From: cswhite2000 <18whitechristop@gmail.com>
+Date: Fri, 24 Aug 2018 02:22:49 -0700
+Subject: [PATCH] Add option to not tick empty worlds
+
+
+diff --git a/src/main/java/net/minecraft/server/ChunkProviderServer.java b/src/main/java/net/minecraft/server/ChunkProviderServer.java
+index bc13a465..475e2507 100644
+--- a/src/main/java/net/minecraft/server/ChunkProviderServer.java
++++ b/src/main/java/net/minecraft/server/ChunkProviderServer.java
+@@ -387,6 +387,45 @@ public class ChunkProviderServer implements IChunkProvider {
+ 
+     }
+ 
++    // SportPaper start
++    public void unloadAllChunks() {
++        for(Chunk chunk : chunks.values()) {
++            unloadChunk(chunk);
++        }
++    }
++
++    public void unloadChunk(Chunk chunk) {
++        Server server = this.world.getServer();
++        ChunkUnloadEvent event = new ChunkUnloadEvent(chunk.bukkitChunk);
++        server.getPluginManager().callEvent(event);
++        if (!event.isCancelled()) {
++
++            chunk.removeEntities();
++            this.saveChunk(chunk);
++            this.saveChunkNOP(chunk);
++            this.chunks.remove(chunk.chunkKey); // CraftBukkit
++            if (this.unloadQueue.contains(chunk.chunkKey)) {
++                this.unloadQueue.remove(chunk.chunkKey);
++            }
++
++            // Update neighbor counts
++            for (int x = -2; x < 3; x++) {
++                for (int z = -2; z < 3; z++) {
++                    if (x == 0 && z == 0) {
++                        continue;
++                    }
++
++                    Chunk neighbor = this.getChunkIfLoaded(chunk.locX + x, chunk.locZ + z);
++                    if (neighbor != null) {
++                        neighbor.setNeighborUnloaded(-x, -z);
++                        chunk.setNeighborUnloaded(x, z);
++                    }
++                }
++            }
++        }
++    }
++    // SportPaper end
++
+     public boolean unloadChunks() {
+         if (!this.world.savingDisabled) {
+             // CraftBukkit start
+@@ -395,35 +434,7 @@ public class ChunkProviderServer implements IChunkProvider {
+                 long chunkcoordinates = this.unloadQueue.popFirst();
+                 Chunk chunk = this.chunks.get(chunkcoordinates);
+                 if (chunk == null) continue;
+-
+-                ChunkUnloadEvent event = new ChunkUnloadEvent(chunk.bukkitChunk);
+-                server.getPluginManager().callEvent(event);
+-                if (!event.isCancelled()) {
+-
+-                    if (chunk != null) {
+-                        chunk.removeEntities();
+-                        this.saveChunk(chunk);
+-                        this.saveChunkNOP(chunk);
+-                        this.chunks.remove(chunkcoordinates); // CraftBukkit
+-                    }
+-
+-                    // this.unloadQueue.remove(olong);
+-
+-                    // Update neighbor counts
+-                    for (int x = -2; x < 3; x++) {
+-                        for (int z = -2; z < 3; z++) {
+-                            if (x == 0 && z == 0) {
+-                                continue;
+-                            }
+-
+-                            Chunk neighbor = this.getChunkIfLoaded(chunk.locX + x, chunk.locZ + z);
+-                            if (neighbor != null) {
+-                                neighbor.setNeighborUnloaded(-x, -z);
+-                                chunk.setNeighborUnloaded(x, z);
+-                            }
+-                        }
+-                    }
+-                }
++                unloadChunk(chunk); // SportPaper - Move to own method
+             }
+             // CraftBukkit end
+ 
+diff --git a/src/main/java/net/minecraft/server/MinecraftServer.java b/src/main/java/net/minecraft/server/MinecraftServer.java
+index 245e9735..d8c20ed6 100644
+--- a/src/main/java/net/minecraft/server/MinecraftServer.java
++++ b/src/main/java/net/minecraft/server/MinecraftServer.java
+@@ -820,6 +820,7 @@ public abstract class MinecraftServer implements Runnable, ICommandListener, IAs
+ 
+             // if (i == 0 || this.getAllowNether()) {
+                 WorldServer worldserver = this.worlds.get(i);
++            if(!worldserver.getWorld().checkTicking()) continue; // SportBukkit
+ 
+                 this.methodProfiler.a(worldserver.getWorldData().getName());
+                 /* Drop global time updates
+diff --git a/src/main/java/org/bukkit/craftbukkit/CraftWorld.java b/src/main/java/org/bukkit/craftbukkit/CraftWorld.java
+index e7cb442b..86bbb9f5 100644
+--- a/src/main/java/org/bukkit/craftbukkit/CraftWorld.java
++++ b/src/main/java/org/bukkit/craftbukkit/CraftWorld.java
+@@ -56,6 +56,7 @@ import org.bukkit.plugin.Plugin;
+ import org.bukkit.plugin.messaging.StandardMessenger;
+ import org.bukkit.util.RayBlockIntersection;
+ import org.bukkit.util.Vector;
++import org.github.paperspigot.PaperSpigotConfig;
+ import org.github.paperspigot.exception.ServerInternalException;
+ 
+ public class CraftWorld implements World {
+@@ -108,6 +109,31 @@ public class CraftWorld implements World {
+         }
+     }
+ 
++    private boolean ticking = false;
++
++    public boolean isTicking() {
++        return ticking;
++    }
++
++    public boolean checkTicking() {
++        if(ticking) {
++            if(!(hasPlayers() || PaperSpigotConfig.tickEmptyWorlds)) {
++                ticking = false;
++                world.getServer().getLogger().info("Stopping world " + getName());
++                getHandle().chunkProviderServer.unloadAllChunks();
++            }
++        } else if(hasPlayers()) {
++            ticking = true;
++            world.getServer().getLogger().info("Starting world " + getName());
++            setKeepSpawnInMemory(getKeepSpawnInMemory());
++        }
++        return ticking;
++    }
++
++    public boolean hasPlayers() {
++        return getPlayerCount() > 0;
++    }
++
+     @Override
+     public World getWorld() {
+         return this;
+diff --git a/src/main/java/org/github/paperspigot/PaperSpigotConfig.java b/src/main/java/org/github/paperspigot/PaperSpigotConfig.java
+index bf847c28..142a5faf 100644
+--- a/src/main/java/org/github/paperspigot/PaperSpigotConfig.java
++++ b/src/main/java/org/github/paperspigot/PaperSpigotConfig.java
+@@ -201,6 +201,11 @@ public class PaperSpigotConfig
+         includeRandomnessInArrowTrajectory = getBoolean("settings.include-randomness-in-arrow-trajectory", includeRandomnessInArrowTrajectory);
+     }
+ 
++    public static boolean tickEmptyWorlds = true;
++    private static void tickEmptyWorlds() {
++        tickEmptyWorlds = getBoolean("settings.tick-empty-worlds", tickEmptyWorlds);
++    }
++
+     public static double strengthEffectModifier;
+     public static double weaknessEffectModifier;
+     private static void effectModifiers()
+-- 
+2.19.0
+

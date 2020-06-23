@@ -1,0 +1,39 @@
+From a24621663a9377ee1cba7c662e3e0caa99272194 Mon Sep 17 00:00:00 2001
+From: cswhite2000 <18whitechristop@gmail.com>
+Date: Thu, 6 Sep 2018 01:25:56 -0700
+Subject: [PATCH] Fix PlayerInteractEvent not cancelling properly
+
+
+diff --git a/src/main/java/net/minecraft/server/PlayerConnection.java b/src/main/java/net/minecraft/server/PlayerConnection.java
+index 429c1d57..21747b92 100644
+--- a/src/main/java/net/minecraft/server/PlayerConnection.java
++++ b/src/main/java/net/minecraft/server/PlayerConnection.java
+@@ -755,7 +755,24 @@ public class PlayerConnection implements PacketListenerPlayIn, IUpdatePlayerList
+                 }
+             }
+ 
+-            if (!cancelled) {
++            if (cancelled) {
++                this.player.getBukkitEntity().updateInventory(); // SPIGOT-2524
++                // SportPaper start - Fix client desync
++                if (itemstack.getItem() == Item.getItemOf(Blocks.WATERLILY)) {
++                    MovingObjectPosition movingObjectPosition1 = this.player.world.rayTrace(vec3d, vec3d1, true, false, false);
++                    if (movingObjectPosition1 != null) {
++                        BlockPosition blockPosition = movingObjectPosition1.a().up();
++                        org.bukkit.craftbukkit.block.CraftBlockState.getBlockState(worldserver, blockPosition.getX(), blockPosition.getY(), blockPosition.getZ()).update(true, false);
++                    }
++                } else if (itemstack.getItem() == Items.BUCKET) {
++                    MovingObjectPosition movingObjectPosition1 = this.player.world.rayTrace(vec3d, vec3d1, true, false, false);
++                    if (movingObjectPosition1 != null) {
++                        BlockPosition blockPosition = movingObjectPosition1.a();
++                        org.bukkit.craftbukkit.block.CraftBlockState.getBlockState(worldserver, blockPosition.getX(), blockPosition.getY(), blockPosition.getZ()).update(true, false);
++                    }
++                }
++                // SportPaper end
++            } else {
+                 this.player.playerInteractManager.useItem(this.player, this.player.world, itemstack);
+             }
+             }
+-- 
+2.19.0
+

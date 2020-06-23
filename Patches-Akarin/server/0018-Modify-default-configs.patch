@@ -1,0 +1,33 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?=E3=84=97=E3=84=A0=CB=8B=20=E3=84=91=E3=84=A7=CB=8A?=
+ <tsao-chi@the-lingo.org>
+Date: Sun, 31 May 2020 12:11:09 +0800
+Subject: [PATCH] Modify default configs
+
+
+diff --git a/src/main/java/com/destroystokyo/paper/PaperConfig.java b/src/main/java/com/destroystokyo/paper/PaperConfig.java
+index f0284e81db3ab7c45018de2b446f2d8296df15c3..931060b9a7261b3aa4725136141ed9b4fd71bc94 100644
+--- a/src/main/java/com/destroystokyo/paper/PaperConfig.java
++++ b/src/main/java/com/destroystokyo/paper/PaperConfig.java
+@@ -202,7 +202,7 @@ public class PaperConfig {
+ 
+     public static String timingsServerName;
+     private static void timings() {
+-        boolean timings = getBoolean("timings.enabled", true);
++        boolean timings = getBoolean("timings.enabled", false); // Akarin don't profile by default
+         boolean verboseTimings = getBoolean("timings.verbose", true);
+         TimingsManager.privacy = getBoolean("timings.server-name-privacy", false);
+         TimingsManager.hiddenConfigs = getList("timings.hidden-config-entries", Lists.newArrayList("database", "settings.bungeecord-addresses"));
+diff --git a/src/main/java/com/destroystokyo/paper/PaperWorldConfig.java b/src/main/java/com/destroystokyo/paper/PaperWorldConfig.java
+index ecacb72b922927f06883b75e7d2cc1f904eb9f03..bb97ecbb687acbe155890e0f866efddfb172c098 100644
+--- a/src/main/java/com/destroystokyo/paper/PaperWorldConfig.java
++++ b/src/main/java/com/destroystokyo/paper/PaperWorldConfig.java
+@@ -648,7 +648,7 @@ public class PaperWorldConfig {
+     }
+ 
+     public boolean cooldownHopperWhenFull = true;
+-    public boolean disableHopperMoveEvents = false;
++    public boolean disableHopperMoveEvents = true; // Akarin disable by default
+     private void hopperOptimizations() {
+         cooldownHopperWhenFull = getBoolean("hopper.cooldown-when-full", cooldownHopperWhenFull);
+         log("Cooldown Hoppers when Full: " + (cooldownHopperWhenFull ? "enabled" : "disabled"));

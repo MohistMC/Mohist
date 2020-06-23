@@ -1,0 +1,127 @@
+From 7cc264b44f55fc97561f2b654e93466f28d04053 Mon Sep 17 00:00:00 2001
+From: cswhite2000 <18whitechristop@gmail.com>
+Date: Sat, 4 Aug 2018 16:03:21 -0700
+Subject: [PATCH] Fire ExplosionPrimeEvent properly. Fixes BUKKIT-770
+
+
+diff --git a/src/main/java/net/minecraft/server/BlockTNT.java b/src/main/java/net/minecraft/server/BlockTNT.java
+index 3d1e583f3..8676196a4 100644
+--- a/src/main/java/net/minecraft/server/BlockTNT.java
++++ b/src/main/java/net/minecraft/server/BlockTNT.java
+@@ -2,6 +2,8 @@ package net.minecraft.server;
+ 
+ public class BlockTNT extends Block {
+ 
++    boolean removeBlock = false; // CraftBukkit
++
+     public static final BlockStateBoolean EXPLODE = BlockStateBoolean.of("explode");
+ 
+     public BlockTNT() {
+@@ -36,8 +38,17 @@ public class BlockTNT extends Block {
+             EntityTNTPrimed entitytntprimed = new EntityTNTPrimed(loc, world, (double) ((float) blockposition.getX() + 0.5F), y, (double) ((float) blockposition.getZ() + 0.5F), explosion.getSource()); // PaperSpigot - add loc
+             // PaperSpigot end
+ 
+-            entitytntprimed.fuseTicks = world.random.nextInt(entitytntprimed.fuseTicks / 4) + entitytntprimed.fuseTicks / 8;
+-            world.addEntity(entitytntprimed);
++            // CraftBukkit start - allow exploded TNT to cancel priming
++            org.bukkit.event.entity.ExplosionPrimeEvent event = new org.bukkit.event.entity.ExplosionPrimeEvent((org.bukkit.entity.Explosive) entitytntprimed.getBukkitEntity());
++            world.getServer().getPluginManager().callEvent(event);
++
++            if (!event.isCancelled()) {
++                entitytntprimed.fuseTicks = world.random.nextInt(entitytntprimed.fuseTicks / 4) + entitytntprimed.fuseTicks / 8;
++                world.addEntity(entitytntprimed);
++            } else {
++                a(world, blockposition, new ItemStack(this, 1, 0));
++            }
++            // CraftBukkit end
+         }
+     }
+ 
+@@ -46,6 +57,7 @@ public class BlockTNT extends Block {
+     }
+ 
+     public void a(World world, BlockPosition blockposition, IBlockData iblockdata, EntityLiving entityliving) {
++        removeBlock = true; // CraftBukkit - TNT priming may be cancelled
+         if (!world.isClientSide) {
+             if (((Boolean) iblockdata.get(BlockTNT.EXPLODE)).booleanValue()) {
+                 org.bukkit.Location loc = new org.bukkit.Location(world.getWorld(), blockposition.getX(), blockposition.getY(), blockposition.getZ()); // PaperSpigot
+@@ -55,8 +67,16 @@ public class BlockTNT extends Block {
+                 EntityTNTPrimed entitytntprimed = new EntityTNTPrimed(loc, world, (double) ((float) blockposition.getX() + 0.5F), y, (double) ((float) blockposition.getZ() + 0.5F), entityliving); // PaperSpigot - add loc
+                 // PaperSpigot end
+ 
+-                world.addEntity(entitytntprimed);
+-                world.makeSound(entitytntprimed, "game.tnt.primed", 1.0F, 1.0F);
++                // CraftBukkit start - fire ExplosionPrimeEvent
++                org.bukkit.event.entity.ExplosionPrimeEvent event = new org.bukkit.event.entity.ExplosionPrimeEvent((org.bukkit.entity.Explosive) entitytntprimed.getBukkitEntity());
++                world.getServer().getPluginManager().callEvent(event);
++                if (event.isCancelled()) {
++                    removeBlock = false;
++                } else {
++                    world.addEntity(entitytntprimed);
++                    world.makeSound(entitytntprimed, "game.tnt.primed", 1.0F, 1.0F);
++                }
++                // CraftBukkit end
+             }
+ 
+         }
+@@ -68,7 +88,11 @@ public class BlockTNT extends Block {
+ 
+             if (item == Items.FLINT_AND_STEEL || item == Items.FIRE_CHARGE) {
+                 this.a(world, blockposition, iblockdata.set(BlockTNT.EXPLODE, Boolean.valueOf(true)), (EntityLiving) entityhuman);
+-                world.setAir(blockposition);
++                // CraftBukkit start - don't remove block if TNT priming is cancelled
++                if (removeBlock) {
++                    world.setAir(blockposition);
++                }
++                // CraftBukkit start - don't remove block if TNT priming is cancelled
+                 if (item == Items.FLINT_AND_STEEL) {
+                     entityhuman.bZ().damage(1, entityhuman);
+                 } else if (!entityhuman.abilities.canInstantlyBuild) {
+diff --git a/src/main/java/net/minecraft/server/EntityCreeper.java b/src/main/java/net/minecraft/server/EntityCreeper.java
+index fecf94da1..af6df0546 100644
+--- a/src/main/java/net/minecraft/server/EntityCreeper.java
++++ b/src/main/java/net/minecraft/server/EntityCreeper.java
+@@ -89,9 +89,19 @@ public class EntityCreeper extends EntityMonster {
+ 
+             int i = this.cm();
+ 
++            // CraftBukkit start - fire ExplosionPrimeEvent
++            float radius = this.isPowered() ? 6.0F : 3.0F;
++
+             if (i > 0 && this.fuseTicks == 0) {
+-                this.makeSound("creeper.primed", 1.0F, 0.5F);
++                ExplosionPrimeEvent event = new ExplosionPrimeEvent(this.getBukkitEntity(), radius, false);
++                this.world.getServer().getPluginManager().callEvent(event);
++                if (event.isCancelled()) {
++                    i = 0;
++                } else {
++                    this.makeSound("creeper.primed", 1.0F, 0.5F);
++                }
+             }
++            // CraftBukkit end
+ 
+             this.fuseTicks += i;
+             if (this.fuseTicks < 0) {
+diff --git a/src/main/java/net/minecraft/server/EntityTNTPrimed.java b/src/main/java/net/minecraft/server/EntityTNTPrimed.java
+index 872d9659c..b1a49452e 100644
+--- a/src/main/java/net/minecraft/server/EntityTNTPrimed.java
++++ b/src/main/java/net/minecraft/server/EntityTNTPrimed.java
+@@ -108,13 +108,9 @@ public class EntityTNTPrimed extends Entity {
+         // PaperSpigot end
+ 
+         org.bukkit.craftbukkit.CraftServer server = this.world.getServer();
++        org.bukkit.entity.Explosive explosive = (org.bukkit.entity.Explosive) org.bukkit.craftbukkit.entity.CraftEntity.getEntity(server, this);
+ 
+-        ExplosionPrimeEvent event = new ExplosionPrimeEvent((org.bukkit.entity.Explosive) org.bukkit.craftbukkit.entity.CraftEntity.getEntity(server, this));
+-        server.getPluginManager().callEvent(event);
+-
+-        if (!event.isCancelled()) {
+-            this.world.createExplosion(this, this.locX, this.locY + (double) (this.length / 2.0F), this.locZ, event.getRadius(), event.getFire(), true);
+-        }
++        this.world.createExplosion(this, this.locX, this.locY + (double) (this.length / 2.0F), this.locZ, explosive.getYield(), explosive.isIncendiary(), true);
+         // CraftBukkit end
+ 
+         // PaperSpigot start - Force load chunks during TNT explosions
+-- 
+2.18.0
+

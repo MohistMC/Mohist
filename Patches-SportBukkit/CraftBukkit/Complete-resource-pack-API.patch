@@ -1,0 +1,71 @@
+From: Jedediah Smith <jedediah@silencegreys.com>
+Date: Sat, 4 Apr 2015 23:17:52 -0400
+Subject: [PATCH] Complete resource pack API
+
+
+diff --git a/src/main/java/net/minecraft/server/PlayerConnection.java b/src/main/java/net/minecraft/server/PlayerConnection.java
+--- a/src/main/java/net/minecraft/server/PlayerConnection.java
++++ b/src/main/java/net/minecraft/server/PlayerConnection.java
+@@ -1034,7 +1034,10 @@ public class PlayerConnection implements PacketListenerPlayIn, ITickable {
+ 
+     // CraftBukkit start
+     public void a(PacketPlayInResourcePackStatus packetplayinresourcepackstatus) {
+-        this.server.getPluginManager().callEvent(new PlayerResourcePackStatusEvent(getPlayer(), PlayerResourcePackStatusEvent.Status.values()[packetplayinresourcepackstatus.status.ordinal()]));
++        PlayerConnectionUtils.ensureMainThread(packetplayinresourcepackstatus, this, this.player.x());
++        final PlayerResourcePackStatusEvent.Status status = PlayerResourcePackStatusEvent.Status.values()[packetplayinresourcepackstatus.status.ordinal()];
++        this.getPlayer().setResourcePackStatus(status);
++        this.server.getPluginManager().callEvent(new PlayerResourcePackStatusEvent(getPlayer(), status));
+     }
+     // CraftBukkit end
+ 
+diff --git a/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java b/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
+--- a/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
++++ b/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
+@@ -61,6 +61,7 @@ import org.bukkit.entity.EntityType;
+ import org.bukkit.entity.Player;
+ import org.bukkit.event.player.PlayerGameModeChangeEvent;
+ import org.bukkit.event.player.PlayerRegisterChannelEvent;
++import org.bukkit.event.player.PlayerResourcePackStatusEvent;
+ import org.bukkit.event.player.PlayerTeleportEvent;
+ import org.bukkit.event.player.PlayerUnregisterChannelEvent;
+ import org.bukkit.inventory.InventoryView.Property;
+@@ -86,6 +87,7 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
+     private double healthScale = 20;
+     private Skin realSkin;
+     private boolean showInvisibles;
++    private PlayerResourcePackStatusEvent.Status resourcePackStatus;
+ 
+     private final Map<CommandSender, String> fakeNames = new WeakHashMap<CommandSender, String>();
+     private final Map<CommandSender, String> fakeDisplayNames = new WeakHashMap<CommandSender, String>();
+@@ -1410,9 +1412,30 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
+ 
+     @Override
+     public void setResourcePack(String url) {
++        setResourcePack(url, "null");
++    }
++
++    @Override
++    public void setResourcePack(String url, String hash) {
+         Validate.notNull(url, "Resource pack URL cannot be null");
++        Validate.notNull(hash, "Hash cannot be null");
++        Validate.isTrue(hash.matches("^[0-9a-f]{40}$"), "Hash must be a 40 character SHA-1 digest with lowercase letters");
++
++        getHandle().setResourcePack(url, hash);
++    }
++
++    @Override
++    public PlayerResourcePackStatusEvent.Status getResourcePackStatus() {
++        return resourcePackStatus;
++    }
++
++    @Override
++    public boolean hasResourcePack() {
++        return this.resourcePackStatus == PlayerResourcePackStatusEvent.Status.SUCCESSFULLY_LOADED;
++    }
+ 
+-        getHandle().setResourcePack(url, "null");
++    public void setResourcePackStatus(PlayerResourcePackStatusEvent.Status status) {
++        this.resourcePackStatus = status;
+     }
+ 
+     public void addChannel(String channel) {

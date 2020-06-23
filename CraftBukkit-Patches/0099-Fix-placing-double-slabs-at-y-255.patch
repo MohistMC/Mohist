@@ -1,0 +1,26 @@
+From 4e89643c48c36492d73f896b768d9ee4974acb15 Mon Sep 17 00:00:00 2001
+From: md_5 <git@md-5.net>
+Date: Fri, 28 Dec 2018 10:11:43 +1100
+Subject: [PATCH] Fix placing double slabs at y = 255
+
+Addresses MC-11211 / SPIGOT-4552
+
+diff --git a/src/main/java/net/minecraft/server/PlayerConnection.java b/src/main/java/net/minecraft/server/PlayerConnection.java
+index bdd23e193..e685b7085 100644
+--- a/src/main/java/net/minecraft/server/PlayerConnection.java
++++ b/src/main/java/net/minecraft/server/PlayerConnection.java
+@@ -1232,9 +1232,10 @@ public class PlayerConnection implements PacketListenerPlayIn {
+         MovingObjectPositionBlock movingobjectpositionblock = packetplayinuseitem.c();
+         BlockPosition blockposition = movingobjectpositionblock.getBlockPosition();
+         EnumDirection enumdirection = movingobjectpositionblock.getDirection();
++        IBlockData clickedBlock = worldserver.getType(blockposition); // Spigot
+ 
+         this.player.resetIdleTimer();
+-        if (blockposition.getY() >= this.minecraftServer.getMaxBuildHeight() - 1 && (enumdirection == EnumDirection.UP || blockposition.getY() >= this.minecraftServer.getMaxBuildHeight())) {
++        if (blockposition.getY() >= this.minecraftServer.getMaxBuildHeight() - 1 && ((enumdirection == EnumDirection.UP && !(clickedBlock.getBlock() instanceof BlockStepAbstract && clickedBlock.get(BlockStepAbstract.a) == BlockPropertySlabType.BOTTOM)) || blockposition.getY() >= this.minecraftServer.getMaxBuildHeight())) { // Spigot
+             IChatBaseComponent ichatbasecomponent = (new ChatMessage("build.tooHigh", new Object[]{this.minecraftServer.getMaxBuildHeight()})).a(EnumChatFormat.RED);
+ 
+             this.player.playerConnection.sendPacket(new PacketPlayOutChat(ichatbasecomponent, ChatMessageType.GAME_INFO));
+-- 
+2.25.1
+

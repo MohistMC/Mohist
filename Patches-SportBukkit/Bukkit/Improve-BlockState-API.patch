@@ -1,0 +1,82 @@
+From: Jedediah Smith <jedediah@silencegreys.com>
+Date: Mon, 1 Jun 2015 06:28:48 -0400
+Subject: [PATCH] Improve BlockState API
+
+
+diff --git a/src/main/java/org/bukkit/block/BlockState.java b/src/main/java/org/bukkit/block/BlockState.java
+--- a/src/main/java/org/bukkit/block/BlockState.java
++++ b/src/main/java/org/bukkit/block/BlockState.java
+@@ -26,17 +26,49 @@ public interface BlockState extends Metadatable {
+     Block getBlock();
+ 
+     /**
++     * Get the material of this block state.
++     */
++    Material getMaterial();
++
++    /**
++     * Get the material and metadata of this block state.
++     */
++    MaterialData getMaterialData();
++
++    /**
++     * Set the material of this block state. If the new material is different
++     * from the current material, any metadata for the new material will be set
++     * to default values.
++     *
++     * This changes only the state of this object, not any blocks.
++     * Call {@link #update} to apply changes to actual blocks.
++     */
++    void setMaterial(Material material);
++
++    /**
++     * Set the material and metadata of this block state.
++     *
++     * This changes only the state of this object, not any blocks.
++     * Call {@link #update} to apply changes to actual blocks.
++     */
++    void setMaterialData(MaterialData materialData);
++
++    /**
+      * Gets the metadata for this block
+      *
+      * @return block specific metadata
++     * @deprecated Confusing name
+      */
++    @Deprecated
+     MaterialData getData();
+ 
+     /**
+      * Gets the type of this block
+      *
+      * @return block type
++     * @deprecated Confusing name
+      */
++    @Deprecated
+     Material getType();
+ 
+     /**
+@@ -109,17 +141,22 @@ public interface BlockState extends Metadatable {
+     Chunk getChunk();
+ 
+     /**
+-     * Sets the metadata for this block
++     * Sets the metadata ONLY for this block (NOT the material).
++     * The {@link Material} of the given data must match that of the block.
+      *
+      * @param data New block specific metadata
++     * @deprecated Confusing name, strange behavior
+      */
++    @Deprecated
+     void setData(MaterialData data);
+ 
+     /**
+      * Sets the type of this block
+      *
+      * @param type Material to change this block to
++     * @deprecated Confusing name
+      */
++    @Deprecated
+     void setType(Material type);
+ 
+     /**

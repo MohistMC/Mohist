@@ -1,0 +1,34 @@
+From ddcb1c8e0aae81be78c1a0f286bdd341dc1567c7 Mon Sep 17 00:00:00 2001
+From: cswhite2000 <18whitechristop@gmail.com>
+Date: Sat, 4 Aug 2018 17:49:23 -0700
+Subject: [PATCH] Add onGround API
+
+
+diff --git a/src/main/java/net/minecraft/server/PlayerConnection.java b/src/main/java/net/minecraft/server/PlayerConnection.java
+index 6c6850962..5a80c00f1 100644
+--- a/src/main/java/net/minecraft/server/PlayerConnection.java
++++ b/src/main/java/net/minecraft/server/PlayerConnection.java
+@@ -241,6 +241,7 @@ public class PlayerConnection implements PacketListenerPlayIn, IUpdatePlayerList
+                 // Spigot End
+                 Location from = new Location(player.getWorld(), lastPosX, lastPosY, lastPosZ, lastYaw, lastPitch); // Get the Players previous Event location.
+                 Location to = player.getLocation().clone(); // Start off the To location as the Players current location.
++                boolean wasOnGround = this.player.onGround;
+ 
+                 // If the packet contains movement information then we update the To location with the correct XYZ.
+                 if (packetplayinflying.hasPos && !(packetplayinflying.hasPos && packetplayinflying.y == -999.0D)) {
+@@ -456,6 +457,12 @@ public class PlayerConnection implements PacketListenerPlayIn, IUpdatePlayerList
+ 
+                     this.player.onGround = packetplayinflying.f();
+                     this.minecraftServer.getPlayerList().d(this.player);
++                    // SportBukkit start
++                    if(wasOnGround != this.player.onGround) {
++                        org.bukkit.event.player.PlayerOnGroundEvent onGroundEvent = new org.bukkit.event.player.PlayerOnGroundEvent(player, this.player.onGround);
++                        this.server.getPluginManager().callEvent(onGroundEvent);
++                    }
++                    // SportBukkit end
+                     this.player.a(this.player.locY - d10, packetplayinflying.f());
+                 } else if (this.e - this.f > 20) {
+                     this.a(this.o, this.p, this.q, this.player.yaw, this.player.pitch);
+-- 
+2.18.0
+

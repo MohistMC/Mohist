@@ -1,0 +1,106 @@
+From 61b695e35bb0020b116824e5517521b8ae4b4bbc Mon Sep 17 00:00:00 2001
+From: cswhite2000 <18whitechristop@gmail.com>
+Date: Mon, 6 Aug 2018 00:28:27 -0700
+Subject: [PATCH] EventException knows the source Event
+
+
+diff --git a/src/main/java/org/bukkit/event/EventException.java b/src/main/java/org/bukkit/event/EventException.java
+index 84638e85..aef8d494 100644
+--- a/src/main/java/org/bukkit/event/EventException.java
++++ b/src/main/java/org/bukkit/event/EventException.java
+@@ -2,7 +2,26 @@ package org.bukkit.event;
+ 
+ public class EventException extends Exception {
+     private static final long serialVersionUID = 3532808232324183999L;
+-    private final Throwable cause;
++    private final Event event;
++
++    /**
++     * Constructs a new EventException based on the given Exception
++     *
++     * @param cause Exception that triggered this Exception
++     */
++    public EventException(Throwable cause, Event event, String message) {
++        super(message, cause);
++        this.event = event;
++    }
++
++    /**
++     * Constructs a new EventException based on the given Exception
++     *
++     * @param throwable Exception that triggered this Exception
++     */
++    public EventException(Throwable throwable, Event event) {
++        this(throwable, event, null);
++    }
+ 
+     /**
+      * Constructs a new EventException based on the given Exception
+@@ -10,14 +29,14 @@ public class EventException extends Exception {
+      * @param throwable Exception that triggered this Exception
+      */
+     public EventException(Throwable throwable) {
+-        cause = throwable;
++        this(throwable, (Event) null);
+     }
+ 
+     /**
+      * Constructs a new EventException
+      */
+     public EventException() {
+-        cause = null;
++        this((Throwable) null);
+     }
+ 
+     /**
+@@ -27,8 +46,7 @@ public class EventException extends Exception {
+      * @param message The message
+      */
+     public EventException(Throwable cause, String message) {
+-        super(message);
+-        this.cause = cause;
++        this(cause, null, message);
+     }
+ 
+     /**
+@@ -37,17 +55,13 @@ public class EventException extends Exception {
+      * @param message The message
+      */
+     public EventException(String message) {
+-        super(message);
+-        cause = null;
++        this(null, message);
+     }
+ 
+     /**
+-     * If applicable, returns the Exception that triggered this Exception
+-     *
+-     * @return Inner exception, or null if one does not exist
++     * @return the {@link Event} that generated this exception
+      */
+-    @Override
+-    public Throwable getCause() {
+-        return cause;
++    public Event getEvent() {
++        return event;
+     }
+ }
+diff --git a/src/main/java/org/bukkit/plugin/java/JavaPluginLoader.java b/src/main/java/org/bukkit/plugin/java/JavaPluginLoader.java
+index b057b053..64812133 100644
+--- a/src/main/java/org/bukkit/plugin/java/JavaPluginLoader.java
++++ b/src/main/java/org/bukkit/plugin/java/JavaPluginLoader.java
+@@ -299,9 +299,9 @@ public final class JavaPluginLoader implements PluginLoader {
+                         }
+                         method.invoke(listener, event);
+                     } catch (InvocationTargetException ex) {
+-                        throw new EventException(ex.getCause());
++                        throw new EventException(ex.getCause(), event);
+                     } catch (Throwable t) {
+-                        throw new EventException(t);
++                        throw new EventException(t, event);
+                     }
+                 }
+             }, plugin, method, eventClass); // Spigot
+-- 
+2.18.0
+

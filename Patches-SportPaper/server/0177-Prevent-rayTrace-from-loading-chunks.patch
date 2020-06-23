@@ -1,0 +1,33 @@
+From 9790f517a1720a99bdd68f068957e9e11a7d68fc Mon Sep 17 00:00:00 2001
+From: Ashcon Partovi <ashcon@partovi.net>
+Date: Sat, 27 Apr 2019 12:44:20 -0700
+Subject: [PATCH] Prevent rayTrace from loading chunks
+
+
+diff --git a/src/main/java/net/minecraft/server/World.java b/src/main/java/net/minecraft/server/World.java
+index 0bb29ec7..3e5332f9 100644
+--- a/src/main/java/net/minecraft/server/World.java
++++ b/src/main/java/net/minecraft/server/World.java
+@@ -848,7 +848,8 @@ public abstract class World implements IBlockAccess {
+                 int i1 = MathHelper.floor(vec3d.b);
+                 int j1 = MathHelper.floor(vec3d.c);
+                 BlockPosition blockposition = new BlockPosition(l, i1, j1);
+-                IBlockData iblockdata = this.getType(blockposition);
++                IBlockData iblockdata = this.getTypeIfLoaded(blockposition); // SportPaper
++                if (iblockdata == null) return null; // SportPaper
+                 Block block = iblockdata.getBlock();
+ 
+                 if ((!flag1 || block.a(this, blockposition, iblockdata) != null) && block.a(iblockdata, flag)) {
+@@ -950,7 +951,8 @@ public abstract class World implements IBlockAccess {
+                     i1 = MathHelper.floor(vec3d.b) - (enumdirection == EnumDirection.UP ? 1 : 0);
+                     j1 = MathHelper.floor(vec3d.c) - (enumdirection == EnumDirection.SOUTH ? 1 : 0);
+                     blockposition = new BlockPosition(l, i1, j1);
+-                    IBlockData iblockdata1 = this.getType(blockposition);
++                    IBlockData iblockdata1 = this.getTypeIfLoaded(blockposition); // SportPaper
++                    if (iblockdata1 == null) return null; // SportPaper
+                     Block block1 = iblockdata1.getBlock();
+ 
+                     if (!flag1 || block1.a(this, blockposition, iblockdata1) != null) {
+-- 
+2.20.1
+

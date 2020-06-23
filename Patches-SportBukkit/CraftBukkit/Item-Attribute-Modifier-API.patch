@@ -1,0 +1,488 @@
+From: Jedediah Smith <jedediah@silencegreys.com>
+Date: Tue, 19 May 2015 06:31:14 -0400
+Subject: [PATCH] Item Attribute Modifier API
+
+
+diff --git a/src/main/java/org/bukkit/craftbukkit/attribute/CraftAttributeInstance.java b/src/main/java/org/bukkit/craftbukkit/attribute/CraftAttributeInstance.java
+--- a/src/main/java/org/bukkit/craftbukkit/attribute/CraftAttributeInstance.java
++++ b/src/main/java/org/bukkit/craftbukkit/attribute/CraftAttributeInstance.java
+@@ -65,11 +65,11 @@ public class CraftAttributeInstance implements AttributeInstance {
+        return handle.getAttribute().getDefault();
+     }
+ 
+-    private static net.minecraft.server.AttributeModifier convert(AttributeModifier bukkit) {
++    public static net.minecraft.server.AttributeModifier convert(AttributeModifier bukkit) {
+         return new net.minecraft.server.AttributeModifier(bukkit.getUniqueId(), bukkit.getName(), bukkit.getAmount(), bukkit.getOperation().ordinal());
+     }
+ 
+-    private static AttributeModifier convert(net.minecraft.server.AttributeModifier nms) {
++    public static AttributeModifier convert(net.minecraft.server.AttributeModifier nms) {
+         return new AttributeModifier(nms.a(), nms.b(), nms.d(), AttributeModifier.Operation.values()[nms.c()]);
+     }
+ }
+diff --git a/src/main/java/org/bukkit/craftbukkit/attribute/CraftAttributeMap.java b/src/main/java/org/bukkit/craftbukkit/attribute/CraftAttributeMap.java
+--- a/src/main/java/org/bukkit/craftbukkit/attribute/CraftAttributeMap.java
++++ b/src/main/java/org/bukkit/craftbukkit/attribute/CraftAttributeMap.java
+@@ -17,23 +17,8 @@ public class CraftAttributeMap implements Attributable {
+     @Override
+     public AttributeInstance getAttribute(Attribute attribute) {
+         Preconditions.checkArgument(attribute != null, "attribute");
+-        net.minecraft.server.AttributeInstance nms = handle.a(toMinecraft(attribute.name()));
++        net.minecraft.server.AttributeInstance nms = handle.a(attribute.getName());
+ 
+         return (nms == null) ? null : new CraftAttributeInstance(nms, attribute);
+     }
+-
+-    static String toMinecraft(String bukkit) {
+-        int first = bukkit.indexOf('_');
+-        int second = bukkit.indexOf('_', first + 1);
+-
+-        StringBuilder sb = new StringBuilder(bukkit.toLowerCase(java.util.Locale.ENGLISH));
+-
+-        sb.setCharAt(first, '.');
+-        if (second != -1) {
+-            sb.deleteCharAt(second);
+-            sb.setCharAt(second, bukkit.charAt(second + 1));
+-        }
+-
+-        return sb.toString();
+-    }
+ }
+diff --git a/src/main/java/org/bukkit/craftbukkit/inventory/CraftItemFactory.java b/src/main/java/org/bukkit/craftbukkit/inventory/CraftItemFactory.java
+--- a/src/main/java/org/bukkit/craftbukkit/inventory/CraftItemFactory.java
++++ b/src/main/java/org/bukkit/craftbukkit/inventory/CraftItemFactory.java
+@@ -1,16 +1,30 @@
+ package org.bukkit.craftbukkit.inventory;
+ 
++import java.util.ArrayList;
+ import java.util.Collection;
++import java.util.Collections;
++import java.util.HashMap;
++import java.util.List;
++import java.util.Map;
+ 
++import net.minecraft.server.AttributeModifier;
++import net.minecraft.server.EnumItemSlot;
++import net.minecraft.server.Item;
+ import org.apache.commons.lang.Validate;
+ import org.bukkit.Color;
+ import org.bukkit.Material;
++import org.bukkit.attribute.Attribute;
++import org.bukkit.attribute.ItemAttributeModifier;
+ import org.bukkit.configuration.serialization.ConfigurationSerialization;
++import org.bukkit.craftbukkit.CraftEquipmentSlot;
++import org.bukkit.craftbukkit.attribute.CraftAttributeInstance;
++import org.bukkit.craftbukkit.util.CraftMagicNumbers;
+ import org.bukkit.inventory.ItemFactory;
+ import org.bukkit.inventory.ItemStack;
+ import org.bukkit.inventory.meta.ItemMeta;
+ 
+ import com.google.common.collect.ImmutableSet;
++import org.bukkit.material.MaterialData;
+ 
+ public final class CraftItemFactory implements ItemFactory {
+     static final Color DEFAULT_LEATHER_COLOR = Color.fromRGB(0xA06540);
+@@ -192,4 +206,77 @@ public final class CraftItemFactory implements ItemFactory {
+     public Color getDefaultLeatherColor() {
+         return DEFAULT_LEATHER_COLOR;
+     }
++
++    @Override
++    public Collection<String> getModifiedAttributes(Material item) {
++        final Item nmsItem = CraftMagicNumbers.getItem(item);
++        if(nmsItem == null) return Collections.emptyList();
++
++        final List<String> attributes = new ArrayList<String>();
++        for(EnumItemSlot nmsSlot : EnumItemSlot.values()) {
++            attributes.addAll(nmsItem.a(nmsSlot).keySet());
++        }
++        return attributes;
++    }
++
++    @Override
++    public Map<String, List<ItemAttributeModifier>> getAttributeModifiers(Material item) {
++        final Item nmsItem = CraftMagicNumbers.getItem(item);
++        if(nmsItem == null) return Collections.emptyMap();
++
++        final Map<String, List<ItemAttributeModifier>> map = new HashMap<String, List<ItemAttributeModifier>>();
++        for(EnumItemSlot nmsSlot : EnumItemSlot.values()) {
++            for(Map.Entry<String, AttributeModifier> entry : nmsItem.a(nmsSlot).entries()) {
++                List<ItemAttributeModifier> list = map.get(entry.getKey());
++                if(list == null) {
++                    list = new ArrayList<ItemAttributeModifier>();
++                    map.put(entry.getKey(), list);
++                }
++                list.add(new ItemAttributeModifier(CraftEquipmentSlot.getSlot(nmsSlot),
++                                                   CraftAttributeInstance.convert(entry.getValue())));
++            }
++        }
++
++        return map;
++    }
++
++    @Override
++    public Collection<ItemAttributeModifier> getAttributeModifiers(Material item, String attribute) {
++        final Item nmsItem = CraftMagicNumbers.getItem(item);
++        if(nmsItem == null) return Collections.emptyList();
++
++        final List<ItemAttributeModifier> mods = new ArrayList<ItemAttributeModifier>();
++        for(EnumItemSlot nmsSlot : EnumItemSlot.values()) {
++            for(AttributeModifier nmsMod : nmsItem.a(nmsSlot).get(attribute)) {
++                mods.add(new ItemAttributeModifier(CraftEquipmentSlot.getSlot(nmsSlot),
++                                                   CraftAttributeInstance.convert(nmsMod)));
++            }
++        }
++        return mods;
++    }
++
++    @Override
++    public Collection<ItemAttributeModifier> getAttributeModifiers(Material item, Attribute attribute) {
++        return getAttributeModifiers(item, attribute.getName());
++    }
++
++    @Override
++    public Collection<String> getModifiedAttributes(MaterialData item) {
++        return getModifiedAttributes(item.getItemType());
++    }
++
++    @Override
++    public Map<String, List<ItemAttributeModifier>> getAttributeModifiers(MaterialData item) {
++        return getAttributeModifiers(item.getItemType());
++    }
++
++    @Override
++    public Collection<ItemAttributeModifier> getAttributeModifiers(MaterialData item, String attribute) {
++        return getAttributeModifiers(item.getItemType(), attribute);
++    }
++
++    @Override
++    public Collection<ItemAttributeModifier> getAttributeModifiers(MaterialData item, Attribute attribute) {
++        return getAttributeModifiers(item.getItemType(), attribute);
++    }
+ }
+diff --git a/src/main/java/org/bukkit/craftbukkit/inventory/CraftMetaItem.java b/src/main/java/org/bukkit/craftbukkit/inventory/CraftMetaItem.java
+--- a/src/main/java/org/bukkit/craftbukkit/inventory/CraftMetaItem.java
++++ b/src/main/java/org/bukkit/craftbukkit/inventory/CraftMetaItem.java
+@@ -8,11 +8,15 @@ import java.lang.reflect.Constructor;
+ import java.lang.reflect.InvocationTargetException;
+ import java.util.ArrayList;
+ import java.util.Collection;
++import java.util.Collections;
+ import java.util.HashMap;
+ import java.util.List;
+ import java.util.Map;
+ import java.util.NoSuchElementException;
+ 
++import com.google.common.collect.HashMultimap;
++import com.google.common.collect.ImmutableSet;
++import com.google.common.collect.SetMultimap;
+ import net.minecraft.server.NBTBase;
+ import net.minecraft.server.NBTTagCompound;
+ import net.minecraft.server.NBTTagList;
+@@ -20,6 +24,9 @@ import net.minecraft.server.NBTTagString;
+ 
+ import org.apache.commons.lang.Validate;
+ import org.bukkit.Material;
++import org.bukkit.attribute.Attribute;
++import org.bukkit.attribute.AttributeModifier;
++import org.bukkit.attribute.ItemAttributeModifier;
+ import org.bukkit.configuration.serialization.ConfigurationSerializable;
+ import org.bukkit.configuration.serialization.DelegateDeserialization;
+ import org.bukkit.configuration.serialization.SerializableAs;
+@@ -207,9 +214,9 @@ class CraftMetaItem implements ItemMeta, Repairable {
+     @Specific(Specific.To.NBT)
+     static final ItemMetaKey ATTRIBUTES_TYPE = new ItemMetaKey("Operation");
+     @Specific(Specific.To.NBT)
+-    static final ItemMetaKey ATTRIBUTES_UUID_HIGH = new ItemMetaKey("UUIDMost");
++    static final ItemMetaKey ATTRIBUTES_UUID = new ItemMetaKey("UUID");
+     @Specific(Specific.To.NBT)
+-    static final ItemMetaKey ATTRIBUTES_UUID_LOW = new ItemMetaKey("UUIDLeast");
++    static final ItemMetaKey ATTRIBUTES_SLOT = new ItemMetaKey("Slot");
+     @Specific(Specific.To.NBT)
+     static final ItemMetaKey HIDEFLAGS = new ItemMetaKey("HideFlags", "ItemFlags");
+     @Specific(Specific.To.NBT)
+@@ -220,6 +227,7 @@ class CraftMetaItem implements ItemMeta, Repairable {
+     private Map<Enchantment, Integer> enchantments;
+     private int repairCost;
+     private int hideFlag;
++    private SetMultimap<String, ItemAttributeModifier> attributeModifiers;
+     private boolean unbreakable;
+ 
+     private static final Set<String> HANDLED_TAGS = Sets.newHashSet();
+@@ -228,6 +236,7 @@ class CraftMetaItem implements ItemMeta, Repairable {
+ 
+     CraftMetaItem(CraftMetaItem meta) {
+         if (meta == null) {
++            attributeModifiers = null;
+             return;
+         }
+ 
+@@ -241,6 +250,10 @@ class CraftMetaItem implements ItemMeta, Repairable {
+             this.enchantments = new HashMap<Enchantment, Integer>(meta.enchantments);
+         }
+ 
++        if(meta.hasAttributeModifiers()) {
++            this.attributeModifiers = HashMultimap.create(meta.attributeModifiers);
++        }
++
+         this.repairCost = meta.repairCost;
+         this.hideFlag = meta.hideFlag;
+         this.unbreakable = meta.unbreakable;
+@@ -268,6 +281,8 @@ class CraftMetaItem implements ItemMeta, Repairable {
+ 
+         this.enchantments = buildEnchantments(tag, ENCHANTMENTS);
+ 
++        this.attributeModifiers = buildAttributeModifiers(tag);
++
+         if (tag.hasKey(REPAIR.NBT)) {
+             repairCost = tag.getInt(REPAIR.NBT);
+         }
+@@ -279,52 +294,6 @@ class CraftMetaItem implements ItemMeta, Repairable {
+             unbreakable = tag.getBoolean(UNBREAKABLE.NBT);
+         }
+ 
+-        if (tag.get(ATTRIBUTES.NBT) instanceof NBTTagList) {
+-            NBTTagList save = null;
+-            NBTTagList nbttaglist = tag.getList(ATTRIBUTES.NBT, 10);
+-
+-            for (int i = 0; i < nbttaglist.size(); ++i) {
+-                if (!(nbttaglist.get(i) instanceof NBTTagCompound)) {
+-                    continue;
+-                }
+-                NBTTagCompound nbttagcompound = (NBTTagCompound) nbttaglist.get(i);
+-
+-                if (!nbttagcompound.hasKeyOfType(ATTRIBUTES_UUID_HIGH.NBT, 99)) {
+-                    continue;
+-                }
+-                if (!nbttagcompound.hasKeyOfType(ATTRIBUTES_UUID_LOW.NBT, 99)) {
+-                    continue;
+-                }
+-                if (!(nbttagcompound.get(ATTRIBUTES_IDENTIFIER.NBT) instanceof NBTTagString) || !CraftItemFactory.KNOWN_NBT_ATTRIBUTE_NAMES.contains(nbttagcompound.getString(ATTRIBUTES_IDENTIFIER.NBT))) {
+-                    continue;
+-                }
+-                if (!(nbttagcompound.get(ATTRIBUTES_NAME.NBT) instanceof NBTTagString) || nbttagcompound.getString(ATTRIBUTES_NAME.NBT).isEmpty()) {
+-                    continue;
+-                }
+-                if (!nbttagcompound.hasKeyOfType(ATTRIBUTES_VALUE.NBT, 99)) {
+-                    continue;
+-                }
+-                if (!nbttagcompound.hasKeyOfType(ATTRIBUTES_TYPE.NBT, 99) || nbttagcompound.getInt(ATTRIBUTES_TYPE.NBT) < 0 || nbttagcompound.getInt(ATTRIBUTES_TYPE.NBT) > 2) {
+-                    continue;
+-                }
+-
+-                if (save == null) {
+-                    save = new NBTTagList();
+-                }
+-
+-                NBTTagCompound entry = new NBTTagCompound();
+-                entry.set(ATTRIBUTES_UUID_HIGH.NBT, nbttagcompound.get(ATTRIBUTES_UUID_HIGH.NBT));
+-                entry.set(ATTRIBUTES_UUID_LOW.NBT, nbttagcompound.get(ATTRIBUTES_UUID_LOW.NBT));
+-                entry.set(ATTRIBUTES_IDENTIFIER.NBT, nbttagcompound.get(ATTRIBUTES_IDENTIFIER.NBT));
+-                entry.set(ATTRIBUTES_NAME.NBT, nbttagcompound.get(ATTRIBUTES_NAME.NBT));
+-                entry.set(ATTRIBUTES_VALUE.NBT, nbttagcompound.get(ATTRIBUTES_VALUE.NBT));
+-                entry.set(ATTRIBUTES_TYPE.NBT, nbttagcompound.get(ATTRIBUTES_TYPE.NBT));
+-                save.add(entry);
+-            }
+-
+-            unhandledTags.put(ATTRIBUTES.NBT, save);
+-        }
+-
+         Set<String> keys = tag.c();
+         for (String key : keys) {
+             if (!getHandledTags().contains(key)) {
+@@ -351,6 +320,33 @@ class CraftMetaItem implements ItemMeta, Repairable {
+         return enchantments;
+     }
+ 
++    static ItemAttributeModifier buildAttributeModifier(NBTTagCompound tag) {
++        return new ItemAttributeModifier(
++            ItemAttributeModifier.deserializeSlot(tag.getString(ATTRIBUTES_SLOT.NBT)),
++            new AttributeModifier(
++                tag.a(ATTRIBUTES_UUID.NBT),
++                tag.getString(ATTRIBUTES_NAME.NBT),
++                tag.getDouble(ATTRIBUTES_VALUE.NBT),
++                AttributeModifier.Operation.fromOpcode(tag.getInt(ATTRIBUTES_TYPE.NBT))
++            )
++        );
++    }
++
++    static SetMultimap<String, ItemAttributeModifier> buildAttributeModifiers(NBTTagCompound tag) {
++        if(!tag.hasKey(ATTRIBUTES.NBT)) return null;
++
++        final SetMultimap<String, ItemAttributeModifier> attributeModifiers = HashMultimap.create();
++
++        final NBTTagList modTags = tag.getList(ATTRIBUTES.NBT, 10);
++        for(int i = 0; i < modTags.size(); i++) {
++            final NBTTagCompound modTag = modTags.get(i);
++            attributeModifiers.put(modTag.getString(ATTRIBUTES_IDENTIFIER.NBT),
++                                   buildAttributeModifier(modTag));
++        }
++
++        return attributeModifiers;
++    }
++
+     CraftMetaItem(Map<String, Object> map) {
+         setDisplayName(SerializableMeta.getString(map, NAME.BUKKIT, true));
+ 
+@@ -366,6 +362,8 @@ class CraftMetaItem implements ItemMeta, Repairable {
+             setRepairCost(repairCost);
+         }
+ 
++        attributeModifiers = null; // No Bukkit serialization for attributes
++
+         Set hideFlags = SerializableMeta.getObject(Set.class, map, HIDEFLAGS.BUKKIT, true);
+         if (hideFlags != null) {
+             for (Object hideFlagObject : hideFlags) {
+@@ -443,6 +441,8 @@ class CraftMetaItem implements ItemMeta, Repairable {
+             itemTag.setInt(REPAIR.NBT, repairCost);
+         }
+ 
++        copyAttributeModifiers(itemTag);
++
+         if (isUnbreakable()) {
+             itemTag.setBoolean(UNBREAKABLE.NBT, unbreakable);
+         }
+@@ -484,6 +484,30 @@ class CraftMetaItem implements ItemMeta, Repairable {
+         tag.set(key.NBT, list);
+     }
+ 
++    static NBTTagCompound createAttributeModifierTag(ItemAttributeModifier modifier) {
++        NBTTagCompound tag = new NBTTagCompound();
++        tag.setString(ATTRIBUTES_NAME.NBT, modifier.getModifier().getName());
++        tag.setDouble(ATTRIBUTES_VALUE.NBT, modifier.getModifier().getAmount());
++        tag.setInt(ATTRIBUTES_TYPE.NBT, modifier.getModifier().getOperation().ordinal());
++        tag.a(ATTRIBUTES_UUID.NBT, modifier.getModifier().getUniqueId());
++        if(modifier.getSlot() != null) {
++            tag.setString(ATTRIBUTES_SLOT.NBT, ItemAttributeModifier.serializeSlot(modifier.getSlot()));
++        }
++        return tag;
++    }
++
++    void copyAttributeModifiers(NBTTagCompound tag) {
++        if(!hasAttributeModifiers()) return;
++
++        NBTTagList list = new NBTTagList();
++        for(Map.Entry<String, ItemAttributeModifier> entry : attributeModifiers.entries()) {
++            NBTTagCompound mod = createAttributeModifierTag(entry.getValue());
++            mod.setString(ATTRIBUTES_IDENTIFIER.NBT, entry.getKey());
++            list.add(mod);
++        }
++        tag.set(ATTRIBUTES.NBT, list);
++    }
++
+     void setDisplayTag(NBTTagCompound tag, String key, NBTBase value) {
+         final NBTTagCompound display = tag.getCompound(DISPLAY.NBT);
+ 
+@@ -501,7 +525,7 @@ class CraftMetaItem implements ItemMeta, Repairable {
+ 
+     @Overridden
+     boolean isEmpty() {
+-        return !(hasDisplayName() || hasEnchants() || hasLore() || hasRepairCost() || !unhandledTags.isEmpty() || hideFlag != 0 || isUnbreakable());
++        return !(hasDisplayName() || hasEnchants() || hasLore() || hasAttributeModifiers() || hasRepairCost() || !unhandledTags.isEmpty() || hideFlag != 0 || isUnbreakable());
+     }
+ 
+     public String getDisplayName() {
+@@ -565,6 +589,69 @@ class CraftMetaItem implements ItemMeta, Repairable {
+     }
+ 
+     @Override
++    public boolean hasAttributeModifiers() {
++        return attributeModifiers != null && !attributeModifiers.isEmpty();
++    }
++
++    @Override
++    public Collection<String> getModifiedAttributes() {
++        return hasAttributeModifiers() ? ImmutableSet.copyOf(attributeModifiers.keySet()) : Collections.<String>emptySet();
++    }
++
++    @Override
++    public boolean hasModifiedAttribute(String attribute) {
++        return hasAttributeModifiers() && attributeModifiers.containsKey(attribute);
++    }
++
++    @Override
++    public boolean hasModifiedAttribute(Attribute attribute) {
++        return hasModifiedAttribute(attribute.getName());
++    }
++
++    @Override
++    public Collection<ItemAttributeModifier> getAttributeModifiers(String attribute) {
++        return hasAttributeModifiers() ? attributeModifiers.get(attribute) : Collections.<ItemAttributeModifier>emptySet();
++    }
++
++    @Override
++    public Collection<ItemAttributeModifier> getAttributeModifiers(Attribute attribute) {
++        return getAttributeModifiers(attribute.getName());
++    }
++
++    @Override
++    public boolean hasAttributeModifier(String attribute, ItemAttributeModifier modifier) {
++        return hasAttributeModifiers() && attributeModifiers.containsEntry(attribute, modifier);
++    }
++
++    @Override
++    public boolean hasAttributeModifier(Attribute attribute, ItemAttributeModifier modifier) {
++        return hasAttributeModifier(attribute.getName(), modifier);
++    }
++
++    @Override
++    public void addAttributeModifier(String attribute, ItemAttributeModifier modifier) {
++        if(attributeModifiers == null) attributeModifiers = HashMultimap.create();
++        attributeModifiers.put(attribute, modifier);
++    }
++
++    @Override
++    public void addAttributeModifier(Attribute attribute, ItemAttributeModifier modifier) {
++        addAttributeModifier(attribute.getName(), modifier);
++    }
++
++    @Override
++    public void removeAttributeModifier(String attribute, ItemAttributeModifier modifier) {
++        if(attributeModifiers != null) {
++            attributeModifiers.remove(attribute, modifier);
++        }
++    }
++
++    @Override
++    public void removeAttributeModifier(Attribute attribute, ItemAttributeModifier modifier) {
++        removeAttributeModifier(attribute.getName(), modifier);
++    }
++
++    @Override
+     public void addItemFlags(ItemFlag... hideFlags) {
+         for (ItemFlag f : hideFlags) {
+             this.hideFlag |= getBitModifier(f);
+@@ -660,6 +747,7 @@ class CraftMetaItem implements ItemMeta, Repairable {
+         return ((this.hasDisplayName() ? that.hasDisplayName() && this.displayName.equals(that.displayName) : !that.hasDisplayName()))
+                 && (this.hasEnchants() ? that.hasEnchants() && this.enchantments.equals(that.enchantments) : !that.hasEnchants())
+                 && (this.hasLore() ? that.hasLore() && this.lore.equals(that.lore) : !that.hasLore())
++                && (this.hasAttributeModifiers() ? that.hasAttributeModifiers() && this.attributeModifiers.equals(that.attributeModifiers) : !that.hasAttributeModifiers())
+                 && (this.hasRepairCost() ? that.hasRepairCost() && this.repairCost == that.repairCost : !that.hasRepairCost())
+                 && (this.unhandledTags.equals(that.unhandledTags))
+                 && (this.hideFlag == that.hideFlag)
+@@ -687,6 +775,7 @@ class CraftMetaItem implements ItemMeta, Repairable {
+         hash = 61 * hash + (hasDisplayName() ? this.displayName.hashCode() : 0);
+         hash = 61 * hash + (hasLore() ? this.lore.hashCode() : 0);
+         hash = 61 * hash + (hasEnchants() ? this.enchantments.hashCode() : 0);
++        hash = 61 * hash + (hasAttributeModifiers() ? this.attributeModifiers.hashCode() : 0);
+         hash = 61 * hash + (hasRepairCost() ? this.repairCost : 0);
+         hash = 61 * hash + unhandledTags.hashCode();
+         hash = 61 * hash + hideFlag;
+@@ -705,6 +794,9 @@ class CraftMetaItem implements ItemMeta, Repairable {
+             if (this.enchantments != null) {
+                 clone.enchantments = new HashMap<Enchantment, Integer>(this.enchantments);
+             }
++            if (this.attributeModifiers != null) {
++                clone.attributeModifiers = HashMultimap.create(this.attributeModifiers);
++            }
+             clone.hideFlag = this.hideFlag;
+             clone.unbreakable = this.unbreakable;
+             return clone;
+@@ -833,6 +925,7 @@ class CraftMetaItem implements ItemMeta, Repairable {
+                         DISPLAY.NBT,
+                         REPAIR.NBT,
+                         ENCHANTMENTS.NBT,
++                        ATTRIBUTES.NBT,
+                         HIDEFLAGS.NBT,
+                         UNBREAKABLE.NBT,
+                         CraftMetaMap.MAP_SCALING.NBT,

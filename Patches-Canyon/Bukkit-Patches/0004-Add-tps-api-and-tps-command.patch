@@ -1,0 +1,104 @@
+From 212a71939e3033ecd972ba1be33bb2e21f3f74fd Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Jakub=20Staro=C5=84?= <kubastaron@hotmail.com>
+Date: Wed, 11 Mar 2020 18:08:34 +0100
+Subject: [PATCH] Add tps api and /tps command
+
+
+diff --git a/src/main/java/com/canyonmodded/command/TpsCommand.java b/src/main/java/com/canyonmodded/command/TpsCommand.java
+new file mode 100644
+index 00000000..bd4d8a18
+--- /dev/null
++++ b/src/main/java/com/canyonmodded/command/TpsCommand.java
+@@ -0,0 +1,49 @@
++package com.canyonmodded.command;
++
++import org.bukkit.ChatColor;
++import org.bukkit.Server;
++import org.bukkit.command.Command;
++import org.bukkit.command.CommandSender;
++
++import java.text.DecimalFormat;
++import java.text.DecimalFormatSymbols;
++import java.util.Locale;
++
++public class TpsCommand extends Command {
++    private final Server server;
++
++    public TpsCommand(Server server) {
++        super("tps");
++        this.server = server;
++        this.description = "Obtains the current server TPS rate.";
++    }
++
++    @Override
++    public boolean execute(CommandSender sender, String label, String[] args) {
++        String str = ChatColor.GOLD + "TPS over the last 1, 5, 15 minutes: ";
++
++        double[] tps = server.getTPS();
++
++        DecimalFormat fmt = new DecimalFormat("#.##", DecimalFormatSymbols.getInstance(Locale.ENGLISH));
++
++        str += colorTpsValue(tps[0]) + fmt.format(tps[0]) + ChatColor.GOLD + ", ";
++        str += colorTpsValue(tps[1]) + fmt.format(tps[1]) + ChatColor.GOLD + ", ";
++        str += colorTpsValue(tps[2]) + fmt.format(tps[2]);
++
++        sender.sendMessage(str);
++        return true;
++    }
++
++    private ChatColor colorTpsValue(double val) {
++        if (Double.compare(val, 19.0d) >= 0) {
++            // Excellent - Your server is performing well.
++            return ChatColor.GREEN;
++        } else if (Double.compare(val, 17.0d) >= 0) {
++            // Fair - Your server is lagging somewhat
++            return ChatColor.YELLOW;
++        } else {
++            // Unplayable
++            return ChatColor.RED;
++        }
++    }
++}
+diff --git a/src/main/java/org/bukkit/Server.java b/src/main/java/org/bukkit/Server.java
+index 1ef6cfa7..0ad93193 100644
+--- a/src/main/java/org/bukkit/Server.java
++++ b/src/main/java/org/bukkit/Server.java
+@@ -441,4 +441,13 @@ public interface Server {
+      * @return Set containing banned players
+      */
+     public Set<OfflinePlayer> getBannedPlayers();
++
++    // Canyon start
++    /**
++     * Gets the current server TPS
++     *
++     * @return current server TPS (1m, 5m, 15m in Canyon-Server)
++     */
++    public double[] getTPS();
++    // Canyon end
+ }
+diff --git a/src/main/java/org/bukkit/command/SimpleCommandMap.java b/src/main/java/org/bukkit/command/SimpleCommandMap.java
+index 2abd87e5..b3b32908 100644
+--- a/src/main/java/org/bukkit/command/SimpleCommandMap.java
++++ b/src/main/java/org/bukkit/command/SimpleCommandMap.java
+@@ -1,5 +1,6 @@
+ package org.bukkit.command;
+ 
++import com.canyonmodded.command.TpsCommand;
+ import org.bukkit.command.defaults.*;
+ import java.util.ArrayList;
+ import java.util.HashMap;
+@@ -50,6 +51,10 @@ public class SimpleCommandMap implements CommandMap {
+         register("bukkit", new VersionCommand("version"));
+         register("bukkit", new ReloadCommand("reload"));
+         register("bukkit", new PluginsCommand("plugins"));
++
++        // Canyon start - register canyon commands
++        register("canyon", new TpsCommand(server));
++        // Canyon end
+     }
+ 
+     /**
+-- 
+2.24.1.windows.2
+

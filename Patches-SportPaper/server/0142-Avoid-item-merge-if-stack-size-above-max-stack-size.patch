@@ -1,0 +1,24 @@
+From e42629735eda725d237fb3cfe0d7ff43a0071864 Mon Sep 17 00:00:00 2001
+From: cswhite2000 <18whitechristop@gmail.com>
+Date: Tue, 21 Aug 2018 16:10:45 -0700
+Subject: [PATCH] Avoid item merge if stack size above max stack size
+
+
+diff --git a/src/main/java/net/minecraft/server/EntityItem.java b/src/main/java/net/minecraft/server/EntityItem.java
+index 789d5833..c0e756c6 100644
+--- a/src/main/java/net/minecraft/server/EntityItem.java
++++ b/src/main/java/net/minecraft/server/EntityItem.java
+@@ -145,6 +145,10 @@ public class EntityItem extends Entity {
+     // Spigot end
+ 
+     private void w() {
++        // Paper start - avoid item merge if stack size above max stack size
++        ItemStack stack = getItemStack();
++        if (stack.count >= stack.getMaxStackSize()) return;
++        // Paper end
+         // Spigot start
+         double radius = world.spigotConfig.itemMerge;
+         Iterator iterator = this.world.a(EntityItem.class, this.getBoundingBox().grow(radius, radius, radius)).iterator();
+-- 
+2.19.0
+

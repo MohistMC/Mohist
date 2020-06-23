@@ -1,0 +1,28 @@
+From e880d4bce5710837a15bddc213de254a8882300d Mon Sep 17 00:00:00 2001
+From: mintoyatsu <53593903+mintoyatsu@users.noreply.github.com>
+Date: Wed, 27 Nov 2019 20:26:31 -0700
+Subject: [PATCH] Water spring propagation fix
+
+Minecraft will create a water source block (spring) at an empty location if that
+empty location is adjacent (horizontally) to two or more water springs and the
+material below is "solid".
+
+This patch fixes the bug that prevents a water spring from being created if the
+empty location is directly above another water spring.
+
+diff --git a/src/main/java/net/minecraft/server/BlockFlowing.java b/src/main/java/net/minecraft/server/BlockFlowing.java
+index 52ba8de1..bbc5145a 100644
+--- a/src/main/java/net/minecraft/server/BlockFlowing.java
++++ b/src/main/java/net/minecraft/server/BlockFlowing.java
+@@ -69,7 +69,7 @@ public class BlockFlowing extends BlockFluids {
+             if (this.a >= 2 && this.material == Material.WATER) {
+                 if (world.getMaterial(i, j - 1, k).isBuildable()) {
+                     i1 = 0;
+-                } else if (world.getMaterial(i, j - 1, k) == this.material && world.getData(i, j, k) == 0) {
++                } else if (world.getMaterial(i, j - 1, k) == this.material && world.getData(i, j - 1, k) == 0) { // Canyon - Water Spring Propagation Fix
+                     i1 = 0;
+                 }
+             }
+-- 
+2.23.0.windows.1
+

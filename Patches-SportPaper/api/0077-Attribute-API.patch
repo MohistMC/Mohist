@@ -1,0 +1,397 @@
+From ae8f0af57be144545cf702c159dfb07864d800ad Mon Sep 17 00:00:00 2001
+From: cswhite2000 <18whitechristop@gmail.com>
+Date: Sun, 26 Aug 2018 16:31:30 -0700
+Subject: [PATCH] Attribute API
+
+
+diff --git a/src/main/java/org/bukkit/attribute/Attributable.java b/src/main/java/org/bukkit/attribute/Attributable.java
+new file mode 100644
+index 00000000..155f13f1
+--- /dev/null
++++ b/src/main/java/org/bukkit/attribute/Attributable.java
+@@ -0,0 +1,16 @@
++package org.bukkit.attribute;
++
++/**
++ * Represents an object which may contain attributes.
++ */
++public interface Attributable {
++
++    /**
++     * Gets the specified attribute instance from the object. This instance will
++     * be backed directly to the object and any changes will be visible at once.
++     *
++     * @param attribute the attribute to get
++     * @return the attribute instance or null if not applicable to this object
++     */
++    AttributeInstance getAttribute(Attribute attribute);
++}
+diff --git a/src/main/java/org/bukkit/attribute/Attribute.java b/src/main/java/org/bukkit/attribute/Attribute.java
+new file mode 100644
+index 00000000..f7bfb9fe
+--- /dev/null
++++ b/src/main/java/org/bukkit/attribute/Attribute.java
+@@ -0,0 +1,65 @@
++package org.bukkit.attribute;
++
++import java.util.HashMap;
++import java.util.Map;
++
++/**
++ * Types of attributes which may be present on an {@link Attributable}.
++ */
++public enum Attribute {
++
++    /**
++     * Maximum health of an Entity.
++     */
++    GENERIC_MAX_HEALTH("generic.maxHealth"),
++    /**
++     * Range at which an Entity will follow others.
++     */
++    GENERIC_FOLLOW_RANGE("generic.followRange"),
++    /**
++     * Resistance of an Entity to knockback.
++     */
++    GENERIC_KNOCKBACK_RESISTANCE("generic.knockbackResistance"),
++    /**
++     * Movement speed of an Entity.
++     */
++    GENERIC_MOVEMENT_SPEED("generic.movementSpeed"),
++    /**
++     * Attack damage of an Entity.
++     */
++    GENERIC_ATTACK_DAMAGE("generic.attackDamage"),
++    /**
++     * Strength with which a horse will jump.
++     */
++    HORSE_JUMP_STRENGTH("horse.jumpStrength"),
++    /**
++     * Chance of a zombie to spawn reinforcements.
++     */
++    ZOMBIE_SPAWN_REINFORCEMENTS("zombie.spawnReinforcements");
++
++    private final String name;
++
++    Attribute(String name) {
++        this.name = name;
++    }
++
++    /**
++     * @return the external name of this attribute
++     */
++    public String getName() {
++        return name;
++    }
++
++    private static final Map<String, Attribute> byName = new HashMap<String, Attribute>();
++
++    static {
++        for(Attribute attribute : values()) {
++            byName.put(attribute.getName(), attribute);
++        }
++    }
++
++    public static Attribute byName(String name) {
++        return byName.get(name);
++    }
++
++}
+diff --git a/src/main/java/org/bukkit/attribute/AttributeInstance.java b/src/main/java/org/bukkit/attribute/AttributeInstance.java
+new file mode 100644
+index 00000000..ca8b76a6
+--- /dev/null
++++ b/src/main/java/org/bukkit/attribute/AttributeInstance.java
+@@ -0,0 +1,67 @@
++package org.bukkit.attribute;
++
++import java.util.Collection;
++
++/**
++ * Represents a mutable instance of an attribute and its associated modifiers
++ * and values.
++ */
++public interface AttributeInstance {
++
++    /**
++     * The attribute pertaining to this instance.
++     *
++     * @return the attribute
++     */
++    Attribute getAttribute();
++
++    /**
++     * Base value of this instance before modifiers are applied.
++     *
++     * @return base value
++     */
++    double getBaseValue();
++
++    /**
++     * Set the base value of this instance.
++     *
++     * @param value new base value
++     */
++    void setBaseValue(double value);
++
++    /**
++     * Get all modifiers present on this instance.
++     *
++     * @return a copied collection of all modifiers
++     */
++    Collection<AttributeModifier> getModifiers();
++
++    /**
++     * Add a modifier to this instance.
++     *
++     * @param modifier to add
++     */
++    void addModifier(AttributeModifier modifier);
++
++    /**
++     * Remove a modifier from this instance.
++     *
++     * @param modifier to remove
++     */
++    void removeModifier(AttributeModifier modifier);
++
++    /**
++     * Get the value of this instance after all associated modifiers have been
++     * applied.
++     *
++     * @return the total attribute value
++     */
++    double getValue();
++
++    /**
++     * Gets the default value of the Attribute attached to this instance.
++     *
++     * @return server default value
++     */
++    double getDefaultValue();
++}
+diff --git a/src/main/java/org/bukkit/attribute/AttributeModifier.java b/src/main/java/org/bukkit/attribute/AttributeModifier.java
+new file mode 100644
+index 00000000..ed54f0fa
+--- /dev/null
++++ b/src/main/java/org/bukkit/attribute/AttributeModifier.java
+@@ -0,0 +1,109 @@
++package org.bukkit.attribute;
++
++import java.util.HashMap;
++import java.util.Map;
++import java.util.UUID;
++import org.apache.commons.lang.Validate;
++import org.bukkit.configuration.serialization.ConfigurationSerializable;
++import org.bukkit.util.NumberConversions;
++
++/**
++ * Concrete implementation of an attribute modifier.
++ */
++public class AttributeModifier implements ConfigurationSerializable {
++
++    private final UUID uuid;
++    private final String name;
++    private final double amount;
++    private final Operation operation;
++
++    public AttributeModifier(String name, double amount, Operation operation) {
++        this(UUID.randomUUID(), name, amount, operation);
++    }
++
++    public AttributeModifier(UUID uuid, String name, double amount, Operation operation) {
++        Validate.notNull(uuid, "uuid");
++        Validate.notEmpty(name, "Name cannot be empty");
++        Validate.notNull(operation, "operation");
++
++        this.uuid = uuid;
++        this.name = name;
++        this.amount = amount;
++        this.operation = operation;
++    }
++
++    /**
++     * Get the unique ID for this modifier.
++     *
++     * @return unique id
++     */
++    public UUID getUniqueId() {
++        return uuid;
++    }
++
++    /**
++     * Get the name of this modifier.
++     *
++     * @return name
++     */
++    public String getName() {
++        return name;
++    }
++
++    /**
++     * Get the amount by which this modifier will apply its {@link Operation}.
++     *
++     * @return modification amount
++     */
++    public double getAmount() {
++        return amount;
++    }
++
++    /**
++     * Get the operation this modifier will apply.
++     *
++     * @return operation
++     */
++    public Operation getOperation() {
++        return operation;
++    }
++
++    @Override
++    public Map<String, Object> serialize() {
++        Map<String, Object> data = new HashMap<String, Object>();
++        data.put("uuid", uuid.toString());
++        data.put("name", name);
++        data.put("operation", operation.ordinal());
++        data.put("amount", amount);
++        return data;
++    }
++
++    public static AttributeModifier deserialize(Map<String, Object> args) {
++        return new AttributeModifier(UUID.fromString((String) args.get("uuid")), (String) args.get("name"), NumberConversions.toDouble(args.get("amount")), Operation.values()[NumberConversions.toInt(args.get("operation"))]);
++    }
++
++    /**
++     * Enumerable operation to be applied.
++     */
++    public enum Operation {
++
++        /**
++         * Adds (or subtracts) the specified amount to the base value.
++         */
++        ADD_NUMBER,
++        /**
++         * Adds this scalar of amount to the base value.
++         */
++        ADD_SCALAR,
++        /**
++         * Multiply amount by this value, after adding 1 to it.
++         */
++        MULTIPLY_SCALAR_1;
++
++        public static Operation fromOpcode(int code) {
++            if(code < 0) code = 0;
++            if(code >= values().length) code = values().length - 1;
++            return values()[code];
++        }
++    }
++}
+diff --git a/src/main/java/org/bukkit/entity/LivingEntity.java b/src/main/java/org/bukkit/entity/LivingEntity.java
+index a9df62b6..7b2d0de4 100644
+--- a/src/main/java/org/bukkit/entity/LivingEntity.java
++++ b/src/main/java/org/bukkit/entity/LivingEntity.java
+@@ -7,6 +7,7 @@ import java.util.Set;
+ 
+ import org.bukkit.Location;
+ import org.bukkit.Material;
++import org.bukkit.attribute.Attributable;
+ import org.bukkit.block.Block;
+ import org.bukkit.inventory.EntityEquipment;
+ import org.bukkit.potion.PotionEffect;
+@@ -16,7 +17,7 @@ import org.bukkit.projectiles.ProjectileSource;
+ /**
+  * Represents a living entity, such as a monster or player
+  */
+-public interface LivingEntity extends Entity, Damageable, ProjectileSource {
++public interface LivingEntity extends Attributable, Entity, Damageable, ProjectileSource {
+ 
+     /**
+      * Gets the height of the living entity's eyes above its Location.
+diff --git a/src/main/java/org/bukkit/inventory/ItemFactory.java b/src/main/java/org/bukkit/inventory/ItemFactory.java
+index 52a8d4d8..b89b4bfb 100644
+--- a/src/main/java/org/bukkit/inventory/ItemFactory.java
++++ b/src/main/java/org/bukkit/inventory/ItemFactory.java
+@@ -3,9 +3,16 @@ package org.bukkit.inventory;
+ import org.bukkit.Color;
+ import org.bukkit.Material;
+ import org.bukkit.Server;
++import org.bukkit.attribute.Attribute;
++import org.bukkit.attribute.AttributeModifier;
+ import org.bukkit.inventory.meta.BookMeta;
+ import org.bukkit.inventory.meta.ItemMeta;
+ import org.bukkit.inventory.meta.SkullMeta;
++import org.bukkit.material.MaterialData;
++
++import java.util.Collection;
++import java.util.List;
++import java.util.Map;
+ 
+ /**
+  * An instance of the ItemFactory can be obtained with {@link
+@@ -121,4 +128,21 @@ public interface ItemFactory {
+      * @return the default color for leather armor
+      */
+     Color getDefaultLeatherColor();
++
++    Collection<String> getModifiedAttributes(MaterialData item);
++
++    Map<String, List<AttributeModifier>> getAttributeModifiers(MaterialData item);
++
++    Collection<AttributeModifier> getAttributeModifiers(MaterialData item, String attribute);
++
++    Collection<AttributeModifier> getAttributeModifiers(MaterialData item, Attribute attribute);
++
++    Collection<String> getModifiedAttributes(Material item);
++
++    Map<String, List<AttributeModifier>> getAttributeModifiers(Material item);
++
++    Collection<AttributeModifier> getAttributeModifiers(Material item, String attribute);
++
++    Collection<AttributeModifier> getAttributeModifiers(Material item, Attribute attribute);
++
+ }
+diff --git a/src/main/java/org/bukkit/inventory/meta/ItemMeta.java b/src/main/java/org/bukkit/inventory/meta/ItemMeta.java
+index e51b65e5..739a3bef 100644
+--- a/src/main/java/org/bukkit/inventory/meta/ItemMeta.java
++++ b/src/main/java/org/bukkit/inventory/meta/ItemMeta.java
+@@ -6,6 +6,8 @@ import java.util.Map;
+ import java.util.Set;
+ 
+ import org.bukkit.Material;
++import org.bukkit.attribute.Attribute;
++import org.bukkit.attribute.AttributeModifier;
+ import org.bukkit.configuration.serialization.ConfigurationSerializable;
+ import org.bukkit.enchantments.Enchantment;
+ import org.bukkit.inventory.ItemFlag;
+@@ -170,6 +172,29 @@ public interface ItemMeta extends Cloneable, ConfigurationSerializable {
+ 
+     void setCanPlaceOn(Material...materials);
+ 
++    boolean hasAttributeModifiers();
++
++    Collection<String> getModifiedAttributes();
++
++    boolean hasModifiedAttribute(String attribute);
++
++    boolean hasModifiedAttribute(Attribute attribute);
++
++    boolean hasAttributeModifier(String attribute, AttributeModifier modifier);
++
++    boolean hasAttributeModifier(Attribute attribute, AttributeModifier modifier);
++
++    Collection<AttributeModifier> getAttributeModifiers(String attribute);
++
++    Collection<AttributeModifier> getAttributeModifiers(Attribute attribute);
++
++    void addAttributeModifier(String attribute, AttributeModifier modifier);
++
++    void addAttributeModifier(Attribute attribute, AttributeModifier modifier);
++
++    void removeAttributeModifier(String attribute, AttributeModifier modifier);
++
++    void removeAttributeModifier(Attribute attribute, AttributeModifier modifier);
+ 
+     @SuppressWarnings("javadoc")
+     ItemMeta clone();
+-- 
+2.18.0
+

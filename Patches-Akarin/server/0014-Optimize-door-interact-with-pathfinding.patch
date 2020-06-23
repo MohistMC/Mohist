@@ -1,0 +1,161 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Sotr <i@omc.hk>
+Date: Wed, 15 Apr 2020 03:51:50 +0700
+Subject: [PATCH] Optimize door interact with pathfinding
+
+
+diff --git a/src/main/java/io/akarin/server/IndexedBlockPosition.java b/src/main/java/io/akarin/server/IndexedBlockPosition.java
+new file mode 100644
+index 0000000000000000000000000000000000000000..83bf1d4cab653a9edcc8352609433a8fd12bd1b3
+--- /dev/null
++++ b/src/main/java/io/akarin/server/IndexedBlockPosition.java
+@@ -0,0 +1,35 @@
++package io.akarin.server;
++
++import net.minecraft.server.BlockPosition;
++
++public class IndexedBlockPosition {
++    private final int index;
++    private final BlockPosition position;
++    
++    public IndexedBlockPosition(int index, BlockPosition position) {
++      this.index = index;
++      this.position = position;
++    }
++    
++    public static IndexedBlockPosition of(int index, BlockPosition position) {
++      return new IndexedBlockPosition(index, position);
++    }
++    
++    public int index() {
++      return index;
++    }
++    
++    public BlockPosition get() {
++      return position;
++    }
++    
++    @Override
++    public int hashCode() {
++      return position.hashCode();
++    }
++    
++    @Override
++    public boolean equals(Object obj) {
++      return position.equals(obj);
++    }
++}
+diff --git a/src/main/java/net/minecraft/server/BehaviorInteractDoor.java b/src/main/java/net/minecraft/server/BehaviorInteractDoor.java
+index 01d9c2d92c580c9fabbb8bb4e8c93f3cc511ccf9..3db22c5f4df6fe68474839c3889ffbe5440f54dc 100644
+--- a/src/main/java/net/minecraft/server/BehaviorInteractDoor.java
++++ b/src/main/java/net/minecraft/server/BehaviorInteractDoor.java
+@@ -1,7 +1,9 @@
+ package net.minecraft.server;
+ 
+ import com.google.common.collect.ImmutableMap;
++import com.google.common.collect.Lists;
+ import com.google.common.collect.Sets;
++import io.akarin.server.IndexedBlockPosition;
+ import java.util.Iterator;
+ import java.util.List;
+ import java.util.Set;
+@@ -19,32 +21,63 @@ public class BehaviorInteractDoor extends Behavior<EntityLiving> {
+         BehaviorController<?> behaviorcontroller = entityliving.getBehaviorController();
+         PathEntity pathentity = (PathEntity) behaviorcontroller.getMemory(MemoryModuleType.PATH).get();
+         List<GlobalPos> list = (List) behaviorcontroller.getMemory(MemoryModuleType.INTERACTABLE_DOORS).get();
++        // Akarin start - remove stream
++        /*
+         List<BlockPosition> list1 = (List) pathentity.d().stream().map((pathpoint) -> {
+             return new BlockPosition(pathpoint.a, pathpoint.b, pathpoint.c);
+         }).collect(Collectors.toList());
+-        Set<BlockPosition> set = this.a(worldserver, list, list1);
++        */
++
++        List<PathPoint> points = pathentity.getPoints();
++        java.util.Map<BlockPosition, Integer> list1 = new java.util.HashMap<BlockPosition, Integer>(points.size());
++        for (int index = 0; index < points.size(); index++) {
++          PathPoint point = points.get(index);
++          list1.put(new BlockPosition(point.a, point.b, point.c), index);
++        }
++
++        // Akarin end
++        Set<io.akarin.server.IndexedBlockPosition> set = this.a(worldserver, list, list1); // Akarin - IndexedBlockPosition
+         int j = pathentity.f() - 1;
+ 
+         this.a(worldserver, list1, set, j, entityliving, behaviorcontroller);
+     }
+ 
+-    private Set<BlockPosition> a(WorldServer worldserver, List<GlobalPos> list, List<BlockPosition> list1) {
++    private Set<io.akarin.server.IndexedBlockPosition> a(WorldServer worldserver, List<GlobalPos> list, java.util.Map<BlockPosition, Integer> list1) { // Akarin - List -> Map, IndexedBlockPosition
++        // Akarin start - remove stream
++        /*
+         Stream stream = list.stream().filter((globalpos) -> {
+             return globalpos.getDimensionManager() == worldserver.getWorldProvider().getDimensionManager();
+         }).map(GlobalPos::getBlockPosition);
+ 
+         list1.getClass();
+         return (Set) stream.filter(list1::contains).collect(Collectors.toSet());
++        */
++
++        Set<io.akarin.server.IndexedBlockPosition> set = Sets.newHashSet();
++        DimensionManager manager = worldserver.getWorldProvider().getDimensionManager();
++
++        for (GlobalPos globalPos : list) {
++          if (globalPos.getDimensionManager() == manager) {
++            BlockPosition position = globalPos.getBlockPosition();
++            Integer index = list1.get(position);
++            if (index != null) // contains
++              set.add(IndexedBlockPosition.of(index, position));
++          }
++        }
++
++        return set;
++        // Akarin end
+     }
+ 
+-    private void a(WorldServer worldserver, List<BlockPosition> list, Set<BlockPosition> set, int i, EntityLiving entityliving, BehaviorController<?> behaviorcontroller) {
+-        set.forEach((blockposition) -> {
+-            int j = list.indexOf(blockposition);
++    private void a(WorldServer worldserver, java.util.Map<BlockPosition, Integer> list, Set<io.akarin.server.IndexedBlockPosition> set, int i, EntityLiving entityliving, BehaviorController<?> behaviorcontroller) { // Akarin - List -> Map, IndexedBlockPosition
++        set.forEach((indexedblockposition) -> { // Akarin - IndexedBlockPosition
++            BlockPosition blockposition = indexedblockposition.get(); // Akarin - IndexedBlockPosition
++            // int j = list.indexOf(blockposition); // Akarin - IndexedBlockPosition
+             IBlockData iblockdata = worldserver.getType(blockposition);
+             Block block = iblockdata.getBlock();
+ 
+             if (TagsBlock.WOODEN_DOORS.isTagged(block) && block instanceof BlockDoor) {
+-                boolean flag = j >= i;
++                boolean flag = indexedblockposition.index() >= i; // Akarin - IndexedBlockPosition
+ 
+                 // CraftBukkit start - entities opening doors
+                 org.bukkit.event.entity.EntityInteractEvent event = new org.bukkit.event.entity.EntityInteractEvent(entityliving.getBukkitEntity(), org.bukkit.craftbukkit.block.CraftBlock.at(entityliving.world, blockposition));
+@@ -74,14 +107,14 @@ public class BehaviorInteractDoor extends Behavior<EntityLiving> {
+         a(worldserver, list, i, entityliving, behaviorcontroller);
+     }
+ 
+-    public static void a(WorldServer worldserver, List<BlockPosition> list, int i, EntityLiving entityliving, BehaviorController<?> behaviorcontroller) {
++    public static void a(WorldServer worldserver, java.util.Map<BlockPosition, Integer> list, int i, EntityLiving entityliving, BehaviorController<?> behaviorcontroller) { // Akarin - List -> Map
+         behaviorcontroller.getMemory(MemoryModuleType.OPENED_DOORS).ifPresent((set) -> {
+             Iterator iterator = set.iterator();
+ 
+             while (iterator.hasNext()) {
+                 GlobalPos globalpos = (GlobalPos) iterator.next();
+                 BlockPosition blockposition = globalpos.getBlockPosition();
+-                int j = list.indexOf(blockposition);
++                int j = list.getOrDefault(blockposition, -1); // Akarin - List -> Map
+ 
+                 if (worldserver.getWorldProvider().getDimensionManager() != globalpos.getDimensionManager()) {
+                     iterator.remove();
+diff --git a/src/main/java/net/minecraft/server/BehaviorSleep.java b/src/main/java/net/minecraft/server/BehaviorSleep.java
+index dfe0f66500ab2ea733fd5ef84d7d80f32e2dfaab..46eb633084a2eb48cb0a42c5df2b69b9e93b22e1 100644
+--- a/src/main/java/net/minecraft/server/BehaviorSleep.java
++++ b/src/main/java/net/minecraft/server/BehaviorSleep.java
+@@ -57,7 +57,7 @@ public class BehaviorSleep extends Behavior<EntityLiving> {
+     protected void a(WorldServer worldserver, EntityLiving entityliving, long i) {
+         if (i > this.a) {
+             entityliving.getBehaviorController().getMemory(MemoryModuleType.OPENED_DOORS).ifPresent((set) -> {
+-                BehaviorInteractDoor.a(worldserver, (List) ImmutableList.of(), 0, entityliving, entityliving.getBehaviorController());
++                BehaviorInteractDoor.a(worldserver, com.google.common.collect.ImmutableMap.of(), 0, entityliving, entityliving.getBehaviorController()); // Akarin - List -> Map
+             });
+             entityliving.entitySleep(((GlobalPos) entityliving.getBehaviorController().getMemory(MemoryModuleType.HOME).get()).getBlockPosition());
+         }

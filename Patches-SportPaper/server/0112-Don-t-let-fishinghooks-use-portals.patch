@@ -1,0 +1,39 @@
+From 4a0e2fae8e56d0edb2d8ea59c7b3dc81d75bffdf Mon Sep 17 00:00:00 2001
+From: cswhite2000 <18whitechristop@gmail.com>
+Date: Tue, 14 Aug 2018 21:53:51 -0700
+Subject: [PATCH] Don't let fishinghooks use portals
+
+
+diff --git a/src/main/java/net/minecraft/server/Entity.java b/src/main/java/net/minecraft/server/Entity.java
+index d3c54d38..edef4375 100644
+--- a/src/main/java/net/minecraft/server/Entity.java
++++ b/src/main/java/net/minecraft/server/Entity.java
+@@ -136,7 +136,7 @@ public abstract class Entity implements ICommandListener {
+     public boolean ah;
+     public boolean ai;
+     public int portalCooldown;
+-    protected boolean ak;
++    protected boolean ak; public boolean inPortal() { return ak; } // Paper - OBFHELPER
+     protected int al;
+     public int dimension;
+     protected BlockPosition an;
+diff --git a/src/main/java/net/minecraft/server/EntityFishingHook.java b/src/main/java/net/minecraft/server/EntityFishingHook.java
+index df6ce0db..6ff95184 100644
+--- a/src/main/java/net/minecraft/server/EntityFishingHook.java
++++ b/src/main/java/net/minecraft/server/EntityFishingHook.java
+@@ -360,6 +360,12 @@ public class EntityFishingHook extends Entity {
+                 this.motY *= (double) f2;
+                 this.motZ *= (double) f2;
+                 this.setPosition(this.locX, this.locY, this.locZ);
++
++                // Paper start - These shouldn't be going through portals
++                if (this.inPortal()) {
++                    this.die();
++                }
++                // Paper end
+             }
+         }
+     }
+-- 
+2.19.0
+

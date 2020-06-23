@@ -1,0 +1,90 @@
+From e4f91799ad3cb3b48bb26ccd8e20f2b578166501 Mon Sep 17 00:00:00 2001
+From: cswhite2000 <18whitechristop@gmail.com>
+Date: Wed, 8 Aug 2018 13:29:27 -0700
+Subject: [PATCH] Retrieve metadata by plugin
+
+
+diff --git a/src/main/java/org/bukkit/craftbukkit/CraftWorld.java b/src/main/java/org/bukkit/craftbukkit/CraftWorld.java
+index a1ffce43..52646b16 100644
+--- a/src/main/java/org/bukkit/craftbukkit/CraftWorld.java
++++ b/src/main/java/org/bukkit/craftbukkit/CraftWorld.java
+@@ -1312,6 +1312,11 @@ public class CraftWorld implements World {
+         server.getWorldMetadata().setMetadata(this, metadataKey, newMetadataValue);
+     }
+ 
++    @Override
++    public MetadataValue getMetadata(String metadataKey, Plugin owningPlugin) {
++        return server.getWorldMetadata().getMetadata(this, metadataKey, owningPlugin);
++    }
++
+     public List<MetadataValue> getMetadata(String metadataKey) {
+         return server.getWorldMetadata().getMetadata(this, metadataKey);
+     }
+diff --git a/src/main/java/org/bukkit/craftbukkit/block/CraftBlock.java b/src/main/java/org/bukkit/craftbukkit/block/CraftBlock.java
+index 34ff5790..ecef909a 100644
+--- a/src/main/java/org/bukkit/craftbukkit/block/CraftBlock.java
++++ b/src/main/java/org/bukkit/craftbukkit/block/CraftBlock.java
+@@ -550,6 +550,11 @@ public class CraftBlock implements Block {
+         chunk.getCraftWorld().getBlockMetadata().setMetadata(this, metadataKey, newMetadataValue);
+     }
+ 
++    @Override
++    public MetadataValue getMetadata(String metadataKey, Plugin owningPlugin) {
++        return chunk.getCraftWorld().getBlockMetadata().getMetadata(this, metadataKey, owningPlugin);
++    }
++
+     public List<MetadataValue> getMetadata(String metadataKey) {
+         return chunk.getCraftWorld().getBlockMetadata().getMetadata(this, metadataKey);
+     }
+diff --git a/src/main/java/org/bukkit/craftbukkit/block/CraftBlockState.java b/src/main/java/org/bukkit/craftbukkit/block/CraftBlockState.java
+index 8a2a578a..7eaaf011 100644
+--- a/src/main/java/org/bukkit/craftbukkit/block/CraftBlockState.java
++++ b/src/main/java/org/bukkit/craftbukkit/block/CraftBlockState.java
+@@ -262,6 +262,12 @@ public class CraftBlockState implements BlockState {
+         chunk.getCraftWorld().getBlockMetadata().setMetadata(getBlock(), metadataKey, newMetadataValue);
+     }
+ 
++    @Override
++    public MetadataValue getMetadata(String metadataKey, Plugin owningPlugin) {
++        requirePlaced();
++        return chunk.getCraftWorld().getBlockMetadata().getMetadata(getBlock(), metadataKey, owningPlugin);
++    }
++
+     public List<MetadataValue> getMetadata(String metadataKey) {
+         requirePlaced();
+         return chunk.getCraftWorld().getBlockMetadata().getMetadata(getBlock(), metadataKey);
+diff --git a/src/main/java/org/bukkit/craftbukkit/entity/CraftEntity.java b/src/main/java/org/bukkit/craftbukkit/entity/CraftEntity.java
+index 2fb74590..b60e2ff0 100644
+--- a/src/main/java/org/bukkit/craftbukkit/entity/CraftEntity.java
++++ b/src/main/java/org/bukkit/craftbukkit/entity/CraftEntity.java
+@@ -426,6 +426,11 @@ public abstract class CraftEntity implements org.bukkit.entity.Entity {
+         server.getEntityMetadata().setMetadata(this, metadataKey, newMetadataValue);
+     }
+ 
++    @Override
++    public MetadataValue getMetadata(String metadataKey, Plugin owningPlugin) {
++        return server.getEntityMetadata().getMetadata(this, metadataKey, owningPlugin);
++    }
++
+     public List<MetadataValue> getMetadata(String metadataKey) {
+         return server.getEntityMetadata().getMetadata(this, metadataKey);
+     }
+diff --git a/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java b/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
+index 7f426d34..9ef1fa59 100644
+--- a/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
++++ b/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
+@@ -1489,6 +1489,11 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
+         server.getPlayerMetadata().setMetadata(this, metadataKey, newMetadataValue);
+     }
+ 
++    @Override
++    public MetadataValue getMetadata(String metadataKey, Plugin owningPlugin) {
++        return server.getPlayerMetadata().getMetadata(this, metadataKey, owningPlugin);
++    }
++
+     @Override
+     public List<MetadataValue> getMetadata(String metadataKey) {
+         return server.getPlayerMetadata().getMetadata(this, metadataKey);
+-- 
+2.19.0
+

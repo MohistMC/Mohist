@@ -1,0 +1,34 @@
+From c0720749dd2ffa4468e44fe410b7bc833a73fbe2 Mon Sep 17 00:00:00 2001
+From: cswhite2000 <18whitechristop@gmail.com>
+Date: Fri, 17 Aug 2018 21:09:51 -0700
+Subject: [PATCH] Item#canEntityPickup
+
+
+diff --git a/src/main/java/org/bukkit/entity/Item.java b/src/main/java/org/bukkit/entity/Item.java
+index 90260b7e..7db060b9 100644
+--- a/src/main/java/org/bukkit/entity/Item.java
++++ b/src/main/java/org/bukkit/entity/Item.java
+@@ -34,4 +34,20 @@ public interface Item extends Entity {
+      * @param delay New delay
+      */
+     public void setPickupDelay(int delay);
++
++    // Paper Start
++    /**
++     * Gets if non-player entities can pick this Item up
++     *
++     * @return True if non-player entities can pickup
++     */
++    public boolean canMobPickup();
++
++    /**
++     * Sets if non-player entities can pick this Item up
++     *
++     * @param canMobPickup True to allow non-player entity pickup
++     */
++    public void setCanMobPickup(boolean canMobPickup);
++    // Paper end
+ }
+-- 
+2.20.1
+

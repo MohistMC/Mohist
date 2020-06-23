@@ -1,0 +1,809 @@
+From 458f1ea3d33ffc9eb57e63ebe819eee47c99681b Mon Sep 17 00:00:00 2001
+From: cswhite2000 <18whitechristop@gmail.com>
+Date: Mon, 6 Aug 2018 16:22:22 -0700
+Subject: [PATCH] Fake name and skin API
+
+
+diff --git a/src/main/java/net/minecraft/server/EntityPlayer.java b/src/main/java/net/minecraft/server/EntityPlayer.java
+index 35ba2e71..cafe5ed5 100644
+--- a/src/main/java/net/minecraft/server/EntityPlayer.java
++++ b/src/main/java/net/minecraft/server/EntityPlayer.java
+@@ -20,7 +20,9 @@ import org.bukkit.craftbukkit.CraftWorld;
+ import org.bukkit.craftbukkit.entity.CraftPlayer;
+ import org.bukkit.craftbukkit.event.CraftEventFactory;
+ import org.bukkit.craftbukkit.inventory.CraftItemStack;
++import org.bukkit.craftbukkit.util.Skins;
+ import org.bukkit.event.inventory.InventoryType;
++import org.bukkit.event.player.PlayerSkinPartsChangeEvent;
+ import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
+ // CraftBukkit end
+ 
+@@ -1022,7 +1024,12 @@ public class EntityPlayer extends EntityHuman implements ICrafting {
+         // PaperSpigot end
+         this.bR = packetplayinsettings.c();
+         this.bS = packetplayinsettings.d();
+-        this.getDataWatcher().watch(10, Byte.valueOf((byte) packetplayinsettings.e()));
++        // SportBukkit - skin parts event
++        int skinFlags = datawatcher.getByte(10);
++        if(skinFlags != packetplayinsettings.e()) {
++            this.getDataWatcher().watch(10, Byte.valueOf((byte) packetplayinsettings.e()));
++            Bukkit.getPluginManager().callEvent(new PlayerSkinPartsChangeEvent(this.getBukkitEntity(), Skins.partsFromFlags(skinFlags)));
++        }
+     }
+ 
+     public EntityHuman.EnumChatVisibility getChatFlags() {
+diff --git a/src/main/java/net/minecraft/server/PacketPlayOutPlayerInfo.java b/src/main/java/net/minecraft/server/PacketPlayOutPlayerInfo.java
+index fc5ad291..658c4238 100644
+--- a/src/main/java/net/minecraft/server/PacketPlayOutPlayerInfo.java
++++ b/src/main/java/net/minecraft/server/PacketPlayOutPlayerInfo.java
+@@ -10,8 +10,8 @@ import java.util.List;
+ 
+ public class PacketPlayOutPlayerInfo implements Packet<PacketListenerPlayOut> {
+ 
+-    private PacketPlayOutPlayerInfo.EnumPlayerInfoAction a;
+-    private final List<PacketPlayOutPlayerInfo.PlayerInfoData> b = Lists.newArrayList();
++    public PacketPlayOutPlayerInfo.EnumPlayerInfoAction a;
++    public final List<PacketPlayOutPlayerInfo.PlayerInfoData> b = Lists.newArrayList();
+ 
+     public PacketPlayOutPlayerInfo() {}
+ 
+@@ -210,7 +210,7 @@ public class PacketPlayOutPlayerInfo implements Packet<PacketListenerPlayOut> {
+         }
+     }
+ 
+-    public class PlayerInfoData {
++    public static class PlayerInfoData {
+ 
+         private final int b;
+         private final WorldSettings.EnumGamemode c;
+diff --git a/src/main/java/net/minecraft/server/PacketPlayOutScoreboardTeam.java b/src/main/java/net/minecraft/server/PacketPlayOutScoreboardTeam.java
+index 4b8eb3ee..c3e6b0ec 100644
+--- a/src/main/java/net/minecraft/server/PacketPlayOutScoreboardTeam.java
++++ b/src/main/java/net/minecraft/server/PacketPlayOutScoreboardTeam.java
+@@ -7,15 +7,15 @@ import java.util.Iterator;
+ 
+ public class PacketPlayOutScoreboardTeam implements Packet<PacketListenerPlayOut> {
+ 
+-    private String a = "";
+-    private String b = "";
+-    private String c = "";
+-    private String d = "";
+-    private String e;
+-    private int f;
+-    private Collection<String> g;
+-    private int h;
+-    private int i;
++    public String a = "";
++    public String b = "";
++    public String c = "";
++    public String d = "";
++    public String e;
++    public int f;
++    public Collection<String> g;
++    public int h;
++    public int i;
+ 
+     public PacketPlayOutScoreboardTeam() {
+         this.e = ScoreboardTeamBase.EnumNameTagVisibility.ALWAYS.e;
+diff --git a/src/main/java/net/minecraft/server/PlayerConnection.java b/src/main/java/net/minecraft/server/PlayerConnection.java
+index e406e283..b6c0be78 100644
+--- a/src/main/java/net/minecraft/server/PlayerConnection.java
++++ b/src/main/java/net/minecraft/server/PlayerConnection.java
+@@ -9,6 +9,7 @@ import io.netty.util.concurrent.Future;
+ import io.netty.util.concurrent.GenericFutureListener;
+ import java.io.IOException;
+ import java.util.ArrayList;
++import java.util.Arrays;
+ import java.util.Collections;
+ import java.util.Date;
+ import java.util.Iterator;
+@@ -893,6 +894,8 @@ public class PlayerConnection implements PacketListenerPlayIn, IUpdatePlayerList
+     }
+ 
+     public void sendPacket(final Packet packet) {
++        Packet replacedPacket = packet; // SportBukkit
++
+         if (packet instanceof PacketPlayOutChat) {
+             PacketPlayOutChat packetplayoutchat = (PacketPlayOutChat) packet;
+             EntityHuman.EnumChatVisibility entityhuman_enumchatvisibility = this.player.getChatFlags();
+@@ -913,10 +916,87 @@ public class PlayerConnection implements PacketListenerPlayIn, IUpdatePlayerList
+             PacketPlayOutSpawnPosition packet6 = (PacketPlayOutSpawnPosition) packet;
+             this.player.compassTarget = new Location(this.getPlayer().getWorld(), packet6.position.getX(), packet6.position.getY(), packet6.position.getZ());
+         }
++
++
++        if (packet instanceof PacketPlayOutScoreboardTeam) {
++            // Translate fake names in team info packets
++            Player viewer = this.getPlayer();
++            if (viewer != null) {
++                PacketPlayOutScoreboardTeam oldPacket = (PacketPlayOutScoreboardTeam) packet;
++
++                if (oldPacket.g.size() == 1) {
++                    // Handle single player team change more efficiently
++                    String realName = (String) oldPacket.g.iterator().next();
++                    String fakeName;
++                    Player player = this.server.getPlayer(realName);
++
++                    if (player != null && (fakeName = player.getFakeName(viewer)) != null) {
++                        PacketPlayOutScoreboardTeam newPacket = new PacketPlayOutScoreboardTeam();
++
++                        newPacket.a = oldPacket.a;
++                        newPacket.b = oldPacket.b;
++                        newPacket.c = oldPacket.c;
++                        newPacket.d = oldPacket.d;
++                        newPacket.e = oldPacket.e;
++                        newPacket.f = oldPacket.f;
++                        newPacket.g = Arrays.asList(fakeName);
++                        newPacket.h = oldPacket.h;
++                        newPacket.i = oldPacket.i;
++
++                        replacedPacket = newPacket;
++                    }
++
++                } else if (oldPacket.g.size() > 1) {
++                    ArrayList<String> newNames = null;
++
++                    for (Object o : oldPacket.g) {
++                        String realName = (String) o;
++                        String fakeName;
++                        Player player = this.server.getPlayer(realName);
++
++                        if (player != null && (fakeName = player.getFakeName(viewer)) != null) {
++                            if (newNames == null) {
++                                // Once we've found a fake name, create the new name list
++                                // and copy the names we've already looped over. If there
++                                // are no fake names, no lists are created and the packet
++                                // is not replaced.
++                                newNames = new ArrayList<String>(oldPacket.g.size());
++                                for (Object oo : oldPacket.g) {
++                                    if (oo == o) break;
++                                    newNames.add((String) oo);
++                                }
++                            }
++
++                            newNames.add(fakeName);
++                        } else if (newNames != null) {
++                            newNames.add(realName);
++                        }
++                    }
++
++                    if (newNames != null) {
++                        PacketPlayOutScoreboardTeam newPacket = new PacketPlayOutScoreboardTeam();
++
++                        newPacket.a = oldPacket.a;
++                        newPacket.b = oldPacket.b;
++                        newPacket.c = oldPacket.c;
++                        newPacket.d = oldPacket.d;
++                        newPacket.e = oldPacket.e;
++                        newPacket.f = oldPacket.f;
++                        newPacket.g = newNames;
++                        newPacket.h = oldPacket.h;
++                        newPacket.i = oldPacket.i;
++
++                        replacedPacket = newPacket;
++                    }
++                }
++            }
++
++        }
++
+         // CraftBukkit end
+ 
+         try {
+-            this.networkManager.handle(packet);
++            this.networkManager.handle(replacedPacket); // SportBukkit
+         } catch (Throwable throwable) {
+             CrashReport crashreport = CrashReport.a(throwable, "Sending packet");
+             CrashReportSystemDetails crashreportsystemdetails = crashreport.a("Packet being sent");
+diff --git a/src/main/java/net/minecraft/server/PlayerList.java b/src/main/java/net/minecraft/server/PlayerList.java
+index f38ab715..ce170c53 100644
+--- a/src/main/java/net/minecraft/server/PlayerList.java
++++ b/src/main/java/net/minecraft/server/PlayerList.java
+@@ -19,6 +19,7 @@ import org.apache.logging.log4j.LogManager;
+ import org.apache.logging.log4j.Logger;
+ 
+ // CraftBukkit start
++import org.bukkit.command.CommandSender;
+ import org.bukkit.craftbukkit.CraftServer;
+ import org.bukkit.craftbukkit.CraftWorld;
+ import org.bukkit.craftbukkit.chunkio.ChunkIOExecutor;
+@@ -26,6 +27,7 @@ import org.bukkit.craftbukkit.chunkio.ChunkIOExecutor;
+ import org.bukkit.Bukkit;
+ import org.bukkit.Location;
+ import org.bukkit.TravelAgent;
++import org.bukkit.craftbukkit.entity.CraftPlayer;
+ import org.bukkit.craftbukkit.util.CraftChatMessage;
+ import org.bukkit.entity.Player;
+ import org.bukkit.event.player.PlayerChangedWorldEvent;
+@@ -326,19 +328,23 @@ public abstract class PlayerList {
+ 
+         // CraftBukkit start - sendAll above replaced with this loop
+         PacketPlayOutPlayerInfo packet = new PacketPlayOutPlayerInfo(PacketPlayOutPlayerInfo.EnumPlayerInfoAction.ADD_PLAYER, entityplayer);
++        CraftPlayer joiner = entityplayer.getBukkitEntity();
+ 
+         for (int i = 0; i < this.players.size(); ++i) {
+             EntityPlayer entityplayer1 = (EntityPlayer) this.players.get(i);
++            CraftPlayer viewer = entityplayer1.getBukkitEntity();
+ 
+-            if (entityplayer1.getBukkitEntity().canSee(entityplayer.getBukkitEntity())) {
+-                entityplayer1.playerConnection.sendPacket(packet);
++            if (viewer.canSee(joiner)) {
++                if(joiner.hasFakeName(viewer) || joiner.hasFakeSkin(viewer)) {
++                    entityplayer1.playerConnection.sendPacket(joiner.makePlayerListAddPacket(viewer));
++                } else {
++                    entityplayer1.playerConnection.sendPacket(packet);
++                }
+             }
+ 
+-            if (!entityplayer.getBukkitEntity().canSee(entityplayer1.getBukkitEntity())) {
+-                continue;
++            if (joiner.canSee(viewer)) {
++                entityplayer.playerConnection.sendPacket(viewer.makePlayerListAddPacket(joiner));
+             }
+-
+-            entityplayer.playerConnection.sendPacket(new PacketPlayOutPlayerInfo(PacketPlayOutPlayerInfo.EnumPlayerInfoAction.ADD_PLAYER, new EntityPlayer[] { entityplayer1}));
+         }
+         // CraftBukkit end
+ 
+diff --git a/src/main/java/org/bukkit/craftbukkit/CraftServer.java b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
+index 69485fa6..dd04d211 100644
+--- a/src/main/java/org/bukkit/craftbukkit/CraftServer.java
++++ b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
+@@ -402,6 +402,12 @@ public final class CraftServer implements Server {
+     @Override
+     @Deprecated
+     public Player getPlayer(final String name) {
++        return getPlayer(name, null);
++    }
++
++    @Override
++    @Deprecated
++    public Player getPlayer(final String name, final CommandSender viewer) {
+         Validate.notNull(name, "Name cannot be null");
+ 
+         Player found = getPlayerExact(name);
+@@ -413,8 +419,8 @@ public final class CraftServer implements Server {
+         String lowerName = name.toLowerCase();
+         int delta = Integer.MAX_VALUE;
+         for (Player player : getOnlinePlayers()) {
+-            if (player.getName().toLowerCase().startsWith(lowerName)) {
+-                int curDelta = Math.abs(player.getName().length() - lowerName.length());
++            if (player.getName(viewer).toLowerCase().startsWith(lowerName)) {
++                int curDelta = player.getName(viewer).length() - lowerName.length();
+                 if (curDelta < delta) {
+                     found = player;
+                     delta = curDelta;
+@@ -428,10 +434,22 @@ public final class CraftServer implements Server {
+     @Override
+     @Deprecated
+     public Player getPlayerExact(String name) {
++        return getPlayerExact(name, null);
++    }
++
++    @Override
++    @Deprecated
++    public Player getPlayerExact(String name, final CommandSender viewer) {
+         Validate.notNull(name, "Name cannot be null");
+ 
+-        EntityPlayer player = playerList.getPlayer(name);
+-        return (player != null) ? player.getBukkitEntity() : null;
++        String lname = name.toLowerCase();
++
++        for (Player player : getOnlinePlayers()) {
++            if (player.getName(viewer).equalsIgnoreCase(lname)) {
++                return player;
++            }
++        }
++        return null;
+     }
+ 
+     @Override
+@@ -457,12 +475,18 @@ public final class CraftServer implements Server {
+     @Override
+     @Deprecated
+     public List<Player> matchPlayer(String partialName) {
++        return matchPlayer(partialName, null);
++    }
++
++    @Override
++    @Deprecated
++    public List<Player> matchPlayer(String partialName, final CommandSender viewer) {
+         Validate.notNull(partialName, "PartialName cannot be null");
+ 
+         List<Player> matchedPlayers = new ArrayList<Player>();
+ 
+         for (Player iterPlayer : this.getOnlinePlayers()) {
+-            String iterPlayerName = iterPlayer.getName();
++            String iterPlayerName = iterPlayer.getName(viewer);
+ 
+             if (partialName.equalsIgnoreCase(iterPlayerName)) {
+                 // Exact match
+@@ -1675,8 +1699,8 @@ public final class CraftServer implements Server {
+         PlayerChatTabCompleteEvent event = new PlayerChatTabCompleteEvent(player, message, completions);
+         String token = event.getLastToken();
+         for (Player p : getOnlinePlayers()) {
+-            if (player.canSee(p) && StringUtil.startsWithIgnoreCase(p.getName(), token)) {
+-                completions.add(p.getName());
++            if (player.canSee(p) && StringUtil.startsWithIgnoreCase(p.getName(player), token)) {
++                completions.add(p.getName(player));
+             }
+         }
+         pluginManager.callEvent(event);
+diff --git a/src/main/java/org/bukkit/craftbukkit/command/ProxiedNativeCommandSender.java b/src/main/java/org/bukkit/craftbukkit/command/ProxiedNativeCommandSender.java
+index 9acd92c3..12fb6156 100644
+--- a/src/main/java/org/bukkit/craftbukkit/command/ProxiedNativeCommandSender.java
++++ b/src/main/java/org/bukkit/craftbukkit/command/ProxiedNativeCommandSender.java
+@@ -58,6 +58,11 @@ public class ProxiedNativeCommandSender implements ProxiedCommandSender {
+         return getCallee().getName();
+     }
+ 
++    @Override
++    public String getName(CommandSender viewer) {
++        return getCallee().getName(viewer);
++    }
++
+     @Override
+     public boolean isPermissionSet(String name) {
+         return getCaller().isPermissionSet(name);
+diff --git a/src/main/java/org/bukkit/craftbukkit/command/ServerCommandSender.java b/src/main/java/org/bukkit/craftbukkit/command/ServerCommandSender.java
+index b339cf3e..5abc00b7 100644
+--- a/src/main/java/org/bukkit/craftbukkit/command/ServerCommandSender.java
++++ b/src/main/java/org/bukkit/craftbukkit/command/ServerCommandSender.java
+@@ -77,4 +77,9 @@ public abstract class ServerCommandSender implements CommandSender {
+     public Server getServer() {
+         return Bukkit.getServer();
+     }
++
++    @Override
++    public String getName(CommandSender viewer) {
++        return this.getName();
++    }
+ }
+diff --git a/src/main/java/org/bukkit/craftbukkit/entity/CraftEntity.java b/src/main/java/org/bukkit/craftbukkit/entity/CraftEntity.java
+index a2024f7e..93a6ddfe 100644
+--- a/src/main/java/org/bukkit/craftbukkit/entity/CraftEntity.java
++++ b/src/main/java/org/bukkit/craftbukkit/entity/CraftEntity.java
+@@ -13,6 +13,7 @@ import org.bukkit.EntityEffect;
+ import org.bukkit.Location;
+ import org.bukkit.Server;
+ import org.bukkit.World;
++import org.bukkit.command.CommandSender;
+ import org.bukkit.craftbukkit.CraftServer;
+ import org.bukkit.craftbukkit.CraftWorld;
+ import org.bukkit.event.entity.EntityDamageEvent;
+@@ -503,6 +504,11 @@ public abstract class CraftEntity implements org.bukkit.entity.Entity {
+         return getHandle().getName();
+     }
+ 
++    @Override
++    public String getName(CommandSender viewer) {
++        return this.getName();
++    }
++
+     @Override
+     public boolean isPermissionSet(String name) {
+         return perm.isPermissionSet(name);
+diff --git a/src/main/java/org/bukkit/craftbukkit/entity/CraftMinecartCommand.java b/src/main/java/org/bukkit/craftbukkit/entity/CraftMinecartCommand.java
+index 813b080a..f2c30225 100644
+--- a/src/main/java/org/bukkit/craftbukkit/entity/CraftMinecartCommand.java
++++ b/src/main/java/org/bukkit/craftbukkit/entity/CraftMinecartCommand.java
+@@ -55,6 +55,11 @@ public class CraftMinecartCommand extends CraftMinecart implements CommandMineca
+         return ((EntityMinecartCommandBlock) getHandle()).getCommandBlock().getName();
+     }
+ 
++    @Override
++    public String getName(org.bukkit.command.CommandSender viewer) {
++        return this.getName();
++    }
++
+     @Override
+     public boolean isOp() {
+         return true;
+diff --git a/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java b/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
+index d44fc62b..2c266649 100644
+--- a/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
++++ b/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
+@@ -1,5 +1,6 @@
+ package org.bukkit.craftbukkit.entity;
+ 
++import com.google.common.base.Objects;
+ import com.google.common.base.Preconditions;
+ import com.google.common.collect.ImmutableSet;
+ import com.mojang.authlib.GameProfile;
+@@ -11,6 +12,7 @@ import java.lang.Override;
+ import java.net.InetSocketAddress;
+ import java.net.SocketAddress;
+ import java.util.ArrayList;
++import java.util.Arrays;
+ import java.util.Collection;
+ import java.util.HashSet;
+ import java.util.LinkedHashMap;
+@@ -18,6 +20,7 @@ import java.util.List;
+ import java.util.Map;
+ import java.util.Set;
+ import java.util.UUID;
++import java.util.WeakHashMap;
+ import java.util.logging.Level;
+ import java.util.logging.Logger;
+ import net.md_5.bungee.api.chat.BaseComponent;
+@@ -34,6 +37,7 @@ import org.bukkit.Statistic;
+ import org.bukkit.Material;
+ import org.bukkit.Statistic.Type;
+ import org.bukkit.World;
++import org.bukkit.command.CommandSender;
+ import org.bukkit.configuration.serialization.DelegateDeserialization;
+ import org.bukkit.conversations.Conversation;
+ import org.bukkit.conversations.ConversationAbandonedEvent;
+@@ -51,6 +55,7 @@ import org.bukkit.craftbukkit.map.RenderData;
+ import org.bukkit.craftbukkit.scoreboard.CraftScoreboard;
+ import org.bukkit.craftbukkit.util.CraftChatMessage;
+ import org.bukkit.craftbukkit.util.CraftMagicNumbers;
++import org.bukkit.craftbukkit.util.Skins;
+ import org.bukkit.entity.EntityType;
+ import org.bukkit.entity.Player;
+ import org.bukkit.event.player.PlayerGameModeChangeEvent;
+@@ -80,11 +85,17 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
+     private double health = 20;
+     private boolean scaledHealth = false;
+     private double healthScale = 20;
++    private Skin realSkin;
++
++    private final Map<CommandSender, String> fakeNames = new WeakHashMap<CommandSender, String>();
++    private final Map<CommandSender, String> fakeDisplayNames = new WeakHashMap<CommandSender, String>();
++    private final Map<CommandSender, Skin> fakeSkins = new WeakHashMap<CommandSender, Skin>();
+ 
+     public CraftPlayer(CraftServer server, EntityPlayer entity) {
+         super(server, entity);
+ 
+         firstPlayed = System.currentTimeMillis();
++        this.realSkin = this.getSkin();
+     }
+ 
+     public GameProfile getProfile() {
+@@ -258,6 +269,259 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
+     }
+     // Paper end
+ 
++    @Override
++    public Set<Skin.Part> getSkinParts() {
++        return Skins.partsFromFlags(this.getHandle().getDataWatcher().getInt(10));
++    }
++
++    @Override
++    public boolean hasFakeSkin(CommandSender viewer) {
++        return viewer != null && this.fakeSkins.containsKey(viewer);
++    }
++
++    @Override
++    public Skin getFakeSkin(CommandSender viewer) {
++        return viewer == null ? null : this.fakeSkins.get(viewer);
++    }
++
++    @Override
++    public void setFakeSkin(CommandSender viewer, Skin newSkin) {
++        this.setFakeNameAndSkin(viewer, null, newSkin, false, true);
++    }
++
++    @Override
++    public Skin getSkin() {
++        return Skins.fromProperties(this.getProfile().getProperties());
++    }
++
++    @Override
++    public Skin getSkin(CommandSender viewer) {
++        if(this.hasFakeSkin(viewer)) {
++            return this.getFakeSkin(viewer);
++        } else {
++            return this.getSkin();
++        }
++    }
++
++    @Override
++    public Skin getRealSkin() {
++        return this.realSkin;
++    }
++
++    @Override
++    public void clearFakeSkins() {
++        Set<CommandSender> viewers = new HashSet<CommandSender>(this.fakeSkins.keySet());
++        for(CommandSender viewer : viewers) this.removeNameOnClient(viewer);
++        this.fakeSkins.clear();
++        for(CommandSender viewer : viewers) this.addNameOnClient(viewer);
++    }
++
++    @Override
++    public void setSkin(Skin newSkin) {
++        if(newSkin == null) {
++            newSkin = this.realSkin;
++        }
++
++        Skin oldSkin = this.getSkin();
++        if(Objects.equal(oldSkin, newSkin)) {
++            return;
++        }
++        Set<Player> viewers = new HashSet<Player>(this.getServer().getOnlinePlayers());
++        viewers.removeAll(this.fakeSkins.keySet());
++
++        for(Player viewer : viewers) this.removeNameOnClient(viewer);
++        Skins.setProperties(newSkin, this.getProfile().getProperties());
++        for(Player viewer : viewers) this.addNameOnClient(viewer);
++    }
++
++    @Override
++    public void clearFakeNamesAndSkins() {
++        Set<CommandSender> viewers = new HashSet<CommandSender>(this.fakeNames.keySet());
++        viewers.addAll(this.fakeSkins.keySet());
++
++        for(CommandSender viewer : viewers) this.removeNameOnClient(viewer);
++        this.fakeNames.clear();
++        this.fakeSkins.clear();
++        for(CommandSender viewer : viewers) this.addNameOnClient(viewer);
++    }
++
++    @Override
++    public boolean hasFakeName(CommandSender viewer) {
++        return viewer != null && this.fakeNames.containsKey(viewer);
++    }
++
++    @Override
++    public void clearFakeNames() {
++        Set<CommandSender> viewers = new HashSet<CommandSender>(this.fakeNames.keySet());
++        for(CommandSender viewer : viewers) this.removeNameOnClient(viewer);
++        this.fakeNames.clear();
++        for(CommandSender viewer : viewers) this.addNameOnClient(viewer);
++    }
++
++    @Override
++    public String getFakeName(CommandSender viewer) {
++        return viewer == null ? null : this.fakeNames.get(viewer);
++    }
++
++    @Override
++    public void setFakeName(CommandSender viewer, String name) {
++        this.setFakeNameAndSkin(viewer, name, null, true, false);
++    }
++
++    @Override
++    public void setFakeNameAndSkin(CommandSender viewer, String name, Skin skin) {
++        this.setFakeNameAndSkin(viewer, name, skin, true, true);
++    }
++
++    private void setFakeNameAndSkin(CommandSender viewer, String newName, Skin newSkin, boolean nameChanged, boolean skinChanged) {
++        String oldName = this.fakeNames.get(viewer);
++        nameChanged = nameChanged && !Objects.equal(oldName, newName);
++        Skin oldSkin = this.fakeSkins.get(viewer);
++        skinChanged = skinChanged && !Objects.equal(oldSkin, newSkin);
++
++        if(nameChanged || skinChanged) {
++            if(newName != null && newName.length() > 16) {
++                throw new IllegalArgumentException("Fake player names are limited to 16 characters in length");
++            }
++
++            this.removeNameOnClient(viewer);
++
++            if(newName == null) {
++                this.fakeNames.remove(viewer);
++            } else {
++                this.fakeNames.put(viewer, newName);
++            }
++
++            if(newSkin == null) {
++                this.fakeSkins.remove(viewer);
++            } else {
++                this.fakeSkins.put(viewer, newSkin);
++            }
++
++            this.addNameOnClient(viewer);
++        }
++    }
++
++    public PacketPlayOutPlayerInfo makePlayerListAddPacket(Player viewer) {
++        GameProfile profile = getHandle().getProfile();
++        String name = getName(viewer);
++        Skin skin = getSkin(viewer);
++
++        if(!name.equals(getName()) || !skin.equals(getSkin())) {
++            profile = new GameProfile(getUniqueId(), name);
++            Skins.setProperties(skin, profile.getProperties());
++        }
++
++        PacketPlayOutPlayerInfo packet = new PacketPlayOutPlayerInfo();
++        packet.a = PacketPlayOutPlayerInfo.EnumPlayerInfoAction.ADD_PLAYER;
++        packet.b.add(new PacketPlayOutPlayerInfo.PlayerInfoData(profile,
++                getHandle().ping,
++                getHandle().playerInteractManager.getGameMode(),
++                getHandle().listName));
++        return packet;
++    }
++
++    /**
++     * Remove this player from the given viewer's scoreboard and player list.
++     */
++    private void removeNameOnClient(CommandSender viewer) {
++        if(viewer instanceof CraftPlayer) {
++            CraftPlayer craftViewer = (CraftPlayer) viewer;
++            EntityPlayer viewerEntity = craftViewer.getHandle();
++            if(viewerEntity.playerConnection != null) {
++                if(craftViewer.canSee(this)) {
++                    EntityTrackerEntry entry = (EntityTrackerEntry) ((WorldServer) this.entity.world).tracker.trackedEntities.get(getHandle().getId());
++                    if(entry != null) {
++                        entry.clear(craftViewer.getHandle());
++                    }
++
++                    viewerEntity.playerConnection.sendPacket(new PacketPlayOutPlayerInfo(PacketPlayOutPlayerInfo.EnumPlayerInfoAction.REMOVE_PLAYER, this.getHandle()));
++                }
++
++                ScoreboardTeam team = craftViewer.getScoreboard().getHandle().getPlayerTeam(this.getName());
++                if(team != null) {
++                    viewerEntity.playerConnection.sendPacket(new PacketPlayOutScoreboardTeam(team, Arrays.asList(this.getName()), 4));
++                }
++            }
++        }
++    }
++
++    /**
++     * Add this player to the given viewer's scoreboard and player list.
++     */
++    private void addNameOnClient(CommandSender viewer) {
++        if(viewer instanceof CraftPlayer) {
++            CraftPlayer craftViewer = (CraftPlayer) viewer;
++            EntityPlayer viewerEntity = craftViewer.getHandle();
++            if(viewerEntity.playerConnection != null) {
++                ScoreboardTeam team = craftViewer.getScoreboard().getHandle().getPlayerTeam(this.getName());
++                if(team != null) {
++                    viewerEntity.playerConnection.sendPacket(new PacketPlayOutScoreboardTeam(team, Arrays.asList(this.getName()), 3));
++                }
++
++                if(craftViewer.canSee(this)) {
++                    viewerEntity.playerConnection.sendPacket(this.makePlayerListAddPacket(craftViewer));
++
++                    EntityTrackerEntry entry = (EntityTrackerEntry) ((WorldServer) this.entity.world).tracker.trackedEntities.get(getHandle().getId());
++                    if(entry != null) {
++                        entry.updatePlayer(craftViewer.getHandle());
++                    }
++                }
++            }
++        }
++    }
++
++    @Override
++    public boolean hasFakeDisplayName(CommandSender viewer) {
++        return this.fakeDisplayNames.containsKey(viewer);
++    }
++
++    @Override
++    public void clearFakeDisplayNames() {
++        this.fakeDisplayNames.clear();
++    }
++
++    @Override
++    public String getFakeDisplayName(CommandSender viewer) {
++        return viewer == null ? null : this.fakeDisplayNames.get(viewer);
++    }
++
++    @Override
++    public void setFakeDisplayName(CommandSender viewer, String name) {
++        if(name == null)  {
++            this.fakeDisplayNames.remove(viewer);
++        } else {
++            this.fakeDisplayNames.put(viewer, name);
++        }
++    }
++
++    @Override
++    public String getName(CommandSender viewer) {
++        String name = this.getFakeName(viewer);
++        if(name == null) {
++            name = this.getName();
++        }
++        return name;
++    }
++
++    @Override
++    public String getPlayerListName(CommandSender viewer) {
++        String name = this.getFakeName(viewer);
++        if(name == null) {
++            name = this.getPlayerListName();
++        }
++        return name;
++    }
++
++    @Override
++    public String getDisplayName(CommandSender viewer) {
++        String name = this.getFakeDisplayName(viewer);
++        if(name == null) {
++            name = this.getDisplayName();
++        }
++        return name;
++    }
++
+     @Override
+     public String getDisplayName() {
+         return getHandle().displayName;
+@@ -996,7 +1260,7 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
+         EntityTracker tracker = ((WorldServer) entity.world).tracker;
+         EntityPlayer other = ((CraftPlayer) player).getHandle();
+ 
+-        getHandle().playerConnection.sendPacket(new PacketPlayOutPlayerInfo(PacketPlayOutPlayerInfo.EnumPlayerInfoAction.ADD_PLAYER, other));
++        getHandle().playerConnection.sendPacket(((CraftPlayer) other.getBukkitEntity()).makePlayerListAddPacket(this));
+ 
+         EntityTrackerEntry entry = (EntityTrackerEntry) tracker.trackedEntities.get(other.getId());
+         if (entry != null && !entry.trackedPlayers.contains(getHandle())) {
+@@ -1228,6 +1492,7 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
+     }
+ 
+     public void disconnect(String reason) {
++        this.clearFakeNames();
+         conversationTracker.abandonAllConversations();
+         perm.clearPermissions();
+     }
+diff --git a/src/main/java/org/bukkit/craftbukkit/util/Skins.java b/src/main/java/org/bukkit/craftbukkit/util/Skins.java
+new file mode 100644
+index 00000000..43345fa5
+--- /dev/null
++++ b/src/main/java/org/bukkit/craftbukkit/util/Skins.java
+@@ -0,0 +1,61 @@
++package org.bukkit.craftbukkit.util;
++
++import com.mojang.authlib.properties.Property;
++import com.mojang.authlib.properties.PropertyMap;
++import org.bukkit.Skin;
++
++import java.util.EnumSet;
++import java.util.Set;
++
++public abstract class Skins {
++    public static Skin fromProperties(PropertyMap profile) {
++        for(Property property : profile.get("textures")) {
++            if(property.hasSignature()) {
++                return new Skin(property.getValue(), property.getSignature());
++            } else {
++                return new Skin(property.getValue(), null);
++            }
++        }
++        return Skin.EMPTY;
++    }
++
++    public static Property toProperty(Skin skin) {
++        if(skin == null || skin.isEmpty()) return null;
++
++        if(skin.getSignature() != null) {
++            return new Property("textures", skin.getData(), skin.getSignature());
++        } else {
++            return new Property("textures", skin.getData());
++        }
++    }
++
++    public static PropertyMap setProperties(Skin skin, PropertyMap properties) {
++        properties.removeAll("textures");
++        if(skin != null && !skin.isEmpty()) {
++            properties.put("textures", toProperty(skin));
++        }
++        return properties;
++    }
++
++    public static PropertyMap toProperties(Skin skin) {
++        return setProperties(skin, new PropertyMap());
++    }
++
++    public static Set<Skin.Part> partsFromFlags(int flags) {
++        EnumSet<Skin.Part> parts = EnumSet.noneOf(Skin.Part.class);
++        for(Skin.Part part : Skin.Part.values()) {
++            if((flags & (1 << part.ordinal())) != 0) {
++                parts.add(part);
++            }
++        }
++        return parts;
++    }
++
++    public static int flagsFromParts(Iterable<Skin.Part> parts) {
++        int flags = 0;
++        for(Skin.Part part : parts) {
++            flags |= 1 << part.ordinal();
++        }
++        return flags;
++    }
++}
+-- 
+2.19.0
+

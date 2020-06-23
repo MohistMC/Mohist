@@ -1,0 +1,42 @@
+From d695b1338cde9c769e316eb8fa770e2175fb850e Mon Sep 17 00:00:00 2001
+From: md_5 <git@md-5.net>
+Date: Sun, 2 Feb 2014 16:55:46 +0000
+Subject: [PATCH] Add Option to Nerf Mobs from Spawners
+
+
+diff --git a/src/main/java/net/minecraft/server/MobSpawnerAbstract.java b/src/main/java/net/minecraft/server/MobSpawnerAbstract.java
+index 5ccb976a6..c57e39492 100644
+--- a/src/main/java/net/minecraft/server/MobSpawnerAbstract.java
++++ b/src/main/java/net/minecraft/server/MobSpawnerAbstract.java
+@@ -128,6 +128,12 @@ public abstract class MobSpawnerAbstract {
+                             if (this.spawnData.getEntity().e() == 1 && this.spawnData.getEntity().hasKeyOfType("id", 8)) {
+                                 ((EntityInsentient) entity).prepare(world, world.getDamageScaler(new BlockPosition(entity)), EnumMobSpawn.SPAWNER, (GroupDataEntity) null, (NBTTagCompound) null);
+                             }
++                            // Spigot Start
++                            if ( entityinsentient.world.spigotConfig.nerfSpawnerMobs )
++                            {
++                                entityinsentient.aware = false;
++                            }
++                            // Spigot End
+                         }
+ 
+                         this.a(entity);
+diff --git a/src/main/java/org/spigotmc/SpigotWorldConfig.java b/src/main/java/org/spigotmc/SpigotWorldConfig.java
+index d8678f2c1..87adb772f 100644
+--- a/src/main/java/org/spigotmc/SpigotWorldConfig.java
++++ b/src/main/java/org/spigotmc/SpigotWorldConfig.java
+@@ -237,4 +237,11 @@ public class SpigotWorldConfig
+         zombieAggressiveTowardsVillager = getBoolean( "zombie-aggressive-towards-villager", true );
+         log( "Zombie Aggressive Towards Villager: " + zombieAggressiveTowardsVillager );
+     }
++
++    public boolean nerfSpawnerMobs;
++    private void nerfSpawnerMobs()
++    {
++        nerfSpawnerMobs = getBoolean( "nerf-spawner-mobs", false );
++        log( "Nerfing mobs spawned from spawners: " + nerfSpawnerMobs );
++    }
+ }
+-- 
+2.25.1
+

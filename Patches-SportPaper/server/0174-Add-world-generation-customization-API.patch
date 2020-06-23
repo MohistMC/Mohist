@@ -1,0 +1,294 @@
+From e97d36b00b596ad15793ac86f0d32bc19e77b8de Mon Sep 17 00:00:00 2001
+From: Rafi Baum <rafi@ukbaums.com>
+Date: Tue, 23 Apr 2019 17:32:11 -0400
+Subject: [PATCH] Add world generation customization API
+
+
+diff --git a/src/main/java/net/minecraft/server/WorldData.java b/src/main/java/net/minecraft/server/WorldData.java
+index 3a7b22b9..4c011acf 100644
+--- a/src/main/java/net/minecraft/server/WorldData.java
++++ b/src/main/java/net/minecraft/server/WorldData.java
+@@ -2,6 +2,8 @@ package net.minecraft.server;
+ 
+ import java.util.concurrent.Callable;
+ // CraftBukkit start
++import network.stratus.sportpaper.api.world.CustomizedGenerationSettings;
++import network.stratus.sportpaper.server.WorldGenSettingsManager;
+ import org.bukkit.Bukkit;
+ import org.bukkit.event.weather.ThunderChangeEvent;
+ import org.bukkit.event.weather.WeatherChangeEvent;
+@@ -47,6 +49,7 @@ public class WorldData {
+     private int J;
+     private GameRules K;
+     public WorldServer world; // CraftBukkit
++    private WorldGenSettingsManager customSettings; // SportPaper
+ 
+     protected WorldData() {
+         this.c = WorldType.NORMAL;
+@@ -61,6 +64,7 @@ public class WorldData {
+         this.I = 5;
+         this.J = 15;
+         this.K = new GameRules();
++        this.customSettings = new WorldGenSettingsManager(); // SportPaper
+     }
+ 
+     public WorldData(NBTTagCompound nbttagcompound) {
+@@ -190,6 +194,8 @@ public class WorldData {
+             this.J = nbttagcompound.getInt("BorderWarningTime");
+         }
+ 
++        customSettings = new WorldGenSettingsManager(nbttagcompound); // SportPaper
++
+     }
+ 
+     public WorldData(WorldSettings worldsettings, String s) {
+@@ -219,6 +225,7 @@ public class WorldData {
+         this.c = worldsettings.h();
+         this.d = worldsettings.j();
+         this.x = worldsettings.i();
++        this.customSettings = worldsettings.getCustomGenSettings(); // SportPaper
+     }
+ 
+     public WorldData(WorldData worlddata) {
+@@ -269,6 +276,7 @@ public class WorldData {
+         this.H = worlddata.H;
+         this.J = worlddata.J;
+         this.I = worlddata.I;
++        this.customSettings = worlddata.customSettings; // SportPaper
+     }
+ 
+     public NBTTagCompound a() {
+@@ -328,6 +336,8 @@ public class WorldData {
+             nbttagcompound.set("Player", nbttagcompound1);
+         }
+ 
++        customSettings.save(nbttagcompound); // SportPaper
++
+     }
+ 
+     public long getSeed() {
+@@ -602,6 +612,16 @@ public class WorldData {
+         this.A = flag;
+     }
+ 
++    // SportPaper start
++    public CustomizedGenerationSettings getCustomSettings() {
++        if (customSettings == null) {
++            customSettings = new WorldGenSettingsManager();
++        }
++
++        return customSettings.getSettings();
++    }
++    // SportPaper end
++
+     public void a(CrashReportSystemDetails crashreportsystemdetails) {
+         crashreportsystemdetails.a("Level seed", new Callable() {
+             public String a() throws Exception {
+diff --git a/src/main/java/net/minecraft/server/WorldGenCaves.java b/src/main/java/net/minecraft/server/WorldGenCaves.java
+index 2cdd0237..18dba121 100644
+--- a/src/main/java/net/minecraft/server/WorldGenCaves.java
++++ b/src/main/java/net/minecraft/server/WorldGenCaves.java
+@@ -7,11 +7,13 @@ public class WorldGenCaves extends WorldGenBase {
+ 
+     public WorldGenCaves() {}
+ 
+-    protected void a(long i, int j, int k, ChunkSnapshot chunksnapshot, double d0, double d1, double d2) {
+-        this.a(i, j, k, chunksnapshot, d0, d1, d2, 1.0F + this.b.nextFloat() * 6.0F, 0.0F, 0.0F, -1, -1, 0.5D);
++    // SportPaper - added lengthFactor to constructor
++    protected void a(long i, int j, int k, ChunkSnapshot chunksnapshot, double d0, double d1, double d2, int lengthFactor) {
++        this.a(i, j, k, chunksnapshot, d0, d1, d2, 1.0F + this.b.nextFloat() * 6.0F, 0.0F, 0.0F, -1, -1, 0.5D, lengthFactor);
+     }
+ 
+-    protected void a(long i, int j, int k, ChunkSnapshot chunksnapshot, double d0, double d1, double d2, float f, float f1, float f2, int l, int i1, double d3) {
++    // SportPaper - added lengthFactor to constructor
++    protected void a(long i, int j, int k, ChunkSnapshot chunksnapshot, double d0, double d1, double d2, float f, float f1, float f2, int l, int i1, double d3, int lengthFactor) {
+         double d4 = (double) (j * 16 + 8);
+         double d5 = (double) (k * 16 + 8);
+         float f3 = 0.0F;
+@@ -21,7 +23,7 @@ public class WorldGenCaves extends WorldGenBase {
+         if (i1 <= 0) {
+             int j1 = this.a * 16 - 16;
+ 
+-            i1 = j1 - random.nextInt(j1 / 4);
++            i1 = j1 - random.nextInt(j1 / lengthFactor); // SportPaper
+         }
+ 
+         boolean flag = false;
+@@ -55,8 +57,10 @@ public class WorldGenCaves extends WorldGenBase {
+             f4 += (random.nextFloat() - random.nextFloat()) * random.nextFloat() * 2.0F;
+             f3 += (random.nextFloat() - random.nextFloat()) * random.nextFloat() * 4.0F;
+             if (!flag && l == k1 && f > 1.0F && i1 > 0) {
+-                this.a(random.nextLong(), j, k, chunksnapshot, d0, d1, d2, random.nextFloat() * 0.5F + 0.5F, f1 - 1.5707964F, f2 / 3.0F, l, i1, 1.0D);
+-                this.a(random.nextLong(), j, k, chunksnapshot, d0, d1, d2, random.nextFloat() * 0.5F + 0.5F, f1 + 1.5707964F, f2 / 3.0F, l, i1, 1.0D);
++                // SportPaper start
++                this.a(random.nextLong(), j, k, chunksnapshot, d0, d1, d2, random.nextFloat() * 0.5F + 0.5F, f1 - 1.5707964F, f2 / 3.0F, l, i1, 1.0D, lengthFactor);
++                this.a(random.nextLong(), j, k, chunksnapshot, d0, d1, d2, random.nextFloat() * 0.5F + 0.5F, f1 + 1.5707964F, f2 / 3.0F, l, i1, 1.0D, lengthFactor);
++                // SportPaper end
+                 return;
+             }
+ 
+@@ -184,7 +188,7 @@ public class WorldGenCaves extends WorldGenBase {
+     protected void a(World world, int i, int j, int k, int l, ChunkSnapshot chunksnapshot) {
+         int i1 = this.b.nextInt(this.b.nextInt(this.b.nextInt(15) + 1) + 1);
+ 
+-        if (this.b.nextInt(7) != 0) {
++        if (this.b.nextInt(world.getWorldData().getCustomSettings().getCaveFrequency()) != 0) { // SportPaper
+             i1 = 0;
+         }
+ 
+@@ -195,20 +199,20 @@ public class WorldGenCaves extends WorldGenBase {
+             int k1 = 1;
+ 
+             if (this.b.nextInt(4) == 0) {
+-                this.a(this.b.nextLong(), k, l, chunksnapshot, d0, d1, d2);
++                this.a(this.b.nextLong(), k, l, chunksnapshot, d0, d1, d2, world.getWorldData().getCustomSettings().getCaveLengthMin()); // SportPaper
+                 k1 += this.b.nextInt(4);
+             }
+ 
+             for (int l1 = 0; l1 < k1; ++l1) {
+                 float f = this.b.nextFloat() * 3.1415927F * 2.0F;
+                 float f1 = (this.b.nextFloat() - 0.5F) * 2.0F / 8.0F;
+-                float f2 = this.b.nextFloat() * 2.0F + this.b.nextFloat();
++                float f2 = world.getWorldData().getCustomSettings().getCaveSize(this.b); // SportPaper
+ 
+                 if (this.b.nextInt(10) == 0) {
+-                    f2 *= this.b.nextFloat() * this.b.nextFloat() * 3.0F + 1.0F;
++                    f2 *= world.getWorldData().getCustomSettings().getLargeCaveSize(this.b); // SportPaper
+                 }
+ 
+-                this.a(this.b.nextLong(), k, l, chunksnapshot, d0, d1, d2, f2, f, f1, 0, 0, 1.0D);
++                this.a(this.b.nextLong(), k, l, chunksnapshot, d0, d1, d2, f2, f, f1, 0, 0, 1.0D, world.getWorldData().getCustomSettings().getCaveLengthMin()); // SportPaper
+             }
+         }
+ 
+diff --git a/src/main/java/net/minecraft/server/WorldSettings.java b/src/main/java/net/minecraft/server/WorldSettings.java
+index 122780a7..0acf487d 100644
+--- a/src/main/java/net/minecraft/server/WorldSettings.java
++++ b/src/main/java/net/minecraft/server/WorldSettings.java
+@@ -1,5 +1,7 @@
+ package net.minecraft.server;
+ 
++import network.stratus.sportpaper.server.WorldGenSettingsManager;
++
+ public final class WorldSettings {
+ 
+     private final long a;
+@@ -10,6 +12,7 @@ public final class WorldSettings {
+     private boolean f;
+     private boolean g;
+     private String h;
++    private WorldGenSettingsManager customGenSettings = new WorldGenSettingsManager(); // SportPaper
+ 
+     public WorldSettings(long i, WorldSettings.EnumGamemode worldsettings_enumgamemode, boolean flag, boolean flag1, WorldType worldtype) {
+         this.h = "";
+@@ -70,6 +73,17 @@ public final class WorldSettings {
+         return this.h;
+     }
+ 
++    // SportPaper start
++    public void setCustomGenSettings(WorldGenSettingsManager settings) {
++        this.customGenSettings = settings;
++    }
++
++    public WorldGenSettingsManager getCustomGenSettings() {
++        return customGenSettings;
++    }
++
++    // SportPaper end
++
+     public static enum EnumGamemode {
+ 
+         NOT_SET(-1, ""), SURVIVAL(0, "survival"), CREATIVE(1, "creative"), ADVENTURE(2, "adventure"), SPECTATOR(3, "spectator");
+diff --git a/src/main/java/network/stratus/sportpaper/server/WorldGenSettingsManager.java b/src/main/java/network/stratus/sportpaper/server/WorldGenSettingsManager.java
+new file mode 100644
+index 00000000..1933225e
+--- /dev/null
++++ b/src/main/java/network/stratus/sportpaper/server/WorldGenSettingsManager.java
+@@ -0,0 +1,64 @@
++package network.stratus.sportpaper.server;
++
++import net.minecraft.server.NBTTagCompound;
++import network.stratus.sportpaper.api.world.CustomizedGenerationSettings;
++
++/**
++ * Acts as a bridge between {@link
++ * network.stratus.sportpaper.api.world.CustomizedGenerationSettings} and NMS classes.
++ *
++ * @author Rafi Baum
++ */
++public class WorldGenSettingsManager {
++
++  private final CustomizedGenerationSettings settings;
++
++  /**
++   * Constructs the object with default settings.
++   */
++  public WorldGenSettingsManager() {
++    this(new CustomizedGenerationSettings());
++  }
++
++  /**
++   * Constructs the object with specified generation settings.
++   * @param settings to use in world gen.
++   */
++  public WorldGenSettingsManager(CustomizedGenerationSettings settings) {
++    this.settings = settings;
++  }
++
++  /**
++   * Constructs the object using data from an NBTTag.
++   * @param nbtTagCompound to read settings from
++   */
++  public WorldGenSettingsManager(NBTTagCompound nbtTagCompound) {
++    this.settings = new CustomizedGenerationSettings();
++
++    if (nbtTagCompound.hasKey("CaveFrequency")) {
++      settings.setCaveFrequency(nbtTagCompound.getInt("CaveFrequency"));
++    }
++
++    if (nbtTagCompound.hasKey("CaveMinLengthFactor")) {
++      settings.setCaveLengthMin(nbtTagCompound.getInt("CaveMinLengthFactor"));
++    }
++
++  }
++
++  /**
++   * @return settings to be used with world generation
++   */
++  public CustomizedGenerationSettings getSettings() {
++    return settings;
++  }
++
++  /**
++   * Saves custom settings to the map's NBTTag
++   * @param nbtTagCompound to save data to
++   */
++  public void save(NBTTagCompound nbtTagCompound) {
++    nbtTagCompound.setInt("CaveFrequency", settings.getCaveFrequency());
++    nbtTagCompound.setInt("CaveMinLengthFactor", settings.getCaveLengthMin());
++  }
++
++}
+diff --git a/src/main/java/org/bukkit/craftbukkit/CraftServer.java b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
+index 7ffc5f5b..310ccac2 100644
+--- a/src/main/java/org/bukkit/craftbukkit/CraftServer.java
++++ b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
+@@ -27,6 +27,7 @@ import javax.imageio.ImageIO;
+ 
+ import net.minecraft.server.*;
+ 
++import network.stratus.sportpaper.server.WorldGenSettingsManager;
+ import org.bukkit.BanList;
+ import org.bukkit.Bukkit;
+ import org.bukkit.ChatColor;
+@@ -818,6 +819,7 @@ public final class CraftServer implements Server {
+         } while(used);
+         WorldSettings worldSettings = new WorldSettings(creator.seed(), WorldSettings.EnumGamemode.getById(getDefaultGameMode().getValue()), generateStructures, creator.hardcore(), type);
+         worldSettings.setGeneratorSettings(creator.generatorSettings());
++        worldSettings.setCustomGenSettings(new WorldGenSettingsManager(creator.getCustomGenSettings())); // SportPaper
+ 
+         IDataManager sdm = new ServerNBTManager(getWorldContainer(), name, true);
+         WorldData worlddata = sdm.getWorldData();
+-- 
+2.17.1
+

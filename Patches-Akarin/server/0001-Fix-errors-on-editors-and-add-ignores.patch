@@ -1,0 +1,48 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Sotr <i@omc.hk>
+Date: Wed, 15 Apr 2020 00:52:56 +0700
+Subject: [PATCH] Fix errors on editors and add ignores
+
+
+diff --git a/.gitignore b/.gitignore
+index 67fb370cad6924895a6b27052dbd5c1767e3f0c9..9b89663438e30e3d45d66df4d06835b1ede8cd90 100644
+--- a/.gitignore
++++ b/.gitignore
+@@ -2,6 +2,7 @@
+ /.classpath
+ /.project
+ /.settings
++/.factorypath
+ 
+ # netbeans
+ /nbproject
+diff --git a/src/main/java/com/destroystokyo/paper/util/PlayerMobDistanceMap.java b/src/main/java/com/destroystokyo/paper/util/PlayerMobDistanceMap.java
+index 9ebd7ecb7a0ac73ccacf34c097056598bb5d26e8..677ccffd00e44eff74fa588a1af0c3e5f87c50e3 100644
+--- a/src/main/java/com/destroystokyo/paper/util/PlayerMobDistanceMap.java
++++ b/src/main/java/com/destroystokyo/paper/util/PlayerMobDistanceMap.java
+@@ -76,7 +76,7 @@ public final class PlayerMobDistanceMap {
+         final int centerX = currPosition.getX();
+         final int centerZ = currPosition.getZ();
+ 
+-        for (final Long2ObjectLinkedOpenHashMap.Entry<PooledHashSets.PooledObjectLinkedOpenHashSet<EntityPlayer>> entry : this.playerMap.long2ObjectEntrySet()) {
++        for (final it.unimi.dsi.fastutil.longs.Long2ObjectMap.Entry<PooledHashSets.PooledObjectLinkedOpenHashSet<EntityPlayer>> entry : this.playerMap.long2ObjectEntrySet()) { // Akarin - fix errors on eclipse
+             final long key = entry.getLongKey();
+             final PooledHashSets.PooledObjectLinkedOpenHashSet<EntityPlayer> map = entry.getValue();
+ 
+diff --git a/src/main/java/com/destroystokyo/paper/util/misc/AreaMap.java b/src/main/java/com/destroystokyo/paper/util/misc/AreaMap.java
+index 1330df2c1d3c4f52dad0adeb169409eb412814ab..534d24df5c9084da210183eac1e34f2c6faca4cd 100644
+--- a/src/main/java/com/destroystokyo/paper/util/misc/AreaMap.java
++++ b/src/main/java/com/destroystokyo/paper/util/misc/AreaMap.java
+@@ -173,10 +173,10 @@ public abstract class AreaMap<E> {
+         final int centerX = MCUtil.getCoordinateX(currPosition);
+         final int centerZ = MCUtil.getCoordinateZ(currPosition);
+ 
+-        for (Iterator<Long2ObjectLinkedOpenHashMap.Entry<PooledLinkedHashSets.PooledObjectLinkedOpenHashSet<E>>> iterator = this.areaMap.long2ObjectEntrySet().fastIterator();
++        for (Iterator<it.unimi.dsi.fastutil.longs.Long2ObjectMap.Entry<PooledLinkedHashSets.PooledObjectLinkedOpenHashSet<E>>> iterator = this.areaMap.long2ObjectEntrySet().fastIterator(); // Akarin - fix errors on eclipse
+              iterator.hasNext();) {
+ 
+-            final Long2ObjectLinkedOpenHashMap.Entry<PooledLinkedHashSets.PooledObjectLinkedOpenHashSet<E>> entry = iterator.next();
++            final it.unimi.dsi.fastutil.longs.Long2ObjectMap.Entry<PooledLinkedHashSets.PooledObjectLinkedOpenHashSet<E>> entry = iterator.next(); // Akarin - fix errors on eclipse
+             final long key = entry.getLongKey();
+             final PooledLinkedHashSets.PooledObjectLinkedOpenHashSet<E> map = entry.getValue();
+ 

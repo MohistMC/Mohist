@@ -1,0 +1,172 @@
+From 75eee45cbf96cd3a20b7f675665812f986ab43b9 Mon Sep 17 00:00:00 2001
+From: cswhite2000 <18whitechristop@gmail.com>
+Date: Wed, 8 Aug 2018 21:41:45 -0700
+Subject: [PATCH] Localize inventory titles
+
+
+diff --git a/src/main/java/org/bukkit/event/inventory/InventoryType.java b/src/main/java/org/bukkit/event/inventory/InventoryType.java
+index c36e0467..9192d5d2 100644
+--- a/src/main/java/org/bukkit/event/inventory/InventoryType.java
++++ b/src/main/java/org/bukkit/event/inventory/InventoryType.java
+@@ -6,77 +6,79 @@ public enum InventoryType {
+      * A chest inventory, with 0, 9, 18, 27, 36, 45, or 54 slots of type
+      * CONTAINER.
+      */
+-    CHEST(27,"Chest"),
++    CHEST(27, "Chest", "container.chest"),
+     /**
+      * A dispenser inventory, with 9 slots of type CONTAINER.
+      */
+-    DISPENSER(9,"Dispenser"),
++    DISPENSER(9, "Dispenser", "container.dispenser"),
+     /**
+      * A dropper inventory, with 9 slots of type CONTAINER.
+      */
+-    DROPPER(9, "Dropper"),
++    DROPPER(9, "Dropper", "container.dropper"),
+     /**
+      * A furnace inventory, with a RESULT slot, a CRAFTING slot, and a FUEL
+      * slot.
+      */
+-    FURNACE(3,"Furnace"),
++    FURNACE(3, "Furnace", "container.furnace"),
+     /**
+      * A workbench inventory, with 9 CRAFTING slots and a RESULT slot.
+      */
+-    WORKBENCH(10,"Crafting"),
++    WORKBENCH(10, "Crafting", "container.crafting"),
+     /**
+      * A player's crafting inventory, with 4 CRAFTING slots and a RESULT slot.
+      * Also implies that the 4 ARMOR slots are accessible.
+      */
+-    CRAFTING(5,"Crafting"),
++    CRAFTING(5, "Crafting", "container.crafting"),
+     /**
+      * An enchantment table inventory, with two CRAFTING slots and three
+      * enchanting buttons.
+      */
+-    ENCHANTING(2,"Enchanting"),
++    ENCHANTING(2, "Enchanting", "container.enchant"),
+     /**
+      * A brewing stand inventory, with one FUEL slot and three CRAFTING slots.
+      */
+-    BREWING(4,"Brewing"),
++    BREWING(4, "Brewing", "container.brewing"),
+     /**
+      * A player's inventory, with 9 QUICKBAR slots, 27 CONTAINER slots, and 4
+      * ARMOR slots. The ARMOUR slots may not be visible to the player, though.
+      */
+-    PLAYER(36,"Player"),
++    PLAYER(36, "Player", "container.inventory"),
+     /**
+      * The creative mode inventory, with only 9 QUICKBAR slots and nothing
+      * else. (The actual creative interface with the items is client-side and
+      * cannot be altered by the server.)
+      */
+-    CREATIVE(9,"Creative"),
++    CREATIVE(9, "Creative", "container.creative"),
+     /**
+      * The merchant inventory, with 2 TRADE-IN slots, and 1 RESULT slot.
+      */
+-    MERCHANT(3,"Villager"),
++    MERCHANT(3, "Villager", "entity.Villager.name"),
+     /**
+      * The ender chest inventory, with 27 slots.
+      */
+-    ENDER_CHEST(27,"Ender Chest"),
++    ENDER_CHEST(27, "Ender Chest", "container.enderchest"),
+     /**
+      * An anvil inventory, with 2 CRAFTING slots and 1 RESULT slot
+      */
+-    ANVIL(3, "Repairing"),
++    ANVIL(3, "Repairing", "container.repair"),
+     /**
+      * A beacon inventory, with 1 CRAFTING slot
+      */
+-    BEACON(1, "container.beacon"),
++    BEACON(1, "Beacon", "container.beacon"),
+     /**
+      * A hopper inventory, with 5 slots of type CONTAINER.
+      */
+-    HOPPER(5, "Item Hopper"),
++    HOPPER(5, "Item Hopper", "container.hopper"),
+     ;
+ 
+     private final int size;
+     private final String title;
++    private final String localizedTitle;
+ 
+-    private InventoryType(int defaultSize, String defaultTitle) {
++    private InventoryType(int defaultSize, String defaultTitle, String localizedTitle) {
+         size = defaultSize;
+         title = defaultTitle;
++        this.localizedTitle = localizedTitle;
+     }
+ 
+     public int getDefaultSize() {
+@@ -87,6 +89,10 @@ public enum InventoryType {
+         return title;
+     }
+ 
++    public String getLocalizedTitle() {
++        return localizedTitle;
++    }
++
+     public enum SlotType {
+         /**
+          * A result slot in a furnace or crafting inventory.
+diff --git a/src/main/java/org/bukkit/inventory/Inventory.java b/src/main/java/org/bukkit/inventory/Inventory.java
+index 873824ec..11dbabb7 100644
+--- a/src/main/java/org/bukkit/inventory/Inventory.java
++++ b/src/main/java/org/bukkit/inventory/Inventory.java
+@@ -4,6 +4,7 @@ import java.util.HashMap;
+ import java.util.List;
+ import java.util.ListIterator;
+ 
++import net.md_5.bungee.api.chat.BaseComponent;
+ import org.bukkit.Material;
+ import org.bukkit.Physical;
+ import org.bukkit.entity.HumanEntity;
+@@ -48,13 +49,26 @@ public interface Inventory extends Iterable<ItemStack>, Physical {
+     public void setMaxStackSize(int size);
+ 
+     /**
+-     * Returns the name of the inventory
++     * Returns the name of the inventory in the default server locale (US English)
+      *
+      * @return The String with the name of the inventory
++     * @deprecated not localized, use #getLocalizedName instead
+      */
+     public String getName();
+ 
+     /**
++     * @return true if this inventory has been given a custom name
++     *         false if it is using the default (localized) name
++     */
++    boolean hasCustomName();
++
++    /**
++     * @return the name of this inventory.
++     */
++    BaseComponent getLocalizedName();
++
++    /**
++
+      * Returns the ItemStack found in the slot at the given index
+      *
+      * @param index The index of the Slot's ItemStack to return
+@@ -346,9 +360,10 @@ public interface Inventory extends Iterable<ItemStack>, Physical {
+     public List<HumanEntity> getViewers();
+ 
+     /**
+-     * Returns the title of this inventory.
++     * Returns the title of this inventory in the default server locale (US English)
+      *
+      * @return A String with the title.
++     * @deprecated not localized, use #getLocalizedName instead
+      */
+     public String getTitle();
+ 
+-- 
+2.18.0
+

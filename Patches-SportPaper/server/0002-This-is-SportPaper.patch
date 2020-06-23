@@ -1,0 +1,88 @@
+From 7ea153ab75c2b0301d652a136d616093ec920c28 Mon Sep 17 00:00:00 2001
+From: Austin Mayes <austin@avicus.net>
+Date: Mon, 16 Oct 2017 11:45:28 -0500
+Subject: [PATCH] This is SportPaper
+
+  Also includes some legacy mc-dev imports
+
+diff --git a/pom.xml b/pom.xml
+index 6aaba502..092ca7df 100644
+--- a/pom.xml
++++ b/pom.xml
+@@ -1,12 +1,10 @@
+ <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+     <modelVersion>4.0.0</modelVersion>
+-    <groupId>org.github.paperspigot</groupId>
+-    <artifactId>paperspigot</artifactId>
++
++    <artifactId>sportpaper</artifactId>
+     <packaging>jar</packaging>
+     <version>1.8.8-R0.1-SNAPSHOT</version>
+-    <name>PaperSpigot</name>
+-    <url>https://hub.spigotmc.org/stash/projects/PAPER/</url>
+ 
+     <properties>
+         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+@@ -22,9 +20,9 @@
+     </properties>
+ 
+     <parent>
+-        <groupId>org.github.paperspigot</groupId>
+-        <artifactId>paperspigot-parent</artifactId>
+-        <version>dev-SNAPSHOT</version>
++        <groupId>network.stratus</groupId>
++        <artifactId>sportpaper-parent</artifactId>
++        <version>dev-1.8-SNAPSHOT</version>
+         <relativePath>../pom.xml</relativePath>
+     </parent>
+ 
+@@ -35,8 +33,8 @@
+             <version>3.0.3</version>
+         </dependency>
+         <dependency>
+-            <groupId>org.github.paperspigot</groupId>
+-            <artifactId>paperspigot-api</artifactId>
++            <groupId>network.stratus</groupId>
++            <artifactId>sportpaper-api</artifactId>
+             <version>${project.version}</version>
+             <type>jar</type>
+             <scope>compile</scope>
+@@ -113,7 +111,7 @@
+             <artifactId>gitdescribe-maven-plugin</artifactId>
+             <version>1.3</version>
+             <configuration>
+-                <outputPrefix>git-PaperSpigot-</outputPrefix>
++                <outputPrefix>git-SportPaper-</outputPrefix>
+                 <scmDirectory>..</scmDirectory>
+             </configuration>
+             <executions>
+diff --git a/src/main/java/net/minecraft/server/MinecraftServer.java b/src/main/java/net/minecraft/server/MinecraftServer.java
+index b400ce04..bbca20fa 100644
+--- a/src/main/java/net/minecraft/server/MinecraftServer.java
++++ b/src/main/java/net/minecraft/server/MinecraftServer.java
+@@ -1084,7 +1084,7 @@ public abstract class MinecraftServer implements Runnable, ICommandListener, IAs
+     }
+ 
+     public String getServerModName() {
+-        return "PaperSpigot"; // PaperSpigot - PaperSpigot > // Spigot - Spigot > // CraftBukkit - cb > vanilla!
++        return "SportPaper"; // SportPaper - SportPaper > // PaperSpigot - PaperSpigot > // Spigot - Spigot > // CraftBukkit - cb > vanilla!
+     }
+ 
+     public CrashReport b(CrashReport crashreport) {
+diff --git a/src/main/java/org/bukkit/craftbukkit/util/Versioning.java b/src/main/java/org/bukkit/craftbukkit/util/Versioning.java
+index 3a4b1424..36bb612a 100644
+--- a/src/main/java/org/bukkit/craftbukkit/util/Versioning.java
++++ b/src/main/java/org/bukkit/craftbukkit/util/Versioning.java
+@@ -11,7 +11,7 @@ public final class Versioning {
+     public static String getBukkitVersion() {
+         String result = "Unknown-Version";
+ 
+-        InputStream stream = Bukkit.class.getClassLoader().getResourceAsStream("META-INF/maven/org.github.paperspigot/paperspigot-api/pom.properties");
++        InputStream stream = Bukkit.class.getClassLoader().getResourceAsStream("META-INF/maven/network.stratus/sportpaper-api/pom.properties");
+         Properties properties = new Properties();
+ 
+         if (stream != null) {
+-- 
+2.18.0
+

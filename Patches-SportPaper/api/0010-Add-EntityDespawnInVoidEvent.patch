@@ -1,0 +1,40 @@
+From 0b1833a601b5df244b708907dd71791d6d128c3c Mon Sep 17 00:00:00 2001
+From: cswhite2000 <18whitechristop@gmail.com>
+Date: Sat, 4 Aug 2018 21:58:43 -0700
+Subject: [PATCH] Add EntityDespawnInVoidEvent
+
+
+diff --git a/src/main/java/org/bukkit/event/entity/EntityDespawnInVoidEvent.java b/src/main/java/org/bukkit/event/entity/EntityDespawnInVoidEvent.java
+new file mode 100644
+index 00000000..f413467b
+--- /dev/null
++++ b/src/main/java/org/bukkit/event/entity/EntityDespawnInVoidEvent.java
+@@ -0,0 +1,25 @@
++package org.bukkit.event.entity;
++
++import org.bukkit.entity.Entity;
++import org.bukkit.event.HandlerList;
++
++/**
++ * This event is called when an {@link org.bukkit.entity.Entity} is removed from the world because it has fallen 64
++ * blocks into the void.
++ */
++public class EntityDespawnInVoidEvent extends EntityEvent {
++    private static final HandlerList handlers = new HandlerList();
++
++    public EntityDespawnInVoidEvent(Entity what) {
++        super(what);
++    }
++
++    public static HandlerList getHandlerList() {
++        return handlers;
++    }
++
++    @Override
++    public HandlerList getHandlers() {
++        return handlers;
++    }
++}
+-- 
+2.18.0
+

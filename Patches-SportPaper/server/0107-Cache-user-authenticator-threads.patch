@@ -1,0 +1,46 @@
+From 0a45d3389de17b85389bd8163f3171d9353f1f06 Mon Sep 17 00:00:00 2001
+From: cswhite2000 <18whitechristop@gmail.com>
+Date: Tue, 14 Aug 2018 16:58:19 -0700
+Subject: [PATCH] Cache user authenticator threads
+
+
+diff --git a/src/main/java/net/minecraft/server/LoginListener.java b/src/main/java/net/minecraft/server/LoginListener.java
+index 541cec7c..1a1ace9e 100644
+--- a/src/main/java/net/minecraft/server/LoginListener.java
++++ b/src/main/java/net/minecraft/server/LoginListener.java
+@@ -81,6 +81,13 @@ public class LoginListener implements PacketLoginInListener, IUpdatePlayerListBo
+ 
+     }
+ 
++    // Paper start - Cache authenticator threads
++    private static final AtomicInteger threadId = new AtomicInteger(0);
++    private static final java.util.concurrent.ExecutorService authenticatorPool = java.util.concurrent.Executors.newCachedThreadPool(
++            r -> new Thread(r, "User Authenticator #" + threadId.incrementAndGet())
++    );
++    // Paper end
++
+     // Spigot start
+     public void initUUID()
+     {
+@@ -191,7 +198,8 @@ public class LoginListener implements PacketLoginInListener, IUpdatePlayerListBo
+             this.loginKey = packetlogininencryptionbegin.a(privatekey);
+             this.g = LoginListener.EnumProtocolState.AUTHENTICATING;
+             this.networkManager.a(this.loginKey);
+-            (new Thread("User Authenticator #" + LoginListener.b.incrementAndGet()) {
++            // Paper start - Cache authenticator threads
++            authenticatorPool.execute(new Runnable() {
+                 public void run() {
+                     GameProfile gameprofile = LoginListener.this.i;
+ 
+@@ -231,7 +239,7 @@ public class LoginListener implements PacketLoginInListener, IUpdatePlayerListBo
+                     }
+ 
+                 }
+-            }).start();
++            });// Paper end
+         }
+     }
+ 
+-- 
+2.19.0
+

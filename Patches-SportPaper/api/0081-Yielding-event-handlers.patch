@@ -1,0 +1,541 @@
+From 952554d18819b18a2c39ff99ce5b3e45f6ea757f Mon Sep 17 00:00:00 2001
+From: cswhite2000 <18whitechristop@gmail.com>
+Date: Mon, 27 Aug 2018 21:05:37 -0700
+Subject: [PATCH] Yielding event handlers
+
+
+diff --git a/src/main/java/org/bukkit/event/Event.java b/src/main/java/org/bukkit/event/Event.java
+index e7061112..b205da97 100644
+--- a/src/main/java/org/bukkit/event/Event.java
++++ b/src/main/java/org/bukkit/event/Event.java
+@@ -1,8 +1,17 @@
+ package org.bukkit.event;
+ 
++import com.google.common.cache.CacheBuilder;
++import com.google.common.cache.CacheLoader;
++import com.google.common.cache.LoadingCache;
++import com.google.common.util.concurrent.UncheckedExecutionException;
+ import org.bukkit.Bukkit;
+ import org.bukkit.plugin.PluginManager;
+ 
++import java.lang.reflect.Field;
++import java.lang.reflect.Method;
++import java.lang.reflect.Modifier;
++import java.util.concurrent.ExecutionException;
++
+ /**
+  * Represents an event.
+  *
+@@ -64,7 +73,84 @@ public abstract class Event {
+         return name;
+     }
+ 
+-    public abstract HandlerList getHandlers();
++    /**
++     * Continue dispatch of this event by calling {@link PluginManager#yield(Event)}.
++     */
++    public void yield() {
++        Bukkit.getPluginManager().yield(this);
++    }
++
++    /**
++     * Return the {@link HandlerList} for the given {@link Event} subtype
++     *
++     * This will search for an ancestor class containing a static method with this name and signature:
++     *
++     *     HandlerList getHandlerList();
++     *
++     * Or a static field with this name and type:
++     *
++     *     HandlerList handlers;
++     *
++     * The accessibility of the method/field does not matter.
++     *
++     * Results are cached per event type, so searches after the first are fairly quick
++     * and do not perform any reflective operations.
++     *
++     * @throws IllegalStateException if no registration class can be found, or the registration class
++     *                               throws a checked exception when attempting to get the list.
++     */
++    public static HandlerList getHandlerList(Class<? extends Event> type) {
++        return HANDLER_LISTS.getUnchecked(type);
++    }
++
++    private static final LoadingCache<Class<? extends Event>, HandlerList> HANDLER_LISTS = CacheBuilder.newBuilder().build(new CacheLoader<Class<? extends Event>, HandlerList>() {
++        @Override
++        public HandlerList load(Class<? extends Event> clazz) throws Exception {
++            Method method = null;
++            try {
++                method = clazz.getDeclaredMethod("getHandlerList");
++            } catch(NoSuchMethodException ignored) {}
++            if(method != null && Modifier.isStatic(method.getModifiers()) && HandlerList.class.isAssignableFrom(method.getReturnType())) {
++                method.setAccessible(true);
++                return (HandlerList) method.invoke(null);
++            }
++
++            Field field = null;
++            try {
++                field = clazz.getDeclaredField("handlers");
++            } catch(NoSuchFieldException ignored) {}
++            if(field != null && Modifier.isStatic(field.getModifiers()) && HandlerList.class.isAssignableFrom(field.getType())) {
++                field.setAccessible(true);
++                return (HandlerList) field.get(null);
++            }
++
++            Throwable ex = null;
++            final Class<?> up = clazz.getSuperclass();
++            if(up != null && !up.equals(Event.class) && Event.class.isAssignableFrom(up)) {
++                try {
++                    return HANDLER_LISTS.get(up.asSubclass(Event.class));
++                } catch(ExecutionException e) {
++                    ex = e.getCause();
++                } catch(UncheckedExecutionException e) {
++                    ex = e.getCause();
++                }
++            }
++
++            throw new IllegalStateException("Unable to find HandlerList for event type " + clazz.getName(), ex);
++        }
++    });
++
++    /**
++     * Return the {@link HandlerList} for this event.
++     *
++     * By default, this calls {@link #getHandlerList(Class)} with this object's class.
++     * Since this method is called every time the event is dispatched, it may be a
++     * worthwhile optimization to override it and return the list directly.
++     */
++    public HandlerList getHandlers() {
++        return getHandlerList(getClass());
++    }
++
+ 
+     /**
+      * Any custom event that should not by synchronized with other events must
+diff --git a/src/main/java/org/bukkit/event/EventCallback.java b/src/main/java/org/bukkit/event/EventCallback.java
+new file mode 100644
+index 00000000..306fd4e3
+--- /dev/null
++++ b/src/main/java/org/bukkit/event/EventCallback.java
+@@ -0,0 +1,8 @@
++package org.bukkit.event;
++
++/**
++ * Something that is called with an {@link Event}, has several uses.
++ */
++public interface EventCallback {
++    void callEvent(Event event) throws Exception;
++}
+diff --git a/src/main/java/org/bukkit/plugin/PluginManager.java b/src/main/java/org/bukkit/plugin/PluginManager.java
+index e5638d56..1fd306d1 100644
+--- a/src/main/java/org/bukkit/plugin/PluginManager.java
++++ b/src/main/java/org/bukkit/plugin/PluginManager.java
+@@ -4,6 +4,7 @@ import java.io.File;
+ import java.util.Set;
+ 
+ import org.bukkit.event.Event;
++import org.bukkit.event.EventCallback;
+ import org.bukkit.event.EventPriority;
+ import org.bukkit.event.Listener;
+ import org.bukkit.permissions.Permissible;
+@@ -93,16 +94,101 @@ public interface PluginManager {
+     public void clearPlugins();
+ 
+     /**
+-     * Calls an event with the given details
++     * Call {@link #callEvent(Event, EventPriority, EventCallback)} with null priority and body.
++     */
++    void callEvent(Event event) throws IllegalStateException;
++
++    /**
++     * Call {@link #callEvent(Event, EventPriority, EventCallback)} with null priority.
++     */
++    void callEvent(Event event, EventCallback body) throws IllegalStateException;
++
++    /**
++     * Call {@link #callEvent(Event, EventPriority, EventCallback)} with a null body.
++     */
++    void callEvent(Event event, EventPriority priority) throws IllegalStateException;
++
++    /**
++     * Dispatch the given event to all applicable registered event handlers,
++     * then (optionally) to the given {@link EventCallback}.
++     *
++     * Event handlers are chained in order of priority, each being called from within
++     * the previous handler, either explicitly when that handler calls {@link #yield(Event)},
++     * or implicitly when the handler returns without calling it. The {@link EventCallback},
++     * if present, effectively becomes the innermost handler for this particular dispatch.
++     *
++     * @param event         Event object passed to handlers
++     * @param priority      If non-null, only call handlers at this priority level
++     * @param body          Body of the actual event, or null for a no-op event
+      *
+-     * @param event Event details
+      * @throws IllegalStateException Thrown when an asynchronous event is
+      *     fired from synchronous code.
+      *     <p>
+      *     <i>Note: This is best-effort basis, and should not be used to test
+      *     synchronized state. This is an indicator for flawed flow logic.</i>
+      */
+-    public void callEvent(Event event) throws IllegalStateException;
++    void callEvent(Event event, EventPriority priority, EventCallback body) throws IllegalStateException;
++
++    /**
++     * When called from within a handler for the given {@link Event}, continues with the
++     * dispatch of the event, by calling the next registered handler, or the {@link EventCallback}
++     * itself, if there are no more handlers. This method does not return until all
++     * of those things have completed.
++     *
++     * Events cannot be cancelled after calling this method, and the effects of doing
++     * so are undefined.
++     *
++     * If an event handler does not call this method itself, it will effectively be
++     * called automatically, just after the handler returns.
++     *
++     * @param event The event being executed
++     *
++     * @throws IllegalStateException if called from anywhere besides a handler for the given event,
++     *                               or if called multiple times from the same handler.
++     */
++    void yield(Event event) throws IllegalStateException;
++
++    /**
++     * Dispatch the given event to a single {@link RegisteredEventHandler}, then (optionally)
++     * to the given {@link EventCallback}.
++     *
++     * This method does not interact with the registration system at all, it simply calls
++     * the given handler directly. If the plugin returned by {@link RegisteredEventHandler#getPlugin()}
++     * is not currently enabled, then the handler is not called, but the {@link EventCallback} is.
++     *
++     * This is roughly equivalent to calling {@link #callEvent(Event, EventCallback)},
++     * while the given handler is the only one registered, except no synchronization or
++     * thread checking is done.
++     *
++     * The event system uses this method internally, and it is exposed primarily for the
++     * purpose of extending the event system.
++     *
++     * @param event         Event object passed to the handler
++     * @param priority      If non-null, only call the handler if it has this exact priority level
++     * @param handler       Event handler to call
++     * @param body          If non-null, called after the handler, or right away if the handler is not called
++     */
++    void callEventHandler(Event event, EventPriority priority, RegisteredEventHandler handler, EventCallback body);
++
++    /**
++     * Dispatch the given event directly to the given {@link EventCallback}.
++     *
++     * The event system uses this method internally, and it is exposed primarily for the
++     * purpose of extending the event system.
++     */
++    void callEventBody(Event event, EventCallback body);
++
++    /**
++     * Handle the given {@link Throwable} as if it was thrown from an event handler
++     * belonging to the given {@link Plugin}.
++     *
++     * A full trace will be sent to the server logger, and {@link AuthorNagException}s
++     * will be handled appropriately.
++     *
++     * The event system uses this method internally, and it is exposed primarily for the
++     * purpose of extending the event system.
++     */
++    void handleEventException(Event event, Plugin plugin, Throwable ex);
+ 
+     /**
+      * Registers all the events in the given listener class
+diff --git a/src/main/java/org/bukkit/plugin/RegisteredEventHandler.java b/src/main/java/org/bukkit/plugin/RegisteredEventHandler.java
+new file mode 100644
+index 00000000..4dd18407
+--- /dev/null
++++ b/src/main/java/org/bukkit/plugin/RegisteredEventHandler.java
+@@ -0,0 +1,20 @@
++package org.bukkit.plugin;
++
++import org.bukkit.event.Event;
++import org.bukkit.event.EventCallback;
++import org.bukkit.event.EventPriority;
++
++/**
++ * An {@link EventCallback} belonging to a specific {@link Plugin}, that intercepts
++ * {@link Event}s at a specific {@link EventPriority} level.
++ *
++ * Used internally by the event system.
++ */
++public interface RegisteredEventHandler extends EventCallback {
++
++    Plugin getPlugin();
++
++    EventPriority getPriority();
++
++    boolean isIgnoringCancelled();
++}
+diff --git a/src/main/java/org/bukkit/plugin/RegisteredListener.java b/src/main/java/org/bukkit/plugin/RegisteredListener.java
+index 9dd0b7a1..33a57d8d 100644
+--- a/src/main/java/org/bukkit/plugin/RegisteredListener.java
++++ b/src/main/java/org/bukkit/plugin/RegisteredListener.java
+@@ -5,7 +5,7 @@ import org.bukkit.event.*;
+ /**
+  * Stores relevant information for plugin listeners
+  */
+-public class RegisteredListener {
++public class RegisteredListener implements RegisteredEventHandler {
+     private final Listener listener;
+     private final EventPriority priority;
+     private final Plugin plugin;
+@@ -34,6 +34,7 @@ public class RegisteredListener {
+      *
+      * @return Registered Plugin
+      */
++    @Override
+     public Plugin getPlugin() {
+         return plugin;
+     }
+@@ -43,6 +44,7 @@ public class RegisteredListener {
+      *
+      * @return Registered Priority
+      */
++    @Override
+     public EventPriority getPriority() {
+         return priority;
+     }
+@@ -53,6 +55,7 @@ public class RegisteredListener {
+      * @param event The event
+      * @throws EventException If an event handler throws an exception.
+      */
++    @Override
+     public void callEvent(final Event event) throws EventException {
+         if (event instanceof Cancellable){
+             if (((Cancellable) event).isCancelled() && isIgnoringCancelled()){
+@@ -62,11 +65,12 @@ public class RegisteredListener {
+         executor.execute(listener, event);
+     }
+ 
+-     /**
++    /**
+      * Whether this listener accepts cancelled events
+      *
+      * @return True when ignoring cancelled events
+      */
++    @Override
+     public boolean isIgnoringCancelled() {
+         return ignoreCancelled;
+     }
+diff --git a/src/main/java/org/bukkit/plugin/SimplePluginManager.java b/src/main/java/org/bukkit/plugin/SimplePluginManager.java
+index ce9839ec..3447aae4 100644
+--- a/src/main/java/org/bukkit/plugin/SimplePluginManager.java
++++ b/src/main/java/org/bukkit/plugin/SimplePluginManager.java
+@@ -24,6 +24,7 @@ import org.bukkit.command.Command;
+ import org.bukkit.command.PluginCommandYamlParser;
+ import org.bukkit.command.SimpleCommandMap;
+ import org.bukkit.event.Event;
++import org.bukkit.event.EventCallback;
+ import org.bukkit.event.EventPriority;
+ import org.bukkit.event.HandlerList;
+ import org.bukkit.event.Listener;
+@@ -481,14 +482,23 @@ public final class SimplePluginManager implements PluginManager {
+         }
+     }
+ 
+-    /**
+-     * Calls an event with the given details.
+-     * <p>
+-     * This method only synchronizes when the event is not asynchronous.
+-     *
+-     * @param event Event details
+-     */
++    @Override
+     public void callEvent(Event event) {
++        callEvent(event, null, null);
++    }
++
++    @Override
++    public void callEvent(Event event, EventCallback body) {
++        callEvent(event, null, body);
++    }
++
++    @Override
++    public void callEvent(Event event, EventPriority priority) {
++        callEvent(event, priority, null);
++    }
++
++    @Override
++    public void callEvent(Event event, EventPriority priority, EventCallback body) {
+         if (event.isAsynchronous()) {
+             if (Thread.holdsLock(this)) {
+                 throw new IllegalStateException(event.getEventName() + " cannot be triggered asynchronously from inside synchronized code.");
+@@ -496,48 +506,96 @@ public final class SimplePluginManager implements PluginManager {
+             if (server.isPrimaryThread()) {
+                 throw new IllegalStateException(event.getEventName() + " cannot be triggered asynchronously from primary server thread.");
+             }
+-            fireEvent(event);
++            callEventSynchronously(event, priority, body);
+         } else {
+             synchronized (this) {
+-                fireEvent(event);
++                callEventSynchronously(event, priority, body);
+             }
+         }
+     }
+ 
+-    private void fireEvent(Event event) {
+-        HandlerList handlers = event.getHandlers();
+-        RegisteredListener[] listeners = handlers.getRegisteredListeners();
++    private void callEventSynchronously(final Event event, EventPriority priority, final EventCallback body) {
++        dispatchEvent(event, priority, body, event.getHandlers().getRegisteredListeners(), 0);
++    }
+ 
+-        for (RegisteredListener registration : listeners) {
+-            if (!registration.getPlugin().isEnabled()) {
+-                continue;
+-            }
+ 
+-            try {
+-                registration.callEvent(event);
+-            } catch (AuthorNagException ex) {
+-                Plugin plugin = registration.getPlugin();
+-
+-                if (plugin.isNaggable()) {
+-                    plugin.setNaggable(false);
+-
+-                    server.getLogger().log(Level.SEVERE, String.format(
+-                            "Nag author(s): '%s' of '%s' about the following: %s",
+-                            plugin.getDescription().getAuthors(),
+-                            plugin.getDescription().getFullName(),
+-                            ex.getMessage()
+-                            ));
++    private void dispatchEvent(final Event event, final EventPriority priority, final EventCallback body, final RegisteredListener[] handlers, final int index) {
++        if(index < handlers.length) {
++            // If there are more handlers, call the current one, with a continuation that calls the next one
++            callEventHandler(event, priority, handlers[index], new EventCallback() {
++                @Override public void callEvent(Event event) throws Exception {
++                    dispatchEvent(event, priority, body, handlers, index + 1);
+                 }
++            });
++        } else {
++            // If there are no more handlers, call the event body
++            callEventBody(event, body);
++        }
++    }
++
++    private static final ThreadLocal<Map<Event, EventCallback>> eventBodies = new ThreadLocal<Map<Event, EventCallback>>() {
++        @Override protected Map<Event, EventCallback> initialValue() {
++            return new HashMap<Event, EventCallback>();
++        }
++    };
++
++    @Override
++    public void yield(Event event) {
++        final EventCallback body = eventBodies.get().remove(event);
++        if(body == null) {
++            throw new IllegalStateException("Yielded to event from outside a handler, or multiple times from the same handler");
++        }
++        callEventBody(event, body);
++    }
++
++    @Override
++    public void callEventHandler(Event event, EventPriority priority, RegisteredEventHandler handler, EventCallback body) {
++        final Plugin plugin = handler.getPlugin();
++        if(plugin.isEnabled() && (priority == null || priority.equals(handler.getPriority()))) {
++            // Save the continuation in a thread-local, and call the handler
++            eventBodies.get().put(event, body);
++
++
++            try {
++                handler.callEvent(event);
+             } catch (Throwable ex) {
+-                // Paper start - error reporting
+-                String msg = "Could not pass event " + event.getEventName() + " to " + registration.getPlugin().getDescription().getFullName();
+-                server.getLogger().log(Level.SEVERE, msg, ex);
+-                if (!(event instanceof ServerExceptionEvent)) { // We don't want to cause an endless event loop
+-                    callEvent(new ServerExceptionEvent(new ServerEventException(msg, ex, registration.getPlugin(), registration.getListener(), event)));
+-                }
+-                // Paper end
++                handleEventException(event, plugin, ex);
++            } finally {
++                // Ensure the continuation is cleaned up.
++                // If the handler already yielded, this will set the variable to null,
++                // preventing the call frok happening below.
++                body = eventBodies.get().remove(event);
+             }
+         }
++        callEventBody(event, body);
++    }
++
++    @Override
++    public void callEventBody(Event event, EventCallback body) {
++        if(body == null) return;
++        try {
++            body.callEvent(event);
++        } catch (Throwable ex) {
++            server.getLogger().log(Level.SEVERE, "Exception running body of event " + event.getEventName(), ex);
++        }
++    }
++
++    @Override
++    public void handleEventException(Event event, Plugin plugin, Throwable ex) {
++        if(ex instanceof AuthorNagException) {
++            if (plugin.isNaggable()) {
++                plugin.setNaggable(false);
++
++                server.getLogger().log(Level.SEVERE, String.format(
++                    "Nag author(s): '%s' of '%s' about the following: %s",
++                    plugin.getDescription().getAuthors(),
++                    plugin.getDescription().getFullName(),
++                    ex.getMessage()
++                ));
++            }
++        } else {
++            server.getLogger().log(Level.SEVERE, "Could not pass event " + event.getEventName() + " to " + plugin.getDescription().getFullName(), ex);
++        }
+     }
+ 
+     public void registerEvents(Listener listener, Plugin plugin) {
+@@ -546,7 +604,7 @@ public final class SimplePluginManager implements PluginManager {
+         }
+ 
+         for (Map.Entry<Class<? extends Event>, Set<RegisteredListener>> entry : plugin.getPluginLoader().createRegisteredListeners(listener, plugin).entrySet()) {
+-            getEventListeners(getRegistrationClass(entry.getKey())).registerAll(entry.getValue());
++            Event.getHandlerList(entry.getKey()).registerAll(entry.getValue());
+         }
+ 
+     }
+@@ -579,34 +637,9 @@ public final class SimplePluginManager implements PluginManager {
+ 
+         executor = new co.aikar.timings.TimedEventExecutor(executor, plugin, null, event); // Spigot
+         if (false) { // Spigot - RL handles useTimings check now
+-            getEventListeners(event).register(new TimedRegisteredListener(listener, executor, priority, plugin, ignoreCancelled));
++            Event.getHandlerList(event).register(new TimedRegisteredListener(listener, executor, priority, plugin, ignoreCancelled));
+         } else {
+-            getEventListeners(event).register(new RegisteredListener(listener, executor, priority, plugin, ignoreCancelled));
+-        }
+-    }
+-
+-    private HandlerList getEventListeners(Class<? extends Event> type) {
+-        try {
+-            Method method = getRegistrationClass(type).getDeclaredMethod("getHandlerList");
+-            method.setAccessible(true);
+-            return (HandlerList) method.invoke(null);
+-        } catch (Exception e) {
+-            throw new IllegalPluginAccessException(e.toString());
+-        }
+-    }
+-
+-    private Class<? extends Event> getRegistrationClass(Class<? extends Event> clazz) {
+-        try {
+-            clazz.getDeclaredMethod("getHandlerList");
+-            return clazz;
+-        } catch (NoSuchMethodException e) {
+-            if (clazz.getSuperclass() != null
+-                    && !clazz.getSuperclass().equals(Event.class)
+-                    && Event.class.isAssignableFrom(clazz.getSuperclass())) {
+-                return getRegistrationClass(clazz.getSuperclass().asSubclass(Event.class));
+-            } else {
+-                throw new IllegalPluginAccessException("Unable to find handler list for event " + clazz.getName() + ". Static getHandlerList method required!");
+-            }
++            Event.getHandlerList(event).register(new RegisteredListener(listener, executor, priority, plugin, ignoreCancelled));
+         }
+     }
+ 
+-- 
+2.19.0
+

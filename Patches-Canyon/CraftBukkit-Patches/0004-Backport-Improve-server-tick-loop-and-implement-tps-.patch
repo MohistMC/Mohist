@@ -1,0 +1,166 @@
+From 4585b783ae0de34a81e3371249ba98fecafa6594 Mon Sep 17 00:00:00 2001
+From: Andrew Steinborn <git@steinborn.me>
+Date: Thu, 22 Aug 2019 00:38:54 -0400
+Subject: [PATCH] Backport: Improve server tick loop and implement tps api
+
+This patch was backported from Paper 1.14.4 to Canyon. The original
+author of the patch in Paper is Aikar.
+
+This patch provides a more stable server tick loop that is not affected
+by changes in the system time. In addition, it is intended to keep the
+server at 20 TPS unless it can not realistically do so. This patch also
+allows Canyon to keep track of server TPS, which can be viewed with the
+/tps command.
+
+diff --git a/src/main/java/net/minecraft/server/MinecraftServer.java b/src/main/java/net/minecraft/server/MinecraftServer.java
+index 59358fbd..28178ba9 100644
+--- a/src/main/java/net/minecraft/server/MinecraftServer.java
++++ b/src/main/java/net/minecraft/server/MinecraftServer.java
+@@ -63,6 +63,62 @@ public class MinecraftServer implements Runnable, ICommandListener {
+     public static int currentTick;
+     // CraftBukkit end
+ 
++    // Canyon start - improved server tick loop and TPS monitoring
++    // Sourced from Paper
++    public static final int TPS = 20;
++    public static final int TICK_TIME = 1000000000 / TPS;
++    private static final int SAMPLE_INTERVAL = 20;
++
++    private static final long SEC_IN_NANO = 1000000000;
++    private static final long MAX_CATCHUP_BUFFER = TICK_TIME * TPS * 60L;
++    private long lastTick = 0;
++    private long catchupTime = 0;
++    public final RollingAverage tps1 = new RollingAverage(60);
++    public final RollingAverage tps5 = new RollingAverage(60 * 5);
++    public final RollingAverage tps15 = new RollingAverage(60 * 15);
++
++    public static class RollingAverage {
++        private final int size;
++        private long time;
++        private java.math.BigDecimal total;
++        private int index = 0;
++        private final java.math.BigDecimal[] samples;
++        private final long[] times;
++
++        RollingAverage(int size) {
++            this.size = size;
++            this.time = size * SEC_IN_NANO;
++            this.total = dec(TPS).multiply(dec(SEC_IN_NANO)).multiply(dec(size));
++            this.samples = new java.math.BigDecimal[size];
++            this.times = new long[size];
++            for (int i = 0; i < size; i++) {
++                this.samples[i] = dec(TPS);
++                this.times[i] = SEC_IN_NANO;
++            }
++        }
++
++        private static java.math.BigDecimal dec(long t) {
++            return new java.math.BigDecimal(t);
++        }
++        public void add(java.math.BigDecimal x, long t) {
++            time -= times[index];
++            total = total.subtract(samples[index].multiply(dec(times[index])));
++            samples[index] = x;
++            times[index] = t;
++            time += t;
++            total = total.add(x.multiply(dec(t)));
++            if (++index == size) {
++                index = 0;
++            }
++        }
++
++        public double getAverage() {
++            return total.divide(dec(time), 30, java.math.RoundingMode.HALF_UP).doubleValue();
++        }
++    }
++    private static final java.math.BigDecimal TPS_BASE = new java.math.BigDecimal(1E9).multiply(new java.math.BigDecimal(SAMPLE_INTERVAL));
++    // Canyon end
++
+     public MinecraftServer(OptionSet options) { // CraftBukkit - adds argument OptionSet
+         new ThreadSleepForever(this);
+ 
+@@ -342,8 +398,45 @@ public class MinecraftServer implements Runnable, ICommandListener {
+     public void run() {
+         try {
+             if (this.init()) {
+-                long i = System.currentTimeMillis();
++                // Canyon Start - Improve server tick loop
++                long start = System.nanoTime(), curTime, wait, tickSection = start;
++                lastTick = start - TICK_TIME; // Paper
+ 
++                while (this.isRunning) {
++                    curTime = System.nanoTime();
++                    // Paper start - Further improve server tick loop
++                    wait = TICK_TIME - (curTime - lastTick);
++                    if (wait > 0) {
++                        if (catchupTime < 2E6) {
++                            wait += Math.abs(catchupTime);
++                        } else if (wait < catchupTime) {
++                            catchupTime -= wait;
++                            wait = 0;
++                        } else {
++                            wait -= catchupTime;
++                            catchupTime = 0;
++                        }
++                    }
++                    if (wait > 0) {
++                        Thread.sleep(wait / 1000000);
++                        curTime = System.nanoTime();
++                        wait = TICK_TIME - (curTime - lastTick);
++                    }
++
++                    catchupTime = Math.min(MAX_CATCHUP_BUFFER, catchupTime - wait);
++                    if ( ++MinecraftServer.currentTick % SAMPLE_INTERVAL == 0 )
++                    {
++                        final long diff = curTime - tickSection;
++                        java.math.BigDecimal currentTps = TPS_BASE.divide(new java.math.BigDecimal(diff), 30, java.math.RoundingMode.HALF_UP);
++                        tps1.add(currentTps, diff);
++                        tps5.add(currentTps, diff);
++                        tps15.add(currentTps, diff);
++                        tickSection = curTime;
++                    }
++
++                    lastTick = curTime;
++                    this.h();
++                }/*
+                 for (long j = 0L; this.isRunning; Thread.sleep(1L)) {
+                     long k = System.currentTimeMillis();
+                     long l = k - i;
+@@ -370,7 +463,8 @@ public class MinecraftServer implements Runnable, ICommandListener {
+                             this.h();
+                         }
+                     }
+-                }
++                }*/
++                // Canyon end
+             } else {
+                 while (this.isRunning) {
+                     this.b();
+diff --git a/src/main/java/org/bukkit/craftbukkit/CraftServer.java b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
+index e7e3ccf7..b2123565 100644
+--- a/src/main/java/org/bukkit/craftbukkit/CraftServer.java
++++ b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
+@@ -1,6 +1,7 @@
+ package org.bukkit.craftbukkit;
+ 
+ import java.io.FileNotFoundException;
++
+ import org.bukkit.generator.ChunkGenerator;
+ import com.avaje.ebean.config.DataSourceConfig;
+ import com.avaje.ebean.config.ServerConfig;
+@@ -807,6 +808,12 @@ public final class CraftServer implements Server {
+         return result;
+     }
+ 
++    // Canyon start
++    public double[] getTPS() {
++        return new double[] { console.tps1.getAverage(), console.tps5.getAverage(), console.tps15.getAverage() };
++    }
++    // Canyon end
++
+     public void setWhitelist(boolean value) {
+         server.o = value;
+         console.propertyManager.b("white-list", value);
+-- 
+2.25.1
+

@@ -1,0 +1,68 @@
+From 32e02e5573ba5f86997d6b485bf21c2d87e98151 Mon Sep 17 00:00:00 2001
+From: cswhite2000 <18whitechristop@gmail.com>
+Date: Tue, 21 Aug 2018 16:08:41 -0700
+Subject: [PATCH] Refresh player inventory when cancelling
+ PlayerInteractEntityEvent and PlayerBucket events
+
+When interacting with entities with an item, the client will assume
+the interaction is successful, and update the held item on the
+client. However, if the interaction is cancelled on the server side,
+the client will still mistakenly remove/replace the item in hand.
+
+Examples for this are milking cows with a bucket or dyeing sheep.
+The bucket is replaced with milk and the dye removed from inventory.
+
+Refresh the player inventory when PlayerInteractEntityEvent is
+cancelled to avoid this problem.
+
+diff --git a/src/main/java/net/minecraft/server/ItemBucket.java b/src/main/java/net/minecraft/server/ItemBucket.java
+index f3bdce53..2e24129f 100644
+--- a/src/main/java/net/minecraft/server/ItemBucket.java
++++ b/src/main/java/net/minecraft/server/ItemBucket.java
+@@ -46,6 +46,7 @@ public class ItemBucket extends Item {
+                         PlayerBucketFillEvent event = CraftEventFactory.callPlayerBucketFillEvent(entityhuman, blockposition.getX(), blockposition.getY(), blockposition.getZ(), null, itemstack, Items.WATER_BUCKET);
+ 
+                         if (event.isCancelled()) {
++                            ((EntityPlayer)entityhuman).updateInventory(entityhuman.defaultContainer);
+                             return itemstack;
+                         }
+                         // CraftBukkit end
+@@ -59,6 +60,7 @@ public class ItemBucket extends Item {
+                         PlayerBucketFillEvent event = CraftEventFactory.callPlayerBucketFillEvent(entityhuman, blockposition.getX(), blockposition.getY(), blockposition.getZ(), null, itemstack, Items.LAVA_BUCKET);
+ 
+                         if (event.isCancelled()) {
++                            ((EntityPlayer)entityhuman).updateInventory(entityhuman.defaultContainer);
+                             return itemstack;
+                         }
+                         // CraftBukkit end
+@@ -72,6 +74,7 @@ public class ItemBucket extends Item {
+                         PlayerBucketEmptyEvent event = CraftEventFactory.callPlayerBucketEmptyEvent(entityhuman, blockposition.getX(), blockposition.getY(), blockposition.getZ(), movingobjectposition.direction, itemstack);
+ 
+                         if (event.isCancelled()) {
++                            ((EntityPlayer)entityhuman).updateInventory(entityhuman.defaultContainer);
+                             return itemstack;
+                         }
+ 
+@@ -90,6 +93,7 @@ public class ItemBucket extends Item {
+                     if (world.isEmpty(blockposition1) || !world.getType(blockposition1).getBlock().getMaterial().isBuildable()) {
+                         PlayerBucketEmptyEvent event = CraftEventFactory.callPlayerBucketEmptyEvent(entityhuman, blockposition.getX(), blockposition.getY(), blockposition.getZ(), movingobjectposition.direction, itemstack);
+                         if (event.isCancelled()) {
++                            ((EntityPlayer)entityhuman).updateInventory(entityhuman.defaultContainer);
+                             return itemstack;
+                         }
+ 
+diff --git a/src/main/java/net/minecraft/server/PlayerConnection.java b/src/main/java/net/minecraft/server/PlayerConnection.java
+index e25543ac..97394ed5 100644
+--- a/src/main/java/net/minecraft/server/PlayerConnection.java
++++ b/src/main/java/net/minecraft/server/PlayerConnection.java
+@@ -1475,6 +1475,7 @@ public class PlayerConnection implements PacketListenerPlayIn, IUpdatePlayerList
+                     }
+ 
+                     if (event.isCancelled()) {
++                        this.player.updateInventory(this.player.activeContainer); // Paper - Refresh player inventory
+                         return;
+                     }
+                     // CraftBukkit end
+-- 
+2.19.0
+

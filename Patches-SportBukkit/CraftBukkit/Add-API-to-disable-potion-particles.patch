@@ -1,0 +1,77 @@
+From: Jedediah Smith <jedediah@silencegreys.com>
+Date: Fri, 9 May 2014 23:48:01 -0400
+Subject: [PATCH] Add API to disable potion particles
+
+
+diff --git a/src/main/java/net/minecraft/server/EntityLiving.java b/src/main/java/net/minecraft/server/EntityLiving.java
+--- a/src/main/java/net/minecraft/server/EntityLiving.java
++++ b/src/main/java/net/minecraft/server/EntityLiving.java
+@@ -29,6 +29,8 @@ import org.bukkit.event.entity.EntityRegainHealthEvent;
+ import org.bukkit.event.entity.EntityResurrectEvent;
+ import org.bukkit.event.entity.EntityTeleportEvent;
+ import org.bukkit.event.player.PlayerItemConsumeEvent;
++import org.bukkit.event.vehicle.VehicleExitEvent;
++import org.bukkit.craftbukkit.entity.CraftLivingEntity;
+ // CraftBukkit end
+ 
+ public abstract class EntityLiving extends Entity {
+@@ -600,10 +602,18 @@ public abstract class EntityLiving extends Entity {
+             this.bQ();
+             this.setInvisible(false);
+         } else {
++            // SportBukkit start - optionally disable potion particles
++            if(((CraftLivingEntity) getBukkitEntity()).getPotionParticles()) {
++            // SportBukkit end
+             Collection collection = this.effects.values();
+ 
+             this.datawatcher.set(EntityLiving.h, Boolean.valueOf(a(collection)));
+             this.datawatcher.set(EntityLiving.g, Integer.valueOf(PotionUtil.a(collection)));
++            // SportBukkit start
++            } else {
++                this.clearPotionEffectMetadata();
++            }
++            // SportBukkit end
+             this.setInvisible(this.hasEffect(MobEffects.INVISIBILITY));
+         }
+ 
+@@ -855,7 +865,7 @@ public abstract class EntityLiving extends Entity {
+ 
+                 // CraftBukkit start
+                 if(this instanceof EntityAnimal){
+-                    ((EntityAnimal)this).resetLove(); 
++                    ((EntityAnimal)this).resetLove();
+                     if(this instanceof EntityTameableAnimal){
+                         ((EntityTameableAnimal)this).getGoalSit().setSitting(false);
+                     }
+diff --git a/src/main/java/org/bukkit/craftbukkit/entity/CraftLivingEntity.java b/src/main/java/org/bukkit/craftbukkit/entity/CraftLivingEntity.java
+--- a/src/main/java/org/bukkit/craftbukkit/entity/CraftLivingEntity.java
++++ b/src/main/java/org/bukkit/craftbukkit/entity/CraftLivingEntity.java
+@@ -77,6 +77,7 @@ import org.bukkit.util.Vector;
+ 
+ public class CraftLivingEntity extends CraftEntity implements LivingEntity {
+     private CraftEntityEquipment equipment;
++    private boolean potionParticles = true;
+ 
+     public CraftLivingEntity(final CraftServer server, final EntityLiving entity) {
+         super(server, entity);
+@@ -331,6 +332,20 @@ public class CraftLivingEntity extends CraftEntity implements LivingEntity {
+         return effects;
+     }
+ 
++    @Override
++    public void setPotionParticles(boolean enabled) {
++        this.potionParticles = enabled;
++        if(enabled) {
++            this.getHandle().updateEffects = true;
++        } else {
++            this.getHandle().clearPotionEffectMetadata();
++        }
++    }
++
++    public boolean getPotionParticles() {
++        return this.potionParticles;
++    }
++
+     public <T extends Projectile> T launchProjectile(Class<? extends T> projectile) {
+         return launchProjectile(projectile, null);
+     }

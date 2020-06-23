@@ -1,0 +1,119 @@
+From: Jedediah Smith <jedediah@silencegreys.com>
+Date: Tue, 26 May 2015 04:01:46 -0400
+Subject: [PATCH] Accurate block hit checking
+
+
+diff --git a/src/main/java/org/bukkit/craftbukkit/CraftWorld.java b/src/main/java/org/bukkit/craftbukkit/CraftWorld.java
+--- a/src/main/java/org/bukkit/craftbukkit/CraftWorld.java
++++ b/src/main/java/org/bukkit/craftbukkit/CraftWorld.java
+@@ -59,6 +59,7 @@ import org.bukkit.plugin.messaging.StandardMessenger;
+ import org.bukkit.potion.PotionData;
+ import org.bukkit.potion.PotionType;
+ import org.bukkit.util.Consumer;
++import org.bukkit.util.RayBlockIntersection;
+ import org.bukkit.util.Vector;
+ 
+ public class CraftWorld implements World {
+@@ -586,6 +587,29 @@ public class CraftWorld implements World {
+         return getHighestBlockAt(location.getBlockX(), location.getBlockZ());
+     }
+ 
++    @Override
++    public RayBlockIntersection rayTraceBlock(Location start, double distance, boolean nonSolids, boolean liquids) {
++        Validate.isTrue(start.getWorld() == this, "wrong world");
++        return rayTraceBlock(start.toVector(), start.toVector().add(start.getDirection().multiply(distance)), nonSolids, liquids);
++    }
++
++    @Override
++    public RayBlockIntersection rayTraceBlock(Vector start, Vector end, boolean nonSolids, boolean liquids) {
++        Validate.isTrue(nonSolids || !liquids, "cannot include liquids without non-solids");
++        MovingObjectPosition hit = getHandle().rayTrace(new Vec3D(start.getX(), start.getY(), start.getZ()),
++                                                        new Vec3D(end.getX(), end.getY(), end.getZ()),
++                                                        liquids,
++                                                        !nonSolids,
++                                                        false);
++        if(hit != null && hit.type == MovingObjectPosition.EnumMovingObjectType.BLOCK) {
++            return new RayBlockIntersection(getBlockAt(hit.a().getX(), hit.a().getY(), hit.a().getZ()),
++                                            CraftBlock.notchToBlockFace(hit.direction),
++                                            new Vector(hit.pos.x, hit.pos.y, hit.pos.z));
++        } else {
++            return null;
++        }
++    }
++
+     public Biome getBiome(int x, int z) {
+         return CraftBlock.biomeBaseToBiome(this.world.getBiome(new BlockPosition(x, 0, z)));
+     }
+diff --git a/src/main/java/org/bukkit/craftbukkit/block/CraftBlock.java b/src/main/java/org/bukkit/craftbukkit/block/CraftBlock.java
+--- a/src/main/java/org/bukkit/craftbukkit/block/CraftBlock.java
++++ b/src/main/java/org/bukkit/craftbukkit/block/CraftBlock.java
+@@ -23,6 +23,8 @@ import org.bukkit.inventory.ItemStack;
+ import org.bukkit.metadata.MetadataValue;
+ import org.bukkit.plugin.Plugin;
+ import org.bukkit.util.BlockVector;
++import org.bukkit.util.RayBlockIntersection;
++import org.bukkit.util.Vector;
+ 
+ public class CraftBlock implements Block {
+     private final CraftChunk chunk;
+@@ -529,4 +531,29 @@ public class CraftBlock implements Block {
+     public void removeMetadata(String metadataKey, Plugin owningPlugin) {
+         chunk.getCraftWorld().getBlockMetadata().removeMetadata(this, metadataKey, owningPlugin);
+     }
++
++    @Override
++    public RayBlockIntersection rayTrace(Vector start, Vector end) {
++        net.minecraft.server.Block nms = CraftMagicNumbers.getBlock(getType());
++        if(nms == null) return null;
++
++        MovingObjectPosition hit = nms.a(getData0(),
++                                         chunk.getCraftWorld().getHandle(),
++                                         new BlockPosition(x, y, z),
++                                         new Vec3D(start.getX(), start.getY(), start.getZ()),
++                                         new Vec3D(end.getX(), end.getY(), end.getZ()));
++
++        if(hit != null && hit.type == MovingObjectPosition.EnumMovingObjectType.BLOCK) {
++            return new RayBlockIntersection(this,
++                                            CraftBlock.notchToBlockFace(hit.direction),
++                                            new Vector(hit.pos.x, hit.pos.y, hit.pos.z));
++        } else {
++            return null;
++        }
++    }
++
++    @Override
++    public RayBlockIntersection rayTrace(Location start, double distance) {
++        return rayTrace(start.toVector(), start.toVector().add(start.getDirection().multiply(distance)));
++    }
+ }
+diff --git a/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java b/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
+--- a/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
++++ b/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
+@@ -72,6 +72,7 @@ import org.bukkit.metadata.MetadataValue;
+ import org.bukkit.plugin.Plugin;
+ import org.bukkit.plugin.messaging.StandardMessenger;
+ import org.bukkit.scoreboard.Scoreboard;
++import org.bukkit.util.RayBlockIntersection;
+ 
+ @DelegateDeserialization(CraftOfflinePlayer.class)
+ public class CraftPlayer extends CraftHumanEntity implements Player {
+@@ -1911,4 +1912,19 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
+         BlockPosition pos = getHandle().playerInteractManager.f;
+         return getWorld().getBlockAt(pos.getX(), pos.getY(), pos.getZ());
+     }
++
++    @Override
++    public double getBlockReach() {
++        return getGameMode() == GameMode.CREATIVE ? 6 : 4.5;
++    }
++
++    @Override
++    public RayBlockIntersection getTargetedBlock(double distance, boolean nonSolids, boolean liquids) {
++        return getWorld().rayTraceBlock(getEyeLocation(), distance, nonSolids, liquids);
++    }
++
++    @Override
++    public RayBlockIntersection getTargetedBlock(boolean nonSolids, boolean liquids) {
++        return getTargetedBlock(getBlockReach(), nonSolids, liquids);
++    }
+ }

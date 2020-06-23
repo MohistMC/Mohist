@@ -1,0 +1,643 @@
+From 5e2381118779072fed5ae8d011803502af5c7ffa Mon Sep 17 00:00:00 2001
+From: cswhite2000 <18whitechristop@gmail.com>
+Date: Mon, 27 Aug 2018 02:31:21 -0700
+Subject: [PATCH] Per World Custom Crafting API
+
+
+diff --git a/src/main/java/net/minecraft/server/ContainerFurnace.java b/src/main/java/net/minecraft/server/ContainerFurnace.java
+index 04cccbb6..be9b4cfd 100644
+--- a/src/main/java/net/minecraft/server/ContainerFurnace.java
++++ b/src/main/java/net/minecraft/server/ContainerFurnace.java
+@@ -104,7 +104,7 @@ public class ContainerFurnace extends Container {
+ 
+                 slot.a(itemstack1, itemstack);
+             } else if (i != 1 && i != 0) {
+-                if (RecipesFurnace.getInstance().getResult(itemstack1) != null) {
++                if (entityhuman.world.recipesFurnace.getResult(itemstack1) != null) {
+                     if (!this.a(itemstack1, 0, 1, false)) {
+                         return null;
+                     }
+diff --git a/src/main/java/net/minecraft/server/ContainerPlayer.java b/src/main/java/net/minecraft/server/ContainerPlayer.java
+index a86f896b..94e329ee 100644
+--- a/src/main/java/net/minecraft/server/ContainerPlayer.java
++++ b/src/main/java/net/minecraft/server/ContainerPlayer.java
+@@ -63,8 +63,8 @@ public class ContainerPlayer extends Container {
+     public void a(IInventory iinventory) {
+         // this.resultInventory.setItem(0, CraftingManager.getInstance().craft(this.craftInventory, this.h.world));
+         // CraftBukkit start (Note: the following line would cause an error if called during construction)
+-        CraftingManager.getInstance().lastCraftView = getBukkitView();
+-        ItemStack craftResult = CraftingManager.getInstance().craft(this.craftInventory, this.h.world);
++        h.world.craftingManager.lastCraftView = getBukkitView(); // SportPaper - Give each world its own CraftingManager
++        ItemStack craftResult = h.world.craftingManager.craft(this.craftInventory, this.h.world);
+         this.resultInventory.setItem(0, craftResult);
+         if (super.listeners.size() < 1) {
+             return;
+diff --git a/src/main/java/net/minecraft/server/ContainerWorkbench.java b/src/main/java/net/minecraft/server/ContainerWorkbench.java
+index 48d524e5..f63011e3 100644
+--- a/src/main/java/net/minecraft/server/ContainerWorkbench.java
++++ b/src/main/java/net/minecraft/server/ContainerWorkbench.java
+@@ -52,8 +52,8 @@ public class ContainerWorkbench extends Container {
+     public void a(IInventory iinventory) {
+         // this.resultInventory.setItem(0, CraftingManager.getInstance().craft(this.craftInventory, this.g));
+         // CraftBukkit start
+-        CraftingManager.getInstance().lastCraftView = getBukkitView();
+-        ItemStack craftResult = CraftingManager.getInstance().craft(this.craftInventory, this.g);
++        g.craftingManager.lastCraftView = getBukkitView();
++        ItemStack craftResult = g.craftingManager.craft(this.craftInventory, this.g);
+         this.resultInventory.setItem(0, craftResult);
+         if (super.listeners.size() < 1) {
+             return;
+diff --git a/src/main/java/net/minecraft/server/CraftingManager.java b/src/main/java/net/minecraft/server/CraftingManager.java
+index 544ff0a6..2c2110d4 100644
+--- a/src/main/java/net/minecraft/server/CraftingManager.java
++++ b/src/main/java/net/minecraft/server/CraftingManager.java
+@@ -13,17 +13,12 @@ import org.bukkit.craftbukkit.event.CraftEventFactory; // CraftBukkit
+ 
+ public class CraftingManager {
+ 
+-    private static final CraftingManager a = new CraftingManager();
+     public List<IRecipe> recipes = Lists.newArrayList();
+     // CraftBukkit start
+     public IRecipe lastRecipe;
+     public org.bukkit.inventory.InventoryView lastCraftView;
+     // CraftBukkit end
+ 
+-    public static CraftingManager getInstance() {
+-        return CraftingManager.a;
+-    }
+-
+     public CraftingManager() {
+         (new RecipesTools()).a(this);
+         (new RecipesWeapons()).a(this);
+@@ -294,7 +289,7 @@ public class CraftingManager {
+ 
+         // CraftBukkit start - INVENTORY_PRE_CRAFT event
+         inventorycrafting.currentRecipe = irecipe;
+-        ItemStack result = irecipe.craftItem(inventorycrafting);
++        ItemStack result = irecipe.craftItem(inventorycrafting, this);
+         return CraftEventFactory.callPreCraftEvent(inventorycrafting, result, lastCraftView, false);
+         // CraftBukkit end
+     }
+diff --git a/src/main/java/net/minecraft/server/EntitySheep.java b/src/main/java/net/minecraft/server/EntitySheep.java
+index 29611a19..9a3d3751 100644
+--- a/src/main/java/net/minecraft/server/EntitySheep.java
++++ b/src/main/java/net/minecraft/server/EntitySheep.java
+@@ -222,7 +222,7 @@ public class EntitySheep extends EntityAnimal {
+ 
+         this.bm.getItem(0).setData(i);
+         this.bm.getItem(1).setData(j);
+-        ItemStack itemstack = CraftingManager.getInstance().craft(this.bm, ((EntitySheep) entityanimal).world);
++        ItemStack itemstack = world.craftingManager.craft(this.bm, ((EntitySheep) entityanimal).world);
+         int k;
+ 
+         if (itemstack != null && itemstack.getItem() == Items.DYE) {
+diff --git a/src/main/java/net/minecraft/server/IRecipe.java b/src/main/java/net/minecraft/server/IRecipe.java
+index ffc65a24..444af5b0 100644
+--- a/src/main/java/net/minecraft/server/IRecipe.java
++++ b/src/main/java/net/minecraft/server/IRecipe.java
+@@ -4,7 +4,7 @@ public interface IRecipe {
+ 
+     boolean a(InventoryCrafting inventorycrafting, World world);
+ 
+-    ItemStack craftItem(InventoryCrafting inventorycrafting);
++    ItemStack craftItem(InventoryCrafting inventorycrafting, CraftingManager craftingManager);
+ 
+     int a();
+ 
+diff --git a/src/main/java/net/minecraft/server/RecipeArmorDye.java b/src/main/java/net/minecraft/server/RecipeArmorDye.java
+index 43a1cf8d..7e7a18dc 100644
+--- a/src/main/java/net/minecraft/server/RecipeArmorDye.java
++++ b/src/main/java/net/minecraft/server/RecipeArmorDye.java
+@@ -40,7 +40,7 @@ public class RecipeArmorDye extends ShapelessRecipes implements IRecipe { // Cra
+         return itemstack != null && !arraylist.isEmpty();
+     }
+ 
+-    public ItemStack craftItem(InventoryCrafting inventorycrafting) {
++    public ItemStack craftItem(InventoryCrafting inventorycrafting, CraftingManager craftingManager) {
+         ItemStack itemstack = null;
+         int[] aint = new int[3];
+         int i = 0;
+diff --git a/src/main/java/net/minecraft/server/RecipeBookClone.java b/src/main/java/net/minecraft/server/RecipeBookClone.java
+index 264019d9..4d591cbf 100644
+--- a/src/main/java/net/minecraft/server/RecipeBookClone.java
++++ b/src/main/java/net/minecraft/server/RecipeBookClone.java
+@@ -35,7 +35,7 @@ public class RecipeBookClone extends ShapelessRecipes implements IRecipe { // Cr
+         return itemstack != null && i > 0;
+     }
+ 
+-    public ItemStack craftItem(InventoryCrafting inventorycrafting) {
++    public ItemStack craftItem(InventoryCrafting inventorycrafting, CraftingManager craftingManager) {
+         int i = 0;
+         ItemStack itemstack = null;
+ 
+diff --git a/src/main/java/net/minecraft/server/RecipeFireworks.java b/src/main/java/net/minecraft/server/RecipeFireworks.java
+index ba9ce61b..be10c973 100644
+--- a/src/main/java/net/minecraft/server/RecipeFireworks.java
++++ b/src/main/java/net/minecraft/server/RecipeFireworks.java
+@@ -163,7 +163,7 @@ public class RecipeFireworks extends ShapelessRecipes implements IRecipe { // Cr
+         }
+     }
+ 
+-    public ItemStack craftItem(InventoryCrafting inventorycrafting) {
++    public ItemStack craftItem(InventoryCrafting inventorycrafting, CraftingManager craftingManager) {
+         return this.a.cloneItemStack();
+     }
+ 
+diff --git a/src/main/java/net/minecraft/server/RecipeMapClone.java b/src/main/java/net/minecraft/server/RecipeMapClone.java
+index 579f6d1d..1663898a 100644
+--- a/src/main/java/net/minecraft/server/RecipeMapClone.java
++++ b/src/main/java/net/minecraft/server/RecipeMapClone.java
+@@ -35,7 +35,7 @@ public class RecipeMapClone extends ShapelessRecipes implements IRecipe { // Cra
+         return itemstack != null && i > 0;
+     }
+ 
+-    public ItemStack craftItem(InventoryCrafting inventorycrafting) {
++    public ItemStack craftItem(InventoryCrafting inventorycrafting, CraftingManager craftingManager) {
+         int i = 0;
+         ItemStack itemstack = null;
+ 
+diff --git a/src/main/java/net/minecraft/server/RecipeRepair.java b/src/main/java/net/minecraft/server/RecipeRepair.java
+index 187e59ae..0bac6309 100644
+--- a/src/main/java/net/minecraft/server/RecipeRepair.java
++++ b/src/main/java/net/minecraft/server/RecipeRepair.java
+@@ -32,7 +32,7 @@ public class RecipeRepair extends ShapelessRecipes implements IRecipe { // Craft
+         return arraylist.size() == 2;
+     }
+ 
+-    public ItemStack craftItem(InventoryCrafting inventorycrafting) {
++    public ItemStack craftItem(InventoryCrafting inventorycrafting, CraftingManager craftingManager) {
+         ArrayList arraylist = Lists.newArrayList();
+ 
+         ItemStack itemstack;
+@@ -73,7 +73,7 @@ public class RecipeRepair extends ShapelessRecipes implements IRecipe { // Craft
+                 ingredients.add(itemstack.cloneItemStack());
+                 ShapelessRecipes recipe = new ShapelessRecipes(result.cloneItemStack(), ingredients);
+                 inventorycrafting.currentRecipe = recipe;
+-                result = org.bukkit.craftbukkit.event.CraftEventFactory.callPreCraftEvent(inventorycrafting, result, CraftingManager.getInstance().lastCraftView, true);
++                result = org.bukkit.craftbukkit.event.CraftEventFactory.callPreCraftEvent(inventorycrafting, result, craftingManager.lastCraftView, true);
+                 return result;
+                 // return new ItemStack(itemstack2.getItem(), 1, i1);
+                 // CraftBukkit end
+diff --git a/src/main/java/net/minecraft/server/RecipesBanner.java b/src/main/java/net/minecraft/server/RecipesBanner.java
+index 4a77c77d..0e60bd0c 100644
+--- a/src/main/java/net/minecraft/server/RecipesBanner.java
++++ b/src/main/java/net/minecraft/server/RecipesBanner.java
+@@ -54,7 +54,7 @@ public class RecipesBanner {
+             }
+         }
+ 
+-        public ItemStack craftItem(InventoryCrafting inventorycrafting) {
++        public ItemStack craftItem(InventoryCrafting inventorycrafting, CraftingManager craftingManager) {
+             ItemStack itemstack = null;
+ 
+             for (int i = 0; i < inventorycrafting.getSize(); ++i) {
+@@ -272,7 +272,7 @@ public class RecipesBanner {
+             return itemstack != null && itemstack1 != null;
+         }
+ 
+-        public ItemStack craftItem(InventoryCrafting inventorycrafting) {
++        public ItemStack craftItem(InventoryCrafting inventorycrafting, CraftingManager craftingManager) {
+             for (int i = 0; i < inventorycrafting.getSize(); ++i) {
+                 ItemStack itemstack = inventorycrafting.getItem(i);
+ 
+diff --git a/src/main/java/net/minecraft/server/RecipesFurnace.java b/src/main/java/net/minecraft/server/RecipesFurnace.java
+index d16fa9ec..d4c2319f 100644
+--- a/src/main/java/net/minecraft/server/RecipesFurnace.java
++++ b/src/main/java/net/minecraft/server/RecipesFurnace.java
+@@ -7,14 +7,9 @@ import java.util.Map.Entry;
+ 
+ public class RecipesFurnace {
+ 
+-    private static final RecipesFurnace a = new RecipesFurnace();
+     public Map<ItemStack, ItemStack> recipes = Maps.newHashMap();
+     private Map<ItemStack, Float> c = Maps.newHashMap();
+-    public Map customRecipes = Maps.newHashMap(); // CraftBukkit - add field
+-
+-    public static RecipesFurnace getInstance() {
+-        return RecipesFurnace.a;
+-    }
++    public Map<ItemStack, ItemStack> customRecipes = Maps.newHashMap(); // CraftBukkit - add field
+ 
+     public RecipesFurnace() { // PAIL: Public
+         this.registerRecipe(Blocks.IRON_ORE, new ItemStack(Items.IRON_INGOT), 0.7F);
+diff --git a/src/main/java/net/minecraft/server/ShapedRecipes.java b/src/main/java/net/minecraft/server/ShapedRecipes.java
+index cac2e78b..17d787cf 100644
+--- a/src/main/java/net/minecraft/server/ShapedRecipes.java
++++ b/src/main/java/net/minecraft/server/ShapedRecipes.java
+@@ -146,7 +146,7 @@ public class ShapedRecipes implements IRecipe {
+         return true;
+     }
+ 
+-    public ItemStack craftItem(InventoryCrafting inventorycrafting) {
++    public ItemStack craftItem(InventoryCrafting inventorycrafting, CraftingManager craftingManager) {
+         ItemStack itemstack = this.b().cloneItemStack();
+ 
+         if (this.e) {
+diff --git a/src/main/java/net/minecraft/server/ShapelessRecipes.java b/src/main/java/net/minecraft/server/ShapelessRecipes.java
+index e9934f90..0d46b8d5 100644
+--- a/src/main/java/net/minecraft/server/ShapelessRecipes.java
++++ b/src/main/java/net/minecraft/server/ShapelessRecipes.java
+@@ -83,7 +83,7 @@ public class ShapelessRecipes implements IRecipe {
+         return arraylist.isEmpty();
+     }
+ 
+-    public ItemStack craftItem(InventoryCrafting inventorycrafting) {
++    public ItemStack craftItem(InventoryCrafting inventorycrafting, CraftingManager craftingManager) {
+         return this.result.cloneItemStack();
+     }
+ 
+diff --git a/src/main/java/net/minecraft/server/SlotFurnaceResult.java b/src/main/java/net/minecraft/server/SlotFurnaceResult.java
+index 914be4e8..24927ede 100644
+--- a/src/main/java/net/minecraft/server/SlotFurnaceResult.java
++++ b/src/main/java/net/minecraft/server/SlotFurnaceResult.java
+@@ -41,7 +41,7 @@ public class SlotFurnaceResult extends Slot {
+         itemstack.a(this.a.world, this.a, this.b);
+         if (!this.a.world.isClientSide) {
+             int i = this.b;
+-            float f = RecipesFurnace.getInstance().b(itemstack);
++            float f = a.world.recipesFurnace.b(itemstack);
+             int j;
+ 
+             if (f == 0.0F) {
+diff --git a/src/main/java/net/minecraft/server/SlotResult.java b/src/main/java/net/minecraft/server/SlotResult.java
+index d2551cfb..ca377490 100644
+--- a/src/main/java/net/minecraft/server/SlotResult.java
++++ b/src/main/java/net/minecraft/server/SlotResult.java
+@@ -83,7 +83,7 @@ public class SlotResult extends Slot {
+ 
+     public void a(EntityHuman entityhuman, ItemStack itemstack) {
+         this.c(itemstack);
+-        ItemStack[] aitemstack = CraftingManager.getInstance().b(this.a, entityhuman.world);
++        ItemStack[] aitemstack = entityhuman.world.craftingManager.b(this.a, entityhuman.world);
+ 
+         for (int i = 0; i < aitemstack.length; ++i) {
+             ItemStack itemstack1 = this.a.getItem(i);
+diff --git a/src/main/java/net/minecraft/server/StatisticList.java b/src/main/java/net/minecraft/server/StatisticList.java
+index b5ceb9a6..c56507e3 100644
+--- a/src/main/java/net/minecraft/server/StatisticList.java
++++ b/src/main/java/net/minecraft/server/StatisticList.java
+@@ -79,7 +79,7 @@ public class StatisticList {
+ 
+     private static void b() {
+         HashSet hashset = Sets.newHashSet();
+-        Iterator iterator = CraftingManager.getInstance().getRecipes().iterator();
++        Iterator iterator = (new CraftingManager()).getRecipes().iterator();
+ 
+         while (iterator.hasNext()) {
+             IRecipe irecipe = (IRecipe) iterator.next();
+@@ -89,7 +89,7 @@ public class StatisticList {
+             }
+         }
+ 
+-        iterator = RecipesFurnace.getInstance().getRecipes().values().iterator();
++        iterator = (new RecipesFurnace()).getRecipes().values().iterator();
+ 
+         while (iterator.hasNext()) {
+             ItemStack itemstack = (ItemStack) iterator.next();
+diff --git a/src/main/java/net/minecraft/server/TileEntityFurnace.java b/src/main/java/net/minecraft/server/TileEntityFurnace.java
+index 37a43fdc..ffc902c9 100644
+--- a/src/main/java/net/minecraft/server/TileEntityFurnace.java
++++ b/src/main/java/net/minecraft/server/TileEntityFurnace.java
+@@ -270,7 +270,7 @@ public class TileEntityFurnace extends TileEntityContainer implements IUpdatePla
+         if (this.items[0] == null) {
+             return false;
+         } else {
+-            ItemStack itemstack = RecipesFurnace.getInstance().getResult(this.items[0]);
++            ItemStack itemstack = this.world.recipesFurnace.getResult(this.items[0]);
+ 
+             // CraftBukkit - consider resultant count instead of current count
+             return itemstack == null ? false : (this.items[2] == null ? true : (!this.items[2].doMaterialsMatch(itemstack) ? false : (this.items[2].count + itemstack.count <= this.getMaxStackSize() && this.items[2].count < this.items[2].getMaxStackSize() ? true : this.items[2].count + itemstack.count <= itemstack.getMaxStackSize())));
+@@ -279,7 +279,7 @@ public class TileEntityFurnace extends TileEntityContainer implements IUpdatePla
+ 
+     public void burn() {
+         if (this.canBurn()) {
+-            ItemStack itemstack = RecipesFurnace.getInstance().getResult(this.items[0]);
++            ItemStack itemstack = this.world.recipesFurnace.getResult(this.items[0]);
+ 
+             // CraftBukkit start - fire FurnaceSmeltEvent
+             CraftItemStack source = CraftItemStack.asCraftMirror(this.items[0]);
+diff --git a/src/main/java/net/minecraft/server/World.java b/src/main/java/net/minecraft/server/World.java
+index e6899775..138b17f3 100644
+--- a/src/main/java/net/minecraft/server/World.java
++++ b/src/main/java/net/minecraft/server/World.java
+@@ -142,6 +142,8 @@ public abstract class World implements IBlockAccess {
+     private int tileTickPosition;
+     public ExecutorService lightingExecutor = Executors.newSingleThreadExecutor(new ThreadFactoryBuilder().setNameFormat("PaperSpigot - Lighting Thread").build()); // PaperSpigot - Asynchronous lighting updates
+     public final Map<Explosion.CacheKey, Float> explosionDensityCache = new HashMap<Explosion.CacheKey, Float>(); // PaperSpigot - Optimize explosions
++    public final CraftingManager craftingManager = new CraftingManager();
++    public final RecipesFurnace recipesFurnace = new RecipesFurnace();
+ 
+     public static long chunkToKey(int x, int z)
+     {
+diff --git a/src/main/java/org/bukkit/craftbukkit/CraftServer.java b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
+index 4dc6ebfc..d0901cac 100644
+--- a/src/main/java/org/bukkit/craftbukkit/CraftServer.java
++++ b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
+@@ -5,7 +5,6 @@ import java.io.File;
+ import java.io.FileInputStream;
+ import java.io.FileNotFoundException;
+ import java.io.IOException;
+-import java.io.InputStreamReader;
+ import java.util.ArrayList;
+ import java.util.Arrays;
+ import java.util.Collections;
+@@ -75,7 +74,6 @@ import org.bukkit.event.inventory.InventoryType;
+ import org.bukkit.event.player.PlayerChatTabCompleteEvent;
+ import org.bukkit.event.world.WorldInitEvent;
+ import org.bukkit.event.world.WorldLoadEvent;
+-import org.bukkit.event.world.WorldSaveEvent;
+ import org.bukkit.event.world.WorldUnloadEvent;
+ import org.bukkit.generator.ChunkGenerator;
+ import org.bukkit.help.HelpMap;
+@@ -99,7 +97,6 @@ import org.bukkit.plugin.messaging.Messenger;
+ import org.bukkit.potion.Potion;
+ import org.bukkit.potion.PotionEffectType;
+ import org.bukkit.plugin.messaging.StandardMessenger;
+-import org.bukkit.scheduler.BukkitWorker;
+ import org.bukkit.util.StringUtil;
+ import org.bukkit.util.permissions.DefaultPermissions;
+ import org.github.paperspigot.BukkitConfig;
+@@ -998,22 +995,7 @@ public final class CraftServer implements Server {
+ 
+     @Override
+     public boolean addRecipe(Recipe recipe) {
+-        CraftRecipe toAdd;
+-        if (recipe instanceof CraftRecipe) {
+-            toAdd = (CraftRecipe) recipe;
+-        } else {
+-            if (recipe instanceof ShapedRecipe) {
+-                toAdd = CraftShapedRecipe.fromBukkitRecipe((ShapedRecipe) recipe);
+-            } else if (recipe instanceof ShapelessRecipe) {
+-                toAdd = CraftShapelessRecipe.fromBukkitRecipe((ShapelessRecipe) recipe);
+-            } else if (recipe instanceof FurnaceRecipe) {
+-                toAdd = CraftFurnaceRecipe.fromBukkitRecipe((FurnaceRecipe) recipe);
+-            } else {
+-                return false;
+-            }
+-        }
+-        toAdd.addToCraftingManager();
+-        CraftingManager.getInstance().sort();
++        getWorlds().forEach(world -> addRecipe(recipe));
+         return true;
+     }
+ 
+@@ -1043,16 +1025,12 @@ public final class CraftServer implements Server {
+ 
+     @Override
+     public void clearRecipes() {
+-        CraftingManager.getInstance().recipes.clear();
+-        RecipesFurnace.getInstance().recipes.clear();
+-        RecipesFurnace.getInstance().customRecipes.clear();
++        getWorlds().forEach(World::clearRecipes);
+     }
+ 
+     @Override
+     public void resetRecipes() {
+-        CraftingManager.getInstance().recipes = new CraftingManager().recipes;
+-        RecipesFurnace.getInstance().recipes = new RecipesFurnace().recipes;
+-        RecipesFurnace.getInstance().customRecipes.clear();
++        getWorlds().forEach(World::resetRecipes);
+     }
+ 
+     @Override
+diff --git a/src/main/java/org/bukkit/craftbukkit/CraftWorld.java b/src/main/java/org/bukkit/craftbukkit/CraftWorld.java
+index 8a7c3345..2d999301 100644
+--- a/src/main/java/org/bukkit/craftbukkit/CraftWorld.java
++++ b/src/main/java/org/bukkit/craftbukkit/CraftWorld.java
+@@ -34,7 +34,12 @@ import org.bukkit.block.BlockState;
+ import org.bukkit.craftbukkit.block.CraftBlock;
+ import org.bukkit.craftbukkit.block.CraftBlockState;
+ import org.bukkit.craftbukkit.entity.*;
++import org.bukkit.craftbukkit.inventory.CraftFurnaceRecipe;
+ import org.bukkit.craftbukkit.inventory.CraftItemStack;
++import org.bukkit.craftbukkit.inventory.CraftRecipe;
++import org.bukkit.craftbukkit.inventory.CraftShapedRecipe;
++import org.bukkit.craftbukkit.inventory.CraftShapelessRecipe;
++import org.bukkit.craftbukkit.inventory.RecipeIterator;
+ import org.bukkit.craftbukkit.metadata.BlockMetadataStore;
+ import org.bukkit.craftbukkit.util.CraftMagicNumbers;
+ import org.bukkit.craftbukkit.util.LongHash;
+@@ -46,12 +51,14 @@ import org.bukkit.entity.minecart.PoweredMinecart;
+ import org.bukkit.entity.minecart.SpawnerMinecart;
+ import org.bukkit.entity.minecart.StorageMinecart;
+ import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
+-import org.bukkit.event.weather.ThunderChangeEvent;
+-import org.bukkit.event.weather.WeatherChangeEvent;
+ import org.bukkit.event.world.SpawnChangeEvent;
+ import org.bukkit.generator.BlockPopulator;
+ import org.bukkit.generator.ChunkGenerator;
++import org.bukkit.inventory.FurnaceRecipe;
+ import org.bukkit.inventory.ItemStack;
++import org.bukkit.inventory.Recipe;
++import org.bukkit.inventory.ShapedRecipe;
++import org.bukkit.inventory.ShapelessRecipe;
+ import org.bukkit.metadata.MetadataValue;
+ import org.bukkit.plugin.Plugin;
+ import org.bukkit.plugin.messaging.StandardMessenger;
+@@ -1529,6 +1536,67 @@ public class CraftWorld implements World {
+             cps.queueUnload(chunk.locX, chunk.locZ);
+         }
+     }
++
++
++    @Override
++    public boolean addRecipe(Recipe recipe) {
++        CraftRecipe toAdd;
++        if (recipe instanceof CraftRecipe) {
++            toAdd = (CraftRecipe) recipe;
++        } else {
++            if (recipe instanceof ShapedRecipe) {
++                toAdd = CraftShapedRecipe.fromBukkitRecipe((ShapedRecipe) recipe);
++            } else if (recipe instanceof ShapelessRecipe) {
++                toAdd = CraftShapelessRecipe.fromBukkitRecipe((ShapelessRecipe) recipe);
++            } else if (recipe instanceof FurnaceRecipe) {
++                toAdd = CraftFurnaceRecipe.fromBukkitRecipe((FurnaceRecipe) recipe);
++            } else {
++                return false;
++            }
++        }
++        toAdd.addToCraftingManager(world.craftingManager, world.recipesFurnace);
++        world.craftingManager.sort();
++        return true;
++    }
++
++    @Override
++    public List<Recipe> getRecipesFor(ItemStack result) {
++        Validate.notNull(result, "Result cannot be null");
++
++        List<Recipe> results = new ArrayList<Recipe>();
++        Iterator<Recipe> iter = recipeIterator();
++        while (iter.hasNext()) {
++            Recipe recipe = iter.next();
++            ItemStack stack = recipe.getResult();
++            if (stack.getType() != result.getType()) {
++                continue;
++            }
++            if (result.getDurability() == -1 || result.getDurability() == stack.getDurability()) {
++                results.add(recipe);
++            }
++        }
++        return results;
++    }
++
++    @Override
++    public Iterator<Recipe> recipeIterator() {
++        return new RecipeIterator(world.craftingManager, world.recipesFurnace);
++    }
++
++    @Override
++    public void clearRecipes() {
++        world.craftingManager.recipes.clear();
++        world.recipesFurnace.recipes.clear();
++        world.recipesFurnace.customRecipes.clear();
++    }
++
++    @Override
++    public void resetRecipes() {
++        world.craftingManager.recipes = new CraftingManager().recipes;
++        world.recipesFurnace.recipes = new RecipesFurnace().recipes;
++        world.recipesFurnace.customRecipes.clear();
++    }
++
+     // Spigot start
+     private final Spigot spigot = new Spigot()
+     {
+diff --git a/src/main/java/org/bukkit/craftbukkit/inventory/CraftFurnaceRecipe.java b/src/main/java/org/bukkit/craftbukkit/inventory/CraftFurnaceRecipe.java
+index 69f17db8..bc853a0f 100644
+--- a/src/main/java/org/bukkit/craftbukkit/inventory/CraftFurnaceRecipe.java
++++ b/src/main/java/org/bukkit/craftbukkit/inventory/CraftFurnaceRecipe.java
+@@ -1,8 +1,8 @@
+ package org.bukkit.craftbukkit.inventory;
+ 
++import net.minecraft.server.CraftingManager;
+ import net.minecraft.server.RecipesFurnace;
+ 
+-import org.bukkit.craftbukkit.util.CraftMagicNumbers;
+ import org.bukkit.inventory.FurnaceRecipe;
+ import org.bukkit.inventory.ItemStack;
+ 
+@@ -19,9 +19,9 @@ public class CraftFurnaceRecipe extends FurnaceRecipe implements CraftRecipe {
+     }
+ 
+     @Override
+-    public void addToCraftingManager() {
++    public void addToCraftingManager(CraftingManager craftingManager, RecipesFurnace recipesFurnace) {
+         ItemStack result = this.getResult();
+         ItemStack input = this.getInput();
+-        RecipesFurnace.getInstance().registerRecipe(CraftItemStack.asNMSCopy(input), CraftItemStack.asNMSCopy(result));
++        recipesFurnace.registerRecipe(CraftItemStack.asNMSCopy(input), CraftItemStack.asNMSCopy(result));
+     }
+ }
+diff --git a/src/main/java/org/bukkit/craftbukkit/inventory/CraftRecipe.java b/src/main/java/org/bukkit/craftbukkit/inventory/CraftRecipe.java
+index d3e03e24..232d1bbd 100644
+--- a/src/main/java/org/bukkit/craftbukkit/inventory/CraftRecipe.java
++++ b/src/main/java/org/bukkit/craftbukkit/inventory/CraftRecipe.java
+@@ -1,7 +1,9 @@
+ package org.bukkit.craftbukkit.inventory;
+ 
++import net.minecraft.server.CraftingManager;
++import net.minecraft.server.RecipesFurnace;
+ import org.bukkit.inventory.Recipe;
+ 
+ public interface CraftRecipe extends Recipe {
+-    void addToCraftingManager();
++    void addToCraftingManager(CraftingManager craftingManager, RecipesFurnace recipesFurnace);
+ }
+diff --git a/src/main/java/org/bukkit/craftbukkit/inventory/CraftShapedRecipe.java b/src/main/java/org/bukkit/craftbukkit/inventory/CraftShapedRecipe.java
+index baea7597..622e4fe7 100644
+--- a/src/main/java/org/bukkit/craftbukkit/inventory/CraftShapedRecipe.java
++++ b/src/main/java/org/bukkit/craftbukkit/inventory/CraftShapedRecipe.java
+@@ -3,6 +3,7 @@ package org.bukkit.craftbukkit.inventory;
+ import java.util.Map;
+ 
+ import net.minecraft.server.CraftingManager;
++import net.minecraft.server.RecipesFurnace;
+ import net.minecraft.server.ShapedRecipes;
+ 
+ import org.bukkit.craftbukkit.util.CraftMagicNumbers;
+@@ -39,7 +40,7 @@ public class CraftShapedRecipe extends ShapedRecipe implements CraftRecipe {
+         return ret;
+     }
+ 
+-    public void addToCraftingManager() {
++    public void addToCraftingManager(CraftingManager craftingManager, RecipesFurnace recipesFurnace) {
+         Object[] data;
+         String[] shape = this.getShape();
+         Map<Character, ItemStack> ingred = this.getIngredientMap();
+@@ -60,6 +61,6 @@ public class CraftShapedRecipe extends ShapedRecipe implements CraftRecipe {
+             data[i] = new net.minecraft.server.ItemStack(CraftMagicNumbers.getItem(id), 1, dmg);
+             i++;
+         }
+-        CraftingManager.getInstance().registerShapedRecipe(CraftItemStack.asNMSCopy(this.getResult()), data);
++        craftingManager.registerShapedRecipe(CraftItemStack.asNMSCopy(this.getResult()), data);
+     }
+ }
+diff --git a/src/main/java/org/bukkit/craftbukkit/inventory/CraftShapelessRecipe.java b/src/main/java/org/bukkit/craftbukkit/inventory/CraftShapelessRecipe.java
+index 53479c72..8b2ea3f5 100644
+--- a/src/main/java/org/bukkit/craftbukkit/inventory/CraftShapelessRecipe.java
++++ b/src/main/java/org/bukkit/craftbukkit/inventory/CraftShapelessRecipe.java
+@@ -3,6 +3,7 @@ package org.bukkit.craftbukkit.inventory;
+ import java.util.List;
+ 
+ import net.minecraft.server.CraftingManager;
++import net.minecraft.server.RecipesFurnace;
+ import net.minecraft.server.ShapelessRecipes;
+ 
+ import org.bukkit.craftbukkit.util.CraftMagicNumbers;
+@@ -33,7 +34,7 @@ public class CraftShapelessRecipe extends ShapelessRecipe implements CraftRecipe
+         return ret;
+     }
+ 
+-    public void addToCraftingManager() {
++    public void addToCraftingManager(CraftingManager craftingManager, RecipesFurnace recipesFurnace) {
+         List<ItemStack> ingred = this.getIngredientList();
+         Object[] data = new Object[ingred.size()];
+         int i = 0;
+@@ -43,6 +44,6 @@ public class CraftShapelessRecipe extends ShapelessRecipe implements CraftRecipe
+             data[i] = new net.minecraft.server.ItemStack(CraftMagicNumbers.getItem(id), 1, dmg);
+             i++;
+         }
+-        CraftingManager.getInstance().registerShapelessRecipe(CraftItemStack.asNMSCopy(this.getResult()), data);
++        craftingManager.registerShapelessRecipe(CraftItemStack.asNMSCopy(this.getResult()), data);
+     }
+ }
+diff --git a/src/main/java/org/bukkit/craftbukkit/inventory/RecipeIterator.java b/src/main/java/org/bukkit/craftbukkit/inventory/RecipeIterator.java
+index 53b53b79..5563c869 100644
+--- a/src/main/java/org/bukkit/craftbukkit/inventory/RecipeIterator.java
++++ b/src/main/java/org/bukkit/craftbukkit/inventory/RecipeIterator.java
+@@ -13,11 +13,20 @@ public class RecipeIterator implements Iterator<Recipe> {
+     private final Iterator<net.minecraft.server.ItemStack> smeltingCustom;
+     private final Iterator<net.minecraft.server.ItemStack> smeltingVanilla;
+     private Iterator<?> removeFrom = null;
++    private RecipesFurnace recipesFurnace;
++
++    public RecipeIterator(CraftingManager craftingManager, RecipesFurnace recipesFurnace) {
++        this.recipes = craftingManager.getRecipes().iterator();
++        this.smeltingCustom = recipesFurnace.customRecipes.keySet().iterator();
++        this.smeltingVanilla = recipesFurnace.recipes.keySet().iterator();
++        recipesFurnace = recipesFurnace;
++    }
+ 
+     public RecipeIterator() {
+-        this.recipes = CraftingManager.getInstance().getRecipes().iterator();
+-        this.smeltingCustom = RecipesFurnace.getInstance().customRecipes.keySet().iterator();
+-        this.smeltingVanilla = RecipesFurnace.getInstance().recipes.keySet().iterator();
++        this.recipesFurnace = new RecipesFurnace();
++        this.recipes = (new CraftingManager()).getRecipes().iterator();
++        this.smeltingCustom = this.recipesFurnace.customRecipes.keySet().iterator();
++        this.smeltingVanilla = this.recipesFurnace.recipes.keySet().iterator();
+     }
+ 
+     public boolean hasNext() {
+@@ -38,7 +47,7 @@ public class RecipeIterator implements Iterator<Recipe> {
+                 item = smeltingVanilla.next();
+             }
+ 
+-            CraftItemStack stack = CraftItemStack.asCraftMirror(RecipesFurnace.getInstance().getResult(item));
++            CraftItemStack stack = CraftItemStack.asCraftMirror(recipesFurnace.getResult(item));
+ 
+             return new CraftFurnaceRecipe(stack, CraftItemStack.asCraftMirror(item));
+         }
+-- 
+2.19.0
+
