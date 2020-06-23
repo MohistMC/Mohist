@@ -1298,6 +1298,13 @@ public interface Server extends PluginMessageRecipient {
         public org.bukkit.configuration.file.YamlConfiguration getConfig() {
             throw new UnsupportedOperationException("Not supported yet.");
         }
+
+        /**
+         * Restart the server. If the server administrator has not configured restarting, the server will stop.
+         */
+        public void restart() {
+            throw new UnsupportedOperationException("Not supported yet.");
+        }
     }
 
     @NotNull
