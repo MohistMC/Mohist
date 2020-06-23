@@ -17,17 +17,16 @@
  import net.minecraft.world.GameRules;
  import net.minecraft.world.World;
 +import org.bukkit.Location;
-+import org.bukkit.craftbukkit.v1_15_R1.entity.CraftHumanEntity;
++import org.bukkit.craftbukkit.entity.CraftHumanEntity;
 +import org.bukkit.entity.HumanEntity;
 +import org.bukkit.inventory.InventoryHolder;
  
  public class ChestMinecartEntity extends ContainerMinecartEntity {
     public ChestMinecartEntity(EntityType<? extends ChestMinecartEntity> p_i50124_1_, World p_i50124_2_) {
-@@ -33,6 +39,48 @@
+@@ -33,6 +39,46 @@
        return 27;
     }
  
-+   // CraftBukkit start
 +   @Override
 +   public int func_70297_j_() {
 +      return 0;
@@ -67,7 +66,6 @@
 +   public Location getLocation() {
 +      return null;
 +   }
-+   // CraftBukkit end
 +
     public AbstractMinecartEntity.Type func_184264_v() {
        return AbstractMinecartEntity.Type.CHEST;

@@ -8,14 +8,7 @@
  import net.minecraft.command.Commands;
  import net.minecraft.crash.CrashReport;
  import net.minecraft.entity.player.ServerPlayerEntity;
-@@ -31,12 +32,14 @@
- import net.minecraft.world.chunk.listener.IChunkStatusListener;
- import net.minecraft.world.chunk.listener.IChunkStatusListenerFactory;
- import net.minecraft.world.dimension.DimensionType;
-+import net.minecraft.world.server.ServerWorld;
- import net.minecraft.world.storage.SaveHandler;
- import net.minecraft.world.storage.WorldInfo;
- import net.minecraftforge.api.distmarker.Dist;
+@@ -37,6 +38,7 @@
  import net.minecraftforge.api.distmarker.OnlyIn;
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
@@ -23,7 +16,7 @@
  
  @OnlyIn(Dist.CLIENT)
  public class IntegratedServer extends MinecraftServer {
-@@ -49,7 +52,7 @@
+@@ -49,7 +51,7 @@
     private UUID field_211528_n;
  
     public IntegratedServer(Minecraft p_i50895_1_, String p_i50895_2_, String p_i50895_3_, WorldSettings p_i50895_4_, YggdrasilAuthenticationService p_i50895_5_, MinecraftSessionService p_i50895_6_, GameProfileRepository p_i50895_7_, PlayerProfileCache p_i50895_8_, IChunkStatusListenerFactory p_i50895_9_) {
@@ -32,7 +25,7 @@
        this.func_71224_l(p_i50895_1_.func_110432_I().func_111285_a());
        this.func_71246_n(p_i50895_3_);
        this.func_71204_b(p_i50895_1_.func_71355_q());
-@@ -64,6 +67,8 @@
+@@ -64,6 +66,8 @@
        this.func_71237_c(p_71247_1_);
        SaveHandler savehandler = this.func_71254_M().func_197715_a(p_71247_1_, this);
        this.func_175584_a(this.func_71270_I(), savehandler);
@@ -41,13 +34,13 @@
        WorldInfo worldinfo = savehandler.func_75757_d();
        if (worldinfo == null) {
           worldinfo = new WorldInfo(this.field_71350_m, p_71247_2_);
-@@ -73,13 +78,12 @@
+@@ -73,13 +77,12 @@
  
        worldinfo.func_230145_a_(this.getServerModName(), this.func_230045_q_().isPresent());
        this.func_195560_a(savehandler.func_75765_b(), worldinfo);
 -      IChunkStatusListener ichunkstatuslistener = this.field_213220_d.create(11);
 -      this.func_213194_a(savehandler, worldinfo, this.field_71350_m, ichunkstatuslistener);
-+      this.func_71247_a(p_71247_1_, p_71247_2_, p_71247_3_, this.field_71350_m.func_77165_h(), this.field_71350_m.func_205391_j()); // CraftBukkit
++      this.func_71247_a(p_71247_1_, p_71247_2_, p_71247_3_, this.field_71350_m.func_77165_h(), this.field_71350_m.func_205391_j());
        if (this.func_71218_a(DimensionType.field_223227_a_).func_72912_H().func_176130_y() == null) {
           this.func_147139_a(this.field_71349_l.field_71474_y.field_74318_M, true);
        }
@@ -57,7 +50,7 @@
     }
  
     public boolean func_71197_b() throws IOException {
-@@ -91,9 +95,10 @@
+@@ -91,9 +94,10 @@
        this.func_71245_h(true);
        field_147148_h.info("Generating keypair");
        this.func_71253_a(CryptManager.func_75891_b());
@@ -69,7 +62,7 @@
     }
  
     public void func_71217_p(BooleanSupplier p_71217_1_) {
-@@ -128,6 +133,7 @@
+@@ -128,6 +132,7 @@
     }
  
     public Difficulty func_147135_j() {
@@ -77,21 +70,19 @@
        return this.field_71349_l.field_71441_e.func_72912_H().func_176130_y();
     }
  
-@@ -143,6 +149,13 @@
+@@ -143,6 +148,11 @@
        return true;
     }
  
-+   // CraftBukkit start
 +   @Override
 +   public CommandSender getBukkitSender(CommandSource p0) {
 +      return null;
 +   }
-+   // CraftBukkit end
 +
     public File func_71238_n() {
        return this.field_71349_l.field_71412_D;
     }
-@@ -219,10 +232,11 @@
+@@ -219,10 +229,11 @@
     }
  
     public void func_71263_m(boolean p_71263_1_) {

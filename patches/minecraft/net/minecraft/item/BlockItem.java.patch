@@ -1,35 +1,28 @@
 --- a/net/minecraft/item/BlockItem.java
 +++ b/net/minecraft/item/BlockItem.java
-@@ -17,7 +17,6 @@
- import net.minecraft.tileentity.TileEntity;
- import net.minecraft.util.ActionResultType;
- import net.minecraft.util.NonNullList;
--import net.minecraft.util.SoundCategory;
- import net.minecraft.util.SoundEvent;
- import net.minecraft.util.math.BlockPos;
- import net.minecraft.util.math.shapes.ISelectionContext;
-@@ -25,6 +24,9 @@
+@@ -25,6 +25,10 @@
  import net.minecraft.world.World;
  import net.minecraftforge.api.distmarker.Dist;
  import net.minecraftforge.api.distmarker.OnlyIn;
-+import org.bukkit.craftbukkit.v1_15_R1.block.CraftBlock;
-+import org.bukkit.craftbukkit.v1_15_R1.block.data.CraftBlockData;
++import org.bukkit.craftbukkit.block.CraftBlock;
++import org.bukkit.craftbukkit.block.data.CraftBlockData;
++import org.bukkit.entity.Player;
 +import org.bukkit.event.block.BlockCanBuildEvent;
  
  public class BlockItem extends Item {
     @Deprecated
-@@ -69,8 +71,8 @@
+@@ -69,8 +73,8 @@
                    }
                 }
  
 -               SoundType soundtype = blockstate1.func_215695_r();
 -               world.func_184133_a(playerentity, blockpos, this.func_219983_a(blockstate1), SoundCategory.BLOCKS, (soundtype.func_185843_a() + 1.0F) / 2.0F, soundtype.func_185847_b() * 0.8F);
 +               SoundType soundtype = blockstate1.getSoundType(world, blockpos, p_195942_1_.func_195999_j());
-+               //world.playSound(playerentity, blockpos, this.getPlaceSound(blockstate1, world, blockpos, context.getPlayer()), SoundCategory.BLOCKS, (soundtype.getVolume() + 1.0F) / 2.0F, soundtype.getPitch() * 0.8F);
++               // world.playSound(playerentity, blockpos, this.getPlaceSound(blockstate1, world, blockpos, context.getPlayer()), SoundCategory.BLOCKS, (soundtype.getVolume() + 1.0F) / 2.0F, soundtype.getPitch() * 0.8F);
                 itemstack.func_190918_g(1);
                 return ActionResultType.SUCCESS;
              }
-@@ -78,10 +80,16 @@
+@@ -78,10 +82,16 @@
        }
     }
  
@@ -46,10 +39,11 @@
     @Nullable
     public BlockItemUseContext func_219984_b(BlockItemUseContext p_219984_1_) {
        return p_219984_1_;
-@@ -103,14 +111,8 @@
+@@ -102,17 +112,9 @@
+       CompoundNBT compoundnbt = p_219985_3_.func_77978_p();
        if (compoundnbt != null) {
           CompoundNBT compoundnbt1 = compoundnbt.func_74775_l("BlockStateTag");
-          StateContainer<Block, BlockState> statecontainer = p_219985_4_.func_177230_c().func_176194_O();
+-         StateContainer<Block, BlockState> statecontainer = p_219985_4_.func_177230_c().func_176194_O();
 -
 -         for(String s : compoundnbt1.func_150296_c()) {
 -            IProperty<?> iproperty = statecontainer.func_185920_a(s);
@@ -61,9 +55,11 @@
 +         // CraftBukkit start
 +         blockstate = getBlockState(blockstate, compoundnbt1);
        }
- 
+-
        if (blockstate != p_219985_4_) {
-@@ -120,6 +122,21 @@
+          p_219985_2_.func_180501_a(p_219985_1_, blockstate, 2);
+       }
+@@ -120,6 +122,20 @@
        return blockstate;
     }
  
@@ -81,18 +77,17 @@
 +      return iblockdata2;
 +   }
 +
-+
     private static <T extends Comparable<T>> BlockState func_219988_a(BlockState p_219988_0_, IProperty<T> p_219988_1_, String p_219988_2_) {
        return p_219988_1_.func_185929_b(p_219988_2_).map((p_219986_2_) -> {
           return p_219988_0_.func_206870_a(p_219988_1_, p_219986_2_);
-@@ -129,7 +146,13 @@
+@@ -129,7 +145,13 @@
     protected boolean func_195944_a(BlockItemUseContext p_195944_1_, BlockState p_195944_2_) {
        PlayerEntity playerentity = p_195944_1_.func_195999_j();
        ISelectionContext iselectioncontext = playerentity == null ? ISelectionContext.func_216377_a() : ISelectionContext.func_216374_a(playerentity);
 -      return (!this.func_219987_d() || p_195944_2_.func_196955_c(p_195944_1_.func_195991_k(), p_195944_1_.func_195995_a())) && p_195944_1_.func_195991_k().func_226663_a_(p_195944_2_, p_195944_1_.func_195995_a(), iselectioncontext);
 +      // CraftBukkit start - store default return
 +      boolean defaultReturn = (!this.func_219987_d() || p_195944_2_.func_196955_c(p_195944_1_.func_195991_k(), p_195944_1_.func_195995_a())) && p_195944_1_.func_195991_k().func_226663_a_(p_195944_2_, p_195944_1_.func_195995_a(), iselectioncontext);
-+      org.bukkit.entity.Player player = (p_195944_1_.func_195999_j() instanceof ServerPlayerEntity) ? (org.bukkit.entity.Player) p_195944_1_.func_195999_j().getBukkitEntity() : null;
++      org.bukkit.entity.Player player = (p_195944_1_.func_195999_j() instanceof ServerPlayerEntity) ? ((Player)p_195944_1_.func_195999_j().getBukkitEntity()) : null;
 +      BlockCanBuildEvent event = new BlockCanBuildEvent(CraftBlock.at(p_195944_1_.func_195991_k(), p_195944_1_.func_195995_a()), player, CraftBlockData.fromData(p_195944_2_), defaultReturn);
 +      p_195944_1_.func_195991_k().getServerCB().getPluginManager().callEvent(event);
 +      return event.isBuildable();
@@ -100,16 +95,7 @@
     }
  
     protected boolean func_219987_d() {
-@@ -149,7 +172,7 @@
-          if (compoundnbt != null) {
-             TileEntity tileentity = p_179224_0_.func_175625_s(p_179224_2_);
-             if (tileentity != null) {
--               if (!p_179224_0_.field_72995_K && tileentity.func_183000_F() && (p_179224_1_ == null || !p_179224_1_.func_195070_dx())) {
-+               if (!p_179224_0_.field_72995_K && tileentity.func_183000_F() && (p_179224_1_ == null || !(p_179224_1_.func_195070_dx() || (p_179224_1_.field_71075_bZ.field_75098_d && p_179224_1_.getBukkitEntity().hasPermission("minecraft.nbt.place"))))) { // Spigot - add permission
-                   return false;
-                }
- 
-@@ -189,10 +212,18 @@
+@@ -189,10 +211,18 @@
     }
  
     public Block func_179223_d() {

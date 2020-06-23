@@ -1,6 +1,6 @@
 --- a/net/minecraft/inventory/IInventory.java
 +++ b/net/minecraft/inventory/IInventory.java
-@@ -1,9 +1,15 @@
+@@ -1,9 +1,17 @@
  package net.minecraft.inventory;
  
 +import java.util.List;
@@ -9,31 +9,31 @@
  import net.minecraft.item.Item;
  import net.minecraft.item.ItemStack;
 +import net.minecraft.item.crafting.IRecipe;
++// CraftBukkit start
 +import org.bukkit.Location;
-+import org.bukkit.craftbukkit.v1_15_R1.entity.CraftHumanEntity;
++import org.bukkit.craftbukkit.entity.CraftHumanEntity;
 +import org.bukkit.entity.HumanEntity;
 +import org.bukkit.inventory.InventoryHolder;
++// CraftBukkit end
  
  public interface IInventory extends IClearable {
     int func_70302_i_();
-@@ -18,9 +24,8 @@
+@@ -18,9 +26,7 @@
  
     void func_70299_a(int p_70299_1_, ItemStack p_70299_2_);
  
 -   default int func_70297_j_() {
 -      return 64;
 -   }
-+   // Craftbukkit - remove 64 max stack limit
 +   int func_70297_j_();
  
     void func_70296_d();
  
-@@ -59,4 +64,29 @@
+@@ -59,4 +65,27 @@
  
        return false;
     }
 +
-+   // CraftBukkit start
 +   List<ItemStack> getContents();
 +
 +   void onOpen(CraftHumanEntity who);
@@ -56,5 +56,4 @@
 +   }
 +
 +   int MAX_STACK = 64;
-+   // CraftBukkit end
  }

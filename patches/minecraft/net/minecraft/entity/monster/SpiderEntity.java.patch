@@ -1,15 +1,6 @@
 --- a/net/minecraft/entity/monster/SpiderEntity.java
 +++ b/net/minecraft/entity/monster/SpiderEntity.java
-@@ -40,6 +40,8 @@
- import net.minecraft.world.DifficultyInstance;
- import net.minecraft.world.IWorld;
- import net.minecraft.world.World;
-+import org.bukkit.event.entity.CreatureSpawnEvent;
-+import org.bukkit.event.entity.EntityPotionEffectEvent.Cause;
- 
- public class SpiderEntity extends MonsterEntity {
-    private static final DataParameter<Byte> field_184729_a = EntityDataManager.func_187226_a(SpiderEntity.class, DataSerializers.field_187191_a);
-@@ -119,7 +121,12 @@
+@@ -119,7 +119,12 @@
     }
  
     public boolean func_70687_e(EffectInstance p_70687_1_) {
@@ -23,21 +14,21 @@
     }
  
     public boolean func_70841_p() {
-@@ -144,7 +151,7 @@
+@@ -144,7 +149,7 @@
           SkeletonEntity skeletonentity = EntityType.field_200741_ag.func_200721_a(this.field_70170_p);
           skeletonentity.func_70012_b(this.func_226277_ct_(), this.func_226278_cu_(), this.func_226281_cx_(), this.field_70177_z, 0.0F);
           skeletonentity.func_213386_a(p_213386_1_, p_213386_2_, p_213386_3_, (ILivingEntityData)null, (CompoundNBT)null);
 -         p_213386_1_.func_217376_c(skeletonentity);
-+         p_213386_1_.addEntity(skeletonentity, CreatureSpawnEvent.SpawnReason.JOCKEY); // CraftBukkit
++         p_213386_1_.addEntity(skeletonentity, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.JOCKEY); // CraftBukkit - add SpawnReason
           skeletonentity.func_184220_m(this);
        }
  
-@@ -158,7 +165,7 @@
+@@ -158,7 +163,7 @@
        if (p_213386_4_ instanceof SpiderEntity.GroupData) {
           Effect effect = ((SpiderEntity.GroupData)p_213386_4_).field_188478_a;
           if (effect != null) {
 -            this.func_195064_c(new EffectInstance(effect, Integer.MAX_VALUE));
-+            this.addPotionEffect(new EffectInstance(effect, Integer.MAX_VALUE), Cause.SPIDER_SPAWN); // CraftBukkit
++            this.addEffect(new EffectInstance(effect, Integer.MAX_VALUE), org.bukkit.event.entity.EntityPotionEffectEvent.Cause.SPIDER_SPAWN); // CraftBukkit
           }
        }
  

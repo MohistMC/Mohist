@@ -8,20 +8,6 @@
  import net.minecraft.block.LeavesBlock;
  import net.minecraft.entity.Entity;
  import net.minecraft.entity.EntityType;
-@@ -36,12 +37,12 @@
- import net.minecraft.util.math.BlockPos;
- import net.minecraft.util.math.MathHelper;
- import net.minecraft.util.math.Vec3d;
--import net.minecraft.world.GameRules;
- import net.minecraft.world.IBlockReader;
- import net.minecraft.world.IWorldReader;
- import net.minecraft.world.World;
- import net.minecraftforge.api.distmarker.Dist;
- import net.minecraftforge.api.distmarker.OnlyIn;
-+import org.bukkit.craftbukkit.v1_15_R1.event.CraftEventFactory;
- 
- public class RavagerEntity extends AbstractRaiderEntity {
-    private static final Predicate<Entity> field_213690_b = (p_213685_0_) -> {
 @@ -139,14 +140,14 @@
              this.func_110148_a(SharedMonsterAttributes.field_111263_d).func_111128_a(MathHelper.func_219803_d(0.1D, d1, d0));
           }
@@ -35,7 +21,7 @@
                 BlockState blockstate = this.field_70170_p.func_180495_p(blockpos);
                 Block block = blockstate.func_177230_c();
 -               if (block instanceof LeavesBlock) {
-+               if (block instanceof LeavesBlock && !CraftEventFactory.callEntityChangeBlockEvent(this,blockpos, Blocks.field_150350_a.func_176223_P()).isCancelled()) { // CraftBukkit
++               if (block instanceof LeavesBlock && !org.bukkit.craftbukkit.event.CraftEventFactory.callEntityChangeBlockEvent(this, blockpos, Blocks.field_150350_a.func_176223_P()).isCancelled()) { // CraftBukkit
                    flag = this.field_70170_p.func_225521_a_(blockpos, true, this) || flag;
                 }
              }

@@ -1,20 +1,10 @@
 --- a/net/minecraft/inventory/container/FurnaceContainer.java
 +++ b/net/minecraft/inventory/container/FurnaceContainer.java
-@@ -4,8 +4,11 @@
+@@ -4,6 +4,7 @@
  import net.minecraft.inventory.IInventory;
  import net.minecraft.item.crafting.IRecipeType;
  import net.minecraft.util.IIntArray;
-+import org.bukkit.craftbukkit.v1_15_R1.inventory.CraftInventoryFurnace;
-+import org.bukkit.craftbukkit.v1_15_R1.inventory.CraftInventoryView;
++import org.bukkit.inventory.InventoryView;
  
  public class FurnaceContainer extends AbstractFurnaceContainer {
-+
     public FurnaceContainer(int p_i50082_1_, PlayerInventory p_i50082_2_) {
-       super(ContainerType.field_221520_n, IRecipeType.field_222150_b, p_i50082_1_, p_i50082_2_);
-    }
-@@ -13,4 +16,5 @@
-    public FurnaceContainer(int p_i50083_1_, PlayerInventory p_i50083_2_, IInventory p_i50083_3_, IIntArray p_i50083_4_) {
-       super(ContainerType.field_221520_n, IRecipeType.field_222150_b, p_i50083_1_, p_i50083_2_, p_i50083_3_, p_i50083_4_);
-    }
-+
- }

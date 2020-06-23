@@ -15,7 +15,7 @@
  import net.minecraft.world.gen.feature.template.TemplateManager;
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
-+import org.bukkit.craftbukkit.v1_15_R1.entity.CraftPlayer;
++import org.bukkit.craftbukkit.entity.CraftPlayer;
  
  public class SaveHandler implements IPlayerFileData {
     private static final Logger field_215773_b = LogManager.getLogger();
@@ -36,32 +36,6 @@
        try {
           File file1 = new File(this.field_215774_c, "level.dat_new");
           File file2 = new File(this.field_215774_c, "level.dat_old");
-@@ -87,7 +93,7 @@
- 
-       } catch (IOException ioexception) {
-          ioexception.printStackTrace();
--         throw new RuntimeException("Failed to check session lock, aborting");
-+         throw new RuntimeException("Failed to check session lock for world located at " + this.field_215774_c + ", aborting. Stop the server and delete the session.lock in this world to prevent further issues."); // Spigot
-       }
-    }
- 
-@@ -102,14 +108,14 @@
- 
-          try {
-             if (datainputstream.readLong() != this.field_215776_e) {
--               throw new SessionLockException("The save is being accessed from another location, aborting");
-+               throw new SessionLockException("The save for world located at " + this.field_215774_c + " is being accessed from another location, aborting");  // Spigot
-             }
-          } finally {
-             datainputstream.close();
-          }
- 
-       } catch (IOException var7) {
--         throw new SessionLockException("Failed to check session lock, aborting");
-+         throw new SessionLockException("Failed to check session lock for world located at " + this.field_215774_c + ", aborting. Stop the server and delete the session.lock in this world to prevent further issues."); // Spigot
-       }
-    }
- 
 @@ -117,14 +123,14 @@
     public WorldInfo func_75757_d() {
        File file1 = new File(this.field_215774_c, "level.dat");
@@ -87,42 +61,13 @@
        } catch (Exception var5) {
           field_215773_b.warn("Failed to save player data for {}", (Object)p_75753_1_.func_200200_C_().getString());
        }
-@@ -154,21 +161,67 @@
- 
-       try {
-          File file1 = new File(this.field_215775_d, p_75752_1_.func_189512_bd() + ".dat");
-+         // Spigot Start
-+         boolean usingWrongFile = false;
-+         if ( !file1.exists() )
-+         {
-+            file1 = new File( this.field_215775_d, UUID.nameUUIDFromBytes( ( "OfflinePlayer:" + p_75752_1_.func_200200_C_() ).getBytes( "UTF-8" ) ).toString() + ".dat");
-+            if ( file1.exists() )
-+            {
-+               usingWrongFile = true;
-+               org.bukkit.Bukkit.getServer().getLogger().warning( "Using offline mode UUID file for player " + p_75752_1_.func_200200_C_() + " as it is the only copy we can find." );
-+            }
-+         }
-+         // Spigot End
-+
-          if (file1.exists() && file1.isFile()) {
-             compoundnbt = CompressedStreamTools.func_74796_a(new FileInputStream(file1));
-          }
-+
-+         // Spigot Start
-+         if ( usingWrongFile )
-+         {
-+            file1.renameTo( new File( file1.getPath() + ".offline-read" ) );
-+         }
-+         // Spigot End
-       } catch (Exception var4) {
-          field_215773_b.warn("Failed to load player data for {}", (Object)p_75752_1_.func_200200_C_().getString());
+@@ -162,13 +169,38 @@
        }
  
        if (compoundnbt != null) {
 +         // CraftBukkit start
 +         if (p_75752_1_ instanceof ServerPlayerEntity) {
 +            CraftPlayer cplayer = (CraftPlayer)p_75752_1_.getBukkitEntity();
-+            // Only update first played if it is older than the one we have
 +            long modified = new File(this.field_215775_d, String.valueOf(p_75752_1_.func_110124_au().toString()) + ".dat").lastModified();
 +            if (modified < cplayer.getFirstPlayed()) {
 +               cplayer.setFirstPlayed(modified);
@@ -155,7 +100,7 @@
     public String[] func_215771_d() {
        String[] astring = this.field_215775_d.list();
        if (astring == null) {
-@@ -191,4 +244,82 @@
+@@ -191,4 +223,82 @@
     public DataFixer func_197718_i() {
        return this.field_215772_a;
     }
@@ -212,7 +157,7 @@
 +         dos = new DataOutputStream(new FileOutputStream(file1));
 +         dos.writeLong(this.uuid.getMostSignificantBits());
 +         dos.writeLong(this.uuid.getLeastSignificantBits());
-+    }
++      }
 +      catch (IOException ex) {
 +         field_215773_b.warn("Failed to write " + file1, ex);
 +      }

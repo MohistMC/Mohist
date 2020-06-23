@@ -1,17 +1,37 @@
 --- a/net/minecraft/entity/merchant/villager/AbstractVillagerEntity.java
 +++ b/net/minecraft/entity/merchant/villager/AbstractVillagerEntity.java
-@@ -34,6 +34,10 @@
+@@ -34,14 +34,29 @@
  import net.minecraft.world.dimension.DimensionType;
  import net.minecraftforge.api.distmarker.Dist;
  import net.minecraftforge.api.distmarker.OnlyIn;
++// CraftBukkit start
 +import org.bukkit.Bukkit;
-+import org.bukkit.craftbukkit.v1_15_R1.inventory.CraftMerchantRecipe;
++import org.bukkit.craftbukkit.inventory.CraftMerchant;
++import org.bukkit.craftbukkit.inventory.CraftMerchantRecipe;
 +import org.bukkit.entity.AbstractVillager;
 +import org.bukkit.event.entity.VillagerAcquireTradeEvent;
++// CraftBukkit end
  
  public abstract class AbstractVillagerEntity extends AgeableEntity implements INPC, IMerchant {
++   // CraftBukkit start
++   private CraftMerchant craftMerchant;
++
++   @Override
++   public CraftMerchant getCraftMerchant() {
++      return (craftMerchant == null) ? craftMerchant = new CraftMerchant(this) : craftMerchant;
++   }
++   // CraftBukkit end
     private static final DataParameter<Integer> field_222820_bA = EntityDataManager.func_187226_a(AbstractVillagerEntity.class, DataSerializers.field_187192_b);
-@@ -179,9 +183,9 @@
+    @Nullable
+    private PlayerEntity field_213725_bA;
+    @Nullable
+    protected MerchantOffers field_213724_bz;
+-   private final Inventory field_213722_bB = new Inventory(8);
++   private final Inventory field_213722_bB = new Inventory(8, (org.bukkit.craftbukkit.entity.CraftAbstractVillager) this.getBukkitEntity()); // CraftBukkit add argument
+ 
+    public AbstractVillagerEntity(EntityType<? extends AbstractVillagerEntity> p_i50185_1_, World p_i50185_2_) {
+       super(p_i50185_1_, p_i50185_2_);
+@@ -179,9 +194,9 @@
     }
  
     @Nullable
@@ -23,7 +43,7 @@
     }
  
     protected void func_213750_eg() {
-@@ -248,7 +252,16 @@
+@@ -248,7 +263,16 @@
           VillagerTrades.ITrade villagertrades$itrade = p_213717_2_[integer];
           MerchantOffer merchantoffer = villagertrades$itrade.func_221182_a(this, this.field_70146_Z);
           if (merchantoffer != null) {

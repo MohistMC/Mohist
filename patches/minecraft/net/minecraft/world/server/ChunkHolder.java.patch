@@ -21,7 +21,7 @@
     private volatile CompletableFuture<Either<Chunk, ChunkHolder.IChunkLoadingError>> field_219314_i = field_219309_d;
     private CompletableFuture<IChunk> field_219315_j = CompletableFuture.completedFuture((IChunk)null);
 -   private int field_219316_k;
-+   public int field_219316_k; // private->public | oldTicketLevel
++   public int field_219316_k;
     private int field_219317_l;
     private int field_219318_m;
     private final ChunkPos field_219319_n;
@@ -126,7 +126,7 @@
        if (flag) {
           Either<IChunk, ChunkHolder.IChunkLoadingError> either = Either.right(new ChunkHolder.IChunkLoadingError() {
              public String toString() {
-@@ -356,6 +395,24 @@
+@@ -356,6 +395,21 @@
  
        this.field_219327_v.func_219066_a(this.field_219319_n, this::func_219281_j, this.field_219317_l, this::func_219275_d);
        this.field_219316_k = this.field_219317_l;
@@ -140,14 +140,11 @@
 +            }
 +            return;
 +         }).exceptionally(throwable -> {
-+            // ensure exceptions are printed, by default this is not the case
 +            MinecraftServer.field_147145_h.fatal("Failed to schedule load callback for chunk " + this.field_219319_n, throwable);
 +            return null;
 +         });
-+         // Run callback right away if the future was already done
 +         p_219291_1_.callbackExecutor.run();
 +      }
-+      // CraftBukkit end
     }
  
     public static ChunkStatus func_219278_b(int p_219278_0_) {

@@ -1,13 +1,13 @@
 --- a/net/minecraft/block/BambooBlock.java
 +++ b/net/minecraft/block/BambooBlock.java
-@@ -23,6 +23,7 @@
- import net.minecraft.world.IWorldReader;
- import net.minecraft.world.World;
- import net.minecraft.world.server.ServerWorld;
-+import org.bukkit.craftbukkit.v1_15_R1.event.CraftEventFactory;
- 
- public class BambooBlock extends Block implements IGrowable {
-    protected static final VoxelShape field_220261_a = Block.func_208617_a(5.0D, 0.0D, 5.0D, 11.0D, 16.0D, 11.0D);
+@@ -8,6 +8,7 @@
+ import net.minecraft.item.SwordItem;
+ import net.minecraft.pathfinding.PathType;
+ import net.minecraft.state.EnumProperty;
++import net.minecraft.state.IProperty;
+ import net.minecraft.state.IntegerProperty;
+ import net.minecraft.state.StateContainer;
+ import net.minecraft.state.properties.BambooLeaves;
 @@ -91,10 +92,11 @@
        if (!p_225534_1_.func_196955_c(p_225534_2_, p_225534_3_)) {
           p_225534_2_.func_175655_b(p_225534_3_, true);
@@ -16,18 +16,17 @@
 +         if (true) {
              int i = this.func_220260_b(p_225534_2_, p_225534_3_) + 1;
 -            if (i < 16) {
-+            if (i < 16 && net.minecraftforge.common.ForgeHooks.onCropsGrowPre(p_225534_2_, p_225534_3_, p_225534_1_, p_225534_4_.nextInt(Math.max(1, (int) (100.0F / p_225534_2_.spigotConfig.bambooModifier) * 3)) == 0 && p_225534_2_.func_175623_d(p_225534_3_.func_177984_a()) && p_225534_2_.func_226659_b_(p_225534_3_.func_177984_a(), 0) >= 9)) {
++            if (i < 16 && net.minecraftforge.common.ForgeHooks.onCropsGrowPre(p_225534_2_, p_225534_3_, p_225534_1_, p_225534_4_.nextInt(3) == 0 && p_225534_2_.func_175623_d(p_225534_3_.func_177984_a()) && p_225534_2_.func_226659_b_(p_225534_3_.func_177984_a(), 0) >= 9)) {
                 this.func_220258_a(p_225534_1_, p_225534_2_, p_225534_3_, p_225534_4_, i);
 +               net.minecraftforge.common.ForgeHooks.onCropsGrowPost(p_225534_2_, p_225534_3_, p_225534_1_);
              }
           }
  
-@@ -156,13 +158,18 @@
+@@ -156,13 +158,17 @@
        BlockPos blockpos = p_220258_3_.func_177979_c(2);
        BlockState blockstate1 = p_220258_2_.func_180495_p(blockpos);
        BambooLeaves bambooleaves = BambooLeaves.NONE;
 +      boolean shouldUpdateOthers = false; // CraftBukkit
-+
        if (p_220258_5_ >= 1) {
           if (blockstate.func_177230_c() == Blocks.field_222405_kQ && blockstate.func_177229_b(field_220265_e) != BambooLeaves.NONE) {
              if (blockstate.func_177230_c() == Blocks.field_222405_kQ && blockstate.func_177229_b(field_220265_e) != BambooLeaves.NONE) {
@@ -43,14 +42,12 @@
                 }
              }
           } else {
-@@ -172,7 +179,15 @@
- 
+@@ -173,6 +179,14 @@
        int i = p_220258_1_.func_177229_b(field_220264_d) != 1 && blockstate1.func_177230_c() != Blocks.field_222405_kQ ? 0 : 1;
        int j = (p_220258_5_ < 11 || !(p_220258_4_.nextFloat() < 0.25F)) && p_220258_5_ != 15 ? 0 : 1;
--      p_220258_2_.func_180501_a(p_220258_3_.func_177984_a(), this.func_176223_P().func_206870_a(field_220264_d, Integer.valueOf(i)).func_206870_a(field_220265_e, bambooleaves).func_206870_a(field_220266_f, Integer.valueOf(j)), 3);
+       p_220258_2_.func_180501_a(p_220258_3_.func_177984_a(), this.func_176223_P().func_206870_a(field_220264_d, Integer.valueOf(i)).func_206870_a(field_220265_e, bambooleaves).func_206870_a(field_220266_f, Integer.valueOf(j)), 3);
 +      // CraftBukkit start
-+      if (CraftEventFactory.handleBlockSpreadEvent(p_220258_2_, blockpos, blockpos.func_177984_a(),
-+          this.func_176223_P().func_206870_a(field_220264_d, Integer.valueOf(i)).func_206870_a(field_220265_e, bambooleaves).func_206870_a(field_220266_f, Integer.valueOf(j)), 3)) {
++      if (org.bukkit.craftbukkit.event.CraftEventFactory.handleBlockSpreadEvent(p_220258_2_, blockpos, blockpos.func_177984_a(), this.func_176223_P().func_206870_a(BambooBlock.field_220264_d, i).func_206870_a(BambooBlock.field_220265_e, bambooleaves).func_206870_a(BambooBlock.field_220266_f, j), 3)) {
 +         if (shouldUpdateOthers) {
 +            p_220258_2_.func_180501_a(p_220258_3_.func_177977_b(), blockstate.func_206870_a(field_220265_e, BambooLeaves.SMALL), 3);
 +            p_220258_2_.func_180501_a(blockpos, blockstate1.func_206870_a(field_220265_e, BambooLeaves.NONE), 3);

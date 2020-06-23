@@ -1,24 +1,9 @@
 --- a/net/minecraft/entity/projectile/WitherSkullEntity.java
 +++ b/net/minecraft/entity/projectile/WitherSkullEntity.java
-@@ -4,7 +4,6 @@
- import net.minecraft.entity.Entity;
- import net.minecraft.entity.EntityType;
- import net.minecraft.entity.LivingEntity;
--import net.minecraft.entity.boss.WitherEntity;
- import net.minecraft.fluid.IFluidState;
- import net.minecraft.network.datasync.DataParameter;
- import net.minecraft.network.datasync.DataSerializers;
-@@ -17,11 +16,13 @@
- import net.minecraft.util.math.RayTraceResult;
- import net.minecraft.world.Difficulty;
- import net.minecraft.world.Explosion;
--import net.minecraft.world.GameRules;
- import net.minecraft.world.IBlockReader;
+@@ -22,6 +22,7 @@
  import net.minecraft.world.World;
  import net.minecraftforge.api.distmarker.Dist;
  import net.minecraftforge.api.distmarker.OnlyIn;
-+import org.bukkit.event.entity.EntityPotionEffectEvent.Cause;
-+import org.bukkit.event.entity.EntityRegainHealthEvent.RegainReason;
 +import org.bukkit.event.entity.ExplosionPrimeEvent;
  
  public class WitherSkullEntity extends DamagingProjectileEntity {
@@ -32,40 +17,26 @@
     }
  
     protected void func_70227_a(RayTraceResult p_70227_1_) {
-@@ -56,19 +57,23 @@
-       if (!this.field_70170_p.field_72995_K) {
+@@ -57,11 +58,11 @@
           if (p_70227_1_.func_216346_c() == RayTraceResult.Type.ENTITY) {
              Entity entity = ((EntityRayTraceResult)p_70227_1_).func_216348_a();
-+            // Spigot start
-+            boolean didDamage = false;
              if (this.field_70235_a != null) {
 -               if (entity.func_70097_a(DamageSource.func_76358_a(this.field_70235_a), 8.0F)) {
-+               didDamage = entity.func_70097_a(DamageSource.func_76356_a(this, field_70235_a), 8.0F);
-+               if (didDamage) { // CraftBukkit
++               if (entity.func_70097_a(DamageSource.func_76356_a(this, this.field_70235_a), 8.0F)) { // CraftBukkit
                    if (entity.func_70089_S()) {
                       this.func_174815_a(this.field_70235_a, entity);
                    } else {
 -                     this.field_70235_a.func_70691_i(5.0F);
-+                     this.field_70235_a.heal(5.0F, RegainReason.WITHER); // CraftBukkit
++                     this.field_70235_a.heal(5.0F, org.bukkit.event.entity.EntityRegainHealthEvent.RegainReason.WITHER); // CraftBukkit
                    }
                 }
              } else {
--               entity.func_70097_a(DamageSource.field_76376_m, 5.0F);
-+               didDamage = entity.func_70097_a(DamageSource.field_76376_m, 5.0F);
-             }
- 
--            if (entity instanceof LivingEntity) {
-+            if (didDamage && entity instanceof LivingEntity) {
-+               // Spigot end
-                int i = 0;
-                if (this.field_70170_p.func_175659_aa() == Difficulty.NORMAL) {
-                   i = 10;
-@@ -77,13 +82,20 @@
+@@ -77,13 +78,21 @@
                 }
  
                 if (i > 0) {
 -                  ((LivingEntity)entity).func_195064_c(new EffectInstance(Effects.field_82731_v, 20 * i, 1));
-+                  ((LivingEntity)entity).addPotionEffect(new EffectInstance(Effects.field_82731_v, 20 * i, 1), Cause.ATTACK); // CraftBukkit
++                  ((LivingEntity)entity).addEffect(new EffectInstance(Effects.field_82731_v, 20 * i, 1), org.bukkit.event.entity.EntityPotionEffectEvent.Cause.ATTACK); // CraftBukkit
                 }
              }
           }
@@ -73,10 +44,11 @@
 -         Explosion.Mode explosion$mode = this.field_70170_p.func_82736_K().func_223586_b(GameRules.field_223599_b) ? Explosion.Mode.DESTROY : Explosion.Mode.NONE;
 -         this.field_70170_p.func_217398_a(this, this.func_226277_ct_(), this.func_226278_cu_(), this.func_226281_cx_(), 1.0F, false, explosion$mode);
 +         Explosion.Mode explosion$mode = net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(this.field_70170_p, this.field_70235_a) ? Explosion.Mode.DESTROY : Explosion.Mode.NONE;
-+
 +         // CraftBukkit start
++         // this.world.createExplosion(this, this.getPosX(), this.getPosY(), this.getPosZ(), 1.0F, false, explosion$mode);
 +         ExplosionPrimeEvent event = new ExplosionPrimeEvent(this.getBukkitEntity(), 1.0F, false);
 +         this.field_70170_p.getServerCB().getPluginManager().callEvent(event);
++
 +         if (!event.isCancelled()) {
 +            this.field_70170_p.func_217398_a(this, this.func_226277_ct_(), this.func_226278_cu_(), this.func_226281_cx_(), event.getRadius(), event.getFire(), explosion$mode);
 +         }

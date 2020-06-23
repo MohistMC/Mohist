@@ -9,11 +9,10 @@
     }
  
     default int func_201572_C() {
-@@ -34,19 +34,25 @@
+@@ -34,19 +34,23 @@
        return 256;
     }
  
-+   // CraftBukkit start
 +   default BlockRayTraceResult rayTraceBlock(RayTraceContext p_217297_1_, BlockPos p_217297_2_) {
 +      BlockState blockstate = this.func_180495_p(p_217297_2_);
 +      IFluidState ifluidstate = this.func_204610_c(p_217297_2_);
@@ -42,7 +41,6 @@
 -         double d1 = blockraytraceresult1 == null ? Double.MAX_VALUE : p_217297_1_.func_222253_b().func_72436_e(blockraytraceresult1.func_216347_e());
 -         return d0 <= d1 ? blockraytraceresult : blockraytraceresult1;
 +         return rayTraceBlock(p_217297_1_, p_217297_2_);
-+         // CraftBukkit end
        }, (p_217302_0_) -> {
           Vec3d vec3d = p_217302_0_.func_222253_b().func_178788_d(p_217302_0_.func_222250_a());
           return BlockRayTraceResult.func_216352_a(p_217302_0_.func_222250_a(), Direction.func_210769_a(vec3d.field_72450_a, vec3d.field_72448_b, vec3d.field_72449_c), new BlockPos(p_217302_0_.func_222250_a()));

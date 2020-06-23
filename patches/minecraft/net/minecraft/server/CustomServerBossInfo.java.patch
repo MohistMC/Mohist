@@ -1,21 +1,20 @@
 --- a/net/minecraft/server/CustomServerBossInfo.java
 +++ b/net/minecraft/server/CustomServerBossInfo.java
-@@ -16,6 +16,8 @@
+@@ -16,13 +16,25 @@
  import net.minecraft.util.text.event.HoverEvent;
  import net.minecraft.world.BossInfo;
  import net.minecraft.world.server.ServerBossInfo;
 +import org.bukkit.boss.KeyedBossBar;
-+import org.bukkit.craftbukkit.v1_15_R1.boss.CraftKeyedBossbar;
++import org.bukkit.craftbukkit.boss.CraftKeyedBossbar;
  
  public class CustomServerBossInfo extends ServerBossInfo {
     private final ResourceLocation field_201373_h;
-@@ -23,6 +25,17 @@
+    private final Set<UUID> field_201374_i = Sets.newHashSet();
     private int field_201375_j;
     private int field_201376_k = 100;
- 
 +   // CraftBukkit start
 +   private KeyedBossBar bossBar;
-+
+ 
 +   public KeyedBossBar getBukkitEntity() {
 +      if (bossBar == null) {
 +         bossBar = new CraftKeyedBossbar(this);

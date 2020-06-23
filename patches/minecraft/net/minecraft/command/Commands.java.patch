@@ -20,6 +20,7 @@
  import net.minecraft.util.text.event.HoverEvent;
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
++import org.bukkit.Bukkit;
 +import org.bukkit.event.player.PlayerCommandSendEvent;
 +import org.bukkit.event.server.ServerCommandEvent;
  
@@ -28,7 +29,6 @@
     private final CommandDispatcher<CommandSource> field_197062_b = new CommandDispatcher<>();
  
 -   public Commands(boolean p_i49161_1_) {
-+   // CraftBukkit start
 +   public final Commands init(boolean isDedicatedServer) {
        AdvancementCommand.func_198199_a(this.field_197062_b);
        ExecuteCommand.func_198378_a(this.field_197062_b);
@@ -47,13 +47,12 @@
  
        this.field_197062_b.findAmbiguities((p_201302_1_, p_201302_2_, p_201302_3_, p_201302_4_) -> {
 -         field_197061_a.warn("Ambiguity between arguments {} and {} with inputs: {}", this.field_197062_b.getPath(p_201302_2_), this.field_197062_b.getPath(p_201302_3_), p_201302_4_);
-+         //LOGGER.warn("Ambiguity between arguments {} and {} with inputs: {}", this.dispatcher.getPath(p_201302_2_), this.dispatcher.getPath(p_201302_3_), p_201302_4_);  // CraftBukkit
++         //LOGGER.warn("Ambiguity between arguments {} and {} with inputs: {}", this.dispatcher.getPath(p_201302_2_), this.dispatcher.getPath(p_201302_3_), p_201302_4_);
        });
 +      return this;
 +   }
 +
 +   public Commands() {
-+      // CraftBukkit end
        this.field_197062_b.setConsumer((p_197058_0_, p_197058_1_, p_197058_2_) -> {
           p_197058_0_.getSource().func_197038_a(p_197058_0_, p_197058_1_, p_197058_2_);
        });
@@ -66,19 +65,21 @@
 +         command = command.substring(1);
 +      }
 +      ServerCommandEvent event = new ServerCommandEvent(sender.getBukkitSender(), command);
-+      org.bukkit.Bukkit.getPluginManager().callEvent(event);
++      Bukkit.getPluginManager().callEvent(event);
 +      if (event.isCancelled()) {
 +         return 0;
 +      }
 +      command = event.getCommand();
 +      String[] args = command.split(" ");
 +      String cmd = args[0];
-+      if (cmd.startsWith("minecraft:")) cmd = cmd.substring("minecraft:".length());
-+      if (cmd.startsWith("bukkit:")) cmd = cmd.substring("bukkit:".length());
++      if (cmd.startsWith("minecraft:")) {
++         cmd = cmd.substring("minecraft:".length());
++      }
++      if (cmd.startsWith("bukkit:")) {
++         cmd = cmd.substring("bukkit:".length());
++      }
 +      // Block disallowed commands
-+      if (cmd.equalsIgnoreCase("stop") || cmd.equalsIgnoreCase("kick") || cmd.equalsIgnoreCase("op")
-+          || cmd.equalsIgnoreCase("deop") || cmd.equalsIgnoreCase("ban") || cmd.equalsIgnoreCase("ban-ip")
-+          || cmd.equalsIgnoreCase("pardon") || cmd.equalsIgnoreCase("pardon-ip") || cmd.equalsIgnoreCase("reload")) {
++      if (cmd.equalsIgnoreCase("stop") || cmd.equalsIgnoreCase("kick") || cmd.equalsIgnoreCase("op") || cmd.equalsIgnoreCase("deop") || cmd.equalsIgnoreCase("ban") || cmd.equalsIgnoreCase("ban-ip") || cmd.equalsIgnoreCase("pardon") || cmd.equalsIgnoreCase("pardon-ip") || cmd.equalsIgnoreCase("reload")) {
 +         return 0;
 +      }
 +      // Handle vanilla commands;
@@ -94,7 +95,6 @@
 +   }
 +
 +   public int handleCommand(CommandSource source, String command, String label) {
-+      // CraftBukkit end
 +      StringReader stringreader = new StringReader(command);
        if (stringreader.canRead() && stringreader.peek() == '/') {
           stringreader.skip();
@@ -128,7 +128,7 @@
                 int k = Math.min(commandsyntaxexception.getInput().length(), commandsyntaxexception.getCursor());
                 ITextComponent itextcomponent1 = (new StringTextComponent("")).func_211708_a(TextFormatting.GRAY).func_211710_a((p_211705_1_) -> {
 -                  p_211705_1_.func_150241_a(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, p_197059_2_));
-+                  p_211705_1_.func_150241_a(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, label)); // CraftBukkit
++                  p_211705_1_.func_150241_a(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, label));
                 });
                 if (k > 10) {
                    itextcomponent1.func_150258_a("...");
@@ -163,7 +163,7 @@
              }
  
              byte b2 = 0;
-@@ -246,15 +299,39 @@
+@@ -246,15 +299,34 @@
           byte b0 = 0;
           return b0;
        } finally {
@@ -174,34 +174,29 @@
  
     public void func_197051_a(ServerPlayerEntity p_197051_1_) {
 -      Map<CommandNode<CommandSource>, CommandNode<ISuggestionProvider>> map = Maps.newHashMap();
-+      if ( org.spigotmc.SpigotConfig.tabComplete < 0 ) return; // Spigot
++      // CraftBukkit start
 +      // Register Vanilla commands into builtRoot as before
-+      Map<CommandNode<CommandSource>, CommandNode<ISuggestionProvider>> map = Maps.newIdentityHashMap(); // Use identity to prevent aliasing issues
++      Map<CommandNode<CommandSource>, CommandNode<ISuggestionProvider>> map = Maps.newIdentityHashMap();
 +      RootCommandNode vanillaRoot = new RootCommandNode();
 +      RootCommandNode<CommandSource> vanilla = p_197051_1_.field_71133_b.vanillaCommandDispatcher.func_197054_a().getRoot();
 +      map.put(vanilla, vanillaRoot);
-+      this.func_197052_a(vanilla, vanillaRoot, p_197051_1_.func_195051_bN(), (Map) map);
++      this.func_197052_a(vanilla, vanillaRoot, p_197051_1_.func_195051_bN(), map);
 +
 +      // Now build the global commands in a second pass
        RootCommandNode<ISuggestionProvider> rootcommandnode = new RootCommandNode<>();
-+
        map.put(this.field_197062_b.getRoot(), rootcommandnode);
        this.func_197052_a(this.field_197062_b.getRoot(), rootcommandnode, p_197051_1_.func_195051_bN(), map);
-+
-+      Collection<String> bukkit = new LinkedHashSet<>();
++      Collection<String> bukkit = new LinkedHashSet<String>();
 +      for (CommandNode node : rootcommandnode.getChildren()) {
 +         bukkit.add(node.getName());
 +      }
-+      PlayerCommandSendEvent event = new PlayerCommandSendEvent(p_197051_1_.getBukkitEntity(), new LinkedHashSet<>(bukkit));
++      PlayerCommandSendEvent event = new PlayerCommandSendEvent(p_197051_1_.getBukkitEntity(), new LinkedHashSet<String>(bukkit));
 +      event.getPlayer().getServer().getPluginManager().callEvent(event);
-+      // Remove labels that were removed during the event
 +      for (String orig : bukkit) {
 +         if (!event.getCommands().contains(orig)) {
 +            rootcommandnode.removeCommand(orig);
 +         }
 +      }
-+      // CraftBukkit end
-+
        p_197051_1_.field_71135_a.func_147359_a(new SCommandListPacket(rootcommandnode));
     }
  

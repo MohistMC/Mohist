@@ -1,22 +1,23 @@
 --- a/net/minecraft/item/HangingEntityItem.java
 +++ b/net/minecraft/item/HangingEntityItem.java
-@@ -10,6 +10,8 @@
+@@ -10,6 +10,9 @@
  import net.minecraft.util.Direction;
  import net.minecraft.util.math.BlockPos;
  import net.minecraft.world.World;
++import org.bukkit.entity.Hanging;
 +import org.bukkit.entity.Player;
 +import org.bukkit.event.hanging.HangingPlaceEvent;
  
  public class HangingEntityItem extends Item {
     private final EntityType<? extends HangingEntity> field_220001_a;
-@@ -47,6 +49,16 @@
+@@ -47,6 +50,16 @@
  
           if (hangingentity.func_70518_d()) {
              if (!world.field_72995_K) {
 +               // CraftBukkit start - fire HandingPlaceEvent
 +               Player who = (p_195939_1_.func_195999_j() == null) ? null : (Player) p_195939_1_.func_195999_j().getBukkitEntity();
 +               org.bukkit.block.Block blockClicked = world.getWorldCB().getBlockAt(blockpos.func_177958_n(), blockpos.func_177956_o(), blockpos.func_177952_p());
-+               org.bukkit.block.BlockFace blockFace = org.bukkit.craftbukkit.v1_15_R1.block.CraftBlock.notchToBlockFace(direction);
++               org.bukkit.block.BlockFace blockFace = org.bukkit.craftbukkit.block.CraftBlock.notchToBlockFace(direction);
 +               HangingPlaceEvent event = new HangingPlaceEvent((org.bukkit.entity.Hanging) ((HangingEntity) hangingentity).getBukkitEntity(), who, blockClicked, blockFace);
 +               world.getServerCB().getPluginManager().callEvent(event);
 +               if (event.isCancelled()) {

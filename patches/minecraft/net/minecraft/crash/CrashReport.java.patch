@@ -1,23 +1,14 @@
 --- a/net/minecraft/crash/CrashReport.java
 +++ b/net/minecraft/crash/CrashReport.java
-@@ -21,6 +21,7 @@
- import org.apache.commons.lang3.ArrayUtils;
- import org.apache.logging.log4j.LogManager;
- import org.apache.logging.log4j.Logger;
-+import org.bukkit.craftbukkit.v1_15_R1.CraftCrashReport;
- 
- public class CrashReport {
-    private static final Logger field_147150_a = LogManager.getLogger();
-@@ -69,6 +70,8 @@
+@@ -69,6 +69,7 @@
           List<String> list = Util.func_211565_f().collect(Collectors.toList());
           return String.format("%d total; %s", list.size(), list.stream().collect(Collectors.joining(" ")));
        });
-+      this.field_85061_c.func_189529_a("CraftBukkit Information", (ICrashReportDetail)new CraftCrashReport()); // CraftBukkit
 +      net.minecraftforge.fml.CrashReportExtender.enhanceCrashReport(this, this.field_85061_c);
     }
  
     public String func_71501_a() {
-@@ -121,23 +124,13 @@
+@@ -121,23 +122,13 @@
           throwable.setStackTrace(this.field_71511_b.getStackTrace());
        }
  

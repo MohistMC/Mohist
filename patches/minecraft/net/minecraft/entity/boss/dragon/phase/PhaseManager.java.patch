@@ -4,18 +4,21 @@
  import net.minecraft.entity.boss.dragon.EnderDragonEntity;
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
-+import org.bukkit.craftbukkit.v1_15_R1.entity.CraftEnderDragon;
++import org.bukkit.craftbukkit.entity.CraftEnderDragon;
 +import org.bukkit.event.entity.EnderDragonChangePhaseEvent;
  
  public class PhaseManager {
     private static final Logger field_188759_a = LogManager.getLogger();
-@@ -21,6 +23,16 @@
+@@ -21,6 +23,19 @@
              this.field_188762_d.func_188658_e();
           }
  
 +         // CraftBukkit start - Call EnderDragonChangePhaseEvent
-+         EnderDragonChangePhaseEvent event = new EnderDragonChangePhaseEvent((CraftEnderDragon) this.field_188760_b.getBukkitEntity(),
-+             (this.field_188762_d == null) ? null : CraftEnderDragon.getBukkitPhase(this.field_188762_d.func_188652_i()), CraftEnderDragon.getBukkitPhase(p_188758_1_));
++         EnderDragonChangePhaseEvent event = new EnderDragonChangePhaseEvent(
++                 (CraftEnderDragon) this.field_188760_b.getBukkitEntity(),
++                 (this.field_188762_d == null) ? null : CraftEnderDragon.getBukkitPhase(this.field_188762_d.func_188652_i()),
++                 CraftEnderDragon.getBukkitPhase(p_188758_1_)
++         );
 +         this.field_188760_b.field_70170_p.getServerCB().getPluginManager().callEvent(event);
 +         if (event.isCancelled()) {
 +            return;

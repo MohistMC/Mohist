@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/server/ServerTickList.java
 +++ b/net/minecraft/world/server/ServerTickList.java
-@@ -50,12 +50,19 @@
+@@ -50,11 +50,18 @@
  
     public void func_205365_a() {
        int i = this.field_205375_e.size();
@@ -9,15 +9,15 @@
           throw new IllegalStateException("TickNextTick list out of synch");
        } else {
           if (i > 65536) {
+-            i = 65536;
 +            // CraftBukkit start - If the server has too much to process over time, try to alleviate that
 +            if (i > 1310720) {
 +               i /= 20;
 +            }
 +            else {
-             i = 65536;
-          }
++               i = 65536;
++            }
 +            // CraftBukkit end
-+         }
+          }
  
           ServerChunkProvider serverchunkprovider = this.field_205376_f.func_72863_F();
-          Iterator<NextTickListEntry<T>> iterator = this.field_205375_e.iterator();

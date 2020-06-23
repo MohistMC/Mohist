@@ -620,7 +620,6 @@ public final class Bukkit {
      */
     public static void reload() {
         server.reload();
-        org.spigotmc.CustomTimingsHandler.reload(); // Spigot
     }
 
     /**
@@ -1539,5 +1538,4 @@ public final class Bukkit {
     public static Server.Spigot spigot() {
         return server.spigot();
     }
-
 }

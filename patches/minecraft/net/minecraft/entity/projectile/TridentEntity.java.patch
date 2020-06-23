@@ -1,25 +1,20 @@
 --- a/net/minecraft/entity/projectile/TridentEntity.java
 +++ b/net/minecraft/entity/projectile/TridentEntity.java
-@@ -24,11 +24,12 @@
- import net.minecraft.world.server.ServerWorld;
- import net.minecraftforge.api.distmarker.Dist;
- import net.minecraftforge.api.distmarker.OnlyIn;
-+import org.bukkit.event.weather.LightningStrikeEvent.Cause;
- 
+@@ -28,7 +28,7 @@
  public class TridentEntity extends AbstractArrowEntity {
     private static final DataParameter<Byte> field_203053_g = EntityDataManager.func_187226_a(TridentEntity.class, DataSerializers.field_187191_a);
     private static final DataParameter<Boolean> field_226571_aq_ = EntityDataManager.func_187226_a(TridentEntity.class, DataSerializers.field_187198_h);
 -   private ItemStack field_203054_h = new ItemStack(Items.field_203184_eO);
-+   public ItemStack field_203054_h = new ItemStack(Items.field_203184_eO); // CraftBukkit private->public
++   public ItemStack field_203054_h = new ItemStack(Items.field_203184_eO); // CraftBukkit - Change access to public
     private boolean field_203051_au;
     public int field_203052_f;
  
-@@ -147,7 +148,7 @@
+@@ -147,7 +147,7 @@
           if (this.field_70170_p.func_226660_f_(blockpos)) {
              LightningBoltEntity lightningboltentity = new LightningBoltEntity(this.field_70170_p, (double)blockpos.func_177958_n() + 0.5D, (double)blockpos.func_177956_o(), (double)blockpos.func_177952_p() + 0.5D, false);
              lightningboltentity.func_204809_d(entity1 instanceof ServerPlayerEntity ? (ServerPlayerEntity)entity1 : null);
 -            ((ServerWorld)this.field_70170_p).func_217468_a(lightningboltentity);
-+            ((ServerWorld)this.field_70170_p).strikeLightning(lightningboltentity, Cause.TRIDENT); // CraftBukkit
++            ((ServerWorld)this.field_70170_p).strikeLightning(lightningboltentity, org.bukkit.event.weather.LightningStrikeEvent.Cause.TRIDENT); // CraftBukkit
              soundevent = SoundEvents.field_203275_iq;
              f1 = 5.0F;
           }

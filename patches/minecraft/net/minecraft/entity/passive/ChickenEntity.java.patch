@@ -5,8 +5,8 @@
  
     public void func_70636_d() {
 +      // CraftBukkit start
-+      if(this.field_152118_bv){
-+         this.persist = !this.func_213397_c(0);
++      if (this.func_152116_bZ()) {
++         this.field_82179_bU = !this.func_213397_c(0.0);
 +      }
 +      // CraftBukkit end
        super.func_70636_d();

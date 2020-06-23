@@ -1,9 +1,8 @@
 --- a/net/minecraft/tileentity/ChestTileEntity.java
 +++ b/net/minecraft/tileentity/ChestTileEntity.java
-@@ -1,7 +1,10 @@
+@@ -1,7 +1,9 @@
  package net.minecraft.tileentity;
  
-+import java.util.ArrayList;
 +import java.util.List;
  import net.minecraft.block.Block;
  import net.minecraft.block.BlockState;
@@ -11,87 +10,77 @@
  import net.minecraft.block.ChestBlock;
  import net.minecraft.entity.player.PlayerEntity;
  import net.minecraft.entity.player.PlayerInventory;
-@@ -27,6 +30,8 @@
+@@ -27,6 +29,10 @@
  import net.minecraft.world.World;
  import net.minecraftforge.api.distmarker.Dist;
  import net.minecraftforge.api.distmarker.OnlyIn;
-+import org.bukkit.craftbukkit.v1_15_R1.entity.CraftHumanEntity;
++// CraftBukkit start
++import org.bukkit.craftbukkit.entity.CraftHumanEntity;
 +import org.bukkit.entity.HumanEntity;
++// CraftBukkit end
  
  @OnlyIn(
     value = Dist.CLIENT,
-@@ -38,6 +43,7 @@
+@@ -38,7 +44,38 @@
     protected float field_145986_n;
     protected int field_145987_o;
     private int field_145983_q;
 +   private net.minecraftforge.common.util.LazyOptional<net.minecraftforge.items.IItemHandlerModifiable> chestHandler;
  
-    protected ChestTileEntity(TileEntityType<?> p_i48287_1_) {
-       super(p_i48287_1_);
-@@ -51,6 +57,41 @@
-       return 27;
-    }
- 
 +   // CraftBukkit start - add fields and methods
-+   private List<HumanEntity> transaction = new ArrayList<>();
++   public List<HumanEntity> transaction = new java.util.ArrayList<HumanEntity>();
 +   private int maxStack = MAX_STACK;
 +
-+   @Override
 +   public List<ItemStack> getContents() {
 +      return this.field_145985_p;
 +   }
 +
-+   @Override
-+   public void onOpen(CraftHumanEntity who) {
++   public void onOpen(final CraftHumanEntity who) {
 +      this.transaction.add(who);
 +   }
 +
-+   @Override
-+   public void onClose(CraftHumanEntity who) {
++   public void onClose(final CraftHumanEntity who) {
 +      this.transaction.remove(who);
 +   }
 +
-+   @Override
 +   public List<HumanEntity> getViewers() {
-+      return transaction;
-+   }
-+
-+   @Override
-+   public void setMaxStackSize(int size) {
-+      this.maxStack = size;
++      return this.transaction;
 +   }
 +
 +   @Override
 +   public int func_70297_j_() {
-+      return maxStack;
++      return this.maxStack;
 +   }
-+   // CraftBukkit end
 +
-    protected ITextComponent func_213907_g() {
-       return new TranslationTextComponent("container.chest");
++   @Override
++   public void setMaxStackSize(final int size) {
++      this.maxStack = size;
++   }
++
+    protected ChestTileEntity(TileEntityType<?> p_i48287_1_) {
+       super(p_i48287_1_);
     }
-@@ -163,8 +204,20 @@
+@@ -163,8 +200,19 @@
           if (this.field_145987_o < 0) {
              this.field_145987_o = 0;
           }
 +         int oldPower = Math.max(0, Math.min(15, this.field_145987_o)); // CraftBukkit - Get power before new viewer is added
  
           ++this.field_145987_o;
-+
 +         if (this.field_145850_b == null) return; // CraftBukkit
++
 +         // CraftBukkit start - Call redstone event
 +         if (this.func_195044_w().func_177230_c() == Blocks.field_150447_bR) {
 +            int newPower = Math.max(0, Math.min(15, this.field_145987_o));
 +            if (oldPower != newPower) {
-+               org.bukkit.craftbukkit.v1_15_R1.event.CraftEventFactory.callRedstoneChange(field_145850_b, field_174879_c, oldPower, newPower);
++               org.bukkit.craftbukkit.event.CraftEventFactory.callRedstoneChange(this.field_145850_b, this.field_174879_c, oldPower, newPower);
 +            }
 +         }
 +         // CraftBukkit end
-+
           this.func_195482_p();
        }
  
-@@ -172,7 +225,18 @@
+@@ -172,7 +220,17 @@
  
     public void func_174886_c(PlayerEntity p_174886_1_) {
        if (!p_174886_1_.func_175149_v()) {
@@ -102,15 +91,14 @@
 +         if (this.func_195044_w().func_177230_c() == Blocks.field_150447_bR) {
 +            int newPower = Math.max(0, Math.min(15, this.field_145987_o));
 +            if (oldPower != newPower) {
-+               org.bukkit.craftbukkit.v1_15_R1.event.CraftEventFactory.callRedstoneChange(field_145850_b, field_174879_c, oldPower, newPower);
++               org.bukkit.craftbukkit.event.CraftEventFactory.callRedstoneChange(this.field_145850_b, this.field_174879_c, oldPower, newPower);
 +            }
 +         }
-+         // CraftBukkit end
-+
++         // Craftbukkit end
           this.func_195482_p();
        }
  
-@@ -202,7 +266,7 @@
+@@ -202,7 +260,7 @@
  
     public static int func_195481_a(IBlockReader p_195481_0_, BlockPos p_195481_1_) {
        BlockState blockstate = p_195481_0_.func_180495_p(p_195481_1_);
@@ -119,7 +107,7 @@
           TileEntity tileentity = p_195481_0_.func_175625_s(p_195481_1_);
           if (tileentity instanceof ChestTileEntity) {
              return ((ChestTileEntity)tileentity).field_145987_o;
-@@ -221,4 +285,63 @@
+@@ -221,4 +279,63 @@
     protected Container func_213906_a(int p_213906_1_, PlayerInventory p_213906_2_) {
        return ChestContainer.func_216992_a(p_213906_1_, p_213906_2_, this);
     }

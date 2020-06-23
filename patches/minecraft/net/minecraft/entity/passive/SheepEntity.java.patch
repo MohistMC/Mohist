@@ -12,8 +12,8 @@
  import net.minecraft.world.storage.loot.LootTables;
  import net.minecraftforge.api.distmarker.Dist;
  import net.minecraftforge.api.distmarker.OnlyIn;
++import org.bukkit.craftbukkit.event.CraftEventFactory;
 +import org.bukkit.event.entity.SheepRegrowWoolEvent;
-+import org.bukkit.event.player.PlayerShearEntityEvent;
 +import org.bukkit.inventory.InventoryView;
  
 -public class SheepEntity extends AnimalEntity {
@@ -21,23 +21,21 @@
     private static final DataParameter<Byte> field_184774_bv = EntityDataManager.func_187226_a(SheepEntity.class, DataSerializers.field_187191_a);
     private static final Map<DyeColor, IItemProvider> field_200206_bz = Util.func_200696_a(Maps.newEnumMap(DyeColor.class), (p_203402_0_) -> {
        p_203402_0_.put(DyeColor.WHITE, Blocks.field_196556_aL);
-@@ -212,7 +216,14 @@
+@@ -212,7 +216,12 @@
  
     public boolean func_184645_a(PlayerEntity p_184645_1_, Hand p_184645_2_) {
        ItemStack itemstack = p_184645_1_.func_184586_b(p_184645_2_);
 -      if (itemstack.func_77973_b() == Items.field_151097_aZ && !this.func_70892_o() && !this.func_70631_g_()) {
 +      if (false && itemstack.func_77973_b() == Items.field_151097_aZ && !this.func_70892_o() && !this.func_70631_g_()) { //Forge: Moved to onSheared
-+         // CraftBukkit start - TODO: Magma - ^ Move to forge onSheared
-+         PlayerShearEntityEvent event = new PlayerShearEntityEvent((org.bukkit.entity.Player) p_184645_1_.getBukkitEntity(), this.getBukkitEntity());
-+         this.field_70170_p.getServerCB().getPluginManager().callEvent(event);
-+         if (event.isCancelled()) {
++         // CraftBukkit start
++         if (!CraftEventFactory.handlePlayerShearEntityEvent(p_184645_1_, this, itemstack, p_184645_2_)) {
 +            return false;
 +         }
 +         // CraftBukkit end
           this.func_213612_dV();
           if (!this.field_70170_p.field_72995_K) {
              itemstack.func_222118_a(1, p_184645_1_, (p_213613_1_) -> {
-@@ -226,13 +237,16 @@
+@@ -226,13 +235,16 @@
        }
     }
  
@@ -54,7 +52,7 @@
              if (itementity != null) {
                 itementity.func_213317_d(itementity.func_213322_ci().func_72441_c((double)((this.field_70146_Z.nextFloat() - this.field_70146_Z.nextFloat()) * 0.1F), (double)(this.field_70146_Z.nextFloat() * 0.05F), (double)((this.field_70146_Z.nextFloat() - this.field_70146_Z.nextFloat()) * 0.1F)));
              }
-@@ -316,6 +330,11 @@
+@@ -316,6 +328,11 @@
     }
  
     public void func_70615_aA() {
@@ -66,20 +64,17 @@
        this.func_70893_e(false);
        if (this.func_70631_g_()) {
           this.func_110195_a(60);
-@@ -342,16 +361,44 @@
- 
-    private static CraftingInventory func_213611_a(DyeColor p_213611_0_, DyeColor p_213611_1_) {
-       CraftingInventory craftinginventory = new CraftingInventory(new Container((ContainerType)null, -1) {
-+         // CraftBukkit start
-+         @Override
-+         public InventoryView getBukkitView() {
-+            return null; // TODO: O.0
-+         }
-+         // CraftBukkit end
-+
+@@ -345,13 +362,41 @@
           public boolean func_75145_c(PlayerEntity p_75145_1_) {
              return false;
           }
++
++         // CraftBukkit start
++         @Override
++         public InventoryView getBukkitView() {
++            return null; // TODO: O.O
++         }
++         // CraftBukkit end
        }, 2, 1);
        craftinginventory.func_70299_a(0, new ItemStack(DyeItem.func_195961_a(p_213611_0_)));
        craftinginventory.func_70299_a(1, new ItemStack(DyeItem.func_195961_a(p_213611_1_)));

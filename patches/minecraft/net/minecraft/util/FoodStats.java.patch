@@ -19,9 +19,9 @@
 -   private int field_75127_a = 20;
 -   private float field_75125_b;
 -   private float field_75126_c;
-+   public int field_75127_a = 20; // private->public CraftBukkit
-+   public float field_75125_b = 5.0F; // private->public CraftBukkit
-+   public float field_75126_c; // private->public CraftBukkit
++   public int field_75127_a = 20;
++   public float field_75125_b = 5.0F;
++   public float field_75126_c;
     private int field_75123_d;
 +   private PlayerEntity entityhuman; // CraftBukkit
     private int field_75124_e = 20;
@@ -47,7 +47,7 @@
 -         this.func_75122_a(food.func_221466_a(), food.func_221469_b());
 +         // CraftBukkit start
 +         int oldFoodLevel = field_75127_a;
-+         org.bukkit.event.entity.FoodLevelChangeEvent event = org.bukkit.craftbukkit.v1_15_R1.event.CraftEventFactory.callFoodLevelChangeEvent(entityhuman, food.func_221466_a() + oldFoodLevel, p_221410_2_);
++         org.bukkit.event.entity.FoodLevelChangeEvent event = org.bukkit.craftbukkit.event.CraftEventFactory.callFoodLevelChangeEvent(entityhuman, food.func_221466_a() + oldFoodLevel, p_221410_2_);
 +
 +         if (!event.isCancelled()) {
 +            this.func_75122_a(event.getFoodLevel() - oldFoodLevel, food.func_221469_b());
@@ -63,7 +63,7 @@
           } else if (difficulty != Difficulty.PEACEFUL) {
              this.field_75127_a = Math.max(this.field_75127_a - 1, 0);
 +            // CraftBukkit start
-+            org.bukkit.event.entity.FoodLevelChangeEvent event = org.bukkit.craftbukkit.v1_15_R1.event.CraftEventFactory.callFoodLevelChangeEvent(entityhuman, Math.max(this.field_75127_a - 1, 0));
++            org.bukkit.event.entity.FoodLevelChangeEvent event = org.bukkit.craftbukkit.event.CraftEventFactory.callFoodLevelChangeEvent(entityhuman, Math.max(this.field_75127_a - 1, 0));
 +
 +            if (!event.isCancelled()) {
 +               this.field_75127_a = event.getFoodLevel();
@@ -74,7 +74,7 @@
           }
        }
  
-@@ -51,15 +79,15 @@
+@@ -51,14 +79,14 @@
           ++this.field_75123_d;
           if (this.field_75123_d >= 10) {
              float f = Math.min(this.field_75125_b, 6.0F);
@@ -87,9 +87,7 @@
           ++this.field_75123_d;
           if (this.field_75123_d >= 80) {
 -            p_75118_1_.func_70691_i(1.0F);
--            this.func_75113_a(6.0F);
 +            p_75118_1_.heal(1.0F, org.bukkit.event.entity.EntityRegainHealthEvent.RegainReason.SATIATED); // CraftBukkit - added RegainReason
-+            this.func_75113_a(p_75118_1_.field_70170_p.spigotConfig.regenExhaustion); // Spigot - Change to use configurable value
+             this.func_75113_a(6.0F);
              this.field_75123_d = 0;
           }
-       } else if (this.field_75127_a <= 0) {

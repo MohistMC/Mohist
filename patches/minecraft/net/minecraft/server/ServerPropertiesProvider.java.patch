@@ -1,16 +1,6 @@
 --- a/net/minecraft/server/ServerPropertiesProvider.java
 +++ b/net/minecraft/server/ServerPropertiesProvider.java
-@@ -1,7 +1,9 @@
- package net.minecraft.server;
- 
-+import java.io.File;
- import java.nio.file.Path;
- import java.util.function.UnaryOperator;
-+import joptsimple.OptionSet;
- import net.minecraft.server.dedicated.ServerProperties;
- 
- public class ServerPropertiesProvider {
-@@ -10,7 +12,7 @@
+@@ -10,7 +10,7 @@
  
     public ServerPropertiesProvider(Path p_i50718_1_) {
        this.field_219036_a = p_i50718_1_;

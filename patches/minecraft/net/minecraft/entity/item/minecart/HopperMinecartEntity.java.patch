@@ -13,17 +13,16 @@
  import net.minecraft.world.GameRules;
  import net.minecraft.world.World;
 +import org.bukkit.Location;
-+import org.bukkit.craftbukkit.v1_15_R1.entity.CraftHumanEntity;
++import org.bukkit.craftbukkit.entity.CraftHumanEntity;
 +import org.bukkit.entity.HumanEntity;
 +import org.bukkit.inventory.InventoryHolder;
  
  public class HopperMinecartEntity extends ContainerMinecartEntity implements IHopper {
     private boolean field_96113_a = true;
-@@ -46,6 +51,48 @@
+@@ -46,6 +51,46 @@
        return 5;
     }
  
-+   // CraftBukkit start
 +   @Override
 +   public int func_70297_j_() {
 +      return 0;
@@ -63,7 +62,6 @@
 +   public Location getLocation() {
 +      return null;
 +   }
-+   // CraftBukkit end
 +
     public void func_96095_a(int p_96095_1_, int p_96095_2_, int p_96095_3_, boolean p_96095_4_) {
        boolean flag = !p_96095_4_;

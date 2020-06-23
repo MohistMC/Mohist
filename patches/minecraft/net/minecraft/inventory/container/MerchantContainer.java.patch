@@ -1,52 +1,46 @@
 --- a/net/minecraft/inventory/container/MerchantContainer.java
 +++ b/net/minecraft/inventory/container/MerchantContainer.java
-@@ -13,6 +13,8 @@
+@@ -13,10 +13,16 @@
  import net.minecraft.util.SoundCategory;
  import net.minecraftforge.api.distmarker.Dist;
  import net.minecraftforge.api.distmarker.OnlyIn;
-+import org.bukkit.craftbukkit.v1_15_R1.inventory.CraftInventoryView;
++import org.bukkit.craftbukkit.inventory.CraftInventoryMerchant;
++import org.bukkit.craftbukkit.inventory.CraftInventoryView;
 +import org.bukkit.inventory.InventoryView;
  
  public class MerchantContainer extends Container {
     private final IMerchant field_75178_e;
-@@ -24,6 +26,11 @@
-    @OnlyIn(Dist.CLIENT)
-    private boolean field_223433_g;
- 
+    private final MerchantInventory field_75176_f;
 +   // CraftBukkit start
 +   private CraftInventoryView bukkitEntity = null;
 +   private PlayerInventory player;
-+   // CraftBukkit stop
-+
-    public MerchantContainer(int p_i50068_1_, PlayerInventory p_i50068_2_) {
-       this(p_i50068_1_, p_i50068_2_, new NPCMerchant(p_i50068_2_.field_70458_d));
-    }
-@@ -31,6 +38,7 @@
-    public MerchantContainer(int p_i50069_1_, PlayerInventory p_i50069_2_, IMerchant p_i50069_3_) {
-       super(ContainerType.field_221525_s, p_i50069_1_);
-       this.field_75178_e = p_i50069_3_;
-+      this.player = p_i50069_2_; // CraftBukkit - save player
-       this.field_75176_f = new MerchantInventory(p_i50069_3_);
+    @OnlyIn(Dist.CLIENT)
+    private int field_217054_e;
+    @OnlyIn(Dist.CLIENT)
+@@ -35,6 +41,7 @@
        this.func_75146_a(new Slot(this.field_75176_f, 0, 136, 37));
        this.func_75146_a(new Slot(this.field_75176_f, 1, 162, 37));
-@@ -62,6 +70,16 @@
-       this.field_75176_f.func_70471_c(p_75175_1_);
+       this.func_75146_a(new MerchantResultSlot(p_i50069_2_.field_70458_d, p_i50069_3_, this.field_75176_f, 2, 220, 37));
++      this.player = p_i50069_2_; // CraftBukkit - save player
+ 
+       for(int i = 0; i < 3; ++i) {
+          for(int j = 0; j < 9; ++j) {
+@@ -105,6 +112,14 @@
+       return false;
     }
  
-+   // CraftBukkit start
 +   @Override
 +   public InventoryView getBukkitView() {
-+      if (bukkitEntity == null) {
-+         bukkitEntity = new CraftInventoryView(this.player.field_70458_d.getBukkitEntity(), new org.bukkit.craftbukkit.v1_15_R1.inventory.CraftInventoryMerchant(field_75178_e, field_75176_f), this);
++      if (this.bukkitEntity == null) {
++         this.bukkitEntity = new CraftInventoryView(this.player.field_70458_d.getBukkitEntity(), new CraftInventoryMerchant(this.field_75178_e, this.field_75176_f), this);
 +      }
-+      return bukkitEntity;
++      return this.bukkitEntity;
 +   }
-+   // CraftBukkit end
 +
-    public boolean func_75145_c(PlayerEntity p_75145_1_) {
-       return this.field_75178_e.func_70931_l_() == p_75145_1_;
-    }
-@@ -147,7 +165,7 @@
+    public ItemStack func_82846_b(PlayerEntity p_82846_1_, int p_82846_2_) {
+       ItemStack itemstack = ItemStack.field_190927_a;
+       Slot slot = this.field_75151_b.get(p_82846_2_);
+@@ -147,7 +162,7 @@
     }
  
     private void func_223132_j() {

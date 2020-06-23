@@ -1,12 +1,13 @@
 --- a/net/minecraft/command/arguments/EntityArgument.java
 +++ b/net/minecraft/command/arguments/EntityArgument.java
-@@ -87,9 +87,14 @@
+@@ -87,9 +87,15 @@
     }
  
     public EntitySelector parse(StringReader p_parse_1_) throws CommandSyntaxException {
 +      // CraftBukkit start
 +      return parse(p_parse_1_, false);
 +   }
++
 +   public EntitySelector parse(StringReader p_parse_1_, boolean overridePermissions) throws CommandSyntaxException {
 +      // CraftBukkit end
        int i = 0;

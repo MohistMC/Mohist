@@ -13,7 +13,7 @@
  import net.minecraftforge.api.distmarker.Dist;
  import net.minecraftforge.api.distmarker.OnlyIn;
 +import org.bukkit.Location;
-+import org.bukkit.craftbukkit.v1_15_R1.event.CraftEventFactory;
++import org.bukkit.craftbukkit.event.CraftEventFactory;
 +import org.bukkit.event.block.BlockExplodeEvent;
 +import org.bukkit.event.entity.EntityExplodeEvent;
  
@@ -24,7 +24,7 @@
     private final double field_77282_d;
     @Nullable
 -   private final Entity field_77283_e;
-+   public final Entity field_77283_e; // private->public CraftBukkit
++   public final Entity field_77283_e;
     private final float field_77280_f;
     private DamageSource field_199593_j;
     private final List<BlockPos> field_77281_g = Lists.newArrayList();
@@ -90,12 +90,13 @@
        Vec3d vec3d = new Vec3d(this.field_77284_b, this.field_77285_c, this.field_77282_d);
  
        for(int k2 = 0; k2 < list.size(); ++k2) {
-@@ -183,7 +197,15 @@
+@@ -183,7 +197,16 @@
                    d9 = d9 / d13;
                    double d14 = (double)func_222259_a(vec3d, entity);
                    double d10 = (1.0D - d12) * d14;
 -                  entity.func_70097_a(this.func_199591_b(), (float)((int)((d10 * d10 + d10) / 2.0D * 7.0D * (double)f3 + 1.0D)));
 +                  // CraftBukkit start
++                  // entity.attackEntityFrom(this.getDamageSource(), (float)((int)((d10 * d10 + d10) / 2.0D * 7.0D * (double)f3 + 1.0D)));
 +                  CraftEventFactory.entityDamage = this.field_77283_e;
 +                  entity.forceExplosionKnockback = false;
 +                  boolean wasDamaged = entity.func_70097_a(this.func_199591_b(), (float)(int)((d10 * d10 + d10) / 2.0D * 7.0D * (double)f3 + 1.0D));
@@ -107,7 +108,7 @@
                    double d11 = d10;
                    if (entity instanceof LivingEntity) {
                       d11 = ProtectionEnchantment.func_92092_a((LivingEntity)entity, d10);
-@@ -221,17 +243,57 @@
+@@ -221,17 +244,57 @@
           ObjectArrayList<Pair<ItemStack, BlockPos>> objectarraylist = new ObjectArrayList<>();
           Collections.shuffle(this.field_77281_g, this.field_77287_j.field_73012_v);
  
@@ -170,7 +171,7 @@
                    }
  
                    blockstate.func_215693_a(lootcontext$builder).forEach((p_229977_2_) -> {
-@@ -239,8 +301,7 @@
+@@ -239,8 +302,7 @@
                    });
                 }
  
@@ -180,19 +181,20 @@
                 this.field_77287_j.func_217381_Z().func_76319_b();
              }
           }
-@@ -253,14 +314,19 @@
+@@ -253,7 +315,11 @@
        if (this.field_77286_a) {
           for(BlockPos blockpos2 : this.field_77281_g) {
              if (this.field_77290_i.nextInt(3) == 0 && this.field_77287_j.func_180495_p(blockpos2).func_196958_f() && this.field_77287_j.func_180495_p(blockpos2.func_177977_b()).func_200015_d(this.field_77287_j, blockpos2.func_177977_b())) {
+-               this.field_77287_j.func_175656_a(blockpos2, Blocks.field_150480_ab.func_176223_P());
 +               // CraftBukkit start - Ignition by explosion
-+               if (!org.bukkit.craftbukkit.v1_15_R1.event.CraftEventFactory.callBlockIgniteEvent(this.field_77287_j, blockpos2.func_177958_n(), blockpos2.func_177956_o(), blockpos2.func_177952_p(), this).isCancelled()) {
-                this.field_77287_j.func_175656_a(blockpos2, Blocks.field_150480_ab.func_176223_P());
-             }
++               if (!org.bukkit.craftbukkit.event.CraftEventFactory.callBlockIgniteEvent(this.field_77287_j, blockpos2.func_177958_n(), blockpos2.func_177956_o(), blockpos2.func_177952_p(), this).isCancelled()) {
++                  this.field_77287_j.func_175656_a(blockpos2, Blocks.field_150480_ab.func_176223_P());
++               }
 +               // CraftBukkit end
-+            }
+             }
           }
        }
- 
+@@ -261,6 +327,7 @@
     }
  
     private static void func_229976_a_(ObjectArrayList<Pair<ItemStack, BlockPos>> p_229976_0_, ItemStack p_229976_1_, BlockPos p_229976_2_) {
@@ -200,7 +202,7 @@
        int i = p_229976_0_.size();
  
        for(int j = 0; j < i; ++j) {
-@@ -311,6 +377,10 @@
+@@ -311,6 +378,10 @@
        return this.field_77281_g;
     }
  

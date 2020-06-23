@@ -1,44 +1,41 @@
 --- a/net/minecraft/entity/monster/EndermanEntity.java
 +++ b/net/minecraft/entity/monster/EndermanEntity.java
-@@ -47,10 +47,10 @@
- import net.minecraft.util.math.MathHelper;
- import net.minecraft.util.math.RayTraceContext;
- import net.minecraft.util.math.Vec3d;
--import net.minecraft.world.GameRules;
+@@ -51,6 +51,7 @@
  import net.minecraft.world.IWorld;
  import net.minecraft.world.IWorldReader;
  import net.minecraft.world.World;
-+import org.bukkit.event.entity.EntityTargetEvent.TargetReason;
++import org.bukkit.event.entity.EntityTargetEvent;
  
  public class EndermanEntity extends MonsterEntity {
     private static final UUID field_110192_bp = UUID.fromString("020E0DFB-87AE-4653-9556-831010E291A0");
-@@ -93,9 +93,19 @@
+@@ -93,9 +94,18 @@
     }
  
     public void func_70624_b(@Nullable LivingEntity p_70624_1_) {
 -      super.func_70624_b(p_70624_1_);
 +      // CraftBukkit start - fire event
-+      setAttackTarget(p_70624_1_, TargetReason.UNKNOWN, true);
++      setAttackTarget(p_70624_1_, EntityTargetEvent.TargetReason.UNKNOWN, true);
 +   }
 +
-+   public boolean setAttackTarget(@Nullable LivingEntity entitylivingbaseIn, TargetReason reason, boolean fireEvent) {
-+      if(!super.setAttackTarget(entitylivingbaseIn, reason, fireEvent)){
++   public boolean setAttackTarget(LivingEntity entitylivingbaseIn, org.bukkit.event.entity.EntityTargetEvent.TargetReason reason, boolean fireEvent) {
++      if (!super.setGoalTarget(entitylivingbaseIn, reason, fireEvent)) {
 +         return false;
 +      }
 +      entitylivingbaseIn = func_70638_az();
 +      // CraftBukkit end
-+
        IAttributeInstance iattributeinstance = this.func_110148_a(SharedMonsterAttributes.field_111263_d);
 -      if (p_70624_1_ == null) {
 +      if (entitylivingbaseIn == null) {
           this.field_184721_by = 0;
           this.field_70180_af.func_187227_b(field_184719_bw, false);
           this.field_70180_af.func_187227_b(field_226535_bx_, false);
-@@ -108,6 +118,7 @@
+@@ -107,7 +117,8 @@
+             iattributeinstance.func_111121_a(field_110193_bq);
           }
        }
- 
-+      return true;
+-
++      super.func_70624_b(entitylivingbaseIn); //Forge: Moved down to allow event handlers to write data manager values.
++      return true; // CraftBukkit
     }
  
     protected void func_70088_a() {
@@ -71,7 +68,7 @@
 -            this.field_179475_a.func_195406_b((BlockState)null);
 +         if (blockstate2 != null && this.func_220836_a(iworld, blockpos, blockstate2, blockstate, blockstate1, blockpos1)  && !net.minecraftforge.event.ForgeEventFactory.onBlockPlace(field_179475_a, new net.minecraftforge.common.util.BlockSnapshot(iworld, blockpos, blockstate1), net.minecraft.util.Direction.UP)) {
 +            // CraftBukkit start - Place event
-+            if (!org.bukkit.craftbukkit.v1_15_R1.event.CraftEventFactory.callEntityChangeBlockEvent(this.field_179475_a, blockpos, blockstate).isCancelled()) {
++            if (!org.bukkit.craftbukkit.event.CraftEventFactory.callEntityChangeBlockEvent(this.field_179475_a, blockpos, blockstate2).isCancelled()) {
 +               iworld.func_180501_a(blockpos, blockstate2, 3);
 +               this.field_179475_a.func_195406_b((BlockState) null);
 +            }
@@ -95,3 +92,18 @@
              return false;
           } else {
              return this.field_179473_a.func_70681_au().nextInt(20) == 0;
+@@ -479,8 +496,12 @@
+          BlockRayTraceResult blockraytraceresult = world.func_217299_a(new RayTraceContext(vec3d, vec3d1, RayTraceContext.BlockMode.OUTLINE, RayTraceContext.FluidMode.NONE, this.field_179473_a));
+          boolean flag = blockraytraceresult.func_216350_a().equals(blockpos);
+          if (block.func_203417_a(BlockTags.field_201151_l) && flag) {
+-            this.field_179473_a.func_195406_b(blockstate);
+-            world.func_217377_a(blockpos, false);
++            // CraftBukkit start - Pickup event
++            if (!org.bukkit.craftbukkit.event.CraftEventFactory.callEntityChangeBlockEvent(this.field_179473_a, blockpos, Blocks.field_150350_a.func_176223_P()).isCancelled()) {
++               this.field_179473_a.func_195406_b(blockstate);
++               world.func_217377_a(blockpos, false);
++            }
++            // CraftBukkit end
+          }
+ 
+       }

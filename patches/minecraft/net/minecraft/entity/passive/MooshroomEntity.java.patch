@@ -1,43 +1,41 @@
 --- a/net/minecraft/entity/passive/MooshroomEntity.java
 +++ b/net/minecraft/entity/passive/MooshroomEntity.java
-@@ -32,8 +32,11 @@
+@@ -32,8 +32,12 @@
  import net.minecraftforge.api.distmarker.Dist;
  import net.minecraftforge.api.distmarker.OnlyIn;
  import org.apache.commons.lang3.tuple.Pair;
-+import org.bukkit.craftbukkit.v1_15_R1.event.CraftEventFactory;
++// CraftBukkit start
++import org.bukkit.craftbukkit.event.CraftEventFactory;
 +import org.bukkit.event.entity.EntityTransformEvent;
-+import org.bukkit.event.player.PlayerShearEntityEvent;
++// CraftBukkit end
  
 -public class MooshroomEntity extends CowEntity {
 +public class MooshroomEntity extends CowEntity implements net.minecraftforge.common.IShearable {
     private static final DataParameter<String> field_213449_bz = EntityDataManager.func_187226_a(MooshroomEntity.class, DataSerializers.field_187194_d);
     private Effect field_213450_bA;
     private int field_213447_bB;
-@@ -97,10 +100,17 @@
+@@ -97,10 +101,15 @@
  
           this.func_184185_a(soundevent, 1.0F, 1.0F);
           return true;
 -      } else if (itemstack.func_77973_b() == Items.field_151097_aZ && !this.func_70631_g_()) {
 +      } else if (false && itemstack.func_77973_b() == Items.field_151097_aZ && !this.func_70631_g_()) { //Forge: Moved to onSheared
 +         // CraftBukkit start
-+         PlayerShearEntityEvent event = new PlayerShearEntityEvent((org.bukkit.entity.Player) p_184645_1_.getBukkitEntity(), this.getBukkitEntity());
-+         this.field_70170_p.getServerCB().getPluginManager().callEvent(event);
-+         if (event.isCancelled()) {
++         if (!CraftEventFactory.handlePlayerShearEntityEvent(p_184645_1_, this, itemstack, p_184645_2_)) {
 +            return false;
 +         }
 +         // CraftBukkit end
           this.field_70170_p.func_195594_a(ParticleTypes.field_197627_t, this.func_226277_ct_(), this.func_226283_e_(0.5D), this.func_226281_cx_(), 0.0D, 0.0D, 0.0D);
           if (!this.field_70170_p.field_72995_K) {
 -            this.func_70106_y();
-+//            this.remove(); // CraftBukkit - moved down
++            // this.remove(); // CraftBukkit - moved down
              CowEntity cowentity = EntityType.field_200796_j.func_200721_a(this.field_70170_p);
              cowentity.func_70012_b(this.func_226277_ct_(), this.func_226278_cu_(), this.func_226281_cx_(), this.field_70177_z, this.field_70125_A);
              cowentity.func_70606_j(this.func_110143_aJ());
-@@ -115,7 +125,13 @@
-             }
+@@ -116,6 +125,13 @@
  
              cowentity.func_184224_h(this.func_190530_aW());
--            this.field_70170_p.func_217376_c(cowentity);
+             this.field_70170_p.func_217376_c(cowentity);
 +            // CraftBukkit start
 +            if (CraftEventFactory.callEntityTransformEvent(this, cowentity, EntityTransformEvent.TransformReason.SHEARED).isCancelled()) {
 +               return false;
@@ -53,7 +51,7 @@
     }
  
 -   private void func_213446_a(MooshroomEntity.Type p_213446_1_) {
-+   public void func_213446_a(MooshroomEntity.Type p_213446_1_) { // private->public CraftBukkit
++   public void func_213446_a(MooshroomEntity.Type p_213446_1_) {
        this.field_70180_af.func_187227_b(field_213449_bz, p_213446_1_.field_221098_c);
     }
  

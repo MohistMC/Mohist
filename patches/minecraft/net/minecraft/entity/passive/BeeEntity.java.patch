@@ -1,77 +1,11 @@
 --- a/net/minecraft/entity/passive/BeeEntity.java
 +++ b/net/minecraft/entity/passive/BeeEntity.java
-@@ -1,43 +1,17 @@
- package net.minecraft.entity.passive;
- 
- import com.google.common.collect.Lists;
--import java.util.Comparator;
--import java.util.EnumSet;
--import java.util.List;
--import java.util.Optional;
--import java.util.UUID;
-+import java.util.*;
- import java.util.function.Predicate;
- import java.util.stream.Collectors;
- import java.util.stream.Stream;
- import javax.annotation.Nullable;
--import net.minecraft.block.Block;
--import net.minecraft.block.BlockState;
--import net.minecraft.block.Blocks;
--import net.minecraft.block.CropsBlock;
--import net.minecraft.block.DoublePlantBlock;
--import net.minecraft.block.StemBlock;
--import net.minecraft.block.SweetBerryBushBlock;
--import net.minecraft.entity.AgeableEntity;
--import net.minecraft.entity.CreatureAttribute;
--import net.minecraft.entity.CreatureEntity;
--import net.minecraft.entity.Entity;
--import net.minecraft.entity.EntitySize;
--import net.minecraft.entity.EntityType;
--import net.minecraft.entity.LivingEntity;
--import net.minecraft.entity.MobEntity;
--import net.minecraft.entity.Pose;
--import net.minecraft.entity.SharedMonsterAttributes;
-+import net.minecraft.block.*;
-+import net.minecraft.entity.*;
- import net.minecraft.entity.ai.RandomPositionGenerator;
- import net.minecraft.entity.ai.controller.FlyingMovementController;
- import net.minecraft.entity.ai.controller.LookController;
--import net.minecraft.entity.ai.goal.BreedGoal;
--import net.minecraft.entity.ai.goal.FollowParentGoal;
--import net.minecraft.entity.ai.goal.Goal;
--import net.minecraft.entity.ai.goal.HurtByTargetGoal;
--import net.minecraft.entity.ai.goal.MeleeAttackGoal;
--import net.minecraft.entity.ai.goal.NearestAttackableTargetGoal;
--import net.minecraft.entity.ai.goal.SwimGoal;
--import net.minecraft.entity.ai.goal.TemptGoal;
-+import net.minecraft.entity.ai.goal.*;
- import net.minecraft.entity.player.PlayerEntity;
- import net.minecraft.fluid.Fluid;
- import net.minecraft.item.ItemStack;
-@@ -63,7 +37,6 @@
- import net.minecraft.tags.Tag;
- import net.minecraft.tileentity.BeehiveTileEntity;
- import net.minecraft.tileentity.TileEntity;
--import net.minecraft.tileentity.TileEntityType;
- import net.minecraft.util.DamageSource;
- import net.minecraft.util.SoundEvent;
- import net.minecraft.util.SoundEvents;
-@@ -79,6 +52,9 @@
- import net.minecraft.world.server.ServerWorld;
- import net.minecraftforge.api.distmarker.Dist;
- import net.minecraftforge.api.distmarker.OnlyIn;
-+import org.bukkit.craftbukkit.v1_15_R1.event.CraftEventFactory;
-+import org.bukkit.event.entity.EntityPotionEffectEvent.Cause;
-+import org.bukkit.event.entity.EntityTargetEvent.TargetReason;
- 
- public class BeeEntity extends AnimalEntity implements IFlyingAnimal {
-    private static final DataParameter<Byte> field_226374_bw_ = EntityDataManager.func_187226_a(BeeEntity.class, DataSerializers.field_187191_a);
-@@ -88,14 +64,14 @@
+@@ -88,14 +88,14 @@
     private float field_226361_bA_;
     private int field_226362_bB_;
     private int field_226363_bC_;
 -   private int field_226364_bD_;
-+   public int field_226364_bD_; // private->public CraftBukkit
++   public int field_226364_bD_; // PAIL private -> pblic
     private int field_226365_bE_;
     private int field_226366_bF_ = 0;
     private int field_226367_bG_ = 0;
@@ -79,40 +13,40 @@
     private BlockPos field_226368_bH_ = null;
     @Nullable
 -   private BlockPos field_226369_bI_ = null;
-+   public BlockPos field_226369_bI_ = null; // private->public CraftBukkit
++   public BlockPos field_226369_bI_ = null;
     private BeeEntity.PollinateGoal field_226370_bJ_;
     private BeeEntity.FindBeehiveGoal field_226371_bK_;
     private BeeEntity.FindFlowerGoal field_226372_bL_;
-@@ -209,12 +185,12 @@
+@@ -209,12 +209,12 @@
              }
  
              if (i > 0) {
 -               ((LivingEntity)p_70652_1_).func_195064_c(new EffectInstance(Effects.field_76436_u, i * 20, 0));
-+               ((LivingEntity)p_70652_1_).addPotionEffect(new EffectInstance(Effects.field_76436_u, i * 20, 0), Cause.ATTACK); // CraftBukkit
++               ((LivingEntity)p_70652_1_).addEffect(new EffectInstance(Effects.field_76436_u, i * 20, 0), org.bukkit.event.entity.EntityPotionEffectEvent.Cause.ATTACK); // CraftBukkit
              }
           }
  
           this.func_226449_s_(true);
 -         this.func_70624_b((LivingEntity)null);
-+         this.setAttackTarget((LivingEntity) null, TargetReason.FORGOT_TARGET, true); // CraftBukkit
++         this.setGoalTarget((LivingEntity)null, org.bukkit.event.entity.EntityTargetEvent.TargetReason.FORGOT_TARGET, true); // CraftBukkit
           this.func_184185_a(SoundEvents.field_226128_ac_, 1.0F, 1.0F);
        }
  
-@@ -366,11 +342,11 @@
+@@ -366,11 +366,11 @@
        return this.func_226418_eL_() > 0;
     }
  
 -   private int func_226418_eL_() {
-+   public int func_226418_eL_() { // private->public CraftBukkit
++   public int func_226418_eL_() {
        return this.field_70180_af.func_187225_a(field_226375_bx_);
     }
  
 -   private void func_226453_u_(int p_226453_1_) {
-+   public void func_226453_u_(int p_226453_1_) { // private->public CraftBukkit
++   public void func_226453_u_(int p_226453_1_) {
        this.field_70180_af.func_187227_b(field_226375_bx_, p_226453_1_);
     }
  
-@@ -438,7 +414,7 @@
+@@ -438,7 +438,7 @@
           return false;
        } else {
           TileEntity tileentity = this.field_70170_p.func_175625_s(this.field_226369_bI_);
@@ -121,59 +55,57 @@
        }
     }
  
-@@ -446,7 +422,7 @@
+@@ -446,7 +446,7 @@
        return this.func_226456_v_(8);
     }
  
 -   private void func_226447_r_(boolean p_226447_1_) {
-+   public void func_226447_r_(boolean p_226447_1_) { // private->public CraftBukkit
++   public void func_226447_r_(boolean p_226447_1_) {
        if (p_226447_1_) {
           this.func_226426_eu_();
        }
-@@ -458,7 +434,7 @@
+@@ -458,7 +458,7 @@
        return this.func_226456_v_(4);
     }
  
 -   private void func_226449_s_(boolean p_226449_1_) {
-+   public void func_226449_s_(boolean p_226449_1_) { // private->public CraftBukkit
++   public void func_226449_s_(boolean p_226449_1_) {
        this.func_226404_d_(4, p_226449_1_);
     }
  
-@@ -580,12 +556,17 @@
+@@ -580,12 +580,17 @@
           return false;
        } else {
           Entity entity = p_70097_1_.func_76346_g();
--         if (!this.field_70170_p.field_72995_K && entity instanceof PlayerEntity && !((PlayerEntity)entity).func_184812_l_() && this.func_70685_l(entity) && !this.func_175446_cd()) {
-+
 +         // CraftBukkit start
-+         boolean result = super.damageEntityCB(p_70097_1_, p_70097_2_);
-+
-+         if (result &&!this.field_70170_p.field_72995_K && entity instanceof PlayerEntity && !((PlayerEntity)entity).func_184812_l_() && this.func_70685_l(entity) && !this.func_175446_cd()) {
++         // TODO: use result after LivingEntity.attackEntityFrom has been updated
++         // boolean result = super.damageEntity(source, amount);
++         // if (result && !this.world.isRemote && entity instanceof PlayerEntity && !((PlayerEntity)entity).isCreative() && this.canEntityBeSeen(entity) && !this.isAIDisabled()) {
+          if (!this.field_70170_p.field_72995_K && entity instanceof PlayerEntity && !((PlayerEntity)entity).func_184812_l_() && this.func_70685_l(entity) && !this.func_175446_cd()) {
              this.field_226370_bJ_.func_226504_l_();
              this.func_226391_a_(entity);
           }
  
--         return super.func_70097_a(p_70097_1_, p_70097_2_);
-+         return result;
-+         // CraftBukkit end
+          return super.func_70097_a(p_70097_1_, p_70097_2_);
++         // return result;
        }
     }
  
-@@ -608,7 +589,7 @@
+@@ -608,7 +613,7 @@
  
        protected void func_220793_a(MobEntity p_220793_1_, LivingEntity p_220793_2_) {
           if (p_220793_1_ instanceof BeeEntity && this.field_75299_d.func_70685_l(p_220793_2_) && ((BeeEntity)p_220793_1_).func_226391_a_(p_220793_2_)) {
 -            p_220793_1_.func_70624_b(p_220793_2_);
-+            p_220793_1_.setAttackTarget(p_220793_2_, TargetReason.TARGET_ATTACKED_ENTITY, true); // CraftBukkit - reason
++            p_220793_1_.setGoalTarget(p_220793_2_, org.bukkit.event.entity.EntityTargetEvent.TargetReason.TARGET_ATTACKED_ENTITY, true); // CraftBukkit - reason
           }
  
        }
-@@ -884,7 +865,7 @@
+@@ -884,7 +889,7 @@
                       }
                    }
  
 -                  if (flag) {
-+                  if (flag && !CraftEventFactory.callEntityChangeBlockEvent(BeeEntity.this, blockpos, blockstate.func_206870_a(integerproperty, (Integer) blockstate.func_177229_b(integerproperty) + 1)).isCancelled()) { // Spigot
++                  if (flag && !org.bukkit.craftbukkit.event.CraftEventFactory.callEntityChangeBlockEvent(BeeEntity.this, blockpos, blockstate.func_206870_a(integerproperty, (Integer) blockstate.func_177229_b(integerproperty) + 1)).isCancelled()) { // Spigot
                       BeeEntity.this.field_70170_p.func_217379_c(2005, blockpos, 0);
                       BeeEntity.this.field_70170_p.func_175656_a(blockpos, blockstate.func_206870_a(integerproperty, Integer.valueOf(blockstate.func_177229_b(integerproperty) + 1)));
                       BeeEntity.this.func_226421_eO_();

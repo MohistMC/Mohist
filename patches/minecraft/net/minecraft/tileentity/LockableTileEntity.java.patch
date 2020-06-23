@@ -6,8 +6,8 @@
  public abstract class LockableTileEntity extends TileEntity implements IInventory, INamedContainerProvider, INameable {
 -   private LockCode field_174901_a = LockCode.field_180162_a;
 -   private ITextComponent field_213909_b;
-+   public LockCode field_174901_a = LockCode.field_180162_a; // private->public CraftBukkit
-+   public ITextComponent field_213909_b; // private->public CraftBukkit
++   public LockCode field_174901_a = LockCode.field_180162_a;
++   public ITextComponent field_213909_b;
  
     protected LockableTileEntity(TileEntityType<?> p_i48285_1_) {
        super(p_i48285_1_);

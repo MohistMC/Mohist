@@ -4,7 +4,7 @@
  import net.minecraft.world.server.ServerWorld;
  import net.minecraftforge.api.distmarker.Dist;
  import net.minecraftforge.api.distmarker.OnlyIn;
-+import org.bukkit.event.block.LeavesDecayEvent;
++import org.bukkit.event.block.LeavesDecayEvent; // CraftBukkit
  
 -public class LeavesBlock extends Block {
 +public class LeavesBlock extends Block implements net.minecraftforge.common.IShearable {
@@ -16,7 +16,7 @@
     public void func_225542_b_(BlockState p_225542_1_, ServerWorld p_225542_2_, BlockPos p_225542_3_, Random p_225542_4_) {
        if (!p_225542_1_.func_177229_b(field_208495_b) && p_225542_1_.func_177229_b(field_208494_a) == 7) {
 +         // CraftBukkit start
-+         LeavesDecayEvent event = new LeavesDecayEvent(p_225542_2_.getWorldCB().getBlockAt(p_225542_3_.func_177958_n(), p_225542_3_.func_177956_o(), p_225542_3_.func_177952_p()));
++         final LeavesDecayEvent event = new LeavesDecayEvent(p_225542_2_.getWorldCB().getBlockAt(p_225542_3_.func_177958_n(), p_225542_3_.func_177956_o(), p_225542_3_.func_177952_p()));
 +         p_225542_2_.getServerCB().getPluginManager().callEvent(event);
 +         if (event.isCancelled() || p_225542_2_.func_180495_p(p_225542_3_).func_177230_c() != this) {
 +            return;

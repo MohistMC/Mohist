@@ -5,25 +5,16 @@
  import net.minecraft.world.gen.feature.Feature;
  import net.minecraft.world.server.ServerWorld;
 +import org.bukkit.TreeType;
-+import org.bukkit.craftbukkit.v1_15_R1.event.CraftEventFactory;
++import org.bukkit.craftbukkit.event.CraftEventFactory;
  
  public class MushroomBlock extends BushBlock implements IGrowable {
     protected static final VoxelShape field_196385_a = Block.func_208617_a(5.0D, 0.0D, 5.0D, 11.0D, 6.0D, 11.0D);
-@@ -25,7 +27,7 @@
-    }
- 
-    public void func_225534_a_(BlockState p_225534_1_, ServerWorld p_225534_2_, BlockPos p_225534_3_, Random p_225534_4_) {
--      if (p_225534_4_.nextInt(25) == 0) {
-+      if (p_225534_4_.nextInt(Math.max(1, (int) (100.0F / p_225534_2_.spigotConfig.mushroomModifier) * 25)) == 0) { // Spigot
-          int i = 5;
-          int j = 4;
- 
 @@ -49,7 +51,7 @@
           }
  
           if (p_225534_2_.func_175623_d(blockpos1) && p_225534_1_.func_196955_c(p_225534_2_, blockpos1)) {
 -            p_225534_2_.func_180501_a(blockpos1, p_225534_1_, 2);
-+            CraftEventFactory.handleBlockSpreadEvent(p_225534_2_, p_225534_3_, blockpos1, p_225534_1_, 2); // CraftBukkit
++            CraftEventFactory.handleBlockSpreadEvent(p_225534_2_, p_225534_3_, blockpos1, p_225534_1_, 2);
           }
        }
  
@@ -36,7 +27,7 @@
        } else {
           return true;
        }
-@@ -74,6 +76,7 @@
+@@ -74,13 +76,14 @@
        p_226940_1_.func_217377_a(p_226940_2_, false);
        ConfiguredFeature<BigMushroomFeatureConfig, ?> configuredfeature;
        if (this == Blocks.field_150338_P) {
@@ -44,10 +35,10 @@
           configuredfeature = Feature.field_202319_S.func_225566_b_(DefaultBiomeFeatures.field_226768_ac_);
        } else {
           if (this != Blocks.field_150337_Q) {
-@@ -81,6 +84,7 @@
+             p_226940_1_.func_180501_a(p_226940_2_, p_226940_3_, 3);
              return false;
           }
- 
+-
 +         SaplingBlock.treeType = TreeType.RED_MUSHROOM; // CraftBukkit
           configuredfeature = Feature.field_202318_R.func_225566_b_(DefaultBiomeFeatures.field_226767_ab_);
        }

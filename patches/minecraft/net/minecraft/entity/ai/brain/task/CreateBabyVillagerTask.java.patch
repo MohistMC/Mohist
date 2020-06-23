@@ -4,29 +4,28 @@
  import net.minecraft.util.math.GlobalPos;
  import net.minecraft.village.PointOfInterestType;
  import net.minecraft.world.server.ServerWorld;
-+import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
++import org.bukkit.craftbukkit.event.CraftEventFactory;
  
  public class CreateBabyVillagerTask extends Task<VillagerEntity> {
     private long field_220483_a;
-@@ -103,6 +104,12 @@
+@@ -103,6 +104,11 @@
  
     private Optional<VillagerEntity> func_220480_a(VillagerEntity p_220480_1_, VillagerEntity p_220480_2_) {
        VillagerEntity villagerentity = p_220480_1_.func_90011_a(p_220480_2_);
 +      // CraftBukkit start - call EntityBreedEvent
-+      if (org.bukkit.craftbukkit.v1_15_R1.event.CraftEventFactory.callEntityBreedEvent(villagerentity, p_220480_1_, p_220480_2_, null, null, 0).isCancelled()) {
++      if (CraftEventFactory.callEntityBreedEvent(villagerentity, p_220480_1_, p_220480_2_, null, null, 0).isCancelled()) {
 +         return Optional.empty();
 +      }
 +      // CraftBukkit end
-+
        if (villagerentity == null) {
           return Optional.empty();
        } else {
-@@ -110,7 +117,7 @@
+@@ -110,7 +116,7 @@
           p_220480_2_.func_70873_a(6000);
           villagerentity.func_70873_a(-24000);
           villagerentity.func_70012_b(p_220480_1_.func_226277_ct_(), p_220480_1_.func_226278_cu_(), p_220480_1_.func_226281_cx_(), 0.0F, 0.0F);
 -         p_220480_1_.field_70170_p.func_217376_c(villagerentity);
-+         p_220480_1_.field_70170_p.addEntity(villagerentity, SpawnReason.BREEDING); // CraftBukkit - added SpawnReason
++         p_220480_1_.field_70170_p.addEntity(villagerentity, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.BREEDING); // CraftBukkit - added SpawnReason
           p_220480_1_.field_70170_p.func_72960_a(villagerentity, (byte)12);
           return Optional.of(villagerentity);
        }

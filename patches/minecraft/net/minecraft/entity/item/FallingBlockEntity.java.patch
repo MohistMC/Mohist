@@ -12,7 +12,7 @@
  import net.minecraft.world.World;
  import net.minecraftforge.api.distmarker.Dist;
  import net.minecraftforge.api.distmarker.OnlyIn;
-+import org.bukkit.craftbukkit.v1_15_R1.event.CraftEventFactory;
++import org.bukkit.craftbukkit.event.CraftEventFactory; // CraftBukkit
  
  public class FallingBlockEntity extends Entity {
     private BlockState field_175132_d = Blocks.field_150354_m.func_176223_P();
@@ -20,7 +20,7 @@
     public boolean field_145813_c = true;
     private boolean field_145808_f;
 -   private boolean field_145809_g;
-+   public boolean field_145809_g; // private->public CraftBukkit
++   public boolean field_145809_g;
     private int field_145815_h = 40;
     private float field_145816_i = 2.0F;
     public CompoundNBT field_145810_d;
@@ -33,16 +33,15 @@
                 this.field_70170_p.func_217377_a(blockpos, false);
              } else if (!this.field_70170_p.field_72995_K) {
                 this.func_70106_y();
-@@ -148,12 +148,18 @@
+@@ -148,12 +148,17 @@
                             this.field_175132_d = this.field_175132_d.func_206870_a(BlockStateProperties.field_208198_y, Boolean.valueOf(true));
                          }
  
 +                        // CraftBukkit start
-+                        if(CraftEventFactory.callEntityChangeBlockEvent(this,blockpos1, this.field_175132_d).isCancelled()){
++                        if (CraftEventFactory.callEntityChangeBlockEvent(this, blockpos1, this.field_175132_d).isCancelled()) {
 +                           return;
 +                        }
 +                        // CraftBukkit end
-+
                          if (this.field_70170_p.func_180501_a(blockpos1, this.field_175132_d, 3)) {
                             if (block instanceof FallingBlock) {
                                ((FallingBlock)block).func_176502_a_(this.field_70170_p, blockpos1, this.field_175132_d, blockstate);
@@ -53,7 +52,7 @@
                                TileEntity tileentity = this.field_70170_p.func_175625_s(blockpos1);
                                if (tileentity != null) {
                                   CompoundNBT compoundnbt = tileentity.func_189515_b(new CompoundNBT());
-@@ -195,7 +201,9 @@
+@@ -195,7 +200,9 @@
              DamageSource damagesource = flag ? DamageSource.field_82728_o : DamageSource.field_82729_p;
  
              for(Entity entity : list) {

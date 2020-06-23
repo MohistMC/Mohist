@@ -4,7 +4,7 @@
  import net.minecraft.world.IBlockReader;
  import net.minecraft.world.World;
  import net.minecraft.world.server.ServerWorld;
-+import org.bukkit.craftbukkit.v1_15_R1.event.CraftEventFactory;
++import org.bukkit.craftbukkit.event.CraftEventFactory; // CraftBukkit
  
  public class RedstoneLampBlock extends Block {
     public static final BooleanProperty field_196502_a = RedstoneTorchBlock.field_196528_a;
@@ -25,7 +25,7 @@
     public void func_225534_a_(BlockState p_225534_1_, ServerWorld p_225534_2_, BlockPos p_225534_3_, Random p_225534_4_) {
        if (p_225534_1_.func_177229_b(field_196502_a) && !p_225534_2_.func_175640_z(p_225534_3_)) {
 +         // CraftBukkit start
-+         if (CraftEventFactory.callRedstoneChange(p_225534_2_, p_225534_3_, 15, 0).getNewCurrent() != 0) {
++         if (CraftEventFactory.callRedstoneChange(p_225534_2_, p_225534_3_, 0, 15).getNewCurrent() != 15) {
 +            return;
 +         }
 +         // CraftBukkit end

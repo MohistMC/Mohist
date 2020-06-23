@@ -4,7 +4,7 @@
  import net.minecraft.util.text.ITextComponent;
  import net.minecraftforge.api.distmarker.Dist;
  import net.minecraftforge.api.distmarker.OnlyIn;
-+import org.bukkit.craftbukkit.v1_15_R1.inventory.CraftItemStack;
++import org.bukkit.craftbukkit.inventory.CraftItemStack;
  
 -public class PacketBuffer extends ByteBuf {
 +public class PacketBuffer extends ByteBuf implements net.minecraftforge.common.extensions.IForgePacketBuffer {
@@ -38,20 +38,16 @@
           this.writeBoolean(false);
        } else {
           this.writeBoolean(true);
-@@ -274,7 +284,11 @@
+@@ -274,7 +284,7 @@
           this.writeByte(p_150788_1_.func_190916_E());
           CompoundNBT compoundnbt = null;
           if (item.func_77645_m() || item.func_77651_p()) {
 -            compoundnbt = p_150788_1_.func_77978_p();
-+            // Spigot start - filter
-+            p_150788_1_ = p_150788_1_.func_77946_l();
-+            CraftItemStack.setItemMeta(p_150788_1_, CraftItemStack.getItemMeta(p_150788_1_));
-+            // Spigot end
 +            compoundnbt = limitedTag ? p_150788_1_.getShareTag() : p_150788_1_.func_77978_p();
           }
  
           this.func_150786_a(compoundnbt);
-@@ -290,7 +304,12 @@
+@@ -290,7 +300,12 @@
           int i = this.func_150792_a();
           int j = this.readByte();
           ItemStack itemstack = new ItemStack(Item.func_150899_d(i), j);

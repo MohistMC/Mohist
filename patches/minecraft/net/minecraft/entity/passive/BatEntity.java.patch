@@ -4,59 +4,54 @@
  import net.minecraft.util.math.Vec3d;
  import net.minecraft.world.IWorld;
  import net.minecraft.world.World;
-+import org.bukkit.craftbukkit.v1_15_R1.event.CraftEventFactory;
++import org.bukkit.craftbukkit.event.CraftEventFactory;
  
  public class BatEntity extends AmbientEntity {
     private static final DataParameter<Byte> field_184660_a = EntityDataManager.func_187226_a(BatEntity.class, DataSerializers.field_187191_a);
-@@ -109,16 +110,24 @@
-       if (this.func_82235_h()) {
-          if (this.field_70170_p.func_180495_p(blockpos1).func_215686_e(this.field_70170_p, blockpos)) {
-             if (this.field_70146_Z.nextInt(200) == 0) {
--               this.field_70759_as = (float)this.field_70146_Z.nextInt(360);
-+               this.field_70759_as = (float) this.field_70146_Z.nextInt(360);
+@@ -113,12 +114,19 @@
              }
  
              if (this.field_70170_p.func_217370_a(field_213813_c, this) != null) {
+-               this.func_82236_f(false);
+-               this.field_70170_p.func_217378_a((PlayerEntity)null, 1025, blockpos, 0);
 +               // CraftBukkit Start - Call BatToggleSleepEvent
 +               if (CraftEventFactory.handleBatToggleSleepEvent(this, true)) {
 +                  this.func_82236_f(false);
-+                  this.field_70170_p.func_217378_a((PlayerEntity) null, 1025, blockpos, 0);
++                  this.field_70170_p.func_217378_a((PlayerEntity)null, 1025, blockpos, 0);
 +               }
-+               // CraftBukkit end
-+            }
-+         }else{
-+            // CraftBukkit Start - Call BatToggleSleepEvent
-+            if(CraftEventFactory.handleBatToggleSleepEvent(this, true)){
-                this.func_82236_f(false);
-                this.field_70170_p.func_217378_a((PlayerEntity)null, 1025, blockpos, 0);
++               // CraftBukkit End
              }
--         } else {
+          } else {
 -            this.func_82236_f(false);
 -            this.field_70170_p.func_217378_a((PlayerEntity)null, 1025, blockpos, 0);
-+            // CraftBukkit End - Call BatToggleSleepEvent
++            // CraftBukkit Start - Call BatToggleSleepEvent
++            if (CraftEventFactory.handleBatToggleSleepEvent(this, true)) {
++               this.func_82236_f(false);
++               this.field_70170_p.func_217378_a((PlayerEntity) null, 1025, blockpos, 0);
++            }
           }
        } else {
           if (this.field_82237_a != null && (!this.field_70170_p.func_175623_d(this.field_82237_a) || this.field_82237_a.func_177956_o() < 1)) {
-@@ -140,7 +149,11 @@
+@@ -140,7 +148,11 @@
           this.field_191988_bg = 0.5F;
           this.field_70177_z += f1;
           if (this.field_70146_Z.nextInt(100) == 0 && this.field_70170_p.func_180495_p(blockpos1).func_215686_e(this.field_70170_p, blockpos1)) {
 -            this.func_82236_f(true);
 +            // CraftBukkit Start - Call BatToggleSleepEvent
-+            if(CraftEventFactory.handleBatToggleSleepEvent(this, false)){
++            if (CraftEventFactory.handleBatToggleSleepEvent(this, false)) {
 +               this.func_82236_f(true);
 +            }
 +            // CraftBukkit End
           }
        }
  
-@@ -166,7 +179,11 @@
+@@ -166,7 +178,11 @@
           return false;
        } else {
           if (!this.field_70170_p.field_72995_K && this.func_82235_h()) {
 -            this.func_82236_f(false);
 +            // CraftBukkit Start - Call BatToggleSleepEvent
-+            if(CraftEventFactory.handleBatToggleSleepEvent(this, true)){
++            if (CraftEventFactory.handleBatToggleSleepEvent(this, true)) {
 +               this.func_82236_f(false);
 +            }
 +            // CraftBukkit End - Call BatToggleSleepEvent

@@ -6,7 +6,7 @@ Subject: [PATCH] Improve paper prevent moving into unloaded chunk check
 Check the AABB of the move
 
 diff --git a/src/main/java/net/minecraft/server/PlayerConnection.java b/src/main/java/net/minecraft/server/PlayerConnection.java
-index c17dbddcbddc7854b7061adae1d83b23adb35066..1859cd296bbe0ea12cd32366e84ce31caf71d9a3 100644
+index 1fb4aade1150596142be128d0641363c99ea19e5..214d2466471e18968b6f33094462154232157b96 100644
 --- a/src/main/java/net/minecraft/server/PlayerConnection.java
 +++ b/src/main/java/net/minecraft/server/PlayerConnection.java
 @@ -369,7 +369,9 @@ public class PlayerConnection implements PacketListenerPlayIn {

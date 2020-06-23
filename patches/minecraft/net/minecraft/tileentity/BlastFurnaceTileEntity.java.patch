@@ -12,8 +12,51 @@
  import net.minecraft.item.crafting.IRecipeType;
  import net.minecraft.util.text.ITextComponent;
  import net.minecraft.util.text.TranslationTextComponent;
-+import org.bukkit.craftbukkit.v1_15_R1.entity.CraftHumanEntity;
++import org.bukkit.craftbukkit.entity.CraftHumanEntity;
 +import org.bukkit.entity.HumanEntity;
  
  public class BlastFurnaceTileEntity extends AbstractFurnaceTileEntity {
     public BlastFurnaceTileEntity() {
+@@ -21,7 +25,42 @@
+       return super.func_213997_a(p_213997_1_) / 2;
+    }
+ 
++   @Override
++   public void func_213995_d(PlayerEntity player, ItemStack stack, int removeCount) {
++
++   }
++
+    protected Container func_213906_a(int p_213906_1_, PlayerInventory p_213906_2_) {
+       return new BlastFurnaceContainer(p_213906_1_, p_213906_2_, this, this.field_214013_b);
+    }
++
++   @Override
++   public int func_70297_j_() {
++      return 0;
++   }
++
++   @Override
++   public List<ItemStack> getContents() {
++      return null;
++   }
++
++   @Override
++   public void onOpen(CraftHumanEntity who) {
++
++   }
++
++   @Override
++   public void onClose(CraftHumanEntity who) {
++
++   }
++
++   @Override
++   public List<HumanEntity> getViewers() {
++      return null;
++   }
++
++   @Override
++   public void setMaxStackSize(int size) {
++
++   }
+ }

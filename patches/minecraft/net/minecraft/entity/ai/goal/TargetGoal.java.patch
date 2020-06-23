@@ -13,7 +13,7 @@
                    return false;
                 } else {
 -                  this.field_75299_d.func_70624_b(livingentity);
-+                  this.field_75299_d.setAttackTarget(livingentity, EntityTargetEvent.TargetReason.CLOSEST_ENTITY, true); // CraftBukkit
++                  this.field_75299_d.setGoalTarget(livingentity, EntityTargetEvent.TargetReason.CLOSEST_ENTITY, true); // CraftBukkit
                    return true;
                 }
              }
@@ -22,7 +22,7 @@
  
     public void func_75251_c() {
 -      this.field_75299_d.func_70624_b((LivingEntity)null);
-+      this.field_75299_d.setAttackTarget((LivingEntity)null, EntityTargetEvent.TargetReason.FORGOT_TARGET, true); // CraftBukkit
++      this.field_75299_d.setGoalTarget((LivingEntity) null, EntityTargetEvent.TargetReason.FORGOT_TARGET, true); // CraftBukkit
        this.field_188509_g = null;
     }
  

@@ -18,7 +18,7 @@
 +         TimeSkipEvent event = new TimeSkipEvent(serverworld.getWorldCB(), TimeSkipEvent.SkipReason.COMMAND, p_198829_1_ - serverworld.func_72820_D());
 +         Bukkit.getPluginManager().callEvent(event);
 +         if (!event.isCancelled()) {
-+            serverworld.func_72877_b((long) serverworld.func_72820_D() + event.getSkipAmount());
++            serverworld.func_72877_b(serverworld.func_72820_D() + event.getSkipAmount());
 +         }
 +         // CraftBukkit end
        }

@@ -1,18 +1,20 @@
 --- a/net/minecraft/item/crafting/FurnaceRecipe.java
 +++ b/net/minecraft/item/crafting/FurnaceRecipe.java
-@@ -3,6 +3,11 @@
+@@ -3,6 +3,13 @@
  import net.minecraft.block.Blocks;
  import net.minecraft.item.ItemStack;
  import net.minecraft.util.ResourceLocation;
-+import org.bukkit.craftbukkit.v1_15_R1.inventory.CraftFurnaceRecipe;
-+import org.bukkit.craftbukkit.v1_15_R1.inventory.CraftItemStack;
-+import org.bukkit.craftbukkit.v1_15_R1.inventory.CraftRecipe;
-+import org.bukkit.craftbukkit.v1_15_R1.util.CraftNamespacedKey;
++// CraftBukkit start
++import org.bukkit.craftbukkit.inventory.CraftFurnaceRecipe;
++import org.bukkit.craftbukkit.inventory.CraftItemStack;
++import org.bukkit.craftbukkit.inventory.CraftRecipe;
++import org.bukkit.craftbukkit.util.CraftNamespacedKey;
 +import org.bukkit.inventory.Recipe;
++// CraftBukkit end
  
  public class FurnaceRecipe extends AbstractCookingRecipe {
     public FurnaceRecipe(ResourceLocation p_i48715_1_, String p_i48715_2_, Ingredient p_i48715_3_, ItemStack p_i48715_4_, float p_i48715_5_, int p_i48715_6_) {
-@@ -16,4 +21,14 @@
+@@ -16,4 +23,14 @@
     public IRecipeSerializer<?> func_199559_b() {
        return IRecipeSerializer.field_222171_o;
     }
