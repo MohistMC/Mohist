@@ -1,11 +1,8 @@
 --- a/net/minecraft/entity/IRendersAsItem.java
 +++ b/net/minecraft/entity/IRendersAsItem.java
-@@ -1,10 +1,8 @@
- package net.minecraft.entity;
- 
- import net.minecraft.item.ItemStack;
--import net.minecraftforge.api.distmarker.Dist;
--import net.minecraftforge.api.distmarker.OnlyIn;
+@@ -4,7 +4,7 @@
+ import net.minecraftforge.api.distmarker.Dist;
+ import net.minecraftforge.api.distmarker.OnlyIn;
  
 -@OnlyIn(Dist.CLIENT)
 +//@OnlyIn(Dist.CLIENT)

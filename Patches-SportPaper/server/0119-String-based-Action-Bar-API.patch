@@ -1,0 +1,95 @@
+From 5b09f2963d90ed76896698d629263f6af057c802 Mon Sep 17 00:00:00 2001
+From: cswhite2000 <18whitechristop@gmail.com>
+Date: Thu, 16 Aug 2018 15:27:59 -0700
+Subject: [PATCH] String based Action Bar API
+
+
+diff --git a/src/main/java/net/minecraft/server/MCUtil.java b/src/main/java/net/minecraft/server/MCUtil.java
+index aefc829b..7f86691a 100644
+--- a/src/main/java/net/minecraft/server/MCUtil.java
++++ b/src/main/java/net/minecraft/server/MCUtil.java
+@@ -2,10 +2,13 @@
+ package net.minecraft.server;
+ 
+ import com.google.common.util.concurrent.ThreadFactoryBuilder;
++import org.apache.commons.lang.exception.ExceptionUtils;
+ import org.bukkit.Location;
++import org.bukkit.craftbukkit.CraftWorld;
+ import org.bukkit.craftbukkit.util.Waitable;
+ import org.spigotmc.AsyncCatcher;
+ 
++import javax.annotation.Nonnull;
+ import javax.annotation.Nullable;
+ import java.util.concurrent.ExecutionException;
+ import java.util.concurrent.Executor;
+@@ -17,6 +20,25 @@ public final class MCUtil {
+ 
+     private MCUtil() {}
+ 
++    /**
++     * Quickly generate a stack trace for current location
++     *
++     * @return Stacktrace
++     */
++    public static String stack() {
++        return ExceptionUtils.getFullStackTrace(new Throwable());
++    }
++
++    /**
++     * Quickly generate a stack trace for current location with message
++     *
++     * @param str
++     * @return Stacktrace
++     */
++    public static String stack(String str) {
++        return ExceptionUtils.getFullStackTrace(new Throwable(str));
++    }
++
+     public static <T> T ensureMain(String reason, Supplier<T> run) {
+         if (AsyncCatcher.enabled && Thread.currentThread() != MinecraftServer.getServer().primaryThread) {
+             new IllegalStateException( "Asynchronous " + reason + "! Blocking thread until it returns ").printStackTrace();
+@@ -108,4 +130,13 @@ public final class MCUtil {
+         }
+         return null;
+     }
++
++    @Nonnull
++    public static World getNMSWorld(@Nonnull org.bukkit.World world) {
++        return ((CraftWorld) world).getHandle();
++    }
++
++    public static World getNMSWorld(@Nonnull org.bukkit.entity.Entity entity) {
++        return getNMSWorld(entity.getWorld());
++    }
+ }
+diff --git a/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java b/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
+index dc4e343d..712f18fe 100644
+--- a/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
++++ b/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
+@@ -193,6 +193,23 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
+         getHandle().playerConnection.sendPacket(packet);
+     }
+ 
++    @Override
++    public void sendActionBar(BaseComponent baseComponent) {
++        sendActionBar(baseComponent.toLegacyText());
++    }
++
++    @Override
++    public void sendActionBar(String message) {
++        if (getHandle().playerConnection == null || message == null || message.isEmpty()) return;
++        getHandle().playerConnection.sendPacket(new PacketPlayOutChat(IChatBaseComponent.ChatSerializer.a("{\"text\":\"" + message + "\"}"), (byte)2));
++    }
++
++    @Override
++    public void sendActionBar(char alternateChar, String message) {
++        if (message == null || message.isEmpty()) return;
++        sendActionBar(org.bukkit.ChatColor.translateAlternateColorCodes(alternateChar, message));
++    }
++
+     @Override
+     public void setPlayerListHeaderFooter(BaseComponent[] header, BaseComponent[] footer) {
+         PacketPlayOutPlayerListHeaderFooter packet = new PacketPlayOutPlayerListHeaderFooter();
+-- 
+2.19.0
+

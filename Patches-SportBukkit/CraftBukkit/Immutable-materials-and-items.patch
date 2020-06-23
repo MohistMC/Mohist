@@ -1,0 +1,307 @@
+From: Jedediah Smith <jedediah@silencegreys.com>
+Date: Wed, 4 Jan 2017 13:57:10 -0500
+Subject: [PATCH] Immutable materials and items
+
+
+diff --git a/src/main/java/org/bukkit/craftbukkit/inventory/CraftItemStack.java b/src/main/java/org/bukkit/craftbukkit/inventory/CraftItemStack.java
+--- a/src/main/java/org/bukkit/craftbukkit/inventory/CraftItemStack.java
++++ b/src/main/java/org/bukkit/craftbukkit/inventory/CraftItemStack.java
+@@ -21,6 +21,7 @@ import org.bukkit.inventory.meta.ItemMeta;
+ 
+ import com.google.common.collect.ImmutableMap;
+ import org.bukkit.craftbukkit.enchantments.CraftEnchantment;
++import org.bukkit.material.MaterialData;
+ 
+ @DelegateDeserialization(ItemStack.class)
+ public final class CraftItemStack extends ItemStack {
+@@ -171,6 +172,20 @@ public final class CraftItemStack extends ItemStack {
+     }
+ 
+     @Override
++    public MaterialData getData() {
++        if(handle == null) return Material.AIR.getNewData((byte) 0);
++        return CraftMagicNumbers.getMaterial(handle.getItem())
++                                .getNewData(handle.getItem().usesDurability() ? 0 : (byte) handle.getData());
++    }
++
++    @Override
++    public void setData(MaterialData data) {
++        if(handle != null) {
++            handle.setData(data != null ? data.getData() : 0);
++        }
++    }
++
++    @Override
+     public int getMaxStackSize() {
+         return (handle == null) ? Material.AIR.getMaxStackSize() : handle.getItem().getMaxStackSize();
+     }
+diff --git a/src/main/java/org/bukkit/craftbukkit/inventory/CraftMetaItem.java b/src/main/java/org/bukkit/craftbukkit/inventory/CraftMetaItem.java
+--- a/src/main/java/org/bukkit/craftbukkit/inventory/CraftMetaItem.java
++++ b/src/main/java/org/bukkit/craftbukkit/inventory/CraftMetaItem.java
+@@ -79,7 +79,7 @@ import org.apache.commons.codec.binary.Base64;
+  * <li> SerializableMeta.Deserializers deserializer()
+  */
+ @DelegateDeserialization(CraftMetaItem.SerializableMeta.class)
+-class CraftMetaItem implements ItemMeta, Repairable {
++public class CraftMetaItem implements ItemMeta, Repairable {
+ 
+     static class ItemMetaKey {
+ 
+@@ -807,6 +807,20 @@ class CraftMetaItem implements ItemMeta, Repairable {
+         canPlaceOn = ImmutableMaterialSet.of(materials);
+     }
+ 
++    /**
++     * This map contains any NBT tags NOT handled by the Bukkit API.
++     * These tags will be loaded and saved verbatim to items.
++     * The returned map can be modified by brave/evil code, in order
++     * to implement custom item state.
++     *
++     * It is not recommended to use this map to interact with standard
++     * tags before Bukkit supports them, because once that support is
++     * added, the tags will disappear from this map.
++     */
++    public Map<String, NBTBase> getUnhandledTags() {
++        return unhandledTags;
++    }
++
+     @Override
+     public final boolean equals(Object object) {
+         if (object == null) {
+diff --git a/src/test/java/org/bukkit/craftbukkit/inventory/ImItemStackTest.java b/src/test/java/org/bukkit/craftbukkit/inventory/ImItemStackTest.java
+new file mode 100644
+index 0000000..0dd64b3
+--- /dev/null
++++ b/src/test/java/org/bukkit/craftbukkit/inventory/ImItemStackTest.java
+@@ -0,0 +1,98 @@
++package org.bukkit.craftbukkit.inventory;
++
++import org.bukkit.DyeColor;
++import org.bukkit.Material;
++import org.bukkit.inventory.ImItemStack;
++import org.bukkit.inventory.ItemStack;
++import org.bukkit.material.Wool;
++import org.junit.Test;
++
++import static org.junit.Assert.*;
++import static tc.oc.test.Assert.*;
++
++public class ImItemStackTest {
++
++    @Test
++    public void testCreationWithDamage() {
++        ImItemStack stack = ImItemStack.of(Material.STONE_SWORD, 123, 45);
++        assertTrue(stack.isImmutable());
++        assertEquals(Material.STONE_SWORD, stack.getType());
++        assertEquals(123, stack.getDurability());
++        assertEquals(45, stack.getAmount());
++    }
++
++    @Test
++    public void testCreationWithData() {
++        Wool wool = new Wool(DyeColor.PINK);
++        ImItemStack stack = ImItemStack.of(wool, 45);
++        assertTrue(stack.isImmutable());
++        assertEquals(wool, stack.getData());
++        assertEquals(wool.getItemType(), stack.getType());
++        assertEquals(45, stack.getAmount());
++    }
++
++    @Test
++    public void testCreationWithBuilder() {
++        Wool wool = new Wool(DyeColor.PINK);
++        ImItemStack stack = wool.buildItemStack().amount(45).immutable();
++        assertTrue(stack.isImmutable());
++        assertEquals(wool.getItemType(), stack.getType());
++        assertEquals(wool, stack.getData());
++        assertEquals(45, stack.getAmount());
++    }
++
++    @Test
++    public void testImmutableCopy() throws Throwable {
++        ItemStack mutable = new ItemStack(Material.STONE_SWORD, 45, (short) 123);
++        ItemStack immutable = mutable.immutableCopy();
++        assertTrue(mutable.isMutable());
++        assertTrue(immutable.isImmutable());
++        assertNotSame(mutable, immutable);
++        assertEquals(mutable, immutable);
++    }
++
++    @Test
++    public void testCloneOfImmutableIsMutable() throws Throwable {
++        ItemStack immutable = ImItemStack.of(Material.STONE_SWORD, 45, (short) 123);
++        ItemStack mutable = immutable.clone();
++        assertTrue(mutable.isMutable());
++        assertTrue(immutable.isImmutable());
++        assertNotSame(mutable, immutable);
++        assertEquals(mutable, immutable);
++    }
++
++    @Test
++    public void testImmutability() throws Throwable {
++        ImItemStack stack = ImItemStack.of(Material.DIRT);
++        assertFalse(stack.isMutable());
++        assertTrue(stack.isImmutable());
++
++        assertThrows(UnsupportedOperationException.class, () -> stack.setType(Material.STONE));
++        assertThrows(UnsupportedOperationException.class, () -> stack.setTypeId(Material.STONE.getId()));
++        assertThrows(UnsupportedOperationException.class, () -> stack.setDurability((short) 123));
++        assertThrows(UnsupportedOperationException.class, () -> stack.setAmount(45));
++        assertThrows(UnsupportedOperationException.class, () -> stack.setData(new Wool(DyeColor.PINK)));
++        assertThrows(UnsupportedOperationException.class, () -> stack.setMaterial(new Wool(DyeColor.PINK)));
++        assertThrows(UnsupportedOperationException.class, () -> stack.setItemMeta(stack.getItemMeta()));
++    }
++
++    @Test
++    public void testDamageItemTypeCheck() throws Throwable {
++        assertThrows(IllegalArgumentException.class, () -> ImItemStack.of(Material.DIRT, 123));
++        assertThrows(IllegalArgumentException.class, () -> ItemStack.builder(Material.DIRT, 123));
++    }
++
++    @Test
++    public void testDamageRangeCheck() throws Throwable {
++        ImItemStack.of(Material.STONE_SWORD, Short.MIN_VALUE);
++        ImItemStack.of(Material.STONE_SWORD, Short.MAX_VALUE);
++        assertThrows(IllegalArgumentException.class, () -> ImItemStack.of(Material.STONE_SWORD, Short.MIN_VALUE - 1));
++        assertThrows(IllegalArgumentException.class, () -> ImItemStack.of(Material.STONE_SWORD, Short.MAX_VALUE + 1));
++    }
++
++    @Test
++    public void testAmountRangeCheck() throws Throwable {
++        ImItemStack.of(Material.DIRT, 0, Byte.MAX_VALUE);
++        assertThrows(IllegalArgumentException.class, () -> ImItemStack.of(Material.DIRT, 0, Byte.MAX_VALUE + 1));
++    }
++}
+diff --git a/src/test/java/org/bukkit/craftbukkit/inventory/ItemStackTest.java b/src/test/java/org/bukkit/craftbukkit/inventory/ItemStackTest.java
+--- a/src/test/java/org/bukkit/craftbukkit/inventory/ItemStackTest.java
++++ b/src/test/java/org/bukkit/craftbukkit/inventory/ItemStackTest.java
+@@ -3,6 +3,7 @@ package org.bukkit.craftbukkit.inventory;
+ import static org.bukkit.support.Matchers.sameHash;
+ import static org.junit.Assert.*;
+ import static org.hamcrest.Matchers.*;
++import static tc.oc.test.Assert.*;
+ 
+ import java.io.ByteArrayInputStream;
+ import java.io.ByteArrayOutputStream;
+@@ -15,12 +16,16 @@ import java.util.HashMap;
+ import java.util.List;
+ import java.util.Map;
+ 
++import org.bukkit.DyeColor;
+ import org.bukkit.Material;
+ import org.bukkit.configuration.InvalidConfigurationException;
+ import org.bukkit.configuration.file.YamlConfiguration;
+ import org.bukkit.inventory.ItemFactory;
+ import org.bukkit.inventory.ItemStack;
++import org.bukkit.inventory.meta.BannerMeta;
+ import org.bukkit.inventory.meta.ItemMeta;
++import org.bukkit.material.MaterialData;
++import org.bukkit.material.Wool;
+ import org.bukkit.support.AbstractTestingBase;
+ import org.bukkit.util.io.BukkitObjectInputStream;
+ import org.bukkit.util.io.BukkitObjectOutputStream;
+@@ -490,4 +495,47 @@ public class ItemStackTest extends AbstractTestingBase {
+         assertThat(information, primaryRead, is(not(unequalOriginal)));
+         assertThat(information, primaryRead, is(not(unequalRead)));
+     }
++
++    @Test
++    public void testMutability() throws Throwable {
++        ItemStack stack = new ItemStack(Material.DIRT);
++        assertTrue(stack.isMutable());
++        assertFalse(stack.isImmutable());
++    }
++
++    @Test
++    public void testMaterialDataAndDurabilityAreIndependent() throws Throwable {
++        Wool wool = new Wool(DyeColor.PINK);
++        ItemStack stack = new ItemStack(wool.getItemType(), 1, (short) 123, wool.getData());
++        assertEquals("Material data and durability should be independent",
++                     wool, stack.getData());
++        assertEquals("Material data and durability should be independent",
++                     123, stack.getDurability());
++
++        stack.setDurability((short) 456);
++        assertEquals("Setting durability should not change material data",
++                     wool, stack.getData());
++
++        stack.setMaterial(wool);
++        assertEquals("Setting material data should not change durability",
++                     456, stack.getDurability());
++    }
++
++    @Test
++    public void testCreationWithBuilder() throws Throwable {
++        MaterialData wool = new Wool(DyeColor.PINK);
++        ItemStack stack = wool.buildItemStack().amount(45).mutable();
++        assertEquals(wool, stack.getData());
++        assertEquals(45, stack.getAmount());
++        assertTrue(stack.isMutable());
++    }
++
++    @Test
++    public void testItemMetaBuilder() throws Throwable {
++        ItemStack banner = ItemStack.builder(Material.BANNER).meta(BannerMeta.class, meta -> {
++            meta.setBaseColor(DyeColor.PINK);
++        }).mutable();
++
++        assertEquals(DyeColor.PINK, ((BannerMeta) banner.getItemMeta()).getBaseColor());
++    }
+ }
+diff --git a/src/test/java/org/bukkit/craftbukkit/inventory/NMSCraftItemStackTest.java b/src/test/java/org/bukkit/craftbukkit/inventory/NMSCraftItemStackTest.java
+--- a/src/test/java/org/bukkit/craftbukkit/inventory/NMSCraftItemStackTest.java
++++ b/src/test/java/org/bukkit/craftbukkit/inventory/NMSCraftItemStackTest.java
+@@ -1,14 +1,20 @@
+ package org.bukkit.craftbukkit.inventory;
+ 
+-import static org.junit.Assert.*;
+-import static org.hamcrest.Matchers.*;
+-
++import net.minecraft.server.BlockCloth;
++import net.minecraft.server.Blocks;
+ import net.minecraft.server.Enchantments;
+-
++import net.minecraft.server.EnumColor;
++import net.minecraft.server.Items;
++import org.bukkit.DyeColor;
++import org.bukkit.Material;
+ import org.bukkit.inventory.ItemStack;
++import org.bukkit.material.Wool;
+ import org.bukkit.support.AbstractTestingBase;
+ import org.junit.Test;
+ 
++import static org.hamcrest.Matchers.is;
++import static org.junit.Assert.*;
++
+ public class NMSCraftItemStackTest extends AbstractTestingBase {
+ 
+     @Test
+@@ -33,4 +39,28 @@ public class NMSCraftItemStackTest extends AbstractTestingBase {
+         ItemStack clone = itemStack.clone();
+         assertThat(clone, is(itemStack));
+     }
++
++    @Test
++    public void testConversionPreservesItemData() throws Throwable {
++        ItemStack bukkit = new Wool(DyeColor.PINK).toItemStack();
++        net.minecraft.server.ItemStack nms = new net.minecraft.server.ItemStack(Blocks.WOOL, 1, Blocks.WOOL.getDropData(Blocks.WOOL.getBlockData().set(BlockCloth.COLOR, EnumColor.PINK)));
++
++        assertEquals(bukkit, CraftItemStack.asBukkitCopy(nms));
++        assertEquals(bukkit, CraftItemStack.asCraftMirror(nms));
++        assertEquals(bukkit, CraftItemStack.asCraftCopy(bukkit));
++
++        assertTrue(net.minecraft.server.ItemStack.equals(nms, CraftItemStack.asNMSCopy(bukkit)));
++    }
++
++    @Test
++    public void testConversionPreservesDurability() throws Throwable {
++        ItemStack bukkit = new ItemStack(Material.STONE_SWORD, 1, (short) 123);
++        net.minecraft.server.ItemStack nms = new net.minecraft.server.ItemStack(Items.STONE_SWORD, 1, 123);
++
++        assertEquals(bukkit, CraftItemStack.asBukkitCopy(nms));
++        assertEquals(bukkit, CraftItemStack.asCraftMirror(nms));
++        assertEquals(bukkit, CraftItemStack.asCraftCopy(bukkit));
++
++        assertTrue(net.minecraft.server.ItemStack.equals(nms, CraftItemStack.asNMSCopy(bukkit)));
++    }
+ }

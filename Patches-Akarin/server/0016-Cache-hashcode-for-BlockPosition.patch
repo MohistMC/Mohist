@@ -1,0 +1,72 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Sotr <i@omc.hk>
+Date: Wed, 15 Apr 2020 04:28:25 +0700
+Subject: [PATCH] Cache hashcode for BlockPosition
+
+
+diff --git a/src/main/java/net/minecraft/server/BaseBlockPosition.java b/src/main/java/net/minecraft/server/BaseBlockPosition.java
+index a0450a7ddf21659c5636b3f298e6bf4f0a93fc4d..c4227ff056f906c6ea1fec0330d2db84409a6482 100644
+--- a/src/main/java/net/minecraft/server/BaseBlockPosition.java
++++ b/src/main/java/net/minecraft/server/BaseBlockPosition.java
+@@ -19,6 +19,7 @@ public class BaseBlockPosition implements Comparable<BaseBlockPosition> {
+         return y < 0 || y >= 256;
+     }
+     // Paper end
++    protected int hash; // Akarin - cache hashcode
+ 
+     public BaseBlockPosition(int i, int j, int k) {
+         this.x = i;
+@@ -43,8 +44,20 @@ public class BaseBlockPosition implements Comparable<BaseBlockPosition> {
+     }
+ 
+     public final int hashCode() { // Paper
+-        return (this.y + this.z * 31) * 31 + this.x; // Paper
++        // Akarin start - cache hashcode
++        int result = hash; // Make the situation not too bad when it is modified by multiple threads
++        if (result == 0) {
++          result = (this.y + this.z * 31) * 31 + this.x; // Paper
++          hash = result;
++        }
++        return result;
++        // return (this.getY() + this.getZ() * 31) * 31 + this.getX();
++    }
++
++    public final void recalcHashCode() {
++      hash = 0;
+     }
++    // Akarin end
+ 
+     public int compareTo(BaseBlockPosition baseblockposition) {
+         return this.getY() == baseblockposition.getY() ? (this.getZ() == baseblockposition.getZ() ? this.getX() - baseblockposition.getX() : this.getZ() - baseblockposition.getZ()) : this.getY() - baseblockposition.getY();
+diff --git a/src/main/java/net/minecraft/server/BlockPosition.java b/src/main/java/net/minecraft/server/BlockPosition.java
+index 4c64798fbc50f4d8b08502ba865c5fde5c968e62..ba6d9c838bf7cd16ad300029521f089d48f19547 100644
+--- a/src/main/java/net/minecraft/server/BlockPosition.java
++++ b/src/main/java/net/minecraft/server/BlockPosition.java
+@@ -437,6 +437,7 @@ public class BlockPosition extends BaseBlockPosition implements MinecraftSeriali
+             this.y = j;
+             this.z = k;
+             // Paper end
++            this.recalcHashCode(); // Akarin - cache hashcode
+             return this;
+         }
+ 
+@@ -477,16 +478,19 @@ public class BlockPosition extends BaseBlockPosition implements MinecraftSeriali
+         public final void setX(final int x) { this.o(x); } // Paper - OBFHELPER
+         public void o(int i) {
+             this.x = i; // Paper change to x
++            this.recalcHashCode(); // Akarin - cache hashcode
+         }
+ 
+         public final void setY(final int y) { this.p(y); } // Paper - OBFHELPER
+         public void p(int i) {
+             this.y = i; // Paper change to y
++            this.recalcHashCode(); // Akarin - cache hashcode
+         }
+ 
+         public final void setZ(final int z) { this.q(z); } // Paper - OBFHELPER
+         public void q(int i) {
+             this.z = i; // Paper change to z
++            this.recalcHashCode(); // Akarin - cache hashcode
+         }
+ 
+         @Override

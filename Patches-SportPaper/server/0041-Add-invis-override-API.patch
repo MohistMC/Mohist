@@ -1,0 +1,98 @@
+From c0d21d6f9074398fbd6bca2d11c60435d920f181 Mon Sep 17 00:00:00 2001
+From: cswhite2000 <18whitechristop@gmail.com>
+Date: Tue, 7 Aug 2018 01:17:15 -0700
+Subject: [PATCH] Add invis override API
+
+
+diff --git a/src/main/java/net/minecraft/server/PacketPlayOutEntityMetadata.java b/src/main/java/net/minecraft/server/PacketPlayOutEntityMetadata.java
+index 62492650..043ce662 100644
+--- a/src/main/java/net/minecraft/server/PacketPlayOutEntityMetadata.java
++++ b/src/main/java/net/minecraft/server/PacketPlayOutEntityMetadata.java
+@@ -5,8 +5,8 @@ import java.util.List;
+ 
+ public class PacketPlayOutEntityMetadata implements Packet<PacketListenerPlayOut> {
+ 
+-    private int a;
+-    private List<DataWatcher.WatchableObject> b;
++    public int a;
++    public List<DataWatcher.WatchableObject> b;
+ 
+     public PacketPlayOutEntityMetadata() {}
+ 
+diff --git a/src/main/java/net/minecraft/server/PlayerConnection.java b/src/main/java/net/minecraft/server/PlayerConnection.java
+index b6c0be78..b46ac6ab 100644
+--- a/src/main/java/net/minecraft/server/PlayerConnection.java
++++ b/src/main/java/net/minecraft/server/PlayerConnection.java
+@@ -990,7 +990,28 @@ public class PlayerConnection implements PacketListenerPlayIn, IUpdatePlayerList
+                     }
+                 }
+             }
+-
++        } else if(packet instanceof PacketPlayOutEntityMetadata) {
++            // Override invisibility flag for players with canSeeInvisibles -> true
++            if(this.getPlayer().canSeeInvisibles()) {
++                PacketPlayOutEntityMetadata metadataPacket = (PacketPlayOutEntityMetadata) packet;
++                Object entity = this.player.world.entitiesById.get(metadataPacket.a);
++                if(entity instanceof EntityLiving && !(entity instanceof EntityArmorStand)) { // Don't show non-living ents or armor stands
++                    for(int i = 0; i < metadataPacket.b.size(); i++) {
++                        DataWatcher.WatchableObject wo = (DataWatcher.WatchableObject) metadataPacket.b.get(i);
++                        if(wo.a() == 0 && wo.b() instanceof Byte) { // Flags at metadata index 0
++                            byte entityFlags = (Byte) wo.b();
++                            if((entityFlags & 0x20) != 0) { // Invisible flag
++                                PacketPlayOutEntityMetadata replacedMetadataPacket = new PacketPlayOutEntityMetadata();
++                                replacedMetadataPacket.a = metadataPacket.a;
++                                replacedMetadataPacket.b = new ArrayList(metadataPacket.b);
++                                replacedMetadataPacket.b.set(i, new DataWatcher.WatchableObject(wo.c(), wo.a(), (byte) (entityFlags & ~0x20))); // Clear invisibility
++                                replacedPacket = replacedMetadataPacket;
++                            }
++                            break;
++                        }
++                    }
++                }
++            }
+         }
+ 
+         // CraftBukkit end
+diff --git a/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java b/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
+index 2c266649..462fb45e 100644
+--- a/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
++++ b/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
+@@ -86,6 +86,7 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
+     private boolean scaledHealth = false;
+     private double healthScale = 20;
+     private Skin realSkin;
++    private boolean showInvisibles;
+ 
+     private final Map<CommandSender, String> fakeNames = new WeakHashMap<CommandSender, String>();
+     private final Map<CommandSender, String> fakeDisplayNames = new WeakHashMap<CommandSender, String>();
+@@ -1277,6 +1278,27 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
+         return !hiddenPlayers.contains(player.getUniqueId());
+     }
+ 
++    @Override
++    public boolean canSeeInvisibles() {
++        return this.showInvisibles;
++    }
++
++    @Override
++    public void showInvisibles(boolean show) {
++        if(show != this.showInvisibles) {
++            this.showInvisibles = show;
++            EntityTracker tracker = ((WorldServer) this.entity.world).tracker;
++            for(Entity entity : getHandle().world.entityList) {
++                if(entity.isInvisible()) {
++                    EntityTrackerEntry trackerEntry = tracker.trackedEntities.get(entity.getId());
++                    if(trackerEntry != null && trackerEntry.trackedPlayers.contains(getHandle())) {
++                        getHandle().playerConnection.sendPacket(new PacketPlayOutEntityMetadata(entity.getId(), entity.getDataWatcher(), true));
++                    }
++                }
++            }
++        }
++    }
++
+     @Override
+     public Map<String, Object> serialize() {
+         Map<String, Object> result = new LinkedHashMap<String, Object>();
+-- 
+2.19.0
+

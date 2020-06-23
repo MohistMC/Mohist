@@ -1,0 +1,18 @@
+From: Jedediah Smith <jedediah@silencegreys.com>
+Date: Thu, 31 Mar 2016 09:08:25 -0400
+Subject: [PATCH] Silence unnecessary exception setting scoreboard of
+ disconnected player
+
+
+diff --git a/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java b/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
+--- a/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
++++ b/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
+@@ -1657,7 +1657,7 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
+             throw new IllegalStateException("Cannot set scoreboard yet");
+         }
+         if (playerConnection.isDisconnected()) {
+-            throw new IllegalStateException("Cannot set scoreboard for invalid CraftPlayer");
++            return;
+         }
+ 
+         this.server.getScoreboardManager().setPlayerBoard(this, scoreboard);

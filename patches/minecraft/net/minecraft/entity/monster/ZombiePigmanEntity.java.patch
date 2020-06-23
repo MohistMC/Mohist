@@ -1,27 +1,28 @@
 --- a/net/minecraft/entity/monster/ZombiePigmanEntity.java
 +++ b/net/minecraft/entity/monster/ZombiePigmanEntity.java
-@@ -30,11 +30,12 @@
+@@ -30,11 +30,13 @@
  import net.minecraft.world.IWorld;
  import net.minecraft.world.IWorldReader;
  import net.minecraft.world.World;
-+import org.bukkit.event.entity.EntityTargetEvent.TargetReason;
++import org.bukkit.entity.PigZombie;
++import org.bukkit.event.entity.PigZombieAngerEvent;
  
  public class ZombiePigmanEntity extends ZombieEntity {
     private static final UUID field_110189_bq = UUID.fromString("49455A49-7EC5-45BA-B886-3B90B23A1718");
     private static final AttributeModifier field_110190_br = (new AttributeModifier(field_110189_bq, "Attacking speed boost", 0.05D, AttributeModifier.Operation.ADDITION)).func_111168_a(false);
 -   private int field_70837_d;
-+   public int field_70837_d; // private->public CraftBukkit
++   public int field_70837_d;
     private int field_70838_e;
     private UUID field_175459_bn;
  
-@@ -145,16 +146,26 @@
+@@ -145,16 +147,26 @@
           return false;
        } else {
           Entity entity = p_70097_1_.func_76346_g();
 -         if (entity instanceof PlayerEntity && !((PlayerEntity)entity).func_184812_l_() && this.func_70685_l(entity)) {
 +         // CraftBukkit start
-+         boolean result = super.damageEntityCB(p_70097_1_, p_70097_2_);
-+         if (result && entity instanceof PlayerEntity && !((PlayerEntity) entity).func_184812_l_() && this.func_70685_l(entity)) {
++         boolean result = super.func_70097_a(p_70097_1_, p_70097_2_);
++         if (result && entity instanceof PlayerEntity && !((PlayerEntity)entity).func_184812_l_() && this.func_70685_l(entity)) {
              this.func_226547_i_((LivingEntity)entity);
           }
  
@@ -34,7 +35,7 @@
     private boolean func_226547_i_(LivingEntity p_226547_1_) {
 -      this.field_70837_d = this.func_223336_ef();
 +      // CraftBukkit start
-+      org.bukkit.event.entity.PigZombieAngerEvent event = new org.bukkit.event.entity.PigZombieAngerEvent((org.bukkit.entity.PigZombie) this.getBukkitEntity(), (p_226547_1_ == null) ? null : p_226547_1_.getBukkitEntity(), this.func_223336_ef());
++      PigZombieAngerEvent event = new PigZombieAngerEvent((PigZombie)this.getBukkitEntity(), (p_226547_1_ == null) ? null : p_226547_1_.getBukkitEntity(), this.func_223336_ef());
 +      this.field_70170_p.getServerCB().getPluginManager().callEvent(event);
 +      if (event.isCancelled()) {
 +         return false;
@@ -44,12 +45,12 @@
        this.field_70838_e = this.field_70146_Z.nextInt(40);
        this.func_70604_c(p_226547_1_);
        return true;
-@@ -200,7 +211,7 @@
+@@ -200,7 +212,7 @@
  
        protected void func_220793_a(MobEntity p_220793_1_, LivingEntity p_220793_2_) {
           if (p_220793_1_ instanceof ZombiePigmanEntity && this.field_75299_d.func_70685_l(p_220793_2_) && ((ZombiePigmanEntity)p_220793_1_).func_226547_i_(p_220793_2_)) {
 -            p_220793_1_.func_70624_b(p_220793_2_);
-+            p_220793_1_.setAttackTarget(p_220793_2_, TargetReason.TARGET_ATTACKED_NEARBY_ENTITY, true); // CraftBukkit
++            p_220793_1_.setGoalTarget(p_220793_2_, org.bukkit.event.entity.EntityTargetEvent.TargetReason.TARGET_ATTACKED_NEARBY_ENTITY, true); // CraftBukkit
           }
  
        }

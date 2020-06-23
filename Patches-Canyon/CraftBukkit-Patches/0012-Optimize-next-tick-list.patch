@@ -1,0 +1,38 @@
+From d6bbdd87fa4b2be66c9430efca0dea948c0f4f34 Mon Sep 17 00:00:00 2001
+From: Andrew Steinborn <git@steinborn.me>
+Date: Sun, 29 Sep 2019 19:08:49 -0400
+Subject: [PATCH] Optimize next tick list
+
+
+diff --git a/src/main/java/net/minecraft/server/World.java b/src/main/java/net/minecraft/server/World.java
+index f317fd22..8c68eb15 100644
+--- a/src/main/java/net/minecraft/server/World.java
++++ b/src/main/java/net/minecraft/server/World.java
+@@ -35,7 +35,7 @@ public class World implements IBlockAccess {
+     private List C = new ArrayList();
+     public List entityList = new ArrayList();
+     private List D = new ArrayList();
+-    private TreeSet E = new TreeSet();
++    private java.util.PriorityQueue<NextTickListEntry> E = new java.util.PriorityQueue<>(); // Canyon - change to priority queue
+     private Set F = new HashSet();
+     public List c = new ArrayList();
+     private List G = new ArrayList();
+@@ -1980,13 +1980,13 @@ public class World implements IBlockAccess {
+             }
+ 
+             for (int j = 0; j < i; ++j) {
+-                NextTickListEntry nextticklistentry = (NextTickListEntry) this.E.first();
++                NextTickListEntry nextticklistentry = (NextTickListEntry) this.E.peek(); // Canyon - use peek function
+ 
+                 if (!flag && nextticklistentry.e > this.worldData.f()) {
+                     break;
+                 }
+ 
+-                this.E.remove(nextticklistentry);
++                this.E.poll(); // Canyon - use poll function
+                 this.F.remove(nextticklistentry);
+                 byte b0 = 8;
+ 
+-- 
+2.25.2
+

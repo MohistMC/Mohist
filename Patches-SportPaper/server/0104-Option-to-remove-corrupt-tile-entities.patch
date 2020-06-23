@@ -1,0 +1,56 @@
+From b1f82888a0dffceeb7e17c005ff83f713246c33a Mon Sep 17 00:00:00 2001
+From: cswhite2000 <18whitechristop@gmail.com>
+Date: Tue, 14 Aug 2018 15:21:57 -0700
+Subject: [PATCH] Option to remove corrupt tile entities
+
+
+diff --git a/src/main/java/net/minecraft/server/Chunk.java b/src/main/java/net/minecraft/server/Chunk.java
+index 2e73f518..fc0196ec 100644
+--- a/src/main/java/net/minecraft/server/Chunk.java
++++ b/src/main/java/net/minecraft/server/Chunk.java
+@@ -46,7 +46,7 @@ public class Chunk {
+     private boolean done;
+     private boolean lit;
+     private boolean p;
+-    private boolean q;
++    private boolean q;public void markDirty() { this.q = true; }// Paper
+     private boolean r;
+     private long lastSaved;
+     private int t;
+@@ -884,11 +884,19 @@ public class Chunk {
+                     "Chunk coordinates: " + (this.locX * 16) + "," + (this.locZ * 16));
+             e.printStackTrace();
+             ServerInternalException.reportInternalException(e);
++
++            if (this.world.paperSpigotConfig.removeCorruptTEs) {
++                this.removeTileEntity(tileentity.getPosition());
++                this.markDirty();
++                org.bukkit.Bukkit.getLogger().info("Removing corrupt tile entity");
++            }
++
+             // Paper end
+             // CraftBukkit end
+         }
+     }
+ 
++    public void removeTileEntity(BlockPosition blockposition) { this.e(blockposition); } // Paper - OBFHELPER
+     public void e(BlockPosition blockposition) {
+         if (this.h) {
+             TileEntity tileentity = (TileEntity) this.tileEntities.remove(blockposition);
+diff --git a/src/main/java/org/github/paperspigot/PaperSpigotWorldConfig.java b/src/main/java/org/github/paperspigot/PaperSpigotWorldConfig.java
+index eef21847..a643db9b 100644
+--- a/src/main/java/org/github/paperspigot/PaperSpigotWorldConfig.java
++++ b/src/main/java/org/github/paperspigot/PaperSpigotWorldConfig.java
+@@ -436,4 +436,9 @@ public class PaperSpigotWorldConfig
+     private void maxAutoSaveChunksPerTick() {
+         maxAutoSaveChunksPerTick = getInt("max-auto-save-chunks-per-tick", 24);
+     }
++
++    public boolean removeCorruptTEs = false;
++    private void removeCorruptTEs() {
++        removeCorruptTEs = getBoolean("remove-corrupt-tile-entities", false);
++    }
+ }
+-- 
+2.19.0
+

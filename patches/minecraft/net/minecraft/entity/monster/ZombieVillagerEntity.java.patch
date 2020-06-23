@@ -1,30 +1,32 @@
 --- a/net/minecraft/entity/monster/ZombieVillagerEntity.java
 +++ b/net/minecraft/entity/monster/ZombieVillagerEntity.java
-@@ -31,6 +31,7 @@
+@@ -29,8 +29,10 @@
+ import net.minecraft.network.datasync.DataParameter;
+ import net.minecraft.network.datasync.DataSerializers;
  import net.minecraft.network.datasync.EntityDataManager;
++import net.minecraft.potion.Effect;
  import net.minecraft.potion.EffectInstance;
  import net.minecraft.potion.Effects;
 +import net.minecraft.server.MinecraftServer;
  import net.minecraft.util.DamageSource;
  import net.minecraft.util.Hand;
  import net.minecraft.util.SoundEvent;
-@@ -43,15 +44,20 @@
+@@ -43,15 +45,19 @@
  import net.minecraft.world.server.ServerWorld;
  import net.minecraftforge.api.distmarker.Dist;
  import net.minecraftforge.api.distmarker.OnlyIn;
-+import org.bukkit.craftbukkit.v1_15_R1.event.CraftEventFactory;
++import org.bukkit.craftbukkit.event.CraftEventFactory;
 +import org.bukkit.entity.ZombieVillager;
-+import org.bukkit.event.entity.EntityPotionEffectEvent.Cause;
 +import org.bukkit.event.entity.EntityTransformEvent;
  
  public class ZombieVillagerEntity extends ZombieEntity implements IVillagerDataHolder {
 -   private static final DataParameter<Boolean> field_184739_bx = EntityDataManager.func_187226_a(ZombieVillagerEntity.class, DataSerializers.field_187198_h);
-+   public static final DataParameter<Boolean> field_184739_bx = EntityDataManager.func_187226_a(ZombieVillagerEntity.class, DataSerializers.field_187198_h); // private->public CraftBukkit
++   public static final DataParameter<Boolean> field_184739_bx = EntityDataManager.func_187226_a(ZombieVillagerEntity.class, DataSerializers.field_187198_h);
     private static final DataParameter<VillagerData> field_213795_c = EntityDataManager.func_187226_a(ZombieVillagerEntity.class, DataSerializers.field_218813_q);
 -   private int field_82234_d;
 -   private UUID field_191992_by;
-+   public int field_82234_d; // private->public CraftBukkit
-+   public UUID field_191992_by; // private->public CraftBukkit
++   public int field_82234_d;
++   public UUID field_191992_by;
     private INBT field_223728_bB;
     private CompoundNBT field_213793_bB;
     private int field_213794_bC;
@@ -49,14 +51,14 @@
     }
  
 -   private void func_191991_a(@Nullable UUID p_191991_1_, int p_191991_2_) {
-+   public void func_191991_a(@Nullable UUID p_191991_1_, int p_191991_2_) { // private->public CraftBukkit
++   public void func_191991_a(@Nullable UUID p_191991_1_, int p_191991_2_) {
        this.field_191992_by = p_191991_1_;
        this.field_82234_d = p_191991_2_;
        this.func_184212_Q().func_187227_b(field_184739_bx, true);
 -      this.func_195063_d(Effects.field_76437_t);
 -      this.func_195064_c(new EffectInstance(Effects.field_76420_g, p_191991_2_, Math.min(this.field_70170_p.func_175659_aa().func_151525_a() - 1, 0)));
 +      // CraftBukkit start
-+      this.field_82179_bU = true; // CraftBukkit - SPIGOT-4684 update persistence
++      this.persist = true; // CraftBukkit - SPIGOT-4684 update persistence
 +      this.removeEffect(Effects.field_76437_t, org.bukkit.event.entity.EntityPotionEffectEvent.Cause.CONVERSION);
 +      this.addEffect(new EffectInstance(Effects.field_76420_g, p_191991_2_, Math.min(this.field_70170_p.func_175659_aa().func_151525_a() - 1, 0)), org.bukkit.event.entity.EntityPotionEffectEvent.Cause.CONVERSION);
 +      // CraftBukkit end
@@ -68,16 +70,16 @@
        }
  
 -      this.func_70106_y();
-+//      this.remove(); // CraftBukkit - moved down
++      // this.remove(); // CraftBukkit - moved down
        villagerentity.func_94061_f(this.func_175446_cd());
        if (this.func_145818_k_()) {
           villagerentity.func_200203_b(this.func_200201_e());
-@@ -215,7 +229,16 @@
+@@ -215,7 +229,15 @@
        }
  
        villagerentity.func_184224_h(this.func_190530_aW());
 -      p_213791_1_.func_217376_c(villagerentity);
-+
++      // p_213791_1_.addEntity(villagerentity);
 +      // CraftBukkit start
 +      if (CraftEventFactory.callEntityTransformEvent(this, villagerentity, EntityTransformEvent.TransformReason.CURED).isCancelled()) {
 +         ((ZombieVillager) getBukkitEntity()).setConversionTime(-1); // SPIGOT-5208: End conversion to stop event spam
@@ -86,16 +88,15 @@
 +      this.func_70106_y(); // CraftBukkit - from above
 +      p_213791_1_.addEntity(villagerentity, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.CURED); // CraftBukkit - add SpawnReason
 +      // CraftBukkit end
-+
        if (this.field_191992_by != null) {
           PlayerEntity playerentity = p_213791_1_.func_217371_b(this.field_191992_by);
           if (playerentity instanceof ServerPlayerEntity) {
-@@ -224,7 +247,7 @@
+@@ -224,7 +246,7 @@
           }
        }
  
 -      villagerentity.func_195064_c(new EffectInstance(Effects.field_76431_k, 200, 0));
-+      villagerentity.addPotionEffect(new EffectInstance(Effects.field_76431_k, 200, 0), Cause.CONVERSION); // CraftBukkit
++      villagerentity.addEffect(new EffectInstance(Effects.field_76431_k, 200, 0), org.bukkit.event.entity.EntityPotionEffectEvent.Cause.CONVERSION); // CraftBukkit
        p_213791_1_.func_217378_a((PlayerEntity)null, 1027, new BlockPos(this), 0);
     }
  

@@ -49,6 +49,7 @@ public class CustomTimingsHandler {
                 continue;
             }
             long avg = time / count;
+
             printStream.println("    " + timings.name + " Time: " + time + " Count: " + count + " Avg: " + avg + " Violations: " + timings.violations);
         }
         printStream.println("# Version " + Bukkit.getVersion());

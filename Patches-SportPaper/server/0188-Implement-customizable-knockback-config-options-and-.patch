@@ -1,0 +1,273 @@
+From ef797fabfea24949b4b7cb64594efcb97074abd1 Mon Sep 17 00:00:00 2001
+From: Rafi Baum <rafi@ukbaums.com>
+Date: Mon, 27 Apr 2020 18:25:50 -0400
+Subject: [PATCH] Implement customizable knockback config options and command
+
+
+diff --git a/src/main/java/app/ashcon/sportpaper/server/KnockbackModificationCommand.java b/src/main/java/app/ashcon/sportpaper/server/KnockbackModificationCommand.java
+new file mode 100644
+index 00000000..ebc859b6
+--- /dev/null
++++ b/src/main/java/app/ashcon/sportpaper/server/KnockbackModificationCommand.java
+@@ -0,0 +1,133 @@
++package app.ashcon.sportpaper.server;
++
++import org.bukkit.ChatColor;
++import org.bukkit.command.Command;
++import org.bukkit.command.CommandSender;
++import org.github.paperspigot.PaperSpigotConfig;
++
++public class KnockbackModificationCommand extends Command {
++
++    // Default values
++    private final double knockbackFriction, knockbackHorizontal, knockbackVertical, knockbackVerticalLimit,
++            knockbackExtraHorizontal, knockbackExtraVertical;
++
++    public KnockbackModificationCommand(String name, double knockbackFriction, double knockbackHorizontal,
++                                        double knockbackVertical, double knockbackVerticalLimit,
++                                        double knockbackExtraHorizontal, double knockbackExtraVertical) {
++        super(name);
++        this.description = "Modify the knockback configuration";
++        this.usageMessage = "/knockback " +
++                "<friction|horizontal|vertical|vertical-limit|extra-horizontal|extra-vertical|reset|show> <value>";
++        this.setPermission("bukkit.command.knockback");
++        this.knockbackFriction = knockbackFriction;
++        this.knockbackHorizontal = knockbackHorizontal;
++        this.knockbackVertical = knockbackVertical;
++        this.knockbackVerticalLimit = knockbackVerticalLimit;
++        this.knockbackExtraHorizontal = knockbackExtraHorizontal;
++        this.knockbackExtraVertical = knockbackExtraVertical;
++    }
++
++    @Override
++    public boolean execute(CommandSender sender, String currentAlias, String[] args) {
++        if (!testPermission(sender)) {
++            return true;
++        }
++        if (args.length < 1) {
++            sender.sendMessage(ChatColor.RED + "Usage: " + usageMessage);
++            return true;
++        }
++
++
++        try {
++            switch (args[0].toLowerCase()) {
++                case "friction": {
++                    double oldVal = PaperSpigotConfig.knockbackFriction;
++                    double newVal = parseValue(args);
++                    PaperSpigotConfig.knockbackFriction = newVal;
++                    updated(sender, "friction", oldVal, newVal);
++                    break;
++                }
++                case "horizontal": {
++                    double oldVal = PaperSpigotConfig.knockbackHorizontal;
++                    double newVal = parseValue(args);
++                    PaperSpigotConfig.knockbackHorizontal = newVal;
++                    updated(sender, "horizontal knockback", oldVal, newVal);
++                    break;
++                }
++                case "vertical": {
++                    double oldVal = PaperSpigotConfig.knockbackVertical;
++                    double newVal = parseValue(args);
++                    PaperSpigotConfig.knockbackVertical = newVal;
++                    updated(sender, "vertical knockback", oldVal, newVal);
++                    break;
++                }
++                case "vertical-limit": {
++                    double oldVal = PaperSpigotConfig.knockbackVerticalLimit;
++                    double newVal = parseValue(args);
++                    PaperSpigotConfig.knockbackVerticalLimit = newVal;
++                    updated(sender, "vertical limit", oldVal, newVal);
++                    break;
++                }
++                case "extra-horizontal": {
++                    double oldVal = PaperSpigotConfig.knockbackExtraHorizontal;
++                    double newVal = parseValue(args);
++                    PaperSpigotConfig.knockbackExtraHorizontal = newVal;
++                    updated(sender, "horizontal (extra)", oldVal, newVal);
++                    break;
++                }
++                case "extra-vertical": {
++                    double oldVal = PaperSpigotConfig.knockbackExtraVertical;
++                    double newVal = parseValue(args);
++                    PaperSpigotConfig.knockbackExtraVertical = newVal;
++                    updated(sender, "vertical (extra)", oldVal, newVal);
++                    break;
++                }
++                case "reset":
++                    PaperSpigotConfig.knockbackFriction = knockbackFriction;
++                    PaperSpigotConfig.knockbackHorizontal = knockbackHorizontal;
++                    PaperSpigotConfig.knockbackVertical = knockbackVertical;
++                    PaperSpigotConfig.knockbackVerticalLimit = knockbackVerticalLimit;
++                    PaperSpigotConfig.knockbackExtraHorizontal = knockbackExtraHorizontal;
++                    PaperSpigotConfig.knockbackExtraVertical = knockbackExtraVertical;
++                    sender.sendMessage(ChatColor.GREEN + "Knockback config reset to values from file.");
++                    break;
++                case "show":
++                    sender.sendMessage(ChatColor.GOLD + "Knockback Configuration");
++                    sendValue(sender, "Friction", PaperSpigotConfig.knockbackFriction);
++                    sendValue(sender, "Horizontal Knockback", PaperSpigotConfig.knockbackHorizontal);
++                    sendValue(sender, "Vertical Knockback", PaperSpigotConfig.knockbackVertical);
++                    sendValue(sender, "Vertical Limit", PaperSpigotConfig.knockbackVerticalLimit);
++                    sendValue(sender, "Horizontal (Extra)", PaperSpigotConfig.knockbackExtraHorizontal);
++                    sendValue(sender, "Vertical (Extra)", PaperSpigotConfig.knockbackExtraVertical);
++                    break;
++                default:
++                    sender.sendMessage(ChatColor.RED + "Usage: " + usageMessage);
++            }
++        } catch (RuntimeException ex) {
++            sender.sendMessage(ChatColor.RED + ex.getMessage());
++        }
++
++        return true;
++    }
++
++    private double parseValue(String[] args) {
++        if (args.length != 2)
++            throw new RuntimeException("Please specify a single value to set the option to.");
++
++        try {
++            return Double.parseDouble(args[1]);
++        } catch (NumberFormatException ex) {
++            throw new RuntimeException("Invalid value specified!");
++        }
++    }
++
++    private void updated(CommandSender viewer, String name, double oldVal, double newVal) {
++        viewer.sendMessage(ChatColor.GREEN + "Updated " + ChatColor.GOLD + name + ChatColor.GREEN + " from " +
++                ChatColor.BLUE + oldVal + ChatColor.GREEN + " to " + ChatColor.BLUE + newVal);
++    }
++
++    private void sendValue(CommandSender viewer, String name, double value) {
++        viewer.sendMessage(ChatColor.AQUA + ChatColor.BOLD.toString() + name + ChatColor.RESET +
++                ": " + ChatColor.BLUE + value);
++    }
++}
+diff --git a/src/main/java/net/minecraft/server/EntityHuman.java b/src/main/java/net/minecraft/server/EntityHuman.java
+index ac644d27..51fd9d4b 100644
+--- a/src/main/java/net/minecraft/server/EntityHuman.java
++++ b/src/main/java/net/minecraft/server/EntityHuman.java
+@@ -22,6 +22,10 @@ import org.bukkit.event.player.PlayerVelocityEvent;
+ import org.bukkit.util.Vector;
+ // CraftBukkit end
+ 
++// SportPaper start
++import org.github.paperspigot.PaperSpigotConfig;
++// SportPaper end
++
+ public abstract class EntityHuman extends EntityLiving {
+ 
+     public PlayerInventory inventory = new PlayerInventory(this);
+@@ -1037,7 +1041,13 @@ public abstract class EntityHuman extends EntityLiving {
+ 
+                     if (flag2) {
+                         if (i > 0) {
+-                            entity.g((double) (-MathHelper.sin(this.yaw * 3.1415927F / 180.0F) * (float) i * 0.5F), 0.1D, (double) (MathHelper.cos(this.yaw * 3.1415927F / 180.0F) * (float) i * 0.5F));
++                            // SportPaper start - Customizable knockback
++                            entity.g(
++                                (double) (-MathHelper.sin(this.yaw * 3.1415927F / 180.0F) * (float) i *
++                                    PaperSpigotConfig.knockbackExtraHorizontal), PaperSpigotConfig.knockbackExtraVertical,
++                                (double) (MathHelper.cos(this.yaw * 3.1415927F / 180.0F) * (float) i *
++                                    PaperSpigotConfig.knockbackExtraHorizontal));
++                            // SportPaper end
+                             this.motX *= 0.6D;
+                             this.motZ *= 0.6D;
+                             this.setSprinting(false);
+diff --git a/src/main/java/net/minecraft/server/EntityLiving.java b/src/main/java/net/minecraft/server/EntityLiving.java
+index 1bcb177f..ede4e3e9 100644
+--- a/src/main/java/net/minecraft/server/EntityLiving.java
++++ b/src/main/java/net/minecraft/server/EntityLiving.java
+@@ -37,6 +37,7 @@ import co.aikar.timings.SpigotTimings; // Spigot
+ 
+ // PaperSpigot start
+ import org.bukkit.Bukkit;
++import org.github.paperspigot.PaperSpigotConfig;
+ import org.spigotmc.event.entity.EntityDismountEvent;
+ // PaperSpigot end
+ 
+@@ -934,30 +935,33 @@ public abstract class EntityLiving extends Entity {
+     public void a(Entity entity, float f, double d0, double d1) {
+         if (this.random.nextDouble() >= this.getAttributeInstance(GenericAttributes.c).getValue()) {
+             this.ai = true;
+-            float f1 = MathHelper.sqrt(d0 * d0 + d1 * d1);
+-            float f2 = 0.4F;
+ 
+-            // CraftBukkit start
++            // SportPaper start - customisable knockback
++            double magnitude = MathHelper.sqrt(d0 * d0 + d1 * d1);
++
+             double knockbackReduction = this.getBukkitEntity().getKnockbackReduction();
+-            double friction = 2.0d - knockbackReduction;
+-            f2 *= (1d - knockbackReduction);
++            double friction = PaperSpigotConfig.knockbackFriction - knockbackReduction;
+ 
+-            // Paper start - preserve old velocity
++            double horizontalKnockback = PaperSpigotConfig.knockbackHorizontal * (1d - knockbackReduction);
++            double verticalKnockback = PaperSpigotConfig.knockbackVertical * (1d - knockbackReduction);
++
++            // Paper - preserve old velocity
+             double oldMotX = this.motX;
+             double oldMotY = this.motY;
+             double oldMotZ = this.motZ;
+-            // Paper end
+ 
+             this.motX /= friction;
+             this.motY /= friction;
+             this.motZ /= friction;
+-            // CraftBukkit end
+-            this.motX -= d0 / (double) f1 * (double) f2;
+-            this.motY += (double) f2;
+-            this.motZ -= d1 / (double) f1 * (double) f2;
+-            if (this.motY > 0.4000000059604645D) {
+-                this.motY = 0.4000000059604645D;
++
++            this.motX -= d0 / magnitude * horizontalKnockback;
++            this.motY += verticalKnockback;
++            this.motZ -= d1 / magnitude * horizontalKnockback;
++
++            if (this.motY > PaperSpigotConfig.knockbackVerticalLimit) {
++                this.motY = PaperSpigotConfig.knockbackVerticalLimit;
+             }
++            // SportPaper end
+ 
+             // Paper start - call EntityKnockbackByEntityEvent
+             Vector delta = new org.bukkit.util.Vector(this.motX - oldMotX, this.motY - oldMotY, this.motZ - oldMotZ);
+diff --git a/src/main/java/org/github/paperspigot/PaperSpigotConfig.java b/src/main/java/org/github/paperspigot/PaperSpigotConfig.java
+index 9360eac7..038137dc 100644
+--- a/src/main/java/org/github/paperspigot/PaperSpigotConfig.java
++++ b/src/main/java/org/github/paperspigot/PaperSpigotConfig.java
+@@ -5,6 +5,7 @@ import java.lang.reflect.Modifier;
+ import java.util.*;
+ import java.util.logging.Level;
+ 
++import app.ashcon.sportpaper.server.KnockbackModificationCommand;
+ import net.minecraft.server.Items;
+ import org.apache.commons.lang.StringUtils;
+ import org.bukkit.Bukkit;
+@@ -200,4 +201,23 @@ public class PaperSpigotConfig
+     private static void firePhysicsEventForRedstone() {
+         firePhysicsEventForRedstone = getBoolean("fire-physics-event-for-redstone", firePhysicsEventForRedstone);
+     }
++
++    public static double knockbackFriction;
++    public static double knockbackHorizontal;
++    public static double knockbackVertical;
++    public static double knockbackVerticalLimit;
++    public static double knockbackExtraHorizontal;
++    public static double knockbackExtraVertical;
++    private static void knockback() {
++        knockbackFriction = getDouble( "knockback.friction", 2.0D );
++        knockbackHorizontal = getDouble( "knockback.horizontal", 0.4D );
++        knockbackVertical = getDouble( "knockback.vertical", 0.4D );
++        knockbackVerticalLimit = getDouble( "knockback.vertical-limit", 0.4D );
++        knockbackExtraHorizontal = getDouble( "knockback.extra-horizontal", 0.5D );
++        knockbackExtraVertical = getDouble( "knockback.extra-vertical", 0.1D );
++        commands.put("knockback", new KnockbackModificationCommand( "knockback", knockbackFriction,
++                knockbackHorizontal, knockbackVertical, knockbackVerticalLimit, knockbackExtraHorizontal,
++                knockbackExtraVertical));
++    }
++
+ }
+-- 
+2.26.2
+

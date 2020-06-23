@@ -1,0 +1,31 @@
+From 8a8784e0e6565210133d4475797d1b17fcc9b049 Mon Sep 17 00:00:00 2001
+From: cswhite2000 <18whitechristop@gmail.com>
+Date: Sat, 4 Aug 2018 16:36:30 -0700
+Subject: [PATCH] More complex logic when looking for nearby players
+
+
+diff --git a/src/main/java/net/minecraft/server/World.java b/src/main/java/net/minecraft/server/World.java
+index f2737477..897ef18b 100644
+--- a/src/main/java/net/minecraft/server/World.java
++++ b/src/main/java/net/minecraft/server/World.java
+@@ -2872,7 +2872,7 @@ public abstract class World implements IBlockAccess {
+         for (int i = 0; i < this.players.size(); ++i) {
+             EntityHuman entityhuman1 = (EntityHuman) this.players.get(i);
+             // CraftBukkit start - Fixed an NPE
+-            if (entityhuman1 == null || entityhuman1.dead) {
++            if (entityhuman1 == null || !entityhuman1.ad()) { // CraftBukkit allow for more complex logic by using the "is alive" method
+                 continue;
+             }
+             // CraftBukkit end
+@@ -2918,7 +2918,7 @@ public abstract class World implements IBlockAccess {
+         for (int i = 0; i < this.players.size(); ++i) {
+             EntityHuman entityhuman1 = (EntityHuman) this.players.get(i);
+             // CraftBukkit start - Fixed an NPE
+-            if (entityhuman1 == null || entityhuman1.dead || !entityhuman1.affectsSpawning) {
++            if (entityhuman1 == null || !entityhuman1.ad() || !entityhuman1.affectsSpawning) { // CraftBukkit allow for more complex logic by using the "is alive" method
+                 continue;
+             }
+             // CraftBukkit end
+-- 
+2.18.0
+

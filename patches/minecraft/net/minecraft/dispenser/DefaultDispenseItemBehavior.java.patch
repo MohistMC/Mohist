@@ -1,16 +1,18 @@
 --- a/net/minecraft/dispenser/DefaultDispenseItemBehavior.java
 +++ b/net/minecraft/dispenser/DefaultDispenseItemBehavior.java
-@@ -5,6 +5,9 @@
+@@ -5,6 +5,11 @@
  import net.minecraft.item.ItemStack;
  import net.minecraft.util.Direction;
  import net.minecraft.world.World;
-+import org.bukkit.craftbukkit.v1_15_R1.inventory.CraftItemStack;
-+import org.bukkit.craftbukkit.v1_15_R1.util.CraftVector;
++// CraftBukkit start
++import org.bukkit.craftbukkit.inventory.CraftItemStack;
++import org.bukkit.craftbukkit.util.CraftVector;
 +import org.bukkit.event.block.BlockDispenseEvent;
++// CraftBukkit end
  
  public class DefaultDispenseItemBehavior implements IDispenseItemBehavior {
     public final ItemStack dispense(IBlockSource p_dispense_1_, ItemStack p_dispense_2_) {
-@@ -18,24 +21,66 @@
+@@ -18,24 +23,63 @@
        Direction direction = p_82487_1_.func_189992_e().func_177229_b(DispenserBlock.field_176441_a);
        IPosition iposition = DispenserBlock.func_149939_a(p_82487_1_);
        ItemStack itemstack = p_82487_2_.func_77979_a(1);
@@ -30,9 +32,7 @@
 -      if (p_82486_3_.func_176740_k() == Direction.Axis.Y) {
 +   // CraftBukkit start - void -> boolean return, IPosition -> ISourceBlock last argument
 +   public static boolean doDispense(World worldIn, ItemStack stack, int speed, Direction facing, IBlockSource source) {
-+      if (stack.func_190926_b()) {
-+         return true;
-+      }
++      if (stack.func_190926_b()) return true;
 +      IPosition position = DispenserBlock.func_149939_a(source);
 +      // CraftBukkit end
 +      double d0 = position.func_82615_a();
@@ -50,8 +50,7 @@
 -      p_82486_0_.func_217376_c(itementity);
 +      ItemEntity itementity = new ItemEntity(worldIn, d0, d1, d2, stack);
 +      double d3 = worldIn.field_73012_v.nextDouble() * 0.1D + 0.2D;
-+      itementity.func_213293_j(worldIn.field_73012_v.nextGaussian() * (double) 0.0075F * (double) speed + (double) facing.func_82601_c() * d3,
-+          worldIn.field_73012_v.nextGaussian() * (double) 0.0075F * (double) speed + (double) 0.2F, worldIn.field_73012_v.nextGaussian() * (double) 0.0075F * (double) speed + (double) facing.func_82599_e() * d3);
++      itementity.func_213293_j(worldIn.field_73012_v.nextGaussian() * (double)0.0075F * (double)speed + (double)facing.func_82601_c() * d3, worldIn.field_73012_v.nextGaussian() * (double)0.0075F * (double)speed + (double)0.2F, worldIn.field_73012_v.nextGaussian() * (double)0.0075F * (double)speed + (double)facing.func_82599_e() * d3);
 +
 +      // CraftBukkit start
 +      org.bukkit.block.Block block = worldIn.getWorldCB().getBlockAt(source.func_180699_d().func_177958_n(), source.func_180699_d().func_177956_o(), source.func_180699_d().func_177952_p());

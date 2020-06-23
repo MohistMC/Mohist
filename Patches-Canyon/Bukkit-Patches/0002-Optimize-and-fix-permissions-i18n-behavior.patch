@@ -1,0 +1,163 @@
+From 7dae6b82b2947e1b876b7e75ace47b76dc10270d Mon Sep 17 00:00:00 2001
+From: Andrew Steinborn <git@steinborn.me>
+Date: Fri, 23 Aug 2019 23:52:53 -0400
+Subject: [PATCH] Optimize and fix permissions i18n behavior
+
+PermissibleBase was using a containsKey/get check, which isn't needed
+as a single get() result will obtain the results we need.
+
+PermissionAttachment was using the default locale of the system to lower
+case string. This is unpredictable behavior. This issue has been fixed.
+
+PermissionAttachment has also been optimized by making its Permissions
+overloads not recompute permissions multiple times and by using a
+HashMap instead of a TreeMap (there is no need for this to be sorted).
+
+diff --git a/src/main/java/org/bukkit/permissions/PermissibleBase.java b/src/main/java/org/bukkit/permissions/PermissibleBase.java
+index 6bf0e510..3a93f2a0 100644
+--- a/src/main/java/org/bukkit/permissions/PermissibleBase.java
++++ b/src/main/java/org/bukkit/permissions/PermissibleBase.java
+@@ -1,11 +1,6 @@
+ package org.bukkit.permissions;
+ 
+-import java.util.HashMap;
+-import java.util.HashSet;
+-import java.util.LinkedList;
+-import java.util.List;
+-import java.util.Map;
+-import java.util.Set;
++import java.util.*;
+ import java.util.logging.Level;
+ import org.bukkit.Bukkit;
+ import org.bukkit.plugin.Plugin;
+@@ -16,7 +11,7 @@ import org.bukkit.plugin.Plugin;
+ public class PermissibleBase implements Permissible {
+     private ServerOperator opable = null;
+     private Permissible parent = this;
+-    private final List<PermissionAttachment> attachments = new LinkedList<PermissionAttachment>();
++    private final List<PermissionAttachment> attachments = new ArrayList<PermissionAttachment>(); // Canyon - use ArrayList
+     private final Map<String, PermissionAttachmentInfo> permissions = new HashMap<String, PermissionAttachmentInfo>();
+ 
+     public PermissibleBase(ServerOperator opable) {
+@@ -50,7 +45,7 @@ public class PermissibleBase implements Permissible {
+             throw new IllegalArgumentException("Permission name cannot be null");
+         }
+ 
+-        return permissions.containsKey(name.toLowerCase());
++        return permissions.containsKey(name.toLowerCase(Locale.ENGLISH)); // Canyon - lowercase using English locale
+     }
+ 
+     public boolean isPermissionSet(Permission perm) {
+@@ -66,10 +61,13 @@ public class PermissibleBase implements Permissible {
+             throw new IllegalArgumentException("Permission name cannot be null");
+         }
+ 
+-        String name = inName.toLowerCase();
++        String name = inName.toLowerCase(Locale.ENGLISH); // Canyon - lowercase using English locale
+ 
+-        if (isPermissionSet(name)) {
+-            return permissions.get(name).getValue();
++        // Canyon start
++        PermissionAttachmentInfo info = this.permissions.get(name);
++        if (info != null) {
++            return info.getValue();
++            // Canyon end
+         } else {
+             Permission perm = Bukkit.getServer().getPluginManager().getPermission(name);
+ 
+@@ -86,15 +84,18 @@ public class PermissibleBase implements Permissible {
+             throw new IllegalArgumentException("Permission cannot be null");
+         }
+ 
+-        String name = perm.getName().toLowerCase();
++        String name = perm.getName().toLowerCase(Locale.ENGLISH); // Canyon - lowercase using English locale
+ 
+-        if (isPermissionSet(name)) {
+-            return permissions.get(name).getValue();
+-        } else if (perm != null) {
++        // Canyon start
++        PermissionAttachmentInfo info = this.permissions.get(name);
++        if (info != null) {
++            return info.getValue();
++        } else { //if (perm != null) {
+             return perm.getDefault().getValue(isOp());
+-        } else {
+-            return false;
+-        }
++        } //else {
++        //    return false;
++        //}
++        // Canyon end
+     }
+ 
+     public PermissionAttachment addAttachment(Plugin plugin, String name, boolean value) {
+@@ -154,7 +155,7 @@ public class PermissibleBase implements Permissible {
+         Bukkit.getServer().getPluginManager().subscribeToDefaultPerms(isOp(), parent);
+ 
+         for (Permission perm : defaults) {
+-            String name = perm.getName().toLowerCase();
++            String name = perm.getName().toLowerCase(Locale.ENGLISH); // Canyon - lowercase using English locale
+             permissions.put(name, new PermissionAttachmentInfo(parent, name, null, true));
+             Bukkit.getServer().getPluginManager().subscribeToPermission(name, parent);
+             calculateChildPermissions(perm.getChildren(), false, null);
+diff --git a/src/main/java/org/bukkit/permissions/PermissionAttachment.java b/src/main/java/org/bukkit/permissions/PermissionAttachment.java
+index 92ba9904..6eab1854 100644
+--- a/src/main/java/org/bukkit/permissions/PermissionAttachment.java
++++ b/src/main/java/org/bukkit/permissions/PermissionAttachment.java
+@@ -10,7 +10,7 @@ import org.bukkit.plugin.Plugin;
+  */
+ public class PermissionAttachment {
+     private PermissionRemovedExecutor removed;
+-    private final TreeMap<String, Boolean> permissions = new TreeMap<String, Boolean>();
++    private final Map<String, Boolean> permissions = new java.util.HashMap<String, Boolean>(); // Canyon
+     private final Permissible permissible;
+     private final Plugin plugin;
+ 
+@@ -69,7 +69,7 @@ public class PermissionAttachment {
+      * @return Copy of all permissions and values expressed by this attachment
+      */
+     public Map<String, Boolean> getPermissions() {
+-        return (Map<String, Boolean>)permissions.clone();
++        return new java.util.HashMap<String, Boolean>(permissions); // Canyon
+     }
+ 
+     /**
+@@ -79,7 +79,7 @@ public class PermissionAttachment {
+      * @param value New value of the permission
+      */
+     public void setPermission(String name, boolean value) {
+-        permissions.put(name.toLowerCase(), value);
++        permissions.put(name.toLowerCase(java.util.Locale.ENGLISH), value); // Canyon - lowercase using English locale
+         permissible.recalculatePermissions();
+     }
+ 
+@@ -91,7 +91,7 @@ public class PermissionAttachment {
+      */
+     public void setPermission(Permission perm, boolean value) {
+         setPermission(perm.getName(), value);
+-        permissible.recalculatePermissions();
++        //permissible.recalculatePermissions(); // Canyon - forwarded method already recomputes permissions for us
+     }
+ 
+     /**
+@@ -102,7 +102,7 @@ public class PermissionAttachment {
+      * @param name Name of the permission to remove
+      */
+     public void unsetPermission(String name) {
+-        permissions.remove(name.toLowerCase());
++        permissions.remove(name.toLowerCase(java.util.Locale.ENGLISH)); // Canyon - lowercase using English locale
+         permissible.recalculatePermissions();
+     }
+ 
+@@ -115,7 +115,7 @@ public class PermissionAttachment {
+      */
+     public void unsetPermission(Permission perm) {
+         unsetPermission(perm.getName());
+-        permissible.recalculatePermissions();
++        //permissible.recalculatePermissions(); // Canyon - forwarded method already recomputes permissions for us
+     }
+ 
+     /**
+-- 
+2.22.0
+

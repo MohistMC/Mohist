@@ -1,33 +1,35 @@
 --- a/net/minecraft/block/SpongeBlock.java
 +++ b/net/minecraft/block/SpongeBlock.java
-@@ -1,6 +1,7 @@
+@@ -1,6 +1,8 @@
  package net.minecraft.block;
  
  import com.google.common.collect.Lists;
++
 +import java.util.List;
  import java.util.Queue;
  import net.minecraft.block.material.Material;
  import net.minecraft.fluid.Fluids;
-@@ -11,6 +12,9 @@
+@@ -11,6 +13,11 @@
  import net.minecraft.util.Tuple;
  import net.minecraft.util.math.BlockPos;
  import net.minecraft.world.World;
-+import org.bukkit.craftbukkit.v1_15_R1.block.CraftBlockState;
-+import org.bukkit.craftbukkit.v1_15_R1.util.BlockStateListPopulator;
++// CraftBukkit start
++import org.bukkit.craftbukkit.block.CraftBlockState;
++import org.bukkit.craftbukkit.util.BlockStateListPopulator;
 +import org.bukkit.event.block.SpongeAbsorbEvent;
++// CraftBukkit end
  
  public class SpongeBlock extends Block {
     protected SpongeBlock(Block.Properties p_i48325_1_) {
-@@ -41,6 +45,8 @@
+@@ -40,6 +47,7 @@
+       Queue<Tuple<BlockPos, Integer>> queue = Lists.newLinkedList();
        queue.add(new Tuple<>(p_176312_2_, 0));
        int i = 0;
- 
 +      BlockStateListPopulator blockList = new BlockStateListPopulator(p_176312_1_); // CraftBukkit - Use BlockStateListPopulator
-+
+ 
        while(!queue.isEmpty()) {
           Tuple<BlockPos, Integer> tuple = queue.poll();
-          BlockPos blockpos = tuple.func_76341_a();
-@@ -48,25 +54,30 @@
+@@ -48,24 +56,28 @@
  
           for(Direction direction : Direction.values()) {
              BlockPos blockpos1 = blockpos.func_177972_a(direction);
@@ -55,43 +57,42 @@
                 } else if (material == Material.field_203243_f || material == Material.field_204868_h) {
 -                  TileEntity tileentity = blockstate.func_177230_c().func_149716_u() ? p_176312_1_.func_175625_s(blockpos1) : null;
 -                  func_220059_a(blockstate, p_176312_1_, blockpos1, tileentity);
--                  p_176312_1_.func_180501_a(blockpos1, Blocks.field_150350_a.func_176223_P(), 3);
 +                  // CraftBukkit start
 +                  // TileEntity tileentity = blockstate.getBlock().hasTileEntity() ? worldIn.getTileEntity(blockpos1) : null;
-+
 +                  // spawnDrops(blockstate, worldIn, blockpos1, tileentity);
-+                  blockList.func_180501_a(blockpos1, Blocks.field_150350_a.func_176223_P(), 3); // CraftBukkit
 +                  // CraftBukkit end
+                   p_176312_1_.func_180501_a(blockpos1, Blocks.field_150350_a.func_176223_P(), 3);
                    ++i;
                    if (j < 6) {
-                      queue.add(new Tuple<>(blockpos1, j + 1));
-@@ -80,6 +91,36 @@
+@@ -79,7 +91,38 @@
+             break;
           }
        }
- 
 +      // CraftBukkit start
-+      List<CraftBlockState> blocks = blockList.getList(); // Is a clone
++      List<CraftBlockState> blocks = blockList.getList();
 +      if (!blocks.isEmpty()) {
-+         final org.bukkit.block.Block bblock = p_176312_1_.getWorldCB().getBlockAt(p_176312_2_.func_177958_n(), p_176312_2_.func_177956_o(), p_176312_2_.func_177952_p());
++         org.bukkit.block.Block bblock = p_176312_1_.getWorldCB().getBlockAt(p_176312_2_.func_177958_n(), p_176312_2_.func_177956_o(), p_176312_2_.func_177952_p());
 +         SpongeAbsorbEvent event = new SpongeAbsorbEvent(bblock, (List<org.bukkit.block.BlockState>) (List) blocks);
 +         p_176312_1_.getServerCB().getPluginManager().callEvent(event);
-+         if (event.isCancelled()) {
+ 
++         if(event.isCancelled()) {
 +            return false;
 +         }
++
 +         for (CraftBlockState block : blocks) {
 +            BlockPos blockposition2 = block.getPosition();
-+            BlockState blockState = p_176312_1_.func_180495_p(blockposition2);
-+            IFluidState fluidState = p_176312_1_.func_204610_c(blockposition2);
-+            Material material = blockState.func_185904_a();
-+            if (fluidState.func_206884_a(FluidTags.field_206959_a)) {
-+               if (blockState.func_177230_c() instanceof IBucketPickupHandler
-+                   && ((IBucketPickupHandler) blockState.func_177230_c()).func_204508_a(blockList, blockposition2, blockState) != Fluids.field_204541_a) { // CraftBukkit
++            BlockState iblockdata = p_176312_1_.func_180495_p(blockposition2);
++            IFluidState fluid = p_176312_1_.func_204610_c(blockposition2);
++            Material material = iblockdata.func_185904_a();
++
++            if (fluid.func_206884_a(FluidTags.field_206959_a)) {
++               if (iblockdata.func_177230_c() instanceof IBucketPickupHandler && ((IBucketPickupHandler) iblockdata.func_177230_c()).func_204508_a(blockList, blockposition2, iblockdata) != Fluids.field_204541_a) {
 +                  // NOP
-+               } else if (blockState.func_177230_c() instanceof FlowingFluidBlock) {
++               } else if (iblockdata.func_177230_c() instanceof FlowingFluidBlock) {
 +                  // NOP
 +               } else if (material == Material.field_203243_f || material == Material.field_204868_h) {
-+                  TileEntity tileentity = blockState.func_177230_c().func_149716_u() ? p_176312_1_.func_175625_s(blockposition2) : null;
-+                  func_220059_a(blockState, p_176312_1_, blockposition2, tileentity);
++                  TileEntity tileentity = iblockdata.func_177230_c().func_149716_u() ? p_176312_1_.func_175625_s(blockposition2) : null;
++                  func_220059_a(iblockdata, p_176312_1_, blockposition2, tileentity);
 +               }
 +            }
 +            p_176312_1_.func_180501_a(blockposition2, block.getHandle(), block.getFlag());

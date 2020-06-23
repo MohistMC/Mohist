@@ -1,0 +1,460 @@
+From: Jedediah Smith <jedediah@silencegreys.com>
+Date: Sat, 7 Jan 2017 04:15:18 -0500
+Subject: [PATCH] World ID in Block and BlockState
+
+
+diff --git a/src/main/java/org/bukkit/craftbukkit/block/CraftBlock.java b/src/main/java/org/bukkit/craftbukkit/block/CraftBlock.java
+--- a/src/main/java/org/bukkit/craftbukkit/block/CraftBlock.java
++++ b/src/main/java/org/bukkit/craftbukkit/block/CraftBlock.java
+@@ -5,19 +5,20 @@ import java.util.Collection;
+ import java.util.Collections;
+ import java.util.List;
+ import java.util.Objects;
++import java.util.UUID;
+ 
+ import net.minecraft.server.*;
+-
++import org.bukkit.Bukkit;
+ import org.bukkit.Chunk;
+ import org.bukkit.Location;
+ import org.bukkit.Material;
+-import org.bukkit.World;
+ import org.bukkit.block.Biome;
+ import org.bukkit.block.Block;
+ import org.bukkit.block.BlockFace;
+ import org.bukkit.block.BlockState;
+ import org.bukkit.block.PistonMoveReaction;
+ import org.bukkit.craftbukkit.CraftChunk;
++import org.bukkit.craftbukkit.CraftWorld;
+ import org.bukkit.craftbukkit.inventory.CraftItemStack;
+ import org.bukkit.craftbukkit.util.CraftMagicNumbers;
+ import org.bukkit.inventory.ItemStack;
+@@ -30,7 +31,7 @@ import org.bukkit.geometry.Vec3;
+ import org.bukkit.util.Vector;
+ 
+ public class CraftBlock implements Block {
+-    private final CraftChunk chunk;
++    private final UUID worldId;
+     private final BlockPosition position;
+ 
+     public CraftBlock(CraftChunk chunk, int x, int y, int z) {
+@@ -38,8 +39,8 @@ public class CraftBlock implements Block {
+     }
+ 
+     public CraftBlock(CraftChunk chunk, Vec3 position) {
++        this.worldId = chunk.getCraftWorld().getUID();
+         this.position = BlockPosition.copyOf(position);
+-        this.chunk = chunk;
+     }
+ 
+     private net.minecraft.server.Block getNMSBlock() {
+@@ -50,8 +51,14 @@ public class CraftBlock implements Block {
+         return CraftMagicNumbers.getBlock(type);
+     }
+ 
+-    public World getWorld() {
+-        return chunk.getWorld();
++    @Override
++    public UUID getWorldId() {
++        return worldId;
++    }
++
++    @Override
++    public CraftWorld getWorld() {
++        return (CraftWorld) Bukkit.world(getWorldId());
+     }
+ 
+     @Override
+@@ -60,12 +67,12 @@ public class CraftBlock implements Block {
+     }
+ 
+     public Location getLocation() {
+-        return new Location(getWorld(), position);
++        return new Location(getWorldId(), position);
+     }
+ 
+     public Location getLocation(Location loc) {
+         if (loc != null) {
+-            loc.setWorld(getWorld());
++            loc.setWorldId(getWorldId());
+             loc.setPosition(position);
+             loc.setYaw(0);
+             loc.setPitch(0);
+@@ -91,7 +98,7 @@ public class CraftBlock implements Block {
+     }
+ 
+     public Chunk getChunk() {
+-        return chunk;
++        return getWorld().getChunkAt(this);
+     }
+ 
+     public void setData(final byte data) {
+@@ -107,17 +114,17 @@ public class CraftBlock implements Block {
+     }
+ 
+     private void setData(final byte data, int flag) {
+-        net.minecraft.server.World world = chunk.getHandle().getWorld();
++        net.minecraft.server.World world = nmsWorld();
+         IBlockData blockData = world.getType(position);
+         world.setTypeAndData(position, blockData.getBlock().fromLegacyData(data), flag);
+     }
+ 
+     private IBlockData getData0() {
+-        return chunk.getHandle().getBlockData(position);
++        return nmsWorld().getType(position);
+     }
+ 
+     public byte getData() {
+-        IBlockData blockData = chunk.getHandle().getBlockData(position);
++        IBlockData blockData = nmsWorld().getType(position);
+         return (byte) blockData.getBlock().toLegacyData(blockData);
+     }
+ 
+@@ -144,16 +151,16 @@ public class CraftBlock implements Block {
+ 
+         // SPIGOT-611: need to do this to prevent glitchiness. Easier to handle this here (like /setblock) than to fix weirdness in tile entity cleanup
+         if (type != 0 && blockData.getBlock() instanceof BlockTileEntity && type != getTypeId()) {
+-            chunk.getHandle().getWorld().setTypeAndData(position, Blocks.AIR.getBlockData(), 0);
++            nmsWorld().setTypeAndData(position, Blocks.AIR.getBlockData(), 0);
+         }
+ 
+         if (applyPhysics) {
+-            return chunk.getHandle().getWorld().setTypeAndData(position, blockData, 3);
++            return nmsWorld().setTypeAndData(position, blockData, 3);
+         } else {
+-            IBlockData old = chunk.getHandle().getBlockData(position);
+-            boolean success = chunk.getHandle().getWorld().setTypeAndData(position, blockData, 18); // NOTIFY | NO_OBSERVER
++            IBlockData old = nmsWorld().getType(position);
++            boolean success = nmsWorld().setTypeAndData(position, blockData, 18); // NOTIFY | NO_OBSERVER
+             if (success) {
+-                chunk.getHandle().getWorld().notify(
++                nmsWorld().notify(
+                         position,
+                         old,
+                         blockData,
+@@ -171,19 +178,19 @@ public class CraftBlock implements Block {
+     @Deprecated
+     @Override
+     public int getTypeId() {
+-        return CraftMagicNumbers.getId(chunk.getHandle().getBlockData(position).getBlock());
++        return CraftMagicNumbers.getId(getData0().getBlock());
+     }
+ 
+     public byte getLightLevel() {
+-        return (byte) chunk.getHandle().getWorld().getLightLevel(position);
++        return (byte) nmsWorld().getLightLevel(position);
+     }
+ 
+     public byte getLightFromSky() {
+-        return (byte) chunk.getHandle().getWorld().getBrightness(EnumSkyBlock.SKY, position);
++        return (byte) nmsWorld().getBrightness(EnumSkyBlock.SKY, position);
+     }
+ 
+     public byte getLightFromBlocks() {
+-        return (byte) chunk.getHandle().getWorld().getBrightness(EnumSkyBlock.BLOCK, position);
++        return (byte) nmsWorld().getBrightness(EnumSkyBlock.BLOCK, position);
+     }
+ 
+ 
+@@ -224,7 +231,7 @@ public class CraftBlock implements Block {
+ 
+     @Override
+     public String toString() {
+-        return "CraftBlock{" + "chunk=" + chunk + ",position=" + position + ",type=" + getType() + ",data=" + getData() + '}';
++        return "CraftBlock{" + "world=" + worldId + ",position=" + position + ",type=" + getType() + ",data=" + getData() + '}';
+     }
+ 
+     public static BlockFace notchToBlockFace(EnumDirection notch) {
+@@ -377,11 +384,11 @@ public class CraftBlock implements Block {
+     }
+ 
+     public boolean isBlockPowered() {
+-        return chunk.getHandle().getWorld().getBlockPower(position) > 0;
++        return nmsWorld().getBlockPower(position) > 0;
+     }
+ 
+     public boolean isBlockIndirectlyPowered() {
+-        return chunk.getHandle().getWorld().isBlockIndirectlyPowered(position);
++        return nmsWorld().isBlockIndirectlyPowered(position);
+     }
+ 
+     @Override
+@@ -399,11 +406,11 @@ public class CraftBlock implements Block {
+     }
+ 
+     public boolean isBlockFacePowered(BlockFace face) {
+-        return chunk.getHandle().getWorld().isBlockFacePowered(position, blockFaceToNotch(face));
++        return nmsWorld().isBlockFacePowered(position, blockFaceToNotch(face));
+     }
+ 
+     public boolean isBlockFaceIndirectlyPowered(BlockFace face) {
+-        int power = chunk.getHandle().getWorld().getBlockFacePower(position, blockFaceToNotch(face));
++        int power = nmsWorld().getBlockFacePower(position, blockFaceToNotch(face));
+ 
+         Block relative = getRelative(face);
+         if (relative.getType() == Material.REDSTONE_WIRE) {
+@@ -416,7 +423,7 @@ public class CraftBlock implements Block {
+     public int getBlockPower(BlockFace face) {
+         int power = 0;
+         BlockRedstoneWire wire = Blocks.REDSTONE_WIRE;
+-        net.minecraft.server.World world = chunk.getHandle().getWorld();
++        net.minecraft.server.World world = nmsWorld();
+         if ((face == BlockFace.DOWN || face == BlockFace.SELF) && world.isBlockFacePowered(position.down(), EnumDirection.DOWN)) power = wire.getPower(world, position.down(), power);
+         if ((face == BlockFace.UP || face == BlockFace.SELF) && world.isBlockFacePowered(position.up(), EnumDirection.UP)) power = wire.getPower(world, position.up(), power);
+         if ((face == BlockFace.EAST || face == BlockFace.SELF) && world.isBlockFacePowered(position.east(), EnumDirection.EAST)) power = wire.getPower(world, position.east(), power);
+@@ -455,7 +462,7 @@ public class CraftBlock implements Block {
+         boolean result = false;
+ 
+         if (block != null && block != Blocks.AIR) {
+-            block.dropNaturally(chunk.getHandle().getWorld(), position, block.fromLegacyData(data), 1.0F, 0);
++            block.dropNaturally(nmsWorld(), position, block.fromLegacyData(data), 1.0F, 0);
+             result = true;
+         }
+ 
+@@ -478,14 +485,14 @@ public class CraftBlock implements Block {
+         if (block != Blocks.AIR) {
+             IBlockData data = getData0();
+             // based on nms.Block.dropNaturally
+-            int count = block.getDropCount(0, chunk.getHandle().getWorld().random);
++            int count = block.getDropCount(0, nmsWorld().random);
+             for (int i = 0; i < count; ++i) {
+-                Item item = block.getDropType(data, chunk.getHandle().getWorld().random, 0);
++                Item item = block.getDropType(data, nmsWorld().random, 0);
+                 if (item != Items.a) {
+                     // Skulls are special, their data is based on the tile entity
+                     if (Blocks.SKULL == block) {
+                         net.minecraft.server.ItemStack nmsStack = new net.minecraft.server.ItemStack(item, 1, block.getDropData(data));
+-                        TileEntitySkull tileentityskull = (TileEntitySkull) chunk.getHandle().getWorld().getTileEntity(position);
++                        TileEntitySkull tileentityskull = (TileEntitySkull) nmsWorld().getTileEntity(position);
+ 
+                         if (tileentityskull.getSkullType() == 3 && tileentityskull.getGameProfile() != null) {
+                             nmsStack.setTag(new NBTTagCompound());
+@@ -521,24 +528,24 @@ public class CraftBlock implements Block {
+     }
+ 
+     public void setMetadata(String metadataKey, MetadataValue newMetadataValue) {
+-        chunk.getCraftWorld().getBlockMetadata().setMetadata(this, metadataKey, newMetadataValue);
++        getWorld().getBlockMetadata().setMetadata(this, metadataKey, newMetadataValue);
+     }
+ 
+     @Override
+     public MetadataValue getMetadata(String metadataKey, Plugin owningPlugin) {
+-        return chunk.getCraftWorld().getBlockMetadata().getMetadata(this, metadataKey, owningPlugin);
++        return getWorld().getBlockMetadata().getMetadata(this, metadataKey, owningPlugin);
+     }
+ 
+     public List<MetadataValue> getMetadata(String metadataKey) {
+-        return chunk.getCraftWorld().getBlockMetadata().getMetadata(this, metadataKey);
++        return getWorld().getBlockMetadata().getMetadata(this, metadataKey);
+     }
+ 
+     public boolean hasMetadata(String metadataKey) {
+-        return chunk.getCraftWorld().getBlockMetadata().hasMetadata(this, metadataKey);
++        return getWorld().getBlockMetadata().hasMetadata(this, metadataKey);
+     }
+ 
+     public void removeMetadata(String metadataKey, Plugin owningPlugin) {
+-        chunk.getCraftWorld().getBlockMetadata().removeMetadata(this, metadataKey, owningPlugin);
++        getWorld().getBlockMetadata().removeMetadata(this, metadataKey, owningPlugin);
+     }
+ 
+     @Override
+@@ -547,7 +554,7 @@ public class CraftBlock implements Block {
+         if(nms == null) return null;
+ 
+         MovingObjectPosition hit = nms.a(getData0(),
+-                                         chunk.getCraftWorld().getHandle(),
++                                         getWorld().getHandle(),
+                                          position,
+                                          new Vec3D(start.getX(), start.getY(), start.getZ()),
+                                          new Vec3D(end.getX(), end.getY(), end.getZ()));
+@@ -567,11 +574,11 @@ public class CraftBlock implements Block {
+     }
+ 
+     public net.minecraft.server.Chunk nmsChunk() {
+-        return chunk.getHandle();
++        return nmsWorld().getChunkAtWorldCoords(getPosition());
+     }
+ 
+-    public net.minecraft.server.World nmsWorld() {
+-        return nmsChunk().getWorld();
++    public WorldServer nmsWorld() {
++        return getWorld().getHandle();
+     }
+ 
+     public BlockPosition nmsPosition() {
+diff --git a/src/main/java/org/bukkit/craftbukkit/block/CraftBlockState.java b/src/main/java/org/bukkit/craftbukkit/block/CraftBlockState.java
+--- a/src/main/java/org/bukkit/craftbukkit/block/CraftBlockState.java
++++ b/src/main/java/org/bukkit/craftbukkit/block/CraftBlockState.java
+@@ -2,6 +2,8 @@ package org.bukkit.craftbukkit.block;
+ 
+ import java.util.List;
+ import java.util.Objects;
++import java.util.UUID;
++import javax.annotation.Nullable;
+ 
+ import net.minecraft.server.BlockPosition;
+ import net.minecraft.server.IBlockData;
+@@ -10,15 +12,13 @@ import org.bukkit.Bukkit;
+ import org.bukkit.Chunk;
+ import org.bukkit.Location;
+ import org.bukkit.Material;
+-import org.bukkit.World;
+ import org.bukkit.block.Block;
++import org.bukkit.craftbukkit.CraftWorld;
+ import org.bukkit.geometry.BlockRotoflection;
+ import org.bukkit.geometry.BlockReflection;
+ import org.bukkit.geometry.BlockRotation;
+ import org.bukkit.block.BlockState;
+ import org.bukkit.geometry.CoarseTransform;
+-import org.bukkit.craftbukkit.CraftChunk;
+-import org.bukkit.craftbukkit.CraftWorld;
+ import org.bukkit.craftbukkit.util.CraftMagicNumbers;
+ import org.bukkit.material.Attachable;
+ import org.bukkit.material.MaterialData;
+@@ -27,18 +27,16 @@ import org.bukkit.plugin.Plugin;
+ import org.bukkit.geometry.Vec3;
+ 
+ public class CraftBlockState implements BlockState {
+-    private final CraftWorld world;
++    private final @Nullable UUID worldId;
+     private final BlockPosition position;
+-    private final CraftChunk chunk;
+     protected int type;
+     protected MaterialData data;
+     protected int flag;
+ 
+     public CraftBlockState(final Block block) {
+-        this.world = (CraftWorld) block.getWorld();
++        this.worldId = block.getWorld().getUID();
+         this.position = BlockPosition.copyOf(block.getPosition());
+         this.type = block.getTypeId();
+-        this.chunk = (CraftChunk) block.getChunk();
+         this.flag = 3;
+ 
+         createData(block.getData());
+@@ -50,10 +48,9 @@ public class CraftBlockState implements BlockState {
+     }
+ 
+     public CraftBlockState(Material material) {
+-        world = null;
++        worldId = null;
+         position = null;
+         type = material.getId();
+-        chunk = null;
+     }
+ 
+     public static CraftBlockState getBlockState(net.minecraft.server.World world, int x, int y, int z) {
+@@ -64,14 +61,20 @@ public class CraftBlockState implements BlockState {
+         return new CraftBlockState(world.getWorld().getBlockAt(x, y, z), flag);
+     }
+ 
+-    public World getWorld() {
++    @Override
++    public UUID getWorldId() {
+         requirePlaced();
+-        return world;
++        return worldId;
++    }
++
++    @Override
++    public @Nullable UUID tryWorldId() {
++        return worldId;
+     }
+ 
+     @Override
+-    public World tryWorld() {
+-        return world;
++    public CraftWorld getWorld() {
++        return (CraftWorld) Bukkit.world(getWorldId());
+     }
+ 
+     @Override
+@@ -101,7 +104,7 @@ public class CraftBlockState implements BlockState {
+ 
+     public Chunk getChunk() {
+         requirePlaced();
+-        return chunk;
++        return getWorld().getChunkAt(getPosition());
+     }
+ 
+     @Override
+@@ -194,7 +197,7 @@ public class CraftBlockState implements BlockState {
+         BlockPosition pos = getPosition();
+         IBlockData newBlock = CraftMagicNumbers.getBlock(getType()).fromLegacyData(getRawData());
+         block.setTypeIdAndData(getTypeId(), getRawData(), applyPhysics);
+-        world.getHandle().notify(
++        getWorld().getHandle().notify(
+                 pos,
+                 CraftMagicNumbers.getBlock(block).fromLegacyData(block.getData()),
+                 newBlock,
+@@ -203,7 +206,7 @@ public class CraftBlockState implements BlockState {
+ 
+         // Update levers etc
+         if (applyPhysics && getData() instanceof Attachable) {
+-            world.getHandle().applyPhysics(pos.shift(CraftBlock.blockFaceToNotch(((Attachable) getData()).getAttachedFace())), newBlock.getBlock(), false);
++            getWorld().getHandle().applyPhysics(pos.shift(CraftBlock.blockFaceToNotch(((Attachable) getData()).getAttachedFace())), newBlock.getBlock(), false);
+         }
+ 
+         return true;
+@@ -246,7 +249,7 @@ public class CraftBlockState implements BlockState {
+         if(this == obj) return true;
+         if(!(obj instanceof BlockState)) return false;
+         final BlockState that = (BlockState) obj;
+-        return Objects.equals(this.world, that.tryWorld()) &&
++        return Objects.equals(this.tryWorldId(), that.tryWorldId()) &&
+                Objects.equals(this.position, that.tryPosition()) &&
+                this.type == that.getTypeId() &&
+                Objects.equals(this.data, that.getMaterialData());
+@@ -255,7 +258,7 @@ public class CraftBlockState implements BlockState {
+     @Override
+     public int hashCode() {
+         int hash = 7;
+-        hash = 73 * hash + (this.world != null ? this.world.hashCode() : 0);
++        hash = 73 * hash + (this.worldId != null ? this.worldId.hashCode() : 0);
+         hash = 73 * hash + (this.position != null ? this.position.hashCode() : 0);
+         hash = 73 * hash + this.type;
+         hash = 73 * hash + (this.data != null ? this.data.hashCode() : 0);
+@@ -268,28 +271,28 @@ public class CraftBlockState implements BlockState {
+ 
+     public void setMetadata(String metadataKey, MetadataValue newMetadataValue) {
+         requirePlaced();
+-        chunk.getCraftWorld().getBlockMetadata().setMetadata(getBlock(), metadataKey, newMetadataValue);
++        getWorld().getBlockMetadata().setMetadata(getBlock(), metadataKey, newMetadataValue);
+     }
+ 
+     @Override
+     public MetadataValue getMetadata(String metadataKey, Plugin owningPlugin) {
+         requirePlaced();
+-        return chunk.getCraftWorld().getBlockMetadata().getMetadata(getBlock(), metadataKey, owningPlugin);
++        return getWorld().getBlockMetadata().getMetadata(getBlock(), metadataKey, owningPlugin);
+     }
+ 
+     public List<MetadataValue> getMetadata(String metadataKey) {
+         requirePlaced();
+-        return chunk.getCraftWorld().getBlockMetadata().getMetadata(getBlock(), metadataKey);
++        return getWorld().getBlockMetadata().getMetadata(getBlock(), metadataKey);
+     }
+ 
+     public boolean hasMetadata(String metadataKey) {
+         requirePlaced();
+-        return chunk.getCraftWorld().getBlockMetadata().hasMetadata(getBlock(), metadataKey);
++        return getWorld().getBlockMetadata().hasMetadata(getBlock(), metadataKey);
+     }
+ 
+     public void removeMetadata(String metadataKey, Plugin owningPlugin) {
+         requirePlaced();
+-        chunk.getCraftWorld().getBlockMetadata().removeMetadata(getBlock(), metadataKey, owningPlugin);
++        getWorld().getBlockMetadata().removeMetadata(getBlock(), metadataKey, owningPlugin);
+     }
+ 
+     @Override
+@@ -299,7 +302,7 @@ public class CraftBlockState implements BlockState {
+ 
+     @Override
+     public boolean isPlaced() {
+-        return world != null;
++        return worldId != null;
+     }
+ 
+     protected void requirePlaced() {

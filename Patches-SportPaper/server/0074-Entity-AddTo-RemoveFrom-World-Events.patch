@@ -1,0 +1,29 @@
+From 4309f6bac4bb5e20028e732f02216d92460f3f0d Mon Sep 17 00:00:00 2001
+From: cswhite2000 <18whitechristop@gmail.com>
+Date: Sun, 12 Aug 2018 02:12:31 -0700
+Subject: [PATCH] Entity AddTo/RemoveFrom World Events
+
+
+diff --git a/src/main/java/net/minecraft/server/World.java b/src/main/java/net/minecraft/server/World.java
+index e16d4a0b0..34774bc29 100644
+--- a/src/main/java/net/minecraft/server/World.java
++++ b/src/main/java/net/minecraft/server/World.java
+@@ -1110,6 +1110,7 @@ public abstract class World implements IBlockAccess {
+         }
+ 
+         entity.valid = true; // CraftBukkit
++        new org.github.paperspigot.event.entity.EntityAddToWorldEvent(entity.getBukkitEntity()).callEvent();
+     }
+ 
+     protected void b(Entity entity) {
+@@ -1117,6 +1118,7 @@ public abstract class World implements IBlockAccess {
+             ((IWorldAccess) this.u.get(i)).b(entity);
+         }
+ 
++        new org.github.paperspigot.event.entity.EntityRemoveFromWorldEvent(entity.getBukkitEntity()).callEvent();
+         entity.valid = false; // CraftBukkit
+     }
+ 
+-- 
+2.18.0
+

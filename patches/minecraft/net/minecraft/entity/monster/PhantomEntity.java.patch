@@ -1,19 +1,11 @@
 --- a/net/minecraft/entity/monster/PhantomEntity.java
 +++ b/net/minecraft/entity/monster/PhantomEntity.java
-@@ -39,6 +39,7 @@
- import net.minecraft.world.gen.Heightmap;
- import net.minecraftforge.api.distmarker.Dist;
- import net.minecraftforge.api.distmarker.OnlyIn;
-+import org.bukkit.event.entity.EntityTargetEvent.TargetReason;
- 
- public class PhantomEntity extends FlyingEntity implements IMob {
-    private static final DataParameter<Integer> field_203035_a = EntityDataManager.func_187226_a(PhantomEntity.class, DataSerializers.field_187192_b);
-@@ -223,7 +224,7 @@
+@@ -223,7 +223,7 @@
  
                 for(PlayerEntity playerentity : list) {
                    if (PhantomEntity.this.func_213344_a(playerentity, EntityPredicate.field_221016_a)) {
 -                     PhantomEntity.this.func_70624_b(playerentity);
-+                     PhantomEntity.this.setAttackTarget(playerentity, TargetReason.CLOSEST_PLAYER, true); // CraftBukkit - reason
++                     PhantomEntity.this.setGoalTarget(playerentity, org.bukkit.event.entity.EntityTargetEvent.TargetReason.CLOSEST_PLAYER, true); // CraftBukkit - reason
                       return true;
                    }
                 }

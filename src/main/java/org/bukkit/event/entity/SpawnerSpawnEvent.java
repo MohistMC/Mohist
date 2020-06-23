@@ -10,7 +10,6 @@ import org.jetbrains.annotations.NotNull;
  * If a Spawner Spawn event is cancelled, the entity will not spawn.
  */
 public class SpawnerSpawnEvent extends EntitySpawnEvent {
-
     private final CreatureSpawner spawner;
 
     public SpawnerSpawnEvent(@NotNull final Entity spawnee, @NotNull final CreatureSpawner spawner) {

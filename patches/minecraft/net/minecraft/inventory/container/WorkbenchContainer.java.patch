@@ -1,71 +1,60 @@
 --- a/net/minecraft/inventory/container/WorkbenchContainer.java
 +++ b/net/minecraft/inventory/container/WorkbenchContainer.java
-@@ -18,13 +18,22 @@
+@@ -18,12 +18,19 @@
  import net.minecraft.world.World;
  import net.minecraftforge.api.distmarker.Dist;
  import net.minecraftforge.api.distmarker.OnlyIn;
-+import org.bukkit.craftbukkit.v1_15_R1.event.CraftEventFactory;
-+import org.bukkit.craftbukkit.v1_15_R1.inventory.CraftInventoryCrafting;
-+import org.bukkit.craftbukkit.v1_15_R1.inventory.CraftInventoryView;
++import org.bukkit.craftbukkit.inventory.CraftInventoryCrafting;
++import org.bukkit.craftbukkit.inventory.CraftInventoryView;
 +import org.bukkit.inventory.InventoryView;
  
  public class WorkbenchContainer extends RecipeBookContainer<CraftingInventory> {
 -   private final CraftingInventory field_75162_e = new CraftingInventory(this, 3, 3);
 -   private final CraftResultInventory field_75160_f = new CraftResultInventory();
+-   private final IWorldPosCallable field_217070_e;
 +   private final CraftingInventory field_75162_e;
-+   public final CraftResultInventory field_75160_f;
-    private final IWorldPosCallable field_217070_e;
++   private final CraftResultInventory field_75160_f;
++   public final IWorldPosCallable field_217070_e;
     private final PlayerEntity field_192390_i;
- 
 +   // CraftBukkit start
 +   private CraftInventoryView bukkitEntity = null;
-+   private PlayerInventory playerCB;
++   private PlayerInventory playerInventory;
 +   // CraftBukkit end
-+
+ 
     public WorkbenchContainer(int p_i50089_1_, PlayerInventory p_i50089_2_) {
        this(p_i50089_1_, p_i50089_2_, IWorldPosCallable.field_221489_a);
-    }
-@@ -32,6 +41,11 @@
+@@ -31,6 +38,12 @@
+ 
     public WorkbenchContainer(int p_i50090_1_, PlayerInventory p_i50090_2_, IWorldPosCallable p_i50090_3_) {
        super(ContainerType.field_221518_l, p_i50090_1_);
-       this.field_217070_e = p_i50090_3_;
 +      // CraftBukkit start - Switched order of IInventory construction and stored player
-+      this.field_75162_e = new CraftingInventory(this, 3, 3, p_i50090_2_.field_70458_d); // CraftBukkit - pass player
 +      this.field_75160_f = new CraftResultInventory();
-+      this.playerCB = p_i50090_2_;
++      this.field_75162_e = new CraftingInventory(this, 3, 3, playerInventory.field_70458_d); // CraftBukkit - pass player
++      this.field_75162_e.resultInventory = this.field_75160_f;
++      this.playerInventory = p_i50090_2_;
 +      // CraftBukkit end
+       this.field_217070_e = p_i50090_3_;
        this.field_192390_i = p_i50090_2_.field_70458_d;
        this.func_75146_a(new CraftingResultSlot(p_i50090_2_.field_70458_d, this.field_75162_e, this.field_75160_f, 0, 124, 35));
- 
-@@ -53,26 +67,27 @@
+@@ -53,7 +66,7 @@
  
     }
  
 -   protected static void func_217066_a(int p_217066_0_, World p_217066_1_, PlayerEntity p_217066_2_, CraftingInventory p_217066_3_, CraftResultInventory p_217066_4_) {
--      if (!p_217066_1_.field_72995_K) {
--         ServerPlayerEntity serverplayerentity = (ServerPlayerEntity)p_217066_2_;
-+   protected static void func_217066_a(int id, World worldIn, PlayerEntity playerIn, CraftingInventory inventoryIn, CraftResultInventory inventoryResult, Container container) { // CraftBukkit
-+      if (!worldIn.field_72995_K) {
-+         ServerPlayerEntity serverplayerentity = (ServerPlayerEntity)playerIn;
++   protected static void func_217066_a(int p_217066_0_, World p_217066_1_, PlayerEntity p_217066_2_, CraftingInventory p_217066_3_, CraftResultInventory p_217066_4_, Container container) { // CraftBukkit
+       if (!p_217066_1_.field_72995_K) {
+          ServerPlayerEntity serverplayerentity = (ServerPlayerEntity)p_217066_2_;
           ItemStack itemstack = ItemStack.field_190927_a;
--         Optional<ICraftingRecipe> optional = p_217066_1_.func_73046_m().func_199529_aN().func_215371_a(IRecipeType.field_222149_a, p_217066_3_, p_217066_1_);
-+         Optional<ICraftingRecipe> optional = worldIn.func_73046_m().func_199529_aN().func_215371_a(IRecipeType.field_222149_a, inventoryIn, worldIn);
-          if (optional.isPresent()) {
-             ICraftingRecipe icraftingrecipe = optional.get();
--            if (p_217066_4_.func_201561_a(p_217066_1_, serverplayerentity, icraftingrecipe)) {
--               itemstack = icraftingrecipe.func_77572_b(p_217066_3_);
-+            if (inventoryResult.func_201561_a(worldIn, serverplayerentity, icraftingrecipe)) {
-+               itemstack = icraftingrecipe.func_77572_b(inventoryIn);
+@@ -64,7 +77,7 @@
+                itemstack = icraftingrecipe.func_77572_b(p_217066_3_);
              }
           }
-+         itemstack = CraftEventFactory.callPreCraftEvent(inventoryIn, inventoryResult,itemstack, container.getBukkitView(), false); // CraftBukkit
- 
--         p_217066_4_.func_70299_a(0, itemstack);
--         serverplayerentity.field_71135_a.func_147359_a(new SSetSlotPacket(p_217066_0_, 0, itemstack));
-+         inventoryResult.func_70299_a(0, itemstack);
-+         serverplayerentity.field_71135_a.func_147359_a(new SSetSlotPacket(id, 0, itemstack));
+-
++         itemstack = org.bukkit.craftbukkit.event.CraftEventFactory.callPreCraftEvent(p_217066_3_, p_217066_4_, itemstack, container.getBukkitView(), false); // CraftBukkit
+          p_217066_4_.func_70299_a(0, itemstack);
+          serverplayerentity.field_71135_a.func_147359_a(new SSetSlotPacket(p_217066_0_, 0, itemstack));
        }
-    }
+@@ -72,7 +85,7 @@
  
     public void func_75130_a(IInventory p_75130_1_) {
        this.field_217070_e.func_221486_a((p_217069_1_, p_217069_2_) -> {
@@ -74,24 +63,29 @@
        });
     }
  
-@@ -96,7 +111,20 @@
-       });
+@@ -97,6 +110,7 @@
     }
  
-+   // CraftBukkit start
-+   @Override
-+   public InventoryView getBukkitView() {
-+      if (bukkitEntity != null) {
-+         return bukkitEntity;
-+      }
-+      CraftInventoryCrafting inventory = new CraftInventoryCrafting(this.field_75162_e, this.field_75160_f);
-+      bukkitEntity = new CraftInventoryView(this.playerCB.field_70458_d.getBukkitEntity(), inventory, this);
-+      return bukkitEntity;
-+   }
-+   // CraftBukkit end
-+
     public boolean func_75145_c(PlayerEntity p_75145_1_) {
 +      if (!this.checkReachable) return true; // CraftBukkit
        return func_216963_a(this.field_217070_e, p_75145_1_, Blocks.field_150462_ai);
     }
  
+@@ -168,4 +182,17 @@
+    public int func_203721_h() {
+       return 10;
+    }
++
++   // CraftBukkit start
++   @Override
++   public CraftInventoryView getBukkitView() {
++      if (bukkitEntity != null) {
++         return bukkitEntity;
++      }
++
++      CraftInventoryCrafting inventory = new CraftInventoryCrafting(this.field_75162_e, this.field_75160_f);
++      bukkitEntity = new CraftInventoryView(this.playerInventory.field_70458_d.getBukkitEntity(), inventory, this);
++      return bukkitEntity;
++   }
++   // CraftBukkit end
+ }

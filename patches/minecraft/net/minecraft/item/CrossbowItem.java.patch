@@ -1,58 +1,39 @@
 --- a/net/minecraft/item/CrossbowItem.java
 +++ b/net/minecraft/item/CrossbowItem.java
-@@ -22,12 +22,7 @@
- import net.minecraft.nbt.CompoundNBT;
- import net.minecraft.nbt.ListNBT;
- import net.minecraft.stats.Stats;
--import net.minecraft.util.ActionResult;
--import net.minecraft.util.Hand;
--import net.minecraft.util.ResourceLocation;
--import net.minecraft.util.SoundCategory;
--import net.minecraft.util.SoundEvent;
--import net.minecraft.util.SoundEvents;
-+import net.minecraft.util.*;
- import net.minecraft.util.math.Vec3d;
- import net.minecraft.util.text.ITextComponent;
- import net.minecraft.util.text.StringTextComponent;
-@@ -116,6 +111,12 @@
+@@ -115,7 +115,11 @@
+             itemstack = new ItemStack(Items.field_151032_g);
              itemstack1 = itemstack.func_77946_l();
           }
- 
+-
 +         // CraftBukkit start - SPIGOT-4870, MC-150847
 +         else if (itemstack1.func_190926_b()) {
 +            return false;
 +         }
 +         // CraftBukkit end
-+
           if (!func_220023_a(p_220021_0_, p_220021_1_, itemstack, k > 0, flag)) {
              return false;
           }
-@@ -226,11 +227,26 @@
+@@ -225,10 +229,22 @@
+             vector3f.func_214905_a(quaternion);
              iprojectile.func_70186_c((double)vector3f.func_195899_a(), (double)vector3f.func_195900_b(), (double)vector3f.func_195902_c(), p_220016_7_, p_220016_8_);
           }
- 
+-
 +         // CraftBukkit start
-+         org.bukkit.event.entity.EntityShootBowEvent event = org.bukkit.craftbukkit.v1_15_R1.event.CraftEventFactory.callEntityShootBowEvent(p_220016_1_, p_220016_3_, (Entity) iprojectile, p_220016_5_);
++         org.bukkit.event.entity.EntityShootBowEvent event = org.bukkit.craftbukkit.event.CraftEventFactory.callEntityShootBowEvent(p_220016_1_, p_220016_3_, (Entity)iprojectile, p_220016_5_);
 +         if (event.isCancelled()) {
 +            event.getProjectile().remove();
 +            return;
 +         }
 +         // CraftBukkit end
-+
           p_220016_3_.func_222118_a(flag ? 3 : 1, p_220016_1_, (p_220017_1_) -> {
              p_220017_1_.func_213334_d(p_220016_2_);
           });
--         p_220016_0_.func_217376_c((Entity)iprojectile);
--         p_220016_0_.func_184148_a((PlayerEntity)null, p_220016_1_.func_226277_ct_(), p_220016_1_.func_226278_cu_(), p_220016_1_.func_226281_cx_(), SoundEvents.field_219616_bH, SoundCategory.PLAYERS, 1.0F, p_220016_5_);
-+         // CraftBukkit start
-+         if (event.getProjectile() == ((Entity) iprojectile).getBukkitEntity() && !p_220016_0_.func_217376_c((Entity) iprojectile)) {
++         if (event.getProjectile() == ((Entity)iprojectile).getBukkitEntity() && !p_220016_0_.func_217376_c((Entity)iprojectile)) {
 +            if (p_220016_1_ instanceof ServerPlayerEntity) {
-+               ((ServerPlayerEntity) p_220016_1_).getBukkitEntity().updateInventory();
++               ((ServerPlayerEntity)p_220016_1_).getBukkitEntity().updateInventory();
 +            }
 +            return;
 +         }
-+         // CraftBukkit end
-+         p_220016_0_.func_184148_a((PlayerEntity) null, p_220016_1_.func_226277_ct_(), p_220016_1_.func_226278_cu_(), p_220016_1_.func_226281_cx_(), SoundEvents.field_219616_bH, SoundCategory.PLAYERS, 1.0F, p_220016_5_);
+          p_220016_0_.func_217376_c((Entity)iprojectile);
+          p_220016_0_.func_184148_a((PlayerEntity)null, p_220016_1_.func_226277_ct_(), p_220016_1_.func_226278_cu_(), p_220016_1_.func_226281_cx_(), SoundEvents.field_219616_bH, SoundCategory.PLAYERS, 1.0F, p_220016_5_);
        }
-    }
- 

@@ -1,0 +1,48 @@
+From 4d8184e8f74c63716d82c0cbb025d1f8d878cfac Mon Sep 17 00:00:00 2001
+From: cswhite2000 <18whitechristop@gmail.com>
+Date: Fri, 24 Aug 2018 20:50:15 -0700
+Subject: [PATCH] FallingBlock form block flag
+
+
+diff --git a/src/main/java/net/minecraft/server/EntityFallingBlock.java b/src/main/java/net/minecraft/server/EntityFallingBlock.java
+index 36c384eb..303d9e44 100644
+--- a/src/main/java/net/minecraft/server/EntityFallingBlock.java
++++ b/src/main/java/net/minecraft/server/EntityFallingBlock.java
+@@ -17,6 +17,7 @@ public class EntityFallingBlock extends Entity {
+     private float fallHurtAmount = 2.0F;
+     public NBTTagCompound tileEntityData;
+     public org.bukkit.Location sourceLoc; // PaperSpigot
++    public boolean formBlock = true; // SportBukkit
+ 
+     // PaperSpigot start - Add FallingBlock source location API
+     public EntityFallingBlock(World world) {
+@@ -113,6 +114,7 @@ public class EntityFallingBlock extends Entity {
+                     if (this.world.getType(blockposition).getBlock() != Blocks.PISTON_EXTENSION) {
+                         this.die();
+                         if (!this.e) {
++                            if(!formBlock) return; // SportBukkit
+                             if (this.world.a(block, blockposition, true, EnumDirection.UP, (Entity) null, (ItemStack) null) && !BlockFalling.canFall(this.world, blockposition.down()) /* mimic the false conditions of setTypeIdAndData */ && blockposition.getX() >= -30000000 && blockposition.getZ() >= -30000000 && blockposition.getX() < 30000000 && blockposition.getZ() < 30000000 && blockposition.getY() >= 0 && blockposition.getY() < 256 && this.world.getType(blockposition) != this.block) {
+                                 if (CraftEventFactory.callEntityChangeBlockEvent(this, blockposition.getX(), blockposition.getY(), blockposition.getZ(), this.block.getBlock(), this.block.getBlock().toLegacyData(this.block)).isCancelled()) {
+                                     return;
+diff --git a/src/main/java/org/bukkit/craftbukkit/entity/CraftFallingSand.java b/src/main/java/org/bukkit/craftbukkit/entity/CraftFallingSand.java
+index eedb66f5..f57428aa 100644
+--- a/src/main/java/org/bukkit/craftbukkit/entity/CraftFallingSand.java
++++ b/src/main/java/org/bukkit/craftbukkit/entity/CraftFallingSand.java
+@@ -64,4 +64,14 @@ public class CraftFallingSand extends CraftEntity implements FallingSand {
+         return getHandle().sourceLoc;
+     }
+     // PaperSpigot end
++
++    @Override
++    public boolean canFormBlock() {
++        return getHandle().formBlock;
++    }
++
++    @Override
++    public void setFormBlock(boolean formBlock) {
++        getHandle().formBlock = formBlock;
++    }
+ }
+-- 
+2.19.0
+

@@ -1,0 +1,34 @@
+From: Jedediah Smith <jedediah@silencegreys.com>
+Date: Fri, 9 May 2014 22:38:54 -0400
+Subject: [PATCH] Fix wrong potion particles after respawn
+
+
+diff --git a/src/main/java/net/minecraft/server/EntityLiving.java b/src/main/java/net/minecraft/server/EntityLiving.java
+--- a/src/main/java/net/minecraft/server/EntityLiving.java
++++ b/src/main/java/net/minecraft/server/EntityLiving.java
+@@ -625,6 +625,7 @@ public abstract class EntityLiving extends Entity {
+         return false;
+     }
+ 
++    public void clearPotionEffectMetadata() { this.bQ(); } // SportBukkit - alias for following method
+     protected void bQ() {
+         this.datawatcher.set(EntityLiving.h, Boolean.valueOf(false));
+         this.datawatcher.set(EntityLiving.g, Integer.valueOf(0));
+diff --git a/src/main/java/net/minecraft/server/EntityPlayer.java b/src/main/java/net/minecraft/server/EntityPlayer.java
+--- a/src/main/java/net/minecraft/server/EntityPlayer.java
++++ b/src/main/java/net/minecraft/server/EntityPlayer.java
+@@ -1303,6 +1303,14 @@ public class EntityPlayer extends EntityHuman implements ICrafting {
+         this.deathTicks = 0;
+         this.removeAllEffects();
+         this.updateEffects = true;
++
++        // SportBukkit - clear potion metadata now, because new effects might
++        // get added before the update in the tick has a chance to run, and if they
++        // match the old effects, the metadata will never be marked dirty and will
++        // go out of sync with the client.
++        this.clearPotionEffectMetadata();
++        this.setInvisible(false);
++
+         this.activeContainer = this.defaultContainer;
+         this.killer = null;
+         this.lastDamager = null;

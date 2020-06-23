@@ -1,0 +1,194 @@
+From: Jedediah Smith <jedediah@silencegreys.com>
+Date: Mon, 29 Jun 2015 04:38:33 -0400
+Subject: [PATCH] Potion effect events
+
+
+diff --git a/src/main/java/org/bukkit/event/entity/PotionEffectAddEvent.java b/src/main/java/org/bukkit/event/entity/PotionEffectAddEvent.java
+new file mode 100644
+index 0000000..a0e0634
+--- /dev/null
++++ b/src/main/java/org/bukkit/event/entity/PotionEffectAddEvent.java
+@@ -0,0 +1,32 @@
++package org.bukkit.event.entity;
++
++import org.bukkit.entity.LivingEntity;
++import org.bukkit.event.Cancellable;
++import org.bukkit.event.HandlerList;
++import org.bukkit.potion.PotionEffect;
++
++/**
++ * Called when a potion effect is applied to an entity, or an existing effect is extended or upgraded
++ */
++public class PotionEffectAddEvent extends PotionEffectEvent implements Cancellable {
++
++    private boolean cancelled;
++
++    public PotionEffectAddEvent(LivingEntity entity, PotionEffect effect) {
++        super(entity, effect);
++    }
++
++    @Override
++    public boolean isCancelled() {
++        return cancelled;
++    }
++
++    @Override
++    public void setCancelled(boolean cancel) {
++        this.cancelled = cancel;
++    }
++
++    private static final HandlerList handlers = new HandlerList();
++    @Override public HandlerList getHandlers() { return handlers; }
++    public static HandlerList getHandlerList() { return handlers; }
++}
+diff --git a/src/main/java/org/bukkit/event/entity/PotionEffectEvent.java b/src/main/java/org/bukkit/event/entity/PotionEffectEvent.java
+new file mode 100644
+index 0000000..b0571a6
+--- /dev/null
++++ b/src/main/java/org/bukkit/event/entity/PotionEffectEvent.java
+@@ -0,0 +1,23 @@
++package org.bukkit.event.entity;
++
++import org.bukkit.entity.LivingEntity;
++import org.bukkit.potion.PotionEffect;
++
++public abstract class PotionEffectEvent extends EntityEvent {
++
++    private final PotionEffect effect;
++
++    public PotionEffectEvent(LivingEntity what, PotionEffect effect) {
++        super(what);
++        this.effect = effect;
++    }
++
++    @Override
++    public LivingEntity getEntity() {
++        return (LivingEntity) super.getEntity();
++    }
++
++    public PotionEffect getEffect() {
++        return effect;
++    }
++}
+diff --git a/src/main/java/org/bukkit/event/entity/PotionEffectExpireEvent.java b/src/main/java/org/bukkit/event/entity/PotionEffectExpireEvent.java
+new file mode 100644
+index 0000000..0fc2840
+--- /dev/null
++++ b/src/main/java/org/bukkit/event/entity/PotionEffectExpireEvent.java
+@@ -0,0 +1,45 @@
++package org.bukkit.event.entity;
++
++import org.bukkit.entity.LivingEntity;
++import org.bukkit.potion.PotionEffect;
++
++/**
++ * Called when a potion effect on an entity runs out. Cancelling the event extends
++ * the effect with a practically infinite duration. The new duration can also be set
++ * explicitly by calling {@link #setDuration}.
++ *
++ * Handlers of {@link PotionEffectRemoveEvent} will also receive this event.
++ */
++public class PotionEffectExpireEvent extends PotionEffectRemoveEvent {
++
++    private int duration = 0;
++
++    public PotionEffectExpireEvent(LivingEntity entity, PotionEffect effect) {
++        super(entity, effect);
++    }
++
++    /**
++     * Get the new duration for the potion effect. This is initially 0.
++     */
++    public int getDuration() {
++        return duration;
++    }
++
++    /**
++     * Set a new duration for the potion effect. Passing 0 to this method un-cancels
++     * the event, and passing anything above 0 cancels it.
++     */
++    public void setDuration(int duration) {
++        this.duration = Math.max(0, duration);
++    }
++
++    @Override
++    public boolean isCancelled() {
++        return duration > 0;
++    }
++
++    @Override
++    public void setCancelled(boolean cancel) {
++        this.duration = cancel ? Integer.MAX_VALUE : 0;
++    }
++}
+diff --git a/src/main/java/org/bukkit/event/entity/PotionEffectExtendEvent.java b/src/main/java/org/bukkit/event/entity/PotionEffectExtendEvent.java
+new file mode 100644
+index 0000000..02164cf
+--- /dev/null
++++ b/src/main/java/org/bukkit/event/entity/PotionEffectExtendEvent.java
+@@ -0,0 +1,26 @@
++package org.bukkit.event.entity;
++
++import org.bukkit.entity.LivingEntity;
++import org.bukkit.potion.PotionEffect;
++
++/**
++ * Called when an entity's active potion effect is extended or upgraded.
++ *
++ * Handlers of {@link PotionEffectAddEvent} will also receive this event.
++ */
++public class PotionEffectExtendEvent extends PotionEffectAddEvent {
++
++    private final PotionEffect oldEffect;
++
++    public PotionEffectExtendEvent(LivingEntity entity, PotionEffect effect, PotionEffect oldEffect) {
++        super(entity, effect);
++        this.oldEffect = oldEffect;
++    }
++
++    /**
++     * Get the state of the potion effect prior to the change
++     */
++    public PotionEffect getOldEffect() {
++        return oldEffect;
++    }
++}
+diff --git a/src/main/java/org/bukkit/event/entity/PotionEffectRemoveEvent.java b/src/main/java/org/bukkit/event/entity/PotionEffectRemoveEvent.java
+new file mode 100644
+index 0000000..c95af16
+--- /dev/null
++++ b/src/main/java/org/bukkit/event/entity/PotionEffectRemoveEvent.java
+@@ -0,0 +1,33 @@
++package org.bukkit.event.entity;
++
++import org.bukkit.entity.LivingEntity;
++import org.bukkit.event.Cancellable;
++import org.bukkit.event.HandlerList;
++import org.bukkit.potion.PotionEffect;
++
++/**
++ * Called when a potion effect is removed from an entity for whatever reason
++ */
++public class PotionEffectRemoveEvent extends PotionEffectEvent implements Cancellable {
++
++    private boolean cancelled;
++
++    public PotionEffectRemoveEvent(LivingEntity entity, PotionEffect effect) {
++        super(entity, effect);
++    }
++
++    @Override
++    public boolean isCancelled() {
++        return cancelled;
++    }
++
++    @Override
++    public void setCancelled(boolean cancel) {
++        this.cancelled = cancel;
++    }
++
++    private static final HandlerList handlers = new HandlerList();
++    @Override public HandlerList getHandlers() { return handlers; }
++    public static HandlerList getHandlerList() { return handlers; }
++
++}

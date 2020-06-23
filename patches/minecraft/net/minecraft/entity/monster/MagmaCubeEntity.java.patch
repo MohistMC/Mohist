@@ -5,7 +5,7 @@
     }
  
 -   protected void func_70799_a(int p_70799_1_, boolean p_70799_2_) {
-+   public void func_70799_a(int p_70799_1_, boolean p_70799_2_) { // protected->public CraftBukkit
++   public void func_70799_a(int p_70799_1_, boolean p_70799_2_) {
        super.func_70799_a(p_70799_1_, p_70799_2_);
        this.func_110148_a(SharedMonsterAttributes.field_188791_g).func_111128_a((double)(p_70799_1_ * 3));
     }
@@ -14,7 +14,7 @@
     }
  
 -   protected ResourceLocation func_184647_J() {
-+   public ResourceLocation func_184647_J() { // protected->public CraftBukkit
++   public ResourceLocation func_184647_J() {
        return this.func_189101_db() ? LootTables.field_186419_a : this.func_200600_R().func_220348_g();
     }
  

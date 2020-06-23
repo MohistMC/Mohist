@@ -1,0 +1,17 @@
+From: Jedediah Smith <jedediah@silencegreys.com>
+Date: Sat, 12 Apr 2014 22:42:11 -0400
+Subject: [PATCH] Fix BlockFromToEvents firing when flow is obstructed
+
+
+diff --git a/src/main/java/net/minecraft/server/BlockFlowing.java b/src/main/java/net/minecraft/server/BlockFlowing.java
+--- a/src/main/java/net/minecraft/server/BlockFlowing.java
++++ b/src/main/java/net/minecraft/server/BlockFlowing.java
+@@ -134,6 +134,8 @@ public class BlockFlowing extends BlockFluids {
+             while (iterator1.hasNext()) {
+                 EnumDirection enumdirection1 = (EnumDirection) iterator1.next();
+ 
++                if(!this.h(world, blockposition.shift(enumdirection1), world.getType(blockposition.shift(enumdirection1)))) continue; // SportBukkit - skip event if flow is obstructed
++
+                 // CraftBukkit start
+                 BlockFromToEvent event = new BlockFromToEvent(source, org.bukkit.craftbukkit.block.CraftBlock.notchToBlockFace(enumdirection1));
+                 world.getServer().getPluginManager().callEvent(event);

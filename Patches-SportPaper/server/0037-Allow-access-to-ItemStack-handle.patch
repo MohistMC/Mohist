@@ -1,0 +1,25 @@
+From 4db7c846fca75bad72843d5bf1a5821fcda8e3a1 Mon Sep 17 00:00:00 2001
+From: cswhite2000 <18whitechristop@gmail.com>
+Date: Mon, 6 Aug 2018 00:08:36 -0700
+Subject: [PATCH] Allow access to ItemStack handle
+
+
+diff --git a/src/main/java/org/bukkit/craftbukkit/inventory/CraftItemStack.java b/src/main/java/org/bukkit/craftbukkit/inventory/CraftItemStack.java
+index 23f05f4db..36a8d4667 100644
+--- a/src/main/java/org/bukkit/craftbukkit/inventory/CraftItemStack.java
++++ b/src/main/java/org/bukkit/craftbukkit/inventory/CraftItemStack.java
+@@ -90,7 +90,10 @@ public final class CraftItemStack extends ItemStack {
+         return new CraftItemStack(CraftMagicNumbers.getMaterial(item), amount, (short) 0, null);
+     }
+ 
+-    net.minecraft.server.ItemStack handle;
++    public net.minecraft.server.ItemStack handle;
++    public net.minecraft.server.ItemStack getHandle() {
++        return this.handle;
++    }
+ 
+     /**
+      * Mirror
+-- 
+2.18.0
+

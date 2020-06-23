@@ -1,0 +1,19 @@
+From: Jedediah Smith <jedediah@silencegreys.com>
+Date: Sun, 20 Mar 2016 06:44:49 -0400
+Subject: [PATCH] Access items by EquipmentSlot
+
+
+diff --git a/src/main/java/org/bukkit/inventory/PlayerInventory.java b/src/main/java/org/bukkit/inventory/PlayerInventory.java
+--- a/src/main/java/org/bukkit/inventory/PlayerInventory.java
++++ b/src/main/java/org/bukkit/inventory/PlayerInventory.java
+@@ -179,6 +179,10 @@ public interface PlayerInventory extends Inventory {
+     @Deprecated
+     public void setItemInHand(ItemStack stack);
+ 
++    ItemStack getItem(EquipmentSlot slot);
++
++    void setItem(EquipmentSlot slot, ItemStack stack);
++
+     /**
+      * Get the slot number of the currently held item
+      *

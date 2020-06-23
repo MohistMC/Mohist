@@ -1,0 +1,88 @@
+From: Jedediah Smith <jedediah@silencegreys.com>
+Date: Wed, 4 Jan 2017 17:23:54 -0500
+Subject: [PATCH] Unregister plugin commands
+
+
+diff --git a/src/main/java/org/bukkit/command/CommandMap.java b/src/main/java/org/bukkit/command/CommandMap.java
+--- a/src/main/java/org/bukkit/command/CommandMap.java
++++ b/src/main/java/org/bukkit/command/CommandMap.java
+@@ -1,6 +1,8 @@
+ package org.bukkit.command;
+ 
+ import java.util.List;
++import java.util.function.Predicate;
++
+ import org.bukkit.Location;
+ 
+ public interface CommandMap {
+@@ -66,6 +68,10 @@ public interface CommandMap {
+      */
+     public boolean register(String fallbackPrefix, Command command);
+ 
++    boolean unregister(Command command);
++
++    void unregisterAll(Predicate<? super Command> filter);
++
+     /**
+      * Looks for the requested command and executes it if found.
+      *
+diff --git a/src/main/java/org/bukkit/command/SimpleCommandMap.java b/src/main/java/org/bukkit/command/SimpleCommandMap.java
+--- a/src/main/java/org/bukkit/command/SimpleCommandMap.java
++++ b/src/main/java/org/bukkit/command/SimpleCommandMap.java
+@@ -8,6 +8,7 @@ import java.util.HashMap;
+ import java.util.Iterator;
+ import java.util.List;
+ import java.util.Map;
++import java.util.function.Predicate;
+ import java.util.regex.Pattern;
+ 
+ import org.apache.commons.lang.Validate;
+@@ -119,6 +120,23 @@ public class SimpleCommandMap implements CommandMap {
+         return registered;
+     }
+ 
++    @Override
++    public boolean unregister(Command command) {
++        command.unregister(this);
++        return knownCommands.values().removeIf(command::equals);
++    }
++
++    @Override
++    public void unregisterAll(Predicate<? super Command> filter) {
++        knownCommands.values().removeIf(command -> {
++            if(filter.test(command)) {
++                command.unregister(this);
++                return true;
++            }
++            return false;
++        });
++    }
++
+     /**
+      * {@inheritDoc}
+      */
+diff --git a/src/main/java/org/bukkit/plugin/SimplePluginManager.java b/src/main/java/org/bukkit/plugin/SimplePluginManager.java
+--- a/src/main/java/org/bukkit/plugin/SimplePluginManager.java
++++ b/src/main/java/org/bukkit/plugin/SimplePluginManager.java
+@@ -21,6 +21,7 @@ import org.apache.commons.lang.Validate;
+ import org.bukkit.Server;
+ import org.bukkit.command.Command;
+ import org.bukkit.command.PluginCommandYamlParser;
++import org.bukkit.command.PluginIdentifiableCommand;
+ import org.bukkit.command.SimpleCommandMap;
+ import org.bukkit.configuration.serialization.ConfigurationSerialization;
+ import org.bukkit.event.Event;
+@@ -472,6 +473,13 @@ public final class SimplePluginManager implements PluginManager {
+             } catch (Throwable ex) {
+                 server.getLogger().log(Level.SEVERE, "Error occurred (in the plugin loader) while unregistering serializables " + plugin.getDescription().getFullName() + " (Is it up to date?)", ex);
+             }
++
++            try {
++                server.getCommandMap().unregisterAll(command -> command instanceof PluginIdentifiableCommand &&
++                                                                plugin == ((PluginIdentifiableCommand) command).getPlugin());
++            } catch (Throwable ex) {
++                server.getLogger().log(Level.SEVERE, "Error occurred (in the plugin loader) while unregistering commands for " + plugin.getDescription().getFullName() + " (Is it up to date?)", ex);
++            }
+         }
+     }
+ 

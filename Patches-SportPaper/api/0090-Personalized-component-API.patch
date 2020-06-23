@@ -1,0 +1,157 @@
+From ea9c5a552ef2960441b51d982cf1c3d7f44f55c9 Mon Sep 17 00:00:00 2001
+From: Austin Mayes <almayes@trevecca.edu>
+Date: Tue, 5 Mar 2019 21:25:40 -0600
+Subject: [PATCH] Personalized component API
+
+
+diff --git a/src/main/java/network/stratus/sportpaper/api/text/TranslatableComponent.java b/src/main/java/network/stratus/sportpaper/api/text/PersonalizedComponent.java
+similarity index 50%
+rename from src/main/java/network/stratus/sportpaper/api/text/TranslatableComponent.java
+rename to src/main/java/network/stratus/sportpaper/api/text/PersonalizedComponent.java
+index 2c4ebfcc..f4494edc 100644
+--- a/src/main/java/network/stratus/sportpaper/api/text/TranslatableComponent.java
++++ b/src/main/java/network/stratus/sportpaper/api/text/PersonalizedComponent.java
+@@ -2,17 +2,18 @@ package network.stratus.sportpaper.api.text;
+ 
+ import java.util.Locale;
+ import net.md_5.bungee.api.chat.BaseComponent;
++import org.bukkit.command.CommandSender;
+ 
+ /**
+- * A component which can be translated using a {@link Locale}.
++ * A component which can be rendered for a specific {@link CommandSender}.
+  */
+-public interface TranslatableComponent {
++public interface PersonalizedComponent {
+ 
+ 	/**
+ 	 * Translate this component into a {@link BaseComponent} in the specified {@link Locale}.
+ 	 *
+-	 * @param locale the locale to translate this component into
++	 * @param sender the person to render this component for
+ 	 * @return the translated component
+ 	 */
+-	BaseComponent translate(Locale locale);
++	BaseComponent render(CommandSender sender);
+ }
+\ No newline at end of file
+diff --git a/src/main/java/org/bukkit/Bukkit.java b/src/main/java/org/bukkit/Bukkit.java
+index 0d835e42..d73e8c74 100644
+--- a/src/main/java/org/bukkit/Bukkit.java
++++ b/src/main/java/org/bukkit/Bukkit.java
+@@ -12,7 +12,7 @@ import java.util.Set;
+ import java.util.UUID;
+ import java.util.logging.Logger;
+ 
+-import network.stratus.sportpaper.api.text.TranslatableComponent;
++import network.stratus.sportpaper.api.text.PersonalizedComponent;
+ import org.bukkit.Warning.WarningState;
+ import org.bukkit.command.CommandException;
+ import org.bukkit.command.CommandMap;
+@@ -1206,9 +1206,9 @@ public final class Bukkit {
+      * Broadcasts a translatable component to all {@link Player}s using their {@link CommandSender#getLocale() locale}.
+      *
+      * @param translatable the translatable component
+-     * @see Server#broadcast(TranslatableComponent)
++     * @see Server#broadcast(PersonalizedComponent)
+      */
+-    public static void broadcast(TranslatableComponent translatable) {
++    public static void broadcast(PersonalizedComponent translatable) {
+         server.broadcast(translatable);
+     }
+     // SportPaper end
+diff --git a/src/main/java/org/bukkit/Server.java b/src/main/java/org/bukkit/Server.java
+index e7878915..f8a4b19e 100644
+--- a/src/main/java/org/bukkit/Server.java
++++ b/src/main/java/org/bukkit/Server.java
+@@ -14,7 +14,7 @@ import java.util.Set;
+ import java.util.UUID;
+ import java.util.logging.Logger;
+ 
+-import network.stratus.sportpaper.api.text.TranslatableComponent;
++import network.stratus.sportpaper.api.text.PersonalizedComponent;
+ import org.bukkit.Warning.WarningState;
+ import org.bukkit.command.CommandException;
+ import org.bukkit.command.CommandMap;
+@@ -1091,9 +1091,9 @@ public interface Server extends PluginMessageRecipient {
+      *
+      * @param translatable the translatable component
+      */
+-    default void broadcast(TranslatableComponent translatable) {
++    default void broadcast(PersonalizedComponent translatable) {
+         for (Player player : this.getOnlinePlayers()) {
+-            player.sendMessage(translatable.translate(player.getLocale()));
++            player.sendMessage(translatable.render(player));
+         }
+     }
+     // SportPaper end
+diff --git a/src/main/java/org/bukkit/World.java b/src/main/java/org/bukkit/World.java
+index 9daad1b6..a021b99f 100644
+--- a/src/main/java/org/bukkit/World.java
++++ b/src/main/java/org/bukkit/World.java
+@@ -1,7 +1,7 @@
+ package org.bukkit;
+ 
+ import java.io.File;
+-import network.stratus.sportpaper.api.text.TranslatableComponent;
++import network.stratus.sportpaper.api.text.PersonalizedComponent;
+ import org.bukkit.command.CommandSender;
+ import org.bukkit.generator.ChunkGenerator;
+ 
+@@ -780,14 +780,14 @@ public interface World extends PluginMessageRecipient, Metadatable, Physical {
+      *
+      * @param translatable the translatable component
+      */
+-    void broadcast(TranslatableComponent translatable);
++    void broadcast(PersonalizedComponent translatable);
+ 
+     /**
+      * Broadcasts a translatable component to all {@link Player}s in this world using their {@link CommandSender#getLocale() locale}.
+      *
+      * @param translatables the translatable components
+      */
+-    void broadcast(TranslatableComponent... translatables);
++    void broadcast(PersonalizedComponent... translatables);
+ 
+     /**
+      * @see #fastBlockChange(Vector, short, byte) with data from the material
+diff --git a/src/main/java/org/bukkit/command/CommandSender.java b/src/main/java/org/bukkit/command/CommandSender.java
+index 0726b5ea..6faad290 100644
+--- a/src/main/java/org/bukkit/command/CommandSender.java
++++ b/src/main/java/org/bukkit/command/CommandSender.java
+@@ -1,7 +1,7 @@
+ package org.bukkit.command;
+ 
+ import java.util.Locale;
+-import network.stratus.sportpaper.api.text.TranslatableComponent;
++import network.stratus.sportpaper.api.text.PersonalizedComponent;
+ import org.bukkit.Server;
+ import org.bukkit.permissions.Permissible;
+ 
+@@ -85,8 +85,8 @@ public interface CommandSender extends Permissible {
+      *
+      * @param translatable the translatable component
+     */
+-    default void sendMessage(TranslatableComponent translatable) {
+-        this.sendMessage(translatable.translate(this.getLocale()));
++    default void sendMessage(PersonalizedComponent translatable) {
++        this.sendMessage(translatable.render(this));
+     }
+ 
+     /**
+@@ -94,9 +94,9 @@ public interface CommandSender extends Permissible {
+      *
+      * @param translatables the translatable components
+      */
+-    default void sendMessage(TranslatableComponent... translatables) {
+-        for (TranslatableComponent translatable : translatables) {
+-            this.sendMessage(translatable.translate(this.getLocale()));
++    default void sendMessage(PersonalizedComponent... translatables) {
++        for (PersonalizedComponent translatable : translatables) {
++            this.sendMessage(translatable.render(this));
+         }
+     }
+     // SportPaper end
+-- 
+2.20.1
+

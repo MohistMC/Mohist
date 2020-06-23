@@ -1,0 +1,117 @@
+From f0df719f64ca50f7f98047eefd9bc0a1d0f5a069 Mon Sep 17 00:00:00 2001
+From: Ashcon Partovi <ashcon@partovi.net>
+Date: Mon, 29 Apr 2019 14:59:30 -0700
+Subject: [PATCH] Expose some entity packet constructors
+
+
+diff --git a/src/main/java/net/minecraft/server/EntityFireworks.java b/src/main/java/net/minecraft/server/EntityFireworks.java
+index 6862cdd7c..fa5ca07e4 100644
+--- a/src/main/java/net/minecraft/server/EntityFireworks.java
++++ b/src/main/java/net/minecraft/server/EntityFireworks.java
+@@ -4,7 +4,7 @@ import java.util.UUID;
+ 
+ public class EntityFireworks extends Entity {
+ 
+-    private int ticksFlown;
++    public int ticksFlown; // SportPaper - make public
+     public int expectedLifespan;
+     public UUID spawningEntity; // Paper
+ 
+diff --git a/src/main/java/net/minecraft/server/PacketPlayOutAttachEntity.java b/src/main/java/net/minecraft/server/PacketPlayOutAttachEntity.java
+index bf6f6643e..436d31fac 100644
+--- a/src/main/java/net/minecraft/server/PacketPlayOutAttachEntity.java
++++ b/src/main/java/net/minecraft/server/PacketPlayOutAttachEntity.java
+@@ -8,6 +8,14 @@ public class PacketPlayOutAttachEntity implements Packet<PacketListenerPlayOut>
+     private int b;
+     private int c;
+ 
++    // SportPaper start - add constructor
++    public PacketPlayOutAttachEntity(int entityId, int vehicleId, boolean leash) {
++        this.a = (byte) (leash ? 1 : 0);
++        this.b = entityId;
++        this.c = vehicleId;
++    }
++    // SportPaper end
++
+     public PacketPlayOutAttachEntity() {}
+ 
+     public PacketPlayOutAttachEntity(int i, Entity entity, Entity entity1) {
+@@ -32,7 +40,4 @@ public class PacketPlayOutAttachEntity implements Packet<PacketListenerPlayOut>
+         packetlistenerplayout.a(this);
+     }
+ 
+-    public void a(PacketListener packetlistener) {
+-        this.a((PacketListenerPlayOut) packetlistener);
+-    }
+ }
+diff --git a/src/main/java/net/minecraft/server/PacketPlayOutNamedEntitySpawn.java b/src/main/java/net/minecraft/server/PacketPlayOutNamedEntitySpawn.java
+index 953d6ef53..1f2e8f5cf 100644
+--- a/src/main/java/net/minecraft/server/PacketPlayOutNamedEntitySpawn.java
++++ b/src/main/java/net/minecraft/server/PacketPlayOutNamedEntitySpawn.java
+@@ -17,6 +17,19 @@ public class PacketPlayOutNamedEntitySpawn implements Packet<PacketListenerPlayO
+     private DataWatcher i;
+     private List<DataWatcher.WatchableObject> j;
+ 
++    // SportPaper start - add constructor
++    public PacketPlayOutNamedEntitySpawn(int id, UUID uuid, double xPos, double yPos, double zPos, byte yaw, byte pitch, ItemStack heldItem, List<DataWatcher.WatchableObject> metadata) {
++        this.a = id;
++        this.b = uuid;
++        this.c = MathHelper.floor(xPos * 32.0D);
++        this.d = MathHelper.floor(yPos * 32.0D);
++        this.e = MathHelper.floor(zPos * 32.0D);
++        this.f = (byte) ((int) (yaw * 256.0F / 360.0F));
++        this.g = (byte) ((int) (pitch * 256.0F / 360.0F));
++        this.j = metadata;
++        this.h = heldItem == null ? 0 : Item.getId(heldItem.getItem());
++    }
++    // SportPaper end
+     public PacketPlayOutNamedEntitySpawn() {}
+ 
+     public PacketPlayOutNamedEntitySpawn(EntityHuman entityhuman) {
+@@ -61,7 +74,4 @@ public class PacketPlayOutNamedEntitySpawn implements Packet<PacketListenerPlayO
+         packetlistenerplayout.a(this);
+     }
+ 
+-    public void a(PacketListener packetlistener) {
+-        this.a((PacketListenerPlayOut) packetlistener);
+-    }
+ }
+diff --git a/src/main/java/net/minecraft/server/PacketPlayOutSpawnEntityLiving.java b/src/main/java/net/minecraft/server/PacketPlayOutSpawnEntityLiving.java
+index 1541921ce..bb65af143 100644
+--- a/src/main/java/net/minecraft/server/PacketPlayOutSpawnEntityLiving.java
++++ b/src/main/java/net/minecraft/server/PacketPlayOutSpawnEntityLiving.java
+@@ -19,6 +19,23 @@ public class PacketPlayOutSpawnEntityLiving implements Packet<PacketListenerPlay
+     private DataWatcher l;
+     private List<DataWatcher.WatchableObject> m;
+ 
++    // SportPaper start - add constructor
++    public PacketPlayOutSpawnEntityLiving(int entityId, byte entityType, double xPos, double yPos, double zPos, float yaw, float pitch, float headPitch, double xVel, double yVel, double zVel, DataWatcher watcher) {
++        this.a = entityId;
++        this.b = entityType;
++        this.c = MathHelper.floor(xPos * 32.0D);
++        this.d = MathHelper.floor(yPos * 32.0D);
++        this.e = MathHelper.floor(zPos * 32.0D);
++        this.i = (byte) ((int) (yaw * 256.0F / 360.0F));
++        this.j = (byte) ((int) (pitch * 256.0F / 360.0F));
++        this.k = (byte) ((int) (headPitch * 256.0F / 360.0F));
++        this.f = (int) (xVel * 8000.0D);
++        this.g = (int) (yVel * 8000.0D);
++        this.h = (int) (zVel * 8000.0D);
++        this.l = watcher;
++    }
++    // SportPaper end
++
+     public PacketPlayOutSpawnEntityLiving() {}
+ 
+     public PacketPlayOutSpawnEntityLiving(EntityLiving entityliving) {
+@@ -99,7 +116,4 @@ public class PacketPlayOutSpawnEntityLiving implements Packet<PacketListenerPlay
+         packetlistenerplayout.a(this);
+     }
+ 
+-    public void a(PacketListener packetlistener) {
+-        this.a((PacketListenerPlayOut) packetlistener);
+-    }
+ }
+-- 
+2.20.1
+

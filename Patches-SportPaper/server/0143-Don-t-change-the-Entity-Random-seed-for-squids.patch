@@ -1,0 +1,22 @@
+From 7648f4b62ec685bdcc966f5fabebb852bdf72aab Mon Sep 17 00:00:00 2001
+From: cswhite2000 <18whitechristop@gmail.com>
+Date: Tue, 21 Aug 2018 16:15:30 -0700
+Subject: [PATCH] Don't change the Entity Random seed for squids
+
+
+diff --git a/src/main/java/net/minecraft/server/EntitySquid.java b/src/main/java/net/minecraft/server/EntitySquid.java
+index 31996b46..aaaece35 100644
+--- a/src/main/java/net/minecraft/server/EntitySquid.java
++++ b/src/main/java/net/minecraft/server/EntitySquid.java
+@@ -20,7 +20,7 @@ public class EntitySquid extends EntityWaterAnimal {
+     public EntitySquid(World world) {
+         super(world);
+         this.setSize(0.95F, 0.95F);
+-        this.random.setSeed((long) (1 + this.getId()));
++        //this.random.setSeed((long) (1 + this.getId())); // Paper
+         this.bq = 1.0F / (this.random.nextFloat() + 1.0F) * 0.2F;
+         this.goalSelector.a(0, new EntitySquid.PathfinderGoalSquid(this));
+     }
+-- 
+2.19.0
+

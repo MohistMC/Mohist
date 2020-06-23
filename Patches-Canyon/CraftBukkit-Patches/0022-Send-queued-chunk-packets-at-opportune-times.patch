@@ -1,0 +1,61 @@
+From 0664ee3a91854294531a659dfad371eda20016eb Mon Sep 17 00:00:00 2001
+From: Andrew Steinborn <git@steinborn.me>
+Date: Tue, 8 Oct 2019 19:56:55 -0400
+Subject: [PATCH] Send queued chunk packets at opportune times
+
+Fixes annoying post-login/teleport lag where you can get "stuck" in stone.
+
+diff --git a/src/main/java/net/minecraft/server/EntityPlayer.java b/src/main/java/net/minecraft/server/EntityPlayer.java
+index 51fe099e..889e498b 100644
+--- a/src/main/java/net/minecraft/server/EntityPlayer.java
++++ b/src/main/java/net/minecraft/server/EntityPlayer.java
+@@ -113,6 +113,7 @@ public class EntityPlayer extends EntityHuman implements ICrafting {
+ 
+     public void m_() {
+         if (isRespawning) return; // Canyon
++        this.sendQueuedChunks(); // Canyon
+         this.itemInWorldManager.a();
+         --this.bM;
+         this.activeContainer.a();
+@@ -216,6 +217,7 @@ public class EntityPlayer extends EntityHuman implements ICrafting {
+             }
+         }
+ 
++        flag = true; // Canyon - always send queued chunks
+         if (flag && !this.chunkCoordIntPairQueue.isEmpty()) {
+             // Canyon start - rewrote logic and moved elsewhere
+             this.sendQueuedChunks();
+diff --git a/src/main/java/net/minecraft/server/NetLoginHandler.java b/src/main/java/net/minecraft/server/NetLoginHandler.java
+index dfa5b6d9..0a81ce3f 100644
+--- a/src/main/java/net/minecraft/server/NetLoginHandler.java
++++ b/src/main/java/net/minecraft/server/NetLoginHandler.java
+@@ -128,6 +128,7 @@ public class NetLoginHandler extends NetHandler implements com.canyonmodded.netw
+             if (this.server.networkListenThread != null) this.server.networkListenThread.a(netserverhandler); // Canyon
+             netserverhandler.sendPacket(new Packet4UpdateTime(entityplayer.getPlayerTime())); // CraftBukkit - add support for player specific time
+             entityplayer.syncInventory();
++            entityplayer.a(true); // Canyon - begin sending chunk packets immediately
+             });
+             // Canyon End
+         }
+diff --git a/src/main/java/net/minecraft/server/ServerConfigurationManager.java b/src/main/java/net/minecraft/server/ServerConfigurationManager.java
+index 30d058a0..7ab9e275 100644
+--- a/src/main/java/net/minecraft/server/ServerConfigurationManager.java
++++ b/src/main/java/net/minecraft/server/ServerConfigurationManager.java
+@@ -132,6 +132,7 @@ public class ServerConfigurationManager {
+ 
+         worldserver.addEntity(entityplayer);
+         this.getPlayerManager(entityplayer.dimension).addPlayer(entityplayer);
++        this.server.queueTask(entityplayer::sendQueuedChunks); // Canyon
+     }
+ 
+     public void d(EntityPlayer entityplayer) {
+@@ -654,5 +655,6 @@ public class ServerConfigurationManager {
+     public void updateClient(EntityPlayer entityplayer) {
+         entityplayer.updateInventory(entityplayer.defaultContainer);
+         entityplayer.C();
++        server.queueTask(() -> entityplayer.a(true)); // Canyon - update chunks on respawn
+     }
+ }
+-- 
+2.25.2
+

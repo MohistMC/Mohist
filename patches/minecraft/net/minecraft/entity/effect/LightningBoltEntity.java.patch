@@ -12,16 +12,15 @@
  import net.minecraft.world.World;
  import net.minecraftforge.api.distmarker.Dist;
  import net.minecraftforge.api.distmarker.OnlyIn;
-+import org.bukkit.craftbukkit.v1_15_R1.event.CraftEventFactory;
++import org.bukkit.craftbukkit.event.CraftEventFactory; // CraftBukkit
  
  public class LightningBoltEntity extends Entity {
     private int field_70262_b;
-@@ -29,9 +31,12 @@
+@@ -29,9 +31,11 @@
     private final boolean field_184529_d;
     @Nullable
     private ServerPlayerEntity field_204810_e;
 +   public boolean isEffect; // CraftBukkit
-+   public boolean isSilent = false; // Spigot
  
     public LightningBoltEntity(World p_i46780_1_, double p_i46780_2_, double p_i46780_4_, double p_i46780_6_, boolean p_i46780_8_) {
        super(EntityType.field_200728_aG, p_i46780_1_);
@@ -29,29 +28,13 @@
        this.field_70158_ak = true;
        this.func_70012_b(p_i46780_2_, p_i46780_4_, p_i46780_6_, 0.0F, 0.0F);
        this.field_70262_b = 2;
-@@ -45,6 +50,14 @@
- 
-    }
- 
-+   // Spigot start
-+   public LightningBoltEntity(World world, double d0, double d1, double d2, boolean isEffect, boolean isSilent)
-+   {
-+      this( world, d0, d1, d2, isEffect );
-+      this.isSilent = isSilent;
-+   }
-+   // Spigot end
-+
-    public SoundCategory func_184176_by() {
-       return SoundCategory.WEATHER;
-    }
-@@ -55,8 +68,25 @@
- 
+@@ -56,7 +60,25 @@
     public void func_70071_h_() {
        super.func_70071_h_();
--      if (this.field_70262_b == 2) {
+       if (this.field_70262_b == 2) {
 -         this.field_70170_p.func_184148_a((PlayerEntity)null, this.func_226277_ct_(), this.func_226278_cu_(), this.func_226281_cx_(), SoundEvents.field_187754_de, SoundCategory.WEATHER, 10000.0F, 0.8F + this.field_70146_Z.nextFloat() * 0.2F);
-+      if (isSilent && this.field_70262_b == 2) { // Spigot
 +         // CraftBukkit start - Use relative location for far away sounds
++         // this.world.playSound((PlayerEntity)null, this.getPosX(), this.getPosY(), this.getPosZ(), SoundEvents.ENTITY_LIGHTNING_BOLT_THUNDER, SoundCategory.WEATHER, 10000.0F, 0.8F + this.rand.nextFloat() * 0.2F);
 +         float pitch = 0.8F + this.field_70146_Z.nextFloat() * 0.2F;
 +         int viewDistance = this.field_70170_p.getServerCB().getViewDistance() * 16;
 +         for (ServerPlayerEntity player : (List<ServerPlayerEntity>) this.field_70170_p.func_217369_A()) {
@@ -72,7 +55,7 @@
           this.field_70170_p.func_184148_a((PlayerEntity)null, this.func_226277_ct_(), this.func_226278_cu_(), this.func_226281_cx_(), SoundEvents.field_187752_dd, SoundCategory.WEATHER, 2.0F, 0.5F + this.field_70146_Z.nextFloat() * 0.2F);
        }
  
-@@ -72,7 +102,7 @@
+@@ -72,7 +94,7 @@
           }
        }
  
@@ -81,7 +64,7 @@
           if (this.field_70170_p.field_72995_K) {
              this.field_70170_p.func_225605_c_(2);
           } else if (!this.field_184529_d) {
-@@ -80,6 +110,7 @@
+@@ -80,6 +102,7 @@
              List<Entity> list = this.field_70170_p.func_175674_a(this, new AxisAlignedBB(this.func_226277_ct_() - 3.0D, this.func_226278_cu_() - 3.0D, this.func_226281_cx_() - 3.0D, this.func_226277_ct_() + 3.0D, this.func_226278_cu_() + 6.0D + 3.0D, this.func_226281_cx_() + 3.0D), Entity::func_70089_S);
  
              for(Entity entity : list) {
@@ -89,26 +72,27 @@
                 entity.func_70077_a(this);
              }
  
-@@ -96,14 +127,22 @@
+@@ -96,13 +119,21 @@
           BlockState blockstate = Blocks.field_150480_ab.func_176223_P();
           BlockPos blockpos = new BlockPos(this);
           if (this.field_70170_p.func_180495_p(blockpos).func_196958_f() && blockstate.func_196955_c(this.field_70170_p, blockpos)) {
+-            this.field_70170_p.func_175656_a(blockpos, blockstate);
 +            // CraftBukkit start - add "!isEffect"
 +            if (!isEffect && !CraftEventFactory.callBlockIgniteEvent(field_70170_p, blockpos, this).isCancelled()) {
-             this.field_70170_p.func_175656_a(blockpos, blockstate);
-          }
++               this.field_70170_p.func_175656_a(blockpos, blockstate);
++            }
 +            // CraftBukkit end
-+         }
+          }
  
           for(int i = 0; i < p_195053_1_; ++i) {
              BlockPos blockpos1 = blockpos.func_177982_a(this.field_70146_Z.nextInt(3) - 1, this.field_70146_Z.nextInt(3) - 1, this.field_70146_Z.nextInt(3) - 1);
              if (this.field_70170_p.func_180495_p(blockpos1).func_196958_f() && blockstate.func_196955_c(this.field_70170_p, blockpos1)) {
+-               this.field_70170_p.func_175656_a(blockpos1, blockstate);
 +               // CraftBukkit start - add "!isEffect"
 +               if (!isEffect && !CraftEventFactory.callBlockIgniteEvent(field_70170_p, blockpos1, this).isCancelled()) {
-                this.field_70170_p.func_175656_a(blockpos1, blockstate);
-             }
++                  this.field_70170_p.func_175656_a(blockpos1, blockstate);
++               }
 +               // CraftBukkit end
-+            }
+             }
           }
  
-       }

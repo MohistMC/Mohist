@@ -1,0 +1,46 @@
+From c8299ea4ba83f011b664a4b4fadb91aebf8e4795 Mon Sep 17 00:00:00 2001
+From: Jonas Konrad <me@yawk.at>
+Date: Tue, 22 Jul 2014 15:59:01 +0200
+Subject: [PATCH] Make "moved too quickly" limit configurable
+
+
+diff --git a/src/main/java/net/minecraft/server/PlayerConnection.java b/src/main/java/net/minecraft/server/PlayerConnection.java
+index e507db624..cb9e64441 100644
+--- a/src/main/java/net/minecraft/server/PlayerConnection.java
++++ b/src/main/java/net/minecraft/server/PlayerConnection.java
+@@ -339,7 +339,7 @@ public class PlayerConnection implements PacketListenerPlayIn {
+                 }
+                 speed *= 2f; // TODO: Get the speed of the vehicle instead of the player
+ 
+-                if (d10 - d9 > Math.max(100.0D, Math.pow((double) (10.0F * (float) i * speed), 2)) && !this.isExemptPlayer()) {
++                if (d10 - d9 > Math.max(100.0D, Math.pow((double) (org.spigotmc.SpigotConfig.movedTooQuicklyMultiplier * (float) i * speed), 2)) && !this.isExemptPlayer()) {
+                 // CraftBukkit end
+                     PlayerConnection.LOGGER.warn("{} (vehicle of {}) moved too quickly! {},{},{}", entity.getDisplayName().getString(), this.player.getDisplayName().getString(), d6, d7, d8);
+                     this.networkManager.sendPacket(new PacketPlayOutVehicleMove(entity));
+@@ -908,7 +908,7 @@ public class PlayerConnection implements PacketListenerPlayIn {
+                             if (!this.player.H() && (!this.player.getWorldServer().getGameRules().getBoolean(GameRules.DISABLE_ELYTRA_MOVEMENT_CHECK) || !this.player.isGliding())) {
+                                 float f2 = this.player.isGliding() ? 300.0F : 100.0F;
+ 
+-                                if (d11 - d10 > Math.max(f2, Math.pow((double) (10.0F * (float) i * speed), 2)) && !this.isExemptPlayer()) {
++                                if (d11 - d10 > Math.max(f2, Math.pow((double) (org.spigotmc.SpigotConfig.movedTooQuicklyMultiplier * (float) i * speed), 2)) && !this.isExemptPlayer()) {
+                                 // CraftBukkit end
+                                     PlayerConnection.LOGGER.warn("{} moved too quickly! {},{},{}", this.player.getDisplayName().getString(), d7, d8, d9);
+                                     this.a(this.player.locX(), this.player.locY(), this.player.locZ(), this.player.yaw, this.player.pitch);
+diff --git a/src/main/java/org/spigotmc/SpigotConfig.java b/src/main/java/org/spigotmc/SpigotConfig.java
+index 7a2b8948c..5d37f976d 100644
+--- a/src/main/java/org/spigotmc/SpigotConfig.java
++++ b/src/main/java/org/spigotmc/SpigotConfig.java
+@@ -332,4 +332,10 @@ public class SpigotConfig
+     {
+         movedWronglyThreshold = getDouble( "settings.moved-wrongly-threshold", 0.0625D );
+     }
++
++    public static double movedTooQuicklyMultiplier;
++    private static void movedTooQuicklyMultiplier()
++    {
++        movedTooQuicklyMultiplier = getDouble( "settings.moved-too-quickly-multiplier", 10.0D );
++    }
+ }
+-- 
+2.25.1
+

@@ -1,0 +1,44 @@
+From 6afce21adb265cc29775392327ceca362e8b720f Mon Sep 17 00:00:00 2001
+From: Andrew Steinborn <git@steinborn.me>
+Date: Fri, 13 Mar 2020 03:16:47 -0400
+Subject: [PATCH] Allow disabling randomization of initial spawn location
+
+By default, Minecraft will spawn new players within 10 blocks of the world
+spawn. This option allows you to opt out of this behavior.
+
+diff --git a/src/main/java/com/canyonmodded/config/CanyonConfig.java b/src/main/java/com/canyonmodded/config/CanyonConfig.java
+index 2648e686..fa641f27 100644
+--- a/src/main/java/com/canyonmodded/config/CanyonConfig.java
++++ b/src/main/java/com/canyonmodded/config/CanyonConfig.java
+@@ -11,6 +11,7 @@ public class CanyonConfig {
+     public static int autoSave = 6000;
+     public static int arrowDespawnRate = 1200;
+     public static int itemDespawnRate = 6000;
++    public static boolean randomizeInitialSpawn = true;
+ 
+     public static void loadConfiguration(File file) {
+         Configuration configuration = new Configuration(file);
+@@ -22,6 +23,7 @@ public class CanyonConfig {
+         autoSave = configuration.getInt("settings.auto-save-every", 6000);
+         arrowDespawnRate = configuration.getInt("optimization.arrow-despawn-rate", arrowDespawnRate);
+         itemDespawnRate = configuration.getInt("optimization.item-despawn-rate", itemDespawnRate);
++        randomizeInitialSpawn = configuration.getBoolean("settings.randomize-initial-spawn", true);
+ 
+         configuration.save();
+     }
+diff --git a/src/main/java/net/minecraft/server/EntityPlayer.java b/src/main/java/net/minecraft/server/EntityPlayer.java
+index 889e498b..6fa8f23c 100644
+--- a/src/main/java/net/minecraft/server/EntityPlayer.java
++++ b/src/main/java/net/minecraft/server/EntityPlayer.java
+@@ -49,7 +49,7 @@ public class EntityPlayer extends EntityHuman implements ICrafting {
+         int j = chunkcoordinates.z;
+         int k = chunkcoordinates.y;
+ 
+-        if (!world.worldProvider.e) {
++        if (!world.worldProvider.e && com.canyonmodded.config.CanyonConfig.randomizeInitialSpawn) { // Canyon
+             i += this.random.nextInt(20) - 10;
+             k = world.f(i, j);
+             j += this.random.nextInt(20) - 10;
+-- 
+2.25.2
+

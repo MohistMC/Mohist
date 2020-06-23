@@ -1,0 +1,61 @@
+From 603a17fac74504489b315218b89c451745a62e1b Mon Sep 17 00:00:00 2001
+From: cswhite2000 <18whitechristop@gmail.com>
+Date: Fri, 24 Aug 2018 01:01:48 -0700
+Subject: [PATCH] Add option to remove randomness in arrow trajectory
+
+
+diff --git a/src/main/java/net/minecraft/server/EntityArrow.java b/src/main/java/net/minecraft/server/EntityArrow.java
+index 2145f681..4366f34b 100644
+--- a/src/main/java/net/minecraft/server/EntityArrow.java
++++ b/src/main/java/net/minecraft/server/EntityArrow.java
+@@ -6,6 +6,7 @@ import java.util.List;
+ import org.bukkit.entity.LivingEntity;
+ import org.bukkit.event.entity.EntityCombustByEntityEvent;
+ import org.bukkit.event.player.PlayerPickupItemEvent;
++import org.github.paperspigot.PaperSpigotConfig;
+ import org.github.paperspigot.event.entity.ProjectileCollideEvent;
+ // CraftBukkit end
+ 
+@@ -96,7 +97,7 @@ public class EntityArrow extends Entity implements IProjectile {
+         this.motX = (double) (-MathHelper.sin(this.yaw / 180.0F * 3.1415927F) * MathHelper.cos(this.pitch / 180.0F * 3.1415927F));
+         this.motZ = (double) (MathHelper.cos(this.yaw / 180.0F * 3.1415927F) * MathHelper.cos(this.pitch / 180.0F * 3.1415927F));
+         this.motY = (double) (-MathHelper.sin(this.pitch / 180.0F * 3.1415927F));
+-        this.shoot(this.motX, this.motY, this.motZ, f * 1.5F, 1.0F);
++        this.shoot(this.motX, this.motY, this.motZ, f * 1.5F, PaperSpigotConfig.includeRandomnessInArrowTrajectory ? 1.0F : 0); // SportPaper
+     }
+ 
+     protected void h() {
+@@ -109,9 +110,11 @@ public class EntityArrow extends Entity implements IProjectile {
+         d0 /= (double) f2;
+         d1 /= (double) f2;
+         d2 /= (double) f2;
+-        d0 += this.random.nextGaussian() * (double) (this.random.nextBoolean() ? -1 : 1) * 0.007499999832361937D * (double) f1;
+-        d1 += this.random.nextGaussian() * (double) (this.random.nextBoolean() ? -1 : 1) * 0.007499999832361937D * (double) f1;
+-        d2 += this.random.nextGaussian() * (double) (this.random.nextBoolean() ? -1 : 1) * 0.007499999832361937D * (double) f1;
++        if (f1 != 0) {
++            d0 += this.random.nextGaussian() * (double) (this.random.nextBoolean() ? -1 : 1) * 0.007499999832361937D * (double) f1;
++            d1 += this.random.nextGaussian() * (double) (this.random.nextBoolean() ? -1 : 1) * 0.007499999832361937D * (double) f1;
++            d2 += this.random.nextGaussian() * (double) (this.random.nextBoolean() ? -1 : 1) * 0.007499999832361937D * (double) f1;
++        }
+         d0 *= (double) f;
+         d1 *= (double) f;
+         d2 *= (double) f;
+diff --git a/src/main/java/org/github/paperspigot/PaperSpigotConfig.java b/src/main/java/org/github/paperspigot/PaperSpigotConfig.java
+index 0d643309..bf847c28 100644
+--- a/src/main/java/org/github/paperspigot/PaperSpigotConfig.java
++++ b/src/main/java/org/github/paperspigot/PaperSpigotConfig.java
+@@ -196,6 +196,11 @@ public class PaperSpigotConfig
+         tabSpamLimit = getInt("settings.spam-limiter.tab-spam-limit", tabSpamLimit);
+     }
+ 
++    public static boolean includeRandomnessInArrowTrajectory = false;
++    private static void includeRandomnessInArrowTrajectory() {
++        includeRandomnessInArrowTrajectory = getBoolean("settings.include-randomness-in-arrow-trajectory", includeRandomnessInArrowTrajectory);
++    }
++
+     public static double strengthEffectModifier;
+     public static double weaknessEffectModifier;
+     private static void effectModifiers()
+-- 
+2.19.0
+

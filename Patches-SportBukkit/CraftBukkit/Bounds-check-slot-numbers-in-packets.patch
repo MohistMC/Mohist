@@ -1,0 +1,56 @@
+From: Jedediah Smith <jedediah@silencegreys.com>
+Date: Tue, 23 Jun 2015 17:18:20 -0400
+Subject: [PATCH] Bounds check slot numbers in packets
+
+
+diff --git a/src/main/java/net/minecraft/server/Container.java b/src/main/java/net/minecraft/server/Container.java
+--- a/src/main/java/net/minecraft/server/Container.java
++++ b/src/main/java/net/minecraft/server/Container.java
+@@ -8,6 +8,7 @@ import java.util.Set;
+ import javax.annotation.Nullable;
+ 
+ // CraftBukkit start
++import java.util.ArrayList;
+ import java.util.HashMap;
+ import java.util.Map;
+ import org.bukkit.craftbukkit.inventory.CraftInventory;
+@@ -21,7 +22,14 @@ import org.bukkit.inventory.InventoryView;
+ public abstract class Container {
+ 
+     public NonNullList<ItemStack> b = NonNullList.a();
+-    public List<Slot> c = Lists.newArrayList();
++    // SportBukkit start - A lot of code expects get() to return null rather than throwing ArrayIndexOutOfBoundsException
++    public List<Slot> c = new ArrayList<Slot>() {
++        @Override
++        public Slot get(int index) {
++            return index < size() ? super.get(index) : null;
++        }
++    };
++    // SportBukkit end
+     public int windowId;
+     private int dragType = -1;
+     private int g;
+diff --git a/src/main/java/net/minecraft/server/PlayerConnection.java b/src/main/java/net/minecraft/server/PlayerConnection.java
+--- a/src/main/java/net/minecraft/server/PlayerConnection.java
++++ b/src/main/java/net/minecraft/server/PlayerConnection.java
+@@ -1691,6 +1691,7 @@ public class PlayerConnection implements PacketListenerPlayIn, ITickable {
+     public void a(PacketPlayInWindowClick packetplayinwindowclick) {
+         PlayerConnectionUtils.ensureMainThread(packetplayinwindowclick, this, this.player.x());
+         if (this.player.isFrozen()) return; // CraftBukkit
++        if(packetplayinwindowclick.b() >= 0 && this.player.activeContainer.getSlot(packetplayinwindowclick.b()) == null) return; // SportBukkit - ignore packets with invalid slot
+         this.player.resetIdleTimer();
+         if (this.player.activeContainer.windowId == packetplayinwindowclick.a() && this.player.activeContainer.c(this.player)) {
+             boolean cancelled = this.player.isSpectator(); // CraftBukkit - see below if
+diff --git a/src/main/java/org/bukkit/craftbukkit/inventory/CraftInventoryView.java b/src/main/java/org/bukkit/craftbukkit/inventory/CraftInventoryView.java
+--- a/src/main/java/org/bukkit/craftbukkit/inventory/CraftInventoryView.java
++++ b/src/main/java/org/bukkit/craftbukkit/inventory/CraftInventoryView.java
+@@ -62,7 +62,8 @@ public class CraftInventoryView extends InventoryView {
+         if (slot == -999) {
+             return null;
+         }
+-        return CraftItemStack.asCraftMirror(container.getSlot(slot).getItem());
++        net.minecraft.server.Slot nmsSlot = container.getSlot(slot);
++        return nmsSlot == null ? null : CraftItemStack.asCraftMirror(nmsSlot.getItem());
+     }
+ 
+     public boolean isInTop(int rawSlot) {

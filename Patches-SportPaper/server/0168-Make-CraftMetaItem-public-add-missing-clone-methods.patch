@@ -1,0 +1,70 @@
+From 3f9a03a09144bb1472305ec039c13ddb8751f1fc Mon Sep 17 00:00:00 2001
+From: Austin Mayes <almayes@trevecca.edu>
+Date: Mon, 25 Feb 2019 15:08:18 -0600
+Subject: [PATCH] Make CraftMetaItem public, add missing clone() methods
+
+
+diff --git a/src/main/java/org/bukkit/craftbukkit/inventory/CraftMetaBanner.java b/src/main/java/org/bukkit/craftbukkit/inventory/CraftMetaBanner.java
+index 80f9ffa9..f89cc329 100644
+--- a/src/main/java/org/bukkit/craftbukkit/inventory/CraftMetaBanner.java
++++ b/src/main/java/org/bukkit/craftbukkit/inventory/CraftMetaBanner.java
+@@ -195,8 +195,15 @@ public class CraftMetaBanner extends CraftMetaItem implements BannerMeta {
+     boolean isEmpty() {
+         return super.isEmpty() && patterns.isEmpty() && base == null;
+     }
+-    
+-    
++
++    @Override
++    public CraftMetaBanner clone() {
++        CraftMetaBanner meta = (CraftMetaBanner) super.clone();
++        meta.base = this.base;
++        meta.patterns = this.patterns;
++        return meta;
++    }
++
+     @Override
+     boolean applicableTo(Material type) {
+         return type == Material.BANNER;
+diff --git a/src/main/java/org/bukkit/craftbukkit/inventory/CraftMetaBlockState.java b/src/main/java/org/bukkit/craftbukkit/inventory/CraftMetaBlockState.java
+index d60686d6..f461a35e 100644
+--- a/src/main/java/org/bukkit/craftbukkit/inventory/CraftMetaBlockState.java
++++ b/src/main/java/org/bukkit/craftbukkit/inventory/CraftMetaBlockState.java
+@@ -47,7 +47,7 @@ public class CraftMetaBlockState extends CraftMetaItem implements BlockStateMeta
+     @ItemMetaKey.Specific(ItemMetaKey.Specific.To.NBT)
+     static final ItemMetaKey BLOCK_ENTITY_TAG = new ItemMetaKey("BlockEntityTag");
+     
+-    final Material material;
++    Material material;
+     NBTTagCompound blockEntityTag;
+ 
+     CraftMetaBlockState(CraftMetaItem meta, Material material) {
+@@ -335,4 +335,12 @@ public class CraftMetaBlockState extends CraftMetaItem implements BlockStateMeta
+         blockEntityTag = new NBTTagCompound();
+         te.b(blockEntityTag);
+     }
++
++    @Override
++    public CraftMetaBlockState clone() {
++        CraftMetaBlockState meta = (CraftMetaBlockState) super.clone();
++        meta.material = this.material;
++        meta.blockEntityTag = this.blockEntityTag;
++        return meta;
++    }
+ }
+diff --git a/src/main/java/org/bukkit/craftbukkit/inventory/CraftMetaItem.java b/src/main/java/org/bukkit/craftbukkit/inventory/CraftMetaItem.java
+index 37fde0ec..04e783c3 100644
+--- a/src/main/java/org/bukkit/craftbukkit/inventory/CraftMetaItem.java
++++ b/src/main/java/org/bukkit/craftbukkit/inventory/CraftMetaItem.java
+@@ -85,7 +85,7 @@ import net.minecraft.server.IAttribute;
+  * <li> SerializableMeta.Deserializers deserializer()
+  */
+ @DelegateDeserialization(CraftMetaItem.SerializableMeta.class)
+-class CraftMetaItem implements ItemMeta, Repairable {
++public class CraftMetaItem implements ItemMeta, Repairable {
+ 
+     static class ItemMetaKey {
+ 
+-- 
+2.20.1
+

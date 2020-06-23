@@ -1,0 +1,26 @@
+From 621e900eba5c4228b08aa1720892db36cacbc667 Mon Sep 17 00:00:00 2001
+From: cswhite2000 <18whitechristop@gmail.com>
+Date: Fri, 17 Aug 2018 21:52:22 -0700
+Subject: [PATCH] Block player logins during server shutdown
+
+
+diff --git a/src/main/java/net/minecraft/server/LoginListener.java b/src/main/java/net/minecraft/server/LoginListener.java
+index 1a1ace9e..2fc69519 100644
+--- a/src/main/java/net/minecraft/server/LoginListener.java
++++ b/src/main/java/net/minecraft/server/LoginListener.java
+@@ -50,6 +50,12 @@ public class LoginListener implements PacketLoginInListener, IUpdatePlayerListBo
+     }
+ 
+     public void c() {
++        // Paper start - Do not allow logins while the server is shutting down
++        if (!MinecraftServer.getServer().isRunning()) {
++            this.disconnect(org.spigotmc.SpigotConfig.restartMessage);
++            return;
++        }
++        // Paper end
+         if (this.g == LoginListener.EnumProtocolState.READY_TO_ACCEPT) {
+             this.b();
+         } else if (this.g == LoginListener.EnumProtocolState.e) {
+-- 
+2.19.0
+

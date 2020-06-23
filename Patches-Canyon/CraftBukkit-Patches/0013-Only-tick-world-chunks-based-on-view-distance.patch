@@ -1,0 +1,24 @@
+From 739d880391caafd3ca9135eb95833368ab0bf1e7 Mon Sep 17 00:00:00 2001
+From: Andrew Steinborn <git@steinborn.me>
+Date: Sun, 29 Sep 2019 22:37:16 -0400
+Subject: [PATCH] Only tick world chunks based on view distance
+
+It is of little use for us to tick chunks that players can not see, unless we
+want to generate more work for the server.
+
+diff --git a/src/main/java/net/minecraft/server/World.java b/src/main/java/net/minecraft/server/World.java
+index 8c68eb15..4c19b963 100644
+--- a/src/main/java/net/minecraft/server/World.java
++++ b/src/main/java/net/minecraft/server/World.java
+@@ -1860,7 +1860,7 @@ public class World implements IBlockAccess {
+ 
+             i = MathHelper.floor(entityhuman.locX / 16.0D);
+             j = MathHelper.floor(entityhuman.locZ / 16.0D);
+-            byte b0 = 9;
++            byte b0 = (byte) getServer().getViewDistance(); // Canyon - tick only based on view distance
+ 
+             for (k = -b0; k <= b0; ++k) {
+                 for (l = -b0; l <= b0; ++l) {
+-- 
+2.25.2
+

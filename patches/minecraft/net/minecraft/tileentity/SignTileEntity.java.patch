@@ -4,13 +4,13 @@
  import net.minecraft.world.server.ServerWorld;
  import net.minecraftforge.api.distmarker.Dist;
  import net.minecraftforge.api.distmarker.OnlyIn;
-+import org.bukkit.command.CommandSender;
++import org.bukkit.command.CommandSender; // CraftBukkit
  
 -public class SignTileEntity extends TileEntity {
 +public class SignTileEntity extends TileEntity implements ICommandSource { // CraftBukkit - implements
     public final ITextComponent[] field_145915_a = new ITextComponent[]{new StringTextComponent(""), new StringTextComponent(""), new StringTextComponent(""), new StringTextComponent("")};
 -   private boolean field_145916_j = true;
-+   public boolean field_145916_j = true; // private->public CraftBukkit
++   public boolean field_145916_j = true;
     private PlayerEntity field_145917_k;
     private final String[] field_212367_h = new String[4];
     private DyeColor field_214073_l = DyeColor.BLACK;
@@ -27,13 +27,14 @@
        p_189515_1_.func_74778_a("Color", this.field_214073_l.func_176762_d());
        return p_189515_1_;
     }
-@@ -50,17 +57,37 @@
+@@ -50,17 +57,38 @@
        super.func_145839_a(p_145839_1_);
        this.field_214073_l = DyeColor.func_204271_a(p_145839_1_.func_74779_i("Color"), DyeColor.BLACK);
  
 +      // CraftBukkit start - Add an option to convert signs correctly
 +      // This is done with a flag instead of all the time because
 +      // we have no way to tell whether a sign is from 1.7.10 or 1.8
++
 +      boolean oldSign = Boolean.getBoolean("convertLegacySigns") && !p_145839_1_.func_74767_n("Bukkit.isConverted");
 +
        for(int i = 0; i < 4; ++i) {
@@ -51,7 +52,7 @@
 +            ITextComponent itextcomponent = ITextComponent.Serializer.func_150699_a(s.isEmpty() ? "\"\"" : s);
 +
 +            if (oldSign) {
-+               field_145915_a[i] = org.bukkit.craftbukkit.v1_15_R1.util.CraftChatMessage.fromString(s)[0];
++               field_145915_a[i] = org.bukkit.craftbukkit.util.CraftChatMessage.fromString(s)[0];
 +               continue;
 +            }
 +            // CraftBukkit end
@@ -72,7 +73,7 @@
           }
  
           this.field_212367_h[i] = null;
-@@ -139,7 +166,8 @@
+@@ -139,7 +167,8 @@
     public CommandSource func_195539_a(@Nullable ServerPlayerEntity p_195539_1_) {
        String s = p_195539_1_ == null ? "Sign" : p_195539_1_.func_200200_C_().getString();
        ITextComponent itextcomponent = (ITextComponent)(p_195539_1_ == null ? new StringTextComponent("Sign") : p_195539_1_.func_145748_c_());
@@ -82,7 +83,7 @@
     }
  
     public DyeColor func_214066_f() {
-@@ -150,10 +178,37 @@
+@@ -150,10 +179,37 @@
        if (p_214068_1_ != this.func_214066_f()) {
           this.field_214073_l = p_214068_1_;
           this.func_70296_d();
@@ -93,6 +94,7 @@
           return false;
        }
     }
++
 +   // CraftBukkit start
 +   @Override
 +   public void func_145747_a(ITextComponent component) {
@@ -116,8 +118,7 @@
 +
 +   @Override
 +   public CommandSender getBukkitSender(CommandSource p0) {
-+      return p0.func_197022_f() != null ? p0.func_197022_f().getBukkitSender(p0) : new org.bukkit.craftbukkit.v1_15_R1.command.CraftBlockCommandSender(p0, this);
++      return p0.func_197022_f() != null ? p0.func_197022_f().getBukkitSender(p0) : new org.bukkit.craftbukkit.command.CraftBlockCommandSender(p0, this);
 +   }
 +   // CraftBukkit end
-+
  }

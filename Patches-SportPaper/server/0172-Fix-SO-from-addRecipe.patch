@@ -1,0 +1,22 @@
+From 43826656465f307f3386c232822cb1a637cb32bc Mon Sep 17 00:00:00 2001
+From: Austin Mayes <austin@avicus.net>
+Date: Sat, 30 Mar 2019 23:32:45 -0500
+Subject: [PATCH] Fix SO from addRecipe
+
+
+diff --git a/src/main/java/org/bukkit/craftbukkit/CraftServer.java b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
+index dba05d97..7ffc5f5b 100644
+--- a/src/main/java/org/bukkit/craftbukkit/CraftServer.java
++++ b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
+@@ -1024,7 +1024,7 @@ public final class CraftServer implements Server {
+ 
+     @Override
+     public boolean addRecipe(Recipe recipe) {
+-        getWorlds().forEach(world -> addRecipe(recipe));
++        getWorlds().forEach(world -> world.addRecipe(recipe));
+         return true;
+     }
+ 
+-- 
+2.20.1
+

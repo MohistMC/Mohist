@@ -1,9 +1,8 @@
 --- a/net/minecraft/inventory/MerchantInventory.java
 +++ b/net/minecraft/inventory/MerchantInventory.java
-@@ -1,7 +1,11 @@
+@@ -1,7 +1,10 @@
  package net.minecraft.inventory;
  
-+import java.util.ArrayList;
 +import java.util.List;
  import javax.annotation.Nullable;
  import net.minecraft.entity.merchant.IMerchant;
@@ -12,13 +11,13 @@
  import net.minecraft.entity.player.PlayerEntity;
  import net.minecraft.item.ItemStack;
  import net.minecraft.item.MerchantOffer;
-@@ -9,15 +13,67 @@
+@@ -9,15 +12,24 @@
  import net.minecraft.util.NonNullList;
  import net.minecraftforge.api.distmarker.Dist;
  import net.minecraftforge.api.distmarker.OnlyIn;
 +import org.bukkit.Location;
-+import org.bukkit.craftbukkit.v1_15_R1.entity.CraftAbstractVillager;
-+import org.bukkit.craftbukkit.v1_15_R1.entity.CraftHumanEntity;
++import org.bukkit.craftbukkit.entity.CraftAbstractVillager;
++import org.bukkit.craftbukkit.entity.CraftHumanEntity;
 +import org.bukkit.entity.HumanEntity;
 +import org.bukkit.inventory.InventoryHolder;
  
@@ -28,13 +27,29 @@
     @Nullable
     private MerchantOffer field_214026_c;
 -   private int field_70473_e;
-+   public int field_70473_e; // private->public CraftBukkit
++   public int field_70473_e;
     private int field_214027_e;
  
 +   // CraftBukkit start - add fields and methods
-+   public List<HumanEntity> transaction = new ArrayList<>();
++   public List<HumanEntity> transaction = new java.util.ArrayList<HumanEntity>();
 +   private int maxStack = MAX_STACK;
 +
+    public MerchantInventory(IMerchant p_i50071_1_) {
+       this.field_70476_a = p_i50071_1_;
+    }
+@@ -74,10 +86,51 @@
+ 
+    }
+ 
++   @Override
++   public int func_70297_j_() {
++      return maxStack;
++   }
++
+    public boolean func_70300_a(PlayerEntity p_70300_1_) {
+       return this.field_70476_a.func_70931_l_() == p_70300_1_;
+    }
+ 
 +   @Override
 +   public List<ItemStack> getContents() {
 +      return this.field_70474_b;
@@ -58,7 +73,7 @@
 +
 +   @Override
 +   public InventoryHolder getOwner() {
-+      return (this.field_70476_a instanceof AbstractVillagerEntity) ? ((CraftAbstractVillager) ((AbstractVillagerEntity) this.field_70476_a).getBukkitEntity()) : null;
++      return (this.field_70476_a instanceof AbstractVillagerEntity) ? ((CraftAbstractVillager)((AbstractVillagerEntity)this.field_70476_a).getBukkitEntity()) : null;
 +   }
 +
 +   @Override
@@ -68,16 +83,9 @@
 +
 +   @Override
 +   public Location getLocation() {
-+      return (this.field_70476_a instanceof VillagerEntity) ? ((VillagerEntity) this.field_70476_a).getBukkitEntity().getLocation() : null;
++      return (this.field_70476_a instanceof VillagerEntity) ? ((VillagerEntity)this.field_70476_a).getBukkitEntity().getLocation() : null;
 +   }
 +
-+   @Override
-+   public int func_70297_j_() {
-+      return maxStack;
-+   }
-+
-+   // CraftBukkit end
-+
-    public MerchantInventory(IMerchant p_i50071_1_) {
-       this.field_70476_a = p_i50071_1_;
+    public void func_70296_d() {
+       this.func_70470_g();
     }

@@ -1,0 +1,49 @@
+From: Jedediah Smith <jedediah@silencegreys.com>
+Date: Mon, 16 Feb 2015 04:58:46 -0500
+Subject: [PATCH] Efficiently search for blocks by material
+
+
+diff --git a/src/main/java/org/bukkit/craftbukkit/CraftChunk.java b/src/main/java/org/bukkit/craftbukkit/CraftChunk.java
+--- a/src/main/java/org/bukkit/craftbukkit/CraftChunk.java
++++ b/src/main/java/org/bukkit/craftbukkit/CraftChunk.java
+@@ -2,6 +2,8 @@ package org.bukkit.craftbukkit;
+ 
+ import java.lang.ref.WeakReference;
+ import java.util.Arrays;
++import java.util.HashSet;
++import java.util.Set;
+ 
+ import net.minecraft.server.*;
+ 
+@@ -74,6 +76,31 @@ public class CraftChunk implements Chunk {
+         return new CraftBlock(this, (getX() << 4) | (x & 0xF), y, (getZ() << 4) | (z & 0xF));
+     }
+ 
++    @Override
++    public Set<Block> getBlocks(Material material) {
++        Set<Block> blocks = new HashSet<Block>();
++
++        net.minecraft.server.Block nmsBlock = CraftMagicNumbers.getBlock(material);
++        net.minecraft.server.Chunk chunk = getHandle();
++
++        for(ChunkSection section : chunk.getSections()) {
++            if(section == null || section.a()) continue; // ChunkSection.a() -> true if section is empty
++
++            for(int x = 0; x < 16; x++) {
++                for(int y = 0; y < 16; y++) {
++                    for(int z = 0; z < 16; z++) {
++                        IBlockData blockData = section.getType(x, y, z);
++                        if(blockData.getBlock().equals(nmsBlock)) {
++                            blocks.add(getBlock(x, section.getYPosition() + y, z));
++                        }
++                    }
++                }
++            }
++        }
++
++        return blocks;
++    }
++
+     public Entity[] getEntities() {
+         int count = 0, index = 0;
+         net.minecraft.server.Chunk chunk = getHandle();

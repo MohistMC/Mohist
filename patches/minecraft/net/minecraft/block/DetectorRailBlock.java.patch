@@ -4,26 +4,27 @@
  import net.minecraft.world.IWorldReader;
  import net.minecraft.world.World;
  import net.minecraft.world.server.ServerWorld;
-+import org.bukkit.event.block.BlockRedstoneEvent;
++import org.bukkit.event.block.BlockRedstoneEvent; // CraftBukkit
  
  public class DetectorRailBlock extends AbstractRailBlock {
     public static final EnumProperty<RailShape> field_176573_b = BlockStateProperties.field_208166_S;
-@@ -76,6 +77,14 @@
-       if (!list.isEmpty()) {
+@@ -77,6 +78,15 @@
           flag1 = true;
        }
+ 
 +      // CraftBukkit start
 +      if (flag != flag1) {
-+         org.bukkit.block.Block block = p_176570_1_.getWorldCB().getBlockAt(p_176570_2_.func_177958_n(), p_176570_2_.func_177956_o(), p_176570_2_.func_177952_p());
-+         BlockRedstoneEvent eventRedstone = new BlockRedstoneEvent(block, flag ? 15 : 0, flag1 ? 15 : 0);
++         final org.bukkit.block.Block block = p_176570_1_.getWorldCB().getBlockAt(p_176570_2_.func_177958_n(), p_176570_2_.func_177956_o(), p_176570_2_.func_177952_p());
++         final BlockRedstoneEvent eventRedstone = new BlockRedstoneEvent(block, flag ? 15 : 0, flag1 ? 15 : 0);
 +         p_176570_1_.getServerCB().getPluginManager().callEvent(eventRedstone);
-+         flag1 = eventRedstone.getNewCurrent() > 0;
++         flag1 = (eventRedstone.getNewCurrent() > 0);
 +      }
 +      // CraftBukkit end
- 
++
        if (flag1 && !flag) {
           BlockState blockstate = p_176570_3_.func_206870_a(field_176574_M, Boolean.valueOf(true));
-@@ -129,6 +138,8 @@
+          p_176570_1_.func_180501_a(p_176570_2_, blockstate, 3);
+@@ -129,6 +139,8 @@
  
     public int func_180641_l(BlockState p_180641_1_, World p_180641_2_, BlockPos p_180641_3_) {
        if (p_180641_1_.func_177229_b(field_176574_M)) {

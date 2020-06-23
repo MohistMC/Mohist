@@ -13,7 +13,7 @@
              }
  
 -            WanderingTraderEntity wanderingtraderentity = EntityType.field_220351_aK.func_220342_a(this.field_221247_b, (CompoundNBT)null, (ITextComponent)null, (PlayerEntity)null, blockpos2, SpawnReason.EVENT, false, false);
-+            WanderingTraderEntity wanderingtraderentity = EntityType.field_220351_aK.spawn(this.field_221247_b, (CompoundNBT)null, (ITextComponent)null, (PlayerEntity)null, blockpos2, SpawnReason.EVENT, false, false, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.NATURAL); // CraftBukkit
++            WanderingTraderEntity wanderingtraderentity = EntityType.field_220351_aK.spawnCreature(this.field_221247_b, (CompoundNBT)null, (ITextComponent)null, (PlayerEntity)null, blockpos2, SpawnReason.EVENT, false, false, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.NATURAL); // CraftBukkit
              if (wanderingtraderentity != null) {
                 for(int j = 0; j < 2; ++j) {
                    this.func_221243_a(wanderingtraderentity, 4);
@@ -22,7 +22,7 @@
        BlockPos blockpos = this.func_221244_a(new BlockPos(p_221243_1_), p_221243_2_);
        if (blockpos != null) {
 -         TraderLlamaEntity traderllamaentity = EntityType.field_220354_ax.func_220342_a(this.field_221247_b, (CompoundNBT)null, (ITextComponent)null, (PlayerEntity)null, blockpos, SpawnReason.EVENT, false, false);
-+         TraderLlamaEntity traderllamaentity = EntityType.field_220354_ax.spawn(this.field_221247_b, (CompoundNBT)null, (ITextComponent)null, (PlayerEntity)null, blockpos, SpawnReason.EVENT, false, false, CreatureSpawnEvent.SpawnReason.NATURAL); // CraftBukkit
++         TraderLlamaEntity traderllamaentity = EntityType.field_220354_ax.spawnCreature(this.field_221247_b, (CompoundNBT)null, (ITextComponent)null, (PlayerEntity)null, blockpos, SpawnReason.EVENT, false, false, CreatureSpawnEvent.SpawnReason.NATURAL); // CraftBukkit
           if (traderllamaentity != null) {
              traderllamaentity.func_110162_b(p_221243_1_, true);
           }

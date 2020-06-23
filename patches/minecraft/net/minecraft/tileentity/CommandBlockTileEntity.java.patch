@@ -1,22 +1,13 @@
 --- a/net/minecraft/tileentity/CommandBlockTileEntity.java
 +++ b/net/minecraft/tileentity/CommandBlockTileEntity.java
-@@ -15,6 +15,8 @@
- import net.minecraft.world.server.ServerWorld;
- import net.minecraftforge.api.distmarker.Dist;
- import net.minecraftforge.api.distmarker.OnlyIn;
-+import org.bukkit.command.CommandSender;
-+import org.bukkit.craftbukkit.v1_15_R1.command.CraftBlockCommandSender;
- 
- public class CommandBlockTileEntity extends TileEntity {
-    private boolean field_184259_a;
-@@ -22,6 +24,13 @@
+@@ -22,6 +22,13 @@
     private boolean field_184261_g;
     private boolean field_184262_h;
     private final CommandBlockLogic field_145994_a = new CommandBlockLogic() {
 +      // CraftBukkit start
 +      @Override
-+      public CommandSender getBukkitSender(CommandSource wrapper) {
-+         return new CraftBlockCommandSender(wrapper, CommandBlockTileEntity.this);
++      public org.bukkit.command.CommandSender getBukkitSender(CommandSource wrapper) {
++         return new org.bukkit.craftbukkit.command.CraftBlockCommandSender(wrapper, CommandBlockTileEntity.this);
 +      }
 +      // CraftBukkit end
 +

@@ -1,0 +1,208 @@
+From e77f0e36d2222c007c11bb85b3c39061fc0c6aa6 Mon Sep 17 00:00:00 2001
+From: Ashcon Partovi <ashcon@partovi.net>
+Date: Sat, 27 Apr 2019 12:36:37 -0700
+Subject: [PATCH] Use fast util collections
+
+
+diff --git a/src/main/java/net/minecraft/server/ChunkProviderServer.java b/src/main/java/net/minecraft/server/ChunkProviderServer.java
+index 0602beac..775cbd48 100644
+--- a/src/main/java/net/minecraft/server/ChunkProviderServer.java
++++ b/src/main/java/net/minecraft/server/ChunkProviderServer.java
+@@ -27,18 +27,25 @@ import org.bukkit.event.world.ChunkUnloadEvent;
+ import org.github.paperspigot.event.ServerExceptionEvent;
+ import org.github.paperspigot.exception.ServerInternalException;
+ // CraftBukkit end
++// SportPaper start
++import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
++import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
++import it.unimi.dsi.fastutil.longs.LongArraySet;
++import it.unimi.dsi.fastutil.longs.LongIterator;
++import it.unimi.dsi.fastutil.longs.LongSet;
++// SportPaper end
+ 
+ public class ChunkProviderServer implements IChunkProvider {
+ 
+     private static final Logger b = LogManager.getLogger();
+-    public LongHashSet unloadQueue = new LongHashSet(); // CraftBukkit - LongHashSet
++    public LongSet unloadQueue = new LongArraySet(); // SportPaper
+     public Chunk emptyChunk;
+     public IChunkProvider chunkProvider;
+     private IChunkLoader chunkLoader;
+     public boolean forceChunkLoad = false; // CraftBukkit - true -> false
+     // Paper start
+     protected Chunk lastChunkByPos = null;
+-    public Long2ObjectOpenHashMap<Chunk> chunks = new Long2ObjectOpenHashMap<Chunk>(8192) {
++    public Long2ObjectMap<Chunk> chunks = new Long2ObjectOpenHashMap<Chunk>(8192, 0.5f) {
+         @Override
+         public Chunk get(long key) {
+             if (lastChunkByPos != null && key == lastChunkByPos.chunkKey) {
+@@ -97,7 +104,7 @@ public class ChunkProviderServer implements IChunkProvider {
+         if (this.world.worldProvider.e()) {
+             if (!this.world.c(i, j)) {
+                 // CraftBukkit start
+-                this.unloadQueue.add(i, j);
++                this.unloadQueue.add(LongHash.toLong(i, j)); // SportPaper
+ 
+                 Chunk c = chunks.get(LongHash.toLong(i, j));
+                 if (c != null) {
+@@ -107,7 +114,7 @@ public class ChunkProviderServer implements IChunkProvider {
+             }
+         } else {
+             // CraftBukkit start
+-            this.unloadQueue.add(i, j);
++            this.unloadQueue.add(LongHash.toLong(i, j)); // SportPaper
+ 
+             Chunk c = chunks.get(LongHash.toLong(i, j));
+             if (c != null) {
+@@ -145,7 +152,7 @@ public class ChunkProviderServer implements IChunkProvider {
+     }
+ 
+     public Chunk getChunkAt(int i, int j, Runnable runnable) {
+-        unloadQueue.remove(i, j);
++        unloadQueue.remove(LongHash.toLong(i, j)); // SportPaper
+         Chunk chunk = chunks.get(LongHash.toLong(i, j));
+         ChunkRegionLoader loader = null;
+ 
+@@ -173,7 +180,7 @@ public class ChunkProviderServer implements IChunkProvider {
+         return chunk;
+     }
+     public Chunk originalGetChunkAt(int i, int j) {
+-        this.unloadQueue.remove(i, j);
++        this.unloadQueue.remove(LongHash.toLong(i, j)); // SportPaper
+         Chunk chunk = (Chunk) this.chunks.get(LongHash.toLong(i, j));
+         boolean newChunk = false;
+         // CraftBukkit end
+@@ -436,8 +443,12 @@ public class ChunkProviderServer implements IChunkProvider {
+         if (!this.world.savingDisabled) {
+             // CraftBukkit start
+             Server server = this.world.getServer();
+-            for (int i = 0; i < 100 && !this.unloadQueue.isEmpty(); ++i) {
+-                long chunkcoordinates = this.unloadQueue.popFirst();
++            // SportPaper start
++            LongIterator iterator = unloadQueue.iterator();
++            for (int i = 0; i < 100 && iterator.hasNext(); ++i) {
++                long chunkcoordinates = iterator.next();
++                iterator.remove();
++                // SportPaper end
+                 Chunk chunk = this.chunks.get(chunkcoordinates);
+                 if (chunk == null) continue;
+                 unloadChunk(chunk); // SportPaper - Move to own method
+diff --git a/src/main/java/net/minecraft/server/DataWatcher.java b/src/main/java/net/minecraft/server/DataWatcher.java
+index dec091e7..f1e70d98 100644
+--- a/src/main/java/net/minecraft/server/DataWatcher.java
++++ b/src/main/java/net/minecraft/server/DataWatcher.java
+@@ -10,18 +10,25 @@ import java.util.Map;
+ import java.util.concurrent.locks.ReadWriteLock;
+ import java.util.concurrent.locks.ReentrantReadWriteLock;
+ import org.apache.commons.lang3.ObjectUtils;
++// SportPaper start
++import it.unimi.dsi.fastutil.objects.Object2IntMap;
++import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
++import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
++import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
++import it.unimi.dsi.fastutil.ints.IntIterator;
++// SportPaper end
+ 
+ public class DataWatcher {
+ 
+     private final Entity a;
+     private boolean b = true;
+-    // Spigot Start
+-    private static final gnu.trove.map.TObjectIntMap classToId = new gnu.trove.map.hash.TObjectIntHashMap( 10, 0.5f, -1 );
+-    private final gnu.trove.map.TIntObjectMap dataValues = new gnu.trove.map.hash.TIntObjectHashMap( 10, 0.5f, -1 );
++    // SportPaper start
++    private static final Object2IntMap<Class<?>> classToId = new Object2IntOpenHashMap(10, 0.5f);
++    private final Int2ObjectMap dataValues = new Int2ObjectOpenHashMap(10, 0.5f);
+     // These exist as an attempt at backwards compatability for (broken) NMS plugins
+-    private static final Map<Class<?>, Integer> c = gnu.trove.TDecorators.wrap( classToId );
+-    private final Map<Integer, DataWatcher.WatchableObject> d = gnu.trove.TDecorators.wrap( dataValues );
+-    // Spigot End
++    private static final Map<Class<?>, Integer> c = classToId;
++    private final Map<Integer, DataWatcher.WatchableObject> d = dataValues;
++	// SportPaper end
+     private boolean e;
+     private ReadWriteLock f = new ReentrantReadWriteLock();
+ 
+@@ -144,7 +151,7 @@ public class DataWatcher {
+ 
+         if (this.e) {
+             this.f.readLock().lock();
+-            Iterator iterator = this.dataValues.valueCollection().iterator(); // Spigot
++            Iterator iterator = this.dataValues.values().iterator(); // SportPaper
+ 
+             while (iterator.hasNext()) {
+                 DataWatcher.WatchableObject datawatcher_watchableobject = (DataWatcher.WatchableObject) iterator.next();
+@@ -179,7 +186,7 @@ public class DataWatcher {
+ 
+     public void a(PacketDataSerializer packetdataserializer) throws IOException {
+         this.f.readLock().lock();
+-        Iterator iterator = this.dataValues.valueCollection().iterator(); // Spigot
++        Iterator iterator = this.dataValues.values().iterator(); // SportPaper
+ 
+         while (iterator.hasNext()) {
+             DataWatcher.WatchableObject datawatcher_watchableobject = (DataWatcher.WatchableObject) iterator.next();
+@@ -196,7 +203,7 @@ public class DataWatcher {
+ 
+         this.f.readLock().lock();
+ 
+-        arraylist.addAll(this.dataValues.valueCollection()); // Spigot
++        arraylist.addAll(this.dataValues.values()); // SportPaper
+         // Spigot start - copy ItemStacks to prevent ConcurrentModificationExceptions
+         for ( int i = 0; i < arraylist.size(); i++ )
+         {
+diff --git a/src/main/java/net/minecraft/server/WorldServer.java b/src/main/java/net/minecraft/server/WorldServer.java
+index e8cdce2a..9a2508c8 100644
+--- a/src/main/java/net/minecraft/server/WorldServer.java
++++ b/src/main/java/net/minecraft/server/WorldServer.java
+@@ -404,7 +404,7 @@ public class WorldServer extends World implements IAsyncTaskHandler {
+                 int chunkX = World.keyToX( chunkCoord );
+                 int chunkZ = World.keyToZ( chunkCoord );
+                 // If unloaded, or in procedd of being unloaded, drop it
+-                if ( ( !this.chunkProvider.isChunkLoaded( chunkX, chunkZ ) ) || ( this.chunkProviderServer.unloadQueue.contains( chunkX, chunkZ ) ) )
++                if ( ( !this.chunkProvider.isChunkLoaded( chunkX, chunkZ ) ) || ( this.chunkProviderServer.unloadQueue.contains( LongHash.toLong(chunkX, chunkZ) ) ) )
+                 {
+                     iter.remove();
+                     continue;
+diff --git a/src/main/java/org/bukkit/craftbukkit/CraftWorld.java b/src/main/java/org/bukkit/craftbukkit/CraftWorld.java
+index 3c42fec5..d358ea58 100644
+--- a/src/main/java/org/bukkit/craftbukkit/CraftWorld.java
++++ b/src/main/java/org/bukkit/craftbukkit/CraftWorld.java
+@@ -280,7 +280,7 @@ public class CraftWorld implements World {
+             world.chunkProviderServer.saveChunkNOP(chunk);
+         }
+ 
+-        world.chunkProviderServer.unloadQueue.remove(x, z);
++        world.chunkProviderServer.unloadQueue.remove(LongHash.toLong(x, z));
+         world.chunkProviderServer.chunks.remove(LongHash.toLong(x, z));
+ 
+         return true;
+@@ -289,7 +289,7 @@ public class CraftWorld implements World {
+     public boolean regenerateChunk(int x, int z) {
+         unloadChunk(x, z, false, false);
+ 
+-        world.chunkProviderServer.unloadQueue.remove(x, z);
++        world.chunkProviderServer.unloadQueue.remove(LongHash.toLong(x, z));
+ 
+         net.minecraft.server.Chunk chunk = null;
+ 
+@@ -338,7 +338,7 @@ public class CraftWorld implements World {
+             return world.chunkProviderServer.getChunkAt(x, z) != null;
+         }
+ 
+-        world.chunkProviderServer.unloadQueue.remove(x, z);
++        world.chunkProviderServer.unloadQueue.remove(LongHash.toLong(x, z));
+         net.minecraft.server.Chunk chunk = world.chunkProviderServer.chunks.get(LongHash.toLong(x, z));
+ 
+         if (chunk == null) {
+@@ -1568,7 +1568,7 @@ public class CraftWorld implements World {
+             }
+ 
+             // Already unloading?
+-            if (cps.unloadQueue.contains(chunk.locX, chunk.locZ)) {
++            if (cps.unloadQueue.contains(LongHash.toLong(chunk.locX, chunk.locZ))) {
+                 continue;
+             }
+ 
+-- 
+2.20.1
+

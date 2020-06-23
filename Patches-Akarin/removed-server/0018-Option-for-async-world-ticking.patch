@@ -1,0 +1,894 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?=E3=84=97=E3=84=A0=CB=8B=20=E3=84=91=E3=84=A7=CB=8A?=
+ <tsao-chi@the-lingo.org>
+Date: Sun, 31 May 2020 11:21:53 +0800
+Subject: [PATCH] Option for async world ticking
+
+Improted from https://github.com/tr7zw/YAPFA/blob/1a54ef2f995f049d4fcf1f2bd084691126f10046/patches/server/0040-Add-MainThreadHandler-to-allow-custom-MainThreads.patch and https://github.com/tr7zw/YAPFA/blob/1a54ef2f995f049d4fcf1f2bd084691126f10046/patches/server/0046-Option-for-async-world-ticking.patch
+
+diff --git a/src/main/java/de/tr7zw/yapfa/MainThreadHandler.java b/src/main/java/de/tr7zw/yapfa/MainThreadHandler.java
+new file mode 100644
+index 0000000000000000000000000000000000000000..f66e15e76e1f4b1357b386eec162be5616b70309
+--- /dev/null
++++ b/src/main/java/de/tr7zw/yapfa/MainThreadHandler.java
+@@ -0,0 +1,24 @@
++package de.tr7zw.yapfa;
++
++import org.bukkit.craftbukkit.util.WeakCollection;
++
++/**
++ * All Threads that are stored in this Collection are considered "MainThread"
++ * for all intents and purposes.
++ * 
++ * @author tr7zw
++ *
++ */
++public class MainThreadHandler {
++
++	private static WeakCollection<Thread> weakMainThreads = new WeakCollection<Thread>();
++
++	public static void registerThread(Thread thread) {
++		weakMainThreads.add(thread);
++	}
++
++	public static boolean isMainThread(Thread thread) {
++		return weakMainThreads.contains(thread);
++	}
++
++}
+diff --git a/src/main/java/io/akarin/server/Config.java b/src/main/java/io/akarin/server/Config.java
+index 2ac8f02a97429f04f3e5c9206ec228edccaf24c9..6dc25ec54fb0bcbc7bab3925d7a7743c692203d0 100644
+--- a/src/main/java/io/akarin/server/Config.java
++++ b/src/main/java/io/akarin/server/Config.java
+@@ -96,6 +96,11 @@ public final class Config {
+         return Config.config.getDouble(path, dfl);
+     }
+ 
++    public static boolean asyncWorldTick = false;
++    private static void asyncWorldTick() {
++    	asyncWorldTick = getBoolean("asyncWorldTick", false);
++    }
++
+     public static final class WorldConfig {
+ 
+         public final String worldName;
+diff --git a/src/main/java/net/minecraft/server/ChunkMapDistance.java b/src/main/java/net/minecraft/server/ChunkMapDistance.java
+index 5b63792d0e27c8801de3ca1658baf736f61473f7..7e142a362098c9245b74646bfccbbdfe06b1dbd8 100644
+--- a/src/main/java/net/minecraft/server/ChunkMapDistance.java
++++ b/src/main/java/net/minecraft/server/ChunkMapDistance.java
+@@ -108,6 +108,7 @@ public abstract class ChunkMapDistance {
+     protected void purgeTickets() {
+         com.tuinity.tuinity.util.TickThread.softEnsureTickThread("Async purge tickets"); // Tuinity
+         ++this.currentTick;
++        synchronized (tickets) {
+         ObjectIterator objectiterator = this.tickets.long2ObjectEntrySet().fastIterator();
+ 
+         int[] tempLevel = new int[] { PlayerChunkMap.GOLDEN_TICKET + 1 }; // Tuinity - delay chunk unloads
+@@ -142,7 +143,7 @@ public abstract class ChunkMapDistance {
+             }
+         }
+ 
+-    }
++    }}
+ 
+     private static int getLowestTicketLevel(ArraySetSorted<Ticket<?>> arraysetsorted) { return a(arraysetsorted); } // Tuinity - OBFHELPER
+     private static int a(ArraySetSorted<Ticket<?>> arraysetsorted) {
+@@ -267,7 +268,9 @@ public abstract class ChunkMapDistance {
+         }
+ 
+         if (arraysetsorted.isEmpty()) {
+-            this.tickets.remove(i);
++        	synchronized (tickets) {
++        		this.tickets.remove(i);
++        	}
+         }
+ 
+         this.e.b(i, a(arraysetsorted), false);
+@@ -384,9 +387,11 @@ public abstract class ChunkMapDistance {
+ 
+     private ArraySetSorted<Ticket<?>> e(long i) {
+         com.tuinity.tuinity.util.TickThread.softEnsureTickThread("Async tickets compute"); // Tuinity
++        synchronized (tickets) {
+         return (ArraySetSorted) this.tickets.computeIfAbsent(i, (j) -> {
+             return ArraySetSorted.a(4);
+         });
++        }
+     }
+ 
+     protected void a(ChunkCoordIntPair chunkcoordintpair, boolean flag) {
+@@ -427,16 +432,18 @@ public abstract class ChunkMapDistance {
+     }
+ 
+     protected String c(long i) {
+-        ArraySetSorted<Ticket<?>> arraysetsorted = (ArraySetSorted) this.tickets.get(i);
+-        String s;
++    	synchronized (tickets) {
++    		ArraySetSorted<Ticket<?>> arraysetsorted = (ArraySetSorted) this.tickets.get(i);
++            String s;
+ 
+-        if (arraysetsorted != null && !arraysetsorted.isEmpty()) {
+-            s = ((Ticket) arraysetsorted.b()).toString();
+-        } else {
+-            s = "no_ticket";
+-        }
++            if (arraysetsorted != null && !arraysetsorted.isEmpty()) {
++                s = ((Ticket) arraysetsorted.b()).toString();
++            } else {
++                s = "no_ticket";
++            }
+ 
+-        return s;
++            return s;
++		}
+     }
+ 
+     protected void setNoTickViewDistance(int i) { // Paper - force abi breakage on usage change
+@@ -466,6 +473,7 @@ public abstract class ChunkMapDistance {
+         com.tuinity.tuinity.util.TickThread.softEnsureTickThread("Async ticket remove"); // Tuinity
+         Ticket<T> target = new Ticket<>(ticketType, ticketLevel, ticketIdentifier);
+ 
++        synchronized (tickets) {
+         for (java.util.Iterator<Entry<ArraySetSorted<Ticket<?>>>> iterator = this.tickets.long2ObjectEntrySet().fastIterator(); iterator.hasNext();) {
+             Entry<ArraySetSorted<Ticket<?>>> entry = iterator.next();
+             ArraySetSorted<Ticket<?>> tickets = entry.getValue();
+@@ -479,6 +487,7 @@ public abstract class ChunkMapDistance {
+                 }
+             }
+         }
++        }
+     }
+     // CraftBukkit end
+ 
+@@ -490,9 +499,11 @@ public abstract class ChunkMapDistance {
+ 
+         @Override
+         protected int b(long i) {
+-            ArraySetSorted<Ticket<?>> arraysetsorted = (ArraySetSorted) ChunkMapDistance.this.tickets.get(i);
++        	synchronized (tickets) {
++        		ArraySetSorted<Ticket<?>> arraysetsorted = (ArraySetSorted) ChunkMapDistance.this.tickets.get(i);
+ 
+-            return arraysetsorted == null ? Integer.MAX_VALUE : (arraysetsorted.isEmpty() ? Integer.MAX_VALUE : ((Ticket) arraysetsorted.b()).b());
++                return arraysetsorted == null ? Integer.MAX_VALUE : (arraysetsorted.isEmpty() ? Integer.MAX_VALUE : ((Ticket) arraysetsorted.b()).b());
++			}
+         }
+ 
+         @Override
+diff --git a/src/main/java/net/minecraft/server/ChunkProviderServer.java b/src/main/java/net/minecraft/server/ChunkProviderServer.java
+index 4c461cc4b731f34815e10f04b186689181615bc9..0b3df08d45e80be4c8c0ae9865aef4a708322bf7 100644
+--- a/src/main/java/net/minecraft/server/ChunkProviderServer.java
++++ b/src/main/java/net/minecraft/server/ChunkProviderServer.java
+@@ -607,7 +607,7 @@ public class ChunkProviderServer extends IChunkProvider {
+     @Override
+     public IChunkAccess getChunkAt(int i, int j, ChunkStatus chunkstatus, boolean flag) {
+         final int x = i; final int z = j; // Paper - conflict on variable change
+-        if (Thread.currentThread() != this.serverThread) {
++        if (!de.tr7zw.yapfa.MainThreadHandler.isMainThread(Thread.currentThread())) { // Akarin
+             return (IChunkAccess) CompletableFuture.supplyAsync(() -> {
+                 return this.getChunkAt(i, j, chunkstatus, flag);
+             }, this.serverThreadQueue).join();
+diff --git a/src/main/java/net/minecraft/server/EntityTrackerEntry.java b/src/main/java/net/minecraft/server/EntityTrackerEntry.java
+index 1bd70384840b1a9e5ddce1e2fd50433661ce2952..aea70d4af85f0c18da0386341e987a674014f5d1 100644
+--- a/src/main/java/net/minecraft/server/EntityTrackerEntry.java
++++ b/src/main/java/net/minecraft/server/EntityTrackerEntry.java
+@@ -87,7 +87,7 @@ public class EntityTrackerEntry {
+ 
+             if (this.tickCounter % 10 == 0 && itemstack.getItem() instanceof ItemWorldMap) { // CraftBukkit - Moved this.tickCounter % 10 logic here so item frames do not enter the other blocks
+                 WorldMap worldmap = ItemWorldMap.getSavedMap(itemstack, this.b);
+-                Iterator iterator = this.trackedPlayers.iterator(); // CraftBukkit
++                Iterator iterator = new HashSet<>(this.trackedPlayers).iterator(); // CraftBukkit
+ 
+                 while (iterator.hasNext()) {
+                     EntityPlayer entityplayer = (EntityPlayer) iterator.next();
+diff --git a/src/main/java/net/minecraft/server/IAsyncTaskHandler.java b/src/main/java/net/minecraft/server/IAsyncTaskHandler.java
+index 2632c7c3ec77918be7979f2aa49209e566cafc77..9eff199f9b85ff30c284fd459814f847134f00f3 100644
+--- a/src/main/java/net/minecraft/server/IAsyncTaskHandler.java
++++ b/src/main/java/net/minecraft/server/IAsyncTaskHandler.java
+@@ -1,6 +1,9 @@
+ package net.minecraft.server;
+ 
+ import com.google.common.collect.Queues;
++
++import de.tr7zw.yapfa.MainThreadHandler;
++
+ import java.util.Queue;
+ import java.util.concurrent.CompletableFuture;
+ import java.util.concurrent.Executor;
+@@ -25,7 +28,7 @@ public abstract class IAsyncTaskHandler<R extends Runnable> implements Mailbox<R
+     protected abstract boolean canExecute(R r0);
+ 
+     public boolean isMainThread() {
+-        return Thread.currentThread() == this.getThread();
++        return MainThreadHandler.isMainThread(Thread.currentThread()); // YAPFA
+     }
+ 
+     protected abstract Thread getThread();
+diff --git a/src/main/java/net/minecraft/server/MCUtil.java b/src/main/java/net/minecraft/server/MCUtil.java
+index 8a349964578e07e5ed13f801c57de68459220da9..79caaf2af01708279c1422a88cef5635e5bc9737 100644
+--- a/src/main/java/net/minecraft/server/MCUtil.java
++++ b/src/main/java/net/minecraft/server/MCUtil.java
+@@ -11,6 +11,8 @@ import com.google.gson.internal.Streams;
+ import com.google.gson.stream.JsonWriter;
+ import com.mojang.authlib.GameProfile;
+ import com.mojang.datafixers.util.Either;
++
++import de.tr7zw.yapfa.MainThreadHandler;
+ import it.unimi.dsi.fastutil.longs.Long2ObjectLinkedOpenHashMap;
+ import org.bukkit.Location;
+ import org.bukkit.block.BlockFace;
+@@ -321,7 +323,7 @@ public final class MCUtil {
+      * @return
+      */
+     public static void ensureMain(String reason, Runnable run) {
+-        if (AsyncCatcher.enabled && Thread.currentThread() != MinecraftServer.getServer().serverThread) {
++        if (AsyncCatcher.enabled && !MainThreadHandler.isMainThread(Thread.currentThread())) { // YAPFA
+             if (reason != null) {
+                 new IllegalStateException("Asynchronous " + reason + "!").printStackTrace();
+             }
+@@ -346,7 +348,7 @@ public final class MCUtil {
+      * @return
+      */
+     public static <T> T ensureMain(String reason, Supplier<T> run) {
+-        if (AsyncCatcher.enabled && Thread.currentThread() != MinecraftServer.getServer().serverThread) {
++        if (AsyncCatcher.enabled && !MainThreadHandler.isMainThread(Thread.currentThread())) { // YAPFA
+             if (reason != null) {
+                 new IllegalStateException("Asynchronous " + reason + "! Blocking thread until it returns ").printStackTrace();
+             }
+diff --git a/src/main/java/net/minecraft/server/MinecraftServer.java b/src/main/java/net/minecraft/server/MinecraftServer.java
+index 4579823da56addad70205eaaabc2d83b98c43ec4..ba8ed35c7088446f311b3b663167975c7bfb0674 100644
+--- a/src/main/java/net/minecraft/server/MinecraftServer.java
++++ b/src/main/java/net/minecraft/server/MinecraftServer.java
+@@ -2,6 +2,8 @@ package net.minecraft.server;
+ 
+ import com.google.common.base.Splitter;
+ import co.aikar.timings.Timings;
++import de.tr7zw.yapfa.MainThreadHandler;
++
+ import com.destroystokyo.paper.event.server.PaperServerListPingEvent;
+ import com.google.common.base.Stopwatch;
+ import com.google.common.collect.Lists;
+@@ -48,7 +50,14 @@ import java.util.Random;
+ import java.util.UUID;
+ import java.util.Map.Entry;
+ import java.util.concurrent.CompletableFuture;
++import java.util.concurrent.ExecutionException;
+ import java.util.concurrent.Executor;
++import java.util.concurrent.ExecutorService;
++import java.util.concurrent.LinkedBlockingQueue;
++import java.util.concurrent.ThreadFactory;
++import java.util.concurrent.ThreadPoolExecutor;
++import java.util.concurrent.TimeUnit;
++import java.util.concurrent.atomic.AtomicInteger;
+ import java.util.function.BooleanSupplier;
+ import javax.annotation.Nullable;
+ import javax.imageio.ImageIO;
+@@ -68,6 +77,7 @@ import org.bukkit.event.server.ServerLoadEvent;
+ // CraftBukkit end
+ import co.aikar.timings.MinecraftTimings; // Paper
+ import org.spigotmc.SlackActivityAccountant; // Spigot
++import org.spigotmc.WatchdogThread;
+ 
+ public abstract class MinecraftServer extends IAsyncTaskHandlerReentrant<TickTask> implements IMojangStatistics, ICommandListener, AutoCloseable, Runnable {
+ 
+@@ -136,6 +146,7 @@ public abstract class MinecraftServer extends IAsyncTaskHandlerReentrant<TickTas
+         thread.setUncaughtExceptionHandler((thread1, throwable) -> {
+             MinecraftServer.LOGGER.error(throwable);
+         });
++        MainThreadHandler.registerThread(thread); // YAPFA
+     });
+     private long nextTick = SystemUtils.getMonotonicMillis();
+     private long ab; final long getTickOversleepMaxTime() { return this.ab; } // Paper - OBFHELPER
+@@ -1318,6 +1329,29 @@ public abstract class MinecraftServer extends IAsyncTaskHandlerReentrant<TickTas
+         co.aikar.timings.TimingsManager.FULL_SERVER_TICK.stopTiming(); // Paper
+     }
+ 
++    // Akarin start
++    
++    public static final ThreadFactory threadFactory = new ThreadFactory() {
++
++        private final AtomicInteger id = new AtomicInteger(0);
++
++        @Override
++        public Thread newThread(Runnable r) {
++            Thread thread = new Thread(r);
++            thread.setName("ASYNC_WORLD_THREAD" + "_" + id.incrementAndGet());
++            de.tr7zw.yapfa.MainThreadHandler.registerThread(thread);
++            return thread;
++        }
++    };
++    
++    public final ExecutorService worldPool = new ThreadPoolExecutor(3, 50, 60, TimeUnit.SECONDS,
++            new LinkedBlockingQueue<Runnable>(), MinecraftServer.threadFactory);
++    
++    public static long worldTick = 0;
++    public static boolean asyncWorlds = false;
++    
++    // Akarin end
++    
+     protected void b(BooleanSupplier booleansupplier) {
+         // Tuinity - replace logic
+         MinecraftTimings.bukkitSchedulerTimer.startTiming(); // Spigot // Paper
+@@ -1362,6 +1396,25 @@ public abstract class MinecraftServer extends IAsyncTaskHandlerReentrant<TickTas
+         // Paper end
+         MinecraftTimings.timeUpdateTimer.stopTiming(); // Spigot // Paper
+ 
++        if (io.akarin.server.Config.asyncWorldTick && !Timings.isTimingsEnabled()) {
++            asyncWorlds = true;
++            try {
++                worldTick = worldPool.invokeAll(new ArrayList<WorldServer>(this.worldServer.values())).parallelStream().mapToLong(f -> {
++                    try {
++                        return f.get();
++                    } catch (InterruptedException e) {
++                        e.printStackTrace();
++                    } catch (ExecutionException e) {
++                        e.printStackTrace();
++                    }
++                    return 100000;
++                }).sum();
++            } catch (InterruptedException e) {
++                e.printStackTrace();
++            }
++        } else {
++        asyncWorlds = false;
++        long start = System.currentTimeMillis();
+         while (iterator.hasNext()) {
+             WorldServer worldserver = (WorldServer) iterator.next();
+ 
+@@ -1404,6 +1457,7 @@ public abstract class MinecraftServer extends IAsyncTaskHandlerReentrant<TickTas
+                 worldserver.explosionDensityCache.clear(); // Paper - Optimize explosions
+             }
+         }
++        }
+ 
+         //this.methodProfiler.exitEnter("connection"); // Akarin - remove caller
+         MinecraftTimings.connectionTimer.startTiming(); // Spigot
+diff --git a/src/main/java/net/minecraft/server/PlayerChunkMap.java b/src/main/java/net/minecraft/server/PlayerChunkMap.java
+index 61b47f1e328ba5974d8106ebad7c950c456670bd..38cbc2a915039852d5d6796b86c68c15cccc1493 100644
+--- a/src/main/java/net/minecraft/server/PlayerChunkMap.java
++++ b/src/main/java/net/minecraft/server/PlayerChunkMap.java
+@@ -24,6 +24,7 @@ import java.io.IOException;
+ import java.io.Writer;
+ import java.util.ArrayList;
+ import java.util.HashMap; // Paper
++import java.util.HashSet;
+ import java.util.Collection;
+ import java.util.Iterator;
+ import java.util.List;
+@@ -577,7 +578,7 @@ public class PlayerChunkMap extends IChunkLoader implements PlayerChunk.d {
+         }
+     }
+     public Long2ObjectLinkedOpenHashMap<PlayerChunk> getVisibleChunks() {
+-        if (Thread.currentThread() == this.world.serverThread) {
++        if (de.tr7zw.yapfa.MainThreadHandler.isMainThread(Thread.currentThread())) { // Akarin
+             return this.visibleChunks;
+         } else {
+             synchronized (this.visibleChunks) {
+@@ -594,7 +595,7 @@ public class PlayerChunkMap extends IChunkLoader implements PlayerChunk.d {
+     @Nullable
+     public PlayerChunk getVisibleChunk(long i) { // Paper - protected -> public
+         // Paper start - mt safe get
+-        if (Thread.currentThread() != this.world.serverThread) {
++        if (!de.tr7zw.yapfa.MainThreadHandler.isMainThread(Thread.currentThread())) { // Akarin
+             synchronized (this.visibleChunks) {
+                 return (PlayerChunk) (this.hasPendingVisibleUpdate ? this.pendingVisibleChunks.get(i) : ((ProtectedVisibleChunksMap)this.visibleChunks).safeGet(i));
+             }
+@@ -2298,7 +2299,7 @@ Sections go from 0..16. Now whenever a section is not empty, it can potentially
+         }
+ 
+         public void broadcast(Packet<?> packet) {
+-            Iterator iterator = this.trackedPlayers.iterator();
++            Iterator iterator = new HashSet<>(this.trackedPlayers).iterator();
+ 
+             while (iterator.hasNext()) {
+                 EntityPlayer entityplayer = (EntityPlayer) iterator.next();
+@@ -2317,7 +2318,7 @@ Sections go from 0..16. Now whenever a section is not empty, it can potentially
+         }
+ 
+         public void a() {
+-            Iterator iterator = this.trackedPlayers.iterator();
++            Iterator iterator = new HashSet<>(this.trackedPlayers).iterator();
+ 
+             while (iterator.hasNext()) {
+                 EntityPlayer entityplayer = (EntityPlayer) iterator.next();
+@@ -2399,7 +2400,7 @@ Sections go from 0..16. Now whenever a section is not empty, it can potentially
+         }
+ 
+         public void track(List<EntityPlayer> list) {
+-            Iterator iterator = list.iterator();
++            Iterator iterator = new ArrayList<>(list).iterator();
+ 
+             while (iterator.hasNext()) {
+                 EntityPlayer entityplayer = (EntityPlayer) iterator.next();
+diff --git a/src/main/java/net/minecraft/server/PlayerConnectionUtils.java b/src/main/java/net/minecraft/server/PlayerConnectionUtils.java
+index d9c9d01aef9e546fc2cb66e69ff0e563a2a2a0ac..fe708494ae58d3441ef09c6496981b9cf21fb0d5 100644
+--- a/src/main/java/net/minecraft/server/PlayerConnectionUtils.java
++++ b/src/main/java/net/minecraft/server/PlayerConnectionUtils.java
+@@ -4,13 +4,23 @@ import org.apache.logging.log4j.LogManager;
+ import org.apache.logging.log4j.Logger;
+ import co.aikar.timings.MinecraftTimings; // Paper
+ import co.aikar.timings.Timing; // Paper
++import co.aikar.timings.Timings;
+ 
+ public class PlayerConnectionUtils {
+ 
+     private static final Logger LOGGER = LogManager.getLogger();
+ 
+     public static <T extends PacketListener> void ensureMainThread(Packet<T> packet, T t0, WorldServer worldserver) throws CancelledPacketHandleException {
+-        ensureMainThread(packet, t0, (IAsyncTaskHandler) worldserver.getMinecraftServer());
++        // Akarin start
++		if (Timings.isTimingsEnabled() || packet instanceof PacketPlayInCustomPayload) {
++			ensureMainThread(packet, t0, (IAsyncTaskHandler) worldserver.getMinecraftServer());
++		} else {
++			if (!de.tr7zw.yapfa.MainThreadHandler.isMainThread(Thread.currentThread())) {
++				worldserver.packets.add(() -> packet.a(t0));
++				throw CancelledPacketHandleException.INSTANCE;
++			}
++		}
++    	// Akarin end
+     }
+ 
+     // Tuinity start - detailed watchdog information
+diff --git a/src/main/java/net/minecraft/server/World.java b/src/main/java/net/minecraft/server/World.java
+index 88d6a4f7f42aeacdad9621d883bda66627a87066..67b268320184eb4667c1c3ccee4fcc9810c872d2 100644
+--- a/src/main/java/net/minecraft/server/World.java
++++ b/src/main/java/net/minecraft/server/World.java
+@@ -42,7 +42,7 @@ public abstract class World implements GeneratorAccess, AutoCloseable {
+     public final List<TileEntity> tileEntityListTick = Lists.newArrayList();
+     protected final List<TileEntity> tileEntityListPending = Lists.newArrayList();
+     protected final java.util.Set<TileEntity> tileEntityListUnload = com.google.common.collect.Sets.newHashSet();
+-    public final Thread serverThread;
++    //public final Thread serverThread;
+     private int c;
+     protected int i = (new Random()).nextInt();
+     protected final int j = 1013904223;
+@@ -156,7 +156,7 @@ public abstract class World implements GeneratorAccess, AutoCloseable {
+         this.chunkProvider = (IChunkProvider) bifunction.apply(this, this.worldProvider);
+         this.isClientSide = flag;
+         this.worldBorder = this.worldProvider.getWorldBorder();
+-        this.serverThread = Thread.currentThread();
++        //this.serverThread = Thread.currentThread();
+         this.biomeManager = new BiomeManager(this, flag ? worlddata.getSeed() : WorldData.c(worlddata.getSeed()), dimensionmanager.getGenLayerZoomer());
+         // CraftBukkit start
+         getWorldBorder().world = (WorldServer) this;
+@@ -272,7 +272,7 @@ public abstract class World implements GeneratorAccess, AutoCloseable {
+     @Override
+     public Chunk getChunkAt(int i, int j) {
+         // Paper start - optimise this for loaded chunks
+-        if (Thread.currentThread() == this.serverThread) {
++        if (de.tr7zw.yapfa.MainThreadHandler.isMainThread(Thread.currentThread())) {
+             Chunk ifLoaded = ((WorldServer) this).getChunkProvider().getChunkAtIfLoadedMainThread(i, j);
+             if (ifLoaded != null) {
+                 return ifLoaded;
+@@ -1055,7 +1055,7 @@ public abstract class World implements GeneratorAccess, AutoCloseable {
+         // CraftBukkit end
+         if (isOutsideWorld(blockposition)) {
+             return null;
+-        } else if (!this.isClientSide && Thread.currentThread() != this.serverThread) {
++        } else if (!this.isClientSide && !de.tr7zw.yapfa.MainThreadHandler.isMainThread(Thread.currentThread())) { // Akarin
+             return null;
+         } else {
+             // CraftBukkit start
+diff --git a/src/main/java/net/minecraft/server/WorldServer.java b/src/main/java/net/minecraft/server/WorldServer.java
+index 32365c4fbda6fb2cabeee7bca4f00ea7b5a5f2d9..f1f3b40181b25c0a257de4f6a5987f1354cfe9ed 100644
+--- a/src/main/java/net/minecraft/server/WorldServer.java
++++ b/src/main/java/net/minecraft/server/WorldServer.java
+@@ -22,6 +22,7 @@ import java.io.BufferedWriter;
+ import java.io.IOException;
+ import java.io.Writer;
+ import java.nio.file.Files;
++import java.util.ArrayList;
+ import java.util.Iterator;
+ import java.util.List;
+ import java.util.Map;
+@@ -31,6 +32,7 @@ import java.util.Queue;
+ import java.util.Random;
+ import java.util.Set;
+ import java.util.UUID;
++import java.util.concurrent.Callable;
+ import java.util.concurrent.Executor;
+ import java.util.function.BooleanSupplier;
+ import java.util.function.Predicate;
+@@ -51,7 +53,8 @@ import org.bukkit.event.weather.LightningStrikeEvent;
+ import org.bukkit.event.world.TimeSkipEvent;
+ // CraftBukkit end
+ 
+-public class WorldServer extends World {
++public class WorldServer extends World
++	implements Callable<Long> { // Akarin
+ 
+     private static final Logger LOGGER = LogManager.getLogger();
+     private final List<Entity> globalEntityList = Lists.newArrayList();
+@@ -222,7 +225,7 @@ public class WorldServer extends World {
+ 
+     public final void loadChunksForMoveAsync(AxisAlignedBB axisalignedbb, double toX, double toZ,
+                                              java.util.function.Consumer<List<IChunkAccess>> onLoad) {
+-        if (Thread.currentThread() != this.serverThread) {
++        if (!de.tr7zw.yapfa.MainThreadHandler.isMainThread(Thread.currentThread())) { // Akarin
+             this.getChunkProvider().serverThreadQueue.execute(() -> {
+                 this.loadChunksForMoveAsync(axisalignedbb, toX, toZ, onLoad);
+             });
+@@ -693,7 +696,7 @@ public class WorldServer extends World {
+     @Override
+     protected TileEntity getTileEntity(BlockPosition pos, boolean validate) {
+         TileEntity result = super.getTileEntity(pos, validate);
+-        if (!validate || Thread.currentThread() != this.serverThread) {
++        if (!validate || !de.tr7zw.yapfa.MainThreadHandler.isMainThread(Thread.currentThread())) {
+             // SPIGOT-5378: avoid deadlock, this can be called in loading logic (i.e lighting) but getType() will block on chunk load
+             return result;
+         }
+@@ -2682,4 +2685,41 @@ public class WorldServer extends World {
+             return structureboundingbox.b((BaseBlockPosition) blockactiondata.a());
+         });
+     }
++    
++    // Akarin start
++    public List<Runnable> packets = new ArrayList<Runnable>();
++    
++	@Override
++	public Long call() throws Exception {
++		long start = System.currentTimeMillis();
++		List<Runnable> copy = new ArrayList<>(packets);
++		copy.forEach(r -> {
++			packets.remove(r);
++			r.run();
++		});
++        hasPhysicsEvent =  org.bukkit.event.block.BlockPhysicsEvent.getHandlerList().getRegisteredListeners().length > 0; // Paper
++        TileEntityHopper.skipHopperEvents = paperConfig.disableHopperMoveEvents || org.bukkit.event.inventory.InventoryMoveItemEvent.getHandlerList().getRegisteredListeners().length == 0; // Paper
++
++        try {
++            doTick(server::canSleepForTick);
++        } catch (Throwable throwable) {
++            // Spigot Start
++            CrashReport crashreport;
++            try {
++                crashreport = CrashReport.a(throwable, "Exception ticking world");
++            } catch (Throwable t) {
++                throw new RuntimeException("Error generating crash report", t);
++            }
++            // Spigot End
++
++            a(crashreport);
++            throw new ReportedException(crashreport);
++        }
++
++        explosionDensityCache.clear(); // Paper - Optimize explosions
++		return System.currentTimeMillis() - start;
++	}
++	
++	// Akarin end
++    
+ }
+diff --git a/src/main/java/org/bukkit/craftbukkit/CraftServer.java b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
+index 074cf1260c3755e537894f6dd86836fe3fda7f74..11e10567106a02eb055e343298b6c3b1cd6c5992 100644
+--- a/src/main/java/org/bukkit/craftbukkit/CraftServer.java
++++ b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
+@@ -14,6 +14,8 @@ import com.mojang.brigadier.StringReader;
+ import com.mojang.brigadier.exceptions.CommandSyntaxException;
+ import com.mojang.brigadier.tree.CommandNode;
+ import com.mojang.brigadier.tree.LiteralCommandNode;
++
++import de.tr7zw.yapfa.MainThreadHandler;
+ import io.netty.buffer.ByteBuf;
+ import io.netty.buffer.ByteBufOutputStream;
+ import io.netty.buffer.Unpooled;
+@@ -1753,7 +1755,7 @@ public final class CraftServer implements Server {
+     public boolean isPrimaryThread() {
+         // Tuinity start
+         final Thread currThread = Thread.currentThread();
+-        return currThread == console.serverThread || currThread instanceof com.tuinity.tuinity.util.TickThread || currThread.equals(net.minecraft.server.MinecraftServer.getServer().shutdownThread); // Paper - Fix issues with detecting main thread properly, the only time Watchdog will be used is during a crash shutdown which is a "try our best" scenario
++        return MainThreadHandler.isMainThread(currThread) || currThread == console.serverThread || currThread instanceof com.tuinity.tuinity.util.TickThread || currThread.equals(net.minecraft.server.MinecraftServer.getServer().shutdownThread); // Paper - Fix issues with detecting main thread properly, the only time Watchdog will be used is during a crash shutdown which is a "try our best" scenario
+         // Tuinity End
+     }
+ 
+diff --git a/src/main/java/org/bukkit/craftbukkit/CraftWorld.java b/src/main/java/org/bukkit/craftbukkit/CraftWorld.java
+index 4f965b58486a8798309fd352d7e61823c88703f4..8f6e9c399afc20771e72ecb6de30ddb3ad8e216c 100644
+--- a/src/main/java/org/bukkit/craftbukkit/CraftWorld.java
++++ b/src/main/java/org/bukkit/craftbukkit/CraftWorld.java
+@@ -447,7 +447,7 @@ public class CraftWorld implements World {
+     @Override
+     public Chunk[] getLoadedChunks() {
+         // Paper start
+-        if (Thread.currentThread() != world.getMinecraftWorld().serverThread) {
++        if (!de.tr7zw.yapfa.MainThreadHandler.isMainThread(Thread.currentThread())) { // Akarin
+             synchronized (world.getChunkProvider().playerChunkMap.visibleChunks) {
+                 Long2ObjectLinkedOpenHashMap<PlayerChunk> chunks = world.getChunkProvider().playerChunkMap.visibleChunks;
+                 return chunks.values().stream().map(PlayerChunk::getFullChunk).filter(Objects::nonNull).map(net.minecraft.server.Chunk::getBukkitChunk).toArray(Chunk[]::new);
+@@ -654,7 +654,10 @@ public class CraftWorld implements World {
+     @Override
+     public Collection<Plugin> getPluginChunkTickets(int x, int z) {
+         ChunkMapDistance chunkDistanceManager = this.world.getChunkProvider().playerChunkMap.chunkDistanceManager;
+-        ArraySetSorted<Ticket<?>> tickets = chunkDistanceManager.tickets.get(ChunkCoordIntPair.pair(x, z));
++        ArraySetSorted<Ticket<?>> tickets = null;
++        synchronized (chunkDistanceManager.tickets) {
++        	tickets = chunkDistanceManager.tickets.get(ChunkCoordIntPair.pair(x, z));
++		}
+ 
+         if (tickets == null) {
+             return Collections.emptyList();
+@@ -675,22 +678,24 @@ public class CraftWorld implements World {
+         Map<Plugin, ImmutableList.Builder<Chunk>> ret = new HashMap<>();
+         ChunkMapDistance chunkDistanceManager = this.world.getChunkProvider().playerChunkMap.chunkDistanceManager;
+ 
+-        for (Long2ObjectMap.Entry<ArraySetSorted<Ticket<?>>> chunkTickets : chunkDistanceManager.tickets.long2ObjectEntrySet()) {
+-            long chunkKey = chunkTickets.getLongKey();
+-            ArraySetSorted<Ticket<?>> tickets = chunkTickets.getValue();
+-
+-            Chunk chunk = null;
+-            for (Ticket<?> ticket : tickets) {
+-                if (ticket.getTicketType() != TicketType.PLUGIN_TICKET) {
+-                    continue;
+-                }
+-
+-                if (chunk == null) {
+-                    chunk = this.getChunkAt(ChunkCoordIntPair.getX(chunkKey), ChunkCoordIntPair.getZ(chunkKey));
+-                }
+-
+-                ret.computeIfAbsent((Plugin) ticket.identifier, (key) -> ImmutableList.builder()).add(chunk);
+-            }
++        synchronized (chunkDistanceManager.tickets) {
++	        for (Long2ObjectMap.Entry<ArraySetSorted<Ticket<?>>> chunkTickets : chunkDistanceManager.tickets.long2ObjectEntrySet()) {
++	            long chunkKey = chunkTickets.getLongKey();
++	            ArraySetSorted<Ticket<?>> tickets = chunkTickets.getValue();
++	
++	            Chunk chunk = null;
++	            for (Ticket<?> ticket : tickets) {
++	                if (ticket.getTicketType() != TicketType.PLUGIN_TICKET) {
++	                    continue;
++	                }
++	
++	                if (chunk == null) {
++	                    chunk = this.getChunkAt(ChunkCoordIntPair.getX(chunkKey), ChunkCoordIntPair.getZ(chunkKey));
++	                }
++	
++	                ret.computeIfAbsent((Plugin) ticket.identifier, (key) -> ImmutableList.builder()).add(chunk);
++	            }
++	        }
+         }
+ 
+         return ret.entrySet().stream().collect(ImmutableMap.toImmutableMap(Map.Entry::getKey, (entry) -> entry.getValue().build()));
+diff --git a/src/main/java/org/bukkit/craftbukkit/util/WeakCollection.java b/src/main/java/org/bukkit/craftbukkit/util/WeakCollection.java
+index 3c8946837351bf5a469be494b735d414e1801c20..c0369adfd825e8b2ea9c83a63c15cc686eb7b862 100644
+--- a/src/main/java/org/bukkit/craftbukkit/util/WeakCollection.java
++++ b/src/main/java/org/bukkit/craftbukkit/util/WeakCollection.java
+@@ -18,23 +18,29 @@ public final class WeakCollection<T> implements Collection<T> {
+     @Override
+     public boolean add(T value) {
+         Validate.notNull(value, "Cannot add null value");
+-        return collection.add(new WeakReference<T>(value));
++        synchronized (collection) {
++        	return collection.add(new WeakReference<T>(value));
++		}
+     }
+ 
+     @Override
+     public boolean addAll(Collection<? extends T> collection) {
+-        Collection<WeakReference<T>> values = this.collection;
+-        boolean ret = false;
+-        for (T value : collection) {
+-            Validate.notNull(value, "Cannot add null value");
+-            ret |= values.add(new WeakReference<T>(value));
+-        }
+-        return ret;
++    	synchronized (collection) {
++	        Collection<WeakReference<T>> values = this.collection;
++	        boolean ret = false;
++	        for (T value : collection) {
++	            Validate.notNull(value, "Cannot add null value");
++	            ret |= values.add(new WeakReference<T>(value));
++	        }
++	        return ret;
++    	}
+     }
+ 
+     @Override
+     public void clear() {
+-        collection.clear();
++    	synchronized (collection) {
++    		collection.clear();
++    	}
+     }
+ 
+     @Override
+@@ -42,17 +48,21 @@ public final class WeakCollection<T> implements Collection<T> {
+         if (object == null) {
+             return false;
+         }
+-        for (T compare : this) {
+-            if (object.equals(compare)) {
+-                return true;
+-            }
++        synchronized (collection) {
++	        for (T compare : this) {
++	            if (object.equals(compare)) {
++	                return true;
++	            }
++	        }
++	        return false;
+         }
+-        return false;
+     }
+ 
+     @Override
+     public boolean containsAll(Collection<?> collection) {
+-        return toCollection().containsAll(collection);
++    	synchronized (collection) {
++    		return toCollection().containsAll(collection);
++    	}
+     }
+ 
+     @Override
+@@ -73,20 +83,22 @@ public final class WeakCollection<T> implements Collection<T> {
+                     return true;
+                 }
+ 
+-                Iterator<WeakReference<T>> it = this.it;
+-                value = null;
+-
+-                while (it.hasNext()) {
+-                    WeakReference<T> ref = it.next();
+-                    value = ref.get();
+-                    if (value == null) {
+-                        it.remove();
+-                    } else {
+-                        this.value = value;
+-                        return true;
+-                    }
++                synchronized (collection) {
++	                Iterator<WeakReference<T>> it = this.it;
++	                value = null;
++	
++	                while (it.hasNext()) {
++	                    WeakReference<T> ref = it.next();
++	                    value = ref.get();
++	                    if (value == null) {
++	                        it.remove();
++	                    } else {
++	                        this.value = value;
++	                        return true;
++	                    }
++	                }
++	                return false;
+                 }
+-                return false;
+             }
+ 
+             @Override
+@@ -119,49 +131,57 @@ public final class WeakCollection<T> implements Collection<T> {
+             return false;
+         }
+ 
+-        Iterator<T> it = this.iterator();
+-        while (it.hasNext()) {
+-            if (object.equals(it.next())) {
+-                it.remove();
+-                return true;
+-            }
++        synchronized (collection) {
++	        Iterator<T> it = this.iterator();
++	        while (it.hasNext()) {
++	            if (object.equals(it.next())) {
++	                it.remove();
++	                return true;
++	            }
++	        }
++	        return false;
+         }
+-        return false;
+     }
+ 
+     @Override
+     public boolean removeAll(Collection<?> collection) {
+-        Iterator<T> it = this.iterator();
+-        boolean ret = false;
+-        while (it.hasNext()) {
+-            if (collection.contains(it.next())) {
+-                ret = true;
+-                it.remove();
+-            }
+-        }
+-        return ret;
++    	synchronized (collection) {
++	        Iterator<T> it = this.iterator();
++	        boolean ret = false;
++	        while (it.hasNext()) {
++	            if (collection.contains(it.next())) {
++	                ret = true;
++	                it.remove();
++	            }
++	        }
++	        return ret;
++    	}
+     }
+ 
+     @Override
+     public boolean retainAll(Collection<?> collection) {
+-        Iterator<T> it = this.iterator();
+-        boolean ret = false;
+-        while (it.hasNext()) {
+-            if (!collection.contains(it.next())) {
+-                ret = true;
+-                it.remove();
+-            }
+-        }
+-        return ret;
++    	synchronized (collection) {
++	        Iterator<T> it = this.iterator();
++	        boolean ret = false;
++	        while (it.hasNext()) {
++	            if (!collection.contains(it.next())) {
++	                ret = true;
++	                it.remove();
++	            }
++	        }
++	        return ret;
++    	}
+     }
+ 
+     @Override
+     public int size() {
+-        int s = 0;
+-        for (T value : this) {
+-            s++;
+-        }
+-        return s;
++    	synchronized (collection) {
++	        int s = 0;
++	        for (T value : this) {
++	            s++;
++	        }
++	        return s;
++    	}
+     }
+ 
+     @Override
+@@ -175,10 +195,12 @@ public final class WeakCollection<T> implements Collection<T> {
+     }
+ 
+     private Collection<T> toCollection() {
+-        ArrayList<T> collection = new ArrayList<T>();
+-        for (T value : this) {
+-            collection.add(value);
+-        }
+-        return collection;
++    	synchronized (collection) {
++	        ArrayList<T> collection = new ArrayList<T>();
++	        for (T value : this) {
++	            collection.add(value);
++	        }
++	        return collection;
++    	}
+     }
+ }
+diff --git a/src/main/java/org/spigotmc/AsyncCatcher.java b/src/main/java/org/spigotmc/AsyncCatcher.java
+index c3ac1a46c3e06bfe06ad9ff9f4ec49c055a790b0..67d2be337a1fa848506bf18f29080624474dc40d 100644
+--- a/src/main/java/org/spigotmc/AsyncCatcher.java
++++ b/src/main/java/org/spigotmc/AsyncCatcher.java
+@@ -1,6 +1,6 @@
+ package org.spigotmc;
+ 
+-import net.minecraft.server.MinecraftServer;
++import de.tr7zw.yapfa.MainThreadHandler;
+ 
+ public class AsyncCatcher
+ {
+@@ -10,7 +10,7 @@ public class AsyncCatcher
+ 
+     public static void catchOp(String reason)
+     {
+-        if ( ( enabled || com.tuinity.tuinity.util.TickThread.STRICT_THREAD_CHECKS ) && !org.bukkit.Bukkit.isPrimaryThread() ) // Tuinity
++        if ( ( enabled || com.tuinity.tuinity.util.TickThread.STRICT_THREAD_CHECKS ) && !org.bukkit.Bukkit.isPrimaryThread() && !MainThreadHandler.isMainThread(Thread.currentThread()) ) // Tuinity
+         {
+             throw new IllegalStateException( "Asynchronous " + reason + "!" );
+         }
+diff --git a/src/main/java/org/spigotmc/TicksPerSecondCommand.java b/src/main/java/org/spigotmc/TicksPerSecondCommand.java
+index 387af9d5c01701eafdb416204e5e2f94116d366f..6c5465f4e187e532c112aeb2c9caa425c1a56918 100644
+--- a/src/main/java/org/spigotmc/TicksPerSecondCommand.java
++++ b/src/main/java/org/spigotmc/TicksPerSecondCommand.java
+@@ -31,6 +31,8 @@ public class TicksPerSecondCommand extends Command
+             tpsAvg[i] = format( tps[i] );
+         }
+         sender.sendMessage( ChatColor.GOLD + "TPS from last 1m, 5m, 15m: " + org.apache.commons.lang.StringUtils.join(tpsAvg, ", "));
++        sender.sendMessage( ChatColor.GOLD + "Async world ticking: " + net.minecraft.server.MinecraftServer.asyncWorlds);
++        sender.sendMessage( ChatColor.GOLD + "The worlds where ticking for " + net.minecraft.server.MinecraftServer.worldTick + "ms");
+         // Paper end
+ 
+         return true;

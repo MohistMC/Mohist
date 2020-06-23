@@ -1,0 +1,65 @@
+From: Jedediah Smith <jedediah@silencegreys.com>
+Date: Sat, 9 May 2015 14:30:20 -0400
+Subject: [PATCH] Block digging API
+
+
+diff --git a/src/main/java/net/minecraft/server/PlayerInteractManager.java b/src/main/java/net/minecraft/server/PlayerInteractManager.java
+--- a/src/main/java/net/minecraft/server/PlayerInteractManager.java
++++ b/src/main/java/net/minecraft/server/PlayerInteractManager.java
+@@ -13,9 +13,9 @@ public class PlayerInteractManager {
+     public World world;
+     public EntityPlayer player;
+     private EnumGamemode gamemode;
+-    private boolean d;
++    public boolean d; // SportBukkit - private -> public
+     private int lastDigTick;
+-    private BlockPosition f;
++    public BlockPosition f; // SportBukkit - private -> public
+     private int currentTick;
+     private boolean h;
+     private BlockPosition i;
+@@ -241,6 +241,7 @@ public class PlayerInteractManager {
+     public void e() {
+         this.d = false;
+         this.world.c(this.player.getId(), this.f, -1);
++        CraftEventFactory.callBlockUndamageEvent(this.player, this.f.getX(), this.f.getY(), this.f.getZ()); // SportBukkit - fire event
+     }
+ 
+     private boolean c(BlockPosition blockposition) {
+diff --git a/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java b/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
+--- a/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
++++ b/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
+@@ -1900,4 +1900,15 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
+                                                              java.util.EnumSet.allOf(PacketPlayOutPosition.EnumPlayerTeleportFlags.class),
+                                                              cause);
+     }
++
++    @Override
++    public boolean isDigging() {
++        return getHandle().playerInteractManager.d;
++    }
++
++    @Override
++    public org.bukkit.block.Block getDiggingBlock() {
++        BlockPosition pos = getHandle().playerInteractManager.f;
++        return getWorld().getBlockAt(pos.getX(), pos.getY(), pos.getZ());
++    }
+ }
+diff --git a/src/main/java/org/bukkit/craftbukkit/event/CraftEventFactory.java b/src/main/java/org/bukkit/craftbukkit/event/CraftEventFactory.java
+--- a/src/main/java/org/bukkit/craftbukkit/event/CraftEventFactory.java
++++ b/src/main/java/org/bukkit/craftbukkit/event/CraftEventFactory.java
+@@ -271,6 +271,14 @@ public class CraftEventFactory {
+         return event;
+     }
+ 
++    public static BlockUndamageEvent callBlockUndamageEvent(EntityPlayer who, int x, int y, int z) {
++        Player player = who.getBukkitEntity();
++        BlockUndamageEvent event = new BlockUndamageEvent(player, player.getWorld().getBlockAt(x, y, z));
++        player.getServer().getPluginManager().callEvent(event);
++
++        return event;
++    }
++
+     /**
+      * CreatureSpawnEvent
+      */

@@ -1,27 +1,15 @@
 --- a/net/minecraft/entity/ai/brain/task/InteractWithDoorTask.java
 +++ b/net/minecraft/entity/ai/brain/task/InteractWithDoorTask.java
-@@ -18,6 +18,8 @@
- import net.minecraft.util.math.BlockPos;
- import net.minecraft.util.math.GlobalPos;
- import net.minecraft.world.server.ServerWorld;
-+import org.bukkit.craftbukkit.v1_15_R1.block.CraftBlock;
-+import org.bukkit.event.entity.EntityInteractEvent;
- 
- public class InteractWithDoorTask extends Task<LivingEntity> {
-    public InteractWithDoorTask() {
-@@ -49,6 +51,15 @@
+@@ -49,6 +49,12 @@
           Block block = blockstate.func_177230_c();
           if (BlockTags.field_200152_g.func_199685_a_(block) && block instanceof DoorBlock) {
              boolean flag = i >= p_220434_4_;
-+
-+             // CraftBukkit start - entities opening doors
-+             EntityInteractEvent event = new EntityInteractEvent(p_220434_5_.getBukkitEntity(), CraftBlock.at(p_220434_5_.field_70170_p, p_225447_4_));
-+            p_220434_5_.field_70170_p.getServerCB().getPluginManager().callEvent(event);
-+             if (event.isCancelled()) {
-+                 return;
-+             }
-+            // CaftBukkit end
-+
++            // CraftBukkit start - entities opening doors
++            org.bukkit.event.entity.EntityInteractEvent event = new org.bukkit.event.entity.EntityInteractEvent(p_220434_5_.getBukkitEntity(), org.bukkit.craftbukkit.block.CraftBlock.at(p_220434_5_.field_70170_p, p_225447_4_));
++            if (event.isCancelled()) {
++               return;
++            }
++            // CraftBukkit end
              ((DoorBlock)block).func_176512_a(p_220434_1_, p_225447_4_, flag);
              GlobalPos globalpos = GlobalPos.func_218179_a(p_220434_1_.func_201675_m().func_186058_p(), p_225447_4_);
              if (!p_220434_6_.func_218207_c(MemoryModuleType.field_225462_q).isPresent() && flag) {

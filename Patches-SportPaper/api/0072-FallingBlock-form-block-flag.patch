@@ -1,0 +1,34 @@
+From 34cc0b6d741e00a855e00f99f731fdcdfff377ea Mon Sep 17 00:00:00 2001
+From: cswhite2000 <18whitechristop@gmail.com>
+Date: Fri, 24 Aug 2018 20:45:23 -0700
+Subject: [PATCH] FallingBlock form block flag
+
+
+diff --git a/src/main/java/org/bukkit/entity/FallingBlock.java b/src/main/java/org/bukkit/entity/FallingBlock.java
+index 240a2783..3bb6f16e 100644
+--- a/src/main/java/org/bukkit/entity/FallingBlock.java
++++ b/src/main/java/org/bukkit/entity/FallingBlock.java
+@@ -66,4 +66,20 @@ public interface FallingBlock extends Entity {
+      * @return the source block location the falling block was spawned from
+      */
+     org.bukkit.Location getSourceLoc(); // PaperSpigot - Add FallingBlock source location API
++
++    /**
++     * Can this entity form a block when it lands?
++     */
++    boolean canFormBlock();
++
++    /**
++     * Allow or prevent this entity from forming a block when it lands.
++     *
++     * If this is false, the entity will just disappear when it lands.
++     * If true, it may form a block if other circumstances permit it.
++     *
++     * This is initially true by default.
++     */
++    void setFormBlock(boolean formBlock);
++
+ }
+-- 
+2.18.0
+

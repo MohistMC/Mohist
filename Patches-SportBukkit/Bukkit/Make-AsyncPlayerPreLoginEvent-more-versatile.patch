@@ -1,0 +1,33 @@
+From: mrapple <tony@oc.tc>
+Date: Sat, 17 Nov 2012 12:42:05 -0600
+Subject: [PATCH] Make AsyncPlayerPreLoginEvent more versatile
+
+
+diff --git a/src/main/java/org/bukkit/event/player/AsyncPlayerPreLoginEvent.java b/src/main/java/org/bukkit/event/player/AsyncPlayerPreLoginEvent.java
+--- a/src/main/java/org/bukkit/event/player/AsyncPlayerPreLoginEvent.java
++++ b/src/main/java/org/bukkit/event/player/AsyncPlayerPreLoginEvent.java
+@@ -189,6 +189,10 @@ public class AsyncPlayerPreLoginEvent extends Event {
+          */
+         KICK_WHITELIST,
+         /**
++         * The player's username was not verified with Mojang
++         */
++        KICK_VERIFY,
++        /**
+          * The player is not allowed to log in, for reasons undefined
+          */
+         KICK_OTHER;
+diff --git a/src/main/java/org/bukkit/event/player/PlayerPreLoginEvent.java b/src/main/java/org/bukkit/event/player/PlayerPreLoginEvent.java
+--- a/src/main/java/org/bukkit/event/player/PlayerPreLoginEvent.java
++++ b/src/main/java/org/bukkit/event/player/PlayerPreLoginEvent.java
+@@ -152,6 +152,10 @@ public class PlayerPreLoginEvent extends Event {
+          */
+         KICK_WHITELIST,
+         /**
++         * The player's username was not verified with Mojang
++         */
++        KICK_VERIFY,
++        /**
+          * The player is not allowed to log in, for reasons undefined
+          */
+         KICK_OTHER

@@ -1,27 +1,6 @@
 --- a/net/minecraft/network/datasync/EntityDataManager.java
 +++ b/net/minecraft/network/datasync/EntityDataManager.java
-@@ -4,6 +4,7 @@
- import com.google.common.collect.Maps;
- import io.netty.handler.codec.DecoderException;
- import io.netty.handler.codec.EncoderException;
-+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
- import java.io.IOException;
- import java.util.List;
- import java.util.Map;
-@@ -26,21 +27,24 @@
-    private static final Logger field_190303_a = LogManager.getLogger();
-    private static final Map<Class<? extends Entity>, Integer> field_187232_a = Maps.newHashMap();
-    private final Entity field_187233_b;
--   private final Map<Integer, EntityDataManager.DataEntry<?>> field_187234_c = Maps.newHashMap();
--   private final ReadWriteLock field_187235_d = new ReentrantReadWriteLock();
-+   private final Int2ObjectOpenHashMap<EntityDataManager.DataEntry<?>> field_187234_c = new Int2ObjectOpenHashMap<>(); // Spigot - use better map // PAIL
-+//   private final ReadWriteLock lock = new ReentrantReadWriteLock(); // Spigot - not required
-    private boolean field_187236_e = true;
-    private boolean field_187237_f;
-+   public boolean registrationLocked; // Spigot
- 
-    public EntityDataManager(Entity p_i46840_1_) {
-       this.field_187233_b = p_i46840_1_;
+@@ -36,11 +36,13 @@
     }
  
     public static <T> DataParameter<T> func_187226_a(Class<? extends Entity> p_187226_0_, IDataSerializer<T> p_187226_1_) {
@@ -37,56 +16,7 @@
              }
           } catch (ClassNotFoundException var5) {
              ;
-@@ -74,6 +78,7 @@
-    }
- 
-    public <T> void func_187214_a(DataParameter<T> p_187214_1_, T p_187214_2_) {
-+      if (this.registrationLocked) throw new IllegalStateException("Registering datawatcher object after entity initialization"); // Spigot
-       int i = p_187214_1_.func_187155_a();
-       if (i > 254) {
-          throw new IllegalArgumentException("Data value id is too big with " + i + "! (Max is " + 254 + ")");
-@@ -88,28 +93,31 @@
- 
-    private <T> void func_187222_c(DataParameter<T> p_187222_1_, T p_187222_2_) {
-       EntityDataManager.DataEntry<T> dataentry = new EntityDataManager.DataEntry<>(p_187222_1_, p_187222_2_);
--      this.field_187235_d.writeLock().lock();
-+//      this.lock.writeLock().lock(); // Spigot - not required
-       this.field_187234_c.put(p_187222_1_.func_187155_a(), dataentry);
-       this.field_187236_e = false;
--      this.field_187235_d.writeLock().unlock();
-+//      this.lock.writeLock().unlock(); // Spigot - not required
-    }
- 
-    private <T> EntityDataManager.DataEntry<T> func_187219_c(DataParameter<T> p_187219_1_) {
--      this.field_187235_d.readLock().lock();
-+      // Spigot start
-+ /*
-+      this.lock.readLock().lock();
- 
-       EntityDataManager.DataEntry<T> dataentry;
-       try {
--         dataentry = (EntityDataManager.DataEntry<T>) this.field_187234_c.get(p_187219_1_.func_187155_a());
-+         dataentry = (EntityDataManager.DataEntry<T>) this.entries.get(key.getId());
-       } catch (Throwable throwable) {
--         CrashReport crashreport = CrashReport.func_85055_a(throwable, "Getting synched entity data");
--         CrashReportCategory crashreportcategory = crashreport.func_85058_a("Synched entity data");
--         crashreportcategory.func_71507_a("Data ID", p_187219_1_);
-+         CrashReport crashreport = CrashReport.makeCrashReport(throwable, "Getting synched entity data");
-+         CrashReportCategory crashreportcategory = crashreport.makeCategory("Synched entity data");
-+         crashreportcategory.addDetail("Data ID", key);
-          throw new ReportedException(crashreport);
-       } finally {
--         this.field_187235_d.readLock().unlock();
-+         this.lock.readLock().unlock();
-       }
- 
--      return dataentry;
-+  */
-+      return (DataEntry<T>) this.field_187234_c.get(p_187219_1_.func_187155_a());
-    }
- 
-    public <T> T func_187225_a(DataParameter<T> p_187225_1_) {
-@@ -127,6 +135,13 @@
+@@ -127,6 +129,13 @@
  
     }
  
@@ -100,73 +30,3 @@
     public boolean func_187223_a() {
        return this.field_187237_f;
     }
-@@ -147,7 +162,7 @@
-    public List<EntityDataManager.DataEntry<?>> func_187221_b() {
-       List<EntityDataManager.DataEntry<?>> list = null;
-       if (this.field_187237_f) {
--         this.field_187235_d.readLock().lock();
-+//         this.lock.readLock().lock(); // Spigot - not required
- 
-          for(EntityDataManager.DataEntry<?> dataentry : this.field_187234_c.values()) {
-             if (dataentry.func_187209_c()) {
-@@ -160,7 +175,7 @@
-             }
-          }
- 
--         this.field_187235_d.readLock().unlock();
-+//         this.lock.readLock().unlock(); // Spigot - not required
-       }
- 
-       this.field_187237_f = false;
-@@ -170,7 +185,7 @@
-    @Nullable
-    public List<EntityDataManager.DataEntry<?>> func_187231_c() {
-       List<EntityDataManager.DataEntry<?>> list = null;
--      this.field_187235_d.readLock().lock();
-+//      this.lock.readLock().lock(); // Spigot - not required
- 
-       for(EntityDataManager.DataEntry<?> dataentry : this.field_187234_c.values()) {
-          if (list == null) {
-@@ -180,7 +195,7 @@
-          list.add(dataentry.func_192735_d());
-       }
- 
--      this.field_187235_d.readLock().unlock();
-+//      this.lock.readLock().unlock(); // Spigot - not required
-       return list;
-    }
- 
-@@ -224,7 +239,7 @@
- 
-    @OnlyIn(Dist.CLIENT)
-    public void func_187218_a(List<EntityDataManager.DataEntry<?>> p_187218_1_) {
--      this.field_187235_d.writeLock().lock();
-+//      this.lock.writeLock().lock(); // Spigot - not required
- 
-       for(EntityDataManager.DataEntry<?> dataentry : p_187218_1_) {
-          EntityDataManager.DataEntry<?> dataentry1 = this.field_187234_c.get(dataentry.func_187205_a().func_187155_a());
-@@ -234,7 +249,7 @@
-          }
-       }
- 
--      this.field_187235_d.writeLock().unlock();
-+//      this.lock.writeLock().unlock(); // Spigot - not required
-       this.field_187237_f = true;
-    }
- 
-@@ -253,13 +268,13 @@
- 
-    public void func_187230_e() {
-       this.field_187237_f = false;
--      this.field_187235_d.readLock().lock();
-+//      this.lock.readLock().lock(); // Spigot - not required
- 
-       for(EntityDataManager.DataEntry<?> dataentry : this.field_187234_c.values()) {
-          dataentry.func_187208_a(false);
-       }
- 
--      this.field_187235_d.readLock().unlock();
-+//      this.lock.readLock().unlock(); // Spigot - not required
-    }
- 
-    public static class DataEntry<T> {

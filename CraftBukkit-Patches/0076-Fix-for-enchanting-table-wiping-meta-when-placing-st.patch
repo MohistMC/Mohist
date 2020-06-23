@@ -1,0 +1,27 @@
+From cc8a3768aeb811a174f1e840b0fb0fa30bcb667b Mon Sep 17 00:00:00 2001
+From: drXor <mcyoungsota@gmail.com>
+Date: Thu, 17 Jul 2014 21:13:15 -0400
+Subject: [PATCH] Fix for enchanting table wiping meta when placing stacked
+ items
+
+
+diff --git a/src/main/java/net/minecraft/server/ContainerEnchantTable.java b/src/main/java/net/minecraft/server/ContainerEnchantTable.java
+index bd4a84666..b8c5af8be 100644
+--- a/src/main/java/net/minecraft/server/ContainerEnchantTable.java
++++ b/src/main/java/net/minecraft/server/ContainerEnchantTable.java
+@@ -358,7 +358,11 @@ public class ContainerEnchantTable extends Container {
+                     ((Slot) this.slots.get(0)).set(itemstack1.cloneItemStack());
+                     itemstack1.setCount(0);
+                 } else if (!itemstack1.isEmpty()) {
+-                    ((Slot) this.slots.get(0)).set(new ItemStack(itemstack1.getItem()));
++                    // Spigot start
++                    ItemStack clone = itemstack1.cloneItemStack();
++                    clone.setCount(1);
++                    ((Slot) this.slots.get(0)).set(clone);
++                    // Spigot end
+                     itemstack1.subtract(1);
+                 }
+             }
+-- 
+2.25.1
+

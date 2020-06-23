@@ -15,11 +15,3 @@
     public final boolean field_219007_a = this.func_218982_a("online-mode", true);
     public final boolean field_219008_b = this.func_218982_a("prevent-proxy-connections", false);
     public final String field_219009_c = this.func_218973_a("server-ip", "");
-@@ -87,6 +89,7 @@
-       return new ServerProperties(func_218969_b(p_218985_0_));
-    }
- 
-+
-    protected ServerProperties func_212857_b_(Properties p_212857_1_) {
-       return new ServerProperties(p_212857_1_);
-    }

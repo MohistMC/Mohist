@@ -1,0 +1,56 @@
+From: Jedediah Smith <jedediah@silencegreys.com>
+Date: Wed, 14 Dec 2016 23:33:02 -0500
+Subject: [PATCH] Add AsyncClientConnectEvent
+
+
+diff --git a/src/main/java/net/minecraft/server/ServerConnection.java b/src/main/java/net/minecraft/server/ServerConnection.java
+--- a/src/main/java/net/minecraft/server/ServerConnection.java
++++ b/src/main/java/net/minecraft/server/ServerConnection.java
+@@ -100,6 +100,7 @@ public class ServerConnection {
+                     ServerConnection.this.h.add(networkmanager);
+                     channel.pipeline().addLast("packet_handler", networkmanager);
+                     networkmanager.setPacketListener(new HandshakeListener(ServerConnection.this.f, networkmanager));
++                    f.server.eventBus().callEvent(new org.bukkit.craftbukkit.event.AsyncClientConnectEvent(channel, networkmanager)); // SportBukkit
+                 }
+             }).group((EventLoopGroup) lazyinitvar.c()).localAddress(inetaddress, i)).bind().syncUninterruptibly());
+         }
+diff --git a/src/main/java/org/bukkit/craftbukkit/event/AsyncClientConnectEvent.java b/src/main/java/org/bukkit/craftbukkit/event/AsyncClientConnectEvent.java
+new file mode 100644
+index 0000000..b6d8ba9
+--- /dev/null
++++ b/src/main/java/org/bukkit/craftbukkit/event/AsyncClientConnectEvent.java
+@@ -0,0 +1,34 @@
++package org.bukkit.craftbukkit.event;
++
++import io.netty.channel.Channel;
++import net.minecraft.server.NetworkManager;
++import org.bukkit.event.Event;
++import org.bukkit.event.HandlerList;
++
++/**
++ * Called right after a new client connection is initialized,
++ * before any packets have been exchanged.
++ *
++ * Obviously, this is quite hacky. Please use for good and not evil.
++ */
++public class AsyncClientConnectEvent extends Event {
++
++    private final Channel channel;
++    private final NetworkManager networkManager;
++
++    public AsyncClientConnectEvent(Channel channel, NetworkManager networkManager) {
++        super(true);
++        this.channel = channel;
++        this.networkManager = networkManager;
++    }
++
++    public Channel channel() {
++        return channel;
++    }
++
++    public NetworkManager networkManager() {
++        return networkManager;
++    }
++
++    private static final HandlerList<AsyncClientConnectEvent> handlers = new HandlerList<>();
++}

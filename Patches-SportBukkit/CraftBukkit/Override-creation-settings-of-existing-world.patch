@@ -1,0 +1,59 @@
+From: Jedediah Smith <jedediah@silencegreys.com>
+Date: Sun, 28 Jun 2015 03:39:14 -0400
+Subject: [PATCH] Override creation settings of existing world
+
+
+diff --git a/src/main/java/org/bukkit/craftbukkit/CraftServer.java b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
+--- a/src/main/java/org/bukkit/craftbukkit/CraftServer.java
++++ b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
+@@ -843,6 +843,25 @@ public final class CraftServer implements Server {
+         return "CraftServer{" + "serverName=" + serverName + ",serverVersion=" + serverVersion + ",minecraftVersion=" + console.getVersion() + '}';
+     }
+ 
++    public WorldCreator detectWorld(String worldName) {
++        IDataManager sdm = new ServerNBTManager(getWorldContainer(), worldName, true, getHandle().getServer().getDataConverterManager());
++        WorldData worldData = sdm.getWorldData();
++        if(worldData == null) return null;
++
++        return new WorldCreator(worldName)
++            .generateStructures(worldData.shouldGenerateMapFeatures())
++            .generatorSettings(worldData.getGeneratorOptions())
++            .seed(worldData.getSeed())
++            .type(org.bukkit.WorldType.getByName(worldData.getType().name()))
++            .hardcore(worldData.isHardcore());
++    }
++
++    @Override
++    public World createWorld(String name) {
++        WorldCreator creator = detectWorld(name);
++        return createWorld(creator != null ? creator : new WorldCreator(name));
++    }
++
+     public World createWorld(String name, World.Environment environment) {
+         return WorldCreator.name(name).environment(environment).createWorld();
+     }
+@@ -913,15 +932,22 @@ public final class CraftServer implements Server {
+                 }
+             }
+         } while(used);
+-        boolean hardcore = false;
++
++        // SportBukkit start - moved from below
++        WorldSettings worldSettings = new WorldSettings(creator.seed(), EnumGamemode.getById(getDefaultGameMode().getValue()), generateStructures, creator.hardcore(), type);
++        worldSettings.setGeneratorSettings(creator.generatorSettings());
++        // SportBukkit end
+ 
+         IDataManager sdm = new ServerNBTManager(getWorldContainer(), name, true, getHandle().getServer().getDataConverterManager());
+         WorldData worlddata = sdm.getWorldData();
+-        WorldSettings worldSettings = null;
+         if (worlddata == null) {
++            /* SportBukkit - moved above
+             worldSettings = new WorldSettings(creator.seed(), EnumGamemode.getById(getDefaultGameMode().getValue()), generateStructures, hardcore, type);
+             worldSettings.setGeneratorSettings(creator.generatorSettings());
++            SportBukkit */
+             worlddata = new WorldData(worldSettings, name);
++        } else {
++            worlddata.a(worldSettings);
+         }
+         worlddata.checkName(name); // CraftBukkit - Migration did not rewrite the level.dat; This forces 1.8 to take the last loaded world as respawn (in this case the end)
+         WorldServer internal = (WorldServer) new WorldServer(console, sdm, worlddata, dimension, console.methodProfiler, creator.environment(), generator).b();

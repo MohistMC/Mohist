@@ -1,0 +1,55 @@
+From 9245ec9dbe3e9e65a796c6380add7ccd49da203b Mon Sep 17 00:00:00 2001
+From: Aikar <aikar@aikar.co>
+Date: Wed, 30 Mar 2016 02:13:24 -0400
+Subject: [PATCH] Use Optimized Collections
+
+Swap out CraftBukkit LongObjectHashMap with Long2ObjectOpenHashMap
+Swap out Integer key HashMap for a Int2ObjectOpenHashMap For ChunkProviderServer
+
+Amaranth, the creator of LongObjectHashMap, tested it vs fastutil and determined fastutil to be 3x faster
+and could not create anything faster than fastutil.
+
+These collections are super fast as seen
+http://java-performance.info/hashmap-overview-jdk-fastutil-goldman-sachs-hppc-koloboke-trove-january-2015/
+
+diff --git a/pom.xml b/pom.xml
+index 092ca7df..ee562d2e 100644
+--- a/pom.xml
++++ b/pom.xml
+@@ -27,6 +27,11 @@
+     </parent>
+ 
+     <dependencies>
++        <dependency>
++            <groupId>it.unimi.dsi</groupId>
++            <artifactId>fastutil</artifactId>
++            <version>8.1.0</version>
++        </dependency>
+         <dependency>
+             <groupId>net.sf.trove4j</groupId>
+             <artifactId>trove4j</artifactId>
+diff --git a/src/main/java/net/minecraft/server/ChunkProviderServer.java b/src/main/java/net/minecraft/server/ChunkProviderServer.java
+index 573303e3..7c81324d 100644
+--- a/src/main/java/net/minecraft/server/ChunkProviderServer.java
++++ b/src/main/java/net/minecraft/server/ChunkProviderServer.java
+@@ -8,6 +8,8 @@ import java.util.Iterator;
+ import java.util.List;
+ import java.util.Set;
+ import java.util.concurrent.ConcurrentHashMap;
++
++import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
+ import org.apache.logging.log4j.LogManager;
+ import org.apache.logging.log4j.Logger;
+ 
+@@ -36,7 +38,7 @@ public class ChunkProviderServer implements IChunkProvider {
+     public boolean forceChunkLoad = false; // CraftBukkit - true -> false
+     // Paper start
+     protected Chunk lastChunkByPos = null;
+-    public LongObjectHashMap<Chunk> chunks = new LongObjectHashMap<Chunk>() {
++    public Long2ObjectOpenHashMap<Chunk> chunks = new Long2ObjectOpenHashMap<Chunk>(8192) {
+         @Override
+         public Chunk get(long key) {
+             if (lastChunkByPos != null && key == lastChunkByPos.chunkKey) {
+-- 
+2.19.0
+

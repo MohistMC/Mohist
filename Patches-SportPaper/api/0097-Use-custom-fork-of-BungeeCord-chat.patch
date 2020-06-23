@@ -1,0 +1,40 @@
+From 67eeda3651a76728d82a8f7ee81c2a431a13b212 Mon Sep 17 00:00:00 2001
+From: Ashcon Partovi <ashcon@partovi.net>
+Date: Wed, 9 Oct 2019 12:26:06 -0700
+Subject: [PATCH] Use custom fork of BungeeCord chat
+
+
+diff --git a/pom.xml b/pom.xml
+index 6a3186d5..76533897 100644
+--- a/pom.xml
++++ b/pom.xml
+@@ -21,6 +21,13 @@
+         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+     </properties>
+ 
++    <repositories>
++        <repository>
++            <id>jitpack-io</id>
++            <url>https://jitpack.io</url>
++        </repository>
++    </repositories>
++
+     <!-- required until fixed plexus-compiler-eclipse is deployed -->
+     <pluginRepositories>
+         <pluginRepository>
+@@ -81,9 +88,9 @@
+             <scope>compile</scope>
+         </dependency>
+         <dependency>
+-            <groupId>net.md-5</groupId>
+-            <artifactId>bungeecord-chat</artifactId>
+-            <version>1.8-SNAPSHOT</version>
++            <groupId>com.github.Electroid</groupId>
++            <artifactId>BungeeCord</artifactId>
++            <version>master</version>
+             <type>jar</type>
+             <scope>compile</scope>
+         </dependency>
+-- 
+2.23.0
+

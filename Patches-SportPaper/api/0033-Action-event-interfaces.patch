@@ -1,0 +1,1564 @@
+From 324d54f2c2d4b9e6ce5af5e93d0252cd11a0577d Mon Sep 17 00:00:00 2001
+From: cswhite2000 <18whitechristop@gmail.com>
+Date: Wed, 8 Aug 2018 21:18:26 -0700
+Subject: [PATCH] Action event interfaces
+
+
+diff --git a/src/main/java/org/bukkit/event/EntityAction.java b/src/main/java/org/bukkit/event/EntityAction.java
+new file mode 100644
+index 00000000..26870fc7
+--- /dev/null
++++ b/src/main/java/org/bukkit/event/EntityAction.java
+@@ -0,0 +1,28 @@
++package org.bukkit.event;
++
++import org.bukkit.entity.Entity;
++
++/**
++ * Implemented by {@link Event}s which can be caused by an {@link Entity}.
++ *
++ * There is no formal definition of "caused" in this case, only an intuitive one.
++ * Events that involve an entity doing something to another entity, or some other
++ * object, will typically implement this interface. Events involving only a single
++ * entity may or may not implement it, depending on whether the event feels like
++ * an "action" by the entity.
++ *
++ * Examples of the types of events that DO implement this interface include:
++ * movements, attacks, item pickup/drop, block place/break, "using" items/entities/blocks,
++ * inventory actions, and collisions (with the obstructing entity as the actor).
++ *
++ * Examples of event types that DO NOT implement this interface include:
++ * spawning, despawning, environmental damage/death, natural depletion/recovery of vitals,
++ * and events with no direct in-game effect, such as chatting and running commands.
++ */
++public interface EntityAction {
++    /**
++     * @return the entity that performed this action, or null if the event was not caused
++     *         by an entity, or the causing entity is unavailable for some reason.
++     */
++    Entity getActor();
++}
+diff --git a/src/main/java/org/bukkit/event/PlayerAction.java b/src/main/java/org/bukkit/event/PlayerAction.java
+new file mode 100644
+index 00000000..5cbbf3db
+--- /dev/null
++++ b/src/main/java/org/bukkit/event/PlayerAction.java
+@@ -0,0 +1,14 @@
++package org.bukkit.event;
++
++import org.bukkit.entity.Player;
++
++/**
++ * Implemented by {@link Event}s which may represent the action of a {@link Player}
++ */
++public interface PlayerAction extends EntityAction {
++    /**
++     * @return the player that performed this action, or null if the event was not caused
++     *         by a player, or the causing player is unavailable for some reason.
++     */
++    Player getActor();
++}
+diff --git a/src/main/java/org/bukkit/event/block/BlockBreakEvent.java b/src/main/java/org/bukkit/event/block/BlockBreakEvent.java
+index a011f61a..6175915c 100644
+--- a/src/main/java/org/bukkit/event/block/BlockBreakEvent.java
++++ b/src/main/java/org/bukkit/event/block/BlockBreakEvent.java
+@@ -4,6 +4,7 @@ import org.bukkit.block.Block;
+ import org.bukkit.entity.Player;
+ import org.bukkit.event.Cancellable;
+ import org.bukkit.event.HandlerList;
++import org.bukkit.event.PlayerAction;
+ 
+ /**
+  * Called when a block is broken by a player.
+@@ -26,7 +27,7 @@ import org.bukkit.event.HandlerList;
+  * If a Block Break event is cancelled, the block will not break and
+  * experience will not drop.
+  */
+-public class BlockBreakEvent extends BlockExpEvent implements Cancellable {
++public class BlockBreakEvent extends BlockExpEvent implements Cancellable, PlayerAction {
+     private final Player player;
+     private boolean cancel;
+ 
+@@ -45,6 +46,11 @@ public class BlockBreakEvent extends BlockExpEvent implements Cancellable {
+         return player;
+     }
+ 
++    @Override
++    public Player getActor() {
++        return getPlayer();
++    }
++
+     public boolean isCancelled() {
+         return cancel;
+     }
+diff --git a/src/main/java/org/bukkit/event/block/BlockDamageEvent.java b/src/main/java/org/bukkit/event/block/BlockDamageEvent.java
+index d80e00ec..77f36dfc 100644
+--- a/src/main/java/org/bukkit/event/block/BlockDamageEvent.java
++++ b/src/main/java/org/bukkit/event/block/BlockDamageEvent.java
+@@ -4,6 +4,7 @@ import org.bukkit.block.Block;
+ import org.bukkit.entity.Player;
+ import org.bukkit.event.Cancellable;
+ import org.bukkit.event.HandlerList;
++import org.bukkit.event.PlayerAction;
+ import org.bukkit.inventory.ItemStack;
+ 
+ /**
+@@ -11,7 +12,7 @@ import org.bukkit.inventory.ItemStack;
+  * <p>
+  * If a Block Damage event is cancelled, the block will not be damaged.
+  */
+-public class BlockDamageEvent extends BlockEvent implements Cancellable {
++public class BlockDamageEvent extends BlockEvent implements Cancellable, PlayerAction {
+     private static final HandlerList handlers = new HandlerList();
+     private final Player player;
+     private boolean instaBreak;
+@@ -35,6 +36,11 @@ public class BlockDamageEvent extends BlockEvent implements Cancellable {
+         return player;
+     }
+ 
++    @Override
++    public Player getActor() {
++        return getPlayer();
++    }
++
+     /**
+      * Gets if the block is set to instantly break when damaged by the player.
+      *
+diff --git a/src/main/java/org/bukkit/event/block/BlockIgniteEvent.java b/src/main/java/org/bukkit/event/block/BlockIgniteEvent.java
+index 5ea8b07f..7f4e9b30 100644
+--- a/src/main/java/org/bukkit/event/block/BlockIgniteEvent.java
++++ b/src/main/java/org/bukkit/event/block/BlockIgniteEvent.java
+@@ -4,6 +4,7 @@ import org.bukkit.block.Block;
+ import org.bukkit.entity.Entity;
+ import org.bukkit.entity.Player;
+ import org.bukkit.event.Cancellable;
++import org.bukkit.event.EntityAction;
+ import org.bukkit.event.HandlerList;
+ 
+ /**
+@@ -12,7 +13,7 @@ import org.bukkit.event.HandlerList;
+  * <p>
+  * If a Block Ignite event is cancelled, the block will not be ignited.
+  */
+-public class BlockIgniteEvent extends BlockEvent implements Cancellable {
++public class BlockIgniteEvent extends BlockEvent implements Cancellable, EntityAction {
+     private static final HandlerList handlers = new HandlerList();
+     private final IgniteCause cause;
+     private final Entity ignitingEntity;
+@@ -70,6 +71,11 @@ public class BlockIgniteEvent extends BlockEvent implements Cancellable {
+         return null;
+     }
+ 
++    @Override
++    public Entity getActor() {
++        return getIgnitingEntity();
++    }
++
+     /**
+      * Gets the entity who ignited this block
+      *
+diff --git a/src/main/java/org/bukkit/event/block/BlockPlaceEvent.java b/src/main/java/org/bukkit/event/block/BlockPlaceEvent.java
+index 6d0ffe81..ce87405d 100644
+--- a/src/main/java/org/bukkit/event/block/BlockPlaceEvent.java
++++ b/src/main/java/org/bukkit/event/block/BlockPlaceEvent.java
+@@ -5,6 +5,7 @@ import org.bukkit.block.BlockState;
+ import org.bukkit.entity.Player;
+ import org.bukkit.event.Cancellable;
+ import org.bukkit.event.HandlerList;
++import org.bukkit.event.PlayerAction;
+ import org.bukkit.inventory.ItemStack;
+ 
+ /**
+@@ -12,7 +13,7 @@ import org.bukkit.inventory.ItemStack;
+  * <p>
+  * If a Block Place event is cancelled, the block will not be placed.
+  */
+-public class BlockPlaceEvent extends BlockEvent implements Cancellable {
++public class BlockPlaceEvent extends BlockEvent implements Cancellable, PlayerAction {
+     private static final HandlerList handlers = new HandlerList();
+     protected boolean cancel;
+     protected boolean canBuild;
+@@ -48,6 +49,11 @@ public class BlockPlaceEvent extends BlockEvent implements Cancellable {
+         return player;
+     }
+ 
++    @Override
++    public Player getActor() {
++        return getPlayer();
++    }
++
+     /**
+      * Clarity method for getting the placed block. Not really needed except
+      * for reasons of clarity.
+diff --git a/src/main/java/org/bukkit/event/block/SignChangeEvent.java b/src/main/java/org/bukkit/event/block/SignChangeEvent.java
+index 83188cf5..702eca0a 100644
+--- a/src/main/java/org/bukkit/event/block/SignChangeEvent.java
++++ b/src/main/java/org/bukkit/event/block/SignChangeEvent.java
+@@ -4,13 +4,14 @@ import org.bukkit.block.Block;
+ import org.bukkit.entity.Player;
+ import org.bukkit.event.Cancellable;
+ import org.bukkit.event.HandlerList;
++import org.bukkit.event.PlayerAction;
+ 
+ /**
+  * Called when a sign is changed by a player.
+  * <p>
+  * If a Sign Change event is cancelled, the sign will not be changed.
+  */
+-public class SignChangeEvent extends BlockEvent implements Cancellable {
++public class SignChangeEvent extends BlockEvent implements Cancellable, PlayerAction {
+     private static final HandlerList handlers = new HandlerList();
+     private boolean cancel = false;
+     private final Player player;
+@@ -31,6 +32,11 @@ public class SignChangeEvent extends BlockEvent implements Cancellable {
+         return player;
+     }
+ 
++    @Override
++    public Player getActor() {
++        return getPlayer();
++    }
++
+     /**
+      * Gets all of the lines of text from the sign involved in this event.
+      *
+diff --git a/src/main/java/org/bukkit/event/entity/CreeperPowerEvent.java b/src/main/java/org/bukkit/event/entity/CreeperPowerEvent.java
+index b103a6ae..c07a2101 100644
+--- a/src/main/java/org/bukkit/event/entity/CreeperPowerEvent.java
++++ b/src/main/java/org/bukkit/event/entity/CreeperPowerEvent.java
+@@ -3,6 +3,7 @@ package org.bukkit.event.entity;
+ import org.bukkit.entity.Creeper;
+ import org.bukkit.entity.LightningStrike;
+ import org.bukkit.event.Cancellable;
++import org.bukkit.event.EntityAction;
+ import org.bukkit.event.HandlerList;
+ 
+ /**
+@@ -10,7 +11,7 @@ import org.bukkit.event.HandlerList;
+  * <p>
+  * If a Creeper Power event is cancelled, the Creeper will not be powered.
+  */
+-public class CreeperPowerEvent extends EntityEvent implements Cancellable {
++public class CreeperPowerEvent extends EntityEvent implements Cancellable, EntityAction {
+     private static final HandlerList handlers = new HandlerList();
+     private boolean canceled;
+     private final PowerCause cause;
+@@ -48,6 +49,11 @@ public class CreeperPowerEvent extends EntityEvent implements Cancellable {
+         return bolt;
+     }
+ 
++    @Override
++    public LightningStrike getActor() {
++        return getLightning();
++    }
++
+     /**
+      * Gets the cause of the creeper being (un)powered.
+      *
+diff --git a/src/main/java/org/bukkit/event/entity/EntityActionBase.java b/src/main/java/org/bukkit/event/entity/EntityActionBase.java
+new file mode 100644
+index 00000000..6e806f99
+--- /dev/null
++++ b/src/main/java/org/bukkit/event/entity/EntityActionBase.java
+@@ -0,0 +1,16 @@
++package org.bukkit.event.entity;
++
++import org.bukkit.entity.Entity;
++import org.bukkit.event.EntityAction;
++
++public abstract class EntityActionBase extends EntityEvent implements EntityAction {
++
++    public EntityActionBase(Entity what) {
++        super(what);
++    }
++
++    @Override
++    public Entity getActor() {
++        return getEntity();
++    }
++}
+diff --git a/src/main/java/org/bukkit/event/entity/EntityChangeBlockEvent.java b/src/main/java/org/bukkit/event/entity/EntityChangeBlockEvent.java
+index 41be9ca9..4989e6cb 100644
+--- a/src/main/java/org/bukkit/event/entity/EntityChangeBlockEvent.java
++++ b/src/main/java/org/bukkit/event/entity/EntityChangeBlockEvent.java
+@@ -10,7 +10,7 @@ import org.bukkit.event.HandlerList;
+ /**
+  * Called when any Entity, excluding players, changes a block.
+  */
+-public class EntityChangeBlockEvent extends EntityEvent implements Cancellable {
++public class EntityChangeBlockEvent extends EntityActionBase implements Cancellable {
+     private static final HandlerList handlers = new HandlerList();
+     private final Block block;
+     private boolean cancel;
+diff --git a/src/main/java/org/bukkit/event/entity/EntityCombustByEntityEvent.java b/src/main/java/org/bukkit/event/entity/EntityCombustByEntityEvent.java
+index 639567bd..0c5d5687 100644
+--- a/src/main/java/org/bukkit/event/entity/EntityCombustByEntityEvent.java
++++ b/src/main/java/org/bukkit/event/entity/EntityCombustByEntityEvent.java
+@@ -1,11 +1,12 @@
+ package org.bukkit.event.entity;
+ 
+ import org.bukkit.entity.Entity;
++import org.bukkit.event.EntityAction;
+ 
+ /**
+  * Called when an entity causes another entity to combust.
+  */
+-public class EntityCombustByEntityEvent extends EntityCombustEvent {
++public class EntityCombustByEntityEvent extends EntityCombustEvent implements EntityAction {
+     private final Entity combuster;
+ 
+     public EntityCombustByEntityEvent(final Entity combuster, final Entity combustee, final int duration) {
+@@ -21,4 +22,9 @@ public class EntityCombustByEntityEvent extends EntityCombustEvent {
+     public Entity getCombuster() {
+         return combuster;
+     }
++
++    @Override
++    public Entity getActor() {
++        return getCombuster();
++    }
+ }
+diff --git a/src/main/java/org/bukkit/event/entity/EntityCreatePortalEvent.java b/src/main/java/org/bukkit/event/entity/EntityCreatePortalEvent.java
+index 286c206d..abf9b8df 100644
+--- a/src/main/java/org/bukkit/event/entity/EntityCreatePortalEvent.java
++++ b/src/main/java/org/bukkit/event/entity/EntityCreatePortalEvent.java
+@@ -10,7 +10,7 @@ import org.bukkit.event.HandlerList;
+ /**
+  * Thrown when a Living Entity creates a portal in a world.
+  */
+-public class EntityCreatePortalEvent extends EntityEvent implements Cancellable {
++public class EntityCreatePortalEvent extends EntityActionBase implements Cancellable {
+     private static final HandlerList handlers = new HandlerList();
+     private final List<BlockState> blocks;
+     private boolean cancelled = false;
+diff --git a/src/main/java/org/bukkit/event/entity/EntityDamageByEntityEvent.java b/src/main/java/org/bukkit/event/entity/EntityDamageByEntityEvent.java
+index 49e74c30..0b1c59d9 100644
+--- a/src/main/java/org/bukkit/event/entity/EntityDamageByEntityEvent.java
++++ b/src/main/java/org/bukkit/event/entity/EntityDamageByEntityEvent.java
+@@ -4,11 +4,12 @@ import java.util.Map;
+ 
+ import com.google.common.base.Function;
+ import org.bukkit.entity.Entity;
++import org.bukkit.event.EntityAction;
+ 
+ /**
+  * Called when an entity is damaged by an entity
+  */
+-public class EntityDamageByEntityEvent extends EntityDamageEvent {
++public class EntityDamageByEntityEvent extends EntityDamageEvent implements EntityAction {
+     private final Entity damager;
+ 
+     @Deprecated
+@@ -35,4 +36,9 @@ public class EntityDamageByEntityEvent extends EntityDamageEvent {
+     public Entity getDamager() {
+         return damager;
+     }
++
++    @Override
++    public Entity getActor() {
++        return getDamager();
++    }
+ }
+diff --git a/src/main/java/org/bukkit/event/entity/EntityExplodeEvent.java b/src/main/java/org/bukkit/event/entity/EntityExplodeEvent.java
+index 287035d1..f464f156 100644
+--- a/src/main/java/org/bukkit/event/entity/EntityExplodeEvent.java
++++ b/src/main/java/org/bukkit/event/entity/EntityExplodeEvent.java
+@@ -11,7 +11,7 @@ import java.util.List;
+ /**
+  * Called when an entity explodes
+  */
+-public class EntityExplodeEvent extends EntityEvent implements Cancellable {
++public class EntityExplodeEvent extends EntityActionBase implements Cancellable {
+     private static final HandlerList handlers = new HandlerList();
+     private boolean cancel;
+     private final Location location;
+diff --git a/src/main/java/org/bukkit/event/entity/EntityInteractEvent.java b/src/main/java/org/bukkit/event/entity/EntityInteractEvent.java
+index 1c4e1003..18d0a347 100644
+--- a/src/main/java/org/bukkit/event/entity/EntityInteractEvent.java
++++ b/src/main/java/org/bukkit/event/entity/EntityInteractEvent.java
+@@ -8,7 +8,7 @@ import org.bukkit.event.HandlerList;
+ /**
+  * Called when an entity interacts with an object
+  */
+-public class EntityInteractEvent extends EntityEvent implements Cancellable {
++public class EntityInteractEvent extends EntityActionBase implements Cancellable {
+     private static final HandlerList handlers = new HandlerList();
+     protected Block block;
+     private boolean cancelled;
+diff --git a/src/main/java/org/bukkit/event/entity/EntityPortalEnterEvent.java b/src/main/java/org/bukkit/event/entity/EntityPortalEnterEvent.java
+index 87d57b01..faf7eb83 100644
+--- a/src/main/java/org/bukkit/event/entity/EntityPortalEnterEvent.java
++++ b/src/main/java/org/bukkit/event/entity/EntityPortalEnterEvent.java
+@@ -7,7 +7,7 @@ import org.bukkit.event.HandlerList;
+ /**
+  * Called when an entity comes into contact with a portal
+  */
+-public class EntityPortalEnterEvent extends EntityEvent {
++public class EntityPortalEnterEvent extends EntityActionBase {
+     private static final HandlerList handlers = new HandlerList();
+     private final Location location;
+ 
+diff --git a/src/main/java/org/bukkit/event/entity/EntityShootBowEvent.java b/src/main/java/org/bukkit/event/entity/EntityShootBowEvent.java
+index f8c91a13..51e6d7ae 100644
+--- a/src/main/java/org/bukkit/event/entity/EntityShootBowEvent.java
++++ b/src/main/java/org/bukkit/event/entity/EntityShootBowEvent.java
+@@ -10,7 +10,7 @@ import org.bukkit.inventory.ItemStack;
+ /**
+  * Called when a LivingEntity shoots a bow firing an arrow
+  */
+-public class EntityShootBowEvent extends EntityEvent implements Cancellable {
++public class EntityShootBowEvent extends EntityActionBase implements Cancellable {
+     private static final HandlerList handlers = new HandlerList();
+     private final ItemStack bow;
+     private Entity projectile;
+@@ -29,6 +29,11 @@ public class EntityShootBowEvent extends EntityEvent implements Cancellable {
+         return (LivingEntity) entity;
+     }
+ 
++    @Override
++    public LivingEntity getActor() {
++        return getEntity();
++    }
++
+     /**
+      * Gets the bow ItemStack used to fire the arrow.
+      *
+diff --git a/src/main/java/org/bukkit/event/entity/EntityTameEvent.java b/src/main/java/org/bukkit/event/entity/EntityTameEvent.java
+index f105817a..4115e073 100644
+--- a/src/main/java/org/bukkit/event/entity/EntityTameEvent.java
++++ b/src/main/java/org/bukkit/event/entity/EntityTameEvent.java
+@@ -2,13 +2,15 @@ package org.bukkit.event.entity;
+ 
+ import org.bukkit.entity.AnimalTamer;
+ import org.bukkit.entity.LivingEntity;
++import org.bukkit.entity.Player;
+ import org.bukkit.event.Cancellable;
+ import org.bukkit.event.HandlerList;
++import org.bukkit.event.PlayerAction;
+ 
+ /**
+  * Thrown when a LivingEntity is tamed
+  */
+-public class EntityTameEvent extends EntityEvent implements Cancellable {
++public class EntityTameEvent extends EntityEvent implements Cancellable, PlayerAction {
+     private static final HandlerList handlers = new HandlerList();
+     private boolean cancelled;
+     private final AnimalTamer owner;
+@@ -40,6 +42,11 @@ public class EntityTameEvent extends EntityEvent implements Cancellable {
+         return owner;
+     }
+ 
++    @Override
++    public Player getActor() {
++        return getEntity().getServer().getPlayer(getOwner().getUniqueId());
++    }
++
+     @Override
+     public HandlerList getHandlers() {
+         return handlers;
+diff --git a/src/main/java/org/bukkit/event/entity/EntityTargetEvent.java b/src/main/java/org/bukkit/event/entity/EntityTargetEvent.java
+index cf672513..95d36ddc 100644
+--- a/src/main/java/org/bukkit/event/entity/EntityTargetEvent.java
++++ b/src/main/java/org/bukkit/event/entity/EntityTargetEvent.java
+@@ -7,7 +7,7 @@ import org.bukkit.event.HandlerList;
+ /**
+  * Called when a creature targets or untargets another entity
+  */
+-public class EntityTargetEvent extends EntityEvent implements Cancellable {
++public class EntityTargetEvent extends EntityActionBase implements Cancellable {
+     private static final HandlerList handlers = new HandlerList();
+     private boolean cancel = false;
+     private Entity target;
+diff --git a/src/main/java/org/bukkit/event/entity/EntityTeleportEvent.java b/src/main/java/org/bukkit/event/entity/EntityTeleportEvent.java
+index 619f8d4f..da1f3bc8 100644
+--- a/src/main/java/org/bukkit/event/entity/EntityTeleportEvent.java
++++ b/src/main/java/org/bukkit/event/entity/EntityTeleportEvent.java
+@@ -9,7 +9,7 @@ import org.bukkit.event.HandlerList;
+  * Thrown when a non-player entity (such as an Enderman) tries to teleport
+  * from one location to another.
+  */
+-public class EntityTeleportEvent extends EntityEvent implements Cancellable {
++public class EntityTeleportEvent extends EntityActionBase implements Cancellable {
+     private static final HandlerList handlers = new HandlerList();
+     private boolean cancel;
+     private Location from;
+diff --git a/src/main/java/org/bukkit/event/entity/ExplosionPrimeByEntityEvent.java b/src/main/java/org/bukkit/event/entity/ExplosionPrimeByEntityEvent.java
+index 6b7d13f6..580513ca 100644
+--- a/src/main/java/org/bukkit/event/entity/ExplosionPrimeByEntityEvent.java
++++ b/src/main/java/org/bukkit/event/entity/ExplosionPrimeByEntityEvent.java
+@@ -2,6 +2,7 @@ package org.bukkit.event.entity;
+ 
+ import org.bukkit.entity.Entity;
+ import org.bukkit.entity.Explosive;
++import org.bukkit.event.EntityAction;
+ 
+ import static com.google.common.base.Preconditions.checkNotNull;
+ 
+@@ -12,7 +13,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
+  *  - a flaming arrow activates a TNT block
+  *  - an entity damages an Ender Crystal
+  */
+-public class ExplosionPrimeByEntityEvent extends ExplosionPrimeEvent {
++public class ExplosionPrimeByEntityEvent extends ExplosionPrimeEvent implements EntityAction {
+ 
+     private final Entity primer;
+ 
+@@ -31,4 +32,9 @@ public class ExplosionPrimeByEntityEvent extends ExplosionPrimeEvent {
+     public Entity getPrimer() {
+         return primer;
+     }
++
++    @Override
++    public Entity getActor() {
++        return getPrimer();
++    }
+ }
+diff --git a/src/main/java/org/bukkit/event/entity/HorseJumpEvent.java b/src/main/java/org/bukkit/event/entity/HorseJumpEvent.java
+index fad2468d..f2820346 100644
+--- a/src/main/java/org/bukkit/event/entity/HorseJumpEvent.java
++++ b/src/main/java/org/bukkit/event/entity/HorseJumpEvent.java
+@@ -7,7 +7,7 @@ import org.bukkit.event.HandlerList;
+ /**
+  * Called when a horse jumps.
+  */
+-public class HorseJumpEvent extends EntityEvent implements Cancellable {
++public class HorseJumpEvent extends EntityActionBase implements Cancellable {
+     private static final HandlerList handlers = new HandlerList();
+     private boolean cancelled;
+     private float power;
+@@ -30,6 +30,11 @@ public class HorseJumpEvent extends EntityEvent implements Cancellable {
+         return (Horse) entity;
+     }
+ 
++    @Override
++    public Horse getActor() {
++        return getEntity();
++    }
++
+     /**
+      * Gets the power of the jump.
+      * <p>
+diff --git a/src/main/java/org/bukkit/event/entity/PigZapEvent.java b/src/main/java/org/bukkit/event/entity/PigZapEvent.java
+index aa80ebf1..9b495562 100644
+--- a/src/main/java/org/bukkit/event/entity/PigZapEvent.java
++++ b/src/main/java/org/bukkit/event/entity/PigZapEvent.java
+@@ -4,12 +4,13 @@ import org.bukkit.entity.LightningStrike;
+ import org.bukkit.entity.Pig;
+ import org.bukkit.entity.PigZombie;
+ import org.bukkit.event.Cancellable;
++import org.bukkit.event.EntityAction;
+ import org.bukkit.event.HandlerList;
+ 
+ /**
+  * Stores data for pigs being zapped
+  */
+-public class PigZapEvent extends EntityEvent implements Cancellable {
++public class PigZapEvent extends EntityActionBase implements Cancellable, EntityAction {
+     private static final HandlerList handlers = new HandlerList();
+     private boolean canceled;
+     private final PigZombie pigzombie;
+@@ -43,6 +44,11 @@ public class PigZapEvent extends EntityEvent implements Cancellable {
+         return bolt;
+     }
+ 
++    @Override
++    public LightningStrike getActor() {
++        return getLightning();
++    }
++
+     /**
+      * Gets the zombie pig that will replace the pig, provided the event is
+      * not cancelled first.
+diff --git a/src/main/java/org/bukkit/event/entity/PlayerLeashEntityEvent.java b/src/main/java/org/bukkit/event/entity/PlayerLeashEntityEvent.java
+index abe2bb81..65816cf7 100644
+--- a/src/main/java/org/bukkit/event/entity/PlayerLeashEntityEvent.java
++++ b/src/main/java/org/bukkit/event/entity/PlayerLeashEntityEvent.java
+@@ -7,11 +7,12 @@ import org.bukkit.entity.Player;
+ import org.bukkit.event.Cancellable;
+ import org.bukkit.event.Event;
+ import org.bukkit.event.HandlerList;
++import org.bukkit.event.PlayerAction;
+ 
+ /**
+  * Called immediately prior to a creature being leashed by a player.
+  */
+-public class PlayerLeashEntityEvent extends Event implements Cancellable, Physical {
++public class PlayerLeashEntityEvent extends Event implements Cancellable, Physical, PlayerAction {
+     private static final HandlerList handlers = new HandlerList();
+     private final Entity leashHolder;
+     private final Entity entity;
+@@ -51,6 +52,11 @@ public class PlayerLeashEntityEvent extends Event implements Cancellable, Physic
+         return player;
+     }
+ 
++    @Override
++    public Player getActor() {
++        return getPlayer();
++    }
++
+     @Override
+     public World getWorld() {
+         return getEntity().getWorld();
+diff --git a/src/main/java/org/bukkit/event/entity/ProjectileHitEvent.java b/src/main/java/org/bukkit/event/entity/ProjectileHitEvent.java
+index 25ae8323..2a62a0b2 100644
+--- a/src/main/java/org/bukkit/event/entity/ProjectileHitEvent.java
++++ b/src/main/java/org/bukkit/event/entity/ProjectileHitEvent.java
+@@ -1,12 +1,14 @@
+ package org.bukkit.event.entity;
+ 
++import org.bukkit.entity.Entity;
++import org.bukkit.entity.Player;
+ import org.bukkit.entity.Projectile;
+ import org.bukkit.event.HandlerList;
+ 
+ /**
+  * Called when a projectile hits an object
+  */
+-public class ProjectileHitEvent extends EntityEvent {
++public class ProjectileHitEvent extends EntityActionBase {
+     private static final HandlerList handlers = new HandlerList();
+ 
+     public ProjectileHitEvent(final Projectile projectile) {
+@@ -18,6 +20,11 @@ public class ProjectileHitEvent extends EntityEvent {
+         return (Projectile) entity;
+     }
+ 
++    @Override
++    public Entity getActor() {
++        return getEntity();
++    }
++
+     @Override
+     public HandlerList getHandlers() {
+         return handlers;
+diff --git a/src/main/java/org/bukkit/event/entity/ProjectileLaunchEvent.java b/src/main/java/org/bukkit/event/entity/ProjectileLaunchEvent.java
+index 0c9190ca..0e633d9b 100644
+--- a/src/main/java/org/bukkit/event/entity/ProjectileLaunchEvent.java
++++ b/src/main/java/org/bukkit/event/entity/ProjectileLaunchEvent.java
+@@ -3,12 +3,14 @@ package org.bukkit.event.entity;
+ import org.bukkit.entity.Entity;
+ import org.bukkit.entity.Projectile;
+ import org.bukkit.event.Cancellable;
++import org.bukkit.event.EntityAction;
+ import org.bukkit.event.HandlerList;
++import org.bukkit.projectiles.ProjectileSource;
+ 
+ /**
+  * Called when a projectile is launched.
+  */
+-public class ProjectileLaunchEvent extends EntityEvent implements Cancellable {
++public class ProjectileLaunchEvent extends EntityEvent implements Cancellable, EntityAction {
+     private static final HandlerList handlers = new HandlerList();
+     private boolean cancelled;
+ 
+@@ -29,6 +31,12 @@ public class ProjectileLaunchEvent extends EntityEvent implements Cancellable {
+         return (Projectile) entity;
+     }
+ 
++    @Override
++    public Entity getActor() {
++        ProjectileSource source = getEntity().getShooter();
++        return source instanceof Entity ? (Entity) source : null;
++    }
++
+     @Override
+     public HandlerList getHandlers() {
+         return handlers;
+diff --git a/src/main/java/org/bukkit/event/hanging/HangingBreakByEntityEvent.java b/src/main/java/org/bukkit/event/hanging/HangingBreakByEntityEvent.java
+index 80851ed0..17a884fa 100644
+--- a/src/main/java/org/bukkit/event/hanging/HangingBreakByEntityEvent.java
++++ b/src/main/java/org/bukkit/event/hanging/HangingBreakByEntityEvent.java
+@@ -2,11 +2,12 @@ package org.bukkit.event.hanging;
+ 
+ import org.bukkit.entity.Entity;
+ import org.bukkit.entity.Hanging;
++import org.bukkit.event.EntityAction;
+ 
+ /**
+  * Triggered when a hanging entity is removed by an entity
+  */
+-public class HangingBreakByEntityEvent extends HangingBreakEvent {
++public class HangingBreakByEntityEvent extends HangingBreakEvent implements EntityAction {
+     private final Entity remover;
+ 
+     public HangingBreakByEntityEvent(final Hanging hanging, final Entity remover) {
+@@ -22,4 +23,9 @@ public class HangingBreakByEntityEvent extends HangingBreakEvent {
+     public Entity getRemover() {
+         return remover;
+     }
++
++    @Override
++    public Entity getActor() {
++        return getRemover();
++    }
+ }
+diff --git a/src/main/java/org/bukkit/event/hanging/HangingPlaceEvent.java b/src/main/java/org/bukkit/event/hanging/HangingPlaceEvent.java
+index b511c555..f7826d34 100644
+--- a/src/main/java/org/bukkit/event/hanging/HangingPlaceEvent.java
++++ b/src/main/java/org/bukkit/event/hanging/HangingPlaceEvent.java
+@@ -6,11 +6,12 @@ import org.bukkit.entity.Hanging;
+ import org.bukkit.entity.Player;
+ import org.bukkit.event.Cancellable;
+ import org.bukkit.event.HandlerList;
++import org.bukkit.event.PlayerAction;
+ 
+ /**
+  * Triggered when a hanging entity is created in the world
+  */
+-public class HangingPlaceEvent extends HangingEvent implements Cancellable {
++public class HangingPlaceEvent extends HangingEvent implements Cancellable, PlayerAction {
+     private static final HandlerList handlers = new HandlerList();
+     private boolean cancelled;
+     private final Player player;
+@@ -33,6 +34,11 @@ public class HangingPlaceEvent extends HangingEvent implements Cancellable {
+         return player;
+     }
+ 
++    @Override
++    public Player getActor() {
++        return getPlayer();
++    }
++
+     /**
+      * Returns the block that the hanging entity was placed on
+      *
+diff --git a/src/main/java/org/bukkit/event/inventory/FurnaceExtractEvent.java b/src/main/java/org/bukkit/event/inventory/FurnaceExtractEvent.java
+index b7381fa1..1d6bdd6d 100644
+--- a/src/main/java/org/bukkit/event/inventory/FurnaceExtractEvent.java
++++ b/src/main/java/org/bukkit/event/inventory/FurnaceExtractEvent.java
+@@ -3,12 +3,13 @@ package org.bukkit.event.inventory;
+ import org.bukkit.Material;
+ import org.bukkit.block.Block;
+ import org.bukkit.entity.Player;
++import org.bukkit.event.PlayerAction;
+ import org.bukkit.event.block.BlockExpEvent;
+ 
+ /**
+  * This event is called when a player takes items out of the furnace
+  */
+-public class FurnaceExtractEvent extends BlockExpEvent {
++public class FurnaceExtractEvent extends BlockExpEvent implements PlayerAction {
+     private final Player player;
+     private final Material itemType;
+     private final int itemAmount;
+@@ -29,6 +30,11 @@ public class FurnaceExtractEvent extends BlockExpEvent {
+         return player;
+     }
+ 
++    @Override
++    public Player getActor() {
++        return getPlayer();
++    }
++
+     /**
+      * Get the Material of the item being retrieved
+      *
+diff --git a/src/main/java/org/bukkit/event/inventory/InventoryEvent.java b/src/main/java/org/bukkit/event/inventory/InventoryEvent.java
+index e84debce..27d12b29 100644
+--- a/src/main/java/org/bukkit/event/inventory/InventoryEvent.java
++++ b/src/main/java/org/bukkit/event/inventory/InventoryEvent.java
+@@ -5,16 +5,18 @@ import java.util.List;
+ 
+ import org.bukkit.Physical;
+ import org.bukkit.World;
++import org.bukkit.entity.Player;
+ import org.bukkit.event.HandlerList;
+ import org.bukkit.entity.HumanEntity;
+ import org.bukkit.event.Event;
++import org.bukkit.event.PlayerAction;
+ import org.bukkit.inventory.Inventory;
+ import org.bukkit.inventory.InventoryView;
+ 
+ /**
+  * Represents a player related inventory event
+  */
+-public class InventoryEvent extends Event implements Physical {
++public class InventoryEvent extends Event implements Physical, PlayerAction {
+     private static final HandlerList handlers = new HandlerList();
+     protected InventoryView transaction;
+ 
+@@ -55,6 +57,11 @@ public class InventoryEvent extends Event implements Physical {
+         return getInventory().getWorld();
+     }
+ 
++    @Override
++    public Player getActor() {
++        return (Player) getView().getPlayer();
++    }
++
+     @Override
+     public HandlerList getHandlers() {
+         return handlers;
+diff --git a/src/main/java/org/bukkit/event/inventory/InventoryMoveItemEvent.java b/src/main/java/org/bukkit/event/inventory/InventoryMoveItemEvent.java
+index e751fbfd..05451978 100644
+--- a/src/main/java/org/bukkit/event/inventory/InventoryMoveItemEvent.java
++++ b/src/main/java/org/bukkit/event/inventory/InventoryMoveItemEvent.java
+@@ -3,10 +3,13 @@ package org.bukkit.event.inventory;
+ import org.apache.commons.lang.Validate;
+ import org.bukkit.Physical;
+ import org.bukkit.World;
++import org.bukkit.entity.Entity;
+ import org.bukkit.event.Cancellable;
++import org.bukkit.event.EntityAction;
+ import org.bukkit.event.Event;
+ import org.bukkit.event.HandlerList;
+ import org.bukkit.inventory.Inventory;
++import org.bukkit.inventory.InventoryHolder;
+ import org.bukkit.inventory.ItemStack;
+ 
+ /**
+@@ -25,7 +28,7 @@ import org.bukkit.inventory.ItemStack;
+  * has not been modified, the source inventory slot will be restored to its
+  * former state. Otherwise any additional items will be discarded.
+  */
+-public class InventoryMoveItemEvent extends Event implements Cancellable, Physical {
++public class InventoryMoveItemEvent extends Event implements Cancellable, Physical, EntityAction {
+     private static final HandlerList handlers = new HandlerList();
+     private boolean cancelled;
+     private final Inventory sourceInventory;
+@@ -91,6 +94,12 @@ public class InventoryMoveItemEvent extends Event implements Cancellable, Physic
+         return didSourceInitiate ? sourceInventory : destinationInventory;
+     }
+ 
++    @Override
++    public Entity getActor() {
++        InventoryHolder holder = getInitiator().getHolder();
++        return holder instanceof Entity ? (Entity) holder : null;
++    }
++
+     @Override
+     public World getWorld() {
+         return getInitiator().getWorld();
+diff --git a/src/main/java/org/bukkit/event/inventory/InventoryPickupItemEvent.java b/src/main/java/org/bukkit/event/inventory/InventoryPickupItemEvent.java
+index 1eb684d7..235657f4 100644
+--- a/src/main/java/org/bukkit/event/inventory/InventoryPickupItemEvent.java
++++ b/src/main/java/org/bukkit/event/inventory/InventoryPickupItemEvent.java
+@@ -2,16 +2,19 @@ package org.bukkit.event.inventory;
+ 
+ import org.bukkit.Physical;
+ import org.bukkit.World;
++import org.bukkit.entity.Entity;
+ import org.bukkit.entity.Item;
+ import org.bukkit.event.Cancellable;
++import org.bukkit.event.EntityAction;
+ import org.bukkit.event.Event;
+ import org.bukkit.event.HandlerList;
+ import org.bukkit.inventory.Inventory;
++import org.bukkit.inventory.InventoryHolder;
+ 
+ /**
+  * Called when a hopper or hopper minecart picks up a dropped item.
+  */
+-public class InventoryPickupItemEvent extends Event implements Cancellable, Physical {
++public class InventoryPickupItemEvent extends Event implements Cancellable, Physical, EntityAction {
+     private static final HandlerList handlers = new HandlerList();
+     private boolean cancelled;
+     private final Inventory inventory;
+@@ -32,6 +35,12 @@ public class InventoryPickupItemEvent extends Event implements Cancellable, Phys
+         return inventory;
+     }
+ 
++    @Override
++    public Entity getActor() {
++        InventoryHolder holder = getInventory().getHolder();
++        return holder instanceof Entity ? (Entity) holder : null;
++    }
++
+     /**
+      * Gets the Item entity that was picked up
+      *
+diff --git a/src/main/java/org/bukkit/event/painting/PaintingBreakByEntityEvent.java b/src/main/java/org/bukkit/event/painting/PaintingBreakByEntityEvent.java
+index 1dc49873..bf00dd67 100644
+--- a/src/main/java/org/bukkit/event/painting/PaintingBreakByEntityEvent.java
++++ b/src/main/java/org/bukkit/event/painting/PaintingBreakByEntityEvent.java
+@@ -3,6 +3,7 @@ package org.bukkit.event.painting;
+ import org.bukkit.Warning;
+ import org.bukkit.entity.Entity;
+ import org.bukkit.entity.Painting;
++import org.bukkit.event.EntityAction;
+ 
+ /**
+  * Triggered when a painting is removed by an entity
+@@ -12,7 +13,7 @@ import org.bukkit.entity.Painting;
+  */
+ @Deprecated
+ @Warning(reason="This event has been replaced by HangingBreakByEntityEvent")
+-public class PaintingBreakByEntityEvent extends PaintingBreakEvent {
++public class PaintingBreakByEntityEvent extends PaintingBreakEvent implements EntityAction {
+     private final Entity remover;
+ 
+     public PaintingBreakByEntityEvent(final Painting painting, final Entity remover) {
+@@ -28,4 +29,9 @@ public class PaintingBreakByEntityEvent extends PaintingBreakEvent {
+     public Entity getRemover() {
+         return remover;
+     }
++
++    @Override
++    public Entity getActor() {
++        return getRemover();
++    }
+ }
+diff --git a/src/main/java/org/bukkit/event/painting/PaintingPlaceEvent.java b/src/main/java/org/bukkit/event/painting/PaintingPlaceEvent.java
+index 3250b292..5dc0e3dc 100644
+--- a/src/main/java/org/bukkit/event/painting/PaintingPlaceEvent.java
++++ b/src/main/java/org/bukkit/event/painting/PaintingPlaceEvent.java
+@@ -7,6 +7,7 @@ import org.bukkit.entity.Painting;
+ import org.bukkit.entity.Player;
+ import org.bukkit.event.Cancellable;
+ import org.bukkit.event.HandlerList;
++import org.bukkit.event.PlayerAction;
+ 
+ /**
+  * Triggered when a painting is created in the world
+@@ -15,7 +16,7 @@ import org.bukkit.event.HandlerList;
+  */
+ @Deprecated
+ @Warning(reason="This event has been replaced by HangingPlaceEvent")
+-public class PaintingPlaceEvent extends PaintingEvent implements Cancellable {
++public class PaintingPlaceEvent extends PaintingEvent implements Cancellable, PlayerAction {
+     private static final HandlerList handlers = new HandlerList();
+     private boolean cancelled;
+     private final Player player;
+@@ -38,6 +39,11 @@ public class PaintingPlaceEvent extends PaintingEvent implements Cancellable {
+         return player;
+     }
+ 
++    @Override
++    public Player getActor() {
++        return getPlayer();
++    }
++
+     /**
+      * Returns the block that the painting was placed on
+      *
+diff --git a/src/main/java/org/bukkit/event/player/PlayerActionBase.java b/src/main/java/org/bukkit/event/player/PlayerActionBase.java
+new file mode 100644
+index 00000000..178360d3
+--- /dev/null
++++ b/src/main/java/org/bukkit/event/player/PlayerActionBase.java
+@@ -0,0 +1,20 @@
++package org.bukkit.event.player;
++
++import org.bukkit.entity.Player;
++import org.bukkit.event.PlayerAction;
++
++public abstract class PlayerActionBase extends PlayerEvent implements PlayerAction {
++
++    public PlayerActionBase(Player who) {
++        super(who);
++    }
++
++    PlayerActionBase(Player who, boolean async) {
++        super(who, async);
++    }
++
++    @Override
++    public Player getActor() {
++        return getPlayer();
++    }
++}
+diff --git a/src/main/java/org/bukkit/event/player/PlayerAnimationEvent.java b/src/main/java/org/bukkit/event/player/PlayerAnimationEvent.java
+index cabe77dd..13cd9129 100644
+--- a/src/main/java/org/bukkit/event/player/PlayerAnimationEvent.java
++++ b/src/main/java/org/bukkit/event/player/PlayerAnimationEvent.java
+@@ -7,7 +7,7 @@ import org.bukkit.event.HandlerList;
+ /**
+  * Represents a player animation event
+  */
+-public class PlayerAnimationEvent extends PlayerEvent implements Cancellable {
++public class PlayerAnimationEvent extends PlayerActionBase implements Cancellable {
+     private static final HandlerList handlers = new HandlerList();
+     private final PlayerAnimationType animationType;
+     private boolean isCancelled = false;
+diff --git a/src/main/java/org/bukkit/event/player/PlayerAttackEntityEvent.java b/src/main/java/org/bukkit/event/player/PlayerAttackEntityEvent.java
+index b05b2314..589a3ddc 100644
+--- a/src/main/java/org/bukkit/event/player/PlayerAttackEntityEvent.java
++++ b/src/main/java/org/bukkit/event/player/PlayerAttackEntityEvent.java
+@@ -9,7 +9,7 @@ import org.bukkit.event.HandlerList;
+  * Called when a player left-clicks on any entity. This is called before any other
+  * event, and cancelling it prevents all further effects of the right-click.
+  */
+-public class PlayerAttackEntityEvent extends PlayerEvent implements Cancellable {
++public class PlayerAttackEntityEvent extends PlayerActionBase implements Cancellable {
+     private static final HandlerList handlers = new HandlerList();
+     protected Entity clickedEntity;
+     boolean cancelled = false;
+diff --git a/src/main/java/org/bukkit/event/player/PlayerBedEnterEvent.java b/src/main/java/org/bukkit/event/player/PlayerBedEnterEvent.java
+index 09f1a669..ce9ed503 100644
+--- a/src/main/java/org/bukkit/event/player/PlayerBedEnterEvent.java
++++ b/src/main/java/org/bukkit/event/player/PlayerBedEnterEvent.java
+@@ -8,7 +8,7 @@ import org.bukkit.event.HandlerList;
+ /**
+  * This event is fired when the player is almost about to enter the bed.
+  */
+-public class PlayerBedEnterEvent extends PlayerEvent implements Cancellable {
++public class PlayerBedEnterEvent extends PlayerActionBase implements Cancellable {
+     private static final HandlerList handlers = new HandlerList();
+     private boolean cancel = false;
+     private final Block bed;
+diff --git a/src/main/java/org/bukkit/event/player/PlayerBedLeaveEvent.java b/src/main/java/org/bukkit/event/player/PlayerBedLeaveEvent.java
+index 628ab0b0..933b5e22 100644
+--- a/src/main/java/org/bukkit/event/player/PlayerBedLeaveEvent.java
++++ b/src/main/java/org/bukkit/event/player/PlayerBedLeaveEvent.java
+@@ -7,7 +7,7 @@ import org.bukkit.event.HandlerList;
+ /**
+  * This event is fired when the player is leaving a bed.
+  */
+-public class PlayerBedLeaveEvent extends PlayerEvent {
++public class PlayerBedLeaveEvent extends PlayerActionBase {
+     private static final HandlerList handlers = new HandlerList();
+     private final Block bed;
+ 
+diff --git a/src/main/java/org/bukkit/event/player/PlayerBucketEvent.java b/src/main/java/org/bukkit/event/player/PlayerBucketEvent.java
+index d32c55e4..ffb4c4fc 100644
+--- a/src/main/java/org/bukkit/event/player/PlayerBucketEvent.java
++++ b/src/main/java/org/bukkit/event/player/PlayerBucketEvent.java
+@@ -10,7 +10,7 @@ import org.bukkit.inventory.ItemStack;
+ /**
+  * Called when a player interacts with a Bucket
+  */
+-public abstract class PlayerBucketEvent extends PlayerEvent implements Cancellable {
++public abstract class PlayerBucketEvent extends PlayerActionBase implements Cancellable {
+     private ItemStack itemStack;
+     private boolean cancelled = false;
+     private final Block blockClicked;
+diff --git a/src/main/java/org/bukkit/event/player/PlayerDropItemEvent.java b/src/main/java/org/bukkit/event/player/PlayerDropItemEvent.java
+index 5b41b652..f37ce2ba 100644
+--- a/src/main/java/org/bukkit/event/player/PlayerDropItemEvent.java
++++ b/src/main/java/org/bukkit/event/player/PlayerDropItemEvent.java
+@@ -8,7 +8,7 @@ import org.bukkit.event.HandlerList;
+ /**
+  * Thrown when a player drops an item from their inventory
+  */
+-public class PlayerDropItemEvent extends PlayerEvent implements Cancellable {
++public class PlayerDropItemEvent extends PlayerActionBase implements Cancellable {
+     private static final HandlerList handlers = new HandlerList();
+     private final Item drop;
+     private boolean cancel = false;
+diff --git a/src/main/java/org/bukkit/event/player/PlayerEditBookEvent.java b/src/main/java/org/bukkit/event/player/PlayerEditBookEvent.java
+index ea7ecefe..12299841 100644
+--- a/src/main/java/org/bukkit/event/player/PlayerEditBookEvent.java
++++ b/src/main/java/org/bukkit/event/player/PlayerEditBookEvent.java
+@@ -11,7 +11,7 @@ import org.bukkit.inventory.meta.BookMeta;
+  * Called when a player edits or signs a book and quill item. If the event is
+  * cancelled, no changes are made to the BookMeta
+  */
+-public class PlayerEditBookEvent extends PlayerEvent implements Cancellable {
++public class PlayerEditBookEvent extends PlayerActionBase implements Cancellable {
+     private static final HandlerList handlers = new HandlerList();
+ 
+     private final BookMeta previousBookMeta;
+diff --git a/src/main/java/org/bukkit/event/player/PlayerEggThrowEvent.java b/src/main/java/org/bukkit/event/player/PlayerEggThrowEvent.java
+index 896347e6..e1d9ac6f 100644
+--- a/src/main/java/org/bukkit/event/player/PlayerEggThrowEvent.java
++++ b/src/main/java/org/bukkit/event/player/PlayerEggThrowEvent.java
+@@ -9,7 +9,7 @@ import org.bukkit.event.HandlerList;
+ /**
+  * Called when a player throws an egg and it might hatch
+  */
+-public class PlayerEggThrowEvent extends PlayerEvent {
++public class PlayerEggThrowEvent extends PlayerActionBase {
+     private static final HandlerList handlers = new HandlerList();
+     private final Egg egg;
+     private boolean hatching;
+diff --git a/src/main/java/org/bukkit/event/player/PlayerFishEvent.java b/src/main/java/org/bukkit/event/player/PlayerFishEvent.java
+index 5f1ecfef..84d2eb8b 100644
+--- a/src/main/java/org/bukkit/event/player/PlayerFishEvent.java
++++ b/src/main/java/org/bukkit/event/player/PlayerFishEvent.java
+@@ -9,7 +9,7 @@ import org.bukkit.event.HandlerList;
+ /**
+  * Thrown when a player is fishing
+  */
+-public class PlayerFishEvent extends PlayerEvent implements Cancellable {
++public class PlayerFishEvent extends PlayerActionBase implements Cancellable {
+     private static final HandlerList handlers = new HandlerList();
+     private final Entity entity;
+     private boolean cancel = false;
+diff --git a/src/main/java/org/bukkit/event/player/PlayerInteractEntityEvent.java b/src/main/java/org/bukkit/event/player/PlayerInteractEntityEvent.java
+index 935211df..243634a3 100644
+--- a/src/main/java/org/bukkit/event/player/PlayerInteractEntityEvent.java
++++ b/src/main/java/org/bukkit/event/player/PlayerInteractEntityEvent.java
+@@ -8,7 +8,7 @@ import org.bukkit.event.HandlerList;
+ /**
+  * Represents an event that is called when a player right clicks an entity.
+  */
+-public class PlayerInteractEntityEvent extends PlayerEvent implements Cancellable {
++public class PlayerInteractEntityEvent extends PlayerActionBase implements Cancellable {
+     private static final HandlerList handlers = new HandlerList();
+     protected Entity clickedEntity;
+     boolean cancelled = false;
+diff --git a/src/main/java/org/bukkit/event/player/PlayerInteractEvent.java b/src/main/java/org/bukkit/event/player/PlayerInteractEvent.java
+index b12382f4..d0eb4333 100644
+--- a/src/main/java/org/bukkit/event/player/PlayerInteractEvent.java
++++ b/src/main/java/org/bukkit/event/player/PlayerInteractEvent.java
+@@ -15,7 +15,7 @@ import org.bukkit.event.block.Action;
+  * This event will fire as cancelled if the vanilla behavior
+  * is to do nothing (e.g interacting with air)
+  */
+-public class PlayerInteractEvent extends PlayerEvent implements Cancellable {
++public class PlayerInteractEvent extends PlayerActionBase implements Cancellable {
+     private static final HandlerList handlers = new HandlerList();
+     protected ItemStack item;
+     protected Action action;
+diff --git a/src/main/java/org/bukkit/event/player/PlayerItemBreakEvent.java b/src/main/java/org/bukkit/event/player/PlayerItemBreakEvent.java
+index 176cd918..9016a469 100644
+--- a/src/main/java/org/bukkit/event/player/PlayerItemBreakEvent.java
++++ b/src/main/java/org/bukkit/event/player/PlayerItemBreakEvent.java
+@@ -10,7 +10,7 @@ import org.bukkit.inventory.ItemStack;
+  * The item that's breaking will exist in the inventory with a stack size of
+  * 0. After the event, the item's durability will be reset to 0.
+  */
+-public class PlayerItemBreakEvent extends PlayerEvent {
++public class PlayerItemBreakEvent extends PlayerActionBase {
+     private static final HandlerList handlers = new HandlerList();
+     private final ItemStack brokenItem;
+ 
+diff --git a/src/main/java/org/bukkit/event/player/PlayerItemConsumeEvent.java b/src/main/java/org/bukkit/event/player/PlayerItemConsumeEvent.java
+index a81b6429..cf38dd1d 100644
+--- a/src/main/java/org/bukkit/event/player/PlayerItemConsumeEvent.java
++++ b/src/main/java/org/bukkit/event/player/PlayerItemConsumeEvent.java
+@@ -16,7 +16,7 @@ import org.bukkit.inventory.ItemStack;
+  * If the event is cancelled the effect will not be applied and the item will
+  * not be removed from the player's inventory.
+  */
+-public class PlayerItemConsumeEvent extends PlayerEvent implements Cancellable {
++public class PlayerItemConsumeEvent extends PlayerActionBase implements Cancellable {
+     private static final HandlerList handlers = new HandlerList();
+     private boolean isCancelled = false;
+     private ItemStack item;
+diff --git a/src/main/java/org/bukkit/event/player/PlayerItemHeldEvent.java b/src/main/java/org/bukkit/event/player/PlayerItemHeldEvent.java
+index f0d055a0..37e7ac15 100644
+--- a/src/main/java/org/bukkit/event/player/PlayerItemHeldEvent.java
++++ b/src/main/java/org/bukkit/event/player/PlayerItemHeldEvent.java
+@@ -7,7 +7,7 @@ import org.bukkit.event.HandlerList;
+ /**
+  * Fired when a player changes their currently held item
+  */
+-public class PlayerItemHeldEvent extends PlayerEvent implements Cancellable {
++public class PlayerItemHeldEvent extends PlayerActionBase implements Cancellable {
+     private static final HandlerList handlers = new HandlerList();
+     private boolean cancel = false;
+     private final int previous;
+diff --git a/src/main/java/org/bukkit/event/player/PlayerMoveEvent.java b/src/main/java/org/bukkit/event/player/PlayerMoveEvent.java
+index d56b7e40..7687667a 100644
+--- a/src/main/java/org/bukkit/event/player/PlayerMoveEvent.java
++++ b/src/main/java/org/bukkit/event/player/PlayerMoveEvent.java
+@@ -9,7 +9,7 @@ import org.bukkit.event.HandlerList;
+ /**
+  * Holds information for player movement events
+  */
+-public class PlayerMoveEvent extends PlayerEvent implements Cancellable {
++public class PlayerMoveEvent extends PlayerActionBase implements Cancellable {
+     private static final HandlerList handlers = new HandlerList();
+     private boolean cancel = false;
+     private Location from;
+diff --git a/src/main/java/org/bukkit/event/player/PlayerOnGroundEvent.java b/src/main/java/org/bukkit/event/player/PlayerOnGroundEvent.java
+index 4a6c3d4b..61f9641c 100644
+--- a/src/main/java/org/bukkit/event/player/PlayerOnGroundEvent.java
++++ b/src/main/java/org/bukkit/event/player/PlayerOnGroundEvent.java
+@@ -3,7 +3,7 @@ package org.bukkit.event.player;
+ import org.bukkit.entity.Player;
+ import org.bukkit.event.HandlerList;
+ 
+-public class PlayerOnGroundEvent extends PlayerEvent {
++public class PlayerOnGroundEvent extends PlayerActionBase {
+     private static final HandlerList handlers = new HandlerList();
+     private boolean onGround;
+ 
+diff --git a/src/main/java/org/bukkit/event/player/PlayerPickupExperienceEvent.java b/src/main/java/org/bukkit/event/player/PlayerPickupExperienceEvent.java
+index 24a13d91..788fe465 100644
+--- a/src/main/java/org/bukkit/event/player/PlayerPickupExperienceEvent.java
++++ b/src/main/java/org/bukkit/event/player/PlayerPickupExperienceEvent.java
+@@ -5,7 +5,7 @@ import org.bukkit.entity.Player;
+ import org.bukkit.event.Cancellable;
+ import org.bukkit.event.HandlerList;
+ 
+-public class PlayerPickupExperienceEvent extends PlayerEvent implements Cancellable {
++public class PlayerPickupExperienceEvent extends PlayerActionBase implements Cancellable {
+     private static final HandlerList handlers = new HandlerList();
+     private final ExperienceOrb experienceorb;
+     private boolean cancel = false;
+diff --git a/src/main/java/org/bukkit/event/player/PlayerPickupItemEvent.java b/src/main/java/org/bukkit/event/player/PlayerPickupItemEvent.java
+index dfba8163..30e450cf 100644
+--- a/src/main/java/org/bukkit/event/player/PlayerPickupItemEvent.java
++++ b/src/main/java/org/bukkit/event/player/PlayerPickupItemEvent.java
+@@ -8,7 +8,7 @@ import org.bukkit.event.HandlerList;
+ /**
+  * Thrown when a player picks an item up from the ground
+  */
+-public class PlayerPickupItemEvent extends PlayerEvent implements Cancellable {
++public class PlayerPickupItemEvent extends PlayerActionBase implements Cancellable {
+     private static final HandlerList handlers = new HandlerList();
+     private final Item item;
+     private boolean cancel = false;
+diff --git a/src/main/java/org/bukkit/event/player/PlayerShearEntityEvent.java b/src/main/java/org/bukkit/event/player/PlayerShearEntityEvent.java
+index 38afb3ce..94486855 100644
+--- a/src/main/java/org/bukkit/event/player/PlayerShearEntityEvent.java
++++ b/src/main/java/org/bukkit/event/player/PlayerShearEntityEvent.java
+@@ -8,7 +8,7 @@ import org.bukkit.event.HandlerList;
+ /**
+  * Called when a player shears an entity
+  */
+-public class PlayerShearEntityEvent extends PlayerEvent implements Cancellable {
++public class PlayerShearEntityEvent extends PlayerActionBase implements Cancellable {
+     private static final HandlerList handlers = new HandlerList();
+     private boolean cancel;
+     private final Entity what;
+diff --git a/src/main/java/org/bukkit/event/player/PlayerSpawnEntityEvent.java b/src/main/java/org/bukkit/event/player/PlayerSpawnEntityEvent.java
+index 1fdc6cad..8e98f371 100644
+--- a/src/main/java/org/bukkit/event/player/PlayerSpawnEntityEvent.java
++++ b/src/main/java/org/bukkit/event/player/PlayerSpawnEntityEvent.java
+@@ -7,7 +7,7 @@ import org.bukkit.event.Cancellable;
+ import org.bukkit.event.HandlerList;
+ import org.bukkit.inventory.ItemStack;
+ 
+-public class PlayerSpawnEntityEvent extends PlayerEvent implements Cancellable {
++public class PlayerSpawnEntityEvent extends PlayerActionBase implements Cancellable {
+     private static final HandlerList handlers = new HandlerList();
+     private boolean cancel;
+     private final Entity what;
+diff --git a/src/main/java/org/bukkit/event/player/PlayerToggleFlightEvent.java b/src/main/java/org/bukkit/event/player/PlayerToggleFlightEvent.java
+index 1c5ec37e..b846be18 100644
+--- a/src/main/java/org/bukkit/event/player/PlayerToggleFlightEvent.java
++++ b/src/main/java/org/bukkit/event/player/PlayerToggleFlightEvent.java
+@@ -7,7 +7,7 @@ import org.bukkit.event.HandlerList;
+ /**
+  * Called when a player toggles their flying state
+  */
+-public class PlayerToggleFlightEvent extends PlayerEvent implements Cancellable {
++public class PlayerToggleFlightEvent extends PlayerActionBase implements Cancellable {
+     private static final HandlerList handlers = new HandlerList();
+     private final boolean isFlying;
+     private boolean cancel = false;
+diff --git a/src/main/java/org/bukkit/event/player/PlayerToggleSneakEvent.java b/src/main/java/org/bukkit/event/player/PlayerToggleSneakEvent.java
+index 667acad2..63b6ec60 100644
+--- a/src/main/java/org/bukkit/event/player/PlayerToggleSneakEvent.java
++++ b/src/main/java/org/bukkit/event/player/PlayerToggleSneakEvent.java
+@@ -7,7 +7,7 @@ import org.bukkit.event.HandlerList;
+ /**
+  * Called when a player toggles their sneaking state
+  */
+-public class PlayerToggleSneakEvent extends PlayerEvent implements Cancellable {
++public class PlayerToggleSneakEvent extends PlayerActionBase implements Cancellable {
+     private static final HandlerList handlers = new HandlerList();
+     private final boolean isSneaking;
+     private boolean cancel = false;
+diff --git a/src/main/java/org/bukkit/event/player/PlayerToggleSprintEvent.java b/src/main/java/org/bukkit/event/player/PlayerToggleSprintEvent.java
+index cf065e11..f36f0349 100644
+--- a/src/main/java/org/bukkit/event/player/PlayerToggleSprintEvent.java
++++ b/src/main/java/org/bukkit/event/player/PlayerToggleSprintEvent.java
+@@ -7,7 +7,7 @@ import org.bukkit.event.HandlerList;
+ /**
+  * Called when a player toggles their sprinting state
+  */
+-public class PlayerToggleSprintEvent extends PlayerEvent implements Cancellable {
++public class PlayerToggleSprintEvent extends PlayerActionBase implements Cancellable {
+     private static final HandlerList handlers = new HandlerList();
+     private final boolean isSprinting;
+     private boolean cancel = false;
+diff --git a/src/main/java/org/bukkit/event/player/PlayerUnleashEntityEvent.java b/src/main/java/org/bukkit/event/player/PlayerUnleashEntityEvent.java
+index f6aebefb..97870dd2 100644
+--- a/src/main/java/org/bukkit/event/player/PlayerUnleashEntityEvent.java
++++ b/src/main/java/org/bukkit/event/player/PlayerUnleashEntityEvent.java
+@@ -3,12 +3,13 @@ package org.bukkit.event.player;
+ import org.bukkit.entity.Entity;
+ import org.bukkit.entity.Player;
+ import org.bukkit.event.Cancellable;
++import org.bukkit.event.PlayerAction;
+ import org.bukkit.event.entity.EntityUnleashEvent;
+ 
+ /**
+  * Called prior to an entity being unleashed due to a player's action.
+  */
+-public class PlayerUnleashEntityEvent extends EntityUnleashEvent implements Cancellable {
++public class PlayerUnleashEntityEvent extends EntityUnleashEvent implements Cancellable, PlayerAction {
+     private final Player player;
+     private boolean cancelled = false;
+ 
+@@ -26,6 +27,11 @@ public class PlayerUnleashEntityEvent extends EntityUnleashEvent implements Canc
+         return player;
+     }
+ 
++    @Override
++    public Player getActor() {
++        return getPlayer();
++    }
++
+     public boolean isCancelled() {
+         return cancelled;
+     }
+diff --git a/src/main/java/org/bukkit/event/vehicle/VehicleDamageEvent.java b/src/main/java/org/bukkit/event/vehicle/VehicleDamageEvent.java
+index c7b9c1a6..2296ab4b 100644
+--- a/src/main/java/org/bukkit/event/vehicle/VehicleDamageEvent.java
++++ b/src/main/java/org/bukkit/event/vehicle/VehicleDamageEvent.java
+@@ -3,13 +3,14 @@ package org.bukkit.event.vehicle;
+ import org.bukkit.entity.Entity;
+ import org.bukkit.entity.Vehicle;
+ import org.bukkit.event.Cancellable;
++import org.bukkit.event.EntityAction;
+ import org.bukkit.event.HandlerList;
+ import org.bukkit.util.NumberConversions;
+ 
+ /**
+  * Raised when a vehicle receives damage.
+  */
+-public class VehicleDamageEvent extends VehicleEvent implements Cancellable {
++public class VehicleDamageEvent extends VehicleEvent implements Cancellable, EntityAction {
+     private static final HandlerList handlers = new HandlerList();
+     private final Entity attacker;
+     private double damage;
+@@ -35,6 +36,11 @@ public class VehicleDamageEvent extends VehicleEvent implements Cancellable {
+         return attacker;
+     }
+ 
++    @Override
++    public Entity getActor() {
++        return getAttacker();
++    }
++
+     /**
+      * Gets the damage done to the vehicle
+      *
+diff --git a/src/main/java/org/bukkit/event/vehicle/VehicleDestroyEvent.java b/src/main/java/org/bukkit/event/vehicle/VehicleDestroyEvent.java
+index f1176fd2..5b0f5459 100644
+--- a/src/main/java/org/bukkit/event/vehicle/VehicleDestroyEvent.java
++++ b/src/main/java/org/bukkit/event/vehicle/VehicleDestroyEvent.java
+@@ -3,6 +3,7 @@ package org.bukkit.event.vehicle;
+ import org.bukkit.entity.Entity;
+ import org.bukkit.entity.Vehicle;
+ import org.bukkit.event.Cancellable;
++import org.bukkit.event.EntityAction;
+ import org.bukkit.event.HandlerList;
+ 
+ /**
+@@ -10,7 +11,7 @@ import org.bukkit.event.HandlerList;
+  * player or the environment. This is not raised if the boat is simply
+  * 'removed' due to other means.
+  */
+-public class VehicleDestroyEvent extends VehicleEvent implements Cancellable {
++public class VehicleDestroyEvent extends VehicleEvent implements Cancellable, EntityAction {
+     private static final HandlerList handlers = new HandlerList();
+     private final Entity attacker;
+     private boolean cancelled;
+@@ -29,6 +30,11 @@ public class VehicleDestroyEvent extends VehicleEvent implements Cancellable {
+         return attacker;
+     }
+ 
++    @Override
++    public Entity getActor() {
++        return getAttacker();
++    }
++
+     public boolean isCancelled() {
+         return cancelled;
+     }
+diff --git a/src/main/java/org/bukkit/event/vehicle/VehicleEnterEvent.java b/src/main/java/org/bukkit/event/vehicle/VehicleEnterEvent.java
+index 85c9b210..029a028e 100644
+--- a/src/main/java/org/bukkit/event/vehicle/VehicleEnterEvent.java
++++ b/src/main/java/org/bukkit/event/vehicle/VehicleEnterEvent.java
+@@ -3,12 +3,13 @@ package org.bukkit.event.vehicle;
+ import org.bukkit.entity.Entity;
+ import org.bukkit.entity.Vehicle;
+ import org.bukkit.event.Cancellable;
++import org.bukkit.event.EntityAction;
+ import org.bukkit.event.HandlerList;
+ 
+ /**
+  * Raised when an entity enters a vehicle.
+  */
+-public class VehicleEnterEvent extends VehicleEvent implements Cancellable {
++public class VehicleEnterEvent extends VehicleEvent implements Cancellable, EntityAction {
+     private static final HandlerList handlers = new HandlerList();
+     private boolean cancelled;
+     private final Entity entered;
+@@ -27,6 +28,11 @@ public class VehicleEnterEvent extends VehicleEvent implements Cancellable {
+         return entered;
+     }
+ 
++    @Override
++    public Entity getActor() {
++        return getEntered();
++    }
++
+     public boolean isCancelled() {
+         return cancelled;
+     }
+diff --git a/src/main/java/org/bukkit/event/vehicle/VehicleEntityCollisionEvent.java b/src/main/java/org/bukkit/event/vehicle/VehicleEntityCollisionEvent.java
+index 4d4d0e25..caf865df 100644
+--- a/src/main/java/org/bukkit/event/vehicle/VehicleEntityCollisionEvent.java
++++ b/src/main/java/org/bukkit/event/vehicle/VehicleEntityCollisionEvent.java
+@@ -3,12 +3,13 @@ package org.bukkit.event.vehicle;
+ import org.bukkit.entity.Entity;
+ import org.bukkit.entity.Vehicle;
+ import org.bukkit.event.Cancellable;
++import org.bukkit.event.EntityAction;
+ import org.bukkit.event.HandlerList;
+ 
+ /**
+  * Raised when a vehicle collides with an entity.
+  */
+-public class VehicleEntityCollisionEvent extends VehicleCollisionEvent implements Cancellable {
++public class VehicleEntityCollisionEvent extends VehicleCollisionEvent implements Cancellable, EntityAction {
+     private static final HandlerList handlers = new HandlerList();
+     private final Entity entity;
+     private boolean cancelled = false;
+@@ -24,6 +25,11 @@ public class VehicleEntityCollisionEvent extends VehicleCollisionEvent implement
+         return entity;
+     }
+ 
++    @Override
++    public Entity getActor() {
++        return getEntity();
++    }
++
+     public boolean isCancelled() {
+         return cancelled;
+     }
+diff --git a/src/main/java/org/bukkit/event/vehicle/VehicleExitEvent.java b/src/main/java/org/bukkit/event/vehicle/VehicleExitEvent.java
+index 364451b5..ab44ac68 100644
+--- a/src/main/java/org/bukkit/event/vehicle/VehicleExitEvent.java
++++ b/src/main/java/org/bukkit/event/vehicle/VehicleExitEvent.java
+@@ -3,12 +3,13 @@ package org.bukkit.event.vehicle;
+ import org.bukkit.entity.LivingEntity;
+ import org.bukkit.entity.Vehicle;
+ import org.bukkit.event.Cancellable;
++import org.bukkit.event.EntityAction;
+ import org.bukkit.event.HandlerList;
+ 
+ /**
+  * Raised when a living entity exits a vehicle.
+  */
+-public class VehicleExitEvent extends VehicleEvent implements Cancellable {
++public class VehicleExitEvent extends VehicleEvent implements Cancellable, EntityAction {
+     private static final HandlerList handlers = new HandlerList();
+     private boolean cancelled;
+     private final LivingEntity exited;
+@@ -27,6 +28,11 @@ public class VehicleExitEvent extends VehicleEvent implements Cancellable {
+         return exited;
+     }
+ 
++    @Override
++    public LivingEntity getActor() {
++        return getExited();
++    }
++
+     public boolean isCancelled() {
+         return cancelled;
+     }
+diff --git a/src/main/java/org/bukkit/event/vehicle/VehicleMoveEvent.java b/src/main/java/org/bukkit/event/vehicle/VehicleMoveEvent.java
+index 9a13e296..ec2f3979 100644
+--- a/src/main/java/org/bukkit/event/vehicle/VehicleMoveEvent.java
++++ b/src/main/java/org/bukkit/event/vehicle/VehicleMoveEvent.java
+@@ -2,12 +2,13 @@ package org.bukkit.event.vehicle;
+ 
+ import org.bukkit.Location;
+ import org.bukkit.entity.Vehicle;
++import org.bukkit.event.EntityAction;
+ import org.bukkit.event.HandlerList;
+ 
+ /**
+  * Raised when a vehicle moves.
+  */
+-public class VehicleMoveEvent extends VehicleEvent {
++public class VehicleMoveEvent extends VehicleEvent implements EntityAction {
+     private static final HandlerList handlers = new HandlerList();
+     private final Location from;
+     private final Location to;
+@@ -19,6 +20,11 @@ public class VehicleMoveEvent extends VehicleEvent {
+         this.to = to;
+     }
+ 
++    @Override
++    public Vehicle getActor() {
++        return getVehicle();
++    }
++
+     /**
+      * Get the previous position.
+      *
+diff --git a/src/main/java/org/bukkit/event/weather/LightningStrikeEvent.java b/src/main/java/org/bukkit/event/weather/LightningStrikeEvent.java
+index 66fd7636..00b51270 100644
+--- a/src/main/java/org/bukkit/event/weather/LightningStrikeEvent.java
++++ b/src/main/java/org/bukkit/event/weather/LightningStrikeEvent.java
+@@ -3,12 +3,13 @@ package org.bukkit.event.weather;
+ import org.bukkit.World;
+ import org.bukkit.entity.LightningStrike;
+ import org.bukkit.event.Cancellable;
++import org.bukkit.event.EntityAction;
+ import org.bukkit.event.HandlerList;
+ 
+ /**
+  * Stores data for lightning striking
+  */
+-public class LightningStrikeEvent extends WeatherEvent implements Cancellable {
++public class LightningStrikeEvent extends WeatherEvent implements Cancellable, EntityAction {
+     private static final HandlerList handlers = new HandlerList();
+     private boolean canceled;
+     private final LightningStrike bolt;
+@@ -35,6 +36,11 @@ public class LightningStrikeEvent extends WeatherEvent implements Cancellable {
+         return bolt;
+     }
+ 
++    @Override
++    public LightningStrike getActor() {
++        return getLightning();
++    }
++
+     @Override
+     public HandlerList getHandlers() {
+         return handlers;
+diff --git a/src/main/java/org/bukkit/event/world/StructureGrowEvent.java b/src/main/java/org/bukkit/event/world/StructureGrowEvent.java
+index 62d300d7..5c1f51fa 100644
+--- a/src/main/java/org/bukkit/event/world/StructureGrowEvent.java
++++ b/src/main/java/org/bukkit/event/world/StructureGrowEvent.java
+@@ -7,12 +7,13 @@ import org.bukkit.block.BlockState;
+ import org.bukkit.entity.Player;
+ import org.bukkit.event.Cancellable;
+ import org.bukkit.event.HandlerList;
++import org.bukkit.event.PlayerAction;
+ 
+ /**
+  * Event that is called when an organic structure attempts to grow (Sapling {@literal ->}
+  * Tree), (Mushroom {@literal ->} Huge Mushroom), naturally or using bonemeal.
+  */
+-public class StructureGrowEvent extends WorldEvent implements Cancellable {
++public class StructureGrowEvent extends WorldEvent implements Cancellable, PlayerAction {
+     private static final HandlerList handlers = new HandlerList();
+     private boolean cancelled = false;
+     private final Location location;
+@@ -68,6 +69,11 @@ public class StructureGrowEvent extends WorldEvent implements Cancellable {
+         return player;
+     }
+ 
++    @Override
++    public Player getActor() {
++        return getPlayer();
++    }
++
+     /**
+      * Gets an ArrayList of all blocks associated with the structure.
+      *
+diff --git a/src/test/java/org/bukkit/plugin/TimedRegisteredListenerTest.java b/src/test/java/org/bukkit/plugin/TimedRegisteredListenerTest.java
+index b206b1f3..ef75e5ac 100644
+--- a/src/test/java/org/bukkit/plugin/TimedRegisteredListenerTest.java
++++ b/src/test/java/org/bukkit/plugin/TimedRegisteredListenerTest.java
+@@ -8,6 +8,7 @@ import org.bukkit.event.EventException;
+ import org.bukkit.event.EventPriority;
+ import org.bukkit.event.Listener;
+ import org.bukkit.event.block.BlockBreakEvent;
++import org.bukkit.event.player.PlayerActionBase;
+ import org.bukkit.event.player.PlayerEvent;
+ import org.bukkit.event.player.PlayerInteractEvent;
+ import org.bukkit.event.player.PlayerMoveEvent;
+@@ -37,7 +38,7 @@ public class TimedRegisteredListenerTest {
+         assertThat(trl.getEventClass(), is((Object) PlayerInteractEvent.class));
+         // Ensure that the closest superclass of the two events is chosen
+         trl.callEvent(moveEvent);
+-        assertThat(trl.getEventClass(), is((Object) PlayerEvent.class));
++        assertThat(trl.getEventClass(), is((Object) PlayerActionBase.class));
+         // As above, so below
+         trl.callEvent(breakEvent);
+         assertThat(trl.getEventClass(), is((Object) Event.class));
+-- 
+2.19.0
+

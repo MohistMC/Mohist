@@ -1,0 +1,100 @@
+From: Jedediah Smith <jedediah@silencegreys.com>
+Date: Wed, 3 Jun 2015 19:10:45 -0400
+Subject: [PATCH] Mutable ChunkSnapshots
+
+
+diff --git a/src/main/java/org/bukkit/craftbukkit/CraftChunkSnapshot.java b/src/main/java/org/bukkit/craftbukkit/CraftChunkSnapshot.java
+--- a/src/main/java/org/bukkit/craftbukkit/CraftChunkSnapshot.java
++++ b/src/main/java/org/bukkit/craftbukkit/CraftChunkSnapshot.java
+@@ -1,10 +1,15 @@
+ package org.bukkit.craftbukkit;
+ 
++import java.util.Arrays;
++
+ import org.bukkit.ChunkSnapshot;
+ import org.bukkit.block.Biome;
++import org.bukkit.block.BlockState;
+ import org.bukkit.craftbukkit.block.CraftBlock;
+ 
+ import net.minecraft.server.BiomeBase;
++import org.bukkit.material.MaterialData;
++import org.bukkit.util.Vector;
+ 
+ /**
+  * Represents a static, thread-safe snapshot of chunk of blocks
+@@ -61,6 +66,16 @@ public class CraftChunkSnapshot implements ChunkSnapshot {
+         return (blockdata[y >> 4][off] >> ((x & 1) << 2)) & 0xF;
+     }
+ 
++    @Override
++    public MaterialData getMaterialData(int x, int y, int z) {
++        return new MaterialData(getBlockTypeId(x, y, z), (byte) getBlockData(x, y, z));
++    }
++
++    @Override
++    public MaterialData getMaterialData(Vector pos) {
++        return getMaterialData(pos.getBlockX(), pos.getBlockY(), pos.getBlockZ());
++    }
++
+     public final int getBlockSkyLight(int x, int y, int z) {
+         int off = ((y & 0xF) << 7) | (z << 3) | (x >> 1);
+         return (skylight[y >> 4][off] >> ((x & 1) << 2)) & 0xF;
+@@ -94,4 +109,58 @@ public class CraftChunkSnapshot implements ChunkSnapshot {
+     public final boolean isSectionEmpty(int sy) {
+         return empty[sy];
+     }
++
++    private void ensureSectionUnshared(int sy) {
++        if(empty[sy]) {
++            empty[sy] = false;
++            blockids[sy] = new short[4096];
++            blockdata[sy] = new byte[2048];
++            emitlight[sy] = new byte[2048];
++            skylight[sy] = new byte[2048];
++            Arrays.fill(skylight[sy], (byte) 0xff);
++        }
++    }
++
++    public void setBlockTypeId(int x, int y, int z, int typeId) {
++        int sy = y >> 4;
++        ensureSectionUnshared(sy);
++        blockids[sy][((y & 0xF) << 8) | (z << 4) | x] = (short) typeId;
++    }
++
++    @Override
++    public void setBlockData(int x, int y, int z, int data) {
++        int sy = y >> 4;
++        ensureSectionUnshared(sy);
++        int off = ((y & 0xF) << 7) | (z << 3) | (x >> 1);
++        data &= 0xf;
++        int packed = blockdata[sy][off];
++        if((x & 1) == 0) {
++            packed = (packed & 0xf0) | data;
++        } else {
++            packed = (packed & 0x0f) | (data << 4);
++        }
++        blockdata[sy][off] = (byte) packed;
++    }
++
++    @Override
++    public void setMaterialData(int x, int y, int z, MaterialData material) {
++        setBlockTypeId(x, y, z, material.getItemTypeId());
++        setBlockData(x, y, z, material.getData());
++    }
++
++    @Override
++    public void setMaterialData(Vector pos, MaterialData material) {
++        setMaterialData(pos.getBlockX(), pos.getBlockY(), pos.getBlockZ(), material);
++    }
++
++    @Override
++    public void updateBlock(BlockState state) {
++        // Can't update light level because BlockState doesn't distinguish between skylight and block light
++        int x = state.getX() - (getX() << 4);
++        int z = state.getZ() - (getZ() << 4);
++        if(x >= 0 && x < 16 && z >= 0 && z < 16 && state.getY() >= 0 && state.getY() < 256) {
++            setBlockTypeId(x, state.getY(), z, state.getTypeId());
++            setBlockData(x, state.getY(), z, state.getRawData());
++        }
++    }
+ }

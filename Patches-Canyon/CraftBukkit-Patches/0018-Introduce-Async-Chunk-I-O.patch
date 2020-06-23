@@ -1,0 +1,424 @@
+From aabcb0519791710c8685b96fe625f3dab733447c Mon Sep 17 00:00:00 2001
+From: Andrew Steinborn <git@steinborn.me>
+Date: Sat, 5 Oct 2019 03:08:44 -0400
+Subject: [PATCH] Introduce Async Chunk I/O
+
+This patch is highly experimental. It offloads chunk loading (saving
+is a future addition) to a separate I/O thread pool.
+
+This feature has been designed such that it will make as few changes
+to the rest of the server as possible, whilst leveraging async chunk
+loading in places where it is most likely to help.
+
+diff --git a/src/main/java/net/minecraft/server/ChunkProviderServer.java b/src/main/java/net/minecraft/server/ChunkProviderServer.java
+index 0b232fd1..b39098b4 100644
+--- a/src/main/java/net/minecraft/server/ChunkProviderServer.java
++++ b/src/main/java/net/minecraft/server/ChunkProviderServer.java
+@@ -21,6 +21,16 @@ import org.bukkit.generator.BlockPopulator;
+ 
+ public class ChunkProviderServer implements IChunkProvider {
+ 
++    // Canyon start
++    private static final boolean DEBUG_SYNC_LOADS = Boolean.getBoolean("canyon.debug-sync-loads");
++    private static final java.util.concurrent.ExecutorService CHUNK_SERVICE = new java.util.concurrent.ThreadPoolExecutor(
++            Runtime.getRuntime().availableProcessors(), Runtime.getRuntime().availableProcessors(),
++            Integer.MAX_VALUE, java.util.concurrent.TimeUnit.SECONDS,
++            new java.util.concurrent.PriorityBlockingQueue<>(),
++            new com.canyonmodded.util.SimpleDaemonThreadFactory("Async Chunk I/O #%d"));
++    private LongHashtable<ChunkLoadTask> loadQueue = new LongHashtable<>();
++    // Canyon end
++
+     // CraftBukkit start
+     public LongHashset unloadQueue = new LongHashset();
+     public Chunk emptyChunk;
+@@ -54,29 +64,53 @@ public class ChunkProviderServer implements IChunkProvider {
+         }
+     }
+ 
+-    public Chunk getChunkAt(int i, int j) {
++    // Canyon start
++    public Chunk getChunkIfLoaded(int x, int z) {
++        return this.chunks.get(x, z);
++    }
++
++    // Please note: this method has to be called in the main thread, but its result is emitted near-asynchronously
++    public java.util.concurrent.CompletableFuture<Chunk> getChunkAtAsync(int i, int j) {
++        return getChunkAtAsync(i, j, false);
++    }
++    public java.util.concurrent.CompletableFuture<Chunk> getChunkAtAsync(int i, int j, boolean immediate) {
+         // CraftBukkit start
+         this.unloadQueue.remove(i, j);
+         Chunk chunk = (Chunk) this.chunks.get(i, j);
+-        boolean newChunk = false;
++        //boolean newChunk = false; // Canyon - move
+         // CraftBukkit end
+ 
+-        if (chunk == null) {
+-            chunk = this.loadChunk(i, j);
+-            if (chunk == null) {
++        if (chunk != null) {
++            return java.util.concurrent.CompletableFuture.completedFuture(chunk);
++        } else {
++            if (immediate && DEBUG_SYNC_LOADS)  {
++                MinecraftServer.log.warning("SYNC CHUNK LOAD REQUEST @ " + i + "," + j);
++                new Throwable().printStackTrace();
++            }
++            return this.requestChunkLoad(i, j, immediate);
++        }
++    }
++
++    private Chunk postLoadTask(Chunk loadedChunk, int i, int j) {
++        // If the chunk is now loaded, just return the already existing chunk
++        if (this.chunks.containsKey(i, j)) {
++            return this.chunks.get(i, j);
++        }
++            boolean newChunk = false;
++            if (loadedChunk == null) {
+                 if (this.chunkProvider == null) {
+-                    chunk = this.emptyChunk;
++                    loadedChunk = this.emptyChunk;
+                 } else {
+-                    chunk = this.chunkProvider.getOrCreateChunk(i, j);
++                    loadedChunk = this.chunkProvider.getOrCreateChunk(i, j);
+                 }
+                 newChunk = true; // CraftBukkit
+             }
+ 
+-            this.chunks.put(i, j, chunk); // CraftBukkit
+-            this.chunkList.add(chunk);
+-            if (chunk != null) {
+-                chunk.loadNOP();
+-                chunk.addEntities();
++            this.chunks.put(i, j, loadedChunk); // CraftBukkit
++            this.chunkList.add(loadedChunk);
++            if (loadedChunk != null) {
++                loadedChunk.loadNOP();
++                loadedChunk.addEntities();
+             }
+ 
+             // CraftBukkit start
+@@ -87,48 +121,62 @@ public class ChunkProviderServer implements IChunkProvider {
+                  * the World constructor. We can't reliably alter that, so we have
+                  * no way of creating a CraftWorld/CraftServer at that point.
+                  */
+-                server.getPluginManager().callEvent(new ChunkLoadEvent(chunk.bukkitChunk, newChunk));
++                server.getPluginManager().callEvent(new ChunkLoadEvent(loadedChunk.bukkitChunk, newChunk));
+             }
+             // CraftBukkit end
+ 
+-            if (!chunk.done && this.isChunkLoaded(i + 1, j + 1) && this.isChunkLoaded(i, j + 1) && this.isChunkLoaded(i + 1, j)) {
++            if (!loadedChunk.done && this.isChunkLoaded(i + 1, j + 1) && this.isChunkLoaded(i, j + 1) && this.isChunkLoaded(i + 1, j)) {
+                 this.getChunkAt(this, i, j);
+             }
+ 
+-            if (this.isChunkLoaded(i - 1, j) && !this.getOrCreateChunk(i - 1, j).done && this.isChunkLoaded(i - 1, j + 1) && this.isChunkLoaded(i, j + 1) && this.isChunkLoaded(i - 1, j)) {
++            if (this.isChunkLoaded(i - 1, j) && !this.getChunkIfLoaded(i - 1, j).done && this.isChunkLoaded(i - 1, j + 1) && this.isChunkLoaded(i, j + 1) && this.isChunkLoaded(i - 1, j)) {
+                 this.getChunkAt(this, i - 1, j);
+             }
+ 
+-            if (this.isChunkLoaded(i, j - 1) && !this.getOrCreateChunk(i, j - 1).done && this.isChunkLoaded(i + 1, j - 1) && this.isChunkLoaded(i, j - 1) && this.isChunkLoaded(i + 1, j)) {
++            if (this.isChunkLoaded(i, j - 1) && !this.getChunkIfLoaded(i, j - 1).done && this.isChunkLoaded(i + 1, j - 1) && this.isChunkLoaded(i, j - 1) && this.isChunkLoaded(i + 1, j)) {
+                 this.getChunkAt(this, i, j - 1);
+             }
+ 
+-            if (this.isChunkLoaded(i - 1, j - 1) && !this.getOrCreateChunk(i - 1, j - 1).done && this.isChunkLoaded(i - 1, j - 1) && this.isChunkLoaded(i, j - 1) && this.isChunkLoaded(i - 1, j)) {
++            if (this.isChunkLoaded(i - 1, j - 1) && !this.getChunkIfLoaded(i - 1, j - 1).done && this.isChunkLoaded(i - 1, j - 1) && this.isChunkLoaded(i, j - 1) && this.isChunkLoaded(i - 1, j)) {
+                 this.getChunkAt(this, i - 1, j - 1);
+             }
+-        }
+ 
+-        return chunk;
++            this.loadQueue.remove(i, j);
++            return loadedChunk;
++
++    }
++    public Chunk getChunkAt(int i, int j) {
++        Chunk chunk = this.chunks.get(i, j);
++        if (chunk != null) return chunk;
++
++        // Someone is going to block until we are done, so we need to do any post-init stuff after the load task completes
++        java.util.concurrent.CompletableFuture<Chunk> future = this.getChunkAtAsync(i, j, true);
++        try {
++            return postLoadTask(future.get(), i, j);
++        } catch (InterruptedException | java.util.concurrent.ExecutionException ex) {
++            ex.printStackTrace();
++            return null;
++        }
+     }
+ 
+     public Chunk getOrCreateChunk(int i, int j) {
+-        // CraftBukkit start
+-        Chunk chunk = (Chunk) this.chunks.get(i, j);
+-
+-        chunk = chunk == null ? (!this.world.isLoading && !this.forceChunkLoad ? this.emptyChunk : this.getChunkAt(i, j)) : chunk;
+-        if (chunk == this.emptyChunk) return chunk;
+-        if (i != chunk.x || j != chunk.z) {
+-            MinecraftServer.log.info("Chunk (" + chunk.x + ", " + chunk.z + ") stored at  (" + i + ", " + j + ")");
+-            MinecraftServer.log.info(chunk.getClass().getName());
+-            Throwable ex = new Throwable();
+-            ex.fillInStackTrace();
+-            ex.printStackTrace();
++        Chunk loaded = this.getChunkAt(i, j);
++        if (loaded == this.emptyChunk) return loaded;
++        if (i != loaded.x || j != loaded.z) {
++            MinecraftServer.log.info("Chunk (" + loaded.x + ", " + loaded.z + ") stored at  (" + i + ", " + j + ")");
+         }
+-        return chunk;
+-        // CraftBukkit end
++        return loaded;
+     }
+ 
++    // Canyon start
+     public Chunk loadChunk(int i, int j) { // CraftBukkit - private -> public
++        try {
++            return this.requestChunkLoad(i, j, true).get();
++        } catch (InterruptedException | java.util.concurrent.ExecutionException ex) {
++            throw new RuntimeException(ex);
++        }
++    }
++    private Chunk realLoadChunk(int i, int j) {
+         if (this.e == null) {
+             return null;
+         } else {
+@@ -146,6 +194,7 @@ public class ChunkProviderServer implements IChunkProvider {
+             }
+         }
+     }
++    // Canyon end
+ 
+     public void saveChunkNOP(Chunk chunk) { // CraftBukkit - private -> public
+         if (this.e != null) {
+@@ -170,7 +219,6 @@ public class ChunkProviderServer implements IChunkProvider {
+ 
+     public void getChunkAt(IChunkProvider ichunkprovider, int i, int j) {
+         Chunk chunk = this.getOrCreateChunk(i, j);
+-
+         if (!chunk.done) {
+             chunk.done = true;
+             if (this.chunkProvider != null) {
+@@ -265,4 +313,64 @@ public class ChunkProviderServer implements IChunkProvider {
+     public boolean canSave() {
+         return !this.world.canSave;
+     }
++
++    // Canyon Start - async load process
++    private java.util.concurrent.CompletableFuture<Chunk> requestChunkLoad(int x, int z, boolean immediate) {
++        if (this.world.server == null) {
++            // The server is not yet available, so do everything sync for now
++            Chunk loaded = realLoadChunk(x, z);
++            Chunk processed = this.postLoadTask(loaded, x, z);
++            return java.util.concurrent.CompletableFuture.completedFuture(processed);
++        }
++
++        ChunkLoadTask task = this.loadQueue.get(x, z);
++        if (task == null) {
++            task = new ChunkLoadTask(x, z);
++            this.loadQueue.put(x, z, task);
++            if (immediate) {
++                task.toggleNeededImmediately();
++            }
++            CHUNK_SERVICE.execute(task);
++        } else {
++            if (immediate) {
++                task.toggleNeededImmediately();
++            }
++        }
++
++        if (immediate) {
++            return task.immediate;
++        } else {
++            return task.result;
++        }
++    }
++
++    private class ChunkLoadTask implements Runnable, Comparable<ChunkLoadTask> {
++        private final int x;
++        private final int z;
++        private final java.util.concurrent.atomic.AtomicBoolean neededImmediately = new java.util.concurrent.atomic.AtomicBoolean(false);
++        private final java.util.concurrent.CompletableFuture<Chunk> immediate = new java.util.concurrent.CompletableFuture<>();
++        private final java.util.concurrent.CompletableFuture<Chunk> result = new java.util.concurrent.CompletableFuture<>();
++
++        private ChunkLoadTask(int x, int z) {
++            this.x = x;
++            this.z = z;
++        }
++
++        void toggleNeededImmediately() {
++            neededImmediately.set(true);
++        }
++
++        @Override
++        public void run() {
++            Chunk loaded = realLoadChunk(x, z);
++            immediate.complete(loaded);
++            world.server.queueTask(() -> result.complete(ChunkProviderServer.this.postLoadTask(loaded, x, z)));
++        }
++
++        @Override
++        public int compareTo(ChunkLoadTask o) {
++            return Boolean.compare(o.neededImmediately.get(), neededImmediately.get());
++        }
++    }
++    // Canyon End
+ }
+diff --git a/src/main/java/net/minecraft/server/EntityPlayer.java b/src/main/java/net/minecraft/server/EntityPlayer.java
+index c7fa3a18..328f385f 100644
+--- a/src/main/java/net/minecraft/server/EntityPlayer.java
++++ b/src/main/java/net/minecraft/server/EntityPlayer.java
+@@ -1,7 +1,6 @@
+ package net.minecraft.server;
+ 
+ import java.util.HashSet;
+-import java.util.LinkedList;
+ import java.util.List;
+ import java.util.Set;
+ 
+@@ -28,6 +27,7 @@ public class EntityPlayer extends EntityHuman implements ICrafting {
+     private ItemStack[] bN = new ItemStack[] { null, null, null, null, null};
+     private int bO = 0;
+     public boolean h;
++    public boolean isRespawning = false; // Canyon - async chunk loading, needed for safety
+ 
+     public EntityPlayer(MinecraftServer minecraftserver, World world, String s, ItemInWorldManager iteminworldmanager) {
+         super(world);
+@@ -101,6 +101,7 @@ public class EntityPlayer extends EntityHuman implements ICrafting {
+     }
+ 
+     public void m_() {
++        if (isRespawning) return; // Canyon
+         this.itemInWorldManager.a();
+         --this.bM;
+         this.activeContainer.a();
+diff --git a/src/main/java/net/minecraft/server/NetLoginHandler.java b/src/main/java/net/minecraft/server/NetLoginHandler.java
+index 145d61a1..dfa5b6d9 100644
+--- a/src/main/java/net/minecraft/server/NetLoginHandler.java
++++ b/src/main/java/net/minecraft/server/NetLoginHandler.java
+@@ -112,6 +112,11 @@ public class NetLoginHandler extends NetHandler implements com.canyonmodded.netw
+             a.info(this.b() + " logged in with entity id " + entityplayer.id + " at ([" + entityplayer.world.worldData.name + "] " + entityplayer.locX + ", " + entityplayer.locY + ", " + entityplayer.locZ + ")");
+             WorldServer worldserver = (WorldServer) entityplayer.world; // CraftBukkit
+             ChunkCoordinates chunkcoordinates = worldserver.getSpawn();
++
++            // Canyon Start - Async Chunk I/O, load the player's spawn chunk here
++            int playerChunkX = (int) Math.floor(entityplayer.locX) >> 4;
++            int playerChunkZ = (int) Math.floor(entityplayer.locZ) >> 4;
++            worldserver.chunkProviderServer.getChunkAtAsync(playerChunkX, playerChunkZ).thenRun(() -> {
+             NetServerHandler netserverhandler = new NetServerHandler(this.server, this.networkManager, entityplayer);
+ 
+             netserverhandler.sendPacket(new Packet1Login("", entityplayer.id, worldserver.getSeed(), (byte) worldserver.worldProvider.dimension));
+@@ -123,6 +128,8 @@ public class NetLoginHandler extends NetHandler implements com.canyonmodded.netw
+             if (this.server.networkListenThread != null) this.server.networkListenThread.a(netserverhandler); // Canyon
+             netserverhandler.sendPacket(new Packet4UpdateTime(entityplayer.getPlayerTime())); // CraftBukkit - add support for player specific time
+             entityplayer.syncInventory();
++            });
++            // Canyon End
+         }
+ 
+         this.c = true;
+diff --git a/src/main/java/net/minecraft/server/PlayerInstance.java b/src/main/java/net/minecraft/server/PlayerInstance.java
+index 3c7706d5..d32d70db 100644
+--- a/src/main/java/net/minecraft/server/PlayerInstance.java
++++ b/src/main/java/net/minecraft/server/PlayerInstance.java
+@@ -28,7 +28,7 @@ class PlayerInstance {
+         this.chunkX = i;
+         this.chunkZ = j;
+         this.location = new ChunkCoordIntPair(i, j);
+-        playermanager.a().chunkProviderServer.getChunkAt(i, j);
++        playermanager.a().chunkProviderServer.getChunkAtAsync(i, j); // Canyon - async chunk loading
+     }
+ 
+     public void a(EntityPlayer entityplayer) {
+diff --git a/src/main/java/net/minecraft/server/ServerConfigurationManager.java b/src/main/java/net/minecraft/server/ServerConfigurationManager.java
+index 981f058a..30d058a0 100644
+--- a/src/main/java/net/minecraft/server/ServerConfigurationManager.java
++++ b/src/main/java/net/minecraft/server/ServerConfigurationManager.java
+@@ -89,7 +89,7 @@ public class ServerConfigurationManager {
+         this.getPlayerManager(entityplayer.dimension).addPlayer(entityplayer);
+         WorldServer worldserver = this.server.getWorldServer(entityplayer.dimension);
+ 
+-        worldserver.chunkProviderServer.getChunkAt((int) entityplayer.locX >> 4, (int) entityplayer.locZ >> 4);
++        worldserver.chunkProviderServer.getChunkAtAsync((int) entityplayer.locX >> 4, (int) entityplayer.locZ >> 4); // Canyon - async chunk loading
+     }
+ 
+     public int a() {
+@@ -113,7 +113,7 @@ public class ServerConfigurationManager {
+         this.players.add(entityplayer);
+         WorldServer worldserver = this.server.getWorldServer(entityplayer.dimension);
+ 
+-        worldserver.chunkProviderServer.getChunkAt((int) entityplayer.locX >> 4, (int) entityplayer.locZ >> 4);
++        //worldserver.chunkProviderServer.getChunkAt((int) entityplayer.locX >> 4, (int) entityplayer.locZ >> 4); // Canyon - remove sync chunk load, done in NetLoginHandler async
+ 
+         while (worldserver.getEntities(entityplayer, entityplayer.boundingBox).size() != 0) {
+             entityplayer.setPosition(entityplayer.locX, entityplayer.locY + 1.0D, entityplayer.locZ);
+@@ -249,26 +249,44 @@ public class ServerConfigurationManager {
+         entityplayer1.setLocation(location.getX(), location.getY(), location.getZ(), location.getYaw(), location.getPitch());
+         // CraftBukkit end
+ 
+-        worldserver.chunkProviderServer.getChunkAt((int) entityplayer1.locX >> 4, (int) entityplayer1.locZ >> 4);
++        // Canyon start - load chunk for respawn async and move up some code for safety
++        byte actualDimension = (byte) (worldserver.getWorld().getEnvironment().getId());
++        entityplayer1.netServerHandler.sendPacket(new Packet9Respawn((byte) (actualDimension >= 0 ? -1 : 0)));
++        entityplayer1.spawnIn(worldserver);
++        entityplayer1.dead = false;
++        entityplayer1.isRespawning = true;
++        this.players.add(entityplayer1);
++        worldserver.addEntity(entityplayer1);
++        worldserver.chunkProviderServer.getChunkAtAsync((int) entityplayer1.locX >> 4, (int) entityplayer1.locZ >> 4).thenRun(() -> {
+ 
+         while (worldserver.getEntities(entityplayer1, entityplayer1.boundingBox).size() != 0) {
+             entityplayer1.setPosition(entityplayer1.locX, entityplayer1.locY + 1.0D, entityplayer1.locZ);
+         }
+ 
+         // CraftBukkit start
+-        byte actualDimension = (byte) (worldserver.getWorld().getEnvironment().getId());
+-        entityplayer1.netServerHandler.sendPacket(new Packet9Respawn((byte) (actualDimension >= 0 ? -1 : 0)));
++        // Canyon start - move portions of the code up
++//        byte actualDimension = (byte) (worldserver.getWorld().getEnvironment().getId());
++//        entityplayer1.netServerHandler.sendPacket(new Packet9Respawn((byte) (actualDimension >= 0 ? -1 : 0)));
+         entityplayer1.netServerHandler.sendPacket(new Packet9Respawn(actualDimension));
+-        entityplayer1.spawnIn(worldserver);
+-        entityplayer1.dead = false;
++//        entityplayer1.spawnIn(worldserver);
++//        entityplayer1.dead = false;
+         entityplayer1.netServerHandler.teleport(new Location(worldserver.getWorld(), entityplayer1.locX, entityplayer1.locY, entityplayer1.locZ, entityplayer1.yaw, entityplayer1.pitch));
+         // CraftBukkit end
+         this.a(entityplayer1, worldserver);
+         this.getPlayerManager(entityplayer1.dimension).addPlayer(entityplayer1);
+-        worldserver.addEntity(entityplayer1);
+-        this.players.add(entityplayer1);
++//        worldserver.addEntity(entityplayer1);
++//        this.players.add(entityplayer1);
+         this.updateClient(entityplayer1); // CraftBukkit
++        entityplayer1.isRespawning = false; // Canyon
+         entityplayer1.x();
++        // Canyon start - resync entity tracker
++        this.server.queueTask(() -> {
++            worldserver.tracker.untrackPlayer(entityplayer);
++            worldserver.tracker.track(entityplayer);
++        });
++        // Canyon end
++        });
++        // Canyon end
+         return entityplayer1;
+     }
+ 
+diff --git a/src/main/java/org/bukkit/craftbukkit/CraftWorld.java b/src/main/java/org/bukkit/craftbukkit/CraftWorld.java
+index 0faf610e..c51e06fb 100644
+--- a/src/main/java/org/bukkit/craftbukkit/CraftWorld.java
++++ b/src/main/java/org/bukkit/craftbukkit/CraftWorld.java
+@@ -583,6 +583,13 @@ public class CraftWorld implements World {
+         world.canSave = !value;
+     }
+ 
++    // Canyon Start
++    @Override
++    public java.util.concurrent.CompletableFuture<Chunk> getChunkAtAsync(int x, int z) {
++        return this.world.chunkProviderServer.getChunkAtAsync(x, z).thenApply(chunk -> chunk.bukkitChunk);
++    }
++    // Canyon End
++
+     public boolean hasStorm() {
+         return world.worldData.hasStorm();
+     }
+-- 
+2.25.2
+

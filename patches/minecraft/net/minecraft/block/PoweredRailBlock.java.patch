@@ -4,7 +4,7 @@
  import net.minecraft.util.Rotation;
  import net.minecraft.util.math.BlockPos;
  import net.minecraft.world.World;
-+import org.bukkit.craftbukkit.v1_15_R1.event.CraftEventFactory;
++import org.bukkit.craftbukkit.event.CraftEventFactory; // CraftBukkit
  
  public class PoweredRailBlock extends AbstractRailBlock {
     public static final EnumProperty<RailShape> field_176568_b = BlockStateProperties.field_208166_S;
@@ -45,8 +45,8 @@
        boolean flag1 = p_189541_2_.func_175640_z(p_189541_3_) || this.func_176566_a(p_189541_2_, p_189541_3_, p_189541_1_, true, 0) || this.func_176566_a(p_189541_2_, p_189541_3_, p_189541_1_, false, 0);
        if (flag1 != flag) {
 +         // CraftBukkit start
-+         int power = flag ? 15 : 0;
-+         int newPower = CraftEventFactory.callRedstoneChange(p_189541_2_, p_189541_3_, power, 15 - power).getNewCurrent();
++         final int power = flag ? 15 : 0;
++         final int newPower = CraftEventFactory.callRedstoneChange(p_189541_2_, p_189541_3_, power, 15 - power).getNewCurrent();
 +         if (newPower == power) {
 +            return;
 +         }

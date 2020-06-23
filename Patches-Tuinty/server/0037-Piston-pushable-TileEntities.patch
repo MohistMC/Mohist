@@ -46,7 +46,7 @@ index 72fb92f7c379cb84425b6b03ddf8aad29388c0ae..8688ff0f8fb1e0abecff0dc0d21d8d2b
      protected static final VoxelShape e = Block.a(1.0D, 0.0D, 0.0D, 15.0D, 14.0D, 15.0D);
      protected static final VoxelShape f = Block.a(1.0D, 0.0D, 1.0D, 15.0D, 14.0D, 16.0D);
 diff --git a/src/main/java/net/minecraft/server/BlockPiston.java b/src/main/java/net/minecraft/server/BlockPiston.java
-index f90ac88d33fb6e83eb7bf1e1432df14e452387ec..8312ed7797eb508ed36eb73c94693a6d87e18938 100644
+index 73ac83832121e0390b7c4649681fc247e3d8c30b..8312ed7797eb508ed36eb73c94693a6d87e18938 100644
 --- a/src/main/java/net/minecraft/server/BlockPiston.java
 +++ b/src/main/java/net/minecraft/server/BlockPiston.java
 @@ -279,8 +279,10 @@ public class BlockPiston extends BlockDirectional {
@@ -96,7 +96,7 @@ index f90ac88d33fb6e83eb7bf1e1432df14e452387ec..8312ed7797eb508ed36eb73c94693a6d
 +                }
 +                // Tuinity end - pushable TE's
                  if (!allowDesync) {
--                    world.setTypeAndData(oldPos, Blocks.AIR.getBlockData(), 4 | 16 | 1024); // set air to prevent later physics updates from seeing this block
+-                    world.setTypeAndData(oldPos, Blocks.AIR.getBlockData(), 2 | 4 | 16 | 1024); // set air to prevent later physics updates from seeing this block
 +                    world.setTypeAndDataRaw(oldPos, Blocks.AIR.getBlockData(), null); // Tuinity - don't fire logic for removing the old block
                  }
 +                world.setTileEntity(blockposition3, BlockPistonMoving.createPistonTile(allowDesync ? list1.get(k) : iblockdata1, enumdirection, flag, false, tileEntity)); // Tuinity - pushable TE's

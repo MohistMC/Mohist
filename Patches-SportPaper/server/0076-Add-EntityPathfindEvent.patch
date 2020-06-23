@@ -1,0 +1,39 @@
+From 94f46d0856ac3693506fa7ea8d0ac81790937600 Mon Sep 17 00:00:00 2001
+From: cswhite2000 <18whitechristop@gmail.com>
+Date: Sun, 12 Aug 2018 02:42:14 -0700
+Subject: [PATCH] Add EntityPathfindEvent
+
+Fires when an Entity decides to start moving to a location.
+
+diff --git a/src/main/java/net/minecraft/server/NavigationAbstract.java b/src/main/java/net/minecraft/server/NavigationAbstract.java
+index 8ebe58495..6c1a8547b 100644
+--- a/src/main/java/net/minecraft/server/NavigationAbstract.java
++++ b/src/main/java/net/minecraft/server/NavigationAbstract.java
+@@ -5,7 +5,7 @@ import java.util.List;
+ 
+ public abstract class NavigationAbstract {
+ 
+-    protected EntityInsentient b;
++    protected EntityInsentient b; public Entity getEntity() { return b; } // Paper - OBFHELPER
+     protected World c;
+     protected PathEntity d;
+     protected double e;
+@@ -41,6 +41,7 @@ public abstract class NavigationAbstract {
+         if (!this.b()) {
+             return null;
+         } else {
++            if (!new org.github.paperspigot.event.entity.EntityPathfindEvent(getEntity().getBukkitEntity(), MCUtil.toLocation(getEntity().world, blockposition), null).callEvent()) { return null; } // Paper
+             float f = this.i();
+ 
+             this.c.methodProfiler.a("pathfind");
+@@ -72,6 +73,7 @@ public abstract class NavigationAbstract {
+ 
+             this.c.methodProfiler.a("pathfind");
+             BlockPosition blockposition = (new BlockPosition(this.b)).up();
++            if (!new org.github.paperspigot.event.entity.EntityPathfindEvent(getEntity().getBukkitEntity(), MCUtil.toLocation(entity.world, blockposition), entity.getBukkitEntity()).callEvent()) { return null; } // Paper
+             int i = (int) (f + 16.0F);
+             ChunkCache chunkcache = new ChunkCache(this.c, blockposition.a(-i, -i, -i), blockposition.a(i, i, i), 0);
+             PathEntity pathentity = this.j.a((IBlockAccess) chunkcache, (Entity) this.b, entity, f);
+-- 
+2.18.0
+

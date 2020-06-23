@@ -1,0 +1,63 @@
+From 365c23d5f96c4f0412c55459a82a97a74fe56866 Mon Sep 17 00:00:00 2001
+From: cswhite2000 <18whitechristop@gmail.com>
+Date: Tue, 7 Aug 2018 01:35:01 -0700
+Subject: [PATCH] Spawn egg interaction with spawners can be cancelled
+
+
+diff --git a/src/main/java/net/minecraft/server/BlockMobSpawner.java b/src/main/java/net/minecraft/server/BlockMobSpawner.java
+index 4bf4df87a..9d621012d 100644
+--- a/src/main/java/net/minecraft/server/BlockMobSpawner.java
++++ b/src/main/java/net/minecraft/server/BlockMobSpawner.java
+@@ -44,4 +44,27 @@ public class BlockMobSpawner extends BlockContainer {
+     public int b() {
+         return 3;
+     }
++
++    // SportBukkit start - moved here from ItemMonsterEgg#interactWith
++    @Override
++    public boolean interact(World world, BlockPosition blockposition, IBlockData iblockdata, EntityHuman entityhuman, EnumDirection enumdirection, float f, float f1, float f2) {
++        ItemStack itemstack = entityhuman.inventory.getItemInHand();
++        TileEntity tileentity = world.getTileEntity(blockposition);
++
++        if(itemstack != null && itemstack.getItem() instanceof ItemMonsterEgg && tileentity instanceof TileEntityMobSpawner) {
++            MobSpawnerAbstract mobspawnerabstract = ((TileEntityMobSpawner) tileentity).getSpawner();
++
++            mobspawnerabstract.setMobName(EntityTypes.b(itemstack.getData()));
++            tileentity.update();
++            world.notify(blockposition);
++            if (!entityhuman.abilities.canInstantlyBuild) {
++                --itemstack.count;
++            }
++
++            return true;
++        }
++
++        return super.interact(world, blockposition, iblockdata, entityhuman, enumdirection, f, f1, f2);
++    }
++    // SportBukkit end
+ }
+diff --git a/src/main/java/net/minecraft/server/ItemMonsterEgg.java b/src/main/java/net/minecraft/server/ItemMonsterEgg.java
+index b145d6d8c..6d418c33e 100644
+--- a/src/main/java/net/minecraft/server/ItemMonsterEgg.java
++++ b/src/main/java/net/minecraft/server/ItemMonsterEgg.java
+@@ -32,6 +32,8 @@ public class ItemMonsterEgg extends Item {
+         } else {
+             IBlockData iblockdata = world.getType(blockposition);
+ 
++            // SportBukkit start - moved to BlockMobSpawner#interact so that PlayerInteractEvent#useInteractedBlock can cancel it
++            /*
+             if (iblockdata.getBlock() == Blocks.MOB_SPAWNER) {
+                 TileEntity tileentity = world.getTileEntity(blockposition);
+ 
+@@ -48,6 +50,8 @@ public class ItemMonsterEgg extends Item {
+                     return true;
+                 }
+             }
++            */
++            // SportBukkit end
+ 
+             blockposition = blockposition.shift(enumdirection);
+             double d0 = 0.0D;
+-- 
+2.18.0
+

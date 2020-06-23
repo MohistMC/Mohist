@@ -1,12 +1,14 @@
 --- a/net/minecraft/item/crafting/ShapelessRecipe.java
 +++ b/net/minecraft/item/crafting/ShapelessRecipe.java
-@@ -11,20 +11,38 @@
+@@ -11,20 +11,40 @@
  import net.minecraft.util.NonNullList;
  import net.minecraft.util.ResourceLocation;
  import net.minecraft.world.World;
-+import org.bukkit.craftbukkit.v1_15_R1.inventory.CraftItemStack;
-+import org.bukkit.craftbukkit.v1_15_R1.inventory.CraftRecipe;
-+import org.bukkit.craftbukkit.v1_15_R1.inventory.CraftShapelessRecipe;
++// CraftBukkit start
++import org.bukkit.craftbukkit.inventory.CraftItemStack;
++import org.bukkit.craftbukkit.inventory.CraftRecipe;
++import org.bukkit.craftbukkit.inventory.CraftShapelessRecipe;
++// CraftBukkit end
  
  public class ShapelessRecipe implements ICraftingRecipe {
     private final ResourceLocation field_199562_a;
@@ -39,7 +41,7 @@
     public ResourceLocation func_199560_c() {
        return this.field_199562_a;
     }
-@@ -47,17 +65,20 @@
+@@ -47,17 +67,20 @@
  
     public boolean func_77569_a(CraftingInventory p_77569_1_, World p_77569_2_) {
        RecipeItemHelper recipeitemhelper = new RecipeItemHelper();
@@ -61,7 +63,7 @@
     }
  
     public ItemStack func_77572_b(CraftingInventory p_77572_1_) {
-@@ -68,14 +89,15 @@
+@@ -68,14 +91,15 @@
        return p_194133_1_ * p_194133_2_ >= this.field_77579_b.size();
     }
  

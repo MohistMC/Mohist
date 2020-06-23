@@ -1,0 +1,17 @@
+From: Jedediah Smith <jedediah@silencegreys.com>
+Date: Mon, 22 Sep 2014 05:35:35 -0400
+Subject: [PATCH] Fix NPE in Player.playEffect
+
+
+diff --git a/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java b/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
+--- a/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
++++ b/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
+@@ -354,7 +354,7 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
+             Validate.isTrue(effect.getData() == null, "Wrong kind of data for this effect!");
+         }
+ 
+-        if (data.getClass().equals(MaterialData.class)) {
++        if (data != null && data.getClass().equals(MaterialData.class)) {
+             MaterialData materialData = (MaterialData) data;
+             Validate.isTrue(!materialData.getItemType().isBlock(), "Material must be block");
+             playEffect(loc, effect, materialData.getItemType().getId(), materialData.getData(), 0, 0, 0, 1, 1, 64);

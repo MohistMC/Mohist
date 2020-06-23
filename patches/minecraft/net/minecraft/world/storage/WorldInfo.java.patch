@@ -1,14 +1,6 @@
 --- a/net/minecraft/world/storage/WorldInfo.java
 +++ b/net/minecraft/world/storage/WorldInfo.java
-@@ -7,18 +7,20 @@
- import com.mojang.datafixers.Dynamic;
- import com.mojang.datafixers.types.JsonOps;
- import java.util.Map;
-+import java.util.Map.Entry;
- import java.util.Set;
- import java.util.UUID;
--import java.util.Map.Entry;
- import javax.annotation.Nullable;
+@@ -14,11 +14,13 @@
  import net.minecraft.command.TimerCallbackManager;
  import net.minecraft.command.TimerCallbackSerializers;
  import net.minecraft.crash.CrashReportCategory;
@@ -36,15 +28,6 @@
  
  public class WorldInfo {
     private String field_186349_b;
-@@ -80,7 +87,7 @@
-    private int field_176155_J = 15;
-    private final Set<String> field_197721_N = Sets.newHashSet();
-    private final Set<String> field_197722_O = Sets.newLinkedHashSet();
--   private final Map<DimensionType, CompoundNBT> field_186348_N = Maps.newIdentityHashMap();
-+   public final Map<DimensionType, CompoundNBT> field_186348_N = Maps.newIdentityHashMap();
-    private CompoundNBT field_201358_Q;
-    private int field_215766_V;
-    private int field_215767_W;
 @@ -89,6 +96,7 @@
     private boolean field_230142_Y_;
     private final GameRules field_82577_x = new GameRules();
@@ -128,7 +111,7 @@
        this.field_230142_Y_ |= p_230145_2_;
     }
 +
-+   // CraftBukkit start - Check if the name stored in NBT is the correct one
++   // CraftBukkit start
 +   public void checkName(final String name) {
 +      if (!this.field_76106_k.equals(name)) {
 +         this.field_76106_k = name;

@@ -1,34 +1,10 @@
 --- a/net/minecraft/entity/item/FireworkRocketEntity.java
 +++ b/net/minecraft/entity/item/FireworkRocketEntity.java
-@@ -1,12 +1,7 @@
- package net.minecraft.entity.item;
- 
- import java.util.OptionalInt;
--import net.minecraft.entity.Entity;
--import net.minecraft.entity.EntityType;
--import net.minecraft.entity.IProjectile;
--import net.minecraft.entity.IRendersAsItem;
--import net.minecraft.entity.LivingEntity;
--import net.minecraft.entity.MoverType;
-+import net.minecraft.entity.*;
- import net.minecraft.entity.player.PlayerEntity;
- import net.minecraft.entity.projectile.ProjectileHelper;
- import net.minecraft.item.ItemStack;
-@@ -22,32 +17,43 @@
- import net.minecraft.util.DamageSource;
- import net.minecraft.util.SoundCategory;
- import net.minecraft.util.SoundEvents;
--import net.minecraft.util.math.BlockPos;
--import net.minecraft.util.math.BlockRayTraceResult;
--import net.minecraft.util.math.MathHelper;
--import net.minecraft.util.math.RayTraceContext;
--import net.minecraft.util.math.RayTraceResult;
--import net.minecraft.util.math.Vec3d;
-+import net.minecraft.util.math.*;
+@@ -31,17 +31,18 @@
  import net.minecraft.world.World;
  import net.minecraftforge.api.distmarker.Dist;
  import net.minecraftforge.api.distmarker.OnlyIn;
-+import org.bukkit.craftbukkit.v1_15_R1.event.CraftEventFactory;
++import org.bukkit.craftbukkit.event.CraftEventFactory;
  
  @OnlyIn(
     value = Dist.CLIENT,
@@ -36,77 +12,56 @@
  )
  public class FireworkRocketEntity extends Entity implements IRendersAsItem, IProjectile {
 -   private static final DataParameter<ItemStack> field_184566_a = EntityDataManager.func_187226_a(FireworkRocketEntity.class, DataSerializers.field_187196_f);
-+   public static final DataParameter<ItemStack> field_184566_a = EntityDataManager.func_187226_a(FireworkRocketEntity.class, DataSerializers.field_187196_f); // private->public CraftBukkit
++   public static final DataParameter<ItemStack> field_184566_a = EntityDataManager.func_187226_a(FireworkRocketEntity.class, DataSerializers.field_187196_f);
     private static final DataParameter<OptionalInt> field_191512_b = EntityDataManager.func_187226_a(FireworkRocketEntity.class, DataSerializers.field_218814_r);
 -   private static final DataParameter<Boolean> field_213895_d = EntityDataManager.func_187226_a(FireworkRocketEntity.class, DataSerializers.field_187198_h);
-+   public static final DataParameter<Boolean> field_213895_d = EntityDataManager.func_187226_a(FireworkRocketEntity.class, DataSerializers.field_187198_h); // private->public CraftBukkit
++   public static final DataParameter<Boolean> field_213895_d = EntityDataManager.func_187226_a(FireworkRocketEntity.class, DataSerializers.field_187198_h);
     private int field_92056_a;
 -   private int field_92055_b;
-+   public int field_92055_b; // private->public CraftBukkit
++   public int field_92055_b;
     private LivingEntity field_191513_e;
  
     public FireworkRocketEntity(EntityType<? extends FireworkRocketEntity> p_i50164_1_, World p_i50164_2_) {
-       super(p_i50164_1_, p_i50164_2_);
-    }
- 
-+   // Spigot Start - copied from tick
-+   @Override
-+   public void inactiveTick() {
-+      this.field_92056_a += 1;
-+      if (!this.field_70170_p.field_72995_K && this.field_92056_a > this.field_92055_b) {
-+         // CraftBukkit start
-+         if (!org.bukkit.craftbukkit.v1_15_R1.event.CraftEventFactory.callFireworkExplodeEvent(this).isCancelled()) {
-+            this.func_191510_k();
-+         }
-+         // CraftBukkit end
-+      }
-+      super.inactiveTick();
-+   }
-+   // Spigot End
-+
-    protected void func_70088_a() {
-       this.field_70180_af.func_187214_a(field_184566_a, ItemStack.field_190927_a);
-       this.field_70180_af.func_187214_a(field_191512_b, OptionalInt.empty());
-@@ -175,7 +181,11 @@
+@@ -175,7 +176,11 @@
        }
  
        if (!this.field_70170_p.field_72995_K && this.field_92056_a > this.field_92055_b) {
 -         this.func_213893_k();
 +         // CraftBukkit start
-+         if (!org.bukkit.craftbukkit.v1_15_R1.event.CraftEventFactory.callFireworkExplodeEvent(this).isCancelled()) {
++         if (!org.bukkit.craftbukkit.event.CraftEventFactory.callFireworkExplodeEvent(this).isCancelled()) {
 +            this.func_213893_k();
 +         }
 +         // CraftBukkit end
        }
  
     }
-@@ -188,7 +198,11 @@
+@@ -188,7 +193,11 @@
  
     protected void func_213892_a(RayTraceResult p_213892_1_) {
        if (p_213892_1_.func_216346_c() == RayTraceResult.Type.ENTITY && !this.field_70170_p.field_72995_K) {
 -         this.func_213893_k();
 +         // CraftBukkit start
-+         if (!org.bukkit.craftbukkit.v1_15_R1.event.CraftEventFactory.callFireworkExplodeEvent(this).isCancelled()) {
++         if (!org.bukkit.craftbukkit.event.CraftEventFactory.callFireworkExplodeEvent(this).isCancelled()) {
 +            this.func_213893_k();
 +         }
 +         // CraftBukkit end
        } else if (this.field_70132_H) {
           BlockPos blockpos;
           if (p_213892_1_.func_216346_c() == RayTraceResult.Type.BLOCK) {
-@@ -199,7 +213,11 @@
+@@ -199,7 +208,11 @@
  
           this.field_70170_p.func_180495_p(blockpos).func_196950_a(this.field_70170_p, blockpos, this);
           if (this.func_213894_l()) {
 -            this.func_213893_k();
 +            // CraftBukkit start
-+            if (!org.bukkit.craftbukkit.v1_15_R1.event.CraftEventFactory.callFireworkExplodeEvent(this).isCancelled()) {
++            if (!org.bukkit.craftbukkit.event.CraftEventFactory.callFireworkExplodeEvent(this).isCancelled()) {
 +               this.func_213893_k();
 +            }
 +            // CraftBukkit end
           }
        }
  
-@@ -223,7 +241,9 @@
+@@ -223,7 +236,9 @@
  
        if (f > 0.0F) {
           if (this.field_191513_e != null) {
@@ -116,7 +71,7 @@
           }
  
           double d0 = 5.0D;
-@@ -244,7 +264,9 @@
+@@ -244,7 +259,9 @@
  
                 if (flag) {
                    float f1 = f * (float)Math.sqrt((5.0D - (double)this.func_70032_d(livingentity)) / 5.0D);

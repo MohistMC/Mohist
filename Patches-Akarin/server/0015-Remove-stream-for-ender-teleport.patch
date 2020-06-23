@@ -1,0 +1,34 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Sotr <i@omc.hk>
+Date: Wed, 15 Apr 2020 04:16:44 +0700
+Subject: [PATCH] Remove stream for ender teleport
+
+
+diff --git a/src/main/java/net/minecraft/server/Entity.java b/src/main/java/net/minecraft/server/Entity.java
+index f5b8ada739afc9f8c0246e98947fe188b1231438..33b456d4348c503cc94557d623c537a8aed8f9ec 100644
+--- a/src/main/java/net/minecraft/server/Entity.java
++++ b/src/main/java/net/minecraft/server/Entity.java
+@@ -3092,7 +3092,7 @@ public abstract class Entity implements INamableTileEntity, ICommandListener, Ke
+             WorldServer worldserver = (WorldServer) this.world;
+ 
+             this.setPositionRotation(d0, d1, d2, this.yaw, this.pitch);
+-            this.cg().forEach((entity) -> {
++            this.collectPassengers().forEach((entity) -> { // Akarin - remove stream
+                 worldserver.chunkCheck(entity);
+                 entity.aF = true;
+                 entity.a(Entity::teleportAndSync);
+@@ -3342,6 +3342,14 @@ public abstract class Entity implements INamableTileEntity, ICommandListener, Ke
+     public Stream<Entity> cg() {
+         return Stream.concat(Stream.of(this), this.passengers.stream().flatMap(Entity::cg));
+     }
++    // Akarin start - non-stream version
++    public List<Entity> collectPassengers() {
++      List<Entity> result = Lists.newArrayList(this);
++      for (Entity passenger : this.passengers)
++        result.addAll(passenger.collectPassengers());
++      return result;
++    }
++    // Akarin end
+ 
+     public boolean hasSinglePlayerPassenger() {
+         Set<Entity> set = Sets.newHashSet();

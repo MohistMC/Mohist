@@ -1,6 +1,6 @@
 --- a/net/minecraft/potion/Effect.java
 +++ b/net/minecraft/potion/Effect.java
-@@ -12,13 +12,17 @@
+@@ -12,13 +12,19 @@
  import net.minecraft.entity.ai.attributes.IAttribute;
  import net.minecraft.entity.ai.attributes.IAttributeInstance;
  import net.minecraft.entity.player.PlayerEntity;
@@ -11,15 +11,17 @@
  import net.minecraft.util.registry.Registry;
  import net.minecraft.util.text.ITextComponent;
  import net.minecraft.util.text.TranslationTextComponent;
-+import org.bukkit.craftbukkit.v1_15_R1.event.CraftEventFactory;
++// CraftBukkit start
++import org.bukkit.craftbukkit.event.CraftEventFactory;
 +import org.bukkit.event.entity.EntityRegainHealthEvent;
++// CraftBukkit end
  
 -public class Effect {
 +public class Effect extends net.minecraftforge.registries.ForgeRegistryEntry<Effect> implements net.minecraftforge.common.extensions.IForgeEffect {
     private final Map<IAttribute, AttributeModifier> field_111188_I = Maps.newHashMap();
     private final EffectType field_220305_b;
     private final int field_76414_N;
-@@ -42,11 +46,11 @@
+@@ -42,11 +48,11 @@
     public void func_76394_a(LivingEntity p_76394_1_, int p_76394_2_) {
        if (this == Effects.field_76428_l) {
           if (p_76394_1_.func_110143_aJ() < p_76394_1_.func_110138_aP()) {
@@ -33,7 +35,7 @@
           }
        } else if (this == Effects.field_82731_v) {
           p_76394_1_.func_70097_a(DamageSource.field_82727_n, 1.0F);
-@@ -54,14 +58,22 @@
+@@ -54,14 +60,22 @@
           ((PlayerEntity)p_76394_1_).func_71020_j(0.005F * (float)(p_76394_2_ + 1));
        } else if (this == Effects.field_76443_y && p_76394_1_ instanceof PlayerEntity) {
           if (!p_76394_1_.field_70170_p.field_72995_K) {

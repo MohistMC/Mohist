@@ -1,0 +1,67 @@
+From bd158aa8916748ffea67b4e2585422aed65bb694 Mon Sep 17 00:00:00 2001
+From: cswhite2000 <18whitechristop@gmail.com>
+Date: Sat, 25 Aug 2018 00:19:58 -0700
+Subject: [PATCH] Trade API
+
+
+diff --git a/src/main/java/net/minecraft/server/EntityVillager.java b/src/main/java/net/minecraft/server/EntityVillager.java
+index 3bdb9b10..0d31f10b 100644
+--- a/src/main/java/net/minecraft/server/EntityVillager.java
++++ b/src/main/java/net/minecraft/server/EntityVillager.java
+@@ -281,6 +281,7 @@ public class EntityVillager extends EntityAgeable implements IMerchant, NPC {
+         super.die(damagesource);
+     }
+ 
++    public void setTradingPlayer(EntityHuman entityHuman) {a_(entityHuman);} // Paper - OBFHELPER
+     public void a_(EntityHuman entityhuman) {
+         this.tradingPlayer = entityhuman;
+     }
+diff --git a/src/main/java/org/bukkit/craftbukkit/entity/CraftHumanEntity.java b/src/main/java/org/bukkit/craftbukkit/entity/CraftHumanEntity.java
+index a12806d4..80332252 100644
+--- a/src/main/java/org/bukkit/craftbukkit/entity/CraftHumanEntity.java
++++ b/src/main/java/org/bukkit/craftbukkit/entity/CraftHumanEntity.java
+@@ -3,12 +3,14 @@ package org.bukkit.craftbukkit.entity;
+ import java.util.Collection;
+ import java.util.Set;
+ 
++import com.google.common.base.Preconditions;
+ import net.minecraft.server.*;
+ 
+ import org.bukkit.GameMode;
+ import org.bukkit.Location;
+ import org.bukkit.Material;
+ import org.bukkit.entity.HumanEntity;
++import org.bukkit.entity.Villager;
+ import org.bukkit.event.inventory.InventoryType;
+ import org.bukkit.inventory.Inventory;
+ import org.bukkit.inventory.InventoryView;
+@@ -341,6 +343,26 @@ public class CraftHumanEntity extends CraftLivingEntity implements HumanEntity {
+         getHandle().activeContainer.addSlotListener(player);
+     }
+ 
++    @Override
++    public InventoryView openMerchantCopy(Villager trader) {
++        Preconditions.checkNotNull(trader, "villager cannot be null");
++
++        final EntityVillager original = ((CraftVillager) trader).getHandle();
++        final EntityVillager copy = new EntityVillager(original.getWorld());
++
++        final NBTTagCompound nbt = new NBTTagCompound();
++        original.b(nbt);
++        copy.a(nbt);
++
++        copy.dead = false;
++        copy.setAge(1);
++
++        copy.setTradingPlayer(getHandle());
++
++        getHandle().openTrade(copy);
++        return getHandle().activeContainer.getBukkitView();
++    }
++
+     public InventoryView openWorkbench(Location location, boolean force) {
+         if (!force) {
+             Block block = location.getBlock();
+-- 
+2.19.0
+

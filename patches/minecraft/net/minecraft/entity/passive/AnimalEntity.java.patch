@@ -6,8 +6,8 @@
  public abstract class AnimalEntity extends AgeableEntity {
 -   private int field_70881_d;
 -   private UUID field_146084_br;
-+   public int field_70881_d; // private->public CraftBukkit
-+   public UUID field_146084_br; // private->public CraftBukkit
++   public int field_70881_d;
++   public UUID field_146084_br;
 +   public ItemStack breedItem; // CraftBukkit - Add breedItem variable
  
     protected AnimalEntity(EntityType<? extends AnimalEntity> p_i48568_1_, World p_i48568_2_) {
@@ -35,11 +35,12 @@
  
     public float func_205022_a(BlockPos p_205022_1_, IWorldReader p_205022_2_) {
        return p_205022_2_.func_180495_p(p_205022_1_.func_177977_b()).func_177230_c() == Blocks.field_196658_i ? 10.0F : p_205022_2_.func_205052_D(p_205022_1_) - 0.5F;
-@@ -144,6 +149,7 @@
+@@ -144,7 +149,7 @@
        if (p_146082_1_ != null) {
           this.field_146084_br = p_146082_1_.func_110124_au();
        }
+-
 +      this.breedItem = p_146082_1_.field_71071_by.func_70448_g(); // CraftBukkit
- 
        this.field_70170_p.func_72960_a(this, (byte)18);
     }
+ 

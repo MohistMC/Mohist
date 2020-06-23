@@ -1,0 +1,139 @@
+From: Steve Anton <anxuiz.nx@gmail.com>
+Date: Thu, 2 Aug 2012 17:00:13 -0700
+Subject: [PATCH] Update the POM to distinguish SportBukkit from CraftBukkit.
+
+
+diff --git a/pom.xml b/pom.xml
+--- a/pom.xml
++++ b/pom.xml
+@@ -1,29 +1,50 @@
+ <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+     <modelVersion>4.0.0</modelVersion>
+-    <groupId>org.bukkit</groupId>
+-    <artifactId>craftbukkit</artifactId>
++    <groupId>tc.oc</groupId>
++    <artifactId>sportbukkit</artifactId>
+     <packaging>jar</packaging>
+     <version>1.11.1-R0.1-SNAPSHOT</version>
+-    <name>CraftBukkit</name>
+-    <url>http://www.bukkit.org</url>
++    <name>SportBukkit</name>
++    <url>https://oc.tc</url>
+ 
+     <properties>
+         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+         <api.version>unknown</api.version>
+         <minecraft.version>1.11.1</minecraft.version>
+-        <minecraft_version>1_11_R1</minecraft_version>
+-        <buildtag.prefix>git-Bukkit-</buildtag.prefix>
++        <buildtag.prefix>git-SportBukkit-</buildtag.prefix>
+         <buildtag.suffix></buildtag.suffix>
+         <maven.build.timestamp.format>yyyyMMdd-HHmm</maven.build.timestamp.format>
+-        <maven.compiler.source>1.6</maven.compiler.source>
+-        <maven.compiler.target>1.6</maven.compiler.target>
++        <maven.compiler.source>1.8</maven.compiler.source>
++        <maven.compiler.target>1.8</maven.compiler.target>
+     </properties>
+ 
++    <repositories>
++        <repository>
++            <id>pa-snapshots</id>
++            <url>https://repo.extension.ws/content/repositories/snapshots</url>
++        </repository>
++        <repository>
++            <id>pa-releases</id>
++            <url>https://repo.extension.ws/content/repositories/releases</url>
++        </repository>
++    </repositories>
++
++    <distributionManagement>
++        <repository>
++            <id>pa-deployment</id>
++            <url>https://repo.extension.ws/content/repositories/releases</url>
++        </repository>
++        <snapshotRepository>
++            <id>pa-deployment</id>
++            <url>https://repo.extension.ws/content/repositories/snapshots</url>
++        </snapshotRepository>
++    </distributionManagement>
++
+     <dependencies>
+         <dependency>
+-            <groupId>org.bukkit</groupId>
+-            <artifactId>bukkit</artifactId>
++            <groupId>tc.oc</groupId>
++            <artifactId>sportbukkit-api</artifactId>
+             <version>${project.version}</version>
+             <scope>compile</scope>
+         </dependency>
+@@ -46,17 +67,21 @@
+             <scope>compile</scope>
+         </dependency>
+         <dependency>
+-            <groupId>org.xerial</groupId>
+-            <artifactId>sqlite-jdbc</artifactId>
+-            <version>3.15.1</version>
+-            <scope>compile</scope>
+-        </dependency>
+-        <dependency>
+             <groupId>mysql</groupId>
+             <artifactId>mysql-connector-java</artifactId>
+             <version>5.1.39</version>
+             <scope>compile</scope>
+         </dependency>
++        <dependency>
++            <groupId>com.google.code.gson</groupId>
++            <artifactId>gson</artifactId>
++            <version>2.2.4</version>
++        </dependency>
++        <dependency>
++            <groupId>com.google.code.findbugs</groupId>
++            <artifactId>findbugs</artifactId>
++            <version>3.0.0</version>
++        </dependency>
+         <!-- testing -->
+         <dependency>
+             <groupId>junit</groupId>
+@@ -70,6 +95,12 @@
+             <version>1.3</version>
+             <scope>test</scope>
+         </dependency>
++        <dependency>
++            <groupId>tc.oc</groupId>
++            <artifactId>test-util</artifactId>
++            <version>1.0-SNAPSHOT</version>
++            <scope>test</scope>
++        </dependency>
+     </dependencies>
+ 
+     <!-- required until fixed plexus-compiler-eclipse is deployed -->
+@@ -152,8 +183,8 @@
+                 <configuration>
+                     <signature>
+                         <groupId>org.codehaus.mojo.signature</groupId>
+-                        <artifactId>java16</artifactId>
+-                        <version>1.1</version>
++                        <artifactId>java18</artifactId>
++                        <version>1.0</version>
+                     </signature>
+                 </configuration>
+             </plugin>
+@@ -185,17 +216,6 @@
+                                     <pattern>org.gjt</pattern>
+                                     <shadedPattern>org.bukkit.craftbukkit.libs.org.gjt</shadedPattern>
+                                 </relocation>
+-                                <relocation>
+-                                    <pattern>org.bukkit.craftbukkit</pattern>
+-                                    <shadedPattern>org.bukkit.craftbukkit.v${minecraft_version}</shadedPattern>
+-                                    <excludes>
+-                                        <exclude>org.bukkit.craftbukkit.Main*</exclude>
+-                                    </excludes>
+-                                </relocation>
+-                                <relocation>
+-                                    <pattern>net.minecraft.server</pattern>
+-                                    <shadedPattern>net.minecraft.server.v${minecraft_version}</shadedPattern>
+-                                </relocation>
+                             </relocations>
+                             <transformers>
+                                 <transformer implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">

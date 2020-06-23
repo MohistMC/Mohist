@@ -1,0 +1,73 @@
+From cf28b09e6e67b07ae21aa2e9a1133abf6daece15 Mon Sep 17 00:00:00 2001
+From: Andrew Steinborn <git@steinborn.me>
+Date: Tue, 1 Oct 2019 23:41:13 -0400
+Subject: [PATCH] Add thread pool for online-mode authentication
+
+
+diff --git a/src/main/java/com/canyonmodded/util/SimpleDaemonThreadFactory.java b/src/main/java/com/canyonmodded/util/SimpleDaemonThreadFactory.java
+new file mode 100644
+index 00000000..486faa42
+--- /dev/null
++++ b/src/main/java/com/canyonmodded/util/SimpleDaemonThreadFactory.java
+@@ -0,0 +1,21 @@
++package com.canyonmodded.util;
++
++import java.util.Objects;
++import java.util.concurrent.ThreadFactory;
++import java.util.concurrent.atomic.AtomicInteger;
++
++public class SimpleDaemonThreadFactory implements ThreadFactory {
++    private final String format;
++    private final AtomicInteger idGenerator = new AtomicInteger();
++
++    public SimpleDaemonThreadFactory(String format) {
++        this.format = Objects.requireNonNull(format, "format");
++    }
++
++    @Override
++    public Thread newThread(Runnable r) {
++        Thread thread = new Thread(r);
++        thread.setName(String.format(format, idGenerator.incrementAndGet()));
++        return thread;
++    }
++}
+diff --git a/src/main/java/net/minecraft/server/NetLoginHandler.java b/src/main/java/net/minecraft/server/NetLoginHandler.java
+index 21347010..145d61a1 100644
+--- a/src/main/java/net/minecraft/server/NetLoginHandler.java
++++ b/src/main/java/net/minecraft/server/NetLoginHandler.java
+@@ -8,6 +8,10 @@ import java.util.logging.Logger;
+ 
+ public class NetLoginHandler extends NetHandler implements com.canyonmodded.network.AsyncCapableNetHandler { // Canyon
+ 
++    // Canyon start - use a thread pool for logins
++    private static java.util.concurrent.ExecutorService loginService = java.util.concurrent.Executors
++            .newCachedThreadPool(new com.canyonmodded.util.SimpleDaemonThreadFactory("User Authenticator - %d"));
++    // Canyon end
+     public static Logger a = Logger.getLogger("Minecraft");
+     private static Random d = new Random();
+     public NetworkManager networkManager;
+@@ -93,7 +97,7 @@ public class NetLoginHandler extends NetHandler implements com.canyonmodded.netw
+             if (!this.server.onlineMode) {
+                 server.queueTask(() -> this.b(packet1login)); // Canyon - post to main thread
+             } else {
+-                (new ThreadLoginVerifier(this, packet1login, this.server.server)).start(); // CraftBukkit
++                loginService.execute(new ThreadLoginVerifier(this, packet1login, this.server.server)); // CraftBukkit // Canyon - use a thread pool for logins
+             }
+         }
+     }
+diff --git a/src/main/java/net/minecraft/server/ThreadLoginVerifier.java b/src/main/java/net/minecraft/server/ThreadLoginVerifier.java
+index 310d022e..991c030e 100644
+--- a/src/main/java/net/minecraft/server/ThreadLoginVerifier.java
++++ b/src/main/java/net/minecraft/server/ThreadLoginVerifier.java
+@@ -10,7 +10,7 @@ import org.bukkit.craftbukkit.CraftServer;
+ import org.bukkit.event.player.PlayerPreLoginEvent;
+ // CraftBukkit end
+ 
+-class ThreadLoginVerifier extends Thread {
++class ThreadLoginVerifier implements Runnable { //extends Thread { - Canyon - use more appropriate interface
+ 
+     final Packet1Login loginPacket;
+ 
+-- 
+2.25.2
+

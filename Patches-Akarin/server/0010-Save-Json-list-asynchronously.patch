@@ -1,0 +1,34 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?=E3=84=97=E3=84=A0=CB=8B=20=E3=84=91=E3=84=A7=CB=8A?=
+ <tsao-chi@the-lingo.org>
+Date: Thu, 2 Apr 2020 11:16:18 +0800
+Subject: [PATCH] Save Json list asynchronously
+
+
+diff --git a/src/main/java/net/minecraft/server/JsonList.java b/src/main/java/net/minecraft/server/JsonList.java
+index c97be42dd7b4c6ea2cadcc97f47185c7f02e2cce..370841cad06121651d0c981c23f3a5e268dc3f59 100644
+--- a/src/main/java/net/minecraft/server/JsonList.java
++++ b/src/main/java/net/minecraft/server/JsonList.java
+@@ -168,6 +168,7 @@ public class JsonList<K, V extends JsonListEntry<K>> {
+     }
+ 
+     public void save() throws IOException {
++        Runnable runnable = () -> { // Akarin - Save json list async
+         this.removeStaleEntries(); // Paper - remove expired values before saving
+         Collection<V> collection = this.d.values();
+         String s = this.b.toJson(collection);
+@@ -176,10 +177,13 @@ public class JsonList<K, V extends JsonListEntry<K>> {
+         try {
+             bufferedwriter = Files.newWriter(this.c, StandardCharsets.UTF_8);
+             bufferedwriter.write(s);
++        } catch (IOException e) { // Akarin - Save json list async
++            JsonList.LOGGER.warn("Failed to save " + this.c, e); // Akarin - Save json list async
+         } finally {
+             IOUtils.closeQuietly(bufferedwriter);
+         }
+-
++        }; // Akarin - Save json list async
++        MCUtil.scheduleAsyncTask(runnable); // Akarin - Save json list async
+     }
+ 
+     public void load() throws FileNotFoundException {

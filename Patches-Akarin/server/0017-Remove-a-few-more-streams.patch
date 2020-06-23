@@ -1,0 +1,102 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Sotr <i@omc.hk>
+Date: Wed, 15 Apr 2020 22:45:48 +0700
+Subject: [PATCH] Remove a few more streams
+
+
+diff --git a/src/main/java/net/minecraft/server/ChunkMapDistance.java b/src/main/java/net/minecraft/server/ChunkMapDistance.java
+index 1270d88138c7d6a88614f2df2802722a93ff27a6..570c6a1af1acafc53af8fe3e85e195e47f1986ef 100644
+--- a/src/main/java/net/minecraft/server/ChunkMapDistance.java
++++ b/src/main/java/net/minecraft/server/ChunkMapDistance.java
+@@ -188,9 +188,15 @@ public abstract class ChunkMapDistance {
+                 while (longiterator.hasNext()) {
+                     long j = longiterator.nextLong();
+ 
++                    // Akarin start - remove stream
++                    ArraySetSorted<Ticket<?>> sorted = this.tickets.get(j);
++                    /*
+                     if (this.e(j).stream().anyMatch((ticket) -> {
+                         return ticket.getTicketType() == TicketType.PLAYER;
+                     })) {
++                    */
++                    Runnable runnable = () -> {
++                    // Akarin end
+                         PlayerChunk playerchunk = playerchunkmap.getUpdatingChunk(j);
+ 
+                         if (playerchunk == null) {
+@@ -206,6 +212,22 @@ public abstract class ChunkMapDistance {
+                             });
+                         });
+                     }
++                    // Akarin start - remove stream
++                    ; // end runnable
++                    
++                    if (sorted == null) {
++                      sorted = ArraySetSorted.a(4);
++                      this.tickets.put(j, sorted);
++                      
++                    } else {
++                      for (Ticket<?> ticket : sorted) {
++                        if (ticket.getTicketType() == TicketType.PLAYER) {
++                          runnable.run();
++                          break; // run for only once
++                        }
++                      }
++                    }
++                    // Akarin end
+                 }
+ 
+                 this.l.clear();
+diff --git a/src/main/java/net/minecraft/server/EntityTNTPrimed.java b/src/main/java/net/minecraft/server/EntityTNTPrimed.java
+index 9c31edade247baac6811ef3ec98e88a332bcffba..eb3f45d8b707002ebeca20a6857ed41473cdeb3e 100644
+--- a/src/main/java/net/minecraft/server/EntityTNTPrimed.java
++++ b/src/main/java/net/minecraft/server/EntityTNTPrimed.java
+@@ -92,12 +92,23 @@ public class EntityTNTPrimed extends Entity {
+                 PacketPlayOutEntityVelocity velocityPacket = new PacketPlayOutEntityVelocity(this);
+                 PacketPlayOutEntityTeleport positionPacket = new PacketPlayOutEntityTeleport(this);
+ 
++                // Akarin start - remove stream
++                /*
+                 ete.trackedPlayers.stream()
+                     .filter(viewer -> (viewer.locX() - this.locX()) * (viewer.locY() - this.locY()) * (viewer.locZ() - this.locZ()) < 16 * 16)
+                     .forEach(viewer -> {
+                         viewer.playerConnection.sendPacket(velocityPacket);
+                         viewer.playerConnection.sendPacket(positionPacket);
+                     });
++                */
++                
++                for (EntityPlayer viewer : ete.trackedPlayers) {
++                  if ((viewer.locX() - this.locX()) * (viewer.locY() - this.locY()) * (viewer.locZ() - this.locZ()) < 16 * 16) {
++                    viewer.playerConnection.sendPacket(velocityPacket);
++                    viewer.playerConnection.sendPacket(positionPacket);
++                  }
++                }
++                // Akarin end
+             }
+         }
+         // Paper end
+diff --git a/src/main/java/net/minecraft/server/EntityVillager.java b/src/main/java/net/minecraft/server/EntityVillager.java
+index b5ee8da43ccb7630c8b333824d7ca24788b45322..a904434211ac6c4645b996294e5018945d266a1f 100644
+--- a/src/main/java/net/minecraft/server/EntityVillager.java
++++ b/src/main/java/net/minecraft/server/EntityVillager.java
+@@ -562,11 +562,20 @@ public class EntityVillager extends EntityVillagerAbstract implements Reputation
+             if (optional.isPresent()) {
+                 WorldServer worldserver = (WorldServer) this.world;
+ 
++                // Akarin start - remote stream
++                /*
+                 ((List) optional.get()).stream().filter((entityliving) -> {
+                     return entityliving instanceof ReputationHandler;
+                 }).forEach((entityliving) -> {
+                     worldserver.a(ReputationEvent.d, entity, (ReputationHandler) entityliving);
+                 });
++                */
++                
++                for (EntityLiving each : optional.get()) {
++                  if (each instanceof ReputationHandler)
++                    worldserver.a(ReputationEvent.d, entity, (ReputationHandler) each);
++                }
++                // Akarin end
+             }
+         }
+     }

@@ -1,0 +1,21 @@
+From 4b3c8ed761929aa517a52d50e9a558ef854cb4f4 Mon Sep 17 00:00:00 2001
+From: cswhite2000 <18whitechristop@gmail.com>
+Date: Sun, 12 Aug 2018 23:23:43 -0700
+Subject: [PATCH] Fix reducedDebugInfo not initialized on client
+
+
+diff --git a/src/main/java/net/minecraft/server/PlayerList.java b/src/main/java/net/minecraft/server/PlayerList.java
+index ce170c53..108e9515 100644
+--- a/src/main/java/net/minecraft/server/PlayerList.java
++++ b/src/main/java/net/minecraft/server/PlayerList.java
+@@ -154,6 +154,7 @@ public abstract class PlayerList {
+         playerconnection.sendPacket(new PacketPlayOutSpawnPosition(blockposition));
+         playerconnection.sendPacket(new PacketPlayOutAbilities(entityplayer.abilities));
+         playerconnection.sendPacket(new PacketPlayOutHeldItemSlot(entityplayer.inventory.itemInHandIndex));
++        playerconnection.sendPacket(new PacketPlayOutEntityStatus(entityplayer, (byte) (worldserver.getGameRules().getBoolean("reducedDebugInfo") ? 22 : 23))); // Paper - fix this rule not being initialized on the client
+         entityplayer.getStatisticManager().d();
+         entityplayer.getStatisticManager().updateStatistics(entityplayer);
+         this.sendScoreboard((ScoreboardServer) worldserver.getScoreboard(), entityplayer);
+-- 
+2.19.0
+

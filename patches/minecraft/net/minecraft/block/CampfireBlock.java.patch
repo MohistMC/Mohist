@@ -1,35 +1,14 @@
 --- a/net/minecraft/block/CampfireBlock.java
 +++ b/net/minecraft/block/CampfireBlock.java
-@@ -25,26 +25,19 @@
- import net.minecraft.stats.Stats;
- import net.minecraft.tileentity.CampfireTileEntity;
- import net.minecraft.tileentity.TileEntity;
--import net.minecraft.util.ActionResultType;
--import net.minecraft.util.DamageSource;
--import net.minecraft.util.Direction;
--import net.minecraft.util.Hand;
--import net.minecraft.util.Mirror;
--import net.minecraft.util.Rotation;
--import net.minecraft.util.SoundCategory;
--import net.minecraft.util.SoundEvents;
-+import net.minecraft.util.*;
- import net.minecraft.util.math.BlockPos;
- import net.minecraft.util.math.BlockRayTraceResult;
- import net.minecraft.util.math.shapes.IBooleanFunction;
- import net.minecraft.util.math.shapes.ISelectionContext;
- import net.minecraft.util.math.shapes.VoxelShape;
- import net.minecraft.util.math.shapes.VoxelShapes;
--import net.minecraft.world.GameRules;
- import net.minecraft.world.IBlockReader;
- import net.minecraft.world.IWorld;
+@@ -45,6 +45,7 @@
  import net.minecraft.world.World;
  import net.minecraftforge.api.distmarker.Dist;
  import net.minecraftforge.api.distmarker.OnlyIn;
-+import org.bukkit.craftbukkit.v1_15_R1.event.CraftEventFactory;
++import org.bukkit.craftbukkit.event.CraftEventFactory;
  
  public class CampfireBlock extends ContainerBlock implements IWaterLoggable {
     protected static final VoxelShape field_220100_a = Block.func_208617_a(0.0D, 0.0D, 0.0D, 16.0D, 7.0D, 16.0D);
-@@ -187,9 +180,16 @@
+@@ -187,9 +188,12 @@
           boolean flag = p_220066_4_ instanceof AbstractFireballEntity || p_220066_4_ instanceof AbstractArrowEntity && p_220066_4_.func_70027_ad();
           if (flag) {
              Entity entity = this.func_226913_a_(p_220066_4_);
@@ -37,13 +16,9 @@
 +            boolean flag1 = entity == null || entity instanceof PlayerEntity || net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(p_220066_1_, entity);
              if (flag1 && !p_220066_2_.func_177229_b(field_220101_b) && !p_220066_2_.func_177229_b(field_220103_d)) {
                 BlockPos blockpos = p_220066_3_.func_216350_a();
-+
-+               // CraftBukkit start
 +               if (CraftEventFactory.callBlockIgniteEvent(p_220066_1_, blockpos, entity).isCancelled()) {
 +                  return;
 +               }
-+               // CraftBukkit end
-+
                 p_220066_1_.func_180501_a(blockpos, p_220066_2_.func_206870_a(BlockStateProperties.field_208190_q, Boolean.valueOf(true)), 11);
              }
           }

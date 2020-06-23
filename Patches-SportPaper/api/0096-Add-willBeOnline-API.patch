@@ -1,0 +1,37 @@
+From 4c0b108ff332bcb404db810910669fa9ba4dce61 Mon Sep 17 00:00:00 2001
+From: Ashcon Partovi <ashcon@partovi.net>
+Date: Thu, 2 May 2019 15:45:58 -0700
+Subject: [PATCH] Add willBeOnline API
+
+
+diff --git a/src/main/java/org/bukkit/OfflinePlayer.java b/src/main/java/org/bukkit/OfflinePlayer.java
+index e98706a6..0ccdfcd0 100644
+--- a/src/main/java/org/bukkit/OfflinePlayer.java
++++ b/src/main/java/org/bukkit/OfflinePlayer.java
+@@ -6,6 +6,8 @@ import java.util.UUID;
+ import org.bukkit.configuration.serialization.ConfigurationSerializable;
+ import org.bukkit.entity.AnimalTamer;
+ import org.bukkit.entity.Player;
++import org.bukkit.event.player.PlayerLoginEvent;
++import org.bukkit.event.player.PlayerQuitEvent;
+ import org.bukkit.permissions.ServerOperator;
+ 
+ public interface OfflinePlayer extends ServerOperator, AnimalTamer, ConfigurationSerializable {
+@@ -17,6 +19,14 @@ public interface OfflinePlayer extends ServerOperator, AnimalTamer, Configuratio
+      */
+     public boolean isOnline();
+ 
++    /**
++     * Will this player be online after the current event is finished?
++     *
++     * Unlike {@link #isOnline()}, this returns true from within {@link PlayerLoginEvent},
++     * and false from within a {@link PlayerQuitEvent}.
++     */
++    public boolean willBeOnline();
++
+     /**
+      * Returns the name of this player
+      * <p>
+-- 
+2.20.1
+

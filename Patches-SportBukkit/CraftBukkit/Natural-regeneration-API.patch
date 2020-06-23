@@ -1,0 +1,71 @@
+From: Jedediah Smith <jedediah@silencegreys.com>
+Date: Mon, 21 Mar 2016 04:31:29 -0400
+Subject: [PATCH] Natural regeneration API
+
+
+diff --git a/src/main/java/net/minecraft/server/EntityHuman.java b/src/main/java/net/minecraft/server/EntityHuman.java
+--- a/src/main/java/net/minecraft/server/EntityHuman.java
++++ b/src/main/java/net/minecraft/server/EntityHuman.java
+@@ -65,6 +65,11 @@ public abstract class EntityHuman extends EntityLiving {
+     @Nullable
+     public EntityFishingHook hookedFish;
+ 
++    // SportBukkit start - natural regen API
++    public boolean fastNaturalRegeneration = true;
++    public boolean slowNaturalRegeneration = true;
++    // SportBukkit end
++
+     // SportBukkit start - affectsSpawning API
+     public boolean affectsSpawning = true;
+ 
+diff --git a/src/main/java/net/minecraft/server/FoodMetaData.java b/src/main/java/net/minecraft/server/FoodMetaData.java
+--- a/src/main/java/net/minecraft/server/FoodMetaData.java
++++ b/src/main/java/net/minecraft/server/FoodMetaData.java
+@@ -60,7 +60,7 @@ public class FoodMetaData {
+ 
+         boolean flag = entityhuman.world.getGameRules().getBoolean("naturalRegeneration");
+ 
+-        if (flag && this.saturationLevel > 0.0F && entityhuman.db() && this.foodLevel >= 20) {
++        if (flag && this.saturationLevel > 0.0F && entityhuman.db() && this.foodLevel >= 20 && entityhuman.fastNaturalRegeneration) { // SportBukkit - check regen flag
+             ++this.foodTickTimer;
+             if (this.foodTickTimer >= 10) {
+                 float f = Math.min(this.saturationLevel, 6.0F);
+@@ -69,7 +69,7 @@ public class FoodMetaData {
+                 this.a(f);
+                 this.foodTickTimer = 0;
+             }
+-        } else if (flag && this.foodLevel >= 18 && entityhuman.db()) {
++        } else if (flag && this.foodLevel >= 18 && entityhuman.db() && entityhuman.slowNaturalRegeneration) { // SportBukkit - check regen flag
+             ++this.foodTickTimer;
+             if (this.foodTickTimer >= 80) {
+                 entityhuman.heal(1.0F, org.bukkit.event.entity.EntityRegainHealthEvent.RegainReason.SATIATED); // CraftBukkit - added RegainReason
+diff --git a/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java b/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
+--- a/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
++++ b/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
+@@ -1183,6 +1183,26 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
+     }
+ 
+     @Override
++    public boolean getFastNaturalRegeneration() {
++        return getHandle().fastNaturalRegeneration;
++    }
++
++    @Override
++    public void setFastNaturalRegeneration(boolean enabled) {
++        getHandle().fastNaturalRegeneration = enabled;
++    }
++
++    @Override
++    public boolean getSlowNaturalRegeneration() {
++        return getHandle().slowNaturalRegeneration;
++    }
++
++    @Override
++    public void setSlowNaturalRegeneration(boolean enabled) {
++        getHandle().slowNaturalRegeneration = enabled;
++    }
++
++    @Override
+     public Location getBedSpawnLocation() {
+         World world = getServer().getWorld(getHandle().spawnWorld);
+         BlockPosition bed = getHandle().getBed();

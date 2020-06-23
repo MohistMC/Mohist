@@ -1,72 +1,28 @@
 --- a/net/minecraft/entity/passive/WolfEntity.java
 +++ b/net/minecraft/entity/passive/WolfEntity.java
-@@ -4,28 +4,8 @@
- import java.util.function.Predicate;
- import javax.annotation.Nullable;
- import net.minecraft.block.BlockState;
--import net.minecraft.entity.AgeableEntity;
--import net.minecraft.entity.Entity;
--import net.minecraft.entity.EntitySize;
--import net.minecraft.entity.EntityType;
--import net.minecraft.entity.LivingEntity;
--import net.minecraft.entity.Pose;
--import net.minecraft.entity.SharedMonsterAttributes;
--import net.minecraft.entity.ai.goal.BegGoal;
--import net.minecraft.entity.ai.goal.BreedGoal;
--import net.minecraft.entity.ai.goal.FollowOwnerGoal;
--import net.minecraft.entity.ai.goal.HurtByTargetGoal;
--import net.minecraft.entity.ai.goal.LeapAtTargetGoal;
--import net.minecraft.entity.ai.goal.LookAtGoal;
--import net.minecraft.entity.ai.goal.LookRandomlyGoal;
--import net.minecraft.entity.ai.goal.MeleeAttackGoal;
--import net.minecraft.entity.ai.goal.NearestAttackableTargetGoal;
--import net.minecraft.entity.ai.goal.NonTamedTargetGoal;
--import net.minecraft.entity.ai.goal.OwnerHurtByTargetGoal;
--import net.minecraft.entity.ai.goal.OwnerHurtTargetGoal;
--import net.minecraft.entity.ai.goal.SitGoal;
--import net.minecraft.entity.ai.goal.SwimGoal;
--import net.minecraft.entity.ai.goal.WaterAvoidingRandomWalkingGoal;
-+import net.minecraft.entity.*;
-+import net.minecraft.entity.ai.goal.*;
- import net.minecraft.entity.monster.AbstractSkeletonEntity;
- import net.minecraft.entity.monster.CreeperEntity;
- import net.minecraft.entity.monster.GhastEntity;
-@@ -33,12 +13,7 @@
- import net.minecraft.entity.passive.horse.LlamaEntity;
- import net.minecraft.entity.player.PlayerEntity;
- import net.minecraft.entity.projectile.AbstractArrowEntity;
--import net.minecraft.item.DyeColor;
--import net.minecraft.item.DyeItem;
--import net.minecraft.item.Item;
--import net.minecraft.item.ItemStack;
--import net.minecraft.item.Items;
--import net.minecraft.item.SpawnEggItem;
-+import net.minecraft.item.*;
- import net.minecraft.nbt.CompoundNBT;
- import net.minecraft.network.datasync.DataParameter;
- import net.minecraft.network.datasync.DataSerializers;
-@@ -54,6 +29,9 @@
+@@ -54,6 +54,10 @@
  import net.minecraft.world.World;
  import net.minecraftforge.api.distmarker.Dist;
  import net.minecraftforge.api.distmarker.OnlyIn;
-+import org.bukkit.craftbukkit.v1_15_R1.event.CraftEventFactory;
-+import org.bukkit.event.entity.EntityRegainHealthEvent.RegainReason;
-+import org.bukkit.event.entity.EntityTargetEvent.TargetReason;
++// CraftBukkit start
++import org.bukkit.craftbukkit.event.CraftEventFactory;
++import org.bukkit.event.entity.EntityTargetEvent;
++// CraftBukkit end
  
  public class WolfEntity extends TameableEntity {
     private static final DataParameter<Boolean> field_184760_bA = EntityDataManager.func_187226_a(WolfEntity.class, DataSerializers.field_187198_h);
-@@ -117,6 +95,22 @@
- 
+@@ -107,6 +111,23 @@
+       this.func_110140_aT().func_111150_b(SharedMonsterAttributes.field_111264_e).func_111128_a(2.0D);
     }
  
 +   // CraftBukkit - add overriden version
 +   @Override
-+   public boolean setAttackTarget(LivingEntity entitylivingbaseIn, TargetReason reason, boolean fireEvent) {
-+      if (!super.setAttackTarget(entitylivingbaseIn, reason, fireEvent)) {
++   public boolean setGoalTarget(LivingEntity entityliving, org.bukkit.event.entity.EntityTargetEvent.TargetReason reason, boolean fire) {
++      if (!super.setGoalTarget(entityliving, reason, fire)) {
 +         return false;
 +      }
-+      entitylivingbaseIn = func_70638_az();
-+      if (entitylivingbaseIn == null) {
++      entityliving = func_70638_az();
++      if (entityliving == null) {
 +         this.func_70916_h(false);
 +      } else if (!this.func_70909_n()) {
 +         this.func_70916_h(true);
@@ -75,10 +31,11 @@
 +   }
 +   // CraftBukkit end
 +
-    protected void func_70088_a() {
-       super.func_70088_a();
-       this.field_70180_af.func_187214_a(field_184760_bA, false);
-@@ -136,6 +130,11 @@
++   @Override
+    public void func_70624_b(@Nullable LivingEntity p_70624_1_) {
+       super.func_70624_b(p_70624_1_);
+       if (p_70624_1_ == null) {
+@@ -136,6 +157,11 @@
     public void func_70037_a(CompoundNBT p_70037_1_) {
        super.func_70037_a(p_70037_1_);
        this.func_70916_h(p_70037_1_.func_74767_n("Angry"));
@@ -90,7 +47,7 @@
        if (p_70037_1_.func_150297_b("CollarColor", 99)) {
           this.func_175547_a(DyeColor.func_196056_a(p_70037_1_.func_74762_e("CollarColor")));
        }
-@@ -173,7 +172,7 @@
+@@ -173,7 +199,7 @@
           this.field_70170_p.func_72960_a(this, (byte)8);
        }
  
@@ -99,17 +56,17 @@
           this.func_70916_h(false);
        }
  
-@@ -273,7 +272,8 @@
+@@ -273,7 +299,8 @@
        } else {
           Entity entity = p_70097_1_.func_76346_g();
           if (this.field_70911_d != null) {
 -            this.field_70911_d.func_75270_a(false);
-+            // CraftBukkit - moved into EntityLiving
-+//            this.sitGoal.setSitting(false);
++            // CraftBukkit - moved into EntityLiving.d(DamageSource, float)
++            // this.sitGoal.setSitting(false);
           }
  
           if (entity != null && !(entity instanceof PlayerEntity) && !(entity instanceof AbstractArrowEntity)) {
-@@ -297,7 +297,7 @@
+@@ -297,7 +324,7 @@
        super.func_70903_f(p_70903_1_);
        if (p_70903_1_) {
           this.func_110148_a(SharedMonsterAttributes.field_111267_a).func_111128_a(20.0D);
@@ -118,21 +75,21 @@
        } else {
           this.func_110148_a(SharedMonsterAttributes.field_111267_a).func_111128_a(8.0D);
        }
-@@ -319,7 +319,7 @@
+@@ -319,7 +346,7 @@
                    itemstack.func_190918_g(1);
                 }
  
 -               this.func_70691_i((float)item.func_219967_s().func_221466_a());
-+               this.heal((float)item.func_219967_s().func_221466_a(), RegainReason.EATING); // CraftBukkit
++               this.heal((float)item.func_219967_s().func_221466_a(), org.bukkit.event.entity.EntityRegainHealthEvent.RegainReason.EATING); // CraftBukkit
                 return true;
              }
  
-@@ -346,14 +346,15 @@
+@@ -346,14 +373,15 @@
                 this.field_70911_d.func_75270_a(!this.func_70906_o());
                 this.field_70703_bu = false;
                 this.field_70699_by.func_75499_g();
 -               this.func_70624_b((LivingEntity)null);
-+               this.setAttackTarget((LivingEntity)null, TargetReason.FORGOT_TARGET, true); // CraftBukkit - reason
++               this.setGoalTarget((LivingEntity)null, EntityTargetEvent.TargetReason.FORGOT_TARGET, true); // CraftBukkit - reason
              }
           } else if (item == Items.field_151103_aS && !this.func_70919_bu()) {
              if (!p_184645_1_.field_71075_bZ.field_75098_d) {

@@ -1,0 +1,53 @@
+From 3f17fef62d46f0c181dea43f279cd267413ecb85 Mon Sep 17 00:00:00 2001
+From: cswhite2000 <18whitechristop@gmail.com>
+Date: Sat, 4 Aug 2018 19:31:58 -0700
+Subject: [PATCH] Add PlayerPickupExperienceEvent
+
+
+diff --git a/src/main/java/org/bukkit/event/player/PlayerPickupExperienceEvent.java b/src/main/java/org/bukkit/event/player/PlayerPickupExperienceEvent.java
+new file mode 100644
+index 00000000..24a13d91
+--- /dev/null
++++ b/src/main/java/org/bukkit/event/player/PlayerPickupExperienceEvent.java
+@@ -0,0 +1,38 @@
++package org.bukkit.event.player;
++
++import org.bukkit.entity.ExperienceOrb;
++import org.bukkit.entity.Player;
++import org.bukkit.event.Cancellable;
++import org.bukkit.event.HandlerList;
++
++public class PlayerPickupExperienceEvent extends PlayerEvent implements Cancellable {
++    private static final HandlerList handlers = new HandlerList();
++    private final ExperienceOrb experienceorb;
++    private boolean cancel = false;
++
++    public PlayerPickupExperienceEvent(final Player player, final ExperienceOrb experienceorb) {
++        super(player);
++        this.experienceorb = experienceorb;
++    }
++
++    public ExperienceOrb getExperienceOrb() {
++        return experienceorb;
++    }
++
++    public boolean isCancelled() {
++        return cancel;
++    }
++
++    public void setCancelled(boolean cancel) {
++        this.cancel = cancel;
++    }
++
++    @Override
++    public HandlerList getHandlers() {
++        return handlers;
++    }
++
++    public static HandlerList getHandlerList() {
++        return handlers;
++    }
++}
+-- 
+2.18.0
+

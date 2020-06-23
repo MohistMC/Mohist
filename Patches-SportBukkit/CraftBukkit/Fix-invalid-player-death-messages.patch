@@ -1,0 +1,27 @@
+From: mrapple <tony@oc.tc>
+Date: Thu, 4 Apr 2013 21:36:54 -0500
+Subject: [PATCH] Fix invalid player death messages
+
+This bug affects the /kill command and any plugin that sets a player's health to zero
+
+diff --git a/src/main/java/net/minecraft/server/EntityPlayer.java b/src/main/java/net/minecraft/server/EntityPlayer.java
+--- a/src/main/java/net/minecraft/server/EntityPlayer.java
++++ b/src/main/java/net/minecraft/server/EntityPlayer.java
+@@ -410,7 +410,7 @@ public class EntityPlayer extends EntityHuman implements ICrafting {
+             }
+         }
+ 
+-        IChatBaseComponent chatmessage = this.getCombatTracker().getDeathMessage();
++        IChatBaseComponent chatmessage = damagesource == DamageSource.GENERIC ? damagesource.getLocalizedDeathMessage(this) : this.getCombatTracker().getDeathMessage(); // SportBukkit
+ 
+         String deathmessage = chatmessage.toPlainText();
+         org.bukkit.event.entity.PlayerDeathEvent event = CraftEventFactory.callPlayerDeathEvent(this, loot, deathmessage, keepInventory);
+@@ -456,7 +456,7 @@ public class EntityPlayer extends EntityHuman implements ICrafting {
+ 
+         EntityLiving entityliving = this.ca();
+ 
+-        if (entityliving != null) {
++        if (entityliving != null && damagesource != DamageSource.GENERIC) { // SportBukkit - can't have a combat tracked killer with a generic damage source
+             EntityTypes.MonsterEggInfo entitytypes_monsteregginfo = (EntityTypes.MonsterEggInfo) EntityTypes.eggInfo.get(EntityTypes.a((Entity) entityliving));
+ 
+             if (entitytypes_monsteregginfo != null) {

@@ -1,0 +1,78 @@
+From b4db1bf955cbd4275da32f630d4400650b3bc460 Mon Sep 17 00:00:00 2001
+From: cswhite2000 <18whitechristop@gmail.com>
+Date: Wed, 8 Aug 2018 01:12:39 -0700
+Subject: [PATCH] Improve BlockState API
+
+
+diff --git a/src/main/java/org/bukkit/block/BlockState.java b/src/main/java/org/bukkit/block/BlockState.java
+index 866a73d9..1ab645fb 100644
+--- a/src/main/java/org/bukkit/block/BlockState.java
++++ b/src/main/java/org/bukkit/block/BlockState.java
+@@ -25,11 +25,40 @@ public interface BlockState extends Metadatable {
+      */
+     Block getBlock();
+ 
++    /**
++     * Get the material of this block state.
++     */
++    Material getMaterial();
++
++    /**
++     * Get the material and metadata of this block state.
++     */
++    MaterialData getMaterialData();
++
++    /**
++     * Set the material of this block state. If the new material is different
++     * from the current material, any metadata for the new material will be set
++     * to default values.
++     *
++     * This changes only the state of this object, not any blocks.
++     * Call {@link #update} to apply changes to actual blocks.
++     */
++    void setMaterial(Material material);
++
++    /**
++     * Set the material and metadata of this block state.
++     *
++     * This changes only the state of this object, not any blocks.
++     * Call {@link #update} to apply changes to actual blocks.
++     */
++    void setMaterialData(MaterialData materialData);
++
+     /**
+      * Gets the metadata for this block
+      *
+      * @return block specific metadata
+      */
++    @Deprecated
+     MaterialData getData();
+ 
+     /**
+@@ -37,6 +66,7 @@ public interface BlockState extends Metadatable {
+      *
+      * @return block type
+      */
++    @Deprecated
+     Material getType();
+ 
+     /**
+@@ -113,6 +143,7 @@ public interface BlockState extends Metadatable {
+      *
+      * @param data New block specific metadata
+      */
++    @Deprecated
+     void setData(MaterialData data);
+ 
+     /**
+@@ -120,6 +151,7 @@ public interface BlockState extends Metadatable {
+      *
+      * @param type Material to change this block to
+      */
++    @Deprecated
+     void setType(Material type);
+ 
+     /**
+-- 
+2.19.0
+

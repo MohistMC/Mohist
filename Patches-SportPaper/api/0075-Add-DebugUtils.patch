@@ -1,0 +1,42 @@
+From 7fba7e65043002a2a440dbc3fda45f4b8386022b Mon Sep 17 00:00:00 2001
+From: cswhite2000 <18whitechristop@gmail.com>
+Date: Sat, 25 Aug 2018 00:37:04 -0700
+Subject: [PATCH] Add DebugUtils
+
+
+diff --git a/src/main/java/org/github/paperspigot/utils/DebugUtils.java b/src/main/java/org/github/paperspigot/utils/DebugUtils.java
+new file mode 100644
+index 00000000..c7bb59ea
+--- /dev/null
++++ b/src/main/java/org/github/paperspigot/utils/DebugUtils.java
+@@ -0,0 +1,27 @@
++package org.github.paperspigot.utils;
++
++import org.apache.commons.lang.exception.ExceptionUtils;
++
++public class DebugUtils {
++
++    public static String stack() {
++        return ExceptionUtils.getFullStackTrace(new Throwable());
++    }
++
++    public static void exception(Throwable e) {
++        exception(null, e);
++    }
++
++    public static void exception(String msg, Throwable e) {
++        if (msg != null) {
++            System.err.println(msg);
++        }
++        if (e.getMessage() != null) {
++            System.err.println(e.getMessage());
++        }
++        for (String line : ExceptionUtils.getFullStackTrace(e).split("\n")) {
++            System.err.println(line);
++        }
++    }
++
++}
+-- 
+2.18.0
+

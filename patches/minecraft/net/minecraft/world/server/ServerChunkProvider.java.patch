@@ -1,49 +1,26 @@
 --- a/net/minecraft/world/server/ServerChunkProvider.java
 +++ b/net/minecraft/world/server/ServerChunkProvider.java
-@@ -28,11 +28,7 @@
- import net.minecraft.util.math.SectionPos;
- import net.minecraft.util.registry.Registry;
- import net.minecraft.village.PointOfInterestManager;
--import net.minecraft.world.GameRules;
--import net.minecraft.world.IBlockReader;
--import net.minecraft.world.LightType;
--import net.minecraft.world.World;
--import net.minecraft.world.WorldType;
-+import net.minecraft.world.*;
- import net.minecraft.world.chunk.AbstractChunkProvider;
- import net.minecraft.world.chunk.Chunk;
- import net.minecraft.world.chunk.ChunkStatus;
-@@ -58,8 +54,8 @@
+@@ -58,8 +58,8 @@
     public final ChunkManager field_217237_a;
     private final DimensionSavedDataManager field_217244_j;
     private long field_217245_k;
 -   private boolean field_217246_l = true;
 -   private boolean field_217247_m = true;
-+   public boolean field_217246_l = true; // private->public CraftBukkit
-+   public boolean field_217247_m = true; // private->public CraftBukkit
++   public boolean field_217246_l = true;
++   public boolean field_217247_m = true;
     private final long[] field_222875_n = new long[4];
     private final ChunkStatus[] field_222876_o = new ChunkStatus[4];
     private final IChunk[] field_222877_p = new IChunk[4];
-@@ -118,15 +114,17 @@
+@@ -118,7 +118,7 @@
           for(int j = 0; j < 4; ++j) {
              if (i == this.field_222875_n[j] && p_212849_3_ == this.field_222876_o[j]) {
                 IChunk ichunk = this.field_222877_p[j];
 -               if (ichunk != null || !p_212849_4_) {
-+               if (ichunk != null) {  // CraftBukkit - the chunk can become accessible in the meantime TODO for non-null chunks it might also make sense to check that the chunk's state hasn't changed in the meantime
++               if (ichunk != null) { // CraftBukkit - the chunk can become accessible in the meantime TODO for non-null chunks it might also make sense to check that the chunk's state hasn't changed in the meantime
                    return ichunk;
                 }
              }
-          }
- 
-          iprofiler.func_230035_c_("getChunkCacheMiss");
-+         field_73251_h.timings.syncChunkLoadTimer.startTiming(); // Spigot
-          CompletableFuture<Either<IChunk, ChunkHolder.IChunkLoadingError>> completablefuture = this.func_217233_c(p_212849_1_, p_212849_2_, p_212849_3_, p_212849_4_);
-          this.field_217243_i.func_213161_c(completablefuture::isDone);
-+         field_73251_h.timings.syncChunkLoadTimer.stopTiming(); // Spigot
-          IChunk ichunk1 = completablefuture.join().map((p_222874_0_) -> {
-             return p_222874_0_;
-          }, (p_222870_1_) -> {
-@@ -207,7 +205,15 @@
+@@ -207,7 +207,15 @@
        long i = chunkpos.func_201841_a();
        int j = 33 + ChunkStatus.func_222599_a(p_217233_3_);
        ChunkHolder chunkholder = this.func_217213_a(i);
@@ -60,16 +37,16 @@
           this.field_217240_d.func_219356_a(TicketType.field_219494_g, chunkpos, j, chunkpos);
           if (this.func_217224_a(chunkholder, j)) {
              IProfiler iprofiler = this.field_73251_h.func_217381_Z();
-@@ -225,7 +231,7 @@
+@@ -225,7 +233,7 @@
     }
  
     private boolean func_217224_a(@Nullable ChunkHolder p_217224_1_, int p_217224_2_) {
 -      return p_217224_1_ == null || p_217224_1_.func_219299_i() > p_217224_2_;
-+      return p_217224_1_ == null || p_217224_1_.field_219316_k > p_217224_2_;  // CraftBukkit using oldTicketLevel for isLoaded checks
++      return p_217224_1_ == null || p_217224_1_.field_219316_k > p_217224_2_; // CraftBukkit using oldTicketLevel for isLoaded checks
     }
  
     public boolean func_73149_a(int p_73149_1_, int p_73149_2_) {
-@@ -311,20 +317,45 @@
+@@ -311,12 +319,33 @@
        this.field_217237_a.func_219177_a(p_217210_1_);
     }
  
@@ -103,20 +80,8 @@
 +
     public void func_217207_a(BooleanSupplier p_217207_1_) {
        this.field_73251_h.func_217381_Z().func_76320_a("purge");
-+      this.field_73251_h.timings.doChunkMap.startTiming(); // Spigot
        this.field_217240_d.func_219340_a();
-       this.func_217235_l();
-+      this.field_73251_h.timings.doChunkMap.stopTiming(); // Spigot
-       this.field_73251_h.func_217381_Z().func_219895_b("chunks");
-       this.func_217220_m();
-+      this.field_73251_h.timings.doChunkUnload.startTiming(); // Spigot
-       this.field_73251_h.func_217381_Z().func_219895_b("unload");
-       this.field_217237_a.func_219204_a(p_217207_1_);
-+      this.field_73251_h.timings.doChunkUnload.stopTiming(); // Spigot
-       this.field_73251_h.func_217381_Z().func_76319_b();
-       this.func_222869_l();
-    }
-@@ -335,12 +366,18 @@
+@@ -335,12 +364,18 @@
        this.field_217245_k = i;
        WorldInfo worldinfo = this.field_73251_h.func_72912_H();
        boolean flag = worldinfo.func_76067_t() == WorldType.field_180272_g;
@@ -137,17 +102,10 @@
           this.field_73251_h.func_217381_Z().func_76320_a("naturalSpawnCount");
           int l = this.field_217240_d.func_219358_b();
           EntityClassification[] aentityclassification = EntityClassification.values();
-@@ -356,22 +393,52 @@
-                ChunkPos chunkpos = p_223434_10_.func_219277_h();
-                if (!this.field_217237_a.func_219243_d(chunkpos)) {
-                   chunk.func_177415_c(chunk.func_177416_w() + j);
--                  if (flag1 && (this.field_217246_l || this.field_217247_m) && this.field_73251_h.func_175723_af().func_177730_a(chunk.func_76632_l())) {
-+                  if (flag1 && (this.field_217246_l || this.field_217247_m) && this.field_73251_h.func_175723_af().func_177730_a(chunk.func_76632_l()) && !this.field_217237_a.isOutsideOfRange(chunkpos, true)) { // Spigot
+@@ -360,8 +395,34 @@
                       this.field_73251_h.func_217381_Z().func_76320_a("spawner");
--
-+                     this.field_73251_h.timings.mobSpawn.startTiming(); // Spigot
+ 
                       for(EntityClassification entityclassification : aentityclassification) {
-+
 +                        // CraftBukkit start - Use per-world spawn limits
 +                        boolean spawnThisTick = true;
 +                        int limit = entityclassification.func_75601_b();
@@ -169,41 +127,18 @@
 +                              limit = field_73251_h.getWorldCB().getAmbientSpawnLimit();
 +                              break;
 +                        }
++
 +                        if (!spawnThisTick || limit == 0) {
 +                           continue;
 +                        }
 +                        // CraftBukkit end
-+
                          if (entityclassification != EntityClassification.MISC && (!entityclassification.func_75599_d() || this.field_217247_m) && (entityclassification.func_75599_d() || this.field_217246_l) && (!entityclassification.func_82705_e() || flag2)) {
 -                           int i1 = entityclassification.func_75601_b() * l / field_217238_b;
-+                           int i1 = limit * l / field_217238_b;  // CraftBukkit - use per-world limits
++                           int i1 = limit * l / field_217238_b; // CraftBukkit - use per-world limits
                             if (object2intmap.getInt(entityclassification) <= i1) {
                                WorldEntitySpawner.func_226701_a_(entityclassification, this.field_73251_h, chunk, blockpos);
                             }
-                         }
-                      }
- 
-+                     this.field_73251_h.timings.mobSpawn.stopTiming(); // Spigot
-                      this.field_73251_h.func_217381_Z().func_76319_b();
-                   }
- 
-+                  this.field_73251_h.timings.doTickTiles.startTiming(); // Spigot
-                   this.field_73251_h.func_217441_a(chunk, k);
-+                  this.field_73251_h.timings.doTickTiles.stopTiming(); // Spigot
-                }
-             }
-          });
-@@ -384,7 +451,9 @@
-          this.field_73251_h.func_217381_Z().func_76319_b();
-       }
- 
-+      this.field_73251_h.timings.tracker.startTiming(); // Spigot
-       this.field_217237_a.func_219169_g();
-+      this.field_73251_h.timings.tracker.stopTiming(); // Spigot
-    }
- 
-    public String func_73148_d() {
-@@ -505,12 +574,18 @@
+@@ -505,12 +566,18 @@
        }
  
        protected boolean func_213168_p() {
@@ -221,7 +156,7 @@
 +               return super.func_213168_p();
 +            }
 +         } finally {
-+            field_217237_a.callbackExecutor.run();
++            ServerChunkProvider.this.field_217237_a.callbackExecutor.run();
           }
 +         // CraftBukkit end
        }

@@ -1,0 +1,30 @@
+From 5ca43fa198d7097361c90044a4d6e4cba39350b9 Mon Sep 17 00:00:00 2001
+From: Spottedleaf <Spottedleaf@users.noreply.github.com>
+Date: Tue, 30 Jul 2019 13:47:34 -0700
+Subject: [PATCH] View Distance
+
+This commit allows the retrieval of per world view distances.
+
+diff --git a/src/main/java/org/bukkit/World.java b/src/main/java/org/bukkit/World.java
+index 387ef3f2..cd8a0957 100644
+--- a/src/main/java/org/bukkit/World.java
++++ b/src/main/java/org/bukkit/World.java
+@@ -2224,6 +2224,15 @@ public interface World extends PluginMessageRecipient, Metadatable {
+     @Nullable
+     public Location locateNearestStructure(@NotNull Location origin, @NotNull StructureType structureType, int radius, boolean findUnexplored);
+ 
++    // Spigot start
++    /**
++     * Returns the view distance used for this world.
++     *
++     * @return the view distance used for this world
++     */
++    int getViewDistance();
++    // Spigot end
++
+     // Spigot start
+     public class Spigot {
+ 
+-- 
+2.25.1
+

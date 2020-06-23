@@ -8,7 +8,7 @@
  
  public class MinecartCommandBlockEntity extends AbstractMinecartEntity {
 -   private static final DataParameter<String> field_184273_a = EntityDataManager.func_187226_a(MinecartCommandBlockEntity.class, DataSerializers.field_187194_d);
-+   public static final DataParameter<String> field_184273_a = EntityDataManager.func_187226_a(MinecartCommandBlockEntity.class, DataSerializers.field_187194_d); // private->public CraftBukkit
++   public static final DataParameter<String> field_184273_a = EntityDataManager.func_187226_a(MinecartCommandBlockEntity.class, DataSerializers.field_187194_d);
     private static final DataParameter<ITextComponent> field_184274_b = EntityDataManager.func_187226_a(MinecartCommandBlockEntity.class, DataSerializers.field_187195_e);
     private final CommandBlockLogic field_145824_a = new MinecartCommandBlockEntity.MinecartCommandLogic();
     private int field_145823_b;
@@ -28,7 +28,7 @@
 +      // CraftBukkit start
 +      @Override
 +      public CommandSender getBukkitSender(CommandSource p0) {
-+         return (org.bukkit.craftbukkit.v1_15_R1.entity.CraftMinecartCommand) MinecartCommandBlockEntity.this.getBukkitEntity();
++         return (org.bukkit.craftbukkit.entity.CraftMinecartCommand) MinecartCommandBlockEntity.this.getBukkitEntity();
 +      }
 +      // CraftBukkit end
     }

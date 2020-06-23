@@ -1,0 +1,27 @@
+From 211d19a81f036d58bed6ea5c1b55cfd2547aaf2a Mon Sep 17 00:00:00 2001
+From: Andrew Steinborn <git@steinborn.me>
+Date: Fri, 13 Mar 2020 02:49:27 -0400
+Subject: [PATCH] Implement Server#getConsoleSender()
+
+
+diff --git a/src/main/java/org/bukkit/craftbukkit/CraftServer.java b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
+index c93162e9..08d1406f 100644
+--- a/src/main/java/org/bukkit/craftbukkit/CraftServer.java
++++ b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
+@@ -818,6 +818,13 @@ public final class CraftServer implements Server {
+     }
+     // Canyon end
+ 
++    // Canyon start
++    @Override
++    public ConsoleCommandSender getConsoleSender() {
++        return this.console.console;
++    }
++    // Canyon end
++
+     public void setWhitelist(boolean value) {
+         server.o = value;
+         console.propertyManager.b("white-list", value);
+-- 
+2.25.1
+

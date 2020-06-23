@@ -1,0 +1,90 @@
+From ce2cbe8f8cece4b45608fa73de2ff695a5f0a55b Mon Sep 17 00:00:00 2001
+From: TheMolkaPL <themolkapl@gmail.com>
+Date: Tue, 31 Dec 2019 03:02:34 +0100
+Subject: [PATCH] Allow plugins to append custom data in server ping
+
+Signed-off-by: TheMolkaPL <themolkapl@gmail.com>
+
+diff --git a/src/main/java/org/bukkit/event/server/ServerListPingEvent.java b/src/main/java/org/bukkit/event/server/ServerListPingEvent.java
+index 3c38d857..215e5e08 100644
+--- a/src/main/java/org/bukkit/event/server/ServerListPingEvent.java
++++ b/src/main/java/org/bukkit/event/server/ServerListPingEvent.java
+@@ -1,11 +1,17 @@
+ package org.bukkit.event.server;
+ 
+ import java.net.InetAddress;
++import java.util.Collections;
++import java.util.HashMap;
+ import java.util.Iterator;
++import java.util.Map;
++import java.util.Optional;
+ 
++import com.google.gson.JsonObject;
+ import org.apache.commons.lang.Validate;
+ import org.bukkit.entity.Player;
+ import org.bukkit.event.HandlerList;
++import org.bukkit.plugin.Plugin;
+ import org.bukkit.util.CachedServerIcon;
+ 
+ /**
+@@ -19,6 +25,7 @@ public class ServerListPingEvent extends ServerEvent implements Iterable<Player>
+     private String motd;
+     private final int numPlayers;
+     private int maxPlayers;
++    private final Map<Plugin, JsonObject> extras = new HashMap<>();
+ 
+     public ServerListPingEvent(final InetAddress address, final String motd, final int numPlayers, final int maxPlayers) {
+         super(); // Paper - Is this event being fired async?
+@@ -107,6 +114,49 @@ public class ServerListPingEvent extends ServerEvent implements Iterable<Player>
+         this.maxPlayers = maxPlayers;
+     }
+ 
++    /**
++     * Get or create a new {@link JsonObject} representing extra data provided
++     * by the given plugin.
++     *
++     * @see #getExtra(Plugin)
++     * @see #getExtras()
++     * @param owningPlugin owner of the data
++     * @return existing {@link JsonObject} or a new one if it doesn't exist
++     */
++    public JsonObject getOrCreateExtra(Plugin owningPlugin) {
++        Validate.notNull(owningPlugin, "owningPlugin");
++        return getExtra(owningPlugin).orElseGet(() -> {
++            JsonObject object = new JsonObject();
++            extras.put(owningPlugin, object);
++            return object;
++        });
++    }
++
++    /**
++     * Get {@link JsonObject} representing extra data provided by the given
++     * plugin.
++     *
++     * @see #getOrCreateExtra(Plugin)
++     * @see #getExtras()
++     * @param owningPlugin owner of the data
++     * @return existing {@link JsonObject} or {@link Optional#empty()}
++     */
++    public Optional<JsonObject> getExtra(Plugin owningPlugin) {
++        Validate.notNull(owningPlugin, "owningPlugin");
++        return Optional.ofNullable(extras.get(owningPlugin));
++    }
++
++    /**
++     * Get all existing extras in this event.
++     *
++     * @see #getOrCreateExtra(Plugin)
++     * @see #getExtra(Plugin)
++     * @return unmodifiable current extras
++     */
++    public Map<Plugin, JsonObject> getExtras() {
++        return Collections.unmodifiableMap(extras);
++    }
++
+     /**
+      * Sets the server-icon sent to the client.
+      *
+-- 
+2.23.0.windows.1
+

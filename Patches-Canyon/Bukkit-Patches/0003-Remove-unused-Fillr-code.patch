@@ -1,0 +1,653 @@
+From 7b11d45b08866f50b3a9ae19dde1d1895ccce680 Mon Sep 17 00:00:00 2001
+From: Andrew Steinborn <git@steinborn.me>
+Date: Tue, 8 Oct 2019 01:03:58 -0400
+Subject: [PATCH] Remove unused Fillr code
+
+This was never used in core Bukkit. While technically API-breaking,
+it is unlikely any Bukkit plugin used anything within this hierarchy.
+
+See https://github.com/Bukkit/Bukkit/commit/938fd93ada3103ecad2d141d244a088e3d8462a1
+for the upstream commit (in the Beta 1.8 timeframe).
+
+diff --git a/src/main/java/org/bukkit/fillr/Checker.java b/src/main/java/org/bukkit/fillr/Checker.java
+deleted file mode 100644
+index fac496c9..00000000
+--- a/src/main/java/org/bukkit/fillr/Checker.java
++++ /dev/null
+@@ -1,109 +0,0 @@
+-package org.bukkit.fillr;
+-
+-import java.io.*;
+-import java.util.jar.*;
+-import org.bukkit.*;
+-import org.bukkit.command.CommandSender;
+-import org.bukkit.plugin.*;
+-
+-public class Checker {
+-    private static String DIRECTORY = Fillr.DIRECTORY;
+-
+-    /**
+-     * Checks all the plugins in plugins/ for updates
+-     *
+-     * @param sender
+-     *            The player to send info to
+-     */
+-    void check(CommandSender sender) {
+-        File folder = new File(DIRECTORY);
+-        File[] files = folder.listFiles(new PluginFilter());
+-
+-        if (files.length == 0) {
+-            sender.sendMessage("No plugins to update.");
+-        } else {
+-            sender.sendMessage("Status for " + files.length + " plugins:");
+-            for (File file : files) {
+-                PluginDescriptionFile pdfFile = Checker.getPDF(file);
+-
+-                if (pdfFile == null) {
+-                    continue;
+-                }
+-                checkForUpdate(file, sender);
+-            }
+-        }
+-    }
+-
+-    /**
+-     * Checks for an update for a given plugin
+-     *
+-     * @param file
+-     *            The plugin file to check for an update
+-     * @param sender
+-     *            The player to send info to
+-     */
+-    private void checkForUpdate(File file, CommandSender sender) {
+-        PluginDescriptionFile pdfFile = Checker.getPDF(file);
+-        FillReader reader = needsUpdate(pdfFile);
+-
+-        if (reader != null) {
+-            sender.sendMessage(ChatColor.RED + reader.getName() + " " + pdfFile.getVersion() + " has an update to " + reader.getCurrVersion());
+-        } else {
+-            sender.sendMessage(pdfFile.getName() + " " + pdfFile.getVersion() + " is up to date!");
+-        }
+-    }
+-
+-    /**
+-     * Checks if a given plugin needs an update
+-     *
+-     * @param file
+-     *            The .yml file to check
+-     * @return The FillReader for the online repo info on the plugin if the plugin needs an update
+-     *          Returns null if no update is needed.
+-     */
+-    static FillReader needsUpdate(PluginDescriptionFile file) {
+-        FillReader reader = new FillReader(file.getName());
+-        String version = file.getVersion();
+-        String currVersion = reader.getCurrVersion();
+-        String name = reader.getName();
+-
+-        if (currVersion.equalsIgnoreCase(version) && new File(DIRECTORY, name + ".jar").exists()) {
+-            return null;
+-        } else {
+-            return reader;
+-        }
+-    }
+-
+-    /**
+-     * Will grab the plugin's .yml file from the give file (hopefully a plugin).
+-     * It'll throw it into a PluginDescriptionFile
+-     *
+-     * @param file
+-     *            The plugin (jar) file
+-     * @return The PluginDescriptionFile representing the .yml
+-     */
+-    static PluginDescriptionFile getPDF(File file) {
+-        // TODO supports only jar files for now. how will yml's be stored in
+-        // different languages?
+-
+-        if (file.getName().endsWith(".jar")) {
+-            JarFile jarFile;
+-
+-            try {
+-                jarFile = new JarFile(file);
+-                JarEntry entry = jarFile.getJarEntry("plugin.yml");
+-                InputStream input = jarFile.getInputStream(entry);
+-
+-                return new PluginDescriptionFile(input);
+-            } catch (IOException e) {
+-                e.printStackTrace();
+-                return null;
+-            } catch (InvalidDescriptionException e) {
+-                e.printStackTrace();
+-                return null;
+-            }
+-        } else {
+-            return null;
+-        }
+-    }
+-}
+diff --git a/src/main/java/org/bukkit/fillr/Downloader.java b/src/main/java/org/bukkit/fillr/Downloader.java
+deleted file mode 100644
+index c42d8aa7..00000000
+--- a/src/main/java/org/bukkit/fillr/Downloader.java
++++ /dev/null
+@@ -1,145 +0,0 @@
+-package org.bukkit.fillr;
+-
+-import org.bukkit.entity.Player;
+-import org.bukkit.plugin.PluginDescriptionFile;
+-
+-import java.io.*;
+-import java.net.URL;
+-
+-public class Downloader {
+-    private final static String DIRECTORY = Fillr.DIRECTORY;
+-    private final static String DOWNLOAD_DIR = DIRECTORY + File.separator + "downloads";
+-    private final static String BACKUP = DIRECTORY + File.separator + "backups";
+-
+-    /**
+-     * Downloads the jar from a given url. If it is a compressed archive, it
+-     * tries to get the .jars out of it
+-     *
+-     * @param url
+-     *            The url to download from
+-     */
+-    static void downloadJar(String url) throws Exception {
+-        int index = url.lastIndexOf('/');
+-        String name = url.substring(index + 1);
+-
+-        File file = new File(DIRECTORY, name);
+-
+-        if (url.endsWith(".jar") && file.exists()) {
+-            backupFile(file);
+-        }
+-
+-        download(new URL(url), name, DIRECTORY);
+-        file = new File("plugins", name);
+-    }
+-
+-    /**
+-     * Downloads the file for a given plugin
+-     *
+-     * @param name
+-     *            The name of the plugin to download
+-     * @param player
+-     *            The player to send info to
+-     */
+-    void downloadFile(String name, Player player) throws Exception {
+-        File file = new File(DIRECTORY, name + ".jar");
+-
+-        if (file.exists()) {
+-            player.sendMessage("Downloading " + name + "'s file");
+-            PluginDescriptionFile pdfFile = Checker.getPDF(file);
+-            FillReader reader = Checker.needsUpdate(pdfFile);
+-
+-            downloadFile(new URL(reader.getFile()));
+-            player.sendMessage("Finished download");
+-        } else {
+-            System.out.println("Can't find " + name);
+-        }
+-    }
+-
+-    /**
+-     * Downloads the file to the plugin/downloads directory
+-     *
+-     * @param u
+-     *            The url of the file to download
+-     */
+-    private void downloadFile(URL u) throws Exception {
+-        String name = u.getFile();
+-        int index = name.lastIndexOf('/');
+-
+-        name = name.substring(index + 1);
+-        download(u, name, DOWNLOAD_DIR);
+-    }
+-
+-    /**
+-     * Downloads the file to a given directory with a given name
+-     *
+-     * @param u
+-     *            The url of the file to download
+-     * @param name
+-     *            The name to give the file
+-     * @param directory
+-     *            The directory to put the file
+-     */
+-    private static void download(URL u, String name, String directory) throws Exception {
+-        InputStream inputStream = null;
+-
+-        inputStream = u.openStream();
+-
+-        if (!new File(directory).exists()) {
+-            new File(directory).mkdir();
+-        }
+-
+-        File f = new File(directory, name);
+-
+-        if (f.exists()) {
+-            f.delete();
+-        }
+-        f.createNewFile();
+-
+-        copyInputStream(inputStream, new BufferedOutputStream(new FileOutputStream(f)));
+-
+-        try {
+-            if (inputStream != null) {
+-                inputStream.close();
+-            }
+-        } catch (IOException ioe) {
+-            System.out.println("[UPDATR]: Error closing inputStream");
+-        }
+-    }
+-
+-    /**
+-     * Copies an InputStream to an OutputStream!
+-     *
+-     * @param in
+-     *            InputStream
+-     * @param out
+-     *            OutputStream
+-     * @throws IOException
+-     */
+-    private static final void copyInputStream(InputStream in, OutputStream out) throws IOException {
+-        byte[] buffer = new byte[1024];
+-        int len;
+-
+-        while ((len = in.read(buffer)) >= 0) {
+-            out.write(buffer, 0, len);
+-        }
+-
+-        in.close();
+-        out.close();
+-    }
+-
+-    /**
+-     * Moves the file to the backup folder.
+-     *
+-     * @param file
+-     *            The file to backup
+-     */
+-    private static void backupFile(File file) {
+-        if (file != null && file.exists()) {
+-            System.out.println("Backing up old file: " + file.getName());
+-            if (!new File(BACKUP).exists()) {
+-                new File(BACKUP).mkdir();
+-            }
+-            file.renameTo(new File(BACKUP, file.getName() + ".bak"));
+-        }
+-    }
+-}
+diff --git a/src/main/java/org/bukkit/fillr/FillReader.java b/src/main/java/org/bukkit/fillr/FillReader.java
+deleted file mode 100644
+index 00209326..00000000
+--- a/src/main/java/org/bukkit/fillr/FillReader.java
++++ /dev/null
+@@ -1,84 +0,0 @@
+-package org.bukkit.fillr;
+-
+-import java.io.*;
+-import java.net.URL;
+-import java.net.URLConnection;
+-
+-import org.json.simple.JSONObject;
+-import org.json.simple.parser.JSONParser;
+-import org.json.simple.parser.ParseException;
+-
+-/**
+- * Grabs the latest info for a given plugin from fill.bukkit.org
+- */
+-public class FillReader {
+-    // TODO change this to what it will actually be...
+-
+-    private static final String BASE_URL = "http://taylorkelly.me/pnfo.php";
+-    private String currVersion;
+-    private String file;
+-    private String name;
+-    private String notes;
+-    private boolean stable;
+-
+-    public FillReader(String name) {
+-        try {
+-            String result = "";
+-
+-            try {
+-                URL url = new URL(BASE_URL + "?name=" + name);
+-
+-                System.out.println(BASE_URL + "?name=" + name);
+-                URLConnection conn = url.openConnection();
+-                StringBuilder buf = new StringBuilder();
+-                BufferedReader rd = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+-                String line;
+-
+-                while ((line = rd.readLine()) != null) {
+-                    buf.append(line);
+-                }
+-                result = buf.toString();
+-                rd.close();
+-                JSONParser parser = new JSONParser();
+-                Object obj;
+-
+-                obj = parser.parse(result);
+-                JSONObject jsonObj = (JSONObject) obj;
+-
+-                this.currVersion = (String) jsonObj.get("plugin_version");
+-                this.name = (String) jsonObj.get("plugin_name");
+-                this.file = (String) jsonObj.get("plugin_file");
+-                this.stable = (Boolean) jsonObj.get("plugin_stable");
+-                this.notes = (String) jsonObj.get("plugin_notes");
+-            } catch (ParseException e) {
+-                e.printStackTrace();
+-            }
+-        } catch (Exception e) {
+-            e.printStackTrace();
+-        }
+-    }
+-
+-    public String getCurrVersion() {
+-        return currVersion;
+-    }
+-
+-    public String getFile() {
+-        return file;
+-    }
+-
+-    public String getName() {
+-        return name;
+-    }
+-
+-    public String getNotes() {
+-        return notes;
+-    }
+-
+-    public void setStable(boolean stable) {
+-        this.stable = stable;
+-    }
+-
+-    public boolean isStable() {
+-        return stable;
+-    }
+-}
+diff --git a/src/main/java/org/bukkit/fillr/Fillr.java b/src/main/java/org/bukkit/fillr/Fillr.java
+deleted file mode 100644
+index 50d1cc6b..00000000
+--- a/src/main/java/org/bukkit/fillr/Fillr.java
++++ /dev/null
+@@ -1,50 +0,0 @@
+-package org.bukkit.fillr;
+-
+-import org.bukkit.command.Command;
+-import org.bukkit.command.CommandSender;
+-import org.bukkit.plugin.java.*;
+-
+-public class Fillr extends JavaPlugin {
+-    public static final String NAME = "Fillr";
+-    public static final String VERSION = "1.0";
+-    public static final String DIRECTORY = "plugins";
+-
+-    public void onDisable() {}
+-
+-    public void onEnable() {}
+-
+-    public void onLoad() {}
+-
+-    @Override
+-    public boolean onCommand(CommandSender sender, Command cmd, String commandLabel, String[] args) {
+-        if (commandLabel.equalsIgnoreCase("check")) {
+-            new Checker().check(sender);
+-            return true;
+-        } else if (commandLabel.equalsIgnoreCase("updateAll")) {
+-            new Updater(getServer()).updateAll(sender);
+-            return true;
+-        } else if (commandLabel.equalsIgnoreCase("update")) {
+-            if (args.length == 0) {
+-                sender.sendMessage("Usage is /update <name>");
+-            } else {
+-                new Updater(getServer()).update(args[0], sender);
+-            }
+-
+-            return true;
+-        } else if (commandLabel.equalsIgnoreCase("get")) {
+-            if (args.length == 0) {
+-                sender.sendMessage("Usage is /get <name>");
+-            } else {
+-                try {
+-                    new Getter(getServer()).get(args[0], sender);
+-                } catch (Exception e) {
+-                    sender.sendMessage("There was an error downloading " + args[0]);
+-                }
+-            }
+-
+-            return true;
+-        }
+-
+-        return false;
+-    }
+-}
+diff --git a/src/main/java/org/bukkit/fillr/Getter.java b/src/main/java/org/bukkit/fillr/Getter.java
+deleted file mode 100644
+index 10ead681..00000000
+--- a/src/main/java/org/bukkit/fillr/Getter.java
++++ /dev/null
+@@ -1,53 +0,0 @@
+-package org.bukkit.fillr;
+-
+-import java.io.File;
+-import java.util.logging.Level;
+-
+-import org.bukkit.*;
+-import org.bukkit.command.CommandSender;
+-import org.bukkit.plugin.InvalidDescriptionException;
+-import org.bukkit.plugin.InvalidPluginException;
+-import org.bukkit.plugin.UnknownDependencyException;
+-
+-public class Getter {
+-    private Server server;
+-    private static String DIRECTORY = Fillr.DIRECTORY;
+-
+-    public Getter(Server server) {
+-        this.server = server;
+-    }
+-
+-    public void get(String string, CommandSender sender) {
+-        FillReader reader = new FillReader(string);
+-
+-        sender.sendMessage("Downloading " + reader.getName() + " " + reader.getCurrVersion());
+-        try {
+-            Downloader.downloadJar(reader.getFile());
+-            if (reader.getNotes() != null && !reader.getNotes().equals("")) {
+-                sender.sendMessage("Notes: " + reader.getNotes());
+-            }
+-            sender.sendMessage("Finished Download!");
+-            enablePlugin(reader);
+-            sender.sendMessage("Loading " + reader.getName());
+-        } catch (Exception ex) {
+-            server.getLogger().log(Level.SEVERE, null, ex);
+-        }
+-    }
+-
+-    private void enablePlugin(FillReader update) {
+-        final String name = update.getName();
+-        // TODO again with the implicit jar support...
+-
+-        File plugin = new File(DIRECTORY, name + ".jar");
+-
+-        try {
+-            server.getPluginManager().loadPlugin(plugin);
+-        } catch (UnknownDependencyException ex) {
+-            server.getLogger().log(Level.SEVERE, null, ex);
+-        } catch (InvalidPluginException ex) {
+-            server.getLogger().log(Level.SEVERE, null, ex);
+-        } catch (InvalidDescriptionException ex) {
+-            server.getLogger().log(Level.SEVERE, null, ex);
+-        }
+-    }
+-}
+diff --git a/src/main/java/org/bukkit/fillr/PluginFilter.java b/src/main/java/org/bukkit/fillr/PluginFilter.java
+deleted file mode 100644
+index e1a568b9..00000000
+--- a/src/main/java/org/bukkit/fillr/PluginFilter.java
++++ /dev/null
+@@ -1,17 +0,0 @@
+-package org.bukkit.fillr;
+-
+-import java.io.File;
+-import java.io.FilenameFilter;
+-
+-/**
+- * Used to filter out non-updatr files
+- */
+-public class PluginFilter implements FilenameFilter {
+-    public boolean accept(File file, String name) {
+-        if (name.endsWith(".jar")) {
+-            return true;
+-        } else {
+-            return false;
+-        }
+-    }
+-}
+diff --git a/src/main/java/org/bukkit/fillr/TODO b/src/main/java/org/bukkit/fillr/TODO
+deleted file mode 100644
+index a2781560..00000000
+--- a/src/main/java/org/bukkit/fillr/TODO
++++ /dev/null
+@@ -1,3 +0,0 @@
+-Things still needed for Fillr:
+- - Needs to be automatically loaded.
+- - hRepo info grabbing (see FillReader.java)
+\ No newline at end of file
+diff --git a/src/main/java/org/bukkit/fillr/Updater.java b/src/main/java/org/bukkit/fillr/Updater.java
+deleted file mode 100644
+index ce9e3f3b..00000000
+--- a/src/main/java/org/bukkit/fillr/Updater.java
++++ /dev/null
+@@ -1,120 +0,0 @@
+-package org.bukkit.fillr;
+-
+-import org.bukkit.*;
+-import org.bukkit.plugin.*;
+-
+-import java.io.File;
+-import java.util.logging.Level;
+-import org.bukkit.command.CommandSender;
+-
+-public class Updater {
+-    public static String DIRECTORY = Fillr.DIRECTORY;
+-    private final Server server;
+-
+-    Updater(Server server) {
+-        this.server = server;
+-    }
+-
+-    /**
+-     * Checks and updates the plugins
+-     *
+-     * @param sender
+-     *            The player to send info to
+-     */
+-    void updateAll(CommandSender sender) {
+-        File folder = new File(DIRECTORY);
+-        File[] files = folder.listFiles(new PluginFilter());
+-
+-        if (files.length == 0) {
+-            sender.sendMessage("No plugins to update.");
+-        } else {
+-            sender.sendMessage("Updating " + files.length + " plugins:");
+-            for (File file : files) {
+-                PluginDescriptionFile pdfFile = Checker.getPDF(file);
+-
+-                if (pdfFile == null) {
+-                    continue;
+-                }
+-                FillReader reader = Checker.needsUpdate(pdfFile);
+-
+-                if (reader != null) {
+-                    update(reader, sender);
+-                }
+-            }
+-        }
+-    }
+-
+-    /**
+-     * Checks if a given plugin needs an update, if it does, it updates it
+-     *
+-     * @param string
+-     *            The name of the plugin
+-     * @param player
+-     *            The player to send info to
+-     */
+-    void update(String string, CommandSender player) {
+-        // TODO so much .jars
+-
+-        File file = new File(DIRECTORY, string + ".jar");
+-
+-        if (file.exists()) {
+-            PluginDescriptionFile pdfFile = Checker.getPDF(file);
+-            FillReader reader = Checker.needsUpdate(pdfFile);
+-
+-            if (reader != null) {
+-                update(reader, player);
+-            } else {
+-                player.sendMessage(string + " is up to date");
+-            }
+-        } else {
+-            player.sendMessage("Can't find " + string);
+-        }
+-    }
+-
+-    /**
+-     * Downloads the plugin specified by the URLReader
+-     *
+-     * @param update
+-     *            The FillReader with all the plugin info
+-     * @param sender The player to send info to
+-     */
+-    private void update(FillReader update, CommandSender sender) {
+-        disablePlugin(update);
+-        sender.sendMessage("Disabling " + update.getName() + " for update");
+-        sender.sendMessage("Downloading " + update.getName() + " " + update.getCurrVersion());
+-        try {
+-            Downloader.downloadJar(update.getFile());
+-            if (update.getNotes() != null && !update.getNotes().equals("")) {
+-                sender.sendMessage("Notes: " + update.getNotes());
+-            }
+-            sender.sendMessage("Finished Download!");
+-            enablePlugin(update);
+-            sender.sendMessage("Loading " + update.getName());
+-        } catch (Exception e) {
+-            e.printStackTrace();
+-        }
+-    }
+-
+-    void enablePlugin(FillReader update) {
+-        final String name = update.getName();
+-
+-        File plugin = new File(DIRECTORY, name + ".jar");
+-
+-        try {
+-            server.getPluginManager().loadPlugin(plugin);
+-        } catch (UnknownDependencyException ex) {
+-            server.getLogger().log(Level.SEVERE, null, ex);
+-        } catch (InvalidPluginException ex) {
+-            server.getLogger().log(Level.SEVERE, null, ex);
+-        } catch (InvalidDescriptionException ex) {
+-            server.getLogger().log(Level.SEVERE, null, ex);
+-        }
+-    }
+-
+-    private void disablePlugin(FillReader update) {
+-        String name = update.getName();
+-        Plugin plugin = server.getPluginManager().getPlugin(name);
+-
+-        server.getPluginManager().disablePlugin(plugin);
+-    }
+-}
+diff --git a/src/main/java/org/bukkit/fillr/plugin.yml b/src/main/java/org/bukkit/fillr/plugin.yml
+deleted file mode 100644
+index 7a1a2273..00000000
+--- a/src/main/java/org/bukkit/fillr/plugin.yml
++++ /dev/null
+@@ -1,3 +0,0 @@
+-name: Fillr
+-version: 1.0
+-main: org.bukkit.fillr.Fillr
+-- 
+2.22.0
+

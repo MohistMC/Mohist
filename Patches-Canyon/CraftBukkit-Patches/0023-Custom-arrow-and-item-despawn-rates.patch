@@ -1,0 +1,57 @@
+From c170107b164bc62cdb081295b9fec4eafcaf1093 Mon Sep 17 00:00:00 2001
+From: Andrew Steinborn <git@steinborn.me>
+Date: Sat, 26 Oct 2019 00:42:01 -0400
+Subject: [PATCH] Custom arrow and item despawn rates
+
+
+diff --git a/src/main/java/com/canyonmodded/config/CanyonConfig.java b/src/main/java/com/canyonmodded/config/CanyonConfig.java
+index 0e5b7a19..2648e686 100644
+--- a/src/main/java/com/canyonmodded/config/CanyonConfig.java
++++ b/src/main/java/com/canyonmodded/config/CanyonConfig.java
+@@ -9,6 +9,8 @@ public class CanyonConfig {
+     public static boolean useNewNetworkingStack = false;
+     public static int maxOutstandingChunks = 2;
+     public static int autoSave = 6000;
++    public static int arrowDespawnRate = 1200;
++    public static int itemDespawnRate = 6000;
+ 
+     public static void loadConfiguration(File file) {
+         Configuration configuration = new Configuration(file);
+@@ -18,6 +20,8 @@ public class CanyonConfig {
+         useNewNetworkingStack = configuration.getBoolean("settings.use-new-networking-stack", false);
+         maxOutstandingChunks = configuration.getInt("settings.max-outstanding-chunks", maxOutstandingChunks);
+         autoSave = configuration.getInt("settings.auto-save-every", 6000);
++        arrowDespawnRate = configuration.getInt("optimization.arrow-despawn-rate", arrowDespawnRate);
++        itemDespawnRate = configuration.getInt("optimization.item-despawn-rate", itemDespawnRate);
+ 
+         configuration.save();
+     }
+diff --git a/src/main/java/net/minecraft/server/EntityArrow.java b/src/main/java/net/minecraft/server/EntityArrow.java
+index 3e31abd8..614b2955 100644
+--- a/src/main/java/net/minecraft/server/EntityArrow.java
++++ b/src/main/java/net/minecraft/server/EntityArrow.java
+@@ -108,7 +108,7 @@ public class EntityArrow extends Entity {
+ 
+             if (i == this.g && j == this.h) {
+                 ++this.j;
+-                if (this.j == 1200) {
++                if (this.j == com.canyonmodded.config.CanyonConfig.arrowDespawnRate) { // Canyon - custom arrow despawn rate
+                     this.die();
+                 }
+             } else {
+diff --git a/src/main/java/net/minecraft/server/EntityItem.java b/src/main/java/net/minecraft/server/EntityItem.java
+index d8558b67..d944acec 100644
+--- a/src/main/java/net/minecraft/server/EntityItem.java
++++ b/src/main/java/net/minecraft/server/EntityItem.java
+@@ -82,7 +82,7 @@ public class EntityItem extends Entity {
+ 
+         ++this.e;
+         ++this.b;
+-        if (this.b >= 6000) {
++        if (this.b >= com.canyonmodded.config.CanyonConfig.itemDespawnRate) {  // Canyon - custom item despawn rate
+             this.die();
+         }
+     }
+-- 
+2.25.2
+

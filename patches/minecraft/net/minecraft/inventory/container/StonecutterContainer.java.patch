@@ -1,51 +1,50 @@
 --- a/net/minecraft/inventory/container/StonecutterContainer.java
 +++ b/net/minecraft/inventory/container/StonecutterContainer.java
-@@ -19,6 +19,10 @@
+@@ -19,6 +19,11 @@
  import net.minecraft.world.World;
  import net.minecraftforge.api.distmarker.Dist;
  import net.minecraftforge.api.distmarker.OnlyIn;
-+import org.bukkit.craftbukkit.v1_15_R1.inventory.CraftInventoryStonecutter;
-+import org.bukkit.craftbukkit.v1_15_R1.inventory.CraftInventoryView;
++import org.bukkit.craftbukkit.inventory.CraftInventory;
++import org.bukkit.craftbukkit.inventory.CraftInventoryStonecutter;
++import org.bukkit.craftbukkit.inventory.CraftInventoryView;
 +import org.bukkit.entity.Player;
 +import org.bukkit.inventory.InventoryView;
  
  public class StonecutterContainer extends Container {
     private final IWorldPosCallable field_217088_g;
-@@ -39,6 +43,10 @@
+@@ -39,7 +44,21 @@
        }
     };
     private final CraftResultInventory field_217095_n = new CraftResultInventory();
 +   // CraftBukkit start
 +   private CraftInventoryView bukkitEntity = null;
 +   private Player player;
-+   // CraftBukkit end
  
-    public StonecutterContainer(int p_i50059_1_, PlayerInventory p_i50059_2_) {
-       this(p_i50059_1_, p_i50059_2_, IWorldPosCallable.field_221489_a);
-@@ -84,6 +92,7 @@
-       }
- 
-       this.func_216958_a(this.field_217089_h);
-+      player = (Player) p_i50060_2_.field_70458_d.getBukkitEntity(); // CraftBukkit
-    }
- 
-    @OnlyIn(Dist.CLIENT)
-@@ -106,7 +115,20 @@
-       return this.field_217085_d.func_75216_d() && !this.field_217091_j.isEmpty();
-    }
- 
-+   // CraftBukkit start
 +   @Override
-+   public InventoryView getBukkitView() {
++   public CraftInventoryView getBukkitView() {
 +      if (bukkitEntity != null) {
 +         return bukkitEntity;
 +      }
++
 +      CraftInventoryStonecutter inventory = new CraftInventoryStonecutter(this.field_217087_f, this.field_217095_n);
 +      bukkitEntity = new CraftInventoryView(this.player, inventory, this);
 +      return bukkitEntity;
 +   }
-+   // CraftBukkit end
 +
+    public StonecutterContainer(int p_i50059_1_, PlayerInventory p_i50059_2_) {
+       this(p_i50059_1_, p_i50059_2_, IWorldPosCallable.field_221489_a);
+    }
+@@ -84,6 +103,7 @@
+       }
+ 
+       this.func_216958_a(this.field_217089_h);
++      this.player = (Player) p_i50060_2_.field_70458_d.getBukkitEntity(); // CraftBukkit
+    }
+ 
+    @OnlyIn(Dist.CLIENT)
+@@ -107,6 +127,7 @@
+    }
+ 
     public boolean func_75145_c(PlayerEntity p_75145_1_) {
 +      if (!this.checkReachable) return true; // CraftBukkit
        return func_216963_a(this.field_217088_g, p_75145_1_, Blocks.field_222430_lS);

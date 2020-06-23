@@ -1,0 +1,31 @@
+From 09d595a2957bb2a835ab3e92d1daee39ffb446ea Mon Sep 17 00:00:00 2001
+From: cswhite2000 <18whitechristop@gmail.com>
+Date: Thu, 16 Aug 2018 15:44:37 -0700
+Subject: [PATCH] Fireworks API's
+
+Get the firework launcher
+
+diff --git a/src/main/java/org/bukkit/entity/Firework.java b/src/main/java/org/bukkit/entity/Firework.java
+index b8a8c075..159d66d4 100644
+--- a/src/main/java/org/bukkit/entity/Firework.java
++++ b/src/main/java/org/bukkit/entity/Firework.java
+@@ -2,6 +2,8 @@ package org.bukkit.entity;
+ 
+ import org.bukkit.inventory.meta.FireworkMeta;
+ 
++import java.util.UUID;
++
+ public interface Firework extends Entity {
+ 
+     /**
+@@ -23,4 +25,7 @@ public interface Firework extends Entity {
+      * remaining fuse.
+      */
+     void detonate();
++
++    // Paper start
++    public UUID getSpawningEntity();
+ }
+-- 
+2.18.0
+

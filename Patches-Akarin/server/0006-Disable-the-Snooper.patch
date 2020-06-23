@@ -1,0 +1,27 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Sotr <i@omc.hk>
+Date: Wed, 15 Apr 2020 22:17:18 +0700
+Subject: [PATCH] Disable the Snooper
+
+
+diff --git a/src/main/java/net/minecraft/server/MinecraftServer.java b/src/main/java/net/minecraft/server/MinecraftServer.java
+index e71e00b087f9e20ab5d3758b2ea901636ebb7fec..2cb12e02e836f34ed80e93d4426bd994146e26c8 100644
+--- a/src/main/java/net/minecraft/server/MinecraftServer.java
++++ b/src/main/java/net/minecraft/server/MinecraftServer.java
+@@ -1275,6 +1275,8 @@ public abstract class MinecraftServer extends IAsyncTaskHandlerReentrant<TickTas
+         //} // Paper
+ 
+         this.methodProfiler.enter("snooper");
++        // Akarin - Disable Snooper
++        /*
+         if (((DedicatedServer) this).getDedicatedServerProperties().snooperEnabled && !this.snooper.d() && this.ticks > 100) { // Spigot
+             this.snooper.a();
+         }
+@@ -1282,6 +1284,7 @@ public abstract class MinecraftServer extends IAsyncTaskHandlerReentrant<TickTas
+         if (((DedicatedServer) this).getDedicatedServerProperties().snooperEnabled && this.ticks % 6000 == 0) { // Spigot
+             this.snooper.b();
+         }
++        */
+ 
+         this.methodProfiler.exit();
+ 

@@ -22,7 +22,7 @@
  
  public class ChunkLoader implements AutoCloseable {
     private final IOWorker field_227077_a_;
-@@ -25,26 +31,62 @@
+@@ -25,26 +31,59 @@
        this.field_227077_a_ = new IOWorker(new RegionFileCache(p_i49939_1_), "chunk");
     }
  
@@ -55,7 +55,6 @@
 +   public CompoundNBT updateChunkData(DimensionType p_219166_1_, Supplier<DimensionSavedDataManager> savedDataManager, CompoundNBT chunkData, ChunkPos pos, @Nullable IWorld generatoraccess) throws IOException {
 +      int i = func_219165_a(chunkData);
        int j = 1493;
-+      // CraftBukkit start
 +      if (i < 1466) {
 +         CompoundNBT level = chunkData.func_74775_l("Level");
 +         if (level.func_74767_n("TerrainPopulated") && !level.func_74767_n("LightPopulated")) {
@@ -65,8 +64,6 @@
 +            }
 +         }
 +      }
-+      // CraftBukkit end
-+
        if (i < 1493) {
 -         p_219166_3_ = NBTUtil.func_210821_a(this.field_219168_b, DefaultTypeReferences.CHUNK, p_219166_3_, i, 1493);
 -         if (p_219166_3_.func_74775_l("Level").func_74767_n("hasLegacyStructureData")) {
@@ -74,7 +71,7 @@
 +         if (chunkData.func_74775_l("Level").func_74767_n("hasLegacyStructureData")) {
              if (this.field_219167_a == null) {
 -               this.field_219167_a = LegacyStructureDataUtil.func_215130_a(p_219166_1_, p_219166_2_.get());
-+               this.field_219167_a = LegacyStructureDataUtil.func_215130_a(p_219166_1_.getType(), savedDataManager.get()); // CraftBukkit - getType
++               this.field_219167_a = LegacyStructureDataUtil.func_215130_a(p_219166_1_.getType(), savedDataManager.get());
              }
  
 -            p_219166_3_ = this.field_219167_a.func_212181_a(p_219166_3_);

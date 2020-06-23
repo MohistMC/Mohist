@@ -14,18 +14,19 @@
  
 +   // CraftBukkit start
 +   @Override
-+   public abstract CommandSender getBukkitSender(CommandSource wrapper);
++   public abstract CommandSender getBukkitSender(CommandSource commandSource);
 +   // CraftBukkit end
 +
     public int func_145760_g() {
        return this.field_145764_b;
     }
-@@ -121,7 +127,7 @@
+@@ -121,7 +127,9 @@
                       }
  
                    });
--                  minecraftserver.func_195571_aL().func_197059_a(commandsource, this.field_145763_e);
-+                  minecraftserver.func_195571_aL().dispatchServerCommand(commandsource, this.field_145763_e);  // CraftBukkit
++                  // TODO: seems already changed logic, duplicate with nms-patches/CommandBlockListenerAbstract.patch
+                   minecraftserver.func_195571_aL().func_197059_a(commandsource, this.field_145763_e);
++                  // minecraftserver.getCommandDispatcher().dispatchServerCommand(commandlistenerwrapper, this.command); // CraftBukkit
                 } catch (Throwable throwable) {
                    CrashReport crashreport = CrashReport.func_85055_a(throwable, "Executing command block");
                    CrashReportCategory crashreportcategory = crashreport.func_85058_a("Command to be executed");

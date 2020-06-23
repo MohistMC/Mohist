@@ -1,0 +1,76 @@
+From: Isaac Moore <rmsy@me.com>
+Date: Sun, 5 Jan 2014 20:35:57 -0600
+Subject: [PATCH] Allow plugins to access player locale
+
+
+diff --git a/src/main/java/net/minecraft/server/EntityPlayer.java b/src/main/java/net/minecraft/server/EntityPlayer.java
+--- a/src/main/java/net/minecraft/server/EntityPlayer.java
++++ b/src/main/java/net/minecraft/server/EntityPlayer.java
+@@ -28,7 +28,7 @@ import org.bukkit.inventory.MainHand;
+ public class EntityPlayer extends EntityHuman implements ICrafting {
+ 
+     private static final Logger bR = LogManager.getLogger();
+-    private String locale = "en_US";
++    public String locale = null; // SportBukkit - make public and default to null
+     public PlayerConnection playerConnection;
+     public final MinecraftServer server;
+     public final PlayerInteractManager playerInteractManager;
+@@ -1062,7 +1062,15 @@ public class EntityPlayer extends EntityHuman implements ICrafting {
+             this.server.server.getPluginManager().callEvent(event);
+         }
+         // CraftBukkit end
++        String oldLocale = this.locale; // SportBukkit
+         this.locale = packetplayinsettings.a();
++        // SportBukkit start - add PlayerLocaleChangeEvent
++        // Since the field is initialized to null, this event should always fire the first time the packet is received
++        if (!this.locale.equals(oldLocale)) {
++            CraftEventFactory.callPlayerLocaleChangeEvent(this, oldLocale, this.locale);
++        }
++        // SportBukkit end
++
+         this.cg = packetplayinsettings.c();
+         this.ch = packetplayinsettings.d();
+         this.getDataWatcher().set(EntityPlayer.bq, Byte.valueOf((byte) packetplayinsettings.e()));
+diff --git a/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java b/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
+--- a/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
++++ b/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
+@@ -1492,4 +1492,15 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
+     public String getHostname() {
+         return getHandle().hostname;
+     }
++
++    @Override
++    public String getLocale() {
++        final String locale = getHandle().locale;
++        return locale != null ? locale : "en_US";
++    }
++
++    @Override
++    public void setLocale(String locale) {
++        getHandle().locale = locale;
++    }
+ }
+diff --git a/src/main/java/org/bukkit/craftbukkit/event/CraftEventFactory.java b/src/main/java/org/bukkit/craftbukkit/event/CraftEventFactory.java
+--- a/src/main/java/org/bukkit/craftbukkit/event/CraftEventFactory.java
++++ b/src/main/java/org/bukkit/craftbukkit/event/CraftEventFactory.java
+@@ -655,7 +655,7 @@ public class CraftEventFactory {
+         if (!event.isCancelled()) {
+             state.update(true);
+         }
+-        
++
+         return !event.isCancelled();
+     }
+ 
+@@ -1050,4 +1050,11 @@ public class CraftEventFactory {
+ 
+         return !event.isCancelled();
+     }
++
++    public static PlayerLocaleChangeEvent callPlayerLocaleChangeEvent(EntityHuman who, String oldLocale, String newLocale) {
++        Player player = (Player) who.getBukkitEntity();
++        PlayerLocaleChangeEvent event = new PlayerLocaleChangeEvent(player, oldLocale, newLocale);
++        Bukkit.getPluginManager().callEvent(event);
++        return event;
++    }
+ }

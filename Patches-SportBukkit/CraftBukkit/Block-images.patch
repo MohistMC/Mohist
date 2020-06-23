@@ -1,0 +1,1044 @@
+From: Jedediah Smith <jedediah@silencegreys.com>
+Date: Mon, 10 Oct 2016 04:53:27 -0400
+Subject: [PATCH] Block images
+
+
+diff --git a/src/main/java/org/bukkit/CraftBukkitRuntime.java b/src/main/java/org/bukkit/CraftBukkitRuntime.java
+--- a/src/main/java/org/bukkit/CraftBukkitRuntime.java
++++ b/src/main/java/org/bukkit/CraftBukkitRuntime.java
+@@ -1,6 +1,8 @@
+ package org.bukkit;
+ 
+ import net.minecraft.server.DispenserRegistry;
++import org.bukkit.block.BlockFactory;
++import org.bukkit.craftbukkit.block.CraftBlockFactory;
+ import org.bukkit.craftbukkit.inventory.CraftItemFactory;
+ import org.bukkit.craftbukkit.potion.CraftPotionBrewRegistry;
+ import org.bukkit.craftbukkit.potion.CraftPotionEffectRegistry;
+@@ -26,6 +28,7 @@ public class CraftBukkitRuntime implements BukkitRuntime {
+         }
+     }
+ 
++    private final CraftBlockFactory blockFactory = new CraftBlockFactory();
+     private final CraftVectorFactory vectorFactory = new CraftVectorFactory();
+ 
+     private final PotionBrewRegistry potionBrewRegistry = new CraftPotionBrewRegistry();
+@@ -46,6 +49,11 @@ public class CraftBukkitRuntime implements BukkitRuntime {
+     }
+ 
+     @Override
++    public BlockFactory blocks() {
++        return blockFactory;
++    }
++
++    @Override
+     public VectorFactory vectors() {
+         return vectorFactory;
+     }
+diff --git a/src/main/java/org/bukkit/craftbukkit/CraftServer.java b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
+--- a/src/main/java/org/bukkit/craftbukkit/CraftServer.java
++++ b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
+@@ -1711,11 +1711,6 @@ public final class CraftServer extends CraftBukkitRuntime implements Server {
+     }
+ 
+     @Override
+-    public CraftItemFactory getItemFactory() {
+-        return CraftItemFactory.instance();
+-    }
+-
+-    @Override
+     public CraftScoreboardManager getScoreboardManager() {
+         return scoreboardManager;
+     }
+diff --git a/src/main/java/org/bukkit/craftbukkit/CraftWorld.java b/src/main/java/org/bukkit/craftbukkit/CraftWorld.java
+--- a/src/main/java/org/bukkit/craftbukkit/CraftWorld.java
++++ b/src/main/java/org/bukkit/craftbukkit/CraftWorld.java
+@@ -11,6 +11,7 @@ import java.util.Iterator;
+ import java.util.Random;
+ import java.util.Set;
+ import java.util.UUID;
++import java.util.function.Predicate;
+ 
+ import net.minecraft.server.*;
+ 
+@@ -30,15 +31,20 @@ import org.bukkit.WorldBorder;
+ import org.bukkit.block.Biome;
+ import org.bukkit.block.Block;
+ import org.bukkit.block.BlockFace;
++import org.bukkit.block.BlockImage;
++import org.bukkit.geometry.CoarseTransform;
++import org.bukkit.region.BlockRegion;
+ import org.bukkit.block.BlockState;
++import org.bukkit.geometry.Transform;
++import org.bukkit.geometry.Vec3;
+ import org.bukkit.craftbukkit.block.CraftBlock;
++import org.bukkit.craftbukkit.block.CraftBlockImage;
+ import org.bukkit.craftbukkit.block.CraftBlockState;
+ import org.bukkit.craftbukkit.entity.*;
+ import org.bukkit.craftbukkit.inventory.CraftItemStack;
+ import org.bukkit.craftbukkit.metadata.BlockMetadataStore;
+ import org.bukkit.craftbukkit.potion.CraftPotionUtil;
+ import org.bukkit.craftbukkit.util.CraftMagicNumbers;
+-import org.bukkit.craftbukkit.util.LongHash;
+ import org.bukkit.entity.*;
+ import org.bukkit.entity.Entity;
+ import org.bukkit.entity.minecart.CommandMinecart;
+@@ -101,6 +107,11 @@ public class CraftWorld implements World {
+         return getChunkAt(x >> 4, z >> 4).getBlock(x & 0xF, y, z & 0xF);
+     }
+ 
++    @Override
++    public Block getBlockAt(Vec3 position) {
++        return new CraftBlock((CraftChunk) getChunkAt(position), position);
++    }
++
+     public int getBlockTypeIdAt(int x, int y, int z) {
+         return CraftMagicNumbers.getId(world.getType(new BlockPosition(x, y, z)).getBlock());
+     }
+@@ -1611,4 +1622,48 @@ public class CraftWorld implements World {
+             cps.unload(chunk);
+         }
+     }
++
++    @Override
++    public boolean hasMaterialAt(MaterialData material, Vec3 position) {
++        final IBlockData nms = CraftMagicNumbers.getBlockData(material);
++        return nms.equals(world.getType(BlockPosition.of(position)));
++    }
++
++    @Override
++    public boolean hasMaterialAt(Set<MaterialData> materials, Vec3 position) {
++        final Set<IBlockData> nms = CraftMagicNumbers.getBlockData(materials);
++        return nms.contains(world.getType(BlockPosition.of(position)));
++    }
++
++    @Override
++    public Predicate<Vec3> hasMaterialAt(MaterialData material) {
++        final IBlockData nms = CraftMagicNumbers.getBlockData(material);
++        return position -> nms.equals(world.getType(BlockPosition.of(position)));
++    }
++
++    @Override
++    public Predicate<Vec3> hasMaterialAt(Set<MaterialData> materials) {
++        final Set<IBlockData> nms = CraftMagicNumbers.getBlockData(materials);
++        return position -> nms.contains(world.getType(BlockPosition.of(position)));
++    }
++
++    @Override
++    public BlockImage copyBlocks(BlockRegion region, boolean includeAir, boolean clearSource) {
++        return new CraftBlockImage(this, region, includeAir, clearSource);
++    }
++
++    @Override
++    public int pasteBlocks(BlockImage image, CoarseTransform transform) {
++        return image.paste(this, transform);
++    }
++
++    @Override
++    public int pasteBlocks(BlockImage image, Vec3 offset) {
++        return pasteBlocks(image, CoarseTransform.translation(offset));
++    }
++
++    @Override
++    public int pasteBlocks(BlockImage image) {
++        return pasteBlocks(image, Transform.identity());
++    }
+ }
+diff --git a/src/main/java/org/bukkit/craftbukkit/block/CraftBlock.java b/src/main/java/org/bukkit/craftbukkit/block/CraftBlock.java
+--- a/src/main/java/org/bukkit/craftbukkit/block/CraftBlock.java
++++ b/src/main/java/org/bukkit/craftbukkit/block/CraftBlock.java
+@@ -4,6 +4,7 @@ import java.util.ArrayList;
+ import java.util.Collection;
+ import java.util.Collections;
+ import java.util.List;
++import java.util.Objects;
+ 
+ import net.minecraft.server.*;
+ 
+@@ -25,18 +26,19 @@ import org.bukkit.metadata.MetadataValue;
+ import org.bukkit.plugin.Plugin;
+ import org.bukkit.util.BlockVector;
+ import org.bukkit.util.RayBlockIntersection;
++import org.bukkit.geometry.Vec3;
+ import org.bukkit.util.Vector;
+ 
+ public class CraftBlock implements Block {
+     private final CraftChunk chunk;
+-    private final int x;
+-    private final int y;
+-    private final int z;
++    private final BlockPosition position;
+ 
+     public CraftBlock(CraftChunk chunk, int x, int y, int z) {
+-        this.x = x;
+-        this.y = y;
+-        this.z = z;
++        this(chunk, BlockPosition.of(x, y, z));
++    }
++
++    public CraftBlock(CraftChunk chunk, Vec3 position) {
++        this.position = BlockPosition.copyOf(position);
+         this.chunk = chunk;
+     }
+ 
+@@ -52,16 +54,19 @@ public class CraftBlock implements Block {
+         return chunk.getWorld();
+     }
+ 
++    @Override
++    public BlockPosition getPosition() {
++        return position;
++    }
++
+     public Location getLocation() {
+-        return new Location(getWorld(), x, y, z);
++        return new Location(getWorld(), position);
+     }
+ 
+     public Location getLocation(Location loc) {
+         if (loc != null) {
+             loc.setWorld(getWorld());
+-            loc.setX(x);
+-            loc.setY(y);
+-            loc.setZ(z);
++            loc.setPosition(position);
+             loc.setYaw(0);
+             loc.setPitch(0);
+         }
+@@ -70,19 +75,19 @@ public class CraftBlock implements Block {
+     }
+ 
+     public BlockVector getVector() {
+-        return new BlockVector(x, y, z);
++        return new BlockVector(position);
+     }
+ 
+     public int getX() {
+-        return x;
++        return position.coarseX();
+     }
+ 
+     public int getY() {
+-        return y;
++        return position.coarseY();
+     }
+ 
+     public int getZ() {
+-        return z;
++        return position.coarseZ();
+     }
+ 
+     public Chunk getChunk() {
+@@ -103,17 +108,16 @@ public class CraftBlock implements Block {
+ 
+     private void setData(final byte data, int flag) {
+         net.minecraft.server.World world = chunk.getHandle().getWorld();
+-        BlockPosition position = new BlockPosition(x, y, z);
+         IBlockData blockData = world.getType(position);
+         world.setTypeAndData(position, blockData.getBlock().fromLegacyData(data), flag);
+     }
+ 
+     private IBlockData getData0() {
+-        return chunk.getHandle().getBlockData(new BlockPosition(x, y, z));
++        return chunk.getHandle().getBlockData(position);
+     }
+ 
+     public byte getData() {
+-        IBlockData blockData = chunk.getHandle().getBlockData(new BlockPosition(x, y, z));
++        IBlockData blockData = chunk.getHandle().getBlockData(position);
+         return (byte) blockData.getBlock().toLegacyData(blockData);
+     }
+ 
+@@ -137,7 +141,6 @@ public class CraftBlock implements Block {
+ 
+     public boolean setTypeIdAndData(final int type, final byte data, final boolean applyPhysics) {
+         IBlockData blockData = getNMSBlock(type).fromLegacyData(data);
+-        BlockPosition position = new BlockPosition(x, y, z);
+ 
+         // SPIGOT-611: need to do this to prevent glitchiness. Easier to handle this here (like /setblock) than to fix weirdness in tile entity cleanup
+         if (type != 0 && blockData.getBlock() instanceof BlockTileEntity && type != getTypeId()) {
+@@ -168,19 +171,19 @@ public class CraftBlock implements Block {
+     @Deprecated
+     @Override
+     public int getTypeId() {
+-        return CraftMagicNumbers.getId(chunk.getHandle().getBlockData(new BlockPosition(this.x, this.y, this.z)).getBlock());
++        return CraftMagicNumbers.getId(chunk.getHandle().getBlockData(position).getBlock());
+     }
+ 
+     public byte getLightLevel() {
+-        return (byte) chunk.getHandle().getWorld().getLightLevel(new BlockPosition(this.x, this.y, this.z));
++        return (byte) chunk.getHandle().getWorld().getLightLevel(position);
+     }
+ 
+     public byte getLightFromSky() {
+-        return (byte) chunk.getHandle().getWorld().getBrightness(EnumSkyBlock.SKY, new BlockPosition(this.x, this.y, this.z));
++        return (byte) chunk.getHandle().getWorld().getBrightness(EnumSkyBlock.SKY, position);
+     }
+ 
+     public byte getLightFromBlocks() {
+-        return (byte) chunk.getHandle().getWorld().getBrightness(EnumSkyBlock.BLOCK, new BlockPosition(this.x, this.y, this.z));
++        return (byte) chunk.getHandle().getWorld().getBrightness(EnumSkyBlock.BLOCK, position);
+     }
+ 
+ 
+@@ -221,7 +224,7 @@ public class CraftBlock implements Block {
+ 
+     @Override
+     public String toString() {
+-        return "CraftBlock{" + "chunk=" + chunk + ",x=" + x + ",y=" + y + ",z=" + z + ",type=" + getType() + ",data=" + getData() + '}';
++        return "CraftBlock{" + "chunk=" + chunk + ",position=" + position + ",type=" + getType() + ",data=" + getData() + '}';
+     }
+ 
+     public static BlockFace notchToBlockFace(EnumDirection notch) {
+@@ -342,11 +345,11 @@ public class CraftBlock implements Block {
+     }
+ 
+     public Biome getBiome() {
+-        return getWorld().getBiome(x, z);
++        return getWorld().getBiome(position);
+     }
+ 
+     public void setBiome(Biome bio) {
+-        getWorld().setBiome(x, z, bio);
++        getWorld().setBiome(position, bio);
+     }
+ 
+     public static Biome biomeBaseToBiome(BiomeBase base) {
+@@ -366,19 +369,19 @@ public class CraftBlock implements Block {
+     }
+ 
+     public double getTemperature() {
+-        return getWorld().getTemperature(x, z);
++        return getWorld().getTemperature(position);
+     }
+ 
+     public double getHumidity() {
+-        return getWorld().getHumidity(x, z);
++        return getWorld().getHumidity(position);
+     }
+ 
+     public boolean isBlockPowered() {
+-        return chunk.getHandle().getWorld().getBlockPower(new BlockPosition(x, y, z)) > 0;
++        return chunk.getHandle().getWorld().getBlockPower(position) > 0;
+     }
+ 
+     public boolean isBlockIndirectlyPowered() {
+-        return chunk.getHandle().getWorld().isBlockIndirectlyPowered(new BlockPosition(x, y, z));
++        return chunk.getHandle().getWorld().isBlockIndirectlyPowered(position);
+     }
+ 
+     @Override
+@@ -387,20 +390,20 @@ public class CraftBlock implements Block {
+         if (!(o instanceof CraftBlock)) return false;
+         CraftBlock other = (CraftBlock) o;
+ 
+-        return this.x == other.x && this.y == other.y && this.z == other.z && this.getWorld().equals(other.getWorld());
++        return this.getPosition().equals(other.getPosition()) && this.getWorld().equals(other.getWorld());
+     }
+ 
+     @Override
+     public int hashCode() {
+-        return this.y << 24 ^ this.x ^ this.z ^ this.getWorld().hashCode();
++        return Objects.hash(getPosition(), getWorld());
+     }
+ 
+     public boolean isBlockFacePowered(BlockFace face) {
+-        return chunk.getHandle().getWorld().isBlockFacePowered(new BlockPosition(x, y, z), blockFaceToNotch(face));
++        return chunk.getHandle().getWorld().isBlockFacePowered(position, blockFaceToNotch(face));
+     }
+ 
+     public boolean isBlockFaceIndirectlyPowered(BlockFace face) {
+-        int power = chunk.getHandle().getWorld().getBlockFacePower(new BlockPosition(x, y, z), blockFaceToNotch(face));
++        int power = chunk.getHandle().getWorld().getBlockFacePower(position, blockFaceToNotch(face));
+ 
+         Block relative = getRelative(face);
+         if (relative.getType() == Material.REDSTONE_WIRE) {
+@@ -414,12 +417,12 @@ public class CraftBlock implements Block {
+         int power = 0;
+         BlockRedstoneWire wire = Blocks.REDSTONE_WIRE;
+         net.minecraft.server.World world = chunk.getHandle().getWorld();
+-        if ((face == BlockFace.DOWN || face == BlockFace.SELF) && world.isBlockFacePowered(new BlockPosition(x, y - 1, z), EnumDirection.DOWN)) power = wire.getPower(world, new BlockPosition(x, y - 1, z), power);
+-        if ((face == BlockFace.UP || face == BlockFace.SELF) && world.isBlockFacePowered(new BlockPosition(x, y + 1, z), EnumDirection.UP)) power = wire.getPower(world, new BlockPosition(x, y + 1, z), power);
+-        if ((face == BlockFace.EAST || face == BlockFace.SELF) && world.isBlockFacePowered(new BlockPosition(x + 1, y, z), EnumDirection.EAST)) power = wire.getPower(world, new BlockPosition(x + 1, y, z), power);
+-        if ((face == BlockFace.WEST || face == BlockFace.SELF) && world.isBlockFacePowered(new BlockPosition(x - 1, y, z), EnumDirection.WEST)) power = wire.getPower(world, new BlockPosition(x - 1, y, z), power);
+-        if ((face == BlockFace.NORTH || face == BlockFace.SELF) && world.isBlockFacePowered(new BlockPosition(x, y, z - 1), EnumDirection.NORTH)) power = wire.getPower(world, new BlockPosition(x, y, z - 1), power);
+-        if ((face == BlockFace.SOUTH || face == BlockFace.SELF) && world.isBlockFacePowered(new BlockPosition(x, y, z + 1), EnumDirection.SOUTH)) power = wire.getPower(world, new BlockPosition(x, y, z - 1), power);
++        if ((face == BlockFace.DOWN || face == BlockFace.SELF) && world.isBlockFacePowered(position.down(), EnumDirection.DOWN)) power = wire.getPower(world, position.down(), power);
++        if ((face == BlockFace.UP || face == BlockFace.SELF) && world.isBlockFacePowered(position.up(), EnumDirection.UP)) power = wire.getPower(world, position.up(), power);
++        if ((face == BlockFace.EAST || face == BlockFace.SELF) && world.isBlockFacePowered(position.east(), EnumDirection.EAST)) power = wire.getPower(world, position.east(), power);
++        if ((face == BlockFace.WEST || face == BlockFace.SELF) && world.isBlockFacePowered(position.west(), EnumDirection.WEST)) power = wire.getPower(world, position.west(), power);
++        if ((face == BlockFace.NORTH || face == BlockFace.SELF) && world.isBlockFacePowered(position.north(), EnumDirection.NORTH)) power = wire.getPower(world, position.north(), power);
++        if ((face == BlockFace.SOUTH || face == BlockFace.SELF) && world.isBlockFacePowered(position.south(), EnumDirection.SOUTH)) power = wire.getPower(world, position.south(), power);
+         return power > 0 ? power : (face == BlockFace.SELF ? isBlockIndirectlyPowered() : isBlockFaceIndirectlyPowered(face)) ? 15 : 0;
+     }
+ 
+@@ -452,7 +455,7 @@ public class CraftBlock implements Block {
+         boolean result = false;
+ 
+         if (block != null && block != Blocks.AIR) {
+-            block.dropNaturally(chunk.getHandle().getWorld(), new BlockPosition(x, y, z), block.fromLegacyData(data), 1.0F, 0);
++            block.dropNaturally(chunk.getHandle().getWorld(), position, block.fromLegacyData(data), 1.0F, 0);
+             result = true;
+         }
+ 
+@@ -482,7 +485,7 @@ public class CraftBlock implements Block {
+                     // Skulls are special, their data is based on the tile entity
+                     if (Blocks.SKULL == block) {
+                         net.minecraft.server.ItemStack nmsStack = new net.minecraft.server.ItemStack(item, 1, block.getDropData(data));
+-                        TileEntitySkull tileentityskull = (TileEntitySkull) chunk.getHandle().getWorld().getTileEntity(new BlockPosition(x, y, z));
++                        TileEntitySkull tileentityskull = (TileEntitySkull) chunk.getHandle().getWorld().getTileEntity(position);
+ 
+                         if (tileentityskull.getSkullType() == 3 && tileentityskull.getGameProfile() != null) {
+                             nmsStack.setTag(new NBTTagCompound());
+@@ -545,7 +548,7 @@ public class CraftBlock implements Block {
+ 
+         MovingObjectPosition hit = nms.a(getData0(),
+                                          chunk.getCraftWorld().getHandle(),
+-                                         new BlockPosition(x, y, z),
++                                         position,
+                                          new Vec3D(start.getX(), start.getY(), start.getZ()),
+                                          new Vec3D(end.getX(), end.getY(), end.getZ()));
+ 
+@@ -572,7 +575,7 @@ public class CraftBlock implements Block {
+     }
+ 
+     public BlockPosition nmsPosition() {
+-        return new BlockPosition(x, y, z);
++        return position;
+     }
+ 
+     @Override
+diff --git a/src/main/java/org/bukkit/craftbukkit/block/CraftBlockFactory.java b/src/main/java/org/bukkit/craftbukkit/block/CraftBlockFactory.java
+new file mode 100644
+index 0000000..de61fef
+--- /dev/null
++++ b/src/main/java/org/bukkit/craftbukkit/block/CraftBlockFactory.java
+@@ -0,0 +1,91 @@
++package org.bukkit.craftbukkit.block;
++
++import net.minecraft.server.EnumBlockMirror;
++import net.minecraft.server.EnumBlockRotation;
++import net.minecraft.server.IBlockData;
++import org.bukkit.block.BlockFactory;
++import org.bukkit.craftbukkit.util.CraftMagicNumbers;
++import org.bukkit.geometry.BlockRotoflection;
++import org.bukkit.geometry.BlockReflection;
++import org.bukkit.geometry.BlockRotation;
++import org.bukkit.geometry.CoarseTransform;
++import org.bukkit.material.MaterialData;
++
++public class CraftBlockFactory implements BlockFactory {
++
++    private static final CraftBlockFactory INSTANCE = new CraftBlockFactory();
++    public static CraftBlockFactory instance() { return INSTANCE; }
++
++    public static BlockReflection toBukkit(EnumBlockMirror nms) {
++        switch(nms) {
++            case NONE: return BlockReflection.NONE;
++            case LEFT_RIGHT: return BlockReflection.LEFT_RIGHT;
++            case FRONT_BACK: return BlockReflection.FRONT_BACK;
++        }
++        throw new IllegalStateException();
++    }
++
++    public static EnumBlockMirror toNms(BlockReflection bukkit) {
++        switch(bukkit) {
++            case NONE: return EnumBlockMirror.NONE;
++            case LEFT_RIGHT: return EnumBlockMirror.LEFT_RIGHT;
++            case FRONT_BACK: return EnumBlockMirror.FRONT_BACK;
++        }
++        throw new IllegalStateException();
++    }
++
++    public static BlockRotation toBukkit(EnumBlockRotation nms) {
++        switch(nms) {
++            case NONE: return BlockRotation.NONE;
++            case CLOCKWISE_90: return BlockRotation.CLOCKWISE_90;
++            case CLOCKWISE_180: return BlockRotation.CLOCKWISE_180;
++            case COUNTERCLOCKWISE_90: return BlockRotation.COUNTERCLOCKWISE_90;
++        }
++        throw new IllegalStateException();
++    }
++
++    public static EnumBlockRotation toNms(BlockRotation nms) {
++        switch(nms) {
++            case NONE: return EnumBlockRotation.NONE;
++            case CLOCKWISE_90: return EnumBlockRotation.CLOCKWISE_90;
++            case CLOCKWISE_180: return EnumBlockRotation.CLOCKWISE_180;
++            case COUNTERCLOCKWISE_90: return EnumBlockRotation.COUNTERCLOCKWISE_90;
++        }
++        throw new IllegalStateException();
++    }
++
++    public IBlockData transform(IBlockData data, BlockRotoflection transform) {
++        if(transform.isIdentity()) return data;
++
++        // Mojang applies reflection first, so we do too
++        data = data.a(toNms(transform.reflection()));
++        data = data.a(toNms(transform.rotation()));
++        return data;
++    }
++
++    @Override
++    public MaterialData transform(MaterialData material, BlockRotoflection transform) {
++        if(transform.isIdentity()) return material;
++
++        return CraftMagicNumbers.nmsBlockStateToMaterialData(
++            transform(CraftMagicNumbers.getBlockData(material), transform)
++        );
++    }
++
++    @Override
++    public MaterialData transform(MaterialData material, CoarseTransform transform) {
++        return transform(material, transform.orientation());
++    }
++
++    @Override
++    public MaterialData reflect(MaterialData material, BlockReflection reflection) {
++        if(reflection == BlockReflection.NONE) return material;
++        return transform(material, BlockRotoflection.of(reflection));
++    }
++
++    @Override
++    public MaterialData rotate(MaterialData material, BlockRotation rotation) {
++        if(rotation == BlockRotation.NONE) return material;
++        return transform(material, BlockRotoflection.of(rotation));
++    }
++}
+diff --git a/src/main/java/org/bukkit/craftbukkit/block/CraftBlockImage.java b/src/main/java/org/bukkit/craftbukkit/block/CraftBlockImage.java
+new file mode 100644
+index 0000000..23be85a
+--- /dev/null
++++ b/src/main/java/org/bukkit/craftbukkit/block/CraftBlockImage.java
+@@ -0,0 +1,232 @@
++package org.bukkit.craftbukkit.block;
++
++import java.util.List;
++
++import com.google.common.collect.ImmutableList;
++import com.google.common.collect.ImmutableMap;
++import com.google.common.collect.Iterables;
++import net.minecraft.server.BlockPosition;
++import net.minecraft.server.Blocks;
++import net.minecraft.server.IBlockData;
++import net.minecraft.server.IInventory;
++import net.minecraft.server.NBTTagCompound;
++import net.minecraft.server.NextTickListEntry;
++import net.minecraft.server.StructureBoundingBox;
++import net.minecraft.server.TileEntity;
++import org.bukkit.Bukkit;
++import org.bukkit.World;
++import org.bukkit.block.BlockImage;
++import org.bukkit.geometry.BlockRotoflection;
++import org.bukkit.geometry.CoarseTransform;
++import org.bukkit.craftbukkit.CraftWorld;
++import org.bukkit.craftbukkit.util.CraftMagicNumbers;
++import org.bukkit.material.MaterialData;
++import org.bukkit.region.BlockRegion;
++import org.bukkit.geometry.Vec3;
++
++/**
++ * Read/write algorithms are derived from the code for the /clone command,
++ * which can be found in {@link net.minecraft.server.CommandClone}.
++ */
++public class CraftBlockImage implements BlockImage {
++
++    static class BlockRecord extends BlockPosition {
++        final IBlockData blockData;
++        final NBTTagCompound tileEntityData;
++        NextTickListEntry tickListEntry;
++
++        BlockRecord(Vec3 pos, IBlockData blockData, NBTTagCompound tileEntityData) {
++            super(pos.coarseX(), pos.coarseY(), pos.coarseZ());
++            this.blockData = blockData;
++            this.tileEntityData = tileEntityData;
++        }
++
++        void pasteTileEntity(net.minecraft.server.World world, BlockPosition pos) {
++            final TileEntity tileEntity = world.getTileEntity(pos);
++
++            if(tileEntityData != null && tileEntity != null) {
++                tileEntityData.setInt("x", pos.getX());
++                tileEntityData.setInt("y", pos.getY());
++                tileEntityData.setInt("z", pos.getZ());
++
++                tileEntity.a(tileEntityData);
++                tileEntity.update();
++            }
++        }
++
++        void pasteTick(net.minecraft.server.World world, BlockPosition pos, long tickTime) {
++            if(tickListEntry != null) {
++                world.b(pos, tickListEntry.a(), (int) (tickListEntry.b - tickTime), tickListEntry.c);
++            }
++        }
++    }
++
++    private final ImmutableMap<Vec3, BlockRecord> byPosition;
++    private final ImmutableList<BlockRecord> earlyBlocks;
++    private final ImmutableList<BlockRecord> tileEntities;
++    private final ImmutableList<BlockRecord> lateBlocks;
++    private final ImmutableList<BlockRecord> tickedBlocks;
++    private final long tickTime;
++
++    @Override
++    public BlockRegion region() {
++        return BlockRegion.of(byPosition.keySet());
++    }
++
++    @Override
++    public MaterialData materialAt(Vec3 pos) {
++        final BlockRecord r = byPosition.get(pos.coarseCopy());
++        return r == null ? null : CraftMagicNumbers.nmsBlockStateToMaterialData(r.blockData);
++    }
++
++    @Override
++    public boolean pasteBlock(Vec3 from, World world, Vec3 to, BlockRotoflection orientation) {
++        final BlockRecord record = byPosition.get(from.coarseCopy());
++        if(record == null) return false;
++
++        final CraftBlockFactory orienter = (CraftBlockFactory) Bukkit.blocks();
++        final net.minecraft.server.World nmsWorld = ((CraftWorld) world).getHandle();
++        final BlockPosition pos = BlockPosition.copyOf(to);
++        record.pasteTileEntity(nmsWorld, pos);
++        nmsWorld.setTypeAndData(pos, orienter.transform(record.blockData, orientation), 2);
++        record.pasteTick(nmsWorld, pos, tickTime);
++        return true;
++    }
++
++    public CraftBlockImage(CraftWorld craftWorld, BlockRegion region, boolean includeAir, boolean clearSource) {
++        final net.minecraft.server.WorldServer world = craftWorld.getHandle();
++        final BlockPosition.MutableBlockPosition mutablePosition = new BlockPosition.MutableBlockPosition();
++
++        final ImmutableMap.Builder<Vec3, BlockRecord> byPosition = ImmutableMap.builder();
++        final ImmutableList.Builder<BlockRecord> earlyBlocks = ImmutableList.builder();
++        final ImmutableList.Builder<BlockRecord> tileEntities = ImmutableList.builder();
++        final ImmutableList.Builder<BlockRecord> lateBlocks = ImmutableList.builder();
++
++        for(Vec3 position : region.mutableIterable()) {
++            // Avoid creating any objects for air blocks, as long as the region
++            // iterator is spitting out NMS BlockPositions.
++            mutablePosition.set(position);
++            final IBlockData blockData = world.getType(mutablePosition);
++
++            if(includeAir || blockData.getBlock() != Blocks.AIR) {
++                final BlockRecord block;
++
++                TileEntity tileEntity = world.getTileEntity(mutablePosition);
++                if(tileEntity != null) {
++                    block = new BlockRecord(mutablePosition, blockData, new NBTTagCompound());
++                    tileEntity.save(block.tileEntityData);
++                    tileEntities.add(block);
++
++                    if(clearSource && tileEntity instanceof IInventory) {
++                        ((IInventory) tileEntity).clear(); // Clear inventory
++                    }
++                } else {
++                    block = new BlockRecord(mutablePosition, blockData, null);
++                    if (!block.blockData.b() && // flammable
++                        !block.blockData.h()) { // full-sized
++                        lateBlocks.add(block);
++                    } else {
++                        earlyBlocks.add(block);
++                    }
++                }
++
++                byPosition.put(block, block);
++            }
++        }
++
++        this.byPosition = byPosition.build();
++        this.earlyBlocks = earlyBlocks.build();
++        this.lateBlocks = lateBlocks.build();
++        this.tileEntities = tileEntities.build();
++
++        if(clearSource) {
++            final Iterable<BlockRecord> clearPositions = Iterables.concat(this.lateBlocks, this.tileEntities, this.earlyBlocks);
++
++            for(BlockRecord block : clearPositions) {
++                if(block.tileEntityData != null) {
++                    final TileEntity tileEntity = world.getTileEntity(block);
++                    if(tileEntity instanceof IInventory) {
++                        ((IInventory) tileEntity).clear();
++                    }
++                }
++                world.setTypeAndData(block, Blocks.BARRIER.getBlockData(), 2);
++            }
++
++            for(BlockRecord block : clearPositions) {
++                world.setTypeAndData(block, Blocks.AIR.getBlockData(), 3);
++            }
++        }
++
++        this.tickTime = world.getWorldData().getTime();
++
++        final ImmutableList.Builder<BlockRecord> tickedBlocks = ImmutableList.builder();
++        final List<NextTickListEntry> ticks = world.a(new StructureBoundingBox(Integer.MIN_VALUE, Integer.MIN_VALUE, Integer.MAX_VALUE, Integer.MAX_VALUE), false);
++        if(ticks != null) {
++            for(NextTickListEntry tick : ticks) {
++                final BlockRecord block = this.byPosition.get(tick.a);
++                if(block != null) {
++                    block.tickListEntry = tick;
++                    tickedBlocks.add(block);
++                }
++            }
++        }
++        this.tickedBlocks = tickedBlocks.build();
++    }
++
++    @Override
++    public int paste(World world, CoarseTransform transform) {
++        final net.minecraft.server.WorldServer nmsWorld = ((CraftWorld) world).getHandle();
++
++        final Iterable<BlockRecord> allBlocks = Iterables.concat(earlyBlocks, tileEntities, lateBlocks);
++        final Iterable<BlockRecord> reversedBlocks = Iterables.concat(lateBlocks, tileEntities, earlyBlocks);
++
++        final BlockPosition.MutableBlockPosition mutablePosition = new BlockPosition.MutableBlockPosition();
++
++        // Fill the entire destination region with barrier blocks
++        for(BlockRecord block : reversedBlocks) {
++            mutablePosition.set(block);
++            transform.applyInPlace(mutablePosition);
++
++            // Clear any containers so they don't spill their contents
++            final TileEntity tileEntity = nmsWorld.getTileEntity(mutablePosition);
++            if (tileEntity instanceof IInventory) {
++                ((IInventory) tileEntity).clear(); // Clear inventory
++            }
++
++            nmsWorld.setTypeAndData(mutablePosition, Blocks.BARRIER.getBlockData(), 2);
++        }
++
++        int affectedBlocks = 0;
++        final CraftBlockFactory orienter = (CraftBlockFactory) Bukkit.blocks();
++        final BlockRotoflection orientation = transform.orientation();
++
++        for(BlockRecord block : allBlocks) {
++            mutablePosition.set(block);
++            transform.applyInPlace(mutablePosition);
++            if(nmsWorld.setTypeAndData(mutablePosition, orienter.transform(block.blockData, orientation), 2)) {
++                ++affectedBlocks;
++            }
++        }
++
++        for(BlockRecord block : tileEntities) {
++            mutablePosition.set(block);
++            transform.applyInPlace(mutablePosition);
++            block.pasteTileEntity(nmsWorld, mutablePosition);
++            nmsWorld.setTypeAndData(mutablePosition, orienter.transform(block.blockData, orientation), 2);
++        }
++
++        for(BlockRecord block : reversedBlocks) {
++            mutablePosition.set(block);
++            transform.applyInPlace(mutablePosition);
++            nmsWorld.update(mutablePosition, block.blockData.getBlock(), false);
++        }
++
++        for(BlockRecord block : tickedBlocks) {
++            mutablePosition.set(block.tickListEntry.a);
++            transform.applyInPlace(mutablePosition);
++            block.pasteTick(nmsWorld, mutablePosition, tickTime);
++        }
++
++        return affectedBlocks;
++    }
++}
+diff --git a/src/main/java/org/bukkit/craftbukkit/block/CraftBlockState.java b/src/main/java/org/bukkit/craftbukkit/block/CraftBlockState.java
+--- a/src/main/java/org/bukkit/craftbukkit/block/CraftBlockState.java
++++ b/src/main/java/org/bukkit/craftbukkit/block/CraftBlockState.java
+@@ -1,13 +1,22 @@
+ package org.bukkit.craftbukkit.block;
+ 
++import java.util.List;
++import java.util.Objects;
++
+ import net.minecraft.server.BlockPosition;
+-import org.bukkit.Location;
+-import org.bukkit.block.Block;
+-import org.bukkit.block.BlockFace;
++import net.minecraft.server.IBlockData;
++import net.minecraft.server.TileEntity;
++import org.bukkit.Bukkit;
+ import org.bukkit.Chunk;
++import org.bukkit.Location;
+ import org.bukkit.Material;
+ import org.bukkit.World;
++import org.bukkit.block.Block;
++import org.bukkit.geometry.BlockRotoflection;
++import org.bukkit.geometry.BlockReflection;
++import org.bukkit.geometry.BlockRotation;
+ import org.bukkit.block.BlockState;
++import org.bukkit.geometry.CoarseTransform;
+ import org.bukkit.craftbukkit.CraftChunk;
+ import org.bukkit.craftbukkit.CraftWorld;
+ import org.bukkit.craftbukkit.util.CraftMagicNumbers;
+@@ -15,27 +24,19 @@ import org.bukkit.material.Attachable;
+ import org.bukkit.material.MaterialData;
+ import org.bukkit.metadata.MetadataValue;
+ import org.bukkit.plugin.Plugin;
+-
+-import java.util.List;
+-import net.minecraft.server.EnumDirection;
+-import net.minecraft.server.IBlockData;
+-import net.minecraft.server.TileEntity;
++import org.bukkit.geometry.Vec3;
+ 
+ public class CraftBlockState implements BlockState {
+     private final CraftWorld world;
++    private final BlockPosition position;
+     private final CraftChunk chunk;
+-    private final int x;
+-    private final int y;
+-    private final int z;
+     protected int type;
+     protected MaterialData data;
+     protected int flag;
+ 
+     public CraftBlockState(final Block block) {
+         this.world = (CraftWorld) block.getWorld();
+-        this.x = block.getX();
+-        this.y = block.getY();
+-        this.z = block.getZ();
++        this.position = BlockPosition.copyOf(block.getPosition());
+         this.type = block.getTypeId();
+         this.chunk = (CraftChunk) block.getChunk();
+         this.flag = 3;
+@@ -50,9 +51,9 @@ public class CraftBlockState implements BlockState {
+ 
+     public CraftBlockState(Material material) {
+         world = null;
++        position = null;
+         type = material.getId();
+         chunk = null;
+-        x = y = z = 0;
+     }
+ 
+     public static CraftBlockState getBlockState(net.minecraft.server.World world, int x, int y, int z) {
+@@ -68,16 +69,34 @@ public class CraftBlockState implements BlockState {
+         return world;
+     }
+ 
++    @Override
++    public World tryWorld() {
++        return world;
++    }
++
++    @Override
++    public BlockPosition getPosition() {
++        if(position == null) {
++            throw new IllegalStateException("This BlockState has no position");
++        }
++        return position;
++    }
++
++    @Override
++    public Vec3 tryPosition() {
++        return position;
++    }
++
+     public int getX() {
+-        return x;
++        return getPosition().coarseX();
+     }
+ 
+     public int getY() {
+-        return y;
++        return getPosition().coarseY();
+     }
+ 
+     public int getZ() {
+-        return z;
++        return getPosition().coarseZ();
+     }
+ 
+     public Chunk getChunk() {
+@@ -151,8 +170,7 @@ public class CraftBlockState implements BlockState {
+     }
+ 
+     public Block getBlock() {
+-        requirePlaced();
+-        return world.getBlockAt(x, y, z);
++        return getWorld().getBlockAt(getPosition());
+     }
+ 
+     public boolean update() {
+@@ -173,7 +191,7 @@ public class CraftBlockState implements BlockState {
+             }
+         }
+ 
+-        BlockPosition pos = new BlockPosition(x, y, z);
++        BlockPosition pos = getPosition();
+         IBlockData newBlock = CraftMagicNumbers.getBlock(getType()).fromLegacyData(getRawData());
+         block.setTypeIdAndData(getTypeId(), getRawData(), applyPhysics);
+         world.getHandle().notify(
+@@ -205,15 +223,13 @@ public class CraftBlockState implements BlockState {
+     }
+ 
+     public Location getLocation() {
+-        return new Location(world, x, y, z);
++        return new Location(getWorld(), getPosition());
+     }
+ 
+     public Location getLocation(Location loc) {
+         if (loc != null) {
+-            loc.setWorld(world);
+-            loc.setX(x);
+-            loc.setY(y);
+-            loc.setZ(z);
++            loc.setWorld(getWorld());
++            loc.setPosition(getPosition());
+             loc.setYaw(0);
+             loc.setPitch(0);
+         }
+@@ -227,41 +243,20 @@ public class CraftBlockState implements BlockState {
+ 
+     @Override
+     public boolean equals(Object obj) {
+-        if (obj == null) {
+-            return false;
+-        }
+-        if (getClass() != obj.getClass()) {
+-            return false;
+-        }
+-        final CraftBlockState other = (CraftBlockState) obj;
+-        if (this.world != other.world && (this.world == null || !this.world.equals(other.world))) {
+-            return false;
+-        }
+-        if (this.x != other.x) {
+-            return false;
+-        }
+-        if (this.y != other.y) {
+-            return false;
+-        }
+-        if (this.z != other.z) {
+-            return false;
+-        }
+-        if (this.type != other.type) {
+-            return false;
+-        }
+-        if (this.data != other.data && (this.data == null || !this.data.equals(other.data))) {
+-            return false;
+-        }
+-        return true;
++        if(this == obj) return true;
++        if(!(obj instanceof BlockState)) return false;
++        final BlockState that = (BlockState) obj;
++        return Objects.equals(this.world, that.tryWorld()) &&
++               Objects.equals(this.position, that.tryPosition()) &&
++               this.type == that.getTypeId() &&
++               Objects.equals(this.data, that.getMaterialData());
+     }
+ 
+     @Override
+     public int hashCode() {
+         int hash = 7;
+         hash = 73 * hash + (this.world != null ? this.world.hashCode() : 0);
+-        hash = 73 * hash + this.x;
+-        hash = 73 * hash + this.y;
+-        hash = 73 * hash + this.z;
++        hash = 73 * hash + (this.position != null ? this.position.hashCode() : 0);
+         hash = 73 * hash + this.type;
+         hash = 73 * hash + (this.data != null ? this.data.hashCode() : 0);
+         return hash;
+@@ -298,6 +293,11 @@ public class CraftBlockState implements BlockState {
+     }
+ 
+     @Override
++    public boolean hasPosition() {
++        return position != null;
++    }
++
++    @Override
+     public boolean isPlaced() {
+         return world != null;
+     }
+@@ -307,4 +307,24 @@ public class CraftBlockState implements BlockState {
+             throw new IllegalStateException("The blockState must be placed to call this method");
+         }
+     }
++
++    @Override
++    public void reflect(BlockReflection reflection) {
++        setMaterialData(Bukkit.blocks().reflect(getMaterialData(), reflection));
++    }
++
++    @Override
++    public void rotate(BlockRotation rotation) {
++        setMaterialData(Bukkit.blocks().rotate(getMaterialData(), rotation));
++    }
++
++    @Override
++    public void reorient(BlockRotoflection orientation) {
++        setMaterialData(Bukkit.blocks().transform(getMaterialData(), orientation));
++    }
++
++    @Override
++    public void reorient(CoarseTransform transform) {
++        setMaterialData(Bukkit.blocks().transform(getMaterialData(), transform));
++    }
+ }
+\ No newline at end of file
+diff --git a/src/test/java/org/bukkit/block/BlockFactoryTest.java b/src/test/java/org/bukkit/block/BlockFactoryTest.java
+new file mode 100644
+index 0000000..0502300
+--- /dev/null
++++ b/src/test/java/org/bukkit/block/BlockFactoryTest.java
+@@ -0,0 +1,58 @@
++package org.bukkit.block;
++
++import org.bukkit.Bukkit;
++import org.bukkit.Material;
++import org.bukkit.geometry.BlockRotoflection;
++import org.bukkit.geometry.BlockReflection;
++import org.bukkit.geometry.BlockRotation;
++import org.bukkit.material.Directional;
++import org.bukkit.material.Lever;
++import org.bukkit.material.MaterialData;
++import org.bukkit.support.BukkitRuntimeTest;
++import org.junit.Test;
++
++import static org.junit.Assert.*;
++
++public class BlockFactoryTest extends BukkitRuntimeTest {
++
++    void normalize(MaterialData data) {
++        final Directional directional = (Directional) data;
++        directional.setFacingDirection(directional.getFacing());
++    }
++
++    void test(MaterialData material, BlockRotoflection rotoflection) {
++        normalize(material);
++
++        // Transform with the BlockOrienter
++        final MaterialData actual = Bukkit.blocks().transform(material, rotoflection);
++
++        // Transform through the Directional interface
++        final MaterialData expected = material.clone();
++        if(expected instanceof Lever) {
++            final Lever lever = (Lever) expected;
++            lever.setFacingDirection(rotoflection.transform().apply(lever.getFacing()),
++                                     rotoflection.apply(lever.getAxis()));
++        } else {
++            final Directional directional = (Directional) expected;
++            final BlockFace facing = directional.getFacing();
++            directional.setFacingDirection(rotoflection.transform().apply(facing));
++        }
++
++        // Assert identical results
++        assertEquals("material=" + material.getItemType() + " data=" + material + " rotoflection=" + rotoflection,
++                     expected, actual);
++    }
++
++    @Test
++    public void reorientDirectionalBlocks() throws Exception {
++        for(Material type : Material.values()) {
++            if(Directional.class.isAssignableFrom(type.getData())) {
++                final MaterialData material = type.getNewData((byte) 0);
++                for(BlockRotation rotation : BlockRotation.values()) {
++                    test(material, BlockRotoflection.of(BlockReflection.NONE, rotation));
++                    test(material, BlockRotoflection.of(BlockReflection.X, rotation));
++                }
++            }
++        }
++    }
++}

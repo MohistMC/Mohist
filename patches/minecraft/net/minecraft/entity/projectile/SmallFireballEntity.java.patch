@@ -1,15 +1,14 @@
 --- a/net/minecraft/entity/projectile/SmallFireballEntity.java
 +++ b/net/minecraft/entity/projectile/SmallFireballEntity.java
-@@ -12,6 +12,8 @@
+@@ -12,6 +12,7 @@
  import net.minecraft.util.math.RayTraceResult;
  import net.minecraft.world.GameRules;
  import net.minecraft.world.World;
-+import org.bukkit.craftbukkit.v1_15_R1.event.CraftEventFactory;
 +import org.bukkit.event.entity.EntityCombustByEntityEvent;
  
  public class SmallFireballEntity extends AbstractFireballEntity {
     public SmallFireballEntity(EntityType<? extends SmallFireballEntity> p_i50160_1_, World p_i50160_2_) {
-@@ -20,6 +22,11 @@
+@@ -20,6 +21,11 @@
  
     public SmallFireballEntity(World p_i1771_1_, LivingEntity p_i1771_2_, double p_i1771_3_, double p_i1771_5_, double p_i1771_7_) {
        super(EntityType.field_200744_aj, p_i1771_2_, p_i1771_3_, p_i1771_5_, p_i1771_7_, p_i1771_1_);
@@ -21,14 +20,14 @@
     }
  
     public SmallFireballEntity(World p_i1772_1_, double p_i1772_2_, double p_i1772_4_, double p_i1772_6_, double p_i1772_8_, double p_i1772_10_, double p_i1772_12_) {
-@@ -33,7 +40,15 @@
+@@ -33,7 +39,15 @@
              Entity entity = ((EntityRayTraceResult)p_70227_1_).func_216348_a();
              if (!entity.func_70045_F()) {
                 int i = entity.func_223314_ad();
 -               entity.func_70015_d(5);
 +               // CraftBukkit start - Entity damage by entity event + combust event
-+               if (isIncendiary) {
-+                  EntityCombustByEntityEvent event = new EntityCombustByEntityEvent((org.bukkit.entity.Projectile) this.getBukkitEntity(), entity.getBukkitEntity(), 5);
++               if (this.isIncendiary) {
++                  final EntityCombustByEntityEvent event = new EntityCombustByEntityEvent(this.getBukkitEntity(), entity.getBukkitEntity(), 5);
 +                  entity.field_70170_p.getServerCB().getPluginManager().callEvent(event);
 +                  if (!event.isCancelled()) {
 +                     entity.setOnFire(event.getDuration(), false);
@@ -38,16 +37,16 @@
                 boolean flag = entity.func_70097_a(DamageSource.func_76362_a(this, this.field_70235_a), 5.0F);
                 if (flag) {
                    this.func_174815_a(this.field_70235_a, entity);
-@@ -41,10 +56,10 @@
+@@ -41,10 +55,10 @@
                    entity.func_223308_g(i);
                 }
              }
 -         } else if (this.field_70235_a == null || !(this.field_70235_a instanceof MobEntity) || this.field_70170_p.func_82736_K().func_223586_b(GameRules.field_223599_b)) {
-+         } else if (this.field_70235_a == null || !(this.field_70235_a instanceof MobEntity) || net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(this.field_70170_p, this.field_70235_a)) {
++         } else if (isIncendiary || net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(this.field_70170_p, this.field_70235_a)) {
              BlockRayTraceResult blockraytraceresult = (BlockRayTraceResult)p_70227_1_;
              BlockPos blockpos = blockraytraceresult.func_216350_a().func_177972_a(blockraytraceresult.func_216354_b());
 -            if (this.field_70170_p.func_175623_d(blockpos)) {
-+            if (this.field_70170_p.func_175623_d(blockpos) && !CraftEventFactory.callBlockIgniteEvent(field_70170_p, blockpos, this).isCancelled()) { // CraftBukkit
++            if (this.field_70170_p.func_175623_d(blockpos) && !org.bukkit.craftbukkit.event.CraftEventFactory.callBlockIgniteEvent(field_70170_p, blockpos, this).isCancelled()) { // CraftBukkit
                 this.field_70170_p.func_175656_a(blockpos, Blocks.field_150480_ab.func_176223_P());
              }
           }

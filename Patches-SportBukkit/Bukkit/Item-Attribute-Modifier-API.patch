@@ -1,0 +1,271 @@
+From: Jedediah Smith <jedediah@silencegreys.com>
+Date: Tue, 19 May 2015 06:30:47 -0400
+Subject: [PATCH] Item Attribute Modifier API
+
+
+diff --git a/src/main/java/org/bukkit/attribute/Attribute.java b/src/main/java/org/bukkit/attribute/Attribute.java
+--- a/src/main/java/org/bukkit/attribute/Attribute.java
++++ b/src/main/java/org/bukkit/attribute/Attribute.java
+@@ -1,5 +1,8 @@
+ package org.bukkit.attribute;
+ 
++import java.util.HashMap;
++import java.util.Map;
++
+ /**
+  * Types of attributes which may be present on an {@link Attributable}.
+  */
+@@ -8,41 +11,66 @@ public enum Attribute {
+     /**
+      * Maximum health of an Entity.
+      */
+-    GENERIC_MAX_HEALTH,
++    GENERIC_MAX_HEALTH("generic.maxHealth"),
+     /**
+      * Range at which an Entity will follow others.
+      */
+-    GENERIC_FOLLOW_RANGE,
++    GENERIC_FOLLOW_RANGE("generic.followRange"),
+     /**
+      * Resistance of an Entity to knockback.
+      */
+-    GENERIC_KNOCKBACK_RESISTANCE,
++    GENERIC_KNOCKBACK_RESISTANCE("generic.knockbackResistance"),
+     /**
+      * Movement speed of an Entity.
+      */
+-    GENERIC_MOVEMENT_SPEED,
++    GENERIC_MOVEMENT_SPEED("generic.movementSpeed"),
+     /**
+      * Attack damage of an Entity.
+      */
+-    GENERIC_ATTACK_DAMAGE,
++    GENERIC_ATTACK_DAMAGE("generic.attackDamage"),
+     /**
+      * Attack speed of an Entity.
+      */
+-    GENERIC_ATTACK_SPEED,
++    GENERIC_ATTACK_SPEED("generic.attackSpeed"),
+     /**
+      * Armor bonus of an Entity.
+      */
+-    GENERIC_ARMOR,
++    GENERIC_ARMOR("generic.armor"),
+     /**
+      * Luck bonus of an Entity.
+      */
+-    GENERIC_LUCK,
++    GENERIC_LUCK("generic.luck"),
+     /**
+      * Strength with which a horse will jump.
+      */
+-    HORSE_JUMP_STRENGTH,
++    HORSE_JUMP_STRENGTH("horse.jumpStrength"),
+     /**
+      * Chance of a zombie to spawn reinforcements.
+      */
+-    ZOMBIE_SPAWN_REINFORCEMENTS;
++    ZOMBIE_SPAWN_REINFORCEMENTS("zombie.spawnReinforcements");
++
++    private final String name;
++
++    Attribute(String name) {
++        this.name = name;
++    }
++
++    /**
++     * @return the external name of this attribute
++     */
++    public String getName() {
++        return name;
++    }
++
++    private static final Map<String, Attribute> byName = new HashMap<String, Attribute>();
++
++    static {
++        for(Attribute attribute : values()) {
++            byName.put(attribute.getName(), attribute);
++        }
++    }
++
++    public static Attribute byName(String name) {
++        return byName.get(name);
++    }
+ }
+diff --git a/src/main/java/org/bukkit/attribute/AttributeModifier.java b/src/main/java/org/bukkit/attribute/AttributeModifier.java
+--- a/src/main/java/org/bukkit/attribute/AttributeModifier.java
++++ b/src/main/java/org/bukkit/attribute/AttributeModifier.java
+@@ -99,5 +99,11 @@ public class AttributeModifier implements ConfigurationSerializable {
+          * Multiply amount by this value, after adding 1 to it.
+          */
+         MULTIPLY_SCALAR_1;
++
++        public static Operation fromOpcode(int code) {
++            if(code < 0) code = 0;
++            if(code >= values().length) code = values().length - 1;
++            return values()[code];
++        }
+     }
+ }
+diff --git a/src/main/java/org/bukkit/attribute/ItemAttributeModifier.java b/src/main/java/org/bukkit/attribute/ItemAttributeModifier.java
+new file mode 100644
+index 0000000..71ae14e
+--- /dev/null
++++ b/src/main/java/org/bukkit/attribute/ItemAttributeModifier.java
+@@ -0,0 +1,65 @@
++package org.bukkit.attribute;
++
++import java.util.Map;
++
++import org.bukkit.configuration.serialization.ConfigurationSerializable;
++import org.bukkit.inventory.EquipmentSlot;
++
++/**
++ * An {@link AttributeModifier} attached to an item, with an optional slot.
++ */
++public class ItemAttributeModifier implements ConfigurationSerializable {
++
++    private final EquipmentSlot slot;
++    private final AttributeModifier modifier;
++
++    public ItemAttributeModifier(EquipmentSlot slot, AttributeModifier modifier) {
++        this.modifier = modifier;
++        this.slot = slot;
++    }
++
++    /**
++     * The slot the item must be in for te modifier to take effect,
++     * or null if the slot doesn't matter.
++     */
++    public EquipmentSlot getSlot() {
++        return slot;
++    }
++
++    public AttributeModifier getModifier() {
++        return modifier;
++    }
++
++    @Override
++    public Map<String, Object> serialize() {
++        final Map<String, Object> map = modifier.serialize();
++        map.put("slot", serializeSlot(slot));
++        return map;
++    }
++    public static ItemAttributeModifier deserialize(Map<String, Object> args) {
++        return new ItemAttributeModifier(deserializeSlot((String) args.get("slot")), AttributeModifier.deserialize(args));
++    }
++
++    public static String serializeSlot(EquipmentSlot slot) {
++        if(slot == null) return null;
++        return slotNames[slot.ordinal()];
++    }
++
++    public static EquipmentSlot deserializeSlot(String slot) {
++        if(slot == null) return null;
++        for(int i = 0; i < slotNames.length; i++) {
++            if(slot.equals(slotNames[i])) return EquipmentSlot.values()[i];
++        }
++        return null;
++    }
++
++    private static final String[] slotNames = new String[EquipmentSlot.values().length];
++    static {
++        slotNames[EquipmentSlot.HAND.ordinal()] = "mainhand";
++        slotNames[EquipmentSlot.OFF_HAND.ordinal()] = "offhand";
++        slotNames[EquipmentSlot.HEAD.ordinal()] = "head";
++        slotNames[EquipmentSlot.CHEST.ordinal()] = "chest";
++        slotNames[EquipmentSlot.LEGS.ordinal()] = "legs";
++        slotNames[EquipmentSlot.FEET.ordinal()] = "feet";
++    }
++}
+diff --git a/src/main/java/org/bukkit/inventory/ItemFactory.java b/src/main/java/org/bukkit/inventory/ItemFactory.java
+--- a/src/main/java/org/bukkit/inventory/ItemFactory.java
++++ b/src/main/java/org/bukkit/inventory/ItemFactory.java
+@@ -1,11 +1,18 @@
+ package org.bukkit.inventory;
+ 
++import java.util.Collection;
++import java.util.List;
++import java.util.Map;
++
+ import org.bukkit.Color;
+ import org.bukkit.Material;
+ import org.bukkit.Server;
++import org.bukkit.attribute.Attribute;
++import org.bukkit.attribute.ItemAttributeModifier;
+ import org.bukkit.inventory.meta.BookMeta;
+ import org.bukkit.inventory.meta.ItemMeta;
+ import org.bukkit.inventory.meta.SkullMeta;
++import org.bukkit.material.MaterialData;
+ 
+ /**
+  * An instance of the ItemFactory can be obtained with {@link
+@@ -121,4 +128,20 @@ public interface ItemFactory {
+      * @return the default color for leather armor
+      */
+     Color getDefaultLeatherColor();
++
++    Collection<String> getModifiedAttributes(MaterialData item);
++
++    Map<String, List<ItemAttributeModifier>> getAttributeModifiers(MaterialData item);
++
++    Collection<ItemAttributeModifier> getAttributeModifiers(MaterialData item, String attribute);
++
++    Collection<ItemAttributeModifier> getAttributeModifiers(MaterialData item, Attribute attribute);
++
++    Collection<String> getModifiedAttributes(Material item);
++
++    Map<String, List<ItemAttributeModifier>> getAttributeModifiers(Material item);
++
++    Collection<ItemAttributeModifier> getAttributeModifiers(Material item, String attribute);
++
++    Collection<ItemAttributeModifier> getAttributeModifiers(Material item, Attribute attribute);
+ }
+diff --git a/src/main/java/org/bukkit/inventory/meta/ItemMeta.java b/src/main/java/org/bukkit/inventory/meta/ItemMeta.java
+--- a/src/main/java/org/bukkit/inventory/meta/ItemMeta.java
++++ b/src/main/java/org/bukkit/inventory/meta/ItemMeta.java
+@@ -1,9 +1,13 @@
+ package org.bukkit.inventory.meta;
+ 
++import java.util.Collection;
+ import java.util.List;
+ import java.util.Map;
+ import java.util.Set;
+ 
++import org.bukkit.attribute.Attribute;
++import org.bukkit.attribute.AttributeModifier;
++import org.bukkit.attribute.ItemAttributeModifier;
+ import org.bukkit.configuration.serialization.ConfigurationSerializable;
+ import org.bukkit.enchantments.Enchantment;
+ import org.bukkit.inventory.ItemFlag;
+@@ -170,6 +174,30 @@ public interface ItemMeta extends Cloneable, ConfigurationSerializable {
+      */
+     void setUnbreakable(boolean unbreakable);
+ 
++    boolean hasAttributeModifiers();
++
++    Collection<String> getModifiedAttributes();
++
++    boolean hasModifiedAttribute(String attribute);
++
++    boolean hasModifiedAttribute(Attribute attribute);
++
++    boolean hasAttributeModifier(String attribute, ItemAttributeModifier modifier);
++
++    boolean hasAttributeModifier(Attribute attribute, ItemAttributeModifier modifier);
++
++    Collection<ItemAttributeModifier> getAttributeModifiers(String attribute);
++
++    Collection<ItemAttributeModifier> getAttributeModifiers(Attribute attribute);
++
++    void addAttributeModifier(String attribute, ItemAttributeModifier modifier);
++
++    void addAttributeModifier(Attribute attribute, ItemAttributeModifier modifier);
++
++    void removeAttributeModifier(String attribute, ItemAttributeModifier modifier);
++
++    void removeAttributeModifier(Attribute attribute, ItemAttributeModifier modifier);
++
+     @SuppressWarnings("javadoc")
+     ItemMeta clone();
+ }

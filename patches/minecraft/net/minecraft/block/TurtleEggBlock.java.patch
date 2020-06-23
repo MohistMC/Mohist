@@ -1,21 +1,17 @@
 --- a/net/minecraft/block/TurtleEggBlock.java
 +++ b/net/minecraft/block/TurtleEggBlock.java
-@@ -19,10 +19,13 @@
- import net.minecraft.util.math.BlockPos;
- import net.minecraft.util.math.shapes.ISelectionContext;
- import net.minecraft.util.math.shapes.VoxelShape;
--import net.minecraft.world.GameRules;
+@@ -23,6 +23,10 @@
  import net.minecraft.world.IBlockReader;
  import net.minecraft.world.World;
  import net.minecraft.world.server.ServerWorld;
-+import org.bukkit.craftbukkit.v1_15_R1.block.CraftBlock;
-+import org.bukkit.craftbukkit.v1_15_R1.event.CraftEventFactory;
-+import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
++import org.bukkit.craftbukkit.block.CraftBlock;
++import org.bukkit.craftbukkit.event.CraftEventFactory;
++import org.bukkit.entity.HumanEntity;
 +import org.bukkit.event.entity.EntityInteractEvent;
  
  public class TurtleEggBlock extends Block {
     private static final VoxelShape field_203172_c = Block.func_208617_a(3.0D, 0.0D, 3.0D, 12.0D, 7.0D, 12.0D);
-@@ -53,6 +56,18 @@
+@@ -53,6 +57,19 @@
           super.func_176199_a(p_203167_1_, p_203167_2_, p_203167_3_);
        } else {
           if (!p_203167_1_.field_72995_K && p_203167_1_.field_73012_v.nextInt(p_203167_4_) == 0) {
@@ -27,6 +23,7 @@
 +               cancellable = new EntityInteractEvent(p_203167_3_.getBukkitEntity(), CraftBlock.at(p_203167_1_, p_203167_2_));
 +               p_203167_1_.getServerCB().getPluginManager().callEvent((EntityInteractEvent) cancellable);
 +            }
++
 +            if (cancellable.isCancelled()) {
 +               return;
 +            }
@@ -34,18 +31,18 @@
              this.func_203166_c(p_203167_1_, p_203167_2_, p_203167_1_.func_180495_p(p_203167_2_));
           }
  
-@@ -75,9 +90,19 @@
+@@ -75,9 +92,19 @@
        if (this.func_203169_a(p_225534_2_) && this.func_203168_a(p_225534_2_, p_225534_3_)) {
           int i = p_225534_1_.func_177229_b(field_203170_a);
           if (i < 2) {
 +            // CraftBukkit start - Call BlockGrowEvent
-+            if (!CraftEventFactory.handleBlockGrowEvent(p_225534_2_, p_225534_3_, p_225534_1_.func_206870_a(TurtleEggBlock.field_203170_a, i + 1), 2)) {
++            if (!CraftEventFactory.handleBlockGrowEvent(p_225534_2_, p_225534_3_, p_225534_1_.func_206870_a(field_203170_a, i + 1), 2)) {
 +               return;
 +            }
 +            // CraftBukkit end
              p_225534_2_.func_184133_a((PlayerEntity)null, p_225534_3_, SoundEvents.field_203280_iy, SoundCategory.BLOCKS, 0.7F, 0.9F + p_225534_4_.nextFloat() * 0.2F);
 -            p_225534_2_.func_180501_a(p_225534_3_, p_225534_1_.func_206870_a(field_203170_a, Integer.valueOf(i + 1)), 2);
-+            // worldIn.setBlockState(pos, state.with(HATCH, Integer.valueOf(i + 1)), 2); // CraftBukkit - handled above
++            // worldIn.setBlockState(pos, state.with(HATCH, Integer.valueOf(i + 1)), 2);// CraftBukkit - handled above
           } else {
 +            // CraftBukkit start - Call BlockFadeEvent
 +            if (CraftEventFactory.callBlockFadeEvent(p_225534_2_, p_225534_3_, Blocks.field_150350_a.func_176223_P()).isCancelled()) {
@@ -55,16 +52,16 @@
              p_225534_2_.func_184133_a((PlayerEntity)null, p_225534_3_, SoundEvents.field_203279_ix, SoundCategory.BLOCKS, 0.7F, 0.9F + p_225534_4_.nextFloat() * 0.2F);
              p_225534_2_.func_217377_a(p_225534_3_, false);
  
-@@ -87,7 +112,7 @@
+@@ -87,7 +114,7 @@
                 turtleentity.func_70873_a(-24000);
                 turtleentity.func_203011_g(p_225534_3_);
                 turtleentity.func_70012_b((double)p_225534_3_.func_177958_n() + 0.3D + (double)j * 0.2D, (double)p_225534_3_.func_177956_o(), (double)p_225534_3_.func_177952_p() + 0.3D, 0.0F, 0.0F);
 -               p_225534_2_.func_217376_c(turtleentity);
-+               p_225534_2_.addEntity(turtleentity, SpawnReason.EGG);  // CraftBukkit
++               p_225534_2_.addEntity(turtleentity, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.EGG); // CraftBukkit
              }
           }
        }
-@@ -141,7 +166,7 @@
+@@ -141,7 +168,7 @@
        if (p_212570_2_ instanceof TurtleEntity) {
           return false;
        } else {

@@ -6,7 +6,7 @@ Subject: [PATCH] Temporary fix for large move vectors
 Check movement distance also based on current position.
 
 diff --git a/src/main/java/net/minecraft/server/PlayerConnection.java b/src/main/java/net/minecraft/server/PlayerConnection.java
-index 3e5dea60fd043010506436e700601c0e8ffd8f17..c17dbddcbddc7854b7061adae1d83b23adb35066 100644
+index 639d186971b9f334ed026964f10f1bf33c1e0afc..1fb4aade1150596142be128d0641363c99ea19e5 100644
 --- a/src/main/java/net/minecraft/server/PlayerConnection.java
 +++ b/src/main/java/net/minecraft/server/PlayerConnection.java
 @@ -323,19 +323,24 @@ public class PlayerConnection implements PacketListenerPlayIn {
