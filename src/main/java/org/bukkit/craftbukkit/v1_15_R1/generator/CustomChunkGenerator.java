@@ -36,6 +36,9 @@ import org.bukkit.generator.ChunkGenerator;
 import org.bukkit.generator.ChunkGenerator.BiomeGrid;
 import org.bukkit.generator.ChunkGenerator.ChunkData;
 
+import static org.bukkit.World.*;
+import static org.bukkit.World.Environment.NETHER;
+
 public class CustomChunkGenerator extends InternalChunkGenerator<GenerationSettings> {
     private final net.minecraft.world.gen.ChunkGenerator delegate;
     private final ChunkGenerator generator;
@@ -76,14 +79,11 @@ public class CustomChunkGenerator extends InternalChunkGenerator<GenerationSetti
     public CustomChunkGenerator(World world, ChunkGenerator generator) {
         super(world, world.dimension.createChunkGenerator().getBiomeProvider(), new GenerationSettings());
         switch (world.getWorldCB().getEnvironment()) {
-            case org.bukkit.World.Environment.NORMAL:
+            case NORMAL:
                 this.delegate = new OverworldChunkGenerator(world, world.dimension.createChunkGenerator().getBiomeProvider(), new OverworldGenSettings());
                 break;
-            case org.bukkit.World.Environment.NETHER:
+            case NETHER:
                 this.delegate = new NetherChunkGenerator(world, world.dimension.createChunkGenerator().getBiomeProvider(), new NetherGenSettings());
-                break;
-            case org.bukkit.World.Environment.THE_END:
-                this.delegate = new EndChunkGenerator(world, world.dimension.createChunkGenerator().getBiomeProvider(), new EndGenerationSettings());
                 break;
             default:
                 throw new AssertionError("Unknown delegate for environment " + world.getWorldCB().getEnvironment());

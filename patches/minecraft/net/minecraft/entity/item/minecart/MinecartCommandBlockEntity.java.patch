@@ -28,7 +28,7 @@
 +      // CraftBukkit start
 +      @Override
 +      public CommandSender getBukkitSender(CommandSource p0) {
-+         return (org.bukkit.craftbukkit.entity.CraftMinecartCommand) MinecartCommandBlockEntity.this.getBukkitEntity();
++         return (org.bukkit.craftbukkit.v1_15_R1.entity.CraftMinecartCommand) MinecartCommandBlockEntity.this.getBukkitEntity();
 +      }
 +      // CraftBukkit end
     }

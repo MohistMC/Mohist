@@ -50,7 +50,7 @@
           return !p_213856_1_.func_175149_v() && (p_213856_1_.func_70067_L() || p_213856_1_ instanceof ItemEntity) && (p_213856_1_ != this.field_146042_b || this.field_146047_aw >= 5);
        }, RayTraceContext.BlockMode.COLLIDER, true);
        if (raytraceresult.func_216346_c() != RayTraceResult.Type.MISS) {
-+         org.bukkit.craftbukkit.event.CraftEventFactory.callProjectileHitEvent(this, raytraceresult); // CraftBukkit - Call event
++         org.bukkit.craftbukkit.v1_15_R1.event.CraftEventFactory.callProjectileHitEvent(this, raytraceresult); // CraftBukkit - Call event
           if (raytraceresult.func_216346_c() == RayTraceResult.Type.ENTITY) {
              this.field_146043_c = ((EntityRayTraceResult)raytraceresult).func_216348_a();
              this.func_190622_s();

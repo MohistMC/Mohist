@@ -2253,6 +2253,13 @@ public class CraftWorld implements World {
         return (nearest == null) ? null : new Location(this, nearest.getX(), nearest.getY(), nearest.getZ());
     }
 
+    // Spigot start
+    @Override
+    public int getViewDistance() {
+        return world.spigotConfig.viewDistance;
+    }
+    // Spigot end
+
     @Override
     public Raid locateNearestRaid(Location location, int radius) {
         Validate.notNull(location, "Location cannot be null");

@@ -50,7 +50,7 @@
 -               p_204515_1_.func_175656_a(p_204515_2_, Blocks.field_150343_Z.func_176223_P());
 -               this.func_180688_d(p_204515_1_, p_204515_2_);
 +               // CraftBukkit start
-+               if (org.bukkit.craftbukkit.event.CraftEventFactory.handleBlockFormEvent(p_204515_1_, p_204515_2_, Blocks.field_150343_Z.func_176223_P())) {
++               if (org.bukkit.craftbukkit.v1_15_R1.event.CraftEventFactory.handleBlockFormEvent(p_204515_1_, p_204515_2_, Blocks.field_150343_Z.func_176223_P())) {
 +                  this.func_180688_d(p_204515_1_, p_204515_2_);
 +               }
 +               // CraftBukkit end
@@ -61,7 +61,7 @@
 -               p_204515_1_.func_175656_a(p_204515_2_, Blocks.field_150347_e.func_176223_P());
 -               this.func_180688_d(p_204515_1_, p_204515_2_);
 +               // CraftBukkit start
-+               if (org.bukkit.craftbukkit.event.CraftEventFactory.handleBlockFormEvent(p_204515_1_, p_204515_2_, Blocks.field_150343_Z.func_176223_P())) {
++               if (org.bukkit.craftbukkit.v1_15_R1.event.CraftEventFactory.handleBlockFormEvent(p_204515_1_, p_204515_2_, Blocks.field_150343_Z.func_176223_P())) {
 +                  this.func_180688_d(p_204515_1_, p_204515_2_);
 +               }
 +               // CraftBukkit end

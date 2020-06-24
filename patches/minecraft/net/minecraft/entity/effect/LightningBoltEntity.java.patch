@@ -12,7 +12,7 @@
  import net.minecraft.world.World;
  import net.minecraftforge.api.distmarker.Dist;
  import net.minecraftforge.api.distmarker.OnlyIn;
-+import org.bukkit.craftbukkit.event.CraftEventFactory; // CraftBukkit
++import org.bukkit.craftbukkit.v1_15_R1.event.CraftEventFactory; // CraftBukkit
  
  public class LightningBoltEntity extends Entity {
     private int field_70262_b;

@@ -47,7 +47,7 @@
     }
  
     protected void func_184567_a(RayTraceResult p_184567_1_) {
-+      org.bukkit.craftbukkit.event.CraftEventFactory.callProjectileHitEvent(this, p_184567_1_); // CraftBukkit - Call event
++      org.bukkit.craftbukkit.v1_15_R1.event.CraftEventFactory.callProjectileHitEvent(this, p_184567_1_); // CraftBukkit - Call event
        if (p_184567_1_.func_216346_c() == RayTraceResult.Type.ENTITY) {
           Entity entity = ((EntityRayTraceResult)p_184567_1_).func_216348_a();
           boolean flag = entity.func_70097_a(DamageSource.func_188403_a(this, this.field_184570_a).func_76349_b(), 4.0F);

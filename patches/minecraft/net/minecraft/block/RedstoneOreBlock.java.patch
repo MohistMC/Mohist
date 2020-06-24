@@ -5,7 +5,7 @@
  import net.minecraftforge.api.distmarker.Dist;
  import net.minecraftforge.api.distmarker.OnlyIn;
 +// CraftBukkit start
-+import org.bukkit.craftbukkit.event.CraftEventFactory;
++import org.bukkit.craftbukkit.v1_15_R1.event.CraftEventFactory;
 +import org.bukkit.event.entity.EntityInteractEvent;
 +// CraftBukkit end
  
@@ -27,7 +27,7 @@
 +      // activate(worldIn.getBlockState(pos), worldIn, pos);
 +      // super.onEntityWalk(worldIn, pos, entityIn);
 +      if (p_176199_3_ instanceof PlayerEntity) {
-+         org.bukkit.event.player.PlayerInteractEvent event = org.bukkit.craftbukkit.event.CraftEventFactory.callPlayerInteractEvent((PlayerEntity) p_176199_3_, org.bukkit.event.block.Action.PHYSICAL, p_176199_2_, null, null, null);
++         org.bukkit.event.player.PlayerInteractEvent event = org.bukkit.craftbukkit.v1_15_R1.event.CraftEventFactory.callPlayerInteractEvent((PlayerEntity) p_176199_3_, org.bukkit.event.block.Action.PHYSICAL, p_176199_2_, null, null, null);
 +         if (!event.isCancelled()) {
 +            activate(p_176199_1_.func_180495_p(p_176199_2_), p_176199_1_, p_176199_2_, p_176199_3_);
 +            super.func_176199_a(p_176199_1_, p_176199_2_, p_176199_3_);

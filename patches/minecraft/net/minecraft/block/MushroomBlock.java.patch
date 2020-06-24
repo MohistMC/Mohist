@@ -5,7 +5,7 @@
  import net.minecraft.world.gen.feature.Feature;
  import net.minecraft.world.server.ServerWorld;
 +import org.bukkit.TreeType;
-+import org.bukkit.craftbukkit.event.CraftEventFactory;
++import org.bukkit.craftbukkit.v1_15_R1.event.CraftEventFactory;
  
  public class MushroomBlock extends BushBlock implements IGrowable {
     protected static final VoxelShape field_196385_a = Block.func_208617_a(5.0D, 0.0D, 5.0D, 11.0D, 6.0D, 11.0D);

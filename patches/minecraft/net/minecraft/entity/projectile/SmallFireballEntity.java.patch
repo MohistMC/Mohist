@@ -46,7 +46,7 @@
              BlockRayTraceResult blockraytraceresult = (BlockRayTraceResult)p_70227_1_;
              BlockPos blockpos = blockraytraceresult.func_216350_a().func_177972_a(blockraytraceresult.func_216354_b());
 -            if (this.field_70170_p.func_175623_d(blockpos)) {
-+            if (this.field_70170_p.func_175623_d(blockpos) && !org.bukkit.craftbukkit.event.CraftEventFactory.callBlockIgniteEvent(field_70170_p, blockpos, this).isCancelled()) { // CraftBukkit
++            if (this.field_70170_p.func_175623_d(blockpos) && !org.bukkit.craftbukkit.v1_15_R1.event.CraftEventFactory.callBlockIgniteEvent(field_70170_p, blockpos, this).isCancelled()) { // CraftBukkit
                 this.field_70170_p.func_175656_a(blockpos, Blocks.field_150480_ab.func_176223_P());
              }
           }

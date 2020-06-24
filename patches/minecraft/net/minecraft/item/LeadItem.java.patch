@@ -21,7 +21,7 @@
 +               }
              }
 -
-+            if (org.bukkit.craftbukkit.event.CraftEventFactory.callPlayerLeashEntityEvent(mobentity, leashknotentity, p_226641_0_).isCancelled()) {
++            if (org.bukkit.craftbukkit.v1_15_R1.event.CraftEventFactory.callPlayerLeashEntityEvent(mobentity, leashknotentity, p_226641_0_).isCancelled()) {
 +               continue;
 +            }
 +            // CraftBukkit end

@@ -7,9 +7,9 @@
 +import net.minecraft.util.text.TranslationTextComponent;
  import net.minecraftforge.api.distmarker.Dist;
  import net.minecraftforge.api.distmarker.OnlyIn;
-+import org.bukkit.craftbukkit.inventory.CraftInventoryCrafting;
-+import org.bukkit.craftbukkit.inventory.CraftInventoryView;
-+import org.bukkit.craftbukkit.util.CraftChatMessage;
++import org.bukkit.craftbukkit.v1_15_R1.inventory.CraftInventoryCrafting;
++import org.bukkit.craftbukkit.v1_15_R1.inventory.CraftInventoryView;
++import org.bukkit.craftbukkit.v1_15_R1.util.CraftChatMessage;
 +import org.bukkit.inventory.InventoryView;
  
  public class PlayerContainer extends RecipeBookContainer<CraftingInventory> {

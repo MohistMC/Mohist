@@ -36,7 +36,7 @@
  
 +         // CraftBukkit start - call EntityBreedEvent
 +         int experience = this.field_75390_d.func_70681_au().nextInt(7) + 1;
-+         org.bukkit.event.entity.EntityBreedEvent entityBreedEvent = org.bukkit.craftbukkit.event.CraftEventFactory.callEntityBreedEvent(ageableentity, this.field_75390_d, this.field_75391_e, serverplayerentity, this.field_75390_d.breedItem, experience);
++         org.bukkit.event.entity.EntityBreedEvent entityBreedEvent = org.bukkit.craftbukkit.v1_15_R1.event.CraftEventFactory.callEntityBreedEvent(ageableentity, this.field_75390_d, this.field_75391_e, serverplayerentity, this.field_75390_d.breedItem, experience);
 +         if (entityBreedEvent.isCancelled()) {
 +            return;
 +         }

@@ -70,7 +70,7 @@
        } else if (!p_70097_1_.func_94541_c() && !this.func_82335_i().func_190926_b()) {
           if (!this.field_70170_p.field_72995_K) {
 +            // CraftBukkit start - fire EntityDamageEvent
-+            if (org.bukkit.craftbukkit.event.CraftEventFactory.handleNonLivingEntityDamageEvent(this, p_70097_1_, p_70097_2_, false) || this.field_70128_L) {
++            if (org.bukkit.craftbukkit.v1_15_R1.event.CraftEventFactory.handleNonLivingEntityDamageEvent(this, p_70097_1_, p_70097_2_, false) || this.field_70128_L) {
 +               return true;
 +            }
 +            // CraftBukkit end

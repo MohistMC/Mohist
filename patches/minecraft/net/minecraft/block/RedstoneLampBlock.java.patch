@@ -4,7 +4,7 @@
  import net.minecraft.world.IBlockReader;
  import net.minecraft.world.World;
  import net.minecraft.world.server.ServerWorld;
-+import org.bukkit.craftbukkit.event.CraftEventFactory; // CraftBukkit
++import org.bukkit.craftbukkit.v1_15_R1.event.CraftEventFactory; // CraftBukkit
  
  public class RedstoneLampBlock extends Block {
     public static final BooleanProperty field_196502_a = RedstoneTorchBlock.field_196528_a;

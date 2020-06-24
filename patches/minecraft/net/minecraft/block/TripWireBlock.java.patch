@@ -22,7 +22,7 @@
 +            if (object != null) {
 +               org.bukkit.event.Cancellable cancellable;
 +               if (object instanceof PlayerEntity) {
-+                  cancellable = org.bukkit.craftbukkit.event.CraftEventFactory.callPlayerInteractEvent((PlayerEntity)object, org.bukkit.event.block.Action.PHYSICAL, p_176288_2_, null, null, null);
++                  cancellable = org.bukkit.craftbukkit.v1_15_R1.event.CraftEventFactory.callPlayerInteractEvent((PlayerEntity)object, org.bukkit.event.block.Action.PHYSICAL, p_176288_2_, null, null, null);
 +               }
 +               else {
 +                  if (!(object instanceof Entity)) {

@@ -16,9 +16,9 @@
  import net.minecraft.util.IntArray;
  import net.minecraftforge.api.distmarker.Dist;
  import net.minecraftforge.api.distmarker.OnlyIn;
-+import org.bukkit.craftbukkit.inventory.CraftInventory;
-+import org.bukkit.craftbukkit.inventory.CraftInventoryBeacon;
-+import org.bukkit.craftbukkit.inventory.CraftInventoryView;
++import org.bukkit.craftbukkit.v1_15_R1.inventory.CraftInventory;
++import org.bukkit.craftbukkit.v1_15_R1.inventory.CraftInventoryBeacon;
++import org.bukkit.craftbukkit.v1_15_R1.inventory.CraftInventoryView;
 +import org.bukkit.inventory.InventoryView;
  
  public class BeaconContainer extends Container {

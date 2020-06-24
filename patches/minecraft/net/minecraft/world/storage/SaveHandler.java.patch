@@ -15,7 +15,7 @@
  import net.minecraft.world.gen.feature.template.TemplateManager;
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
-+import org.bukkit.craftbukkit.entity.CraftPlayer;
++import org.bukkit.craftbukkit.v1_15_R1.entity.CraftPlayer;
  
  public class SaveHandler implements IPlayerFileData {
     private static final Logger field_215773_b = LogManager.getLogger();

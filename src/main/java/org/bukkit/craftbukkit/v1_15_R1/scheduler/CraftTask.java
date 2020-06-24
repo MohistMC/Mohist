@@ -6,7 +6,7 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitTask;
 
 
-class CraftTask implements BukkitTask, Runnable {
+public class CraftTask implements BukkitTask, Runnable {
 
     private volatile CraftTask next = null;
     public static final int ERROR = 0;
@@ -127,4 +127,10 @@ class CraftTask implements BukkitTask, Runnable {
         setPeriod(CraftTask.CANCEL);
         return true;
     }
+
+    // Spigot start
+    public String getTaskName() {
+        return (getTaskClass() == null) ? "Unknown" : getTaskClass().getName();
+    }
+    // Spigot end
 }

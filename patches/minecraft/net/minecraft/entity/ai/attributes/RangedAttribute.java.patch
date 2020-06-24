@@ -1,10 +1,11 @@
 --- a/net/minecraft/entity/ai/attributes/RangedAttribute.java
 +++ b/net/minecraft/entity/ai/attributes/RangedAttribute.java
-@@ -31,6 +31,7 @@
-    }
+@@ -5,7 +5,7 @@
  
-    public double func_111109_a(double p_111109_1_) {
-+      if (p_111109_1_ != p_111109_1_) return func_111110_b(); // CraftBukkit
-       p_111109_1_ = MathHelper.func_151237_a(p_111109_1_, this.field_111120_a, this.field_111118_b);
-       return p_111109_1_;
-    }
+ public class RangedAttribute extends Attribute {
+    private final double field_111120_a;
+-   private final double field_111118_b;
++   public double field_111118_b; // Spigot
+    private String field_111119_c;
+ 
+    public RangedAttribute(@Nullable IAttribute p_i45891_1_, String p_i45891_2_, double p_i45891_3_, double p_i45891_5_, double p_i45891_7_) {

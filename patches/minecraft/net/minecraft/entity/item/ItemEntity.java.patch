@@ -94,7 +94,7 @@
 +         ItemStack item = this.func_92059_d();
 +         if (!this.field_70170_p.field_72995_K && this.field_70292_b >= lifespan) {
 +            // CraftBukkit start - fire ItemDespawnEvent
-+            if (org.bukkit.craftbukkit.event.CraftEventFactory.callItemDespawnEvent(this).isCancelled()) {
++            if (org.bukkit.craftbukkit.v1_15_R1.event.CraftEventFactory.callItemDespawnEvent(this).isCancelled()) {
 +               this.field_70292_b = 0;
 +               return;
 +            }
@@ -126,7 +126,7 @@
     }
  
     private static void func_213858_a(ItemEntity p_213858_0_, ItemStack p_213858_1_, ItemEntity p_213858_2_, ItemStack p_213858_3_) {
-+      if (org.bukkit.craftbukkit.event.CraftEventFactory.callItemMergeEvent(p_213858_2_, p_213858_0_).isCancelled()) return; // CraftBukkit
++      if (org.bukkit.craftbukkit.v1_15_R1.event.CraftEventFactory.callItemMergeEvent(p_213858_2_, p_213858_0_).isCancelled()) return; // CraftBukkit
        func_226531_a_(p_213858_0_, p_213858_1_, p_213858_3_);
        p_213858_0_.field_145804_b = Math.max(p_213858_0_.field_145804_b, p_213858_2_.field_145804_b);
        p_213858_0_.field_70292_b = Math.min(p_213858_0_.field_70292_b, p_213858_2_.field_70292_b);
@@ -148,7 +148,7 @@
           return false;
        } else {
 +         // CraftBukkit start
-+         if (org.bukkit.craftbukkit.event.CraftEventFactory.handleNonLivingEntityDamageEvent(this, p_70097_1_, p_70097_2_)) {
++         if (org.bukkit.craftbukkit.v1_15_R1.event.CraftEventFactory.handleNonLivingEntityDamageEvent(this, p_70097_1_, p_70097_2_)) {
 +            return false;
 +         }
 +         // CraftBukkit end

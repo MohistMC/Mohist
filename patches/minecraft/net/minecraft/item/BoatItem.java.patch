@@ -21,7 +21,7 @@
           if (raytraceresult.func_216346_c() == RayTraceResult.Type.BLOCK) {
 +            // CraftBukkit start - Boat placement
 +            BlockRayTraceResult movingobjectpositionblock = (BlockRayTraceResult) raytraceresult;
-+            org.bukkit.event.player.PlayerInteractEvent event = org.bukkit.craftbukkit.event.CraftEventFactory.callPlayerInteractEvent(p_77659_2_, org.bukkit.event.block.Action.RIGHT_CLICK_BLOCK, movingobjectpositionblock.func_216350_a(), movingobjectpositionblock.func_216354_b(), itemstack, p_77659_3_);
++            org.bukkit.event.player.PlayerInteractEvent event = org.bukkit.craftbukkit.v1_15_R1.event.CraftEventFactory.callPlayerInteractEvent(p_77659_2_, org.bukkit.event.block.Action.RIGHT_CLICK_BLOCK, movingobjectpositionblock.func_216350_a(), movingobjectpositionblock.func_216354_b(), itemstack, p_77659_3_);
 +
 +            if (event.isCancelled()) {
 +               return new ActionResult<>(ActionResultType.PASS, itemstack);
@@ -36,7 +36,7 @@
                 if (!p_77659_1_.field_72995_K) {
 -                  p_77659_1_.func_217376_c(boatentity);
 +                  // CraftBukkit start
-+                  if (org.bukkit.craftbukkit.event.CraftEventFactory.callEntityPlaceEvent(p_77659_1_, movingobjectpositionblock.func_216350_a(), movingobjectpositionblock.func_216354_b(), p_77659_2_, boatentity).isCancelled()) {
++                  if (org.bukkit.craftbukkit.v1_15_R1.event.CraftEventFactory.callEntityPlaceEvent(p_77659_1_, movingobjectpositionblock.func_216350_a(), movingobjectpositionblock.func_216354_b(), p_77659_2_, boatentity).isCancelled()) {
 +                     return ActionResult.func_226251_d_(itemstack);
 +                  }
 +

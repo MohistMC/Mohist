@@ -13,7 +13,7 @@
  import net.minecraft.world.GameRules;
  import net.minecraft.world.server.ServerWorld;
 +import org.bukkit.command.CommandSender;
-+import org.bukkit.craftbukkit.command.VanillaCommandWrapper;
++import org.bukkit.craftbukkit.v1_15_R1.command.VanillaCommandWrapper;
  
  public class CommandSource implements ISuggestionProvider {
     public static final SimpleCommandExceptionType field_197039_a = new SimpleCommandExceptionType(new TranslationTextComponent("permissions.requires.player"));

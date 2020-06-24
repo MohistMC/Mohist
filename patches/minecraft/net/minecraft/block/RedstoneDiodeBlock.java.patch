@@ -4,7 +4,7 @@
  import net.minecraft.world.TickPriority;
  import net.minecraft.world.World;
  import net.minecraft.world.server.ServerWorld;
-+import org.bukkit.craftbukkit.event.CraftEventFactory;
++import org.bukkit.craftbukkit.v1_15_R1.event.CraftEventFactory;
  
  public abstract class RedstoneDiodeBlock extends HorizontalBlock {
     protected static final VoxelShape field_196347_b = Block.func_208617_a(0.0D, 0.0D, 0.0D, 16.0D, 2.0D, 16.0D);

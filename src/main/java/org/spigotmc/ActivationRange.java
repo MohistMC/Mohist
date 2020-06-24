@@ -26,6 +26,7 @@ import net.minecraft.entity.projectile.FireballEntity;
 import net.minecraft.entity.projectile.ThrowableEntity;
 import net.minecraft.entity.projectile.TridentEntity;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.util.ClassInheritanceMultiMap;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
@@ -133,7 +134,7 @@ public class ActivationRange {
      * Checks for the activation state of all entities in this chunk.
      */
     private static void activateChunkEntities(Chunk chunk) {
-        for (List<Entity> slice : chunk.entityLists) {
+        for (ClassInheritanceMultiMap<Entity> slice : chunk.entityLists) {
             for (Entity entity : (Collection<Entity>) slice) {
                 if (MinecraftServer.currentTick > entity.activatedTick) {
                     if (entity.defaultActivationState) {

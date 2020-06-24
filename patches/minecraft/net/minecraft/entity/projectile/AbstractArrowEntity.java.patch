@@ -13,7 +13,7 @@
  import net.minecraftforge.api.distmarker.Dist;
  import net.minecraftforge.api.distmarker.OnlyIn;
 +// CraftBukkit start
-+import org.bukkit.craftbukkit.entity.CraftItem;
++import org.bukkit.craftbukkit.v1_15_R1.entity.CraftItem;
 +import org.bukkit.entity.AbstractArrow;
 +import org.bukkit.entity.Player;
 +import org.bukkit.event.entity.EntityCombustByEntityEvent;
@@ -63,7 +63,7 @@
     }
  
     protected void func_184549_a(RayTraceResult p_184549_1_) {
-+      org.bukkit.craftbukkit.event.CraftEventFactory.callProjectileHitEvent(this, p_184549_1_); // CraftBukkit - Call event
++      org.bukkit.craftbukkit.v1_15_R1.event.CraftEventFactory.callProjectileHitEvent(this, p_184549_1_); // CraftBukkit - Call event
        RayTraceResult.Type raytraceresult$type = p_184549_1_.func_216346_c();
        if (raytraceresult$type == RayTraceResult.Type.ENTITY) {
           this.func_213868_a((EntityRayTraceResult)p_184549_1_);

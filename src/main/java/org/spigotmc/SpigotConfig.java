@@ -27,6 +27,7 @@ import org.bukkit.command.Command;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
+import red.mohist.Metrics;
 
 public class SpigotConfig {
 
@@ -314,7 +315,7 @@ public class SpigotConfig {
     private static void attributeMaxes()
     {
         maxHealth = getDouble( "settings.attribute.maxHealth.max", maxHealth );
-        ( (RangedAttribute) SharedMonsterAttributes.MAX_HEALTH ).maximumValue = maxHealth;
+        ( (RangedAttribute) SharedMonsterAttributes.MAX_HEALTH ).maximumValue  = maxHealth;
         movementSpeed = getDouble( "settings.attribute.movementSpeed.max", movementSpeed );
         ( (RangedAttribute) SharedMonsterAttributes.MOVEMENT_SPEED ).maximumValue = movementSpeed;
         attackDamage = getDouble( "settings.attribute.attackDamage.max", attackDamage );

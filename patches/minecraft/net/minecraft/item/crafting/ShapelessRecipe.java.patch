@@ -5,9 +5,9 @@
  import net.minecraft.util.ResourceLocation;
  import net.minecraft.world.World;
 +// CraftBukkit start
-+import org.bukkit.craftbukkit.inventory.CraftItemStack;
-+import org.bukkit.craftbukkit.inventory.CraftRecipe;
-+import org.bukkit.craftbukkit.inventory.CraftShapelessRecipe;
++import org.bukkit.craftbukkit.v1_15_R1.inventory.CraftItemStack;
++import org.bukkit.craftbukkit.v1_15_R1.inventory.CraftRecipe;
++import org.bukkit.craftbukkit.v1_15_R1.inventory.CraftShapelessRecipe;
 +// CraftBukkit end
  
  public class ShapelessRecipe implements ICraftingRecipe {
