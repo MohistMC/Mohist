@@ -85,8 +85,6 @@ public class ServerLaunchWrapper {
             System.out.println("                                      " + Message.getString("forge.serverlanunchwrapper.1"));
             System.out.println("");
             SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");//set date format
-            if (Message.isCN()==true){
-            }
             System.out.println(Message.getString("mohist.start"));
             System.out.println(Message.getString("load.libraries"));
             Mohist.LOGGER = LogManager.getLogger("Mohist");
