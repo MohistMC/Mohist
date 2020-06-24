@@ -4,7 +4,7 @@
  import org.apache.commons.lang3.StringUtils;
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
-+import org.bukkit.craftbukkit.inventory.CraftInventoryView;
++import org.bukkit.craftbukkit.v1_15_R1.inventory.CraftInventoryView;
 +import org.bukkit.inventory.InventoryView;
  
  public class RepairContainer extends Container {
@@ -60,7 +60,7 @@
        int k = 0;
        if (itemstack.func_190926_b()) {
 -         this.field_82852_f.func_70299_a(0, ItemStack.field_190927_a);
-+         org.bukkit.craftbukkit.event.CraftEventFactory.callPrepareAnvilEvent(getBukkitView(), ItemStack.field_190927_a); // CraftBukkit
++         org.bukkit.craftbukkit.v1_15_R1.event.CraftEventFactory.callPrepareAnvilEvent(getBukkitView(), ItemStack.field_190927_a); // CraftBukkit
           this.field_82854_e.func_221494_a(0);
        } else {
           ItemStack itemstack1 = itemstack.func_77946_l();
@@ -78,7 +78,7 @@
                 int l2 = Math.min(itemstack1.func_77952_i(), itemstack1.func_77958_k() / 4);
                 if (l2 <= 0) {
 -                  this.field_82852_f.func_70299_a(0, ItemStack.field_190927_a);
-+                  org.bukkit.craftbukkit.event.CraftEventFactory.callPrepareAnvilEvent(getBukkitView(), ItemStack.field_190927_a); // CraftBukkit
++                  org.bukkit.craftbukkit.v1_15_R1.event.CraftEventFactory.callPrepareAnvilEvent(getBukkitView(), ItemStack.field_190927_a); // CraftBukkit
                    this.field_82854_e.func_221494_a(0);
                    return;
                 }
@@ -87,7 +87,7 @@
              } else {
                 if (!flag && (itemstack1.func_77973_b() != itemstack2.func_77973_b() || !itemstack1.func_77984_f())) {
 -                  this.field_82852_f.func_70299_a(0, ItemStack.field_190927_a);
-+                  org.bukkit.craftbukkit.event.CraftEventFactory.callPrepareAnvilEvent(getBukkitView(), ItemStack.field_190927_a); // CraftBukkit
++                  org.bukkit.craftbukkit.v1_15_R1.event.CraftEventFactory.callPrepareAnvilEvent(getBukkitView(), ItemStack.field_190927_a); // CraftBukkit
                    this.field_82854_e.func_221494_a(0);
                    return;
                 }
@@ -96,7 +96,7 @@
  
                 if (flag3 && !flag2) {
 -                  this.field_82852_f.func_70299_a(0, ItemStack.field_190927_a);
-+                  org.bukkit.craftbukkit.event.CraftEventFactory.callPrepareAnvilEvent(getBukkitView(), ItemStack.field_190927_a); // CraftBukkit
++                  org.bukkit.craftbukkit.v1_15_R1.event.CraftEventFactory.callPrepareAnvilEvent(getBukkitView(), ItemStack.field_190927_a); // CraftBukkit
                    this.field_82854_e.func_221494_a(0);
                    return;
                 }
@@ -127,7 +127,7 @@
           }
  
 -         this.field_82852_f.func_70299_a(0, itemstack1);
-+         org.bukkit.craftbukkit.event.CraftEventFactory.callPrepareAnvilEvent(getBukkitView(), itemstack1); // CraftBukkit
++         org.bukkit.craftbukkit.v1_15_R1.event.CraftEventFactory.callPrepareAnvilEvent(getBukkitView(), itemstack1); // CraftBukkit
           this.func_75142_b();
        }
     }
@@ -149,7 +149,7 @@
 +      if (bukkitEntity != null) {
 +         return bukkitEntity;
 +      }
-+      org.bukkit.craftbukkit.inventory.CraftInventory inventory = new org.bukkit.craftbukkit.inventory.CraftInventoryAnvil(field_216980_g.getLocation(), this.field_82853_g, this.field_82852_f, this);
++      org.bukkit.craftbukkit.v1_15_R1.inventory.CraftInventory inventory = new org.bukkit.craftbukkit.v1_15_R1.inventory.CraftInventoryAnvil(field_216980_g.getLocation(), this.field_82853_g, this.field_82852_f, this);
 +      bukkitEntity = new CraftInventoryView(this.field_82855_n.getBukkitEntity(), inventory, this);
 +      return bukkitEntity;
 +   }

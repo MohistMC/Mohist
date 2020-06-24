@@ -35,7 +35,7 @@
        ItemStack itemstack = p_175445_1_.func_92059_d();
 -      if (this.func_175448_a(itemstack)) {
 +      // if (this.canEquipItem(itemstack)) {
-+      if (!org.bukkit.craftbukkit.event.CraftEventFactory.callEntityPickupItemEvent(this, p_175445_1_, itemstack.func_190916_E() - 1, !this.func_175448_a(itemstack)).isCancelled()) { // CraftBukkit - call EntityPickupItemEvent
++      if (!org.bukkit.craftbukkit.v1_15_R1.event.CraftEventFactory.callEntityPickupItemEvent(this, p_175445_1_, itemstack.func_190916_E() - 1, !this.func_175448_a(itemstack)).isCancelled()) { // CraftBukkit - call EntityPickupItemEvent
           int i = itemstack.func_190916_E();
           if (i > 1) {
              this.func_213486_l(itemstack.func_77979_a(i - 1));
@@ -50,7 +50,7 @@
                 int i = blockstate.func_177229_b(SweetBerryBushBlock.field_220125_a);
                 blockstate.func_206870_a(SweetBerryBushBlock.field_220125_a, Integer.valueOf(1));
 +               // CraftBukkit start - call EntityChangeBlockEvent
-+               if (org.bukkit.craftbukkit.event.CraftEventFactory.callEntityChangeBlockEvent(FoxEntity.this, this.field_179494_b, blockstate.func_206870_a(SweetBerryBushBlock.field_220125_a, 1)).isCancelled()) {
++               if (org.bukkit.craftbukkit.v1_15_R1.event.CraftEventFactory.callEntityChangeBlockEvent(FoxEntity.this, this.field_179494_b, blockstate.func_206870_a(SweetBerryBushBlock.field_220125_a, 1)).isCancelled()) {
 +                  return;
 +               }
 +               // CraftBukkit end
@@ -64,7 +64,7 @@
 -
 +            // CraftBukkit start - call EntityBreedEvent
 +            int experience = this.field_75390_d.func_70681_au().nextInt(7) + 1;
-+            org.bukkit.event.entity.EntityBreedEvent entityBreedEvent = org.bukkit.craftbukkit.event.CraftEventFactory.callEntityBreedEvent(foxentity, field_75390_d, field_75391_e, serverplayerentity, this.field_75390_d.breedItem, experience);
++            org.bukkit.event.entity.EntityBreedEvent entityBreedEvent = org.bukkit.craftbukkit.v1_15_R1.event.CraftEventFactory.callEntityBreedEvent(foxentity, field_75390_d, field_75391_e, serverplayerentity, this.field_75390_d.breedItem, experience);
 +            if (entityBreedEvent.isCancelled()) {
 +               return;
 +            }

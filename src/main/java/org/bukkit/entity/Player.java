@@ -443,11 +443,8 @@ public interface Player extends HumanEntity, Conversable, OfflinePlayer, PluginM
 
     /**
      * Forces an update of the player's entire inventory.
-     *
-     * @deprecated This method should not be relied upon as it is a temporary
-     *     work-around for a larger, more complicated issue.
      */
-    @Deprecated
+    //@Deprecated // Spigot - undeprecate
     public void updateInventory();
 
     /**
@@ -1250,8 +1247,59 @@ public interface Player extends HumanEntity, Conversable, OfflinePlayer, PluginM
 
     // Spigot start
     public class Spigot extends Entity.Spigot {
+        /**
+        *Gets the connection address of this player, regardless of whether it
+        *has been spoofed or not.*
+         *
+         * @return the player's connection address
+        */
+        @NotNull
+        public InetSocketAddress getRawAddress() {
+            throw new UnsupportedOperationException("Not supported yet.");
+        }
 
+        /**
+         * Gets whether the player collides with entities
+         *
+         * @return the player's collision toggle state
+         * @deprecated see {@link LivingEntity#isCollidable()}
+         */
+
+        @Deprecated
+        public boolean getCollidesWithEntities() {
+            throw new UnsupportedOperationException("Not supported yet.");
+        }
+        /**
+         * Sets whether the player collides with entities
+         *
+         * @param collides whether the player should collide with entities or
+         * not.
+         * @deprecated {@link LivingEntity#setCollidable(boolean)}
+         */
+
+        @Deprecated
+        public void setCollidesWithEntities(boolean collides) {
+            throw new UnsupportedOperationException("Not supported yet.");
+        }
+
+    /**
+    *Respawns the player if dead.
+    */
+
+    public void respawn() {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
+
+        /**
+         * Gets all players hidden with {@link #hidePlayer(org.bukkit.entity.Player)}.
+         *
+         * @return a Set with all hidden players
+         */
+        @NotNull
+        public java.util.Set<Player> getHiddenPlayers() {
+            throw new UnsupportedOperationException("Not supported yet.");
+        }
+}
 
     @NotNull
     @Override

@@ -5,7 +5,7 @@
  import net.minecraft.world.BossInfo;
  import net.minecraft.world.server.ServerBossInfo;
 +import org.bukkit.boss.KeyedBossBar;
-+import org.bukkit.craftbukkit.boss.CraftKeyedBossbar;
++import org.bukkit.craftbukkit.v1_15_R1.boss.CraftKeyedBossbar;
  
  public class CustomServerBossInfo extends ServerBossInfo {
     private final ResourceLocation field_201373_h;

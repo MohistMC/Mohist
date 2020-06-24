@@ -4,7 +4,7 @@
  import net.minecraft.world.World;
  import net.minecraftforge.api.distmarker.Dist;
  import net.minecraftforge.api.distmarker.OnlyIn;
-+import org.bukkit.craftbukkit.inventory.CraftMerchant;
++import org.bukkit.craftbukkit.v1_15_R1.inventory.CraftMerchant;
  
  public class NPCMerchant implements IMerchant {
     private final MerchantInventory field_70937_a;

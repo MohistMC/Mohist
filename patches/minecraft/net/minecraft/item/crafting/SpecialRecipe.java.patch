@@ -8,7 +8,7 @@
 +   // CraftBukkit start
 +   @Override
 +   public org.bukkit.inventory.Recipe toBukkitRecipe() {
-+      return new org.bukkit.craftbukkit.inventory.CraftComplexRecipe(this);
++      return new org.bukkit.craftbukkit.v1_15_R1.inventory.CraftComplexRecipe(this);
 +   }
 +   // CraftBukkit end
  }

@@ -5,7 +5,7 @@
           if (BlockTags.field_200152_g.func_199685_a_(block) && block instanceof DoorBlock) {
              boolean flag = i >= p_220434_4_;
 +            // CraftBukkit start - entities opening doors
-+            org.bukkit.event.entity.EntityInteractEvent event = new org.bukkit.event.entity.EntityInteractEvent(p_220434_5_.getBukkitEntity(), org.bukkit.craftbukkit.block.CraftBlock.at(p_220434_5_.field_70170_p, p_225447_4_));
++            org.bukkit.event.entity.EntityInteractEvent event = new org.bukkit.event.entity.EntityInteractEvent(p_220434_5_.getBukkitEntity(), org.bukkit.craftbukkit.v1_15_R1.block.CraftBlock.at(p_220434_5_.field_70170_p, p_225447_4_));
 +            if (event.isCancelled()) {
 +               return;
 +            }

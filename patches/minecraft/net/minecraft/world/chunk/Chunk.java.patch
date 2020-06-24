@@ -68,7 +68,7 @@
 -
 +      this.gatherCapabilities();
 +      // CraftBukkit start
-+      this.bukkitChunk = new org.bukkit.craftbukkit.CraftChunk(this);
++      this.bukkitChunk = new org.bukkit.craftbukkit.v1_15_R1.CraftChunk(this);
     }
  
 +    public org.bukkit.Chunk bukkitChunk;

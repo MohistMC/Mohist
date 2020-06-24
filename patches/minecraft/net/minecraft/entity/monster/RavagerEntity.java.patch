@@ -21,7 +21,7 @@
                 BlockState blockstate = this.field_70170_p.func_180495_p(blockpos);
                 Block block = blockstate.func_177230_c();
 -               if (block instanceof LeavesBlock) {
-+               if (block instanceof LeavesBlock && !org.bukkit.craftbukkit.event.CraftEventFactory.callEntityChangeBlockEvent(this, blockpos, Blocks.field_150350_a.func_176223_P()).isCancelled()) { // CraftBukkit
++               if (block instanceof LeavesBlock && !org.bukkit.craftbukkit.v1_15_R1.event.CraftEventFactory.callEntityChangeBlockEvent(this, blockpos, Blocks.field_150350_a.func_176223_P()).isCancelled()) { // CraftBukkit
                    flag = this.field_70170_p.func_225521_a_(blockpos, true, this) || flag;
                 }
              }

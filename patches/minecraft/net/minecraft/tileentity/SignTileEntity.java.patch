@@ -52,7 +52,7 @@
 +            ITextComponent itextcomponent = ITextComponent.Serializer.func_150699_a(s.isEmpty() ? "\"\"" : s);
 +
 +            if (oldSign) {
-+               field_145915_a[i] = org.bukkit.craftbukkit.util.CraftChatMessage.fromString(s)[0];
++               field_145915_a[i] = org.bukkit.craftbukkit.v1_15_R1.util.CraftChatMessage.fromString(s)[0];
 +               continue;
 +            }
 +            // CraftBukkit end
@@ -118,7 +118,7 @@
 +
 +   @Override
 +   public CommandSender getBukkitSender(CommandSource p0) {
-+      return p0.func_197022_f() != null ? p0.func_197022_f().getBukkitSender(p0) : new org.bukkit.craftbukkit.command.CraftBlockCommandSender(p0, this);
++      return p0.func_197022_f() != null ? p0.func_197022_f().getBukkitSender(p0) : new org.bukkit.craftbukkit.v1_15_R1.command.CraftBlockCommandSender(p0, this);
 +   }
 +   // CraftBukkit end
  }

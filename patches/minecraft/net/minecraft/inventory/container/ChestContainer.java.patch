@@ -10,10 +10,10 @@
  import net.minecraft.item.ItemStack;
  import net.minecraftforge.api.distmarker.Dist;
  import net.minecraftforge.api.distmarker.OnlyIn;
-+import org.bukkit.craftbukkit.inventory.CraftInventory;
-+import org.bukkit.craftbukkit.inventory.CraftInventoryDoubleChest;
-+import org.bukkit.craftbukkit.inventory.CraftInventoryPlayer;
-+import org.bukkit.craftbukkit.inventory.CraftInventoryView;
++import org.bukkit.craftbukkit.v1_15_R1.inventory.CraftInventory;
++import org.bukkit.craftbukkit.v1_15_R1.inventory.CraftInventoryDoubleChest;
++import org.bukkit.craftbukkit.v1_15_R1.inventory.CraftInventoryPlayer;
++import org.bukkit.craftbukkit.v1_15_R1.inventory.CraftInventoryView;
 +import org.bukkit.inventory.InventoryView;
  
  public class ChestContainer extends Container {

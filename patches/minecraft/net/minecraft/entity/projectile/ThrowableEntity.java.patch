@@ -37,7 +37,7 @@
              this.func_70184_a(raytraceresult);
 +            // CraftBukkit start
 +            if (this.field_70128_L) {
-+               org.bukkit.craftbukkit.event.CraftEventFactory.callProjectileHitEvent(this, raytraceresult);
++               org.bukkit.craftbukkit.v1_15_R1.event.CraftEventFactory.callProjectileHitEvent(this, raytraceresult);
 +            }
 +            // CraftBukkit end
           }

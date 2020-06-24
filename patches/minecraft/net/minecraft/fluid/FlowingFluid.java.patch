@@ -5,9 +5,9 @@
  import net.minecraft.world.IWorldReader;
  import net.minecraft.world.World;
 +import org.bukkit.block.BlockFace;
-+import org.bukkit.craftbukkit.block.CraftBlock;
-+import org.bukkit.craftbukkit.block.data.CraftBlockData;
-+import org.bukkit.craftbukkit.event.CraftEventFactory;
++import org.bukkit.craftbukkit.v1_15_R1.block.CraftBlock;
++import org.bukkit.craftbukkit.v1_15_R1.block.data.CraftBlockData;
++import org.bukkit.craftbukkit.v1_15_R1.event.CraftEventFactory;
 +import org.bukkit.event.block.BlockFromToEvent;
 +import org.bukkit.event.block.FluidLevelChangeEvent;
  

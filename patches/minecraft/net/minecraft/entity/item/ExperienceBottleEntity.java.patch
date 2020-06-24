@@ -19,7 +19,7 @@
           int i = 3 + this.field_70170_p.field_73012_v.nextInt(5) + this.field_70170_p.field_73012_v.nextInt(5);
  
 +         // CraftBukkit start
-+         org.bukkit.event.entity.ExpBottleEvent event = org.bukkit.craftbukkit.event.CraftEventFactory.callExpBottleEvent(this, i);
++         org.bukkit.event.entity.ExpBottleEvent event = org.bukkit.craftbukkit.v1_15_R1.event.CraftEventFactory.callExpBottleEvent(this, i);
 +         i = event.getExperience();
 +         if (event.getShowEffect()) {
 +            this.field_70170_p.func_217379_c(2002, new BlockPos(this), PotionUtils.func_185183_a(Potions.field_185230_b));

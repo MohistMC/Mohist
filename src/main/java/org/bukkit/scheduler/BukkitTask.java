@@ -41,4 +41,5 @@ public interface BukkitTask {
      * Will attempt to cancel this task.
      */
     public void cancel();
+
 }

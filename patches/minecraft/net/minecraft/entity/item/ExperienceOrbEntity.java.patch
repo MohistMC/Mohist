@@ -12,7 +12,7 @@
  import net.minecraft.world.World;
  import net.minecraftforge.api.distmarker.Dist;
  import net.minecraftforge.api.distmarker.OnlyIn;
-+import org.bukkit.craftbukkit.event.CraftEventFactory;
++import org.bukkit.craftbukkit.v1_15_R1.event.CraftEventFactory;
 +import org.bukkit.event.entity.EntityTargetEvent;
 +import org.bukkit.event.entity.EntityTargetLivingEntityEvent;
  
@@ -35,7 +35,7 @@
 +      boolean cancelled = false;
 +      if (this.field_80001_f != prevTarget) {
 +         EntityTargetLivingEntityEvent event = CraftEventFactory.callEntityTargetLivingEvent(this, field_80001_f, (field_80001_f != null) ? EntityTargetEvent.TargetReason.CLOSEST_PLAYER : EntityTargetEvent.TargetReason.FORGOT_TARGET);
-+         LivingEntity target = (event.getTarget() == null) ? null : ((org.bukkit.craftbukkit.entity.CraftLivingEntity) event.getTarget()).getHandle();
++         LivingEntity target = (event.getTarget() == null) ? null : ((org.bukkit.craftbukkit.v1_15_R1.entity.CraftLivingEntity) event.getTarget()).getHandle();
 +         cancelled = event.isCancelled();
 +
 +         if (cancelled) {

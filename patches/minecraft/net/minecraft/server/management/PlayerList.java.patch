@@ -52,10 +52,10 @@
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
 +import org.bukkit.Location;
-+import org.bukkit.craftbukkit.CraftServer;
-+import org.bukkit.craftbukkit.CraftWorld;
-+import org.bukkit.craftbukkit.event.CraftEventFactory;
-+import org.bukkit.craftbukkit.util.CraftChatMessage;
++import org.bukkit.craftbukkit.v1_15_R1.CraftServer;
++import org.bukkit.craftbukkit.v1_15_R1.CraftWorld;
++import org.bukkit.craftbukkit.v1_15_R1.event.CraftEventFactory;
++import org.bukkit.craftbukkit.v1_15_R1.util.CraftChatMessage;
 +import org.bukkit.entity.HumanEntity;
 +import org.bukkit.entity.Player;
 +import org.bukkit.event.player.PlayerChangedWorldEvent;
@@ -97,8 +97,8 @@
  
     public PlayerList(MinecraftServer p_i50688_1_, int p_i50688_2_) {
 +      this.cserver = p_i50688_1_.server = new CraftServer((DedicatedServer) p_i50688_1_, this);
-+      p_i50688_1_.console = org.bukkit.craftbukkit.command.ColouredConsoleSender.getInstance();
-+      p_i50688_1_.reader.addCompleter(new org.bukkit.craftbukkit.command.ConsoleCommandCompleter(p_i50688_1_.server));
++      p_i50688_1_.console = org.bukkit.craftbukkit.v1_15_R1.command.ColouredConsoleSender.getInstance();
++      p_i50688_1_.reader.addCompleter(new org.bukkit.craftbukkit.v1_15_R1.command.ConsoleCommandCompleter(p_i50688_1_.server));
 +      // CraftBukkit end
        this.field_72400_f = p_i50688_1_;
        this.field_72405_c = p_i50688_2_;
@@ -301,7 +301,7 @@
 +
 +      // CraftBukkit start - Quitting must be before we do final save of data, in case plugins need to modify it
 +      CraftEventFactory.handleInventoryCloseEvent(playerIn);
-+      PlayerQuitEvent playerQuitEvent = new PlayerQuitEvent(this.cserver.getPlayer(playerIn), "§e" + playerIn.func_195047_I_() + " left the game");
++      PlayerQuitEvent playerQuitEvent = new PlayerQuitEvent(this.cserver.getPlayer(playerIn), "Â§e" + playerIn.func_195047_I_() + " left the game");
 +      this.cserver.getPluginManager().callEvent(playerQuitEvent);
 +      playerIn.getBukkitEntity().disconnect(playerQuitEvent.getQuitMessage());
 +      playerIn.func_71127_g(); // SPIGOT-924
