@@ -64,6 +64,7 @@ public class ServerLaunchWrapper {
             Mohist.LOGGER = LogManager.getLogger("Mohist");
         } catch (Exception e) {
             System.out.println(Message.getString("mohist.start.error.nothavelibrary"));
+            System.out.println("   ");
             e.printStackTrace(System.err);
             System.exit(1);
         }
