@@ -71,6 +71,7 @@ import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.ModContainer;
 import net.minecraftforge.fml.common.eventhandler.Event;
+import red.mohist.util.i18n.Message;
 
 /**
  * Manages chunkloading for mods.
@@ -1108,7 +1109,7 @@ public class ForgeChunkManager
         temp.setMinValue(0);
         dormantChunkCacheSize = temp.getInt(0);
         propOrder.add("dormantChunkCacheSize");
-        FMLLog.log.info("Configured a dormant chunk cache size of {}", temp.getInt(0));
+        FMLLog.log.info(Message.getString("fml.log.6"), temp.getInt(0));
 
         temp = config.get("defaults", "asyncChunkLoading", true);
         temp.setComment("Load chunks asynchronously for players, reducing load on the server thread.\n" +
