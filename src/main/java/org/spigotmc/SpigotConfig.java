@@ -26,6 +26,7 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
 import red.mohist.Mohist;
+import red.mohist.util.i18n.Message;
 
 public class SpigotConfig {
 
@@ -203,7 +204,7 @@ public class SpigotConfig {
     private static void nettyThreads() {
         int count = getInt("settings.netty-threads", 4);
         System.setProperty("io.netty.eventLoopThreads", Integer.toString(count));
-        Bukkit.getLogger().log(Level.INFO, "Using {0} threads for Netty based IO", count);
+        Bukkit.getLogger().log(Level.INFO, Message.getString("mohist.start.nettyio_count"), count);
     }
 
     private static void lateBind() {
@@ -235,7 +236,7 @@ public class SpigotConfig {
 
     private static void playerSample() {
         playerSample = Math.max(getInt("settings.sample-count", 12), 0); // Paper - Avoid negative counts
-        LogManager.getLogger("Spigot").info("Server Ping Player Sample Count: " + playerSample);
+        LogManager.getLogger("Spigot").info(Message.getString("mohist.start.server_ping_count") + playerSample);
     }
 
     private static void playerShuffle() {

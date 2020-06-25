@@ -58,19 +58,6 @@ public class ServerLaunchWrapper {
         try {
             launchwrapper = Class.forName("net.minecraft.launchwrapper.Launch", true, Mohist.class.getClassLoader());
             Class.forName("org.objectweb.asm.Type", true, Mohist.class.getClassLoader());
-            System.out.println("");
-            System.out.println("");
-            System.out.println("\n" +
-                    "\n" +
-                    " __    __   ______   __  __   __   ______   ______  \n" +
-                    "/\\ \"-./  \\ /\\  __ \\ /\\ \\_\\ \\ /\\ \\ /\\  ___\\ /\\__  _\\ \n" +
-                    "\\ \\ \\-./\\ \\\\ \\ \\/\\ \\\\ \\  __ \\\\ \\ \\\\ \\___  \\\\/_/\\ \\/ \n" +
-                    " \\ \\_\\ \\ \\_\\\\ \\_____\\\\ \\_\\ \\_\\\\ \\_\\\\/\\_____\\  \\ \\_\\ \n" +
-                    "  \\/_/  \\/_/ \\/_____/ \\/_/\\/_/ \\/_/ \\/_____/   \\/_/ \n" +
-                    "                                                    \n" +
-                    "\n");
-            System.out.println("                                      " + Message.getString("forge.serverlanunchwrapper.1"));
-            System.out.println("");
             SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");//set date format
             System.out.println(Message.getString("mohist.start"));
             System.out.println(Message.getString("load.libraries"));

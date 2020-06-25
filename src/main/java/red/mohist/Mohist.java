@@ -30,6 +30,17 @@ public class Mohist {
         if(System.getProperty("log4j.configurationFile") == null)
             System.setProperty("log4j.configurationFile", "log4j2_mohist.xml");
         MohistConfigUtil.copyMohistConfig();
+        //TODO Mohist-Logo
+        System.out.println("\n" +
+                "\n" +
+                " __    __   ______   __  __   __   ______   ______  \n" +
+                "/\\ \"-./  \\ /\\  __ \\ /\\ \\_\\ \\ /\\ \\ /\\  ___\\ /\\__  _\\ \n" +
+                "\\ \\ \\-./\\ \\\\ \\ \\/\\ \\\\ \\  __ \\\\ \\ \\\\ \\___  \\\\/_/\\ \\/ \n" +
+                " \\ \\_\\ \\ \\_\\\\ \\_____\\\\ \\_\\ \\_\\\\ \\_\\\\/\\_____\\  \\ \\_\\ \n" +
+                "  \\/_/  \\/_/ \\/_____/ \\/_/\\/_/ \\/_/ \\/_____/   \\/_/ \n" +
+                "                                                    \n" +
+                "\n");
+        System.out.println("                                      " + Message.getString("forge.serverlanunchwrapper.1"));
         if(UpdateUtils.isCheckLibs()) DownloadLibraries.run();
         MappingFix.init();
         if(!EulaUtil.hasAcceptedEULA()) {

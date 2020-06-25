@@ -82,6 +82,7 @@ import org.apache.commons.lang3.Validate;
 import org.apache.logging.log4j.Level;
 import org.bukkit.inventory.Recipe;
 import red.mohist.recipe.CustomModRecipe;
+import red.mohist.util.i18n.Message;
 
 /**
  * INTERNAL ONLY
@@ -612,7 +613,7 @@ public class GameData
     @SuppressWarnings({ "unchecked", "rawtypes" })
     public static Multimap<ResourceLocation, ResourceLocation> injectSnapshot(Map<ResourceLocation, ForgeRegistry.Snapshot> snapshot, boolean injectFrozenData, boolean isLocalWorld)
     {
-        FMLLog.log.info("Injecting existing registry data into this {} instance", FMLCommonHandler.instance().getEffectiveSide().isServer() ? "server" : "client");
+        FMLLog.log.info(Message.getString("fml.log.7"), FMLCommonHandler.instance().getEffectiveSide().isServer() ? "server" : "client");
         RegistryManager.ACTIVE.registries.forEach((name, reg) -> reg.validateContent(name));
         RegistryManager.ACTIVE.registries.forEach((name, reg) -> reg.dump(name));
         RegistryManager.ACTIVE.registries.forEach((name, reg) -> reg.resetDelegates());

@@ -34,6 +34,7 @@ import net.minecraftforge.fml.common.discovery.ASMDataTable;
 import net.minecraftforge.fml.common.discovery.ASMDataTable.ASMData;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.common.registry.GameRegistry.ObjectHolder;
+import red.mohist.util.i18n.Message;
 
 /**
  * Internal registry for tracking {@link ObjectHolder} references
@@ -45,7 +46,7 @@ public enum ObjectHolderRegistry
 
     public void findObjectHolders(ASMDataTable table)
     {
-        FMLLog.log.info("Processing ObjectHolder annotations");
+        FMLLog.log.info(Message.getString("forge.loader.58"));
         Set<ASMData> allObjectHolders = table.getAll(GameRegistry.ObjectHolder.class.getName());
         Map<String, String> classModIds = Maps.newHashMap();
         Map<String, Class<?>> classCache = Maps.newHashMap();
@@ -84,7 +85,7 @@ public enum ObjectHolderRegistry
         scanTarget(classModIds, classCache, "net.minecraft.init.Enchantments", null, "minecraft", true, true);
         scanTarget(classModIds, classCache, "net.minecraft.init.SoundEvents", null, "minecraft", true, true);
         scanTarget(classModIds, classCache, "net.minecraft.init.PotionTypes", null, "minecraft", true, true);
-        FMLLog.log.info("Found {} ObjectHolder annotations", objectHolders.size());
+        FMLLog.log.info(Message.getString("fml.log.5"), objectHolders.size());
     }
 
     private void scanTarget(Map<String, String> classModIds, Map<String, Class<?>> classCache, String className, @Nullable String annotationTarget, String value, boolean isClass, boolean extractFromValue)
@@ -119,7 +120,7 @@ public enum ObjectHolderRegistry
                 if (prefix == null)
                 {
                     FMLLog.log.warn("Found an unqualified ObjectHolder annotation ({}) without a modid context at {}.{}, ignoring", value, className, annotationTarget);
-                    throw new IllegalStateException("Unqualified reference to ObjectHolder");
+                    throw new IllegalStateException(Message.getString("fml.exception.1"));
                 }
                 value = prefix + ":" + value;
             }
@@ -161,12 +162,12 @@ public enum ObjectHolderRegistry
 
     public void applyObjectHolders()
     {
-        FMLLog.log.info("Applying holder lookups");
+        FMLLog.log.info(Message.getString("forge.loader.59"));
         for (ObjectHolderRef ohr : objectHolders)
         {
             ohr.apply();
         }
-        FMLLog.log.info("Holder lookups applied");
+        FMLLog.log.info(Message.getString("forge.loader.60"));
     }
 
 }

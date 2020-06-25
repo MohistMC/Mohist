@@ -389,7 +389,7 @@ public final class CraftServer implements Server {
             Plugin[] plugins = pluginManager.loadPlugins(pluginFolder);
             for (Plugin plugin : plugins) {
                 try {
-                    String message = String.format("Loading %s", plugin.getDescription().getFullName());
+                    String message = String.format(Message.getString("mohist.start.plugin_loaded_info"), plugin.getDescription().getFullName());
                     Mohist.LOGGER.info(message);
                     plugin.onLoad();
                 } catch (Throwable ex) {
