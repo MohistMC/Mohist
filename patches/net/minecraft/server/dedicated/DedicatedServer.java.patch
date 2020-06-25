@@ -140,10 +140,11 @@
              LOGGER.warn("To start the server with more ram, launch it as \"java -Xmx1024M -Xms1024M -jar minecraft_server.jar\"");
          }
  
+-        LOGGER.info("Loading properties");
+-        this.settings = new PropertyManager(new File("server.properties"));
 +        net.minecraftforge.fml.common.FMLCommonHandler.instance().onServerStart(this);
 +
-         LOGGER.info("Loading properties");
--        this.settings = new PropertyManager(new File("server.properties"));
++        LOGGER.info(Message.getString("mohist.start.loading_properties"));
 +        this.settings = new PropertyManager(this.options); // CraftBukkit - CLI argument support
          this.eula = new ServerEula(new File("eula.txt"));
  
@@ -157,10 +158,20 @@
              }
  
              this.setCanSpawnAnimals(this.settings.getBooleanProperty("spawn-animals", true));
+@@ -164,7 +210,7 @@
+             this.canSpawnStructures = this.settings.getBooleanProperty("generate-structures", true);
+             int i = this.settings.getIntProperty("gamemode", GameType.SURVIVAL.getID());
+             this.gameType = WorldSettings.getGameTypeById(i);
+-            LOGGER.info("Default game type: {}", (Object)this.gameType);
++            Mohist.LOGGER.info(Message.getString("game.gametype") + "{}", (Object)this.gameType);
+             InetAddress inetaddress = null;
+ 
+             if (!this.getServerHostname().isEmpty())
 @@ -177,10 +223,22 @@
                  this.setServerPort(this.settings.getIntProperty("server-port", 25565));
              }
  
+-            LOGGER.info("Generating keypair");
 +            // Spigot start
 +            this.setPlayerList(new DedicatedPlayerList(this));
 +            SpigotConfig.init((File) options.valueOf("spigot-settings"));
@@ -171,7 +182,7 @@
 +            PaperMCConfig.init((File) options.valueOf("paper-settings"));
 +            // Paper end
 +
-             LOGGER.info("Generating keypair");
++            LOGGER.info(Message.getString("mohist.start.gen_key"));
              this.setKeyPair(CryptManager.generateKeyPair());
 -            LOGGER.info("Starting Minecraft server on {}:{}", this.getServerHostname().isEmpty() ? "*" : this.getServerHostname(), Integer.valueOf(this.getServerPort()));
 +            Object[] p = {this.getServerHostname().isEmpty() ? "0.0.0.0" : this.getServerHostname(), String.valueOf(this.getServerPort())};
@@ -212,8 +223,9 @@
                  TileEntitySkull.setProfileCache(this.getPlayerProfileCache());
                  TileEntitySkull.setSessionService(this.getMinecraftSessionService());
                  PlayerProfileCache.setOnlineMode(this.isServerInOnlineMode());
+-                LOGGER.info("Preparing level \"{}\"", (Object)this.getFolderName());
 +                if (!net.minecraftforge.fml.common.FMLCommonHandler.instance().handleServerAboutToStart(this)) return false;
-                 LOGGER.info("Preparing level \"{}\"", (Object)this.getFolderName());
++                LOGGER.info(Message.getString("mohist.start.preparing_level"), (Object)this.getFolderName());
                  this.loadAllWorlds(this.getFolderName(), this.getFolderName(), k, worldtype, s2);
                  long i1 = System.nanoTime() - j;
                  String s3 = String.format("%.3fs", (double)i1 / 1.0E9D);

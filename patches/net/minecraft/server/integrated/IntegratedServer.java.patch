@@ -24,7 +24,15 @@
  import net.minecraft.world.ServerWorldEventHandler;
  import net.minecraft.world.WorldServer;
  import net.minecraft.world.WorldServerDemo;
-@@ -48,7 +52,7 @@
+@@ -35,6 +39,7 @@
+ import net.minecraftforge.fml.relauncher.SideOnly;
+ import org.apache.logging.log4j.LogManager;
+ import org.apache.logging.log4j.Logger;
++import red.mohist.util.i18n.Message;
+ 
+ @SideOnly(Side.CLIENT)
+ public class IntegratedServer extends MinecraftServer
+@@ -48,7 +53,7 @@
  
      public IntegratedServer(Minecraft clientIn, String folderNameIn, String worldNameIn, WorldSettings worldSettingsIn, YggdrasilAuthenticationService authServiceIn, MinecraftSessionService sessionServiceIn, GameProfileRepository profileRepoIn, PlayerProfileCache profileCacheIn)
      {
@@ -33,7 +41,7 @@
          this.setServerOwner(clientIn.getSession().getUsername());
          this.setFolderName(folderNameIn);
          this.setWorldName(worldNameIn);
-@@ -60,6 +64,11 @@
+@@ -60,6 +65,11 @@
          this.worldSettings = this.isDemo() ? WorldServerDemo.DEMO_WORLD_SETTINGS : worldSettingsIn;
      }
  
@@ -45,7 +53,7 @@
      public ServerCommandManager createCommandManager()
      {
          return new IntegratedServerCommandManager(this);
-@@ -68,8 +77,6 @@
+@@ -68,8 +78,6 @@
      public void loadAllWorlds(String saveName, String worldNameIn, long seed, WorldType type, String generatorOptions)
      {
          this.convertMapIfNeeded(saveName);
@@ -54,7 +62,7 @@
          ISaveHandler isavehandler = this.getActiveAnvilConverter().getSaveLoader(saveName, true);
          this.setResourcePackFromWorld(this.getFolderName(), isavehandler);
          WorldInfo worldinfo = isavehandler.loadWorldInfo();
-@@ -83,6 +90,7 @@
+@@ -83,6 +91,7 @@
              worldinfo.setWorldName(worldNameIn);
          }
  
@@ -62,7 +70,7 @@
          for (int i = 0; i < this.worlds.length; ++i)
          {
              int j = 0;
-@@ -117,10 +125,25 @@
+@@ -117,10 +126,25 @@
  
              this.worlds[i].addEventListener(new ServerWorldEventHandler(this, this.worlds[i]));
          }
@@ -90,9 +98,12 @@
          {
              this.setDifficultyForAllWorlds(this.mc.gameSettings.difficulty);
          }
-@@ -138,9 +161,10 @@
+@@ -136,11 +160,12 @@
+         this.setCanSpawnNPCs(true);
+         this.setAllowPvp(true);
          this.setAllowFlight(true);
-         LOGGER.info("Generating keypair");
+-        LOGGER.info("Generating keypair");
++        LOGGER.info(Message.getString("mohist.start.gen_key"));
          this.setKeyPair(CryptManager.generateKeyPair());
 +        if (!net.minecraftforge.fml.common.FMLCommonHandler.instance().handleServerAboutToStart(this)) return false;
          this.loadAllWorlds(this.getFolderName(), this.getWorldName(), this.worldSettings.getSeed(), this.worldSettings.getTerrainType(), this.worldSettings.getGeneratorOptions());
@@ -102,7 +113,7 @@
      }
  
      public void tick()
-@@ -213,6 +237,7 @@
+@@ -213,6 +238,7 @@
  
      public EnumDifficulty getDifficulty()
      {
@@ -110,7 +121,7 @@
          return this.mc.world.getWorldInfo().getDifficulty();
      }
  
-@@ -353,7 +378,11 @@
+@@ -353,7 +379,11 @@
  
      public void stopServer()
      {
@@ -123,7 +134,7 @@
  
          if (this.lanServerPing != null)
          {
-@@ -364,6 +393,7 @@
+@@ -364,6 +394,7 @@
  
      public void initiateShutdown()
      {

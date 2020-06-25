@@ -9,7 +9,15 @@
  import net.minecraft.client.network.NetHandlerHandshakeMemory;
  import net.minecraft.crash.CrashReport;
  import net.minecraft.crash.CrashReportCategory;
-@@ -49,21 +51,21 @@
+@@ -41,6 +43,7 @@
+ import net.minecraftforge.fml.relauncher.SideOnly;
+ import org.apache.logging.log4j.LogManager;
+ import org.apache.logging.log4j.Logger;
++import red.mohist.util.i18n.Message;
+ 
+ public class NetworkSystem
+ {
+@@ -49,21 +52,21 @@
      {
          protected NioEventLoopGroup load()
          {
@@ -34,7 +42,7 @@
          }
      };
      private final MinecraftServer mcServer;
-@@ -71,6 +73,9 @@
+@@ -71,6 +74,9 @@
      private final List<ChannelFuture> endpoints = Collections.<ChannelFuture>synchronizedList(Lists.newArrayList());
      private final List<NetworkManager> networkManagers = Collections.<NetworkManager>synchronizedList(Lists.newArrayList());
  
@@ -44,7 +52,7 @@
      public NetworkSystem(MinecraftServer server)
      {
          this.mcServer = server;
-@@ -79,6 +84,7 @@
+@@ -79,6 +85,7 @@
  
      public void addLanEndpoint(InetAddress address, int port) throws IOException
      {
@@ -52,7 +60,16 @@
          synchronized (this.endpoints)
          {
              Class <? extends ServerSocketChannel > oclass;
-@@ -110,9 +116,10 @@
+@@ -94,7 +101,7 @@
+             {
+                 oclass = NioServerSocketChannel.class;
+                 lazyloadbase = SERVER_NIO_EVENTLOOP;
+-                LOGGER.info("Using default channel type");
++                LOGGER.info(Message.getString("mohist.start.channel_type"));
+             }
+ 
+             this.endpoints.add(((ServerBootstrap)((ServerBootstrap)(new ServerBootstrap()).channel(oclass)).childHandler(new ChannelInitializer<Channel>()
+@@ -110,9 +117,10 @@
                          ;
                      }
  
@@ -65,7 +82,7 @@
                      p_initChannel_1_.pipeline().addLast("packet_handler", networkmanager);
                      networkmanager.setNetHandler(new NetHandlerHandshakeTCP(NetworkSystem.this.mcServer, networkmanager));
                  }
-@@ -133,7 +140,8 @@
+@@ -133,7 +141,8 @@
                  {
                      NetworkManager networkmanager = new NetworkManager(EnumPacketDirection.SERVERBOUND);
                      networkmanager.setNetHandler(new NetHandlerHandshakeMemory(NetworkSystem.this.mcServer, networkmanager));
@@ -75,7 +92,7 @@
                      p_initChannel_1_.pipeline().addLast("packet_handler", networkmanager);
                  }
              }).group(SERVER_NIO_EVENTLOOP.getValue()).localAddress(LocalAddress.ANY)).bind().syncUninterruptibly();
-@@ -162,8 +170,16 @@
+@@ -162,8 +171,16 @@
  
      public void networkTick()
      {
@@ -92,7 +109,7 @@
              Iterator<NetworkManager> iterator = this.networkManagers.iterator();
  
              while (iterator.hasNext())
-@@ -208,12 +224,18 @@
+@@ -208,12 +225,18 @@
                      }
                      else
                      {
