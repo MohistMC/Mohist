@@ -149,6 +149,7 @@ public class NetworkDispatcher extends SimpleChannelInboundHandler<Packet<?>> im
         {
             //FML on client, send server hello
             //TODO: Make this cleaner as it uses netty magic 0.o
+
             insertIntoChannel();
         }
         else

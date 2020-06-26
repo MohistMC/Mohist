@@ -54,6 +54,7 @@ public class HandshakeMessageHandler<S extends Enum<S> & IHandshakeState<S>> ext
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception
     {
+
         ctx.channel().attr(fmlHandshakeState).set(initialState);
     }
     @Override

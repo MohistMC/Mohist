@@ -31,4 +31,5 @@ public interface IHandshakeState<S> {
      * The consumer allows to set new state before sending any messages to avoid race conditions.
      */
     void accept(ChannelHandlerContext ctx, @Nullable FMLHandshakeMessage msg, Consumer<? super S> cons);
+
 }

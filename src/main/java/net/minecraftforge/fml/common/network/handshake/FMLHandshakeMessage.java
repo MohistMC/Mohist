@@ -104,6 +104,7 @@ public abstract class FMLHandshakeMessage {
         public void fromBytes(ByteBuf buffer)
         {
             serverProtocolVersion = buffer.readByte();
+
         }
 
         public byte protocolVersion()
