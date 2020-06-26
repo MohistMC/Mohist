@@ -58,5 +58,6 @@ public class NetworkEventFiringHandler extends SimpleChannelInboundHandler<FMLPr
     {
         FMLLog.log.error("NetworkEventFiringHandler exception", cause);
         super.exceptionCaught(ctx, cause);
+         ////   TODOOOOOOOOOOO
     }
 }
