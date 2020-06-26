@@ -44,108 +44,105 @@ import red.mohist.util.i18n.Message;
 enum FMLHandshakeServerState implements IHandshakeState<FMLHandshakeServerState>
 {
     START
-            {
-                @Override
-                public void accept(ChannelHandlerContext ctx, FMLHandshakeMessage msg, Consumer<? super FMLHandshakeServerState> cons)
-                {
-                    cons.accept(HELLO);
-                    NetworkDispatcher dispatcher = ctx.channel().attr(NetworkDispatcher.FML_DISPATCHER).get();
-                    int overrideDim = dispatcher.serverInitiateHandshake();
-                    ctx.writeAndFlush(FMLHandshakeMessage.makeCustomChannelRegistration(NetworkRegistry.INSTANCE.channelNamesFor(Side.SERVER))).addListener(ChannelFutureListener.FIRE_EXCEPTION_ON_FAILURE);
-                    ctx.writeAndFlush(new FMLHandshakeMessage.ServerHello(overrideDim)).addListener(ChannelFutureListener.FIRE_EXCEPTION_ON_FAILURE);
-                }
-            },
+    {
+        @Override
+        public void accept(ChannelHandlerContext ctx, FMLHandshakeMessage msg, Consumer<? super FMLHandshakeServerState> cons)
+        {
+            cons.accept(HELLO);
+            NetworkDispatcher dispatcher = ctx.channel().attr(NetworkDispatcher.FML_DISPATCHER).get();
+            int overrideDim = dispatcher.serverInitiateHandshake();
+            ctx.writeAndFlush(FMLHandshakeMessage.makeCustomChannelRegistration(NetworkRegistry.INSTANCE.channelNamesFor(Side.SERVER))).addListener(ChannelFutureListener.FIRE_EXCEPTION_ON_FAILURE);
+            ctx.writeAndFlush(new FMLHandshakeMessage.ServerHello(overrideDim)).addListener(ChannelFutureListener.FIRE_EXCEPTION_ON_FAILURE);
+        }
+    },
     HELLO
+    {
+        @Override
+        public void accept(ChannelHandlerContext ctx, FMLHandshakeMessage msg, Consumer<? super FMLHandshakeServerState> cons)
+        {
+            // Hello packet first
+            if (msg instanceof FMLHandshakeMessage.ClientHello)
             {
-                @Override
-                public void accept(ChannelHandlerContext ctx, FMLHandshakeMessage msg, Consumer<? super FMLHandshakeServerState> cons)
-                {
-                    // Hello packet first
-                    if (msg instanceof FMLHandshakeMessage.ClientHello)
-                    {
-                        //FMLLog.log.info("Client protocol version {}", Integer.toHexString(((FMLHandshakeMessage.ClientHello)msg).protocolVersion()));
-                        return;
-                    }
+                //FMLLog.log.info("Client protocol version {}", Integer.toHexString(((FMLHandshakeMessage.ClientHello)msg).protocolVersion()));
+                return;
+            }
 
-                    FMLHandshakeMessage.ModList client = (FMLHandshakeMessage.ModList)msg;
-                    NetworkDispatcher dispatcher = ctx.channel().attr(NetworkDispatcher.FML_DISPATCHER).get();
-                    EntityPlayerMP mp = dispatcher.player;
-                    if (MohistForgeUtils.modsblacklist(client.modListAsString())) {
-                        dispatcher.kickWithMessage(MohistConfig.instance.modsblacklistkickMessage.getValue());
-                        return;
-                    }
-                    dispatcher.setModList(client.modList());
-                    if (client.modListSize() > 0) {
-                        PlayerAPI.mods.put(mp, client.modListSize());
-                        PlayerAPI.modlist.put(mp, client.modListAsString());
-                    }
-                    if (!MohistConfig.instance.hideJoinModsList.getValue()) {
-                        FMLLog.log.info(Message.getFormatString("client.join.mods", new Object[]{ client.modListSize() }) + " : " + client.modListAsString());
-                    } else {
-                        FMLLog.log.info(Message.getFormatString("client.join.mods", new Object[]{client.modListSize()}));
-                    }
+            FMLHandshakeMessage.ModList client = (FMLHandshakeMessage.ModList)msg;
+            NetworkDispatcher dispatcher = ctx.channel().attr(NetworkDispatcher.FML_DISPATCHER).get();
+            EntityPlayerMP mp = dispatcher.player;
+            if (MohistForgeUtils.modsblacklist(client.modListAsString())) {
+                dispatcher.kickWithMessage(MohistConfig.instance.modsblacklistkickMessage.getValue());
+                return;
+            }
+            dispatcher.setModList(client.modList());
+            if (client.modListSize() > 0) {
+                PlayerAPI.mods.put(mp, client.modListSize());
+                PlayerAPI.modlist.put(mp, client.modListAsString());
+            }
+            if (!MohistConfig.instance.hideJoinModsList.getValue()) {
+                FMLLog.log.info(Message.getFormatString("client.join.mods", new Object[]{ client.modListSize() }) + " : " + client.modListAsString());
+            } else {
+                FMLLog.log.info(Message.getFormatString("client.join.mods", new Object[]{client.modListSize()}));
+            }
 
-                    String modRejections = FMLNetworkHandler.checkModList(client, Side.CLIENT);
-                    if (modRejections != null)
-                    {
-                        cons.accept(ERROR);
-                        dispatcher.rejectHandshake(modRejections);
-                        return;
-                    }
-                    cons.accept(WAITINGCACK);
-                    ctx.writeAndFlush(new FMLHandshakeMessage.ModList(Loader.instance().getActiveModList()));
-                }
-            },
+            String modRejections = FMLNetworkHandler.checkModList(client, Side.CLIENT);
+            if (modRejections != null)
+            {
+                cons.accept(ERROR);
+                dispatcher.rejectHandshake(modRejections);
+                return;
+            }
+            cons.accept(WAITINGCACK);
+            ctx.writeAndFlush(new FMLHandshakeMessage.ModList(Loader.instance().getActiveModList()));
+        }
+    },
     WAITINGCACK
+    {
+        @Override
+        public void accept(ChannelHandlerContext ctx, FMLHandshakeMessage msg, Consumer<? super FMLHandshakeServerState> cons)
+        {
+            cons.accept(COMPLETE);
+            if (!ctx.channel().attr(NetworkDispatcher.IS_LOCAL).get())
             {
-                @Override
-                public void accept(ChannelHandlerContext ctx, FMLHandshakeMessage msg, Consumer<? super FMLHandshakeServerState> cons)
+                Map<ResourceLocation, ForgeRegistry.Snapshot> snapshot = RegistryManager.ACTIVE.takeSnapshot(false);
+                Iterator<Map.Entry<ResourceLocation, ForgeRegistry.Snapshot>> itr = snapshot.entrySet().iterator();
+                while (itr.hasNext())
                 {
-                    cons.accept(COMPLETE);
-                    if (!ctx.channel().attr(NetworkDispatcher.IS_LOCAL).get())
-                    {
-                        Map<ResourceLocation, ForgeRegistry.Snapshot> snapshot = RegistryManager.ACTIVE.takeSnapshot(false);
-                        Iterator<Map.Entry<ResourceLocation, ForgeRegistry.Snapshot>> itr = snapshot.entrySet().iterator();
-                        while (itr.hasNext())
-                        {
-                            Entry<ResourceLocation, ForgeRegistry.Snapshot> e = itr.next();
-                            if ("minecraft:dataserializers".equals(e.getKey().toString()) && !ForgeVersion.isCompatibleLowForge(ctx.channel().attr(NetworkDispatcher.FML_DISPATCHER).get().getModList())){
-                                continue;
-                            }
-                            ctx.writeAndFlush(new FMLHandshakeMessage.RegistryData(itr.hasNext(), e.getKey(), e.getValue())).addListener(ChannelFutureListener.FIRE_EXCEPTION_ON_FAILURE);
-                        }
+                    Entry<ResourceLocation, ForgeRegistry.Snapshot> e = itr.next();
+                    if ("minecraft:dataserializers".equals(e.getKey().toString()) && !ForgeVersion.isCompatibleLowForge(ctx.channel().attr(NetworkDispatcher.FML_DISPATCHER).get().getModList())){
+                        continue;
                     }
-                    ctx.writeAndFlush(new FMLHandshakeMessage.HandshakeAck(ordinal())).addListener(ChannelFutureListener.FIRE_EXCEPTION_ON_FAILURE);
-                    NetworkRegistry.INSTANCE.fireNetworkHandshake(ctx.channel().attr(NetworkDispatcher.FML_DISPATCHER).get(), Side.SERVER);
+                    ctx.writeAndFlush(new FMLHandshakeMessage.RegistryData(itr.hasNext(), e.getKey(), e.getValue())).addListener(ChannelFutureListener.FIRE_EXCEPTION_ON_FAILURE);
                 }
-            },
+            }
+            ctx.writeAndFlush(new FMLHandshakeMessage.HandshakeAck(ordinal())).addListener(ChannelFutureListener.FIRE_EXCEPTION_ON_FAILURE);
+            NetworkRegistry.INSTANCE.fireNetworkHandshake(ctx.channel().attr(NetworkDispatcher.FML_DISPATCHER).get(), Side.SERVER);
+        }
+    },
     COMPLETE
-            {
-                @Override
-                public void accept(ChannelHandlerContext ctx, FMLHandshakeMessage msg, Consumer<? super FMLHandshakeServerState> cons)
-                {
-                    cons.accept(DONE);
-                    // Poke the client
-                    ctx.writeAndFlush(new FMLHandshakeMessage.HandshakeAck(ordinal())).addListener(ChannelFutureListener.FIRE_EXCEPTION_ON_FAILURE);
-                    FMLMessage.CompleteHandshake complete = new FMLMessage.CompleteHandshake(Side.SERVER);
-                    ctx.fireChannelRead(complete);
-                }
-            },
+    {
+        @Override
+        public void accept(ChannelHandlerContext ctx, FMLHandshakeMessage msg, Consumer<? super FMLHandshakeServerState> cons)
+        {
+            cons.accept(DONE);
+            // Poke the client
+            ctx.writeAndFlush(new FMLHandshakeMessage.HandshakeAck(ordinal())).addListener(ChannelFutureListener.FIRE_EXCEPTION_ON_FAILURE);
+            FMLMessage.CompleteHandshake complete = new FMLMessage.CompleteHandshake(Side.SERVER);
+            ctx.fireChannelRead(complete);
+        }
+    },
     DONE
-            {
-                @Override
-                public void accept(ChannelHandlerContext ctx, FMLHandshakeMessage msg, Consumer<? super FMLHandshakeServerState> cons)
-                {
-                }
-            },
+    {
+        @Override
+        public void accept(ChannelHandlerContext ctx, FMLHandshakeMessage msg, Consumer<? super FMLHandshakeServerState> cons)
+        {
+        }
+    },
     ERROR
-            {
-                private final Object ChannelContextTransform = FMLHandshakeServerState.valueOf("todo");
-                   //TODO Consumer
-                @Override
-                public void accept(ChannelHandlerContext ctx, FMLHandshakeMessage msg, Consumer<? super FMLHandshakeServerState> cons)
-                {
-                    //TODO some modify
-                }
-            };
+    {
+        @Override
+        public void accept(ChannelHandlerContext ctx, FMLHandshakeMessage msg, Consumer<? super FMLHandshakeServerState> cons)
+        {
+        }
+    };
 }
