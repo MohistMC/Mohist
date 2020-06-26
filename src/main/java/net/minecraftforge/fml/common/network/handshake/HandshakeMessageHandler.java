@@ -23,7 +23,6 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.util.AttributeKey;
 import net.minecraftforge.fml.common.FMLLog;
-import red.mohist.util.i18n.Message;
 
 public class HandshakeMessageHandler<S extends Enum<S> & IHandshakeState<S>> extends SimpleChannelInboundHandler<FMLHandshakeMessage> {
     private static final AttributeKey<IHandshakeState<?>> STATE = AttributeKey.valueOf("fml:handshake-state");
@@ -72,7 +71,7 @@ public class HandshakeMessageHandler<S extends Enum<S> & IHandshakeState<S>> ext
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception
     {
-        FMLLog.log.error(Message.getString("fml.log.10"), cause);
+        FMLLog.log.error("HandshakeMessageHandler exception", cause);
         ctx.channel().attr(fmlHandshakeState).set(errorState);
         super.exceptionCaught(ctx, cause);
     }
