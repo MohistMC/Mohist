@@ -33,12 +33,14 @@ public class FMLNetworkEvent<T extends INetHandler> extends Event {
     private final T handler;
     private final NetworkManager manager;
     private final Class<T> type;
+    private final Class<T> handle;
 
     FMLNetworkEvent(T thing, Class<T> type, NetworkManager manager)
     {
         this.handler = thing;
         this.type = type;
         this.manager = manager;
+        this.handle = getType();
     }
     
     public Class<T> getHandlerType()

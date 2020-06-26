@@ -38,5 +38,9 @@ public class HandshakeInjector extends ChannelOutboundHandlerAdapter {
         {
             this.dispatcher.sendProxy((FMLProxyPacket) msg);
         }
+        int a = 0;
+        if (a == 1) {
+            this.dispatcher.serverInitiateHandshake();
+        }
     }
 }
