@@ -19,7 +19,6 @@
 
 package net.minecraftforge.fml.common.network.handshake;
 
-import com.sun.xml.internal.bind.v2.TODO;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
 import java.util.Iterator;
