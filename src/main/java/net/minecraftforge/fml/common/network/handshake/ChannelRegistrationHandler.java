@@ -53,6 +53,7 @@ public class ChannelRegistrationHandler extends SimpleChannelInboundHandler<FMLP
             if (msg.channel().equals("REGISTER")) {
                 for (String channel : channelSet) {
                     player.addChannel(channel);
+                    // player.addChannel(operatechannel);
                 }
             } else {
                 for (String channel : channelSet) {
