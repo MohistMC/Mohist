@@ -8,7 +8,7 @@
  import com.mojang.authlib.GameProfile;
  import com.mojang.authlib.exceptions.AuthenticationUnavailableException;
  import io.netty.channel.ChannelFuture;
-@@ -29,10 +31,14 @@
+@@ -29,10 +31,15 @@
  import net.minecraft.util.CryptManager;
  import net.minecraft.util.ITickable;
  import net.minecraft.util.text.ITextComponent;
@@ -20,10 +20,11 @@
 +import org.bukkit.craftbukkit.v1_12_R1.util.Waitable;
 +import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
 +import org.bukkit.event.player.PlayerPreLoginEvent;
++import red.mohist.util.i18n.Message;
  
  public class NetHandlerLoginServer implements INetHandlerLoginServer, ITickable
  {
-@@ -42,13 +48,15 @@
+@@ -42,13 +49,15 @@
      private final byte[] verifyToken = new byte[4];
      private final MinecraftServer server;
      public final NetworkManager networkManager;
@@ -40,7 +41,7 @@
      public NetHandlerLoginServer(MinecraftServer serverIn, NetworkManager networkManagerIn)
      {
          this.server = serverIn;
-@@ -58,18 +66,22 @@
+@@ -58,18 +67,22 @@
  
      public void update()
      {
@@ -68,7 +69,7 @@
                  this.player = null;
              }
          }
-@@ -80,6 +92,19 @@
+@@ -80,6 +93,19 @@
          }
      }
  
@@ -88,7 +89,7 @@
      public void disconnect(ITextComponent reason)
      {
          try
-@@ -94,22 +119,43 @@
+@@ -94,22 +120,43 @@
          }
      }
  
@@ -139,7 +140,7 @@
  
              if (this.server.getNetworkCompressionThreshold() >= 0 && !this.networkManager.isLocalChannel())
              {
-@@ -127,12 +173,12 @@
+@@ -127,19 +174,19 @@
  
              if (entityplayermp != null)
              {
@@ -155,7 +156,15 @@
              }
          }
      }
-@@ -149,23 +195,35 @@
+ 
+     public void onDisconnect(ITextComponent reason)
+     {
+-        LOGGER.info("{} lost connection: {}", this.getConnectionInfo(), reason.getUnformattedText());
++        LOGGER.info(Message.getString("server.connect.lost_connection"), this.getConnectionInfo(), reason.getUnformattedText());
+     }
+ 
+     public String getConnectionInfo()
+@@ -149,23 +196,35 @@
  
      public void processLoginStart(CPacketLoginStart packetIn)
      {
@@ -195,7 +204,7 @@
          PrivateKey privatekey = this.server.getKeyPair().getPrivate();
  
          if (!Arrays.equals(this.verifyToken, packetIn.getVerifyToken(privatekey)))
-@@ -175,9 +233,9 @@
+@@ -175,9 +234,9 @@
          else
          {
              this.secretKey = packetIn.getSecretKey(privatekey);
@@ -207,7 +216,7 @@
              {
                  public void run()
                  {
-@@ -190,14 +248,18 @@
+@@ -190,14 +249,18 @@
  
                          if (NetHandlerLoginServer.this.loginGameProfile != null)
                          {
@@ -229,7 +238,7 @@
                          }
                          else
                          {
-@@ -211,13 +273,16 @@
+@@ -211,13 +274,17 @@
                          {
                              NetHandlerLoginServer.LOGGER.warn("Authentication servers are down but will let them in anyway!");
                              NetHandlerLoginServer.this.loginGameProfile = NetHandlerLoginServer.this.getOfflineProfile(gameprofile);
@@ -244,11 +253,12 @@
 +                        // CraftBukkit start - catch all exceptions
 +                    } catch (Exception exception) {
 +                        disconnect(new TextComponentTranslation("Failed to verify username!"));
++                        //
 +                        // CraftBukkit end
                      }
                  }
                  @Nullable
-@@ -230,6 +295,55 @@
+@@ -230,6 +297,55 @@
          }
      }
  
@@ -295,7 +305,7 @@
 +                }
 +            }
 +            // CraftBukkit end
-+            NetHandlerLoginServer.LOGGER.info("UUID of player {} is {}", NetHandlerLoginServer.this.loginGameProfile.getName(), NetHandlerLoginServer.this.loginGameProfile.getId());
++            NetHandlerLoginServer.LOGGER.info(Message.getString("server.connect.uuid"), NetHandlerLoginServer.this.loginGameProfile.getName(), NetHandlerLoginServer.this.loginGameProfile.getId());
 +            NetHandlerLoginServer.this.currentLoginState = NetHandlerLoginServer.LoginState.READY_TO_ACCEPT;
 +        }
 +    }

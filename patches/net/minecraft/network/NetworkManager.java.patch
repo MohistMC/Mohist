@@ -1,6 +1,15 @@
 --- ../src-base/minecraft/net/minecraft/network/NetworkManager.java
 +++ ../src-work/minecraft/net/minecraft/network/NetworkManager.java
-@@ -76,23 +76,39 @@
+@@ -45,6 +45,8 @@
+ import org.apache.logging.log4j.Logger;
+ import org.apache.logging.log4j.Marker;
+ import org.apache.logging.log4j.MarkerManager;
++import red.mohist.Mohist;
++import red.mohist.util.i18n.Message;
+ 
+ public class NetworkManager extends SimpleChannelInboundHandler < Packet<? >>
+ {
+@@ -76,23 +78,39 @@
      private final EnumPacketDirection direction;
      private final Queue<NetworkManager.InboundHandlerTuplePacketListener> outboundPacketsQueue = Queues.<NetworkManager.InboundHandlerTuplePacketListener>newConcurrentLinkedQueue();
      private final ReentrantReadWriteLock readWriteLock = new ReentrantReadWriteLock();
@@ -42,7 +51,7 @@
  
          try
          {
-@@ -204,7 +220,7 @@
+@@ -204,7 +222,7 @@
          final EnumConnectionState enumconnectionstate = EnumConnectionState.getFromPacket(inPacket);
          final EnumConnectionState enumconnectionstate1 = (EnumConnectionState)this.channel.attr(PROTOCOL_ATTRIBUTE_KEY).get();
  
@@ -51,7 +60,7 @@
          {
              LOGGER.debug("Disabled auto read");
              this.channel.config().setAutoRead(false);
-@@ -212,7 +228,7 @@
+@@ -212,7 +230,7 @@
  
          if (this.channel.eventLoop().inEventLoop())
          {
@@ -60,7 +69,7 @@
              {
                  this.setConnectionState(enumconnectionstate);
              }
-@@ -232,7 +248,7 @@
+@@ -232,7 +250,7 @@
              {
                  public void run()
                  {
@@ -69,7 +78,7 @@
                      {
                          NetworkManager.this.setConnectionState(enumconnectionstate);
                      }
-@@ -293,9 +309,12 @@
+@@ -293,9 +311,12 @@
  
      public void closeChannel(ITextComponent message)
      {
@@ -83,7 +92,7 @@
              this.terminationReason = message;
          }
      }
-@@ -308,6 +327,7 @@
+@@ -308,6 +329,7 @@
      @SideOnly(Side.CLIENT)
      public static NetworkManager createNetworkManagerAndConnect(InetAddress address, int serverPort, boolean useNativeTransport)
      {
@@ -91,7 +100,7 @@
          final NetworkManager networkmanager = new NetworkManager(EnumPacketDirection.CLIENTBOUND);
          Class <? extends SocketChannel > oclass;
          LazyLoadBase <? extends EventLoopGroup > lazyloadbase;
-@@ -404,7 +424,7 @@
+@@ -404,7 +426,7 @@
              }
              else
              {
@@ -100,7 +109,16 @@
              }
  
              if (this.channel.pipeline().get("compress") instanceof NettyCompressionEncoder)
-@@ -454,6 +474,11 @@
+@@ -436,7 +458,7 @@
+         {
+             if (this.disconnected)
+             {
+-                LOGGER.warn("handleDisconnection() called twice");
++                Mohist.LOGGER.warn(Message.getString("server.connect.handler_disconnection"));
+             }
+             else
+             {
+@@ -454,6 +476,11 @@
          }
      }
  
@@ -112,7 +130,7 @@
      static class InboundHandlerTuplePacketListener
          {
              private final Packet<?> packet;
-@@ -465,4 +490,12 @@
+@@ -465,4 +492,12 @@
                  this.futureListeners = inFutureListeners;
              }
          }
