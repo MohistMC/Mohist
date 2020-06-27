@@ -6,7 +6,7 @@ import org.apache.logging.log4j.Logger;
 import red.mohist.bukkit.AutoDeletePlugins;
 import red.mohist.bukkit.nms.MappingFix;
 import red.mohist.configuration.MohistConfigUtil;
-import red.mohist.network.download.DownloadLibraries;
+import red.mohist.network.download.FileDownload;
 import red.mohist.network.download.UpdateUtils;
 import red.mohist.forge.AutoDeleteMods;
 import red.mohist.util.EulaUtil;
@@ -41,7 +41,7 @@ public class Mohist {
                 "                                                    \n" +
                 "\n");
         System.out.println("                                      " + Message.getString("forge.serverlanunchwrapper.1"));
-        if(UpdateUtils.isCheckLibs()) DownloadLibraries.run();
+        if(UpdateUtils.isCheckLibs()) FileDownload.run();
         MappingFix.init();
         if(!EulaUtil.hasAcceptedEULA()) {
             System.out.println(Message.getString("eula"));

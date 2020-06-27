@@ -19,7 +19,7 @@ import red.mohist.configuration.MohistConfigUtil;
 import red.mohist.util.JarLoader;
 import red.mohist.util.i18n.Message;
 
-public class DownloadLibraries {
+public class FileDownload {
     static boolean needToRecheck = false;
     static int retry = 0;
     static FileChannel fileChannel;
@@ -29,7 +29,7 @@ public class DownloadLibraries {
         String str;
         String url = "https://www.mgazul.cn/";
         if (Message.isCN()) url = "https://mohist-community.gitee.io/mohistdown/"; //Gitee Mirror
-        BufferedReader b = new BufferedReader(new InputStreamReader(DownloadLibraries.class.getClassLoader().getResourceAsStream("lib.red")));
+        BufferedReader b = new BufferedReader(new InputStreamReader(FileDownload.class.getClassLoader().getResourceAsStream("lib.red")));
         while ((str = b.readLine()) != null) {
             String[] args = str.split("\\|");
             if (args.length == 2) {
