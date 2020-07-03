@@ -32,16 +32,25 @@
  
  public class EntityDragon extends EntityLiving implements IEntityMultiPart, IMob
  {
-@@ -78,6 +83,8 @@
+@@ -78,6 +83,17 @@
      private final int[] neighbors = new int[24];
      private final PathHeap pathFindQueue = new PathHeap();
  
 +    private Explosion explosionSource = new Explosion(null, this, Double.NaN, Double.NaN, Double.NaN, Float.NaN, true, true); // CraftBukkit - reusable source for CraftTNTPrimed.getSource()
 +
++    public final int getDeathTicks() {
++        return this.deathTicks;
++    }
++
++    public final void setDeathTicks(final int value) {
++        this.deathTicks = value;
++    }
++    // Paper
++
      public EntityDragon(World worldIn)
      {
          super(worldIn);
-@@ -241,7 +248,7 @@
+@@ -241,7 +257,7 @@
  
                      Vec3d vec3d = iphase.getTargetLocation();
  
@@ -50,7 +59,7 @@
                      {
                          double d6 = vec3d.x - this.posX;
                          double d7 = vec3d.y - this.posY;
-@@ -411,7 +418,13 @@
+@@ -411,7 +427,13 @@
              }
              else if (this.ticksExisted % 10 == 0 && this.getHealth() < this.getMaxHealth())
              {
@@ -65,7 +74,7 @@
              }
          }
  
-@@ -488,7 +501,10 @@
+@@ -488,7 +510,10 @@
          int j1 = MathHelper.floor(p_70972_1_.maxZ);
          boolean flag = false;
          boolean flag1 = false;
@@ -77,7 +86,7 @@
          for (int k1 = i; k1 <= l; ++k1)
          {
              for (int l1 = j; l1 <= i1; ++l1)
-@@ -499,17 +515,21 @@
+@@ -499,17 +524,21 @@
                      IBlockState iblockstate = this.world.getBlockState(blockpos);
                      Block block = iblockstate.getBlock();
  
@@ -103,7 +112,7 @@
                              }
                              else
                              {
-@@ -525,6 +545,41 @@
+@@ -525,6 +554,41 @@
              }
          }
  
@@ -145,7 +154,7 @@
          if (flag1)
          {
              double d0 = p_70972_1_.minX + (p_70972_1_.maxX - p_70972_1_.minX) * (double)this.rand.nextFloat();
-@@ -638,7 +693,23 @@
+@@ -638,7 +702,23 @@
  
              if (this.deathTicks == 1)
              {
@@ -170,3 +179,19 @@
              }
          }
  
+@@ -904,6 +984,7 @@
+     {
+         super.writeEntityToNBT(compound);
+         compound.setInteger("DragonPhase", this.phaseManager.getCurrentPhase().getType().getId());
++        compound.setInteger("Paper.DeathTick", this.getDeathTicks());
+     }
+ 
+     public void readEntityFromNBT(NBTTagCompound compound)
+@@ -914,6 +995,7 @@
+         {
+             this.phaseManager.setPhase(PhaseList.getById(compound.getInteger("DragonPhase")));
+         }
++        this.setDeathTicks(compound.getInteger("Paper.DeathTick")); // Paper
+     }
+ 
+     protected void despawnEntity()

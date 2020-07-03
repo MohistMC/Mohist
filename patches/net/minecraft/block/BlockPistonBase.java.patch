@@ -54,10 +54,28 @@
              }
              else
              {
-@@ -349,11 +364,78 @@
+@@ -333,13 +348,11 @@
+         {
+             return false;
+         }
+-        else
+-        {
++        else {
+             List<BlockPos> list = blockpistonstructurehelper.getBlocksToMove();
+             List<IBlockState> list1 = Lists.<IBlockState>newArrayList();
+ 
+-            for (int i = 0; i < list.size(); ++i)
+-            {
++            for (int i = 0; i < list.size(); ++i) {
+                 BlockPos blockpos = list.get(i);
+                 list1.add(worldIn.getBlockState(blockpos).getActualState(worldIn, blockpos));
+             }
+@@ -349,24 +362,101 @@
              IBlockState[] aiblockstate = new IBlockState[k];
              EnumFacing enumfacing = extending ? direction : direction.getOpposite();
  
+-            for (int j = list2.size() - 1; j >= 0; --j)
+-            {
 +            final org.bukkit.block.Block bblock = worldIn.getWorld().getBlockAt(pos.getX(), pos.getY(), pos.getZ());
 +
 +            final List<BlockPos> moved = blockpistonstructurehelper.getBlocksToMove();
@@ -123,8 +141,7 @@
 +                return false;
 +            }
 +
-             for (int j = list2.size() - 1; j >= 0; --j)
-             {
++            for (int j = list2.size() - 1; j >= 0; --j) {
                  BlockPos blockpos1 = list2.get(j);
                  IBlockState iblockstate = worldIn.getBlockState(blockpos1);
 -                iblockstate.getBlock().dropBlockAsItem(worldIn, blockpos1, iblockstate, 0);
@@ -134,7 +151,33 @@
                  worldIn.setBlockState(blockpos1, Blocks.AIR.getDefaultState(), 4);
                  --k;
                  aiblockstate[k] = iblockstate;
-@@ -434,6 +516,13 @@
+             }
+ 
+-            for (int l = list.size() - 1; l >= 0; --l)
+-            {
++            for (int l = list.size() - 1; l >= 0; --l) {
+                 BlockPos blockpos3 = list.get(l);
+                 IBlockState iblockstate2 = worldIn.getBlockState(blockpos3);
++                // Paper start - fix a variety of piston desync dupes
++                boolean allowDesync = com.destroystokyo.paper.PaperMCConfig.allowPistonDuplication;
++                BlockPos oldPos = blockpos3 = (BlockPos) list.get(k);
++                iblockstate2 = allowDesync ? worldIn.getBlockState(oldPos) : null;
++                // Paper end - fix a variety of piston desync dupes
+                 worldIn.setBlockState(blockpos3, Blocks.AIR.getDefaultState(), 2);
+                 blockpos3 = blockpos3.offset(enumfacing);
+                 worldIn.setBlockState(blockpos3, Blocks.PISTON_EXTENSION.getDefaultState().withProperty(FACING, direction), 4);
++                // Paper start - fix a variety of piston desync dupes
++                if (!allowDesync) {
++                    iblockstate2 = worldIn.getBlockState(oldPos);
++                }
+                 worldIn.setTileEntity(blockpos3, BlockPistonMoving.createTilePiston(list1.get(l), direction, extending, false));
++                if (!allowDesync) {
++                    worldIn.setBlockState(oldPos, Blocks.AIR.getDefaultState(), 4 | 16 | 1024); // set air to prevent later physics updates from seeing this block
++                }
+                 --k;
+                 aiblockstate[k] = iblockstate2;
+             }
+@@ -434,6 +524,13 @@
          return new BlockStateContainer(this, new IProperty[] {FACING, EXTENDED});
      }
  

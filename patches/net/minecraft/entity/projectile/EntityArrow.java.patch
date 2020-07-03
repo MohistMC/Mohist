@@ -19,7 +19,7 @@
  
  public abstract class EntityArrow extends Entity implements IProjectile
  {
-@@ -47,21 +52,33 @@
+@@ -47,21 +52,39 @@
          }
      });
      private static final DataParameter<Byte> CRITICAL = EntityDataManager.<Byte>createKey(EntityArrow.class, DataSerializers.BYTE);
@@ -43,7 +43,13 @@
      private double damage;
 -    private int knockbackStrength;
 +    public int knockbackStrength;
++    protected abstract ItemStack getItemStack();
  
++    public ItemStack getOriginalItemStack() {
++        return getItemStack();
++    }
++    // Paper - OBFHelper
++
 +    // Spigot Start
 +    @Override
 +    public void inactiveTick()
@@ -59,7 +65,7 @@
      public EntityArrow(World worldIn)
      {
          super(worldIn);
-@@ -83,6 +100,7 @@
+@@ -83,6 +106,7 @@
      {
          this(worldIn, shooter.posX, shooter.posY + (double)shooter.getEyeHeight() - 0.10000000149011612D, shooter.posZ);
          this.shootingEntity = shooter;
@@ -67,7 +73,7 @@
  
          if (shooter instanceof EntityPlayer)
          {
-@@ -222,7 +240,7 @@
+@@ -222,7 +246,7 @@
              {
                  ++this.ticksInGround;
  
@@ -76,7 +82,7 @@
                  {
                      this.setDead();
                  }
-@@ -262,7 +280,7 @@
+@@ -262,7 +286,7 @@
                  }
              }
  
@@ -85,7 +91,7 @@
              {
                  this.onHit(raytraceresult);
              }
-@@ -339,7 +357,7 @@
+@@ -339,7 +363,7 @@
      protected void onHit(RayTraceResult raytraceResultIn)
      {
          Entity entity = raytraceResultIn.entityHit;
@@ -94,7 +100,7 @@
          if (entity != null)
          {
              float f = MathHelper.sqrt(this.motionX * this.motionX + this.motionY * this.motionY + this.motionZ * this.motionZ);
-@@ -363,7 +381,12 @@
+@@ -363,7 +387,12 @@
  
              if (this.isBurning() && !(entity instanceof EntityEnderman))
              {
@@ -108,7 +114,7 @@
              }
  
              if (entity.attackEntityFrom(damagesource, (float)i))
-@@ -565,14 +588,24 @@
+@@ -565,14 +594,24 @@
  
          this.setIsCritical(compound.getBoolean("crit"));
      }
@@ -137,7 +143,7 @@
              {
                  flag = false;
              }
-@@ -584,7 +617,6 @@
+@@ -584,7 +623,6 @@
              }
          }
      }
@@ -145,7 +151,7 @@
      protected abstract ItemStack getArrowStack();
  
      protected boolean canTriggerWalking()
-@@ -655,7 +687,13 @@
+@@ -655,7 +693,13 @@
  
          if (EnchantmentHelper.getMaxEnchantmentLevel(Enchantments.FLAME, p_190547_1_) > 0)
          {
