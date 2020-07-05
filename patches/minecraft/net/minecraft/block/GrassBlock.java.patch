@@ -5,7 +5,7 @@
  
                 if (blockstate1.func_196955_c(p_225535_1_, blockpos1)) {
 -                  p_225535_1_.func_180501_a(blockpos1, blockstate1, 3);
-+                  org.bukkit.craftbukkit.v1_15_R1.event.CraftEventFactory.handleBlockGrowEvent(p_225535_1_, blockpos1, blockstate1, 3); // CraftBukkit
++                  org.bukkit.craftbukkit.event.CraftEventFactory.handleBlockGrowEvent(p_225535_1_, blockpos1, blockstate1, 3); // CraftBukkit
                 }
                 break;
              }

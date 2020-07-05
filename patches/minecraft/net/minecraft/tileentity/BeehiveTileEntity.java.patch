@@ -50,7 +50,7 @@
 +      if (this.field_226958_a_.size() < this.maxBees) { // CraftBukkit
 +         // CraftBukkit start
 +         if (this.field_145850_b != null) {
-+            org.bukkit.event.entity.EntityEnterBlockEvent event = new org.bukkit.event.entity.EntityEnterBlockEvent(p_226962_1_.getBukkitEntity(), org.bukkit.craftbukkit.v1_15_R1.block.CraftBlock.at(field_145850_b, func_174877_v()));
++            org.bukkit.event.entity.EntityEnterBlockEvent event = new org.bukkit.event.entity.EntityEnterBlockEvent(p_226962_1_.getBukkitEntity(), org.bukkit.craftbukkit.block.CraftBlock.at(field_145850_b, func_174877_v()));
 +            org.bukkit.Bukkit.getPluginManager().callEvent(event);
 +            if (event.isCancelled()) {
 +               if (p_226962_1_ instanceof BeeEntity) {

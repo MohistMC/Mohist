@@ -4,8 +4,8 @@
  import net.minecraftforge.api.distmarker.OnlyIn;
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
-+import org.bukkit.craftbukkit.v1_15_R1.persistence.CraftPersistentDataContainer;
-+import org.bukkit.craftbukkit.v1_15_R1.persistence.CraftPersistentDataTypeRegistry;
++import org.bukkit.craftbukkit.persistence.CraftPersistentDataContainer;
++import org.bukkit.craftbukkit.persistence.CraftPersistentDataTypeRegistry;
 +import org.bukkit.inventory.InventoryHolder;
  
 -public abstract class TileEntity {

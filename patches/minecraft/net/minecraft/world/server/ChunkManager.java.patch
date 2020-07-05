@@ -133,7 +133,39 @@
     }
  
     boolean func_219243_d(ChunkPos p_219243_1_) {
-@@ -1056,15 +1095,15 @@
+@@ -794,6 +833,7 @@
+    }
+ 
+    void func_219234_a(ServerPlayerEntity p_219234_1_, boolean p_219234_2_) {
++      org.spigotmc.AsyncCatcher.catchOp("player tracker update"); // Spigot
+       boolean flag = this.func_219187_b(p_219234_1_);
+       boolean flag1 = this.field_219271_y.func_219448_c(p_219234_1_);
+       int i = MathHelper.func_76128_c(p_219234_1_.func_226277_ct_()) >> 4;
+@@ -919,6 +959,7 @@
+    }
+ 
+    protected void func_219210_a(Entity p_219210_1_) {
++      org.spigotmc.AsyncCatcher.catchOp("entity track"); // Spigot
+       if (!(p_219210_1_ instanceof EnderDragonPartEntity)) {
+          if (!(p_219210_1_ instanceof LightningBoltEntity)) {
+             EntityType<?> entitytype = p_219210_1_.func_200600_R();
+@@ -947,6 +988,7 @@
+    }
+ 
+    protected void func_219231_b(Entity p_219231_1_) {
++      org.spigotmc.AsyncCatcher.catchOp("entity untrack"); // Spigot
+       if (p_219231_1_ instanceof ServerPlayerEntity) {
+          ServerPlayerEntity serverplayerentity = (ServerPlayerEntity)p_219231_1_;
+          this.func_219234_a(serverplayerentity, false);
+@@ -964,6 +1006,7 @@
+    }
+ 
+    protected void func_219169_g() {
++      org.spigotmc.AsyncCatcher.catchOp("player tracker clear"); // Spigot
+       List<ServerPlayerEntity> list = Lists.newArrayList();
+       List<ServerPlayerEntity> list1 = this.field_219255_i.func_217369_A();
+ 
+@@ -1056,15 +1099,15 @@
        });
     }
  
@@ -152,7 +184,7 @@
           this.field_219403_c = p_i50468_2_;
           this.field_219404_d = p_i50468_3_;
           this.field_219405_e = SectionPos.func_218157_a(p_i50468_2_);
-@@ -1113,7 +1152,7 @@
+@@ -1113,7 +1156,7 @@
  
        public void func_219400_b(ServerPlayerEntity p_219400_1_) {
           if (p_219400_1_ != this.field_219403_c) {
@@ -161,7 +193,7 @@
              int i = Math.min(this.func_229843_b_(), (ChunkManager.this.field_219247_A - 1) * 16);
              boolean flag = vec3d.field_72450_a >= (double)(-i) && vec3d.field_72450_a <= (double)i && vec3d.field_72449_c >= (double)(-i) && vec3d.field_72449_c <= (double)i && this.field_219403_c.func_174827_a(p_219400_1_);
              if (flag) {
-@@ -1126,6 +1165,17 @@
+@@ -1126,6 +1169,17 @@
                    }
                 }
  

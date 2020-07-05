@@ -5,7 +5,7 @@
  import net.minecraftforge.api.distmarker.Dist;
  import net.minecraftforge.api.distmarker.OnlyIn;
 +// CraftBukkit start
-+import org.bukkit.craftbukkit.v1_15_R1.event.CraftEventFactory;
++import org.bukkit.craftbukkit.event.CraftEventFactory;
 +import org.bukkit.event.entity.EntityInteractEvent;
 +// CraftBukkit end
  
@@ -16,13 +16,13 @@
           if (!func_176530_e(p_225534_2_, p_225534_3_) && !p_225534_2_.func_175727_C(p_225534_3_.func_177984_a())) {
              if (i > 0) {
 -               p_225534_2_.func_180501_a(p_225534_3_, p_225534_1_.func_206870_a(field_176531_a, Integer.valueOf(i - 1)), 2);
-+               org.bukkit.craftbukkit.v1_15_R1.event.CraftEventFactory.handleMoistureChangeEvent(p_225534_2_, p_225534_3_, p_225534_1_.func_206870_a(FarmlandBlock.field_176531_a, i - 1), 2); // CraftBukkit
++               org.bukkit.craftbukkit.event.CraftEventFactory.handleMoistureChangeEvent(p_225534_2_, p_225534_3_, p_225534_1_.func_206870_a(FarmlandBlock.field_176531_a, i - 1), 2); // CraftBukkit
              } else if (!func_176529_d(p_225534_2_, p_225534_3_)) {
                 func_199610_d(p_225534_1_, p_225534_2_, p_225534_3_);
              }
           } else if (i < 7) {
 -            p_225534_2_.func_180501_a(p_225534_3_, p_225534_1_.func_206870_a(field_176531_a, Integer.valueOf(7)), 2);
-+            org.bukkit.craftbukkit.v1_15_R1.event.CraftEventFactory.handleMoistureChangeEvent(p_225534_2_, p_225534_3_, p_225534_1_.func_206870_a(FarmlandBlock.field_176531_a, 7), 2); // CraftBukkit
++            org.bukkit.craftbukkit.event.CraftEventFactory.handleMoistureChangeEvent(p_225534_2_, p_225534_3_, p_225534_1_.func_206870_a(FarmlandBlock.field_176531_a, 7), 2); // CraftBukkit
           }
  
        }

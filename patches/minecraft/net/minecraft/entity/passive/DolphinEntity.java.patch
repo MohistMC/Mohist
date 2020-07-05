@@ -5,7 +5,7 @@
           ItemStack itemstack = p_175445_1_.func_92059_d();
           if (this.func_175448_a(itemstack)) {
 +            // CraftBukkit start - call EntityPickupItemEvent
-+            if (org.bukkit.craftbukkit.v1_15_R1.event.CraftEventFactory.callEntityPickupItemEvent(this, p_175445_1_, 0, false).isCancelled()) {
++            if (org.bukkit.craftbukkit.event.CraftEventFactory.callEntityPickupItemEvent(this, p_175445_1_, 0, false).isCancelled()) {
 +               return;
 +            }
 +            // CraftBukkit end

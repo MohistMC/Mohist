@@ -4,9 +4,9 @@
        LivingEntity livingentity = this.func_190552_j();
        if (p_190551_1_.func_70089_S() && !p_190551_1_.func_190530_aW() && p_190551_1_ != livingentity) {
           if (livingentity == null) {
-+            org.bukkit.craftbukkit.v1_15_R1.event.CraftEventFactory.entityDamage = this; // CraftBukkit
++            org.bukkit.craftbukkit.event.CraftEventFactory.entityDamage = this; // CraftBukkit
              p_190551_1_.func_70097_a(DamageSource.field_76376_m, 6.0F);
-+            org.bukkit.craftbukkit.v1_15_R1.event.CraftEventFactory.entityDamage = null; // CraftBukkit
++            org.bukkit.craftbukkit.event.CraftEventFactory.entityDamage = null; // CraftBukkit
           } else {
              if (livingentity.func_184191_r(p_190551_1_)) {
                 return;

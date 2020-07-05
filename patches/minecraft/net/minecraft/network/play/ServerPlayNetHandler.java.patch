@@ -78,14 +78,14 @@
 +import org.bukkit.ChatColor;
 +import org.bukkit.GameMode;
 +import org.bukkit.Location;
-+import org.bukkit.craftbukkit.v1_15_R1.block.CraftSign;
-+import org.bukkit.craftbukkit.v1_15_R1.entity.CraftPlayer;
-+import org.bukkit.craftbukkit.v1_15_R1.event.CraftEventFactory;
-+import org.bukkit.craftbukkit.v1_15_R1.inventory.CraftItemStack;
-+import org.bukkit.craftbukkit.v1_15_R1.util.CraftChatMessage;
-+import org.bukkit.craftbukkit.v1_15_R1.util.CraftMagicNumbers;
-+import org.bukkit.craftbukkit.v1_15_R1.util.LazyPlayerSet;
-+import org.bukkit.craftbukkit.v1_15_R1.util.Waitable;
++import org.bukkit.craftbukkit.block.CraftSign;
++import org.bukkit.craftbukkit.entity.CraftPlayer;
++import org.bukkit.craftbukkit.event.CraftEventFactory;
++import org.bukkit.craftbukkit.inventory.CraftItemStack;
++import org.bukkit.craftbukkit.util.CraftChatMessage;
++import org.bukkit.craftbukkit.util.CraftMagicNumbers;
++import org.bukkit.craftbukkit.util.LazyPlayerSet;
++import org.bukkit.craftbukkit.util.Waitable;
 +import org.bukkit.entity.Player;
 +import org.bukkit.event.Event;
 +import org.bukkit.event.block.Action;
@@ -129,7 +129,7 @@
 +      this.cbserver = p_i1530_1_.server;
     }
  
-+   private final org.bukkit.craftbukkit.v1_15_R1.CraftServer cbserver;
++   private final org.bukkit.craftbukkit.CraftServer cbserver;
 +   public boolean processedDisconnect;
 +   private int lastTick = MinecraftServer.currentTick;
 +   private int allowedPlayerTicks = 1;
@@ -1488,6 +1488,15 @@
        this.field_147369_b.func_143004_u();
        if (this.field_147369_b.field_71070_bA.field_75152_c == p_147338_1_.func_149539_c() && this.field_147369_b.field_71070_bA.func_75129_b(this.field_147369_b) && !this.field_147369_b.func_175149_v()) {
           this.field_147369_b.field_71070_bA.func_75140_a(this.field_147369_b, p_147338_1_.func_149537_d());
+@@ -1176,7 +2148,7 @@
+          boolean flag = p_147344_1_.func_149627_c() < 0;
+          ItemStack itemstack = p_147344_1_.func_149625_d();
+          CompoundNBT compoundnbt = itemstack.func_179543_a("BlockEntityTag");
+-         if (!itemstack.func_190926_b() && compoundnbt != null && compoundnbt.func_74764_b("x") && compoundnbt.func_74764_b("y") && compoundnbt.func_74764_b("z")) {
++         if (!itemstack.func_190926_b() && compoundnbt != null && compoundnbt.func_74764_b("x") && compoundnbt.func_74764_b("y") && compoundnbt.func_74764_b("z") && this.field_147369_b.getBukkitEntity().hasPermission("minecraft.nbt.copy")) { // Spigot
+             BlockPos blockpos = new BlockPos(compoundnbt.func_74762_e("x"), compoundnbt.func_74762_e("y"), compoundnbt.func_74762_e("z"));
+             TileEntity tileentity = this.field_147369_b.field_70170_p.func_175625_s(blockpos);
+             if (tileentity != null) {
 @@ -1190,6 +2162,37 @@
  
           boolean flag1 = p_147344_1_.func_149627_c() >= 1 && p_147344_1_.func_149627_c() <= 45;
@@ -1566,7 +1575,7 @@
 +            lines[i] = TextFormatting.func_110646_a(new StringTextComponent(TextFormatting.func_110646_a(lines[i])).getString());
           }
 -
-+         SignChangeEvent event = new SignChangeEvent((org.bukkit.craftbukkit.v1_15_R1.block.CraftBlock) player.getWorld().getBlockAt(x, y, z), this.cbserver.getPlayer(this.field_147369_b), astring);
++         SignChangeEvent event = new SignChangeEvent((org.bukkit.craftbukkit.block.CraftBlock) player.getWorld().getBlockAt(x, y, z), this.cbserver.getPlayer(this.field_147369_b), astring);
 +         this.cbserver.getPluginManager().callEvent(event);
 +         if (!event.isCancelled()) {
 +            System.arraycopy(CraftSign.sanitizeLines(event.getLines()), 0, signtileentity.field_145915_a, 0, 4);

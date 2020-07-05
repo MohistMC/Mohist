@@ -5,7 +5,7 @@
           } else if (this.func_70877_b(itemstack)) {
              this.func_175505_a(p_184645_1_, itemstack);
 -            if (this.field_70146_Z.nextInt(3) == 0) {
-+            if (this.field_70146_Z.nextInt(3) == 0 && !org.bukkit.craftbukkit.v1_15_R1.event.CraftEventFactory.callEntityTameEvent(this, p_184645_1_).isCancelled()) { // CraftBukkit
++            if (this.field_70146_Z.nextInt(3) == 0 && !org.bukkit.craftbukkit.event.CraftEventFactory.callEntityTameEvent(this, p_184645_1_).isCancelled()) { // CraftBukkit
                 this.func_193101_c(p_184645_1_);
                 this.field_70911_d.func_75270_a(true);
                 this.field_70170_p.func_72960_a(this, (byte)7);

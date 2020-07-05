@@ -4,7 +4,7 @@
  import net.minecraft.world.server.ServerWorld;
  import net.minecraftforge.api.distmarker.Dist;
  import net.minecraftforge.api.distmarker.OnlyIn;
-+import org.bukkit.craftbukkit.v1_15_R1.inventory.CraftBlockInventoryHolder;
++import org.bukkit.craftbukkit.inventory.CraftBlockInventoryHolder;
  
  public class ComposterBlock extends Block implements ISidedInventoryProvider {
     public static final IntegerProperty field_220298_a = BlockStateProperties.field_222509_am;

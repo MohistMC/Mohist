@@ -4,7 +4,7 @@
  import net.minecraft.world.World;
  import net.minecraftforge.api.distmarker.Dist;
  import net.minecraftforge.api.distmarker.OnlyIn;
-+import org.bukkit.craftbukkit.v1_15_R1.event.CraftEventFactory;
++import org.bukkit.craftbukkit.event.CraftEventFactory;
  
  @OnlyIn(
     value = Dist.CLIENT,
@@ -28,7 +28,7 @@
        if (!this.field_70170_p.field_72995_K && this.field_92056_a > this.field_92055_b) {
 -         this.func_213893_k();
 +         // CraftBukkit start
-+         if (!org.bukkit.craftbukkit.v1_15_R1.event.CraftEventFactory.callFireworkExplodeEvent(this).isCancelled()) {
++         if (!org.bukkit.craftbukkit.event.CraftEventFactory.callFireworkExplodeEvent(this).isCancelled()) {
 +            this.func_213893_k();
 +         }
 +         // CraftBukkit end
@@ -41,7 +41,7 @@
        if (p_213892_1_.func_216346_c() == RayTraceResult.Type.ENTITY && !this.field_70170_p.field_72995_K) {
 -         this.func_213893_k();
 +         // CraftBukkit start
-+         if (!org.bukkit.craftbukkit.v1_15_R1.event.CraftEventFactory.callFireworkExplodeEvent(this).isCancelled()) {
++         if (!org.bukkit.craftbukkit.event.CraftEventFactory.callFireworkExplodeEvent(this).isCancelled()) {
 +            this.func_213893_k();
 +         }
 +         // CraftBukkit end
@@ -54,7 +54,7 @@
           if (this.func_213894_l()) {
 -            this.func_213893_k();
 +            // CraftBukkit start
-+            if (!org.bukkit.craftbukkit.v1_15_R1.event.CraftEventFactory.callFireworkExplodeEvent(this).isCancelled()) {
++            if (!org.bukkit.craftbukkit.event.CraftEventFactory.callFireworkExplodeEvent(this).isCancelled()) {
 +               this.func_213893_k();
 +            }
 +            // CraftBukkit end

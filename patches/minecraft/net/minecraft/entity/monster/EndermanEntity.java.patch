@@ -68,7 +68,7 @@
 -            this.field_179475_a.func_195406_b((BlockState)null);
 +         if (blockstate2 != null && this.func_220836_a(iworld, blockpos, blockstate2, blockstate, blockstate1, blockpos1)  && !net.minecraftforge.event.ForgeEventFactory.onBlockPlace(field_179475_a, new net.minecraftforge.common.util.BlockSnapshot(iworld, blockpos, blockstate1), net.minecraft.util.Direction.UP)) {
 +            // CraftBukkit start - Place event
-+            if (!org.bukkit.craftbukkit.v1_15_R1.event.CraftEventFactory.callEntityChangeBlockEvent(this.field_179475_a, blockpos, blockstate2).isCancelled()) {
++            if (!org.bukkit.craftbukkit.event.CraftEventFactory.callEntityChangeBlockEvent(this.field_179475_a, blockpos, blockstate2).isCancelled()) {
 +               iworld.func_180501_a(blockpos, blockstate2, 3);
 +               this.field_179475_a.func_195406_b((BlockState) null);
 +            }
@@ -99,7 +99,7 @@
 -            this.field_179473_a.func_195406_b(blockstate);
 -            world.func_217377_a(blockpos, false);
 +            // CraftBukkit start - Pickup event
-+            if (!org.bukkit.craftbukkit.v1_15_R1.event.CraftEventFactory.callEntityChangeBlockEvent(this.field_179473_a, blockpos, Blocks.field_150350_a.func_176223_P()).isCancelled()) {
++            if (!org.bukkit.craftbukkit.event.CraftEventFactory.callEntityChangeBlockEvent(this.field_179473_a, blockpos, Blocks.field_150350_a.func_176223_P()).isCancelled()) {
 +               this.field_179473_a.func_195406_b(blockstate);
 +               world.func_217377_a(blockpos, false);
 +            }

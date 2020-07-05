@@ -20,7 +20,7 @@
 +   private void triggerNote(World worldIn, BlockPos pos, BlockState data) { // CraftBukkit
 +      if (worldIn.func_175623_d(pos.func_177984_a())) {
 +         // CraftBukkit start
-+         org.bukkit.event.block.NotePlayEvent event = org.bukkit.craftbukkit.v1_15_R1.event.CraftEventFactory.callNotePlayEvent(worldIn, pos, data.func_177229_b(NoteBlock.field_196483_a), data.func_177229_b(NoteBlock.field_196485_c));
++         org.bukkit.event.block.NotePlayEvent event = org.bukkit.craftbukkit.event.CraftEventFactory.callNotePlayEvent(worldIn, pos, data.func_177229_b(NoteBlock.field_196483_a), data.func_177229_b(NoteBlock.field_196485_c));
 +         if (!event.isCancelled()) {
 +            worldIn.func_175641_c(pos, this, 0, 0);
 +         }

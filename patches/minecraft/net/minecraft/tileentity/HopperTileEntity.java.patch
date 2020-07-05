@@ -20,9 +20,9 @@
  import net.minecraft.util.text.TranslationTextComponent;
  import net.minecraft.world.World;
 +// CraftBukkit start
-+import org.bukkit.craftbukkit.v1_15_R1.entity.CraftHumanEntity;
-+import org.bukkit.craftbukkit.v1_15_R1.inventory.CraftInventoryDoubleChest;
-+import org.bukkit.craftbukkit.v1_15_R1.inventory.CraftItemStack;
++import org.bukkit.craftbukkit.entity.CraftHumanEntity;
++import org.bukkit.craftbukkit.inventory.CraftInventoryDoubleChest;
++import org.bukkit.craftbukkit.inventory.CraftItemStack;
 +import org.bukkit.entity.HumanEntity;
 +import org.bukkit.event.inventory.InventoryMoveItemEvent;
 +import org.bukkit.event.inventory.InventoryPickupItemEvent;

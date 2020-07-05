@@ -9,7 +9,7 @@
 +         if (oldPowered != flag) {
 +            int newPower = flag ? 15 : 0;
 +            int oldPower = oldPowered ? 15 : 0;
-+            org.bukkit.block.Block bukkitBlock = org.bukkit.craftbukkit.v1_15_R1.block.CraftBlock.at(p_220069_2_, p_220069_3_);
++            org.bukkit.block.Block bukkitBlock = org.bukkit.craftbukkit.block.CraftBlock.at(p_220069_2_, p_220069_3_);
 +            org.bukkit.event.block.BlockRedstoneEvent eventRedstone = new org.bukkit.event.block.BlockRedstoneEvent(bukkitBlock, oldPower, newPower);
 +            p_220069_2_.getServerCB().getPluginManager().callEvent(eventRedstone);
 +            flag = (eventRedstone.getNewCurrent() > 0);

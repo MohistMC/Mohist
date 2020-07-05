@@ -7,7 +7,7 @@
 -                     p_207186_1_.func_175656_a(blockpos, Blocks.field_150480_ab.func_176223_P());
 +                     // CraftBukkit start - Prevent lava putting something on fire
 +                     if (p_207186_1_.func_180495_p(blockpos).func_177230_c() != Blocks.field_150480_ab) {
-+                        if (org.bukkit.craftbukkit.v1_15_R1.event.CraftEventFactory.callBlockIgniteEvent(p_207186_1_, blockpos, p_207186_2_).isCancelled()) {
++                        if (org.bukkit.craftbukkit.event.CraftEventFactory.callBlockIgniteEvent(p_207186_1_, blockpos, p_207186_2_).isCancelled()) {
 +                           continue;
 +                        }
 +                     }
@@ -24,7 +24,7 @@
 +                  // CraftBukkit start - Prevent lava putting something on fire
 +                  BlockPos up = blockpos1.func_177984_a();
 +                  if (p_207186_1_.func_180495_p(up).func_177230_c() != Blocks.field_150480_ab) {
-+                     if (org.bukkit.craftbukkit.v1_15_R1.event.CraftEventFactory.callBlockIgniteEvent(p_207186_1_, up, p_207186_2_).isCancelled()) {
++                     if (org.bukkit.craftbukkit.event.CraftEventFactory.callBlockIgniteEvent(p_207186_1_, up, p_207186_2_).isCancelled()) {
 +                        continue;
 +                     }
 +                  }
@@ -45,7 +45,7 @@
 +               // TODO: keep forge or bukkit handle of lava flow?
 +               // worldIn.setBlockState(pos, net.minecraftforge.event.ForgeEventFactory.fireFluidPlaceBlockEvent(worldIn, pos, pos, Blocks.STONE.getDefaultState()), 3);
 +               // CraftBukkit start
-+               if (!org.bukkit.craftbukkit.v1_15_R1.event.CraftEventFactory.handleBlockFormEvent(p_205574_1_.func_201672_e(), p_205574_2_, Blocks.field_150348_b.func_176223_P(), 3)) {
++               if (!org.bukkit.craftbukkit.event.CraftEventFactory.handleBlockFormEvent(p_205574_1_.func_201672_e(), p_205574_2_, Blocks.field_150348_b.func_176223_P(), 3)) {
 +                  return;
 +               }
 +               // CraftBukkit end

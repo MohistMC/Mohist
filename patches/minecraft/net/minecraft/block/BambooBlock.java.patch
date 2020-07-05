@@ -16,7 +16,7 @@
 +         if (true) {
              int i = this.func_220260_b(p_225534_2_, p_225534_3_) + 1;
 -            if (i < 16) {
-+            if (i < 16 && net.minecraftforge.common.ForgeHooks.onCropsGrowPre(p_225534_2_, p_225534_3_, p_225534_1_, p_225534_4_.nextInt(3) == 0 && p_225534_2_.func_175623_d(p_225534_3_.func_177984_a()) && p_225534_2_.func_226659_b_(p_225534_3_.func_177984_a(), 0) >= 9)) {
++            if (i < 16 && net.minecraftforge.common.ForgeHooks.onCropsGrowPre(p_225534_2_, p_225534_3_, p_225534_1_, p_225534_4_.nextInt(Math.max(1, (int) (100.0F / p_225534_2_.spigotConfig.bambooModifier) * 3)) == 0 && p_225534_2_.func_175623_d(p_225534_3_.func_177984_a())  && p_225534_2_.func_226659_b_(p_225534_3_.func_177984_a(), 0) >= 9)) { // Spigot
                 this.func_220258_a(p_225534_1_, p_225534_2_, p_225534_3_, p_225534_4_, i);
 +               net.minecraftforge.common.ForgeHooks.onCropsGrowPost(p_225534_2_, p_225534_3_, p_225534_1_);
              }
@@ -47,7 +47,7 @@
        int j = (p_220258_5_ < 11 || !(p_220258_4_.nextFloat() < 0.25F)) && p_220258_5_ != 15 ? 0 : 1;
        p_220258_2_.func_180501_a(p_220258_3_.func_177984_a(), this.func_176223_P().func_206870_a(field_220264_d, Integer.valueOf(i)).func_206870_a(field_220265_e, bambooleaves).func_206870_a(field_220266_f, Integer.valueOf(j)), 3);
 +      // CraftBukkit start
-+      if (org.bukkit.craftbukkit.v1_15_R1.event.CraftEventFactory.handleBlockSpreadEvent(p_220258_2_, blockpos, blockpos.func_177984_a(), this.func_176223_P().func_206870_a(BambooBlock.field_220264_d, i).func_206870_a(BambooBlock.field_220265_e, bambooleaves).func_206870_a(BambooBlock.field_220266_f, j), 3)) {
++      if (org.bukkit.craftbukkit.event.CraftEventFactory.handleBlockSpreadEvent(p_220258_2_, blockpos, blockpos.func_177984_a(), this.func_176223_P().func_206870_a(BambooBlock.field_220264_d, i).func_206870_a(BambooBlock.field_220265_e, bambooleaves).func_206870_a(BambooBlock.field_220266_f, j), 3)) {
 +         if (shouldUpdateOthers) {
 +            p_220258_2_.func_180501_a(p_220258_3_.func_177977_b(), blockstate.func_206870_a(field_220265_e, BambooLeaves.SMALL), 3);
 +            p_220258_2_.func_180501_a(blockpos, blockstate1.func_206870_a(field_220265_e, BambooLeaves.NONE), 3);

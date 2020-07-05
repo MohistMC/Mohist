@@ -13,7 +13,7 @@
           BlockPos blockpos1 = blockpos.func_177972_a(p_195939_1_.func_196000_l());
           if (func_219996_a(iworld.func_180495_p(blockpos1), iworld, blockpos1)) {
 +            // CraftBukkit start
-+            if (org.bukkit.craftbukkit.v1_15_R1.event.CraftEventFactory.callBlockIgniteEvent((World) iworld, blockpos1, org.bukkit.event.block.BlockIgniteEvent.IgniteCause.FLINT_AND_STEEL, playerentity).isCancelled()) {
++            if (org.bukkit.craftbukkit.event.CraftEventFactory.callBlockIgniteEvent((World) iworld, blockpos1, org.bukkit.event.block.BlockIgniteEvent.IgniteCause.FLINT_AND_STEEL, playerentity).isCancelled()) {
 +               p_195939_1_.func_195996_i().func_222118_a(1, playerentity, entityhuman1 -> entityhuman1.func_213334_d(p_195939_1_.func_221531_n()));
 +               return ActionResultType.PASS;
 +            }

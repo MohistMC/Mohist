@@ -73,35 +73,35 @@ public class TimingsCommand extends BukkitCommand {
             ByteArrayOutputStream bout = (paste) ? new ByteArrayOutputStream() : null;
             while (timings.exists()) {
                 timings = new File(timingFolder, "timings" + (++index) + ".txt");
-                PrintStream fileTimings = null;
-                try {
-                    fileTimings = (paste) ? new PrintStream(bout) : new PrintStream(timings);
+            }
+            PrintStream fileTimings = null;
+            try {
+                fileTimings = (paste) ? new PrintStream(bout) : new PrintStream(timings);
 
-                    CustomTimingsHandler.printTimings(fileTimings);
-                    fileTimings.println("Sample time " + sampleTime + " (" + sampleTime / 1E9 + "s)");
+                CustomTimingsHandler.printTimings(fileTimings);
+                fileTimings.println("Sample time " + sampleTime + " (" + sampleTime / 1E9 + "s)");
 
-                    fileTimings.println("<spigotConfig>");
-                    fileTimings.println(Bukkit.spigot().getConfig().saveToString());
-                    fileTimings.println("</spigotConfig>");
+                fileTimings.println("<spigotConfig>");
+                fileTimings.println(Bukkit.spigot().getConfig().saveToString());
+                fileTimings.println("</spigotConfig>");
 
-                    if (paste) {
-                        new PasteThread(sender, bout).start();
-                        return;
-                    }
+                if (paste) {
+                    new PasteThread(sender, bout).start();
+                    return;
+                }
 
-                    sender.sendMessage("Timings written to " + timings.getPath());
-                    sender.sendMessage("Paste contents of file into form at http://www.spigotmc.org/go/timings to read results.");
+                sender.sendMessage("Timings written to " + timings.getPath());
+                sender.sendMessage("Paste contents of file into form at http://www.spigotmc.org/go/timings to read results.");
 
-                } catch (IOException e) {
-                } finally {
-                    if (fileTimings != null) {
-                        fileTimings.close();
-                    }
+            } catch (IOException e) {
+            } finally {
+                if (fileTimings != null) {
+                    fileTimings.close();
                 }
             }
-        // Spigot end
         }
     }
+    // Spigot end
 
     @Override
     public boolean execute(@NotNull CommandSender sender, @NotNull String currentAlias, @NotNull String[] args) {
@@ -116,7 +116,6 @@ public class TimingsCommand extends BukkitCommand {
             return true;
         }
         // Spigot end
-
         if (!sender.getServer().getPluginManager().useTimings()) {
             sender.sendMessage("Please enable timings by setting \"settings.plugin-profiling\" to true in bukkit.yml");
             return true;
@@ -207,6 +206,7 @@ public class TimingsCommand extends BukkitCommand {
 
     // Spigot start
     private static class PasteThread extends Thread {
+
         private final CommandSender sender;
         private final ByteArrayOutputStream bout;
 
@@ -214,7 +214,6 @@ public class TimingsCommand extends BukkitCommand {
             super("Timings paste thread");
             this.sender = sender;
             this.bout = bout;
-
         }
 
         @Override
@@ -233,6 +232,7 @@ public class TimingsCommand extends BukkitCommand {
                 con.setDoOutput(true);
                 con.setRequestMethod("POST");
                 con.setInstanceFollowRedirects(false);
+
                 OutputStream out = con.getOutputStream();
                 out.write(bout.toByteArray());
                 out.close();
@@ -248,5 +248,4 @@ public class TimingsCommand extends BukkitCommand {
             }
         }
     }
-    // Spigot end
 }

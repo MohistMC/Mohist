@@ -22,7 +22,7 @@
              BlockState blockstate = iworld.func_180495_p(blockpos);
              if (SilverfishBlock.func_196466_i(blockstate)) {
 +               // CraftBukkit start
-+               if (org.bukkit.craftbukkit.v1_15_R1.event.CraftEventFactory.callEntityChangeBlockEvent(this.field_75457_a, blockpos, SilverfishBlock.func_196467_h(blockstate.func_177230_c())).isCancelled()) {
++               if (org.bukkit.craftbukkit.event.CraftEventFactory.callEntityChangeBlockEvent(this.field_75457_a, blockpos, SilverfishBlock.func_196467_h(blockstate.func_177230_c())).isCancelled()) {
 +                  return;
 +               }
 +               // CraftBukkit end
@@ -35,7 +35,7 @@
                       if (block instanceof SilverfishBlock) {
 -                        if (world.func_82736_K().func_223586_b(GameRules.field_223599_b)) {
 +                        // CraftBukkit start
-+                        if (org.bukkit.craftbukkit.v1_15_R1.event.CraftEventFactory.callEntityChangeBlockEvent(this.field_179464_a, blockpos1, Blocks.field_150350_a.func_176223_P()).isCancelled()) {
++                        if (org.bukkit.craftbukkit.event.CraftEventFactory.callEntityChangeBlockEvent(this.field_179464_a, blockpos1, Blocks.field_150350_a.func_176223_P()).isCancelled()) {
 +                           continue;
 +                        }
 +                        // CraftBukkit end

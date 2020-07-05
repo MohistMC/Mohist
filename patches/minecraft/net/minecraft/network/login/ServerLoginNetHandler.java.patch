@@ -17,7 +17,7 @@
  import org.apache.commons.lang3.Validate;
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
-+import org.bukkit.craftbukkit.v1_15_R1.util.Waitable;
++import org.bukkit.craftbukkit.util.Waitable;
 +import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
 +import org.bukkit.event.player.PlayerPreLoginEvent;
  
@@ -128,7 +128,7 @@
 +                     String playerName = field_147337_i.getName();
 +                     java.net.InetAddress address = ((java.net.InetSocketAddress) field_147333_a.func_74430_c()).getAddress();
 +                     java.util.UUID uniqueId = field_147337_i.getId();
-+                     final org.bukkit.craftbukkit.v1_15_R1.CraftServer server = ServerLoginNetHandler.this.field_147327_f.server;
++                     final org.bukkit.craftbukkit.CraftServer server = ServerLoginNetHandler.this.field_147327_f.server;
 +
 +                     AsyncPlayerPreLoginEvent asyncEvent = new AsyncPlayerPreLoginEvent(playerName, address, uniqueId);
 +                     server.getPluginManager().callEvent(asyncEvent);

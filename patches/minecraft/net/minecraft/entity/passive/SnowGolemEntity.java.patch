@@ -6,7 +6,7 @@
  import net.minecraft.util.math.MathHelper;
 -import net.minecraft.world.GameRules;
  import net.minecraft.world.World;
-+import org.bukkit.craftbukkit.v1_15_R1.event.CraftEventFactory;
++import org.bukkit.craftbukkit.event.CraftEventFactory;
  
 -public class SnowGolemEntity extends GolemEntity implements IRangedAttackMob {
 +public class SnowGolemEntity extends GolemEntity implements IRangedAttackMob, net.minecraftforge.common.IShearable {
@@ -33,7 +33,7 @@
 -            if (this.field_70170_p.func_180495_p(blockpos).func_196958_f() && this.field_70170_p.func_226691_t_(blockpos).func_225486_c(blockpos) < 0.8F && blockstate.func_196955_c(this.field_70170_p, blockpos)) {
 -               this.field_70170_p.func_175656_a(blockpos, blockstate);
 +            if (this.field_70170_p.func_175623_d(blockpos) && this.field_70170_p.func_226691_t_(blockpos).func_225486_c(blockpos) < 0.8F && blockstate.func_196955_c(this.field_70170_p, blockpos)) {
-+               org.bukkit.craftbukkit.v1_15_R1.event.CraftEventFactory.handleBlockFormEvent(this.field_70170_p, blockpos, blockstate, this); // CraftBukkit
++               org.bukkit.craftbukkit.event.CraftEventFactory.handleBlockFormEvent(this.field_70170_p, blockpos, blockstate, this); // CraftBukkit
              }
           }
        }

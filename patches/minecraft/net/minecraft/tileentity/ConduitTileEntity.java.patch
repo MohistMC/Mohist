@@ -4,8 +4,8 @@
  import net.minecraft.util.math.Vec3d;
  import net.minecraftforge.api.distmarker.Dist;
  import net.minecraftforge.api.distmarker.OnlyIn;
-+import org.bukkit.craftbukkit.v1_15_R1.block.CraftBlock;
-+import org.bukkit.craftbukkit.v1_15_R1.event.CraftEventFactory;
++import org.bukkit.craftbukkit.block.CraftBlock;
++import org.bukkit.craftbukkit.event.CraftEventFactory;
  
  public class ConduitTileEntity extends TileEntity implements ITickableTileEntity {
     private static final Block[] field_205042_e = new Block[]{Blocks.field_180397_cI, Blocks.field_196779_gQ, Blocks.field_180398_cJ, Blocks.field_196781_gR};

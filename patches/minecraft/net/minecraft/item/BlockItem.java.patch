@@ -4,8 +4,8 @@
  import net.minecraft.world.World;
  import net.minecraftforge.api.distmarker.Dist;
  import net.minecraftforge.api.distmarker.OnlyIn;
-+import org.bukkit.craftbukkit.v1_15_R1.block.CraftBlock;
-+import org.bukkit.craftbukkit.v1_15_R1.block.data.CraftBlockData;
++import org.bukkit.craftbukkit.block.CraftBlock;
++import org.bukkit.craftbukkit.block.data.CraftBlockData;
 +import org.bukkit.entity.Player;
 +import org.bukkit.event.block.BlockCanBuildEvent;
  
@@ -95,6 +95,15 @@
     }
  
     protected boolean func_219987_d() {
+@@ -149,7 +171,7 @@
+          if (compoundnbt != null) {
+             TileEntity tileentity = p_179224_0_.func_175625_s(p_179224_2_);
+             if (tileentity != null) {
+-               if (!p_179224_0_.field_72995_K && tileentity.func_183000_F() && (p_179224_1_ == null || !p_179224_1_.func_195070_dx())) {
++               if (!p_179224_0_.field_72995_K && tileentity.func_183000_F() && (p_179224_1_ == null || !p_179224_1_.func_195070_dx()) || (p_179224_1_.field_71075_bZ.field_75098_d && p_179224_1_.getBukkitEntity().hasPermission("minecraft.nbt.place"))) { // Spigot - add permission
+                   return false;
+                }
+ 
 @@ -189,10 +211,18 @@
     }
  

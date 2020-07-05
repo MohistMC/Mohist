@@ -4,7 +4,7 @@
  import net.minecraft.world.IWorldReader;
  import net.minecraft.world.World;
  import net.minecraft.world.server.ServerWorld;
-+import org.bukkit.craftbukkit.v1_15_R1.event.CraftEventFactory; // CraftBukkit
++import org.bukkit.craftbukkit.event.CraftEventFactory; // CraftBukkit
  
  public class CocoaBlock extends HorizontalBlock implements IGrowable {
     public static final IntegerProperty field_176501_a = BlockStateProperties.field_208167_T;
@@ -17,7 +17,7 @@
           int i = p_225534_1_.func_177229_b(field_176501_a);
 -         if (i < 2) {
 -            p_225534_2_.func_180501_a(p_225534_3_, p_225534_1_.func_206870_a(field_176501_a, Integer.valueOf(i + 1)), 2);
-+         if (i < 2 && net.minecraftforge.common.ForgeHooks.onCropsGrowPre(p_225534_2_, p_225534_3_, p_225534_1_, p_225534_2_.field_73012_v.nextInt(5) == 0)) {
++         if (i < 2 && net.minecraftforge.common.ForgeHooks.onCropsGrowPre(p_225534_2_, p_225534_3_, p_225534_1_, p_225534_2_.field_73012_v.nextInt(Math.max(1, (int) (100.0F / p_225534_2_.spigotConfig.cocoaModifier) * 5)) == 0)) { // Spigot
 +            CraftEventFactory.handleBlockGrowEvent(p_225534_2_, p_225534_3_, p_225534_1_.func_206870_a(CocoaBlock.field_176501_a, i + 1), 2); // CraftBukkkit
           }
        }

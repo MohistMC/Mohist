@@ -5,10 +5,10 @@
     public void func_225534_a_(BlockState p_225534_1_, ServerWorld p_225534_2_, BlockPos p_225534_3_, Random p_225534_4_) {
        int i = p_225534_1_.func_177229_b(field_176486_a);
 -      if (i < 3 && p_225534_4_.nextInt(10) == 0) {
-+      if (i < 3 && net.minecraftforge.common.ForgeHooks.onCropsGrowPre(p_225534_2_, p_225534_3_, p_225534_1_, p_225534_4_.nextInt(10) == 0)) {
++      if (i < 3 && net.minecraftforge.common.ForgeHooks.onCropsGrowPre(p_225534_2_, p_225534_3_, p_225534_1_,  p_225534_4_.nextInt(Math.max(1, (int) (100.0F / p_225534_2_.spigotConfig.wartModifier) * 10)) == 0)) { // Spigot
           p_225534_1_ = p_225534_1_.func_206870_a(field_176486_a, Integer.valueOf(i + 1));
 -         p_225534_2_.func_180501_a(p_225534_3_, p_225534_1_, 2);
-+         org.bukkit.craftbukkit.v1_15_R1.event.CraftEventFactory.handleBlockGrowEvent(p_225534_2_, p_225534_3_, p_225534_1_, 2); // CraftBukkit
++         org.bukkit.craftbukkit.event.CraftEventFactory.handleBlockGrowEvent(p_225534_2_, p_225534_3_, p_225534_1_, 2); // CraftBukkit
 +         net.minecraftforge.common.ForgeHooks.onCropsGrowPost(p_225534_2_, p_225534_3_, p_225534_1_);
        }
  
