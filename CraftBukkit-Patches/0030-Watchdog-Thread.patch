@@ -1,0 +1,359 @@
+From ba2496f81037c5125c4f31017dc61d599a81a423 Mon Sep 17 00:00:00 2001
+From: md_5 <md_5@live.com.au>
+Date: Tue, 5 Aug 2014 17:20:19 +0100
+Subject: [PATCH] Watchdog Thread.
+
+
+diff --git a/src/main/java/net/minecraft/server/DedicatedServer.java b/src/main/java/net/minecraft/server/DedicatedServer.java
+index 6c016f4eb..1a189a01b 100644
+--- a/src/main/java/net/minecraft/server/DedicatedServer.java
++++ b/src/main/java/net/minecraft/server/DedicatedServer.java
+@@ -286,7 +286,7 @@ public class DedicatedServer extends MinecraftServer implements IMinecraftServer
+                 this.remoteConsole = new org.bukkit.craftbukkit.command.CraftRemoteConsoleCommandSender(this.remoteControlCommandListener); // CraftBukkit
+             }
+ 
+-            if (this.getMaxTickTime() > 0L) {
++            if (false && this.getMaxTickTime() > 0L) {  // Spigot - disable
+                 Thread thread1 = new Thread(new ThreadWatchdog(this));
+ 
+                 thread1.setUncaughtExceptionHandler(new ThreadNamedUncaughtExceptionHandler(DedicatedServer.LOGGER));
+diff --git a/src/main/java/net/minecraft/server/MinecraftServer.java b/src/main/java/net/minecraft/server/MinecraftServer.java
+index 493aa24c4..ba13b1723 100644
+--- a/src/main/java/net/minecraft/server/MinecraftServer.java
++++ b/src/main/java/net/minecraft/server/MinecraftServer.java
+@@ -825,6 +825,7 @@ public abstract class MinecraftServer extends IAsyncTaskHandlerReentrant<TickTas
+             } catch (Throwable throwable1) {
+                 MinecraftServer.LOGGER.error("Exception stopping the server", throwable1);
+             } finally {
++                org.spigotmc.WatchdogThread.doStop(); // Spigot
+                 // CraftBukkit start - Restore terminal to original settings
+                 try {
+                     reader.getTerminal().restore();
+@@ -983,6 +984,7 @@ public abstract class MinecraftServer extends IAsyncTaskHandlerReentrant<TickTas
+ 
+         this.circularTimer.a(i1 - i);
+         this.methodProfiler.exit();
++        org.spigotmc.WatchdogThread.tick(); // Spigot
+         SpigotTimings.serverTickTimer.stopTiming(); // Spigot
+         org.spigotmc.CustomTimingsHandler.tick(); // Spigot
+     }
+diff --git a/src/main/java/org/bukkit/craftbukkit/CraftServer.java b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
+index 36547ea9d..f339a2587 100644
+--- a/src/main/java/org/bukkit/craftbukkit/CraftServer.java
++++ b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
+@@ -1603,7 +1603,7 @@ public final class CraftServer implements Server {
+ 
+     @Override
+     public boolean isPrimaryThread() {
+-        return Thread.currentThread().equals(console.serverThread) || console.hasStopped(); // All bets are off if we have shut down (e.g. due to watchdog)
++        return Thread.currentThread().equals(console.serverThread) || console.hasStopped() || !org.spigotmc.AsyncCatcher.enabled; // All bets are off if we have shut down (e.g. due to watchdog)
+     }
+ 
+     @Override
+@@ -1949,6 +1949,11 @@ public final class CraftServer implements Server {
+         {
+             return org.spigotmc.SpigotConfig.config;
+         }
++
++        @Override
++        public void restart() {
++            org.spigotmc.RestartCommand.restart();
++        }
+     };
+ 
+     public Spigot spigot()
+diff --git a/src/main/java/org/spigotmc/RestartCommand.java b/src/main/java/org/spigotmc/RestartCommand.java
+new file mode 100644
+index 000000000..e7b953ca3
+--- /dev/null
++++ b/src/main/java/org/spigotmc/RestartCommand.java
+@@ -0,0 +1,130 @@
++package org.spigotmc;
++
++import java.io.File;
++import java.util.List;
++import net.minecraft.server.EntityPlayer;
++import net.minecraft.server.MinecraftServer;
++import org.bukkit.command.Command;
++import org.bukkit.command.CommandSender;
++
++public class RestartCommand extends Command
++{
++
++    public RestartCommand(String name)
++    {
++        super( name );
++        this.description = "Restarts the server";
++        this.usageMessage = "/restart";
++        this.setPermission( "bukkit.command.restart" );
++    }
++
++    @Override
++    public boolean execute(CommandSender sender, String currentAlias, String[] args)
++    {
++        if ( testPermission( sender ) )
++        {
++            MinecraftServer.getServer().processQueue.add( new Runnable()
++            {
++                @Override
++                public void run()
++                {
++                    restart();
++                }
++            } );
++        }
++        return true;
++    }
++
++    public static void restart()
++    {
++        restart( SpigotConfig.restartScript );
++    }
++
++    private static void restart(final String restartScript)
++    {
++        AsyncCatcher.enabled = false; // Disable async catcher incase it interferes with us
++        try
++        {
++            String[] split = restartScript.split( " " );
++            if ( split.length > 0 && new File( split[0] ).isFile() )
++            {
++                System.out.println( "Attempting to restart with " + restartScript );
++
++                // Disable Watchdog
++                WatchdogThread.doStop();
++
++                // Kick all players
++                for ( EntityPlayer p : (List< EntityPlayer>) MinecraftServer.getServer().getPlayerList().players )
++                {
++                    p.playerConnection.disconnect(SpigotConfig.restartMessage);
++                }
++                // Give the socket a chance to send the packets
++                try
++                {
++                    Thread.sleep( 100 );
++                } catch ( InterruptedException ex )
++                {
++                }
++                // Close the socket so we can rebind with the new process
++                MinecraftServer.getServer().getServerConnection().b();
++
++                // Give time for it to kick in
++                try
++                {
++                    Thread.sleep( 100 );
++                } catch ( InterruptedException ex )
++                {
++                }
++
++                // Actually shutdown
++                try
++                {
++                    MinecraftServer.getServer().close();
++                } catch ( Throwable t )
++                {
++                }
++
++                // This will be done AFTER the server has completely halted
++                Thread shutdownHook = new Thread()
++                {
++                    @Override
++                    public void run()
++                    {
++                        try
++                        {
++                            String os = System.getProperty( "os.name" ).toLowerCase(java.util.Locale.ENGLISH);
++                            if ( os.contains( "win" ) )
++                            {
++                                Runtime.getRuntime().exec( "cmd /c start " + restartScript );
++                            } else
++                            {
++                                Runtime.getRuntime().exec( "sh " + restartScript );
++                            }
++                        } catch ( Exception e )
++                        {
++                            e.printStackTrace();
++                        }
++                    }
++                };
++
++                shutdownHook.setDaemon( true );
++                Runtime.getRuntime().addShutdownHook( shutdownHook );
++            } else
++            {
++                System.out.println( "Startup script '" + SpigotConfig.restartScript + "' does not exist! Stopping server." );
++
++                // Actually shutdown
++                try
++                {
++                    MinecraftServer.getServer().close();
++                } catch ( Throwable t )
++                {
++                }
++            }
++            System.exit( 0 );
++        } catch ( Exception ex )
++        {
++            ex.printStackTrace();
++        }
++    }
++}
+diff --git a/src/main/java/org/spigotmc/SpigotConfig.java b/src/main/java/org/spigotmc/SpigotConfig.java
+index 60d14fa25..37bf0cec0 100644
+--- a/src/main/java/org/spigotmc/SpigotConfig.java
++++ b/src/main/java/org/spigotmc/SpigotConfig.java
+@@ -200,4 +200,18 @@ public class SpigotConfig
+         outdatedClientMessage = transform( getString( "messages.outdated-client", outdatedClientMessage ) );
+         outdatedServerMessage = transform( getString( "messages.outdated-server", outdatedServerMessage ) );
+     }
++
++    public static int timeoutTime = 60;
++    public static boolean restartOnCrash = true;
++    public static String restartScript = "./start.sh";
++    public static String restartMessage;
++    private static void watchdog()
++    {
++        timeoutTime = getInt( "settings.timeout-time", timeoutTime );
++        restartOnCrash = getBoolean( "settings.restart-on-crash", restartOnCrash );
++        restartScript = getString( "settings.restart-script", restartScript );
++        restartMessage = transform( getString( "messages.restart", "Server is restarting" ) );
++        commands.put( "restart", new RestartCommand( "restart" ) );
++        WatchdogThread.doStart( timeoutTime, restartOnCrash );
++    }
+ }
+diff --git a/src/main/java/org/spigotmc/WatchdogThread.java b/src/main/java/org/spigotmc/WatchdogThread.java
+new file mode 100644
+index 000000000..8b3732202
+--- /dev/null
++++ b/src/main/java/org/spigotmc/WatchdogThread.java
+@@ -0,0 +1,127 @@
++package org.spigotmc;
++
++import java.lang.management.ManagementFactory;
++import java.lang.management.MonitorInfo;
++import java.lang.management.ThreadInfo;
++import java.util.logging.Level;
++import java.util.logging.Logger;
++import net.minecraft.server.MinecraftServer;
++import org.bukkit.Bukkit;
++
++public class WatchdogThread extends Thread
++{
++
++    private static WatchdogThread instance;
++    private final long timeoutTime;
++    private final boolean restart;
++    private volatile long lastTick;
++    private volatile boolean stopping;
++
++    private WatchdogThread(long timeoutTime, boolean restart)
++    {
++        super( "Spigot Watchdog Thread" );
++        this.timeoutTime = timeoutTime;
++        this.restart = restart;
++    }
++
++    private static long monotonicMillis()
++    {
++        return System.nanoTime() / 1000000L;
++    }
++
++    public static void doStart(int timeoutTime, boolean restart)
++    {
++        if ( instance == null )
++        {
++            instance = new WatchdogThread( timeoutTime * 1000L, restart );
++            instance.start();
++        }
++    }
++
++    public static void tick()
++    {
++        instance.lastTick = monotonicMillis();
++    }
++
++    public static void doStop()
++    {
++        if ( instance != null )
++        {
++            instance.stopping = true;
++        }
++    }
++
++    @Override
++    public void run()
++    {
++        while ( !stopping )
++        {
++            //
++            if ( lastTick != 0 && monotonicMillis() > lastTick + timeoutTime )
++            {
++                Logger log = Bukkit.getServer().getLogger();
++                log.log( Level.SEVERE, "------------------------------" );
++                log.log( Level.SEVERE, "The server has stopped responding! This is (probably) not a Spigot bug." );
++                log.log( Level.SEVERE, "If you see a plugin in the Server thread dump below, then please report it to that author" );
++                log.log( Level.SEVERE, "\t *Especially* if it looks like HTTP or MySQL operations are occurring" );
++                log.log( Level.SEVERE, "If you see a world save or edit, then it means you did far more than your server can handle at once" );
++                log.log( Level.SEVERE, "\t If this is the case, consider increasing timeout-time in spigot.yml but note that this will replace the crash with LARGE lag spikes" );
++                log.log( Level.SEVERE, "If you are unsure or still think this is a Spigot bug, please report to https://www.spigotmc.org/" );
++                log.log( Level.SEVERE, "Be sure to include ALL relevant console errors and Minecraft crash reports" );
++                log.log( Level.SEVERE, "Spigot version: " + Bukkit.getServer().getVersion() );
++                //
++                log.log( Level.SEVERE, "------------------------------" );
++                log.log( Level.SEVERE, "Server thread dump (Look for plugins here before reporting to Spigot!):" );
++                dumpThread( ManagementFactory.getThreadMXBean().getThreadInfo( MinecraftServer.getServer().serverThread.getId(), Integer.MAX_VALUE ), log );
++                log.log( Level.SEVERE, "------------------------------" );
++                //
++                log.log( Level.SEVERE, "Entire Thread Dump:" );
++                ThreadInfo[] threads = ManagementFactory.getThreadMXBean().dumpAllThreads( true, true );
++                for ( ThreadInfo thread : threads )
++                {
++                    dumpThread( thread, log );
++                }
++                log.log( Level.SEVERE, "------------------------------" );
++
++                if ( restart && !MinecraftServer.getServer().hasStopped() )
++                {
++                    RestartCommand.restart();
++                }
++                break;
++            }
++
++            try
++            {
++                sleep( 10000 );
++            } catch ( InterruptedException ex )
++            {
++                interrupt();
++            }
++        }
++    }
++
++    private static void dumpThread(ThreadInfo thread, Logger log)
++    {
++        log.log( Level.SEVERE, "------------------------------" );
++        //
++        log.log( Level.SEVERE, "Current Thread: " + thread.getThreadName() );
++        log.log( Level.SEVERE, "\tPID: " + thread.getThreadId()
++                + " | Suspended: " + thread.isSuspended()
++                + " | Native: " + thread.isInNative()
++                + " | State: " + thread.getThreadState() );
++        if ( thread.getLockedMonitors().length != 0 )
++        {
++            log.log( Level.SEVERE, "\tThread is waiting on monitor(s):" );
++            for ( MonitorInfo monitor : thread.getLockedMonitors() )
++            {
++                log.log( Level.SEVERE, "\t\tLocked on:" + monitor.getLockedStackFrame() );
++            }
++        }
++        log.log( Level.SEVERE, "\tStack:" );
++        //
++        for ( StackTraceElement stack : thread.getStackTrace() )
++        {
++            log.log( Level.SEVERE, "\t\t" + stack );
++        }
++    }
++}
+-- 
+2.25.1
+

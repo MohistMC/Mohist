@@ -2225,6 +2225,16 @@ public interface World extends PluginMessageRecipient, Metadatable {
     public Location locateNearestStructure(@NotNull Location origin, @NotNull StructureType structureType, int radius, boolean findUnexplored);
 
     // Spigot start
+
+    /**
+     *  Returns the view distance used for this world.
+     *
+     *  @return the view distance used for this world
+     */
+    int getViewDistance();
+    // Spigot end
+
+    // Spigot start
     public class Spigot {
 
     }

@@ -1,0 +1,40 @@
+From 40dcdf0f4bae9900d0f7592fbf1655c367e1d84f Mon Sep 17 00:00:00 2001
+From: drXor <mcyoungsota@gmail.com>
+Date: Tue, 25 Feb 2014 15:15:26 -0400
+Subject: [PATCH] Cancellable WitherSkull potion effect
+
+
+diff --git a/src/main/java/net/minecraft/server/EntityWitherSkull.java b/src/main/java/net/minecraft/server/EntityWitherSkull.java
+index 6f391cc99..4c0bb6bc1 100644
+--- a/src/main/java/net/minecraft/server/EntityWitherSkull.java
++++ b/src/main/java/net/minecraft/server/EntityWitherSkull.java
+@@ -36,8 +36,11 @@ public class EntityWitherSkull extends EntityFireball {
+             if (movingobjectposition.getType() == MovingObjectPosition.EnumMovingObjectType.ENTITY) {
+                 Entity entity = ((MovingObjectPositionEntity) movingobjectposition).getEntity();
+ 
++                // Spigot start
++                boolean didDamage = false;
+                 if (this.shooter != null) {
+-                    if (entity.damageEntity(DamageSource.projectile(this, shooter), 8.0F)) { // CraftBukkit
++                    didDamage = entity.damageEntity(DamageSource.projectile(this, shooter), 8.0F);
++                    if (didDamage) { // CraftBukkit
+                         if (entity.isAlive()) {
+                             this.a(this.shooter, entity);
+                         } else {
+@@ -45,10 +48,11 @@ public class EntityWitherSkull extends EntityFireball {
+                         }
+                     }
+                 } else {
+-                    entity.damageEntity(DamageSource.MAGIC, 5.0F);
++                    didDamage = entity.damageEntity(DamageSource.MAGIC, 5.0F);
+                 }
+ 
+-                if (entity instanceof EntityLiving) {
++                if (didDamage && entity instanceof EntityLiving) {
++                // Spigot end
+                     byte b0 = 0;
+ 
+                     if (this.world.getDifficulty() == EnumDifficulty.NORMAL) {
+-- 
+2.25.1
+

@@ -1,0 +1,470 @@
+From c03c58d11418db95add2fdbabd8ee1d97433da86 Mon Sep 17 00:00:00 2001
+From: md_5 <git@md-5.net>
+Date: Sat, 13 Dec 2014 02:59:14 +0100
+Subject: [PATCH] BungeeCord Chat API
+
+
+diff --git a/pom.xml b/pom.xml
+index 87977e2f..186405ba 100644
+--- a/pom.xml
++++ b/pom.xml
+@@ -71,6 +71,13 @@
+             <version>2.8.0</version>
+             <scope>compile</scope>
+         </dependency>
++        <dependency>
++            <groupId>net.md-5</groupId>
++            <artifactId>bungeecord-chat</artifactId>
++            <version>1.15-SNAPSHOT</version>
++            <type>jar</type>
++            <scope>compile</scope>
++        </dependency>
+         <dependency>
+             <groupId>org.yaml</groupId>
+             <artifactId>snakeyaml</artifactId>
+diff --git a/src/main/java/org/bukkit/ChatColor.java b/src/main/java/org/bukkit/ChatColor.java
+index 930f109a..a0ef2a82 100644
+--- a/src/main/java/org/bukkit/ChatColor.java
++++ b/src/main/java/org/bukkit/ChatColor.java
+@@ -15,91 +15,223 @@ public enum ChatColor {
+     /**
+      * Represents black
+      */
+-    BLACK('0', 0x00),
++    BLACK('0', 0x00) {
++        @NotNull
++        @Override
++        public net.md_5.bungee.api.ChatColor asBungee() {
++            return net.md_5.bungee.api.ChatColor.BLACK;
++        }
++    },
+     /**
+      * Represents dark blue
+      */
+-    DARK_BLUE('1', 0x1),
++    DARK_BLUE('1', 0x1) {
++        @NotNull
++        @Override
++        public net.md_5.bungee.api.ChatColor asBungee() {
++            return net.md_5.bungee.api.ChatColor.DARK_BLUE;
++        }
++    },
+     /**
+      * Represents dark green
+      */
+-    DARK_GREEN('2', 0x2),
++    DARK_GREEN('2', 0x2) {
++        @NotNull
++        @Override
++        public net.md_5.bungee.api.ChatColor asBungee() {
++            return net.md_5.bungee.api.ChatColor.DARK_GREEN;
++        }
++    },
+     /**
+      * Represents dark blue (aqua)
+      */
+-    DARK_AQUA('3', 0x3),
++    DARK_AQUA('3', 0x3) {
++        @NotNull
++        @Override
++        public net.md_5.bungee.api.ChatColor asBungee() {
++            return net.md_5.bungee.api.ChatColor.DARK_AQUA;
++        }
++    },
+     /**
+      * Represents dark red
+      */
+-    DARK_RED('4', 0x4),
++    DARK_RED('4', 0x4) {
++        @NotNull
++        @Override
++        public net.md_5.bungee.api.ChatColor asBungee() {
++            return net.md_5.bungee.api.ChatColor.DARK_RED;
++        }
++    },
+     /**
+      * Represents dark purple
+      */
+-    DARK_PURPLE('5', 0x5),
++    DARK_PURPLE('5', 0x5) {
++        @NotNull
++        @Override
++        public net.md_5.bungee.api.ChatColor asBungee() {
++            return net.md_5.bungee.api.ChatColor.DARK_PURPLE;
++        }
++    },
+     /**
+      * Represents gold
+      */
+-    GOLD('6', 0x6),
++    GOLD('6', 0x6) {
++        @NotNull
++        @Override
++        public net.md_5.bungee.api.ChatColor asBungee() {
++            return net.md_5.bungee.api.ChatColor.GOLD;
++        }
++    },
+     /**
+      * Represents gray
+      */
+-    GRAY('7', 0x7),
++    GRAY('7', 0x7) {
++        @NotNull
++        @Override
++        public net.md_5.bungee.api.ChatColor asBungee() {
++            return net.md_5.bungee.api.ChatColor.GRAY;
++        }
++    },
+     /**
+      * Represents dark gray
+      */
+-    DARK_GRAY('8', 0x8),
++    DARK_GRAY('8', 0x8) {
++        @NotNull
++        @Override
++        public net.md_5.bungee.api.ChatColor asBungee() {
++            return net.md_5.bungee.api.ChatColor.DARK_GRAY;
++        }
++    },
+     /**
+      * Represents blue
+      */
+-    BLUE('9', 0x9),
++    BLUE('9', 0x9) {
++        @NotNull
++        @Override
++        public net.md_5.bungee.api.ChatColor asBungee() {
++            return net.md_5.bungee.api.ChatColor.BLUE;
++        }
++    },
+     /**
+      * Represents green
+      */
+-    GREEN('a', 0xA),
++    GREEN('a', 0xA) {
++        @NotNull
++        @Override
++        public net.md_5.bungee.api.ChatColor asBungee() {
++            return net.md_5.bungee.api.ChatColor.GREEN;
++        }
++    },
+     /**
+      * Represents aqua
+      */
+-    AQUA('b', 0xB),
++    AQUA('b', 0xB) {
++        @NotNull
++        @Override
++        public net.md_5.bungee.api.ChatColor asBungee() {
++            return net.md_5.bungee.api.ChatColor.AQUA;
++        }
++    },
+     /**
+      * Represents red
+      */
+-    RED('c', 0xC),
++    RED('c', 0xC) {
++        @NotNull
++        @Override
++        public net.md_5.bungee.api.ChatColor asBungee() {
++            return net.md_5.bungee.api.ChatColor.RED;
++        }
++    },
+     /**
+      * Represents light purple
+      */
+-    LIGHT_PURPLE('d', 0xD),
++    LIGHT_PURPLE('d', 0xD) {
++        @NotNull
++        @Override
++        public net.md_5.bungee.api.ChatColor asBungee() {
++            return net.md_5.bungee.api.ChatColor.LIGHT_PURPLE;
++        }
++    },
+     /**
+      * Represents yellow
+      */
+-    YELLOW('e', 0xE),
++    YELLOW('e', 0xE) {
++        @NotNull
++        @Override
++        public net.md_5.bungee.api.ChatColor asBungee() {
++            return net.md_5.bungee.api.ChatColor.YELLOW;
++        }
++    },
+     /**
+      * Represents white
+      */
+-    WHITE('f', 0xF),
++    WHITE('f', 0xF) {
++        @NotNull
++        @Override
++        public net.md_5.bungee.api.ChatColor asBungee() {
++            return net.md_5.bungee.api.ChatColor.WHITE;
++        }
++    },
+     /**
+      * Represents magical characters that change around randomly
+      */
+-    MAGIC('k', 0x10, true),
++    MAGIC('k', 0x10, true) {
++        @NotNull
++        @Override
++        public net.md_5.bungee.api.ChatColor asBungee() {
++            return net.md_5.bungee.api.ChatColor.MAGIC;
++        }
++    },
+     /**
+      * Makes the text bold.
+      */
+-    BOLD('l', 0x11, true),
++    BOLD('l', 0x11, true) {
++        @NotNull
++        @Override
++        public net.md_5.bungee.api.ChatColor asBungee() {
++            return net.md_5.bungee.api.ChatColor.BOLD;
++        }
++    },
+     /**
+      * Makes a line appear through the text.
+      */
+-    STRIKETHROUGH('m', 0x12, true),
++    STRIKETHROUGH('m', 0x12, true) {
++        @NotNull
++        @Override
++        public net.md_5.bungee.api.ChatColor asBungee() {
++            return net.md_5.bungee.api.ChatColor.STRIKETHROUGH;
++        }
++    },
+     /**
+      * Makes the text appear underlined.
+      */
+-    UNDERLINE('n', 0x13, true),
++    UNDERLINE('n', 0x13, true) {
++        @NotNull
++        @Override
++        public net.md_5.bungee.api.ChatColor asBungee() {
++            return net.md_5.bungee.api.ChatColor.UNDERLINE;
++        }
++    },
+     /**
+      * Makes the text italic.
+      */
+-    ITALIC('o', 0x14, true),
++    ITALIC('o', 0x14, true) {
++        @NotNull
++        @Override
++        public net.md_5.bungee.api.ChatColor asBungee() {
++            return net.md_5.bungee.api.ChatColor.ITALIC;
++        }
++    },
+     /**
+      * Resets all previous chat colors or formats.
+      */
+-    RESET('r', 0x15);
++    RESET('r', 0x15) {
++        @NotNull
++        @Override
++        public net.md_5.bungee.api.ChatColor asBungee() {
++            return net.md_5.bungee.api.ChatColor.RESET;
++        }
++    };
+ 
+     /**
+      * The special character which prefixes all chat colour codes. Use this if
+@@ -126,6 +258,11 @@ public enum ChatColor {
+         this.toString = new String(new char[] {COLOR_CHAR, code});
+     }
+ 
++    @NotNull
++    public net.md_5.bungee.api.ChatColor asBungee() {
++        return net.md_5.bungee.api.ChatColor.RESET;
++    };
++
+     /**
+      * Gets the char value associated with this color
+      *
+diff --git a/src/main/java/org/bukkit/Server.java b/src/main/java/org/bukkit/Server.java
+index b8c963b9..aba9b011 100644
+--- a/src/main/java/org/bukkit/Server.java
++++ b/src/main/java/org/bukkit/Server.java
+@@ -1299,6 +1299,24 @@ public interface Server extends PluginMessageRecipient {
+         public org.bukkit.configuration.file.YamlConfiguration getConfig() {
+             throw new UnsupportedOperationException("Not supported yet.");
+         }
++
++        /**
++         * Sends the component to the player
++         *
++         * @param component the components to send
++         */
++        public void broadcast(@NotNull net.md_5.bungee.api.chat.BaseComponent component) {
++            throw new UnsupportedOperationException("Not supported yet.");
++        }
++
++        /**
++         * Sends an array of components as a single message to the player
++         *
++         * @param components the components to send
++         */
++        public void broadcast(@NotNull net.md_5.bungee.api.chat.BaseComponent... components) {
++            throw new UnsupportedOperationException("Not supported yet.");
++        }
+     }
+ 
+     @NotNull
+diff --git a/src/main/java/org/bukkit/command/CommandSender.java b/src/main/java/org/bukkit/command/CommandSender.java
+index 8e42cb9d..a9020ecc 100644
+--- a/src/main/java/org/bukkit/command/CommandSender.java
++++ b/src/main/java/org/bukkit/command/CommandSender.java
+@@ -39,6 +39,23 @@ public interface CommandSender extends Permissible {
+     // Spigot start
+     public class Spigot {
+ 
++        /**
++         * Sends this sender a chat component.
++         *
++         * @param component the components to send
++         */
++        public void sendMessage(@NotNull net.md_5.bungee.api.chat.BaseComponent component) {
++            throw new UnsupportedOperationException("Not supported yet.");
++        }
++
++        /**
++         * Sends an array of components as a single message to the sender.
++         *
++         * @param components the components to send
++         */
++        public void sendMessage(@NotNull net.md_5.bungee.api.chat.BaseComponent... components) {
++            throw new UnsupportedOperationException("Not supported yet.");
++        }
+     }
+ 
+     @NotNull
+diff --git a/src/main/java/org/bukkit/entity/Player.java b/src/main/java/org/bukkit/entity/Player.java
+index e2a38451..92bafd63 100644
+--- a/src/main/java/org/bukkit/entity/Player.java
++++ b/src/main/java/org/bukkit/entity/Player.java
+@@ -1299,6 +1299,36 @@ public interface Player extends HumanEntity, Conversable, OfflinePlayer, PluginM
+         public java.util.Set<Player> getHiddenPlayers() {
+             throw new UnsupportedOperationException("Not supported yet.");
+         }
++
++        @Override
++        public void sendMessage(@NotNull net.md_5.bungee.api.chat.BaseComponent component) {
++            throw new UnsupportedOperationException("Not supported yet.");
++        }
++
++        @Override
++        public void sendMessage(@NotNull net.md_5.bungee.api.chat.BaseComponent... components) {
++            throw new UnsupportedOperationException("Not supported yet.");
++        }
++
++        /**
++         * Sends the component to the specified screen position of this player
++         *
++         * @param position the screen position
++         * @param component the components to send
++         */
++        public void sendMessage(@NotNull net.md_5.bungee.api.ChatMessageType position, @NotNull net.md_5.bungee.api.chat.BaseComponent component) {
++            throw new UnsupportedOperationException("Not supported yet.");
++        }
++
++        /**
++         * Sends an array of components as a single message to the specified screen position of this player
++         *
++         * @param position the screen position
++         * @param components the components to send
++         */
++        public void sendMessage(@NotNull net.md_5.bungee.api.ChatMessageType position, @NotNull net.md_5.bungee.api.chat.BaseComponent... components) {
++            throw new UnsupportedOperationException("Not supported yet.");
++        }
+     }
+ 
+     @NotNull
+diff --git a/src/main/java/org/bukkit/inventory/meta/BookMeta.java b/src/main/java/org/bukkit/inventory/meta/BookMeta.java
+index f740bebe..94852d50 100644
+--- a/src/main/java/org/bukkit/inventory/meta/BookMeta.java
++++ b/src/main/java/org/bukkit/inventory/meta/BookMeta.java
+@@ -1,6 +1,7 @@
+ package org.bukkit.inventory.meta;
+ 
+ import java.util.List;
++import net.md_5.bungee.api.chat.BaseComponent;
+ import org.bukkit.Material;
+ import org.jetbrains.annotations.NotNull;
+ import org.jetbrains.annotations.Nullable;
+@@ -189,6 +190,70 @@ public interface BookMeta extends ItemMeta {
+     // Spigot start
+     public class Spigot {
+ 
++        /**
++         * Gets the specified page in the book. The given page must exist.
++         *
++         * @param page the page number to get
++         * @return the page from the book
++         */
++        @NotNull
++        public BaseComponent[] getPage(int page) {
++            throw new UnsupportedOperationException("Not supported yet.");
++        }
++
++        /**
++         * Sets the specified page in the book. Pages of the book must be
++         * contiguous.
++         * <p>
++         * The data can be up to 256 characters in length, additional characters
++         * are truncated.
++         *
++         * @param page the page number to set
++         * @param data the data to set for that page
++         */
++        public void setPage(int page, @Nullable BaseComponent... data) {
++            throw new UnsupportedOperationException("Not supported yet.");
++        }
++
++        /**
++         * Gets all the pages in the book.
++         *
++         * @return list of all the pages in the book
++         */
++        @NotNull
++        public List<BaseComponent[]> getPages() {
++            throw new UnsupportedOperationException("Not supported yet.");
++        }
++
++        /**
++         * Clears the existing book pages, and sets the book to use the provided
++         * pages. Maximum 50 pages with 256 characters per page.
++         *
++         * @param pages A list of pages to set the book to use
++         */
++        public void setPages(@NotNull List<BaseComponent[]> pages) {
++            throw new UnsupportedOperationException("Not supported yet.");
++        }
++
++        /**
++         * Clears the existing book pages, and sets the book to use the provided
++         * pages. Maximum 50 pages with 256 characters per page.
++         *
++         * @param pages A list of component arrays, each being a page
++         */
++        public void setPages(@NotNull BaseComponent[]... pages) {
++            throw new UnsupportedOperationException("Not supported yet.");
++        }
++
++        /**
++         * Adds new pages to the end of the book. Up to a maximum of 50 pages
++         * with 256 characters per page.
++         *
++         * @param pages A list of component arrays, each being a page
++         */
++        public void addPage(@NotNull BaseComponent[]... pages) {
++            throw new UnsupportedOperationException("Not supported yet.");
++        }
+     }
+ 
+     @NotNull
+-- 
+2.25.1
+
