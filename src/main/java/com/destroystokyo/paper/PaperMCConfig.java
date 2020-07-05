@@ -311,4 +311,10 @@ public class PaperMCConfig {
             maxBookTotalSizeMultiplier = 0.98D;
         }
     }
+
+    public static boolean allowPistonDuplication;
+    private static void allowPistonDuplication() {
+        allowPistonDuplication = getBoolean("settings.unsupported-settings.allow-piston-duplication", config.getBoolean("settings.unsupported-settings.allow-tnt-duplication", false));
+        set("settings.unsupported-settings.allow-tnt-duplication", null);
+    }
 }

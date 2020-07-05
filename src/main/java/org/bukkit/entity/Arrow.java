@@ -105,4 +105,11 @@ public interface Arrow extends Projectile {
         }
     }
     // Spigot end
+
+    /**
+     * Gets the ItemStack for this arrow.
+     *
+     * @return The ItemStack, as if a player picked up the arrow
+     */
+    org.bukkit.inventory.ItemStack getItemStack();
 }

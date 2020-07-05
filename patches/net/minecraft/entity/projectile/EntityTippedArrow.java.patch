@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/entity/projectile/EntityTippedArrow.java
 +++ ../src-work/minecraft/net/minecraft/entity/projectile/EntityTippedArrow.java
-@@ -26,7 +26,7 @@
+@@ -26,9 +26,20 @@
  {
      private static final DataParameter<Integer> COLOR = EntityDataManager.<Integer>createKey(EntityTippedArrow.class, DataSerializers.VARINT);
      private PotionType potion = PotionTypes.EMPTY;
@@ -8,8 +8,21 @@
 +    public final Set<PotionEffect> customPotionEffects = Sets.<PotionEffect>newHashSet(); //CraftBukkit
      private boolean fixedColor;
  
++    @Override
++    protected ItemStack getItemStack() {
++        return getItemStack();
++    }
++
++    @Override
++    public ItemStack getOriginalItemStack() {
++        return getItemStack();
++    }
++    // Paper - OBFHelper
++
      public EntityTippedArrow(World worldIn)
-@@ -146,12 +146,30 @@
+     {
+         super(worldIn);
+@@ -146,12 +157,30 @@
          }
      }
  

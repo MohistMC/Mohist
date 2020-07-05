@@ -1,11 +1,23 @@
 --- ../src-base/minecraft/net/minecraft/entity/projectile/EntitySpectralArrow.java
 +++ ../src-work/minecraft/net/minecraft/entity/projectile/EntitySpectralArrow.java
-@@ -12,7 +12,7 @@
+@@ -12,8 +12,19 @@
  
  public class EntitySpectralArrow extends EntityArrow
  {
 -    private int duration = 200;
 +    public int duration = 200;
  
++    @Override
++    protected ItemStack getItemStack() {
++        return getItemStack();
++    }
++
++    @Override
++    public ItemStack getOriginalItemStack() {
++        return getItemStack();
++    }
++    // Paper - OBFHelper
++
      public EntitySpectralArrow(World worldIn)
      {
+         super(worldIn);

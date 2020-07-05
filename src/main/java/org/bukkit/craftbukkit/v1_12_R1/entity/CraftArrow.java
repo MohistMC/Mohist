@@ -103,4 +103,12 @@ public class CraftArrow extends AbstractProjectile implements Arrow {
         return spigot;
     }
     // Spigot end
+
+    // Paper start
+    @Override
+    public org.bukkit.craftbukkit.v1_12_R1.inventory.CraftItemStack getItemStack() {
+        return org.bukkit.craftbukkit.v1_12_R1.inventory.CraftItemStack.asCraftMirror(getHandle().getOriginalItemStack());
+    }
+    //Paper end
 }
+
