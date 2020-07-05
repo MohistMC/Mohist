@@ -1,0 +1,27 @@
+From 1fdb1775526b5bc7408d391b33e121f2ef88919a Mon Sep 17 00:00:00 2001
+From: md_5 <git@md-5.net>
+Date: Mon, 13 Jul 2015 19:10:15 +1000
+Subject: [PATCH] Add restart API.
+
+
+diff --git a/src/main/java/org/bukkit/Server.java b/src/main/java/org/bukkit/Server.java
+index aba9b011..f6fb72fa 100644
+--- a/src/main/java/org/bukkit/Server.java
++++ b/src/main/java/org/bukkit/Server.java
+@@ -1317,6 +1317,13 @@ public interface Server extends PluginMessageRecipient {
+         public void broadcast(@NotNull net.md_5.bungee.api.chat.BaseComponent... components) {
+             throw new UnsupportedOperationException("Not supported yet.");
+         }
++
++        /**
++         * Restart the server. If the server administrator has not configured restarting, the server will stop.
++         */
++        public void restart() {
++            throw new UnsupportedOperationException("Not supported yet.");
++        }
+     }
+ 
+     @NotNull
+-- 
+2.25.1
+
