@@ -1291,4 +1291,17 @@ public interface Server extends PluginMessageRecipient {
     @Deprecated
     @NotNull
     UnsafeValues getUnsafe();
+
+    // Spigot start
+    public class Spigot {
+
+        @NotNull
+        public org.bukkit.configuration.file.YamlConfiguration getConfig() {
+            throw new UnsupportedOperationException("Not supported yet.");
+        }
+    }
+
+    @NotNull
+    Spigot spigot();
+    // Spigot end
 }

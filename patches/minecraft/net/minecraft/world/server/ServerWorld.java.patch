@@ -472,7 +472,7 @@
        Entity entity = this.field_175741_N.get(p_217448_1_.func_110124_au());
        if (entity != null) {
           field_147491_a.warn("Force-added player with duplicate UUID {}", (Object)p_217448_1_.func_110124_au().toString());
-@@ -869,18 +999,23 @@
+@@ -869,18 +999,24 @@
     }
  
     private boolean func_72838_d(Entity p_72838_1_) {
@@ -482,6 +482,7 @@
 +   }
 +
 +   private boolean addEntity0(Entity entityIn, CreatureSpawnEvent.SpawnReason spawnReason) {
++      org.spigotmc.AsyncCatcher.catchOp("entity add"); // Spigot
 +      if (entityIn.field_70128_L) {
 +         // LOGGER.warn("Tried to add entity {} but it was marked as removed already", (Object)EntityType.getKey(entityIn.getType())); // CraftBukkit
           return false;
@@ -502,7 +503,7 @@
              return true;
           }
        }
-@@ -890,6 +1025,7 @@
+@@ -890,6 +1026,7 @@
        if (this.func_217478_l(p_217440_1_)) {
           return false;
        } else {
@@ -510,7 +511,7 @@
           this.func_217465_m(p_217440_1_);
           return true;
        }
-@@ -900,7 +1036,7 @@
+@@ -900,7 +1037,7 @@
        if (entity == null) {
           return false;
        } else {
@@ -519,7 +520,7 @@
           return true;
        }
     }
-@@ -925,12 +1061,17 @@
+@@ -925,12 +1062,18 @@
  
     }
  
@@ -528,6 +529,7 @@
 +      removeEntityComplete(p_217484_1_, false);
 +   }
 +   public void removeEntityComplete(Entity p_217484_1_, boolean keepData) {
++      org.spigotmc.AsyncCatcher.catchOp("entity unregister"); // Spigot
        if (p_217484_1_ instanceof EnderDragonEntity) {
           for(EnderDragonPartEntity enderdragonpartentity : ((EnderDragonEntity)p_217484_1_).func_213404_dT()) {
 -            enderdragonpartentity.func_70106_y();
@@ -538,7 +540,7 @@
  
        this.field_175741_N.remove(p_217484_1_.func_110124_au());
        this.func_72863_F().func_217226_b(p_217484_1_);
-@@ -940,10 +1081,16 @@
+@@ -940,13 +1083,20 @@
        }
  
        this.func_96441_U().func_181140_a(p_217484_1_);
@@ -556,7 +558,11 @@
     }
  
     private void func_217465_m(Entity p_217465_1_) {
-@@ -959,20 +1106,29 @@
++      org.spigotmc.AsyncCatcher.catchOp("entity register"); // Spigot
+       if (this.field_217492_a) {
+          this.field_217499_z.add(p_217465_1_);
+       } else {
+@@ -959,20 +1109,29 @@
  
           this.field_175741_N.put(p_217465_1_.func_110124_au(), p_217465_1_);
           this.func_72863_F().func_217230_c(p_217465_1_);
@@ -588,7 +594,7 @@
        }
     }
  
-@@ -985,22 +1141,43 @@
+@@ -985,22 +1144,43 @@
     }
  
     public void func_217434_e(ServerPlayerEntity p_217434_1_) {
@@ -636,7 +642,7 @@
              if (d0 * d0 + d1 * d1 + d2 * d2 < 1024.0D) {
                 serverplayerentity.field_71135_a.func_147359_a(new SAnimateBlockBreakPacket(p_175715_1_, p_175715_2_, p_175715_3_));
              }
-@@ -1010,10 +1187,20 @@
+@@ -1010,10 +1190,20 @@
     }
  
     public void func_184148_a(@Nullable PlayerEntity p_184148_1_, double p_184148_2_, double p_184148_4_, double p_184148_6_, SoundEvent p_184148_8_, SoundCategory p_184148_9_, float p_184148_10_, float p_184148_11_) {
@@ -657,7 +663,7 @@
        this.field_73061_a.func_184103_al().func_148543_a(p_217384_1_, p_217384_2_.func_226277_ct_(), p_217384_2_.func_226278_cu_(), p_217384_2_.func_226281_cx_(), p_217384_5_ > 1.0F ? (double)(16.0F * p_217384_5_) : 16.0D, this.field_73011_w.func_186058_p(), new SSpawnMovingSoundEffectPacket(p_217384_3_, p_217384_4_, p_217384_2_, p_217384_5_, p_217384_6_));
     }
  
-@@ -1048,13 +1235,20 @@
+@@ -1048,13 +1238,20 @@
     }
  
     public Explosion func_217401_a(@Nullable Entity p_217401_1_, @Nullable DamageSource p_217401_2_, double p_217401_3_, double p_217401_5_, double p_217401_7_, float p_217401_9_, boolean p_217401_10_, Explosion.Mode p_217401_11_) {
@@ -683,7 +689,7 @@
        if (p_217401_11_ == Explosion.Mode.NONE) {
           explosion.func_180342_d();
        }
-@@ -1109,12 +1303,17 @@
+@@ -1109,12 +1306,17 @@
     }
  
     public <T extends IParticleData> int func_195598_a(T p_195598_1_, double p_195598_2_, double p_195598_4_, double p_195598_6_, int p_195598_8_, double p_195598_9_, double p_195598_11_, double p_195598_13_, double p_195598_15_) {
@@ -703,7 +709,7 @@
              ++i;
           }
        }
-@@ -1188,7 +1387,13 @@
+@@ -1188,7 +1390,13 @@
     @Nullable
     public MapData func_217406_a(String p_217406_1_) {
        return this.func_73046_m().func_71218_a(DimensionType.field_223227_a_).func_217481_x().func_215753_b(() -> {
@@ -718,7 +724,7 @@
        }, p_217406_1_);
     }
  
-@@ -1377,4 +1582,15 @@
+@@ -1377,4 +1585,15 @@
           return p_229854_1_.func_175898_b(p_229855_1_.func_180328_a());
        });
     }

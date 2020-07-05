@@ -9,6 +9,15 @@
  
  public class MushroomBlock extends BushBlock implements IGrowable {
     protected static final VoxelShape field_196385_a = Block.func_208617_a(5.0D, 0.0D, 5.0D, 11.0D, 6.0D, 11.0D);
+@@ -25,7 +27,7 @@
+    }
+ 
+    public void func_225534_a_(BlockState p_225534_1_, ServerWorld p_225534_2_, BlockPos p_225534_3_, Random p_225534_4_) {
+-      if (p_225534_4_.nextInt(25) == 0) {
++      if (p_225534_4_.nextInt(Math.max(1, (int) (100.0F / p_225534_2_.spigotConfig.mushroomModifier) * 25)) == 0) { // Spigot
+          int i = 5;
+          int j = 4;
+ 
 @@ -49,7 +51,7 @@
           }
  

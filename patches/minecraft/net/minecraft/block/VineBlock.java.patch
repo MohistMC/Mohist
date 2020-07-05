@@ -16,7 +16,7 @@
           }
  
 -      } else if (p_225534_2_.field_73012_v.nextInt(4) == 0) {
-+      } else if (p_225534_2_.field_73012_v.nextInt(4) == 0 && p_225534_2_.isAreaLoaded(p_225534_3_, 4)) { // Forge: check area to prevent loading unloaded chunks
++      } else if (p_225534_2_.field_73012_v.nextInt(Math.max(1, (int) (100.0F / p_225534_2_.spigotConfig.vineModifier) * 4)) == 0 && p_225534_2_.isAreaLoaded(p_225534_3_, 4)) { // Forge: check area to prevent loading unloaded chunks
           Direction direction = Direction.func_176741_a(p_225534_4_);
           BlockPos blockpos = p_225534_3_.func_177984_a();
           if (direction.func_176740_k().func_176722_c() && !p_225534_1_.func_177229_b(func_176267_a(direction))) {

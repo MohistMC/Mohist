@@ -1488,6 +1488,15 @@
        this.field_147369_b.func_143004_u();
        if (this.field_147369_b.field_71070_bA.field_75152_c == p_147338_1_.func_149539_c() && this.field_147369_b.field_71070_bA.func_75129_b(this.field_147369_b) && !this.field_147369_b.func_175149_v()) {
           this.field_147369_b.field_71070_bA.func_75140_a(this.field_147369_b, p_147338_1_.func_149537_d());
+@@ -1176,7 +2148,7 @@
+          boolean flag = p_147344_1_.func_149627_c() < 0;
+          ItemStack itemstack = p_147344_1_.func_149625_d();
+          CompoundNBT compoundnbt = itemstack.func_179543_a("BlockEntityTag");
+-         if (!itemstack.func_190926_b() && compoundnbt != null && compoundnbt.func_74764_b("x") && compoundnbt.func_74764_b("y") && compoundnbt.func_74764_b("z")) {
++         if (!itemstack.func_190926_b() && compoundnbt != null && compoundnbt.func_74764_b("x") && compoundnbt.func_74764_b("y") && compoundnbt.func_74764_b("z") && this.field_147369_b.getBukkitEntity().hasPermission("minecraft.nbt.copy")) { // Spigot
+             BlockPos blockpos = new BlockPos(compoundnbt.func_74762_e("x"), compoundnbt.func_74762_e("y"), compoundnbt.func_74762_e("z"));
+             TileEntity tileentity = this.field_147369_b.field_70170_p.func_175625_s(blockpos);
+             if (tileentity != null) {
 @@ -1190,6 +2162,37 @@
  
           boolean flag1 = p_147344_1_.func_149627_c() >= 1 && p_147344_1_.func_149627_c() <= 45;

@@ -16,7 +16,7 @@
        if (p_225534_2_.func_226659_b_(p_225534_3_, 0) >= 9) {
           float f = CropsBlock.func_180672_a(this, p_225534_2_, p_225534_3_);
 -         if (p_225534_4_.nextInt((int)(25.0F / f) + 1) == 0) {
-+         if (net.minecraftforge.common.ForgeHooks.onCropsGrowPre(p_225534_2_, p_225534_3_, p_225534_1_, p_225534_4_.nextInt((int)(25.0F / f) + 1) == 0)) {
++         if (net.minecraftforge.common.ForgeHooks.onCropsGrowPre(p_225534_2_, p_225534_3_, p_225534_1_, p_225534_4_.nextInt((int) ((100.0F / (this == Blocks.field_150393_bb ? p_225534_2_.spigotConfig.pumpkinModifier : p_225534_2_.spigotConfig.melonModifier)) * (25.0F / f)) + 1) == 0)) { // Spigot
              int i = p_225534_1_.func_177229_b(field_176484_a);
              if (i < 7) {
 -               p_225534_1_ = p_225534_1_.func_206870_a(field_176484_a, Integer.valueOf(i + 1));
