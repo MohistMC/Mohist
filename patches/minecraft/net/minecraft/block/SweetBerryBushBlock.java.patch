@@ -5,8 +5,8 @@
  import net.minecraft.world.World;
  import net.minecraft.world.server.ServerWorld;
 +// CraftBukkit start
-+import org.bukkit.craftbukkit.v1_15_R1.block.CraftBlock;
-+import org.bukkit.craftbukkit.v1_15_R1.event.CraftEventFactory;
++import org.bukkit.craftbukkit.block.CraftBlock;
++import org.bukkit.craftbukkit.event.CraftEventFactory;
 +// CraftBukkit end
  
  public class SweetBerryBushBlock extends BushBlock implements IGrowable {

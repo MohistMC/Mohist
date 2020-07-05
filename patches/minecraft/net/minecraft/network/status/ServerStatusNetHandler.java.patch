@@ -17,7 +17,7 @@
 +import net.minecraft.util.text.StringTextComponent;
  import net.minecraft.util.text.TranslationTextComponent;
 +// CraftBukkit start
-+import org.bukkit.craftbukkit.v1_15_R1.util.CraftIconCache;
++import org.bukkit.craftbukkit.util.CraftIconCache;
 +import org.bukkit.entity.Player;
 +// CraftBukkit end
 +import java.net.InetSocketAddress;
@@ -43,7 +43,7 @@
 +            @Override
 +            public void setServerIcon(org.bukkit.util.CachedServerIcon icon) {
 +               if (!(icon instanceof CraftIconCache)) {
-+                  throw new IllegalArgumentException(icon + " was not created by " + org.bukkit.craftbukkit.v1_15_R1.CraftServer.class);
++                  throw new IllegalArgumentException(icon + " was not created by " + org.bukkit.craftbukkit.CraftServer.class);
 +               }
 +               this.icon = (CraftIconCache) icon;
 +            }

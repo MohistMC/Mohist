@@ -21,7 +21,7 @@
        double d3 = (double)MathHelper.func_76133_a(d0 * d0 + d2 * d2);
        abstractarrowentity.func_70186_c(d0, d1 + d3 * (double)0.2F, d2, 1.6F, (float)(14 - this.field_70170_p.func_175659_aa().func_151525_a() * 4));
 +      // CraftBukkit start
-+      org.bukkit.event.entity.EntityShootBowEvent event = org.bukkit.craftbukkit.v1_15_R1.event.CraftEventFactory.callEntityShootBowEvent(this, this.func_184614_ca(), abstractarrowentity, 0.8f);
++      org.bukkit.event.entity.EntityShootBowEvent event = org.bukkit.craftbukkit.event.CraftEventFactory.callEntityShootBowEvent(this, this.func_184614_ca(), abstractarrowentity, 0.8f);
 +      if (event.isCancelled()) {
 +         event.getProjectile().remove();
 +         return;

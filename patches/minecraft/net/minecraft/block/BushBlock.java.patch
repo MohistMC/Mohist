@@ -4,7 +4,7 @@
  import net.minecraft.world.IBlockReader;
  import net.minecraft.world.IWorld;
  import net.minecraft.world.IWorldReader;
-+import org.bukkit.craftbukkit.v1_15_R1.event.CraftEventFactory;
++import org.bukkit.craftbukkit.event.CraftEventFactory;
  
 -public class BushBlock extends Block {
 +public class BushBlock extends Block implements net.minecraftforge.common.IPlantable {

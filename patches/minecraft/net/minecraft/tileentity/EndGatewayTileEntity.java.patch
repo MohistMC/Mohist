@@ -35,7 +35,7 @@
           if (this.field_195506_h != null) {
              BlockPos blockpos = this.field_195507_i ? this.field_195506_h : this.func_195502_i();
 +            if (p_195496_1_ instanceof ServerPlayerEntity) {
-+               org.bukkit.craftbukkit.v1_15_R1.entity.CraftPlayer player = (org.bukkit.craftbukkit.v1_15_R1.entity.CraftPlayer)p_195496_1_.getBukkitEntity();
++               org.bukkit.craftbukkit.entity.CraftPlayer player = (org.bukkit.craftbukkit.entity.CraftPlayer)p_195496_1_.getBukkitEntity();
 +               org.bukkit.Location location = new org.bukkit.Location(this.field_145850_b.getWorldCB(), blockpos.func_177958_n() + 0.5, blockpos.func_177956_o() + 0.5, blockpos.func_177952_p() + 0.5);
 +               location.setPitch(player.getLocation().getPitch());
 +               location.setYaw(player.getLocation().getYaw());

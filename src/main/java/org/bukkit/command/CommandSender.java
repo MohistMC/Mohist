@@ -35,13 +35,4 @@ public interface CommandSender extends Permissible {
      */
     @NotNull
     public String getName();
-
-    // Spigot start
-    public class Spigot {
-
-    }
-
-    @NotNull
-    Spigot spigot();
-    // Spigot end
 }

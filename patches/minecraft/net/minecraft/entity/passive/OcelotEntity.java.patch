@@ -15,7 +15,7 @@
           if (!this.field_70170_p.field_72995_K) {
 -            if (this.field_70146_Z.nextInt(3) == 0) {
 +            // CraftBukkit -added event call and isCancelled check
-+            if (this.field_70146_Z.nextInt(3) == 0 && !org.bukkit.craftbukkit.v1_15_R1.event.CraftEventFactory.callEntityTameEvent(this, p_184645_1_).isCancelled()) {
++            if (this.field_70146_Z.nextInt(3) == 0 && !org.bukkit.craftbukkit.event.CraftEventFactory.callEntityTameEvent(this, p_184645_1_).isCancelled()) {
                 this.func_213528_r(true);
                 this.func_213527_s(true);
                 this.field_70170_p.func_72960_a(this, (byte)41);

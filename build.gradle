@@ -10,7 +10,7 @@ buildscript {
         }
     }
     dependencies {
-        classpath 'net.minecraftforge.gradle:ForgeGradle:3.+'
+        classpath 'net.minecraftforge.gradle:ForgeGradle:3.0.179'
         classpath 'org.ow2.asm:asm:7.2'
         classpath 'org.ow2.asm:asm-tree:7.2'
     }
@@ -38,7 +38,6 @@ plugins {
     id 'de.undercouch.download' version '3.3.0'
     id 'com.github.ben-manes.versions' version '0.22.0'
 }
-apply plugin: 'eclipse'
 
 println('Java: ' + System.getProperty('java.version') + ' JVM: ' + System.getProperty('java.vm.version'))
 
@@ -957,16 +956,14 @@ project(':forge') {
             into '/inject/'
         }
     }
-
-    extractRangeMap {
+	
+	 extractRangeMap {
         addDependencies jar.archivePath
         addSources sourceSets.userdev.java.srcDirs
     }
     applyRangeMap {
         setSources sourceSets.userdev.java.srcDirs
     }
-    
-    tasks.eclipse.dependsOn('genEclipseRuns')
     
     if (project.hasProperty('UPDATE_MAPPINGS')) {
         extractRangeMap {

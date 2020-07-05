@@ -14,9 +14,9 @@
     }
  
     public void func_70077_a(LightningBoltEntity p_70077_1_) {
-+      org.bukkit.craftbukkit.v1_15_R1.event.CraftEventFactory.entityDamage = p_70077_1_; // CraftBukkit
++      org.bukkit.craftbukkit.event.CraftEventFactory.entityDamage = p_70077_1_; // CraftBukkit
        this.func_70097_a(DamageSource.field_180137_b, Float.MAX_VALUE);
-+      org.bukkit.craftbukkit.v1_15_R1.event.CraftEventFactory.entityDamage = null; // CraftBukkit
++      org.bukkit.craftbukkit.event.CraftEventFactory.entityDamage = null; // CraftBukkit
     }
  
     static class GoHomeGoal extends Goal {
@@ -27,7 +27,7 @@
 -               world.func_184133_a((PlayerEntity)null, blockpos, SoundEvents.field_203278_iw, SoundCategory.BLOCKS, 0.3F, 0.9F + world.field_73012_v.nextFloat() * 0.2F);
 -               world.func_180501_a(this.field_179494_b.func_177984_a(), Blocks.field_203213_jA.func_176223_P().func_206870_a(TurtleEggBlock.field_203171_b, Integer.valueOf(this.field_203122_f.field_70146_Z.nextInt(4) + 1)), 3);
 +               // CraftBukkit start
-+               if (!org.bukkit.craftbukkit.v1_15_R1.event.CraftEventFactory.callEntityChangeBlockEvent(this.field_203122_f, this.field_179494_b.func_177984_a(), (BlockState) Blocks.field_203213_jA.func_176223_P().func_206870_a(TurtleEggBlock.field_203171_b, this.field_203122_f.field_70146_Z.nextInt(4) + 1)).isCancelled()) {
++               if (!org.bukkit.craftbukkit.event.CraftEventFactory.callEntityChangeBlockEvent(this.field_203122_f, this.field_179494_b.func_177984_a(), (BlockState) Blocks.field_203213_jA.func_176223_P().func_206870_a(TurtleEggBlock.field_203171_b, this.field_203122_f.field_70146_Z.nextInt(4) + 1)).isCancelled()) {
 +                  world.func_184133_a((PlayerEntity) null, blockpos, SoundEvents.field_203278_iw, SoundCategory.BLOCKS, 0.3F, 0.9F + world.field_73012_v.nextFloat() * 0.2F);
 +                  world.func_180501_a(this.field_179494_b.func_177984_a(), Blocks.field_203213_jA.func_176223_P().func_206870_a(TurtleEggBlock.field_203171_b, Integer.valueOf(this.field_203122_f.field_70146_Z.nextInt(4) + 1)), 3);
 +               }

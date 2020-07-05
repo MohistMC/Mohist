@@ -13,7 +13,7 @@
  import net.minecraftforge.api.distmarker.Dist;
  import net.minecraftforge.api.distmarker.OnlyIn;
 +import org.bukkit.Location;
-+import org.bukkit.craftbukkit.v1_15_R1.event.CraftEventFactory;
++import org.bukkit.craftbukkit.event.CraftEventFactory;
 +import org.bukkit.event.block.BlockExplodeEvent;
 +import org.bukkit.event.entity.EntityExplodeEvent;
  
@@ -187,7 +187,7 @@
              if (this.field_77290_i.nextInt(3) == 0 && this.field_77287_j.func_180495_p(blockpos2).func_196958_f() && this.field_77287_j.func_180495_p(blockpos2.func_177977_b()).func_200015_d(this.field_77287_j, blockpos2.func_177977_b())) {
 -               this.field_77287_j.func_175656_a(blockpos2, Blocks.field_150480_ab.func_176223_P());
 +               // CraftBukkit start - Ignition by explosion
-+               if (!org.bukkit.craftbukkit.v1_15_R1.event.CraftEventFactory.callBlockIgniteEvent(this.field_77287_j, blockpos2.func_177958_n(), blockpos2.func_177956_o(), blockpos2.func_177952_p(), this).isCancelled()) {
++               if (!org.bukkit.craftbukkit.event.CraftEventFactory.callBlockIgniteEvent(this.field_77287_j, blockpos2.func_177958_n(), blockpos2.func_177956_o(), blockpos2.func_177952_p(), this).isCancelled()) {
 +                  this.field_77287_j.func_175656_a(blockpos2, Blocks.field_150480_ab.func_176223_P());
 +               }
 +               // CraftBukkit end

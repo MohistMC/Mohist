@@ -23,8 +23,8 @@
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
 +// CraftBukkit start
-+import org.bukkit.craftbukkit.v1_15_R1.entity.CraftLivingEntity;
-+import org.bukkit.craftbukkit.v1_15_R1.event.CraftEventFactory;
++import org.bukkit.craftbukkit.entity.CraftLivingEntity;
++import org.bukkit.craftbukkit.event.CraftEventFactory;
 +import org.bukkit.event.entity.EntityPotionEffectEvent;
 +// CraftBukkit end
  
@@ -71,7 +71,7 @@
 +         }
 +      }
 +
-+      org.bukkit.event.entity.PotionSplashEvent event = org.bukkit.craftbukkit.v1_15_R1.event.CraftEventFactory.callPotionSplashEvent(this, affected);
++      org.bukkit.event.entity.PotionSplashEvent event = org.bukkit.craftbukkit.event.CraftEventFactory.callPotionSplashEvent(this, affected);
 +      if (!event.isCancelled() && list != null && !list.isEmpty()) {// do not process effects if there are no effects to process
 +         for (org.bukkit.entity.LivingEntity victim : event.getAffectedEntities()) {
 +            if (!(victim instanceof CraftLivingEntity)) {
@@ -112,7 +112,7 @@
  
 -      this.field_70170_p.func_217376_c(areaeffectcloudentity);
 +      // CraftBukkit start
-+      org.bukkit.event.entity.LingeringPotionSplashEvent event = org.bukkit.craftbukkit.v1_15_R1.event.CraftEventFactory.callLingeringPotionSplashEvent(this, areaeffectcloudentity);
++      org.bukkit.event.entity.LingeringPotionSplashEvent event = org.bukkit.craftbukkit.event.CraftEventFactory.callLingeringPotionSplashEvent(this, areaeffectcloudentity);
 +      if (!(event.isCancelled() || areaeffectcloudentity.field_70128_L)) {
 +         this.field_70170_p.func_217376_c(areaeffectcloudentity);
 +      } else {

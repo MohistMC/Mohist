@@ -105,7 +105,7 @@
                    }
  
 -                  if (flag) {
-+                  if (flag && !org.bukkit.craftbukkit.v1_15_R1.event.CraftEventFactory.callEntityChangeBlockEvent(BeeEntity.this, blockpos, blockstate.func_206870_a(integerproperty, (Integer) blockstate.func_177229_b(integerproperty) + 1)).isCancelled()) { // Spigot
++                  if (flag && !org.bukkit.craftbukkit.event.CraftEventFactory.callEntityChangeBlockEvent(BeeEntity.this, blockpos, blockstate.func_206870_a(integerproperty, (Integer) blockstate.func_177229_b(integerproperty) + 1)).isCancelled()) { // Spigot
                       BeeEntity.this.field_70170_p.func_217379_c(2005, blockpos, 0);
                       BeeEntity.this.field_70170_p.func_175656_a(blockpos, blockstate.func_206870_a(integerproperty, Integer.valueOf(blockstate.func_177229_b(integerproperty) + 1)));
                       BeeEntity.this.func_226421_eO_();

@@ -4,8 +4,8 @@
  import net.minecraft.world.World;
  import net.minecraftforge.api.distmarker.Dist;
  import net.minecraftforge.api.distmarker.OnlyIn;
-+import org.bukkit.craftbukkit.v1_15_R1.inventory.CraftInventoryFurnace;
-+import org.bukkit.craftbukkit.v1_15_R1.inventory.CraftInventoryView;
++import org.bukkit.craftbukkit.inventory.CraftInventoryFurnace;
++import org.bukkit.craftbukkit.inventory.CraftInventoryView;
  
  public abstract class AbstractFurnaceContainer extends RecipeBookContainer<IInventory> {
     private final IInventory field_217063_d;

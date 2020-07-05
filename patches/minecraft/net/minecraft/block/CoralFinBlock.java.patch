@@ -5,7 +5,7 @@
     public void func_225534_a_(BlockState p_225534_1_, ServerWorld p_225534_2_, BlockPos p_225534_3_, Random p_225534_4_) {
        if (!func_212557_b_(p_225534_1_, p_225534_2_, p_225534_3_)) {
 +         // CraftBukkit start
-+         if (org.bukkit.craftbukkit.v1_15_R1.event.CraftEventFactory.callBlockFadeEvent(p_225534_2_, p_225534_3_, this.field_211887_b.func_176223_P().func_206870_a(field_212560_b, false)).isCancelled()) {
++         if (org.bukkit.craftbukkit.event.CraftEventFactory.callBlockFadeEvent(p_225534_2_, p_225534_3_, this.field_211887_b.func_176223_P().func_206870_a(field_212560_b, false)).isCancelled()) {
 +            return;
 +         }
 +         // CraftBukkit end

@@ -4,8 +4,8 @@
  import net.minecraft.world.World;
  import net.minecraftforge.api.distmarker.Dist;
  import net.minecraftforge.api.distmarker.OnlyIn;
-+import org.bukkit.craftbukkit.v1_15_R1.inventory.CraftInventoryCrafting;
-+import org.bukkit.craftbukkit.v1_15_R1.inventory.CraftInventoryView;
++import org.bukkit.craftbukkit.inventory.CraftInventoryCrafting;
++import org.bukkit.craftbukkit.inventory.CraftInventoryView;
 +import org.bukkit.inventory.InventoryView;
  
  public class WorkbenchContainer extends RecipeBookContainer<CraftingInventory> {
@@ -50,7 +50,7 @@
              }
           }
 -
-+         itemstack = org.bukkit.craftbukkit.v1_15_R1.event.CraftEventFactory.callPreCraftEvent(p_217066_3_, p_217066_4_, itemstack, container.getBukkitView(), false); // CraftBukkit
++         itemstack = org.bukkit.craftbukkit.event.CraftEventFactory.callPreCraftEvent(p_217066_3_, p_217066_4_, itemstack, container.getBukkitView(), false); // CraftBukkit
           p_217066_4_.func_70299_a(0, itemstack);
           serverplayerentity.field_71135_a.func_147359_a(new SSetSlotPacket(p_217066_0_, 0, itemstack));
        }
