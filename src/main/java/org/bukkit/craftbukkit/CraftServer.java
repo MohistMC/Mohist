@@ -708,11 +708,11 @@ public final class CraftServer implements Server {
             return true;
         }
 
-        if (sender instanceof Player) {
-            sender.sendMessage("Unknown command. Type \"/help\" for help.");
-        } else {
-            sender.sendMessage("Unknown command. Type \"help\" for help.");
+        // Spigot start
+        if (!org.spigotmc.SpigotConfig.unknownCommandMessage.isEmpty()) {
+            sender.sendMessage(org.spigotmc.SpigotConfig.unknownCommandMessage);
         }
+        // Spigot end
 
         return false;
     }
@@ -1641,6 +1641,12 @@ public final class CraftServer implements Server {
     }
 
     public List<String> tabCompleteCommand(Player player, String message, ServerWorld world, Vec3d pos) {
+        // Spigot Start
+        if ( (org.spigotmc.SpigotConfig.tabComplete < 0 || message.length() <= org.spigotmc.SpigotConfig.tabComplete) && !message.contains( " " ) )
+        {
+            return ImmutableList.of();
+        }
+        // Spigot End
         List<String> completions = null;
         try {
             if (message.startsWith("/")) {
