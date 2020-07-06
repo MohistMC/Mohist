@@ -124,7 +124,7 @@
           if (p_219199_5_ && !p_219199_4_) {
              ChunkHolder chunkholder = this.func_219219_b(p_219199_2_.func_201841_a());
              if (chunkholder != null) {
-@@ -779,7 +818,7 @@
+@@ -779,13 +818,23 @@
     @Nullable
     private CompoundNBT func_219178_f(ChunkPos p_219178_1_) throws IOException {
        CompoundNBT compoundnbt = this.func_227078_e_(p_219178_1_);
@@ -133,7 +133,25 @@
     }
  
     boolean func_219243_d(ChunkPos p_219243_1_) {
-@@ -794,6 +833,7 @@
+-      long i = p_219243_1_.func_201841_a();
++      // Spigot start
++      return isOutsideOfRange(p_219243_1_, false);
++   }
++
++   boolean isOutsideOfRange(ChunkPos chunkPosIn, boolean reducedRange) {
++      int chunkRange = field_219255_i.spigotConfig.mobSpawnRange;
++      chunkRange = (chunkRange > field_219255_i.spigotConfig.viewDistance) ? (byte) field_219255_i.spigotConfig.viewDistance : chunkRange;
++      chunkRange = (chunkRange > 8) ? 8 : chunkRange;
++      double blockRange = (reducedRange) ? Math.pow(chunkRange << 4, 2) : 16384.0D;
++      // Spigot end
++      long i = chunkPosIn.func_201841_a();
+       return !this.field_219267_u.func_223494_d(i) ? true : this.field_219271_y.func_219444_a(i).noneMatch((p_219201_1_) -> {
+-         return !p_219201_1_.func_175149_v() && func_219217_a(p_219243_1_, p_219201_1_) < 16384.0D;
++         return !p_219201_1_.func_175149_v() && func_219217_a(chunkPosIn, p_219201_1_)  < blockRange; // Spigot
+       });
+    }
+ 
+@@ -794,6 +843,7 @@
     }
  
     void func_219234_a(ServerPlayerEntity p_219234_1_, boolean p_219234_2_) {
@@ -141,7 +159,7 @@
        boolean flag = this.func_219187_b(p_219234_1_);
        boolean flag1 = this.field_219271_y.func_219448_c(p_219234_1_);
        int i = MathHelper.func_76128_c(p_219234_1_.func_226277_ct_()) >> 4;
-@@ -919,6 +959,7 @@
+@@ -919,10 +969,12 @@
     }
  
     protected void func_219210_a(Entity p_219210_1_) {
@@ -149,7 +167,12 @@
        if (!(p_219210_1_ instanceof EnderDragonPartEntity)) {
           if (!(p_219210_1_ instanceof LightningBoltEntity)) {
              EntityType<?> entitytype = p_219210_1_.func_200600_R();
-@@ -947,6 +988,7 @@
+             int i = entitytype.func_220345_k() * 16;
++            i = org.spigotmc.TrackingRange.getEntityTrackingRange(p_219210_1_, i); // Spigot
+             int j = entitytype.func_220332_l();
+             if (this.field_219272_z.containsKey(p_219210_1_.func_145782_y())) {
+                throw (IllegalStateException)Util.func_229757_c_(new IllegalStateException("Entity is already tracked!"));
+@@ -947,6 +999,7 @@
     }
  
     protected void func_219231_b(Entity p_219231_1_) {
@@ -157,7 +180,7 @@
        if (p_219231_1_ instanceof ServerPlayerEntity) {
           ServerPlayerEntity serverplayerentity = (ServerPlayerEntity)p_219231_1_;
           this.func_219234_a(serverplayerentity, false);
-@@ -964,6 +1006,7 @@
+@@ -964,6 +1017,7 @@
     }
  
     protected void func_219169_g() {
@@ -165,7 +188,7 @@
        List<ServerPlayerEntity> list = Lists.newArrayList();
        List<ServerPlayerEntity> list1 = this.field_219255_i.func_217369_A();
  
-@@ -1056,15 +1099,15 @@
+@@ -1056,15 +1110,15 @@
        });
     }
  
@@ -184,7 +207,7 @@
           this.field_219403_c = p_i50468_2_;
           this.field_219404_d = p_i50468_3_;
           this.field_219405_e = SectionPos.func_218157_a(p_i50468_2_);
-@@ -1113,7 +1156,7 @@
+@@ -1113,7 +1167,7 @@
  
        public void func_219400_b(ServerPlayerEntity p_219400_1_) {
           if (p_219400_1_ != this.field_219403_c) {
@@ -193,7 +216,7 @@
              int i = Math.min(this.func_229843_b_(), (ChunkManager.this.field_219247_A - 1) * 16);
              boolean flag = vec3d.field_72450_a >= (double)(-i) && vec3d.field_72450_a <= (double)i && vec3d.field_72449_c >= (double)(-i) && vec3d.field_72449_c <= (double)i && this.field_219403_c.func_174827_a(p_219400_1_);
              if (flag) {
-@@ -1126,6 +1169,17 @@
+@@ -1126,6 +1180,17 @@
                    }
                 }
  

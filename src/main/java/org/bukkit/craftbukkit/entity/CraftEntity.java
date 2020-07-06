@@ -473,6 +473,7 @@ public abstract class CraftEntity implements org.bukkit.entity.Entity {
         entity.setPositionAndRotation(location.getX(), location.getY(), location.getZ(), location.getYaw(), location.getPitch());
         // SPIGOT-619: Force sync head rotation also
         entity.setRotationYawHead(location.getYaw());
+        ((net.minecraft.world.server.ServerWorld) entity.world).chunkCheck(entity); // Spigot - register to new chunk
 
         return true;
     }

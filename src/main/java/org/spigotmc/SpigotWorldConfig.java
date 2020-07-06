@@ -161,4 +161,48 @@ public class SpigotWorldConfig
         viewDistance = Math.max( Math.min( viewDistance,  32 ), 3 );
         log( "View Distance: " + viewDistance );
     }
+
+    public byte mobSpawnRange;
+    private void mobSpawnRange()
+    {
+        mobSpawnRange = (byte) getInt( "mob-spawn-range", 6 );
+        log( "Mob Spawn Range: " + mobSpawnRange );
+    }
+
+    public int itemDespawnRate;
+    private void itemDespawnRate()
+    {
+        itemDespawnRate = getInt( "item-despawn-rate", 6000 );
+        log( "Item Despawn Rate: " + itemDespawnRate );
+    }
+
+    public int animalActivationRange = 32;
+    public int monsterActivationRange = 32;
+    public int raiderActivationRange = 48;
+    public int miscActivationRange = 16;
+    public boolean tickInactiveVillagers = true;
+    private void activationRange()
+    {
+        animalActivationRange = getInt( "entity-activation-range.animals", animalActivationRange );
+        monsterActivationRange = getInt( "entity-activation-range.monsters", monsterActivationRange );
+        raiderActivationRange = getInt( "entity-activation-range.raiders", raiderActivationRange );
+        miscActivationRange = getInt( "entity-activation-range.misc", miscActivationRange );
+        tickInactiveVillagers = getBoolean( "entity-activation-range.tick-inactive-villagers", tickInactiveVillagers );
+        log( "Entity Activation Range: An " + animalActivationRange + " / Mo " + monsterActivationRange + " / Ra " + raiderActivationRange + " / Mi " + miscActivationRange + " / Tiv " + tickInactiveVillagers );
+    }
+
+    public int playerTrackingRange = 48;
+    public int animalTrackingRange = 48;
+    public int monsterTrackingRange = 48;
+    public int miscTrackingRange = 32;
+    public int otherTrackingRange = 64;
+    private void trackingRange()
+    {
+        playerTrackingRange = getInt( "entity-tracking-range.players", playerTrackingRange );
+        animalTrackingRange = getInt( "entity-tracking-range.animals", animalTrackingRange );
+        monsterTrackingRange = getInt( "entity-tracking-range.monsters", monsterTrackingRange );
+        miscTrackingRange = getInt( "entity-tracking-range.misc", miscTrackingRange );
+        otherTrackingRange = getInt( "entity-tracking-range.other", otherTrackingRange );
+        log( "Entity Tracking Range: Pl " + playerTrackingRange + " / An " + animalTrackingRange + " / Mo " + monsterTrackingRange + " / Mi " + miscTrackingRange + " / Other " + otherTrackingRange );
+    }
 }
