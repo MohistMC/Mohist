@@ -1,19 +1,20 @@
 package red.mohist.configuration;
 
+import org.bukkit.configuration.file.YamlConfiguration;
+import red.mohist.api.ServerAPI;
+import red.mohist.util.i18n.Message;
+
 import java.io.File;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.List;
-import org.bukkit.configuration.file.YamlConfiguration;
-import red.mohist.api.ServerAPI;
-import red.mohist.util.i18n.Message;
 
 public class MohistConfig extends ConfigBase {
 
     private final String HEADER = "This is the main configuration file for Mohist.\n"
             + "\n"
-            + "Home: https://www.mohist.red/\n";
+            + "Home: https://mohist.red/\n";
 
     public static MohistConfig instance;
 
@@ -38,6 +39,7 @@ public class MohistConfig extends ConfigBase {
     // Bukkit Event Canceled
     public final BoolSetting explosion_canceled = new BoolSetting(this, "eventCanceled.explosion", false, Message.getString("mohistsettings.explosion_canceled"));
 
+    public final BoolSetting use_custom_java8 = new BoolSetting(this, "mohist.use_custom_java8", false, Message.getString("mohistsettings.use_custom_java8"));
     public final BoolSetting check_update = new BoolSetting(this, "mohist.check_update", true, Message.getString("mohistsettings.check_update"));
     public final BoolSetting needToUpdate = new BoolSetting(this, "mohist.check_update_auto_download", false, Message.getString("mohistsettings.needToUpdate"));
     public final BoolSetting check_libraries = new BoolSetting(this, "mohist.check_libraries", true, Message.getString("mohistsettings.check_libraries"));
@@ -66,9 +68,10 @@ public class MohistConfig extends ConfigBase {
     public final BoolSetting stopserversaveworlds = new BoolSetting(this, "world.stopserversaveworlds", false, Message.getString("mohistsettings.stopserversaveworlds"));
     public final BoolSetting disableannounceAdvancements = new BoolSetting(this, "disable-announce-Advancements", false, Message.getString("mohistsettings.disableannounceAdvancements"));
 
-    public final StringSetting modsblacklist = new StringSetting(this, "forge.modswhitelist.list", "aaaaa;bbbbbb", Message.getString("mohistsettings.modsblacklist"));
+    public final StringSetting modsblacklist = new StringSetting(this, "forge.modswhitelist.list", "aaaa@version,bbbb@version", Message.getString("mohistsettings.modsblacklist"));
     public final StringSetting modsblacklistkickMessage = new StringSetting(this, "forge.modswhitelist.kickmessage", "Use of unauthorized mods", Message.getString("mohistsettings.modsblacklistkickMessage"));
-    public final BoolSetting modswhitelistdisable = new BoolSetting(this, "forge.disable_mods_whitelist", false, Message.getString("mohistsettings.modswhitelistdisable"));
+    public final BoolSetting modswhitelistenable = new BoolSetting(this, "forge.enable_mods_whitelist", false, Message.getString("mohistsettings.modswhitelistenable"));
+    public final IntSetting modsnumber = new IntSetting(this, "forge.whitelist_mods_number", 0, Message.getString("mohistsettings.whitelistmodsnumber"));
     public final IntSetting forgeversionmajor = new IntSetting(this, "forge.version.major", 14, "forge.version.major");
     public final IntSetting forgeversionminor = new IntSetting(this, "forge.version.minor", 23, "forge.version.minor");
     public final IntSetting forgeversionrevision = new IntSetting(this, "forge.version.revision", 5, "forge.version.revision");

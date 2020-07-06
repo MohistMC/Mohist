@@ -1,5 +1,10 @@
 package red.mohist.configuration;
 
+import org.bukkit.configuration.file.YamlConfiguration;
+import red.mohist.Mohist;
+import red.mohist.util.IOUtil;
+import red.mohist.util.NumberUtils;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -8,9 +13,6 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
-import red.mohist.Mohist;
-import red.mohist.util.IOUtil;
-import red.mohist.util.NumberUtils;
 
 public class MohistConfigUtil {
 
@@ -42,16 +44,39 @@ public class MohistConfigUtil {
         return Integer.parseInt(defaultreturn);
     }
 
-    public static void copyMohistConfig() {
-        try {
-            File configfile = new File("mohist-config");
-            if (!configfile.exists()) {
-                configfile.mkdirs();
-                Files.copy(Mohist.class.getClassLoader().getResourceAsStream("configurations/mohist.yml"), Paths.get("mohist-config", "mohist.yml"), StandardCopyOption.REPLACE_EXISTING);
-            }
-        } catch (Exception e) {
-            System.out.println("File copy exception!");
-        }
+  public static void copyMohistConfig() {
+    try {
+      File configfile = new File("mohist-config/mohist.yml");
+      if (!configfile.exists()) {
+        configfile.mkdirs();
+        Files.copy(Mohist.class.getClassLoader().getResourceAsStream("configurations/mohist.yml"), Paths.get("mohist-config", "mohist.yml"), StandardCopyOption.REPLACE_EXISTING);
+      }
+    } catch (Exception e) {
+      System.out.println("File copy exception!");
     }
+  }
 
+  public static boolean bMohist(String key) { return MohistConfigUtil.getBoolean(new File("mohist-config", "mohist.yml"), key+":"); }
+
+  public static void setValueMohist(String oldValue, String value) {
+    File mohistyml = new File("mohist-config", "mohist.yml");
+    YamlConfiguration yml = YamlConfiguration.loadConfiguration(mohistyml);
+    yml.set(oldValue, value);
+    try {
+      yml.save(mohistyml);
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+  }
+
+  public static void setValueMohist(String oldValue, boolean value) {
+    File mohistyml = new File("mohist-config", "mohist.yml");
+    YamlConfiguration yml = YamlConfiguration.loadConfiguration(mohistyml);
+    yml.set(oldValue, value);
+    try {
+      yml.save(mohistyml);
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+  }
 }

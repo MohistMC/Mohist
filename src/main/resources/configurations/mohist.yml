@@ -1,5 +1,5 @@
 # This is the main configuration file for Mohist.
-# 
+#
 # Home: https://www.mohist.red/
 #
 
@@ -8,9 +8,9 @@ hidejoinmodslist: false
 forge:
   modswhitelist:
     kickmessage: Use of unauthorized mods
-    list: aaaaa;bbbbbb
-  disable_mods_whitelist: false
-  disablechunkforcesystem: false
+    list: aaaa@version,bbbb@version
+  enable_mods_whitelist: false
+  whitelist_mods_number: 0
   autounloadWorld_whitelist:
     - 0
     - 1
@@ -24,6 +24,7 @@ forge:
     revision: 5
     build: 2854
 mohist:
+  use_custom_java8: false
   check_update: true
   server-type: FML
   lang: xx_XX
