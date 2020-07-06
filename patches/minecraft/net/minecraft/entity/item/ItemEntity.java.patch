@@ -86,13 +86,13 @@
  
           this.field_70160_al |= this.func_70072_I();
           if (!this.field_70170_p.field_72995_K) {
-@@ -130,7 +146,20 @@
+@@ -130,13 +146,52 @@
              }
           }
  
 -         if (!this.field_70170_p.field_72995_K && this.field_70292_b >= 6000) {
 +         ItemStack item = this.func_92059_d();
-+         if (!this.field_70170_p.field_72995_K && this.field_70292_b >= lifespan) {
++         if (!this.field_70170_p.field_72995_K && this.field_70292_b >= field_70170_p.spigotConfig.itemDespawnRate) {
 +            // CraftBukkit start - fire ItemDespawnEvent
 +            if (org.bukkit.craftbukkit.event.CraftEventFactory.callItemDespawnEvent(this).isCancelled()) {
 +               this.field_70292_b = 0;
@@ -108,7 +108,39 @@
              this.func_70106_y();
           }
  
-@@ -144,7 +173,10 @@
+       }
+    }
+ 
++   // Spigot start - copied from above
++   @Override
++   public void inactiveTick() {
++      // CraftBukkit start - Use wall time for pickup and despawn timers
++      int elapsedTicks = MinecraftServer.currentTick - this.lastTick;
++      if (this.field_145804_b != 32767) {
++         this.field_145804_b -= elapsedTicks;
++      }
++      if (this.field_70292_b != -32768) {
++         this.field_70292_b += elapsedTicks;
++      }
++      this.lastTick = MinecraftServer.currentTick;
++      // CraftBukkit end
++
++      if (!this.field_70170_p.field_72995_K && this.field_70292_b >= field_70170_p.spigotConfig.itemDespawnRate) { // Spigot
++         // CraftBukkit start - fire ItemDespawnEvent
++         if (org.bukkit.craftbukkit.event.CraftEventFactory.callItemDespawnEvent(this).isCancelled()) {
++            this.field_70292_b = 0;
++            return;
++         }
++         // CraftBukkit end
++         this.func_70106_y();
++      }
++   }
++   // Spigot end
++
+    private void func_203043_v() {
+       Vec3d vec3d = this.func_213322_ci();
+       this.func_213293_j(vec3d.field_72450_a * (double)0.99F, vec3d.field_72448_b + (double)(vec3d.field_72448_b < (double)0.06F ? 5.0E-4F : 0.0F), vec3d.field_72449_c * (double)0.99F);
+@@ -144,7 +199,10 @@
  
     private void func_85054_d() {
        if (this.func_213857_z()) {
@@ -120,7 +152,7 @@
              return p_213859_1_ != this && p_213859_1_.func_213857_z();
           })) {
              if (itementity.func_213857_z()) {
-@@ -167,7 +199,7 @@
+@@ -167,7 +225,7 @@
        ItemStack itemstack = this.func_92059_d();
        ItemStack itemstack1 = p_226530_1_.func_92059_d();
        if (Objects.equals(this.func_200215_l(), p_226530_1_.func_200215_l()) && func_226532_a_(itemstack, itemstack1)) {
@@ -129,7 +161,7 @@
              func_213858_a(this, itemstack, p_226530_1_, itemstack1);
           } else {
              func_213858_a(p_226530_1_, itemstack1, this, itemstack);
-@@ -183,6 +215,8 @@
+@@ -183,6 +241,8 @@
           return false;
        } else if (p_226532_1_.func_77942_o() ^ p_226532_0_.func_77942_o()) {
           return false;
@@ -138,7 +170,7 @@
        } else {
           return !p_226532_1_.func_77942_o() || p_226532_1_.func_77978_p().equals(p_226532_0_.func_77978_p());
        }
-@@ -198,10 +232,11 @@
+@@ -198,10 +258,11 @@
  
     private static void func_226531_a_(ItemEntity p_226531_0_, ItemStack p_226531_1_, ItemStack p_226531_2_) {
        ItemStack itemstack = func_226533_a_(p_226531_1_, p_226531_2_, 64);
@@ -151,7 +183,7 @@
        func_226531_a_(p_213858_0_, p_213858_1_, p_213858_3_);
        p_213858_0_.field_145804_b = Math.max(p_213858_0_.field_145804_b, p_213858_2_.field_145804_b);
        p_213858_0_.field_70292_b = Math.min(p_213858_0_.field_70292_b, p_213858_2_.field_70292_b);
-@@ -211,16 +246,22 @@
+@@ -211,16 +272,22 @@
  
     }
  
@@ -176,7 +208,7 @@
           this.func_70018_K();
           this.field_70291_e = (int)((float)this.field_70291_e - p_70097_2_);
           if (this.field_70291_e <= 0) {
-@@ -235,6 +276,7 @@
+@@ -235,6 +302,7 @@
        p_213281_1_.func_74777_a("Health", (short)this.field_70291_e);
        p_213281_1_.func_74777_a("Age", (short)this.field_70292_b);
        p_213281_1_.func_74777_a("PickupDelay", (short)this.field_145804_b);
@@ -184,7 +216,7 @@
        if (this.func_200214_m() != null) {
           p_213281_1_.func_218657_a("Thrower", NBTUtil.func_186862_a(this.func_200214_m()));
        }
-@@ -255,6 +297,7 @@
+@@ -255,6 +323,7 @@
        if (p_70037_1_.func_74764_b("PickupDelay")) {
           this.field_145804_b = p_70037_1_.func_74765_d("PickupDelay");
        }
@@ -192,7 +224,7 @@
  
        if (p_70037_1_.func_150297_b("Owner", 10)) {
           this.field_145802_g = NBTUtil.func_186860_b(p_70037_1_.func_74775_l("Owner"));
-@@ -274,12 +317,48 @@
+@@ -274,12 +343,48 @@
  
     public void func_70100_b_(PlayerEntity p_70100_1_) {
        if (!this.field_70170_p.field_72995_K) {
@@ -242,7 +274,7 @@
                 this.func_70106_y();
                 itemstack.func_190920_e(i);
              }
-@@ -300,8 +379,8 @@
+@@ -300,8 +405,8 @@
     }
  
     @Nullable
@@ -253,7 +285,7 @@
        if (!this.field_70170_p.field_72995_K && entity instanceof ItemEntity) {
           ((ItemEntity)entity).func_85054_d();
        }
-@@ -314,7 +393,9 @@
+@@ -314,7 +419,9 @@
     }
  
     public void func_92058_a(ItemStack p_92058_1_) {
@@ -263,12 +295,12 @@
     }
  
     @Nullable
-@@ -366,7 +447,7 @@
+@@ -366,7 +473,7 @@
  
     public void func_174870_v() {
        this.func_174871_r();
 -      this.field_70292_b = 5999;
-+      this.field_70292_b = func_92059_d().getEntityLifespan(field_70170_p) - 1;
++      this.field_70292_b = field_70170_p.spigotConfig.itemDespawnRate - 1; // Spigot
     }
  
     public IPacket<?> func_213297_N() {
