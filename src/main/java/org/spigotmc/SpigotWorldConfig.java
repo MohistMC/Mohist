@@ -205,7 +205,6 @@ public class SpigotWorldConfig
         otherTrackingRange = getInt( "entity-tracking-range.other", otherTrackingRange );
         log( "Entity Tracking Range: Pl " + playerTrackingRange + " / An " + animalTrackingRange + " / Mo " + monsterTrackingRange + " / Mi " + miscTrackingRange + " / Other " + otherTrackingRange );
     }
-
     public int hopperTransfer;
     public int hopperCheck;
     public int hopperAmount;
@@ -221,4 +220,5 @@ public class SpigotWorldConfig
         hopperAmount = getInt( "hopper-amount", 1 );
         log( "Hopper Transfer: " + hopperTransfer + " Hopper Check: " + hopperCheck + " Hopper Amount: " + hopperAmount );
     }
+
 }

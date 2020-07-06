@@ -89,9 +89,7 @@
           }
        }
  
-@@ -503,7 +535,9 @@
-    }
- 
+
     public void func_70645_a(DamageSource p_70645_1_) {
 -      field_184243_a.info("Villager {} died, message: '{}'", this, p_70645_1_.func_151519_b(this).getString());
 +      if (org.spigotmc.SpigotConfig.logVillagerDeaths) {
@@ -100,7 +98,7 @@
        Entity entity = p_70645_1_.func_76346_g();
        if (entity != null) {
           this.func_223361_a(entity);
-@@ -607,7 +641,8 @@
+
     }
  
     protected ITextComponent func_225513_by_() {
@@ -110,7 +108,6 @@
     }
  
     @OnlyIn(Dist.CLIENT)
-@@ -665,7 +700,12 @@
           witchentity.func_174805_g(this.func_174833_aM());
        }
  
@@ -124,7 +121,6 @@
        this.func_70106_y();
     }
  
-@@ -845,7 +885,7 @@
           IronGolemEntity irongolementity = EntityType.field_200757_aw.func_220349_b(this.field_70170_p, (CompoundNBT)null, (ITextComponent)null, (PlayerEntity)null, blockpos2, SpawnReason.MOB_SUMMONED, false, false);
           if (irongolementity != null) {
              if (irongolementity.func_213380_a(this.field_70170_p, SpawnReason.MOB_SUMMONED) && irongolementity.func_205019_a(this.field_70170_p)) {
