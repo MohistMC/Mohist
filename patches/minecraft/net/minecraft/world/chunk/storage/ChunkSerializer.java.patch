@@ -57,28 +57,3 @@
        } else {
           ChunkPrimer chunkprimer = (ChunkPrimer)p_222645_1_;
           listnbt2.addAll(chunkprimer.func_201652_l());
-@@ -360,6 +374,7 @@
-    private static void func_222650_a(CompoundNBT p_222650_0_, Chunk p_222650_1_) {
-       ListNBT listnbt = p_222650_0_.func_150295_c("Entities", 10);
-       World world = p_222650_1_.func_177412_p();
-+      world.timings.syncChunkLoadEntitiesTimer.startTiming(); // Spigot
- 
-       for(int i = 0; i < listnbt.size(); ++i) {
-          CompoundNBT compoundnbt = listnbt.func_150305_b(i);
-@@ -370,6 +385,8 @@
-          p_222650_1_.func_177409_g(true);
-       }
- 
-+      world.timings.syncChunkLoadEntitiesTimer.stopTiming(); // Spigot
-+      world.timings.syncChunkLoadTileEntitiesTimer.startTiming(); // Spigot
-       ListNBT listnbt1 = p_222650_0_.func_150295_c("TileEntities", 10);
- 
-       for(int j = 0; j < listnbt1.size(); ++j) {
-@@ -384,6 +401,7 @@
-             }
-          }
-       }
-+      world.timings.syncChunkLoadTileEntitiesTimer.stopTiming(); // Spigot
- 
-    }
- 

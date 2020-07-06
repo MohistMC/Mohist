@@ -1,6 +1,6 @@
 --- a/net/minecraft/entity/item/FireworkRocketEntity.java
 +++ b/net/minecraft/entity/item/FireworkRocketEntity.java
-@@ -31,23 +31,39 @@
+@@ -31,17 +31,18 @@
  import net.minecraft.world.World;
  import net.minecraftforge.api.distmarker.Dist;
  import net.minecraftforge.api.distmarker.OnlyIn;
@@ -22,28 +22,7 @@
     private LivingEntity field_191513_e;
  
     public FireworkRocketEntity(EntityType<? extends FireworkRocketEntity> p_i50164_1_, World p_i50164_2_) {
-       super(p_i50164_1_, p_i50164_2_);
-    }
- 
-+   // Spigot Start - copied from tick
-+   @Override
-+   public void inactiveTick() {
-+      this.field_92056_a += 1;
-+      if (!this.field_70170_p.field_72995_K && this.field_92056_a > this.field_92055_b) {
-+         // CraftBukkit start
-+         if (!org.bukkit.craftbukkit.event.CraftEventFactory.callFireworkExplodeEvent(this).isCancelled()) {
-+            this.func_191510_k();
-+         }
-+         // CraftBukkit end
-+      }
-+      super.inactiveTick();
-+   }
-+   // Spigot End
-+
-    protected void func_70088_a() {
-       this.field_70180_af.func_187214_a(field_184566_a, ItemStack.field_190927_a);
-       this.field_70180_af.func_187214_a(field_191512_b, OptionalInt.empty());
-@@ -175,7 +191,11 @@
+@@ -175,7 +176,11 @@
        }
  
        if (!this.field_70170_p.field_72995_K && this.field_92056_a > this.field_92055_b) {
@@ -56,7 +35,7 @@
        }
  
     }
-@@ -188,7 +208,11 @@
+@@ -188,7 +193,11 @@
  
     protected void func_213892_a(RayTraceResult p_213892_1_) {
        if (p_213892_1_.func_216346_c() == RayTraceResult.Type.ENTITY && !this.field_70170_p.field_72995_K) {
@@ -69,7 +48,7 @@
        } else if (this.field_70132_H) {
           BlockPos blockpos;
           if (p_213892_1_.func_216346_c() == RayTraceResult.Type.BLOCK) {
-@@ -199,7 +223,11 @@
+@@ -199,7 +208,11 @@
  
           this.field_70170_p.func_180495_p(blockpos).func_196950_a(this.field_70170_p, blockpos, this);
           if (this.func_213894_l()) {
@@ -82,7 +61,7 @@
           }
        }
  
-@@ -223,7 +251,9 @@
+@@ -223,7 +236,9 @@
  
        if (f > 0.0F) {
           if (this.field_191513_e != null) {
@@ -92,7 +71,7 @@
           }
  
           double d0 = 5.0D;
-@@ -244,7 +274,9 @@
+@@ -244,7 +259,9 @@
  
                 if (flag) {
                    float f1 = f * (float)Math.sqrt((5.0D - (double)this.func_70032_d(livingentity)) / 5.0D);

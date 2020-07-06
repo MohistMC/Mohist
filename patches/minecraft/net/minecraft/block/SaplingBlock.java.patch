@@ -29,9 +29,8 @@
  
     public void func_225534_a_(BlockState p_225534_1_, ServerWorld p_225534_2_, BlockPos p_225534_3_, Random p_225534_4_) {
        super.func_225534_a_(p_225534_1_, p_225534_2_, p_225534_3_, p_225534_4_);
--      if (p_225534_2_.func_201696_r(p_225534_3_.func_177984_a()) >= 9 && p_225534_4_.nextInt(7) == 0) {
 +      if (!p_225534_2_.isAreaLoaded(p_225534_3_, 1)) return; // Forge: prevent loading unloaded chunks when checking neighbor's light
-+      if (p_225534_2_.func_201696_r(p_225534_3_.func_177984_a()) >= 9 &&  p_225534_4_.nextInt(Math.max(2, (int) (((100.0F / p_225534_2_.spigotConfig.saplingModifier) * 7) + 0.5F))) == 0) { // Spigot
+       if (p_225534_2_.func_201696_r(p_225534_3_.func_177984_a()) >= 9 && p_225534_4_.nextInt(7) == 0) {
 +         // CraftBukkit start
 +         p_225534_2_.captureTreeGeneration = true;
           this.func_226942_a_(p_225534_2_, p_225534_3_, p_225534_1_, p_225534_4_);

@@ -298,7 +298,6 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
 
     @Override
     public void kickPlayer(String message) {
-        org.spigotmc.AsyncCatcher.catchOp("player kick"); // Spigot
         if (getHandle().connection == null) return;
 
         getHandle().connection.disconnect(message == null ? "" : message);
@@ -1633,15 +1632,4 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
         getHandle().openBook(org.bukkit.craftbukkit.inventory.CraftItemStack.asNMSCopy(book), net.minecraft.util.Hand.MAIN_HAND);
         getInventory().setItemInMainHand(hand);
     }
-
-    // Spigot start
-    private final Player.Spigot spigot = new Player.Spigot()
-    {
-    };
-
-    public Player.Spigot spigot()
-    {
-        return spigot;
-    }
-    // Spigot end
 }

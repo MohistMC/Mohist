@@ -353,14 +353,4 @@ public class CraftMetaBook extends CraftMetaItem implements BookMeta {
 
         return builder;
     }
-
-    // Spigot start
-    private final BookMeta.Spigot spigot = new BookMeta.Spigot() {
-    };
-
-    @Override
-    public BookMeta.Spigot spigot() {
-        return spigot;
-    }
-    // Spigot end
 }

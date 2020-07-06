@@ -708,11 +708,11 @@ public final class CraftServer implements Server {
             return true;
         }
 
-        // Spigot start
-        if (!org.spigotmc.SpigotConfig.unknownCommandMessage.isEmpty()) {
-            sender.sendMessage(org.spigotmc.SpigotConfig.unknownCommandMessage);
+        if (sender instanceof Player) {
+            sender.sendMessage("Unknown command. Type \"/help\" for help.");
+        } else {
+            sender.sendMessage("Unknown command. Type \"help\" for help.");
         }
-        // Spigot end
 
         return false;
     }
@@ -753,7 +753,6 @@ public final class CraftServer implements Server {
             logger.log(Level.WARNING, "Failed to load banned-players.json, " + ex.getMessage());
         }
 
-        org.spigotmc.SpigotConfig.init((File) console.options.valueOf("spigot-settings")); // Spigot
         for (ServerWorld world : console.getWorlds()) {
             world.getWorldInfo().setDifficulty(config.difficulty);
             world.setAllowedSpawnTypes(config.spawnMonsters, config.spawnAnimals);
@@ -780,7 +779,6 @@ public final class CraftServer implements Server {
             } else {
                 world.ticksPerAmbientSpawns = this.getTicksPerAmbientSpawns();
             }
-            world.spigotConfig.init(); // Spigot
         }
 
         pluginManager.clearPlugins();
@@ -1641,12 +1639,6 @@ public final class CraftServer implements Server {
     }
 
     public List<String> tabCompleteCommand(Player player, String message, ServerWorld world, Vec3d pos) {
-        // Spigot Start
-        if ( (org.spigotmc.SpigotConfig.tabComplete < 0 || message.length() <= org.spigotmc.SpigotConfig.tabComplete) && !message.contains( " " ) )
-        {
-            return ImmutableList.of();
-        }
-        // Spigot End
         List<String> completions = null;
         try {
             if (message.startsWith("/")) {
@@ -1943,21 +1935,5 @@ public final class CraftServer implements Server {
     @Override
     public UnsafeValues getUnsafe() {
         return CraftMagicNumbers.INSTANCE;
-    }
-
-    private final Spigot spigot = new Spigot()
-    {
-
-        @Override
-        public YamlConfiguration getConfig()
-        {
-            return org.spigotmc.SpigotConfig.config;
-        }
-
-    };
-
-    public Spigot spigot()
-    {
-        return spigot;
     }
 }
