@@ -62,17 +62,11 @@
     }
  
     @Deprecated
-@@ -467,14 +473,15 @@
- 
-    @Deprecated
-    public void func_220082_b(BlockState p_220082_1_, World p_220082_2_, BlockPos p_220082_3_, BlockState p_220082_4_, boolean p_220082_5_) {
-+      org.spigotmc.AsyncCatcher.catchOp("block onPlace"); // Spigot
-    }
+@@ -471,10 +477,9 @@
  
     @Deprecated
     public void func_196243_a(BlockState p_196243_1_, World p_196243_2_, BlockPos p_196243_3_, BlockState p_196243_4_, boolean p_196243_5_) {
 -      if (this.func_149716_u() && p_196243_1_.func_177230_c() != p_196243_4_.func_177230_c()) {
-+      org.spigotmc.AsyncCatcher.catchOp("block remove"); // Spigot
 +      if (p_196243_1_.hasTileEntity() && (p_196243_1_.func_177230_c() != p_196243_4_.func_177230_c() || !p_196243_4_.hasTileEntity())) {
           p_196243_2_.func_175713_t(p_196243_3_);
        }
@@ -80,7 +74,7 @@
     }
  
     @Deprecated
-@@ -483,8 +490,8 @@
+@@ -483,8 +488,8 @@
        if (f == -1.0F) {
           return 0.0F;
        } else {
@@ -91,7 +85,7 @@
        }
     }
  
-@@ -494,8 +501,7 @@
+@@ -494,8 +499,7 @@
  
     public ResourceLocation func_220068_i() {
        if (this.field_220085_g == null) {
@@ -101,7 +95,7 @@
        }
  
        return this.field_220085_g;
-@@ -555,19 +561,26 @@
+@@ -555,19 +559,26 @@
     }
  
     public static void func_180635_a(World p_180635_0_, BlockPos p_180635_1_, ItemStack p_180635_2_) {
@@ -131,7 +125,7 @@
           while(p_180637_3_ > 0) {
              int i = ExperienceOrbEntity.func_70527_a(p_180637_3_);
              p_180637_3_ -= i;
-@@ -577,6 +590,7 @@
+@@ -577,6 +588,7 @@
  
     }
  
@@ -139,7 +133,7 @@
     public float func_149638_a() {
        return this.field_149781_w;
     }
-@@ -675,6 +689,7 @@
+@@ -675,6 +687,7 @@
        p_176216_2_.func_213317_d(p_176216_2_.func_213322_ci().func_216372_d(1.0D, 0.0D, 1.0D));
     }
  
@@ -147,7 +141,7 @@
     public ItemStack func_185473_a(IBlockReader p_185473_1_, BlockPos p_185473_2_, BlockState p_185473_3_) {
        return new ItemStack(this);
     }
-@@ -688,6 +703,7 @@
+@@ -688,6 +701,7 @@
        return Fluids.field_204541_a.func_207188_f();
     }
  
@@ -155,7 +149,7 @@
     public float func_208618_m() {
        return this.field_149765_K;
     }
-@@ -716,6 +732,7 @@
+@@ -716,6 +730,7 @@
     public void func_176224_k(World p_176224_1_, BlockPos p_176224_2_) {
     }
  
@@ -163,7 +157,7 @@
     public boolean func_149659_a(Explosion p_149659_1_) {
        return true;
     }
-@@ -760,6 +777,7 @@
+@@ -760,6 +775,7 @@
        }
     }
  
@@ -171,7 +165,7 @@
     public SoundType func_220072_p(BlockState p_220072_1_) {
        return this.field_149762_H;
     }
-@@ -769,7 +787,7 @@
+@@ -769,7 +785,7 @@
           this.field_220086_i = Item.func_150898_a(this);
        }
  
@@ -180,7 +174,7 @@
     }
  
     public boolean func_208619_r() {
-@@ -777,13 +795,97 @@
+@@ -777,13 +793,85 @@
     }
  
     public String toString() {
@@ -264,22 +258,10 @@
 +   }
 +   /* ========================================= FORGE END ======================================*/
 +
-+   // Spigot start
-+   public static float range(float min, float value, float max) {
-+      if (value < min) {
-+         return min;
-+      }
-+      if (value > max) {
-+         return max;
-+      }
-+      return value;
-+   }
-+   // Spigot end
-+
     public static enum OffsetType {
        NONE,
        XZ,
-@@ -805,6 +907,9 @@
+@@ -805,6 +893,9 @@
        private ResourceLocation field_222381_j;
        private boolean field_226895_m_ = true;
        private boolean field_208772_j;
@@ -289,7 +271,7 @@
  
        private Properties(Material p_i48616_1_, MaterialColor p_i48616_2_) {
           this.field_200953_a = p_i48616_1_;
-@@ -837,6 +942,8 @@
+@@ -837,6 +928,8 @@
           block$properties.field_226893_j_ = p_200950_0_.func_226891_m_();
           block$properties.field_208772_j = p_200950_0_.field_208621_p;
           block$properties.field_226895_m_ = p_200950_0_.field_226888_j_;
@@ -298,7 +280,7 @@
           return block$properties;
        }
  
-@@ -901,13 +1008,23 @@
+@@ -901,13 +994,23 @@
           return this;
        }
  

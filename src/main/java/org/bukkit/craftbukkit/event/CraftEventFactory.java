@@ -538,23 +538,6 @@ public class CraftEventFactory {
             event = CraftEventFactory.callProjectileLaunchEvent(entity);
         } else if (entity.getBukkitEntity() instanceof org.bukkit.entity.Vehicle){
             event = CraftEventFactory.callVehicleCreateEvent(entity);
-            // Spigot start
-        } else if (entity instanceof ExperienceOrbEntity) {
-            ExperienceOrbEntity xp = (ExperienceOrbEntity) entity;
-            double radius = world.spigotConfig.expMerge;
-            if (radius > 0) {
-                List<Entity> entities = world.getEntitiesWithinAABBExcludingEntity(entity, entity.getBoundingBox().grow(radius, radius, radius));
-                for (Entity e : entities) {
-                    if (e instanceof ExperienceOrbEntity) {
-                        ExperienceOrbEntity loopItem = (ExperienceOrbEntity) e;
-                        if (!loopItem.removed) {
-                            xp.xpValue += loopItem.xpValue;
-                            loopItem.remove();
-                        }
-                    }
-                }
-            }
-            // Spigot end
         } else if (!(entity instanceof ServerPlayerEntity)) {
             event = CraftEventFactory.callEntitySpawnEvent(entity);
         }

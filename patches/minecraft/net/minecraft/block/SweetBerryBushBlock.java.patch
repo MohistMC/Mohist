@@ -17,7 +17,7 @@
        int i = p_225534_1_.func_177229_b(field_220125_a);
 -      if (i < 3 && p_225534_4_.nextInt(5) == 0 && p_225534_2_.func_226659_b_(p_225534_3_.func_177984_a(), 0) >= 9) {
 -         p_225534_2_.func_180501_a(p_225534_3_, p_225534_1_.func_206870_a(field_220125_a, Integer.valueOf(i + 1)), 2);
-+      if (i < 3 && p_225534_2_.func_226659_b_(p_225534_3_.func_177984_a(), 0) >= 9 && net.minecraftforge.common.ForgeHooks.onCropsGrowPre(p_225534_2_, p_225534_3_, p_225534_1_, p_225534_4_.nextInt(Math.max(1, (int) (100.0F / p_225534_2_.spigotConfig.sweetBerryModifier) * 5)) == 0 && p_225534_2_.func_226659_b_(p_225534_3_.func_177984_a(), 0) >= 9)) { // Spigot
++      if (i < 3 && p_225534_2_.func_226659_b_(p_225534_3_.func_177984_a(), 0) >= 9 && net.minecraftforge.common.ForgeHooks.onCropsGrowPre(p_225534_2_, p_225534_3_, p_225534_1_, p_225534_4_.nextInt(5) == 0)) {
 +         CraftEventFactory.handleBlockGrowEvent(p_225534_2_, p_225534_3_, p_225534_1_.func_206870_a(SweetBerryBushBlock.field_220125_a, i + 1), 2); // CraftBukkit
 +         net.minecraftforge.common.ForgeHooks.onCropsGrowPost(p_225534_2_, p_225534_3_, p_225534_1_);
        }

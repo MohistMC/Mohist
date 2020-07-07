@@ -1247,14 +1247,4 @@ public interface Player extends HumanEntity, Conversable, OfflinePlayer, PluginM
      * @param book The book to open for this player
      */
     public void openBook(@NotNull ItemStack book);
-
-    // Spigot start
-    public class Spigot extends Entity.Spigot {
-
-    }
-
-    @NotNull
-    @Override
-    Spigot spigot();
-    // Spigot end
 }

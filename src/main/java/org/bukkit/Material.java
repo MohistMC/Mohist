@@ -4210,36 +4210,6 @@ public enum Material implements Keyed {
     }
 
     /**
-     * Determines the remaining item in a crafting grid after crafting with this
-     * ingredient.
-     *  <br>
-     *  Only available when {@link #isItem()} is true.
-     *
-     *  @return the item left behind when crafting, or null if nothing is.
-     */
-    @Nullable
-    public Material getCraftingRemainingItem() {
-        Validate.isTrue(isItem(), "The Material is not an item!");
-        switch (this) {
-            // <editor-fold defaultstate="collapsed" desc="getCraftingRemainingItem">
-            case WATER_BUCKET:
-            case LAVA_BUCKET:
-            case MILK_BUCKET:
-                return BUCKET;
-            case DRAGON_BREATH:
-            case HONEY_BOTTLE:
-                return GLASS_BOTTLE;
-            default:
-                return null;
-            // </editor-fold>
-        }
-    }
-    // use a normalize() function to ensure it is accessible after a round-trip
-    public static String normalizeName(String name) {
-        return name.toUpperCase(java.util.Locale.ENGLISH).replaceAll("(:|\\s)", "_").replaceAll("\\W", "");
-    }
-
-    /**
      * Attempts to get the Material with the given name.
      * <p>
      * This is a normal lookup, names must be the precise name they are given
@@ -8007,12 +7977,5 @@ public enum Material implements Keyed {
                 return 0;
             // </editor-fold>
         }
-    }
-
-    @javax.annotation.Nullable
-    public static Material addMaterial(Material material) {
-        BY_NAME.put(normalizeName(material.name()), material);
-        BY_NAME.put("X" + String.valueOf(material.id), material);
-        return material;
     }
 }

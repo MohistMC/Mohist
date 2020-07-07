@@ -431,7 +431,7 @@
           double d0 = this.func_226277_ct_();
           double d1 = this.func_226278_cu_();
           double d2 = this.func_226281_cx_();
-@@ -583,69 +764,127 @@
+@@ -583,23 +764,37 @@
           double d3 = 8.0D;
           float f2 = f1;
           serverworld.func_217381_Z().func_76320_a("moving");
@@ -484,13 +484,8 @@
 +         d3 = exit.getZ();
           serverworld.func_217381_Z().func_76319_b();
           serverworld.func_217381_Z().func_76320_a("placing");
--         double d7 = Math.min(-2.9999872E7D, serverworld1.func_175723_af().func_177726_b() + 16.0D);
--         double d4 = Math.min(-2.9999872E7D, serverworld1.func_175723_af().func_177736_c() + 16.0D);
-+         // Spigot start - SPIGOT-5677, MC-114796: Fix portals generating outside world border
-+         double d7 = Math.max(-2.9999872E7D, serverworld1.func_175723_af().func_177726_b() + 16.0D);
-+         double d4 = Math.max(-2.9999872E7D, serverworld1.func_175723_af().func_177736_c() + 16.0D);
-+         // Spigot end
-          double d5 = Math.min(2.9999872E7D, serverworld1.func_175723_af().func_177728_d() - 16.0D);
+          double d7 = Math.min(-2.9999872E7D, serverworld1.func_175723_af().func_177726_b() + 16.0D);
+@@ -608,44 +803,86 @@
           double d6 = Math.min(2.9999872E7D, serverworld1.func_175723_af().func_177733_e() - 16.0D);
           d0 = MathHelper.func_151237_a(d0, d7, d5);
           d2 = MathHelper.func_151237_a(d2, d4, d6);
@@ -601,7 +596,7 @@
              this.field_71135_a.func_147359_a(new SPlayEntityEffectPacket(this.func_145782_y(), effectinstance));
           }
  
-@@ -653,11 +892,14 @@
+@@ -653,11 +890,14 @@
           this.field_71144_ck = -1;
           this.field_71149_ch = -1.0F;
           this.field_71146_ci = -1;
@@ -617,7 +612,7 @@
        DimensionType dimensiontype = p_213846_1_.field_73011_w.func_186058_p();
        DimensionType dimensiontype1 = this.field_70170_p.field_73011_w.func_186058_p();
        CriteriaTriggers.field_193134_u.func_193143_a(this, dimensiontype, dimensiontype1);
-@@ -695,13 +937,21 @@
+@@ -695,13 +935,21 @@
     }
  
     public Either<PlayerEntity.SleepResult, Unit> func_213819_a(BlockPos p_213819_1_) {
@@ -640,7 +635,7 @@
        if (this.func_70608_bn()) {
           this.func_71121_q().func_72863_F().func_217216_a(this, new SAnimateHandPacket(this, 2));
        }
-@@ -764,8 +1014,9 @@
+@@ -764,8 +1012,9 @@
        this.field_71135_a.func_147359_a(new SOpenSignMenuPacket(p_175141_1_.func_174877_v()));
     }
  
@@ -651,7 +646,7 @@
     }
  
     public OptionalInt func_213829_a(@Nullable INamedContainerProvider p_213829_1_) {
-@@ -776,8 +1027,22 @@
+@@ -776,8 +1025,22 @@
              this.func_71053_j();
           }
  
@@ -675,7 +670,7 @@
           if (container == null) {
              if (this.func_175149_v()) {
                 this.func_146105_b((new TranslationTextComponent("container.spectatorCantOpen")).func_211708_a(TextFormatting.RED), true);
-@@ -785,9 +1050,10 @@
+@@ -785,9 +1048,10 @@
  
              return OptionalInt.empty();
           } else {
@@ -687,7 +682,7 @@
              return OptionalInt.of(this.field_71139_cq);
           }
        }
-@@ -798,14 +1064,26 @@
+@@ -798,14 +1062,26 @@
     }
  
     public void func_184826_a(AbstractHorseEntity p_184826_1_, IInventory p_184826_2_) {
@@ -716,7 +711,7 @@
     }
  
     public void func_184814_a(ItemStack p_184814_1_, Hand p_184814_2_) {
-@@ -844,6 +1122,11 @@
+@@ -844,6 +1120,11 @@
     public void func_71110_a(Container p_71110_1_, NonNullList<ItemStack> p_71110_2_) {
        this.field_71135_a.func_147359_a(new SWindowItemsPacket(p_71110_1_.field_75152_c, p_71110_2_));
        this.field_71135_a.func_147359_a(new SSetSlotPacket(-1, -1, this.field_71071_by.func_70445_o()));
@@ -728,7 +723,7 @@
     }
  
     public void func_71112_a(Container p_71112_1_, int p_71112_2_, int p_71112_3_) {
-@@ -851,6 +1134,7 @@
+@@ -851,6 +1132,7 @@
     }
  
     public void func_71053_j() {
@@ -736,7 +731,7 @@
        this.field_71135_a.func_147359_a(new SCloseWindowPacket(this.field_71070_bA.field_75152_c));
        this.func_71128_l();
     }
-@@ -863,6 +1147,7 @@
+@@ -863,6 +1145,7 @@
  
     public void func_71128_l() {
        this.field_71070_bA.func_75134_a(this);
@@ -744,7 +739,7 @@
        this.field_71070_bA = this.field_71069_bz;
     }
  
-@@ -884,14 +1169,14 @@
+@@ -884,14 +1167,14 @@
  
     public void func_71064_a(Stat<?> p_71064_1_, int p_71064_2_) {
        this.field_147103_bO.func_150871_b(this, p_71064_1_, p_71064_2_);
@@ -761,7 +756,7 @@
     }
  
     public int func_195065_a(Collection<IRecipe<?>> p_195065_1_) {
-@@ -932,8 +1217,17 @@
+@@ -932,8 +1215,17 @@
  
     public void func_71118_n() {
        this.field_71149_ch = -1.0E8F;
@@ -779,7 +774,7 @@
     public void func_146105_b(ITextComponent p_146105_1_, boolean p_146105_2_) {
        this.field_71135_a.func_147359_a(new SChatPacket(p_146105_1_, p_146105_2_ ? ChatType.GAME_INFO : ChatType.CHAT));
     }
-@@ -983,12 +1277,27 @@
+@@ -983,12 +1275,27 @@
        this.field_71144_ck = -1;
        this.field_71149_ch = -1.0F;
        this.field_71146_ci = -1;
@@ -808,7 +803,7 @@
     }
  
     protected void func_70670_a(EffectInstance p_70670_1_) {
-@@ -1092,6 +1401,15 @@
+@@ -1092,6 +1399,15 @@
     }
  
     public void func_147100_a(CClientSettingsPacket p_147100_1_) {
@@ -824,7 +819,7 @@
        this.field_71148_cg = p_147100_1_.func_149524_c();
        this.field_71143_cn = p_147100_1_.func_149523_e();
        this.field_71140_co = p_147100_1_.func_149520_f();
-@@ -1155,7 +1473,7 @@
+@@ -1155,7 +1471,7 @@
        this.field_175401_bS = (Entity)(p_175399_1_ == null ? this : p_175399_1_);
        if (entity != this.field_175401_bS) {
           this.field_71135_a.func_147359_a(new SCameraPacket(this.field_175401_bS));
@@ -833,7 +828,7 @@
        }
  
     }
-@@ -1182,7 +1500,7 @@
+@@ -1182,7 +1498,7 @@
  
     @Nullable
     public ITextComponent func_175396_E() {
@@ -842,7 +837,7 @@
     }
  
     public void func_184609_a(Hand p_184609_1_) {
-@@ -1203,29 +1521,38 @@
+@@ -1203,29 +1519,38 @@
     }
  
     public void func_200619_a(ServerWorld p_200619_1_, double p_200619_2_, double p_200619_4_, double p_200619_6_, float p_200619_8_, float p_200619_9_) {
@@ -900,7 +895,7 @@
     }
  
     public void func_213844_a(ChunkPos p_213844_1_, IPacket<?> p_213844_2_, IPacket<?> p_213844_3_) {
-@@ -1261,6 +1588,8 @@
+@@ -1261,6 +1586,8 @@
        if (itementity == null) {
           return null;
        } else {
@@ -909,7 +904,7 @@
           this.field_70170_p.func_217376_c(itementity);
           ItemStack itemstack = itementity.func_92059_d();
           if (p_146097_3_) {
-@@ -1274,4 +1603,126 @@
+@@ -1274,4 +1601,126 @@
           return itementity;
        }
     }

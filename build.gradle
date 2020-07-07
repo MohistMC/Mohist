@@ -167,6 +167,7 @@ project(':forge') {
             url 'https://repo.maven.apache.org/maven2/'
         }
         maven { url "https://hub.spigotmc.org/nexus/content/groups/public" }
+        maven { url "https://hub.spigotmc.org/nexus/content/groups/public/net/md-5/bungeecord-chat/1.15-SNAPSHOT" }
     }
 
     ext {
@@ -354,6 +355,8 @@ project(':forge') {
         installer 'org.apache.logging.log4j:log4j-core:2.11.2'
         installer 'net.minecrell:terminalconsoleappender:1.2.+'
         installer 'net.sf.jopt-simple:jopt-simple:5.0.4'
+		
+		compile 'org.projectlombok:lombok:1.18.12'
 
         installer 'org.fusesource.jansi:jansi:1.18'
         installer 'jline:jline:2.13'
@@ -363,8 +366,8 @@ project(':forge') {
         installer 'org.jetbrains:annotations:18.0.0'
         installer 'commons-lang:commons-lang:2.6'
         installer 'org.yaml:snakeyaml:1.25'
-
-        compile 'org.projectlombok:lombok:1.18.12'
+        installer 'net.md-5:bungeecord-chat:1.15-20200526.094816-73'
+        installer 'net.md-5:SpecialSource:1.8.5'
 
         fmllauncherImplementation 'com.google.guava:guava:21.0'
         fmllauncherImplementation 'com.google.code.gson:gson:2.8.0'
