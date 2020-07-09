@@ -1,18 +1,27 @@
 --- a/net/minecraft/entity/passive/DolphinEntity.java
 +++ b/net/minecraft/entity/passive/DolphinEntity.java
-@@ -217,6 +217,11 @@
+@@ -61,6 +61,8 @@
+ import net.minecraft.world.server.ServerWorld;
+ import net.minecraftforge.api.distmarker.Dist;
+ import net.minecraftforge.api.distmarker.OnlyIn;
++import org.bukkit.craftbukkit.v1_15_R1.event.CraftEventFactory;
++import org.bukkit.event.entity.EntityPotionEffectEvent.Cause;
+ 
+ public class DolphinEntity extends WaterMobEntity {
+    private static final DataParameter<BlockPos> field_208014_b = EntityDataManager.func_187226_a(DolphinEntity.class, DataSerializers.field_187200_j);
+@@ -217,6 +219,11 @@
        if (this.func_184582_a(EquipmentSlotType.MAINHAND).func_190926_b()) {
           ItemStack itemstack = p_175445_1_.func_92059_d();
           if (this.func_175448_a(itemstack)) {
 +            // CraftBukkit start - call EntityPickupItemEvent
-+            if (org.bukkit.craftbukkit.event.CraftEventFactory.callEntityPickupItemEvent(this, p_175445_1_, 0, false).isCancelled()) {
++            if(CraftEventFactory.callEntityPickupItemEvent(this,p_175445_1_, 0, false).isCancelled()){
 +               return;
 +            }
 +            // CraftBukkit end
              this.func_184201_a(EquipmentSlotType.MAINHAND, itemstack);
              this.field_82174_bp[EquipmentSlotType.MAINHAND.func_188454_b()] = 2.0F;
              this.func_71001_a(p_175445_1_, itemstack.func_190916_E());
-@@ -473,7 +478,7 @@
+@@ -473,7 +480,7 @@
        }
  
        public boolean func_75250_a() {
@@ -21,21 +30,21 @@
        }
  
        public boolean func_75253_b() {
-@@ -565,7 +570,7 @@
+@@ -565,7 +572,7 @@
        }
  
        public void func_75249_e() {
 -         this.field_206836_c.func_195064_c(new EffectInstance(Effects.field_206827_D, 100));
-+         this.field_206836_c.addEffect(new EffectInstance(Effects.field_206827_D, 100), org.bukkit.event.entity.EntityPotionEffectEvent.Cause.DOLPHIN); // CraftBukkit
++         this.field_206836_c.addPotionEffect(new EffectInstance(Effects.field_206827_D, 100), Cause.DOLPHIN); // CraftBukkit - reason
        }
  
        public void func_75251_c() {
-@@ -582,7 +587,7 @@
+@@ -582,7 +589,7 @@
           }
  
           if (this.field_206836_c.func_203007_ba() && this.field_206836_c.field_70170_p.field_73012_v.nextInt(6) == 0) {
 -            this.field_206836_c.func_195064_c(new EffectInstance(Effects.field_206827_D, 100));
-+            this.field_206836_c.addEffect(new EffectInstance(Effects.field_206827_D, 100), org.bukkit.event.entity.EntityPotionEffectEvent.Cause.DOLPHIN); // CraftBukkit
++            this.field_206836_c.addPotionEffect(new EffectInstance(Effects.field_206827_D, 100), Cause.DOLPHIN); // CraftBukkit - reason
           }
  
        }

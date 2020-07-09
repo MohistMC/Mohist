@@ -51,7 +51,6 @@ import org.bukkit.util.CachedServerIcon;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import red.mohist.Mohist;
 
 /**
  * Represents the Bukkit core, for version and Server singleton handling
@@ -87,7 +86,7 @@ public final class Bukkit {
         }
 
         Bukkit.server = server;
-        server.getLogger().info("This server is running " + getName() + " version " + Mohist.getVersion() +  " (MC: 1.15.2) (Implementing API version " + Bukkit.getBukkitVersion() + ", Forge version " + ForgeVersion.getVersion() + ")");
+        server.getLogger().info("This server is running " + getName() + " version " +  " (MC: 1.15.2) (Implementing API version " + Bukkit.getBukkitVersion() + ", Forge version " + ForgeVersion.getVersion() + ")");
     }
 
     /**
@@ -620,6 +619,7 @@ public final class Bukkit {
      */
     public static void reload() {
         server.reload();
+        org.spigotmc.CustomTimingsHandler.reload(); // Spigot
     }
 
     /**
@@ -1533,4 +1533,10 @@ public final class Bukkit {
     public static UnsafeValues getUnsafe() {
         return server.getUnsafe();
     }
+
+    @NotNull
+    public static Server.Spigot spigot() {
+        return server.spigot();
+    }
+
 }

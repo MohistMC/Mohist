@@ -739,7 +739,7 @@ public class ForgeHooks
             // Revert variable back to true as it would have been set to false
             if (entity instanceof ContainerMinecartEntity)
             {
-               ((ContainerMinecartEntity) entity).dropContentsWhenDead(true);
+                ((ContainerMinecartEntity) entity).dropContentsWhenDead(true);
             }
         }
         return !event.isCanceled();

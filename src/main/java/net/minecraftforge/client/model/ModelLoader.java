@@ -65,11 +65,11 @@ public final class ModelLoader extends ModelBakery
         return isLoading;
     }
 
-    public ModelLoader(IResourceManager manager, BlockColors colours, IProfiler profiler, int maxMipmapLevel)
+    public ModelLoader(IResourceManager manager, BlockColors colours, IProfiler profiler, int p_i226056_4_)
     {
         super(manager, colours, false);
         instance = this;
-        processLoading(profiler, maxMipmapLevel);
+        processLoading(profiler, p_i226056_4_);
     }
 
     private static Set<ResourceLocation> specialModels = new HashSet<>();

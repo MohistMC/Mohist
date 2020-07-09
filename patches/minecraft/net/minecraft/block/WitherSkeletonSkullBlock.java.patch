@@ -4,8 +4,8 @@
  import net.minecraft.util.math.BlockPos;
  import net.minecraft.world.Difficulty;
  import net.minecraft.world.World;
-+import org.bukkit.craftbukkit.util.BlockStateListPopulator;
-+import org.bukkit.event.entity.CreatureSpawnEvent;
++import org.bukkit.craftbukkit.v1_15_R1.util.BlockStateListPopulator;
++import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
  
  public class WitherSkeletonSkullBlock extends SkullBlock {
     @Nullable
@@ -29,30 +29,30 @@
 -                     p_196298_0_.func_180501_a(cachedblockinfo.func_177508_d(), Blocks.field_150350_a.func_176223_P(), 2);
 -                     p_196298_0_.func_217379_c(2001, cachedblockinfo.func_177508_d(), Block.func_196246_j(cachedblockinfo.func_177509_a()));
 +                     blockList.func_180501_a(cachedblockinfo.func_177508_d(), Blocks.field_150350_a.func_176223_P(), 2); // CraftBukkit
-+                     // worldIn.playEvent(2001, cachedblockinfo.getPos(), Block.getStateId(cachedblockinfo.getBlockState())); // CraftBukkit
++                      p_196298_0_.func_217379_c(2001, cachedblockinfo.func_177508_d(), Block.func_196246_j(cachedblockinfo.func_177509_a())); // CraftBukkit
                    }
                 }
  
-@@ -61,12 +66,20 @@
-                witherentity.func_70012_b((double)blockpos.func_177958_n() + 0.5D, (double)blockpos.func_177956_o() + 0.55D, (double)blockpos.func_177952_p() + 0.5D, blockpattern$patternhelper.func_177669_b().func_176740_k() == Direction.Axis.X ? 0.0F : 90.0F, 0.0F);
+@@ -62,11 +67,21 @@
                 witherentity.field_70761_aq = blockpattern$patternhelper.func_177669_b().func_176740_k() == Direction.Axis.X ? 0.0F : 90.0F;
                 witherentity.func_82206_m();
--
+ 
 +               // CraftBukkit start
-+               if (!p_196298_0_.addEntity(witherentity, CreatureSpawnEvent.SpawnReason.BUILD_WITHER)) {
++               if (!p_196298_0_.addEntity(witherentity, SpawnReason.BUILD_WITHER)) {
 +                  return;
 +               }
-+               for (BlockPos pos2 : blockList.getBlocks()) {
-+                  p_196298_0_.func_217379_c(2001, pos2, Block.func_196246_j(p_196298_0_.func_180495_p(pos2)));
++               for (BlockPos blockPos : blockList.getBlocks()) {
++                  p_196298_0_.func_217379_c(2001, blockPos, Block.func_196246_j(p_196298_0_.func_180495_p(p_196298_1_)));
 +               }
 +               blockList.updateList();
 +               // CraftBukkit end
++
                 for(ServerPlayerEntity serverplayerentity : p_196298_0_.func_217357_a(ServerPlayerEntity.class, witherentity.func_174813_aQ().func_186662_g(50.0D))) {
                    CriteriaTriggers.field_192133_m.func_192229_a(serverplayerentity, witherentity);
                 }
  
 -               p_196298_0_.func_217376_c(witherentity);
-+               // worldIn.addEntity(witherentity); // CraftBukkit - moved up
++               // worldIn.addEntity(witherentity);  // CraftBukkit - moved up
  
                 for(int k = 0; k < blockpattern.func_177684_c(); ++k) {
                    for(int l = 0; l < blockpattern.func_177685_b(); ++l) {

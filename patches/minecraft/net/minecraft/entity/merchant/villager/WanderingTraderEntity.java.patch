@@ -1,26 +1,24 @@
 --- a/net/minecraft/entity/merchant/villager/WanderingTraderEntity.java
 +++ b/net/minecraft/entity/merchant/villager/WanderingTraderEntity.java
-@@ -41,6 +41,13 @@
+@@ -41,6 +41,11 @@
  import net.minecraft.util.math.BlockPos;
  import net.minecraft.util.math.Vec3d;
  import net.minecraft.world.World;
-+// CraftBukkit start
 +import org.bukkit.Bukkit;
-+import org.bukkit.craftbukkit.inventory.CraftMerchant;
-+import org.bukkit.craftbukkit.inventory.CraftMerchantRecipe;
++import org.bukkit.craftbukkit.v1_15_R1.inventory.CraftMerchant;
++import org.bukkit.craftbukkit.v1_15_R1.inventory.CraftMerchantRecipe;
 +import org.bukkit.entity.AbstractVillager;
 +import org.bukkit.event.entity.VillagerAcquireTradeEvent;
-+// CraftBukkit end
  
  public class WanderingTraderEntity extends AbstractVillagerEntity {
     @Nullable
-@@ -121,7 +128,15 @@
+@@ -121,7 +126,15 @@
           VillagerTrades.ITrade villagertrades$itrade = avillagertrades$itrade1[i];
           MerchantOffer merchantoffer = villagertrades$itrade.func_221182_a(this, this.field_70146_Z);
           if (merchantoffer != null) {
 -            merchantoffers.add(merchantoffer);
 +            // CraftBukkit start
-+            final VillagerAcquireTradeEvent event = new VillagerAcquireTradeEvent((AbstractVillager)this.getBukkitEntity(), merchantoffer.asBukkit());
++            final VillagerAcquireTradeEvent event = new VillagerAcquireTradeEvent((AbstractVillager) this.getBukkitEntity(), merchantoffer.asBukkit());
 +            if (this.valid) {
 +               Bukkit.getPluginManager().callEvent(event);
 +            }
@@ -31,14 +29,16 @@
           }
  
        }
-@@ -186,6 +201,11 @@
+@@ -186,6 +199,13 @@
        return SoundEvents.field_219724_nc;
     }
  
++   // CraftBukkit start
 +   @Override
 +   public CraftMerchant getCraftMerchant() {
 +      return null;
 +   }
++   // CraftBukkit end
 +
     public void func_213728_s(int p_213728_1_) {
        this.field_213737_bB = p_213728_1_;

@@ -9,3 +9,12 @@
  
     public SSpawnPositionPacket() {
     }
+@@ -30,7 +30,7 @@
+       p_148833_1_.func_147271_a(this);
+    }
+ 
+-   @OnlyIn(Dist.CLIENT)
++   //@OnlyIn(Dist.CLIENT)
+    public BlockPos func_179800_a() {
+       return this.field_179801_a;
+    }

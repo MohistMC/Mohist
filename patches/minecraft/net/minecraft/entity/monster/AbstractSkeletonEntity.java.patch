@@ -21,18 +21,18 @@
        double d3 = (double)MathHelper.func_76133_a(d0 * d0 + d2 * d2);
        abstractarrowentity.func_70186_c(d0, d1 + d3 * (double)0.2F, d2, 1.6F, (float)(14 - this.field_70170_p.func_175659_aa().func_151525_a() * 4));
 +      // CraftBukkit start
-+      org.bukkit.event.entity.EntityShootBowEvent event = org.bukkit.craftbukkit.event.CraftEventFactory.callEntityShootBowEvent(this, this.func_184614_ca(), abstractarrowentity, 0.8f);
++      org.bukkit.event.entity.EntityShootBowEvent event = org.bukkit.craftbukkit.v1_15_R1.event.CraftEventFactory.callEntityShootBowEvent(this, this.func_184614_ca(), abstractarrowentity, 0.8F);
 +      if (event.isCancelled()) {
 +         event.getProjectile().remove();
 +         return;
 +      }
 +      if (event.getProjectile() == abstractarrowentity.getBukkitEntity()) {
-+         this.field_70170_p.func_217376_c(abstractarrowentity);
++         field_70170_p.func_217376_c(abstractarrowentity);
 +      }
 +      // CraftBukkit end
        this.func_184185_a(SoundEvents.field_187866_fi, 1.0F, 1.0F / (this.func_70681_au().nextFloat() * 0.4F + 0.8F));
 -      this.field_70170_p.func_217376_c(abstractarrowentity);
-+      // this.world.addEntity(abstractarrowentity); // CraftBukkit - moved up
++//      this.world.addEntity(abstractarrowentity); // CraftBukkit - moved up
     }
  
     protected AbstractArrowEntity func_213624_b(ItemStack p_213624_1_, float p_213624_2_) {

@@ -4,40 +4,37 @@
  import net.minecraft.world.server.ServerWorld;
  import net.minecraftforge.api.distmarker.Dist;
  import net.minecraftforge.api.distmarker.OnlyIn;
-+import org.bukkit.craftbukkit.inventory.CraftBlockInventoryHolder;
++import org.bukkit.craftbukkit.v1_15_R1.inventory.CraftBlockInventoryHolder;
  
  public class ComposterBlock extends Block implements ISidedInventoryProvider {
     public static final IntegerProperty field_220298_a = BlockStateProperties.field_222509_am;
-@@ -250,16 +251,14 @@
- 
-    public ISidedInventory func_219966_a(BlockState p_219966_1_, IWorld p_219966_2_, BlockPos p_219966_3_) {
-       int i = p_219966_1_.func_177229_b(field_220298_a);
--      if (i == 8) {
--         return new ComposterBlock.FullInventory(p_219966_1_, p_219966_2_, p_219966_3_, new ItemStack(Items.field_196106_bc));
--      } else {
+@@ -253,13 +254,15 @@
+       if (i == 8) {
+          return new ComposterBlock.FullInventory(p_219966_1_, p_219966_2_, p_219966_3_, new ItemStack(Items.field_196106_bc));
+       } else {
 -         return (ISidedInventory)(i < 7 ? new ComposterBlock.PartialInventory(p_219966_1_, p_219966_2_, p_219966_3_) : new ComposterBlock.EmptyInventory());
--      }
-+      // CraftBukkit - empty generatoraccess, blockposition
-+      return (ISidedInventory) (i == 8 ? new ComposterBlock.FullInventory(p_219966_1_, p_219966_2_, p_219966_3_, new ItemStack(Items.field_196106_bc)) : (i < 7 ? new ComposterBlock.PartialInventory(p_219966_1_,p_219966_2_, p_219966_3_) : new ComposterBlock.EmptyInventory(p_219966_2_, p_219966_3_)));
++         // CraftBukkit - empty generatoraccess, blockposition
++         return (ISidedInventory)(i < 7 ? new ComposterBlock.PartialInventory(p_219966_1_, p_219966_2_, p_219966_3_) : new ComposterBlock.EmptyInventory(p_219966_2_, p_219966_3_));
+       }
     }
  
     static class EmptyInventory extends Inventory implements ISidedInventory {
 -      public EmptyInventory() {
-+      public EmptyInventory(IWorld generatoraccess, BlockPos blockposition) {
++      public EmptyInventory(IWorld world, BlockPos blockPos) { // CraftBukkit
           super(0);
-+         this.bukkitOwner = new CraftBlockInventoryHolder(generatoraccess, blockposition, this); // CraftBukkit
++         this.bukkitOwner = new CraftBlockInventoryHolder(world, blockPos, this); // CraftBukkit
        }
  
        public int[] func_180463_a(Direction p_180463_1_) {
-@@ -286,6 +285,7 @@
+@@ -283,6 +286,7 @@
+ 
+       public FullInventory(BlockState p_i50463_1_, IWorld p_i50463_2_, BlockPos p_i50463_3_, ItemStack p_i50463_4_) {
+          super(p_i50463_4_);
++         this.bukkitOwner = new CraftBlockInventoryHolder(p_i50463_2_, p_i50463_3_, this); // CraftBukkit
           this.field_213920_a = p_i50463_1_;
           this.field_213921_b = p_i50463_2_;
           this.field_213922_c = p_i50463_3_;
-+         this.bukkitOwner = new CraftBlockInventoryHolder(p_i50463_2_, p_i50463_3_, this); // CraftBukkit
-       }
- 
-       public int func_70297_j_() {
-@@ -305,8 +305,16 @@
+@@ -305,8 +309,15 @@
        }
  
        public void func_70296_d() {
@@ -47,8 +44,7 @@
 +         if (this.func_191420_l()) {
 +            ComposterBlock.func_220294_d(this.field_213920_a, this.field_213921_b, this.field_213922_c);
 +            this.field_213923_d = true;
-+         }
-+         else {
++         } else {
 +            this.field_213921_b.func_180501_a(this.field_213922_c, this.field_213920_a, 3);
 +            this.field_213923_d = false;
 +         }
@@ -56,7 +52,7 @@
        }
     }
  
-@@ -318,6 +326,7 @@
+@@ -318,6 +329,7 @@
  
        public PartialInventory(BlockState p_i50464_1_, IWorld p_i50464_2_, BlockPos p_i50464_3_) {
           super(1);

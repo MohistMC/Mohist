@@ -7,7 +7,7 @@
 -                     p_207186_1_.func_175656_a(blockpos, Blocks.field_150480_ab.func_176223_P());
 +                     // CraftBukkit start - Prevent lava putting something on fire
 +                     if (p_207186_1_.func_180495_p(blockpos).func_177230_c() != Blocks.field_150480_ab) {
-+                        if (org.bukkit.craftbukkit.event.CraftEventFactory.callBlockIgniteEvent(p_207186_1_, blockpos, p_207186_2_).isCancelled()) {
++                        if (org.bukkit.craftbukkit.v1_15_R1.event.CraftEventFactory.callBlockIgniteEvent(p_207186_1_, blockpos, p_207186_2_).isCancelled()) {
 +                           continue;
 +                        }
 +                     }
@@ -16,7 +16,7 @@
                       return;
                    }
                 } else if (blockstate.func_185904_a().func_76230_c()) {
-@@ -85,11 +92,18 @@
+@@ -85,7 +92,15 @@
                 }
  
                 if (p_207186_1_.func_175623_d(blockpos1.func_177984_a()) && this.func_176368_m(p_207186_1_, blockpos1)) {
@@ -24,7 +24,7 @@
 +                  // CraftBukkit start - Prevent lava putting something on fire
 +                  BlockPos up = blockpos1.func_177984_a();
 +                  if (p_207186_1_.func_180495_p(up).func_177230_c() != Blocks.field_150480_ab) {
-+                     if (org.bukkit.craftbukkit.event.CraftEventFactory.callBlockIgniteEvent(p_207186_1_, up, p_207186_2_).isCancelled()) {
++                     if (org.bukkit.craftbukkit.v1_15_R1.event.CraftEventFactory.callBlockIgniteEvent(p_207186_1_, up, p_207186_2_).isCancelled()) {
 +                        continue;
 +                     }
 +                  }
@@ -33,19 +33,15 @@
                 }
              }
           }
--
-       }
-    }
- 
-@@ -163,7 +177,13 @@
+@@ -163,7 +178,13 @@
           IFluidState ifluidstate = p_205574_1_.func_204610_c(p_205574_2_);
           if (this.func_207185_a(FluidTags.field_206960_b) && ifluidstate.func_206884_a(FluidTags.field_206959_a)) {
              if (p_205574_3_.func_177230_c() instanceof FlowingFluidBlock) {
 -               p_205574_1_.func_180501_a(p_205574_2_, Blocks.field_150348_b.func_176223_P(), 3);
-+               // TODO: keep forge or bukkit handle of lava flow?
-+               // worldIn.setBlockState(pos, net.minecraftforge.event.ForgeEventFactory.fireFluidPlaceBlockEvent(worldIn, pos, pos, Blocks.STONE.getDefaultState()), 3);
++               // TODO: Magma - not sure do we call both or not?
++               net.minecraftforge.event.ForgeEventFactory.fireFluidPlaceBlockEvent(p_205574_1_, p_205574_2_, p_205574_2_, Blocks.field_150348_b.func_176223_P());
 +               // CraftBukkit start
-+               if (!org.bukkit.craftbukkit.event.CraftEventFactory.handleBlockFormEvent(p_205574_1_.func_201672_e(), p_205574_2_, Blocks.field_150348_b.func_176223_P(), 3)) {
++               if (!org.bukkit.craftbukkit.v1_15_R1.event.CraftEventFactory.handleBlockFormEvent(p_205574_1_.func_201672_e(), p_205574_2_, Blocks.field_150348_b.func_176223_P(), 3)) {
 +                  return;
 +               }
 +               // CraftBukkit end

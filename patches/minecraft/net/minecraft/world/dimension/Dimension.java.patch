@@ -35,7 +35,7 @@
     public abstract ChunkGenerator<?> func_186060_c();
  
     @Nullable
-@@ -123,5 +124,68 @@
+@@ -123,5 +124,64 @@
     @OnlyIn(Dist.CLIENT)
     public abstract boolean func_76568_b(int p_76568_1_, int p_76568_2_);
  
@@ -90,14 +90,10 @@
 +
 +   @Override
 +   public void resetRainAndThunder() {
-+     field_76579_a.func_72912_H().func_76084_b(false);
-+      if (!field_76579_a.func_72912_H().func_76059_o()) {
-+         field_76579_a.func_72912_H().func_76080_g(0);
-+      }
++      field_76579_a.func_72912_H().func_76080_g(0);
++      field_76579_a.func_72912_H().func_76084_b(false);
++      field_76579_a.func_72912_H().func_76090_f(0);
 +      field_76579_a.func_72912_H().func_76069_a(false);
-+      if (!field_76579_a.func_72912_H().func_76061_m()) {
-+         field_76579_a.func_72912_H().func_76090_f(0);
-+      }
 +   }
 +
 +   @Override

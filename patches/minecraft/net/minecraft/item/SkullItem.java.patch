@@ -8,8 +8,18 @@
  import net.minecraft.nbt.NBTUtil;
  import net.minecraft.tileentity.SkullTileEntity;
  import net.minecraft.util.text.ITextComponent;
-@@ -44,6 +45,15 @@
-          p_179215_1_.func_218657_a("SkullOwner", NBTUtil.func_180708_a(new CompoundNBT(), gameprofile));
+@@ -40,10 +41,23 @@
+       super.func_179215_a(p_179215_1_);
+       if (p_179215_1_.func_150297_b("SkullOwner", 8) && !StringUtils.isBlank(p_179215_1_.func_74779_i("SkullOwner"))) {
+          GameProfile gameprofile = new GameProfile((UUID)null, p_179215_1_.func_74779_i("SkullOwner"));
+-         gameprofile = SkullTileEntity.func_174884_b(gameprofile);
+-         p_179215_1_.func_218657_a("SkullOwner", NBTUtil.func_180708_a(new CompoundNBT(), gameprofile));
++         // Spigot start
++         SkullTileEntity.updateGameProfile(gameprofile, gameprofile1 -> {
++            p_179215_1_.func_218657_a("SkullOwner", NBTUtil.func_180708_a(new CompoundNBT(), gameprofile1));
++            return false;
++         }, false);
++         // Spigot end
           return true;
        } else {
 +         // CraftBukkit start

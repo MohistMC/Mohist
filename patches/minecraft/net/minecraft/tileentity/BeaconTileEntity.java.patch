@@ -16,15 +16,26 @@
  import net.minecraft.entity.player.PlayerEntity;
  import net.minecraft.entity.player.PlayerInventory;
  import net.minecraft.entity.player.ServerPlayerEntity;
-@@ -36,21 +36,26 @@
+@@ -23,11 +23,7 @@
+ import net.minecraft.potion.Effect;
+ import net.minecraft.potion.EffectInstance;
+ import net.minecraft.potion.Effects;
+-import net.minecraft.util.IIntArray;
+-import net.minecraft.util.IWorldPosCallable;
+-import net.minecraft.util.SoundCategory;
+-import net.minecraft.util.SoundEvent;
+-import net.minecraft.util.SoundEvents;
++import net.minecraft.util.*;
+ import net.minecraft.util.math.AxisAlignedBB;
+ import net.minecraft.util.math.BlockPos;
+ import net.minecraft.util.text.ITextComponent;
+@@ -36,21 +32,24 @@
  import net.minecraft.world.gen.Heightmap;
  import net.minecraftforge.api.distmarker.Dist;
  import net.minecraftforge.api.distmarker.OnlyIn;
-+// CraftBukkit start
-+import org.bukkit.craftbukkit.potion.CraftPotionUtil;
++import org.bukkit.craftbukkit.v1_15_R1.potion.CraftPotionUtil;
 +import org.bukkit.event.entity.EntityPotionEffectEvent;
 +import org.bukkit.potion.PotionEffect;
-+// CraftBukkit end
  
  public class BeaconTileEntity extends TileEntity implements INamedContainerProvider, ITickableTileEntity {
     public static final Effect[][] field_146009_a = new Effect[][]{{Effects.field_76424_c, Effects.field_76422_e}, {Effects.field_76429_m, Effects.field_76430_j}, {Effects.field_76420_g}, {Effects.field_76428_l}};
@@ -32,23 +43,23 @@
     private List<BeaconTileEntity.BeamSegment> field_174909_f = Lists.newArrayList();
     private List<BeaconTileEntity.BeamSegment> field_213934_g = Lists.newArrayList();
 -   private int field_146012_l;
-+   public int field_146012_l;
++   public int field_146012_l; // private->public CraftBukkit
     private int field_213935_i = -1;
     @Nullable
 -   private Effect field_146013_m;
-+   public Effect field_146013_m;
++   public Effect field_146013_m; // private->public CraftBukkit
     @Nullable
 -   private Effect field_146010_n;
-+   public Effect field_146010_n;
++   public Effect field_146010_n; // private->public CraftBukkit
     @Nullable
 -   private ITextComponent field_146008_p;
 -   private LockCode field_213936_m = LockCode.field_180162_a;
-+   public ITextComponent field_146008_p;
-+   public LockCode field_213936_m = LockCode.field_180162_a;
++   public ITextComponent field_146008_p; // private->public CraftBukkit
++   public LockCode field_213936_m = LockCode.field_180162_a; // private->public CraftBukkit
     private final IIntArray field_213937_n = new IIntArray() {
        public int func_221476_a(int p_221476_1_) {
           switch(p_221476_1_) {
-@@ -88,6 +93,16 @@
+@@ -88,6 +87,16 @@
        }
     };
  
@@ -65,7 +76,7 @@
     public BeaconTileEntity() {
        super(TileEntityType.field_200984_o);
     }
-@@ -111,8 +126,8 @@
+@@ -111,8 +120,8 @@
        for(int i1 = 0; i1 < 10 && blockpos.func_177956_o() <= l; ++i1) {
           BlockState blockstate = this.field_145850_b.func_180495_p(blockpos);
           Block block = blockstate.func_177230_c();
@@ -76,7 +87,7 @@
              if (this.field_213934_g.size() <= 1) {
                 beacontileentity$beamsegment = new BeaconTileEntity.BeamSegment(afloat);
                 this.field_213934_g.add(beacontileentity$beamsegment);
-@@ -183,8 +198,7 @@
+@@ -183,8 +192,7 @@
  
           for(int k = p_213927_1_ - i; k <= p_213927_1_ + i && flag; ++k) {
              for(int l = p_213927_3_ - i; l <= p_213927_3_ + i; ++l) {
@@ -86,7 +97,7 @@
                    flag = false;
                    break;
                 }
-@@ -203,30 +217,62 @@
+@@ -203,30 +211,64 @@
        super.func_145843_s();
     }
  
@@ -103,15 +114,16 @@
 +      int i = (9 + this.field_146012_l * 2) * 20;
 +      return i;
 +   }
++   // CraftBukkit end
 +
 +   public List getHumansInRange() {
 +      double d0 = this.field_146012_l * 10 + 10;
-+      AxisAlignedBB axisalignedbb = new AxisAlignedBB(this.field_174879_c).func_186662_g(d0).func_72321_a(0.0D, this.field_145850_b.func_217301_I(), 0.0D);
++      AxisAlignedBB axisalignedbb = new AxisAlignedBB(this.field_174879_c).func_186662_g(d0).func_72321_a(0.0, this.field_145850_b.func_217301_I(), 0.0);
 +      List<PlayerEntity> list = this.field_145850_b.func_217357_a(PlayerEntity.class, axisalignedbb);
 +      return list;
 +   }
 +
-+   private void applyEffect(List<PlayerEntity> list, Effect effects, int i, int b0) {
++   private void applyEffect(List<PlayerEntity> list, final Effect effects, final int i, final int b0) {
 +      Iterator iterator = list.iterator();
 +
 +      PlayerEntity entityhuman;
@@ -140,7 +152,7 @@
 +         byte b0 = getAmplification();
 +         int i = getLevel();
  
--         int j = (9 + this.field_146012_l * 2) * 20;
+          int j = (9 + this.field_146012_l * 2) * 20;
 -         AxisAlignedBB axisalignedbb = (new AxisAlignedBB(this.field_174879_c)).func_186662_g(d0).func_72321_a(0.0D, (double)this.field_145850_b.func_217301_I(), 0.0D);
 -         List<PlayerEntity> list = this.field_145850_b.func_217357_a(PlayerEntity.class, axisalignedbb);
 +         List<PlayerEntity> list = getHumansInRange();
@@ -164,7 +176,7 @@
  
     public void func_205736_a(SoundEvent p_205736_1_) {
        this.field_145850_b.func_184133_a((PlayerEntity)null, this.field_174879_c, p_205736_1_, SoundCategory.BLOCKS, 1.0F, 1.0F);
-@@ -263,8 +309,11 @@
+@@ -263,8 +305,11 @@
  
     public void func_145839_a(CompoundNBT p_145839_1_) {
        super.func_145839_a(p_145839_1_);

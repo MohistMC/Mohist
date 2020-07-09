@@ -25,7 +25,7 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import org.bukkit.Location;
-import org.bukkit.craftbukkit.entity.CraftHumanEntity;
+import org.bukkit.craftbukkit.v1_15_R1.entity.CraftHumanEntity;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.inventory.InventoryHolder;
 
@@ -103,6 +103,7 @@ public class RecipeWrapper implements IInventory {
         return inv.isItemValid(slot, stack);
     }
 
+    // CraftBukkit start
     @Override
     public List<ItemStack> getContents() {
         return null;
@@ -137,6 +138,7 @@ public class RecipeWrapper implements IInventory {
     public Location getLocation() {
         return null;
     }
+    // CraftBukkit end
 
     @Override
     public void clear() 

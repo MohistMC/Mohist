@@ -51,4 +51,3 @@ public enum PlantType implements IExtensibleEnum
         throw new IllegalStateException("Enum not extended");
     }
 }
-

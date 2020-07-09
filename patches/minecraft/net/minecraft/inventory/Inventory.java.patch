@@ -1,11 +1,11 @@
 --- a/net/minecraft/inventory/Inventory.java
 +++ b/net/minecraft/inventory/Inventory.java
-@@ -8,17 +8,31 @@
+@@ -8,17 +8,67 @@
  import net.minecraft.item.ItemStack;
  import net.minecraft.item.crafting.RecipeItemHelper;
  import net.minecraft.util.NonNullList;
 +import org.bukkit.Location;
-+import org.bukkit.craftbukkit.entity.CraftHumanEntity;
++import org.bukkit.craftbukkit.v1_15_R1.entity.CraftHumanEntity;
 +import org.bukkit.entity.HumanEntity;
 +import org.bukkit.inventory.InventoryHolder;
  
@@ -19,37 +19,6 @@
 +   private int maxStack = MAX_STACK;
 +   protected org.bukkit.inventory.InventoryHolder bukkitOwner;
 +
-    public Inventory(int p_i50397_1_) {
--      this.field_70481_b = p_i50397_1_;
--      this.field_70482_c = NonNullList.func_191197_a(p_i50397_1_, ItemStack.field_190927_a);
-+      this(p_i50397_1_, null);
-    }
- 
-+   public Inventory(final int numSlots, final InventoryHolder owner) {
-+      this.bukkitOwner = owner;
-+      this.field_70481_b = numSlots;
-+      this.field_70482_c = NonNullList.func_191197_a(numSlots, ItemStack.field_190927_a);
-+   }
-+
-    public Inventory(ItemStack... p_i50398_1_) {
-       this.field_70481_b = p_i50398_1_.length;
-       this.field_70482_c = NonNullList.func_193580_a(ItemStack.field_190927_a, p_i50398_1_);
-@@ -101,6 +115,11 @@
-       this.func_70296_d();
-    }
- 
-+   @Override
-+   public int func_70297_j_() {
-+      return maxStack;
-+   }
-+
-    public int func_70302_i_() {
-       return this.field_70481_b;
-    }
-@@ -128,6 +147,41 @@
-       return true;
-    }
- 
 +   @Override
 +   public List<ItemStack> getContents() {
 +      return this.field_70482_c;
@@ -62,7 +31,7 @@
 +
 +   @Override
 +   public void onClose(CraftHumanEntity who) {
-+      transaction.remove(who);
++      transaction.add(who);
 +   }
 +
 +   @Override
@@ -72,7 +41,7 @@
 +
 +   @Override
 +   public InventoryHolder getOwner() {
-+      return this.bukkitOwner;
++      return bukkitOwner;
 +   }
 +
 +   @Override
@@ -85,6 +54,33 @@
 +      return null;
 +   }
 +
-    public void func_174888_l() {
-       this.field_70482_c.clear();
+    public Inventory(int p_i50397_1_) {
+-      this.field_70481_b = p_i50397_1_;
+-      this.field_70482_c = NonNullList.func_191197_a(p_i50397_1_, ItemStack.field_190927_a);
++      this(p_i50397_1_, null);
+    }
+ 
++   public Inventory(int numSlots, org.bukkit.inventory.InventoryHolder owner) {
++      this.bukkitOwner = owner;
++      // CraftBukkit end
++      this.field_70481_b = numSlots;
++      this.field_70482_c = NonNullList.func_191197_a(numSlots, ItemStack.field_190927_a);
++   }
++
+    public Inventory(ItemStack... p_i50398_1_) {
+       this.field_70481_b = p_i50398_1_.length;
+       this.field_70482_c = NonNullList.func_193580_a(ItemStack.field_190927_a, p_i50398_1_);
+@@ -101,6 +151,13 @@
        this.func_70296_d();
+    }
+ 
++   // CraftBukkit start
++   @Override
++   public int func_70297_j_() {
++      return 0;
++   }
++   // CraftBukkit end
++
+    public int func_70302_i_() {
+       return this.field_70481_b;
+    }

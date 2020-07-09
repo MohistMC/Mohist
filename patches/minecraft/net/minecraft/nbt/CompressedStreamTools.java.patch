@@ -1,6 +1,19 @@
 --- a/net/minecraft/nbt/CompressedStreamTools.java
 +++ b/net/minecraft/nbt/CompressedStreamTools.java
-@@ -110,10 +110,12 @@
+@@ -88,6 +88,12 @@
+    }
+ 
+    public static CompoundNBT func_152456_a(DataInput p_152456_0_, NBTSizeTracker p_152456_1_) throws IOException {
++      // Spigot start
++      if ( p_152456_0_ instanceof io.netty.buffer.ByteBufInputStream )
++      {
++         p_152456_0_ = new DataInputStream(new org.spigotmc.LimitStream((InputStream) p_152456_0_, p_152456_1_));
++      }
++      // Spigot end
+       INBT inbt = func_152455_a(p_152456_0_, 0, p_152456_1_);
+       if (inbt instanceof CompoundNBT) {
+          return (CompoundNBT)inbt;
+@@ -110,10 +116,12 @@
  
     private static INBT func_152455_a(DataInput p_152455_0_, int p_152455_1_, NBTSizeTracker p_152455_2_) throws IOException {
        byte b0 = p_152455_0_.readByte();

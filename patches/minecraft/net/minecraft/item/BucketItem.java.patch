@@ -1,15 +1,6 @@
 --- a/net/minecraft/item/BucketItem.java
 +++ b/net/minecraft/item/BucketItem.java
-@@ -1,6 +1,8 @@
- package net.minecraft.item;
- 
- import javax.annotation.Nullable;
-+import lombok.Getter;
-+import lombok.Setter;
- import net.minecraft.advancements.CriteriaTriggers;
- import net.minecraft.block.BlockState;
- import net.minecraft.block.IBucketPickupHandler;
-@@ -11,33 +13,51 @@
+@@ -11,33 +11,49 @@
  import net.minecraft.fluid.FlowingFluid;
  import net.minecraft.fluid.Fluid;
  import net.minecraft.fluid.Fluids;
@@ -30,16 +21,14 @@
  import net.minecraft.util.math.RayTraceResult;
  import net.minecraft.world.IWorld;
  import net.minecraft.world.World;
-+// CraftBukkit start
-+import org.bukkit.craftbukkit.event.CraftEventFactory;
-+import org.bukkit.craftbukkit.inventory.CraftItemStack;
-+import org.bukkit.craftbukkit.util.DummyGeneratorAccess;
++import org.bukkit.craftbukkit.v1_15_R1.entity.CraftItem;
++import org.bukkit.craftbukkit.v1_15_R1.event.CraftEventFactory;
++import org.bukkit.craftbukkit.v1_15_R1.inventory.CraftItemStack;
++import org.bukkit.craftbukkit.v1_15_R1.util.DummyGeneratorAccess;
 +import org.bukkit.event.player.PlayerBucketEmptyEvent;
 +import org.bukkit.event.player.PlayerBucketFillEvent;
-+// CraftBukkit end
  
  public class BucketItem extends Item {
-+   @Getter
     private final Fluid field_77876_a;
  
 +   // Forge: Use the other constructor that takes a Supplier
@@ -67,17 +56,17 @@
        if (raytraceresult.func_216346_c() == RayTraceResult.Type.MISS) {
           return ActionResult.func_226250_c_(itemstack);
        } else if (raytraceresult.func_216346_c() != RayTraceResult.Type.BLOCK) {
-@@ -51,11 +71,23 @@
+@@ -51,11 +67,23 @@
              if (this.field_77876_a == Fluids.field_204541_a) {
                 BlockState blockstate1 = p_77659_1_.func_180495_p(blockpos);
                 if (blockstate1.func_177230_c() instanceof IBucketPickupHandler) {
 +                  // CraftBukkit start
-+                  Fluid dummyFluid = ((IBucketPickupHandler)blockstate1.func_177230_c()).func_204508_a(DummyGeneratorAccess.INSTANCE, blockpos, blockstate1);
++                  Fluid dummyFluid = ((IBucketPickupHandler) blockstate1.func_177230_c()).func_204508_a(DummyGeneratorAccess.INSTANCE, blockpos, blockstate1);
 +                  PlayerBucketFillEvent event = CraftEventFactory.callPlayerBucketFillEvent(p_77659_1_, p_77659_2_, blockpos, blockpos, ((BlockRayTraceResult) raytraceresult).func_216354_b(), itemstack, dummyFluid.func_204524_b());
 +                  if (event.isCancelled()) {
-+                     ((ServerPlayerEntity)p_77659_2_).field_71135_a.func_147359_a(new SChangeBlockPacket(p_77659_1_, blockpos)); // SPIGOT-5163 (see PlayerInteractManager)
-+                     ((ServerPlayerEntity)p_77659_2_).getBukkitEntity().updateInventory(); // SPIGOT-4541
-+                     return new ActionResult<ItemStack>(ActionResultType.FAIL, itemstack);
++                     ((ServerPlayerEntity) p_77659_2_).field_71135_a.func_147359_a(new SChangeBlockPacket(p_77659_1_, blockpos)); // SPIGOT-5163 (see PlayerInteractManager)
++                     ((ServerPlayerEntity) p_77659_2_).getBukkitEntity().updateInventory(); // SPIGOT-4541
++                     return new ActionResult<>(ActionResultType.FAIL, itemstack);
 +                  }
 +                  // CraftBukkit end
                    Fluid fluid = ((IBucketPickupHandler)blockstate1.func_177230_c()).func_204508_a(p_77659_1_, blockpos, blockstate1);
@@ -93,7 +82,7 @@
                       if (!p_77659_1_.field_72995_K) {
                          CriteriaTriggers.field_204813_j.func_204817_a((ServerPlayerEntity)p_77659_2_, new ItemStack(fluid.func_204524_b()));
                       }
-@@ -67,8 +99,8 @@
+@@ -67,8 +95,8 @@
                 return ActionResult.func_226251_d_(itemstack);
              } else {
                 BlockState blockstate = p_77659_1_.func_180495_p(blockpos);
@@ -104,7 +93,7 @@
                    this.func_203792_a(p_77659_1_, itemstack, blockpos2);
                    if (p_77659_2_ instanceof ServerPlayerEntity) {
                       CriteriaTriggers.field_193137_x.func_193173_a((ServerPlayerEntity)p_77659_2_, blockpos2, itemstack);
-@@ -93,62 +125,98 @@
+@@ -93,62 +121,98 @@
     public void func_203792_a(World p_203792_1_, ItemStack p_203792_2_, BlockPos p_203792_3_) {
     }
  
@@ -159,11 +148,11 @@
 +         boolean canContainFluid = canBlockContainFluid(worldIn, posIn, blockstate);
 +         if (blockstate.func_196958_f() || flag || canContainFluid) {
 +            // CraftBukkit start
-+            if (player != null) {
++            if(player != null){
 +               PlayerBucketEmptyEvent event = CraftEventFactory.callPlayerBucketEmptyEvent(worldIn, player, posIn, clicked, enumdirection, itemstack);
-+               if (event.isCancelled()) {
-+                  ((ServerPlayerEntity)player).field_71135_a.func_147359_a(new SChangeBlockPacket(worldIn, posIn)); // SPIGOT-4238: needed when looking through entity
-+                  ((ServerPlayerEntity)player).getBukkitEntity().updateInventory(); // SPIGOT-4541
++               if(event.isCancelled()){
++                  ((ServerPlayerEntity) player).field_71135_a.func_147359_a(new SChangeBlockPacket(worldIn, posIn)); // SPIGOT-4238: needed when looking through entity
++                  ((ServerPlayerEntity) player).getBukkitEntity().updateInventory(); // SPIGOT-4541
 +                  return false;
 +               }
 +            }

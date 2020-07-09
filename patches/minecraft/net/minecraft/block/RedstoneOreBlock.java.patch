@@ -1,39 +1,48 @@
 --- a/net/minecraft/block/RedstoneOreBlock.java
 +++ b/net/minecraft/block/RedstoneOreBlock.java
-@@ -18,6 +18,10 @@
+@@ -1,8 +1,6 @@
+ package net.minecraft.block;
+ 
+ import java.util.Random;
+-import net.minecraft.enchantment.EnchantmentHelper;
+-import net.minecraft.enchantment.Enchantments;
+ import net.minecraft.entity.Entity;
+ import net.minecraft.entity.player.PlayerEntity;
+ import net.minecraft.item.ItemStack;
+@@ -18,6 +16,9 @@
  import net.minecraft.world.server.ServerWorld;
  import net.minecraftforge.api.distmarker.Dist;
  import net.minecraftforge.api.distmarker.OnlyIn;
-+// CraftBukkit start
-+import org.bukkit.craftbukkit.event.CraftEventFactory;
++import org.bukkit.craftbukkit.v1_15_R1.event.CraftEventFactory;
 +import org.bukkit.event.entity.EntityInteractEvent;
-+// CraftBukkit end
++import org.bukkit.event.player.PlayerInteractEvent;
  
  public class RedstoneOreBlock extends Block {
     public static final BooleanProperty field_196501_a = RedstoneTorchBlock.field_196528_a;
-@@ -32,13 +36,29 @@
+@@ -32,13 +33,30 @@
     }
  
     public void func_196270_a(BlockState p_196270_1_, World p_196270_2_, BlockPos p_196270_3_, PlayerEntity p_196270_4_) {
 -      func_196500_d(p_196270_1_, p_196270_2_, p_196270_3_);
-+      activate(p_196270_1_, p_196270_2_, p_196270_3_, p_196270_4_); // // CraftBukkit - add entityhuman
++      activate(p_196270_1_, p_196270_2_, p_196270_3_, p_196270_4_);  // CraftBukkit - add entityhuman
        super.func_196270_a(p_196270_1_, p_196270_2_, p_196270_3_, p_196270_4_);
     }
  
     public void func_176199_a(World p_176199_1_, BlockPos p_176199_2_, Entity p_176199_3_) {
 -      func_196500_d(p_176199_1_.func_180495_p(p_176199_2_), p_176199_1_, p_176199_2_);
 -      super.func_176199_a(p_176199_1_, p_176199_2_, p_176199_3_);
++
 +      // CraftBukkit start
 +      // activate(worldIn.getBlockState(pos), worldIn, pos);
 +      // super.onEntityWalk(worldIn, pos, entityIn);
 +      if (p_176199_3_ instanceof PlayerEntity) {
-+         org.bukkit.event.player.PlayerInteractEvent event = org.bukkit.craftbukkit.event.CraftEventFactory.callPlayerInteractEvent((PlayerEntity) p_176199_3_, org.bukkit.event.block.Action.PHYSICAL, p_176199_2_, null, null, null);
++         PlayerInteractEvent event = org.bukkit.craftbukkit.v1_15_R1.event.CraftEventFactory.callPlayerInteractEvent((PlayerEntity) p_176199_3_, org.bukkit.event.block.Action.PHYSICAL, p_176199_2_, null, null, null);
 +         if (!event.isCancelled()) {
-+            activate(p_176199_1_.func_180495_p(p_176199_2_), p_176199_1_, p_176199_2_, p_176199_3_);
++            activate(p_176199_1_.func_180495_p(p_176199_2_), p_176199_1_, p_176199_2_, p_176199_3_); // add entity
 +            super.func_176199_a(p_176199_1_, p_176199_2_, p_176199_3_);
 +         }
 +      } else {
-+         EntityInteractEvent event = new EntityInteractEvent(p_176199_3_.getBukkitEntity(), p_176199_1_.getWorldCB().getBlockAt(p_176199_2_.func_177958_n(),p_176199_2_.func_177956_o(), p_176199_2_.func_177952_p()));
++         EntityInteractEvent event = new EntityInteractEvent(p_176199_3_.getBukkitEntity(), p_176199_1_.getWorldCB().getBlockAt(p_176199_2_.func_177958_n(), p_176199_2_.func_177956_o(), p_176199_2_.func_177952_p()));
 +         p_176199_1_.getServerCB().getPluginManager().callEvent(event);
 +         if (!event.isCancelled()) {
 +            activate(p_176199_1_.func_180495_p(p_176199_2_), p_176199_1_, p_176199_2_, p_176199_3_); // add entity
@@ -44,7 +53,7 @@
     }
  
     public ActionResultType func_225533_a_(BlockState p_225533_1_, World p_225533_2_, BlockPos p_225533_3_, PlayerEntity p_225533_4_, Hand p_225533_5_, BlockRayTraceResult p_225533_6_) {
-@@ -46,14 +66,19 @@
+@@ -46,14 +64,19 @@
           func_180691_e(p_225533_2_, p_225533_3_);
           return ActionResultType.SUCCESS;
        } else {
@@ -55,48 +64,38 @@
     }
  
 -   private static void func_196500_d(BlockState p_196500_0_, World p_196500_1_, BlockPos p_196500_2_) {
-+   private static void activate(BlockState p_196500_0_, World p_196500_1_, BlockPos p_196500_2_, Entity entity) {// CraftBukkit - add Entity
++   private static void activate(BlockState p_196500_0_, World p_196500_1_, BlockPos p_196500_2_, Entity entity) { // CraftBukkit - add Entity
        func_180691_e(p_196500_1_, p_196500_2_);
        if (!p_196500_0_.func_177229_b(field_196501_a)) {
 +         // CraftBukkit start
-+         if (CraftEventFactory.callEntityChangeBlockEvent(entity, p_196500_2_, p_196500_0_.func_206870_a(RedstoneOreBlock.field_196501_a, true)).isCancelled()) {
++         if (CraftEventFactory.callEntityChangeBlockEvent(entity, p_196500_2_, p_196500_0_.func_206870_a(field_196501_a, true)).isCancelled()) {
 +            return;
 +         }
 +         // CraftBukkit end
           p_196500_1_.func_180501_a(p_196500_2_, p_196500_0_.func_206870_a(field_196501_a, Boolean.valueOf(true)), 3);
        }
  
-@@ -61,18 +86,33 @@
+@@ -61,6 +84,11 @@
  
     public void func_225534_a_(BlockState p_225534_1_, ServerWorld p_225534_2_, BlockPos p_225534_3_, Random p_225534_4_) {
        if (p_225534_1_.func_177229_b(field_196501_a)) {
 +         // CraftBukkit start
-+         if (CraftEventFactory.callBlockFadeEvent(p_225534_2_, p_225534_3_, p_225534_1_.func_206870_a(RedstoneOreBlock.field_196501_a, false)).isCancelled()) {
++         if (CraftEventFactory.callBlockFadeEvent(p_225534_2_, p_225534_3_, p_225534_1_.func_206870_a(field_196501_a, true)).isCancelled()) {
 +            return;
 +         }
 +         // CraftBukkit end
           p_225534_2_.func_180501_a(p_225534_3_, p_225534_1_.func_206870_a(field_196501_a, Boolean.valueOf(false)), 3);
        }
--
-    }
+ 
+@@ -68,11 +96,11 @@
  
     public void func_220062_a(BlockState p_220062_1_, World p_220062_2_, BlockPos p_220062_3_, ItemStack p_220062_4_) {
        super.func_220062_a(p_220062_1_, p_220062_2_, p_220062_3_, p_220062_4_);
 -      if (EnchantmentHelper.func_77506_a(Enchantments.field_185306_r, p_220062_4_) == 0) {
 -         int i = 1 + p_220062_2_.field_73012_v.nextInt(5);
 -         this.func_180637_b(p_220062_2_, p_220062_3_, i);
+-      }
 +   }
-+
-+   // CraftBukkit start - Delegated to getExpDrop
-+   @Override
-+   public int getExpDrop(BlockState iblockdata, World world, BlockPos blockposition, ItemStack itemstack) {
-+      if (EnchantmentHelper.func_77506_a(Enchantments.field_185306_r, itemstack) == 0) {
-+         final int i = 1 + world.field_73012_v.nextInt(5);
-+         return i;
-       }
-+      return 0;
-+   }
-+   // CraftBukkit end
  
 +   @Override
 +   public int getExpDrop(BlockState state, net.minecraft.world.IWorldReader world, BlockPos pos, int fortune, int silktouch) {

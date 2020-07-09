@@ -1,29 +1,27 @@
 --- a/net/minecraft/block/SweetBerryBushBlock.java
 +++ b/net/minecraft/block/SweetBerryBushBlock.java
-@@ -23,6 +23,10 @@
+@@ -23,6 +23,8 @@
  import net.minecraft.world.IBlockReader;
  import net.minecraft.world.World;
  import net.minecraft.world.server.ServerWorld;
-+// CraftBukkit start
-+import org.bukkit.craftbukkit.block.CraftBlock;
-+import org.bukkit.craftbukkit.event.CraftEventFactory;
-+// CraftBukkit end
++import org.bukkit.craftbukkit.v1_15_R1.block.CraftBlock;
++import org.bukkit.craftbukkit.v1_15_R1.event.CraftEventFactory;
  
  public class SweetBerryBushBlock extends BushBlock implements IGrowable {
     public static final IntegerProperty field_220125_a = BlockStateProperties.field_208168_U;
-@@ -49,8 +53,9 @@
+@@ -49,8 +51,9 @@
     public void func_225534_a_(BlockState p_225534_1_, ServerWorld p_225534_2_, BlockPos p_225534_3_, Random p_225534_4_) {
        super.func_225534_a_(p_225534_1_, p_225534_2_, p_225534_3_, p_225534_4_);
        int i = p_225534_1_.func_177229_b(field_220125_a);
 -      if (i < 3 && p_225534_4_.nextInt(5) == 0 && p_225534_2_.func_226659_b_(p_225534_3_.func_177984_a(), 0) >= 9) {
 -         p_225534_2_.func_180501_a(p_225534_3_, p_225534_1_.func_206870_a(field_220125_a, Integer.valueOf(i + 1)), 2);
-+      if (i < 3 && p_225534_2_.func_226659_b_(p_225534_3_.func_177984_a(), 0) >= 9 && net.minecraftforge.common.ForgeHooks.onCropsGrowPre(p_225534_2_, p_225534_3_, p_225534_1_, p_225534_4_.nextInt(5) == 0)) {
-+         CraftEventFactory.handleBlockGrowEvent(p_225534_2_, p_225534_3_, p_225534_1_.func_206870_a(SweetBerryBushBlock.field_220125_a, i + 1), 2); // CraftBukkit
++      if (i < 3 && p_225534_4_.nextInt(Math.max(1, (int) (100.0F / p_225534_2_.spigotConfig.sweetBerryModifier) * 5)) == 0 && p_225534_2_.func_226659_b_(p_225534_3_.func_177984_a(), 0) >= 9 && net.minecraftforge.common.ForgeHooks.onCropsGrowPre(p_225534_2_, p_225534_3_, p_225534_1_, p_225534_4_.nextInt(5) == 0)) {
++         CraftEventFactory.handleBlockGrowEvent(p_225534_2_, p_225534_3_, p_225534_1_.func_206870_a(field_220125_a, Integer.valueOf(i + 1)), 2); // CraftBukkit
 +         net.minecraftforge.common.ForgeHooks.onCropsGrowPost(p_225534_2_, p_225534_3_, p_225534_1_);
        }
  
     }
-@@ -62,7 +67,9 @@
+@@ -62,7 +65,9 @@
              double d0 = Math.abs(p_196262_4_.func_226277_ct_() - p_196262_4_.field_70142_S);
              double d1 = Math.abs(p_196262_4_.func_226281_cx_() - p_196262_4_.field_70136_U);
              if (d0 >= (double)0.003F || d1 >= (double)0.003F) {

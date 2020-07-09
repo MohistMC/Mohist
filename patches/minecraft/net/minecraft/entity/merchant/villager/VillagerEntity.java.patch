@@ -8,33 +8,49 @@
  import net.minecraft.util.text.ITextComponent;
  import net.minecraft.util.text.TranslationTextComponent;
  import net.minecraft.village.GossipManager;
-@@ -81,6 +80,16 @@
+@@ -81,6 +80,14 @@
  import net.minecraft.world.server.ServerWorld;
  import net.minecraftforge.api.distmarker.Dist;
  import net.minecraftforge.api.distmarker.OnlyIn;
-+// CraftBukkit start
 +import org.bukkit.Bukkit;
-+import org.bukkit.craftbukkit.event.CraftEventFactory;
-+import org.bukkit.craftbukkit.inventory.CraftMerchant;
++import org.bukkit.craftbukkit.v1_15_R1.event.CraftEventFactory;
++import org.bukkit.craftbukkit.v1_15_R1.inventory.CraftMerchant;
 +import org.bukkit.entity.Villager;
 +import org.bukkit.event.entity.CreatureSpawnEvent;
 +import org.bukkit.event.entity.EntityPotionEffectEvent;
 +import org.bukkit.event.entity.EntityTransformEvent;
 +import org.bukkit.event.entity.VillagerReplenishTradeEvent;
-+// CraftBukkit end
  
  public class VillagerEntity extends AbstractVillagerEntity implements IReputationTracking, IVillagerDataHolder {
     private static final DataParameter<VillagerData> field_213775_bC = EntityDataManager.func_187226_a(VillagerEntity.class, DataSerializers.field_218813_q);
-@@ -189,7 +198,7 @@
+@@ -177,6 +184,17 @@
+       this.func_110148_a(SharedMonsterAttributes.field_111265_b).func_111128_a(48.0D);
+    }
+ 
++   // Spigot Start
++   @Override
++   public void inactiveTick() {
++      // SPIGOT-3874, SPIGOT-3894, SPIGOT-3846, SPIGOT-5286 :(
++      if (field_70170_p.spigotConfig.tickInactiveVillagers) {
++         this.func_70619_bc();
++      }
++      super.inactiveTick();
++   }
++   // Spigot End
++
+    protected void func_70619_bc() {
+       this.field_70170_p.func_217381_Z().func_76320_a("brain");
+       this.func_213375_cj().func_218210_a((ServerWorld)this.field_70170_p, this);
+@@ -189,7 +207,7 @@
                 this.field_213777_bF = false;
              }
  
 -            this.func_195064_c(new EffectInstance(Effects.field_76428_l, 200, 0));
-+            this.addEffect(new EffectInstance(Effects.field_76428_l, 200, 0), EntityPotionEffectEvent.Cause.VILLAGER_TRADE); // CraftBukkit
++            this.addPotionEffect(new EffectInstance(Effects.field_76428_l, 200, 0), EntityPotionEffectEvent.Cause.VILLAGER_TRADE); // CraftBukkit
           }
        }
  
-@@ -228,7 +237,7 @@
+@@ -228,7 +246,7 @@
        if (flag) {
           itemstack.func_111282_a(p_184645_1_, this, p_184645_2_);
           return true;
@@ -43,19 +59,21 @@
           if (this.func_70631_g_()) {
              this.func_213756_es();
              return super.func_184645_a(p_184645_1_, p_184645_2_);
-@@ -296,6 +305,11 @@
+@@ -296,6 +314,13 @@
        return true;
     }
  
++   // CraftBukkit start
 +   @Override
 +   public CraftMerchant getCraftMerchant() {
 +      return null;
 +   }
++   // CraftBukkit end
 +
     public void func_213766_ei() {
        this.func_223715_ey();
  
-@@ -370,7 +384,14 @@
+@@ -370,7 +395,14 @@
        int i = this.func_223107_f(p_213762_1_);
        if (i != 0) {
           for(MerchantOffer merchantoffer : this.func_213706_dY()) {
@@ -71,7 +89,16 @@
           }
        }
  
-@@ -607,7 +628,8 @@
+@@ -503,7 +535,7 @@
+    }
+ 
+    public void func_70645_a(DamageSource p_70645_1_) {
+-      field_184243_a.info("Villager {} died, message: '{}'", this, p_70645_1_.func_151519_b(this).getString());
++      if (org.spigotmc.SpigotConfig.logVillagerDeaths) field_184243_a.info("Villager {} died, message: '{}'", this, p_70645_1_.func_151519_b(this).getString()); // Spigot
+       Entity entity = p_70645_1_.func_76346_g();
+       if (entity != null) {
+          this.func_223361_a(entity);
+@@ -607,7 +639,8 @@
     }
  
     protected ITextComponent func_225513_by_() {
@@ -81,7 +108,7 @@
     }
  
     @OnlyIn(Dist.CLIENT)
-@@ -665,7 +687,12 @@
+@@ -665,7 +698,12 @@
           witchentity.func_174805_g(this.func_174833_aM());
        }
  
@@ -95,7 +122,7 @@
        this.func_70106_y();
     }
  
-@@ -845,7 +872,7 @@
+@@ -845,7 +883,7 @@
           IronGolemEntity irongolementity = EntityType.field_200757_aw.func_220349_b(this.field_70170_p, (CompoundNBT)null, (ITextComponent)null, (PlayerEntity)null, blockpos2, SpawnReason.MOB_SUMMONED, false, false);
           if (irongolementity != null) {
              if (irongolementity.func_213380_a(this.field_70170_p, SpawnReason.MOB_SUMMONED) && irongolementity.func_205019_a(this.field_70170_p)) {

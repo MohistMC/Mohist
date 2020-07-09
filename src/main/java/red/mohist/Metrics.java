@@ -36,8 +36,8 @@ public class Metrics {
     private final List<CustomChart> charts = new ArrayList<>();
 
     public Metrics(String name, String serverUUID, boolean logFailedRequests) {
-            this.name = name;
-            this.serverUUID = serverUUID;
+        this.name = name;
+        this.serverUUID = serverUUID;
 
         startSubmitting();
     }

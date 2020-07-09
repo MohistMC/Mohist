@@ -1,14 +1,27 @@
 --- a/net/minecraft/block/ComparatorBlock.java
 +++ b/net/minecraft/block/ComparatorBlock.java
-@@ -23,6 +23,7 @@
+@@ -11,11 +11,7 @@
+ import net.minecraft.state.properties.ComparatorMode;
+ import net.minecraft.tileentity.ComparatorTileEntity;
+ import net.minecraft.tileentity.TileEntity;
+-import net.minecraft.util.ActionResultType;
+-import net.minecraft.util.Direction;
+-import net.minecraft.util.Hand;
+-import net.minecraft.util.SoundCategory;
+-import net.minecraft.util.SoundEvents;
++import net.minecraft.util.*;
+ import net.minecraft.util.math.AxisAlignedBB;
+ import net.minecraft.util.math.BlockPos;
+ import net.minecraft.util.math.BlockRayTraceResult;
+@@ -23,6 +19,7 @@
  import net.minecraft.world.TickPriority;
  import net.minecraft.world.World;
  import net.minecraft.world.server.ServerWorld;
-+import org.bukkit.craftbukkit.event.CraftEventFactory; // CraftBukkit
++import org.bukkit.craftbukkit.v1_15_R1.event.CraftEventFactory;
  
  public class ComparatorBlock extends RedstoneDiodeBlock implements ITileEntityProvider {
     public static final EnumProperty<ComparatorMode> field_176463_b = BlockStateProperties.field_208141_ap;
-@@ -71,7 +72,7 @@
+@@ -71,7 +68,7 @@
           blockstate = p_176397_1_.func_180495_p(blockpos);
           if (blockstate.func_185912_n()) {
              i = blockstate.func_185888_a(p_176397_1_, blockpos);
@@ -17,7 +30,7 @@
              ItemFrameEntity itemframeentity = this.func_176461_a(p_176397_1_, direction, blockpos);
              if (itemframeentity != null) {
                 i = itemframeentity.func_174866_q();
-@@ -130,8 +131,18 @@
+@@ -130,8 +127,18 @@
           boolean flag1 = this.func_176404_e(p_176462_1_, p_176462_2_, p_176462_3_);
           boolean flag = p_176462_3_.func_177229_b(field_196348_c);
           if (flag && !flag1) {
@@ -29,14 +42,14 @@
              p_176462_1_.func_180501_a(p_176462_2_, p_176462_3_.func_206870_a(field_196348_c, Boolean.valueOf(false)), 2);
           } else if (!flag && flag1) {
 +            // CraftBukkit start
-+            if (CraftEventFactory.callRedstoneChange(p_176462_1_, p_176462_2_, 15, 0).getNewCurrent() != 0) {
++            if (CraftEventFactory.callRedstoneChange(p_176462_1_, p_176462_2_, 0, 15).getNewCurrent() != 15) {
 +               return;
 +            }
 +            // CraftBukkit end
              p_176462_1_.func_180501_a(p_176462_2_, p_176462_3_.func_206870_a(field_196348_c, Boolean.valueOf(true)), 2);
           }
  
-@@ -157,4 +168,16 @@
+@@ -157,4 +164,16 @@
     protected void func_206840_a(StateContainer.Builder<Block, BlockState> p_206840_1_) {
        p_206840_1_.func_206894_a(field_185512_D, field_176463_b, field_196348_c);
     }

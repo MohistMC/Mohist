@@ -5,7 +5,7 @@
  import net.minecraft.util.math.BlockPos;
  import net.minecraft.world.IWorldReader;
 +import org.bukkit.Location;
-+import org.bukkit.craftbukkit.entity.CraftEntity;
++import org.bukkit.craftbukkit.v1_15_R1.entity.CraftEntity;
 +import org.bukkit.event.entity.EntityTeleportEvent;
  
  public class FollowOwnerGoal extends Goal {

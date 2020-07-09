@@ -107,7 +107,7 @@ public interface IForgeVertexBuilder
             }
         }
     }
-
+    
     default int applyBakedLighting(int lightmapCoord, ByteBuffer data) {
         int bl = lightmapCoord&0xFFFF;
         int sl = (lightmapCoord>>16)&0xFFFF;
@@ -118,7 +118,7 @@ public interface IForgeVertexBuilder
         sl = Math.max(sl, slBaked);
         return bl | (sl<<16);
     }
-
+    
     default void applyBakedNormals(Vector3f generated, ByteBuffer data, Matrix3f normalTransform) {
         byte nx = data.get(28);
         byte ny = data.get(29);

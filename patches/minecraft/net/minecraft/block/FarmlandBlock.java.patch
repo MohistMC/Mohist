@@ -1,28 +1,42 @@
 --- a/net/minecraft/block/FarmlandBlock.java
 +++ b/net/minecraft/block/FarmlandBlock.java
-@@ -22,6 +22,10 @@
+@@ -2,7 +2,6 @@
+ 
+ import java.util.Random;
+ import net.minecraft.entity.Entity;
+-import net.minecraft.entity.LivingEntity;
+ import net.minecraft.entity.player.PlayerEntity;
+ import net.minecraft.item.BlockItemUseContext;
+ import net.minecraft.pathfinding.PathType;
+@@ -14,7 +13,6 @@
+ import net.minecraft.util.math.BlockPos;
+ import net.minecraft.util.math.shapes.ISelectionContext;
+ import net.minecraft.util.math.shapes.VoxelShape;
+-import net.minecraft.world.GameRules;
+ import net.minecraft.world.IBlockReader;
+ import net.minecraft.world.IWorld;
+ import net.minecraft.world.IWorldReader;
+@@ -22,6 +20,8 @@
  import net.minecraft.world.server.ServerWorld;
  import net.minecraftforge.api.distmarker.Dist;
  import net.minecraftforge.api.distmarker.OnlyIn;
-+// CraftBukkit start
-+import org.bukkit.craftbukkit.event.CraftEventFactory;
++import org.bukkit.craftbukkit.v1_15_R1.event.CraftEventFactory;
 +import org.bukkit.event.entity.EntityInteractEvent;
-+// CraftBukkit end
  
  public class FarmlandBlock extends Block {
     public static final IntegerProperty field_176531_a = BlockStateProperties.field_208133_ah;
-@@ -64,32 +68,53 @@
+@@ -64,32 +64,53 @@
           int i = p_225534_1_.func_177229_b(field_176531_a);
           if (!func_176530_e(p_225534_2_, p_225534_3_) && !p_225534_2_.func_175727_C(p_225534_3_.func_177984_a())) {
              if (i > 0) {
 -               p_225534_2_.func_180501_a(p_225534_3_, p_225534_1_.func_206870_a(field_176531_a, Integer.valueOf(i - 1)), 2);
-+               org.bukkit.craftbukkit.event.CraftEventFactory.handleMoistureChangeEvent(p_225534_2_, p_225534_3_, p_225534_1_.func_206870_a(FarmlandBlock.field_176531_a, i - 1), 2); // CraftBukkit
++               org.bukkit.craftbukkit.v1_15_R1.event.CraftEventFactory.handleMoistureChangeEvent(p_225534_2_, p_225534_3_, (BlockState) p_225534_1_.func_206870_a(FarmlandBlock.field_176531_a, i - 1), 2); // CraftBukkit
              } else if (!func_176529_d(p_225534_2_, p_225534_3_)) {
                 func_199610_d(p_225534_1_, p_225534_2_, p_225534_3_);
              }
           } else if (i < 7) {
 -            p_225534_2_.func_180501_a(p_225534_3_, p_225534_1_.func_206870_a(field_176531_a, Integer.valueOf(7)), 2);
-+            org.bukkit.craftbukkit.event.CraftEventFactory.handleMoistureChangeEvent(p_225534_2_, p_225534_3_, p_225534_1_.func_206870_a(FarmlandBlock.field_176531_a, 7), 2); // CraftBukkit
++            org.bukkit.craftbukkit.v1_15_R1.event.CraftEventFactory.handleMoistureChangeEvent(p_225534_2_, p_225534_3_, (BlockState) p_225534_1_.func_206870_a(FarmlandBlock.field_176531_a, 7), 2); // CraftBukkit
           }
  
        }
@@ -72,7 +86,7 @@
     }
  
     private static boolean func_176530_e(IWorldReader p_176530_0_, BlockPos p_176530_1_) {
-@@ -99,7 +124,7 @@
+@@ -99,7 +120,7 @@
           }
        }
  

@@ -5,7 +5,7 @@
     private final TicketType<T> field_219480_a;
     private final int field_219481_b;
 -   private final T field_219482_c;
-+   public final T field_219482_c;
++   public final T field_219482_c; // private->public CraftBukkit
     private long field_219483_d;
  
     protected Ticket(TicketType<T> p_i226095_1_, int p_i226095_2_, T p_i226095_3_) {
