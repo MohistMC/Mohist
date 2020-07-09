@@ -130,6 +130,14 @@ public class Main {
                         .defaultsTo(new File("spigot.yml"))
                         .describedAs("Yml file");
                 // Spigot End
+
+                // Paper Start
+                acceptsAll(asList("paper", "paper-settings"), "File for paper settings")
+                        .withRequiredArg()
+                        .ofType(File.class)
+                        .defaultsTo(new File("paper.yml"))
+                        .describedAs("Yml file");
+                // Paper end
             }
         };
 

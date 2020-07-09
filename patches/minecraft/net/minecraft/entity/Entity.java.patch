@@ -152,10 +152,24 @@
     private final Set<String> field_184236_aF = Sets.newHashSet();
     private boolean field_184237_aG;
     private final double[] field_191505_aI = new double[]{0.0D, 0.0D, 0.0D};
-@@ -195,14 +268,21 @@
+@@ -195,14 +268,35 @@
     private EntitySize field_213325_aI;
     private float field_213326_aJ;
  
++   public int getChunkX() {
++      return field_70176_ah;
++   }
++   // Paper - OBFHELPER
++
++   public int getChunkY() {
++      return field_70162_ai;
++   }
++   // Paper - OBFHELPER
++
++   public int getChunkZ() {
++      return field_70164_aj;
++   }
++   // Paper - OBFHELPER
 +
     public Entity(EntityType<?> p_i48580_1_, World p_i48580_2_) {
 +      super(Entity.class);
@@ -174,7 +188,7 @@
  
        this.field_70180_af = new EntityDataManager(this);
        this.field_70180_af.func_187214_a(field_184240_ax, (byte)0);
-@@ -213,7 +293,10 @@
+@@ -213,7 +307,10 @@
        this.field_70180_af.func_187214_a(field_189655_aD, false);
        this.field_70180_af.func_187214_a(field_213330_X, Pose.STANDING);
        this.func_70088_a();
@@ -186,7 +200,7 @@
     }
  
     @OnlyIn(Dist.CLIENT)
-@@ -292,7 +375,7 @@
+@@ -292,7 +389,7 @@
     @OnlyIn(Dist.CLIENT)
     protected void func_70065_x() {
        if (this.field_70170_p != null) {
@@ -195,7 +209,7 @@
              this.func_70107_b(this.func_226277_ct_(), d0, this.func_226281_cx_());
              if (this.field_70170_p.func_226669_j_(this)) {
                 break;
-@@ -305,10 +388,22 @@
+@@ -305,10 +402,22 @@
     }
  
     public void func_70106_y() {
@@ -218,7 +232,7 @@
        this.field_70180_af.func_187227_b(field_213330_X, p_213301_1_);
     }
  
-@@ -317,15 +412,40 @@
+@@ -317,15 +426,40 @@
     }
  
     protected void func_70101_b(float p_70101_1_, float p_70101_2_) {
@@ -259,7 +273,7 @@
     }
  
     protected void func_226264_Z_() {
-@@ -356,6 +476,15 @@
+@@ -356,6 +490,15 @@
        this.func_70030_z();
     }
  
@@ -275,7 +289,7 @@
     public void func_70030_z() {
        this.field_70170_p.func_217381_Z().func_76320_a("entityBaseTick");
        if (this.func_184218_aH() && this.func_184187_bx().field_70128_L) {
-@@ -369,7 +498,7 @@
+@@ -369,7 +512,7 @@
        this.field_70141_P = this.field_70140_Q;
        this.field_70127_C = this.field_70125_A;
        this.field_70126_B = this.field_70177_z;
@@ -284,7 +298,7 @@
        this.func_174830_Y();
        this.func_205011_p();
        if (this.field_70170_p.field_72995_K) {
-@@ -419,13 +548,41 @@
+@@ -419,13 +562,41 @@
  
     protected void func_70044_A() {
        if (!this.func_70045_F()) {
@@ -328,7 +342,7 @@
        if (this instanceof LivingEntity) {
           i = ProtectionEnchantment.func_92093_a((LivingEntity)this, i);
        }
-@@ -461,6 +618,7 @@
+@@ -461,6 +632,7 @@
     }
  
     public void func_213315_a(MoverType p_213315_1_, Vec3d p_213315_2_) {
@@ -336,7 +350,7 @@
        if (this.field_70145_X) {
           this.func_174826_a(this.func_174813_aQ().func_191194_a(p_213315_2_));
           this.func_174829_m();
-@@ -509,6 +667,26 @@
+@@ -509,6 +681,26 @@
              block.func_176216_a(this.field_70170_p, this);
           }
  
@@ -363,7 +377,7 @@
           if (this.field_70122_E && !this.func_226271_bk_()) {
              block.func_176199_a(this.field_70170_p, blockpos, this);
           }
-@@ -523,7 +701,7 @@
+@@ -523,7 +715,7 @@
  
              this.field_70140_Q = (float)((double)this.field_70140_Q + (double)MathHelper.func_76133_a(func_213296_b(vec3d)) * 0.6D);
              this.field_82151_R = (float)((double)this.field_82151_R + (double)MathHelper.func_76133_a(d0 * d0 + d1 * d1 + d2 * d2) * 0.6D);
@@ -372,7 +386,7 @@
                 this.field_70150_b = this.func_203009_ad();
                 if (this.func_70090_H()) {
                    Entity entity = this.func_184207_aI() && this.func_184179_bs() != null ? this.func_184179_bs() : this;
-@@ -538,7 +716,7 @@
+@@ -538,7 +730,7 @@
                 } else {
                    this.func_180429_a(blockpos, blockstate);
                 }
@@ -381,7 +395,7 @@
                 this.field_191959_ay = this.func_191954_d(this.field_82151_R);
              }
           }
-@@ -559,11 +737,17 @@
+@@ -559,11 +751,17 @@
              if (!flag) {
                 ++this.field_190534_ay;
                 if (this.field_190534_ay == 0) {
@@ -401,7 +415,7 @@
           } else if (this.field_190534_ay <= 0) {
              this.field_190534_ay = -this.func_190531_bD();
           }
-@@ -575,6 +759,7 @@
+@@ -575,6 +773,7 @@
  
           this.field_70170_p.func_217381_Z().func_76319_b();
        }
@@ -409,7 +423,7 @@
     }
  
     protected BlockPos func_226268_ag_() {
-@@ -582,11 +767,10 @@
+@@ -582,11 +781,10 @@
        int j = MathHelper.func_76128_c(this.field_70163_u - (double)0.2F);
        int k = MathHelper.func_76128_c(this.field_70161_v);
        BlockPos blockpos = new BlockPos(i, j, k);
@@ -423,7 +437,7 @@
              return blockpos1;
           }
        }
-@@ -770,6 +954,8 @@
+@@ -770,6 +968,8 @@
     public void func_174829_m() {
        AxisAlignedBB axisalignedbb = this.func_174813_aQ();
        this.func_226288_n_((axisalignedbb.field_72340_a + axisalignedbb.field_72336_d) / 2.0D, axisalignedbb.field_72338_b, (axisalignedbb.field_72339_c + axisalignedbb.field_72334_f) / 2.0D);
@@ -432,7 +446,7 @@
     }
  
     protected SoundEvent func_184184_Z() {
-@@ -822,7 +1008,7 @@
+@@ -822,7 +1022,7 @@
     protected void func_180429_a(BlockPos p_180429_1_, BlockState p_180429_2_) {
        if (!p_180429_2_.func_185904_a().func_76224_d()) {
           BlockState blockstate = this.field_70170_p.func_180495_p(p_180429_1_.func_177984_a());
@@ -441,7 +455,7 @@
           this.func_184185_a(soundtype.func_185844_d(), soundtype.func_185843_a() * 0.15F, soundtype.func_185847_b());
        }
     }
-@@ -884,9 +1070,9 @@
+@@ -884,9 +1084,9 @@
        return null;
     }
  
@@ -453,7 +467,7 @@
        }
  
     }
-@@ -1019,9 +1205,10 @@
+@@ -1019,9 +1219,10 @@
        int k = MathHelper.func_76128_c(this.func_226281_cx_());
        BlockPos blockpos = new BlockPos(i, j, k);
        BlockState blockstate = this.field_70170_p.func_180495_p(blockpos);
@@ -465,7 +479,7 @@
        }
  
     }
-@@ -1040,7 +1227,7 @@
+@@ -1040,7 +1241,7 @@
              return false;
           } else {
              IFluidState ifluidstate = this.field_70170_p.func_204610_c(blockpos);
@@ -474,7 +488,7 @@
           }
        }
     }
-@@ -1081,6 +1268,13 @@
+@@ -1081,6 +1282,13 @@
     }
  
     public void func_70029_a(World p_70029_1_) {
@@ -488,7 +502,7 @@
        this.field_70170_p = p_70029_1_;
     }
  
-@@ -1095,6 +1289,7 @@
+@@ -1095,6 +1303,7 @@
        this.field_70125_A = MathHelper.func_76131_a(p_70080_8_, -90.0F, 90.0F) % 360.0F;
        this.field_70126_B = this.field_70177_z;
        this.field_70127_C = this.field_70125_A;
@@ -496,7 +510,7 @@
     }
  
     public void func_174828_a(BlockPos p_174828_1_, float p_174828_2_, float p_174828_3_) {
-@@ -1283,7 +1478,7 @@
+@@ -1283,7 +1492,7 @@
  
     public boolean func_184198_c(CompoundNBT p_184198_1_) {
        String s = this.func_70022_Q();
@@ -505,7 +519,7 @@
           p_184198_1_.func_74778_a("id", s);
           this.func_189511_e(p_184198_1_);
           return true;
-@@ -1301,15 +1496,33 @@
+@@ -1301,15 +1510,33 @@
           p_189511_1_.func_218657_a("Pos", this.func_70087_a(this.func_226277_ct_(), this.func_226278_cu_(), this.func_226281_cx_()));
           Vec3d vec3d = this.func_213322_ci();
           p_189511_1_.func_218657_a("Motion", this.func_70087_a(vec3d.field_72450_a, vec3d.field_72448_b, vec3d.field_72449_c));
@@ -540,7 +554,7 @@
           ITextComponent itextcomponent = this.func_200201_e();
           if (itextcomponent != null) {
              p_189511_1_.func_74778_a("CustomName", ITextComponent.Serializer.func_150696_a(itextcomponent));
-@@ -1330,6 +1543,7 @@
+@@ -1330,6 +1557,7 @@
           if (this.field_184238_ar) {
              p_189511_1_.func_74757_a("Glowing", this.field_184238_ar);
           }
@@ -548,7 +562,7 @@
  
           if (!this.field_184236_aF.isEmpty()) {
              ListNBT listnbt = new ListNBT();
-@@ -1341,6 +1555,10 @@
+@@ -1341,6 +1569,10 @@
              p_189511_1_.func_218657_a("Tags", listnbt);
           }
  
@@ -559,7 +573,7 @@
           this.func_213281_b(p_189511_1_);
           if (this.func_184207_aI()) {
              ListNBT listnbt1 = new ListNBT();
-@@ -1357,6 +1575,12 @@
+@@ -1357,6 +1589,12 @@
              }
           }
  
@@ -572,7 +586,7 @@
           return p_189511_1_;
        } catch (Throwable throwable) {
           CrashReport crashreport = CrashReport.func_85055_a(throwable, "Saving entity NBT");
-@@ -1387,7 +1611,7 @@
+@@ -1387,7 +1625,7 @@
           this.func_70050_g(p_70020_1_.func_74765_d("Air"));
           this.field_70122_E = p_70020_1_.func_74767_n("OnGround");
           if (p_70020_1_.func_74764_b("Dimension")) {
@@ -581,7 +595,7 @@
           }
  
           this.field_83001_bt = p_70020_1_.func_74767_n("Invulnerable");
-@@ -1409,6 +1633,9 @@
+@@ -1409,6 +1647,9 @@
                 this.func_174810_b(p_70020_1_.func_74767_n("Silent"));
                 this.func_189654_d(p_70020_1_.func_74767_n("NoGravity"));
                 this.func_184195_f(p_70020_1_.func_74767_n("Glowing"));
@@ -591,7 +605,7 @@
                 if (p_70020_1_.func_150297_b("Tags", 9)) {
                    this.field_184236_aF.clear();
                    ListNBT listnbt1 = p_70020_1_.func_150295_c("Tags", 8);
-@@ -1430,6 +1657,39 @@
+@@ -1430,6 +1671,39 @@
           } else {
              throw new IllegalStateException("Entity has invalid position");
           }
@@ -631,7 +645,7 @@
        } catch (Throwable throwable) {
           CrashReport crashreport = CrashReport.func_85055_a(throwable, "Loading entity NBT");
           CrashReportCategory crashreportcategory = crashreport.func_85058_a("Entity being loaded");
-@@ -1495,8 +1755,23 @@
+@@ -1495,8 +1769,23 @@
        } else if (this.field_70170_p.field_72995_K) {
           return null;
        } else {
@@ -655,7 +669,7 @@
           this.field_70170_p.func_217376_c(itementity);
           return itementity;
        }
-@@ -1540,6 +1815,7 @@
+@@ -1540,6 +1829,7 @@
  
     public void func_70098_U() {
        this.func_213317_d(Vec3d.field_186680_a);
@@ -663,7 +677,7 @@
        this.func_70071_h_();
        if (this.func_184218_aH()) {
           this.func_184187_bx().func_184232_k(this);
-@@ -1584,13 +1860,14 @@
+@@ -1584,13 +1874,14 @@
           }
        }
  
@@ -679,7 +693,7 @@
           return true;
        } else {
           return false;
-@@ -1615,32 +1892,82 @@
+@@ -1615,32 +1906,82 @@
     public void func_184210_p() {
        if (this.field_184239_as != null) {
           Entity entity = this.field_184239_as;
@@ -772,7 +786,7 @@
     }
  
     protected boolean func_184219_q(Entity p_184219_1_) {
-@@ -1698,11 +2025,19 @@
+@@ -1698,11 +2039,19 @@
        if (this.field_70170_p instanceof ServerWorld) {
           int i = this.func_82145_z();
           if (this.field_71087_bX) {
@@ -794,7 +808,7 @@
                 this.field_70170_p.func_217381_Z().func_76319_b();
              }
  
-@@ -1771,6 +2106,7 @@
+@@ -1771,6 +2120,7 @@
        return !this.func_184188_bt().isEmpty();
     }
  
@@ -802,7 +816,7 @@
     public boolean func_205710_ba() {
        return true;
     }
-@@ -1825,6 +2161,13 @@
+@@ -1825,6 +2175,13 @@
     }
  
     public void func_204711_a(boolean p_204711_1_) {
@@ -816,7 +830,7 @@
        this.func_70052_a(4, p_204711_1_);
     }
  
-@@ -1871,11 +2214,11 @@
+@@ -1871,11 +2228,11 @@
        this.func_70052_a(5, p_82142_1_);
     }
  
@@ -830,7 +844,7 @@
        byte b0 = this.field_70180_af.func_187225_a(field_184240_ax);
        if (p_70052_2_) {
           this.field_70180_af.func_187227_b(field_184240_ax, (byte)(b0 | 1 << p_70052_1_));
-@@ -1894,16 +2237,55 @@
+@@ -1894,16 +2251,55 @@
     }
  
     public void func_70050_g(int p_70050_1_) {
@@ -888,7 +902,7 @@
     }
  
     public void func_203002_i(boolean p_203002_1_) {
-@@ -1989,7 +2371,7 @@
+@@ -1989,7 +2385,7 @@
     }
  
     protected ITextComponent func_225513_by_() {
@@ -897,7 +911,7 @@
     }
  
     public boolean func_70028_i(Entity p_70028_1_) {
-@@ -2046,43 +2428,89 @@
+@@ -2046,43 +2442,89 @@
  
     @Nullable
     public Entity func_212321_a(DimensionType p_212321_1_) {
@@ -1010,7 +1024,7 @@
              if (blockpattern$portalinfo == null) {
                 return null;
              }
-@@ -2090,23 +2518,45 @@
+@@ -2090,23 +2532,45 @@
              blockpos = new BlockPos(blockpattern$portalinfo.field_222505_a);
              vec3d = blockpattern$portalinfo.field_222506_b;
              f = (float)blockpattern$portalinfo.field_222507_c;
@@ -1061,7 +1075,7 @@
        } else {
           return null;
        }
-@@ -2129,10 +2579,12 @@
+@@ -2129,10 +2593,12 @@
     }
  
     public Vec3d func_181014_aG() {
@@ -1074,7 +1088,7 @@
        return this.field_181018_ap;
     }
  
-@@ -2261,7 +2713,7 @@
+@@ -2261,7 +2727,7 @@
        Pose pose = this.func_213283_Z();
        EntitySize entitysize1 = this.func_213305_a(pose);
        this.field_213325_aI = entitysize1;
@@ -1083,7 +1097,7 @@
        if (entitysize1.field_220315_a < entitysize.field_220315_a) {
           double d0 = (double)entitysize1.field_220315_a / 2.0D;
           this.func_174826_a(new AxisAlignedBB(this.func_226277_ct_() - d0, this.func_226278_cu_(), this.func_226281_cx_() - d0, this.func_226277_ct_() + d0, this.func_226278_cu_() + (double)entitysize1.field_220316_b, this.func_226281_cx_() + d0));
-@@ -2318,7 +2770,36 @@
+@@ -2318,7 +2784,36 @@
     }
  
     public void func_174826_a(AxisAlignedBB p_174826_1_) {
@@ -1121,7 +1135,7 @@
     }
  
     protected float func_213316_a(Pose p_213316_1_, EntitySize p_213316_2_) {
-@@ -2533,7 +3014,7 @@
+@@ -2533,7 +3028,7 @@
        return SoundCategory.NEUTRAL;
     }
  
@@ -1130,7 +1144,7 @@
        return 1;
     }
  
-@@ -2713,6 +3194,7 @@
+@@ -2713,6 +3208,7 @@
        this.field_70165_t = p_226288_1_;
        this.field_70163_u = p_226288_3_;
        this.field_70161_v = p_226288_5_;
@@ -1138,7 +1152,7 @@
     }
  
     public void func_70623_bb() {
-@@ -2726,4 +3208,69 @@
+@@ -2726,4 +3222,69 @@
     public interface IMoveCallback {
        void accept(Entity p_accept_1_, double p_accept_2_, double p_accept_4_, double p_accept_6_);
     }
