@@ -147,7 +147,7 @@
              }
  
              this.setItemStackToSlot(entityequipmentslot, itemstack);
-@@ -695,23 +751,35 @@
+@@ -695,34 +751,46 @@
          return true;
      }
  
@@ -186,6 +186,19 @@
                  double d0 = entity.posX - this.posX;
                  double d1 = entity.posY - this.posY;
                  double d2 = entity.posZ - this.posZ;
+                 double d3 = d0 * d0 + d1 * d1 + d2 * d2;
+ 
+-                if (this.canDespawn() && d3 > 16384.0D)
++                if (this.canDespawn() && d3 > world.spigotConfig.hardDespawnDistance) // CraftBukkit - remove isTypeNotPersistent() check // Paper - custom despawn distances
+                 {
+                     this.setDead();
+                 }
+ 
+-                if (this.idleTime > 600 && this.rand.nextInt(800) == 0 && d3 > 1024.0D && this.canDespawn())
++                if (this.idleTime > 600 && this.rand.nextInt(800) == 0 && d3 > world.spigotConfig.softDespawnDistance && this.canDespawn()) // CraftBukkit - remove isTypeNotPersistent() check // Paper - custom despawn distances
+                 {
+                     this.setDead();
+                 }
 @@ -736,10 +804,21 @@
  
      protected final void updateEntityActionState()
