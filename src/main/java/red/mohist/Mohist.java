@@ -25,13 +25,6 @@ public class Mohist {
   }
 
   public static void main(String[] args) throws Throwable {
-    if(Float.parseFloat(System.getProperty("java.class.version")) != 52.0) {
-      System.out.println(Message.getString("unsupported.java.version"));
-      System.exit(0);
-    }
-    if(System.getProperty("log4j.configurationFile") == null) {
-      System.setProperty("log4j.configurationFile", "log4j2_mohist.xml");
-    }
     System.out.println("\n" +
       "\n" +
       " __    __   ______   __  __   __   ______   ______  \n" +
@@ -42,7 +35,6 @@ public class Mohist {
       "                                                    \n" +
       "\n");
     System.out.println("                                      " + Message.getString("forge.serverlanunchwrapper.1"));
-    if(System.getProperty("log4j.configurationFile") == null) {
       System.setProperty("log4j.configurationFile", "log4j2_mohist.xml");
     }
     if(bMohist("check_libraries")) {
