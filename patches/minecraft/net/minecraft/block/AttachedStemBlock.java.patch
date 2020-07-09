@@ -1,0 +1,19 @@
+--- a/net/minecraft/block/AttachedStemBlock.java
++++ b/net/minecraft/block/AttachedStemBlock.java
+@@ -16,6 +16,8 @@
+ import net.minecraft.util.math.shapes.VoxelShape;
+ import net.minecraft.world.IBlockReader;
+ import net.minecraft.world.IWorld;
++import net.minecraftforge.api.distmarker.Dist;
++import net.minecraftforge.api.distmarker.OnlyIn;
+ 
+ public class AttachedStemBlock extends BushBlock {
+    public static final DirectionProperty field_196280_a = HorizontalBlock.field_185512_D;
+@@ -40,6 +42,7 @@
+       return p_200014_1_.func_177230_c() == Blocks.field_150458_ak;
+    }
+ 
++   @OnlyIn(Dist.CLIENT)
+    protected Item func_196279_O_() {
+       if (this.field_196281_b == Blocks.field_150423_aK) {
+          return Items.field_151080_bb;

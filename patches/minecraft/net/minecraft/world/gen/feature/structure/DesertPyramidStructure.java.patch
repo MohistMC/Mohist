@@ -1,0 +1,35 @@
+--- a/net/minecraft/world/gen/feature/structure/DesertPyramidStructure.java
++++ b/net/minecraft/world/gen/feature/structure/DesertPyramidStructure.java
+@@ -3,6 +3,7 @@
+ import com.mojang.datafixers.Dynamic;
+ import java.util.function.Function;
+ import net.minecraft.util.math.MutableBoundingBox;
++import net.minecraft.world.World;
+ import net.minecraft.world.biome.Biome;
+ import net.minecraft.world.gen.ChunkGenerator;
+ import net.minecraft.world.gen.feature.NoFeatureConfig;
+@@ -13,6 +14,11 @@
+       super(p_i49888_1_);
+    }
+ 
++   @Override
++   protected int func_202382_c() {
++      return 0; // Default
++   }
++
+    public String func_143025_a() {
+       return "Desert_Pyramid";
+    }
+@@ -25,8 +31,10 @@
+       return DesertPyramidStructure.Start::new;
+    }
+ 
+-   protected int func_202382_c() {
+-      return 14357617;
++   // Spigot start
++   protected int getSeedModifier(World world) {
++      return  world.spigotConfig.desertSeed;
++      // Spigot end
+    }
+ 
+    public static class Start extends StructureStart {

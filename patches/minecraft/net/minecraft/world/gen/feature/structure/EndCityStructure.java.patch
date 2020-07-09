@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/gen/feature/structure/EndCityStructure.java
++++ b/net/minecraft/world/gen/feature/structure/EndCityStructure.java
+@@ -29,7 +29,7 @@
+       int j1 = l < 0 ? l - i + 1 : l;
+       int k1 = i1 / i;
+       int l1 = j1 / i;
+-      ((SharedSeedRandom)p_211744_2_).func_202427_a(p_211744_1_.func_202089_c(), k1, l1, 10387313);
++      ((SharedSeedRandom)p_211744_2_).func_202427_a(p_211744_1_.func_202089_c(), k1, l1, p_211744_1_.getWorld().spigotConfig.endCitySeed); // Spigot
+       k1 = k1 * i;
+       l1 = l1 * i;
+       k1 = k1 + (p_211744_2_.nextInt(i - j) + p_211744_2_.nextInt(i - j)) / 2;

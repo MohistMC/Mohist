@@ -1,0 +1,46 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Sudzzy <originmc@outlook.com>
+Date: Wed, 2 Mar 2016 23:34:44 -0600
+Subject: [PATCH] Configurable container update tick rate
+
+
+diff --git a/src/main/java/com/destroystokyo/paper/PaperWorldConfig.java b/src/main/java/com/destroystokyo/paper/PaperWorldConfig.java
+index 428deed56dae597291670bea8c8a6a67ce4d940f..a4da22ea65d5fdba38f8dc331919088f9ca99aed 100644
+--- a/src/main/java/com/destroystokyo/paper/PaperWorldConfig.java
++++ b/src/main/java/com/destroystokyo/paper/PaperWorldConfig.java
+@@ -176,4 +176,9 @@ public class PaperWorldConfig {
+     private void mobSpawnerTickRate() {
+         mobSpawnerTickRate = getInt("mob-spawner-tick-rate", 1);
+     }
++
++    public int containerUpdateTickRate;
++    private void containerUpdateTickRate() {
++        containerUpdateTickRate = getInt("container-update-tick-rate", 1);
++    }
+ }
+diff --git a/src/main/java/net/minecraft/server/EntityPlayer.java b/src/main/java/net/minecraft/server/EntityPlayer.java
+index cd09b207c963d81c9302067e0294db57e3ffd0f7..64635fe70f37cecdf4344661c28768f6ac16fdd2 100644
+--- a/src/main/java/net/minecraft/server/EntityPlayer.java
++++ b/src/main/java/net/minecraft/server/EntityPlayer.java
+@@ -72,6 +72,7 @@ public class EntityPlayer extends EntityHuman implements ICrafting {
+     public boolean e;
+     public int ping;
+     public boolean viewingCredits;
++    private int containerUpdateDelay; // Paper
+ 
+     // CraftBukkit start
+     public String displayName;
+@@ -355,7 +356,12 @@ public class EntityPlayer extends EntityHuman implements ICrafting {
+             --this.noDamageTicks;
+         }
+ 
+-        this.activeContainer.c();
++        // Paper start - Configurable container update tick rate
++        if (--containerUpdateDelay <= 0) {
++            this.activeContainer.c();
++            containerUpdateDelay = world.paperConfig.containerUpdateTickRate;
++        }
++        // Paper end
+         if (!this.world.isClientSide && !this.activeContainer.canUse(this)) {
+             this.closeInventory();
+             this.activeContainer = this.defaultContainer;

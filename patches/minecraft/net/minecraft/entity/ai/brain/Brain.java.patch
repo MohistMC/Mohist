@@ -1,0 +1,89 @@
+--- a/net/minecraft/entity/ai/brain/Brain.java
++++ b/net/minecraft/entity/ai/brain/Brain.java
+@@ -8,10 +8,8 @@
+ import com.mojang.datafixers.Dynamic;
+ import com.mojang.datafixers.types.DynamicOps;
+ import com.mojang.datafixers.util.Pair;
+-import java.util.Collection;
+-import java.util.Map;
+-import java.util.Optional;
+-import java.util.Set;
++
++import java.util.*;
+ import java.util.Map.Entry;
+ import java.util.function.Function;
+ import java.util.stream.Collectors;
+@@ -42,6 +40,7 @@
+    private final Set<Activity> field_218236_g = Sets.newHashSet();
+    private Activity field_218237_h = Activity.field_221366_b;
+    private long field_218238_i = -9999L;
++   private final List<Pair<Activity, List<Task<? super E>>>> allTasks = new ArrayList<>();
+ 
+    public <T> Brain(Collection<MemoryModuleType<?>> p_i50378_1_, Collection<SensorType<? extends Sensor<? super E>>> p_i50378_2_, Dynamic<T> p_i50378_3_) {
+       p_i50378_1_.forEach((p_218228_1_) -> {
+@@ -159,6 +158,11 @@
+             return Sets.newLinkedHashSet();
+          }).add(p_218223_2_.getSecond());
+       });
++      for (Map<Activity, Set<Task<? super E>>> map : this.field_218232_c.values()) {
++         for (Map.Entry<Activity, Set<Task<? super E>>> entry : map.entrySet()) {
++            this.allTasks.add(Pair.of(entry.getKey(), new ArrayList<>(entry.getValue())));
++         }
++      }
+    }
+ 
+    public boolean func_218214_c(Activity p_218214_1_) {
+@@ -198,29 +202,38 @@
+    }
+ 
+    private void func_218229_c(ServerWorld p_218229_1_, E p_218229_2_) {
+-      this.field_218231_b.values().forEach((p_218201_2_) -> {
+-         p_218201_2_.func_220973_b(p_218229_1_, p_218229_2_);
+-      });
++      for (Sensor<? super E> sensor : this.field_218231_b.values()) {
++         sensor.func_220973_b(p_218229_1_, p_218229_2_);
++      }
++
+    }
+ 
+    private void func_218218_d(ServerWorld p_218218_1_, E p_218218_2_) {
+       long i = p_218218_1_.func_82737_E();
+-      this.field_218232_c.values().stream().flatMap((p_218219_0_) -> {
+-         return p_218219_0_.entrySet().stream();
+-      }).filter((p_218215_1_) -> {
+-         return this.field_218236_g.contains(p_218215_1_.getKey());
+-      }).map(Entry::getValue).flatMap(Collection::stream).filter((p_218194_0_) -> {
+-         return p_218194_0_.func_220376_b() == Task.Status.STOPPED;
+-      }).forEach((p_218192_4_) -> {
+-         p_218192_4_.func_220378_b(p_218218_1_, p_218218_2_, i);
+-      });
++
++      for (Pair<Activity, List<Task<? super E>>> pair : this.allTasks) {
++         if (!this.field_218236_g.contains(pair.getFirst())) {
++            continue;
++         }
++
++         for (Task<? super E> task : pair.getSecond()) {
++            if (task.func_220376_b() == Task.Status.STOPPED) {
++               task.func_220378_b(p_218218_1_, p_218218_2_, i);
++            }
++         }
++      }
+    }
+ 
+    private void func_218222_e(ServerWorld p_218222_1_, E p_218222_2_) {
+       long i = p_218222_1_.func_82737_E();
+-      this.func_218193_d().forEach((p_218220_4_) -> {
+-         p_218220_4_.func_220377_c(p_218222_1_, p_218222_2_, i);
+-      });
++
++      for (Pair<Activity, List<Task<? super E>>> pair : this.allTasks) {
++         for (Task<? super E> task : pair.getSecond()) {
++            if (task.func_220376_b() == Task.Status.RUNNING) {
++               task.func_220377_c(p_218222_1_, p_218222_2_, i);
++            }
++         }
++      }
+    }
+ 
+    private boolean func_218217_d(Activity p_218217_1_) {

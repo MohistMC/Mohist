@@ -1,0 +1,11 @@
+--- a/net/minecraft/block/WoodType.java
++++ b/net/minecraft/block/WoodType.java
+@@ -3,6 +3,8 @@
+ import it.unimi.dsi.fastutil.objects.ObjectArraySet;
+ import java.util.Set;
+ import java.util.stream.Stream;
++import net.minecraftforge.api.distmarker.Dist;
++import net.minecraftforge.api.distmarker.OnlyIn;
+ 
+ public class WoodType {
+    private static final Set<WoodType> field_227044_g_ = new ObjectArraySet<>();

@@ -1,0 +1,35 @@
+--- a/net/minecraft/world/gen/feature/structure/JunglePyramidStructure.java
++++ b/net/minecraft/world/gen/feature/structure/JunglePyramidStructure.java
+@@ -3,6 +3,7 @@
+ import com.mojang.datafixers.Dynamic;
+ import java.util.function.Function;
+ import net.minecraft.util.math.MutableBoundingBox;
++import net.minecraft.world.World;
+ import net.minecraft.world.biome.Biome;
+ import net.minecraft.world.gen.ChunkGenerator;
+ import net.minecraft.world.gen.feature.NoFeatureConfig;
+@@ -13,6 +14,11 @@
+       super(p_i51489_1_);
+    }
+ 
++   @Override
++   protected int func_202382_c() {
++      return 0; // Default
++   }
++
+    public String func_143025_a() {
+       return "Jungle_Pyramid";
+    }
+@@ -25,8 +31,10 @@
+       return JunglePyramidStructure.Start::new;
+    }
+ 
+-   protected int func_202382_c() {
+-      return 14357619;
++   // Spigot start
++   protected int getSeedModifier(World world) {
++      return  world.spigotConfig.jungleSeed;
++      // Spigot end
+    }
+ 
+    public static class Start extends StructureStart {
