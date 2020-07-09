@@ -4,11 +4,11 @@
  import net.minecraft.world.dimension.DimensionType;
  import net.minecraft.world.server.ServerWorld;
  import net.minecraft.world.storage.WorldSavedData;
-+import org.bukkit.craftbukkit.event.CraftEventFactory;
++import org.bukkit.craftbukkit.v1_15_R1.event.CraftEventFactory;
  
  public class RaidManager extends WorldSavedData {
 -   private final Map<Integer, Raid> field_215175_a = Maps.newHashMap();
-+   public final Map<Integer, Raid> field_215175_a = Maps.newHashMap();
++   public final Map<Integer, Raid> field_215175_a = Maps.newHashMap(); // private->public CraftBukkit
     private final ServerWorld field_215176_b;
     private int field_215177_c;
     private int field_215178_d;

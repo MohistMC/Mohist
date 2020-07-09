@@ -1,19 +1,30 @@
 --- a/net/minecraft/server/management/UserList.java
 +++ b/net/minecraft/server/management/UserList.java
-@@ -102,10 +102,16 @@
-       this.func_152684_c(p_199042_1_.func_152640_f());
+@@ -106,6 +106,12 @@
+       return this.field_152696_d.keySet().toArray(new String[this.field_152696_d.size()]);
     }
  
 +   // CraftBukkit start
-    public String[] func_152685_a() {
-       return this.field_152696_d.keySet().toArray(new String[this.field_152696_d.size()]);
-    }
-+   // CraftBukkit end
- 
 +   public Collection<V> getValues() {
 +      return this.field_152696_d.values();
 +   }
++   // CraftBukkit end
 +
     public boolean func_152690_d() {
        return this.field_152696_d.size() < 1;
     }
+@@ -171,6 +177,14 @@
+                   }
+                }
+             }
++            // Spigot Start
++         } catch ( com.google.gson.JsonParseException ex )
++         {
++            org.bukkit.Bukkit.getLogger().log(java.util.logging.Level.WARNING, "Unable to read file " + this.field_152695_c + ", backing it up to {0}.backup and creating new copy.", ex);
++            File backup = new File(this.field_152695_c + ".backup");
++            this.field_152695_c.renameTo(backup);
++            this.field_152695_c.delete();
++            // Spigot End
+          } finally {
+             IOUtils.closeQuietly((Reader)bufferedreader);
+          }

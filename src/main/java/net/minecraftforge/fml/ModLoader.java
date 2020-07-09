@@ -234,8 +234,8 @@ public class ModLoader
         if (containers.size() != modInfoMap.size()) {
             LOGGER.fatal(LOADING,"File {} constructed {} mods: {}, but had {} mods specified: {}",
                     modFile.getFilePath(),
-                    containers.size(), containers.stream().map(c -> c != null ? c.getModId() : "(null)").collect(Collectors.toList()),
-                    modInfoMap.size(), modInfoMap.values().stream().map(IModInfo::getModId).collect(Collectors.toList()));
+                    containers.size(), containers.stream().map(c -> c != null ? c.getModId() : "(null)").sorted().collect(Collectors.toList()),
+                    modInfoMap.size(), modInfoMap.values().stream().map(IModInfo::getModId).sorted().collect(Collectors.toList()));
             loadingExceptions.add(new ModLoadingException(null, ModLoadingStage.CONSTRUCT, "fml.modloading.missingclasses", null, modFile.getFilePath()));
         }
         return containers;
@@ -285,7 +285,12 @@ public class ModLoader
         this.loadingWarnings.add(warning);
     }
 
+    @Deprecated //Remove in 1.16
     public void runDataGenerator(final Set<String> mods, final Path path, final Collection<Path> inputs, Collection<Path> existingPacks, final boolean serverGenerators, final boolean clientGenerators, final boolean devToolGenerators, final boolean reportsGenerator, final boolean structureValidator) {
+        runDataGenerator(mods, path, inputs, existingPacks, serverGenerators, clientGenerators, devToolGenerators, reportsGenerator, structureValidator, false);
+    }
+
+    public void runDataGenerator(final Set<String> mods, final Path path, final Collection<Path> inputs, Collection<Path> existingPacks, final boolean serverGenerators, final boolean clientGenerators, final boolean devToolGenerators, final boolean reportsGenerator, final boolean structureValidator, final boolean flat) {
         if (mods.contains("minecraft") && mods.size() == 1) return;
         LOGGER.info("Initializing Data Gatherer for mods {}", mods);
         Bootstrap.register();

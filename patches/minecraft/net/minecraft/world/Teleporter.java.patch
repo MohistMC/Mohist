@@ -1,40 +1,61 @@
 --- a/net/minecraft/world/Teleporter.java
 +++ b/net/minecraft/world/Teleporter.java
-@@ -23,7 +23,7 @@
+@@ -10,6 +10,7 @@
+ import net.minecraft.block.Blocks;
+ import net.minecraft.block.NetherPortalBlock;
+ import net.minecraft.block.pattern.BlockPattern;
++import net.minecraft.block.pattern.BlockPattern.PortalInfo;
+ import net.minecraft.entity.Entity;
+ import net.minecraft.entity.player.PlayerEntity;
+ import net.minecraft.util.Direction;
+@@ -22,8 +23,10 @@
+ import net.minecraft.village.PointOfInterestType;
  import net.minecraft.world.server.ServerWorld;
  import net.minecraft.world.server.TicketType;
++import org.bukkit.craftbukkit.v1_15_R1.util.BlockStateListPopulator;
++import org.bukkit.event.world.PortalCreateEvent;
  
 -public class Teleporter {
 +public class Teleporter implements net.minecraftforge.common.util.ITeleporter {
     protected final ServerWorld field_85192_a;
     protected final Random field_77187_a;
  
-@@ -33,28 +33,41 @@
+@@ -33,30 +36,45 @@
     }
  
     public boolean func_222268_a(Entity p_222268_1_, float p_222268_2_) {
+-      Vec3d vec3d = p_222268_1_.func_181014_aG();
+-      Direction direction = p_222268_1_.func_181012_aH();
+-      BlockPattern.PortalInfo blockpattern$portalinfo = this.func_222272_a(new BlockPos(p_222268_1_), p_222268_1_.func_213322_ci(), direction, vec3d.field_72450_a, vec3d.field_72448_b, p_222268_1_ instanceof PlayerEntity);
+-      if (blockpattern$portalinfo == null) {
+-         return false;
 +      // CraftBukkit start
 +      return placeInPortal(p_222268_1_, new BlockPos(p_222268_1_), p_222268_2_, 128, false) != null;
 +   }
 +
-+   public BlockPattern.PortalInfo placeInPortal(Entity p_222268_1_, BlockPos findPosition, float p_222268_2_, int searchRadius, boolean searchOnly) {
++   public BlockPattern.PortalInfo placeInPortal(Entity entity, BlockPos findPosition, float f, int searchRadius, boolean searchOnly) {
 +      // CraftBukkit end
-       Vec3d vec3d = p_222268_1_.func_181014_aG();
-       Direction direction = p_222268_1_.func_181012_aH();
--      BlockPattern.PortalInfo blockpattern$portalinfo = this.func_222272_a(new BlockPos(p_222268_1_), p_222268_1_.func_213322_ci(), direction, vec3d.field_72450_a, vec3d.field_72448_b, p_222268_1_ instanceof PlayerEntity);
-+      BlockPattern.PortalInfo blockpattern$portalinfo = this.placeInExistingPortal(findPosition, p_222268_1_.func_213322_ci(), direction, vec3d.field_72450_a, vec3d.field_72448_b, p_222268_1_ instanceof PlayerEntity, searchRadius); // CraftBukkit - add location and searchRadius
-+      if (searchOnly) return blockpattern$portalinfo; // CraftBukkit - optional teleporting
-       if (blockpattern$portalinfo == null) {
--         return false;
-+         return null; // CraftBukkit - return shape
++      Vec3d vec3d = entity.func_181014_aG();
++      Direction direction = entity.func_181012_aH();
++      BlockPattern.PortalInfo portalInfo = this.placeInExistingPortal(findPosition, entity.func_213322_ci(), direction, vec3d.field_72450_a, vec3d.field_72448_b, entity instanceof PlayerEntity, searchRadius); // CraftBukkit - add location and searchRadius
++      if (searchOnly) {
++         return portalInfo; // CraftBukkit - optional teleporting
++      }
++      if (portalInfo == null) {
++         return null;  // CraftBukkit - return portal info
        } else {
-          Vec3d vec3d1 = blockpattern$portalinfo.field_222505_a;
-          Vec3d vec3d2 = blockpattern$portalinfo.field_222506_b;
-          p_222268_1_.func_213317_d(vec3d2);
-          p_222268_1_.field_70177_z = p_222268_2_ + (float)blockpattern$portalinfo.field_222507_c;
-          p_222268_1_.func_225653_b_(vec3d1.field_72450_a, vec3d1.field_72448_b, vec3d1.field_72449_c);
+-         Vec3d vec3d1 = blockpattern$portalinfo.field_222505_a;
+-         Vec3d vec3d2 = blockpattern$portalinfo.field_222506_b;
+-         p_222268_1_.func_213317_d(vec3d2);
+-         p_222268_1_.field_70177_z = p_222268_2_ + (float)blockpattern$portalinfo.field_222507_c;
+-         p_222268_1_.func_225653_b_(vec3d1.field_72450_a, vec3d1.field_72448_b, vec3d1.field_72449_c);
 -         return true;
-+         return blockpattern$portalinfo; // CraftBukkit - return shape
++         Vec3d vec3d1 = portalInfo.field_222505_a;
++         Vec3d vec3d2 = portalInfo.field_222506_b;
++         entity.func_213317_d(vec3d2);
++         entity.field_70177_z = f + (float) portalInfo.field_222507_c;
++         entity.func_225653_b_(vec3d1.field_72450_a, vec3d1.field_72448_b, vec3d1.field_72449_c);
++         return portalInfo; // CraftBukkit - return portal info
        }
     }
  
@@ -45,23 +66,27 @@
 +      return placeInExistingPortal(p_222272_1_, p_222272_2_, p_222272_3_, p_222272_4_, p_222272_6_, p_222272_8_, 128);
 +   }
 +
-+   public BlockPattern.PortalInfo placeInExistingPortal(BlockPos p_222272_1_, Vec3d p_222272_2_, Direction directionIn, double p_222272_4_, double p_222272_6_, boolean p_222272_8_, int searchRadius) {
++   public PortalInfo placeInExistingPortal(BlockPos blockPos, Vec3d vec3d, Direction direction, double d0 ,double d1, boolean flag, int searchRadius){
 +      // CraftBukkit end
        PointOfInterestManager pointofinterestmanager = this.field_85192_a.func_217443_B();
-       pointofinterestmanager.func_226347_a_(this.field_85192_a, p_222272_1_, 128);
+-      pointofinterestmanager.func_226347_a_(this.field_85192_a, p_222272_1_, 128);
++      pointofinterestmanager.func_226347_a_(this.field_85192_a, blockPos, 128);
        List<PointOfInterest> list = pointofinterestmanager.func_226353_b_((p_226705_0_) -> {
           return p_226705_0_ == PointOfInterestType.field_226358_u_;
 -      }, p_222272_1_, 128, PointOfInterestManager.Status.ANY).collect(Collectors.toList());
-+      }, p_222272_1_, searchRadius, PointOfInterestManager.Status.ANY).collect(Collectors.toList()); // CraftBukkit - searchRadius
++      }, blockPos, searchRadius, PointOfInterestManager.Status.ANY).collect(Collectors.toList()); // CraftBukkit - searchRadius
        Optional<PointOfInterest> optional = list.stream().min(Comparator.<PointOfInterest>comparingDouble((p_226706_1_) -> {
-          return p_226706_1_.func_218261_f().func_177951_i(p_222272_1_);
+-         return p_226706_1_.func_218261_f().func_177951_i(p_222272_1_);
++         return p_226706_1_.func_218261_f().func_177951_i(blockPos);
        }).thenComparingInt((p_226704_0_) -> {
-@@ -64,16 +77,24 @@
+          return p_226704_0_.func_218261_f().func_177956_o();
+       }));
+@@ -64,16 +82,24 @@
           BlockPos blockpos = p_226707_7_.func_218261_f();
           this.field_85192_a.func_72863_F().func_217228_a(TicketType.field_219493_f, new ChunkPos(blockpos), 3, blockpos);
           BlockPattern.PatternHelper blockpattern$patternhelper = NetherPortalBlock.func_181089_f(this.field_85192_a, blockpos);
 -         return blockpattern$patternhelper.func_222504_a(p_222272_3_, blockpos, p_222272_6_, p_222272_2_, p_222272_4_);
-+         return blockpattern$patternhelper.func_222504_a(directionIn, blockpos, p_222272_6_, p_222272_2_, p_222272_4_);
++         return blockpattern$patternhelper.func_222504_a(direction, blockpos, d1, vec3d, d0);
        }).orElse((BlockPattern.PortalInfo)null);
     }
  
@@ -70,7 +95,7 @@
 +      return makePortal(p_85188_1_, new BlockPos(p_85188_1_), 16);
 +   }
 +
-+   public boolean makePortal(Entity entityIn, BlockPos createPosition, int createRadius) {
++   public boolean makePortal(Entity entityIn, BlockPos blockPos, int createRadius) {
 +      // CraftBukkit end
        int i = 16;
        double d0 = -1.0D;
@@ -78,30 +103,30 @@
 -      int k = MathHelper.func_76128_c(p_85188_1_.func_226278_cu_());
 -      int l = MathHelper.func_76128_c(p_85188_1_.func_226281_cx_());
 +      // CraftBukkit start - providable position
-+      int j = createPosition.func_177958_n();
-+      int k = createPosition.func_177956_o();
-+      int l = createPosition.func_177952_p();
++      int j = blockPos.func_177958_n();
++      int k = blockPos.func_177956_o();
++      int l = blockPos.func_177952_p();
 +      // CraftBukkit end
        int i1 = j;
        int j1 = k;
        int k1 = l;
-@@ -81,11 +102,11 @@
+@@ -81,11 +107,11 @@
        int i2 = this.field_77187_a.nextInt(4);
        BlockPos.Mutable blockpos$mutable = new BlockPos.Mutable();
  
 -      for(int j2 = j - 16; j2 <= j + 16; ++j2) {
 -         double d1 = (double)j2 + 0.5D - p_85188_1_.func_226277_ct_();
-+      for(int j2 = j - 16; j2 <= j + createRadius; ++j2) { // CraftBukkit - createRadius
-+         double d1 = (double)j2 + 0.5D - createPosition.func_177958_n(); // CraftBukkit - providable position
++      for(int j2 = j - createRadius; j2 <= j + createRadius; ++j2) {  // CraftBukkit - createRadius
++         double d1 = (double)j2 + 0.5D - blockPos.func_177958_n(); // CraftBukkit - providable position
  
 -         for(int l2 = l - 16; l2 <= l + 16; ++l2) {
 -            double d2 = (double)l2 + 0.5D - p_85188_1_.func_226281_cx_();
-+         for(int l2 = l - 16; l2 <= l + createRadius; ++l2) { // CraftBukkit - createRadius
-+            double d2 = (double)l2 + 0.5D - createPosition.func_177952_p(); // CraftBukkit - providable position
++         for(int l2 = l - createRadius; l2 <= l + createRadius; ++l2) {  // CraftBukkit - createRadius
++            double d2 = (double)l2 + 0.5D - blockPos.func_177952_p(); // CraftBukkit - providable position
  
              label276:
              for(int j3 = this.field_85192_a.func_72940_L() - 1; j3 >= 0; --j3) {
-@@ -116,7 +137,7 @@
+@@ -116,7 +142,7 @@
                          }
                       }
  
@@ -110,23 +135,23 @@
                       double d7 = d1 * d1 + d5 * d5 + d2 * d2;
                       if (d0 < 0.0D || d7 < d0) {
                          d0 = d7;
-@@ -132,11 +153,11 @@
+@@ -132,11 +158,11 @@
        }
  
        if (d0 < 0.0D) {
 -         for(int l5 = j - 16; l5 <= j + 16; ++l5) {
 -            double d3 = (double)l5 + 0.5D - p_85188_1_.func_226277_ct_();
-+         for(int l5 = j - createRadius; l5 <= j + createRadius; ++l5) { // CraftBukkit - createRadius
-+            double d3 = (double)l5 + 0.5D -  createPosition.func_177958_n(); // CraftBukkit - providable position
++         for(int l5 = j - createRadius; l5 <= j + createRadius; ++l5) {  // CraftBukkit - createRadius
++            double d3 = (double)l5 + 0.5D -  blockPos.func_177958_n(); // CraftBukkit - providable position
  
 -            for(int j6 = l - 16; j6 <= l + 16; ++j6) {
 -               double d4 = (double)j6 + 0.5D - p_85188_1_.func_226281_cx_();
-+            for(int j6 = l - createRadius; j6 <= l + createRadius; ++j6) { // CraftBukkit - createRadius
-+               double d4 = (double)j6 + 0.5D - createPosition.func_177952_p(); // CraftBukkit - providable position
++            for(int j6 = l - createRadius; j6 <= l + createRadius; ++j6) {  // CraftBukkit - createRadius
++               double d4 = (double)j6 + 0.5D - blockPos.func_177952_p(); // CraftBukkit - providable position
  
                 label214:
                 for(int i7 = this.field_85192_a.func_72940_L() - 1; i7 >= 0; --i7) {
-@@ -161,7 +182,7 @@
+@@ -161,7 +187,7 @@
                             }
                          }
  
@@ -135,49 +160,51 @@
                          double d8 = d3 * d3 + d6 * d6 + d4 * d4;
                          if (d0 < 0.0D || d8 < d0) {
                             d0 = d8;
-@@ -187,6 +208,7 @@
+@@ -187,6 +213,7 @@
           i3 = -i3;
        }
  
-+      org.bukkit.craftbukkit.util.BlockStateListPopulator blockList = new org.bukkit.craftbukkit.util.BlockStateListPopulator(this.field_85192_a); // CraftBukkit - Use BlockStateListPopulator
++      BlockStateListPopulator blockStateList = new BlockStateListPopulator(this.field_85192_a); // CraftBukkit - Use BlockStateListPopulator
        if (d0 < 0.0D) {
           j1 = MathHelper.func_76125_a(j1, 70, this.field_85192_a.func_72940_L() - 10);
           k2 = j1;
-@@ -199,7 +221,7 @@
+@@ -199,7 +226,7 @@
                    int l10 = k6 + (i8 - 1) * i3 - j7 * l6;
                    boolean flag = i9 < 0;
                    blockpos$mutable.func_181079_c(l9, j10, l10);
 -                  this.field_85192_a.func_175656_a(blockpos$mutable, flag ? Blocks.field_150343_Z.func_176223_P() : Blocks.field_150350_a.func_176223_P());
-+                  blockList.func_180501_a(blockpos$mutable, flag ? Blocks.field_150343_Z.func_176223_P() : Blocks.field_150350_a.func_176223_P(), 3); // CraftBukkit
++                  blockStateList.func_180501_a(blockpos$mutable, flag ? Blocks.field_150343_Z.func_176223_P() : Blocks.field_150350_a.func_176223_P(), 3);  // CraftBukkit
                 }
              }
           }
-@@ -209,7 +231,7 @@
+@@ -209,7 +236,7 @@
           for(int j8 = -1; j8 < 4; ++j8) {
              if (k7 == -1 || k7 == 2 || j8 == -1 || j8 == 3) {
                 blockpos$mutable.func_181079_c(i6 + k7 * l6, k2 + j8, k6 + k7 * i3);
 -               this.field_85192_a.func_180501_a(blockpos$mutable, Blocks.field_150343_Z.func_176223_P(), 3);
-+               blockList.func_180501_a(blockpos$mutable, Blocks.field_150343_Z.func_176223_P(), 3); // CraftBukkit
++               blockStateList.func_180501_a(blockpos$mutable, Blocks.field_150343_Z.func_176223_P(), 3); // CraftBukkit
              }
           }
        }
-@@ -219,10 +241,18 @@
+@@ -219,10 +246,20 @@
        for(int k8 = 0; k8 < 2; ++k8) {
           for(int j9 = 0; j9 < 3; ++j9) {
              blockpos$mutable.func_181079_c(i6 + k8 * l6, k2 + j9, k6 + k8 * i3);
 -            this.field_85192_a.func_180501_a(blockpos$mutable, blockstate, 18);
-+            blockList.func_180501_a(blockpos$mutable, blockstate, 18); // CraftBukkit
++            blockStateList.func_180501_a(blockpos$mutable, blockstate, 18); // CraftBukkit
           }
        }
  
 +      // CraftBukkit start
 +      org.bukkit.World bworld = this.field_85192_a.getWorldCB();
-+      org.bukkit.event.world.PortalCreateEvent event = new org.bukkit.event.world.PortalCreateEvent((java.util.List<org.bukkit.block.BlockState>) (java.util.List) blockList.getList(), bworld, entityIn.getBukkitEntity(), org.bukkit.event.world.PortalCreateEvent.CreateReason.NETHER_PAIR);
++      PortalCreateEvent event = new PortalCreateEvent((List<org.bukkit.block.BlockState>) (java.util.List) blockStateList.getList(), bworld, entityIn.getBukkitEntity(),
++          PortalCreateEvent.CreateReason.NETHER_PAIR);
 +      this.field_85192_a.getServerCB().getPluginManager().callEvent(event);
 +      if (!event.isCancelled()) {
-+         blockList.updateList();
++         blockStateList.updateList();
 +      }
 +      // CraftBukkit end
++
        return true;
     }
  }

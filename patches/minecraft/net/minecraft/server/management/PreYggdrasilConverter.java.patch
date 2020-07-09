@@ -9,6 +9,15 @@
  import net.minecraft.server.MinecraftServer;
  import net.minecraft.server.dedicated.DedicatedServer;
  import net.minecraft.util.StringUtils;
+@@ -52,7 +54,7 @@
+       }).toArray((p_201149_0_) -> {
+          return new String[p_201149_0_];
+       });
+-      if (p_152717_0_.func_71266_T()) {
++      if (p_152717_0_.func_71266_T()|| org.spigotmc.SpigotConfig.bungee) { // Spigot: bungee = online mode, for now.
+          p_152717_0_.func_152359_aw().findProfilesByNames(astring, Agent.MINECRAFT, p_152717_2_);
+       } else {
+          for(String s : astring) {
 @@ -70,8 +72,9 @@
           if (banlist.func_152691_c().exists()) {
              try {

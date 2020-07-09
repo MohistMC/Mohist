@@ -1,0 +1,56 @@
+--- a/net/minecraft/entity/ai/brain/task/FindInteractionAndLookTargetTask.java
++++ b/net/minecraft/entity/ai/brain/task/FindInteractionAndLookTargetTask.java
+@@ -1,6 +1,8 @@
+ package net.minecraft.entity.ai.brain.task;
+ 
+ import com.google.common.collect.ImmutableMap;
++
++import java.util.Collections;
+ import java.util.List;
+ import java.util.function.Predicate;
+ import net.minecraft.entity.EntityType;
+@@ -34,20 +36,35 @@
+    }
+ 
+    public boolean func_212832_a_(ServerWorld p_212832_1_, LivingEntity p_212832_2_) {
+-      return this.field_220536_d.test(p_212832_2_) && this.func_220530_b(p_212832_2_).stream().anyMatch(this::func_220532_a);
++      if (!this.field_220536_d.test(p_212832_2_)) {
++         return false;
++      }
++      List<LivingEntity> visible = this.func_220530_b(p_212832_2_);
++
++      for (LivingEntity entity : visible) {
++         if (this.func_220532_a(entity)) {
++            return true;
++         }
++      }
++      return false;
+    }
+ 
+    public void func_212831_a_(ServerWorld p_212831_1_, LivingEntity p_212831_2_, long p_212831_3_) {
+       super.func_212831_a_(p_212831_1_, p_212831_2_, p_212831_3_);
+       Brain<?> brain = p_212831_2_.func_213375_cj();
+-      brain.func_218207_c(MemoryModuleType.field_220946_g).ifPresent((p_220526_3_) -> {
+-         p_220526_3_.stream().filter((p_220529_2_) -> {
+-            return p_220529_2_.func_70068_e(p_212831_2_) <= (double)this.field_220534_b;
+-         }).filter(this::func_220532_a).findFirst().ifPresent((p_220527_1_) -> {
+-            brain.func_218205_a(MemoryModuleType.field_220952_m, p_220527_1_);
+-            brain.func_218205_a(MemoryModuleType.field_220951_l, new EntityPosWrapper(p_220527_1_));
+-         });
+-      });
++      List<LivingEntity> visible = brain.func_218207_c(MemoryModuleType.field_220946_g)
++              .orElse(Collections.emptyList());
++
++      for (LivingEntity entity : visible) {
++         if (entity.func_70068_e(p_212831_2_) > (double) this.field_220534_b) {
++            continue;
++         }
++
++         if (this.func_220532_a(entity)) {
++            brain.func_218205_a(MemoryModuleType.field_220952_m, entity);
++            brain.func_218205_a(MemoryModuleType.field_220951_l, new EntityPosWrapper(entity));
++         }
++      }
+    }
+ 
+    private boolean func_220532_a(LivingEntity p_220532_1_) {

@@ -1,0 +1,11 @@
+--- a/net/minecraft/nbt/ByteArrayNBT.java
++++ b/net/minecraft/nbt/ByteArrayNBT.java
+@@ -14,6 +14,8 @@
+       public ByteArrayNBT func_225649_b_(DataInput p_225649_1_, int p_225649_2_, NBTSizeTracker p_225649_3_) throws IOException {
+          p_225649_3_.func_152450_a(192L);
+          int i = p_225649_1_.readInt();
++         com.google.common.base.Preconditions.checkArgument( i < 1 << 24); // Spigot
++
+          p_225649_3_.func_152450_a(8L * (long)i);
+          byte[] abyte = new byte[i];
+          p_225649_1_.readFully(abyte);

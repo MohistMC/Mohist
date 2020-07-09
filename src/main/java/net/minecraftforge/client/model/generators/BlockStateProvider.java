@@ -19,19 +19,6 @@
 
 package net.minecraftforge.client.model.generators;
 
-import java.io.IOException;
-import java.nio.file.Path;
-import java.util.Arrays;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.function.Function;
-
-import javax.annotation.Nonnull;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
@@ -40,7 +27,14 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-
+import java.io.IOException;
+import java.nio.file.Path;
+import java.util.Arrays;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+import javax.annotation.Nonnull;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.DoorBlock;
@@ -68,6 +62,8 @@ import net.minecraft.state.properties.StairsShape;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Direction.Axis;
 import net.minecraft.util.ResourceLocation;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  * Data provider for blockstate files. Extends {@link BlockModelProvider} so that
@@ -84,6 +80,7 @@ public abstract class BlockStateProvider implements IDataProvider {
     private final DataGenerator generator;
     private final String modid;
     private final BlockModelProvider blockModels;
+    private final ItemModelProvider itemModels;
 
     public BlockStateProvider(DataGenerator gen, String modid, ExistingFileHelper exFileHelper) {
         this.generator = gen;
@@ -91,21 +88,24 @@ public abstract class BlockStateProvider implements IDataProvider {
         this.blockModels = new BlockModelProvider(gen, modid, exFileHelper) {
 
             @Override
-            public String getName() {
-                return BlockStateProvider.this.getName();
+            protected void registerModels() {
             }
-            
+        };
+        this.itemModels = new ItemModelProvider(gen, modid, exFileHelper) {
             @Override
-            protected void registerModels() {}
+            protected void registerModels() {
+            }
         };
     }
 
     @Override
     public void act(DirectoryCache cache) throws IOException {
         models().clear();
+        itemModels().clear();
         registeredBlocks.clear();
         registerStatesAndModels();
         models().generateAll(cache);
+        itemModels().generateAll(cache);
         for (Map.Entry<Block, IGeneratedBlockstate> entry : registeredBlocks.entrySet()) {
             saveBlockState(cache, entry.getValue().toJson(), entry.getKey());
         }
@@ -139,6 +139,10 @@ public abstract class BlockStateProvider implements IDataProvider {
     
     public BlockModelProvider models() {
         return blockModels;
+    }
+
+    public ItemModelProvider itemModels() {
+        return itemModels;
     }
     
     public ResourceLocation modLoc(String name) {
@@ -176,6 +180,10 @@ public abstract class BlockStateProvider implements IDataProvider {
 
     public void simpleBlock(Block block, ModelFile model) {
         simpleBlock(block, new ConfiguredModel(model));
+    }
+
+    public void simpleBlockItem(Block block, ModelFile model) {
+        itemModels().getBuilder(block.getRegistryName().getPath()).parent(model);
     }
 
     public void simpleBlock(Block block, ConfiguredModel... models) {
@@ -538,7 +546,7 @@ public abstract class BlockStateProvider implements IDataProvider {
     @Nonnull
     @Override
     public String getName() {
-        return "Block States";
+        return "Block States:" + modid;
     }
 
     public static class ConfiguredModelList {

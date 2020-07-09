@@ -4,7 +4,7 @@
  import net.minecraft.util.math.BlockRayTraceResult;
  import net.minecraft.world.Explosion;
  import net.minecraft.world.World;
-+import org.bukkit.craftbukkit.event.CraftEventFactory;
++import org.bukkit.craftbukkit.v1_15_R1.event.CraftEventFactory;
  
  public class TNTBlock extends Block {
     public static final BooleanProperty field_212569_a = BlockStateProperties.field_212646_x;

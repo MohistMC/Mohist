@@ -8,7 +8,7 @@
  import net.minecraft.entity.Entity;
  import net.minecraft.entity.EntityType;
  import net.minecraft.entity.MoverType;
-@@ -11,23 +12,25 @@
+@@ -11,23 +12,24 @@
  import net.minecraft.entity.player.PlayerEntity;
  import net.minecraft.item.ItemStack;
  import net.minecraft.nbt.CompoundNBT;
@@ -22,94 +22,97 @@
  import net.minecraft.util.math.MathHelper;
  import net.minecraft.util.math.Vec3d;
  import net.minecraft.world.World;
-+// CraftBukkit start
  import org.apache.commons.lang3.Validate;
 +import org.bukkit.entity.Hanging;
 +import org.bukkit.event.hanging.HangingBreakByEntityEvent;
 +import org.bukkit.event.hanging.HangingBreakEvent;
-+// CraftBukkit end
  
  public abstract class HangingEntity extends Entity {
++
     protected static final Predicate<Entity> field_184524_c = (p_210144_0_) -> {
        return p_210144_0_ instanceof HangingEntity;
     };
     private int field_70520_f;
 -   protected BlockPos field_174861_a;
-+   public BlockPos field_174861_a;
++   public BlockPos field_174861_a; // private->public CraftBukkit
     protected Direction field_174860_b = Direction.SOUTH;
  
     protected HangingEntity(EntityType<? extends HangingEntity> p_i48561_1_, World p_i48561_2_) {
-@@ -39,10 +42,14 @@
-       this.field_174861_a = p_i48562_3_;
-    }
- 
--   protected void func_70088_a() {
-+    public static AxisAlignedBB calculateBoundingBox(Object o, BlockPos pos, Direction opposite, int width, int height) {
-+      return null;
-+    }
-+
-+    protected void func_70088_a() {
+@@ -42,7 +44,7 @@
+    protected void func_70088_a() {
     }
  
 -   protected void func_174859_a(Direction p_174859_1_) {
-+   public void func_174859_a(Direction p_174859_1_) {
++   public void func_174859_a(Direction p_174859_1_) { // private->public CraftBukkit
        Validate.notNull(p_174859_1_);
        Validate.isTrue(p_174859_1_.func_176740_k().func_176722_c());
        this.field_174860_b = p_174859_1_;
-@@ -53,23 +60,33 @@
+@@ -53,43 +55,69 @@
  
     protected void func_174856_o() {
        if (this.field_174860_b != null) {
 -         double d0 = (double)this.field_174861_a.func_177958_n() + 0.5D;
 -         double d1 = (double)this.field_174861_a.func_177956_o() + 0.5D;
 -         double d2 = (double)this.field_174861_a.func_177952_p() + 0.5D;
-+         // CraftBukkit start code moved in to calculateBoundingBox
-+         this.func_174826_a(calculateBoundingBox(this, this.field_174861_a, this.field_174860_b, this.func_82329_d(), this.func_82330_g()));
-+      }
-+   }
-+
-+   // CraftBukkit start - break out BB calc into own method
-+   public static AxisAlignedBB calculateBoundingBox(@Nullable final Entity entity, final BlockPos blockPosition, final Direction direction, final int width, final int height) {
-+      {
-+         double d0 = (double)blockPosition.func_177958_n() + 0.5D;
-+         double d1 = (double)blockPosition.func_177956_o() + 0.5D;
-+         double d2 = (double)blockPosition.func_177952_p() + 0.5D;
-          double d3 = 0.46875D;
+-         double d3 = 0.46875D;
 -         double d4 = this.func_190202_a(this.func_82329_d());
 -         double d5 = this.func_190202_a(this.func_82330_g());
 -         d0 = d0 - (double)this.field_174860_b.func_82601_c() * 0.46875D;
 -         d2 = d2 - (double)this.field_174860_b.func_82599_e() * 0.46875D;
-+         double d4 = func_190202_a(width);
-+         double d5 = func_190202_a(height);
-+         d0 = d0 - (double)direction.func_82601_c() * 0.46875D;
-+         d2 = d2 - (double)direction.func_82599_e() * 0.46875D;
-          d1 = d1 + d5;
+-         d1 = d1 + d5;
 -         Direction direction = this.field_174860_b.func_176735_f();
-+         Direction enumdirection = direction.func_176735_f();
-          d0 = d0 + d4 * (double)direction.func_82601_c();
-          d2 = d2 + d4 * (double)direction.func_82599_e();
+-         d0 = d0 + d4 * (double)direction.func_82601_c();
+-         d2 = d2 + d4 * (double)direction.func_82599_e();
 -         this.func_226288_n_(d0, d1, d2);
 -         double d6 = (double)this.func_82329_d();
 -         double d7 = (double)this.func_82330_g();
 -         double d8 = (double)this.func_82329_d();
 -         if (this.field_174860_b.func_176740_k() == Direction.Axis.Z) {
-+         if (entity != null) {
-+            entity.func_226288_n_(d0, d1, d2);
-+         }
-+         double d6 = (double)width;
-+         double d7 = (double)height;
-+         double d8 = (double)width;
-+         if (direction.func_176740_k() == Direction.Axis.Z) {
-             d8 = 1.0D;
-          } else {
-             d6 = 1.0D;
-@@ -78,11 +95,12 @@
-          d6 = d6 / 32.0D;
-          d7 = d7 / 32.0D;
-          d8 = d8 / 32.0D;
+-            d8 = 1.0D;
+-         } else {
+-            d6 = 1.0D;
+-         }
++         // CraftBukkit start code moved in to calculateBoundingBox
++         calculateBoundingBox(this, this.field_174861_a, this.field_174860_b, this.func_82329_d(), this.func_82330_g());
++         // CraftBukkit ebd
++      }
++   }
+ 
+-         d6 = d6 / 32.0D;
+-         d7 = d7 / 32.0D;
+-         d8 = d8 / 32.0D;
 -         this.func_174826_a(new AxisAlignedBB(d0 - d6, d1 - d7, d2 - d8, d0 + d6, d1 + d7, d2 + d8));
-+         return new AxisAlignedBB(d0 - d6, d1 - d7, d2 - d8, d0 + d6, d1 + d7, d2 + d8);
++   public static AxisAlignedBB calculateBoundingBox(@Nullable Entity entity, BlockPos pos, Direction direction, int width, int height) {
++      double d0 = (double) pos.func_177958_n() + 0.5D;
++      double d1 = (double) pos.func_177956_o() + 0.5D;
++      double d2 = (double) pos.func_177952_p() + 0.5D;
++      double d3 = 0.46875D;
++      double d4 = func_190202_a(width);
++      double d5 = func_190202_a(height);
++      d0 = d0 - (double) direction.func_82601_c() * 0.46875D;
++      d2 = d2 - (double) direction.func_82599_e() * 0.46875D;
++      d1 = d1 + d5;
++      Direction direction1 = direction.func_176735_f();
++      d0 = d0 + d4 * (double) direction1.func_82601_c();
++      d2 = d2 + d4 * (double) direction1.func_82599_e();
++
++      if (entity != null) {
++         entity.func_226288_n_(d0, d1, d2);
        }
++      double d6 = (double) width;
++      double d7 = (double) height;
++      double d8 = (double) width;
++
++      if (direction.func_176740_k() == Direction.Axis.Z) {
++         d8 = 1.0D;
++      } else {
++         d6 = 1.0D;
++      }
++
++      d6 = d6 / 32.0D;
++      d7 = d7 / 32.0D;
++      d8 = d8 / 32.0D;
++      return new AxisAlignedBB(d0 - d6, d1 - d7, d2 - d8, d0 + d6, d1 + d7, d2 + d8);
     }
 +   // CraftBukkit end
  
@@ -118,21 +121,20 @@
        return p_190202_1_ % 32 == 0 ? 0.5D : 0.0D;
     }
  
-@@ -90,6 +108,23 @@
-       if (this.field_70520_f++ == 100 && !this.field_70170_p.field_72995_K) {
+    public void func_70071_h_() {
+-      if (this.field_70520_f++ == 100 && !this.field_70170_p.field_72995_K) {
++      if (this.field_70520_f++ == this.field_70170_p.spigotConfig.hangingTickFrequency && !this.field_70170_p.field_72995_K) { // Spigot
           this.field_70520_f = 0;
           if (!this.field_70128_L && !this.func_70518_d()) {
 +            // CraftBukkit start - fire break events
 +            Material material = this.field_70170_p.func_180495_p(new BlockPos(this)).func_185904_a();
 +            HangingBreakEvent.RemoveCause cause;
-+
 +            if (!material.equals(Material.field_151579_a)) {
 +               // TODO: This feels insufficient to catch 100% of suffocation cases
 +               cause = HangingBreakEvent.RemoveCause.OBSTRUCTION;
 +            } else {
 +               cause = HangingBreakEvent.RemoveCause.PHYSICS;
 +            }
-+
 +            HangingBreakEvent event = new HangingBreakEvent((Hanging) this.getBukkitEntity(), cause);
 +            this.field_70170_p.getServerCB().getPluginManager().callEvent(event);
 +            if (field_70128_L || event.isCancelled()) {
@@ -142,7 +144,7 @@
              this.func_70106_y();
              this.func_110128_b((Entity)null);
           }
-@@ -113,6 +148,8 @@
+@@ -113,6 +141,8 @@
                 int j1 = (j - 1) / -2;
                 blockpos$mutable.func_189533_g(blockpos).func_189534_c(direction, k + i1).func_189534_c(Direction.UP, l + j1);
                 BlockState blockstate = this.field_70170_p.func_180495_p(blockpos$mutable);
@@ -151,54 +153,52 @@
                 if (!blockstate.func_185904_a().func_76220_a() && !RedstoneDiodeBlock.func_185546_B(blockstate)) {
                    return false;
                 }
-@@ -145,6 +182,22 @@
+@@ -145,6 +175,19 @@
           return false;
        } else {
           if (!this.field_70128_L && !this.field_70170_p.field_72995_K) {
 +            // CraftBukkit start - fire break events
-+            Entity damager = (p_70097_1_ instanceof IndirectEntityDamageSource) ? ((IndirectEntityDamageSource) p_70097_1_).getProximateDamageSource() : p_70097_1_.func_76346_g();
++            Entity damager = (p_70097_1_ instanceof EntityDamageSource) ? ((EntityDamageSource) p_70097_1_).getProximateDamageSource() : p_70097_1_.func_76346_g();
 +            HangingBreakEvent event;
 +            if (damager != null) {
 +               event = new HangingBreakByEntityEvent((Hanging) this.getBukkitEntity(), damager.getBukkitEntity(), p_70097_1_.func_94541_c() ? HangingBreakEvent.RemoveCause.EXPLOSION : HangingBreakEvent.RemoveCause.ENTITY);
 +            } else {
 +               event = new HangingBreakEvent((Hanging) this.getBukkitEntity(), p_70097_1_.func_94541_c() ? HangingBreakEvent.RemoveCause.EXPLOSION : HangingBreakEvent.RemoveCause.DEFAULT);
 +            }
-+
 +            this.field_70170_p.getServerCB().getPluginManager().callEvent(event);
-+
 +            if (this.field_70128_L || event.isCancelled()) {
 +               return true;
 +            }
 +            // CraftBukkit end
-+
              this.func_70106_y();
              this.func_70018_K();
              this.func_110128_b(p_70097_1_.func_76346_g());
-@@ -156,6 +209,18 @@
+@@ -156,6 +199,15 @@
  
     public void func_213315_a(MoverType p_213315_1_, Vec3d p_213315_2_) {
        if (!this.field_70170_p.field_72995_K && !this.field_70128_L && p_213315_2_.func_189985_c() > 0.0D) {
 +         if (this.field_70128_L) return; // CraftBukkit
-+
 +         // CraftBukkit start - fire break events
 +         // TODO - Does this need its own cause? Seems to only be triggered by pistons
 +         HangingBreakEvent event = new HangingBreakEvent((Hanging) this.getBukkitEntity(), HangingBreakEvent.RemoveCause.PHYSICS);
 +         this.field_70170_p.getServerCB().getPluginManager().callEvent(event);
-+
 +         if (this.field_70128_L || event.isCancelled()) {
 +            return;
 +         }
 +         // CraftBukkit end
-+
           this.func_70106_y();
           this.func_110128_b((Entity)null);
        }
-@@ -163,7 +228,7 @@
+@@ -163,11 +215,10 @@
     }
  
     public void func_70024_g(double p_70024_1_, double p_70024_3_, double p_70024_5_) {
 -      if (!this.field_70170_p.field_72995_K && !this.field_70128_L && p_70024_1_ * p_70024_1_ + p_70024_3_ * p_70024_3_ + p_70024_5_ * p_70024_5_ > 0.0D) {
-+      if (false && !this.field_70170_p.field_72995_K && !this.field_70128_L && p_70024_1_ * p_70024_1_ + p_70024_3_ * p_70024_3_ + p_70024_5_ * p_70024_5_ > 0.0D) { // CraftBukkit - not needed
++      if (false && !this.field_70170_p.field_72995_K && !this.field_70128_L && p_70024_1_ * p_70024_1_ + p_70024_3_ * p_70024_3_ + p_70024_5_ * p_70024_5_ > 0.0D) { // Craftbukkit - not needed
           this.func_70106_y();
           this.func_110128_b((Entity)null);
        }
+-
+    }
+ 
+    public void func_213281_b(CompoundNBT p_213281_1_) {

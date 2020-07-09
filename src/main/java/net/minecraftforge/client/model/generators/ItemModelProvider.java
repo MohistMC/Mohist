@@ -19,6 +19,7 @@
 
 package net.minecraftforge.client.model.generators;
 
+import javax.annotation.Nonnull;
 import net.minecraft.data.DataGenerator;
 
 /**
@@ -29,5 +30,11 @@ public abstract class ItemModelProvider extends ModelProvider<ItemModelBuilder> 
 
     public ItemModelProvider(DataGenerator generator, String modid, ExistingFileHelper existingFileHelper) {
         super(generator, modid, ITEM_FOLDER, ItemModelBuilder::new, existingFileHelper);
+    }
+
+    @Nonnull
+    @Override
+    public String getName() {
+        return "Item Models: " + modid;
     }
 }

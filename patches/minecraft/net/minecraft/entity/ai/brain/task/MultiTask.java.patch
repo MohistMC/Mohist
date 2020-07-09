@@ -1,0 +1,11 @@
+--- a/net/minecraft/entity/ai/brain/task/MultiTask.java
++++ b/net/minecraft/entity/ai/brain/task/MultiTask.java
+@@ -28,7 +28,7 @@
+       });
+    }
+ 
+-   protected boolean func_212834_g_(ServerWorld p_212834_1_, E p_212834_2_, long p_212834_3_) {
++   public boolean func_212834_g_(ServerWorld p_212834_1_, E p_212834_2_, long p_212834_3_) {
+       return this.field_220419_e.func_220655_b().filter((p_220414_0_) -> {
+          return p_220414_0_.func_220376_b() == Task.Status.RUNNING;
+       }).anyMatch((p_220413_4_) -> {

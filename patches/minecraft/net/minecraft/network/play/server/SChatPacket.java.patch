@@ -1,0 +1,46 @@
+--- a/net/minecraft/network/play/server/SChatPacket.java
++++ b/net/minecraft/network/play/server/SChatPacket.java
+@@ -11,6 +11,7 @@
+ 
+ public class SChatPacket implements IPacket<IClientPlayNetHandler> {
+    private ITextComponent field_148919_a;
++   public net.md_5.bungee.api.chat.BaseComponent[] components; // Spigot
+    private ChatType field_179842_b;
+ 
+    public SChatPacket() {
+@@ -31,11 +32,33 @@
+    }
+ 
+    public void func_148840_b(PacketBuffer p_148840_1_) throws IOException {
+-      p_148840_1_.func_179256_a(this.field_148919_a);
++      // Spigot start
++      if (components != null) {
++         p_148840_1_.func_180714_a(net.md_5.bungee.chat.ComponentSerializer.toString(components));
++      } else {
++         p_148840_1_.func_179256_a(this.field_148919_a);
++      }
++      // Spigot end
+       p_148840_1_.writeByte(this.field_179842_b.func_192583_a());
+    }
+ 
+-   public void func_148833_a(IClientPlayNetHandler p_148833_1_) {
++   // Spigot Start
++   private static final java.util.concurrent.ExecutorService executors = java.util.concurrent.Executors.newCachedThreadPool(
++       new com.google.common.util.concurrent.ThreadFactoryBuilder().setDaemon( true ).setNameFormat( "Async Chat Thread - #%d" ).build() );
++   public void func_148833_a(final IClientPlayNetHandler p_148833_1_) {
++      if ( !this.field_179842_b.name().startsWith("/") )
++      {
++         executors.submit( new Runnable()
++         {
++            @Override
++            public void run()
++            {
++               p_148833_1_.func_147251_a( SChatPacket.this );
++            }
++         } );
++         return;
++      }
++      // Spigot End
+       p_148833_1_.func_147251_a(this);
+    }
+ 

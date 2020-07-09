@@ -1,15 +1,16 @@
 --- a/net/minecraft/tileentity/ConduitTileEntity.java
 +++ b/net/minecraft/tileentity/ConduitTileEntity.java
-@@ -27,6 +27,8 @@
+@@ -27,6 +27,9 @@
  import net.minecraft.util.math.Vec3d;
  import net.minecraftforge.api.distmarker.Dist;
  import net.minecraftforge.api.distmarker.OnlyIn;
-+import org.bukkit.craftbukkit.block.CraftBlock;
-+import org.bukkit.craftbukkit.event.CraftEventFactory;
++import org.bukkit.craftbukkit.v1_15_R1.block.CraftBlock;
++import org.bukkit.craftbukkit.v1_15_R1.event.CraftEventFactory;
++import org.bukkit.event.entity.EntityPotionEffectEvent.Cause;
  
  public class ConduitTileEntity extends TileEntity implements ITickableTileEntity {
     private static final Block[] field_205042_e = new Block[]{Blocks.field_180397_cI, Blocks.field_196779_gQ, Blocks.field_180398_cJ, Blocks.field_196781_gR};
-@@ -131,10 +133,8 @@
+@@ -131,10 +134,8 @@
                    BlockPos blockpos1 = this.field_174879_c.func_177982_a(j1, k1, l1);
                    BlockState blockstate = this.field_145850_b.func_180495_p(blockpos1);
  
@@ -21,16 +22,16 @@
                    }
                 }
              }
-@@ -156,7 +156,7 @@
+@@ -156,7 +157,7 @@
        if (!list.isEmpty()) {
           for(PlayerEntity playerentity : list) {
              if (this.field_174879_c.func_218141_a(new BlockPos(playerentity), (double)j) && playerentity.func_70026_G()) {
 -               playerentity.func_195064_c(new EffectInstance(Effects.field_205136_C, 260, 0, true, true));
-+               playerentity.addEffect(new EffectInstance(Effects.field_205136_C, 260, 0, true, true), org.bukkit.event.entity.EntityPotionEffectEvent.Cause.CONDUIT); // CraftBukkit
++               playerentity.addPotionEffect(new EffectInstance(Effects.field_205136_C, 260, 0, true, true), Cause.CONDUIT); // CraftBukkit
              }
           }
  
-@@ -183,8 +183,13 @@
+@@ -183,8 +184,13 @@
        }
  
        if (this.field_205047_j != null) {

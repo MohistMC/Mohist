@@ -1,6 +1,29 @@
 --- a/net/minecraft/entity/ai/brain/task/FarmTask.java
 +++ b/net/minecraft/entity/ai/brain/task/FarmTask.java
-@@ -39,7 +39,7 @@
+@@ -4,11 +4,7 @@
+ import com.google.common.collect.Lists;
+ import java.util.List;
+ import javax.annotation.Nullable;
+-import net.minecraft.block.Block;
+-import net.minecraft.block.BlockState;
+-import net.minecraft.block.Blocks;
+-import net.minecraft.block.CropsBlock;
+-import net.minecraft.block.FarmlandBlock;
++import net.minecraft.block.*;
+ import net.minecraft.entity.ai.brain.memory.MemoryModuleStatus;
+ import net.minecraft.entity.ai.brain.memory.MemoryModuleType;
+ import net.minecraft.entity.ai.brain.memory.WalkTarget;
+@@ -22,8 +18,8 @@
+ import net.minecraft.util.SoundEvents;
+ import net.minecraft.util.math.BlockPos;
+ import net.minecraft.util.math.BlockPosWrapper;
+-import net.minecraft.world.GameRules;
+ import net.minecraft.world.server.ServerWorld;
++import org.bukkit.craftbukkit.v1_15_R1.event.CraftEventFactory;
+ 
+ public class FarmTask extends Task<VillagerEntity> {
+    @Nullable
+@@ -39,7 +35,7 @@
     }
  
     protected boolean func_212832_a_(ServerWorld p_212832_1_, VillagerEntity p_212832_2_) {
@@ -9,20 +32,20 @@
           return false;
        } else if (p_212832_2_.func_213700_eh().func_221130_b() != VillagerProfession.field_221156_f) {
           return false;
-@@ -114,7 +114,11 @@
+@@ -114,7 +110,11 @@
           Block block = blockstate.func_177230_c();
           Block block1 = p_212833_1_.func_180495_p(this.field_220422_a.func_177977_b()).func_177230_c();
           if (block instanceof CropsBlock && ((CropsBlock)block).func_185525_y(blockstate) && this.field_220424_c) {
 -            p_212833_1_.func_225521_a_(this.field_220422_a, true, p_212833_2_);
 +            // CraftBukkit start
-+            if (!org.bukkit.craftbukkit.event.CraftEventFactory.callEntityChangeBlockEvent(p_212833_2_, this.field_220422_a, Blocks.field_150350_a.func_176223_P()).isCancelled()) {
++            if(!CraftEventFactory.callEntityChangeBlockEvent(p_212833_2_, this.field_220422_a, Blocks.field_150350_a.func_176223_P()).isCancelled()){
 +               p_212833_1_.func_225521_a_(this.field_220422_a, true, p_212833_2_);
 +            }
 +            // CraftBukkit end
           }
  
           if (blockstate.func_196958_f() && block1 instanceof FarmlandBlock && this.field_220423_b) {
-@@ -124,19 +128,33 @@
+@@ -124,19 +124,39 @@
                 ItemStack itemstack = inventory.func_70301_a(i);
                 boolean flag = false;
                 if (!itemstack.func_190926_b()) {
@@ -37,26 +60,31 @@
 +                     planted = Blocks.field_150469_bN;
                       flag = true;
                    } else if (itemstack.func_77973_b() == Items.field_151172_bF) {
--                     p_212833_1_.func_180501_a(this.field_220422_a, Blocks.field_150459_bM.func_176223_P(), 3);
 +                     planted = Blocks.field_150459_bM;
+                      p_212833_1_.func_180501_a(this.field_220422_a, Blocks.field_150459_bM.func_176223_P(), 3);
                       flag = true;
                    } else if (itemstack.func_77973_b() == Items.field_185163_cU) {
 -                     p_212833_1_.func_180501_a(this.field_220422_a, Blocks.field_185773_cZ.func_176223_P(), 3);
 +                     planted = Blocks.field_185773_cZ;
                       flag = true;
-                   }
-+                  // TODO: Combined with Forge handle
-+                  if (planted != null && !org.bukkit.craftbukkit.event.CraftEventFactory.callEntityChangeBlockEvent(p_212833_2_, this.field_220422_a, planted.func_176223_P()).isCancelled()) {
-+                     p_212833_1_.func_180501_a(this.field_220422_a, planted.func_176223_P(), 3);
 +                  } else if (itemstack.func_77973_b() instanceof net.minecraftforge.common.IPlantable) {
 +                     if (((net.minecraftforge.common.IPlantable)itemstack.func_77973_b()).getPlantType(p_212833_1_, field_220422_a) == net.minecraftforge.common.PlantType.Crop) {
-+                        p_212833_1_.func_180501_a(field_220422_a, ((net.minecraftforge.common.IPlantable)itemstack.func_77973_b()).getPlant(p_212833_1_, field_220422_a), 3);
++                        if(!org.bukkit.craftbukkit.v1_15_R1.event.CraftEventFactory.callEntityChangeBlockEvent(p_212833_2_, this.field_220422_a, ((net.minecraftforge.common.IPlantable)itemstack.func_77973_b()).getPlant(p_212833_1_, field_220422_a)).isCancelled()){
++                           p_212833_1_.func_180501_a(field_220422_a, ((net.minecraftforge.common.IPlantable)itemstack.func_77973_b()).getPlant(p_212833_1_, field_220422_a), 3);
++                        }else {
++                           flag = false;
++                        }
 +                        flag = true;
 +                     }
+                   }
++
++                  if (planted != null && !org.bukkit.craftbukkit.v1_15_R1.event.CraftEventFactory.callEntityChangeBlockEvent(p_212833_2_, this.field_220422_a, planted.func_176223_P()).isCancelled()) {
++                     p_212833_1_.func_180501_a(field_220422_a, planted.func_176223_P(), 3);
 +                  } else {
 +                     flag = false;
 +                  }
 +                  // CraftBukkit end
++
                 }
  
                 if (flag) {

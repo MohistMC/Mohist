@@ -5,7 +5,7 @@
  public class LockCode {
     public static final LockCode field_180162_a = new LockCode("");
 -   private final String field_180161_b;
-+   public final String field_180161_b;
++   public final String field_180161_b; // private->public CraftBukkit
  
     public LockCode(String p_i45903_1_) {
        this.field_180161_b = p_i45903_1_;

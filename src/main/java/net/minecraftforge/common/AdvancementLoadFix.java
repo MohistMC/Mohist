@@ -83,9 +83,9 @@ public class AdvancementLoadFix {
 
     public static void buildSortedTrees(final Set<Advancement> roots) {
         AdvancementLoadFix.roots = roots.stream()
-                .map(AdvancementLoadFix::buildGraph)
-                .map(g -> TopologicalSort.topologicalSort(g, Comparator.comparing(Advancement::getId)))
-                .collect(Collectors.toMap(lst -> lst.get(0), Function.identity()));
+            .map(AdvancementLoadFix::buildGraph)
+            .map(g -> TopologicalSort.topologicalSort(g, Comparator.comparing(Advancement::getId)))
+            .collect(Collectors.toMap(lst -> lst.get(0), Function.identity()));
     }
 
     private static Graph<Advancement> buildGraph(final Advancement root) {

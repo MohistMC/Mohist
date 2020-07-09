@@ -248,6 +248,6 @@ public abstract class ForgeFlowingFluid extends FlowingFluid
         {
             this.tickRate = tickRate;
             return this;
-        }
     }
+}
 }

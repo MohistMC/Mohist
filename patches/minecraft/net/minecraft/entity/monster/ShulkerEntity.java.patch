@@ -17,7 +17,7 @@
     protected static final DataParameter<Optional<BlockPos>> field_184701_b = EntityDataManager.func_187226_a(ShulkerEntity.class, DataSerializers.field_187201_k);
     protected static final DataParameter<Byte> field_184702_c = EntityDataManager.func_187226_a(ShulkerEntity.class, DataSerializers.field_187191_a);
 -   protected static final DataParameter<Byte> field_190770_bw = EntityDataManager.func_187226_a(ShulkerEntity.class, DataSerializers.field_187191_a);
-+   public static final DataParameter<Byte> field_190770_bw = EntityDataManager.func_187226_a(ShulkerEntity.class, DataSerializers.field_187191_a);
++   public static final DataParameter<Byte> field_190770_bw = EntityDataManager.func_187226_a(ShulkerEntity.class, DataSerializers.field_187191_a); // protected->public CraftBukkit
     private float field_184705_bx;
     private float field_184706_by;
     private BlockPos field_184707_bz;
@@ -72,7 +72,7 @@
              }
  
              this.func_226286_f_((double)blockpos.func_177958_n() + 0.5D, (double)blockpos.func_177956_o(), (double)blockpos.func_177952_p() + 0.5D);
-+            if (valid) ((ServerWorld) field_70170_p).func_217464_b(this); // CraftBukkit
++            if(valid) ((ServerWorld) field_70170_p).func_217464_b(this); // CraftBukkit
           }
        }
  

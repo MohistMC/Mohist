@@ -120,7 +120,7 @@ public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
         MinecraftForge.EVENT_BUS.register(MinecraftForge.INTERNAL_HANDLER);
         MinecraftForge.EVENT_BUS.register(this);
 
-        // VersionChecker.startVersionCheck();
+        VersionChecker.startVersionCheck();
 
         /*
          * We can't actually add any of these, because vanilla clients will choke on unknown argument types
@@ -158,6 +158,7 @@ public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
     {
         if (tag.contains("dims", 10))
             DimensionManager.readRegistry(tag.getCompound("dims"));
+        DimensionManager.processScheduledDeletions(handler);
     }
 
     public void mappingChanged(FMLModIdMappingEvent evt)

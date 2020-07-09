@@ -14,17 +14,17 @@
        p_152641_1_.addProperty("reason", this.field_73693_g);
     }
 +
++   // CraftBukkit start
 +   public Date getCreated() {
 +      return this.field_73694_d;
 +   }
 +
-+   // CraftBukkit start
 +   private static <T> T checkExpiry(final T object, final JsonObject jsonobject) {
 +      Date expires = null;
 +      try {
 +         expires = (jsonobject.has("expires") ? BanEntry.field_73698_a.parse(jsonobject.get("expires").getAsString()) : null);
++      } catch (ParseException ex) {
 +      }
-+      catch (ParseException ex) {}
 +      if (expires == null || expires.after(new Date())) {
 +         return object;
 +      }

@@ -5,7 +5,7 @@
  
  public abstract class StateHolder<O, S> implements IStateHolder<S> {
 -   private static final Function<Entry<IProperty<?>, Comparable<?>>, String> field_177233_b = new Function<Entry<IProperty<?>, Comparable<?>>, String>() {
-+   public static final Function<Entry<IProperty<?>, Comparable<?>>, String> field_177233_b = new Function<Entry<IProperty<?>, Comparable<?>>, String>() {
++   public static final Function<Entry<IProperty<?>, Comparable<?>>, String> field_177233_b = new Function<Entry<IProperty<?>, Comparable<?>>, String>() { // private->public CraftBukkit
        public String apply(@Nullable Entry<IProperty<?>, Comparable<?>> p_apply_1_) {
           if (p_apply_1_ == null) {
              return "<NULL>";

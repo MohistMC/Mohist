@@ -261,19 +261,21 @@
        this.blit(l, i1, j, k, 28, 32);
        this.setBlitOffset(100);
        this.itemRenderer.field_77023_b = 100.0F;
-@@ -819,6 +903,11 @@
-          return this.field_148330_a.size() > 45;
+@@ -791,6 +875,13 @@
+          this.func_148329_a(0.0F);
        }
  
++      // CraftBukkit start
 +      @Override
 +      public InventoryView getBukkitView() {
 +         return null;
 +      }
++      // CraftBukkit end
 +
-       public ItemStack func_82846_b(PlayerEntity p_82846_1_, int p_82846_2_) {
-          if (p_82846_2_ >= this.field_75151_b.size() - 9 && p_82846_2_ < this.field_75151_b.size()) {
-             Slot slot = this.field_75151_b.get(p_82846_2_);
-@@ -896,6 +985,22 @@
+       public boolean func_75145_c(PlayerEntity p_75145_1_) {
+          return true;
+       }
+@@ -896,6 +987,22 @@
        public boolean func_82869_a(PlayerEntity p_82869_1_) {
           return this.field_148332_b.func_82869_a(p_82869_1_);
        }

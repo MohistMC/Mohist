@@ -1,66 +1,67 @@
 --- a/net/minecraft/inventory/container/ChestContainer.java
 +++ b/net/minecraft/inventory/container/ChestContainer.java
-@@ -2,15 +2,24 @@
+@@ -1,5 +1,6 @@
+ package net.minecraft.inventory.container;
  
++import net.minecraft.block.ChestBlock.DoubleInventory;
  import net.minecraft.entity.player.PlayerEntity;
  import net.minecraft.entity.player.PlayerInventory;
-+import net.minecraft.inventory.DoubleSidedInventory;
  import net.minecraft.inventory.IInventory;
- import net.minecraft.inventory.Inventory;
+@@ -7,11 +8,19 @@
  import net.minecraft.item.ItemStack;
  import net.minecraftforge.api.distmarker.Dist;
  import net.minecraftforge.api.distmarker.OnlyIn;
-+import org.bukkit.craftbukkit.inventory.CraftInventory;
-+import org.bukkit.craftbukkit.inventory.CraftInventoryDoubleChest;
-+import org.bukkit.craftbukkit.inventory.CraftInventoryPlayer;
-+import org.bukkit.craftbukkit.inventory.CraftInventoryView;
++import org.bukkit.craftbukkit.v1_15_R1.inventory.CraftInventory;
++import org.bukkit.craftbukkit.v1_15_R1.inventory.CraftInventoryView;
 +import org.bukkit.inventory.InventoryView;
  
  public class ChestContainer extends Container {
     private final IInventory field_75155_e;
     private final int field_75154_f;
+ 
 +   // CraftBukkit start
 +   private CraftInventoryView bukkitEntity = null;
 +   private PlayerInventory player;
- 
++   // CraftBukkit end
++
     private ChestContainer(ContainerType<?> p_i50091_1_, int p_i50091_2_, PlayerInventory p_i50091_3_, int p_i50091_4_) {
        this(p_i50091_1_, p_i50091_2_, p_i50091_3_, new Inventory(9 * p_i50091_4_), p_i50091_4_);
-@@ -56,6 +65,9 @@
-       p_i50092_4_.func_174889_b(p_i50092_3_.field_70458_d);
-       int i = (this.field_75154_f - 4) * 18;
- 
+    }
+@@ -53,6 +62,9 @@
+       func_216962_a(p_i50092_4_, p_i50092_5_ * 9);
+       this.field_75155_e = p_i50092_4_;
+       this.field_75154_f = p_i50092_5_;
 +      // CraftBukkit start - Save player
 +      this.player = p_i50092_3_;
 +      // CraftBukkit end
-       for(int j = 0; j < this.field_75154_f; ++j) {
-          for(int k = 0; k < 9; ++k) {
-             this.func_75146_a(new Slot(p_i50092_4_, k + j * 9, 8 + k * 18, 18 + j * 18));
-@@ -75,9 +87,28 @@
+       p_i50092_4_.func_174889_b(p_i50092_3_.field_70458_d);
+       int i = (this.field_75154_f - 4) * 18;
+ 
+@@ -74,7 +86,27 @@
+ 
     }
  
++   // CraftBukkit start
++   @Override
++   public InventoryView getBukkitView() {
++      if (bukkitEntity != null) {
++         return bukkitEntity;
++      }
++      CraftInventory inventory;
++      if (this.field_75155_e instanceof PlayerInventory) {
++         inventory = new org.bukkit.craftbukkit.v1_15_R1.inventory.CraftInventoryPlayer((PlayerInventory) this.field_75155_e);
++      } else if (this.field_75155_e instanceof DoubleInventory) {
++         inventory = new org.bukkit.craftbukkit.v1_15_R1.inventory.CraftInventoryDoubleChest((DoubleInventory) this.field_75155_e);
++      } else {
++         inventory = new CraftInventory(this.field_75155_e);
++      }
++      bukkitEntity = new CraftInventoryView(this.player.field_70458_d.getBukkitEntity(), inventory, this);
++      return bukkitEntity;
++   }
++   // CraftBukkit end
++
     public boolean func_75145_c(PlayerEntity p_75145_1_) {
 +      if (!this.checkReachable) return true; // CraftBukkit
        return this.field_75155_e.func_70300_a(p_75145_1_);
     }
  
-+   @Override
-+   public InventoryView getBukkitView() {
-+      if (this.bukkitEntity != null) {
-+         return this.bukkitEntity;
-+      }
-+      CraftInventory inventory;
-+      if (this.field_75155_e instanceof PlayerInventory) {
-+         inventory = new CraftInventoryPlayer((PlayerInventory)this.field_75155_e);
-+      }
-+      else if (this.field_75155_e instanceof DoubleSidedInventory) {
-+         inventory = new CraftInventoryDoubleChest((DoubleSidedInventory)this.field_75155_e);
-+      }
-+      else {
-+         inventory = new CraftInventory(this.field_75155_e);
-+      }
-+      return this.bukkitEntity = new CraftInventoryView(this.player.field_70458_d.getBukkitEntity(), inventory, this);
-+   }
-+
-    public ItemStack func_82846_b(PlayerEntity p_82846_1_, int p_82846_2_) {
-       ItemStack itemstack = ItemStack.field_190927_a;
-       Slot slot = this.field_75151_b.get(p_82846_2_);

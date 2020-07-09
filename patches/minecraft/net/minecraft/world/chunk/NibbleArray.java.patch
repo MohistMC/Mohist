@@ -1,0 +1,37 @@
+--- a/net/minecraft/world/chunk/NibbleArray.java
++++ b/net/minecraft/world/chunk/NibbleArray.java
+@@ -33,27 +33,26 @@
+       return p_177483_2_ << 8 | p_177483_3_ << 4 | p_177483_1_;
+    }
+ 
+-   private int func_177480_a(int p_177480_1_) {
++   public int func_177480_a(int p_177480_1_) { // PAIL: private -> public
+       if (this.field_76585_a == null) {
+          return 0;
+       } else {
+          int i = this.func_177478_c(p_177480_1_);
+-         return this.func_177479_b(p_177480_1_) ? this.field_76585_a[i] & 15 : this.field_76585_a[i] >> 4 & 15;
++         return this.field_76585_a[i] >> ((p_177480_1_ & 1) << 2) & 15; // Spigot
+       }
+    }
+ 
+-   private void func_177482_a(int p_177482_1_, int p_177482_2_) {
++   public void func_177482_a(int p_177482_1_, int p_177482_2_) { // PAIL: private -> public
+       if (this.field_76585_a == null) {
+          this.field_76585_a = new byte[2048];
+       }
+ 
+       int i = this.func_177478_c(p_177482_1_);
+-      if (this.func_177479_b(p_177482_1_)) {
+-         this.field_76585_a[i] = (byte)(this.field_76585_a[i] & 240 | p_177482_2_ & 15);
+-      } else {
+-         this.field_76585_a[i] = (byte)(this.field_76585_a[i] & 15 | (p_177482_2_ & 15) << 4);
+-      }
+ 
++      // Spigot start
++      int shift = (p_177482_1_ & 1) << 2;
++      this.field_76585_a[i] = (byte) (this.field_76585_a[i] & ~(15 << shift) | (p_177482_2_ & 15) << shift);
++      // Spigot end
+    }
+ 
+    private boolean func_177479_b(int p_177479_1_) {

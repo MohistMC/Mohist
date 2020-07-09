@@ -1,0 +1,21 @@
+--- a/net/minecraft/entity/ai/goal/Goal.java
++++ b/net/minecraft/entity/ai/goal/Goal.java
+@@ -7,6 +7,10 @@
+ 
+    public abstract boolean func_75250_a();
+ 
++   private static final Goal.Flag[] NO_CONTROLS = new Goal.Flag[0];
++
++   private Goal.Flag[] controlsArray = NO_CONTROLS;
++
+    public boolean func_75253_b() {
+       return this.func_75250_a();
+    }
+@@ -27,6 +31,7 @@
+    public void func_220684_a(EnumSet<Goal.Flag> p_220684_1_) {
+       this.field_220687_a.clear();
+       this.field_220687_a.addAll(p_220684_1_);
++      this.controlsArray = p_220684_1_.toArray(NO_CONTROLS); // NO_CONTROLS is only used to get around type erasure
+    }
+ 
+    public String toString() {

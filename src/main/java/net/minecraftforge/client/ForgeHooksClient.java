@@ -39,7 +39,6 @@ import static org.lwjgl.opengl.GL20.glVertexAttribPointer;
 
 import java.io.File;
 import java.lang.reflect.Field;
-import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
@@ -432,7 +431,7 @@ public class ForgeHooksClient
         VertexFormatElement attr = format.getElements().get(element);
         int count = attr.getElementCount();
         int constant = attr.getType().getGlConstant();
-        ((Buffer)buffer).position(format.getOffset(element));
+        buffer.position(format.getOffset(element));
         switch(attrType)
         {
             case POSITION:

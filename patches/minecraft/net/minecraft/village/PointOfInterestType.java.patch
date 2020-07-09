@@ -9,3 +9,26 @@
     private static final Predicate<PointOfInterestType> field_221071_s = (p_221041_0_) -> {
        return Registry.field_218370_L.func_201756_e().map(VillagerProfession::func_221149_b).collect(Collectors.toSet()).contains(p_221041_0_);
     };
+@@ -58,11 +58,11 @@
+    private final Predicate<PointOfInterestType> field_221078_z;
+    private final int field_225481_A;
+ 
+-   public static Set<BlockState> func_221042_a(Block p_221042_0_) {
++   private static Set<BlockState> func_221042_a(Block p_221042_0_) {
+       return ImmutableSet.copyOf(p_221042_0_.func_176194_O().func_177619_a());
+    }
+ 
+-   public PointOfInterestType(String p_i225713_1_, Set<BlockState> p_i225713_2_, int p_i225713_3_, Predicate<PointOfInterestType> p_i225713_4_, int p_i225713_5_) {
++   private PointOfInterestType(String p_i225713_1_, Set<BlockState> p_i225713_2_, int p_i225713_3_, Predicate<PointOfInterestType> p_i225713_4_, int p_i225713_5_) {
+       this.field_221074_v = p_i225713_1_;
+       this.field_221075_w = ImmutableSet.copyOf(p_i225713_2_);
+       this.field_221076_x = p_i225713_3_;
+@@ -70,7 +70,7 @@
+       this.field_225481_A = p_i225713_5_;
+    }
+ 
+-   public PointOfInterestType(String p_i225712_1_, Set<BlockState> p_i225712_2_, int p_i225712_3_, int p_i225712_4_) {
++   private PointOfInterestType(String p_i225712_1_, Set<BlockState> p_i225712_2_, int p_i225712_3_, int p_i225712_4_) {
+       this.field_221074_v = p_i225712_1_;
+       this.field_221075_w = ImmutableSet.copyOf(p_i225712_2_);
+       this.field_221076_x = p_i225712_3_;

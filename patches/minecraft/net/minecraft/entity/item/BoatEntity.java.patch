@@ -1,47 +1,61 @@
 --- a/net/minecraft/entity/item/BoatEntity.java
 +++ b/net/minecraft/entity/item/BoatEntity.java
-@@ -43,6 +43,12 @@
+@@ -25,13 +25,7 @@
+ import net.minecraft.network.play.server.SSpawnObjectPacket;
+ import net.minecraft.particles.ParticleTypes;
+ import net.minecraft.tags.FluidTags;
+-import net.minecraft.util.DamageSource;
+-import net.minecraft.util.Direction;
+-import net.minecraft.util.EntityPredicates;
+-import net.minecraft.util.Hand;
+-import net.minecraft.util.IndirectEntityDamageSource;
+-import net.minecraft.util.SoundEvent;
+-import net.minecraft.util.SoundEvents;
++import net.minecraft.util.*;
+ import net.minecraft.util.math.AxisAlignedBB;
+ import net.minecraft.util.math.BlockPos;
+ import net.minecraft.util.math.MathHelper;
+@@ -43,6 +37,9 @@
  import net.minecraft.world.World;
  import net.minecraftforge.api.distmarker.Dist;
  import net.minecraftforge.api.distmarker.OnlyIn;
 +import org.bukkit.Location;
 +import org.bukkit.entity.Vehicle;
-+import org.bukkit.event.vehicle.VehicleDamageEvent;
-+import org.bukkit.event.vehicle.VehicleDestroyEvent;
-+import org.bukkit.event.vehicle.VehicleEntityCollisionEvent;
-+import org.bukkit.event.vehicle.VehicleMoveEvent;
++import org.bukkit.event.vehicle.*;
  
  public class BoatEntity extends Entity {
     private static final DataParameter<Integer> field_184460_a = EntityDataManager.func_187226_a(BoatEntity.class, DataSerializers.field_187192_b);
-@@ -76,6 +82,14 @@
-    private float field_203061_aO;
+@@ -77,6 +74,14 @@
     private float field_203062_aP;
     private float field_203063_aQ;
+ 
 +   // CraftBukkit start
-+   // PAIL: Some of these haven't worked since a few updates, and since 1.9 they are less and less applicable.
-+   public double maxSpeed = 0.4D;
-+   public double occupiedDeceleration = 0.2D;
-+   public double unoccupiedDeceleration = -1;
-+   public boolean landBoats = false;
++   public double maxSpeed;
++   public double occupiedDeceleration;
++   public double unoccupiedDeceleration;
++   public boolean landBoats;
 +   private Location lastLocation;
 +   // CraftBukkit end
- 
++
     public BoatEntity(EntityType<? extends BoatEntity> p_i50129_1_, World p_i50129_2_) {
        super(p_i50129_1_, p_i50129_2_);
-@@ -130,12 +144,30 @@
+       this.field_70156_m = true;
+@@ -130,12 +135,34 @@
           if (p_70097_1_ instanceof IndirectEntityDamageSource && p_70097_1_.func_76346_g() != null && this.func_184196_w(p_70097_1_.func_76346_g())) {
              return false;
           } else {
 +            // CraftBukkit start
 +            Vehicle vehicle = (Vehicle) this.getBukkitEntity();
 +            org.bukkit.entity.Entity attacker = (p_70097_1_.func_76346_g() == null) ? null : p_70097_1_.func_76346_g().getBukkitEntity();
++
 +            VehicleDamageEvent event = new VehicleDamageEvent(vehicle, attacker, (double) p_70097_2_);
 +            this.field_70170_p.getServerCB().getPluginManager().callEvent(event);
-+            if (event.isCancelled()) {
++
++            if(event.isCancelled()){
 +               return false;
 +            }
-+            // amount = event.getDamage(); // TODO: Why don't we do this?
 +            // CraftBukkit end
++
              this.func_70269_c(-this.func_70267_i());
              this.func_70265_b(10);
              this.func_70266_a(this.func_70271_g() + p_70097_2_ * 10.0F);
@@ -50,24 +64,27 @@
              if (flag || this.func_70271_g() > 40.0F) {
 +               // CraftBukkit start
 +               VehicleDestroyEvent destroyEvent = new VehicleDestroyEvent(vehicle, attacker);
-+               this.field_70170_p.getServerCB().getPluginManager().callEvent(destroyEvent);
-+               if (destroyEvent.isCancelled()) {
-+                  this.func_70266_a(40F); // Maximize damage so this doesn't get triggered again right away
++               this.field_70170_p.getServerCB().getPluginManager().callEvent(event);
++
++               if(destroyEvent.isCancelled()){
++                  this.func_70266_a(40F); // Maximize damage so this doesn't trigger again right away
 +                  return true;
 +               }
 +               // CraftBukkit end
++
                 if (!flag && this.field_70170_p.func_82736_K().func_223586_b(GameRules.field_223604_g)) {
                    this.func_199703_a(this.func_184455_j());
                 }
-@@ -169,9 +201,27 @@
+@@ -169,9 +196,29 @@
     public void func_70108_f(Entity p_70108_1_) {
        if (p_70108_1_ instanceof BoatEntity) {
           if (p_70108_1_.func_174813_aQ().field_72338_b < this.func_174813_aQ().field_72337_e) {
 +            // CraftBukkit start
-+            if (!this.func_184223_x(p_70108_1_)) {
++            if(!this.func_184223_x(p_70108_1_)) { // isSameVehicle == isRidingSameEntity maybe?
 +               VehicleEntityCollisionEvent event = new VehicleEntityCollisionEvent((Vehicle) this.getBukkitEntity(), p_70108_1_.getBukkitEntity());
 +               this.field_70170_p.getServerCB().getPluginManager().callEvent(event);
-+               if (event.isCancelled()) {
++
++               if(event.isCancelled()){
 +                  return;
 +               }
 +            }
@@ -76,10 +93,11 @@
           }
        } else if (p_70108_1_.func_174813_aQ().field_72338_b <= this.func_174813_aQ().field_72338_b) {
 +         // CraftBukkit start
-+         if (!this.func_184223_x(p_70108_1_)) {
++         if(!this.func_184223_x(p_70108_1_)) { // isSameVehicle == isRidingSameEntity maybe?
 +            VehicleEntityCollisionEvent event = new VehicleEntityCollisionEvent((Vehicle) this.getBukkitEntity(), p_70108_1_.getBukkitEntity());
 +            this.field_70170_p.getServerCB().getPluginManager().callEvent(event);
-+            if (event.isCancelled()) {
++
++            if(event.isCancelled()){
 +               return;
 +            }
 +         }
@@ -87,16 +105,19 @@
           super.func_70108_f(p_70108_1_);
        }
  
-@@ -259,6 +309,19 @@
+@@ -259,6 +306,22 @@
           this.func_213317_d(Vec3d.field_186680_a);
        }
  
 +      // CraftBukkit start
 +      org.bukkit.Server server = this.field_70170_p.getServerCB();
-+      org.bukkit.World bworld = this.field_70170_p.getWorldCB();
-+      Location to = new Location(bworld, this.func_226277_ct_(), this.func_226278_cu_(), this.func_226281_cx_(), this.field_70177_z, this.field_70125_A);
++      org.bukkit.World world = this.field_70170_p.getWorldCB();
++
++      Location to = new Location(world, this.func_226277_ct_(), this.func_226278_cu_(), this.func_226281_cx_());
 +      Vehicle vehicle = (Vehicle) this.getBukkitEntity();
-+      server.getPluginManager().callEvent(new org.bukkit.event.vehicle.VehicleUpdateEvent(vehicle));
++
++      server.getPluginManager().callEvent(new VehicleUpdateEvent(vehicle));
++
 +      if (lastLocation != null && !lastLocation.equals(to)) {
 +         VehicleMoveEvent event = new VehicleMoveEvent(vehicle, lastLocation, to);
 +         server.getPluginManager().callEvent(event);
@@ -116,7 +137,7 @@
                             ++k1;
                          }
                       }
-@@ -684,16 +747,22 @@
+@@ -684,17 +747,23 @@
  
                 this.func_225503_b_(this.field_70143_R, 1.0F);
                 if (!this.field_70170_p.field_72995_K && !this.field_70128_L) {
@@ -142,24 +163,25 @@
 +                           this.func_199703_a(Items.field_151055_y);
 +                        }
                       }
--                  }
-+                  } // CraftBukkit end
-                }
+                   }
+-               }
++               } // CraftBukkit end
              }
  
+             this.field_70143_R = 0.0F;
 @@ -776,6 +845,17 @@
        return new SSpawnObjectPacket(this);
     }
  
 +   // Forge: Fix MC-119811 by instantly completing lerp on board
 +   @Override
-+   protected boolean addPassenger(Entity passenger) { // Mohist: Fix incompatible return type - Xiaowei Zhou
-+      boolean temp = super.addPassenger(passenger);
++   protected boolean addPassenger(Entity passenger) {
++      super.addPassenger(passenger);
 +      if (this.func_184186_bw() && this.field_184476_at > 0) {
 +         this.field_184476_at = 0;
 +         this.func_70080_a(this.field_70281_h, this.field_184477_av, this.field_184478_aw, (float)this.field_70273_g, (float)this.field_184479_ay);
 +      }
-+      return temp;
++      return false;
 +   }
 +
     public static enum Status {

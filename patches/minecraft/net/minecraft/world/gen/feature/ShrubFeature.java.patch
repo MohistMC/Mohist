@@ -19,18 +19,22 @@
           p_225557_3_ = p_225557_3_.func_177984_a();
           this.func_227216_a_(p_225557_1_, p_225557_2_, p_225557_3_, p_225557_4_, p_225557_6_, p_225557_7_);
  
-@@ -31,8 +34,14 @@
+@@ -31,8 +34,18 @@
                 }
              }
           }
++      // CraftBukkit start - Return false if gen was unsuccessful
 +      } else {
 +         return false;
        }
++      // CraftBukkit end
  
        return true;
     }
 +
++   // CraftBukkit start
 +   public boolean generate(IWorld generatoraccess, ChunkGenerator<? extends GenerationSettings> chunkgenerator, Random random, BlockPos blockposition, BaseTreeFeatureConfig fc) {
 +      return super.func_212245_a(generatoraccess, chunkgenerator, random, blockposition, fc);
 +   }
++   // CraftBukkit end
  }

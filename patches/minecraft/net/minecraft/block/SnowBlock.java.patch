@@ -5,7 +5,7 @@
     public void func_225534_a_(BlockState p_225534_1_, ServerWorld p_225534_2_, BlockPos p_225534_3_, Random p_225534_4_) {
        if (p_225534_2_.func_226658_a_(LightType.BLOCK, p_225534_3_) > 11) {
 +         // CraftBukkit start
-+         if (org.bukkit.craftbukkit.event.CraftEventFactory.callBlockFadeEvent(p_225534_2_, p_225534_3_, Blocks.field_150350_a.func_176223_P()).isCancelled()) {
++         if (org.bukkit.craftbukkit.v1_15_R1.event.CraftEventFactory.callBlockFadeEvent(p_225534_2_, p_225534_3_, Blocks.field_150350_a.func_176223_P()).isCancelled()) {
 +            return;
 +         }
 +         // CraftBukkit end

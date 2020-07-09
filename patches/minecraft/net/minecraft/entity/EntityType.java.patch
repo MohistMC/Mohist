@@ -1,17 +1,21 @@
 --- a/net/minecraft/entity/EntityType.java
 +++ b/net/minecraft/entity/EntityType.java
-@@ -134,8 +134,9 @@
+@@ -132,10 +132,13 @@
+ import net.minecraft.world.World;
+ import net.minecraftforge.api.distmarker.Dist;
  import net.minecraftforge.api.distmarker.OnlyIn;
++import net.minecraftforge.event.ForgeEventFactory;
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
 +import org.bukkit.event.entity.CreatureSpawnEvent;
++import java.util.Set; // Paper
  
 -public class EntityType<T extends Entity> {
 +public class EntityType<T extends Entity> extends net.minecraftforge.registries.ForgeRegistryEntry<EntityType<?>> {
     private static final Logger field_200731_aJ = LogManager.getLogger();
     public static final EntityType<AreaEffectCloudEntity> field_200788_b = func_200712_a("area_effect_cloud", EntityType.Builder.<AreaEffectCloudEntity>func_220322_a(AreaEffectCloudEntity::new, EntityClassification.MISC).func_220320_c().func_220321_a(6.0F, 0.5F));
     public static final EntityType<ArmorStandEntity> field_200789_c = func_200712_a("armor_stand", EntityType.Builder.<ArmorStandEntity>func_220322_a(ArmorStandEntity::new, EntityClassification.MISC).func_220321_a(0.5F, 1.975F));
-@@ -254,6 +255,12 @@
+@@ -254,6 +257,12 @@
     private ResourceLocation field_220358_bg;
     private final EntitySize field_220359_bi;
  
@@ -24,10 +28,21 @@
     private static <T extends Entity> EntityType<T> func_200712_a(String p_200712_0_, EntityType.Builder<T> p_200712_1_) {
        return Registry.func_218325_a(Registry.field_212629_r, p_200712_0_, p_200712_1_.func_206830_a(p_200712_0_));
     }
-@@ -266,7 +273,11 @@
+@@ -266,7 +275,22 @@
        return Registry.field_212629_r.func_218349_b(ResourceLocation.func_208304_a(p_220327_0_));
     }
  
++   public T spawnCreature(World worldIn, @Nullable CompoundNBT compound, @Nullable ITextComponent customName, @Nullable PlayerEntity playerIn, BlockPos pos, SpawnReason reason, boolean flag, boolean flag1, CreatureSpawnEvent.SpawnReason spawnReason) {
++      T t = this.func_220349_b(worldIn, compound, customName, playerIn, pos, reason, flag, flag1);
++      if (t instanceof MobEntity && ForgeEventFactory.doSpecialSpawn((MobEntity) t, worldIn, pos.func_177958_n(), pos.func_177956_o(), pos.func_177952_p(), null, reason)) {
++         return null;
++      }
++      return worldIn.addEntity(t,spawnReason) ? t : null;
++   }
++
++   public T link$spawnCreature(World worldIn, @Nullable CompoundNBT compound, @Nullable ITextComponent customName, @Nullable PlayerEntity playerIn, BlockPos pos, SpawnReason reason, boolean flag, boolean flag1, CreatureSpawnEvent.SpawnReason spawnReason) {
++      return spawnCreature(worldIn, compound, customName, playerIn, pos, reason, flag, flag1, spawnReason);
++   }
 +
     public EntityType(EntityType.IFactory<T> p_i51559_1_, EntityClassification p_i51559_2_, boolean p_i51559_3_, boolean p_i51559_4_, boolean p_i51559_5_, boolean p_i51559_6_, EntitySize p_i51559_7_) {
 +      this(p_i51559_1_, p_i51559_2_, p_i51559_3_, p_i51559_4_, p_i51559_5_, p_i51559_6_, p_i51559_7_, EntityType::defaultVelocitySupplier, EntityType::defaultTrackingRangeSupplier, EntityType::defaultUpdateIntervalSupplier, null);
@@ -36,7 +51,7 @@
        this.field_200732_aK = p_i51559_1_;
        this.field_220355_ba = p_i51559_2_;
        this.field_225438_be = p_i51559_6_;
-@@ -274,21 +285,32 @@
+@@ -274,6 +298,10 @@
        this.field_200734_aM = p_i51559_4_;
        this.field_220357_bd = p_i51559_5_;
        this.field_220359_bi = p_i51559_7_;
@@ -47,33 +62,38 @@
     }
  
     @Nullable
-    public Entity func_220331_a(World p_220331_1_, @Nullable ItemStack p_220331_2_, @Nullable PlayerEntity p_220331_3_, BlockPos p_220331_4_, SpawnReason p_220331_5_, boolean p_220331_6_, boolean p_220331_7_) {
--      return this.func_220342_a(p_220331_1_, p_220331_2_ == null ? null : p_220331_2_.func_77978_p(), p_220331_2_ != null && p_220331_2_.func_82837_s() ? p_220331_2_.func_200301_q() : null, p_220331_3_, p_220331_4_, p_220331_5_, p_220331_6_, p_220331_7_);
-+      // CraftBukkit start
-+      return this.spawnCreature(p_220331_1_, p_220331_2_ == null ? null : p_220331_2_.func_77978_p(), p_220331_2_ != null && p_220331_2_.func_82837_s() ? p_220331_2_.func_200301_q() : null, p_220331_3_, p_220331_4_, p_220331_5_, p_220331_6_, p_220331_7_, CreatureSpawnEvent.SpawnReason.SPAWNER_EGG);
-    }
+@@ -283,12 +311,18 @@
  
     @Nullable
     public T func_220342_a(World p_220342_1_, @Nullable CompoundNBT p_220342_2_, @Nullable ITextComponent p_220342_3_, @Nullable PlayerEntity p_220342_4_, BlockPos p_220342_5_, SpawnReason p_220342_6_, boolean p_220342_7_, boolean p_220342_8_) {
 -      T t = this.func_220349_b(p_220342_1_, p_220342_2_, p_220342_3_, p_220342_4_, p_220342_5_, p_220342_6_, p_220342_7_, p_220342_8_);
 -      p_220342_1_.func_217376_c(t);
 -      return t;
-+      return this.spawnCreature(p_220342_1_, p_220342_2_, p_220342_3_, p_220342_4_, p_220342_5_, p_220342_6_, p_220342_7_, p_220342_8_, CreatureSpawnEvent.SpawnReason.SPAWNER_EGG);
++      // CraftBukkit start
++      return spawn(p_220342_1_, p_220342_2_, p_220342_3_, p_220342_4_, p_220342_5_, p_220342_6_,p_220342_7_, p_220342_8_, CreatureSpawnEvent.SpawnReason.SPAWNER_EGG);
     }
  
     @Nullable
-+   public T spawnCreature(World worldIn, @Nullable CompoundNBT compound, @Nullable ITextComponent customName, @Nullable PlayerEntity playerIn, BlockPos pos, SpawnReason reason, boolean p_220342_7_, boolean p_220342_8_, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason spawnReason) {
++   public T spawn(World worldIn, @Nullable CompoundNBT compound, @Nullable ITextComponent customName, @Nullable PlayerEntity playerIn, BlockPos pos, SpawnReason reason, boolean p_220342_7_, boolean p_220342_8_, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason spawnReason) {
 +      T t = this.func_220349_b(worldIn, compound, customName, playerIn, pos, reason, p_220342_7_, p_220342_8_);
-+      // if (t instanceof net.minecraft.entity.MobEntity && net.minecraftforge.event.ForgeEventFactory.doSpecialSpawn((net.minecraft.entity.MobEntity) t, worldIn, pos.getX(), pos.getY(), pos.getZ(), null, reason)) return null;
-+      return worldIn.addEntity(t, spawnReason) ? t : null;// Don't return an entity when CreatureSpawnEvent is canceled
-+      // CraftBukkit end
++      if (t instanceof net.minecraft.entity.MobEntity && net.minecraftforge.event.ForgeEventFactory.doSpecialSpawn((net.minecraft.entity.MobEntity) t, worldIn, pos.func_177958_n(), pos.func_177956_o(), pos.func_177952_p(), null, reason)) return null;
++      return worldIn.addEntity(t, spawnReason) ? t : null;  // Don't return an entity when CreatureSpawnEvent is canceled
 +   }
 +
 +   @Nullable
     public T func_220349_b(World p_220349_1_, @Nullable CompoundNBT p_220349_2_, @Nullable ITextComponent p_220349_3_, @Nullable PlayerEntity p_220349_4_, BlockPos p_220349_5_, SpawnReason p_220349_6_, boolean p_220349_7_, boolean p_220349_8_) {
        T t = this.func_200721_a(p_220349_1_);
        if (t == null) {
-@@ -466,6 +488,9 @@
+@@ -315,7 +349,7 @@
+             t.func_200203_b(p_220349_3_);
+          }
+ 
+-         func_208048_a(p_220349_1_, p_220349_4_, t, p_220349_2_);
++         try { func_208048_a(p_220349_1_, p_220349_4_, t, p_220349_2_); } catch (Throwable throwable) { field_200731_aJ.warn("Error loading spawn egg NBT", throwable); } // CraftBukkit - SPIGOT-5665
+          return t;
+       }
+    }
+@@ -466,6 +500,9 @@
     }
  
     public int func_220345_k() {
@@ -83,18 +103,17 @@
        if (this == field_200729_aH) {
           return 32;
        } else if (this == field_200801_o) {
-@@ -478,6 +503,10 @@
+@@ -478,6 +515,9 @@
     }
  
     public int func_220332_l() {
-+      // CraftBukkit - SPIGOT-3729: track area effect clouds
-+      return this != EntityType.field_200729_aH && this != EntityType.field_200805_s ? (this == EntityType.field_200808_v ? 4 : (this == EntityType.field_200730_aI ? 5 : (this != EntityType.field_200744_aj && this != EntityType.field_200799_m && this != EntityType.field_200767_G && this != EntityType.field_200723_aB && this != EntityType.field_200746_al && this != EntityType.field_200770_J && this != EntityType.field_200752_ar && this != EntityType.field_200751_aq && this != EntityType.field_200754_at && this != EntityType.field_200753_as && this != EntityType.field_200810_x && this != EntityType.field_200735_aa ? (this != EntityType.field_200790_d && this != EntityType.field_200747_am && this != EntityType.field_203098_aL && this != EntityType.field_200765_E && this != EntityType.field_200809_w && this != EntityType.field_200807_u ? (this != EntityType.field_200766_F && this != EntityType.field_200768_H && this != EntityType.field_200782_V && this != EntityType.field_200801_o ? 3 : Integer.MAX_VALUE) : 20) : 10))) : 2;
++      return updateIntervalSupplier.applyAsInt(this);
 +   }
 +   private int defaultUpdateIntervalSupplier() {
        if (this != field_200729_aH && this != field_200805_s) {
           if (this == field_200808_v) {
              return 4;
-@@ -498,6 +527,9 @@
+@@ -498,6 +538,9 @@
     }
  
     public boolean func_220340_m() {
@@ -104,7 +123,7 @@
        return this != field_200729_aH && this != field_200770_J && this != field_200760_az && this != field_200791_e && this != field_200766_F && this != field_200768_H && this != field_200782_V && this != field_200801_o && this != field_200805_s;
     }
  
-@@ -505,12 +537,30 @@
+@@ -505,12 +548,30 @@
        return p_220341_1_.func_199685_a_(this);
     }
  
@@ -135,7 +154,7 @@
        private boolean field_225436_f;
        private EntitySize field_220326_f = EntitySize.func_220314_b(0.6F, 1.8F);
  
-@@ -555,11 +605,35 @@
+@@ -555,11 +616,35 @@
           return this;
        }
  
@@ -172,7 +191,7 @@
                 if (SharedConstants.field_206244_b) {
                    throw illegalstateexception;
                 }
-@@ -568,7 +642,7 @@
+@@ -568,10 +653,16 @@
              }
           }
  
@@ -181,3 +200,12 @@
        }
     }
  
++   // Paper start
++   public static Set<ResourceLocation> getEntityNameList() {
++      return Registry.field_212629_r.func_148742_b();
++   }
++   // Paper end
++
+    public interface IFactory<T extends Entity> {
+       T create(EntityType<T> p_create_1_, World p_create_2_);
+    }

@@ -1,6 +1,6 @@
 --- a/net/minecraft/item/TridentItem.java
 +++ b/net/minecraft/item/TridentItem.java
-@@ -8,6 +8,7 @@
+@@ -8,13 +8,13 @@
  import net.minecraft.entity.SharedMonsterAttributes;
  import net.minecraft.entity.ai.attributes.AttributeModifier;
  import net.minecraft.entity.player.PlayerEntity;
@@ -8,7 +8,14 @@
  import net.minecraft.entity.projectile.AbstractArrowEntity;
  import net.minecraft.entity.projectile.TridentEntity;
  import net.minecraft.inventory.EquipmentSlotType;
-@@ -26,9 +27,13 @@
+ import net.minecraft.stats.Stats;
+ import net.minecraft.util.ActionResult;
+ import net.minecraft.util.Hand;
+-import net.minecraft.util.ResourceLocation;
+ import net.minecraft.util.SoundCategory;
+ import net.minecraft.util.SoundEvent;
+ import net.minecraft.util.SoundEvents;
+@@ -26,9 +26,13 @@
  public class TridentItem extends Item {
     public TridentItem(Item.Properties p_i48788_1_) {
        super(p_i48788_1_);
@@ -24,7 +31,7 @@
     }
  
     public boolean func_195938_a(BlockState p_195938_1_, World p_195938_2_, BlockPos p_195938_3_, PlayerEntity p_195938_4_) {
-@@ -51,9 +56,12 @@
+@@ -51,9 +55,12 @@
              int j = EnchantmentHelper.func_203190_g(p_77615_1_);
              if (j <= 0 || playerentity.func_70026_G()) {
                 if (!p_77615_2_.field_72995_K) {
@@ -39,7 +46,7 @@
                    if (j == 0) {
                       TridentEntity tridententity = new TridentEntity(p_77615_2_, playerentity, p_77615_1_);
                       tridententity.func_184547_a(playerentity, playerentity.field_70125_A, playerentity.field_70177_z, 0.0F, 2.5F + (float)j * 0.5F, 1.0F);
-@@ -61,16 +69,39 @@
+@@ -61,16 +68,39 @@
                          tridententity.field_70251_a = AbstractArrowEntity.PickupStatus.CREATIVE_ONLY;
                       }
  
@@ -74,7 +81,7 @@
                 playerentity.func_71029_a(Stats.field_75929_E.func_199076_b(this));
                 if (j > 0) {
 +                  // CraftBukkit start
-+                  org.bukkit.event.player.PlayerRiptideEvent event = new org.bukkit.event.player.PlayerRiptideEvent((org.bukkit.entity.Player) playerentity.getBukkitEntity(), org.bukkit.craftbukkit.inventory.CraftItemStack.asCraftMirror(p_77615_1_));
++                  org.bukkit.event.player.PlayerRiptideEvent event = new org.bukkit.event.player.PlayerRiptideEvent((org.bukkit.entity.Player) playerentity.getBukkitEntity(), org.bukkit.craftbukkit.v1_15_R1.inventory.CraftItemStack.asCraftMirror(p_77615_1_));
 +                  event.getPlayer().getServer().getPluginManager().callEvent(event);
 +                  // CraftBukkit end
                    float f7 = playerentity.field_70177_z;

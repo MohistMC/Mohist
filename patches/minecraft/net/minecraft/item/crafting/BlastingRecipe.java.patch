@@ -1,20 +1,18 @@
 --- a/net/minecraft/item/crafting/BlastingRecipe.java
 +++ b/net/minecraft/item/crafting/BlastingRecipe.java
-@@ -3,6 +3,13 @@
+@@ -3,6 +3,11 @@
  import net.minecraft.block.Blocks;
  import net.minecraft.item.ItemStack;
  import net.minecraft.util.ResourceLocation;
-+// CraftBukkit start
-+import org.bukkit.craftbukkit.inventory.CraftBlastingRecipe;
-+import org.bukkit.craftbukkit.inventory.CraftItemStack;
-+import org.bukkit.craftbukkit.inventory.CraftRecipe;
-+import org.bukkit.craftbukkit.util.CraftNamespacedKey;
++import org.bukkit.craftbukkit.v1_15_R1.inventory.CraftBlastingRecipe;
++import org.bukkit.craftbukkit.v1_15_R1.inventory.CraftItemStack;
++import org.bukkit.craftbukkit.v1_15_R1.inventory.CraftRecipe;
++import org.bukkit.craftbukkit.v1_15_R1.util.CraftNamespacedKey;
 +import org.bukkit.inventory.Recipe;
-+// CraftBukkit end
  
  public class BlastingRecipe extends AbstractCookingRecipe {
     public BlastingRecipe(ResourceLocation p_i50031_1_, String p_i50031_2_, Ingredient p_i50031_3_, ItemStack p_i50031_4_, float p_i50031_5_, int p_i50031_6_) {
-@@ -16,4 +23,14 @@
+@@ -16,4 +21,14 @@
     public IRecipeSerializer<?> func_199559_b() {
        return IRecipeSerializer.field_222172_p;
     }

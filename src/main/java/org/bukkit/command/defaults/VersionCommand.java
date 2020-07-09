@@ -13,7 +13,6 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.util.StringUtil;
 import org.jetbrains.annotations.NotNull;
-import red.mohist.Mohist;
 
 public class VersionCommand extends BukkitCommand {
     public VersionCommand(@NotNull String name) {
@@ -30,7 +29,7 @@ public class VersionCommand extends BukkitCommand {
         if (!testPermission(sender)) return true;
 
         if (args.length == 0) {
-            sender.sendMessage("This server is running " + Bukkit.getName() + " version " + Mohist.getVersion() +  " (MC: 1.15.2) (Implementing API version " + Bukkit.getBukkitVersion() + ", Forge version " + ForgeVersion.getVersion() + ")");
+            sender.sendMessage("This server is running " + Bukkit.getName() + " version "  +  " (MC: 1.15.2) (Implementing API version " + Bukkit.getBukkitVersion() + ", Forge version " + ForgeVersion.getVersion() + ")");
         } else {
             StringBuilder name = new StringBuilder();
 

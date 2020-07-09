@@ -20,13 +20,17 @@
 package net.minecraftforge.common.model;
 
 import java.lang.reflect.Type;
+import java.util.EnumMap;
 import java.util.Map;
 
 import com.google.gson.*;
 import net.minecraft.client.renderer.*;
 import net.minecraft.util.math.MathHelper;
 
+import com.google.common.collect.Maps;
+
 import net.minecraft.client.renderer.model.ItemTransformVec3f;
+import net.minecraft.util.Direction;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 

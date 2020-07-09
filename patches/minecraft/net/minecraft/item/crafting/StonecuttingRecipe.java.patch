@@ -1,20 +1,18 @@
 --- a/net/minecraft/item/crafting/StonecuttingRecipe.java
 +++ b/net/minecraft/item/crafting/StonecuttingRecipe.java
-@@ -5,6 +5,13 @@
+@@ -5,6 +5,11 @@
  import net.minecraft.item.ItemStack;
  import net.minecraft.util.ResourceLocation;
  import net.minecraft.world.World;
-+// CraftBukkit start
-+import org.bukkit.craftbukkit.inventory.CraftItemStack;
-+import org.bukkit.craftbukkit.inventory.CraftRecipe;
-+import org.bukkit.craftbukkit.inventory.CraftStonecuttingRecipe;
-+import org.bukkit.craftbukkit.util.CraftNamespacedKey;
++import org.bukkit.craftbukkit.v1_15_R1.inventory.CraftItemStack;
++import org.bukkit.craftbukkit.v1_15_R1.inventory.CraftRecipe;
++import org.bukkit.craftbukkit.v1_15_R1.inventory.CraftStonecuttingRecipe;
++import org.bukkit.craftbukkit.v1_15_R1.util.CraftNamespacedKey;
 +import org.bukkit.inventory.Recipe;
-+// CraftBukkit end
  
  public class StonecuttingRecipe extends SingleItemRecipe {
     public StonecuttingRecipe(ResourceLocation p_i50021_1_, String p_i50021_2_, Ingredient p_i50021_3_, ItemStack p_i50021_4_) {
-@@ -18,4 +25,14 @@
+@@ -18,4 +23,14 @@
     public ItemStack func_222128_h() {
        return new ItemStack(Blocks.field_222430_lS);
     }

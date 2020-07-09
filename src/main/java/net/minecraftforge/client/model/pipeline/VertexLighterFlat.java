@@ -55,7 +55,7 @@ public class VertexLighterFlat extends QuadGatheringTransformer
 
     protected VertexFormat baseFormat;
     protected MatrixStack.Entry pose;
-    
+
     public VertexLighterFlat(BlockColors colors)
     {
         this.blockInfo = new BlockInfo(colors);
@@ -67,7 +67,7 @@ public class VertexLighterFlat extends QuadGatheringTransformer
         super.setParent(parent);
         setVertexFormat(parent.getVertexFormat());
     }
-    
+
     public void setTransform(final MatrixStack.Entry pose)
     {
         this.pose = pose;

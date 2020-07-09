@@ -8,14 +8,14 @@
     }
  
     private void func_227829_a_(FloatBuffer p_227829_1_, int p_227829_2_) {
-@@ -298,6 +297,7 @@
+@@ -297,6 +296,7 @@
+          this.func_178965_a();
        }
  
++      field_179001_a.order(this.field_179001_a.order()); // FORGE: Fix incorrect byte order
        ByteBuffer bytebuffer = this.field_179001_a.slice();
-+      bytebuffer.order(this.field_179001_a.order()); // FORGE: Fix incorrect byte order
        ((Buffer)this.field_179001_a).clear();
        return Pair.of(bufferbuilder$drawstate, bytebuffer);
-    }
 @@ -365,4 +365,15 @@
           this.field_179018_e = p_i225907_2_;
        }

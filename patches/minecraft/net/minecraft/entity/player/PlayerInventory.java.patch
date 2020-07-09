@@ -1,69 +1,70 @@
 --- a/net/minecraft/entity/player/PlayerInventory.java
 +++ b/net/minecraft/entity/player/PlayerInventory.java
-@@ -1,6 +1,8 @@
+@@ -1,6 +1,7 @@
  package net.minecraft.entity.player;
  
  import com.google.common.collect.ImmutableList;
-+
 +import java.util.ArrayList;
  import java.util.Iterator;
  import java.util.List;
  import java.util.function.Predicate;
-@@ -26,6 +28,12 @@
+@@ -26,6 +27,10 @@
  import net.minecraft.world.World;
  import net.minecraftforge.api.distmarker.Dist;
  import net.minecraftforge.api.distmarker.OnlyIn;
-+// CraftBukkit start
 +import org.bukkit.Location;
-+import org.bukkit.craftbukkit.entity.CraftHumanEntity;
++import org.bukkit.craftbukkit.v1_15_R1.entity.CraftHumanEntity;
 +import org.bukkit.entity.HumanEntity;
 +import org.bukkit.inventory.InventoryHolder;
-+// CraftBukkit end
  
  public class PlayerInventory implements IInventory, INameable {
     public final NonNullList<ItemStack> field_70462_a = NonNullList.func_191197_a(36, ItemStack.field_190927_a);
-@@ -37,6 +45,53 @@
+@@ -37,6 +42,57 @@
     private ItemStack field_70457_g = ItemStack.field_190927_a;
     private int field_194017_h;
  
 +   // CraftBukkit start - add fields and methods
-+   public List<HumanEntity> transaction = new java.util.ArrayList<HumanEntity>();
 +   private int maxStack = MAX_STACK;
-+
-+   public List<ItemStack> getContents() {
-+      final List<ItemStack> combined = new ArrayList<ItemStack>(this.field_70462_a.size() + this.field_70460_b.size() + this.field_184439_c.size());
-+      for (final List<ItemStack> sub : this.field_184440_g) {
-+         combined.addAll(sub);
-+      }
-+      return combined;
-+   }
-+
-+   public List<ItemStack> getArmorContents() {
-+      return this.field_70460_b;
-+   }
-+
-+   public void onOpen(CraftHumanEntity who) {
-+      this.transaction.add(who);
-+   }
-+
-+   public void onClose(CraftHumanEntity who) {
-+      this.transaction.remove(who);
-+   }
-+
-+   public List<HumanEntity> getViewers() {
-+      return this.transaction;
-+   }
-+
-+   public InventoryHolder getOwner() {
-+      return this.field_70458_d.getBukkitEntity();
-+   }
++   public List<HumanEntity> transaction = new java.util.ArrayList<HumanEntity>();
 +
 +   @Override
 +   public int func_70297_j_() {
 +      return this.maxStack;
 +   }
 +
-+   public void setMaxStackSize(final int size) {
++   public List<ItemStack> getArmorContents() {
++      return this.field_70460_b;
++   }
++
++   @Override
++   public List<ItemStack> getContents() {
++      final List<ItemStack> combined = new ArrayList<>(this.field_70462_a.size() + this.field_70460_b.size() + this.field_184439_c.size());
++      this.field_184440_g.forEach(combined::addAll);
++      return combined;
++   }
++
++   @Override
++   public void onOpen(CraftHumanEntity who) {
++      this.transaction.add(who);
++   }
++
++   @Override
++   public void onClose(CraftHumanEntity who) {
++      this.transaction.remove(who);
++   }
++
++   @Override
++   public List<HumanEntity> getViewers() {
++      return this.transaction;
++   }
++
++   @Override
++   public InventoryHolder getOwner() {
++      return this.field_70458_d.getBukkitEntity();
++   }
++
++   @Override
++   public void setMaxStackSize(int size) {
 +      this.maxStack = size;
 +   }
 +
@@ -76,7 +77,7 @@
     public PlayerInventory(PlayerEntity p_i1750_1_) {
        this.field_70458_d = p_i1750_1_;
     }
-@@ -57,6 +112,32 @@
+@@ -57,6 +113,32 @@
        return p_184431_1_.func_77973_b() == p_184431_2_.func_77973_b() && ItemStack.func_77970_a(p_184431_1_, p_184431_2_);
     }
  
@@ -109,7 +110,7 @@
     public int func_70447_i() {
        for(int i = 0; i < this.field_70462_a.size(); ++i) {
           if (this.field_70462_a.get(i).func_190926_b()) {
-@@ -214,7 +295,8 @@
+@@ -214,7 +296,8 @@
        int i = p_191973_2_.func_190916_E();
        ItemStack itemstack = this.func_70301_a(p_191973_1_);
        if (itemstack.func_190926_b()) {
@@ -119,7 +120,7 @@
           if (p_191973_2_.func_77942_o()) {
              itemstack.func_77982_d(p_191973_2_.func_77978_p().func_74737_b());
           }
-@@ -265,7 +347,7 @@
+@@ -265,7 +348,7 @@
              }
           }
        }
@@ -128,7 +129,7 @@
     }
  
     public boolean func_70441_a(ItemStack p_70441_1_) {
-@@ -318,6 +400,8 @@
+@@ -318,6 +401,8 @@
           } catch (Throwable throwable) {
              CrashReport crashreport = CrashReport.func_85055_a(throwable, "Adding item to inventory");
              CrashReportCategory crashreportcategory = crashreport.func_85058_a("Item being added");
@@ -137,7 +138,7 @@
              crashreportcategory.func_71507_a("Item ID", Item.func_150891_b(p_191971_2_.func_77973_b()));
              crashreportcategory.func_71507_a("Item data", p_191971_2_.func_77952_i());
              crashreportcategory.func_189529_a("Item name", () -> {
-@@ -574,6 +658,11 @@
+@@ -574,6 +659,11 @@
     }
  
     public ItemStack func_70445_o() {
