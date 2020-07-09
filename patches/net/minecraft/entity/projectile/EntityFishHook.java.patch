@@ -158,7 +158,18 @@
                  {
                      worldserver.spawnParticle(EnumParticleTypes.WATER_SPLASH, d4, d5, d6, 2 + this.rand.nextInt(2), 0.10000000149011612D, 0.0D, 0.10000000149011612D, 0.0D);
                  }
-@@ -506,8 +515,14 @@
+@@ -482,8 +491,9 @@
+         }
+         else
+         {
+-            this.ticksCaughtDelay = MathHelper.getInt(this.rand, 100, 600);
++            this.ticksCaughtDelay = MathHelper.getInt(this.rand, world.spigotConfig.fishingMinTicks, world.spigotConfig.fishingMaxTicks); // Paper
+             this.ticksCaughtDelay -= this.lureSpeed * 20 * 5;
++            this.ticksCaughtDelay = Math.max(0, this.ticksCaughtDelay); // Paper - Don't allow negative values
+         }
+     }
+ 
+@@ -506,8 +516,14 @@
          {
              int i = 0;
  
@@ -173,7 +184,7 @@
                  this.bringInHookedEntity();
                  this.world.setEntityState(this, (byte)31);
                  i = this.caughtEntity instanceof EntityItem ? 3 : 5;
-@@ -515,11 +530,26 @@
+@@ -515,11 +531,26 @@
              else if (this.ticksCatchable > 0)
              {
                  LootContext.Builder lootcontext$builder = new LootContext.Builder((WorldServer)this.world);
@@ -202,7 +213,7 @@
                      double d0 = this.angler.posX - this.posX;
                      double d1 = this.angler.posY - this.posY;
                      double d2 = this.angler.posZ - this.posZ;
-@@ -529,7 +559,12 @@
+@@ -529,7 +560,12 @@
                      entityitem.motionY = d1 * 0.1D + (double)MathHelper.sqrt(d3) * 0.08D;
                      entityitem.motionZ = d2 * 0.1D;
                      this.world.spawnEntity(entityitem);
@@ -216,7 +227,7 @@
                      Item item = itemstack.getItem();
  
                      if (item == Items.FISH || item == Items.COOKED_FISH)
-@@ -543,11 +578,24 @@
+@@ -543,11 +579,24 @@
  
              if (this.inGround)
              {
