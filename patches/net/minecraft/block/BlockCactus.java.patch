@@ -27,7 +27,12 @@
          BlockPos blockpos = pos.up();
  
          if (worldIn.isAirBlock(blockpos))
-@@ -51,9 +52,12 @@
+@@ -47,13 +48,16 @@
+                 ;
+             }
+ 
+-            if (i < 3)
++            if (i < worldIn.spigotConfig.cactusMaxHeight) // Paper - Configurable growth height
              {
                  int j = ((Integer)state.getValue(AGE)).intValue();
  
