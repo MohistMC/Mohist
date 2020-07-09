@@ -93,7 +93,19 @@
           return t;
        }
     }
-@@ -466,6 +500,9 @@
+@@ -345,6 +379,11 @@
+       }
+    }
+ 
++   public boolean isPersistable() {
++      return func_200715_a();
++   }
++   // Paper - OBFHELPER
++
+    public boolean func_200715_a() {
+       return this.field_200733_aL;
+    }
+@@ -466,6 +505,9 @@
     }
  
     public int func_220345_k() {
@@ -103,7 +115,7 @@
        if (this == field_200729_aH) {
           return 32;
        } else if (this == field_200801_o) {
-@@ -478,6 +515,9 @@
+@@ -478,6 +520,9 @@
     }
  
     public int func_220332_l() {
@@ -113,7 +125,7 @@
        if (this != field_200729_aH && this != field_200805_s) {
           if (this == field_200808_v) {
              return 4;
-@@ -498,6 +538,9 @@
+@@ -498,6 +543,9 @@
     }
  
     public boolean func_220340_m() {
@@ -123,7 +135,7 @@
        return this != field_200729_aH && this != field_200770_J && this != field_200760_az && this != field_200791_e && this != field_200766_F && this != field_200768_H && this != field_200782_V && this != field_200801_o && this != field_200805_s;
     }
  
-@@ -505,12 +548,30 @@
+@@ -505,12 +553,30 @@
        return p_220341_1_.func_199685_a_(this);
     }
  
@@ -154,7 +166,7 @@
        private boolean field_225436_f;
        private EntitySize field_220326_f = EntitySize.func_220314_b(0.6F, 1.8F);
  
-@@ -555,11 +616,35 @@
+@@ -555,11 +621,35 @@
           return this;
        }
  
@@ -191,7 +203,7 @@
                 if (SharedConstants.field_206244_b) {
                    throw illegalstateexception;
                 }
-@@ -568,10 +653,16 @@
+@@ -568,10 +658,16 @@
              }
           }
  
