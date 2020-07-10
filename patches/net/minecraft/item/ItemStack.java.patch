@@ -251,7 +251,25 @@
      }
  
      public boolean attemptDamageItem(int amount, Random rand, @Nullable EntityPlayerMP damager)
-@@ -298,6 +353,18 @@
+@@ -288,8 +343,17 @@
+                 int i = EnchantmentHelper.getEnchantmentLevel(Enchantments.UNBREAKING, this);
+                 int j = 0;
+ 
++                i = Math.min(5, i); // EMC
+                 for (int k = 0; i > 0 && k < amount; ++k)
+                 {
++                    // EMC start - make Unbreaking scale to level for armor. 5 = 80% chance of no loss.
++                    if (getItem() instanceof ItemArmor) {
++                        if (rand.nextFloat() >= 1 - (.8 * (i / 5))) {
++                            j++;
++                        }
++                        continue;
++                    }
++                    // EMC end
+                     if (EnchantmentDurability.negateDamage(this, i, rand))
+                     {
+                         ++j;
+@@ -298,6 +362,18 @@
  
                  amount -= j;
  
@@ -270,7 +288,7 @@
                  if (amount <= 0)
                  {
                      return false;
-@@ -309,8 +376,8 @@
+@@ -309,8 +385,8 @@
                  CriteriaTriggers.ITEM_DURABILITY_CHANGED.trigger(damager, this, this.itemDamage + amount);
              }
  
@@ -281,7 +299,7 @@
          }
      }
  
-@@ -323,6 +390,11 @@
+@@ -323,6 +399,11 @@
                  if (this.attemptDamageItem(amount, entityIn.getRNG(), entityIn instanceof EntityPlayerMP ? (EntityPlayerMP)entityIn : null))
                  {
                      entityIn.renderBrokenItemStack(this);
@@ -293,7 +311,7 @@
                      this.shrink(1);
  
                      if (entityIn instanceof EntityPlayer)
-@@ -359,7 +431,7 @@
+@@ -359,7 +440,7 @@
  
      public boolean canHarvestBlock(IBlockState blockIn)
      {
@@ -302,7 +320,7 @@
      }
  
      public boolean interactWithEntity(EntityPlayer playerIn, EntityLivingBase entityIn, EnumHand hand)
-@@ -369,7 +441,7 @@
+@@ -369,7 +450,7 @@
  
      public ItemStack copy()
      {
@@ -311,7 +329,7 @@
          itemstack.setAnimationsToGo(this.getAnimationsToGo());
  
          if (this.stackTagCompound != null)
-@@ -394,7 +466,7 @@
+@@ -394,7 +475,7 @@
              }
              else
              {
@@ -320,7 +338,7 @@
              }
          }
          else
-@@ -435,7 +507,7 @@
+@@ -435,7 +516,7 @@
          }
          else
          {
@@ -329,7 +347,7 @@
          }
      }
  
-@@ -862,6 +934,7 @@
+@@ -862,6 +943,7 @@
              }
          }
  
@@ -337,7 +355,7 @@
          return list;
      }
  
-@@ -871,6 +944,7 @@
+@@ -871,6 +953,7 @@
          return this.getItem().hasEffect(this);
      }
  
@@ -345,7 +363,7 @@
      public EnumRarity getRarity()
      {
          return this.getItem().getRarity(this);
-@@ -957,6 +1031,14 @@
+@@ -957,6 +1040,14 @@
  
      public void setRepairCost(int cost)
      {
@@ -360,7 +378,7 @@
          if (!this.hasTagCompound())
          {
              this.stackTagCompound = new NBTTagCompound();
-@@ -987,7 +1069,7 @@
+@@ -987,7 +1078,7 @@
          }
          else
          {
@@ -369,7 +387,7 @@
          }
  
          return multimap;
-@@ -1017,6 +1099,14 @@
+@@ -1017,6 +1108,14 @@
          nbttaglist.appendTag(nbttagcompound);
      }
  
@@ -384,7 +402,7 @@
      public ITextComponent getTextComponent()
      {
          TextComponentString textcomponentstring = new TextComponentString(this.getDisplayName());
-@@ -1032,7 +1122,7 @@
+@@ -1032,7 +1131,7 @@
          {
              NBTTagCompound nbttagcompound = this.writeToNBT(new NBTTagCompound());
              itextcomponent.getStyle().setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_ITEM, new TextComponentString(nbttagcompound.toString())));
@@ -393,7 +411,7 @@
          }
  
          return itextcomponent;
-@@ -1130,4 +1220,140 @@
+@@ -1130,4 +1229,140 @@
      {
          this.grow(-quantity);
      }

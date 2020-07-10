@@ -77,7 +77,61 @@
              this.adjacentChestChecked = true;
              this.adjacentChestXNeg = this.getAdjacentChest(EnumFacing.WEST);
              this.adjacentChestXPos = this.getAdjacentChest(EnumFacing.EAST);
-@@ -323,8 +353,21 @@
+@@ -208,37 +238,39 @@
+         }
+     }
+ 
+-    public void update()
+-    {
++    public void update() {
+         this.checkForAdjacentChests();
+         int i = this.pos.getX();
+         int j = this.pos.getY();
+         int k = this.pos.getZ();
+         ++this.ticksSinceSync;
+ 
+-        if (!this.world.isRemote && this.numPlayersUsing != 0 && (this.ticksSinceSync + i + j + k) % 200 == 0)
+-        {
++        if (!this.world.isRemote && this.numPlayersUsing != 0 && (this.ticksSinceSync + i + j + k) % 200 == 0) {
+             this.numPlayersUsing = 0;
+             float f = 5.0F;
+ 
+-            for (EntityPlayer entityplayer : this.world.getEntitiesWithinAABB(EntityPlayer.class, new AxisAlignedBB((double)((float)i - 5.0F), (double)((float)j - 5.0F), (double)((float)k - 5.0F), (double)((float)(i + 1) + 5.0F), (double)((float)(j + 1) + 5.0F), (double)((float)(k + 1) + 5.0F))))
+-            {
+-                if (entityplayer.openContainer instanceof ContainerChest)
+-                {
+-                    IInventory iinventory = ((ContainerChest)entityplayer.openContainer).getLowerChestInventory();
++            for (EntityPlayer entityplayer : this.world.getEntitiesWithinAABB(EntityPlayer.class, new AxisAlignedBB((double) ((float) i - 5.0F), (double) ((float) j - 5.0F), (double) ((float) k - 5.0F), (double) ((float) (i + 1) + 5.0F), (double) ((float) (j + 1) + 5.0F), (double) ((float) (k + 1) + 5.0F)))) {
++                if (entityplayer.openContainer instanceof ContainerChest) {
++                    IInventory iinventory = ((ContainerChest) entityplayer.openContainer).getLowerChestInventory();
+ 
+-                    if (iinventory == this || iinventory instanceof InventoryLargeChest && ((InventoryLargeChest)iinventory).isPartOfLargeChest(this))
+-                    {
++                    if (iinventory == this || iinventory instanceof InventoryLargeChest && ((InventoryLargeChest) iinventory).isPartOfLargeChest(this)) {
+                         ++this.numPlayersUsing;
+                     }
+                 }
+             }
+         }
+-
++        // Spigot start
++    }
++    private void sendSounds() {
++        this.checkForAdjacentChests(); // PAIL - findConnectedChest()
++        int i = this.pos.getX();
++        int j = this.pos.getY();
++        int k = this.pos.getZ();
++        // Spigot end
+         this.prevLidAngle = this.lidAngle;
+-        float f1 = 0.1F;
++        float f1 = 0.1F; // Spigot
+ 
+-        if (this.numPlayersUsing > 0 && this.lidAngle == 0.0F && this.adjacentChestZNeg == null && this.adjacentChestXNeg == null)
++        if (/*this.numPlayersUsing > 0 && this.lidAngle == 0.0F &&*/ this.adjacentChestZNeg == null && this.adjacentChestXNeg == null)// Spigot - Removed buggy close sound checks
+         {
+             double d1 = (double)i + 0.5D;
+             double d2 = (double)k + 0.5D;
+@@ -323,8 +355,21 @@
                  this.numPlayersUsing = 0;
              }
  
@@ -99,7 +153,7 @@
              this.world.notifyNeighborsOfStateChange(this.pos, this.getBlockType(), false);
  
              if (this.getChestType() == BlockChest.Type.TRAP)
-@@ -338,17 +381,47 @@
+@@ -338,17 +383,47 @@
      {
          if (!player.isSpectator() && this.getBlockType() instanceof BlockChest)
          {

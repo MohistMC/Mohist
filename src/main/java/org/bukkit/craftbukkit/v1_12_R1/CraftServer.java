@@ -176,6 +176,7 @@ import red.mohist.util.i18n.Message;
 
 public final class CraftServer implements Server {
     static {
+        com.empireminecraft.api.API api = com.empireminecraft.api.CraftEmpireAPI.instance; // EMC - Force load at server start
         ConfigurationSerialization.registerClass(CraftOfflinePlayer.class);
         CraftItemFactory.instance();
     }

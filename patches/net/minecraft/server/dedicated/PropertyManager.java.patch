@@ -79,7 +79,7 @@
          try
          {
 +            // CraftBukkit start - Don't attempt writing to file if it's read only
-+            if (this.serverPropertiesFile.exists() && !this.serverPropertiesFile.canWrite()) {
++            if (this.serverPropertiesFile.exists()) { // EMC - Never overwrite the file
 +                return;
 +            }
 +            // CraftBukkit end

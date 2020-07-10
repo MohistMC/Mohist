@@ -142,6 +142,7 @@ public class CreatureSpawnEvent extends EntitySpawnEvent {
          * When a creature is spawned by plugins
          */
         CUSTOM,
+        FORCE, // EMC
         /**
          * When an entity is missing a SpawnReason
          */

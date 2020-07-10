@@ -12,7 +12,7 @@
      private static final DataParameter<Integer> OCELOT_VARIANT = EntityDataManager.<Integer>createKey(EntityOcelot.class, DataSerializers.VARINT);
      private EntityAIAvoidEntity<EntityPlayer> avoidEntity;
      private EntityAITempt aiTempt;
-+    public boolean spawnBonus = true; // Spigot
++    public boolean spawnBonus = false; // Spigot // EMC
  
      public EntityOcelot(World worldIn)
      {

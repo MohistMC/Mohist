@@ -1,6 +1,18 @@
 --- ../src-base/minecraft/net/minecraft/tileentity/MobSpawnerBaseLogic.java
 +++ ../src-work/minecraft/net/minecraft/tileentity/MobSpawnerBaseLogic.java
-@@ -22,21 +22,21 @@
+@@ -6,6 +6,7 @@
+ import net.minecraft.entity.Entity;
+ import net.minecraft.entity.EntityLiving;
+ import net.minecraft.entity.IEntityLivingData;
++import net.minecraft.entity.player.EntityPlayer;
+ import net.minecraft.nbt.NBTTagCompound;
+ import net.minecraft.nbt.NBTTagList;
+ import net.minecraft.util.EnumParticleTypes;
+@@ -19,24 +20,25 @@
+ import net.minecraft.world.chunk.storage.AnvilChunkLoader;
+ import net.minecraftforge.fml.relauncher.Side;
+ import net.minecraftforge.fml.relauncher.SideOnly;
++import org.bukkit.craftbukkit.v1_12_R1.util.CraftNamespacedKey;
  
  public abstract class MobSpawnerBaseLogic
  {
@@ -30,7 +42,7 @@
      {
          String s = this.spawnData.getNbt().getString("id");
          return StringUtils.isNullOrEmpty(s) ? null : new ResourceLocation(s);
-@@ -47,6 +47,7 @@
+@@ -47,13 +49,30 @@
          if (id != null)
          {
              this.spawnData.getNbt().setString("id", id.toString());
@@ -38,7 +50,31 @@
          }
      }
  
-@@ -124,14 +125,21 @@
+     private boolean isActivated()
+     {
+         BlockPos blockpos = this.getSpawnerPosition();
+-        return this.getSpawnerWorld().isAnyPlayerWithinRangeAt((double)blockpos.getX() + 0.5D, (double)blockpos.getY() + 0.5D, (double)blockpos.getZ() + 0.5D, (double)this.activatingRangeFromPlayer);
++        //return this.getSpawnerWorld().isAnyPlayerWithinRangeAt((double)blockpos.getX() + 0.5D, (double)blockpos.getY() + 0.5D, (double)blockpos.getZ() + 0.5D, (double)this.activatingRangeFromPlayer);
++
++        // EMC start - Add in SpawnerInitiateEvent
++        final World world = this.getSpawnerWorld();
++        final int x = blockpos.getX();
++        final int y = blockpos.getY();
++        final int z = blockpos.getZ();
++        EntityPlayer entity = world.getClosestPlayer((double) x + 0.5D,
++                (double) y + 0.5D,
++                (double) z + 0.5D,
++                (double) this.activatingRangeFromPlayer, EntityPlayer.affectsSpawningPredicate);
++        if (entity == null) {
++            return false;
++        }
++        org.bukkit.Location loc = new org.bukkit.Location(world.getWorld(), x, y, z);
++        return new com.empireminecraft.customevents.SpawnerInitiateEvent(CraftNamespacedKey.fromMinecraft(this.getEntityId()), world.getWorld(), loc, entity.getBukkitEntity()).callEvent();
++        // EMC end
+     }
+ 
+     public void updateSpawner()
+@@ -124,14 +143,21 @@
                      EntityLiving entityliving = entity instanceof EntityLiving ? (EntityLiving)entity : null;
                      entity.setLocationAndAngles(entity.posX, entity.posY, entity.posZ, world.rand.nextFloat() * 360.0F, 0.0F);
  
@@ -62,7 +98,7 @@
                          world.playEvent(2004, blockpos, 0);
  
                          if (entityliving != null)
-@@ -307,4 +315,7 @@
+@@ -307,4 +333,7 @@
      {
          return this.prevMobRotation;
      }

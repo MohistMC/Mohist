@@ -9,9 +9,12 @@
          {
              return false;
          }
-@@ -84,6 +84,10 @@
+@@ -82,8 +82,12 @@
+             this.previousBreakProgress = i;
+         }
  
-         if (this.breakingTime == 240 && this.entity.world.getDifficulty() == EnumDifficulty.HARD)
+-        if (this.breakingTime == 240 && this.entity.world.getDifficulty() == EnumDifficulty.HARD)
++        if (this.breakingTime == 240 && this.entity.world.getDifficulty().ordinal() >= EnumDifficulty.NORMAL.ordinal()) // EMC
          {
 +            if (org.bukkit.craftbukkit.v1_12_R1.event.CraftEventFactory.callEntityBreakDoorEvent(this.entity, this.doorPosition.getX(), this.doorPosition.getY(), this.doorPosition.getZ()).isCancelled()) {
 +                this.startExecuting();
