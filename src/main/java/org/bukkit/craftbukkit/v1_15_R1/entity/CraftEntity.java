@@ -151,6 +151,7 @@ import org.bukkit.craftbukkit.v1_15_R1.persistence.CraftPersistentDataContainer;
 import org.bukkit.craftbukkit.v1_15_R1.persistence.CraftPersistentDataTypeRegistry;
 import org.bukkit.craftbukkit.v1_15_R1.util.CraftChatMessage;
 import org.bukkit.craftbukkit.v1_15_R1.util.CraftVector;
+import org.bukkit.entity.Player;
 import org.bukkit.entity.Pose;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
@@ -996,5 +997,8 @@ public abstract class CraftEntity implements org.bukkit.entity.Entity {
     {
         return spigot;
     }
-    // Spigot end
+
+    public Player getPlayer() {
+        return (Player) this;
+    }
 }

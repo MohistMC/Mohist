@@ -22,6 +22,9 @@ import org.bukkit.material.MaterialData;
 @DelegateDeserialization(ItemStack.class)
 public final class CraftItemStack extends ItemStack {
 
+    public net.minecraft.item.ItemStack getHandle(){
+        return handle;
+    }
     public static net.minecraft.item.ItemStack asNMSCopy(ItemStack original) {
         if (original instanceof CraftItemStack) {
             CraftItemStack stack = (CraftItemStack) original;
