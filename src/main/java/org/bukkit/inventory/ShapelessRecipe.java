@@ -119,6 +119,34 @@ public class ShapelessRecipe implements Recipe, Keyed {
         return this;
     }
 
+    // EMC start
+    public ShapelessRecipe addIngredient(ItemStack item) {
+        return addIngredient(1, item);
+    }
+
+    public ShapelessRecipe addIngredient(int count, ItemStack item) {
+        Validate.isTrue(ingredients.size() + count <= 9, "Shapeless recipes cannot have more than 9 ingredients");
+        while (count-- > 0) {
+            ingredients.add(item);
+        }
+        return this;
+    }
+    public ShapelessRecipe removeIngredient(ItemStack item) {
+        return removeIngredient(1, item);
+    }
+    public ShapelessRecipe removeIngredient(int count, ItemStack item) {
+        Iterator<ItemStack> iterator = ingredients.iterator();
+        while (count > 0 && iterator.hasNext()) {
+            ItemStack stack = iterator.next();
+            if (stack.isSimilar(item)) {
+                iterator.remove();
+                count--;
+            }
+        }
+        return this;
+    }
+    // EMC end
+
     /**
      * Removes an ingredient from the list. If the ingredient occurs multiple
      * times, only one instance of it is removed. Only removes exact matches,

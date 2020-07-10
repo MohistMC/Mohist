@@ -1,0 +1,11 @@
+--- ../src-base/minecraft/net/minecraft/entity/passive/EntityBat.java
++++ ../src-work/minecraft/net/minecraft/entity/passive/EntityBat.java
+@@ -170,7 +170,7 @@
+             this.moveForward = 0.5F;
+             this.rotationYaw += f1;
+ 
+-            if (this.rand.nextInt(100) == 0 && this.world.getBlockState(blockpos1).isNormalCube())
++            if (!this.isBeingRidden() && this.rand.nextInt(100) == 0 && this.world.getBlockState(blockpos1).isNormalCube()) // EMC - add isVehicle
+             {
+                 this.setIsBatHanging(true);
+             }

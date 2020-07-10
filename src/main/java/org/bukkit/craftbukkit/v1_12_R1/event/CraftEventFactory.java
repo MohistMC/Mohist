@@ -245,6 +245,7 @@ public class CraftEventFactory {
         BlockPlaceEvent event = new BlockPlaceEvent(placedBlock, replacedBlockState, blockClicked, item, player, canBuild, equipmentSlot);
         craftServer.getPluginManager().callEvent(event);
 
+        if (event.isCancelled()) { player.updateInventory(); } // EMC
         return event;
     }
 
@@ -329,6 +330,11 @@ public class CraftEventFactory {
             event.setUseInteractedBlock(Event.Result.DENY);
         }
         craftServer.getPluginManager().callEvent(event);
+
+        if (action == Action.RIGHT_CLICK_BLOCK && !cancelledBlock && event.isCancelled()) {
+            player.updateInventory();
+        }
+        // EMC
 
         return event;
     }

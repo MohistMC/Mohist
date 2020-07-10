@@ -363,22 +363,75 @@ public class ItemStack implements Cloneable, ConfigurationSerializable {
         return getAmount() == stack.getAmount() && isSimilar(stack);
     }
 
+    public boolean isSimilar(ItemStack stack) {
+        return isSimilar(stack, false);
+    }
     /**
      * This method is the same as equals, but does not consider stack size
      * (amount).
      *
      * @param stack the item stack to compare to
-     * @return true if the two stacks are equal, ignoring the amount
+     * @param skipDur Ignore differences in durability
+     *  @return true if the two stacks are equal, ignoring the amount, and optionally durability
      */
     @Utility
-    public boolean isSimilar(ItemStack stack) {
+    public boolean isSimilar(ItemStack stack, boolean skipDur) {
+        return isSimilar(stack, skipDur, false);
+    }
+
+    /**
+     *This method is the same as equals, but does not consider stack size
+     * (amount).
+     *
+     *  @param stack the item stack to compare to
+     *  @param skipDur Ignore differences in durability
+     *  @param skipCheckingName Ignore differences in display name
+     */
+    @Utility
+    public boolean isSimilar(ItemStack stack, boolean skipDur, boolean skipCheckingName) {
         if (stack == null) {
             return false;
         }
         if (stack == this) {
             return true;
         }
-        return getTypeId() == stack.getTypeId() && getDurability() == stack.getDurability() && hasItemMeta() == stack.hasItemMeta() && (hasItemMeta() ? Bukkit.getItemFactory().equals(getItemMeta(), stack.getItemMeta()) : true);
+        if (getTypeId() != stack.getTypeId() || (!skipDur && getDurability() != stack.getDurability())) {
+            return false;
+        }
+        final boolean hasMeta1 = hasItemMeta();
+        final boolean hasMeta2 = stack.hasItemMeta();
+        if (!hasMeta1 && !hasMeta2) {
+            return true;
+        }
+
+        final ItemMeta meta1 = hasMeta1 ? getItemMeta() : null;
+        final ItemMeta meta2 = hasMeta2 ? stack.getItemMeta() : null;
+
+        final String prevName1 = meta1 != null ? meta1.getDisplayName() : null;
+        final String prevName2 = meta2 != null ? meta2.getDisplayName() : null;
+        if (skipCheckingName) {
+            if (meta1 != null) {
+                meta1.setDisplayName(null);
+                if (meta2 != null) {
+                    meta2.setDisplayName(null);
+                }
+            }
+
+            try {
+                return Bukkit.getItemFactory().equals(meta1, meta2);
+            } finally {
+                if (skipCheckingName) {
+                    if (meta1 != null) {
+                        meta1.setDisplayName(prevName1);
+                    }
+                    if (meta2 != null) {
+                        meta2.setDisplayName(prevName2);
+                    }
+                }
+            }
+            // Paper end
+        }
+        return hasMeta1;
     }
 
     @Override
