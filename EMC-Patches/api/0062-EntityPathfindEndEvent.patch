@@ -1,0 +1,70 @@
+From 146f50fcb3d02590160b8e88308b79dc1adb5492 Mon Sep 17 00:00:00 2001
+From: Aikar <aikar@aikar.co>
+Date: Mon, 25 Jun 2018 23:16:41 -0400
+Subject: [PATCH] EntityPathfindEndEvent
+
+---
+ .../event/entity/EntityPathfindEndEvent.java  | 51 +++++++++++++++++++
+ 1 file changed, 51 insertions(+)
+ create mode 100644 src/main/java/com/destroystokyo/paper/event/entity/EntityPathfindEndEvent.java
+
+diff --git a/src/main/java/com/destroystokyo/paper/event/entity/EntityPathfindEndEvent.java b/src/main/java/com/destroystokyo/paper/event/entity/EntityPathfindEndEvent.java
+new file mode 100644
+index 00000000..4cef354e
+--- /dev/null
++++ b/src/main/java/com/destroystokyo/paper/event/entity/EntityPathfindEndEvent.java
+@@ -0,0 +1,51 @@
++/*
++ * Copyright (c) 2018 Daniel Ennis (Aikar) MIT License
++ *
++ *  Permission is hereby granted, free of charge, to any person obtaining
++ *  a copy of this software and associated documentation files (the
++ *  "Software"), to deal in the Software without restriction, including
++ *  without limitation the rights to use, copy, modify, merge, publish,
++ *  distribute, sublicense, and/or sell copies of the Software, and to
++ *  permit persons to whom the Software is furnished to do so, subject to
++ *  the following conditions:
++ *
++ *  The above copyright notice and this permission notice shall be
++ *  included in all copies or substantial portions of the Software.
++ *
++ *  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
++ *  EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
++ *  MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
++ *  NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
++ *  LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
++ *  OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
++ *  WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
++ */
++
++package com.destroystokyo.paper.event.entity;
++
++import com.destroystokyo.paper.entity.SentientNPC;
++import org.bukkit.entity.Entity;
++import org.bukkit.event.Event;
++import org.bukkit.event.HandlerList;
++import org.bukkit.event.entity.EntityEvent;
++
++public class EntityPathfindEndEvent extends EntityEvent {
++    public EntityPathfindEndEvent(SentientNPC entity) {
++        super(entity);
++    }
++
++    @Override
++    public SentientNPC getEntity() {
++        return (SentientNPC) super.getEntity();
++    }
++
++    private static final HandlerList handlers = new HandlerList();
++
++    public HandlerList getHandlers() {
++        return handlers;
++    }
++
++    public static HandlerList getHandlerList() {
++        return handlers;
++    }
++}
+-- 
+2.18.0
+

@@ -1,0 +1,33 @@
+From 6ce21a09ef6406b4751761a3b2c35199ae457809 Mon Sep 17 00:00:00 2001
+From: Aikar <aikar@aikar.co>
+Date: Thu, 14 Jan 2016 00:49:14 -0500
+Subject: [PATCH] Fix Give command
+
+---
+ src/main/java/net/minecraft/server/CommandGive.java | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/src/main/java/net/minecraft/server/CommandGive.java b/src/main/java/net/minecraft/server/CommandGive.java
+index f689b1864..98ca5e6da 100644
+--- a/src/main/java/net/minecraft/server/CommandGive.java
++++ b/src/main/java/net/minecraft/server/CommandGive.java
+@@ -47,7 +47,7 @@ public class CommandGive extends CommandAbstract {
+                 entityplayer.world.a((EntityHuman) null, entityplayer.locX, entityplayer.locY, entityplayer.locZ, SoundEffects.dx, SoundCategory.PLAYERS, 0.2F, ((entityplayer.getRandom().nextFloat() - entityplayer.getRandom().nextFloat()) * 0.7F + 1.0F) * 2.0F);
+                 entityplayer.defaultContainer.b();
+             }
+-
++/* // EMC start - remove dropping
+             EntityItem entityitem;
+ 
+             if (flag && itemstack.isEmpty()) {
+@@ -65,6 +65,7 @@ public class CommandGive extends CommandAbstract {
+                     entityitem.d(entityplayer.getName());
+                 }
+             }
++            */ // EMC end
+ 
+             a(icommandlistener, (ICommand) this, "commands.give.success", new Object[] { itemstack.C(), Integer.valueOf(i), entityplayer.getName()});
+         }
+-- 
+2.17.1
+

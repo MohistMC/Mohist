@@ -1,0 +1,59 @@
+From 619a879852935ef74952ff6aec57c64526bd6ca6 Mon Sep 17 00:00:00 2001
+From: Aikar <aikar@aikar.co>
+Date: Sun, 17 May 2015 13:38:54 -0400
+Subject: [PATCH] Implement SpongeAbsorbEvent
+
+---
+ src/main/java/net/minecraft/server/BlockSponge.java    |  7 ++++++-
+ .../bukkit/craftbukkit/event/CraftEventFactory.java    | 10 ++++++++++
+ 2 files changed, 16 insertions(+), 1 deletion(-)
+
+diff --git a/src/main/java/net/minecraft/server/BlockSponge.java b/src/main/java/net/minecraft/server/BlockSponge.java
+index 5c52045645..74cf84da19 100644
+--- a/src/main/java/net/minecraft/server/BlockSponge.java
++++ b/src/main/java/net/minecraft/server/BlockSponge.java
+@@ -53,7 +53,7 @@ public class BlockSponge extends Block {
+             Tuple tuple = (Tuple) linkedlist.poll();
+ 
+             blockposition1 = (BlockPosition) tuple.a();
+-            int j = ((Integer) tuple.b()).intValue();
++            int j = ((Integer) tuple.b()).intValue(); // PAIL - Rename to absorptionLevel
+             EnumDirection[] aenumdirection = EnumDirection.values();
+             int k = aenumdirection.length;
+ 
+@@ -62,6 +62,11 @@ public class BlockSponge extends Block {
+                 BlockPosition blockposition2 = blockposition1.shift(enumdirection);
+ 
+                 if (world.getType(blockposition2).getMaterial() == Material.WATER) {
++                    // CraftBukkit start
++                    if (org.bukkit.craftbukkit.event.CraftEventFactory.handleSpongeAbsorbEvent(world.getWorld(), blockposition, blockposition2, j).isCancelled()) {
++                        continue;
++                    }
++                    // CraftBukkit end
+                     world.setTypeAndData(blockposition2, Blocks.AIR.getBlockData(), 2);
+                     arraylist.add(blockposition2);
+                     ++i;
+diff --git a/src/main/java/org/bukkit/craftbukkit/event/CraftEventFactory.java b/src/main/java/org/bukkit/craftbukkit/event/CraftEventFactory.java
+index feb5712f8e..a906b87fbb 100644
+--- a/src/main/java/org/bukkit/craftbukkit/event/CraftEventFactory.java
++++ b/src/main/java/org/bukkit/craftbukkit/event/CraftEventFactory.java
+@@ -1108,6 +1108,16 @@ public class CraftEventFactory {
+         return (Cancellable) event;
+     }
+ 
++    public static SpongeAbsorbEvent handleSpongeAbsorbEvent(CraftWorld world, BlockPosition spongePosition,
++                                                            BlockPosition absorbedPosition,
++                                                            int absorbtionLevel) {
++        final Block spongeBlock = world.getBlockAt(spongePosition.getX(), spongePosition.getY(), spongePosition.getZ());
++        final Block absorbedBlock = world.getBlockAt(absorbedPosition.getX(), absorbedPosition.getY(), absorbedPosition.getZ());
++        SpongeAbsorbEvent event = new SpongeAbsorbEvent(spongeBlock, absorbedBlock, absorbtionLevel);
++        Bukkit.getServer().getPluginManager().callEvent(event);
++        return event;
++    }
++
+     public static FireworkExplodeEvent callFireworkExplodeEvent(EntityFireworks firework) {
+         FireworkExplodeEvent event = new FireworkExplodeEvent((Firework) firework.getBukkitEntity());
+         firework.world.getServer().getPluginManager().callEvent(event);
+-- 
+2.19.0
+

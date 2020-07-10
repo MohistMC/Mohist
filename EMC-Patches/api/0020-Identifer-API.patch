@@ -1,0 +1,107 @@
+From cd927cc198e5d1eea642d1dd46accd861ddb7ccd Mon Sep 17 00:00:00 2001
+From: Aikar <aikar@aikar.co>
+Date: Tue, 17 May 2016 19:38:55 -0400
+Subject: [PATCH] Identifer API
+
+Seems silly, but I want to have a common interface to represent an identity
+but not have risk of 2 objects equalling each other.
+
+Example: ChunkIdentifier and a ResidenceIdentifier are 2 ways to identify a context
+but cant ever equal each other.
+
+Implementers should not expose entropy data, just provide equal/hashcode.
+
+Objects represented by an Identifier, should be able to use them as their equal/hashcodes.
+---
+ .../java/com/empireminecraft/Identifier.java  | 13 +++++++
+ .../com/empireminecraft/UniqueIdentifier.java | 34 +++++++++++++++++++
+ src/main/java/org/bukkit/Chunk.java           |  1 +
+ src/main/java/org/bukkit/block/Block.java     |  1 +
+ 4 files changed, 49 insertions(+)
+ create mode 100644 src/main/java/com/empireminecraft/Identifier.java
+ create mode 100644 src/main/java/com/empireminecraft/UniqueIdentifier.java
+
+diff --git a/src/main/java/com/empireminecraft/Identifier.java b/src/main/java/com/empireminecraft/Identifier.java
+new file mode 100644
+index 000000000..188c34491
+--- /dev/null
++++ b/src/main/java/com/empireminecraft/Identifier.java
+@@ -0,0 +1,13 @@
++/*
++ * Copyright (c) 2016. Starlis LLC / dba Empire Minecraft
++ *
++ * This source code is proprietary software and must not be redistributed without Starlis LLC's approval
++ *
++ */
++
++package com.empireminecraft;
++
++/**
++ * Simply represents an object identifier
++ */
++public interface Identifier {}
+diff --git a/src/main/java/com/empireminecraft/UniqueIdentifier.java b/src/main/java/com/empireminecraft/UniqueIdentifier.java
+new file mode 100644
+index 000000000..423b00346
+--- /dev/null
++++ b/src/main/java/com/empireminecraft/UniqueIdentifier.java
+@@ -0,0 +1,34 @@
++/*
++ * Copyright (c) 2016. Starlis LLC / dba Empire Minecraft
++ *
++ * This source code is proprietary software and must not be redistributed without Starlis LLC's approval
++ *
++ */
++
++package com.empireminecraft;
++
++import javax.annotation.Nonnull;
++import java.util.UUID;
++
++public class UniqueIdentifier implements Identifier {
++    private final UUID uuid;
++    public UniqueIdentifier(@Nonnull UUID uuid) {
++        this.uuid = uuid;
++    }
++
++    @Override
++    public boolean equals(Object o) {
++        if (this == o) { return true; }
++        if (o == null || getClass() != o.getClass()) { return false; }
++
++        UniqueIdentifier that = (UniqueIdentifier) o;
++
++        return uuid.equals(that.uuid);
++
++    }
++
++    @Override
++    public int hashCode() {
++        return uuid.hashCode();
++    }
++}
+diff --git a/src/main/java/org/bukkit/Chunk.java b/src/main/java/org/bukkit/Chunk.java
+index c75bce07a..e8853549e 100644
+--- a/src/main/java/org/bukkit/Chunk.java
++++ b/src/main/java/org/bukkit/Chunk.java
+@@ -8,6 +8,7 @@ import org.bukkit.entity.Entity;
+  * Represents a chunk of blocks
+  */
+ public interface Chunk {
++    com.empireminecraft.Identifier getIdentifier(); // EMC
+ 
+     /**
+      * Gets the X-coordinate of this chunk
+diff --git a/src/main/java/org/bukkit/block/Block.java b/src/main/java/org/bukkit/block/Block.java
+index 2dbc784cb..37a1e092b 100644
+--- a/src/main/java/org/bukkit/block/Block.java
++++ b/src/main/java/org/bukkit/block/Block.java
+@@ -423,4 +423,5 @@ public interface Block extends Metadatable {
+      */
+     Collection<ItemStack> getDrops(ItemStack tool);
+ 
++    com.empireminecraft.Identifier getIdentifier(); // EMC
+ }
+-- 
+2.19.0
+

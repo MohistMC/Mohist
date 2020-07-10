@@ -1,0 +1,46 @@
+From 09b2624bfdc8582c47c231d22f57c74d003836dd Mon Sep 17 00:00:00 2001
+From: Aikar <aikar@aikar.co>
+Date: Sun, 17 Jun 2018 02:09:37 -0400
+Subject: [PATCH] Human#getAttackPct
+
+---
+ src/main/java/net/minecraft/server/EntityHuman.java             | 2 ++
+ .../java/org/bukkit/craftbukkit/entity/CraftHumanEntity.java    | 2 ++
+ 2 files changed, 4 insertions(+)
+
+diff --git a/src/main/java/net/minecraft/server/EntityHuman.java b/src/main/java/net/minecraft/server/EntityHuman.java
+index 82a7656e9..b6152d835 100644
+--- a/src/main/java/net/minecraft/server/EntityHuman.java
++++ b/src/main/java/net/minecraft/server/EntityHuman.java
+@@ -66,6 +66,7 @@ public abstract class EntityHuman extends EntityLiving {
+     public EntityFishingHook hookedFish;
+     public boolean affectsSpawning = true;
+     static com.google.common.base.Predicate<Entity> affectsSpawningPredicate = (player) -> (player instanceof EntityHuman && ((EntityHuman) player).affectsSpawning); // EMC
++    public float lastAttackPct = 0;
+ 
+     // CraftBukkit start
+     public boolean fauxSleeping;
+@@ -971,6 +972,7 @@ public abstract class EntityHuman extends EntityLiving {
+                 }
+ 
+                 float f2 = this.n(0.5F);
++                this.lastAttackPct = f2; // EMC
+ 
+                 f *= 0.2F + f2 * f2 * 0.8F;
+                 f1 *= f2;
+diff --git a/src/main/java/org/bukkit/craftbukkit/entity/CraftHumanEntity.java b/src/main/java/org/bukkit/craftbukkit/entity/CraftHumanEntity.java
+index 05ca403e8..c42704c97 100644
+--- a/src/main/java/org/bukkit/craftbukkit/entity/CraftHumanEntity.java
++++ b/src/main/java/org/bukkit/craftbukkit/entity/CraftHumanEntity.java
+@@ -41,6 +41,8 @@ public class CraftHumanEntity extends CraftLivingEntity implements HumanEntity {
+     private boolean op;
+     private GameMode mode;
+ 
++    @Override public float getAttackPct() { return getHandle().lastAttackPct; } // EMC
++
+     public CraftHumanEntity(final CraftServer server, final EntityHuman entity) {
+         super(server, entity);
+         mode = server.getDefaultGameMode();
+-- 
+2.18.0
+

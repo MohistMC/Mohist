@@ -1,0 +1,32 @@
+From 1c9f6d7c3fb5fcccebbc8496202e9a9c2fe36d13 Mon Sep 17 00:00:00 2001
+From: Aikar <aikar@aikar.co>
+Date: Sat, 22 Aug 2015 11:10:12 -0400
+Subject: [PATCH] Add Server Tick Events
+
+---
+ src/main/java/net/minecraft/server/MinecraftServer.java | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/src/main/java/net/minecraft/server/MinecraftServer.java b/src/main/java/net/minecraft/server/MinecraftServer.java
+index dc6afb34a1..c564b67bb2 100644
+--- a/src/main/java/net/minecraft/server/MinecraftServer.java
++++ b/src/main/java/net/minecraft/server/MinecraftServer.java
+@@ -766,6 +766,7 @@ public abstract class MinecraftServer implements ICommandListener, Runnable, IAs
+         co.aikar.timings.TimingsManager.FULL_SERVER_TICK.startTiming(); // Paper
+         this.slackActivityAccountant.tickStarted(); // Spigot
+         long i = System.nanoTime(); long startTime = i; // Paper
++        new com.empireminecraft.customevents.ServerTickStartEvent().callEvent(); // EMC
+ 
+         ++this.ticks;
+         if (this.T) {
+@@ -836,6 +837,7 @@ public abstract class MinecraftServer implements ICommandListener, Runnable, IAs
+         org.spigotmc.WatchdogThread.tick(); // Spigot
+         PaperLightingQueue.processQueue(startTime); // Paper
+         this.slackActivityAccountant.tickEnded(tickNanos); // Spigot
++        new com.empireminecraft.customevents.ServerTickEndEvent().callEvent(); // EMC
+         co.aikar.timings.TimingsManager.FULL_SERVER_TICK.stopTiming(); // Paper
+     }
+ 
+-- 
+2.19.0
+

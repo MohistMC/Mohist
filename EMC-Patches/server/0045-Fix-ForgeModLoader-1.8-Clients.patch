@@ -1,0 +1,28 @@
+From e5d543c76c614fa5d74708922a2a81de3300615c Mon Sep 17 00:00:00 2001
+From: Aikar <aikar@aikar.co>
+Date: Wed, 31 Dec 2014 13:32:49 -0500
+Subject: [PATCH] Fix ForgeModLoader 1.8 Clients
+
+---
+ src/main/java/net/minecraft/server/HandshakeListener.java | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/src/main/java/net/minecraft/server/HandshakeListener.java b/src/main/java/net/minecraft/server/HandshakeListener.java
+index 3392e8b56..6789a37a2 100644
+--- a/src/main/java/net/minecraft/server/HandshakeListener.java
++++ b/src/main/java/net/minecraft/server/HandshakeListener.java
+@@ -103,6 +103,11 @@ public class HandshakeListener implements PacketHandshakingInListener {
+                 //if (org.spigotmc.SpigotConfig.bungee) { // Paper - comment out, we check above!
+                     b.isProxied = true; // EMC
+                     String[] split = packethandshakinginsetprotocol.hostname.split("\00");
++                    // EMC - Fix FML
++                    if (split.length == 6 && "FML".equals(split[1])) {
++                        split = new String[] {split[0], split[3], split[4], split[5]};
++                    }
++                    // EMC end
+                     if ( split.length == 3 || split.length == 4 ) {
+                         packethandshakinginsetprotocol.hostname = split[0];
+                         b.l = new java.net.InetSocketAddress(split[1], ((java.net.InetSocketAddress) b.getSocketAddress()).getPort());
+-- 
+2.17.1
+

@@ -1,0 +1,145 @@
+From 9a541b0b883e771bbcd8a22bf8f7260c13161e29 Mon Sep 17 00:00:00 2001
+From: Aikar <aikar@aikar.co>
+Date: Thu, 29 Dec 2016 17:37:46 -0500
+Subject: [PATCH] Convert Horse Eggs with EMC Metadata
+
+We stored the Variant in the lore. This allows us to convert those
+horse eggs so that they have the appropriate icon color without
+spawning and re-eggifying it.
+---
+ .../org/bukkit/craftbukkit/CraftServer.java   |   1 +
+ .../inventory/CraftMetaSpawnEgg.java          | 102 ++++++++++++++++++
+ 2 files changed, 103 insertions(+)
+
+diff --git a/src/main/java/org/bukkit/craftbukkit/CraftServer.java b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
+index 816c37db4..e189e7866 100644
+--- a/src/main/java/org/bukkit/craftbukkit/CraftServer.java
++++ b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
+@@ -212,6 +212,7 @@ public final class CraftServer implements Server {
+         MobEffects.BLINDNESS.getClass();
+         PotionEffectType.stopAcceptingRegistrations();
+         // Ugly hack :(
++        org.bukkit.craftbukkit.inventory.CraftMetaSpawnEgg.registerConverter(); // EMC
+ 
+         if (!Main.useConsole) {
+             getLogger().info("Console input is disabled due to --noconsole command argument");
+diff --git a/src/main/java/org/bukkit/craftbukkit/inventory/CraftMetaSpawnEgg.java b/src/main/java/org/bukkit/craftbukkit/inventory/CraftMetaSpawnEgg.java
+index 70616a2f9..26f67e9c5 100644
+--- a/src/main/java/org/bukkit/craftbukkit/inventory/CraftMetaSpawnEgg.java
++++ b/src/main/java/org/bukkit/craftbukkit/inventory/CraftMetaSpawnEgg.java
+@@ -63,10 +63,112 @@ public class CraftMetaSpawnEgg extends CraftMetaItem implements SpawnEggMeta {
+ 
+             if (entityTag.hasKey(ENTITY_ID.NBT)) {
+                 this.spawnedType = EntityType.fromName(new MinecraftKey(entityTag.getString(ENTITY_ID.NBT)).getKey());
++                convertHorse(); // EMC
+             }
+         }
+     }
+ 
++    // EMC start
++
++    public static void registerConverter() {
++        MinecraftServer.getServer().dataConverterManager.a(DataConverterTypes.ITEM_INSTANCE, new net.minecraft.server.IDataConverter() {
++            @Override
++            public int a() {
++                return 922;
++            }
++
++            @Override
++            public NBTTagCompound a(NBTTagCompound root) {
++                if ("minecraft:spawn_egg".equals(root.getString("id"))) {
++                    NBTTagCompound tag = root.getCompound("tag");
++                    if (!tag.hasKey("display")) {
++                        return root;
++                    }
++                    NBTTagCompound display = tag.getCompound("display");
++                    if (!display.hasKey("Lore")) {
++                        return root;
++                    }
++
++                    net.minecraft.server.NBTTagList lore = display.getList("Lore", 8);
++                    if (lore.size() < 32) {
++                        return root;
++                    }
++                    NBTTagCompound entityTag = tag.getCompound("EntityTag");
++                    // Only convert horse eggs
++                    if (entityTag.hasKey("id") && !"minecraft:yhorse".equals(entityTag.getString("id"))) {
++                        return root;
++                    }
++                    String type = null;
++                    for (int i = 31; i + 1 < lore.size(); i += 2) {
++                        if ("var".equalsIgnoreCase(lore.getString(i))) {
++                            String variant = lore.getString(i + 1);
++                            if (variant != null) {
++                                switch (variant) {
++                                    case "DONKEY":
++                                        type = "donkey";
++                                        break;
++                                    case "MULE":
++                                        type = "mule";
++                                        break;
++                                    case "UNDEAD_HORSE":
++                                        type = "zombie_horse";
++                                        break;
++                                    case "SKELETON_HORSE":
++                                        type = "skeleton_horse";
++                                        break;
++                                }
++                            }
++                        }
++                    }
++                    if (type != null) {
++                        entityTag.setString("id", type);
++                        tag.set("EntityTag", entityTag);
++                        root.set("tag", tag);
++                    }
++                }
++                return root;
++            }
++        });
++    }
++    private void convertHorse() {
++        if (spawnedType != EntityType.HORSE) {
++            return;
++        }
++
++        if (this.hasLore()) {
++            java.util.List<String> lore = this.getLore();
++            String type = this.spawnedType != null ? this.spawnedType.getName() : "horse";
++            if (lore.size() > 31) {
++                for (int i = 31; i + 1 < lore.size(); i += 2) {
++                    if ("var".equalsIgnoreCase(lore.get(i))) {
++                        String variant = lore.get(i + 1);
++                        if (variant != null) {
++                            switch(variant) {
++                                case "DONKEY":
++                                    type = "donkey";
++                                    break;
++                                case "MULE":
++                                    type = "mule";
++                                    break;
++                                case "UNDEAD_HORSE":
++                                    type = "zombie_horse";
++                                    break;
++                                case "SKELETON_HORSE":
++                                    type = "skeleton_horse";
++                                    break;
++                                case "HORSE":
++                                default:
++                                    type = "horse";
++                            }
++                        }
++                    }
++                }
++            }
++            this.spawnedType = EntityType.fromName(new MinecraftKey(type != null ? type : "horse").getKey());
++        }
++    }
++    // EMC end
++
+     @Override
+     void serializeInternal(Map<String, NBTBase> internalTags) {
+         if (entityTag != null) {
+-- 
+2.17.1
+

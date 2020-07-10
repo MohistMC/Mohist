@@ -1,0 +1,30 @@
+From 7944755e5d775dcf5d0e969402bd76e3603fc462 Mon Sep 17 00:00:00 2001
+From: Aikar <aikar@aikar.co>
+Date: Tue, 5 May 2015 00:34:04 -0400
+Subject: [PATCH] Fix PlayerInteractEvent for Armor Stands
+
+---
+ .../org/bukkit/event/player/PlayerInteractAtEntityEvent.java    | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/src/main/java/org/bukkit/event/player/PlayerInteractAtEntityEvent.java b/src/main/java/org/bukkit/event/player/PlayerInteractAtEntityEvent.java
+index 431715de..50d724ca 100644
+--- a/src/main/java/org/bukkit/event/player/PlayerInteractAtEntityEvent.java
++++ b/src/main/java/org/bukkit/event/player/PlayerInteractAtEntityEvent.java
+@@ -30,6 +30,7 @@ public class PlayerInteractAtEntityEvent extends PlayerInteractEntityEvent {
+         return position.clone();
+     }
+ 
++    /* // EMC start
+     @Override
+     public HandlerList getHandlers() {
+         return handlers;
+@@ -38,4 +39,5 @@ public class PlayerInteractAtEntityEvent extends PlayerInteractEntityEvent {
+     public static HandlerList getHandlerList() {
+         return handlers;
+     }
++    */ // EMC end
+ }
+-- 
+2.17.1
+

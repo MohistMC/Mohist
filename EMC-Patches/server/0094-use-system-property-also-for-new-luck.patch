@@ -1,0 +1,34 @@
+From 8d4c9b19e6037869f56bc4a5c266ce7d61f042de Mon Sep 17 00:00:00 2001
+From: Aikar <aikar@aikar.co>
+Date: Sat, 16 Jun 2018 13:18:10 -0400
+Subject: [PATCH] use system property also for new luck
+
+---
+ src/main/java/net/minecraft/server/LotoSelectorEntry.java | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/src/main/java/net/minecraft/server/LotoSelectorEntry.java b/src/main/java/net/minecraft/server/LotoSelectorEntry.java
+index b5544bcf3..8712ad442 100644
+--- a/src/main/java/net/minecraft/server/LotoSelectorEntry.java
++++ b/src/main/java/net/minecraft/server/LotoSelectorEntry.java
+@@ -33,7 +33,7 @@ public abstract class LotoSelectorEntry {
+         // This is vanilla
+         float qualityModifer = (float) this.getQuality() * f;
+         double baseWeight = (this.getWeight() + qualityModifer);
+-        if (com.destroystokyo.paper.PaperConfig.useAlternativeLuckFormula) {
++        if (USE_NEW_LUCK || com.destroystokyo.paper.PaperConfig.useAlternativeLuckFormula) {
+             // Random boost to avoid losing precision in the final int cast on return
+             final int weightBoost = 100;
+             baseWeight *= weightBoost;
+@@ -50,6 +50,8 @@ public abstract class LotoSelectorEntry {
+         lastWeight = (int) Math.max(0, Math.floor(baseWeight));
+         return lastWeight;
+     }
++
++    public static final boolean USE_NEW_LUCK = Boolean.getBoolean("use-new-luck");
+     private Float lastLuck = null;
+     private int lastWeight = 0;
+     // Paper end
+-- 
+2.17.1
+

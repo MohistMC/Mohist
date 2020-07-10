@@ -1,0 +1,72 @@
+From f5b260e8958ded15481b681b28c8c2e829cdd577 Mon Sep 17 00:00:00 2001
+From: Aikar <aikar@aikar.co>
+Date: Sun, 17 May 2015 13:37:14 -0400
+Subject: [PATCH] Add SpongeAbsorbEvent
+
+This event fires when Sponge will absorb water.
+---
+ .../bukkit/event/block/SpongeAbsorbEvent.java | 52 +++++++++++++++++++
+ 1 file changed, 52 insertions(+)
+ create mode 100644 src/main/java/org/bukkit/event/block/SpongeAbsorbEvent.java
+
+diff --git a/src/main/java/org/bukkit/event/block/SpongeAbsorbEvent.java b/src/main/java/org/bukkit/event/block/SpongeAbsorbEvent.java
+new file mode 100644
+index 00000000..ee81ba9c
+--- /dev/null
++++ b/src/main/java/org/bukkit/event/block/SpongeAbsorbEvent.java
+@@ -0,0 +1,52 @@
++package org.bukkit.event.block;
++
++import org.bukkit.block.Block;
++import org.bukkit.event.Cancellable;
++import org.bukkit.event.Event;
++import org.bukkit.event.HandlerList;
++
++public class SpongeAbsorbEvent extends Event implements Cancellable {
++    private final Block spongeBlock;
++    private final Block absorbedBlock;
++    private final int currentAbsorptionLevel;
++
++    public SpongeAbsorbEvent(Block spongeBlock, Block absorbedBlock, int currentAbsorptionLevel) {
++        this.spongeBlock = spongeBlock;
++        this.absorbedBlock = absorbedBlock;
++        this.currentAbsorptionLevel = currentAbsorptionLevel;
++    }
++
++    public Block getSpongeBlock() {
++        return spongeBlock;
++    }
++
++    public Block getAbsorbedBlock() {
++        return absorbedBlock;
++    }
++
++    public int getCurrentAbsorptionLevel() {
++        return currentAbsorptionLevel;
++    }
++
++    private static final HandlerList handlers = new HandlerList();
++
++    public HandlerList getHandlers() {
++        return handlers;
++    }
++
++    public static HandlerList getHandlerList() {
++        return handlers;
++    }
++
++    private boolean cancelled = false;
++
++    @Override
++    public boolean isCancelled() {
++        return cancelled;
++    }
++
++    @Override
++    public void setCancelled(boolean cancel) {
++        cancelled = cancel;
++    }
++}
+-- 
+2.17.1
+

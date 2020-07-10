@@ -1,0 +1,25 @@
+From f0b81bdf45b0281273416f26f7f4403de5adf94d Mon Sep 17 00:00:00 2001
+From: Aikar <aikar@aikar.co>
+Date: Thu, 30 Apr 2015 22:12:01 -0400
+Subject: [PATCH] Ignore statistics warnings
+
+---
+ src/main/java/net/minecraft/server/ServerStatisticManager.java | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/main/java/net/minecraft/server/ServerStatisticManager.java b/src/main/java/net/minecraft/server/ServerStatisticManager.java
+index e3d2c0ff7..2d1999ef5 100644
+--- a/src/main/java/net/minecraft/server/ServerStatisticManager.java
++++ b/src/main/java/net/minecraft/server/ServerStatisticManager.java
+@@ -118,7 +118,7 @@ public class ServerStatisticManager extends StatisticManager {
+                     }
+ 
+                     hashmap.put(statistic, statisticwrapper);
+-                } else {
++                } else if (false) { // EMC
+                     ServerStatisticManager.b.warn("Invalid statistic in {}: Don\'t know what {} is", this.d, entry.getKey());
+                     if (com.destroystokyo.paper.PaperConfig.removeInvalidStatistics) invalidStats.add((String) entry.getKey()); // Paper
+                 }
+-- 
+2.17.1
+

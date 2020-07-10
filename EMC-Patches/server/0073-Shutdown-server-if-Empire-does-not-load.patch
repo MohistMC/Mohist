@@ -1,0 +1,30 @@
+From 06017c1b76ae2bb9f33a81d16a34cbd0bad84ba7 Mon Sep 17 00:00:00 2001
+From: Aikar <aikar@aikar.co>
+Date: Thu, 11 Feb 2016 23:13:57 -0500
+Subject: [PATCH] Shutdown server if Empire does not load
+
+---
+ src/main/java/net/minecraft/server/MinecraftServer.java | 7 +++++++
+ 1 file changed, 7 insertions(+)
+
+diff --git a/src/main/java/net/minecraft/server/MinecraftServer.java b/src/main/java/net/minecraft/server/MinecraftServer.java
+index b3b935415..4995d94ce 100644
+--- a/src/main/java/net/minecraft/server/MinecraftServer.java
++++ b/src/main/java/net/minecraft/server/MinecraftServer.java
+@@ -441,6 +441,13 @@ public abstract class MinecraftServer implements ICommandListener, Runnable, IAs
+         this.f = null;
+         this.g = 0;
+         this.server.enablePlugins(org.bukkit.plugin.PluginLoadOrder.POSTWORLD); // CraftBukkit
++        // EMC start
++        org.bukkit.plugin.Plugin empire = server.getPluginManager().getPlugin("Empire"); // EMC
++        if (empire == null || !empire.isEnabled()) {
++            System.err.println("CRITICAL - Empire did not load. ABORT ABORT ABORT!");
++            org.bukkit.Bukkit.getServer().shutdown();
++        }
++        // EMC end
+     }
+ 
+     protected void saveChunks(boolean flag) {
+-- 
+2.17.1
+

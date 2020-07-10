@@ -1,0 +1,47 @@
+From 9f6f9ba8434e1fe75f1f89de5337ea7bc1b430ba Mon Sep 17 00:00:00 2001
+From: chickeneer <emcchickeneer@gmail.com>
+Date: Mon, 23 Dec 2019 23:16:13 -0600
+Subject: [PATCH] Do not save entities with player passengers
+
+---
+ .../net/minecraft/server/ChunkRegionLoader.java | 17 +++++++++++++++++
+ 1 file changed, 17 insertions(+)
+
+diff --git a/src/main/java/net/minecraft/server/ChunkRegionLoader.java b/src/main/java/net/minecraft/server/ChunkRegionLoader.java
+index 698a02fea..06f88dca7 100644
+--- a/src/main/java/net/minecraft/server/ChunkRegionLoader.java
++++ b/src/main/java/net/minecraft/server/ChunkRegionLoader.java
+@@ -376,6 +376,9 @@ public class ChunkRegionLoader implements IChunkLoader, IAsyncChunkSaver {
+                 if (entity.dead) {
+                     continue;
+                 }
++                if (hasPlayerPassenger(entity)) {
++                    continue;
++                }
+                 // Paper end
+ 
+                 nbttagcompound1 = new NBTTagCompound();
+@@ -430,6 +433,20 @@ public class ChunkRegionLoader implements IChunkLoader, IAsyncChunkSaver {
+ 
+     }
+ 
++    // Paper start
++    private static boolean hasPlayerPassenger(Entity entity) {
++        for (Entity passenger : entity.passengers) {
++            if (passenger instanceof EntityPlayer) {
++                return true;
++            }
++            if (hasPlayerPassenger(passenger)) {
++                return true;
++            }
++        }
++        return false;
++    }
++    // Paper end
++
+     private Chunk a(World world, NBTTagCompound nbttagcompound) {
+         int i = nbttagcompound.getInt("xPos");
+         int j = nbttagcompound.getInt("zPos");
+-- 
+2.24.1
+

@@ -1,0 +1,24 @@
+From bb81de866fb1a1c96068ba1022925aef93d63225 Mon Sep 17 00:00:00 2001
+From: Aikar <aikar@aikar.co>
+Date: Fri, 12 Jun 2015 23:51:12 -0400
+Subject: [PATCH] getTick API
+
+---
+ src/main/java/org/bukkit/Server.java | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/src/main/java/org/bukkit/Server.java b/src/main/java/org/bukkit/Server.java
+index 2912bdae..526fff51 100644
+--- a/src/main/java/org/bukkit/Server.java
++++ b/src/main/java/org/bukkit/Server.java
+@@ -1000,6 +1000,7 @@ public interface Server extends PluginMessageRecipient {
+             throw new UnsupportedOperationException( "Not supported yet." );
+         }
+ 
++        public int getTick(){return 0; } // EMC
+         public org.bukkit.configuration.file.YamlConfiguration getBukkitConfig()
+         {
+             throw new UnsupportedOperationException( "Not supported yet." );
+-- 
+2.17.1
+

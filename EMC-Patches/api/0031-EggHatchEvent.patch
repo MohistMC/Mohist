@@ -1,0 +1,57 @@
+From 947fe58aedb1c3b9656e05dc5f7afceb78e65241 Mon Sep 17 00:00:00 2001
+From: Aikar <aikar@aikar.co>
+Date: Sun, 4 Dec 2016 01:15:46 -0500
+Subject: [PATCH] EggHatchEvent
+
+---
+ .../customevents/EggHatchEvent.java           | 38 +++++++++++++++++++
+ 1 file changed, 38 insertions(+)
+ create mode 100644 src/main/java/com/empireminecraft/customevents/EggHatchEvent.java
+
+diff --git a/src/main/java/com/empireminecraft/customevents/EggHatchEvent.java b/src/main/java/com/empireminecraft/customevents/EggHatchEvent.java
+new file mode 100644
+index 00000000..84323b1d
+--- /dev/null
++++ b/src/main/java/com/empireminecraft/customevents/EggHatchEvent.java
+@@ -0,0 +1,38 @@
++package com.empireminecraft.customevents;
++
++import org.bukkit.entity.Egg;
++import org.bukkit.entity.Entity;
++import org.bukkit.event.Cancellable;
++import org.bukkit.event.Event;
++import org.bukkit.event.HandlerList;
++
++public class EggHatchEvent extends Event implements Cancellable {
++    private static final HandlerList handlers = new HandlerList();
++    private boolean cancelled;
++
++    final Egg entity;
++
++    public EggHatchEvent(Entity entity) {
++        this.entity = (Egg) entity;
++    }
++
++    public Egg getEntity() {
++        return entity;
++    }
++
++    public boolean isCancelled() {
++        return cancelled;
++    }
++
++    public void setCancelled(boolean cancel) {
++        cancelled = cancel;
++    }
++
++    public HandlerList getHandlers() {
++        return handlers;
++    }
++
++    public static HandlerList getHandlerList() {
++        return handlers;
++    }
++}
+-- 
+2.17.1
+

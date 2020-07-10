@@ -1,0 +1,375 @@
+From 8781c8d3ba349d7443fcc69d6556954d637ac271 Mon Sep 17 00:00:00 2001
+From: Aikar <aikar@aikar.co>
+Date: Tue, 6 Dec 2016 22:31:31 -0500
+Subject: [PATCH] Attributes API
+
+---
+ .../java/com/empireminecraft/api/API.java     |   2 +
+ .../api/attributes/Attribute.java             |  46 ++++++
+ .../api/attributes/AttributeSlot.java         |  81 +++++++++++
+ .../api/attributes/EAPI_Attributes.java       | 134 ++++++++++++++++++
+ .../api/attributes/Operation.java             |  50 +++++++
+ 5 files changed, 313 insertions(+)
+ create mode 100644 src/main/java/com/empireminecraft/api/attributes/Attribute.java
+ create mode 100644 src/main/java/com/empireminecraft/api/attributes/AttributeSlot.java
+ create mode 100644 src/main/java/com/empireminecraft/api/attributes/EAPI_Attributes.java
+ create mode 100644 src/main/java/com/empireminecraft/api/attributes/Operation.java
+
+diff --git a/src/main/java/com/empireminecraft/api/API.java b/src/main/java/com/empireminecraft/api/API.java
+index efa1e55e7..4197eb102 100644
+--- a/src/main/java/com/empireminecraft/api/API.java
++++ b/src/main/java/com/empireminecraft/api/API.java
+@@ -23,6 +23,7 @@
+ 
+ package com.empireminecraft.api;
+ 
++import com.empireminecraft.api.attributes.EAPI_Attributes;
+ import com.empireminecraft.api.meta.EAPI_Meta;
+ import org.apache.commons.lang.exception.ExceptionUtils;
+ 
+@@ -32,6 +33,7 @@ public abstract class API {
+     public static EAPI_Misc misc;
+     public static EAPI_Meta meta;
+     public static EAPI_Chat chat;
++    public static EAPI_Attributes attributes;
+ 
+     public static String stack() {
+         return ExceptionUtils.getFullStackTrace(new Throwable());
+diff --git a/src/main/java/com/empireminecraft/api/attributes/Attribute.java b/src/main/java/com/empireminecraft/api/attributes/Attribute.java
+new file mode 100644
+index 000000000..1266c97ee
+--- /dev/null
++++ b/src/main/java/com/empireminecraft/api/attributes/Attribute.java
+@@ -0,0 +1,46 @@
++/*
++ * Copyright (c) 2016 Starlis LLC / Daniel Ennis (Aikar) - MIT License
++ *
++ *  Permission is hereby granted, free of charge, to any person obtaining
++ *  a copy of this software and associated documentation files (the
++ *  "Software"), to deal in the Software without restriction, including
++ *  without limitation the rights to use, copy, modify, merge, publish,
++ *  distribute, sublicense, and/or sell copies of the Software, and to
++ *  permit persons to whom the Software is furnished to do so, subject to
++ *  the following conditions:
++ *
++ *  The above copyright notice and this permission notice shall be
++ *  included in all copies or substantial portions of the Software.
++ *
++ *  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
++ *  EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
++ *  MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
++ *  NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
++ *  LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
++ *  OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
++ *  WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
++ */
++
++package com.empireminecraft.api.attributes;
++
++import java.util.UUID;
++
++public enum Attribute {
++    // DO NOT EVER CHANGE ENUM NAME
++    TARGET_RANGE,
++    FOLLOW_RANGE,
++    MAX_HEALTH,
++    KNOCKBACK_RESISTANCE,
++    MOVEMENT_SPEED,
++    FLYING_SPEED,
++    ATTACK_DAMAGE,
++    ATTACK_SPEED,
++    ARMOR,
++    ARMOR_TOUGHNESS,
++    LUCK;
++
++    public final UUID uuid;
++    Attribute() {
++        this.uuid = new UUID(this.name().hashCode(), this.name().toLowerCase().hashCode());
++    }
++}
+diff --git a/src/main/java/com/empireminecraft/api/attributes/AttributeSlot.java b/src/main/java/com/empireminecraft/api/attributes/AttributeSlot.java
+new file mode 100644
+index 000000000..b88075765
+--- /dev/null
++++ b/src/main/java/com/empireminecraft/api/attributes/AttributeSlot.java
+@@ -0,0 +1,81 @@
++/*
++ * Copyright (c) 2016 Starlis LLC / Daniel Ennis (Aikar) - MIT License
++ *
++ *  Permission is hereby granted, free of charge, to any person obtaining
++ *  a copy of this software and associated documentation files (the
++ *  "Software"), to deal in the Software without restriction, including
++ *  without limitation the rights to use, copy, modify, merge, publish,
++ *  distribute, sublicense, and/or sell copies of the Software, and to
++ *  permit persons to whom the Software is furnished to do so, subject to
++ *  the following conditions:
++ *
++ *  The above copyright notice and this permission notice shall be
++ *  included in all copies or substantial portions of the Software.
++ *
++ *  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
++ *  EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
++ *  MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
++ *  NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
++ *  LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
++ *  OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
++ *  WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
++ */
++
++package com.empireminecraft.api.attributes;
++
++public enum AttributeSlot {
++
++    MAINHAND(Function.HAND, 0, 0, "mainhand"),
++    OFFHAND(Function.HAND, 1, 5, "offhand"),
++    FEET(Function.ARMOR, 0, 1, "feet"),
++    LEGS(Function.ARMOR, 1, 2, "legs"),
++    CHEST(Function.ARMOR, 2, 3, "chest"),
++    HEAD(Function.ARMOR, 3, 4, "head")
++    ;
++
++    private final Function function;
++    private final int inventoryIndex;
++    private final int i;
++    private final String slotName;
++
++    AttributeSlot(Function function, int i, int dunno, String slotName) {
++        this.function = function;
++        this.inventoryIndex = i;
++        this.i = dunno;
++        this.slotName = slotName;
++    }
++
++    public Function getFunction() {
++        return this.function;
++    }
++
++    public int getInventoryIndex() {
++        return 100 + this.inventoryIndex;
++    }
++
++    public String getSlotName() {
++        return this.slotName;
++    }
++
++    public static AttributeSlot getSlotByName(String s) {
++        AttributeSlot[] aenumitemslot = values();
++        int i = aenumitemslot.length;
++
++        for (int j = 0; j < i; ++j) {
++            AttributeSlot enumitemslot = aenumitemslot[j];
++
++            if (enumitemslot.getSlotName().equalsIgnoreCase(s)) {
++                return enumitemslot;
++            }
++        }
++
++        throw new IllegalArgumentException("Invalid slot \'" + s + "\'");
++    }
++
++    public enum Function {
++
++        HAND, ARMOR;
++
++        Function() {}
++    }
++}
+diff --git a/src/main/java/com/empireminecraft/api/attributes/EAPI_Attributes.java b/src/main/java/com/empireminecraft/api/attributes/EAPI_Attributes.java
+new file mode 100644
+index 000000000..b902ece55
+--- /dev/null
++++ b/src/main/java/com/empireminecraft/api/attributes/EAPI_Attributes.java
+@@ -0,0 +1,134 @@
++/*
++ * Copyright (c) 2016 Starlis LLC / Daniel Ennis (Aikar) - MIT License
++ *
++ *  Permission is hereby granted, free of charge, to any person obtaining
++ *  a copy of this software and associated documentation files (the
++ *  "Software"), to deal in the Software without restriction, including
++ *  without limitation the rights to use, copy, modify, merge, publish,
++ *  distribute, sublicense, and/or sell copies of the Software, and to
++ *  permit persons to whom the Software is furnished to do so, subject to
++ *  the following conditions:
++ *
++ *  The above copyright notice and this permission notice shall be
++ *  included in all copies or substantial portions of the Software.
++ *
++ *  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
++ *  EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
++ *  MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
++ *  NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
++ *  LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
++ *  OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
++ *  WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
++ */
++
++package com.empireminecraft.api.attributes;
++
++import org.bukkit.entity.LivingEntity;
++import org.bukkit.inventory.ItemStack;
++
++public interface EAPI_Attributes {
++
++    /**
++     * Defaults to Operation.ADD_NUMBER
++     * @param item
++     * @param attr
++     * @param val
++     */
++    default void setAttribute(AttributeSlot slot, ItemStack item, Attribute attr, double val) {
++        setAttribute(slot, item, attr, Operation.ADD_NUMBER, val);
++    }
++
++    /**
++     * Set an attribute to the default respective slot. Unknown items will apply to all slots.
++     * @param item
++     * @param attr
++     * @param operation
++     * @param val
++     */
++    default void setAttribute(ItemStack item, Attribute attr, Operation operation, double val) {
++        switch (item.getType()) {
++            case DIAMOND_SWORD:
++            case DIAMOND_AXE:
++            case DIAMOND_PICKAXE:
++            case DIAMOND_HOE:
++            case DIAMOND_SPADE:
++            case GOLD_SWORD:
++            case GOLD_AXE:
++            case GOLD_PICKAXE:
++            case GOLD_HOE:
++            case GOLD_SPADE:
++            case IRON_SWORD:
++            case IRON_AXE:
++            case IRON_PICKAXE:
++            case IRON_HOE:
++            case IRON_SPADE:
++            case BOW:
++            case FISHING_ROD:
++            case SHEARS:
++            case FLINT_AND_STEEL:
++                setAttribute(AttributeSlot.MAINHAND, item, attr, operation, val);
++                setAttribute(AttributeSlot.OFFHAND, item, attr, operation, val);
++                break;
++            case SHIELD:
++            case TOTEM:
++                setAttribute(AttributeSlot.OFFHAND, item, attr, operation, val);
++                break;
++            case DIAMOND_CHESTPLATE:
++            case GOLD_CHESTPLATE:
++            case IRON_CHESTPLATE:
++            case CHAINMAIL_CHESTPLATE:
++            case LEATHER_CHESTPLATE:
++                setAttribute(AttributeSlot.CHEST, item, attr, operation, val);
++                break;
++            case DIAMOND_LEGGINGS:
++            case GOLD_LEGGINGS:
++            case IRON_LEGGINGS:
++            case CHAINMAIL_LEGGINGS:
++            case LEATHER_LEGGINGS:
++                setAttribute(AttributeSlot.LEGS, item, attr, operation, val);
++                break;
++            case DIAMOND_BOOTS:
++            case GOLD_BOOTS:
++            case IRON_BOOTS:
++            case CHAINMAIL_BOOTS:
++            case LEATHER_BOOTS:
++                setAttribute(AttributeSlot.FEET, item, attr, operation, val);
++                break;
++            case DIAMOND_HELMET:
++            case GOLD_HELMET:
++            case IRON_HELMET:
++            case CHAINMAIL_HELMET:
++            case LEATHER_HELMET:
++            case JACK_O_LANTERN:
++                setAttribute(AttributeSlot.HEAD, item, attr, operation, val);
++                break;
++            default:
++                setAttribute(null, item, attr, operation, val);
++        }
++    }
++
++    void setAttribute(AttributeSlot slot, ItemStack item, Attribute attr, Operation operation, double val);
++
++    /**
++     * Remove all of said attribute
++     * @param item
++     * @param attr
++     */
++    default void removeAttribute(ItemStack item, Attribute attr) {
++        removeAttribute(item, attr, null);
++        for (AttributeSlot attributeSlot : AttributeSlot.values()) {
++            removeAttribute(item, attr, attributeSlot);
++        }
++    }
++
++    /**
++     * Only remove attribute at the specified slot
++     * @param item
++     * @param attr
++     * @param slot
++     */
++    void removeAttribute(ItemStack item, Attribute attr, AttributeSlot slot);
++
++    boolean setAttribute(LivingEntity livingEntity, Attribute attr, double val);
++    Double getAttribute(LivingEntity livingEntity, Attribute attr);
++}
+diff --git a/src/main/java/com/empireminecraft/api/attributes/Operation.java b/src/main/java/com/empireminecraft/api/attributes/Operation.java
+new file mode 100644
+index 000000000..a43849916
+--- /dev/null
++++ b/src/main/java/com/empireminecraft/api/attributes/Operation.java
+@@ -0,0 +1,50 @@
++/*
++ * Copyright (c) 2016 Starlis LLC / Daniel Ennis (Aikar) - MIT License
++ *
++ *  Permission is hereby granted, free of charge, to any person obtaining
++ *  a copy of this software and associated documentation files (the
++ *  "Software"), to deal in the Software without restriction, including
++ *  without limitation the rights to use, copy, modify, merge, publish,
++ *  distribute, sublicense, and/or sell copies of the Software, and to
++ *  permit persons to whom the Software is furnished to do so, subject to
++ *  the following conditions:
++ *
++ *  The above copyright notice and this permission notice shall be
++ *  included in all copies or substantial portions of the Software.
++ *
++ *  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
++ *  EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
++ *  MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
++ *  NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
++ *  LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
++ *  OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
++ *  WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
++ */
++
++package com.empireminecraft.api.attributes;
++
++// part of this copied from https://bukkit.org/threads/util-edit-itemstack-attributes-adding-speed-damage-or-health-bonuses.158316/
++public enum Operation {
++    ADD_NUMBER(0),
++    MULTIPLY_PERCENTAGE(1),
++    ADD_PERCENTAGE(2);
++    private final int id;
++
++    Operation(int id) {
++        this.id = id;
++    }
++
++    public int getId() {
++        return id;
++    }
++
++    public static Operation fromId(int id) {
++        // Linear scan is very fast for small N
++        for (Operation op : values()) {
++            if (op.getId() == id) {
++                return op;
++            }
++        }
++        throw new IllegalArgumentException("Corrupt operation ID " + id + " detected.");
++    }
++}
+-- 
+2.18.0
+

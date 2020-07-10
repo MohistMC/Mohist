@@ -1,0 +1,43 @@
+From bb0b0f5f13f2a8fe376f0c36e8884d33773c9540 Mon Sep 17 00:00:00 2001
+From: Aikar <aikar@aikar.co>
+Date: Thu, 30 Jun 2016 22:31:06 -0400
+Subject: [PATCH] Don't use Players scoreboard team for pets
+
+---
+ .../java/net/minecraft/server/EntityTameableAnimal.java     | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/src/main/java/net/minecraft/server/EntityTameableAnimal.java b/src/main/java/net/minecraft/server/EntityTameableAnimal.java
+index 6c86fefcf..0ac81148c 100644
+--- a/src/main/java/net/minecraft/server/EntityTameableAnimal.java
++++ b/src/main/java/net/minecraft/server/EntityTameableAnimal.java
+@@ -155,6 +155,7 @@ public abstract class EntityTameableAnimal extends EntityAnimal implements Entit
+         return true;
+     }
+ 
++    /* // EMC start - don't link to owners team
+     public ScoreboardTeamBase aY() {
+         if (this.isTamed()) {
+             EntityLiving entityliving = this.getOwner();
+@@ -165,7 +166,8 @@ public abstract class EntityTameableAnimal extends EntityAnimal implements Entit
+         }
+ 
+         return super.aY();
+-    }
++    } */
++    // EMC end
+ 
+     public boolean r(Entity entity) {
+         if (this.isTamed()) {
+@@ -192,7 +194,7 @@ public abstract class EntityTameableAnimal extends EntityAnimal implements Entit
+     }
+ 
+     @Nullable
+-    public Entity getOwner() {
++    public Entity getOwnerBlah() { // EMC - naming conflict
+         return this.getOwner();
+     }
+ }
+-- 
+2.17.1
+

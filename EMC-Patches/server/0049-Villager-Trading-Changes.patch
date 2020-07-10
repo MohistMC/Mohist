@@ -1,0 +1,165 @@
+From e917192e05b10e71fdf0c14a6e25330d31d7ffc0 Mon Sep 17 00:00:00 2001
+From: Aikar <aikar@aikar.co>
+Date: Sun, 3 May 2015 01:57:31 -0400
+Subject: [PATCH] Villager Trading Changes
+
+---
+ .../net/minecraft/server/EntityVillager.java  | 88 +++++++++++++++++--
+ .../net/minecraft/server/MerchantRecipe.java  |  6 +-
+ 2 files changed, 86 insertions(+), 8 deletions(-)
+
+diff --git a/src/main/java/net/minecraft/server/EntityVillager.java b/src/main/java/net/minecraft/server/EntityVillager.java
+index a9c4ab10d..fe00eddfc 100644
+--- a/src/main/java/net/minecraft/server/EntityVillager.java
++++ b/src/main/java/net/minecraft/server/EntityVillager.java
+@@ -32,8 +32,8 @@ public class EntityVillager extends EntityAgeable implements NPC, IMerchant {
+     private boolean bH;
+     public int riches;
+     private String bJ;
+-    public int bK; // PAIL private -> public // PAIL rename careerID
+-    private int bL;
++    public int bK; private int getCareer() { return bK; } // EMC - OBF HELPER // PAIL private -> public // PAIL rename careerID
++    private int bL; private int getCareerLevel() { return bL; } // EMC - OBF HELPER
+     private boolean bM;
+     private boolean bN;
+     public final InventorySubcontainer inventory;
+@@ -43,6 +43,82 @@ public class EntityVillager extends EntityAgeable implements NPC, IMerchant {
+         this(world, 0);
+     }
+ 
++    // EMC start
++    public boolean shouldLevelUp(MerchantRecipe recipe) {
++        float chance = 0.2F;
++        for (MerchantRecipe offer : getOffers(null)) {
++            if (offer.uses >= offer.maxUses) {
++                chance += .15;
++            }
++        }
++        return recipe.uses == 1 || this.random.nextFloat() <= chance;
++    }
++    public boolean shouldReset(MerchantRecipe recipe) {
++        final MerchantRecipeList offers = getOffers(null);
++        int locked = 0;
++        for (MerchantRecipe offer : offers) {
++            if (offer.uses >= offer.maxUses) {
++                locked++;
++            }
++        }
++        return recipe.uses == 1 || offers.size() < 5 || locked > 1 || (locked == 1 && recipe.uses < recipe.maxUses);
++    }
++    public void convertTrades(MerchantRecipeList list) {
++        if (list == null) {
++            return;
++        }
++        if (!list.isEmpty() && getCareer() == 0 && getCareerLevel() == 0) {
++            int oldCount = list.size();
++            System.out.println("Converting Villager at " + world.getWorld().getName()+":"+locX+","+locY+","+locZ+" with " + oldCount + " trades");
++
++            MerchantRecipeList old = (MerchantRecipeList) list.clone();
++            list.clear();
++            int i = 0;
++            int lastSize = -1;
++            while (list.size() < oldCount && i++ < 10 && lastSize != list.size()) {
++                System.out.println("Adding Trade " + i);
++                lastSize = list.size();
++                addTrade();
++            }
++            System.out.println("BEFORE RESET - Now has " + list.size() + " trades - Gained " + (list.size() - old.size()) + " additional trades");
++            for (int x = 0; x < old.size(); x++) {
++                final MerchantRecipe oldTrade = old.get(x);
++                if (x < list.size()) {
++                    System.out.println("Overwriting 1.8 trade with 1.7 trade");
++                    list.set(x, oldTrade);
++                } else {
++                    System.out.println("Adding 1.7 trade on top of 1.8 trades " + old.size() + "," + list.size());
++                    list.add(oldTrade);
++                }
++            }
++            System.out.println("AFTER RESET - Now has " + list.size() + " trades - Gained " + (list.size() - old.size()) + " additional trades");
++        }
++        int unlocked = 0;
++        for (MerchantRecipe oldTrade : list) {
++            if (oldTrade.maxUses - oldTrade.uses > 15 ) {
++                oldTrade.maxUses = oldTrade.uses + 15; // Repair damage from bug
++            }
++            if (oldTrade.uses < oldTrade.maxUses) {
++                unlocked++;
++            }
++        }
++        if (unlocked < 4 && list.size() >= 6) {
++            for (MerchantRecipe oldTrade : list) {
++                boostRecipe(oldTrade);
++            }
++        }
++    }
++    private void boostRecipe(MerchantRecipe recipe) {
++        int lower = 3;
++        int upper = 6;
++        if (recipe.sellingItem.getBukkitStack().getType() == org.bukkit.Material.ENCHANTED_BOOK) {
++            upper = 2;
++            lower = 5;
++        }
++        recipe.maxUses += random.nextInt(upper + 4) + random.nextInt(upper) + lower;
++    }
++    // EMC end
++
+     public EntityVillager(World world, int i) {
+         super(world);
+         this.inventory = new InventorySubcontainer("Items", false, 8, (CraftVillager) this.getBukkitEntity()); // CraftBukkit add argument
+@@ -148,7 +224,7 @@ public class EntityVillager extends EntityAgeable implements NPC, IMerchant {
+                             VillagerReplenishTradeEvent event = new VillagerReplenishTradeEvent((Villager) this.getBukkitEntity(), merchantrecipe.asBukkit(), bonus);
+                             Bukkit.getPluginManager().callEvent(event);
+                             if (!event.isCancelled()) {
+-                                merchantrecipe.a(event.getBonus());
++                                boostRecipe(merchantrecipe); // EMC
+                             }
+                             // CraftBukkit end
+                         }
+@@ -265,6 +341,7 @@ public class EntityVillager extends EntityAgeable implements NPC, IMerchant {
+             NBTTagCompound nbttagcompound1 = nbttagcompound.getCompound("Offers");
+ 
+             this.trades = new MerchantRecipeList(nbttagcompound1);
++            convertTrades(this.trades); // EMC
+         }
+ 
+         NBTTagList nbttaglist = nbttagcompound.getList("Inventory", 10);
+@@ -419,9 +496,9 @@ public class EntityVillager extends EntityAgeable implements NPC, IMerchant {
+         this.a(SoundEffects.ip, this.cq(), this.cr());
+         int i = 3 + this.random.nextInt(4);
+ 
+-        if (merchantrecipe.e() == 1 || this.random.nextInt(5) == 0) {
++        if (shouldLevelUp(merchantrecipe)) { // EMC
+             this.bF = 40;
+-            this.bG = true;
++            this.bG = shouldReset(merchantrecipe); // EMC
+             this.bH = true;
+             if (this.tradingPlayer != null) {
+                 this.bJ = this.tradingPlayer.getName();
+@@ -463,6 +540,7 @@ public class EntityVillager extends EntityAgeable implements NPC, IMerchant {
+         return this.trades;
+     }
+ 
++    private void addTrade() { dx(); } // EMC - OBF HELPER
+     public void dx() { // CraftBukkit private -> public // PAIL rename populateTrades
+         EntityVillager.IMerchantRecipeOption[][][] aentityvillager_imerchantrecipeoption = EntityVillager.bP[this.getProfession()];
+ 
+diff --git a/src/main/java/net/minecraft/server/MerchantRecipe.java b/src/main/java/net/minecraft/server/MerchantRecipe.java
+index 96f3e16d7..971d317e7 100644
+--- a/src/main/java/net/minecraft/server/MerchantRecipe.java
++++ b/src/main/java/net/minecraft/server/MerchantRecipe.java
+@@ -6,9 +6,9 @@ public class MerchantRecipe {
+ 
+     public ItemStack buyingItem1;
+     public ItemStack buyingItem2;
+-    public ItemStack sellingItem;
+-    public int uses;
+-    public int maxUses;
++    public ItemStack sellingItem; // EMC
++    public int uses; // EMC
++    public int maxUses; // EMC
+     public boolean rewardExp;
+     // CraftBukkit start
+     private CraftMerchantRecipe bukkitHandle;
+-- 
+2.17.1
+

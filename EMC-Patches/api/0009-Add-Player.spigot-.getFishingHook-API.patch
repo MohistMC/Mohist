@@ -1,0 +1,31 @@
+From 66e997ca8ada3a2579ac17bee39d280cd273063a Mon Sep 17 00:00:00 2001
+From: Aikar <aikar@aikar.co>
+Date: Thu, 14 Aug 2014 18:21:11 -0400
+Subject: [PATCH] Add Player.spigot().getFishingHook() API
+
+---
+ src/main/java/org/bukkit/entity/Player.java | 8 ++++++++
+ 1 file changed, 8 insertions(+)
+
+diff --git a/src/main/java/org/bukkit/entity/Player.java b/src/main/java/org/bukkit/entity/Player.java
+index d874d166..dff70b29 100644
+--- a/src/main/java/org/bukkit/entity/Player.java
++++ b/src/main/java/org/bukkit/entity/Player.java
+@@ -1870,6 +1870,14 @@ public interface Player extends HumanEntity, Conversable, CommandSender, Offline
+     public class Spigot extends Entity.Spigot
+     {
+ 
++        /**
++         * Gets the current Fishing Hook a player has out.
++         * @return current fishing hook or null if the player is not fishing
++         */
++        public Fish getFishingHook() {
++            throw new UnsupportedOperationException( "Not supported yet." );
++        }
++
+         /**
+          * Gets the connection address of this player, regardless of whether it
+          * has been spoofed or not.
+-- 
+2.17.1
+

@@ -1,0 +1,51 @@
+From 9a0da9e951b67cfcecad48c6569a717d90892598 Mon Sep 17 00:00:00 2001
+From: Aikar <aikar@aikar.co>
+Date: Fri, 6 Dec 2013 20:54:23 -0500
+Subject: [PATCH] AchievementBroadcastEvent
+
+Used to control who sees achievement message
+---
+ .../minecraft/server/AdvancementDataPlayer.java    | 14 +++++++++++++-
+ 1 file changed, 13 insertions(+), 1 deletion(-)
+
+diff --git a/src/main/java/net/minecraft/server/AdvancementDataPlayer.java b/src/main/java/net/minecraft/server/AdvancementDataPlayer.java
+index 8913e2744..65cf2d224 100644
+--- a/src/main/java/net/minecraft/server/AdvancementDataPlayer.java
++++ b/src/main/java/net/minecraft/server/AdvancementDataPlayer.java
+@@ -1,5 +1,6 @@
+ package net.minecraft.server;
+ 
++import com.empireminecraft.customevents.AchievementBroadcastEvent;
+ import com.google.common.collect.Lists;
+ import com.google.common.collect.Maps;
+ import com.google.common.collect.Sets;
+@@ -26,6 +27,8 @@ import java.util.stream.Stream;
+ import javax.annotation.Nullable;
+ import org.apache.logging.log4j.LogManager;
+ import org.apache.logging.log4j.Logger;
++import org.bukkit.craftbukkit.entity.CraftPlayer;
++import org.bukkit.entity.Player;
+ 
+ public class AdvancementDataPlayer {
+ 
+@@ -209,7 +212,16 @@ public class AdvancementDataPlayer {
+                 this.player.world.getServer().getPluginManager().callEvent(new org.bukkit.event.player.PlayerAdvancementDoneEvent(this.player.getBukkitEntity(), advancement.bukkit)); // CraftBukkit
+                 advancement.d().a(this.player);
+                 if (advancement.c() != null && advancement.c().i() && this.player.world.getGameRules().getBoolean("announceAdvancements")) {
+-                    this.d.getPlayerList().sendMessage(new ChatMessage("chat.type.advancement." + advancement.c().e().a(), new Object[] { this.player.getScoreboardDisplayName(), advancement.j()}));
++                    // EMC start
++                    ChatMessage achv = new ChatMessage("chat.type.advancement." + advancement.c().e().a(), new Object[] { this.player.getScoreboardDisplayName(), advancement.j()});
++                    com.empireminecraft.customevents.AchievementBroadcastEvent event = new AchievementBroadcastEvent(this.player.getBukkitEntity());
++                    event.callEvent();
++                    for (Player player : event.getReceivers()) {
++                        ((CraftPlayer) player).getHandle().sendMessage(achv);
++                    }
++                    // EMC end
++
++                    //this.d.getPlayerList().sendMessage(new ChatMessage("chat.type.advancement." + advancement.c().e().a(), new Object[] { this.player.getScoreboardDisplayName(), advancement.j()}));
+                 }
+             }
+         }
+-- 
+2.17.1
+

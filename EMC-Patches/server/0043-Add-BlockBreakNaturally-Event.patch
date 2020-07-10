@@ -1,0 +1,65 @@
+From a76b456c81bb33df760ff16cb1d6063e5211f1b7 Mon Sep 17 00:00:00 2001
+From: Aikar <aikar@aikar.co>
+Date: Thu, 18 Dec 2014 22:48:46 -0500
+Subject: [PATCH] Add BlockBreakNaturally Event
+
+To give reliable control over all blocks dropping to world to restore custom item meta
+---
+ src/main/java/net/minecraft/server/Block.java         |  2 ++
+ src/main/java/net/minecraft/server/EntityItem.java    |  1 +
+ .../net/minecraft/server/PlayerInteractManager.java   | 11 +++++++++++
+ 3 files changed, 14 insertions(+)
+
+diff --git a/src/main/java/net/minecraft/server/Block.java b/src/main/java/net/minecraft/server/Block.java
+index 3e2f52647..00cdbf3b9 100644
+--- a/src/main/java/net/minecraft/server/Block.java
++++ b/src/main/java/net/minecraft/server/Block.java
+@@ -380,9 +380,11 @@ public class Block {
+             entityitem.q();
+             // CraftBukkit start
+             if (world.captureDrops != null) {
++                entityitem.droppedPosition = blockposition; // EMC
+                 world.captureDrops.add(entityitem);
+             } else {
+                 world.addEntity(entityitem);
++                new com.empireminecraft.customevents.BlockBreakNaturallyEvent(MCUtil.toLocation(world, blockposition), (org.bukkit.entity.Item) entityitem.getBukkitEntity()).callEvent(); // EMC
+             }
+             // CraftBukkit end
+         }
+diff --git a/src/main/java/net/minecraft/server/EntityItem.java b/src/main/java/net/minecraft/server/EntityItem.java
+index a651ef0dc..bc516a228 100644
+--- a/src/main/java/net/minecraft/server/EntityItem.java
++++ b/src/main/java/net/minecraft/server/EntityItem.java
+@@ -23,6 +23,7 @@ public class EntityItem extends Entity implements HopperPusher {
+     private static final DataWatcherObject<ItemStack> c = DataWatcher.a(EntityItem.class, DataWatcherRegistry.f);
+     private int age;
+     public boolean canDespawn = true; // EMC
++    public BlockPosition droppedPosition; // EMC
+     public int pickupDelay;
+     public boolean canMobPickup = true; // Paper
+     private int f;
+diff --git a/src/main/java/net/minecraft/server/PlayerInteractManager.java b/src/main/java/net/minecraft/server/PlayerInteractManager.java
+index cef982f03..44da5f264 100644
+--- a/src/main/java/net/minecraft/server/PlayerInteractManager.java
++++ b/src/main/java/net/minecraft/server/PlayerInteractManager.java
+@@ -385,6 +385,17 @@ public class PlayerInteractManager {
+                 world.captureDrops = new ArrayList<>();
+                 boolean flag = this.c(blockposition);
+                 if (event.isDropItems()) {
++                    // EMC start
++                    com.google.common.collect.Multimap<org.bukkit.Location, org.bukkit.entity.Item> drops = com.google.common.collect.ArrayListMultimap.create();
++                    for (EntityItem item : world.captureDrops) {
++                        drops.put(net.minecraft.server.MCUtil.toLocation(item.world, item.droppedPosition), (org.bukkit.entity.Item) item.getBukkitEntity());
++                    }
++                    for (org.bukkit.Location location : drops.keySet()) {
++                        for (org.bukkit.entity.Item item : drops.get(location)) {
++                            new com.empireminecraft.customevents.BlockBreakNaturallyEvent(location, item).callEvent();
++                        }
++                    }
++                    // EMC end
+                     for (EntityItem item : world.captureDrops) {
+                         world.addEntity(item);
+                     }
+-- 
+2.24.1
+

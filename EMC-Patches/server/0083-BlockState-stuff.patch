@@ -1,0 +1,44 @@
+From 79cc7325670c17b8c0b7ee336d70e9466493a29c Mon Sep 17 00:00:00 2001
+From: Aikar <aikar@aikar.co>
+Date: Sun, 3 Jul 2016 22:55:59 -0500
+Subject: [PATCH] BlockState stuff
+
+---
+ src/main/java/net/minecraft/server/BlockStateList.java | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
+
+diff --git a/src/main/java/net/minecraft/server/BlockStateList.java b/src/main/java/net/minecraft/server/BlockStateList.java
+index a7846b845..e853a8cc1 100644
+--- a/src/main/java/net/minecraft/server/BlockStateList.java
++++ b/src/main/java/net/minecraft/server/BlockStateList.java
+@@ -98,7 +98,7 @@ public class BlockStateList {
+ 
+                 Comparable comparable = (Comparable) iterator.next();
+ 
+-                s1 = iblockstate.a(comparable);
++                s1 = iblockstate.a((T) comparable); // Paper - decompile error
+             } while (BlockStateList.a.matcher(s1).matches());
+ 
+             throw new IllegalArgumentException("Block: " + block.getClass() + " has property: " + s + " with invalidly named value: " + s1);
+@@ -165,7 +165,7 @@ public class BlockStateList {
+             if (comparable == null) {
+                 throw new IllegalArgumentException("Cannot get property " + iblockstate + " as it does not exist in " + this.a.s());
+             } else {
+-                return (Comparable) iblockstate.b().cast(comparable);
++                return (T) comparable; // Paper - decompile error
+             }
+         }
+ 
+@@ -371,5 +371,9 @@ public class BlockStateList {
+         BlockData(Block block, ImmutableMap immutablemap, Object object) {
+             this(block, immutablemap);
+         }
++
++        // Paper start
++
++        // Paper end
+     }
+ }
+-- 
+2.17.1
+

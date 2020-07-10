@@ -1,0 +1,52 @@
+From 23a7d068d7f0383ad9faa24d12aab8725273d2c6 Mon Sep 17 00:00:00 2001
+From: Aikar <aikar@aikar.co>
+Date: Thu, 29 Dec 2016 23:44:27 -0500
+Subject: [PATCH] Comment out movement logs, we handle in an event now
+
+---
+ src/main/java/net/minecraft/server/PlayerConnection.java | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/src/main/java/net/minecraft/server/PlayerConnection.java b/src/main/java/net/minecraft/server/PlayerConnection.java
+index 0c2222985..08f1a944a 100644
+--- a/src/main/java/net/minecraft/server/PlayerConnection.java
++++ b/src/main/java/net/minecraft/server/PlayerConnection.java
+@@ -364,7 +364,7 @@ public class PlayerConnection implements PacketListenerPlayIn, ITickable {
+ 
+                 if (d10 - d9 > Math.max(100.0D, Math.pow((double) (org.spigotmc.SpigotConfig.movedTooQuicklyMultiplier * (float) i * speed), 2)) && (!this.minecraftServer.R() || !this.minecraftServer.Q().equals(entity.getName()))) { // Spigot
+                 // CraftBukkit end
+-                    PlayerConnection.LOGGER.warn("{} (vehicle of {}) moved too quickly! {},{},{}", entity.getName(), this.player.getName(), Double.valueOf(d6), Double.valueOf(d7), Double.valueOf(d8));
++                    //PlayerConnection.LOGGER.warn("{} (vehicle of {}) moved too quickly! {},{},{}", entity.getName(), this.player.getName(), Double.valueOf(d6), Double.valueOf(d7), Double.valueOf(d8)); // EMC
+                     this.networkManager.sendPacket(new PacketPlayOutVehicleMove(entity));
+                     return;
+                 }
+@@ -389,7 +389,7 @@ public class PlayerConnection implements PacketListenerPlayIn, ITickable {
+ 
+                 if (d10 > org.spigotmc.SpigotConfig.movedWronglyThreshold) { // Spigot
+                     flag1 = true;
+-                    PlayerConnection.LOGGER.warn(entity.getName() + " (vehicle of " + this.player.getName() + ") moved wrongly!"); // Paper - More informative
++                    //PlayerConnection.LOGGER.warn(entity.getName() + " (vehicle of " + this.player.getName() + ") moved wrongly!"); // Paper - More informative // EMC
+                 }
+                 Location curPos = this.getPlayer().getLocation(); // Spigot
+ 
+@@ -613,7 +613,7 @@ public class PlayerConnection implements PacketListenerPlayIn, ITickable {
+                                 if (d11 - d10 > Math.max(f2, Math.pow((double) (org.spigotmc.SpigotConfig.movedTooQuicklyMultiplier * (float) i * speed), 2)) && (!this.minecraftServer.R() || !this.minecraftServer.Q().equals(this.player.getName()))) { // Spigot
+                                 if (new com.empireminecraft.customevents.MovedTooQuicklyEvent(d10, getPlayer()).callEvent()) { // EMC
+                                 // CraftBukkit end
+-                                    PlayerConnection.LOGGER.warn("{} moved too quickly! {},{},{}", this.player.getName(), Double.valueOf(d7), Double.valueOf(d8), Double.valueOf(d9));
++                                    //PlayerConnection.LOGGER.warn("{} moved too quickly! {},{},{}", this.player.getName(), Double.valueOf(d7), Double.valueOf(d8), Double.valueOf(d9)); // EMC
+                                     this.a(this.player.locX, this.player.locY, this.player.locZ, this.player.yaw, this.player.pitch);
+                                     return;
+                                 } // EMC
+@@ -672,7 +672,7 @@ public class PlayerConnection implements PacketListenerPlayIn, ITickable {
+ 
+                             if (!this.player.L() && d11 > org.spigotmc.SpigotConfig.movedWronglyThreshold && !this.player.isSleeping() && !this.player.playerInteractManager.isCreative() && this.player.playerInteractManager.getGameMode() != EnumGamemode.SPECTATOR) { // Spigot
+                                 flag1 = true;
+-                                PlayerConnection.LOGGER.warn("{} moved wrongly!", this.player.getName());
++                                //PlayerConnection.LOGGER.warn("{} moved wrongly!", this.player.getName());
+                             }
+ 
+                             this.player.setLocation(d4, d5, d6, f, f1);
+-- 
+2.24.1
+

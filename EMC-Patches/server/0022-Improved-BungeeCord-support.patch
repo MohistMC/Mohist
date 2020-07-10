@@ -1,0 +1,99 @@
+From a354d5d0b8e6c71afa6b904013862e259631851f Mon Sep 17 00:00:00 2001
+From: Aikar <aikar@aikar.co>
+Date: Mon, 9 Dec 2013 23:21:21 -0500
+Subject: [PATCH] Improved BungeeCord support
+
+Secure BungeeCord with IP Whitelist for IP/UUID forwarding
+Allow online-mode to be set to true, and skip online-mode for bungee IP's
+---
+ src/main/java/net/minecraft/server/HandshakeListener.java | 6 ++++--
+ src/main/java/net/minecraft/server/LoginListener.java     | 2 +-
+ src/main/java/net/minecraft/server/NetworkManager.java    | 1 +
+ src/main/java/org/spigotmc/SpigotConfig.java              | 3 +++
+ 4 files changed, 9 insertions(+), 3 deletions(-)
+
+diff --git a/src/main/java/net/minecraft/server/HandshakeListener.java b/src/main/java/net/minecraft/server/HandshakeListener.java
+index c583ab7d9..3392e8b56 100644
+--- a/src/main/java/net/minecraft/server/HandshakeListener.java
++++ b/src/main/java/net/minecraft/server/HandshakeListener.java
+@@ -74,7 +74,8 @@ public class HandshakeListener implements PacketHandshakingInListener {
+             } else {
+                 this.b.setPacketListener(new LoginListener(this.a, this.b));
+                 // Paper start - handshake event
+-                boolean proxyLogicEnabled = org.spigotmc.SpigotConfig.bungee;
++                String ip = ((java.net.InetSocketAddress) this.b.getSocketAddress()).getAddress().getHostAddress(); // EMC
++                boolean proxyLogicEnabled = org.spigotmc.SpigotConfig.bungee && org.spigotmc.SpigotConfig.bungeeAddresses.contains(ip); // EMC
+                 boolean handledByEvent = false;
+                 // Try and handle the handshake through the event
+                 if (com.destroystokyo.paper.event.player.PlayerHandshakeEvent.getHandlerList().getRegisteredListeners().length != 0) { // Hello? Can you hear me?
+@@ -100,12 +101,13 @@ public class HandshakeListener implements PacketHandshakingInListener {
+                 // Paper end
+                 // Spigot Start
+                 //if (org.spigotmc.SpigotConfig.bungee) { // Paper - comment out, we check above!
++                    b.isProxied = true; // EMC
+                     String[] split = packethandshakinginsetprotocol.hostname.split("\00");
+                     if ( split.length == 3 || split.length == 4 ) {
+                         packethandshakinginsetprotocol.hostname = split[0];
+                         b.l = new java.net.InetSocketAddress(split[1], ((java.net.InetSocketAddress) b.getSocketAddress()).getPort());
+                         b.spoofedUUID = com.mojang.util.UUIDTypeAdapter.fromString( split[2] );
+-                    } else
++                    } else if (false) // EMC
+                     {
+                         chatmessage = new ChatMessage("If you wish to use IP forwarding, please enable it in your BungeeCord config as well!");
+                         this.b.sendPacket(new PacketLoginOutDisconnect(chatmessage));
+diff --git a/src/main/java/net/minecraft/server/LoginListener.java b/src/main/java/net/minecraft/server/LoginListener.java
+index 8aeded425..d9d52cdab 100644
+--- a/src/main/java/net/minecraft/server/LoginListener.java
++++ b/src/main/java/net/minecraft/server/LoginListener.java
+@@ -192,7 +192,7 @@ public class LoginListener implements PacketLoginInListener, ITickable {
+     public void a(PacketLoginInStart packetlogininstart) {
+         Validate.validState(this.g == LoginListener.EnumProtocolState.HELLO, "Unexpected hello packet", new Object[0]);
+         this.i = packetlogininstart.a();
+-        if (this.server.getOnlineMode() && !this.networkManager.isLocal()) {
++        if (!this.networkManager.isProxied && this.server.getOnlineMode() && !this.networkManager.isLocal()) { // EMC - add !isProxied
+             this.g = LoginListener.EnumProtocolState.KEY;
+             this.networkManager.sendPacket(new PacketLoginOutEncryptionBegin("", this.server.O().getPublic(), this.e));
+         } else {
+diff --git a/src/main/java/net/minecraft/server/NetworkManager.java b/src/main/java/net/minecraft/server/NetworkManager.java
+index 3d32e0056..ff6d566f1 100644
+--- a/src/main/java/net/minecraft/server/NetworkManager.java
++++ b/src/main/java/net/minecraft/server/NetworkManager.java
+@@ -70,6 +70,7 @@ public class NetworkManager extends SimpleChannelInboundHandler<Packet<?>> {
+     public java.util.UUID spoofedUUID;
+     public com.mojang.authlib.properties.Property[] spoofedProfile;
+     public boolean preparing = true;
++    public boolean isProxied = false; // EMC
+     // Spigot End
+     private PacketListener m;
+     private IChatBaseComponent n;
+diff --git a/src/main/java/org/spigotmc/SpigotConfig.java b/src/main/java/org/spigotmc/SpigotConfig.java
+index 4f9fd4bc6..4b0210b1a 100644
+--- a/src/main/java/org/spigotmc/SpigotConfig.java
++++ b/src/main/java/org/spigotmc/SpigotConfig.java
+@@ -7,6 +7,7 @@ import java.lang.reflect.InvocationTargetException;
+ import java.lang.reflect.Method;
+ import java.lang.reflect.Modifier;
+ import java.util.Arrays;
++import java.util.Collections;
+ import java.util.HashMap;
+ import java.util.HashSet;
+ import java.util.List;
+@@ -227,6 +228,7 @@ public class SpigotConfig
+     }
+ 
+     public static boolean bungee;
++    public static List<String> bungeeAddresses = Collections.singletonList("127.0.0.1");
+     private static void bungee() {
+         if ( version < 4 )
+         {
+@@ -234,6 +236,7 @@ public class SpigotConfig
+             System.out.println( "Oudated config, disabling BungeeCord support!" );
+         }
+         bungee = getBoolean( "settings.bungeecord", false );
++        bungeeAddresses = getList("settings.bungeecord-addresses", bungeeAddresses);
+     }
+ 
+     private static void nettyThreads()
+-- 
+2.17.1
+

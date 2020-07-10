@@ -1,0 +1,53 @@
+From a4a4c219d3ca934a98a9527c6292abbe1c417040 Mon Sep 17 00:00:00 2001
+From: Aikar <aikar@aikar.co>
+Date: Tue, 19 May 2015 23:47:32 -0400
+Subject: [PATCH] Disable Repair Cost
+
+Handled on Plugin Level on a Per Player basis
+---
+ src/main/java/net/minecraft/server/ItemStack.java             | 4 ++++
+ .../java/org/bukkit/craftbukkit/inventory/CraftMetaItem.java  | 2 +-
+ 2 files changed, 5 insertions(+), 1 deletion(-)
+
+diff --git a/src/main/java/net/minecraft/server/ItemStack.java b/src/main/java/net/minecraft/server/ItemStack.java
+index cff1cd8b5..71a78ea2d 100644
+--- a/src/main/java/net/minecraft/server/ItemStack.java
++++ b/src/main/java/net/minecraft/server/ItemStack.java
+@@ -157,6 +157,7 @@ public final class ItemStack {
+                 this.item.a(this.tag);
+                 // CraftBukkit end
+             }
++            if (this.tag.hasKey("RepairCost")) this.tag.remove("RepairCost"); // EMC
+         }
+     }
+ 
+@@ -774,10 +775,13 @@ public final class ItemStack {
+     }
+ 
+     public int getRepairCost() {
++        if (true) return 0; // EMC
+         return this.hasTag() && this.tag.hasKeyOfType("RepairCost", 3) ? this.tag.getInt("RepairCost") : 0;
+     }
+ 
+     public void setRepairCost(int i) {
++        if (true) return; // EMC
++
+         // CraftBukkit start - remove RepairCost tag when 0 (SPIGOT-3945)
+         if (i == 0) {
+             if (this.hasTag()) {
+diff --git a/src/main/java/org/bukkit/craftbukkit/inventory/CraftMetaItem.java b/src/main/java/org/bukkit/craftbukkit/inventory/CraftMetaItem.java
+index 2ab4a1cf4..6fda6153f 100644
+--- a/src/main/java/org/bukkit/craftbukkit/inventory/CraftMetaItem.java
++++ b/src/main/java/org/bukkit/craftbukkit/inventory/CraftMetaItem.java
+@@ -292,7 +292,7 @@ class CraftMetaItem implements ItemMeta, Repairable {
+ 
+         this.enchantments = buildEnchantments(tag, ENCHANTMENTS);
+ 
+-        if (tag.hasKey(REPAIR.NBT)) {
++        if (false && tag.hasKey(REPAIR.NBT)) { // EMC
+             repairCost = tag.getInt(REPAIR.NBT);
+         }
+ 
+-- 
+2.24.1
+

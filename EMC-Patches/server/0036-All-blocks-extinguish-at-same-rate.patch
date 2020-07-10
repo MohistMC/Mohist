@@ -1,0 +1,27 @@
+From 6fda45cb7a3a09cc8533aed9f9b45192c39e10cd Mon Sep 17 00:00:00 2001
+From: Aikar <aikar@aikar.co>
+Date: Tue, 29 Apr 2014 20:27:43 -0400
+Subject: [PATCH] All blocks extinguish at same rate
+
+Previously "Flammable" blocks would burn for ages, this makes them burn out the same as non flammable.
+This is so that blocks that have ignite/burn events cancelled will actually burn out.
+---
+ src/main/java/net/minecraft/server/BlockFire.java | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/main/java/net/minecraft/server/BlockFire.java b/src/main/java/net/minecraft/server/BlockFire.java
+index 6832a19af..7a9defee9 100644
+--- a/src/main/java/net/minecraft/server/BlockFire.java
++++ b/src/main/java/net/minecraft/server/BlockFire.java
+@@ -131,7 +131,7 @@ public class BlockFire extends Block {
+                         return;
+                     }
+ 
+-                    if (!this.c((IBlockAccess) world, blockposition.down()) && i == 15 && random.nextInt(4) == 0) {
++                    if (/*!this.c((IBlockAccess) world, blockposition.down()) &&*/ i == 15 && random.nextInt(4) == 0) { // EMC - comment out this.e() on line with i = 15 / rand 4
+                         fireExtinguished(world, blockposition); // CraftBukkit
+                         return;
+                     }
+-- 
+2.17.1
+

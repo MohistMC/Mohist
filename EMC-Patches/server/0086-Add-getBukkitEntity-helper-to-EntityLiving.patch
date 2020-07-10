@@ -1,0 +1,27 @@
+From 7d69e0f2a7aadce0d0b19ff2d4e685d7b0947d0d Mon Sep 17 00:00:00 2001
+From: Aikar <aikar@aikar.co>
+Date: Sun, 4 Dec 2016 15:06:29 -0500
+Subject: [PATCH] Add getBukkitEntity helper to EntityLiving
+
+---
+ src/main/java/net/minecraft/server/EntityLiving.java | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/src/main/java/net/minecraft/server/EntityLiving.java b/src/main/java/net/minecraft/server/EntityLiving.java
+index 41a7abacb..dc61ccf71 100644
+--- a/src/main/java/net/minecraft/server/EntityLiving.java
++++ b/src/main/java/net/minecraft/server/EntityLiving.java
+@@ -114,6 +114,10 @@ public abstract class EntityLiving extends Entity {
+     public int expToDrop;
+     public int maxAirTicks = 300;
+     boolean forceDrops;
++    @Override
++    public org.bukkit.craftbukkit.entity.CraftLivingEntity getBukkitEntity() {
++        return (org.bukkit.craftbukkit.entity.CraftLivingEntity) super.getBukkitEntity();
++    }
+     ArrayList<org.bukkit.inventory.ItemStack> drops = new ArrayList<org.bukkit.inventory.ItemStack>();
+     public org.bukkit.craftbukkit.attribute.CraftAttributeMap craftAttributes;
+     public boolean collides = true;
+-- 
+2.17.1
+

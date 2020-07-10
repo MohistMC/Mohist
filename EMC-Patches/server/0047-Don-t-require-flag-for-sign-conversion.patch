@@ -1,0 +1,34 @@
+From 1c40455586c56b852ee78bc00b178e2576a11eee Mon Sep 17 00:00:00 2001
+From: Aikar <aikar@aikar.co>
+Date: Thu, 30 Apr 2015 00:46:26 -0400
+Subject: [PATCH] Don't require flag for sign conversion
+
+---
+ src/main/java/net/minecraft/server/TileEntitySign.java | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/src/main/java/net/minecraft/server/TileEntitySign.java b/src/main/java/net/minecraft/server/TileEntitySign.java
+index 95de8b055b..998d374903 100644
+--- a/src/main/java/net/minecraft/server/TileEntitySign.java
++++ b/src/main/java/net/minecraft/server/TileEntitySign.java
+@@ -10,7 +10,7 @@ public class TileEntitySign extends TileEntity {
+     private EntityHuman h;
+     private final CommandObjectiveExecutor i = new CommandObjectiveExecutor();
+     public static final int MAX_SIGN_LINE_LENGTH = Integer.getInteger("Paper.maxSignLength", 80); // Paper
+-    private static final boolean CONVERT_LEGACY_SIGNS = Boolean.getBoolean("convertLegacySigns");
++    private static final boolean CONVERT_LEGACY_SIGNS = true; // EMC
+     public java.util.UUID signEditor; // Paper
+ 
+     public TileEntitySign() {}
+@@ -71,7 +71,7 @@ public class TileEntitySign extends TileEntity {
+         // This is done with a flag instead of all the time because
+         // we have no way to tell whether a sign is from 1.7.10 or 1.8
+ 
+-        boolean oldSign = Boolean.getBoolean("convertLegacySigns") && !nbttagcompound.getBoolean("Bukkit.isConverted");
++        boolean oldSign = !nbttagcompound.getBoolean("Bukkit.isConverted"); // EMC - don't use flag
+ 
+         for (int i = 0; i < 4; ++i) {
+             String s = nbttagcompound.getString("Text" + (i + 1));
+-- 
+2.21.0
+

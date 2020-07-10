@@ -1,0 +1,39 @@
+From 1d8c2535dd9eaf5b5e5da77fb7028f7e57d531f0 Mon Sep 17 00:00:00 2001
+From: Aikar <aikar@aikar.co>
+Date: Fri, 28 Feb 2014 22:25:04 -0500
+Subject: [PATCH] Fire EntityTargetLivingEntityEvent for
+ GoalNearestAttackableTarget
+
+If cancelled, move to next in list
+---
+ .../PathfinderGoalNearestAttackableTarget.java     | 14 +++++++++++++-
+ 1 file changed, 13 insertions(+), 1 deletion(-)
+
+diff --git a/src/main/java/net/minecraft/server/PathfinderGoalNearestAttackableTarget.java b/src/main/java/net/minecraft/server/PathfinderGoalNearestAttackableTarget.java
+index ebc7ff788..208904f89 100644
+--- a/src/main/java/net/minecraft/server/PathfinderGoalNearestAttackableTarget.java
++++ b/src/main/java/net/minecraft/server/PathfinderGoalNearestAttackableTarget.java
+@@ -50,7 +50,19 @@ public class PathfinderGoalNearestAttackableTarget<T extends EntityLiving> exten
+                 return false;
+             } else {
+                 Collections.sort(list, this.b);
+-                this.d = (T) list.get(0); // CraftBukkit - fix decompile error
++                // EMC start
++                for (T entity : ((List<T>) list)) {
++                    if (org.bukkit.craftbukkit.event.CraftEventFactory
++                        .callEntityTargetLivingEvent(
++                            this.e,
++                            entity,
++                            org.bukkit.event.entity.EntityTargetEvent.TargetReason.CLOSEST_PLAYER).isCancelled()) {
++                        continue;
++                    }
++                    this.d = entity;
++                    break; // CraftBukkit - fix decompile error
++                }
++                // EMC end
+                 return true;
+             }
+         } else {
+-- 
+2.17.1
+

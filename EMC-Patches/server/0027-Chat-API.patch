@@ -1,0 +1,357 @@
+From a104d47ef4d88c56ec7e5b9d26ab8c8badff66eb Mon Sep 17 00:00:00 2001
+From: Aikar <aikar@aikar.co>
+Date: Mon, 17 Feb 2014 00:05:26 -0500
+Subject: [PATCH] Chat API
+
+Initial for Fanciful Credits to http://forums.bukkit.org/threads/lib-fanciful-pleasant-chat-message-formatting.195148/
+But did a lot of bug fixing and improving upon it, and designing into the Empire API
+---
+ .../empireminecraft/api/CraftEmpireAPI.java   |   2 +
+ .../api/FancifulChatAPIImpl.java              | 267 ++++++++++++++++++
+ .../api/meta/CraftEAPI_Chat.java              |  40 +++
+ 3 files changed, 309 insertions(+)
+ create mode 100644 src/main/java/com/empireminecraft/api/FancifulChatAPIImpl.java
+ create mode 100644 src/main/java/com/empireminecraft/api/meta/CraftEAPI_Chat.java
+
+diff --git a/src/main/java/com/empireminecraft/api/CraftEmpireAPI.java b/src/main/java/com/empireminecraft/api/CraftEmpireAPI.java
+index 9b0eb03de..a6e2c3d28 100644
+--- a/src/main/java/com/empireminecraft/api/CraftEmpireAPI.java
++++ b/src/main/java/com/empireminecraft/api/CraftEmpireAPI.java
+@@ -24,6 +24,7 @@
+ package com.empireminecraft.api;
+ 
+ import com.empireminecraft.api.meta.CraftEAPI_Attributes;
++import com.empireminecraft.api.meta.CraftEAPI_Chat;
+ import com.empireminecraft.api.meta.CraftEAPI_Meta;
+ 
+ public final class CraftEmpireAPI extends API {
+@@ -36,6 +37,7 @@ public final class CraftEmpireAPI extends API {
+         misc = new CraftEAPI_Misc();
+         meta = new CraftEAPI_Meta();
+         attributes = new CraftEAPI_Attributes();
++        chat = new CraftEAPI_Chat();
+     }
+ 
+ }
+diff --git a/src/main/java/com/empireminecraft/api/FancifulChatAPIImpl.java b/src/main/java/com/empireminecraft/api/FancifulChatAPIImpl.java
+new file mode 100644
+index 000000000..4647fb87c
+--- /dev/null
++++ b/src/main/java/com/empireminecraft/api/FancifulChatAPIImpl.java
+@@ -0,0 +1,267 @@
++/*
++ * Copyright (c) 2016 Starlis LLC / Daniel Ennis (Aikar) - MIT License
++ *
++ *  Permission is hereby granted, free of charge, to any person obtaining
++ *  a copy of this software and associated documentation files (the
++ *  "Software"), to deal in the Software without restriction, including
++ *  without limitation the rights to use, copy, modify, merge, publish,
++ *  distribute, sublicense, and/or sell copies of the Software, and to
++ *  permit persons to whom the Software is furnished to do so, subject to
++ *  the following conditions:
++ *
++ *  The above copyright notice and this permission notice shall be
++ *  included in all copies or substantial portions of the Software.
++ *
++ *  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
++ *  EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
++ *  MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
++ *  NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
++ *  LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
++ *  OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
++ *  WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
++ */
++
++package com.empireminecraft.api;
++
++/**
++ * Credits to original version @
++ * http://forums.bukkit.org/threads/lib-fanciful-pleasant-chat-message-formatting.195148/
++ *
++ * Improved to use proper components to fix issues
++ * @author aikar
++ *
++ */
++
++import java.util.ArrayList;
++import java.util.List;
++
++import com.empireminecraft.api.HiddenItemMeta;
++import net.minecraft.server.*;
++
++import net.minecraft.server.PacketPlayOutTitle.EnumTitleAction;
++import org.bukkit.craftbukkit.entity.CraftPlayer;
++import org.bukkit.craftbukkit.inventory.CraftItemStack;
++import org.bukkit.craftbukkit.util.CraftChatMessage;
++import org.bukkit.entity.Player;
++import org.bukkit.inventory.ItemStack;
++import org.json.JSONException;
++import org.json.JSONStringer;
++
++public class FancifulChatAPIImpl implements EAPI_Chat.FancifulChat {
++    private final List<MessagePart> messageParts = new ArrayList<MessagePart>();
++    private ChatComponentText component;
++    private boolean isDirty = true;
++
++    public FancifulChatAPIImpl file(final String path) {
++        onClick("open_file", path);
++        return this;
++    }
++
++    public FancifulChatAPIImpl link(final String url) {
++        onClick("open_url", url);
++        return this;
++    }
++
++    public FancifulChatAPIImpl suggest(final String command) {
++        onClick("suggest_command", command);
++        return this;
++    }
++
++    public FancifulChatAPIImpl command(final String command) {
++        onClick("run_command", command);
++        return this;
++    }
++
++    public FancifulChatAPIImpl achievementTooltip(final String name) {
++        onHover("show_achievement", "achievement." + name);
++        return this;
++    }
++
++    public FancifulChatAPIImpl itemTooltip(final String itemJSON) {
++        onHover("show_item", itemJSON);
++        return this;
++    }
++
++    public FancifulChatAPIImpl itemTooltip(final ItemStack itemStack) {
++        NBTTagCompound root = CraftItemStack.asNMSCopy(itemStack).save(new NBTTagCompound());
++        if (root.hasKey("tag")) {
++            NBTTagCompound tag = HiddenItemMeta.filterItemLore(root.getCompound("tag"), false);
++            NBTTagCompound display = tag.getCompound("display");
++            if (display.hasKey("Lore")) {
++                NBTTagList lore = display.getList("Lore", 8);
++                NBTTagList newlore = new NBTTagList();
++
++                for (int i = 0; i < lore.size(); i++) {
++                    String line = lore.getString(i);
++                    String newline = (line.isEmpty() ? " " : line).replace("\"", "\\\"");
++                    newlore.add(new NBTTagString(newline));
++                }
++                display.set("Lore", newlore);
++            }
++
++            root.set("tag", tag);
++        }
++        return itemTooltip(root.toString());
++    }
++
++    public FancifulChatAPIImpl tooltip(final String text) {
++        final String[] lines = text.split("\\n");
++        if (lines.length <= 1) {
++            onHover("show_text", text);
++        } else {
++            itemTooltip(makeMultilineTooltip(lines));
++        }
++        return this;
++    }
++
++    public FancifulChatAPIImpl then(final Object obj) {
++        messageParts.add(new MessagePart(obj.toString()));
++        isDirty = true;
++        return this;
++    }
++
++    public void send(Player player){
++        sendPacket(player, new PacketPlayOutChat(buildComponent()));
++    }
++
++    public static void sendTitle(Player player, FancifulChatAPIImpl title, FancifulChatAPIImpl subtitle, Integer fadeIn, Integer stay, Integer fadeOut) {
++        if (fadeIn != null && stay != null && fadeOut != null) {
++            sendPacket(player, new PacketPlayOutTitle(fadeIn, stay, fadeOut));
++        }
++        if (title != null) {
++            sendPacket(player, new PacketPlayOutTitle(EnumTitleAction.TITLE, title.buildComponent()));
++        }
++        if (subtitle != null ) {
++            sendPacket(player, new PacketPlayOutTitle(EnumTitleAction.SUBTITLE, subtitle.buildComponent()));
++        }
++    }
++
++    private static void sendPacket(Player player, Packet<?> packet) {
++        final PlayerConnection conn = ((CraftPlayer) player).getHandle().playerConnection;
++        if (conn == null) {
++            return;
++        }
++        conn.sendPacket(packet);
++    }
++
++    private ChatComponentText buildComponent() {
++        if (component != null && !isDirty) {
++            return component;
++        }
++        isDirty = false;
++        component = new ChatComponentText("");
++        for (MessagePart msg : messageParts) {
++            for (IChatBaseComponent cmp : msg.getComponents()) {
++                component.addSibling(cmp);
++            }
++        }
++        return component;
++    }
++    protected MessagePart latest() {
++        return messageParts.get(messageParts.size() - 1);
++    }
++
++    protected String makeMultilineTooltip(final String[] lines) {
++        final JSONStringer json = new JSONStringer();
++        try {
++            json.object().key("id").value(1);
++            json.key("tag").object().key("display").object();
++            json.key("Name").value("\\u00A7f" + lines[0].replace("\"", "\\\""));
++            json.key("Lore").array();
++            for (int i = 1; i < lines.length; i++) {
++                json.value(lines[i].isEmpty() ? " " : lines[i].replace("\"", "\\\""));
++            }
++            json.endArray().endObject().endObject().endObject();
++        } catch (final JSONException e) {
++            throw new RuntimeException("invalid tooltip");
++        }
++        return json.toString();
++    }
++
++    protected void onClick(final String name, final String data) {
++        final MessagePart latest = latest();
++        latest.clickActionName = name;
++        latest.clickActionData = data;
++        isDirty = true;
++    }
++
++    protected void onHover(final String name, final String data) {
++        final MessagePart latest = latest();
++        latest.hoverActionName = name;
++        latest.hoverActionData = data;
++        isDirty = true;
++    }
++    static final class MessagePart {
++
++
++        String clickActionName = null, clickActionData = null,
++            hoverActionName = null, hoverActionData = null;
++        final IChatBaseComponent[] components;
++
++        MessagePart(final String text) {
++            components = CraftChatMessage.fromString(text, true);
++        }
++        public IChatBaseComponent[] getComponents() {
++            for (IChatBaseComponent component : components) {
++                if (clickActionName != null) {
++                    if (clickActionName.equals("open_file")) {
++
++                        component.getChatModifier().setChatClickable(
++
++                            new ChatClickable(ChatClickable.EnumClickAction.OPEN_FILE, clickActionData));
++                    } else if (clickActionName.equals("open_url")) {
++                        component.getChatModifier().setChatClickable(
++                            new ChatClickable(ChatClickable.EnumClickAction.OPEN_URL, clickActionData));
++                    } else if (clickActionName.equals("suggest_command")) {
++                        component.getChatModifier().setChatClickable(
++                            new ChatClickable(ChatClickable.EnumClickAction.SUGGEST_COMMAND, clickActionData));
++                    } else if (clickActionName.equals("run_command")) {
++                        component.getChatModifier().setChatClickable(
++                            new ChatClickable(ChatClickable.EnumClickAction.RUN_COMMAND, clickActionData));
++                    }
++                }
++                if (hoverActionName != null) {
++                    final ChatComponentText hover = new ChatComponentText(hoverActionData);
++                    if (hoverActionName.equals("show_item")) {
++                        component.getChatModifier().setChatHoverable(
++                            new ChatHoverable(ChatHoverable.EnumHoverAction.SHOW_ITEM, hover));
++                    } else if (hoverActionName.equals("show_text")) {
++                        component.getChatModifier().setChatHoverable(
++                            new ChatHoverable(ChatHoverable.EnumHoverAction.SHOW_TEXT, hover));
++                    }
++                }
++            }
++
++            return components;
++        }
++/*
++        JSONWriter writeJson(final JSONWriter json) throws JSONException {
++            json.object().key("text").value(text);
++            if (color != null) {
++                json.key("color").value(color.name().toLowerCase());
++            }
++            if (styles != null) {
++                for (final ChatColor style : styles) {
++                    json.key(style.name().toLowerCase()).value(true);
++                }
++            }
++            if (clickActionName != null && clickActionData != null) {
++                json.key("clickEvent")
++                    .object()
++                    .key("action").value(clickActionName)
++                    .key("value").value(clickActionData)
++                    .endObject();
++            }
++            if (hoverActionName != null && hoverActionData != null) {
++                json.key("hoverEvent")
++                    .object()
++                    .key("action").value(hoverActionName)
++                    .key("value").value(hoverActionData)
++                    .endObject();
++            }
++            return json.endObject();
++        }
++*/
++    }
++}
++
+diff --git a/src/main/java/com/empireminecraft/api/meta/CraftEAPI_Chat.java b/src/main/java/com/empireminecraft/api/meta/CraftEAPI_Chat.java
+new file mode 100644
+index 000000000..33b49b3d9
+--- /dev/null
++++ b/src/main/java/com/empireminecraft/api/meta/CraftEAPI_Chat.java
+@@ -0,0 +1,40 @@
++/*
++ * Copyright (c) 2016 Starlis LLC / Daniel Ennis (Aikar) - MIT License
++ *
++ *  Permission is hereby granted, free of charge, to any person obtaining
++ *  a copy of this software and associated documentation files (the
++ *  "Software"), to deal in the Software without restriction, including
++ *  without limitation the rights to use, copy, modify, merge, publish,
++ *  distribute, sublicense, and/or sell copies of the Software, and to
++ *  permit persons to whom the Software is furnished to do so, subject to
++ *  the following conditions:
++ *
++ *  The above copyright notice and this permission notice shall be
++ *  included in all copies or substantial portions of the Software.
++ *
++ *  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
++ *  EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
++ *  MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
++ *  NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
++ *  LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
++ *  OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
++ *  WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
++ */
++
++package com.empireminecraft.api.meta;
++
++import com.empireminecraft.api.EAPI_Chat;
++import com.empireminecraft.api.FancifulChatAPIImpl;
++import org.bukkit.entity.Player;
++
++public class CraftEAPI_Chat implements EAPI_Chat {
++    @Override
++    public FancifulChat createFancy() {
++        return new FancifulChatAPIImpl();
++    }
++
++    @Override
++    public void sendTitle(Player player, FancifulChat title, FancifulChat subtitle, Integer fadeIn, Integer stay, Integer fadeOut) {
++        FancifulChatAPIImpl.sendTitle(player, (FancifulChatAPIImpl) title, (FancifulChatAPIImpl) subtitle, fadeIn, stay, fadeOut);
++    }
++}
+-- 
+2.17.1
+

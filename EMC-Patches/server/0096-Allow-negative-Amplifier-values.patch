@@ -1,0 +1,34 @@
+From e984f51ccf67417ca7f23a35596a1dc12e86f149 Mon Sep 17 00:00:00 2001
+From: Aikar <aikar@aikar.co>
+Date: Sun, 17 Jun 2018 22:16:25 -0400
+Subject: [PATCH] Allow negative Amplifier values
+
+---
+ src/main/java/net/minecraft/server/MobEffect.java | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/src/main/java/net/minecraft/server/MobEffect.java b/src/main/java/net/minecraft/server/MobEffect.java
+index 56baf5c47..4ecf0cf18 100644
+--- a/src/main/java/net/minecraft/server/MobEffect.java
++++ b/src/main/java/net/minecraft/server/MobEffect.java
+@@ -173,7 +173,7 @@ public class MobEffect implements Comparable<MobEffect> {
+                 flag1 = nbttagcompound.getBoolean("ShowParticles");
+             }
+ 
+-            return new MobEffect(mobeffectlist, i, b1 < 0 ? 0 : b1, flag, flag1);
++            return new MobEffect(mobeffectlist, i, b1, flag, flag1); // EMC
+         }
+     }
+ 
+@@ -183,7 +183,7 @@ public class MobEffect implements Comparable<MobEffect> {
+         return (this.getDuration() <= 32147 || mobeffect.getDuration() <= 32147) && (!this.isAmbient() || !mobeffect.isAmbient()) ? ComparisonChain.start().compare(Boolean.valueOf(this.isAmbient()), Boolean.valueOf(mobeffect.isAmbient())).compare(this.getDuration(), mobeffect.getDuration()).compare(this.getMobEffect().getColor(), mobeffect.getMobEffect().getColor()).result() : ComparisonChain.start().compare(Boolean.valueOf(this.isAmbient()), Boolean.valueOf(mobeffect.isAmbient())).compare(this.getMobEffect().getColor(), mobeffect.getMobEffect().getColor()).result();
+     }
+ 
+-    public int compareTo(Object object) {
++    public int compareTo(MobEffect object) { // EMC
+         return this.b((MobEffect) object);
+     }
+ }
+-- 
+2.17.1
+

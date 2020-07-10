@@ -1,0 +1,44 @@
+From 3b8f5480aeacf7e73092d7c7d6206702892b9292 Mon Sep 17 00:00:00 2001
+From: Aikar <aikar@aikar.co>
+Date: Sun, 19 Oct 2014 02:32:26 -0400
+Subject: [PATCH] Exterminate the chickeneer - EMC-610
+
+Wipe out chickens when the Jockey is killed.
+---
+ src/main/java/net/minecraft/server/EntityChicken.java | 7 +++++++
+ src/main/java/net/minecraft/server/EntityZombie.java  | 1 +
+ 2 files changed, 8 insertions(+)
+
+diff --git a/src/main/java/net/minecraft/server/EntityChicken.java b/src/main/java/net/minecraft/server/EntityChicken.java
+index 55f026386..c183ff383 100644
+--- a/src/main/java/net/minecraft/server/EntityChicken.java
++++ b/src/main/java/net/minecraft/server/EntityChicken.java
+@@ -122,6 +122,13 @@ public class EntityChicken extends EntityAnimal {
+ 
+     }
+ 
++    // EMC start
++    @Override
++    public boolean d(NBTTagCompound nbttagcompound) {
++        return (!(isChickenJockey() && !isVehicle())) && super.d(nbttagcompound);
++    }
++    // EMC end
++
+     public void b(NBTTagCompound nbttagcompound) {
+         super.b(nbttagcompound);
+         nbttagcompound.setBoolean("IsChickenJockey", this.bE);
+diff --git a/src/main/java/net/minecraft/server/EntityZombie.java b/src/main/java/net/minecraft/server/EntityZombie.java
+index efa8e3e9d..3a4fbd91d 100644
+--- a/src/main/java/net/minecraft/server/EntityZombie.java
++++ b/src/main/java/net/minecraft/server/EntityZombie.java
+@@ -424,6 +424,7 @@ public class EntityZombie extends EntityMonster {
+ 
+     public void die(DamageSource damagesource) {
+         // super.die(damagesource); // CraftBukkit
++        if (getVehicle() instanceof EntityChicken) {((EntityLiving) getVehicle()).die(damagesource);} // EMC
+         if (damagesource.getEntity() instanceof EntityCreeper) {
+             EntityCreeper entitycreeper = (EntityCreeper) damagesource.getEntity();
+ 
+-- 
+2.17.1
+

@@ -1,0 +1,81 @@
+From 998c87ec2624e0f85703203cdc6a7f7625c22987 Mon Sep 17 00:00:00 2001
+From: Aikar <aikar@aikar.co>
+Date: Sun, 4 Dec 2016 01:19:52 -0500
+Subject: [PATCH] Server Tick Events
+
+---
+ .../customevents/ServerTickEndEvent.java      | 27 +++++++++++++++++++
+ .../customevents/ServerTickStartEvent.java    | 27 +++++++++++++++++++
+ 2 files changed, 54 insertions(+)
+ create mode 100644 src/main/java/com/empireminecraft/customevents/ServerTickEndEvent.java
+ create mode 100644 src/main/java/com/empireminecraft/customevents/ServerTickStartEvent.java
+
+diff --git a/src/main/java/com/empireminecraft/customevents/ServerTickEndEvent.java b/src/main/java/com/empireminecraft/customevents/ServerTickEndEvent.java
+new file mode 100644
+index 00000000..ddf73af6
+--- /dev/null
++++ b/src/main/java/com/empireminecraft/customevents/ServerTickEndEvent.java
+@@ -0,0 +1,27 @@
++/*
++ * Copyright (c) 2015. Starlis LLC / dba Empire Minecraft
++ *
++ * This source code is proprietary software and must not be redistributed without Starlis LLC's approval
++ *
++ */
++
++package com.empireminecraft.customevents;
++
++import org.bukkit.event.Event;
++import org.bukkit.event.HandlerList;
++
++public class ServerTickEndEvent extends Event {
++    public ServerTickEndEvent() {
++    }
++
++
++    private static final HandlerList handlers = new HandlerList();
++
++    public HandlerList getHandlers() {
++        return handlers;
++    }
++
++    public static HandlerList getHandlerList() {
++        return handlers;
++    }
++}
+diff --git a/src/main/java/com/empireminecraft/customevents/ServerTickStartEvent.java b/src/main/java/com/empireminecraft/customevents/ServerTickStartEvent.java
+new file mode 100644
+index 00000000..879798f6
+--- /dev/null
++++ b/src/main/java/com/empireminecraft/customevents/ServerTickStartEvent.java
+@@ -0,0 +1,27 @@
++/*
++ * Copyright (c) 2015. Starlis LLC / dba Empire Minecraft
++ *
++ * This source code is proprietary software and must not be redistributed without Starlis LLC's approval
++ *
++ */
++
++package com.empireminecraft.customevents;
++
++import org.bukkit.event.Event;
++import org.bukkit.event.HandlerList;
++
++public class ServerTickStartEvent extends Event {
++    public ServerTickStartEvent() {
++    }
++
++
++    private static final HandlerList handlers = new HandlerList();
++
++    public HandlerList getHandlers() {
++        return handlers;
++    }
++
++    public static HandlerList getHandlerList() {
++        return handlers;
++    }
++}
+-- 
+2.17.1
+

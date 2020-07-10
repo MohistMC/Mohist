@@ -1,0 +1,47 @@
+From 0197b80f889a84c3f67e0336eaaa005410785614 Mon Sep 17 00:00:00 2001
+From: Aikar <aikar@aikar.co>
+Date: Sun, 4 Dec 2016 01:14:52 -0500
+Subject: [PATCH] BlockBreakNaturallyEvent
+
+---
+ .../BlockBreakNaturallyEvent.java             | 28 +++++++++++++++++++
+ 1 file changed, 28 insertions(+)
+ create mode 100644 src/main/java/com/empireminecraft/customevents/BlockBreakNaturallyEvent.java
+
+diff --git a/src/main/java/com/empireminecraft/customevents/BlockBreakNaturallyEvent.java b/src/main/java/com/empireminecraft/customevents/BlockBreakNaturallyEvent.java
+new file mode 100644
+index 00000000..e959dcb4
+--- /dev/null
++++ b/src/main/java/com/empireminecraft/customevents/BlockBreakNaturallyEvent.java
+@@ -0,0 +1,28 @@
++package com.empireminecraft.customevents;
++
++import org.bukkit.Location;
++import org.bukkit.entity.Item;
++import org.bukkit.event.HandlerList;
++import org.bukkit.event.block.BlockEvent;
++
++public class BlockBreakNaturallyEvent extends BlockEvent {
++    private final Item item;
++    public BlockBreakNaturallyEvent(Location pos, Item item) {
++        super(pos.getBlock());
++        this.item = item;
++    }
++
++    public Item getItem() {
++        return item;
++    }
++
++    private static final HandlerList handlers = new HandlerList();
++
++    public HandlerList getHandlers() {
++        return handlers;
++    }
++
++    public static HandlerList getHandlerList() {
++        return handlers;
++    }
++}
+-- 
+2.17.1
+

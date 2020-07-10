@@ -1,0 +1,128 @@
+From 11e7f493a8ac64ebfc4a784add63707b5a15c95f Mon Sep 17 00:00:00 2001
+From: Aikar <aikar@aikar.co>
+Date: Tue, 17 May 2016 19:46:42 -0400
+Subject: [PATCH] Identifer API
+
+Seems silly, but I want to have a common interface to represent an identity
+but not have risk of 2 objects equalling each other.
+
+Example: ChunkIdentifier and a ResidenceIdentifier are 2 ways to identify a context
+but cant ever equal each other.
+
+Implementers should not expose entropy data, just provide equal/hashcode.
+
+Objects represented by an Identifier, should be able to use them as their equal/hashcodes.
+---
+ .../org/bukkit/craftbukkit/CraftChunk.java    | 43 +++++++++++++++++++
+ .../bukkit/craftbukkit/block/CraftBlock.java  | 31 +++++++++++++
+ 2 files changed, 74 insertions(+)
+
+diff --git a/src/main/java/org/bukkit/craftbukkit/CraftChunk.java b/src/main/java/org/bukkit/craftbukkit/CraftChunk.java
+index cbf87aab5..b95432927 100644
+--- a/src/main/java/org/bukkit/craftbukkit/CraftChunk.java
++++ b/src/main/java/org/bukkit/craftbukkit/CraftChunk.java
+@@ -33,6 +33,7 @@ public class CraftChunk implements Chunk {
+         worldServer = (WorldServer) getHandle().world;
+         x = getHandle().locX;
+         z = getHandle().locZ;
++        chunkKey = new ChunkIdentifier(this); // EMC
+     }
+ 
+     public World getWorld() {
+@@ -313,4 +314,46 @@ public class CraftChunk implements Chunk {
+     static {
+         Arrays.fill(emptySkyLight, (byte) 0xFF);
+     }
++
++    // EMC start
++    private final ChunkIdentifier chunkKey;
++    public com.empireminecraft.Identifier getIdentifier() {
++        return chunkKey;
++    }
++
++    @Override
++    public int hashCode() {
++        return chunkKey.hashCode();
++    }
++
++    @Override
++    public boolean equals(Object obj) {
++        return obj instanceof Chunk && chunkKey.equals(((Chunk) obj).getIdentifier());
++    }
++
++    private static class ChunkIdentifier implements com.empireminecraft.Identifier {
++        private final World world;
++        private final int x, z;
++        private ChunkIdentifier(final Chunk chunk) {
++            this.world = chunk.getWorld();
++            this.x = chunk.getX();
++            this.z = chunk.getZ();
++        }
++
++        @Override
++        public boolean equals(Object o) {
++            if (this == o) { return true; }
++            if (o == null || getClass() != o.getClass()) { return false; }
++
++            final ChunkIdentifier that = (ChunkIdentifier) o;
++            return x == that.x && z == that.z && world.equals(that.world);
++
++        }
++
++        @Override
++        public int hashCode() {
++            return 73 * (73 * world.hashCode() + x) + z;
++        }
++    }
++    // EMC stop
+ }
+diff --git a/src/main/java/org/bukkit/craftbukkit/block/CraftBlock.java b/src/main/java/org/bukkit/craftbukkit/block/CraftBlock.java
+index a9d3f12bc..4c33ef72a 100644
+--- a/src/main/java/org/bukkit/craftbukkit/block/CraftBlock.java
++++ b/src/main/java/org/bukkit/craftbukkit/block/CraftBlock.java
+@@ -35,6 +35,7 @@ public class CraftBlock implements Block {
+         this.y = y;
+         this.z = z;
+         this.chunk = chunk;
++        this.blockKey = new BlockIdentifier(); // EMC
+     }
+ 
+     private net.minecraft.server.Block getNMSBlock() {
+@@ -553,4 +554,34 @@ public class CraftBlock implements Block {
+     public void removeMetadata(String metadataKey, Plugin owningPlugin) {
+         chunk.getCraftWorld().getBlockMetadata().removeMetadata(this, metadataKey, owningPlugin);
+     }
++
++    // EMC start
++    private final com.empireminecraft.Identifier blockKey;
++    @Override
++    public com.empireminecraft.Identifier getIdentifier() {
++        return blockKey;
++    }
++
++    private class BlockIdentifier implements com.empireminecraft.Identifier {
++        private final CraftBlock block;
++        private BlockIdentifier() {
++            this.block = CraftBlock.this;
++        }
++
++        @Override
++        public boolean equals(Object o) {
++            if (this == o) { return true; }
++            if (o == null || getClass() != o.getClass()) { return false; }
++
++            BlockIdentifier that = (BlockIdentifier) o;
++
++            return x == that.block.x && y == that.block.y && z == that.block.z && block.getWorld().equals(that.block.getWorld());
++        }
++
++        @Override
++        public int hashCode() {
++            return 73 * (73 * (73 * chunk.getWorld().hashCode() + x) + y) + z;
++        }
++    }
++    // EMC end
+ }
+-- 
+2.17.1
+

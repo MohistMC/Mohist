@@ -1,0 +1,102 @@
+From a56db64a7486a3db64c4e5d2044cad10532f51aa Mon Sep 17 00:00:00 2001
+From: Aikar <aikar@aikar.co>
+Date: Sun, 1 Jan 2017 20:36:31 -0500
+Subject: [PATCH] ShulkerBox API
+
+---
+ .../empireminecraft/api/CraftEAPI_Misc.java   | 67 +++++++++++++++++++
+ 1 file changed, 67 insertions(+)
+
+diff --git a/src/main/java/com/empireminecraft/api/CraftEAPI_Misc.java b/src/main/java/com/empireminecraft/api/CraftEAPI_Misc.java
+index 6ca596bf5..45d401f3a 100644
+--- a/src/main/java/com/empireminecraft/api/CraftEAPI_Misc.java
++++ b/src/main/java/com/empireminecraft/api/CraftEAPI_Misc.java
+@@ -31,6 +31,8 @@ import net.minecraft.server.ItemWorldMap;
+ import net.minecraft.server.MCUtil;
+ import net.minecraft.server.MapIcon.Type;
+ import net.minecraft.server.NBTTagCompound;
++import net.minecraft.server.NBTTagList;
++import net.minecraft.server.ThreadWatchdog;
+ import net.minecraft.server.World;
+ import net.minecraft.server.WorldMap;
+ import org.bukkit.Location;
+@@ -39,6 +41,8 @@ import org.bukkit.craftbukkit.inventory.CraftItemStack;
+ import org.bukkit.entity.EntityType;
+ 
+ import javax.annotation.Nonnull;
++import java.util.ArrayList;
++import java.util.List;
+ import java.util.Locale;
+ 
+ public class CraftEAPI_Misc implements EAPI_Misc {
+@@ -104,4 +108,67 @@ public class CraftEAPI_Misc implements EAPI_Misc {
+         itemstack.setLocaleName("filled_map." + mapType.toLowerCase(Locale.ROOT));
+         return CraftItemStack.asCraftMirror(itemstack);
+     }
++
++    @Override
++    public boolean hasShulkerInventory(@Nonnull org.bukkit.inventory.ItemStack shulker) {
++        return getNBTItems(shulker) != null;
++    }
++
++    @Override
++    public List<org.bukkit.inventory.ItemStack> getShulkerInventory(@Nonnull org.bukkit.inventory.ItemStack shulker) {
++        NBTTagList nbttaglist = getNBTItems(shulker);
++        if (nbttaglist == null) {
++            return null;
++        }
++        List<org.bukkit.inventory.ItemStack> items = new ArrayList<>(nbttaglist.size());
++        for (int i = 0; i < nbttaglist.size(); ++i) {
++            NBTTagCompound nbttagcompound1 = nbttaglist.get(i);
++            int j = nbttagcompound1.getByte("Slot") & 255;
++            items.add(j, CraftItemStack.asBukkitCopy(new ItemStack(nbttagcompound1)));
++        }
++        return items;
++    }
++
++    private static NBTTagList getNBTItems(org.bukkit.inventory.ItemStack shulker) {
++        if (shulker == null) {
++            throw new NullPointerException("Itemstack can not be null");
++        }
++        switch (shulker.getType()) {
++            case WHITE_SHULKER_BOX:
++            case ORANGE_SHULKER_BOX:
++            case MAGENTA_SHULKER_BOX:
++            case LIGHT_BLUE_SHULKER_BOX:
++            case YELLOW_SHULKER_BOX:
++            case LIME_SHULKER_BOX:
++            case PINK_SHULKER_BOX:
++            case GRAY_SHULKER_BOX:
++            case SILVER_SHULKER_BOX:
++            case CYAN_SHULKER_BOX:
++            case PURPLE_SHULKER_BOX:
++            case BLUE_SHULKER_BOX:
++            case BROWN_SHULKER_BOX:
++            case GREEN_SHULKER_BOX:
++            case RED_SHULKER_BOX:
++            case BLACK_SHULKER_BOX:
++                break;
++            default:
++                throw new IllegalArgumentException("Not a shulker box");
++        }
++
++        final CraftItemStack craft;
++        if (shulker instanceof CraftItemStack) {
++            craft = ((CraftItemStack) shulker);
++        } else {
++            craft = CraftItemStack.asCraftCopy(shulker);
++        }
++        if (craft == null || craft.handle == null || craft.handle.tag == null || !craft.handle.tag.hasKeyOfType("BlockEntityTag", 10)) {
++            return null;
++        }
++        final NBTTagCompound tag = craft.handle.tag.getCompound("BlockEntityTag");
++        if (tag.hasKeyOfType("Items", 9)) {
++            final NBTTagList items = tag.getList("Items", 10);
++            return items.isEmpty() ? null : items;
++        }
++        return null;
++    }
+ }
+-- 
+2.17.1
+

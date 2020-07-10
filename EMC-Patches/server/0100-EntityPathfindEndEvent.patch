@@ -1,0 +1,32 @@
+From 350276c501e0a8de4c3a3c94d137498337e7a24f Mon Sep 17 00:00:00 2001
+From: Aikar <aikar@aikar.co>
+Date: Mon, 25 Jun 2018 23:16:51 -0400
+Subject: [PATCH] EntityPathfindEndEvent
+
+---
+ src/main/java/net/minecraft/server/NavigationAbstract.java | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/src/main/java/net/minecraft/server/NavigationAbstract.java b/src/main/java/net/minecraft/server/NavigationAbstract.java
+index cc4c5cf03..f45c0ca1f 100644
+--- a/src/main/java/net/minecraft/server/NavigationAbstract.java
++++ b/src/main/java/net/minecraft/server/NavigationAbstract.java
+@@ -1,5 +1,7 @@
+ package net.minecraft.server;
+ 
++import com.destroystokyo.paper.event.entity.EntityPathfindEndEvent;
++
+ import javax.annotation.Nullable;
+ 
+ public abstract class NavigationAbstract {
+@@ -280,6 +282,7 @@ public abstract class NavigationAbstract {
+     public void stopPathfinding() { p(); } // EMC - OBF HELPER
+     public void p() {
+         this.pathfindFailures = 0; this.lastFailure = 0; // Paper - Pathfinding optimizations
++        new EntityPathfindEndEvent((com.destroystokyo.paper.entity.SentientNPC)this.getEntity().getBukkitEntity()).callEvent(); // Paper
+         this.c = null;
+     }
+ 
+-- 
+2.18.0
+

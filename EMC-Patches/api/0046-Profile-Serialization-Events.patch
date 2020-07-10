@@ -1,0 +1,117 @@
+From b0a7680023d44359e19db3ef0094b9c848a26cbd Mon Sep 17 00:00:00 2001
+From: Aikar <aikar@aikar.co>
+Date: Sun, 4 Dec 2016 21:50:15 -0500
+Subject: [PATCH] Profile Serialization Events
+
+---
+ .../customevents/ProfileDeserializeEvent.java | 53 +++++++++++++++++++
+ .../customevents/ProfileSerializeEvent.java   | 37 +++++++++++++
+ 2 files changed, 90 insertions(+)
+ create mode 100644 src/main/java/com/empireminecraft/customevents/ProfileDeserializeEvent.java
+ create mode 100644 src/main/java/com/empireminecraft/customevents/ProfileSerializeEvent.java
+
+diff --git a/src/main/java/com/empireminecraft/customevents/ProfileDeserializeEvent.java b/src/main/java/com/empireminecraft/customevents/ProfileDeserializeEvent.java
+new file mode 100644
+index 00000000..02d31358
+--- /dev/null
++++ b/src/main/java/com/empireminecraft/customevents/ProfileDeserializeEvent.java
+@@ -0,0 +1,53 @@
++/*
++ * Copyright (c) 2016 Starlis LLC / Daniel Ennis (Aikar) - MIT License
++ *
++ *  Permission is hereby granted, free of charge, to any person obtaining
++ *  a copy of this software and associated documentation files (the
++ *  "Software"), to deal in the Software without restriction, including
++ *  without limitation the rights to use, copy, modify, merge, publish,
++ *  distribute, sublicense, and/or sell copies of the Software, and to
++ *  permit persons to whom the Software is furnished to do so, subject to
++ *  the following conditions:
++ *
++ *  The above copyright notice and this permission notice shall be
++ *  included in all copies or substantial portions of the Software.
++ *
++ *  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
++ *  EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
++ *  MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
++ *  NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
++ *  LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
++ *  OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
++ *  WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
++ */
++
++package com.empireminecraft.customevents;
++
++import com.destroystokyo.paper.profile.PlayerProfile;
++import org.bukkit.Bukkit;
++import org.bukkit.event.Event;
++import org.bukkit.event.HandlerList;
++
++public class ProfileDeserializeEvent extends Event {
++    private final PlayerProfile profile;
++
++    public ProfileDeserializeEvent(PlayerProfile profile) {
++        super(!Bukkit.isPrimaryThread());
++        this.profile = profile;
++    }
++
++
++    private static final HandlerList handlers = new HandlerList();
++
++    public HandlerList getHandlers() {
++        return handlers;
++    }
++
++    public static HandlerList getHandlerList() {
++        return handlers;
++    }
++
++    public PlayerProfile getPlayerProfile() {
++        return profile;
++    }
++}
+diff --git a/src/main/java/com/empireminecraft/customevents/ProfileSerializeEvent.java b/src/main/java/com/empireminecraft/customevents/ProfileSerializeEvent.java
+new file mode 100644
+index 00000000..f5c035ff
+--- /dev/null
++++ b/src/main/java/com/empireminecraft/customevents/ProfileSerializeEvent.java
+@@ -0,0 +1,37 @@
++/*
++ * Copyright (c) 2015. Starlis LLC / dba Empire Minecraft
++ *
++ * This source code is proprietary software and must not be redistributed without Starlis LLC's approval
++ *
++ */
++
++package com.empireminecraft.customevents;
++
++import com.destroystokyo.paper.profile.PlayerProfile;
++import org.bukkit.Bukkit;
++import org.bukkit.event.Event;
++import org.bukkit.event.HandlerList;
++
++public class ProfileSerializeEvent extends Event {
++    private final PlayerProfile profile;
++
++    public ProfileSerializeEvent(PlayerProfile profile) {
++        super(!Bukkit.isPrimaryThread());
++        this.profile = profile;
++    }
++
++
++    private static final HandlerList handlers = new HandlerList();
++
++    public HandlerList getHandlers() {
++        return handlers;
++    }
++
++    public static HandlerList getHandlerList() {
++        return handlers;
++    }
++
++    public PlayerProfile getPlayerProfile() {
++        return profile;
++    }
++}
+-- 
+2.17.1
+

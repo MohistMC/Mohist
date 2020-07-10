@@ -1,0 +1,26 @@
+From 9fd99abb28c147ae8b9f0dc4cc90186f48f07426 Mon Sep 17 00:00:00 2001
+From: Aikar <aikar@aikar.co>
+Date: Fri, 10 Jan 2014 22:05:59 -0500
+Subject: [PATCH] Disable Snooper
+
+What purpose does it provide...
+---
+ src/main/java/net/minecraft/server/MinecraftServer.java | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/main/java/net/minecraft/server/MinecraftServer.java b/src/main/java/net/minecraft/server/MinecraftServer.java
+index e0546e3dd2..8fc3de8355 100644
+--- a/src/main/java/net/minecraft/server/MinecraftServer.java
++++ b/src/main/java/net/minecraft/server/MinecraftServer.java
+@@ -1395,7 +1395,7 @@ public abstract class MinecraftServer implements ICommandListener, Runnable, IAs
+     }
+ 
+     public boolean getSnooperEnabled() {
+-        return true;
++        return false; // EMC
+     }
+ 
+     public abstract boolean aa();
+-- 
+2.19.0
+
