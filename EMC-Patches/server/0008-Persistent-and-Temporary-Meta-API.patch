@@ -1,0 +1,922 @@
+From 32931c4b43bc8563d5ef2d164e5d9bf6ae0aebf9 Mon Sep 17 00:00:00 2001
+From: Aikar <aikar@aikar.co>
+Date: Mon, 4 Mar 2013 23:35:02 -0500
+Subject: [PATCH] Persistent and Temporary Meta API
+
+---
+ .../empireminecraft/api/CraftEmpireAPI.java   |   3 +
+ .../api/meta/CraftEAPI_Meta.java              |  80 +++
+ src/main/java/net/minecraft/server/Chunk.java |   3 +
+ .../minecraft/server/ChunkRegionLoader.java   |   2 +
+ .../java/net/minecraft/server/Entity.java     |   3 +
+ .../net/minecraft/server/MetaApiAccessor.java | 473 ++++++++++++++++++
+ .../server/PacketPlayOutMapChunk.java         |   1 +
+ .../server/PacketPlayOutTileEntityData.java   |   1 +
+ .../java/net/minecraft/server/TileEntity.java |   5 +
+ src/main/java/net/minecraft/server/World.java |   1 +
+ .../java/net/minecraft/server/WorldData.java  |   4 +
+ .../org/bukkit/craftbukkit/CraftChunk.java    |   4 +
+ .../org/bukkit/craftbukkit/CraftServer.java   |   3 +
+ .../block/CraftBlockEntityState.java          |   7 +
+ .../craftbukkit/block/CraftBlockState.java    |   9 +-
+ .../craftbukkit/entity/CraftEntity.java       |   3 +
+ .../craftbukkit/event/CraftEventFactory.java  |   5 +
+ .../craftbukkit/inventory/CraftInventory.java |  11 +
+ 18 files changed, 617 insertions(+), 1 deletion(-)
+ create mode 100644 src/main/java/com/empireminecraft/api/meta/CraftEAPI_Meta.java
+ create mode 100644 src/main/java/net/minecraft/server/MetaApiAccessor.java
+
+diff --git a/src/main/java/com/empireminecraft/api/CraftEmpireAPI.java b/src/main/java/com/empireminecraft/api/CraftEmpireAPI.java
+index 7b295bc869..f3c9419c81 100644
+--- a/src/main/java/com/empireminecraft/api/CraftEmpireAPI.java
++++ b/src/main/java/com/empireminecraft/api/CraftEmpireAPI.java
+@@ -23,6 +23,8 @@
+ 
+ package com.empireminecraft.api;
+ 
++import com.empireminecraft.api.meta.CraftEAPI_Meta;
++
+ public final class CraftEmpireAPI extends API {
+ 
+     private CraftEmpireAPI() {}
+@@ -31,6 +33,7 @@ public final class CraftEmpireAPI extends API {
+     static {
+         entity = new CraftEAPI_Entity();
+         misc = new CraftEAPI_Misc();
++        meta = new CraftEAPI_Meta();
+     }
+ 
+ }
+diff --git a/src/main/java/com/empireminecraft/api/meta/CraftEAPI_Meta.java b/src/main/java/com/empireminecraft/api/meta/CraftEAPI_Meta.java
+new file mode 100644
+index 0000000000..a9a194b3a7
+--- /dev/null
++++ b/src/main/java/com/empireminecraft/api/meta/CraftEAPI_Meta.java
+@@ -0,0 +1,80 @@
++/*
++ * Copyright (c) 2016 Starlis LLC / Daniel Ennis (Aikar) - MIT License
++ *
++ *  Permission is hereby granted, free of charge, to any person obtaining
++ *  a copy of this software and associated documentation files (the
++ *  "Software"), to deal in the Software without restriction, including
++ *  without limitation the rights to use, copy, modify, merge, publish,
++ *  distribute, sublicense, and/or sell copies of the Software, and to
++ *  permit persons to whom the Software is furnished to do so, subject to
++ *  the following conditions:
++ *
++ *  The above copyright notice and this permission notice shall be
++ *  included in all copies or substantial portions of the Software.
++ *
++ *  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
++ *  EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
++ *  MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
++ *  NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
++ *  LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
++ *  OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
++ *  WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
++ */
++
++package com.empireminecraft.api.meta;
++
++import com.empireminecraft.api.Vector3i;
++import net.minecraft.server.MetaApiAccessor;
++import org.bukkit.Chunk;
++import org.bukkit.Location;
++import org.bukkit.World;
++import org.bukkit.block.Block;
++import org.bukkit.block.BlockState;
++import org.bukkit.craftbukkit.CraftChunk;
++import org.bukkit.craftbukkit.CraftWorld;
++import org.bukkit.entity.Entity;
++
++import java.util.Map;
++
++public class CraftEAPI_Meta implements EAPI_Meta {
++
++    @Override
++    public PersistentMetaMap getTileEntityMetaMap(BlockState tileEntity, boolean isWrite) {
++        return MetaApiAccessor.getTileEntityMetaMap(tileEntity, isWrite);
++    }
++
++    @Override
++    public PersistentMetaMap getBlockMetaMap(Location loc, boolean isWrite) {
++        return MetaApiAccessor.getBlockMetaMap(loc, isWrite);
++    }
++
++    @Override
++    public PersistentMetaMap getChunkMetaMap(Chunk chunk, boolean isWrite) {
++        return MetaApiAccessor.getChunkMetaMap(chunk, isWrite);
++    }
++
++    @Override
++    public TempMetaMap getChunkTempMetaMap(Chunk chunk, boolean isWrite) {
++        return chunk.getTempMeta();
++    }
++
++    @Override
++    public Map<Vector3i, PersistentMetaMap> getChunkMetaData(Chunk chunk) {
++        return ((CraftChunk) chunk).getHandle().chunkMeta;
++    }
++
++    @Override
++    public PersistentMetaMap getEntityMetaMap(Entity entity, boolean isWrite) {
++        return MetaApiAccessor.getEntityMetaMap(entity, isWrite);
++    }
++
++    @Override
++    public PersistentMetaMap getWorldMetaMap(World world) {
++        return MetaApiAccessor.getWorldMetaMap((CraftWorld) world);
++    }
++
++    @Override
++    public Map<String, Object> getBlockTempMeta(Block block, boolean isWrite) {
++        return MetaApiAccessor.getChunkTempMeta(block, isWrite);
++    }
++}
+diff --git a/src/main/java/net/minecraft/server/Chunk.java b/src/main/java/net/minecraft/server/Chunk.java
+index 4060fd2748..c5260cb0bd 100644
+--- a/src/main/java/net/minecraft/server/Chunk.java
++++ b/src/main/java/net/minecraft/server/Chunk.java
+@@ -17,6 +17,7 @@ import java.util.Map;
+ import java.util.Random;
+ import java.util.concurrent.ConcurrentLinkedQueue;
+ import javax.annotation.Nullable;
++
+ import org.apache.logging.log4j.LogManager;
+ import org.apache.logging.log4j.Logger;
+ 
+@@ -148,6 +149,8 @@ public class Chunk {
+ 
+     public org.bukkit.Chunk bukkitChunk;
+     public boolean mustSave;
++    public MetaApiAccessor.ChunkPersistentMeta chunkMeta; // EMC
++    public MetaApiAccessor.ChunkTempMeta chunkTempMeta = new MetaApiAccessor.ChunkTempMeta(); // EMC
+     // CraftBukkit end
+ 
+     public Chunk(World world, ChunkSnapshot chunksnapshot, int i, int j) {
+diff --git a/src/main/java/net/minecraft/server/ChunkRegionLoader.java b/src/main/java/net/minecraft/server/ChunkRegionLoader.java
+index e6906effb4..698a02fea7 100644
+--- a/src/main/java/net/minecraft/server/ChunkRegionLoader.java
++++ b/src/main/java/net/minecraft/server/ChunkRegionLoader.java
+@@ -304,6 +304,7 @@ public class ChunkRegionLoader implements IChunkLoader, IAsyncChunkSaver {
+     private static void saveBody(NBTTagCompound nbttagcompound, Chunk chunk, long worldTime, boolean worldHasSkyLight) { // Spigot
+         nbttagcompound.setInt("xPos", chunk.locX);
+         nbttagcompound.setInt("zPos", chunk.locZ);
++        MetaApiAccessor.saveChunkMetaNbt(nbttagcompound, chunk); // EMC
+         nbttagcompound.setLong("LastUpdate", worldTime); // Spigot
+         nbttagcompound.setIntArray("HeightMap", chunk.r());
+         nbttagcompound.setBoolean("TerrainPopulated", chunk.isDone());
+@@ -435,6 +436,7 @@ public class ChunkRegionLoader implements IChunkLoader, IAsyncChunkSaver {
+         Chunk chunk = new Chunk(world, i, j);
+ 
+         chunk.a(nbttagcompound.getIntArray("HeightMap"));
++        MetaApiAccessor.loadChunkMetaNbt(nbttagcompound, chunk); // EMC
+         chunk.d(nbttagcompound.getBoolean("TerrainPopulated"));
+         chunk.e(nbttagcompound.getBoolean("LightPopulated"));
+         chunk.c(nbttagcompound.getLong("InhabitedTime"));
+diff --git a/src/main/java/net/minecraft/server/Entity.java b/src/main/java/net/minecraft/server/Entity.java
+index 74bbba0110..fc9a79ce9e 100644
+--- a/src/main/java/net/minecraft/server/Entity.java
++++ b/src/main/java/net/minecraft/server/Entity.java
+@@ -45,6 +45,7 @@ import org.bukkit.plugin.PluginManager;
+ public abstract class Entity implements ICommandListener, KeyedObject { // Paper
+ 
+     // CraftBukkit start
++    public com.empireminecraft.api.meta.PersistentMetaMap metaMap = null; // EMC
+     private static final int CURRENT_LEVEL = 2;
+     // Paper start
+     public static Random SHARED_RANDOM = new Random() {
+@@ -1530,6 +1531,7 @@ public abstract class Entity implements ICommandListener, KeyedObject { // Paper
+                 this.yaw = 0;
+             }
+ 
++            MetaApiAccessor.saveEntityMeta(this, nbttagcompound); // EMC
+             if (Float.isNaN(this.pitch)) {
+                 this.pitch = 0;
+             }
+@@ -1766,6 +1768,7 @@ public abstract class Entity implements ICommandListener, KeyedObject { // Paper
+             }
+ 
+             spawnedViaMobSpawner = nbttagcompound.getBoolean("Paper.FromMobSpawner"); // Restore entity's from mob spawner status
++            MetaApiAccessor.loadEntityMeta(this, nbttagcompound); // EMC
+             // Paper end
+ 
+         } catch (Throwable throwable) {
+diff --git a/src/main/java/net/minecraft/server/MetaApiAccessor.java b/src/main/java/net/minecraft/server/MetaApiAccessor.java
+new file mode 100644
+index 0000000000..200f6ed17d
+--- /dev/null
++++ b/src/main/java/net/minecraft/server/MetaApiAccessor.java
+@@ -0,0 +1,473 @@
++package net.minecraft.server;
++
++import org.bukkit.Bukkit;
++import com.empireminecraft.api.Vector3i;
++import com.empireminecraft.api.meta.PersistentMetaList;
++import com.empireminecraft.api.meta.PersistentMetaMap;
++import com.empireminecraft.customevents.BlockWithPersistentMetaClearedEvent;
++import org.bukkit.Location;
++import org.bukkit.block.Block;
++import org.bukkit.craftbukkit.CraftChunk;
++import org.bukkit.craftbukkit.CraftWorld;
++import org.bukkit.craftbukkit.block.CraftBlockState;
++import org.bukkit.craftbukkit.entity.CraftEntity;
++import org.bukkit.craftbukkit.inventory.CraftItemStack;
++import org.bukkit.entity.Player;
++
++import java.util.*;
++import java.util.Map.Entry;
++import java.util.regex.Pattern;
++
++public final class MetaApiAccessor {
++
++    private static final String META_MAP = "MetaMap";
++    private static final String META_TYPE = "MetaType";
++    private static final String ITEM = "Item";
++    private static final String ENTITY_META = "_EntityMeta";
++    private static final String TILEENTITY_META = "_TileEntityMeta";
++    private static final String WORLD_META = "_WorldMeta";
++    private static final String CHUNK_META_LIST = "_ChunkMetaList";
++    private static final String BLOCK_POS = "_BlockPos";
++    private static final String CHUNK_META = "_ChunkMeta";
++
++    private MetaApiAccessor() {}
++
++    public static PersistentMetaMap getWorldMetaMap(CraftWorld world) {
++        return world.getHandle().worldData.metaMap;
++    }
++
++    public static PersistentMetaMap getTileEntityMetaMap(org.bukkit.block.BlockState block, boolean isWrite) {
++        final CraftBlockState craftBlock = (CraftBlockState) block;
++        final TileEntity tileEntity = ((CraftWorld) craftBlock.getWorld()).getHandle().getTileEntity(MCUtil.toBlockPosition(craftBlock.getLocation()));
++        if (tileEntity == null) {
++            return null;
++        }
++        if (tileEntity.metaMap == null && isWrite) {
++            tileEntity.metaMap = new PersistentMetaMap();
++        }
++        return tileEntity.metaMap;
++    }
++
++    /**
++     * Util for getting a MetaMap by location
++     * @param loc
++     * @return
++     */
++    public static PersistentMetaMap getBlockMetaMap(org.bukkit.Location loc, boolean isWrite) {
++        return getBlockMetaMap(((CraftChunk) loc.getChunk()).getHandle(), loc.getBlockX(), loc.getBlockY(), loc.getBlockZ(), isWrite);
++    }
++
++    /**
++     * Util for getting a MetaMap for a chunk
++     * @param chunk
++     * @return
++     */
++    public static PersistentMetaMap getChunkMetaMap(org.bukkit.Chunk chunk, boolean isWrite) {
++        return getBlockMetaMap(((CraftChunk) chunk).getHandle(), 0, -1, 0, isWrite);
++    }
++
++    /**
++     * Gets the metamap for the specified coords, creating it if it doesnt exists
++     * @param handle
++     * @param x
++     * @param y
++     * @param z
++     * @return
++     */
++    private static PersistentMetaMap getBlockMetaMap(Chunk handle, int x, int y, int z, boolean isWrite) {
++        ChunkPersistentMeta meta = handle.chunkMeta;
++        if (meta == null) {
++            if (!isWrite) {
++                return null;
++            }
++            meta = handle.chunkMeta = new ChunkPersistentMeta();
++        }
++        Vector3i coords = new Vector3i(x, y, z);
++        if (!isWrite && !meta.containsKey(coords)) {
++            return null;
++        }
++        PersistentMetaMap ret = meta.get(coords);
++        if (ret == null) {
++            if (isWrite) {
++                ret = new PersistentMetaMap();
++                meta.put(coords, ret);
++            }
++        }
++        return ret;
++    }
++
++    /**
++     * Util for getting a MetaMap for an Entity
++     * @param craftentity
++     * @return
++     */
++    public static PersistentMetaMap getEntityMetaMap(org.bukkit.entity.Entity craftentity, boolean isWrite) {
++        Entity entity = ((CraftEntity) craftentity).getHandle();
++        if (entity.metaMap == null) {
++            if (isWrite) {
++                entity.metaMap = new PersistentMetaMap();
++            }
++        }
++        return entity.metaMap;
++    }
++
++    static void loadEntityMeta(Entity entity, NBTTagCompound nbt) {
++        if (nbt.hasKey(ENTITY_META)) {
++            entity.metaMap = getMetaMapFromCompound(nbt.getCompound(ENTITY_META));
++        }
++    }
++
++    static void saveEntityMeta(Entity entity, NBTTagCompound nbt) {
++        if (entity.metaMap != null && !entity.metaMap.isEmpty()) {
++            nbt.set(ENTITY_META, getNbtFromObject(entity.metaMap));
++        }
++    }
++
++    static void loadTileEntityMeta(TileEntity tileEntity, NBTTagCompound nbt) {
++        if (nbt.hasKey(TILEENTITY_META)) {
++            tileEntity.metaMap = getMetaMapFromCompound(nbt.getCompound(TILEENTITY_META));
++        }
++    }
++
++    static void saveTileEntityMeta(TileEntity tileEntity, NBTTagCompound nbt) {
++        if (tileEntity.metaMap != null && !tileEntity.metaMap.isEmpty()) {
++            nbt.set(TILEENTITY_META, getNbtFromObject(tileEntity.metaMap));
++        }
++    }
++
++    static void loadWorldMeta(WorldData world, NBTTagCompound nbt) {
++        if (nbt.hasKey(WORLD_META)) {
++            NBTTagCompound nbtmeta = nbt.getCompound(WORLD_META);
++            world.metaMap = getMetaMapFromCompound(nbtmeta);
++        }
++        if (world.metaMap == null) {
++            world.metaMap = new PersistentMetaMap();
++        }
++    }
++
++    static void saveWorldMeta(WorldData world, NBTTagCompound nbt) {
++        if (world.metaMap != null && !world.metaMap.isEmpty()) {
++            NBTBase nbtmeta = getNbtFromObject(world.metaMap);
++            nbt.set(WORLD_META, nbtmeta);
++        }
++    }
++
++    /**
++     * Saves this chunks Meta Data into NBT
++     * @param cmp
++     * @param chunk
++     */
++    static void saveChunkMetaNbt(NBTTagCompound cmp, Chunk chunk) {
++        if (chunk.chunkMeta == null || chunk.chunkMeta.isEmpty()) {
++            return;
++        }
++        NBTTagList meta = new NBTTagList();
++        for (Map.Entry<Vector3i, PersistentMetaMap> entry : chunk.chunkMeta.entrySet()) {
++            PersistentMetaMap list = entry.getValue();
++            if (!list.isEmpty()) {
++                NBTTagCompound pos = serializePos(entry.getKey());
++                NBTTagCompound metacmp = getCompoundFromMetaMap(list);
++                metacmp.set(BLOCK_POS, pos);
++                meta.add(metacmp);
++            }
++        }
++
++        if (!meta.isEmpty()) {
++            cmp.set(CHUNK_META_LIST, meta);
++        }
++    }
++
++    /**
++     * Loads this chunks Meta Data from NBT
++     * @param cmp
++     * @param chunk
++     */
++    static void loadChunkMetaNbt(NBTTagCompound cmp, Chunk chunk) {
++        ChunkPersistentMeta meta = chunk.chunkMeta;
++        if (cmp.hasKey(CHUNK_META)) {
++            NBTTagCompound chunkMeta = cmp.getCompound(CHUNK_META);
++            for (String key : chunkMeta.c()) {
++                NBTTagCompound e = chunkMeta.getCompound(key);
++                meta = loadBlockMeta(meta, deserializeOldLoc(key), e);
++            }
++        } else if (cmp.hasKey(CHUNK_META_LIST)) {
++            NBTTagList chunkMeta = cmp.getList(CHUNK_META_LIST, 10);
++            final int size = chunkMeta.size();
++            for (int i = 0; i < size; i++) {
++                NBTTagCompound e = chunkMeta.get(i);
++                if (e.hasKey(BLOCK_POS)) {
++                    NBTTagCompound blockPos = e.getCompound(BLOCK_POS);
++                    meta = loadBlockMeta(meta, getBlockPosFromCompound(blockPos), e);
++                }
++            }
++        }
++        chunk.chunkMeta = meta;
++    }
++
++    private static ChunkPersistentMeta loadBlockMeta(ChunkPersistentMeta meta, Vector3i key, NBTTagCompound e) {
++        PersistentMetaMap map = getMetaMapFromCompound(e);
++        if (map != null && !map.isEmpty()) {
++            if (meta == null) {
++                meta = new ChunkPersistentMeta();
++            }
++            meta.put(key, map);
++        }
++        return meta;
++    }
++
++    private static Vector3i getBlockPosFromCompound(NBTTagCompound pos) {
++        return new Vector3i(pos.getInt("x"), pos.getInt("y"), pos.getInt("z"));
++    }
++
++    /**
++     * Converts an Object into NBT
++     * @param value
++     * @return
++     */
++    private static NBTBase getNbtFromObject(Object value) {
++        if (value == null) {
++            return null;
++        }
++        if (value instanceof String) {
++            return new NBTTagString((String) value);
++        } else if (value instanceof ItemStack || value instanceof org.bukkit.inventory.ItemStack) {
++            ItemStack item;
++            if (value instanceof org.bukkit.inventory.ItemStack) {
++                item = CraftItemStack.asNMSCopy((org.bukkit.inventory.ItemStack) value);
++            } else {
++                item = (ItemStack) value;
++            }
++            if (item == null) {
++                return null;
++            }
++            NBTTagCompound itemnbt = new NBTTagCompound();
++            itemnbt.setString(META_TYPE, ITEM);
++            return item.save(itemnbt);
++        } else if (value instanceof Long) {
++            return new NBTTagLong((Long) value);
++        } else if (value instanceof Integer) {
++            return new NBTTagInt((Integer) value);
++        } else if (value instanceof Double) {
++            return new NBTTagDouble((Double) value);
++        } else if (value instanceof Float) {
++            return new NBTTagFloat((Float) value);
++        } else if (value instanceof PersistentMetaMap) {
++            return getCompoundFromMetaMap((PersistentMetaMap) value);
++        } else if (value instanceof PersistentMetaList) {
++            NBTTagList list = new NBTTagList();
++            for (Object obj : (Iterable<?>) value) {
++                NBTBase add = getNbtFromObject(obj);
++                if (add != null) {
++                    list.add(add);
++                }
++            }
++            return list.isEmpty() ? null : list;
++        }
++
++        return null;
++    }
++
++    /**
++     * Converts NBT into an Object
++     * @param nbt
++     * @return
++     */
++    @SuppressWarnings("RedundantCast")
++    private static Object getObjectFromNbt(NBTBase nbt) {
++        if (nbt == null) {
++            return null;
++        }
++        if (nbt instanceof NBTTagString) {
++            return (String) nbt.c_();
++            // Redundant casts added to each number so that it will fail to compile
++            // If the method names change for each type. Do not remove.
++        } else if (nbt instanceof NBTTagInt) {
++            return (Integer) ((NBTNumber) nbt).e();
++        } else if (nbt instanceof NBTTagLong) {
++            return (Long) ((NBTNumber) nbt).d();
++        } else if (nbt instanceof NBTTagFloat) {
++            return (Float) ((NBTNumber) nbt).i();
++        } else if (nbt instanceof NBTTagDouble) {
++            return (Double) ((NBTNumber) nbt).asDouble();
++        } else if (nbt instanceof NBTTagList) {
++            NBTTagList nbtlist = (NBTTagList) nbt;
++            if (nbtlist.isEmpty()) {
++                return null;
++            }
++            PersistentMetaList<Object> list = new PersistentMetaList<>();
++            for (int i = 0; i < nbtlist.size(); i++) {
++                final Object obj = getObjectFromNbt(nbtlist.list.get(i));
++                if (obj != null) {
++                    list.add(obj);
++                }
++            }
++            return list.isEmpty() ? null : list;
++        } else if (nbt instanceof NBTTagCompound) {
++            NBTTagCompound cmp = (NBTTagCompound) nbt.clone();
++            if (cmp.hasKey(META_TYPE)) {
++                String type = cmp.getString(META_TYPE);
++                cmp.remove(META_TYPE);
++                if (ITEM.equals(type)) {
++                    return CraftItemStack.asBukkitCopy(new ItemStack(cmp));
++                } else if (META_MAP.equals(type)) {
++                    final PersistentMetaMap metaMap = getMetaMapFromCompound(cmp);
++                    if (metaMap == null || metaMap.isEmpty()) {
++                        return null;
++                    }
++                    return metaMap;
++                }
++            }
++        }
++        return null;
++    }
++
++    /**
++     * Converts a NBTTagCompound to a MetaMap
++     * @param cmp
++     * @return
++     */
++    private static PersistentMetaMap getMetaMapFromCompound(NBTTagCompound cmp) {
++        if (cmp.map.isEmpty()) {
++            return null;
++        }
++        PersistentMetaMap map = new PersistentMetaMap();
++        for (Entry<String, NBTBase> entry : cmp.map.entrySet()) {
++            final Object metaData = getObjectFromNbt(entry.getValue());
++            if (metaData != null) {
++                map.put(entry.getKey(), metaData);
++            }
++        }
++        return map;
++    }
++
++    /**
++     * Converts a MetaMap into an NBTTagCompount
++     * @param map
++     * @return
++     */
++    private static NBTTagCompound getCompoundFromMetaMap(PersistentMetaMap map) {
++        NBTTagCompound cmp = new NBTTagCompound();
++        if (map.isEmpty()) {
++            return cmp;
++        }
++        cmp.setString(META_TYPE, META_MAP);
++        for (Map.Entry<String, Object> entry : map.entrySet()) {
++            NBTBase add = getNbtFromObject(entry.getValue());
++            if (add != null) {
++                cmp.set(entry.getKey(), add);
++            }
++        }
++        return cmp;
++    }
++
++    /**
++     * Translates BlockPos to a String form
++     * @param coords
++     * @return
++     */
++    private static NBTTagCompound serializePos(Vector3i coords) {
++        if (coords == null) {
++            return null;
++        }
++        NBTTagCompound cmp = new NBTTagCompound();
++        cmp.setInt("x", coords.x);
++        cmp.setInt("y", coords.y);
++        cmp.setInt("z", coords.z);
++        return cmp;
++    }
++
++    private static final Pattern COLON_SPLIT = Pattern.compile(":");
++    /**
++     * Parses a string into BlockPos
++     *
++     * @param loc
++     * @return
++     */
++    private static Vector3i deserializeOldLoc(String loc) {
++        if (loc != null)  {
++            String[] args = COLON_SPLIT.split(loc, 3);
++            if (args.length == 3) {
++                try {
++                    int x = (int) Math.floor(Float.parseFloat(args[0]));
++                    int y = (int) Math.floor(Float.parseFloat(args[1]));
++                    int z = (int) Math.floor(Float.parseFloat(args[2]));
++                    return new Vector3i(x, y, z);
++                } catch (NumberFormatException ignored) {}
++            }
++        }
++        return null;
++    }
++
++    static void processSetAir(Chunk chunk, BlockPosition pos) {
++        ChunkPersistentMeta meta = chunk.chunkMeta;
++        if (meta == null) {
++            return;
++        }
++        Vector3i coords = new Vector3i(pos.getX(), pos.getY(), pos.getZ());
++        if (meta.containsKey(coords)) {
++            new BlockWithPersistentMetaClearedEvent(MCUtil.toLocation(chunk.world, pos).getBlock()).callEvent();
++        }
++    }
++
++    static void filterTileEntityMeta(NBTTagCompound cmp) {
++        cmp.remove(TILEENTITY_META);
++    }
++
++    public static void reload() {
++        // Players are not guaranteed to be in a chunk if dead
++        for (Player player: Bukkit.getOnlinePlayers()) {
++            player.getTempMeta().clear();
++        }
++        for (WorldServer world : MinecraftServer.getServer().worlds) {
++            for (Entity entity : world.entityList) {
++                entity.getBukkitEntity().getTempMeta().clear();
++            }
++            for (Chunk chunk : world.getChunkProviderServer().chunks.values()) {
++                chunk.chunkTempMeta.clear();
++            }
++        }
++    }
++
++    public static Map<String, Object> getChunkTempMeta(Block block, boolean isWrite) {
++        Location loc = block.getLocation();
++        Chunk chunk = ((CraftChunk) block.getChunk()).getHandle();
++        Vector3i pos = new Vector3i(loc.getBlockX(), loc.getBlockY(), loc.getBlockZ());
++        Map<String, Object> map = chunk.chunkTempMeta.get(pos);
++        if (map == null) {
++            if (!isWrite) {
++                return null;
++            }
++            map = new HashMap<>(0);
++            chunk.chunkTempMeta.put(pos, map);
++        }
++        return map;
++    }
++
++    static class ChunkTempMeta extends HashMap<Vector3i, Map<String, Object>> {
++        public ChunkTempMeta() {
++            super(0);
++        }
++
++        public ChunkTempMeta(Map<? extends Vector3i, ? extends Map<String, Object>> m) {
++            super(m);
++        }
++
++        public ChunkTempMeta clone() {
++            return (ChunkTempMeta) new ChunkTempMeta(this);
++        }
++    }
++
++    static class ChunkPersistentMeta extends HashMap<Vector3i, PersistentMetaMap> {
++        ChunkPersistentMeta() {
++            super(0);
++        }
++
++        ChunkPersistentMeta(Map<? extends Vector3i, ? extends PersistentMetaMap> m) {
++            super(m);
++        }
++
++        public ChunkPersistentMeta clone() {
++            return new ChunkPersistentMeta(this);
++        }
++    }
++}
+diff --git a/src/main/java/net/minecraft/server/PacketPlayOutMapChunk.java b/src/main/java/net/minecraft/server/PacketPlayOutMapChunk.java
+index 4fe7c99565..368db38e0e 100644
+--- a/src/main/java/net/minecraft/server/PacketPlayOutMapChunk.java
++++ b/src/main/java/net/minecraft/server/PacketPlayOutMapChunk.java
+@@ -71,6 +71,7 @@ public class PacketPlayOutMapChunk implements Packet<PacketListenerPlayOut> {
+                 }
+                 // Paper end
+                 NBTTagCompound nbttagcompound = tileentity.d();
++                MetaApiAccessor.filterTileEntityMeta(nbttagcompound); // EMC
+ 
+                 this.e.add(nbttagcompound);
+             }
+diff --git a/src/main/java/net/minecraft/server/PacketPlayOutTileEntityData.java b/src/main/java/net/minecraft/server/PacketPlayOutTileEntityData.java
+index b30c97e3ff..77c7c8c55e 100644
+--- a/src/main/java/net/minecraft/server/PacketPlayOutTileEntityData.java
++++ b/src/main/java/net/minecraft/server/PacketPlayOutTileEntityData.java
+@@ -11,6 +11,7 @@ public class PacketPlayOutTileEntityData implements Packet<PacketListenerPlayOut
+     public PacketPlayOutTileEntityData() {}
+ 
+     public PacketPlayOutTileEntityData(BlockPosition blockposition, int i, NBTTagCompound nbttagcompound) {
++        MetaApiAccessor.filterTileEntityMeta(nbttagcompound); // EMC
+         this.a = blockposition;
+         this.b = i;
+         this.c = nbttagcompound;
+diff --git a/src/main/java/net/minecraft/server/TileEntity.java b/src/main/java/net/minecraft/server/TileEntity.java
+index 54bfbfc6bc..166feae8df 100644
+--- a/src/main/java/net/minecraft/server/TileEntity.java
++++ b/src/main/java/net/minecraft/server/TileEntity.java
+@@ -1,6 +1,8 @@
+ package net.minecraft.server;
+ 
+ import javax.annotation.Nullable;
++
++import com.empireminecraft.api.meta.PersistentMetaMap;
+ import org.apache.logging.log4j.LogManager;
+ import org.apache.logging.log4j.Logger;
+ 
+@@ -74,6 +76,7 @@ public abstract class TileEntity implements KeyedObject {
+     }
+ 
+     public void load(NBTTagCompound nbttagcompound) {
++        MetaApiAccessor.loadTileEntityMeta(this, nbttagcompound); // EMC
+         this.position = new BlockPosition(nbttagcompound.getInt("x"), nbttagcompound.getInt("y"), nbttagcompound.getInt("z"));
+     }
+ 
+@@ -88,6 +91,7 @@ public abstract class TileEntity implements KeyedObject {
+             throw new RuntimeException(this.getClass() + " is missing a mapping! This is a bug!");
+         } else {
+             nbttagcompound.setString("id", minecraftkey.toString());
++            MetaApiAccessor.saveTileEntityMeta(this, nbttagcompound); // EMC
+             nbttagcompound.setInt("x", this.position.getX());
+             nbttagcompound.setInt("y", this.position.getY());
+             nbttagcompound.setInt("z", this.position.getZ());
+@@ -291,6 +295,7 @@ public abstract class TileEntity implements KeyedObject {
+         a("bed", TileEntityBed.class);
+     }
+ 
++    PersistentMetaMap metaMap; // EMC
+     // CraftBukkit start - add method
+     // Paper start
+     public InventoryHolder getOwner() {
+diff --git a/src/main/java/net/minecraft/server/World.java b/src/main/java/net/minecraft/server/World.java
+index 564d2aa8ad..89bdc40d37 100644
+--- a/src/main/java/net/minecraft/server/World.java
++++ b/src/main/java/net/minecraft/server/World.java
+@@ -430,6 +430,7 @@ public abstract class World implements IBlockAccess {
+                     this.c(blockposition, block);
+                 }
+                 */
++                if (block == Blocks.AIR) MetaApiAccessor.processSetAir(chunk, blockposition); // EMC
+ 
+                 // CraftBukkit start
+                 if (!this.captureBlockStates) { // Don't notify clients or update physics while capturing blockstates
+diff --git a/src/main/java/net/minecraft/server/WorldData.java b/src/main/java/net/minecraft/server/WorldData.java
+index 7f0baf17a2..bb10d37f89 100644
+--- a/src/main/java/net/minecraft/server/WorldData.java
++++ b/src/main/java/net/minecraft/server/WorldData.java
+@@ -1,5 +1,6 @@
+ package net.minecraft.server;
+ 
++import com.empireminecraft.api.meta.PersistentMetaMap;
+ import com.google.common.collect.Maps;
+ import java.util.Iterator;
+ import java.util.Map;
+@@ -55,6 +56,7 @@ public class WorldData {
+     private final Map<DimensionManager, NBTTagCompound> N;
+     private GameRules O;
+     public WorldServer world; // CraftBukkit
++    public PersistentMetaMap metaMap = new PersistentMetaMap(); // EMC
+ 
+     protected WorldData() {
+         this.f = WorldType.NORMAL;
+@@ -224,6 +226,7 @@ public class WorldData {
+             }
+         }
+ 
++        MetaApiAccessor.loadWorldMeta(this, nbttagcompound); // EMC
+     }
+ 
+     public WorldData(WorldSettings worldsettings, String s) {
+@@ -370,6 +373,7 @@ public class WorldData {
+             nbttagcompound.set("Player", nbttagcompound1);
+         }
+ 
++        MetaApiAccessor.saveWorldMeta(this, nbttagcompound); // EMC
+     }
+ 
+     public long getSeed() {
+diff --git a/src/main/java/org/bukkit/craftbukkit/CraftChunk.java b/src/main/java/org/bukkit/craftbukkit/CraftChunk.java
+index ba3676b67b..cbf87aab58 100644
+--- a/src/main/java/org/bukkit/craftbukkit/CraftChunk.java
++++ b/src/main/java/org/bukkit/craftbukkit/CraftChunk.java
+@@ -4,6 +4,8 @@ import java.lang.ref.WeakReference;
+ import java.util.Arrays;
+ 
+ import java.util.Random;
++
++import com.empireminecraft.api.meta.TempMetaMap;
+ import net.minecraft.server.*;
+ 
+ import org.bukkit.Chunk;
+@@ -16,6 +18,8 @@ import org.bukkit.ChunkSnapshot;
+ 
+ public class CraftChunk implements Chunk {
+     private WeakReference<net.minecraft.server.Chunk> weakChunk;
++    private final TempMetaMap tempMeta = new TempMetaMap(); // EMC
++    public TempMetaMap getTempMeta() { return tempMeta; } // EMC
+     private final WorldServer worldServer;
+     private final int x;
+     private final int z;
+diff --git a/src/main/java/org/bukkit/craftbukkit/CraftServer.java b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
+index b775ab9f58..119136a059 100644
+--- a/src/main/java/org/bukkit/craftbukkit/CraftServer.java
++++ b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
+@@ -804,6 +804,9 @@ public final class CraftServer implements Server {
+                 "This plugin is not properly shutting down its async tasks when it is being reloaded.  This may cause conflicts with the newly loaded version of the plugin"
+             ));
+         }
++        // EMC start
++        net.minecraft.server.MetaApiAccessor.reload();
++        // EMC end
+         loadPlugins();
+         enablePlugins(PluginLoadOrder.STARTUP);
+         enablePlugins(PluginLoadOrder.POSTWORLD);
+diff --git a/src/main/java/org/bukkit/craftbukkit/block/CraftBlockEntityState.java b/src/main/java/org/bukkit/craftbukkit/block/CraftBlockEntityState.java
+index fe112812d1..9236940d7d 100644
+--- a/src/main/java/org/bukkit/craftbukkit/block/CraftBlockEntityState.java
++++ b/src/main/java/org/bukkit/craftbukkit/block/CraftBlockEntityState.java
+@@ -137,4 +137,11 @@ public class CraftBlockEntityState<T extends TileEntity> extends CraftBlockState
+ 
+         return result;
+     }
++
++    // EMC start
++    @Override
++    public boolean isTileEntity() {
++        return tileEntity != null;
++    }
++    // EMC end
+ }
+diff --git a/src/main/java/org/bukkit/craftbukkit/block/CraftBlockState.java b/src/main/java/org/bukkit/craftbukkit/block/CraftBlockState.java
+index 2a1b731c0c..4d3a1a0796 100644
+--- a/src/main/java/org/bukkit/craftbukkit/block/CraftBlockState.java
++++ b/src/main/java/org/bukkit/craftbukkit/block/CraftBlockState.java
+@@ -283,4 +283,11 @@ public class CraftBlockState implements BlockState {
+             throw new IllegalStateException("The blockState must be placed to call this method");
+         }
+     }
+-}
+\ No newline at end of file
++
++    // EMC start
++    @Override
++    public boolean isTileEntity() {
++        return false;
++    }
++    // EMC end
++}
+diff --git a/src/main/java/org/bukkit/craftbukkit/entity/CraftEntity.java b/src/main/java/org/bukkit/craftbukkit/entity/CraftEntity.java
+index 47edc0494d..09b50e996f 100644
+--- a/src/main/java/org/bukkit/craftbukkit/entity/CraftEntity.java
++++ b/src/main/java/org/bukkit/craftbukkit/entity/CraftEntity.java
+@@ -1,5 +1,6 @@
+ package org.bukkit.craftbukkit.entity;
+ 
++import com.empireminecraft.api.meta.TempMetaMap;
+ import com.google.common.base.Function;
+ import com.google.common.base.Preconditions;
+ import com.google.common.collect.Lists;
+@@ -29,6 +30,8 @@ import org.bukkit.plugin.Plugin;
+ import org.bukkit.util.Vector;
+ 
+ public abstract class CraftEntity implements org.bukkit.entity.Entity {
++    private final TempMetaMap tempMeta = new TempMetaMap(); // EMC
++    public TempMetaMap getTempMeta() { return tempMeta; } // EMC
+     private static PermissibleBase perm;
+ 
+     protected final CraftServer server;
+diff --git a/src/main/java/org/bukkit/craftbukkit/event/CraftEventFactory.java b/src/main/java/org/bukkit/craftbukkit/event/CraftEventFactory.java
+index 80ac2e56cd..c706553c91 100644
+--- a/src/main/java/org/bukkit/craftbukkit/event/CraftEventFactory.java
++++ b/src/main/java/org/bukkit/craftbukkit/event/CraftEventFactory.java
+@@ -983,6 +983,11 @@ public class CraftEventFactory {
+         // Paper end
+         human.world.getServer().getPluginManager().callEvent(event);
+         human.activeContainer.transferTo(human.defaultContainer, human.getBukkitEntity());
++        // EMC start
++        if (event.getInventory().getViewers().isEmpty()) {
++            org.bukkit.craftbukkit.inventory.CraftInventory.meta.remove(((org.bukkit.craftbukkit.inventory.CraftInventory)event.getInventory()).getInventory());
++        }
++        // EMC end
+     }
+ 
+     public static void handleEditBookEvent(EntityPlayer player, ItemStack newBookItem) {
+diff --git a/src/main/java/org/bukkit/craftbukkit/inventory/CraftInventory.java b/src/main/java/org/bukkit/craftbukkit/inventory/CraftInventory.java
+index 4866d1aee6..6bb5c6a85c 100644
+--- a/src/main/java/org/bukkit/craftbukkit/inventory/CraftInventory.java
++++ b/src/main/java/org/bukkit/craftbukkit/inventory/CraftInventory.java
+@@ -29,6 +29,17 @@ import org.bukkit.Material;
+ public class CraftInventory implements Inventory {
+     protected final IInventory inventory;
+ 
++    // EMC start
++    public static final java.util.WeakHashMap<IInventory, HashMap<String, Object>> meta = new java.util.WeakHashMap<IInventory, HashMap<String, Object>>(64);
++    public HashMap<String, Object> getMeta() {
++        HashMap<String, Object> metaMap = meta.get(inventory);
++        if (metaMap == null) {
++            metaMap = new HashMap<String, Object>();
++            meta.put(inventory, metaMap);
++        }
++        return metaMap;
++    } // EMC end
++
+     public CraftInventory(IInventory inventory) {
+         this.inventory = inventory;
+     }
+-- 
+2.21.0
+

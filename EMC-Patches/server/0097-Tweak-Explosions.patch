@@ -1,0 +1,50 @@
+From ef50c72913626f714a414cdb4d2990d116777a2b Mon Sep 17 00:00:00 2001
+From: Aikar <aikar@aikar.co>
+Date: Wed, 20 Jun 2018 22:35:39 -0400
+Subject: [PATCH] Tweak Explosions
+
+---
+ src/main/java/net/minecraft/server/Explosion.java | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/src/main/java/net/minecraft/server/Explosion.java b/src/main/java/net/minecraft/server/Explosion.java
+index 61fbdeb6a..bd8a6f0e3 100644
+--- a/src/main/java/net/minecraft/server/Explosion.java
++++ b/src/main/java/net/minecraft/server/Explosion.java
+@@ -55,6 +55,7 @@ public class Explosion {
+         int i;
+         int j;
+ 
++        if (this.a || this.b) { // EMC - don't run block processing if neither flag is set
+         for (int k = 0; k < 16; ++k) {
+             for (i = 0; i < 16; ++i) {
+                 for (j = 0; j < 16; ++j) {
+@@ -94,6 +95,7 @@ public class Explosion {
+                 }
+             }
+         }
++        } // EMC - don't run block processing if neither flag is set
+ 
+         this.blocks.addAll(hashset);
+         float f3 = this.size * 2.0F;
+@@ -108,7 +110,7 @@ public class Explosion {
+         List list = this.world.getEntities(this.source, new AxisAlignedBB((double) i, (double) l, (double) j1, (double) j, (double) i1, (double) k1), new com.google.common.base.Predicate<Entity>() {
+             @Override
+             public boolean apply(Entity entity) {
+-                return IEntitySelector.d.apply(entity) && !entity.dead;
++                return IEntitySelector.d.apply(entity) && !entity.dead && !(entity instanceof EntityItem); // EMC
+             }
+         });
+         // Paper end
+@@ -168,7 +170,7 @@ public class Explosion {
+ 
+     public void a(boolean flag) {
+         this.world.a((EntityHuman) null, this.posX, this.posY, this.posZ, SoundEffects.bV, SoundCategory.BLOCKS, 4.0F, (1.0F + (this.world.random.nextFloat() - this.world.random.nextFloat()) * 0.2F) * 0.7F);
+-        if (this.size >= 2.0F && this.b) {
++        if (this.size >= 2.0F/* && this.b*/) { // EMC - don't care about block breaks flag for animation
+             this.world.addParticle(EnumParticle.EXPLOSION_HUGE, this.posX, this.posY, this.posZ, 1.0D, 0.0D, 0.0D, new int[0]);
+         } else {
+             this.world.addParticle(EnumParticle.EXPLOSION_LARGE, this.posX, this.posY, this.posZ, 1.0D, 0.0D, 0.0D, new int[0]);
+-- 
+2.17.1
+

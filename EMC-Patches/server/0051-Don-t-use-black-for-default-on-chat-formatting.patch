@@ -1,0 +1,37 @@
+From 8c68622893a9032d1756feebdaed742c6468860a Mon Sep 17 00:00:00 2001
+From: Aikar <aikar@aikar.co>
+Date: Wed, 6 May 2015 00:47:48 -0400
+Subject: [PATCH] Don't use black for default on chat formatting
+
+---
+ .../java/org/bukkit/craftbukkit/util/CraftChatMessage.java  | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/src/main/java/org/bukkit/craftbukkit/util/CraftChatMessage.java b/src/main/java/org/bukkit/craftbukkit/util/CraftChatMessage.java
+index dbbed1be7..868ba6f80 100644
+--- a/src/main/java/org/bukkit/craftbukkit/util/CraftChatMessage.java
++++ b/src/main/java/org/bukkit/craftbukkit/util/CraftChatMessage.java
+@@ -145,9 +145,9 @@ public final class CraftChatMessage {
+     public static IChatBaseComponent[] fromString(String message, boolean keepNewlines) {
+         return new StringMessage(message, keepNewlines).getOutput();
+     }
+-    
++
+     public static String fromComponent(IChatBaseComponent component) {
+-        return fromComponent(component, EnumChatFormat.BLACK);
++        return fromComponent(component, null); // EMC
+     }
+ 
+     public static String fromComponent(IChatBaseComponent component, EnumChatFormat defaultColor) {
+@@ -156,7 +156,7 @@ public final class CraftChatMessage {
+         
+         for (IChatBaseComponent c : (Iterable<IChatBaseComponent>) component) {
+             ChatModifier modi = c.getChatModifier();
+-            out.append(modi.getColor() == null ? defaultColor : modi.getColor());
++            out.append(modi.getColor() == null ? (defaultColor  == null ? "" : defaultColor) : modi.getColor()); // EMC
+             if (modi.isBold()) {
+                 out.append(EnumChatFormat.BOLD);
+             }
+-- 
+2.17.1
+

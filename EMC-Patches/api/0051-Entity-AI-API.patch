@@ -1,0 +1,191 @@
+From aa1592fd5e6cd383e827846749708e7a7b75de7b Mon Sep 17 00:00:00 2001
+From: Aikar <aikar@aikar.co>
+Date: Tue, 6 Dec 2016 22:31:40 -0500
+Subject: [PATCH] Entity AI API
+
+---
+ .../com/empireminecraft/api/EAPI_Entity.java  | 101 ++++++++++++++++++
+ src/main/java/org/bukkit/entity/Blaze.java    |   7 +-
+ .../java/org/bukkit/entity/EnderSignal.java   |   8 +-
+ src/main/java/org/bukkit/entity/Ghast.java    |   6 +-
+ 4 files changed, 118 insertions(+), 4 deletions(-)
+
+diff --git a/src/main/java/com/empireminecraft/api/EAPI_Entity.java b/src/main/java/com/empireminecraft/api/EAPI_Entity.java
+index 4ef15c905..85c4930d9 100644
+--- a/src/main/java/com/empireminecraft/api/EAPI_Entity.java
++++ b/src/main/java/com/empireminecraft/api/EAPI_Entity.java
+@@ -23,9 +23,23 @@
+ 
+ package com.empireminecraft.api;
+ 
++import com.destroystokyo.paper.entity.RangedEntity;
++import com.destroystokyo.paper.entity.SentientNPC;
+ import com.empireminecraft.api.EntityTask.TaskHandler;
++import org.bukkit.Location;
+ import org.bukkit.World;
++import org.bukkit.entity.Animals;
++import org.bukkit.entity.ArmorStand;
++import org.bukkit.entity.Creature;
++import org.bukkit.entity.EnderSignal;
+ import org.bukkit.entity.Entity;
++import org.bukkit.entity.Item;
++import org.bukkit.entity.LivingEntity;
++import org.bukkit.entity.Monster;
++import org.bukkit.entity.Spider;
++import org.bukkit.entity.Wolf;
++
++import java.util.List;
+ 
+ public interface EAPI_Entity {
+ 
+@@ -89,4 +103,91 @@ public interface EAPI_Entity {
+     }
+ 
+     <T extends Entity> EntityTask<T> scheduleTask(T entity, int interval, EntityTask<T> task);
++
++    boolean isEntityDisabled(org.bukkit.entity.Entity entity);
++
++    void setItemCanDespawn(Item item, boolean canDespawn);
++
++    /**
++     * Disables Ticking on an Entity
++     *
++     * @param entity
++     * @param disabled
++     */
++    void setDisabledEntity(org.bukkit.entity.Entity entity, boolean disabled);
++
++    int getLove(Animals animal);
++
++    void setLove(Animals animal, int love);
++
++    void setFireProof(SentientNPC entity, boolean flag);
++
++    void setFirePanicProof(SentientNPC entity, boolean flag);
++
++    void makeAggressive(Creature creature, float range);
++
++    void makeAggressiveDuringDay(Spider spider, boolean attack);
++
++    boolean isAggressive(Creature creature);
++
++    void makePeaceful(SentientNPC entity);
++
++    void addGoalByName(SentientNPC entity, String goalName, boolean isTargetGoal, int tickRate, Class<?>[] argClasses, Object... args);
++
++    void removeGoalByName(SentientNPC entity, String goalName);
++
++    void setEntitySize(org.bukkit.entity.Entity entity, float width, float height);
++
++    void setTargetRange(SentientNPC entity, float range);
++
++    @Deprecated
++    default void setArrowAttackRange(RangedEntity monster, float range) {
++        setRangedAttackDistance(monster, range);
++    }
++
++    @Deprecated
++    default void setArrowAttackSpeed(RangedEntity monster, Integer min, Integer max) {
++        setRangedAttackSpeed(monster, min, max);
++    }
++
++    void setRangedAttackDistance(RangedEntity monster, float range);
++
++    default void setRangedAttackSpeed(RangedEntity monster, int speed) {
++        setRangedAttackSpeed(monster, speed, speed);
++    }
++    void setRangedAttackSpeed(RangedEntity monster, Integer min, Integer max);
++
++    void setAlwaysAngry(Wolf wolf, boolean alwaysAngry);
++
++    void setEntityMaxPathfindingRange(SentientNPC creature, float range);
++
++    int getDisabledSlots(ArmorStand armorStand);
++
++    void setDisabledSlots(ArmorStand armorStand, int i);
++
++    void respawnEntity(org.bukkit.entity.Entity entity);
++
++    void setEnderSignalLife(EnderSignal enderSignal, int lifeTime);
++
++    int getEnderSignalLife(EnderSignal enderSignal);
++
++    void setEnderSignalSpeed(EnderSignal enderSignal, double speed);
++
++    void setEnderSignalDestination(EnderSignal enderSignal, Location target);
++
++    boolean hasEntityPath(SentientNPC entity);
++    Location getEntityPathDestination(SentientNPC entity);
++    Location getEntityPathDestination(SentientNPC entity, Location loc);
++    Location getEntityPathDestination(SentientNPC entity, LivingEntity target);
++    default boolean setEntityDestination(SentientNPC entity, Location loc) {
++        return setEntityDestination(entity, loc, 1);
++    }
++    default boolean setEntityDestination(SentientNPC entity, LivingEntity target) {
++        return setEntityDestination(entity, target, 1);
++    }
++    boolean setEntityDestination(SentientNPC entity, Location loc, double speed);
++    boolean setEntityDestination(SentientNPC entity, LivingEntity target, double speed);
++    Integer getEntityPathIndex(SentientNPC entity);
++    Location getEntityNextPathLoc(SentientNPC entity);
++    List<Location> getEntityPathPoints(SentientNPC entity);
+ }
+diff --git a/src/main/java/org/bukkit/entity/Blaze.java b/src/main/java/org/bukkit/entity/Blaze.java
+index 7a5505b7f..5f4161c89 100644
+--- a/src/main/java/org/bukkit/entity/Blaze.java
++++ b/src/main/java/org/bukkit/entity/Blaze.java
+@@ -4,5 +4,10 @@ package org.bukkit.entity;
+  * Represents a Blaze monster
+  */
+ public interface Blaze extends Monster {
+-
++    // EMC start
++    void setFireballs(int num);
++    int getNumFireballs();
++    int getTimeBetweenFireballs();
++    void setTimeBetweenFireballs(int timeBetweenFireballs);
++    // EMC end
+ }
+diff --git a/src/main/java/org/bukkit/entity/EnderSignal.java b/src/main/java/org/bukkit/entity/EnderSignal.java
+index 8e2723f8c..3b2b15f24 100644
+--- a/src/main/java/org/bukkit/entity/EnderSignal.java
++++ b/src/main/java/org/bukkit/entity/EnderSignal.java
+@@ -13,7 +13,7 @@ public interface EnderSignal extends Entity {
+      * @return the {@link Location} this EnderSignal is moving towards.
+      */
+     public Location getTargetLocation();
+-
++    // EMC start
+     /**
+      * Set the {@link Location} this EnderSignal is moving towards.
+      * <br>
+@@ -22,7 +22,11 @@ public interface EnderSignal extends Entity {
+      *
+      * @param location the new target location
+      */
+-    public void setTargetLocation(Location location);
++    public default void setTargetLocation(Location location) {
++        setTargetLocation(location, false);
++    }
++    public void setTargetLocation(Location location, boolean useExactTarget);
++    // EMC end
+ 
+     /**
+      * Gets if the EnderSignal should drop an item on death.<br>
+diff --git a/src/main/java/org/bukkit/entity/Ghast.java b/src/main/java/org/bukkit/entity/Ghast.java
+index 3f5edf76c..324ac12e1 100644
+--- a/src/main/java/org/bukkit/entity/Ghast.java
++++ b/src/main/java/org/bukkit/entity/Ghast.java
+@@ -3,4 +3,8 @@ package org.bukkit.entity;
+ /**
+  * Represents a Ghast.
+  */
+-public interface Ghast extends Flying {}
++public interface Ghast extends Flying {
++
++    int getFireballCooldown(); // EMC
++    void setFireballCooldown(int cooldown); // EMC
++}
+-- 
+2.18.0
+

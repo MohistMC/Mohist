@@ -1,0 +1,25 @@
+From 52a06129649d297e8a38e84b1c39463e7451b6ea Mon Sep 17 00:00:00 2001
+From: Aikar <aikar@aikar.co>
+Date: Tue, 7 Nov 2017 00:01:04 -0500
+Subject: [PATCH] Don't use snapshots for TileEntity::getOwner
+
+---
+ src/main/java/net/minecraft/server/TileEntity.java | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/main/java/net/minecraft/server/TileEntity.java b/src/main/java/net/minecraft/server/TileEntity.java
+index 166feae8df..af0e55adcd 100644
+--- a/src/main/java/net/minecraft/server/TileEntity.java
++++ b/src/main/java/net/minecraft/server/TileEntity.java
+@@ -299,7 +299,7 @@ public abstract class TileEntity implements KeyedObject {
+     // CraftBukkit start - add method
+     // Paper start
+     public InventoryHolder getOwner() {
+-        return getOwner(true);
++        return getOwner(false); // EMC - don't use snapshots
+     }
+     public InventoryHolder getOwner(boolean useSnapshot) {
+         // Paper end
+-- 
+2.18.0
+

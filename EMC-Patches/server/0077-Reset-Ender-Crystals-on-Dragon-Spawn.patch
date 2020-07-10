@@ -1,0 +1,32 @@
+From 88e2207f2235aafbc2b7e5d62dc7c93ed3b1339f Mon Sep 17 00:00:00 2001
+From: Aikar <aikar@aikar.co>
+Date: Wed, 1 Jun 2016 23:29:17 -0400
+Subject: [PATCH] Reset Ender Crystals on Dragon Spawn
+
+---
+ src/main/java/net/minecraft/server/EnderDragonBattle.java | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/src/main/java/net/minecraft/server/EnderDragonBattle.java b/src/main/java/net/minecraft/server/EnderDragonBattle.java
+index 5c3829be3..7c63ebf5f 100644
+--- a/src/main/java/net/minecraft/server/EnderDragonBattle.java
++++ b/src/main/java/net/minecraft/server/EnderDragonBattle.java
+@@ -388,6 +388,7 @@ public class EnderDragonBattle {
+         entityenderdragon.setPositionRotation(0.0D, 128.0D, 0.0D, this.d.random.nextFloat() * 360.0F, 0.0F);
+         this.d.addEntity(entityenderdragon);
+         this.m = entityenderdragon.getUniqueID();
++        this.resetCrystals(); // EMC
+         return entityenderdragon;
+     }
+ 
+@@ -491,6 +492,7 @@ public class EnderDragonBattle {
+ 
+     }
+ 
++    private void resetCrystals() { this.f(); } // EMC // OBF HELPER
+     public void f() {
+         WorldGenEnder.Spike[] aworldgenender_spike = BiomeTheEndDecorator.a(this.d);
+         int i = aworldgenender_spike.length;
+-- 
+2.18.0
+

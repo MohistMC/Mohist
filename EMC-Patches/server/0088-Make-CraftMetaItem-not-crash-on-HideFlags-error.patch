@@ -1,0 +1,30 @@
+From f2092dd1f4c4808f49cafc7c8827055ca0bf8d21 Mon Sep 17 00:00:00 2001
+From: Aikar <aikar@aikar.co>
+Date: Thu, 29 Dec 2016 23:27:50 -0500
+Subject: [PATCH] Make CraftMetaItem not crash on HideFlags error
+
+---
+ .../org/bukkit/craftbukkit/inventory/CraftMetaItem.java    | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
+
+diff --git a/src/main/java/org/bukkit/craftbukkit/inventory/CraftMetaItem.java b/src/main/java/org/bukkit/craftbukkit/inventory/CraftMetaItem.java
+index 6fda6153f..bf3175482 100644
+--- a/src/main/java/org/bukkit/craftbukkit/inventory/CraftMetaItem.java
++++ b/src/main/java/org/bukkit/craftbukkit/inventory/CraftMetaItem.java
+@@ -193,7 +193,12 @@ class CraftMetaItem implements ItemMeta, Repairable {
+                 }
+                 return null;
+             }
+-            throw new IllegalArgumentException(field + "(" + object + ") is not a valid " + clazz);
++            if (nullable) {
++                new IllegalArgumentException(field + "(" + object + ") is not a valid " + clazz).printStackTrace();
++            } else {
++                throw new IllegalArgumentException(field + "(" + object + ") is not a valid " + clazz);
++            }
++            return null;
+         }
+     }
+ 
+-- 
+2.17.1
+

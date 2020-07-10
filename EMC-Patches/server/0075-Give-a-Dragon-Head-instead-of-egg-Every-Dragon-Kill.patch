@@ -1,0 +1,33 @@
+From 29c7b9fce6edbddc32e3cc54124dc6629782a591 Mon Sep 17 00:00:00 2001
+From: Aikar <aikar@aikar.co>
+Date: Sat, 23 Apr 2016 20:03:27 -0400
+Subject: [PATCH] Give a Dragon Head instead of egg Every Dragon Kill
+
+---
+ .../java/net/minecraft/server/EnderDragonBattle.java   | 10 +++++++---
+ 1 file changed, 7 insertions(+), 3 deletions(-)
+
+diff --git a/src/main/java/net/minecraft/server/EnderDragonBattle.java b/src/main/java/net/minecraft/server/EnderDragonBattle.java
+index 286069746..5c3829be3 100644
+--- a/src/main/java/net/minecraft/server/EnderDragonBattle.java
++++ b/src/main/java/net/minecraft/server/EnderDragonBattle.java
+@@ -339,9 +339,13 @@ public class EnderDragonBattle {
+             this.c.setVisible(false);
+             this.a(true);
+             this.l();
+-            if (!this.l) {
+-                this.d.setTypeUpdate(this.d.getHighestBlockYAt(WorldGenEndTrophy.a), Blocks.DRAGON_EGG.getBlockData());
+-            }
++            // EMC start - Use a Dragon Skull instead of Dragon Egg
++            BlockPosition loc = this.d.getHighestBlockYAt(WorldGenEndTrophy.a);
++            this.d.setTypeUpdate(loc, Blocks.SKULL.getBlockData());
++            TileEntitySkull tileEntity = (TileEntitySkull) this.d.getTileEntity(loc);
++            tileEntity.setSkullType(5);
++            tileEntity.update();
++            // EMC stop
+ 
+             this.l = true;
+             this.k = true;
+-- 
+2.18.0
+

@@ -1,0 +1,113 @@
+From 8b13002d3a929db7df2fa0ff6eecea89415f2c46 Mon Sep 17 00:00:00 2001
+From: Aikar <aikar@aikar.co>
+Date: Tue, 28 Jan 2014 21:04:24 -0500
+Subject: [PATCH] Add ItemStack recipe API
+
+Allows using custom items in Crafting Recipes
+---
+ src/main/java/net/minecraft/server/ItemStack.java   | 13 +++++++++++++
+ .../java/net/minecraft/server/ShapedRecipes.java    |  5 +++--
+ .../java/net/minecraft/server/ShapelessRecipes.java |  5 +++--
+ .../craftbukkit/inventory/CraftShapedRecipe.java    |  2 +-
+ .../craftbukkit/inventory/CraftShapelessRecipe.java |  2 +-
+ 5 files changed, 21 insertions(+), 6 deletions(-)
+
+diff --git a/src/main/java/net/minecraft/server/ItemStack.java b/src/main/java/net/minecraft/server/ItemStack.java
+index 71fc8b79a..21a5dcede 100644
+--- a/src/main/java/net/minecraft/server/ItemStack.java
++++ b/src/main/java/net/minecraft/server/ItemStack.java
+@@ -29,6 +29,19 @@ public final class ItemStack {
+             }
+         return bukkitStack;
+     }
++    public boolean satisfiesRecipeRequirement(RecipeItemStack recipeItemStack) {
++        if (recipeItemStack.choices.length == 0) {
++            return this.isEmpty();
++        }
++        getBukkitStack();
++        for (ItemStack choice : recipeItemStack.choices) {
++            // 32767 is some magic code for "don't care what the durability of the block is"
++            if (bukkitStack.isSimilar(choice.getBukkitStack(), choice.getData() == 32767, true)) {
++                return true;
++            }
++        }
++        return false;
++    }
+     // EMC end
+     public static final ItemStack a = new ItemStack((Item) null);public static final ItemStack NULL_ITEM = a; // EMC
+     public static final DecimalFormat b = new DecimalFormat("#.##");
+diff --git a/src/main/java/net/minecraft/server/ShapedRecipes.java b/src/main/java/net/minecraft/server/ShapedRecipes.java
+index dd42c47dd..d0ffb951d 100644
+--- a/src/main/java/net/minecraft/server/ShapedRecipes.java
++++ b/src/main/java/net/minecraft/server/ShapedRecipes.java
+@@ -92,7 +92,8 @@ public class ShapedRecipes implements IRecipe {
+         for (RecipeItemStack list : this.items) {
+             if (list != null && list.choices.length > 0) {
+                 net.minecraft.server.ItemStack stack = list.choices[0];
+-                recipe.setIngredient(c, org.bukkit.craftbukkit.util.CraftMagicNumbers.getMaterial(stack.getItem()), (list.choices.length) > 1 ? 32767 : stack.getData());
++                //recipe.setIngredient(c, org.bukkit.craftbukkit.util.CraftMagicNumbers.getMaterial(stack.getItem()), (list.choices.length) > 1 ? 32767 : stack.getData()); // EMC
++                recipe.setIngredient(c, stack.getBukkitStack()); // EMC
+             }
+             c++;
+         }
+@@ -153,7 +154,7 @@ public class ShapedRecipes implements IRecipe {
+                     }
+                 }
+ 
+-                if (!recipeitemstack.a(inventorycrafting.c(k, l))) {
++                if (!inventorycrafting.c(k, l).satisfiesRecipeRequirement(recipeitemstack)) { // EMC
+                     return false;
+                 }
+             }
+diff --git a/src/main/java/net/minecraft/server/ShapelessRecipes.java b/src/main/java/net/minecraft/server/ShapelessRecipes.java
+index 9c69f92f2..bd77dde6b 100644
+--- a/src/main/java/net/minecraft/server/ShapelessRecipes.java
++++ b/src/main/java/net/minecraft/server/ShapelessRecipes.java
+@@ -39,7 +39,8 @@ public class ShapelessRecipes implements IRecipe {
+         for (RecipeItemStack list : this.ingredients) {
+             if (list != null) {
+                 net.minecraft.server.ItemStack stack = list.choices[0];
+-                recipe.addIngredient(org.bukkit.craftbukkit.util.CraftMagicNumbers.getMaterial(stack.getItem()), (list.choices.length) > 1 ? 32767 : stack.getData());
++                //recipe.addIngredient(org.bukkit.craftbukkit.util.CraftMagicNumbers.getMaterial(stack.getItem()), (list.choices.length) > 1 ? 32767 : stack.getData()); // EMC
++                recipe.addIngredient(stack.getBukkitStack()); // EMC
+             }
+         }
+         return recipe;
+@@ -82,7 +83,7 @@ public class ShapelessRecipes implements IRecipe {
+                     while (iterator.hasNext()) {
+                         RecipeItemStack recipeitemstack = (RecipeItemStack) iterator.next();
+ 
+-                        if (recipeitemstack.a(itemstack)) {
++                        if (itemstack.satisfiesRecipeRequirement(recipeitemstack)) { // EMC
+                             flag = true;
+                             arraylist.remove(recipeitemstack);
+                             break;
+diff --git a/src/main/java/org/bukkit/craftbukkit/inventory/CraftShapedRecipe.java b/src/main/java/org/bukkit/craftbukkit/inventory/CraftShapedRecipe.java
+index 44df93019..3358d56ce 100644
+--- a/src/main/java/org/bukkit/craftbukkit/inventory/CraftShapedRecipe.java
++++ b/src/main/java/org/bukkit/craftbukkit/inventory/CraftShapedRecipe.java
+@@ -36,7 +36,7 @@ public class CraftShapedRecipe extends ShapedRecipe implements CraftRecipe {
+         for (char c : ingredientMap.keySet()) {
+             ItemStack stack = ingredientMap.get(c);
+             if (stack != null) {
+-                ret.setIngredient(c, stack.getType(), stack.getDurability());
++                ret.setIngredient(c, stack); // EMC
+             }
+         }
+         return ret;
+diff --git a/src/main/java/org/bukkit/craftbukkit/inventory/CraftShapelessRecipe.java b/src/main/java/org/bukkit/craftbukkit/inventory/CraftShapelessRecipe.java
+index 211898c51..cc7326f7e 100644
+--- a/src/main/java/org/bukkit/craftbukkit/inventory/CraftShapelessRecipe.java
++++ b/src/main/java/org/bukkit/craftbukkit/inventory/CraftShapelessRecipe.java
+@@ -31,7 +31,7 @@ public class CraftShapelessRecipe extends ShapelessRecipe implements CraftRecipe
+         }
+         CraftShapelessRecipe ret = new CraftShapelessRecipe(recipe.getKey(), recipe.getResult());
+         for (ItemStack ingred : recipe.getIngredientList()) {
+-            ret.addIngredient(ingred.getType(), ingred.getDurability());
++            ret.addIngredient(ingred); // EMC
+         }
+         return ret;
+     }
+-- 
+2.18.0
+

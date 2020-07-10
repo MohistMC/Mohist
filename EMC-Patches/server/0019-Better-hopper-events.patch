@@ -1,0 +1,82 @@
+From a7f795b6e772da70463e6fe6692dfb2442020667 Mon Sep 17 00:00:00 2001
+From: Aikar <aikar@aikar.co>
+Date: Mon, 9 Sep 2013 19:41:07 -0400
+Subject: [PATCH] Better hopper events
+
+---
+ .../com/empireminecraft/api/HopperEvents.java | 32 +++++++++++++++++++
+ .../minecraft/server/TileEntityHopper.java    |  4 +++
+ 2 files changed, 36 insertions(+)
+ create mode 100644 src/main/java/com/empireminecraft/api/HopperEvents.java
+
+diff --git a/src/main/java/com/empireminecraft/api/HopperEvents.java b/src/main/java/com/empireminecraft/api/HopperEvents.java
+new file mode 100644
+index 000000000..0697d6ce6
+--- /dev/null
++++ b/src/main/java/com/empireminecraft/api/HopperEvents.java
+@@ -0,0 +1,32 @@
++package com.empireminecraft.api;
++
++import com.empireminecraft.customevents.HopperDrainEvent;
++import com.empireminecraft.customevents.HopperFillEvent;
++import net.minecraft.server.BlockPosition;
++import net.minecraft.server.EnumDirection;
++import org.bukkit.Bukkit;
++import org.bukkit.craftbukkit.CraftWorld;
++import org.bukkit.inventory.Inventory;
++
++public final class HopperEvents {
++    private HopperEvents() {}
++
++    public static boolean drain(CraftWorld world, Inventory inventory, double x, double y, double z) {
++        HopperDrainEvent event = new HopperDrainEvent(world, inventory, x, y, z);
++        Bukkit.getPluginManager().callEvent(event);
++        return event.isCancelled();
++    }
++    public static boolean fill(CraftWorld world, Inventory inventory, BlockPosition position, EnumDirection enumdirection)  {
++        HopperFillEvent event = new HopperFillEvent(world, inventory,
++            position.getX(),
++            position.getY(),
++            position.getZ(),
++            enumdirection.getAdjacentX(),
++            enumdirection.getAdjacentY(),
++            enumdirection.getAdjacentZ()
++        );
++        Bukkit.getPluginManager().callEvent(event);
++        return event.isCancelled();
++    }
++
++}
+diff --git a/src/main/java/net/minecraft/server/TileEntityHopper.java b/src/main/java/net/minecraft/server/TileEntityHopper.java
+index 5198a590a..20d225cf0 100644
+--- a/src/main/java/net/minecraft/server/TileEntityHopper.java
++++ b/src/main/java/net/minecraft/server/TileEntityHopper.java
+@@ -5,7 +5,9 @@ import java.util.List;
+ import javax.annotation.Nullable;
+ 
+ // CraftBukkit start
++import com.empireminecraft.api.HopperEvents; // EMC
+ import org.bukkit.craftbukkit.entity.CraftHumanEntity;
++import org.bukkit.craftbukkit.inventory.CraftInventory; // EMC
+ import org.bukkit.craftbukkit.inventory.CraftItemStack;
+ import org.bukkit.entity.HumanEntity;
+ import org.bukkit.event.inventory.InventoryMoveItemEvent;
+@@ -352,6 +354,7 @@ public class TileEntityHopper extends TileEntityLootable implements IHopper, ITi
+         } else {
+             EnumDirection enumdirection = BlockHopper.b(this.v()).opposite();
+ 
++            if (HopperEvents.fill(((WorldServer)world).getWorld(), this.getOwner(false).getInventory(), this.position, enumdirection)) { return false; } // EMC
+             if (this.a(iinventory, enumdirection)) {
+                 return false;
+             } else {
+@@ -477,6 +480,7 @@ public class TileEntityHopper extends TileEntityLootable implements IHopper, ITi
+             }
+             skipPullModeEventFire = skipHopperEvents; // Paper
+ 
++            if (HopperEvents.drain((ihopper.getWorld()).getWorld(), new CraftInventory(ihopper), ihopper.getX(), ihopper.getY(), ihopper.getZ())) { return false; } // EMC
+             if (iinventory instanceof IWorldInventory) {
+                 IWorldInventory iworldinventory = (IWorldInventory) iinventory;
+                 int[] aint = iworldinventory.getSlotsForFace(enumdirection);
+-- 
+2.17.1
+

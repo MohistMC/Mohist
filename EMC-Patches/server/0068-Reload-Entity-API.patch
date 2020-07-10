@@ -1,0 +1,31 @@
+From 4882b2008445d72ba482bd64b96ca8fced66cec9 Mon Sep 17 00:00:00 2001
+From: Aikar <aikar@aikar.co>
+Date: Sun, 13 Dec 2015 01:19:17 -0500
+Subject: [PATCH] Reload Entity API
+
+---
+ .../org/bukkit/craftbukkit/entity/CraftEntity.java     | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
+
+diff --git a/src/main/java/org/bukkit/craftbukkit/entity/CraftEntity.java b/src/main/java/org/bukkit/craftbukkit/entity/CraftEntity.java
+index 19f2345c78..690bf9cc25 100644
+--- a/src/main/java/org/bukkit/craftbukkit/entity/CraftEntity.java
++++ b/src/main/java/org/bukkit/craftbukkit/entity/CraftEntity.java
+@@ -820,4 +820,14 @@ public abstract class CraftEntity implements org.bukkit.entity.Entity {
+         return getHandle().spawnedViaMobSpawner;
+     }
+     // Paper end
++    // EMC start
++    public boolean reloadEntity() {
++        Entity entity = ((WorldServer) this.entity.world).entitiesByUUID.get(this.entity.getUniqueID());
++        if (entity != null) {
++            this.entity = entity;
++            return true;
++        }
++        return false;
++    }
++    // EMC stop
+ }
+-- 
+2.18.0
+

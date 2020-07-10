@@ -1,0 +1,98 @@
+From 369f73572a5d5728a7def08dc03f66b16d80030d Mon Sep 17 00:00:00 2001
+From: Aikar <aikar@aikar.co>
+Date: Tue, 22 Nov 2016 00:40:42 -0500
+Subject: [PATCH] Fix Skulls from Same User
+
+---
+ .../server/PacketDataSerializer.java          | 19 ++++++++++++++++
+ .../server/PacketPlayOutMapChunk.java         |  1 +
+ .../net/minecraft/server/TileEntitySkull.java | 22 ++++++++++++++++++-
+ 3 files changed, 41 insertions(+), 1 deletion(-)
+
+diff --git a/src/main/java/net/minecraft/server/PacketDataSerializer.java b/src/main/java/net/minecraft/server/PacketDataSerializer.java
+index 03866aa938..31a64ae97d 100644
+--- a/src/main/java/net/minecraft/server/PacketDataSerializer.java
++++ b/src/main/java/net/minecraft/server/PacketDataSerializer.java
+@@ -252,6 +252,15 @@ public class PacketDataSerializer extends ByteBuf {
+                 // Spigot end
+                 nbttagcompound = itemstack.getTag();
+                 nbttagcompound = com.empireminecraft.api.HiddenItemMeta.filterItemLore(nbttagcompound, true); // EMC
++                // Paper start
++                if (nbttagcompound != null && nbttagcompound.hasKeyOfType("SkullOwner", 10)) {
++                    NBTTagCompound owner = nbttagcompound.getCompound("SkullOwner");
++                    if (owner.hasKey("Id")) {
++                        nbttagcompound.setString("SkullOwnerOrig", owner.getString("Id"));
++                        owner.setString("Id", UUID.randomUUID().toString());
++                    }
++                }
++                // Paper end
+             }
+ 
+             this.a(nbttagcompound);
+@@ -274,6 +283,16 @@ public class PacketDataSerializer extends ByteBuf {
+             // CraftBukkit start
+             if (itemstack.getTag() != null) {
+                 itemstack.tag = com.empireminecraft.api.HiddenItemMeta.restoreItemLore(itemstack.tag); // EMC - get around creative menu having ultimate control of the NBT...
++                // Paper start - Fix skulls of same owner
++                if (itemstack.tag.hasKey("SkullOwnerOrig")) {
++                    NBTTagCompound owner = itemstack.tag.getCompound("SkullOwner");
++                    String ownerOrig = itemstack.tag.getString("SkullOwnerOrig");
++                    if (!owner.isEmpty() && !ownerOrig.isEmpty()) {
++                        owner.setString("Id", ownerOrig);
++                    }
++                    itemstack.tag.remove("SkullOwnerOrig");
++                }
++                // Paper end
+                 CraftItemStack.setItemMeta(itemstack, CraftItemStack.getItemMeta(itemstack));
+             }
+             // CraftBukkit end
+diff --git a/src/main/java/net/minecraft/server/PacketPlayOutMapChunk.java b/src/main/java/net/minecraft/server/PacketPlayOutMapChunk.java
+index 368db38e0e..f83813f3f0 100644
+--- a/src/main/java/net/minecraft/server/PacketPlayOutMapChunk.java
++++ b/src/main/java/net/minecraft/server/PacketPlayOutMapChunk.java
+@@ -71,6 +71,7 @@ public class PacketPlayOutMapChunk implements Packet<PacketListenerPlayOut> {
+                 }
+                 // Paper end
+                 NBTTagCompound nbttagcompound = tileentity.d();
++                if (tileentity instanceof TileEntitySkull) { nbttagcompound = TileEntitySkull.randomizeUUID(nbttagcompound); }// EMC
+                 MetaApiAccessor.filterTileEntityMeta(nbttagcompound); // EMC
+ 
+                 this.e.add(nbttagcompound);
+diff --git a/src/main/java/net/minecraft/server/TileEntitySkull.java b/src/main/java/net/minecraft/server/TileEntitySkull.java
+index dd2665881f..10b4297c0e 100644
+--- a/src/main/java/net/minecraft/server/TileEntitySkull.java
++++ b/src/main/java/net/minecraft/server/TileEntitySkull.java
+@@ -148,9 +148,29 @@ public class TileEntitySkull extends TileEntity /*implements ITickable*/ { // Pa
+ 
+     @Nullable
+     public PacketPlayOutTileEntityData getUpdatePacket() {
+-        return new PacketPlayOutTileEntityData(this.position, 4, this.d());
++        // EMC start
++        return new PacketPlayOutTileEntityData(this.position, 4, randomizeUUID(this.d()));
+     }
+ 
++    static NBTTagCompound randomizeUUID(NBTTagCompound cmp) {
++        NBTTagCompound owner = cmp.getCompound("Owner");
++        if (!owner.isEmpty()) {
++            owner.setString("Id", UUID.randomUUID().toString());
++            NBTTagCompound properties = owner.getCompound("Properties");
++            NBTTagList list = null;
++            if (!properties.isEmpty()) {
++                list = properties.getList("textures", 10);
++            }
++
++            String url = null;
++            if (list != null && !list.isEmpty()) {
++                url = list.get(0).getCompound("Value").toString();
++            }
++        }
++        return cmp;
++    }
++    // EMC end
++
+     public NBTTagCompound d() {
+         return this.save(new NBTTagCompound());
+     }
+-- 
+2.21.0
+

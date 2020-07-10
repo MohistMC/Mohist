@@ -1,0 +1,51 @@
+From 7fd4b4de002bd060646a2f5ca547307d75894e8e Mon Sep 17 00:00:00 2001
+From: Aikar <aikar@aikar.co>
+Date: Mon, 25 Jun 2018 22:30:08 -0400
+Subject: [PATCH] EntityRandomStrollEvent
+
+---
+ .../server/PathfinderGoalRandomStroll.java    | 21 +++++++++++++------
+ 1 file changed, 15 insertions(+), 6 deletions(-)
+
+diff --git a/src/main/java/net/minecraft/server/PathfinderGoalRandomStroll.java b/src/main/java/net/minecraft/server/PathfinderGoalRandomStroll.java
+index 570ce0193..76fffcd27 100644
+--- a/src/main/java/net/minecraft/server/PathfinderGoalRandomStroll.java
++++ b/src/main/java/net/minecraft/server/PathfinderGoalRandomStroll.java
+@@ -4,11 +4,11 @@ import javax.annotation.Nullable;
+ 
+ public class PathfinderGoalRandomStroll extends PathfinderGoal {
+ 
+-    protected final EntityCreature a;
+-    protected double b;
+-    protected double c;
+-    protected double d;
+-    protected final double e;
++    protected final EntityCreature a; EntityCreature getEntity() { return a; } // Paper - OBFHELPER
++    protected double b; double getX() { return b; } // Paper - OBFHELPER
++    protected double c; double getY() { return c; } // Paper - OBFHELPER
++    protected double d; double getZ() { return d; } // Paper - OBFHELPER
++    protected final double e;double getSpeed() { return e; } // Paper - OBFHELPER
+     protected int f;
+     protected boolean g;
+ 
+@@ -57,7 +57,16 @@ public class PathfinderGoalRandomStroll extends PathfinderGoal {
+     }
+ 
+     public void c() {
+-        this.a.getNavigation().a(this.b, this.c, this.d, this.e);
++        // Paper start
++        org.bukkit.Location loc = MCUtil.toLocation(getEntity().getWorld(), getX(), getY(), getZ());
++        com.destroystokyo.paper.event.entity.EntityRandomStrollEvent event = new com.destroystokyo.paper.event.entity.EntityRandomStrollEvent((org.bukkit.entity.Creature)getEntity().getBukkitEntity(), loc, getSpeed());
++
++        if (!event.callEvent()) {
++            return;
++        }
++        loc = event.getLocation();
++        getEntity().getNavigation().a(loc.getX(), loc.getY(), loc.getZ(), event.getSpeed());
++        // Paper end
+     }
+ 
+     public void i() {
+-- 
+2.18.0
+

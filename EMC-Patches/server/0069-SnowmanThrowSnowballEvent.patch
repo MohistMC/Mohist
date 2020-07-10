@@ -1,0 +1,54 @@
+From c33cd3fc6f2e41975b5a2bbfb12b0cd1b4ae8ee0 Mon Sep 17 00:00:00 2001
+From: Aikar <aikar@aikar.co>
+Date: Mon, 21 Dec 2015 13:33:00 -0500
+Subject: [PATCH] SnowmanThrowSnowballEvent
+
+---
+ .../net/minecraft/server/EntitySnowman.java   | 24 +++++++++++++++++++
+ 1 file changed, 24 insertions(+)
+
+diff --git a/src/main/java/net/minecraft/server/EntitySnowman.java b/src/main/java/net/minecraft/server/EntitySnowman.java
+index f8a2273c2..7fa173e02 100644
+--- a/src/main/java/net/minecraft/server/EntitySnowman.java
++++ b/src/main/java/net/minecraft/server/EntitySnowman.java
+@@ -10,6 +10,25 @@ public class EntitySnowman extends EntityGolem implements IRangedEntity {
+ 
+     private static final DataWatcherObject<Byte> a = DataWatcher.a(EntitySnowman.class, DataWatcherRegistry.a);
+ 
++
++    // EMC start
++    public static boolean fireEvent(EntitySnowman snowman, EntitySnowball snowball, EntityLiving target) {
++        org.bukkit.entity.Snowman bukkitSnowman = (org.bukkit.entity.Snowman) snowman.getBukkitEntity();
++        org.bukkit.entity.Snowball bukkitSnowball = (org.bukkit.entity.Snowball) snowball.getBukkitEntity();
++        snowball.projectileSource = bukkitSnowman;
++
++        if (!(new org.bukkit.event.entity.ProjectileLaunchEvent(bukkitSnowball).callEvent())) {
++            return false;
++        }
++
++        com.empireminecraft.customevents.SnowmanThrowSnowballEvent event = new com.empireminecraft.customevents.SnowmanThrowSnowballEvent(
++            bukkitSnowman,
++            bukkitSnowball,
++            target.getBukkitEntity()
++        );
++        return event.callEvent();
++    }
++    // EMC end
+     public EntitySnowman(World world) {
+         super(world);
+         this.setSize(0.7F, 1.9F);
+@@ -98,6 +117,11 @@ public class EntitySnowman extends EntityGolem implements IRangedEntity {
+         float f1 = MathHelper.sqrt(d1 * d1 + d3 * d3) * 0.2F;
+ 
+         entitysnowball.shoot(d1, d2 + (double) f1, d3, 1.6F, 12.0F);
++        // EMC start
++        if (!fireEvent(this, entitysnowball, entityliving)) {
++            return;
++        }
++        // EMC stop
+         this.a(SoundEffects.ht, 1.0F, 1.0F / (this.getRandom().nextFloat() * 0.4F + 0.8F));
+         this.world.addEntity(entitysnowball);
+     }
+-- 
+2.17.1
+

@@ -1,0 +1,24 @@
+From 38e876d43faab0724246b98135ab7a272f94b2d9 Mon Sep 17 00:00:00 2001
+From: Aikar <aikar@aikar.co>
+Date: Wed, 15 Jun 2016 22:06:57 -0400
+Subject: [PATCH] Don't trigger Lootable Refresh for non player interaction
+
+---
+ src/main/java/net/minecraft/server/TileEntityLootable.java | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/src/main/java/net/minecraft/server/TileEntityLootable.java b/src/main/java/net/minecraft/server/TileEntityLootable.java
+index 618521304..b5bc755dd 100644
+--- a/src/main/java/net/minecraft/server/TileEntityLootable.java
++++ b/src/main/java/net/minecraft/server/TileEntityLootable.java
+@@ -41,6 +41,7 @@ public abstract class TileEntityLootable extends TileEntityContainer implements
+     }
+ 
+     public void d(@Nullable EntityHuman entityhuman) {
++        if (entityhuman == null) return; // EMC
+         if (lootableData.shouldReplenish(entityhuman)) { // Paper
+             LootTable loottable = this.world.getLootTableRegistry().a(this.m);
+ 
+-- 
+2.17.1
+

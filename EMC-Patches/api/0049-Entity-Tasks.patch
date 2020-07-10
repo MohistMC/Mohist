@@ -1,0 +1,201 @@
+From 4b6e05821468da65781fc3d07402c530003d78b2 Mon Sep 17 00:00:00 2001
+From: Aikar <aikar@aikar.co>
+Date: Sun, 4 Dec 2016 22:52:29 -0500
+Subject: [PATCH] Entity Tasks
+
+---
+ .../com/empireminecraft/api/EAPI_Entity.java  |  59 ++++++++++
+ .../com/empireminecraft/api/EntityTask.java   | 106 ++++++++++++++++++
+ 2 files changed, 165 insertions(+)
+ create mode 100644 src/main/java/com/empireminecraft/api/EntityTask.java
+
+diff --git a/src/main/java/com/empireminecraft/api/EAPI_Entity.java b/src/main/java/com/empireminecraft/api/EAPI_Entity.java
+index 8180ce46..4ef15c90 100644
+--- a/src/main/java/com/empireminecraft/api/EAPI_Entity.java
++++ b/src/main/java/com/empireminecraft/api/EAPI_Entity.java
+@@ -23,6 +23,7 @@
+ 
+ package com.empireminecraft.api;
+ 
++import com.empireminecraft.api.EntityTask.TaskHandler;
+ import org.bukkit.World;
+ import org.bukkit.entity.Entity;
+ 
+@@ -30,4 +31,62 @@ public interface EAPI_Entity {
+ 
+     byte[] serializeEntity(Entity craftentity);
+     Entity deserializeEntity(byte[] data, World world);
++
++    void cancelTasks(Entity entity);
++
++    default <T extends Entity> EntityTask<T> scheduleTask(T entity, int interval, Runnable task) {
++        return scheduleTask(entity, interval, new EntityTask<T>() {
++            @Override
++            public void run(T entity) {
++                task.run();
++            }
++        });
++    }
++
++    default <T extends Entity> EntityTask<T> scheduleDelayedTask(T entity, int delay, Runnable task) {
++        return scheduleTask(entity, delay, new EntityTask<T>(1) {
++            @Override
++            public void run(T entity) {
++                task.run();
++            }
++        });
++    }
++
++    default <T extends Entity> EntityTask<T> scheduleDelayedTask(T entity, int delay, TaskHandler<T> task) {
++        return scheduleTask(entity, delay, new EntityTask<T>(1) {
++            @Override
++            public void run(T entity) {
++                task.run(entity, this);
++            }
++        });
++    }
++
++    default <T extends Entity> EntityTask<T> scheduleTask(T entity, int interval, TaskHandler<T> task) {
++        return scheduleTask(entity, interval, new EntityTask<T>() {
++            @Override
++            public void run(T entity) {
++                task.run(entity, this);
++            }
++        });
++    }
++
++    default <T extends Entity> EntityTask<T> scheduleTask(T entity, int interval, int limit, TaskHandler<T> task) {
++        return scheduleTask(entity, interval, new EntityTask<T>(limit) {
++            @Override
++            public void run(T entity) {
++                task.run(entity, this);
++            }
++        });
++    }
++
++    default <T extends Entity> EntityTask<T> scheduleTask(T entity, int interval, int limit, Runnable task) {
++        return scheduleTask(entity, interval, new EntityTask<T>(limit) {
++            @Override
++            public void run(T entity) {
++                task.run();
++            }
++        });
++    }
++
++    <T extends Entity> EntityTask<T> scheduleTask(T entity, int interval, EntityTask<T> task);
+ }
+diff --git a/src/main/java/com/empireminecraft/api/EntityTask.java b/src/main/java/com/empireminecraft/api/EntityTask.java
+new file mode 100644
+index 00000000..ea0dd351
+--- /dev/null
++++ b/src/main/java/com/empireminecraft/api/EntityTask.java
+@@ -0,0 +1,106 @@
++/*
++ * Copyright (c) 2016 Starlis LLC / Daniel Ennis (Aikar) - MIT License
++ *
++ *  Permission is hereby granted, free of charge, to any person obtaining
++ *  a copy of this software and associated documentation files (the
++ *  "Software"), to deal in the Software without restriction, including
++ *  without limitation the rights to use, copy, modify, merge, publish,
++ *  distribute, sublicense, and/or sell copies of the Software, and to
++ *  permit persons to whom the Software is furnished to do so, subject to
++ *  the following conditions:
++ *
++ *  The above copyright notice and this permission notice shall be
++ *  included in all copies or substantial portions of the Software.
++ *
++ *  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
++ *  EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
++ *  MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
++ *  NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
++ *  LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
++ *  OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
++ *  WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
++ */
++
++package com.empireminecraft.api;
++
++import org.bukkit.entity.Entity;
++
++public abstract class EntityTask<T extends Entity> {
++    private int limit = -1;
++    private int count = 0;
++    private int nextTick = -1;
++    private int tickEvery = -1;
++    private T entity;
++
++    public EntityTask() {}
++    public EntityTask(int limit) {
++        this.limit = limit;
++    }
++
++    public void init(T entity, int interval) {
++        if (this.entity != null) {
++            throw new IllegalStateException("Already initialized");
++        }
++        this.entity = entity;
++        nextTick = entity.getTicksLived() + interval;
++        tickEvery = interval;
++    }
++
++    public abstract void run(T entity);
++
++    public EntityTask<T> invokeNow() {
++        run(entity);
++        return this;
++    }
++
++    public boolean tick() {
++        if (isReady()) {
++            invokeNow();
++            this.count++;
++            this.nextTick = this.entity.getTicksLived() + this.tickEvery;
++            return true;
++        }
++        return false;
++    }
++
++    public boolean isValid() {
++        return entity != null && (limit == -1 || count < limit);
++    }
++
++    public boolean isReady() {
++        return entity != null && entity.getTicksLived() == nextTick;
++    }
++
++    public int getLimit() {
++        return limit;
++    }
++
++    public int getCount() {
++        return count;
++    }
++
++    public int getNextTick() {
++        return nextTick;
++    }
++
++    public int getTickEvery() {
++        return tickEvery;
++    }
++
++    public void setTickEvery(int ticks) {
++        this.tickEvery = ticks;
++    }
++
++    public T getEntity() {
++        return entity;
++    }
++
++    public void abort() {
++        this.limit = 1;
++        this.count = 1;
++    }
++
++    public interface TaskHandler<T extends Entity> {
++        void run(T entity, EntityTask<T> task);
++    }
++}
+-- 
+2.17.1
+

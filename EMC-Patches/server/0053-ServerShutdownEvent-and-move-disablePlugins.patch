@@ -1,0 +1,63 @@
+From b4af8ff4322efb095e9ed96f58a9fa227b07b63e Mon Sep 17 00:00:00 2001
+From: Aikar <aikar@aikar.co>
+Date: Fri, 8 May 2015 19:56:21 -0400
+Subject: [PATCH] ServerShutdownEvent and move disablePlugins
+
+---
+ src/main/java/net/minecraft/server/CommandStop.java     | 1 +
+ src/main/java/net/minecraft/server/MinecraftServer.java | 6 +++++-
+ 2 files changed, 6 insertions(+), 1 deletion(-)
+
+diff --git a/src/main/java/net/minecraft/server/CommandStop.java b/src/main/java/net/minecraft/server/CommandStop.java
+index e57ed838c..19b87953d 100644
+--- a/src/main/java/net/minecraft/server/CommandStop.java
++++ b/src/main/java/net/minecraft/server/CommandStop.java
+@@ -16,6 +16,7 @@ public class CommandStop extends CommandAbstract {
+         if (minecraftserver.worldServer != null) {
+             a(icommandlistener, (ICommand) this, "commands.stop.start", new Object[0]);
+         }
++        if (astring.length > 0) { MinecraftServer.getServer().shutdownReason = org.apache.commons.lang.StringUtils.join(astring, ' '); }// EMC
+ 
+         minecraftserver.safeShutdown();
+     }
+diff --git a/src/main/java/net/minecraft/server/MinecraftServer.java b/src/main/java/net/minecraft/server/MinecraftServer.java
+index 6fe17eafc..a508c65a3 100644
+--- a/src/main/java/net/minecraft/server/MinecraftServer.java
++++ b/src/main/java/net/minecraft/server/MinecraftServer.java
+@@ -80,6 +80,7 @@ public abstract class MinecraftServer implements ICommandListener, Runnable, IAs
+     private boolean A;
+     private boolean spawnAnimals;
+     private boolean spawnNPCs;
++    public String shutdownReason; // EMC
+     private boolean pvpMode;
+     private boolean allowFlight;
+     private String motd;
+@@ -483,7 +484,8 @@ public abstract class MinecraftServer implements ICommandListener, Runnable, IAs
+         MinecraftTimings.stopServer(); // Paper
+         // CraftBukkit start
+         if (this.server != null) {
+-            this.server.disablePlugins();
++            // this.server.disablePlugins(); // EMC - Moved below after everything has unloaded so plugins can get events
++            new com.empireminecraft.customevents.ServerShutdownEvent(shutdownReason).callEvent(); // EMC
+         }
+         // CraftBukkit end
+         if (this.an() != null) {
+@@ -525,6 +527,7 @@ public abstract class MinecraftServer implements ICommandListener, Runnable, IAs
+             }
+             // CraftBukkit end */
+         }
++        if (server != null) { this.server.disablePlugins(); } // EMC
+ 
+         if (this.m.d()) {
+             this.m.e();
+@@ -556,6 +559,7 @@ public abstract class MinecraftServer implements ICommandListener, Runnable, IAs
+     }
+ 
+     public void safeShutdown(boolean isRestarting) {
++        if (shutdownReason == null) { shutdownReason = "Server Shutting Down"; } // EMC
+         this.isRunning = false;
+         this.isRestarting = isRestarting;
+     }
+-- 
+2.17.1
+

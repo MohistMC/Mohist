@@ -1,0 +1,348 @@
+From 83f77b9136f4a48ff641a5cee34f12dc2a134763 Mon Sep 17 00:00:00 2001
+From: Aikar <aikar@aikar.co>
+Date: Tue, 6 Dec 2016 22:19:45 -0500
+Subject: [PATCH] Attributes API
+
+---
+ .../empireminecraft/api/CraftEmpireAPI.java   |   2 +
+ .../api/meta/CraftEAPI_Attributes.java        | 139 ++++++++++++++++++
+ .../minecraft/server/AttributeInstance.java   |   4 +-
+ .../minecraft/server/AttributeMapBase.java    |   4 +-
+ .../minecraft/server/AttributesAccessor.java  |  48 ++++++
+ .../minecraft/server/EntityInsentient.java    |   1 +
+ .../net/minecraft/server/EntityLiving.java    |   1 +
+ .../minecraft/server/GenericAttributes.java   |  13 +-
+ .../server/PathfinderGoalTarget.java          |   2 +-
+ 9 files changed, 203 insertions(+), 11 deletions(-)
+ create mode 100644 src/main/java/com/empireminecraft/api/meta/CraftEAPI_Attributes.java
+ create mode 100644 src/main/java/net/minecraft/server/AttributesAccessor.java
+
+diff --git a/src/main/java/com/empireminecraft/api/CraftEmpireAPI.java b/src/main/java/com/empireminecraft/api/CraftEmpireAPI.java
+index f3c9419c81..9b0eb03dea 100644
+--- a/src/main/java/com/empireminecraft/api/CraftEmpireAPI.java
++++ b/src/main/java/com/empireminecraft/api/CraftEmpireAPI.java
+@@ -23,6 +23,7 @@
+ 
+ package com.empireminecraft.api;
+ 
++import com.empireminecraft.api.meta.CraftEAPI_Attributes;
+ import com.empireminecraft.api.meta.CraftEAPI_Meta;
+ 
+ public final class CraftEmpireAPI extends API {
+@@ -34,6 +35,7 @@ public final class CraftEmpireAPI extends API {
+         entity = new CraftEAPI_Entity();
+         misc = new CraftEAPI_Misc();
+         meta = new CraftEAPI_Meta();
++        attributes = new CraftEAPI_Attributes();
+     }
+ 
+ }
+diff --git a/src/main/java/com/empireminecraft/api/meta/CraftEAPI_Attributes.java b/src/main/java/com/empireminecraft/api/meta/CraftEAPI_Attributes.java
+new file mode 100644
+index 0000000000..e4866e0c32
+--- /dev/null
++++ b/src/main/java/com/empireminecraft/api/meta/CraftEAPI_Attributes.java
+@@ -0,0 +1,139 @@
++/*
++ * Copyright (c) 2016 Starlis LLC / Daniel Ennis (Aikar) - MIT License
++ *
++ *  Permission is hereby granted, free of charge, to any person obtaining
++ *  a copy of this software and associated documentation files (the
++ *  "Software"), to deal in the Software without restriction, including
++ *  without limitation the rights to use, copy, modify, merge, publish,
++ *  distribute, sublicense, and/or sell copies of the Software, and to
++ *  permit persons to whom the Software is furnished to do so, subject to
++ *  the following conditions:
++ *
++ *  The above copyright notice and this permission notice shall be
++ *  included in all copies or substantial portions of the Software.
++ *
++ *  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
++ *  EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
++ *  MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
++ *  NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
++ *  LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
++ *  OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
++ *  WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
++ */
++
++package com.empireminecraft.api.meta;
++
++import com.empireminecraft.api.attributes.Attribute;
++import com.empireminecraft.api.attributes.AttributeSlot;
++import com.empireminecraft.api.attributes.EAPI_Attributes;
++import com.empireminecraft.api.attributes.Operation;
++import net.minecraft.server.AttributeInstance;
++import net.minecraft.server.AttributeModifier;
++import net.minecraft.server.AttributesAccessor;
++import net.minecraft.server.EntityLiving;
++import net.minecraft.server.EnumItemSlot;
++import net.minecraft.server.GenericAttributes;
++import net.minecraft.server.IAttribute;
++import net.minecraft.server.NBTBase;
++import net.minecraft.server.NBTTagCompound;
++import net.minecraft.server.NBTTagList;
++import org.bukkit.craftbukkit.entity.CraftLivingEntity;
++import org.bukkit.craftbukkit.inventory.CraftItemStack;
++import org.bukkit.entity.LivingEntity;
++import org.bukkit.inventory.ItemStack;
++
++import java.util.Iterator;
++import java.util.Objects;
++import java.util.UUID;
++
++public class CraftEAPI_Attributes implements EAPI_Attributes {
++
++
++    public void setAttribute(AttributeSlot slot, ItemStack item, Attribute attr, Operation operation, double val) {
++        final CraftItemStack craftStack = CraftItemStack.asCraftCopy(item);
++        final NBTTagList attributes = getAttributes(craftStack.handle);
++        final NBTTagCompound attributeData = createAttribute(slot, attr, operation, val);
++        removeAttribute(attributes, attr, slot);
++
++        attributes.add(attributeData);
++        item.setItemMeta(craftStack.getItemMeta());
++    }
++
++    public void removeAttribute(ItemStack item, Attribute attr, AttributeSlot slot) {
++        final CraftItemStack craftStack = CraftItemStack.asCraftCopy(item);
++        final NBTTagList attributes = getAttributes(craftStack.handle);
++        removeAttribute(attributes, attr, slot);
++        item.setItemMeta(craftStack.getItemMeta());
++    }
++
++
++    public boolean setAttribute(LivingEntity livingEntity, Attribute attr, double val) {
++        final EntityLiving entity = ((CraftLivingEntity) livingEntity).getHandle();
++        final IAttribute attributetype = AttributesAccessor.getAttribute(attr);
++        if (attributetype == null) {
++            throw new NullPointerException("Bad Attribute Type");
++        }
++        final AttributeInstance attribute = entity.getAttributeInstance(attributetype);
++        if (attribute != null) {
++            attribute.setValue(val);
++            return true;
++        }
++        return false;
++    }
++    public Double getAttribute(LivingEntity livingEntity, Attribute attr) {
++        final EntityLiving entity = ((CraftLivingEntity) livingEntity).getHandle();
++        final IAttribute attributetype = AttributesAccessor.getAttribute(attr);
++
++        if (attributetype == null) {
++            throw new NullPointerException("Bad Attribute Type");
++        }
++        final AttributeInstance attribute = entity.getAttributeInstance(attributetype);
++        if (attribute != null) {
++            return attribute.getBaseValue(); // Don't use attribute modifier version (getValue)
++        }
++        return attributetype.getDefault();
++    }
++
++
++    private static NBTTagCompound createAttribute(AttributeSlot slot, Attribute attr, Operation operation, double val) {
++        final String name = AttributesAccessor.getAttribute(attr).getName();
++        final AttributeModifier attributeModifier =
++            new AttributeModifier(attr.uuid, name, val, operation.getId());
++        final NBTTagCompound attributeData = GenericAttributes.buildModifierCompound(attributeModifier);
++        attributeData.setString("AttributeName", name);
++        if (slot != null) {
++            attributeData.setString("Slot", slot.getSlotName());
++        }
++        return attributeData;
++    }
++
++    private static void removeAttribute(NBTTagList attributes, Attribute attr, AttributeSlot slot) {
++        final String name = AttributesAccessor.getAttribute(attr).getName();
++        for (Iterator<NBTBase> iterator = attributes.list.iterator(); iterator.hasNext(); ) {
++            NBTTagCompound nbtBase = (NBTTagCompound) iterator.next();
++            if (name.equals(nbtBase.getString("AttributeName")) &&
++                Objects.equals(slot != null ? slot.getSlotName() : "", nbtBase.getString("Slot"))) {
++                iterator.remove();
++            }
++        }
++    }
++
++    private static NBTTagList getAttributes(final net.minecraft.server.ItemStack nmsStack) {
++        NBTTagCompound parent;
++
++        if (nmsStack.tag == null) {
++            parent = nmsStack.tag = new NBTTagCompound();
++        } else {
++            parent = nmsStack.tag;
++        }
++
++        NBTTagList attributes;
++        if (parent.hasKeyOfType("AttributeModifiers", 9)) {
++            attributes = parent.getList("AttributeModifiers", 10);
++        } else {
++            attributes = new NBTTagList();
++            parent.set("AttributeModifiers", attributes);
++        }
++        return attributes;
++    }
++}
+diff --git a/src/main/java/net/minecraft/server/AttributeInstance.java b/src/main/java/net/minecraft/server/AttributeInstance.java
+index be179ba213..c5608aab52 100644
+--- a/src/main/java/net/minecraft/server/AttributeInstance.java
++++ b/src/main/java/net/minecraft/server/AttributeInstance.java
+@@ -8,7 +8,7 @@ public interface AttributeInstance {
+ 
+     IAttribute getAttribute();
+ 
+-    double b();
++    double b(); default double getBaseValue() { return b(); } // EMC - OBF HELPER
+ 
+     void setValue(double d0);
+ 
+@@ -16,7 +16,7 @@ public interface AttributeInstance {
+ 
+     Collection<AttributeModifier> c();
+ 
+-    boolean a(AttributeModifier attributemodifier);
++    boolean a(AttributeModifier attributemodifier); default boolean configureAttribute(AttributeModifier attributeModifier) { return a(attributeModifier); } // EMC - OBF HELPER
+ 
+     @Nullable
+     AttributeModifier a(UUID uuid);
+diff --git a/src/main/java/net/minecraft/server/AttributeMapBase.java b/src/main/java/net/minecraft/server/AttributeMapBase.java
+index e541672b27..22bef21597 100644
+--- a/src/main/java/net/minecraft/server/AttributeMapBase.java
++++ b/src/main/java/net/minecraft/server/AttributeMapBase.java
+@@ -26,8 +26,8 @@ public abstract class AttributeMapBase {
+         return (AttributeInstance) this.b.get(s);
+     }
+ 
+-    public AttributeInstance b(IAttribute iattribute) {
+-        if (this.b.containsKey(iattribute.getName())) {
++    public AttributeInstance registerAttribute(IAttribute attr) { return b(attr); } public AttributeInstance b(IAttribute iattribute) { // EMC - OBF HELPER
++        if (false && this.b.containsKey(iattribute.getName())) { // EMC - we don't care
+             throw new IllegalArgumentException("Attribute is already registered!");
+         } else {
+             AttributeInstance attributeinstance = this.c(iattribute);
+diff --git a/src/main/java/net/minecraft/server/AttributesAccessor.java b/src/main/java/net/minecraft/server/AttributesAccessor.java
+new file mode 100644
+index 0000000000..106efbb382
+--- /dev/null
++++ b/src/main/java/net/minecraft/server/AttributesAccessor.java
+@@ -0,0 +1,48 @@
++package net.minecraft.server;
++
++import com.empireminecraft.api.API;
++import com.empireminecraft.api.attributes.Attribute;
++import com.google.common.collect.Maps;
++import org.bukkit.entity.LivingEntity;
++import org.bukkit.entity.Wither;
++
++import java.util.HashMap;
++
++public final class AttributesAccessor {
++    static final IAttribute targetRange = (new AttributeRanged(null, "generic.targetRange", 16.0D, 0.0D, 2048.0D)).a("Target Range");
++
++    private static final HashMap<Attribute, IAttribute> attributeMap = Maps.newHashMap();
++    static {
++        attributeMap.put(Attribute.TARGET_RANGE, targetRange);
++        attributeMap.put(Attribute.MAX_HEALTH, GenericAttributes.maxHealth);
++        attributeMap.put(Attribute.FOLLOW_RANGE, GenericAttributes.FOLLOW_RANGE);
++        attributeMap.put(Attribute.KNOCKBACK_RESISTANCE, GenericAttributes.getKnockbackResistance());
++        attributeMap.put(Attribute.MOVEMENT_SPEED, GenericAttributes.MOVEMENT_SPEED);
++        attributeMap.put(Attribute.FLYING_SPEED, GenericAttributes.getFlyingSpeed());
++        attributeMap.put(Attribute.ATTACK_DAMAGE, GenericAttributes.ATTACK_DAMAGE);
++        attributeMap.put(Attribute.ATTACK_SPEED, GenericAttributes.getAttackSpeed());
++        attributeMap.put(Attribute.ARMOR, GenericAttributes.getArmor());
++        attributeMap.put(Attribute.ARMOR_TOUGHNESS, GenericAttributes.getArmorToughness());
++        attributeMap.put(Attribute.LUCK, GenericAttributes.getLuck());
++    }
++
++    private AttributesAccessor() {}
++
++    public static IAttribute getAttribute(Attribute attribute) {
++        return attributeMap.get(attribute);
++    }
++
++    public static void configureAttributes(EntityInsentient entity) {
++        entity.getAttributeInstance(targetRange)
++              .configureAttribute(new AttributeModifier("Random spawn bonus", entity.random.nextGaussian() * 0.05D, 1));
++    }
++
++    public static void initializeAttributes(EntityLiving entity, AttributeMapBase map) {
++        if (entity instanceof EntityInsentient) {
++            map.registerAttribute(targetRange);
++            if (entity instanceof Wither) {
++                API.attributes.setAttribute(entity.getBukkitEntity(), Attribute.TARGET_RANGE, 30D);
++            }
++        }
++    }
++}
+diff --git a/src/main/java/net/minecraft/server/EntityInsentient.java b/src/main/java/net/minecraft/server/EntityInsentient.java
+index d6a1933ad7..9070d7fd5c 100644
+--- a/src/main/java/net/minecraft/server/EntityInsentient.java
++++ b/src/main/java/net/minecraft/server/EntityInsentient.java
+@@ -980,6 +980,7 @@ public abstract class EntityInsentient extends EntityLiving {
+     @Nullable
+     public GroupDataEntity prepare(DifficultyDamageScaler difficultydamagescaler, @Nullable GroupDataEntity groupdataentity) {
+         this.getAttributeInstance(GenericAttributes.FOLLOW_RANGE).b(new AttributeModifier("Random spawn bonus", this.random.nextGaussian() * 0.05D, 1));
++        AttributesAccessor.configureAttributes(this); // EMC
+         if (this.random.nextFloat() < 0.05F) {
+             this.o(true);
+         } else {
+diff --git a/src/main/java/net/minecraft/server/EntityLiving.java b/src/main/java/net/minecraft/server/EntityLiving.java
+index a33049c680..e544d66522 100644
+--- a/src/main/java/net/minecraft/server/EntityLiving.java
++++ b/src/main/java/net/minecraft/server/EntityLiving.java
+@@ -170,6 +170,7 @@ public abstract class EntityLiving extends Entity {
+         this.getAttributeMap().b(GenericAttributes.MOVEMENT_SPEED);
+         this.getAttributeMap().b(GenericAttributes.h);
+         this.getAttributeMap().b(GenericAttributes.i);
++        AttributesAccessor.initializeAttributes(this, attributeMap); // EMC
+     }
+ 
+     protected void a(double d0, boolean flag, IBlockData iblockdata, BlockPosition blockposition) {
+diff --git a/src/main/java/net/minecraft/server/GenericAttributes.java b/src/main/java/net/minecraft/server/GenericAttributes.java
+index 21865021b4..aba74206d7 100644
+--- a/src/main/java/net/minecraft/server/GenericAttributes.java
++++ b/src/main/java/net/minecraft/server/GenericAttributes.java
+@@ -13,14 +13,14 @@ public class GenericAttributes {
+     // Spigot start
+     public static final IAttribute maxHealth = (new AttributeRanged((IAttribute) null, "generic.maxHealth", 20.0D, 0.0D, org.spigotmc.SpigotConfig.maxHealth)).a("Max Health").a(true);
+     public static final IAttribute FOLLOW_RANGE = (new AttributeRanged((IAttribute) null, "generic.followRange", 32.0D, 0.0D, 2048.0D)).a("Follow Range");
+-    public static final IAttribute c = (new AttributeRanged((IAttribute) null, "generic.knockbackResistance", 0.0D, 0.0D, 1.0D)).a("Knockback Resistance");
++    public static final IAttribute c = (new AttributeRanged((IAttribute) null, "generic.knockbackResistance", 0.0D, 0.0D, 1.0D)).a("Knockback Resistance");public static IAttribute getKnockbackResistance() { return c; } // EMC - OBF HELPER
+     public static final IAttribute MOVEMENT_SPEED = (new AttributeRanged((IAttribute) null, "generic.movementSpeed", 0.699999988079071D, 0.0D, org.spigotmc.SpigotConfig.movementSpeed)).a("Movement Speed").a(true);
+-    public static final IAttribute e = (new AttributeRanged((IAttribute) null, "generic.flyingSpeed", 0.4000000059604645D, 0.0D, 1024.0D)).a("Flying Speed").a(true);
++    public static final IAttribute e = (new AttributeRanged((IAttribute) null, "generic.flyingSpeed", 0.4000000059604645D, 0.0D, 1024.0D)).a("Flying Speed").a(true);public static IAttribute getFlyingSpeed() { return e; } // EMC - OBF HELPER
+     public static final IAttribute ATTACK_DAMAGE = new AttributeRanged((IAttribute) null, "generic.attackDamage", 2.0D, 0.0D, org.spigotmc.SpigotConfig.attackDamage);
+-    public static final IAttribute g = (new AttributeRanged((IAttribute) null, "generic.attackSpeed", 4.0D, 0.0D, 1024.0D)).a(true);
+-    public static final IAttribute h = (new AttributeRanged((IAttribute) null, "generic.armor", 0.0D, 0.0D, 30.0D)).a(true);
+-    public static final IAttribute i = (new AttributeRanged((IAttribute) null, "generic.armorToughness", 0.0D, 0.0D, 20.0D)).a(true);
+-    public static final IAttribute j = (new AttributeRanged((IAttribute) null, "generic.luck", 0.0D, -1024.0D, 1024.0D)).a(true);
++    public static final IAttribute g = (new AttributeRanged((IAttribute) null, "generic.attackSpeed", 4.0D, 0.0D, 1024.0D)).a(true);public static IAttribute getAttackSpeed() { return g; } // EMC - OBF HELPER
++    public static final IAttribute h = (new AttributeRanged((IAttribute) null, "generic.armor", 0.0D, 0.0D, 30.0D)).a(true);public static IAttribute getArmor() { return h; } // EMC - OBF HELPER
++    public static final IAttribute i = (new AttributeRanged((IAttribute) null, "generic.armorToughness", 0.0D, 0.0D, 20.0D)).a(true);public static IAttribute getArmorToughness() { return i; } // EMC - OBF HELPER
++    public static final IAttribute j = (new AttributeRanged((IAttribute) null, "generic.luck", 0.0D, -1024.0D, 1024.0D)).a(true);public static IAttribute getLuck() { return j; } // EMC - OBF HELPER
+     // Spigot end
+ 
+     public static NBTTagList a(AttributeMapBase attributemapbase) {
+@@ -62,6 +62,7 @@ public class GenericAttributes {
+         return nbttagcompound;
+     }
+ 
++    public static NBTTagCompound buildModifierCompound(AttributeModifier attributeModifier) { return a(attributeModifier); } // EMC - OBF HELPER
+     public static NBTTagCompound a(AttributeModifier attributemodifier) {
+         NBTTagCompound nbttagcompound = new NBTTagCompound();
+ 
+diff --git a/src/main/java/net/minecraft/server/PathfinderGoalTarget.java b/src/main/java/net/minecraft/server/PathfinderGoalTarget.java
+index ba8c1480bc..15450fc015 100644
+--- a/src/main/java/net/minecraft/server/PathfinderGoalTarget.java
++++ b/src/main/java/net/minecraft/server/PathfinderGoalTarget.java
+@@ -68,7 +68,7 @@ public abstract class PathfinderGoalTarget extends PathfinderGoal {
+     }
+ 
+     protected double i() {
+-        AttributeInstance attributeinstance = this.e.getAttributeInstance(GenericAttributes.FOLLOW_RANGE);
++        final AttributeInstance attributeinstance = this.e.getAttributeInstance(AttributesAccessor.targetRange); // EMC
+ 
+         return attributeinstance == null ? 16.0D : attributeinstance.getValue();
+     }
+-- 
+2.19.0
+

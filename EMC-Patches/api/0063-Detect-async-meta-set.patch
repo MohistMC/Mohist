@@ -1,0 +1,47 @@
+From 4f971d8c37d59801a4e6dca22c459f503619a00e Mon Sep 17 00:00:00 2001
+From: Aikar <aikar@aikar.co>
+Date: Sat, 30 Jun 2018 03:06:49 -0400
+Subject: [PATCH] Detect async meta set
+
+---
+ .../java/com/empireminecraft/api/meta/MetaMap.java   | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
+
+diff --git a/src/main/java/com/empireminecraft/api/meta/MetaMap.java b/src/main/java/com/empireminecraft/api/meta/MetaMap.java
+index a47f01307..212c5d6bd 100644
+--- a/src/main/java/com/empireminecraft/api/meta/MetaMap.java
++++ b/src/main/java/com/empireminecraft/api/meta/MetaMap.java
+@@ -23,11 +23,14 @@
+ 
+ package com.empireminecraft.api.meta;
+ 
++import org.bukkit.Bukkit;
++
+ import javax.annotation.Nonnull;
+ import java.util.HashMap;
+ 
+ public class MetaMap <K extends MetaKey> extends HashMap<String, Object> {
+ 
++    public boolean allowAsync = false;
+     public MetaMap() {
+         super(0);
+     }
+@@ -90,6 +93,15 @@ public class MetaMap <K extends MetaKey> extends HashMap<String, Object> {
+         return put(key.key(), value);
+     }
+ 
++    @Override
++    public Object put(String key, Object value) {
++        if (!allowAsync && !Bukkit.isPrimaryThread() && !Thread.currentThread().getName().contains("ForkJoinPool")) {
++            Bukkit.getLogger().severe("Asynchronous Meta Set: " + key + " - " + (value != null ? value : "null"));
++            new IllegalStateException().printStackTrace();
++        }
++        return super.put(key, value);
++    }
++
+     public boolean containsKey(K key) {
+         return containsKey(key.key());
+     }
+-- 
+2.18.0
+

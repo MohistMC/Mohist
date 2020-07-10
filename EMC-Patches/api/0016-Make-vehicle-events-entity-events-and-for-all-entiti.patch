@@ -1,0 +1,82 @@
+From c526841e59710861bf2cd9904e660ab6ca40eb84 Mon Sep 17 00:00:00 2001
+From: Aikar <aikar@aikar.co>
+Date: Tue, 17 Nov 2015 01:02:10 -0500
+Subject: [PATCH] Make vehicle events entity events and for all entities
+
+---
+ .../org/bukkit/event/vehicle/VehicleEnterEvent.java   |  2 +-
+ .../java/org/bukkit/event/vehicle/VehicleEvent.java   | 11 +++++++----
+ .../org/bukkit/event/vehicle/VehicleExitEvent.java    |  3 ++-
+ 3 files changed, 10 insertions(+), 6 deletions(-)
+
+diff --git a/src/main/java/org/bukkit/event/vehicle/VehicleEnterEvent.java b/src/main/java/org/bukkit/event/vehicle/VehicleEnterEvent.java
+index 85c9b210..e6fe3c98 100644
+--- a/src/main/java/org/bukkit/event/vehicle/VehicleEnterEvent.java
++++ b/src/main/java/org/bukkit/event/vehicle/VehicleEnterEvent.java
+@@ -13,7 +13,7 @@ public class VehicleEnterEvent extends VehicleEvent implements Cancellable {
+     private boolean cancelled;
+     private final Entity entered;
+ 
+-    public VehicleEnterEvent(final Vehicle vehicle, final Entity entered) {
++    public VehicleEnterEvent(final Entity vehicle, final Entity entered) { // EMC
+         super(vehicle);
+         this.entered = entered;
+     }
+diff --git a/src/main/java/org/bukkit/event/vehicle/VehicleEvent.java b/src/main/java/org/bukkit/event/vehicle/VehicleEvent.java
+index b8255c01..1bbffd73 100644
+--- a/src/main/java/org/bukkit/event/vehicle/VehicleEvent.java
++++ b/src/main/java/org/bukkit/event/vehicle/VehicleEvent.java
+@@ -1,15 +1,18 @@
+ package org.bukkit.event.vehicle;
+ 
++import org.bukkit.entity.Entity;
+ import org.bukkit.entity.Vehicle;
+ import org.bukkit.event.Event;
++import org.bukkit.event.entity.EntityEvent; // EMC
+ 
+ /**
+  * Represents a vehicle-related event.
+  */
+-public abstract class VehicleEvent extends Event {
+-    protected Vehicle vehicle;
++public abstract class VehicleEvent extends EntityEvent { // EMC
++    protected Entity vehicle; // EMC
+ 
+-    public VehicleEvent(final Vehicle vehicle) {
++    public VehicleEvent(final Entity vehicle) { // EMC
++        super(vehicle); // EMC
+         this.vehicle = vehicle;
+     }
+ 
+@@ -18,7 +21,7 @@ public abstract class VehicleEvent extends Event {
+      *
+      * @return the vehicle
+      */
+-    public final Vehicle getVehicle() {
++    public final Entity getVehicle() { // EMC
+         return vehicle;
+     }
+ }
+diff --git a/src/main/java/org/bukkit/event/vehicle/VehicleExitEvent.java b/src/main/java/org/bukkit/event/vehicle/VehicleExitEvent.java
+index 0408d5e5..75712157 100644
+--- a/src/main/java/org/bukkit/event/vehicle/VehicleExitEvent.java
++++ b/src/main/java/org/bukkit/event/vehicle/VehicleExitEvent.java
+@@ -1,5 +1,6 @@
+ package org.bukkit.event.vehicle;
+ 
++import org.bukkit.entity.Entity;
+ import org.bukkit.entity.LivingEntity;
+ import org.bukkit.entity.Vehicle;
+ import org.bukkit.event.Cancellable;
+@@ -23,7 +24,7 @@ public class VehicleExitEvent extends VehicleEvent implements Cancellable {
+     private boolean cancelled;
+     private final LivingEntity exited;
+ 
+-    public VehicleExitEvent(final Vehicle vehicle, final LivingEntity exited) {
++    public VehicleExitEvent(final Entity vehicle, final LivingEntity exited) { // EMC
+         super(vehicle);
+         this.exited = exited;
+     }
+-- 
+2.17.1
+

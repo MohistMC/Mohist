@@ -1,0 +1,40 @@
+From baaa34dbf65fffb28ada3d24e73b46b0711e970e Mon Sep 17 00:00:00 2001
+From: Aikar <aikar@aikar.co>
+Date: Fri, 14 Feb 2014 02:28:32 -0500
+Subject: [PATCH] Force PVP on
+
+Blocks Multiverse from controlling this...
+---
+ src/main/java/net/minecraft/server/MinecraftServer.java | 2 +-
+ src/main/java/org/bukkit/craftbukkit/CraftWorld.java    | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/src/main/java/net/minecraft/server/MinecraftServer.java b/src/main/java/net/minecraft/server/MinecraftServer.java
+index 8fc3de8355..b801fb9b01 100644
+--- a/src/main/java/net/minecraft/server/MinecraftServer.java
++++ b/src/main/java/net/minecraft/server/MinecraftServer.java
+@@ -1435,7 +1435,7 @@ public abstract class MinecraftServer implements ICommandListener, Runnable, IAs
+     }
+ 
+     public boolean getPVP() {
+-        return this.pvpMode;
++        return true; // EMC
+     }
+ 
+     public void setPVP(boolean flag) {
+diff --git a/src/main/java/org/bukkit/craftbukkit/CraftWorld.java b/src/main/java/org/bukkit/craftbukkit/CraftWorld.java
+index afb141c629..01adb05869 100644
+--- a/src/main/java/org/bukkit/craftbukkit/CraftWorld.java
++++ b/src/main/java/org/bukkit/craftbukkit/CraftWorld.java
+@@ -891,7 +891,7 @@ public class CraftWorld implements World {
+     }
+ 
+     public void setPVP(boolean pvp) {
+-        world.pvpMode = pvp;
++        world.pvpMode = true; // EMC
+     }
+ 
+     public void playEffect(Player player, Effect effect, int data) {
+-- 
+2.19.0
+

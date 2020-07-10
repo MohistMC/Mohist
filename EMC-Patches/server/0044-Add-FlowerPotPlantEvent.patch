@@ -1,0 +1,24 @@
+From 721088a06aaa10dae0fc979cf71df908840dab3c Mon Sep 17 00:00:00 2001
+From: Aikar <aikar@aikar.co>
+Date: Thu, 18 Dec 2014 23:03:44 -0500
+Subject: [PATCH] Add FlowerPotPlantEvent
+
+---
+ src/main/java/net/minecraft/server/BlockFlowerPot.java | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/src/main/java/net/minecraft/server/BlockFlowerPot.java b/src/main/java/net/minecraft/server/BlockFlowerPot.java
+index 2c6f25a90..d5e5234b4 100644
+--- a/src/main/java/net/minecraft/server/BlockFlowerPot.java
++++ b/src/main/java/net/minecraft/server/BlockFlowerPot.java
+@@ -63,6 +63,7 @@ public class BlockFlowerPot extends BlockTileEntity {
+                 tileentityflowerpot.setContents(ItemStack.a);
+             }
+ 
++            new com.empireminecraft.customevents.FlowerPotPlantEvent(MCUtil.toLocation(world, blockposition), itemstack.getBukkitStack()).callEvent(); // EMC
+             tileentityflowerpot.update();
+             world.notify(blockposition, iblockdata, iblockdata, 3);
+             return true;
+-- 
+2.17.1
+

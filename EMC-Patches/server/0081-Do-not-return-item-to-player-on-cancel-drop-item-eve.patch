@@ -1,0 +1,25 @@
+From 3bc2a471d2776d47965cdcc00551bba072c656d9 Mon Sep 17 00:00:00 2001
+From: Aikar <aikar@aikar.co>
+Date: Thu, 23 Jun 2016 23:24:20 -0400
+Subject: [PATCH] Do not return item to player on cancel drop item event
+
+we will control this in plugin code
+---
+ src/main/java/net/minecraft/server/EntityHuman.java | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/src/main/java/net/minecraft/server/EntityHuman.java b/src/main/java/net/minecraft/server/EntityHuman.java
+index 36594b1d8..82a7656e9 100644
+--- a/src/main/java/net/minecraft/server/EntityHuman.java
++++ b/src/main/java/net/minecraft/server/EntityHuman.java
+@@ -542,6 +542,7 @@ public abstract class EntityHuman extends EntityLiving {
+             this.world.getServer().getPluginManager().callEvent(event);
+ 
+             if (event.isCancelled()) {
++                if (true) return null; // EMC
+                 org.bukkit.inventory.ItemStack cur = player.getInventory().getItemInHand();
+                 if (flag1 && (cur == null || cur.getAmount() == 0)) {
+                     // The complete stack was dropped
+-- 
+2.18.0
+

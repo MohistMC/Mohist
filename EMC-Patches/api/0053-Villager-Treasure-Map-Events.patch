@@ -1,0 +1,121 @@
+From acb5a468930c25cf36d291b1b861efd6539f21be Mon Sep 17 00:00:00 2001
+From: Aikar <aikar@aikar.co>
+Date: Tue, 13 Dec 2016 00:40:35 -0500
+Subject: [PATCH] Villager Treasure Map Events
+
+---
+ .../com/empireminecraft/api/EAPI_Misc.java    | 19 ++++++
+ .../CreatePendingTreasureMapEvent.java        | 65 +++++++++++++++++++
+ 2 files changed, 84 insertions(+)
+ create mode 100644 src/main/java/com/empireminecraft/customevents/CreatePendingTreasureMapEvent.java
+
+diff --git a/src/main/java/com/empireminecraft/api/EAPI_Misc.java b/src/main/java/com/empireminecraft/api/EAPI_Misc.java
+index 60b1ac82..7d99f93f 100644
+--- a/src/main/java/com/empireminecraft/api/EAPI_Misc.java
++++ b/src/main/java/com/empireminecraft/api/EAPI_Misc.java
+@@ -24,7 +24,9 @@
+ package com.empireminecraft.api;
+ 
+ import org.bukkit.NamespacedKey;
++import org.bukkit.Location;
+ import org.bukkit.entity.EntityType;
++import org.bukkit.entity.Player;
+ import org.bukkit.inventory.ItemStack;
+ 
+ import javax.annotation.Nonnull;
+@@ -45,4 +47,21 @@ public interface EAPI_Misc {
+      * @return
+      */
+     ItemStack spawnEggAsType(@Nonnull ItemStack bukkitItem, @Nonnull NamespacedKey key);
++
++    /**
++     *
++     * @param structure
++     * @param center
++     * @param undiscoveredOnly
++     * @return
++     */
++    Location findNearestStructure(@Nonnull String structure, @Nonnull Location center, boolean undiscoveredOnly);
++
++    /**
++     *
++     * @param mapType
++     * @param loc
++     * @return
++     */
++    ItemStack createTreasureMap(@Nonnull String mapType, int iconType, @Nonnull Location loc);
+ }
+diff --git a/src/main/java/com/empireminecraft/customevents/CreatePendingTreasureMapEvent.java b/src/main/java/com/empireminecraft/customevents/CreatePendingTreasureMapEvent.java
+new file mode 100644
+index 00000000..00c6eff9
+--- /dev/null
++++ b/src/main/java/com/empireminecraft/customevents/CreatePendingTreasureMapEvent.java
+@@ -0,0 +1,65 @@
++/*
++ * Copyright (c) 2016 Starlis LLC / Daniel Ennis (Aikar) - MIT License
++ *
++ *  Permission is hereby granted, free of charge, to any person obtaining
++ *  a copy of this software and associated documentation files (the
++ *  "Software"), to deal in the Software without restriction, including
++ *  without limitation the rights to use, copy, modify, merge, publish,
++ *  distribute, sublicense, and/or sell copies of the Software, and to
++ *  permit persons to whom the Software is furnished to do so, subject to
++ *  the following conditions:
++ *
++ *  The above copyright notice and this permission notice shall be
++ *  included in all copies or substantial portions of the Software.
++ *
++ *  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
++ *  EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
++ *  MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
++ *  NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
++ *  LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
++ *  OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
++ *  WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
++ */
++
++package com.empireminecraft.customevents;
++
++import org.bukkit.event.Event;
++import org.bukkit.event.HandlerList;
++import org.bukkit.inventory.ItemStack;
++
++public class CreatePendingTreasureMapEvent extends Event {
++    private final String mapType;
++    private final int iconTypeId;
++    private ItemStack item;
++
++    public CreatePendingTreasureMapEvent(String mapType, int iconTypeId) {
++        this.mapType = mapType;
++        this.iconTypeId = iconTypeId;
++    }
++
++    public String getMapType() {
++        return mapType;
++    }
++
++    public int getIconTypeId() {
++        return iconTypeId;
++    }
++
++    public ItemStack getItem() {
++        return item;
++    }
++
++    public void setItem(ItemStack item) {
++        this.item = item;
++    }
++
++    private static final HandlerList handlers = new HandlerList();
++
++    public HandlerList getHandlers() {
++        return handlers;
++    }
++
++    public static HandlerList getHandlerList() {
++        return handlers;
++    }
++}
+-- 
+2.17.1
+

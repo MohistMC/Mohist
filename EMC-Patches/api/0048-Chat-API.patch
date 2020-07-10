@@ -1,0 +1,89 @@
+From d7b0b3fa0958456f8ae1567c8b24063285b4a41f Mon Sep 17 00:00:00 2001
+From: Aikar <aikar@aikar.co>
+Date: Sun, 4 Dec 2016 22:30:15 -0500
+Subject: [PATCH] Chat API
+
+---
+ .../java/com/empireminecraft/api/API.java     |  1 +
+ .../com/empireminecraft/api/EAPI_Chat.java    | 57 +++++++++++++++++++
+ 2 files changed, 58 insertions(+)
+ create mode 100644 src/main/java/com/empireminecraft/api/EAPI_Chat.java
+
+diff --git a/src/main/java/com/empireminecraft/api/API.java b/src/main/java/com/empireminecraft/api/API.java
+index 9ff1db8c..efa1e55e 100644
+--- a/src/main/java/com/empireminecraft/api/API.java
++++ b/src/main/java/com/empireminecraft/api/API.java
+@@ -31,6 +31,7 @@ public abstract class API {
+     public static EAPI_Entity entity;
+     public static EAPI_Misc misc;
+     public static EAPI_Meta meta;
++    public static EAPI_Chat chat;
+ 
+     public static String stack() {
+         return ExceptionUtils.getFullStackTrace(new Throwable());
+diff --git a/src/main/java/com/empireminecraft/api/EAPI_Chat.java b/src/main/java/com/empireminecraft/api/EAPI_Chat.java
+new file mode 100644
+index 00000000..96a845fb
+--- /dev/null
++++ b/src/main/java/com/empireminecraft/api/EAPI_Chat.java
+@@ -0,0 +1,57 @@
++/*
++ * Copyright (c) 2016 Starlis LLC / Daniel Ennis (Aikar) - MIT License
++ *  
++ *  Permission is hereby granted, free of charge, to any person obtaining
++ *  a copy of this software and associated documentation files (the
++ *  "Software"), to deal in the Software without restriction, including
++ *  without limitation the rights to use, copy, modify, merge, publish,
++ *  distribute, sublicense, and/or sell copies of the Software, and to
++ *  permit persons to whom the Software is furnished to do so, subject to
++ *  the following conditions:
++ *  
++ *  The above copyright notice and this permission notice shall be
++ *  included in all copies or substantial portions of the Software.
++ *  
++ *  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
++ *  EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
++ *  MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
++ *  NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
++ *  LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
++ *  OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
++ *  WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
++ */
++
++package com.empireminecraft.api;
++
++import org.bukkit.entity.Player;
++import org.bukkit.inventory.ItemStack;
++
++
++public interface EAPI_Chat {
++
++    FancifulChat createFancy();
++
++    void sendTitle(Player player, FancifulChat title, FancifulChat subtitle, Integer fadeIn, Integer stay, Integer fadeOut);
++
++    interface FancifulChat {
++        FancifulChat file(final String path);
++
++        FancifulChat link(final String url);
++
++        FancifulChat suggest(final String command);
++
++        FancifulChat command(final String command);
++
++        FancifulChat achievementTooltip(final String name);
++
++        FancifulChat itemTooltip(final String itemJSON);
++
++        FancifulChat itemTooltip(final ItemStack itemStack);
++
++        FancifulChat tooltip(final String text);
++
++        FancifulChat then(final Object obj);
++
++        void send(Player player);
++    }
++}
+-- 
+2.17.1
+

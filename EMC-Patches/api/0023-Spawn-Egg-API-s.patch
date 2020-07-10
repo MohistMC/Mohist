@@ -1,0 +1,75 @@
+From 933e88d6e07d3848522dd788da513a3ac9f299a4 Mon Sep 17 00:00:00 2001
+From: Aikar <aikar@aikar.co>
+Date: Sat, 3 Dec 2016 22:08:01 -0500
+Subject: [PATCH] Spawn Egg API's
+
+---
+ .../com/empireminecraft/api/EAPI_Misc.java    | 21 +++++++++++++++++++
+ .../MonsterEggPrepareSpawnEvent.java          |  9 +++++++-
+ 2 files changed, 29 insertions(+), 1 deletion(-)
+
+diff --git a/src/main/java/com/empireminecraft/api/EAPI_Misc.java b/src/main/java/com/empireminecraft/api/EAPI_Misc.java
+index 64e55912..60b1ac82 100644
+--- a/src/main/java/com/empireminecraft/api/EAPI_Misc.java
++++ b/src/main/java/com/empireminecraft/api/EAPI_Misc.java
+@@ -23,5 +23,26 @@
+ 
+ package com.empireminecraft.api;
+ 
++import org.bukkit.NamespacedKey;
++import org.bukkit.entity.EntityType;
++import org.bukkit.inventory.ItemStack;
++
++import javax.annotation.Nonnull;
++
+ public interface EAPI_Misc {
++
++    /**
++     * Gets Registered Entity Type for this spawn egg.
++     * @param bukkitItem
++     * @return
++     */
++    EntityType getTypeForSpawnEgg(@Nonnull ItemStack bukkitItem);
++
++    /**
++     * Changes the type of a Spawn Egg and returns new itemstack. ALWAYS USE THE RETURNED STACK
++     * @param bukkitItem
++     * @param key
++     * @return
++     */
++    ItemStack spawnEggAsType(@Nonnull ItemStack bukkitItem, @Nonnull NamespacedKey key);
+ }
+diff --git a/src/main/java/com/empireminecraft/customevents/MonsterEggPrepareSpawnEvent.java b/src/main/java/com/empireminecraft/customevents/MonsterEggPrepareSpawnEvent.java
+index deea4c27..85260cf9 100644
+--- a/src/main/java/com/empireminecraft/customevents/MonsterEggPrepareSpawnEvent.java
++++ b/src/main/java/com/empireminecraft/customevents/MonsterEggPrepareSpawnEvent.java
+@@ -13,6 +13,7 @@ import org.bukkit.entity.LivingEntity;
+ import org.bukkit.event.Cancellable;
+ import org.bukkit.event.Event;
+ import org.bukkit.event.HandlerList;
++import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
+ import org.bukkit.inventory.ItemStack;
+ 
+ import javax.annotation.Nonnull;
+@@ -22,11 +23,17 @@ public class MonsterEggPrepareSpawnEvent extends Event implements Cancellable {
+     private final HumanEntity player;
+     private NamespacedKey typeKey;
+     private final ItemStack item;
++    private final SpawnReason spawnReason;
+ 
+-    public MonsterEggPrepareSpawnEvent(HumanEntity player, NamespacedKey typeKey, ItemStack item) {
++    public MonsterEggPrepareSpawnEvent(HumanEntity player, NamespacedKey typeKey, ItemStack item, SpawnReason spawnReason) {
+         this.player = player;
+         this.typeKey = typeKey;
+         this.item = item;
++        this.spawnReason = spawnReason;
++    }
++
++    @Nonnull public SpawnReason getSpawnReason() {
++        return spawnReason;
+     }
+ 
+     @Nullable public HumanEntity getPlayer() {
+-- 
+2.17.1
+

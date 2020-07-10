@@ -1,0 +1,24 @@
+From 17533588322092ee5da9f01868df1c8f690c220b Mon Sep 17 00:00:00 2001
+From: Aikar <aikar@aikar.co>
+Date: Sun, 17 Jun 2018 02:08:40 -0400
+Subject: [PATCH] Human#getAttackPct
+
+---
+ src/main/java/org/bukkit/entity/HumanEntity.java | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/src/main/java/org/bukkit/entity/HumanEntity.java b/src/main/java/org/bukkit/entity/HumanEntity.java
+index dd95773e..9ea62fad 100644
+--- a/src/main/java/org/bukkit/entity/HumanEntity.java
++++ b/src/main/java/org/bukkit/entity/HumanEntity.java
+@@ -17,6 +17,7 @@ import org.bukkit.permissions.Permissible;
+  */
+ public interface HumanEntity extends LivingEntity, AnimalTamer, Permissible, InventoryHolder {
+ 
++    float getAttackPct(); // EMC
+     /**
+      * Returns the name of this player
+      *
+-- 
+2.17.1
+

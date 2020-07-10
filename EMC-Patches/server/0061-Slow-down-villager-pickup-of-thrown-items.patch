@@ -1,0 +1,27 @@
+From 466a4b570c89d7b420ff36defd06ff7b2771057d Mon Sep 17 00:00:00 2001
+From: Aikar <aikar@aikar.co>
+Date: Thu, 18 Jun 2015 21:56:03 -0400
+Subject: [PATCH] Slow down villager pickup of thrown items
+
+Helps 1.8 Farms let hoppers pick it up before Villager
+due to our hopper changes
+---
+ .../net/minecraft/server/PathfinderGoalInteractVillagers.java   | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/main/java/net/minecraft/server/PathfinderGoalInteractVillagers.java b/src/main/java/net/minecraft/server/PathfinderGoalInteractVillagers.java
+index 1d1938090..793f27df5 100644
+--- a/src/main/java/net/minecraft/server/PathfinderGoalInteractVillagers.java
++++ b/src/main/java/net/minecraft/server/PathfinderGoalInteractVillagers.java
+@@ -62,7 +62,7 @@ public class PathfinderGoalInteractVillagers extends PathfinderGoalInteract {
+                         entityitem.motX = (double) (-MathHelper.sin(f1 * 0.017453292F) * MathHelper.cos(f2 * 0.017453292F) * 0.3F);
+                         entityitem.motZ = (double) (MathHelper.cos(f1 * 0.017453292F) * MathHelper.cos(f2 * 0.017453292F) * 0.3F);
+                         entityitem.motY = (double) (-MathHelper.sin(f2 * 0.017453292F) * 0.3F + 0.1F);
+-                        entityitem.q();
++                        entityitem.pickupDelay = 100; // EMC
+                         this.f.world.addEntity(entityitem);
+                         break;
+                     }
+-- 
+2.17.1
+

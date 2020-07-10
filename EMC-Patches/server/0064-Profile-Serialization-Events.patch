@@ -1,0 +1,66 @@
+From c2d517ecbb8de7f067fbfdbe9ec2b2c5c25c01cf Mon Sep 17 00:00:00 2001
+From: Aikar <aikar@aikar.co>
+Date: Tue, 21 Jul 2015 23:05:32 -0400
+Subject: [PATCH] Profile Serialization Events
+
+Lets us modify profile data before/after it is serialized/deserialized.
+---
+ .../minecraft/server/GameProfileSerializer.java    | 14 +++++++++++---
+ 1 file changed, 11 insertions(+), 3 deletions(-)
+
+diff --git a/src/main/java/net/minecraft/server/GameProfileSerializer.java b/src/main/java/net/minecraft/server/GameProfileSerializer.java
+index a2da8913d..06b6669da 100644
+--- a/src/main/java/net/minecraft/server/GameProfileSerializer.java
++++ b/src/main/java/net/minecraft/server/GameProfileSerializer.java
+@@ -1,5 +1,6 @@
+ package net.minecraft.server;
+ 
++import com.destroystokyo.paper.profile.CraftPlayerProfile;
+ import com.google.common.annotations.VisibleForTesting;
+ import com.google.common.base.Optional;
+ import com.google.common.collect.UnmodifiableIterator;
+@@ -61,6 +62,7 @@ public final class GameProfileSerializer {
+                 }
+             }
+ 
++            new com.empireminecraft.customevents.ProfileDeserializeEvent(CraftPlayerProfile.asBukkitMirror(gameprofile)).callEvent(); // EMC
+             return gameprofile;
+         } catch (Throwable throwable1) {
+             return null;
+@@ -68,6 +70,12 @@ public final class GameProfileSerializer {
+     }
+ 
+     public static NBTTagCompound serialize(NBTTagCompound nbttagcompound, GameProfile gameprofile) {
++        // EMC start - defensive copy to prevent ConcurrentModificationExceptions if the event modifies the profile
++        GameProfile old = gameprofile;
++        gameprofile = new GameProfile(old.getId(), old.getName());
++        gameprofile.getProperties().putAll(old.getProperties());
++        new com.empireminecraft.customevents.ProfileSerializeEvent(CraftPlayerProfile.asBukkitMirror(gameprofile)).callEvent();
++        // EMC end
+         if (!UtilColor.b(gameprofile.getName())) {
+             nbttagcompound.setString("Name", gameprofile.getName());
+         }
+@@ -225,10 +233,10 @@ public final class GameProfileSerializer {
+     }
+ 
+     private static <T extends Comparable<T>> IBlockData a(IBlockData iblockdata, IBlockState<T> iblockstate, String s, NBTTagCompound nbttagcompound, NBTTagCompound nbttagcompound1) {
+-        Optional optional = iblockstate.b(nbttagcompound.getString(s));
++        Optional<T> optional = iblockstate.b(nbttagcompound.getString(s)); // EMC - decompile error- add <T>
+ 
+         if (optional.isPresent()) {
+-            return iblockdata.set(iblockstate, (Comparable) optional.get());
++            return iblockdata.set(iblockstate, optional.get()); // EMC - decompile error - remove cast
+         } else {
+             GameProfileSerializer.a.warn("Unable to read property: {} with value: {} for blockstate: {}", s, nbttagcompound.getString(s), nbttagcompound1.toString());
+             return iblockdata;
+@@ -255,6 +263,6 @@ public final class GameProfileSerializer {
+     }
+ 
+     private static <T extends Comparable<T>> String a(IBlockState<T> iblockstate, Comparable<?> comparable) {
+-        return iblockstate.a(comparable);
++        return iblockstate.a((T) comparable); // EMC - decompile error
+     }
+ }
+-- 
+2.17.1
+

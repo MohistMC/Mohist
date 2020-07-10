@@ -1,0 +1,64 @@
+From 665e8b9d0dd548df0bfa5873e70047e7f9a5c113 Mon Sep 17 00:00:00 2001
+From: Aikar <aikar@aikar.co>
+Date: Fri, 26 Jul 2013 22:19:29 -0400
+Subject: [PATCH] Allow force spawns
+
+Pass spawn reason force to not allow plugins to block
+Force some cases where plugins should not be allowed to block it.
+---
+ src/main/java/net/minecraft/server/Entity.java     | 2 +-
+ src/main/java/net/minecraft/server/PlayerList.java | 2 +-
+ src/main/java/net/minecraft/server/World.java      | 4 ++--
+ 3 files changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/src/main/java/net/minecraft/server/Entity.java b/src/main/java/net/minecraft/server/Entity.java
+index 0f12d4e33a..0551fdda29 100644
+--- a/src/main/java/net/minecraft/server/Entity.java
++++ b/src/main/java/net/minecraft/server/Entity.java
+@@ -2546,7 +2546,7 @@ public abstract class Entity implements ICommandListener, KeyedObject { // Paper
+                 boolean flag = entity.attachedToPlayer;
+ 
+                 entity.attachedToPlayer = true;
+-                worldserver1.addEntity(entity);
++                worldserver1.addEntity(entity, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.FORCE); // EMC
+                 entity.attachedToPlayer = flag;
+                 worldserver1.entityJoinedWorld(entity, false);
+                 // CraftBukkit start - Forward the CraftEntity to the new entity
+diff --git a/src/main/java/net/minecraft/server/PlayerList.java b/src/main/java/net/minecraft/server/PlayerList.java
+index 44ced604a9..c101c0bc75 100644
+--- a/src/main/java/net/minecraft/server/PlayerList.java
++++ b/src/main/java/net/minecraft/server/PlayerList.java
+@@ -1019,7 +1019,7 @@ public abstract class PlayerList {
+                         entity.getBukkitEntity().setVelocity(velocity);
+                     }
+                 }
+-                // worldserver1.addEntity(entity);
++                // worldserver1.addEntity(entity, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason.FORCE); // EMC
+                 worldserver1.entityJoinedWorld(entity, false);
+             }
+ 
+diff --git a/src/main/java/net/minecraft/server/World.java b/src/main/java/net/minecraft/server/World.java
+index daefcc4058..b6217b588c 100644
+--- a/src/main/java/net/minecraft/server/World.java
++++ b/src/main/java/net/minecraft/server/World.java
+@@ -1177,7 +1177,7 @@ public abstract class World implements IBlockAccess {
+             }
+         } // Spigot end
+ 
+-        if (event != null && (event.isCancelled() || entity.dead)) {
++        if (spawnReason != SpawnReason.FORCE && event != null && (event.isCancelled() || entity.dead)) { // EMC
+             entity.dead = true;
+             return false;
+         }
+@@ -1197,7 +1197,7 @@ public abstract class World implements IBlockAccess {
+             flag = true;
+         }
+ 
+-        if (!flag && !this.isChunkLoaded(i, j, false)) {
++        if (spawnReason != SpawnReason.FORCE && !flag && !this.isChunkLoaded(i, j, false)) { // EMC
+             return false;
+         } else {
+             if (entity instanceof EntityHuman) {
+-- 
+2.20.1
+

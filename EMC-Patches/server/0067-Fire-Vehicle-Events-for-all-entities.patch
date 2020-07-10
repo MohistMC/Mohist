@@ -1,0 +1,28 @@
+From 31ed08b1c48b9ff4a666b09d9946e76568c15c0a Mon Sep 17 00:00:00 2001
+From: Aikar <aikar@aikar.co>
+Date: Tue, 17 Nov 2015 01:28:08 -0500
+Subject: [PATCH] Fire Vehicle Events for all entities
+
+---
+ src/main/java/net/minecraft/server/Entity.java | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/src/main/java/net/minecraft/server/Entity.java b/src/main/java/net/minecraft/server/Entity.java
+index fb5217a053..73c0d2d109 100644
+--- a/src/main/java/net/minecraft/server/Entity.java
++++ b/src/main/java/net/minecraft/server/Entity.java
+@@ -2079,9 +2079,9 @@ public abstract class Entity implements ICommandListener, KeyedObject { // Paper
+             entity.setVehicle(this); // Paper - Set the vehicle back for the event
+             CraftEntity craft = (CraftEntity) entity.getBukkitEntity().getVehicle();
+             Entity orig = craft == null ? null : craft.getHandle();
+-            if (getBukkitEntity() instanceof Vehicle && entity.getBukkitEntity() instanceof LivingEntity) {
++            if (entity.getBukkitEntity() instanceof LivingEntity) { // EMC
+                 VehicleExitEvent event = new VehicleExitEvent(
+-                        (Vehicle) getBukkitEntity(),
++                        getBukkitEntity(), // EMC
+                         (LivingEntity) entity.getBukkitEntity()
+                 );
+                 event.reason = reason; // EMC
+-- 
+2.19.0
+

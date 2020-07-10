@@ -1,0 +1,43 @@
+From 422d9dc50bf53504cac17c6de171add37296fd00 Mon Sep 17 00:00:00 2001
+From: Aikar <aikar@aikar.co>
+Date: Fri, 12 Jul 2013 21:29:19 -0400
+Subject: [PATCH] Entity Serialization
+
+add method to spawn an entity at a location if its not in any world (invalid)
+---
+ src/main/java/com/empireminecraft/api/EAPI_Entity.java | 6 ++++++
+ src/main/java/org/bukkit/entity/Entity.java            | 2 ++
+ 2 files changed, 8 insertions(+)
+
+diff --git a/src/main/java/com/empireminecraft/api/EAPI_Entity.java b/src/main/java/com/empireminecraft/api/EAPI_Entity.java
+index 9bac21214..8180ce462 100644
+--- a/src/main/java/com/empireminecraft/api/EAPI_Entity.java
++++ b/src/main/java/com/empireminecraft/api/EAPI_Entity.java
+@@ -23,5 +23,11 @@
+ 
+ package com.empireminecraft.api;
+ 
++import org.bukkit.World;
++import org.bukkit.entity.Entity;
++
+ public interface EAPI_Entity {
++
++    byte[] serializeEntity(Entity craftentity);
++    Entity deserializeEntity(byte[] data, World world);
+ }
+diff --git a/src/main/java/org/bukkit/entity/Entity.java b/src/main/java/org/bukkit/entity/Entity.java
+index f8c9efee3..932d2f7ac 100644
+--- a/src/main/java/org/bukkit/entity/Entity.java
++++ b/src/main/java/org/bukkit/entity/Entity.java
+@@ -22,6 +22,8 @@ import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
+  */
+ public interface Entity extends Metadatable, CommandSender, Nameable {
+ 
++    public boolean spawnAt(Location loc); // EMC
++    public boolean spawnAt(Location loc, org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason spawnReason); // EMC
+     /**
+      * Gets the entity's current position
+      *
+-- 
+2.18.0
+

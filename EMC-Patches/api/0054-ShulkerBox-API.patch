@@ -1,0 +1,78 @@
+From c9766716d7727f4b1a80ffe28ba350dbb7cef83e Mon Sep 17 00:00:00 2001
+From: Aikar <aikar@aikar.co>
+Date: Sun, 1 Jan 2017 20:35:55 -0500
+Subject: [PATCH] ShulkerBox API
+
+---
+ .../com/empireminecraft/api/EAPI_Misc.java    | 18 +++++++++++++++
+ src/main/java/org/bukkit/Material.java        | 22 +++++++++++++++++++
+ 2 files changed, 40 insertions(+)
+
+diff --git a/src/main/java/com/empireminecraft/api/EAPI_Misc.java b/src/main/java/com/empireminecraft/api/EAPI_Misc.java
+index 7d99f93f..d4ba8e25 100644
+--- a/src/main/java/com/empireminecraft/api/EAPI_Misc.java
++++ b/src/main/java/com/empireminecraft/api/EAPI_Misc.java
+@@ -30,6 +30,8 @@ import org.bukkit.entity.Player;
+ import org.bukkit.inventory.ItemStack;
+ 
+ import javax.annotation.Nonnull;
++import javax.annotation.Nullable;
++import java.util.List;
+ 
+ public interface EAPI_Misc {
+ 
+@@ -64,4 +66,20 @@ public interface EAPI_Misc {
+      * @return
+      */
+     ItemStack createTreasureMap(@Nonnull String mapType, int iconType, @Nonnull Location loc);
++
++
++    /**
++     * Returns if this is a shulker box with items in it.
++     * @param shulker
++     * @return Has items or not
++     */
++    boolean hasShulkerInventory(@Nonnull ItemStack shulker);
++
++    /**
++     * Returns a list of items inside of a Shulker Box Item Stack
++     * @param shulker
++     * @return List of Items, Not Mutable
++     */
++    @Nullable
++    List<ItemStack> getShulkerInventory(@Nonnull ItemStack shulker);
+ }
+diff --git a/src/main/java/org/bukkit/Material.java b/src/main/java/org/bukkit/Material.java
+index fcc76e19..738b7396 100644
+--- a/src/main/java/org/bukkit/Material.java
++++ b/src/main/java/org/bukkit/Material.java
+@@ -1453,4 +1453,26 @@ public enum Material {
+                 return true;
+         }
+     }
++    public boolean isShulkerBox() {
++        switch (this) {
++            case WHITE_SHULKER_BOX:
++            case ORANGE_SHULKER_BOX:
++            case MAGENTA_SHULKER_BOX:
++            case LIGHT_BLUE_SHULKER_BOX:
++            case YELLOW_SHULKER_BOX:
++            case LIME_SHULKER_BOX:
++            case PINK_SHULKER_BOX:
++            case GRAY_SHULKER_BOX:
++            case SILVER_SHULKER_BOX:
++            case CYAN_SHULKER_BOX:
++            case PURPLE_SHULKER_BOX:
++            case BLUE_SHULKER_BOX:
++            case BROWN_SHULKER_BOX:
++            case GREEN_SHULKER_BOX:
++            case RED_SHULKER_BOX:
++            case BLACK_SHULKER_BOX:
++                return true;
++        }
++        return false;
++    }
+ }
+-- 
+2.17.1
+

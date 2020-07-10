@@ -1,0 +1,65 @@
+From 7893917270578830e83fad616f531b2a34777da1 Mon Sep 17 00:00:00 2001
+From: Aikar <aikar@aikar.co>
+Date: Sun, 4 Dec 2016 01:03:19 -0500
+Subject: [PATCH] ArrowHitBlockEvent
+
+---
+ .../customevents/ArrowHitBlockEvent.java      | 46 +++++++++++++++++++
+ 1 file changed, 46 insertions(+)
+ create mode 100644 src/main/java/com/empireminecraft/customevents/ArrowHitBlockEvent.java
+
+diff --git a/src/main/java/com/empireminecraft/customevents/ArrowHitBlockEvent.java b/src/main/java/com/empireminecraft/customevents/ArrowHitBlockEvent.java
+new file mode 100644
+index 00000000..9f1d49c4
+--- /dev/null
++++ b/src/main/java/com/empireminecraft/customevents/ArrowHitBlockEvent.java
+@@ -0,0 +1,46 @@
++package com.empireminecraft.customevents;
++
++import org.bukkit.block.Block;
++import org.bukkit.entity.Arrow;
++import org.bukkit.entity.Entity;
++import org.bukkit.event.Cancellable;
++import org.bukkit.event.Event;
++import org.bukkit.event.HandlerList;
++
++public class ArrowHitBlockEvent extends Event implements Cancellable {
++    private static final HandlerList handlers = new HandlerList();
++    private boolean canceled;
++
++    final Arrow entity;
++    final Block block;
++
++    public ArrowHitBlockEvent(Entity entity, Block block) {
++        this.entity = (Arrow) entity;
++        this.block = block;
++    }
++
++    public Arrow getEntity() {
++        return entity;
++    }
++
++    public Block getBlock() {
++        return block;
++    }
++
++    public boolean isCancelled() {
++        return canceled;
++    }
++
++    public void setCancelled(boolean cancel) {
++        canceled = cancel;
++    }
++
++    public HandlerList getHandlers() {
++        return handlers;
++    }
++
++    public static HandlerList getHandlerList() {
++        return handlers;
++    }
++
++}
+-- 
+2.17.1
+

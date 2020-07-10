@@ -1,0 +1,147 @@
+From 1a7d1265db9ec62a55c5250422fc2102436175ef Mon Sep 17 00:00:00 2001
+From: Aikar <aikar@aikar.co>
+Date: Tue, 11 Jun 2013 23:15:00 -0400
+Subject: [PATCH] EntityTasks API
+
+Allows scheduling repeating task timers on an entity level.
+Avoids Bukkit system so that tasks will simply maintain themselves on entity removal.
+---
+ .../empireminecraft/api/CraftEAPI_Entity.java | 18 +++++++
+ .../java/net/minecraft/server/Entity.java     |  1 +
+ .../minecraft/server/EntityTasksHandler.java  | 50 +++++++++++++++++++
+ src/main/java/net/minecraft/server/World.java |  2 +
+ .../org/bukkit/craftbukkit/CraftServer.java   |  1 +
+ 5 files changed, 72 insertions(+)
+ create mode 100644 src/main/java/net/minecraft/server/EntityTasksHandler.java
+
+diff --git a/src/main/java/com/empireminecraft/api/CraftEAPI_Entity.java b/src/main/java/com/empireminecraft/api/CraftEAPI_Entity.java
+index e7bb9003da..0a1f690690 100644
+--- a/src/main/java/com/empireminecraft/api/CraftEAPI_Entity.java
++++ b/src/main/java/com/empireminecraft/api/CraftEAPI_Entity.java
+@@ -23,5 +23,23 @@
+ 
+ package com.empireminecraft.api;
+ 
++import net.minecraft.server.EntityTasksHandler;
++import org.bukkit.craftbukkit.entity.CraftEntity;
++import org.bukkit.entity.Entity;
++
++import java.util.ArrayList;
++import java.util.List;
++
+ public class CraftEAPI_Entity implements EAPI_Entity {
++
++    public <T extends Entity> EntityTask<T> scheduleTask(T entity, int interval, EntityTask<T> task) {
++        final EntityTasksHandler.TaskList entityTasks = ((CraftEntity) entity).getHandle().entityTasks;
++        entityTasks.add(task);
++        task.init(entity, interval);
++        return task;
++    }
++
++    public void cancelTasks(Entity entity) {
++        ((CraftEntity) entity).getHandle().entityTasks.clear();
++    }
+ }
+diff --git a/src/main/java/net/minecraft/server/Entity.java b/src/main/java/net/minecraft/server/Entity.java
+index fc9a79ce9e..0d250a2090 100644
+--- a/src/main/java/net/minecraft/server/Entity.java
++++ b/src/main/java/net/minecraft/server/Entity.java
+@@ -46,6 +46,7 @@ public abstract class Entity implements ICommandListener, KeyedObject { // Paper
+ 
+     // CraftBukkit start
+     public com.empireminecraft.api.meta.PersistentMetaMap metaMap = null; // EMC
++    public EntityTasksHandler.TaskList entityTasks = new EntityTasksHandler.TaskList(); // EMC
+     private static final int CURRENT_LEVEL = 2;
+     // Paper start
+     public static Random SHARED_RANDOM = new Random() {
+diff --git a/src/main/java/net/minecraft/server/EntityTasksHandler.java b/src/main/java/net/minecraft/server/EntityTasksHandler.java
+new file mode 100644
+index 0000000000..3cf2a70ec4
+--- /dev/null
++++ b/src/main/java/net/minecraft/server/EntityTasksHandler.java
+@@ -0,0 +1,50 @@
++package net.minecraft.server;
++
++import com.empireminecraft.api.API;
++import org.bukkit.*;
++import org.bukkit.World;
++
++import java.util.ArrayList;
++import java.util.HashMap;
++import java.util.Iterator;
++import java.util.List;
++
++import com.empireminecraft.api.EntityTask;
++import org.bukkit.craftbukkit.entity.CraftEntity;
++
++import static java.util.Map.Entry;
++
++public final class EntityTasksHandler {
++
++    private EntityTasksHandler() {}
++
++    public static void tickHandler(Entity entity) {
++        if (entity.entityTasks.isEmpty()) {
++            return;
++        }
++        List<EntityTask> tasksToRun = new ArrayList<>();
++        final Iterator<EntityTask> it = entity.entityTasks.iterator();
++        while (it.hasNext()) {
++            EntityTask task = it.next();
++            if (!task.isValid()) {
++                it.remove();
++                continue;
++            }
++            if (task.isReady()) {
++                tasksToRun.add(task);
++            }
++        }
++
++        tasksToRun.forEach(EntityTask::tick);
++    }
++
++    public static void reload() {
++        for (WorldServer world : MinecraftServer.getServer().worlds) {
++            for (Entity entity : world.entityList) {
++                entity.entityTasks.clear();
++            }
++        }
++    }
++
++    public static class TaskList extends ArrayList<EntityTask> {}
++}
+diff --git a/src/main/java/net/minecraft/server/World.java b/src/main/java/net/minecraft/server/World.java
+index 89bdc40d37..94c40fcf35 100644
+--- a/src/main/java/net/minecraft/server/World.java
++++ b/src/main/java/net/minecraft/server/World.java
+@@ -1778,6 +1778,7 @@ public abstract class World implements IBlockAccess {
+         // Chunk startingChunk = this.getChunkIfLoaded(MathHelper.floor(entity.locX) >> 4, MathHelper.floor(entity.locZ) >> 4);
+         if (flag && !org.spigotmc.ActivationRange.checkIfActive(entity)) {
+             entity.ticksLived++;
++            EntityTasksHandler.tickHandler(entity); // EMC
+             entity.inactiveTick();
+             // Spigot end
+             return;
+@@ -1791,6 +1792,7 @@ public abstract class World implements IBlockAccess {
+         entity.lastPitch = entity.pitch;
+         if (flag && entity.aa) {
+             ++entity.ticksLived;
++            EntityTasksHandler.tickHandler(entity); // EMC
+             ++co.aikar.timings.TimingHistory.activatedEntityTicks; // Paper
+             if (entity.isPassenger()) {
+                 entity.aE();
+diff --git a/src/main/java/org/bukkit/craftbukkit/CraftServer.java b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
+index 119136a059..2209e59d2b 100644
+--- a/src/main/java/org/bukkit/craftbukkit/CraftServer.java
++++ b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
+@@ -806,6 +806,7 @@ public final class CraftServer implements Server {
+         }
+         // EMC start
+         net.minecraft.server.MetaApiAccessor.reload();
++        net.minecraft.server.EntityTasksHandler.reload();
+         // EMC end
+         loadPlugins();
+         enablePlugins(PluginLoadOrder.STARTUP);
+-- 
+2.20.1
+

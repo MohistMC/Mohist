@@ -1,0 +1,26 @@
+From 9b37e500f90a3c58c08c8a14f5701c126e3a03d4 Mon Sep 17 00:00:00 2001
+From: Aikar <aikar@aikar.co>
+Date: Sun, 19 May 2013 21:09:31 -0400
+Subject: [PATCH] ArrowHitBlock Event
+
+---
+ src/main/java/net/minecraft/server/EntityArrow.java | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/src/main/java/net/minecraft/server/EntityArrow.java b/src/main/java/net/minecraft/server/EntityArrow.java
+index e4eed6a78d..ea6fbd94b1 100644
+--- a/src/main/java/net/minecraft/server/EntityArrow.java
++++ b/src/main/java/net/minecraft/server/EntityArrow.java
+@@ -361,7 +361,9 @@ public abstract class EntityArrow extends Entity implements IProjectile {
+             this.shake = 7;
+             this.setCritical(false);
+             if (iblockdata.getMaterial() != Material.AIR) {
++                if (new com.empireminecraft.customevents.ArrowHitBlockEvent(this.getBukkitEntity(), world.getWorld().getBlockAt(blockposition.getX(), blockposition.getY(), blockposition.getZ())).callEvent()) { // EMC
+                 this.av.a(this.world, blockposition, iblockdata, (Entity) this);
++                } // EMC
+             }
+         }
+ 
+-- 
+2.19.1
+

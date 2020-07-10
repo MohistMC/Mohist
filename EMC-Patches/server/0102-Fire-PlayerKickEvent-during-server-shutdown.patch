@@ -1,0 +1,61 @@
+From d7cfecfc47761a849cf6925c25a34e572a2d8bde Mon Sep 17 00:00:00 2001
+From: Aikar <aikar@aikar.co>
+Date: Wed, 4 Jul 2018 15:49:34 -0400
+Subject: [PATCH] Fire PlayerKickEvent during server shutdown
+
+---
+ src/main/java/net/minecraft/server/PlayerConnection.java | 5 +++--
+ src/main/java/org/spigotmc/WatchdogThread.java           | 4 ++--
+ 2 files changed, 5 insertions(+), 4 deletions(-)
+
+diff --git a/src/main/java/net/minecraft/server/PlayerConnection.java b/src/main/java/net/minecraft/server/PlayerConnection.java
+index d738fc9a43..cff18b2a3e 100644
+--- a/src/main/java/net/minecraft/server/PlayerConnection.java
++++ b/src/main/java/net/minecraft/server/PlayerConnection.java
+@@ -60,6 +60,7 @@ import org.bukkit.util.NumberConversions;
+ import com.destroystokyo.paper.event.player.IllegalPacketEvent; // Paper
+ import com.destroystokyo.paper.event.player.PlayerJumpEvent; // Paper
+ import co.aikar.timings.MinecraftTimings; // Paper
++import org.spigotmc.WatchdogThread;
+ // CraftBukkit end
+ 
+ public class PlayerConnection implements PacketListenerPlayIn, ITickable {
+@@ -265,11 +266,11 @@ public class PlayerConnection implements PacketListenerPlayIn, ITickable {
+ 
+         PlayerKickEvent event = new PlayerKickEvent(this.server.getPlayer(this.player), s, leaveMessage);
+ 
+-        if (this.server.getServer().isRunning()) {
++        if (true) { // EMC - don't care if its async either, fire it!
+             this.server.getPluginManager().callEvent(event);
+         }
+ 
+-        if (event.isCancelled()) {
++        if (!WatchdogThread.instance.stopping && event.isCancelled()) { // EMC
+             // Do not kick the player
+             return;
+         }
+diff --git a/src/main/java/org/spigotmc/WatchdogThread.java b/src/main/java/org/spigotmc/WatchdogThread.java
+index 93dc698359..585201dd7a 100644
+--- a/src/main/java/org/spigotmc/WatchdogThread.java
++++ b/src/main/java/org/spigotmc/WatchdogThread.java
+@@ -12,7 +12,7 @@ import org.bukkit.Bukkit;
+ public class WatchdogThread extends Thread
+ {
+ 
+-    private static WatchdogThread instance;
++    public static WatchdogThread instance; // EMC
+     private final long timeoutTime;
+     private final long earlyWarningEvery; // Paper - Timeout time for just printing a dump but not restarting
+     private final long earlyWarningDelay; // Paper
+@@ -20,7 +20,7 @@ public class WatchdogThread extends Thread
+     private long lastEarlyWarning; // Paper - Keep track of short dump times to avoid spamming console with short dumps
+     private final boolean restart;
+     private volatile long lastTick;
+-    private volatile boolean stopping;
++    public volatile boolean stopping; // EMC
+ 
+     private WatchdogThread(long timeoutTime, boolean restart)
+     {
+-- 
+2.19.0
+

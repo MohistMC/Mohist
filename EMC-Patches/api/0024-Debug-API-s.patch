@@ -1,0 +1,47 @@
+From 084378121b7eec51d858f659273ab9bf1fd2eb13 Mon Sep 17 00:00:00 2001
+From: Aikar <aikar@aikar.co>
+Date: Sat, 3 Dec 2016 22:27:48 -0500
+Subject: [PATCH] Debug API's
+
+---
+ .../java/com/empireminecraft/api/API.java     | 21 +++++++++++++++++++
+ 1 file changed, 21 insertions(+)
+
+diff --git a/src/main/java/com/empireminecraft/api/API.java b/src/main/java/com/empireminecraft/api/API.java
+index 01b7bda8..237e5575 100644
+--- a/src/main/java/com/empireminecraft/api/API.java
++++ b/src/main/java/com/empireminecraft/api/API.java
+@@ -23,9 +23,30 @@
+ 
+ package com.empireminecraft.api;
+ 
++import org.apache.commons.lang.exception.ExceptionUtils;
+ 
+ public abstract class API {
+ 
+     public static EAPI_Entity entity;
+     public static EAPI_Misc misc;
++
++    public static String stack() {
++        return ExceptionUtils.getFullStackTrace(new Throwable());
++    }
++
++    public static void exception(Throwable e) {
++        exception(null, e);
++    }
++
++    public static void exception(String msg, Throwable e) {
++        if (msg != null) {
++            System.err.println(msg);
++        }
++        if (e.getMessage() != null) {
++            System.err.println(e.getMessage());
++        }
++        for (String line : ExceptionUtils.getFullStackTrace(e).split("\n")) {
++            System.err.println(line);
++        }
++    }
+ }
+-- 
+2.17.1
+

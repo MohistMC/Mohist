@@ -1,0 +1,117 @@
+From dec93dc5b5e312d663032b065189fa552e1b6df6 Mon Sep 17 00:00:00 2001
+From: Aikar <aikar@aikar.co>
+Date: Mon, 11 Mar 2013 21:05:05 -0400
+Subject: [PATCH] Keep certain items on death API
+
+This adds a getItemsToKeep to PlayerDeathEvent that can be modified for what item a player should keep upon death.
+
+This can be used for never-to-be-dropped items.
+---
+ .../net/minecraft/server/EntityPlayer.java    | 45 ++++++++++++++++++-
+ .../java/net/minecraft/server/ItemStack.java  | 12 ++++-
+ .../net/minecraft/server/PlayerInventory.java |  2 +-
+ 3 files changed, 55 insertions(+), 4 deletions(-)
+
+diff --git a/src/main/java/net/minecraft/server/EntityPlayer.java b/src/main/java/net/minecraft/server/EntityPlayer.java
+index 6afb6cf7b9..07524fc63c 100644
+--- a/src/main/java/net/minecraft/server/EntityPlayer.java
++++ b/src/main/java/net/minecraft/server/EntityPlayer.java
+@@ -437,6 +437,44 @@ public class EntityPlayer extends EntityHuman implements ICrafting {
+ 
+     }
+ 
++    // EMC start
++    private static void processKeep(org.bukkit.event.entity.PlayerDeathEvent event, NonNullList<ItemStack> inv) {
++        List<org.bukkit.inventory.ItemStack> itemsToKeep = event.getItemsToKeep();
++        if (inv == null) {
++            // remainder
++            if (!itemsToKeep.isEmpty()) {
++                final org.bukkit.inventory.ItemStack[] items = itemsToKeep.toArray(
++                    new org.bukkit.inventory.ItemStack[itemsToKeep.size()]
++                );
++                event.getEntity().getInventory().addItem(items);
++            }
++            return;
++        }
++        for (int i = 0; i < inv.size(); ++i) {
++            ItemStack item = inv.get(i);
++            if (itemsToKeep.isEmpty() || item.isEmpty()) {
++                inv.set(i, ItemStack.NULL_ITEM);
++                continue;
++            }
++            final org.bukkit.inventory.ItemStack bukkitStack = item.getBukkitStack();
++
++            boolean keep = false;
++
++            final Iterator<org.bukkit.inventory.ItemStack> iterator = itemsToKeep.iterator();
++            while (iterator.hasNext()) {
++                final org.bukkit.inventory.ItemStack keepStack = iterator.next();
++                if (bukkitStack.equals(keepStack)) {
++                    iterator.remove();
++                    keep = true;
++                    break;
++                }
++            }
++            if (!keep) {
++                inv.set(i, ItemStack.NULL_ITEM);
++            }
++        }
++    }
++    // EMC end
+     public void die(DamageSource damagesource) {
+         boolean flag = this.world.getGameRules().getBoolean("showDeathMessages");
+ 
+@@ -495,8 +533,13 @@ public class EntityPlayer extends EntityHuman implements ICrafting {
+         this.releaseShoulderEntities();
+         // we clean the player's inventory after the EntityDeathEvent is called so plugins can get the exact state of the inventory.
+         if (!event.getKeepInventory()) {
+-            this.inventory.clear();
++            // EMC start - replace logic
++            for (NonNullList<ItemStack> inv : this.inventory.getComponents()) {
++                processKeep(event, inv);
++            }
++            // EMC end
+         }
++        processKeep(event, null); // EMC
+ 
+         this.closeInventory(org.bukkit.event.inventory.InventoryCloseEvent.Reason.DEATH); // Paper
+         this.setSpectatorTarget(this); // Remove spectated target
+diff --git a/src/main/java/net/minecraft/server/ItemStack.java b/src/main/java/net/minecraft/server/ItemStack.java
+index a2dc077bd4..71fc8b79aa 100644
+--- a/src/main/java/net/minecraft/server/ItemStack.java
++++ b/src/main/java/net/minecraft/server/ItemStack.java
+@@ -21,8 +21,16 @@ import org.bukkit.event.world.StructureGrowEvent;
+ // CraftBukkit end
+ 
+ public final class ItemStack {
+-
+-    public static final ItemStack a = new ItemStack((Item) null);
++    // EMC start
++    private org.bukkit.inventory.ItemStack bukkitStack;
++    public org.bukkit.inventory.ItemStack getBukkitStack() {
++        if (bukkitStack == null) {
++                bukkitStack = org.bukkit.craftbukkit.inventory.CraftItemStack.asCraftMirror(this);
++            }
++        return bukkitStack;
++    }
++    // EMC end
++    public static final ItemStack a = new ItemStack((Item) null);public static final ItemStack NULL_ITEM = a; // EMC
+     public static final DecimalFormat b = new DecimalFormat("#.##");
+     private int count;
+     private int d;
+diff --git a/src/main/java/net/minecraft/server/PlayerInventory.java b/src/main/java/net/minecraft/server/PlayerInventory.java
+index 84f59b7501..d1386d8cd1 100644
+--- a/src/main/java/net/minecraft/server/PlayerInventory.java
++++ b/src/main/java/net/minecraft/server/PlayerInventory.java
+@@ -19,7 +19,7 @@ public class PlayerInventory implements IInventory {
+     public final NonNullList<ItemStack> items;
+     public final NonNullList<ItemStack> armor;
+     public final NonNullList<ItemStack> extraSlots;
+-    private final List<NonNullList<ItemStack>> f;
++    private final List<NonNullList<ItemStack>> f; List<NonNullList<ItemStack>> getComponents() { return f; } // EMC - OBF HELPER
+     public int itemInHandIndex;
+     public EntityHuman player;
+     private ItemStack carried;
+-- 
+2.19.0
+

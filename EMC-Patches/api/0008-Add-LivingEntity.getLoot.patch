@@ -1,0 +1,25 @@
+From 7d7c8e3dfc35d8cca0165eaaec3bef590abbcc34 Mon Sep 17 00:00:00 2001
+From: Aikar <aikar@aikar.co>
+Date: Wed, 23 Apr 2014 00:37:16 -0400
+Subject: [PATCH] Add LivingEntity.getLoot()
+
+Get the common loot this entity might drop on death.
+---
+ src/main/java/org/bukkit/entity/LivingEntity.java | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/src/main/java/org/bukkit/entity/LivingEntity.java b/src/main/java/org/bukkit/entity/LivingEntity.java
+index 5ccb8ef3..361f9c2d 100644
+--- a/src/main/java/org/bukkit/entity/LivingEntity.java
++++ b/src/main/java/org/bukkit/entity/LivingEntity.java
+@@ -22,6 +22,7 @@ import javax.annotation.Nullable;
+  */
+ public interface LivingEntity extends Attributable, Entity, Damageable, ProjectileSource {
+ 
++    public org.bukkit.inventory.ItemStack getLoot(); // EMC
+     /**
+      * Gets the height of the living entity's eyes above its Location.
+      *
+-- 
+2.18.0
+

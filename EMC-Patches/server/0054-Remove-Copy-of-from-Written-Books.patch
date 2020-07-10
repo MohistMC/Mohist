@@ -1,0 +1,38 @@
+From ca0051585d41c218a73a0dcea0071105a87b1f05 Mon Sep 17 00:00:00 2001
+From: Aikar <aikar@aikar.co>
+Date: Fri, 15 May 2015 21:21:19 -0400
+Subject: [PATCH] Remove "Copy of" from Written Books
+
+---
+ src/main/java/net/minecraft/server/ItemStack.java       | 1 +
+ src/main/java/net/minecraft/server/RecipeBookClone.java | 2 +-
+ 2 files changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/src/main/java/net/minecraft/server/ItemStack.java b/src/main/java/net/minecraft/server/ItemStack.java
+index 21a5dcede..e02fd3e74 100644
+--- a/src/main/java/net/minecraft/server/ItemStack.java
++++ b/src/main/java/net/minecraft/server/ItemStack.java
+@@ -152,6 +152,7 @@ public final class ItemStack {
+             // CraftBukkit start - make defensive copy as this data may be coming from the save thread
+             this.tag = (NBTTagCompound) nbttagcompound.getCompound("tag").clone();
+             processEnchantOrder(this.tag); // Paper
++            if (item == Items.WRITTEN_BOOK && tag.hasKey("generation")) tag.remove("generation"); // EMC
+             if (this.item != null) {
+                 this.item.a(this.tag);
+                 // CraftBukkit end
+diff --git a/src/main/java/net/minecraft/server/RecipeBookClone.java b/src/main/java/net/minecraft/server/RecipeBookClone.java
+index a2e62eb74..737137704 100644
+--- a/src/main/java/net/minecraft/server/RecipeBookClone.java
++++ b/src/main/java/net/minecraft/server/RecipeBookClone.java
+@@ -62,7 +62,7 @@ public class RecipeBookClone extends ShapelessRecipes implements IRecipe { // Cr
+             ItemStack itemstack2 = new ItemStack(Items.WRITTEN_BOOK, i);
+ 
+             itemstack2.setTag(itemstack.getTag().g());
+-            itemstack2.getTag().setInt("generation", ItemWrittenBook.h(itemstack) + 1);
++            //itemstack2.getTag().setInt("generation", ItemWrittenBook.h(itemstack) + 1); // EMC
+             if (itemstack.hasName()) {
+                 itemstack2.g(itemstack.getName());
+             }
+-- 
+2.18.0
+

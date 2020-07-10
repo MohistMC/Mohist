@@ -1,0 +1,25 @@
+From cf4dbdc81fddc0607ebd033423223599a702f107 Mon Sep 17 00:00:00 2001
+From: Aikar <aikar@aikar.co>
+Date: Fri, 5 Sep 2014 23:04:54 -0400
+Subject: [PATCH] Accept the EULA
+
+Starlis LLC, the owner of Empire Minecraft, accepts the Minecraft EULA with this commit.
+---
+ src/main/java/net/minecraft/server/DedicatedServer.java | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/src/main/java/net/minecraft/server/DedicatedServer.java b/src/main/java/net/minecraft/server/DedicatedServer.java
+index 69f394d21d..d3d611cdf4 100644
+--- a/src/main/java/net/minecraft/server/DedicatedServer.java
++++ b/src/main/java/net/minecraft/server/DedicatedServer.java
+@@ -149,6 +149,7 @@ public class DedicatedServer extends MinecraftServer implements IMinecraftServer
+             System.err.println( "By using this setting you are indicating your agreement to Mojang's EULA (https://account.mojang.com/documents/minecraft_eula)." );
+             System.err.println( "If you do not agree to the above EULA please stop your server and remove this flag immediately." );
+         }
++        eulaAgreed = true; // EMC - Starlis LLC agrees to Mojangs EULA since we don't really have a choice now do we?
+         // Spigot End
+         if (!this.r.a() && !eulaAgreed) { // Spigot
+             DedicatedServer.LOGGER.info("You need to agree to the EULA in order to run the server. Go to eula.txt for more info.");
+-- 
+2.18.0
+

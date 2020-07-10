@@ -1,0 +1,24 @@
+From 6fbe0420f112006cd3ba2e118f7348b756acb19a Mon Sep 17 00:00:00 2001
+From: Aikar <aikar@aikar.co>
+Date: Wed, 6 May 2015 02:29:30 -0400
+Subject: [PATCH] Limit worlds structures can generate
+
+---
+ src/main/java/net/minecraft/server/StructureGenerator.java | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/src/main/java/net/minecraft/server/StructureGenerator.java b/src/main/java/net/minecraft/server/StructureGenerator.java
+index f4dfba8f3..a9ae976cc 100644
+--- a/src/main/java/net/minecraft/server/StructureGenerator.java
++++ b/src/main/java/net/minecraft/server/StructureGenerator.java
+@@ -23,6 +23,7 @@ public abstract class StructureGenerator extends WorldGenBase {
+     public abstract String a();
+ 
+     protected final synchronized void a(World world, final int i, final int j, int k, int l, ChunkSnapshot chunksnapshot) {
++        if ("town".equals(world.getWorld().getName())) return; // EMC
+         this.a(world);
+         if (!this.c.containsKey(ChunkCoordIntPair.a(i, j))) {
+             this.f.nextInt();
+-- 
+2.17.1
+

@@ -1,0 +1,114 @@
+From 27acd2abd4a14ff749bae1f5bce9fc95cd5aec55 Mon Sep 17 00:00:00 2001
+From: Aikar <aikar@aikar.co>
+Date: Wed, 7 Aug 2013 19:52:14 -0400
+Subject: [PATCH] VehicleExitEvent Dismount Reason API
+
+---
+ src/main/java/net/minecraft/server/Entity.java       | 5 +++++
+ src/main/java/net/minecraft/server/EntityHuman.java  | 2 ++
+ src/main/java/net/minecraft/server/EntityLiving.java | 1 +
+ src/main/java/net/minecraft/server/PlayerList.java   | 1 +
+ src/main/java/net/minecraft/server/World.java        | 2 ++
+ 5 files changed, 11 insertions(+)
+
+diff --git a/src/main/java/net/minecraft/server/Entity.java b/src/main/java/net/minecraft/server/Entity.java
+index 0551fdda29..293eda0692 100644
+--- a/src/main/java/net/minecraft/server/Entity.java
++++ b/src/main/java/net/minecraft/server/Entity.java
+@@ -1998,6 +1998,7 @@ public abstract class Entity implements ICommandListener, KeyedObject { // Paper
+             return false;
+         } else {
+             if (this.isPassenger()) {
++                entity.dismountReason = VehicleExitEvent.DismountReason.TRANSFER; // EMC
+                 this.stopRiding();
+             }
+ 
+@@ -2068,6 +2069,8 @@ public abstract class Entity implements ICommandListener, KeyedObject { // Paper
+     }
+ 
+     protected void p(Entity entity) {
++        VehicleExitEvent.DismountReason reason = dismountReason; // EMC
++        dismountReason = VehicleExitEvent.DismountReason.UNKNOWN; // EMC
+         if (entity.bJ() == this) {
+             throw new IllegalStateException("Use x.stopRiding(y), not y.removePassenger(x)");
+         } else {
+@@ -2080,6 +2083,7 @@ public abstract class Entity implements ICommandListener, KeyedObject { // Paper
+                         (Vehicle) getBukkitEntity(),
+                         (LivingEntity) entity.getBukkitEntity()
+                 );
++                event.reason = reason; // EMC
+                 Bukkit.getPluginManager().callEvent(event);
+                 CraftEntity craftn = (CraftEntity) entity.getBukkitEntity().getVehicle();
+                 Entity n = craftn == null ? null : craftn.getHandle();
+@@ -2392,6 +2396,7 @@ public abstract class Entity implements ICommandListener, KeyedObject { // Paper
+         return String.format("%s[\'%s\'/%d, uuid=\'%s\', l=\'%s\', x=%.2f, y=%.2f, z=%.2f, cx=%d, cd=%d, tl=%d, v=%b, d=%b]", new Object[] { this.getClass().getSimpleName(), this.getName(), Integer.valueOf(this.id), this.uniqueID.toString(), this.world == null ? "~NULL~" : this.world.getWorldData().getName(), Double.valueOf(this.locX), Double.valueOf(this.locY), Double.valueOf(this.locZ), getChunkX(), getChunkZ(), this.ticksLived, this.valid, this.dead}); // Paper - add more information
+     }
+ 
++    VehicleExitEvent.DismountReason dismountReason = VehicleExitEvent.DismountReason.UNKNOWN; // EMC
+     public boolean isInvulnerable(DamageSource damagesource) {
+         return this.invulnerable && damagesource != DamageSource.OUT_OF_WORLD && !damagesource.u() && !isDisabled; // EMC - add && !isDisabled
+     }
+diff --git a/src/main/java/net/minecraft/server/EntityHuman.java b/src/main/java/net/minecraft/server/EntityHuman.java
+index 0b70c66da0..9f43e29771 100644
+--- a/src/main/java/net/minecraft/server/EntityHuman.java
++++ b/src/main/java/net/minecraft/server/EntityHuman.java
+@@ -308,6 +308,7 @@ public abstract class EntityHuman extends EntityLiving {
+ 
+     public void aE() {
+         if (!this.world.isClientSide && this.isSneaking() && this.isPassenger()) {
++            this.dismountReason = org.bukkit.event.vehicle.VehicleExitEvent.DismountReason.PLAYER; // EMC
+             this.stopRiding();
+             this.setSneaking(false);
+         } else {
+@@ -1252,6 +1253,7 @@ public abstract class EntityHuman extends EntityLiving {
+         }
+ 
+         if (this.isPassenger()) {
++            this.dismountReason = org.bukkit.event.vehicle.VehicleExitEvent.DismountReason.PLAYER; // EMC
+             this.stopRiding();
+         }
+ 
+diff --git a/src/main/java/net/minecraft/server/EntityLiving.java b/src/main/java/net/minecraft/server/EntityLiving.java
+index f62b1ff92a..641cc43567 100644
+--- a/src/main/java/net/minecraft/server/EntityLiving.java
++++ b/src/main/java/net/minecraft/server/EntityLiving.java
+@@ -251,6 +251,7 @@ public abstract class EntityLiving extends Entity {
+                 }
+ 
+                 if (!this.world.isClientSide && this.isPassenger() && this.bJ() instanceof EntityLiving) {
++                    this.dismountReason = org.bukkit.event.vehicle.VehicleExitEvent.DismountReason.WATER; // EMC
+                     this.stopRiding();
+                 }
+             } else {
+diff --git a/src/main/java/net/minecraft/server/PlayerList.java b/src/main/java/net/minecraft/server/PlayerList.java
+index c101c0bc75..b85a3ee7af 100644
+--- a/src/main/java/net/minecraft/server/PlayerList.java
++++ b/src/main/java/net/minecraft/server/PlayerList.java
+@@ -448,6 +448,7 @@ public abstract class PlayerList {
+ 
+             if (entity.b(EntityPlayer.class).size() == 1) {
+                 PlayerList.f.debug("Removing player mount");
++                entityplayer.dismountReason = org.bukkit.event.vehicle.VehicleExitEvent.DismountReason.DISCONNECT; // EMC
+                 entityplayer.stopRiding();
+                 worldserver.removeEntity(entity);
+                 Iterator iterator = entity.bG().iterator();
+diff --git a/src/main/java/net/minecraft/server/World.java b/src/main/java/net/minecraft/server/World.java
+index b6217b588c..98854ab3ca 100644
+--- a/src/main/java/net/minecraft/server/World.java
++++ b/src/main/java/net/minecraft/server/World.java
+@@ -1238,10 +1238,12 @@ public abstract class World implements IBlockAccess {
+     public void kill(Entity entity) {
+         org.spigotmc.AsyncCatcher.catchOp( "entity kill"); // Spigot
+         if (entity.isVehicle()) {
++            entity.passengers.forEach(e -> e.dismountReason = org.bukkit.event.vehicle.VehicleExitEvent.DismountReason.DEAD); // EMC
+             entity.ejectPassengers();
+         }
+ 
+         if (entity.isPassenger()) {
++            entity.dismountReason = org.bukkit.event.vehicle.VehicleExitEvent.DismountReason.DEAD; // EMC
+             entity.stopRiding();
+         }
+ 
+-- 
+2.20.1
+

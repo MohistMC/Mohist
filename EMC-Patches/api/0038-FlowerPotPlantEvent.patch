@@ -1,0 +1,53 @@
+From 54fb9f4ad4d146c9e9f3839a173d936ebe0e4368 Mon Sep 17 00:00:00 2001
+From: Aikar <aikar@aikar.co>
+Date: Sun, 4 Dec 2016 15:02:53 -0500
+Subject: [PATCH] FlowerPotPlantEvent
+
+---
+ .../customevents/FlowerPotPlantEvent.java     | 34 +++++++++++++++++++
+ 1 file changed, 34 insertions(+)
+ create mode 100644 src/main/java/com/empireminecraft/customevents/FlowerPotPlantEvent.java
+
+diff --git a/src/main/java/com/empireminecraft/customevents/FlowerPotPlantEvent.java b/src/main/java/com/empireminecraft/customevents/FlowerPotPlantEvent.java
+new file mode 100644
+index 00000000..67d0ea78
+--- /dev/null
++++ b/src/main/java/com/empireminecraft/customevents/FlowerPotPlantEvent.java
+@@ -0,0 +1,34 @@
++package com.empireminecraft.customevents;
++
++import org.bukkit.Location;
++import org.bukkit.block.Block;
++import org.bukkit.event.Event;
++import org.bukkit.event.HandlerList;
++import org.bukkit.inventory.ItemStack;
++
++public class FlowerPotPlantEvent extends Event {
++    private final Block block;
++    private final ItemStack item;
++    public FlowerPotPlantEvent(Location loc, ItemStack itemstack) {
++        this.block = loc.getBlock();
++        this.item = itemstack;
++    }
++
++    public Block getBlock() {
++        return block;
++    }
++
++    public ItemStack getItem() {
++        return item;
++    }
++
++    private static final HandlerList handlers = new HandlerList();
++
++    public HandlerList getHandlers() {
++        return handlers;
++    }
++
++    public static HandlerList getHandlerList() {
++        return handlers;
++    }
++}
+-- 
+2.17.1
+
