@@ -72,6 +72,13 @@ Merci aux projets suivants
 * [**Atom**](https://gitlab.com/divinecode/atom/Atom.git) - Code source partiel.
 * [**Thermos**](https://github.com/CyberdyneCC/Thermos.git) - Code source partiel.
 * [**um_bukkit**](https://github.com/TechCatOther/um_bukkit.git) - Code source partiel.
+* [**EMC**](https://github.com/starlis/empirecraft) - Performances et Optimisations.
+* [**Purpur**](https://github.com/pl3xgaming/Purpur) - Performances et Optimisations.
+* [**Akarin**](https://github.com/Akarin-project/Akarin) - Performances et Optimisations.
+* [**Phosphor**](https://github.com/jellysquid3/phosphor-fabric) - Moteur d 'atténuation
+* [**Lithium**](https://github.com/jellysquid3/lithium-fabric) - Performances et Optimisations.
+* [**Yapfa**](https://github.com/tr7zw/YAPFA) - Performances et Optimisations.
+* [**Tuinity**](https://github.com/Spottedleaf/Tuinity) - Performances et Optimisations.
 
 Nous remercions tout particulièrement :
 -------------

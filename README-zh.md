@@ -96,6 +96,13 @@ Mohist服务端核心文件应在这里 `.\build\distributions\Mohist-xxxxx-serv
 * [**Atom**](https://gitlab.com/divinecode/atom/Atom.git) - Partial code source.
 * [**Thermos**](https://github.com/CyberdyneCC/Thermos.git) - Partial code source.
 * [**um_bukkit**](https://github.com/TechCatOther/um_bukkit.git) - Partial code source.
+* [**EMC**](https://github.com/starlis/empirecraft) - performance optimizations.
+* [**Purpur**](https://github.com/pl3xgaming/Purpur) - performance optimizations.
+* [**Akarin**](https://github.com/Akarin-project/Akarin) - performance optimizations.
+* [**Phosphor**](https://github.com/jellysquid3/phosphor-fabric) - LightEngine optimizations.
+* [**Lithium**](https://github.com/jellysquid3/lithium-fabric) - performance optimizations.
+* [**Yapfa**](https://github.com/tr7zw/YAPFA) - performance optimizations.
+* [**Tuinity**](https://github.com/Spottedleaf/Tuinity) - performance optimizations.
 
 特别感谢:
 -------------
