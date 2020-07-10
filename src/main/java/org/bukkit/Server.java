@@ -38,6 +38,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.Merchant;
 import org.bukkit.inventory.Recipe;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.loot.LootTable;
 import org.bukkit.map.MapView;
 import org.bukkit.permissions.Permissible;
 import org.bukkit.plugin.PluginManager;
@@ -47,6 +48,7 @@ import org.bukkit.plugin.messaging.PluginMessageRecipient;
 import org.bukkit.scheduler.BukkitScheduler;
 import org.bukkit.scoreboard.ScoreboardManager;
 import org.bukkit.util.CachedServerIcon;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Represents a server implementation.
@@ -1061,4 +1063,7 @@ public interface Server extends PluginMessageRecipient {
         }
     }
     // Paper end
+
+    @Nullable
+    LootTable getLootTable(@NotNull NamespacedKey key);
 }

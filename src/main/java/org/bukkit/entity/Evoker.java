@@ -1,5 +1,7 @@
 package org.bukkit.entity;
 
+import org.jetbrains.annotations.Nullable;
+
 /**
  * Represents an Evoker "Illager".
  */
@@ -25,6 +27,23 @@ public interface Evoker extends Spellcaster {
      */
     @Deprecated
     void setCurrentSpell(Spell spell);
+
+    // Purpur start
+    /**
+     *  Get the sheep being targeted by the Wololo spell
+     *
+     *  @return Targeted sheep
+     */
+    @Nullable
+    Sheep getWololoTarget();
+
+    /**
+     *  Set the sheep targeted by the Wololo spell
+     *
+     *  @param sheep Sheep to target
+     */
+    void setWololoTarget(@Nullable Sheep sheep);
+    // Purpur end
 
     /**
      * Represents the current spell the Evoker is using.

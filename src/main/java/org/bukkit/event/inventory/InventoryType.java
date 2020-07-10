@@ -75,13 +75,19 @@ public enum InventoryType {
      */
     SHULKER_BOX(27, "Shulker Box"),;
 
-    private final int size;
+    private int size; // Purpur - remove final
     private final String title;
 
     private InventoryType(int defaultSize, String defaultTitle) {
         size = defaultSize;
         title = defaultTitle;
     }
+
+    // Purpur start
+    public void setDefaultSize(int size) {
+        this.size = size;
+    }
+    // Purpur end
 
     public int getDefaultSize() {
         return size;

@@ -67,6 +67,7 @@ import net.minecraft.world.WorldType;
 import net.minecraft.world.storage.MapData;
 import net.minecraft.world.storage.MapStorage;
 import net.minecraft.world.storage.SaveHandler;
+import net.minecraft.world.storage.loot.LootTableManager;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.world.WorldEvent;
@@ -149,6 +150,7 @@ import org.bukkit.inventory.Merchant;
 import org.bukkit.inventory.Recipe;
 import org.bukkit.inventory.ShapedRecipe;
 import org.bukkit.inventory.ShapelessRecipe;
+import org.bukkit.loot.LootTable;
 import org.bukkit.permissions.Permissible;
 import org.bukkit.permissions.Permission;
 import org.bukkit.plugin.Plugin;
@@ -1838,4 +1840,9 @@ public final class CraftServer implements Server {
         private boolean value = true;
     }
     // Paper end
+
+    @Override
+    public LootTable getLootTable(NamespacedKey key) {
+     return this.getLootTable(key);
+    }
 }

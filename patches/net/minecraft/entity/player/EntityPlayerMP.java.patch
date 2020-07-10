@@ -36,22 +36,25 @@
  import net.minecraft.stats.RecipeBookServer;
  import net.minecraft.stats.StatBase;
  import net.minecraft.stats.StatList;
-@@ -83,12 +85,14 @@
+@@ -83,16 +85,7 @@
  import net.minecraft.tileentity.TileEntity;
  import net.minecraft.tileentity.TileEntityCommandBlock;
  import net.minecraft.tileentity.TileEntitySign;
-+import net.minecraft.util.CombatTracker;
- import net.minecraft.util.CooldownTracker;
- import net.minecraft.util.CooldownTrackerServer;
- import net.minecraft.util.DamageSource;
- import net.minecraft.util.EntityDamageSource;
- import net.minecraft.util.EnumHand;
- import net.minecraft.util.EnumHandSide;
-+import net.minecraft.util.FoodStats;
- import net.minecraft.util.NonNullList;
- import net.minecraft.util.ReportedException;
- import net.minecraft.util.ResourceLocation;
-@@ -109,21 +113,39 @@
+-import net.minecraft.util.CooldownTracker;
+-import net.minecraft.util.CooldownTrackerServer;
+-import net.minecraft.util.DamageSource;
+-import net.minecraft.util.EntityDamageSource;
+-import net.minecraft.util.EnumHand;
+-import net.minecraft.util.EnumHandSide;
+-import net.minecraft.util.NonNullList;
+-import net.minecraft.util.ReportedException;
+-import net.minecraft.util.ResourceLocation;
+-import net.minecraft.util.SoundCategory;
++import net.minecraft.util.*;
+ import net.minecraft.util.datafix.DataFixer;
+ import net.minecraft.util.datafix.FixTypes;
+ import net.minecraft.util.datafix.IDataFixer;
+@@ -109,21 +102,39 @@
  import net.minecraft.world.GameType;
  import net.minecraft.world.IInteractionObject;
  import net.minecraft.world.ILockableContainer;
@@ -93,7 +96,7 @@
      private final PlayerAdvancements advancements;
      private final StatisticsManagerServer statsFile;
      private float lastHealthScore = Float.MIN_VALUE;
-@@ -135,13 +157,13 @@
+@@ -135,13 +146,13 @@
      private float lastHealth = -1.0E8F;
      private int lastFoodLevel = -99999999;
      private boolean wasHungry = true;
@@ -110,7 +113,7 @@
      private boolean seenCredits;
      private final RecipeBookServer recipeBook = new RecipeBookServer();
      private Vec3d levitationStartPos;
-@@ -152,15 +174,36 @@
+@@ -152,15 +163,36 @@
      public boolean isChangingQuantityOnly;
      public int ping;
      public boolean queuedEndExit;
@@ -149,7 +152,7 @@
          {
              int i = Math.max(0, server.getSpawnRadius(worldIn));
              int j = MathHelper.floor(worldIn.getWorldBorder().getClosestDistance((double)blockpos.getX(), (double)blockpos.getZ()));
-@@ -188,8 +231,33 @@
+@@ -188,8 +220,33 @@
          {
              this.setPosition(this.posX, this.posY + 1.0D, this.posZ);
          }
@@ -183,7 +186,7 @@
      public void readEntityFromNBT(NBTTagCompound compound)
      {
          super.readEntityFromNBT(compound);
-@@ -218,6 +286,7 @@
+@@ -218,6 +275,7 @@
          {
              this.recipeBook.read(compound.getCompoundTag("recipeBook"));
          }
@@ -191,7 +194,7 @@
      }
  
      public static void registerFixesPlayerMP(DataFixer p_191522_0_)
-@@ -270,8 +339,34 @@
+@@ -270,8 +328,34 @@
          }
  
          compound.setTag("recipeBook", this.recipeBook.write());
@@ -226,7 +229,7 @@
      public void addExperienceLevel(int levels)
      {
          super.addExperienceLevel(levels);
-@@ -313,6 +408,9 @@
+@@ -313,6 +397,9 @@
  
      public void onUpdate()
      {
@@ -236,7 +239,7 @@
          this.interactionManager.updateBlockRemoving();
          --this.respawnInvulnerabilityTicks;
  
-@@ -323,7 +421,7 @@
+@@ -323,7 +410,7 @@
  
          this.openContainer.detectAndSendChanges();
  
@@ -245,7 +248,7 @@
          {
              this.closeScreen();
              this.openContainer = this.inventoryContainer;
-@@ -398,7 +496,7 @@
+@@ -398,7 +485,7 @@
  
              if (this.getHealth() != this.lastHealth || this.lastFoodLevel != this.foodStats.getFoodLevel() || this.foodStats.getSaturationLevel() == 0.0F != this.wasHungry)
              {
@@ -254,7 +257,7 @@
                  this.lastHealth = this.getHealth();
                  this.lastFoodLevel = this.foodStats.getFoodLevel();
                  this.wasHungry = this.foodStats.getSaturationLevel() == 0.0F;
-@@ -422,6 +520,12 @@
+@@ -422,6 +509,12 @@
                  this.updateScorePoints(IScoreCriteria.AIR, MathHelper.ceil((float)this.lastAirScore));
              }
  
@@ -267,7 +270,7 @@
              if (this.getTotalArmorValue() != this.lastArmorScore)
              {
                  this.lastArmorScore = this.getTotalArmorValue();
-@@ -450,6 +554,16 @@
+@@ -450,6 +543,16 @@
              {
                  CriteriaTriggers.LOCATION.trigger(this);
              }
@@ -284,7 +287,7 @@
          }
          catch (Throwable throwable)
          {
-@@ -462,50 +576,84 @@
+@@ -462,50 +565,84 @@
  
      private void updateScorePoints(IScoreCriteria criteria, int points)
      {
@@ -388,7 +391,7 @@
              score.incrementScore();
          }
  
-@@ -536,23 +684,28 @@
+@@ -536,23 +673,28 @@
          {
              super.awardKillScore(p_191956_1_, p_191956_2_, p_191956_3_);
              this.addScore(p_191956_2_);
@@ -423,7 +426,7 @@
              }
  
              CriteriaTriggers.PLAYER_KILLED_ENTITY.trigger(this, p_191956_1_, p_191956_3_);
-@@ -593,6 +746,43 @@
+@@ -593,6 +735,43 @@
          return Lists.<ScoreObjective>newArrayList();
      }
  
@@ -467,7 +470,7 @@
      public boolean attackEntityFrom(DamageSource source, float amount)
      {
          if (this.isEntityInvulnerable(source))
-@@ -641,13 +831,15 @@
+@@ -641,13 +820,15 @@
  
      private boolean canPlayersAttack()
      {
@@ -486,7 +489,7 @@
  
          if (this.dimension == 0 && dimensionIn == -1)
          {
-@@ -658,8 +850,9 @@
+@@ -658,8 +839,9 @@
              this.enteredNetherPosition = null;
          }
  
@@ -497,7 +500,7 @@
              this.world.removeEntity(this);
  
              if (!this.queuedEndExit)
-@@ -678,7 +871,11 @@
+@@ -678,7 +860,11 @@
                  dimensionIn = 1;
              }
  
@@ -510,7 +513,7 @@
              this.connection.sendPacket(new SPacketEffect(1032, BlockPos.ORIGIN, 0, false));
              this.lastExperience = -1;
              this.lastHealth = -1.0F;
-@@ -737,6 +934,7 @@
+@@ -737,6 +923,7 @@
  
      public void wakeUpPlayer(boolean immediately, boolean updateWorldFlag, boolean setSpawn)
      {
@@ -518,7 +521,7 @@
          if (this.isPlayerSleeping())
          {
              this.getServerWorld().getEntityTracker().sendToTrackingAndSelf(this, new SPacketAnimation(this, 2));
-@@ -808,7 +1006,7 @@
+@@ -808,7 +995,7 @@
          BlockPos blockpos = new BlockPos(i, j, k);
          IBlockState iblockstate = this.world.getBlockState(blockpos);
  
@@ -527,7 +530,7 @@
          {
              BlockPos blockpos1 = blockpos.down();
              IBlockState iblockstate1 = this.world.getBlockState(blockpos1);
-@@ -830,6 +1028,12 @@
+@@ -830,6 +1017,12 @@
          this.connection.sendPacket(new SPacketSignEditorOpen(signTile.getPos()));
      }
  
@@ -540,7 +543,7 @@
      public void getNextWindowId()
      {
          this.currentWindowId = this.currentWindowId % 100 + 1;
-@@ -837,22 +1041,53 @@
+@@ -837,22 +1030,53 @@
  
      public void displayGui(IInteractionObject guiOwner)
      {
@@ -596,7 +599,7 @@
          if (chestInventory instanceof ILootContainer && ((ILootContainer)chestInventory).getLootTable() != null && this.isSpectator())
          {
              this.sendStatusMessage((new TextComponentTranslation("container.spectatorCantOpen", new Object[0])).setStyle((new Style()).setColor(TextFormatting.RED)), true);
-@@ -872,6 +1107,7 @@
+@@ -872,6 +1096,7 @@
                  {
                      this.connection.sendPacket(new SPacketChat(new TextComponentTranslation("container.isLocked", new Object[] {chestInventory.getDisplayName()}), ChatType.GAME_INFO));
                      this.connection.sendPacket(new SPacketSoundEffect(SoundEvents.BLOCK_CHEST_LOCKED, SoundCategory.BLOCKS, this.posX, this.posY, this.posZ, 1.0F, 1.0F));
@@ -604,7 +607,7 @@
                      return;
                  }
              }
-@@ -881,25 +1117,36 @@
+@@ -881,25 +1106,36 @@
              if (chestInventory instanceof IInteractionObject)
              {
                  this.connection.sendPacket(new SPacketOpenWindow(this.currentWindowId, ((IInteractionObject)chestInventory).getGuiID(), chestInventory.getDisplayName(), chestInventory.getSizeInventory()));
@@ -644,7 +647,7 @@
          IInventory iinventory = ((ContainerMerchant)this.openContainer).getMerchantInventory();
          ITextComponent itextcomponent = villager.getDisplayName();
          this.connection.sendPacket(new SPacketOpenWindow(this.currentWindowId, "minecraft:villager", itextcomponent, iinventory.getSizeInventory()));
-@@ -916,6 +1163,13 @@
+@@ -916,6 +1152,13 @@
  
      public void openGuiHorseInventory(AbstractHorse horse, IInventory inventoryIn)
      {
@@ -658,7 +661,7 @@
          if (this.openContainer != this.inventoryContainer)
          {
              this.closeScreen();
-@@ -923,7 +1177,8 @@
+@@ -923,7 +1166,8 @@
  
          this.getNextWindowId();
          this.connection.sendPacket(new SPacketOpenWindow(this.currentWindowId, "EntityHorse", inventoryIn.getDisplayName(), inventoryIn.getSizeInventory(), horse.getEntityId()));
@@ -668,7 +671,7 @@
          this.openContainer.windowId = this.currentWindowId;
          this.openContainer.addListener(this);
      }
-@@ -971,6 +1226,12 @@
+@@ -971,6 +1215,12 @@
      {
          this.connection.sendPacket(new SPacketWindowItems(containerToSend.windowId, itemsList));
          this.connection.sendPacket(new SPacketSetSlot(-1, -1, this.inventory.getItemStack()));
@@ -681,7 +684,7 @@
      }
  
      public void sendWindowProperty(Container containerIn, int varToUpdate, int newValue)
-@@ -988,6 +1249,7 @@
+@@ -988,6 +1238,7 @@
  
      public void closeScreen()
      {
@@ -689,7 +692,7 @@
          this.connection.sendPacket(new SPacketCloseWindow(this.openContainer.windowId));
          this.closeContainer();
      }
-@@ -1003,6 +1265,7 @@
+@@ -1003,6 +1254,7 @@
      public void closeContainer()
      {
          this.openContainer.onContainerClosed(this);
@@ -697,7 +700,7 @@
          this.openContainer = this.inventoryContainer;
      }
  
-@@ -1062,6 +1325,10 @@
+@@ -1062,6 +1314,10 @@
  
          for (ResourceLocation resourcelocation : p_193102_1_)
          {
@@ -708,7 +711,7 @@
              list.add(CraftingManager.getRecipe(resourcelocation));
          }
  
-@@ -1092,8 +1359,16 @@
+@@ -1092,8 +1348,16 @@
      public void setPlayerHealthUpdated()
      {
          this.lastHealth = -1.0E8F;
@@ -725,7 +728,7 @@
      public void sendStatusMessage(ITextComponent chatComponent, boolean actionBar)
      {
          this.connection.sendPacket(new SPacketChat(chatComponent, actionBar ? ChatType.GAME_INFO : ChatType.CHAT));
-@@ -1138,12 +1413,29 @@
+@@ -1138,12 +1402,29 @@
          this.lastExperience = -1;
          this.lastHealth = -1.0F;
          this.lastFoodLevel = -1;
@@ -756,7 +759,7 @@
      }
  
      protected void onNewPotionEffect(PotionEffect id)
-@@ -1211,6 +1503,15 @@
+@@ -1211,6 +1492,15 @@
  
      public void setGameType(GameType gameType)
      {
@@ -772,7 +775,7 @@
          this.interactionManager.setGameType(gameType);
          this.connection.sendPacket(new SPacketChangeGameState(3, (float)gameType.getID()));
  
-@@ -1245,36 +1546,28 @@
+@@ -1245,36 +1535,28 @@
  
      public boolean canUseCommand(int permLevel, String commandName)
      {
@@ -825,7 +828,7 @@
      public String getPlayerIP()
      {
          String s = this.connection.netManager.getRemoteAddress().toString();
-@@ -1285,6 +1578,14 @@
+@@ -1285,6 +1567,14 @@
  
      public void handleClientSettings(CPacketClientSettings packetIn)
      {
@@ -840,7 +843,7 @@
          this.language = packetIn.getLang();
          this.chatVisibility = packetIn.getChatVisibility();
          this.chatColours = packetIn.isColorsEnabled();
-@@ -1292,7 +1593,7 @@
+@@ -1292,7 +1582,7 @@
          this.getDataManager().set(MAIN_HAND, Byte.valueOf((byte)(packetIn.getMainHand() == EnumHandSide.LEFT ? 0 : 1)));
      }
  
@@ -849,7 +852,7 @@
      {
          return this.chatVisibility;
      }
-@@ -1367,7 +1668,7 @@
+@@ -1367,7 +1657,7 @@
          if (entity != this.spectatingEntity)
          {
              this.connection.sendPacket(new SPacketCamera(this.spectatingEntity));
@@ -858,7 +861,7 @@
          }
      }
  
-@@ -1375,7 +1676,12 @@
+@@ -1375,7 +1665,12 @@
      {
          if (this.timeUntilPortal > 0 && !this.invulnerableDimensionChange)
          {
@@ -872,7 +875,7 @@
          }
      }
  
-@@ -1399,7 +1705,8 @@
+@@ -1399,7 +1694,8 @@
      @Nullable
      public ITextComponent getTabListDisplayName()
      {
@@ -882,7 +885,7 @@
      }
  
      public void swingArm(EnumHand hand)
-@@ -1420,13 +1727,16 @@
+@@ -1420,13 +1716,16 @@
  
      public void setElytraFlying()
      {
@@ -902,7 +905,7 @@
      }
  
      public PlayerAdvancements getAdvancements()
-@@ -1439,4 +1749,144 @@
+@@ -1439,4 +1738,144 @@
      {
          return this.enteredNetherPosition;
      }

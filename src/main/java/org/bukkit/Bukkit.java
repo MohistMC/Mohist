@@ -37,6 +37,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.Merchant;
 import org.bukkit.inventory.Recipe;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.loot.LootTable;
 import org.bukkit.map.MapView;
 import org.bukkit.permissions.Permissible;
 import org.bukkit.plugin.PluginManager;
@@ -45,6 +46,7 @@ import org.bukkit.plugin.messaging.Messenger;
 import org.bukkit.scheduler.BukkitScheduler;
 import org.bukkit.scoreboard.ScoreboardManager;
 import org.bukkit.util.CachedServerIcon;
+import org.jetbrains.annotations.NotNull;
 import red.mohist.Mohist;
 import red.mohist.util.i18n.Message;
 
@@ -1230,4 +1232,9 @@ public final class Bukkit {
         return server.createProfile(uuid, name);
     }
     // Paper end
+
+    @NotNull
+    public static LootTable getLootTable(@NotNull NamespacedKey key) {
+        return server.getLootTable(key);
+    }
 }

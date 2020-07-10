@@ -1,6 +1,31 @@
 --- ../src-base/minecraft/net/minecraft/advancements/DisplayInfo.java
 +++ ../src-work/minecraft/net/minecraft/advancements/DisplayInfo.java
-@@ -132,7 +132,9 @@
+@@ -22,11 +22,22 @@
+     private final ResourceLocation background;
+     private final FrameType frame;
+     private final boolean showToast;
+-    private final boolean announceToChat;
+-    private final boolean hidden;
++    private boolean announceToChat;// Purpur - un-finalize
++    private boolean hidden;// Purpur - un-finalize
+     private float x;
+     private float y;
++    public final org.bukkit.advancement.AdvancementDisplay bukkit = new org.bukkit.craftbukkit.v1_12_R1.advancement.CraftAdvancementDisplay(this); // Purpur
+ 
++    public void setHidden(boolean hidden) {
++        this.hidden = hidden;
++    }
++    // Purpur - OBFHELPER
++
++    public void setShouldAnnounceToChat(boolean announce) {
++        this.announceToChat = announce;
++    }
++    // Purpur - OBFHELPER
++
+     public DisplayInfo(ItemStack icon, ITextComponent title, ITextComponent description, @Nullable ResourceLocation background, FrameType frame, boolean showToast, boolean announceToChat, boolean hidden)
+     {
+         this.title = title;
+@@ -132,7 +143,9 @@
          {
              Item item = JsonUtils.getItem(object, "item");
              int i = JsonUtils.getInt(object, "data", 0);

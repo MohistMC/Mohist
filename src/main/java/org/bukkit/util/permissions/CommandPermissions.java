@@ -17,6 +17,7 @@ public final class CommandPermissions {
         DefaultPermissions.registerPermission(PREFIX + "plugins", "Allows the user to view the list of plugins running on this server", PermissionDefault.TRUE, commands);
         DefaultPermissions.registerPermission(PREFIX + "reload", "Allows the user to reload the server settings", PermissionDefault.OP, commands);
         DefaultPermissions.registerPermission(PREFIX + "version", "Allows the user to view the version of the server", PermissionDefault.TRUE, commands);
+        DefaultPermissions.registerPermission(PREFIX + "purpur", "Allows the user to use the purpur command", PermissionDefault.OP, commands); // Purpur
 
         commands.recalculatePermissibles();
         return commands;

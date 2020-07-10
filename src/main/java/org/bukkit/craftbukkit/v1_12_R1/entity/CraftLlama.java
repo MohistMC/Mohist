@@ -66,4 +66,48 @@ public class CraftLlama extends CraftChestedHorse implements Llama {
     public EntityType getType() {
         return EntityType.LLAMA;
     }
+
+    // Purpur start
+    @Override
+    public boolean shouldJoinCaravan() {
+        return getHandle().shouldJoinCaravan;
+    }
+
+    @Override
+    public void setShouldJoinCaravan(boolean shouldJoinCaravan) {
+        getHandle().shouldJoinCaravan = shouldJoinCaravan;
+    }
+
+    @Override
+    public boolean inCaravan() {
+        return getHandle().inCaravan();
+    }
+
+    @Override
+    public void joinCaravan(Llama llama) {
+        if (llama != null) {
+            getHandle().joinCaravan(((CraftLlama) llama).getHandle());
+        }
+    }
+
+    @Override
+    public void leaveCaravan() {
+        getHandle().leaveCaravan();
+    }
+
+    @Override
+    public boolean hasCaravanTail() {
+        return getHandle().hasCaravanTail();
+    }
+
+    @Override
+    public Llama getCaravanHead() {
+        return getHandle().getCaravanHead() == null ? null : (Llama) getHandle().getCaravanHead().getBukkitEntity();
+    }
+
+    @Override
+    public Llama getCaravanTail() {
+        return getHandle().getCaravanTail() == null ? null : (Llama) getHandle().getCaravanTail().getBukkitEntity();
+    }
+    // Purpur end
 }

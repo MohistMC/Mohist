@@ -1,6 +1,19 @@
 --- ../src-base/minecraft/net/minecraft/entity/passive/EntityLlama.java
 +++ ../src-work/minecraft/net/minecraft/entity/passive/EntityLlama.java
-@@ -66,7 +66,7 @@
+@@ -60,13 +60,20 @@
+     @Nullable
+     private EntityLlama caravanTail;
+ 
++    public EntityLlama getCaravanTail() {
++        return caravanTail;
++    }
++    // Purpur - OBFHELPER
++
++    public boolean shouldJoinCaravan = true; // Purpur
++
+     public EntityLlama(World worldIn)
+     {
+         super(worldIn);
          this.setSize(0.9F, 1.87F);
      }
  
@@ -9,3 +22,59 @@
      {
          this.dataManager.set(DATA_STRENGTH_ID, Integer.valueOf(Math.max(1, Math.min(5, strengthIn))));
      }
+@@ -92,6 +99,8 @@
+         {
+             compound.setTag("DecorItem", this.horseChest.getStackInSlot(1).writeToNBT(new NBTTagCompound()));
+         }
++
++        compound.setBoolean("Purpur.ShouldJoinCaravan", shouldJoinCaravan); // Purpur
+     }
+ 
+     public void readEntityFromNBT(NBTTagCompound compound)
+@@ -105,6 +114,12 @@
+             this.horseChest.setInventorySlotContents(1, new ItemStack(compound.getCompoundTag("DecorItem")));
+         }
+ 
++        // Purpur start
++        if (compound.hasKey("Purpur.ShouldJoinCaravan")) {
++            compound.setBoolean("Purpur.ShouldJoinCaravan", shouldJoinCaravan);
++        }
++        // Purpur end
++
+         this.updateHorseSlots();
+     }
+ 
+@@ -305,10 +320,12 @@
+ 
+         if (soundevent != null)
+         {
++            new net.pl3x.purpur.event.entity.LlamaLeaveCaravanEvent((org.bukkit.entity.Llama) getBukkitEntity()).callEvent(); // Purpur
+             this.playSound(soundevent, this.getSoundVolume(), this.getSoundPitch());
+         }
+     }
+ 
++
+     @Nullable
+     protected ResourceLocation getLootTable()
+     {
+@@ -467,6 +484,9 @@
+ 
+     public void joinCaravan(EntityLlama caravanHeadIn)
+     {
++        if (!shouldJoinCaravan || !new net.pl3x.purpur.event.entity.LlamaJoinCaravanEvent((org.bukkit.entity.Llama) getBukkitEntity(), (org.bukkit.entity.Llama) caravanHeadIn.getBukkitEntity()).callEvent()) {
++            return; // Purpur
++        }
+         this.caravanHead = caravanHeadIn;
+         this.caravanHead.caravanTail = this;
+     }
+@@ -475,6 +495,10 @@
+     {
+         return this.caravanTail != null;
+     }
++    public boolean hasCaravanTail() {
++        return hasCaravanTrail();
++    }
++    // Purpur - OBFHELPER
+ 
+     public boolean inCaravan()
+     {
