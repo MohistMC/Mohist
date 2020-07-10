@@ -1,0 +1,22 @@
+--- ../src-base/minecraft/net/minecraft/advancements/FrameType.java
++++ ../src-work/minecraft/net/minecraft/advancements/FrameType.java
+@@ -6,6 +6,7 @@
+ 
+ public enum FrameType
+ {
++    // Purpur start
+     TASK("task", 0, TextFormatting.GREEN),
+     CHALLENGE("challenge", 26, TextFormatting.DARK_PURPLE),
+     GOAL("goal", 52, TextFormatting.GREEN);
+@@ -14,8 +15,10 @@
+     private final int icon;
+     private final TextFormatting format;
+ 
+-    private FrameType(String nameIn, int iconIn, TextFormatting formatIn)
++
++    FrameType(String nameIn, int iconIn, TextFormatting formatIn)
+     {
++        // Purpur end
+         this.name = nameIn;
+         this.icon = iconIn;
+         this.format = formatIn;

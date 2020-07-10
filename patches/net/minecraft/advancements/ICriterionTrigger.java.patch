@@ -1,0 +1,14 @@
+--- ../src-base/minecraft/net/minecraft/advancements/ICriterionTrigger.java
++++ ../src-work/minecraft/net/minecraft/advancements/ICriterionTrigger.java
+@@ -29,6 +29,11 @@
+                 this.criterionName = criterionNameIn;
+             }
+ 
++            public T getInstance() {
++                return getCriterionInstance();
++            }
++            // Purpur - OBFHELPER
++
+             public T getCriterionInstance()
+             {
+                 return this.criterionInstance;
