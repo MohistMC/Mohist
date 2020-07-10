@@ -75,7 +75,7 @@ Merci aux projets suivants
 * [**EMC**](https://github.com/starlis/empirecraft) - Performances et Optimisations.
 * [**Purpur**](https://github.com/pl3xgaming/Purpur) - Performances et Optimisations.
 * [**Akarin**](https://github.com/Akarin-project/Akarin) - Performances et Optimisations.
-* [**Phosphor**](https://github.com/jellysquid3/phosphor-fabric) - Optimisations des lumières is better
+* [**Phosphor**](https://github.com/jellysquid3/phosphor-fabric) - Optimisations des lumières.
 * [**Lithium**](https://github.com/jellysquid3/lithium-fabric) - Performances et Optimisations.
 * [**Yapfa**](https://github.com/tr7zw/YAPFA) - Performances et Optimisations.
 * [**Tuinity**](https://github.com/Spottedleaf/Tuinity) - Performances et Optimisations.
