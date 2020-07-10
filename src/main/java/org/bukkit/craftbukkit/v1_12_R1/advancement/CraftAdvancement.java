@@ -27,4 +27,11 @@ public class CraftAdvancement implements org.bukkit.advancement.Advancement {
     public Collection<String> getCriteria() {
         return Collections.unmodifiableCollection(handle.getCriteria().keySet());
     }
+
+    // Purpur start
+    @Override
+    public org.bukkit.advancement.AdvancementDisplay getDisplay() {
+        return getHandle().getDisplay() == null ? null : getHandle().getDisplay().bukkit;
+    }
+    // Purpur end
 }

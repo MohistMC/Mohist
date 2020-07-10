@@ -825,8 +825,19 @@
          this.sleepTimer = immediately ? 0 : 100;
  
          if (setSpawn)
-@@ -1565,15 +1821,16 @@
+@@ -1563,17 +1819,27 @@
+         }
+     }
  
++    // Purpur start
++    public void setAfk(boolean setAfk){
++    }
++
++    public boolean isAfk() {
++        return false;
++    }
++    // Purpur end
++
      private boolean isInBed()
      {
 -        return this.world.getBlockState(this.bedLocation).getBlock() == Blocks.BED;
@@ -845,7 +856,7 @@
          {
              if (!forceSpawn)
              {
-@@ -1588,16 +1845,17 @@
+@@ -1588,16 +1854,17 @@
          }
          else
          {
@@ -866,7 +877,7 @@
  
              switch (enumfacing)
              {
-@@ -1625,7 +1883,7 @@
+@@ -1625,7 +1892,7 @@
          return this.sleeping && this.sleepTimer >= 100;
      }
  
@@ -875,7 +886,7 @@
      public int getSleepTimer()
      {
          return this.sleepTimer;
-@@ -1637,25 +1895,35 @@
+@@ -1637,25 +1904,35 @@
  
      public BlockPos getBedLocation()
      {
@@ -913,7 +924,7 @@
          }
      }
  
-@@ -1691,11 +1959,13 @@
+@@ -1691,11 +1968,13 @@
  
          if (this.isSprinting())
          {
@@ -929,7 +940,7 @@
          }
      }
  
-@@ -1714,7 +1984,10 @@
+@@ -1714,7 +1993,10 @@
              this.motionY = d3 * 0.6D;
              this.jumpMovementFactor = f;
              this.fallDistance = 0.0F;
@@ -941,7 +952,7 @@
          }
          else
          {
-@@ -1839,6 +2112,10 @@
+@@ -1839,6 +2121,10 @@
  
              super.fall(distance, damageMultiplier);
          }
@@ -952,7 +963,7 @@
      }
  
      protected void doWaterSplashEffect()
-@@ -1943,6 +2220,7 @@
+@@ -1943,6 +2229,7 @@
  
      public void addExhaustion(float exhaustion)
      {
@@ -960,7 +971,7 @@
          if (!this.capabilities.disableDamage)
          {
              if (!this.world.isRemote)
-@@ -2115,10 +2393,12 @@
+@@ -2115,10 +2402,12 @@
  
      protected void spawnShoulderEntities()
      {
@@ -977,7 +988,7 @@
      }
  
      private void spawnShoulderEntity(@Nullable NBTTagCompound p_192026_1_)
-@@ -2137,6 +2417,23 @@
+@@ -2137,6 +2426,23 @@
          }
      }
  
@@ -1001,7 +1012,7 @@
      @SideOnly(Side.CLIENT)
      public boolean isInvisibleToPlayer(EntityPlayer player)
      {
-@@ -2176,7 +2473,10 @@
+@@ -2176,7 +2482,10 @@
  
      public ITextComponent getDisplayName()
      {
@@ -1013,7 +1024,7 @@
          itextcomponent.getStyle().setClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/msg " + this.getName() + " "));
          itextcomponent.getStyle().setHoverEvent(this.getHoverEvent());
          itextcomponent.getStyle().setInsertion(this.getName());
-@@ -2185,7 +2485,7 @@
+@@ -2185,7 +2494,7 @@
  
      public float getEyeHeight()
      {
@@ -1022,7 +1033,7 @@
  
          if (this.isPlayerSleeping())
          {
-@@ -2368,7 +2668,7 @@
+@@ -2368,7 +2677,7 @@
          return (NBTTagCompound)this.dataManager.get(LEFT_SHOULDER_ENTITY);
      }
  
@@ -1031,7 +1042,7 @@
      {
          this.dataManager.set(LEFT_SHOULDER_ENTITY, tag);
      }
-@@ -2378,7 +2678,7 @@
+@@ -2378,7 +2687,7 @@
          return (NBTTagCompound)this.dataManager.get(RIGHT_SHOULDER_ENTITY);
      }
  
@@ -1040,7 +1051,7 @@
      {
          this.dataManager.set(RIGHT_SHOULDER_ENTITY, tag);
      }
-@@ -2418,9 +2718,171 @@
+@@ -2418,9 +2727,171 @@
  
      public boolean canUseCommandBlock()
      {

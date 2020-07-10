@@ -27,6 +27,7 @@ import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
 import red.mohist.Mohist;
 import red.mohist.util.i18n.Message;
+import org.bukkit.event.inventory.InventoryType;
 
 public class SpigotConfig {
 
@@ -301,4 +302,5 @@ public class SpigotConfig {
         disableAdvancementSaving = getBoolean("advancements.disable-saving", false);
         disabledAdvancements = getList("advancements.disabled", Arrays.asList("minecraft:story/disabled"));
     }
+
 }

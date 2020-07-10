@@ -606,7 +606,19 @@
          this.setPosition(this.posX, this.posY, this.posZ);
          this.setRotation(yaw, pitch);
      }
-@@ -1671,6 +1860,16 @@
+@@ -1415,6 +1604,11 @@
+         return MathHelper.sqrt(f * f + f1 * f1 + f2 * f2);
+     }
+ 
++    public double getDistanceSquared(double x, double y, double z) {
++        return getDistanceSq(x, y, z);
++    }
++    // Purpur - OBFHELPER
++
+     public double getDistanceSq(double x, double y, double z)
+     {
+         double d0 = this.posX - x;
+@@ -1671,6 +1865,16 @@
          {
              compound.setTag("Pos", this.newDoubleNBTList(this.posX, this.posY, this.posZ));
              compound.setTag("Motion", this.newDoubleNBTList(this.motionX, this.motionY, this.motionZ));
@@ -623,7 +635,7 @@
              compound.setTag("Rotation", this.newFloatNBTList(this.rotationYaw, this.rotationPitch));
              compound.setFloat("FallDistance", this.fallDistance);
              compound.setShort("Fire", (short)this.fire);
-@@ -1680,7 +1879,17 @@
+@@ -1680,7 +1884,17 @@
              compound.setBoolean("Invulnerable", this.invulnerable);
              compound.setInteger("PortalCooldown", this.timeUntilPortal);
              compound.setUniqueId("UUID", this.getUniqueID());
@@ -642,7 +654,7 @@
              if (this.hasCustomName())
              {
                  compound.setString("CustomName", this.getCustomNameTag());
-@@ -1707,6 +1916,7 @@
+@@ -1707,6 +1921,7 @@
              {
                  compound.setBoolean("Glowing", this.glowing);
              }
@@ -650,7 +662,7 @@
  
              if (!this.tags.isEmpty())
              {
-@@ -1720,6 +1930,9 @@
+@@ -1720,6 +1935,9 @@
                  compound.setTag("Tags", nbttaglist);
              }
  
@@ -660,7 +672,7 @@
              this.writeEntityToNBT(compound);
  
              if (this.isBeingRidden())
-@@ -1741,7 +1954,6 @@
+@@ -1741,7 +1959,6 @@
                      compound.setTag("Passengers", nbttaglist1);
                  }
              }
@@ -668,7 +680,7 @@
              return compound;
          }
          catch (Throwable throwable)
-@@ -1764,21 +1976,6 @@
+@@ -1764,21 +1981,6 @@
              this.motionY = nbttaglist2.getDoubleAt(1);
              this.motionZ = nbttaglist2.getDoubleAt(2);
  
@@ -690,7 +702,7 @@
              this.posX = nbttaglist.getDoubleAt(0);
              this.posY = nbttaglist.getDoubleAt(1);
              this.posZ = nbttaglist.getDoubleAt(2);
-@@ -1826,7 +2023,11 @@
+@@ -1826,7 +2028,11 @@
              this.setSilent(compound.getBoolean("Silent"));
              this.setNoGravity(compound.getBoolean("NoGravity"));
              this.setGlowing(compound.getBoolean("Glowing"));
@@ -702,7 +714,7 @@
              if (compound.hasKey("Tags", 9))
              {
                  this.tags.clear();
-@@ -1845,6 +2046,72 @@
+@@ -1845,6 +2051,72 @@
              {
                  this.setPosition(this.posX, this.posY, this.posZ);
              }
@@ -775,7 +787,7 @@
          }
          catch (Throwable throwable)
          {
-@@ -1861,7 +2128,7 @@
+@@ -1861,7 +2133,7 @@
      }
  
      @Nullable
@@ -784,7 +796,7 @@
      {
          ResourceLocation resourcelocation = EntityList.getKey(this);
          return resourcelocation == null ? null : resourcelocation.toString();
-@@ -1918,7 +2185,10 @@
+@@ -1918,7 +2190,10 @@
          {
              EntityItem entityitem = new EntityItem(this.world, this.posX, this.posY + (double)offsetY, this.posZ, stack);
              entityitem.setDefaultPickupDelay();
@@ -796,7 +808,7 @@
              return entityitem;
          }
      }
-@@ -1985,6 +2255,7 @@
+@@ -1985,6 +2260,7 @@
              this.motionX = 0.0D;
              this.motionY = 0.0D;
              this.motionZ = 0.0D;
@@ -804,7 +816,7 @@
              this.onUpdate();
  
              if (this.isRiding())
-@@ -2032,6 +2303,7 @@
+@@ -2032,6 +2308,7 @@
              }
          }
  
@@ -812,7 +824,7 @@
          if (force || this.canBeRidden(entityIn) && entityIn.canFitPassenger(this))
          {
              if (this.isRiding())
-@@ -2067,6 +2339,7 @@
+@@ -2067,6 +2344,7 @@
          if (this.ridingEntity != null)
          {
              Entity entity = this.ridingEntity;
@@ -820,7 +832,7 @@
              this.ridingEntity = null;
              entity.removePassenger(this);
          }
-@@ -2080,6 +2353,28 @@
+@@ -2080,6 +2358,28 @@
          }
          else
          {
@@ -849,7 +861,7 @@
              if (!this.world.isRemote && passenger instanceof EntityPlayer && !(this.getControllingPassenger() instanceof EntityPlayer))
              {
                  this.riddenByEntities.add(0, passenger);
-@@ -2099,6 +2394,27 @@
+@@ -2099,6 +2399,27 @@
          }
          else
          {
@@ -877,7 +889,7 @@
              this.riddenByEntities.remove(passenger);
              passenger.rideCooldown = 60;
          }
-@@ -2295,12 +2611,12 @@
+@@ -2295,12 +2616,12 @@
          this.setFlag(5, invisible);
      }
  
@@ -892,7 +904,7 @@
      {
          byte b0 = ((Byte)this.dataManager.get(FLAGS)).byteValue();
  
-@@ -2321,17 +2637,52 @@
+@@ -2321,17 +2642,52 @@
  
      public void setAir(int air)
      {
@@ -947,7 +959,7 @@
          }
      }
  
-@@ -2472,7 +2823,7 @@
+@@ -2472,7 +2828,7 @@
  
      public String toString()
      {
@@ -956,7 +968,7 @@
      }
  
      public boolean isEntityInvulnerable(DamageSource source)
-@@ -2509,57 +2860,62 @@
+@@ -2509,57 +2865,62 @@
      @Nullable
      public Entity changeDimension(int dimensionIn)
      {
@@ -1061,7 +1073,7 @@
              this.world.profiler.endStartSection("reloading");
              Entity entity = EntityList.newEntity(this.getClass(), worldserver1);
  
-@@ -2567,28 +2923,26 @@
+@@ -2567,28 +2928,26 @@
              {
                  entity.copyDataFromOld(this);
  
@@ -1099,7 +1111,7 @@
              return entity;
          }
          else
-@@ -2604,7 +2958,7 @@
+@@ -2604,7 +2963,7 @@
  
      public float getExplosionResistance(Explosion explosionIn, World worldIn, BlockPos pos, IBlockState blockStateIn)
      {
@@ -1108,7 +1120,7 @@
      }
  
      public boolean canExplosionDestroyBlock(Explosion explosionIn, World worldIn, BlockPos pos, IBlockState blockStateIn, float p_174816_5_)
-@@ -2717,6 +3071,11 @@
+@@ -2717,6 +3076,11 @@
  
      public void setCustomNameTag(String name)
      {
@@ -1120,7 +1132,7 @@
          this.dataManager.set(CUSTOM_NAME, name);
      }
  
-@@ -2800,7 +3159,25 @@
+@@ -2800,7 +3164,25 @@
  
      public void setEntityBoundingBox(AxisAlignedBB bb)
      {
@@ -1147,7 +1159,7 @@
      }
  
      public float getEyeHeight()
-@@ -2832,6 +3209,11 @@
+@@ -2832,6 +3214,11 @@
          return true;
      }
  
@@ -1159,7 +1171,7 @@
      public BlockPos getPosition()
      {
          return new BlockPos(this.posX, this.posY + 0.5D, this.posZ);
-@@ -2859,11 +3241,11 @@
+@@ -2859,11 +3246,11 @@
  
      public void setCommandStat(CommandResultStats.Type type, int amount)
      {
@@ -1175,7 +1187,7 @@
  
      @Nullable
      public MinecraftServer getServer()
-@@ -2901,6 +3283,217 @@
+@@ -2901,6 +3288,217 @@
          EnchantmentHelper.applyArthropodEnchantments(entityLivingBaseIn, entityIn);
      }
  
@@ -1393,7 +1405,7 @@
      public void addTrackingPlayer(EntityPlayerMP player)
      {
      }
-@@ -3069,7 +3662,7 @@
+@@ -3069,7 +3667,7 @@
          return SoundCategory.NEUTRAL;
      }
  

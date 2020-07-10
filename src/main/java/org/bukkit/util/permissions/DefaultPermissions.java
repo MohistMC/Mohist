@@ -78,6 +78,8 @@ public final class DefaultPermissions {
         CommandPermissions.registerPermissions(parent);
         BroadcastPermissions.registerPermissions(parent);
 
+        PurpurPermissions.registerPermissions(); //Purpur
+
         parent.recalculatePermissibles();
     }
 }

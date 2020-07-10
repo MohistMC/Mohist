@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/world/gen/ChunkProviderServer.java
 +++ ../src-work/minecraft/net/minecraft/world/gen/ChunkProviderServer.java
-@@ -23,18 +23,25 @@
+@@ -23,19 +23,27 @@
  import net.minecraft.world.biome.Biome;
  import net.minecraft.world.chunk.Chunk;
  import net.minecraft.world.chunk.IChunkProvider;
@@ -25,9 +25,11 @@
      public final WorldServer world;
 +    private final Set<Long> loadingChunks = com.google.common.collect.Sets.newHashSet();
  
++
      public ChunkProviderServer(WorldServer worldObjIn, IChunkLoader chunkLoaderIn, IChunkGenerator chunkGeneratorIn)
      {
-@@ -82,32 +89,78 @@
+         this.world = worldObjIn;
+@@ -82,32 +90,78 @@
          return chunk;
      }
  
@@ -111,7 +113,7 @@
              long i = ChunkPos.asLong(x, z);
  
              try
-@@ -126,7 +179,8 @@
+@@ -126,7 +180,8 @@
  
              this.id2ChunkMap.put(i, chunk);
              chunk.onLoad();
@@ -121,7 +123,7 @@
          }
  
          return chunk;
-@@ -149,7 +203,7 @@
+@@ -149,7 +204,7 @@
          }
          catch (Exception exception)
          {
@@ -130,7 +132,7 @@
              return null;
          }
      }
-@@ -162,25 +216,25 @@
+@@ -162,25 +217,25 @@
          }
          catch (Exception exception)
          {
@@ -161,7 +163,7 @@
      }
  
      public boolean saveChunks(boolean all)
-@@ -205,7 +259,7 @@
+@@ -205,7 +260,7 @@
  
                  if (i == 24 && !all)
                  {
@@ -170,7 +172,7 @@
                  }
              }
          }
-@@ -224,6 +278,11 @@
+@@ -224,6 +279,11 @@
          {
              if (!this.droppedChunksSet.isEmpty())
              {
@@ -182,7 +184,7 @@
                  Iterator<Long> iterator = this.droppedChunksSet.iterator();
  
                  for (int i = 0; i < 100 && iterator.hasNext(); iterator.remove())
-@@ -233,21 +292,56 @@
+@@ -233,21 +293,56 @@
  
                      if (chunk != null && chunk.unloadQueued)
                      {
