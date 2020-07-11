@@ -1,0 +1,40 @@
+From: mrapple <tony@oc.tc>
+Date: Tue, 9 Jul 2013 17:06:59 -0500
+Subject: [PATCH] Fix invalid positions kicking players
+
+
+diff --git a/src/main/java/net/minecraft/server/PlayerConnection.java b/src/main/java/net/minecraft/server/PlayerConnection.java
+--- a/src/main/java/net/minecraft/server/PlayerConnection.java
++++ b/src/main/java/net/minecraft/server/PlayerConnection.java
+@@ -590,6 +590,12 @@ public class PlayerConnection implements PacketListenerPlayIn, ITickable {
+                             double delta = Math.pow(this.lastPosX - to.getX(), 2) + Math.pow(this.lastPosY - to.getY(), 2) + Math.pow(this.lastPosZ - to.getZ(), 2);
+                             float deltaAngle = Math.abs(this.lastYaw - to.getYaw()) + Math.abs(this.lastPitch - to.getPitch());
+ 
++                        // SportBukkit - Fix invalid positions kicking players
++                        if (Double.isNaN(packetplayinflying.x) || Double.isNaN(packetplayinflying.y) || Double.isNaN(packetplayinflying.z) || (packetplayinflying.hasLook && (Double.isNaN(packetplayinflying.yaw) || Double.isNaN(packetplayinflying.pitch)))) {
++                            player.teleport(to, PlayerTeleportEvent.TeleportCause.UNKNOWN);
++                            return;
++                        }
++
+                             if ((delta > 1f / 256 || deltaAngle > 10f) && !this.player.isFrozen()) {
+                                 this.lastPosX = to.getX();
+                                 this.lastPosY = to.getY();
+@@ -712,6 +718,18 @@ public class PlayerConnection implements PacketListenerPlayIn, ITickable {
+             f1 = 0;
+         }
+ 
++        if(Double.isNaN(d0)) {
++            d0 = this.o;
++        }
++
++        if(Double.isNaN(d1)) {
++            d1 = this.p;
++        }
++
++        if(Double.isNaN(d2)) {
++            d2 = this.q;
++        }
++
+         this.justTeleported = true;
+         // CraftBukkit end
+         double d3 = set.contains(PacketPlayOutPosition.EnumPlayerTeleportFlags.X) ? this.player.locX : 0.0D;

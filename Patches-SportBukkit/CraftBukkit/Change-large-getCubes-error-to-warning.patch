@@ -1,0 +1,20 @@
+From: Jedediah Smith <jedediah@silencegreys.com>
+Date: Sat, 21 Jan 2017 04:29:56 -0500
+Subject: [PATCH] Change large getCubes error to warning
+
+
+diff --git a/src/main/java/net/minecraft/server/World.java b/src/main/java/net/minecraft/server/World.java
+--- a/src/main/java/net/minecraft/server/World.java
++++ b/src/main/java/net/minecraft/server/World.java
+@@ -1130,7 +1130,10 @@ public abstract class World implements IBlockAccess {
+         int i1 = MathHelper.floor(axisalignedbb.c) - 1;
+         int j1 = MathHelper.f(axisalignedbb.f) + 1;
+         // CraftBukkit start - filter out large ranges
+-        com.google.common.base.Preconditions.checkArgument((j - i) * (l - k) * (j1 - i1) <= 32 * 32 * 32, "Filtered out large getCubes call %s,%s %s,%s %s,%s", i, j, k, l, i1, j1);
++        if((j - i) * (l - k) * (j1 - i1) > 32 * 32 * 32) {
++            MinecraftServer.LOGGER.warn("Filtered out large getCubes call %s,%s %s,%s %s,%s", i, j, k, l, i1, j1);
++            return false;
++        }
+         // CraftBukkit end
+         WorldBorder worldborder = this.getWorldBorder();
+         boolean flag1 = entity != null && entity.br();

@@ -1,0 +1,39 @@
+From: Jedediah Smith <jedediah@silencegreys.com>
+Date: Sun, 21 Jun 2015 15:05:21 -0400
+Subject: [PATCH] Custom replacement for eaten items
+
+
+diff --git a/src/main/java/org/bukkit/event/player/PlayerItemConsumeEvent.java b/src/main/java/org/bukkit/event/player/PlayerItemConsumeEvent.java
+--- a/src/main/java/org/bukkit/event/player/PlayerItemConsumeEvent.java
++++ b/src/main/java/org/bukkit/event/player/PlayerItemConsumeEvent.java
+@@ -20,6 +20,7 @@ public class PlayerItemConsumeEvent extends PlayerEvent implements Cancellable {
+     private static final HandlerList handlers = new HandlerList();
+     private boolean isCancelled = false;
+     private ItemStack item;
++    private ItemStack replacement;
+ 
+     /**
+      * @param player the player consuming
+@@ -55,6 +56,22 @@ public class PlayerItemConsumeEvent extends PlayerEvent implements Cancellable {
+         }
+     }
+ 
++    /**
++     * Return the custom item stack that will replace the consumed item, or null if no
++     * custom replacement has been set (which means the default replacement will be used).
++     */
++    public ItemStack getReplacement() {
++        return replacement;
++    }
++
++    /**
++     * Set a custom item stack to replace the consumed item. Pass null to clear any custom
++     * stack that has been set and use the default replacement.
++     */
++    public void setReplacement(ItemStack replacement) {
++        this.replacement = replacement;
++    }
++
+     public boolean isCancelled() {
+         return this.isCancelled;
+     }

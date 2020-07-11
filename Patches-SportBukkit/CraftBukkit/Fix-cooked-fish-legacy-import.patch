@@ -1,0 +1,17 @@
+From: Jedediah Smith <jedediah@silencegreys.com>
+Date: Tue, 22 Mar 2016 16:00:16 -0400
+Subject: [PATCH] Fix cooked fish legacy import
+
+
+diff --git a/src/main/java/net/minecraft/server/DataConverterMaterialId.java b/src/main/java/net/minecraft/server/DataConverterMaterialId.java
+--- a/src/main/java/net/minecraft/server/DataConverterMaterialId.java
++++ b/src/main/java/net/minecraft/server/DataConverterMaterialId.java
+@@ -261,7 +261,7 @@ public class DataConverterMaterialId implements IDataConverter {
+         DataConverterMaterialId.a[347] = "minecraft:clock";
+         DataConverterMaterialId.a[348] = "minecraft:glowstone_dust";
+         DataConverterMaterialId.a[349] = "minecraft:fish";
+-        DataConverterMaterialId.a[350] = "minecraft:cooked_fished";
++        DataConverterMaterialId.a[350] = "minecraft:cooked_fish"; // SportBukkit - cooked_fished -> cooked_fish
+         DataConverterMaterialId.a[351] = "minecraft:dye";
+         DataConverterMaterialId.a[352] = "minecraft:bone";
+         DataConverterMaterialId.a[353] = "minecraft:sugar";

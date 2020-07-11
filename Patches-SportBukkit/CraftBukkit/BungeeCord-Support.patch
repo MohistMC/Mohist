@@ -1,0 +1,133 @@
+From: Steve Anton <anxuiz.nx@gmail.com>
+Date: Sat, 13 Apr 2013 10:50:21 -0700
+Subject: [PATCH] BungeeCord Support
+
+- Allows BungeeCord to set the players real IP address very early in the login process, so that the BungeeCord proxy IP is never even seen by a plugin.
+- Ported from Spigot
+
+diff --git a/src/main/java/net/minecraft/server/HandshakeListener.java b/src/main/java/net/minecraft/server/HandshakeListener.java
+--- a/src/main/java/net/minecraft/server/HandshakeListener.java
++++ b/src/main/java/net/minecraft/server/HandshakeListener.java
+@@ -71,6 +71,28 @@ public class HandshakeListener implements PacketHandshakingInListener {
+                 this.b.close(chatcomponenttext);
+             } else {
+                 this.b.setPacketListener(new LoginListener(this.a, this.b));
++
++                // SportBukkit Start - BungeeCord support
++                if (this.a.server.bungee) {
++                    String[] split = packethandshakinginsetprotocol.hostname.split("\00");
++                    if ( split.length == 3 || split.length == 4 ) {
++                        packethandshakinginsetprotocol.hostname = split[0];
++                        b.l = new java.net.InetSocketAddress(split[1], ((java.net.InetSocketAddress) b.getSocketAddress()).getPort());
++                        b.spoofedUUID = com.mojang.util.UUIDTypeAdapter.fromString( split[2] );
++                    } else
++                    {
++                        chatcomponenttext = new ChatComponentText("If you wish to use IP forwarding, please enable it in your BungeeCord config as well!");
++                        this.b.sendPacket(new PacketLoginOutDisconnect(chatcomponenttext));
++                        this.b.close(chatcomponenttext);
++                        return;
++                    }
++                    if ( split.length == 4 )
++                    {
++                        b.spoofedProfile = org.bukkit.craftbukkit.CraftServer.gson.fromJson(split[3], com.mojang.authlib.properties.Property[].class);
++                    }
++                }
++                // SportBukkit End
++
+                 ((LoginListener) this.b.i()).hostname = packethandshakinginsetprotocol.hostname + ":" + packethandshakinginsetprotocol.port; // CraftBukkit - set hostname
+             }
+             break;
+diff --git a/src/main/java/net/minecraft/server/LoginListener.java b/src/main/java/net/minecraft/server/LoginListener.java
+--- a/src/main/java/net/minecraft/server/LoginListener.java
++++ b/src/main/java/net/minecraft/server/LoginListener.java
+@@ -148,7 +148,7 @@ public class LoginListener implements PacketLoginInListener, ITickable {
+             // SportBukkit start - call pre-login event in offline mode
+             new Thread("User Authenticator #" + LoginListener.b.incrementAndGet()) {
+                 public void run() {
+-                    LoginListener.this.i = LoginListener.this.a(LoginListener.this.i);
++                    LoginListener.this.i = LoginListener.this.completeOfflineProfile(LoginListener.this.i);
+                     LoginListener.c.info("UUID (offline) of player " + LoginListener.this.i.getName() + " is " + LoginListener.this.i.getId());
+                     callPreLoginEvent();
+                 }
+@@ -263,6 +263,22 @@ public class LoginListener implements PacketLoginInListener, ITickable {
+ 
+         this.g = LoginListener.EnumProtocolState.READY_TO_ACCEPT;
+     }
++
++    public GameProfile completeOfflineProfile(GameProfile profile) {
++        if (networkManager.spoofedUUID != null) {
++            profile = new GameProfile(networkManager.spoofedUUID, profile.getName());
++        } else {
++            profile = this.a(profile);
++        }
++
++        if (networkManager.spoofedProfile != null) {
++            for (com.mojang.authlib.properties.Property property : networkManager.spoofedProfile) {
++                profile.getProperties().put(property.getName(), property);
++            }
++        }
++
++        return profile;
++    }
+     // SportBukkit end
+ 
+     protected GameProfile a(GameProfile gameprofile) {
+diff --git a/src/main/java/net/minecraft/server/NetworkManager.java b/src/main/java/net/minecraft/server/NetworkManager.java
+--- a/src/main/java/net/minecraft/server/NetworkManager.java
++++ b/src/main/java/net/minecraft/server/NetworkManager.java
+@@ -65,7 +65,11 @@ public class NetworkManager extends SimpleChannelInboundHandler<Packet<?>> {
+     private final Queue<NetworkManager.QueuedPacket> i = Queues.newConcurrentLinkedQueue();
+     private final ReentrantReadWriteLock j = new ReentrantReadWriteLock();
+     public Channel channel;
+-    private SocketAddress l;
++    // SportBukkit Start
++    public SocketAddress l;
++    public java.util.UUID spoofedUUID;
++    public com.mojang.authlib.properties.Property[] spoofedProfile;
++    // SportBukkit End
+     private PacketListener m;
+     private IChatBaseComponent n;
+     private boolean o;
+diff --git a/src/main/java/net/minecraft/server/PacketHandshakingInSetProtocol.java b/src/main/java/net/minecraft/server/PacketHandshakingInSetProtocol.java
+--- a/src/main/java/net/minecraft/server/PacketHandshakingInSetProtocol.java
++++ b/src/main/java/net/minecraft/server/PacketHandshakingInSetProtocol.java
+@@ -13,7 +13,7 @@ public class PacketHandshakingInSetProtocol implements Packet<PacketHandshakingI
+ 
+     public void a(PacketDataSerializer packetdataserializer) throws IOException {
+         this.a = packetdataserializer.g();
+-        this.hostname = packetdataserializer.e(255);
++        this.hostname = packetdataserializer.e(Short.MAX_VALUE); // SportBukkit - Make extra room for BungeeCord spoofed info
+         this.port = packetdataserializer.readUnsignedShort();
+         this.d = EnumProtocol.a(packetdataserializer.g());
+     }
+diff --git a/src/main/java/org/bukkit/craftbukkit/CraftServer.java b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
+--- a/src/main/java/org/bukkit/craftbukkit/CraftServer.java
++++ b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
+@@ -171,6 +171,8 @@ public final class CraftServer implements Server {
+     private final UUID invalidUserUUID = UUID.nameUUIDFromBytes("InvalidUsername".getBytes(Charsets.UTF_8));
+     private final List<CraftPlayer> playerView;
+     public int reloadCount;
++    public boolean bungee = false;
++    public static final com.google.gson.Gson gson = new com.google.gson.Gson();
+ 
+     private final class BooleanWrapper {
+         private boolean value = true;
+@@ -244,6 +246,7 @@ public final class CraftServer implements Server {
+         }
+ 
+         saveCommandsConfig();
++        bungee = configuration.getBoolean("settings.bungeecord");
+         overrideAllCommandBlockCommands = commandsConfiguration.getStringList("command-block-overrides").contains("*");
+         ((SimplePluginManager) pluginManager).useTimings(configuration.getBoolean("settings.plugin-profiling"));
+         monsterSpawn = configuration.getInt("spawn-limits.monsters");
+diff --git a/src/main/resources/configurations/bukkit.yml b/src/main/resources/configurations/bukkit.yml
+--- a/src/main/resources/configurations/bukkit.yml
++++ b/src/main/resources/configurations/bukkit.yml
+@@ -22,6 +22,7 @@ settings:
+     query-plugins: true
+     deprecated-verbose: default
+     shutdown-message: Server closed
++    bungeecord: false
+ spawn-limits:
+     monsters: 70
+     animals: 15

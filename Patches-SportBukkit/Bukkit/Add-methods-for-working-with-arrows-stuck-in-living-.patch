@@ -1,0 +1,27 @@
+From: mrapple <tony@oc.tc>
+Date: Sun, 25 Nov 2012 13:47:27 -0600
+Subject: [PATCH] Add methods for working with arrows stuck in living entities
+
+
+diff --git a/src/main/java/org/bukkit/entity/LivingEntity.java b/src/main/java/org/bukkit/entity/LivingEntity.java
+--- a/src/main/java/org/bukkit/entity/LivingEntity.java
++++ b/src/main/java/org/bukkit/entity/LivingEntity.java
+@@ -428,4 +428,18 @@ public interface LivingEntity extends Attributable, Entity, Damageable, Projecti
+      * @return collision status
+      */
+     boolean isCollidable();
++
++    /**
++     * Get the number of arrows stuck in this entity
++     *
++     * @return Number of arrows stuck
++     */
++    public int getArrowsStuck();
++
++    /**
++     * Set the number of arrows stuck in this entity
++     *
++     * @param arrows Number of arrows to stick in this entity
++     */
++    public void setArrowsStuck(int arrows);
+ }

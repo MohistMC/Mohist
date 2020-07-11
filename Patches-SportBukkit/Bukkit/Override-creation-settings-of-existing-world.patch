@@ -1,0 +1,83 @@
+From: Jedediah Smith <jedediah@silencegreys.com>
+Date: Sun, 28 Jun 2015 03:37:39 -0400
+Subject: [PATCH] Override creation settings of existing world
+
+
+diff --git a/src/main/java/org/bukkit/Bukkit.java b/src/main/java/org/bukkit/Bukkit.java
+--- a/src/main/java/org/bukkit/Bukkit.java
++++ b/src/main/java/org/bukkit/Bukkit.java
+@@ -500,6 +500,14 @@ public final class Bukkit {
+         return server.getWorlds();
+     }
+ 
++    public static WorldCreator detectWorld(String name) {
++        return server.detectWorld(name);
++    }
++
++    public static World createWorld(String name) {
++        return server.createWorld(name);
++    }
++
+     /**
+      * Creates or loads a world with the given name using the specified
+      * options.
+diff --git a/src/main/java/org/bukkit/Server.java b/src/main/java/org/bukkit/Server.java
+--- a/src/main/java/org/bukkit/Server.java
++++ b/src/main/java/org/bukkit/Server.java
+@@ -411,6 +411,29 @@ public interface Server extends PluginMessageRecipient {
+     public List<World> getWorlds();
+ 
+     /**
++     * Check for a level.dat file belonging to a world with the given name.
++     * If found, return a {@link WorldCreator} configured to match the settings
++     * in the level.dat file. If the file is not found, return null. This works
++     * regardless of whether the world is loaded or not.
++     *
++     * The returned object will have the following fields set explicitly:
++     *  - Name {@link WorldCreator#name()}
++     *  - Type {@link WorldCreator#type()}
++     *  - Seed {@link WorldCreator#seed()}
++     *  - Structure flag {@link WorldCreator#generateStructures()}
++     *  - Generator settings {@link WorldCreator#generatorSettings()}
++     *  - Hardcore flag {@link WorldCreator#hardcore()}
++     */
++    WorldCreator detectWorld(String name);
++
++    /**
++     * Creates or loads a world with the given name. If the world is already loaded,
++     * it will just return the equivalent of getWorld(creator.name()). If the world
++     * is created, {@link #detectWorld} will be called to try and detect settings.
++     */
++    World createWorld(String name);
++
++    /**
+      * Creates or loads a world with the given name using the specified
+      * options.
+      * <p>
+diff --git a/src/main/java/org/bukkit/WorldCreator.java b/src/main/java/org/bukkit/WorldCreator.java
+--- a/src/main/java/org/bukkit/WorldCreator.java
++++ b/src/main/java/org/bukkit/WorldCreator.java
+@@ -16,6 +16,7 @@ public class WorldCreator {
+     private WorldType type = WorldType.NORMAL;
+     private boolean generateStructures = true;
+     private String generatorSettings = "";
++    private boolean hardcore;
+ 
+     /**
+      * Creates an empty WorldCreationOptions for the given world name
+@@ -249,6 +250,15 @@ public class WorldCreator {
+         return generateStructures;
+     }
+ 
++    public WorldCreator hardcore(boolean hardcore) {
++        this.hardcore = hardcore;
++        return this;
++    }
++
++    public boolean hardcore() {
++        return hardcore;
++    }
++
+     /**
+      * Creates a world with the specified options.
+      * <p>

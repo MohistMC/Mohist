@@ -1,0 +1,611 @@
+From: Jedediah Smith <jedediah@silencegreys.com>
+Date: Sat, 7 Jan 2017 00:30:44 -0500
+Subject: [PATCH] Reduce ItemStack copying
+
+
+diff --git a/src/main/java/net/minecraft/server/EntityMinecartContainer.java b/src/main/java/net/minecraft/server/EntityMinecartContainer.java
+--- a/src/main/java/net/minecraft/server/EntityMinecartContainer.java
++++ b/src/main/java/net/minecraft/server/EntityMinecartContainer.java
+@@ -13,7 +13,7 @@ import org.bukkit.inventory.InventoryHolder;
+ 
+ public abstract class EntityMinecartContainer extends EntityMinecartAbstract implements ITileInventory, ILootable {
+ 
+-    private NonNullList<ItemStack> items;
++    private final NonNullList<ItemStack> items; // SportBukkit - add final
+     private boolean b;
+     private MinecraftKey c;
+     private long d;
+@@ -177,7 +177,7 @@ public abstract class EntityMinecartContainer extends EntityMinecartAbstract imp
+ 
+     protected void a(NBTTagCompound nbttagcompound) {
+         super.a(nbttagcompound);
+-        this.items = NonNullList.a(this.getSize(), ItemStack.a);
++        java.util.Collections.fill(this.items, ItemStack.a); // SportBukkit - fill list instead of creating a new one
+         if (nbttagcompound.hasKeyOfType("LootTable", 8)) {
+             this.c = new MinecraftKey(nbttagcompound.getString("LootTable"));
+             this.d = nbttagcompound.getLong("LootTableSeed");
+diff --git a/src/main/java/net/minecraft/server/ItemStack.java b/src/main/java/net/minecraft/server/ItemStack.java
+--- a/src/main/java/net/minecraft/server/ItemStack.java
++++ b/src/main/java/net/minecraft/server/ItemStack.java
+@@ -14,6 +14,7 @@ import org.bukkit.Location;
+ import org.bukkit.TreeType;
+ import org.bukkit.block.BlockState;
+ import org.bukkit.craftbukkit.block.CraftBlockState;
++import org.bukkit.craftbukkit.inventory.CraftItemStack;
+ import org.bukkit.craftbukkit.util.CraftMagicNumbers;
+ import org.bukkit.entity.Player;
+ import org.bukkit.event.world.StructureGrowEvent;
+@@ -38,6 +39,17 @@ public final class ItemStack {
+     private Block l;
+     private boolean m;
+ 
++    // SportBukkit start
++    private @Nullable CraftItemStack craftMirror;
++
++    public CraftItemStack craftMirror() {
++        if(craftMirror == null) {
++            craftMirror = new CraftItemStack(this);
++        }
++        return craftMirror;
++    }
++    // SportBukkit end
++
+     public ItemStack(Block block) {
+         this(block, 1);
+     }
+diff --git a/src/main/java/net/minecraft/server/PlayerInventory.java b/src/main/java/net/minecraft/server/PlayerInventory.java
+--- a/src/main/java/net/minecraft/server/PlayerInventory.java
++++ b/src/main/java/net/minecraft/server/PlayerInventory.java
+@@ -30,6 +30,7 @@ public class PlayerInventory implements IInventory {
+     private int maxStack = MAX_STACK;
+ 
+     public List<ItemStack> getContents() {
++
+         List<ItemStack> combined = new ArrayList<ItemStack>(items.size() + armor.size() + extraSlots.size());
+         for (List<net.minecraft.server.ItemStack> sub : this.g) {
+             combined.addAll(sub);
+diff --git a/src/main/java/org/bukkit/craftbukkit/inventory/CraftInventory.java b/src/main/java/org/bukkit/craftbukkit/inventory/CraftInventory.java
+--- a/src/main/java/org/bukkit/craftbukkit/inventory/CraftInventory.java
++++ b/src/main/java/org/bukkit/craftbukkit/inventory/CraftInventory.java
+@@ -3,7 +3,10 @@ package org.bukkit.craftbukkit.inventory;
+ import java.util.HashMap;
+ import java.util.List;
+ import java.util.ListIterator;
++import java.util.Objects;
++import java.util.function.Predicate;
+ 
++import com.google.common.collect.Lists;
+ import net.md_5.bungee.api.chat.BaseComponent;
+ import net.md_5.bungee.api.chat.TextComponent;
+ import net.md_5.bungee.api.chat.TranslatableComponent;
+@@ -29,12 +32,20 @@ import org.bukkit.inventory.Inventory;
+ import org.bukkit.inventory.InventoryHolder;
+ import org.bukkit.inventory.ItemStack;
+ import org.bukkit.Material;
++import tc.oc.collection.ListUtils;
+ 
+ public class CraftInventory implements Inventory {
+     protected final IInventory inventory;
++    private final List<ItemStack> contents;
+ 
+     public CraftInventory(IInventory inventory) {
+         this.inventory = inventory;
++        List<net.minecraft.server.ItemStack> contents = inventory.getContents();
++        if(inventory.getSize() < contents.size()) {
++            // Some inventories have contents bigger than their size e.g. chest minecart
++            contents = contents.subList(0, inventory.getSize());
++        }
++        this.contents = Lists.transform(contents, CraftItemStack::asCraftMirror);
+     }
+ 
+     public IInventory getInventory() {
+@@ -69,36 +80,25 @@ public class CraftInventory implements Inventory {
+     }
+ 
+     @Override
+-    public ItemStack[] getStorageContents() {
+-        return getContents();
+-    }
+-
+-    @Override
+     public void setStorageContents(ItemStack[] items) throws IllegalArgumentException {
+         setContents(items);
+     }
+ 
+-    public ItemStack[] getContents() {
+-        ItemStack[] items = new ItemStack[getSize()];
+-        List<net.minecraft.server.ItemStack> mcItems = getInventory().getContents();
+-
+-        int size = Math.min(items.length, mcItems.size());
+-        for (int i = 0; i < size; i++) {
+-            items[i] = (mcItems.get(i).isEmpty()) ? null : CraftItemStack.asCraftMirror(mcItems.get(i));
+-        }
+-        return items;
++    @Override
++    public List<ItemStack> contents() {
++        return contents;
+     }
+ 
+-    public void setContents(ItemStack[] items) {
+-        if (getSize() < items.length) {
++    public void setContents(List<ItemStack> items) {
++        if (getSize() < items.size()) {
+             throw new IllegalArgumentException("Invalid inventory size; expected " + getSize() + " or less");
+         }
+ 
+         for (int i = 0; i < getSize(); i++) {
+-            if (i >= items.length) {
++            if (i >= items.size()) {
+                 setItem(i, null);
+             } else {
+-                setItem(i, items[i]);
++                setItem(i, items.get(i));
+             }
+         }
+     }
+@@ -108,7 +108,7 @@ public class CraftInventory implements Inventory {
+     }
+ 
+     public boolean contains(int materialId) {
+-        for (ItemStack item : getStorageContents()) {
++        for (ItemStack item : storage()) {
+             if (item != null && item.getTypeId() == materialId) {
+                 return true;
+             }
+@@ -122,22 +122,14 @@ public class CraftInventory implements Inventory {
+     }
+ 
+     public boolean contains(ItemStack item) {
+-        if (item == null) {
+-            return false;
+-        }
+-        for (ItemStack i : getStorageContents()) {
+-            if (item.equals(i)) {
+-                return true;
+-            }
+-        }
+-        return false;
++        return item != null && storage().contains(item);
+     }
+ 
+     public boolean contains(int materialId, int amount) {
+         if (amount <= 0) {
+             return true;
+         }
+-        for (ItemStack item : getStorageContents()) {
++        for (ItemStack item : storage()) {
+             if (item != null && item.getTypeId() == materialId) {
+                 if ((amount -= item.getAmount()) <= 0) {
+                     return true;
+@@ -159,7 +151,7 @@ public class CraftInventory implements Inventory {
+         if (amount <= 0) {
+             return true;
+         }
+-        for (ItemStack i : getStorageContents()) {
++        for (ItemStack i : storage()) {
+             if (item.equals(i) && --amount <= 0) {
+                 return true;
+             }
+@@ -174,7 +166,7 @@ public class CraftInventory implements Inventory {
+         if (amount <= 0) {
+             return true;
+         }
+-        for (ItemStack i : getStorageContents()) {
++        for (ItemStack i : storage()) {
+             if (item.isSimilar(i) && (amount -= i.getAmount()) <= 0) {
+                 return true;
+             }
+@@ -185,9 +177,9 @@ public class CraftInventory implements Inventory {
+     public HashMap<Integer, ItemStack> all(int materialId) {
+         HashMap<Integer, ItemStack> slots = new HashMap<Integer, ItemStack>();
+ 
+-        ItemStack[] inventory = getStorageContents();
+-        for (int i = 0; i < inventory.length; i++) {
+-            ItemStack item = inventory[i];
++        List<ItemStack> inventory = storage();
++        for (int i = 0; i < inventory.size(); i++) {
++            ItemStack item = inventory.get(i);
+             if (item != null && item.getTypeId() == materialId) {
+                 slots.put(i, item);
+             }
+@@ -203,10 +195,10 @@ public class CraftInventory implements Inventory {
+     public HashMap<Integer, ItemStack> all(ItemStack item) {
+         HashMap<Integer, ItemStack> slots = new HashMap<Integer, ItemStack>();
+         if (item != null) {
+-            ItemStack[] inventory = getStorageContents();
+-            for (int i = 0; i < inventory.length; i++) {
+-                if (item.equals(inventory[i])) {
+-                    slots.put(i, inventory[i]);
++            List<ItemStack> inventory = storage();
++            for (int i = 0; i < inventory.size(); i++) {
++                if (item.equals(inventory.get(i))) {
++                    slots.put(i, inventory.get(i));
+                 }
+             }
+         }
+@@ -214,14 +206,7 @@ public class CraftInventory implements Inventory {
+     }
+ 
+     public int first(int materialId) {
+-        ItemStack[] inventory = getStorageContents();
+-        for (int i = 0; i < inventory.length; i++) {
+-            ItemStack item = inventory[i];
+-            if (item != null && item.getTypeId() == materialId) {
+-                return i;
+-            }
+-        }
+-        return -1;
++        return ListUtils.indexOf(storage(), item -> item != null && item.getTypeId() == materialId);
+     }
+ 
+     public int first(Material material) {
+@@ -237,36 +222,19 @@ public class CraftInventory implements Inventory {
+         if (item == null) {
+             return -1;
+         }
+-        ItemStack[] inventory = getStorageContents();
+-        for (int i = 0; i < inventory.length; i++) {
+-            if (inventory[i] == null) continue;
+-
+-            if (withAmount ? item.equals(inventory[i]) : item.isSimilar(inventory[i])) {
+-                return i;
+-            }
+-        }
+-        return -1;
++        return ListUtils.indexOf(storage(), i -> i != null && withAmount ? item.equals(i) : item.isSimilar(i));
+     }
+ 
+     public int firstEmpty() {
+-        ItemStack[] inventory = getStorageContents();
+-        for (int i = 0; i < inventory.length; i++) {
+-            if (inventory[i] == null) {
+-                return i;
+-            }
+-        }
+-        return -1;
++        return ListUtils.indexOf(storage(), Objects::isNull);
+     }
+ 
+     public int firstPartial(int materialId) {
+-        ItemStack[] inventory = getStorageContents();
+-        for (int i = 0; i < inventory.length; i++) {
+-            ItemStack item = inventory[i];
+-            if (item != null && item.getTypeId() == materialId && item.getAmount() < item.getMaxStackSize()) {
+-                return i;
+-            }
+-        }
+-        return -1;
++        return ListUtils.indexOf(storage(), item ->
++            item != null &&
++            item.getTypeId() == materialId &&
++            item.getAmount() < item.getMaxStackSize()
++        );
+     }
+ 
+     public int firstPartial(Material material) {
+@@ -275,18 +243,12 @@ public class CraftInventory implements Inventory {
+     }
+ 
+     protected int firstPartial(ItemStack item) {
+-        ItemStack[] inventory = getStorageContents();
+-        ItemStack filteredItem = CraftItemStack.asCraftCopy(item);
+-        if (item == null) {
+-            return -1;
+-        }
+-        for (int i = 0; i < inventory.length; i++) {
+-            ItemStack cItem = inventory[i];
+-            if (cItem != null && cItem.getAmount() < cItem.getMaxStackSize() && cItem.isSimilar(filteredItem)) {
+-                return i;
+-            }
+-        }
+-        return -1;
++        final ItemStack filteredItem = CraftItemStack.asCraftCopy(item);
++        return ListUtils.indexOf(storage(), cItem ->
++            cItem != null &&
++            cItem.getAmount() < cItem.getMaxStackSize() &&
++            cItem.isSimilar(filteredItem)
++        );
+     }
+ 
+     public HashMap<Integer, ItemStack> addItem(ItemStack... items) {
+@@ -401,27 +363,28 @@ public class CraftInventory implements Inventory {
+         return getInventory().getMaxStackSize();
+     }
+ 
+-    public void remove(int materialId) {
+-        ItemStack[] items = getStorageContents();
+-        for (int i = 0; i < items.length; i++) {
+-            if (items[i] != null && items[i].getTypeId() == materialId) {
++    @Override
++    public void removeIf(Predicate<? super ItemStack> filter) {
++        final List<ItemStack> items = storage();
++        for(int i = 0; i < items.size(); i++) {
++            final ItemStack item = items.get(i);
++            if(item != null && filter.test(item)) {
+                 clear(i);
+             }
+         }
+     }
+ 
++    public void remove(int materialId) {
++        removeIf(item -> item.getTypeId() == materialId);
++    }
++
+     public void remove(Material material) {
+         Validate.notNull(material, "Material cannot be null");
+         remove(material.getId());
+     }
+ 
+     public void remove(ItemStack item) {
+-        ItemStack[] items = getStorageContents();
+-        for (int i = 0; i < items.length; i++) {
+-            if (items[i] != null && items[i].equals(item)) {
+-                clear(i);
+-            }
+-        }
++        removeIf(i -> i.equals(item));
+     }
+ 
+     public void clear(int index) {
+diff --git a/src/main/java/org/bukkit/craftbukkit/inventory/CraftInventoryCrafting.java b/src/main/java/org/bukkit/craftbukkit/inventory/CraftInventoryCrafting.java
+--- a/src/main/java/org/bukkit/craftbukkit/inventory/CraftInventoryCrafting.java
++++ b/src/main/java/org/bukkit/craftbukkit/inventory/CraftInventoryCrafting.java
+@@ -1,6 +1,6 @@
+ package org.bukkit.craftbukkit.inventory;
+ 
+-import java.util.Arrays;
++import java.util.ArrayList;
+ import java.util.List;
+ 
+ import net.minecraft.server.IRecipe;
+@@ -33,35 +33,28 @@ public class CraftInventoryCrafting extends CraftInventory implements CraftingIn
+     }
+ 
+     @Override
+-    public void setContents(ItemStack[] items) {
++    public void setContents(List<ItemStack> items) {
+         int resultLen = getResultInventory().getContents().size();
+         int len = getMatrixInventory().getContents().size() + resultLen;
+-        if (len > items.length) {
++        if (len > items.size()) {
+             throw new IllegalArgumentException("Invalid inventory size; expected " + len + " or less");
+         }
+-        setContents(items[0], Arrays.copyOfRange(items, 1, items.length));
++        setContents(items.get(0), items.subList(1, items.size()));
+     }
+ 
+     @Override
+-    public ItemStack[] getContents() {
+-        ItemStack[] items = new ItemStack[getSize()];
+-        List<net.minecraft.server.ItemStack> mcResultItems = getResultInventory().getContents();
+-
+-        int i = 0;
+-        for (i = 0; i < mcResultItems.size(); i++ ) {
+-            items[i] = CraftItemStack.asCraftMirror(mcResultItems.get(i));
++    public List<ItemStack> contents() {
++        final List<ItemStack> items = new ArrayList<>(getSize());
++        for(net.minecraft.server.ItemStack result : getResultInventory().getContents()) {
++            items.add(CraftItemStack.asCraftMirror(result));
+         }
+-
+-        List<net.minecraft.server.ItemStack> mcItems = getMatrixInventory().getContents();
+-
+-        for (int j = 0; j < mcItems.size(); j++) {
+-            items[i + j] = CraftItemStack.asCraftMirror(mcItems.get(j));
++        for(net.minecraft.server.ItemStack ingredient : getMatrixInventory().getContents()) {
++            items.add(CraftItemStack.asCraftMirror(ingredient));
+         }
+-
+         return items;
+     }
+ 
+-    public void setContents(ItemStack result, ItemStack[] contents) {
++    public void setContents(ItemStack result, List<ItemStack> contents) {
+         setResult(result);
+         setMatrix(contents);
+     }
+@@ -103,16 +96,16 @@ public class CraftInventoryCrafting extends CraftInventory implements CraftingIn
+         return null;
+     }
+ 
+-    public void setMatrix(ItemStack[] contents) {
+-        if (getMatrixInventory().getContents().size() > contents.length) {
++    public void setMatrix(List<ItemStack> contents) {
++        if (getMatrixInventory().getContents().size() > contents.size()) {
+             throw new IllegalArgumentException("Invalid inventory size; expected " + getMatrixInventory().getContents().size() + " or less");
+         }
+ 
+         List<net.minecraft.server.ItemStack> mcItems = getMatrixInventory().getContents();
+ 
+         for (int i = 0; i < mcItems.size(); i++) {
+-            if (i < contents.length) {
+-                getMatrixInventory().setItem(i, CraftItemStack.asNMSCopy(contents[i]));
++            if (i < contents.size()) {
++                getMatrixInventory().setItem(i, CraftItemStack.asNMSCopy(contents.get(i)));
+             } else {
+                 getMatrixInventory().setItem(i, net.minecraft.server.ItemStack.a);
+             }
+diff --git a/src/main/java/org/bukkit/craftbukkit/inventory/CraftInventoryDoubleChest.java b/src/main/java/org/bukkit/craftbukkit/inventory/CraftInventoryDoubleChest.java
+--- a/src/main/java/org/bukkit/craftbukkit/inventory/CraftInventoryDoubleChest.java
++++ b/src/main/java/org/bukkit/craftbukkit/inventory/CraftInventoryDoubleChest.java
+@@ -1,5 +1,7 @@
+ package org.bukkit.craftbukkit.inventory;
+ 
++import java.util.List;
++
+ import net.minecraft.server.ITileEntityContainer;
+ import net.minecraft.server.ITileInventory;
+ import org.bukkit.block.DoubleChest;
+@@ -43,16 +45,16 @@ public class CraftInventoryDoubleChest extends CraftInventory implements DoubleC
+     }
+ 
+     @Override
+-    public void setContents(ItemStack[] items) {
+-        if (getInventory().getContents().size() < items.length) {
++    public void setContents(List<ItemStack> items) {
++        if (getInventory().getContents().size() < items.size()) {
+             throw new IllegalArgumentException("Invalid inventory size; expected " + getInventory().getContents().size() + " or less");
+         }
+-        ItemStack[] leftItems = new ItemStack[left.getSize()], rightItems = new ItemStack[right.getSize()];
+-        System.arraycopy(items, 0, leftItems, 0, Math.min(left.getSize(),items.length));
+-        left.setContents(leftItems);
+-        if (items.length >= left.getSize()) {
+-            System.arraycopy(items, left.getSize(), rightItems, 0, Math.min(right.getSize(), items.length - left.getSize()));
+-            right.setContents(rightItems);
++        if(items.size() <= left.getSize()) {
++            left.setContents(items);
++            right.clear();
++        } else {
++            left.setContents(items.subList(0, left.getSize()));
++            right.setContents(items.subList(left.getSize(), items.size()));
+         }
+     }
+ 
+diff --git a/src/main/java/org/bukkit/craftbukkit/inventory/CraftInventoryPlayer.java b/src/main/java/org/bukkit/craftbukkit/inventory/CraftInventoryPlayer.java
+--- a/src/main/java/org/bukkit/craftbukkit/inventory/CraftInventoryPlayer.java
++++ b/src/main/java/org/bukkit/craftbukkit/inventory/CraftInventoryPlayer.java
+@@ -1,7 +1,9 @@
+ package org.bukkit.craftbukkit.inventory;
+ 
+ import com.google.common.base.Preconditions;
+-import java.util.Arrays;
++import java.util.List;
++
++import com.google.common.collect.Lists;
+ import net.minecraft.server.EntityPlayer;
+ import net.minecraft.server.PacketPlayOutHeldItemSlot;
+ import net.minecraft.server.PacketPlayOutSetSlot;
+@@ -12,11 +14,23 @@ import org.bukkit.craftbukkit.entity.CraftPlayer;
+ import org.bukkit.entity.HumanEntity;
+ import org.bukkit.inventory.EntityEquipment;
+ import org.bukkit.inventory.EquipmentSlot;
++import org.bukkit.inventory.Inventory;
+ import org.bukkit.inventory.ItemStack;
++import tc.oc.collection.ConcatenatedList;
+ 
+ public class CraftInventoryPlayer extends CraftInventory implements org.bukkit.inventory.PlayerInventory, EntityEquipment {
++
++    private final List<ItemStack> storage;
++    private final List<ItemStack> armor;
++    private final List<ItemStack> extra;
++    private final List<ItemStack> contents;
++
+     public CraftInventoryPlayer(net.minecraft.server.PlayerInventory inventory) {
+         super(inventory);
++        this.storage = Lists.transform(inventory.items, CraftItemStack::asCraftMirror);
++        this.armor = Lists.transform(inventory.getArmorContents(), CraftItemStack::asCraftMirror);
++        this.extra = Lists.transform(inventory.extraSlots, CraftItemStack::asCraftMirror);
++        this.contents = ConcatenatedList.of(storage, armor, extra);
+     }
+ 
+     @Override
+@@ -25,8 +39,18 @@ public class CraftInventoryPlayer extends CraftInventory implements org.bukkit.i
+     }
+ 
+     @Override
++    public List<ItemStack> contents() {
++        return contents;
++    }
++
++    @Override
+     public ItemStack[] getStorageContents() {
+-        return Arrays.copyOfRange(getContents(), 0, getInventory().items.size());
++        return Inventory.itemListToArray(storage());
++    }
++
++    @Override
++    public List<ItemStack> storage() {
++        return storage;
+     }
+ 
+ 
+@@ -175,8 +199,12 @@ public class CraftInventoryPlayer extends CraftInventory implements org.bukkit.i
+     }
+ 
+     public ItemStack[] getArmorContents() {
+-        int start = getInventory().items.size();
+-        return Arrays.copyOfRange(getContents(), start, start + getInventory().armor.size());
++        return org.bukkit.inventory.PlayerInventory.super.getArmorContents();
++    }
++
++    @Override
++    public List<ItemStack> armor() {
++        return armor;
+     }
+ 
+     private void setSlots(ItemStack[] items, int baseSlot, int length) {
+@@ -205,9 +233,8 @@ public class CraftInventoryPlayer extends CraftInventory implements org.bukkit.i
+     }
+ 
+     @Override
+-    public ItemStack[] getExtraContents() {
+-        int start = getInventory().items.size() + getInventory().armor.size();
+-        return Arrays.copyOfRange(getContents(), start, start + getInventory().extraSlots.size());
++    public List<ItemStack> extra() {
++        return extra;
+     }
+ 
+     @Override
+@@ -217,10 +244,10 @@ public class CraftInventoryPlayer extends CraftInventory implements org.bukkit.i
+ 
+     public int clear(int id, int data) {
+         int count = 0;
+-        ItemStack[] items = getContents();
++        List<ItemStack> items = contents();
+ 
+-        for (int i = 0; i < items.length; i++) {
+-            ItemStack item = items[i];
++        for (int i = 0; i < items.size(); i++) {
++            ItemStack item = items.get(i);
+             if (item == null) continue;
+             if (id > -1 && item.getTypeId() != id) continue;
+             if (data > -1 && item.getData().getData() != data) continue;
+diff --git a/src/main/java/org/bukkit/craftbukkit/inventory/CraftItemStack.java b/src/main/java/org/bukkit/craftbukkit/inventory/CraftItemStack.java
+--- a/src/main/java/org/bukkit/craftbukkit/inventory/CraftItemStack.java
++++ b/src/main/java/org/bukkit/craftbukkit/inventory/CraftItemStack.java
+@@ -69,7 +69,7 @@ public final class CraftItemStack extends ItemStack {
+     }
+ 
+     public static CraftItemStack asCraftMirror(net.minecraft.server.ItemStack original) {
+-        return new CraftItemStack(original);
++        return original != null ? original.craftMirror() : new CraftItemStack(original);
+     }
+ 
+     public static CraftItemStack asCraftCopy(ItemStack original) {
+@@ -96,7 +96,7 @@ public final class CraftItemStack extends ItemStack {
+     /**
+      * Mirror
+      */
+-    private CraftItemStack(net.minecraft.server.ItemStack item) {
++    public CraftItemStack(net.minecraft.server.ItemStack item) {
+         this.handle = item;
+     }
+ 
+diff --git a/src/main/java/org/bukkit/craftbukkit/inventory/InventoryWrapper.java b/src/main/java/org/bukkit/craftbukkit/inventory/InventoryWrapper.java
+--- a/src/main/java/org/bukkit/craftbukkit/inventory/InventoryWrapper.java
++++ b/src/main/java/org/bukkit/craftbukkit/inventory/InventoryWrapper.java
+@@ -4,6 +4,8 @@ import com.google.common.base.Predicates;
+ import com.google.common.collect.Iterables;
+ import java.util.ArrayList;
+ import java.util.List;
++
++import com.google.common.collect.Lists;
+ import net.minecraft.server.EntityHuman;
+ import net.minecraft.server.IChatBaseComponent;
+ import net.minecraft.server.IInventory;
+@@ -124,14 +126,7 @@ public class InventoryWrapper implements IInventory {
+ 
+     @Override
+     public List<ItemStack> getContents() {
+-        int size = getSize();
+-        List<ItemStack> items = new ArrayList<ItemStack>(size);
+-
+-        for (int i = 0; i < size; i++) {
+-            items.set(i, getItem(i));
+-        }
+-
+-        return items;
++        return Lists.transform(inventory.contents(), CraftItemStack::asNMSCopy);
+     }
+ 
+     @Override

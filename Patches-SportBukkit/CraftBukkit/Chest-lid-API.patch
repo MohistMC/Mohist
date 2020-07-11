@@ -1,0 +1,120 @@
+From: Jedediah Smith <jedediah@silencegreys.com>
+Date: Sat, 24 Dec 2016 20:03:43 -0500
+Subject: [PATCH] Chest lid API
+
+
+diff --git a/src/main/java/net/minecraft/server/TileEntityChest.java b/src/main/java/net/minecraft/server/TileEntityChest.java
+--- a/src/main/java/net/minecraft/server/TileEntityChest.java
++++ b/src/main/java/net/minecraft/server/TileEntityChest.java
+@@ -4,6 +4,7 @@ import java.util.Iterator;
+ import java.util.List;
+ import javax.annotation.Nullable;
+ // CraftBukkit start
++import org.bukkit.block.Chest;
+ import org.bukkit.craftbukkit.entity.CraftHumanEntity;
+ import org.bukkit.entity.HumanEntity;
+ // CraftBukkit end
+@@ -18,7 +19,7 @@ public class TileEntityChest extends TileEntityLootable implements ITickable {
+     public TileEntityChest i;
+     public float j;
+     public float k;
+-    public int l;
++    public int l; public int viewerCount() { return l; } // SportBukkit - alias
+     private int q;
+     private BlockChest.Type r;
+ 
+@@ -26,6 +27,44 @@ public class TileEntityChest extends TileEntityLootable implements ITickable {
+     public List<HumanEntity> transaction = new java.util.ArrayList<HumanEntity>();
+     private int maxStack = MAX_STACK;
+ 
++    // SportBukkit start
++    private Chest.Lid lid = Chest.Lid.AUTO;
++
++    public Chest.Lid getLid() {
++        return lid;
++    }
++
++    public boolean isOpen() {
++        switch(lid) {
++            case OPEN: return true;
++            case CLOSED: return false;
++            default: return viewerCount() > 0;
++        }
++    }
++
++    public boolean setLid(Chest.Lid lid) {
++        final boolean wasOpen = isOpen();
++        this.lid = lid;
++        if(wasOpen != isOpen()) {
++            playBlockAction();
++            return true;
++        }
++        return false;
++    }
++
++    public void playBlockAction() {
++        if(this.world != null) {
++            final int count;
++            switch(lid) {
++                case OPEN: count = Math.max(1, viewerCount()); break;
++                case CLOSED: count = 0; break;
++                default: count = viewerCount(); break;
++            }
++            this.world.playBlockAction(getPosition(), getBlock(), 1, count);
++        }
++    }
++    // SportBukkit end
++
+     public List<ItemStack> getContents() {
+         return this.items;
+     }
+@@ -291,7 +330,10 @@ public class TileEntityChest extends TileEntityLootable implements ITickable {
+ 
+             ++this.l;
+             if (this.world == null) return; // CraftBukkit
+-            this.world.playBlockAction(this.position, this.getBlock(), 1, this.l);
++            // SportBukkit start
++            //this.world.playBlockAction(this.position, this.getBlock(), 1, this.l);
++            playBlockAction();
++            // SportBukkit end
+ 
+             // CraftBukkit start - Call redstone event
+             if (this.getBlock() == Blocks.TRAPPED_CHEST) {
+@@ -314,7 +356,10 @@ public class TileEntityChest extends TileEntityLootable implements ITickable {
+         if (!entityhuman.isSpectator() && this.getBlock() instanceof BlockChest) {
+             int oldPower = Math.max(0, Math.min(15, this.l)); // CraftBukkit - Get power before new viewer is added
+             --this.l;
+-            this.world.playBlockAction(this.position, this.getBlock(), 1, this.l);
++            // SportBukkit start
++            //this.world.playBlockAction(this.position, this.getBlock(), 1, this.l);
++            playBlockAction();
++            // SportBukkit end
+             this.world.applyPhysics(this.position, this.getBlock(), false);
+ 
+             // CraftBukkit start - Call redstone event
+diff --git a/src/main/java/org/bukkit/craftbukkit/block/CraftChest.java b/src/main/java/org/bukkit/craftbukkit/block/CraftChest.java
+--- a/src/main/java/org/bukkit/craftbukkit/block/CraftChest.java
++++ b/src/main/java/org/bukkit/craftbukkit/block/CraftChest.java
+@@ -1,5 +1,7 @@
+ package org.bukkit.craftbukkit.block;
+ 
++import javax.annotation.Nullable;
++
+ import net.minecraft.server.BlockPosition;
+ import net.minecraft.server.TileEntityChest;
+ 
+@@ -84,4 +86,14 @@ public class CraftChest extends CraftLootable implements Chest {
+     public TileEntityChest getTileEntity() {
+         return chest;
+     }
++
++    @Override
++    public boolean setLid(Lid lid) {
++        return getTileEntity().setLid(lid);
++    }
++
++    @Override
++    public Lid getLid() {
++        return getTileEntity().getLid();
++    }
+ }

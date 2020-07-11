@@ -1,0 +1,124 @@
+From: md_5 <git@md-5.net>
+Date: Sat, 25 Jan 2014 14:08:35 +1100
+Subject: [PATCH] Highly Optimized Tick Loop
+
+
+diff --git a/src/main/java/net/minecraft/server/MinecraftServer.java b/src/main/java/net/minecraft/server/MinecraftServer.java
+--- a/src/main/java/net/minecraft/server/MinecraftServer.java
++++ b/src/main/java/net/minecraft/server/MinecraftServer.java
+@@ -102,6 +102,7 @@ public abstract class MinecraftServer implements Runnable, ICommandListener, IAs
+     private long Z;
+     protected final Queue<FutureTask<?>> j = Queues.newArrayDeque();
+     private Thread serverThread;
++    void setLastTickStart(long millis) { ab = millis; } // SportBukkit - alias
+     private long ab = aw();
+ 
+     // CraftBukkit start
+@@ -116,6 +117,12 @@ public abstract class MinecraftServer implements Runnable, ICommandListener, IAs
+     public java.util.Queue<Runnable> processQueue = new java.util.concurrent.ConcurrentLinkedQueue<Runnable>();
+     public int autosavePeriod;
+     // CraftBukkit end
++    // SportBukkit start
++    private static final int TPS = 20;
++    private static final int TICK_TIME = 1000000000 / TPS;
++    private static final int SAMPLE_INTERVAL = 100;
++    public final double[] recentTps = new double[ 3 ];
++    // SportBukkit end
+ 
+     public MinecraftServer(OptionSet options, Proxy proxy, DataConverterManager dataconvertermanager, YggdrasilAuthenticationService yggdrasilauthenticationservice, MinecraftSessionService minecraftsessionservice, GameProfileRepository gameprofilerepository, UserCache usercache) {
+         this.e = proxy;
+@@ -516,48 +523,50 @@ public abstract class MinecraftServer implements Runnable, ICommandListener, IAs
+         this.isRunning = false;
+     }
+ 
++    // SportBukkit Start
++    private static double calcTps(double avg, double exp, double tps)
++    {
++        return ( avg * exp ) + ( tps * ( 1 - exp ) );
++    }
++    // SportBukkit End
++
+     public void run() {
+         try {
+             if (this.init()) {
+-                this.ab = aw();
+-                long i = 0L;
+-
+                 this.q.setMOTD(new ChatComponentText(this.motd));
+                 this.q.setServerInfo(new ServerPing.ServerData("1.11.1", 316));
+                 this.a(this.q);
+ 
++                // SportBukkit start
++                Arrays.fill( recentTps, 20 );
++                long lastTick = System.nanoTime(), catchupTime = 0, curTime, wait, tickSection = lastTick;
+                 while (this.isRunning) {
+-                    long j = aw();
+-                    long k = j - this.ab;
+-
+-                    if (k > 2000L && this.ab - this.R >= 15000L) {
+-                        if (server.getWarnOnOverload()) // CraftBukkit
+-                        MinecraftServer.LOGGER.warn("Can\'t keep up! Did the system time change, or is the server overloaded? Running {}ms behind, skipping {} tick(s)", new Object[] { Long.valueOf(k), Long.valueOf(k / 50L)});
+-                        k = 2000L;
+-                        this.R = this.ab;
+-                    }
+-
+-                    if (k < 0L) {
+-                        MinecraftServer.LOGGER.warn("Time ran backwards! Did the system time change?");
+-                        k = 0L;
++                    setLastTickStart(realTimeMillis());
++
++                    curTime = System.nanoTime();
++                    wait = TICK_TIME - (curTime - lastTick) - catchupTime;
++                    if (wait > 0) {
++                        Thread.sleep(wait / 1000000);
++                        catchupTime = 0;
++                        continue;
++                    } else {
++                        catchupTime = Math.min(1000000000, Math.abs(wait));
+                     }
+ 
+-                    i += k;
+-                    this.ab = j;
+-                    if (this.worlds.get(0).everyoneDeeplySleeping()) { // CraftBukkit
+-                        this.C();
+-                        i = 0L;
+-                    } else {
+-                        while (i > 50L) {
+-                            MinecraftServer.currentTick = (int) (System.currentTimeMillis() / 50); // CraftBukkit
+-                            i -= 50L;
+-                            this.C();
+-                        }
++                    if ( MinecraftServer.currentTick++ % SAMPLE_INTERVAL == 0 )
++                    {
++                        double currentTps = 1E9 / ( curTime - tickSection ) * SAMPLE_INTERVAL;
++                        recentTps[0] = calcTps( recentTps[0], 0.92, currentTps ); // 1/exp(5sec/1min)
++                        recentTps[1] = calcTps( recentTps[1], 0.9835, currentTps ); // 1/exp(5sec/5min)
++                        recentTps[2] = calcTps( recentTps[2], 0.9945, currentTps ); // 1/exp(5sec/15min)
++                        tickSection = curTime;
+                     }
++                    lastTick = curTime;
+ 
+-                    Thread.sleep(Math.max(1L, 50L - i));
++                    this.runTick();
+                     this.Q = true;
+                 }
++                // SportBukkit end
+             } else {
+                 this.a((CrashReport) null);
+             }
+@@ -636,6 +645,7 @@ public abstract class MinecraftServer implements Runnable, ICommandListener, IAs
+ 
+     public void B() {}
+ 
++    protected void runTick() throws ExceptionWorldConflict { C(); } // SportBukkit - alias
+     protected void C() throws ExceptionWorldConflict { // CraftBukkit - added throws
+         long i = System.nanoTime();
+ 
+@@ -1347,6 +1357,7 @@ public abstract class MinecraftServer implements Runnable, ICommandListener, IAs
+         return this.e;
+     }
+ 
++    public static long realTimeMillis() { return aw(); } // SportBukkit - alias
+     public static long aw() {
+         return System.currentTimeMillis();
+     }

@@ -86,6 +86,7 @@ import org.bukkit.util.Vector;
 
 public class CraftLivingEntity extends CraftEntity implements LivingEntity {
     private CraftEntityEquipment equipment;
+    private boolean potionParticles = true;
 
     public CraftLivingEntity(final CraftServer server, final net.minecraft.entity.LivingEntity entity) {
         super(server, entity);
@@ -359,6 +360,20 @@ public class CraftLivingEntity extends CraftEntity implements LivingEntity {
     }
 
     @Override
+    public void setPotionParticles(boolean enabled) {
+        this.potionParticles = enabled;
+        if(enabled) {
+            this.getHandle().potionsNeedUpdate = true;
+        } else {
+            this.getHandle().clearActivePotions();
+        }
+    }
+
+    public boolean getPotionParticles() {
+        return this.potionParticles;
+    }
+
+    @Override
     public <T extends Projectile> T launchProjectile(Class<? extends T> projectile) {
         return launchProjectile(projectile, null);
     }
@@ -617,5 +632,15 @@ public class CraftLivingEntity extends CraftEntity implements LivingEntity {
     @Override
     public <T> void setMemory(MemoryKey<T> memoryKey, T t) {
         getHandle().getBrain().setMemory(CraftMemoryKey.fromMemoryKey(memoryKey), CraftMemoryMapper.toNms(t));
+    }
+
+    @Override
+    public float getAbsorption() {
+        return getHandle().getAbsorptionAmount();
+    }
+
+    @Override
+    public void setAbsorption(float absorption) {
+        getHandle().setAbsorptionAmount(absorption);
     }
 }

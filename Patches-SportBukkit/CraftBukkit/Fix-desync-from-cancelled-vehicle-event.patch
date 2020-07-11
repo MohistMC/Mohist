@@ -1,0 +1,113 @@
+From: Jedediah Smith <jedediah@silencegreys.com>
+Date: Mon, 21 Mar 2016 02:50:33 -0400
+Subject: [PATCH] Fix desync from cancelled vehicle event
+
+
+diff --git a/src/main/java/net/minecraft/server/Entity.java b/src/main/java/net/minecraft/server/Entity.java
+--- a/src/main/java/net/minecraft/server/Entity.java
++++ b/src/main/java/net/minecraft/server/Entity.java
+@@ -1826,6 +1826,24 @@ public abstract class Entity implements ICommandListener {
+         if (!flag && (!this.n(entity) || !entity.q(this))) {
+             return false;
+         } else {
++            // CraftBukkit start
++            com.google.common.base.Preconditions.checkState(!getPassengers().contains(entity), "Circular entity riding! %s %s", entity, this);
++
++            CraftEntity craft = (CraftEntity) getBukkitEntity().getVehicle();
++            Entity orig = craft == null ? null : craft.getHandle();
++            if (entity.getBukkitEntity() instanceof Vehicle && getBukkitEntity() instanceof LivingEntity) {
++                VehicleEnterEvent event = new VehicleEnterEvent(
++                        (Vehicle) entity.getBukkitEntity(),
++                         getBukkitEntity()
++                );
++                Bukkit.getPluginManager().callEvent(event);
++                CraftEntity craftn = (CraftEntity) getBukkitEntity().getVehicle();
++                Entity n = craftn == null ? null : craftn.getHandle();
++                if (event.isCancelled() || n != orig) {
++                    return false;
++                }
++            }
++            // CraftBukkit end
+             if (this.isPassenger()) {
+                 this.stopRiding();
+             }
+@@ -1850,6 +1868,22 @@ public abstract class Entity implements ICommandListener {
+ 
+     public void stopRiding() {
+         if (this.au != null) {
++            // CraftBukkit start
++            CraftEntity craft = (CraftEntity) getBukkitEntity().getVehicle();
++            Entity orig = craft == null ? null : craft.getHandle();
++            if (this.getRiding().getBukkitEntity() instanceof Vehicle && getBukkitEntity() instanceof LivingEntity && world.isChunkLoaded((int) locX >> 4, (int) locZ >> 4, false)) { // Boolean not used
++                VehicleExitEvent event = new VehicleExitEvent(
++                        (Vehicle) this.getRiding().getBukkitEntity(),
++                        (LivingEntity) getBukkitEntity()
++                );
++                Bukkit.getPluginManager().callEvent(event);
++                CraftEntity craftn = (CraftEntity) getBukkitEntity().getVehicle();
++                Entity n = craftn == null ? null : craftn.getHandle();
++                if (event.isCancelled() || n != orig) {
++                    return;
++                }
++            }
++            // CraftBukkit end
+             Entity entity = this.au;
+ 
+             this.au = null;
+@@ -1862,24 +1896,6 @@ public abstract class Entity implements ICommandListener {
+         if (entity.bB() != this) {
+             throw new IllegalStateException("Use x.startRiding(y), not y.addPassenger(x)");
+         } else {
+-            // CraftBukkit start
+-            com.google.common.base.Preconditions.checkState(!entity.passengers.contains(this), "Circular entity riding! %s %s", this, entity);
+-
+-            CraftEntity craft = (CraftEntity) entity.getBukkitEntity().getVehicle();
+-            Entity orig = craft == null ? null : craft.getHandle();
+-            if (getBukkitEntity() instanceof Vehicle && entity.getBukkitEntity() instanceof LivingEntity && entity.world.isChunkLoaded((int) entity.locX >> 4, (int) entity.locZ >> 4, false)) { // Boolean not used
+-                VehicleEnterEvent event = new VehicleEnterEvent(
+-                        (Vehicle) getBukkitEntity(),
+-                         entity.getBukkitEntity()
+-                );
+-                Bukkit.getPluginManager().callEvent(event);
+-                CraftEntity craftn = (CraftEntity) entity.getBukkitEntity().getVehicle();
+-                Entity n = craftn == null ? null : craftn.getHandle();
+-                if (event.isCancelled() || n != orig) {
+-                    return;
+-                }
+-            }
+-            // CraftBukkit end
+             if (!this.world.isClientSide && entity instanceof EntityHuman && !(this.bw() instanceof EntityHuman)) {
+                 this.passengers.add(0, entity);
+             } else {
+@@ -1893,22 +1909,6 @@ public abstract class Entity implements ICommandListener {
+         if (entity.bB() == this) {
+             throw new IllegalStateException("Use x.stopRiding(y), not y.removePassenger(x)");
+         } else {
+-            // CraftBukkit start
+-            CraftEntity craft = (CraftEntity) entity.getBukkitEntity().getVehicle();
+-            Entity orig = craft == null ? null : craft.getHandle();
+-            if (getBukkitEntity() instanceof Vehicle && entity.getBukkitEntity() instanceof LivingEntity) {
+-                VehicleExitEvent event = new VehicleExitEvent(
+-                        (Vehicle) getBukkitEntity(),
+-                        (LivingEntity) entity.getBukkitEntity()
+-                );
+-                Bukkit.getPluginManager().callEvent(event);
+-                CraftEntity craftn = (CraftEntity) entity.getBukkitEntity().getVehicle();
+-                Entity n = craftn == null ? null : craftn.getHandle();
+-                if (event.isCancelled() || n != orig) {
+-                    return;
+-                }
+-            }
+-            // CraftBukkit end
+             this.passengers.remove(entity);
+             entity.j = 60;
+         }
+@@ -2770,6 +2770,8 @@ public abstract class Entity implements ICommandListener {
+     }
+ 
+     @Nullable
++    Entity getRiding() { return this.bB(); } // SportBukkit - alias for following method
++    @Nullable
+     public Entity bB() {
+         return this.au;
+     }

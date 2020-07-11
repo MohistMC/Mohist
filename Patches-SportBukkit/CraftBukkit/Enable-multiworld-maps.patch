@@ -1,0 +1,39 @@
+From: mrapple <tony@oc.tc>
+Date: Tue, 13 Nov 2012 19:38:11 -0600
+Subject: [PATCH] Enable multiworld maps
+
+
+diff --git a/src/main/java/net/minecraft/server/ItemWorldMap.java b/src/main/java/net/minecraft/server/ItemWorldMap.java
+--- a/src/main/java/net/minecraft/server/ItemWorldMap.java
++++ b/src/main/java/net/minecraft/server/ItemWorldMap.java
+@@ -35,19 +35,18 @@ public class ItemWorldMap extends ItemWorldMapBase {
+ 
+     @Nullable
+     public WorldMap getSavedMap(ItemStack itemstack, World world) {
+-        World worldMain = world.getServer().getServer().worlds.get(0); // CraftBukkit - store reference to primary world
+         String s = "map_" + itemstack.getData();
+-        WorldMap worldmap = (WorldMap) worldMain.a(WorldMap.class, s); // CraftBukkit - use primary world for maps
++        WorldMap worldmap = (WorldMap) world.a(WorldMap.class, s);
+ 
+         if (worldmap == null && !world.isClientSide) {
+-            itemstack.setData(worldMain.b("map")); // CraftBukkit - use primary world for maps
++            itemstack.setData(world.b("map"));
+             s = "map_" + itemstack.getData();
+             worldmap = new WorldMap(s);
+             worldmap.scale = 3;
+             worldmap.a((double) world.getWorldData().b(), (double) world.getWorldData().d(), worldmap.scale);
+             worldmap.map = (byte) ((WorldServer) world).dimension; // CraftBukkit - fixes Bukkit multiworld maps
+             worldmap.c();
+-            worldMain.a(s, (PersistentBase) worldmap); // CraftBukkit - use primary world for maps
++            world.a(s, (PersistentBase) worldmap);
+ 
+             // CraftBukkit start
+             MapInitializeEvent event = new MapInitializeEvent(worldmap.mapView);
+@@ -322,7 +321,6 @@ public class ItemWorldMap extends ItemWorldMapBase {
+     protected static void a(ItemStack itemstack, World world, int i) {
+         WorldMap worldmap = Items.FILLED_MAP.getSavedMap(itemstack, world);
+ 
+-        world = world.getServer().getServer().worlds.get(0); // CraftBukkit - use primary world for maps
+         itemstack.setData(world.b("map"));
+         WorldMap worldmap1 = new WorldMap("map_" + itemstack.getData());
+ 

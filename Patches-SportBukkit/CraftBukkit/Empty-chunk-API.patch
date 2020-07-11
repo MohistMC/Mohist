@@ -1,0 +1,34 @@
+From: Jedediah Smith <jedediah@silencegreys.com>
+Date: Sun, 6 Mar 2016 03:43:35 -0500
+Subject: [PATCH] Empty chunk API
+
+
+diff --git a/src/main/java/net/minecraft/server/ChunkSection.java b/src/main/java/net/minecraft/server/ChunkSection.java
+--- a/src/main/java/net/minecraft/server/ChunkSection.java
++++ b/src/main/java/net/minecraft/server/ChunkSection.java
+@@ -63,6 +63,7 @@ public class ChunkSection {
+         this.blockIds.setBlock(i, j, k, iblockdata);
+     }
+ 
++    public boolean isEmpty() { return this.a(); } // SportBukkit - alias for following method
+     public boolean a() {
+         return false; // CraftBukkit - MC-80966
+     }
+diff --git a/src/main/java/org/bukkit/craftbukkit/CraftChunk.java b/src/main/java/org/bukkit/craftbukkit/CraftChunk.java
+--- a/src/main/java/org/bukkit/craftbukkit/CraftChunk.java
++++ b/src/main/java/org/bukkit/craftbukkit/CraftChunk.java
+@@ -101,6 +101,14 @@ public class CraftChunk implements Chunk {
+         return blocks;
+     }
+ 
++    @Override
++    public boolean isEmpty() {
++        for(ChunkSection chunkSections : getHandle().getSections()) {
++            if(chunkSections != null && !chunkSections.isEmpty()) return false;
++        }
++        return true;
++    }
++
+     public Entity[] getEntities() {
+         int count = 0, index = 0;
+         net.minecraft.server.Chunk chunk = getHandle();

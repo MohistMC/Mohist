@@ -1,0 +1,52 @@
+From: Jedediah Smith <jedediah@silencegreys.com>
+Date: Tue, 29 Mar 2016 02:12:39 -0400
+Subject: [PATCH] Entity bounding box API
+
+
+diff --git a/src/main/java/org/bukkit/craftbukkit/entity/CraftEntity.java b/src/main/java/org/bukkit/craftbukkit/entity/CraftEntity.java
+--- a/src/main/java/org/bukkit/craftbukkit/entity/CraftEntity.java
++++ b/src/main/java/org/bukkit/craftbukkit/entity/CraftEntity.java
+@@ -31,6 +31,8 @@ import org.bukkit.permissions.PermissionAttachment;
+ import org.bukkit.permissions.PermissionAttachmentInfo;
+ import org.bukkit.permissions.ServerOperator;
+ import org.bukkit.plugin.Plugin;
++import org.bukkit.geometry.Cuboid;
++import org.bukkit.util.ImVector;
+ import org.bukkit.util.Vector;
+ 
+ public abstract class CraftEntity implements org.bukkit.entity.Entity {
+@@ -818,4 +820,11 @@ public abstract class CraftEntity implements org.bukkit.entity.Entity {
+     public Vector getPredictedVelocity() {
+         return getVelocity();
+     }
++
++    @Override
++    public Cuboid getBoundingBox() {
++        final AxisAlignedBB bb = getHandle().getBoundingBox();
++        return Cuboid.between(ImVector.of(bb.a, bb.b, bb.c),
++                              ImVector.of(bb.d, bb.e, bb.f));
++    }
+ }
+diff --git a/src/main/java/org/bukkit/craftbukkit/entity/CraftLivingEntity.java b/src/main/java/org/bukkit/craftbukkit/entity/CraftLivingEntity.java
+--- a/src/main/java/org/bukkit/craftbukkit/entity/CraftLivingEntity.java
++++ b/src/main/java/org/bukkit/craftbukkit/entity/CraftLivingEntity.java
+@@ -73,6 +73,7 @@ import org.bukkit.potion.PotionEffectType;
+ import org.bukkit.potion.PotionType;
+ import org.bukkit.util.BlockIterator;
+ import org.bukkit.util.NumberConversions;
++import org.bukkit.geometry.Ray;
+ import org.bukkit.util.Vector;
+ 
+ public class CraftLivingEntity extends CraftEntity implements LivingEntity {
+@@ -245,6 +246,11 @@ public class CraftLivingEntity extends CraftEntity implements LivingEntity {
+         return loc;
+     }
+ 
++    @Override
++    public Ray getEyeRay() {
++        return Ray.fromLocation(getEyeLocation());
++    }
++
+     public int getMaximumNoDamageTicks() {
+         return getHandle().maxNoDamageTicks;
+     }
