@@ -50,7 +50,7 @@ public class Cake extends MaterialData {
      * @param n The number of slices eaten
      */
     public void setSlicesEaten(int n) {
-        if (n < 6) {
+        if (n < 6 && n >=0) {
             setData((byte) n);
         } // TODO: else destroy the block? Probably not possible though
     }

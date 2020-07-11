@@ -902,7 +902,8 @@ public class MemorySection implements ConfigurationSection {
      */
     @NotNull
     public static String createPath(@NotNull ConfigurationSection section, @Nullable String key) {
-        return createPath(section, key, (section == null) ? null : section.getRoot());
+        Validate.notNull(section, "Cannot create path without a section");
+        return createPath(section, key, section.getRoot());
     }
 
     /**
@@ -927,17 +928,15 @@ public class MemorySection implements ConfigurationSection {
         char separator = root.options().pathSeparator();
 
         StringBuilder builder = new StringBuilder();
-        if (section != null) {
-            for (ConfigurationSection parent = section; (parent != null) && (parent != relativeTo); parent = parent.getParent()) {
-                if (builder.length() > 0) {
-                    builder.insert(0, separator);
-                }
-
-                builder.insert(0, parent.getName());
+        for (ConfigurationSection parent = section; parent != null && parent != relativeTo; parent = parent.getParent()) {
+            if (builder.length() > 0) {
+                builder.insert(0, separator);
             }
+
+            builder.insert(0, parent.getName());
         }
 
-        if ((key != null) && (key.length() > 0)) {
+        if (key != null && key.length() > 0) {
             if (builder.length() > 0) {
                 builder.append(separator);
             }

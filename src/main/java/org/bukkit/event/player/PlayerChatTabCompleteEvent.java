@@ -1,6 +1,8 @@
 package org.bukkit.event.player;
 
 import java.util.Collection;
+
+import com.sun.deploy.security.SelectableSecurityManager;
 import org.apache.commons.lang.Validate;
 import org.bukkit.Warning;
 import org.bukkit.entity.Player;
@@ -19,6 +21,7 @@ public class PlayerChatTabCompleteEvent extends PlayerEvent {
     private final String message;
     private final String lastToken;
     private final Collection<String> completions;
+    private final boolean isPinging;
 
     public PlayerChatTabCompleteEvent(@NotNull final Player who, @NotNull final String message, @NotNull final Collection<String> completions) {
         super(who);
@@ -27,13 +30,40 @@ public class PlayerChatTabCompleteEvent extends PlayerEvent {
         this.message = message;
         int i = message.lastIndexOf(' ');
         if (i < 0) {
-            this.lastToken = message;
-        } else {
-            this.lastToken = message.substring(i + 1);
+            if (message.length() > 0 && message.charAt(0) == '@') {
+                this.lastToken = message.substring(1);
+                this.isPinging = true;
+            } else {
+                this.lastToken = message;
+                this.isPinging = false;
+            }
+        }
+        else
+        {
+            String lastToken = message.substring(i+1);
+            if (lastToken.length() > 0 && lastToken.charAt(0) == '@')
+            {
+                if (lastToken.length() == 1)
+                {
+                    lastToken = "";
+                }
+                else
+                    lastToken = lastToken.substring(1);
+                this.isPinging = true;
+            }
+            else
+            {
+                this.isPinging = false;
+            }
+            this.lastToken = lastToken;
         }
         this.completions = completions;
     }
 
+    public boolean isPinging()
+    {
+        return this.isPinging;
+    }
     /**
      * Gets the chat message being tab-completed.
      *

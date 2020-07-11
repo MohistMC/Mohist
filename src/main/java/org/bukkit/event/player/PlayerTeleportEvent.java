@@ -58,6 +58,14 @@ public class PlayerTeleportEvent extends PlayerMoveEvent {
          * portal
          */
         END_PORTAL,
+        // Cauldron start - added cause for mods
+        /**
+         * Indicates the teleportation was caused by a player entering a
+         * Mod portal
+         */
+        MOD,
+        // Cauldron end
+        DEATH, // KCauldron
         /**
          * Indicates the teleportation was caused by a player teleporting to a
          * Entity/Player via the spectator menu
@@ -78,6 +86,15 @@ public class PlayerTeleportEvent extends PlayerMoveEvent {
          * this enum
          */
         UNKNOWN;
+
+        public boolean isPortal() {
+            switch(this) {
+                case NETHER_PORTAL:
+                case END_PORTAL:
+                    return true;
+            }
+            return false;
+        }
     }
 
     @NotNull
