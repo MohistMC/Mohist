@@ -49,3 +49,43 @@
           }
        }
  
+@@ -322,6 +332,16 @@
+    }
+ 
+    private void func_192742_b(Advancement p_192742_1_) {
++      // Paper start
++      ensureVisibility(p_192742_1_, IterationEntryPoint.ROOT);
++   }
++   private enum IterationEntryPoint {
++      ROOT,
++      ITERATOR,
++      PARENT_OF_ITERATOR
++   }
++   private void ensureVisibility(Advancement p_192742_1_, IterationEntryPoint entryPoint) {
++      // Paper end
+       boolean flag = this.func_192738_c(p_192742_1_);
+       boolean flag1 = this.field_192759_g.contains(p_192742_1_);
+       if (flag && !flag1) {
+@@ -336,11 +356,20 @@
+       }
+ 
+       if (flag != flag1 && p_192742_1_.func_192070_b() != null) {
+-         this.func_192742_b(p_192742_1_.func_192070_b());
++         // Paper start - If we're not coming from an iterator consider this to be a root entry, otherwise
++         // market that we're entering from the parent of an iterator.
++         this.ensureVisibility(p_192742_1_.func_192070_b(), entryPoint == IterationEntryPoint.ITERATOR ? IterationEntryPoint.PARENT_OF_ITERATOR : IterationEntryPoint.ROOT);
+       }
+ 
++      // If this is true, we've went through a child iteration, entered the parent, processed the parent
++      // and are about to reprocess the children. Stop processing here to prevent O(N^2) processing.
++      if (entryPoint == IterationEntryPoint.PARENT_OF_ITERATOR) {
++         return;
++      }
++      // Paper end
++
+       for(Advancement advancement : p_192742_1_.func_192069_e()) {
+-         this.func_192742_b(advancement);
++         this.ensureVisibility(advancement, IterationEntryPoint.ITERATOR); // Paper - Mark this call as being from iteration
+       }
+ 
+    }
