@@ -49,6 +49,7 @@ public class InventoryClickEvent extends InventoryInteractEvent {
     private static final HandlerList handlers = new HandlerList();
     private final ClickType click;
     private final InventoryAction action;
+    private final Inventory clickedInventory;
     private SlotType slot_type;
     private int whichSlot;
     private int rawSlot;
@@ -59,12 +60,13 @@ public class InventoryClickEvent extends InventoryInteractEvent {
         super(view);
         this.slot_type = type;
         this.rawSlot = slot;
+        this.clickedInventory = slot < 0 ? null : (view.getTopInventory() != null && slot < view.getTopInventory().getSize() ? view.getTopInventory() : view.getBottomInventory());
         this.whichSlot = view.convertSlot(slot);
         this.click = click;
         this.action = action;
     }
 
-    public InventoryClickEvent(@NotNull InventoryView view, @NotNull SlotType type, int slot, @NotNull ClickType click, @NotNull InventoryAction action, int key) {
+    public InventoryClickEvent(@NotNull InventoryView view, @NotNull InventoryType.SlotType type, int slot, @NotNull ClickType click, @NotNull InventoryAction action, int key) {
         this(view, type, slot, click, action);
         this.hotbarKey = key;
     }
@@ -170,7 +172,7 @@ public class InventoryClickEvent extends InventoryInteractEvent {
      */
     @Nullable
     public Inventory getClickedInventory() {
-        return getView().getInventory(rawSlot);
+        return clickedInventory;
     }
 
     /**

@@ -81,7 +81,8 @@ public class SimpleServicesManager implements ServicesManager {
                         while (it2.hasNext()) {
                             RegisteredServiceProvider<?> registered = it2.next();
 
-                            if (registered.getPlugin().equals(plugin)) {
+                            Plugin oPlugin = registered.getPlugin();
+                            if (oPlugin != null ? oPlugin.equals(plugin) : plugin == null) {
                                 it2.remove();
                                 unregisteredEvents.add(new ServiceUnregisterEvent(registered));
                             }

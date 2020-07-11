@@ -22,12 +22,14 @@ import net.minecraft.entity.item.minecart.*;
 import net.minecraft.entity.monster.ZombieEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.*;
+import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.network.play.server.SPlaySoundEventPacket;
 import net.minecraft.network.play.server.SPlaySoundPacket;
 import net.minecraft.network.play.server.SUpdateTimePacket;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.*;
 import net.minecraft.util.math.*;
+import net.minecraft.util.text.ITextComponent;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.GameRules;
 import net.minecraft.world.biome.DefaultBiomeFeatures;
@@ -443,7 +445,7 @@ public class CraftWorld implements World {
             ((ArrowEntity) arrow).setType(CraftPotionUtil.fromBukkit(new PotionData(PotionType.WATER, false, false)));
         } else if (SpectralArrow.class.isAssignableFrom(clazz)) {
             arrow = net.minecraft.entity.EntityType.SPECTRAL_ARROW.create(world);
-        } else if (Trident.class.isAssignableFrom(clazz)){
+        } else if (Trident.class.isAssignableFrom(clazz)) {
             arrow = net.minecraft.entity.EntityType.TRIDENT.create(world);
         } else {
             arrow = net.minecraft.entity.EntityType.ARROW.create(world);
@@ -457,8 +459,31 @@ public class CraftWorld implements World {
 
     @Override
     public Entity spawnEntity(Location loc, EntityType entityType) {
+        // Cauldron start - handle custom entity spawns from plugins
+        if (((net.minecraft.entity.Entity) (Object) this).getName() != null) {
+            net.minecraft.entity.Entity entity = null;
+            entity = getEntity(((net.minecraft.entity.Entity) (Object) this).getClass(), world);
+            if (entity != null) {
+                entity.setLocationAndAngles(loc.getX(), loc.getY(), loc.getZ(), 0, 0);
+                world.addEntity(entity, SpawnReason.CUSTOM);
+                return entity.getBukkitEntity();
+            }
+        }
+        // Cauldron end
         return spawn(loc, entityType.getEntityClass());
     }
+
+    // Cauldron start
+    public net.minecraft.entity.Entity getEntity(Class<? extends net.minecraft.entity.Entity> clazz, net.minecraft.world.World world) {
+        net.minecraft.entity.LivingEntity entity = null;
+        try {
+            entity = (net.minecraft.entity.LivingEntity) clazz.getConstructor(new Class[]{net.minecraft.world.World.class}).newInstance(new Object[]{world});
+        } catch (Throwable throwable)
+        {
+        }
+        return entity;
+}
+// Cauldron end
 
     @Override
     public LightningStrike strikeLightning(Location loc) {
@@ -1194,8 +1219,12 @@ public class CraftWorld implements World {
         radius *= radius;
 
         for (Player player : getPlayers()) {
-            if (((CraftPlayer) player).getHandle().connection == null) continue;
-            if (!location.getWorld().equals(player.getWorld())) continue;
+            if (((CraftPlayer) player).getHandle().connection == null) {
+                continue;
+            }
+            if (!location.getWorld().equals(player.getWorld())) {
+                continue;
+            }
 
             distance = (int) player.getLocation().distanceSquared(location);
             if (distance <= radius) {
