@@ -86,12 +86,7 @@ import org.apache.logging.log4j.Logger;
 import javax.annotation.Nullable;
 
 import java.lang.reflect.Field;
-import java.util.Collection;
-import java.util.IdentityHashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
@@ -1051,4 +1046,5 @@ public class GameData
         }
 
     }
+
 }

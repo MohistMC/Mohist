@@ -119,6 +119,7 @@ import net.minecraft.world.storage.loot.LootTableManager;
 import net.minecraftforge.common.loot.IGlobalLootModifier;
 import net.minecraftforge.common.loot.LootModifierManager;
 import net.minecraftforge.common.util.BlockSnapshot;
+import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.event.AnvilUpdateEvent;
 import net.minecraftforge.event.DifficultyChangeEvent;
 import net.minecraftforge.event.ForgeEventFactory;
@@ -158,46 +159,38 @@ import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 import org.apache.logging.log4j.util.TriConsumer;
 
-public class ForgeHooks
-{
+public class ForgeHooks {
     private static final Logger LOGGER = LogManager.getLogger();
     private static final Marker FORGEHOOKS = MarkerManager.getMarker("FORGEHOOKS");
 
-    public static boolean canContinueUsing(@Nonnull ItemStack from, @Nonnull ItemStack to)
-    {
-        if (!from.isEmpty() && !to.isEmpty())
-        {
+    public static boolean canContinueUsing(@Nonnull ItemStack from, @Nonnull ItemStack to) {
+        if (!from.isEmpty() && !to.isEmpty()) {
             return from.getItem().canContinueUsing(from, to);
         }
         return false;
     }
 
-    public static boolean canHarvestBlock(@Nonnull BlockState state, @Nonnull PlayerEntity player, @Nonnull IBlockReader world, @Nonnull BlockPos pos)
-    {
+    public static boolean canHarvestBlock(@Nonnull BlockState state, @Nonnull PlayerEntity player, @Nonnull IBlockReader world, @Nonnull BlockPos pos) {
         //state = state.getActualState(world, pos);
-        if (state.getMaterial().isToolNotRequired())
-        {
+        if (state.getMaterial().isToolNotRequired()) {
             return true;
         }
 
         ItemStack stack = player.getHeldItemMainhand();
         ToolType tool = state.getHarvestTool();
-        if (stack.isEmpty() || tool == null)
-        {
+        if (stack.isEmpty() || tool == null) {
             return player.canHarvestBlock(state);
         }
 
         int toolLevel = stack.getItem().getHarvestLevel(stack, tool, player, state);
-        if (toolLevel < 0)
-        {
+        if (toolLevel < 0) {
             return player.canHarvestBlock(state);
         }
 
         return ForgeEventFactory.doPlayerHarvestCheck(player, state, toolLevel >= state.getHarvestLevel());
     }
 
-    public static boolean canToolHarvestBlock(IWorldReader world, BlockPos pos, @Nonnull ItemStack stack)
-    {
+    public static boolean canToolHarvestBlock(IWorldReader world, BlockPos pos, @Nonnull ItemStack stack) {
         BlockState state = world.getBlockState(pos);
         //state = state.getActualState(world, pos);
         ToolType tool = state.getHarvestTool();
@@ -205,12 +198,10 @@ public class ForgeHooks
         return stack.getHarvestLevel(tool, null, null) >= state.getHarvestLevel();
     }
 
-    public static boolean isToolEffective(IWorldReader world, BlockPos pos, @Nonnull ItemStack stack)
-    {
+    public static boolean isToolEffective(IWorldReader world, BlockPos pos, @Nonnull ItemStack stack) {
         BlockState state = world.getBlockState(pos);
         //state = state.getActualState(world, pos);
-        for (ToolType type : stack.getToolTypes())
-        {
+        for (ToolType type : stack.getToolTypes()) {
             if (state.isToolEffective(type))
                 return true;
         }
@@ -218,8 +209,8 @@ public class ForgeHooks
     }
 
     private static boolean toolInit = false;
-    static void initTools()
-    {
+
+    static void initTools() {
         if (toolInit)
             return;
         toolInit = true;
@@ -242,15 +233,13 @@ public class ForgeHooks
     /**
      * Called when a player uses 'pick block', calls new Entity and Block hooks.
      */
-    public static boolean onPickBlock(RayTraceResult target, PlayerEntity player, World world)
-    {
+    public static boolean onPickBlock(RayTraceResult target, PlayerEntity player, World world) {
         ItemStack result = ItemStack.EMPTY;
         boolean isCreative = player.abilities.isCreativeMode;
         TileEntity te = null;
 
-        if (target.getType() == RayTraceResult.Type.BLOCK)
-        {
-            BlockPos pos = ((BlockRayTraceResult)target).getPos();
+        if (target.getType() == RayTraceResult.Type.BLOCK) {
+            BlockPos pos = ((BlockRayTraceResult) target).getPos();
             BlockState state = world.getBlockState(pos);
 
             if (state.isAir(world, pos))
@@ -263,10 +252,8 @@ public class ForgeHooks
 
             if (result.isEmpty())
                 LOGGER.warn("Picking on: [{}] {} gave null item", target.getType(), state.getBlock().getRegistryName());
-        }
-        else if (target.getType() == RayTraceResult.Type.ENTITY)
-        {
-            Entity entity = ((EntityRayTraceResult)target).getEntity();
+        } else if (target.getType() == RayTraceResult.Type.ENTITY) {
+            Entity entity = ((EntityRayTraceResult) target).getEntity();
             result = entity.getPickedResult(target);
 
             if (result.isEmpty())
@@ -279,15 +266,13 @@ public class ForgeHooks
         if (te != null)
             Minecraft.getInstance().storeTEInStack(result, te);
 
-        if (isCreative)
-        {
+        if (isCreative) {
             player.inventory.setPickedItemStack(result);
             Minecraft.getInstance().playerController.sendSlotPacket(player.getHeldItem(Hand.MAIN_HAND), 36 + player.inventory.currentItem);
             return true;
         }
         int slot = player.inventory.getSlotFor(result);
-        if (slot != -1)
-        {
+        if (slot != -1) {
             if (PlayerInventory.isHotbar(slot))
                 player.inventory.currentItem = slot;
             else
@@ -297,119 +282,97 @@ public class ForgeHooks
         return false;
     }
 
-    public static void onDifficultyChange(Difficulty difficulty, Difficulty oldDifficulty)
-    {
+    public static void onDifficultyChange(Difficulty difficulty, Difficulty oldDifficulty) {
         MinecraftForge.EVENT_BUS.post(new DifficultyChangeEvent(difficulty, oldDifficulty));
     }
 
     //Optifine Helper Functions u.u, these are here specifically for Optifine
     //Note: When using Optifine, these methods are invoked using reflection, which
     //incurs a major performance penalty.
-    public static void onLivingSetAttackTarget(LivingEntity entity, LivingEntity target)
-    {
+    public static void onLivingSetAttackTarget(LivingEntity entity, LivingEntity target) {
         MinecraftForge.EVENT_BUS.post(new LivingSetAttackTargetEvent(entity, target));
     }
 
-    public static boolean onLivingUpdate(LivingEntity entity)
-    {
+    public static boolean onLivingUpdate(LivingEntity entity) {
         return MinecraftForge.EVENT_BUS.post(new LivingUpdateEvent(entity));
     }
 
-    public static boolean onLivingAttack(LivingEntity entity, DamageSource src, float amount)
-    {
+    public static boolean onLivingAttack(LivingEntity entity, DamageSource src, float amount) {
         return entity instanceof PlayerEntity || !MinecraftForge.EVENT_BUS.post(new LivingAttackEvent(entity, src, amount));
     }
 
-    public static boolean onPlayerAttack(LivingEntity entity, DamageSource src, float amount)
-    {
+    public static boolean onPlayerAttack(LivingEntity entity, DamageSource src, float amount) {
         return !MinecraftForge.EVENT_BUS.post(new LivingAttackEvent(entity, src, amount));
     }
 
-    public static LivingKnockBackEvent onLivingKnockBack(LivingEntity target, Entity attacker, float strength, double ratioX, double ratioZ)
-    {
+    public static LivingKnockBackEvent onLivingKnockBack(LivingEntity target, Entity attacker, float strength, double ratioX, double ratioZ) {
         LivingKnockBackEvent event = new LivingKnockBackEvent(target, attacker, strength, ratioX, ratioZ);
         MinecraftForge.EVENT_BUS.post(event);
         return event;
     }
 
-    public static float onLivingHurt(LivingEntity entity, DamageSource src, float amount)
-    {
+    public static float onLivingHurt(LivingEntity entity, DamageSource src, float amount) {
         LivingHurtEvent event = new LivingHurtEvent(entity, src, amount);
         return (MinecraftForge.EVENT_BUS.post(event) ? 0 : event.getAmount());
     }
 
-    public static float onLivingDamage(LivingEntity entity, DamageSource src, float amount)
-    {
+    public static float onLivingDamage(LivingEntity entity, DamageSource src, float amount) {
         LivingDamageEvent event = new LivingDamageEvent(entity, src, amount);
         return (MinecraftForge.EVENT_BUS.post(event) ? 0 : event.getAmount());
     }
 
-    public static boolean onLivingDeath(LivingEntity entity, DamageSource src)
-    {
+    public static boolean onLivingDeath(LivingEntity entity, DamageSource src) {
         return MinecraftForge.EVENT_BUS.post(new LivingDeathEvent(entity, src));
     }
 
-    public static boolean onLivingDrops(LivingEntity entity, DamageSource source, Collection<ItemEntity> drops, int lootingLevel, boolean recentlyHit)
-    {
+    public static boolean onLivingDrops(LivingEntity entity, DamageSource source, Collection<ItemEntity> drops, int lootingLevel, boolean recentlyHit) {
         return MinecraftForge.EVENT_BUS.post(new LivingDropsEvent(entity, source, drops, lootingLevel, recentlyHit));
     }
 
     @Nullable
-    public static float[] onLivingFall(LivingEntity entity, float distance, float damageMultiplier)
-    {
+    public static float[] onLivingFall(LivingEntity entity, float distance, float damageMultiplier) {
         LivingFallEvent event = new LivingFallEvent(entity, distance, damageMultiplier);
         return (MinecraftForge.EVENT_BUS.post(event) ? null : new float[]{event.getDistance(), event.getDamageMultiplier()});
     }
 
-    public static int getLootingLevel(Entity target, @Nullable Entity killer, DamageSource cause)
-    {
+    public static int getLootingLevel(Entity target, @Nullable Entity killer, DamageSource cause) {
         int looting = 0;
         if (killer instanceof LivingEntity)
-            looting = EnchantmentHelper.getLootingModifier((LivingEntity)killer);
+            looting = EnchantmentHelper.getLootingModifier((LivingEntity) killer);
         if (target instanceof LivingEntity)
-            looting = getLootingLevel((LivingEntity)target, cause, looting);
+            looting = getLootingLevel((LivingEntity) target, cause, looting);
         return looting;
     }
 
-    public static int getLootingLevel(LivingEntity target, DamageSource cause, int level)
-    {
+    public static int getLootingLevel(LivingEntity target, DamageSource cause, int level) {
         LootingLevelEvent event = new LootingLevelEvent(target, cause, level);
         MinecraftForge.EVENT_BUS.post(event);
         return event.getLootingLevel();
     }
 
-    public static double getPlayerVisibilityDistance(PlayerEntity player, double xzDistance, double maxXZDistance)
-    {
+    public static double getPlayerVisibilityDistance(PlayerEntity player, double xzDistance, double maxXZDistance) {
         PlayerEvent.Visibility event = new PlayerEvent.Visibility(player);
         MinecraftForge.EVENT_BUS.post(event);
         double value = event.getVisibilityModifier() * xzDistance;
         return value >= maxXZDistance ? maxXZDistance : value;
     }
 
-    public static boolean isLivingOnLadder(@Nonnull BlockState state, @Nonnull World world, @Nonnull BlockPos pos, @Nonnull LivingEntity entity)
-    {
-        boolean isSpectator = (entity instanceof PlayerEntity && ((PlayerEntity)entity).isSpectator());
+    public static boolean isLivingOnLadder(@Nonnull BlockState state, @Nonnull World world, @Nonnull BlockPos pos, @Nonnull LivingEntity entity) {
+        boolean isSpectator = (entity instanceof PlayerEntity && ((PlayerEntity) entity).isSpectator());
         if (isSpectator) return false;
-        if (!ForgeConfig.SERVER.fullBoundingBoxLadders.get())
-        {
+        if (!ForgeConfig.SERVER.fullBoundingBoxLadders.get()) {
             return state.isLadder(world, pos, entity);
-        }
-        else
-        {
+        } else {
             AxisAlignedBB bb = entity.getBoundingBox();
             int mX = MathHelper.floor(bb.minX);
             int mY = MathHelper.floor(bb.minY);
             int mZ = MathHelper.floor(bb.minZ);
-            for (int y2 = mY; y2 < bb.maxY; y2++)
-            {
-                for (int x2 = mX; x2 < bb.maxX; x2++)
-                {
-                    for (int z2 = mZ; z2 < bb.maxZ; z2++)
-                    {
+            for (int y2 = mY; y2 < bb.maxY; y2++) {
+                for (int x2 = mX; x2 < bb.maxX; x2++) {
+                    for (int z2 = mZ; z2 < bb.maxZ; z2++) {
                         BlockPos tmp = new BlockPos(x2, y2, z2);
                         state = world.getBlockState(tmp);
-                        if (state.isLadder(world, tmp, entity))
-                        {
+                        if (state.isLadder(world, tmp, entity)) {
                             return true;
                         }
                     }
@@ -419,14 +382,12 @@ public class ForgeHooks
         }
     }
 
-    public static void onLivingJump(LivingEntity entity)
-    {
+    public static void onLivingJump(LivingEntity entity) {
         MinecraftForge.EVENT_BUS.post(new LivingJumpEvent(entity));
     }
 
     @Nullable
-    public static ItemEntity onPlayerTossEvent(@Nonnull PlayerEntity player, @Nonnull ItemStack item, boolean includeName)
-    {
+    public static ItemEntity onPlayerTossEvent(@Nonnull PlayerEntity player, @Nonnull ItemStack item, boolean includeName) {
         player.captureDrops(Lists.newArrayList());
         ItemEntity ret = player.dropItem(item, false, includeName);
         player.captureDrops(null);
@@ -444,12 +405,12 @@ public class ForgeHooks
     }
 
     @Nullable
-    public static ITextComponent onServerChatEvent(ServerPlayNetHandler net, String raw, ITextComponent comp)
-    {
+    public static ITextComponent onServerChatEvent(ServerPlayNetHandler net, String raw, ITextComponent comp) {
         ServerChatEvent event = new ServerChatEvent(net.player, raw, comp);
-        if (MinecraftForge.EVENT_BUS.post(event))
-        {
-            return null;
+        synchronized (ServerChatEvent.class) {
+            if (MinecraftForge.EVENT_BUS.post(event)) {
+                return null;
+            }
         }
         return event.getComponent();
     }
@@ -461,9 +422,11 @@ public class ForgeHooks
             "((?:[a-z0-9]{2,}:\\/\\/)?(?:(?:[0-9]{1,3}\\.){3}[0-9]{1,3}|(?:[-\\w_]{1,}\\.[a-z]{2,}?))(?::[0-9]{1,5})?.*?(?=[!\"\u00A7 \n]|$))",
             Pattern.CASE_INSENSITIVE);
 
-    public static ITextComponent newChatWithLinks(String string){ return newChatWithLinks(string, true); }
-    public static ITextComponent newChatWithLinks(String string, boolean allowMissingHeader)
-    {
+    public static ITextComponent newChatWithLinks(String string) {
+        return newChatWithLinks(string, true);
+    }
+
+    public static ITextComponent newChatWithLinks(String string, boolean allowMissingHeader) {
         // Includes ipv4 and domain pattern
         // Matches an ip (xx.xxx.xx.xxx) or a domain (something.com) with or
         // without a protocol or path.
@@ -472,15 +435,13 @@ public class ForgeHooks
         int lastEnd = 0;
 
         // Find all urls
-        while (matcher.find())
-        {
+        while (matcher.find()) {
             int start = matcher.start();
             int end = matcher.end();
 
             // Append the previous left overs.
             String part = string.substring(lastEnd, start);
-            if (part.length() > 0)
-            {
+            if (part.length() > 0) {
                 if (ichat == null)
                     ichat = new StringTextComponent(part);
                 else
@@ -490,13 +451,10 @@ public class ForgeHooks
             String url = string.substring(start, end);
             ITextComponent link = new StringTextComponent(url);
 
-            try
-            {
+            try {
                 // Add schema so client doesn't crash.
-                if ((new URI(url)).getScheme() == null)
-                {
-                    if (!allowMissingHeader)
-                    {
+                if ((new URI(url)).getScheme() == null) {
+                    if (!allowMissingHeader) {
                         if (ichat == null)
                             ichat = new StringTextComponent(url);
                         else
@@ -505,9 +463,7 @@ public class ForgeHooks
                     }
                     url = "http://" + url;
                 }
-            }
-            catch (URISyntaxException e)
-            {
+            } catch (URISyntaxException e) {
                 // Bad syntax bail out!
                 if (ichat == null) ichat = new StringTextComponent(url);
                 else ichat.appendText(url);
@@ -533,30 +489,30 @@ public class ForgeHooks
         return ichat;
     }
 
-    public static int onBlockBreakEvent(World world, GameType gameType, ServerPlayerEntity entityPlayer, BlockPos pos)
-    {
-        // Logic from tryHarvestBlock for pre-canceling the event
-        boolean preCancelEvent = false;
-        ItemStack itemstack = entityPlayer.getHeldItemMainhand();
-        if (!itemstack.isEmpty() && !itemstack.getItem().canPlayerBreakBlockWhileHolding(world.getBlockState(pos), world, pos, entityPlayer))
-        {
-            preCancelEvent = true;
-        }
+    public static int onBlockBreakEvent(World world, GameType gameType, ServerPlayerEntity entityPlayer, BlockPos pos) {
+         // Logic from tryHarvestBlock for pre-canceling the event
+         boolean preCancelEvent = false;
+         ItemStack itemstack = entityPlayer.getHeldItemMainhand();
+         if (!itemstack.isEmpty() && !itemstack.getItem().canPlayerBreakBlockWhileHolding(world.getBlockState(pos), world, pos, entityPlayer))
+         {
+         preCancelEvent = true;
+         }
 
-        if (gameType.hasLimitedInteractions())
-        {
-            if (gameType == GameType.SPECTATOR)
-                preCancelEvent = true;
+         if (gameType.hasLimitedInteractions())
+         {
+         if (gameType == GameType.SPECTATOR)
+         preCancelEvent = true;
 
-            if (!entityPlayer.isAllowEdit())
-            {
-                if (itemstack.isEmpty() || !itemstack.canDestroy(world.getTags(), new CachedBlockInfo(world, pos, false)))
-                    preCancelEvent = true;
-            }
-        }
+         if (!entityPlayer.isAllowEdit())
+         {
+         if (itemstack.isEmpty() || !itemstack.canDestroy(world.getTags(), new CachedBlockInfo(world, pos, false)))
+         preCancelEvent = true;
+         }
+         }
+
 
         // Tell client the block is gone immediately then process events
-        if (world.getTileEntity(pos) == null)
+        if (world.getTileEntity(pos) == null && !(entityPlayer instanceof FakePlayer))// Cauldron - don't send packets to fakeplayers
         {
             entityPlayer.connection.sendPacket(new SChangeBlockPacket(DUMMY_WORLD, pos));
         }
@@ -564,22 +520,20 @@ public class ForgeHooks
         // Post the block break event
         BlockState state = world.getBlockState(pos);
         BlockEvent.BreakEvent event = new BlockEvent.BreakEvent(world, pos, state, entityPlayer);
-        event.setCanceled(preCancelEvent);
+        // event.setCanceled(preCancelEvent);
         MinecraftForge.EVENT_BUS.post(event);
 
         // Handle if the event is canceled
-        if (event.isCanceled())
+        if (event.isCanceled() && !(entityPlayer instanceof FakePlayer)) // Cauldron - don't send packets to fakeplayers
         {
             // Let the client know the block still exists
             entityPlayer.connection.sendPacket(new SChangeBlockPacket(world, pos));
 
             // Update any tile entity data for this block
             TileEntity tileentity = world.getTileEntity(pos);
-            if (tileentity != null)
-            {
+            if (tileentity != null) {
                 IPacket<?> pkt = tileentity.getUpdatePacket();
-                if (pkt != null)
-                {
+                if (pkt != null) {
                     entityPlayer.connection.sendPacket(pkt);
                 }
             }
@@ -587,8 +541,7 @@ public class ForgeHooks
         return event.isCanceled() ? -1 : event.getExpToDrop();
     }
 
-    public static ActionResultType onPlaceItemIntoWorld(@Nonnull ItemUseContext context)
-    {
+    public static ActionResultType onPlaceItemIntoWorld(@Nonnull ItemUseContext context) {
         ItemStack itemstack = context.getItem();
         World world = context.getWorld();
 

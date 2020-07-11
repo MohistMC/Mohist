@@ -2116,6 +2116,11 @@ public class CraftWorld implements World {
         return new CraftDragonBattle(((EndDimension) worldProvider).getDragonFightManager()); // PAIL rename getDragonBattle
     }
 
+    @Override
+    public ServerWorld getServerWorld() {
+        return this.world;
+    }
+
     // Spigot start
     private final Spigot spigot = new Spigot()
     {

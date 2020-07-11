@@ -1,9 +1,12 @@
 package org.bukkit;
 
 import com.google.common.collect.Maps;
+
+import java.lang.reflect.Array;
 import java.lang.reflect.Constructor;
-import java.util.Locale;
-import java.util.Map;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.util.*;
 import java.util.function.Consumer;
 import org.apache.commons.lang.Validate;
 import org.bukkit.block.data.Ageable;
@@ -78,6 +81,7 @@ import org.bukkit.block.data.type.WallSign;
 import org.bukkit.material.MaterialData;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import red.mohist.util.EnumHelper;
 
 /**
  * An enum of all material IDs accepted by the official server and client
@@ -3258,16 +3262,35 @@ public enum Material implements Keyed {
 
     private final int id;
     private final Constructor<? extends MaterialData> ctor;
-    private static final Map<String, Material> BY_NAME = Maps.newHashMap();
+    private static Material[] byId = new Material[383];
+    private static Map<String, Material> BY_NAME = Maps.newHashMap(); // Cauldron - remove final
     private final int maxStack;
     private final short durability;
     public final Class<?> data;
     private final boolean legacy;
     private final NamespacedKey key;
 
+    // Cauldron start
+    private static Object reflectionFactory;
+    private static Method newConstructorAccessor;
+    private static Method newInstance;
+    private static Method newFieldAccessor;
+    private static Method fieldAccessorSet;
+    private static boolean isSetup;
+    private boolean isForgeBlock = false;
+    // Cauldron end
+
+
     private Material(final int id) {
         this(id, 64);
     }
+
+    // Cauldron start - constructor used to set if the Material is a block or not
+    private Material(final int id, boolean flag) {
+        this(id, 64);
+        this.isForgeBlock = flag;
+    }
+    // Cauldron end
 
     private Material(final int id, final int stack) {
         this(id, stack, MaterialData.class);
@@ -4120,8 +4143,17 @@ public enum Material implements Keyed {
             //</editor-fold>
                 return true;
             default:
-                return 0 <= id && id < 256;
+                return 0 <= id && id < 256 || isForgeBlock; // Cauldron
         }
+    }
+
+    /**
+     *  Checks if the material is a forge block
+     *
+     *  @return true if this material is a forge block
+     */
+    public boolean isForgeBlock() {
+        return isForgeBlock;
     }
 
     /**
@@ -4252,6 +4284,143 @@ public enum Material implements Keyed {
         return BY_NAME.get(name);
     }
 
+    /* ===============================  Cauldron START ============================= */
+    // use a normalize() function to ensure it is accessible after a round-trip
+    public static Material addMaterial(int id, boolean isBlock){
+        return addMaterial(id, "X" + String.valueOf(id), isBlock);
+    }
+
+    public static Material addMaterial(int id, String name, boolean isBlock) {
+        if (byId[id] == null) {
+            String materialName = LEGACY_PREFIX + name;
+            Material material = (Material) EnumHelper.addEnum(Material.class, materialName, new Class[]{Integer.TYPE, Boolean.TYPE}, new Object[]{Integer.valueOf(id), isBlock});
+            byId[id] = material;
+            BY_NAME.put(materialName, material);
+            BY_NAME.put("X" + String.valueOf(id), material);
+            return material;
+        }
+        return null;
+    }
+
+    public static void setMaterialName(int id, String name, boolean flag) {
+        String materialName = LEGACY_PREFIX + name;
+
+        if (byId[id] == null)
+        {
+            addMaterial(id, materialName, flag);
+        }
+    }
+
+    private static void setup()
+    {
+        if (isSetup)
+        {
+            return;
+        }
+        try {
+            Method getReflectionFactory = Class.forName("sun.reflect.ReflectionFactory").getDeclaredMethod("getReflectionFactory", new Class[0]);
+            reflectionFactory = getReflectionFactory.invoke(null, new Object[0]);
+            newConstructorAccessor = Class.forName("sun.reflect.ReflectionFactory").getDeclaredMethod("newConstructorAccessor", new Class[] { Constructor.class });
+            newInstance = Class.forName("sun.reflect.ConstructorAccessor").getDeclaredMethod("newInstance", new Class[] { Object[].class });
+            newFieldAccessor = Class.forName("sun.reflect.ReflectionFactory").getDeclaredMethod("newFieldAccessor", new Class[] { Field.class, Boolean.TYPE });
+            fieldAccessorSet = Class.forName("sun.reflect.FieldAccessor").getDeclaredMethod("set", new Class[] { Object.class, Object.class });
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        isSetup = true;
+    }
+
+    private static Object getConstructorAccessor(Class<?> enumClass, Class<?>[] additionalParameterTypes) throws Exception {
+        Class[] parameterTypes = null;
+
+        parameterTypes = new Class[additionalParameterTypes.length + 2];
+        parameterTypes[0] = String.class;
+        parameterTypes[1] = Integer.TYPE;
+        System.arraycopy(additionalParameterTypes, 0, parameterTypes, 2, additionalParameterTypes.length);
+
+        return newConstructorAccessor.invoke(reflectionFactory, new Object[] { enumClass.getDeclaredConstructor(parameterTypes) });
+    }
+
+    private static <T extends Enum<?>> T makeEnum(Class<T> enumClass, String value, int ordinal, Class<?>[] additionalTypes, Object[] additionalValues) throws Exception {
+        Object[] parms = null;
+
+        parms = new Object[additionalValues.length + 2];
+        parms[0] = value;
+        parms[1] = Integer.valueOf(ordinal);
+        System.arraycopy(additionalValues, 0, parms, 2, additionalValues.length);
+
+        return (T)enumClass.cast(newInstance.invoke(getConstructorAccessor(enumClass, additionalTypes), new Object[] { parms }));
+    }
+
+    private static void setFailsafeFieldValue(Field field, Object target, Object value) throws Exception {
+        field.setAccessible(true);
+        Field modifiersField = Field.class.getDeclaredField("modifiers");
+        modifiersField.setAccessible(true);
+        modifiersField.setInt(field, field.getModifiers() & 0xFFFFFFEF);
+        Object fieldAccessor = newFieldAccessor.invoke(reflectionFactory, new Object[] { field, Boolean.valueOf(false) });
+        fieldAccessorSet.invoke(fieldAccessor, new Object[] { target, value });
+    }
+
+    private static void blankField(Class<?> enumClass, String fieldName) throws Exception {
+        for (Field field : Class.class.getDeclaredFields()) {
+            if (field.getName().contains(fieldName)) {
+                field.setAccessible(true);
+                setFailsafeFieldValue(field, enumClass, null);
+                break;
+            }
+        }
+    }
+
+    private static void cleanEnumCache(Class<?> enumClass) throws Exception
+    {
+        blankField(enumClass, "enumConstantDirectory");
+        blankField(enumClass, "enumConstants");
+    }
+
+    public static <T extends Enum<?>> T replaceEnum(Class<T> enumType, String enumName, int ordinal,  Class<?>[] paramTypes, Object[] paramValues)
+    {
+        if (!isSetup) setup();
+        Field valuesField = null;
+        Field[] fields = enumType.getDeclaredFields();
+        int flags = 4122;
+        String valueType = String.format("[L%s;", new Object[] { enumType.getName() });
+
+        for (Field field : fields) {
+            if (((field.getModifiers() & flags) != flags) || (!field.getType().getName().equals(valueType))) {
+                continue;
+            }
+            valuesField = field;
+            break;
+        }
+
+        valuesField.setAccessible(true);
+        try
+        {
+            Enum[] previousValues = (Enum[])(Enum[])valuesField.get(enumType);
+            Enum[] newValues = new Enum[previousValues.length];
+            Enum newValue = null;
+            for (Enum enumValue : previousValues)
+            {
+                if (enumValue.ordinal() == ordinal)
+                {
+                    newValue = makeEnum(enumType, enumName, ordinal, paramTypes, paramValues);
+                    newValues[enumValue.ordinal()] =  newValue;
+                }
+                else newValues[enumValue.ordinal()] = enumValue;
+            }
+            List values = new ArrayList(Arrays.asList(newValues));
+
+            setFailsafeFieldValue(valuesField, null, values.toArray((Enum[])(Enum[]) Array.newInstance(enumType, 0)));
+            cleanEnumCache(enumType);
+            return (T) newValue;
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException(e.getMessage(), e);
+        }
+    }
+    /* ===============================  Cauldron END============================= */
+
     /**
      * Attempts to match the Material with the given name.
      * <p>
@@ -4295,6 +4464,17 @@ public enum Material implements Keyed {
     }
 
     static {
+        // Cauldron start
+        byId = new Material[32000];
+        BY_NAME = Maps.newHashMap();
+
+        reflectionFactory = null;
+        newConstructorAccessor = null;
+        newInstance = null;
+        newFieldAccessor = null;
+        fieldAccessorSet = null;
+        isSetup = false;
+        // Cauldron end
         for (Material material : values()) {
             BY_NAME.put(material.name(), material);
         }

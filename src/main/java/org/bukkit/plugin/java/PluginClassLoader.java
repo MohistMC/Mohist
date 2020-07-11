@@ -14,6 +14,7 @@ import java.util.Enumeration;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.jar.Manifest;
@@ -28,16 +29,16 @@ import org.jetbrains.annotations.Nullable;
 /**
  * A ClassLoader for plugins, to allow shared classes across multiple plugins
  */
-final class PluginClassLoader extends URLClassLoader {
+public class PluginClassLoader extends URLClassLoader {
     private final JavaPluginLoader loader;
-    private final Map<String, Class<?>> classes = new ConcurrentHashMap<String, Class<?>>();
+    private final ConcurrentMap<String, Class<?>> classes = new ConcurrentHashMap<String, Class<?>>(); // Cauldron - Threadsafe classloading
     private final PluginDescriptionFile description;
     private final File dataFolder;
     private final File file;
     private final JarFile jar;
     private final Manifest manifest;
     private final URL url;
-    final JavaPlugin plugin;
+    JavaPlugin plugin; // Cauldron - remove final
     private JavaPlugin pluginInit;
     private IllegalStateException pluginState;
     private final Set<String> seenIllegalAccess = Collections.newSetFromMap(new ConcurrentHashMap<>());
