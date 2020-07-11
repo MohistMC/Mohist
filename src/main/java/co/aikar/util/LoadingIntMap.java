@@ -13,13 +13,13 @@ import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 /**
  * Allows you to pass a Loader function that when a key is accessed that doesn't exist,
  * automatically loads the entry into the map by calling the loader Function.
- *
+ * <p>
  * .get() Will only return null if the Loader can return null.
- *
+ * <p>
  * You may pass any backing Map to use.
- *
+ * <p>
  * This class is not thread safe and should be wrapped with Collections.synchronizedMap on the OUTSIDE of the LoadingMap if needed.
- *
+ * <p>
  * Do not wrap the backing map with Collections.synchronizedMap.
  *
  * @param <V> Value
@@ -60,7 +60,7 @@ public class LoadingIntMap<V> extends Int2ObjectOpenHashMap<V> {
      *
      * @param <T> Type
      */
-    public abstract static class Feeder <T> implements Function<T, T> {
+    public abstract static class Feeder<T> implements Function<T, T> {
         @Override
         public T apply(Object input) {
             return apply();

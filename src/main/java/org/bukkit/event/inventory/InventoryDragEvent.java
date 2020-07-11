@@ -1,9 +1,6 @@
 package org.bukkit.event.inventory;
 
 import com.google.common.collect.ImmutableSet;
-import java.util.Collections;
-import java.util.Map;
-import java.util.Set;
 import org.apache.commons.lang.Validate;
 import org.bukkit.Location;
 import org.bukkit.entity.HumanEntity;
@@ -15,10 +12,14 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitScheduler;
 
+import java.util.Collections;
+import java.util.Map;
+import java.util.Set;
+
 /**
  * This event is called when the player drags an item in their cursor across
  * the inventory. The ItemStack is distributed across the slots the
- * HumanEntity dragged over. The method of distribution is described by the 
+ * HumanEntity dragged over. The method of distribution is described by the
  * DragType returned by {@link #getType()}.
  * <p>
  * Canceling this event will result in none of the changes described in
@@ -37,7 +38,7 @@ import org.bukkit.scheduler.BukkitScheduler;
  * <li>{@link HumanEntity#openEnchanting(Location, boolean)}
  * <li>{@link InventoryView#close()}
  * </ul>
- * To invoke one of these methods, schedule a task using 
+ * To invoke one of these methods, schedule a task using
  * {@link BukkitScheduler#runTask(Plugin, Runnable)}, which will run the task
  * on the next tick.  Also be aware that this is not an exhaustive list, and
  * other methods could potentially create issues as well.
@@ -103,7 +104,7 @@ public class InventoryDragEvent extends InventoryInteractEvent {
      * Gets the slots to be changed in this drag.
      *
      * @return list of converted slot ids, suitable for {@link
-     *     org.bukkit.inventory.Inventory#getItem(int)}.
+     * org.bukkit.inventory.Inventory#getItem(int)}.
      */
     public Set<Integer> getInventorySlots() {
         return containerSlots;

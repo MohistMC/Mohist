@@ -1,11 +1,12 @@
 package org.bukkit.help;
 
-import java.util.Collection;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.util.ChatPaginator;
+
+import java.util.Collection;
 
 /**
  * This help topic generates a list of other help topics. This class is useful
@@ -69,7 +70,7 @@ public class IndexHelpTopic extends HelpTopic {
             if (topic.canSee(sender)) {
                 String lineStr = buildIndexLine(sender, topic).replace("\n", ". ");
                 if (sender instanceof Player && lineStr.length() > ChatPaginator.GUARANTEED_NO_WRAP_CHAT_PAGE_WIDTH) {
-                    sb.append(lineStr.substring(0, ChatPaginator.GUARANTEED_NO_WRAP_CHAT_PAGE_WIDTH - 3));
+                    sb.append(lineStr, 0, ChatPaginator.GUARANTEED_NO_WRAP_CHAT_PAGE_WIDTH - 3);
                     sb.append("...");
                 } else {
                     sb.append(lineStr);

@@ -9,6 +9,7 @@ import org.bukkit.event.entity.EntityPickupItemEvent;
 
 /**
  * Thrown when a player picks an item up from the ground
+ *
  * @deprecated {@link EntityPickupItemEvent}
  */
 @Warning(false)

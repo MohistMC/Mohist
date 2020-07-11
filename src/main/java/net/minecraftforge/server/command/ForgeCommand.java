@@ -23,10 +23,8 @@ import net.minecraft.command.ICommand;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.server.MinecraftServer;
 
-public class ForgeCommand extends CommandTreeBase
-{
-    public ForgeCommand()
-    {
+public class ForgeCommand extends CommandTreeBase {
+    public ForgeCommand() {
         super.addSubcommand(new CommandTps());
         super.addSubcommand(new CommandTrack());
         super.addSubcommand(new CommandGenerate());
@@ -37,32 +35,27 @@ public class ForgeCommand extends CommandTreeBase
     }
 
     @Override
-    public String getName()
-    {
+    public String getName() {
         return "forge";
     }
 
     @Override
-    public void addSubcommand(ICommand command)
-    {
+    public void addSubcommand(ICommand command) {
         throw new UnsupportedOperationException("Don't add sub-commands to /forge, create your own command.");
     }
 
     @Override
-    public int getRequiredPermissionLevel()
-    {
+    public int getRequiredPermissionLevel() {
         return 4;
     }
 
     @Override
-    public boolean checkPermission(MinecraftServer server, ICommandSender sender)
-    {
+    public boolean checkPermission(MinecraftServer server, ICommandSender sender) {
         return true;
     }
 
     @Override
-    public String getUsage(ICommandSender icommandsender)
-    {
+    public String getUsage(ICommandSender icommandsender) {
         return "commands.forge.usage";
     }
 }

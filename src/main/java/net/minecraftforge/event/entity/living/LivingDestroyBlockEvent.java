@@ -39,25 +39,21 @@ import net.minecraftforge.fml.common.eventhandler.Cancelable;
  * This event is fired on the {@link MinecraftForge#EVENT_BUS}.
  **/
 @Cancelable
-public class LivingDestroyBlockEvent extends LivingEvent
-{
+public class LivingDestroyBlockEvent extends LivingEvent {
     private final BlockPos pos;
     private final IBlockState state;
-    
-    public LivingDestroyBlockEvent(EntityLivingBase entity, BlockPos pos, IBlockState state)
-    {
+
+    public LivingDestroyBlockEvent(EntityLivingBase entity, BlockPos pos, IBlockState state) {
         super(entity);
         this.pos = pos;
         this.state = state;
     }
 
-    public IBlockState getState()
-    {
+    public IBlockState getState() {
         return state;
     }
-    
-    public BlockPos getPos()
-    {
+
+    public BlockPos getPos() {
         return pos;
     }
 }

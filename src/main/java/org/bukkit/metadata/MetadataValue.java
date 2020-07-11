@@ -9,75 +9,75 @@ public interface MetadataValue {
      *
      * @return the metadata value.
      */
-    public Object value();
+    Object value();
 
     /**
      * Attempts to convert the value of this metadata item into an int.
      *
      * @return the value as an int.
      */
-    public int asInt();
+    int asInt();
 
     /**
      * Attempts to convert the value of this metadata item into a float.
      *
      * @return the value as a float.
      */
-    public float asFloat();
+    float asFloat();
 
     /**
      * Attempts to convert the value of this metadata item into a double.
      *
      * @return the value as a double.
      */
-    public double asDouble();
+    double asDouble();
 
     /**
      * Attempts to convert the value of this metadata item into a long.
      *
      * @return the value as a long.
      */
-    public long asLong();
+    long asLong();
 
     /**
      * Attempts to convert the value of this metadata item into a short.
      *
      * @return the value as a short.
      */
-    public short asShort();
+    short asShort();
 
     /**
      * Attempts to convert the value of this metadata item into a byte.
      *
      * @return the value as a byte.
      */
-    public byte asByte();
+    byte asByte();
 
     /**
      * Attempts to convert the value of this metadata item into a boolean.
      *
      * @return the value as a boolean.
      */
-    public boolean asBoolean();
+    boolean asBoolean();
 
     /**
      * Attempts to convert the value of this metadata item into a string.
      *
      * @return the value as a string.
      */
-    public String asString();
+    String asString();
 
     /**
      * Returns the {@link Plugin} that created this metadata item.
      *
      * @return the plugin that owns this metadata value. This should never be
-     *     null.
+     * null.
      */
-    public Plugin getOwningPlugin();
+    Plugin getOwningPlugin();
 
     /**
      * Invalidates this metadata item, forcing it to recompute when next
      * accessed.
      */
-    public void invalidate();
+    void invalidate();
 }

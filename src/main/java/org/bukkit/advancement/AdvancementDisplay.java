@@ -37,7 +37,6 @@ public interface AdvancementDisplay {
      * Set if this advancement should be announced in chat when completed
      *
      * @param announce True or false
-     *
      */
     void setShouldAnnounceToChat(boolean announce);
 

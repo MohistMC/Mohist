@@ -1,8 +1,9 @@
 package org.bukkit.inventory.meta;
 
-import java.util.List;
 import org.bukkit.FireworkEffect;
 import org.bukkit.Material;
+
+import java.util.List;
 
 /**
  * Represents a {@link Material#FIREWORK} and its effects.
@@ -23,7 +24,7 @@ public interface FireworkMeta extends ItemMeta {
      * @param effects The firework effects to add
      * @throws IllegalArgumentException If effects is null
      * @throws IllegalArgumentException If any effect is null (may be thrown
-     *     after changes have occurred)
+     *                                  after changes have occurred)
      */
     void addEffects(FireworkEffect... effects) throws IllegalArgumentException;
 
@@ -31,10 +32,10 @@ public interface FireworkMeta extends ItemMeta {
      * Add several firework effects to this firework.
      *
      * @param effects An iterable object whose iterator yields the desired
-     *     firework effects
+     *                firework effects
      * @throws IllegalArgumentException If effects is null
      * @throws IllegalArgumentException If any effect is null (may be thrown
-     *     after changes have occurred)
+     *                                  after changes have occurred)
      */
     void addEffects(Iterable<FireworkEffect> effects) throws IllegalArgumentException;
 
@@ -57,7 +58,7 @@ public interface FireworkMeta extends ItemMeta {
      *
      * @param index The index of the effect to remove
      * @throws IndexOutOfBoundsException If index {@literal < 0 or index >} {@link
-     *     #getEffectsSize()}
+     *                                   #getEffectsSize()}
      */
     void removeEffect(int index) throws IndexOutOfBoundsException;
 

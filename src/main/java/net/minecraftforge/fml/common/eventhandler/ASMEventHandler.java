@@ -20,79 +20,61 @@
 package net.minecraftforge.fml.common.eventhandler;
 
 import com.google.common.collect.Maps;
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
-import java.lang.reflect.ParameterizedType;
-import java.util.HashMap;
 import net.minecraftforge.fml.common.ModContainer;
 import org.apache.logging.log4j.ThreadContext;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.MethodVisitor;
-import static org.objectweb.asm.Opcodes.ACC_PUBLIC;
-import static org.objectweb.asm.Opcodes.ACC_SUPER;
-import static org.objectweb.asm.Opcodes.ALOAD;
-import static org.objectweb.asm.Opcodes.CHECKCAST;
-import static org.objectweb.asm.Opcodes.GETFIELD;
-import static org.objectweb.asm.Opcodes.INVOKESPECIAL;
-import static org.objectweb.asm.Opcodes.INVOKESTATIC;
-import static org.objectweb.asm.Opcodes.INVOKEVIRTUAL;
-import static org.objectweb.asm.Opcodes.PUTFIELD;
-import static org.objectweb.asm.Opcodes.RETURN;
-import static org.objectweb.asm.Opcodes.V1_6;
 import org.objectweb.asm.Type;
 
-public class ASMEventHandler implements IEventListener
-{
-    private static int IDs = 0;
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
+import java.lang.reflect.ParameterizedType;
+import java.util.HashMap;
+
+import static org.objectweb.asm.Opcodes.*;
+
+public class ASMEventHandler implements IEventListener {
     private static final String HANDLER_DESC = Type.getInternalName(IEventListener.class);
     private static final String HANDLER_FUNC_DESC = Type.getMethodDescriptor(IEventListener.class.getDeclaredMethods()[0]);
     private static final ASMClassLoader LOADER = new ASMClassLoader();
     private static final HashMap<Method, Class<?>> cache = Maps.newHashMap();
     private static final boolean GETCONTEXT = Boolean.parseBoolean(System.getProperty("fml.LogContext", "false"));
-
+    private static int IDs = 0;
     private final IEventListener handler;
     private final SubscribeEvent subInfo;
-    private ModContainer owner;
-    private String readable;
+    private final ModContainer owner;
+    private final String readable;
     private java.lang.reflect.Type filter = null;
 
     @Deprecated
-    public ASMEventHandler(Object target, Method method, ModContainer owner) throws Exception
-    {
+    public ASMEventHandler(Object target, Method method, ModContainer owner) throws Exception {
         this(target, method, owner, false);
     }
 
-    public ASMEventHandler(Object target, Method method, ModContainer owner, boolean isGeneric) throws Exception
-    {
+    public ASMEventHandler(Object target, Method method, ModContainer owner, boolean isGeneric) throws Exception {
         this.owner = owner;
         if (Modifier.isStatic(method.getModifiers()))
-            handler = (IEventListener)createWrapper(method).newInstance();
+            handler = (IEventListener) createWrapper(method).newInstance();
         else
-            handler = (IEventListener)createWrapper(method).getConstructor(Object.class).newInstance(target);
+            handler = (IEventListener) createWrapper(method).getConstructor(Object.class).newInstance(target);
         subInfo = method.getAnnotation(SubscribeEvent.class);
         readable = "ASM: " + target + " " + method.getName() + Type.getMethodDescriptor(method);
-        if (isGeneric)
-        {
+        if (isGeneric) {
             java.lang.reflect.Type type = method.getGenericParameterTypes()[0];
-            if (type instanceof ParameterizedType)
-            {
-                filter = ((ParameterizedType)type).getActualTypeArguments()[0];
+            if (type instanceof ParameterizedType) {
+                filter = ((ParameterizedType) type).getActualTypeArguments()[0];
             }
         }
     }
 
     @SuppressWarnings("rawtypes")
     @Override
-    public void invoke(Event event)
-    {
+    public void invoke(Event event) {
         if (GETCONTEXT)
             ThreadContext.put("mod", owner == null ? "" : owner.getName());
-        if (handler != null)
-        {
-            if (!event.isCancelable() || !event.isCanceled() || subInfo.receiveCanceled())
-            {
-                if (filter == null || filter == ((IGenericEvent)event).getGenericType())
-                {
+        if (handler != null) {
+            if (!event.isCancelable() || !event.isCanceled() || subInfo.receiveCanceled()) {
+                if (filter == null || filter == ((IGenericEvent) event).getGenericType()) {
                     handler.invoke(event);
                 }
             }
@@ -101,15 +83,12 @@ public class ASMEventHandler implements IEventListener
             ThreadContext.remove("mod");
     }
 
-    public EventPriority getPriority()
-    {
+    public EventPriority getPriority() {
         return subInfo.priority();
     }
 
-    public Class<?> createWrapper(Method callback)
-    {
-        if (cache.containsKey(callback))
-        {
+    public Class<?> createWrapper(Method callback) {
+        if (cache.containsKey(callback)) {
             return cache.get(callback);
         }
 
@@ -118,7 +97,7 @@ public class ASMEventHandler implements IEventListener
 
         boolean isStatic = Modifier.isStatic(callback.getModifiers());
         String name = getUniqueName(callback);
-        String desc = name.replace('.',  '/');
+        String desc = name.replace('.', '/');
         String instType = Type.getInternalName(callback.getDeclaringClass());
         String eventType = Type.getInternalName(callback.getParameterTypes()[0]);
 
@@ -130,7 +109,7 @@ public class ASMEventHandler implements IEventListener
         System.out.println("Event:    " + eventType);
         */
 
-        cw.visit(V1_6, ACC_PUBLIC | ACC_SUPER, desc, null, "java/lang/Object", new String[]{ HANDLER_DESC });
+        cw.visit(V1_6, ACC_PUBLIC | ACC_SUPER, desc, null, "java/lang/Object", new String[]{HANDLER_DESC});
 
         cw.visitSource(".dynamic", null);
         {
@@ -142,8 +121,7 @@ public class ASMEventHandler implements IEventListener
             mv.visitCode();
             mv.visitVarInsn(ALOAD, 0);
             mv.visitMethodInsn(INVOKESPECIAL, "java/lang/Object", "<init>", "()V", false);
-            if (!isStatic)
-            {
+            if (!isStatic) {
                 mv.visitVarInsn(ALOAD, 0);
                 mv.visitVarInsn(ALOAD, 1);
                 mv.visitFieldInsn(PUTFIELD, desc, "instance", "Ljava/lang/Object;");
@@ -156,8 +134,7 @@ public class ASMEventHandler implements IEventListener
             mv = cw.visitMethod(ACC_PUBLIC, "invoke", HANDLER_FUNC_DESC, null, null);
             mv.visitCode();
             mv.visitVarInsn(ALOAD, 0);
-            if (!isStatic)
-            {
+            if (!isStatic) {
                 mv.visitFieldInsn(GETFIELD, desc, "instance", "Ljava/lang/Object;");
                 mv.visitTypeInsn(CHECKCAST, instType);
             }
@@ -174,29 +151,24 @@ public class ASMEventHandler implements IEventListener
         return ret;
     }
 
-    private String getUniqueName(Method callback)
-    {
+    private String getUniqueName(Method callback) {
         return String.format("%s_%d_%s_%s_%s", getClass().getName(), IDs++,
                 callback.getDeclaringClass().getSimpleName(),
                 callback.getName(),
                 callback.getParameterTypes()[0].getSimpleName());
     }
 
-    private static class ASMClassLoader extends ClassLoader
-    {
-        private ASMClassLoader()
-        {
+    public String toString() {
+        return readable;
+    }
+
+    private static class ASMClassLoader extends ClassLoader {
+        private ASMClassLoader() {
             super(ASMClassLoader.class.getClassLoader());
         }
 
-        public Class<?> define(String name, byte[] data)
-        {
+        public Class<?> define(String name, byte[] data) {
             return defineClass(name, data, 0, data.length);
         }
-    }
-
-    public String toString()
-    {
-        return readable;
     }
 }

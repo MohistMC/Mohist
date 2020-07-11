@@ -1,7 +1,8 @@
 package org.bukkit.util.noise;
 
-import java.util.Random;
 import org.bukkit.World;
+
+import java.util.Random;
 
 /**
  * Creates perlin noise through unbiased octaves
@@ -11,7 +12,7 @@ public class PerlinOctaveGenerator extends OctaveGenerator {
     /**
      * Creates a perlin octave generator for the given world
      *
-     * @param world World to construct this generator for
+     * @param world   World to construct this generator for
      * @param octaves Amount of octaves to create
      */
     public PerlinOctaveGenerator(World world, int octaves) {
@@ -21,7 +22,7 @@ public class PerlinOctaveGenerator extends OctaveGenerator {
     /**
      * Creates a perlin octave generator for the given world
      *
-     * @param seed Seed to construct this generator for
+     * @param seed    Seed to construct this generator for
      * @param octaves Amount of octaves to create
      */
     public PerlinOctaveGenerator(long seed, int octaves) {
@@ -31,7 +32,7 @@ public class PerlinOctaveGenerator extends OctaveGenerator {
     /**
      * Creates a perlin octave generator for the given {@link Random}
      *
-     * @param rand Random object to construct this generator for
+     * @param rand    Random object to construct this generator for
      * @param octaves Amount of octaves to create
      */
     public PerlinOctaveGenerator(Random rand, int octaves) {

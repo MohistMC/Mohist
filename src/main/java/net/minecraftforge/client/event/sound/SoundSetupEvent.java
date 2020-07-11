@@ -25,10 +25,8 @@ import net.minecraft.client.audio.SoundManager;
  * This event is raised by the SoundManager when it does its first setup of the
  * SoundSystemConfig's codecs, use this function to add your own codecs.
  */
-public class SoundSetupEvent extends SoundEvent
-{
-    public SoundSetupEvent(SoundManager manager)
-    {
+public class SoundSetupEvent extends SoundEvent {
+    public SoundSetupEvent(SoundManager manager) {
         super(manager);
     }
 }

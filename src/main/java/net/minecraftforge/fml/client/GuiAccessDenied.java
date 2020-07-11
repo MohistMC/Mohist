@@ -24,33 +24,29 @@ import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.multiplayer.ServerData;
 import net.minecraft.client.resources.I18n;
 
-public class GuiAccessDenied extends GuiScreen
-{
-    private GuiScreen parent;
-    private ServerData data;
-    public GuiAccessDenied(GuiScreen parent, ServerData data)
-    {
+public class GuiAccessDenied extends GuiScreen {
+    private final GuiScreen parent;
+    private final ServerData data;
+
+    public GuiAccessDenied(GuiScreen parent, ServerData data) {
         this.parent = parent;
         this.data = data;
     }
 
     @Override
-    public void initGui()
-    {
+    public void initGui() {
         this.buttonList.add(new GuiButton(1, this.width / 2 - 75, this.height - 38, I18n.format("gui.done")));
     }
 
     @Override
-    protected void actionPerformed(GuiButton p_73875_1_)
-    {
-        if (p_73875_1_.enabled && p_73875_1_.id == 1)
-        {
+    protected void actionPerformed(GuiButton p_73875_1_) {
+        if (p_73875_1_.enabled && p_73875_1_.id == 1) {
             FMLClientHandler.instance().showGuiScreen(parent);
         }
     }
+
     @Override
-    public void drawScreen(int mouseX, int mouseY, float partialTicks)
-    {
+    public void drawScreen(int mouseX, int mouseY, float partialTicks) {
         this.drawDefaultBackground();
         int offset = Math.max(85 - 2 * 10, 10);
         this.drawCenteredString(this.fontRenderer, "Forge Mod Loader could not connect to this server", this.width / 2, offset, 0xFFFFFF);

@@ -25,10 +25,8 @@ import net.minecraft.client.audio.SoundManager;
  * Raised by the SoundManager.loadSoundSettings, this would be a good place for
  * adding your custom sounds to the SoundPool.
  */
-public class SoundLoadEvent extends SoundEvent
-{
-    public SoundLoadEvent(SoundManager manager)
-    {
+public class SoundLoadEvent extends SoundEvent {
+    public SoundLoadEvent(SoundManager manager) {
         super(manager);
     }
 }

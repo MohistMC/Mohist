@@ -13,7 +13,7 @@ import org.bukkit.util.Vector;
  */
 public class EntityPortalExitEvent extends EntityTeleportEvent {
     private static final HandlerList handlers = new HandlerList();
-    private Vector before;
+    private final Vector before;
     private Vector after;
 
     public EntityPortalExitEvent(final Entity entity, final Location from, final Location to, final Vector before, final Vector after) {

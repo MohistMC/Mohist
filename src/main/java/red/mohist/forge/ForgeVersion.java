@@ -1,8 +1,9 @@
 package red.mohist.forge;
 
+import red.mohist.configuration.MohistConfigUtil;
+
 import java.io.File;
 import java.util.Map;
-import red.mohist.configuration.MohistConfigUtil;
 
 public class ForgeVersion {
 

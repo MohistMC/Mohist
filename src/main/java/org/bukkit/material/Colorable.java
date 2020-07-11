@@ -12,13 +12,13 @@ public interface Colorable {
      *
      * @return The DyeColor of this object.
      */
-    public DyeColor getColor();
+    DyeColor getColor();
 
     /**
      * Sets the color of this object to the specified DyeColor.
      *
      * @param color The color of the object, as a DyeColor.
      */
-    public void setColor(DyeColor color);
+    void setColor(DyeColor color);
 
 }

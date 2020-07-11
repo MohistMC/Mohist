@@ -17,5 +17,5 @@ public enum NetherWartsState {
     /**
      * Ready to harvest
      */
-    RIPE;
+    RIPE
 }

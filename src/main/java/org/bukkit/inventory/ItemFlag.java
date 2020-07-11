@@ -28,5 +28,5 @@ public enum ItemFlag {
     /**
      * Setting to show/hide potion effects on this ItemStack
      */
-    HIDE_POTION_EFFECTS;
+    HIDE_POTION_EFFECTS
 }

@@ -29,7 +29,7 @@ import net.minecraftforge.fml.common.eventhandler.Cancelable;
 
 /**
  * LivingDeathEvent is fired when an Entity dies. <br>
- * This event is fired whenever an Entity dies in 
+ * This event is fired whenever an Entity dies in
  * {@link EntityLivingBase#onDeath(DamageSource)},
  * {@link EntityPlayer#onDeath(DamageSource)}, and
  * {@link EntityPlayerMP#onDeath(DamageSource)}. <br>
@@ -46,17 +46,15 @@ import net.minecraftforge.fml.common.eventhandler.Cancelable;
  * This event is fired on the {@link MinecraftForge#EVENT_BUS}.
  **/
 @Cancelable
-public class LivingDeathEvent extends LivingEvent
-{
+public class LivingDeathEvent extends LivingEvent {
     private final DamageSource source;
-    public LivingDeathEvent(EntityLivingBase entity, DamageSource source)
-    {
+
+    public LivingDeathEvent(EntityLivingBase entity, DamageSource source) {
         super(entity);
         this.source = source;
     }
 
-    public DamageSource getSource()
-    {
+    public DamageSource getSource() {
         return source;
     }
 }

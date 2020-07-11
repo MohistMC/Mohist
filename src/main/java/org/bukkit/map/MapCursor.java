@@ -11,11 +11,11 @@ public final class MapCursor {
     /**
      * Initialize the map cursor.
      *
-     * @param x The x coordinate, from -128 to 127.
-     * @param y The y coordinate, from -128 to 127.
+     * @param x         The x coordinate, from -128 to 127.
+     * @param y         The y coordinate, from -128 to 127.
      * @param direction The facing of the cursor, from 0 to 15.
-     * @param type The type (color/style) of the map cursor.
-     * @param visible Whether the cursor is visible by default.
+     * @param type      The type (color/style) of the map cursor.
+     * @param visible   Whether the cursor is visible by default.
      * @deprecated Magic value
      */
 
@@ -30,11 +30,11 @@ public final class MapCursor {
     /**
      * Initialize the map cursor.
      *
-     * @param x The x coordinate, from -128 to 127.
-     * @param y The y coordinate, from -128 to 127.
+     * @param x         The x coordinate, from -128 to 127.
+     * @param y         The y coordinate, from -128 to 127.
      * @param direction The facing of the cursor, from 0 to 15.
-     * @param type The type (color/style) of the map cursor.
-     * @param visible Whether the cursor is visible by default.
+     * @param type      The type (color/style) of the map cursor.
+     * @param visible   Whether the cursor is visible by default.
      */
     public MapCursor(byte x, byte y, byte direction, Type type, boolean visible) {
         this.x = x;
@@ -179,14 +179,13 @@ public final class MapCursor {
         MANSION(8),
         TEMPLE(9);
 
-        private byte value;
+        private final byte value;
 
-        private Type(int value) {
+        Type(int value) {
             this.value = (byte) value;
         }
 
         /**
-         *
          * @param value the value
          * @return the matching type
          * @deprecated Magic value
@@ -202,7 +201,6 @@ public final class MapCursor {
         }
 
         /**
-         *
          * @return the value
          * @deprecated Magic value
          */

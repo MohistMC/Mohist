@@ -1,13 +1,14 @@
 package org.bukkit.command.defaults;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import red.mohist.util.i18n.Message;
+
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 public class ReloadCommand extends BukkitCommand {
     public ReloadCommand(String name) {

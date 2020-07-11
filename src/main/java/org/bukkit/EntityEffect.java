@@ -1,22 +1,9 @@
 package org.bukkit;
 
 import com.google.common.collect.Maps;
+import org.bukkit.entity.*;
+
 import java.util.Map;
-import org.bukkit.entity.Ageable;
-import org.bukkit.entity.ArmorStand;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.Firework;
-import org.bukkit.entity.Guardian;
-import org.bukkit.entity.IronGolem;
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Rabbit;
-import org.bukkit.entity.Squid;
-import org.bukkit.entity.Tameable;
-import org.bukkit.entity.TippedArrow;
-import org.bukkit.entity.Villager;
-import org.bukkit.entity.Witch;
-import org.bukkit.entity.Wolf;
-import org.bukkit.entity.ZombieVillager;
 
 /**
  * A list of all Effects that can happen to entities.
@@ -169,7 +156,7 @@ public enum EntityEffect {
      *
      * @param data Data value to fetch
      * @return The {@link EntityEffect} representing the given value, or null
-     *     if it doesn't exist
+     * if it doesn't exist
      * @deprecated Magic value
      */
 

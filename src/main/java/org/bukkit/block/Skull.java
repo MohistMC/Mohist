@@ -13,7 +13,7 @@ public interface Skull extends BlockState {
      *
      * @return true if the skull has an owner
      */
-    public boolean hasOwner();
+    boolean hasOwner();
 
     /**
      * Gets the owner of the skull, if one exists
@@ -22,7 +22,7 @@ public interface Skull extends BlockState {
      * @deprecated See {@link #getOwningPlayer()}.
      */
     @Deprecated
-    public String getOwner();
+    String getOwner();
 
     /**
      * Sets the owner of the skull
@@ -35,7 +35,7 @@ public interface Skull extends BlockState {
      * @deprecated see {@link #setOwningPlayer(org.bukkit.OfflinePlayer)}.
      */
     @Deprecated
-    public boolean setOwner(String name);
+    boolean setOwner(String name);
 
     /**
      * Get the player which owns the skull. This player may appear as the
@@ -43,7 +43,7 @@ public interface Skull extends BlockState {
      *
      * @return owning player
      */
-    public OfflinePlayer getOwningPlayer();
+    OfflinePlayer getOwningPlayer();
 
     /**
      * Set the player which owns the skull. This player may appear as the
@@ -51,33 +51,33 @@ public interface Skull extends BlockState {
      *
      * @param player the owning player
      */
-    public void setOwningPlayer(OfflinePlayer player);
+    void setOwningPlayer(OfflinePlayer player);
 
     /**
      * Gets the rotation of the skull in the world
      *
      * @return the rotation of the skull
      */
-    public BlockFace getRotation();
+    BlockFace getRotation();
 
     /**
      * Sets the rotation of the skull in the world
      *
      * @param rotation the rotation of the skull
      */
-    public void setRotation(BlockFace rotation);
+    void setRotation(BlockFace rotation);
 
     /**
      * Gets the type of skull
      *
      * @return the type of skull
      */
-    public SkullType getSkullType();
+    SkullType getSkullType();
 
     /**
      * Sets the type of skull
      *
      * @param skullType the type of skull
      */
-    public void setSkullType(SkullType skullType);
+    void setSkullType(SkullType skullType);
 }

@@ -27,15 +27,12 @@ import org.jline.reader.LineReaderBuilder;
 import org.jline.reader.UserInterruptException;
 import org.jline.terminal.Terminal;
 
-public final class TerminalHandler
-{
+public final class TerminalHandler {
 
-    private TerminalHandler()
-    {
+    private TerminalHandler() {
     }
 
-    public static boolean handleCommands(DedicatedServer server)
-    {
+    public static boolean handleCommands(DedicatedServer server) {
         final Terminal terminal = TerminalConsoleAppender.getTerminal();
         if (terminal == null)
             return false;
@@ -50,17 +47,12 @@ public final class TerminalHandler
 
         TerminalConsoleAppender.setReader(reader);
 
-        try
-        {
+        try {
             String line;
-            while (!server.isServerStopped() && server.isServerRunning())
-            {
-                try
-                {
+            while (!server.isServerStopped() && server.isServerRunning()) {
+                try {
                     line = reader.readLine("> ");
-                }
-                catch (EndOfFileException ignored)
-                {
+                } catch (EndOfFileException ignored) {
                     // Continue reading after EOT
                     continue;
                 }
@@ -69,18 +61,13 @@ public final class TerminalHandler
                     break;
 
                 line = line.trim();
-                if (!line.isEmpty())
-                {
+                if (!line.isEmpty()) {
                     server.addPendingCommand(line, server);
                 }
             }
-        }
-        catch (UserInterruptException e)
-        {
+        } catch (UserInterruptException e) {
             server.initiateShutdown();
-        }
-        finally
-        {
+        } finally {
             TerminalConsoleAppender.setReader(null);
         }
 

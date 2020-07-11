@@ -14,12 +14,17 @@ import org.jetbrains.annotations.NotNull;
  */
 public class LlamaJoinCaravanEvent extends EntityEvent implements Cancellable {
     private static final HandlerList handlers = new HandlerList();
-    private boolean canceled;
     private final Llama head;
+    private boolean canceled;
 
     public LlamaJoinCaravanEvent(@NotNull Llama llama, @NotNull Llama head) {
         super(llama);
         this.head = head;
+    }
+
+    @NotNull
+    public static HandlerList getHandlerList() {
+        return handlers;
     }
 
     @Override
@@ -51,11 +56,6 @@ public class LlamaJoinCaravanEvent extends EntityEvent implements Cancellable {
     @Override
     @NotNull
     public HandlerList getHandlers() {
-        return handlers;
-    }
-
-    @NotNull
-    public static HandlerList getHandlerList() {
         return handlers;
     }
 }

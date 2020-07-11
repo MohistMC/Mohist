@@ -10,7 +10,7 @@ public interface ChestedHorse extends AbstractHorse {
      *
      * @return true if the horse has chest storage
      */
-    public boolean isCarryingChest();
+    boolean isCarryingChest();
 
     /**
      * Sets whether the horse has a chest equipped. Removing a chest will also
@@ -18,5 +18,5 @@ public interface ChestedHorse extends AbstractHorse {
      *
      * @param chest true if the horse should have a chest
      */
-    public void setCarryingChest(boolean chest);
+    void setCarryingChest(boolean chest);
 }

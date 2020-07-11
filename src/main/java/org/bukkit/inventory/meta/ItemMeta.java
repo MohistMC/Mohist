@@ -1,11 +1,12 @@
 package org.bukkit.inventory.meta;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemFlag;
+
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * This type represents the storage mechanism for auxiliary item data.
@@ -81,7 +82,7 @@ public interface ItemMeta extends Cloneable, ConfigurationSerializable {
     List<String> getLore();
 
     /**
-     * Sets the lore for this item. 
+     * Sets the lore for this item.
      * Removes lore when given null.
      *
      * @param lore the lore that will be set
@@ -112,7 +113,7 @@ public interface ItemMeta extends Cloneable, ConfigurationSerializable {
     int getEnchantLevel(Enchantment ench);
 
     /**
-     * Returns a copy the enchantments in this ItemMeta. <br> 
+     * Returns a copy the enchantments in this ItemMeta. <br>
      * Returns an empty map if none.
      *
      * @return An immutable copy of the enchantments
@@ -122,12 +123,12 @@ public interface ItemMeta extends Cloneable, ConfigurationSerializable {
     /**
      * Adds the specified enchantment to this item meta.
      *
-     * @param ench Enchantment to add
-     * @param level Level for the enchantment
+     * @param ench                   Enchantment to add
+     * @param level                  Level for the enchantment
      * @param ignoreLevelRestriction this indicates the enchantment should be
-     *     applied, ignoring the level limit
+     *                               applied, ignoring the level limit
      * @return true if the item meta changed as a result of this call, false
-     *     otherwise
+     * otherwise
      */
     boolean addEnchant(Enchantment ench, int level, boolean ignoreLevelRestriction);
 
@@ -136,7 +137,7 @@ public interface ItemMeta extends Cloneable, ConfigurationSerializable {
      *
      * @param ench Enchantment to remove
      * @return true if the item meta changed as a result of this call, false
-     *     otherwise
+     * otherwise
      */
     boolean removeEnchant(Enchantment ench);
 
@@ -199,7 +200,7 @@ public interface ItemMeta extends Cloneable, ConfigurationSerializable {
     Spigot spigot();
 
     // Spigot start
-    public class Spigot {
+    class Spigot {
         /**
          * Return if the unbreakable tag is true
          *

@@ -8,7 +8,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * This enum holds a list of all known {@link LootTable}s offered by Mojang.
  * This list is not guaranteed to be accurate in future versions.
- *
+ * <p>
  * See the
  * <a href="https://minecraft.gamepedia.com/Loot_table#List_of_loot_tables">
  * Minecraft Wiki</a> for more information on loot tables.
@@ -160,7 +160,7 @@ public enum LootTables implements Keyed {
 
     private final String location;
 
-    private LootTables(/*@NotNull*/ String location) {
+    LootTables(/*@NotNull*/ String location) {
         this.location = location;
     }
 

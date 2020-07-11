@@ -1,6 +1,7 @@
 package org.bukkit;
 
 import com.google.common.collect.Maps;
+
 import java.util.Map;
 
 public enum Instrument {
@@ -61,7 +62,7 @@ public enum Instrument {
 
     private final byte type;
 
-    private Instrument(final int type) {
+    Instrument(final int type) {
         this.type = (byte) type;
     }
 

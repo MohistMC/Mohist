@@ -3,10 +3,11 @@ package org.bukkit.entity;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.LinkedListMultimap;
 import com.google.common.collect.Multimap;
-import java.util.List;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.Merchant;
+
+import java.util.List;
 
 /**
  * Represents a villager NPC
@@ -18,21 +19,21 @@ public interface Villager extends Ageable, NPC, InventoryHolder, Merchant {
      *
      * @return Current profession.
      */
-    public Profession getProfession();
+    Profession getProfession();
 
     /**
      * Sets the new profession of this villager.
      *
      * @param profession New profession.
      */
-    public void setProfession(Profession profession);
+    void setProfession(Profession profession);
 
     /**
      * Get the current {@link Career} for this Villager.
      *
      * @return the {@link Career}
      */
-    public Career getCareer();
+    Career getCareer();
 
     /**
      * Set the new {@link Career} for this Villager.
@@ -40,27 +41,27 @@ public interface Villager extends Ageable, NPC, InventoryHolder, Merchant {
      *
      * @param career the new career, or null to clear the career to a random one
      * @throws IllegalArgumentException when the new {@link Career} cannot be
-     * used with this Villager's current {@link Profession}.
+     *                                  used with this Villager's current {@link Profession}.
      */
-    public void setCareer(Career career);
+    void setCareer(Career career);
 
     /**
      * Set the new {@link Career} for this Villager.
      *
-     * @param career the new career, or null to clear the career to a random one
+     * @param career      the new career, or null to clear the career to a random one
      * @param resetTrades true to reset this Villager's trades to the new
-     * career's (if any)
+     *                    career's (if any)
      * @throws IllegalArgumentException when the new {@link Career} cannot be
-     * used with this Villager's current {@link Profession}.
+     *                                  used with this Villager's current {@link Profession}.
      */
-    public void setCareer(Career career, boolean resetTrades);
+    void setCareer(Career career, boolean resetTrades);
 
     /**
      * Gets this villager's inventory.
      * <br>
      * Note that this inventory is not the Merchant inventory, rather, it is the
      * items that a villager might have collected (from harvesting crops, etc.)
-     *
+     * <p>
      * {@inheritDoc}
      */
     @Override
@@ -77,9 +78,8 @@ public interface Villager extends Ageable, NPC, InventoryHolder, Merchant {
     /**
      * Sets this villager's riches.
      *
-     * @see Villager#getRiches()
-     *
      * @param riches the new riches
+     * @see Villager#getRiches()
      */
     void setRiches(int riches);
 
@@ -87,9 +87,10 @@ public interface Villager extends Ageable, NPC, InventoryHolder, Merchant {
      * Represents the various different Villager professions there may be.
      * Villagers have different trading options depending on their profession,
      */
-    public enum Profession {
+    enum Profession {
         /**
          * Normal. <b>Reserved for Zombies.</b>
+         *
          * @deprecated Unused
          */
         @Deprecated
@@ -120,13 +121,14 @@ public interface Villager extends Ageable, NPC, InventoryHolder, Merchant {
         NITWIT(false),
         /**
          * Husk. <b>Reserved for Zombies</b>
+         *
          * @deprecated Unused
          */
         @Deprecated
         HUSK(true);
         private final boolean zombie;
 
-        private Profession(boolean zombie) {
+        Profession(boolean zombie) {
             this.zombie = zombie;
         }
 
@@ -157,7 +159,7 @@ public interface Villager extends Ageable, NPC, InventoryHolder, Merchant {
      * Each {@link Profession} has a set of careers it is applicable to. Each
      * career dictates the trading options that are generated.
      */
-    public enum Career {
+    enum Career {
         /*
         NOTE: The Career entries are order-specific. They should be maintained in the numerical order they are used in the CB implementation.
         (e.g. Farmer careers are 1,2,3,4 so Career should reflect that numerical order in their ordinal status)
@@ -237,7 +239,7 @@ public interface Villager extends Ageable, NPC, InventoryHolder, Merchant {
 
         private final Profession profession;
 
-        private Career(Profession profession) {
+        Career(Profession profession) {
             this.profession = profession;
         }
 
@@ -250,7 +252,7 @@ public interface Villager extends Ageable, NPC, InventoryHolder, Merchant {
          * profession, or an empty map if the profession was not found
          */
         public static List<Career> getCareers(Profession profession) {
-            return careerMap.containsKey(profession) ? ImmutableList.copyOf(careerMap.get(profession)) : ImmutableList.<Career>of();
+            return careerMap.containsKey(profession) ? ImmutableList.copyOf(careerMap.get(profession)) : ImmutableList.of();
         }
 
         /**

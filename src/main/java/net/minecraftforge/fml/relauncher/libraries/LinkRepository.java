@@ -19,48 +19,37 @@
 
 package net.minecraftforge.fml.relauncher.libraries;
 
-import java.io.File;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 import net.minecraftforge.fml.common.FMLLog;
 
-public class LinkRepository extends Repository
-{
-    private Map<String, File> artifact_to_file = new HashMap<>();
-    private Map<String, File> filesystem = new HashMap<>();
-    private Map<String, Artifact> snapshots = new HashMap<>();
-    private Set<File> known = new HashSet<>();
+import java.io.File;
+import java.util.*;
 
-    LinkRepository(File root)
-    {
+public class LinkRepository extends Repository {
+    private final Map<String, File> artifact_to_file = new HashMap<>();
+    private final Map<String, File> filesystem = new HashMap<>();
+    private final Map<String, Artifact> snapshots = new HashMap<>();
+    private final Set<File> known = new HashSet<>();
+
+    LinkRepository(File root) {
         super(root, "MEMORY");
     }
 
-    public File archive(Artifact artifact, File file, byte[] manifest)
-    {
+    public File archive(Artifact artifact, File file, byte[] manifest) {
         String key = artifact.toString();
         known.add(file);
-        if (artifact_to_file.containsKey(key))
-        {
+        if (artifact_to_file.containsKey(key)) {
             FMLLog.log.debug("Maven file already exists for {}({}) at {}, ignoring duplicate.", file.getName(), artifact.toString(), artifact_to_file.get(key).getAbsolutePath());
 
-            if (artifact.isSnapshot())
-            {
+            if (artifact.isSnapshot()) {
                 Artifact old = snapshots.get(key);
-                if (old == null || old.compareVersion(artifact) < 0)
-                {
+                if (old == null || old.compareVersion(artifact) < 0) {
                     FMLLog.log.debug("Overriding Snapshot {} -> {}", old == null ? "null" : old.getTimestamp(), artifact.getTimestamp());
                     snapshots.put(key, artifact);
                     artifact_to_file.put(key, file);
                     filesystem.put(artifact.getPath(), file);
                 }
             }
-        }
-        else
-        {
+        } else {
             FMLLog.log.debug("Making maven link for {} in memory to {}.", key, file.getAbsolutePath());
             artifact_to_file.put(key, file);
             filesystem.put(artifact.getPath(), file);
@@ -80,13 +69,11 @@ public class LinkRepository extends Repository
     }
 
     @Override
-    public void filterLegacy(List<File> list)
-    {
+    public void filterLegacy(List<File> list) {
         list.removeIf(e -> known.contains(e));
     }
 
-    public Artifact resolve(Artifact artifact)
-    {
+    public Artifact resolve(Artifact artifact) {
         String key = artifact.toString();
         File file = artifact_to_file.get(key);
         if (file == null || !file.exists())
@@ -95,8 +82,7 @@ public class LinkRepository extends Repository
     }
 
     @Override
-    public File getFile(String path)
-    {
+    public File getFile(String path) {
         return filesystem.containsKey(path) ? filesystem.get(path) : super.getFile(path);
     }
 }

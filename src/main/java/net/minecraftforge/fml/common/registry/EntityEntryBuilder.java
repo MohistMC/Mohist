@@ -19,18 +19,6 @@
 
 package net.minecraftforge.fml.common.registry;
 
-import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Preconditions.checkNotNull;
-import static com.google.common.base.Preconditions.checkState;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-import java.util.function.Function;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityList;
 import net.minecraft.entity.EntityLiving;
@@ -45,19 +33,34 @@ import net.minecraftforge.fml.common.ModContainer;
 import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 import net.minecraftforge.fml.relauncher.ReflectionHelper.UnknownConstructorException;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
+import java.util.function.Function;
+
+import static com.google.common.base.Preconditions.*;
+
 /**
  * An entity registry entry builder.
  *
  * @param <E> The entity type
  */
-public final class EntityEntryBuilder<E extends Entity>
-{
+public final class EntityEntryBuilder<E extends Entity> {
     private final ModContainer mod;
-    @Nullable private Class<? extends E> entity;
-    @Nullable private Function<World, E> factory;
-    @Nullable private ResourceLocation id;
+    @Nullable
+    private Class<? extends E> entity;
+    @Nullable
+    private Function<World, E> factory;
+    @Nullable
+    private ResourceLocation id;
     private int network;
-    @Nullable private String name;
+    @Nullable
+    private String name;
     private int trackingRange;
     private int trackingUpdateFrequency;
     private boolean trackingVelocityUpdates;
@@ -65,9 +68,16 @@ public final class EntityEntryBuilder<E extends Entity>
     private int primaryEggColor;
     private int secondaryEggColor;
     private boolean statisticsRegistered;
-    @Nullable private StatBase killEntityStatistic;
-    @Nullable private StatBase entityKilledByStatistic;
-    @Nullable private Collection<Spawn> spawns;
+    @Nullable
+    private StatBase killEntityStatistic;
+    @Nullable
+    private StatBase entityKilledByStatistic;
+    @Nullable
+    private Collection<Spawn> spawns;
+
+    private EntityEntryBuilder() {
+        this.mod = Loader.instance().activeModContainer();
+    }
 
     /**
      * Creates a new entity entry builder.
@@ -76,14 +86,8 @@ public final class EntityEntryBuilder<E extends Entity>
      * @return A new entity entry builder
      */
     @Nonnull
-    public static <E extends Entity> EntityEntryBuilder<E> create()
-    {
+    public static <E extends Entity> EntityEntryBuilder<E> create() {
         return new EntityEntryBuilder<>();
-    }
-
-    private EntityEntryBuilder()
-    {
-        this.mod = Loader.instance().activeModContainer();
     }
 
     /**
@@ -97,8 +101,7 @@ public final class EntityEntryBuilder<E extends Entity>
      * @throws NullPointerException If {@code entity} is {@code null}
      */
     @Nonnull
-    public final EntityEntryBuilder<E> entity(@Nonnull final Class<? extends E> entity)
-    {
+    public final EntityEntryBuilder<E> entity(@Nonnull final Class<? extends E> entity) {
         this.entity = checkNotNull(entity, "entity class");
         return this;
     }
@@ -111,8 +114,7 @@ public final class EntityEntryBuilder<E extends Entity>
      * @throws NullPointerException If {@code entity} is {@code null}
      */
     @Nonnull
-    public final EntityEntryBuilder<E> factory(@Nonnull final Function<World, E> factory)
-    {
+    public final EntityEntryBuilder<E> factory(@Nonnull final Function<World, E> factory) {
         this.factory = checkNotNull(factory, "entity factory");
         return this;
     }
@@ -120,14 +122,13 @@ public final class EntityEntryBuilder<E extends Entity>
     /**
      * Sets the id of the entity.
      *
-     * @param id The entity id
+     * @param id      The entity id
      * @param network The network id
      * @return This builder
      * @throws NullPointerException If {@code id} is {@code null}
      */
     @Nonnull
-    public final EntityEntryBuilder<E> id(@Nonnull final ResourceLocation id, final int network)
-    {
+    public final EntityEntryBuilder<E> id(@Nonnull final ResourceLocation id, final int network) {
         this.id = checkNotNull(id, "id");
         this.network = network;
         return this;
@@ -136,14 +137,13 @@ public final class EntityEntryBuilder<E extends Entity>
     /**
      * Sets the id of the entity.
      *
-     * @param id The entity id
+     * @param id      The entity id
      * @param network The network id
      * @return This builder
      * @throws NullPointerException If {@code id} is {@code null}
      */
     @Nonnull
-    public final EntityEntryBuilder<E> id(@Nonnull final String id, final int network)
-    {
+    public final EntityEntryBuilder<E> id(@Nonnull final String id, final int network) {
         checkNotNull(id, "id");
         return this.id(new ResourceLocation(id.indexOf(':') == -1 ? this.mod.getModId() + ':' + id : id), network);
     }
@@ -156,8 +156,7 @@ public final class EntityEntryBuilder<E extends Entity>
      * @throws NullPointerException If {@code name} is {@code null}
      */
     @Nonnull
-    public final EntityEntryBuilder<E> name(@Nonnull final String name)
-    {
+    public final EntityEntryBuilder<E> name(@Nonnull final String name) {
         this.name = checkNotNull(name, "name");
         return this;
     }
@@ -165,14 +164,13 @@ public final class EntityEntryBuilder<E extends Entity>
     /**
      * Sets entity tracking information.
      *
-     * @param range The tracking range
-     * @param updateFrequency The tracking update frequency
+     * @param range               The tracking range
+     * @param updateFrequency     The tracking update frequency
      * @param sendVelocityUpdates If the entity should send velocity updates
      * @return This builder
      */
     @Nonnull
-    public final EntityEntryBuilder<E> tracker(final int range, final int updateFrequency, final boolean sendVelocityUpdates)
-    {
+    public final EntityEntryBuilder<E> tracker(final int range, final int updateFrequency, final boolean sendVelocityUpdates) {
         this.trackingRange = range;
         this.trackingUpdateFrequency = updateFrequency;
         this.trackingVelocityUpdates = sendVelocityUpdates;
@@ -182,19 +180,18 @@ public final class EntityEntryBuilder<E extends Entity>
     /**
      * Adds a spawn entry.
      *
-     * @param type The creature type
+     * @param type   The creature type
      * @param weight The spawn entry weight
-     * @param min The minimum spawn count
-     * @param max The maximum spawn count
+     * @param min    The minimum spawn count
+     * @param max    The maximum spawn count
      * @param biomes The biomes to add an entry in
      * @return This builder
      * @throws IllegalArgumentException If the entity is not a {@link EntityLiving}
-     * @throws NullPointerException If {@code type} is {@code null}
-     * @throws NullPointerException If {@code biomes} is {@code null}
+     * @throws NullPointerException     If {@code type} is {@code null}
+     * @throws NullPointerException     If {@code biomes} is {@code null}
      */
     @Nonnull
-    public final EntityEntryBuilder<E> spawn(@Nonnull final EnumCreatureType type, final int weight, final int min, final int max, @Nonnull final Biome... biomes)
-    {
+    public final EntityEntryBuilder<E> spawn(@Nonnull final EnumCreatureType type, final int weight, final int min, final int max, @Nonnull final Biome... biomes) {
         checkNotNull(biomes, "biomes");
         return this.spawn(type, weight, min, max, Arrays.asList(biomes));
     }
@@ -202,22 +199,22 @@ public final class EntityEntryBuilder<E extends Entity>
     /**
      * Adds a spawn entry.
      *
-     * @param type The creature type
+     * @param type   The creature type
      * @param weight The spawn entry weight
-     * @param min The minimum spawn count
-     * @param max The maximum spawn count
+     * @param min    The minimum spawn count
+     * @param max    The maximum spawn count
      * @param biomes The biomes to add an entry in
      * @return This builder
      * @throws IllegalArgumentException If the entity is not a {@link EntityLiving}
-     * @throws NullPointerException If {@code type} is {@code null}
-     * @throws NullPointerException If {@code biomes} is {@code null}
+     * @throws NullPointerException     If {@code type} is {@code null}
+     * @throws NullPointerException     If {@code biomes} is {@code null}
      */
     @Nonnull
-    public final EntityEntryBuilder<E> spawn(@Nonnull final EnumCreatureType type, final int weight, final int min, final int max, @Nonnull final Iterable<Biome> biomes)
-    {
+    public final EntityEntryBuilder<E> spawn(@Nonnull final EnumCreatureType type, final int weight, final int min, final int max, @Nonnull final Iterable<Biome> biomes) {
         checkNotNull(type, "type");
         checkNotNull(biomes, "biomes");
-        if (this.entity != null) checkArgument(EntityLiving.class.isAssignableFrom(this.entity), "Cannot add spawns to a non-%s", EntityLiving.class.getSimpleName());
+        if (this.entity != null)
+            checkArgument(EntityLiving.class.isAssignableFrom(this.entity), "Cannot add spawns to a non-%s", EntityLiving.class.getSimpleName());
         if (this.spawns == null) this.spawns = new ArrayList<>();
         this.spawns.add(new Spawn(type, weight, min, max, biomes));
         return this;
@@ -226,13 +223,12 @@ public final class EntityEntryBuilder<E extends Entity>
     /**
      * Sets the egg of the entity.
      *
-     * @param primaryColor the primary egg color
+     * @param primaryColor   the primary egg color
      * @param secondaryColor the secondary egg color
      * @return This builder
      */
     @Nonnull
-    public final EntityEntryBuilder<E> egg(final int primaryColor, final int secondaryColor)
-    {
+    public final EntityEntryBuilder<E> egg(final int primaryColor, final int secondaryColor) {
         this.eggProvided = true;
         this.primaryEggColor = primaryColor;
         this.secondaryEggColor = secondaryColor;
@@ -243,20 +239,20 @@ public final class EntityEntryBuilder<E extends Entity>
      * Create an entity entry based on the data in this builder.
      *
      * @return The entity entry
-     * @throws IllegalStateException If the entity class has not been provided
-     * @throws IllegalStateException If the entity id has not been provided
-     * @throws IllegalStateException If the entity name has not been provided
-     * @throws IllegalStateException If spawns have been provided for a non {@link EntityLiving}
+     * @throws IllegalStateException       If the entity class has not been provided
+     * @throws IllegalStateException       If the entity id has not been provided
+     * @throws IllegalStateException       If the entity name has not been provided
+     * @throws IllegalStateException       If spawns have been provided for a non {@link EntityLiving}
      * @throws UnknownConstructorException If a {@link #factory} has not been provided
-     *     and {@link #entity} does not have a constructor accepting {@link World}
+     *                                     and {@link #entity} does not have a constructor accepting {@link World}
      */
     @Nonnull
-    public EntityEntry build()
-    {
+    public EntityEntry build() {
         checkState(this.entity != null, "entity class not provided");
         checkState(this.id != null, "entity id not provided");
         checkState(this.name != null, "entity name not provided");
-        if (this.spawns != null) checkState(EntityLiving.class.isAssignableFrom(EntityEntryBuilder.this.entity), "Cannot add spawns to a non-%s", EntityLiving.class.getSimpleName());
+        if (this.spawns != null)
+            checkState(EntityLiving.class.isAssignableFrom(EntityEntryBuilder.this.entity), "Cannot add spawns to a non-%s", EntityLiving.class.getSimpleName());
         final BuiltEntityEntry entry = new BuiltEntityEntry(this.entity, this.name);
         entry.factory = this.factory != null ? this.factory : new ConstructorFactory<E>(this.entity) {
             @Override
@@ -265,8 +261,7 @@ public final class EntityEntryBuilder<E extends Entity>
             }
         };
         entry.setRegistryName(this.id);
-        if (this.eggProvided)
-        {
+        if (this.eggProvided) {
             this.killEntityStatistic = new StatBase("stat.killEntity." + this.name, new TextComponentTranslation("stat.entityKill", new TextComponentTranslation("entity." + this.name + ".name")));
             this.entityKilledByStatistic = new StatBase("stat.entityKilledBy." + this.name, new TextComponentTranslation("stat.entityKilledBy", new TextComponentTranslation("entity." + this.name + ".name")));
             entry.setEgg(new EntityList.EntityEggInfo(this.id, this.primaryEggColor, this.secondaryEggColor, this.killEntityStatistic, this.entityKilledByStatistic));
@@ -274,34 +269,26 @@ public final class EntityEntryBuilder<E extends Entity>
         return entry;
     }
 
-    private void registerStatistics()
-    {
-        if (!this.statisticsRegistered && (this.killEntityStatistic != null && this.entityKilledByStatistic != null))
-        {
+    private void registerStatistics() {
+        if (!this.statisticsRegistered && (this.killEntityStatistic != null && this.entityKilledByStatistic != null)) {
             this.killEntityStatistic.registerStat();
             this.entityKilledByStatistic.registerStat();
             this.statisticsRegistered = true;
         }
     }
 
-    static abstract class ConstructorFactory<E extends Entity> implements Function<World, E>
-    {
+    static abstract class ConstructorFactory<E extends Entity> implements Function<World, E> {
         private final Constructor<? extends E> constructor;
 
-        ConstructorFactory(final Class<? extends E> entity)
-        {
+        ConstructorFactory(final Class<? extends E> entity) {
             this.constructor = ObfuscationReflectionHelper.findConstructor(entity, World.class);
         }
 
         @Override
-        public E apply(final World world)
-        {
-            try
-            {
+        public E apply(final World world) {
+            try {
                 return this.constructor.newInstance(world);
-            }
-            catch (final IllegalAccessException | InstantiationException | InvocationTargetException e)
-            {
+            } catch (final IllegalAccessException | InstantiationException | InvocationTargetException e) {
                 //FMLLog.log.error("Encountered an exception while constructing entity '{}'", this.describeEntity(), e);
                 return null;
             }
@@ -310,12 +297,10 @@ public final class EntityEntryBuilder<E extends Entity>
         protected abstract String describeEntity();
     }
 
-    public final class BuiltEntityEntry extends EntityEntry
-    {
+    public final class BuiltEntityEntry extends EntityEntry {
         private boolean added;
 
-        BuiltEntityEntry(final Class<? extends Entity> cls, final String name)
-        {
+        BuiltEntityEntry(final Class<? extends Entity> cls, final String name) {
             super(cls, name);
         }
 
@@ -324,16 +309,13 @@ public final class EntityEntryBuilder<E extends Entity>
             // NOOP - we handle this in build
         }
 
-        public final void addedToRegistry()
-        {
+        public final void addedToRegistry() {
             if (this.added) return;
             this.added = true;
             EntityEntryBuilder.this.registerStatistics();
             EntityRegistry.instance().insert(EntityEntryBuilder.this.entity, createRegistration());
-            if (EntityEntryBuilder.this.spawns != null)
-            {
-                for (final Spawn spawn : EntityEntryBuilder.this.spawns)
-                {
+            if (EntityEntryBuilder.this.spawns != null) {
+                for (final Spawn spawn : EntityEntryBuilder.this.spawns) {
                     spawn.insert();
                 }
                 EntityEntryBuilder.this.spawns = null;
@@ -341,27 +323,24 @@ public final class EntityEntryBuilder<E extends Entity>
         }
 
         @Nonnull
-        private EntityRegistry.EntityRegistration createRegistration()
-        {
+        private EntityRegistry.EntityRegistration createRegistration() {
             EntityEntryBuilder<E> builder = EntityEntryBuilder.this;
             return EntityRegistry.instance().new EntityRegistration(
-                builder.mod, builder.id, builder.entity, builder.name, builder.network,
-                builder.trackingRange, builder.trackingUpdateFrequency, builder.trackingVelocityUpdates, this.factory
+                    builder.mod, builder.id, builder.entity, builder.name, builder.network,
+                    builder.trackingRange, builder.trackingUpdateFrequency, builder.trackingVelocityUpdates, this.factory
             );
         }
 
     }
 
-    public final class Spawn
-    {
+    public final class Spawn {
         private final EnumCreatureType type;
         private final int weight;
         private final int min;
         private final int max;
         private final Iterable<Biome> biomes;
 
-        public Spawn(final EnumCreatureType type, final int weight, final int min, final int max, final Iterable<Biome> biomes)
-        {
+        public Spawn(final EnumCreatureType type, final int weight, final int min, final int max, final Iterable<Biome> biomes) {
             this.type = type;
             this.weight = weight;
             this.min = min;
@@ -370,8 +349,7 @@ public final class EntityEntryBuilder<E extends Entity>
         }
 
         @SuppressWarnings("unchecked")
-        final void insert()
-        {
+        final void insert() {
             for (final Biome biome : this.biomes) {
                 final List<Biome.SpawnListEntry> entries = biome.getSpawnableList(this.type);
                 boolean found = false;
@@ -384,7 +362,8 @@ public final class EntityEntryBuilder<E extends Entity>
                         break;
                     }
                 }
-                if (!found) entries.add(new Biome.SpawnListEntry((Class<? extends EntityLiving>) EntityEntryBuilder.this.entity, this.weight, this.min, this.max));
+                if (!found)
+                    entries.add(new Biome.SpawnListEntry((Class<? extends EntityLiving>) EntityEntryBuilder.this.entity, this.weight, this.min, this.max));
             }
         }
     }

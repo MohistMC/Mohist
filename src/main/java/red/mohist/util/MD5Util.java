@@ -29,7 +29,7 @@ public class MD5Util {
         int nread = 0;
         while ((nread = is.read(dataBytes)) != -1) {
             md.update(dataBytes, 0, nread);
-        };
+        }
         byte[] mdbytes = md.digest();
 
         // convert the byte to hex format

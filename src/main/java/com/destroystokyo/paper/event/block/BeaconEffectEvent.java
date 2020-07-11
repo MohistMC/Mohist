@@ -14,8 +14,8 @@ public class BeaconEffectEvent extends BlockEvent implements Cancellable {
     private static final HandlerList handlers = new HandlerList();
     private boolean cancelled;
     private PotionEffect effect;
-    private Player player;
-    private boolean primary;
+    private final Player player;
+    private final boolean primary;
 
     public BeaconEffectEvent(Block block, PotionEffect effect, Player player, boolean primary) {
         super(block);

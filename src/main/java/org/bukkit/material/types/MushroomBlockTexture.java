@@ -1,8 +1,9 @@
 package org.bukkit.material.types;
 
 import com.google.common.collect.Maps;
-import java.util.Map;
 import org.bukkit.block.BlockFace;
+
+import java.util.Map;
 
 /**
  * Represents the different textured blocks of mushroom.
@@ -75,7 +76,7 @@ public enum MushroomBlockTexture {
     private final Byte data;
     private final BlockFace capFace;
 
-    private MushroomBlockTexture(final int data, final BlockFace capFace) {
+    MushroomBlockTexture(final int data, final BlockFace capFace) {
         this.data = (byte) data;
         this.capFace = capFace;
     }
@@ -98,7 +99,6 @@ public enum MushroomBlockTexture {
      * @param face the required block face with cap texture
      * @return The {@link MushroomBlockTexture} representing the given block
      * face, or null if it doesn't exist
-     *
      * @see BlockFace
      */
     public static MushroomBlockTexture getCapByFace(final BlockFace face) {

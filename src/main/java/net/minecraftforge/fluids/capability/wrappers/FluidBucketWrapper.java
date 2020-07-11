@@ -19,8 +19,6 @@
 
 package net.minecraftforge.fluids.capability.wrappers;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBucketMilk;
@@ -38,59 +36,47 @@ import net.minecraftforge.fluids.capability.FluidTankProperties;
 import net.minecraftforge.fluids.capability.IFluidHandlerItem;
 import net.minecraftforge.fluids.capability.IFluidTankProperties;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 /**
  * Wrapper for vanilla and forge buckets.
  * Swaps between empty bucket and filled bucket of the correct type.
  */
-public class FluidBucketWrapper implements IFluidHandlerItem, ICapabilityProvider
-{
+public class FluidBucketWrapper implements IFluidHandlerItem, ICapabilityProvider {
     @Nonnull
     protected ItemStack container;
 
-    public FluidBucketWrapper(@Nonnull ItemStack container)
-    {
+    public FluidBucketWrapper(@Nonnull ItemStack container) {
         this.container = container;
     }
 
     @Nonnull
     @Override
-    public ItemStack getContainer()
-    {
+    public ItemStack getContainer() {
         return container;
     }
 
-    public boolean canFillFluidType(FluidStack fluidStack)
-    {
+    public boolean canFillFluidType(FluidStack fluidStack) {
         Fluid fluid = fluidStack.getFluid();
-        if (fluid == FluidRegistry.WATER || fluid == FluidRegistry.LAVA || fluid.getName().equals("milk"))
-        {
+        if (fluid == FluidRegistry.WATER || fluid == FluidRegistry.LAVA || fluid.getName().equals("milk")) {
             return true;
         }
         return FluidRegistry.isUniversalBucketEnabled() && FluidRegistry.hasBucket(fluid);
     }
 
     @Nullable
-    public FluidStack getFluid()
-    {
+    public FluidStack getFluid() {
         Item item = container.getItem();
-        if (item == Items.WATER_BUCKET)
-        {
+        if (item == Items.WATER_BUCKET) {
             return new FluidStack(FluidRegistry.WATER, Fluid.BUCKET_VOLUME);
-        }
-        else if (item == Items.LAVA_BUCKET)
-        {
+        } else if (item == Items.LAVA_BUCKET) {
             return new FluidStack(FluidRegistry.LAVA, Fluid.BUCKET_VOLUME);
-        }
-        else if (item == Items.MILK_BUCKET)
-        {
+        } else if (item == Items.MILK_BUCKET) {
             return FluidRegistry.getFluidStack("milk", Fluid.BUCKET_VOLUME);
-        }
-        else if (item == ForgeModContainer.getInstance().universalBucket)
-        {
+        } else if (item == ForgeModContainer.getInstance().universalBucket) {
             return ForgeModContainer.getInstance().universalBucket.getFluid(container);
-        }
-        else
-        {
+        } else {
             return null;
         }
     }
@@ -103,8 +89,7 @@ public class FluidBucketWrapper implements IFluidHandlerItem, ICapabilityProvide
         setFluid(new FluidStack(fluid, Fluid.BUCKET_VOLUME));
     }
 
-    protected void setFluid(@Nullable FluidStack fluidStack)
-    {
+    protected void setFluid(@Nullable FluidStack fluidStack) {
         if (fluidStack == null)
             container = new ItemStack(Items.BUCKET);
         else
@@ -112,21 +97,17 @@ public class FluidBucketWrapper implements IFluidHandlerItem, ICapabilityProvide
     }
 
     @Override
-    public IFluidTankProperties[] getTankProperties()
-    {
-        return new FluidTankProperties[] { new FluidTankProperties(getFluid(), Fluid.BUCKET_VOLUME) };
+    public IFluidTankProperties[] getTankProperties() {
+        return new FluidTankProperties[]{new FluidTankProperties(getFluid(), Fluid.BUCKET_VOLUME)};
     }
 
     @Override
-    public int fill(FluidStack resource, boolean doFill)
-    {
-        if (container.getCount() != 1 || resource == null || resource.amount < Fluid.BUCKET_VOLUME || container.getItem() instanceof ItemBucketMilk || getFluid() != null || !canFillFluidType(resource))
-        {
+    public int fill(FluidStack resource, boolean doFill) {
+        if (container.getCount() != 1 || resource == null || resource.amount < Fluid.BUCKET_VOLUME || container.getItem() instanceof ItemBucketMilk || getFluid() != null || !canFillFluidType(resource)) {
             return 0;
         }
 
-        if (doFill)
-        {
+        if (doFill) {
             setFluid(resource);
         }
 
@@ -135,18 +116,14 @@ public class FluidBucketWrapper implements IFluidHandlerItem, ICapabilityProvide
 
     @Nullable
     @Override
-    public FluidStack drain(FluidStack resource, boolean doDrain)
-    {
-        if (container.getCount() != 1 || resource == null || resource.amount < Fluid.BUCKET_VOLUME)
-        {
+    public FluidStack drain(FluidStack resource, boolean doDrain) {
+        if (container.getCount() != 1 || resource == null || resource.amount < Fluid.BUCKET_VOLUME) {
             return null;
         }
 
         FluidStack fluidStack = getFluid();
-        if (fluidStack != null && fluidStack.isFluidEqual(resource))
-        {
-            if (doDrain)
-            {
+        if (fluidStack != null && fluidStack.isFluidEqual(resource)) {
+            if (doDrain) {
                 setFluid((FluidStack) null);
             }
             return fluidStack;
@@ -157,18 +134,14 @@ public class FluidBucketWrapper implements IFluidHandlerItem, ICapabilityProvide
 
     @Nullable
     @Override
-    public FluidStack drain(int maxDrain, boolean doDrain)
-    {
-        if (container.getCount() != 1 || maxDrain < Fluid.BUCKET_VOLUME)
-        {
+    public FluidStack drain(int maxDrain, boolean doDrain) {
+        if (container.getCount() != 1 || maxDrain < Fluid.BUCKET_VOLUME) {
             return null;
         }
 
         FluidStack fluidStack = getFluid();
-        if (fluidStack != null)
-        {
-            if (doDrain)
-            {
+        if (fluidStack != null) {
+            if (doDrain) {
                 setFluid((FluidStack) null);
             }
             return fluidStack;
@@ -178,17 +151,14 @@ public class FluidBucketWrapper implements IFluidHandlerItem, ICapabilityProvide
     }
 
     @Override
-    public boolean hasCapability(@Nonnull Capability<?> capability, @Nullable EnumFacing facing)
-    {
+    public boolean hasCapability(@Nonnull Capability<?> capability, @Nullable EnumFacing facing) {
         return capability == CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY;
     }
 
     @Override
     @Nullable
-    public <T> T getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing facing)
-    {
-        if (capability == CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY)
-        {
+    public <T> T getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing facing) {
+        if (capability == CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY) {
             return CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY.cast(this);
         }
         return null;

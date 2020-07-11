@@ -24,7 +24,6 @@ package net.minecraftforge.fml.common.event;
  *
  * @author cpw
  */
-public class FMLLoadEvent
-{
+public class FMLLoadEvent {
 
 }

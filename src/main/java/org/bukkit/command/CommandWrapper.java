@@ -1,8 +1,6 @@
 package org.bukkit.command;
 
 import com.google.common.collect.ImmutableList;
-import java.util.List;
-import javax.annotation.Nullable;
 import net.minecraft.advancements.FunctionManager;
 import net.minecraft.command.ICommand;
 import net.minecraft.command.ICommandSender;
@@ -14,6 +12,9 @@ import net.minecraft.util.math.BlockPos;
 import org.bukkit.craftbukkit.v1_12_R1.command.CraftBlockCommandSender;
 import org.bukkit.craftbukkit.v1_12_R1.command.CraftFunctionCommandSender;
 import org.bukkit.craftbukkit.v1_12_R1.command.CraftRemoteConsoleCommandSender;
+
+import javax.annotation.Nullable;
+import java.util.List;
 
 public class CommandWrapper implements ICommand {
     private final CommandSender sender;

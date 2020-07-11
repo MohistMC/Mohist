@@ -8,7 +8,7 @@ import org.bukkit.plugin.Plugin;
  * to enter another player's name.
  */
 public abstract class PlayerNamePrompt extends ValidatingPrompt {
-    private Plugin plugin;
+    private final Plugin plugin;
 
     public PlayerNamePrompt(Plugin plugin) {
         super();
@@ -30,7 +30,7 @@ public abstract class PlayerNamePrompt extends ValidatingPrompt {
      * response.
      *
      * @param context Context information about the conversation.
-     * @param input The user's player name response.
+     * @param input   The user's player name response.
      * @return The next {@link Prompt} in the prompt graph.
      */
     protected abstract Prompt acceptValidatedInput(ConversationContext context, Player input);

@@ -182,9 +182,9 @@ public interface BlockState extends Metadatable {
      * If applyPhysics is true, it will trigger a physics update on
      * surrounding blocks which could cause them to update or disappear.
      *
-     * @param force true to forcefully set the state
+     * @param force        true to forcefully set the state
      * @param applyPhysics false to cancel updating physics on surrounding
-     *     blocks
+     *                     blocks
      * @return true if the update was successful, otherwise false
      */
     boolean update(boolean force, boolean applyPhysics);
@@ -194,14 +194,14 @@ public interface BlockState extends Metadatable {
      * @deprecated Magic value
      */
     @Deprecated
-    public byte getRawData();
+    byte getRawData();
 
     /**
      * @param data The new data value for the block.
      * @deprecated Magic value
      */
     @Deprecated
-    public void setRawData(byte data);
+    void setRawData(byte data);
 
     /**
      * Returns whether this state is placed in the world.
@@ -210,7 +210,7 @@ public interface BlockState extends Metadatable {
      * placed in the world.
      *
      * @return whether the state is placed in the world
-     *         or 'virtual' (e.g. on an itemstack)
+     * or 'virtual' (e.g. on an itemstack)
      */
     boolean isPlaced();
 }

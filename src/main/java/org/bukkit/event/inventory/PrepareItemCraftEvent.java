@@ -7,8 +7,8 @@ import org.bukkit.inventory.Recipe;
 
 public class PrepareItemCraftEvent extends InventoryEvent {
     private static final HandlerList handlers = new HandlerList();
-    private boolean repair;
-    private CraftingInventory matrix;
+    private final boolean repair;
+    private final CraftingInventory matrix;
 
     public PrepareItemCraftEvent(CraftingInventory what, InventoryView view, boolean isRepair) {
         super(view);

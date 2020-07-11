@@ -1,9 +1,6 @@
 package org.bukkit.command.defaults;
 
 import com.google.common.collect.ImmutableList;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 import net.minecraftforge.common.ForgeVersion;
 import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
@@ -15,6 +12,10 @@ import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.util.StringUtil;
 import red.mohist.Mohist;
 import red.mohist.util.i18n.Message;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 public class VersionCommand extends Command {
     public VersionCommand(String name) {
@@ -34,7 +35,7 @@ public class VersionCommand extends Command {
         }
 
         if (args.length == 0) {
-            sender.sendMessage("This server is running " + Bukkit.getName() + " version " + Mohist.getVersion() +  " (MC: 1.12.2) (Implementing API version " + Bukkit.getBukkitVersion() + ", Forge version " + ForgeVersion.getVersion() + ")");
+            sender.sendMessage("This server is running " + Bukkit.getName() + " version " + Mohist.getVersion() + " (MC: 1.12.2) (Implementing API version " + Bukkit.getBukkitVersion() + ", Forge version " + ForgeVersion.getVersion() + ")");
         } else {
             StringBuilder name = new StringBuilder();
 

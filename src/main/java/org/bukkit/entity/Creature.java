@@ -11,7 +11,7 @@ public interface Creature extends LivingEntity {
      *
      * @return Current target of this creature, or null if none exists
      */
-    public LivingEntity getTarget();
+    LivingEntity getTarget();
 
     /**
      * Instructs this Creature to set the specified LivingEntity as its
@@ -22,5 +22,5 @@ public interface Creature extends LivingEntity {
      *
      * @param target New LivingEntity to target, or null to clear the target
      */
-    public void setTarget(LivingEntity target);
+    void setTarget(LivingEntity target);
 }

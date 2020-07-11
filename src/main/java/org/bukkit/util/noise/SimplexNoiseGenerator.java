@@ -1,7 +1,8 @@
 package org.bukkit.util.noise;
 
-import java.util.Random;
 import org.bukkit.World;
+
+import java.util.Random;
 
 /**
  * Generates simplex-based noise.
@@ -24,7 +25,7 @@ public class SimplexNoiseGenerator extends PerlinNoiseGenerator {
     protected static final double G42 = G4 * 2.0;
     protected static final double G43 = G4 * 3.0;
     protected static final double G44 = G4 * 4.0 - 1.0;
-    protected static final int grad4[][] = {{0, 1, 1, 1}, {0, 1, 1, -1}, {0, 1, -1, 1}, {0, 1, -1, -1},
+    protected static final int[][] grad4 = {{0, 1, 1, 1}, {0, 1, 1, -1}, {0, 1, -1, 1}, {0, 1, -1, -1},
             {0, -1, 1, 1}, {0, -1, 1, -1}, {0, -1, -1, 1}, {0, -1, -1, -1},
             {1, 0, 1, 1}, {1, 0, 1, -1}, {1, 0, -1, 1}, {1, 0, -1, -1},
             {-1, 0, 1, 1}, {-1, 0, 1, -1}, {-1, 0, -1, 1}, {-1, 0, -1, -1},
@@ -32,7 +33,7 @@ public class SimplexNoiseGenerator extends PerlinNoiseGenerator {
             {-1, 1, 0, 1}, {-1, 1, 0, -1}, {-1, -1, 0, 1}, {-1, -1, 0, -1},
             {1, 1, 1, 0}, {1, 1, -1, 0}, {1, -1, 1, 0}, {1, -1, -1, 0},
             {-1, 1, 1, 0}, {-1, 1, -1, 0}, {-1, -1, 1, 0}, {-1, -1, -1, 0}};
-    protected static final int simplex[][] = {
+    protected static final int[][] simplex = {
             {0, 1, 2, 3}, {0, 1, 3, 2}, {0, 0, 0, 0}, {0, 2, 3, 1}, {0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {1, 2, 3, 0},
             {0, 2, 1, 3}, {0, 0, 0, 0}, {0, 3, 1, 2}, {0, 3, 2, 1}, {0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {1, 3, 2, 0},
             {0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0},
@@ -76,15 +77,15 @@ public class SimplexNoiseGenerator extends PerlinNoiseGenerator {
         offsetW = rand.nextDouble() * 256;
     }
 
-    protected static double dot(int g[], double x, double y) {
+    protected static double dot(int[] g, double x, double y) {
         return g[0] * x + g[1] * y;
     }
 
-    protected static double dot(int g[], double x, double y, double z) {
+    protected static double dot(int[] g, double x, double y, double z) {
         return g[0] * x + g[1] * y + g[2] * z;
     }
 
-    protected static double dot(int g[], double x, double y, double z, double w) {
+    protected static double dot(int[] g, double x, double y, double z, double w) {
         return g[0] * x + g[1] * y + g[2] * z + g[3] * w;
     }
 

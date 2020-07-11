@@ -1,15 +1,16 @@
 package org.bukkit.craftbukkit.v1_12_R1.command;
 
 import com.google.common.collect.Sets;
+import jline.console.completer.Completer;
+import org.bukkit.craftbukkit.v1_12_R1.CraftServer;
+import org.bukkit.craftbukkit.v1_12_R1.util.Waitable;
+import org.bukkit.event.server.TabCompleteEvent;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.logging.Level;
-import jline.console.completer.Completer;
-import org.bukkit.craftbukkit.v1_12_R1.CraftServer;
-import org.bukkit.craftbukkit.v1_12_R1.util.Waitable;
-import org.bukkit.event.server.TabCompleteEvent;
 
 public class ConsoleCommandCompleter implements Completer {
     private final CraftServer server;

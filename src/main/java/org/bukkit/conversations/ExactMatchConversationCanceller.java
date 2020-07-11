@@ -5,13 +5,13 @@ package org.bukkit.conversations;
  * enters an exact input string
  */
 public class ExactMatchConversationCanceller implements ConversationCanceller {
-    private String escapeSequence;
+    private final String escapeSequence;
 
     /**
      * Builds an ExactMatchConversationCanceller.
      *
      * @param escapeSequence The string that, if entered by the user, will
-     *     cancel the conversation.
+     *                       cancel the conversation.
      */
     public ExactMatchConversationCanceller(String escapeSequence) {
         this.escapeSequence = escapeSequence;

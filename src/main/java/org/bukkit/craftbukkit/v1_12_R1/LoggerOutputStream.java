@@ -1,9 +1,10 @@
 package org.bukkit.craftbukkit.v1_12_R1;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.Logger;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 
 public class LoggerOutputStream extends ByteArrayOutputStream {
     private final String separator = System.getProperty("line.separator");

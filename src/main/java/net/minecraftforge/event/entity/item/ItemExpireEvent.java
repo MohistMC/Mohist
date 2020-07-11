@@ -29,30 +29,26 @@ import net.minecraftforge.fml.common.eventhandler.Cancelable;
  * it will add more time to the entities life equal to extraLife.
  */
 @Cancelable
-public class ItemExpireEvent extends ItemEvent
-{
+public class ItemExpireEvent extends ItemEvent {
 
     private int extraLife;
 
     /**
      * Creates a new event for an expiring EntityItem.
-     * 
+     *
      * @param entityItem The EntityItem being deleted.
-     * @param extraLife The amount of time to be added to this entities lifespan if the event is canceled.
+     * @param extraLife  The amount of time to be added to this entities lifespan if the event is canceled.
      */
-    public ItemExpireEvent(EntityItem entityItem, int extraLife)
-    {
+    public ItemExpireEvent(EntityItem entityItem, int extraLife) {
         super(entityItem);
         this.setExtraLife(extraLife);
     }
 
-    public int getExtraLife()
-    {
+    public int getExtraLife() {
         return extraLife;
     }
 
-    public void setExtraLife(int extraLife)
-    {
+    public void setExtraLife(int extraLife) {
         this.extraLife = extraLife;
     }
 }

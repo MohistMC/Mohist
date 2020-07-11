@@ -1,7 +1,5 @@
 package org.bukkit.craftbukkit.v1_12_R1.util;
 
-import java.util.ArrayList;
-import java.util.List;
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 import net.minecraft.world.World;
@@ -9,6 +7,9 @@ import org.bukkit.BlockChangeDelegate;
 import org.bukkit.block.BlockState;
 import org.bukkit.craftbukkit.v1_12_R1.CraftWorld;
 import org.bukkit.material.MaterialData;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class StructureGrowDelegate implements BlockChangeDelegate {
     private final CraftWorld world;

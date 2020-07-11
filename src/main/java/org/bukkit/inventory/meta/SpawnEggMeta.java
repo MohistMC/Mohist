@@ -19,7 +19,7 @@ public interface SpawnEggMeta extends ItemMeta {
      * Set the type of entity this egg will spawn.
      *
      * @param type The entity type. May be null for implementation specific
-     * default.
+     *             default.
      */
     void setSpawnedType(EntityType type);
 

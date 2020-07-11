@@ -35,17 +35,14 @@ import net.minecraftforge.fml.common.eventhandler.Event;
  * <br>
  * All children of this event are fired on the {@link MinecraftForge#EVENT_BUS}.<br>
  **/
-public class EntityEvent extends Event
-{
+public class EntityEvent extends Event {
     private final Entity entity;
 
-    public EntityEvent(Entity entity)
-    {
+    public EntityEvent(Entity entity) {
         this.entity = entity;
     }
 
-    public Entity getEntity()
-    {
+    public Entity getEntity() {
         return entity;
     }
 
@@ -59,10 +56,8 @@ public class EntityEvent extends Event
      * <br>
      * This event is fired on the {@link MinecraftForge#EVENT_BUS}.<br>
      **/
-    public static class EntityConstructing extends EntityEvent
-    {
-        public EntityConstructing(Entity entity)
-        {
+    public static class EntityConstructing extends EntityEvent {
+        public EntityConstructing(Entity entity) {
             super(entity);
         }
     }
@@ -80,25 +75,22 @@ public class EntityEvent extends Event
      * <br>
      * This event is fired on the {@link MinecraftForge#EVENT_BUS}.<br>
      **/
-    public static class CanUpdate extends EntityEvent
-    {
+    public static class CanUpdate extends EntityEvent {
         private boolean canUpdate = false;
-        public CanUpdate(Entity entity)
-        {
+
+        public CanUpdate(Entity entity) {
             super(entity);
         }
 
-        public boolean getCanUpdate()
-        {
+        public boolean getCanUpdate() {
             return canUpdate;
         }
 
-        public void setCanUpdate(boolean canUpdate)
-        {
+        public void setCanUpdate(boolean canUpdate) {
             this.canUpdate = canUpdate;
         }
     }
-    
+
     /**
      * EnteringChunk is fired when an Entity enters a chunk. <br>
      * This event is fired whenever vanilla Minecraft determines that an entity <br>
@@ -110,15 +102,13 @@ public class EntityEvent extends Event
      * <br>
      * This event is fired on the {@link MinecraftForge#EVENT_BUS}.<br>
      **/
-    public static class EnteringChunk extends EntityEvent
-    {
+    public static class EnteringChunk extends EntityEvent {
         private int newChunkX;
         private int newChunkZ;
         private int oldChunkX;
         private int oldChunkZ;
 
-        public EnteringChunk(Entity entity, int newChunkX, int newChunkZ, int oldChunkX, int oldChunkZ)
-        {
+        public EnteringChunk(Entity entity, int newChunkX, int newChunkZ, int oldChunkX, int oldChunkZ) {
             super(entity);
             this.setNewChunkX(newChunkX);
             this.setNewChunkZ(newChunkZ);
@@ -126,13 +116,36 @@ public class EntityEvent extends Event
             this.setOldChunkZ(oldChunkZ);
         }
 
-        public int getNewChunkX() { return newChunkX; }
-        public void setNewChunkX(int newChunkX) { this.newChunkX = newChunkX; }
-        public int getNewChunkZ() { return newChunkZ; }
-        public void setNewChunkZ(int newChunkZ) { this.newChunkZ = newChunkZ; }
-        public int getOldChunkX() { return oldChunkX; }
-        public void setOldChunkX(int oldChunkX) { this.oldChunkX = oldChunkX; }
-        public int getOldChunkZ() { return oldChunkZ; }
-        public void setOldChunkZ(int oldChunkZ) { this.oldChunkZ = oldChunkZ; }
+        public int getNewChunkX() {
+            return newChunkX;
+        }
+
+        public void setNewChunkX(int newChunkX) {
+            this.newChunkX = newChunkX;
+        }
+
+        public int getNewChunkZ() {
+            return newChunkZ;
+        }
+
+        public void setNewChunkZ(int newChunkZ) {
+            this.newChunkZ = newChunkZ;
+        }
+
+        public int getOldChunkX() {
+            return oldChunkX;
+        }
+
+        public void setOldChunkX(int oldChunkX) {
+            this.oldChunkX = oldChunkX;
+        }
+
+        public int getOldChunkZ() {
+            return oldChunkZ;
+        }
+
+        public void setOldChunkZ(int oldChunkZ) {
+            this.oldChunkZ = oldChunkZ;
+        }
     }
 }

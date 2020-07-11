@@ -23,48 +23,40 @@ import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.util.EnumFacing;
 
-public class VertexTransformer implements IVertexConsumer
-{
+public class VertexTransformer implements IVertexConsumer {
     protected final IVertexConsumer parent;
 
-    public VertexTransformer(IVertexConsumer parent)
-    {
+    public VertexTransformer(IVertexConsumer parent) {
         this.parent = parent;
     }
 
     @Override
-    public VertexFormat getVertexFormat()
-    {
+    public VertexFormat getVertexFormat() {
         return parent.getVertexFormat();
     }
 
     @Override
-    public void setQuadTint(int tint)
-    {
+    public void setQuadTint(int tint) {
         parent.setQuadTint(tint);
     }
 
     @Override
-    public void setTexture(TextureAtlasSprite texture)
-    {
+    public void setTexture(TextureAtlasSprite texture) {
         parent.setTexture(texture);
     }
 
     @Override
-    public void setQuadOrientation(EnumFacing orientation)
-    {
+    public void setQuadOrientation(EnumFacing orientation) {
         parent.setQuadOrientation(orientation);
     }
 
     @Override
-    public void setApplyDiffuseLighting(boolean diffuse)
-    {
+    public void setApplyDiffuseLighting(boolean diffuse) {
         parent.setApplyDiffuseLighting(diffuse);
     }
 
     @Override
-    public void put(int element, float... data)
-    {
+    public void put(int element, float... data) {
         parent.put(element, data);
     }
 }

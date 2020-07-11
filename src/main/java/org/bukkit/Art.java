@@ -1,8 +1,9 @@
 package org.bukkit;
 
 import com.google.common.collect.Maps;
-import java.util.HashMap;
 import org.apache.commons.lang.Validate;
+
+import java.util.HashMap;
 
 /**
  * Represents the art on a painting
@@ -45,9 +46,11 @@ public enum Art {
         }
     }
 
-    private int id, width, height;
+    private final int id;
+    private final int width;
+    private final int height;
 
-    private Art(int id, int width, int height) {
+    Art(int id, int width, int height) {
         this.id = id;
         this.width = width;
         this.height = height;

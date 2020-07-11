@@ -21,26 +21,24 @@ package net.minecraftforge.common.util;
 
 import com.google.common.collect.Maps;
 import com.mojang.authlib.GameProfile;
+import net.minecraft.world.WorldServer;
+
 import java.lang.ref.WeakReference;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
 import java.util.UUID;
-import net.minecraft.world.WorldServer;
 
 //To be expanded for generic Mod fake players?
-public class FakePlayerFactory
-{
-    private static GameProfile MINECRAFT = new GameProfile(UUID.fromString("41C82C87-7AfB-4024-BA57-13D2C99CAE77"), "[Minecraft]");
+public class FakePlayerFactory {
     // Map of all active fake player usernames to their entities
     public static Map<GameProfile, FakePlayer> fakePlayers = Maps.newHashMap();
+    private static final GameProfile MINECRAFT = new GameProfile(UUID.fromString("41C82C87-7AfB-4024-BA57-13D2C99CAE77"), "[Minecraft]");
     private static WeakReference<FakePlayer> MINECRAFT_PLAYER = null;
 
-    public static FakePlayer getMinecraft(WorldServer world)
-    {
+    public static FakePlayer getMinecraft(WorldServer world) {
         FakePlayer ret = MINECRAFT_PLAYER != null ? MINECRAFT_PLAYER.get() : null;
-        if (ret == null)
-        {
-            ret = FakePlayerFactory.get(world,  MINECRAFT);
+        if (ret == null) {
+            ret = FakePlayerFactory.get(world, MINECRAFT);
             MINECRAFT_PLAYER = new WeakReference<FakePlayer>(ret);
         }
         return ret;
@@ -51,15 +49,12 @@ public class FakePlayerFactory
      * Mods should either hold weak references to the return value, or listen for a
      * WorldEvent.Unload and kill all references to prevent worlds staying in memory.
      */
-    public static FakePlayer get(WorldServer world, GameProfile username)
-    {
+    public static FakePlayer get(WorldServer world, GameProfile username) {
         // Cauldron start - Refactored below to avoid a hashCode check with a null GameProfile ID
         if (username == null || username.getName() == null) return null;
-        for (Map.Entry<GameProfile, FakePlayer> mapEntry : fakePlayers.entrySet())
-        {
+        for (Map.Entry<GameProfile, FakePlayer> mapEntry : fakePlayers.entrySet()) {
             GameProfile gameprofile = mapEntry.getKey();
-            if (gameprofile.getName().equals(username.getName()))
-            {
+            if (gameprofile.getName().equals(username.getName())) {
                 return mapEntry.getValue();
             }
         }
@@ -73,14 +68,12 @@ public class FakePlayerFactory
         return fakePlayers.get(username);
     }
 
-    public static void unloadWorld(WorldServer world)
-    {
+    public static void unloadWorld(WorldServer world) {
         fakePlayers.entrySet().removeIf(entry -> entry.getValue().world == world);
         if (MINECRAFT_PLAYER != null && MINECRAFT_PLAYER.get() != null && MINECRAFT_PLAYER.get().world == world) // This shouldn't be strictly necessary, but lets be aggressive.
         {
             FakePlayer mc = MINECRAFT_PLAYER.get();
-            if (mc != null && mc.world == world)
-            {
+            if (mc != null && mc.world == world) {
                 MINECRAFT_PLAYER = null;
             }
         }

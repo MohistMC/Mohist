@@ -7,7 +7,7 @@ import org.bukkit.entity.Player;
  */
 public abstract class MapRenderer {
 
-    private boolean contextual;
+    private final boolean contextual;
 
     /**
      * Initialize the map renderer base to be non-contextual. See {@link
@@ -21,7 +21,7 @@ public abstract class MapRenderer {
      * Initialize the map renderer base with the given contextual status.
      *
      * @param contextual Whether the renderer is contextual. See {@link
-     *     #isContextual()}.
+     *                   #isContextual()}.
      */
     public MapRenderer(boolean contextual) {
         this.contextual = contextual;
@@ -48,7 +48,7 @@ public abstract class MapRenderer {
     /**
      * Render to the given map.
      *
-     * @param map The MapView being rendered to.
+     * @param map    The MapView being rendered to.
      * @param canvas The canvas to use for rendering.
      * @param player The player who triggered the rendering.
      */

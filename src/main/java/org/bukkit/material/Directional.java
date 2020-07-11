@@ -9,12 +9,12 @@ public interface Directional {
      *
      * @param face The facing direction
      */
-    public void setFacingDirection(BlockFace face);
+    void setFacingDirection(BlockFace face);
 
     /**
      * Gets the direction this block is facing
      *
      * @return the direction this block is facing
      */
-    public BlockFace getFacing();
+    BlockFace getFacing();
 }

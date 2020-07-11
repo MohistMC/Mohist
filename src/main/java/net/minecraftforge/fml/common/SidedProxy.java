@@ -49,13 +49,12 @@ import java.lang.annotation.Target;
  *  }
  * }
  * </pre>
- * @author cpw
  *
+ * @author cpw
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
-public @interface SidedProxy
-{
+public @interface SidedProxy {
     /**
      * The full name of the client side class to load and populate.
      * Defaults to the nested class named "ClientProxy" in the current class.

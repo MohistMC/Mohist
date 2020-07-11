@@ -26,7 +26,6 @@ public class Bed extends MaterialData implements Directional {
     }
 
     /**
-     *
      * @param type the raw type id
      * @deprecated Magic value
      */

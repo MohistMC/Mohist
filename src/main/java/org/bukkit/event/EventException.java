@@ -23,7 +23,7 @@ public class EventException extends Exception {
     /**
      * Constructs a new EventException with the given message
      *
-     * @param cause The exception that caused this
+     * @param cause   The exception that caused this
      * @param message The message
      */
     public EventException(Throwable cause, String message) {

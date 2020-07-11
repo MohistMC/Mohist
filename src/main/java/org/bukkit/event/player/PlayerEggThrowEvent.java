@@ -50,7 +50,7 @@ public class PlayerEggThrowEvent extends PlayerEvent {
      * Sets whether the egg will hatch or not.
      *
      * @param hatching true if you want the egg to hatch, false if you want it
-     *     not to
+     *                 not to
      */
     public void setHatching(boolean hatching) {
         this.hatching = hatching;

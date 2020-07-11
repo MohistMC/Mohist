@@ -34,7 +34,7 @@ public enum BlockFace {
         this.modZ = modZ;
     }
 
-    private BlockFace(final BlockFace face1, final BlockFace face2) {
+    BlockFace(final BlockFace face1, final BlockFace face2) {
         this.modX = face1.getModX() + face2.getModX();
         this.modY = face1.getModY() + face2.getModY();
         this.modZ = face1.getModZ() + face2.getModZ();

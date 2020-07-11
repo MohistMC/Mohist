@@ -23,5 +23,5 @@ public enum Mirror {
      * <br>
      * Positive Z to Negative X
      */
-    FRONT_BACK;
+    FRONT_BACK
 }

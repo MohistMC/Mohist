@@ -32,32 +32,28 @@ import red.mohist.api.ServerAPI;
  * This event allows for customizations of the server, such as loading custom commands, perhaps customizing recipes or
  * other activities.
  *
- * @see net.minecraftforge.fml.common.Mod.EventHandler for how to subscribe to this event
  * @author cpw
+ * @see net.minecraftforge.fml.common.Mod.EventHandler for how to subscribe to this event
  */
-public class FMLServerStartingEvent extends FMLStateEvent
-{
+public class FMLServerStartingEvent extends FMLStateEvent {
 
-    private MinecraftServer server;
+    private final MinecraftServer server;
 
-    public FMLServerStartingEvent(Object... data)
-    {
+    public FMLServerStartingEvent(Object... data) {
         super(data);
         this.server = (MinecraftServer) data[0];
     }
+
     @Override
-    public ModState getModState()
-    {
+    public ModState getModState() {
         return ModState.AVAILABLE;
     }
 
-    public MinecraftServer getServer()
-    {
+    public MinecraftServer getServer() {
         return server;
     }
 
-    public void registerServerCommand(ICommand command)
-    {
+    public void registerServerCommand(ICommand command) {
         CommandHandler ch = (CommandHandler) getServer().getCommandManager();
         if (command instanceof CommandBase) {
             String per = Loader.instance().activeModContainer().getModId() + ".command." + command.getName();

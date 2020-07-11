@@ -17,7 +17,7 @@ public interface Dispenser extends Container, Nameable {
      * @return a BlockProjectileSource if valid, otherwise null
      * @throws IllegalStateException if this block state is not placed
      */
-    public BlockProjectileSource getBlockProjectileSource();
+    BlockProjectileSource getBlockProjectileSource();
 
     /**
      * Attempts to dispense the contents of the dispenser.
@@ -28,5 +28,5 @@ public interface Dispenser extends Container, Nameable {
      * @return true if successful, otherwise false
      * @throws IllegalStateException if this block state is not placed
      */
-    public boolean dispense();
+    boolean dispense();
 }

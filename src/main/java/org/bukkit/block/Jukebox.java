@@ -12,21 +12,21 @@ public interface Jukebox extends BlockState {
      *
      * @return The record Material, or AIR if none is playing
      */
-    public Material getPlaying();
+    Material getPlaying();
 
     /**
      * Checks if the jukebox is playing a record.
      *
      * @return True if there is a record playing
      */
-    public boolean isPlaying();
+    boolean isPlaying();
 
     /**
      * Sets the record being played.
      *
      * @param record The record Material, or null/AIR to stop playing
      */
-    public void setPlaying(Material record);
+    void setPlaying(Material record);
 
     /**
      * Stops the jukebox playing and ejects the current record.
@@ -37,5 +37,5 @@ public interface Jukebox extends BlockState {
      * @return True if a record was ejected; false if there was none playing
      * @throws IllegalStateException if this block state is not placed
      */
-    public boolean eject();
+    boolean eject();
 }

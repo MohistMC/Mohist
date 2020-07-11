@@ -1,12 +1,13 @@
 package org.bukkit.craftbukkit.v1_12_R1.metadata;
 
-import java.util.List;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.metadata.MetadataStore;
 import org.bukkit.metadata.MetadataStoreBase;
 import org.bukkit.metadata.MetadataValue;
 import org.bukkit.plugin.Plugin;
+
+import java.util.List;
 
 /**
  * A BlockMetadataStore stores metadata values for {@link Block} objects.
@@ -17,6 +18,7 @@ public class BlockMetadataStore extends MetadataStoreBase<Block> implements Meta
 
     /**
      * Initializes a BlockMetadataStore.
+     *
      * @param owningWorld The world to which this BlockMetadataStore belongs.
      */
     public BlockMetadataStore(World owningWorld) {
@@ -25,10 +27,11 @@ public class BlockMetadataStore extends MetadataStoreBase<Block> implements Meta
 
     /**
      * Generates a unique metadata key for a {@link Block} object based on its coordinates in the world.
-     * @see MetadataStoreBase#disambiguate(Object, String)
-     * @param block the block
+     *
+     * @param block       the block
      * @param metadataKey The name identifying the metadata value
      * @return a unique metadata key
+     * @see MetadataStoreBase#disambiguate(Object, String)
      */
     @Override
     protected String disambiguate(Block block, String metadataKey) {
@@ -38,6 +41,7 @@ public class BlockMetadataStore extends MetadataStoreBase<Block> implements Meta
     /**
      * Retrieves the metadata for a {@link Block}, ensuring the block being asked for actually belongs to this BlockMetadataStore's
      * owning world.
+     *
      * @see MetadataStoreBase#getMetadata(Object, String)
      */
     @Override
@@ -52,6 +56,7 @@ public class BlockMetadataStore extends MetadataStoreBase<Block> implements Meta
     /**
      * Tests to see if a metadata value has been added to a {@link Block}, ensuring the block being interrogated belongs
      * to this BlockMetadataStore's owning world.
+     *
      * @see MetadataStoreBase#hasMetadata(Object, String)
      */
     @Override
@@ -66,6 +71,7 @@ public class BlockMetadataStore extends MetadataStoreBase<Block> implements Meta
     /**
      * Removes metadata from from a {@link Block} belonging to a given {@link Plugin}, ensuring the block being deleted from belongs
      * to this BlockMetadataStore's owning world.
+     *
      * @see MetadataStoreBase#removeMetadata(Object, String, Plugin)
      */
     @Override
@@ -80,6 +86,7 @@ public class BlockMetadataStore extends MetadataStoreBase<Block> implements Meta
     /**
      * Sets or overwrites a metadata value on a {@link Block} from a given {@link Plugin}, ensuring the target block belongs
      * to this BlockMetadataStore's owning world.
+     *
      * @see MetadataStoreBase#setMetadata(Object, String, MetadataValue)
      */
     @Override

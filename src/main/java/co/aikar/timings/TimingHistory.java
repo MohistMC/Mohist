@@ -24,24 +24,10 @@
 package co.aikar.timings;
 
 import co.aikar.timings.TimingHistory.RegionData.RegionId;
-import static co.aikar.timings.TimingsManager.FULL_SERVER_TICK;
-import static co.aikar.timings.TimingsManager.MINUTE_REPORTS;
-import static co.aikar.util.JSONUtil.JSONPair;
-import static co.aikar.util.JSONUtil.createObject;
-import static co.aikar.util.JSONUtil.pair;
-import static co.aikar.util.JSONUtil.toArray;
-import static co.aikar.util.JSONUtil.toArrayMapper;
-import static co.aikar.util.JSONUtil.toObjectMapper;
 import co.aikar.util.LoadingMap;
 import co.aikar.util.MRUMapCache;
 import com.google.common.base.Function;
 import com.google.common.collect.Sets;
-import java.lang.management.ManagementFactory;
-import java.util.Collection;
-import java.util.EnumMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Material;
@@ -50,6 +36,13 @@ import org.bukkit.block.BlockState;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
+
+import java.lang.management.ManagementFactory;
+import java.util.*;
+
+import static co.aikar.timings.TimingsManager.FULL_SERVER_TICK;
+import static co.aikar.timings.TimingsManager.MINUTE_REPORTS;
+import static co.aikar.util.JSONUtil.*;
 
 @SuppressWarnings({"deprecation", "SuppressionAnnotation", "Convert2Lambda", "Anonymous2MethodRef"})
 public class TimingHistory {
@@ -66,15 +59,14 @@ public class TimingHistory {
             return worldIdPool++;
         }
     });
+    final Set<Material> tileEntityTypeSet = Sets.newHashSet();
+    final Set<EntityType> entityTypeSet = Sets.newHashSet();
     private final long endTime;
     private final long startTime;
     private final long totalTicks;
     private final long totalTime; // Represents all time spent running the server this history
     private final MinuteReport[] minuteReports;
-
     private final TimingHistoryEntry[] entries;
-    final Set<Material> tileEntityTypeSet = Sets.newHashSet();
-    final Set<EntityType> entityTypeSet = Sets.newHashSet();
     private final Map<Object, Object> worlds;
 
     TimingHistory() {
@@ -128,46 +120,84 @@ public class TimingHistory {
                     }
                 }
                 return pair(
-                    worldMap.get(world.getName()),
-                    toArrayMapper(regions.values(),new Function<RegionData, Object>() {
-                        @Override
-                        public Object apply(RegionData input) {
-                            return toArray(
-                                input.regionId.x,
-                                input.regionId.z,
-                                toObjectMapper(input.entityCounts.entrySet(),
-                                    new Function<Map.Entry<EntityType, Counter>, JSONPair>() {
-                                        @Override
-                                        public JSONPair apply(Map.Entry<EntityType, Counter> entry) {
-                                            entityTypeSet.add(entry.getKey());
-                                            return pair(
-                                                    String.valueOf(entry.getKey().getTypeId()),
-                                                    entry.getValue().count()
-                                            );
-                                        }
-                                    }
-                                ),
-                                toObjectMapper(input.tileEntityCounts.entrySet(),
-                                    new Function<Map.Entry<Material, Counter>, JSONPair>() {
-                                        @Override
-                                        public JSONPair apply(Map.Entry<Material, Counter> entry) {
-                                            tileEntityTypeSet.add(entry.getKey());
-                                            return pair(
-                                                    String.valueOf(entry.getKey().getId()),
-                                                    entry.getValue().count()
-                                            );
-                                        }
-                                    }
-                                )
-                            );
-                        }
-                    })
+                        worldMap.get(world.getName()),
+                        toArrayMapper(regions.values(), new Function<RegionData, Object>() {
+                            @Override
+                            public Object apply(RegionData input) {
+                                return toArray(
+                                        input.regionId.x,
+                                        input.regionId.z,
+                                        toObjectMapper(input.entityCounts.entrySet(),
+                                                new Function<Map.Entry<EntityType, Counter>, JSONPair>() {
+                                                    @Override
+                                                    public JSONPair apply(Map.Entry<EntityType, Counter> entry) {
+                                                        entityTypeSet.add(entry.getKey());
+                                                        return pair(
+                                                                String.valueOf(entry.getKey().getTypeId()),
+                                                                entry.getValue().count()
+                                                        );
+                                                    }
+                                                }
+                                        ),
+                                        toObjectMapper(input.tileEntityCounts.entrySet(),
+                                                new Function<Map.Entry<Material, Counter>, JSONPair>() {
+                                                    @Override
+                                                    public JSONPair apply(Map.Entry<Material, Counter> entry) {
+                                                        tileEntityTypeSet.add(entry.getKey());
+                                                        return pair(
+                                                                String.valueOf(entry.getKey().getId()),
+                                                                entry.getValue().count()
+                                                        );
+                                                    }
+                                                }
+                                        )
+                                );
+                            }
+                        })
                 );
             }
         });
     }
+
+    static void resetTicks(boolean fullReset) {
+        if (fullReset) {
+            // Non full is simply for 1 minute reports
+            timedTicks = 0;
+        }
+        lastMinuteTime = System.nanoTime();
+        playerTicks = 0;
+        tileEntityTicks = 0;
+        entityTicks = 0;
+        activatedEntityTicks = 0;
+    }
+
+    Object export() {
+        return createObject(
+                pair("s", startTime),
+                pair("e", endTime),
+                pair("tk", totalTicks),
+                pair("tm", totalTime),
+                pair("w", worlds),
+                pair("h", toArrayMapper(entries, new Function<TimingHistoryEntry, Object>() {
+                    @Override
+                    public Object apply(TimingHistoryEntry entry) {
+                        TimingData record = entry.data;
+                        if (!record.hasData()) {
+                            return null;
+                        }
+                        return entry.export();
+                    }
+                })),
+                pair("mp", toArrayMapper(minuteReports, new Function<MinuteReport, Object>() {
+                    @Override
+                    public Object apply(MinuteReport input) {
+                        return input.export();
+                    }
+                }))
+        );
+    }
+
     static class RegionData {
-        final RegionId regionId;
         @SuppressWarnings("Guava")
         static Function<RegionId, RegionData> LOADER = new Function<RegionId, RegionData>() {
             @Override
@@ -175,6 +205,16 @@ public class TimingHistory {
                 return new RegionData(id);
             }
         };
+        final RegionId regionId;
+        @SuppressWarnings("unchecked")
+        final Map<EntityType, Counter> entityCounts = MRUMapCache.of(LoadingMap.of(
+                new EnumMap<EntityType, Counter>(EntityType.class), k -> new Counter()
+        ));
+        @SuppressWarnings("unchecked")
+        final Map<Material, Counter> tileEntityCounts = MRUMapCache.of(LoadingMap.of(
+                new EnumMap<Material, Counter>(Material.class), k -> new Counter()
+        ));
+
         RegionData(RegionId id) {
             this.regionId = id;
         }
@@ -199,18 +239,10 @@ public class TimingHistory {
             return regionId.hashCode();
         }
 
-        @SuppressWarnings("unchecked")
-        final Map<EntityType, Counter> entityCounts = MRUMapCache.of(LoadingMap.of(
-                new EnumMap<EntityType, Counter>(EntityType.class), k -> new Counter()
-        ));
-        @SuppressWarnings("unchecked")
-        final Map<Material, Counter> tileEntityCounts = MRUMapCache.of(LoadingMap.of(
-                new EnumMap<Material, Counter>(Material.class), k -> new Counter()
-        ));
-
         static class RegionId {
             final int x, z;
             final long regionId;
+
             RegionId(int x, int z) {
                 this.x = x >> 5 << 5;
                 this.z = z >> 5 << 5;
@@ -234,43 +266,6 @@ public class TimingHistory {
             }
         }
     }
-    static void resetTicks(boolean fullReset) {
-        if (fullReset) {
-            // Non full is simply for 1 minute reports
-            timedTicks = 0;
-        }
-        lastMinuteTime = System.nanoTime();
-        playerTicks = 0;
-        tileEntityTicks = 0;
-        entityTicks = 0;
-        activatedEntityTicks = 0;
-    }
-
-    Object export() {
-        return createObject(
-            pair("s", startTime),
-            pair("e", endTime),
-            pair("tk", totalTicks),
-            pair("tm", totalTime),
-            pair("w", worlds),
-            pair("h", toArrayMapper(entries, new Function<TimingHistoryEntry, Object>() {
-                @Override
-                public Object apply(TimingHistoryEntry entry) {
-                    TimingData record = entry.data;
-                    if (!record.hasData()) {
-                        return null;
-                    }
-                    return entry.export();
-                }
-            })),
-            pair("mp", toArrayMapper(minuteReports, new Function<MinuteReport, Object>() {
-                @Override
-                public Object apply(MinuteReport input) {
-                    return input.export();
-                }
-            }))
-        );
-    }
 
     static class MinuteReport {
         final long time = System.currentTimeMillis() / 1000;
@@ -278,26 +273,26 @@ public class TimingHistory {
         final TicksRecord ticksRecord = new TicksRecord();
         final PingRecord pingRecord = new PingRecord();
         final TimingData fst = TimingsManager.FULL_SERVER_TICK.minuteData.clone();
-        final double tps = 1E9 / ( System.nanoTime() - lastMinuteTime ) * ticksRecord.timed;
+        final double tps = 1E9 / (System.nanoTime() - lastMinuteTime) * ticksRecord.timed;
         final double usedMemory = TimingsManager.FULL_SERVER_TICK.avgUsedMemory;
         final double freeMemory = TimingsManager.FULL_SERVER_TICK.avgFreeMemory;
         final double loadAvg = ManagementFactory.getOperatingSystemMXBean().getSystemLoadAverage();
 
         List<Object> export() {
             return toArray(
-                time,
-                Math.round(tps * 100D) / 100D,
-                Math.round(pingRecord.avg * 100D) / 100D,
-                fst.export(),
-                toArray(ticksRecord.timed,
-                    ticksRecord.player,
-                    ticksRecord.entity,
-                    ticksRecord.activatedEntity,
-                    ticksRecord.tileEntity
-                ),
-                usedMemory,
-                freeMemory,
-                loadAvg
+                    time,
+                    Math.round(tps * 100D) / 100D,
+                    Math.round(pingRecord.avg * 100D) / 100D,
+                    fst.export(),
+                    toArray(ticksRecord.timed,
+                            ticksRecord.player,
+                            ticksRecord.entity,
+                            ticksRecord.activatedEntity,
+                            ticksRecord.tileEntity
+                    ),
+                    usedMemory,
+                    freeMemory,
+                    loadAvg
             );
         }
     }
@@ -335,9 +330,11 @@ public class TimingHistory {
 
     private static class Counter {
         private int count = 0;
+
         public int increment() {
             return ++count;
         }
+
         public int count() {
             return count;
         }

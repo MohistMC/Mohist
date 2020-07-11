@@ -21,5 +21,5 @@ public enum NameTagVisibility {
     /**
      * Show the player's nametag only to members of other teams.
      */
-    HIDE_FOR_OWN_TEAM;
+    HIDE_FOR_OWN_TEAM
 }

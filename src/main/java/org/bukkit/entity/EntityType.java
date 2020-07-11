@@ -1,22 +1,17 @@
 package org.bukkit.entity;
 
-import java.util.HashMap;
-import java.util.Map;
 import org.bukkit.Location;
 import org.bukkit.World;
-import org.bukkit.entity.minecart.CommandMinecart;
-import org.bukkit.entity.minecart.ExplosiveMinecart;
-import org.bukkit.entity.minecart.HopperMinecart;
-import org.bukkit.entity.minecart.PoweredMinecart;
-import org.bukkit.entity.minecart.RideableMinecart;
-import org.bukkit.entity.minecart.SpawnerMinecart;
-import org.bukkit.entity.minecart.StorageMinecart;
+import org.bukkit.entity.minecart.*;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffectType;
 import red.mohist.entity.CraftCustomAbstractHorse;
 import red.mohist.entity.CraftCustomChestHorse;
 import red.mohist.entity.CraftCustomEntity;
 import red.mohist.entity.CustomProjectileEntity;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public enum EntityType {
 
@@ -288,16 +283,17 @@ public enum EntityType {
         }
     }
 
-    private String name;
-    private Class<? extends Entity> clazz;
-    private short typeId;
-    private boolean independent, living;
+    private final String name;
+    private final Class<? extends Entity> clazz;
+    private final short typeId;
+    private final boolean independent;
+    private boolean living;
 
-    private EntityType(String name, Class<? extends Entity> clazz, int typeId) {
+    EntityType(String name, Class<? extends Entity> clazz, int typeId) {
         this(name, clazz, typeId, true);
     }
 
-    private EntityType(String name, Class<? extends Entity> clazz, int typeId, boolean independent) {
+    EntityType(String name, Class<? extends Entity> clazz, int typeId, boolean independent) {
         this.name = name;
         this.clazz = clazz;
         this.typeId = (short) typeId;
@@ -308,7 +304,6 @@ public enum EntityType {
     }
 
     /**
-     *
      * @param name the entity type's name
      * @return the matching entity type or null
      * @deprecated Magic value
@@ -321,7 +316,6 @@ public enum EntityType {
     }
 
     /**
-     *
      * @param id the raw type id
      * @return the matching entity type or null
      * @deprecated Magic value
@@ -334,7 +328,6 @@ public enum EntityType {
     }
 
     /**
-     *
      * @return the entity type's name
      * @deprecated Magic value
      */
@@ -347,7 +340,6 @@ public enum EntityType {
     }
 
     /**
-     *
      * @return the raw type id
      * @deprecated Magic value
      */

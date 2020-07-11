@@ -47,14 +47,14 @@ public interface BanEntry {
      *
      * @return the target name or IP address
      */
-    public String getTarget();
+    String getTarget();
 
     /**
      * Gets the date this ban entry was created.
      *
      * @return the creation date
      */
-    public Date getCreated();
+    Date getCreated();
 
     /**
      * Sets the date this ban entry was created.
@@ -62,7 +62,7 @@ public interface BanEntry {
      * @param created the new created date, cannot be null
      * @see #save() saving changes
      */
-    public void setCreated(Date created);
+    void setCreated(Date created);
 
     /**
      * Gets the source of this ban.
@@ -72,7 +72,7 @@ public interface BanEntry {
      *
      * @return the source of the ban
      */
-    public String getSource();
+    String getSource();
 
     /**
      * Sets the source of this ban.
@@ -83,40 +83,40 @@ public interface BanEntry {
      * @param source the new source where null values become empty strings
      * @see #save() saving changes
      */
-    public void setSource(String source);
+    void setSource(String source);
 
     /**
      * Gets the date this ban expires on, or null for no defined end date.
      *
      * @return the expiration date
      */
-    public Date getExpiration();
+    Date getExpiration();
 
     /**
      * Sets the date this ban expires on. Null values are considered
      * "infinite" bans.
      *
      * @param expiration the new expiration date, or null to indicate an
-     *     eternity
+     *                   eternity
      * @see #save() saving changes
      */
-    public void setExpiration(Date expiration);
+    void setExpiration(Date expiration);
 
     /**
      * Gets the reason for this ban.
      *
      * @return the ban reason, or null if not set
      */
-    public String getReason();
+    String getReason();
 
     /**
      * Sets the reason for this ban. Reasons must not be null.
      *
      * @param reason the new reason, null values assume the implementation
-     *     default
+     *               default
      * @see #save() saving changes
      */
-    public void setReason(String reason);
+    void setReason(String reason);
 
     /**
      * Saves the ban entry, overwriting any previous data in the ban list.
@@ -124,5 +124,5 @@ public interface BanEntry {
      * Saving the ban entry of an unbanned player will cause the player to be
      * banned once again.
      */
-    public void save();
+    void save();
 }

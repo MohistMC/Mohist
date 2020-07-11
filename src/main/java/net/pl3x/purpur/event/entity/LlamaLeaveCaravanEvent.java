@@ -15,6 +15,11 @@ public class LlamaLeaveCaravanEvent extends EntityEvent {
         super(llama);
     }
 
+    @NotNull
+    public static HandlerList getHandlerList() {
+        return handlers;
+    }
+
     @Override
     @NotNull
     public Llama getEntity() {
@@ -24,11 +29,6 @@ public class LlamaLeaveCaravanEvent extends EntityEvent {
     @Override
     @NotNull
     public HandlerList getHandlers() {
-        return handlers;
-    }
-
-    @NotNull
-    public static HandlerList getHandlerList() {
         return handlers;
     }
 }

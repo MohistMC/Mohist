@@ -557,5 +557,5 @@ public enum Sound {
     UI_TOAST_IN,
     UI_TOAST_OUT,
     WEATHER_RAIN,
-    WEATHER_RAIN_ABOVE;
+    WEATHER_RAIN_ABOVE
 }

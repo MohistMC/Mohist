@@ -21,54 +21,37 @@ package net.minecraftforge.fml.relauncher.libraries;
 
 import com.google.common.io.ByteStreams;
 import com.google.common.io.Files;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.FilenameFilter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-import java.util.jar.Attributes;
-import java.util.jar.JarEntry;
-import java.util.jar.JarFile;
-import java.util.jar.Manifest;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
 import net.minecraft.launchwrapper.Launch;
 import net.minecraftforge.common.ForgeVersion;
 import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.relauncher.FMLLaunchHandler;
 import org.apache.commons.lang3.tuple.Pair;
 
-public class LibraryManager
-{
+import java.io.*;
+import java.util.*;
+import java.util.jar.Attributes;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
+import java.util.jar.Manifest;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
+
+public class LibraryManager {
     public static final boolean DISABLE_EXTERNAL_MANIFEST = Boolean.parseBoolean(System.getProperty("forge.disable_external_manifest", "false"));
     public static final boolean ENABLE_AUTO_MOD_MOVEMENT = Boolean.parseBoolean(System.getProperty("forge.enable_auto_mod_movement", "false"));
-    private static final String LIBRARY_DIRECTORY_OVERRIDE = System.getProperty("forge.lib_folder", null);
-    private static final List<String> skipContainedDeps = Arrays.asList(System.getProperty("fml.skipContainedDeps","").split(",")); //TODO: Is this used by anyone in the real world? TODO: Remove in 1.13.
-    private static final FilenameFilter MOD_FILENAME_FILTER  = (dir, name) -> name.endsWith(".jar") || name.endsWith(".zip"); //TODO: Disable support for zip in 1.13
-    private static final Comparator<File> FILE_NAME_SORTER_INSENSITVE = (o1, o2) -> o1.getName().toLowerCase(Locale.ENGLISH).compareTo(o2.getName().toLowerCase(Locale.ENGLISH));
-
     public static final Attributes.Name MODSIDE = new Attributes.Name("ModSide");
+    private static final String LIBRARY_DIRECTORY_OVERRIDE = System.getProperty("forge.lib_folder", null);
+    private static final List<String> skipContainedDeps = Arrays.asList(System.getProperty("fml.skipContainedDeps", "").split(",")); //TODO: Is this used by anyone in the real world? TODO: Remove in 1.13.
+    private static final FilenameFilter MOD_FILENAME_FILTER = (dir, name) -> name.endsWith(".jar") || name.endsWith(".zip"); //TODO: Disable support for zip in 1.13
+    private static final Comparator<File> FILE_NAME_SORTER_INSENSITVE = (o1, o2) -> o1.getName().toLowerCase(Locale.ENGLISH).compareTo(o2.getName().toLowerCase(Locale.ENGLISH));
     private static final Attributes.Name MODCONTAINSDEPS = new Attributes.Name("ContainedDeps");
     private static final Attributes.Name MAVEN_ARTIFACT = new Attributes.Name("Maven-Artifact");
     private static final Attributes.Name TIMESTAMP = new Attributes.Name("Timestamp");
     private static final Attributes.Name MD5 = new Attributes.Name("MD5");
     private static Repository libraries_dir = null;
-    private static Set<File> processed = new HashSet<File>();
+    private static final Set<File> processed = new HashSet<File>();
 
-    public static void setup(File minecraftHome)
-    {
+    public static void setup(File minecraftHome) {
         File libDir = findLibraryFolder(minecraftHome);
         FMLLog.log.debug("Determined Minecraft Libraries Root: {}", libDir);
         Repository old = Repository.replace(libDir, "libraries");
@@ -80,8 +63,7 @@ public class LibraryManager
         File mods_ver = new File(mods, ForgeVersion.mcVersion);
 
         ModList memory = null;
-        if (!ENABLE_AUTO_MOD_MOVEMENT)
-        {
+        if (!ENABLE_AUTO_MOD_MOVEMENT) {
             Repository repo = new LinkRepository(new File(mods, "memory_repo"));
             memory = new MemoryModList(repo);
             ModList.cache.put("MEMORY", memory);
@@ -91,17 +73,14 @@ public class LibraryManager
         for (File dir : new File[]{mods, mods_ver})
             cleanDirectory(dir, ENABLE_AUTO_MOD_MOVEMENT ? ModList.create(new File(dir, "mod_list.json"), minecraftHome) : memory, mods_ver, mods);
 
-        for (ModList list : ModList.getKnownLists(minecraftHome))
-        {
+        for (ModList list : ModList.getKnownLists(minecraftHome)) {
             Repository repo = list.getRepository() == null ? libraries_dir : list.getRepository();
             List<Artifact> artifacts = list.getArtifacts();
             // extractPacked adds artifacts to the list. As such, we can't use an Iterator to traverse it.
-            for (int i = 0; i < artifacts.size(); i++)
-            {
+            for (int i = 0; i < artifacts.size(); i++) {
                 Artifact artifact = artifacts.get(i);
                 Artifact resolved = repo.resolve(artifact);
-                if (resolved != null)
-                {
+                if (resolved != null) {
                     File target = repo.getFile(resolved.getPath());
                     if (target.exists())
                         extractPacked(target, list, mods_ver, mods);
@@ -110,10 +89,8 @@ public class LibraryManager
         }
     }
 
-    private static File findLibraryFolder(File minecraftHome)
-    {
-        if (LIBRARY_DIRECTORY_OVERRIDE != null)
-        {
+    private static File findLibraryFolder(File minecraftHome) {
+        if (LIBRARY_DIRECTORY_OVERRIDE != null) {
             FMLLog.log.error("System variable set to override Library Directory: {}", LIBRARY_DIRECTORY_OVERRIDE);
             return new File(LIBRARY_DIRECTORY_OVERRIDE);
         }
@@ -122,17 +99,14 @@ public class LibraryManager
         return new File(minecraftHome, "libraries"); //Everything else failed, return the default.
     }
 
-    private static void cleanDirectory(File dir, ModList modlist, File... modDirs)
-    {
+    private static void cleanDirectory(File dir, ModList modlist, File... modDirs) {
         if (!dir.exists())
             return;
 
         FMLLog.log.debug("Cleaning up mods folder: {}", dir);
-        for (File file : dir.listFiles(f -> f.isFile() && f.getName().endsWith(".jar")))
-        {
+        for (File file : dir.listFiles(f -> f.isFile() && f.getName().endsWith(".jar"))) {
             Pair<Artifact, byte[]> ret = extractPacked(file, modlist, modDirs);
-            if (ret != null)
-            {
+            if (ret != null) {
                 Artifact artifact = ret.getLeft();
                 Repository repo = modlist.getRepository() == null ? libraries_dir : modlist.getRepository();
                 File moved = repo.archive(artifact, file, ret.getRight());
@@ -140,47 +114,38 @@ public class LibraryManager
             }
         }
 
-        try
-        {
+        try {
             if (modlist.changed())
                 modlist.save();
-        }
-        catch (IOException e)
-        {
+        } catch (IOException e) {
             FMLLog.log.error(FMLLog.log.getMessageFactory().newMessage("Error updating modlist file {}", modlist.getName()), e);
         }
     }
 
-    private static Pair<Artifact, byte[]> extractPacked(File file, ModList modlist, File... modDirs)
-    {
-        if (processed.contains(file))
-        {
+    private static Pair<Artifact, byte[]> extractPacked(File file, ModList modlist, File... modDirs) {
+        if (processed.contains(file)) {
             FMLLog.log.debug("File already proccessed {}, Skipping", file.getAbsolutePath());
             return null;
         }
         JarFile jar = null;
-        try
-        {
+        try {
             jar = new JarFile(file);
             FMLLog.log.debug("Examining file: {}", file.getName());
             processed.add(file);
             return extractPacked(jar, modlist, modDirs);
-        }
-        catch (IOException ioe)
-        {
+        } catch (IOException ioe) {
             FMLLog.log.error("Unable to read the jar file {} - ignoring", file.getName(), ioe);
-        }
-        finally
-        {
+        } finally {
             try {
                 if (jar != null)
                     jar.close();
-            } catch (IOException e) {}
+            } catch (IOException e) {
+            }
         }
         return null;
     }
-    private static Pair<Artifact, byte[]> extractPacked(JarFile jar, ModList modlist, File... modDirs) throws IOException
-    {
+
+    private static Pair<Artifact, byte[]> extractPacked(JarFile jar, ModList modlist, File... modDirs) throws IOException {
         Attributes attrs;
         if (jar.getManifest() == null)
             return null;
@@ -195,12 +160,9 @@ public class LibraryManager
         if (modSide != null && !"BOTH".equals(modSide) && !FMLLaunchHandler.side().name().equals(modSide))
             return null;
 
-        if (attrs.containsKey(MODCONTAINSDEPS))
-        {
-            for (String dep : attrs.getValue(MODCONTAINSDEPS).split(" "))
-            {
-                if (!dep.endsWith(".jar"))
-                {
+        if (attrs.containsKey(MODCONTAINSDEPS)) {
+            for (String dep : attrs.getValue(MODCONTAINSDEPS).split(" ")) {
+                if (!dep.endsWith(".jar")) {
                     FMLLog.log.error("Contained Dep is not a jar file: {}", dep);
                     throw new IllegalStateException("Invalid contained dep, Must be jar: " + dep);
                 }
@@ -209,15 +171,13 @@ public class LibraryManager
                     dep = "META-INF/libraries/" + dep;
 
                 JarEntry depEntry = jar.getJarEntry(dep);
-                if (depEntry == null)
-                {
+                if (depEntry == null) {
                     FMLLog.log.error("Contained Dep is not in the jar: {}", dep);
                     throw new IllegalStateException("Invalid contained dep, Missing from jar: " + dep);
                 }
 
                 String depEndName = new File(dep).getName(); // extract last part of name
-                if (skipContainedDeps.contains(dep) || skipContainedDeps.contains(depEndName))
-                {
+                if (skipContainedDeps.contains(dep) || skipContainedDeps.contains(depEndName)) {
                     FMLLog.log.error("Skipping dep at request: {}", dep);
                     continue;
                 }
@@ -227,21 +187,16 @@ public class LibraryManager
                 byte[] manifest_data = null;
 
                 JarEntry metaEntry = jar.getJarEntry(dep + ".meta");
-                if (metaEntry != null)
-                {
+                if (metaEntry != null) {
                     manifest_data = readAll(jar.getInputStream(metaEntry));
                     meta = new Manifest(new ByteArrayInputStream(manifest_data)).getMainAttributes();
-                }
-                else
-                {
+                } else {
                     data = readAll(jar.getInputStream(depEntry));
                     try (ZipInputStream zi = new ZipInputStream(new ByteArrayInputStream(data))) //We use zip input stream directly, as the current Oracle implementation of JarInputStream only works when the manifest is the First/Second entry in the jar...
                     {
                         ZipEntry ze = null;
-                        while ((ze = zi.getNextEntry()) != null)
-                        {
-                            if (ze.getName().equalsIgnoreCase(JarFile.MANIFEST_NAME))
-                            {
+                        while ((ze = zi.getNextEntry()) != null) {
+                            if (ze.getName().equalsIgnoreCase(JarFile.MANIFEST_NAME)) {
                                 manifest_data = readAll(zi);
                                 meta = new Manifest(new ByteArrayInputStream(manifest_data)).getMainAttributes();
                                 break;
@@ -253,80 +208,63 @@ public class LibraryManager
                 if (meta == null || !meta.containsKey(MAVEN_ARTIFACT)) //Ugh I really don't want to do backwards compatibility here, I want to force modders to provide information... TODO: Remove in 1.13?
                 {
                     boolean found = false;
-                    for (File dir : modDirs)
-                    {
+                    for (File dir : modDirs) {
                         File target = new File(dir, depEndName);
-                        if (target.exists())
-                        {
+                        if (target.exists()) {
                             FMLLog.log.debug("Found existing ContainDep extracted to {}, skipping extraction", target.getCanonicalPath());
                             found = true;
                         }
                     }
-                    if (!found)
-                    {
+                    if (!found) {
                         File target = new File(modDirs[0], depEndName);
                         FMLLog.log.debug("Extracting ContainedDep {} from {} to {}", dep, jar.getName(), target.getCanonicalPath());
-                        try
-                        {
+                        try {
                             Files.createParentDirs(target);
                             try
-                            (
-                                FileOutputStream out = new FileOutputStream(target);
-                                InputStream in = data == null ? jar.getInputStream(depEntry) : new ByteArrayInputStream(data)
-                            )
-                            {
+                                    (
+                                            FileOutputStream out = new FileOutputStream(target);
+                                            InputStream in = data == null ? jar.getInputStream(depEntry) : new ByteArrayInputStream(data)
+                                    ) {
                                 ByteStreams.copy(in, out);
                             }
                             FMLLog.log.debug("Extracted ContainedDep {} from {} to {}", dep, jar.getName(), target.getCanonicalPath());
                             extractPacked(target, modlist, modDirs);
-                        }
-                        catch (IOException e)
-                        {
+                        } catch (IOException e) {
                             FMLLog.log.error("An error occurred extracting dependency", e);
                         }
                     }
-                }
-                else
-                {
-                    try
-                    {
+                } else {
+                    try {
                         Artifact artifact = readArtifact(modlist.getRepository(), meta);
                         File target = artifact.getFile();
-                        if (target.exists())
-                        {
+                        if (target.exists()) {
                             FMLLog.log.debug("Found existing ContainedDep {}({}) from {} extracted to {}, skipping extraction", dep, artifact.toString(), target.getCanonicalPath(), jar.getName());
-                            if (!ENABLE_AUTO_MOD_MOVEMENT)
-                            {
+                            if (!ENABLE_AUTO_MOD_MOVEMENT) {
                                 Pair<?, ?> child = extractPacked(target, modlist, modDirs); //If we're not building a real list we have to re-build the dep list every run. So search down.
                                 if (child == null && metaEntry != null) //External meta with no internal name... If there is a internal name, we trust that that name is the correct one.
                                 {
                                     modlist.add(artifact);
                                 }
                             }
-                        }
-                        else
-                        {
+                        } else {
                             FMLLog.log.debug("Extracting ContainedDep {}({}) from {} to {}", dep, artifact.toString(), jar.getName(), target.getCanonicalPath());
                             Files.createParentDirs(target);
                             try
-                            (
-                                FileOutputStream out = new FileOutputStream(target);
-                                InputStream in = data == null ? jar.getInputStream(depEntry) : new ByteArrayInputStream(data)
-                            )
-                            {
+                                    (
+                                            FileOutputStream out = new FileOutputStream(target);
+                                            InputStream in = data == null ? jar.getInputStream(depEntry) : new ByteArrayInputStream(data)
+                                    ) {
                                 ByteStreams.copy(in, out);
                             }
                             FMLLog.log.debug("Extracted ContainedDep {}({}) from {} to {}", dep, artifact.toString(), jar.getName(), target.getCanonicalPath());
 
-                            if (artifact.isSnapshot())
-                            {
+                            if (artifact.isSnapshot()) {
                                 SnapshotJson json = SnapshotJson.create(artifact.getSnapshotMeta());
                                 json.add(new SnapshotJson.Entry(artifact.getTimestamp(), meta.getValue(MD5)));
                                 json.write(artifact.getSnapshotMeta());
                             }
 
-                            if (!DISABLE_EXTERNAL_MANIFEST)
-                            {
+                            if (!DISABLE_EXTERNAL_MANIFEST) {
                                 File meta_target = new File(target.getAbsolutePath() + ".meta");
                                 Files.write(manifest_data, meta_target);
                             }
@@ -336,21 +274,16 @@ public class LibraryManager
                                 modlist.add(artifact);
                             }
                         }
-                    }
-                    catch (NumberFormatException nfe)
-                    {
+                    } catch (NumberFormatException nfe) {
                         FMLLog.log.error(FMLLog.log.getMessageFactory().newMessage("An error occurred extracting dependency. Invalid Timestamp: {}", meta.getValue(TIMESTAMP)), nfe);
-                    }
-                    catch (IOException e)
-                    {
+                    } catch (IOException e) {
                         FMLLog.log.error("An error occurred extracting dependency", e);
                     }
                 }
             }
         }
 
-        if (attrs.containsKey(MAVEN_ARTIFACT))
-        {
+        if (attrs.containsKey(MAVEN_ARTIFACT)) {
             Artifact artifact = readArtifact(modlist.getRepository(), attrs);
             modlist.add(artifact);
             return Pair.of(artifact, readAll(jar.getInputStream(manifest_entry)));
@@ -358,8 +291,7 @@ public class LibraryManager
         return null;
     }
 
-    private static Artifact readArtifact(Repository repo, Attributes meta)
-    {
+    private static Artifact readArtifact(Repository repo, Attributes meta) {
         String timestamp = meta.getValue(TIMESTAMP);
         if (timestamp != null)
             timestamp = SnapshotJson.TIMESTAMP.format(new Date(Long.parseLong(timestamp)));
@@ -367,8 +299,7 @@ public class LibraryManager
         return new Artifact(repo, meta.getValue(MAVEN_ARTIFACT), timestamp);
     }
 
-    private static byte[] readAll(InputStream in) throws IOException
-    {
+    private static byte[] readAll(InputStream in) throws IOException {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         int read = -1;
         byte[] data = new byte[1024 * 16];
@@ -380,20 +311,14 @@ public class LibraryManager
         return out.toByteArray();
     }
 
-    public static List<Artifact> flattenLists(File mcDir)
-    {
+    public static List<Artifact> flattenLists(File mcDir) {
         List<Artifact> merged = new ArrayList<>();
-        for (ModList list : ModList.getBasicLists(mcDir))
-        {
-            for (Artifact art : list.flatten())
-            {
+        for (ModList list : ModList.getBasicLists(mcDir)) {
+            for (Artifact art : list.flatten()) {
                 Optional<Artifact> old = merged.stream().filter(art::matchesID).findFirst();
-                if (!old.isPresent())
-                {
+                if (!old.isPresent()) {
                     merged.add(art);
-                }
-                else if (old.get().getVersion().compareTo(art.getVersion()) < 0)
-                {
+                } else if (old.get().getVersion().compareTo(art.getVersion()) < 0) {
                     merged.add(merged.indexOf(old.get()), art);
                     merged.remove(old.get());
                 }
@@ -402,46 +327,35 @@ public class LibraryManager
         return merged;
     }
 
-    public static List<File> gatherLegacyCanidates(File mcDir)
-    {
+    public static List<File> gatherLegacyCanidates(File mcDir) {
         List<File> list = new ArrayList<>();
 
         @SuppressWarnings("unchecked")
-        Map<String,String> args = (Map<String, String>)Launch.blackboard.get("forgeLaunchArgs");
+        Map<String, String> args = (Map<String, String>) Launch.blackboard.get("forgeLaunchArgs");
         String extraMods = args.get("--mods");
-        if (extraMods != null)
-        {
+        if (extraMods != null) {
             FMLLog.log.info("Found mods from the command line:");
-            for (String mod : extraMods.split(","))
-            {
+            for (String mod : extraMods.split(",")) {
                 File file = new File(mcDir, mod);
-                if (!file.exists())
-                {
+                if (!file.exists()) {
                     FMLLog.log.info("  Failed to find mod file {} ({})", mod, file.getAbsolutePath());
-                }
-                else if (!list.contains(file))
-                {
+                } else if (!list.contains(file)) {
                     FMLLog.log.debug("  Adding {} ({}) to the mod list", mod, file.getAbsolutePath());
                     list.add(file);
-                }
-                else if (!list.contains(file))
-                {
+                } else if (!list.contains(file)) {
                     FMLLog.log.debug("  Duplicte command line mod detected {} ({})", mod, file.getAbsolutePath());
                 }
             }
         }
 
-        for (String dir : new String[]{"mods", "mods" + File.separatorChar + ForgeVersion.mcVersion})
-        {
+        for (String dir : new String[]{"mods", "mods" + File.separatorChar + ForgeVersion.mcVersion}) {
             File base = new File(mcDir, dir);
             if (!base.isDirectory() || !base.exists())
                 continue;
 
             FMLLog.log.info(red.mohist.util.i18n.Message.getString("fml.log.4"), base.getAbsolutePath());
-            for (File f : base.listFiles(MOD_FILENAME_FILTER))
-            {
-                if (!list.contains(f))
-                {
+            for (File f : base.listFiles(MOD_FILENAME_FILTER)) {
+                if (!list.contains(f)) {
                     FMLLog.log.debug("  Adding {} to the mod list", f.getName());
                     list.add(f);
                 }
@@ -456,8 +370,7 @@ public class LibraryManager
         return list;
     }
 
-    public static Repository getDefaultRepo()
-    {
+    public static Repository getDefaultRepo() {
         return libraries_dir;
     }
 }

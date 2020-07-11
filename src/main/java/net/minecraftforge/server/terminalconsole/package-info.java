@@ -2,5 +2,6 @@
 @MethodsReturnNonnullByDefault
 package net.minecraftforge.server.terminalconsole;
 
-import javax.annotation.ParametersAreNonnullByDefault;
 import mcp.MethodsReturnNonnullByDefault;
+
+import javax.annotation.ParametersAreNonnullByDefault;

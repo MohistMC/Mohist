@@ -6,7 +6,6 @@ import org.bukkit.event.entity.EntityEvent;
 
 /**
  * Called when an entity stops riding another entity.
- *
  */
 public class EntityDismountEvent extends EntityEvent {
 

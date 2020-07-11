@@ -35,7 +35,7 @@ public class Tree extends Wood {
      * direction.
      *
      * @param species the species of the tree block
-     * @param dir the direction the tree block is facing
+     * @param dir     the direction the tree block is facing
      */
     public Tree(TreeSpecies species, BlockFace dir) {
         this(DEFAULT_TYPE, species, dir);
@@ -62,7 +62,7 @@ public class Tree extends Wood {
     /**
      * Constructs a tree block of the given type and tree species.
      *
-     * @param type the type of tree block
+     * @param type    the type of tree block
      * @param species the species of the tree block
      */
     public Tree(final Material type, TreeSpecies species) {
@@ -73,9 +73,9 @@ public class Tree extends Wood {
      * Constructs a tree block of the given type and tree species, and facing
      * the given direction.
      *
-     * @param type the type of tree block
+     * @param type    the type of tree block
      * @param species the species of the tree block
-     * @param dir the direction the tree block is facing
+     * @param dir     the direction the tree block is facing
      */
     public Tree(final Material type, TreeSpecies species, BlockFace dir) {
         super(type, species);

@@ -26,12 +26,12 @@ import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
-public @interface Config
-{
+public @interface Config {
     /**
-    * The mod id that this configuration is associated with.
-    */
+     * The mod id that this configuration is associated with.
+     */
     String modid();
+
     /**
      * A user friendly name for the config file,
      * the default will be modid
@@ -51,77 +51,79 @@ public @interface Config
      */
     String category() default "general";
 
-    public static enum Type
-    {
+    enum Type {
         /**
-        * Loaded once, directly after mod construction. Before pre-init.
-        * This class must have static fields.
-        */
+         * Loaded once, directly after mod construction. Before pre-init.
+         * This class must have static fields.
+         */
         INSTANCE(true);
 
 
         private boolean isStatic = true;
-        private Type(boolean isStatic) { this.isStatic = isStatic; }
-        public boolean isStatic(){ return this.isStatic; }
+
+        Type(boolean isStatic) {
+            this.isStatic = isStatic;
+        }
+
+        public boolean isStatic() {
+            return this.isStatic;
+        }
     }
 
     @Retention(RetentionPolicy.RUNTIME)
     @Target({ElementType.FIELD, ElementType.TYPE})
-    @interface LangKey
-    {
+    @interface LangKey {
         String value();
     }
 
     @Retention(RetentionPolicy.RUNTIME)
     @Target(ElementType.FIELD)
-    @interface Comment
-    {
+    @interface Comment {
         String[] value();
     }
 
     @Retention(RetentionPolicy.RUNTIME)
     @Target(ElementType.FIELD)
-    @interface Ignore
-    {}
+    @interface Ignore {
+    }
 
     @Retention(RetentionPolicy.RUNTIME)
     @Target(ElementType.FIELD)
-    @interface RangeInt
-    {
+    @interface RangeInt {
         int min() default Integer.MIN_VALUE;
+
         int max() default Integer.MAX_VALUE;
     }
 
     @Retention(RetentionPolicy.RUNTIME)
     @Target(ElementType.FIELD)
-    @interface RangeDouble
-    {
+    @interface RangeDouble {
         double min() default Double.MIN_VALUE;
+
         double max() default Double.MAX_VALUE;
     }
 
     @Retention(RetentionPolicy.RUNTIME)
     @Target(ElementType.FIELD)
-    @interface Name
-    {
+    @interface Name {
         String value();
     }
-    
+
     @Retention(RetentionPolicy.RUNTIME)
     @Target({ElementType.FIELD, ElementType.TYPE})
-    @interface RequiresMcRestart
-    {}
-    
+    @interface RequiresMcRestart {
+    }
+
     @Retention(RetentionPolicy.RUNTIME)
     @Target({ElementType.FIELD, ElementType.TYPE})
-    @interface RequiresWorldRestart
-    {}
+    @interface RequiresWorldRestart {
+    }
 
     /**
      * A field marked with this annotation (and {@link RangeInt} or {@link RangeDouble}) will have a slider control attached in the config UI
      */
     @Retention(RetentionPolicy.RUNTIME)
     @Target(ElementType.FIELD)
-    @interface SlidingOption
-    {}
+    @interface SlidingOption {
+    }
 }

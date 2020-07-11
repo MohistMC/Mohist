@@ -24,9 +24,9 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 
-public class PacketUtil
-{
-    private PacketUtil() {}
+public class PacketUtil {
+    private PacketUtil() {
+    }
 
     /**
      * Most ItemStack serialization is Server to Client, and must go through PacketBuffer.writeItemStack which uses Item.getNBTShareTag.
@@ -35,21 +35,16 @@ public class PacketUtil
      * This method matches PacketBuffer.writeItemStack but without the Item.getNBTShareTag patch.
      * It is compatible with PacketBuffer.readItemStack.
      */
-    public static void writeItemStackFromClientToServer(PacketBuffer buffer, ItemStack stack)
-    {
-        if (stack.isEmpty())
-        {
+    public static void writeItemStackFromClientToServer(PacketBuffer buffer, ItemStack stack) {
+        if (stack.isEmpty()) {
             buffer.writeShort(-1);
-        }
-        else
-        {
+        } else {
             buffer.writeShort(Item.getIdFromItem(stack.getItem()));
             buffer.writeByte(stack.getCount());
             buffer.writeShort(stack.getMetadata());
             NBTTagCompound nbttagcompound = null;
 
-            if (stack.getItem().isDamageable() || stack.getItem().getShareTag())
-            {
+            if (stack.getItem().isDamageable() || stack.getItem().getShareTag()) {
                 nbttagcompound = stack.getTagCompound();
             }
 

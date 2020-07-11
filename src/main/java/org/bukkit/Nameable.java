@@ -11,7 +11,7 @@ public interface Nameable {
      *
      * @return name of the mob/block or null
      */
-    public String getCustomName();
+    String getCustomName();
 
     /**
      * Sets a custom name on a mob or block. This name will be used in death
@@ -24,5 +24,5 @@ public interface Nameable {
      *
      * @param name the name to set
      */
-    public void setCustomName(String name);
+    void setCustomName(String name);
 }

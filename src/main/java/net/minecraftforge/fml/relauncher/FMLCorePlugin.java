@@ -21,39 +21,34 @@ package net.minecraftforge.fml.relauncher;
 
 import java.util.Map;
 
-public class FMLCorePlugin implements IFMLLoadingPlugin
-{
+public class FMLCorePlugin implements IFMLLoadingPlugin {
     @Override
-    public String[] getASMTransformerClass()
-    {
-        return new String[] {
-                             "net.minecraftforge.fml.common.asm.transformers.SideTransformer",
-                             "net.minecraftforge.fml.common.asm.transformers.EventSubscriptionTransformer",
-                             "net.minecraftforge.fml.common.asm.transformers.EventSubscriberTransformer",
-                             "net.minecraftforge.fml.common.asm.transformers.SoundEngineFixTransformer"
-                            };
+    public String[] getASMTransformerClass() {
+        return new String[]{
+                "net.minecraftforge.fml.common.asm.transformers.SideTransformer",
+                "net.minecraftforge.fml.common.asm.transformers.EventSubscriptionTransformer",
+                "net.minecraftforge.fml.common.asm.transformers.EventSubscriberTransformer",
+                "net.minecraftforge.fml.common.asm.transformers.SoundEngineFixTransformer"
+        };
     }
 
     @Override
-    public String getAccessTransformerClass()
-    {
+    public String getAccessTransformerClass() {
         return "net.minecraftforge.fml.common.asm.transformers.AccessTransformer";
     }
+
     @Override
-    public String getModContainerClass()
-    {
+    public String getModContainerClass() {
         return "net.minecraftforge.fml.common.FMLContainer";
     }
 
     @Override
-    public String getSetupClass()
-    {
+    public String getSetupClass() {
         return "net.minecraftforge.fml.common.asm.FMLSanityChecker";
     }
 
     @Override
-    public void injectData(Map<String, Object> data)
-    {
+    public void injectData(Map<String, Object> data) {
         // don't care about this data
     }
 }

@@ -1,7 +1,5 @@
 package org.bukkit.craftbukkit.v1_12_R1.generator;
 
-import java.util.List;
-import java.util.Random;
 import net.minecraft.block.Block;
 import net.minecraft.entity.EnumCreatureType;
 import net.minecraft.util.math.BlockPos;
@@ -14,6 +12,9 @@ import org.bukkit.block.Biome;
 import org.bukkit.craftbukkit.v1_12_R1.block.CraftBlock;
 import org.bukkit.generator.BlockPopulator;
 import org.bukkit.generator.ChunkGenerator;
+
+import java.util.List;
+import java.util.Random;
 
 public class CustomChunkGenerator extends InternalChunkGenerator {
     private final ChunkGenerator generator;
@@ -210,7 +211,7 @@ public class CustomChunkGenerator extends InternalChunkGenerator {
 
     @Override
     public boolean isInsideStructure(World world, String type, BlockPos position) {
-        return "Stronghold".equals(type) && this.strongholdGen != null ? this.strongholdGen.isInsideStructure(position) : false;
+        return ("Stronghold".equals(type) && this.strongholdGen != null) && this.strongholdGen.isInsideStructure(position);
     }
 
     @Override

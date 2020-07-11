@@ -16,7 +16,7 @@ public interface FlowerPot extends BlockState {
 
     /**
      * Sets the item present in this flower pot.
-     *
+     * <p>
      * NOTE: The Vanilla Minecraft client will currently not refresh this until
      * a block update is triggered.
      *

@@ -10,33 +10,33 @@ public interface CommandSender extends Permissible {
      *
      * @param message Message to be displayed
      */
-    public void sendMessage(String message);
+    void sendMessage(String message);
 
     /**
      * Sends this sender multiple messages
      *
      * @param messages An array of messages to be displayed
      */
-    public void sendMessage(String[] messages);
+    void sendMessage(String[] messages);
 
     /**
      * Returns the server instance that this command is running on
      *
      * @return Server instance
      */
-    public Server getServer();
+    Server getServer();
 
     /**
      * Gets the name of this command sender
      *
      * @return Name of the sender
      */
-    public String getName();
+    String getName();
 
     Spigot spigot();
 
     // Spigot start
-    public class Spigot {
+    class Spigot {
 
         /**
          * Sends this sender a chat component.

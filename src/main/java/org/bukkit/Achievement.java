@@ -2,6 +2,7 @@ package org.bukkit;
 
 /**
  * Represents an achievement, which may be given to players.
+ *
  * @deprecated future versions of Minecraft do not have achievements
  */
 
@@ -43,11 +44,11 @@ public enum Achievement {
 
     private final Achievement parent;
 
-    private Achievement() {
+    Achievement() {
         parent = null;
     }
 
-    private Achievement(Achievement parent) {
+    Achievement(Achievement parent) {
         this.parent = parent;
     }
 

@@ -7,10 +7,10 @@ package org.bukkit.plugin;
  */
 public class RegisteredServiceProvider<T> implements Comparable<RegisteredServiceProvider<?>> {
 
-    private Class<T> service;
-    private Plugin plugin;
-    private T provider;
-    private ServicePriority priority;
+    private final Class<T> service;
+    private final Plugin plugin;
+    private final T provider;
+    private final ServicePriority priority;
 
     public RegisteredServiceProvider(Class<T> service, T provider, ServicePriority priority, Plugin plugin) {
 

@@ -1,17 +1,18 @@
 package org.bukkit.event.block;
 
-import java.util.List;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.event.HandlerList;
+
+import java.util.List;
 
 /**
  * Called when a piston retracts
  */
 public class BlockPistonRetractEvent extends BlockPistonEvent {
     private static final HandlerList handlers = new HandlerList();
-    private List<Block> blocks;
+    private final List<Block> blocks;
 
     public BlockPistonRetractEvent(final Block block, final List<Block> blocks, final BlockFace direction) {
         super(block, direction);

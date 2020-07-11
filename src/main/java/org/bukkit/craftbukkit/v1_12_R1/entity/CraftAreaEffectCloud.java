@@ -1,7 +1,6 @@
 package org.bukkit.craftbukkit.v1_12_R1.entity;
 
 import com.google.common.collect.ImmutableList;
-import java.util.List;
 import net.minecraft.entity.EntityAreaEffectCloud;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.potion.Potion;
@@ -18,6 +17,8 @@ import org.bukkit.potion.PotionData;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.projectiles.ProjectileSource;
+
+import java.util.List;
 
 public class CraftAreaEffectCloud extends CraftEntity implements AreaEffectCloud {
 
@@ -215,9 +216,9 @@ public class CraftAreaEffectCloud extends CraftEntity implements AreaEffectCloud
 
     public void setSource(ProjectileSource shooter) {
         if (shooter instanceof CraftLivingEntity) {
-            getHandle().setOwner((EntityLivingBase) ((CraftLivingEntity) shooter).getHandle());
+            getHandle().setOwner(((CraftLivingEntity) shooter).getHandle());
         } else {
-            getHandle().setOwner((EntityLivingBase) null);
+            getHandle().setOwner(null);
         }
     }
 }

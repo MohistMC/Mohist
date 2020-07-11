@@ -15,7 +15,7 @@ public interface BlockStateMeta extends ItemMeta {
     /**
      * Returns the currently attached block state for this
      * item or creates a new one if one doesn't exist.
-     *
+     * <p>
      * The state is a copy, it must be set back (or to another
      * item) with {@link #setBlockState(org.bukkit.block.BlockState)}
      *
@@ -28,7 +28,7 @@ public interface BlockStateMeta extends ItemMeta {
      *
      * @param blockState the block state to attach to the block.
      * @throws IllegalArgumentException if the blockState is null
-     *         or invalid for this item.
+     *                                  or invalid for this item.
      */
     void setBlockState(BlockState blockState);
 }

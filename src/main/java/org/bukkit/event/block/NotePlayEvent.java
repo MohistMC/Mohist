@@ -12,7 +12,7 @@ import org.bukkit.event.HandlerList;
  */
 public class NotePlayEvent extends BlockEvent implements Cancellable {
 
-    private static HandlerList handlers = new HandlerList();
+    private static final HandlerList handlers = new HandlerList();
     private Instrument instrument;
     private Note note;
     private boolean cancelled = false;

@@ -1,8 +1,9 @@
 package org.bukkit.enchantments;
 
+import org.bukkit.inventory.ItemStack;
+
 import java.util.HashMap;
 import java.util.Map;
-import org.bukkit.inventory.ItemStack;
 
 /**
  * The various type of enchantments that may be added to armour or weapons
@@ -318,10 +319,7 @@ public abstract class Enchantment {
             return false;
         }
         final Enchantment other = (Enchantment) obj;
-        if (this.id != other.id) {
-            return false;
-        }
-        return true;
+        return this.id == other.id;
     }
 
     @Override

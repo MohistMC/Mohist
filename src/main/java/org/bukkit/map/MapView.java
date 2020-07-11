@@ -1,7 +1,8 @@
 package org.bukkit.map;
 
-import java.util.List;
 import org.bukkit.World;
+
+import java.util.List;
 
 /**
  * Represents a map item.
@@ -16,7 +17,7 @@ public interface MapView {
      * @deprecated Magic value
      */
     @Deprecated
-    public short getId();
+    short getId();
 
     /**
      * Check whether this map is virtual. A map is virtual if its lowermost
@@ -24,49 +25,49 @@ public interface MapView {
      *
      * @return Whether the map is virtual.
      */
-    public boolean isVirtual();
+    boolean isVirtual();
 
     /**
      * Get the scale of this map.
      *
      * @return The scale of the map.
      */
-    public Scale getScale();
+    Scale getScale();
 
     /**
      * Set the scale of this map.
      *
      * @param scale The scale to set.
      */
-    public void setScale(Scale scale);
+    void setScale(Scale scale);
 
     /**
      * Get the center X position of this map.
      *
      * @return The center X position.
      */
-    public int getCenterX();
+    int getCenterX();
 
     /**
      * Set the center X position of this map.
      *
      * @param x The center X position.
      */
-    public void setCenterX(int x);
+    void setCenterX(int x);
 
     /**
      * Get the center Z position of this map.
      *
      * @return The center Z position.
      */
-    public int getCenterZ();
+    int getCenterZ();
 
     /**
      * Set the center Z position of this map.
      *
      * @param z The center Z position.
      */
-    public void setCenterZ(int z);
+    void setCenterZ(int z);
 
     /**
      * Get the world that this map is associated with. Primarily used by the
@@ -75,7 +76,7 @@ public interface MapView {
      *
      * @return The World this map is associated with.
      */
-    public World getWorld();
+    World getWorld();
 
     /**
      * Set the world that this map is associated with. The world is used by
@@ -83,21 +84,21 @@ public interface MapView {
      *
      * @param world The World to associate this map with.
      */
-    public void setWorld(World world);
+    void setWorld(World world);
 
     /**
      * Get a list of MapRenderers currently in effect.
      *
      * @return A {@code List<MapRenderer>} containing each map renderer.
      */
-    public List<MapRenderer> getRenderers();
+    List<MapRenderer> getRenderers();
 
     /**
      * Add a renderer to this map.
      *
      * @param renderer The MapRenderer to add.
      */
-    public void addRenderer(MapRenderer renderer);
+    void addRenderer(MapRenderer renderer);
 
     /**
      * Remove a renderer from this map.
@@ -105,7 +106,7 @@ public interface MapView {
      * @param renderer The MapRenderer to remove.
      * @return True if the renderer was successfully removed.
      */
-    public boolean removeRenderer(MapRenderer renderer);
+    boolean removeRenderer(MapRenderer renderer);
 
     /**
      * Whether the map will show a smaller position cursor (true), or no
@@ -126,16 +127,16 @@ public interface MapView {
     /**
      * An enum representing all possible scales a map can be set to.
      */
-    public static enum Scale {
+    enum Scale {
         CLOSEST(0),
         CLOSE(1),
         NORMAL(2),
         FAR(3),
         FARTHEST(4);
 
-        private byte value;
+        private final byte value;
 
-        private Scale(int value) {
+        Scale(int value) {
             this.value = (byte) value;
         }
 

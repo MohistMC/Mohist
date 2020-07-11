@@ -1,16 +1,17 @@
 package org.bukkit.plugin;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import org.bukkit.event.Event;
 import org.bukkit.event.EventException;
 import org.bukkit.event.Listener;
 import org.spigotmc.CustomTimingsHandler;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+
 public class EventExecutor1 implements EventExecutor {
-    private Method method;
-    private Class<? extends Event> eventClass;
     private final CustomTimingsHandler timings;
+    private final Method method;
+    private final Class<? extends Event> eventClass;
 
     public EventExecutor1(Method method, Class<? extends Event> eventClass, CustomTimingsHandler timings) {
         this.method = method;

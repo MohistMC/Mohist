@@ -19,8 +19,6 @@
 
 package net.minecraftforge.client.event;
 
-import java.util.ArrayList;
-import java.util.List;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
@@ -32,35 +30,33 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.input.Mouse;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Event classes for GuiScreen events.
- * 
+ *
  * @author bspkrs
  */
 @SideOnly(Side.CLIENT)
-public class GuiScreenEvent extends Event 
-{
+public class GuiScreenEvent extends Event {
     private final GuiScreen gui;
-    
-    public GuiScreenEvent(GuiScreen gui)
-    {
+
+    public GuiScreenEvent(GuiScreen gui) {
         this.gui = gui;
     }
 
     /**
      * The GuiScreen object generating this event.
      */
-    public GuiScreen getGui()
-    {
+    public GuiScreen getGui() {
         return gui;
     }
 
-    public static class InitGuiEvent extends GuiScreenEvent
-    {
+    public static class InitGuiEvent extends GuiScreenEvent {
         private List<GuiButton> buttonList;
-        
-        public InitGuiEvent(GuiScreen gui, List<GuiButton> buttonList)
-        {
+
+        public InitGuiEvent(GuiScreen gui, List<GuiButton> buttonList) {
             super(gui);
             this.setButtonList(buttonList);
         }
@@ -68,54 +64,46 @@ public class GuiScreenEvent extends Event
         /**
          * The {@link #buttonList} field from the GuiScreen object referenced by {@link #gui}.
          */
-        public List<GuiButton> getButtonList()
-        {
+        public List<GuiButton> getButtonList() {
             return buttonList;
         }
 
-        public void setButtonList(List<GuiButton> buttonList)
-        {
+        public void setButtonList(List<GuiButton> buttonList) {
             this.buttonList = buttonList;
         }
 
         /**
          * This event fires just after initializing {@link GuiScreen#mc}, {@link GuiScreen#fontRenderer},
          * {@link GuiScreen#width}, and {@link GuiScreen#height}.<br/><br/>
-         * 
+         * <p>
          * If canceled the following lines are skipped in {@link GuiScreen#setWorldAndResolution(Minecraft, int, int)}:<br/>
          * {@code this.buttonList.clear();}<br/>
          * {@code this.initGui();}<br/>
          */
         @Cancelable
-        public static class Pre extends InitGuiEvent
-        {
-            public Pre(GuiScreen gui, List<GuiButton> buttonList)
-            {
+        public static class Pre extends InitGuiEvent {
+            public Pre(GuiScreen gui, List<GuiButton> buttonList) {
                 super(gui, buttonList);
             }
         }
-        
+
         /**
          * This event fires right after {@link GuiScreen#initGui()}.
          * This is a good place to alter a GuiScreen's component layout if desired.
          */
-        public static class Post extends InitGuiEvent
-        {
-            public Post(GuiScreen gui, List<GuiButton> buttonList)
-            {
+        public static class Post extends InitGuiEvent {
+            public Post(GuiScreen gui, List<GuiButton> buttonList) {
                 super(gui, buttonList);
             }
         }
     }
-    
-    public static class DrawScreenEvent extends GuiScreenEvent
-    {
+
+    public static class DrawScreenEvent extends GuiScreenEvent {
         private final int mouseX;
         private final int mouseY;
         private final float renderPartialTicks;
 
-        public DrawScreenEvent(GuiScreen gui, int mouseX, int mouseY, float renderPartialTicks)
-        {
+        public DrawScreenEvent(GuiScreen gui, int mouseX, int mouseY, float renderPartialTicks) {
             super(gui);
             this.mouseX = mouseX;
             this.mouseY = mouseY;
@@ -125,24 +113,21 @@ public class GuiScreenEvent extends Event
         /**
          * The x coordinate of the mouse pointer on the screen.
          */
-        public int getMouseX()
-        {
+        public int getMouseX() {
             return mouseX;
         }
 
         /**
          * The y coordinate of the mouse pointer on the screen.
          */
-        public int getMouseY()
-        {
+        public int getMouseY() {
             return mouseY;
         }
 
         /**
          * Partial render ticks elapsed.
          */
-        public float getRenderPartialTicks()
-        {
+        public float getRenderPartialTicks() {
             return renderPartialTicks;
         }
 
@@ -151,10 +136,8 @@ public class GuiScreenEvent extends Event
          * Cancel this event to skip {@link GuiScreen#drawScreen(int, int, float)}.
          */
         @Cancelable
-        public static class Pre extends DrawScreenEvent
-        {
-            public Pre(GuiScreen gui, int mouseX, int mouseY, float renderPartialTicks)
-            {
+        public static class Pre extends DrawScreenEvent {
+            public Pre(GuiScreen gui, int mouseX, int mouseY, float renderPartialTicks) {
                 super(gui, mouseX, mouseY, renderPartialTicks);
             }
         }
@@ -162,10 +145,8 @@ public class GuiScreenEvent extends Event
         /**
          * This event fires just after {@link GuiScreen#drawScreen(int, int, float)} is called.
          */
-        public static class Post extends DrawScreenEvent
-        {
-            public Post(GuiScreen gui, int mouseX, int mouseY, float renderPartialTicks)
-            {
+        public static class Post extends DrawScreenEvent {
+            public Post(GuiScreen gui, int mouseX, int mouseY, float renderPartialTicks) {
                 super(gui, mouseX, mouseY, renderPartialTicks);
             }
         }
@@ -175,13 +156,11 @@ public class GuiScreenEvent extends Event
      * This event fires at the end of {@link GuiScreen#drawDefaultBackground()} and before the rest of the Gui draws.
      * This allows drawing next to Guis, above the background but below any tooltips.
      */
-    public static class BackgroundDrawnEvent extends GuiScreenEvent
-    {
+    public static class BackgroundDrawnEvent extends GuiScreenEvent {
         private final int mouseX;
         private final int mouseY;
 
-        public BackgroundDrawnEvent(GuiScreen gui)
-        {
+        public BackgroundDrawnEvent(GuiScreen gui) {
             super(gui);
             final ScaledResolution scaledresolution = new ScaledResolution(gui.mc);
             final int scaledWidth = scaledresolution.getScaledWidth();
@@ -193,16 +172,14 @@ public class GuiScreenEvent extends Event
         /**
          * The x coordinate of the mouse pointer on the screen.
          */
-        public int getMouseX()
-        {
+        public int getMouseX() {
             return mouseX;
         }
 
         /**
          * The y coordinate of the mouse pointer on the screen.
          */
-        public int getMouseY()
-        {
+        public int getMouseY() {
             return mouseY;
         }
     }
@@ -213,21 +190,17 @@ public class GuiScreenEvent extends Event
      * Cancel this event to prevent the Gui from being moved.
      */
     @Cancelable
-    public static class PotionShiftEvent extends GuiScreenEvent
-    {
-        public PotionShiftEvent(GuiScreen gui)
-        {
+    public static class PotionShiftEvent extends GuiScreenEvent {
+        public PotionShiftEvent(GuiScreen gui) {
             super(gui);
         }
     }
-    
-    public static class ActionPerformedEvent extends GuiScreenEvent
-    {
+
+    public static class ActionPerformedEvent extends GuiScreenEvent {
         private GuiButton button;
         private List<GuiButton> buttonList;
 
-        public ActionPerformedEvent(GuiScreen gui, GuiButton button, List<GuiButton> buttonList)
-        {
+        public ActionPerformedEvent(GuiScreen gui, GuiButton button, List<GuiButton> buttonList) {
             super(gui);
             this.setButton(button);
             this.setButtonList(new ArrayList<GuiButton>(buttonList));
@@ -236,26 +209,22 @@ public class GuiScreenEvent extends Event
         /**
          * The button that was clicked.
          */
-        public GuiButton getButton()
-        {
+        public GuiButton getButton() {
             return button;
         }
 
-        public void setButton(GuiButton button)
-        {
+        public void setButton(GuiButton button) {
             this.button = button;
         }
 
         /**
          * A COPY of the {@link #buttonList} field from the GuiScreen referenced by {@link #gui}.
          */
-        public List<GuiButton> getButtonList()
-        {
+        public List<GuiButton> getButtonList() {
             return buttonList;
         }
 
-        public void setButtonList(List<GuiButton> buttonList)
-        {
+        public void setButtonList(List<GuiButton> buttonList) {
             this.buttonList = buttonList;
         }
 
@@ -265,31 +234,25 @@ public class GuiScreenEvent extends Event
          * Replace button with a different button from buttonList to have that button's action executed.
          */
         @Cancelable
-        public static class Pre extends ActionPerformedEvent
-        {
-            public Pre(GuiScreen gui, GuiButton button, List<GuiButton> buttonList)
-            {
+        public static class Pre extends ActionPerformedEvent {
+            public Pre(GuiScreen gui, GuiButton button, List<GuiButton> buttonList) {
                 super(gui, button, buttonList);
             }
         }
-        
+
         /**
          * This event fires after {@link GuiScreen#actionPerformed(GuiButton)} provided that the active
          * screen has not been changed as a result of {@link GuiScreen#actionPerformed(GuiButton)}.
          */
-        public static class Post extends ActionPerformedEvent
-        {
-            public Post(GuiScreen gui, GuiButton button, List<GuiButton> buttonList)
-            {
+        public static class Post extends ActionPerformedEvent {
+            public Post(GuiScreen gui, GuiButton button, List<GuiButton> buttonList) {
                 super(gui, button, buttonList);
             }
         }
     }
 
-    public static class MouseInputEvent extends GuiScreenEvent
-    {
-        public MouseInputEvent(GuiScreen gui)
-        {
+    public static class MouseInputEvent extends GuiScreenEvent {
+        public MouseInputEvent(GuiScreen gui) {
             super(gui);
         }
 
@@ -298,10 +261,8 @@ public class GuiScreenEvent extends Event
          * Cancel this event to bypass {@link GuiScreen#handleMouseInput()}.
          */
         @Cancelable
-        public static class Pre extends MouseInputEvent
-        {
-            public Pre(GuiScreen gui)
-            {
+        public static class Pre extends MouseInputEvent {
+            public Pre(GuiScreen gui) {
                 super(gui);
             }
         }
@@ -313,19 +274,15 @@ public class GuiScreenEvent extends Event
          * Cancel this event when you successfully use the mouse input to prevent other handlers from using the same input.
          */
         @Cancelable
-        public static class Post extends MouseInputEvent
-        {
-            public Post(GuiScreen gui)
-            {
+        public static class Post extends MouseInputEvent {
+            public Post(GuiScreen gui) {
                 super(gui);
             }
         }
     }
 
-    public static class KeyboardInputEvent extends GuiScreenEvent
-    {
-        public KeyboardInputEvent(GuiScreen gui)
-        {
+    public static class KeyboardInputEvent extends GuiScreenEvent {
+        public KeyboardInputEvent(GuiScreen gui) {
             super(gui);
         }
 
@@ -334,10 +291,8 @@ public class GuiScreenEvent extends Event
          * Cancel this event to bypass {@link GuiScreen#handleKeyboardInput()}.
          */
         @Cancelable
-        public static class Pre extends KeyboardInputEvent
-        {
-            public Pre(GuiScreen gui)
-            {
+        public static class Pre extends KeyboardInputEvent {
+            public Pre(GuiScreen gui) {
                 super(gui);
             }
         }
@@ -349,10 +304,8 @@ public class GuiScreenEvent extends Event
          * Cancel this event when you successfully use the keyboard input to prevent other handlers from using the same input.
          */
         @Cancelable
-        public static class Post extends KeyboardInputEvent
-        {
-            public Post(GuiScreen gui)
-            {
+        public static class Post extends KeyboardInputEvent {
+            public Post(GuiScreen gui) {
                 super(gui);
             }
         }

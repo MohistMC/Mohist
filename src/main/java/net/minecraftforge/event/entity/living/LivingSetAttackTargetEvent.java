@@ -40,18 +40,16 @@ import net.minecraftforge.fml.common.eventhandler.Cancelable;
  * <br>
  * This event is fired on the {@link MinecraftForge#EVENT_BUS}.
  **/
-public class LivingSetAttackTargetEvent extends LivingEvent
-{
+public class LivingSetAttackTargetEvent extends LivingEvent {
 
     private final EntityLivingBase target;
-    public LivingSetAttackTargetEvent(EntityLivingBase entity, EntityLivingBase target)
-    {
+
+    public LivingSetAttackTargetEvent(EntityLivingBase entity, EntityLivingBase target) {
         super(entity);
         this.target = target;
     }
 
-    public EntityLivingBase getTarget()
-    {
+    public EntityLivingBase getTarget() {
         return target;
     }
 }

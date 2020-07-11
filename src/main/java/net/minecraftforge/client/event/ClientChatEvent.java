@@ -42,28 +42,24 @@ import net.minecraftforge.fml.common.eventhandler.Event;
  * This event is fired on the {@link MinecraftForge#EVENT_BUS}.
  **/
 @Cancelable
-public class ClientChatEvent extends Event
-{
-    private String message;
+public class ClientChatEvent extends Event {
     private final String originalMessage;
-    public ClientChatEvent(String message)
-    {
+    private String message;
+
+    public ClientChatEvent(String message) {
         this.setMessage(message);
         this.originalMessage = Strings.nullToEmpty(message);
     }
 
-    public String getMessage()
-    {
+    public String getMessage() {
         return message;
     }
 
-    public void setMessage(String message)
-    {
+    public void setMessage(String message) {
         this.message = Strings.nullToEmpty(message);
     }
 
-    public String getOriginalMessage()
-    {
+    public String getOriginalMessage() {
         return originalMessage;
     }
 }

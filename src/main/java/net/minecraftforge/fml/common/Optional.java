@@ -19,43 +19,41 @@
 
 package net.minecraftforge.fml.common;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Repeatable;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import java.lang.annotation.*;
 
 /**
  * Classes annotated with this will have the named interface or method removed from the runtime definition of the class
  * if the modid specified is missing.
  *
  * @author cpw
- *
  */
 public final class Optional {
     /**
      * Not constructable
      */
-    private Optional() {}
+    private Optional() {
+    }
 
     /**
      * Mark a list of interfaces as removable
-     * @author cpw
      *
+     * @author cpw
      */
     @Retention(RetentionPolicy.RUNTIME)
     @Target(ElementType.TYPE)
     public @interface InterfaceList {
         /**
          * Mark a list of interfaces for optional removal.
+         *
          * @return
          */
         Interface[] value();
     }
+
     /**
      * Used to remove optional interfaces
-     * @author cpw
      *
+     * @author cpw
      */
     @Repeatable(InterfaceList.class)
     @Retention(RetentionPolicy.RUNTIME)
@@ -63,12 +61,14 @@ public final class Optional {
     public @interface Interface {
         /**
          * The fully qualified name of the interface to be stripped
+         *
          * @return the interface name
          */
         String iface();
 
         /**
          * The modid that is required to be present for stripping NOT to occur
+         *
          * @return the modid
          */
         String modid();
@@ -80,16 +80,18 @@ public final class Optional {
          */
         boolean striprefs() default false;
     }
+
     /**
      * Used to remove optional methods
-     * @author cpw
      *
+     * @author cpw
      */
     @Retention(RetentionPolicy.RUNTIME)
     @Target(ElementType.METHOD)
     public @interface Method {
         /**
          * The modid that is required to be present for stripping NOT to occur
+         *
          * @return the modid
          */
         String modid();

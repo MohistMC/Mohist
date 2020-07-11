@@ -19,8 +19,7 @@
 
 package net.minecraftforge.fml.common.eventhandler;
 
-public enum EventPriority implements IEventListener
-{
+public enum EventPriority implements IEventListener {
     /*Priority of event listeners, listeners will be sorted with respect to this priority level.
      *
      * Note:
@@ -32,11 +31,10 @@ public enum EventPriority implements IEventListener
     NORMAL,
     LOW,
     LOWEST //Last to execute
-;
+    ;
 
     @Override
-    public void invoke(Event event)
-    {
+    public void invoke(Event event) {
         event.setPhase(this);
     }
 }

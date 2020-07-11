@@ -13,21 +13,21 @@ public interface ItemFrame extends Hanging {
      *
      * @return a defensive copy the item in this item frame
      */
-    public ItemStack getItem();
+    ItemStack getItem();
 
     /**
      * Set the item in this frame
      *
      * @param item the new item
      */
-    public void setItem(ItemStack item);
+    void setItem(ItemStack item);
 
     /**
      * Get the rotation of the frame's item
      *
      * @return the direction
      */
-    public Rotation getRotation();
+    Rotation getRotation();
 
     /**
      * Set the rotation of the frame's item
@@ -35,5 +35,5 @@ public interface ItemFrame extends Hanging {
      * @param rotation the new rotation
      * @throws IllegalArgumentException if rotation is null
      */
-    public void setRotation(Rotation rotation) throws IllegalArgumentException;
+    void setRotation(Rotation rotation) throws IllegalArgumentException;
 }

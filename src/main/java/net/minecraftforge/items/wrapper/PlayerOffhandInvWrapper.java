@@ -21,10 +21,8 @@ package net.minecraftforge.items.wrapper;
 
 import net.minecraft.entity.player.InventoryPlayer;
 
-public class PlayerOffhandInvWrapper extends RangedWrapper
-{
-    public PlayerOffhandInvWrapper(InventoryPlayer inv)
-    {
+public class PlayerOffhandInvWrapper extends RangedWrapper {
+    public PlayerOffhandInvWrapper(InventoryPlayer inv) {
         super(new InvWrapper(inv), inv.mainInventory.size() + inv.armorInventory.size(),
                 inv.mainInventory.size() + inv.armorInventory.size() + inv.offHandInventory.size());
     }

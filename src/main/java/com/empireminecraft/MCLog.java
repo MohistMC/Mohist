@@ -9,7 +9,8 @@ public class MCLog {
     private static final Logger LOGGER = Logger.getLogger("NMS");
     private static final Pattern NEWLINE = Pattern.compile("\n");
 
-    private MCLog() {}
+    private MCLog() {
+    }
 
 
     public static void log(String message) {

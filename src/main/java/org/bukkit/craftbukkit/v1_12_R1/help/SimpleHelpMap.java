@@ -3,29 +3,14 @@ package org.bukkit.craftbukkit.v1_12_R1.help;
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import com.google.common.collect.Collections2;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeMap;
-import java.util.TreeSet;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
-import org.bukkit.command.MultipleCommandAlias;
-import org.bukkit.command.PluginCommand;
-import org.bukkit.command.PluginIdentifiableCommand;
+import org.bukkit.command.*;
 import org.bukkit.command.defaults.BukkitCommand;
 import org.bukkit.craftbukkit.v1_12_R1.CraftServer;
 import org.bukkit.craftbukkit.v1_12_R1.command.ModCustomCommand;
 import org.bukkit.craftbukkit.v1_12_R1.command.VanillaCommandWrapper;
-import org.bukkit.help.GenericCommandHelpTopic;
-import org.bukkit.help.HelpMap;
-import org.bukkit.help.HelpTopic;
-import org.bukkit.help.HelpTopicComparator;
-import org.bukkit.help.HelpTopicFactory;
-import org.bukkit.help.IndexHelpTopic;
+import org.bukkit.help.*;
+
+import java.util.*;
 
 /**
  * Standard implementation of {@link HelpMap} for CraftBukkit servers.
@@ -215,10 +200,7 @@ public class SimpleHelpMap implements HelpMap {
         if ((command instanceof BukkitCommand) && ignoredPlugins.contains("Bukkit")) {
             return true;
         }
-        if (command instanceof PluginIdentifiableCommand && ignoredPlugins.contains(((PluginIdentifiableCommand) command).getPlugin().getName())) {
-            return true;
-        }
-        return false;
+        return command instanceof PluginIdentifiableCommand && ignoredPlugins.contains(((PluginIdentifiableCommand) command).getPlugin().getName());
     }
 
     public void registerHelpTopicFactory(Class commandClass, HelpTopicFactory factory) {

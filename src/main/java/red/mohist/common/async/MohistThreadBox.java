@@ -17,12 +17,13 @@ public class MohistThreadBox {
 
     public static final ExecutorService TCW = Executors.newSingleThreadExecutor(new NamedThreadFactory("TerminalConsoleWriter"));
 
-    public static final ExecutorService Head = Executors.newFixedThreadPool(3,  new NamedThreadFactory("Head Conversion Thread"));
+    public static final ExecutorService Head = Executors.newFixedThreadPool(3, new NamedThreadFactory("Head Conversion Thread"));
 
     public static class AssignableThread extends Thread {
         public AssignableThread(Runnable run) {
             super(run);
         }
+
         public AssignableThread() {
             super();
         }

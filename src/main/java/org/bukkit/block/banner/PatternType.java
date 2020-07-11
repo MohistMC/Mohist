@@ -54,7 +54,7 @@ public enum PatternType {
 
     private final String identifier;
 
-    private PatternType(String key) {
+    PatternType(String key) {
         this.identifier = key;
     }
 

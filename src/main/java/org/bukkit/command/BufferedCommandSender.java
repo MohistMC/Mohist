@@ -2,6 +2,7 @@ package org.bukkit.command;
 
 public class BufferedCommandSender implements MessageCommandSender {
     private final StringBuffer buffer = new StringBuffer();
+
     @Override
     public void sendMessage(String message) {
         buffer.append(message);

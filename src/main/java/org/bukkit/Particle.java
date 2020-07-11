@@ -66,6 +66,7 @@ public enum Particle {
 
     /**
      * Returns the required data type for the particle
+     *
      * @return the required data type
      */
     public Class<?> getDataType() {

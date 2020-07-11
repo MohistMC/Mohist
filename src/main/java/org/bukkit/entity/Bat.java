@@ -11,7 +11,7 @@ public interface Bat extends Ambient {
      * This does not imply any persistence of state past the method call.
      *
      * @return true if the bat is awake or false if it is currently hanging
-     *     from a block
+     * from a block
      */
     boolean isAwake();
 

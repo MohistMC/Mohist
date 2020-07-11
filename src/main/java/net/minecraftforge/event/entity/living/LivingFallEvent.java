@@ -41,19 +41,29 @@ import net.minecraftforge.fml.common.eventhandler.Cancelable;
  * This event is fired on the {@link MinecraftForge#EVENT_BUS}.
  **/
 @Cancelable
-public class LivingFallEvent extends LivingEvent
-{
+public class LivingFallEvent extends LivingEvent {
     private float distance;
     private float damageMultiplier;
-    public LivingFallEvent(EntityLivingBase entity, float distance, float damageMultiplier)
-    {
+
+    public LivingFallEvent(EntityLivingBase entity, float distance, float damageMultiplier) {
         super(entity);
         this.setDistance(distance);
         this.setDamageMultiplier(damageMultiplier);
     }
 
-    public float getDistance() { return distance; }
-    public void setDistance(float distance) { this.distance = distance; }
-    public float getDamageMultiplier() { return damageMultiplier; }
-    public void setDamageMultiplier(float damageMultiplier) { this.damageMultiplier = damageMultiplier; }
+    public float getDistance() {
+        return distance;
+    }
+
+    public void setDistance(float distance) {
+        this.distance = distance;
+    }
+
+    public float getDamageMultiplier() {
+        return damageMultiplier;
+    }
+
+    public void setDamageMultiplier(float damageMultiplier) {
+        this.damageMultiplier = damageMultiplier;
+    }
 }

@@ -1,11 +1,12 @@
 package org.bukkit.craftbukkit.v1_12_R1.util;
 
+import org.apache.commons.lang3.Validate;
+
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
-import org.apache.commons.lang3.Validate;
 
 public final class WeakCollection<T> implements Collection<T> {
     static final Object NO_VALUE = new Object();
@@ -56,7 +57,7 @@ public final class WeakCollection<T> implements Collection<T> {
 
     public Iterator<T> iterator() {
         return new Iterator<T>() {
-            Iterator<WeakReference<T>> it = collection.iterator();
+            final Iterator<WeakReference<T>> it = collection.iterator();
             Object value = NO_VALUE;
 
             public boolean hasNext() {

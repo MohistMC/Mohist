@@ -10,7 +10,7 @@ import org.bukkit.event.HandlerList;
  */
 public class ServerExceptionEvent extends Event {
     private static final HandlerList handlers = new HandlerList();
-    private ServerException exception;
+    private final ServerException exception;
 
     public ServerExceptionEvent(ServerException exception) {
         this.exception = Preconditions.checkNotNull(exception, "exception");

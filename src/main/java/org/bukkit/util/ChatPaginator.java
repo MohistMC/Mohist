@@ -1,9 +1,10 @@
 package org.bukkit.util;
 
+import org.bukkit.ChatColor;
+
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
-import org.bukkit.ChatColor;
 
 /**
  * The ChatPaginator takes a raw string of arbitrary length and breaks it down
@@ -22,7 +23,7 @@ public class ChatPaginator {
      * Breaks a raw string up into pages using the default width and height.
      *
      * @param unpaginatedString The raw string to break.
-     * @param pageNumber The page number to fetch.
+     * @param pageNumber        The page number to fetch.
      * @return A single chat page.
      */
     public static ChatPage paginate(String unpaginatedString, int pageNumber) {
@@ -33,9 +34,9 @@ public class ChatPaginator {
      * Breaks a raw string up into pages using a provided width and height.
      *
      * @param unpaginatedString The raw string to break.
-     * @param pageNumber The page number to fetch.
-     * @param lineLength The desired width of a chat line.
-     * @param pageHeight The desired number of lines in a page.
+     * @param pageNumber        The page number to fetch.
+     * @param lineLength        The desired width of a chat line.
+     * @param pageHeight        The desired number of lines in a page.
      * @return A single chat page.
      */
     public static ChatPage paginate(String unpaginatedString, int pageNumber, int lineLength, int pageHeight) {
@@ -55,7 +56,7 @@ public class ChatPaginator {
      * Breaks a raw string up into a series of lines. Words are wrapped using
      * spaces as decimeters and the newline character is respected.
      *
-     * @param rawString The raw string to break.
+     * @param rawString  The raw string to break.
      * @param lineLength The length of a line of text.
      * @return An array of word-wrapped lines.
      */
@@ -145,9 +146,9 @@ public class ChatPaginator {
 
     public static class ChatPage {
 
-        private String[] lines;
-        private int pageNumber;
-        private int totalPages;
+        private final String[] lines;
+        private final int pageNumber;
+        private final int totalPages;
 
         public ChatPage(String[] lines, int pageNumber, int totalPages) {
             this.lines = lines;

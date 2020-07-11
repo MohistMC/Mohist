@@ -1,9 +1,10 @@
 package org.bukkit.event.player;
 
-import java.util.Collection;
 import org.apache.commons.lang.Validate;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
+
+import java.util.Collection;
 
 /**
  * Called when a player attempts to tab-complete a chat message.

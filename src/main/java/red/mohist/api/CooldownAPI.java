@@ -5,11 +5,11 @@ import java.util.Map;
 
 public class CooldownAPI {
 
-    private static Map<String, CooldownAPI> cooldowns = new HashMap<>();
+    private static final Map<String, CooldownAPI> cooldowns = new HashMap<>();
     private long start;
-    private int timeInSeconds;
-    private String id;
-    private String cooldownName;
+    private final int timeInSeconds;
+    private final String id;
+    private final String cooldownName;
 
     public CooldownAPI(String id, String cooldownName, int timeInSeconds) {
         this.id = id;
@@ -40,7 +40,7 @@ public class CooldownAPI {
             long now = System.currentTimeMillis();
             long cooldownTime = cooldown.start;
             int totalTime = cooldown.timeInSeconds;
-            int r = (int)(now - cooldownTime) / 1000;
+            int r = (int) (now - cooldownTime) / 1000;
             f = (r - totalTime) * -1;
         }
         return f;

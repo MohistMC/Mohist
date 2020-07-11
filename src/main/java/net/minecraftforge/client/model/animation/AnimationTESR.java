@@ -40,34 +40,27 @@ import org.apache.commons.lang3.tuple.Pair;
 /**
  * Generic TileEntitySpecialRenderer that works with the Forge model system and animations.
  */
-public class AnimationTESR<T extends TileEntity> extends FastTESR<T> implements IEventHandler<T>
-{
+public class AnimationTESR<T extends TileEntity> extends FastTESR<T> implements IEventHandler<T> {
     protected static BlockRendererDispatcher blockRenderer;
 
     @Override
-    public void renderTileEntityFast(T te, double x, double y, double z, float partialTick, int breakStage, float partial, BufferBuilder renderer)
-   {
-        if(!te.hasCapability(CapabilityAnimation.ANIMATION_CAPABILITY, null))
-        {
+    public void renderTileEntityFast(T te, double x, double y, double z, float partialTick, int breakStage, float partial, BufferBuilder renderer) {
+        if (!te.hasCapability(CapabilityAnimation.ANIMATION_CAPABILITY, null)) {
             return;
         }
-        if(blockRenderer == null) blockRenderer = Minecraft.getMinecraft().getBlockRendererDispatcher();
+        if (blockRenderer == null) blockRenderer = Minecraft.getMinecraft().getBlockRendererDispatcher();
         BlockPos pos = te.getPos();
         IBlockAccess world = MinecraftForgeClient.getRegionRenderCache(te.getWorld(), pos);
         IBlockState state = world.getBlockState(pos);
-        if(state.getPropertyKeys().contains(Properties.StaticProperty))
-        {
+        if (state.getPropertyKeys().contains(Properties.StaticProperty)) {
             state = state.withProperty(Properties.StaticProperty, false);
         }
-        if(state instanceof IExtendedBlockState)
-        {
-            IExtendedBlockState exState = (IExtendedBlockState)state;
-            if(exState.getUnlistedNames().contains(Properties.AnimationProperty))
-            {
+        if (state instanceof IExtendedBlockState) {
+            IExtendedBlockState exState = (IExtendedBlockState) state;
+            if (exState.getUnlistedNames().contains(Properties.AnimationProperty)) {
                 float time = Animation.getWorldTime(getWorld(), partialTick);
                 IAnimationStateMachine capability = te.getCapability(CapabilityAnimation.ANIMATION_CAPABILITY, null);
-                if (capability != null)
-                {
+                if (capability != null) {
                     Pair<IModelState, Iterable<Event>> pair = capability.apply(time);
                     handleEvents(te, time, pair.getRight());
 
@@ -84,5 +77,6 @@ public class AnimationTESR<T extends TileEntity> extends FastTESR<T> implements 
     }
 
     @Override
-    public void handleEvents(T te, float time, Iterable<Event> pastEvents) {}
+    public void handleEvents(T te, float time, Iterable<Event> pastEvents) {
+    }
 }

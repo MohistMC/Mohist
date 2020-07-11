@@ -36,26 +36,20 @@ import net.minecraftforge.fml.common.gameevent.TickEvent.ClientTickEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.Phase;
 import net.minecraftforge.fml.common.gameevent.TickEvent.ServerTickEvent;
 
-public class ForgeInternalHandler
-{
+public class ForgeInternalHandler {
     @SubscribeEvent(priority = EventPriority.HIGHEST)
-    public void onEntityJoinWorld(EntityJoinWorldEvent event)
-    {
-        if (!event.getWorld().isRemote)
-        {
+    public void onEntityJoinWorld(EntityJoinWorldEvent event) {
+        if (!event.getWorld().isRemote) {
             ForgeChunkManager.loadEntity(event.getEntity());
         }
 
         Entity entity = event.getEntity();
-        if (entity.getClass().equals(EntityItem.class))
-        {
-            ItemStack stack = ((EntityItem)entity).getItem();
+        if (entity.getClass().equals(EntityItem.class)) {
+            ItemStack stack = ((EntityItem) entity).getItem();
             Item item = stack.getItem();
-            if (item.hasCustomEntity(stack))
-            {
+            if (item.hasCustomEntity(stack)) {
                 Entity newEntity = item.createEntity(event.getWorld(), entity, stack);
-                if (newEntity != null)
-                {
+                if (newEntity != null) {
                     entity.setDead();
                     event.setCanceled(true);
                     event.getWorld().spawnEntity(newEntity);
@@ -65,41 +59,35 @@ public class ForgeInternalHandler
     }
 
     @SubscribeEvent(priority = EventPriority.HIGHEST)
-    public void onDimensionLoad(WorldEvent.Load event)
-    {
+    public void onDimensionLoad(WorldEvent.Load event) {
         ForgeChunkManager.loadWorld(event.getWorld());
     }
 
     @SubscribeEvent(priority = EventPriority.HIGHEST)
-    public void onDimensionSave(WorldEvent.Save event)
-    {
+    public void onDimensionSave(WorldEvent.Save event) {
         ForgeChunkManager.saveWorld(event.getWorld());
     }
 
     @SubscribeEvent(priority = EventPriority.HIGHEST)
-    public void onDimensionUnload(WorldEvent.Unload event)
-    {
+    public void onDimensionUnload(WorldEvent.Unload event) {
         ForgeChunkManager.unloadWorld(event.getWorld());
         if (event.getWorld() instanceof WorldServer)
             FakePlayerFactory.unloadWorld((WorldServer) event.getWorld());
     }
 
     @SubscribeEvent
-    public void onServerTick(ServerTickEvent event)
-    {
+    public void onServerTick(ServerTickEvent event) {
         WorldWorkerManager.tick(event.phase == TickEvent.Phase.START);
     }
 
     @SubscribeEvent
-    public void checkSettings(ClientTickEvent event)
-    {
+    public void checkSettings(ClientTickEvent event) {
         if (event.phase == Phase.END)
             FMLClientHandler.instance().updateCloudSettings();
     }
 
     @SubscribeEvent
-    public void onChunkUnload(ChunkEvent.Unload event)
-    {
+    public void onChunkUnload(ChunkEvent.Unload event) {
         if (!event.getWorld().isRemote)
             FarmlandWaterManager.removeTickets(event.getChunk());
     }

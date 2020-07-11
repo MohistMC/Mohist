@@ -55,7 +55,7 @@ public class EntityRegainHealthEvent extends EntityEvent implements Cancellable 
      * Gets the reason for why the entity is regaining health
      *
      * @return A RegainReason detailing the reason for the entity regaining
-     *     health
+     * health
      */
     public RegainReason getRegainReason() {
         return regainReason;

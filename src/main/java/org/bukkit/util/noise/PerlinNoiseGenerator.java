@@ -1,22 +1,23 @@
 package org.bukkit.util.noise;
 
-import java.util.Random;
 import org.bukkit.World;
+
+import java.util.Random;
 
 /**
  * Generates noise using the "classic" perlin generator
  *
  * @see SimplexNoiseGenerator "Improved" and faster version with slightly
- *     different results
+ * different results
  */
 public class PerlinNoiseGenerator extends NoiseGenerator {
-    protected static final int grad3[][] = {{1, 1, 0}, {-1, 1, 0}, {1, -1, 0}, {-1, -1, 0},
+    protected static final int[][] grad3 = {{1, 1, 0}, {-1, 1, 0}, {1, -1, 0}, {-1, -1, 0},
             {1, 0, 1}, {-1, 0, 1}, {1, 0, -1}, {-1, 0, -1},
             {0, 1, 1}, {0, -1, 1}, {0, 1, -1}, {0, -1, -1}};
     private static final PerlinNoiseGenerator instance = new PerlinNoiseGenerator();
 
     protected PerlinNoiseGenerator() {
-        int p[] = {151, 160, 137, 91, 90, 15, 131, 13, 201,
+        int[] p = {151, 160, 137, 91, 90, 15, 131, 13, 201,
                 95, 96, 53, 194, 233, 7, 225, 140, 36, 103, 30, 69, 142, 8, 99, 37,
                 240, 21, 10, 23, 190, 6, 148, 247, 120, 234, 75, 0, 26, 197, 62,
                 94, 252, 219, 203, 117, 35, 11, 32, 57, 177, 33, 88, 237, 149, 56,
@@ -131,8 +132,8 @@ public class PerlinNoiseGenerator extends NoiseGenerator {
      * Generates noise for the 1D coordinates using the specified number of
      * octaves and parameters
      *
-     * @param x X-coordinate
-     * @param octaves Number of octaves to use
+     * @param x         X-coordinate
+     * @param octaves   Number of octaves to use
      * @param frequency How much to alter the frequency by each octave
      * @param amplitude How much to alter the amplitude by each octave
      * @return Resulting noise
@@ -145,9 +146,9 @@ public class PerlinNoiseGenerator extends NoiseGenerator {
      * Generates noise for the 2D coordinates using the specified number of
      * octaves and parameters
      *
-     * @param x X-coordinate
-     * @param y Y-coordinate
-     * @param octaves Number of octaves to use
+     * @param x         X-coordinate
+     * @param y         Y-coordinate
+     * @param octaves   Number of octaves to use
      * @param frequency How much to alter the frequency by each octave
      * @param amplitude How much to alter the amplitude by each octave
      * @return Resulting noise
@@ -160,10 +161,10 @@ public class PerlinNoiseGenerator extends NoiseGenerator {
      * Generates noise for the 3D coordinates using the specified number of
      * octaves and parameters
      *
-     * @param x X-coordinate
-     * @param y Y-coordinate
-     * @param z Z-coordinate
-     * @param octaves Number of octaves to use
+     * @param x         X-coordinate
+     * @param y         Y-coordinate
+     * @param z         Z-coordinate
+     * @param octaves   Number of octaves to use
      * @param frequency How much to alter the frequency by each octave
      * @param amplitude How much to alter the amplitude by each octave
      * @return Resulting noise

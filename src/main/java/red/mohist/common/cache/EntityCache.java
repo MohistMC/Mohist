@@ -8,8 +8,7 @@ public class EntityCache {
     public String configPath;
     public String worldName;
 
-    public EntityCache(Class<? extends Entity> entityClass, String worldName, String configPath, int tickInterval)
-    {
+    public EntityCache(Class<? extends Entity> entityClass, String worldName, String configPath, int tickInterval) {
         this.entityClass = entityClass;
         this.worldName = worldName;
         this.tickInterval = tickInterval;

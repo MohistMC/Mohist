@@ -27,13 +27,11 @@ import net.minecraft.client.gui.GuiButton;
  *
  * @author bspkrs
  */
-public class GuiCheckBox extends GuiButton
-{
+public class GuiCheckBox extends GuiButton {
     private boolean isChecked;
-    private int     boxWidth;
+    private final int boxWidth;
 
-    public GuiCheckBox(int id, int xPos, int yPos, String displayString, boolean isChecked)
-    {
+    public GuiCheckBox(int id, int xPos, int yPos, String displayString, boolean isChecked) {
         super(id, xPos, yPos, displayString);
         this.isChecked = isChecked;
         this.boxWidth = 11;
@@ -42,21 +40,16 @@ public class GuiCheckBox extends GuiButton
     }
 
     @Override
-    public void drawButton(Minecraft mc, int mouseX, int mouseY, float partial)
-    {
-        if (this.visible)
-        {
+    public void drawButton(Minecraft mc, int mouseX, int mouseY, float partial) {
+        if (this.visible) {
             this.hovered = mouseX >= this.x && mouseY >= this.y && mouseX < this.x + this.boxWidth && mouseY < this.y + this.height;
             GuiUtils.drawContinuousTexturedBox(BUTTON_TEXTURES, this.x, this.y, 0, 46, this.boxWidth, this.height, 200, 20, 2, 3, 2, 2, this.zLevel);
             this.mouseDragged(mc, mouseX, mouseY);
             int color = 14737632;
 
-            if (packedFGColour != 0)
-            {
+            if (packedFGColour != 0) {
                 color = packedFGColour;
-            }
-            else if (!this.enabled)
-            {
+            } else if (!this.enabled) {
                 color = 10526880;
             }
 
@@ -68,10 +61,8 @@ public class GuiCheckBox extends GuiButton
     }
 
     @Override
-    public boolean mousePressed(Minecraft mc, int mouseX, int mouseY)
-    {
-        if (this.enabled && this.visible && mouseX >= this.x && mouseY >= this.y && mouseX < this.x + this.width && mouseY < this.y + this.height)
-        {
+    public boolean mousePressed(Minecraft mc, int mouseX, int mouseY) {
+        if (this.enabled && this.visible && mouseX >= this.x && mouseY >= this.y && mouseX < this.x + this.width && mouseY < this.y + this.height) {
             this.isChecked = !this.isChecked;
             return true;
         }
@@ -79,13 +70,11 @@ public class GuiCheckBox extends GuiButton
         return false;
     }
 
-    public boolean isChecked()
-    {
+    public boolean isChecked() {
         return this.isChecked;
     }
 
-    public void setIsChecked(boolean isChecked)
-    {
+    public void setIsChecked(boolean isChecked) {
         this.isChecked = isChecked;
     }
 }

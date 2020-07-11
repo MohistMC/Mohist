@@ -23,19 +23,16 @@
 
 package net.minecraftforge.server.terminalconsole;
 
-import java.util.List;
-import javax.annotation.Nullable;
 import org.apache.logging.log4j.core.LogEvent;
 import org.apache.logging.log4j.core.config.Configuration;
 import org.apache.logging.log4j.core.config.plugins.Plugin;
 import org.apache.logging.log4j.core.layout.PatternLayout;
-import org.apache.logging.log4j.core.pattern.ConverterKeys;
-import org.apache.logging.log4j.core.pattern.LogEventPatternConverter;
-import org.apache.logging.log4j.core.pattern.PatternConverter;
-import org.apache.logging.log4j.core.pattern.PatternFormatter;
-import org.apache.logging.log4j.core.pattern.PatternParser;
+import org.apache.logging.log4j.core.pattern.*;
 import org.apache.logging.log4j.util.PerformanceSensitive;
 import org.apache.logging.log4j.util.PropertiesUtil;
+
+import javax.annotation.Nullable;
+import java.util.List;
 
 /**
  * Replaces Minecraft formatting codes in the result of a pattern with
@@ -57,13 +54,12 @@ import org.apache.logging.log4j.util.PropertiesUtil;
  * {@code %minecraftFormatting{%message}{strip}}</p>
  *
  * @see <a href="http://minecraft.gamepedia.com/Formatting_codes">
- *     Formatting Codes</a>
+ * Formatting Codes</a>
  */
 @Plugin(name = "minecraftFormatting", category = PatternConverter.CATEGORY)
-@ConverterKeys({ "minecraftFormatting" })
+@ConverterKeys({"minecraftFormatting"})
 @PerformanceSensitive("allocation")
-public class MinecraftFormattingConverter extends LogEventPatternConverter
-{
+public class MinecraftFormattingConverter extends LogEventPatternConverter {
     /**
      * System property that allows disabling the replacement of Minecraft
      * formatting codes entirely, keeping them in the console output. For
@@ -83,7 +79,7 @@ public class MinecraftFormattingConverter extends LogEventPatternConverter
     private static final char COLOR_CHAR = '\u00A7'; // §
     private static final String LOOKUP = "0123456789abcdefklmnor";
 
-    private static final String[] ansiCodes = new String[] {
+    private static final String[] ansiCodes = new String[]{
             "\u001B[0;30;22m", // Black §0
             "\u001B[0;34;22m", // Dark Blue §1
             "\u001B[0;32;22m", // Dark Green §2
@@ -115,41 +111,18 @@ public class MinecraftFormattingConverter extends LogEventPatternConverter
      * Construct the converter.
      *
      * @param formatters The pattern formatters to generate the text to manipulate
-     * @param strip If true, the converter will strip all formatting codes
+     * @param strip      If true, the converter will strip all formatting codes
      */
-    protected MinecraftFormattingConverter(List<PatternFormatter> formatters, boolean strip)
-    {
+    protected MinecraftFormattingConverter(List<PatternFormatter> formatters, boolean strip) {
         super("minecraftFormatting", null);
         this.formatters = formatters;
         this.ansi = !strip;
     }
 
-    @Override
-    public void format(LogEvent event, StringBuilder toAppendTo)
-    {
-        int start = toAppendTo.length();
-        //noinspection ForLoopReplaceableByForEach
-        for (int i = 0, size = formatters.size(); i < size; i++)
-        {
-            formatters.get(i).format(event, toAppendTo);
-        }
-
-        if (KEEP_FORMATTING || toAppendTo.length() == start)
-        {
-            // Skip replacement if disabled or if the content is empty
-            return;
-        }
-
-        String content = toAppendTo.substring(start);
-        format(content, toAppendTo, start, ansi && TerminalConsoleAppender.isAnsiSupported());
-    }
-
-    private static void format(String s, StringBuilder result, int start, boolean ansi)
-    {
+    private static void format(String s, StringBuilder result, int start, boolean ansi) {
         int next = s.indexOf(COLOR_CHAR);
         int last = s.length() - 1;
-        if (next == -1 || next == last)
-        {
+        if (next == -1 || next == last) {
             return;
         }
 
@@ -158,22 +131,17 @@ public class MinecraftFormattingConverter extends LogEventPatternConverter
         int pos = next;
         int format;
         do {
-            if (pos != next)
-            {
+            if (pos != next) {
                 result.append(s, pos, next);
             }
 
             format = LOOKUP.indexOf(s.charAt(next + 1));
-            if (format != -1)
-            {
-                if (ansi)
-                {
+            if (format != -1) {
+                if (ansi) {
                     result.append(ansiCodes[format]);
                 }
                 pos = next += 2;
-            }
-            else
-            {
+            } else {
                 next++;
             }
 
@@ -181,8 +149,7 @@ public class MinecraftFormattingConverter extends LogEventPatternConverter
         } while (next != -1 && next < last);
 
         result.append(s, pos, s.length());
-        if (ansi)
-        {
+        if (ansi) {
             result.append(ANSI_RESET);
         }
     }
@@ -191,22 +158,18 @@ public class MinecraftFormattingConverter extends LogEventPatternConverter
      * Gets a new instance of the {@link MinecraftFormattingConverter} with the
      * specified options.
      *
-     * @param config The current configuration
+     * @param config  The current configuration
      * @param options The pattern options
      * @return The new instance
-     *
      * @see MinecraftFormattingConverter
      */
     @Nullable
-    public static MinecraftFormattingConverter newInstance(Configuration config, String[] options)
-    {
-        if (options.length < 1 || options.length > 2)
-        {
+    public static MinecraftFormattingConverter newInstance(Configuration config, String[] options) {
+        if (options.length < 1 || options.length > 2) {
             LOGGER.error("Incorrect number of options on minecraftFormatting. Expected at least 1, max 2 received " + options.length);
             return null;
         }
-        if (options[0] == null)
-        {
+        if (options[0] == null) {
             LOGGER.error("No pattern supplied on minecraftFormatting");
             return null;
         }
@@ -215,6 +178,23 @@ public class MinecraftFormattingConverter extends LogEventPatternConverter
         List<PatternFormatter> formatters = parser.parse(options[0]);
         boolean strip = options.length > 1 && "strip".equals(options[1]);
         return new MinecraftFormattingConverter(formatters, strip);
+    }
+
+    @Override
+    public void format(LogEvent event, StringBuilder toAppendTo) {
+        int start = toAppendTo.length();
+        //noinspection ForLoopReplaceableByForEach
+        for (int i = 0, size = formatters.size(); i < size; i++) {
+            formatters.get(i).format(event, toAppendTo);
+        }
+
+        if (KEEP_FORMATTING || toAppendTo.length() == start) {
+            // Skip replacement if disabled or if the content is empty
+            return;
+        }
+
+        String content = toAppendTo.substring(start);
+        format(content, toAppendTo, start, ansi && TerminalConsoleAppender.isAnsiSupported());
     }
 
 }

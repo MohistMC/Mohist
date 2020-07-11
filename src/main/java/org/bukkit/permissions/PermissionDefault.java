@@ -24,7 +24,7 @@ public enum PermissionDefault {
 
     private final String[] names;
 
-    private PermissionDefault(String... names) {
+    PermissionDefault(String... names) {
         this.names = names;
     }
 

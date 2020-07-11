@@ -86,7 +86,7 @@ public abstract class InventoryView {
      * Get the item on the cursor of one of the viewing players.
      *
      * @return The item on the player's cursor, or null if they aren't holding
-     *     one.
+     * one.
      */
     public final ItemStack getCursor() {
         return getPlayer().getItemOnCursor();
@@ -96,7 +96,7 @@ public abstract class InventoryView {
      * Sets the item on the cursor of one of the viewing players.
      *
      * @param item The item to put on the cursor, or null to remove the item
-     *     on their cursor.
+     *             on their cursor.
      */
     public final void setCursor(ItemStack item) {
         getPlayer().setItemOnCursor(item);
@@ -202,10 +202,10 @@ public abstract class InventoryView {
      * Sets an extra property of this inventory if supported by that
      * inventory, for example the state of a progress bar.
      *
-     * @param prop the window property to update
+     * @param prop  the window property to update
      * @param value the new value for the window property
      * @return true if the property was updated successfully, false if the
-     *     property is not supported by that inventory
+     * property is not supported by that inventory
      */
     public final boolean setProperty(Property prop, int value) {
         return getPlayer().setWindowProperty(prop, value);
@@ -306,7 +306,7 @@ public abstract class InventoryView {
         int id;
         InventoryType style;
 
-        private Property(int id, InventoryType appliesTo) {
+        Property(int id, InventoryType appliesTo) {
             this.id = id;
             style = appliesTo;
         }
@@ -316,7 +316,6 @@ public abstract class InventoryView {
         }
 
         /**
-         *
          * @return the id of this view
          * @deprecated Magic value
          */

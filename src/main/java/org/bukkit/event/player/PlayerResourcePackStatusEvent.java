@@ -56,6 +56,6 @@ public class PlayerResourcePackStatusEvent extends PlayerEvent {
         /**
          * The client accepted the pack and is beginning a download of it.
          */
-        ACCEPTED;
+        ACCEPTED
     }
 }

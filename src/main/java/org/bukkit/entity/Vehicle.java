@@ -12,12 +12,12 @@ public interface Vehicle extends Entity {
      *
      * @return velocity vector
      */
-    public Vector getVelocity();
+    Vector getVelocity();
 
     /**
      * Sets the vehicle's velocity.
      *
      * @param vel velocity vector
      */
-    public void setVelocity(Vector vel);
+    void setVelocity(Vector vel);
 }

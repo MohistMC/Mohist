@@ -18,7 +18,7 @@ public class CraftStatistic {
     private static final BiMap<String, Statistic> statistics;
 
     static {
-        ImmutableBiMap.Builder<String, Statistic> statisticBuilder = ImmutableBiMap.<String, Statistic>builder();
+        ImmutableBiMap.Builder<String, Statistic> statisticBuilder = ImmutableBiMap.builder();
         for (Statistic statistic : Statistic.values()) {
             if (statistic == Statistic.PLAY_ONE_TICK) {
                 statisticBuilder.put("stat.playOneMinute", statistic);

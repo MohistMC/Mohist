@@ -33,15 +33,13 @@ import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.fluids.capability.templates.FluidHandlerItemStack;
 
-public class CapabilityFluidHandler
-{
+public class CapabilityFluidHandler {
     @CapabilityInject(IFluidHandler.class)
     public static Capability<IFluidHandler> FLUID_HANDLER_CAPABILITY = null;
     @CapabilityInject(IFluidHandlerItem.class)
     public static Capability<IFluidHandlerItem> FLUID_HANDLER_ITEM_CAPABILITY = null;
 
-    public static void register()
-    {
+    public static void register() {
         CapabilityManager.INSTANCE.register(IFluidHandler.class, new DefaultFluidHandlerStorage<>(), () -> new FluidTank(Fluid.BUCKET_VOLUME));
 
         CapabilityManager.INSTANCE.register(IFluidHandlerItem.class, new DefaultFluidHandlerStorage<>(), () -> new FluidHandlerItemStack(new ItemStack(Items.BUCKET), Fluid.BUCKET_VOLUME));
@@ -49,34 +47,29 @@ public class CapabilityFluidHandler
 
     private static class DefaultFluidHandlerStorage<T extends IFluidHandler> implements Capability.IStorage<T> {
         @Override
-		public NBTBase writeNBT(Capability<T> capability, T instance, EnumFacing side)
-		{
-			if (!(instance instanceof IFluidTank))
-				throw new RuntimeException("IFluidHandler instance does not implement IFluidTank");
-			NBTTagCompound nbt = new NBTTagCompound();
-			IFluidTank tank = (IFluidTank) instance;
-			FluidStack fluid = tank.getFluid();
-			if (fluid != null)
-			{
-				fluid.writeToNBT(nbt);
-			}
-			else
-			{
-				nbt.setString("Empty", "");
-			}
-			nbt.setInteger("Capacity", tank.getCapacity());
-			return nbt;
-		}
+        public NBTBase writeNBT(Capability<T> capability, T instance, EnumFacing side) {
+            if (!(instance instanceof IFluidTank))
+                throw new RuntimeException("IFluidHandler instance does not implement IFluidTank");
+            NBTTagCompound nbt = new NBTTagCompound();
+            IFluidTank tank = (IFluidTank) instance;
+            FluidStack fluid = tank.getFluid();
+            if (fluid != null) {
+                fluid.writeToNBT(nbt);
+            } else {
+                nbt.setString("Empty", "");
+            }
+            nbt.setInteger("Capacity", tank.getCapacity());
+            return nbt;
+        }
 
         @Override
-		public void readNBT(Capability<T> capability, T instance, EnumFacing side, NBTBase nbt)
-		{
-			if (!(instance instanceof FluidTank))
-				throw new RuntimeException("IFluidHandler instance is not instance of FluidTank");
-			NBTTagCompound tags = (NBTTagCompound) nbt;
-			FluidTank tank = (FluidTank) instance;
-			tank.setCapacity(tags.getInteger("Capacity"));
-			tank.readFromNBT(tags);
-		}
+        public void readNBT(Capability<T> capability, T instance, EnumFacing side, NBTBase nbt) {
+            if (!(instance instanceof FluidTank))
+                throw new RuntimeException("IFluidHandler instance is not instance of FluidTank");
+            NBTTagCompound tags = (NBTTagCompound) nbt;
+            FluidTank tank = (FluidTank) instance;
+            tank.setCapacity(tags.getInteger("Capacity"));
+            tank.readFromNBT(tags);
+        }
     }
 }

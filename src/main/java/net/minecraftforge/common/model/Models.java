@@ -23,19 +23,15 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.UnmodifiableIterator;
 
-public enum Models
-{
+public enum Models {
     ;
 
-    public static IModelPart getHiddenModelPart(ImmutableList<String> path)
-    {
+    public static IModelPart getHiddenModelPart(ImmutableList<String> path) {
         return new HiddenModelPart(path);
     }
 
-    public static UnmodifiableIterator<String> getParts(IModelPart part)
-    {
-        if(part instanceof HiddenModelPart)
-        {
+    public static UnmodifiableIterator<String> getParts(IModelPart part) {
+        if (part instanceof HiddenModelPart) {
             return ((HiddenModelPart) part).getPath().iterator();
         }
         ImmutableSet<String> ret = ImmutableSet.of();

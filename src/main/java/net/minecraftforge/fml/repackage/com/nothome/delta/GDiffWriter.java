@@ -1,4 +1,4 @@
-/* 
+/*
  *
  * Copyright (c) 2001 Torgeir Veimo
  *
@@ -34,19 +34,19 @@ import java.io.OutputStream;
  * http://www.w3.org/TR/NOTE-gdiff-19970901.html.
  */
 public class GDiffWriter implements DiffWriter {
-    
+
     /**
      * Max length of a chunk.
      */
     public static final int CHUNK_SIZE = Short.MAX_VALUE;
-    
+
     public static final byte EOF = 0;
-    
+
     /**
      * Max length for single length data encode.
      */
     public static final int DATA_MAX = 246;
-    
+
     public static final int DATA_USHORT = 247;
     public static final int DATA_INT = 248;
     public static final int COPY_USHORT_UBYTE = 249;
@@ -57,12 +57,12 @@ public class GDiffWriter implements DiffWriter {
     public static final int COPY_INT_INT = 254;
     public static final int COPY_LONG_INT = 255;
 
-    private ByteArrayOutputStream buf = new ByteArrayOutputStream();
+    private final ByteArrayOutputStream buf = new ByteArrayOutputStream();
 
-    private boolean debug = false;
-    
+    private final boolean debug = false;
+
     private DataOutputStream output = null;
-    
+
     /**
      * Constructs a new GDiffWriter.
      */
@@ -75,7 +75,7 @@ public class GDiffWriter implements DiffWriter {
         output.writeByte(0xff);
         output.writeByte(0x04);
     }
-    
+
     /**
      * Constructs a new GDiffWriter.
      */
@@ -86,48 +86,48 @@ public class GDiffWriter implements DiffWriter {
     @Override
     public void addCopy(long offset, int length) throws IOException {
         writeBuf();
-        
+
         //output debug data        
         if (debug)
             System.err.println("COPY off: " + offset + ", len: " + length);
-        
+
         // output real data
         if (offset > Integer.MAX_VALUE) {
             // Actually, we don't support longer files than int.MAX_VALUE at the moment..
             output.writeByte(COPY_LONG_INT);
             output.writeLong(offset);
             output.writeInt(length);
-        } else if (offset < 65536)  {
-            if (length < 256) {                
+        } else if (offset < 65536) {
+            if (length < 256) {
                 output.writeByte(COPY_USHORT_UBYTE);
-                output.writeShort((int)offset);
+                output.writeShort((int) offset);
                 output.writeByte(length);
             } else if (length > 65535) {
                 output.writeByte(COPY_USHORT_INT);
-                output.writeShort((int)offset);
+                output.writeShort((int) offset);
                 output.writeInt(length);
             } else {
                 output.writeByte(COPY_USHORT_USHORT);
-                output.writeShort((int)offset);
+                output.writeShort((int) offset);
                 output.writeShort(length);
             }
         } else {
             if (length < 256) {
                 output.writeByte(COPY_INT_UBYTE);
-                output.writeInt((int)offset);
+                output.writeInt((int) offset);
                 output.writeByte(length);
             } else if (length > 65535) {
                 output.writeByte(COPY_INT_INT);
-                output.writeInt((int)offset);
+                output.writeInt((int) offset);
                 output.writeInt(length);
             } else {
                 output.writeByte(COPY_INT_USHORT);
-                output.writeInt((int)offset);
+                output.writeInt((int) offset);
                 output.writeShort(length);
             }
         }
     }
-    
+
     /**
      * Adds a data byte.
      */
@@ -137,7 +137,7 @@ public class GDiffWriter implements DiffWriter {
         if (buf.size() >= CHUNK_SIZE)
             writeBuf();
     }
-    
+
     private void writeBuf() throws IOException {
         if (buf.size() > 0) {
             if (buf.size() <= DATA_MAX) {
@@ -153,17 +153,16 @@ public class GDiffWriter implements DiffWriter {
             buf.reset();
         }
     }
-    
+
     /**
      * Flushes accumulated data bytes, if any.
      */
     @Override
-    public void flush() throws IOException 
-    { 
-		writeBuf(); 
-    	output.flush(); 
+    public void flush() throws IOException {
+        writeBuf();
+        output.flush();
     }
-    
+
     /**
      * Writes the final EOF byte, closes the underlying stream.
      */

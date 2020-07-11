@@ -23,30 +23,29 @@
  */
 package org.spigotmc;
 
-import org.bukkit.Bukkit;
-import org.bukkit.plugin.AuthorNagException;
-import org.bukkit.plugin.Plugin;
-import co.aikar.timings.NullTimingHandler;
 import co.aikar.timings.Timing;
 import co.aikar.timings.Timings;
 import co.aikar.timings.TimingsManager;
+import org.bukkit.Bukkit;
+import org.bukkit.plugin.AuthorNagException;
+import org.bukkit.plugin.Plugin;
 
 import java.lang.reflect.Method;
 import java.util.logging.Level;
 
 /**
  * This is here for legacy purposes incase any plugin used it.
- *
+ * <p>
  * If you use this, migrate ASAP as this will be removed in the future!
  *
- * @deprecated
  * @see Timings#of
+ * @deprecated
  */
 @Deprecated
 public final class CustomTimingsHandler {
-    private final Timing handler;
     private static Boolean sunReflectAvailable;
     private static Method getCallerClass;
+    private final Timing handler;
 
     public CustomTimingsHandler(String name) {
         if (sunReflectAvailable == null) {
@@ -80,7 +79,8 @@ public final class CustomTimingsHandler {
         Plugin plugin = null;
         try {
             plugin = TimingsManager.getPluginByClassloader(calling);
-        } catch (Exception ignored) {}
+        } catch (Exception ignored) {
+        }
 
         new AuthorNagException("Deprecated use of CustomTimingsHandler. Please Switch to Timings.of ASAP").printStackTrace();
         if (plugin != null) {
@@ -98,7 +98,12 @@ public final class CustomTimingsHandler {
         handler = timing;
     }
 
-    public void startTiming() { handler.startTiming(); }
-    public void stopTiming() { handler.stopTiming(); }
+    public void startTiming() {
+        handler.startTiming();
+    }
+
+    public void stopTiming() {
+        handler.stopTiming();
+    }
 
 }

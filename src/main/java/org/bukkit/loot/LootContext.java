@@ -56,7 +56,7 @@ public final class LootContext {
      * Represents the
      * {@link org.bukkit.enchantments.Enchantment#LOOT_BONUS_MOBS} the
      * {@link #getKiller()} entity has on their equipped item.
-     *
+     * <p>
      * This value is only set via
      * {@link LootContext.Builder#lootingModifier(int)}. If not set, the
      * {@link #getKiller()} entity's looting level will be used instead.

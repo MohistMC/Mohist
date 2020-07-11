@@ -40,18 +40,15 @@ import net.minecraftforge.fml.common.eventhandler.Cancelable;
  * This event is fired on the {@link MinecraftForge#EVENT_BUS}.<br>
  **/
 @Cancelable
-public class EntityStruckByLightningEvent extends EntityEvent
-{
+public class EntityStruckByLightningEvent extends EntityEvent {
     private final EntityLightningBolt lightning;
 
-    public EntityStruckByLightningEvent(Entity entity, EntityLightningBolt lightning)
-    {
+    public EntityStruckByLightningEvent(Entity entity, EntityLightningBolt lightning) {
         super(entity);
         this.lightning = lightning;
     }
 
-    public EntityLightningBolt getLightning()
-    {
+    public EntityLightningBolt getLightning() {
         return lightning;
     }
 }

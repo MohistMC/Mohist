@@ -23,9 +23,11 @@
  */
 package co.aikar.timings;
 
-import static co.aikar.util.JSONUtil.toArrayMapper;
 import com.google.common.base.Function;
+
 import java.util.List;
+
+import static co.aikar.util.JSONUtil.toArrayMapper;
 
 class TimingHistoryEntry {
     final TimingData data;
@@ -40,12 +42,12 @@ class TimingHistoryEntry {
         List<Object> result = data.export();
         if (children.length > 0) {
             result.add(
-                toArrayMapper(children, new Function<TimingData, Object>() {
-                    @Override
-                    public Object apply(TimingData child) {
-                        return child.export();
-                    }
-                })
+                    toArrayMapper(children, new Function<TimingData, Object>() {
+                        @Override
+                        public Object apply(TimingData child) {
+                            return child.export();
+                        }
+                    })
             );
         }
         return result;

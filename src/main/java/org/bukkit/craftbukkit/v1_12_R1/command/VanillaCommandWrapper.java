@@ -1,12 +1,7 @@
 package org.bukkit.craftbukkit.v1_12_R1.command;
 
-import java.util.List;
-import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;
-import net.minecraft.command.CommandResultStats;
-import net.minecraft.command.EntitySelector;
-import net.minecraft.command.ICommandSender;
-import net.minecraft.command.WrongUsageException;
+import net.minecraft.command.*;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityMinecartCommandBlock;
 import net.minecraft.server.MinecraftServer;
@@ -18,17 +13,15 @@ import net.minecraft.util.text.TextFormatting;
 import org.apache.commons.lang3.Validate;
 import org.apache.logging.log4j.Level;
 import org.bukkit.Location;
-import org.bukkit.command.BlockCommandSender;
-import org.bukkit.command.CommandSender;
-import org.bukkit.command.ConsoleCommandSender;
-import org.bukkit.command.ProxiedCommandSender;
-import org.bukkit.command.RemoteConsoleCommandSender;
+import org.bukkit.command.*;
 import org.bukkit.command.defaults.BukkitCommand;
 import org.bukkit.craftbukkit.v1_12_R1.CraftServer;
 import org.bukkit.craftbukkit.v1_12_R1.entity.CraftMinecartCommand;
 import org.bukkit.craftbukkit.v1_12_R1.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.minecart.CommandMinecart;
+
+import java.util.List;
 
 public final class VanillaCommandWrapper extends BukkitCommand {
     public static CommandSender lastSender = null; // Nasty :(
@@ -40,8 +33,8 @@ public final class VanillaCommandWrapper extends BukkitCommand {
         this.setPermission("minecraft.command." + vanillaCommand.getName());
     }
 
-    public static String[] dropFirstArgument(String as[]) {
-        String as1[] = new String[as.length - 1];
+    public static String[] dropFirstArgument(String[] as) {
+        String[] as1 = new String[as.length - 1];
         for (int i = 1; i < as.length; i++) {
             as1[i - 1] = as[i];
         }
@@ -151,7 +144,7 @@ public final class VanillaCommandWrapper extends BukkitCommand {
             return ((CraftBlockCommandSender) sender).getTileEntity();
         }
         if (sender instanceof CommandMinecart) {
-            return ((EntityMinecartCommandBlock) ((CraftMinecartCommand) sender).getHandle()).getCommandBlockLogic();
+            return ((CraftMinecartCommand) sender).getHandle().getCommandBlockLogic();
         }
         if (sender instanceof RemoteConsoleCommandSender) {
             return ((DedicatedServer) MinecraftServer.getServerInst()).rconConsoleSource;
@@ -168,7 +161,7 @@ public final class VanillaCommandWrapper extends BukkitCommand {
         throw new IllegalArgumentException("Cannot make " + sender + " a vanilla command listener");
     }
 
-    private int getPlayerListSize(String as[]) throws CommandException {
+    private int getPlayerListSize(String[] as) throws CommandException {
         for (int i = 0; i < as.length; i++) {
             if (vanillaCommand.isUsernameIndex(as, i) && EntitySelector.matchesMultiplePlayersDefault(as[i])) {
                 return i;

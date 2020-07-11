@@ -4,7 +4,7 @@ package org.bukkit.command;
  * Represents a command that delegates to one or more other commands
  */
 public class MultipleCommandAlias extends Command {
-    private Command[] commands;
+    private final Command[] commands;
 
     public MultipleCommandAlias(String name, Command[] commands) {
         super(name);

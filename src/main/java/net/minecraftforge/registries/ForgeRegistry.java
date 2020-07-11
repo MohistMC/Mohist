@@ -20,47 +20,30 @@
 package net.minecraftforge.registries;
 
 import com.google.common.base.Preconditions;
-import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.BiMap;
-import com.google.common.collect.HashBiMap;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Multimap;
-import com.google.common.collect.Sets;
-import java.lang.reflect.Method;
-import java.util.BitSet;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import com.google.common.collect.*;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTTagString;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.event.RegistryEvent.MissingMappings;
-import net.minecraftforge.fml.common.FMLContainer;
-import net.minecraftforge.fml.common.FMLLog;
-import net.minecraftforge.fml.common.InjectedModContainer;
-import net.minecraftforge.fml.common.Loader;
-import net.minecraftforge.fml.common.ModContainer;
+import net.minecraftforge.fml.common.*;
 import org.apache.commons.lang3.Validate;
 
-public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRegistryInternal<V>, IForgeRegistryModifiable<V>
-{
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.lang.reflect.Method;
+import java.util.*;
+import java.util.Map.Entry;
+
+public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRegistryInternal<V>, IForgeRegistryModifiable<V> {
     public static final boolean DEBUG = Boolean.parseBoolean(System.getProperty("forge.debugRegistryEntries", "false"));
+    final Map<ResourceLocation, ?> slaves = Maps.newHashMap();
     private final RegistryManager stage;
     private final BiMap<Integer, V> ids = HashBiMap.create();
     private final BiMap<ResourceLocation, V> names = HashBiMap.create();
     private final Class<V> superType;
     private final Map<ResourceLocation, ResourceLocation> aliases = Maps.newHashMap();
-    final Map<ResourceLocation, ?> slaves = Maps.newHashMap();
     private final ResourceLocation defaultKey;
     private final CreateCallback<V> create;
     private final AddCallback<V> add;
@@ -78,12 +61,10 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
     private final int max;
     private final boolean allowOverrides;
     private final boolean isModifiable;
-
-    private V defaultValue = null;
     boolean isFrozen = false;
+    private V defaultValue = null;
 
-    ForgeRegistry(Class<V> superType, ResourceLocation defaultKey, int min, int max, @Nullable CreateCallback<V> create, @Nullable AddCallback<V> add, @Nullable ClearCallback<V> clear, @Nullable ValidateCallback<V> validate, RegistryManager stage, boolean allowOverrides, boolean isModifiable, @Nullable DummyFactory<V> dummyFactory, @Nullable MissingFactory<V> missing)
-    {
+    ForgeRegistry(Class<V> superType, ResourceLocation defaultKey, int min, int max, @Nullable CreateCallback<V> create, @Nullable AddCallback<V> add, @Nullable ClearCallback<V> clear, @Nullable ValidateCallback<V> validate, RegistryManager stage, boolean allowOverrides, boolean isModifiable, @Nullable DummyFactory<V> dummyFactory, @Nullable MissingFactory<V> missing) {
         this.stage = stage;
         this.superType = superType;
         this.defaultKey = defaultKey;
@@ -104,28 +85,27 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
     }
 
     @Override
-    public void register(V value)
-    {
+    public void register(V value) {
         add(-1, value);
     }
 
     @Override
     public Iterator<V> iterator() {
-        return new Iterator<V>()
-        {
+        return new Iterator<V>() {
             int cur = -1;
             V next = null;
-            { next(); }
+
+            {
+                next();
+            }
 
             @Override
-            public boolean hasNext()
-            {
+            public boolean hasNext() {
                 return next != null;
             }
 
             @Override
-            public V next()
-            {
+            public V next() {
                 V ret = next;
                 do {
                     cur = availabilityMap.nextSetBit(cur + 1);
@@ -138,23 +118,19 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
     }
 
     @Override
-    public Class<V> getRegistrySuperType()
-    {
+    public Class<V> getRegistrySuperType() {
         return superType;
     }
 
     @Override
-    public void registerAll(@SuppressWarnings("unchecked") V... values)
-    {
+    public void registerAll(@SuppressWarnings("unchecked") V... values) {
         for (V value : values)
             register(value);
     }
 
     @Override
-    public boolean containsKey(ResourceLocation key)
-    {
-        while (key != null)
-        {
+    public boolean containsKey(ResourceLocation key) {
+        while (key != null) {
             if (this.names.containsKey(key))
                 return true;
             key = this.aliases.get(key);
@@ -163,18 +139,15 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
     }
 
     @Override
-    public boolean containsValue(V value)
-    {
+    public boolean containsValue(V value) {
         return this.names.containsValue(value);
     }
 
     @Override
-    public V getValue(ResourceLocation key)
-    {
+    public V getValue(ResourceLocation key) {
         V ret = this.names.get(key);
         key = this.aliases.get(key);
-        while (ret == null && key != null)
-        {
+        while (ret == null && key != null) {
             ret = this.names.get(key);
             key = this.aliases.get(key);
         }
@@ -182,15 +155,13 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
     }
 
     @Override
-    public ResourceLocation getKey(V value)
-    {
+    public ResourceLocation getKey(V value) {
         ResourceLocation ret = this.names.inverse().get(value);
         return ret == null ? this.defaultKey : ret;
     }
 
     @Override
-    public Set<ResourceLocation> getKeys()
-    {
+    public Set<ResourceLocation> getKeys() {
         return Collections.unmodifiableSet(this.names.keySet());
     }
 
@@ -199,86 +170,74 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
      */
     @Deprecated
     @Override
-    public List<V> getValues()
-    {
+    public List<V> getValues() {
         return ImmutableList.copyOf(this.names.values());
     }
 
     @Nonnull
     @Override
-    public Collection<V> getValuesCollection()
-    {
+    public Collection<V> getValuesCollection() {
         return Collections.unmodifiableSet(this.names.values());
     }
 
     @Override
-    public Set<Entry<ResourceLocation, V>> getEntries()
-    {
+    public Set<Entry<ResourceLocation, V>> getEntries() {
         return Collections.unmodifiableSet(this.names.entrySet());
     }
 
     @SuppressWarnings("unchecked")
     @Override
-    public <T> T getSlaveMap(ResourceLocation name, Class<T> type)
-    {
-        return (T)this.slaves.get(name);
+    public <T> T getSlaveMap(ResourceLocation name, Class<T> type) {
+        return (T) this.slaves.get(name);
     }
 
     @SuppressWarnings("unchecked")
     @Override
-    public void setSlaveMap(ResourceLocation name, Object obj)
-    {
-        ((Map<ResourceLocation, Object>)this.slaves).put(name, obj);
+    public void setSlaveMap(ResourceLocation name, Object obj) {
+        ((Map<ResourceLocation, Object>) this.slaves).put(name, obj);
     }
 
-    public int getID(V value)
-    {
+    public int getID(V value) {
         Integer ret = this.ids.inverse().get(value);
         if (ret == null && this.defaultValue != null)
             ret = this.ids.inverse().get(this.defaultValue);
         return ret == null ? -1 : ret.intValue();
     }
 
-    public int getID(ResourceLocation name)
-    {
+    public int getID(ResourceLocation name) {
         return getID(this.names.get(name));
     }
-    private int getIDRaw(V value)
-    {
+
+    private int getIDRaw(V value) {
         Integer ret = this.ids.inverse().get(value);
         return ret == null ? -1 : ret.intValue();
     }
-    private int getIDRaw(ResourceLocation name)
-    {
+
+    private int getIDRaw(ResourceLocation name) {
         return getIDRaw(this.names.get(name));
     }
 
-    public V getValue(int id)
-    {
+    public V getValue(int id) {
         V ret = this.ids.get(id);
         return ret == null ? this.defaultValue : ret;
     }
 
-    void validateKey()
-    {
+    void validateKey() {
         if (this.defaultKey != null)
             Validate.notNull(this.defaultValue, "Missing default of ForgeRegistry: " + this.defaultKey + " Type: " + this.superType);
     }
 
-    ForgeRegistry<V> copy(RegistryManager stage)
-    {
+    ForgeRegistry<V> copy(RegistryManager stage) {
         return new ForgeRegistry<V>(superType, defaultKey, min, max, create, add, clear, validate, stage, allowOverrides, isModifiable, dummyFactory, missing);
     }
 
-    int add(int id, V value)
-    {
+    int add(int id, V value) {
         ModContainer mc = Loader.instance().activeModContainer();
-        String owner = mc == null || (mc instanceof InjectedModContainer && ((InjectedModContainer)mc).wrappedContainer instanceof FMLContainer) ? null : mc.getModId().toLowerCase();
+        String owner = mc == null || (mc instanceof InjectedModContainer && ((InjectedModContainer) mc).wrappedContainer instanceof FMLContainer) ? null : mc.getModId().toLowerCase();
         return add(id, value, owner);
     }
 
-    int add(int id, V value, String owner)
-    {
+    int add(int id, V value, String owner) {
         ResourceLocation key = value == null ? null : value.getRegistryName();
         Preconditions.checkNotNull(key, "Can't use a null-name for the registry, object %s.", value);
         Preconditions.checkNotNull(value, "Can't add null-object to the registry, name %s.", key);
@@ -308,8 +267,7 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
         }
 
         Integer foundId = this.ids.inverse().get(value); //Is this ever possible to trigger with otherThing being different?
-        if (foundId != null)
-        {
+        if (foundId != null) {
             V otherThing = this.ids.get(foundId);
             throw new IllegalArgumentException(String.format("The object %s{%x} has been registered twice, using the names %s and %s. (Other object at this id is %s{%x})", value, System.identityHashCode(value), getKey(value), key, otherThing, System.identityHashCode(otherThing)));
         }
@@ -317,8 +275,7 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
         if (isLocked())
             throw new IllegalStateException(String.format("The object %s (name %s) is being added too late.", value, key));
 
-        if (defaultKey != null && defaultKey.equals(key))
-        {
+        if (defaultKey != null && defaultKey.equals(key)) {
             if (this.defaultValue != null)
                 throw new IllegalStateException(String.format("Attemped to override already set default value. This is not allowed: The object %s (name %s)", value, key));
             this.defaultValue = value;
@@ -329,11 +286,9 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
         this.availabilityMap.set(idToUse);
         this.owners.put(new OverrideOwner(owner == null ? key.getResourceDomain() : owner, key), value);
 
-        if (isDelegated)
-        {
+        if (isDelegated) {
             getDelegate(value).setName(key);
-            if (oldEntry != null)
-            {
+            if (oldEntry != null) {
                 if (!this.overrides.get(key).contains(oldEntry))
                     this.overrides.put(key, oldEntry);
                 this.overrides.get(key).remove(value);
@@ -354,12 +309,10 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
         return idToUse;
     }
 
-    private V getRaw(ResourceLocation key)
-    {
+    private V getRaw(ResourceLocation key) {
         V ret = this.names.get(key);
         key = this.aliases.get(key);
-        while (ret == null && key != null)
-        {
+        while (ret == null && key != null) {
             ret = this.names.get(key);
             key = this.aliases.get(key);
         }
@@ -367,13 +320,11 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
     }
 
     @Deprecated //Public for ByteByfUtils only!
-    public V getRaw(int id)
-    {
+    public V getRaw(int id) {
         return this.ids.get(id);
     }
 
-    void addAlias(ResourceLocation from, ResourceLocation to)
-    {
+    void addAlias(ResourceLocation from, ResourceLocation to) {
         if (this.isLocked())
             throw new IllegalStateException(String.format("Attempted to register the alias %s -> %s to late", from, to));
         this.aliases.put(from, to);
@@ -381,8 +332,7 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
             FMLLog.log.trace("Registry {} alias: {} -> {}", this.superType.getSimpleName(), from, to);
     }
 
-    void addDummy(ResourceLocation key)
-    {
+    void addDummy(ResourceLocation key) {
         if (this.isLocked())
             throw new IllegalStateException(String.format("Attempted to register the dummy %s to late", key));
         this.dummies.add(key);
@@ -390,52 +340,43 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
             FMLLog.log.trace("Registry {} dummy: {}", this.superType.getSimpleName(), key);
     }
 
-    private RegistryDelegate<V> getDelegate(V thing)
-    {
+    private RegistryDelegate<V> getDelegate(V thing) {
         if (isDelegated)
-            return (RegistryDelegate<V>)((IForgeRegistryEntry.Impl<V>)thing).delegate;
+            return (RegistryDelegate<V>) ((IForgeRegistryEntry.Impl<V>) thing).delegate;
         else
             throw new IllegalStateException("Tried to get existing delegate from registry that is not delegated.");
     }
 
-    void resetDelegates()
-    {
+    void resetDelegates() {
         if (!this.isDelegated)
             return;
 
         for (V value : this)
             getDelegate(value).changeReference(value);
 
-        for (V value: this.overrides.values())
+        for (V value : this.overrides.values())
             getDelegate(value).changeReference(value);
     }
 
-    V getDefault()
-    {
+    V getDefault() {
         return this.defaultValue;
     }
 
-    boolean isDummied(ResourceLocation key)
-    {
+    boolean isDummied(ResourceLocation key) {
         return this.dummies.contains(key);
     }
 
 
-    void validateContent(ResourceLocation registryName)
-    {
-        try
-        {
+    void validateContent(ResourceLocation registryName) {
+        try {
             Method method = BitSet.class.getDeclaredMethod("trimToSize");
             method.setAccessible(true);
             method.invoke(this.availabilityMap);
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             //We don't care... Just a micro-optimization
         }
 
-        for (V obj : this)
-        {
+        for (V obj : this) {
             int id = getID(obj);
             ResourceLocation name = getKey(obj);
 
@@ -471,8 +412,7 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
         }
     }
 
-    void sync(ResourceLocation name, ForgeRegistry<V> from)
-    {
+    void sync(ResourceLocation name, ForgeRegistry<V> from) {
         if (DEBUG)
             FMLLog.log.debug("Registry {} Sync: {} -> {}", this.superType.getSimpleName(), this.stage.getName(), from.stage.getName());
         if (this == from)
@@ -502,34 +442,26 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
 
         boolean errored = false;
 
-        for (Entry<ResourceLocation, V> entry : from.names.entrySet())
-        {
+        for (Entry<ResourceLocation, V> entry : from.names.entrySet()) {
             List<V> overrides = Lists.newArrayList(from.overrides.get(entry.getKey()));
             int id = from.getID(entry.getKey());
-            if (overrides.isEmpty())
-            {
+            if (overrides.isEmpty()) {
                 int realId = add(id, entry.getValue());
-                if (id != realId && id != -1)
-                {
+                if (id != realId && id != -1) {
                     FMLLog.log.warn("Registry {}: Object did not get ID it asked for. Name: {} Expected: {} Got: {}", this.superType.getSimpleName(), entry.getKey(), id, realId);
                     errored = true;
                 }
-            }
-            else
-            {
+            } else {
                 overrides.add(entry.getValue());
-                for (V value : overrides)
-                {
+                for (V value : overrides) {
                     OverrideOwner owner = from.owners.inverse().get(value);
-                    if (owner == null)
-                    {
+                    if (owner == null) {
                         FMLLog.log.warn("Registry {}: Override did not have an associated owner object. Name: {} Value: {}", this.superType.getSimpleName(), entry.getKey(), value);
                         errored = true;
                         continue;
                     }
                     int realId = add(id, value, owner.owner);
-                    if (id != realId && id != -1)
-                    {
+                    if (id != realId && id != -1) {
                         FMLLog.log.warn("Registry {}: Object did not get ID it asked for. Name: {} Expected: {} Got: {}", this.superType.getSimpleName(), entry.getKey(), id, realId);
                         errored = true;
                     }
@@ -546,10 +478,8 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
     }
 
 
-
     @Override
-    public void clear()
-    {
+    public void clear() {
         if (!this.isModifiable)
             throw new UnsupportedOperationException("Attempted to clear a non-modifiable Forge Registry");
 
@@ -569,8 +499,7 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
     }
 
     @Override
-    public V remove(ResourceLocation key)
-    {
+    public V remove(ResourceLocation key) {
         if (!this.isModifiable)
             throw new UnsupportedOperationException("Attempted to remove from a non-modifiable Forge Registry");
 
@@ -578,8 +507,7 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
             throw new IllegalStateException("Attempted to remove from the registry to late.");
 
         V value = this.names.remove(key);
-        if (value != null)
-        {
+        if (value != null) {
             Integer id = this.ids.inverse().remove(value);
             if (id == null)
                 throw new IllegalStateException("Removed a entry that did not have an associated id: " + key + " " + value.toString() + " This should never happen unless hackery!");
@@ -591,15 +519,13 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
         return value;
     }
 
-    void block(int id)
-    {
+    void block(int id) {
         this.blocked.add(id);
         this.availabilityMap.set(id);
     }
 
     @Override
-    public boolean isLocked()
-    {
+    public boolean isLocked() {
         return this.isFrozen;
     }
 
@@ -607,23 +533,19 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
      * Used to control the times where people can modify this registry.
      * Users should only ever register things in the Register<?> events!
      */
-    public void freeze()
-    {
+    public void freeze() {
         this.isFrozen = true;
     }
 
-    public void unfreeze()
-    {
+    public void unfreeze() {
         this.isFrozen = false;
     }
 
-    RegistryEvent.Register<V> getRegisterEvent(ResourceLocation name)
-    {
+    RegistryEvent.Register<V> getRegisterEvent(ResourceLocation name) {
         return new RegistryEvent.Register<V>(name, this);
     }
 
-    void dump(ResourceLocation name)
-    {
+    void dump(ResourceLocation name) {
         List<Integer> ids = Lists.newArrayList();
         getKeys().forEach(n -> ids.add(getID(n)));
 
@@ -633,25 +555,20 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
         ids.forEach(id -> FMLLog.log.trace("  Registry: {} {} {}", id, getKey(getValue(id)), getValue(id)));
     }
 
-    public void loadIds(Map<ResourceLocation, Integer> ids, Map<ResourceLocation, String> overrides, Map<ResourceLocation, Integer> missing, Map<ResourceLocation, Integer[]> remapped, ForgeRegistry<V> old, ResourceLocation name)
-    {
+    public void loadIds(Map<ResourceLocation, Integer> ids, Map<ResourceLocation, String> overrides, Map<ResourceLocation, Integer> missing, Map<ResourceLocation, Integer[]> remapped, ForgeRegistry<V> old, ResourceLocation name) {
         Map<ResourceLocation, String> ovs = Maps.newHashMap(overrides);
-        for (Map.Entry<ResourceLocation, Integer> entry : ids.entrySet())
-        {
+        for (Map.Entry<ResourceLocation, Integer> entry : ids.entrySet()) {
             ResourceLocation itemName = entry.getKey();
             int newId = entry.getValue();
             int currId = old.getIDRaw(itemName);
 
-            if (currId == -1)
-            {
+            if (currId == -1) {
                 FMLLog.log.info("Registry {}: Found a missing id from the world {}", this.superType.getSimpleName(), itemName);
                 missing.put(itemName, newId);
                 continue; // no block/item -> nothing to add
-            }
-            else if (currId != newId)
-            {
+            } else if (currId != newId) {
                 FMLLog.log.debug("Registry {}: Fixed {} id mismatch {}: {} (init) -> {} (map).", this.superType.getSimpleName(), name, itemName, currId, newId);
-                remapped.put(itemName, new Integer[] {currId, newId});
+                remapped.put(itemName, new Integer[]{currId, newId});
             }
 
             V obj = old.getRaw(itemName);
@@ -659,23 +576,18 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
 
             List<V> lst = Lists.newArrayList(old.overrides.get(itemName));
             String primaryName = null;
-            if (old.overrides.containsKey(itemName))
-            {
-                if (!overrides.containsKey(itemName))
-                {
+            if (old.overrides.containsKey(itemName)) {
+                if (!overrides.containsKey(itemName)) {
                     lst.add(obj);
                     obj = old.overrides.get(itemName).iterator().next(); //Get the first one in the list, Which should be the first one registered
                     primaryName = old.owners.inverse().get(obj).owner;
-                }
-                else
+                } else
                     primaryName = overrides.get(itemName);
             }
 
-            for (V value : lst)
-            {
+            for (V value : lst) {
                 OverrideOwner owner = old.owners.inverse().get(value);
-                if (owner == null)
-                {
+                if (owner == null) {
                     FMLLog.log.warn("Registry {}: Override did not have an associated owner object. Name: {} Value: {}", this.superType.getSimpleName(), entry.getKey(), value);
                     continue;
                 }
@@ -694,16 +606,13 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
             ovs.remove(itemName);
         }
 
-        for (Map.Entry<ResourceLocation, String> entry :  ovs.entrySet())
-        {
+        for (Map.Entry<ResourceLocation, String> entry : ovs.entrySet()) {
             ResourceLocation itemName = entry.getKey();
             String owner = entry.getValue();
             String current = this.owners.inverse().get(this.getRaw(itemName)).owner;
-            if (!owner.equals(current))
-            {
+            if (!owner.equals(current)) {
                 V _new = this.owners.get(new OverrideOwner(owner, itemName));
-                if (_new == null)
-                {
+                if (_new == null) {
                     FMLLog.log.warn("Registry {}: Skipping override for {}, Unknown owner {}", this.superType.getSimpleName(), itemName, owner);
                     continue;
                 }
@@ -718,8 +627,7 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
         }
     }
 
-    boolean markDummy(ResourceLocation key, int id)
-    {
+    boolean markDummy(ResourceLocation key, int id) {
         if (this.dummyFactory == null)
             return false;
 
@@ -729,8 +637,7 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
 
         //It was blocked before so we need to unset the blocking map
         this.availabilityMap.clear(id);
-        if (this.containsKey(key))
-        {
+        if (this.containsKey(key)) {
             //If the entry already exists, we need to delete it so we can add a dummy...
             V value = this.names.remove(key);
             if (value == null)
@@ -757,8 +664,7 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
     }
 
     //Public for tests
-    public Snapshot makeSnapshot()
-    {
+    public Snapshot makeSnapshot() {
         Snapshot ret = new Snapshot();
         this.ids.forEach((id, value) -> ret.ids.put(getKey(value), id));
         ret.aliases.putAll(this.aliases);
@@ -768,11 +674,9 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
         return ret;
     }
 
-    Map<ResourceLocation, String> getOverrideOwners()
-    {
+    Map<ResourceLocation, String> getOverrideOwners() {
         Map<ResourceLocation, String> ret = Maps.newHashMap();
-        for (ResourceLocation key : this.overrides.keySet())
-        {
+        for (ResourceLocation key : this.overrides.keySet()) {
             V obj = this.names.get(key);
             OverrideOwner owner = this.owners.inverse().get(obj);
             if (owner == null && DEBUG)
@@ -782,16 +686,124 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
         return ret;
     }
 
-    public static class Snapshot
-    {
+    public MissingMappings<?> getMissingEvent(ResourceLocation name, Map<ResourceLocation, Integer> map) {
+        List<MissingMappings.Mapping<V>> lst = Lists.newArrayList();
+        ForgeRegistry<V> pool = RegistryManager.ACTIVE.getRegistry(name);
+        map.forEach((rl, id) -> lst.add(new MissingMappings.Mapping<V>(this, pool, rl, id)));
+        return new MissingMappings<V>(name, this, lst);
+    }
+
+    void processMissingEvent(ResourceLocation name, ForgeRegistry<V> pool, List<MissingMappings.Mapping<V>> mappings, Map<ResourceLocation, Integer> missing, Map<ResourceLocation, Integer[]> remaps, Collection<ResourceLocation> defaulted, Collection<ResourceLocation> failed, boolean injectNetworkDummies) {
+        FMLLog.log.debug("Processing missing event for {}:", name);
+        int ignored = 0;
+
+        for (MissingMappings.Mapping<V> remap : mappings) {
+            MissingMappings.Action action = remap.getAction();
+
+            if (action == MissingMappings.Action.REMAP) {
+                // entry re-mapped, finish the registration with the new name/object, but the old id
+                int currId = getID(remap.getTarget());
+                ResourceLocation newName = pool.getKey(remap.getTarget());
+                FMLLog.log.debug("  Remapping {} -> {}.", remap.key, newName);
+
+                missing.remove(remap.key);
+                //I don't think this will work, but I dont think it ever worked.. the item is already in the map with a different id... we want to fix that..
+                int realId = this.add(remap.id, remap.getTarget());
+                if (realId != remap.id)
+                    FMLLog.log.warn("Registered object did not get ID it asked for. Name: {} Type: {} Expected: {} Got: {}", newName, this.getRegistrySuperType(), remap.id, realId);
+                this.addAlias(remap.key, newName);
+
+
+                if (currId != realId) {
+                    FMLLog.log.info("  Fixed id mismatch {}: {} (init) -> {} (map).", newName, currId, realId);
+                    remaps.put(newName, new Integer[]{currId, realId});
+                }
+            } else {
+                // block item missing, warn as requested and block the id
+                if (action == MissingMappings.Action.DEFAULT) {
+                    V m = this.missing == null ? null : this.missing.createMissing(remap.key, injectNetworkDummies);
+                    if (m == null)
+                        defaulted.add(remap.key);
+                    else
+                        this.add(remap.id, m, remap.key.getResourceDomain());
+                } else if (action == MissingMappings.Action.IGNORE) {
+                    FMLLog.log.debug("  Ignoring {}", remap.key);
+                    ignored++;
+                } else if (action == MissingMappings.Action.FAIL) {
+                    FMLLog.log.debug("  Failing {}!", remap.key);
+                    failed.add(remap.key);
+                } else if (action == MissingMappings.Action.WARN) {
+                    FMLLog.log.warn("  {} may cause world breakage!", remap.key);
+                }
+                this.block(remap.id);
+            }
+        }
+
+        if (failed.isEmpty() && ignored > 0)
+            FMLLog.log.debug("There were {} missing mappings that have been ignored", ignored);
+    }
+
+    public static class Snapshot {
         public final Map<ResourceLocation, Integer> ids = Maps.newHashMap();
         public final Map<ResourceLocation, ResourceLocation> aliases = Maps.newHashMap();
         public final Set<Integer> blocked = Sets.newHashSet();
         public final Set<ResourceLocation> dummied = Sets.newHashSet();
         public final Map<ResourceLocation, String> overrides = Maps.newHashMap();
 
-        public NBTTagCompound write()
-        {
+        public static Snapshot read(NBTTagCompound nbt) {
+            Snapshot ret = new Snapshot();
+            if (nbt == null) {
+                return ret;
+            }
+
+            NBTTagList list = nbt.getTagList("ids", 10);
+            list.forEach(e ->
+            {
+                NBTTagCompound comp = (NBTTagCompound) e;
+                ret.ids.put(new ResourceLocation(comp.getString("K")), comp.getInteger("V"));
+            });
+
+            list = nbt.getTagList("aliases", 10);
+            list.forEach(e ->
+            {
+                NBTTagCompound comp = (NBTTagCompound) e;
+                String v = comp.getString("V");
+                if (v.indexOf(':') == -1) //Forge Bug: https://github.com/MinecraftForge/MinecraftForge/issues/4894 TODO: Remove in 1.13
+                {
+                    ret.overrides.put(new ResourceLocation(comp.getString("K")), v);
+                } else {
+                    ResourceLocation aliask = new ResourceLocation(comp.getString("K"));
+                    ResourceLocation aliasv = new ResourceLocation(v);
+                    if (aliasv.equals(aliask)) {
+                        FMLLog.log.warn("Found unrecoverable 4894 bugged alias/override: {} -> {}, skipping.", aliask, aliasv);
+                    } else {
+                        ret.aliases.put(aliask, aliasv);
+                    }
+                }
+            });
+
+            list = nbt.getTagList("overrides", 10);
+            list.forEach(e ->
+            {
+                NBTTagCompound comp = (NBTTagCompound) e;
+                ret.overrides.put(new ResourceLocation(comp.getString("K")), comp.getString("V"));
+            });
+
+            int[] blocked = nbt.getIntArray("blocked");
+            for (int i : blocked) {
+                ret.blocked.add(i);
+            }
+
+            list = nbt.getTagList("dummied", 10); //10 - NBTTagCompound, Old format. New format is String list. For now we will just merge the old and new. TODO: Remove in 1.13
+            list.forEach(e -> ret.dummied.add(new ResourceLocation(((NBTTagCompound) e).getString("K"))));
+
+            list = nbt.getTagList("dummied", 8); //8 - NBTTagString, New format, less redundant/verbose
+            list.forEach(e -> ret.dummied.add(new ResourceLocation(((NBTTagString) e).getString())));
+
+            return ret;
+        }
+
+        public NBTTagCompound write() {
             NBTTagCompound data = new NBTTagCompound();
 
             NBTTagList ids = new NBTTagList();
@@ -824,7 +836,7 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
             });
             data.setTag("overrides", overrides);
 
-            int[] blocked = this.blocked.stream().mapToInt(x->x).sorted().toArray();
+            int[] blocked = this.blocked.stream().mapToInt(x -> x).sorted().toArray();
             data.setIntArray("blocked", blocked);
 
             NBTTagList dummied = new NBTTagList();
@@ -833,164 +845,29 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
 
             return data;
         }
-
-        public static Snapshot read(NBTTagCompound nbt)
-        {
-            Snapshot ret = new Snapshot();
-            if (nbt == null)
-            {
-                return ret;
-            }
-
-            NBTTagList list = nbt.getTagList("ids", 10);
-            list.forEach(e ->
-            {
-                NBTTagCompound comp = (NBTTagCompound)e;
-                ret.ids.put(new ResourceLocation(comp.getString("K")), comp.getInteger("V"));
-            });
-
-            list = nbt.getTagList("aliases", 10);
-            list.forEach(e ->
-            {
-                NBTTagCompound comp = (NBTTagCompound)e;
-                String v = comp.getString("V");
-                if (v.indexOf(':') == -1) //Forge Bug: https://github.com/MinecraftForge/MinecraftForge/issues/4894 TODO: Remove in 1.13
-                {
-                    ret.overrides.put(new ResourceLocation(comp.getString("K")), v);
-                }
-                else
-                {
-                    ResourceLocation aliask = new ResourceLocation(comp.getString("K"));
-                    ResourceLocation aliasv = new ResourceLocation(v);
-                    if (aliasv.equals(aliask))
-                    {
-                        FMLLog.log.warn("Found unrecoverable 4894 bugged alias/override: {} -> {}, skipping.", aliask, aliasv);
-                    }
-                    else
-                    {
-                        ret.aliases.put(aliask, aliasv);
-                    }
-                }
-            });
-
-            list = nbt.getTagList("overrides", 10);
-            list.forEach(e ->
-            {
-                NBTTagCompound comp = (NBTTagCompound)e;
-                ret.overrides.put(new ResourceLocation(comp.getString("K")), comp.getString("V"));
-            });
-
-            int[] blocked = nbt.getIntArray("blocked");
-            for (int i : blocked)
-            {
-                ret.blocked.add(i);
-            }
-
-            list = nbt.getTagList("dummied", 10); //10 - NBTTagCompound, Old format. New format is String list. For now we will just merge the old and new. TODO: Remove in 1.13
-            list.forEach(e -> ret.dummied.add(new ResourceLocation(((NBTTagCompound)e).getString("K"))));
-
-            list = nbt.getTagList("dummied", 8); //8 - NBTTagString, New format, less redundant/verbose
-            list.forEach(e -> ret.dummied.add(new ResourceLocation(((NBTTagString)e).getString())));
-
-            return ret;
-        }
     }
 
-    public MissingMappings<?> getMissingEvent(ResourceLocation name, Map<ResourceLocation, Integer> map)
-    {
-        List<MissingMappings.Mapping<V>> lst = Lists.newArrayList();
-        ForgeRegistry<V> pool = RegistryManager.ACTIVE.getRegistry(name);
-        map.forEach((rl, id) -> lst.add(new MissingMappings.Mapping<V>(this, pool, rl, id)));
-        return new MissingMappings<V>(name, this, lst);
-    }
-
-    void processMissingEvent(ResourceLocation name, ForgeRegistry<V> pool, List<MissingMappings.Mapping<V>> mappings, Map<ResourceLocation, Integer> missing, Map<ResourceLocation, Integer[]> remaps, Collection<ResourceLocation> defaulted, Collection<ResourceLocation> failed, boolean injectNetworkDummies)
-    {
-        FMLLog.log.debug("Processing missing event for {}:", name);
-        int ignored = 0;
-
-        for (MissingMappings.Mapping<V> remap : mappings)
-        {
-            MissingMappings.Action action = remap.getAction();
-
-            if (action == MissingMappings.Action.REMAP)
-            {
-                // entry re-mapped, finish the registration with the new name/object, but the old id
-                int currId = getID(remap.getTarget());
-                ResourceLocation newName = pool.getKey(remap.getTarget());
-                FMLLog.log.debug("  Remapping {} -> {}.", remap.key, newName);
-
-                missing.remove(remap.key);
-                //I don't think this will work, but I dont think it ever worked.. the item is already in the map with a different id... we want to fix that..
-                int realId = this.add(remap.id, remap.getTarget());
-                if (realId != remap.id)
-                    FMLLog.log.warn("Registered object did not get ID it asked for. Name: {} Type: {} Expected: {} Got: {}", newName, this.getRegistrySuperType(), remap.id, realId);
-                this.addAlias(remap.key, newName);
-
-
-                if (currId != realId)
-                {
-                    FMLLog.log.info("  Fixed id mismatch {}: {} (init) -> {} (map).", newName, currId, realId);
-                    remaps.put(newName, new Integer[] {currId, realId});
-                }
-            }
-            else
-            {
-                // block item missing, warn as requested and block the id
-                if (action == MissingMappings.Action.DEFAULT)
-                {
-                    V m = this.missing == null ? null : this.missing.createMissing(remap.key, injectNetworkDummies);
-                    if (m == null)
-                        defaulted.add(remap.key);
-                    else
-                        this.add(remap.id, m, remap.key.getResourceDomain());
-                }
-                else if (action == MissingMappings.Action.IGNORE)
-                {
-                    FMLLog.log.debug("  Ignoring {}", remap.key);
-                    ignored++;
-                }
-                else if (action == MissingMappings.Action.FAIL)
-                {
-                    FMLLog.log.debug("  Failing {}!", remap.key);
-                    failed.add(remap.key);
-                }
-                else if (action == MissingMappings.Action.WARN)
-                {
-                    FMLLog.log.warn("  {} may cause world breakage!", remap.key);
-                }
-                this.block(remap.id);
-            }
-        }
-
-        if (failed.isEmpty() && ignored > 0)
-            FMLLog.log.debug("There were {} missing mappings that have been ignored", ignored);
-    }
-
-    private static class OverrideOwner
-    {
+    private static class OverrideOwner {
         final String owner;
         final ResourceLocation key;
-        private OverrideOwner(String owner, ResourceLocation key)
-        {
+
+        private OverrideOwner(String owner, ResourceLocation key) {
             this.owner = owner;
             this.key = key;
         }
 
-        public boolean equals(Object o)
-        {
+        public boolean equals(Object o) {
             if (this == o)
                 return true;
 
             if (!(o instanceof OverrideOwner))
                 return false;
 
-            OverrideOwner oo = (OverrideOwner)o;
+            OverrideOwner oo = (OverrideOwner) o;
             return this.owner.equals(oo.owner) && this.key.equals(oo.key);
         }
 
-        public int hashCode()
-        {
+        public int hashCode() {
             return 31 * this.key.hashCode() + this.owner.hashCode();
         }
     }

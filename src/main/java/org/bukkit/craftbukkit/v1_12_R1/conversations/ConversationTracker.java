@@ -1,13 +1,15 @@
 package org.bukkit.craftbukkit.v1_12_R1.conversations;
 
-import java.util.LinkedList;
-import java.util.logging.Level;
 import org.bukkit.conversations.Conversation;
 import org.bukkit.conversations.ConversationAbandonedEvent;
 import org.bukkit.conversations.ManuallyAbandonedConversationCanceller;
 import red.mohist.Mohist;
 
+import java.util.LinkedList;
+import java.util.logging.Level;
+
 /**
+ *
  */
 public class ConversationTracker {
 
@@ -30,9 +32,7 @@ public class ConversationTracker {
             if (conversationQueue.getFirst() == conversation) {
                 conversation.abandon(details);
             }
-            if (this.conversationQueue.contains(conversation)) {
-                this.conversationQueue.remove(conversation);
-            }
+            this.conversationQueue.remove(conversation);
             if (!conversationQueue.isEmpty()) {
                 conversationQueue.getFirst().outputNextPrompt();
             }

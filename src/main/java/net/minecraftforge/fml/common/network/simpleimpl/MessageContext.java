@@ -28,7 +28,6 @@ import net.minecraftforge.fml.relauncher.Side;
  * Context for the {@link IMessageHandler}
  *
  * @author cpw
- *
  */
 public class MessageContext {
     /**
@@ -41,22 +40,20 @@ public class MessageContext {
      * The Side this message has been received on
      */
     public final Side side;
+
     /**
      * @param netHandler
      */
-    MessageContext(INetHandler netHandler, Side side)
-    {
+    MessageContext(INetHandler netHandler, Side side) {
         this.netHandler = netHandler;
         this.side = side;
     }
 
-    public NetHandlerPlayServer getServerHandler()
-    {
+    public NetHandlerPlayServer getServerHandler() {
         return (NetHandlerPlayServer) netHandler;
     }
 
-    public NetHandlerPlayClient getClientHandler()
-    {
+    public NetHandlerPlayClient getClientHandler() {
         return (NetHandlerPlayClient) netHandler;
     }
 }

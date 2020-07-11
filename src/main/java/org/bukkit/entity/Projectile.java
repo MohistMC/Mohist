@@ -12,14 +12,14 @@ public interface Projectile extends Entity {
      *
      * @return the {@link ProjectileSource} that shot this projectile
      */
-    public ProjectileSource getShooter();
+    ProjectileSource getShooter();
 
     /**
      * Set the shooter of this projectile.
      *
      * @param source the {@link ProjectileSource} that shot this projectile
      */
-    public void setShooter(ProjectileSource source);
+    void setShooter(ProjectileSource source);
 
     /**
      * Determine if this projectile should bounce or not when it hits.
@@ -28,7 +28,7 @@ public interface Projectile extends Entity {
      *
      * @return true if it should bounce.
      */
-    public boolean doesBounce();
+    boolean doesBounce();
 
     /**
      * Set whether or not this projectile should bounce or not when it hits
@@ -36,5 +36,5 @@ public interface Projectile extends Entity {
      *
      * @param doesBounce whether or not it should bounce.
      */
-    public void setBounce(boolean doesBounce);
+    void setBounce(boolean doesBounce);
 }

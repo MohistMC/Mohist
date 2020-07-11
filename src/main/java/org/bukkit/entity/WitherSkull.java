@@ -10,12 +10,12 @@ public interface WitherSkull extends Fireball {
      *
      * @return whether the wither skull is charged
      */
-    public boolean isCharged();
+    boolean isCharged();
 
     /**
      * Sets the charged status of the wither skull.
      *
      * @param charged whether it should be charged
      */
-    public void setCharged(boolean charged);
+    void setCharged(boolean charged);
 }

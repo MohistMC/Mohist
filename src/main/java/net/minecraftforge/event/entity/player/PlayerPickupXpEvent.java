@@ -25,21 +25,18 @@ import net.minecraftforge.fml.common.eventhandler.Cancelable;
 
 /**
  * This event is called when a player collides with a EntityXPOrb on the ground.
- * The event can be canceled, and no further processing will be done.  
+ * The event can be canceled, and no further processing will be done.
  */
 @Cancelable
-public class PlayerPickupXpEvent extends PlayerEvent
-{
+public class PlayerPickupXpEvent extends PlayerEvent {
     private final EntityXPOrb orb;
 
-    public PlayerPickupXpEvent(EntityPlayer player, EntityXPOrb orb)
-    {
+    public PlayerPickupXpEvent(EntityPlayer player, EntityXPOrb orb) {
         super(player);
         this.orb = orb;
     }
 
-    public EntityXPOrb getOrb()
-    {
+    public EntityXPOrb getOrb() {
         return orb;
     }
 }

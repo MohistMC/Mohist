@@ -1,18 +1,6 @@
 package org.bukkit.plugin.java;
 
 import com.google.common.base.Charsets;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.Reader;
-import java.net.URL;
-import java.net.URLConnection;
-import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.apache.commons.lang.Validate;
 import org.bukkit.Server;
 import org.bukkit.command.Command;
@@ -25,6 +13,13 @@ import org.bukkit.plugin.PluginBase;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.PluginLoader;
 import org.bukkit.plugin.PluginLogger;
+
+import java.io.*;
+import java.net.URL;
+import java.net.URLConnection;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Represents a Java plugin
@@ -67,19 +62,19 @@ public abstract class JavaPlugin extends PluginBase {
      * does not extend the class, where the intended plugin would have
      * resided in a different jar / classloader.
      *
-     * @param <T> a class that extends JavaPlugin
+     * @param <T>   a class that extends JavaPlugin
      * @param clazz the class desired
      * @return the plugin that provides and implements said class
      * @throws IllegalArgumentException if clazz is null
      * @throws IllegalArgumentException if clazz does not extend {@link
-     *     JavaPlugin}
-     * @throws IllegalStateException if clazz was not provided by a plugin,
-     *     for example, if called with
-     *     <code>JavaPlugin.getPlugin(JavaPlugin.class)</code>
-     * @throws IllegalStateException if called from the static initializer for
-     *     given JavaPlugin
-     * @throws ClassCastException if plugin that provided the class does not
-     *     extend the class
+     *                                  JavaPlugin}
+     * @throws IllegalStateException    if clazz was not provided by a plugin,
+     *                                  for example, if called with
+     *                                  <code>JavaPlugin.getPlugin(JavaPlugin.class)</code>
+     * @throws IllegalStateException    if called from the static initializer for
+     *                                  given JavaPlugin
+     * @throws ClassCastException       if plugin that provided the class does not
+     *                                  extend the class
      */
     public static <T extends JavaPlugin> T getPlugin(Class<T> clazz) {
         Validate.notNull(clazz, "Null class cannot have a plugin");
@@ -104,10 +99,10 @@ public abstract class JavaPlugin extends PluginBase {
      * @param clazz a class belonging to a plugin
      * @return the plugin that provided the class
      * @throws IllegalArgumentException if the class is not provided by a
-     *     JavaPlugin
+     *                                  JavaPlugin
      * @throws IllegalArgumentException if class is null
-     * @throws IllegalStateException if called from the static initializer for
-     *     given JavaPlugin
+     * @throws IllegalStateException    if called from the static initializer for
+     *                                  given JavaPlugin
      */
     public static JavaPlugin getProvidingPlugin(Class<?> clazz) {
         Validate.notNull(clazz, "Null class cannot have a plugin");

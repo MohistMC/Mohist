@@ -22,8 +22,6 @@ package net.minecraftforge.fml.common.network.handshake;
 import com.google.common.collect.ImmutableSet;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
-import java.nio.charset.StandardCharsets;
-import java.util.Set;
 import net.minecraft.network.NetHandlerPlayServer;
 import net.minecraft.network.NetworkManager;
 import net.minecraftforge.fml.common.FMLCommonHandler;
@@ -32,14 +30,15 @@ import net.minecraftforge.fml.common.network.internal.FMLProxyPacket;
 import net.minecraftforge.fml.relauncher.Side;
 import org.bukkit.craftbukkit.v1_12_R1.entity.CraftPlayer;
 
+import java.nio.charset.StandardCharsets;
+import java.util.Set;
+
 public class ChannelRegistrationHandler extends SimpleChannelInboundHandler<FMLProxyPacket> {
     @Override
-    protected void channelRead0(ChannelHandlerContext ctx, FMLProxyPacket msg) throws Exception
-    {
+    protected void channelRead0(ChannelHandlerContext ctx, FMLProxyPacket msg) throws Exception {
         Side side = msg.getTarget();
         NetworkManager manager = msg.getOrigin();
-        if (msg.channel().equals("REGISTER") || msg.channel().equals("UNREGISTER"))
-        {
+        if (msg.channel().equals("REGISTER") || msg.channel().equals("UNREGISTER")) {
             byte[] data = new byte[msg.payload().readableBytes()];
             msg.payload().readBytes(data);
             String channels = new String(data, StandardCharsets.UTF_8);
@@ -48,7 +47,7 @@ public class ChannelRegistrationHandler extends SimpleChannelInboundHandler<FMLP
             FMLCommonHandler.instance().fireNetRegistrationEvent(manager, channelSet, msg.channel(), side);
             msg.payload().release();
             // Cauldron start - register bukkit channels for players
-            NetHandlerPlayServer dispatcher = (NetHandlerPlayServer)ctx.channel().attr(NetworkDispatcher.FML_DISPATCHER).get().getNetHandler();
+            NetHandlerPlayServer dispatcher = (NetHandlerPlayServer) ctx.channel().attr(NetworkDispatcher.FML_DISPATCHER).get().getNetHandler();
             CraftPlayer player = dispatcher.getPlayer();
             if (msg.channel().equals("REGISTER")) {
                 for (String channel : channelSet) {
@@ -61,16 +60,13 @@ public class ChannelRegistrationHandler extends SimpleChannelInboundHandler<FMLP
                 }
             }
             // Cauldron end
-        }
-        else
-        {
+        } else {
             ctx.fireChannelRead(msg);
         }
     }
 
     @Override
-    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception
-    {
+    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
         FMLLog.log.error("ChannelRegistrationHandler exception", cause);
         super.exceptionCaught(ctx, cause);
     }

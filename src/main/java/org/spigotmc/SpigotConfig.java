@@ -2,18 +2,6 @@ package org.spigotmc;
 
 import com.google.common.base.Throwables;
 import gnu.trove.map.hash.TObjectIntHashMap;
-import java.io.File;
-import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.logging.Level;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.attributes.RangedAttribute;
 import net.minecraft.server.MinecraftServer;
@@ -27,7 +15,14 @@ import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
 import red.mohist.Mohist;
 import red.mohist.util.i18n.Message;
-import org.bukkit.event.inventory.InventoryType;
+
+import java.io.File;
+import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
+import java.util.*;
+import java.util.logging.Level;
 
 public class SpigotConfig {
 
@@ -68,6 +63,9 @@ public class SpigotConfig {
     public static int itemDirtyTicks;
     public static boolean disableAdvancementSaving;
     public static List<String> disabledAdvancements;
+    public static boolean restartOnCrash = true;
+    public static String restartScript = "./start.sh";
+    public static String restartMessage;
     static int version;
     static Map<String, Command> commands;
     private static File CONFIG_FILE;
@@ -182,16 +180,13 @@ public class SpigotConfig {
         //outdatedServerMessage = transform( MohistConfig.outdatedServerMessage );
     }
 
-    public static boolean restartOnCrash = true;
-    public static String restartScript = "./start.sh";
-    public static String restartMessage;
     private static void watchdog() {
-        timeoutTime = getInt( "settings.timeout-time", timeoutTime );
-        restartOnCrash = getBoolean( "settings.restart-on-crash", restartOnCrash );
-        restartScript = getString( "settings.restart-script", restartScript );
-        restartMessage = transform( getString( "messages.restart", "Server is restarting" ) );
-        commands.put( "restart", new RestartCommand( "restart" ) );
-        WatchdogThread.doStart( timeoutTime, restartOnCrash );
+        timeoutTime = getInt("settings.timeout-time", timeoutTime);
+        restartOnCrash = getBoolean("settings.restart-on-crash", restartOnCrash);
+        restartScript = getString("settings.restart-script", restartScript);
+        restartMessage = transform(getString("messages.restart", "Server is restarting"));
+        commands.put("restart", new RestartCommand("restart"));
+        WatchdogThread.doStart(timeoutTime, restartOnCrash);
     }
 
     private static void bungee() {

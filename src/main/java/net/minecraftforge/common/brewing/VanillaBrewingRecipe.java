@@ -19,15 +19,16 @@
 
 package net.minecraftforge.common.brewing;
 
-import javax.annotation.Nonnull;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.potion.PotionHelper;
 
+import javax.annotation.Nonnull;
+
 /**
  * Used in BrewingRecipeRegistry to maintain the vanilla behaviour.
- *
+ * <p>
  * Most of the code was simply adapted from net.minecraft.tileentity.TileEntityBrewingStand
  */
 public class VanillaBrewingRecipe implements IBrewingRecipe {
@@ -36,8 +37,7 @@ public class VanillaBrewingRecipe implements IBrewingRecipe {
      * Code adapted from TileEntityBrewingStand.isItemValidForSlot(int index, ItemStack stack)
      */
     @Override
-    public boolean isInput(@Nonnull ItemStack stack)
-    {
+    public boolean isInput(@Nonnull ItemStack stack) {
         Item item = stack.getItem();
         return item == Items.POTIONITEM || item == Items.SPLASH_POTION || item == Items.LINGERING_POTION || item == Items.GLASS_BOTTLE;
     }
@@ -46,8 +46,7 @@ public class VanillaBrewingRecipe implements IBrewingRecipe {
      * Code adapted from TileEntityBrewingStand.isItemValidForSlot(int index, ItemStack stack)
      */
     @Override
-    public boolean isIngredient(@Nonnull ItemStack stack)
-    {
+    public boolean isIngredient(@Nonnull ItemStack stack) {
         return PotionHelper.isReagent(stack);
     }
 
@@ -58,13 +57,10 @@ public class VanillaBrewingRecipe implements IBrewingRecipe {
      */
     @Override
     @Nonnull
-    public ItemStack getOutput(@Nonnull ItemStack input, @Nonnull ItemStack ingredient)
-    {
-        if (!input.isEmpty() && !ingredient.isEmpty() && isIngredient(ingredient))
-        {
+    public ItemStack getOutput(@Nonnull ItemStack input, @Nonnull ItemStack ingredient) {
+        if (!input.isEmpty() && !ingredient.isEmpty() && isIngredient(ingredient)) {
             ItemStack result = PotionHelper.doReaction(ingredient, input);
-            if (result != input)
-            {
+            if (result != input) {
                 return result;
             }
             return ItemStack.EMPTY;

@@ -10,7 +10,7 @@ public interface Tameable extends Entity {
      *
      * @return true if this has been tamed
      */
-    public boolean isTamed();
+    boolean isTamed();
 
     /**
      * Sets if this has been tamed. Not necessary if the method setOwner has
@@ -21,7 +21,7 @@ public interface Tameable extends Entity {
      *
      * @param tame true if tame
      */
-    public void setTamed(boolean tame);
+    void setTamed(boolean tame);
 
     // Paper start
 
@@ -30,7 +30,7 @@ public interface Tameable extends Entity {
      *
      * @return the owners UUID, or null if not owned
      */
-    public java.util.UUID getOwnerUUID();
+    java.util.UUID getOwnerUUID();
     // Paper end
 
     /**
@@ -38,7 +38,7 @@ public interface Tameable extends Entity {
      *
      * @return the owning AnimalTamer, or null if not owned
      */
-    public AnimalTamer getOwner();
+    AnimalTamer getOwner();
 
     /**
      * Set this to be owned by given AnimalTamer.
@@ -49,6 +49,6 @@ public interface Tameable extends Entity {
      *
      * @param tamer the AnimalTamer who should own this
      */
-    public void setOwner(AnimalTamer tamer);
+    void setOwner(AnimalTamer tamer);
 
 }

@@ -12,7 +12,7 @@ public interface Wolf extends Animals, Tameable, Sittable {
      *
      * @return Anger true if angry
      */
-    public boolean isAngry();
+    boolean isAngry();
 
     /**
      * Sets the anger of this wolf.
@@ -22,19 +22,19 @@ public interface Wolf extends Animals, Tameable, Sittable {
      *
      * @param angry true if angry
      */
-    public void setAngry(boolean angry);
+    void setAngry(boolean angry);
 
     /**
      * Get the collar color of this wolf
      *
      * @return the color of the collar
      */
-    public DyeColor getCollarColor();
+    DyeColor getCollarColor();
 
     /**
      * Set the collar color of this wolf
      *
      * @param color the color to apply
      */
-    public void setCollarColor(DyeColor color);
+    void setCollarColor(DyeColor color);
 }

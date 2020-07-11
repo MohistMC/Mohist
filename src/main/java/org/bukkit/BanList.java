@@ -14,28 +14,28 @@ public interface BanList {
      * @param target entry parameter to search for
      * @return the corresponding entry, or null if none found
      */
-    public BanEntry getBanEntry(String target);
+    BanEntry getBanEntry(String target);
 
     /**
      * Adds a ban to the this list. If a previous ban exists, this will
      * update the previous entry.
      *
-     * @param target the target of the ban
-     * @param reason reason for the ban, null indicates implementation default
+     * @param target  the target of the ban
+     * @param reason  reason for the ban, null indicates implementation default
      * @param expires date for the ban's expiration (unban), or null to imply
-     *     forever
-     * @param source source of the ban, null indicates implementation default
+     *                forever
+     * @param source  source of the ban, null indicates implementation default
      * @return the entry for the newly created ban, or the entry for the
-     *     (updated) previous ban
+     * (updated) previous ban
      */
-    public BanEntry addBan(String target, String reason, Date expires, String source);
+    BanEntry addBan(String target, String reason, Date expires, String source);
 
     /**
      * Gets a set containing every {@link BanEntry} in this list.
      *
      * @return an immutable set containing every entry tracked by this list
      */
-    public Set<BanEntry> getBanEntries();
+    Set<BanEntry> getBanEntries();
 
     /**
      * Gets if a {@link BanEntry} exists for the target, indicating an active
@@ -43,9 +43,9 @@ public interface BanList {
      *
      * @param target the target to find
      * @return true if a {@link BanEntry} exists for the name, indicating an
-     *     active ban status, false otherwise
+     * active ban status, false otherwise
      */
-    public boolean isBanned(String target);
+    boolean isBanned(String target);
 
     /**
      * Removes the specified target from this list, therefore indicating a
@@ -53,12 +53,12 @@ public interface BanList {
      *
      * @param target the target to remove from this list
      */
-    public void pardon(String target);
+    void pardon(String target);
 
     /**
      * Represents a ban-type that a {@link BanList} may track.
      */
-    public enum Type {
+    enum Type {
         /**
          * Banned player names
          */
@@ -66,6 +66,7 @@ public interface BanList {
         /**
          * Banned player IP addresses
          */
-        IP,;
+        IP,
+        ;
     }
 }

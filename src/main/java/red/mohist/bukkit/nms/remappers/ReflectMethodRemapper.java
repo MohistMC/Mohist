@@ -1,5 +1,16 @@
 package red.mohist.bukkit.nms.remappers;
 
+import org.bukkit.configuration.file.YamlConfiguration;
+import org.objectweb.asm.MethodVisitor;
+import org.objectweb.asm.Opcodes;
+import org.objectweb.asm.Type;
+import org.objectweb.asm.commons.MethodRemapper;
+import org.objectweb.asm.commons.Remapper;
+import red.mohist.bukkit.nms.model.MethodRedirectRule;
+import red.mohist.bukkit.nms.proxy.*;
+import red.mohist.bukkit.nms.proxy.asm.ProxyClassWriter;
+import red.mohist.bukkit.nms.utils.ASMUtils;
+
 import java.io.InputStream;
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodType;
@@ -9,31 +20,13 @@ import java.net.URL;
 import java.net.URLStreamHandlerFactory;
 import java.util.HashMap;
 import java.util.Map;
-import org.bukkit.configuration.file.YamlConfiguration;
-import org.objectweb.asm.MethodVisitor;
-import org.objectweb.asm.Opcodes;
-import org.objectweb.asm.Type;
-import org.objectweb.asm.commons.MethodRemapper;
-import org.objectweb.asm.commons.Remapper;
-import red.mohist.bukkit.nms.model.MethodRedirectRule;
-import red.mohist.bukkit.nms.proxy.DelegateURLClassLoder;
-import red.mohist.bukkit.nms.proxy.ProxyClass;
-import red.mohist.bukkit.nms.proxy.ProxyClassLoader;
-import red.mohist.bukkit.nms.proxy.ProxyField;
-import red.mohist.bukkit.nms.proxy.ProxyMethod;
-import red.mohist.bukkit.nms.proxy.ProxyMethodHandles_Lookup;
-import red.mohist.bukkit.nms.proxy.ProxyMethodType;
-import red.mohist.bukkit.nms.proxy.ProxyYamlConfiguration;
-import red.mohist.bukkit.nms.proxy.asm.ProxyClassWriter;
-import red.mohist.bukkit.nms.utils.ASMUtils;
 
 /**
- *
  * @author pyz
  * @date 2019/7/2 8:51 PM
  */
 public class ReflectMethodRemapper extends MethodRemapper {
-    private static Map<String, Map<String, Map<String, MethodRedirectRule>>> methodRedirectMapping = new HashMap<>();
+    private static final Map<String, Map<String, Map<String, MethodRedirectRule>>> methodRedirectMapping = new HashMap<>();
 
     static {
         registerMethodRemapper("java/lang/Class", "forName", Class.class, new Class[]{String.class}, ProxyClass.class);

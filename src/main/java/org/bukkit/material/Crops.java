@@ -36,7 +36,7 @@ public class Crops extends MaterialData {
     /**
      * Constructs a crop block of the given type and in the given growth state
      *
-     * @param type The type of crops
+     * @param type  The type of crops
      * @param state The growth state of the crops
      */
     public Crops(final Material type, final CropState state) {
@@ -84,7 +84,7 @@ public class Crops extends MaterialData {
 
     /**
      * Gets the current growth state of this crop
-     *
+     * <p>
      * For crops with only four growth states such as beetroot, only the values SEEDED, SMALL, TALL and RIPE will be
      * returned.
      *
@@ -109,11 +109,11 @@ public class Crops extends MaterialData {
 
     /**
      * Sets the growth state of this crop
-     *
+     * <p>
      * For crops with only four growth states such as beetroot, the 8 CropStates are mapped into four states:
-     *
+     * <p>
      * SEEDED, SMALL, TALL and RIPE
-     *
+     * <p>
      * GERMINATED will change to SEEDED
      * VERY_SMALL will change to SMALL
      * MEDIUM will change to TALL

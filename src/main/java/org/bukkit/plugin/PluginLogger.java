@@ -12,7 +12,7 @@ import java.util.logging.Logger;
  * @see Logger
  */
 public class PluginLogger extends Logger {
-    private String pluginName;
+    private final String pluginName;
 
     /**
      * Creates a new PluginLogger that extracts the name from a plugin.

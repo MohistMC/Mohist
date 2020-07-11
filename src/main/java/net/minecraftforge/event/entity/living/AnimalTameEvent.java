@@ -33,25 +33,21 @@ import net.minecraftforge.fml.common.eventhandler.Cancelable;
  * This event is fired on the {@link MinecraftForge#EVENT_BUS}.
  */
 @Cancelable
-public class AnimalTameEvent extends LivingEvent
-{
+public class AnimalTameEvent extends LivingEvent {
     private final EntityAnimal animal;
     private final EntityPlayer tamer;
 
-    public AnimalTameEvent(EntityAnimal animal, EntityPlayer tamer)
-    {
+    public AnimalTameEvent(EntityAnimal animal, EntityPlayer tamer) {
         super(animal);
         this.animal = animal;
         this.tamer = tamer;
     }
 
-    public EntityAnimal getAnimal()
-    {
+    public EntityAnimal getAnimal() {
         return animal;
     }
 
-    public EntityPlayer getTamer()
-    {
+    public EntityPlayer getTamer() {
         return tamer;
     }
 }

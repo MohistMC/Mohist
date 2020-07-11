@@ -19,16 +19,16 @@
 
 package net.minecraftforge.event.entity.player;
 
-import java.util.List;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 
-public class ItemTooltipEvent extends PlayerEvent
-{
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.util.List;
+
+public class ItemTooltipEvent extends PlayerEvent {
     private final ITooltipFlag flags;
     @Nonnull
     private final ItemStack itemStack;
@@ -38,8 +38,7 @@ public class ItemTooltipEvent extends PlayerEvent
      * This event is fired in {@link ItemStack#getTooltip(EntityPlayer, ITooltipFlag)}, which in turn is called from it's respective GUIContainer.
      * Tooltips are also gathered with a null entityPlayer during startup by {@link Minecraft#populateSearchTreeManager()}.
      */
-    public ItemTooltipEvent(@Nonnull ItemStack itemStack, @Nullable EntityPlayer entityPlayer, List<String> toolTip, ITooltipFlag flags)
-    {
+    public ItemTooltipEvent(@Nonnull ItemStack itemStack, @Nullable EntityPlayer entityPlayer, List<String> toolTip, ITooltipFlag flags) {
         super(entityPlayer);
         this.itemStack = itemStack;
         this.toolTip = toolTip;
@@ -49,8 +48,7 @@ public class ItemTooltipEvent extends PlayerEvent
     /**
      * Use to determine if the advanced information on item tooltips is being shown, toggled by F3+H.
      */
-    public ITooltipFlag getFlags()
-    {
+    public ITooltipFlag getFlags() {
         return flags;
     }
 
@@ -58,16 +56,14 @@ public class ItemTooltipEvent extends PlayerEvent
      * The {@link ItemStack} with the tooltip.
      */
     @Nonnull
-    public ItemStack getItemStack()
-    {
+    public ItemStack getItemStack() {
         return itemStack;
     }
 
     /**
      * The {@link ItemStack} tooltip.
      */
-    public List<String> getToolTip()
-    {
+    public List<String> getToolTip() {
         return toolTip;
     }
 
@@ -76,8 +72,7 @@ public class ItemTooltipEvent extends PlayerEvent
      */
     @Override
     @Nullable
-    public EntityPlayer getEntityPlayer()
-    {
+    public EntityPlayer getEntityPlayer() {
         return super.getEntityPlayer();
     }
 }

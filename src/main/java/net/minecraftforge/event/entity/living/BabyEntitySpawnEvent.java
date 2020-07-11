@@ -19,7 +19,6 @@
 
 package net.minecraftforge.event.entity.living;
 
-import javax.annotation.Nullable;
 import net.minecraft.entity.EntityAgeable;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.ai.EntityAIMate;
@@ -29,6 +28,8 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.Cancelable;
 import net.minecraftforge.fml.common.eventhandler.Event;
+
+import javax.annotation.Nullable;
 
 /**
  * BabyEntitySpawnEvent is fired just before a baby entity is about to be spawned. <br>
@@ -50,24 +51,21 @@ import net.minecraftforge.fml.common.eventhandler.Event;
  * This event is fired on the {@link MinecraftForge#EVENT_BUS}.
  **/
 @Cancelable
-public class BabyEntitySpawnEvent extends Event
-{
+public class BabyEntitySpawnEvent extends Event {
     private final EntityLiving parentA;
     private final EntityLiving parentB;
     private final EntityPlayer causedByPlayer;
     private EntityAgeable child;
 
-    public BabyEntitySpawnEvent(EntityLiving parentA, EntityLiving parentB, @Nullable EntityAgeable proposedChild)
-    {
+    public BabyEntitySpawnEvent(EntityLiving parentA, EntityLiving parentB, @Nullable EntityAgeable proposedChild) {
         //causedByPlayer calculated here to simplify the patch.
         EntityPlayer causedByPlayer = null;
         if (parentA instanceof EntityAnimal) {
-            causedByPlayer = ((EntityAnimal)parentA).getLoveCause();
+            causedByPlayer = ((EntityAnimal) parentA).getLoveCause();
         }
 
-        if (causedByPlayer == null && parentB instanceof EntityAnimal)
-        {
-            causedByPlayer = ((EntityAnimal)parentB).getLoveCause();
+        if (causedByPlayer == null && parentB instanceof EntityAnimal) {
+            causedByPlayer = ((EntityAnimal) parentB).getLoveCause();
         }
 
         this.parentA = parentA;
@@ -76,30 +74,25 @@ public class BabyEntitySpawnEvent extends Event
         this.child = proposedChild;
     }
 
-    public EntityLiving getParentA()
-    {
+    public EntityLiving getParentA() {
         return parentA;
     }
 
-    public EntityLiving getParentB()
-    {
+    public EntityLiving getParentB() {
         return parentB;
     }
 
     @Nullable
-    public EntityPlayer getCausedByPlayer()
-    {
+    public EntityPlayer getCausedByPlayer() {
         return causedByPlayer;
     }
 
     @Nullable
-    public EntityAgeable getChild()
-    {
+    public EntityAgeable getChild() {
         return child;
     }
 
-    public void setChild(EntityAgeable proposedChild)
-    {
+    public void setChild(EntityAgeable proposedChild) {
         child = proposedChild;
     }
 }

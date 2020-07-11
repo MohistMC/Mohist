@@ -40,7 +40,7 @@ public class ExpBottleEvent extends ProjectileHitEvent {
      * This does not change the experience created.
      *
      * @param showEffect true indicates the effect will be shown, false
-     *     indicates no effect will be shown
+     *                   indicates no effect will be shown
      */
     public void setShowEffect(final boolean showEffect) {
         this.showEffect = showEffect;

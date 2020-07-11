@@ -25,14 +25,12 @@ import net.minecraftforge.fml.client.IDisplayableError;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-public class WrongMinecraftVersionException extends EnhancedRuntimeException implements IDisplayableError
-{
+public class WrongMinecraftVersionException extends EnhancedRuntimeException implements IDisplayableError {
     private static final long serialVersionUID = 1L;
     public ModContainer mod;
-    private String mcVersion;
+    private final String mcVersion;
 
-    public WrongMinecraftVersionException(ModContainer mod, String mcver)
-    {
+    public WrongMinecraftVersionException(ModContainer mod, String mcver) {
         super(String.format("Wrong Minecraft version for %s", mod.getModId()));
         this.mod = mod;
         this.mcVersion = mcver;
@@ -50,8 +48,7 @@ public class WrongMinecraftVersionException extends EnhancedRuntimeException imp
 
     @Override
     @SideOnly(Side.CLIENT)
-    public GuiScreen createGui()
-    {
+    public GuiScreen createGui() {
         return new GuiWrongMinecraft(this);
     }
 }

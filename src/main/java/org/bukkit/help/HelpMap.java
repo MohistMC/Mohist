@@ -22,29 +22,29 @@ public interface HelpMap {
      *
      * @param topicName The help topic name to look up.
      * @return A {@link HelpTopic} object matching the topic name or null if
-     *     none can be found.
+     * none can be found.
      */
-    public HelpTopic getHelpTopic(String topicName);
+    HelpTopic getHelpTopic(String topicName);
 
     /**
      * Returns a collection of all the registered help topics.
      *
      * @return All the registered help topics.
      */
-    public Collection<HelpTopic> getHelpTopics();
+    Collection<HelpTopic> getHelpTopics();
 
     /**
      * Adds a topic to the server's help index.
      *
      * @param topic The new help topic to add.
      */
-    public void addTopic(HelpTopic topic);
+    void addTopic(HelpTopic topic);
 
     /**
      * Clears out the contents of the help index. Normally called during
      * server reload.
      */
-    public void clear();
+    void clear();
 
     /**
      * Associates a {@link HelpTopicFactory} object with given command base
@@ -56,14 +56,14 @@ public interface HelpMap {
      * commandClass} base class.
      *
      * @param commandClass The class for which the custom HelpTopicFactory
-     *     applies. Must derive from either {@link org.bukkit.command.Command}
-     *     or {@link org.bukkit.command.CommandExecutor}.
-     * @param factory The {@link HelpTopicFactory} implementation to associate
-     *     with the {@code commandClass}.
+     *                     applies. Must derive from either {@link org.bukkit.command.Command}
+     *                     or {@link org.bukkit.command.CommandExecutor}.
+     * @param factory      The {@link HelpTopicFactory} implementation to associate
+     *                     with the {@code commandClass}.
      * @throws IllegalArgumentException Thrown if {@code commandClass} does
-     *     not derive from a legal base class.
+     *                                  not derive from a legal base class.
      */
-    public void registerHelpTopicFactory(Class<?> commandClass, HelpTopicFactory<?> factory);
+    void registerHelpTopicFactory(Class<?> commandClass, HelpTopicFactory<?> factory);
 
     /**
      * Gets the list of plugins the server administrator has chosen to exclude
@@ -75,5 +75,5 @@ public interface HelpMap {
      *
      * @return A list of plugins that should be excluded from the help index.
      */
-    public List<String> getIgnoredPlugins();
+    List<String> getIgnoredPlugins();
 }

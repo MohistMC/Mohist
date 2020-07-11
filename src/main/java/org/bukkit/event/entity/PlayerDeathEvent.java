@@ -1,8 +1,9 @@
 package org.bukkit.event.entity;
 
-import java.util.List;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+
+import java.util.List;
 
 /**
  * Thrown whenever a {@link Player} dies
@@ -14,8 +15,7 @@ public class PlayerDeathEvent extends EntityDeathEvent {
     private int newTotalExp = 0;
     private boolean keepLevel = false;
     private boolean keepInventory = false;
-    private List<ItemStack> itemsToKeep = new java.util.ArrayList(); // EMC
-    public List<ItemStack> getItemsToKeep() {return itemsToKeep;} // EMC
+    private final List<ItemStack> itemsToKeep = new java.util.ArrayList(); // EMC
 
     public PlayerDeathEvent(final Player player, final List<ItemStack> drops, final int droppedExp, final String deathMessage) {
         this(player, drops, droppedExp, 0, deathMessage);
@@ -32,6 +32,10 @@ public class PlayerDeathEvent extends EntityDeathEvent {
         this.newLevel = newLevel;
         this.deathMessage = deathMessage;
     }
+
+    public List<ItemStack> getItemsToKeep() {
+        return itemsToKeep;
+    } // EMC
 
     @Override
     public Player getEntity() {

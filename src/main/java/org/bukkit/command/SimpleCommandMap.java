@@ -91,11 +91,11 @@ public class SimpleCommandMap implements CommandMap {
      * Registers a command with the given name is possible. Also uses
      * fallbackPrefix to create a unique name.
      *
-     * @param label the name of the command, without the '/'-prefix.
-     * @param command the command to register
-     * @param isAlias whether the command is an alias
+     * @param label          the name of the command, without the '/'-prefix.
+     * @param command        the command to register
+     * @param isAlias        whether the command is an alias
      * @param fallbackPrefix a prefix which is prepended to the command for a
-     *     unique address
+     *                       unique address
      * @return true if command was registered, false otherwise.
      */
     private synchronized boolean register(String label, Command command, boolean isAlias, String fallbackPrefix) {
@@ -217,7 +217,7 @@ public class SimpleCommandMap implements CommandMap {
             return null;
         }
 
-        String argLine = cmdLine.substring(spaceIndex + 1, cmdLine.length());
+        String argLine = cmdLine.substring(spaceIndex + 1);
         String[] args = PATTERN_ON_SPACE.split(argLine, -1);
 
         try {

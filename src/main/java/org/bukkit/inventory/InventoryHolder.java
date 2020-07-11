@@ -7,5 +7,5 @@ public interface InventoryHolder {
      *
      * @return The inventory.
      */
-    public Inventory getInventory();
+    Inventory getInventory();
 }

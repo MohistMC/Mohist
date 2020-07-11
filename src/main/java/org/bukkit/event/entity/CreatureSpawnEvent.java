@@ -24,7 +24,7 @@ public class CreatureSpawnEvent extends EntitySpawnEvent {
      * Gets the reason for why the creature is being spawned.
      *
      * @return A SpawnReason value detailing the reason for the creature being
-     *     spawned
+     * spawned
      */
     public SpawnReason getSpawnReason() {
         return spawnReason;

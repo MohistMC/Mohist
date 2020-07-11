@@ -7,7 +7,6 @@ import org.bukkit.event.entity.EntityEvent;
 
 /**
  * Called when an entity attempts to ride another entity.
- *
  */
 public class EntityMountEvent extends EntityEvent implements Cancellable {
 

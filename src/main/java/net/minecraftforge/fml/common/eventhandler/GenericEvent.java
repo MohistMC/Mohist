@@ -21,17 +21,15 @@ package net.minecraftforge.fml.common.eventhandler;
 
 import java.lang.reflect.Type;
 
-public class GenericEvent<T> extends Event implements IGenericEvent<T>
-{
-    private Class<T> type;
-    protected GenericEvent(Class<T> type)
-    {
+public class GenericEvent<T> extends Event implements IGenericEvent<T> {
+    private final Class<T> type;
+
+    protected GenericEvent(Class<T> type) {
         this.type = type;
     }
 
     @Override
-    public Type getGenericType()
-    {
+    public Type getGenericType() {
         return type;
     }
 }

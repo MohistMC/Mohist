@@ -13,9 +13,6 @@ public class AsyncCatcher {
     }
 
     public static boolean catchInv() {
-        if (enabled && Thread.currentThread() != MinecraftServer.getServerInst().primaryThread) {
-            return true;
-        }
-        return false;
+        return enabled && Thread.currentThread() != MinecraftServer.getServerInst().primaryThread;
     }
 }

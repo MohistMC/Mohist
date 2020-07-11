@@ -1,10 +1,5 @@
 package org.bukkit.craftbukkit.v1_12_R1.map;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import net.minecraft.world.storage.MapData;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
@@ -13,6 +8,8 @@ import org.bukkit.craftbukkit.v1_12_R1.entity.CraftPlayer;
 import org.bukkit.map.MapRenderer;
 import org.bukkit.map.MapView;
 import red.mohist.Mohist;
+
+import java.util.*;
 
 public final class CraftMapView implements MapView {
 
@@ -128,7 +125,7 @@ public final class CraftMapView implements MapView {
             renderCache.put(context ? player : null, render);
         }
 
-        if (context && renderCache.containsKey(null)) {
+        if (context) {
             renderCache.remove(null);
         }
 

@@ -66,7 +66,7 @@ public interface Structure extends BlockState {
      * distance is 32 blocks in any direction.
      *
      * @param vector the {@link BlockVector} containing the relative origin
-     * coordinates of this structure.
+     *               coordinates of this structure.
      */
     void setRelativePosition(BlockVector vector);
 
@@ -86,7 +86,7 @@ public interface Structure extends BlockState {
      * allowed size is 32x32x32.
      *
      * @param vector the {@link BlockVector} containing the size of this
-     * structure, based off of the origin coordinates.
+     *               structure, based off of the origin coordinates.
      */
     void setStructureSize(BlockVector vector);
 

@@ -36,24 +36,20 @@ import net.minecraftforge.fml.common.eventhandler.Event;
  * <br>
  * This event is fired on the {@link MinecraftForge#EVENT_BUS}.
  **/
-public class DifficultyChangeEvent extends Event
-{
+public class DifficultyChangeEvent extends Event {
     private final EnumDifficulty difficulty;
     private final EnumDifficulty oldDifficulty;
 
-    public DifficultyChangeEvent(EnumDifficulty difficulty, EnumDifficulty oldDifficulty)
-    {
+    public DifficultyChangeEvent(EnumDifficulty difficulty, EnumDifficulty oldDifficulty) {
         this.difficulty = difficulty;
         this.oldDifficulty = oldDifficulty;
     }
 
-    public EnumDifficulty getDifficulty()
-    {
+    public EnumDifficulty getDifficulty() {
         return difficulty;
     }
 
-    public EnumDifficulty getOldDifficulty()
-    {
+    public EnumDifficulty getOldDifficulty() {
         return oldDifficulty;
     }
 }

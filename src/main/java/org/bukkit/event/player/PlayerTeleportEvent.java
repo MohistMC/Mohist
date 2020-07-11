@@ -92,7 +92,7 @@ public class PlayerTeleportEvent extends PlayerMoveEvent {
         UNKNOWN;
 
         public boolean isPortal() {
-            switch(this) {
+            switch (this) {
                 case NETHER_PORTAL:
                 case END_PORTAL:
                     return true;

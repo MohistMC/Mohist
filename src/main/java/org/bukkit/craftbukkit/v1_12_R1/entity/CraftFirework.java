@@ -1,6 +1,5 @@
 package org.bukkit.craftbukkit.v1_12_R1.entity;
 
-import java.util.Random;
 import net.minecraft.entity.item.EntityFireworkRocket;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
@@ -10,6 +9,8 @@ import org.bukkit.craftbukkit.v1_12_R1.inventory.CraftItemStack;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Firework;
 import org.bukkit.inventory.meta.FireworkMeta;
+
+import java.util.Random;
 
 public class CraftFirework extends CraftEntity implements Firework {
 

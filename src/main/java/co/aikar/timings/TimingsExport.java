@@ -23,29 +23,8 @@
  */
 package co.aikar.timings;
 
-import static co.aikar.timings.TimingsManager.HISTORY;
-import static co.aikar.util.JSONUtil.appendObjectData;
-import static co.aikar.util.JSONUtil.createObject;
-import static co.aikar.util.JSONUtil.pair;
-import static co.aikar.util.JSONUtil.toArray;
-import static co.aikar.util.JSONUtil.toArrayMapper;
-import static co.aikar.util.JSONUtil.toObjectMapper;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.lang.management.ManagementFactory;
-import java.lang.management.RuntimeMXBean;
-import java.net.HttpURLConnection;
-import java.net.InetAddress;
-import java.net.URL;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.logging.Level;
-import java.util.zip.GZIPOutputStream;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -58,14 +37,33 @@ import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 import red.mohist.util.i18n.Message;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.lang.management.ManagementFactory;
+import java.lang.management.RuntimeMXBean;
+import java.net.HttpURLConnection;
+import java.net.InetAddress;
+import java.net.URL;
+import java.nio.charset.StandardCharsets;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.logging.Level;
+import java.util.zip.GZIPOutputStream;
+
+import static co.aikar.timings.TimingsManager.HISTORY;
+import static co.aikar.util.JSONUtil.*;
+
 @SuppressWarnings({"rawtypes", "SuppressionAnnotation"})
 class TimingsExport extends Thread {
 
+    final static List<CommandSender> requestingReport = Lists.newArrayList();
+    private static long lastReport = 0;
     private final TimingsReportListener listeners;
     private final Map out;
     private final TimingHistory[] history;
-    private static long lastReport = 0;
-    final static List<CommandSender> requestingReport = Lists.newArrayList();
 
     private TimingsExport(TimingsReportListener listeners, Map out, TimingHistory[] history) {
         super("Timings paste thread");
@@ -88,32 +86,32 @@ class TimingsExport extends Thread {
         long now = System.currentTimeMillis();
         final long lastReportDiff = now - lastReport;
         if (lastReportDiff < 60000) {
-            listeners.sendMessage(ChatColor.RED + Message.getFormatString("timings.export.1", new Object[]{(int)((60000 - lastReportDiff) / 1000)}));
+            listeners.sendMessage(ChatColor.RED + Message.getFormatString("timings.export.1", new Object[]{(int) ((60000 - lastReportDiff) / 1000)}));
             listeners.done();
             return;
         }
         final long lastStartDiff = now - TimingsManager.timingStart;
         if (lastStartDiff < 180000) {
-            listeners.sendMessage(ChatColor.RED + Message.getFormatString("timings.export.2", new Object[]{(int)((180000 - lastStartDiff) / 1000)}));
+            listeners.sendMessage(ChatColor.RED + Message.getFormatString("timings.export.2", new Object[]{(int) ((180000 - lastStartDiff) / 1000)}));
             listeners.done();
             return;
         }
         listeners.sendMessage(ChatColor.GREEN + Message.getString("timings.export.3"));
         lastReport = now;
         Map parent = createObject(
-            // Get some basic system details about the server
-            pair("version", Bukkit.getVersion()),
-            pair("maxplayers", Bukkit.getMaxPlayers()),
-            pair("start", TimingsManager.timingStart / 1000),
-            pair("end", System.currentTimeMillis() / 1000),
-            pair("sampletime", (System.currentTimeMillis() - TimingsManager.timingStart) / 1000)
+                // Get some basic system details about the server
+                pair("version", Bukkit.getVersion()),
+                pair("maxplayers", Bukkit.getMaxPlayers()),
+                pair("start", TimingsManager.timingStart / 1000),
+                pair("end", System.currentTimeMillis() / 1000),
+                pair("sampletime", (System.currentTimeMillis() - TimingsManager.timingStart) / 1000)
         );
         if (!TimingsManager.privacy) {
             appendObjectData(parent,
-                pair("server", Bukkit.getServerName()),
-                pair("motd", Bukkit.getServer().getMotd()),
-                pair("online-mode", Bukkit.getServer().getOnlineMode()),
-                pair("icon", Bukkit.getServer().getServerIcon().getData())
+                    pair("server", Bukkit.getServerName()),
+                    pair("motd", Bukkit.getServer().getMotd()),
+                    pair("online-mode", Bukkit.getServer().getOnlineMode()),
+                    pair("icon", Bukkit.getServer().getServerIcon().getData())
             );
         }
 
@@ -131,7 +129,7 @@ class TimingsExport extends Thread {
                 pair("runtime", ManagementFactory.getRuntimeMXBean().getUptime()),
                 pair("flags", StringUtils.join(runtimeBean.getInputArguments(), " ")),
                 pair("gc", toObjectMapper(ManagementFactory.getGarbageCollectorMXBeans(), input -> pair(input.getName(), toArray(input.getCollectionCount(), input.getCollectionTime()))))
-            )
+                )
         );
 
         Set<Material> tileEntityTypeSet = Sets.newHashSet();
@@ -166,8 +164,8 @@ class TimingsExport extends Thread {
                             name = name.substring(3);
                         }
                         handlers.put(id.id, toArray(
-                            group.id,
-                            name
+                                group.id,
+                                name
                         ));
                     }
                 }
@@ -176,33 +174,32 @@ class TimingsExport extends Thread {
             groupData = toObjectMapper(TimingIdentifier.GROUP_MAP.values(), group -> pair(group.id, group.name));
         }
         parent.put("idmap", createObject(
-            pair("groups", groupData),
-            pair("handlers", handlers),
-            pair("worlds", toObjectMapper(TimingHistory.worldMap.entrySet(), input -> pair(input.getValue(), input.getKey()))),
-            pair("tileentity",
-                toObjectMapper(tileEntityTypeSet, input -> pair(input.getId(), input.name()))),
-            pair("entity",
-                toObjectMapper(entityTypeSet, input -> pair(input.getTypeId(), input.name())))
+                pair("groups", groupData),
+                pair("handlers", handlers),
+                pair("worlds", toObjectMapper(TimingHistory.worldMap.entrySet(), input -> pair(input.getValue(), input.getKey()))),
+                pair("tileentity",
+                        toObjectMapper(tileEntityTypeSet, input -> pair(input.getId(), input.name()))),
+                pair("entity",
+                        toObjectMapper(entityTypeSet, input -> pair(input.getTypeId(), input.name())))
         ));
 
         // Information about loaded plugins
 
         parent.put("plugins", toObjectMapper(Bukkit.getPluginManager().getPlugins(),
                 plugin -> pair(plugin.getName(), createObject(
-                    pair("version", plugin.getDescription().getVersion()),
-                    pair("description", String.valueOf(plugin.getDescription().getDescription()).trim()),
-                    pair("website", plugin.getDescription().getWebsite()),
-                    pair("authors", StringUtils.join(plugin.getDescription().getAuthors(), ", "))
+                        pair("version", plugin.getDescription().getVersion()),
+                        pair("description", String.valueOf(plugin.getDescription().getDescription()).trim()),
+                        pair("website", plugin.getDescription().getWebsite()),
+                        pair("authors", StringUtils.join(plugin.getDescription().getAuthors(), ", "))
                 ))));
-
 
 
         // Information on the users Config
 
         parent.put("config", createObject(
-            pair("spigot", mapAsJSON(Bukkit.spigot().getSpigotConfig(), null)),
-            pair("bukkit", mapAsJSON(Bukkit.spigot().getBukkitConfig(), null)),
-            pair("paper", mapAsJSON(Bukkit.spigot().getPaperConfig(), null))
+                pair("spigot", mapAsJSON(Bukkit.spigot().getSpigotConfig(), null)),
+                pair("bukkit", mapAsJSON(Bukkit.spigot().getBukkitConfig(), null)),
+                pair("paper", mapAsJSON(Bukkit.spigot().getPaperConfig(), null))
         ));
 
         new TimingsExport(listeners, parent, history).start();
@@ -284,7 +281,8 @@ class TimingsExport extends Thread {
             String hostName = "BrokenHost";
             try {
                 hostName = InetAddress.getLocalHost().getHostName();
-            } catch(Exception ignored) {}
+            } catch (Exception ignored) {
+            }
             con.setRequestProperty("User-Agent", "Paper/" + Bukkit.getServerName() + "/" + hostName);
             con.setRequestMethod("POST");
             con.setInstanceFollowRedirects(false);
@@ -293,14 +291,14 @@ class TimingsExport extends Thread {
                 this.def.setLevel(7);
             }};
 
-            request.write(JSONValue.toJSONString(out).getBytes("UTF-8"));
+            request.write(JSONValue.toJSONString(out).getBytes(StandardCharsets.UTF_8));
             request.close();
 
             response = getResponse(con);
 
             if (con.getResponseCode() != 302) {
                 listeners.sendMessage(
-                    ChatColor.RED + Message.getString("timings.export.4") + ": " + con.getResponseCode() + ": " + con.getResponseMessage());
+                        ChatColor.RED + Message.getString("timings.export.4") + ": " + con.getResponseCode() + ": " + con.getResponseMessage());
                 listeners.sendMessage(ChatColor.RED + Message.getString("timings.export.5"));
                 if (response != null) {
                     Bukkit.getLogger().log(Level.SEVERE, response);

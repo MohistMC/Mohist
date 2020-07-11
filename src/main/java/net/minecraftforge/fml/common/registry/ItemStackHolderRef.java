@@ -19,27 +19,28 @@
 
 package net.minecraftforge.fml.common.registry;
 
+import net.minecraft.item.ItemStack;
+import net.minecraftforge.fml.common.FMLLog;
+
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import net.minecraft.item.ItemStack;
-import net.minecraftforge.fml.common.FMLLog;
 
 /**
  * Internal class used in tracking {@link GameRegistry.ItemStackHolder} references
  *
  * @author cpw
- *
  */
 class ItemStackHolderRef {
-    private Field field;
-    private String itemName;
-    private int meta;
-    private String serializednbt;
-
-
-    ItemStackHolderRef(Field field, String itemName, int meta, String serializednbt)
-    {
+    private static Field modifiersField;
+    private static Object reflectionFactory;
+    private static Method newFieldAccessor;
+    private static Method fieldAccessorSet;
+    private final Field field;
+    private final String itemName;
+    private final int meta;
+    private final String serializednbt;
+    ItemStackHolderRef(Field field, String itemName, int meta, String serializednbt) {
         this.field = field;
         this.itemName = itemName;
         this.meta = meta;
@@ -47,16 +48,9 @@ class ItemStackHolderRef {
         makeWritable(field);
     }
 
-    private static Field modifiersField;
-    private static Object reflectionFactory;
-    private static Method newFieldAccessor;
-    private static Method fieldAccessorSet;
-    private static void makeWritable(Field f)
-    {
-        try
-        {
-            if (modifiersField == null)
-            {
+    private static void makeWritable(Field f) {
+        try {
+            if (modifiersField == null) {
                 Method getReflectionFactory = Class.forName("sun.reflect.ReflectionFactory").getDeclaredMethod("getReflectionFactory");
                 reflectionFactory = getReflectionFactory.invoke(null);
                 newFieldAccessor = Class.forName("sun.reflect.ReflectionFactory").getDeclaredMethod("newFieldAccessor", Field.class, boolean.class);
@@ -65,31 +59,23 @@ class ItemStackHolderRef {
                 modifiersField.setAccessible(true);
             }
             modifiersField.setInt(f, f.getModifiers() & ~Modifier.FINAL);
-        }
-        catch (ReflectiveOperationException e)
-        {
+        } catch (ReflectiveOperationException e) {
             throw new RuntimeException(e);
         }
     }
 
-    public void apply()
-    {
+    public void apply() {
         ItemStack is;
-        try
-        {
+        try {
             is = GameRegistry.makeItemStack(itemName, meta, 1, serializednbt);
-        } catch (RuntimeException e)
-        {
-            FMLLog.log.error("Caught exception processing itemstack {},{},{} in annotation at {}.{}", itemName, meta, serializednbt,field.getClass().getName(),field.getName());
+        } catch (RuntimeException e) {
+            FMLLog.log.error("Caught exception processing itemstack {},{},{} in annotation at {}.{}", itemName, meta, serializednbt, field.getClass().getName(), field.getName());
             throw e;
         }
-        try
-        {
+        try {
             Object fieldAccessor = newFieldAccessor.invoke(reflectionFactory, field, false);
             fieldAccessorSet.invoke(fieldAccessor, null, is);
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             FMLLog.log.warn("Unable to set {} with value {},{},{}", this.field, this.itemName, this.meta, this.serializednbt);
         }
     }

@@ -19,50 +19,44 @@
 
 package net.minecraftforge.fml.client;
 
-import java.util.Set;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraftforge.fml.client.config.GuiConfig;
 import net.minecraftforge.fml.common.ModContainer;
 
-public class DefaultGuiFactory implements IModGuiFactory
-{
-    
+import java.util.Set;
+
+public class DefaultGuiFactory implements IModGuiFactory {
+
     protected String modid, title;
     protected Minecraft minecraft;
-    
-    protected DefaultGuiFactory(String modid, String title)
-    {
+
+    protected DefaultGuiFactory(String modid, String title) {
         this.modid = modid;
         this.title = title;
     }
 
+    public static IModGuiFactory forMod(ModContainer mod) {
+        return new DefaultGuiFactory(mod.getModId(), mod.getName());
+    }
+
     @Override
-    public boolean hasConfigGui()
-    {
+    public boolean hasConfigGui() {
         return true;
     }
 
     @Override
-    public void initialize(Minecraft minecraftInstance)
-    {
+    public void initialize(Minecraft minecraftInstance) {
         this.minecraft = minecraftInstance;
     }
 
     @Override
-    public GuiScreen createConfigGui(GuiScreen parentScreen)
-    {  
+    public GuiScreen createConfigGui(GuiScreen parentScreen) {
         return new GuiConfig(parentScreen, modid, title);
     }
 
     @Override
-    public Set<RuntimeOptionCategoryElement> runtimeGuiCategories()
-    {
+    public Set<RuntimeOptionCategoryElement> runtimeGuiCategories() {
         return null;
-    }
-
-    public static IModGuiFactory forMod(ModContainer mod)
-    {
-        return new DefaultGuiFactory(mod.getModId(), mod.getName());
     }
 }

@@ -19,34 +19,30 @@
 
 package net.minecraftforge.client.settings;
 
+import net.minecraft.client.settings.KeyBinding;
+import net.minecraft.util.IntHashMap;
+
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.EnumMap;
 import java.util.List;
-import javax.annotation.Nullable;
-import net.minecraft.client.settings.KeyBinding;
-import net.minecraft.util.IntHashMap;
 
-public class KeyBindingMap
-{
+public class KeyBindingMap {
     private static final EnumMap<KeyModifier, IntHashMap<Collection<KeyBinding>>> map = new java.util.EnumMap<KeyModifier, IntHashMap<Collection<KeyBinding>>>(KeyModifier.class);
-    static
-    {
-        for (KeyModifier modifier : KeyModifier.values())
-        {
+
+    static {
+        for (KeyModifier modifier : KeyModifier.values()) {
             map.put(modifier, new IntHashMap<Collection<KeyBinding>>());
         }
     }
 
     @Nullable
-    public KeyBinding lookupActive(int keyCode)
-    {
+    public KeyBinding lookupActive(int keyCode) {
         KeyModifier activeModifier = KeyModifier.getActiveModifier();
-        if (!activeModifier.matches(keyCode))
-        {
+        if (!activeModifier.matches(keyCode)) {
             KeyBinding binding = getBinding(keyCode, activeModifier);
-            if (binding != null)
-            {
+            if (binding != null) {
                 return binding;
             }
         }
@@ -54,15 +50,11 @@ public class KeyBindingMap
     }
 
     @Nullable
-    private KeyBinding getBinding(int keyCode, KeyModifier keyModifier)
-    {
+    private KeyBinding getBinding(int keyCode, KeyModifier keyModifier) {
         Collection<KeyBinding> bindings = map.get(keyModifier).lookup(keyCode);
-        if (bindings != null)
-        {
-            for (KeyBinding binding : bindings)
-            {
-                if (binding.isActiveAndMatches(keyCode))
-                {
+        if (bindings != null) {
+            for (KeyBinding binding : bindings) {
+                if (binding.isActiveAndMatches(keyCode)) {
                     return binding;
                 }
             }
@@ -70,53 +62,43 @@ public class KeyBindingMap
         return null;
     }
 
-    public List<KeyBinding> lookupAll(int keyCode)
-    {
+    public List<KeyBinding> lookupAll(int keyCode) {
         List<KeyBinding> matchingBindings = new ArrayList<KeyBinding>();
-        for (IntHashMap<Collection<KeyBinding>> bindingsMap : map.values())
-        {
+        for (IntHashMap<Collection<KeyBinding>> bindingsMap : map.values()) {
             Collection<KeyBinding> bindings = bindingsMap.lookup(keyCode);
-            if (bindings != null)
-            {
+            if (bindings != null) {
                 matchingBindings.addAll(bindings);
             }
         }
         return matchingBindings;
     }
 
-    public void addKey(int keyCode, KeyBinding keyBinding)
-    {
+    public void addKey(int keyCode, KeyBinding keyBinding) {
         KeyModifier keyModifier = keyBinding.getKeyModifier();
         IntHashMap<Collection<KeyBinding>> bindingsMap = map.get(keyModifier);
         Collection<KeyBinding> bindingsForKey = bindingsMap.lookup(keyCode);
-        if (bindingsForKey == null)
-        {
+        if (bindingsForKey == null) {
             bindingsForKey = new ArrayList<KeyBinding>();
             bindingsMap.addKey(keyCode, bindingsForKey);
         }
         bindingsForKey.add(keyBinding);
     }
 
-    public void removeKey(KeyBinding keyBinding)
-    {
+    public void removeKey(KeyBinding keyBinding) {
         KeyModifier keyModifier = keyBinding.getKeyModifier();
         int keyCode = keyBinding.getKeyCode();
         IntHashMap<Collection<KeyBinding>> bindingsMap = map.get(keyModifier);
         Collection<KeyBinding> bindingsForKey = bindingsMap.lookup(keyCode);
-        if (bindingsForKey != null)
-        {
+        if (bindingsForKey != null) {
             bindingsForKey.remove(keyBinding);
-            if (bindingsForKey.isEmpty())
-            {
+            if (bindingsForKey.isEmpty()) {
                 bindingsMap.removeObject(keyCode);
             }
         }
     }
 
-    public void clearMap()
-    {
-        for (IntHashMap<Collection<KeyBinding>> bindings : map.values())
-        {
+    public void clearMap() {
+        for (IntHashMap<Collection<KeyBinding>> bindings : map.values()) {
             bindings.clearMap();
         }
     }

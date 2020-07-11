@@ -10,10 +10,10 @@ public interface ZombieVillager extends Zombie {
      *
      * @return the profession or null
      */
-    public Villager.Profession getVillagerProfession();
+    Villager.Profession getVillagerProfession();
 
     /**
      * Sets the villager profession of this zombie.
      */
-    public void setVillagerProfession(Villager.Profession profession);
+    void setVillagerProfession(Villager.Profession profession);
 }

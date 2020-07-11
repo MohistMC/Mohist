@@ -19,15 +19,15 @@
 
 package net.minecraftforge.fluids.capability;
 
-import javax.annotation.Nonnull;
 import net.minecraft.item.ItemStack;
+
+import javax.annotation.Nonnull;
 
 /**
  * ItemStacks handled by an {@link IFluidHandler} may change, so this class allows
  * users of the fluid handler to get the container after it has been used.
  */
-public interface IFluidHandlerItem extends IFluidHandler
-{
+public interface IFluidHandlerItem extends IFluidHandler {
     /**
      * Get the container currently acted on by this fluid handler.
      * The ItemStack may be different from its initial state, in the case of fluid containers that have different items

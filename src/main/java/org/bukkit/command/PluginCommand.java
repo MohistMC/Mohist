@@ -1,8 +1,9 @@
 package org.bukkit.command;
 
-import java.util.List;
 import org.apache.commons.lang.Validate;
 import org.bukkit.plugin.Plugin;
+
+import java.util.List;
 
 /**
  * Represents a {@link Command} belonging to a plugin
@@ -22,9 +23,9 @@ public final class PluginCommand extends Command implements PluginIdentifiableCo
     /**
      * Executes the command, returning its success
      *
-     * @param sender Source object which is executing this command
+     * @param sender       Source object which is executing this command
      * @param commandLabel The alias of the command used
-     * @param args All arguments passed to the command, split via ' '
+     * @param args         All arguments passed to the command, split via ' '
      * @return true if the command was successful, otherwise false
      */
     @Override
@@ -115,8 +116,8 @@ public final class PluginCommand extends Command implements PluginIdentifiableCo
      * <p>
      * This method does not consider permissions.
      *
-     * @throws CommandException if the completer or executor throw an
-     *     exception during the process of tab-completing.
+     * @throws CommandException         if the completer or executor throw an
+     *                                  exception during the process of tab-completing.
      * @throws IllegalArgumentException if sender, alias, or args is null
      */
     @Override

@@ -6,7 +6,7 @@ import org.bukkit.event.entity.EntityEvent;
 
 /**
  * Fired any time an entity is being added to the world for any reason.
- *
+ * <p>
  * Not to be confused with {@link org.bukkit.event.entity.CreatureSpawnEvent}
  * This will fire anytime a chunk is reloaded too.
  */

@@ -10,20 +10,11 @@ import org.bukkit.event.HandlerList;
  */
 public class VehicleExitEvent extends VehicleEvent implements Cancellable {
 
-    // EMC start
-    public enum DismountReason {
-        PLAYER, WATER, DEAD, TRANSFER, UNKNOWN, DISCONNECT;
-    }
-    public DismountReason reason = DismountReason.UNKNOWN;
-
-    public DismountReason getReason() {
-        return reason;
-    }
     // EMC end
     private static final HandlerList handlers = new HandlerList();
     private final LivingEntity exited;
+    public DismountReason reason = DismountReason.UNKNOWN;
     private boolean cancelled;
-
     public VehicleExitEvent(final Vehicle vehicle, final LivingEntity exited) {
         super(vehicle);
         this.exited = exited;
@@ -31,6 +22,10 @@ public class VehicleExitEvent extends VehicleEvent implements Cancellable {
 
     public static HandlerList getHandlerList() {
         return handlers;
+    }
+
+    public DismountReason getReason() {
+        return reason;
     }
 
     /**
@@ -53,5 +48,10 @@ public class VehicleExitEvent extends VehicleEvent implements Cancellable {
     @Override
     public HandlerList getHandlers() {
         return handlers;
+    }
+
+    // EMC start
+    public enum DismountReason {
+        PLAYER, WATER, DEAD, TRANSFER, UNKNOWN, DISCONNECT
     }
 }

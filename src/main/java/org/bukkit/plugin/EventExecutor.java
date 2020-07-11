@@ -5,14 +5,15 @@ import com.destroystokyo.paper.event.executor.StaticMethodHandleEventExecutor;
 import com.destroystokyo.paper.event.executor.asm.ASMEventExecutorGenerator;
 import com.destroystokyo.paper.event.executor.asm.ClassDefiner;
 import com.google.common.base.Preconditions;
+import org.bukkit.event.Event;
+import org.bukkit.event.EventException;
+import org.bukkit.event.Listener;
+
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.function.Function;
-import org.bukkit.event.Event;
-import org.bukkit.event.EventException;
-import org.bukkit.event.Listener;
 
 /**
  * Interface which defines the class for event call backs to plugins
@@ -37,7 +38,7 @@ public interface EventExecutor {
         }
     };
 
-    public static EventExecutor create(Method m, Class<? extends Event> eventClass) {
+    static EventExecutor create(Method m, Class<? extends Event> eventClass) {
         Preconditions.checkNotNull(m, "Null method");
         Preconditions.checkArgument(m.getParameterCount() != 0, "Incorrect number of arguments %s", m.getParameterCount());
         Preconditions.checkArgument(m.getParameterTypes()[0] == eventClass, "First parameter %s doesn't match event class %s", m.getParameterTypes()[0], eventClass);
@@ -71,6 +72,6 @@ public interface EventExecutor {
         }
     }
 
-    public void execute(Listener listener, Event event) throws EventException;
+    void execute(Listener listener, Event event) throws EventException;
     // Paper end
 }

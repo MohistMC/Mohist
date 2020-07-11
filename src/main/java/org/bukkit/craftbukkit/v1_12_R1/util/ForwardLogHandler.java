@@ -1,16 +1,17 @@
 package org.bukkit.craftbukkit.v1_12_R1.util;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import red.mohist.Mohist;
+
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.ConsoleHandler;
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import red.mohist.Mohist;
 
 public class ForwardLogHandler extends ConsoleHandler {
-    private Map<String, Logger> cachedLoggers = new ConcurrentHashMap<>();
+    private final Map<String, Logger> cachedLoggers = new ConcurrentHashMap<>();
 
     private Logger getLogger(String name) {
         Logger logger = cachedLoggers.get(name);

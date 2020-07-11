@@ -13,7 +13,6 @@ public interface Evoker extends Spellcaster {
      * @return the current spell
      * @deprecated future versions of Minecraft have additional spell casting
      * entities.
-     *
      */
     @Deprecated
     Spell getCurrentSpell();
@@ -29,18 +28,19 @@ public interface Evoker extends Spellcaster {
     void setCurrentSpell(Spell spell);
 
     // Purpur start
+
     /**
-     *  Get the sheep being targeted by the Wololo spell
+     * Get the sheep being targeted by the Wololo spell
      *
-     *  @return Targeted sheep
+     * @return Targeted sheep
      */
     @Nullable
     Sheep getWololoTarget();
 
     /**
-     *  Set the sheep targeted by the Wololo spell
+     * Set the sheep targeted by the Wololo spell
      *
-     *  @param sheep Sheep to target
+     * @param sheep Sheep to target
      */
     void setWololoTarget(@Nullable Sheep sheep);
     // Purpur end
@@ -52,7 +52,7 @@ public interface Evoker extends Spellcaster {
      * entities.
      */
     @Deprecated
-    public enum Spell {
+    enum Spell {
 
         /**
          * No spell is being evoked.
@@ -77,6 +77,6 @@ public interface Evoker extends Spellcaster {
         /**
          * The spell that makes the target blind.
          */
-        BLINDNESS;
+        BLINDNESS
     }
 }

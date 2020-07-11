@@ -2,15 +2,16 @@ package org.bukkit.craftbukkit.v1_12_R1.util;
 
 import com.google.common.base.Charsets;
 import com.google.gson.Gson;
+import org.apache.commons.io.IOUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.UUID;
-import org.apache.commons.io.IOUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 public class MojangNameLookup {
     private static final Logger logger = LogManager.getFormatterLogger(MojangNameLookup.class);

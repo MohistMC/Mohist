@@ -53,16 +53,16 @@ public interface Llama extends ChestedHorse {
     boolean shouldJoinCaravan();
 
     /**
-     *  Set if this Llama should attempt to join a caravan
+     * Set if this Llama should attempt to join a caravan
      *
-     *  @param shouldJoinCaravan True to allow joining a caravan
+     * @param shouldJoinCaravan True to allow joining a caravan
      */
     void setShouldJoinCaravan(boolean shouldJoinCaravan);
 
     /**
-     *  Check if Llama is in a caravan
+     * Check if Llama is in a caravan
      *
-     *  @return True if in caravan
+     * @return True if in caravan
      */
     boolean inCaravan();
 
@@ -74,7 +74,7 @@ public interface Llama extends ChestedHorse {
     void joinCaravan(@NotNull Llama llama);
 
     /**
-     *  Leave current caravan if in one
+     * Leave current caravan if in one
      */
     void leaveCaravan();
 
@@ -86,11 +86,11 @@ public interface Llama extends ChestedHorse {
     boolean hasCaravanTail();
 
     /**
-     *  Get the Llama that this Llama is following
-     *  <p>
-     *  Does not necessarily mean the leader of the entire caravan
+     * Get the Llama that this Llama is following
+     * <p>
+     * Does not necessarily mean the leader of the entire caravan
      *
-     *  @return The Llama being followed
+     * @return The Llama being followed
      */
     @Nullable
     Llama getCaravanHead();
@@ -107,7 +107,7 @@ public interface Llama extends ChestedHorse {
     /**
      * Represents the base color that the llama has.
      */
-    public enum Color {
+    enum Color {
 
         /**
          * A cream-colored llama.
@@ -124,7 +124,7 @@ public interface Llama extends ChestedHorse {
         /**
          * A gray llama.
          */
-        GRAY;
+        GRAY
     }
 
 }

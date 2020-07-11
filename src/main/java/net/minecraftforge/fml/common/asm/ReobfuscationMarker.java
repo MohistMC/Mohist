@@ -26,8 +26,8 @@ import java.lang.annotation.Target;
 
 /**
  * Used to force certain classes to reobfuscate
- * @author cpw
  *
+ * @author cpw
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE})

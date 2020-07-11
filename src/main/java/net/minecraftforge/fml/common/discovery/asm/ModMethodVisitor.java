@@ -25,12 +25,11 @@ import org.objectweb.asm.Opcodes;
 
 public class ModMethodVisitor extends MethodVisitor {
 
-    private String methodName;
-    private String methodDescriptor;
-    private ASMModParser discoverer;
+    private final String methodName;
+    private final String methodDescriptor;
+    private final ASMModParser discoverer;
 
-    public ModMethodVisitor(String name, String desc, ASMModParser discoverer)
-    {
+    public ModMethodVisitor(String name, String desc, ASMModParser discoverer) {
         super(Opcodes.ASM5);
         this.methodName = name;
         this.methodDescriptor = desc;
@@ -38,8 +37,7 @@ public class ModMethodVisitor extends MethodVisitor {
     }
 
     @Override
-    public AnnotationVisitor visitAnnotation(String annotationName, boolean runtimeVisible)
-    {
+    public AnnotationVisitor visitAnnotation(String annotationName, boolean runtimeVisible) {
         discoverer.startMethodAnnotation(methodName, methodDescriptor, annotationName);
         return new ModAnnotationVisitor(discoverer);
     }

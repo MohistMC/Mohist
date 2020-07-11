@@ -38,13 +38,30 @@ public class MRUMapCache<K, V> extends AbstractMap<K, V> {
     final Map<K, V> backingMap;
     Object cacheKey;
     V cacheValue;
+
     public MRUMapCache(final Map<K, V> backingMap) {
         this.backingMap = backingMap;
     }
 
-    public int size() {return backingMap.size();}
+    /**
+     * Wraps the specified map with a most recently used cache
+     *
+     * @param map Map to be wrapped
+     * @param <K> Key Type of the Map
+     * @param <V> Value Type of the Map
+     * @return Map
+     */
+    public static <K, V> Map<K, V> of(Map<K, V> map) {
+        return new MRUMapCache<K, V>(map);
+    }
 
-    public boolean isEmpty() {return backingMap.isEmpty();}
+    public int size() {
+        return backingMap.size();
+    }
+
+    public boolean isEmpty() {
+        return backingMap.isEmpty();
+    }
 
     public boolean containsKey(Object key) {
         return key != null && key.equals(cacheKey) || backingMap.containsKey(key);
@@ -74,7 +91,9 @@ public class MRUMapCache<K, V> extends AbstractMap<K, V> {
         return backingMap.remove(key);
     }
 
-    public void putAll(Map<? extends K, ? extends V> m) {backingMap.putAll(m);}
+    public void putAll(Map<? extends K, ? extends V> m) {
+        backingMap.putAll(m);
+    }
 
     public void clear() {
         cacheKey = null;
@@ -82,21 +101,15 @@ public class MRUMapCache<K, V> extends AbstractMap<K, V> {
         backingMap.clear();
     }
 
-    public Set<K> keySet() {return backingMap.keySet();}
+    public Set<K> keySet() {
+        return backingMap.keySet();
+    }
 
-    public Collection<V> values() {return backingMap.values();}
+    public Collection<V> values() {
+        return backingMap.values();
+    }
 
-    public Set<Entry<K, V>> entrySet() {return backingMap.entrySet();}
-
-    /**
-     * Wraps the specified map with a most recently used cache
-     *
-     * @param map Map to be wrapped
-     * @param <K> Key Type of the Map
-     * @param <V> Value Type of the Map
-     * @return Map
-     */
-    public static <K, V> Map<K, V> of(Map<K, V> map) {
-        return new MRUMapCache<K, V>(map);
+    public Set<Entry<K, V>> entrySet() {
+        return backingMap.entrySet();
     }
 }

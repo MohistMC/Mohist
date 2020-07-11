@@ -1,13 +1,13 @@
 package red.mohist.bukkit.nms.proxy;
 
+import red.mohist.bukkit.nms.utils.RemapUtils;
+
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodType;
 import java.lang.reflect.Method;
-import red.mohist.bukkit.nms.utils.RemapUtils;
 
 /**
- *
  * @author pyz
  * @date 2019/7/1 7:45 PM
  */
@@ -56,17 +56,17 @@ public class ProxyMethodHandles_Lookup {
             String name = m.getName();
             switch (name) {
                 case "forName":
-                    return lookup.unreflect(ProxyClass.class.getMethod(name, new Class[]{String.class}));
+                    return lookup.unreflect(ProxyClass.class.getMethod(name, String.class));
                 case "getField":
                 case "getDeclaredField": {
-                    return lookup.unreflect(ProxyClass.class.getMethod(name, new Class[]{Class.class, String.class}));
+                    return lookup.unreflect(ProxyClass.class.getMethod(name, Class.class, String.class));
                 }
                 case "getMethod":
                 case "getDeclaredMethod":
-                    return lookup.unreflect(ProxyClass.class.getMethod(name, new Class[]{Class.class, String.class, Class[].class}));
+                    return lookup.unreflect(ProxyClass.class.getMethod(name, Class.class, String.class, Class[].class));
             }
         } else if (m.getDeclaringClass() == ClassLoader.class && m.getName().equals("loadClass")) {
-            return lookup.unreflect(ClassLoader.class.getMethod(m.getName(), new Class[]{ClassLoader.class, String.class}));
+            return lookup.unreflect(ClassLoader.class.getMethod(m.getName(), ClassLoader.class, String.class));
         }
         return lookup.unreflect(m);
     }

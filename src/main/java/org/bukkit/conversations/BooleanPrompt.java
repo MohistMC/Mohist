@@ -32,7 +32,7 @@ public abstract class BooleanPrompt extends ValidatingPrompt {
      * response.
      *
      * @param context Context information about the conversation.
-     * @param input The user's boolean response.
+     * @param input   The user's boolean response.
      * @return The next {@link Prompt} in the prompt graph.
      */
     protected abstract Prompt acceptValidatedInput(ConversationContext context, boolean input);

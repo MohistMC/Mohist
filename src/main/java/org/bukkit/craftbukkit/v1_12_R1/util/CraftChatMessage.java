@@ -1,22 +1,19 @@
 package org.bukkit.craftbukkit.v1_12_R1.util;
 
 import com.google.common.collect.ImmutableMap;
+import net.minecraft.util.text.*;
+import net.minecraft.util.text.event.ClickEvent;
+import org.bukkit.ChatColor;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.Style;
-import net.minecraft.util.text.TextComponentString;
-import net.minecraft.util.text.TextComponentTranslation;
-import net.minecraft.util.text.TextFormatting;
-import net.minecraft.util.text.event.ClickEvent;
-import org.bukkit.ChatColor;
 
 public final class CraftChatMessage {
 
-    private static final Pattern LINK_PATTERN = Pattern.compile("((?:(?:https?):\\/\\/)?(?:[-\\w_\\.]{2,}\\.[a-z]{2,4}.*?(?=[\\.\\?!,;:]?(?:[" + String.valueOf(ChatColor.COLOR_CHAR) + " \\n]|$))))");
+    private static final Pattern LINK_PATTERN = Pattern.compile("((?:(?:https?):\\/\\/)?(?:[-\\w_\\.]{2,}\\.[a-z]{2,4}.*?(?=[\\.\\?!,;:]?(?:[" + ChatColor.COLOR_CHAR + " \\n]|$))))");
     private static final Map<Character, TextFormatting> formatMap;
 
     static {
@@ -56,7 +53,7 @@ public final class CraftChatMessage {
         }
         StringBuilder out = new StringBuilder();
 
-        for (ITextComponent c : (Iterable<ITextComponent>) component) {
+        for (ITextComponent c : component) {
             Style modi = c.getStyle();
             out.append(modi.getColor() == null ? defaultColor : modi.getColor());
             if (modi.getBold()) {
@@ -156,7 +153,7 @@ public final class CraftChatMessage {
     }
 
     private static class StringMessage {
-        private static final Pattern INCREMENTAL_PATTERN = Pattern.compile("(" + String.valueOf(ChatColor.COLOR_CHAR) + "[0-9a-fk-or])|(\\n)|((?:(?:https?):\\/\\/)?(?:[-\\w_\\.]{2,}\\.[a-z]{2,4}.*?(?=[\\.\\?!,;:]?(?:[" + String.valueOf(ChatColor.COLOR_CHAR) + " \\n]|$))))", Pattern.CASE_INSENSITIVE);
+        private static final Pattern INCREMENTAL_PATTERN = Pattern.compile("(" + ChatColor.COLOR_CHAR + "[0-9a-fk-or])|(\\n)|((?:(?:https?):\\/\\/)?(?:[-\\w_\\.]{2,}\\.[a-z]{2,4}.*?(?=[\\.\\?!,;:]?(?:[" + ChatColor.COLOR_CHAR + " \\n]|$))))", Pattern.CASE_INSENSITIVE);
 
         private final List<ITextComponent> list = new ArrayList<>();
         private final ITextComponent[] output;

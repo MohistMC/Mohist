@@ -73,24 +73,25 @@ public enum InventoryType {
     /**
      * A shulker box inventory, with 27 slots of type CONTAINER.
      */
-    SHULKER_BOX(27, "Shulker Box"),;
+    SHULKER_BOX(27, "Shulker Box"),
+    ;
 
-    private int size; // Purpur - remove final
     private final String title;
+    private int size; // Purpur - remove final
 
-    private InventoryType(int defaultSize, String defaultTitle) {
+    InventoryType(int defaultSize, String defaultTitle) {
         size = defaultSize;
         title = defaultTitle;
     }
 
-    // Purpur start
-    public void setDefaultSize(int size) {
-        this.size = size;
+    public int getDefaultSize() {
+        return size;
     }
     // Purpur end
 
-    public int getDefaultSize() {
-        return size;
+    // Purpur start
+    public void setDefaultSize(int size) {
+        this.size = size;
     }
 
     public String getDefaultTitle() {
@@ -129,6 +130,6 @@ public enum InventoryType {
          * The fuel slot in a furnace inventory, or the ingredient slot in a
          * brewing stand inventory.
          */
-        FUEL;
+        FUEL
     }
 }

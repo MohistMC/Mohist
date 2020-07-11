@@ -19,14 +19,14 @@ public interface AbstractHorse extends Animals, Vehicle, InventoryHolder, Tameab
      * @deprecated different variants are different classes
      */
     @Deprecated
-    public Horse.Variant getVariant();
+    Horse.Variant getVariant();
 
     /**
      * @param variant
      * @deprecated you are required to spawn a different entity
      */
     @Deprecated
-    public void setVariant(Horse.Variant variant);
+    void setVariant(Horse.Variant variant);
 
     /**
      * Gets the domestication level of this horse.
@@ -37,7 +37,7 @@ public interface AbstractHorse extends Animals, Vehicle, InventoryHolder, Tameab
      *
      * @return domestication level
      */
-    public int getDomestication();
+    int getDomestication();
 
     /**
      * Sets the domestication level of this horse.
@@ -51,7 +51,7 @@ public interface AbstractHorse extends Animals, Vehicle, InventoryHolder, Tameab
      *
      * @param level domestication level
      */
-    public void setDomestication(int level);
+    void setDomestication(int level);
 
     /**
      * Gets the maximum domestication level of this horse.
@@ -61,7 +61,7 @@ public interface AbstractHorse extends Animals, Vehicle, InventoryHolder, Tameab
      *
      * @return the max domestication level
      */
-    public int getMaxDomestication();
+    int getMaxDomestication();
 
     /**
      * Sets the maximum domestication level of this horse.
@@ -74,7 +74,7 @@ public interface AbstractHorse extends Animals, Vehicle, InventoryHolder, Tameab
      *
      * @param level the max domestication level
      */
-    public void setMaxDomestication(int level);
+    void setMaxDomestication(int level);
 
     /**
      * Gets the jump strength of this horse.
@@ -84,7 +84,7 @@ public interface AbstractHorse extends Animals, Vehicle, InventoryHolder, Tameab
      *
      * @return the horse's jump strength
      */
-    public double getJumpStrength();
+    double getJumpStrength();
 
     /**
      * Sets the jump strength of this horse.
@@ -96,8 +96,8 @@ public interface AbstractHorse extends Animals, Vehicle, InventoryHolder, Tameab
      *
      * @param strength jump strength for this horse
      */
-    public void setJumpStrength(double strength);
+    void setJumpStrength(double strength);
 
     @Override
-    public AbstractHorseInventory getInventory();
+    AbstractHorseInventory getInventory();
 }

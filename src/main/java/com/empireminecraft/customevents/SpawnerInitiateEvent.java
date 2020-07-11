@@ -1,7 +1,7 @@
 package com.empireminecraft.customevents;
 
-import org.bukkit.NamespacedKey;
 import org.bukkit.Location;
+import org.bukkit.NamespacedKey;
 import org.bukkit.World;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.HumanEntity;
@@ -13,10 +13,10 @@ import javax.annotation.Nullable;
 
 public class SpawnerInitiateEvent extends Event implements Cancellable {
     private static final HandlerList handlers = new HandlerList();
-    private boolean canceled;
     private final Location loc;
     private final World world;
     private final HumanEntity entity;
+    private boolean canceled;
     private NamespacedKey mob;
 
     public SpawnerInitiateEvent(NamespacedKey mob, World world, Location loc, HumanEntity entity) {
@@ -24,6 +24,10 @@ public class SpawnerInitiateEvent extends Event implements Cancellable {
         this.loc = loc;
         this.mob = mob;
         this.entity = entity;
+    }
+
+    public static HandlerList getHandlerList() {
+        return handlers;
     }
 
     public World getWorld() {
@@ -56,10 +60,6 @@ public class SpawnerInitiateEvent extends Event implements Cancellable {
     }
 
     public HandlerList getHandlers() {
-        return handlers;
-    }
-
-    public static HandlerList getHandlerList() {
         return handlers;
     }
 }

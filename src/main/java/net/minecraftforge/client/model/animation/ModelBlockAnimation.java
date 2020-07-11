@@ -19,33 +19,11 @@
 
 package net.minecraftforge.client.model.animation;
 
-import com.google.common.collect.ImmutableCollection;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableMultimap;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
-import com.google.common.collect.UnmodifiableIterator;
+import com.google.common.collect.*;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonParseException;
 import com.google.gson.annotations.SerializedName;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.nio.charset.StandardCharsets;
-import java.util.Collections;
-import java.util.EnumSet;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.NoSuchElementException;
-import java.util.Optional;
-import java.util.TreeMap;
-import javax.annotation.Nullable;
-import javax.vecmath.AxisAngle4f;
-import javax.vecmath.Matrix4f;
-import javax.vecmath.Quat4f;
-import javax.vecmath.Vector3f;
 import net.minecraft.client.renderer.block.model.BlockPart;
 import net.minecraft.client.resources.IResource;
 import net.minecraft.client.resources.IResourceManager;
@@ -64,38 +42,68 @@ import net.minecraftforge.common.model.animation.JointClips;
 import net.minecraftforge.common.util.JsonUtils;
 import net.minecraftforge.fml.common.FMLLog;
 
-public class ModelBlockAnimation
-{
+import javax.annotation.Nullable;
+import javax.vecmath.AxisAngle4f;
+import javax.vecmath.Matrix4f;
+import javax.vecmath.Quat4f;
+import javax.vecmath.Vector3f;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
+import java.util.*;
+
+public class ModelBlockAnimation {
+    private static final Gson mbaGson = new GsonBuilder()
+            .registerTypeAdapter(ImmutableList.class, JsonUtils.ImmutableListTypeAdapter.INSTANCE)
+            .registerTypeAdapter(ImmutableMap.class, JsonUtils.ImmutableMapTypeAdapter.INSTANCE)
+            .setPrettyPrinting()
+            .enableComplexMapKeySerialization()
+            .disableHtmlEscaping()
+            .create();
+    private static final ModelBlockAnimation defaultModelBlockAnimation = new ModelBlockAnimation(ImmutableMap.of(), ImmutableMap.of());
     private final ImmutableMap<String, ImmutableMap<String, float[]>> joints;
     private final ImmutableMap<String, MBClip> clips;
     private transient ImmutableMultimap<Integer, MBJointWeight> jointIndexMap;
 
-    public ModelBlockAnimation(ImmutableMap<String, ImmutableMap<String, float[]>> joints, ImmutableMap<String, MBClip> clips)
-    {
+    public ModelBlockAnimation(ImmutableMap<String, ImmutableMap<String, float[]>> joints, ImmutableMap<String, MBClip> clips) {
         this.joints = joints;
         this.clips = clips;
     }
 
-    public ImmutableMap<String, ? extends IClip> getClips()
-    {
+    /**
+     * Load armature associated with a vanilla model.
+     */
+    public static ModelBlockAnimation loadVanillaAnimation(IResourceManager manager, ResourceLocation armatureLocation) {
+        try {
+            try (IResource resource = manager.getResource(armatureLocation)) {
+                ModelBlockAnimation mba = mbaGson.fromJson(new InputStreamReader(resource.getInputStream(), StandardCharsets.UTF_8), ModelBlockAnimation.class);
+                //String json = mbaGson.toJson(mba);
+                return mba;
+            } catch (FileNotFoundException e) {
+                // this is normal. FIXME: error reporting?
+                return defaultModelBlockAnimation;
+            }
+        } catch (IOException | JsonParseException e) {
+            FMLLog.log.error("Exception loading vanilla model animation {}, skipping", armatureLocation, e);
+            return defaultModelBlockAnimation;
+        }
+    }
+
+    public ImmutableMap<String, ? extends IClip> getClips() {
         return clips;
     }
 
-    public ImmutableCollection<MBJointWeight> getJoint(int i)
-    {
-        if(jointIndexMap == null)
-        {
+    public ImmutableCollection<MBJointWeight> getJoint(int i) {
+        if (jointIndexMap == null) {
             ImmutableMultimap.Builder<Integer, MBJointWeight> builder = ImmutableMultimap.builder();
-            for(Map.Entry<String, ImmutableMap<String, float[]>> info : joints.entrySet())
-            {
+            for (Map.Entry<String, ImmutableMap<String, float[]>> info : joints.entrySet()) {
                 ImmutableMap.Builder<Integer, float[]> weightBuilder = ImmutableMap.builder();
-                for(Map.Entry<String, float[]> e : info.getValue().entrySet())
-                {
+                for (Map.Entry<String, float[]> e : info.getValue().entrySet()) {
                     weightBuilder.put(Integer.parseInt(e.getKey()), e.getValue());
                 }
                 ImmutableMap<Integer, float[]> weightMap = weightBuilder.build();
-                for(Map.Entry<Integer, float[]> e : weightMap.entrySet())
-                {
+                for (Map.Entry<Integer, float[]> e : weightMap.entrySet()) {
                     builder.put(e.getKey(), new MBJointWeight(info.getKey(), weightMap));
                 }
             }
@@ -104,16 +112,41 @@ public class ModelBlockAnimation
         return jointIndexMap.get(i);
     }
 
-    protected static class MBVariableClip
-    {
+    @Nullable
+    public TRSRTransformation getPartTransform(IModelState state, BlockPart part, int i) {
+        ImmutableCollection<MBJointWeight> infos = getJoint(i);
+        if (!infos.isEmpty()) {
+            Matrix4f m = new Matrix4f(), tmp;
+            float weight = 0;
+            for (MBJointWeight info : infos) {
+                if (info.getWeights().containsKey(i)) {
+                    ModelBlockAnimation.MBJoint joint = new ModelBlockAnimation.MBJoint(info.getName());
+                    Optional<TRSRTransformation> trOp = state.apply(Optional.of(joint));
+                    if (trOp.isPresent() && !trOp.get().isIdentity()) {
+                        float w = info.getWeights().get(i)[0];
+                        tmp = trOp.get().getMatrix();
+                        tmp.mul(w);
+                        m.add(tmp);
+                        weight += w;
+                    }
+                }
+            }
+            if (weight > 1e-5) {
+                m.mul(1f / weight);
+                return new TRSRTransformation(m);
+            }
+        }
+        return null;
+    }
+
+    protected static class MBVariableClip {
         private final Variable variable;
         @SuppressWarnings("unused")
         private final Type type;
         private final Interpolation interpolation;
         private final float[] samples;
 
-        public MBVariableClip(Variable variable, Type type, Interpolation interpolation, float[] samples)
-        {
+        public MBVariableClip(Variable variable, Type type, Interpolation interpolation, float[] samples) {
             this.variable = variable;
             this.type = type;
             this.interpolation = interpolation;
@@ -121,52 +154,42 @@ public class ModelBlockAnimation
         }
     }
 
-    protected static class MBClip implements IClip
-    {
+    protected static class MBClip implements IClip {
         private final boolean loop;
         @SerializedName("joint_clips")
         private final ImmutableMap<String, ImmutableList<MBVariableClip>> jointClipsFlat;
-        private transient ImmutableMap<String, MBJointClip> jointClips;
         @SerializedName("events")
         private final ImmutableMap<String, String> eventsRaw;
+        private transient ImmutableMap<String, MBJointClip> jointClips;
         private transient TreeMap<Float, Event> events;
 
-        public MBClip(boolean loop, ImmutableMap<String, ImmutableList<MBVariableClip>> clips, ImmutableMap<String, String> events)
-        {
+        public MBClip(boolean loop, ImmutableMap<String, ImmutableList<MBVariableClip>> clips, ImmutableMap<String, String> events) {
             this.loop = loop;
             this.jointClipsFlat = clips;
             this.eventsRaw = events;
         }
 
-        private void initialize()
-        {
-            if(jointClips == null)
-            {
+        private void initialize() {
+            if (jointClips == null) {
                 ImmutableMap.Builder<String, MBJointClip> builder = ImmutableMap.builder();
-                for (Map.Entry<String, ImmutableList<MBVariableClip>> e : jointClipsFlat.entrySet())
-                {
+                for (Map.Entry<String, ImmutableList<MBVariableClip>> e : jointClipsFlat.entrySet()) {
                     builder.put(e.getKey(), new MBJointClip(loop, e.getValue()));
                 }
                 jointClips = builder.build();
                 events = Maps.newTreeMap();
-                if (!eventsRaw.isEmpty())
-                {
+                if (!eventsRaw.isEmpty()) {
                     TreeMap<Float, String> times = Maps.newTreeMap();
-                    for (String time : eventsRaw.keySet())
-                    {
+                    for (String time : eventsRaw.keySet()) {
                         times.put(Float.parseFloat(time), time);
                     }
                     float lastTime = Float.POSITIVE_INFINITY;
-                    if (loop)
-                    {
+                    if (loop) {
                         lastTime = times.firstKey();
                     }
-                    for (Map.Entry<Float, String> entry : times.descendingMap().entrySet())
-                    {
+                    for (Map.Entry<Float, String> entry : times.descendingMap().entrySet()) {
                         float time = entry.getKey();
                         float offset = lastTime - time;
-                        if (loop)
-                        {
+                        if (loop) {
                             offset = 1 - (1 - offset) % 1;
                         }
                         events.put(time, new Event(eventsRaw.get(entry.getValue()), offset));
@@ -176,52 +199,42 @@ public class ModelBlockAnimation
         }
 
         @Override
-        public IJointClip apply(IJoint joint)
-        {
+        public IJointClip apply(IJoint joint) {
             initialize();
-            if(joint instanceof MBJoint)
-            {
-                MBJoint mbJoint = (MBJoint)joint;
+            if (joint instanceof MBJoint) {
+                MBJoint mbJoint = (MBJoint) joint;
                 //MBJointInfo = jointInfos.
                 MBJointClip clip = jointClips.get(mbJoint.getName());
-                if(clip != null) return clip;
+                if (clip != null) return clip;
             }
             return JointClips.IdentityJointClip.INSTANCE;
         }
 
         @Override
-        public Iterable<Event> pastEvents(final float lastPollTime, final float time)
-        {
+        public Iterable<Event> pastEvents(final float lastPollTime, final float time) {
             initialize();
-            return new Iterable<Event>()
-            {
+            return new Iterable<Event>() {
                 @Override
-                public Iterator<Event> iterator()
-                {
-                    return new UnmodifiableIterator<Event>()
-                    {
+                public Iterator<Event> iterator() {
+                    return new UnmodifiableIterator<Event>() {
                         private Float curKey;
                         private Event firstEvent;
                         private float stopTime;
+
                         {
-                            if(lastPollTime >= time)
-                            {
+                            if (lastPollTime >= time) {
                                 curKey = null;
-                            }
-                            else
-                            {
-                                float fractTime = time - (float)Math.floor(time);
-                                float fractLastTime = lastPollTime - (float)Math.floor(lastPollTime);
+                            } else {
+                                float fractTime = time - (float) Math.floor(time);
+                                float fractLastTime = lastPollTime - (float) Math.floor(lastPollTime);
                                 // swap if not in order
-                                if(fractLastTime > fractTime)
-                                {
+                                if (fractLastTime > fractTime) {
                                     float tmp = fractTime;
                                     fractTime = fractLastTime;
                                     fractLastTime = tmp;
                                 }
                                 // need to wrap around, swap again
-                                if(fractTime - fractLastTime > .5f)
-                                {
+                                if (fractTime - fractLastTime > .5f) {
                                     float tmp = fractTime;
                                     fractTime = fractLastTime;
                                     fractLastTime = tmp;
@@ -230,24 +243,19 @@ public class ModelBlockAnimation
                                 stopTime = fractLastTime;
 
                                 curKey = events.floorKey(fractTime);
-                                if(curKey == null && loop && !events.isEmpty())
-                                {
+                                if (curKey == null && loop && !events.isEmpty()) {
                                     curKey = events.lastKey();
                                 }
-                                if(curKey != null)
-                                {
+                                if (curKey != null) {
                                     float checkCurTime = curKey;
                                     float checkStopTime = stopTime;
-                                    if(checkCurTime >= fractTime) checkCurTime--;
-                                    if(checkStopTime >= fractTime) checkStopTime--;
+                                    if (checkCurTime >= fractTime) checkCurTime--;
+                                    if (checkStopTime >= fractTime) checkStopTime--;
                                     float offset = fractTime - checkCurTime;
                                     Event event = events.get(curKey);
-                                    if(checkCurTime < checkStopTime)
-                                    {
+                                    if (checkCurTime < checkStopTime) {
                                         curKey = null;
-                                    }
-                                    else if(offset != event.offset())
-                                    {
+                                    } else if (offset != event.offset()) {
                                         firstEvent = new Event(event.event(), offset);
                                     }
                                 }
@@ -255,40 +263,31 @@ public class ModelBlockAnimation
                         }
 
                         @Override
-                        public boolean hasNext()
-                        {
+                        public boolean hasNext() {
                             return curKey != null;
                         }
 
                         @Override
-                        public Event next()
-                        {
-                            if(curKey == null)
-                            {
+                        public Event next() {
+                            if (curKey == null) {
                                 throw new NoSuchElementException();
                             }
                             Event event;
-                            if(firstEvent == null)
-                            {
+                            if (firstEvent == null) {
                                 event = events.get(curKey);
-                            }
-                            else
-                            {
+                            } else {
                                 event = firstEvent;
                                 firstEvent = null;
                             }
                             curKey = events.lowerKey(curKey);
-                            if(curKey == null && loop)
-                            {
+                            if (curKey == null && loop) {
                                 curKey = events.lastKey();
                             }
-                            if(curKey != null)
-                            {
+                            if (curKey != null) {
                                 float checkStopTime = stopTime;
-                                while(curKey + events.get(curKey).offset() < checkStopTime) checkStopTime--;
-                                while(curKey + events.get(curKey).offset() >= checkStopTime + 1) checkStopTime++;
-                                if(curKey <= checkStopTime)
-                                {
+                                while (curKey + events.get(curKey).offset() < checkStopTime) checkStopTime--;
+                                while (curKey + events.get(curKey).offset() >= checkStopTime + 1) checkStopTime++;
+                                if (curKey <= checkStopTime) {
                                     curKey = null;
                                 }
                             }
@@ -299,20 +298,16 @@ public class ModelBlockAnimation
             };
         }
 
-        protected static class MBJointClip implements IJointClip
-        {
+        protected static class MBJointClip implements IJointClip {
             private final boolean loop;
             private final ImmutableList<MBVariableClip> variables;
 
-            public MBJointClip(boolean loop, ImmutableList<MBVariableClip> variables)
-            {
+            public MBJointClip(boolean loop, ImmutableList<MBVariableClip> variables) {
                 this.loop = loop;
                 this.variables = variables;
-                EnumSet<Variable> hadVar = Sets.newEnumSet(Collections.<Variable>emptyList(), Variable.class);
-                for(MBVariableClip var : variables)
-                {
-                    if(hadVar.contains(var.variable))
-                    {
+                EnumSet<Variable> hadVar = Sets.newEnumSet(Collections.emptyList(), Variable.class);
+                for (MBVariableClip var : variables) {
+                    if (hadVar.contains(var.variable)) {
                         throw new IllegalArgumentException("duplicate variable: " + var);
                     }
                     hadVar.add(var.variable);
@@ -320,34 +315,28 @@ public class ModelBlockAnimation
             }
 
             @Override
-            public TRSRTransformation apply(float time)
-            {
+            public TRSRTransformation apply(float time) {
                 time -= Math.floor(time);
                 Vector3f translation = new Vector3f(0, 0, 0);
                 Vector3f scale = new Vector3f(1, 1, 1);
                 Vector3f origin = new Vector3f(0, 0, 0);
                 AxisAngle4f rotation = new AxisAngle4f(0, 0, 0, 0);
-                for(MBVariableClip var : variables)
-                {
+                for (MBVariableClip var : variables) {
                     int length = loop ? var.samples.length : (var.samples.length - 1);
                     float timeScaled = time * length;
-                    int s1 = MathHelper.clamp((int)Math.round(Math.floor(timeScaled)), 0, length - 1);
+                    int s1 = MathHelper.clamp((int) Math.round(Math.floor(timeScaled)), 0, length - 1);
                     float progress = timeScaled - s1;
                     int s2 = s1 + 1;
-                    if(s2 == length && loop) s2 = 0;
+                    if (s2 == length && loop) s2 = 0;
                     float value = 0;
-                    switch(var.interpolation)
-                    {
+                    switch (var.interpolation) {
                         case LINEAR:
-                            if(var.variable == Variable.ANGLE)
-                            {
+                            if (var.variable == Variable.ANGLE) {
                                 float v1 = var.samples[s1];
                                 float v2 = var.samples[s2];
                                 float diff = ((v2 - v1) % 360 + 540) % 360 - 180;
                                 value = v1 + diff * progress;
-                            }
-                            else
-                            {
+                            } else {
                                 value = var.samples[s1] * (1 - progress) + var.samples[s2] * progress;
                             }
                             break;
@@ -355,8 +344,7 @@ public class ModelBlockAnimation
                             value = var.samples[progress < .5f ? s1 : s2];
                             break;
                     }
-                    switch(var.variable)
-                    {
+                    switch (var.variable) {
                         case X:
                             translation.x = value;
                             break;
@@ -376,7 +364,7 @@ public class ModelBlockAnimation
                             rotation.z = value;
                             break;
                         case ANGLE:
-                            rotation.angle = (float)Math.toRadians(value);
+                            rotation.angle = (float) Math.toRadians(value);
                             break;
                         case SCALE:
                             scale.x = scale.y = scale.z = value;
@@ -412,59 +400,48 @@ public class ModelBlockAnimation
         }
     }
 
-    protected static class MBJoint implements IJoint
-    {
+    protected static class MBJoint implements IJoint {
         private final String name;
 
-        public MBJoint(String name)
-        {
+        public MBJoint(String name) {
             this.name = name;
         }
 
         @Override
-        public TRSRTransformation getInvBindPose()
-        {
+        public TRSRTransformation getInvBindPose() {
             return TRSRTransformation.identity();
         }
 
         @Override
-        public Optional<? extends IJoint> getParent()
-        {
+        public Optional<? extends IJoint> getParent() {
             return Optional.empty();
         }
 
-        public String getName()
-        {
+        public String getName() {
             return name;
         }
     }
 
-    protected static class MBJointWeight
-    {
+    protected static class MBJointWeight {
         private final String name;
         private final ImmutableMap<Integer, float[]> weights;
 
-        public MBJointWeight(String name, ImmutableMap<Integer, float[]> weights)
-        {
+        public MBJointWeight(String name, ImmutableMap<Integer, float[]> weights) {
             this.name = name;
             this.weights = weights;
         }
 
-        public String getName()
-        {
+        public String getName() {
             return name;
         }
 
-        public ImmutableMap<Integer, float[]> getWeights()
-        {
+        public ImmutableMap<Integer, float[]> getWeights() {
             return weights;
         }
     }
 
-    protected static class Parameter
-    {
-        public static enum Variable
-        {
+    protected static class Parameter {
+        public enum Variable {
             @SerializedName("offset_x")
             X,
             @SerializedName("offset_y")
@@ -492,90 +469,19 @@ public class ModelBlockAnimation
             @SerializedName("origin_y")
             YORIGIN,
             @SerializedName("origin_z")
-            ZORIGIN;
+            ZORIGIN
         }
 
-        public static enum Type
-        {
+        public enum Type {
             @SerializedName("uniform")
-            UNIFORM;
+            UNIFORM
         }
 
-        public static enum Interpolation
-        {
+        public enum Interpolation {
             @SerializedName("linear")
             LINEAR,
             @SerializedName("nearest")
-            NEAREST;
+            NEAREST
         }
     }
-
-    @Nullable
-    public TRSRTransformation getPartTransform(IModelState state, BlockPart part, int i)
-    {
-        ImmutableCollection<MBJointWeight> infos = getJoint(i);
-        if(!infos.isEmpty())
-        {
-            Matrix4f m = new Matrix4f(), tmp;
-            float weight = 0;
-            for(MBJointWeight info : infos)
-            {
-                if(info.getWeights().containsKey(i))
-                {
-                    ModelBlockAnimation.MBJoint joint = new ModelBlockAnimation.MBJoint(info.getName());
-                    Optional<TRSRTransformation> trOp = state.apply(Optional.of(joint));
-                    if(trOp.isPresent() && !trOp.get().isIdentity())
-                    {
-                        float w = info.getWeights().get(i)[0];
-                        tmp = trOp.get().getMatrix();
-                        tmp.mul(w);
-                        m.add(tmp);
-                        weight += w;
-                    }
-                }
-            }
-            if(weight > 1e-5)
-            {
-                m.mul(1f / weight);
-                return new TRSRTransformation(m);
-            }
-        }
-        return null;
-    }
-
-    /**
-     * Load armature associated with a vanilla model.
-     */
-    public static ModelBlockAnimation loadVanillaAnimation(IResourceManager manager, ResourceLocation armatureLocation)
-    {
-        try
-        {
-            try (IResource resource = manager.getResource(armatureLocation))
-            {
-                ModelBlockAnimation mba = mbaGson.fromJson(new InputStreamReader(resource.getInputStream(), StandardCharsets.UTF_8), ModelBlockAnimation.class);
-                //String json = mbaGson.toJson(mba);
-                return mba;
-            }
-            catch(FileNotFoundException e)
-            {
-                // this is normal. FIXME: error reporting?
-                return defaultModelBlockAnimation;
-            }
-        }
-        catch(IOException | JsonParseException e)
-        {
-            FMLLog.log.error("Exception loading vanilla model animation {}, skipping", armatureLocation, e);
-            return defaultModelBlockAnimation;
-        }
-    }
-
-    private static final Gson mbaGson = new GsonBuilder()
-        .registerTypeAdapter(ImmutableList.class, JsonUtils.ImmutableListTypeAdapter.INSTANCE)
-        .registerTypeAdapter(ImmutableMap.class, JsonUtils.ImmutableMapTypeAdapter.INSTANCE)
-        .setPrettyPrinting()
-        .enableComplexMapKeySerialization()
-        .disableHtmlEscaping()
-        .create();
-
-    private static final ModelBlockAnimation defaultModelBlockAnimation = new ModelBlockAnimation(ImmutableMap.<String, ImmutableMap<String, float[]>>of(), ImmutableMap.<String, ModelBlockAnimation.MBClip>of());
 }

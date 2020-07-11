@@ -19,7 +19,6 @@
 
 package net.minecraftforge.fml.client;
 
-import java.util.List;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.fml.common.Loader;
@@ -28,44 +27,37 @@ import net.minecraftforge.fml.common.ModContainer;
 import net.minecraftforge.fml.common.versioning.ArtifactVersion;
 import net.minecraftforge.fml.common.versioning.DefaultArtifactVersion;
 
-public class GuiModsMissing extends GuiErrorBase
-{
-    private MissingModsException modsMissing;
+import java.util.List;
 
-    public GuiModsMissing(MissingModsException modsMissing)
-    {
+public class GuiModsMissing extends GuiErrorBase {
+    private final MissingModsException modsMissing;
+
+    public GuiModsMissing(MissingModsException modsMissing) {
         this.modsMissing = modsMissing;
     }
 
     @Override
-    public void drawScreen(int mouseX, int mouseY, float partialTicks)
-    {
+    public void drawScreen(int mouseX, int mouseY, float partialTicks) {
         this.drawDefaultBackground();
         List<MissingModsException.MissingModInfo> missingModsVersions = modsMissing.getMissingModInfos();
         int offset = Math.max(85 - missingModsVersions.size() * 10, 10);
         String modMissingDependenciesText = I18n.format("fml.messages.mod.missing.dependencies.compatibility", TextFormatting.BOLD + modsMissing.getModName() + TextFormatting.RESET);
         this.drawCenteredString(this.fontRenderer, modMissingDependenciesText, this.width / 2, offset, 0xFFFFFF);
-        offset+=5;
-        for (MissingModsException.MissingModInfo versionInfo : missingModsVersions)
-        {
+        offset += 5;
+        for (MissingModsException.MissingModInfo versionInfo : missingModsVersions) {
             ArtifactVersion acceptedVersion = versionInfo.getAcceptedVersion();
             String acceptedModId = acceptedVersion.getLabel();
             ArtifactVersion currentVersion = versionInfo.getCurrentVersion();
             String missingReason;
-            if (currentVersion == null)
-            {
+            if (currentVersion == null) {
                 missingReason = I18n.format("fml.messages.mod.missing.dependencies.missing");
-            }
-            else
-            {
+            } else {
                 missingReason = I18n.format("fml.messages.mod.missing.dependencies.you.have", currentVersion.getVersionString());
             }
             String acceptedModVersionString = acceptedVersion.getRangeString();
-            if (acceptedVersion instanceof DefaultArtifactVersion)
-            {
-                DefaultArtifactVersion dav = (DefaultArtifactVersion)acceptedVersion;
-                if (dav.getRange() != null)
-                {
+            if (acceptedVersion instanceof DefaultArtifactVersion) {
+                DefaultArtifactVersion dav = (DefaultArtifactVersion) acceptedVersion;
+                if (dav.getRange() != null) {
                     acceptedModVersionString = dav.getRange().toStringFriendly();
                 }
             }
@@ -73,12 +65,9 @@ public class GuiModsMissing extends GuiErrorBase
             String acceptedModName = acceptedMod != null ? acceptedMod.getName() : acceptedModId;
             String versionInfoText = String.format(TextFormatting.BOLD + "%s " + TextFormatting.RESET + "%s (%s)", acceptedModName, acceptedModVersionString, missingReason);
             String message;
-            if (versionInfo.isRequired())
-            {
+            if (versionInfo.isRequired()) {
                 message = I18n.format("fml.messages.mod.missing.dependencies.requires", versionInfoText);
-            }
-            else
-            {
+            } else {
                 message = I18n.format("fml.messages.mod.missing.dependencies.compatible.with", versionInfoText);
             }
             offset += 10;

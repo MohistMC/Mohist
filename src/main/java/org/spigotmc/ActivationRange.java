@@ -45,8 +45,7 @@ public class ActivationRange {
      * @return group id
      */
     public static byte initializeEntityActivationType(Entity entity) {
-        if (entity instanceof EntityMob || entity instanceof EntitySlime)
-        {
+        if (entity instanceof EntityMob || entity instanceof EntitySlime) {
             return 1; // Monster
         } else if (entity instanceof EntityCreature || entity instanceof EntityAmbientCreature) {
             return 2; // Animal
@@ -68,7 +67,7 @@ public class ActivationRange {
             return true;
         }
 
-        if ((entity.activationType == 3 && config.miscActivationRange == 0)
+        return (entity.activationType == 3 && config.miscActivationRange == 0)
                 || (entity.activationType == 2 && config.animalActivationRange == 0)
                 || (entity.activationType == 1 && config.monsterActivationRange == 0)
                 || entity instanceof EntityPlayer
@@ -80,11 +79,7 @@ public class ActivationRange {
                 || entity instanceof EntityTNTPrimed
                 || entity instanceof EntityFallingBlock // Paper - Always tick falling blocks
                 || entity instanceof EntityEnderCrystal
-                || entity instanceof EntityFireworkRocket) {
-            return true;
-        }
-
-        return false;
+                || entity instanceof EntityFireworkRocket;
     }
 
     /**
@@ -135,7 +130,7 @@ public class ActivationRange {
     private static void activateChunkEntities(Chunk chunk) {
         for (ClassInheritanceMultiMap<Entity> slice : chunk.entityLists) {
             for (Entity entity : slice) {
-				if (entity == null) continue;
+                if (entity == null) continue;
                 if (MinecraftServer.currentTick > entity.activatedTick) {
                     if (entity.defaultActivationState) {
                         entity.activatedTick = MinecraftServer.currentTick;
@@ -204,9 +199,8 @@ public class ActivationRange {
                     return true;
                 }
             }
-            if (entity instanceof EntityCreeper && ((EntityCreeper) entity).hasIgnited()) { // isExplosive
-                return true;
-            }
+            // isExplosive
+            return entity instanceof EntityCreeper && ((EntityCreeper) entity).hasIgnited();
         }
         return false;
     }
@@ -219,7 +213,7 @@ public class ActivationRange {
      */
     public static boolean checkIfActive(Entity entity) {
         if (MinecraftServer.entityConfig != null
-            && MinecraftServer.entityConfig.skipActivationRange.getValue())
+                && MinecraftServer.entityConfig.skipActivationRange.getValue())
             return true;
 
         // Never safe to skip fireworks or entities not yet added to chunk

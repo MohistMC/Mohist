@@ -31,5 +31,5 @@ public interface ConfigurationSerializable {
      *
      * @return Map containing the current state of this class
      */
-    public Map<String, Object> serialize();
+    Map<String, Object> serialize();
 }

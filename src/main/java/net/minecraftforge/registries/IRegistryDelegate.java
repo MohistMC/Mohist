@@ -27,9 +27,8 @@ import net.minecraft.util.ResourceLocation;
  * These should be safe to use in things like lists though aliased items and blocks will not
  * have object identity with respect to their delegate.
  *
- * @author cpw
- *
  * @param <T> the type of thing we're holding onto
+ * @author cpw
  */
 public interface IRegistryDelegate<T> {
     /**
@@ -44,12 +43,14 @@ public interface IRegistryDelegate<T> {
     /**
      * Get the unique resource location for this delegate. Completely static after registration has completed, and
      * will never change.
+     *
      * @return The name
      */
     ResourceLocation name();
 
     /**
      * Get the delegate type. It will be dependent on the registry this delegate is sourced from.
+     *
      * @return The type of delegate
      */
     Class<T> type();

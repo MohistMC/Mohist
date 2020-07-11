@@ -9,7 +9,7 @@ import org.bukkit.inventory.InventoryHolder;
 public interface HopperMinecart extends Minecart, InventoryHolder {
 
     /**
-     * Checks whether or not this Minecart will pick up 
+     * Checks whether or not this Minecart will pick up
      * items into its inventory.
      *
      * @return true if the Minecart will pick up items

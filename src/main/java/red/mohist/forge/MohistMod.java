@@ -1,27 +1,18 @@
 package red.mohist.forge;
 
 import com.google.common.eventbus.EventBus;
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
 import net.minecraftforge.fml.common.DummyModContainer;
 import net.minecraftforge.fml.common.LoadController;
 import net.minecraftforge.fml.common.ModMetadata;
 import red.mohist.Mohist;
 
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+
 public class MohistMod extends DummyModContainer {
 
     public MohistMod(ModMetadata metadata) {
         super(metadata);
-    }
-
-    @Override
-    public boolean registerBus(EventBus bus, LoadController controller) {
-        return true;
-    }
-
-    @Override
-    public Disableable canBeDisabled() {
-        return Disableable.YES;
     }
 
     public static InputStream modinfo() {
@@ -43,5 +34,15 @@ public class MohistMod extends DummyModContainer {
                 "}\n" +
                 "]";
         return new ByteArrayInputStream(info.getBytes());
+    }
+
+    @Override
+    public boolean registerBus(EventBus bus, LoadController controller) {
+        return true;
+    }
+
+    @Override
+    public Disableable canBeDisabled() {
+        return Disableable.YES;
     }
 }

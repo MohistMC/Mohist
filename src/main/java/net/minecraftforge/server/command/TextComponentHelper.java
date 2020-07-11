@@ -30,31 +30,26 @@ import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.util.text.translation.I18n;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 
-public class TextComponentHelper
-{
-    private TextComponentHelper() {}
+public class TextComponentHelper {
+    private TextComponentHelper() {
+    }
 
     /**
      * Detects when sending to a vanilla client and falls back to sending english,
      * since they don't have the lang data necessary to translate on the client.
      */
-    public static TextComponentBase createComponentTranslation(ICommandSender sender, final String translation, final Object... args)
-    {
-        if (isVanillaClient(sender))
-        {
+    public static TextComponentBase createComponentTranslation(ICommandSender sender, final String translation, final Object... args) {
+        if (isVanillaClient(sender)) {
             return new TextComponentString(I18n.translateToLocalFormatted(translation, args));
         }
         return new TextComponentTranslation(translation, args);
     }
 
-    private static boolean isVanillaClient(ICommandSender sender)
-    {
-        if (sender instanceof EntityPlayerMP)
-        {
+    private static boolean isVanillaClient(ICommandSender sender) {
+        if (sender instanceof EntityPlayerMP) {
             EntityPlayerMP playerMP = (EntityPlayerMP) sender;
             NetHandlerPlayServer connection = playerMP.connection;
-            if (connection != null)
-            {
+            if (connection != null) {
                 NetworkManager netManager = connection.netManager;
                 Channel channel = netManager.channel();
                 return !channel.attr(NetworkRegistry.FML_MARKER).get();

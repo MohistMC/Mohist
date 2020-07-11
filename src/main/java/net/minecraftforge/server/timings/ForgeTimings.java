@@ -28,15 +28,13 @@ import java.util.Arrays;
  *
  * @param <T>
  */
-public class ForgeTimings<T>
-{
+public class ForgeTimings<T> {
 
-    private WeakReference<T> object;
+    private final WeakReference<T> object;
 
-    private int[] rawTimingData;
+    private final int[] rawTimingData;
 
-    public ForgeTimings(T object, int[] rawTimingData)
-    {
+    public ForgeTimings(T object, int[] rawTimingData) {
         this.object = new WeakReference<T>(object);
         this.rawTimingData = rawTimingData;
     }
@@ -46,8 +44,7 @@ public class ForgeTimings<T>
      *
      * @return The object
      */
-    public WeakReference<T> getObject()
-    {
+    public WeakReference<T> getObject() {
         return object;
     }
 
@@ -57,12 +54,10 @@ public class ForgeTimings<T>
      *
      * @return An average of the raw timing data
      */
-    public double getAverageTimings()
-    {
+    public double getAverageTimings() {
         double sum = 0.0;
 
-        for (int data : rawTimingData)
-        {
+        for (int data : rawTimingData) {
             sum += data;
         }
 
@@ -71,10 +66,11 @@ public class ForgeTimings<T>
 
     /**
      * Returns a copy of the raw timings data collected by the tracker
+     *
      * @return The raw timing data
      * @deprecated Added for compatibility, remove in 1.13
      */
-    public int[] getRawTimingData(){
+    public int[] getRawTimingData() {
         return Arrays.copyOfRange(rawTimingData, 0, rawTimingData.length);
     }
 }

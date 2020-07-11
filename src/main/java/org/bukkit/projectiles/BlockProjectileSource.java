@@ -9,5 +9,5 @@ public interface BlockProjectileSource extends ProjectileSource {
      *
      * @return Block for the projectile source
      */
-    public Block getBlock();
+    Block getBlock();
 }

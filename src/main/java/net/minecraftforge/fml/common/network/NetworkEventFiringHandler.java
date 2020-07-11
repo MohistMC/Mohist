@@ -31,33 +31,29 @@ import net.minecraftforge.fml.common.network.internal.FMLProxyPacket;
  * Note: it will not forward on to other handlers.
  *
  * @author cpw
- *
  */
 @Sharable
 public class NetworkEventFiringHandler extends SimpleChannelInboundHandler<FMLProxyPacket> {
-    private FMLEventChannel eventChannel;
+    private final FMLEventChannel eventChannel;
 
-    NetworkEventFiringHandler(FMLEventChannel fmlEventChannel)
-    {
+    NetworkEventFiringHandler(FMLEventChannel fmlEventChannel) {
         this.eventChannel = fmlEventChannel;
     }
 
     @Override
-    protected void channelRead0(ChannelHandlerContext ctx, FMLProxyPacket msg) throws Exception
-    {
-        eventChannel.fireRead(msg,ctx);
+    protected void channelRead0(ChannelHandlerContext ctx, FMLProxyPacket msg) throws Exception {
+        eventChannel.fireRead(msg, ctx);
     }
 
     @Override
-    public void userEventTriggered(ChannelHandlerContext ctx, Object evt) throws Exception
-    {
-        eventChannel.fireUserEvent(evt,ctx);
+    public void userEventTriggered(ChannelHandlerContext ctx, Object evt) throws Exception {
+        eventChannel.fireUserEvent(evt, ctx);
     }
+
     @Override
-    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception
-    {
+    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
         FMLLog.log.error("NetworkEventFiringHandler exception", cause);
         super.exceptionCaught(ctx, cause);
-         ////   TODOOOOOOOOOOO
+        ////   TODOOOOOOOOOOO
     }
 }

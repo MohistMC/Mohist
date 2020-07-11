@@ -11,5 +11,5 @@ public interface Redstone {
      *
      * @return true if powered, otherwise false
      */
-    public boolean isPowered();
+    boolean isPowered();
 }

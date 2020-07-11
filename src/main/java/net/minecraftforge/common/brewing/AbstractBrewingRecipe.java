@@ -19,52 +19,46 @@
 
 package net.minecraftforge.common.brewing;
 
-import javax.annotation.Nonnull;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.oredict.OreDictionary;
 
-public abstract class AbstractBrewingRecipe<T> implements IBrewingRecipe
-{
+import javax.annotation.Nonnull;
+
+public abstract class AbstractBrewingRecipe<T> implements IBrewingRecipe {
     @Nonnull
     private final ItemStack input;
     private final T ingredient;
     private final ItemStack output;
 
-    protected AbstractBrewingRecipe(@Nonnull ItemStack input, @Nonnull T ingredient, @Nonnull ItemStack output)
-    {
+    protected AbstractBrewingRecipe(@Nonnull ItemStack input, @Nonnull T ingredient, @Nonnull ItemStack output) {
         this.input = input;
         this.ingredient = ingredient;
         this.output = output;
     }
 
     @Override
-    public boolean isInput(@Nonnull ItemStack stack)
-    {
+    public boolean isInput(@Nonnull ItemStack stack) {
         return OreDictionary.itemMatches(this.getInput(), stack, false);
     }
 
     @Override
     @Nonnull
-    public ItemStack getOutput(@Nonnull ItemStack input, @Nonnull ItemStack ingredient)
-    {
+    public ItemStack getOutput(@Nonnull ItemStack input, @Nonnull ItemStack ingredient) {
         return isInput(input) && isIngredient(ingredient) ? getOutput().copy() : ItemStack.EMPTY;
     }
 
     @Nonnull
-    public ItemStack getInput()
-    {
+    public ItemStack getInput() {
         return input;
     }
 
     @Nonnull
-    public T getIngredient()
-    {
+    public T getIngredient() {
         return ingredient;
     }
 
     @Nonnull
-    public ItemStack getOutput()
-    {
+    public ItemStack getOutput() {
         return output;
     }
 }

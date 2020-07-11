@@ -1,17 +1,18 @@
 package org.bukkit.event.command;
 
-import javax.annotation.Nullable;
 import org.bukkit.command.CommandSender;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
+
+import javax.annotation.Nullable;
 
 /**
  * Thrown when a player executes a command that is not defined
  */
 public class UnknownCommandEvent extends Event {
     private static final HandlerList handlers = new HandlerList();
-    private CommandSender sender;
-    private String commandLine;
+    private final CommandSender sender;
+    private final String commandLine;
     private String message;
 
     public UnknownCommandEvent(final CommandSender sender, final String commandLine, final String message) {

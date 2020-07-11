@@ -24,8 +24,7 @@ import net.minecraftforge.fml.common.patcher.ClassPatchManager;
 
 public class PatchingTransformer implements IClassTransformer {
     @Override
-    public byte[] transform(String name, String transformedName, byte[] bytes)
-    {
+    public byte[] transform(String name, String transformedName, byte[] bytes) {
         return ClassPatchManager.INSTANCE.applyPatch(name, transformedName, bytes);
     }
 

@@ -35,24 +35,24 @@ public interface DiffWriter extends Closeable {
     /**
      * Add a GDIFF copy instruction.
      */
-    public void addCopy(long offset, int length) throws IOException;
+    void addCopy(long offset, int length) throws IOException;
 
     /**
      * Add a GDIFF data instruction.
      * Implementors should buffer the data.
      */
-	public void addData(byte b) throws IOException;
+    void addData(byte b) throws IOException;
 
-	/**
-	 * Flushes to output, e.g. any data added.
-	 */
-    public void flush() throws IOException;
+    /**
+     * Flushes to output, e.g. any data added.
+     */
+    void flush() throws IOException;
 
     /**
      * Closes this stream.
      * Note that {@link DiffWriter} will invoke this method at the end.
      */
     @Override
-    public void close() throws IOException;
+    void close() throws IOException;
 }
 
