@@ -3,6 +3,8 @@ package org.bukkit.entity;
 import com.google.common.base.Preconditions;
 import java.util.HashMap;
 import java.util.Map;
+
+import net.minecraft.util.ResourceLocation;
 import org.bukkit.Keyed;
 import org.bukkit.Location;
 import org.bukkit.NamespacedKey;
@@ -408,4 +410,5 @@ public enum EntityType implements Keyed {
     public boolean isAlive() {
         return living;
     }
+
 }

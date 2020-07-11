@@ -10,6 +10,8 @@ import org.bukkit.material.MaterialData;
 @Deprecated
 public final class CraftLegacy {
 
+    private static Material[] moddedMaterials;
+
     private CraftLegacy() {
         //
     }
@@ -27,12 +29,15 @@ public final class CraftLegacy {
     }
 
     public static Material[] modern_values() {
-        Material[] values = Material.values();
-        return Arrays.copyOfRange(values, 0, Material.LEGACY_AIR.ordinal());
+        if (moddedMaterials == null) {
+            moddedMaterials = Arrays.stream(Material.values()).filter(it -> !it.isLegacy()).toArray(Material[]::new);
+        }
+        return moddedMaterials;
     }
 
+
     public static int modern_ordinal(Material material) {
-        if (material.isLegacy()) {
+            if (material.isLegacy()) {
             // SPIGOT-4002: Fix for eclipse compiler manually compiling in default statements to lookupswitch
             throw new NoSuchFieldError("Legacy field ordinal: " + material);
         }

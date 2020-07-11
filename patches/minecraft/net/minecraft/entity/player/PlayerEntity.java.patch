@@ -113,7 +113,7 @@
     public static final EntitySize field_213835_bs = EntitySize.func_220314_b(0.6F, 1.8F);
     private static final Map<Pose, EntitySize> field_213836_b = ImmutableMap.<Pose, EntitySize>builder().put(Pose.STANDING, field_213835_bs).put(Pose.SLEEPING, field_213377_as).put(Pose.FALL_FLYING, EntitySize.func_220314_b(0.6F, 0.6F)).put(Pose.SWIMMING, EntitySize.func_220314_b(0.6F, 0.6F)).put(Pose.SPIN_ATTACK, EntitySize.func_220314_b(0.6F, 0.6F)).put(Pose.CROUCHING, EntitySize.func_220314_b(0.6F, 1.5F)).put(Pose.DYING, EntitySize.func_220311_c(0.2F, 0.2F)).build();
     private static final DataParameter<Float> field_184829_a = EntityDataManager.func_187226_a(PlayerEntity.class, DataSerializers.field_187193_c);
-@@ -119,10 +90,10 @@
+@@ -119,10 +90,11 @@
     protected static final DataParameter<CompoundNBT> field_192033_bu = EntityDataManager.func_187226_a(PlayerEntity.class, DataSerializers.field_192734_n);
     private long field_223730_e;
     public final PlayerInventory field_71071_by = new PlayerInventory(this);
@@ -122,11 +122,12 @@
     public final PlayerContainer field_71069_bz;
     public Container field_71070_bA;
 -   protected FoodStats field_71100_bB = new FoodStats();
-+   protected FoodStats field_71100_bB = new FoodStats(this);
++   public FoodStats field_71100_bB = new FoodStats(this);
++   public FoodStats setEntityHuman = new FoodStats(this);
     protected int field_71101_bC;
     public float field_71107_bF;
     public float field_71109_bG;
-@@ -133,7 +104,7 @@
+@@ -133,7 +105,7 @@
     public double field_71094_bP;
     public double field_71095_bQ;
     public double field_71085_bR;
@@ -135,7 +136,7 @@
     protected boolean field_204230_bP;
     protected BlockPos field_71077_c;
     protected boolean field_82248_d;
-@@ -144,6 +115,7 @@
+@@ -144,6 +116,7 @@
     protected int field_175152_f;
     protected final float field_71102_ce = 0.02F;
     private int field_82249_h;
@@ -143,7 +144,7 @@
     private final GameProfile field_146106_i;
     @OnlyIn(Dist.CLIENT)
     private boolean field_175153_bG;
-@@ -151,7 +123,21 @@
+@@ -151,7 +124,23 @@
     private final CooldownTracker field_184832_bU = this.func_184815_l();
     @Nullable
     public FishingBobberEntity field_71104_cf;
@@ -156,6 +157,8 @@
 +   public String spawnWorld = "";
 +   public int oldLevel = -1;
 +
++
++
 +   @Override
 +   public CraftHumanEntity getBukkitEntity() {
 +      return (CraftHumanEntity) super.getBukkitEntity();
@@ -165,7 +168,7 @@
     public PlayerEntity(World p_i45324_1_, GameProfile p_i45324_2_) {
        super(EntityType.field_200729_aH, p_i45324_1_);
        this.func_184221_a(func_146094_a(p_i45324_2_));
-@@ -182,6 +168,7 @@
+@@ -182,6 +171,7 @@
        this.func_110148_a(SharedMonsterAttributes.field_111263_d).func_111128_a((double)0.1F);
        this.func_110140_aT().func_111150_b(SharedMonsterAttributes.field_188790_f);
        this.func_110140_aT().func_111150_b(SharedMonsterAttributes.field_188792_h);
@@ -173,7 +176,7 @@
     }
  
     protected void func_70088_a() {
-@@ -195,6 +182,7 @@
+@@ -195,6 +185,7 @@
     }
  
     public void func_70071_h_() {
@@ -181,7 +184,7 @@
        this.field_70145_X = this.func_175149_v();
        if (this.func_175149_v()) {
           this.field_70122_E = false;
-@@ -210,7 +198,7 @@
+@@ -210,7 +201,7 @@
              this.field_71076_b = 100;
           }
  
@@ -190,7 +193,7 @@
              this.func_225652_a_(false, true);
           }
        } else if (this.field_71076_b > 0) {
-@@ -268,6 +256,7 @@
+@@ -268,6 +259,7 @@
        this.func_203041_m();
        this.field_184832_bU.func_185144_a();
        this.func_213832_dB();
@@ -198,7 +201,7 @@
     }
  
     public boolean func_226563_dT_() {
-@@ -290,7 +279,7 @@
+@@ -290,7 +282,7 @@
     private void func_203041_m() {
        ItemStack itemstack = this.func_184582_a(EquipmentSlotType.HEAD);
        if (itemstack.func_77973_b() == Items.field_203179_ao && !this.func_208600_a(FluidTags.field_206959_a)) {
@@ -207,7 +210,7 @@
        }
  
     }
-@@ -405,7 +394,7 @@
+@@ -405,7 +397,7 @@
        return SoundCategory.PLAYERS;
     }
  
@@ -216,7 +219,7 @@
        return 20;
     }
  
-@@ -454,10 +443,10 @@
+@@ -454,10 +446,10 @@
           this.field_71107_bF = this.field_71109_bG;
           this.field_71109_bG = 0.0F;
           this.func_71015_k(this.func_226277_ct_() - d0, this.func_226278_cu_() - d1, this.func_226281_cx_() - d2);
@@ -229,7 +232,7 @@
           }
  
        }
-@@ -484,7 +473,8 @@
+@@ -484,7 +476,8 @@
  
        if (this.field_70170_p.func_175659_aa() == Difficulty.PEACEFUL && this.field_70170_p.func_82736_K().func_223586_b(GameRules.field_223606_i)) {
           if (this.func_110143_aJ() < this.func_110138_aP() && this.field_70173_aa % 20 == 0) {
@@ -239,7 +242,7 @@
           }
  
           if (this.field_71100_bB.func_75121_c() && this.field_70173_aa % 10 == 0) {
-@@ -570,6 +560,7 @@
+@@ -570,6 +563,7 @@
     }
  
     public void func_70645_a(DamageSource p_70645_1_) {
@@ -247,7 +250,7 @@
        super.func_70645_a(p_70645_1_);
        this.func_226264_Z_();
        if (!this.func_175149_v()) {
-@@ -623,12 +614,14 @@
+@@ -623,12 +617,14 @@
     }
  
     public boolean func_225609_n_(boolean p_225609_1_) {
@@ -264,7 +267,7 @@
     }
  
     @Nullable
-@@ -658,11 +651,38 @@
+@@ -658,11 +654,38 @@
              itementity.func_213293_j((double)(-f3 * f2 * 0.3F) + Math.cos((double)f5) * (double)f6, (double)(-f8 * 0.3F + 0.1F + (this.field_70146_Z.nextFloat() - this.field_70146_Z.nextFloat()) * 0.1F), (double)(f4 * f2 * 0.3F) + Math.sin((double)f5) * (double)f6);
           }
  
@@ -303,7 +306,7 @@
        float f = this.field_71071_by.func_184438_a(p_184813_1_);
        if (f > 1.0F) {
           int i = EnchantmentHelper.func_185293_e(this);
-@@ -704,11 +724,12 @@
+@@ -704,11 +727,12 @@
           f /= 5.0F;
        }
  
@@ -317,7 +320,7 @@
     }
  
     public void func_70037_a(CompoundNBT p_70037_1_) {
-@@ -727,11 +748,30 @@
+@@ -727,11 +751,30 @@
        }
  
        this.func_85040_s(p_70037_1_.func_74762_e("Score"));
@@ -348,7 +351,7 @@
        this.field_71100_bB.func_75112_a(p_70037_1_);
        this.field_71075_bZ.func_75095_b(p_70037_1_);
        if (p_70037_1_.func_150297_b("EnderItems", 9)) {
-@@ -745,6 +785,7 @@
+@@ -745,6 +788,7 @@
        if (p_70037_1_.func_150297_b("ShoulderEntityRight", 10)) {
           this.func_192031_i(p_70037_1_.func_74775_l("ShoulderEntityRight"));
        }
@@ -356,7 +359,7 @@
  
     }
  
-@@ -777,6 +818,23 @@
+@@ -777,6 +821,23 @@
           p_213281_1_.func_218657_a("ShoulderEntityRight", this.func_192025_dl());
        }
  
@@ -380,7 +383,7 @@
     }
  
     public boolean func_180431_b(DamageSource p_180431_1_) {
-@@ -794,16 +852,18 @@
+@@ -794,16 +855,18 @@
     }
  
     public boolean func_70097_a(DamageSource p_70097_1_, float p_70097_2_) {
@@ -400,7 +403,7 @@
              if (p_70097_1_.func_76350_n()) {
                 if (this.field_70170_p.func_175659_aa() == Difficulty.PEACEFUL) {
                    p_70097_2_ = 0.0F;
-@@ -818,27 +878,49 @@
+@@ -818,27 +881,49 @@
                 }
              }
  
@@ -457,7 +460,7 @@
     }
  
     protected void func_70675_k(float p_70675_1_) {
-@@ -846,11 +928,12 @@
+@@ -846,11 +931,12 @@
     }
  
     protected void func_184590_k(float p_184590_1_) {
@@ -471,7 +474,7 @@
           });
           if (this.field_184627_bm.func_190926_b()) {
              if (hand == Hand.MAIN_HAND) {
-@@ -866,12 +949,19 @@
+@@ -866,12 +952,19 @@
  
     }
  
@@ -491,7 +494,7 @@
           float f = p_70665_2_ - f2;
           if (f > 0.0F && f < 3.4028235E37F) {
              this.func_195067_a(Stats.field_212738_J, Math.round(f * 10.0F));
-@@ -890,6 +980,13 @@
+@@ -890,6 +983,13 @@
        }
     }
  
@@ -505,7 +508,7 @@
     public void func_175141_a(SignTileEntity p_175141_1_) {
     }
  
-@@ -926,6 +1023,8 @@
+@@ -926,6 +1026,8 @@
  
           return ActionResultType.PASS;
        } else {
@@ -514,7 +517,7 @@
           ItemStack itemstack = this.func_184586_b(p_190775_2_);
           ItemStack itemstack1 = itemstack.func_77946_l();
           if (p_190775_1_.func_184230_a(this, p_190775_2_)) {
-@@ -933,6 +1032,9 @@
+@@ -933,6 +1035,9 @@
                 itemstack.func_190920_e(itemstack1.func_190916_E());
              }
  
@@ -524,7 +527,7 @@
              return ActionResultType.SUCCESS;
           } else {
              if (!itemstack.func_190926_b() && p_190775_1_ instanceof LivingEntity) {
-@@ -942,6 +1044,7 @@
+@@ -942,6 +1047,7 @@
  
                 if (itemstack.func_111282_a(this, (LivingEntity)p_190775_1_, p_190775_2_)) {
                    if (itemstack.func_190926_b() && !this.field_71075_bZ.field_75098_d) {
@@ -532,7 +535,7 @@
                       this.func_184611_a(p_190775_2_, ItemStack.field_190927_a);
                    }
  
-@@ -1018,6 +1121,7 @@
+@@ -1018,6 +1124,7 @@
     }
  
     public void func_71059_n(Entity p_71059_1_) {
@@ -540,7 +543,7 @@
        if (p_71059_1_.func_70075_an()) {
           if (!p_71059_1_.func_85031_j(this)) {
              float f = (float)this.func_110148_a(SharedMonsterAttributes.field_111264_e).func_111126_e();
-@@ -1045,8 +1149,10 @@
+@@ -1045,8 +1152,10 @@
  
                 boolean flag2 = flag && this.field_70143_R > 0.0F && !this.field_70122_E && !this.func_70617_f_() && !this.func_70090_H() && !this.func_70644_a(Effects.field_76440_q) && !this.func_184218_aH() && p_71059_1_ instanceof LivingEntity;
                 flag2 = flag2 && !this.func_70051_ag();
@@ -552,7 +555,7 @@
                 }
  
                 f = f + f1;
-@@ -1065,8 +1171,14 @@
+@@ -1065,8 +1174,14 @@
                 if (p_71059_1_ instanceof LivingEntity) {
                    f4 = ((LivingEntity)p_71059_1_).func_110143_aJ();
                    if (j > 0 && !p_71059_1_.func_70027_ad()) {
@@ -569,7 +572,7 @@
                    }
                 }
  
-@@ -1089,8 +1201,11 @@
+@@ -1089,8 +1204,11 @@
  
                       for(LivingEntity livingentity : this.field_70170_p.func_217357_a(LivingEntity.class, p_71059_1_.func_174813_aQ().func_72314_b(1.0D, 0.25D, 1.0D))) {
                          if (livingentity != this && livingentity != p_71059_1_ && !this.func_184191_r(livingentity) && (!(livingentity instanceof ArmorStandEntity) || !((ArmorStandEntity)livingentity).func_181026_s()) && this.func_70068_e(livingentity) < 9.0D) {
@@ -583,7 +586,7 @@
                          }
                       }
  
-@@ -1099,9 +1214,23 @@
+@@ -1099,9 +1217,23 @@
                    }
  
                    if (p_71059_1_ instanceof ServerPlayerEntity && p_71059_1_.field_70133_I) {
@@ -610,7 +613,7 @@
                    }
  
                    if (flag2) {
-@@ -1134,8 +1263,10 @@
+@@ -1134,8 +1266,10 @@
                    }
  
                    if (!this.field_70170_p.field_72995_K && !itemstack1.func_190926_b() && entity instanceof LivingEntity) {
@@ -621,7 +624,7 @@
                          this.func_184611_a(Hand.MAIN_HAND, ItemStack.field_190927_a);
                       }
                    }
-@@ -1144,7 +1275,13 @@
+@@ -1144,7 +1278,13 @@
                       float f5 = f4 - ((LivingEntity)p_71059_1_).func_110143_aJ();
                       this.func_195067_a(Stats.field_188111_y, Math.round(f5 * 10.0F));
                       if (j > 0) {
@@ -636,7 +639,7 @@
                       }
  
                       if (this.field_70170_p instanceof ServerWorld && f5 > 2.0F) {
-@@ -1153,12 +1290,17 @@
+@@ -1153,12 +1293,17 @@
                       }
                    }
  
@@ -655,7 +658,7 @@
                 }
              }
  
-@@ -1177,7 +1319,7 @@
+@@ -1177,7 +1322,7 @@
        }
  
        if (this.field_70146_Z.nextFloat() < f) {
@@ -664,7 +667,7 @@
           this.func_184602_cy();
           this.field_70170_p.func_72960_a(this, (byte)30);
        }
-@@ -1203,8 +1345,9 @@
+@@ -1203,8 +1348,9 @@
     public void func_71004_bE() {
     }
  
@@ -676,7 +679,7 @@
        this.field_71069_bz.func_75134_a(this);
        if (this.field_71070_bA != null) {
           this.field_71070_bA.func_75134_a(this);
-@@ -1221,7 +1364,16 @@
+@@ -1221,7 +1367,16 @@
     }
  
     public Either<PlayerEntity.SleepResult, Unit> func_213819_a(BlockPos p_213819_1_) {
@@ -694,7 +697,7 @@
        if (!this.field_70170_p.field_72995_K) {
           if (this.func_70608_bn() || !this.func_70089_S()) {
              return Either.left(PlayerEntity.SleepResult.OTHER_PROBLEM);
-@@ -1231,23 +1383,23 @@
+@@ -1231,23 +1386,23 @@
              return Either.left(PlayerEntity.SleepResult.NOT_POSSIBLE_HERE);
           }
  
@@ -723,7 +726,7 @@
              List<MonsterEntity> list = this.field_70170_p.func_175647_a(MonsterEntity.class, new AxisAlignedBB(vec3d.func_82615_a() - 8.0D, vec3d.func_82617_b() - 5.0D, vec3d.func_82616_c() - 8.0D, vec3d.func_82615_a() + 8.0D, vec3d.func_82617_b() + 5.0D, vec3d.func_82616_c() + 8.0D), (p_213820_1_) -> {
                 return p_213820_1_.func_191990_c(this);
              });
-@@ -1257,7 +1409,7 @@
+@@ -1257,7 +1412,7 @@
           }
        }
  
@@ -732,7 +735,7 @@
        this.field_71076_b = 0;
        if (this.field_70170_p instanceof ServerWorld) {
           ((ServerWorld)this.field_70170_p).func_72854_c();
-@@ -1273,6 +1425,7 @@
+@@ -1273,6 +1428,7 @@
     }
  
     private boolean func_190774_a(BlockPos p_190774_1_, Direction p_190774_2_) {
@@ -740,7 +743,7 @@
        return this.func_230126_g_(p_190774_1_) || this.func_230126_g_(p_190774_1_.func_177972_a(p_190774_2_.func_176734_d()));
     }
  
-@@ -1287,11 +1440,27 @@
+@@ -1287,11 +1443,27 @@
     }
  
     public void func_225652_a_(boolean p_225652_1_, boolean p_225652_2_) {
@@ -768,7 +771,7 @@
        this.field_71076_b = p_225652_1_ ? 0 : 100;
     }
  
-@@ -1300,17 +1469,17 @@
+@@ -1300,17 +1472,17 @@
     }
  
     public static Optional<Vec3d> func_213822_a(IWorldReader p_213822_0_, BlockPos p_213822_1_, boolean p_213822_2_) {
@@ -790,7 +793,7 @@
        }
     }
  
-@@ -1325,15 +1494,62 @@
+@@ -1325,15 +1497,62 @@
     public void func_146105_b(ITextComponent p_146105_1_, boolean p_146105_2_) {
     }
  
@@ -855,7 +858,7 @@
        if (p_226560_1_ != null) {
           if (p_226560_3_ && !p_226560_1_.equals(this.field_71077_c)) {
              this.func_145747_a(new TranslationTextComponent("block.minecraft.bed.set_spawn"));
-@@ -1341,9 +1557,11 @@
+@@ -1341,9 +1560,11 @@
  
           this.field_71077_c = p_226560_1_;
           this.field_82248_d = p_226560_2_;
@@ -867,7 +870,7 @@
        }
  
     }
-@@ -1381,9 +1599,9 @@
+@@ -1381,9 +1602,9 @@
        super.func_70664_aZ();
        this.func_195066_a(Stats.field_75953_u);
        if (this.func_70051_ag()) {
@@ -879,7 +882,7 @@
        }
  
     }
-@@ -1410,7 +1628,11 @@
+@@ -1410,7 +1631,11 @@
           this.func_213293_j(vec3d.field_72450_a, d5 * 0.6D, vec3d.field_72449_c);
           this.field_70747_aH = f;
           this.field_70143_R = 0.0F;
@@ -892,7 +895,7 @@
        } else {
           super.func_213352_e(p_213352_1_);
        }
-@@ -1441,13 +1663,13 @@
+@@ -1441,13 +1666,13 @@
              int i = Math.round(MathHelper.func_76133_a(p_71000_1_ * p_71000_1_ + p_71000_3_ * p_71000_3_ + p_71000_5_ * p_71000_5_) * 100.0F);
              if (i > 0) {
                 this.func_195067_a(Stats.field_75946_m, i);
@@ -908,7 +911,7 @@
              }
           } else if (this.func_70090_H()) {
              int k = Math.round(MathHelper.func_76133_a(p_71000_1_ * p_71000_1_ + p_71000_5_ * p_71000_5_) * 100.0F);
-@@ -1464,13 +1686,13 @@
+@@ -1464,13 +1689,13 @@
              if (l > 0) {
                 if (this.func_70051_ag()) {
                    this.func_195067_a(Stats.field_188102_l, l);
@@ -925,7 +928,7 @@
                 }
              }
           } else if (this.func_184613_cA()) {
-@@ -1506,6 +1728,7 @@
+@@ -1506,6 +1731,7 @@
  
     public boolean func_225503_b_(float p_225503_1_, float p_225503_2_) {
        if (this.field_71075_bZ.field_75101_c) {
@@ -933,7 +936,7 @@
           return false;
        } else {
           if (p_225503_1_ >= 2.0F) {
-@@ -1529,12 +1752,24 @@
+@@ -1529,12 +1755,24 @@
     }
  
     public void func_226567_ej_() {
@@ -961,7 +964,7 @@
     }
  
     protected void func_71061_d_() {
-@@ -1560,6 +1795,10 @@
+@@ -1560,6 +1798,10 @@
     }
  
     public void func_195068_e(int p_195068_1_) {
@@ -972,7 +975,7 @@
        this.func_85039_t(p_195068_1_);
        this.field_71106_cc += (float)p_195068_1_ / (float)this.func_71050_bK();
        this.field_71067_cb = MathHelper.func_76125_a(this.field_71067_cb + p_195068_1_, 0, Integer.MAX_VALUE);
-@@ -1588,7 +1827,7 @@
+@@ -1588,7 +1830,7 @@
     }
  
     public void func_192024_a(ItemStack p_192024_1_, int p_192024_2_) {
@@ -981,7 +984,7 @@
        if (this.field_71068_ca < 0) {
           this.field_71068_ca = 0;
           this.field_71106_cc = 0.0F;
-@@ -1599,6 +1838,10 @@
+@@ -1599,6 +1841,10 @@
     }
  
     public void func_82242_a(int p_82242_1_) {
@@ -992,7 +995,7 @@
        this.field_71068_ca += p_82242_1_;
        if (this.field_71068_ca < 0) {
           this.field_71068_ca = 0;
-@@ -1750,26 +1993,34 @@
+@@ -1750,26 +1996,34 @@
  
     protected void func_192030_dh() {
        if (this.field_223730_e + 20L < this.field_70170_p.func_82737_E()) {
@@ -1038,7 +1041,7 @@
     }
  
     public abstract boolean func_175149_v();
-@@ -1789,7 +2040,10 @@
+@@ -1789,7 +2043,10 @@
     }
  
     public ITextComponent func_145748_c_() {
@@ -1050,7 +1053,7 @@
        return this.func_208016_c(itextcomponent);
     }
  
-@@ -1922,7 +2176,7 @@
+@@ -1922,7 +2179,7 @@
        return this.field_70180_af.func_187225_a(field_192032_bt);
     }
  
@@ -1059,7 +1062,7 @@
        this.field_70180_af.func_187227_b(field_192032_bt, p_192029_1_);
     }
  
-@@ -1930,7 +2184,7 @@
+@@ -1930,7 +2187,7 @@
        return this.field_70180_af.func_187225_a(field_192033_bu);
     }
  
@@ -1068,7 +1071,7 @@
        this.field_70180_af.func_187227_b(field_192033_bu, p_192031_1_);
     }
  
-@@ -2029,4 +2283,45 @@
+@@ -2029,4 +2286,45 @@
           return this.field_221260_g;
        }
     }
