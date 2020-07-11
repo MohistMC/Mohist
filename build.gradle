@@ -8,18 +8,14 @@ buildscript {
             name 'maven_central'
             url 'https://repo.maven.apache.org/maven2/'
         }
-        maven {
-            name 'open_jdk'
-            url ' https://repo1.maven.org/maven2/'
-        }
     }
+
     dependencies {
         classpath 'net.minecraftforge.gradle:ForgeGradle:3.0.179'
         classpath 'org.ow2.asm:asm:7.2'
         classpath 'org.ow2.asm:asm-tree:7.2'
     }
 }
-
 
 import groovy.json.JsonBuilder
 import groovy.json.JsonSlurper
@@ -340,8 +336,6 @@ project(':forge') {
         fmllauncherImplementation.extendsFrom(installer)
     }
     dependencies {
-        implementation'org.openjdk.jmh:jmh-core:1.9.3'
-        implementation'org.powermock:powermock-reflect:2.0.7'
 
         installer 'org.ow2.asm:asm:7.2'
         installer 'org.ow2.asm:asm-commons:7.2'
@@ -361,6 +355,7 @@ project(':forge') {
         installer 'org.apache.logging.log4j:log4j-core:2.11.2'
         installer 'net.minecrell:terminalconsoleappender:1.2.+'
         installer 'net.sf.jopt-simple:jopt-simple:5.0.4'
+        installer 'net.minecraftforge:eventbus:2.2.+:service'
 		
 		compile 'org.projectlombok:lombok:1.18.12'
 
