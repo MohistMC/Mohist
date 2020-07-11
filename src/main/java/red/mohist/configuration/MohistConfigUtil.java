@@ -16,33 +16,37 @@ import java.nio.file.StandardCopyOption;
 
 public class MohistConfigUtil {
 
-    public static String getString(String s, String key, String defaultreturn) {
-        if(s.contains(key)) {
-            String string = s.substring(s.indexOf(key));
-            String s1 = (string.substring(string.indexOf(": ") + 2));
-            String[] ss = s1.split("\n");
-            return ss[0].trim().replace("'", "").replace("\"", "");
-        }
-        return defaultreturn;
+  public static String getString(String s, String key, String defaultreturn) {
+    if(s.contains(key)) {
+      String string = s.substring(s.indexOf(key));
+      String s1 = (string.substring(string.indexOf(": ") + 2));
+      String[] ss = s1.split("\n");
+      return ss[0].trim().replace("'", "").replace("\"", "");
     }
+    return defaultreturn;
+  }
 
-    public static String getString(File f, String key, String defaultreturn) {
-        try {
-            return getString(IOUtil.readContent(new InputStreamReader(new FileInputStream(f), StandardCharsets.UTF_8)), key, defaultreturn);
-        } catch (IOException e) {
-            return defaultreturn;
-        }
+  public static String getString(File f, String key, String defaultreturn) {
+    try {
+      return getString(IOUtil.readContent(new InputStreamReader(new FileInputStream(f), StandardCharsets.UTF_8)), key, defaultreturn);
+    } catch (IOException e) {
+      return defaultreturn;
     }
+  }
 
-    public static boolean getBoolean(File f, String key) {
-        return !getString(f, key, "true").equals("false");
-    }
+  public static boolean getBoolean(File f, String key, String b) {
+    return !getString(f, key, b).equals("false");
+  }
 
-    public static int getInt(File f, String key, String defaultreturn) {
-        String s = getString(f, key, defaultreturn);
-        if(NumberUtils.isInteger(s)) return Integer.parseInt(s);
-        return Integer.parseInt(defaultreturn);
-    }
+  public static boolean getBoolean(File f, String key) {
+    return !getString(f, key, "true").equals("false");
+  }
+
+  public static int getInt(File f, String key, String defaultreturn) {
+    String s = getString(f, key, defaultreturn);
+    if(NumberUtils.isInteger(s)) return Integer.parseInt(s);
+    return Integer.parseInt(defaultreturn);
+  }
 
   public static void copyMohistConfig() {
     try {
@@ -54,10 +58,16 @@ public class MohistConfigUtil {
     } catch (Exception e) {
       System.out.println("File copy exception!");
     }
-      new MohistConfig().init();
+    new MohistConfig().init();
   }
 
-  public static boolean bMohist(String key) { return MohistConfigUtil.getBoolean(new File("mohist-config", "mohist.yml"), key+":"); }
+  public static boolean bMohist(String key) {
+    return MohistConfigUtil.getBoolean(new File("mohist-config", "mohist.yml"), key);
+  }
+
+  public static boolean bMohist(String key, String defaultReturn) {
+    return MohistConfigUtil.getBoolean(new File("mohist-config", "mohist.yml"), key, defaultReturn);
+  }
 
   public static void setValueMohist(String oldValue, String value) {
     File mohistyml = new File("mohist-config", "mohist.yml");
