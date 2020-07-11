@@ -35,8 +35,8 @@ public class ModCandidate {
     private final boolean classpath;
     private final boolean isMinecraft;
     private final Set<String> foundClasses = Sets.newHashSet();
-    private List<ModContainer> mods;
     private final List<String> packages = Lists.newArrayList();
+    private List<ModContainer> mods;
     private ASMDataTable table;
 
     public ModCandidate(File classPathRoot, File modContainer, ContainerType sourceType) {

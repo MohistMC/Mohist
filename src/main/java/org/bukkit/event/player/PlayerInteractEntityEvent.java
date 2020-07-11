@@ -11,9 +11,9 @@ import org.bukkit.inventory.EquipmentSlot;
  */
 public class PlayerInteractEntityEvent extends PlayerEvent implements Cancellable {
     private static final HandlerList handlers = new HandlerList();
+    private final EquipmentSlot hand;
     protected Entity clickedEntity;
     boolean cancelled = false;
-    private final EquipmentSlot hand;
 
     public PlayerInteractEntityEvent(final Player who, final Entity clickedEntity) {
         this(who, clickedEntity, EquipmentSlot.HAND);

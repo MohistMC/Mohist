@@ -36,11 +36,11 @@ import java.util.LinkedList;
 import java.util.Set;
 
 public class ASMModParser {
+    private final LinkedList<ModAnnotation> annotations = Lists.newLinkedList();
+    private final Set<String> interfaces = Sets.newHashSet();
     private Type asmType;
     private int classVersion;
     private Type asmSuperType;
-    private final LinkedList<ModAnnotation> annotations = Lists.newLinkedList();
-    private final Set<String> interfaces = Sets.newHashSet();
 
     public ASMModParser(InputStream stream) throws IOException {
         try {

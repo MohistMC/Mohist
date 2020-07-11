@@ -129,6 +129,7 @@ public class DecorateBiomeEvent extends Event {
         private final EventType type;
         @Nullable
         private final BlockPos placementPos;
+
         public Decorate(World world, Random rand, ChunkPos chunkPos, @Nullable BlockPos placementPos, EventType type) {
             super(world, rand, chunkPos);
             this.type = type;

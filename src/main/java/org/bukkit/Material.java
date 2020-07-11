@@ -483,10 +483,10 @@ public enum Material {
     RECORD_12(2267, 1),
     ;
 
-    public static Map<String, Material> BLOCK_BY_NAME = Maps.newHashMap();
-    private static Material[] byId = new Material[32676];
     private static final Material[] blockById = new Material[32676];
     private static final Map<String, Material> BY_NAME = Maps.newHashMap(); // Cauldron - remove final
+    public static Map<String, Material> BLOCK_BY_NAME = Maps.newHashMap();
+    private static Material[] byId = new Material[32676];
 
     static {
         for (Material material : values()) {

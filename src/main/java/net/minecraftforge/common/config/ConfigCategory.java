@@ -34,12 +34,12 @@ import static net.minecraftforge.common.config.Configuration.*;
 public class ConfigCategory implements Map<String, Property> {
     public final ConfigCategory parent;
     private final String name;
-    private String comment;
-    private String languagekey;
     private final ArrayList<ConfigCategory> children = new ArrayList<ConfigCategory>();
     private final Map<String, Property> properties = new TreeMap<String, Property>();
     @SuppressWarnings("unused")
     private final int propNumber = 0;
+    private String comment;
+    private String languagekey;
     private boolean changed = false;
     private boolean requiresWorldRestart = false;
     private boolean showInGui = true;

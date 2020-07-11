@@ -228,7 +228,9 @@ public class ForgeBlockStateV1 extends Marker {
 
     public static class Variant {
         public static final Object SET_VALUE = new Object();
-
+        private final Map<String, String> textures = Maps.newHashMap();
+        private final Map<String, List<ForgeBlockStateV1.Variant>> submodels = Maps.newHashMap();
+        private final Map<String, String> customData = Maps.newHashMap();
         @Nullable
         private ResourceLocation model = null;
         private boolean modelSet = false;
@@ -237,10 +239,7 @@ public class ForgeBlockStateV1 extends Marker {
         private Optional<Boolean> smooth = Optional.empty();
         private Optional<Boolean> gui3d = Optional.empty();
         private Optional<Integer> weight = Optional.empty();
-        private final Map<String, String> textures = Maps.newHashMap();
-        private final Map<String, List<ForgeBlockStateV1.Variant>> submodels = Maps.newHashMap();
         private Map<String, Object> simpleSubmodels = Maps.newHashMap(); // Makeshift Set to allow us to "remove" (replace value with null) singleParts when needed.
-        private final Map<String, String> customData = Maps.newHashMap();
 
         private Variant() {
         }

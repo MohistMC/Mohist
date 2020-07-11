@@ -49,9 +49,9 @@ public class VillagerRegistry {
     @ObjectHolder("minecraft:farmer")
     public static final VillagerProfession FARMER = null;
     private static final VillagerRegistry INSTANCE = new VillagerRegistry();
-    RegistryNamespaced<ResourceLocation, VillagerProfession> REGISTRY = GameData.getWrapper(VillagerProfession.class);
     private final Map<Class<?>, IVillageCreationHandler> villageCreationHandlers = Maps.newHashMap();
     private final boolean hasInit = false;
+    RegistryNamespaced<ResourceLocation, VillagerProfession> REGISTRY = GameData.getWrapper(VillagerProfession.class);
 
     private VillagerRegistry() {
         init();
@@ -269,8 +269,8 @@ public class VillagerRegistry {
     public static class VillagerCareer {
         private final VillagerProfession profession;
         private final String name;
-        private int id;
         private final List<List<ITradeList>> trades = Lists.newArrayList();
+        private int id;
 
         public VillagerCareer(VillagerProfession parent, String name) {
             this.profession = parent;

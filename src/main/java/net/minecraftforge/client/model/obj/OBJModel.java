@@ -188,16 +188,15 @@ public class OBJModel implements IModel {
     public static class Parser {
         private static final Pattern WHITE_SPACE = Pattern.compile("\\s+");
         private static final Set<String> unknownObjectCommands = new HashSet<String>();
-        public MaterialLibrary materialLibrary = new MaterialLibrary();
         private final IResourceManager manager;
         private final InputStreamReader objStream;
         private final BufferedReader objReader;
         private final ResourceLocation objFrom;
-
         private final List<String> groupList = Lists.newArrayList();
         private final List<Vertex> vertices = Lists.newArrayList();
         private final List<Normal> normals = Lists.newArrayList();
         private final List<TextureCoordinate> texCoords = Lists.newArrayList();
+        public MaterialLibrary materialLibrary = new MaterialLibrary();
 
         public Parser(IResource from, IResourceManager manager) throws IOException {
             this.manager = manager;
@@ -1079,7 +1078,6 @@ public class OBJModel implements IModel {
         private final OBJModel model;
         private final VertexFormat format;
         private final IModelState state;
-        private ImmutableList<BakedQuad> quads;
         private final ImmutableMap<String, TextureAtlasSprite> textures;
         private final LoadingCache<IModelState, OBJBakedModel> cache = CacheBuilder.newBuilder().maximumSize(20).build(new CacheLoader<IModelState, OBJBakedModel>() {
             @Override
@@ -1087,6 +1085,7 @@ public class OBJModel implements IModel {
                 return new OBJBakedModel(model, state, format, textures);
             }
         });
+        private ImmutableList<BakedQuad> quads;
         private TextureAtlasSprite sprite = ModelLoader.White.INSTANCE;
 
         public OBJBakedModel(OBJModel model, IModelState state, VertexFormat format, ImmutableMap<String, TextureAtlasSprite> textures) {

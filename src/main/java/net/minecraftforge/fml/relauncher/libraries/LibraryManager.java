@@ -48,8 +48,8 @@ public class LibraryManager {
     private static final Attributes.Name MAVEN_ARTIFACT = new Attributes.Name("Maven-Artifact");
     private static final Attributes.Name TIMESTAMP = new Attributes.Name("Timestamp");
     private static final Attributes.Name MD5 = new Attributes.Name("MD5");
-    private static Repository libraries_dir = null;
     private static final Set<File> processed = new HashSet<File>();
+    private static Repository libraries_dir = null;
 
     public static void setup(File minecraftHome) {
         File libDir = findLibraryFolder(minecraftHome);

@@ -50,12 +50,12 @@ public class OreDictionary {
      */
     public static final int WILDCARD_VALUE = Short.MAX_VALUE;
     private static final boolean DEBUG = false;
-    private static boolean hasInit = false;
     private static final List<String> idToName = new ArrayList<String>();
     private static final Map<String, Integer> nameToId = new HashMap<String, Integer>(128);
     private static final List<NonNullList<ItemStack>> idToStack = Lists.newArrayList();
     private static final List<NonNullList<ItemStack>> idToStackUn = Lists.newArrayList();
     private static final Map<Integer, List<Integer>> stackToId = Maps.newHashMapWithExpectedSize((int) (128 * 0.75));
+    private static boolean hasInit = false;
 
     static {
         initVanillaEntries();

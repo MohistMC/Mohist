@@ -79,9 +79,9 @@ public abstract class FieldWrapper implements IFieldWrapper {
 
     private static class MapWrapper extends FieldWrapper {
         private final String baseName;
+        private final Type mType;
         ITypeAdapter adapter;
         private Map<String, Object> theMap = null;
-        private final Type mType;
 
         @SuppressWarnings("unchecked")
         private MapWrapper(String category, Field field, Object instance) {

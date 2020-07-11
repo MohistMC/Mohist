@@ -8,6 +8,7 @@ public abstract class ArraySetting<T> extends Setting<String> {
     protected String value;
     protected HashSet<T> value_set;
     protected ArrayList<T> value_array;
+
     public ArraySetting(String path, String def, String description, ConfigBase config) {
         super(path, def, description);
         this.value = def;

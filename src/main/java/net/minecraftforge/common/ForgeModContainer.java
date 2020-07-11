@@ -107,6 +107,7 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
     private static ForgeModContainer INSTANCE;
     public UniversalBucket universalBucket;
     private URL updateJSONUrl = null;
+
     public ForgeModContainer() {
         super(new ModMetadata());
         ModMetadata meta = getMetadata();

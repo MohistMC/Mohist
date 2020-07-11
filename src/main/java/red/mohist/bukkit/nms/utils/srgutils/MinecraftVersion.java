@@ -30,6 +30,7 @@ public class MinecraftVersion implements Comparable<MinecraftVersion> {
     private final int year;
     private final int pre;
     private final String revision;
+
     private MinecraftVersion(String version) {
         this.full = version;
         String lower = version.toLowerCase(Locale.ENGLISH);

@@ -66,6 +66,8 @@ import static net.minecraft.util.text.TextFormatting.WHITE;
  */
 public class GuiModList extends GuiScreen {
     private final GuiScreen mainMenu;
+    private final int buttonMargin = 1;
+    private final int numButtons = SortType.values().length;
     private GuiSlotModList modList;
     private GuiScrollingList modInfo;
     private int selected = -1;
@@ -74,12 +76,11 @@ public class GuiModList extends GuiScreen {
     private ArrayList<ModContainer> mods;
     private GuiButton configModButton;
     private GuiButton disableModButton;
-    private final int buttonMargin = 1;
-    private final int numButtons = SortType.values().length;
     private String lastFilterText = "";
     private GuiTextField search;
     private boolean sorted = false;
     private SortType sortType = SortType.NORMAL;
+
     /**
      * @param mainMenu
      */

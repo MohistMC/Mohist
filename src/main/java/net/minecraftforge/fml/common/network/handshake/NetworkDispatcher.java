@@ -76,6 +76,7 @@ public class NetworkDispatcher extends SimpleChannelInboundHandler<Packet<?>> im
     private Map<String, String> modList = Collections.emptyMap();
     private int overrideLoginDim;
     private MultiPartCustomPayload multipart = null;
+
     public NetworkDispatcher(NetworkManager manager) {
         super(false);
         this.manager = manager;
@@ -89,6 +90,7 @@ public class NetworkDispatcher extends SimpleChannelInboundHandler<Packet<?>> im
         if (DEBUG_HANDSHAKE)
             PacketLoggingHandler.register(manager);
     }
+
     public NetworkDispatcher(NetworkManager manager, PlayerList scm) {
         super(false);
         this.manager = manager;

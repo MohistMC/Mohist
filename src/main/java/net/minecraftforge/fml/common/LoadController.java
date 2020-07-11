@@ -46,14 +46,14 @@ import java.util.stream.Stream;
 public class LoadController {
     private final Loader loader;
     private final EventBus masterChannel;
-    private ImmutableMap<String, EventBus> eventChannels;
-    private LoaderState state;
     private final Multimap<String, ModState> modStates = MultimapBuilder.hashKeys().enumSetValues(ModState.class).build();
     private final List<ModContainer> activeModList = Lists.newArrayList();
-    private ModContainer activeContainer;
-    private BiMap<ModContainer, Object> modObjectList;
     private final ListMultimap<String, ModContainer> packageOwners;
     private final FMLSecurityManager accessibleManager = new FMLSecurityManager();
+    private ImmutableMap<String, EventBus> eventChannels;
+    private LoaderState state;
+    private ModContainer activeContainer;
+    private BiMap<ModContainer, Object> modObjectList;
 
     public LoadController(Loader loader) {
         this.loader = loader;

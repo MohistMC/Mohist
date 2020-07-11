@@ -60,6 +60,7 @@ import java.util.List;
 public class LoggerNamePatternSelector implements PatternSelector {
     private final PatternFormatter[] defaultFormatters;
     private final List<LoggerNameSelector> formatters = new ArrayList<>();
+
     /**
      * Constructs a new {@link LoggerNamePatternSelector}.
      *

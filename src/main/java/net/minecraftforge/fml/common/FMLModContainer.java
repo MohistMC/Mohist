@@ -59,29 +59,28 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 public class FMLModContainer implements ModContainer {
-    private Object modInstance;
     private final File source;
-    private ModMetadata modMetadata;
     private final String className;
     private final Map<String, Object> descriptor;
+    private final String modLanguage;
+    private final ListMultimap<Class<? extends FMLEvent>, Method> eventMethods;
+    private final ModCandidate candidate;
+    private Object modInstance;
+    private ModMetadata modMetadata;
     private boolean enabled = true;
     private String internalVersion;
     private boolean overridesMetadata;
     private EventBus eventBus;
     private LoadController controller;
     private DefaultArtifactVersion processedVersion;
-
     private String annotationDependencies;
     private VersionRange minecraftAccepted;
     private boolean fingerprintNotPresent;
     private Set<String> sourceFingerprints;
     private Certificate certificate;
-    private final String modLanguage;
     private ILanguageAdapter languageAdapter;
     private Disableable disableability;
-    private final ListMultimap<Class<? extends FMLEvent>, Method> eventMethods;
     private Map<String, String> customModProperties;
-    private final ModCandidate candidate;
     private URL updateJSONUrl;
     private int classVersion;
 

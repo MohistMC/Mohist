@@ -40,6 +40,7 @@ class ItemStackHolderRef {
     private final String itemName;
     private final int meta;
     private final String serializednbt;
+
     ItemStackHolderRef(Field field, String itemName, int meta, String serializednbt) {
         this.field = field;
         this.itemName = itemName;

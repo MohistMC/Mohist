@@ -116,6 +116,7 @@ public class OreGenEvent extends Event {
     public static class GenerateMinable extends OreGenEvent {
         private final EventType type;
         private final WorldGenerator generator;
+
         public GenerateMinable(World world, Random rand, WorldGenerator generator, BlockPos pos, EventType type) {
             super(world, rand, pos);
             this.generator = generator;

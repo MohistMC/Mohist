@@ -45,10 +45,10 @@ public class AsyncTabCompleteEvent extends Event implements Cancellable {
     private final String buffer;
     private final boolean isCommand;
     private final Location loc;
+    private final boolean fireSyncHandler = true;
     private List<String> completions;
     private boolean cancelled;
     private boolean handled = false;
-    private final boolean fireSyncHandler = true;
 
     public AsyncTabCompleteEvent(CommandSender sender, List<String> completions, String buffer, boolean isCommand, Location loc) {
         super(true);

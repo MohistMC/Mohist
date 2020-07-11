@@ -28,8 +28,8 @@ import net.minecraft.client.gui.GuiButton;
  * @author bspkrs
  */
 public class GuiCheckBox extends GuiButton {
-    private boolean isChecked;
     private final int boxWidth;
+    private boolean isChecked;
 
     public GuiCheckBox(int id, int xPos, int yPos, String displayString, boolean isChecked) {
         super(id, xPos, yPos, displayString);

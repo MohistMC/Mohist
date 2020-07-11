@@ -12,10 +12,10 @@ import org.bukkit.potion.PotionEffect;
  */
 public class BeaconEffectEvent extends BlockEvent implements Cancellable {
     private static final HandlerList handlers = new HandlerList();
-    private boolean cancelled;
-    private PotionEffect effect;
     private final Player player;
     private final boolean primary;
+    private boolean cancelled;
+    private PotionEffect effect;
 
     public BeaconEffectEvent(Block block, PotionEffect effect, Player player, boolean primary) {
         super(block);

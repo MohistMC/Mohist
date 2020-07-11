@@ -37,10 +37,10 @@ import java.util.Queue;
  */
 @SuppressWarnings("rawtypes")
 class ObjectHolderRef {
-    private Field field;
     private final ResourceLocation injectedObject;
-    private boolean isValid;
     private final ForgeRegistry<?> registry;
+    private Field field;
+    private boolean isValid;
 
     @SuppressWarnings("unchecked")
     ObjectHolderRef(Field field, ResourceLocation injectedObject, boolean extractFromExistingValues) {

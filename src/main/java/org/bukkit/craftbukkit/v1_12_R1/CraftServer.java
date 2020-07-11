@@ -147,6 +147,7 @@ public final class CraftServer implements Server {
     private final WorldMetadataStore worldMetadata = new WorldMetadataStore();
     private final BooleanWrapper online = new BooleanWrapper();
     private final List<CraftPlayer> playerView;
+    private final boolean unrestrictedAdvancements;
     public int chunkGCPeriod = -1;
     public int chunkGCLoadThresh = 0;
     public CraftScoreboardManager scoreboardManager;
@@ -205,7 +206,6 @@ public final class CraftServer implements Server {
     private boolean printSaveWarning;
     private CraftIconCache icon;
     private boolean overrideAllCommandBlockCommands = false;
-    private final boolean unrestrictedAdvancements;
 
     public CraftServer(MinecraftServer console, PlayerList playerList) {
         this.console = console;

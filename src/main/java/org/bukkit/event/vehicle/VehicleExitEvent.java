@@ -15,6 +15,7 @@ public class VehicleExitEvent extends VehicleEvent implements Cancellable {
     private final LivingEntity exited;
     public DismountReason reason = DismountReason.UNKNOWN;
     private boolean cancelled;
+
     public VehicleExitEvent(final Vehicle vehicle, final LivingEntity exited) {
         super(vehicle);
         this.exited = exited;

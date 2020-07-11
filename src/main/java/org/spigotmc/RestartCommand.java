@@ -7,7 +7,6 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 
 import java.io.File;
-import java.util.List;
 
 public class RestartCommand extends Command {
 

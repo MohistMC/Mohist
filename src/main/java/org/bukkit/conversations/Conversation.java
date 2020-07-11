@@ -34,6 +34,7 @@ import java.util.Map;
  */
 public class Conversation {
 
+    private final Prompt firstPrompt;
     protected Prompt currentPrompt;
     protected ConversationContext context;
     protected boolean modal;
@@ -41,7 +42,6 @@ public class Conversation {
     protected ConversationPrefix prefix;
     protected List<ConversationCanceller> cancellers;
     protected List<ConversationAbandonedListener> abandonedListeners;
-    private final Prompt firstPrompt;
     private boolean abandoned;
 
     /**

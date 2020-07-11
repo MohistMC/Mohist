@@ -63,6 +63,7 @@ public class ModSortingException extends EnhancedRuntimeException implements IDi
     public class SortingExceptionData<T> {
         private final T firstBadNode;
         private final Set<T> visitedNodes;
+
         public SortingExceptionData(T node, Set<T> visitedNodes) {
             this.firstBadNode = node;
             this.visitedNodes = visitedNodes;

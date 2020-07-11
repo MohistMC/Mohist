@@ -43,8 +43,8 @@ import java.util.Set;
 public class NetworkModHolder {
     private static int assignedIds = 1;
     private final int localId;
-    private int networkId;
     private final ModContainer container;
+    private int networkId;
     private Method checkHandler;
     private VersionRange acceptableRange;
     private NetworkChecker checker;

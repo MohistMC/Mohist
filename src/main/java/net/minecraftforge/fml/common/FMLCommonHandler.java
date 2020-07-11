@@ -92,18 +92,17 @@ public class FMLCommonHandler {
      * The singleton
      */
     private static final FMLCommonHandler INSTANCE = new FMLCommonHandler();
+    private final Set<SaveHandler> handlerSet = Collections.newSetFromMap(new MapMaker().weakKeys().makeMap());
+    private final EventBus eventBus = MinecraftForge.EVENT_BUS;
     /**
      * The delegate for side specific data and functions
      */
     private IFMLSidedHandler sidedDelegate;
-
     private boolean noForge;
     private List<String> brandings;
     private List<String> brandingsNoMC;
     private final List<ICrashCallable> crashCallables = Lists.newArrayList(Loader.instance().getCallableCrashInformation());
-    private final Set<SaveHandler> handlerSet = Collections.newSetFromMap(new MapMaker().weakKeys().makeMap());
     private WeakReference<SaveHandler> handlerToCheck;
-    private final EventBus eventBus = MinecraftForge.EVENT_BUS;
     private volatile CountDownLatch exitLatch = null;
 
     private FMLCommonHandler() {

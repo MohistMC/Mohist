@@ -24,9 +24,9 @@ import static red.mohist.network.download.UpdateUtils.restartServer;
 
 public class DownloadJava {
     public static File java = new File("CustomJAVA/");
+    private static final File javadl = new File(java.getAbsolutePath() + "/java.zip");
     public static File javabin = new File("CustomJAVA/bin/");
     public static ArrayList<String> launchArgs = new ArrayList<>();
-    private static final File javadl = new File(java.getAbsolutePath() + "/java.zip");
 
     public static void run(String[] args) throws Exception {
         launchArgs.addAll(Arrays.asList(args));

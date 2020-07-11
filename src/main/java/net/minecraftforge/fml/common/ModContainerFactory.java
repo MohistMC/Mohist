@@ -31,8 +31,8 @@ import java.lang.reflect.Constructor;
 import java.util.Map;
 
 public class ModContainerFactory {
-    public static Map<Type, Constructor<? extends ModContainer>> modTypes = Maps.newHashMap();
     private static final ModContainerFactory INSTANCE = new ModContainerFactory();
+    public static Map<Type, Constructor<? extends ModContainer>> modTypes = Maps.newHashMap();
 
     private ModContainerFactory() {
         // We always know about Mod type

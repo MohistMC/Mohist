@@ -45,6 +45,7 @@ public class EntityRegistry {
     private final ListMultimap<ModContainer, EntityRegistration> entityRegistrations = ArrayListMultimap.create();
     private final BiMap<Class<? extends Entity>, EntityRegistration> entityClassRegistrations = HashBiMap.create();
     private final Map<Class<? extends Entity>, EntityEntry> entityClassEntries = GameData.getEntityClassMap();
+
     private EntityRegistry() {
     }
 

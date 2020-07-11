@@ -28,11 +28,11 @@ import net.minecraft.client.gui.GuiButton;
  * @author bspkrs
  */
 public class HoverChecker {
+    private final int threshold;
     private int top;
     private int bottom;
     private int left;
     private int right;
-    private final int threshold;
     private GuiButton button;
     private long hoverStart;
 

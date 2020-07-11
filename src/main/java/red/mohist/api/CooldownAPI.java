@@ -6,10 +6,10 @@ import java.util.Map;
 public class CooldownAPI {
 
     private static final Map<String, CooldownAPI> cooldowns = new HashMap<>();
-    private long start;
     private final int timeInSeconds;
     private final String id;
     private final String cooldownName;
+    private long start;
 
     public CooldownAPI(String id, String cooldownName, int timeInSeconds) {
         this.id = id;

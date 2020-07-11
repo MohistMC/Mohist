@@ -35,9 +35,9 @@ import javax.annotation.Nullable;
  * equal.
  */
 public class FluidStack {
+    private final IRegistryDelegate<Fluid> fluidDelegate;
     public int amount;
     public NBTTagCompound tag;
-    private final IRegistryDelegate<Fluid> fluidDelegate;
 
     public FluidStack(Fluid fluid, int amount) {
         if (fluid == null) {

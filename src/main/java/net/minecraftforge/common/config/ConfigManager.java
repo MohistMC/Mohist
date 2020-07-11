@@ -47,11 +47,11 @@ import java.util.Set;
 public class ConfigManager {
     static final Joiner NEW_LINE = Joiner.on('\n');
     static final Joiner PIPE = Joiner.on('|');
-    static Map<Class<?>, ITypeAdapter> ADAPTERS = Maps.newHashMap();
-    static Map<Class<?>, Class<?>> ARRAY_REMAP = Maps.newHashMap();
     private static final Map<String, Multimap<Config.Type, ASMData>> asm_data = Maps.newHashMap();
     private static final Map<String, Configuration> CONFIGS = Maps.newHashMap();
     private static final Map<String, Set<Class<?>>> MOD_CONFIG_CLASSES = Maps.newHashMap();
+    static Map<Class<?>, ITypeAdapter> ADAPTERS = Maps.newHashMap();
+    static Map<Class<?>, Class<?>> ARRAY_REMAP = Maps.newHashMap();
 
     static {
         register(boolean.class, TypeAdapters.bool);

@@ -69,10 +69,6 @@ import java.util.*;
  */
 public class ForgeChunkManager {
     public static final List<String> MOD_PROP_ORDER = new ArrayList<String>(2);
-    public static boolean asyncChunkLoading;
-    private static int defaultMaxCount;
-    private static int defaultMaxChunks;
-    private static boolean overridesEnabled;
     private static final Map<World, Multimap<String, Ticket>> tickets = new MapMaker().weakKeys().makeMap();
     private static final Map<String, Integer> ticketConstraints = Maps.newHashMap();
     private static final Map<String, Integer> chunkConstraints = Maps.newHashMap();
@@ -81,11 +77,15 @@ public class ForgeChunkManager {
     private static final Map<World, ImmutableSetMultimap<ChunkPos, Ticket>> forcedChunks = Collections.synchronizedMap(new WeakHashMap<>());
     private static final BiMap<UUID, Ticket> pendingEntities = HashBiMap.create();
     private static final Map<World, Cache<Long, ChunkEntry>> dormantChunkCache = new MapMaker().weakKeys().makeMap();
+    private static final Set<String> warnedMods = Sets.newHashSet();
+    public static boolean asyncChunkLoading;
+    private static int defaultMaxCount;
+    private static int defaultMaxChunks;
+    private static boolean overridesEnabled;
     private static File cfgFile;
     private static Configuration config;
     private static int playerTicketLength;
     private static int dormantChunkCacheSize;
-    private static final Set<String> warnedMods = Sets.newHashSet();
 
     static {
         MOD_PROP_ORDER.add("maximumTicketCount");

@@ -89,10 +89,10 @@ public class B3DModel {
         private final ImmutableMap.Builder<String, Node<Mesh>> meshes = ImmutableMap.builder();
         private final Deque<Table<Integer, Optional<Node<?>>, Key>> animations = new ArrayDeque<>();
         private final byte[] tag = new byte[4];
+        private final Deque<Integer> limitStack = new ArrayDeque<>();
         private int length;
         private String dump = "";
         private B3DModel res;
-        private final Deque<Integer> limitStack = new ArrayDeque<>();
 
         public Parser(InputStream in) throws IOException {
             if (in instanceof FileInputStream) {
@@ -858,10 +858,9 @@ public class B3DModel {
     public static class Mesh implements IKind<Mesh> {
         private final Brush brush;
         private final ImmutableList<Face> faces;
-        private Node<Mesh> parent;
         //private final ImmutableList<Bone> bones;
         private final Set<Node<Bone>> bones = new HashSet<>();
-
+        private Node<Mesh> parent;
         private ImmutableMultimap<Vertex, Pair<Float, Node<Bone>>> weightMap = ImmutableMultimap.of();
 
         public Mesh(Pair<Brush, List<Face>> data) {

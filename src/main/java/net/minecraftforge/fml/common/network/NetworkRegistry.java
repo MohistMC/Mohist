@@ -310,6 +310,7 @@ public enum NetworkRegistry {
         public final double z;
         public final double range;
         public final int dimension;
+
         /**
          * A target point
          *

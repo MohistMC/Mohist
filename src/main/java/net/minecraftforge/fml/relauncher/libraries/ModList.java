@@ -45,12 +45,14 @@ public class ModList {
     private final List<Artifact> artifacts_imm = Collections.unmodifiableList(artifacts);
     private final Map<String, Artifact> art_map = new HashMap<>();
     private boolean changed = false;
+
     protected ModList(Repository repo) {
         this.path = null;
         this.mod_list = new JsonModList();
         this.repo = repo;
         this.parent = null;
     }
+
     private ModList(File path, File mcdir) {
         this.path = path;
         JsonModList temp_list = null;

@@ -29,11 +29,13 @@ public class TickEvent extends Event {
     public final Type type;
     public final Side side;
     public final Phase phase;
+
     public TickEvent(Type type, Side side, Phase phase) {
         this.type = type;
         this.side = side;
         this.phase = phase;
     }
+
     public enum Type {
         WORLD, PLAYER, CLIENT, SERVER, RENDER
     }

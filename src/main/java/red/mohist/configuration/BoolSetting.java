@@ -3,8 +3,8 @@ package red.mohist.configuration;
 import org.apache.commons.lang.BooleanUtils;
 
 public class BoolSetting extends Setting<Boolean> {
-    private Boolean value;
     private final ConfigBase config;
+    private Boolean value;
 
     public BoolSetting(ConfigBase config, String path, Boolean def, String description) {
         super(path, def, description);

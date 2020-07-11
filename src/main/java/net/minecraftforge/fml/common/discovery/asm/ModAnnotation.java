@@ -35,6 +35,7 @@ public class ModAnnotation {
     Map<String, Object> values = Maps.newHashMap();
     private ArrayList<Object> arrayList;
     private String arrayName;
+
     public ModAnnotation(AnnotationType type, Type asmType, String member) {
         this.type = type;
         this.asmType = asmType;

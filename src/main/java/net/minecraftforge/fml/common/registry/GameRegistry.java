@@ -62,13 +62,13 @@ import java.lang.annotation.Target;
 import java.util.*;
 
 public class GameRegistry {
-    public static Map<String, String> worldGenMap = Maps.newHashMap();
     private static final Set<IWorldGenerator> worldGenerators = Sets.newHashSet();
     private static final Map<IWorldGenerator, Integer> worldGeneratorIndex = Maps.newHashMap();
     private static final List<IFuelHandler> fuelHandlers = Lists.newArrayList();
-    private static List<IWorldGenerator> sortedGeneratorList;
     private static final List<IEntitySelectorFactory> entitySelectorFactories = Lists.newArrayList();
     private static final Map<String, Boolean> configWorldGenCache = Maps.newHashMap();
+    public static Map<String, String> worldGenMap = Maps.newHashMap();
+    private static List<IWorldGenerator> sortedGeneratorList;
 
     /**
      * Register a world generator - something that inserts new block types into the world

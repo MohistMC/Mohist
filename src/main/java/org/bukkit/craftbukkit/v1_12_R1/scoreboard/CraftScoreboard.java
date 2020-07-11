@@ -14,8 +14,6 @@ import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.Score;
 import org.bukkit.scoreboard.Team;
 
-import java.util.Collection;
-
 public final class CraftScoreboard implements org.bukkit.scoreboard.Scoreboard {
     final Scoreboard board;
 

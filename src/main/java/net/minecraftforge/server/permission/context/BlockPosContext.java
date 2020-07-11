@@ -30,8 +30,8 @@ import javax.annotation.Nullable;
 
 public class BlockPosContext extends PlayerContext {
     private final BlockPos blockPos;
-    private IBlockState blockState;
     private final EnumFacing facing;
+    private IBlockState blockState;
 
     public BlockPosContext(EntityPlayer ep, BlockPos pos, @Nullable IBlockState state, @Nullable EnumFacing f) {
         super(ep);

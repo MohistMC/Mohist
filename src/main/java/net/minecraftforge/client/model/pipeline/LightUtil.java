@@ -256,10 +256,9 @@ public class LightUtil {
     }
 
     public static class ItemConsumer extends VertexTransformer {
-        private int vertices = 0;
-
         private final float[] auxColor = new float[]{1, 1, 1, 1};
         private final float[] buf = new float[4];
+        private int vertices = 0;
 
         public ItemConsumer(IVertexConsumer parent) {
             super(parent);

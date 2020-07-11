@@ -57,13 +57,6 @@ import java.util.List;
 import java.util.function.BiPredicate;
 
 public class EnumHelper {
-    private static Object reflectionFactory = null;
-    private static Method newConstructorAccessor = null;
-    private static Method newInstance = null;
-    private static Method newFieldAccessor = null;
-    private static Method fieldAccessorSet = null;
-    private static boolean isSetup = false;
-
     //Some enums are decompiled with extra arguments, so lets check for that
     private static final Class<?>[][] commonTypes =
             {
@@ -83,6 +76,12 @@ public class EnumHelper {
                     {HorseArmorType.class, String.class, int.class},
                     {EntityLiving.SpawnPlacementType.class, BiPredicate.class}
             };
+    private static Object reflectionFactory = null;
+    private static Method newConstructorAccessor = null;
+    private static Method newInstance = null;
+    private static Method newFieldAccessor = null;
+    private static Method fieldAccessorSet = null;
+    private static boolean isSetup = false;
 
     static {
         if (!isSetup) {

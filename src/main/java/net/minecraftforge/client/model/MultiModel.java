@@ -54,6 +54,7 @@ public final class MultiModel implements IModel {
     @Nullable
     private final IModel base;
     private final Map<String, Pair<IModel, IModelState>> parts;
+
     // TODO 1.13 remove, kept for binary compatibility
     @Deprecated
     public MultiModel(ResourceLocation location, @Nullable IModel base, IModelState baseState, ImmutableMap<String, Pair<IModel, IModelState>> parts) {

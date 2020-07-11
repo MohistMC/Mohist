@@ -27,15 +27,15 @@ import javax.annotation.Nullable;
 import java.util.List;
 
 public class RegistryBuilder<T extends IForgeRegistryEntry<T>> {
+    private final List<AddCallback<T>> addCallback = Lists.newArrayList();
+    private final List<ClearCallback<T>> clearCallback = Lists.newArrayList();
+    private final List<CreateCallback<T>> createCallback = Lists.newArrayList();
+    private final List<ValidateCallback<T>> validateCallback = Lists.newArrayList();
     private ResourceLocation registryName;
     private Class<T> registryType;
     private ResourceLocation optionalDefaultKey;
     private int minId = 0;
     private int maxId = Integer.MAX_VALUE - 1;
-    private final List<AddCallback<T>> addCallback = Lists.newArrayList();
-    private final List<ClearCallback<T>> clearCallback = Lists.newArrayList();
-    private final List<CreateCallback<T>> createCallback = Lists.newArrayList();
-    private final List<ValidateCallback<T>> validateCallback = Lists.newArrayList();
     private boolean saveToDisc = true;
     private boolean allowOverrides = true;
     private boolean allowModifications = false;

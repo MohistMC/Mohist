@@ -26,8 +26,6 @@ public class Mohist {
     }
 
     public static void main(String[] args) throws Throwable {
-        if (Float.parseFloat(System.getProperty("java.class.version")) != 52.0 || bMohist("use_custom_java8", "false"))
-            DownloadJava.run(args);
         System.out.println("\n" +
                 "\n" +
                 " __    __   ______   __  __   __   ______   ______  \n" +
@@ -53,6 +51,8 @@ public class Mohist {
         if (!bMohist("disable_mods_blacklist")) jar((byte) 1);
         jar((byte) 2);
 
-        Class.forName("net.minecraftforge.fml.relauncher.ServerLaunchWrapper").getDeclaredMethod("main", String[].class).invoke(null, new Object[]{args});
+        Class.forName("net.minecraftforge.fml.relauncher.ServerLaunchWrapper")
+                .getDeclaredMethod("main", String[].class)
+                .invoke(null, new Object[]{args});
     }
 }

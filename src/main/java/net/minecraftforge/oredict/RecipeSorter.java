@@ -48,10 +48,11 @@ public class RecipeSorter implements Comparator<IRecipe> {
     //private static Map<String, Class<?>>       types = Maps.newHashMap();
     private static final Map<String, SortEntry> entries = Maps.newHashMap();
     private static final Map<Class<?>, Integer> priorities = Maps.newHashMap();
-    private static boolean isDirty = true;
     private static final SortEntry before = new SortEntry("Before", null, UNKNOWN, "");
     private static final SortEntry after = new SortEntry("After", null, UNKNOWN, "");
     private static final Set<Class<?>> warned = Sets.newHashSet();
+    private static boolean isDirty = true;
+
     private RecipeSorter() {
         register("minecraft:shaped", ShapedRecipes.class, SHAPED, "before:minecraft:shapeless");
         register("minecraft:mapextending", RecipesMapExtending.class, SHAPED, "after:minecraft:shaped before:minecraft:shapeless");
@@ -205,12 +206,12 @@ public class RecipeSorter implements Comparator<IRecipe> {
     }
 
     private static class SortEntry {
-        List<String> before = Lists.newArrayList();
-        List<String> after = Lists.newArrayList();
         private final String name;
         @Nullable
         private final Class<?> cls;
         private final Category cat;
+        List<String> before = Lists.newArrayList();
+        List<String> after = Lists.newArrayList();
 
         private SortEntry(String name, @Nullable Class<?> cls, Category cat, String deps) {
             this.name = name;

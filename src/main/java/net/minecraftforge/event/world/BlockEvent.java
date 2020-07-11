@@ -381,8 +381,8 @@ public class BlockEvent extends Event {
     @Cancelable
     public static class FluidPlaceBlockEvent extends BlockEvent {
         private final BlockPos liquidPos;
-        private IBlockState newState;
         private final IBlockState origState;
+        private IBlockState newState;
 
         public FluidPlaceBlockEvent(World world, BlockPos pos, BlockPos liquidPos, IBlockState state) {
             super(world, pos, state);

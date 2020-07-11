@@ -30,9 +30,9 @@ import java.util.UUID;
 
 //To be expanded for generic Mod fake players?
 public class FakePlayerFactory {
+    private static final GameProfile MINECRAFT = new GameProfile(UUID.fromString("41C82C87-7AfB-4024-BA57-13D2C99CAE77"), "[Minecraft]");
     // Map of all active fake player usernames to their entities
     public static Map<GameProfile, FakePlayer> fakePlayers = Maps.newHashMap();
-    private static final GameProfile MINECRAFT = new GameProfile(UUID.fromString("41C82C87-7AfB-4024-BA57-13D2C99CAE77"), "[Minecraft]");
     private static WeakReference<FakePlayer> MINECRAFT_PLAYER = null;
 
     public static FakePlayer getMinecraft(WorldServer world) {

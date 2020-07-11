@@ -38,6 +38,7 @@ public class Event {
     private boolean isCanceled = false;
     private Result result = Result.DEFAULT;
     private EventPriority phase = null;
+
     public Event() {
         setup();
     }

@@ -31,8 +31,8 @@ import java.util.Random;
 import java.util.Set;
 
 class NamespacedDefaultedWrapper<V extends IForgeRegistryEntry<V>> extends RegistryNamespacedDefaultedByKey<ResourceLocation, V> implements ILockableRegistry {
-    private boolean locked = false;
     private final ForgeRegistry<V> delegate;
+    private boolean locked = false;
 
     private NamespacedDefaultedWrapper(ForgeRegistry<V> owner) {
         super(null);

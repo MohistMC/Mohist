@@ -44,10 +44,9 @@ public class TimeTracker<T> {
      * A tracker for timing entity updates
      */
     public static final TimeTracker<Entity> ENTITY_UPDATE = new TimeTracker<>();
-
+    private final Map<T, int[]> timings = new MapMaker().weakKeys().makeMap();
     private boolean enabled;
     private int trackingDuration;
-    private final Map<T, int[]> timings = new MapMaker().weakKeys().makeMap();
     private WeakReference<T> currentlyTracking;
     private long trackTime;
     private long timing;

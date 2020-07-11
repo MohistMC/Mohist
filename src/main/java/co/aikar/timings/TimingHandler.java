@@ -36,8 +36,8 @@ import java.util.logging.Logger;
 
 class TimingHandler implements Timing {
 
-    static Deque<TimingHandler> TIMING_STACK = new ArrayDeque<>();
     private static final AtomicInteger idPool = new AtomicInteger(1);
+    static Deque<TimingHandler> TIMING_STACK = new ArrayDeque<>();
     final int id = idPool.getAndIncrement();
 
     final TimingIdentifier identifier;

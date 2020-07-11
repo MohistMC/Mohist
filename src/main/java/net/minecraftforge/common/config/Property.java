@@ -57,12 +57,15 @@ public class Property {
     private boolean isListLengthFixed = false;
     private int maxListLength = -1;
     private boolean changed = false;
+
     public Property(String name, String value, Type type) {
         this(name, value, type, false, new String[0], new String[0], name);
     }
+
     public Property(String name, String value, Type type, boolean read) {
         this(name, value, type, read, new String[0], new String[0], name);
     }
+
     public Property(String name, String value, Type type, String[] validValues) {
         this(name, value, type, false, validValues, new String[0], name);
     }

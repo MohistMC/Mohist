@@ -173,9 +173,11 @@ public abstract class FMLHandshakeMessage {
         private Map<ResourceLocation, Integer> ids;
         private Set<ResourceLocation> dummied;
         private Map<ResourceLocation, String> overrides;
+
         public RegistryData() {
 
         }
+
         public RegistryData(boolean hasMore, ResourceLocation name, ForgeRegistry.Snapshot entry) {
             this.hasMore = hasMore;
             this.name = name;

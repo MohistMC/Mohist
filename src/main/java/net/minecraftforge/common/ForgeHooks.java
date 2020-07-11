@@ -141,10 +141,10 @@ public class ForgeHooks {
     };
     private static final Map<DataSerializer<?>, DataSerializerEntry> serializerEntries = GameData.getSerializerMap();
     private static final ForgeRegistry<DataSerializerEntry> serializerRegistry = (ForgeRegistry<DataSerializerEntry>) ForgeRegistries.DATA_SERIALIZERS;
-    //static HashSet<List> toolEffectiveness = new HashSet<List>();
-    private static boolean toolInit = false;
     private static final ThreadLocal<EntityPlayer> craftingPlayer = new ThreadLocal<EntityPlayer>();
     private static final ThreadLocal<Deque<LootTableContext>> lootContext = new ThreadLocal<Deque<LootTableContext>>();
+    //static HashSet<List> toolEffectiveness = new HashSet<List>();
+    private static boolean toolInit = false;
 
     static {
         seedList.add(new SeedEntry(new ItemStack(Items.WHEAT_SEEDS), 10) {
@@ -1151,9 +1151,9 @@ public class ForgeHooks {
         public final ResourceLocation name;
         public final boolean custom;
         private final boolean vanilla;
+        private final HashSet<String> entryNames = Sets.newHashSet();
         public int poolCount = 0;
         public int entryCount = 0;
-        private final HashSet<String> entryNames = Sets.newHashSet();
 
         private LootTableContext(ResourceLocation name, boolean custom) {
             this.name = name;

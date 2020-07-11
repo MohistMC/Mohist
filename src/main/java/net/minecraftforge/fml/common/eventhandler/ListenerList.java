@@ -116,9 +116,9 @@ public class ListenerList {
     }
 
     private class ListenerListInst {
+        private final ArrayList<ArrayList<IEventListener>> priorities;
         private boolean rebuild = true;
         private IEventListener[] listeners;
-        private final ArrayList<ArrayList<IEventListener>> priorities;
         private ListenerListInst parent;
         private List<ListenerListInst> children;
 

@@ -28,9 +28,9 @@ import net.minecraftforge.registries.IForgeRegistryEntry.Impl;
 import java.util.function.Function;
 
 public class EntityEntry extends Impl<EntityEntry> {
-    Function<World, ? extends Entity> factory;
     private final Class<? extends Entity> cls;
     private final String name;
+    Function<World, ? extends Entity> factory;
     private EntityEggInfo egg;
 
     public EntityEntry(Class<? extends Entity> cls, String name) {

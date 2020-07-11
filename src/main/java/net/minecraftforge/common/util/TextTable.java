@@ -126,8 +126,8 @@ public class TextTable {
 
     public static class Column {
         private final String header;
-        private int width;
         private final Alignment alignment;
+        private int width;
 
         public Column(String header) {
             this(header, Alignment.LEFT);

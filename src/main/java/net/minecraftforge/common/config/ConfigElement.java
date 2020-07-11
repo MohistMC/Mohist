@@ -37,9 +37,9 @@ import java.util.regex.Pattern;
  * This class bridges the gap between the FML config GUI classes and the Forge Configuration classes.
  */
 public class ConfigElement implements IConfigElement {
+    private final boolean isProperty;
     private Property prop;
     private Property.Type type;
-    private final boolean isProperty;
     private ConfigCategory category;
     private boolean categoriesFirst = true;
 

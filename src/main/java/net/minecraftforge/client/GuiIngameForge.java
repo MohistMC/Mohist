@@ -83,12 +83,11 @@ public class GuiIngameForge extends GuiIngame {
 
     public static int left_height = 39;
     public static int right_height = 39;
-
+    //private static final String MC_VERSION = MinecraftForge.MC_VERSION;
+    private final GuiOverlayDebugForge debugOverlay;
     private ScaledResolution res = null;
     private FontRenderer fontrenderer = null;
     private RenderGameOverlayEvent eventParent;
-    //private static final String MC_VERSION = MinecraftForge.MC_VERSION;
-    private final GuiOverlayDebugForge debugOverlay;
 
     public GuiIngameForge(Minecraft mc) {
         super(mc);

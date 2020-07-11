@@ -54,9 +54,9 @@ public class DimensionManager {
     private static final IntSet usedIds = new IntOpenHashSet();
     private static final ConcurrentMap<World, World> weakWorldMap = new MapMaker().weakKeys().weakValues().makeMap();
     private static final Multiset<Integer> leakedWorlds = HashMultiset.create();
+    private static final ArrayList<Integer> bukkitDims = new ArrayList<Integer>(); // used to keep track of Bukkit dimensions
     private static boolean hasInit = false;
     private static int lastUsedId = 0;
-    private static final ArrayList<Integer> bukkitDims = new ArrayList<Integer>(); // used to keep track of Bukkit dimensions
 
     static {
         init();

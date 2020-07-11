@@ -31,8 +31,8 @@ import java.util.Random;
 import java.util.Set;
 
 public class NamespacedWrapper<V extends IForgeRegistryEntry<V>> extends RegistryNamespaced<ResourceLocation, V> implements ILockableRegistry {
-    private boolean locked = false;
     private final ForgeRegistry<V> delegate;
+    private boolean locked = false;
 
     public NamespacedWrapper(ForgeRegistry<V> owner) {
         this.delegate = owner;

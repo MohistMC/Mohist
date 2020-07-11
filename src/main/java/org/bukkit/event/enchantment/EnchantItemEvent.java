@@ -22,9 +22,9 @@ public class EnchantItemEvent extends InventoryEvent implements Cancellable {
     private final ItemStack item;
     private final Map<Enchantment, Integer> enchants;
     private final Player enchanter;
+    private final int button;
     private int level;
     private boolean cancelled;
-    private final int button;
 
     public EnchantItemEvent(final Player enchanter, final InventoryView view, final Block table, final ItemStack item, final int level, final Map<Enchantment, Integer> enchants, final int i) {
         super(view);

@@ -438,6 +438,7 @@ public final class ModelLoader extends ModelBakery {
         missingVariants.clear();
         isLoading = false;
     }
+
     protected enum VanillaLoader implements ICustomModelLoader {
         INSTANCE;
 

@@ -33,6 +33,7 @@ public class FluidTankProperties implements IFluidTankProperties {
     private final int capacity;
     private final boolean canFill;
     private final boolean canDrain;
+
     public FluidTankProperties(@Nullable FluidStack contents, int capacity) {
         this(contents, capacity, true, true);
     }

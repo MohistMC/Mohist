@@ -54,15 +54,15 @@ public class FMLDeobfuscatingRemapper extends Remapper {
      * Cache the field descriptions for classes so we don't repeatedly reload the same data again and again
      */
     private final Map<String, Map<String, String>> fieldDescriptions = Maps.newHashMap();
+    // Cache null values so we don't waste time trying to recompute classes with no field or method maps
+    private final Set<String> negativeCacheMethods = Sets.newHashSet();
+    private final Set<String> negativeCacheFields = Sets.newHashSet();
     private BiMap<String, String> classNameBiMap;
     private Map<String, Map<String, String>> rawFieldMaps;
     private Map<String, Map<String, String>> rawMethodMaps;
     private Map<String, Map<String, String>> fieldNameMaps;
     private Map<String, Map<String, String>> methodNameMaps;
     private LaunchClassLoader classLoader;
-    // Cache null values so we don't waste time trying to recompute classes with no field or method maps
-    private final Set<String> negativeCacheMethods = Sets.newHashSet();
-    private final Set<String> negativeCacheFields = Sets.newHashSet();
 
     private FMLDeobfuscatingRemapper() {
         classNameBiMap = ImmutableBiMap.of();

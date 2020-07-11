@@ -60,10 +60,10 @@ public class ForgeVersion {
     private static final int MAX_HTTP_REDIRECTS = Integer.getInteger("http.maxRedirects", 20);
     private static final CheckResult PENDING_CHECK = new CheckResult(PENDING, null, null, null);
     @SuppressWarnings("unused")
-    private static Status status = PENDING;
-    @SuppressWarnings("unused")
     private static final String target = null;
     private static final Map<ModContainer, CheckResult> results = new ConcurrentHashMap<ModContainer, CheckResult>();
+    @SuppressWarnings("unused")
+    private static Status status = PENDING;
 
     public static int getMajorVersion() {
         return majorVersion;
@@ -241,6 +241,7 @@ public class ForgeVersion {
         CheckResult ret = results.get(mod);
         return ret == null ? PENDING_CHECK : ret;
     }
+
     public enum Status {
         PENDING(),
         FAILED(),

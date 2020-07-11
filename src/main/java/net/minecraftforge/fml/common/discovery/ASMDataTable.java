@@ -31,9 +31,9 @@ import java.util.Set;
 
 public class ASMDataTable {
     private final SetMultimap<String, ASMData> globalAnnotationData = HashMultimap.create();
-    private Map<ModContainer, SetMultimap<String, ASMData>> containerAnnotationData;
     private final List<ModContainer> containers = Lists.newArrayList();
     private final SetMultimap<String, ModCandidate> packageMap = HashMultimap.create();
+    private Map<ModContainer, SetMultimap<String, ASMData>> containerAnnotationData;
 
     @Nullable
     public static String getOwnerModID(Set<ASMData> mods, ASMData targ) {

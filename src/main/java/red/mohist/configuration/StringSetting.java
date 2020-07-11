@@ -1,8 +1,8 @@
 package red.mohist.configuration;
 
 public class StringSetting extends Setting<String> {
-    private String value;
     private final ConfigBase config;
+    private String value;
 
     public StringSetting(ConfigBase config, String path, String def,
                          String description) {

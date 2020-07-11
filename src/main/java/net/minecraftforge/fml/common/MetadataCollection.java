@@ -34,9 +34,9 @@ import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
 public class MetadataCollection {
+    private final Map<String, ModMetadata> metadatas = Maps.newHashMap();
     private String modListVersion;
     private ModMetadata[] modList;
-    private final Map<String, ModMetadata> metadatas = Maps.newHashMap();
 
     public static MetadataCollection from(@Nullable InputStream inputStream, String sourceName) {
         if (inputStream == null) {

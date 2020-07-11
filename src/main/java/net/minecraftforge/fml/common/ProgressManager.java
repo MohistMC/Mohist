@@ -96,10 +96,10 @@ public class ProgressManager {
     public static class ProgressBar {
         private final String title;
         private final int steps;
+        private final long startTime = System.nanoTime();
         private volatile int step = 0;
         private volatile String message = "";
         private boolean timeEachStep = false;
-        private final long startTime = System.nanoTime();
         private long lastTime = startTime;
 
         private ProgressBar(String title, int steps) {

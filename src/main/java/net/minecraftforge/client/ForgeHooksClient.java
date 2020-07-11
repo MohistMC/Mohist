@@ -114,14 +114,14 @@ public class ForgeHooksClient {
     private static final Matrix4f flipX;
     private static final FloatBuffer matrixBuf = BufferUtils.createFloatBuffer(16);
     private static final LightGatheringTransformer lightGatherer = new LightGatheringTransformer();
+    private static final int updatescrollcounter = 0;
+    private static final Map<Pair<Item, Integer>, Class<? extends TileEntity>> tileItemMap = Maps.newHashMap();
     static int renderPass = -1;
     //static RenderBlocks VertexBufferRB;
     static int worldRenderPass;
     private static int skyX, skyZ;
     private static boolean skyInit;
     private static int skyRGBMultiplier;
-    private static final int updatescrollcounter = 0;
-    private static final Map<Pair<Item, Integer>, Class<? extends TileEntity>> tileItemMap = Maps.newHashMap();
     private static int slotMainHand = 0;
 
     /**

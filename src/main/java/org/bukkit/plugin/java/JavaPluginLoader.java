@@ -32,10 +32,10 @@ import java.util.regex.Pattern;
  * Represents a Java plugin loader, allowing plugins in the form of .jar
  */
 public class JavaPluginLoader implements PluginLoader {
-    Server server;
     private final Pattern[] fileFilters = new Pattern[]{Pattern.compile("\\.jar$"),};
     private final Map<String, Class<?>> classes = new java.util.concurrent.ConcurrentHashMap<>(); // Spigot
     private final List<PluginClassLoader> loaders = new CopyOnWriteArrayList<>();
+    Server server;
 
     /**
      * This class was not meant to be constructed explicitly

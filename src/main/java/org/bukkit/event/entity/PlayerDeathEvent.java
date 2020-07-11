@@ -9,13 +9,13 @@ import java.util.List;
  * Thrown whenever a {@link Player} dies
  */
 public class PlayerDeathEvent extends EntityDeathEvent {
+    private final List<ItemStack> itemsToKeep = new java.util.ArrayList(); // EMC
     private int newExp = 0;
     private String deathMessage = "";
     private int newLevel = 0;
     private int newTotalExp = 0;
     private boolean keepLevel = false;
     private boolean keepInventory = false;
-    private final List<ItemStack> itemsToKeep = new java.util.ArrayList(); // EMC
 
     public PlayerDeathEvent(final Player player, final List<ItemStack> drops, final int droppedExp, final String deathMessage) {
         this(player, drops, droppedExp, 0, deathMessage);

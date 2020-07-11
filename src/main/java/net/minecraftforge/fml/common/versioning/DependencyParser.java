@@ -35,6 +35,7 @@ public final class DependencyParser {
     private static final Splitter DEPENDENCY_SPLITTER = Splitter.on(";").omitEmptyStrings().trimResults();
     private final String modId;
     private final Side side;
+
     public DependencyParser(String modId, Side side) {
         this.modId = modId;
         this.side = side;

@@ -53,18 +53,18 @@ import java.util.jar.Manifest;
 public class CoreModManager {
     private static final Attributes.Name COREMODCONTAINSFMLMOD = new Attributes.Name("FMLCorePluginContainsFMLMod");
     private static final Attributes.Name MODTYPE = new Attributes.Name("ModType");
-    static boolean deobfuscatedEnvironment;
     private static final String[] rootPlugins = {"net.minecraftforge.fml.relauncher.FMLCorePlugin", "net.minecraftforge.classloading.FMLForgePlugin", "red.mohist.forge.MohistCorePlugin"};
     private static final List<String> ignoredModFiles = Lists.newArrayList();
     private static final Map<String, List<String>> transformers = Maps.newHashMap();
-    private static List<FMLPluginWrapper> loadPlugins;
-    private static FMLTweaker tweaker;
-    private static File mcDir;
     private static final List<String> candidateModFiles = Lists.newArrayList();
     private static final List<String> accessTransformers = Lists.newArrayList();
     private static final Set<String> rootNames = Sets.newHashSet();
-    private static Method ADDURL;
     private static final Map<String, Integer> tweakSorting = Maps.newHashMap();
+    static boolean deobfuscatedEnvironment;
+    private static List<FMLPluginWrapper> loadPlugins;
+    private static FMLTweaker tweaker;
+    private static File mcDir;
+    private static Method ADDURL;
 
     static {
         for (String cls : rootPlugins) {

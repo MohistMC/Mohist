@@ -481,10 +481,10 @@ public class GuiEditArrayEntries extends GuiListExtended {
         protected final GuiButtonExt btnRemoveEntry;
         private final HoverChecker addNewEntryAboveHoverChecker;
         private final HoverChecker removeEntryHoverChecker;
-        protected boolean isValidValue = true;
-        protected boolean isValidated = false;
         private final List<String> addNewToolTip;
         private final List<String> removeToolTip;
+        protected boolean isValidValue = true;
+        protected boolean isValidated = false;
 
         public BaseEntry(GuiEditArray owningScreen, GuiEditArrayEntries owningEntryList, IConfigElement configElement) {
             this.owningScreen = owningScreen;

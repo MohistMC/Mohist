@@ -27,8 +27,8 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class WrongMinecraftVersionException extends EnhancedRuntimeException implements IDisplayableError {
     private static final long serialVersionUID = 1L;
-    public ModContainer mod;
     private final String mcVersion;
+    public ModContainer mod;
 
     public WrongMinecraftVersionException(ModContainer mod, String mcver) {
         super(String.format("Wrong Minecraft version for %s", mod.getModId()));

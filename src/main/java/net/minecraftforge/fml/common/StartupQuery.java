@@ -35,6 +35,7 @@ public class StartupQuery {
     private final AtomicBoolean result;
     private final CountDownLatch signal = new CountDownLatch(1);
     private volatile boolean synchronous;
+
     private StartupQuery(String text, @Nullable AtomicBoolean result) {
         this.text = text;
         this.result = result;

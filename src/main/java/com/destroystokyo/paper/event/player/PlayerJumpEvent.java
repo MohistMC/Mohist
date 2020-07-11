@@ -16,9 +16,9 @@ import org.bukkit.event.player.PlayerEvent;
  */
 public class PlayerJumpEvent extends PlayerEvent implements Cancellable {
     private static final HandlerList handlers = new HandlerList();
+    private final Location to;
     private boolean cancel = false;
     private Location from;
-    private final Location to;
 
     public PlayerJumpEvent(final Player player, final Location from, final Location to) {
         super(player);

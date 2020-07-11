@@ -49,11 +49,11 @@ import java.util.Properties;
  * @see net.minecraftforge.fml.common.Mod.EventHandler for how to subscribe to this event
  */
 public class FMLPreInitializationEvent extends FMLStateEvent {
+    private final File configurationDir;
+    private final ASMDataTable asmData;
     private ModMetadata modMetadata;
     private File sourceFile;
-    private final File configurationDir;
     private File suggestedConfigFile;
-    private final ASMDataTable asmData;
     private ModContainer modContainer;
 
     public FMLPreInitializationEvent(Object... data) {

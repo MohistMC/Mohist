@@ -68,12 +68,11 @@ public class FMLServerHandler implements IFMLSidedHandler {
      * The singleton
      */
     private static final FMLServerHandler INSTANCE = new FMLServerHandler();
-
+    private final List<String> injectedModContainers;
     /**
      * A reference to the server itself
      */
     private MinecraftServer server;
-    private final List<String> injectedModContainers;
 
     private FMLServerHandler() {
         injectedModContainers = FMLCommonHandler.instance().beginLoading(this);

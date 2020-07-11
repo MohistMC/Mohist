@@ -122,6 +122,11 @@ public class Loader {
      * The class loader we load the mods into.
      */
     private final ModClassLoader modClassLoader;
+    private final MinecraftDummyContainer minecraft;
+    private final MCPDummyContainer mcp;
+    private final MohistMod mohistMod;
+    private final ListMultimap<String, ArtifactVersion> injectedBefore = ArrayListMultimap.create();
+    private final ListMultimap<String, ArtifactVersion> injectedAfter = ArrayListMultimap.create();
     /**
      * The sorted list of mods.
      */
@@ -140,15 +145,10 @@ public class Loader {
     private File canonicalConfigDir;
     private File canonicalModsDir;
     private LoadController modController;
-    private final MinecraftDummyContainer minecraft;
-    private final MCPDummyContainer mcp;
-    private final MohistMod mohistMod;
     private ImmutableMap<String, String> fmlBrandingProperties;
     private File forcedModFile;
     private ModDiscoverer discoverer;
     private ProgressBar progressBar;
-    private final ListMultimap<String, ArtifactVersion> injectedBefore = ArrayListMultimap.create();
-    private final ListMultimap<String, ArtifactVersion> injectedAfter = ArrayListMultimap.create();
 
     private Loader() {
         modClassLoader = new ModClassLoader(getClass().getClassLoader());

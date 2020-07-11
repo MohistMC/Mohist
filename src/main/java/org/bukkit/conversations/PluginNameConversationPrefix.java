@@ -9,11 +9,10 @@ import org.bukkit.plugin.Plugin;
  */
 public class PluginNameConversationPrefix implements ConversationPrefix {
 
+    private final String cachedPrefix;
     protected String separator;
     protected ChatColor prefixColor;
     protected Plugin plugin;
-
-    private final String cachedPrefix;
 
     public PluginNameConversationPrefix(Plugin plugin) {
         this(plugin, " > ", ChatColor.LIGHT_PURPLE);

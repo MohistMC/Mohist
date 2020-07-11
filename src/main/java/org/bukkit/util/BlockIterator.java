@@ -20,19 +20,15 @@ public class BlockIterator implements Iterator<Block> {
     private static final int gridSize = 1 << 24;
     private final World world;
     private final int maxDistance;
-    private boolean end = false;
-
     private final Block[] blockQueue = new Block[3];
-    private int currentBlock = 0;
-    private int currentDistance = 0;
     private final int maxDistanceInt;
-
-    private int secondError;
-    private int thirdError;
-
     private final int secondStep;
     private final int thirdStep;
-
+    private boolean end = false;
+    private int currentBlock = 0;
+    private int currentDistance = 0;
+    private int secondError;
+    private int thirdError;
     private BlockFace mainFace;
     private BlockFace secondFace;
     private BlockFace thirdFace;

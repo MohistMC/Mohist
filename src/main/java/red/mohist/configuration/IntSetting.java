@@ -1,8 +1,8 @@
 package red.mohist.configuration;
 
 public class IntSetting extends Setting<Integer> {
-    private Integer value;
     private final ConfigBase config;
+    private Integer value;
 
     public IntSetting(ConfigBase config, String path, Integer def, String description) {
         super(path, def, description);

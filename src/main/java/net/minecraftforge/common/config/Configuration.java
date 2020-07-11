@@ -62,11 +62,11 @@ public class Configuration {
         NEW_LINE = System.getProperty("line.separator");
     }
 
+    private final Map<String, Configuration> children = new TreeMap<String, Configuration>();
     public String defaultEncoding = DEFAULT_ENCODING;
     public boolean isChild = false;
     File file;
     private Map<String, ConfigCategory> categories = new TreeMap<String, ConfigCategory>();
-    private final Map<String, Configuration> children = new TreeMap<String, Configuration>();
     private boolean caseSensitiveCustomCategories;
     private String fileName = null;
     private boolean changed = false;
