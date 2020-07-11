@@ -1,12 +1,15 @@
 package red.mohist.api.event;
 
+
+import net.minecraftforge.eventbus.api.Event;
 import org.bukkit.Bukkit;
-import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
-import org.jetbrains.annotations.NotNull;
 
-public class BukkitHookForgeEvent extends Event {
-
+/**
+ * Using Bukkit to handle Forge's Event
+ * look red.mohist.test.BukkitHookForgeEventTest
+ */
+public class BukkitHookForgeEvent extends org.bukkit.event.Event {
     private static final HandlerList handlers = new HandlerList();
     private final Event event;
 
@@ -32,7 +35,7 @@ public class BukkitHookForgeEvent extends Event {
     }
 
     @Override
-    public @NotNull HandlerList getHandlers() {
+    public HandlerList getHandlers() {
         return handlers;
     }
 }
