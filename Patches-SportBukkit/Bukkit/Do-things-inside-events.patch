@@ -1,0 +1,18 @@
+From: Jedediah Smith <jedediah@silencegreys.com>
+Date: Fri, 23 Dec 2016 14:05:06 -0500
+Subject: [PATCH] Do things inside events
+
+
+diff --git a/src/main/java/org/bukkit/event/player/PlayerQuitEvent.java b/src/main/java/org/bukkit/event/player/PlayerQuitEvent.java
+--- a/src/main/java/org/bukkit/event/player/PlayerQuitEvent.java
++++ b/src/main/java/org/bukkit/event/player/PlayerQuitEvent.java
+@@ -5,6 +5,9 @@ import org.bukkit.event.HandlerList;
+ 
+ /**
+  * Called when a player leaves a server
++ *
++ * The disconnect happens inside {@link #yield()}. After it returns,
++ * the player has been removed from the list of online players.
+  */
+ public class PlayerQuitEvent extends PlayerEvent {
+     private static final HandlerList handlers = new HandlerList();

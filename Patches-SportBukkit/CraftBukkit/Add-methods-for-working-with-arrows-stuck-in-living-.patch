@@ -1,0 +1,37 @@
+From: mrapple <tony@oc.tc>
+Date: Sun, 25 Nov 2012 13:43:39 -0600
+Subject: [PATCH] Add methods for working with arrows stuck in living entities
+
+
+diff --git a/src/main/java/net/minecraft/server/EntityLiving.java b/src/main/java/net/minecraft/server/EntityLiving.java
+--- a/src/main/java/net/minecraft/server/EntityLiving.java
++++ b/src/main/java/net/minecraft/server/EntityLiving.java
+@@ -1365,10 +1365,12 @@ public abstract class EntityLiving extends Entity {
+         return (float) this.getAttributeInstance(GenericAttributes.maxHealth).getValue();
+     }
+ 
++    public int getArrowsStuck() { return cc(); } // SportBukkit - alias for next method
+     public final int cc() {
+         return ((Integer) this.datawatcher.get(EntityLiving.bq)).intValue();
+     }
+ 
++    public void setArrowsStuck(int arrows) { f(arrows); } // SportBukkit - alias for next method
+     public final void f(int i) {
+         this.datawatcher.set(EntityLiving.bq, Integer.valueOf(i));
+     }
+diff --git a/src/main/java/org/bukkit/craftbukkit/entity/CraftLivingEntity.java b/src/main/java/org/bukkit/craftbukkit/entity/CraftLivingEntity.java
+--- a/src/main/java/org/bukkit/craftbukkit/entity/CraftLivingEntity.java
++++ b/src/main/java/org/bukkit/craftbukkit/entity/CraftLivingEntity.java
+@@ -556,4 +556,12 @@ public class CraftLivingEntity extends CraftEntity implements LivingEntity {
+     public boolean isCollidable() {
+         return getHandle().collides;
+     }
++
++    public int getArrowsStuck() {
++        return getHandle().getArrowsStuck();
++    }
++
++    public void setArrowsStuck(int arrows) {
++        getHandle().setArrowsStuck(arrows);
++    }
+ }

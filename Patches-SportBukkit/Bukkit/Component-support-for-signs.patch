@@ -1,0 +1,152 @@
+From: Jedediah Smith <jedediah@silencegreys.com>
+Date: Fri, 3 Jun 2016 02:02:23 -0400
+Subject: [PATCH] Component support for signs
+
+
+diff --git a/src/main/java/org/bukkit/block/Sign.java b/src/main/java/org/bukkit/block/Sign.java
+--- a/src/main/java/org/bukkit/block/Sign.java
++++ b/src/main/java/org/bukkit/block/Sign.java
+@@ -1,5 +1,7 @@
+ package org.bukkit.block;
+ 
++import net.md_5.bungee.api.chat.BaseComponent;
++
+ /**
+  * Represents either a SignPost or a WallSign
+  */
+@@ -8,8 +10,11 @@ public interface Sign extends BlockState {
+     /**
+      * Gets all the lines of text currently on this sign.
+      *
+-     * @return Array of Strings containing each line of text
++     * @return Array of BaseComponents containing each line of text
+      */
++    BaseComponent[] lines();
++
++    @Deprecated
+     public String[] getLines();
+ 
+     /**
+@@ -21,6 +26,9 @@ public interface Sign extends BlockState {
+      * @throws IndexOutOfBoundsException Thrown when the line does not exist
+      * @return Text on the given line
+      */
++    BaseComponent line(int index);
++
++    @Deprecated
+     public String getLine(int index) throws IndexOutOfBoundsException;
+ 
+     /**
+@@ -33,5 +41,8 @@ public interface Sign extends BlockState {
+      * @param line New text to set at the specified index
+      * @throws IndexOutOfBoundsException If the index is out of the range 0..3
+      */
++    void setLine(int index, BaseComponent line);
++
++    @Deprecated
+     public void setLine(int index, String line) throws IndexOutOfBoundsException;
+ }
+diff --git a/src/main/java/org/bukkit/entity/Player.java b/src/main/java/org/bukkit/entity/Player.java
+--- a/src/main/java/org/bukkit/entity/Player.java
++++ b/src/main/java/org/bukkit/entity/Player.java
+@@ -1,8 +1,10 @@
+ package org.bukkit.entity;
+ 
+ import java.net.InetSocketAddress;
++import java.util.List;
+ import java.util.Set;
+ 
++import net.md_5.bungee.api.chat.BaseComponent;
+ import org.bukkit.Achievement;
+ import org.bukkit.ChatColor;
+ import org.bukkit.Effect;
+@@ -509,6 +511,9 @@ public interface Player extends HumanEntity, Conversable, CommandSender, Offline
+      * @throws IllegalArgumentException if location is null
+      * @throws IllegalArgumentException if lines is non-null and has a length less than 4
+      */
++    void sendSignChange(Location loc, BaseComponent[] lines);
++
++    @Deprecated
+     public void sendSignChange(Location loc, String[] lines) throws IllegalArgumentException;
+ 
+     /**
+diff --git a/src/main/java/org/bukkit/event/block/SignChangeEvent.java b/src/main/java/org/bukkit/event/block/SignChangeEvent.java
+--- a/src/main/java/org/bukkit/event/block/SignChangeEvent.java
++++ b/src/main/java/org/bukkit/event/block/SignChangeEvent.java
+@@ -1,5 +1,7 @@
+ package org.bukkit.event.block;
+ 
++import net.md_5.bungee.api.chat.BaseComponent;
++import net.md_5.bungee.api.chat.TextComponent;
+ import org.bukkit.block.Block;
+ import org.bukkit.entity.Player;
+ import org.bukkit.event.Cancellable;
+@@ -15,9 +17,9 @@ public class SignChangeEvent extends BlockEvent implements Cancellable, PlayerAc
+     private static final HandlerList handlers = new HandlerList();
+     private boolean cancel = false;
+     private final Player player;
+-    private final String[] lines;
++    private final BaseComponent[] lines;
+ 
+-    public SignChangeEvent(final Block theBlock, final Player thePlayer, final String[] theLines) {
++    public SignChangeEvent(final Block theBlock, final Player thePlayer, final BaseComponent[] theLines) {
+         super(theBlock);
+         this.player = thePlayer;
+         this.lines = theLines;
+@@ -40,25 +42,35 @@ public class SignChangeEvent extends BlockEvent implements Cancellable, PlayerAc
+     /**
+      * Gets all of the lines of text from the sign involved in this event.
+      *
+-     * @return the String array for the sign's lines new text
++     * @return the BaseComponent array for the sign's lines new text
+      */
+-    public String[] getLines() {
++    public BaseComponent[] lines() {
+         return lines;
+     }
+ 
++    @Deprecated
++    public String[] getLines() {
++        return BaseComponent.toLegacyArray(lines);
++    }
++
+     /**
+      * Gets a single line of text from the sign involved in this event.
+      *
+      * @param index index of the line to get
+-     * @return the String containing the line of text associated with the
++     * @return the BaseComponent containing the line of text associated with the
+      *     provided index
+      * @throws IndexOutOfBoundsException thrown when the provided index is {@literal > 3
+      *     or < 0}
+      */
+-    public String getLine(int index) throws IndexOutOfBoundsException {
++    public BaseComponent line(int index) {
+         return lines[index];
+     }
+ 
++    @Deprecated
++    public String getLine(int index) throws IndexOutOfBoundsException {
++        return lines[index].toLegacyText();
++    }
++
+     /**
+      * Sets a single line for the sign involved in this event
+      *
+@@ -67,10 +79,15 @@ public class SignChangeEvent extends BlockEvent implements Cancellable, PlayerAc
+      * @throws IndexOutOfBoundsException thrown when the provided index is {@literal > 3
+      *     or < 0}
+      */
+-    public void setLine(int index, String line) throws IndexOutOfBoundsException {
++    public void setLine(int index, BaseComponent line) {
+         lines[index] = line;
+     }
+ 
++    @Deprecated
++    public void setLine(int index, String line) throws IndexOutOfBoundsException {
++        lines[index] = TextComponent.fromLegacyToComponent(line, false);
++    }
++
+     public boolean isCancelled() {
+         return cancel;
+     }

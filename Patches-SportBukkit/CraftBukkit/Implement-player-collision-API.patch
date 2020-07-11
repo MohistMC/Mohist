@@ -1,0 +1,99 @@
+From: Jedediah Smith <jedediah@silencegreys.com>
+Date: Thu, 2 Aug 2012 17:54:44 -0700
+Subject: [PATCH] Implement player collision API
+
+
+diff --git a/src/main/java/net/minecraft/server/Entity.java b/src/main/java/net/minecraft/server/Entity.java
+--- a/src/main/java/net/minecraft/server/Entity.java
++++ b/src/main/java/net/minecraft/server/Entity.java
+@@ -67,7 +67,7 @@ public abstract class Entity implements ICommandListener {
+     private static double f = 1.0D;
+     public static int entityCount; // SportBukkit - private -> public
+     private int id;
+-    public boolean i;
++    public boolean i; public void setCanObstruct(boolean yes) { this.i = yes; } // SportBukkit - add setter
+     public final List<Entity> passengers;
+     protected int j;
+     private Entity au;
+@@ -1268,6 +1268,7 @@ public abstract class Entity implements ICommandListener {
+     public void d(EntityHuman entityhuman) {}
+ 
+     public void collide(Entity entity) {
++        if(!this.isCollidable() || !entity.isCollidable()) return; // SportBukkit
+         if (!this.x(entity)) {
+             if (!entity.noclip && !this.noclip) {
+                 double d0 = entity.locX - this.locX;
+diff --git a/src/main/java/net/minecraft/server/EntityHuman.java b/src/main/java/net/minecraft/server/EntityHuman.java
+--- a/src/main/java/net/minecraft/server/EntityHuman.java
++++ b/src/main/java/net/minecraft/server/EntityHuman.java
+@@ -401,7 +401,7 @@ public abstract class EntityHuman extends EntityLiving {
+ 
+             List list = this.world.getEntities(this, axisalignedbb);
+ 
+-            for (int i = 0; i < list.size(); ++i) {
++            if (this.isCollidable()) for (int i = 0; i < list.size(); ++i) { // CraftBukkit
+                 Entity entity = (Entity) list.get(i);
+ 
+                 if (!entity.dead) {
+diff --git a/src/main/java/net/minecraft/server/EntityLiving.java b/src/main/java/net/minecraft/server/EntityLiving.java
+--- a/src/main/java/net/minecraft/server/EntityLiving.java
++++ b/src/main/java/net/minecraft/server/EntityLiving.java
+@@ -2105,7 +2105,7 @@ public abstract class EntityLiving extends Entity {
+     protected void ct() {
+         List list = this.world.getEntities(this, this.getBoundingBox(), IEntitySelector.a(this));
+ 
+-        if (!list.isEmpty()) {
++        if (this.isCollidable() && !list.isEmpty()) { // SportBukkit - check if collidable
+             int i = this.world.getGameRules().c("maxEntityCramming");
+             int j;
+ 
+diff --git a/src/main/java/net/minecraft/server/EntityPlayer.java b/src/main/java/net/minecraft/server/EntityPlayer.java
+--- a/src/main/java/net/minecraft/server/EntityPlayer.java
++++ b/src/main/java/net/minecraft/server/EntityPlayer.java
+@@ -67,6 +67,8 @@ public class EntityPlayer extends EntityHuman implements ICrafting {
+     public IChatBaseComponent listName;
+     public org.bukkit.Location compassTarget;
+     public int newExp = 0;
++    public boolean collidesWithEntities = true; // CraftBukkit
++
+     public int newLevel = 0;
+     public int newTotalExp = 0;
+     public boolean keepLevel = false;
+@@ -204,6 +206,18 @@ public class EntityPlayer extends EntityHuman implements ICrafting {
+         this.playerConnection.sendPacket(new PacketPlayOutCombatEvent(this.getCombatTracker(), PacketPlayOutCombatEvent.EnumCombatEventType.ENTER_COMBAT));
+     }
+ 
++    // CraftBukkit start
++    @Override
++    public boolean isInteractable() {
++        return this.collidesWithEntities && super.isInteractable();
++    }
++
++    @Override
++    public boolean isCollidable() {
++        return this.collidesWithEntities && super.isCollidable();
++    }
++    // CraftBukkit end
++
+     public void exitCombat() {
+         super.exitCombat();
+         this.playerConnection.sendPacket(new PacketPlayOutCombatEvent(this.getCombatTracker(), PacketPlayOutCombatEvent.EnumCombatEventType.END_COMBAT));
+diff --git a/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java b/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
+--- a/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
++++ b/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
+@@ -1541,6 +1541,15 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
+         getHandle().updateAbilities();
+     }
+ 
++    public void setCollidesWithEntities(boolean yes) {
++        getHandle().collidesWithEntities = yes;
++        getHandle().setCanObstruct(yes);
++    }
++
++    public boolean getCollidesWithEntities() {
++        return getHandle().collidesWithEntities;
++    }
++
+     @Override
+     public boolean getAllowFlight() {
+         return getHandle().abilities.canFly;

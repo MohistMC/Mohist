@@ -1,0 +1,41 @@
+From: Jedediah Smith <jedediah@silencegreys.com>
+Date: Fri, 4 Mar 2016 04:36:20 -0500
+Subject: [PATCH] Arrow damage API
+
+
+diff --git a/src/main/java/net/minecraft/server/EntityArrow.java b/src/main/java/net/minecraft/server/EntityArrow.java
+--- a/src/main/java/net/minecraft/server/EntityArrow.java
++++ b/src/main/java/net/minecraft/server/EntityArrow.java
+@@ -469,10 +469,12 @@ public abstract class EntityArrow extends Entity implements IProjectile {
+         return false;
+     }
+ 
++    public void setDamage(double damage) { this.c(damage); } // SportBukkit - alias for following method
+     public void c(double d0) {
+         this.damage = d0;
+     }
+ 
++    public double getDamage() { return this.k(); } // SportBukkit - alias for following method
+     public double k() {
+         return this.damage;
+     }
+diff --git a/src/main/java/org/bukkit/craftbukkit/entity/CraftArrow.java b/src/main/java/org/bukkit/craftbukkit/entity/CraftArrow.java
+--- a/src/main/java/org/bukkit/craftbukkit/entity/CraftArrow.java
++++ b/src/main/java/org/bukkit/craftbukkit/entity/CraftArrow.java
+@@ -15,6 +15,16 @@ public class CraftArrow extends AbstractProjectile implements Arrow {
+         super(server, entity);
+     }
+ 
++    @Override
++    public double getDamage() {
++        return getHandle().getDamage();
++    }
++
++    @Override
++    public void setDamage(double damage) {
++        getHandle().setDamage(damage);
++    }
++
+     public void setKnockbackStrength(int knockbackStrength) {
+         Validate.isTrue(knockbackStrength >= 0, "Knockback cannot be negative");
+         getHandle().setKnockbackStrength(knockbackStrength);

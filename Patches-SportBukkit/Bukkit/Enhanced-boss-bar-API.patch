@@ -1,0 +1,84 @@
+From: Jedediah Smith <jedediah@silencegreys.com>
+Date: Sat, 5 Mar 2016 01:41:34 -0500
+Subject: [PATCH] Enhanced boss bar API
+
+
+diff --git a/src/main/java/org/bukkit/Bukkit.java b/src/main/java/org/bukkit/Bukkit.java
+--- a/src/main/java/org/bukkit/Bukkit.java
++++ b/src/main/java/org/bukkit/Bukkit.java
+@@ -1195,7 +1195,7 @@ public final class Bukkit {
+      * @param flags an optional list of flags to set on the boss bar
+      * @return the created boss bar
+      */
+-    public static BossBar createBossBar(String title, BarColor color, BarStyle style, BarFlag... flags) {
++    public static BossBar createBossBar(net.md_5.bungee.api.chat.BaseComponent title, BarColor color, BarStyle style, BarFlag... flags) {
+         return server.createBossBar(title, color, style, flags);
+     }
+ 
+diff --git a/src/main/java/org/bukkit/Server.java b/src/main/java/org/bukkit/Server.java
+--- a/src/main/java/org/bukkit/Server.java
++++ b/src/main/java/org/bukkit/Server.java
+@@ -994,7 +994,7 @@ public interface Server extends PluginMessageRecipient, tc.oc.minecraft.api.serv
+      * @param flags an optional list of flags to set on the boss bar
+      * @return the created boss bar
+      */
+-    BossBar createBossBar(String title, BarColor color, BarStyle style, BarFlag ...flags);
++    BossBar createBossBar(net.md_5.bungee.api.chat.BaseComponent title, BarColor color, BarStyle style, BarFlag ...flags);
+ 
+     /**
+      * @see UnsafeValues
+diff --git a/src/main/java/org/bukkit/boss/BossBar.java b/src/main/java/org/bukkit/boss/BossBar.java
+--- a/src/main/java/org/bukkit/boss/BossBar.java
++++ b/src/main/java/org/bukkit/boss/BossBar.java
+@@ -1,8 +1,10 @@
+ package org.bukkit.boss;
+ 
++import net.md_5.bungee.api.chat.BaseComponent;
+ import org.bukkit.entity.Player;
+ 
+ import java.util.List;
++import java.util.Set;
+ 
+ public interface BossBar {
+ 
+@@ -11,14 +13,14 @@ public interface BossBar {
+      *
+      * @return the title of the bar
+      */
+-    String getTitle();
++    BaseComponent getTitle();
+ 
+     /**
+      * Sets the title of this boss bar
+      *
+      * @param title the title of the bar
+      */
+-    void setTitle(String title);
++    void setTitle(BaseComponent title);
+ 
+     /**
+      * Returns the color of this boss bar
+@@ -49,6 +51,11 @@ public interface BossBar {
+     void setStyle(BarStyle style);
+ 
+     /**
++     * Replace the entire set of flags for this boss bar
++     */
++    void setFlags(Set<BarFlag> flags);
++
++    /**
+      * Remove an existing flag on this boss bar
+      *
+      * @param flag the existing flag to remove
+@@ -141,4 +148,11 @@ public interface BossBar {
+      */
+     @Deprecated
+     void hide();
++
++    /**
++     * Set all properties of this boss bar at once. This will send no more than a single packet to
++     * each client. It will be the smallest packet that can carry all the properties that actually
++     * changed. If no properties change, then no packet will be sent at all.
++     */
++    void update(BaseComponent title, double progress, BarColor color, BarStyle style, Set<BarFlag> flags);
+ }

@@ -1,0 +1,17 @@
+From: Jedediah Smith <jedediah@silencegreys.com>
+Date: Fri, 20 Feb 2015 15:23:57 -0500
+Subject: [PATCH] Fix playEffect params
+
+
+diff --git a/src/main/java/org/bukkit/craftbukkit/CraftWorld.java b/src/main/java/org/bukkit/craftbukkit/CraftWorld.java
+--- a/src/main/java/org/bukkit/craftbukkit/CraftWorld.java
++++ b/src/main/java/org/bukkit/craftbukkit/CraftWorld.java
+@@ -867,7 +867,7 @@ public class CraftWorld implements World {
+                 particleFullName.append('_').append(data);
+             }
+ 
+-            packet = new PacketPlayOutWorldParticles(CraftEffect.getNMSParticle(effect), false, (float)location.getX(), (float)location.getY(), (float)location.getZ(), offsetX, offsetY, offsetZ, particleCount, radius);
++            packet = new PacketPlayOutWorldParticles(CraftEffect.getNMSParticle(effect), false, (float)location.getX(), (float)location.getY(), (float)location.getZ(), offsetX, offsetY, offsetZ, speed, particleCount);
+         }
+ 
+         int distance;

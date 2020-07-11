@@ -1,0 +1,107 @@
+From: Jedediah Smith <jedediah@silencegreys.com>
+Date: Sat, 14 Feb 2015 08:18:51 -0500
+Subject: [PATCH] Add invis override API
+
+
+diff --git a/src/main/java/net/minecraft/server/Entity.java b/src/main/java/net/minecraft/server/Entity.java
+--- a/src/main/java/net/minecraft/server/Entity.java
++++ b/src/main/java/net/minecraft/server/Entity.java
+@@ -117,7 +117,7 @@ public abstract class Entity implements ICommandListener {
+     protected boolean justCreated;
+     protected boolean fireProof;
+     protected DataWatcher datawatcher;
+-    protected static final DataWatcherObject<Byte> Z = DataWatcher.a(Entity.class, DataWatcherRegistry.a);
++    protected static final DataWatcherObject<Byte> Z = DataWatcher.a(Entity.class, DataWatcherRegistry.a); public static final DataWatcherObject<Byte> FLAGS = Z; // SportBukkit - add public alias
+     private static final DataWatcherObject<Integer> az = DataWatcher.a(Entity.class, DataWatcherRegistry.b);
+     private static final DataWatcherObject<String> aA = DataWatcher.a(Entity.class, DataWatcherRegistry.d);
+     private static final DataWatcherObject<Boolean> aB = DataWatcher.a(Entity.class, DataWatcherRegistry.h);
+diff --git a/src/main/java/net/minecraft/server/PacketPlayOutEntityMetadata.java b/src/main/java/net/minecraft/server/PacketPlayOutEntityMetadata.java
+--- a/src/main/java/net/minecraft/server/PacketPlayOutEntityMetadata.java
++++ b/src/main/java/net/minecraft/server/PacketPlayOutEntityMetadata.java
+@@ -5,8 +5,10 @@ import java.util.List;
+ 
+ public class PacketPlayOutEntityMetadata implements Packet<PacketListenerPlayOut> {
+ 
+-    private int a;
+-    private List<DataWatcher.Item<?>> b;
++    // SportBukkit start - make public
++    public int a;
++    public List<DataWatcher.Item<?>> b;
++    // SportBukkit end
+ 
+     public PacketPlayOutEntityMetadata() {}
+ 
+diff --git a/src/main/java/net/minecraft/server/PlayerConnection.java b/src/main/java/net/minecraft/server/PlayerConnection.java
+--- a/src/main/java/net/minecraft/server/PlayerConnection.java
++++ b/src/main/java/net/minecraft/server/PlayerConnection.java
+@@ -1144,6 +1144,31 @@ public class PlayerConnection implements PacketListenerPlayIn, ITickable {
+                 }
+             }
+ 
++        } else if(packet instanceof PacketPlayOutEntityMetadata) {
++            // Override invisibility flag for players with canSeeInvisibles -> true
++            if(this.getPlayer().canSeeInvisibles()) {
++                PacketPlayOutEntityMetadata metadataPacket = (PacketPlayOutEntityMetadata) packet;
++                Object entity = this.player.world.entitiesById.get(metadataPacket.a);
++                if(entity instanceof EntityLiving && !(entity instanceof EntityArmorStand)) { // Don't show non-living ents or armor stands
++                    for(int i = 0; i < metadataPacket.b.size(); i++) {
++                        DataWatcher.Item flagsItem = (DataWatcher.Item) metadataPacket.b.get(i);
++                        if(Entity.FLAGS.equals(flagsItem.a()) && flagsItem.b() instanceof Byte) { // Flags at metadata index 0
++                            byte entityFlags = (Byte) flagsItem.b();
++                            if((entityFlags & 0x20) != 0) { // Invisible flag
++                                PacketPlayOutEntityMetadata replacedMetadataPacket = new PacketPlayOutEntityMetadata();
++                                replacedMetadataPacket.a = metadataPacket.a;
++                                replacedMetadataPacket.b = new ArrayList(metadataPacket.b);
++                                final DataWatcher.Item replacementItem = new DataWatcher.Item(flagsItem.a(), (byte) (entityFlags & ~0x20));
++                                replacementItem.a(flagsItem.c());
++                                replacedMetadataPacket.b.set(i, replacementItem); // Clear invisibility
++
++                                replacedPacket = replacedMetadataPacket;
++                            }
++                            break;
++                        }
++                    }
++                }
++            }
+         }
+         // CraftBukkit end
+ 
+diff --git a/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java b/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
+--- a/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
++++ b/src/main/java/org/bukkit/craftbukkit/entity/CraftPlayer.java
+@@ -85,6 +85,7 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
+     private boolean scaledHealth = false;
+     private double healthScale = 20;
+     private Skin realSkin;
++    private boolean showInvisibles;
+ 
+     private final Map<CommandSender, String> fakeNames = new WeakHashMap<CommandSender, String>();
+     private final Map<CommandSender, String> fakeDisplayNames = new WeakHashMap<CommandSender, String>();
+@@ -1253,6 +1254,27 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
+     }
+ 
+     @Override
++    public boolean canSeeInvisibles() {
++        return this.showInvisibles;
++    }
++
++    @Override
++    public void showInvisibles(boolean show) {
++        if(show != this.showInvisibles) {
++            this.showInvisibles = show;
++            EntityTracker tracker = ((WorldServer) this.entity.world).tracker;
++            for(Entity entity : getHandle().world.entityList) {
++                if(entity.isInvisible()) {
++                    EntityTrackerEntry trackerEntry = tracker.trackedEntities.get(entity.getId());
++                    if(trackerEntry != null && trackerEntry.trackedPlayers.contains(getHandle())) {
++                        getHandle().playerConnection.sendPacket(new PacketPlayOutEntityMetadata(entity.getId(), entity.getDataWatcher(), true));
++                    }
++                }
++            }
++        }
++    }
++
++    @Override
+     public Map<String, Object> serialize() {
+         Map<String, Object> result = new LinkedHashMap<String, Object>();
+ 

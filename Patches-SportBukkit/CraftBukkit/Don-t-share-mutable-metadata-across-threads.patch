@@ -1,0 +1,107 @@
+From: Jedediah Smith <jedediah@silencegreys.com>
+Date: Fri, 20 Mar 2015 01:21:22 -0400
+Subject: [PATCH] Don't share mutable metadata across threads
+
+
+diff --git a/src/main/java/net/minecraft/server/DataWatcher.java b/src/main/java/net/minecraft/server/DataWatcher.java
+--- a/src/main/java/net/minecraft/server/DataWatcher.java
++++ b/src/main/java/net/minecraft/server/DataWatcher.java
+@@ -303,5 +303,30 @@ public class DataWatcher {
+         public void a(boolean flag) {
+             this.c = flag;
+         }
++
++        // SportBukkit start - Make an independent copy of the item
++        public Item<T> deepCopy() {
++            T value = this.b();
++
++            // All the metadata types are immutable except ItemStack, which we have to clone.
++            if(value instanceof ItemStack) {
++                value = (T) ((ItemStack) value).cloneItemStack();
++            }
++
++            final Item<T> copy = new Item<>(this.a(), value);
++            copy.a(this.c());
++            return copy;
++        }
++        // SportBukkit end
++    }
++
++    // SportBukkit start - Copy all items in the given list in-place
++    public static void deepCopy(List<Item<?>> items) {
++        if(items == null) return;
++
++        for(int j = 0; j < items.size(); j++) {
++            items.set(j, items.get(j).deepCopy());
++        }
+     }
++    // SportBukkit end
+ }
+diff --git a/src/main/java/net/minecraft/server/PacketPlayOutEntityMetadata.java b/src/main/java/net/minecraft/server/PacketPlayOutEntityMetadata.java
+--- a/src/main/java/net/minecraft/server/PacketPlayOutEntityMetadata.java
++++ b/src/main/java/net/minecraft/server/PacketPlayOutEntityMetadata.java
+@@ -20,7 +20,7 @@ public class PacketPlayOutEntityMetadata implements Packet<PacketListenerPlayOut
+         } else {
+             this.b = datawatcher.b();
+         }
+-
++        DataWatcher.deepCopy(this.b); // SportBukkit - send unshared copy of metadata
+     }
+ 
+     public void a(PacketDataSerializer packetdataserializer) throws IOException {
+diff --git a/src/main/java/net/minecraft/server/PacketPlayOutNamedEntitySpawn.java b/src/main/java/net/minecraft/server/PacketPlayOutNamedEntitySpawn.java
+--- a/src/main/java/net/minecraft/server/PacketPlayOutNamedEntitySpawn.java
++++ b/src/main/java/net/minecraft/server/PacketPlayOutNamedEntitySpawn.java
+@@ -40,6 +40,11 @@ public class PacketPlayOutNamedEntitySpawn implements Packet<PacketListenerPlayO
+         this.f = (byte) ((int) (entityhuman.yaw * 256.0F / 360.0F));
+         this.g = (byte) ((int) (entityhuman.pitch * 256.0F / 360.0F));
+         this.h = entityhuman.getDataWatcher();
++
++        // SportBukkit start - send unshared copy of metadata
++        this.i = this.h.c();
++        DataWatcher.deepCopy(this.i);
++        // SportBukkit end
+     }
+ 
+     public void a(PacketDataSerializer packetdataserializer) throws IOException {
+@@ -61,7 +66,11 @@ public class PacketPlayOutNamedEntitySpawn implements Packet<PacketListenerPlayO
+         packetdataserializer.writeDouble(this.e);
+         packetdataserializer.writeByte(this.f);
+         packetdataserializer.writeByte(this.g);
+-        this.h.a(packetdataserializer);
++
++        // SportBukkit start - send unshared copy of metadata
++        // this.h.a(packetdataserializer);
++        DataWatcher.a(this.i, packetdataserializer);
++        // SportBukkit end
+     }
+ 
+     public void a(PacketListenerPlayOut packetlistenerplayout) {
+diff --git a/src/main/java/net/minecraft/server/PacketPlayOutSpawnEntityLiving.java b/src/main/java/net/minecraft/server/PacketPlayOutSpawnEntityLiving.java
+--- a/src/main/java/net/minecraft/server/PacketPlayOutSpawnEntityLiving.java
++++ b/src/main/java/net/minecraft/server/PacketPlayOutSpawnEntityLiving.java
+@@ -84,6 +84,11 @@ public class PacketPlayOutSpawnEntityLiving implements Packet<PacketListenerPlay
+         this.h = (int) (d2 * 8000.0D);
+         this.i = (int) (d3 * 8000.0D);
+         this.m = entityliving.getDataWatcher();
++
++        // SportBukkit start - send unshared copy of metadata
++        this.n = this.m.c();
++        DataWatcher.deepCopy(this.n);
++        // SportBukkit end
+     }
+ 
+     public void a(PacketDataSerializer packetdataserializer) throws IOException {
+@@ -115,7 +120,11 @@ public class PacketPlayOutSpawnEntityLiving implements Packet<PacketListenerPlay
+         packetdataserializer.writeShort(this.g);
+         packetdataserializer.writeShort(this.h);
+         packetdataserializer.writeShort(this.i);
+-        this.m.a(packetdataserializer);
++
++        // SportBukkit start - send unshared copy of metadata
++        // this.m.a(packetdataserializer);
++        DataWatcher.a(this.n, packetdataserializer);
++        // SportBukkit end
+     }
+ 
+     public void a(PacketListenerPlayOut packetlistenerplayout) {

@@ -1,0 +1,43 @@
+From: Jedediah Smith <jedediah@silencegreys.com>
+Date: Fri, 4 Mar 2016 05:28:58 -0500
+Subject: [PATCH] Expose sound effect classes
+
+
+diff --git a/src/main/java/net/minecraft/server/SoundEffectType.java b/src/main/java/net/minecraft/server/SoundEffectType.java
+--- a/src/main/java/net/minecraft/server/SoundEffectType.java
++++ b/src/main/java/net/minecraft/server/SoundEffectType.java
+@@ -40,15 +40,23 @@ public class SoundEffectType {
+         return this.n;
+     }
+ 
++    public SoundEffect stepSound() { return this.d(); } // SportBukkit - alias for following method
+     public SoundEffect d() {
+         return this.p;
+     }
+ 
++    public SoundEffect placeSound() { return this.e(); } // SportBukkit - alias for following method
+     public SoundEffect e() {
+         return this.q;
+     }
+ 
++    public SoundEffect fallSound() { return this.g(); } // SportBukkit - alias for following method
+     public SoundEffect g() {
+         return this.s;
+     }
++
++    // SportBukkit start - add missing accessors
++    public SoundEffect breakSound() { return this.o;}
++    public SoundEffect hitSound() { return this.r;}
++    // SportBukkit end
+ }
+diff --git a/src/main/java/net/minecraft/server/World.java b/src/main/java/net/minecraft/server/World.java
+--- a/src/main/java/net/minecraft/server/World.java
++++ b/src/main/java/net/minecraft/server/World.java
+@@ -922,6 +922,7 @@ public abstract class World implements IBlockAccess {
+         this.a(entityhuman, (double) blockposition.getX() + 0.5D, (double) blockposition.getY() + 0.5D, (double) blockposition.getZ() + 0.5D, soundeffect, soundcategory, f, f1);
+     }
+ 
++    public void playSoundEffect(@Nullable EntityHuman source, double x, double y, double z, SoundEffect sound, SoundCategory category, float volume, float pitch) { this.a(source, x, y, z, sound, category, volume, pitch); } // SportBukkit - alias for following method
+     public void a(@Nullable EntityHuman entityhuman, double d0, double d1, double d2, SoundEffect soundeffect, SoundCategory soundcategory, float f, float f1) {
+         for (int i = 0; i < this.u.size(); ++i) {
+             ((IWorldAccess) this.u.get(i)).a(entityhuman, soundeffect, soundcategory, d0, d1, d2, f, f1);

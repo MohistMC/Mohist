@@ -1,0 +1,581 @@
+From: Jedediah Smith <jedediah@silencegreys.com>
+Date: Thu, 10 Mar 2016 15:08:23 -0500
+Subject: [PATCH] Modernize potion API
+
+
+diff --git a/src/main/java/org/bukkit/Bukkit.java b/src/main/java/org/bukkit/Bukkit.java
+--- a/src/main/java/org/bukkit/Bukkit.java
++++ b/src/main/java/org/bukkit/Bukkit.java
+@@ -37,6 +37,8 @@ import org.bukkit.permissions.Permissible;
+ import org.bukkit.plugin.PluginManager;
+ import org.bukkit.plugin.ServicesManager;
+ import org.bukkit.plugin.messaging.Messenger;
++import org.bukkit.potion.PotionEffectRegistry;
++import org.bukkit.potion.PotionBrewRegistry;
+ import org.bukkit.registry.Key;
+ import org.bukkit.scheduler.BukkitScheduler;
+ import org.bukkit.scoreboard.ScoreboardManager;
+@@ -1253,4 +1255,12 @@ public final class Bukkit {
+     public static Key key(String id) {
+         return runtime().key(id);
+     }
++
++    public static PotionBrewRegistry potionRegistry() {
++        return runtime().potionRegistry();
++    }
++
++    public static PotionEffectRegistry potionEffectRegistry() {
++        return runtime().potionEffectRegistry();
++    }
+ }
+diff --git a/src/main/java/org/bukkit/BukkitRuntime.java b/src/main/java/org/bukkit/BukkitRuntime.java
+--- a/src/main/java/org/bukkit/BukkitRuntime.java
++++ b/src/main/java/org/bukkit/BukkitRuntime.java
+@@ -2,6 +2,8 @@ package org.bukkit;
+ 
+ import org.bukkit.inventory.ItemFactory;
+ import org.bukkit.inventory.meta.ItemMeta;
++import org.bukkit.potion.PotionEffectRegistry;
++import org.bukkit.potion.PotionBrewRegistry;
+ import org.bukkit.registry.Key;
+ 
+ public interface BukkitRuntime {
+@@ -17,4 +19,8 @@ public interface BukkitRuntime {
+      * @see ItemFactory
+      */
+     ItemFactory getItemFactory();
++
++    PotionBrewRegistry potionRegistry();
++
++    PotionEffectRegistry potionEffectRegistry();
+ }
+diff --git a/src/main/java/org/bukkit/inventory/meta/PotionMeta.java b/src/main/java/org/bukkit/inventory/meta/PotionMeta.java
+--- a/src/main/java/org/bukkit/inventory/meta/PotionMeta.java
++++ b/src/main/java/org/bukkit/inventory/meta/PotionMeta.java
+@@ -1,6 +1,7 @@
+ package org.bukkit.inventory.meta;
+ 
+ import org.bukkit.Color;
++import org.bukkit.potion.PotionBrew;
+ import org.bukkit.potion.PotionEffect;
+ import org.bukkit.potion.PotionEffectType;
+ import org.bukkit.potion.PotionData;
+@@ -27,6 +28,10 @@ public interface PotionMeta extends ItemMeta {
+      */
+     PotionData getBasePotionData();
+ 
++    void setPotionBrew(PotionBrew brew);
++
++    PotionBrew getPotionBrew();
++
+     /**
+      * Checks for the presence of custom potion effects.
+      *
+diff --git a/src/main/java/org/bukkit/potion/PotionBrew.java b/src/main/java/org/bukkit/potion/PotionBrew.java
+new file mode 100644
+index 0000000..f5fcc3a
+--- /dev/null
++++ b/src/main/java/org/bukkit/potion/PotionBrew.java
+@@ -0,0 +1,9 @@
++package org.bukkit.potion;
++
++import java.util.List;
++
++import org.bukkit.registry.Registerable;
++
++public interface PotionBrew extends Registerable {
++    List<PotionEffect> effects();
++}
+diff --git a/src/main/java/org/bukkit/potion/PotionBrewRegistry.java b/src/main/java/org/bukkit/potion/PotionBrewRegistry.java
+new file mode 100644
+index 0000000..11ae697
+--- /dev/null
++++ b/src/main/java/org/bukkit/potion/PotionBrewRegistry.java
+@@ -0,0 +1,5 @@
++package org.bukkit.potion;
++
++import org.bukkit.registry.Registry;
++
++public interface PotionBrewRegistry extends Registry<PotionBrew> {}
+diff --git a/src/main/java/org/bukkit/potion/PotionEffectRegistry.java b/src/main/java/org/bukkit/potion/PotionEffectRegistry.java
+new file mode 100644
+index 0000000..724b62f
+--- /dev/null
++++ b/src/main/java/org/bukkit/potion/PotionEffectRegistry.java
+@@ -0,0 +1,11 @@
++package org.bukkit.potion;
++
++import org.bukkit.registry.Registry;
++
++public interface PotionEffectRegistry extends Registry<PotionEffectType> {
++    @Deprecated
++    PotionEffectType forLegacyId(int legacyId);
++
++    @Deprecated
++    PotionEffectType forLegacyName(String legacyName);
++}
+diff --git a/src/main/java/org/bukkit/potion/PotionEffectType.java b/src/main/java/org/bukkit/potion/PotionEffectType.java
+--- a/src/main/java/org/bukkit/potion/PotionEffectType.java
++++ b/src/main/java/org/bukkit/potion/PotionEffectType.java
+@@ -1,163 +1,158 @@
+ package org.bukkit.potion;
+ 
+-import java.util.HashMap;
+-import java.util.Map;
++import java.util.ArrayList;
++import java.util.List;
+ 
+-import org.apache.commons.lang.Validate;
++import org.bukkit.Bukkit;
+ import org.bukkit.Color;
++import org.bukkit.registry.Key;
++import org.bukkit.registry.Registerable;
+ 
+ /**
+  * Represents a type of potion and its effect on an entity.
+  */
+-public abstract class PotionEffectType {
++public abstract class PotionEffectType implements Registerable {
+     /**
+      * Increases movement speed.
+      */
+-    public static final PotionEffectType SPEED = new PotionEffectTypeWrapper(1);
++    public static final PotionEffectType SPEED = new PotionEffectTypeWrapper("speed");
+ 
+     /**
+      * Decreases movement speed.
+      */
+-    public static final PotionEffectType SLOW = new PotionEffectTypeWrapper(2);
++    public static final PotionEffectType SLOW = new PotionEffectTypeWrapper("slowness");
+ 
+     /**
+      * Increases dig speed.
+      */
+-    public static final PotionEffectType FAST_DIGGING = new PotionEffectTypeWrapper(3);
++    public static final PotionEffectType FAST_DIGGING = new PotionEffectTypeWrapper("haste");
+ 
+     /**
+      * Decreases dig speed.
+      */
+-    public static final PotionEffectType SLOW_DIGGING = new PotionEffectTypeWrapper(4);
++    public static final PotionEffectType SLOW_DIGGING = new PotionEffectTypeWrapper("mining_fatigue");
+ 
+     /**
+      * Increases damage dealt.
+      */
+-    public static final PotionEffectType INCREASE_DAMAGE = new PotionEffectTypeWrapper(5);
++    public static final PotionEffectType INCREASE_DAMAGE = new PotionEffectTypeWrapper("strength");
+ 
+     /**
+      * Heals an entity.
+      */
+-    public static final PotionEffectType HEAL = new PotionEffectTypeWrapper(6);
++    public static final PotionEffectType HEAL = new PotionEffectTypeWrapper("instant_health");
+ 
+     /**
+      * Hurts an entity.
+      */
+-    public static final PotionEffectType HARM = new PotionEffectTypeWrapper(7);
++    public static final PotionEffectType HARM = new PotionEffectTypeWrapper("instant_damage");
+ 
+     /**
+      * Increases jump height.
+      */
+-    public static final PotionEffectType JUMP = new PotionEffectTypeWrapper(8);
++    public static final PotionEffectType JUMP = new PotionEffectTypeWrapper("jump_boost");
+ 
+     /**
+      * Warps vision on the client.
+      */
+-    public static final PotionEffectType CONFUSION = new PotionEffectTypeWrapper(9);
++    public static final PotionEffectType CONFUSION = new PotionEffectTypeWrapper("nausea");
+ 
+     /**
+      * Regenerates health.
+      */
+-    public static final PotionEffectType REGENERATION = new PotionEffectTypeWrapper(10);
++    public static final PotionEffectType REGENERATION = new PotionEffectTypeWrapper("regeneration");
+ 
+     /**
+      * Decreases damage dealt to an entity.
+      */
+-    public static final PotionEffectType DAMAGE_RESISTANCE = new PotionEffectTypeWrapper(11);
++    public static final PotionEffectType DAMAGE_RESISTANCE = new PotionEffectTypeWrapper("resistance");
+ 
+     /**
+      * Stops fire damage.
+      */
+-    public static final PotionEffectType FIRE_RESISTANCE = new PotionEffectTypeWrapper(12);
++    public static final PotionEffectType FIRE_RESISTANCE = new PotionEffectTypeWrapper("fire_resistance");
+ 
+     /**
+      * Allows breathing underwater.
+      */
+-    public static final PotionEffectType WATER_BREATHING = new PotionEffectTypeWrapper(13);
++    public static final PotionEffectType WATER_BREATHING = new PotionEffectTypeWrapper("water_breathing");
+ 
+     /**
+      * Grants invisibility.
+      */
+-    public static final PotionEffectType INVISIBILITY = new PotionEffectTypeWrapper(14);
++    public static final PotionEffectType INVISIBILITY = new PotionEffectTypeWrapper("invisibility");
+ 
+     /**
+      * Blinds an entity.
+      */
+-    public static final PotionEffectType BLINDNESS = new PotionEffectTypeWrapper(15);
++    public static final PotionEffectType BLINDNESS = new PotionEffectTypeWrapper("blindness");
+ 
+     /**
+      * Allows an entity to see in the dark.
+      */
+-    public static final PotionEffectType NIGHT_VISION = new PotionEffectTypeWrapper(16);
++    public static final PotionEffectType NIGHT_VISION = new PotionEffectTypeWrapper("night_vision");
+ 
+     /**
+      * Increases hunger.
+      */
+-    public static final PotionEffectType HUNGER = new PotionEffectTypeWrapper(17);
++    public static final PotionEffectType HUNGER = new PotionEffectTypeWrapper("hunger");
+ 
+     /**
+      * Decreases damage dealt by an entity.
+      */
+-    public static final PotionEffectType WEAKNESS = new PotionEffectTypeWrapper(18);
++    public static final PotionEffectType WEAKNESS = new PotionEffectTypeWrapper("weakness");
+ 
+     /**
+      * Deals damage to an entity over time.
+      */
+-    public static final PotionEffectType POISON = new PotionEffectTypeWrapper(19);
++    public static final PotionEffectType POISON = new PotionEffectTypeWrapper("poison");
+ 
+     /**
+      * Deals damage to an entity over time and gives the health to the
+      * shooter.
+      */
+-    public static final PotionEffectType WITHER = new PotionEffectTypeWrapper(20);
++    public static final PotionEffectType WITHER = new PotionEffectTypeWrapper("wither");
+ 
+     /**
+      * Increases the maximum health of an entity.
+      */
+-    public static final PotionEffectType HEALTH_BOOST = new PotionEffectTypeWrapper(21);
++    public static final PotionEffectType HEALTH_BOOST = new PotionEffectTypeWrapper("health_boost");
+ 
+     /**
+      * Increases the maximum health of an entity with health that cannot be
+      * regenerated, but is refilled every 30 seconds.
+      */
+-    public static final PotionEffectType ABSORPTION = new PotionEffectTypeWrapper(22);
++    public static final PotionEffectType ABSORPTION = new PotionEffectTypeWrapper("absorption");
+ 
+     /**
+      * Increases the food level of an entity each tick.
+      */
+-    public static final PotionEffectType SATURATION = new PotionEffectTypeWrapper(23);
++    public static final PotionEffectType SATURATION = new PotionEffectTypeWrapper("saturation");
+ 
+     /**
+      * Outlines the entity so that it can be seen from afar.
+      */
+-    public static final PotionEffectType GLOWING = new PotionEffectTypeWrapper(24);
++    public static final PotionEffectType GLOWING = new PotionEffectTypeWrapper("glowing");
+ 
+     /**
+      * Causes the entity to float into the air.
+      */
+-    public static final PotionEffectType LEVITATION = new PotionEffectTypeWrapper(25);
++    public static final PotionEffectType LEVITATION = new PotionEffectTypeWrapper("levitation");
+ 
+     /**
+      * Loot table luck.
+      */
+-    public static final PotionEffectType LUCK = new PotionEffectTypeWrapper(26);
++    public static final PotionEffectType LUCK = new PotionEffectTypeWrapper("luck");
+ 
+     /**
+      * Loot table unluck.
+      */
+-    public static final PotionEffectType UNLUCK = new PotionEffectTypeWrapper(27);
+-
+-    private final int id;
+-
+-    protected PotionEffectType(int id) {
+-        this.id = id;
+-    }
++    public static final PotionEffectType UNLUCK = new PotionEffectTypeWrapper("unluck");
+ 
+     /**
+      * Creates a PotionEffect from this PotionEffectType, applying duration
+      * modifiers and checks.
+      *
+-     * @see PotionBrewer#createEffect(PotionEffectType, int, int)
+      * @param duration time in ticks
+      * @param amplifier the effect's amplifier
+      * @return a resulting potion effect
+@@ -180,15 +175,15 @@ public abstract class PotionEffectType {
+      * @deprecated Magic value
+      */
+     @Deprecated
+-    public int getId() {
+-        return id;
+-    }
++    public abstract int getId();
+ 
+     /**
+-     * Returns the name of this effect type.
++     * Returns the legacy Bukkit name of this effect type.
+      *
+      * @return The name of this effect type
++     * @deprecated Use {@link #key()}
+      */
++    @Deprecated
+     public abstract String getName();
+ 
+     /**
+@@ -207,34 +202,22 @@ public abstract class PotionEffectType {
+ 
+     @Override
+     public boolean equals(Object obj) {
+-        if (obj == null) {
+-            return false;
+-        }
+-        if (!(obj instanceof PotionEffectType)) {
+-            return false;
+-        }
+-        final PotionEffectType other = (PotionEffectType) obj;
+-        if (this.id != other.id) {
+-            return false;
+-        }
+-        return true;
++        return this == obj || (
++            obj instanceof PotionEffectType &&
++            key().equals(((PotionEffectType) obj).key())
++        );
+     }
+ 
+     @Override
+     public int hashCode() {
+-        return id;
++        return key().hashCode();
+     }
+ 
+     @Override
+     public String toString() {
+-        return "PotionEffectType[" + id + ", " + getName() + "]";
++        return "PotionEffectType[" + key() + ", " + getName() + "]";
+     }
+ 
+-    private static final PotionEffectType[] byId = new PotionEffectType[28];
+-    private static final Map<String, PotionEffectType> byName = new HashMap<String, PotionEffectType>();
+-    // will break on updates.
+-    private static boolean acceptingNew = true;
+-
+     /**
+      * Gets the effect type specified by the unique id.
+      *
+@@ -244,46 +227,33 @@ public abstract class PotionEffectType {
+      */
+     @Deprecated
+     public static PotionEffectType getById(int id) {
+-        if (id >= byId.length || id < 0)
+-            return null;
+-        return byId[id];
++        return Bukkit.potionEffectRegistry().forLegacyId(id);
+     }
+ 
+     /**
+-     * Gets the effect type specified by the given name.
++     * Gets the effect type specified by the given legacy Bukkit name.
+      *
+      * @param name Name of PotionEffectType to fetch
+      * @return Resulting PotionEffectType, or null if not found.
++     * @deprecated Use {@link PotionEffectRegistry#get(Key)}
+      */
+     public static PotionEffectType getByName(String name) {
+-        Validate.notNull(name, "name cannot be null");
+-        return byName.get(name.toLowerCase(java.util.Locale.ENGLISH));
++        return Bukkit.potionEffectRegistry().forLegacyName(name);
+     }
+ 
+     /**
+-     * Registers an effect type with the given object.
+-     * <p>
+-     * Generally not to be used from within a plugin.
+-     *
+-     * @param type PotionType to register
++     * Legacy method, not to be called under any circumstances
+      */
++    @Deprecated
+     public static void registerPotionEffectType(PotionEffectType type) {
+-        if (byId[type.id] != null || byName.containsKey(type.getName().toLowerCase(java.util.Locale.ENGLISH))) {
+-            throw new IllegalArgumentException("Cannot set already-set type");
+-        } else if (!acceptingNew) {
+-            throw new IllegalStateException(
+-                    "No longer accepting new potion effect types (can only be done by the server implementation)");
+-        }
+-
+-        byId[type.id] = type;
+-        byName.put(type.getName().toLowerCase(java.util.Locale.ENGLISH), type);
++        throw new UnsupportedOperationException();
+     }
+ 
+     /**
+-     * Stops accepting any effect type registrations.
++     * Legacy method, not to be called under any circumstances
+      */
++    @Deprecated
+     public static void stopAcceptingRegistrations() {
+-        acceptingNew = false;
+     }
+ 
+     /**
+@@ -291,8 +261,14 @@ public abstract class PotionEffectType {
+      * This array is not necessarily in any particular order and may contain null.
+      *
+      * @return Array of types.
++     * @deprecated Use {@link PotionEffectRegistry#iterator()}
+      */
++    @Deprecated
+     public static PotionEffectType[] values() {
+-        return byId.clone();
++        final List<PotionEffectType> list = new ArrayList<PotionEffectType>();
++        for(PotionEffectType type : Bukkit.potionEffectRegistry()) {
++            list.add(type);
++        }
++        return list.toArray(new PotionEffectType[list.size()]);
+     }
+ }
+diff --git a/src/main/java/org/bukkit/potion/PotionEffectTypeWrapper.java b/src/main/java/org/bukkit/potion/PotionEffectTypeWrapper.java
+--- a/src/main/java/org/bukkit/potion/PotionEffectTypeWrapper.java
++++ b/src/main/java/org/bukkit/potion/PotionEffectTypeWrapper.java
+@@ -1,10 +1,15 @@
+ package org.bukkit.potion;
+ 
++import org.bukkit.Bukkit;
+ import org.bukkit.Color;
++import org.bukkit.registry.Key;
+ 
+ public class PotionEffectTypeWrapper extends PotionEffectType {
+-    protected PotionEffectTypeWrapper(int id) {
+-        super(id);
++
++    private final String id;
++
++    protected PotionEffectTypeWrapper(String id) {
++        this.id = id;
+     }
+ 
+     @Override
+@@ -13,6 +18,16 @@ public class PotionEffectTypeWrapper extends PotionEffectType {
+     }
+ 
+     @Override
++    public Key key() {
++        return Bukkit.key(id);
++    }
++
++    @Override
++    public int getId() {
++        return getType().getId();
++    }
++
++    @Override
+     public String getName() {
+         return getType().getName();
+     }
+@@ -23,7 +38,7 @@ public class PotionEffectTypeWrapper extends PotionEffectType {
+      * @return The potion effect type
+      */
+     public PotionEffectType getType() {
+-        return PotionEffectType.getById(getId());
++        return Bukkit.potionEffectRegistry().get(key());
+     }
+ 
+     @Override
+diff --git a/src/main/java/org/bukkit/potion/PotionType.java b/src/main/java/org/bukkit/potion/PotionType.java
+--- a/src/main/java/org/bukkit/potion/PotionType.java
++++ b/src/main/java/org/bukkit/potion/PotionType.java
+@@ -1,41 +1,60 @@
+ package org.bukkit.potion;
+ 
++import org.bukkit.Bukkit;
++import org.bukkit.registry.Key;
++
+ /**
+  * This enum reflects and matches each potion state that can be obtained from
+  * the Creative mode inventory
+  */
+ public enum PotionType {
+-    UNCRAFTABLE(null, false, false),
+-    WATER(null, false, false),
+-    MUNDANE(null, false, false),
+-    THICK(null, false, false),
+-    AWKWARD(null, false, false),
+-    NIGHT_VISION(PotionEffectType.NIGHT_VISION, false, true),
+-    INVISIBILITY(PotionEffectType.INVISIBILITY, false, true),
+-    JUMP(PotionEffectType.JUMP, true, true),
+-    FIRE_RESISTANCE(PotionEffectType.FIRE_RESISTANCE, false, true),
+-    SPEED(PotionEffectType.SPEED, true, true),
+-    SLOWNESS(PotionEffectType.SLOW, false, true),
+-    WATER_BREATHING(PotionEffectType.WATER_BREATHING, false, true),
+-    INSTANT_HEAL(PotionEffectType.HEAL, true, false),
+-    INSTANT_DAMAGE(PotionEffectType.HARM, true, false),
+-    POISON(PotionEffectType.POISON, true, true),
+-    REGEN(PotionEffectType.REGENERATION, true, true),
+-    STRENGTH(PotionEffectType.INCREASE_DAMAGE, true, true),
+-    WEAKNESS(PotionEffectType.WEAKNESS, false, true),
+-    LUCK(PotionEffectType.LUCK, false, false);
+-    ;
++    UNCRAFTABLE("empty", null, false, false),
++    WATER("water", null, false, false),
++    MUNDANE("mundane", null, false, false),
++    THICK("thick", null, false, false),
++    AWKWARD("awkward", null, false, false),
++    NIGHT_VISION("night_vision", PotionEffectType.NIGHT_VISION, false, true),
++    INVISIBILITY("invisibility", PotionEffectType.INVISIBILITY, false, true),
++    JUMP("leaping", PotionEffectType.JUMP, true, true),
++    FIRE_RESISTANCE("fire_resistance", PotionEffectType.FIRE_RESISTANCE, false, true),
++    SPEED("swiftness", PotionEffectType.SPEED, true, true),
++    SLOWNESS("slowness", PotionEffectType.SLOW, false, true),
++    WATER_BREATHING("water_breathing", PotionEffectType.WATER_BREATHING, false, true),
++    INSTANT_HEAL("healing", PotionEffectType.HEAL, true, false),
++    INSTANT_DAMAGE("harming", PotionEffectType.HARM, true, false),
++    POISON("poison", PotionEffectType.POISON, true, true),
++    REGEN("regeneration", PotionEffectType.REGENERATION, true, true),
++    STRENGTH("strength", PotionEffectType.INCREASE_DAMAGE, true, true),
++    WEAKNESS("weakness", PotionEffectType.WEAKNESS, false, true),
++    LUCK("luck", PotionEffectType.LUCK, false, false);
++
++    private static final String LONG_PREFIX = "long_";
++    private static final String STRONG_PREFIX = "strong_";
+ 
+     private final PotionEffectType effect;
+     private final boolean upgradeable;
+     private final boolean extendable;
++    private final String id;
+ 
+-    PotionType(PotionEffectType effect, boolean upgradeable, boolean extendable) {
++    PotionType(String id, PotionEffectType effect, boolean upgradeable, boolean extendable) {
++        this.id = id;
+         this.effect = effect;
+         this.upgradeable = upgradeable;
+         this.extendable = extendable;
+     }
+ 
++    public Key baseKey() {
++        return Bukkit.key(id);
++    }
++
++    public Key longKey() {
++        return Bukkit.key(LONG_PREFIX + id);
++    }
++
++    public Key strongKey() {
++        return Bukkit.key(STRONG_PREFIX + id);
++    }
++
+     public PotionEffectType getEffectType() {
+         return effect;
+     }

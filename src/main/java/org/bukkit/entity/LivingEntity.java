@@ -241,6 +241,16 @@ public interface LivingEntity extends Attributable, Damageable, ProjectileSource
     public void setNoDamageTicks(int ticks);
 
     /**
+     *  Get the amount of absorption this entity currently has, in half-hearts.
+     */
+    float getAbsorption();
+
+    /**
+     * Set the amount of absorption this entity currently has, in half-hearts.
+     */
+    void setAbsorption(float absorption);
+
+    /**
      * Gets the player identified as the killer of the living entity.
      * <p>
      * May be null.
@@ -317,6 +327,13 @@ public interface LivingEntity extends Attributable, Damageable, ProjectileSource
      */
     @NotNull
     public Collection<PotionEffect> getActivePotionEffects();
+
+    /**
+     *  Enables or disables potion particles visible around this entity when under
+     *  the effect of a potion. If this entity is a player, this also affects the
+     *  particles they see in front of them.
+     */
+    public void setPotionParticles(boolean enabled);
 
     /**
      * Checks whether the living entity has block line of sight to another.

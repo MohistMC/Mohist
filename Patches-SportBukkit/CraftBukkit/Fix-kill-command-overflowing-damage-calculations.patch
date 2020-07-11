@@ -1,0 +1,16 @@
+From: Jedediah Smith <jedediah@silencegreys.com>
+Date: Sun, 20 Mar 2016 08:44:13 -0400
+Subject: [PATCH] Fix /kill command overflowing damage calculations
+
+
+diff --git a/src/main/java/net/minecraft/server/EntityLiving.java b/src/main/java/net/minecraft/server/EntityLiving.java
+--- a/src/main/java/net/minecraft/server/EntityLiving.java
++++ b/src/main/java/net/minecraft/server/EntityLiving.java
+@@ -817,6 +817,7 @@ public abstract class EntityLiving extends Entity {
+         } else if (this.world.isClientSide) {
+             return false;
+         } else {
++            f = Math.min(f, Float.MAX_VALUE / 0x100); // SportBukkit - clamp huge values that will overflow and become NaN
+             this.ticksFarFromPlayer = 0;
+             if (this.getHealth() <= 0.0F) {
+                 return false;

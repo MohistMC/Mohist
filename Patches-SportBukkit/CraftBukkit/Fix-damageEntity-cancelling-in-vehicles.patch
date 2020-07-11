@@ -1,0 +1,29 @@
+From: ShinyDialga45 <shinydialga45@gmail.com>
+Date: Sat, 25 Oct 2014 16:04:15 -0500
+Subject: [PATCH] Fix damageEntity cancelling in vehicles
+
+
+diff --git a/src/main/java/net/minecraft/server/EntityBoat.java b/src/main/java/net/minecraft/server/EntityBoat.java
+--- a/src/main/java/net/minecraft/server/EntityBoat.java
++++ b/src/main/java/net/minecraft/server/EntityBoat.java
+@@ -121,7 +121,7 @@ public class EntityBoat extends Entity {
+                 this.world.getServer().getPluginManager().callEvent(event);
+ 
+                 if (event.isCancelled()) {
+-                    return true;
++                    return false;
+                 }
+                 // f = event.getDamage(); // TODO Why don't we do this?
+                 // CraftBukkit end
+diff --git a/src/main/java/net/minecraft/server/EntityMinecartAbstract.java b/src/main/java/net/minecraft/server/EntityMinecartAbstract.java
+--- a/src/main/java/net/minecraft/server/EntityMinecartAbstract.java
++++ b/src/main/java/net/minecraft/server/EntityMinecartAbstract.java
+@@ -131,7 +131,7 @@ public abstract class EntityMinecartAbstract extends Entity implements INamableT
+                 this.world.getServer().getPluginManager().callEvent(event);
+ 
+                 if (event.isCancelled()) {
+-                    return true;
++                    return false;
+                 }
+ 
+                 f = (float) event.getDamage();

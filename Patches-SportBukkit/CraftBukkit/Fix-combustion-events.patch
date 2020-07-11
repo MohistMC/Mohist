@@ -1,0 +1,256 @@
+From: Jedediah Smith <jedediah@silencegreys.com>
+Date: Thu, 30 Oct 2014 00:40:07 -0400
+Subject: [PATCH] Fix combustion events
+
+
+diff --git a/src/main/java/net/minecraft/server/DispenserRegistry.java b/src/main/java/net/minecraft/server/DispenserRegistry.java
+--- a/src/main/java/net/minecraft/server/DispenserRegistry.java
++++ b/src/main/java/net/minecraft/server/DispenserRegistry.java
+@@ -230,7 +230,7 @@ public class DispenserRegistry {
+                 CraftItemStack craftItem = CraftItemStack.asCraftMirror(itemstack1);
+ 
+                 EntitySmallFireball fireball = new EntitySmallFireball(world, d0, d1, d2, d3, d4, d5);
+-
++                fireball.projectileSource = new org.bukkit.craftbukkit.projectiles.CraftBlockProjectileSource((TileEntityDispenser) isourceblock.getTileEntity());
+                 BlockDispenseEntityEvent event = new BlockDispenseEntityEvent(block, craftItem.clone(), fireball.getBukkitEntity(), fireball.getBukkitEntity().getLocation(), ((org.bukkit.entity.Fireball) fireball.getBukkitEntity()).getDirection());
+                 if (!BlockDispenser.eventFired) {
+                     world.getServer().getPluginManager().callEvent(event);
+@@ -252,7 +252,6 @@ public class DispenserRegistry {
+                     }
+                 }
+ 
+-                fireball.projectileSource = new org.bukkit.craftbukkit.projectiles.CraftBlockProjectileSource((TileEntityDispenser) isourceblock.getTileEntity());
+                 fireball.getBukkitEntity().setLocationDirect(event.getLocation());
+                 ((Fireball) fireball.getBukkitEntity()).setDirection(event.getVelocity()); // don't call the NMS version because it randomizes the value
+ 
+diff --git a/src/main/java/net/minecraft/server/Entity.java b/src/main/java/net/minecraft/server/Entity.java
+--- a/src/main/java/net/minecraft/server/Entity.java
++++ b/src/main/java/net/minecraft/server/Entity.java
+@@ -25,6 +25,8 @@ import org.bukkit.block.BlockFace;
+ import org.bukkit.entity.Hanging;
+ import org.bukkit.entity.LivingEntity;
+ import org.bukkit.entity.Vehicle;
++import org.bukkit.event.entity.EntityExtinguishEvent;
++import org.bukkit.event.entity.EntityCombustByBlockEvent;
+ import org.bukkit.event.entity.EntityCombustByEntityEvent;
+ import org.bukkit.event.entity.EntityDespawnInVoidEvent;
+ import org.bukkit.event.hanging.HangingBreakByEntityEvent;
+@@ -109,6 +111,7 @@ public abstract class Entity implements ICommandListener {
+     protected Random random;
+     public int ticksLived;
+     public int fireTicks;
++    public boolean wasOnFire; // SportBukkit - to detect when the fire goes out
+     public boolean inWater;
+     public int noDamageTicks;
+     protected boolean justCreated;
+@@ -374,8 +377,11 @@ public abstract class Entity implements ICommandListener {
+             }
+         }
+ 
+-        if (this.ao()) {
+-            this.burnFromLava();
++        // SportBukkit start - pass position
++        final BlockPosition lavaPos = insideLavaBlockPosition();
++        if (lavaPos != null) {
++            this.burnFromLava(lavaPos);
++            // SportBukkit end
+             this.fallDistance *= 0.5F;
+         }
+ 
+@@ -402,26 +408,26 @@ public abstract class Entity implements ICommandListener {
+         return 1;
+     }
+ 
+-    protected void burnFromLava() {
++    protected void burnFromLava(BlockPosition lavaPos) { // SportBukkit - add position
+         if (!this.fireProof) {
+-            this.damageEntity(DamageSource.LAVA, 4.0F);
+-
+             // CraftBukkit start - Fallen in lava TODO: this event spams!
++            org.bukkit.block.Block lavaBlock = this.world.getWorld().getBlockAt(lavaPos.getX(), lavaPos.getY(), lavaPos.getZ());
++            try {
++                CraftEventFactory.blockDamage = lavaBlock;
++                this.damageEntity(DamageSource.LAVA, 4);
++            } finally {
++                CraftEventFactory.blockDamage = null;
++            }
++
+             if (this instanceof EntityLiving) {
+-                if (fireTicks <= 0) {
+-                    // not on fire yet
+-                    // TODO: shouldn't be sending null for the block
+-                    org.bukkit.block.Block damager = null; // ((WorldServer) this.l).getWorld().getBlockAt(i, j, k);
+-                    org.bukkit.entity.Entity damagee = this.getBukkitEntity();
+-                    EntityCombustEvent combustEvent = new org.bukkit.event.entity.EntityCombustByBlockEvent(damager, damagee, 15);
+-                    this.world.getServer().getPluginManager().callEvent(combustEvent);
+-
+-                    if (!combustEvent.isCancelled()) {
+-                        this.setOnFire(combustEvent.getDuration());
+-                    }
+-                } else {
+-                    // This will be called every single tick the entity is in lava, so don't throw an event
+-                    this.setOnFire(15);
++                // Note that in order for cancelling or custom duration to work properly,
++                // this event must be fired every tick, thus we cannot avoid "spamming" it.
++                org.bukkit.entity.Entity damagee = this.getBukkitEntity();
++                EntityCombustEvent combustEvent = new org.bukkit.event.entity.EntityCombustByBlockEvent(lavaBlock, damagee, 15);
++                this.world.getServer().getPluginManager().callEvent(combustEvent);
++
++                if (!combustEvent.isCancelled()) {
++                    this.setOnFire(combustEvent.getDuration());
+                 }
+                 return;
+             }
+@@ -832,19 +838,33 @@ public abstract class Entity implements ICommandListener {
+ 
+             boolean flag1 = this.ai();
+ 
+-            if (this.world.e(this.getBoundingBox().shrink(0.001D))) {
+-                this.burn(1);
+-                if (!flag1) {
+-                    ++this.fireTicks;
+-                    if (this.fireTicks == 0) {
+-                        // CraftBukkit start
+-                        EntityCombustEvent event = new org.bukkit.event.entity.EntityCombustByBlockEvent(null, getBukkitEntity(), 8);
+-                        world.getServer().getPluginManager().callEvent(event);
++            // SportBukkit start - get the location of the fire block
++            final BlockPosition firePos = this.world.getLargestBlockIntersection(this.boundingBox.shrink(0.001D), Material.FIRE);
++            if (firePos != null) {
++                org.bukkit.block.Block fireBlock = this.bukkitEntity.getWorld().getBlockAt(firePos.getX(), firePos.getY(), firePos.getZ());
++                try {
++                    CraftEventFactory.blockDamage = fireBlock;
++                    this.burn(1);
++                } finally {
++                    CraftEventFactory.blockDamage = null;
++                }
+ 
+-                        if (!event.isCancelled()) {
++                if (!flag1) {
++                    EntityCombustByBlockEvent event = new EntityCombustByBlockEvent(fireBlock, this.getBukkitEntity(), 8);
++                    this.world.getServer().getPluginManager().callEvent(event);
++
++                    if (!event.isCancelled()) {
++                        // Note carefully how this works: when fireTicks is negative, the entity is
++                        // "heating up" but not on fire yet. When fireTicks reaches 0, the entity
++                        // "ignites" and fireTicks jumps to 160. It will then stay at that value as
++                        // long as the player remains in fire (because the ++ below will cancel out
++                        // the -- in the entity tick). For the event cancelling to work, it has to
++                        // be fired every tick, thus we cannot avoid "spamming" it.
++                        ++this.fireTicks;
++                        if (this.fireTicks == 0) {
+                             this.setOnFire(event.getDuration());
+                         }
+-                        // CraftBukkit end
++                        // SportBukkit end
+                     }
+                 }
+             } else if (this.fireTicks <= 0) {
+@@ -856,6 +876,15 @@ public abstract class Entity implements ICommandListener {
+                 this.fireTicks = -this.getMaxFireTicks();
+             }
+ 
++            // SportBukkit start
++            if(this.fireTicks > 0) {
++                this.wasOnFire = true;
++            } else if(this.wasOnFire && this.fireTicks <= 0) {
++                this.wasOnFire = false;
++                this.world.getServer().getPluginManager().callEvent(new EntityExtinguishEvent(this.getBukkitEntity()));
++            }
++            // SportBukkit end
++
+             this.world.methodProfiler.b();
+         }
+     }
+@@ -1103,6 +1132,12 @@ public abstract class Entity implements ICommandListener {
+         return this.world.a(this.getBoundingBox().grow(-0.10000000149011612D, -0.4000000059604645D, -0.10000000149011612D), Material.LAVA);
+     }
+ 
++    // SportBukkit start
++    public @Nullable BlockPosition insideLavaBlockPosition() {
++        return this.world.getLargestBlockIntersection(this.getBoundingBox().grow(-0.1, -0.4, -0.1), Material.LAVA);
++    }
++    // SportBukkit end
++
+     public void a(float f, float f1, float f2) {
+         float f3 = f * f + f1 * f1;
+ 
+diff --git a/src/main/java/net/minecraft/server/World.java b/src/main/java/net/minecraft/server/World.java
+--- a/src/main/java/net/minecraft/server/World.java
++++ b/src/main/java/net/minecraft/server/World.java
+@@ -1744,6 +1744,41 @@ public abstract class World implements IBlockAccess {
+         return false;
+     }
+ 
++    // SportBukkit start
++    public @Nullable BlockPosition getLargestBlockIntersection(AxisAlignedBB aabb, Material material) {
++        int xMin = MathHelper.floor(aabb.a);
++        int xMax = MathHelper.f(aabb.d); // this is ceil(), make sure it matches the method above!
++        int yMin = MathHelper.floor(aabb.b);
++        int yMax = MathHelper.f(aabb.e);
++        int zMin = MathHelper.floor(aabb.c);
++        int zMax = MathHelper.f(aabb.f);
++
++        final BlockPosition.MutableBlockPosition pos = new BlockPosition.MutableBlockPosition(0, 0, 0);
++        double maxVolume = 0;
++        int xBlock = 0, yBlock = 0, zBlock = 0;
++
++        for (int x = xMin; x < xMax; ++x) {
++            for (int y = yMin; y < yMax; ++y) {
++                for (int z = zMin; z < zMax; ++z) {
++                    final IBlockData type = this.getType(pos.c(x, y, z));
++                    if (material.equals(type.getBlock().material)) {
++                        final double volume = (Math.min(aabb.d, x + 1) - Math.max(aabb.a, x)) *
++                                              (Math.min(aabb.e, y + 1) - Math.max(aabb.b, y)) *
++                                              (Math.min(aabb.f, z + 1) - Math.max(aabb.c, z));
++                        if(volume > maxVolume) {
++                            maxVolume = volume;
++                            xBlock = x; yBlock = y; zBlock = z;
++                            if(maxVolume >= 1) return new BlockPosition(x, y, z);
++                        }
++                    }
++                }
++            }
++        }
++
++        return maxVolume > 0 ? new BlockPosition(xBlock, yBlock, zBlock) : null;
++    }
++    // SportBukkit end
++
+     public Explosion explode(@Nullable Entity entity, double d0, double d1, double d2, float f, boolean flag) {
+         return this.createExplosion(entity, d0, d1, d2, f, false, flag);
+     }
+diff --git a/src/main/java/org/bukkit/craftbukkit/event/CraftEventFactory.java b/src/main/java/org/bukkit/craftbukkit/event/CraftEventFactory.java
+--- a/src/main/java/org/bukkit/craftbukkit/event/CraftEventFactory.java
++++ b/src/main/java/org/bukkit/craftbukkit/event/CraftEventFactory.java
+@@ -484,18 +484,16 @@ public class CraftEventFactory {
+                 event.getEntity().setLastDamageCause(event);
+             }
+             return event;
+-        } else if (source == DamageSource.LAVA) {
+-            EntityDamageEvent event = callEvent(new EntityDamageByBlockEvent(null, entity.getBukkitEntity(), DamageCause.LAVA, modifiers, modifierFunctions));
+-            if (!event.isCancelled()) {
+-                event.getEntity().setLastDamageCause(event);
+-            }
+-            return event;
+         } else if (blockDamage != null) {
+             DamageCause cause = null;
+             Block damager = blockDamage;
+             blockDamage = null;
+             if (source == DamageSource.CACTUS) {
+                 cause = DamageCause.CONTACT;
++            } else if (source == DamageSource.FIRE) {
++                cause = DamageCause.FIRE;
++            } else if (source == DamageSource.LAVA) {
++                cause = DamageCause.LAVA;
+             } else if (source == DamageSource.HOT_FLOOR) {
+                 cause = DamageCause.HOT_FLOOR;
+             } else {
+@@ -531,6 +529,8 @@ public class CraftEventFactory {
+         DamageCause cause = null;
+         if (source == DamageSource.FIRE) {
+             cause = DamageCause.FIRE;
++        } else if (source == DamageSource.LAVA) {
++            cause = DamageCause.LAVA;
+         } else if (source == DamageSource.STARVE) {
+             cause = DamageCause.STARVATION;
+         } else if (source == DamageSource.WITHER) {

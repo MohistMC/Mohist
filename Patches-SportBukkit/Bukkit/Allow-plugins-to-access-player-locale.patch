@@ -1,0 +1,83 @@
+From: Isaac Moore <rmsy@me.com>
+Date: Sun, 5 Jan 2014 20:32:00 -0600
+Subject: [PATCH] Allow plugins to access player locale
+
+
+diff --git a/src/main/java/org/bukkit/entity/Player.java b/src/main/java/org/bukkit/entity/Player.java
+--- a/src/main/java/org/bukkit/entity/Player.java
++++ b/src/main/java/org/bukkit/entity/Player.java
+@@ -1357,4 +1357,18 @@ public interface Player extends HumanEntity, Conversable, CommandSender, Offline
+      * @return The hostname and port
+      */
+     public String getHostname();
+-}
++
++    /**
++     * Gets the player's client-determined, ISO-standard locale.
++     *
++     * If the player's locale has not been set, either by the client or the {@link #setLocale} method,
++     * the default locale will be returned, which is "en_US".
++     */
++    public String getLocale();
++
++    /**
++     * Set the player's ISO-standard locale. Passing null will clear the player's locale,
++     * effectively setting it to the default of "en_US".
++     */
++    public void setLocale(String locale);
++ }
+diff --git a/src/main/java/org/bukkit/event/player/PlayerLocaleChangeEvent.java b/src/main/java/org/bukkit/event/player/PlayerLocaleChangeEvent.java
+new file mode 100644
+index 0000000..33c95f3
+--- /dev/null
++++ b/src/main/java/org/bukkit/event/player/PlayerLocaleChangeEvent.java
+@@ -0,0 +1,49 @@
++package org.bukkit.event.player;
++
++import org.bukkit.entity.Player;
++import org.bukkit.event.HandlerList;
++
++/**
++ * Called when the locale of the player is changed.
++ *
++ * This should always happen shortly after a player connects, and when the player
++ * changes their language in the client options menu.
++ */
++public class PlayerLocaleChangeEvent extends PlayerEvent {
++    private static final HandlerList handlers = new HandlerList();
++    private final String oldLocale;
++    private final String newLocale;
++
++    public PlayerLocaleChangeEvent(final Player player, final String oldLocale, final String newLocale) {
++        super(player);
++        this.oldLocale = oldLocale;
++        this.newLocale = newLocale;
++    }
++
++    /**
++     * Gets the player's previous locale, or null if the locale is being initialized.
++     *
++     * @return  player's old locale
++     */
++    public String getOldLocale() {
++        return oldLocale;
++    }
++
++    /**
++     * Gets the locale the player is changed to.
++     *
++     * @return  player's new locale
++     */
++    public String getNewLocale() {
++        return newLocale;
++    }
++
++    @Override
++    public HandlerList getHandlers() {
++        return handlers;
++    }
++
++    public static HandlerList getHandlerList() {
++        return handlers;
++    }
++}

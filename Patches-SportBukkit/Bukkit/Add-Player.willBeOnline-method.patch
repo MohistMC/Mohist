@@ -1,0 +1,32 @@
+From: Jedediah Smith <jedediah@silencegreys.com>
+Date: Mon, 25 Apr 2016 20:47:00 -0400
+Subject: [PATCH] Add Player.willBeOnline method
+
+
+diff --git a/src/main/java/org/bukkit/OfflinePlayer.java b/src/main/java/org/bukkit/OfflinePlayer.java
+--- a/src/main/java/org/bukkit/OfflinePlayer.java
++++ b/src/main/java/org/bukkit/OfflinePlayer.java
+@@ -6,6 +6,8 @@ import java.util.UUID;
+ import org.bukkit.configuration.serialization.ConfigurationSerializable;
+ import org.bukkit.entity.AnimalTamer;
+ import org.bukkit.entity.Player;
++import org.bukkit.event.player.PlayerLoginEvent;
++import org.bukkit.event.player.PlayerQuitEvent;
+ import org.bukkit.permissions.ServerOperator;
+ 
+ public interface OfflinePlayer extends ServerOperator, AnimalTamer, ConfigurationSerializable {
+@@ -18,6 +20,14 @@ public interface OfflinePlayer extends ServerOperator, AnimalTamer, Configuratio
+     public boolean isOnline();
+ 
+     /**
++     * Will this player be online after the current event is finished?
++     *
++     * Unlike {@link #isOnline()}, this returns true from within {@link PlayerLoginEvent},
++     * and false from within a {@link PlayerQuitEvent}.
++     */
++    boolean willBeOnline();
++
++    /**
+      * Returns the name of this player
+      * <p>
+      * Names are no longer unique past a single game session. For persistent storage

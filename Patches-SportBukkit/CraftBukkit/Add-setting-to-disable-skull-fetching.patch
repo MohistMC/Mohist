@@ -1,0 +1,44 @@
+From: Jedediah Smith <jedediah@silencegreys.com>
+Date: Wed, 4 Feb 2015 03:39:46 -0500
+Subject: [PATCH] Add setting to disable skull fetching
+
+
+diff --git a/src/main/java/net/minecraft/server/TileEntitySkull.java b/src/main/java/net/minecraft/server/TileEntitySkull.java
+--- a/src/main/java/net/minecraft/server/TileEntitySkull.java
++++ b/src/main/java/net/minecraft/server/TileEntitySkull.java
+@@ -106,6 +106,9 @@ public class TileEntitySkull extends TileEntity implements ITickable {
+         if (gameprofile != null && !UtilColor.b(gameprofile.getName())) {
+             if (gameprofile.isComplete() && gameprofile.getProperties().containsKey("textures")) {
+                 return gameprofile;
++            } else if(!org.bukkit.Bukkit.getFetchSkulls()) {
++                org.bukkit.Bukkit.getLogger().warning("Skull-fetching is disabled, so not fetching skin for '" + gameprofile.getName() + "'");
++                return gameprofile;
+             } else if (TileEntitySkull.j != null && TileEntitySkull.k != null) {
+                 GameProfile gameprofile1 = TileEntitySkull.j.getProfile(gameprofile.getName());
+ 
+diff --git a/src/main/java/org/bukkit/craftbukkit/CraftServer.java b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
+--- a/src/main/java/org/bukkit/craftbukkit/CraftServer.java
++++ b/src/main/java/org/bukkit/craftbukkit/CraftServer.java
+@@ -584,6 +584,11 @@ public final class CraftServer implements Server {
+     }
+ 
+     @Override
++    public boolean getFetchSkulls() {
++        return this.configuration.getBoolean("settings.fetch-skulls", true);
++    }
++
++    @Override
+     public int getTicksPerAnimalSpawns() {
+         return this.configuration.getInt("ticks-per.animal-spawns");
+     }
+diff --git a/src/main/resources/configurations/bukkit.yml b/src/main/resources/configurations/bukkit.yml
+--- a/src/main/resources/configurations/bukkit.yml
++++ b/src/main/resources/configurations/bukkit.yml
+@@ -24,6 +24,7 @@ settings:
+     deprecated-verbose: default
+     shutdown-message: Server closed
+     bungeecord: false
++    fetch-skulls: true
+ spawn-limits:
+     monsters: 70
+     animals: 15

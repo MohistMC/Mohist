@@ -1,0 +1,23 @@
+From: Jedediah Smith <jedediah@silencegreys.com>
+Date: Sat, 2 Apr 2016 21:57:13 -0400
+Subject: [PATCH] Custom attributes
+
+
+diff --git a/src/main/java/org/bukkit/attribute/Attribute.java b/src/main/java/org/bukkit/attribute/Attribute.java
+--- a/src/main/java/org/bukkit/attribute/Attribute.java
++++ b/src/main/java/org/bukkit/attribute/Attribute.java
+@@ -47,7 +47,13 @@ public enum Attribute {
+     /**
+      * Chance of a zombie to spawn reinforcements.
+      */
+-    ZOMBIE_SPAWN_REINFORCEMENTS("zombie.spawnReinforcements");
++    ZOMBIE_SPAWN_REINFORCEMENTS("zombie.spawnReinforcements"),
++
++    ARROW_ACCURACY("sportbukkit.arrowAccuracy"),
++
++    ARROW_VELOCITY_TRANSFER("sportbukkit.arrowVelocityTransfer"),
++
++    SHIELD_STRENGTH("sportbukkit.shieldStrength");
+ 
+     private final String name;
+ 
