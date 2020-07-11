@@ -112,7 +112,11 @@ public abstract class ChunkGenerator {
      * @return ChunkData containing the types for each block created by this
      *     generator
      */
-    @NotNull
+
+    public byte[] generate(World world, Random random, int x, int z) {
+        throw new UnsupportedOperationException("Custom generator is missing required methods: generate(), generateBlockSections() and generateExtBlockSections()");
+    }
+
     public ChunkData generateChunkData(@NotNull World world, @NotNull Random random, int x, int z, @NotNull BiomeGrid biome) {
         throw new UnsupportedOperationException("Custom generator " + getClass().getName() + " is missing required method generateChunkData");
     }
