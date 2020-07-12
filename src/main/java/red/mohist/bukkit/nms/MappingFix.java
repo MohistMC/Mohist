@@ -34,14 +34,19 @@ public class MappingFix {
         System.out.println(Message.getString("mappingfix.created.nms"));
       //start decode
       System.out.println(Message.getString("mappingfix.decoding.start"));
-      System.out.println("######Powered by MCP######");
+      System.out.println("#################################################\n" +
+              "                 Powered by MCP                  \n" +
+              "             http://modcoderpack.com             \n" +
+              "     by: Searge, ProfMobius, R4wk, ZeuX          \n" +
+              "     Fesh0r, IngisKahn, bspkrs, LexManos         \n" +
+              "#################################################");
       System.out.println(Message.getString("mappingfix.decoding.info"));
       Timer t = new Timer();
       t.schedule(new TimerTask() {
         @Override
         public void run() {
           if(percentage != Math.round((float)lib.length()/4000000*100))
-            System.out.println("Decoding - " + percentage + "%");
+            System.out.println(Message.getString("mapping.decoding.progress") + percentage + "%");
           percentage = Math.round((float)lib.length()/4000000*100);
         }
       }, 3000, 3000);
