@@ -1,0 +1,41 @@
+--- a/net/minecraft/entity/ai/brain/task/Task.java
++++ b/net/minecraft/entity/ai/brain/task/Task.java
+@@ -1,9 +1,11 @@
+ package net.minecraft.entity.ai.brain.task;
+ 
++import java.util.List;
+ import java.util.Map;
+ import net.minecraft.entity.LivingEntity;
+ import net.minecraft.entity.ai.brain.memory.MemoryModuleStatus;
+ import net.minecraft.entity.ai.brain.memory.MemoryModuleType;
++import net.minecraft.util.Tuple;
+ import net.minecraft.world.server.ServerWorld;
+ 
+ public abstract class Task<E extends LivingEntity> {
+@@ -12,6 +14,7 @@
+    private long field_220385_b;
+    private final int field_220386_c;
+    private final int field_220387_d;
++   private List<Tuple<MemoryModuleType<?>, MemoryModuleStatus>> requiredMemoryStatesFlattened;
+ 
+    public Task(Map<MemoryModuleType<?>, MemoryModuleStatus> p_i51504_1_) {
+       this(p_i51504_1_, 60);
+@@ -83,11 +86,13 @@
+    }
+ 
+    private boolean func_220382_a(E p_220382_1_) {
+-      return this.field_223010_a.entrySet().stream().allMatch((p_220379_1_) -> {
+-         MemoryModuleType<?> memorymoduletype = p_220379_1_.getKey();
+-         MemoryModuleStatus memorymodulestatus = p_220379_1_.getValue();
+-         return p_220382_1_.func_213375_cj().func_218196_a(memorymoduletype, memorymodulestatus);
+-      });
++      for (Tuple<MemoryModuleType<?>, MemoryModuleStatus> entry : this.requiredMemoryStatesFlattened) {
++         if (!p_220382_1_.func_213375_cj().func_218196_a(entry.func_76341_a(), entry.func_76340_b())) {
++            return false;
++         }
++      }
++
++      return true;
+    }
+ 
+    public static enum Status {
