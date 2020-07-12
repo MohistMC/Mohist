@@ -57,6 +57,16 @@ Thanks for the following project
 * [**CraftBukkit**](https://hub.spigotmc.org/stash/scm/spigot/craftbukkit.git) - plugin support.
 * [**Spigot**](https://hub.spigotmc.org/stash/scm/spigot/spigot.git) - plugin support.
 * [**MinecraftForge**](https://github.com/MinecraftForge/MinecraftForge.git) - mod support.
+* [**Atom**](https://gitlab.com/divinecode/atom/Atom.git) - Partial code source.
+* [**Thermos**](https://github.com/CyberdyneCC/Thermos.git) - Partial code source.
+* [**um_bukkit**](https://github.com/TechCatOther/um_bukkit.git) - Partial code source.
+* [**EMC**](https://github.com/starlis/empirecraft) - performance optimizations.
+* [**Purpur**](https://github.com/pl3xgaming/Purpur) - performance optimizations.
+* [**Akarin**](https://github.com/Akarin-project/Akarin) - performance optimizations.
+* [**Phosphor**](https://github.com/jellysquid3/phosphor-fabric) - LightEngine optimizations.
+* [**Lithium**](https://github.com/jellysquid3/lithium-fabric) - performance optimizations.
+* [**Yapfa**](https://github.com/tr7zw/YAPFA) - performance optimizations.
+* [**Tuinity**](https://github.com/Spottedleaf/Tuinity) - performance optimizations.
 
 Special Thanks To:
 -------------
