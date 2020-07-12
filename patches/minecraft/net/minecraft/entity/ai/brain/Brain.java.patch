@@ -21,19 +21,35 @@
  
     public <T> Brain(Collection<MemoryModuleType<?>> p_i50378_1_, Collection<SensorType<? extends Sensor<? super E>>> p_i50378_2_, Dynamic<T> p_i50378_3_) {
        p_i50378_1_.forEach((p_218228_1_) -> {
-@@ -159,6 +158,11 @@
+@@ -159,6 +158,14 @@
              return Sets.newLinkedHashSet();
           }).add(p_218223_2_.getSecond());
        });
-+      for (Map<Activity, Set<Task<? super E>>> map : this.field_218232_c.values()) {
-+         for (Map.Entry<Activity, Set<Task<? super E>>> entry : map.entrySet()) {
-+            this.allTasks.add(Pair.of(entry.getKey(), new ArrayList<>(entry.getValue())));
++            // Re-build the sorted list of tasks, flattening it into a simple array
++            // This will only happen a few times during during entity initialization
++            for (Map<Activity, Set<Task<? super E>>> map : this.field_218232_c.values()) {
++               for (Map.Entry<Activity, Set<Task<? super E>>> entry : map.entrySet()) {
++                  this.allTasks.add(Pair.of(entry.getKey(), new ArrayList<>(entry.getValue())));
++                  this.allTasks.clear();
 +         }
 +      }
     }
  
     public boolean func_218214_c(Activity p_218214_1_) {
-@@ -198,29 +202,38 @@
+@@ -176,9 +183,9 @@
+    }
+ 
+    public void func_218210_a(ServerWorld p_218210_1_, E p_218210_2_) {
+-      this.func_218229_c(p_218210_1_, p_218210_2_);
+-      this.func_218218_d(p_218210_1_, p_218210_2_);
+-      this.func_218222_e(p_218210_1_, p_218210_2_);
++      for (Sensor<? super E> sensor : this.field_218231_b.values()) {
++         sensor.func_220973_b(p_218210_1_, p_218210_2_);
++      }
+    }
+ 
+    public void func_218227_b(ServerWorld p_218227_1_, E p_218227_2_) {
+@@ -198,29 +205,38 @@
     }
  
     private void func_218229_c(ServerWorld p_218229_1_, E p_218229_2_) {

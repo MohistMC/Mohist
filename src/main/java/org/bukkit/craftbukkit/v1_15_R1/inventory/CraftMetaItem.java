@@ -36,6 +36,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.BlockItem;
@@ -79,7 +80,6 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.Repairable;
 import org.bukkit.inventory.meta.tags.CustomItemTagContainer;
 import org.bukkit.persistence.PersistentDataContainer;
-import org.spigotmc.ValidateUtils;
 
 /**
  * Children must include the following:
@@ -299,7 +299,7 @@ class CraftMetaItem implements ItemMeta, Damageable, Repairable, BlockDataMeta {
         this.customModelData = meta.customModelData;
         this.blockData = meta.blockData;
 
-        if (meta.enchantments != null) { // Spigot
+        if (meta.hasEnchants()) {
             this.enchantments = new LinkedHashMap<Enchantment, Integer>(meta.enchantments);
         }
 
@@ -328,7 +328,7 @@ class CraftMetaItem implements ItemMeta, Damageable, Repairable, BlockDataMeta {
 
             if (display.contains(NAME.NBT)) {
                 try {
-                    displayName = ITextComponent.Serializer.fromJson(ValidateUtils.limit(display.getString(NAME.NBT), 1024)); // Spigot
+                    displayName = ITextComponent.Serializer.fromJson(display.getString(NAME.NBT));
                 } catch (JsonParseException ex) {
                     // Ignore (stripped like Vanilla)
                 }
@@ -336,7 +336,7 @@ class CraftMetaItem implements ItemMeta, Damageable, Repairable, BlockDataMeta {
 
             if (display.contains(LOCNAME.NBT)) {
                 try {
-                    locName = ITextComponent.Serializer.fromJson(ValidateUtils.limit(display.getString(NAME.NBT), 1024)); // Spigot
+                    locName = ITextComponent.Serializer.fromJson(display.getString(LOCNAME.NBT));
                 } catch (JsonParseException ex) {
                     // Ignore (stripped like Vanilla)
                 }
@@ -347,7 +347,7 @@ class CraftMetaItem implements ItemMeta, Damageable, Repairable, BlockDataMeta {
                 lore = new ArrayList<ITextComponent>(list.size());
 
                 for (int index = 0; index < list.size(); index++) {
-                    String line = ValidateUtils.limit(list.getString(index), 8192); // Spigot
+                    String line = list.getString(index);
                     try {
                         lore.add(ITextComponent.Serializer.fromJson(line));
                     } catch (JsonParseException ex) {
@@ -683,7 +683,7 @@ class CraftMetaItem implements ItemMeta, Damageable, Repairable, BlockDataMeta {
     }
 
     static void applyEnchantments(Map<Enchantment, Integer> enchantments, CompoundNBT tag, ItemMetaKey key) {
-        if (enchantments == null /*|| enchantments.size() == 0*/) { // Spigot - remove size check
+        if (enchantments == null || enchantments.size() == 0) {
             return;
         }
 
@@ -832,14 +832,7 @@ class CraftMetaItem implements ItemMeta, Damageable, Repairable, BlockDataMeta {
     @Override
     public boolean removeEnchant(Enchantment ench) {
         Validate.notNull(ench, "Enchantment cannot be null");
-        // Spigot start
-        boolean b = hasEnchants() && enchantments.remove( ench ) != null;
-        if ( enchantments != null && enchantments.isEmpty() )
-        {
-            this.enchantments = null;
-        }
-        return b;
-        // Spigot end
+        return hasEnchants() && enchantments.remove(ench) != null;
     }
 
     @Override
@@ -926,7 +919,7 @@ class CraftMetaItem implements ItemMeta, Damageable, Repairable, BlockDataMeta {
 
     @Override
     public boolean hasBlockData() {
-       return this.blockData != null;
+        return this.blockData != null;
     }
 
     @Override
