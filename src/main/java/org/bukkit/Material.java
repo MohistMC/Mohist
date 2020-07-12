@@ -3329,6 +3329,10 @@ public enum Material implements Keyed {
         }
     }
 
+    public static Material getMaterial(int idFromBlock) {
+        return getMaterial(idFromBlock);
+    }
+
     /**
      * Do not use for any reason.
      *
