@@ -37,7 +37,6 @@ public class Mohist {
       "                                                    \n" +
       "\n");
     System.out.println("                                      " + Message.getString("forge.serverlanunchwrapper.1"));
-    Mohist.LOGGER.info(Message.getString("properties.java.version") + System.getProperty("java.version"));
     if(System.getProperty("log4j.configurationFile") == null)
       System.setProperty("log4j.configurationFile", "log4j2_mohist.xml");
     if(bMohist("check_libraries")) DownloadLibraries.run();
