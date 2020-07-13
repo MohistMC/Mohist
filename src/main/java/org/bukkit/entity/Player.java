@@ -1230,6 +1230,22 @@ public interface Player extends HumanEntity, Conversable, OfflinePlayer, PluginM
     @NotNull
     public String getLocale();
 
+    // Paper start
+    /**
+     * Get whether the player can affect mob spawning
+     *
+     *  @return if the player can affect mob spawning
+     */
+    public boolean getAffectsSpawning();
+
+    /**
+     *  Set whether the player can affect mob spawning
+     *
+     *  @param affects Whether the player can affect mob spawning
+     */
+    public void setAffectsSpawning(boolean affects);
+    // Paper end
+
     /**
      * Update the list of commands sent to the client.
      * <br>
