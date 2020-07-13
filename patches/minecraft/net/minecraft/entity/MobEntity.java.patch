@@ -234,6 +234,7 @@
           this.func_70106_y();
        } else if (!this.func_104002_bU() && !this.func_213392_I()) {
           Entity entity = this.field_70170_p.func_217362_a(this, -1.0D);
+-         if (entity != null) {
 +         net.minecraftforge.eventbus.api.Event.Result result = net.minecraftforge.event.ForgeEventFactory.canEntityDespawn(this);
 +         if (result == net.minecraftforge.eventbus.api.Event.Result.DENY) {
 +            field_70708_bq = 0;
@@ -242,7 +243,7 @@
 +            this.func_70106_y();
 +            entity = null;
 +         }
-          if (entity != null) {
++         if (entity != null && field_70717_bb.affectsSpawning) {
              double d0 = entity.func_70068_e(this);
 -            if (d0 > 16384.0D && this.func_213397_c(d0)) {
 +            if (d0 > 16384.0D) { // CraftBukkit - remove canDespawn() check

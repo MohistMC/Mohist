@@ -4,6 +4,14 @@ import java.lang.reflect.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
+
+// Cauldron start
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.bukkit.World;
+import org.bukkit.block.Biome;
+// Cauldron end
 
 /**
  * Copyright from MinecrafrForge
@@ -37,6 +45,22 @@ public class EnumHelper {
         }
         isWork = true;
     }
+
+    // Cauldron start
+    public static Biome addBukkitBiome(String name)
+    {
+        return (Biome)addEnum(Biome.class, name, new Class[0], new Object[0]);
+    }
+
+    public static World.Environment addBukkitEnvironment(int id, String name)
+    {
+        if (!isWork)
+        {
+            work();
+        }
+        return (World.Environment)addEnum(World.Environment.class, name, new Class[] { Integer.TYPE }, new Object[] { Integer.valueOf(id) });
+    }
+    // Cauldron end
 
     private static Object getConstructorAccessor(Class<?> enumClass, Class<?>[] additionalParameterTypes) throws Exception {
         Class<?>[] parameterTypes = new Class[additionalParameterTypes.length + 2];

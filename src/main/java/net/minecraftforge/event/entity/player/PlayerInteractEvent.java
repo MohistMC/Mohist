@@ -49,6 +49,7 @@ public class PlayerInteractEvent extends PlayerEvent
 {
     private final Hand hand;
     private final BlockPos pos;
+    public org.bukkit.event.player.PlayerInteractEvent cb;
     @Nullable
     private final Direction face;
     private ActionResultType cancellationResult = ActionResultType.PASS;
