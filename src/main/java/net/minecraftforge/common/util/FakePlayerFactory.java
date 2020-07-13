@@ -35,7 +35,7 @@ public class FakePlayerFactory
 {
     private static GameProfile MINECRAFT = new GameProfile(UUID.fromString("41C82C87-7AfB-4024-BA57-13D2C99CAE77"), "[Minecraft]");
     // Map of all active fake player usernames to their entities
-    private static Map<GameProfile, FakePlayer> fakePlayers = Maps.newHashMap();
+    public static Map<GameProfile, FakePlayer> fakePlayers = Maps.newHashMap();
     private static WeakReference<FakePlayer> MINECRAFT_PLAYER = null;
 
     public static FakePlayer getMinecraft(ServerWorld world)
@@ -56,11 +56,27 @@ public class FakePlayerFactory
      */
     public static FakePlayer get(ServerWorld world, GameProfile username)
     {
-        if (!fakePlayers.containsKey(username))
-        {
-            FakePlayer fakePlayer = new FakePlayer(world, username);
-            fakePlayers.put(username, fakePlayer);
+        // Cauldron start - Refactored below to avoid a hashCode check with a null GameProfile ID
+        if (username == null || username.getName() == null) {
+            return null;
         }
+
+        for (Map.Entry<GameProfile, FakePlayer> mapEntry : fakePlayers.entrySet())
+        {
+            GameProfile gameprofile = mapEntry.getKey();
+            if (gameprofile.getName().equals(username.getName()))
+            {
+                return mapEntry.getValue();
+            }
+        }
+
+        FakePlayer fakePlayer = new FakePlayer(world, username);
+        if (username.getId() == null) // GameProfile hashCode check will fail with a null ID
+        {
+            username = new GameProfile(UUID.randomUUID(), username.getName()); // Create new GameProfile with random UUID
+        }
+        // Cauldron end
+        fakePlayers.put(username, fakePlayer);
 
         return fakePlayers.get(username);
     }

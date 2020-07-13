@@ -22,6 +22,7 @@ package net.minecraftforge.fml.event.server;
 import com.mojang.brigadier.CommandDispatcher;
 import net.minecraft.command.CommandSource;
 import net.minecraft.server.MinecraftServer;
+import org.bukkit.command.Command; // Cauldron
 
 /**
  * Called after {@link FMLServerAboutToStartEvent} and before {@link FMLServerStartedEvent}.
@@ -40,4 +41,12 @@ public class FMLServerStartingEvent extends ServerLifecycleEvent
     public CommandDispatcher<CommandSource> getCommandDispatcher() {
         return server.getCommandManager().getDispatcher();
     }
+
+    // Cauldron start - used for mods to register a Bukkit command
+    public void registerServerCommand(String fallbackPrefix, Command command)
+    {
+        org.bukkit.command.SimpleCommandMap commandMap = getServer().server.getCommandMap();
+        commandMap.register(fallbackPrefix, command);
+    }
+    // Cauldron end
 }
