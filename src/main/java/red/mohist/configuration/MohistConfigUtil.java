@@ -54,7 +54,7 @@ public class MohistConfigUtil {
     } catch (Exception e) {
       System.out.println("File copy exception!");
     }
-    new MohistConfig().init();
+  //  new MohistConfig().init();
   }
 
   public static boolean bMohist(String key) { return MohistConfigUtil.getBoolean(new File("mohist-config", "mohist.yml"), key+":"); }
