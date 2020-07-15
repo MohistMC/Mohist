@@ -146,6 +146,7 @@ import org.bukkit.World;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.PistonMoveReaction;
 import org.bukkit.craftbukkit.v1_15_R1.CraftServer;
+import org.bukkit.craftbukkit.v1_15_R1.CraftWorld;
 import org.bukkit.craftbukkit.v1_15_R1.block.CraftBlock;
 import org.bukkit.craftbukkit.v1_15_R1.persistence.CraftPersistentDataContainer;
 import org.bukkit.craftbukkit.v1_15_R1.persistence.CraftPersistentDataTypeRegistry;
@@ -466,11 +467,7 @@ public abstract class CraftEntity implements org.bukkit.entity.Entity {
         // If this entity is riding another entity, we must dismount before teleporting.
         entity.stopRiding();
 
-        // Let the server handle cross world teleports
-        if (!location.getWorld().equals(getWorld())) {
-            //entity.teleportTo(((CraftWorld) location.getWorld()).getHandle().getDimension().getType(), new BlockPos(location.getX(), location.getY(), location.getZ()));
-            return true;
-        }
+        entity.world = ((CraftWorld) location.getWorld()).getHandle();
 
         // entity.setLocation() throws no event, and so cannot be cancelled
         entity.setPositionAndRotation(location.getX(), location.getY(), location.getZ(), location.getYaw(), location.getPitch());
