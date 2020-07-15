@@ -8,8 +8,17 @@
  import javax.annotation.Nullable;
  import net.minecraft.block.AbstractSkullBlock;
  import net.minecraft.block.Blocks;
-@@ -23,16 +24,10 @@
+@@ -17,22 +18,19 @@
+ import net.minecraft.entity.ai.controller.MovementController;
+ import net.minecraft.entity.ai.goal.Goal;
+ import net.minecraft.entity.ai.goal.GoalSelector;
++import net.minecraft.entity.ai.goal.SwimGoal;
+ import net.minecraft.entity.item.BoatEntity;
+ import net.minecraft.entity.item.HangingEntity;
+ import net.minecraft.entity.item.ItemEntity;
  import net.minecraft.entity.item.LeashKnotEntity;
++import net.minecraft.entity.monster.BlazeEntity;
++import net.minecraft.entity.monster.EndermanEntity;
  import net.minecraft.entity.monster.IMob;
  import net.minecraft.entity.player.PlayerEntity;
 +import net.minecraft.entity.player.ServerPlayerEntity;
@@ -27,7 +36,7 @@
  import net.minecraft.nbt.CompoundNBT;
  import net.minecraft.nbt.FloatNBT;
  import net.minecraft.nbt.ListNBT;
-@@ -46,24 +41,21 @@
+@@ -46,24 +44,21 @@
  import net.minecraft.pathfinding.PathNavigator;
  import net.minecraft.pathfinding.PathNodeType;
  import net.minecraft.tags.Tag;
@@ -61,7 +70,7 @@
  
  public abstract class MobEntity extends LivingEntity {
     private static final DataParameter<Byte> field_184654_a = EntityDataManager.func_187226_a(MobEntity.class, DataSerializers.field_187191_a);
-@@ -74,19 +66,19 @@
+@@ -74,19 +69,19 @@
     protected JumpController field_70767_i;
     private final BodyController field_70762_j;
     protected PathNavigator field_70699_by;
@@ -89,16 +98,19 @@
     @Nullable
     private Entity field_110168_bw;
     private int field_213400_bI;
-@@ -95,6 +87,8 @@
+@@ -95,6 +90,11 @@
     private BlockPos field_213401_bK = BlockPos.field_177992_a;
     private float field_213402_bL = -1.0F;
  
++   @Nullable
++   public SwimGoal goalFloat; // Paper
++
 +   public boolean aware = true; // CraftBukkit
 +
     protected MobEntity(EntityType<? extends MobEntity> p_i48576_1_, World p_i48576_2_) {
        super(p_i48576_1_, p_i48576_2_);
        this.field_70714_bg = new GoalSelector(p_i48576_2_ != null && p_i48576_2_.func_217381_Z() != null ? p_i48576_2_.func_217381_Z() : null);
-@@ -111,6 +105,9 @@
+@@ -111,6 +111,9 @@
           this.func_184651_r();
        }
  
@@ -108,7 +120,7 @@
     }
  
     protected void func_184651_r() {
-@@ -175,9 +172,43 @@
+@@ -175,9 +178,43 @@
     }
  
     public void func_70624_b(@Nullable LivingEntity p_70624_1_) {
@@ -153,7 +165,7 @@
     public boolean func_213358_a(EntityType<?> p_213358_1_) {
        return p_213358_1_ != EntityType.field_200811_y;
     }
-@@ -369,15 +400,26 @@
+@@ -369,15 +406,26 @@
           p_213281_1_.func_74757_a("NoAI", this.func_175446_cd());
        }
  
@@ -182,7 +194,7 @@
        if (p_70037_1_.func_150297_b("ArmorItems", 9)) {
           ListNBT listnbt = p_70037_1_.func_150295_c("ArmorItems", 10);
  
-@@ -421,6 +463,11 @@
+@@ -421,6 +469,11 @@
        }
  
        this.func_94061_f(p_70037_1_.func_74767_n("NoAI"));
@@ -194,7 +206,7 @@
     }
  
     protected void func_213354_a(DamageSource p_213354_1_, boolean p_213354_2_) {
-@@ -436,7 +483,7 @@
+@@ -436,7 +489,7 @@
        return this.field_184659_bA == null ? this.func_184647_J() : this.field_184659_bA;
     }
  
@@ -203,7 +215,7 @@
        return super.func_213346_cF();
     }
  
-@@ -460,7 +507,7 @@
+@@ -460,7 +513,7 @@
     public void func_70636_d() {
        super.func_70636_d();
        this.field_70170_p.func_217381_Z().func_76320_a("looting");
@@ -212,7 +224,7 @@
           for(ItemEntity itementity : this.field_70170_p.func_217357_a(ItemEntity.class, this.func_174813_aQ().func_72314_b(1.0D, 0.0D, 1.0D))) {
              if (!itementity.field_70128_L && !itementity.func_92059_d().func_190926_b() && !itementity.func_174874_s()) {
                 this.func_175445_a(itementity);
-@@ -476,10 +523,16 @@
+@@ -476,10 +529,16 @@
        EquipmentSlotType equipmentslottype = func_184640_d(itemstack);
        ItemStack itemstack1 = this.func_184582_a(equipmentslottype);
        boolean flag = this.func_208003_a(itemstack, itemstack1, equipmentslottype);
@@ -230,7 +242,7 @@
           }
  
           this.func_184201_a(equipmentslottype, itemstack);
-@@ -556,13 +609,21 @@
+@@ -556,13 +615,21 @@
           this.func_70106_y();
        } else if (!this.func_104002_bU() && !this.func_213392_I()) {
           Entity entity = this.field_70170_p.func_217362_a(this, -1.0D);
@@ -255,15 +267,27 @@
                 this.func_70106_y();
              } else if (d0 < 1024.0D) {
                 this.field_70708_bq = 0;
-@@ -576,6 +637,7 @@
+@@ -576,6 +643,19 @@
  
     protected final void func_70626_be() {
        ++this.field_70708_bq;
-+      if (!this.aware) return; // CraftBukkit
++      if (!this.aware) { // Paper start - Allow nerfed mobs to jump, float and take water damage
++         if (goalFloat != null) {
++            if (goalFloat.validConditions()) {
++               goalFloat.update();
++            }
++            this.func_70683_ar().jumpIfSet();
++         }
++         if ((this instanceof BlazeEntity || this instanceof EndermanEntity) && isInWaterOrRainOrBubble()) {
++            func_70665_d(DamageSource.field_76369_e, 1.0F);
++         }
++         return;
++      }
++      // Paper end
        this.field_70170_p.func_217381_Z().func_76320_a("sensing");
        this.field_70723_bA.func_75523_a();
        this.field_70170_p.func_217381_Z().func_76319_b();
-@@ -791,6 +853,8 @@
+@@ -791,6 +871,8 @@
     }
  
     public static EquipmentSlotType func_184640_d(ItemStack p_184640_0_) {
@@ -272,7 +296,7 @@
        Item item = p_184640_0_.func_77973_b();
        if (item != Blocks.field_196625_cS.func_199767_j() && (!(item instanceof BlockItem) || !(((BlockItem)item).func_179223_d() instanceof AbstractSkullBlock))) {
           if (item instanceof ArmorItem) {
-@@ -798,7 +862,7 @@
+@@ -798,7 +880,7 @@
           } else if (item == Items.field_185160_cR) {
              return EquipmentSlotType.CHEST;
           } else {
@@ -281,7 +305,7 @@
           }
        } else {
           return EquipmentSlotType.HEAD;
-@@ -910,11 +974,11 @@
+@@ -910,11 +992,11 @@
     }
  
     public boolean func_98052_bS() {
@@ -295,7 +319,7 @@
     }
  
     public boolean func_213365_e(ItemStack p_213365_1_) {
-@@ -930,11 +994,23 @@
+@@ -930,11 +1012,23 @@
        if (!this.func_70089_S()) {
           return false;
        } else if (this.func_110166_bE() == p_184230_1_) {
@@ -319,7 +343,7 @@
              this.func_110162_b(p_184230_1_, true);
              itemstack.func_190918_g(1);
              return true;
-@@ -984,6 +1060,7 @@
+@@ -984,6 +1078,7 @@
  
        if (this.field_110168_bw != null) {
           if (!this.func_70089_S() || !this.field_110168_bw.func_70089_S()) {
@@ -327,7 +351,7 @@
              this.func_110160_i(true, true);
           }
  
-@@ -999,7 +1076,9 @@
+@@ -999,7 +1094,9 @@
  
           this.field_110168_bw = null;
           if (!this.field_70170_p.field_72995_K && p_110160_2_) {
@@ -337,7 +361,7 @@
           }
  
           if (!this.field_70170_p.field_72995_K && p_110160_1_ && this.field_70170_p instanceof ServerWorld) {
-@@ -1070,6 +1149,7 @@
+@@ -1070,6 +1167,7 @@
              BlockPos blockpos = new BlockPos(this.field_110170_bx.func_74762_e("X"), this.field_110170_bx.func_74762_e("Y"), this.field_110170_bx.func_74762_e("Z"));
              this.func_110162_b(LeashKnotEntity.func_213855_a(this.field_70170_p, blockpos), true);
           } else {
@@ -345,7 +369,7 @@
              this.func_110160_i(false, true);
           }
  
-@@ -1164,7 +1244,13 @@
+@@ -1164,7 +1262,13 @@
  
        int i = EnchantmentHelper.func_90036_a(this);
        if (i > 0) {
@@ -360,7 +384,7 @@
        }
  
        boolean flag = p_70652_1_.func_70097_a(DamageSource.func_76358_a(this), f);
-@@ -1178,10 +1264,10 @@
+@@ -1178,10 +1282,10 @@
              PlayerEntity playerentity = (PlayerEntity)p_70652_1_;
              ItemStack itemstack = this.func_184614_ca();
              ItemStack itemstack1 = playerentity.func_184587_cr() ? playerentity.func_184607_cu() : ItemStack.field_190927_a;

@@ -42,6 +42,15 @@
     }
  
     protected void func_70088_a() {
+@@ -188,7 +199,7 @@
+ 
+    protected void func_70619_bc() {
+       if (this.func_203008_ap()) {
+-         this.func_70097_a(DamageSource.field_76369_e, 1.0F);
++         this.func_70097_a(DamageSource.field_76369_e, 1.0F); // Paper - copied in patch 13 (allow nerfed mobs to jump, float and take water damage)
+       }
+ 
+       if (this.field_70170_p.func_72935_r() && this.field_70173_aa >= this.field_184721_by + 600) {
 @@ -234,7 +245,9 @@
        boolean flag = blockstate.func_185904_a().func_76230_c();
        boolean flag1 = blockstate.func_204520_s().func_206884_a(FluidTags.field_206959_a);

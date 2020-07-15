@@ -72,4 +72,9 @@ public class PaperWorldConfig {
         reedMaxHeight = getInt("max-growth-height.reeds", 3);
         log("Max height for cactus growth " + cactusMaxHeight + ". Max height for reed growth " + reedMaxHeight);
     }
+
+    public boolean nerfedMobsShouldJump;
+    private void nerfedMobsShouldJump() {
+        nerfedMobsShouldJump = getBoolean("spawner-nerfed-mobs-should-jump", false);
+    }
 }
