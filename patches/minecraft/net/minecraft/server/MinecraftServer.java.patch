@@ -1017,7 +1017,17 @@
  
     public void func_193031_aM() {
        if (!this.func_213162_bc()) {
-@@ -1567,6 +1851,31 @@
+@@ -1452,6 +1736,9 @@
+       if (this.func_205744_aT()) {
+          PlayerList playerlist = p_205743_1_.func_197028_i().func_184103_al();
+          WhiteList whitelist = playerlist.func_152599_k();
++         if (!((DedicatedServer)getServer()).func_213221_d_().field_219006_S.get()) {
++            return; // Purpur - white list not enabled
++         }
+          if (whitelist.func_152689_b()) {
+             for(ServerPlayerEntity serverplayerentity : Lists.newArrayList(playerlist.func_181057_v())) {
+                if (!whitelist.func_152705_a(serverplayerentity.func_146103_bH())) {
+@@ -1567,6 +1854,31 @@
  
     public abstract boolean func_213199_b(GameProfile p_213199_1_);
  
@@ -1049,7 +1059,7 @@
     public void func_223711_a(Path p_223711_1_) throws IOException {
        Path path = p_223711_1_.resolve("levels");
  
-@@ -1609,8 +1918,8 @@
+@@ -1609,8 +1921,8 @@
           final List<String> list = Lists.newArrayList();
           final GameRules gamerules = this.func_200252_aR();
           GameRules.func_223590_a(new GameRules.IRuleEntryVisitor() {
@@ -1060,7 +1070,7 @@
              }
           });
  
-@@ -1651,4 +1960,16 @@
+@@ -1651,4 +1963,16 @@
     private void func_229737_ba_() {
        Block.field_176229_d.forEach(BlockState::func_215692_c);
     }

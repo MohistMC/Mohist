@@ -108,11 +108,14 @@ public class CraftWorld implements World {
 
     @Override
     public Block getBlockAt(int x, int y, int z) {
-        return CraftBlock.at(world, new BlockPos(x, y, z));
+        return getChunkAt(x >> 4, z >> 4).getBlock(x & 0xF, y, z & 0xF);
     }
 
     @Override
     public int getHighestBlockYAt(int x, int z) {
+        if (!isChunkLoaded(x >> 4, z >> 4)) {
+            loadChunk(x >> 4, z >> 4);
+        }
         return getHighestBlockYAt(x, z, org.bukkit.HeightMap.MOTION_BLOCKING);
     }
 
