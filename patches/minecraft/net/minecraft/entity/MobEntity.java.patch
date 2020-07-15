@@ -242,7 +242,7 @@
           }
  
           this.func_184201_a(equipmentslottype, itemstack);
-@@ -556,13 +615,21 @@
+@@ -556,13 +615,20 @@
           this.func_70106_y();
        } else if (!this.func_104002_bU() && !this.func_213392_I()) {
           Entity entity = this.field_70170_p.func_217362_a(this, -1.0D);
@@ -258,16 +258,16 @@
 +         if (entity != null && field_70717_bb.affectsSpawning) {
              double d0 = entity.func_70068_e(this);
 -            if (d0 > 16384.0D && this.func_213397_c(d0)) {
-+            if (d0 > 16384.0D) { // CraftBukkit - remove canDespawn() check
++            if (d0 > field_70170_p.paperConfig.hardDespawnDistance) { // CraftBukkit - remove isTypeNotPersistent() check // Paper - custom despawn distances
                 this.func_70106_y();
              }
- 
+-
 -            if (this.field_70708_bq > 600 && this.field_70146_Z.nextInt(800) == 0 && d0 > 1024.0D && this.func_213397_c(d0)) {
-+            if (this.field_70708_bq > 600 && this.field_70146_Z.nextInt(800) == 0 && d0 > 1024.0D) { // CraftBukkit - remove canDespawn() check
++            if (this.field_70708_bq > 600 && this.field_70146_Z.nextInt(800) == 0 && d0 > field_70170_p.paperConfig.softDespawnDistance) { // CraftBukkit - remove isTypeNotPersistent() check // Paper - custom despawn distances
                 this.func_70106_y();
              } else if (d0 < 1024.0D) {
                 this.field_70708_bq = 0;
-@@ -576,6 +643,19 @@
+@@ -576,6 +642,19 @@
  
     protected final void func_70626_be() {
        ++this.field_70708_bq;
@@ -287,7 +287,7 @@
        this.field_70170_p.func_217381_Z().func_76320_a("sensing");
        this.field_70723_bA.func_75523_a();
        this.field_70170_p.func_217381_Z().func_76319_b();
-@@ -791,6 +871,8 @@
+@@ -791,6 +870,8 @@
     }
  
     public static EquipmentSlotType func_184640_d(ItemStack p_184640_0_) {
@@ -296,7 +296,7 @@
        Item item = p_184640_0_.func_77973_b();
        if (item != Blocks.field_196625_cS.func_199767_j() && (!(item instanceof BlockItem) || !(((BlockItem)item).func_179223_d() instanceof AbstractSkullBlock))) {
           if (item instanceof ArmorItem) {
-@@ -798,7 +880,7 @@
+@@ -798,7 +879,7 @@
           } else if (item == Items.field_185160_cR) {
              return EquipmentSlotType.CHEST;
           } else {
@@ -305,7 +305,7 @@
           }
        } else {
           return EquipmentSlotType.HEAD;
-@@ -910,11 +992,11 @@
+@@ -910,11 +991,11 @@
     }
  
     public boolean func_98052_bS() {
@@ -319,7 +319,7 @@
     }
  
     public boolean func_213365_e(ItemStack p_213365_1_) {
-@@ -930,11 +1012,23 @@
+@@ -930,11 +1011,23 @@
        if (!this.func_70089_S()) {
           return false;
        } else if (this.func_110166_bE() == p_184230_1_) {
@@ -343,7 +343,7 @@
              this.func_110162_b(p_184230_1_, true);
              itemstack.func_190918_g(1);
              return true;
-@@ -984,6 +1078,7 @@
+@@ -984,6 +1077,7 @@
  
        if (this.field_110168_bw != null) {
           if (!this.func_70089_S() || !this.field_110168_bw.func_70089_S()) {
@@ -351,7 +351,7 @@
              this.func_110160_i(true, true);
           }
  
-@@ -999,7 +1094,9 @@
+@@ -999,7 +1093,9 @@
  
           this.field_110168_bw = null;
           if (!this.field_70170_p.field_72995_K && p_110160_2_) {
@@ -361,7 +361,7 @@
           }
  
           if (!this.field_70170_p.field_72995_K && p_110160_1_ && this.field_70170_p instanceof ServerWorld) {
-@@ -1070,6 +1167,7 @@
+@@ -1070,6 +1166,7 @@
              BlockPos blockpos = new BlockPos(this.field_110170_bx.func_74762_e("X"), this.field_110170_bx.func_74762_e("Y"), this.field_110170_bx.func_74762_e("Z"));
              this.func_110162_b(LeashKnotEntity.func_213855_a(this.field_70170_p, blockpos), true);
           } else {
@@ -369,7 +369,7 @@
              this.func_110160_i(false, true);
           }
  
-@@ -1164,7 +1262,13 @@
+@@ -1164,7 +1261,13 @@
  
        int i = EnchantmentHelper.func_90036_a(this);
        if (i > 0) {
@@ -384,7 +384,7 @@
        }
  
        boolean flag = p_70652_1_.func_70097_a(DamageSource.func_76358_a(this), f);
-@@ -1178,10 +1282,10 @@
+@@ -1178,10 +1281,10 @@
              PlayerEntity playerentity = (PlayerEntity)p_70652_1_;
              ItemStack itemstack = this.func_184614_ca();
              ItemStack itemstack1 = playerentity.func_184587_cr() ? playerentity.func_184607_cu() : ItemStack.field_190927_a;
