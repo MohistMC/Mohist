@@ -16,8 +16,6 @@ import net.minecraft.util.Formatting;
 import net.minecraft.text.Text;
 import org.bukkit.ChatColor;
 import org.jetbrains.annotations.Nullable;
-import red.mohist.extra.text.ExtraStyle;
-import red.mohist.mixin.text.MixinStyle;
 
 public final class CraftChatMessage {
 
