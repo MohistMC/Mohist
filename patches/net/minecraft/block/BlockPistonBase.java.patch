@@ -70,7 +70,7 @@
                  BlockPos blockpos = list.get(i);
                  list1.add(worldIn.getBlockState(blockpos).getActualState(worldIn, blockpos));
              }
-@@ -349,24 +362,101 @@
+@@ -349,24 +362,102 @@
              IBlockState[] aiblockstate = new IBlockState[k];
              EnumFacing enumfacing = extending ? direction : direction.getOpposite();
  
@@ -156,6 +156,7 @@
 -            for (int l = list.size() - 1; l >= 0; --l)
 -            {
 +            for (int l = list.size() - 1; l >= 0; --l) {
++                if(l>=list.size()||k>=list.size()) continue;
                  BlockPos blockpos3 = list.get(l);
                  IBlockState iblockstate2 = worldIn.getBlockState(blockpos3);
 +                // Paper start - fix a variety of piston desync dupes
@@ -177,7 +178,7 @@
                  --k;
                  aiblockstate[k] = iblockstate2;
              }
-@@ -434,6 +524,13 @@
+@@ -434,6 +525,13 @@
          return new BlockStateContainer(this, new IProperty[] {FACING, EXTENDED});
      }
  
