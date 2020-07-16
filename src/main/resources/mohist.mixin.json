@@ -4,9 +4,14 @@
   "package": "red.mohist.mixin",
   "compatibilityLevel": "JAVA_8",
   "mixins": [
+    "advancement.MixinAdvancement",
+    "advancement.MixinPlayerAdvancementTracker",
+    "entity.MixinEntityAttributeInstance"
   ],
-  "client": [
-    "MixinMinecraftServer"
+  "server": [
+    "advancement.MixinAdvancement",
+    "advancement.MixinPlayerAdvancementTracker",
+    "entity.MixinEntityAttributeInstance"
   ],
   "injectors": {
     "defaultRequire": 1

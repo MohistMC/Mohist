@@ -7,13 +7,14 @@ import java.util.List;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.attribute.AttributeModifier;
+import red.mohist.extra.entity.ExtraEntityAttributeInstance;
 
 public class CraftAttributeInstance implements AttributeInstance {
 
-    private final net.minecraft.server.AttributeModifiable handle;
+    private final net.minecraft.entity.attribute.EntityAttributeInstance handle;
     private final Attribute attribute;
 
-    public CraftAttributeInstance(net.minecraft.server.AttributeModifiable handle, Attribute attribute) {
+    public CraftAttributeInstance(net.minecraft.entity.attribute.EntityAttributeInstance handle, Attribute attribute) {
         this.handle = handle;
         this.attribute = attribute;
     }
@@ -30,13 +31,13 @@ public class CraftAttributeInstance implements AttributeInstance {
 
     @Override
     public void setBaseValue(double d) {
-        handle.setValue(d);
+        handle.setBaseValue(d);
     }
 
     @Override
     public Collection<AttributeModifier> getModifiers() {
         List<AttributeModifier> result = new ArrayList<AttributeModifier>();
-        for (net.minecraft.server.AttributeModifier nms : handle.getModifiers()) {
+        for (net.minecraft.entity.attribute.EntityAttributeModifier nms : handle.getModifiers()) {
             result.add(convert(nms));
         }
 
@@ -46,7 +47,7 @@ public class CraftAttributeInstance implements AttributeInstance {
     @Override
     public void addModifier(AttributeModifier modifier) {
         Preconditions.checkArgument(modifier != null, "modifier");
-        handle.addModifier(convert(modifier));
+        ((ExtraEntityAttributeInstance) this).getAddModifier(convert(modifier));
     }
 
     @Override
@@ -62,14 +63,14 @@ public class CraftAttributeInstance implements AttributeInstance {
 
     @Override
     public double getDefaultValue() {
-       return handle.getAttribute().getDefault();
+       return handle.getAttribute().getDefaultValue();
     }
 
-    public static net.minecraft.server.AttributeModifier convert(AttributeModifier bukkit) {
-        return new net.minecraft.server.AttributeModifier(bukkit.getUniqueId(), bukkit.getName(), bukkit.getAmount(), net.minecraft.server.AttributeModifier.Operation.values()[bukkit.getOperation().ordinal()]);
+    public static net.minecraft.entity.attribute.EntityAttributeModifier convert(AttributeModifier bukkit) {
+        return new net.minecraft.entity.attribute.EntityAttributeModifier(bukkit.getUniqueId(), bukkit.getName(), bukkit.getAmount(), net.minecraft.entity.attribute.EntityAttributeModifier.Operation.values()[bukkit.getOperation().ordinal()]);
     }
 
-    public static AttributeModifier convert(net.minecraft.server.AttributeModifier nms) {
-        return new AttributeModifier(nms.getUniqueId(), nms.getName(), nms.getAmount(), AttributeModifier.Operation.values()[nms.getOperation().ordinal()]);
+    public AttributeModifier convert(net.minecraft.entity.attribute.EntityAttributeModifier nms) {
+        return new AttributeModifier(nms.getId(), nms.getName(), ((ExtraEntityAttributeInstance) this).getAmount(), AttributeModifier.Operation.values()[nms.getOperation().ordinal()]);
     }
 }
