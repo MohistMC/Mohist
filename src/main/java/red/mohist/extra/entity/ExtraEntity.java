@@ -2,7 +2,8 @@ package red.mohist.extra.entity;
 
 import net.minecraft.entity.Entity;
 
-public interface ExtraServerPlayerEntity {
+public interface ExtraEntity {
 
-    Entity getBukkitEntity();
+    public Entity getBukkitEntity();
+
 }
