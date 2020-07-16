@@ -24,11 +24,6 @@ public class MixinBossBar implements ExtraBossBar {
     }
 
     @Override
-    public BossBar.Style getStyle() {
-        return this.style;
-    }
-
-    @Override
     public BossBar.Color getColor() {
         return this.color;
     }

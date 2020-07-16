@@ -6,14 +6,20 @@
   "mixins": [
     "advancement.MixinAdvancement",
     "advancement.MixinPlayerAdvancementTracker",
-    "entity.MixinEntityAttributeInstance"
-    "entity.MixinAttributeContainer"
+    "entity.MixinEntityAttributeInstance",
+    "entity.MixinAttributeContainer",
+    "entity.MixinBossBar",
+    "entity.MixinServerBossBar",
+    "entity.MixinServerPlayerEntity"
   ],
   "server": [
     "advancement.MixinAdvancement",
     "advancement.MixinPlayerAdvancementTracker",
     "entity.MixinEntityAttributeInstance",
-    "entity.MixinAttributeContainer"
+    "entity.MixinAttributeContainer",
+    "entity.MixinBossBar",
+    "entity.MixinServerBossBar",
+    "entity.MixinServerPlayerEntity"
   ],
   "injectors": {
     "defaultRequire": 1

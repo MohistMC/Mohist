@@ -1,25 +1,25 @@
 package org.bukkit.craftbukkit.boss;
 
 import com.google.common.base.Preconditions;
-import net.minecraft.server.EnderDragonBattle;
-import net.minecraft.server.Entity;
-import net.minecraft.server.EnumDragonRespawn;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.boss.dragon.EnderDragonFight;
 import org.bukkit.Location;
 import org.bukkit.boss.BossBar;
 import org.bukkit.boss.DragonBattle;
 import org.bukkit.entity.EnderDragon;
+import red.mohist.extra.entity.ExtraEnderDragonFight;
 
 public class CraftDragonBattle implements DragonBattle {
 
-    private final EnderDragonBattle handle;
+    private final EnderDragonFight handle;
 
-    public CraftDragonBattle(EnderDragonBattle handle) {
+    public CraftDragonBattle(EnderDragonFight handle) {
         this.handle = handle;
     }
 
     @Override
     public EnderDragon getEnderDragon() {
-        Entity entity = handle.world.getEntity(handle.dragonUUID);
+        Entity entity = ((ExtraEnderDragonFight) this).getWorld().getEntity(handle.dragonUUID);
         return (entity != null) ? (EnderDragon) entity.getBukkitEntity() : null;
     }
 

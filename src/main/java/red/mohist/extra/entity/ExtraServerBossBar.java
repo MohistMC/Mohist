@@ -1,10 +1,10 @@
 package red.mohist.extra.entity;
 
-import net.minecraft.text.Text;
+import net.minecraft.network.packet.s2c.play.BossBarS2CPacket;
 
 public interface ExtraServerBossBar {
 
-    void getsendPacket();
+    void getsendPacket(BossBarS2CPacket.Type updateName);
 
-    Text getName();
+    boolean getVisible();
 }

@@ -9,6 +9,9 @@ import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 import net.minecraft.entity.boss.ServerBossBar;
+import net.minecraft.network.packet.s2c.play.BossBarS2CPacket;
+import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.text.Text;
 import org.bukkit.boss.BarColor;
 import org.bukkit.boss.BarFlag;
 import org.bukkit.boss.BarStyle;
@@ -18,11 +21,15 @@ import org.bukkit.craftbukkit.util.CraftChatMessage;
 import org.bukkit.entity.Player;
 import red.mohist.extra.entity.ExtraBossBar;
 import red.mohist.extra.entity.ExtraServerBossBar;
+import red.mohist.extra.entity.ExtraServerPlayerEntity;
 
 public class CraftBossBar implements BossBar {
 
     private final ServerBossBar handle;
     private Map<BarFlag, FlagContainer> flags;
+    public net.minecraft.entity.boss.BossBar.Style style;
+    public net.minecraft.entity.boss.BossBar.Color color;
+    public Text name;
 
     public CraftBossBar(String title, BarColor color, BarStyle style, BarFlag... flags) {
         handle = new ServerBossBar(
@@ -49,9 +56,9 @@ public class CraftBossBar implements BossBar {
 
     private void initialize() {
         this.flags = new HashMap<>();
-        this.flags.put(BarFlag.DARKEN_SKY, new FlagContainer(handle::isDarkenSky, handle::setDarkenSky));
-        this.flags.put(BarFlag.PLAY_BOSS_MUSIC, new FlagContainer(handle::isPlayMusic, handle::setPlayMusic));
-        this.flags.put(BarFlag.CREATE_FOG, new FlagContainer(handle::isCreateFog, handle::setCreateFog));
+        this.flags.put(BarFlag.DARKEN_SKY, new FlagContainer(handle::getDarkenSky, handle::setDarkenSky));
+        this.flags.put(BarFlag.PLAY_BOSS_MUSIC, new FlagContainer(handle::hasDragonMusic, handle::setDragonMusic));
+        this.flags.put(BarFlag.CREATE_FOG, new FlagContainer(handle::getThickenFog, handle::setThickenFog));
     }
 
     private BarColor convertColor(net.minecraft.entity.boss.BossBar.Color color) {
@@ -103,30 +110,30 @@ public class CraftBossBar implements BossBar {
 
     @Override
     public void setTitle(String title) {
-        ((ExtraServerBossBar) this).getName() = CraftChatMessage.fromString(title, true)[0];
-        handle.sendPacket(PacketPlayOutBoss.Action.UPDATE_NAME);
+        this.name = CraftChatMessage.fromString(title, true)[0];
+        ((ExtraServerBossBar) this).getsendPacket(BossBarS2CPacket.Type.UPDATE_NAME);
     }
 
     @Override
     public BarColor getColor() {
-        return convertColor(handle.color);
+        return convertColor(this.color);
     }
 
     @Override
     public void setColor(BarColor color) {
-        ((ExtraBossBar) this).getColor() = convertColor(color);
-        ((ExtraServerBossBar) this).getsendPacket(PacketPlayOutBoss.Action.UPDATE_STYLE);
+        this.color = convertColor(color);
+        ((ExtraServerBossBar) this).getsendPacket(BossBarS2CPacket.Type.UPDATE_STYLE);
     }
 
     @Override
     public BarStyle getStyle() {
-        return convertStyle(((ExtraBossBar) this).getStyle());
+        return convertStyle(this.style);
     }
 
     @Override
     public void setStyle(BarStyle style) {
-        ((ExtraBossBar) this).getStyle() = convertStyle(style);
-        handle.sendUpdate(PacketPlayOutBoss.Action.UPDATE_STYLE);
+        this.style = convertStyle(style);
+        ((ExtraServerBossBar) this).getsendPacket(BossBarS2CPacket.Type.UPDATE_STYLE);
     }
 
     @Override
@@ -157,18 +164,18 @@ public class CraftBossBar implements BossBar {
     @Override
     public void setProgress(double progress) {
         Preconditions.checkArgument(progress >= 0.0 && progress <= 1.0, "Progress must be between 0.0 and 1.0 (%s)", progress);
-        handle.setProgress((float) progress);
+        handle.setPercent((float) progress);
     }
 
     @Override
     public double getProgress() {
-        return handle.getProgress();
+        return handle.getPercent();
     }
 
     @Override
     public void addPlayer(Player player) {
         Preconditions.checkArgument(player != null, "player == null");
-        Preconditions.checkArgument(((CraftPlayer) player).getHandle().playerConnection != null, "player is not fully connected (wait for PlayerJoinEvent)");
+        Preconditions.checkArgument(((CraftPlayer) player).getHandle().networkHandler != null, "player is not fully connected (wait for PlayerJoinEvent)");
 
         handle.addPlayer(((CraftPlayer) player).getHandle());
     }
@@ -183,8 +190,8 @@ public class CraftBossBar implements BossBar {
     @Override
     public List<Player> getPlayers() {
         ImmutableList.Builder<Player> players = ImmutableList.builder();
-        for (EntityPlayer p : handle.getPlayers()) {
-            players.add(p.getBukkitEntity());
+        for (ServerPlayerEntity p : handle.getPlayers()) {
+            players.add((Player) ((ExtraServerPlayerEntity) (Object) this).getBukkitEntity());
         }
         return players.build();
     }
@@ -196,7 +203,7 @@ public class CraftBossBar implements BossBar {
 
     @Override
     public boolean isVisible() {
-        return handle.visible;
+        return ((ExtraServerBossBar) this).getVisible();
     }
 
     @Override
@@ -227,7 +234,7 @@ public class CraftBossBar implements BossBar {
         }
     }
 
-    public BossBattleServer getHandle() {
+    public ServerBossBar getHandle() {
         return handle;
     }
 }

@@ -7,7 +7,5 @@ public interface ExtraBossBar {
 
     Text getName();
 
-    BossBar.Style getStyle();
-
     BossBar.Color getColor();
 }
