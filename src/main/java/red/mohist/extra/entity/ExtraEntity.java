@@ -4,6 +4,10 @@ import net.minecraft.entity.Entity;
 
 public interface ExtraEntity {
 
-    public Entity getBukkitEntity();
+    Entity getBukkitEntity();
+
+    int getFireTicks();
+
+    int bridge$getBurningDuration();
 
 }

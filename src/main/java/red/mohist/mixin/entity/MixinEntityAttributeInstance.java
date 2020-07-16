@@ -21,18 +21,15 @@ public class MixinEntityAttributeInstance implements ExtraEntityAttributeInstanc
     private double amount;
 
     @Shadow
-    @Final
     private Map<UUID, EntityAttributeModifier> byId = new Object2ObjectArrayMap();
 
     @Shadow
-    @Final
     private Map<EntityAttributeModifier.Operation, Set<EntityAttributeModifier>> operationToModifiers = Maps.newEnumMap(EntityAttributeModifier.Operation.class);
 
     @Shadow
     private boolean dirty = true;
 
     @Shadow
-    @Final
     private Consumer<EntityAttributeInstance> updateCallback;
 
     @Shadow
