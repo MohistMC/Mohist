@@ -1,0 +1,31 @@
+--- a/net/minecraft/server/ChunkGenerator.java
++++ b/net/minecraft/server/ChunkGenerator.java
+@@ -214,6 +214,13 @@
+         while (iterator.hasNext()) {
+             StructureFeature<?, ?> structurefeature = (StructureFeature) iterator.next();
+ 
++            // CraftBukkit start
++            if (structurefeature.b == StructureGenerator.STRONGHOLD) {
++                synchronized (structurefeature) {
++                    this.a(structurefeature, structuremanager, ichunkaccess, definedstructuremanager, i, chunkcoordintpair, biomebase);
++                }
++            } else
++            // CraftBukkit end
+             this.a(structurefeature, structuremanager, ichunkaccess, definedstructuremanager, i, chunkcoordintpair, biomebase);
+         }
+ 
+@@ -293,9 +300,11 @@
+     }
+ 
+     static {
+-        IRegistry.a(IRegistry.CHUNK_GENERATOR, "noise", (Object) ChunkGeneratorAbstract.d);
+-        IRegistry.a(IRegistry.CHUNK_GENERATOR, "flat", (Object) ChunkProviderFlat.d);
+-        IRegistry.a(IRegistry.CHUNK_GENERATOR, "debug", (Object) ChunkProviderDebug.e);
++        // CraftBukkit start - decompile errors
++        IRegistry.a(IRegistry.CHUNK_GENERATOR, "noise", ChunkGeneratorAbstract.d);
++        IRegistry.a(IRegistry.CHUNK_GENERATOR, "flat", ChunkProviderFlat.d);
++        IRegistry.a(IRegistry.CHUNK_GENERATOR, "debug", ChunkProviderDebug.e);
++        // CraftBukkit end
+         a = IRegistry.CHUNK_GENERATOR.dispatchStable(ChunkGenerator::a, Function.identity());
+     }
+ }

@@ -1,0 +1,33 @@
+--- a/net/minecraft/server/EntityShulkerBullet.java
++++ b/net/minecraft/server/EntityShulkerBullet.java
+@@ -34,8 +34,21 @@
+         this.target = entity;
+         this.dir = EnumDirection.UP;
+         this.a(enumdirection_enumaxis);
++        projectileSource = (org.bukkit.entity.LivingEntity) entityliving.getBukkitEntity(); // CraftBukkit
+     }
+ 
++    // CraftBukkit start
++    public Entity getTarget() {
++        return this.target;
++    }
++
++    public void setTarget(Entity e) {
++        this.target = e;
++        this.dir = EnumDirection.UP;
++        this.a(EnumDirection.EnumAxis.X);
++    }
++    // CraftBukkit end
++
+     @Override
+     public SoundCategory getSoundCategory() {
+         return SoundCategory.HOSTILE;
+@@ -255,7 +268,7 @@
+         if (flag) {
+             this.a(entityliving, entity);
+             if (entity instanceof EntityLiving) {
+-                ((EntityLiving) entity).addEffect(new MobEffect(MobEffects.LEVITATION, 200));
++                ((EntityLiving) entity).addEffect(new MobEffect(MobEffects.LEVITATION, 200), org.bukkit.event.entity.EntityPotionEffectEvent.Cause.ATTACK); // CraftBukkit
+             }
+         }
+ 

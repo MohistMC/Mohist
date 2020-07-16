@@ -1,0 +1,10 @@
+--- a/net/minecraft/server/WorldGenMegaTreeProvider.java
++++ b/net/minecraft/server/WorldGenMegaTreeProvider.java
+@@ -30,6 +30,7 @@
+             return false;
+         } else {
+             ((WorldGenFeatureTreeConfiguration) worldgenfeatureconfigured.e).a();
++            setTreeType(worldgenfeatureconfigured); // CraftBukkit
+             IBlockData iblockdata1 = Blocks.AIR.getBlockData();
+ 
+             worldserver.setTypeAndData(blockposition.b(i, 0, j), iblockdata1, 4);
