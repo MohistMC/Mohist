@@ -3,11 +3,8 @@ package org.bukkit.entity;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
-import org.bukkit.EntityEffect;
-import org.bukkit.Location;
-import org.bukkit.Nameable;
-import org.bukkit.Server;
-import org.bukkit.World;
+
+import org.bukkit.*;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.PistonMoveReaction;
 import org.bukkit.command.CommandSender;
@@ -103,7 +100,6 @@ public interface Entity extends Metadatable, CommandSender, Nameable, Persistent
      *
      * @return World
      */
-    @NotNull
     public World getWorld();
 
     /**
