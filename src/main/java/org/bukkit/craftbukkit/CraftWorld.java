@@ -21,76 +21,7 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
-import net.minecraft.server.ArraySetSorted;
-import net.minecraft.server.AxisAlignedBB;
-import net.minecraft.server.BiomeBase;
-import net.minecraft.server.BiomeDecoratorGroups;
-import net.minecraft.server.BlockChorusFlower;
-import net.minecraft.server.BlockDiodeAbstract;
-import net.minecraft.server.BlockPosition;
-import net.minecraft.server.Blocks;
-import net.minecraft.server.ChunkCoordIntPair;
-import net.minecraft.server.ChunkMapDistance;
-import net.minecraft.server.ChunkStatus;
-import net.minecraft.server.EntityAreaEffectCloud;
-import net.minecraft.server.EntityArmorStand;
-import net.minecraft.server.EntityArrow;
-import net.minecraft.server.EntityBoat;
-import net.minecraft.server.EntityEgg;
-import net.minecraft.server.EntityEnderSignal;
-import net.minecraft.server.EntityEvokerFangs;
-import net.minecraft.server.EntityExperienceOrb;
-import net.minecraft.server.EntityFallingBlock;
-import net.minecraft.server.EntityFireball;
-import net.minecraft.server.EntityFireworks;
-import net.minecraft.server.EntityHanging;
-import net.minecraft.server.EntityHuman;
-import net.minecraft.server.EntityInsentient;
-import net.minecraft.server.EntityItem;
-import net.minecraft.server.EntityItemFrame;
-import net.minecraft.server.EntityLeash;
-import net.minecraft.server.EntityLightning;
-import net.minecraft.server.EntityMinecartChest;
-import net.minecraft.server.EntityMinecartCommandBlock;
-import net.minecraft.server.EntityMinecartFurnace;
-import net.minecraft.server.EntityMinecartHopper;
-import net.minecraft.server.EntityMinecartMobSpawner;
-import net.minecraft.server.EntityMinecartRideable;
-import net.minecraft.server.EntityMinecartTNT;
-import net.minecraft.server.EntityPainting;
-import net.minecraft.server.EntityPotion;
-import net.minecraft.server.EntitySnowball;
-import net.minecraft.server.EntityTNTPrimed;
-import net.minecraft.server.EntityTippedArrow;
-import net.minecraft.server.EntityTypes;
-import net.minecraft.server.EntityZombie;
-import net.minecraft.server.EnumDifficulty;
-import net.minecraft.server.EnumDirection;
-import net.minecraft.server.EnumMobSpawn;
-import net.minecraft.server.Explosion;
-import net.minecraft.server.GameRules;
-import net.minecraft.server.GroupDataEntity;
-import net.minecraft.server.IBlockData;
-import net.minecraft.server.IChunkAccess;
-import net.minecraft.server.MinecraftKey;
-import net.minecraft.server.MovingObjectPosition;
-import net.minecraft.server.PacketPlayOutCustomSoundEffect;
-import net.minecraft.server.PacketPlayOutUpdateTime;
-import net.minecraft.server.PacketPlayOutWorldEvent;
-import net.minecraft.server.PersistentRaid;
-import net.minecraft.server.PlayerChunk;
-import net.minecraft.server.ProtoChunkExtension;
-import net.minecraft.server.RayTrace;
-import net.minecraft.server.SavedFile;
-import net.minecraft.server.SoundCategory;
-import net.minecraft.server.StructureGenerator;
-import net.minecraft.server.Ticket;
-import net.minecraft.server.TicketType;
-import net.minecraft.server.Unit;
-import net.minecraft.server.Vec3D;
-import net.minecraft.server.WorldGenFeatureHugeFungiConfiguration;
-import net.minecraft.server.WorldGenerator;
-import net.minecraft.server.WorldServer;
+import net.minecraft.server.world.ServerWorld;
 import org.apache.commons.lang.Validate;
 import org.bukkit.BlockChangeDelegate;
 import org.bukkit.Bukkit;
@@ -268,7 +199,7 @@ import org.bukkit.util.Vector;
 public class CraftWorld implements World {
     public static final int CUSTOM_DIMENSION_OFFSET = 10;
 
-    private final WorldServer world;
+    private final ServerWorld world;
     private WorldBorder worldBorder;
     private Environment environment;
     private final CraftServer server = (CraftServer) Bukkit.getServer();
@@ -584,7 +515,7 @@ public class CraftWorld implements World {
         return Collections.unmodifiableCollection(chunks);
     }
 
-    public WorldServer getHandle() {
+    public ServerWorld getHandle() {
         return world;
     }
 

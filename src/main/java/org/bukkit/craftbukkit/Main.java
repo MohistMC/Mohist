@@ -17,6 +17,7 @@ import org.fusesource.jansi.AnsiConsole;
 public class Main {
     public static boolean useJline = true;
     public static boolean useConsole = true;
+    public static OptionSet serverOptions;
 
     public static void main(String[] args) {
         // Todo: Installation script
@@ -191,7 +192,7 @@ public class Main {
                 }
 
                 System.out.println("Loading libraries, please wait...");
-                net.minecraft.server.Main.main(options);
+                serverOptions = options;
             } catch (Throwable t) {
                 t.printStackTrace();
             }
