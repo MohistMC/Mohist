@@ -7,10 +7,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
-import net.minecraft.server.BossBattle;
-import net.minecraft.server.BossBattleServer;
-import net.minecraft.server.EntityPlayer;
-import net.minecraft.server.PacketPlayOutBoss;
+
+import net.minecraft.entity.boss.ServerBossBar;
 import org.bukkit.boss.BarColor;
 import org.bukkit.boss.BarFlag;
 import org.bukkit.boss.BarStyle;
@@ -18,18 +16,21 @@ import org.bukkit.boss.BossBar;
 import org.bukkit.craftbukkit.entity.CraftPlayer;
 import org.bukkit.craftbukkit.util.CraftChatMessage;
 import org.bukkit.entity.Player;
+import red.mohist.extra.entity.ExtraBossBar;
+import red.mohist.extra.entity.ExtraServerBossBar;
 
 public class CraftBossBar implements BossBar {
 
-    private final BossBattleServer handle;
+    private final ServerBossBar handle;
     private Map<BarFlag, FlagContainer> flags;
 
     public CraftBossBar(String title, BarColor color, BarStyle style, BarFlag... flags) {
-        handle = new BossBattleServer(
+        handle = new ServerBossBar(
                 CraftChatMessage.fromString(title, true)[0],
                 convertColor(color),
                 convertStyle(style)
         );
+
 
         this.initialize();
 
@@ -41,7 +42,7 @@ public class CraftBossBar implements BossBar {
         this.setStyle(style);
     }
 
-    public CraftBossBar(BossBattleServer bossBattleServer) {
+    public CraftBossBar(ServerBossBar bossBattleServer) {
         this.handle = bossBattleServer;
         this.initialize();
     }
@@ -53,33 +54,33 @@ public class CraftBossBar implements BossBar {
         this.flags.put(BarFlag.CREATE_FOG, new FlagContainer(handle::isCreateFog, handle::setCreateFog));
     }
 
-    private BarColor convertColor(BossBattle.BarColor color) {
+    private BarColor convertColor(net.minecraft.entity.boss.BossBar.Color color) {
         BarColor bukkitColor = BarColor.valueOf(color.name());
         return (bukkitColor == null) ? BarColor.WHITE : bukkitColor;
     }
 
-    private BossBattle.BarColor convertColor(BarColor color) {
-        BossBattle.BarColor nmsColor = BossBattle.BarColor.valueOf(color.name());
-        return (nmsColor == null) ? BossBattle.BarColor.WHITE : nmsColor;
+    private net.minecraft.entity.boss.BossBar.Color convertColor(BarColor color) {
+        net.minecraft.entity.boss.BossBar.Color nmsColor = net.minecraft.entity.boss.BossBar.Color.valueOf(color.name());
+        return (nmsColor == null) ? net.minecraft.entity.boss.BossBar.Color.WHITE : nmsColor;
     }
 
-    private BossBattle.BarStyle convertStyle(BarStyle style) {
+    private net.minecraft.entity.boss.BossBar.Style convertStyle(BarStyle style) {
         switch (style) {
             default:
             case SOLID:
-                return BossBattle.BarStyle.PROGRESS;
+                return net.minecraft.entity.boss.BossBar.Style.PROGRESS;
             case SEGMENTED_6:
-                return BossBattle.BarStyle.NOTCHED_6;
+                return net.minecraft.entity.boss.BossBar.Style.NOTCHED_6;
             case SEGMENTED_10:
-                return BossBattle.BarStyle.NOTCHED_10;
+                return net.minecraft.entity.boss.BossBar.Style.NOTCHED_10;
             case SEGMENTED_12:
-                return BossBattle.BarStyle.NOTCHED_12;
+                return net.minecraft.entity.boss.BossBar.Style.NOTCHED_12;
             case SEGMENTED_20:
-                return BossBattle.BarStyle.NOTCHED_20;
+                return net.minecraft.entity.boss.BossBar.Style.NOTCHED_20;
         }
     }
 
-    private BarStyle convertStyle(BossBattle.BarStyle style) {
+    private BarStyle convertStyle(net.minecraft.entity.boss.BossBar.Style style) {
         switch (style) {
             default:
             case PROGRESS:
@@ -97,13 +98,13 @@ public class CraftBossBar implements BossBar {
 
     @Override
     public String getTitle() {
-        return CraftChatMessage.fromComponent(handle.title);
+        return CraftChatMessage.fromComponent(((ExtraBossBar) this).getName());
     }
 
     @Override
     public void setTitle(String title) {
-        handle.title = CraftChatMessage.fromString(title, true)[0];
-        handle.sendUpdate(PacketPlayOutBoss.Action.UPDATE_NAME);
+        ((ExtraServerBossBar) this).getName() = CraftChatMessage.fromString(title, true)[0];
+        handle.sendPacket(PacketPlayOutBoss.Action.UPDATE_NAME);
     }
 
     @Override
@@ -113,18 +114,18 @@ public class CraftBossBar implements BossBar {
 
     @Override
     public void setColor(BarColor color) {
-        handle.color = convertColor(color);
-        handle.sendUpdate(PacketPlayOutBoss.Action.UPDATE_STYLE);
+        ((ExtraBossBar) this).getColor() = convertColor(color);
+        ((ExtraServerBossBar) this).getsendPacket(PacketPlayOutBoss.Action.UPDATE_STYLE);
     }
 
     @Override
     public BarStyle getStyle() {
-        return convertStyle(handle.style);
+        return convertStyle(((ExtraBossBar) this).getStyle());
     }
 
     @Override
     public void setStyle(BarStyle style) {
-        handle.style = convertStyle(style);
+        ((ExtraBossBar) this).getStyle() = convertStyle(style);
         handle.sendUpdate(PacketPlayOutBoss.Action.UPDATE_STYLE);
     }
 

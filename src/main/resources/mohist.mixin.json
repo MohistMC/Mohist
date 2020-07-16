@@ -7,11 +7,13 @@
     "advancement.MixinAdvancement",
     "advancement.MixinPlayerAdvancementTracker",
     "entity.MixinEntityAttributeInstance"
+    "entity.MixinAttributeContainer"
   ],
   "server": [
     "advancement.MixinAdvancement",
     "advancement.MixinPlayerAdvancementTracker",
-    "entity.MixinEntityAttributeInstance"
+    "entity.MixinEntityAttributeInstance",
+    "entity.MixinAttributeContainer"
   ],
   "injectors": {
     "defaultRequire": 1
