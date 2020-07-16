@@ -5,7 +5,6 @@
   "compatibilityLevel": "JAVA_8",
   "mixins": [
     "advancement.MixinAdvancement",
-    "advancement.MixinPlayerAdvancementTracker",
     "entity.MixinEntityAttributeInstance",
     "entity.MixinAttributeContainer",
     "entity.MixinBossBar",
@@ -14,7 +13,6 @@
   ],
   "server": [
     "advancement.MixinAdvancement",
-    "advancement.MixinPlayerAdvancementTracker",
     "entity.MixinEntityAttributeInstance",
     "entity.MixinAttributeContainer",
     "entity.MixinBossBar",
