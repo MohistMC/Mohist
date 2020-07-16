@@ -17,6 +17,7 @@ import net.minecraft.server.ChatModifier;
 import net.minecraft.server.EnumChatFormat;
 import net.minecraft.server.IChatBaseComponent;
 import net.minecraft.server.IChatMutableComponent;
+import net.minecraft.text.Text;
 import org.bukkit.ChatColor;
 
 public final class CraftChatMessage {
@@ -47,10 +48,10 @@ public final class CraftChatMessage {
         // ChatColor.b does not explicitly reset, its more of empty
         private static final ChatModifier RESET = ChatModifier.b.setBold(false).setItalic(false).setUnderline(false).setStrikethrough(false).setRandom(false);
 
-        private final List<IChatBaseComponent> list = new ArrayList<IChatBaseComponent>();
+        private final List<Text> list = new ArrayList<Text>();
         private IChatMutableComponent currentChatComponent = new ChatComponentText("");
         private ChatModifier modifier = ChatModifier.b;
-        private final IChatBaseComponent[] output;
+        private final Text[] output;
         private int currentIndex;
         private StringBuilder hex;
         private final String message;
@@ -58,7 +59,7 @@ public final class CraftChatMessage {
         private StringMessage(String message, boolean keepNewlines) {
             this.message = message;
             if (message == null) {
-                output = new IChatBaseComponent[]{currentChatComponent};
+                output = new Text[]{currentChatComponent};
                 return;
             }
             list.add(currentChatComponent);
@@ -141,7 +142,7 @@ public final class CraftChatMessage {
         }
 
         private void appendNewComponent(int index) {
-            IChatBaseComponent addition = new ChatComponentText(message.substring(currentIndex, index)).setChatModifier(modifier);
+            Text addition = new ChatComponentText(message.substring(currentIndex, index)).setChatModifier(modifier);
             currentIndex = index;
             if (currentChatComponent == null) {
                 currentChatComponent = new ChatComponentText("");
@@ -150,37 +151,37 @@ public final class CraftChatMessage {
             currentChatComponent.addSibling(addition);
         }
 
-        private IChatBaseComponent[] getOutput() {
+        private Text[] getOutput() {
             return output;
         }
     }
 
-    public static IChatBaseComponent fromStringOrNull(String message) {
+    public static Text fromStringOrNull(String message) {
         return fromStringOrNull(message, false);
     }
 
-    public static IChatBaseComponent fromStringOrNull(String message, boolean keepNewlines) {
+    public static Text fromStringOrNull(String message, boolean keepNewlines) {
         return (message == null || message.isEmpty()) ? null : fromString(message, keepNewlines)[0];
     }
 
-    public static IChatBaseComponent[] fromString(String message) {
+    public static Text[] fromString(String message) {
         return fromString(message, false);
     }
 
-    public static IChatBaseComponent[] fromString(String message, boolean keepNewlines) {
+    public static Text[] fromString(String message, boolean keepNewlines) {
         return new StringMessage(message, keepNewlines).getOutput();
     }
 
-    public static String toJSON(IChatBaseComponent component) {
-        return IChatBaseComponent.ChatSerializer.a(component);
+    public static String toJSON(Text component) {
+        return Text.ChatSerializer.a(component);
     }
 
-    public static String fromComponent(IChatBaseComponent component) {
+    public static String fromComponent(Text component) {
         if (component == null) return "";
         StringBuilder out = new StringBuilder();
 
         boolean hadFormat = false;
-        for (IChatBaseComponent c : component) {
+        for (Text c : component) {
             ChatModifier modi = c.getChatModifier();
             ChatHexColor color = modi.getColor();
             if (!c.getText().isEmpty() || color != null) {
@@ -227,12 +228,12 @@ public final class CraftChatMessage {
         return out.toString();
     }
 
-    public static IChatBaseComponent fixComponent(IChatBaseComponent component) {
+    public static Text fixComponent(Text component) {
         Matcher matcher = LINK_PATTERN.matcher("");
         return fixComponent(component, matcher);
     }
 
-    private static IChatBaseComponent fixComponent(IChatBaseComponent component, Matcher matcher) {
+    private static Text fixComponent(Text component, Matcher matcher) {
         if (component instanceof ChatComponentText) {
             ChatComponentText text = ((ChatComponentText) component);
             String msg = text.getText();

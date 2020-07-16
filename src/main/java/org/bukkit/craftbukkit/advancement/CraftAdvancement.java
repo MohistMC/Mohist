@@ -4,7 +4,6 @@ import java.util.Collection;
 import java.util.Collections;
 
 import net.minecraft.advancement.Advancement;
-import net.minecraft.server.Advancement;
 import org.bukkit.NamespacedKey;
 import org.bukkit.craftbukkit.util.CraftNamespacedKey;
 
@@ -22,7 +21,7 @@ public class CraftAdvancement implements org.bukkit.advancement.Advancement {
 
     @Override
     public NamespacedKey getKey() {
-        return CraftNamespacedKey.fromMinecraft(handle.getName());
+        return CraftNamespacedKey.fromMinecraft(handle.getId());
     }
 
     @Override
