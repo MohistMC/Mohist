@@ -42,12 +42,13 @@ public class MixinServerBossBar implements ExtraServerBossBar {
     }
 
     @Override
-    public void getsendPacket() {
+    public void getsendPacket(BossBarS2CPacket.Type updateName) {
         this.sendPacket(type);
     }
 
     @Override
-    public Text getName() {
-        return this.name;
+    public boolean getVisible() {
+        return this.visible;
     }
+
 }
