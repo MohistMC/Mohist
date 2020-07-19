@@ -67,6 +67,4 @@ public class ProgressExecutor {
             }
             //TODO Tasks
         }
-
-    }
 }
