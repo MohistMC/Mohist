@@ -1,11 +1,11 @@
---- ../src-base/minecraft/net/minecraft/block/BlockPistonBase.java
-+++ ../src-work/minecraft/net/minecraft/block/BlockPistonBase.java
+
+    ../src-work/minecraft/net/minecraft/block/BlockPistonBase.java
 @@ -1,6 +1,8 @@
  package net.minecraft.block;
  
-+import com.google.common.collect.ImmutableList;
+ import com.google.common.collect.ImmutableList;
  import com.google.common.collect.Lists;
-+import java.util.AbstractList;
+ import java.util.AbstractList;
  import java.util.List;
  import javax.annotation.Nullable;
  import net.minecraft.block.material.EnumPushReaction;
@@ -13,334 +13,133 @@
  import net.minecraft.util.math.BlockPos;
  import net.minecraft.world.IBlockAccess;
  import net.minecraft.world.World;
-+import org.bukkit.craftbukkit.v1_12_R1.block.CraftBlock;
-+import org.bukkit.event.block.BlockPistonExtendEvent;
-+import org.bukkit.event.block.BlockPistonRetractEvent;
+ import org.bukkit.craftbukkit.v1_12_R1.block.CraftBlock;
+ import org.bukkit.event.block.BlockPistonExtendEvent;
+ import org.bukkit.event.block.BlockPistonRetractEvent;
  
  public class BlockPistonBase extends BlockDirectional
  {
-@@ -130,27 +135,36 @@
- 
-     private void checkForMove(World worldIn, BlockPos pos, IBlockState state)
-     {
--        EnumFacing enumfacing = (EnumFacing)state.getValue(FACING);
--        boolean flag = this.shouldBeExtended(worldIn, pos, enumfacing);
-+        EnumFacing PistonFaciing = (EnumFacing)state.getValue(FACING);
-+        boolean flag = this.shouldBeExtended(worldIn, pos, PistonFaciing);
- 
-         if (flag && !((Boolean)state.getValue(EXTENDED)).booleanValue())
-         {
--            if ((new BlockPistonStructureHelper(worldIn, pos, enumfacing, true)).canMove())
-+            if ((new BlockPistonStructureHelper(worldIn, pos, PistonFaciing, true)).canMove())
-             {
--                worldIn.addBlockEvent(pos, this, 0, enumfacing.getIndex());
-+                worldIn.addBlockEvent(pos, this, 0, PistonFaciing.getIndex());
-             }
+@@ -142,6 +147,15 @@
          }
          else if (!flag && ((Boolean)state.getValue(EXTENDED)).booleanValue())
          {
--            worldIn.addBlockEvent(pos, this, 1, enumfacing.getIndex());
-+            if (!this.isSticky) {
-+                org.bukkit.block.Block block = worldIn.getWorld().getBlockAt(pos.getX(), pos.getY(), pos.getZ());
-+                BlockPistonRetractEvent event = new BlockPistonRetractEvent(block, ImmutableList.<org.bukkit.block.Block>of(), CraftBlock.notchToBlockFace(PistonFaciing));
-+                worldIn.getServer().getPluginManager().callEvent(event);
-+
-+                if (event.isCancelled()) {
-+                    return;
-+                }
-+            }
-+            worldIn.addBlockEvent(pos, this, 1, PistonFaciing.getIndex());
+             if (!this.isSticky) {
+                 org.bukkit.block.Block block = worldIn.getWorld().getBlockAt(pos.getX(), pos.getY(), pos.getZ());
+                 BlockPistonRetractEvent event = new BlockPistonRetractEvent(block, ImmutableList.<org.bukkit.block.Block>of(), CraftBlock.notchToBlockFace(enumfacing));
+                 worldIn.getServer().getPluginManager().callEvent(event);
+
+                 if (event.isCancelled()) {
+                     return;
+                 }
+             }
+             worldIn.addBlockEvent(pos, this, 1, enumfacing.getIndex());
          }
      }
- 
-     private boolean shouldBeExtended(World worldIn, BlockPos pos, EnumFacing facing)
-     {
--        for (EnumFacing enumfacing : EnumFacing.values())
-+        for (EnumFacing PistonFaciing : EnumFacing.values())
-         {
--            if (enumfacing != facing && worldIn.isSidePowered(pos.offset(enumfacing), enumfacing))
-+            if (PistonFaciing != facing && worldIn.isSidePowered(pos.offset(PistonFaciing), PistonFaciing))
-             {
-                 return true;
-             }
-@@ -178,11 +192,11 @@
- 
-     public boolean eventReceived(IBlockState state, World worldIn, BlockPos pos, int id, int param)
-     {
--        EnumFacing enumfacing = (EnumFacing)state.getValue(FACING);
-+        EnumFacing PistonFaciing = (EnumFacing)state.getValue(FACING);
- 
-         if (!worldIn.isRemote)
-         {
--            boolean flag = this.shouldBeExtended(worldIn, pos, enumfacing);
-+            boolean flag = this.shouldBeExtended(worldIn, pos, PistonFaciing);
- 
-             if (flag && id == 1)
-             {
-@@ -198,7 +212,7 @@
- 
-         if (id == 0)
-         {
--            if (!this.doMove(worldIn, pos, enumfacing, true))
-+            if (!this.doMove(worldIn, pos, PistonFaciing, true))
-             {
-                 return false;
-             }
-@@ -208,19 +222,19 @@
-         }
-         else if (id == 1)
-         {
--            TileEntity tileentity1 = worldIn.getTileEntity(pos.offset(enumfacing));
-+            TileEntity tileentity1 = worldIn.getTileEntity(pos.offset(PistonFaciing));
- 
-             if (tileentity1 instanceof TileEntityPiston)
-             {
-                 ((TileEntityPiston)tileentity1).clearPistonTileEntity();
-             }
- 
--            worldIn.setBlockState(pos, Blocks.PISTON_EXTENSION.getDefaultState().withProperty(BlockPistonMoving.FACING, enumfacing).withProperty(BlockPistonMoving.TYPE, this.isSticky ? BlockPistonExtension.EnumPistonType.STICKY : BlockPistonExtension.EnumPistonType.DEFAULT), 3);
--            worldIn.setTileEntity(pos, BlockPistonMoving.createTilePiston(this.getStateFromMeta(param), enumfacing, false, true));
-+            worldIn.setBlockState(pos, Blocks.PISTON_EXTENSION.getDefaultState().withProperty(BlockPistonMoving.FACING, PistonFaciing).withProperty(BlockPistonMoving.TYPE, this.isSticky ? BlockPistonExtension.EnumPistonType.STICKY : BlockPistonExtension.EnumPistonType.DEFAULT), 3);
-+            worldIn.setTileEntity(pos, BlockPistonMoving.createTilePiston(this.getStateFromMeta(param), PistonFaciing, false, true));
- 
-             if (this.isSticky)
-             {
--                BlockPos blockpos = pos.add(enumfacing.getFrontOffsetX() * 2, enumfacing.getFrontOffsetY() * 2, enumfacing.getFrontOffsetZ() * 2);
-+                BlockPos blockpos = pos.add(PistonFaciing.getFrontOffsetX() * 2, PistonFaciing.getFrontOffsetY() * 2, PistonFaciing.getFrontOffsetZ() * 2);
-                 IBlockState iblockstate = worldIn.getBlockState(blockpos);
-                 Block block = iblockstate.getBlock();
-                 boolean flag1 = false;
-@@ -233,7 +247,7 @@
-                     {
-                         TileEntityPiston tileentitypiston = (TileEntityPiston)tileentity;
- 
--                        if (tileentitypiston.getFacing() == enumfacing && tileentitypiston.isExtending())
-+                        if (tileentitypiston.getFacing() == PistonFaciing && tileentitypiston.isExtending())
-                         {
-                             tileentitypiston.clearPistonTileEntity();
-                             flag1 = true;
-@@ -241,14 +255,15 @@
+@@ -241,7 +255,8 @@
                      }
                  }
- 
--                if (!flag1 && iblockstate.getMaterial() != Material.AIR && canPush(iblockstate, worldIn, blockpos, enumfacing.getOpposite(), false, enumfacing) && (iblockstate.getMobilityFlag() == EnumPushReaction.NORMAL || block == Blocks.PISTON || block == Blocks.STICKY_PISTON))
-+                // CraftBukkit - remove '!iblockstate.getBlock().isAir(iblockstate, worldIn, blockpos)' condition
-+                if (!flag1 && canPush(iblockstate, worldIn, blockpos, PistonFaciing.getOpposite(), false, PistonFaciing) && (iblockstate.getMobilityFlag() == EnumPushReaction.NORMAL || block == Blocks.PISTON || block == Blocks.STICKY_PISTON))
+
+                 if (!flag1 && canPush(iblockstate, worldIn, blockpos, enumfacing.getOpposite(), false, enumfacing) && (iblockstate.getMobilityFlag() == EnumPushReaction.NORMAL || block == Blocks.PISTON || block == Blocks.STICKY_PISTON))
                  {
--                    this.doMove(worldIn, pos, enumfacing, false);
-+                    this.doMove(worldIn, pos, PistonFaciing, false);
+                     this.doMove(worldIn, pos, enumfacing, false);
                  }
-             }
-             else
-             {
--                worldIn.setBlockToAir(pos.offset(enumfacing));
-+                worldIn.setBlockToAir(pos.offset(PistonFaciing));
-             }
- 
-             worldIn.playSound((EntityPlayer)null, pos, SoundEvents.BLOCK_PISTON_CONTRACT, SoundCategory.BLOCKS, 0.5F, worldIn.rand.nextFloat() * 0.15F + 0.6F);
 @@ -307,7 +322,7 @@
                      return false;
                  }
- 
--                return !block.hasTileEntity();
-+                return !block.hasTileEntity(blockStateIn);
+
+                 return !block.hasTileEntity(blockStateIn);
              }
              else
              {
-@@ -327,48 +342,135 @@
-             worldIn.setBlockToAir(pos.offset(direction));
-         }
+@@ -349,11 +364,78 @@
+             IBlockState[] aiblockstate = new IBlockState[k];
+             EnumFacing enumfacing = extending ? direction : direction.getOpposite();
  
--        BlockPistonStructureHelper blockpistonstructurehelper = new BlockPistonStructureHelper(worldIn, pos, direction, extending);
-+        //Piston helper that can get piston's data easily
-+        BlockPistonStructureHelper pistonhelper = new BlockPistonStructureHelper(worldIn, pos, direction, extending);
- 
--        if (!blockpistonstructurehelper.canMove())
-+        if (!pistonhelper.canMove())
-         {
-             return false;
-         }
--        else
--        {
--            List<BlockPos> list = blockpistonstructurehelper.getBlocksToMove();
--            List<IBlockState> list1 = Lists.<IBlockState>newArrayList();
-+        else {
-+            //The blocks that needs to move
-+            List<BlockPos> BlockToMove = pistonhelper.getBlocksToMove();
-+            //The moved blocks' state list
-+            List<IBlockState> MoveBlockState = Lists.<IBlockState>newArrayList();
- 
--            for (int i = 0; i < list.size(); ++i)
--            {
--                BlockPos blockpos = list.get(i);
--                list1.add(worldIn.getBlockState(blockpos).getActualState(worldIn, blockpos));
-+            for (int i = 0; i < BlockToMove.size(); ++i) {
-+                //Get the block's position
-+                BlockPos blockpos = BlockToMove.get(i);
-+                //Add it to the list that contains moved blocks' state
-+                MoveBlockState.add(worldIn.getBlockState(blockpos).getActualState(worldIn, blockpos));
+             final org.bukkit.block.Block bblock = worldIn.getWorld().getBlockAt(pos.getX(), pos.getY(), pos.getZ());
+
+             final List<BlockPos> moved = blockpistonstructurehelper.getBlocksToMove();
+             final List<BlockPos> broken = blockpistonstructurehelper.getBlocksToDestroy();
+
+             List<org.bukkit.block.Block> blocks = new AbstractList<org.bukkit.block.Block>() {
+
+                 @Override
+                 public int size() {
+                     return moved.size() + broken.size();
+                 }
+
+                 @Override
+                 public org.bukkit.block.Block get(int index) {
+                     if (index >= size() || index < 0) {
+                         throw new ArrayIndexOutOfBoundsException(index);
+                     }
+                     BlockPos pos = index < moved.size() ? moved.get(index) : broken.get(index - moved.size());
+                     return bblock.getWorld().getBlockAt(pos.getX(), pos.getY(), pos.getZ());
+                 }
+             };
+             boolean cancell = false;
+             for (BlockPos blockPos : moved) {
+                 if (worldIn.getTileEntity(blockPos) != null) {
+                     cancell = true;
+                     break;
+                 }
              }
- 
--            List<BlockPos> list2 = blockpistonstructurehelper.getBlocksToDestroy();
--            int k = list.size() + list2.size();
--            IBlockState[] aiblockstate = new IBlockState[k];
--            EnumFacing enumfacing = extending ? direction : direction.getOpposite();
-+            //The blocks that needs to destroy
-+            List<BlockPos> BlockToDestroy = pistonhelper.getBlocksToDestroy();
-+            //Total of operated blocks
-+            int BlockTotal = BlockToMove.size() + BlockToDestroy.size();
-+            //The operated blocks' state list
-+            IBlockState[] AllBlocksState = new IBlockState[BlockTotal];
-+            //Piston facing
-+            EnumFacing PistonFaciing = extending ? direction : direction.getOpposite();
- 
--            for (int j = list2.size() - 1; j >= 0; --j)
--            {
--                BlockPos blockpos1 = list2.get(j);
-+            final org.bukkit.block.Block bblock = worldIn.getWorld().getBlockAt(pos.getX(), pos.getY(), pos.getZ());
-+
-+            //Blocks to move
-+            final List<BlockPos> moved = pistonhelper.getBlocksToMove();
-+            //Blocks to break
-+            final List<BlockPos> broken = pistonhelper.getBlocksToDestroy();
-+
-+            List<org.bukkit.block.Block> blocks = new AbstractList<org.bukkit.block.Block>() {
-+
-+                @Override
-+                public int size() {
-+                    return moved.size() + broken.size();
-+                }
-+
-+                @Override
-+                public org.bukkit.block.Block get(int index) {
-+                    if (index >= size() || index < 0) {
-+                        throw new ArrayIndexOutOfBoundsException(index);
-+                    }
-+                    BlockPos pos = index < moved.size() ? moved.get(index) : broken.get(index - moved.size());
-+                    return bblock.getWorld().getBlockAt(pos.getX(), pos.getY(), pos.getZ());
-+                }
-+            };
-+            boolean cancell = false;
-+            for (BlockPos blockPos : moved) {
-+                if (worldIn.getTileEntity(blockPos) != null) {
-+                    cancell = true;
-+                    break;
-+                }
-+            }
-+            for (BlockPos blockPos : broken) {
-+                if (worldIn.getTileEntity(blockPos) != null) {
-+                    cancell = true;
-+                    break;
-+                }
-+            }
-+            if (cancell) {
-+                for (BlockPos b : broken) {
-+                    worldIn.notifyBlockUpdate(b, Blocks.AIR.getDefaultState(), worldIn.getBlockState(b), 3);
-+                }
-+                for (BlockPos b : moved) {
-+                    worldIn.notifyBlockUpdate(b, Blocks.AIR.getDefaultState(), worldIn.getBlockState(b), 3);
-+                    b = b.offset(PistonFaciing);
-+                    worldIn.notifyBlockUpdate(b, Blocks.AIR.getDefaultState(), worldIn.getBlockState(b), 3);
-+                }
-+                return false;
-+            }
-+            org.bukkit.event.block.BlockPistonEvent event;
-+            if (extending) {
-+                event = new BlockPistonExtendEvent(bblock, blocks, CraftBlock.notchToBlockFace(PistonFaciing));
-+            } else {
-+                event = new BlockPistonRetractEvent(bblock, blocks, CraftBlock.notchToBlockFace(PistonFaciing));
-+            }
-+            worldIn.getServer().getPluginManager().callEvent(event);
-+
-+            if (event.isCancelled()) {
-+                for (BlockPos b : broken) {
-+                    worldIn.notifyBlockUpdate(b, Blocks.AIR.getDefaultState(), worldIn.getBlockState(b), 3);
-+                }
-+                for (BlockPos b : moved) {
-+                    worldIn.notifyBlockUpdate(b, Blocks.AIR.getDefaultState(), worldIn.getBlockState(b), 3);
-+                    b = b.offset(PistonFaciing);
-+                    worldIn.notifyBlockUpdate(b, Blocks.AIR.getDefaultState(), worldIn.getBlockState(b), 3);
-+                }
-+                return false;
-+            }
-+
-+            for (int j = BlockToDestroy.size() - 1; j >= 0; --j) {
-+                BlockPos blockpos1 = BlockToDestroy.get(j);
+             for (BlockPos blockPos : broken) {
+                 if (worldIn.getTileEntity(blockPos) != null) {
+                     cancell = true;
+                     break;
+                 }
+             }
+             if (cancell) {
+                 for (BlockPos b : broken) {
+                     worldIn.notifyBlockUpdate(b, Blocks.AIR.getDefaultState(), worldIn.getBlockState(b), 3);
+                 }
+                 for (BlockPos b : moved) {
+                     worldIn.notifyBlockUpdate(b, Blocks.AIR.getDefaultState(), worldIn.getBlockState(b), 3);
+                     b = b.offset(enumfacing);
+                     worldIn.notifyBlockUpdate(b, Blocks.AIR.getDefaultState(), worldIn.getBlockState(b), 3);
+                 }
+                 return false;
+             }
+            org.bukkit.event.block.BlockPistonEvent event;
+             if (extending) {
+                 event = new BlockPistonExtendEvent(bblock, blocks, CraftBlock.notchToBlockFace(enumfacing));
+             } else {
+                 event = new BlockPistonRetractEvent(bblock, blocks, CraftBlock.notchToBlockFace(enumfacing));
+             }
+             worldIn.getServer().getPluginManager().callEvent(event);
+
+             if (event.isCancelled()) {
+                 for (BlockPos b : broken) {
+                     worldIn.notifyBlockUpdate(b, Blocks.AIR.getDefaultState(), worldIn.getBlockState(b), 3);
+                 }
+                 for (BlockPos b : moved) {
+                     worldIn.notifyBlockUpdate(b, Blocks.AIR.getDefaultState(), worldIn.getBlockState(b), 3);
+                     b = b.offset(enumfacing);
+                     worldIn.notifyBlockUpdate(b, Blocks.AIR.getDefaultState(), worldIn.getBlockState(b), 3);
+                 }
+                 return false;
+             }
+
+             for (int j = list2.size() - 1; j >= 0; --j)
+             {
+                 BlockPos blockpos1 = list2.get(j);
                  IBlockState iblockstate = worldIn.getBlockState(blockpos1);
--                iblockstate.getBlock().dropBlockAsItem(worldIn, blockpos1, iblockstate, 0);
-+                // Forge: With our change to how snowballs are dropped this needs to disallow to mimic vanilla behavior.
-+                float chance = iblockstate.getBlock() instanceof BlockSnow ? -1.0f : 1.0f;
-+                iblockstate.getBlock().dropBlockAsItemWithChance(worldIn, blockpos1, iblockstate, chance, 0);
+                 float chance = iblockstate.getBlock() instanceof BlockSnow ? -1.0f : 1.0f;
+                 iblockstate.getBlock().dropBlockAsItemWithChance(worldIn, blockpos1, iblockstate, chance, 0);
                  worldIn.setBlockState(blockpos1, Blocks.AIR.getDefaultState(), 4);
--                --k;
--                aiblockstate[k] = iblockstate;
-+                --BlockTotal;
-+                AllBlocksState[BlockTotal] = iblockstate;
-             }
- 
--            for (int l = list.size() - 1; l >= 0; --l)
--            {
--                BlockPos blockpos3 = list.get(l);
-+            for (int l = BlockToMove.size() - 1; l >= 0; --l) {
-+                if(l>=BlockToMove.size()||BlockTotal>=BlockToMove.size()) continue;
-+                BlockPos blockpos3 = BlockToMove.get(l);
-                 IBlockState iblockstate2 = worldIn.getBlockState(blockpos3);
-+                // Paper start - fix a variety of piston desync dupes
-+                boolean allowDesync = com.destroystokyo.paper.PaperMCConfig.allowPistonDuplication;
-+                BlockPos oldPos = blockpos3 = (BlockPos) BlockToMove.get(BlockTotal);
-+                iblockstate2 = allowDesync ? worldIn.getBlockState(oldPos) : null;
-+                // Paper end - fix a variety of piston desync dupes
-                 worldIn.setBlockState(blockpos3, Blocks.AIR.getDefaultState(), 2);
--                blockpos3 = blockpos3.offset(enumfacing);
-+                blockpos3 = blockpos3.offset(PistonFaciing);
-                 worldIn.setBlockState(blockpos3, Blocks.PISTON_EXTENSION.getDefaultState().withProperty(FACING, direction), 4);
--                worldIn.setTileEntity(blockpos3, BlockPistonMoving.createTilePiston(list1.get(l), direction, extending, false));
--                --k;
--                aiblockstate[k] = iblockstate2;
-+                // Paper start - fix a variety of piston desync dupes
-+                if (!allowDesync) {
-+                    iblockstate2 = worldIn.getBlockState(oldPos);
-+                }
-+                worldIn.setTileEntity(blockpos3, BlockPistonMoving.createTilePiston(MoveBlockState.get(l), direction, extending, false));
-+                if (!allowDesync) {
-+                    worldIn.setBlockState(oldPos, Blocks.AIR.getDefaultState(), 4 | 16 | 1024); // set air to prevent later physics updates from seeing this block
-+                }
-+                --BlockTotal;
-+                AllBlocksState[BlockTotal] = iblockstate2;
-             }
- 
-             BlockPos blockpos2 = pos.offset(direction);
-@@ -382,14 +484,15 @@
-                 worldIn.setTileEntity(blockpos2, BlockPistonMoving.createTilePiston(iblockstate3, direction, true, true));
-             }
- 
--            for (int i1 = list2.size() - 1; i1 >= 0; --i1)
-+            for (int i1 = BlockToDestroy.size() - 1; i1 >= 0; --i1)
-             {
--                worldIn.notifyNeighborsOfStateChange(list2.get(i1), aiblockstate[k++].getBlock(), false);
-+                worldIn.notifyNeighborsOfStateChange(BlockToDestroy.get(i1), AllBlocksState[BlockTotal++].getBlock(), false);
-             }
- 
--            for (int j1 = list.size() - 1; j1 >= 0; --j1)
-+            for (int FIXVAL = BlockToDestroy.size()-1;FIXVAL>=0;--FIXVAL)BlockTotal--;
-+            for (int j1 = BlockToMove.size() - 1; j1 >= 0; --j1)
-             {
--                worldIn.notifyNeighborsOfStateChange(list.get(j1), aiblockstate[k++].getBlock(), false);
-+                worldIn.notifyNeighborsOfStateChange(BlockToMove.get(j1), AllBlocksState[BlockTotal++].getBlock(), false);
-             }
- 
-             if (extending)
-@@ -434,6 +537,13 @@
+                 --k;
+                 aiblockstate[k] = iblockstate;
+@@ -434,6 +516,13 @@
          return new BlockStateContainer(this, new IProperty[] {FACING, EXTENDED});
      }
  
-+    /* ======================================== FORGE START =====================================*/
-+    public boolean rotateBlock(World world, BlockPos pos, EnumFacing axis)
-+    {
-+        IBlockState state = world.getBlockState(pos);
-+        return !state.getValue(EXTENDED) && super.rotateBlock(world, pos, axis);
-+    }
-+
+     /* =========================== FORGE START =========================*/
+     public boolean rotateBlock(World world, BlockPos pos, EnumFacing axis)
+     {
+         IBlockState state = world.getBlockState(pos);
+         return !state.getValue(EXTENDED) && super.rotateBlock(world, pos, axis);
+     }
+
      public BlockFaceShape getBlockFaceShape(IBlockAccess worldIn, IBlockState state, BlockPos pos, EnumFacing face)
      {
          state = this.getActualState(state, worldIn, pos);
