@@ -1,12 +1,13 @@
 package org.bukkit.inventory;
 
 import com.google.common.base.Preconditions;
+
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Represents a merchant's trade.
- *
+ * <p>
  * Trades can take one or two ingredients, and provide one result. The
  * ingredients' Itemstack amounts are respected in the trade.
  * <br>

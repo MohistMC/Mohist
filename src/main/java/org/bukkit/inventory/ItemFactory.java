@@ -21,7 +21,7 @@ public interface ItemFactory {
      *
      * @param material The material to consider as base for the meta
      * @return a new ItemMeta that could be applied to an item stack of the
-     *     specified material
+     * specified material
      */
     ItemMeta getItemMeta(final Material material);
 
@@ -32,12 +32,12 @@ public interface ItemFactory {
      * A {@link SkullMeta} would not be valid for a sword, but a normal {@link
      * ItemMeta} from an enchanted dirt block would.
      *
-     * @param meta Meta to check
+     * @param meta  Meta to check
      * @param stack Item that meta will be applied to
      * @return true if the meta can be applied without losing data, false
-     *     otherwise
+     * otherwise
      * @throws IllegalArgumentException if the meta was not created by this
-     *     factory
+     *                                  factory
      */
     boolean isApplicable(final ItemMeta meta, final ItemStack stack) throws IllegalArgumentException;
 
@@ -48,12 +48,12 @@ public interface ItemFactory {
      * A {@link SkullMeta} would not be valid for a sword, but a normal {@link
      * ItemMeta} from an enchanted dirt block would.
      *
-     * @param meta Meta to check
+     * @param meta     Meta to check
      * @param material Material that meta will be applied to
      * @return true if the meta can be applied without losing data, false
-     *     otherwise
+     * otherwise
      * @throws IllegalArgumentException if the meta was not created by this
-     *     factory
+     *                                  factory
      */
     boolean isApplicable(final ItemMeta meta, final Material material) throws IllegalArgumentException;
 
@@ -62,11 +62,11 @@ public interface ItemFactory {
      *
      * @param meta1 First meta to compare, and may be null to indicate no data
      * @param meta2 Second meta to compare, and may be null to indicate no
-     *     data
+     *              data
      * @return false if one of the meta has data the other does not, otherwise
-     *     true
+     * true
      * @throws IllegalArgumentException if either meta was not created by this
-     *     factory
+     *                                  factory
      */
     boolean equals(final ItemMeta meta1, final ItemMeta meta2) throws IllegalArgumentException;
 
@@ -83,13 +83,13 @@ public interface ItemFactory {
      * specified meta that is applicable to an {@link ItemMeta}, the highest
      * common interface.
      *
-     * @param meta the meta to convert
+     * @param meta  the meta to convert
      * @param stack the stack to convert the meta for
      * @return An appropriate item meta for the specified item stack. No
-     *     guarantees are made as to if a copy is returned. This will be null
-     *     for a stack of air.
+     * guarantees are made as to if a copy is returned. This will be null
+     * for a stack of air.
      * @throws IllegalArgumentException if the specified meta was not created
-     *     by this factory
+     *                                  by this factory
      */
     ItemMeta asMetaFor(final ItemMeta meta, final ItemStack stack) throws IllegalArgumentException;
 
@@ -106,12 +106,12 @@ public interface ItemFactory {
      * specified meta that is applicable to an {@link ItemMeta}, the highest
      * common interface.
      *
-     * @param meta the meta to convert
+     * @param meta     the meta to convert
      * @param material the material to convert the meta for
      * @return An appropriate item meta for the specified item material. No
-     *     guarantees are made as to if a copy is returned. This will be null for air.
+     * guarantees are made as to if a copy is returned. This will be null for air.
      * @throws IllegalArgumentException if the specified meta was not created
-     *     by this factory
+     *                                  by this factory
      */
     ItemMeta asMetaFor(final ItemMeta meta, final Material material) throws IllegalArgumentException;
 

@@ -29,11 +29,9 @@ import java.lang.annotation.Target;
  * the save games list.
  *
  * @author cpw
- *
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
-public @interface SaveInspectionHandler
-{
+public @interface SaveInspectionHandler {
 
 }

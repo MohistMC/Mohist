@@ -1,14 +1,13 @@
 package co.aikar.timings;
 
-import static co.aikar.timings.TimingsManager.MINUTE_REPORTS;
-import static co.aikar.timings.TimingsManager.TIMINGS_TICK;
-import static co.aikar.timings.TimingsManager.TIMING_MAP;
+import static co.aikar.timings.TimingsManager.*;
 
 public class FullServerTickHandler extends TimingHandler {
     private static final TimingIdentifier IDENTITY = new TimingIdentifier("Minecraft", "Full Server Tick", null);
     final TimingData minuteData;
     double avgFreeMemory = -1D;
     double avgUsedMemory = -1D;
+
     FullServerTickHandler() {
         super(IDENTITY);
         minuteData = new TimingData(id);
@@ -54,7 +53,7 @@ public class FullServerTickHandler extends TimingHandler {
         long diff = System.nanoTime() - start;
         TIMINGS_TICK.addDiff(diff, null);
         // addDiff for TIMINGS_TICK incremented this, bring it back down to 1 per tick.
-        record.setCurTickCount(record.getCurTickCount()-1);
+        record.setCurTickCount(record.getCurTickCount() - 1);
 
         minuteData.setCurTickTotal(record.getCurTickTotal());
         minuteData.setCurTickCount(1);

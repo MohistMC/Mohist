@@ -38,7 +38,7 @@ public interface EnderSignal extends Entity {
      * shatter.
      *
      * @param drop true if the EnderSignal should drop an item on death, or
-     * false if it should shatter.
+     *             false if it should shatter.
      */
     public void setDropItem(boolean drop);
 

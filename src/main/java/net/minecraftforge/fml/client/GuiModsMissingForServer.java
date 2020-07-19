@@ -19,39 +19,35 @@
 
 package net.minecraftforge.fml.client;
 
-import java.util.List;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.resources.I18n;
 import net.minecraftforge.fml.common.MissingModsException;
 import net.minecraftforge.fml.common.versioning.ArtifactVersion;
 
-public class GuiModsMissingForServer extends GuiScreen
-{
+import java.util.List;
+
+public class GuiModsMissingForServer extends GuiScreen {
     private MissingModsException modsMissing;
 
-    public GuiModsMissingForServer(MissingModsException modsMissing)
-    {
+    public GuiModsMissingForServer(MissingModsException modsMissing) {
         this.modsMissing = modsMissing;
     }
 
     @Override
-    public void initGui()
-    {
+    public void initGui() {
         this.buttonList.add(new GuiButton(1, this.width / 2 - 75, this.height - 38, I18n.format("gui.done")));
     }
 
     @Override
-    protected void actionPerformed(GuiButton p_73875_1_)
-    {
-        if (p_73875_1_.enabled && p_73875_1_.id == 1)
-        {
+    protected void actionPerformed(GuiButton p_73875_1_) {
+        if (p_73875_1_.enabled && p_73875_1_.id == 1) {
             FMLClientHandler.instance().showGuiScreen(null);
         }
     }
+
     @Override
-    public void drawScreen(int mouseX, int mouseY, float partialTicks)
-    {
+    public void drawScreen(int mouseX, int mouseY, float partialTicks) {
         this.drawDefaultBackground();
         List<MissingModsException.MissingModInfo> missingModsVersions = modsMissing.getMissingModInfos();
         int offset = Math.max(85 - missingModsVersions.size() * 10, 10);
@@ -61,8 +57,7 @@ public class GuiModsMissingForServer extends GuiScreen
         offset += 10;
         this.drawCenteredString(this.fontRenderer, "They are required to play on this server", this.width / 2, offset, 0xFFFFFF);
         offset += 5;
-        for (MissingModsException.MissingModInfo info : missingModsVersions)
-        {
+        for (MissingModsException.MissingModInfo info : missingModsVersions) {
             ArtifactVersion v = info.getAcceptedVersion();
             offset += 10;
             this.drawCenteredString(this.fontRenderer, String.format("%s : %s", v.getLabel(), v.getRangeString()), this.width / 2, offset, 0xEEEEEE);

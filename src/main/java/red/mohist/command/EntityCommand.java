@@ -1,16 +1,19 @@
 package red.mohist.command;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Locale;
 import net.minecraft.server.MinecraftServer;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import red.mohist.util.i18n.Message;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Locale;
+
 public class EntityCommand extends Command {
+
+    private List<String> params = Arrays.asList("reload", "dump-existing");
 
     public EntityCommand(String name) {
         super(name);
@@ -18,8 +21,6 @@ public class EntityCommand extends Command {
         this.usageMessage = "/entity [reload|dump-existing]";
         this.setPermission("mohist.command.entity");
     }
-
-    private List<String> params = Arrays.asList("reload", "dump-existing");
 
     @Override
     public List<String> tabComplete(CommandSender sender, String alias, String[] args) throws IllegalArgumentException {

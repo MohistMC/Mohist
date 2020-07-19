@@ -1,9 +1,10 @@
 package org.bukkit.event.command;
 
-import javax.annotation.Nullable;
 import org.bukkit.command.CommandSender;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
+
+import javax.annotation.Nullable;
 
 /**
  * Thrown when a player executes a command that is not defined

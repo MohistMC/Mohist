@@ -1,10 +1,11 @@
 package org.bukkit;
 
 import com.google.common.collect.Maps;
-import java.util.Map;
 import org.bukkit.block.BlockFace;
 import org.bukkit.material.MaterialData;
 import org.bukkit.potion.Potion;
+
+import java.util.Map;
 
 /**
  * A list of effects that the server is able to send to players.
@@ -197,186 +198,217 @@ public enum Effect {
     ENDERDRAGON_GROWL(3001, Type.SOUND),
     /**
      * The spark that comes off a fireworks
+     *
      * @deprecated Spigot specific API, use {@link Particle}.
      */
 
     FIREWORKS_SPARK("fireworksSpark", Type.PARTICLE),
     /**
      * Critical hit particles
+     *
      * @deprecated Spigot specific API, use {@link Particle}.
      */
 
     CRIT("crit", Type.PARTICLE),
     /**
      * Blue critical hit particles
+     *
      * @deprecated Spigot specific API, use {@link Particle}.
      */
 
     MAGIC_CRIT("magicCrit", Type.PARTICLE),
     /**
      * Multicolored potion effect particles
+     *
      * @deprecated Spigot specific API, use {@link Particle}.
      */
 
     POTION_SWIRL("mobSpell", Type.PARTICLE),
     /**
      * Multicolored potion effect particles that are slightly transparent
+     *
      * @deprecated Spigot specific API, use {@link Particle}.
      */
 
     POTION_SWIRL_TRANSPARENT("mobSpellAmbient", Type.PARTICLE),
     /**
      * A puff of white potion swirls
+     *
      * @deprecated Spigot specific API, use {@link Particle}.
      */
 
     SPELL("spell", Type.PARTICLE),
     /**
      * A puff of white stars
+     *
      * @deprecated Spigot specific API, use {@link Particle}.
      */
 
     INSTANT_SPELL("instantSpell", Type.PARTICLE),
     /**
      * A puff of purple particles
+     *
      * @deprecated Spigot specific API, use {@link Particle}.
      */
 
     WITCH_MAGIC("witchMagic", Type.PARTICLE),
     /**
      * The note that appears above note blocks
+     *
      * @deprecated Spigot specific API, use {@link Particle}.
      */
 
     NOTE("note", Type.PARTICLE),
     /**
      * The particles shown at nether portals
+     *
      * @deprecated Spigot specific API, use {@link Particle}.
      */
 
     PORTAL("portal", Type.PARTICLE),
     /**
      * The symbols that fly towards the enchantment table
+     *
      * @deprecated Spigot specific API, use {@link Particle}.
      */
 
     FLYING_GLYPH("enchantmenttable", Type.PARTICLE),
     /**
      * Fire particles
+     *
      * @deprecated Spigot specific API, use {@link Particle}.
      */
 
     FLAME("flame", Type.PARTICLE),
     /**
      * The particles that pop out of lava
+     *
      * @deprecated Spigot specific API, use {@link Particle}.
      */
 
     LAVA_POP("lava", Type.PARTICLE),
     /**
      * A small gray square
+     *
      * @deprecated Spigot specific API, use {@link Particle}.
      */
 
     FOOTSTEP("footstep", Type.PARTICLE),
     /**
      * Water particles
+     *
      * @deprecated Spigot specific API, use {@link Particle}.
      */
 
     SPLASH("splash", Type.PARTICLE),
     /**
      * Smoke particles
+     *
      * @deprecated Spigot specific API, use {@link Particle}.
      */
 
     PARTICLE_SMOKE("smoke", Type.PARTICLE),
     /**
      * The biggest explosion particle effect
+     *
      * @deprecated Spigot specific API, use {@link Particle}.
      */
 
     EXPLOSION_HUGE("hugeexplosion", Type.PARTICLE),
     /**
      * A larger version of the explode particle
+     *
      * @deprecated Spigot specific API, use {@link Particle}.
      */
 
     EXPLOSION_LARGE("largeexplode", Type.PARTICLE),
     /**
      * Explosion particles
+     *
      * @deprecated Spigot specific API, use {@link Particle}.
      */
 
     EXPLOSION("explode", Type.PARTICLE),
     /**
      * Small gray particles
+     *
      * @deprecated Spigot specific API, use {@link Particle}.
      */
 
     VOID_FOG("depthsuspend", Type.PARTICLE),
     /**
      * Small gray particles
+     *
      * @deprecated Spigot specific API, use {@link Particle}.
      */
 
     SMALL_SMOKE("townaura", Type.PARTICLE),
     /**
      * A puff of white smoke
+     *
      * @deprecated Spigot specific API, use {@link Particle}.
      */
 
     CLOUD("cloud", Type.PARTICLE),
     /**
      * Multicolored dust particles
+     *
      * @deprecated Spigot specific API, use {@link Particle}.
      */
 
     COLOURED_DUST("reddust", Type.PARTICLE),
     /**
      * Snowball breaking
+     *
      * @deprecated Spigot specific API, use {@link Particle}.
      */
 
     SNOWBALL_BREAK("snowballpoof", Type.PARTICLE),
     /**
      * The water drip particle that appears on blocks under water
+     *
      * @deprecated Spigot specific API, use {@link Particle}.
      */
 
     WATERDRIP("dripWater", Type.PARTICLE),
     /**
      * The lava drip particle that appears on blocks under lava
+     *
      * @deprecated Spigot specific API, use {@link Particle}.
      */
 
     LAVADRIP("dripLava", Type.PARTICLE),
     /**
      * White particles
+     *
      * @deprecated Spigot specific API, use {@link Particle}.
      */
 
     SNOW_SHOVEL("snowshovel", Type.PARTICLE),
     /**
      * The particle shown when a slime jumps
+     *
      * @deprecated Spigot specific API, use {@link Particle}.
      */
 
     SLIME("slime", Type.PARTICLE),
     /**
      * The particle that appears when breading animals
+     *
      * @deprecated Spigot specific API, use {@link Particle}.
      */
 
     HEART("heart", Type.PARTICLE),
     /**
      * The particle that appears when hitting a villager
+     *
      * @deprecated Spigot specific API, use {@link Particle}.
      */
 
     VILLAGER_THUNDERCLOUD("angryVillager", Type.PARTICLE),
     /**
      * The particle that appears when trading with a villager
+     *
      * @deprecated Spigot specific API, use {@link Particle}.
      */
 
@@ -384,6 +416,7 @@ public enum Effect {
     /**
      * The smoke particles that appears on blazes, minecarts
      * with furnaces and fire
+     *
      * @deprecated Spigot specific API, use {@link Particle}.
      */
 
@@ -391,6 +424,7 @@ public enum Effect {
     /**
      * The particles generated when a tool breaks.
      * This particle requires a Material so that the client can select the correct texture.
+     *
      * @deprecated Spigot specific API, use {@link Particle}.
      */
 
@@ -398,6 +432,7 @@ public enum Effect {
     /**
      * The particles generated while breaking a block.
      * This particle requires a Material and data value so that the client can select the correct texture.
+     *
      * @deprecated Spigot specific API, use {@link Particle}.
      */
 
@@ -405,6 +440,7 @@ public enum Effect {
     /**
      * The particles generated while sprinting a block
      * This particle requires a Material and data value so that the client can select the correct texture.
+     *
      * @deprecated Spigot specific API, use {@link Particle}.
      */
 

@@ -19,13 +19,6 @@
 
 package net.minecraftforge.server.command;
 
-import java.text.DecimalFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-import javax.annotation.Nullable;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
@@ -41,13 +34,15 @@ import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.server.timings.ForgeTimings;
 import net.minecraftforge.server.timings.TimeTracker;
 
-class CommandTrack extends CommandTreeBase
-{
+import javax.annotation.Nullable;
+import java.text.DecimalFormat;
+import java.util.*;
+
+class CommandTrack extends CommandTreeBase {
 
     private static final DecimalFormat TIME_FORMAT = new DecimalFormat("#####0.00");
 
-    public CommandTrack()
-    {
+    public CommandTrack() {
         addSubcommand(new StartTrackingCommand());
         addSubcommand(new ResetTrackingCommand());
         addSubcommand(new TrackResultsTileEntity());
@@ -56,125 +51,98 @@ class CommandTrack extends CommandTreeBase
     }
 
     @Override
-    public String getName()
-    {
+    public String getName() {
         return "track";
     }
 
     @Override
-    public int getRequiredPermissionLevel()
-    {
+    public int getRequiredPermissionLevel() {
         return 2;
     }
 
     @Override
-    public String getUsage(ICommandSender sender)
-    {
+    public String getUsage(ICommandSender sender) {
         return "commands.forge.tracking.usage";
     }
 
-    private static class StartTrackingCommand extends CommandBase
-    {
+    private static class StartTrackingCommand extends CommandBase {
 
         @Override
-        public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException
-        {
-            if (args.length != 2)
-            {
+        public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
+            if (args.length != 2) {
                 throw new WrongUsageException(getUsage(sender));
             }
             String type = args[0];
             int duration = parseInt(args[1], 1, 60);
-            if ("te".equals(type))
-            {
+            if ("te".equals(type)) {
                 TimeTracker.TILE_ENTITY_UPDATE.reset();
                 TimeTracker.TILE_ENTITY_UPDATE.enable(duration);
                 sender.sendMessage(TextComponentHelper.createComponentTranslation(sender, "commands.forge.tracking.te.enabled", duration));
-            }
-            else if ("entity".equals(type))
-            {
+            } else if ("entity".equals(type)) {
                 TimeTracker.ENTITY_UPDATE.reset();
                 TimeTracker.ENTITY_UPDATE.enable(duration);
                 sender.sendMessage(TextComponentHelper.createComponentTranslation(sender, "commands.forge.tracking.entity.enabled", duration));
-            }
-            else
-            {
+            } else {
                 throw new WrongUsageException(getUsage(sender));
             }
         }
 
         @Override
-        public List<String> getTabCompletions(MinecraftServer server, ICommandSender sender, String[] args, @Nullable BlockPos targetPos)
-        {
+        public List<String> getTabCompletions(MinecraftServer server, ICommandSender sender, String[] args, @Nullable BlockPos targetPos) {
             return Arrays.asList("te", "entity");
         }
 
         @Override
-        public String getName()
-        {
+        public String getName() {
             return "start";
         }
 
         @Override
-        public int getRequiredPermissionLevel()
-        {
+        public int getRequiredPermissionLevel() {
             return 2;
         }
 
         @Override
-        public String getUsage(ICommandSender sender)
-        {
+        public String getUsage(ICommandSender sender) {
             return "commands.forge.tracking.start.usage";
         }
     }
 
-    private static class ResetTrackingCommand extends CommandBase
-    {
+    private static class ResetTrackingCommand extends CommandBase {
         @Override
-        public String getName()
-        {
+        public String getName() {
             return "reset";
         }
 
         @Override
-        public String getUsage(ICommandSender sender)
-        {
+        public String getUsage(ICommandSender sender) {
             return "commands.forge.tracking.reset.usage";
         }
 
         @Override
-        public int getRequiredPermissionLevel()
-        {
+        public int getRequiredPermissionLevel() {
             return 2;
         }
 
         @Override
-        public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException
-        {
-            if (args.length != 1)
-            {
+        public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
+            if (args.length != 1) {
                 throw new WrongUsageException(getUsage(sender));
             }
             String type = args[0];
-            if ("te".equals(type))
-            {
+            if ("te".equals(type)) {
                 TimeTracker.TILE_ENTITY_UPDATE.reset();
                 sender.sendMessage(TextComponentHelper.createComponentTranslation(sender, "commands.forge.tracking.reset"));
-            }
-            else if ("entity".equals(type))
-            {
+            } else if ("entity".equals(type)) {
                 TimeTracker.ENTITY_UPDATE.reset();
                 sender.sendMessage(TextComponentHelper.createComponentTranslation(sender, "commands.forge.tracking.reset"));
-            }
-            else
-            {
+            } else {
                 throw new WrongUsageException(getUsage(sender));
             }
         }
 
         @Override
-        public List<String> getTabCompletions(MinecraftServer server, ICommandSender sender, String[] args, @Nullable BlockPos targetPos)
-        {
+        public List<String> getTabCompletions(MinecraftServer server, ICommandSender sender, String[] args, @Nullable BlockPos targetPos) {
             return Arrays.asList("te", "entity");
         }
     }
@@ -184,13 +152,11 @@ class CommandTrack extends CommandTreeBase
      *
      * @param <T>
      */
-    private static abstract class TrackResultsBaseCommand<T> extends CommandBase
-    {
+    private static abstract class TrackResultsBaseCommand<T> extends CommandBase {
 
         private TimeTracker<T> tracker;
 
-        protected TrackResultsBaseCommand(TimeTracker<T> tracker)
-        {
+        protected TrackResultsBaseCommand(TimeTracker<T> tracker) {
             this.tracker = tracker;
         }
 
@@ -199,8 +165,7 @@ class CommandTrack extends CommandTreeBase
          *
          * @return A list of time objects
          */
-        protected List<ForgeTimings<T>> getSortedTimings()
-        {
+        protected List<ForgeTimings<T>> getSortedTimings() {
             ArrayList<ForgeTimings<T>> list = new ArrayList<>();
 
             list.addAll(tracker.getTimingData());
@@ -211,15 +176,11 @@ class CommandTrack extends CommandTreeBase
         }
 
         @Override
-        public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException
-        {
+        public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
             List<ForgeTimings<T>> timingsList = getSortedTimings();
-            if (timingsList.isEmpty())
-            {
+            if (timingsList.isEmpty()) {
                 sender.sendMessage(TextComponentHelper.createComponentTranslation(sender, "commands.forge.tracking.noData"));
-            }
-            else
-            {
+            } else {
                 timingsList.stream()
                         .filter(timings -> timings.getObject().get() != null)
                         .limit(10)
@@ -236,14 +197,10 @@ class CommandTrack extends CommandTreeBase
          * @param time The time in nanoseconds
          * @return The time suffix
          */
-        protected String getTimeSuffix(double time)
-        {
-            if (time < 1000)
-            {
+        protected String getTimeSuffix(double time) {
+            if (time < 1000) {
                 return "µs";
-            }
-            else
-            {
+            } else {
                 return "ms";
             }
         }
@@ -254,42 +211,33 @@ class CommandTrack extends CommandTreeBase
          * @param dimId The dimension ID
          * @return The name of the dimension
          */
-        protected String getWorldName(int dimId)
-        {
+        protected String getWorldName(int dimId) {
             DimensionType type = DimensionManager.getProviderType(dimId);
-            if (type == null)
-            {
+            if (type == null) {
                 return "Dim " + dimId;
-            }
-            else
-            {
+            } else {
                 return type.getName();
             }
         }
     }
 
-    private static class TrackResultsEntity extends TrackResultsBaseCommand<Entity>
-    {
-        public TrackResultsEntity()
-        {
+    private static class TrackResultsEntity extends TrackResultsBaseCommand<Entity> {
+        public TrackResultsEntity() {
             super(TimeTracker.ENTITY_UPDATE);
         }
 
         @Override
-        public String getName()
-        {
+        public String getName() {
             return "entity";
         }
 
         @Override
-        public String getUsage(ICommandSender sender)
-        {
+        public String getUsage(ICommandSender sender) {
             return "commands.forge.tracking.entity.usage";
         }
 
         @Override
-        protected ITextComponent buildTrackString(ICommandSender sender, ForgeTimings<Entity> data)
-        {
+        protected ITextComponent buildTrackString(ICommandSender sender, ForgeTimings<Entity> data) {
             Entity entity = data.getObject().get();
             if (entity == null)
                 return TextComponentHelper.createComponentTranslation(sender, "commands.forge.tracking.invalid");
@@ -305,29 +253,24 @@ class CommandTrack extends CommandTreeBase
         }
     }
 
-    private static class TrackResultsTileEntity extends TrackResultsBaseCommand<TileEntity>
-    {
+    private static class TrackResultsTileEntity extends TrackResultsBaseCommand<TileEntity> {
 
-        public TrackResultsTileEntity()
-        {
+        public TrackResultsTileEntity() {
             super(TimeTracker.TILE_ENTITY_UPDATE);
         }
 
         @Override
-        public String getName()
-        {
+        public String getName() {
             return "te";
         }
 
         @Override
-        public String getUsage(ICommandSender sender)
-        {
+        public String getUsage(ICommandSender sender) {
             return "commands.forge.tracking.te.usage";
         }
 
         @Override
-        protected ITextComponent buildTrackString(ICommandSender sender, ForgeTimings<TileEntity> data)
-        {
+        protected ITextComponent buildTrackString(ICommandSender sender, ForgeTimings<TileEntity> data) {
             TileEntity te = data.getObject().get();
             if (te == null)
                 return TextComponentHelper.createComponentTranslation(sender, "commands.forge.tracking.invalid");
@@ -344,13 +287,11 @@ class CommandTrack extends CommandTreeBase
                             pos.getX(), pos.getY(), pos.getZ(), tickTime);
         }
 
-        private String getTileEntityName(TileEntity tileEntity)
-        {
+        private String getTileEntityName(TileEntity tileEntity) {
             ResourceLocation registryId = TileEntity.getKey(tileEntity.getClass());
             if (registryId == null)
                 return tileEntity.getClass().getSimpleName();
-            else
-            {
+            else {
                 return registryId.toString();
             }
         }

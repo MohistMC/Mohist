@@ -1,10 +1,10 @@
 package red.mohist.bukkit.nms.proxy;
 
-import java.lang.invoke.MethodType;
 import red.mohist.bukkit.nms.utils.RemapUtils;
 
+import java.lang.invoke.MethodType;
+
 /**
- *
  * @author pyz
  * @date 2019/7/1 7:38 PM
  */

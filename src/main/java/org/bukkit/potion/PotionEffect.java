@@ -1,13 +1,14 @@
 package org.bukkit.potion;
 
 import com.google.common.collect.ImmutableMap;
-import java.util.Map;
-import java.util.NoSuchElementException;
 import org.apache.commons.lang.Validate;
 import org.bukkit.Color;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.configuration.serialization.SerializableAs;
 import org.bukkit.entity.LivingEntity;
+
+import java.util.Map;
+import java.util.NoSuchElementException;
 
 /**
  * Represents a potion effect, that can be added to a {@link LivingEntity}. A
@@ -31,13 +32,14 @@ public class PotionEffect implements ConfigurationSerializable {
 
     /**
      * Creates a potion effect.
-     * @param type effect type
-     * @param duration measured in ticks, see {@link
-     *     PotionEffect#getDuration()}
+     *
+     * @param type      effect type
+     * @param duration  measured in ticks, see {@link
+     *                  PotionEffect#getDuration()}
      * @param amplifier the amplifier, see {@link PotionEffect#getAmplifier()}
-     * @param ambient the ambient status, see {@link PotionEffect#isAmbient()}
+     * @param ambient   the ambient status, see {@link PotionEffect#isAmbient()}
      * @param particles the particle status, see {@link PotionEffect#hasParticles()}
-     * @param color the particle color, see {@link PotionEffect#getColor()}
+     * @param color     the particle color, see {@link PotionEffect#getColor()}
      */
     public PotionEffect(PotionEffectType type, int duration, int amplifier, boolean ambient, boolean particles, Color color) {
         Validate.notNull(type, "effect type cannot be null");
@@ -52,11 +54,11 @@ public class PotionEffect implements ConfigurationSerializable {
     /**
      * Creates a potion effect with no defined color.
      *
-     * @param type effect type
-     * @param duration measured in ticks, see {@link
-     *     PotionEffect#getDuration()}
+     * @param type      effect type
+     * @param duration  measured in ticks, see {@link
+     *                  PotionEffect#getDuration()}
      * @param amplifier the amplifier, see {@link PotionEffect#getAmplifier()}
-     * @param ambient the ambient status, see {@link PotionEffect#isAmbient()}
+     * @param ambient   the ambient status, see {@link PotionEffect#isAmbient()}
      * @param particles the particle status, see {@link PotionEffect#hasParticles()}
      */
     public PotionEffect(PotionEffectType type, int duration, int amplifier, boolean ambient, boolean particles) {
@@ -66,11 +68,11 @@ public class PotionEffect implements ConfigurationSerializable {
     /**
      * Creates a potion effect. Assumes that particles are visible
      *
-     * @param type effect type
-     * @param duration measured in ticks, see {@link
-     *     PotionEffect#getDuration()}
+     * @param type      effect type
+     * @param duration  measured in ticks, see {@link
+     *                  PotionEffect#getDuration()}
      * @param amplifier the amplifier, see {@link PotionEffect#getAmplifier()}
-     * @param ambient the ambient status, see {@link PotionEffect#isAmbient()}
+     * @param ambient   the ambient status, see {@link PotionEffect#isAmbient()}
      */
     public PotionEffect(PotionEffectType type, int duration, int amplifier, boolean ambient) {
         this(type, duration, amplifier, ambient, true);
@@ -79,8 +81,8 @@ public class PotionEffect implements ConfigurationSerializable {
     /**
      * Creates a potion effect. Assumes ambient is true.
      *
-     * @param type Effect type
-     * @param duration measured in ticks
+     * @param type      Effect type
+     * @param duration  measured in ticks
      * @param amplifier the amplifier for the effect
      * @see PotionEffect#PotionEffect(PotionEffectType, int, int, boolean)
      */
@@ -136,9 +138,9 @@ public class PotionEffect implements ConfigurationSerializable {
      * Attempts to add the effect represented by this object to the given
      * {@link LivingEntity}.
      *
-     * @see LivingEntity#addPotionEffect(PotionEffect)
      * @param entity The entity to add this effect to
      * @return Whether the effect could be added
+     * @see LivingEntity#addPotionEffect(PotionEffect)
      */
     public boolean apply(LivingEntity entity) {
         return entity.addPotionEffect(this);

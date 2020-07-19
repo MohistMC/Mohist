@@ -19,21 +19,21 @@
 
 package net.minecraftforge.common.command;
 
-import java.util.List;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.Entity;
 
+import java.util.List;
+
 /**
  * Handler for custom types of selectors registered with {@link SelectorHandlerManager}
  */
-public interface SelectorHandler
-{
+public interface SelectorHandler {
     /**
      * Returns a {@link List} of {@link Entity Entities} of class {@code targetClass} ({@code T}) represented by {@code token}<br>
      * <b>Note:</b> If {@code token} does not match the overall syntax defined by {@link #isSelector}, this method should return an empty list.
      * For any other error, an exception should be thrown
-     * 
+     *
      * @param sender The {@link ICommandSender} that initiated the query
      */
     <T extends Entity> List<T> matchEntities(ICommandSender sender, String token, Class<? extends T> targetClass) throws CommandException;

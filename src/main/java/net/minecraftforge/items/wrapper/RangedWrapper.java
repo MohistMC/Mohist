@@ -20,9 +20,10 @@
 package net.minecraftforge.items.wrapper;
 
 import com.google.common.base.Preconditions;
-import javax.annotation.Nonnull;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.items.IItemHandlerModifiable;
+
+import javax.annotation.Nonnull;
 
 /**
  * A wrapper that composes another IItemHandlerModifiable, exposing only a range of the composed slots.
@@ -34,8 +35,7 @@ public class RangedWrapper implements IItemHandlerModifiable {
     private final int minSlot;
     private final int maxSlot;
 
-    public RangedWrapper(IItemHandlerModifiable compose, int minSlot, int maxSlotExclusive)
-    {
+    public RangedWrapper(IItemHandlerModifiable compose, int minSlot, int maxSlotExclusive) {
         Preconditions.checkArgument(maxSlotExclusive > minSlot, "Max slot must be greater than min slot");
         this.compose = compose;
         this.minSlot = minSlot;
@@ -43,17 +43,14 @@ public class RangedWrapper implements IItemHandlerModifiable {
     }
 
     @Override
-    public int getSlots()
-    {
+    public int getSlots() {
         return maxSlot - minSlot;
     }
 
     @Override
     @Nonnull
-    public ItemStack getStackInSlot(int slot)
-    {
-        if (checkSlot(slot))
-        {
+    public ItemStack getStackInSlot(int slot) {
+        if (checkSlot(slot)) {
             return compose.getStackInSlot(slot + minSlot);
         }
 
@@ -62,10 +59,8 @@ public class RangedWrapper implements IItemHandlerModifiable {
 
     @Override
     @Nonnull
-    public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate)
-    {
-        if (checkSlot(slot))
-        {
+    public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate) {
+        if (checkSlot(slot)) {
             return compose.insertItem(slot + minSlot, stack, simulate);
         }
 
@@ -74,10 +69,8 @@ public class RangedWrapper implements IItemHandlerModifiable {
 
     @Override
     @Nonnull
-    public ItemStack extractItem(int slot, int amount, boolean simulate)
-    {
-        if (checkSlot(slot))
-        {
+    public ItemStack extractItem(int slot, int amount, boolean simulate) {
+        if (checkSlot(slot)) {
             return compose.extractItem(slot + minSlot, amount, simulate);
         }
 
@@ -85,19 +78,15 @@ public class RangedWrapper implements IItemHandlerModifiable {
     }
 
     @Override
-    public void setStackInSlot(int slot, @Nonnull ItemStack stack)
-    {
-        if (checkSlot(slot))
-        {
+    public void setStackInSlot(int slot, @Nonnull ItemStack stack) {
+        if (checkSlot(slot)) {
             compose.setStackInSlot(slot + minSlot, stack);
         }
     }
 
     @Override
-    public int getSlotLimit(int slot)
-    {
-        if (checkSlot(slot))
-        {
+    public int getSlotLimit(int slot) {
+        if (checkSlot(slot)) {
             return compose.getSlotLimit(slot + minSlot);
         }
 
@@ -105,18 +94,15 @@ public class RangedWrapper implements IItemHandlerModifiable {
     }
 
     @Override
-    public boolean isItemValid(int slot, @Nonnull ItemStack stack)
-    {
-        if (checkSlot(slot))
-        {
+    public boolean isItemValid(int slot, @Nonnull ItemStack stack) {
+        if (checkSlot(slot)) {
             return compose.isItemValid(slot + minSlot, stack);
         }
 
         return false;
     }
 
-    private boolean checkSlot(int localSlot)
-    {
+    private boolean checkSlot(int localSlot) {
         return localSlot + minSlot < maxSlot;
     }
 

@@ -16,19 +16,19 @@ public class GetModListCommand extends Command {
         super(name);
         this.description = "Paste the list of your mods on hastebin and get the link.";
         this.usageMessage = "/getmodlist";
-        this.setPermission( "mohist.command.getmodlist" );
+        this.setPermission("mohist.command.getmodlist");
     }
 
     @Override
     public boolean execute(CommandSender sender, String currentAlias, String[] args) {
-        if(testPermission(sender) || sender.isOp()) {
-                for (ModContainer mod : Loader.instance().getModList())
-                    sendToHaste = sendToHaste + "\nName : " + mod.getName() + "\nModID : " + mod.getModId() + "\nVersion : " + mod.getVersion()+"\n---------";
-                try {
-                    sender.sendMessage("Link of the list of your mods : "+paste(sendToHaste));
-                } catch (IOException e) {
-                    System.out.println("Unable to paste the list of your mods.");
-                }
+        if (testPermission(sender) || sender.isOp()) {
+            for (ModContainer mod : Loader.instance().getModList())
+                sendToHaste = sendToHaste + "\nName : " + mod.getName() + "\nModID : " + mod.getModId() + "\nVersion : " + mod.getVersion() + "\n---------";
+            try {
+                sender.sendMessage("Link of the list of your mods : " + paste(sendToHaste));
+            } catch (IOException e) {
+                System.out.println("Unable to paste the list of your mods.");
+            }
         }
         return true;
     }

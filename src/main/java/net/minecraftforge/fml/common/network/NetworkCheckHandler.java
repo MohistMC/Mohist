@@ -19,11 +19,12 @@
 
 package net.minecraftforge.fml.common.network;
 
+import net.minecraftforge.fml.relauncher.Side;
+
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
-import net.minecraftforge.fml.relauncher.Side;
 
 /**
  * A method annotated with this will be called when a remote network connection is offered.
@@ -42,11 +43,9 @@ import net.minecraftforge.fml.relauncher.Side;
  * or the client in any way, except to accept or reject the list of mods.</strong>
  *
  * @author cpw
- *
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
-public @interface NetworkCheckHandler
-{
+public @interface NetworkCheckHandler {
 
 }

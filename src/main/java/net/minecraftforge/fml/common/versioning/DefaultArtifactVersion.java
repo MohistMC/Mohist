@@ -19,98 +19,81 @@
 
 package net.minecraftforge.fml.common.versioning;
 
-public class DefaultArtifactVersion implements ArtifactVersion
-{
+public class DefaultArtifactVersion implements ArtifactVersion {
     private ComparableVersion comparableVersion;
     private String label;
     private boolean unbounded;
     private VersionRange range;
 
-    public DefaultArtifactVersion(String versionNumber)
-    {
+    public DefaultArtifactVersion(String versionNumber) {
         comparableVersion = new ComparableVersion(versionNumber);
         range = VersionRange.createFromVersion(versionNumber, this);
     }
 
-    public DefaultArtifactVersion(String label, VersionRange range)
-    {
+    public DefaultArtifactVersion(String label, VersionRange range) {
         this.label = label;
         this.range = range;
     }
-    public DefaultArtifactVersion(String label, String version)
-    {
+
+    public DefaultArtifactVersion(String label, String version) {
         this(version);
         this.label = label;
     }
 
-    public DefaultArtifactVersion(String string, boolean unbounded)
-    {
+    public DefaultArtifactVersion(String string, boolean unbounded) {
         this.label = string;
         this.unbounded = true;
     }
 
     @Override
-    public boolean equals(Object obj)
-    {
-        return ((DefaultArtifactVersion)obj).containsVersion(this);
+    public boolean equals(Object obj) {
+        return ((DefaultArtifactVersion) obj).containsVersion(this);
     }
 
     @Override
-    public int compareTo(ArtifactVersion o)
-    {
-        return unbounded ? 0 : this.comparableVersion.compareTo(((DefaultArtifactVersion)o).comparableVersion);
+    public int compareTo(ArtifactVersion o) {
+        return unbounded ? 0 : this.comparableVersion.compareTo(((DefaultArtifactVersion) o).comparableVersion);
     }
 
     @Override
-    public String getLabel()
-    {
+    public String getLabel() {
         return label;
     }
 
     @Override
-    public boolean containsVersion(ArtifactVersion source)
-    {
-        if (source.getLabel() != null && !source.getLabel().equals(getLabel()))
-        {
+    public boolean containsVersion(ArtifactVersion source) {
+        if (source.getLabel() != null && !source.getLabel().equals(getLabel())) {
             return false;
         }
-        if (unbounded)
-        {
+        if (unbounded) {
             return true;
         }
-        if (range != null)
-        {
+        if (range != null) {
             return range.containsVersion(source);
-        }
-        else
-        {
+        } else {
             return false;
         }
     }
 
     @Override
-    public String getVersionString()
-    {
+    public String getVersionString() {
         return comparableVersion == null ? "unknown" : comparableVersion.toString();
     }
 
     @Override
-    public String getRangeString()
-    {
+    public String getRangeString() {
         return range == null ? "any" : range.toString();
     }
+
     @Override
-    public String toString()
-    {
-        if (label == null)
-        {
+    public String toString() {
+        if (label == null) {
             return getVersionString();
         }
         return label + (unbounded ? "" : "@" + range);
     }
 
-    public VersionRange getRange()
-    {
+    public VersionRange getRange() {
         return range;
     }
 }

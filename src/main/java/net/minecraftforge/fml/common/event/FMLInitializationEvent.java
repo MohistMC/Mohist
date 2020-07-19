@@ -24,27 +24,24 @@ import net.minecraftforge.fml.common.LoaderState.ModState;
 /**
  * Called after {@link FMLPreInitializationEvent} and before {@link FMLPostInitializationEvent} during mod
  * startup.
- *
+ * <p>
  * This is the second of three commonly called events during mod initialization.
- *
+ * <p>
  * Recommended activities: Register your recipes and Ore Dictionary entries in the
  * {@link net.minecraftforge.fml.common.registry.GameRegistry} and {@link net.minecraftforge.oredict.OreDictionary}
  * Dispatch requests through {@link FMLInterModComms} to other mods, to tell them what you wish them to do.
  *
- * @see net.minecraftforge.fml.common.Mod.EventHandler for how to subscribe to this event
  * @author cpw
+ * @see net.minecraftforge.fml.common.Mod.EventHandler for how to subscribe to this event
  */
-public class FMLInitializationEvent extends FMLStateEvent
-{
+public class FMLInitializationEvent extends FMLStateEvent {
 
-    public FMLInitializationEvent(Object... data)
-    {
+    public FMLInitializationEvent(Object... data) {
         super(data);
     }
-    
+
     @Override
-    public ModState getModState()
-    {
+    public ModState getModState() {
         return ModState.INITIALIZED;
     }
 

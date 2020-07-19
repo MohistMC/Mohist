@@ -2,13 +2,12 @@ package red.mohist.common.threadpool;
 
 import java.util.concurrent.Callable;
 import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
 
 /**
  * 测试类
  *
  * @author Carierx_MAX(fakeTrotsky)
- * @date   2020-7-13
+ * @date 2020-7-13
  */
 public class ProgressExecutor {
 
@@ -17,22 +16,38 @@ public class ProgressExecutor {
         ThreadExecutor pool = ThreadExecutor.getInstance();
 
         for (int i = 0; i < 200; i++) {
-            Future<?> future = pool.submit(new ExcuteTask1(i+""));
-        //TODO  thread return value
+            Future<?> future = pool.submit(new ExcuteTask1(i + ""));
+            //TODO  thread return value
         }
 
         for (int i = 0; i < 200; i++) {
-            pool.execute((Runnable) new ExcuteTask1(i+""));
+            pool.execute((Runnable) new ExcuteTask1(i + ""));
         }
         //close pool
         pool.shutdown();
     }
 
     /**
+     * 执行任务2，实现Runable方式
+     *
+     * @author Carierx_MAX(fakeTrotsky)
+     * @date 2020-7-13
+     */
+
+    public void run() {
+        try {
+            //TODO some code
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        //TODO Tasks
+    }
+
+    /**
      * 执行任务1，实现Callable方式
      *
      * @author Carierx_MAX(fakeTrotsky)
-     * @date   2020-7-13
+     * @date 2020-7-13
      */
     static class ExcuteTask1 implements Callable<String> {
         private String taskName;
@@ -51,20 +66,4 @@ public class ProgressExecutor {
             return "114514";
         }
     }
-
-    /**
-     * 执行任务2，实现Runable方式
-     *
-     * @author Carierx_MAX(fakeTrotsky)
-     * @date   2020-7-13
-     */
-
-        public void run() {
-            try {
-                //TODO some code
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            //TODO Tasks
-        }
 }

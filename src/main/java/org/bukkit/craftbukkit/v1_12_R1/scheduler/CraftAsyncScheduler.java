@@ -25,15 +25,12 @@ package org.bukkit.craftbukkit.v1_12_R1.scheduler;
 
 import com.destroystokyo.paper.ServerSchedulerReportingWrapper;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
+import org.bukkit.plugin.Plugin;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
-import java.util.concurrent.SynchronousQueue;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
-import org.bukkit.plugin.Plugin;
+import java.util.concurrent.*;
 
 public class CraftAsyncScheduler extends CraftScheduler {
 
@@ -52,6 +49,7 @@ public class CraftAsyncScheduler extends CraftScheduler {
 
     /**
      * Task is not cancelled
+     *
      * @param runningTask
      * @return
      */

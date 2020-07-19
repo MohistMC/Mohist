@@ -1,12 +1,13 @@
 package org.bukkit.craftbukkit.v1_12_R1.attribute;
 
 import com.google.common.base.Preconditions;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.attribute.AttributeModifier;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 public class CraftAttributeInstance implements AttributeInstance {
 

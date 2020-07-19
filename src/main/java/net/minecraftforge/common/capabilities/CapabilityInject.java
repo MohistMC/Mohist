@@ -29,28 +29,25 @@ import java.lang.annotation.Target;
  * instance of Capability once that capability is registered.
  * That field must be static and be able to hold a instance
  * of 'Capability'
- *
+ * <p>
  * Example:
- *  @CapabilityInject(IExampleCapability.class)
- *  private static final Capability<IExampleCapability> TEST_CAP = null;
  *
+ * @CapabilityInject(IExampleCapability.class) private static final Capability<IExampleCapability> TEST_CAP = null;
+ * <p>
  * When placed on a METHOD, the method will be invoked once the
  * capability is registered. This allows you to have a 'enable features'
  * callback. It MUST have one parameter of type 'Capability;
- *
+ * <p>
  * Example:
- *  @CapabilityInject(IExampleCapability.class)
- *  private static void capRegistered(Capability<IExampleCapability> cap) {}
- *
+ * @CapabilityInject(IExampleCapability.class) private static void capRegistered(Capability<IExampleCapability> cap) {}
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.FIELD, ElementType.METHOD})
-public @interface CapabilityInject
-{
+public @interface CapabilityInject {
     /**
      * The capability interface to listen for registration.
      * Note:
-     *   When reading annotations, DO NOT call this function as it will cause a hard dependency on the class.
+     * When reading annotations, DO NOT call this function as it will cause a hard dependency on the class.
      */
     Class<?> value();
 }

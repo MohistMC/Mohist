@@ -24,14 +24,13 @@ package net.minecraftforge.common.config;
  * In general: The key is the fully qualified property name, where each subcategory is appended with a dot.
  * i.e: general.map.isPresent
  */
-public interface IFieldWrapper
-{
+public interface IFieldWrapper {
 
     /**
      * @return The type adapter to serialize the values returned by getValue. Null if non-primitive.
      */
     ITypeAdapter getTypeAdapter();
-    
+
     /**
      * @return a list of fully qualified property keys handled by this field
      */
@@ -44,7 +43,7 @@ public interface IFieldWrapper
     Object getValue(String key);
 
     /**
-     * @param key the fully qualified property key
+     * @param key   the fully qualified property key
      * @param value the target value of the property associated with the key
      */
     void setValue(String key, Object value);
@@ -68,22 +67,21 @@ public interface IFieldWrapper
     void setupConfiguration(Configuration cfg, String desc, String langKey, boolean reqMCRestart, boolean reqWorldRestart);
 
     /**
-     *
-     * @param cfg The configuration object holding the properties
-     * @param desc The properties description
-     * @param langKey The languageKey of the property, used in GUI
-     * @param reqMCRestart True, if a change in this property requires a restart of Minecraft
-     * @param reqWorldRestart True, if the world needs to be reloaded after changes to this property
+     * @param cfg               The configuration object holding the properties
+     * @param desc              The properties description
+     * @param langKey           The languageKey of the property, used in GUI
+     * @param reqMCRestart      True, if a change in this property requires a restart of Minecraft
+     * @param reqWorldRestart   True, if the world needs to be reloaded after changes to this property
      * @param hasSlidingControl true if the property is going to have a slider control attached in the configuration UI;
      *                          works in conjunction with {@link Config.RangeInt} and {@link Config.RangeDouble}
      */
-    default void setupConfiguration(Configuration cfg, String desc, String langKey, boolean reqMCRestart, boolean reqWorldRestart, boolean hasSlidingControl)
-    {
+    default void setupConfiguration(Configuration cfg, String desc, String langKey, boolean reqMCRestart, boolean reqWorldRestart, boolean hasSlidingControl) {
         setupConfiguration(cfg, desc, langKey, reqMCRestart, reqWorldRestart);
     }
-    
+
     /**
      * i.e. general.map in the example above
+     *
      * @return the category name in which the entries should be saved. This includes the parent categories
      */
     String getCategory();

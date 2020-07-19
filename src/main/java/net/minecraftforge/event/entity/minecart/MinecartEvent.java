@@ -33,18 +33,15 @@ import net.minecraftforge.fml.common.eventhandler.Event;
  * <br>
  * All children of this event are fired on the {@link MinecraftForge#EVENT_BUS}.<br>
  **/
-public class MinecartEvent extends EntityEvent
-{
+public class MinecartEvent extends EntityEvent {
     private final EntityMinecart minecart;
 
-    public MinecartEvent(EntityMinecart minecart)
-    {
+    public MinecartEvent(EntityMinecart minecart) {
         super(minecart);
         this.minecart = minecart;
     }
 
-    public EntityMinecart getMinecart()
-    {
+    public EntityMinecart getMinecart() {
         return minecart;
     }
 }

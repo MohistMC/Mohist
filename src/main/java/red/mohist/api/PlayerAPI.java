@@ -1,12 +1,13 @@
 package red.mohist.api;
 
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.server.MinecraftServer;
 import org.bukkit.craftbukkit.v1_12_R1.entity.CraftPlayer;
 import org.bukkit.entity.Player;
+
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class PlayerAPI {
 
@@ -14,7 +15,7 @@ public class PlayerAPI {
     public static Map<EntityPlayerMP, String> modlist = new ConcurrentHashMap<>();
 
     /**
-     *  Get Player ping
+     * Get Player ping
      *
      * @param player org.bukkit.entity.player
      */
@@ -39,12 +40,11 @@ public class PlayerAPI {
         return modlist.get(getNMSPlayer(player)) == null ? "null" : modlist.get(getNMSPlayer(player));
     }
 
-    public static Boolean hasMod(Player player, String modid){
+    public static Boolean hasMod(Player player, String modid) {
         return getModlist(player).contains(modid);
     }
 
-    public static boolean isOp(EntityPlayer ep)
-    {
+    public static boolean isOp(EntityPlayer ep) {
         return MinecraftServer.getServerInst().getPlayerList().canSendCommands(ep.getGameProfile());
     }
 }

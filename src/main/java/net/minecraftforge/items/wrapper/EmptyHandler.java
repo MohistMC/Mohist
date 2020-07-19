@@ -19,57 +19,50 @@
 
 package net.minecraftforge.items.wrapper;
 
-import javax.annotation.Nonnull;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
-public class EmptyHandler implements IItemHandlerModifiable
-{
+import javax.annotation.Nonnull;
+
+public class EmptyHandler implements IItemHandlerModifiable {
     public static final IItemHandler INSTANCE = new EmptyHandler();
 
     @Override
-    public int getSlots()
-    {
+    public int getSlots() {
         return 0;
     }
 
     @Override
     @Nonnull
-    public ItemStack getStackInSlot(int slot)
-    {
+    public ItemStack getStackInSlot(int slot) {
         return ItemStack.EMPTY;
     }
 
     @Override
     @Nonnull
-    public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate)
-    {
+    public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate) {
         return stack;
     }
 
     @Override
     @Nonnull
-    public ItemStack extractItem(int slot, int amount, boolean simulate)
-    {
+    public ItemStack extractItem(int slot, int amount, boolean simulate) {
         return ItemStack.EMPTY;
     }
 
     @Override
-    public void setStackInSlot(int slot, @Nonnull ItemStack stack)
-    {
+    public void setStackInSlot(int slot, @Nonnull ItemStack stack) {
         // nothing to do here
     }
 
     @Override
-    public int getSlotLimit(int slot)
-    {
+    public int getSlotLimit(int slot) {
         return 0;
     }
 
     @Override
-    public boolean isItemValid(int slot, @Nonnull ItemStack stack)
-    {
+    public boolean isItemValid(int slot, @Nonnull ItemStack stack) {
         return false;
     }
 }

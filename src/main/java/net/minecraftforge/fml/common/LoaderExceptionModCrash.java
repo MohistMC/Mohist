@@ -22,18 +22,15 @@ package net.minecraftforge.fml.common;
 /**
  * Prevent LoaderException from adding its own stack trace to the wrapped throwable's stack trace.
  */
-public class LoaderExceptionModCrash extends LoaderException
-{
+public class LoaderExceptionModCrash extends LoaderException {
     private static final long serialVersionUID = 1L;
 
-    public LoaderExceptionModCrash(String message, Throwable cause)
-    {
+    public LoaderExceptionModCrash(String message, Throwable cause) {
         super(message, cause);
     }
 
     @Override
-    public synchronized Throwable fillInStackTrace()
-    {
+    public synchronized Throwable fillInStackTrace() {
         return this;
     }
 }

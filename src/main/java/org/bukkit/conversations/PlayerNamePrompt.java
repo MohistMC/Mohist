@@ -30,7 +30,7 @@ public abstract class PlayerNamePrompt extends ValidatingPrompt {
      * response.
      *
      * @param context Context information about the conversation.
-     * @param input The user's player name response.
+     * @param input   The user's player name response.
      * @return The next {@link Prompt} in the prompt graph.
      */
     protected abstract Prompt acceptValidatedInput(ConversationContext context, Player input);

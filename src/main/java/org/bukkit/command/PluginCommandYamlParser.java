@@ -1,11 +1,12 @@
 package org.bukkit.command;
 
+import org.bukkit.plugin.Plugin;
+import red.mohist.Mohist;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import org.bukkit.plugin.Plugin;
-import red.mohist.Mohist;
 
 public class PluginCommandYamlParser {
 

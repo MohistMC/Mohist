@@ -57,8 +57,7 @@ public class Button extends SimpleAttachableMaterialData implements Redstone {
     /**
      * Sets the current state of this button
      *
-     * @param bool
-     *            whether or not the button is powered
+     * @param bool whether or not the button is powered
      */
     public void setPowered(boolean bool) {
         setData((byte) (bool ? (getData() | 0x8) : (getData() & ~0x8)));

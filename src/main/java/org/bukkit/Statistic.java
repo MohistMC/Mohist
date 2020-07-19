@@ -110,7 +110,6 @@ public enum Statistic {
 
     /**
      * The type of statistic.
-     *
      */
     public enum Type {
         /**

@@ -1,8 +1,9 @@
 package org.bukkit.inventory.meta;
 
-import java.util.List;
 import net.md_5.bungee.api.chat.BaseComponent;
 import org.bukkit.Material;
+
+import java.util.List;
 
 /**
  * Represents a book ({@link Material#BOOK_AND_QUILL} or {@link

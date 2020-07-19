@@ -1,7 +1,5 @@
 package org.bukkit.craftbukkit.v1_12_R1;
 
-import java.lang.ref.WeakReference;
-import java.util.Arrays;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.WorldServer;
 import net.minecraft.world.biome.Biome;
@@ -15,6 +13,9 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
 import org.bukkit.craftbukkit.v1_12_R1.block.CraftBlock;
 import org.bukkit.entity.Entity;
+
+import java.lang.ref.WeakReference;
+import java.util.Arrays;
 
 public class CraftChunk implements Chunk {
     private static final byte[] emptyData = new byte[2048];

@@ -20,11 +20,6 @@
 package net.minecraftforge.common;
 
 import com.google.common.collect.ImmutableList;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-import javax.annotation.Nullable;
 import net.minecraft.init.Biomes;
 import net.minecraft.util.WeightedRandom;
 import net.minecraft.world.biome.Biome;
@@ -32,24 +27,25 @@ import net.minecraft.world.biome.BiomeProvider;
 import net.minecraft.world.gen.structure.MapGenVillage;
 import net.minecraftforge.common.util.EnumHelper;
 
-public class BiomeManager
-{
-    private static TrackedList<BiomeEntry>[] biomes = setupBiomes();
+import javax.annotation.Nullable;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
 
+public class BiomeManager {
     public static List<Biome> oceanBiomes = new ArrayList<Biome>();
-
     public static ArrayList<Biome> strongHoldBiomes = new ArrayList<Biome>();
     public static ArrayList<Biome> strongHoldBiomesBlackList = new ArrayList<Biome>();
+    private static TrackedList<BiomeEntry>[] biomes = setupBiomes();
 
-    static
-    {
+    static {
         oceanBiomes.add(Biomes.OCEAN);
         oceanBiomes.add(Biomes.DEEP_OCEAN);
         oceanBiomes.add(Biomes.FROZEN_OCEAN);
     }
 
-    private static TrackedList<BiomeEntry>[] setupBiomes()
-    {
+    private static TrackedList<BiomeEntry>[] setupBiomes() {
         @SuppressWarnings("unchecked")
         TrackedList<BiomeEntry>[] currentBiomes = new TrackedList[BiomeType.values().length];
         List<BiomeEntry> list = new ArrayList<BiomeEntry>();
@@ -83,87 +79,70 @@ public class BiomeManager
         return currentBiomes;
     }
 
-    public static void addVillageBiome(Biome biome, boolean canSpawn)
-    {
-        if (!MapGenVillage.VILLAGE_SPAWN_BIOMES.contains(biome))
-        {
+    public static void addVillageBiome(Biome biome, boolean canSpawn) {
+        if (!MapGenVillage.VILLAGE_SPAWN_BIOMES.contains(biome)) {
             ArrayList<Biome> biomes = new ArrayList<Biome>(MapGenVillage.VILLAGE_SPAWN_BIOMES);
             biomes.add(biome);
             MapGenVillage.VILLAGE_SPAWN_BIOMES = biomes;
         }
     }
 
-    public static void removeVillageBiome(Biome biome)
-    {
-        if (MapGenVillage.VILLAGE_SPAWN_BIOMES.contains(biome))
-        {
+    public static void removeVillageBiome(Biome biome) {
+        if (MapGenVillage.VILLAGE_SPAWN_BIOMES.contains(biome)) {
             ArrayList<Biome> biomes = new ArrayList<Biome>(MapGenVillage.VILLAGE_SPAWN_BIOMES);
             biomes.remove(biome);
             MapGenVillage.VILLAGE_SPAWN_BIOMES = biomes;
         }
     }
 
-    public static void addStrongholdBiome(Biome biome)
-    {
-        if (!strongHoldBiomes.contains(biome))
-        {
+    public static void addStrongholdBiome(Biome biome) {
+        if (!strongHoldBiomes.contains(biome)) {
             strongHoldBiomes.add(biome);
         }
     }
 
-    public static void removeStrongholdBiome(Biome biome)
-    {
-        if (!strongHoldBiomesBlackList.contains(biome))
-        {
+    public static void removeStrongholdBiome(Biome biome) {
+        if (!strongHoldBiomesBlackList.contains(biome)) {
             strongHoldBiomesBlackList.add(biome);
         }
     }
 
-    public static void addSpawnBiome(Biome biome)
-    {
-        if (!BiomeProvider.allowedBiomes.contains(biome))
-        {
+    public static void addSpawnBiome(Biome biome) {
+        if (!BiomeProvider.allowedBiomes.contains(biome)) {
             BiomeProvider.allowedBiomes.add(biome);
         }
     }
 
-    public static void removeSpawnBiome(Biome biome)
-    {
-        if (BiomeProvider.allowedBiomes.contains(biome))
-        {
+    public static void removeSpawnBiome(Biome biome) {
+        if (BiomeProvider.allowedBiomes.contains(biome)) {
             BiomeProvider.allowedBiomes.remove(biome);
         }
     }
 
-    public static void addBiome(BiomeType type, BiomeEntry entry)
-    {
+    public static void addBiome(BiomeType type, BiomeEntry entry) {
         int idx = type.ordinal();
         List<BiomeEntry> list = idx > biomes.length ? null : biomes[idx];
         if (list != null) list.add(entry);
     }
 
-    public static void removeBiome(BiomeType type, BiomeEntry entry)
-    {
+    public static void removeBiome(BiomeType type, BiomeEntry entry) {
         int idx = type.ordinal();
         List<BiomeEntry> list = idx > biomes.length ? null : biomes[idx];
 
-        if (list != null && list.contains(entry))
-        {
+        if (list != null && list.contains(entry)) {
             list.remove(entry);
         }
     }
 
     @Nullable
-    public static ImmutableList<BiomeEntry> getBiomes(BiomeType type)
-    {
+    public static ImmutableList<BiomeEntry> getBiomes(BiomeType type) {
         int idx = type.ordinal();
         List<BiomeEntry> list = idx >= biomes.length ? null : biomes[idx];
 
         return list != null ? ImmutableList.copyOf(list) : null;
     }
 
-    public static boolean isTypeListModded(BiomeType type)
-    {
+    public static boolean isTypeListModded(BiomeType type) {
         int idx = type.ordinal();
         TrackedList<BiomeEntry> list = idx > biomes.length ? null : biomes[idx];
 
@@ -172,23 +151,19 @@ public class BiomeManager
         return false;
     }
 
-    public static enum BiomeType
-    {
+    public static enum BiomeType {
         DESERT, WARM, COOL, ICY;
 
-        public static BiomeType getType(String name)
-        {
+        public static BiomeType getType(String name) {
             name = name.toUpperCase();
 
-            for (BiomeType t : values())
-            {
+            for (BiomeType t : values()) {
                 if (t.name().equals(name)) return t;
             }
 
             BiomeType ret = EnumHelper.addEnum(BiomeType.class, name, new Class[0], new Object[0]);
 
-            if (ret.ordinal() >= biomes.length)
-            {
+            if (ret.ordinal() >= biomes.length) {
                 biomes = Arrays.copyOf(biomes, ret.ordinal() + 1);
             }
 
@@ -196,100 +171,85 @@ public class BiomeManager
         }
     }
 
-    public static class BiomeEntry extends WeightedRandom.Item
-    {
+    public static class BiomeEntry extends WeightedRandom.Item {
         public final Biome biome;
 
-        public BiomeEntry(Biome biome, int weight)
-        {
+        public BiomeEntry(Biome biome, int weight) {
             super(weight);
 
             this.biome = biome;
         }
     }
 
-    private static class TrackedList<E> extends ArrayList<E>
-    {
+    private static class TrackedList<E> extends ArrayList<E> {
         private static final long serialVersionUID = 1L;
         private boolean isModded = false;
 
-        public TrackedList(Collection<? extends E> c)
-        {
+        public TrackedList(Collection<? extends E> c) {
             super(c);
         }
 
         @Override
-        public E set(int index, E element)
-        {
+        public E set(int index, E element) {
             isModded = true;
             return super.set(index, element);
         }
 
         @Override
-        public boolean add(E e)
-        {
+        public boolean add(E e) {
             isModded = true;
             return super.add(e);
         }
 
         @Override
-        public void add(int index, E element)
-        {
+        public void add(int index, E element) {
             isModded = true;
             super.add(index, element);
         }
 
         @Override
-        public E remove(int index)
-        {
+        public E remove(int index) {
             isModded = true;
             return super.remove(index);
         }
 
         @Override
-        public boolean remove(Object o)
-        {
+        public boolean remove(Object o) {
             isModded = true;
             return super.remove(o);
         }
 
         @Override
-        public void clear()
-        {
+        public void clear() {
             isModded = true;
             super.clear();
         }
 
         @Override
-        public boolean addAll(Collection<? extends E> c)
-        {
+        public boolean addAll(Collection<? extends E> c) {
             isModded = true;
             return super.addAll(c);
         }
 
         @Override
-        public boolean addAll(int index, Collection<? extends E> c)
-        {
+        public boolean addAll(int index, Collection<? extends E> c) {
             isModded = true;
             return super.addAll(index, c);
         }
 
         @Override
-        public boolean removeAll(Collection<?> c)
-        {
+        public boolean removeAll(Collection<?> c) {
             isModded = true;
             return super.removeAll(c);
         }
 
         @Override
-        public boolean retainAll(Collection<?> c)
-        {
+        public boolean retainAll(Collection<?> c) {
             isModded = true;
             return super.retainAll(c);
         }
 
-        public boolean isModded()
-        {
+        public boolean isModded() {
             return isModded;
         }
     }

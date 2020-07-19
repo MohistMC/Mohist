@@ -45,13 +45,12 @@ import net.minecraftforge.fml.common.eventhandler.Event;
  * This event is fired on the {@link MinecraftForge#EVENT_BUS}.
  **/
 @Cancelable
-public class ServerChatEvent extends Event
-{
+public class ServerChatEvent extends Event {
     private final String message, username;
     private final EntityPlayerMP player;
     private ITextComponent component;
-    public ServerChatEvent(EntityPlayerMP player, String message, ITextComponent component)
-    {
+
+    public ServerChatEvent(EntityPlayerMP player, String message, ITextComponent component) {
         super();
         this.message = message;
         this.player = player;
@@ -59,17 +58,23 @@ public class ServerChatEvent extends Event
         this.component = component;
     }
 
-    public void setComponent(ITextComponent e)
-    {
-        this.component = e;
-    }
-
-    public ITextComponent getComponent()
-    {
+    public ITextComponent getComponent() {
         return this.component;
     }
 
-    public String getMessage() { return this.message; }
-    public String getUsername() { return this.username; }
-    public EntityPlayerMP getPlayer() { return this.player; }
+    public void setComponent(ITextComponent e) {
+        this.component = e;
+    }
+
+    public String getMessage() {
+        return this.message;
+    }
+
+    public String getUsername() {
+        return this.username;
+    }
+
+    public EntityPlayerMP getPlayer() {
+        return this.player;
+    }
 }

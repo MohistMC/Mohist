@@ -20,29 +20,26 @@
 package net.minecraftforge.server.permission.context;
 
 import com.google.common.base.Preconditions;
-import javax.annotation.Nullable;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.world.World;
 
-public class WorldContext extends Context
-{
+import javax.annotation.Nullable;
+
+public class WorldContext extends Context {
     private final World world;
 
-    public WorldContext(World w)
-    {
+    public WorldContext(World w) {
         world = Preconditions.checkNotNull(w, "World can't be null in WorldContext!");
     }
 
     @Override
-    public World getWorld()
-    {
+    public World getWorld() {
         return world;
     }
 
     @Override
     @Nullable
-    public EntityPlayer getPlayer()
-    {
+    public EntityPlayer getPlayer() {
         return null;
     }
 }

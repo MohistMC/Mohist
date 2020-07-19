@@ -28,7 +28,7 @@ import net.minecraftforge.fml.common.eventhandler.Cancelable;
 import net.minecraftforge.fml.common.eventhandler.Event;
 
 /**
- * CommandEvent is fired whenever a command is scheduled to be executed. 
+ * CommandEvent is fired whenever a command is scheduled to be executed.
  * This event is fired during the invocation of {@link CommandHandler#executeCommand(ICommandSender, String)}
  * and {@link ClientCommandHandler#executeCommand(ICommandSender, String)}. <br>
  * <br>
@@ -45,25 +45,40 @@ import net.minecraftforge.fml.common.eventhandler.Event;
  * This event is fired on the {@link MinecraftForge#EVENT_BUS}.<br>
  **/
 @Cancelable
-public class CommandEvent extends Event
-{
+public class CommandEvent extends Event {
 
     private final ICommand command;
     private final ICommandSender sender;
     private String[] parameters;
     private Throwable exception;
 
-    public CommandEvent(ICommand command, ICommandSender sender, String[] parameters)
-    {
+    public CommandEvent(ICommand command, ICommandSender sender, String[] parameters) {
         this.command = command;
         this.sender = sender;
         this.setParameters(parameters);
     }
 
-    public ICommand getCommand() { return command; }
-    public ICommandSender getSender() { return sender; }
-    public String[] getParameters() { return parameters; }
-    public void setParameters(String[] parameters) { this.parameters = parameters; }
-    public Throwable getException() { return exception; }
-    public void setException(Throwable exception) { this.exception = exception; }
+    public ICommand getCommand() {
+        return command;
+    }
+
+    public ICommandSender getSender() {
+        return sender;
+    }
+
+    public String[] getParameters() {
+        return parameters;
+    }
+
+    public void setParameters(String[] parameters) {
+        this.parameters = parameters;
+    }
+
+    public Throwable getException() {
+        return exception;
+    }
+
+    public void setException(Throwable exception) {
+        this.exception = exception;
+    }
 }

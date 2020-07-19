@@ -1,11 +1,12 @@
 package org.bukkit.attribute;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
 import org.apache.commons.lang.Validate;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.util.NumberConversions;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 
 /**
  * Concrete implementation of an attribute modifier.

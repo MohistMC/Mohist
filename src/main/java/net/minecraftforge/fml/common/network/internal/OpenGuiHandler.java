@@ -31,29 +31,23 @@ import net.minecraftforge.fml.common.network.internal.FMLMessage.OpenGui;
 
 public class OpenGuiHandler extends SimpleChannelInboundHandler<FMLMessage.OpenGui> {
     @Override
-    protected void channelRead0(ChannelHandlerContext ctx, final OpenGui msg) throws Exception
-    {
+    protected void channelRead0(ChannelHandlerContext ctx, final OpenGui msg) throws Exception {
         IThreadListener thread = FMLCommonHandler.instance().getWorldThread(ctx.channel().attr(NetworkRegistry.NET_HANDLER).get());
-        if (thread.isCallingFromMinecraftThread())
-        {
+        if (thread.isCallingFromMinecraftThread()) {
             process(msg);
-        }
-        else
-        {
+        } else {
             thread.addScheduledTask(() -> OpenGuiHandler.this.process(msg));
         }
     }
 
-    private void process(OpenGui msg)
-    {
+    private void process(OpenGui msg) {
         EntityPlayer player = FMLClientHandler.instance().getClient().player;
         player.openGui(msg.modId, msg.modGuiId, player.world, msg.x, msg.y, msg.z);
         player.openContainer.windowId = msg.windowId;
     }
 
     @Override
-    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception
-    {
+    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
         FMLLog.log.error("OpenGuiHandler exception", cause);
         super.exceptionCaught(ctx, cause);
     }

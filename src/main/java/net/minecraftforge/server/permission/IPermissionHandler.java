@@ -20,12 +20,12 @@
 package net.minecraftforge.server.permission;
 
 import com.mojang.authlib.GameProfile;
-import java.util.Collection;
-import javax.annotation.Nullable;
 import net.minecraftforge.server.permission.context.IContext;
 
-public interface IPermissionHandler
-{
+import javax.annotation.Nullable;
+import java.util.Collection;
+
+public interface IPermissionHandler {
     /**
      * Use {@link PermissionAPI#registerNode(String, DefaultPermissionLevel, String)}
      */

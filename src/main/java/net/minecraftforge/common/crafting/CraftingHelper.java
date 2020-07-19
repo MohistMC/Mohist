@@ -22,44 +22,11 @@ package net.minecraftforge.common.crafting;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParseException;
-import com.google.gson.JsonSyntaxException;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.nio.file.FileSystem;
-import java.nio.file.FileSystems;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
-import java.util.function.BiConsumer;
-import java.util.function.BiFunction;
-import java.util.function.BooleanSupplier;
-import java.util.function.Function;
-import javax.annotation.Nonnull;
+import com.google.gson.*;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.CraftingManager;
-import net.minecraft.item.crafting.IRecipe;
-import net.minecraft.item.crafting.Ingredient;
-import net.minecraft.item.crafting.ShapedRecipes;
-import net.minecraft.item.crafting.ShapelessRecipes;
+import net.minecraft.item.crafting.*;
 import net.minecraft.nbt.JsonToNBT;
 import net.minecraft.nbt.NBTException;
 import net.minecraft.nbt.NBTTagCompound;
@@ -81,50 +48,63 @@ import net.minecraftforge.registries.RegistryManager;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 
+import javax.annotation.Nonnull;
+import java.io.*;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.nio.file.FileSystem;
+import java.nio.file.*;
+import java.util.*;
+import java.util.Map.Entry;
+import java.util.function.BiConsumer;
+import java.util.function.BiFunction;
+import java.util.function.BooleanSupplier;
+import java.util.function.Function;
+
 public class CraftingHelper {
 
-    private static final boolean DEBUG_LOAD_MINECRAFT = false;
     public static final Gson GSON = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create();
+    private static final boolean DEBUG_LOAD_MINECRAFT = false;
     private static final Map<ResourceLocation, IConditionFactory> conditions = Maps.newHashMap();
+    public static final FactoryLoader<IConditionFactory> CONDITIONS = new FactoryLoader<>("conditions", IConditionFactory.class, CraftingHelper::register);
     private static final Map<ResourceLocation, IIngredientFactory> ingredients = Maps.newHashMap();
+    public static final FactoryLoader<IIngredientFactory> INGREDIENTS = new FactoryLoader<>("ingredients", IIngredientFactory.class, CraftingHelper::register);
     private static final Map<ResourceLocation, IRecipeFactory> recipes = Maps.newHashMap();
+    public static final FactoryLoader<IRecipeFactory> RECIPES = new FactoryLoader<>("recipes", IRecipeFactory.class, CraftingHelper::register);
 
     static {
         init();
     }
 
-    public static void register(ResourceLocation key, IConditionFactory factory)
-    {
+    public static void register(ResourceLocation key, IConditionFactory factory) {
         if (conditions.containsKey(key))
             throw new IllegalStateException("Duplicate recipe condition factory: " + key);
         conditions.put(key, factory);
     }
-    public static void register(ResourceLocation key, IRecipeFactory factory)
-    {
+
+    public static void register(ResourceLocation key, IRecipeFactory factory) {
         if (recipes.containsKey(key))
             throw new IllegalStateException("Duplicate recipe factory: " + key);
         recipes.put(key, factory);
     }
-    public static void register(ResourceLocation key, IIngredientFactory factory)
-    {
+
+    public static void register(ResourceLocation key, IIngredientFactory factory) {
         if (ingredients.containsKey(key))
             throw new IllegalStateException("Duplicate recipe ingredient factory: " + key);
         ingredients.put(key, factory);
     }
 
-
-    public static Ingredient getIngredient(Object obj)
-    {
+    public static Ingredient getIngredient(Object obj) {
         if (obj instanceof Ingredient)
-            return (Ingredient)obj;
+            return (Ingredient) obj;
         else if (obj instanceof ItemStack)
-            return Ingredient.fromStacks(((ItemStack)obj).copy());
+            return Ingredient.fromStacks(((ItemStack) obj).copy());
         else if (obj instanceof Item)
-            return Ingredient.fromItem((Item)obj);
+            return Ingredient.fromItem((Item) obj);
         else if (obj instanceof Block)
-            return Ingredient.fromStacks(new ItemStack((Block)obj, 1, OreDictionary.WILDCARD_VALUE));
+            return Ingredient.fromStacks(new ItemStack((Block) obj, 1, OreDictionary.WILDCARD_VALUE));
         else if (obj instanceof String)
-            return new OreIngredient((String)obj);
+            return new OreIngredient((String) obj);
         else if (obj instanceof JsonElement)
             throw new IllegalArgumentException("JsonObjects must use getIngredient(JsonObject, JsonContext)");
 
@@ -132,34 +112,28 @@ public class CraftingHelper {
     }
 
     @Nonnull
-    public static Ingredient getIngredient(JsonElement json, JsonContext context)
-    {
+    public static Ingredient getIngredient(JsonElement json, JsonContext context) {
         if (json == null || json.isJsonNull())
             throw new JsonSyntaxException("Json cannot be null");
         if (context == null)
             throw new IllegalArgumentException("getIngredient Context cannot be null");
 
-        if (json.isJsonArray())
-        {
+        if (json.isJsonArray()) {
             List<Ingredient> ingredients = Lists.newArrayList();
             List<Ingredient> vanilla = Lists.newArrayList();
             json.getAsJsonArray().forEach((ele) ->
             {
                 Ingredient ing = CraftingHelper.getIngredient(ele, context);
 
-                if (ing.getClass() == Ingredient.class)
-                {
+                if (ing.getClass() == Ingredient.class) {
                     //Vanilla, Due to how we read it splits each itemstack, so we pull out to re-merge later
                     vanilla.add(ing);
-                }
-                else
-                {
+                } else {
                     ingredients.add(ing);
                 }
             });
 
-            if (!vanilla.isEmpty())
-            {
+            if (!vanilla.isEmpty()) {
                 ingredients.add(Ingredient.merge(vanilla));
             }
 
@@ -175,17 +149,15 @@ public class CraftingHelper {
         if (!json.isJsonObject())
             throw new JsonSyntaxException("Expcted ingredient to be a object or array of objects");
 
-        JsonObject obj = (JsonObject)json;
+        JsonObject obj = (JsonObject) json;
 
         String type = context.appendModId(JsonUtils.getString(obj, "type", "minecraft:item"));
         if (type.isEmpty())
             throw new JsonSyntaxException("Ingredient type can not be an empty string");
 
-        if (type.equals("minecraft:item"))
-        {
+        if (type.equals("minecraft:item")) {
             String item = JsonUtils.getString(obj, "item");
-            if (item.startsWith("#"))
-            {
+            if (item.startsWith("#")) {
                 Ingredient constant = context.getConstant(item.substring(1));
                 if (constant == null)
                     throw new JsonSyntaxException("Ingredient referenced invalid constant: " + item);
@@ -200,8 +172,7 @@ public class CraftingHelper {
         return factory.parse(context, obj);
     }
 
-    public static ItemStack getItemStack(JsonObject json, JsonContext context)
-    {
+    public static ItemStack getItemStack(JsonObject json, JsonContext context) {
         String itemName = context.appendModId(JsonUtils.getString(json, "item"));
 
         Item item = ForgeRegistries.ITEMS.getValue(new ResourceLocation(itemName));
@@ -212,21 +183,18 @@ public class CraftingHelper {
         if (item.getHasSubtypes() && !json.has("data"))
             throw new JsonParseException("Missing data for item '" + itemName + "'");
 
-        if (json.has("nbt"))
-        {
+        if (json.has("nbt")) {
             // Lets hope this works? Needs test
-            try
-            {
+            try {
                 JsonElement element = json.get("nbt");
                 NBTTagCompound nbt;
-                if(element.isJsonObject())
+                if (element.isJsonObject())
                     nbt = JsonToNBT.getTagFromJson(GSON.toJson(element));
                 else
                     nbt = JsonToNBT.getTagFromJson(JsonUtils.getString(element, "nbt"));
 
                 NBTTagCompound tmp = new NBTTagCompound();
-                if (nbt.hasKey("ForgeCaps"))
-                {
+                if (nbt.hasKey("ForgeCaps")) {
                     tmp.setTag("ForgeCaps", nbt.getTag("ForgeCaps"));
                     nbt.removeTag("ForgeCaps");
                 }
@@ -237,9 +205,7 @@ public class CraftingHelper {
                 tmp.setInteger("Damage", JsonUtils.getInt(json, "data", 0));
 
                 return new ItemStack(tmp);
-            }
-            catch (NBTException e)
-            {
+            } catch (NBTException e) {
                 throw new JsonSyntaxException("Invalid NBT Entry: " + e.toString());
             }
         }
@@ -247,9 +213,7 @@ public class CraftingHelper {
         return new ItemStack(item, JsonUtils.getInt(json, "count", 1), JsonUtils.getInt(json, "data", 0));
     }
 
-
-    public static ItemStack getItemStackBasic(JsonObject json, JsonContext context)
-    {
+    public static ItemStack getItemStackBasic(JsonObject json, JsonContext context) {
         String itemName = context.appendModId(JsonUtils.getString(json, "item"));
 
         Item item = ForgeRegistries.ITEMS.getValue(new ResourceLocation(itemName));
@@ -263,55 +227,40 @@ public class CraftingHelper {
         return new ItemStack(item, 1, JsonUtils.getInt(json, "data", 0));
     }
 
-    public static class ShapedPrimer {
-        public int height, width;
-        public boolean mirrored = true;
-        public NonNullList<Ingredient> input;
-    }
-
-    public static ShapedPrimer parseShaped(Object... recipe)
-    {
+    public static ShapedPrimer parseShaped(Object... recipe) {
         ShapedPrimer ret = new ShapedPrimer();
         String shape = "";
         int idx = 0;
 
-        if (recipe[idx] instanceof Boolean)
-        {
-            ret.mirrored = (Boolean)recipe[idx];
-            if (recipe[idx+1] instanceof Object[])
-                recipe = (Object[])recipe[idx+1];
+        if (recipe[idx] instanceof Boolean) {
+            ret.mirrored = (Boolean) recipe[idx];
+            if (recipe[idx + 1] instanceof Object[])
+                recipe = (Object[]) recipe[idx + 1];
             else
                 idx = 1;
         }
 
-        if (recipe[idx] instanceof String[])
-        {
-            String[] parts = ((String[])recipe[idx++]);
+        if (recipe[idx] instanceof String[]) {
+            String[] parts = ((String[]) recipe[idx++]);
 
-            for (String s : parts)
-            {
+            for (String s : parts) {
                 ret.width = s.length();
                 shape += s;
             }
 
             ret.height = parts.length;
-        }
-        else
-        {
-            while (recipe[idx] instanceof String)
-            {
-                String s = (String)recipe[idx++];
+        } else {
+            while (recipe[idx] instanceof String) {
+                String s = (String) recipe[idx++];
                 shape += s;
                 ret.width = s.length();
                 ret.height++;
             }
         }
 
-        if (ret.width * ret.height != shape.length() || shape.length() == 0)
-        {
+        if (ret.width * ret.height != shape.length() || shape.length() == 0) {
             String err = "Invalid shaped recipe: ";
-            for (Object tmp :  recipe)
-            {
+            for (Object tmp : recipe) {
                 err += tmp + ", ";
             }
             throw new RuntimeException(err);
@@ -320,24 +269,19 @@ public class CraftingHelper {
         HashMap<Character, Ingredient> itemMap = Maps.newHashMap();
         itemMap.put(' ', Ingredient.EMPTY);
 
-        for (; idx < recipe.length; idx += 2)
-        {
-            Character chr = (Character)recipe[idx];
+        for (; idx < recipe.length; idx += 2) {
+            Character chr = (Character) recipe[idx];
             Object in = recipe[idx + 1];
             Ingredient ing = CraftingHelper.getIngredient(in);
 
             if (' ' == chr.charValue())
                 throw new JsonSyntaxException("Invalid key entry: ' ' is a reserved symbol.");
 
-            if (ing != null)
-            {
+            if (ing != null) {
                 itemMap.put(chr, ing);
-            }
-            else
-            {
+            } else {
                 String err = "Invalid shaped ore recipe: ";
-                for (Object tmp :  recipe)
-                {
+                for (Object tmp : recipe) {
                     err += tmp + ", ";
                 }
                 throw new RuntimeException(err);
@@ -350,8 +294,7 @@ public class CraftingHelper {
         keys.remove(' ');
 
         int x = 0;
-        for (char chr : shape.toCharArray())
-        {
+        for (char chr : shape.toCharArray()) {
             Ingredient ing = itemMap.get(chr);
             if (ing == null)
                 throw new IllegalArgumentException("Pattern references symbol '" + chr + "' but it's not defined in the key");
@@ -365,15 +308,12 @@ public class CraftingHelper {
         return ret;
     }
 
-    public static boolean processConditions(JsonObject json, String memberName, JsonContext context)
-    {
+    public static boolean processConditions(JsonObject json, String memberName, JsonContext context) {
         return !json.has(memberName) || processConditions(JsonUtils.getJsonArray(json, memberName), context);
     }
 
-    public static boolean processConditions(JsonArray conditions, JsonContext context)
-    {
-        for (int x = 0; x < conditions.size(); x++)
-        {
+    public static boolean processConditions(JsonArray conditions, JsonContext context) {
+        for (int x = 0; x < conditions.size(); x++) {
             if (!conditions.get(x).isJsonObject())
                 throw new JsonSyntaxException("Conditions must be an array of JsonObjects");
 
@@ -385,8 +325,12 @@ public class CraftingHelper {
         return true;
     }
 
-    public static BooleanSupplier getCondition(JsonObject json, JsonContext context)
-    {
+
+    //=======================================================
+    // INTERNAL
+    //=======================================================
+
+    public static BooleanSupplier getCondition(JsonObject json, JsonContext context) {
         ResourceLocation type = new ResourceLocation(context.appendModId(JsonUtils.getString(json, "type")));
         IConditionFactory factory = conditions.get(type);
         if (factory == null)
@@ -394,8 +338,7 @@ public class CraftingHelper {
         return factory.parse(context, json);
     }
 
-    public static IRecipe getRecipe(JsonObject json, JsonContext context)
-    {
+    public static IRecipe getRecipe(JsonObject json, JsonContext context) {
         if (json == null || json.isJsonNull())
             throw new JsonSyntaxException("Json cannot be null");
         if (context == null)
@@ -412,13 +355,7 @@ public class CraftingHelper {
         return factory.parse(context, json);
     }
 
-
-    //=======================================================
-    // INTERNAL
-    //=======================================================
-
-    public static void init()
-    {
+    public static void init() {
         conditions.clear();
         ingredients.clear();
         recipes.clear();
@@ -438,8 +375,7 @@ public class CraftingHelper {
         registerC("forge:or", (context, json) -> {
             JsonArray values = JsonUtils.getJsonArray(json, "values");
             List<BooleanSupplier> children = Lists.newArrayList();
-            for (JsonElement j : values)
-            {
+            for (JsonElement j : values) {
                 if (!j.isJsonObject())
                     throw new JsonSyntaxException("Or condition values must be an array of JsonObjects");
                 children.add(CraftingHelper.getCondition(j.getAsJsonObject(), context));
@@ -449,8 +385,7 @@ public class CraftingHelper {
         registerC("forge:and", (context, json) -> {
             JsonArray values = JsonUtils.getJsonArray(json, "values");
             List<BooleanSupplier> children = Lists.newArrayList();
-            for (JsonElement j : values)
-            {
+            for (JsonElement j : values) {
                 if (!j.isJsonObject())
                     throw new JsonSyntaxException("And condition values must be an array of JsonObjects");
                 children.add(CraftingHelper.getCondition(j.getAsJsonObject(), context));
@@ -467,8 +402,7 @@ public class CraftingHelper {
             //    group = context.getModId() + ":" + group;
 
             Map<Character, Ingredient> ingMap = Maps.newHashMap();
-            for (Entry<String, JsonElement> entry : JsonUtils.getJsonObject(json, "key").entrySet())
-            {
+            for (Entry<String, JsonElement> entry : JsonUtils.getJsonObject(json, "key").entrySet()) {
                 if (entry.getKey().length() != 1)
                     throw new JsonSyntaxException("Invalid key entry: '" + entry.getKey() + "' is an invalid symbol (must be 1 character only).");
                 if (" ".equals(entry.getKey()))
@@ -486,8 +420,7 @@ public class CraftingHelper {
                 throw new JsonSyntaxException("Invalid pattern: too many rows, 3 is maximum");
 
             String[] pattern = new String[patternJ.size()];
-            for (int x = 0; x < pattern.length; ++x)
-            {
+            for (int x = 0; x < pattern.length; ++x) {
                 String line = JsonUtils.getString(patternJ.get(x), "pattern[" + x + "]");
                 if (line.length() > 3)
                     throw new JsonSyntaxException("Invalid pattern: too many columns, 3 is maximum");
@@ -501,10 +434,8 @@ public class CraftingHelper {
             keys.remove(' ');
 
             int x = 0;
-            for (String line : pattern)
-            {
-                for (char chr : line.toCharArray())
-                {
+            for (String line : pattern) {
+                for (char chr : line.toCharArray()) {
                     Ingredient ing = ingMap.get(chr);
                     if (ing == null)
                         throw new JsonSyntaxException("Pattern references symbol '" + chr + "' but it's not defined in the key");
@@ -546,45 +477,24 @@ public class CraftingHelper {
     private static void registerC(String name, IConditionFactory fac) {
         register(new ResourceLocation(name), fac);
     }
+
     private static void registerR(String name, IRecipeFactory fac) {
         register(new ResourceLocation(name), fac);
     }
+
     private static void registerI(String name, IIngredientFactory fac) {
         register(new ResourceLocation(name), fac);
     }
 
-    public static final class FactoryLoader<T>
-    {
-        final String name;
-        final Class<T> type;
-        final BiConsumer<ResourceLocation, T> consumer;
-
-        FactoryLoader(String name, Class<T> type, BiConsumer<ResourceLocation, T> consumer)
-        {
-            this.name = name;
-            this.type = type;
-            this.consumer = consumer;
-        }
-    }
-
-    public static final FactoryLoader<IIngredientFactory> INGREDIENTS = new FactoryLoader<>("ingredients", IIngredientFactory.class, CraftingHelper::register);
-    public static final FactoryLoader<IRecipeFactory> RECIPES = new FactoryLoader<>("recipes", IRecipeFactory.class, CraftingHelper::register);
-    public static final FactoryLoader<IConditionFactory> CONDITIONS = new FactoryLoader<>("conditions", IConditionFactory.class, CraftingHelper::register);
-
-    private static void loadFactories(JsonObject json, JsonContext context, FactoryLoader... loaders)
-    {
-        for (FactoryLoader<?> loader : loaders)
-        {
+    private static void loadFactories(JsonObject json, JsonContext context, FactoryLoader... loaders) {
+        for (FactoryLoader<?> loader : loaders) {
             loadFactory(json, context, loader);
         }
     }
 
-    private static <T> void loadFactory(JsonObject json, JsonContext context, FactoryLoader<T> loader)
-    {
-        if (json.has(loader.name))
-        {
-            for (Entry<String, JsonElement> entry : JsonUtils.getJsonObject(json, loader.name).entrySet())
-            {
+    private static <T> void loadFactory(JsonObject json, JsonContext context, FactoryLoader<T> loader) {
+        if (json.has(loader.name)) {
+            for (Entry<String, JsonElement> entry : JsonUtils.getJsonObject(json, loader.name).entrySet()) {
                 ResourceLocation key = new ResourceLocation(context.getModId(), entry.getKey());
                 String clsName = JsonUtils.getString(entry.getValue(), loader.name + "[" + entry.getValue() + "]");
                 loader.consumer.accept(key, getClassInstance(clsName, loader.type));
@@ -592,32 +502,25 @@ public class CraftingHelper {
         }
     }
 
-    private static <T> T getClassInstance(String clsName, Class<T> expected)
-    {
-        try
-        {
+    private static <T> T getClassInstance(String clsName, Class<T> expected) {
+        try {
             Class<?> cls = Class.forName(clsName);
             if (!expected.isAssignableFrom(cls))
                 throw new JsonSyntaxException("Class '" + clsName + "' is not an " + expected.getSimpleName());
-            return (T)cls.newInstance();
-        }
-        catch (ClassNotFoundException e)
-        {
+            return (T) cls.newInstance();
+        } catch (ClassNotFoundException e) {
             throw new JsonSyntaxException("Could not find " + expected.getSimpleName() + ": " + clsName, e);
-        }
-        catch (InstantiationException | IllegalAccessException e)
-        {
+        } catch (InstantiationException | IllegalAccessException e) {
             throw new JsonSyntaxException("Could not instantiate " + expected.getSimpleName() + ": " + clsName, e);
         }
     }
 
-    public static void loadRecipes(boolean revertFrozen)
-    {
+    public static void loadRecipes(boolean revertFrozen) {
         //TODO: If this errors in ServerInit it freezes the client at loading world, find a way to pop that up?
         //TODO: Figure out how to remove recipes, and override them. This relies on cpw to help.
         //For now this is only done one after mod init, I want to move this to ServerInit and re-do it many times.
         init();
-        ForgeRegistry<IRecipe> reg = (ForgeRegistry<IRecipe>)ForgeRegistries.RECIPES;
+        ForgeRegistry<IRecipe> reg = (ForgeRegistry<IRecipe>) ForgeRegistries.RECIPES;
         //reg.unfreeze();
         if (DEBUG_LOAD_MINECRAFT)
             reg.clear();
@@ -635,103 +538,81 @@ public class CraftingHelper {
         FMLCommonHandler.instance().resetClientRecipeBook();
     }
 
-    private static void loadFactories(ModContainer mod)
-    {
+    private static void loadFactories(ModContainer mod) {
         loadFactories(mod, "assets/" + mod.getModId() + "/recipes", INGREDIENTS, RECIPES, CONDITIONS);
     }
 
-    public static void loadFactories(ModContainer mod, String base, FactoryLoader... loaders)
-    {
+    public static void loadFactories(ModContainer mod, String base, FactoryLoader... loaders) {
         FileSystem fs = null;
-        try
-        {
+        try {
             Path fPath = null;
             JsonContext ctx = new JsonContext(mod.getModId());
 
-            if (mod.getSource().isFile())
-            {
-                fs = FileSystems.newFileSystem(mod.getSource().toPath(), (ClassLoader)null);
+            if (mod.getSource().isFile()) {
+                fs = FileSystems.newFileSystem(mod.getSource().toPath(), (ClassLoader) null);
                 fPath = fs.getPath("/" + base, "_factories.json");
-            }
-            else if (mod.getSource().isDirectory())
-            {
+            } else if (mod.getSource().isDirectory()) {
                 fPath = mod.getSource().toPath().resolve(base).resolve("_factories.json");
             }
 
-            if (fPath != null && Files.exists(fPath))
-            {
-                try (BufferedReader reader = Files.newBufferedReader(fPath))
-                {
+            if (fPath != null && Files.exists(fPath)) {
+                try (BufferedReader reader = Files.newBufferedReader(fPath)) {
                     JsonObject json = JsonUtils.fromJson(GSON, reader, JsonObject.class);
                     loadFactories(json, ctx, loaders);
                 }
             }
-        }
-        catch (JsonParseException | IOException e)
-        {
+        } catch (JsonParseException | IOException e) {
             FMLLog.log.error("Error loading _factories.json: ", e);
-        }
-        finally
-        {
+        } finally {
             IOUtils.closeQuietly(fs);
         }
     }
 
-    private static boolean loadRecipes(ModContainer mod)
-    {
+    private static boolean loadRecipes(ModContainer mod) {
         JsonContext ctx = new JsonContext(mod.getModId());
 
         return findFiles(mod, "assets/" + mod.getModId() + "/recipes",
-            root ->
-            {
-                Path fPath = root.resolve("_constants.json");
-                if (fPath != null && Files.exists(fPath))
+                root ->
                 {
-                    try(BufferedReader reader = Files.newBufferedReader(fPath))
-                    {
-                        JsonObject[] json = JsonUtils.fromJson(GSON, reader, JsonObject[].class);
-                        ctx.loadConstants(json);
+                    Path fPath = root.resolve("_constants.json");
+                    if (fPath != null && Files.exists(fPath)) {
+                        try (BufferedReader reader = Files.newBufferedReader(fPath)) {
+                            JsonObject[] json = JsonUtils.fromJson(GSON, reader, JsonObject[].class);
+                            ctx.loadConstants(json);
+                        } catch (JsonParseException | IOException e) {
+                            FMLLog.log.error("Error loading _constants.json: ", e);
+                            return false;
+                        }
                     }
-                    catch (JsonParseException | IOException e)
-                    {
-                        FMLLog.log.error("Error loading _constants.json: ", e);
+                    return true;
+                },
+                (root, file) ->
+                {
+                    Loader.instance().setActiveModContainer(mod);
+
+                    String relative = root.relativize(file).toString();
+                    if (!"json".equals(FilenameUtils.getExtension(file.toString())) || relative.startsWith("_"))
+                        return true;
+
+                    String name = FilenameUtils.removeExtension(relative).replaceAll("\\\\", "/");
+                    ResourceLocation key = new ResourceLocation(ctx.getModId(), name);
+
+                    try (BufferedReader reader = Files.newBufferedReader(file)) {
+                        JsonObject json = JsonUtils.fromJson(GSON, reader, JsonObject.class);
+                        if (!processConditions(json, "conditions", ctx))
+                            return true;
+                        IRecipe recipe = CraftingHelper.getRecipe(json, ctx);
+                        ForgeRegistries.RECIPES.register(recipe.setRegistryName(key));
+                    } catch (JsonParseException e) {
+                        FMLLog.log.debug("Parsing error loading recipe {}", key, e);
+                        return false;
+                    } catch (IOException e) {
+                        FMLLog.log.debug("Couldn't read recipe {} from {}", key, file, e);
                         return false;
                     }
-                }
-                return true;
-            },
-            (root, file) ->
-            {
-                Loader.instance().setActiveModContainer(mod);
-
-                String relative = root.relativize(file).toString();
-                if (!"json".equals(FilenameUtils.getExtension(file.toString())) || relative.startsWith("_"))
                     return true;
-
-                String name = FilenameUtils.removeExtension(relative).replaceAll("\\\\", "/");
-                ResourceLocation key = new ResourceLocation(ctx.getModId(), name);
-
-                try(BufferedReader reader = Files.newBufferedReader(file))
-                {
-                    JsonObject json = JsonUtils.fromJson(GSON, reader, JsonObject.class);
-                    if (!processConditions(json, "conditions", ctx))
-                        return true;
-                    IRecipe recipe = CraftingHelper.getRecipe(json, ctx);
-                    ForgeRegistries.RECIPES.register(recipe.setRegistryName(key));
-                }
-                catch (JsonParseException e)
-                {
-                    FMLLog.log.debug("Parsing error loading recipe {}", key, e);
-                    return false;
-                }
-                catch (IOException e)
-                {
-                    FMLLog.log.debug("Couldn't read recipe {} from {}", key, file, e);
-                    return false;
-                }
-                return true;
-            },
-            true, true
+                },
+                true, true
         );
     }
 
@@ -739,8 +620,7 @@ public class CraftingHelper {
      * @deprecated Use {@link CraftingHelper#findFiles(ModContainer, String, Function, BiFunction, boolean, boolean)} instead.
      */
     @Deprecated
-    public static boolean findFiles(ModContainer mod, String base, Function<Path, Boolean> preprocessor, BiFunction<Path, Path, Boolean> processor)
-    {
+    public static boolean findFiles(ModContainer mod, String base, Function<Path, Boolean> preprocessor, BiFunction<Path, Path, Boolean> processor) {
         return findFiles(mod, base, preprocessor, processor, false, false);
     }
 
@@ -748,29 +628,23 @@ public class CraftingHelper {
      * @deprecated Use {@link CraftingHelper#findFiles(ModContainer, String, Function, BiFunction, boolean, boolean)} instead.
      */
     @Deprecated
-    public static boolean findFiles(ModContainer mod, String base, Function<Path, Boolean> preprocessor, BiFunction<Path, Path, Boolean> processor, boolean defaultUnfoundRoot)
-    {
+    public static boolean findFiles(ModContainer mod, String base, Function<Path, Boolean> preprocessor, BiFunction<Path, Path, Boolean> processor, boolean defaultUnfoundRoot) {
         return findFiles(mod, base, preprocessor, processor, defaultUnfoundRoot, false);
     }
 
     public static boolean findFiles(ModContainer mod, String base, Function<Path, Boolean> preprocessor, BiFunction<Path, Path, Boolean> processor,
-            boolean defaultUnfoundRoot, boolean visitAllFiles)
-    {
+                                    boolean defaultUnfoundRoot, boolean visitAllFiles) {
 
         File source = mod.getSource();
 
-        if ("minecraft".equals(mod.getModId()))
-        {
+        if ("minecraft".equals(mod.getModId())) {
             if (!DEBUG_LOAD_MINECRAFT)
                 return true;
 
-            try
-            {
+            try {
                 URI tmp = CraftingManager.class.getResource("/assets/.mcassetsroot").toURI();
                 source = new File(tmp.resolve("..").getPath());
-            }
-            catch (URISyntaxException e)
-            {
+            } catch (URISyntaxException e) {
                 FMLLog.log.error("Error finding Minecraft jar: ", e);
                 return false;
             }
@@ -779,125 +653,110 @@ public class CraftingHelper {
         FileSystem fs = null;
         boolean success = true;
 
-        try
-        {
+        try {
             Path root = null;
 
-            if (source.isFile())
-            {
-                try
-                {
-                    fs = FileSystems.newFileSystem(source.toPath(), (ClassLoader)null);
+            if (source.isFile()) {
+                try {
+                    fs = FileSystems.newFileSystem(source.toPath(), (ClassLoader) null);
                     root = fs.getPath("/" + base);
-                }
-                catch (IOException e)
-                {
+                } catch (IOException e) {
                     FMLLog.log.error("Error loading FileSystem from jar: ", e);
                     return false;
                 }
-            }
-            else if (source.isDirectory())
-            {
+            } else if (source.isDirectory()) {
                 root = source.toPath().resolve(base);
             }
-    
+
             if (root == null || !Files.exists(root))
                 return defaultUnfoundRoot;
-    
-            if (preprocessor != null)
-            {
+
+            if (preprocessor != null) {
                 Boolean cont = preprocessor.apply(root);
                 if (cont == null || !cont.booleanValue())
                     return false;
             }
-        
-            if (processor != null)
-            {
+
+            if (processor != null) {
                 Iterator<Path> itr = null;
-                try
-                {
+                try {
                     itr = Files.walk(root).iterator();
-                }
-                catch (IOException e)
-                {
+                } catch (IOException e) {
                     FMLLog.log.error("Error iterating filesystem for: {}", mod.getModId(), e);
                     return false;
                 }
-    
-                while (itr != null && itr.hasNext())
-                {
+
+                while (itr != null && itr.hasNext()) {
                     Boolean cont = processor.apply(root, itr.next());
-    
-                    if (visitAllFiles)
-                    {
+
+                    if (visitAllFiles) {
                         success &= cont != null && cont;
-                    }
-                    else if (cont == null || !cont)
-                    {
+                    } else if (cont == null || !cont) {
                         return false;
                     }
                 }
             }
-        }
-        finally
-        {
+        } finally {
             IOUtils.closeQuietly(fs);
         }
 
         return success;
     }
 
-    public static JsonContext loadContext(ResourceLocation path) throws IOException
-    {
+    public static JsonContext loadContext(ResourceLocation path) throws IOException {
         ModContainer mod = Loader.instance().activeModContainer();
-        if(mod == null)
-        {
+        if (mod == null) {
             throw new IllegalStateException("No active mod container");
         }
         return loadContext(path, mod);
-     }
-    
-    public static JsonContext loadContext(ResourceLocation path, ModContainer mod) throws IOException
-    {
+    }
+
+    public static JsonContext loadContext(ResourceLocation path, ModContainer mod) throws IOException {
         return loadContext(mod, new JsonContext(mod.getModId()), path);
     }
 
-    private static JsonContext loadContext(JsonContext ctx, File file) throws IOException
-    {
-        try(BufferedReader reader = new BufferedReader(new FileReader(file)))
-        {
+    private static JsonContext loadContext(JsonContext ctx, File file) throws IOException {
+        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
             JsonObject[] json = JsonUtils.fromJson(GSON, reader, JsonObject[].class);
             ctx.loadConstants(json);
             return ctx;
-        }
-        catch (IOException e)
-        {
+        } catch (IOException e) {
             throw new IOException("Error loading constants from file: " + file.getAbsolutePath(), e);
         }
     }
 
-    private static JsonContext loadContext(ModContainer mod, JsonContext ctx, ResourceLocation path) throws IOException
-    {
+    private static JsonContext loadContext(ModContainer mod, JsonContext ctx, ResourceLocation path) throws IOException {
         Path fPath = null;
-        if(mod.getSource().isFile())
-        {
-            try(FileSystem fs = FileSystems.newFileSystem(mod.getSource().toPath(), (ClassLoader)null))
-            {
+        if (mod.getSource().isFile()) {
+            try (FileSystem fs = FileSystems.newFileSystem(mod.getSource().toPath(), (ClassLoader) null)) {
                 fPath = fs.getPath("assets", path.getResourceDomain(), path.getResourcePath());
             }
-        }
-        else if (mod.getSource().isDirectory())
-        {
+        } else if (mod.getSource().isDirectory()) {
             fPath = mod.getSource().toPath().resolve(Paths.get("assets", path.getResourceDomain(), path.getResourcePath()));
         }
 
-        if (fPath != null && Files.exists(fPath))
-        {
+        if (fPath != null && Files.exists(fPath)) {
             return loadContext(ctx, fPath.toFile());
-        } 
-        else 
-        {
+        } else {
             throw new FileNotFoundException(fPath != null ? fPath.toString() : path.toString());
+        }
+    }
+
+    public static class ShapedPrimer {
+        public int height, width;
+        public boolean mirrored = true;
+        public NonNullList<Ingredient> input;
+    }
+
+    public static final class FactoryLoader<T> {
+        final String name;
+        final Class<T> type;
+        final BiConsumer<ResourceLocation, T> consumer;
+
+        FactoryLoader(String name, Class<T> type, BiConsumer<ResourceLocation, T> consumer) {
+            this.name = name;
+            this.type = type;
+            this.consumer = consumer;
         }
     }
 }

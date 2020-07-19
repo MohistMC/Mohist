@@ -1,9 +1,10 @@
 package org.bukkit;
 
 import com.google.common.collect.Maps;
+import org.apache.commons.lang.Validate;
+
 import java.util.Map;
 import java.util.regex.Pattern;
-import org.apache.commons.lang.Validate;
 
 /**
  * All supported color values for chat
@@ -247,7 +248,7 @@ public enum ChatColor {
      *
      * @param code Code to check
      * @return Associative {@link org.bukkit.ChatColor} with the given code,
-     *     or null if it doesn't exist
+     * or null if it doesn't exist
      */
     public static ChatColor getByChar(char code) {
         return BY_CHAR.get(code);
@@ -258,7 +259,7 @@ public enum ChatColor {
      *
      * @param code Code to check
      * @return Associative {@link org.bukkit.ChatColor} with the given code,
-     *     or null if it doesn't exist
+     * or null if it doesn't exist
      */
     public static ChatColor getByChar(String code) {
         Validate.notNull(code, "Code cannot be null");
@@ -287,7 +288,7 @@ public enum ChatColor {
      * character. The alternate color code character will only be replaced if
      * it is immediately followed by 0-9, A-F, a-f, K-O, k-o, R or r.
      *
-     * @param altColorChar The alternate color code character to replace. Ex: {@literal &}
+     * @param altColorChar    The alternate color code character to replace. Ex: {@literal &}
      * @param textToTranslate Text containing the alternate color code character.
      * @return Text containing the ChatColor.COLOR_CODE color code character.
      */

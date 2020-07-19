@@ -1,21 +1,25 @@
 package co.aikar.util;
 
 import com.google.common.collect.ForwardingMap;
+
 import java.util.HashMap;
 import java.util.Map;
 
-public class Counter <T> extends ForwardingMap<T, Long> {
+public class Counter<T> extends ForwardingMap<T, Long> {
     private final Map<T, Long> counts = new HashMap<>();
 
     public long decrement(T key) {
         return increment(key, -1);
     }
+
     public long increment(T key) {
         return increment(key, 1);
     }
+
     public long decrement(T key, long amount) {
         return decrement(key, -amount);
     }
+
     public long increment(T key, long amount) {
         Long count = this.getCount(key);
         count += amount;

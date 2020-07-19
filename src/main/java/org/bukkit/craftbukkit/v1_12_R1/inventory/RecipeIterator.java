@@ -1,11 +1,12 @@
 package org.bukkit.craftbukkit.v1_12_R1.inventory;
 
-import java.util.Iterator;
 import net.minecraft.item.crafting.CraftingManager;
 import net.minecraft.item.crafting.FurnaceRecipes;
 import net.minecraft.item.crafting.IRecipe;
 import org.bukkit.inventory.Recipe;
 import red.mohist.recipe.RecipeUtils;
+
+import java.util.Iterator;
 
 public class RecipeIterator implements Iterator<Recipe> {
     private final Iterator<IRecipe> recipes;

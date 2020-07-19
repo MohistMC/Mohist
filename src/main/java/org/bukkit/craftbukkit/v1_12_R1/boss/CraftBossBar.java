@@ -2,9 +2,6 @@ package org.bukkit.craftbukkit.v1_12_R1.boss;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
-import java.util.EnumSet;
-import java.util.List;
-import java.util.Set;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.network.play.server.SPacketUpdateBossInfo;
 import net.minecraft.world.BossInfo;
@@ -16,6 +13,10 @@ import org.bukkit.boss.BossBar;
 import org.bukkit.craftbukkit.v1_12_R1.entity.CraftPlayer;
 import org.bukkit.craftbukkit.v1_12_R1.util.CraftChatMessage;
 import org.bukkit.entity.Player;
+
+import java.util.EnumSet;
+import java.util.List;
+import java.util.Set;
 
 public class CraftBossBar implements BossBar {
 

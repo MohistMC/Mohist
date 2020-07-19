@@ -19,8 +19,6 @@
 
 package net.minecraftforge.common.chunkio;
 
-import java.io.IOException;
-import java.util.concurrent.ConcurrentLinkedQueue;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.world.chunk.Chunk;
@@ -29,58 +27,49 @@ import net.minecraft.world.gen.ChunkProviderServer;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.world.ChunkDataEvent;
 
-class ChunkIOProvider implements Runnable
-{
+import java.io.IOException;
+import java.util.concurrent.ConcurrentLinkedQueue;
+
+class ChunkIOProvider implements Runnable {
     private final QueuedChunk chunkInfo;
     private final AnvilChunkLoader loader;
     private final ChunkProviderServer provider;
-
+    private final ConcurrentLinkedQueue<Runnable> callbacks = new ConcurrentLinkedQueue<Runnable>();
     private Chunk chunk;
     private NBTTagCompound nbt;
-    private final ConcurrentLinkedQueue<Runnable> callbacks = new ConcurrentLinkedQueue<Runnable>();
     private boolean ran = false;
 
-    ChunkIOProvider(QueuedChunk chunk, AnvilChunkLoader loader, ChunkProviderServer provider)
-    {
+    ChunkIOProvider(QueuedChunk chunk, AnvilChunkLoader loader, ChunkProviderServer provider) {
         this.chunkInfo = chunk;
         this.loader = loader;
         this.provider = provider;
     }
 
-    public void addCallback(Runnable callback)
-    {
+    public void addCallback(Runnable callback) {
         this.callbacks.add(callback);
     }
-    public void removeCallback(Runnable callback)
-    {
+
+    public void removeCallback(Runnable callback) {
         this.callbacks.remove(callback);
     }
 
     @Override
     public void run() // async stuff
     {
-        synchronized(this)
-        {
-            try
-            {
+        synchronized (this) {
+            try {
                 Object[] data = null;
-                try
-                {
+                try {
                     data = this.loader.loadChunk__Async(chunkInfo.world, chunkInfo.x, chunkInfo.z);
-                }
-                catch (IOException e)
-                {
+                } catch (IOException e) {
                     throw new RuntimeException(e); // Allow exception to bubble up to afterExecute
                 }
-    
-                if (data != null)
-                {
-                    this.nbt   = (NBTTagCompound)data[1];
-                    this.chunk = (Chunk)data[0];
+
+                if (data != null) {
+                    this.nbt = (NBTTagCompound) data[1];
+                    this.chunk = (Chunk) data[0];
                 }
-            }
-            finally 
-            {
+            } finally {
                 this.ran = true;
                 this.notifyAll();
             }
@@ -88,10 +77,8 @@ class ChunkIOProvider implements Runnable
     }
 
     // sync stuff
-    public void syncCallback()
-    {
-        if (chunk == null)
-        {
+    public void syncCallback() {
+        if (chunk == null) {
             this.runCallbacks();
             return;
         }
@@ -110,33 +97,27 @@ class ChunkIOProvider implements Runnable
         this.runCallbacks();
     }
 
-    public Chunk getChunk()
-    {
+    public Chunk getChunk() {
         return this.chunk;
     }
 
-    public boolean runFinished()
-    {
+    public boolean runFinished() {
         return this.ran;
     }
 
-    public boolean hasCallback()
-    {
+    public boolean hasCallback() {
         return this.callbacks.size() > 0;
     }
 
-    public void runCallbacks()
-    {
-        for (Runnable r : this.callbacks)
-        {
+    public void runCallbacks() {
+        for (Runnable r : this.callbacks) {
             r.run();
         }
 
         this.callbacks.clear();
     }
 
-    public QueuedChunk getChunkInfo() 
-    {
-    	return chunkInfo;
+    public QueuedChunk getChunkInfo() {
+        return chunkInfo;
     }
 }

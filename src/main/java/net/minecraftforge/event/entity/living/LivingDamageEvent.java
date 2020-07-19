@@ -42,23 +42,29 @@ import net.minecraftforge.fml.common.eventhandler.Cancelable;
  * If this event is canceled, the Entity is not hurt. Used resources WILL NOT be restored.<br>
  * <br>
  * This event does not have a result. {@link HasResult}<br>
+ *
  * @see LivingHurtEvent
  **/
 @Cancelable
-public class LivingDamageEvent extends LivingEvent
-{
+public class LivingDamageEvent extends LivingEvent {
     private final DamageSource source;
     private float amount;
-    public LivingDamageEvent(EntityLivingBase entity, DamageSource source, float amount)
-    {
+
+    public LivingDamageEvent(EntityLivingBase entity, DamageSource source, float amount) {
         super(entity);
         this.source = source;
         this.amount = amount;
     }
 
-    public DamageSource getSource() { return source; }
+    public DamageSource getSource() {
+        return source;
+    }
 
-    public float getAmount() { return amount; }
+    public float getAmount() {
+        return amount;
+    }
 
-    public void setAmount(float amount) { this.amount = amount; }
+    public void setAmount(float amount) {
+        this.amount = amount;
+    }
 }

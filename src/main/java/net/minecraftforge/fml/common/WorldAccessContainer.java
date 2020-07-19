@@ -19,15 +19,16 @@
 
 package net.minecraftforge.fml.common;
 
-import java.util.Map;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.storage.SaveHandler;
 import net.minecraft.world.storage.WorldInfo;
 
+import java.util.Map;
 
-public interface WorldAccessContainer
-{
+
+public interface WorldAccessContainer {
     NBTTagCompound getDataForWriting(SaveHandler handler, WorldInfo info);
+
     void readData(SaveHandler handler, WorldInfo info, Map<String, NBTBase> propertyMap, NBTTagCompound tag);
 }

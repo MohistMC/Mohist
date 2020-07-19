@@ -1,10 +1,11 @@
 package org.bukkit.entity;
 
-import java.util.List;
 import org.bukkit.Color;
 import org.bukkit.potion.PotionData;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
+
+import java.util.List;
 
 public interface TippedArrow extends Arrow {
 
@@ -57,9 +58,9 @@ public interface TippedArrow extends Arrow {
     /**
      * Adds a custom potion effect to this arrow.
      *
-     * @param effect the potion effect to add
+     * @param effect    the potion effect to add
      * @param overwrite true if any existing effect of the same type should be
-     * overwritten
+     *                  overwritten
      * @return true if the effect was added as a result of this call
      */
     boolean addCustomEffect(PotionEffect effect, boolean overwrite);
@@ -70,7 +71,7 @@ public interface TippedArrow extends Arrow {
      * @param type the potion effect type to remove
      * @return true if the an effect was removed as a result of this call
      * @throws IllegalArgumentException if this operation would leave the Arrow
-     * in a state with no Custom Effects and PotionType.UNCRAFTABLE
+     *                                  in a state with no Custom Effects and PotionType.UNCRAFTABLE
      */
     boolean removeCustomEffect(PotionEffectType type);
 
@@ -86,7 +87,7 @@ public interface TippedArrow extends Arrow {
      * Removes all custom potion effects from this arrow.
      *
      * @throws IllegalArgumentException if this operation would leave the Arrow
-     * in a state with no Custom Effects and PotionType.UNCRAFTABLE
+     *                                  in a state with no Custom Effects and PotionType.UNCRAFTABLE
      */
     void clearCustomEffects();
 }

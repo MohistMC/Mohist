@@ -1,19 +1,16 @@
 package org.bukkit.entity;
 
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
-import org.bukkit.EntityEffect;
-import org.bukkit.Location;
-import org.bukkit.Nameable;
-import org.bukkit.Server;
-import org.bukkit.World;
+import org.bukkit.*;
 import org.bukkit.block.PistonMoveReaction;
 import org.bukkit.command.CommandSender;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import org.bukkit.metadata.Metadatable;
 import org.bukkit.util.Vector;
+
+import java.util.List;
+import java.util.Set;
+import java.util.UUID;
 
 /**
  * Represents a base entity in the world
@@ -96,7 +93,7 @@ public interface Entity extends Metadatable, CommandSender, Nameable {
      * vehicle, it will be dismounted prior to teleportation.
      *
      * @param location New location to teleport this entity to
-     * @param cause The cause of this teleportation
+     * @param cause    The cause of this teleportation
      * @return <code>true</code> if the teleport was successful
      */
     public boolean teleport(Location location, TeleportCause cause);
@@ -115,7 +112,7 @@ public interface Entity extends Metadatable, CommandSender, Nameable {
      * vehicle, it will be dismounted prior to teleportation.
      *
      * @param destination Entity to teleport this entity to
-     * @param cause The cause of this teleportation
+     * @param cause       The cause of this teleportation
      * @return <code>true</code> if the teleport was successful
      */
     public boolean teleport(Entity destination, TeleportCause cause);
@@ -269,7 +266,7 @@ public interface Entity extends Metadatable, CommandSender, Nameable {
      * This event may have been cancelled.
      *
      * @return the last known {@link EntityDamageEvent} or null if hitherto
-     *     unharmed
+     * unharmed
      */
     public EntityDamageEvent getLastDamageCause();
 

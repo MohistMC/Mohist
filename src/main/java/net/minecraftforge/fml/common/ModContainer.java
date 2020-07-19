@@ -21,15 +21,16 @@ package net.minecraftforge.fml.common;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.eventbus.EventBus;
+import net.minecraftforge.fml.common.versioning.ArtifactVersion;
+import net.minecraftforge.fml.common.versioning.VersionRange;
+
+import javax.annotation.Nullable;
 import java.io.File;
 import java.net.URL;
 import java.security.cert.Certificate;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import javax.annotation.Nullable;
-import net.minecraftforge.fml.common.versioning.ArtifactVersion;
-import net.minecraftforge.fml.common.versioning.VersionRange;
 
 /**
  * The container that wraps around mods in the system.
@@ -41,14 +42,11 @@ import net.minecraftforge.fml.common.versioning.VersionRange;
  * </p>
  *
  * @author cpw
- *
  */
 
-public interface ModContainer
-{
-    public static enum Disableable {
-        YES, RESTART, NEVER, DEPENDENCIES;
-    }
+public interface ModContainer {
+    public static final Map<String, String> EMPTY_PROPERTIES = ImmutableMap.of();
+
     /**
      * The globally unique modid for this mod
      */
@@ -143,8 +141,7 @@ public interface ModContainer
     @Nullable
     Certificate getSigningCertificate();
 
-    public static final Map<String,String> EMPTY_PROPERTIES = ImmutableMap.of();
-    Map<String,String> getCustomModProperties();
+    Map<String, String> getCustomModProperties();
 
     public Class<?> getCustomResourcePackClass();
 
@@ -160,7 +157,11 @@ public interface ModContainer
 
     URL getUpdateUrl();
 
+    int getClassVersion();
+
     void setClassVersion(int classVersion);
 
-    int getClassVersion();
+    public static enum Disableable {
+        YES, RESTART, NEVER, DEPENDENCIES;
+    }
 }

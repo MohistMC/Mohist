@@ -20,20 +20,20 @@ public interface Painting extends Hanging {
      *
      * @param art The new art
      * @return False if the new art won't fit at the painting's current
-     *     location
+     * location
      */
     public boolean setArt(Art art);
 
     /**
      * Set the art on this painting
      *
-     * @param art The new art
+     * @param art   The new art
      * @param force If true, force the new art regardless of whether it fits
-     *     at the current location. Note that forcing it where it can't fit
-     *     normally causes it to drop as an item unless you override this by
-     *     catching the {@link HangingBreakEvent}.
+     *              at the current location. Note that forcing it where it can't fit
+     *              normally causes it to drop as an item unless you override this by
+     *              catching the {@link HangingBreakEvent}.
      * @return False if force was false and the new art won't fit at the
-     *     painting's current location
+     * painting's current location
      */
     public boolean setArt(Art art, boolean force);
 }

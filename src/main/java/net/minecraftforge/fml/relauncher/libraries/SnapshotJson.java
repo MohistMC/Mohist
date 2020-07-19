@@ -23,6 +23,8 @@ import com.google.common.io.Files;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonSyntaxException;
+import net.minecraftforge.fml.common.FMLLog;
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -32,73 +34,60 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-import net.minecraftforge.fml.common.FMLLog;
+
 /**
  * This is different from the standard maven snapshot metadata.
  * Because none of that data is exposed to us as a user of gradle/maven/whatever.
  * So we JUST use the timestamp.
- *
+ * <p>
  * {
- *   "latest": "yyyyMMdd.hhmmss",
- *   "versions": [
- *     {
- *       "md5": "md5 in hex lowercase",
- *       "timestamp": "yyyyMMdd.hhmmss"
- *   ]
+ * "latest": "yyyyMMdd.hhmmss",
+ * "versions": [
+ * {
+ * "md5": "md5 in hex lowercase",
+ * "timestamp": "yyyyMMdd.hhmmss"
+ * ]
  * }
- *
  */
-public class SnapshotJson implements Comparable<SnapshotJson>
-{
+public class SnapshotJson implements Comparable<SnapshotJson> {
     public static final DateFormat TIMESTAMP = new SimpleDateFormat("yyyyMMdd.hhmmss");
     public static final String META_JSON_FILE = "maven-metadata.json";
     private static final Gson GSON = new GsonBuilder().create();
     private static final Comparator<Entry> SORTER = (o1, o2) -> o2.timestamp.compareTo(o1.timestamp);
+    private String latest;
+    private List<Entry> versions;
 
-    public static SnapshotJson create(File target)
-    {
+    public static SnapshotJson create(File target) {
         if (!target.exists())
             return new SnapshotJson();
 
-        try
-        {
+        try {
             String json = Files.asCharSource(target, StandardCharsets.UTF_8).read();
             SnapshotJson obj = GSON.fromJson(json, SnapshotJson.class);
             obj.updateLatest();
             return obj;
-        }
-        catch (JsonSyntaxException jse)
-        {
+        } catch (JsonSyntaxException jse) {
             FMLLog.log.info(FMLLog.log.getMessageFactory().newMessage("Failed to parse snapshot json file {}.", target), jse);
-        }
-        catch (IOException ioe)
-        {
+        } catch (IOException ioe) {
             FMLLog.log.info(FMLLog.log.getMessageFactory().newMessage("Failed to read snapshot json file {}.", target), ioe);
         }
 
         return new SnapshotJson();
     }
 
-    private String latest;
-    private List<Entry> versions;
-
-    public String getLatest()
-    {
+    public String getLatest() {
         return this.latest;
     }
 
-    public void add(Entry data)
-    {
+    public void add(Entry data) {
         if (versions == null)
             versions = new ArrayList<>();
         versions.add(data);
         updateLatest();
     }
 
-    public void merge(SnapshotJson o)
-    {
-        if (o.versions != null)
-        {
+    public void merge(SnapshotJson o) {
+        if (o.versions != null) {
             if (versions == null)
                 versions = new ArrayList<>(o.versions);
             else
@@ -107,8 +96,7 @@ public class SnapshotJson implements Comparable<SnapshotJson>
         }
     }
 
-    public boolean remove(String timestamp)
-    {
+    public boolean remove(String timestamp) {
         if (versions == null)
             return false;
         if (versions.removeIf(e -> e.timestamp.equals(timestamp)))
@@ -116,10 +104,8 @@ public class SnapshotJson implements Comparable<SnapshotJson>
         return false;
     }
 
-    public String updateLatest()
-    {
-        if (versions == null)
-        {
+    public String updateLatest() {
+        if (versions == null) {
             latest = null;
             return null;
         }
@@ -127,35 +113,29 @@ public class SnapshotJson implements Comparable<SnapshotJson>
         return latest = versions.isEmpty() ? null : versions.get(0).timestamp;
     }
 
-    public void write(File target) throws IOException
-    {
+    public void write(File target) throws IOException {
         Files.write(GSON.toJson(this), target, StandardCharsets.UTF_8);
     }
 
     @Override
-    public int compareTo(SnapshotJson o)
-    {
+    public int compareTo(SnapshotJson o) {
         return o == null ? 1 : o.latest == null ? latest == null ? 0 : 1 : latest == null ? -1 : o.latest.compareTo(latest);
     }
 
-    public static class Entry
-    {
+    public static class Entry {
         private String timestamp;
         private String md5;
 
-        public Entry(String timestamp, String md5)
-        {
+        public Entry(String timestamp, String md5) {
             this.timestamp = timestamp;
             this.md5 = md5;
         }
 
-        public String getTimestamp()
-        {
+        public String getTimestamp() {
             return this.timestamp;
         }
 
-        public String getMd5()
-        {
+        public String getMd5() {
             return this.md5;
         }
     }

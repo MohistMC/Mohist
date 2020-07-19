@@ -4,11 +4,12 @@
  */
 package org.bukkit.craftbukkit.v1_12_R1.generator;
 
-import java.util.Arrays;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.generator.ChunkGenerator;
 import org.bukkit.material.MaterialData;
+
+import java.util.Arrays;
 
 /**
  * Data to be used for the block types and data in a newly generated chunk.

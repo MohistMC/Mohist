@@ -31,30 +31,26 @@ import net.minecraftforge.fml.common.eventhandler.Event;
  * TODO This may get merged in 11 with RenderSpecificHandEvent to make a generic hand rendering
  */
 @Cancelable
-public class RenderHandEvent extends Event
-{
+public class RenderHandEvent extends Event {
     private final RenderGlobal context;
     private final float partialTicks;
     private final int renderPass;
-    public RenderHandEvent(RenderGlobal context, float partialTicks, int renderPass)
-    {
+
+    public RenderHandEvent(RenderGlobal context, float partialTicks, int renderPass) {
         this.context = context;
         this.partialTicks = partialTicks;
         this.renderPass = renderPass;
     }
 
-    public RenderGlobal getContext()
-    {
+    public RenderGlobal getContext() {
         return context;
     }
 
-    public float getPartialTicks()
-    {
+    public float getPartialTicks() {
         return partialTicks;
     }
 
-    public int getRenderPass()
-    {
+    public int getRenderPass() {
         return renderPass;
     }
 }

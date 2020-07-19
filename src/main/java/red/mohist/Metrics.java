@@ -1,22 +1,5 @@
 package red.mohist;
 
-import java.io.ByteArrayOutputStream;
-import java.io.DataOutputStream;
-import java.io.File;
-import java.io.IOException;
-import java.net.URL;
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-import java.util.concurrent.Callable;
-import java.util.concurrent.TimeUnit;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import java.util.zip.GZIPOutputStream;
-import javax.net.ssl.HttpsURLConnection;
 import net.minecraft.server.MinecraftServer;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -24,9 +7,23 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import red.mohist.common.async.MohistThreadBox;
 
+import javax.net.ssl.HttpsURLConnection;
+import java.io.ByteArrayOutputStream;
+import java.io.DataOutputStream;
+import java.io.File;
+import java.io.IOException;
+import java.net.URL;
+import java.nio.charset.StandardCharsets;
+import java.util.*;
+import java.util.concurrent.Callable;
+import java.util.concurrent.TimeUnit;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.zip.GZIPOutputStream;
+
 /**
  * bStats collects some data for plugin authors.
- *
+ * <p>
  * Check out https://bStats.org/ to learn more about bStats!
  */
 public class Metrics {
@@ -36,8 +33,8 @@ public class Metrics {
     private final List<CustomChart> charts = new ArrayList<>();
 
     public Metrics(String name, String serverUUID, boolean logFailedRequests) {
-            this.name = name;
-            this.serverUUID = serverUUID;
+        this.name = name;
+        this.serverUUID = serverUUID;
 
         startSubmitting();
     }
@@ -116,14 +113,18 @@ public class Metrics {
         pluginData.add(getPluginData());
         data.put("plugins", pluginData);
 
-        try { sendData(data); } catch (Exception ignored) {}
+        try {
+            sendData(data);
+        } catch (Exception ignored) {
+        }
     }
 
     public static abstract class CustomChart {
         final String chartId;
 
         CustomChart(String chartId) {
-            if (chartId == null || chartId.isEmpty()) throw new IllegalArgumentException("ChartId cannot be null or empty!");
+            if (chartId == null || chartId.isEmpty())
+                throw new IllegalArgumentException("ChartId cannot be null or empty!");
             this.chartId = chartId;
         }
 
@@ -134,7 +135,9 @@ public class Metrics {
                 JSONObject data = getChartData();
                 if (data == null) return null;
                 chart.put("data", data);
-            } catch (Throwable t) { return null; }
+            } catch (Throwable t) {
+                return null;
+            }
             return chart;
         }
 
@@ -231,7 +234,10 @@ public class Metrics {
                                 "This has nearly no effect on the server performance!\n" +
                                 "Check out https://bStats.org/ to learn more :)"
                 ).copyDefaults(true);
-                try { config.save(configFile); } catch (IOException ignored) {}
+                try {
+                    config.save(configFile);
+                } catch (IOException ignored) {
+                }
             }
 
             String serverUUID = config.getString("serverUuid");

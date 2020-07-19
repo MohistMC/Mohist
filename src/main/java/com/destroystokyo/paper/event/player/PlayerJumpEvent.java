@@ -79,7 +79,7 @@ public class PlayerJumpEvent extends PlayerEvent implements Cancellable {
 
     /**
      * Gets the location this player jumped to
-     *
+     * <p>
      * This information is based on what the client sends, it typically
      * has little relation to the arc of the jump at any given point.
      *

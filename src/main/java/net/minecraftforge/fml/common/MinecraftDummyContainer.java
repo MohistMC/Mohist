@@ -20,64 +20,58 @@
 package net.minecraftforge.fml.common;
 
 import com.google.common.eventbus.EventBus;
-import java.io.File;
-import java.security.cert.Certificate;
-import javax.annotation.Nullable;
 import net.minecraftforge.fml.common.versioning.VersionParser;
 import net.minecraftforge.fml.common.versioning.VersionRange;
 import net.minecraftforge.fml.relauncher.FMLLaunchHandler;
 import net.minecraftforge.fml.relauncher.Side;
 
-public class MinecraftDummyContainer extends DummyModContainer
-{
+import javax.annotation.Nullable;
+import java.io.File;
+import java.security.cert.Certificate;
+
+public class MinecraftDummyContainer extends DummyModContainer {
 
     private VersionRange staticRange;
-    public MinecraftDummyContainer(String actualMCVersion)
-    {
+
+    public MinecraftDummyContainer(String actualMCVersion) {
         super(new ModMetadata());
         getMetadata().modId = "minecraft";
         getMetadata().name = "Minecraft";
         getMetadata().version = actualMCVersion;
-        staticRange = VersionParser.parseRange("["+actualMCVersion+"]");
+        staticRange = VersionParser.parseRange("[" + actualMCVersion + "]");
     }
 
     @Override
-    public boolean isImmutable()
-    {
+    public boolean isImmutable() {
         return true;
     }
 
     @Override
-    public File getSource()
-    {
+    public File getSource() {
         return new File("minecraft.jar");
     }
 
     @Override
-    public boolean registerBus(EventBus bus, LoadController controller)
-    {
+    public boolean registerBus(EventBus bus, LoadController controller) {
         return true;
     }
 
-    public VersionRange getStaticVersionRange()
-    {
+    public VersionRange getStaticVersionRange() {
         return staticRange;
     }
 
     @Override
     @Nullable
-    public Certificate getSigningCertificate()
-    {
+    public Certificate getSigningCertificate() {
         if (FMLLaunchHandler.side() != Side.CLIENT)
             return null;
 
-        try
-        {
+        try {
             Class<?> cbr = Class.forName("net.minecraft.client.ClientBrandRetriever", false, getClass().getClassLoader());
             Certificate[] certificates = cbr.getProtectionDomain().getCodeSource().getCertificates();
             return certificates != null ? certificates[0] : null;
-        }
-        catch (Exception ignored){} // Errors don't matter just return null.
+        } catch (Exception ignored) {
+        } // Errors don't matter just return null.
         return null;
     }
 }

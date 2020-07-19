@@ -61,7 +61,8 @@ public enum ClickType {
      * <p>
      * Any ClickType.UNKNOWN is called on a best-effort basis.
      */
-    UNKNOWN,;
+    UNKNOWN,
+    ;
 
     /**
      * Gets whether this ClickType represents the pressing of a key on a

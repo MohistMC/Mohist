@@ -40,22 +40,19 @@ import net.minecraftforge.fml.common.eventhandler.Cancelable;
  * This event is fired on the {@link MinecraftForge#EVENT_BUS}.
  **/
 @Cancelable
-public class LivingHealEvent extends LivingEvent
-{
+public class LivingHealEvent extends LivingEvent {
     private float amount;
-    public LivingHealEvent(EntityLivingBase entity, float amount)
-    {
+
+    public LivingHealEvent(EntityLivingBase entity, float amount) {
         super(entity);
         this.setAmount(amount);
     }
 
-    public float getAmount()
-    {
+    public float getAmount() {
         return amount;
     }
 
-    public void setAmount(float amount)
-    {
+    public void setAmount(float amount) {
         this.amount = amount;
     }
 }

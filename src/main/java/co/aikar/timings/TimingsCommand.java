@@ -24,14 +24,15 @@
 package co.aikar.timings;
 
 import com.google.common.collect.ImmutableList;
-import java.util.ArrayList;
-import java.util.List;
 import org.apache.commons.lang.Validate;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.defaults.BukkitCommand;
 import org.bukkit.util.StringUtil;
 import red.mohist.util.i18n.Message;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class TimingsCommand extends BukkitCommand {
@@ -90,13 +91,13 @@ public class TimingsCommand extends BukkitCommand {
 
         } else if ("cost".equals(arg)) {
             sender.sendMessage(Message.getString("timings.command.9") + ": " + TimingsExport.getCost());
-        } else  if (
-            "paste".equalsIgnoreCase(arg) ||
-                "report".equalsIgnoreCase(arg) ||
-                "get".equalsIgnoreCase(arg) ||
-                "merged".equalsIgnoreCase(arg) ||
-                "separate".equalsIgnoreCase(arg)
-            ) {
+        } else if (
+                "paste".equalsIgnoreCase(arg) ||
+                        "report".equalsIgnoreCase(arg) ||
+                        "get".equalsIgnoreCase(arg) ||
+                        "merged".equalsIgnoreCase(arg) ||
+                        "separate".equalsIgnoreCase(arg)
+        ) {
             Timings.generateReport(sender);
         } else {
             sender.sendMessage(ChatColor.RED + "Usage: " + usageMessage);
@@ -112,7 +113,7 @@ public class TimingsCommand extends BukkitCommand {
 
         if (args.length == 1) {
             return StringUtil.copyPartialMatches(args[0], TIMINGS_SUBCOMMANDS,
-                new ArrayList<String>(TIMINGS_SUBCOMMANDS.size()));
+                    new ArrayList<String>(TIMINGS_SUBCOMMANDS.size()));
         }
         return ImmutableList.of();
     }

@@ -26,15 +26,14 @@ import net.minecraftforge.fml.relauncher.Side;
 /**
  * The parent of all mod-state changing events
  */
-public abstract class FMLStateEvent extends FMLEvent
-{
-    public FMLStateEvent(Object... data)
-    {
+public abstract class FMLStateEvent extends FMLEvent {
+    public FMLStateEvent(Object... data) {
 
     }
 
     /**
      * The current state of the mod
+     *
      * @return The current state of the mod
      */
     public abstract ModState getModState();
@@ -42,10 +41,10 @@ public abstract class FMLStateEvent extends FMLEvent
     /**
      * The side we're loading on. {@link Side#CLIENT} means we're loading in the client, {@link Side#SERVER} means
      * we're loading in the dedicated server.
+     *
      * @return Return which side we're loading on.
      */
-    public Side getSide()
-    {
+    public Side getSide() {
         return FMLCommonHandler.instance().getSide();
     }
 }

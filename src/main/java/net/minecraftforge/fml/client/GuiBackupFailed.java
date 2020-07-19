@@ -19,38 +19,35 @@
 
 package net.minecraftforge.fml.client;
 
-import java.io.File;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.resources.I18n;
 
-public class GuiBackupFailed extends GuiScreen
-{
+import java.io.File;
+
+public class GuiBackupFailed extends GuiScreen {
     private GuiScreen parent;
     private File zipName;
-    public GuiBackupFailed(GuiScreen parent, File zipName)
-    {
+
+    public GuiBackupFailed(GuiScreen parent, File zipName) {
         this.parent = parent;
         this.zipName = zipName;
     }
 
     @Override
-    public void initGui()
-    {
+    public void initGui() {
         this.buttonList.add(new GuiButton(1, this.width / 2 - 75, this.height - 38, I18n.format("gui.done")));
     }
 
     @Override
-    protected void actionPerformed(GuiButton p_73875_1_)
-    {
-        if (p_73875_1_.enabled && p_73875_1_.id == 1)
-        {
+    protected void actionPerformed(GuiButton p_73875_1_) {
+        if (p_73875_1_.enabled && p_73875_1_.id == 1) {
             FMLClientHandler.instance().showGuiScreen(parent);
         }
     }
+
     @Override
-    public void drawScreen(int mouseX, int mouseY, float partialTicks)
-    {
+    public void drawScreen(int mouseX, int mouseY, float partialTicks) {
         this.drawDefaultBackground();
         int offset = Math.max(85 - 2 * 10, 10);
         this.drawCenteredString(this.fontRenderer, String.format("There was an error saving the archive %s", zipName.getName()), this.width / 2, offset, 0xFFFFFF);

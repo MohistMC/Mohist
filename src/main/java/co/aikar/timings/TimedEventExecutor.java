@@ -23,13 +23,14 @@
  */
 package co.aikar.timings;
 
-import java.lang.reflect.Method;
 import org.bukkit.Bukkit;
 import org.bukkit.event.Event;
 import org.bukkit.event.EventException;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.EventExecutor;
 import org.bukkit.plugin.Plugin;
+
+import java.lang.reflect.Method;
 
 public class TimedEventExecutor implements EventExecutor {
 
@@ -39,9 +40,9 @@ public class TimedEventExecutor implements EventExecutor {
     /**
      * Wraps an event executor and associates a timing handler to it.
      *
-     * @param executor Executor to wrap
-     * @param plugin Owning plugin
-     * @param method EventHandler method
+     * @param executor   Executor to wrap
+     * @param plugin     Owning plugin
+     * @param method     EventHandler method
      * @param eventClass Owning class
      */
     public TimedEventExecutor(EventExecutor executor, Plugin plugin, Method method, Class<? extends Event> eventClass) {
@@ -64,7 +65,7 @@ public class TimedEventExecutor implements EventExecutor {
         final String eventName = eventClass.getSimpleName();
         boolean verbose = "BlockPhysicsEvent".equals(eventName);
         this.timings = Timings.ofSafe(plugin.getName(), (verbose ? "## " : "") +
-            "Event: " + id + " (" + eventName + ")", null);
+                "Event: " + id + " (" + eventName + ")", null);
     }
 
     @Override

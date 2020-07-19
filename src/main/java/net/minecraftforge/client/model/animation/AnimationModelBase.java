@@ -19,7 +19,6 @@
 
 package net.minecraftforge.client.model.animation;
 
-import java.util.List;
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
@@ -46,33 +45,31 @@ import net.minecraftforge.common.model.animation.IAnimationStateMachine;
 import org.apache.commons.lang3.tuple.Pair;
 import org.lwjgl.opengl.GL11;
 
+import java.util.List;
+
 /**
  * ModelBase that works with the Forge model system and animations.
  * Some quirks are still left, deprecated for the moment.
  */
 @Deprecated
-public class AnimationModelBase<T extends Entity> extends ModelBase implements IEventHandler<T>
-{
+public class AnimationModelBase<T extends Entity> extends ModelBase implements IEventHandler<T> {
     private final VertexLighterFlat lighter;
     private final ResourceLocation modelLocation;
 
-    public AnimationModelBase(ResourceLocation modelLocation, VertexLighterFlat lighter)
-    {
+    public AnimationModelBase(ResourceLocation modelLocation, VertexLighterFlat lighter) {
         this.modelLocation = modelLocation;
         this.lighter = lighter;
     }
 
     @SuppressWarnings("unchecked")
     @Override
-    public void render(Entity entity, float limbSwing, float limbSwingSpeed, float timeAlive, float yawHead, float rotationPitch, float scale)
-    {
+    public void render(Entity entity, float limbSwing, float limbSwingSpeed, float timeAlive, float yawHead, float rotationPitch, float scale) {
         IAnimationStateMachine capability = entity.getCapability(CapabilityAnimation.ANIMATION_CAPABILITY, null);
-        if (capability == null)
-        {
+        if (capability == null) {
             return;
         }
         Pair<IModelState, Iterable<Event>> pair = capability.apply(timeAlive / 20);
-        handleEvents((T)entity, timeAlive / 20, pair.getRight());
+        handleEvents((T) entity, timeAlive / 20, pair.getRight());
         IModel model = ModelLoaderRegistry.getModelOrMissing(modelLocation);
         IBakedModel bakedModel = model.bake(pair.getLeft(), DefaultVertexFormats.ITEM, ModelLoader.defaultTextureGetter());
 
@@ -92,24 +89,19 @@ public class AnimationModelBase<T extends Entity> extends ModelBase implements I
         lighter.setBlockPos(pos);
         boolean empty = true;
         List<BakedQuad> quads = bakedModel.getQuads(null, null, 0);
-        if(!quads.isEmpty())
-        {
+        if (!quads.isEmpty()) {
             lighter.updateBlockInfo();
             empty = false;
-            for(BakedQuad quad : quads)
-            {
+            for (BakedQuad quad : quads) {
                 quad.pipe(lighter);
             }
         }
-        for(EnumFacing side : EnumFacing.values())
-        {
+        for (EnumFacing side : EnumFacing.values()) {
             quads = bakedModel.getQuads(null, side, 0);
-            if(!quads.isEmpty())
-            {
-                if(empty) lighter.updateBlockInfo();
+            if (!quads.isEmpty()) {
+                if (empty) lighter.updateBlockInfo();
                 empty = false;
-                for(BakedQuad quad : quads)
-                {
+                for (BakedQuad quad : quads) {
                     quad.pipe(lighter);
                 }
             }
@@ -129,5 +121,6 @@ public class AnimationModelBase<T extends Entity> extends ModelBase implements I
     }
 
     @Override
-    public void handleEvents(T instance, float time, Iterable<Event> pastEvents) {}
+    public void handleEvents(T instance, float time, Iterable<Event> pastEvents) {
+    }
 }

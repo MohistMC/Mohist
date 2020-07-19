@@ -23,45 +23,38 @@ import net.minecraft.client.audio.ISound;
 import net.minecraft.client.audio.SoundManager;
 import net.minecraftforge.fml.common.eventhandler.Event;
 
-public class SoundEvent extends Event
-{
+public class SoundEvent extends Event {
     private final SoundManager manager;
-    public SoundEvent(SoundManager manager)
-    {
+
+    public SoundEvent(SoundManager manager) {
         this.manager = manager;
     }
 
-    public SoundManager getManager()
-    {
+    public SoundManager getManager() {
         return manager;
     }
 
-    public static class SoundSourceEvent extends SoundEvent
-    {
+    public static class SoundSourceEvent extends SoundEvent {
         private final ISound sound;
         private final String uuid;
         private final String name;
 
-        public SoundSourceEvent(SoundManager manager, ISound sound, String uuid)
-        {
+        public SoundSourceEvent(SoundManager manager, ISound sound, String uuid) {
             super(manager);
             this.name = sound.getSoundLocation().getResourcePath();
             this.sound = sound;
             this.uuid = uuid;
         }
 
-        public ISound getSound()
-        {
+        public ISound getSound() {
             return sound;
         }
 
-        public String getUuid()
-        {
+        public String getUuid() {
             return uuid;
         }
 
-        public String getName()
-        {
+        public String getName() {
             return name;
         }
     }

@@ -39,68 +39,56 @@ import net.minecraftforge.fml.common.eventhandler.Cancelable;
  * This event is fired on the {@link MinecraftForge#EVENT_BUS}.
  */
 @Cancelable
-public class ProjectileImpactEvent extends EntityEvent
-{
+public class ProjectileImpactEvent extends EntityEvent {
     private final RayTraceResult ray;
 
-    public ProjectileImpactEvent(Entity entity, RayTraceResult ray)
-    {
+    public ProjectileImpactEvent(Entity entity, RayTraceResult ray) {
         super(entity);
         this.ray = ray;
     }
 
-    public RayTraceResult getRayTraceResult()
-    {
+    public RayTraceResult getRayTraceResult() {
         return ray;
     }
 
     @Cancelable
-    public static class Arrow extends ProjectileImpactEvent
-    {
+    public static class Arrow extends ProjectileImpactEvent {
         private final EntityArrow arrow;
 
-        public Arrow(EntityArrow arrow, RayTraceResult ray)
-        {
+        public Arrow(EntityArrow arrow, RayTraceResult ray) {
             super(arrow, ray);
             this.arrow = arrow;
         }
 
-        public EntityArrow getArrow()
-        {
+        public EntityArrow getArrow() {
             return arrow;
         }
     }
 
     @Cancelable
-    public static class Fireball extends ProjectileImpactEvent
-    {
+    public static class Fireball extends ProjectileImpactEvent {
         private final EntityFireball fireball;
 
-        public Fireball(EntityFireball fireball, RayTraceResult ray)
-        {
+        public Fireball(EntityFireball fireball, RayTraceResult ray) {
             super(fireball, ray);
             this.fireball = fireball;
         }
 
-        public EntityFireball getFireball()
-        {
+        public EntityFireball getFireball() {
             return fireball;
         }
     }
 
     @Cancelable
-    public static class Throwable extends ProjectileImpactEvent
-    {
+    public static class Throwable extends ProjectileImpactEvent {
         private final EntityThrowable throwable;
 
-        public Throwable(EntityThrowable throwable, RayTraceResult ray)
-        {
+        public Throwable(EntityThrowable throwable, RayTraceResult ray) {
             super(throwable, ray);
             this.throwable = throwable;
         }
 
-        public EntityThrowable getThrowable()
-        {
+        public EntityThrowable getThrowable() {
             return throwable;
         }
     }

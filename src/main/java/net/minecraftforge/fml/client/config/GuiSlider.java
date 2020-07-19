@@ -19,22 +19,26 @@
 
 package net.minecraftforge.fml.client.config;
 
-import javax.annotation.Nullable;
 import net.minecraft.client.Minecraft;
+
+import javax.annotation.Nullable;
 
 /**
  * This class is blatantly stolen from iChunUtils with permission.
  *
  * @author iChun
  */
-public class GuiSlider extends GuiButtonExt
-{
-    /** The value of this slider control. */
+public class GuiSlider extends GuiButtonExt {
+    /**
+     * The value of this slider control.
+     */
     public double sliderValue = 1.0F;
 
     public String dispString = "";
 
-    /** Is this slider control being dragged. */
+    /**
+     * Is this slider control being dragged.
+     */
     public boolean dragging = false;
     public boolean showDecimal = true;
 
@@ -49,13 +53,11 @@ public class GuiSlider extends GuiButtonExt
 
     public boolean drawString = true;
 
-    public GuiSlider(int id, int xPos, int yPos, int width, int height, String prefix, String suf, double minVal, double maxVal, double currentVal, boolean showDec, boolean drawStr)
-    {
+    public GuiSlider(int id, int xPos, int yPos, int width, int height, String prefix, String suf, double minVal, double maxVal, double currentVal, boolean showDec, boolean drawStr) {
         this(id, xPos, yPos, width, height, prefix, suf, minVal, maxVal, currentVal, showDec, drawStr, null);
     }
 
-    public GuiSlider(int id, int xPos, int yPos, int width, int height, String prefix, String suf, double minVal, double maxVal, double currentVal, boolean showDec, boolean drawStr, @Nullable ISlider par)
-    {
+    public GuiSlider(int id, int xPos, int yPos, int width, int height, String prefix, String suf, double minVal, double maxVal, double currentVal, boolean showDec, boolean drawStr, @Nullable ISlider par) {
         super(id, xPos, yPos, width, height, prefix);
         minValue = minVal;
         maxValue = maxVal;
@@ -66,28 +68,23 @@ public class GuiSlider extends GuiButtonExt
         showDecimal = showDec;
         String val;
 
-        if (showDecimal)
-        {
+        if (showDecimal) {
             val = Double.toString(sliderValue * (maxValue - minValue) + minValue);
             precision = Math.min(val.substring(val.indexOf(".") + 1).length(), 4);
-        }
-        else
-        {
-            val = Integer.toString((int)Math.round(sliderValue * (maxValue - minValue) + minValue));
+        } else {
+            val = Integer.toString((int) Math.round(sliderValue * (maxValue - minValue) + minValue));
             precision = 0;
         }
 
         displayString = dispString + val + suffix;
 
         drawString = drawStr;
-        if(!drawString)
-        {
+        if (!drawString) {
             displayString = "";
         }
     }
 
-    public GuiSlider(int id, int xPos, int yPos, String displayStr, double minVal, double maxVal, double currentVal, ISlider par)
-    {
+    public GuiSlider(int id, int xPos, int yPos, String displayStr, double minVal, double maxVal, double currentVal, ISlider par) {
         this(id, xPos, yPos, 150, 20, displayStr, "", minVal, maxVal, currentVal, true, true, par);
     }
 
@@ -96,8 +93,7 @@ public class GuiSlider extends GuiButtonExt
      * this button.
      */
     @Override
-    public int getHoverState(boolean par1)
-    {
+    public int getHoverState(boolean par1) {
         return 0;
     }
 
@@ -105,17 +101,14 @@ public class GuiSlider extends GuiButtonExt
      * Fired when the mouse button is dragged. Equivalent of MouseListener.mouseDragged(MouseEvent e).
      */
     @Override
-    protected void mouseDragged(Minecraft par1Minecraft, int par2, int par3)
-    {
-        if (this.visible)
-        {
-            if (this.dragging)
-            {
-                this.sliderValue = (par2 - (this.x + 4)) / (float)(this.width - 8);
+    protected void mouseDragged(Minecraft par1Minecraft, int par2, int par3) {
+        if (this.visible) {
+            if (this.dragging) {
+                this.sliderValue = (par2 - (this.x + 4)) / (float) (this.width - 8);
                 updateSlider();
             }
 
-            GuiUtils.drawContinuousTexturedBox(BUTTON_TEXTURES, this.x + (int)(this.sliderValue * (float)(this.width - 8)), this.y, 0, 66, 8, this.height, 200, 20, 2, 3, 2, 2, this.zLevel);
+            GuiUtils.drawContinuousTexturedBox(BUTTON_TEXTURES, this.x + (int) (this.sliderValue * (float) (this.width - 8)), this.y, 0, 66, 8, this.height, 200, 20, 2, 3, 2, 2, this.zLevel);
         }
     }
 
@@ -124,68 +117,51 @@ public class GuiSlider extends GuiButtonExt
      * e).
      */
     @Override
-    public boolean mousePressed(Minecraft par1Minecraft, int par2, int par3)
-    {
-        if (super.mousePressed(par1Minecraft, par2, par3))
-        {
-            this.sliderValue = (float)(par2 - (this.x + 4)) / (float)(this.width - 8);
+    public boolean mousePressed(Minecraft par1Minecraft, int par2, int par3) {
+        if (super.mousePressed(par1Minecraft, par2, par3)) {
+            this.sliderValue = (float) (par2 - (this.x + 4)) / (float) (this.width - 8);
             updateSlider();
             this.dragging = true;
             return true;
-        }
-        else
-        {
+        } else {
             return false;
         }
     }
 
-    public void updateSlider()
-    {
-        if (this.sliderValue < 0.0F)
-        {
+    public void updateSlider() {
+        if (this.sliderValue < 0.0F) {
             this.sliderValue = 0.0F;
         }
 
-        if (this.sliderValue > 1.0F)
-        {
+        if (this.sliderValue > 1.0F) {
             this.sliderValue = 1.0F;
         }
 
         String val;
 
-        if (showDecimal)
-        {
+        if (showDecimal) {
             val = Double.toString(sliderValue * (maxValue - minValue) + minValue);
 
-            if (val.substring(val.indexOf(".") + 1).length() > precision)
-            {
+            if (val.substring(val.indexOf(".") + 1).length() > precision) {
                 val = val.substring(0, val.indexOf(".") + precision + 1);
 
-                if (val.endsWith("."))
-                {
+                if (val.endsWith(".")) {
                     val = val.substring(0, val.indexOf(".") + precision);
                 }
-            }
-            else
-            {
-                while (val.substring(val.indexOf(".") + 1).length() < precision)
-                {
+            } else {
+                while (val.substring(val.indexOf(".") + 1).length() < precision) {
                     val = val + "0";
                 }
             }
-        }
-        else
-        {
-            val = Integer.toString((int)Math.round(sliderValue * (maxValue - minValue) + minValue));
+        } else {
+            val = Integer.toString((int) Math.round(sliderValue * (maxValue - minValue) + minValue));
         }
 
-        if(drawString)
-        {
+        if (drawString) {
             displayString = dispString + val + suffix;
         }
 
-        if (parent != null)
-        {
+        if (parent != null) {
             parent.onChangeSliderValue(this);
         }
     }
@@ -194,28 +170,23 @@ public class GuiSlider extends GuiButtonExt
      * Fired when the mouse button is released. Equivalent of MouseListener.mouseReleased(MouseEvent e).
      */
     @Override
-    public void mouseReleased(int par1, int par2)
-    {
+    public void mouseReleased(int par1, int par2) {
         this.dragging = false;
     }
 
-    public int getValueInt()
-    {
-        return (int)Math.round(sliderValue * (maxValue - minValue) + minValue);
+    public int getValueInt() {
+        return (int) Math.round(sliderValue * (maxValue - minValue) + minValue);
     }
 
-    public double getValue()
-    {
+    public double getValue() {
         return sliderValue * (maxValue - minValue) + minValue;
     }
 
-    public void setValue(double d)
-    {
+    public void setValue(double d) {
         this.sliderValue = (d - minValue) / (maxValue - minValue);
     }
 
-    public static interface ISlider
-    {
+    public static interface ISlider {
         void onChangeSliderValue(GuiSlider slider);
     }
 }

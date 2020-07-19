@@ -31,68 +31,53 @@ import net.minecraftforge.common.model.animation.IJointClip;
 import net.minecraftforge.common.model.animation.JointClips;
 
 // FIXME: is this fast enough?
-public enum B3DClip implements IClip
-{
+public enum B3DClip implements IClip {
     INSTANCE;
 
     @Override
-    public IJointClip apply(final IJoint joint)
-    {
-        if(!(joint instanceof NodeJoint))
-        {
+    public IJointClip apply(final IJoint joint) {
+        if (!(joint instanceof NodeJoint)) {
             return JointClips.IdentityJointClip.INSTANCE;
         }
-        return new NodeClip(((NodeJoint)joint).getNode());
+        return new NodeClip(((NodeJoint) joint).getNode());
     }
 
     @Override
-    public Iterable<Event> pastEvents(float lastPollTime, float time)
-    {
+    public Iterable<Event> pastEvents(float lastPollTime, float time) {
         return ImmutableSet.of();
     }
 
-    protected static class NodeClip implements IJointClip
-    {
+    protected static class NodeClip implements IJointClip {
         private final Node<?> node;
 
-        public NodeClip(Node<?> node)
-        {
+        public NodeClip(Node<?> node) {
             this.node = node;
         }
 
         @Override
-        public TRSRTransformation apply(float time)
-        {
+        public TRSRTransformation apply(float time) {
             TRSRTransformation ret = TRSRTransformation.identity();
-            if(node.getAnimation() == null)
-            {
+            if (node.getAnimation() == null) {
                 return ret.compose(new TRSRTransformation(node.getPos(), node.getRot(), node.getScale(), null));
             }
-            int start = Math.max(1, (int)Math.round(Math.floor(time)));
-            int end = Math.min(start + 1, (int)Math.round(Math.ceil(time)));
-            float progress = time - (float)Math.floor(time);
+            int start = Math.max(1, (int) Math.round(Math.floor(time)));
+            int end = Math.min(start + 1, (int) Math.round(Math.ceil(time)));
+            float progress = time - (float) Math.floor(time);
             Key keyStart = node.getAnimation().getKeys().get(start, node);
             Key keyEnd = node.getAnimation().getKeys().get(end, node);
-            TRSRTransformation startTr = keyStart == null ? null : new TRSRTransformation(keyStart.getPos(), keyStart.getRot(),keyStart.getScale(), null);
-            TRSRTransformation endTr = keyEnd == null ? null : new TRSRTransformation(keyEnd.getPos(), keyEnd.getRot(),keyEnd.getScale(), null);
-            if(keyStart == null)
-            {
-                if(keyEnd == null)
-                {
+            TRSRTransformation startTr = keyStart == null ? null : new TRSRTransformation(keyStart.getPos(), keyStart.getRot(), keyStart.getScale(), null);
+            TRSRTransformation endTr = keyEnd == null ? null : new TRSRTransformation(keyEnd.getPos(), keyEnd.getRot(), keyEnd.getScale(), null);
+            if (keyStart == null) {
+                if (keyEnd == null) {
                     ret = ret.compose(new TRSRTransformation(node.getPos(), node.getRot(), node.getScale(), null));
                 }
                 // TODO animated TRSRTransformation for speed?
-                else
-                {
+                else {
                     ret = ret.compose(endTr);
                 }
-            }
-            else if(progress < 1e-5 || keyEnd == null)
-            {
+            } else if (progress < 1e-5 || keyEnd == null) {
                 ret = ret.compose(startTr);
-            }
-            else
-            {
+            } else {
                 ret = ret.compose(startTr.slerp(endTr, progress));
             }
             return ret;

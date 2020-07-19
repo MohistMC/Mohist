@@ -39,17 +39,15 @@ import net.minecraftforge.fml.common.eventhandler.Cancelable;
  * This event is fired on the {@link MinecraftForge#EVENT_BUS}.
  **/
 @Cancelable
-public class AttackEntityEvent extends PlayerEvent
-{
+public class AttackEntityEvent extends PlayerEvent {
     private final Entity target;
-    public AttackEntityEvent(EntityPlayer player, Entity target)
-    {
+
+    public AttackEntityEvent(EntityPlayer player, Entity target) {
         super(player);
         this.target = target;
     }
 
-    public Entity getTarget()
-    {
+    public Entity getTarget() {
         return target;
     }
 }

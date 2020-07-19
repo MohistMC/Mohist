@@ -25,31 +25,9 @@ import com.google.common.collect.Sets;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.nio.file.Files;
-import java.util.ArrayList;
-import java.util.Deque;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
-import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import net.minecraft.advancements.Advancement;
 import net.minecraft.advancements.AdvancementManager;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockDoor;
-import net.minecraft.block.BlockJukebox;
-import net.minecraft.block.BlockLiquid;
-import net.minecraft.block.BlockMushroom;
-import net.minecraft.block.BlockSapling;
+import net.minecraft.block.*;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
@@ -69,18 +47,7 @@ import net.minecraft.init.Items;
 import net.minecraft.inventory.ContainerRepair;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.InventoryCrafting;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemAxe;
-import net.minecraft.item.ItemBucket;
-import net.minecraft.item.ItemDye;
-import net.minecraft.item.ItemEnchantedBook;
-import net.minecraft.item.ItemMonsterPlacer;
-import net.minecraft.item.ItemPickaxe;
-import net.minecraft.item.ItemPotion;
-import net.minecraft.item.ItemRecord;
-import net.minecraft.item.ItemSpade;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.ItemTippedArrow;
+import net.minecraft.item.*;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -96,20 +63,8 @@ import net.minecraft.stats.StatList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityNote;
 import net.minecraft.tileentity.TileEntitySkull;
-import net.minecraft.util.DamageSource;
-import net.minecraft.util.EnumActionResult;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
-import net.minecraft.util.IntIdentityHashBiMap;
-import net.minecraft.util.JsonUtils;
-import net.minecraft.util.NonNullList;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.WeightedRandom;
-import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.RayTraceResult;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.*;
+import net.minecraft.util.math.*;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextFormatting;
@@ -132,23 +87,10 @@ import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.event.ServerChatEvent;
 import net.minecraftforge.event.entity.EntityTravelToDimensionEvent;
 import net.minecraftforge.event.entity.item.ItemTossEvent;
-import net.minecraftforge.event.entity.living.LivingAttackEvent;
-import net.minecraftforge.event.entity.living.LivingDamageEvent;
-import net.minecraftforge.event.entity.living.LivingDeathEvent;
-import net.minecraftforge.event.entity.living.LivingDropsEvent;
+import net.minecraftforge.event.entity.living.*;
 import net.minecraftforge.event.entity.living.LivingEvent.LivingJumpEvent;
 import net.minecraftforge.event.entity.living.LivingEvent.LivingUpdateEvent;
-import net.minecraftforge.event.entity.living.LivingFallEvent;
-import net.minecraftforge.event.entity.living.LivingHurtEvent;
-import net.minecraftforge.event.entity.living.LivingKnockBackEvent;
-import net.minecraftforge.event.entity.living.LivingSetAttackTargetEvent;
-import net.minecraftforge.event.entity.living.LootingLevelEvent;
-import net.minecraftforge.event.entity.player.AdvancementEvent;
-import net.minecraftforge.event.entity.player.AnvilRepairEvent;
-import net.minecraftforge.event.entity.player.AttackEntityEvent;
-import net.minecraftforge.event.entity.player.CriticalHitEvent;
-import net.minecraftforge.event.entity.player.PlayerEvent;
-import net.minecraftforge.event.entity.player.PlayerInteractEvent;
+import net.minecraftforge.event.entity.player.*;
 import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.event.world.NoteBlockEvent;
 import net.minecraftforge.fluids.IFluidBlock;
@@ -160,11 +102,7 @@ import net.minecraftforge.fml.common.eventhandler.Event;
 import net.minecraftforge.fml.common.network.handshake.NetworkDispatcher;
 import net.minecraftforge.fml.common.network.handshake.NetworkDispatcher.ConnectionType;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
-import net.minecraftforge.registries.DataSerializerEntry;
-import net.minecraftforge.registries.ForgeRegistry;
-import net.minecraftforge.registries.GameData;
-import net.minecraftforge.registries.IForgeRegistry;
-import net.minecraftforge.registries.RegistryManager;
+import net.minecraftforge.registries.*;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.bukkit.Location;
@@ -175,24 +113,48 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.world.StructureGrowEvent;
 import red.mohist.Mohist;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.nio.file.Files;
+import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+
 public class ForgeHooks {
-    //TODO: Loot tables?
-    static class SeedEntry extends WeightedRandom.Item {
-        @Nonnull
-        public final ItemStack seed;
-
-        public SeedEntry(@Nonnull ItemStack seed, int weight) {
-            super(weight);
-            this.seed = seed;
-        }
-
-        @Nonnull
-        public ItemStack getStack(Random rand, int fortune) {
-            return seed.copy();
-        }
-    }
-
     static final List<SeedEntry> seedList = new ArrayList<SeedEntry>();
+    static final Pattern URL_PATTERN = Pattern.compile(
+            //         schema                          ipv4            OR        namespace                 port     path         ends
+            //   |-----------------|        |-------------------------|  |-------------------------|    |---------| |--|   |---------------|
+            "((?:[a-z0-9]{2,}:\\/\\/)?(?:(?:[0-9]{1,3}\\.){3}[0-9]{1,3}|(?:[-\\w_]{1,}\\.[a-z]{2,}?))(?::[0-9]{1,5})?.*?(?=[!\"\u00A7 \n]|$))",
+            Pattern.CASE_INSENSITIVE);
+    private static final ClassValue<String> registryNames = new ClassValue<String>() {
+        @Override
+        @SuppressWarnings("unchecked")
+        protected String computeValue(Class<?> type) {
+            return String.valueOf(TileEntity.getKey((Class<? extends TileEntity>) type));
+        }
+    };
+    private static final Map<DataSerializer<?>, DataSerializerEntry> serializerEntries = GameData.getSerializerMap();
+    private static final ForgeRegistry<DataSerializerEntry> serializerRegistry = (ForgeRegistry<DataSerializerEntry>) ForgeRegistries.DATA_SERIALIZERS;
+    //static HashSet<List> toolEffectiveness = new HashSet<List>();
+    private static boolean toolInit = false;
+    private static ThreadLocal<EntityPlayer> craftingPlayer = new ThreadLocal<EntityPlayer>();
+    private static ThreadLocal<Deque<LootTableContext>> lootContext = new ThreadLocal<Deque<LootTableContext>>();
+
+    static {
+        seedList.add(new SeedEntry(new ItemStack(Items.WHEAT_SEEDS), 10) {
+            @Override
+            @Nonnull
+            public ItemStack getStack(Random rand, int fortune) {
+                return new ItemStack(Items.WHEAT_SEEDS, 1 + rand.nextInt(fortune * 2 + 1));
+            }
+        });
+    }
 
     @Nonnull
     public static ItemStack getGrassSeed(Random rand, int fortune) {
@@ -212,9 +174,6 @@ public class ForgeHooks {
         }
         return false;
     }
-
-    private static boolean toolInit = false;
-    //static HashSet<List> toolEffectiveness = new HashSet<List>();
 
     public static boolean canHarvestBlock(@Nonnull Block block, @Nonnull EntityPlayer player, @Nonnull IBlockAccess world, @Nonnull BlockPos pos) {
         IBlockState state = world.getBlockState(pos);
@@ -314,16 +273,6 @@ public class ForgeHooks {
             }
         }
         return ret;
-    }
-
-    static {
-        seedList.add(new SeedEntry(new ItemStack(Items.WHEAT_SEEDS), 10) {
-            @Override
-            @Nonnull
-            public ItemStack getStack(Random rand, int fortune) {
-                return new ItemStack(Items.WHEAT_SEEDS, 1 + rand.nextInt(fortune * 2 + 1));
-            }
-        });
     }
 
     /**
@@ -517,13 +466,6 @@ public class ForgeHooks {
         }
         return event.getComponent();
     }
-
-
-    static final Pattern URL_PATTERN = Pattern.compile(
-            //         schema                          ipv4            OR        namespace                 port     path         ends
-            //   |-----------------|        |-------------------------|  |-------------------------|    |---------| |--|   |---------------|
-            "((?:[a-z0-9]{2,}:\\/\\/)?(?:(?:[0-9]{1,3}\\.){3}[0-9]{1,3}|(?:[-\\w_]{1,}\\.[a-z]{2,}?))(?::[0-9]{1,5})?.*?(?=[!\"\u00A7 \n]|$))",
-            Pattern.CASE_INSENSITIVE);
 
     public static ITextComponent newChatWithLinks(String string) {
         return newChatWithLinks(string, true);
@@ -811,14 +753,12 @@ public class ForgeHooks {
         return ret;
     }
 
-    private static ThreadLocal<EntityPlayer> craftingPlayer = new ThreadLocal<EntityPlayer>();
+    public static EntityPlayer getCraftingPlayer() {
+        return craftingPlayer.get();
+    }
 
     public static void setCraftingPlayer(EntityPlayer player) {
         craftingPlayer.set(player);
-    }
-
-    public static EntityPlayer getCraftingPlayer() {
-        return craftingPlayer.get();
     }
 
     @Nonnull
@@ -927,8 +867,6 @@ public class ForgeHooks {
         MinecraftForge.EVENT_BUS.post(new PlayerInteractEvent.LeftClickEmpty(player));
     }
 
-    private static ThreadLocal<Deque<LootTableContext>> lootContext = new ThreadLocal<Deque<LootTableContext>>();
-
     private static LootTableContext getLootTableContext() {
         LootTableContext ctx = lootContext.get().peek();
 
@@ -963,45 +901,6 @@ public class ForgeHooks {
             ret.freeze();
 
         return ret;
-    }
-
-    private static class LootTableContext {
-        public final ResourceLocation name;
-        private final boolean vanilla;
-        public final boolean custom;
-        public int poolCount = 0;
-        public int entryCount = 0;
-        private HashSet<String> entryNames = Sets.newHashSet();
-
-        private LootTableContext(ResourceLocation name, boolean custom) {
-            this.name = name;
-            this.custom = custom;
-            this.vanilla = "minecraft".equals(this.name.getResourceDomain());
-        }
-
-        private void resetPoolCtx() {
-            this.entryCount = 0;
-            this.entryNames.clear();
-        }
-
-        public String validateEntryName(@Nullable String name) {
-            if (name != null && !this.entryNames.contains(name)) {
-                this.entryNames.add(name);
-                return name;
-            }
-
-            if (!this.vanilla)
-                throw new JsonParseException("Loot Table \"" + this.name.toString() + "\" Duplicate entry name \"" + name + "\" for pool #" + (this.poolCount - 1) + " entry #" + (this.entryCount - 1));
-
-            int x = 0;
-            while (this.entryNames.contains(name + "#" + x))
-                x++;
-
-            name = name + "#" + x;
-            this.entryNames.add(name);
-
-            return name;
-        }
     }
 
     public static String readPoolName(JsonObject json) {
@@ -1043,7 +942,6 @@ public class ForgeHooks {
         return ctx.validateEntryName(name);
     }
 
-
     //TODO: Some registry to support custom LootEntry types?
     public static LootEntry deserializeJsonLootEntry(String type, JsonObject json, int weight, int quality, LootCondition[] conditions) {
         return null;
@@ -1070,14 +968,6 @@ public class ForgeHooks {
     public static void onCropsGrowPost(World worldIn, BlockPos pos, IBlockState state, IBlockState blockState) {
         MinecraftForge.EVENT_BUS.post(new BlockEvent.CropGrowEvent.Post(worldIn, pos, state, worldIn.getBlockState(pos)));
     }
-
-    private static final ClassValue<String> registryNames = new ClassValue<String>() {
-        @Override
-        @SuppressWarnings("unchecked")
-        protected String computeValue(Class<?> type) {
-            return String.valueOf(TileEntity.getKey((Class<? extends TileEntity>) type));
-        }
-    };
 
     public static String getRegistryName(Class<? extends TileEntity> type) {
         return registryNames.get(type);
@@ -1212,11 +1102,9 @@ public class ForgeHooks {
         return modId;
     }
 
-    public static boolean onFarmlandTrample(World world, BlockPos pos, IBlockState state, float fallDistance, Entity entity)
-    {
+    public static boolean onFarmlandTrample(World world, BlockPos pos, IBlockState state, float fallDistance, Entity entity) {
 
-        if (entity.canTrample(world, state.getBlock(), pos, fallDistance))
-        {
+        if (entity.canTrample(world, state.getBlock(), pos, fallDistance)) {
             BlockEvent.FarmlandTrampleEvent event = new BlockEvent.FarmlandTrampleEvent(world, pos, state, fallDistance, entity);
             MinecraftForge.EVENT_BUS.post(event);
             return !event.isCanceled();
@@ -1224,29 +1112,77 @@ public class ForgeHooks {
         return false;
     }
 
-    private static final Map<DataSerializer<?>, DataSerializerEntry> serializerEntries = GameData.getSerializerMap();
-    private static final ForgeRegistry<DataSerializerEntry> serializerRegistry = (ForgeRegistry<DataSerializerEntry>) ForgeRegistries.DATA_SERIALIZERS;
-
     @Nullable
-    public static DataSerializer<?> getSerializer(int id, IntIdentityHashBiMap<DataSerializer<?>> vanilla)
-    {
+    public static DataSerializer<?> getSerializer(int id, IntIdentityHashBiMap<DataSerializer<?>> vanilla) {
         DataSerializer<?> serializer = vanilla.get(id);
-        if (serializer == null)
-        {
+        if (serializer == null) {
             DataSerializerEntry entry = serializerRegistry.getValue(id);
             if (entry != null) serializer = entry.getSerializer();
         }
         return serializer;
     }
 
-    public static int getSerializerId(DataSerializer<?> serializer, IntIdentityHashBiMap<DataSerializer<?>> vanilla)
-    {
+    public static int getSerializerId(DataSerializer<?> serializer, IntIdentityHashBiMap<DataSerializer<?>> vanilla) {
         int id = vanilla.getId(serializer);
-        if (id < 0)
-        {
+        if (id < 0) {
             DataSerializerEntry entry = serializerEntries.get(serializer);
             if (entry != null) id = serializerRegistry.getID(entry);
         }
         return id;
+    }
+
+    //TODO: Loot tables?
+    static class SeedEntry extends WeightedRandom.Item {
+        @Nonnull
+        public final ItemStack seed;
+
+        public SeedEntry(@Nonnull ItemStack seed, int weight) {
+            super(weight);
+            this.seed = seed;
+        }
+
+        @Nonnull
+        public ItemStack getStack(Random rand, int fortune) {
+            return seed.copy();
+        }
+    }
+
+    private static class LootTableContext {
+        public final ResourceLocation name;
+        public final boolean custom;
+        private final boolean vanilla;
+        public int poolCount = 0;
+        public int entryCount = 0;
+        private HashSet<String> entryNames = Sets.newHashSet();
+
+        private LootTableContext(ResourceLocation name, boolean custom) {
+            this.name = name;
+            this.custom = custom;
+            this.vanilla = "minecraft".equals(this.name.getResourceDomain());
+        }
+
+        private void resetPoolCtx() {
+            this.entryCount = 0;
+            this.entryNames.clear();
+        }
+
+        public String validateEntryName(@Nullable String name) {
+            if (name != null && !this.entryNames.contains(name)) {
+                this.entryNames.add(name);
+                return name;
+            }
+
+            if (!this.vanilla)
+                throw new JsonParseException("Loot Table \"" + this.name.toString() + "\" Duplicate entry name \"" + name + "\" for pool #" + (this.poolCount - 1) + " entry #" + (this.entryCount - 1));
+
+            int x = 0;
+            while (this.entryNames.contains(name + "#" + x))
+                x++;
+
+            name = name + "#" + x;
+            this.entryNames.add(name);
+
+            return name;
+        }
     }
 }

@@ -1,13 +1,5 @@
 package red.mohist.command;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
 import net.minecraft.server.MinecraftServer;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import org.apache.commons.io.FileUtils;
@@ -24,15 +16,20 @@ import org.bukkit.potion.PotionType;
 import red.mohist.api.ServerAPI;
 import red.mohist.util.i18n.Message;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.util.*;
+
 public class DumpCommand extends Command {
+    private final List<String> params = Arrays.asList("potions", "enchants", "cbcmds", "modscmds", "entitytypes", "biomes", "pattern", "worldgen", "worldtype");
+
     public DumpCommand(String name) {
         super(name);
         this.description = "Universal Dump, which will print the information you need locally!";
         this.usageMessage = "/dump [potions|enchants|cbcmds|modscmds|entitytypes|biomes|pattern|worldgen|worldtype]";
         this.setPermission("mohist.command.dump");
     }
-
-    private final List<String> params = Arrays.asList("potions", "enchants", "cbcmds", "modscmds", "entitytypes", "biomes", "pattern", "worldgen", "worldtype");
 
     @Override
     public List<String> tabComplete(CommandSender sender, String alias, String[] args) throws IllegalArgumentException {
@@ -93,7 +90,7 @@ public class DumpCommand extends Command {
         return false;
     }
 
-    private void dumpPotions(CommandSender sender){
+    private void dumpPotions(CommandSender sender) {
         StringBuilder sb = new StringBuilder();
         for (PotionEffectType pet : PotionEffectType.values()) {
             if (pet != null) {
@@ -146,7 +143,7 @@ public class DumpCommand extends Command {
 
     private void dumpModsCommands(CommandSender sender) {
         StringBuilder sb = new StringBuilder();
-        for(Map.Entry<String,String> m: ServerAPI.forgecmdper.entrySet()){
+        for (Map.Entry<String, String> m : ServerAPI.forgecmdper.entrySet()) {
             sb.append(m.getKey()).append(": ").append(m.getValue()).append("\n");
         }
         File file = new File("dump", "modscommands.red");
@@ -164,7 +161,7 @@ public class DumpCommand extends Command {
         dumpmsg(sender, file, "biomes");
     }
 
-    private void dumpPattern(CommandSender sender){
+    private void dumpPattern(CommandSender sender) {
         StringBuilder sb = new StringBuilder();
         for (PatternType patternType : PatternType.values()) {
             String key = patternType.getIdentifier();
@@ -175,19 +172,19 @@ public class DumpCommand extends Command {
         dumpmsg(sender, file, "pattern");
     }
 
-    private void dumpWorldGen(CommandSender sender){
+    private void dumpWorldGen(CommandSender sender) {
         StringBuilder sb = new StringBuilder();
         for (Map.Entry<String, String> entry : GameRegistry.worldGenMap.entrySet()) {
-                String key = entry.getKey();
-                String value = entry.getValue();
-                sb.append("worldgen-").append(value).append("-").append(key).append("\n");
+            String key = entry.getKey();
+            String value = entry.getValue();
+            sb.append("worldgen-").append(value).append("-").append(key).append("\n");
         }
         File file = new File("dump", "worldgen.red");
         writeByteArrayToFile(file, sb);
         dumpmsg(sender, file, "worldgen");
     }
 
-    private void dumpWorldType(CommandSender sender){
+    private void dumpWorldType(CommandSender sender) {
         StringBuilder sb = new StringBuilder();
         for (WorldType type : WorldType.values()) {
             String key = type.getName();
@@ -198,11 +195,11 @@ public class DumpCommand extends Command {
         dumpmsg(sender, file, "worldtype");
     }
 
-    private void dumpmsg(CommandSender sender, File file, String type){
+    private void dumpmsg(CommandSender sender, File file, String type) {
         sender.sendMessage("Successfully dump " + type + ", output path: " + file.getAbsolutePath());
     }
 
-    protected void writeByteArrayToFile(File file, StringBuilder sb){
+    protected void writeByteArrayToFile(File file, StringBuilder sb) {
         try {
             FileUtils.writeByteArrayToFile(file, sb.toString().getBytes(StandardCharsets.UTF_8));
         } catch (IOException e) {

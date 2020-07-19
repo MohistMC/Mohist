@@ -3,6 +3,7 @@ package co.aikar.util;
 import com.google.common.base.Function;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -12,7 +13,8 @@ import java.util.Map;
  */
 @SuppressWarnings({"rawtypes", "SuppressionAnnotation"})
 public final class JSONUtil {
-    private JSONUtil() {}
+    private JSONUtil() {
+    }
 
     /**
      * Creates a key/value "JSONPair" object
@@ -43,7 +45,7 @@ public final class JSONUtil {
      * This appends multiple key/value Obj pairs into a JSON Object
      *
      * @param parent Map to be appended to
-     * @param data Data to append
+     * @param data   Data to append
      * @return Map
      */
     public static Map appendObjectData(Map parent, JSONPair... data) {
@@ -67,8 +69,8 @@ public final class JSONUtil {
      * These help build a single JSON array using a mapper function
      *
      * @param collection Collection to apply to
-     * @param mapper Mapper to apply
-     * @param <E> Element Type
+     * @param mapper     Mapper to apply
+     * @param <E>        Element Type
      * @return List
      */
     public static <E> List toArrayMapper(E[] collection, Function<E, Object> mapper) {
@@ -90,8 +92,8 @@ public final class JSONUtil {
      * These help build a single JSON Object from a collection, using a mapper function
      *
      * @param collection Collection to apply to
-     * @param mapper Mapper to apply
-     * @param <E> Element Type
+     * @param mapper     Mapper to apply
+     * @param <E>        Element Type
      * @return Map
      */
     public static <E> Map toObjectMapper(E[] collection, Function<E, JSONPair> mapper) {

@@ -5,6 +5,7 @@ import com.mojang.authlib.GameProfileRepository;
 import com.mojang.authlib.UserAuthentication;
 import com.mojang.authlib.minecraft.MinecraftSessionService;
 import com.mojang.authlib.yggdrasil.YggdrasilAuthenticationService;
+
 import java.net.Proxy;
 
 public class PaperAuthenticationService extends YggdrasilAuthenticationService {

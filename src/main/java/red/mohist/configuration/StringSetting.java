@@ -5,7 +5,7 @@ public class StringSetting extends Setting<String> {
     private ConfigBase config;
 
     public StringSetting(ConfigBase config, String path, String def,
-            String description) {
+                         String description) {
         super(path, def, description);
         this.value = def;
         this.config = config;

@@ -1,17 +1,10 @@
 package org.bukkit.craftbukkit.v1_12_R1.util;
 
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Queue;
-import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.ThreadFactory;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicIntegerFieldUpdater;
 import org.apache.commons.lang3.Validate;
+
+import java.util.*;
+import java.util.concurrent.*;
+import java.util.concurrent.atomic.AtomicIntegerFieldUpdater;
 
 /**
  * Executes tasks using a multi-stage process executor. Synchronous executions are via {@link AsynchronousExecutor#finishActive()} or the {@link AsynchronousExecutor#get(Object)} methods.
@@ -33,8 +26,10 @@ public final class AsynchronousExecutor<P, T, C, E extends Throwable> {
     final Queue<Task> finished = new ConcurrentLinkedQueue<>();
     final Map<P, Task> tasks = new HashMap<>();
     final ThreadPoolExecutor pool;
+
     /**
      * Uses a thread pool to pass executions to the provider.
+     *
      * @see AsynchronousExecutor
      */
     public AsynchronousExecutor(final CallBackProvider<P, T, C, E> provider, final int coreSize) {
@@ -75,6 +70,7 @@ public final class AsynchronousExecutor<P, T, C, E extends Throwable> {
      * Subsequent calls to {@link #get(Object)} might work.
      * <p>
      * This should always be synchronous
+     *
      * @return true if no further execution for the parameter is possible, such that, no exceptions will be thrown in {@link #finishActive()} for the parameter, and {@link #get(Object)} will throw an {@link IllegalStateException}, false otherwise
      * @throws IllegalStateException if parameter is not in the queue anymore
      * @throws IllegalStateException if the callback was not specified for given parameter
@@ -102,6 +98,7 @@ public final class AsynchronousExecutor<P, T, C, E extends Throwable> {
      * This method attempts to skip the waiting period for said parameter.
      * <p>
      * This should always be synchronous.
+     *
      * @throws IllegalStateException if the parameter is not in the queue anymore, or sometimes if called from asynchronous thread
      */
     public T get(P parameter) throws E, IllegalStateException {

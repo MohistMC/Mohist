@@ -1,9 +1,10 @@
 package org.bukkit.metadata;
 
-import java.lang.ref.WeakReference;
 import org.apache.commons.lang.Validate;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.util.NumberConversions;
+
+import java.lang.ref.WeakReference;
 
 /**
  * Optional base class for facilitating MetadataValue implementations.

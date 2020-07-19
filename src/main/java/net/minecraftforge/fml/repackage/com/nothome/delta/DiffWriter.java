@@ -41,11 +41,11 @@ public interface DiffWriter extends Closeable {
      * Add a GDIFF data instruction.
      * Implementors should buffer the data.
      */
-	public void addData(byte b) throws IOException;
+    public void addData(byte b) throws IOException;
 
-	/**
-	 * Flushes to output, e.g. any data added.
-	 */
+    /**
+     * Flushes to output, e.g. any data added.
+     */
     public void flush() throws IOException;
 
     /**

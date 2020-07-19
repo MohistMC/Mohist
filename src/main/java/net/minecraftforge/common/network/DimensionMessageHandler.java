@@ -26,18 +26,16 @@ import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.network.ForgeMessage.DimensionRegisterMessage;
 import net.minecraftforge.fml.common.FMLLog;
 
-public class DimensionMessageHandler extends SimpleChannelInboundHandler<ForgeMessage.DimensionRegisterMessage>{
+public class DimensionMessageHandler extends SimpleChannelInboundHandler<ForgeMessage.DimensionRegisterMessage> {
     @Override
-    protected void channelRead0(ChannelHandlerContext ctx, DimensionRegisterMessage msg) throws Exception
-    {
-        if (!DimensionManager.isDimensionRegistered(msg.dimensionId))
-        {
+    protected void channelRead0(ChannelHandlerContext ctx, DimensionRegisterMessage msg) throws Exception {
+        if (!DimensionManager.isDimensionRegistered(msg.dimensionId)) {
             DimensionManager.registerDimension(msg.dimensionId, DimensionType.valueOf(msg.providerId));
         }
     }
+
     @Override
-    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception
-    {
+    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
         FMLLog.log.error("DimensionMessageHandler exception", cause);
         super.exceptionCaught(ctx, cause);
     }

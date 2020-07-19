@@ -19,14 +19,14 @@
 
 package net.minecraftforge.items;
 
-import javax.annotation.Nonnull;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 
-public interface IItemHandler
-{
+import javax.annotation.Nonnull;
+
+public interface IItemHandler {
     /**
      * Returns the number of slots available
      *
@@ -36,9 +36,9 @@ public interface IItemHandler
 
     /**
      * Returns the ItemStack in a given slot.
-     *
+     * <p>
      * The result's stack size may be greater than the itemstack's max size.
-     *
+     * <p>
      * If the result is empty, then the slot is empty.
      *
      * <p>
@@ -67,8 +67,8 @@ public interface IItemHandler
      * @param stack    ItemStack to insert. This must not be modified by the item handler.
      * @param simulate If true, the insertion is only simulated
      * @return The remaining ItemStack that was not inserted (if the entire stack is accepted, then return an empty ItemStack).
-     *         May be the same as the input ItemStack if unchanged, otherwise a new ItemStack.
-     *         The returned ItemStack can be safely modified after.
+     * May be the same as the input ItemStack if unchanged, otherwise a new ItemStack.
+     * The returned ItemStack can be safely modified after.
      **/
     @Nonnull
     ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate);
@@ -84,7 +84,7 @@ public interface IItemHandler
      * @param amount   Amount to extract (may be greater than the current stack's max limit)
      * @param simulate If true, the extraction is only simulated
      * @return ItemStack extracted from the slot, must be empty if nothing can be extracted.
-     *         The returned ItemStack can be safely modified after, so item handlers should return a new or copied stack.
+     * The returned ItemStack can be safely modified after, so item handlers should return a new or copied stack.
      **/
     @Nonnull
     ItemStack extractItem(int slot, int amount, boolean simulate);
@@ -93,7 +93,7 @@ public interface IItemHandler
      * Retrieves the maximum stack size allowed to exist in the given slot.
      *
      * @param slot Slot to query.
-     * @return     The maximum stack size allowed in the slot.
+     * @return The maximum stack size allowed in the slot.
      */
     int getSlotLimit(int slot);
 
@@ -110,12 +110,14 @@ public interface IItemHandler
      * <li>When isItemValid is true, no assumptions can be made and insertion must be simulated case-by-case.</li>
      * <li>The actual items in the inventory, its fullness, or any other state are <strong>not</strong> considered by isItemValid.</li>
      * </ul>
-     * @param slot    Slot to query for validity
-     * @param stack   Stack to test with for validity
      *
+     * @param slot  Slot to query for validity
+     * @param stack Stack to test with for validity
      * @return true if the slot can insert the ItemStack, not considering the current state of the inventory.
-     *         false if the slot can never insert the ItemStack in any situation.
+     * false if the slot can never insert the ItemStack in any situation.
      */
     //todo Make non-default and/or replace in 1.13
-    default boolean isItemValid(int slot, @Nonnull ItemStack stack) { return true; }
+    default boolean isItemValid(int slot, @Nonnull ItemStack stack) {
+        return true;
+    }
 }

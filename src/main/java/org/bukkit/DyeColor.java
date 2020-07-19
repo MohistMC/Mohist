@@ -1,6 +1,7 @@
 package org.bukkit;
 
 import com.google.common.collect.ImmutableMap;
+
 import java.util.Map;
 
 /**
@@ -112,7 +113,7 @@ public enum DyeColor {
      *
      * @param data Wool data value to fetch
      * @return The {@link DyeColor} representing the given value, or null if
-     *     it doesn't exist
+     * it doesn't exist
      * @see #getByDyeData(byte)
      * @deprecated Magic value
      */
@@ -130,7 +131,7 @@ public enum DyeColor {
      *
      * @param data Dye data value to fetch
      * @return The {@link DyeColor} representing the given value, or null if
-     *     it doesn't exist
+     * it doesn't exist
      * @see #getByWoolData(byte)
      * @deprecated Magic value
      */
@@ -148,7 +149,7 @@ public enum DyeColor {
      *
      * @param color Color value to get the dye by
      * @return The {@link DyeColor} representing the given value, or null if
-     *     it doesn't exist
+     * it doesn't exist
      */
     public static DyeColor getByColor(final Color color) {
         return BY_COLOR.get(color);
@@ -159,7 +160,7 @@ public enum DyeColor {
      *
      * @param color Color value to get dye by
      * @return The {@link DyeColor} representing the given value, or null if
-     *     it doesn't exist
+     * it doesn't exist
      */
     public static DyeColor getByFireworkColor(final Color color) {
         return BY_FIREWORK.get(color);

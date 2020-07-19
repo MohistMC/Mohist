@@ -22,43 +22,37 @@ package net.minecraftforge.common.crafting;
 import com.google.common.collect.Maps;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSyntaxException;
-import java.util.Map;
-import javax.annotation.Nullable;
 import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.util.JsonUtils;
 
-public class JsonContext
-{
+import javax.annotation.Nullable;
+import java.util.Map;
+
+public class JsonContext {
     private String modId;
     private Map<String, Ingredient> constants = Maps.newHashMap();
 
-    public JsonContext(String modId)
-    {
+    public JsonContext(String modId) {
         this.modId = modId;
     }
 
-    public String getModId()
-    {
+    public String getModId() {
         return this.modId;
     }
 
-    public String appendModId(String data)
-    {
+    public String appendModId(String data) {
         if (data.indexOf(':') == -1)
             return modId + ":" + data;
         return data;
     }
 
     @Nullable
-    public Ingredient getConstant(String name)
-    {
+    public Ingredient getConstant(String name) {
         return constants.get(name);
     }
 
-    void loadConstants(JsonObject... jsons)
-    {
-        for (JsonObject json : jsons)
-        {
+    void loadConstants(JsonObject... jsons) {
+        for (JsonObject json : jsons) {
             if (!CraftingHelper.processConditions(json, "conditions", this))
                 continue;
             if (!json.has("ingredient"))

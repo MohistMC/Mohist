@@ -33,18 +33,15 @@ import net.minecraftforge.fml.common.eventhandler.Cancelable;
  * <br>
  * This event is fired on the {@link MinecraftForge#EVENT_BUS}.
  */
-public class AdvancementEvent extends PlayerEvent
-{
+public class AdvancementEvent extends PlayerEvent {
     private final Advancement advancement;
 
-    public AdvancementEvent(EntityPlayer player, Advancement advancement)
-    {
+    public AdvancementEvent(EntityPlayer player, Advancement advancement) {
         super(player);
         this.advancement = advancement;
     }
 
-    public Advancement getAdvancement()
-    {
+    public Advancement getAdvancement() {
         return advancement;
     }
 }

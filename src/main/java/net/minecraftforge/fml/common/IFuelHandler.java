@@ -27,7 +27,6 @@ import net.minecraftforge.event.furnace.FurnaceFuelBurnTimeEvent;
  * @deprecated set your item's {@link Item#getItemBurnTime(ItemStack)} or subscribe to {@link FurnaceFuelBurnTimeEvent} instead.
  */
 @Deprecated
-public interface IFuelHandler
-{
+public interface IFuelHandler {
     int getBurnTime(ItemStack fuel);
 }

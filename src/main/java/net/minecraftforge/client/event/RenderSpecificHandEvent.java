@@ -19,11 +19,12 @@
 
 package net.minecraftforge.client.event;
 
-import javax.annotation.Nonnull;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumHand;
 import net.minecraftforge.fml.common.eventhandler.Cancelable;
 import net.minecraftforge.fml.common.eventhandler.Event;
+
+import javax.annotation.Nonnull;
 
 /**
  * This event is fired on the {@link net.minecraftforge.common.MinecraftForge#EVENT_BUS}
@@ -32,8 +33,7 @@ import net.minecraftforge.fml.common.eventhandler.Event;
  * TODO This may get merged in 11 with RenderHandEvent to make a generic hand rendering
  */
 @Cancelable
-public class RenderSpecificHandEvent extends Event
-{
+public class RenderSpecificHandEvent extends Event {
     private final EnumHand hand;
     private final float partialTicks;
     private final float interpolatedPitch;
@@ -42,8 +42,7 @@ public class RenderSpecificHandEvent extends Event
     @Nonnull
     private final ItemStack stack;
 
-    public RenderSpecificHandEvent(EnumHand hand, float partialTicks, float interpolatedPitch, float swingProgress, float equipProgress, @Nonnull ItemStack stack)
-    {
+    public RenderSpecificHandEvent(EnumHand hand, float partialTicks, float interpolatedPitch, float swingProgress, float equipProgress, @Nonnull ItemStack stack) {
         this.hand = hand;
         this.partialTicks = partialTicks;
         this.interpolatedPitch = interpolatedPitch;
@@ -52,37 +51,32 @@ public class RenderSpecificHandEvent extends Event
         this.stack = stack;
     }
 
-    public EnumHand getHand()
-    {
+    public EnumHand getHand() {
         return hand;
     }
 
-    public float getPartialTicks()
-    {
+    public float getPartialTicks() {
         return partialTicks;
     }
 
     /**
      * @return The interpolated pitch of the player entity
      */
-    public float getInterpolatedPitch()
-    {
+    public float getInterpolatedPitch() {
         return interpolatedPitch;
     }
 
     /**
      * @return The swing progress of the hand being rendered
      */
-    public float getSwingProgress()
-    {
+    public float getSwingProgress() {
         return swingProgress;
     }
 
     /**
      * @return The progress of the equip animation. 1.0 is fully equipped.
      */
-    public float getEquipProgress()
-    {
+    public float getEquipProgress() {
         return equipProgress;
     }
 
@@ -90,8 +84,7 @@ public class RenderSpecificHandEvent extends Event
      * @return The ItemStack to be rendered, or null.
      */
     @Nonnull
-    public ItemStack getItemStack()
-    {
+    public ItemStack getItemStack() {
         return stack;
     }
 }

@@ -65,7 +65,7 @@ public interface CreatureSpawner extends BlockState {
      * This value is used when the spawner resets its delay (for any reason).
      * It will choose a random number between {@link #getMinSpawnDelay()}
      * and {@link #getMaxSpawnDelay()} for its next {@link #getDelay()}.
-     *
+     * <p>
      * Default value is 200 ticks.
      *
      * @return the minimum spawn delay amount
@@ -75,8 +75,8 @@ public interface CreatureSpawner extends BlockState {
     /**
      * Set the minimum spawn delay amount (in ticks).
      *
-     * @see #getMinSpawnDelay()
      * @param delay the minimum spawn delay amount
+     * @see #getMinSpawnDelay()
      */
     public void setMinSpawnDelay(int delay);
 
@@ -89,7 +89,7 @@ public interface CreatureSpawner extends BlockState {
      * <br>
      * This value <b>must</b> be greater than 0 and less than or equal to
      * {@link #getMaxSpawnDelay()}.
-     *
+     * <p>
      * Default value is 800 ticks.
      *
      * @return the maximum spawn delay amount
@@ -102,8 +102,8 @@ public interface CreatureSpawner extends BlockState {
      * This value <b>must</b> be greater than 0, as well as greater than or
      * equal to {@link #getMinSpawnDelay()}
      *
-     * @see #getMaxSpawnDelay()
      * @param delay the new maximum spawn delay amount
+     * @see #getMaxSpawnDelay()
      */
     public void setMaxSpawnDelay(int delay);
 
@@ -168,7 +168,7 @@ public interface CreatureSpawner extends BlockState {
      * always active (given that there are players online).
      *
      * @param requiredPlayerRange the maximum distance (squared) a player can be
-     * in order for this spawner to be active.
+     *                            in order for this spawner to be active.
      */
     public void setRequiredPlayerRange(int requiredPlayerRange);
 
@@ -192,8 +192,8 @@ public interface CreatureSpawner extends BlockState {
      * Set the new spawn range.
      * <br>
      *
-     * @see #getSpawnRange()
      * @param spawnRange the new spawn range
+     * @see #getSpawnRange()
      */
     public void setSpawnRange(int spawnRange);
 }

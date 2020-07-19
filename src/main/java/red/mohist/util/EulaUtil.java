@@ -1,13 +1,10 @@
 package red.mohist.util;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
+import red.mohist.util.i18n.Message;
+
+import java.io.*;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import red.mohist.util.i18n.Message;
 
 public class EulaUtil {
     public static void writeInfos() throws IOException {
@@ -18,7 +15,7 @@ public class EulaUtil {
     }
 
     public static boolean hasAcceptedEULA() throws IOException {
-        if(new File("eula.txt").exists())
+        if (new File("eula.txt").exists())
             return FileUtil.readContent(new File("eula.txt")).contains("eula=true");
         return false;
     }

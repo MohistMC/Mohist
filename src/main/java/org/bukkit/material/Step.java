@@ -1,8 +1,9 @@
 package org.bukkit.material;
 
+import org.bukkit.Material;
+
 import java.util.ArrayList;
 import java.util.List;
-import org.bukkit.Material;
 
 /**
  * Represents the different types of steps.
@@ -79,7 +80,7 @@ public class Step extends TexturedMaterial {
      * Set step inverted state
      *
      * @param inv - true if step is inverted (top half), false if step is
-     *     normal (bottom half)
+     *            normal (bottom half)
      */
     public void setInverted(boolean inv) {
         int dat = getData() & 0x7;
@@ -90,7 +91,6 @@ public class Step extends TexturedMaterial {
     }
 
     /**
-     *
      * @deprecated Magic value
      */
 
@@ -100,7 +100,6 @@ public class Step extends TexturedMaterial {
     }
 
     /**
-     *
      * @deprecated Magic value
      */
 

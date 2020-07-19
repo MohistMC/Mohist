@@ -21,24 +21,24 @@ package net.minecraftforge.fml.common.registry;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import java.lang.reflect.Field;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.discovery.ASMDataTable;
 import net.minecraftforge.fml.common.discovery.ASMDataTable.ASMData;
 import red.mohist.util.i18n.Message;
 
-public enum ItemStackHolderInjector
-{
+import java.lang.reflect.Field;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+public enum ItemStackHolderInjector {
     INSTANCE;
 
     private List<ItemStackHolderRef> itemStackHolders = Lists.newArrayList();
 
     public void inject() {
         FMLLog.log.info(Message.getString("fml.log.2"));
-        for (ItemStackHolderRef ishr: itemStackHolders) {
+        for (ItemStackHolderRef ishr : itemStackHolders) {
             ishr.apply();
         }
         FMLLog.log.info(Message.getString("fml.log.3"));
@@ -48,8 +48,7 @@ public enum ItemStackHolderInjector
         FMLLog.log.info(Message.getString("fml.log.8"));
         Set<ASMData> allItemStackHolders = table.getAll(GameRegistry.ItemStackHolder.class.getName());
         Map<String, Class<?>> classCache = Maps.newHashMap();
-        for (ASMData data : allItemStackHolders)
-        {
+        for (ASMData data : allItemStackHolders) {
             String className = data.getClassName();
             String annotationTarget = data.getObjectName();
             String value = (String) data.getAnnotationInfo().get("value");
@@ -61,33 +60,23 @@ public enum ItemStackHolderInjector
 
     }
 
-    private void addHolder(Map<String, Class<?>> classCache, String className, String annotationTarget, String value, Integer meta, String nbt)
-    {
+    private void addHolder(Map<String, Class<?>> classCache, String className, String annotationTarget, String value, Integer meta, String nbt) {
         Class<?> clazz;
-        if (classCache.containsKey(className))
-        {
+        if (classCache.containsKey(className)) {
             clazz = classCache.get(className);
-        }
-        else
-        {
-            try
-            {
+        } else {
+            try {
                 clazz = Class.forName(className, true, getClass().getClassLoader());
                 classCache.put(className, clazz);
-            }
-            catch (ClassNotFoundException ex)
-            {
+            } catch (ClassNotFoundException ex) {
                 // unpossible?
                 throw new RuntimeException(ex);
             }
         }
-        try
-        {
+        try {
             Field f = clazz.getField(annotationTarget);
             itemStackHolders.add(new ItemStackHolderRef(f, value, meta, nbt));
-        }
-        catch (NoSuchFieldException ex)
-        {
+        } catch (NoSuchFieldException ex) {
             // unpossible?
             throw new RuntimeException(ex);
         }

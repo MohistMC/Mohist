@@ -19,20 +19,20 @@
 
 package net.minecraftforge.fluids.capability;
 
-import javax.annotation.Nullable;
 import net.minecraftforge.fluids.FluidStack;
+
+import javax.annotation.Nullable;
 
 /**
  * Simplified Read-only Information about the internals of an {@link IFluidHandler}.
  * This is useful for displaying information, and as hints for interacting with it.
  * These properties are constant and do not depend on the fluid contents (except the contents themselves, of course).
- *
+ * <p>
  * The information here may not tell the full story of how the tank actually works,
  * for real fluid transactions you must use {@link IFluidHandler} to simulate, check, and then interact.
  * None of the information in these properties is required to successfully interact using a {@link IFluidHandler}.
  */
-public interface IFluidTankProperties
-{
+public interface IFluidTankProperties {
     /**
      * @return A copy of the fluid contents of this tank. May be null.
      * To modify the contents, use {@link IFluidHandler}.
@@ -48,7 +48,7 @@ public interface IFluidTankProperties
     /**
      * Returns true if the tank can be filled at any time (even if it is currently full).
      * It does not consider the contents or capacity of the tank.
-     *
+     * <p>
      * This value is constant. If the tank behavior is more complicated, returns true.
      */
     boolean canFill();
@@ -56,7 +56,7 @@ public interface IFluidTankProperties
     /**
      * Returns true if the tank can be drained at any time (even if it is currently empty).
      * It does not consider the contents or capacity of the tank.
-     *
+     * <p>
      * This value is constant. If the tank behavior is more complicated, returns true.
      */
     boolean canDrain();
@@ -64,7 +64,7 @@ public interface IFluidTankProperties
     /**
      * Returns true if the tank can be filled with a specific type of fluid.
      * Used as a filter for fluid types.
-     *
+     * <p>
      * Does not consider the current contents or capacity of the tank,
      * only whether it could ever fill with this type of fluid.
      * {@link FluidStack} is used here because fluid properties can depend on NBT, the amount is ignored.
@@ -74,7 +74,7 @@ public interface IFluidTankProperties
     /**
      * Returns true if the tank can drain out this a specific of fluid.
      * Used as a filter for fluid types.
-     *
+     * <p>
      * Does not consider the current contents or capacity of the tank,
      * only whether it could ever drain out this type of fluid.
      * {@link FluidStack} is used here because fluid properties can depend on NBT, the amount is ignored.

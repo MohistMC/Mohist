@@ -27,8 +27,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
  * resources.
  */
 @SideOnly(Side.CLIENT)
-public enum VanillaResourceType implements IResourceType
-{
+public enum VanillaResourceType implements IResourceType {
     /**
      * Used when block and item models are reloaded and rebaked. This also includes the texture-stitching from that
      * phase.

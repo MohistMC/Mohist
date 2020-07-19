@@ -19,10 +19,8 @@
 
 package net.minecraftforge.fml.common.asm.transformers;
 
-public class PotionEffectTransformer extends FieldRedirectTransformer
-{
-    public PotionEffectTransformer()
-    {
+public class PotionEffectTransformer extends FieldRedirectTransformer {
+    public PotionEffectTransformer() {
         super("net.minecraft.potion.PotionEffect", "Lnet/minecraft/potion/Potion;", "getPotionRaw");
     }
 }

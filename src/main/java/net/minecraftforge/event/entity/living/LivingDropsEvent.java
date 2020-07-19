@@ -19,14 +19,15 @@
 
 package net.minecraftforge.event.entity.living;
 
-import java.util.ArrayList;
-import java.util.List;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.util.DamageSource;
 import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.Cancelable;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * LivingDropsEvent is fired when an Entity's death causes dropped items to appear.<br>
@@ -48,15 +49,13 @@ import net.minecraftforge.fml.common.eventhandler.Cancelable;
  * This event is fired on the {@link MinecraftForge#EVENT_BUS}.
  **/
 @Cancelable
-public class LivingDropsEvent extends LivingEvent
-{
+public class LivingDropsEvent extends LivingEvent {
     private final DamageSource source;
     private final List<EntityItem> drops;
     private final int lootingLevel;
     private final boolean recentlyHit;
 
-    public LivingDropsEvent(EntityLivingBase entity, DamageSource source, List<EntityItem> drops, int lootingLevel, boolean recentlyHit)
-    {
+    public LivingDropsEvent(EntityLivingBase entity, DamageSource source, List<EntityItem> drops, int lootingLevel, boolean recentlyHit) {
         super(entity);
         this.source = source;
         this.drops = drops;
@@ -64,23 +63,19 @@ public class LivingDropsEvent extends LivingEvent
         this.recentlyHit = recentlyHit;
     }
 
-    public DamageSource getSource()
-    {
+    public DamageSource getSource() {
         return source;
     }
 
-    public List<EntityItem> getDrops()
-    {
+    public List<EntityItem> getDrops() {
         return drops;
     }
 
-    public int getLootingLevel()
-    {
+    public int getLootingLevel() {
         return lootingLevel;
     }
 
-    public boolean isRecentlyHit()
-    {
+    public boolean isRecentlyHit() {
         return recentlyHit;
     }
 }

@@ -1,11 +1,12 @@
 package red.mohist.bukkit.nms.remappers;
 
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Set;
 import net.md_5.specialsource.provider.InheritanceProvider;
 import org.objectweb.asm.tree.ClassNode;
 import red.mohist.bukkit.nms.utils.RemapUtils;
+
+import java.util.HashSet;
+import java.util.Objects;
+import java.util.Set;
 
 public class MohistInheritanceProvider implements InheritanceProvider {
     @Override
@@ -48,7 +49,7 @@ public class MohistInheritanceProvider implements InheritanceProvider {
     }
 
     protected Set<String> findNormalParents(String className, boolean remap) {
-		//TODO: ScriptManager -> java.lang.ArrayIndexOutOfBoundsException: 27210
+        //TODO: ScriptManager -> java.lang.ArrayIndexOutOfBoundsException: 27210
         ClassNode cn = MohistClassRepo.getInstance().findClass(className);
         if (cn == null) {
             if (!remap) {

@@ -1,10 +1,11 @@
 package org.spigotmc;
 
-import java.util.List;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.YamlConfiguration;
 import red.mohist.Mohist;
 import red.mohist.util.i18n.Message;
+
+import java.util.List;
 
 public class SpigotWorldConfig {
 

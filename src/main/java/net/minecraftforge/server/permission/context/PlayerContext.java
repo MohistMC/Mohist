@@ -23,24 +23,20 @@ import com.google.common.base.Preconditions;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.world.World;
 
-public class PlayerContext extends Context
-{
+public class PlayerContext extends Context {
     private final EntityPlayer player;
 
-    public PlayerContext(EntityPlayer ep)
-    {
+    public PlayerContext(EntityPlayer ep) {
         player = Preconditions.checkNotNull(ep, "Player can't be null in PlayerContext!");
     }
 
     @Override
-    public World getWorld()
-    {
+    public World getWorld() {
         return player.getEntityWorld();
     }
 
     @Override
-    public EntityPlayer getPlayer()
-    {
+    public EntityPlayer getPlayer() {
         return player;
     }
 }

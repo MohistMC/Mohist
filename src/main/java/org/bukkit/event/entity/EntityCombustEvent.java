@@ -34,7 +34,7 @@ public class EntityCombustEvent extends EntityEvent implements Cancellable {
 
     /**
      * @return the amount of time (in seconds) the combustee should be alight
-     *     for
+     * for
      */
     public int getDuration() {
         return duration;

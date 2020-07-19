@@ -26,23 +26,16 @@ import com.google.common.eventbus.SubscriberExceptionHandler;
  * Event bus that allows exceptions thrown by the exception handler to propagate.
  * TODO remove this in 1.13 and stop using the guava event bus
  */
-public class FMLThrowingEventBus extends EventBus
-{
-    public FMLThrowingEventBus(final SubscriberExceptionHandler exceptionHandler)
-    {
+public class FMLThrowingEventBus extends EventBus {
+    public FMLThrowingEventBus(final SubscriberExceptionHandler exceptionHandler) {
         super((exception, context) -> {
-            try
-            {
+            try {
                 exceptionHandler.handleException(exception, context);
-            }
-            catch (final Throwable t)
-            {
+            } catch (final Throwable t) {
                 // this is a hack to break out of the catch statement in EventBus.handleSubscriberException
-                throw new RuntimeException()
-                {
+                throw new RuntimeException() {
                     @Override
-                    public String toString()
-                    {
+                    public String toString() {
                         throw t;
                     }
                 };

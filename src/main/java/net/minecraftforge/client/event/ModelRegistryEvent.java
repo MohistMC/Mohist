@@ -25,6 +25,5 @@ import net.minecraftforge.fml.common.eventhandler.IContextSetter;
 /**
  * Fired when the {@link net.minecraftforge.client.model.ModelLoader} is ready to receive registrations
  */
-public class ModelRegistryEvent extends Event implements IContextSetter
-{
+public class ModelRegistryEvent extends Event implements IContextSetter {
 }

@@ -20,15 +20,16 @@
 package net.minecraftforge.common.capabilities;
 
 import com.google.common.collect.Lists;
-import java.util.List;
-import java.util.Map;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.util.INBTSerializable;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.util.List;
+import java.util.Map;
 
 /**
  * A high-speed implementation of a capability delegator.
@@ -36,24 +37,21 @@ import net.minecraftforge.common.util.INBTSerializable;
  * It is HIGHLY recommended that you DO NOT use this approach unless
  * you MUST delegate to multiple providers instead just implement y
  * our handlers using normal if statements.
- *
+ * <p>
  * Internally the handlers are baked into arrays for fast iteration.
  * The ResourceLocations will be used for the NBT Key when serializing.
  */
-public final class CapabilityDispatcher implements INBTSerializable<NBTTagCompound>, ICapabilityProvider
-{
+public final class CapabilityDispatcher implements INBTSerializable<NBTTagCompound>, ICapabilityProvider {
     private ICapabilityProvider[] caps;
     private INBTSerializable<NBTBase>[] writers;
     private String[] names;
 
-    public CapabilityDispatcher(Map<ResourceLocation, ICapabilityProvider> list)
-    {
+    public CapabilityDispatcher(Map<ResourceLocation, ICapabilityProvider> list) {
         this(list, null);
     }
 
     @SuppressWarnings("unchecked")
-    public CapabilityDispatcher(Map<ResourceLocation, ICapabilityProvider> list, @Nullable ICapabilityProvider parent)
-    {
+    public CapabilityDispatcher(Map<ResourceLocation, ICapabilityProvider> list, @Nullable ICapabilityProvider parent) {
         List<ICapabilityProvider> lstCaps = Lists.newArrayList();
         List<INBTSerializable<NBTBase>> lstWriters = Lists.newArrayList();
         List<String> lstNames = Lists.newArrayList();
@@ -61,20 +59,17 @@ public final class CapabilityDispatcher implements INBTSerializable<NBTTagCompou
         if (parent != null) // Parents go first!
         {
             lstCaps.add(parent);
-            if (parent instanceof INBTSerializable)
-            {
-                lstWriters.add((INBTSerializable<NBTBase>)parent);
+            if (parent instanceof INBTSerializable) {
+                lstWriters.add((INBTSerializable<NBTBase>) parent);
                 lstNames.add("Parent");
             }
         }
 
-        for (Map.Entry<ResourceLocation, ICapabilityProvider> entry : list.entrySet())
-        {
+        for (Map.Entry<ResourceLocation, ICapabilityProvider> entry : list.entrySet()) {
             ICapabilityProvider prov = entry.getValue();
             lstCaps.add(prov);
-            if (prov instanceof INBTSerializable)
-            {
-                lstWriters.add((INBTSerializable<NBTBase>)prov);
+            if (prov instanceof INBTSerializable) {
+                lstWriters.add((INBTSerializable<NBTBase>) prov);
                 lstNames.add(entry.getKey().toString());
             }
         }
@@ -85,12 +80,9 @@ public final class CapabilityDispatcher implements INBTSerializable<NBTTagCompou
     }
 
     @Override
-    public boolean hasCapability(@Nonnull Capability<?> capability, @Nullable EnumFacing facing)
-    {
-        for (ICapabilityProvider cap : caps)
-        {
-            if (cap.hasCapability(capability, facing))
-            {
+    public boolean hasCapability(@Nonnull Capability<?> capability, @Nullable EnumFacing facing) {
+        for (ICapabilityProvider cap : caps) {
+            if (cap.hasCapability(capability, facing)) {
                 return true;
             }
         }
@@ -99,13 +91,10 @@ public final class CapabilityDispatcher implements INBTSerializable<NBTTagCompou
 
     @Override
     @Nullable
-    public <T> T getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing facing)
-    {
-        for (ICapabilityProvider cap : caps)
-        {
+    public <T> T getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing facing) {
+        for (ICapabilityProvider cap : caps) {
             T ret = cap.getCapability(capability, facing);
-            if (ret != null)
-            {
+            if (ret != null) {
                 return ret;
             }
         }
@@ -113,23 +102,18 @@ public final class CapabilityDispatcher implements INBTSerializable<NBTTagCompou
     }
 
     @Override
-    public NBTTagCompound serializeNBT()
-    {
+    public NBTTagCompound serializeNBT() {
         NBTTagCompound nbt = new NBTTagCompound();
-        for (int x = 0; x < writers.length; x++)
-        {
+        for (int x = 0; x < writers.length; x++) {
             nbt.setTag(names[x], writers[x].serializeNBT());
         }
         return nbt;
     }
 
     @Override
-    public void deserializeNBT(NBTTagCompound nbt)
-    {
-        for (int x = 0; x < writers.length; x++)
-        {
-            if (nbt.hasKey(names[x]))
-            {
+    public void deserializeNBT(NBTTagCompound nbt) {
+        for (int x = 0; x < writers.length; x++) {
+            if (nbt.hasKey(names[x])) {
                 writers[x].deserializeNBT(nbt.getTag(names[x]));
             }
         }
@@ -137,7 +121,8 @@ public final class CapabilityDispatcher implements INBTSerializable<NBTTagCompou
 
     public boolean areCompatible(CapabilityDispatcher other) //Called from ItemStack to compare equality.
     {                                                        // Only compares serializeable caps.
-        if (other == null) return this.writers.length == 0;  // Done this way so we can do some pre-checks before doing the costly NBT serialization and compare
+        if (other == null)
+            return this.writers.length == 0;  // Done this way so we can do some pre-checks before doing the costly NBT serialization and compare
         if (this.writers.length == 0) return other.writers.length == 0;
         return this.serializeNBT().equals(other.serializeNBT());
     }

@@ -1,9 +1,10 @@
 package org.bukkit.craftbukkit.v1_12_R1.inventory;
 
 import com.google.common.base.Preconditions;
-import java.util.List;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.MerchantRecipe;
+
+import java.util.List;
 
 public class CraftMerchantRecipe extends MerchantRecipe {
 

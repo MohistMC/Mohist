@@ -4,33 +4,9 @@ import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Sets;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.EnumSet;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.NoSuchElementException;
-import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.attributes.IAttribute;
-import net.minecraft.nbt.CompressedStreamTools;
-import net.minecraft.nbt.NBTBase;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
-import net.minecraft.nbt.NBTTagString;
+import net.minecraft.nbt.*;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.Validate;
 import org.bukkit.Material;
@@ -44,6 +20,19 @@ import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.Repairable;
+
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Children must include the following:
@@ -121,6 +110,7 @@ class CraftMetaItem implements ItemMeta, Repairable {
         }
     };
     private NBTTagCompound internalTag;
+
     CraftMetaItem(CraftMetaItem meta) {
         if (meta == null) {
             return;
@@ -194,114 +184,96 @@ class CraftMetaItem implements ItemMeta, Repairable {
             gnu.trove.map.hash.TObjectDoubleHashMap<String> attributeTracker = new gnu.trove.map.hash.TObjectDoubleHashMap<>();
             gnu.trove.map.hash.TObjectDoubleHashMap<String> attributeTrackerX = new gnu.trove.map.hash.TObjectDoubleHashMap<>();
             Map<String, IAttribute> attributesByName = new HashMap<>();
-            attributeTracker.put( "generic.maxHealth", 20.0 );
-            attributesByName.put( "generic.maxHealth", SharedMonsterAttributes.MAX_HEALTH );
-            attributeTracker.put( "generic.followRange", 32.0 );
-            attributesByName.put( "generic.followRange", SharedMonsterAttributes.FOLLOW_RANGE );
-            attributeTracker.put( "generic.knockbackResistance", 0.0 );
-            attributesByName.put( "generic.knockbackResistance", SharedMonsterAttributes.KNOCKBACK_RESISTANCE );
-            attributeTracker.put( "generic.movementSpeed", 0.7 );
-            attributesByName.put( "generic.movementSpeed", SharedMonsterAttributes.MOVEMENT_SPEED );
-            attributeTracker.put( "generic.attackDamage", 1.0 );
-            attributesByName.put( "generic.attackDamage", SharedMonsterAttributes.ATTACK_DAMAGE );
+            attributeTracker.put("generic.maxHealth", 20.0);
+            attributesByName.put("generic.maxHealth", SharedMonsterAttributes.MAX_HEALTH);
+            attributeTracker.put("generic.followRange", 32.0);
+            attributesByName.put("generic.followRange", SharedMonsterAttributes.FOLLOW_RANGE);
+            attributeTracker.put("generic.knockbackResistance", 0.0);
+            attributesByName.put("generic.knockbackResistance", SharedMonsterAttributes.KNOCKBACK_RESISTANCE);
+            attributeTracker.put("generic.movementSpeed", 0.7);
+            attributesByName.put("generic.movementSpeed", SharedMonsterAttributes.MOVEMENT_SPEED);
+            attributeTracker.put("generic.attackDamage", 1.0);
+            attributesByName.put("generic.attackDamage", SharedMonsterAttributes.ATTACK_DAMAGE);
             NBTTagList oldList = nbttaglist;
             nbttaglist = new NBTTagList();
 
             List<NBTTagCompound> op0 = new ArrayList<>();
             List<NBTTagCompound> op1 = new ArrayList<>();
             List<NBTTagCompound> op2 = new ArrayList<>();
-            for ( int i = 0; i < oldList.tagCount(); ++i )
-            {
-                NBTTagCompound nbttagcompound = oldList.getCompoundTagAt( i );
-                if ( nbttagcompound == null ) continue;
+            for (int i = 0; i < oldList.tagCount(); ++i) {
+                NBTTagCompound nbttagcompound = oldList.getCompoundTagAt(i);
+                if (nbttagcompound == null) continue;
 
-                if ( !nbttagcompound.hasKey(ATTRIBUTES_UUID_HIGH.NBT, 99) )
-                {
+                if (!nbttagcompound.hasKey(ATTRIBUTES_UUID_HIGH.NBT, 99)) {
                     continue;
                 }
-                if ( !nbttagcompound.hasKey(ATTRIBUTES_UUID_LOW.NBT, 99)  )
-                {
+                if (!nbttagcompound.hasKey(ATTRIBUTES_UUID_LOW.NBT, 99)) {
                     continue;
                 }
-                if ( !( nbttagcompound.getTag( ATTRIBUTES_IDENTIFIER.NBT ) instanceof NBTTagString ) || !CraftItemFactory.KNOWN_NBT_ATTRIBUTE_NAMES.contains( nbttagcompound.getString( ATTRIBUTES_IDENTIFIER.NBT ) ) )
-                {
+                if (!(nbttagcompound.getTag(ATTRIBUTES_IDENTIFIER.NBT) instanceof NBTTagString) || !CraftItemFactory.KNOWN_NBT_ATTRIBUTE_NAMES.contains(nbttagcompound.getString(ATTRIBUTES_IDENTIFIER.NBT))) {
                     continue;
                 }
-                if ( !( nbttagcompound.getTag( ATTRIBUTES_NAME.NBT ) instanceof NBTTagString ) || nbttagcompound.getString( ATTRIBUTES_NAME.NBT ).isEmpty() )
-                {
+                if (!(nbttagcompound.getTag(ATTRIBUTES_NAME.NBT) instanceof NBTTagString) || nbttagcompound.getString(ATTRIBUTES_NAME.NBT).isEmpty()) {
                     continue;
                 }
-                if ( !nbttagcompound.hasKey(ATTRIBUTES_VALUE.NBT, 99) )
-                {
+                if (!nbttagcompound.hasKey(ATTRIBUTES_VALUE.NBT, 99)) {
                     continue;
                 }
-                if ( !nbttagcompound.hasKey(ATTRIBUTES_TYPE.NBT, 99) || nbttagcompound.getInteger( ATTRIBUTES_TYPE.NBT ) < 0 || nbttagcompound.getInteger( ATTRIBUTES_TYPE.NBT ) > 2 )
-                {
+                if (!nbttagcompound.hasKey(ATTRIBUTES_TYPE.NBT, 99) || nbttagcompound.getInteger(ATTRIBUTES_TYPE.NBT) < 0 || nbttagcompound.getInteger(ATTRIBUTES_TYPE.NBT) > 2) {
                     continue;
                 }
 
-                switch ( nbttagcompound.getInteger( ATTRIBUTES_TYPE.NBT ) )
-                {
+                switch (nbttagcompound.getInteger(ATTRIBUTES_TYPE.NBT)) {
                     case 0:
-                        op0.add( nbttagcompound );
+                        op0.add(nbttagcompound);
                         break;
                     case 1:
-                        op1.add( nbttagcompound );
+                        op1.add(nbttagcompound);
                         break;
                     case 2:
-                        op2.add( nbttagcompound );
+                        op2.add(nbttagcompound);
                         break;
                 }
             }
-            for ( NBTTagCompound nbtTagCompound : op0 )
-            {
-                String name = nbtTagCompound.getString( ATTRIBUTES_IDENTIFIER.NBT );
-                if ( attributeTracker.containsKey( name ) )
-                {
-                    double val = attributeTracker.get( name );
-                    val += nbtTagCompound.getDouble( ATTRIBUTES_VALUE.NBT );
-                    if ( val != attributesByName.get( name ).clampValue( val ) )
-                    {
+            for (NBTTagCompound nbtTagCompound : op0) {
+                String name = nbtTagCompound.getString(ATTRIBUTES_IDENTIFIER.NBT);
+                if (attributeTracker.containsKey(name)) {
+                    double val = attributeTracker.get(name);
+                    val += nbtTagCompound.getDouble(ATTRIBUTES_VALUE.NBT);
+                    if (val != attributesByName.get(name).clampValue(val)) {
                         continue;
                     }
-                    attributeTracker.put( name, val );
+                    attributeTracker.put(name, val);
                 }
-                nbttaglist.appendTag( nbtTagCompound );
+                nbttaglist.appendTag(nbtTagCompound);
             }
-            for ( String name : attributeTracker.keySet() )
-            {
-                attributeTrackerX.put( name, attributeTracker.get( name ) );
+            for (String name : attributeTracker.keySet()) {
+                attributeTrackerX.put(name, attributeTracker.get(name));
             }
-            for ( NBTTagCompound nbtTagCompound : op1 )
-            {
-                String name = nbtTagCompound.getString( ATTRIBUTES_IDENTIFIER.NBT );
-                if ( attributeTracker.containsKey( name ) )
-                {
-                    double val = attributeTracker.get( name );
-                    double valX = attributeTrackerX.get( name );
-                    val += valX * nbtTagCompound.getDouble( ATTRIBUTES_VALUE.NBT );
-                    if ( val != attributesByName.get( name ).clampValue( val ) )
-                    {
+            for (NBTTagCompound nbtTagCompound : op1) {
+                String name = nbtTagCompound.getString(ATTRIBUTES_IDENTIFIER.NBT);
+                if (attributeTracker.containsKey(name)) {
+                    double val = attributeTracker.get(name);
+                    double valX = attributeTrackerX.get(name);
+                    val += valX * nbtTagCompound.getDouble(ATTRIBUTES_VALUE.NBT);
+                    if (val != attributesByName.get(name).clampValue(val)) {
                         continue;
                     }
-                    attributeTracker.put( name, val );
+                    attributeTracker.put(name, val);
                 }
-                nbttaglist.appendTag( nbtTagCompound );
+                nbttaglist.appendTag(nbtTagCompound);
             }
-            for ( NBTTagCompound nbtTagCompound : op2 )
-            {
-                String name = nbtTagCompound.getString( ATTRIBUTES_IDENTIFIER.NBT );
-                if ( attributeTracker.containsKey( name ) )
-                {
-                    double val = attributeTracker.get( name );
-                    val += val * nbtTagCompound.getDouble( ATTRIBUTES_VALUE.NBT );
-                    if ( val != attributesByName.get( name ).clampValue( val ) )
-                    {
+            for (NBTTagCompound nbtTagCompound : op2) {
+                String name = nbtTagCompound.getString(ATTRIBUTES_IDENTIFIER.NBT);
+                if (attributeTracker.containsKey(name)) {
+                    double val = attributeTracker.get(name);
+                    val += val * nbtTagCompound.getDouble(ATTRIBUTES_VALUE.NBT);
+                    if (val != attributesByName.get(name).clampValue(val)) {
                         continue;
                     }
-                    attributeTracker.put( name, val );
+                    attributeTracker.put(name, val);
                 }
-                nbttaglist.appendTag( nbtTagCompound );
+                nbttaglist.appendTag(nbtTagCompound);
             }
 
             // Spigot end
@@ -690,9 +662,8 @@ class CraftMetaItem implements ItemMeta, Repairable {
     public boolean removeEnchant(Enchantment ench) {
         Validate.notNull(ench, "Enchantment cannot be null");
         // Spigot start
-        boolean b = hasEnchants() && enchantments.remove( ench ) != null;
-        if ( enchantments != null && enchantments.isEmpty() )
-        {
+        boolean b = hasEnchants() && enchantments.remove(ench) != null;
+        if (enchantments != null && enchantments.isEmpty()) {
             this.enchantments = null;
         }
         return b;
@@ -932,6 +903,7 @@ class CraftMetaItem implements ItemMeta, Repairable {
 
         final String BUKKIT;
         final String NBT;
+
         ItemMetaKey(final String both) {
             this(both, both);
         }
@@ -948,7 +920,8 @@ class CraftMetaItem implements ItemMeta, Repairable {
 
             enum To {
                 BUKKIT,
-                NBT,;
+                NBT,
+                ;
             }
         }
     }

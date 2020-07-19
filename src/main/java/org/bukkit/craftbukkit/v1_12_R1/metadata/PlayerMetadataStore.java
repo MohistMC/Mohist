@@ -11,10 +11,11 @@ public class PlayerMetadataStore extends MetadataStoreBase<OfflinePlayer> implem
     /**
      * Generates a unique metadata key for {@link org.bukkit.entity.Player} and {@link OfflinePlayer} using the player
      * name.
-     * @see MetadataStoreBase#disambiguate(Object, String)
-     * @param player the player
+     *
+     * @param player      the player
      * @param metadataKey The name identifying the metadata value
      * @return a unique metadata key
+     * @see MetadataStoreBase#disambiguate(Object, String)
      */
     @Override
     protected String disambiguate(OfflinePlayer player, String metadataKey) {

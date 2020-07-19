@@ -26,6 +26,5 @@ import net.minecraftforge.fml.relauncher.SideOnly;
  * Represents a generic type of reloadable resource. Used for resource reload filtering.
  */
 @SideOnly(Side.CLIENT)
-public interface IResourceType
-{
+public interface IResourceType {
 }

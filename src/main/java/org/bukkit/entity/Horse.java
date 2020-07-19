@@ -136,7 +136,8 @@ public interface Horse extends AbstractHorse {
         /**
          * Dark brown
          */
-        DARK_BROWN,;
+        DARK_BROWN,
+        ;
     }
 
     /**
@@ -162,6 +163,7 @@ public interface Horse extends AbstractHorse {
         /**
          * Small black dots
          */
-        BLACK_DOTS,;
+        BLACK_DOTS,
+        ;
     }
 }

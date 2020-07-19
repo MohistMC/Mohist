@@ -24,24 +24,22 @@ import io.netty.channel.ChannelHandlerContext;
 import net.minecraftforge.fml.common.network.FMLIndexedMessageToMessageCodec;
 
 public class FMLHandshakeCodec extends FMLIndexedMessageToMessageCodec<FMLHandshakeMessage> {
-    public FMLHandshakeCodec()
-    {
-        addDiscriminator((byte)0, FMLHandshakeMessage.ServerHello.class);
-        addDiscriminator((byte)1, FMLHandshakeMessage.ClientHello.class);
-        addDiscriminator((byte)2, FMLHandshakeMessage.ModList.class);
-        addDiscriminator((byte)3, FMLHandshakeMessage.RegistryData.class);
-        addDiscriminator((byte)-1, FMLHandshakeMessage.HandshakeAck.class);
-        addDiscriminator((byte)-2, FMLHandshakeMessage.HandshakeReset.class);
+    public FMLHandshakeCodec() {
+        addDiscriminator((byte) 0, FMLHandshakeMessage.ServerHello.class);
+        addDiscriminator((byte) 1, FMLHandshakeMessage.ClientHello.class);
+        addDiscriminator((byte) 2, FMLHandshakeMessage.ModList.class);
+        addDiscriminator((byte) 3, FMLHandshakeMessage.RegistryData.class);
+        addDiscriminator((byte) -1, FMLHandshakeMessage.HandshakeAck.class);
+        addDiscriminator((byte) -2, FMLHandshakeMessage.HandshakeReset.class);
     }
+
     @Override
-    public void encodeInto(ChannelHandlerContext ctx, FMLHandshakeMessage msg, ByteBuf target) throws Exception
-    {
+    public void encodeInto(ChannelHandlerContext ctx, FMLHandshakeMessage msg, ByteBuf target) throws Exception {
         msg.toBytes(target);
     }
 
     @Override
-    public void decodeInto(ChannelHandlerContext ctx, ByteBuf source, FMLHandshakeMessage msg)
-    {
+    public void decodeInto(ChannelHandlerContext ctx, ByteBuf source, FMLHandshakeMessage msg) {
         msg.fromBytes(source);
     }
 }

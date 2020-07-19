@@ -45,8 +45,7 @@ public class ActivationRange {
      * @return group id
      */
     public static byte initializeEntityActivationType(Entity entity) {
-        if (entity instanceof EntityMob || entity instanceof EntitySlime)
-        {
+        if (entity instanceof EntityMob || entity instanceof EntitySlime) {
             return 1; // Monster
         } else if (entity instanceof EntityCreature || entity instanceof EntityAmbientCreature) {
             return 2; // Animal
@@ -135,7 +134,7 @@ public class ActivationRange {
     private static void activateChunkEntities(Chunk chunk) {
         for (ClassInheritanceMultiMap<Entity> slice : chunk.entityLists) {
             for (Entity entity : slice) {
-				if (entity == null) continue;
+                if (entity == null) continue;
                 if (MinecraftServer.currentTick > entity.activatedTick) {
                     if (entity.defaultActivationState) {
                         entity.activatedTick = MinecraftServer.currentTick;
@@ -219,7 +218,7 @@ public class ActivationRange {
      */
     public static boolean checkIfActive(Entity entity) {
         if (MinecraftServer.entityConfig != null
-            && MinecraftServer.entityConfig.skipActivationRange.getValue())
+                && MinecraftServer.entityConfig.skipActivationRange.getValue())
             return true;
 
         // Never safe to skip fireworks or entities not yet added to chunk

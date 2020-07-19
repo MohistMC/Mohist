@@ -36,14 +36,14 @@ public interface Timing extends AutoCloseable {
 
     /**
      * <p>Stops timing and records the data. Propagates the data up to group handlers.</p>
-     *
+     * <p>
      * Will automatically be called when this Timing is used with try-with-resources
      */
     void stopTiming();
 
     /**
      * Starts timing the execution until {@link #stopTiming()} is called.
-     *
+     * <p>
      * But only if we are on the primary thread.
      *
      * @return Timing
@@ -54,7 +54,7 @@ public interface Timing extends AutoCloseable {
      * <p>Stops timing and records the data. Propagates the data up to group handlers.</p>
      *
      * <p>Will automatically be called when this Timing is used with try-with-resources</p>
-     *
+     * <p>
      * But only if we are on the primary thread.
      */
     void stopTimingIfSync();

@@ -20,218 +20,183 @@
 package net.minecraftforge.fml.common;
 
 import com.google.common.eventbus.EventBus;
+import net.minecraftforge.fml.common.versioning.ArtifactVersion;
+import net.minecraftforge.fml.common.versioning.VersionRange;
+
+import javax.annotation.Nullable;
 import java.io.File;
 import java.net.URL;
 import java.security.cert.Certificate;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import javax.annotation.Nullable;
-import net.minecraftforge.fml.common.versioning.ArtifactVersion;
-import net.minecraftforge.fml.common.versioning.VersionRange;
 
-public class InjectedModContainer implements ModContainer
-{
-    private File source;
+public class InjectedModContainer implements ModContainer {
     public final ModContainer wrappedContainer;
+    private File source;
 
-    public InjectedModContainer(ModContainer mc, File source)
-    {
+    public InjectedModContainer(ModContainer mc, File source) {
         this.source = source != null ? source : new File("minecraft.jar");
         this.wrappedContainer = mc;
     }
 
     @Override
-    public String getModId()
-    {
+    public String getModId() {
         return wrappedContainer.getModId();
     }
 
     @Override
-    public String getName()
-    {
+    public String getName() {
         return wrappedContainer.getName();
     }
 
     @Override
-    public String getVersion()
-    {
+    public String getVersion() {
         return wrappedContainer.getVersion();
     }
 
     @Override
-    public File getSource()
-    {
+    public File getSource() {
         return source;
     }
 
     @Override
-    public ModMetadata getMetadata()
-    {
+    public ModMetadata getMetadata() {
         return wrappedContainer.getMetadata();
     }
 
     @Override
-    public void bindMetadata(MetadataCollection mc)
-    {
+    public void bindMetadata(MetadataCollection mc) {
         wrappedContainer.bindMetadata(mc);
     }
 
     @Override
-    public void setEnabledState(boolean enabled)
-    {
+    public void setEnabledState(boolean enabled) {
         wrappedContainer.setEnabledState(enabled);
     }
 
     @Override
-    public Set<ArtifactVersion> getRequirements()
-    {
+    public Set<ArtifactVersion> getRequirements() {
         return wrappedContainer.getRequirements();
     }
 
     @Override
-    public List<ArtifactVersion> getDependencies()
-    {
+    public List<ArtifactVersion> getDependencies() {
         return wrappedContainer.getDependencies();
     }
 
     @Override
-    public List<ArtifactVersion> getDependants()
-    {
+    public List<ArtifactVersion> getDependants() {
         return wrappedContainer.getDependants();
     }
 
     @Override
-    public String getSortingRules()
-    {
+    public String getSortingRules() {
         return wrappedContainer.getSortingRules();
     }
 
     @Override
-    public boolean registerBus(EventBus bus, LoadController controller)
-    {
+    public boolean registerBus(EventBus bus, LoadController controller) {
         return wrappedContainer.registerBus(bus, controller);
     }
 
     @Override
-    public boolean matches(Object mod)
-    {
+    public boolean matches(Object mod) {
         return wrappedContainer.matches(mod);
     }
 
     @Override
-    public Object getMod()
-    {
+    public Object getMod() {
         return wrappedContainer.getMod();
     }
 
     @Override
-    public ArtifactVersion getProcessedVersion()
-    {
+    public ArtifactVersion getProcessedVersion() {
         return wrappedContainer.getProcessedVersion();
     }
 
     @Override
-    public boolean isImmutable()
-    {
+    public boolean isImmutable() {
         return true;
     }
 
     @Override
-    public String getDisplayVersion()
-    {
+    public String getDisplayVersion() {
         return wrappedContainer.getDisplayVersion();
     }
 
     @Override
-    public VersionRange acceptableMinecraftVersionRange()
-    {
+    public VersionRange acceptableMinecraftVersionRange() {
         return wrappedContainer.acceptableMinecraftVersionRange();
     }
 
     @Nullable
-    public WorldAccessContainer getWrappedWorldAccessContainer()
-    {
-        if (wrappedContainer instanceof WorldAccessContainer)
-        {
+    public WorldAccessContainer getWrappedWorldAccessContainer() {
+        if (wrappedContainer instanceof WorldAccessContainer) {
             return (WorldAccessContainer) wrappedContainer;
-        }
-        else
-        {
+        } else {
             return null;
         }
     }
 
     @Override
     @Nullable
-    public Certificate getSigningCertificate()
-    {
+    public Certificate getSigningCertificate() {
         return wrappedContainer.getSigningCertificate();
     }
 
     @Override
-    public String toString()
-    {
-        return "Wrapped{"+wrappedContainer.toString()+"}";
+    public String toString() {
+        return "Wrapped{" + wrappedContainer.toString() + "}";
     }
 
     @Override
-    public Map<String, String> getCustomModProperties()
-    {
+    public Map<String, String> getCustomModProperties() {
         return wrappedContainer.getCustomModProperties();
     }
 
     @Override
-    public Class<?> getCustomResourcePackClass()
-    {
+    public Class<?> getCustomResourcePackClass() {
         return wrappedContainer.getCustomResourcePackClass();
     }
 
     @Override
-    public Map<String, String> getSharedModDescriptor()
-    {
+    public Map<String, String> getSharedModDescriptor() {
         return wrappedContainer.getSharedModDescriptor();
     }
 
     @Override
-    public Disableable canBeDisabled()
-    {
+    public Disableable canBeDisabled() {
         return wrappedContainer.canBeDisabled();
     }
 
     @Override
-    public String getGuiClassName()
-    {
+    public String getGuiClassName() {
         return wrappedContainer.getGuiClassName();
     }
 
     @Override
-    public List<String> getOwnedPackages()
-    {
+    public List<String> getOwnedPackages() {
         return wrappedContainer.getOwnedPackages();
     }
 
     @Override
-    public boolean shouldLoadInEnvironment()
-    {
+    public boolean shouldLoadInEnvironment() {
         return true;
     }
 
     @Override
-    public URL getUpdateUrl()
-    {
+    public URL getUpdateUrl() {
         return wrappedContainer.getUpdateUrl();
     }
 
     @Override
-    public void setClassVersion(int classVersion)
-    {
-        wrappedContainer.setClassVersion(classVersion);
+    public int getClassVersion() {
+        return wrappedContainer.getClassVersion();
     }
 
     @Override
-    public int getClassVersion()
-    {
-        return wrappedContainer.getClassVersion();
+    public void setClassVersion(int classVersion) {
+        wrappedContainer.setClassVersion(classVersion);
     }
 }

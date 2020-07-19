@@ -1,11 +1,12 @@
 package org.bukkit.event.entity;
 
-import java.util.List;
 import org.bukkit.PortalType;
 import org.bukkit.block.BlockState;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.HandlerList;
+
+import java.util.List;
 
 /**
  * Thrown when a Living Entity creates a portal in a world.

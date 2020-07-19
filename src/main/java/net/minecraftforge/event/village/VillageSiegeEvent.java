@@ -39,45 +39,38 @@ import net.minecraftforge.fml.common.eventhandler.Event;
  * This event is fired on the {@link MinecraftForge#EVENT_BUS}.
  */
 @Cancelable
-public class VillageSiegeEvent extends Event
-{
+public class VillageSiegeEvent extends Event {
     private final VillageSiege siege;
     private final World world;
     private final EntityPlayer player;
     private final Village village;
     private final Vec3d attemptedSpawnPos;
 
-    public VillageSiegeEvent(VillageSiege siege, World world, EntityPlayer player, Village village, Vec3d attemptedSpawnPos)
-    {
-       this.siege = siege;
-       this.world = world;
-       this.player = player;
-       this.village = village;
-       this.attemptedSpawnPos = attemptedSpawnPos;
+    public VillageSiegeEvent(VillageSiege siege, World world, EntityPlayer player, Village village, Vec3d attemptedSpawnPos) {
+        this.siege = siege;
+        this.world = world;
+        this.player = player;
+        this.village = village;
+        this.attemptedSpawnPos = attemptedSpawnPos;
     }
 
-    public VillageSiege getSiege()
-    {
+    public VillageSiege getSiege() {
         return siege;
     }
 
-    public World getWorld()
-    {
+    public World getWorld() {
         return world;
     }
 
-    public EntityPlayer getPlayer()
-    {
+    public EntityPlayer getPlayer() {
         return player;
     }
 
-    public Village getVillage()
-    {
+    public Village getVillage() {
         return village;
     }
 
-    public Vec3d getAttemptedSpawnPos()
-    {
+    public Vec3d getAttemptedSpawnPos() {
         return attemptedSpawnPos;
     }
 }

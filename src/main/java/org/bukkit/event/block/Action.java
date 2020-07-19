@@ -20,7 +20,7 @@ public enum Action {
     RIGHT_CLICK_AIR,
     /**
      * Stepping onto or into a block (Ass-pressure)
-     *
+     * <p>
      * Examples:
      * <ul>
      * <li>Jumping on soil

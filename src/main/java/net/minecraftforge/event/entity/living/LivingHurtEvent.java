@@ -28,7 +28,7 @@ import net.minecraftforge.fml.common.eventhandler.Cancelable;
 
 /**
  * LivingHurtEvent is fired when an Entity is set to be hurt. <br>
- * This event is fired whenever an Entity is hurt in 
+ * This event is fired whenever an Entity is hurt in
  * {@link EntityLivingBase#damageEntity(DamageSource, float)} and
  * {@link EntityPlayer#damageEntity(DamageSource, float)}.<br>
  * <br>
@@ -43,23 +43,29 @@ import net.minecraftforge.fml.common.eventhandler.Cancelable;
  * This event does not have a result. {@link HasResult}<br>
  * <br>
  * This event is fired on the {@link MinecraftForge#EVENT_BUS}.
+ *
  * @see LivingDamageEvent
  **/
 @Cancelable
-public class LivingHurtEvent extends LivingEvent
-{
+public class LivingHurtEvent extends LivingEvent {
     private final DamageSource source;
     private float amount;
-    public LivingHurtEvent(EntityLivingBase entity, DamageSource source, float amount)
-    {
+
+    public LivingHurtEvent(EntityLivingBase entity, DamageSource source, float amount) {
         super(entity);
         this.source = source;
         this.amount = amount;
     }
 
-    public DamageSource getSource() { return source; }
+    public DamageSource getSource() {
+        return source;
+    }
 
-    public float getAmount() { return amount; }
+    public float getAmount() {
+        return amount;
+    }
 
-    public void setAmount(float amount) { this.amount = amount; }
+    public void setAmount(float amount) {
+        this.amount = amount;
+    }
 }

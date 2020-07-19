@@ -37,18 +37,15 @@ import net.minecraftforge.fml.common.eventhandler.Cancelable;
  * <br>
  * This event is fired on the {@link MinecraftForge#EVENT_BUS}.
  **/
-public class MinecartUpdateEvent extends MinecartEvent
-{
+public class MinecartUpdateEvent extends MinecartEvent {
     private final BlockPos pos;
 
-    public MinecartUpdateEvent(EntityMinecart minecart, BlockPos pos)
-    {
+    public MinecartUpdateEvent(EntityMinecart minecart, BlockPos pos) {
         super(minecart);
         this.pos = pos;
     }
 
-    public BlockPos getPos()
-    {
+    public BlockPos getPos() {
         return pos;
     }
 }

@@ -1,12 +1,13 @@
 package org.bukkit.util;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.Random;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.configuration.serialization.SerializableAs;
+
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Random;
 
 /**
  * Represents a mutable vector. Because the components of Vectors are mutable,
@@ -450,6 +451,28 @@ public class Vector implements Cloneable, ConfigurationSerializable {
     }
 
     /**
+     * Set the X component.
+     *
+     * @param x The new X component.
+     * @return This vector.
+     */
+    public Vector setX(int x) {
+        this.x = x;
+        return this;
+    }
+
+    /**
+     * Set the X component.
+     *
+     * @param x The new X component.
+     * @return This vector.
+     */
+    public Vector setX(double x) {
+        this.x = x;
+        return this;
+    }
+
+    /**
      * Gets the floored value of the X component, indicating the block that
      * this vector is contained with.
      *
@@ -475,6 +498,28 @@ public class Vector implements Cloneable, ConfigurationSerializable {
      * @return This vector.
      */
     public Vector setY(float y) {
+        this.y = y;
+        return this;
+    }
+
+    /**
+     * Set the Y component.
+     *
+     * @param y The new Y component.
+     * @return This vector.
+     */
+    public Vector setY(int y) {
+        this.y = y;
+        return this;
+    }
+
+    /**
+     * Set the Y component.
+     *
+     * @param y The new Y component.
+     * @return This vector.
+     */
+    public Vector setY(double y) {
         this.y = y;
         return this;
     }
@@ -510,60 +555,6 @@ public class Vector implements Cloneable, ConfigurationSerializable {
     }
 
     /**
-     * Gets the floored value of the Z component, indicating the block that
-     * this vector is contained with.
-     *
-     * @return block z
-     */
-    public int getBlockZ() {
-        return NumberConversions.floor(z);
-    }
-
-    /**
-     * Set the X component.
-     *
-     * @param x The new X component.
-     * @return This vector.
-     */
-    public Vector setX(int x) {
-        this.x = x;
-        return this;
-    }
-
-    /**
-     * Set the X component.
-     *
-     * @param x The new X component.
-     * @return This vector.
-     */
-    public Vector setX(double x) {
-        this.x = x;
-        return this;
-    }
-
-    /**
-     * Set the Y component.
-     *
-     * @param y The new Y component.
-     * @return This vector.
-     */
-    public Vector setY(int y) {
-        this.y = y;
-        return this;
-    }
-
-    /**
-     * Set the Y component.
-     *
-     * @param y The new Y component.
-     * @return This vector.
-     */
-    public Vector setY(double y) {
-        this.y = y;
-        return this;
-    }
-
-    /**
      * Set the Z component.
      *
      * @param z The new Z component.
@@ -583,6 +574,16 @@ public class Vector implements Cloneable, ConfigurationSerializable {
     public Vector setZ(double z) {
         this.z = z;
         return this;
+    }
+
+    /**
+     * Gets the floored value of the Z component, indicating the block that
+     * this vector is contained with.
+     *
+     * @return block z
+     */
+    public int getBlockZ() {
+        return NumberConversions.floor(z);
     }
 
     /**
@@ -654,7 +655,7 @@ public class Vector implements Cloneable, ConfigurationSerializable {
      * Gets a Location version of this vector.
      *
      * @param world The world to link the location to.
-     * @param yaw The desired yaw.
+     * @param yaw   The desired yaw.
      * @param pitch The desired pitch.
      * @return the location
      */

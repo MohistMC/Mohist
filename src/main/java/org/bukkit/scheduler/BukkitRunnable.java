@@ -35,7 +35,7 @@ public abstract class BukkitRunnable implements Runnable {
      * @param plugin the reference to the plugin scheduling task
      * @return a BukkitTask that contains the id number
      * @throws IllegalArgumentException if plugin is null
-     * @throws IllegalStateException if this was already scheduled
+     * @throws IllegalStateException    if this was already scheduled
      * @see BukkitScheduler#runTask(Plugin, Runnable)
      */
     public synchronized BukkitTask runTask(Plugin plugin) throws IllegalArgumentException, IllegalStateException {
@@ -52,7 +52,7 @@ public abstract class BukkitRunnable implements Runnable {
      * @param plugin the reference to the plugin scheduling task
      * @return a BukkitTask that contains the id number
      * @throws IllegalArgumentException if plugin is null
-     * @throws IllegalStateException if this was already scheduled
+     * @throws IllegalStateException    if this was already scheduled
      * @see BukkitScheduler#runTaskAsynchronously(Plugin, Runnable)
      */
     public synchronized BukkitTask runTaskAsynchronously(Plugin plugin) throws IllegalArgumentException, IllegalStateException {
@@ -64,10 +64,10 @@ public abstract class BukkitRunnable implements Runnable {
      * Schedules this to run after the specified number of server ticks.
      *
      * @param plugin the reference to the plugin scheduling task
-     * @param delay the ticks to wait before running the task
+     * @param delay  the ticks to wait before running the task
      * @return a BukkitTask that contains the id number
      * @throws IllegalArgumentException if plugin is null
-     * @throws IllegalStateException if this was already scheduled
+     * @throws IllegalStateException    if this was already scheduled
      * @see BukkitScheduler#runTaskLater(Plugin, Runnable, long)
      */
     public synchronized BukkitTask runTaskLater(Plugin plugin, long delay) throws IllegalArgumentException, IllegalStateException {
@@ -83,10 +83,10 @@ public abstract class BukkitRunnable implements Runnable {
      * server ticks.
      *
      * @param plugin the reference to the plugin scheduling task
-     * @param delay the ticks to wait before running the task
+     * @param delay  the ticks to wait before running the task
      * @return a BukkitTask that contains the id number
      * @throws IllegalArgumentException if plugin is null
-     * @throws IllegalStateException if this was already scheduled
+     * @throws IllegalStateException    if this was already scheduled
      * @see BukkitScheduler#runTaskLaterAsynchronously(Plugin, Runnable, long)
      */
     public synchronized BukkitTask runTaskLaterAsynchronously(Plugin plugin, long delay) throws IllegalArgumentException, IllegalStateException {
@@ -99,11 +99,11 @@ public abstract class BukkitRunnable implements Runnable {
      * specified number of server ticks.
      *
      * @param plugin the reference to the plugin scheduling task
-     * @param delay the ticks to wait before running the task
+     * @param delay  the ticks to wait before running the task
      * @param period the ticks to wait between runs
      * @return a BukkitTask that contains the id number
      * @throws IllegalArgumentException if plugin is null
-     * @throws IllegalStateException if this was already scheduled
+     * @throws IllegalStateException    if this was already scheduled
      * @see BukkitScheduler#runTaskTimer(Plugin, Runnable, long, long)
      */
     public synchronized BukkitTask runTaskTimer(Plugin plugin, long delay, long period) throws IllegalArgumentException, IllegalStateException {
@@ -119,14 +119,14 @@ public abstract class BukkitRunnable implements Runnable {
      * starting after the specified number of server ticks.
      *
      * @param plugin the reference to the plugin scheduling task
-     * @param delay the ticks to wait before running the task for the first
-     *     time
+     * @param delay  the ticks to wait before running the task for the first
+     *               time
      * @param period the ticks to wait between runs
      * @return a BukkitTask that contains the id number
      * @throws IllegalArgumentException if plugin is null
-     * @throws IllegalStateException if this was already scheduled
+     * @throws IllegalStateException    if this was already scheduled
      * @see BukkitScheduler#runTaskTimerAsynchronously(Plugin, Runnable, long,
-     *     long)
+     * long)
      */
     public synchronized BukkitTask runTaskTimerAsynchronously(Plugin plugin, long delay, long period) throws IllegalArgumentException, IllegalStateException {
         checkNotYetScheduled();

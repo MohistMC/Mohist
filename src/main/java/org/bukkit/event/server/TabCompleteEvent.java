@@ -1,11 +1,12 @@
 package org.bukkit.event.server;
 
-import java.util.List;
 import org.apache.commons.lang.Validate;
 import org.bukkit.command.CommandSender;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
+
+import java.util.List;
 
 /**
  * Called when a {@link CommandSender} of any description (ie: player or

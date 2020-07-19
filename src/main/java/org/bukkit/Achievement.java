@@ -2,6 +2,7 @@ package org.bukkit;
 
 /**
  * Represents an achievement, which may be given to players.
+ *
  * @deprecated future versions of Minecraft do not have achievements
  */
 

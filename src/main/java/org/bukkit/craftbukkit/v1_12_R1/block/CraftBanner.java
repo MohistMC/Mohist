@@ -1,7 +1,5 @@
 package org.bukkit.craftbukkit.v1_12_R1.block;
 
-import java.util.ArrayList;
-import java.util.List;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -12,6 +10,9 @@ import org.bukkit.block.Banner;
 import org.bukkit.block.Block;
 import org.bukkit.block.banner.Pattern;
 import org.bukkit.block.banner.PatternType;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class CraftBanner extends CraftBlockEntityState<TileEntityBanner> implements Banner {
 

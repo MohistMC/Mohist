@@ -19,9 +19,6 @@
 
 package net.minecraftforge.event.world;
 
-import java.util.ArrayList;
-import java.util.Hashtable;
-import java.util.List;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.client.network.NetHandlerPlayClient;
@@ -39,6 +36,10 @@ import net.minecraft.world.biome.Biome.SpawnListEntry;
 import net.minecraftforge.fml.common.eventhandler.Cancelable;
 import net.minecraftforge.fml.common.eventhandler.Event;
 
+import java.util.ArrayList;
+import java.util.Hashtable;
+import java.util.List;
+
 /**
  * WorldEvent is fired when an event involving the world occurs.<br>
  * If a method utilizes this {@link Event} as its parameter, the method will
@@ -48,17 +49,14 @@ import net.minecraftforge.fml.common.eventhandler.Event;
  * <br>
  * All children of this event are fired on the {@link MinecraftForge#EVENT_BUS}.<br>
  **/
-public class WorldEvent extends Event
-{
+public class WorldEvent extends Event {
     private final World world;
 
-    public WorldEvent(World world)
-    {
+    public WorldEvent(World world) {
         this.world = world;
     }
 
-    public World getWorld()
-    {
+    public World getWorld() {
         return world;
     }
 
@@ -77,9 +75,10 @@ public class WorldEvent extends Event
      * <br>
      * This event is fired on the {@link MinecraftForge#EVENT_BUS}.<br>
      **/
-    public static class Load extends WorldEvent
-    {
-        public Load(World world) { super(world); }
+    public static class Load extends WorldEvent {
+        public Load(World world) {
+            super(world);
+        }
     }
 
     /**
@@ -96,9 +95,10 @@ public class WorldEvent extends Event
      * <br>
      * This event is fired on the {@link MinecraftForge#EVENT_BUS}.<br>
      **/
-    public static class Unload extends WorldEvent
-    {
-        public Unload(World world) { super(world); }
+    public static class Unload extends WorldEvent {
+        public Unload(World world) {
+            super(world);
+        }
     }
 
     /**
@@ -113,9 +113,10 @@ public class WorldEvent extends Event
      * <br>
      * This event is fired on the {@link MinecraftForge#EVENT_BUS}.<br>
      **/
-    public static class Save extends WorldEvent
-    {
-        public Save(World world) { super(world); }
+    public static class Save extends WorldEvent {
+        public Save(World world) {
+            super(world);
+        }
     }
 
     /**
@@ -127,39 +128,31 @@ public class WorldEvent extends Event
      * Canceling the event will result in a empty list, meaning no entity will be spawned.
      */
     @Cancelable
-    public static class PotentialSpawns extends WorldEvent
-    {
+    public static class PotentialSpawns extends WorldEvent {
         private final EnumCreatureType type;
         private final BlockPos pos;
         private final List<SpawnListEntry> list;
 
-        public PotentialSpawns(World world, EnumCreatureType type, BlockPos pos, List<SpawnListEntry> oldList)
-        {
+        public PotentialSpawns(World world, EnumCreatureType type, BlockPos pos, List<SpawnListEntry> oldList) {
             super(world);
             this.pos = pos;
             this.type = type;
-            if (oldList != null)
-            {
+            if (oldList != null) {
                 this.list = new ArrayList<SpawnListEntry>(oldList);
-            }
-            else
-            {
+            } else {
                 this.list = new ArrayList<SpawnListEntry>();
             }
         }
 
-        public EnumCreatureType getType()
-        {
+        public EnumCreatureType getType() {
             return type;
         }
 
-        public BlockPos getPos()
-        {
+        public BlockPos getPos() {
             return pos;
         }
 
-        public List<SpawnListEntry> getList()
-        {
+        public List<SpawnListEntry> getList() {
             return list;
         }
     }
@@ -169,17 +162,15 @@ public class WorldEvent extends Event
      * Canceling the event will prevent the vanilla code from running.
      */
     @Cancelable
-    public static class CreateSpawnPosition extends WorldEvent
-    {
+    public static class CreateSpawnPosition extends WorldEvent {
         private final WorldSettings settings;
-        public CreateSpawnPosition(World world, WorldSettings settings)
-        {
+
+        public CreateSpawnPosition(World world, WorldSettings settings) {
             super(world);
             this.settings = settings;
         }
 
-        public WorldSettings getSettings()
-        {
+        public WorldSettings getSettings() {
             return settings;
         }
     }

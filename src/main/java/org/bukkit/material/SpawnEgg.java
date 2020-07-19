@@ -6,6 +6,7 @@ import org.bukkit.inventory.meta.SpawnEggMeta;
 
 /**
  * Represents a spawn egg that can be used to spawn mobs
+ *
  * @deprecated use {@link SpawnEggMeta}
  */
 

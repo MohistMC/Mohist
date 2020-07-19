@@ -28,17 +28,15 @@ import net.minecraftforge.event.entity.EntityEvent;
  * additional useful data from the firing method that isn't already contained
  * within the EntityItem instance.
  */
-public class ItemEvent extends EntityEvent
-{
+public class ItemEvent extends EntityEvent {
     private final EntityItem entityItem;
 
     /**
      * Creates a new event for an EntityItem.
-     * 
+     *
      * @param itemEntity The EntityItem for this event
      */
-    public ItemEvent(EntityItem itemEntity)
-    {
+    public ItemEvent(EntityItem itemEntity) {
         super(itemEntity);
         this.entityItem = itemEntity;
     }
@@ -46,8 +44,7 @@ public class ItemEvent extends EntityEvent
     /**
      * The relevant EntityItem for this event, already cast for you.
      */
-    public EntityItem getEntityItem()
-    {
+    public EntityItem getEntityItem() {
         return entityItem;
     }
 }

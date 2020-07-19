@@ -20,9 +20,6 @@
 package net.minecraftforge.common;
 
 import com.google.common.io.Files;
-import java.io.File;
-import java.io.IOException;
-import java.util.UUID;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.MinecraftException;
 import net.minecraft.world.WorldProvider;
@@ -34,42 +31,72 @@ import net.minecraft.world.storage.ISaveHandler;
 import net.minecraft.world.storage.WorldInfo;
 import net.minecraftforge.fml.common.FMLLog;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.UUID;
+
 //Class used internally to provide the world specific data directories.
 
-public class WorldSpecificSaveHandler implements ISaveHandler
-{
+public class WorldSpecificSaveHandler implements ISaveHandler {
     private WorldServer world;
     private ISaveHandler parent;
     private File dataDir;
 
-    public WorldSpecificSaveHandler(WorldServer world, ISaveHandler parent)
-    {
+    public WorldSpecificSaveHandler(WorldServer world, ISaveHandler parent) {
         this.world = world;
         this.parent = parent;
     }
 
-    @Override public WorldInfo loadWorldInfo() { return parent.loadWorldInfo(); }
-    @Override public void checkSessionLock() throws MinecraftException { parent.checkSessionLock(); }
-    @Override public IChunkLoader getChunkLoader(WorldProvider var1) { return parent.getChunkLoader(var1); }
-    @Override public void saveWorldInfoWithPlayer(WorldInfo var1, NBTTagCompound var2) { parent.saveWorldInfoWithPlayer(var1, var2); }
-    @Override public void saveWorldInfo(WorldInfo var1){ parent.saveWorldInfo(var1); }
-    @Override public IPlayerFileData getPlayerNBTManager() { return parent.getPlayerNBTManager(); }
-    @Override public void flush() { parent.flush(); }
-    @Override public File getWorldDirectory() { return parent.getWorldDirectory(); }
+    @Override
+    public WorldInfo loadWorldInfo() {
+        return parent.loadWorldInfo();
+    }
 
     @Override
-    public File getMapFileFromName(String name)
-    {
+    public void checkSessionLock() throws MinecraftException {
+        parent.checkSessionLock();
+    }
+
+    @Override
+    public IChunkLoader getChunkLoader(WorldProvider var1) {
+        return parent.getChunkLoader(var1);
+    }
+
+    @Override
+    public void saveWorldInfoWithPlayer(WorldInfo var1, NBTTagCompound var2) {
+        parent.saveWorldInfoWithPlayer(var1, var2);
+    }
+
+    @Override
+    public void saveWorldInfo(WorldInfo var1) {
+        parent.saveWorldInfo(var1);
+    }
+
+    @Override
+    public IPlayerFileData getPlayerNBTManager() {
+        return parent.getPlayerNBTManager();
+    }
+
+    @Override
+    public void flush() {
+        parent.flush();
+    }
+
+    @Override
+    public File getWorldDirectory() {
+        return parent.getWorldDirectory();
+    }
+
+    @Override
+    public File getMapFileFromName(String name) {
         if (dataDir == null) //Delayed down here do that world has time to be initialized first.
         {
             dataDir = new File(world.getChunkSaveLocation(), "data");
             dataDir.mkdirs();
         }
         File file = new File(dataDir, name + ".dat");
-        if (!file.exists())
-        {
-            switch (world.provider.getDimension())
-            {
+        if (!file.exists()) {
+            switch (world.provider.getDimension()) {
                 case -1:
                     if (name.equalsIgnoreCase("FORTRESS")) copyFile(name, file);
                     break;
@@ -81,25 +108,19 @@ public class WorldSpecificSaveHandler implements ISaveHandler
         return file;
     }
 
-    private void copyFile(String name, File to)
-    {
+    private void copyFile(String name, File to) {
         File parentFile = parent.getMapFileFromName(name);
-        if (parentFile.exists())
-        {
-            try
-            {
+        if (parentFile.exists()) {
+            try {
                 Files.copy(parentFile, to);
-            }
-            catch (IOException e)
-            {
+            } catch (IOException e) {
                 FMLLog.log.error("A critical error occurred copying {} to world specific dat folder - new file will be created.", parentFile.getName(), e);
             }
         }
     }
 
     @Override
-    public TemplateManager getStructureTemplateManager()
-    {
+    public TemplateManager getStructureTemplateManager() {
         return parent.getStructureTemplateManager();
     }
 

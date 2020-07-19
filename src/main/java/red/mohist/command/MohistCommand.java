@@ -1,9 +1,5 @@
 package red.mohist.command;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Locale;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -15,7 +11,14 @@ import red.mohist.api.ServerAPI;
 import red.mohist.configuration.MohistConfig;
 import red.mohist.util.i18n.Message;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Locale;
+
 public class MohistCommand extends Command {
+
+    private List<String> params = Arrays.asList("mods", "playermods", "printthreadcost", "lang", "item", "reload");
 
     public MohistCommand(String name) {
         super(name);
@@ -23,8 +26,6 @@ public class MohistCommand extends Command {
         this.usageMessage = "/mohist [mods|playermods|printthreadcost|lang|item|reload]";
         this.setPermission("mohist.command.mohist");
     }
-
-    private List<String> params = Arrays.asList("mods", "playermods", "printthreadcost", "lang", "item", "reload");
 
     @Override
     public List<String> tabComplete(CommandSender sender, String alias, String[] args) throws IllegalArgumentException {
@@ -74,14 +75,14 @@ public class MohistCommand extends Command {
                 MohistThreadCost.dumpThreadCpuTime();
                 break;
             case "lang":
-                sender.sendMessage(ChatColor.GREEN +Message.getLocale());
+                sender.sendMessage(ChatColor.GREEN + Message.getLocale());
                 break;
             case "item":
                 if (args.length == 1) {
                     sender.sendMessage(ChatColor.RED + "Usage: /mohist item info");
                     return false;
                 }
-                if ("info".equals(args[1].toLowerCase(Locale.ENGLISH))){
+                if ("info".equals(args[1].toLowerCase(Locale.ENGLISH))) {
                     ItemCommand.info(sender);
                 } else {
                     sender.sendMessage(ChatColor.RED + "Usage: /mohist item info");

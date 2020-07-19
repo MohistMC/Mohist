@@ -29,80 +29,67 @@ import org.apache.logging.log4j.Logger;
  * FMLs logging class. <b>Internal use only, NOT FOR MOD LOGGING!</b> Mods use your own log, see {@link FMLPreInitializationEvent#getModLog()}.
  * TODO 1.13 remove all the deprecated methods
  */
-public class FMLLog
-{
+public class FMLLog {
 
     public static final Logger log = LogManager.getLogger("FML");
 
-    public static void bigWarning(String format, Object... data)
-    {
+    public static void bigWarning(String format, Object... data) {
         StackTraceElement[] trace = Thread.currentThread().getStackTrace();
         log.warn("****************************************");
-        log.warn("* "+format, data);
-        for (int i = 2; i < 8 && i < trace.length; i++)
-        {
+        log.warn("* " + format, data);
+        for (int i = 2; i < 8 && i < trace.length; i++) {
             log.warn("*  at {}{}", trace[i].toString(), i == 7 ? "..." : "");
         }
         log.warn("****************************************");
     }
 
     @Deprecated
-    public static void log(String targetLog, Level level, String format, Object... data)
-    {
+    public static void log(String targetLog, Level level, String format, Object... data) {
         FMLRelaunchLog.log(targetLog, level, format, data);
     }
 
     @Deprecated
-    public static void log(Level level, String format, Object... data)
-    {
+    public static void log(Level level, String format, Object... data) {
         FMLRelaunchLog.log(level, format, data);
     }
 
     @Deprecated
-    public static void log(String targetLog, Level level, Throwable ex, String format, Object... data)
-    {
+    public static void log(String targetLog, Level level, Throwable ex, String format, Object... data) {
         FMLRelaunchLog.log(targetLog, level, ex, format, data);
     }
 
     @Deprecated
-    public static void log(Level level, Throwable ex, String format, Object... data)
-    {
+    public static void log(Level level, Throwable ex, String format, Object... data) {
         FMLRelaunchLog.log(level, ex, format, data);
     }
 
     @Deprecated
-    public static void severe(String format, Object... data)
-    {
+    public static void severe(String format, Object... data) {
         log(Level.ERROR, format, data);
     }
 
     @Deprecated
-    public static void warning(String format, Object... data)
-    {
+    public static void warning(String format, Object... data) {
         log(Level.WARN, format, data);
     }
 
     @Deprecated
-    public static void info(String format, Object... data)
-    {
+    public static void info(String format, Object... data) {
         log(Level.INFO, format, data);
     }
 
     @Deprecated
-    public static void fine(String format, Object... data)
-    {
+    public static void fine(String format, Object... data) {
         log(Level.DEBUG, format, data);
     }
 
     @Deprecated
-    public static void finer(String format, Object... data)
-    {
+    public static void finer(String format, Object... data) {
         log(Level.TRACE, format, data);
     }
 
     @Deprecated
-    public static Logger getLogger()
-    {
+    public static Logger getLogger() {
         return log;
     }
 }

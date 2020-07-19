@@ -20,27 +20,26 @@
 package net.minecraftforge.event;
 
 import com.google.common.collect.Maps;
-import java.util.Collections;
-import java.util.Map;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.fml.common.eventhandler.GenericEvent;
 
+import java.util.Collections;
+import java.util.Map;
+
 /**
  * Fired whenever an object with Capabilities support {currently TileEntity/Item/Entity)
  * is created. Allowing for the attachment of arbitrary capability providers.
- *
+ * <p>
  * Please note that as this is fired for ALL object creations efficient code is recommended.
  * And if possible use one of the sub-classes to filter your intended objects.
  */
-public class AttachCapabilitiesEvent<T> extends GenericEvent<T>
-{
+public class AttachCapabilitiesEvent<T> extends GenericEvent<T> {
     private final T obj;
     private final Map<ResourceLocation, ICapabilityProvider> caps = Maps.newLinkedHashMap();
     private final Map<ResourceLocation, ICapabilityProvider> view = Collections.unmodifiableMap(caps);
 
-    public AttachCapabilitiesEvent(Class<T> type, T obj)
-    {
+    public AttachCapabilitiesEvent(Class<T> type, T obj) {
         super(type);
         this.obj = obj;
     }
@@ -48,8 +47,7 @@ public class AttachCapabilitiesEvent<T> extends GenericEvent<T>
     /**
      * Retrieves the object that is being created, Not much state is set.
      */
-    public T getObject()
-    {
+    public T getObject() {
         return this.obj;
     }
 
@@ -61,18 +59,16 @@ public class AttachCapabilitiesEvent<T> extends GenericEvent<T>
      * @param key The name of owner of this capability provider.
      * @param cap The capability provider
      */
-    public void addCapability(ResourceLocation key, ICapabilityProvider cap)
-    {
+    public void addCapability(ResourceLocation key, ICapabilityProvider cap) {
         if (caps.containsKey(key))
-            throw new IllegalStateException("Duplicate Capability Key: " + key  + " " + cap);
+            throw new IllegalStateException("Duplicate Capability Key: " + key + " " + cap);
         this.caps.put(key, cap);
     }
 
     /**
      * A unmodifiable view of the capabilities that will be attached to this object.
      */
-    public Map<ResourceLocation, ICapabilityProvider> getCapabilities()
-    {
+    public Map<ResourceLocation, ICapabilityProvider> getCapabilities() {
         return view;
     }
 }

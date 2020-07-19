@@ -1,11 +1,12 @@
 package org.bukkit.event.player;
 
 import com.destroystokyo.paper.profile.PlayerProfile;
-import java.net.InetAddress;
-import java.util.UUID;
 import org.bukkit.Bukkit;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
+
+import java.net.InetAddress;
+import java.util.UUID;
 
 /**
  * Stores details for players attempting to log in.
@@ -48,6 +49,7 @@ public class AsyncPlayerPreLoginEvent extends Event {
 
     /**
      * Gets the PlayerProfile of the player logging in
+     *
      * @return The Profile
      */
     public PlayerProfile getPlayerProfile() {
@@ -56,6 +58,7 @@ public class AsyncPlayerPreLoginEvent extends Event {
 
     /**
      * Changes the PlayerProfile the player will login as
+     *
      * @param profile The profile to use
      */
     public void setPlayerProfile(PlayerProfile profile) {
@@ -84,9 +87,9 @@ public class AsyncPlayerPreLoginEvent extends Event {
      * Gets the current result of the login, as an enum
      *
      * @return Current Result of the login
-     * @deprecated This method uses a deprecated enum from {@link
-     *     PlayerPreLoginEvent}
      * @see #getLoginResult()
+     * @deprecated This method uses a deprecated enum from {@link
+     * PlayerPreLoginEvent}
      */
     @Deprecated
     public PlayerPreLoginEvent.Result getResult() {
@@ -97,9 +100,9 @@ public class AsyncPlayerPreLoginEvent extends Event {
      * Sets the new result of the login, as an enum
      *
      * @param result New result to set
-     * @deprecated This method uses a deprecated enum from {@link
-     *     PlayerPreLoginEvent}
      * @see #setLoginResult(Result)
+     * @deprecated This method uses a deprecated enum from {@link
+     * PlayerPreLoginEvent}
      */
     @Deprecated
     public void setResult(final PlayerPreLoginEvent.Result result) {
@@ -136,7 +139,7 @@ public class AsyncPlayerPreLoginEvent extends Event {
     /**
      * Disallows the player from logging in, with the given reason
      *
-     * @param result New result for disallowing the player
+     * @param result  New result for disallowing the player
      * @param message Kick message to display to the user
      */
     public void disallow(final Result result, final String message) {
@@ -147,11 +150,11 @@ public class AsyncPlayerPreLoginEvent extends Event {
     /**
      * Disallows the player from logging in, with the given reason
      *
-     * @param result New result for disallowing the player
+     * @param result  New result for disallowing the player
      * @param message Kick message to display to the user
-     * @deprecated This method uses a deprecated enum from {@link
-     *     PlayerPreLoginEvent}
      * @see #disallow(Result, String)
+     * @deprecated This method uses a deprecated enum from {@link
+     * PlayerPreLoginEvent}
      */
     @Deprecated
     public void disallow(final PlayerPreLoginEvent.Result result, final String message) {

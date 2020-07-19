@@ -1,8 +1,9 @@
 package org.bukkit.inventory.meta;
 
-import java.util.List;
 import org.bukkit.DyeColor;
 import org.bukkit.block.banner.Pattern;
+
+import java.util.List;
 
 public interface BannerMeta extends ItemMeta {
 

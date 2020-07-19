@@ -1,7 +1,5 @@
 package org.bukkit.craftbukkit.v1_12_R1.inventory;
 
-import java.util.Arrays;
-import java.util.List;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.crafting.IRecipe;
@@ -9,6 +7,9 @@ import org.bukkit.inventory.CraftingInventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.Recipe;
 import red.mohist.recipe.RecipeUtils;
+
+import java.util.Arrays;
+import java.util.List;
 
 public class CraftInventoryCrafting extends CraftInventory implements CraftingInventory {
     private final IInventory resultInventory;

@@ -1,12 +1,5 @@
 package org.bukkit.craftbukkit;
 
-import java.io.File;
-import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.Arrays;
-import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import jline.UnsupportedTerminal;
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
@@ -14,6 +7,14 @@ import org.apache.logging.log4j.LogManager;
 import org.fusesource.jansi.AnsiConsole;
 import red.mohist.Mohist;
 import red.mohist.util.i18n.Message;
+
+import java.io.File;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Arrays;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class Main {
     public static boolean useJline = true;

@@ -19,30 +19,26 @@
 
 package net.minecraftforge.common.brewing;
 
-import java.util.List;
-import javax.annotation.Nonnull;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.oredict.OreDictionary;
 
+import javax.annotation.Nonnull;
+import java.util.List;
+
 public class BrewingOreRecipe extends AbstractBrewingRecipe<List<ItemStack>> {
 
-    public BrewingOreRecipe(@Nonnull ItemStack input, @Nonnull String ingredient, @Nonnull ItemStack output)
-    {
+    public BrewingOreRecipe(@Nonnull ItemStack input, @Nonnull String ingredient, @Nonnull ItemStack output) {
         super(input, OreDictionary.getOres(ingredient), output);
     }
 
-    public BrewingOreRecipe(@Nonnull ItemStack input, @Nonnull List<ItemStack> ingredient, @Nonnull ItemStack output)
-    {
+    public BrewingOreRecipe(@Nonnull ItemStack input, @Nonnull List<ItemStack> ingredient, @Nonnull ItemStack output) {
         super(input, ingredient, output);
     }
 
     @Override
-    public boolean isIngredient(@Nonnull ItemStack stack)
-    {
-        for (ItemStack target : this.getIngredient())
-        {
-            if (OreDictionary.itemMatches(target, stack, false))
-            {
+    public boolean isIngredient(@Nonnull ItemStack stack) {
+        for (ItemStack target : this.getIngredient()) {
+            if (OreDictionary.itemMatches(target, stack, false)) {
                 return true;
             }
 

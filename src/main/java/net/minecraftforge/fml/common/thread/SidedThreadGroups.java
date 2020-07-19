@@ -21,8 +21,7 @@ package net.minecraftforge.fml.common.thread;
 
 import net.minecraftforge.fml.relauncher.Side;
 
-public final class SidedThreadGroups
-{
+public final class SidedThreadGroups {
     public static final SidedThreadGroup CLIENT = new SidedThreadGroup(Side.CLIENT);
     public static final SidedThreadGroup SERVER = new SidedThreadGroup(Side.SERVER);
 

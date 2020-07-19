@@ -115,7 +115,7 @@ public interface PlayerInventory extends Inventory {
      * exception will be thrown.
      *
      * @param index The index where to put the ItemStack
-     * @param item The ItemStack to set
+     * @param item  The ItemStack to set
      * @throws ArrayIndexOutOfBoundsException when index &lt; 0 || index &gt; 39
      * @see #setBoots(ItemStack)
      * @see #setChestplate(ItemStack)
@@ -158,11 +158,11 @@ public interface PlayerInventory extends Inventory {
     /**
      * Gets a copy of the item the player is currently holding
      *
-     * @deprecated players can duel wield now use the methods for the
-     *      specific hand instead
+     * @return the currently held item
      * @see #getItemInMainHand()
      * @see #getItemInOffHand()
-     * @return the currently held item
+     * @deprecated players can duel wield now use the methods for the
+     * specific hand instead
      */
     @Deprecated
     public ItemStack getItemInHand();
@@ -170,11 +170,11 @@ public interface PlayerInventory extends Inventory {
     /**
      * Sets the item the player is holding
      *
-     * @deprecated players can duel wield now use the methods for the
-     *      specific hand instead
+     * @param stack The item to put into the player's hand
      * @see #setItemInMainHand(ItemStack)
      * @see #setItemInOffHand(ItemStack)
-     * @param stack The item to put into the player's hand
+     * @deprecated players can duel wield now use the methods for the
+     * specific hand instead
      */
     @Deprecated
     public void setItemInHand(ItemStack stack);
@@ -193,7 +193,7 @@ public interface PlayerInventory extends Inventory {
      *
      * @param slot The new slot number
      * @throws IllegalArgumentException Thrown if slot is not between 0 and 8
-     *     inclusive
+     *                                  inclusive
      */
     public void setHeldItemSlot(int slot);
 
@@ -202,7 +202,7 @@ public interface PlayerInventory extends Inventory {
      * -1 will skip it's check, while setting both to -1 will clear all items
      * in your inventory unconditionally.
      *
-     * @param id the id of the item you want to clear from the inventory
+     * @param id   the id of the item you want to clear from the inventory
      * @param data the data of the item you want to clear from the inventory
      * @return The number of items cleared
      * @deprecated Magic value

@@ -27,7 +27,7 @@ public interface Conversable {
      *
      * @param conversation The conversation to begin
      * @return True if the conversation should proceed, false if it has been
-     *     enqueued
+     * enqueued
      */
     public boolean beginConversation(Conversation conversation);
 
@@ -42,7 +42,7 @@ public interface Conversable {
      * Abandons an active conversation.
      *
      * @param conversation The conversation to abandon
-     * @param details Details about why the conversation was abandoned
+     * @param details      Details about why the conversation was abandoned
      */
     public void abandonConversation(Conversation conversation, ConversationAbandonedEvent details);
 

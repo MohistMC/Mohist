@@ -1,7 +1,8 @@
 package org.bukkit.advancement;
 
-import java.util.Collection;
 import org.bukkit.Keyed;
+
+import java.util.Collection;
 
 /**
  * Represents an advancement that may be awarded to a player. This class is not

@@ -19,7 +19,6 @@
 
 package net.minecraftforge.client;
 
-import javax.annotation.Nullable;
 import net.minecraft.client.audio.MusicTicker;
 import net.minecraft.client.settings.GameSettings.Options;
 import net.minecraft.util.SoundEvent;
@@ -27,51 +26,46 @@ import net.minecraft.util.Util.EnumOS;
 import net.minecraft.world.GameType;
 import net.minecraftforge.common.util.EnumHelper;
 
-public class EnumHelperClient extends EnumHelper
-{
+import javax.annotation.Nullable;
+
+public class EnumHelperClient extends EnumHelper {
     private static Class<?>[][] clientTypes =
-    {
-        {GameType.class, int.class, String.class, String.class},
-        {Options.class, String.class, boolean.class, boolean.class},
-        {EnumOS.class},
-        {MusicTicker.MusicType.class, SoundEvent.class, int.class, int.class}
-    };
+            {
+                    {GameType.class, int.class, String.class, String.class},
+                    {Options.class, String.class, boolean.class, boolean.class},
+                    {EnumOS.class},
+                    {MusicTicker.MusicType.class, SoundEvent.class, int.class, int.class}
+            };
 
     @Nullable
-    public static GameType addGameType(String name, int id, String displayName, String shortName)
-    {
+    public static GameType addGameType(String name, int id, String displayName, String shortName) {
         return addEnum(GameType.class, name, id, displayName, shortName);
     }
 
     @Nullable
-    public static Options addOptions(String name, String langName, boolean isSlider, boolean isToggle)
-    {
+    public static Options addOptions(String name, String langName, boolean isSlider, boolean isToggle) {
         return addEnum(Options.class, name, langName, isSlider, isToggle);
     }
 
     @Nullable
-    public static Options addOptions(String name, String langName, boolean isSlider, boolean isToggle, float valMin, float valMax, float valStep)
-    {
+    public static Options addOptions(String name, String langName, boolean isSlider, boolean isToggle, float valMin, float valMax, float valStep) {
         return addEnum(Options.class, name,
                 new Class<?>[]{String.class, boolean.class, boolean.class, float.class, float.class, float.class},
                 langName, isSlider, isToggle, valMin, valMax, valStep);
     }
 
     @Nullable
-    public static EnumOS addOS2(String name)
-    {
+    public static EnumOS addOS2(String name) {
         return addEnum(EnumOS.class, name);
     }
 
     @Nullable
-    public static MusicTicker.MusicType addMusicType(String name, SoundEvent sound, int minDelay, int maxDelay)
-    {
+    public static MusicTicker.MusicType addMusicType(String name, SoundEvent sound, int minDelay, int maxDelay) {
         return addEnum(MusicTicker.MusicType.class, name, sound, minDelay, maxDelay);
     }
 
     @Nullable
-    private static <T extends Enum<? >> T addEnum(Class<T> enumType, String enumName, Object... paramValues)
-    {
+    private static <T extends Enum<?>> T addEnum(Class<T> enumType, String enumName, Object... paramValues) {
         return addEnum(clientTypes, enumType, enumName, paramValues);
     }
 }

@@ -20,7 +20,7 @@ public interface CommandMinecart extends Minecart, CommandSender {
      * String.
      *
      * @param command Command that this CommandMinecart will run when
-     *     activated.
+     *                activated.
      */
     public void setCommand(String command);
 

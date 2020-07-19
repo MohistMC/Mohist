@@ -3,10 +3,11 @@ package org.bukkit.entity;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.LinkedListMultimap;
 import com.google.common.collect.Multimap;
-import java.util.List;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.Merchant;
+
+import java.util.List;
 
 /**
  * Represents a villager NPC
@@ -40,18 +41,18 @@ public interface Villager extends Ageable, NPC, InventoryHolder, Merchant {
      *
      * @param career the new career, or null to clear the career to a random one
      * @throws IllegalArgumentException when the new {@link Career} cannot be
-     * used with this Villager's current {@link Profession}.
+     *                                  used with this Villager's current {@link Profession}.
      */
     public void setCareer(Career career);
 
     /**
      * Set the new {@link Career} for this Villager.
      *
-     * @param career the new career, or null to clear the career to a random one
+     * @param career      the new career, or null to clear the career to a random one
      * @param resetTrades true to reset this Villager's trades to the new
-     * career's (if any)
+     *                    career's (if any)
      * @throws IllegalArgumentException when the new {@link Career} cannot be
-     * used with this Villager's current {@link Profession}.
+     *                                  used with this Villager's current {@link Profession}.
      */
     public void setCareer(Career career, boolean resetTrades);
 
@@ -60,7 +61,7 @@ public interface Villager extends Ageable, NPC, InventoryHolder, Merchant {
      * <br>
      * Note that this inventory is not the Merchant inventory, rather, it is the
      * items that a villager might have collected (from harvesting crops, etc.)
-     *
+     * <p>
      * {@inheritDoc}
      */
     @Override
@@ -77,9 +78,8 @@ public interface Villager extends Ageable, NPC, InventoryHolder, Merchant {
     /**
      * Sets this villager's riches.
      *
-     * @see Villager#getRiches()
-     *
      * @param riches the new riches
+     * @see Villager#getRiches()
      */
     void setRiches(int riches);
 
@@ -90,6 +90,7 @@ public interface Villager extends Ageable, NPC, InventoryHolder, Merchant {
     public enum Profession {
         /**
          * Normal. <b>Reserved for Zombies.</b>
+         *
          * @deprecated Unused
          */
         @Deprecated
@@ -120,6 +121,7 @@ public interface Villager extends Ageable, NPC, InventoryHolder, Merchant {
         NITWIT(false),
         /**
          * Husk. <b>Reserved for Zombies</b>
+         *
          * @deprecated Unused
          */
         @Deprecated

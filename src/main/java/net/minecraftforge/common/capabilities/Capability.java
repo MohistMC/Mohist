@@ -20,98 +20,66 @@
 package net.minecraftforge.common.capabilities;
 
 import com.google.common.base.Throwables;
-import java.util.concurrent.Callable;
-import javax.annotation.Nullable;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.util.EnumFacing;
+
+import javax.annotation.Nullable;
+import java.util.concurrent.Callable;
 
 /**
  * This is the core holder object Capabilities.
  * Each capability will have ONE instance of this class,
  * and it will the the one passed into the ICapabilityProvider functions.
- *
+ * <p>
  * The CapabilityManager is in charge of creating this class.
  */
-public class Capability<T>
-{
-    public static interface IStorage<T>
-    {
-        /**
-         * Serialize the capability instance to a NBTTag.
-         * This allows for a central implementation of saving the data.
-         *
-         * It is important to note that it is up to the API defining
-         * the capability what requirements the 'instance' value must have.
-         *
-         * Due to the possibility of manipulating internal data, some
-         * implementations MAY require that the 'instance' be an instance
-         * of the 'default' implementation.
-         *
-         * Review the API docs for more info.
-         *
-         * @param capability The Capability being stored.
-         * @param instance An instance of that capabilities interface.
-         * @param side The side of the object the instance is associated with.
-         * @return a NBT holding the data. Null if no data needs to be stored.
-         */
-        @Nullable
-        NBTBase writeNBT(Capability<T> capability, T instance, EnumFacing side);
+public class Capability<T> {
+    // INTERNAL
+    private final String name;
+    private final IStorage<T> storage;
+    private final Callable<? extends T> factory;
 
-        /**
-         * Read the capability instance from a NBT tag.
-         *
-         * This allows for a central implementation of saving the data.
-         *
-         * It is important to note that it is up to the API defining
-         * the capability what requirements the 'instance' value must have.
-         *
-         * Due to the possibility of manipulating internal data, some
-         * implementations MAY require that the 'instance' be an instance
-         * of the 'default' implementation.
-         *
-         * Review the API docs for more info.         *
-         *
-         * @param capability The Capability being stored.
-         * @param instance An instance of that capabilities interface.
-         * @param side The side of the object the instance is associated with.
-         * @param nbt A NBT holding the data. Must not be null, as doesn't make sense to call this function with nothing to read...
-         */
-        void readNBT(Capability<T> capability, T instance, EnumFacing side, NBTBase nbt);
+    Capability(String name, IStorage<T> storage, Callable<? extends T> factory) {
+        this.name = name;
+        this.storage = storage;
+        this.factory = factory;
     }
 
     /**
      * @return The unique name of this capability, typically this is
      * the fully qualified class name for the target interface.
      */
-    public String getName() { return name; }
+    public String getName() {
+        return name;
+    }
 
     /**
      * @return An instance of the default storage handler. You can safely use this store your default implementation in NBT.
      */
-    public IStorage<T> getStorage() { return storage; }
-    
+    public IStorage<T> getStorage() {
+        return storage;
+    }
+
     /**
-     * Quick access to the IStorage's readNBT. 
+     * Quick access to the IStorage's readNBT.
      * See {@link IStorage#readNBT(Capability, Object, EnumFacing, NBTBase)}  for documentation.
      */
-    public void readNBT(T instance, EnumFacing side, NBTBase nbt)
-    {
-    	storage.readNBT(this, instance, side, nbt); 
+    public void readNBT(T instance, EnumFacing side, NBTBase nbt) {
+        storage.readNBT(this, instance, side, nbt);
     }
-    
+
     /**
-     * Quick access to the IStorage's writeNBT. 
+     * Quick access to the IStorage's writeNBT.
      * See {@link IStorage#writeNBT(Capability, Object, EnumFacing)} for documentation.
      */
     @Nullable
-    public NBTBase writeNBT(T instance, EnumFacing side)
-    {
-    	return storage.writeNBT(this, instance, side);
+    public NBTBase writeNBT(T instance, EnumFacing side) {
+        return storage.writeNBT(this, instance, side);
     }
 
     /**
      * A NEW instance of the default implementation.
-     *
+     * <p>
      * If it important to note that if you want to use the default storage
      * you may be required to use this exact implementation.
      * Refer to the owning API of the Capability in question.
@@ -119,14 +87,10 @@ public class Capability<T>
      * @return A NEW instance of the default implementation.
      */
     @Nullable
-    public T getDefaultInstance()
-    {
-        try
-        {
+    public T getDefaultInstance() {
+        try {
             return this.factory.call();
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             Throwables.throwIfUnchecked(e);
             throw new RuntimeException(e);
         }
@@ -138,20 +102,51 @@ public class Capability<T>
      * Use with caution;
      */
     @SuppressWarnings("unchecked")
-    public <R> R cast(T instance)
-    {
-        return (R)instance;
+    public <R> R cast(T instance) {
+        return (R) instance;
     }
 
-    // INTERNAL
-    private final String name;
-    private final IStorage<T> storage;
-    private final Callable<? extends T> factory;
+    public static interface IStorage<T> {
+        /**
+         * Serialize the capability instance to a NBTTag.
+         * This allows for a central implementation of saving the data.
+         * <p>
+         * It is important to note that it is up to the API defining
+         * the capability what requirements the 'instance' value must have.
+         * <p>
+         * Due to the possibility of manipulating internal data, some
+         * implementations MAY require that the 'instance' be an instance
+         * of the 'default' implementation.
+         * <p>
+         * Review the API docs for more info.
+         *
+         * @param capability The Capability being stored.
+         * @param instance   An instance of that capabilities interface.
+         * @param side       The side of the object the instance is associated with.
+         * @return a NBT holding the data. Null if no data needs to be stored.
+         */
+        @Nullable
+        NBTBase writeNBT(Capability<T> capability, T instance, EnumFacing side);
 
-    Capability(String name, IStorage<T> storage, Callable<? extends T> factory)
-    {
-        this.name = name;
-        this.storage = storage;
-        this.factory = factory;
+        /**
+         * Read the capability instance from a NBT tag.
+         * <p>
+         * This allows for a central implementation of saving the data.
+         * <p>
+         * It is important to note that it is up to the API defining
+         * the capability what requirements the 'instance' value must have.
+         * <p>
+         * Due to the possibility of manipulating internal data, some
+         * implementations MAY require that the 'instance' be an instance
+         * of the 'default' implementation.
+         * <p>
+         * Review the API docs for more info.         *
+         *
+         * @param capability The Capability being stored.
+         * @param instance   An instance of that capabilities interface.
+         * @param side       The side of the object the instance is associated with.
+         * @param nbt        A NBT holding the data. Must not be null, as doesn't make sense to call this function with nothing to read...
+         */
+        void readNBT(Capability<T> capability, T instance, EnumFacing side, NBTBase nbt);
     }
 }

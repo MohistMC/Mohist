@@ -19,7 +19,6 @@
 
 package net.minecraftforge.event.world;
 
-import javax.annotation.Nullable;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.server.management.PlayerChunkMapEntry;
 import net.minecraft.util.math.ChunkPos;
@@ -27,6 +26,8 @@ import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.Cancelable;
 import net.minecraftforge.fml.common.eventhandler.Event;
+
+import javax.annotation.Nullable;
 
 /**
  * ChunkWatchEvent is fired when an event involving a chunk being watched occurs.<br>
@@ -50,38 +51,34 @@ public class ChunkWatchEvent extends Event //TODO: extend ChunkEvent in 1.13
     private final Chunk chunkInstance;
 
     @Deprecated //TODO: Remove in 1.13
-    public ChunkWatchEvent(ChunkPos chunk, EntityPlayerMP player)
-    {
+    public ChunkWatchEvent(ChunkPos chunk, EntityPlayerMP player) {
         this.chunk = chunk;
         this.player = player;
         this.chunkInstance = null;
     }
 
-    public ChunkWatchEvent(Chunk chunk, EntityPlayerMP player)
-    {
+    public ChunkWatchEvent(Chunk chunk, EntityPlayerMP player) {
         this.chunk = chunk.getPos();
         this.player = player;
         this.chunkInstance = chunk;
     }
 
     @Deprecated //TODO: Remove in 1.13
-    public ChunkPos getChunk()
-    {
+    public ChunkPos getChunk() {
         return chunk;
     }
 
-    public EntityPlayerMP getPlayer()
-    {
+    public EntityPlayerMP getPlayer() {
         return player;
     }
 
     /**
      * The affected chunk.
+     *
      * @return The affected chunk.
      */
     @Nullable
-    public Chunk getChunkInstance()
-    {
+    public Chunk getChunkInstance() {
         return chunkInstance;
     }
 
@@ -96,12 +93,15 @@ public class ChunkWatchEvent extends Event //TODO: extend ChunkEvent in 1.13
      * <br>
      * This event is fired on the {@link MinecraftForge#EVENT_BUS}.<br>
      **/
-    public static class Watch extends ChunkWatchEvent
-    {
+    public static class Watch extends ChunkWatchEvent {
         @Deprecated //TODO: Remove in 1.13
-        public Watch(ChunkPos chunk, EntityPlayerMP player) { super(chunk, player); }
+        public Watch(ChunkPos chunk, EntityPlayerMP player) {
+            super(chunk, player);
+        }
 
-        public Watch(Chunk chunk, EntityPlayerMP player) { super(chunk, player); }
+        public Watch(Chunk chunk, EntityPlayerMP player) {
+            super(chunk, player);
+        }
     }
 
     /**
@@ -115,11 +115,14 @@ public class ChunkWatchEvent extends Event //TODO: extend ChunkEvent in 1.13
      * <br>
      * This event is fired on the {@link MinecraftForge#EVENT_BUS}.<br>
      **/
-    public static class UnWatch extends ChunkWatchEvent
-    {
+    public static class UnWatch extends ChunkWatchEvent {
         @Deprecated //TODO: Remove in 1.13
-        public UnWatch(ChunkPos chunkLocation, EntityPlayerMP player) { super(chunkLocation, player); }
+        public UnWatch(ChunkPos chunkLocation, EntityPlayerMP player) {
+            super(chunkLocation, player);
+        }
 
-        public UnWatch(Chunk chunk, EntityPlayerMP player) { super(chunk, player); }
+        public UnWatch(Chunk chunk, EntityPlayerMP player) {
+            super(chunk, player);
+        }
     }
 }

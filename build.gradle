@@ -203,12 +203,12 @@ outputJar {
     archiveClassifier = 'server'
 
     manifest.attributes([
-            "Manifest-Version": "1.8",
-            "Implementation-Title": "Mohist",
+            "Manifest-Version"      : "1.8",
+            "Implementation-Title"  : "Mohist",
             "Implementation-Version": project.version,
-            "Main-Class": "red.mohist.Mohist",
-            "TweakClass": "net.minecraftforge.fml.common.launcher.FMLTweaker",
-            "Class-Path": getServerClasspath(file("forge/${minecraft.version}-mohist-rel.json"))
+            "Main-Class"            : "red.mohist.Mohist",
+            "TweakClass"            : "net.minecraftforge.fml.common.launcher.FMLTweaker",
+            "Class-Path"            : getServerClasspath(file("forge/${minecraft.version}-mohist-rel.json"))
     ])
 }
 
@@ -216,11 +216,11 @@ processJson {
     releaseJson = "forge/${minecraft.version}-mohist-rel.json"
     addReplacements([
             "@minecraft_version@": project.minecraft.version,
-            "@version@": project.version,
-            "@project@": "mohist",
-            "@artifact@": "red.mohist:mohist:${project.version}",
-            "@universal_jar@": { outputJar.archiveFileName },
-            "@timestamp@": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ"),
+            "@version@"          : project.version,
+            "@project@"          : "mohist",
+            "@artifact@"         : "red.mohist:mohist:${project.version}",
+            "@universal_jar@"    : { outputJar.archiveFileName },
+            "@timestamp@"        : new Date().format("yyyy-MM-dd'T'HH:mm:ssZ"),
     ])
 }
 
@@ -240,8 +240,7 @@ String getServerClasspath(File file) {
     def node = new JsonSlurper().parse(file)
     def out = new StringBuilder()
     node.versionInfo.libraries.each { lib ->
-        if (lib.serverreq)
-        {
+        if (lib.serverreq) {
             def split = lib.name.split(':')
             def group = split[0].replace('.', '/')
             def artifact = split[1]

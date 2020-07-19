@@ -1,39 +1,19 @@
 package com.destroystokyo.paper.event.player;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import org.bukkit.Material;
-import static org.bukkit.Material.CHAINMAIL_BOOTS;
-import static org.bukkit.Material.CHAINMAIL_CHESTPLATE;
-import static org.bukkit.Material.CHAINMAIL_HELMET;
-import static org.bukkit.Material.CHAINMAIL_LEGGINGS;
-import static org.bukkit.Material.DIAMOND_BOOTS;
-import static org.bukkit.Material.DIAMOND_CHESTPLATE;
-import static org.bukkit.Material.DIAMOND_HELMET;
-import static org.bukkit.Material.DIAMOND_LEGGINGS;
-import static org.bukkit.Material.ELYTRA;
-import static org.bukkit.Material.GOLD_BOOTS;
-import static org.bukkit.Material.GOLD_CHESTPLATE;
-import static org.bukkit.Material.GOLD_HELMET;
-import static org.bukkit.Material.GOLD_LEGGINGS;
-import static org.bukkit.Material.IRON_BOOTS;
-import static org.bukkit.Material.IRON_CHESTPLATE;
-import static org.bukkit.Material.IRON_HELMET;
-import static org.bukkit.Material.IRON_LEGGINGS;
-import static org.bukkit.Material.JACK_O_LANTERN;
-import static org.bukkit.Material.LEATHER_BOOTS;
-import static org.bukkit.Material.LEATHER_CHESTPLATE;
-import static org.bukkit.Material.LEATHER_HELMET;
-import static org.bukkit.Material.LEATHER_LEGGINGS;
-import static org.bukkit.Material.PUMPKIN;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.player.PlayerEvent;
 import org.bukkit.inventory.ItemStack;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
+
+import static org.bukkit.Material.*;
 
 /**
  * Called when the player themselves change their armor items

@@ -20,8 +20,6 @@
 package net.minecraftforge.event;
 
 import com.google.common.collect.ImmutableList;
-import java.util.Collection;
-import java.util.stream.Collectors;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.ModContainer;
 import net.minecraftforge.fml.common.eventhandler.Event;
@@ -31,94 +29,86 @@ import net.minecraftforge.registries.IForgeRegistry;
 import net.minecraftforge.registries.IForgeRegistryEntry;
 import org.apache.commons.lang3.Validate;
 
+import java.util.Collection;
+import java.util.stream.Collectors;
+
 
 /**
  * RegistryEvent supertype.
  */
-public class RegistryEvent<T extends IForgeRegistryEntry<T>> extends GenericEvent<T> implements IContextSetter
-{
+public class RegistryEvent<T extends IForgeRegistryEntry<T>> extends GenericEvent<T> implements IContextSetter {
     RegistryEvent(Class<T> clazz) {
         super(clazz);
     }
+
     /**
      * Register new registries when you receive this event, through the {@link RecipeBuilder}
      */
-    public static class NewRegistry extends Event
-    {
+    public static class NewRegistry extends Event {
     }
 
     /**
      * Register your objects for the appropriate registry type when you receive this event.
      *
      * <code>event.getRegistry().register(...)</code>
-     *
+     * <p>
      * The registries will be visited in alphabetic order of their name, except blocks and items,
      * which will be visited FIRST and SECOND respectively.
-     *
+     * <p>
      * ObjectHolders will reload between Blocks and Items, and after all registries have been visited.
+     *
      * @param <T> The registry top level type
      */
-    public static class Register<T extends IForgeRegistryEntry<T>> extends RegistryEvent<T>
-    {
+    public static class Register<T extends IForgeRegistryEntry<T>> extends RegistryEvent<T> {
         private final IForgeRegistry<T> registry;
         private final ResourceLocation name;
 
-        public Register(ResourceLocation name, IForgeRegistry<T> registry)
-        {
+        public Register(ResourceLocation name, IForgeRegistry<T> registry) {
             super(registry.getRegistrySuperType());
             this.name = name;
             this.registry = registry;
         }
 
-        public IForgeRegistry<T> getRegistry()
-        {
+        public IForgeRegistry<T> getRegistry() {
             return registry;
         }
 
-        public ResourceLocation getName()
-        {
+        public ResourceLocation getName() {
             return name;
         }
 
     }
 
-    public static class MissingMappings<T extends IForgeRegistryEntry<T>> extends RegistryEvent<T>
-    {
+    public static class MissingMappings<T extends IForgeRegistryEntry<T>> extends RegistryEvent<T> {
         private final IForgeRegistry<T> registry;
         private final ResourceLocation name;
         private final ImmutableList<Mapping<T>> mappings;
         private ModContainer activeMod;
 
-        public MissingMappings(ResourceLocation name, IForgeRegistry<T> registry, Collection<Mapping<T>> missed)
-        {
+        public MissingMappings(ResourceLocation name, IForgeRegistry<T> registry, Collection<Mapping<T>> missed) {
             super(registry.getRegistrySuperType());
             this.registry = registry;
             this.name = name;
             this.mappings = ImmutableList.copyOf(missed);
         }
 
-        public void setModContainer(ModContainer mod)
-        {
+        public void setModContainer(ModContainer mod) {
             this.activeMod = mod;
         }
 
-        public ResourceLocation getName()
-        {
+        public ResourceLocation getName() {
             return this.name;
         }
 
-        public IForgeRegistry<T> getRegistry()
-        {
+        public IForgeRegistry<T> getRegistry() {
             return this.registry;
         }
 
-        public ImmutableList<Mapping<T>> getMappings()
-        {
+        public ImmutableList<Mapping<T>> getMappings() {
             return ImmutableList.copyOf(this.mappings.stream().filter(e -> e.key.getResourceDomain().equals(this.activeMod.getModId())).collect(Collectors.toList()));
         }
 
-        public ImmutableList<Mapping<T>> getAllMappings()
-        {
+        public ImmutableList<Mapping<T>> getAllMappings() {
             return this.mappings;
         }
 
@@ -130,8 +120,7 @@ public class RegistryEvent<T extends IForgeRegistryEntry<T>> extends GenericEven
          * <li>{@link #FAIL} means this missing mapping will prevent the world from loading.
          * </ul>
          */
-        public enum Action
-        {
+        public enum Action {
             /**
              * Take the default action
              */
@@ -154,17 +143,15 @@ public class RegistryEvent<T extends IForgeRegistryEntry<T>> extends GenericEven
             REMAP
         }
 
-        public static class Mapping<T extends IForgeRegistryEntry<T>>
-        {
+        public static class Mapping<T extends IForgeRegistryEntry<T>> {
             public final IForgeRegistry<T> registry;
-            private final IForgeRegistry<T> pool;
             public final ResourceLocation key;
             public final int id;
+            private final IForgeRegistry<T> pool;
             private Action action = Action.DEFAULT;
             private T target;
 
-            public Mapping(IForgeRegistry<T> registry, IForgeRegistry<T> pool, ResourceLocation key, int id)
-            {
+            public Mapping(IForgeRegistry<T> registry, IForgeRegistry<T> pool, ResourceLocation key, int id) {
                 this.registry = registry;
                 this.pool = pool;
                 this.key = key;
@@ -174,37 +161,33 @@ public class RegistryEvent<T extends IForgeRegistryEntry<T>> extends GenericEven
             /**
              * Ignore the missing item.
              */
-            public void ignore()
-            {
+            public void ignore() {
                 action = Action.IGNORE;
             }
 
             /**
              * Warn the user about the missing item.
              */
-            public void warn()
-            {
+            public void warn() {
                 action = Action.WARN;
             }
 
             /**
              * Prevent the world from loading due to the missing item.
              */
-            public void fail()
-            {
+            public void fail() {
                 action = Action.FAIL;
             }
 
             /**
              * Remap the missing entry to the specified object.
-             *
+             * <p>
              * Use this if you have renamed an entry.
              * Existing references using the old name will point to the new one.
              *
              * @param target Entry to remap to.
              */
-            public void remap(T target)
-            {
+            public void remap(T target) {
                 Validate.notNull(target, "Remap target can not be null");
                 Validate.isTrue(pool.getKey(target) != null, String.format("The specified entry %s hasn't been registered in registry yet.", target));
                 action = Action.REMAP;
@@ -212,13 +195,11 @@ public class RegistryEvent<T extends IForgeRegistryEntry<T>> extends GenericEven
             }
 
             // internal
-            public Action getAction()
-            {
+            public Action getAction() {
                 return this.action;
             }
 
-            public T getTarget()
-            {
+            public T getTarget() {
                 return target;
             }
         }

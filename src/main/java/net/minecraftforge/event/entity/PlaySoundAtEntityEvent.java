@@ -48,17 +48,15 @@ import net.minecraftforge.fml.common.eventhandler.Cancelable;
  * This event is fired on the {@link MinecraftForge#EVENT_BUS}.<br>
  **/
 @Cancelable
-public class PlaySoundAtEntityEvent extends EntityEvent
-{
-    private SoundEvent name;
-    private SoundCategory category;
+public class PlaySoundAtEntityEvent extends EntityEvent {
     private final float volume;
     private final float pitch;
+    private SoundEvent name;
+    private SoundCategory category;
     private float newVolume;
     private float newPitch;
 
-    public PlaySoundAtEntityEvent(Entity entity, SoundEvent name, SoundCategory category, float volume, float pitch)
-    {
+    public PlaySoundAtEntityEvent(Entity entity, SoundEvent name, SoundCategory category, float volume, float pitch) {
         super(entity);
         this.name = name;
         this.category = category;
@@ -68,14 +66,43 @@ public class PlaySoundAtEntityEvent extends EntityEvent
         this.newPitch = pitch;
     }
 
-    public SoundEvent getSound() { return this.name; }
-    public SoundCategory getCategory() { return this.category; }
-    public float getDefaultVolume() { return this.volume; }
-    public float getDefaultPitch() { return this.pitch; }
-    public float getVolume() { return this.newVolume; }
-    public float getPitch() { return this.newPitch; }
-    public void setSound(SoundEvent value) { this.name = value; }
-    public void setCategory(SoundCategory category) { this.category = category; }
-    public void setVolume(float value) { this.newVolume = value; }
-    public void setPitch(float value) { this.newPitch = value; }
+    public SoundEvent getSound() {
+        return this.name;
+    }
+
+    public void setSound(SoundEvent value) {
+        this.name = value;
+    }
+
+    public SoundCategory getCategory() {
+        return this.category;
+    }
+
+    public void setCategory(SoundCategory category) {
+        this.category = category;
+    }
+
+    public float getDefaultVolume() {
+        return this.volume;
+    }
+
+    public float getDefaultPitch() {
+        return this.pitch;
+    }
+
+    public float getVolume() {
+        return this.newVolume;
+    }
+
+    public void setVolume(float value) {
+        this.newVolume = value;
+    }
+
+    public float getPitch() {
+        return this.newPitch;
+    }
+
+    public void setPitch(float value) {
+        this.newPitch = value;
+    }
 }

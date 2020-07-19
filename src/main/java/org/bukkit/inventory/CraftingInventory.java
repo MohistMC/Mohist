@@ -31,7 +31,7 @@ public interface CraftingInventory extends Inventory {
      *
      * @param contents The new contents.
      * @throws IllegalArgumentException if the length of contents is greater
-     *     than the size of the crafting matrix.
+     *                                  than the size of the crafting matrix.
      */
     void setMatrix(ItemStack[] contents);
 
@@ -39,7 +39,7 @@ public interface CraftingInventory extends Inventory {
      * Get the current recipe formed on the crafting inventory, if any.
      *
      * @return The recipe, or null if the current contents don't match any
-     *     recipe.
+     * recipe.
      */
     Recipe getRecipe();
 }
