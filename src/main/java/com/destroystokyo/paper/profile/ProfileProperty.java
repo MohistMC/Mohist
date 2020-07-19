@@ -1,6 +1,7 @@
 package com.destroystokyo.paper.profile;
 
 import com.google.common.base.Preconditions;
+
 import java.util.Objects;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;

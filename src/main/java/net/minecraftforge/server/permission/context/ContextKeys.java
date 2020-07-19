@@ -28,8 +28,7 @@ import net.minecraft.util.math.BlockPos;
 /**
  * Some default context keys, for easier compatibility
  */
-public class ContextKeys
-{
+public class ContextKeys {
     /**
      * BlockPos for interacting, breaking and other permissions
      */

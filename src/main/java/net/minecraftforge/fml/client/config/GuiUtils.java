@@ -22,6 +22,7 @@ package net.minecraftforge.fml.client.config;
 import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.Nonnull;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.BufferBuilder;
@@ -40,39 +41,39 @@ import org.lwjgl.opengl.GL11;
  *
  * @author bspkrs
  */
-public class GuiUtils
-{
-    public static final String UNDO_CHAR  = "\u21B6";
+public class GuiUtils {
+    public static final String UNDO_CHAR = "\u21B6";
     public static final String RESET_CHAR = "\u2604";
-    public static final String VALID      = "\u2714";
-    public static final String INVALID    = "\u2715";
+    public static final String VALID = "\u2714";
+    public static final String INVALID = "\u2715";
 
-    public static int[] colorCodes = new int[] { 0, 170, 43520, 43690, 11141120, 11141290, 16755200, 11184810, 5592405, 5592575, 5635925, 5636095, 16733525, 16733695, 16777045, 16777215,
-        0, 42, 10752, 10794, 2752512, 2752554, 2763264, 2763306, 1381653, 1381695, 1392405, 1392447, 4134165, 4134207, 4144917, 4144959 };
+    public static int[] colorCodes = new int[]{0, 170, 43520, 43690, 11141120, 11141290, 16755200, 11184810, 5592405, 5592575, 5635925, 5636095, 16733525, 16733695, 16777045, 16777215,
+            0, 42, 10752, 10794, 2752512, 2752554, 2763264, 2763306, 1381653, 1381695, 1392405, 1392447, 4134165, 4134207, 4144917, 4144959};
+    @Nonnull
+    private static ItemStack cachedTooltipStack = ItemStack.EMPTY;
 
-    public static int getColorCode(char c, boolean isLighter)
-    {
+    public static int getColorCode(char c, boolean isLighter) {
         return colorCodes[isLighter ? "0123456789abcdef".indexOf(c) : "0123456789abcdef".indexOf(c) + 16];
     }
+
     /**
      * Draws a textured box of any size (smallest size is borderSize * 2 square) based on a fixed size textured box with continuous borders
      * and filler. It is assumed that the desired texture ResourceLocation object has been bound using
      * Minecraft.getMinecraft().getTextureManager().bindTexture(resourceLocation).
      *
-     * @param x x axis offset
-     * @param y y axis offset
-     * @param u bound resource location image x offset
-     * @param v bound resource location image y offset
-     * @param width the desired box width
-     * @param height the desired box height
-     * @param textureWidth the width of the box texture in the resource location image
+     * @param x             x axis offset
+     * @param y             y axis offset
+     * @param u             bound resource location image x offset
+     * @param v             bound resource location image y offset
+     * @param width         the desired box width
+     * @param height        the desired box height
+     * @param textureWidth  the width of the box texture in the resource location image
      * @param textureHeight the height of the box texture in the resource location image
-     * @param borderSize the size of the box's borders
-     * @param zLevel the zLevel to draw at
+     * @param borderSize    the size of the box's borders
+     * @param zLevel        the zLevel to draw at
      */
     public static void drawContinuousTexturedBox(int x, int y, int u, int v, int width, int height, int textureWidth, int textureHeight,
-            int borderSize, float zLevel)
-    {
+                                                 int borderSize, float zLevel) {
         drawContinuousTexturedBox(x, y, u, v, width, height, textureWidth, textureHeight, borderSize, borderSize, borderSize, borderSize, zLevel);
     }
 
@@ -81,21 +82,20 @@ public class GuiUtils
      * and filler. The provided ResourceLocation object will be bound using
      * Minecraft.getMinecraft().getTextureManager().bindTexture(resourceLocation).
      *
-     * @param res the ResourceLocation object that contains the desired image
-     * @param x x axis offset
-     * @param y y axis offset
-     * @param u bound resource location image x offset
-     * @param v bound resource location image y offset
-     * @param width the desired box width
-     * @param height the desired box height
-     * @param textureWidth the width of the box texture in the resource location image
+     * @param res           the ResourceLocation object that contains the desired image
+     * @param x             x axis offset
+     * @param y             y axis offset
+     * @param u             bound resource location image x offset
+     * @param v             bound resource location image y offset
+     * @param width         the desired box width
+     * @param height        the desired box height
+     * @param textureWidth  the width of the box texture in the resource location image
      * @param textureHeight the height of the box texture in the resource location image
-     * @param borderSize the size of the box's borders
-     * @param zLevel the zLevel to draw at
+     * @param borderSize    the size of the box's borders
+     * @param zLevel        the zLevel to draw at
      */
     public static void drawContinuousTexturedBox(ResourceLocation res, int x, int y, int u, int v, int width, int height, int textureWidth, int textureHeight,
-            int borderSize, float zLevel)
-    {
+                                                 int borderSize, float zLevel) {
         drawContinuousTexturedBox(res, x, y, u, v, width, height, textureWidth, textureHeight, borderSize, borderSize, borderSize, borderSize, zLevel);
     }
 
@@ -104,24 +104,23 @@ public class GuiUtils
      * and filler. The provided ResourceLocation object will be bound using
      * Minecraft.getMinecraft().getTextureManager().bindTexture(resourceLocation).
      *
-     * @param res the ResourceLocation object that contains the desired image
-     * @param x x axis offset
-     * @param y y axis offset
-     * @param u bound resource location image x offset
-     * @param v bound resource location image y offset
-     * @param width the desired box width
-     * @param height the desired box height
-     * @param textureWidth the width of the box texture in the resource location image
+     * @param res           the ResourceLocation object that contains the desired image
+     * @param x             x axis offset
+     * @param y             y axis offset
+     * @param u             bound resource location image x offset
+     * @param v             bound resource location image y offset
+     * @param width         the desired box width
+     * @param height        the desired box height
+     * @param textureWidth  the width of the box texture in the resource location image
      * @param textureHeight the height of the box texture in the resource location image
-     * @param topBorder the size of the box's top border
-     * @param bottomBorder the size of the box's bottom border
-     * @param leftBorder the size of the box's left border
-     * @param rightBorder the size of the box's right border
-     * @param zLevel the zLevel to draw at
+     * @param topBorder     the size of the box's top border
+     * @param bottomBorder  the size of the box's bottom border
+     * @param leftBorder    the size of the box's left border
+     * @param rightBorder   the size of the box's right border
+     * @param zLevel        the zLevel to draw at
      */
     public static void drawContinuousTexturedBox(ResourceLocation res, int x, int y, int u, int v, int width, int height, int textureWidth, int textureHeight,
-            int topBorder, int bottomBorder, int leftBorder, int rightBorder, float zLevel)
-    {
+                                                 int topBorder, int bottomBorder, int leftBorder, int rightBorder, float zLevel) {
         Minecraft.getMinecraft().getTextureManager().bindTexture(res);
         drawContinuousTexturedBox(x, y, u, v, width, height, textureWidth, textureHeight, topBorder, bottomBorder, leftBorder, rightBorder, zLevel);
     }
@@ -131,23 +130,22 @@ public class GuiUtils
      * and filler. It is assumed that the desired texture ResourceLocation object has been bound using
      * Minecraft.getMinecraft().getTextureManager().bindTexture(resourceLocation).
      *
-     * @param x x axis offset
-     * @param y y axis offset
-     * @param u bound resource location image x offset
-     * @param v bound resource location image y offset
-     * @param width the desired box width
-     * @param height the desired box height
-     * @param textureWidth the width of the box texture in the resource location image
+     * @param x             x axis offset
+     * @param y             y axis offset
+     * @param u             bound resource location image x offset
+     * @param v             bound resource location image y offset
+     * @param width         the desired box width
+     * @param height        the desired box height
+     * @param textureWidth  the width of the box texture in the resource location image
      * @param textureHeight the height of the box texture in the resource location image
-     * @param topBorder the size of the box's top border
-     * @param bottomBorder the size of the box's bottom border
-     * @param leftBorder the size of the box's left border
-     * @param rightBorder the size of the box's right border
-     * @param zLevel the zLevel to draw at
+     * @param topBorder     the size of the box's top border
+     * @param bottomBorder  the size of the box's bottom border
+     * @param leftBorder    the size of the box's left border
+     * @param rightBorder   the size of the box's right border
+     * @param zLevel        the zLevel to draw at
      */
     public static void drawContinuousTexturedBox(int x, int y, int u, int v, int width, int height, int textureWidth, int textureHeight,
-            int topBorder, int bottomBorder, int leftBorder, int rightBorder, float zLevel)
-    {
+                                                 int topBorder, int bottomBorder, int leftBorder, int rightBorder, float zLevel) {
         GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
         GlStateManager.enableBlend();
         GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, 1, 0);
@@ -171,8 +169,7 @@ public class GuiUtils
         // Bottom Right
         drawTexturedModalRect(x + leftBorder + canvasWidth, y + topBorder + canvasHeight, u + leftBorder + fillerWidth, v + topBorder + fillerHeight, rightBorder, bottomBorder, zLevel);
 
-        for (int i = 0; i < xPasses + (remainderWidth > 0 ? 1 : 0); i++)
-        {
+        for (int i = 0; i < xPasses + (remainderWidth > 0 ? 1 : 0); i++) {
             // Top Border
             drawTexturedModalRect(x + leftBorder + (i * fillerWidth), y, u + leftBorder, v, (i == xPasses ? remainderWidth : fillerWidth), topBorder, zLevel);
             // Bottom Border
@@ -184,8 +181,7 @@ public class GuiUtils
         }
 
         // Side Borders
-        for (int j = 0; j < yPasses + (remainderHeight > 0 ? 1 : 0); j++)
-        {
+        for (int j = 0; j < yPasses + (remainderHeight > 0 ? 1 : 0); j++) {
             // Left Border
             drawTexturedModalRect(x, y + topBorder + (j * fillerHeight), u, v + topBorder, leftBorder, (j == yPasses ? remainderHeight : fillerHeight), zLevel);
             // Right Border
@@ -193,59 +189,52 @@ public class GuiUtils
         }
     }
 
-    public static void drawTexturedModalRect(int x, int y, int u, int v, int width, int height, float zLevel)
-    {
+    public static void drawTexturedModalRect(int x, int y, int u, int v, int width, int height, float zLevel) {
         final float uScale = 1f / 0x100;
         final float vScale = 1f / 0x100;
 
         Tessellator tessellator = Tessellator.getInstance();
         BufferBuilder wr = tessellator.getBuffer();
         wr.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
-        wr.pos(x        , y + height, zLevel).tex( u          * uScale, ((v + height) * vScale)).endVertex();
+        wr.pos(x, y + height, zLevel).tex(u * uScale, ((v + height) * vScale)).endVertex();
         wr.pos(x + width, y + height, zLevel).tex((u + width) * uScale, ((v + height) * vScale)).endVertex();
-        wr.pos(x + width, y         , zLevel).tex((u + width) * uScale, ( v           * vScale)).endVertex();
-        wr.pos(x        , y         , zLevel).tex( u          * uScale, ( v           * vScale)).endVertex();
+        wr.pos(x + width, y, zLevel).tex((u + width) * uScale, (v * vScale)).endVertex();
+        wr.pos(x, y, zLevel).tex(u * uScale, (v * vScale)).endVertex();
         tessellator.draw();
     }
-
-    @Nonnull
-    private static ItemStack cachedTooltipStack = ItemStack.EMPTY;
 
     /**
      * Must be called from {@code GuiScreen.renderToolTip} before {@code GuiScreen.drawHoveringText} is called.
      *
      * @param stack The stack for which a tooltip is about to be drawn.
      */
-    public static void preItemToolTip(@Nonnull ItemStack stack)
-    {
+    public static void preItemToolTip(@Nonnull ItemStack stack) {
         cachedTooltipStack = stack;
     }
 
     /**
      * Must be called from {@code GuiScreen.renderToolTip} after {@code GuiScreen.drawHoveringText} is called.
      */
-    public static void postItemToolTip()
-    {
+    public static void postItemToolTip() {
         cachedTooltipStack = ItemStack.EMPTY;
     }
 
     /**
-     *  Draws a tooltip box on the screen with text in it.
-     *  Automatically positions the box relative to the mouse to match Mojang's implementation.
-     *  Automatically wraps text when there is not enough space on the screen to display the text without wrapping.
-     *  Can have a maximum width set to avoid creating very wide tooltips.
+     * Draws a tooltip box on the screen with text in it.
+     * Automatically positions the box relative to the mouse to match Mojang's implementation.
+     * Automatically wraps text when there is not enough space on the screen to display the text without wrapping.
+     * Can have a maximum width set to avoid creating very wide tooltips.
      *
-     * @param textLines the lines of text to be drawn in a hovering tooltip box.
-     * @param mouseX the mouse X position
-     * @param mouseY the mouse Y position
-     * @param screenWidth the available screen width for the tooltip to drawn in
+     * @param textLines    the lines of text to be drawn in a hovering tooltip box.
+     * @param mouseX       the mouse X position
+     * @param mouseY       the mouse Y position
+     * @param screenWidth  the available screen width for the tooltip to drawn in
      * @param screenHeight the available  screen height for the tooltip to drawn in
      * @param maxTextWidth the maximum width of the text in the tooltip box.
      *                     Set to a negative number to have no max width.
-     * @param font the font for drawing the text in the tooltip box
+     * @param font         the font for drawing the text in the tooltip box
      */
-    public static void drawHoveringText(List<String> textLines, int mouseX, int mouseY, int screenWidth, int screenHeight, int maxTextWidth, FontRenderer font)
-    {
+    public static void drawHoveringText(List<String> textLines, int mouseX, int mouseY, int screenWidth, int screenHeight, int maxTextWidth, FontRenderer font) {
         drawHoveringText(cachedTooltipStack, textLines, mouseX, mouseY, screenWidth, screenHeight, maxTextWidth, font);
     }
 
@@ -254,10 +243,8 @@ public class GuiUtils
      *
      * @see #drawHoveringText(List, int, int, int, int, int, FontRenderer)
      */
-    public static void drawHoveringText(@Nonnull final ItemStack stack, List<String> textLines, int mouseX, int mouseY, int screenWidth, int screenHeight, int maxTextWidth, FontRenderer font)
-    {
-        if (!textLines.isEmpty())
-        {
+    public static void drawHoveringText(@Nonnull final ItemStack stack, List<String> textLines, int mouseX, int mouseY, int screenWidth, int screenHeight, int maxTextWidth, FontRenderer font) {
+        if (!textLines.isEmpty()) {
             RenderTooltipEvent.Pre event = new RenderTooltipEvent.Pre(stack, textLines, mouseX, mouseY, screenWidth, screenHeight, maxTextWidth, font);
             if (MinecraftForge.EVENT_BUS.post(event)) {
                 return;
@@ -275,12 +262,10 @@ public class GuiUtils
             GlStateManager.disableDepth();
             int tooltipTextWidth = 0;
 
-            for (String textLine : textLines)
-            {
+            for (String textLine : textLines) {
                 int textLineWidth = font.getStringWidth(textLine);
 
-                if (textLineWidth > tooltipTextWidth)
-                {
+                if (textLineWidth > tooltipTextWidth) {
                     tooltipTextWidth = textLineWidth;
                 }
             }
@@ -289,47 +274,37 @@ public class GuiUtils
 
             int titleLinesCount = 1;
             int tooltipX = mouseX + 12;
-            if (tooltipX + tooltipTextWidth + 4 > screenWidth)
-            {
+            if (tooltipX + tooltipTextWidth + 4 > screenWidth) {
                 tooltipX = mouseX - 16 - tooltipTextWidth;
                 if (tooltipX < 4) // if the tooltip doesn't fit on the screen
                 {
-                    if (mouseX > screenWidth / 2)
-                    {
+                    if (mouseX > screenWidth / 2) {
                         tooltipTextWidth = mouseX - 12 - 8;
-                    }
-                    else
-                    {
+                    } else {
                         tooltipTextWidth = screenWidth - 16 - mouseX;
                     }
                     needsWrap = true;
                 }
             }
 
-            if (maxTextWidth > 0 && tooltipTextWidth > maxTextWidth)
-            {
+            if (maxTextWidth > 0 && tooltipTextWidth > maxTextWidth) {
                 tooltipTextWidth = maxTextWidth;
                 needsWrap = true;
             }
 
-            if (needsWrap)
-            {
+            if (needsWrap) {
                 int wrappedTooltipWidth = 0;
                 List<String> wrappedTextLines = new ArrayList<String>();
-                for (int i = 0; i < textLines.size(); i++)
-                {
+                for (int i = 0; i < textLines.size(); i++) {
                     String textLine = textLines.get(i);
                     List<String> wrappedLine = font.listFormattedStringToWidth(textLine, tooltipTextWidth);
-                    if (i == 0)
-                    {
+                    if (i == 0) {
                         titleLinesCount = wrappedLine.size();
                     }
 
-                    for (String line : wrappedLine)
-                    {
+                    for (String line : wrappedLine) {
                         int lineWidth = font.getStringWidth(line);
-                        if (lineWidth > wrappedTooltipWidth)
-                        {
+                        if (lineWidth > wrappedTooltipWidth) {
                             wrappedTooltipWidth = lineWidth;
                         }
                         wrappedTextLines.add(line);
@@ -338,12 +313,9 @@ public class GuiUtils
                 tooltipTextWidth = wrappedTooltipWidth;
                 textLines = wrappedTextLines;
 
-                if (mouseX > screenWidth / 2)
-                {
+                if (mouseX > screenWidth / 2) {
                     tooltipX = mouseX - 16 - tooltipTextWidth;
-                }
-                else
-                {
+                } else {
                     tooltipX = mouseX + 12;
                 }
             }
@@ -351,20 +323,16 @@ public class GuiUtils
             int tooltipY = mouseY - 12;
             int tooltipHeight = 8;
 
-            if (textLines.size() > 1)
-            {
+            if (textLines.size() > 1) {
                 tooltipHeight += (textLines.size() - 1) * 10;
                 if (textLines.size() > titleLinesCount) {
                     tooltipHeight += 2; // gap between title lines and next lines
                 }
             }
 
-            if (tooltipY < 4)
-            {
+            if (tooltipY < 4) {
                 tooltipY = 4;
-            }
-            else if (tooltipY + tooltipHeight + 4 > screenHeight)
-            {
+            } else if (tooltipY + tooltipHeight + 4 > screenHeight) {
                 tooltipY = screenHeight - tooltipHeight - 4;
             }
 
@@ -390,13 +358,11 @@ public class GuiUtils
             MinecraftForge.EVENT_BUS.post(new RenderTooltipEvent.PostBackground(stack, textLines, tooltipX, tooltipY, font, tooltipTextWidth, tooltipHeight));
             int tooltipTop = tooltipY;
 
-            for (int lineNumber = 0; lineNumber < textLines.size(); ++lineNumber)
-            {
+            for (int lineNumber = 0; lineNumber < textLines.size(); ++lineNumber) {
                 String line = textLines.get(lineNumber);
-                font.drawStringWithShadow(line, (float)tooltipX, (float)tooltipY, -1);
+                font.drawStringWithShadow(line, (float) tooltipX, (float) tooltipY, -1);
 
-                if (lineNumber + 1 == titleLinesCount)
-                {
+                if (lineNumber + 1 == titleLinesCount) {
                     tooltipY += 2;
                 }
 
@@ -412,16 +378,15 @@ public class GuiUtils
         }
     }
 
-    public static void drawGradientRect(int zLevel, int left, int top, int right, int bottom, int startColor, int endColor)
-    {
-        float startAlpha = (float)(startColor >> 24 & 255) / 255.0F;
-        float startRed   = (float)(startColor >> 16 & 255) / 255.0F;
-        float startGreen = (float)(startColor >>  8 & 255) / 255.0F;
-        float startBlue  = (float)(startColor       & 255) / 255.0F;
-        float endAlpha   = (float)(endColor   >> 24 & 255) / 255.0F;
-        float endRed     = (float)(endColor   >> 16 & 255) / 255.0F;
-        float endGreen   = (float)(endColor   >>  8 & 255) / 255.0F;
-        float endBlue    = (float)(endColor         & 255) / 255.0F;
+    public static void drawGradientRect(int zLevel, int left, int top, int right, int bottom, int startColor, int endColor) {
+        float startAlpha = (float) (startColor >> 24 & 255) / 255.0F;
+        float startRed = (float) (startColor >> 16 & 255) / 255.0F;
+        float startGreen = (float) (startColor >> 8 & 255) / 255.0F;
+        float startBlue = (float) (startColor & 255) / 255.0F;
+        float endAlpha = (float) (endColor >> 24 & 255) / 255.0F;
+        float endRed = (float) (endColor >> 16 & 255) / 255.0F;
+        float endGreen = (float) (endColor >> 8 & 255) / 255.0F;
+        float endBlue = (float) (endColor & 255) / 255.0F;
 
         GlStateManager.disableTexture2D();
         GlStateManager.enableBlend();
@@ -432,10 +397,10 @@ public class GuiUtils
         Tessellator tessellator = Tessellator.getInstance();
         BufferBuilder buffer = tessellator.getBuffer();
         buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_COLOR);
-        buffer.pos(right,    top, zLevel).color(startRed, startGreen, startBlue, startAlpha).endVertex();
-        buffer.pos( left,    top, zLevel).color(startRed, startGreen, startBlue, startAlpha).endVertex();
-        buffer.pos( left, bottom, zLevel).color(  endRed,   endGreen,   endBlue,   endAlpha).endVertex();
-        buffer.pos(right, bottom, zLevel).color(  endRed,   endGreen,   endBlue,   endAlpha).endVertex();
+        buffer.pos(right, top, zLevel).color(startRed, startGreen, startBlue, startAlpha).endVertex();
+        buffer.pos(left, top, zLevel).color(startRed, startGreen, startBlue, startAlpha).endVertex();
+        buffer.pos(left, bottom, zLevel).color(endRed, endGreen, endBlue, endAlpha).endVertex();
+        buffer.pos(right, bottom, zLevel).color(endRed, endGreen, endBlue, endAlpha).endVertex();
         tessellator.draw();
 
         GlStateManager.shadeModel(GL11.GL_FLAT);

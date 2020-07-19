@@ -21,9 +21,11 @@ package net.minecraftforge.client.model;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+
 import java.util.Collection;
 import java.util.Optional;
 import java.util.function.Function;
+
 import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.block.model.ModelBlock;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
@@ -37,8 +39,7 @@ import net.minecraftforge.common.model.animation.IClip;
  * Interface for models that can be baked
  * (possibly to different vertex formats and with different state).
  */
-public interface IModel
-{
+public interface IModel {
     /*
      * Returns all model locations that this model depends on.
      * Assume that returned collection is immutable.
@@ -82,6 +83,7 @@ public interface IModel
     /**
      * Allows the model to process custom data from the variant definition.
      * If unknown data is encountered it should be skipped.
+     *
      * @return a new model, with data applied.
      */
     default IModel process(ImmutableMap<String, String> customData) {
@@ -105,12 +107,12 @@ public interface IModel
      * The returned model should be independent of the accessed one,
      * as a model should be able to be retextured multiple times producing
      * a separate model each time.
-     *
+     * <p>
      * The input map MAY map to an empty string "" which should be used
      * to indicate the texture was removed. Handling of that is up to
      * the model itself. Such as using default, missing texture, or
      * removing vertices.
-     *
+     * <p>
      * The input should be considered a DIFF of the old textures, not a
      * replacement as it may not contain everything.
      *

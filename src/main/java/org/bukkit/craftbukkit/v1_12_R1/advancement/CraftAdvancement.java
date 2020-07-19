@@ -2,6 +2,7 @@ package org.bukkit.craftbukkit.v1_12_R1.advancement;
 
 import java.util.Collection;
 import java.util.Collections;
+
 import net.minecraft.advancements.Advancement;
 import org.bukkit.NamespacedKey;
 import org.bukkit.craftbukkit.v1_12_R1.util.CraftNamespacedKey;

@@ -11,7 +11,7 @@
  * and/or sell copies of the Software, and to permit persons to whom the
  * Software is furnished to do so, subject to the following conditions:
  *
- * The above copyright notice and this permission notice shall be included in 
+ * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
@@ -32,7 +32,7 @@ import java.io.IOException;
  * Thrown when a patch is invalid.
  */
 public class PatchException extends IOException {
-    
+
     private static final long serialVersionUID = 1;
 
     /**
@@ -40,9 +40,10 @@ public class PatchException extends IOException {
      */
     public PatchException() {
     }
-    
+
     /**
      * Constructs an instance of <code>PatchException</code> with the specified detail message.
+     *
      * @param msg the detail message.
      */
     public PatchException(String msg) {

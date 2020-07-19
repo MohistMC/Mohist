@@ -2,6 +2,7 @@ package org.bukkit.material;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import org.bukkit.Material;
 
 /**

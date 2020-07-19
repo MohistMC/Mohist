@@ -2,6 +2,7 @@ package org.bukkit.entity;
 
 import java.util.HashMap;
 import java.util.Map;
+
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.minecart.CommandMinecart;
@@ -308,7 +309,6 @@ public enum EntityType {
     }
 
     /**
-     *
      * @param name the entity type's name
      * @return the matching entity type or null
      * @deprecated Magic value
@@ -321,7 +321,6 @@ public enum EntityType {
     }
 
     /**
-     *
      * @param id the raw type id
      * @return the matching entity type or null
      * @deprecated Magic value
@@ -334,7 +333,6 @@ public enum EntityType {
     }
 
     /**
-     *
      * @return the entity type's name
      * @deprecated Magic value
      */
@@ -347,7 +345,6 @@ public enum EntityType {
     }
 
     /**
-     *
      * @return the raw type id
      * @deprecated Magic value
      */

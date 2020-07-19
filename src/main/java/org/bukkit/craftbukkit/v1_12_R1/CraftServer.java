@@ -12,6 +12,7 @@ import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufOutputStream;
 import io.netty.buffer.Unpooled;
 import io.netty.handler.codec.base64.Base64;
+
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileInputStream;
@@ -34,6 +35,7 @@ import java.util.logging.Logger;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.imageio.ImageIO;
+
 import jline.console.ConsoleReader;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.minecraft.advancements.Advancement;
@@ -199,12 +201,17 @@ public final class CraftServer implements Server {
     private final WorldMetadataStore worldMetadata = new WorldMetadataStore();
     private final BooleanWrapper online = new BooleanWrapper();
     private final List<CraftPlayer> playerView;
+    public int chunkGCPeriod = -1;
+    public int chunkGCLoadThresh = 0;
+    public CraftScoreboardManager scoreboardManager;
+    public boolean playerCommandState;
+    public int reloadCount;
+    private YamlConfiguration configuration;
     private final Spigot spigot = new Spigot() {
 
         @Deprecated
         @Override
-        public YamlConfiguration getConfig()
-        {
+        public YamlConfiguration getConfig() {
             return org.spigotmc.SpigotConfig.config;
         }
 
@@ -214,20 +221,17 @@ public final class CraftServer implements Server {
         }
 
         @Override
-        public YamlConfiguration getBukkitConfig()
-        {
+        public YamlConfiguration getBukkitConfig() {
             return configuration;
         }
 
         @Override
-        public YamlConfiguration getSpigotConfig()
-        {
+        public YamlConfiguration getSpigotConfig() {
             return org.spigotmc.SpigotConfig.config;
         }
 
         @Override
-        public YamlConfiguration getPaperConfig()
-        {
+        public YamlConfiguration getPaperConfig() {
             return PaperMCConfig.config;
         }
 
@@ -245,12 +249,6 @@ public final class CraftServer implements Server {
             }
         }
     };
-    public int chunkGCPeriod = -1;
-    public int chunkGCLoadThresh = 0;
-    public CraftScoreboardManager scoreboardManager;
-    public boolean playerCommandState;
-    public int reloadCount;
-    private YamlConfiguration configuration;
     private YamlConfiguration commandsConfiguration;
     private int monsterSpawn = -1;
     private int animalSpawn = -1;
@@ -325,7 +323,7 @@ public final class CraftServer implements Server {
         ambientSpawn = configuration.getInt("spawn-limits.ambient");
         console.autosavePeriod = configuration.getInt("ticks-per.autosave");
         warningState = WarningState.value(configuration.getString("settings.deprecated-verbose"));
-        chunkGCPeriod = Math.min(20,configuration.getInt("chunk-gc.period-in-ticks"));
+        chunkGCPeriod = Math.min(20, configuration.getInt("chunk-gc.period-in-ticks"));
         chunkGCLoadThresh = configuration.getInt("chunk-gc.load-threshold");
         loadIcon();
     }
@@ -1359,7 +1357,7 @@ public final class CraftServer implements Server {
     @Deprecated
     public OfflinePlayer getOfflinePlayer(String name) {
         Validate.notNull(name, "Name cannot be null");
-        com.google.common.base.Preconditions.checkArgument( !org.apache.commons.lang.StringUtils.isBlank( name ), "Name cannot be blank" ); // Spigot
+        com.google.common.base.Preconditions.checkArgument(!org.apache.commons.lang.StringUtils.isBlank(name), "Name cannot be blank"); // Spigot
         OfflinePlayer result = getPlayerExact(name);
         if (result == null) {
             // This is potentially blocking :(
@@ -1614,7 +1612,7 @@ public final class CraftServer implements Server {
     public CraftSimpleCommandMap getCraftCommandMap() {
         return craftCommandMap;
     }
-	// Cauldron end
+    // Cauldron end
 
     @Override
     public int getMonsterSpawnLimit() {
@@ -1677,8 +1675,7 @@ public final class CraftServer implements Server {
 
     public List<String> tabCompleteCommand(Player player, String message, BlockPos pos) {
         // Spigot Start
-        if ( (org.spigotmc.SpigotConfig.tabComplete < 0 || message.length() <= org.spigotmc.SpigotConfig.tabComplete) && !message.contains( " " ) )
-        {
+        if ((org.spigotmc.SpigotConfig.tabComplete < 0 || message.length() <= org.spigotmc.SpigotConfig.tabComplete) && !message.contains(" ")) {
             return ImmutableList.of();
         }
         // Spigot End

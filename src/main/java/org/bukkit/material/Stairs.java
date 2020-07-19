@@ -118,7 +118,7 @@ public class Stairs extends MaterialData implements Directional {
      * Set step inverted state
      *
      * @param inv - true if step is inverted (top half), false if step is
-     *     normal (bottom half)
+     *            normal (bottom half)
      */
     public void setInverted(boolean inv) {
         int dat = getData() & 0x3;

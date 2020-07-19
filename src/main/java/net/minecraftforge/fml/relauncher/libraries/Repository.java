@@ -21,38 +21,50 @@ package net.minecraftforge.fml.relauncher.libraries;
 
 import com.google.common.hash.Hashing;
 import com.google.common.io.Files;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+
 import net.minecraftforge.fml.common.FMLLog;
 
-public class Repository
-{
+public class Repository {
     static final Map<String, Repository> cache = new LinkedHashMap<>();
+    private final String name;
+    private final File root;
 
-    public static Repository create(File root) throws IOException
-    {
+    protected Repository(File root) throws IOException {
+        this(root, root.getCanonicalPath());
+    }
+
+    protected Repository(File root, String name) {
+        this.root = root;
+        this.name = name;
+        if (name == null)
+            throw new IllegalArgumentException("Invalid Repository Name, for " + root);
+    }
+
+    public static Repository create(File root) throws IOException {
         return create(root, root.getCanonicalPath());
     }
-    public static Repository create(File root, String name)
-    {
+
+    public static Repository create(File root, String name) {
         return cache.computeIfAbsent(name, f -> new Repository(root, name));
     }
-    public static Repository replace(File root, String name)
-    {
+
+    public static Repository replace(File root, String name) {
         return cache.put(name, new Repository(root, name));
     }
-    public static Repository get(String name)
-    {
+
+    public static Repository get(String name) {
         return cache.get(name);
     }
-    public static Artifact resolveAll(Artifact artifact)
-    {
+
+    public static Artifact resolveAll(Artifact artifact) {
         Artifact ret = null;
-        for (Repository repo : cache.values())
-        {
+        for (Repository repo : cache.values()) {
             Artifact tmp = repo.resolve(artifact);
             if (tmp == null)
                 continue;
@@ -63,36 +75,17 @@ public class Repository
         return ret;
     }
 
-
-    private final String name;
-    private final File root;
-
-    protected Repository(File root) throws IOException
-    {
-        this(root, root.getCanonicalPath());
-    }
-    protected Repository(File root, String name)
-    {
-        this.root = root;
-        this.name = name;
-        if (name == null)
-            throw new IllegalArgumentException("Invalid Repository Name, for " + root);
-    }
-
     @Override
-    public int hashCode()
-    {
+    public int hashCode() {
         return this.name.hashCode();
     }
 
     @Override
-    public boolean equals(Object o)
-    {
-        return o instanceof Repository && ((Repository)o).name.equals(name);
+    public boolean equals(Object o) {
+        return o instanceof Repository && ((Repository) o).name.equals(name);
     }
 
-    public Artifact resolve(Artifact artifact)
-    {
+    public Artifact resolve(Artifact artifact) {
         if (!artifact.isSnapshot())
             return getFile(artifact.getPath()).exists() ? artifact : null;
 
@@ -105,8 +98,7 @@ public class Repository
             return null;
 
         Artifact ret = new Artifact(artifact, this, json.getLatest());
-        while (json.getLatest() != null && !getFile(ret.getPath()).exists())
-        {
+        while (json.getLatest() != null && !getFile(ret.getPath()).exists()) {
             if (!json.remove(json.getLatest()))
                 throw new IllegalStateException("Something went wrong, Latest (" + json.getLatest() + ") did not point to an entry in the json list: " + meta.getAbsolutePath());
             ret = new Artifact(artifact, this, json.getLatest());
@@ -115,47 +107,38 @@ public class Repository
         return getFile(ret.getPath()).exists() ? ret : null;
     }
 
-    public File getFile(String path)
-    {
+    public File getFile(String path) {
         return new File(root, path);
     }
 
-    public File archive(Artifact artifact, File file, byte[] manifest)
-    {
+    public File archive(Artifact artifact, File file, byte[] manifest) {
         File target = artifact.getFile();
-        try
-        {
-            if (target.exists())
-            {
+        try {
+            if (target.exists()) {
                 FMLLog.log.debug("Maven file already exists for {}({}) at {}, deleting duplicate.", file.getName(), artifact.toString(), target.getAbsolutePath());
                 file.delete();
-            }
-            else
-            {
+            } else {
                 FMLLog.log.debug("Moving file {}({}) to maven repo at {}.", file.getName(), artifact.toString(), target.getAbsolutePath());
                 Files.move(file, target);
 
-                if (artifact.isSnapshot())
-                {
+                if (artifact.isSnapshot()) {
                     SnapshotJson json = SnapshotJson.create(artifact.getSnapshotMeta());
                     json.add(new SnapshotJson.Entry(artifact.getTimestamp(), Files.hash(target, Hashing.md5()).toString()));
                     json.write(artifact.getSnapshotMeta());
                 }
 
-                if (!LibraryManager.DISABLE_EXTERNAL_MANIFEST)
-                {
+                if (!LibraryManager.DISABLE_EXTERNAL_MANIFEST) {
                     File meta_target = new File(target.getAbsolutePath() + ".meta");
                     Files.write(manifest, meta_target);
                 }
             }
             return target;
-        }
-        catch (IOException e)
-        {
+        } catch (IOException e) {
             FMLLog.log.error(FMLLog.log.getMessageFactory().newMessage("Error moving file {} to {}", file, target.getAbsolutePath()), e);
         }
         return file;
     }
 
-    public void filterLegacy(List<File> list){}
+    public void filterLegacy(List<File> list) {
+    }
 }

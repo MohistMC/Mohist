@@ -20,9 +20,11 @@
 package net.minecraftforge.common.util;
 
 import com.mojang.authlib.GameProfile;
+
 import java.net.InetAddress;
 import java.util.ArrayList;
 import javax.annotation.Nullable;
+
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -43,15 +45,14 @@ import org.bukkit.event.player.PlayerPreLoginEvent;
 import red.mohist.Mohist;
 
 //Preliminary, simple Fake Player class
-public class FakePlayer extends EntityPlayerMP
-{
-    static public ArrayList<FakePlayer> fakePlayers=new ArrayList();
-    static public boolean BukkitInited=false;
-    public FakePlayer(WorldServer world, GameProfile name)
-    {
+public class FakePlayer extends EntityPlayerMP {
+    static public ArrayList<FakePlayer> fakePlayers = new ArrayList();
+    static public boolean BukkitInited = false;
+
+    public FakePlayer(WorldServer world, GameProfile name) {
         super(FMLCommonHandler.instance().getMinecraftServerInstance(), world, name, new PlayerInteractionManager(world));
         //KCauldronX Start
-        if(MinecraftServer.mohistConfig.fakePlayerLogin.getValue()) {
+        if (MinecraftServer.mohistConfig.fakePlayerLogin.getValue()) {
             if (!BukkitInited) {
                 fakePlayers.add(this);
             } else {
@@ -60,7 +61,8 @@ public class FakePlayer extends EntityPlayerMP
         }
         //KCauldronX End
     }
-    public void callBukkitLoginEvent(){
+
+    public void callBukkitLoginEvent() {
         new Thread(() -> {
             AsyncPlayerPreLoginEvent prelogin2 = new AsyncPlayerPreLoginEvent(getName(), InetAddress.getLoopbackAddress(), getUniqueID());
             Bukkit.getPluginManager().callEvent(prelogin2);
@@ -69,23 +71,75 @@ public class FakePlayer extends EntityPlayerMP
                 Bukkit.getPluginManager().callEvent(prelogin1);
                 PlayerLoginEvent login = new PlayerLoginEvent(getBukkitEntity(), "localhost", InetAddress.getLoopbackAddress());
                 Bukkit.getPluginManager().callEvent(login);
-                Mohist.LOGGER.info("%s","Fakeplayer "+getName()+" ("+getUniqueID()+") joined server");
+                Mohist.LOGGER.info("%s", "Fakeplayer " + getName() + " (" + getUniqueID() + ") joined server");
             });
         }).start();
     }
 
-    @Override public Vec3d getPositionVector(){ return new Vec3d(0, 0, 0); }
-    @Override public boolean canUseCommand(int i, String s){ return false; }
-    @Override public boolean canUseCommand(int i, String s, String perm){ return false; }
-    @Override public void sendStatusMessage(ITextComponent chatComponent, boolean actionBar){}
-    @Override public void sendMessage(ITextComponent component) {}
-    @Override public void addStat(StatBase par1StatBase, int par2){}
-    @Override public void openGui(Object mod, int modGuiId, World world, int x, int y, int z){}
-    @Override public boolean isEntityInvulnerable(DamageSource source){ return true; }
-    @Override public boolean canAttackPlayer(EntityPlayer player){ return false; }
-    @Override public void onDeath(DamageSource source){ return; }
-    @Override public void onUpdate(){ return; }
-    @Override public Entity changeDimension(int dim, ITeleporter teleporter){ return this; }
-    @Override public void handleClientSettings(CPacketClientSettings pkt){ return; }
-    @Override @Nullable public MinecraftServer getServer() { return FMLCommonHandler.instance().getMinecraftServerInstance(); }
+    @Override
+    public Vec3d getPositionVector() {
+        return new Vec3d(0, 0, 0);
+    }
+
+    @Override
+    public boolean canUseCommand(int i, String s) {
+        return false;
+    }
+
+    @Override
+    public boolean canUseCommand(int i, String s, String perm) {
+        return false;
+    }
+
+    @Override
+    public void sendStatusMessage(ITextComponent chatComponent, boolean actionBar) {
+    }
+
+    @Override
+    public void sendMessage(ITextComponent component) {
+    }
+
+    @Override
+    public void addStat(StatBase par1StatBase, int par2) {
+    }
+
+    @Override
+    public void openGui(Object mod, int modGuiId, World world, int x, int y, int z) {
+    }
+
+    @Override
+    public boolean isEntityInvulnerable(DamageSource source) {
+        return true;
+    }
+
+    @Override
+    public boolean canAttackPlayer(EntityPlayer player) {
+        return false;
+    }
+
+    @Override
+    public void onDeath(DamageSource source) {
+        return;
+    }
+
+    @Override
+    public void onUpdate() {
+        return;
+    }
+
+    @Override
+    public Entity changeDimension(int dim, ITeleporter teleporter) {
+        return this;
+    }
+
+    @Override
+    public void handleClientSettings(CPacketClientSettings pkt) {
+        return;
+    }
+
+    @Override
+    @Nullable
+    public MinecraftServer getServer() {
+        return FMLCommonHandler.instance().getMinecraftServerInstance();
+    }
 }

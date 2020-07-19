@@ -1,6 +1,7 @@
 package org.bukkit.plugin;
 
 import com.google.common.collect.ImmutableSet;
+
 import java.io.File;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
@@ -18,6 +19,7 @@ import java.util.WeakHashMap;
 import java.util.logging.Level;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
 import org.apache.commons.lang.Validate;
 import org.bukkit.Server;
 import org.bukkit.command.Command;
@@ -63,7 +65,7 @@ public final class SimplePluginManager implements PluginManager {
      *
      * @param loader Class name of the PluginLoader to register
      * @throws IllegalArgumentException Thrown when the given Class is not a
-     *     valid PluginLoader
+     *                                  valid PluginLoader
      */
     public void registerInterface(Class<? extends PluginLoader> loader) throws IllegalArgumentException {
         PluginLoader instance;
@@ -300,10 +302,10 @@ public final class SimplePluginManager implements PluginManager {
      *
      * @param file File containing the plugin to load
      * @return The Plugin loaded, or null if it was invalid
-     * @throws InvalidPluginException Thrown when the specified file is not a
-     *     valid plugin
+     * @throws InvalidPluginException     Thrown when the specified file is not a
+     *                                    valid plugin
      * @throws UnknownDependencyException If a required dependency could not
-     *     be found
+     *                                    be found
      */
     public synchronized Plugin loadPlugin(File file) throws InvalidPluginException, UnknownDependencyException {
         Validate.notNull(file, "File cannot be null");
@@ -411,6 +413,7 @@ public final class SimplePluginManager implements PluginManager {
             disablePlugin(plugins[i]);
         }
     }
+
     public void disablePlugin(final Plugin plugin) {
         if (plugin.isEnabled()) {
             try {
@@ -520,13 +523,13 @@ public final class SimplePluginManager implements PluginManager {
      * Registers the given event to the specified listener using a directly
      * passed EventExecutor
      *
-     * @param event Event class to register
-     * @param listener PlayerListener to register
-     * @param priority Priority of this event
-     * @param executor EventExecutor to register
-     * @param plugin Plugin to register
+     * @param event           Event class to register
+     * @param listener        PlayerListener to register
+     * @param priority        Priority of this event
+     * @param executor        EventExecutor to register
+     * @param plugin          Plugin to register
      * @param ignoreCancelled Do not call executor if event was already
-     *     cancelled
+     *                        cancelled
      */
     public void registerEvent(Class<? extends Event> event, Listener listener, EventPriority priority, EventExecutor executor, Plugin plugin, boolean ignoreCancelled) {
         Validate.notNull(listener, "Listener cannot be null");

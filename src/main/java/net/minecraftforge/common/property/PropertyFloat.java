@@ -23,48 +23,40 @@ import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import com.google.common.collect.Range;
 
-public class PropertyFloat implements IUnlistedProperty<Float>
-{
+public class PropertyFloat implements IUnlistedProperty<Float> {
     private final String name;
     private final Predicate<Float> validator;
 
-    public PropertyFloat(String name)
-    {
+    public PropertyFloat(String name) {
         this(name, Predicates.alwaysTrue());
     }
 
-    public PropertyFloat(String name, float min, float max)
-    {
+    public PropertyFloat(String name, float min, float max) {
         this(name, Range.closed(min, max));
     }
 
-    public PropertyFloat(String name, Predicate<Float> validator)
-    {
+    public PropertyFloat(String name, Predicate<Float> validator) {
         this.name = name;
         this.validator = validator;
     }
 
     @Override
-    public String getName()
-    {
+    public String getName() {
         return name;
     }
 
     @Override
-    public boolean isValid(Float value)
-    {
+    public boolean isValid(Float value) {
         return validator.apply(value);
     }
 
     @Override
-    public Class<Float> getType()
-    {
+    public Class<Float> getType() {
         return Float.class;
     }
 
     @Override
-    public String valueToString(Float value)
-    {
+    public String valueToString(Float value) {
         return value.toString();
     }
 }

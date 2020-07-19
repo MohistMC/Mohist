@@ -20,21 +20,20 @@
 package net.minecraftforge.common.crafting;
 
 import javax.annotation.Nullable;
+
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.Ingredient;
 
-public class IngredientNBT extends Ingredient
-{
+public class IngredientNBT extends Ingredient {
     private final ItemStack stack;
-    protected IngredientNBT(ItemStack stack)
-    {
+
+    protected IngredientNBT(ItemStack stack) {
         super(stack);
         this.stack = stack;
     }
 
     @Override
-    public boolean apply(@Nullable ItemStack input)
-    {
+    public boolean apply(@Nullable ItemStack input) {
         if (input == null)
             return false;
         //Can't use areItemStacksEqualUsingNBTShareTag because it compares stack size as well
@@ -42,8 +41,7 @@ public class IngredientNBT extends Ingredient
     }
 
     @Override
-    public boolean isSimple()
-    {
+    public boolean isSimple() {
         return false;
     }
 }

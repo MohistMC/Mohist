@@ -2,6 +2,7 @@ package org.bukkit.craftbukkit.v1_12_R1.block;
 
 import java.util.ArrayList;
 import java.util.Collection;
+
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.potion.Potion;
 import net.minecraft.tileentity.TileEntity;

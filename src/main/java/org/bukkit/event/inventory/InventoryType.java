@@ -73,7 +73,8 @@ public enum InventoryType {
     /**
      * A shulker box inventory, with 27 slots of type CONTAINER.
      */
-    SHULKER_BOX(27, "Shulker Box"),;
+    SHULKER_BOX(27, "Shulker Box"),
+    ;
 
     private final int size;
     private final String title;

@@ -38,7 +38,8 @@ public class DebugDiffWriter implements DiffWriter {
     /**
      * Constructs a new DebugDiffWriter.
      */
-    public DebugDiffWriter() {}
+    public DebugDiffWriter() {
+    }
 
     @Override
     public void addCopy(long offset, int length) throws IOException {
@@ -52,6 +53,7 @@ public class DebugDiffWriter implements DiffWriter {
         os.write(b);
         writeBuf();
     }
+
     private void writeBuf() {
         System.err.print("DATA: ");
         byte[] ba = os.toByteArray();
@@ -70,6 +72,7 @@ public class DebugDiffWriter implements DiffWriter {
     public void flush() throws IOException {
         System.err.println("FLUSH");
     }
+
     @Override
     public void close() throws IOException {
         System.err.println("CLOSE");

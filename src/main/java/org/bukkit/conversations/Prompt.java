@@ -29,7 +29,7 @@ public interface Prompt extends Cloneable {
      *
      * @param context Context information about the conversation.
      * @return If true, the {@link Conversation} will wait for input before
-     *     continuing.
+     * continuing.
      */
     boolean blocksForInput(ConversationContext context);
 
@@ -38,7 +38,7 @@ public interface Prompt extends Cloneable {
      * Prompt in the prompt graph is returned.
      *
      * @param context Context information about the conversation.
-     * @param input The input text from the user.
+     * @param input   The input text from the user.
      * @return The next Prompt in the prompt graph.
      */
     Prompt acceptInput(ConversationContext context, String input);

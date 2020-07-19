@@ -10,12 +10,16 @@ import co.aikar.timings.Timing;
 
 public class CraftTask implements BukkitTask, Runnable { // Spigot
 
-    private volatile CraftTask next = null;
     public static final int ERROR = 0;
     public static final int NO_REPEATING = -1;
     public static final int CANCEL = -2;
     public static final int PROCESS_FOR_FUTURE = -3;
     public static final int DONE_FOR_FUTURE = -4;
+    public final Runnable task; // Paper
+    private final Plugin plugin;
+    private final int id;
+    public Timing timings; // Paper
+    private volatile CraftTask next = null;
     /**
      * -1 means no repeating <br>
      * -2 means cancel <br>
@@ -26,10 +30,6 @@ public class CraftTask implements BukkitTask, Runnable { // Spigot
      */
     private volatile long period;
     private long nextRun;
-    public final Runnable task; // Paper
-    public Timing timings; // Paper
-    private final Plugin plugin;
-    private final int id;
 
     CraftTask() {
         this(null, null, CraftTask.NO_REPEATING, CraftTask.NO_REPEATING);

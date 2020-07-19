@@ -27,8 +27,7 @@ package net.minecraftforge.server.permission;
  * <tr><td>NONE</td><td>false</td><td>false</td></tr>
  * </tbody></table>
  */
-public enum DefaultPermissionLevel
-{
+public enum DefaultPermissionLevel {
     ALL,
     OP,
     NONE

@@ -20,11 +20,13 @@
 package net.minecraftforge.common.crafting;
 
 import com.google.gson.JsonObject;
+
 import javax.annotation.Nonnull;
+
 import net.minecraft.item.crafting.Ingredient;
 
-public interface IIngredientFactory
-{
-    @Nonnull //If you would return null throw JsonSyntaxException to explain why
+public interface IIngredientFactory {
+    @Nonnull
+        //If you would return null throw JsonSyntaxException to explain why
     Ingredient parse(JsonContext context, JsonObject json);
 }

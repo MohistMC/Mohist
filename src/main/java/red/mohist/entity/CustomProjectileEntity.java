@@ -1,7 +1,9 @@
 package red.mohist.entity;
 
 import com.mojang.authlib.GameProfile;
+
 import java.util.UUID;
+
 import net.minecraft.entity.Entity;
 import org.bukkit.craftbukkit.v1_12_R1.CraftServer;
 import org.bukkit.entity.EntityType;
@@ -9,14 +11,13 @@ import org.bukkit.entity.Projectile;
 import org.bukkit.projectiles.ProjectileSource;
 
 public class CustomProjectileEntity extends CraftCustomEntity implements Projectile {
+    public static final GameProfile dropper = new GameProfile(UUID.nameUUIDFromBytes("[Dropper]".getBytes()), "[Dropper]");
     private ProjectileSource shooter = null;
     private boolean doesBounce;
 
     public CustomProjectileEntity(CraftServer server, Entity entity) {
         super(server, entity);
     }
-
-    public static final GameProfile dropper =  new GameProfile(UUID.nameUUIDFromBytes("[Dropper]".getBytes()), "[Dropper]");
 
     @Override
     public ProjectileSource getShooter() {
@@ -49,8 +50,7 @@ public class CustomProjectileEntity extends CraftCustomEntity implements Project
     }
 
     @Override
-    public String toString()
-    {
+    public String toString() {
         return "CraftCustomProjectile";
     }
 }

@@ -24,6 +24,7 @@ import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.eventhandler.Event;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
+
 import static org.objectweb.asm.ClassWriter.COMPUTE_FRAMES;
 import static org.objectweb.asm.Opcodes.ACC_PRIVATE;
 import static org.objectweb.asm.Opcodes.ACC_PROTECTED;
@@ -41,10 +42,13 @@ import static org.objectweb.asm.Opcodes.IRETURN;
 import static org.objectweb.asm.Opcodes.NEW;
 import static org.objectweb.asm.Opcodes.PUTSTATIC;
 import static org.objectweb.asm.Opcodes.RETURN;
+
 import org.objectweb.asm.Type;
+
 import static org.objectweb.asm.Type.BOOLEAN_TYPE;
 import static org.objectweb.asm.Type.VOID_TYPE;
 import static org.objectweb.asm.Type.getMethodDescriptor;
+
 import org.objectweb.asm.tree.AnnotationNode;
 import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.FieldInsnNode;
@@ -58,87 +62,71 @@ import org.objectweb.asm.tree.MethodNode;
 import org.objectweb.asm.tree.TypeInsnNode;
 import org.objectweb.asm.tree.VarInsnNode;
 
-public class EventSubscriptionTransformer implements IClassTransformer
-{
-    public EventSubscriptionTransformer()
-    {
+public class EventSubscriptionTransformer implements IClassTransformer {
+    public EventSubscriptionTransformer() {
     }
 
     @Override
-    public byte[] transform(String name, String transformedName, byte[] bytes)
-    {
-        if (bytes == null || name.equals("net.minecraftforge.fml.common.eventhandler.Event") || name.startsWith("net.minecraft.") || name.indexOf('.') == -1)
-        {
+    public byte[] transform(String name, String transformedName, byte[] bytes) {
+        if (bytes == null || name.equals("net.minecraftforge.fml.common.eventhandler.Event") || name.startsWith("net.minecraft.") || name.indexOf('.') == -1) {
             return bytes;
         }
         ClassReader cr = new ClassReader(bytes);
         ClassNode classNode = new ClassNode();
         cr.accept(classNode, 0);
 
-        try
-        {
-            if (buildEvents(classNode))
-            {
+        try {
+            if (buildEvents(classNode)) {
                 ClassWriter cw = new ClassWriter(COMPUTE_FRAMES);
                 classNode.accept(cw);
                 return cw.toByteArray();
             }
             return bytes;
-        }
-        catch (ClassNotFoundException ex)
-        {
+        } catch (ClassNotFoundException ex) {
             // Discard silently- it's just noise
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             FMLLog.log.error("Error building events.", e);
         }
 
         return bytes;
     }
 
-    private boolean buildEvents(ClassNode classNode) throws Exception
-    {
+    private boolean buildEvents(ClassNode classNode) throws Exception {
         // Yes, this recursively loads classes until we get this base class. THIS IS NOT A ISSUE. Coremods should handle re-entry just fine.
         // If they do not this a COREMOD issue NOT a Forge/LaunchWrapper issue.
         Class<?> parent = this.getClass().getClassLoader().loadClass(classNode.superName.replace('/', '.'));
-        if (!Event.class.isAssignableFrom(parent))
-        {
+        if (!Event.class.isAssignableFrom(parent)) {
             return false;
         }
 
         //Class<?> listenerListClazz = Class.forName("net.minecraftforge.fml.common.eventhandler.ListenerList", false, getClass().getClassLoader());
         Type tList = Type.getType("Lnet/minecraftforge/fml/common/eventhandler/ListenerList;");
 
-        boolean edited             = false;
-        boolean hasSetup           = false;
+        boolean edited = false;
+        boolean hasSetup = false;
         boolean hasGetListenerList = false;
-        boolean hasDefaultCtr      = false;
-        boolean hasCancelable      = false;
-        boolean hasResult          = false;
-        String voidDesc            = Type.getMethodDescriptor(VOID_TYPE);
-        String boolDesc            = Type.getMethodDescriptor(BOOLEAN_TYPE);
-        String listDesc            = tList.getDescriptor();
-        String listDescM           = Type.getMethodDescriptor(tList);
+        boolean hasDefaultCtr = false;
+        boolean hasCancelable = false;
+        boolean hasResult = false;
+        String voidDesc = Type.getMethodDescriptor(VOID_TYPE);
+        String boolDesc = Type.getMethodDescriptor(BOOLEAN_TYPE);
+        String listDesc = tList.getDescriptor();
+        String listDescM = Type.getMethodDescriptor(tList);
 
-        for (MethodNode method : classNode.methods)
-        {
-            if (method.name.equals("setup") && method.desc.equals(voidDesc) && (method.access & ACC_PROTECTED) == ACC_PROTECTED) hasSetup = true;
-            if ((method.access & ACC_PUBLIC) == ACC_PUBLIC)
-            {
+        for (MethodNode method : classNode.methods) {
+            if (method.name.equals("setup") && method.desc.equals(voidDesc) && (method.access & ACC_PROTECTED) == ACC_PROTECTED)
+                hasSetup = true;
+            if ((method.access & ACC_PUBLIC) == ACC_PUBLIC) {
                 if (method.name.equals("getListenerList") && method.desc.equals(listDescM)) hasGetListenerList = true;
-                if (method.name.equals("isCancelable")    && method.desc.equals(boolDesc))  hasCancelable = true;
-                if (method.name.equals("hasResult")       && method.desc.equals(boolDesc))  hasResult = true;
+                if (method.name.equals("isCancelable") && method.desc.equals(boolDesc)) hasCancelable = true;
+                if (method.name.equals("hasResult") && method.desc.equals(boolDesc)) hasResult = true;
             }
             if (method.name.equals("<init>") && method.desc.equals(voidDesc)) hasDefaultCtr = true;
         }
 
-        if (classNode.visibleAnnotations != null)
-        {
-            for (AnnotationNode node : classNode.visibleAnnotations)
-            {
-                if (!hasResult && node.desc.equals("Lnet/minecraftforge/fml/common/eventhandler/Event$HasResult;"))
-                {
+        if (classNode.visibleAnnotations != null) {
+            for (AnnotationNode node : classNode.visibleAnnotations) {
+                if (!hasResult && node.desc.equals("Lnet/minecraftforge/fml/common/eventhandler/Event$HasResult;")) {
                     /* Add:
                      *      public boolean hasResult()
                      *      {
@@ -150,9 +138,7 @@ public class EventSubscriptionTransformer implements IClassTransformer
                     method.instructions.add(new InsnNode(IRETURN));
                     classNode.methods.add(method);
                     edited = true;
-                }
-                else if (!hasCancelable && node.desc.equals("Lnet/minecraftforge/fml/common/eventhandler/Cancelable;"))
-                {
+                } else if (!hasCancelable && node.desc.equals("Lnet/minecraftforge/fml/common/eventhandler/Cancelable;")) {
                     /* Add:
                      *      public boolean isCancelable()
                      *      {
@@ -168,8 +154,7 @@ public class EventSubscriptionTransformer implements IClassTransformer
             }
         }
 
-        if (hasSetup)
-        {
+        if (hasSetup) {
             if (!hasGetListenerList)
                 throw new RuntimeException("Event class defines setup() but does not define getListenerList! " + classNode.name);
             else
@@ -187,8 +172,7 @@ public class EventSubscriptionTransformer implements IClassTransformer
          *              super();
          *      }
          */
-        if (!hasDefaultCtr)
-        {
+        if (!hasDefaultCtr) {
             MethodNode method = new MethodNode(ACC_PUBLIC, "<init>", voidDesc, null, null);
             method.instructions.add(new VarInsnNode(ALOAD, 0));
             method.instructions.add(new MethodInsnNode(INVOKESPECIAL, tSuper.getInternalName(), "<init>", voidDesc, false));

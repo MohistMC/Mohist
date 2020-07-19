@@ -24,20 +24,18 @@ import io.netty.channel.ChannelHandlerContext;
 import net.minecraftforge.fml.common.network.FMLIndexedMessageToMessageCodec;
 
 public class ForgeRuntimeCodec extends FMLIndexedMessageToMessageCodec<ForgeMessage> {
-    public ForgeRuntimeCodec()
-    {
+    public ForgeRuntimeCodec() {
         addDiscriminator(1, ForgeMessage.DimensionRegisterMessage.class);
         addDiscriminator(2, ForgeMessage.FluidIdMapMessage.class);
     }
+
     @Override
-    public void encodeInto(ChannelHandlerContext ctx, ForgeMessage msg, ByteBuf target) throws Exception
-    {
+    public void encodeInto(ChannelHandlerContext ctx, ForgeMessage msg, ByteBuf target) throws Exception {
         msg.toBytes(target);
     }
 
     @Override
-    public void decodeInto(ChannelHandlerContext ctx, ByteBuf source, ForgeMessage msg)
-    {
+    public void decodeInto(ChannelHandlerContext ctx, ByteBuf source, ForgeMessage msg) {
         msg.fromBytes(source);
     }
 }

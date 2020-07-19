@@ -24,8 +24,7 @@ package net.minecraftforge.fml.common.versioning;
 //This entire package *should* be removed and updated to normal maven-artifact library in 1.13.
 
 public interface ArtifactVersion
-    extends Comparable<ArtifactVersion>
-{
+        extends Comparable<ArtifactVersion> {
     String getLabel();
 
     String getVersionString();

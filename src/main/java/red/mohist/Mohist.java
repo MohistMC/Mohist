@@ -6,17 +6,21 @@ import red.mohist.bukkit.AutoDeletePlugins;
 import red.mohist.bukkit.nms.MappingFix;
 
 import red.mohist.configuration.MohistConfigUtil;
+
 import static red.mohist.configuration.MohistConfigUtil.bMohist;
 import static red.mohist.forge.AutoDeleteMods.jar;
 
 import red.mohist.network.download.DownloadJava;
 import red.mohist.network.download.DownloadLibraries;
 import red.mohist.network.download.UpdateUtils;
+
 import static red.mohist.util.EulaUtil.hasAcceptedEULA;
 import static red.mohist.util.EulaUtil.writeInfos;
+
 import red.mohist.util.i18n.Message;
 
 import java.util.Scanner;
+
 public class Mohist {
     public static final String NAME = "Mohist";
     public static Logger LOGGER;
@@ -73,6 +77,6 @@ public class Mohist {
 
         Class.forName("net.minecraftforge.fml.relauncher.ServerLaunchWrapper")
                 .getDeclaredMethod("main", String[].class)
-                .invoke(null, new Object[] { args });
+                .invoke(null, new Object[]{args});
     }
 }

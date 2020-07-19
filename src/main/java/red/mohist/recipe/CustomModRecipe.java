@@ -11,7 +11,7 @@ import org.bukkit.inventory.Recipe;
 
 /**
  * Bukkit API wrapper for non-vanilla IRecipe classes
- *
+ * <p>
  * Form net.minecraftforge.cauldron.inventory.CustomModRecipe
  */
 public class CustomModRecipe implements Recipe, Keyed {

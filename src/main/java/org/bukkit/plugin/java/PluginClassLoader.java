@@ -13,6 +13,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.jar.JarFile;
 import java.util.jar.Manifest;
+
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.Validate;
 import org.bukkit.plugin.InvalidPluginException;
@@ -24,7 +25,6 @@ import red.mohist.bukkit.nms.utils.RemapUtils;
  * A ClassLoader for plugins, to allow shared classes across multiple plugins
  */
 public final class PluginClassLoader extends URLClassLoader {
-    public JavaPlugin getPlugin() { return plugin; } // Spigot
     final JavaPlugin plugin;
     private final JavaPluginLoader loader;
     private final Map<String, Class<?>> classes = new HashMap<>();
@@ -36,7 +36,6 @@ public final class PluginClassLoader extends URLClassLoader {
     private final URL url;
     private JavaPlugin pluginInit;
     private IllegalStateException pluginState;
-
     PluginClassLoader(final JavaPluginLoader loader, final ClassLoader parent, final PluginDescriptionFile description, final File dataFolder, final File file) throws IOException, InvalidPluginException {
         super(new URL[]{file.toURI().toURL()}, parent);
         Validate.notNull(loader, "Loader cannot be null");
@@ -70,6 +69,10 @@ public final class PluginClassLoader extends URLClassLoader {
             throw new InvalidPluginException("Abnormal plugin type", ex);
         }
     }
+
+    public JavaPlugin getPlugin() {
+        return plugin;
+    } // Spigot
 
     @Override
     public Class<?> findClass(String name) throws ClassNotFoundException {

@@ -2,6 +2,7 @@ package org.bukkit.craftbukkit.v1_12_R1.util;
 
 import java.util.HashSet;
 import java.util.List;
+
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.server.MinecraftServer;
 import org.bukkit.entity.Player;

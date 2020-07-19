@@ -1,6 +1,7 @@
 package org.bukkit.craftbukkit.v1_12_R1.scoreboard;
 
 import java.util.Map;
+
 import net.minecraft.scoreboard.ScoreObjective;
 import net.minecraft.scoreboard.Scoreboard;
 import org.bukkit.Bukkit;

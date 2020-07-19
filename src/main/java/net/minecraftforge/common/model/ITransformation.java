@@ -20,14 +20,14 @@
 package net.minecraftforge.common.model;
 
 import javax.vecmath.Matrix4f;
+
 import net.minecraft.util.EnumFacing;
 
 /*
  * Replacement interface for ModelRotation to allow custom transformations of vanilla models.
  * You should probably use TRSRTransformation directly.
  */
-public interface ITransformation
-{
+public interface ITransformation {
     Matrix4f getMatrix();
 
     EnumFacing rotate(EnumFacing facing);

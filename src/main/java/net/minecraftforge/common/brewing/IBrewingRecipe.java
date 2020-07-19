@@ -20,6 +20,7 @@
 package net.minecraftforge.common.brewing;
 
 import javax.annotation.Nonnull;
+
 import net.minecraft.item.ItemStack;
 
 public interface IBrewingRecipe {

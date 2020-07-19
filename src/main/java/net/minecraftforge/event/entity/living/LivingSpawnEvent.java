@@ -20,6 +20,7 @@
 package net.minecraftforge.event.entity.living;
 
 import javax.annotation.Nullable;
+
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.tileentity.MobSpawnerBaseLogic;
 import net.minecraft.world.World;
@@ -40,15 +41,13 @@ import net.minecraftforge.fml.common.eventhandler.Event;
  * <br>
  * All children of this event are fired on the {@link MinecraftForge#EVENT_BUS}.
  **/
-public class LivingSpawnEvent extends LivingEvent
-{
+public class LivingSpawnEvent extends LivingEvent {
     private final World world;
     private final float x;
     private final float y;
     private final float z;
 
-    public LivingSpawnEvent(EntityLiving entity, World world, float x, float y, float z)
-    {
+    public LivingSpawnEvent(EntityLiving entity, World world, float x, float y, float z) {
         super(entity);
         this.world = world;
         this.x = x;
@@ -56,22 +55,32 @@ public class LivingSpawnEvent extends LivingEvent
         this.z = z;
     }
 
-    public World getWorld() { return world; }
-    public float getX() { return x; }
-    public float getY() { return y; }
-    public float getZ() { return z; }
+    public World getWorld() {
+        return world;
+    }
+
+    public float getX() {
+        return x;
+    }
+
+    public float getY() {
+        return y;
+    }
+
+    public float getZ() {
+        return z;
+    }
+
     /**
      * Fires before mob spawn events.
-     *
+     * <p>
      * Result is significant:
-     *    DEFAULT: use vanilla spawn rules
-     *    ALLOW:   allow the spawn
-     *    DENY:    deny the spawn
-     *
+     * DEFAULT: use vanilla spawn rules
+     * ALLOW:   allow the spawn
+     * DENY:    deny the spawn
      */
     @HasResult
-    public static class CheckSpawn extends LivingSpawnEvent
-    {
+    public static class CheckSpawn extends LivingSpawnEvent {
         private final boolean isSpawner; // TODO: remove in 1.13
         @Nullable
         private final MobSpawnerBaseLogic spawner;
@@ -79,16 +88,16 @@ public class LivingSpawnEvent extends LivingEvent
 
         /**
          * CheckSpawn is fired when an Entity is about to be spawned.
-         * @param entity the spawning entity
-         * @param world the world to spawn in
-         * @param x x coordinate
-         * @param y y coordinate
-         * @param z z coordinate
+         *
+         * @param entity  the spawning entity
+         * @param world   the world to spawn in
+         * @param x       x coordinate
+         * @param y       y coordinate
+         * @param z       z coordinate
          * @param spawner position of the MobSpawner
-         *                  null if it this spawn is coming from a WorldSpawner
+         *                null if it this spawn is coming from a WorldSpawner
          */
-        public CheckSpawn(EntityLiving entity, World world, float x, float y, float z, @Nullable MobSpawnerBaseLogic spawner)
-        {
+        public CheckSpawn(EntityLiving entity, World world, float x, float y, float z, @Nullable MobSpawnerBaseLogic spawner) {
             super(entity, world, x, y, z);
             this.isSpawner = spawner != null;
             this.spawner = spawner;
@@ -96,20 +105,19 @@ public class LivingSpawnEvent extends LivingEvent
         }
 
         /**
-         * @deprecated Use {@link CheckSpawn##CheckSpawn(EntityLiving, World, float, float, float, MobSpawnerBaseLogic)}
-         *   with a spawner instance, or null if not a spawner
-         * CheckSpawn is fired when an Entity is about to be spawned.
-         * @param entity the spawning entity
-         * @param world the world to spawn in
-         * @param x x coordinate
-         * @param y y coordinate
-         * @param z z coordinate
+         * @param entity    the spawning entity
+         * @param world     the world to spawn in
+         * @param x         x coordinate
+         * @param y         y coordinate
+         * @param z         z coordinate
          * @param isSpawner true if this spawn is done by a MobSpawner,
          *                  false if it this spawn is coming from a WorldSpawner
+         * @deprecated Use {@link CheckSpawn##CheckSpawn(EntityLiving, World, float, float, float, MobSpawnerBaseLogic)}
+         * with a spawner instance, or null if not a spawner
+         * CheckSpawn is fired when an Entity is about to be spawned.
          */
         @Deprecated // TODO: Remove in 1.13
-        public CheckSpawn(EntityLiving entity, World world, float x, float y, float z, boolean isSpawner)
-        {
+        public CheckSpawn(EntityLiving entity, World world, float x, float y, float z, boolean isSpawner) {
             super(entity, world, x, y, z);
             this.isSpawner = isSpawner;
             spawner = null;
@@ -120,19 +128,16 @@ public class LivingSpawnEvent extends LivingEvent
          * @deprecated Use {@link CheckSpawn#CheckSpawn(EntityLiving, World, float, float, float, MobSpawnerBaseLogic)} instead
          */
         @Deprecated // TODO: Remove in 1.13
-        public CheckSpawn(EntityLiving entity, World world, float x, float y, float z)
-        {
+        public CheckSpawn(EntityLiving entity, World world, float x, float y, float z) {
             this(entity, world, x, y, z, true);
         }
 
-        public boolean isSpawner()
-        {
+        public boolean isSpawner() {
             return isSpawner; // TODO: replace with spawner null check in 1.13
         }
 
         @Nullable
-        public MobSpawnerBaseLogic getSpawner()
-        {
+        public MobSpawnerBaseLogic getSpawner() {
             return spawner;
         }
     }
@@ -151,18 +156,16 @@ public class LivingSpawnEvent extends LivingEvent
      * This event is fired on the {@link MinecraftForge#EVENT_BUS}.
      **/
     @Cancelable
-    public static class SpecialSpawn extends LivingSpawnEvent
-    {
+    public static class SpecialSpawn extends LivingSpawnEvent {
         @Nullable
         private final MobSpawnerBaseLogic spawner;
 
         /**
          * @deprecated Use {@link SpecialSpawn#SpecialSpawn(EntityLiving, World, float, float, float, MobSpawnerBaseLogic)}
-         *   with originating spawner instance or null
+         * with originating spawner instance or null
          */
         @Deprecated // TODO: remove in 1.13
-        public SpecialSpawn(EntityLiving entity, World world, float x, float y, float z)
-        {
+        public SpecialSpawn(EntityLiving entity, World world, float x, float y, float z) {
             super(entity, world, x, y, z);
             spawner = null;
             entity.spawnReason = "spawner";
@@ -171,16 +174,14 @@ public class LivingSpawnEvent extends LivingEvent
         /**
          * @param spawner the position of a tileentity or approximate position of an entity that initiated the spawn if any
          */
-        public SpecialSpawn(EntityLiving entity, World world, float x, float y, float z, @Nullable MobSpawnerBaseLogic spawner)
-        {
+        public SpecialSpawn(EntityLiving entity, World world, float x, float y, float z, @Nullable MobSpawnerBaseLogic spawner) {
             super(entity, world, x, y, z);
             this.spawner = spawner;
             entity.spawnReason = "spawner";
         }
 
         @Nullable
-        public MobSpawnerBaseLogic getSpawner()
-        {
+        public MobSpawnerBaseLogic getSpawner() {
             return spawner;
         }
     }
@@ -191,19 +192,16 @@ public class LivingSpawnEvent extends LivingEvent
      * {@link Result#ALLOW} will force the mob to despawn.
      * {@link Result#DENY} will force the mob to remain.
      * This is fired every tick for every despawnable entity. Be efficient in your handlers.
-     *
+     * <p>
      * Note: this is not fired <em>if</em> the mob is definitely going to otherwise despawn. It is fired to check if
      * the mob can be allowed to despawn. See {@link EntityLiving#despawnEntity}
      *
      * @author cpw
-     *
      */
     @HasResult
-    public static class AllowDespawn extends LivingSpawnEvent
-    {
-        public AllowDespawn(EntityLiving entity)
-        {
-            super(entity, entity.world, (float)entity.posX, (float)entity.posY, (float)entity.posZ);
+    public static class AllowDespawn extends LivingSpawnEvent {
+        public AllowDespawn(EntityLiving entity) {
+            super(entity, entity.world, (float) entity.posX, (float) entity.posY, (float) entity.posZ);
         }
 
     }

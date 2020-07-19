@@ -20,14 +20,17 @@
 package net.minecraftforge.fml.common.eventhandler;
 
 import static java.lang.annotation.ElementType.METHOD;
+
 import java.lang.annotation.Retention;
+
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
+
 import java.lang.annotation.Target;
 
 @Retention(value = RUNTIME)
 @Target(value = METHOD)
-public @interface SubscribeEvent
-{
+public @interface SubscribeEvent {
     EventPriority priority() default EventPriority.NORMAL;
+
     boolean receiveCanceled() default false;
 }

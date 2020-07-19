@@ -26,23 +26,18 @@ import net.minecraftforge.common.ForgeModContainer;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
-public class ForgeClientHandler
-{
+public class ForgeClientHandler {
     @SubscribeEvent
-    public static void registerModels(ModelRegistryEvent event)
-    {
+    public static void registerModels(ModelRegistryEvent event) {
         // register model for the universal bucket, if it exists
-        if (FluidRegistry.isUniversalBucketEnabled())
-        {
+        if (FluidRegistry.isUniversalBucketEnabled()) {
             ModelLoader.setBucketModelDefinition(ForgeModContainer.getInstance().universalBucket);
         }
     }
 
     @SubscribeEvent
-    public static void registerItemHandlers(ColorHandlerEvent.Item event)
-    {
-        if (FluidRegistry.isUniversalBucketEnabled())
-        {
+    public static void registerItemHandlers(ColorHandlerEvent.Item event) {
+        if (FluidRegistry.isUniversalBucketEnabled()) {
             event.getItemColors().registerItemColorHandler(new FluidContainerColorer(), ForgeModContainer.getInstance().universalBucket);
         }
     }

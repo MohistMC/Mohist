@@ -23,8 +23,10 @@ import com.google.common.collect.Lists;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
+
 import java.util.List;
 import javax.annotation.Nonnull;
+
 import net.minecraft.block.Block;
 import net.minecraft.client.util.RecipeItemHelper;
 import net.minecraft.inventory.InventoryCrafting;
@@ -43,42 +45,41 @@ import net.minecraftforge.registries.IForgeRegistryEntry;
 import org.bukkit.inventory.Recipe;
 import red.mohist.recipe.CustomModRecipe;
 
-public class ShapelessOreRecipe extends IForgeRegistryEntry.Impl<IRecipe> implements IRecipe
-{
+public class ShapelessOreRecipe extends IForgeRegistryEntry.Impl<IRecipe> implements IRecipe {
     @Nonnull
     protected ItemStack output = ItemStack.EMPTY;
     protected NonNullList<Ingredient> input = NonNullList.create();
     protected ResourceLocation group;
     protected boolean isSimple = true;
-	private Recipe bukkitRecip;
+    private Recipe bukkitRecip;
 
-    public ShapelessOreRecipe(ResourceLocation group, Block result, Object... recipe){ this(group, new ItemStack(result), recipe); }
-    public ShapelessOreRecipe(ResourceLocation group, Item  result, Object... recipe){ this(group, new ItemStack(result), recipe); }
-    public ShapelessOreRecipe(ResourceLocation group, NonNullList<Ingredient> input, @Nonnull ItemStack result)
-    {
+    public ShapelessOreRecipe(ResourceLocation group, Block result, Object... recipe) {
+        this(group, new ItemStack(result), recipe);
+    }
+
+    public ShapelessOreRecipe(ResourceLocation group, Item result, Object... recipe) {
+        this(group, new ItemStack(result), recipe);
+    }
+
+    public ShapelessOreRecipe(ResourceLocation group, NonNullList<Ingredient> input, @Nonnull ItemStack result) {
         this.group = group;
         output = result.copy();
         this.input = input;
         for (Ingredient i : input)
             this.isSimple &= i.isSimple();
     }
-    public ShapelessOreRecipe(ResourceLocation group, @Nonnull ItemStack result, Object... recipe)
-    {
+
+    public ShapelessOreRecipe(ResourceLocation group, @Nonnull ItemStack result, Object... recipe) {
         this.group = group;
         output = result.copy();
-        for (Object in : recipe)
-        {
+        for (Object in : recipe) {
             Ingredient ing = CraftingHelper.getIngredient(in);
-            if (ing != null)
-            {
+            if (ing != null) {
                 input.add(ing);
                 this.isSimple &= ing.isSimple();
-            }
-            else
-            {
+            } else {
                 String ret = "Invalid shapeless ore recipe: ";
-                for (Object tmp :  recipe)
-                {
+                for (Object tmp : recipe) {
                     ret += tmp + ", ";
                 }
                 ret += output;
@@ -87,26 +88,41 @@ public class ShapelessOreRecipe extends IForgeRegistryEntry.Impl<IRecipe> implem
         }
     }
 
-    @Override
-    @Nonnull
-    public ItemStack getRecipeOutput(){ return output; }
+    public static ShapelessOreRecipe factory(JsonContext context, JsonObject json) {
+        String group = JsonUtils.getString(json, "group", "");
+
+        NonNullList<Ingredient> ings = NonNullList.create();
+        for (JsonElement ele : JsonUtils.getJsonArray(json, "ingredients"))
+            ings.add(CraftingHelper.getIngredient(ele, context));
+
+        if (ings.isEmpty())
+            throw new JsonParseException("No ingredients for shapeless recipe");
+
+        ItemStack itemstack = CraftingHelper.getItemStack(JsonUtils.getJsonObject(json, "result"), context);
+        return new ShapelessOreRecipe(group.isEmpty() ? null : new ResourceLocation(group), ings, itemstack);
+    }
 
     @Override
     @Nonnull
-    public ItemStack getCraftingResult(@Nonnull InventoryCrafting var1){ return output.copy(); }
+    public ItemStack getRecipeOutput() {
+        return output;
+    }
 
     @Override
-    public boolean matches(@Nonnull InventoryCrafting inv, @Nonnull World world)
-    {
+    @Nonnull
+    public ItemStack getCraftingResult(@Nonnull InventoryCrafting var1) {
+        return output.copy();
+    }
+
+    @Override
+    public boolean matches(@Nonnull InventoryCrafting inv, @Nonnull World world) {
         int ingredientCount = 0;
         RecipeItemHelper recipeItemHelper = new RecipeItemHelper();
         List<ItemStack> items = Lists.newArrayList();
 
-        for (int i = 0; i < inv.getSizeInventory(); ++i)
-        {
+        for (int i = 0; i < inv.getSizeInventory(); ++i) {
             ItemStack itemstack = inv.getStackInSlot(i);
-            if (!itemstack.isEmpty())
-            {
+            if (!itemstack.isEmpty()) {
                 ++ingredientCount;
                 if (this.isSimple)
                     recipeItemHelper.accountStack(itemstack, 1);
@@ -126,39 +142,20 @@ public class ShapelessOreRecipe extends IForgeRegistryEntry.Impl<IRecipe> implem
 
     @Override
     @Nonnull
-    public NonNullList<Ingredient> getIngredients()
-    {
+    public NonNullList<Ingredient> getIngredients() {
         return this.input;
     }
 
     @Override
     @Nonnull
-    public String getGroup()
-    {
+    public String getGroup() {
         return this.group == null ? "" : this.group.toString();
     }
 
     @Override
-    public boolean canFit(int p_194133_1_, int p_194133_2_)
-    {
+    public boolean canFit(int p_194133_1_, int p_194133_2_) {
         return p_194133_1_ * p_194133_2_ >= this.input.size();
     }
-
-    public static ShapelessOreRecipe factory(JsonContext context, JsonObject json)
-    {
-        String group = JsonUtils.getString(json, "group", "");
-
-        NonNullList<Ingredient> ings = NonNullList.create();
-        for (JsonElement ele : JsonUtils.getJsonArray(json, "ingredients"))
-            ings.add(CraftingHelper.getIngredient(ele, context));
-
-        if (ings.isEmpty())
-            throw new JsonParseException("No ingredients for shapeless recipe");
-
-        ItemStack itemstack = CraftingHelper.getItemStack(JsonUtils.getJsonObject(json, "result"), context);
-        return new ShapelessOreRecipe(group.isEmpty() ? null : new ResourceLocation(group), ings, itemstack);
-    }
-
 
     @Override
     public Recipe toBukkitRecipe() {

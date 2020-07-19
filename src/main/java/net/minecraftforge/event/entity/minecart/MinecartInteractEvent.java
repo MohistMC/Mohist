@@ -20,6 +20,7 @@
 package net.minecraftforge.event.entity.minecart;
 
 import javax.annotation.Nonnull;
+
 import net.minecraft.entity.item.EntityMinecart;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -43,20 +44,26 @@ import net.minecraftforge.fml.common.eventhandler.Cancelable;
  * This event is fired on the {@link MinecraftForge#EVENT_BUS}.
  **/
 @Cancelable
-public class MinecartInteractEvent extends MinecartEvent
-{
+public class MinecartInteractEvent extends MinecartEvent {
     private final EntityPlayer player;
     private final EnumHand hand;
 
-    public MinecartInteractEvent(EntityMinecart minecart, EntityPlayer player, EnumHand hand)
-    {
+    public MinecartInteractEvent(EntityMinecart minecart, EntityPlayer player, EnumHand hand) {
         super(minecart);
         this.player = player;
         this.hand = hand;
     }
 
-    public EntityPlayer getPlayer() { return player; }
+    public EntityPlayer getPlayer() {
+        return player;
+    }
+
     @Nonnull
-    public ItemStack getItem() { return player.getHeldItem(hand); }
-    public EnumHand getHand() { return hand; }
+    public ItemStack getItem() {
+        return player.getHeldItem(hand);
+    }
+
+    public EnumHand getHand() {
+        return hand;
+    }
 }

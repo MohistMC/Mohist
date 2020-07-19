@@ -19,29 +19,28 @@
 
 package net.minecraftforge.fml.common;
 
-public class LoaderException extends EnhancedRuntimeException
-{
+public class LoaderException extends EnhancedRuntimeException {
     /**
      *
      */
     private static final long serialVersionUID = -5675297950958861378L;
 
-    public LoaderException(Throwable wrapped)
-    {
+    public LoaderException(Throwable wrapped) {
         super(wrapped);
     }
 
-    public LoaderException()
-    {
+    public LoaderException() {
     }
-    public LoaderException(String message)
-    {
+
+    public LoaderException(String message) {
         super(message);
     }
-    public LoaderException(String message, Throwable cause)
-    {
+
+    public LoaderException(String message, Throwable cause) {
         super(message, cause);
     }
 
-    @Override protected void printStackTrace(WrappedPrintStream stream){}
+    @Override
+    protected void printStackTrace(WrappedPrintStream stream) {
+    }
 }

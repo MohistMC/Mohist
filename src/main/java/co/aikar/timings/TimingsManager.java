@@ -25,11 +25,13 @@ package co.aikar.timings;
 
 import co.aikar.util.LoadingMap;
 import com.google.common.collect.EvictingQueue;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
+
 import org.bukkit.Bukkit;
 import org.bukkit.Server;
 import org.bukkit.command.Command;
@@ -38,25 +40,24 @@ import org.bukkit.plugin.java.PluginClassLoader;
 import red.mohist.util.i18n.Message;
 
 public final class TimingsManager {
-    static final Map<TimingIdentifier, TimingHandler> TIMING_MAP = LoadingMap.of(
-        new ConcurrentHashMap<>(4096, .5F), TimingHandler::new
-    );
     public static final FullServerTickHandler FULL_SERVER_TICK = new FullServerTickHandler();
     public static final TimingHandler TIMINGS_TICK = Timings.ofSafe("Timings Tick", FULL_SERVER_TICK);
+    static final Map<TimingIdentifier, TimingHandler> TIMING_MAP = LoadingMap.of(
+            new ConcurrentHashMap<>(4096, .5F), TimingHandler::new
+    );
     public static final Timing PLUGIN_GROUP_HANDLER = Timings.ofSafe("Plugins");
-    public static List<String> hiddenConfigs = new ArrayList<String>();
-    public static boolean privacy = false;
-
     static final List<TimingHandler> HANDLERS = new ArrayList<>(1024);
     static final List<TimingHistory.MinuteReport> MINUTE_REPORTS = new ArrayList<>(64);
-
+    public static List<String> hiddenConfigs = new ArrayList<String>();
+    public static boolean privacy = false;
     static EvictingQueue<TimingHistory> HISTORY = EvictingQueue.create(12);
     static long timingStart = 0;
     static long historyStart = 0;
     static boolean needsFullReset = false;
     static boolean needsRecheckEnabled = false;
 
-    private TimingsManager() {}
+    private TimingsManager() {
+    }
 
     /**
      * Resets all timing data on the next tick
@@ -86,10 +87,12 @@ public final class TimingsManager {
             // Generate TPS/Ping/Tick reports every minute
         }
     }
+
     static void stopServer() {
         Timings.timingsEnabled = false;
         recheckEnabled();
     }
+
     static void recheckEnabled() {
         synchronized (TIMING_MAP) {
             for (TimingHandler timings : TIMING_MAP.values()) {
@@ -98,6 +101,7 @@ public final class TimingsManager {
         }
         needsRecheckEnabled = false;
     }
+
     static void resetTimings() {
         if (needsFullReset) {
             // Full resets need to re-check every handlers enabled state
@@ -134,7 +138,7 @@ public final class TimingsManager {
 
     /**
      * <p>Due to access restrictions, we need a helper method to get a Command TimingHandler with String group</p>
-     *
+     * <p>
      * Plugins should never call this
      *
      * @param pluginName Plugin this command is associated with
@@ -144,7 +148,7 @@ public final class TimingsManager {
     public static Timing getCommandTiming(String pluginName, Command command) {
         Plugin plugin = null;
         final Server server = Bukkit.getServer();
-        if (!(  server == null || pluginName == null ||
+        if (!(server == null || pluginName == null ||
                 "minecraft".equals(pluginName) || "bukkit".equals(pluginName) ||
                 "spigot".equalsIgnoreCase(pluginName) || "paper".equals(pluginName)
         )) {

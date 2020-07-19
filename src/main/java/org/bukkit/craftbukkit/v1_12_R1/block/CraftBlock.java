@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+
 import net.minecraft.block.BlockCocoa;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.BlockRedstoneWire;
@@ -52,10 +53,6 @@ public class CraftBlock implements Block {
 
     private static net.minecraft.block.Block getNMSBlock(int type) {
         return CraftMagicNumbers.getBlock(type);
-    }
-
-    private net.minecraft.block.Block getNMSBlock() {
-        return CraftMagicNumbers.getBlock(this); // TODO: UPDATE THIS
     }
 
     public static BlockFace notchToBlockFace(EnumFacing notch) {
@@ -113,6 +110,10 @@ public class CraftBlock implements Block {
         }
 
         return net.minecraft.world.biome.Biome.REGISTRY.getObject(new ResourceLocation(bio.name().toLowerCase(java.util.Locale.ENGLISH)));
+    }
+
+    private net.minecraft.block.Block getNMSBlock() {
+        return CraftMagicNumbers.getBlock(this); // TODO: UPDATE THIS
     }
 
     public World getWorld() {
@@ -295,7 +296,7 @@ public class CraftBlock implements Block {
         Material material = getType();
         // Cauldron start - if null, check for TE that implements IInventory
         if (material == null) {
-            TileEntity tileEntity = ((CraftWorld)this.getWorld()).getHandle().getTileEntity(new BlockPos(x, y, z));
+            TileEntity tileEntity = ((CraftWorld) this.getWorld()).getHandle().getTileEntity(new BlockPos(x, y, z));
             if (tileEntity != null) {
                 return new CraftBlockEntityState<TileEntity>(this, (Class<TileEntity>) tileEntity.getClass());
             } else {
@@ -377,7 +378,8 @@ public class CraftBlock implements Block {
                 return new CraftBed(this);
             default:
                 // Cauldron start
-                TileEntity tileEntity = ((CraftWorld)this.getWorld()).getHandle().getTileEntity(new BlockPos(x, y, z));;
+                TileEntity tileEntity = ((CraftWorld) this.getWorld()).getHandle().getTileEntity(new BlockPos(x, y, z));
+                ;
                 if (tileEntity != null) {
                     return new CraftBlockEntityState<TileEntity>(this, (Class<TileEntity>) tileEntity.getClass());
                 } else {

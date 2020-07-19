@@ -20,29 +20,24 @@
 package net.minecraftforge.fml.common.discovery;
 
 import java.util.List;
+
 import net.minecraftforge.fml.common.ModContainer;
 
-public enum ContainerType
-{
+public enum ContainerType {
     JAR(JarDiscoverer.class),
     DIR(DirectoryDiscoverer.class);
 
     private ITypeDiscoverer discoverer;
 
-    private ContainerType(Class<? extends ITypeDiscoverer> discovererClass)
-    {
-        try
-        {
+    private ContainerType(Class<? extends ITypeDiscoverer> discovererClass) {
+        try {
             this.discoverer = discovererClass.newInstance();
-        }
-        catch (ReflectiveOperationException e)
-        {
+        } catch (ReflectiveOperationException e) {
             throw new RuntimeException(e);
         }
     }
 
-    public List<ModContainer> findMods(ModCandidate candidate, ASMDataTable table)
-    {
+    public List<ModContainer> findMods(ModCandidate candidate, ASMDataTable table) {
         return discoverer.discover(candidate, table);
     }
 }

@@ -27,38 +27,32 @@ import net.minecraftforge.fml.common.discovery.ASMDataTable;
 /**
  * An internal FML event used to signal the construction of mods. Should not be used by mods.
  */
-public class FMLConstructionEvent extends FMLStateEvent
-{
+public class FMLConstructionEvent extends FMLStateEvent {
     private ModClassLoader modClassLoader;
     private ASMDataTable asmData;
-    private ListMultimap<String,String> reverseDependencies;
+    private ListMultimap<String, String> reverseDependencies;
 
     @SuppressWarnings("unchecked")
-    public FMLConstructionEvent(Object... eventData)
-    {
-        this.modClassLoader = (ModClassLoader)eventData[0];
+    public FMLConstructionEvent(Object... eventData) {
+        this.modClassLoader = (ModClassLoader) eventData[0];
         this.asmData = (ASMDataTable) eventData[1];
         this.reverseDependencies = (ListMultimap<String, String>) eventData[2];
     }
 
-    public ModClassLoader getModClassLoader()
-    {
+    public ModClassLoader getModClassLoader() {
         return modClassLoader;
     }
 
     @Override
-    public ModState getModState()
-    {
+    public ModState getModState() {
         return ModState.CONSTRUCTED;
     }
 
-    public ASMDataTable getASMHarvestedData()
-    {
+    public ASMDataTable getASMHarvestedData() {
         return asmData;
     }
 
-    public ListMultimap<String, String> getReverseDependencies()
-    {
+    public ListMultimap<String, String> getReverseDependencies() {
         return reverseDependencies;
     }
 }

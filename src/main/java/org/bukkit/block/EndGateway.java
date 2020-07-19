@@ -8,7 +8,7 @@ import org.bukkit.Location;
 public interface EndGateway extends BlockState {
 
     /**
-     * Gets the location that entities are teleported to when 
+     * Gets the location that entities are teleported to when
      * entering the gateway portal.
      * <p>
      * If this block state is not placed the location's world will be null.

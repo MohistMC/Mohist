@@ -20,6 +20,7 @@
 package net.minecraftforge.server.command;
 
 import com.google.common.collect.Maps;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -28,6 +29,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 import javax.annotation.Nullable;
+
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
@@ -44,58 +46,47 @@ import net.minecraftforge.common.DimensionManager;
 import org.apache.commons.lang3.tuple.MutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 
-class CommandEntity extends CommandTreeBase
-{
-    public CommandEntity()
-    {
+class CommandEntity extends CommandTreeBase {
+    public CommandEntity() {
         addSubcommand(new EntityListCommand());
         addSubcommand(new CommandTreeHelp(this));
     }
 
     @Override
-    public String getUsage(ICommandSender sender)
-    {
+    public String getUsage(ICommandSender sender) {
         return "commands.forge.entity.usage";
     }
 
     @Override
-    public int getRequiredPermissionLevel()
-    {
+    public int getRequiredPermissionLevel() {
         return 2;
     }
 
     @Override
-    public String getName()
-    {
+    public String getName() {
         return "entity";
     }
 
-    private static class EntityListCommand extends CommandBase
-    {
+    private static class EntityListCommand extends CommandBase {
         @Override
-        public String getName()
-        {
+        public String getName() {
             return "list";
         }
 
         @Override
-        public int getRequiredPermissionLevel()
-        {
+        public int getRequiredPermissionLevel() {
             return 2;
         }
 
         @Override
-        public String getUsage(ICommandSender sender)
-        {
+        public String getUsage(ICommandSender sender) {
             return "commands.forge.entity.list.usage";
         }
 
         @Override
-        public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException
-        {
+        public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
             String filter = "*";
-            if (args.length > 0)
-            {
+            if (args.length > 0) {
                 filter = args[0];
             }
             final String cleanFilter = filter.replace("?", ".?").replace("*", ".*?");
@@ -121,8 +112,7 @@ class CommandEntity extends CommandTreeBase
                 info.right.put(chunk, info.right.getOrDefault(chunk, 0) + 1);
             });
 
-            if (names.size() == 1)
-            {
+            if (names.size() == 1) {
                 ResourceLocation name = names.iterator().next();
                 Pair<Integer, Map<ChunkPos, Integer>> info = list.get(name);
                 if (info == null)
@@ -131,40 +121,30 @@ class CommandEntity extends CommandTreeBase
                 List<Map.Entry<ChunkPos, Integer>> toSort = new ArrayList<>();
                 toSort.addAll(info.getRight().entrySet());
                 toSort.sort((a, b) -> {
-                    if (Objects.equals(a.getValue(), b.getValue()))
-                    {
+                    if (Objects.equals(a.getValue(), b.getValue())) {
                         return a.getKey().toString().compareTo(b.getKey().toString());
-                    }
-                    else
-                    {
+                    } else {
                         return b.getValue() - a.getValue();
                     }
                 });
                 long limit = 10;
-                for (Map.Entry<ChunkPos, Integer> e : toSort)
-                {
+                for (Map.Entry<ChunkPos, Integer> e : toSort) {
                     if (limit-- == 0) break;
                     sender.sendMessage(new TextComponentString("  " + e.getValue() + ": " + e.getKey().x + ", " + e.getKey().z));
                 }
-            }
-            else
-            {
+            } else {
 
                 List<Pair<ResourceLocation, Integer>> info = new ArrayList<>();
                 list.forEach((key, value) -> {
-                    if (names.contains(key))
-                    {
+                    if (names.contains(key)) {
                         Pair<ResourceLocation, Integer> of = Pair.of(key, value.left);
                         info.add(of);
                     }
                 });
                 info.sort((a, b) -> {
-                    if (Objects.equals(a.getRight(), b.getRight()))
-                    {
+                    if (Objects.equals(a.getRight(), b.getRight())) {
                         return a.getKey().toString().compareTo(b.getKey().toString());
-                    }
-                    else
-                    {
+                    } else {
                         return b.getRight() - a.getRight();
                     }
                 });
@@ -179,10 +159,8 @@ class CommandEntity extends CommandTreeBase
         }
 
         @Override
-        public List<String> getTabCompletions(MinecraftServer server, ICommandSender sender, String[] args, @Nullable BlockPos targetPos)
-        {
-            if (args.length == 1)
-            {
+        public List<String> getTabCompletions(MinecraftServer server, ICommandSender sender, String[] args, @Nullable BlockPos targetPos) {
+            if (args.length == 1) {
                 String[] entityNames = EntityList.getEntityNameList().stream().map(ResourceLocation::toString).sorted().toArray(String[]::new);
                 return getListOfStringsMatchingLastWord(args, entityNames);
             }

@@ -20,6 +20,7 @@
 package net.minecraftforge.client;
 
 import java.util.List;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiChat;
 import net.minecraft.command.CommandException;
@@ -30,9 +31,11 @@ import net.minecraft.command.WrongUsageException;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.util.text.TextFormatting;
+
 import static net.minecraft.util.text.TextFormatting.GRAY;
 import static net.minecraft.util.text.TextFormatting.RED;
 import static net.minecraft.util.text.TextFormatting.RESET;
+
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.CommandEvent;
 import net.minecraftforge.fml.client.FMLClientHandler;
@@ -41,29 +44,25 @@ import net.minecraftforge.fml.common.FMLLog;
 /**
  * The class that handles client-side chat commands. You should register any
  * commands that you want handled on the client with this command handler.
- *
+ * <p>
  * If there is a command with the same name registered both on the server and
  * client, the client takes precedence!
- *
  */
-public class ClientCommandHandler extends CommandHandler
-{
+public class ClientCommandHandler extends CommandHandler {
     public static final ClientCommandHandler instance = new ClientCommandHandler();
 
     public String[] latestAutoComplete = null;
 
     /**
      * @return 1 if successfully executed, -1 if no permission or wrong usage,
-     *         0 if it doesn't exist or it was canceled (it's sent to the server)
+     * 0 if it doesn't exist or it was canceled (it's sent to the server)
      */
     @Override
-    public int executeCommand(ICommandSender sender, String message)
-    {
+    public int executeCommand(ICommandSender sender, String message) {
         message = message.trim();
 
         boolean usedSlash = message.startsWith("/");
-        if (usedSlash)
-        {
+        if (usedSlash) {
             message = message.substring(1);
         }
 
@@ -73,20 +72,15 @@ public class ClientCommandHandler extends CommandHandler
         System.arraycopy(temp, 1, args, 0, args.length);
         ICommand icommand = getCommands().get(commandName);
 
-        try
-        {
-            if (icommand == null || (!usedSlash && icommand instanceof IClientCommand && !((IClientCommand)icommand).allowUsageWithoutPrefix(sender, message)))
-            {
+        try {
+            if (icommand == null || (!usedSlash && icommand instanceof IClientCommand && !((IClientCommand) icommand).allowUsageWithoutPrefix(sender, message))) {
                 return 0;
             }
 
-            if (icommand.checkPermission(this.getServer(), sender))
-            {
+            if (icommand.checkPermission(this.getServer(), sender)) {
                 CommandEvent event = new CommandEvent(icommand, sender, args);
-                if (MinecraftForge.EVENT_BUS.post(event))
-                {
-                    if (event.getException() != null)
-                    {
+                if (MinecraftForge.EVENT_BUS.post(event)) {
+                    if (event.getException() != null) {
                         throw event.getException();
                     }
                     return 0;
@@ -94,22 +88,14 @@ public class ClientCommandHandler extends CommandHandler
 
                 this.tryExecute(sender, args, icommand, message);
                 return 1;
-            }
-            else
-            {
+            } else {
                 sender.sendMessage(format(RED, "commands.generic.permission"));
             }
-        }
-        catch (WrongUsageException wue)
-        {
+        } catch (WrongUsageException wue) {
             sender.sendMessage(format(RED, "commands.generic.usage", format(RED, wue.getMessage(), wue.getErrorObjects())));
-        }
-        catch (CommandException ce)
-        {
+        } catch (CommandException ce) {
             sender.sendMessage(format(RED, ce.getMessage(), ce.getErrorObjects()));
-        }
-        catch (Throwable t)
-        {
+        } catch (Throwable t) {
             sender.sendMessage(format(RED, "commands.generic.exception"));
             FMLLog.log.error("Command '{}' threw an exception:", message, t);
         }
@@ -118,38 +104,28 @@ public class ClientCommandHandler extends CommandHandler
     }
 
     //Couple of helpers because the mcp names are stupid and long...
-    private TextComponentTranslation format(TextFormatting color, String str, Object... args)
-    {
+    private TextComponentTranslation format(TextFormatting color, String str, Object... args) {
         TextComponentTranslation ret = new TextComponentTranslation(str, args);
         ret.getStyle().setColor(color);
         return ret;
     }
 
-    public void autoComplete(String leftOfCursor)
-    {
+    public void autoComplete(String leftOfCursor) {
         latestAutoComplete = null;
 
-        if (leftOfCursor.charAt(0) == '/')
-        {
+        if (leftOfCursor.charAt(0) == '/') {
             leftOfCursor = leftOfCursor.substring(1);
 
             Minecraft mc = FMLClientHandler.instance().getClient();
-            if (mc.currentScreen instanceof GuiChat)
-            {
+            if (mc.currentScreen instanceof GuiChat) {
                 List<String> commands = getTabCompletions(mc.player, leftOfCursor, mc.player.getPosition());
-                if (!commands.isEmpty())
-                {
-                    if (leftOfCursor.indexOf(' ') == -1)
-                    {
-                        for (int i = 0; i < commands.size(); i++)
-                        {
+                if (!commands.isEmpty()) {
+                    if (leftOfCursor.indexOf(' ') == -1) {
+                        for (int i = 0; i < commands.size(); i++) {
                             commands.set(i, GRAY + "/" + commands.get(i) + RESET);
                         }
-                    }
-                    else
-                    {
-                        for (int i = 0; i < commands.size(); i++)
-                        {
+                    } else {
+                        for (int i = 0; i < commands.size(); i++) {
                             commands.set(i, GRAY + commands.get(i) + RESET);
                         }
                     }

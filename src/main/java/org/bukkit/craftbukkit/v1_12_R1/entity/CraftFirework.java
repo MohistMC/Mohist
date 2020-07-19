@@ -1,6 +1,7 @@
 package org.bukkit.craftbukkit.v1_12_R1.entity;
 
 import java.util.Random;
+
 import net.minecraft.entity.item.EntityFireworkRocket;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;

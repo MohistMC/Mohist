@@ -1,6 +1,7 @@
 package com.destroystokyo.paper.exception;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 

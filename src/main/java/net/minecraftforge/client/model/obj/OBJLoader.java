@@ -22,6 +22,7 @@ package net.minecraftforge.client.model.obj;
 import java.io.FileNotFoundException;
 import java.util.HashSet;
 import java.util.Set;
+
 import net.minecraft.client.resources.IResource;
 import net.minecraft.client.resources.IResourceManager;
 import net.minecraft.util.ResourceLocation;
@@ -39,40 +40,32 @@ import org.apache.commons.io.IOUtils;
 public enum OBJLoader implements ICustomModelLoader {
     INSTANCE;
 
-    private IResourceManager manager;
     private final Set<String> enabledDomains = new HashSet<>();
+    private IResourceManager manager;
 
-    public void addDomain(String domain)
-    {
+    public void addDomain(String domain) {
         enabledDomains.add(domain.toLowerCase());
         FMLLog.log.info("OBJLoader: Domain {} has been added.", domain.toLowerCase());
     }
 
     @Override
-    public void onResourceManagerReload(IResourceManager resourceManager)
-    {
+    public void onResourceManagerReload(IResourceManager resourceManager) {
         this.manager = resourceManager;
     }
 
     @Override
-    public boolean accepts(ResourceLocation modelLocation)
-    {
+    public boolean accepts(ResourceLocation modelLocation) {
         return enabledDomains.contains(modelLocation.getResourceDomain()) && modelLocation.getResourcePath().endsWith(".obj");
     }
 
     @Override
-    public IModel loadModel(ResourceLocation modelLocation) throws Exception
-    {
+    public IModel loadModel(ResourceLocation modelLocation) throws Exception {
         ResourceLocation file = new ResourceLocation(modelLocation.getResourceDomain(), modelLocation.getResourcePath());
         IResource resource = null;
-        try
-        {
-            try
-            {
+        try {
+            try {
                 resource = manager.getResource(file);
-            }
-            catch (FileNotFoundException e)
-            {
+            } catch (FileNotFoundException e) {
                 if (modelLocation.getResourcePath().startsWith("models/block/"))
                     resource = manager.getResource(new ResourceLocation(file.getResourceDomain(), "models/item/" + file.getResourcePath().substring("models/block/".length())));
                 else if (modelLocation.getResourcePath().startsWith("models/item/"))
@@ -81,18 +74,13 @@ public enum OBJLoader implements ICustomModelLoader {
             }
             OBJModel.Parser parser = new OBJModel.Parser(resource, manager);
             OBJModel model;
-            try
-            {
+            try {
                 model = parser.parse();
-            }
-            catch (Exception e)
-            {
+            } catch (Exception e) {
                 throw new ModelLoaderRegistry.LoaderException("Error loading model previously: " + file, e);
             }
             return model;
-        }
-        finally
-        {
+        } finally {
             IOUtils.closeQuietly(resource);
         }
     }

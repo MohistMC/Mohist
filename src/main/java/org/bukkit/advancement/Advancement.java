@@ -1,6 +1,7 @@
 package org.bukkit.advancement;
 
 import java.util.Collection;
+
 import org.bukkit.Keyed;
 
 /**

@@ -2,6 +2,7 @@ package org.bukkit.craftbukkit.v1_12_R1.map;
 
 import java.awt.*;
 import java.util.Arrays;
+
 import org.bukkit.map.MapCanvas;
 import org.bukkit.map.MapCursorCollection;
 import org.bukkit.map.MapFont;

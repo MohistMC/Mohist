@@ -16,16 +16,16 @@ public class BukkitHookForgeEventTest implements Listener {
      * @param event
      */
     @EventHandler
-    public void test(BukkitHookForgeEvent event){
+    public void test(BukkitHookForgeEvent event) {
         if (event.getEvent() instanceof ExplosionEvent.Detonate) {
-            ExplosionEvent.Detonate explosionEvent = (ExplosionEvent.Detonate)event.getEvent();
+            ExplosionEvent.Detonate explosionEvent = (ExplosionEvent.Detonate) event.getEvent();
             explosionEvent.getAffectedBlocks().clear();
         }
     }
 
     @SubscribeEvent
     public void test2(BukkitStateForgeEvent.PluginsEnable event) {
-        if(event.getType().equals(PluginLoadOrder.POSTWORLD) && event.getServer().getPluginManager().getPlugin("Mohist") != null){
+        if (event.getType().equals(PluginLoadOrder.POSTWORLD) && event.getServer().getPluginManager().getPlugin("Mohist") != null) {
             event.getServer().getConsoleSender().sendMessage("Thank you for using Mohist!");
         }
     }

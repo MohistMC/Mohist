@@ -1,7 +1,9 @@
 package org.bukkit;
 
 import com.google.common.collect.Maps;
+
 import java.util.Map;
+
 import org.bukkit.entity.Ageable;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
@@ -169,7 +171,7 @@ public enum EntityEffect {
      *
      * @param data Data value to fetch
      * @return The {@link EntityEffect} representing the given value, or null
-     *     if it doesn't exist
+     * if it doesn't exist
      * @deprecated Magic value
      */
 

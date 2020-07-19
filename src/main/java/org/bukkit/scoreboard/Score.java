@@ -13,8 +13,8 @@ public interface Score {
      * Gets the OfflinePlayer being tracked by this Score
      *
      * @return this Score's tracked player
-     * @deprecated Scoreboards can contain entries that aren't players
      * @see #getEntry()
+     * @deprecated Scoreboards can contain entries that aren't players
      */
 
     OfflinePlayer getPlayer();
@@ -38,7 +38,7 @@ public interface Score {
      *
      * @return the current score
      * @throws IllegalStateException if the associated objective has been
-     *     unregistered
+     *                               unregistered
      */
     int getScore() throws IllegalStateException;
 
@@ -47,7 +47,7 @@ public interface Score {
      *
      * @param score New score
      * @throws IllegalStateException if the associated objective has been
-     *     unregistered
+     *                               unregistered
      */
     void setScore(int score) throws IllegalStateException;
 
@@ -56,7 +56,7 @@ public interface Score {
      *
      * @return if this score has been set before
      * @throws IllegalStateException if the associated objective has been
-     *     unregistered
+     *                               unregistered
      */
     boolean isScoreSet() throws IllegalStateException;
 
@@ -64,7 +64,7 @@ public interface Score {
      * Gets the scoreboard for the associated objective.
      *
      * @return the owning objective's scoreboard, or null if it has been
-     *     {@link Objective#unregister() unregistered}
+     * {@link Objective#unregister() unregistered}
      */
     Scoreboard getScoreboard();
 }

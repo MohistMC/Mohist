@@ -20,17 +20,15 @@ public class BlockCanBuildEvent extends BlockEvent {
     protected boolean buildable;
 
     /**
-     *
      * @deprecated Magic value
      */
     protected int material;
 
     /**
-     *
+     * @param block    the block involved in this event
+     * @param id       the id of the block to place
+     * @param canBuild whether we can build
      * @deprecated Magic value
-     * @param block the block involved in this event
-     * @param id the id of the block to place
-     * @param canBuild whether we can build 
      */
     public BlockCanBuildEvent(final Block block, final int id, final boolean canBuild) {
         super(block);
@@ -58,7 +56,7 @@ public class BlockCanBuildEvent extends BlockEvent {
      * Sets whether the block can be built here or not.
      *
      * @param cancel true if you want to allow the block to be built here
-     *     despite Minecraft's default behaviour
+     *               despite Minecraft's default behaviour
      */
     public void setBuildable(boolean cancel) {
         this.buildable = cancel;

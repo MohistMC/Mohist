@@ -25,6 +25,7 @@ import com.google.common.collect.ImmutableList.Builder;
 import com.google.common.collect.Lists;
 import com.google.common.collect.MapMaker;
 import com.google.common.collect.Maps;
+
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
@@ -44,6 +45,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.FutureTask;
 import java.util.concurrent.TimeUnit;
 import javax.annotation.Nullable;
+
 import net.minecraft.crash.CrashReport;
 import net.minecraft.crash.CrashReportCategory;
 import net.minecraft.entity.item.EntityItem;
@@ -85,19 +87,17 @@ import red.mohist.util.i18n.Message;
 
 /**
  * The main class for non-obfuscated hook handling code
- *
+ * <p>
  * Anything that doesn't require obfuscated or client/server specific code should
  * go in this handler
- *
+ * <p>
  * It also contains a reference to the sided handler instance that is valid
  * allowing for common code to access specific properties from the obfuscated world
  * without a direct dependency
  *
  * @author cpw
- *
  */
-public class FMLCommonHandler
-{
+public class FMLCommonHandler {
     /**
      * The singleton
      */
@@ -111,48 +111,58 @@ public class FMLCommonHandler
     private List<String> brandings;
     private List<String> brandingsNoMC;
     private List<ICrashCallable> crashCallables = Lists.newArrayList(Loader.instance().getCallableCrashInformation());
-    private Set<SaveHandler> handlerSet = Collections.newSetFromMap(new MapMaker().weakKeys().<SaveHandler,Boolean>makeMap());
+    private Set<SaveHandler> handlerSet = Collections.newSetFromMap(new MapMaker().weakKeys().<SaveHandler, Boolean>makeMap());
     private WeakReference<SaveHandler> handlerToCheck;
     private EventBus eventBus = MinecraftForge.EVENT_BUS;
     private volatile CountDownLatch exitLatch = null;
 
-    private FMLCommonHandler()
-    {
-        registerCrashCallable(new ICrashCallable()
-        {
+    private FMLCommonHandler() {
+        registerCrashCallable(new ICrashCallable() {
             @Override
-            public String call() throws Exception
-            {
+            public String call() throws Exception {
                 StringBuilder builder = new StringBuilder();
                 Joiner joiner = Joiner.on("\n  ");
-                for(String coreMod : CoreModManager.getTransformers().keySet())
-                {
+                for (String coreMod : CoreModManager.getTransformers().keySet()) {
                     builder.append("\n" + coreMod + "\n  ").append(joiner.join(CoreModManager.getTransformers().get(coreMod)));
                 }
                 return builder.toString();
             }
 
             @Override
-            public String getLabel()
-            {
+            public String getLabel() {
                 return "Loaded coremods (and transformers)";
             }
         });
     }
+
+    /**
+     * @return the instance
+     */
+    public static FMLCommonHandler instance() {
+        return INSTANCE;
+    }
+
+    public static void callFuture(FutureTask<?> task) {
+        try {
+            task.run();
+            task.get(); // Forces the exception to be thrown if any
+        } catch (InterruptedException | ExecutionException e) {
+            FMLLog.log.fatal("Exception caught executing FutureTask: {}", e.toString(), e);
+        }
+    }
+
     /**
      * The FML event bus. Subscribe here for FML related events
      *
-     * @Deprecated Use {@link MinecraftForge#EVENT_BUS} they're the same thing now
      * @return the event bus
+     * @Deprecated Use {@link MinecraftForge#EVENT_BUS} they're the same thing now
      */
     @Deprecated
-    public EventBus bus()
-    {
+    public EventBus bus() {
         return eventBus;
     }
 
-    public List<String> beginLoading(IFMLSidedHandler handler)
-    {
+    public List<String> beginLoading(IFMLSidedHandler handler) {
         sidedDelegate = handler;
         MinecraftForge.initialize();
 //        MinecraftForge.registerCrashCallable();
@@ -160,41 +170,30 @@ public class FMLCommonHandler
     }
 
     /**
-     * @return the instance
-     */
-    public static FMLCommonHandler instance()
-    {
-        return INSTANCE;
-    }
-    /**
      * Find the container that associates with the supplied mod object
+     *
      * @param mod
      */
-    public ModContainer findContainerFor(Object mod)
-    {
-        if (mod instanceof String)
-        {
+    public ModContainer findContainerFor(Object mod) {
+        if (mod instanceof String) {
             return Loader.instance().getIndexedModList().get(mod);
-        }
-        else
-        {
+        } else {
             return Loader.instance().getReversedModObjectList().get(mod);
         }
     }
+
     /**
      * Get the forge mod loader logging instance (goes to the forgemodloader log file)
-     * @return The log instance for the FML log file
      *
+     * @return The log instance for the FML log file
      * @deprecated Not used in FML, Mods use your own logger, see {@link FMLPreInitializationEvent#getModLog()}
      */
     @Deprecated
-    public Logger getFMLLogger()
-    {
+    public Logger getFMLLogger() {
         return FMLLog.log;
     }
 
-    public Side getSide()
-    {
+    public Side getSide() {
         return Side.SERVER;
     }
 
@@ -203,104 +202,87 @@ public class FMLCommonHandler
      * on thread analysis to try and determine whether the code is running in the
      * server or not. Use at your own risk
      */
-    public Side getEffectiveSide()
-    {
+    public Side getEffectiveSide() {
         return Side.SERVER;
     }
+
     /**
      * Raise an exception
      */
-    public void raiseException(Throwable exception, String message, boolean stopGame)
-    {
+    public void raiseException(Throwable exception, String message, boolean stopGame) {
         FMLLog.log.error("Something raised an exception. The message was '{}'. 'stopGame' is {}", message, stopGame, exception);
-        if (stopGame)
-        {
-            getSidedDelegate().haltGame(message,exception);
+        if (stopGame) {
+            getSidedDelegate().haltGame(message, exception);
         }
     }
 
-
-    public void computeBranding()
-    {
-        if (brandings == null)
-        {
+    public void computeBranding() {
+        if (brandings == null) {
             Builder<String> brd = ImmutableList.builder();
             brd.add(Loader.instance().getMCVersionString());
             brd.add(Loader.instance().getMCPVersionString());
             brd.add("Powered by Forge " + ForgeVersion.getVersion());
-            if (sidedDelegate!=null)
-            {
+            if (sidedDelegate != null) {
                 brd.addAll(sidedDelegate.getAdditionalBrandingInformation());
             }
-            if (Loader.instance().getFMLBrandingProperties().containsKey("fmlbranding"))
-            {
+            if (Loader.instance().getFMLBrandingProperties().containsKey("fmlbranding")) {
                 brd.add(Loader.instance().getFMLBrandingProperties().get("fmlbranding"));
             }
             int tModCount = Loader.instance().getModList().size();
             int aModCount = Loader.instance().getActiveModList().size();
-            brd.add(String.format("%d mod%s loaded, %d mod%s active", tModCount, tModCount!=1 ? "s" :"", aModCount, aModCount!=1 ? "s" :"" ));
+            brd.add(String.format("%d mod%s loaded, %d mod%s active", tModCount, tModCount != 1 ? "s" : "", aModCount, aModCount != 1 ? "s" : ""));
             brandings = brd.build();
             brandingsNoMC = brandings.subList(1, brandings.size());
         }
     }
-    public List<String> getBrandings(boolean includeMC)
-    {
-        if (brandings == null)
-        {
+
+    public List<String> getBrandings(boolean includeMC) {
+        if (brandings == null) {
             computeBranding();
         }
         return includeMC ? ImmutableList.copyOf(brandings) : ImmutableList.copyOf(brandingsNoMC);
     }
 
-    public IFMLSidedHandler getSidedDelegate()
-    {
+    public IFMLSidedHandler getSidedDelegate() {
         return sidedDelegate;
     }
 
-    public void onPostServerTick()
-    {
+    public void onPostServerTick() {
         bus().post(new TickEvent.ServerTickEvent(Phase.END));
     }
 
     /**
      * Every tick just after world and other ticks occur
      */
-    public void onPostWorldTick(World world)
-    {
+    public void onPostWorldTick(World world) {
         bus().post(new TickEvent.WorldTickEvent(Side.SERVER, Phase.END, world));
     }
 
-    public void onPreServerTick()
-    {
+    public void onPreServerTick() {
         bus().post(new TickEvent.ServerTickEvent(Phase.START));
     }
 
     /**
      * Every tick just before world and other ticks occur
      */
-    public void onPreWorldTick(World world)
-    {
+    public void onPreWorldTick(World world) {
         bus().post(new TickEvent.WorldTickEvent(Side.SERVER, Phase.START, world));
     }
 
-    public boolean handleServerAboutToStart(MinecraftServer server)
-    {
+    public boolean handleServerAboutToStart(MinecraftServer server) {
         return Loader.instance().serverAboutToStart(server);
     }
 
-    public boolean handleServerStarting(MinecraftServer server)
-    {
+    public boolean handleServerStarting(MinecraftServer server) {
         return Loader.instance().serverStarting(server);
     }
 
-    public void handleServerStarted()
-    {
+    public void handleServerStarted() {
         Loader.instance().serverStarted();
         sidedDelegate.allowLogins();
     }
 
-    public void handleServerStopping()
-    {
+    public void handleServerStopping() {
         Loader.instance().serverStopping();
     }
 
@@ -308,90 +290,70 @@ public class FMLCommonHandler
         return sidedDelegate.getSavesDirectory();
     }
 
-    public MinecraftServer getMinecraftServerInstance()
-    {
+    public MinecraftServer getMinecraftServerInstance() {
         return sidedDelegate.getServer();
     }
 
-    public void showGuiScreen(Object clientGuiElement)
-    {
+    public void showGuiScreen(Object clientGuiElement) {
         sidedDelegate.showGuiScreen(clientGuiElement);
     }
 
-    public void queryUser(StartupQuery query) throws InterruptedException
-    {
+    public void queryUser(StartupQuery query) throws InterruptedException {
         sidedDelegate.queryUser(query);
     }
 
-    public void onServerStart(MinecraftServer dedicatedServer)
-    {
+    public void onServerStart(MinecraftServer dedicatedServer) {
         FMLServerHandler.instance();
         sidedDelegate.beginServerLoading(dedicatedServer);
     }
 
-    public void onServerStarted()
-    {
+    public void onServerStarted() {
         sidedDelegate.finishServerLoading();
     }
 
-
-    public void onPreClientTick()
-    {
+    public void onPreClientTick() {
         bus().post(new TickEvent.ClientTickEvent(Phase.START));
     }
 
-    public void onPostClientTick()
-    {
+    public void onPostClientTick() {
         bus().post(new TickEvent.ClientTickEvent(Phase.END));
     }
 
-    public void onRenderTickStart(float timer)
-    {
+    public void onRenderTickStart(float timer) {
         Animation.setClientPartialTickTime(timer);
         bus().post(new TickEvent.RenderTickEvent(Phase.START, timer));
     }
 
-    public void onRenderTickEnd(float timer)
-    {
+    public void onRenderTickEnd(float timer) {
         bus().post(new TickEvent.RenderTickEvent(Phase.END, timer));
     }
 
-    public void onPlayerPreTick(EntityPlayer player)
-    {
+    public void onPlayerPreTick(EntityPlayer player) {
         bus().post(new TickEvent.PlayerTickEvent(Phase.START, player));
     }
 
-    public void onPlayerPostTick(EntityPlayer player)
-    {
+    public void onPlayerPostTick(EntityPlayer player) {
         bus().post(new TickEvent.PlayerTickEvent(Phase.END, player));
     }
 
-    public void registerCrashCallable(ICrashCallable callable)
-    {
+    public void registerCrashCallable(ICrashCallable callable) {
         crashCallables.add(callable);
     }
 
-    public void enhanceCrashReport(CrashReport crashReport, CrashReportCategory category)
-    {
-        for (ICrashCallable call: crashCallables)
-        {
+    public void enhanceCrashReport(CrashReport crashReport, CrashReportCategory category) {
+        for (ICrashCallable call : crashCallables) {
             category.addDetail(call.getLabel(), call);
         }
     }
 
-    public void handleWorldDataSave(SaveHandler handler, WorldInfo worldInfo, NBTTagCompound tagCompound)
-    {
-        if (worldInfo.getDimension() != 0)
-        {
+    public void handleWorldDataSave(SaveHandler handler, WorldInfo worldInfo, NBTTagCompound tagCompound) {
+        if (worldInfo.getDimension() != 0) {
             return;
         }
-        for (ModContainer mc : Loader.instance().getModList())
-        {
-            if (mc instanceof InjectedModContainer)
-            {
-                WorldAccessContainer wac = ((InjectedModContainer)mc).getWrappedWorldAccessContainer();
-                if (wac != null)
-                {
+        for (ModContainer mc : Loader.instance().getModList()) {
+            if (mc instanceof InjectedModContainer) {
+                WorldAccessContainer wac = ((InjectedModContainer) mc).getWrappedWorldAccessContainer();
+                if (wac != null) {
                     NBTTagCompound dataForWriting = wac.getDataForWriting(handler, worldInfo);
                     tagCompound.setTag(mc.getModId(), dataForWriting);
                 }
@@ -399,35 +361,28 @@ public class FMLCommonHandler
         }
     }
 
-    public void handleWorldDataLoad(SaveHandler handler, WorldInfo worldInfo, NBTTagCompound tagCompound)
-    {
-        if (getEffectiveSide()!=Side.SERVER)
-        {
+    public void handleWorldDataLoad(SaveHandler handler, WorldInfo worldInfo, NBTTagCompound tagCompound) {
+        if (getEffectiveSide() != Side.SERVER) {
             return;
         }
-        if (handlerSet.contains(handler) || DimensionManager.getWorld(0) != null)
-        {
+        if (handlerSet.contains(handler) || DimensionManager.getWorld(0) != null) {
             return;
         }
         handlerSet.add(handler);
         handlerToCheck = new WeakReference<SaveHandler>(handler); // for confirmBackupLevelDatUse
-        Map<String,NBTBase> additionalProperties = Maps.newHashMap();
+        Map<String, NBTBase> additionalProperties = Maps.newHashMap();
         worldInfo.setAdditionalProperties(additionalProperties);
-        for (ModContainer mc : Loader.instance().getModList())
-        {
-            if (mc instanceof InjectedModContainer)
-            {
-                WorldAccessContainer wac = ((InjectedModContainer)mc).getWrappedWorldAccessContainer();
-                if (wac != null)
-                {
+        for (ModContainer mc : Loader.instance().getModList()) {
+            if (mc instanceof InjectedModContainer) {
+                WorldAccessContainer wac = ((InjectedModContainer) mc).getWrappedWorldAccessContainer();
+                if (wac != null) {
                     wac.readData(handler, worldInfo, additionalProperties, tagCompound.getCompoundTag(mc.getModId()));
                 }
             }
         }
     }
 
-    public void confirmBackupLevelDatUse(SaveHandler handler)
-    {
+    public void confirmBackupLevelDatUse(SaveHandler handler) {
         if (handlerToCheck == null || handlerToCheck.get() != handler) {
             // only run if the save has been initially loaded
             handlerToCheck = null;
@@ -443,15 +398,12 @@ public class FMLCommonHandler
         if (!confirmed) StartupQuery.abort();
     }
 
-    public boolean isDisplayCloseRequested()
-    {
+    public boolean isDisplayCloseRequested() {
         return sidedDelegate != null && sidedDelegate.isDisplayCloseRequested();
     }
 
-    public boolean shouldServerBeKilledQuietly()
-    {
-        if (sidedDelegate == null)
-        {
+    public boolean shouldServerBeKilledQuietly() {
+        if (sidedDelegate == null) {
             return false;
         }
         return sidedDelegate.shouldServerShouldBeKilledQuietly();
@@ -459,41 +411,32 @@ public class FMLCommonHandler
 
     /**
      * Make handleExit() wait for handleServerStopped().
-     *
+     * <p>
      * For internal use only!
      */
-    public void expectServerStopped()
-    {
+    public void expectServerStopped() {
         exitLatch = new CountDownLatch(1);
     }
 
     /**
      * Delayed System.exit() until the server is actually stopped/done saving.
-     *
+     * <p>
      * For internal use only!
      *
      * @param retVal Exit code for System.exit()
      */
-    public void handleExit(int retVal)
-    {
+    public void handleExit(int retVal) {
         CountDownLatch latch = exitLatch;
 
-        if (latch != null)
-        {
-            try
-            {
+        if (latch != null) {
+            try {
                 FMLLog.log.info("Waiting for the server to terminate/save.");
-                if (!latch.await(10, TimeUnit.SECONDS))
-                {
+                if (!latch.await(10, TimeUnit.SECONDS)) {
                     FMLLog.log.warn("The server didn't stop within 10 seconds, exiting anyway.");
-                }
-                else
-                {
+                } else {
                     FMLLog.log.info("Server terminated.");
                 }
-            }
-            catch (InterruptedException e)
-            {
+            } catch (InterruptedException e) {
                 FMLLog.log.warn("Interrupted wait, exiting.");
             }
         }
@@ -501,113 +444,94 @@ public class FMLCommonHandler
         System.exit(retVal);
     }
 
-    public void handleServerStopped()
-    {
+    public void handleServerStopped() {
         sidedDelegate.serverStopped();
         MinecraftServer server = getMinecraftServerInstance();
         Loader.instance().serverStopped();
         // FORCE the internal server to stop: hello optifine workaround!
-        if (server!=null) ObfuscationReflectionHelper.setPrivateValue(MinecraftServer.class, server, false, "field_71316"+"_v");
+        if (server != null)
+            ObfuscationReflectionHelper.setPrivateValue(MinecraftServer.class, server, false, "field_71316" + "_v");
 
         // allow any pending exit to continue, clear exitLatch
         CountDownLatch latch = exitLatch;
 
-        if (latch != null)
-        {
+        if (latch != null) {
             latch.countDown();
             exitLatch = null;
         }
     }
 
-    public String getModName()
-    {
+    public String getModName() {
         List<String> modNames = Lists.newArrayListWithExpectedSize(3);
         modNames.add("Mohist");
         return Joiner.on(',').join(modNames);
     }
 
-    public void addModToResourcePack(ModContainer container)
-    {
+    public void addModToResourcePack(ModContainer container) {
         sidedDelegate.addModAsResource(container);
     }
 
-    public String getCurrentLanguage()
-    {
+    public String getCurrentLanguage() {
 
         return sidedDelegate.getCurrentLanguage();
     }
 
-    public void bootstrap()
-    {
+    public void bootstrap() {
     }
 
-    public NetworkManager getClientToServerNetworkManager()
-    {
+    public NetworkManager getClientToServerNetworkManager() {
         return sidedDelegate.getClientToServerNetworkManager();
     }
 
-    public void fireMouseInput()
-    {
+    public void fireMouseInput() {
         bus().post(new InputEvent.MouseInputEvent());
     }
 
-    public void fireKeyInput()
-    {
+    public void fireKeyInput() {
         bus().post(new InputEvent.KeyInputEvent());
     }
 
-    public void firePlayerChangedDimensionEvent(EntityPlayer player, int fromDim, int toDim)
-    {
+    public void firePlayerChangedDimensionEvent(EntityPlayer player, int fromDim, int toDim) {
         bus().post(new PlayerEvent.PlayerChangedDimensionEvent(player, fromDim, toDim));
     }
 
-    public void firePlayerLoggedIn(EntityPlayer player)
-    {
+    public void firePlayerLoggedIn(EntityPlayer player) {
         bus().post(new PlayerEvent.PlayerLoggedInEvent(player));
     }
 
-    public void firePlayerLoggedOut(EntityPlayer player)
-    {
+    public void firePlayerLoggedOut(EntityPlayer player) {
         bus().post(new PlayerEvent.PlayerLoggedOutEvent(player));
     }
 
-    public void firePlayerRespawnEvent(EntityPlayer player, boolean endConquered)
-    {
+    public void firePlayerRespawnEvent(EntityPlayer player, boolean endConquered) {
         bus().post(new PlayerEvent.PlayerRespawnEvent(player, endConquered));
     }
 
-    public void firePlayerItemPickupEvent(EntityPlayer player, EntityItem item, ItemStack clone)
-    {
+    public void firePlayerItemPickupEvent(EntityPlayer player, EntityItem item, ItemStack clone) {
         bus().post(new PlayerEvent.ItemPickupEvent(player, item, clone));
     }
 
-    public void firePlayerCraftingEvent(EntityPlayer player, ItemStack crafted, IInventory craftMatrix)
-    {
+    public void firePlayerCraftingEvent(EntityPlayer player, ItemStack crafted, IInventory craftMatrix) {
         bus().post(new PlayerEvent.ItemCraftedEvent(player, crafted, craftMatrix));
     }
 
-    public void firePlayerSmeltedEvent(EntityPlayer player, ItemStack smelted)
-    {
+    public void firePlayerSmeltedEvent(EntityPlayer player, ItemStack smelted) {
         bus().post(new PlayerEvent.ItemSmeltedEvent(player, smelted));
     }
 
-    public INetHandler getClientPlayHandler()
-    {
+    public INetHandler getClientPlayHandler() {
         return sidedDelegate.getClientPlayHandler();
     }
 
-    public void fireNetRegistrationEvent(NetworkManager manager, Set<String> channelSet, String channel, Side side)
-    {
+    public void fireNetRegistrationEvent(NetworkManager manager, Set<String> channelSet, String channel, Side side) {
         sidedDelegate.fireNetRegistrationEvent(bus(), manager, channelSet, channel, side);
     }
 
-    public boolean shouldAllowPlayerLogins()
-    {
+    public boolean shouldAllowPlayerLogins() {
         return sidedDelegate.shouldAllowPlayerLogins();
     }
 
-    public void fireServerConnectionEvent(NetworkManager manager)
-    {
+    public void fireServerConnectionEvent(NetworkManager manager) {
         bus().post(new FMLNetworkEvent.ServerConnectionFromClientEvent(manager));
     }
 
@@ -615,14 +539,12 @@ public class FMLCommonHandler
      * Process initial Handshake packet, kicks players from the server if they are connecting while we are starting up.
      * Also verifies the client has the FML marker.
      *
-     * @param packet Handshake Packet
+     * @param packet  Handshake Packet
      * @param manager Network connection
      * @return True to allow connection, otherwise False.
      */
-    public boolean handleServerHandshake(C00Handshake packet, NetworkManager manager)
-    {
-        if (!shouldAllowPlayerLogins())
-        {
+    public boolean handleServerHandshake(C00Handshake packet, NetworkManager manager) {
+        if (!shouldAllowPlayerLogins()) {
             TextComponentString text = new TextComponentString(Message.getString("forge.fmlcommonhandler.hsh.1"));
             FMLLog.log.info(Message.getFormatString("forge.fmlcommonhandler.hsh.2", new Object[]{text.getUnformattedText()}));
             manager.sendPacket(new SPacketDisconnect(text));
@@ -630,8 +552,7 @@ public class FMLCommonHandler
             return false;
         }
 
-        if (packet.getRequestedState() == EnumConnectionState.LOGIN && (!NetworkRegistry.INSTANCE.isVanillaAccepted(Side.CLIENT) && !packet.hasFMLMarker()))
-        {
+        if (packet.getRequestedState() == EnumConnectionState.LOGIN && (!NetworkRegistry.INSTANCE.isVanillaAccepted(Side.CLIENT) && !packet.hasFMLMarker())) {
             manager.setConnectionState(EnumConnectionState.LOGIN);
             TextComponentString text = new TextComponentString(Message.getString("forge.fmlcommonhandler.hsh.3"));
             Collection<String> modNames = NetworkRegistry.INSTANCE.getRequiredMods(Side.CLIENT);
@@ -645,8 +566,7 @@ public class FMLCommonHandler
         return true;
     }
 
-    public void processWindowMessages()
-    {
+    public void processWindowMessages() {
         if (sidedDelegate == null) return;
         sidedDelegate.processWindowMessages();
     }
@@ -658,46 +578,26 @@ public class FMLCommonHandler
      * @param exitCode The exit code
      * @param hardExit Perform a halt instead of an exit (only use when the world is unsavable) - read the warnings at {@link Runtime#halt(int)}
      */
-    public void exitJava(int exitCode, boolean hardExit)
-    {
+    public void exitJava(int exitCode, boolean hardExit) {
         FMLLog.log.info("Java has been asked to exit (code {})", exitCode);
-        if (hardExit)
-        {
+        if (hardExit) {
             FMLLog.log.info("This is an abortive exit and could cause world corruption or other things");
         }
         StackTraceElement[] stack = Thread.currentThread().getStackTrace();
         FMLLog.log.info("Exit trace:");
         //The first 2 elements are Thread#getStackTrace and FMLCommonHandler#exitJava and aren't relevant
-        for (int i = 2; i < stack.length; i++)
-        {
+        for (int i = 2; i < stack.length; i++) {
             FMLLog.log.info("\t{}", stack[i]);
         }
-        if (hardExit)
-        {
+        if (hardExit) {
             Runtime.getRuntime().halt(exitCode);
-        }
-        else
-        {
+        } else {
             Runtime.getRuntime().exit(exitCode);
         }
     }
 
-    public IThreadListener getWorldThread(INetHandler net)
-    {
+    public IThreadListener getWorldThread(INetHandler net) {
         return sidedDelegate.getWorldThread(net);
-    }
-
-    public static void callFuture(FutureTask<?> task)
-    {
-        try
-        {
-            task.run();
-            task.get(); // Forces the exception to be thrown if any
-        }
-        catch (InterruptedException | ExecutionException e)
-        {
-            FMLLog.log.fatal("Exception caught executing FutureTask: {}", e.toString(), e);
-        }
     }
 
     /**
@@ -706,23 +606,19 @@ public class FMLCommonHandler
      * The Marker is 'PARSE_ESCAPES' by itself on a line starting with '#' as such:
      * #PARSE_ESCAPES
      *
-     * @param table The Map to load each key/value pair into.
+     * @param table       The Map to load each key/value pair into.
      * @param inputstream Input stream containing the lang file.
      * @return A new InputStream that vanilla uses to load normal Lang files, Null if this is a 'enhanced' file and loading is done.
      */
     @Nullable
-    public InputStream loadLanguage(Map<String, String> table, InputStream inputstream) throws IOException
-    {
+    public InputStream loadLanguage(Map<String, String> table, InputStream inputstream) throws IOException {
         byte[] data = IOUtils.toByteArray(inputstream);
 
         boolean isEnhanced = false;
-        for (String line : IOUtils.readLines(new ByteArrayInputStream(data), StandardCharsets.UTF_8))
-        {
-            if (!line.isEmpty() && line.charAt(0) == '#')
-            {
+        for (String line : IOUtils.readLines(new ByteArrayInputStream(data), StandardCharsets.UTF_8)) {
+            if (!line.isEmpty() && line.charAt(0) == '#') {
                 line = line.substring(1).trim();
-                if (line.equals("PARSE_ESCAPES"))
-                {
+                if (line.equals("PARSE_ESCAPES")) {
                     isEnhanced = true;
                     break;
                 }
@@ -734,15 +630,14 @@ public class FMLCommonHandler
 
         Properties props = new Properties();
         props.load(new InputStreamReader(new ByteArrayInputStream(data), StandardCharsets.UTF_8));
-        for (Entry<Object, Object> e : props.entrySet())
-        {
-            table.put((String)e.getKey(), (String)e.getValue());
+        for (Entry<Object, Object> e : props.entrySet()) {
+            table.put((String) e.getKey(), (String) e.getValue());
         }
         props.clear();
         return null;
     }
-    public String stripSpecialChars(String message)
-    {
+
+    public String stripSpecialChars(String message) {
         return sidedDelegate != null ? sidedDelegate.stripSpecialChars(message) : message;
     }
 
@@ -750,17 +645,18 @@ public class FMLCommonHandler
         sidedDelegate.reloadRenderers();
     }
 
-    public void fireSidedRegistryEvents()
-    {
+    public void fireSidedRegistryEvents() {
         sidedDelegate.fireSidedRegistryEvents();
     }
 
-    public CompoundDataFixer getDataFixer()
-    {
-        return (CompoundDataFixer)sidedDelegate.getDataFixer();
+    public CompoundDataFixer getDataFixer() {
+        return (CompoundDataFixer) sidedDelegate.getDataFixer();
     }
 
-    public boolean isDisplayVSyncForced() { return sidedDelegate.isDisplayVSyncForced(); }
+    public boolean isDisplayVSyncForced() {
+        return sidedDelegate.isDisplayVSyncForced();
+    }
+
     public void resetClientRecipeBook() {
         this.sidedDelegate.resetClientRecipeBook();
     }
@@ -769,8 +665,7 @@ public class FMLCommonHandler
         this.sidedDelegate.reloadSearchTrees();
     }
 
-    public void reloadCreativeSettings()
-    {
+    public void reloadCreativeSettings() {
         this.sidedDelegate.reloadCreativeSettings();
     }
 }

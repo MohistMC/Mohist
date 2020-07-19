@@ -22,7 +22,7 @@ public interface HelpMap {
      *
      * @param topicName The help topic name to look up.
      * @return A {@link HelpTopic} object matching the topic name or null if
-     *     none can be found.
+     * none can be found.
      */
     public HelpTopic getHelpTopic(String topicName);
 
@@ -56,12 +56,12 @@ public interface HelpMap {
      * commandClass} base class.
      *
      * @param commandClass The class for which the custom HelpTopicFactory
-     *     applies. Must derive from either {@link org.bukkit.command.Command}
-     *     or {@link org.bukkit.command.CommandExecutor}.
-     * @param factory The {@link HelpTopicFactory} implementation to associate
-     *     with the {@code commandClass}.
+     *                     applies. Must derive from either {@link org.bukkit.command.Command}
+     *                     or {@link org.bukkit.command.CommandExecutor}.
+     * @param factory      The {@link HelpTopicFactory} implementation to associate
+     *                     with the {@code commandClass}.
      * @throws IllegalArgumentException Thrown if {@code commandClass} does
-     *     not derive from a legal base class.
+     *                                  not derive from a legal base class.
      */
     public void registerHelpTopicFactory(Class<?> commandClass, HelpTopicFactory<?> factory);
 

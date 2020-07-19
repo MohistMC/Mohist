@@ -2,6 +2,7 @@ package org.bukkit.event.enchantment;
 
 import java.util.HashMap;
 import java.util.Map;
+
 import org.bukkit.block.Block;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;

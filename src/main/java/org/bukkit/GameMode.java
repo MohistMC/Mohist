@@ -1,7 +1,9 @@
 package org.bukkit;
 
 import com.google.common.collect.Maps;
+
 import java.util.Map;
+
 import org.bukkit.entity.HumanEntity;
 
 /**
@@ -26,8 +28,8 @@ public enum GameMode {
     ADVENTURE(2),
 
     /**
-     * Spectator mode cannot interact with the world in anyway and is 
-     * invisible to normal players. This grants the player the 
+     * Spectator mode cannot interact with the world in anyway and is
+     * invisible to normal players. This grants the player the
      * ability to no-clip through the world.
      */
     SPECTATOR(3);
@@ -51,7 +53,7 @@ public enum GameMode {
      *
      * @param value Value to check
      * @return Associative {@link GameMode} with the given value, or null if
-     *     it doesn't exist
+     * it doesn't exist
      * @deprecated Magic value
      */
 

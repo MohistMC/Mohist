@@ -1,6 +1,7 @@
 package org.spigotmc;
 
 import gnu.trove.map.hash.TCustomHashMap;
+
 import java.util.Map;
 
 public class CaseInsensitiveMap<V> extends TCustomHashMap<String, V> {

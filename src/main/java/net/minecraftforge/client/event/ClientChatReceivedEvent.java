@@ -25,28 +25,24 @@ import net.minecraftforge.fml.common.eventhandler.Cancelable;
 import net.minecraftforge.fml.common.eventhandler.Event;
 
 @Cancelable
-public class ClientChatReceivedEvent extends Event
-{
-    private ITextComponent message;
+public class ClientChatReceivedEvent extends Event {
     private final ChatType type;
-    public ClientChatReceivedEvent(ChatType type, ITextComponent message)
-    {
+    private ITextComponent message;
+
+    public ClientChatReceivedEvent(ChatType type, ITextComponent message) {
         this.type = type;
         this.setMessage(message);
     }
 
-    public ITextComponent getMessage()
-    {
+    public ITextComponent getMessage() {
         return message;
     }
 
-    public void setMessage(ITextComponent message)
-    {
+    public void setMessage(ITextComponent message) {
         this.message = message;
     }
 
-    public ChatType getType()
-    {
+    public ChatType getType() {
         return type;
     }
 }

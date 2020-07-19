@@ -2,7 +2,9 @@ package org.bukkit.craftbukkit.v1_12_R1.inventory;
 
 import com.google.common.base.Objects;
 import com.google.common.collect.ImmutableMap;
+
 import java.util.Map;
+
 import net.minecraft.block.BlockJukebox;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;

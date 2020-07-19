@@ -22,32 +22,27 @@ package net.minecraftforge.event.entity.player;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
 
-public class PlayerContainerEvent extends PlayerEvent
-{
+public class PlayerContainerEvent extends PlayerEvent {
     private final Container container;
-    public PlayerContainerEvent(EntityPlayer player, Container container)
-    {
+
+    public PlayerContainerEvent(EntityPlayer player, Container container) {
         super(player);
         this.container = container;
     }
 
-    public static class Open extends PlayerContainerEvent
-    {
-        public Open(EntityPlayer player, Container container)
-        {
-            super(player, container);
-        }
+    public Container getContainer() {
+        return container;
     }
-    public static class Close extends PlayerContainerEvent
-    {
-        public Close(EntityPlayer player, Container container)
-        {
+
+    public static class Open extends PlayerContainerEvent {
+        public Open(EntityPlayer player, Container container) {
             super(player, container);
         }
     }
 
-    public Container getContainer()
-    {
-        return container;
+    public static class Close extends PlayerContainerEvent {
+        public Close(EntityPlayer player, Container container) {
+            super(player, container);
+        }
     }
 }

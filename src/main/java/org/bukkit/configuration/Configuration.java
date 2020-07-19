@@ -16,7 +16,7 @@ public interface Configuration extends ConfigurationSection {
      * If value is null, the value will be removed from the default
      * Configuration source.
      *
-     * @param path Path of the value to set.
+     * @param path  Path of the value to set.
      * @param value Value to set the default to.
      * @throws IllegalArgumentException Thrown if path is null.
      */

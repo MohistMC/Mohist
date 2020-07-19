@@ -1,7 +1,9 @@
 package org.bukkit.craftbukkit.v1_12_R1.entity;
 
 import com.google.common.base.Preconditions;
+
 import java.util.Set;
+
 import net.minecraft.block.BlockAnvil;
 import net.minecraft.block.BlockWorkbench;
 import net.minecraft.entity.Entity;
@@ -320,7 +322,7 @@ public class CraftHumanEntity extends CraftLivingEntity implements HumanEntity {
         if (windowType.equals("minecraft:crafting_table")
                 || windowType.equals("minecraft:anvil")
                 || windowType.equals("minecraft:enchanting_table")
-                ) {
+        ) {
             size = 0;
         }
 

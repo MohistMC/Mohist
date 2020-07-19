@@ -3,6 +3,7 @@ package org.bukkit.entity;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
+
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.attribute.Attributable;
@@ -28,7 +29,7 @@ public interface LivingEntity extends Attributable, Entity, Damageable, Projecti
      * Gets the height of the living entity's eyes above its Location.
      *
      * @param ignorePose if set to true, the effects of pose changes, eg
-     *     sneaking and gliding will be ignored
+     *                   sneaking and gliding will be ignored
      * @return height of the living entity's eyes above its location
      */
     public double getEyeHeight(boolean ignorePose);
@@ -47,11 +48,11 @@ public interface LivingEntity extends Attributable, Entity, Damageable, Projecti
      * target inclusive.
      *
      * @param transparent HashSet containing all transparent block Materials (set to
-     *     null for only air)
+     *                    null for only air)
      * @param maxDistance this is the maximum distance to scan (may be limited
-     *     by server by at least 100 blocks, no less)
+     *                    by server by at least 100 blocks, no less)
      * @return list containing all blocks along the living entity's line of
-     *     sight
+     * sight
      */
     public List<Block> getLineOfSight(Set<Material> transparent, int maxDistance);
 
@@ -59,9 +60,9 @@ public interface LivingEntity extends Attributable, Entity, Damageable, Projecti
      * Gets the block that the living entity has targeted.
      *
      * @param transparent HashSet containing all transparent block Materials (set to
-     *     null for only air)
+     *                    null for only air)
      * @param maxDistance this is the maximum distance to scan (may be limited
-     *     by server by at least 100 blocks, no less)
+     *                    by server by at least 100 blocks, no less)
      * @return block that the living entity has targeted
      */
     public Block getTargetBlock(Set<Material> transparent, int maxDistance);
@@ -72,11 +73,11 @@ public interface LivingEntity extends Attributable, Entity, Damageable, Projecti
      * The target block will be the last block in the list.
      *
      * @param transparent HashSet containing all transparent block Materials (set to
-     *     null for only air)
+     *                    null for only air)
      * @param maxDistance this is the maximum distance to scan. This may be
-     *     further limited by the server, but never to less than 100 blocks
+     *                    further limited by the server, but never to less than 100 blocks
      * @return list containing the last 2 blocks along the living entity's
-     *     line of sight
+     * line of sight
      */
     public List<Block> getLastTwoTargetBlocks(Set<Material> transparent, int maxDistance);
 
@@ -185,7 +186,7 @@ public interface LivingEntity extends Attributable, Entity, Damageable, Projecti
      * PotionEffectType}.
      *
      * @param effect PotionEffect to be added
-     * @param force whether conflicting effects should be removed
+     * @param force  whether conflicting effects should be removed
      * @return whether the effect could be added
      */
     public boolean addPotionEffect(PotionEffect effect, boolean force);
@@ -311,6 +312,7 @@ public interface LivingEntity extends Attributable, Entity, Damageable, Projecti
 
     /**
      * Checks to see if an entity is gliding, such as using an Elytra.
+     *
      * @return True if this entity is gliding.
      */
     public boolean isGliding();
@@ -319,6 +321,7 @@ public interface LivingEntity extends Attributable, Entity, Damageable, Projecti
      * Makes entity start or stop gliding. This will work even if an Elytra
      * is not equipped, but will be reverted by the server immediately after
      * unless an event-cancelling mechanism is put in place.
+     *
      * @param gliding True if the entity is gliding.
      */
     public void setGliding(boolean gliding);

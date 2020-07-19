@@ -5,11 +5,13 @@ import com.destroystokyo.paper.event.executor.StaticMethodHandleEventExecutor;
 import com.destroystokyo.paper.event.executor.asm.ASMEventExecutorGenerator;
 import com.destroystokyo.paper.event.executor.asm.ClassDefiner;
 import com.google.common.base.Preconditions;
+
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.function.Function;
+
 import org.bukkit.event.Event;
 import org.bukkit.event.EventException;
 import org.bukkit.event.Listener;

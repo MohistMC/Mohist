@@ -1,6 +1,7 @@
 package org.bukkit.craftbukkit.v1_12_R1.inventory;
 
 import java.util.ListIterator;
+
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 

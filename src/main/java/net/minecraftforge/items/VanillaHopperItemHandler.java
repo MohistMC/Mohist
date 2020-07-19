@@ -20,39 +20,32 @@
 package net.minecraftforge.items;
 
 import javax.annotation.Nonnull;
+
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntityHopper;
 import net.minecraftforge.items.wrapper.InvWrapper;
 
-public class VanillaHopperItemHandler extends InvWrapper
-{
+public class VanillaHopperItemHandler extends InvWrapper {
     private final TileEntityHopper hopper;
 
-    public VanillaHopperItemHandler(TileEntityHopper hopper)
-    {
+    public VanillaHopperItemHandler(TileEntityHopper hopper) {
         super(hopper);
         this.hopper = hopper;
     }
 
     @Override
     @Nonnull
-    public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate)
-    {
-        if (simulate)
-        {
+    public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate) {
+        if (simulate) {
             return super.insertItem(slot, stack, simulate);
-        }
-        else
-        {
+        } else {
             boolean wasEmpty = getInv().isEmpty();
 
             int originalStackSize = stack.getCount();
             stack = super.insertItem(slot, stack, simulate);
 
-            if (wasEmpty && originalStackSize > stack.getCount())
-            {
-                if (!hopper.mayTransfer())
-                {
+            if (wasEmpty && originalStackSize > stack.getCount()) {
+                if (!hopper.mayTransfer()) {
                     // This cooldown is always set to 8 in vanilla with one exception:
                     // Hopper -> Hopper transfer sets this cooldown to 7 when this hopper
                     // has not been updated as recently as the one pushing items into it.

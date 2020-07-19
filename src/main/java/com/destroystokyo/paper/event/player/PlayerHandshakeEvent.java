@@ -1,6 +1,7 @@
 package com.destroystokyo.paper.event.player;
 
 import java.util.UUID;
+
 import org.apache.commons.lang.Validate;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
@@ -30,7 +31,7 @@ public class PlayerHandshakeEvent extends Event implements Cancellable {
      * Creates a new {@link PlayerHandshakeEvent}.
      *
      * @param originalHandshake the original handshake string
-     * @param cancelled if this event is enabled
+     * @param cancelled         if this event is enabled
      */
     public PlayerHandshakeEvent(String originalHandshake, boolean cancelled) {
         this.originalHandshake = originalHandshake;

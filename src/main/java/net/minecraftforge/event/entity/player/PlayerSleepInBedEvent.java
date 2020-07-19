@@ -39,29 +39,24 @@ import net.minecraftforge.fml.common.eventhandler.Cancelable;
  * <br>
  * This event is fired on the {@link MinecraftForge#EVENT_BUS}.
  **/
-public class PlayerSleepInBedEvent extends PlayerEvent
-{
-    private SleepResult result = null;
+public class PlayerSleepInBedEvent extends PlayerEvent {
     private final BlockPos pos;
+    private SleepResult result = null;
 
-    public PlayerSleepInBedEvent(EntityPlayer player, BlockPos pos)
-    {
+    public PlayerSleepInBedEvent(EntityPlayer player, BlockPos pos) {
         super(player);
         this.pos = pos;
     }
 
-    public SleepResult getResultStatus()
-    {
+    public SleepResult getResultStatus() {
         return result;
     }
 
-    public void setResult(SleepResult result)
-    {
+    public void setResult(SleepResult result) {
         this.result = result;
     }
 
-    public BlockPos getPos()
-    {
+    public BlockPos getPos() {
         return pos;
     }
 }

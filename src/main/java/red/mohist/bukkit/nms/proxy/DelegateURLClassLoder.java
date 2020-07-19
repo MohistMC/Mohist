@@ -9,6 +9,7 @@ import java.security.CodeSigner;
 import java.security.CodeSource;
 import java.util.HashMap;
 import java.util.Map;
+
 import net.minecraft.launchwrapper.LaunchClassLoader;
 import net.minecraft.server.MinecraftServer;
 import org.apache.commons.io.IOUtils;
@@ -18,7 +19,6 @@ import org.bukkit.plugin.java.JavaPlugin;
 import red.mohist.bukkit.nms.utils.RemapUtils;
 
 /**
- *
  * @author pyz
  * @date 2019/7/1 8:41 PM
  */

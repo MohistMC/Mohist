@@ -2,6 +2,7 @@ package org.bukkit.configuration.file;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
+
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.yaml.snakeyaml.constructor.SafeConstructor;
 import org.yaml.snakeyaml.error.YAMLException;

@@ -3,6 +3,7 @@ package red.mohist.bukkit.nms.remappers;
 import com.google.common.base.Joiner;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.ImmutableList;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -13,12 +14,12 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import net.md_5.specialsource.InheritanceMap;
 import net.md_5.specialsource.JarRemapper;
 import net.md_5.specialsource.provider.InheritanceProvider;
 
 /**
- *
  * @author pyz
  * @date 2019/7/4 9:44 AM
  */

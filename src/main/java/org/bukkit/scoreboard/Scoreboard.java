@@ -1,6 +1,7 @@
 package org.bukkit.scoreboard;
 
 import java.util.Set;
+
 import org.bukkit.OfflinePlayer;
 
 /**
@@ -11,13 +12,13 @@ public interface Scoreboard {
     /**
      * Registers an Objective on this Scoreboard
      *
-     * @param name Name of the Objective
+     * @param name     Name of the Objective
      * @param criteria Criteria for the Objective
      * @return The registered Objective
      * @throws IllegalArgumentException if name is null
      * @throws IllegalArgumentException if criteria is null
      * @throws IllegalArgumentException if an objective by that name already
-     *     exists
+     *                                  exists
      */
     Objective registerNewObjective(String name, String criteria) throws IllegalArgumentException;
 
@@ -51,7 +52,7 @@ public interface Scoreboard {
      *
      * @param slot The DisplaySlot
      * @return the Objective currently displayed or null if nothing is
-     *     displayed in that DisplaySlot
+     * displayed in that DisplaySlot
      * @throws IllegalArgumentException if slot is null
      */
     Objective getObjective(DisplaySlot slot) throws IllegalArgumentException;
@@ -62,8 +63,8 @@ public interface Scoreboard {
      * @param player the player whose scores are being retrieved
      * @return immutable set of all scores tracked for the player
      * @throws IllegalArgumentException if player is null
-     * @deprecated Scoreboards can contain entries that aren't players
      * @see #getScores(String)
+     * @deprecated Scoreboards can contain entries that aren't players
      */
 
     Set<Score> getScores(OfflinePlayer player) throws IllegalArgumentException;
@@ -82,8 +83,8 @@ public interface Scoreboard {
      *
      * @param player the player to drop all current scores for
      * @throws IllegalArgumentException if player is null
-     * @deprecated Scoreboards can contain entries that aren't players
      * @see #resetScores(String)
+     * @deprecated Scoreboards can contain entries that aren't players
      */
 
     void resetScores(OfflinePlayer player) throws IllegalArgumentException;
@@ -102,8 +103,8 @@ public interface Scoreboard {
      * @param player the player to search for
      * @return the player's Team or null if the player is not on a team
      * @throws IllegalArgumentException if player is null
-     * @deprecated Scoreboards can contain entries that aren't players
      * @see #getEntryTeam(String)
+     * @deprecated Scoreboards can contain entries that aren't players
      */
 
     Team getPlayerTeam(OfflinePlayer player) throws IllegalArgumentException;
@@ -147,8 +148,8 @@ public interface Scoreboard {
      * Gets all players tracked by this Scoreboard
      *
      * @return immutable set of all tracked players
-     * @deprecated Scoreboards can contain entries that aren't players
      * @see #getEntries()
+     * @deprecated Scoreboards can contain entries that aren't players
      */
 
     Set<OfflinePlayer> getPlayers();

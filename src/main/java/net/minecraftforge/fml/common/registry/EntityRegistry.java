@@ -24,10 +24,12 @@ import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.google.common.collect.ListMultimap;
 import com.google.common.collect.Maps;
+
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 import javax.annotation.Nullable;
+
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityList;
 import net.minecraft.entity.EntityList.EntityEggInfo;
@@ -45,138 +47,32 @@ import net.minecraftforge.fml.common.ModContainer;
 import net.minecraftforge.fml.common.network.internal.FMLMessage.EntitySpawnMessage;
 import net.minecraftforge.registries.GameData;
 
-public class EntityRegistry
-{
-    public class EntityRegistration
-    {
-        @Deprecated
-        private Class<? extends Entity> entityClass;
-        private Function<World, ? extends Entity> factory;
-        private ModContainer container;
-        private ResourceLocation regName;
-        private String entityName;
-        private int modId;
-        private int trackingRange;
-        private int updateFrequency;
-        private boolean sendsVelocityUpdates;
-        private Function<EntitySpawnMessage, Entity> customSpawnCallback;
-        private boolean usesVanillaSpawning;
-
-        @Deprecated //1.13
-        public EntityRegistration(ModContainer mc, ResourceLocation registryName, Class<? extends Entity> entityClass, String entityName, int id, int trackingRange, int updateFrequency, boolean sendsVelocityUpdates)
-        {
-            this(mc, registryName, entityClass, entityName, id, trackingRange, updateFrequency, sendsVelocityUpdates, null);
-        }
-
-        public EntityRegistration(ModContainer mc, ResourceLocation registryName, Class<? extends Entity> entityClass, String entityName, int id, int trackingRange, int updateFrequency, boolean sendsVelocityUpdates, Function<World, ? extends Entity> factory)
-        {
-            this.container = mc;
-            this.regName = registryName;
-            this.entityClass = entityClass;
-            this.entityName = entityName;
-            this.modId = id;
-            this.trackingRange = trackingRange;
-            this.updateFrequency = updateFrequency;
-            this.sendsVelocityUpdates = sendsVelocityUpdates;
-            this.factory = factory != null ? factory :
-                new EntityEntryBuilder.ConstructorFactory<Entity>(entityClass) {
-                    @Override
-                    protected String describeEntity() {
-                        return String.valueOf(EntityRegistration.this.getRegistryName());
-                    }
-                };
-            if (EntityList.REGISTRY.getNameForObject(entityClass) == null && id >= 0) {
-                EntityList.REGISTRY.register(id, registryName, entityClass);
-            }
-        }
-        public ResourceLocation getRegistryName()
-        {
-            return regName;
-        }
-        @Deprecated //Used only for creating a new instance in EntitySpawnHandler, use newInstance(world) instead.
-        public Class<? extends Entity> getEntityClass()
-        {
-            return entityClass;
-        }
-        public Entity newInstance(World world)
-        {
-            return this.factory.apply(world);
-        }
-        public ModContainer getContainer()
-        {
-            return container;
-        }
-        public String getEntityName()
-        {
-            return entityName;
-        }
-        public int getModEntityId()
-        {
-            return modId;
-        }
-        public int getTrackingRange()
-        {
-            return trackingRange;
-        }
-        public int getUpdateFrequency()
-        {
-            return updateFrequency;
-        }
-        public boolean sendsVelocityUpdates()
-        {
-            return sendsVelocityUpdates;
-        }
-
-        public boolean usesVanillaSpawning()
-        {
-            return usesVanillaSpawning;
-        }
-        public boolean hasCustomSpawning()
-        {
-            return customSpawnCallback != null;
-        }
-        public Entity doCustomSpawning(EntitySpawnMessage spawnMsg) throws Exception
-        {
-            return customSpawnCallback.apply(spawnMsg);
-        }
-        public void setCustomSpawning(Function<EntitySpawnMessage, Entity> callable, boolean usesVanillaSpawning)
-        {
-            this.customSpawnCallback = callable;
-            this.usesVanillaSpawning = usesVanillaSpawning;
-        }
-    }
-
+public class EntityRegistry {
     private static final EntityRegistry INSTANCE = new EntityRegistry();
-
+    public static Map<Class<? extends Entity>, String> entityTypeMap = Maps.newHashMap(); // used by CraftCustomEntity
+    public static Map<String, Class<? extends Entity>> entityClassMap = Maps.newHashMap(); // user by CraftWorld
     private final ListMultimap<ModContainer, EntityRegistration> entityRegistrations = ArrayListMultimap.create();
     private final BiMap<Class<? extends Entity>, EntityRegistration> entityClassRegistrations = HashBiMap.create();
     private final Map<Class<? extends Entity>, EntityEntry> entityClassEntries = GameData.getEntityClassMap();
-
-    public static Map<Class<? extends Entity>, String> entityTypeMap = Maps.newHashMap(); // used by CraftCustomEntity
-    public static Map<String, Class<? extends Entity>> entityClassMap = Maps.newHashMap(); // user by CraftWorld
-
-    public static EntityRegistry instance()
-    {
-        return INSTANCE;
+    private EntityRegistry() {
     }
 
-    private EntityRegistry()
-    {
+    public static EntityRegistry instance() {
+        return INSTANCE;
     }
 
     /**
      * Register the mod entity type with FML
-
-     * @param entityClass The entity class
-     * @param entityName A unique name for the entity
-     * @param id A mod specific ID for the entity
-     * @param mod The mod
-     * @param trackingRange The range at which MC will send tracking updates
-     * @param updateFrequency The frequency of tracking updates
+     *
+     * @param entityClass          The entity class
+     * @param entityName           A unique name for the entity
+     * @param id                   A mod specific ID for the entity
+     * @param mod                  The mod
+     * @param trackingRange        The range at which MC will send tracking updates
+     * @param updateFrequency      The frequency of tracking updates
      * @param sendsVelocityUpdates Whether to send velocity information packets as well
      */
-    public static void registerModEntity(ResourceLocation registryName, Class<? extends Entity> entityClass, String entityName, int id, Object mod, int trackingRange, int updateFrequency, boolean sendsVelocityUpdates)
-    {
+    public static void registerModEntity(ResourceLocation registryName, Class<? extends Entity> entityClass, String entityName, int id, Object mod, int trackingRange, int updateFrequency, boolean sendsVelocityUpdates) {
         instance().doModEntityRegistration(registryName, entityClass, entityName, id, mod, trackingRange, updateFrequency, sendsVelocityUpdates);
         registerBukkitType(entityClass, entityName);
     }
@@ -184,48 +80,21 @@ public class EntityRegistry
     /**
      * Register the mod entity type with FML
      * This will also register a spawn egg.
-
-     * @param entityClass The entity class
-     * @param entityName A unique name for the entity
-     * @param id A mod specific ID for the entity
-     * @param mod The mod
-     * @param trackingRange The range at which MC will send tracking updates
-     * @param updateFrequency The frequency of tracking updates
+     *
+     * @param entityClass          The entity class
+     * @param entityName           A unique name for the entity
+     * @param id                   A mod specific ID for the entity
+     * @param mod                  The mod
+     * @param trackingRange        The range at which MC will send tracking updates
+     * @param updateFrequency      The frequency of tracking updates
      * @param sendsVelocityUpdates Whether to send velocity information packets as well
-     * @param eggPrimary Primary egg color
-     * @param eggSecondary Secondary egg color
+     * @param eggPrimary           Primary egg color
+     * @param eggSecondary         Secondary egg color
      */
-    public static void registerModEntity(ResourceLocation registryName, Class<? extends Entity> entityClass, String entityName, int id, Object mod, int trackingRange, int updateFrequency, boolean sendsVelocityUpdates, int eggPrimary, int eggSecondary)
-    {
+    public static void registerModEntity(ResourceLocation registryName, Class<? extends Entity> entityClass, String entityName, int id, Object mod, int trackingRange, int updateFrequency, boolean sendsVelocityUpdates, int eggPrimary, int eggSecondary) {
         instance().doModEntityRegistration(registryName, entityClass, entityName, id, mod, trackingRange, updateFrequency, sendsVelocityUpdates);
         EntityRegistry.registerEgg(registryName, eggPrimary, eggSecondary);
         registerBukkitType(entityClass, entityName);
-    }
-
-    private void doModEntityRegistration(ResourceLocation registryName, Class<? extends Entity> entityClass, String entityName, int id, Object mod, int trackingRange, int updateFrequency, boolean sendsVelocityUpdates)
-    {
-        ModContainer mc = FMLCommonHandler.instance().findContainerFor(mod);
-        EntityRegistration er = new EntityRegistration(mc, registryName, entityClass, entityName, id, trackingRange, updateFrequency, sendsVelocityUpdates);
-        try
-        {
-            entityClassRegistrations.put(entityClass, er);
-            if (!ForgeRegistries.ENTITIES.containsKey(registryName))
-            {
-                EntityEntry entry = new EntityEntry(entityClass, entityName).setRegistryName(registryName);
-                ForgeRegistries.ENTITIES.register(entry);
-                FMLLog.log.trace("Automatically registered mod {} entity {} as {}", mc.getModId(), entityName, entry.getRegistryName());
-            }
-            else
-            {
-                FMLLog.log.debug("Skipping automatic mod {} entity registration for already registered entry {} class {}", mc.getModId(), registryName, entityClass.getName());
-            }
-        }
-        catch (IllegalArgumentException e)
-        {
-            FMLLog.log.warn("The mod {} tried to register the entity (registry,name,class) ({},{},{}) one or both of which are already registered", mc.getModId(), registryName, entityName, entityClass.getName(), e);
-            return;
-        }
-        entityRegistrations.put(mc, er);
     }
 
     /**
@@ -235,16 +104,13 @@ public class EntityRegistry
      * Once registered mob eggs can be created by using minecraft:spawn_egg with NBT entry 'entity_name' with
      * value of the name this class is registered in the classToStringMapping with.
      *
-     * @param name The entity ResourceLocation
-     * @param primary Primary egg color
+     * @param name      The entity ResourceLocation
+     * @param primary   Primary egg color
      * @param secondary Secondary egg color
-     *
      */
-    public static void registerEgg(ResourceLocation name, int primary, int secondary)
-    {
+    public static void registerEgg(ResourceLocation name, int primary, int secondary) {
         EntityEntry entry = ForgeRegistries.ENTITIES.getValue(name);
-        if (entry == null)
-        {
+        if (entry == null) {
             FMLLog.bigWarning("Attempted to registry a entity egg for entity ({}) that is not in the Entity Registry", name);
             return;
         }
@@ -253,25 +119,22 @@ public class EntityRegistry
 
     /**
      * Add a spawn entry for the supplied entity in the supplied {@link Biome} list
-     * @param entityClass Entity class added
-     * @param weightedProb Probability
-     * @param min Min spawn count
-     * @param max Max spawn count
+     *
+     * @param entityClass    Entity class added
+     * @param weightedProb   Probability
+     * @param min            Min spawn count
+     * @param max            Max spawn count
      * @param typeOfCreature Type of spawn
-     * @param biomes List of biomes
+     * @param biomes         List of biomes
      */
-    public static void addSpawn(Class <? extends EntityLiving > entityClass, int weightedProb, int min, int max, EnumCreatureType typeOfCreature, Biome... biomes)
-    {
-        for (Biome biome : biomes)
-        {
+    public static void addSpawn(Class<? extends EntityLiving> entityClass, int weightedProb, int min, int max, EnumCreatureType typeOfCreature, Biome... biomes) {
+        for (Biome biome : biomes) {
             List<SpawnListEntry> spawns = biome.getSpawnableList(typeOfCreature);
 
             boolean found = false;
-            for (SpawnListEntry entry : spawns)
-            {
+            for (SpawnListEntry entry : spawns) {
                 //Adjusting an existing spawn entry
-                if (entry.entityClass == entityClass)
-                {
+                if (entry.entityClass == entityClass) {
                     entry.itemWeight = weightedProb;
                     entry.minGroupCount = min;
                     entry.maxGroupCount = max;
@@ -287,112 +150,56 @@ public class EntityRegistry
 
     /**
      * Add a spawn entry for the supplied entity in the supplied {@link Biome} list
-     * @param entityName The entity name
-     * @param weightedProb Probability
-     * @param min Min spawn count
-     * @param max Max spawn count
+     *
+     * @param entityName     The entity name
+     * @param weightedProb   Probability
+     * @param min            Min spawn count
+     * @param max            Max spawn count
      * @param typeOfCreature type of spawn
-     * @param biomes List of biomes
+     * @param biomes         List of biomes
      */
     @SuppressWarnings("unchecked")
-    public static void addSpawn(String entityName, int weightedProb, int min, int max, EnumCreatureType typeOfCreature, Biome... biomes)
-    {
-        Class <? extends Entity > entityClazz = null;
+    public static void addSpawn(String entityName, int weightedProb, int min, int max, EnumCreatureType typeOfCreature, Biome... biomes) {
+        Class<? extends Entity> entityClazz = null;
 
-        if (EntityLiving.class.isAssignableFrom(entityClazz))
-        {
-            addSpawn((Class <? extends EntityLiving >) entityClazz, weightedProb, min, max, typeOfCreature, biomes);
+        if (EntityLiving.class.isAssignableFrom(entityClazz)) {
+            addSpawn((Class<? extends EntityLiving>) entityClazz, weightedProb, min, max, typeOfCreature, biomes);
         }
     }
 
     /**
      * Remove the spawn entry for the supplied entity
-     * @param entityClass The entity class
+     *
+     * @param entityClass    The entity class
      * @param typeOfCreature type of spawn
-     * @param biomes Biomes to remove from
+     * @param biomes         Biomes to remove from
      */
-    public static void removeSpawn(Class <? extends EntityLiving > entityClass, EnumCreatureType typeOfCreature, Biome... biomes)
-    {
-        for (Biome biome : biomes)
-        {
+    public static void removeSpawn(Class<? extends EntityLiving> entityClass, EnumCreatureType typeOfCreature, Biome... biomes) {
+        for (Biome biome : biomes) {
             biome.getSpawnableList(typeOfCreature).removeIf(entry -> entry.entityClass == entityClass);
         }
     }
 
     /**
      * Remove the spawn entry for the supplied entity
-     * @param entityName Name of entity being removed
+     *
+     * @param entityName     Name of entity being removed
      * @param typeOfCreature type of spawn
-     * @param biomes Biomes to remove from
+     * @param biomes         Biomes to remove from
      */
     @SuppressWarnings("unchecked")
-    public static void removeSpawn(String entityName, EnumCreatureType typeOfCreature, Biome... biomes)
-    {
-        Class <? extends Entity > entityClazz = null;
+    public static void removeSpawn(String entityName, EnumCreatureType typeOfCreature, Biome... biomes) {
+        Class<? extends Entity> entityClazz = null;
 
-        if (EntityLiving.class.isAssignableFrom(entityClazz))
-        {
-            removeSpawn((Class <? extends EntityLiving>) entityClazz, typeOfCreature, biomes);
+        if (EntityLiving.class.isAssignableFrom(entityClazz)) {
+            removeSpawn((Class<? extends EntityLiving>) entityClazz, typeOfCreature, biomes);
         }
-    }
-
-    @Nullable
-    public EntityRegistration lookupModSpawn(Class<? extends Entity> clazz, boolean keepLooking)
-    {
-        Class<?> localClazz = clazz;
-
-        do
-        {
-            EntityRegistration er = entityClassRegistrations.get(localClazz);
-            if (er != null)
-            {
-                return er;
-            }
-            localClazz = localClazz.getSuperclass();
-            keepLooking &= (!Object.class.equals(localClazz));
-        }
-        while (keepLooking);
-
-        return null;
-    }
-
-    @Nullable
-    public EntityRegistration lookupModSpawn(ModContainer mc, int modEntityId)
-    {
-        for (EntityRegistration er : entityRegistrations.get(mc))
-        {
-            if (er.getModEntityId() == modEntityId)
-            {
-                return er;
-            }
-        }
-        return null;
-    }
-
-    public boolean tryTrackingEntity(EntityTracker entityTracker, Entity entity)
-    {
-
-        EntityRegistration er = lookupModSpawn(entity.getClass(), true);
-        if (er != null)
-        {
-            entityTracker.track(entity, er.getTrackingRange(), er.getUpdateFrequency(), er.sendsVelocityUpdates());
-            return true;
-        }
-        return false;
     }
 
     //Helper function
     @Nullable
-    public static EntityEntry getEntry(Class<? extends Entity> entityClass)
-    {
+    public static EntityEntry getEntry(Class<? extends Entity> entityClass) {
         return instance().entityClassEntries.get(entityClass);
-    }
-
-    // This is an internal method - do not touch.
-    final void insert(final Class<? extends Entity> entity, final EntityRegistration registration)
-    {
-        this.entityClassRegistrations.put(entity, registration);
-        this.entityRegistrations.put(registration.container, registration);
     }
 
     private static void registerBukkitType(Class<? extends Entity> entityClass, String entityName) {
@@ -418,9 +225,165 @@ public class EntityRegistry
     }
 
     // used by CraftCustomEntity
-    public static String getCustomEntityTypeName(Class <? extends Entity > entityClass)
-    {
+    public static String getCustomEntityTypeName(Class<? extends Entity> entityClass) {
         return entityTypeMap.get(entityClass);
+    }
+
+    private void doModEntityRegistration(ResourceLocation registryName, Class<? extends Entity> entityClass, String entityName, int id, Object mod, int trackingRange, int updateFrequency, boolean sendsVelocityUpdates) {
+        ModContainer mc = FMLCommonHandler.instance().findContainerFor(mod);
+        EntityRegistration er = new EntityRegistration(mc, registryName, entityClass, entityName, id, trackingRange, updateFrequency, sendsVelocityUpdates);
+        try {
+            entityClassRegistrations.put(entityClass, er);
+            if (!ForgeRegistries.ENTITIES.containsKey(registryName)) {
+                EntityEntry entry = new EntityEntry(entityClass, entityName).setRegistryName(registryName);
+                ForgeRegistries.ENTITIES.register(entry);
+                FMLLog.log.trace("Automatically registered mod {} entity {} as {}", mc.getModId(), entityName, entry.getRegistryName());
+            } else {
+                FMLLog.log.debug("Skipping automatic mod {} entity registration for already registered entry {} class {}", mc.getModId(), registryName, entityClass.getName());
+            }
+        } catch (IllegalArgumentException e) {
+            FMLLog.log.warn("The mod {} tried to register the entity (registry,name,class) ({},{},{}) one or both of which are already registered", mc.getModId(), registryName, entityName, entityClass.getName(), e);
+            return;
+        }
+        entityRegistrations.put(mc, er);
+    }
+
+    @Nullable
+    public EntityRegistration lookupModSpawn(Class<? extends Entity> clazz, boolean keepLooking) {
+        Class<?> localClazz = clazz;
+
+        do {
+            EntityRegistration er = entityClassRegistrations.get(localClazz);
+            if (er != null) {
+                return er;
+            }
+            localClazz = localClazz.getSuperclass();
+            keepLooking &= (!Object.class.equals(localClazz));
+        }
+        while (keepLooking);
+
+        return null;
+    }
+
+    @Nullable
+    public EntityRegistration lookupModSpawn(ModContainer mc, int modEntityId) {
+        for (EntityRegistration er : entityRegistrations.get(mc)) {
+            if (er.getModEntityId() == modEntityId) {
+                return er;
+            }
+        }
+        return null;
+    }
+
+    public boolean tryTrackingEntity(EntityTracker entityTracker, Entity entity) {
+
+        EntityRegistration er = lookupModSpawn(entity.getClass(), true);
+        if (er != null) {
+            entityTracker.track(entity, er.getTrackingRange(), er.getUpdateFrequency(), er.sendsVelocityUpdates());
+            return true;
+        }
+        return false;
+    }
+
+    // This is an internal method - do not touch.
+    final void insert(final Class<? extends Entity> entity, final EntityRegistration registration) {
+        this.entityClassRegistrations.put(entity, registration);
+        this.entityRegistrations.put(registration.container, registration);
+    }
+
+    public class EntityRegistration {
+        @Deprecated
+        private Class<? extends Entity> entityClass;
+        private Function<World, ? extends Entity> factory;
+        private ModContainer container;
+        private ResourceLocation regName;
+        private String entityName;
+        private int modId;
+        private int trackingRange;
+        private int updateFrequency;
+        private boolean sendsVelocityUpdates;
+        private Function<EntitySpawnMessage, Entity> customSpawnCallback;
+        private boolean usesVanillaSpawning;
+
+        @Deprecated //1.13
+        public EntityRegistration(ModContainer mc, ResourceLocation registryName, Class<? extends Entity> entityClass, String entityName, int id, int trackingRange, int updateFrequency, boolean sendsVelocityUpdates) {
+            this(mc, registryName, entityClass, entityName, id, trackingRange, updateFrequency, sendsVelocityUpdates, null);
+        }
+
+        public EntityRegistration(ModContainer mc, ResourceLocation registryName, Class<? extends Entity> entityClass, String entityName, int id, int trackingRange, int updateFrequency, boolean sendsVelocityUpdates, Function<World, ? extends Entity> factory) {
+            this.container = mc;
+            this.regName = registryName;
+            this.entityClass = entityClass;
+            this.entityName = entityName;
+            this.modId = id;
+            this.trackingRange = trackingRange;
+            this.updateFrequency = updateFrequency;
+            this.sendsVelocityUpdates = sendsVelocityUpdates;
+            this.factory = factory != null ? factory :
+                    new EntityEntryBuilder.ConstructorFactory<Entity>(entityClass) {
+                        @Override
+                        protected String describeEntity() {
+                            return String.valueOf(EntityRegistration.this.getRegistryName());
+                        }
+                    };
+            if (EntityList.REGISTRY.getNameForObject(entityClass) == null && id >= 0) {
+                EntityList.REGISTRY.register(id, registryName, entityClass);
+            }
+        }
+
+        public ResourceLocation getRegistryName() {
+            return regName;
+        }
+
+        @Deprecated //Used only for creating a new instance in EntitySpawnHandler, use newInstance(world) instead.
+        public Class<? extends Entity> getEntityClass() {
+            return entityClass;
+        }
+
+        public Entity newInstance(World world) {
+            return this.factory.apply(world);
+        }
+
+        public ModContainer getContainer() {
+            return container;
+        }
+
+        public String getEntityName() {
+            return entityName;
+        }
+
+        public int getModEntityId() {
+            return modId;
+        }
+
+        public int getTrackingRange() {
+            return trackingRange;
+        }
+
+        public int getUpdateFrequency() {
+            return updateFrequency;
+        }
+
+        public boolean sendsVelocityUpdates() {
+            return sendsVelocityUpdates;
+        }
+
+        public boolean usesVanillaSpawning() {
+            return usesVanillaSpawning;
+        }
+
+        public boolean hasCustomSpawning() {
+            return customSpawnCallback != null;
+        }
+
+        public Entity doCustomSpawning(EntitySpawnMessage spawnMsg) throws Exception {
+            return customSpawnCallback.apply(spawnMsg);
+        }
+
+        public void setCustomSpawning(Function<EntitySpawnMessage, Entity> callable, boolean usesVanillaSpawning) {
+            this.customSpawnCallback = callable;
+            this.usesVanillaSpawning = usesVanillaSpawning;
+        }
     }
     // Cauldron end
 }

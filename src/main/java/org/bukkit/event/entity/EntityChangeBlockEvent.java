@@ -17,11 +17,10 @@ public class EntityChangeBlockEvent extends EntityEvent implements Cancellable {
     private boolean cancel;
 
     /**
-     *
-     * @param what the Entity causing the change
+     * @param what  the Entity causing the change
      * @param block the block (before the change)
-     * @param to the future material being changed to
-     * @param data the future block data
+     * @param to    the future material being changed to
+     * @param data  the future block data
      * @deprecated Magic value
      */
     public EntityChangeBlockEvent(final Entity what, final Block block, final Material to, final byte data) {

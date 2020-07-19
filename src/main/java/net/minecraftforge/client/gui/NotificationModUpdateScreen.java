@@ -34,8 +34,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 @SideOnly(Side.CLIENT)
-public class NotificationModUpdateScreen extends GuiScreen
-{
+public class NotificationModUpdateScreen extends GuiScreen {
 
     private static final ResourceLocation VERSION_CHECK_ICONS = new ResourceLocation(ForgeVersion.MOD_ID, "textures/gui/version_check_icons.png");
 
@@ -43,23 +42,24 @@ public class NotificationModUpdateScreen extends GuiScreen
     private Status showNotification = null;
     private boolean hasCheckedForUpdates = false;
 
-    public NotificationModUpdateScreen(GuiButton modButton)
-    {
+    public NotificationModUpdateScreen(GuiButton modButton) {
         this.modButton = modButton;
     }
 
+    public static NotificationModUpdateScreen init(GuiMainMenu guiMainMenu, GuiButton modButton) {
+        NotificationModUpdateScreen notificationModUpdateScreen = new NotificationModUpdateScreen(modButton);
+        notificationModUpdateScreen.setGuiSize(guiMainMenu.width, guiMainMenu.height);
+        notificationModUpdateScreen.initGui();
+        return notificationModUpdateScreen;
+    }
+
     @Override
-    public void initGui()
-    {
-        if (!hasCheckedForUpdates)
-        {
-            if (modButton != null)
-            {
-                for (ModContainer mod : Loader.instance().getModList())
-                {
+    public void initGui() {
+        if (!hasCheckedForUpdates) {
+            if (modButton != null) {
+                for (ModContainer mod : Loader.instance().getModList()) {
                     Status status = ForgeVersion.getResult(mod).status;
-                    if (status == Status.OUTDATED || status == Status.BETA_OUTDATED)
-                    {
+                    if (status == Status.OUTDATED || status == Status.BETA_OUTDATED) {
                         // TODO: Needs better visualization, maybe stacked icons
                         // drawn in a terrace-like pattern?
                         showNotification = Status.OUTDATED;
@@ -71,10 +71,8 @@ public class NotificationModUpdateScreen extends GuiScreen
     }
 
     @Override
-    public void drawScreen(int mouseX, int mouseY, float partialTicks)
-    {
-        if (showNotification == null || !showNotification.shouldDraw() || ForgeModContainer.disableVersionCheck)
-        {
+    public void drawScreen(int mouseX, int mouseY, float partialTicks) {
+        if (showNotification == null || !showNotification.shouldDraw() || ForgeModContainer.disableVersionCheck) {
             return;
         }
 
@@ -89,14 +87,6 @@ public class NotificationModUpdateScreen extends GuiScreen
 
         drawModalRectWithCustomSizedTexture(x + w - (h / 2 + 4), y + (h / 2 - 4), showNotification.getSheetOffset() * 8, (showNotification.isAnimated() && ((System.currentTimeMillis() / 800 & 1) == 1)) ? 8 : 0, 8, 8, 64, 16);
         GlStateManager.popMatrix();
-    }
-
-    public static NotificationModUpdateScreen init(GuiMainMenu guiMainMenu, GuiButton modButton)
-    {
-        NotificationModUpdateScreen notificationModUpdateScreen = new NotificationModUpdateScreen(modButton);
-        notificationModUpdateScreen.setGuiSize(guiMainMenu.width, guiMainMenu.height);
-        notificationModUpdateScreen.initGui();
-        return notificationModUpdateScreen;
     }
 
 }

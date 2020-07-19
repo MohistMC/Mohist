@@ -20,6 +20,7 @@
 package net.minecraftforge.fml.common.asm.transformers;
 
 import java.util.Arrays;
+
 import net.minecraft.launchwrapper.IClassNameTransformer;
 import net.minecraft.launchwrapper.IClassTransformer;
 import net.minecraft.launchwrapper.Launch;
@@ -30,7 +31,7 @@ import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.commons.RemappingClassAdapter;
 
 public class DeobfuscationTransformer implements IClassTransformer, IClassNameTransformer {
-    private static final String[] EXEMPT_LIBS = new String[] {
+    private static final String[] EXEMPT_LIBS = new String[]{
             "com.google.",
             "com.mojang.",
             "joptsimple.",
@@ -42,7 +43,7 @@ public class DeobfuscationTransformer implements IClassTransformer, IClassNameTr
             "paulscode.",
             "com.jcraft"
     };
-    private static final String[] EXEMPT_DEV = new String[] {
+    private static final String[] EXEMPT_DEV = new String[]{
             "net.minecraft.",
             "net.minecraftforge."
     };
@@ -58,10 +59,8 @@ public class DeobfuscationTransformer implements IClassTransformer, IClassNameTr
     private boolean deobfuscatedEnvironment = (Boolean) Launch.blackboard.get("fml.deobfuscatedEnvironment");
 
     @Override
-    public byte[] transform(String name, String transformedName, byte[] bytes)
-    {
-        if (bytes == null)
-        {
+    public byte[] transform(String name, String transformedName, byte[] bytes) {
+        if (bytes == null) {
             return null;
         }
 
@@ -74,30 +73,24 @@ public class DeobfuscationTransformer implements IClassTransformer, IClassNameTr
         return classWriter.toByteArray();
     }
 
-    private boolean shouldTransform(String name)
-    {
+    private boolean shouldTransform(String name) {
         boolean transformLib = Arrays.stream(EXEMPT_LIBS).noneMatch(name::startsWith);
 
-        if (deobfuscatedEnvironment)
-        {
+        if (deobfuscatedEnvironment) {
             return transformLib && Arrays.stream(EXEMPT_DEV).noneMatch(name::startsWith);
-        }
-        else
-        {
+        } else {
             return transformLib;
         }
     }
 
     @Override
-    public String remapClassName(String name)
-    {
-        return FMLDeobfuscatingRemapper.INSTANCE.map(name.replace('.','/')).replace('/', '.');
+    public String remapClassName(String name) {
+        return FMLDeobfuscatingRemapper.INSTANCE.map(name.replace('.', '/')).replace('/', '.');
     }
 
     @Override
-    public String unmapClassName(String name)
-    {
-        return FMLDeobfuscatingRemapper.INSTANCE.unmap(name.replace('.', '/')).replace('/','.');
+    public String unmapClassName(String name) {
+        return FMLDeobfuscatingRemapper.INSTANCE.unmap(name.replace('.', '/')).replace('/', '.');
     }
 
 }

@@ -21,24 +21,23 @@ package net.minecraftforge.fml.common.asm;
 
 import java.io.File;
 import java.util.Map;
+
 import net.minecraft.launchwrapper.LaunchClassLoader;
 import net.minecraftforge.fml.common.asm.transformers.deobf.FMLDeobfuscatingRemapper;
 import net.minecraftforge.fml.common.patcher.ClassPatchManager;
 import net.minecraftforge.fml.relauncher.FMLLaunchHandler;
 import net.minecraftforge.fml.relauncher.IFMLCallHook;
 
-public class FMLSanityChecker implements IFMLCallHook
-{
-    private static final String FMLFINGERPRINT =   "51:0A:FB:4C:AF:A4:A0:F2:F5:CF:C5:0E:B4:CC:3C:30:24:4A:E3:8E".toLowerCase().replace(":", "");
+public class FMLSanityChecker implements IFMLCallHook {
+    private static final String FMLFINGERPRINT = "51:0A:FB:4C:AF:A4:A0:F2:F5:CF:C5:0E:B4:CC:3C:30:24:4A:E3:8E".toLowerCase().replace(":", "");
     private static final String FORGEFINGERPRINT = "E3:C3:D5:0C:7C:98:6D:F7:4C:64:5C:0A:C5:46:39:74:1C:90:A5:57".toLowerCase().replace(":", "");
-    private static final String MCFINGERPRINT =    "CD:99:95:96:56:F7:53:DC:28:D8:63:B4:67:69:F7:F8:FB:AE:FC:FC".toLowerCase().replace(":", "");
+    private static final String MCFINGERPRINT = "CD:99:95:96:56:F7:53:DC:28:D8:63:B4:67:69:F7:F8:FB:AE:FC:FC".toLowerCase().replace(":", "");
+    public static File fmlLocation;
     private LaunchClassLoader cl;
     private boolean liveEnv;
-    public static File fmlLocation;
 
     @Override
-    public Void call() throws Exception
-    {
+    public Void call() throws Exception {
 		/*
         CodeSource codeSource = getClass().getProtectionDomain().getCodeSource();
         boolean goodFML = false;
@@ -158,12 +157,11 @@ public class FMLSanityChecker implements IFMLCallHook
     }
 
     @Override
-    public void injectData(Map<String, Object> data)
-    {
-        liveEnv = (Boolean)data.get("runtimeDeobfuscationEnabled");
+    public void injectData(Map<String, Object> data) {
+        liveEnv = (Boolean) data.get("runtimeDeobfuscationEnabled");
         cl = (LaunchClassLoader) data.get("classLoader");
-        File mcDir = (File)data.get("mcLocation");
-        fmlLocation = (File)data.get("coremodLocation");
+        File mcDir = (File) data.get("mcLocation");
+        fmlLocation = (File) data.get("coremodLocation");
         ClassPatchManager.INSTANCE.setup(FMLLaunchHandler.side());
         FMLDeobfuscatingRemapper.INSTANCE.setup(mcDir, cl, (String) data.get("deobfuscationFileName"));
     }

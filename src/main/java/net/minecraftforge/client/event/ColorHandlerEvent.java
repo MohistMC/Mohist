@@ -27,41 +27,33 @@ import net.minecraftforge.fml.common.eventhandler.Event;
  * Use these events to register block/item
  * color handlers at the appropriate time.
  */
-public abstract class ColorHandlerEvent extends Event
-{
-    public static class Block extends ColorHandlerEvent
-    {
+public abstract class ColorHandlerEvent extends Event {
+    public static class Block extends ColorHandlerEvent {
         private final BlockColors blockColors;
 
-        public Block(BlockColors blockColors)
-        {
+        public Block(BlockColors blockColors) {
             this.blockColors = blockColors;
         }
 
-        public BlockColors getBlockColors()
-        {
+        public BlockColors getBlockColors() {
             return blockColors;
         }
     }
 
-    public static class Item extends ColorHandlerEvent
-    {
+    public static class Item extends ColorHandlerEvent {
         private final ItemColors itemColors;
         private final BlockColors blockColors;
 
-        public Item(ItemColors itemColors, BlockColors blockColors)
-        {
+        public Item(ItemColors itemColors, BlockColors blockColors) {
             this.itemColors = itemColors;
             this.blockColors = blockColors;
         }
 
-        public ItemColors getItemColors()
-        {
+        public ItemColors getItemColors() {
             return itemColors;
         }
 
-        public BlockColors getBlockColors()
-        {
+        public BlockColors getBlockColors() {
             return blockColors;
         }
     }

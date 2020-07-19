@@ -34,7 +34,7 @@ public class Leaves extends Wood {
      * Constructs a leaf block of the given tree species and flag for whether
      * this leaf block will disappear when too far from a log.
      *
-     * @param species the species of the wood block
+     * @param species     the species of the wood block
      * @param isDecayable whether the block is permanent or can disappear
      */
     public Leaves(TreeSpecies species, boolean isDecayable) {
@@ -62,7 +62,7 @@ public class Leaves extends Wood {
     /**
      * Constructs a leaf block of the given type and tree species.
      *
-     * @param type the type of leaf block
+     * @param type    the type of leaf block
      * @param species the species of the wood block
      */
     public Leaves(final Material type, TreeSpecies species) {
@@ -73,8 +73,8 @@ public class Leaves extends Wood {
      * Constructs a leaf block of the given type and tree species and flag for
      * whether this leaf block will disappear when too far from a log.
      *
-     * @param type the type of leaf block
-     * @param species the species of the wood block
+     * @param type        the type of leaf block
+     * @param species     the species of the wood block
      * @param isDecayable whether the block is permanent or can disappear
      */
     public Leaves(final Material type, TreeSpecies species, boolean isDecayable) {

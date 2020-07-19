@@ -47,7 +47,6 @@ public class ExtendedRails extends Rails {
     }
 
     /**
-     *
      * @deprecated Magic value
      */
 

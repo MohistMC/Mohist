@@ -20,7 +20,9 @@
 package net.minecraftforge.client.model;
 
 import com.google.common.collect.ImmutableMap;
+
 import java.util.Optional;
+
 import net.minecraftforge.common.model.IModelPart;
 import net.minecraftforge.common.model.IModelState;
 import net.minecraftforge.common.model.TRSRTransformation;
@@ -28,31 +30,25 @@ import net.minecraftforge.common.model.TRSRTransformation;
 /*
  * Simple implementation of IModelState via a map and a default value.
  */
-public final class SimpleModelState implements IModelState
-{
+public final class SimpleModelState implements IModelState {
     private final ImmutableMap<? extends IModelPart, TRSRTransformation> map;
     private final Optional<TRSRTransformation> def;
 
-    public SimpleModelState(ImmutableMap<? extends IModelPart, TRSRTransformation> map)
-    {
+    public SimpleModelState(ImmutableMap<? extends IModelPart, TRSRTransformation> map) {
         this(map, Optional.empty());
     }
 
-    public SimpleModelState(ImmutableMap<? extends IModelPart, TRSRTransformation> map, Optional<TRSRTransformation> def)
-    {
+    public SimpleModelState(ImmutableMap<? extends IModelPart, TRSRTransformation> map, Optional<TRSRTransformation> def) {
         this.map = map;
         this.def = def;
     }
 
     @Override
-    public Optional<TRSRTransformation> apply(Optional<? extends IModelPart> part)
-    {
-        if(!part.isPresent())
-        {
+    public Optional<TRSRTransformation> apply(Optional<? extends IModelPart> part) {
+        if (!part.isPresent()) {
             return def;
         }
-        if(!map.containsKey(part.get()))
-        {
+        if (!map.containsKey(part.get())) {
             return Optional.empty();
         }
         return Optional.ofNullable(map.get(part.get()));

@@ -22,4 +22,5 @@
 package net.minecraftforge.client.model.animation;
 
 import javax.annotation.ParametersAreNonnullByDefault;
+
 import mcp.MethodsReturnNonnullByDefault;

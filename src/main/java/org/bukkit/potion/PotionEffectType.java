@@ -2,6 +2,7 @@ package org.bukkit.potion;
 
 import java.util.HashMap;
 import java.util.Map;
+
 import org.apache.commons.lang.Validate;
 import org.bukkit.Color;
 
@@ -229,10 +230,10 @@ public abstract class PotionEffectType {
      * Creates a PotionEffect from this PotionEffectType, applying duration
      * modifiers and checks.
      *
-     * @see PotionBrewer#createEffect(PotionEffectType, int, int)
-     * @param duration time in ticks
+     * @param duration  time in ticks
      * @param amplifier the effect's amplifier
      * @return a resulting potion effect
+     * @see PotionBrewer#createEffect(PotionEffectType, int, int)
      */
     public PotionEffect createEffect(int duration, int amplifier) {
         return new PotionEffect(this, isInstant() ? 1 : (int) (duration * getDurationModifier()), amplifier);

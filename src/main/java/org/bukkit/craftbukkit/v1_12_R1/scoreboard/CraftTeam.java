@@ -1,7 +1,9 @@
 package org.bukkit.craftbukkit.v1_12_R1.scoreboard;
 
 import com.google.common.collect.ImmutableSet;
+
 import java.util.Set;
+
 import net.minecraft.scoreboard.ScorePlayerTeam;
 import net.minecraft.scoreboard.Team.EnumVisible;
 import org.apache.commons.lang3.Validate;

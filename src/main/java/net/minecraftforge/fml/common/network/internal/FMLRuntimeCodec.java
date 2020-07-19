@@ -28,33 +28,29 @@ import net.minecraftforge.fml.common.network.FMLIndexedMessageToMessageCodec;
 import net.minecraftforge.fml.common.network.FMLNetworkException;
 
 public class FMLRuntimeCodec extends FMLIndexedMessageToMessageCodec<FMLMessage> {
-    public FMLRuntimeCodec()
-    {
-        addDiscriminator(0,FMLMessage.CompleteHandshake.class);
-        addDiscriminator(1,FMLMessage.OpenGui.class);
-        addDiscriminator(2,FMLMessage.EntitySpawnMessage.class);
+    public FMLRuntimeCodec() {
+        addDiscriminator(0, FMLMessage.CompleteHandshake.class);
+        addDiscriminator(1, FMLMessage.OpenGui.class);
+        addDiscriminator(2, FMLMessage.EntitySpawnMessage.class);
     }
+
     @Override
-    public void encodeInto(ChannelHandlerContext ctx, FMLMessage msg, ByteBuf target) throws Exception
-    {
+    public void encodeInto(ChannelHandlerContext ctx, FMLMessage msg, ByteBuf target) throws Exception {
         msg.toBytes(target);
     }
 
     @Override
-    public void decodeInto(ChannelHandlerContext ctx, ByteBuf source, FMLMessage msg)
-    {
+    public void decodeInto(ChannelHandlerContext ctx, ByteBuf source, FMLMessage msg) {
         msg.fromBytes(source);
     }
 
     @Override
-    protected void testMessageValidity(FMLProxyPacket msg)
-    {
-        if (msg.payload().getByte(0) == 0 && msg.payload().readableBytes() > 2)
-        {
+    protected void testMessageValidity(FMLProxyPacket msg) {
+        if (msg.payload().getByte(0) == 0 && msg.payload().readableBytes() > 2) {
             FMLLog.log.fatal("The connection appears to have sent an invalid FML packet of type 0, this is likely because it think's it's talking to 1.6.4 FML");
             FMLLog.log.info("Bad data :");
             for (String l : Splitter.on('\n').split(ByteBufUtils.getContentDump(msg.payload()))) {
-                FMLLog.log.info("\t{}",l);
+                FMLLog.log.info("\t{}", l);
             }
             throw new FMLNetworkException("Invalid FML packet");
         }

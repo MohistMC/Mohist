@@ -27,23 +27,22 @@ import org.bukkit.craftbukkit.v1_12_R1.CraftTravelAgent;
 
 /**
  * Interface for handling the placement of entities during dimension change.
- *
+ * <p>
  * An implementation of this interface can be used to place the entity
  * in a safe location, or generate a return portal, for instance.
- *
+ * <p>
  * See the {@link net.minecraft.world.Teleporter} class, which has
  * been patched to implement this interface, for a vanilla example.
  */
-public interface ITeleporter
-{
+public interface ITeleporter {
     /**
      * Called to handle placing the entity in the new world.
-     *
+     * <p>
      * The initial position of the entity will be its
      * position in the origin world, multiplied horizontally
      * by the computed cross-dimensional movement factor
      * (see {@link WorldProvider#getMovementFactor()}).
-     *
+     * <p>
      * Note that the supplied entity has not yet been spawned
      * in the destination world at the time.
      *
@@ -54,8 +53,7 @@ public interface ITeleporter
     void placeEntity(World world, Entity entity, float yaw);
 
     // used internally to handle vanilla hardcoding
-    default boolean isVanilla()
-    {
+    default boolean isVanilla() {
         // handle craftbukit
         return getClass() == Teleporter.class || this.getClass() == CraftTravelAgent.class;
     }

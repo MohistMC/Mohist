@@ -23,36 +23,33 @@ import com.mojang.authlib.Agent;
 import com.mojang.authlib.exceptions.AuthenticationException;
 import com.mojang.authlib.yggdrasil.YggdrasilAuthenticationService;
 import com.mojang.authlib.yggdrasil.YggdrasilUserAuthentication;
+
 import java.net.Proxy;
 import java.util.Map;
+
 import org.apache.logging.log4j.LogManager;
 
 /**
  * Basic implementation of Mojang's 'Yggdrasil' login system, purely intended as a dev time bare bones login.
  * Login errors are not handled.
  */
-public class Yggdrasil
-{
-    public static void login(Map<String, String> args)
-    {
+public class Yggdrasil {
+    public static void login(Map<String, String> args) {
         if (!args.containsKey("--username") || !args.containsKey("--password")) return;
         YggdrasilUserAuthentication auth = (YggdrasilUserAuthentication) new YggdrasilAuthenticationService(Proxy.NO_PROXY, "1").createUserAuthentication(Agent.MINECRAFT);
         auth.setUsername(args.get("--username"));
         auth.setPassword(args.remove("--password"));
 
-        try
-        {
+        try {
             auth.logIn();
-        }
-        catch (AuthenticationException e)
-        {
+        } catch (AuthenticationException e) {
             LogManager.getLogger("FML.TWEAK").error("-- Login failed!", e);
             throw new RuntimeException(e); // don't set other variables
         }
 
-        args.put("--username",       auth.getSelectedProfile().getName());
-        args.put("--uuid",           auth.getSelectedProfile().getId().toString().replace("-", ""));
-        args.put("--accessToken",    auth.getAuthenticatedToken());
+        args.put("--username", auth.getSelectedProfile().getName());
+        args.put("--uuid", auth.getSelectedProfile().getId().toString().replace("-", ""));
+        args.put("--accessToken", auth.getAuthenticatedToken());
         args.put("--userProperties", auth.getUserProperties().toString());
     }
 }

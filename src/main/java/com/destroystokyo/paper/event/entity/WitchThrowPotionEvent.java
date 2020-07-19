@@ -47,6 +47,7 @@ public class WitchThrowPotionEvent extends EntityEvent implements Cancellable {
 
     /**
      * Sets the potion to be thrown at a player
+     *
      * @param potion The potion
      */
     public void setPotion(ItemStack potion) {

@@ -1,8 +1,10 @@
 package com.destroystokyo.paper.network;
 
 import com.destroystokyo.paper.event.server.PaperServerListPingEvent;
+
 import java.net.InetSocketAddress;
 import javax.annotation.Nullable;
+
 import net.minecraft.server.MinecraftServer;
 import org.apache.commons.lang3.StringUtils;
 import org.bukkit.ChatColor;

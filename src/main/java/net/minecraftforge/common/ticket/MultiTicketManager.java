@@ -23,26 +23,22 @@ package net.minecraftforge.common.ticket;
  * @deprecated No longer needed, {@link SimpleTicket} now accepts dummy managers
  */
 @Deprecated
-public class MultiTicketManager<T> implements ITicketManager<T>
-{
+public class MultiTicketManager<T> implements ITicketManager<T> {
     private final ITicketGetter<T>[] ticketManagers;
 
     @SafeVarargs
-    public MultiTicketManager(ITicketGetter<T>... ticketManagers)
-    {
+    public MultiTicketManager(ITicketGetter<T>... ticketManagers) {
         this.ticketManagers = ticketManagers;
     }
 
     @Override
-    public void add(SimpleTicket<T> ticket)
-    {
+    public void add(SimpleTicket<T> ticket) {
         for (ITicketGetter<T> manager : ticketManagers)
             manager.add(ticket);
     }
 
     @Override
-    public void remove(SimpleTicket<T> ticket)
-    {
+    public void remove(SimpleTicket<T> ticket) {
         for (ITicketGetter<T> manager : ticketManagers)
             manager.remove(ticket);
     }

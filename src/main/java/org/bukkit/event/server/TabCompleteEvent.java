@@ -1,6 +1,7 @@
 package org.bukkit.event.server;
 
 import java.util.List;
+
 import org.apache.commons.lang.Validate;
 import org.bukkit.command.CommandSender;
 import org.bukkit.event.Cancellable;

@@ -34,23 +34,19 @@ import static red.mohist.util.JarTool.inputStreamFile;
 
 public class ServerLaunchWrapper {
 
+    private ServerLaunchWrapper() {
+
+    }
+
     /**
      * @param args
      */
-    public static void main(String[] args)
-    {
+    public static void main(String[] args) {
         new ServerLaunchWrapper().run(args);
     }
 
-    private ServerLaunchWrapper()
-    {
-
-    }
-
-    private void run(String[] args)
-    {
-        if (System.getProperty("log4j.configurationFile") == null)
-        {
+    private void run(String[] args) {
+        if (System.getProperty("log4j.configurationFile") == null) {
             // Set this early so we don't need to reconfigure later
             System.setProperty("log4j.configurationFile", "log4j2_mohist.xml");
         }

@@ -26,34 +26,29 @@ import net.minecraftforge.fml.common.eventhandler.Event;
 /**
  * Fired when a game rule is changed,
  * via {@link net.minecraft.command.CommandGameRule#notifyGameRuleChange(GameRules, String, MinecraftServer)}.
- *
+ * <p>
  * This allows updating clients with the effects of server rule changes.
  */
-public class GameRuleChangeEvent extends Event
-{
+public class GameRuleChangeEvent extends Event {
     private final GameRules rules;
     private final String ruleName;
     private final MinecraftServer server;
 
-    public GameRuleChangeEvent(GameRules rules, String ruleName, MinecraftServer server)
-    {
+    public GameRuleChangeEvent(GameRules rules, String ruleName, MinecraftServer server) {
         this.rules = rules;
         this.ruleName = ruleName;
         this.server = server;
     }
 
-    public GameRules getRules()
-    {
+    public GameRules getRules() {
         return rules;
     }
 
-    public String getRuleName()
-    {
+    public String getRuleName() {
         return ruleName;
     }
 
-    public MinecraftServer getServer()
-    {
+    public MinecraftServer getServer() {
         return server;
     }
 }

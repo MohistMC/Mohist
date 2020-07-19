@@ -10,10 +10,10 @@ import org.bukkit.event.entity.CreatureSpawnEvent;
 
 /**
  * WARNING: This event only fires for a limited number of cases, and not for every case that CreatureSpawnEvent does.
- *
+ * <p>
  * You should still listen to CreatureSpawnEvent as a backup, and only use this event as an "enhancement".
  * The intent of this event is to improve server performance, so limited use cases.
- *
+ * <p>
  * Currently: NATURAL and SPAWNER based reasons. Please submit a Pull Request for future additions.
  * Also, Plugins that replace Entity Registrations with their own custom entities might not fire this event.
  */
@@ -87,6 +87,7 @@ public class PreCreatureSpawnEvent extends Event implements Cancellable {
 
     /**
      * Cancelling this event is more effecient than cancelling CreatureSpawnEvent
+     *
      * @param cancel true if you wish to cancel this event, and abort the spawn of this creature
      */
     @Override

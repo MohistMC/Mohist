@@ -3,10 +3,12 @@ package com.destroystokyo.paper;
 import com.destroystokyo.paper.profile.CraftPlayerProfile;
 import com.destroystokyo.paper.profile.PlayerProfile;
 import com.mojang.authlib.GameProfile;
+
 import java.util.concurrent.ExecutionException;
 import java.util.function.Supplier;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+
 import net.minecraft.entity.Entity;
 import net.minecraft.init.Blocks;
 import net.minecraft.server.MinecraftServer;
@@ -23,7 +25,8 @@ import org.spigotmc.AsyncCatcher;
 
 public final class MCUtil {
 
-    private MCUtil() {}
+    private MCUtil() {
+    }
 
     /**
      * Quickly generate a stack trace for current location
@@ -46,6 +49,7 @@ public final class MCUtil {
 
     /**
      * Ensures the target code is running on the main thread
+     *
      * @param reason
      * @param run
      * @param <T>
@@ -53,7 +57,7 @@ public final class MCUtil {
      */
     public static <T> T ensureMain(String reason, Supplier<T> run) {
         if (AsyncCatcher.enabled && Thread.currentThread() != MinecraftServer.getServerInst().primaryThread) {
-            new IllegalStateException( "Asynchronous " + reason + "! Blocking thread until it returns ").printStackTrace();
+            new IllegalStateException("Asynchronous " + reason + "! Blocking thread until it returns ").printStackTrace();
             Waitable<T> wait = new Waitable<T>() {
                 @Override
                 protected T evaluate() {
@@ -77,6 +81,7 @@ public final class MCUtil {
 
     /**
      * Calculates distance between 2 entities
+     *
      * @param e1
      * @param e2
      * @return
@@ -88,6 +93,7 @@ public final class MCUtil {
 
     /**
      * Calculates distance between 2 block positions
+     *
      * @param e1
      * @param e2
      * @return
@@ -98,6 +104,7 @@ public final class MCUtil {
 
     /**
      * Gets the distance between 2 positions
+     *
      * @param x1
      * @param y1
      * @param z1
@@ -112,16 +119,18 @@ public final class MCUtil {
 
     /**
      * Get's the distance squared between 2 entities
+     *
      * @param e1
      * @param e2
      * @return
      */
     public static double distanceSq(Entity e1, Entity e2) {
-        return distanceSq(e1.posX,e1.posY,e1.posZ, e2.posX,e2.posY,e2.posZ);
+        return distanceSq(e1.posX, e1.posY, e1.posZ, e2.posX, e2.posY, e2.posZ);
     }
 
     /**
      * Gets the distance sqaured between 2 block positions
+     *
      * @param pos1
      * @param pos2
      * @return
@@ -132,6 +141,7 @@ public final class MCUtil {
 
     /**
      * Gets the distance squared between 2 positions
+     *
      * @param x1
      * @param y1
      * @param z1
@@ -146,6 +156,7 @@ public final class MCUtil {
 
     /**
      * Converts a NMS World/BlockPosition to Bukkit Location
+     *
      * @param world
      * @param x
      * @param y
@@ -158,6 +169,7 @@ public final class MCUtil {
 
     /**
      * Converts a NMS World/BlockPosition to Bukkit Location
+     *
      * @param world
      * @param pos
      * @return
@@ -168,6 +180,7 @@ public final class MCUtil {
 
     /**
      * Converts an NMS entity's current location to a Bukkit Location
+     *
      * @param entity
      * @return
      */

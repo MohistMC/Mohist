@@ -23,9 +23,11 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+
 import net.minecraft.util.ResourceLocation;
 
 /**
@@ -33,38 +35,20 @@ import net.minecraft.util.ResourceLocation;
  * will be called back whenever the client or server loads an ID set. This includes both
  * when the ID maps are loaded from disk, as well as when the ID maps revert to the initial
  * state.
- *
+ * <p>
  * Note: you cannot change the IDs that have been allocated, but you might want to use
  * this event to update caches or other in-mod artifacts that might be impacted by an ID
  * change.
  *
- * @see net.minecraftforge.fml.common.Mod.EventHandler for how to subscribe to this event
  * @author cpw
+ * @see net.minecraftforge.fml.common.Mod.EventHandler for how to subscribe to this event
  */
-public class FMLModIdMappingEvent extends FMLEvent
-{
-    public class ModRemapping
-    {
-        public final ResourceLocation registry;
-        public final ResourceLocation key;
-        public final int oldId;
-        public final int newId;
-
-        private ModRemapping(ResourceLocation registry, ResourceLocation key, int oldId, int newId)
-        {
-            this.registry = registry;
-            this.key = key;
-            this.oldId = oldId;
-            this.newId = newId;
-        }
-    }
-
+public class FMLModIdMappingEvent extends FMLEvent {
+    public final boolean isFrozen;
     private final Map<ResourceLocation, ImmutableList<ModRemapping>> remaps;
     private final ImmutableSet<ResourceLocation> keys;
 
-    public final boolean isFrozen;
-    public FMLModIdMappingEvent(Map<ResourceLocation, Map<ResourceLocation, Integer[]>> remaps, boolean isFrozen)
-    {
+    public FMLModIdMappingEvent(Map<ResourceLocation, Map<ResourceLocation, Integer[]>> remaps, boolean isFrozen) {
         this.isFrozen = isFrozen;
         this.remaps = Maps.newHashMap();
         remaps.forEach((name, rm) ->
@@ -77,13 +61,25 @@ public class FMLModIdMappingEvent extends FMLEvent
         this.keys = ImmutableSet.copyOf(this.remaps.keySet());
     }
 
-    public ImmutableSet<ResourceLocation> getRegistries()
-    {
+    public ImmutableSet<ResourceLocation> getRegistries() {
         return this.keys;
     }
 
-    public ImmutableList<ModRemapping> getRemaps(ResourceLocation registry)
-    {
+    public ImmutableList<ModRemapping> getRemaps(ResourceLocation registry) {
         return this.remaps.get(registry);
+    }
+
+    public class ModRemapping {
+        public final ResourceLocation registry;
+        public final ResourceLocation key;
+        public final int oldId;
+        public final int newId;
+
+        private ModRemapping(ResourceLocation registry, ResourceLocation key, int oldId, int newId) {
+            this.registry = registry;
+            this.key = key;
+            this.oldId = oldId;
+            this.newId = newId;
+        }
     }
 }

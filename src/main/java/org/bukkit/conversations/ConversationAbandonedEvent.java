@@ -44,8 +44,8 @@ public class ConversationAbandonedEvent extends EventObject {
      * prompt chain or prematurely via a {@link ConversationCanceller}.
      *
      * @return True if the conversation is abandoned gracefully by a {@link
-     *     Prompt} returning null or the next prompt. False of the
-     *     conversations is abandoned prematurely by a ConversationCanceller.
+     * Prompt} returning null or the next prompt. False of the
+     * conversations is abandoned prematurely by a ConversationCanceller.
      */
     public boolean gracefulExit() {
         return canceller == null;

@@ -21,10 +21,12 @@ package net.minecraftforge.server.timings;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.MapMaker;
+
 import java.lang.ref.WeakReference;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
+
 import net.minecraft.entity.Entity;
 import net.minecraft.tileentity.TileEntity;
 
@@ -33,8 +35,7 @@ import net.minecraft.tileentity.TileEntity;
  *
  * @param <T>
  */
-public class TimeTracker<T>
-{
+public class TimeTracker<T> {
 
     /**
      * A tracker for timing tile entity update
@@ -57,12 +58,10 @@ public class TimeTracker<T>
      *
      * @return An immutable list of timings data collected by this tracker
      */
-    public ImmutableList<ForgeTimings<T>> getTimingData()
-    {
+    public ImmutableList<ForgeTimings<T>> getTimingData() {
         ImmutableList.Builder<ForgeTimings<T>> builder = ImmutableList.builder();
 
-        for (Map.Entry<T, int[]> entry : timings.entrySet())
-        {
+        for (Map.Entry<T, int[]> entry : timings.entrySet()) {
             builder.add(new ForgeTimings<>(entry.getKey(), Arrays.copyOfRange(entry.getValue(), 0, 99)));
         }
         return builder.build();
@@ -71,8 +70,7 @@ public class TimeTracker<T>
     /**
      * Resets the tracker (clears timings and stops any in-progress timings)
      */
-    public void reset()
-    {
+    public void reset() {
         enabled = false;
         trackTime = 0;
         timings.clear();
@@ -83,8 +81,7 @@ public class TimeTracker<T>
      *
      * @param tracking The object to stop timing
      */
-    public void trackEnd(T tracking)
-    {
+    public void trackEnd(T tracking) {
         if (!enabled)
             return;
         this.trackEnd(tracking, System.nanoTime());
@@ -95,8 +92,7 @@ public class TimeTracker<T>
      *
      * @param duration The duration for the time to track
      */
-    public void enable(int duration)
-    {
+    public void enable(int duration) {
         this.trackingDuration = duration;
         this.enabled = true;
     }
@@ -106,17 +102,14 @@ public class TimeTracker<T>
      *
      * @param toTrack The object to start timing
      */
-    public void trackStart(T toTrack)
-    {
+    public void trackStart(T toTrack) {
         if (!enabled)
             return;
         this.trackStart(toTrack, System.nanoTime());
     }
 
-    private void trackEnd(T object, long nanoTime)
-    {
-        if (currentlyTracking == null || currentlyTracking.get() != object)
-        {
+    private void trackEnd(T object, long nanoTime) {
+        if (currentlyTracking == null || currentlyTracking.get() != object) {
             currentlyTracking = null;
             return;
         }
@@ -125,14 +118,10 @@ public class TimeTracker<T>
         timings[idx] = (int) (nanoTime - timing);
     }
 
-    private void trackStart(T toTrack, long nanoTime)
-    {
-        if (trackTime == 0)
-        {
+    private void trackStart(T toTrack, long nanoTime) {
+        if (trackTime == 0) {
             trackTime = nanoTime;
-        }
-        else if (trackTime + TimeUnit.NANOSECONDS.convert(trackingDuration, TimeUnit.SECONDS) < nanoTime)
-        {
+        } else if (trackTime + TimeUnit.NANOSECONDS.convert(trackingDuration, TimeUnit.SECONDS) < nanoTime) {
             enabled = false;
             trackTime = 0;
         }

@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.TreeMap;
+
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -15,6 +16,8 @@ import red.mohist.util.i18n.Message;
 import red.mohist.util.pluginmanager.PluginManagers;
 
 public class PluginsCommand extends BukkitCommand {
+    private final List<String> params = Arrays.asList("load", "unload", "reload");
+
     public PluginsCommand(String name) {
         super(name);
         this.description = Message.getString("pluginscommand.des");
@@ -22,8 +25,6 @@ public class PluginsCommand extends BukkitCommand {
         this.setAliases(Collections.singletonList("pl"));
         this.setPermission("bukkit.command.plugins");
     }
-
-    private final List<String> params = Arrays.asList("load", "unload", "reload");
 
     private boolean checkparam(String args) {
         //TODO

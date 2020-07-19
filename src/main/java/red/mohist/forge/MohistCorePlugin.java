@@ -2,6 +2,7 @@ package red.mohist.forge;
 
 import java.util.Map;
 import javax.annotation.Nullable;
+
 import net.minecraftforge.fml.relauncher.FMLLaunchHandler;
 import net.minecraftforge.fml.relauncher.IFMLLoadingPlugin;
 import red.mohist.bukkit.pluginfix.MyPetTransformer;
@@ -11,7 +12,7 @@ public class MohistCorePlugin implements IFMLLoadingPlugin {
     @Override
     public String[] getASMTransformerClass() {
         return !FMLLaunchHandler.isDeobfuscatedEnvironment() ? new String[]{
-                 SendPacketTransformer.class.getCanonicalName(),
+                SendPacketTransformer.class.getCanonicalName(),
                 MyPetTransformer.class.getCanonicalName()
         } : null;
     }

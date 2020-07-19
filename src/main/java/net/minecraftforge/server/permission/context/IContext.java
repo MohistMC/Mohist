@@ -20,14 +20,14 @@
 package net.minecraftforge.server.permission.context;
 
 import javax.annotation.Nullable;
+
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.world.World;
 
 /**
  * Use {@link BlockPosContext} or {@link PlayerContext} when possible
  */
-public interface IContext
-{
+public interface IContext {
     /**
      * World from where permission is requested. Can be null
      */

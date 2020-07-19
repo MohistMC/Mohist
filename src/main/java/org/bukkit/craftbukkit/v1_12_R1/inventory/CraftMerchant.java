@@ -2,8 +2,10 @@ package org.bukkit.craftbukkit.v1_12_R1.inventory;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Lists;
+
 import java.util.Collections;
 import java.util.List;
+
 import net.minecraft.entity.IMerchant;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.village.MerchantRecipeList;

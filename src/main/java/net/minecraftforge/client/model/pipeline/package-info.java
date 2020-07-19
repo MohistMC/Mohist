@@ -22,4 +22,5 @@
 package net.minecraftforge.client.model.pipeline;
 
 import javax.annotation.ParametersAreNonnullByDefault;
+
 import mcp.MethodsReturnNonnullByDefault;

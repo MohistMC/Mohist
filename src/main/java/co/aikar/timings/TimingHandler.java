@@ -25,26 +25,26 @@ package co.aikar.timings;
 
 import co.aikar.util.LoadingIntMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
+
 import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import org.bukkit.Bukkit;
 import red.mohist.util.i18n.Message;
 
 class TimingHandler implements Timing {
 
-    private static AtomicInteger idPool = new AtomicInteger(1);
     static Deque<TimingHandler> TIMING_STACK = new ArrayDeque<>();
+    private static AtomicInteger idPool = new AtomicInteger(1);
     final int id = idPool.getAndIncrement();
 
     final TimingIdentifier identifier;
-    private final boolean verbose;
-
-    private final Int2ObjectOpenHashMap<TimingData> children = new LoadingIntMap<>(TimingData::new);
-
     final TimingData record;
+    private final boolean verbose;
+    private final Int2ObjectOpenHashMap<TimingData> children = new LoadingIntMap<>(TimingData::new);
     private final TimingHandler groupHandler;
 
     private long start = 0;

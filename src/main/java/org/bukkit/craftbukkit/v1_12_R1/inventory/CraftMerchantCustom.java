@@ -1,6 +1,7 @@
 package org.bukkit.craftbukkit.v1_12_R1.inventory;
 
 import javax.annotation.Nullable;
+
 import net.minecraft.entity.IMerchant;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;

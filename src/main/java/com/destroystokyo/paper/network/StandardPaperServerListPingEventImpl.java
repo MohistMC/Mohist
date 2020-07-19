@@ -5,9 +5,11 @@ import com.destroystokyo.paper.profile.PlayerProfile;
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Strings;
 import com.mojang.authlib.GameProfile;
+
 import java.util.List;
 import java.util.UUID;
 import javax.annotation.Nonnull;
+
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.ServerStatusResponse;
 import net.minecraft.network.status.server.SPacketServerInfo;

@@ -1,10 +1,12 @@
 package com.destroystokyo.paper.event.executor;
 
 import com.google.common.base.Preconditions;
+
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+
 import org.bukkit.event.Event;
 import org.bukkit.event.EventException;
 import org.bukkit.event.Listener;

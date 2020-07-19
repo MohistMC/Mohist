@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+
 import red.mohist.util.i18n.Message;
 
 public class EulaUtil {
@@ -18,7 +19,7 @@ public class EulaUtil {
     }
 
     public static boolean hasAcceptedEULA() throws IOException {
-        if(new File("eula.txt").exists())
+        if (new File("eula.txt").exists())
             return FileUtil.readContent(new File("eula.txt")).contains("eula=true");
         return false;
     }

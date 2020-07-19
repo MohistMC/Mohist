@@ -21,6 +21,7 @@ package net.minecraftforge.fml.common.launcher;
 
 import java.io.File;
 import java.util.List;
+
 import net.minecraft.launchwrapper.LaunchClassLoader;
 import net.minecraftforge.fml.relauncher.FMLLaunchHandler;
 import org.apache.logging.log4j.LogManager;
@@ -29,26 +30,22 @@ import org.apache.logging.log4j.core.LoggerContext;
 public class FMLServerTweaker extends FMLTweaker {
 
     @Override
-    public void acceptOptions(List<String> args, File gameDir, File assetsDir, String profile)
-    {
+    public void acceptOptions(List<String> args, File gameDir, File assetsDir, String profile) {
         super.acceptOptions(args, gameDir, assetsDir, profile);
 
-        if (System.getProperty("log4j.configurationFile") == null)
-        {
+        if (System.getProperty("log4j.configurationFile") == null) {
             System.setProperty("log4j.configurationFile", "log4j2_mohist.xml");
             ((LoggerContext) LogManager.getContext(false)).reconfigure();
         }
     }
 
     @Override
-    public String getLaunchTarget()
-    {
+    public String getLaunchTarget() {
         return "net.minecraft.server.MinecraftServer";
     }
 
     @Override
-    public void injectIntoClassLoader(LaunchClassLoader classLoader)
-    {
+    public void injectIntoClassLoader(LaunchClassLoader classLoader) {
         // The log4j2 queue is excluded so it is correctly visible from the obfuscated
         // and deobfuscated parts of the code. Without, the UI won't show anything
         classLoader.addClassLoaderExclusion("com.mojang.util.QueueLogAppender");

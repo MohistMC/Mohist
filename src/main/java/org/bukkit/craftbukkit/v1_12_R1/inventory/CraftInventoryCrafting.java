@@ -2,6 +2,7 @@ package org.bukkit.craftbukkit.v1_12_R1.inventory;
 
 import java.util.Arrays;
 import java.util.List;
+
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.crafting.IRecipe;

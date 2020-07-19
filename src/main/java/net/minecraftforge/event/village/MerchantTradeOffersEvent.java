@@ -20,6 +20,7 @@
 package net.minecraftforge.event.village;
 
 import javax.annotation.Nullable;
+
 import net.minecraft.entity.IMerchant;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.village.MerchantRecipeList;
@@ -39,14 +40,13 @@ import net.minecraftforge.fml.common.eventhandler.Event;
  * <br>
  * This event is fired on the {@link MinecraftForge#EVENT_BUS}.
  */
-public class MerchantTradeOffersEvent extends Event
-{
+public class MerchantTradeOffersEvent extends Event {
     private final IMerchant merchant;
     private final EntityPlayer player;
-    private @Nullable MerchantRecipeList list;
-    
-    public MerchantTradeOffersEvent(IMerchant merchant, EntityPlayer player, @Nullable MerchantRecipeList list)
-    {
+    private @Nullable
+    MerchantRecipeList list;
+
+    public MerchantTradeOffersEvent(IMerchant merchant, EntityPlayer player, @Nullable MerchantRecipeList list) {
         this.merchant = merchant;
         this.player = player;
         this.list = list;
@@ -54,25 +54,23 @@ public class MerchantTradeOffersEvent extends Event
 
     /**
      * The recipe list (if not {@code null}) returned from this function may be modified.
+     *
      * @return the recipe list
      */
-    public @Nullable MerchantRecipeList getList()
-    {
+    public @Nullable
+    MerchantRecipeList getList() {
         return list;
     }
 
-    public void setList(@Nullable MerchantRecipeList list)
-    {
+    public void setList(@Nullable MerchantRecipeList list) {
         this.list = list;
     }
 
-    public IMerchant getMerchant()
-    {
+    public IMerchant getMerchant() {
         return merchant;
     }
 
-    public EntityPlayer getPlayer()
-    {
+    public EntityPlayer getPlayer() {
         return player;
     }
 

@@ -9,6 +9,7 @@ import java.net.URL;
 import java.net.URLStreamHandlerFactory;
 import java.util.HashMap;
 import java.util.Map;
+
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
@@ -28,7 +29,6 @@ import red.mohist.bukkit.nms.proxy.asm.ProxyClassWriter;
 import red.mohist.bukkit.nms.utils.ASMUtils;
 
 /**
- *
  * @author pyz
  * @date 2019/7/2 8:51 PM
  */

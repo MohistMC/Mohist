@@ -35,7 +35,7 @@ public interface Damageable extends Entity {
      *
      * @param health New health represented from 0 to max
      * @throws IllegalArgumentException Thrown if the health is {@literal < 0 or >}
-     *     {@link #getMaxHealth()}
+     *                                  {@link #getMaxHealth()}
      */
     void setHealth(double health);
 
@@ -65,6 +65,7 @@ public interface Damageable extends Entity {
 
     /**
      * Resets the max health to the original amount.
+     *
      * @deprecated use {@link Attribute#GENERIC_MAX_HEALTH}.
      */
     @Deprecated

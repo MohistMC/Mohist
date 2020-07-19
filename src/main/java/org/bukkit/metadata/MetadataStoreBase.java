@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.WeakHashMap;
 import java.util.concurrent.ConcurrentHashMap;
+
 import org.apache.commons.lang.Validate;
 import org.bukkit.plugin.Plugin;
 
@@ -29,12 +30,12 @@ public abstract class MetadataStoreBase<T> {
      * Bukkit is almost entirely single threaded so locking overhead shouldn't
      * pose a problem.
      *
-     * @param subject The object receiving the metadata.
-     * @param metadataKey A unique key to identify this metadata.
+     * @param subject          The object receiving the metadata.
+     * @param metadataKey      A unique key to identify this metadata.
      * @param newMetadataValue The metadata value to apply.
-     * @see MetadataStore#setMetadata(Object, String, MetadataValue)
      * @throws IllegalArgumentException If value is null, or the owning plugin
-     *     is null
+     *                                  is null
+     * @see MetadataStore#setMetadata(Object, String, MetadataValue)
      */
     public void setMetadata(T subject, String metadataKey, MetadataValue newMetadataValue) {
         Validate.notNull(newMetadataValue, "Value cannot be null");
@@ -51,10 +52,10 @@ public abstract class MetadataStoreBase<T> {
      * Returns all metadata values attached to an object. If multiple
      * have attached metadata, each will value will be included.
      *
-     * @param subject the object being interrogated.
+     * @param subject     the object being interrogated.
      * @param metadataKey the unique metadata key being sought.
      * @return A list of values, one for each plugin that has set the
-     *     requested value.
+     * requested value.
      * @see MetadataStore#getMetadata(Object, String)
      */
     public List<MetadataValue> getMetadata(T subject, String metadataKey) {
@@ -71,8 +72,8 @@ public abstract class MetadataStoreBase<T> {
     /**
      * Tests to see if a metadata attribute has been set on an object.
      *
-     * @param subject the object upon which the has-metadata test is
-     *     performed.
+     * @param subject     the object upon which the has-metadata test is
+     *                    performed.
      * @param metadataKey the unique metadata key being queried.
      * @return the existence of the metadataKey within subject.
      */
@@ -84,13 +85,13 @@ public abstract class MetadataStoreBase<T> {
     /**
      * Removes a metadata item owned by a plugin from a subject.
      *
-     * @param subject the object to remove the metadata from.
-     * @param metadataKey the unique metadata key identifying the metadata to
-     *     remove.
+     * @param subject      the object to remove the metadata from.
+     * @param metadataKey  the unique metadata key identifying the metadata to
+     *                     remove.
      * @param owningPlugin the plugin attempting to remove a metadata item.
-     * @see MetadataStore#removeMetadata(Object, String,
-     *     org.bukkit.plugin.Plugin)
      * @throws IllegalArgumentException If plugin is null
+     * @see MetadataStore#removeMetadata(Object, String,
+     * org.bukkit.plugin.Plugin)
      */
     public void removeMetadata(T subject, String metadataKey, Plugin owningPlugin) {
         Validate.notNull(owningPlugin, "Plugin cannot be null");
@@ -113,8 +114,8 @@ public abstract class MetadataStoreBase<T> {
      * be recalculated the next time it is accessed.
      *
      * @param owningPlugin the plugin requesting the invalidation.
-     * @see MetadataStore#invalidateAll(org.bukkit.plugin.Plugin)
      * @throws IllegalArgumentException If plugin is null
+     * @see MetadataStore#invalidateAll(org.bukkit.plugin.Plugin)
      */
     public void invalidateAll(Plugin owningPlugin) {
         Validate.notNull(owningPlugin, "Plugin cannot be null");
@@ -154,7 +155,7 @@ public abstract class MetadataStoreBase<T> {
      * two Player objects must generate the same string if they represent the
      * same player, even if the objects would fail a reference equality test.
      *
-     * @param subject The object for which this key is being generated.
+     * @param subject     The object for which this key is being generated.
      * @param metadataKey The name identifying the metadata value.
      * @return a unique metadata key for the given subject.
      */

@@ -28,7 +28,7 @@ public interface HumanEntity extends LivingEntity, AnimalTamer, Permissible, Inv
      * Get the player's inventory.
      *
      * @return The inventory of the player, this also contains the armor
-     *     slots.
+     * slots.
      */
     public PlayerInventory getInventory();
 
@@ -50,7 +50,7 @@ public interface HumanEntity extends LivingEntity, AnimalTamer, Permissible, Inv
      * If the player currently has an inventory window open, this method will
      * set a property of that window, such as the state of a progress bar.
      *
-     * @param prop The property.
+     * @param prop  The property.
      * @param value The value to set the property to.
      * @return True if the property was successfully set.
      */
@@ -78,11 +78,11 @@ public interface HumanEntity extends LivingEntity, AnimalTamer, Permissible, Inv
      * on the bottom.
      *
      * @param location The location to attach it to. If null, the player's
-     *     location is used.
-     * @param force If false, and there is no workbench block at the location,
-     *     no inventory will be opened and null will be returned.
+     *                 location is used.
+     * @param force    If false, and there is no workbench block at the location,
+     *                 no inventory will be opened and null will be returned.
      * @return The newly opened inventory view, or null if it could not be
-     *     opened.
+     * opened.
      */
     public InventoryView openWorkbench(Location location, boolean force);
 
@@ -91,11 +91,11 @@ public interface HumanEntity extends LivingEntity, AnimalTamer, Permissible, Inv
      * on the bottom.
      *
      * @param location The location to attach it to. If null, the player's
-     *     location is used.
-     * @param force If false, and there is no enchanting table at the
-     *     location, no inventory will be opened and null will be returned.
+     *                 location is used.
+     * @param force    If false, and there is no enchanting table at the
+     *                 location, no inventory will be opened and null will be returned.
      * @return The newly opened inventory view, or null if it could not be
-     *     opened.
+     * opened.
      */
     public InventoryView openEnchanting(Location location, boolean force);
 
@@ -108,12 +108,12 @@ public interface HumanEntity extends LivingEntity, AnimalTamer, Permissible, Inv
 
     /**
      * Starts a trade between the player and the villager.
-     *
+     * <p>
      * Note that only one player may trade with a villager at once. You must use
      * the force parameter for this.
      *
      * @param trader The merchant to trade with. Cannot be null.
-     * @param force whether to force the trade even if another player is trading
+     * @param force  whether to force the trade even if another player is trading
      * @return The newly opened inventory view, or null if it could not be
      * opened.
      */
@@ -121,12 +121,12 @@ public interface HumanEntity extends LivingEntity, AnimalTamer, Permissible, Inv
 
     /**
      * Starts a trade between the player and the merchant.
-     *
+     * <p>
      * Note that only one player may trade with a merchant at once. You must use
      * the force parameter for this.
      *
      * @param merchant The merchant to trade with. Cannot be null.
-     * @param force whether to force the trade even if another player is trading
+     * @param force    whether to force the trade even if another player is trading
      * @return The newly opened inventory view, or null if it could not be
      * opened.
      */
@@ -202,7 +202,7 @@ public interface HumanEntity extends LivingEntity, AnimalTamer, Permissible, Inv
      * for attacking.
      *
      * @param material the material to set the cooldown for
-     * @param ticks the amount of ticks to set or 0 to remove
+     * @param ticks    the amount of ticks to set or 0 to remove
      */
     public void setCooldown(Material material, int ticks);
 

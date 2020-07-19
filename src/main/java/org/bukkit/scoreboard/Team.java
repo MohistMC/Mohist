@@ -1,6 +1,7 @@
 package org.bukkit.scoreboard;
 
 import java.util.Set;
+
 import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.potion.PotionEffectType;
@@ -33,8 +34,8 @@ public interface Team {
      *
      * @param displayName New display name
      * @throws IllegalArgumentException if displayName is longer than 32
-     *     characters.
-     * @throws IllegalStateException if this team has been unregistered
+     *                                  characters.
+     * @throws IllegalStateException    if this team has been unregistered
      */
     void setDisplayName(String displayName) throws IllegalStateException, IllegalArgumentException;
 
@@ -52,8 +53,8 @@ public interface Team {
      * @param prefix New prefix
      * @throws IllegalArgumentException if prefix is null
      * @throws IllegalArgumentException if prefix is longer than 16
-     *     characters
-     * @throws IllegalStateException if this team has been unregistered
+     *                                  characters
+     * @throws IllegalStateException    if this team has been unregistered
      */
     void setPrefix(String prefix) throws IllegalStateException, IllegalArgumentException;
 
@@ -71,8 +72,8 @@ public interface Team {
      * @param suffix the new suffix for this team.
      * @throws IllegalArgumentException if suffix is null
      * @throws IllegalArgumentException if suffix is longer than 16
-     *     characters
-     * @throws IllegalStateException if this team has been unregistered
+     *                                  characters
+     * @throws IllegalStateException    if this team has been unregistered
      */
     void setSuffix(String suffix) throws IllegalStateException, IllegalArgumentException;
 
@@ -94,7 +95,7 @@ public interface Team {
      * names are handled by prefixes / suffixes.
      *
      * @param color new color, must be non-null. Use {@link ChatColor#RESET} for
-     * no color
+     *              no color
      */
     void setColor(ChatColor color);
 
@@ -158,8 +159,8 @@ public interface Team {
      *
      * @return players on the team
      * @throws IllegalStateException if this team has been unregistered\
-     * @deprecated Teams can contain entries that aren't players
      * @see #getEntries()
+     * @deprecated Teams can contain entries that aren't players
      */
 
     Set<OfflinePlayer> getPlayers() throws IllegalStateException;
@@ -184,7 +185,7 @@ public interface Team {
      * Gets the Scoreboard to which this team is attached
      *
      * @return Owning scoreboard, or null if this team has been {@link
-     *     #unregister() unregistered}
+     * #unregister() unregistered}
      */
     Scoreboard getScoreboard();
 
@@ -195,9 +196,9 @@ public interface Team {
      *
      * @param player the player to add
      * @throws IllegalArgumentException if player is null
-     * @throws IllegalStateException if this team has been unregistered
-     * @deprecated Teams can contain entries that aren't players
+     * @throws IllegalStateException    if this team has been unregistered
      * @see #addEntry(String)
+     * @deprecated Teams can contain entries that aren't players
      */
 
     void addPlayer(OfflinePlayer player) throws IllegalStateException, IllegalArgumentException;
@@ -209,7 +210,7 @@ public interface Team {
      *
      * @param entry the entry to add
      * @throws IllegalArgumentException if entry is null
-     * @throws IllegalStateException if this team has been unregistered
+     * @throws IllegalStateException    if this team has been unregistered
      */
     void addEntry(String entry) throws IllegalStateException, IllegalArgumentException;
 
@@ -219,9 +220,9 @@ public interface Team {
      * @param player the player to remove
      * @return if the player was on this team
      * @throws IllegalArgumentException if player is null
-     * @throws IllegalStateException if this team has been unregistered
-     * @deprecated Teams can contain entries that aren't players
+     * @throws IllegalStateException    if this team has been unregistered
      * @see #removeEntry(String)
+     * @deprecated Teams can contain entries that aren't players
      */
 
     boolean removePlayer(OfflinePlayer player) throws IllegalStateException, IllegalArgumentException;
@@ -230,9 +231,9 @@ public interface Team {
      * Removes the entry from this team.
      *
      * @param entry the entry to remove
-     * @throws IllegalArgumentException if entry is null
-     * @throws IllegalStateException if this team has been unregistered
      * @return if the entry was a part of this team
+     * @throws IllegalArgumentException if entry is null
+     * @throws IllegalStateException    if this team has been unregistered
      */
     boolean removeEntry(String entry) throws IllegalStateException, IllegalArgumentException;
 
@@ -249,9 +250,9 @@ public interface Team {
      * @param player the player to search for
      * @return true if the player is a member of this team
      * @throws IllegalArgumentException if player is null
-     * @throws IllegalStateException if this team has been unregistered
-     * @deprecated Teams can contain entries that aren't players
+     * @throws IllegalStateException    if this team has been unregistered
      * @see #hasEntry(String)
+     * @deprecated Teams can contain entries that aren't players
      */
 
     boolean hasPlayer(OfflinePlayer player) throws IllegalArgumentException, IllegalStateException;
@@ -262,7 +263,7 @@ public interface Team {
      * @param entry the entry to search for
      * @return true if the entry is a member of this team
      * @throws IllegalArgumentException if entry is null
-     * @throws IllegalStateException if this team has been unregistered
+     * @throws IllegalStateException    if this team has been unregistered
      */
     boolean hasEntry(String entry) throws IllegalArgumentException, IllegalStateException;
 

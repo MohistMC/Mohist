@@ -25,8 +25,10 @@ package com.destroystokyo.paper.event.profile;
 
 import com.destroystokyo.paper.profile.PlayerProfile;
 import com.destroystokyo.paper.profile.ProfileProperty;
+
 import java.util.Set;
 import javax.annotation.Nonnull;
+
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
@@ -57,8 +59,8 @@ public class FillProfileEvent extends Event {
     /**
      * Same as .getPlayerProfile().getProperties()
      *
-     * @see PlayerProfile#getProperties()
      * @return The new properties on the profile.
+     * @see PlayerProfile#getProperties()
      */
     public Set<ProfileProperty> getProperties() {
         return profile.getProperties();

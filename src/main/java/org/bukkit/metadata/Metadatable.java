@@ -1,6 +1,7 @@
 package org.bukkit.metadata;
 
 import java.util.List;
+
 import org.bukkit.plugin.Plugin;
 
 /**
@@ -11,10 +12,10 @@ public interface Metadatable {
     /**
      * Sets a metadata value in the implementing object's metadata store.
      *
-     * @param metadataKey A unique key to identify this metadata.
+     * @param metadataKey      A unique key to identify this metadata.
      * @param newMetadataValue The metadata value to apply.
      * @throws IllegalArgumentException If value is null, or the owning plugin
-     *     is null
+     *                                  is null
      */
     public void setMetadata(String metadataKey, MetadataValue newMetadataValue);
 
@@ -24,7 +25,7 @@ public interface Metadatable {
      *
      * @param metadataKey the unique metadata key being sought.
      * @return A list of values, one for each plugin that has set the
-     *     requested value.
+     * requested value.
      */
     public List<MetadataValue> getMetadata(String metadataKey);
 
@@ -41,10 +42,10 @@ public interface Metadatable {
      * Removes the given metadata value from the implementing object's
      * metadata store.
      *
-     * @param metadataKey the unique metadata key identifying the metadata to
-     *     remove.
+     * @param metadataKey  the unique metadata key identifying the metadata to
+     *                     remove.
      * @param owningPlugin This plugin's metadata value will be removed. All
-     *     other values will be left untouched.
+     *                     other values will be left untouched.
      * @throws IllegalArgumentException If plugin is null
      */
     public void removeMetadata(String metadataKey, Plugin owningPlugin);

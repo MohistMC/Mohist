@@ -1,7 +1,9 @@
 package org.bukkit.craftbukkit.v1_12_R1.inventory;
 
 import com.google.common.collect.ImmutableSet;
+
 import java.util.Collection;
+
 import org.apache.commons.lang3.Validate;
 import org.bukkit.Color;
 import org.bukkit.Material;

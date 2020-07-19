@@ -1,6 +1,7 @@
 package org.bukkit.event.command;
 
 import javax.annotation.Nullable;
+
 import org.bukkit.command.CommandSender;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;

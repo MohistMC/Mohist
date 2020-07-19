@@ -25,10 +25,12 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSyntaxException;
+
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import javax.annotation.Nonnull;
+
 import net.minecraft.block.Block;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.Item;
@@ -47,8 +49,7 @@ import net.minecraftforge.registries.IForgeRegistryEntry;
 import org.bukkit.inventory.Recipe;
 import red.mohist.recipe.CustomModRecipe;
 
-public class ShapedOreRecipe extends IForgeRegistryEntry.Impl<IRecipe> implements IShapedRecipe
-{
+public class ShapedOreRecipe extends IForgeRegistryEntry.Impl<IRecipe> implements IShapedRecipe {
     @Deprecated
     public static final int MAX_CRAFT_GRID_WIDTH = 3;
     @Deprecated
@@ -61,13 +62,21 @@ public class ShapedOreRecipe extends IForgeRegistryEntry.Impl<IRecipe> implement
     protected int height = 0;
     protected boolean mirrored = true;
     protected ResourceLocation group;
-	private Recipe bukkitRecip;
+    private Recipe bukkitRecip;
 
-    public ShapedOreRecipe(ResourceLocation group, Block     result, Object... recipe){ this(group, new ItemStack(result), recipe); }
-    public ShapedOreRecipe(ResourceLocation group, Item      result, Object... recipe){ this(group, new ItemStack(result), recipe); }
-    public ShapedOreRecipe(ResourceLocation group, @Nonnull ItemStack result, Object... recipe) { this(group, result, CraftingHelper.parseShaped(recipe)); }
-    public ShapedOreRecipe(ResourceLocation group, @Nonnull ItemStack result, ShapedPrimer primer)
-    {
+    public ShapedOreRecipe(ResourceLocation group, Block result, Object... recipe) {
+        this(group, new ItemStack(result), recipe);
+    }
+
+    public ShapedOreRecipe(ResourceLocation group, Item result, Object... recipe) {
+        this(group, new ItemStack(result), recipe);
+    }
+
+    public ShapedOreRecipe(ResourceLocation group, @Nonnull ItemStack result, Object... recipe) {
+        this(group, result, CraftingHelper.parseShaped(recipe));
+    }
+
+    public ShapedOreRecipe(ResourceLocation group, @Nonnull ItemStack result, ShapedPrimer primer) {
         this.group = group;
         output = result.copy();
         this.width = primer.width;
@@ -76,130 +85,13 @@ public class ShapedOreRecipe extends IForgeRegistryEntry.Impl<IRecipe> implement
         this.mirrored = primer.mirrored;
     }
 
-    @Override
-    @Nonnull
-    public ItemStack getCraftingResult(@Nonnull InventoryCrafting var1){ return output.copy(); }
-
-    @Override
-    @Nonnull
-    public ItemStack getRecipeOutput(){ return output; }
-
-    @Override
-    public boolean matches(@Nonnull InventoryCrafting inv, @Nonnull World world)
-    {
-        for (int x = 0; x <= inv.getWidth() - width; x++)
-        {
-            for (int y = 0; y <= inv.getHeight() - height; ++y)
-            {
-                if (checkMatch(inv, x, y, false))
-                {
-                    return true;
-                }
-
-                if (mirrored && checkMatch(inv, x, y, true))
-                {
-                    return true;
-                }
-            }
-        }
-
-        return false;
-    }
-
-    /**
-     * Based on {@link net.minecraft.item.crafting.ShapedRecipes#checkMatch(InventoryCrafting, int, int, boolean)}
-     */
-    protected boolean checkMatch(InventoryCrafting inv, int startX, int startY, boolean mirror)
-    {
-        for (int x = 0; x < inv.getWidth(); x++)
-        {
-            for (int y = 0; y < inv.getHeight(); y++)
-            {
-                int subX = x - startX;
-                int subY = y - startY;
-                Ingredient target = Ingredient.EMPTY;
-
-                if (subX >= 0 && subY >= 0 && subX < width && subY < height)
-                {
-                    if (mirror)
-                    {
-                        target = input.get(width - subX - 1 + subY * width);
-                    }
-                    else
-                    {
-                        target = input.get(subX + subY * width);
-                    }
-                }
-
-                if (!target.apply(inv.getStackInRowAndColumn(x, y)))
-                {
-                    return false;
-                }
-            }
-        }
-
-        return true;
-    }
-
-    public ShapedOreRecipe setMirrored(boolean mirror)
-    {
-        mirrored = mirror;
-        return this;
-    }
-
-    @Override
-    @Nonnull
-    public NonNullList<Ingredient> getIngredients()
-    {
-        return this.input;
-    }
-
-    @Deprecated //Use IShapedRecipe.getRecipeWidth
-    public int getWidth()
-    {
-        return width;
-    }
-
-    @Override
-    public int getRecipeWidth()
-    {
-        return this.getWidth();
-    }
-
-    @Deprecated //Use IShapedRecipe.getRecipeHeight
-    public int getHeight()
-    {
-        return height;
-    }
-
-    @Override
-    public int getRecipeHeight()
-    {
-        return this.getHeight();
-    }
-
-    @Override
-    @Nonnull
-    public String getGroup()
-    {
-        return this.group == null ? "" : this.group.toString();
-    }
-
-    @Override
-    public boolean canFit(int p_194133_1_, int p_194133_2_)
-    {
-        return p_194133_1_ >= this.width && p_194133_2_ >= this.height;
-    }
-
-    public static ShapedOreRecipe factory(JsonContext context, JsonObject json)
-    {
+    public static ShapedOreRecipe factory(JsonContext context, JsonObject json) {
         String group = JsonUtils.getString(json, "group", "");
         //if (!group.isEmpty() && group.indexOf(':') == -1)
         //    group = context.getModId() + ":" + group;
 
         Map<Character, Ingredient> ingMap = Maps.newHashMap();
-        for (Entry<String, JsonElement> entry : JsonUtils.getJsonObject(json, "key").entrySet())
-        {
+        for (Entry<String, JsonElement> entry : JsonUtils.getJsonObject(json, "key").entrySet()) {
             if (entry.getKey().length() != 1)
                 throw new JsonSyntaxException("Invalid key entry: '" + entry.getKey() + "' is an invalid symbol (must be 1 character only).");
             if (" ".equals(entry.getKey()))
@@ -216,8 +108,7 @@ public class ShapedOreRecipe extends IForgeRegistryEntry.Impl<IRecipe> implement
             throw new JsonSyntaxException("Invalid pattern: empty pattern not allowed");
 
         String[] pattern = new String[patternJ.size()];
-        for (int x = 0; x < pattern.length; ++x)
-        {
+        for (int x = 0; x < pattern.length; ++x) {
             String line = JsonUtils.getString(patternJ.get(x), "pattern[" + x + "]");
             if (x > 0 && pattern[0].length() != line.length())
                 throw new JsonSyntaxException("Invalid pattern: each row must  be the same width");
@@ -234,10 +125,8 @@ public class ShapedOreRecipe extends IForgeRegistryEntry.Impl<IRecipe> implement
         keys.remove(' ');
 
         int x = 0;
-        for (String line : pattern)
-        {
-            for (char chr : line.toCharArray())
-            {
+        for (String line : pattern) {
+            for (char chr : line.toCharArray()) {
                 Ingredient ing = ingMap.get(chr);
                 if (ing == null)
                     throw new JsonSyntaxException("Pattern references symbol '" + chr + "' but it's not defined in the key");
@@ -251,6 +140,104 @@ public class ShapedOreRecipe extends IForgeRegistryEntry.Impl<IRecipe> implement
 
         ItemStack result = CraftingHelper.getItemStack(JsonUtils.getJsonObject(json, "result"), context);
         return new ShapedOreRecipe(group.isEmpty() ? null : new ResourceLocation(group), result, primer);
+    }
+
+    @Override
+    @Nonnull
+    public ItemStack getCraftingResult(@Nonnull InventoryCrafting var1) {
+        return output.copy();
+    }
+
+    @Override
+    @Nonnull
+    public ItemStack getRecipeOutput() {
+        return output;
+    }
+
+    @Override
+    public boolean matches(@Nonnull InventoryCrafting inv, @Nonnull World world) {
+        for (int x = 0; x <= inv.getWidth() - width; x++) {
+            for (int y = 0; y <= inv.getHeight() - height; ++y) {
+                if (checkMatch(inv, x, y, false)) {
+                    return true;
+                }
+
+                if (mirrored && checkMatch(inv, x, y, true)) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Based on {@link net.minecraft.item.crafting.ShapedRecipes#checkMatch(InventoryCrafting, int, int, boolean)}
+     */
+    protected boolean checkMatch(InventoryCrafting inv, int startX, int startY, boolean mirror) {
+        for (int x = 0; x < inv.getWidth(); x++) {
+            for (int y = 0; y < inv.getHeight(); y++) {
+                int subX = x - startX;
+                int subY = y - startY;
+                Ingredient target = Ingredient.EMPTY;
+
+                if (subX >= 0 && subY >= 0 && subX < width && subY < height) {
+                    if (mirror) {
+                        target = input.get(width - subX - 1 + subY * width);
+                    } else {
+                        target = input.get(subX + subY * width);
+                    }
+                }
+
+                if (!target.apply(inv.getStackInRowAndColumn(x, y))) {
+                    return false;
+                }
+            }
+        }
+
+        return true;
+    }
+
+    public ShapedOreRecipe setMirrored(boolean mirror) {
+        mirrored = mirror;
+        return this;
+    }
+
+    @Override
+    @Nonnull
+    public NonNullList<Ingredient> getIngredients() {
+        return this.input;
+    }
+
+    @Deprecated //Use IShapedRecipe.getRecipeWidth
+    public int getWidth() {
+        return width;
+    }
+
+    @Override
+    public int getRecipeWidth() {
+        return this.getWidth();
+    }
+
+    @Deprecated //Use IShapedRecipe.getRecipeHeight
+    public int getHeight() {
+        return height;
+    }
+
+    @Override
+    public int getRecipeHeight() {
+        return this.getHeight();
+    }
+
+    @Override
+    @Nonnull
+    public String getGroup() {
+        return this.group == null ? "" : this.group.toString();
+    }
+
+    @Override
+    public boolean canFit(int p_194133_1_, int p_194133_2_) {
+        return p_194133_1_ >= this.width && p_194133_2_ >= this.height;
     }
 
     @Override

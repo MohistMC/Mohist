@@ -17,7 +17,7 @@ public interface ConversationCanceller extends Cloneable {
      * Cancels a conversation based on user input.
      *
      * @param context Context information about the conversation.
-     * @param input The input text from the user.
+     * @param input   The input text from the user.
      * @return True to cancel the conversation, False otherwise.
      */
     public boolean cancelBasedOnInput(ConversationContext context, String input);

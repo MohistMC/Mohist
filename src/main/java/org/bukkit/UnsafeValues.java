@@ -1,6 +1,7 @@
 package org.bukkit;
 
 import java.util.List;
+
 import org.bukkit.advancement.Advancement;
 import org.bukkit.inventory.ItemStack;
 
@@ -40,7 +41,7 @@ public interface UnsafeValues {
      * <br>
      * Callers should be prepared for {@link Exception} to be thrown.
      *
-     * @param key the unique advancement key
+     * @param key         the unique advancement key
      * @param advancement representation of the advancement
      * @return the loaded advancement or null if an error occurred
      */

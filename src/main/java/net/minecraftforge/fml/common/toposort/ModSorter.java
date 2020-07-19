@@ -20,10 +20,12 @@
 package net.minecraftforge.fml.common.toposort;
 
 import com.google.common.collect.Maps;
+
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import net.minecraftforge.fml.common.DummyModContainer;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.ModAPIManager;
@@ -33,10 +35,8 @@ import net.minecraftforge.fml.common.versioning.ArtifactVersion;
 
 /**
  * @author cpw
- *
  */
-public class ModSorter
-{
+public class ModSorter {
     private DirectedGraph<ModContainer> modGraph;
 
     private ModContainer beforeAll = new DummyModContainer("BeforeAll");
@@ -44,15 +44,13 @@ public class ModSorter
     private ModContainer before = new DummyModContainer("Before");
     private ModContainer after = new DummyModContainer("After");
 
-    public ModSorter(List<ModContainer> modList, Map<String, ModContainer> nameLookup)
-    {
+    public ModSorter(List<ModContainer> modList, Map<String, ModContainer> nameLookup) {
         HashMap<String, ModContainer> sortingNameLookup = Maps.newHashMap(nameLookup);
         ModAPIManager.INSTANCE.injectAPIModContainers(modList, sortingNameLookup);
         buildGraph(modList, sortingNameLookup);
     }
 
-    private void buildGraph(List<ModContainer> modList, Map<String, ModContainer> nameLookup)
-    {
+    private void buildGraph(List<ModContainer> modList, Map<String, ModContainer> nameLookup) {
         modGraph = new DirectedGraph<ModContainer>();
         modGraph.addNode(beforeAll);
         modGraph.addNode(before);
@@ -62,15 +60,12 @@ public class ModSorter
         modGraph.addEdge(beforeAll, before);
         modGraph.addEdge(after, afterAll);
 
-        for (ModContainer mod : modList)
-        {
+        for (ModContainer mod : modList) {
             modGraph.addNode(mod);
         }
 
-        for (ModContainer mod : modList)
-        {
-            if (mod.isImmutable())
-            {
+        for (ModContainer mod : modList) {
+            if (mod.isImmutable()) {
                 // Immutable mods are always before everything
                 modGraph.addEdge(beforeAll, mod);
                 modGraph.addEdge(mod, before);
@@ -79,20 +74,16 @@ public class ModSorter
             boolean preDepAdded = false;
             boolean postDepAdded = false;
 
-            for (ArtifactVersion dep : mod.getDependencies())
-            {
+            for (ArtifactVersion dep : mod.getDependencies()) {
                 preDepAdded = true;
 
                 String modid = dep.getLabel();
-                if (modid.equals("*"))
-                {
+                if (modid.equals("*")) {
                     // We are "after" everything
                     modGraph.addEdge(mod, afterAll);
                     modGraph.addEdge(after, mod);
                     postDepAdded = true;
-                }
-                else
-                {
+                } else {
                     modGraph.addEdge(before, mod);
                     if (nameLookup.containsKey(modid) || Loader.isModLoaded(modid)) {
                         modGraph.addEdge(nameLookup.get(modid), mod);
@@ -100,20 +91,16 @@ public class ModSorter
                 }
             }
 
-            for (ArtifactVersion dep : mod.getDependants())
-            {
+            for (ArtifactVersion dep : mod.getDependants()) {
                 postDepAdded = true;
 
                 String modid = dep.getLabel();
-                if (modid.equals("*"))
-                {
+                if (modid.equals("*")) {
                     // We are "before" everything
                     modGraph.addEdge(beforeAll, mod);
                     modGraph.addEdge(mod, before);
                     preDepAdded = true;
-                }
-                else
-                {
+                } else {
                     modGraph.addEdge(mod, after);
                     if (Loader.isModLoaded(modid)) {
                         modGraph.addEdge(mod, nameLookup.get(modid));
@@ -121,22 +108,19 @@ public class ModSorter
                 }
             }
 
-            if (!preDepAdded)
-            {
+            if (!preDepAdded) {
                 modGraph.addEdge(before, mod);
             }
 
-            if (!postDepAdded)
-            {
+            if (!postDepAdded) {
                 modGraph.addEdge(mod, after);
             }
         }
     }
 
-    public List<ModContainer> sort()
-    {
+    public List<ModContainer> sort() {
         List<ModContainer> sortedList = TopologicalSort.topologicalSort(modGraph);
-        sortedList.removeAll(Arrays.asList(new ModContainer[] {beforeAll, before, after, afterAll}));
+        sortedList.removeAll(Arrays.asList(new ModContainer[]{beforeAll, before, after, afterAll}));
         return sortedList;
     }
 }

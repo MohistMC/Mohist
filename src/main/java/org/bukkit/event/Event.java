@@ -5,7 +5,7 @@ import org.bukkit.plugin.PluginManager;
 
 /**
  * Represents an event.
- *
+ * <p>
  * All events require a static method named getHandlerList() which returns the same {@link HandlerList} as {@link #getHandlers()}.
  *
  * @see PluginManager#callEvent(Event)
@@ -28,7 +28,7 @@ public abstract class Event {
      * or asynchronous.
      *
      * @param isAsync true indicates the event will fire asynchronously, false
-     *     by default from default constructor
+     *                by default from default constructor
      */
     public Event(boolean isAsync) {
         this.async = isAsync;

@@ -3,6 +3,7 @@ package org.bukkit.craftbukkit.v1_12_R1.inventory;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;

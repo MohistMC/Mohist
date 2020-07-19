@@ -1,6 +1,7 @@
 package org.bukkit.event.entity;
 
 import java.util.List;
+
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.HandlerList;
 import org.bukkit.inventory.ItemStack;
@@ -30,6 +31,10 @@ public class EntityDeathEvent extends EntityEvent implements org.bukkit.event.Ca
         super(what);
         this.drops = drops;
         this.dropExp = droppedExp;
+    }
+
+    public static HandlerList getHandlerList() {
+        return handlers;
     }
 
     @Override
@@ -72,10 +77,6 @@ public class EntityDeathEvent extends EntityEvent implements org.bukkit.event.Ca
 
     @Override
     public HandlerList getHandlers() {
-        return handlers;
-    }
-
-    public static HandlerList getHandlerList() {
         return handlers;
     }
 

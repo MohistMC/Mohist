@@ -1,6 +1,7 @@
 package org.bukkit.craftbukkit.v1_12_R1.inventory;
 
 import java.util.Iterator;
+
 import net.minecraft.item.crafting.CraftingManager;
 import net.minecraft.item.crafting.FurnaceRecipes;
 import net.minecraft.item.crafting.IRecipe;

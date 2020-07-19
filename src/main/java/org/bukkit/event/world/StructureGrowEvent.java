@@ -1,6 +1,7 @@
 package org.bukkit.event.world;
 
 import java.util.List;
+
 import org.bukkit.Location;
 import org.bukkit.TreeType;
 import org.bukkit.block.BlockState;
@@ -66,7 +67,7 @@ public class StructureGrowEvent extends WorldEvent implements Cancellable {
      * Gets the player that created the structure.
      *
      * @return Player that created the structure, null if was not created
-     *     manually
+     * manually
      */
     public Player getPlayer() {
         return player;

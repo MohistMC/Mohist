@@ -97,7 +97,7 @@ public interface BanEntry {
      * "infinite" bans.
      *
      * @param expiration the new expiration date, or null to indicate an
-     *     eternity
+     *                   eternity
      * @see #save() saving changes
      */
     public void setExpiration(Date expiration);
@@ -113,7 +113,7 @@ public interface BanEntry {
      * Sets the reason for this ban. Reasons must not be null.
      *
      * @param reason the new reason, null values assume the implementation
-     *     default
+     *               default
      * @see #save() saving changes
      */
     public void setReason(String reason);

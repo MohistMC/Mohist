@@ -35,16 +35,14 @@ public enum Side {
     /**
      * @return If this is the server environment
      */
-    public boolean isServer()
-    {
+    public boolean isServer() {
         return !isClient();
     }
 
     /**
      * @return if this is the Client environment
      */
-    public boolean isClient()
-    {
+    public boolean isClient() {
         return this == CLIENT;
     }
 }

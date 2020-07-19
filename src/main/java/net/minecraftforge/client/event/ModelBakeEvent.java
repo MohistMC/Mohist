@@ -31,31 +31,26 @@ import net.minecraftforge.fml.common.eventhandler.Event;
  * Called after model registry is setup, but before it's passed to BlockModelShapes.
  */
 // TODO: try to merge with ICustomModelLoader
-public class ModelBakeEvent extends Event
-{
+public class ModelBakeEvent extends Event {
     private final ModelManager modelManager;
     private final IRegistry<ModelResourceLocation, IBakedModel> modelRegistry;
     private final ModelLoader modelLoader;
 
-    public ModelBakeEvent(ModelManager modelManager, IRegistry<ModelResourceLocation, IBakedModel> modelRegistry, ModelLoader modelLoader)
-    {
+    public ModelBakeEvent(ModelManager modelManager, IRegistry<ModelResourceLocation, IBakedModel> modelRegistry, ModelLoader modelLoader) {
         this.modelManager = modelManager;
         this.modelRegistry = modelRegistry;
         this.modelLoader = modelLoader;
     }
 
-    public ModelManager getModelManager()
-    {
+    public ModelManager getModelManager() {
         return modelManager;
     }
 
-    public IRegistry<ModelResourceLocation, IBakedModel> getModelRegistry()
-    {
+    public IRegistry<ModelResourceLocation, IBakedModel> getModelRegistry() {
         return modelRegistry;
     }
 
-    public ModelLoader getModelLoader()
-    {
+    public ModelLoader getModelLoader() {
         return modelLoader;
     }
 }

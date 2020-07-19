@@ -19,13 +19,12 @@ public class BlockPhysicsEvent extends BlockEvent implements Cancellable {
     private Block sourceBlock;
 
     /**
-     *
-     * @deprecated Magic value
-     * @param block the block involved in this event
+     * @param block   the block involved in this event
      * @param changed the changed block's type id
      * @param sourceX the x of the source block
      * @param sourceY the y of the source block
      * @param sourceZ the z of the source block
+     * @deprecated Magic value
      */
     @Deprecated
     public BlockPhysicsEvent(final Block block, final int changed, final int sourceX, final int sourceY, final int sourceZ) {
@@ -37,28 +36,28 @@ public class BlockPhysicsEvent extends BlockEvent implements Cancellable {
     }
 
     /**
-     * Gets the source block, causing this event
-     *
-     * @return Source block
-     */
-    public Block getSourceBlock() {
-        return sourceBlock == null ? (sourceBlock = block.getWorld().getBlockAt(sourceX, sourceY, sourceZ)) : sourceBlock;
-    }
-    // Paper end
-    /**
-     *
-     * @deprecated Magic value
-     * @param block the block involved in this event
+     * @param block   the block involved in this event
      * @param changed the changed block's type id
+     * @deprecated Magic value
      */
     public BlockPhysicsEvent(final Block block, final int changed) {
         super(block);
         this.changed = changed;
         this.sourceBlock = block; // Paper - add source block
     }
+    // Paper end
 
     public static HandlerList getHandlerList() {
         return handlers;
+    }
+
+    /**
+     * Gets the source block, causing this event
+     *
+     * @return Source block
+     */
+    public Block getSourceBlock() {
+        return sourceBlock == null ? (sourceBlock = block.getWorld().getBlockAt(sourceX, sourceY, sourceZ)) : sourceBlock;
     }
 
     /**

@@ -20,10 +20,12 @@
 package net.minecraftforge.fml.common;
 
 import com.google.common.base.Predicate;
+
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import javax.annotation.Nonnull;
+
 import net.minecraft.command.EntitySelector;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.Entity;
@@ -34,8 +36,7 @@ import net.minecraft.util.math.Vec3d;
  * Registered in {@link net.minecraftforge.fml.common.registry.GameRegistry#registerEntitySelector(IEntitySelectorFactory, String...)}
  * For an example implementation, see CustomEntitySelectorTest
  */
-public interface IEntitySelectorFactory
-{
+public interface IEntitySelectorFactory {
     /**
      * Called every time a command that contains entity selectors is executed
      *
@@ -45,5 +46,6 @@ public interface IEntitySelectorFactory
      * @param position     A position either specified in the selector arguments or by the players position. See {@link EntitySelector#getPosFromArguments(Map, Vec3d)}
      * @return A list of new predicates, can be empty ({@link Collections#emptyList()} but not null.
      */
-    @Nonnull List<Predicate<Entity>> createPredicates(Map<String, String> arguments, String mainSelector, ICommandSender sender, Vec3d position);
+    @Nonnull
+    List<Predicate<Entity>> createPredicates(Map<String, String> arguments, String mainSelector, ICommandSender sender, Vec3d position);
 }

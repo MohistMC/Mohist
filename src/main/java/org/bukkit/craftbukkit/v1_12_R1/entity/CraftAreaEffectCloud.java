@@ -1,7 +1,9 @@
 package org.bukkit.craftbukkit.v1_12_R1.entity;
 
 import com.google.common.collect.ImmutableList;
+
 import java.util.List;
+
 import net.minecraft.entity.EntityAreaEffectCloud;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.potion.Potion;

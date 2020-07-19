@@ -23,6 +23,7 @@ import com.google.common.hash.Hashing;
 import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
 import com.google.common.io.Files;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -32,6 +33,7 @@ import java.util.Locale;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import javax.annotation.Nullable;
+
 import net.minecraftforge.fml.common.asm.transformers.deobf.FMLDeobfuscatingRemapper;
 import net.minecraftforge.fml.repackage.com.nothome.delta.Delta;
 import org.apache.logging.log4j.LogManager;
@@ -41,8 +43,7 @@ public class GenDiffSet {
 
     private static final List<String> RESERVED_NAMES = Arrays.asList("CON", "PRN", "AUX", "NUL", "COM1", "COM2", "COM3", "COM4", "COM5", "COM6", "COM7", "COM8", "COM9", "LPT1", "LPT2", "LPT3", "LPT4", "LPT5", "LPT6", "LPT7", "LPT8", "LPT9");
 
-    public static void main(String[] args) throws IOException
-    {
+    public static void main(String[] args) throws IOException {
         String sourceJar = args[0]; //Clean Vanilla jar minecraft.jar or minecraft_server.jar
         String targetDir = args[1]; //Directory containing obfed output classes, typically mcp/reobf/minecraft
         String deobfData = args[2]; //Path to FML's deobfusication_data.lzma
@@ -60,19 +61,16 @@ public class GenDiffSet {
         File f = new File(outputDir);
         f.mkdirs();
 
-        for (String name : remapper.getObfedClasses())
-        {
+        for (String name : remapper.getObfedClasses()) {
 //            Logger.getLogger("GENDIFF").info(String.format("Evaluating path for data :%s",name));
             String fileName = name;
             String jarName = name;
-            if (RESERVED_NAMES.contains(name.toUpperCase(Locale.ENGLISH)))
-            {
-                fileName = "_"+name;
+            if (RESERVED_NAMES.contains(name.toUpperCase(Locale.ENGLISH))) {
+                fileName = "_" + name;
             }
             File targetFile = new File(targetDir, fileName.replace('/', File.separatorChar) + ".class");
-            jarName = jarName+".class";
-            if (targetFile.exists())
-            {
+            jarName = jarName + ".class";
+            if (targetFile.exists()) {
                 String sourceClassName = name.replace('/', '.');
                 String targetClassName = remapper.map(name).replace('/', '.');
                 JarEntry entry = sourceZip.getJarEntry(jarName);
@@ -91,8 +89,7 @@ public class GenDiffSet {
                 diffOut.writeUTF(targetClassName);
                 // exists at original
                 diffOut.writeBoolean(entry != null);
-                if (entry != null)
-                {
+                if (entry != null) {
                     diffOut.writeInt(Hashing.adler32().hashBytes(vanillaBytes).asInt());
                 }
                 // length of patch
@@ -100,12 +97,11 @@ public class GenDiffSet {
                 // patch
                 diffOut.write(diff);
 
-                File target = new File(outputDir, targetClassName+".binpatch");
+                File target = new File(outputDir, targetClassName + ".binpatch");
                 target.getParentFile().mkdirs();
                 Files.write(diffOut.toByteArray(), target);
                 logger.info("Wrote patch for {} ({}) at {}", name, targetClassName, target.getAbsolutePath());
-                if (kill)
-                {
+                if (kill) {
                     targetFile.delete();
                     logger.info("  Deleted target: {}", targetFile);
                 }
@@ -114,15 +110,12 @@ public class GenDiffSet {
         sourceZip.close();
     }
 
-    private static byte[] toByteArray(JarFile sourceZip, @Nullable JarEntry entry) throws IOException
-    {
-        if (entry == null)
-        {
+    private static byte[] toByteArray(JarFile sourceZip, @Nullable JarEntry entry) throws IOException {
+        if (entry == null) {
             return new byte[0];
         }
 
-        try (InputStream sourceZipInputStream = sourceZip.getInputStream(entry))
-        {
+        try (InputStream sourceZipInputStream = sourceZip.getInputStream(entry)) {
             return ByteStreams.toByteArray(sourceZipInputStream);
         }
     }

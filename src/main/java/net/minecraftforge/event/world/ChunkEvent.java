@@ -34,18 +34,15 @@ import net.minecraftforge.fml.common.eventhandler.Event;
  * <br>
  * All children of this event are fired on the {@link MinecraftForge#EVENT_BUS}.<br>
  **/
-public class ChunkEvent extends WorldEvent
-{
+public class ChunkEvent extends WorldEvent {
     private final Chunk chunk;
 
-    public ChunkEvent(Chunk chunk)
-    {
+    public ChunkEvent(Chunk chunk) {
         super(chunk.getWorld());
         this.chunk = chunk;
     }
 
-    public Chunk getChunk()
-    {
+    public Chunk getChunk() {
         return chunk;
     }
 
@@ -61,10 +58,8 @@ public class ChunkEvent extends WorldEvent
      * <br>
      * This event is fired on the {@link MinecraftForge#EVENT_BUS}.<br>
      **/
-    public static class Load extends ChunkEvent
-    {
-        public Load(Chunk chunk)
-        {
+    public static class Load extends ChunkEvent {
+        public Load(Chunk chunk) {
             super(chunk);
         }
     }
@@ -80,10 +75,8 @@ public class ChunkEvent extends WorldEvent
      * <br>
      * This event is fired on the {@link MinecraftForge#EVENT_BUS}.<br>
      **/
-    public static class Unload extends ChunkEvent
-    {
-        public Unload(Chunk chunk)
-        {
+    public static class Unload extends ChunkEvent {
+        public Unload(Chunk chunk) {
             super(chunk);
         }
     }

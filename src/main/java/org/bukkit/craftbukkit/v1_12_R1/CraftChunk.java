@@ -2,6 +2,7 @@ package org.bukkit.craftbukkit.v1_12_R1;
 
 import java.lang.ref.WeakReference;
 import java.util.Arrays;
+
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.WorldServer;
 import net.minecraft.world.biome.Biome;

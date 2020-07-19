@@ -27,17 +27,14 @@ import net.minecraftforge.fml.common.LoaderState.ModState;
  *
  * @author cpw
  */
-public class FMLLoadCompleteEvent extends FMLStateEvent
-{
+public class FMLLoadCompleteEvent extends FMLStateEvent {
 
-    public FMLLoadCompleteEvent(Object... data)
-    {
+    public FMLLoadCompleteEvent(Object... data) {
         super(data);
     }
-    
+
     @Override
-    public ModState getModState()
-    {
+    public ModState getModState() {
         return ModState.AVAILABLE;
     }
 

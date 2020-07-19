@@ -24,7 +24,7 @@ public interface FishHook extends Projectile {
      *
      * @param chance the bite chance
      * @throws IllegalArgumentException if the bite chance is not between 0
-     *     and 1
+     *                                  and 1
      * @deprecated has no effect in newer Minecraft versions
      */
     @Deprecated

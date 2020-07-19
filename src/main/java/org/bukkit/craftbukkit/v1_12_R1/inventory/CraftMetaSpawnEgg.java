@@ -2,7 +2,9 @@ package org.bukkit.craftbukkit.v1_12_R1.inventory;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap.Builder;
+
 import java.util.Map;
+
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.server.MinecraftServer;
@@ -84,7 +86,7 @@ public class CraftMetaSpawnEgg extends CraftMetaItem implements SpawnEggMeta {
 
         if (hasSpawnedType()) {
             String[] domain_and_name = this.entityTag.getString("id").split(":");
-            entityTag.setString(ENTITY_ID.NBT, new ResourceLocation(domain_and_name[0],spawnedType.getName()).toString().toLowerCase());
+            entityTag.setString(ENTITY_ID.NBT, new ResourceLocation(domain_and_name[0], spawnedType.getName()).toString().toLowerCase());
         }
 
         if (entityTag != null) {

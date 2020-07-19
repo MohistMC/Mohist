@@ -2,12 +2,14 @@ package org.bukkit.craftbukkit.v1_12_R1.event;
 
 import com.google.common.base.Function;
 import com.google.common.base.Functions;
+
 import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 import javax.annotation.Nullable;
+
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
@@ -196,7 +198,7 @@ public class CraftEventFactory {
     public static BlockMultiPlaceEvent callBlockMultiPlaceEvent(World world, EntityPlayer who, EnumHand hand, List<BlockState> blockStates, int clickedX, int clickedY, int clickedZ) {
         CraftWorld craftWorld = world.getWorld();
         CraftServer craftServer = world.getServer();
-        Player player = (Player)who.getBukkitEntity();
+        Player player = (Player) who.getBukkitEntity();
 
         Block blockClicked = craftWorld.getBlockAt(clickedX, clickedY, clickedZ);
 

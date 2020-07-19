@@ -21,6 +21,7 @@ package net.minecraftforge.event.world;
 
 import java.util.List;
 import javax.annotation.Nullable;
+
 import net.minecraft.entity.Entity;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.world.World;
@@ -41,32 +42,27 @@ import net.minecraftforge.fml.common.eventhandler.Cancelable;
  * <br>
  * This event is fired on the {@link MinecraftForge#EVENT_BUS}.<br>
  **/
-public class GetCollisionBoxesEvent extends WorldEvent
-{
+public class GetCollisionBoxesEvent extends WorldEvent {
     private final Entity entity;
     private final AxisAlignedBB aabb;
     private final List<AxisAlignedBB> collisionBoxesList;
 
-    public GetCollisionBoxesEvent(World world, @Nullable Entity entity, AxisAlignedBB aabb, List<AxisAlignedBB> collisionBoxesList)
-    {
+    public GetCollisionBoxesEvent(World world, @Nullable Entity entity, AxisAlignedBB aabb, List<AxisAlignedBB> collisionBoxesList) {
         super(world);
         this.entity = entity;
         this.aabb = aabb;
         this.collisionBoxesList = collisionBoxesList;
     }
 
-    public Entity getEntity()
-    {
+    public Entity getEntity() {
         return entity;
     }
 
-    public AxisAlignedBB getAabb()
-    {
+    public AxisAlignedBB getAabb() {
         return aabb;
     }
 
-    public List<AxisAlignedBB> getCollisionBoxesList()
-    {
+    public List<AxisAlignedBB> getCollisionBoxesList() {
         return collisionBoxesList;
     }
 }

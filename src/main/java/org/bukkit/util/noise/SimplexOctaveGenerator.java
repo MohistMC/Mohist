@@ -1,6 +1,7 @@
 package org.bukkit.util.noise;
 
 import java.util.Random;
+
 import org.bukkit.World;
 
 /**
@@ -12,7 +13,7 @@ public class SimplexOctaveGenerator extends OctaveGenerator {
     /**
      * Creates a simplex octave generator for the given world
      *
-     * @param world World to construct this generator for
+     * @param world   World to construct this generator for
      * @param octaves Amount of octaves to create
      */
     public SimplexOctaveGenerator(World world, int octaves) {
@@ -22,7 +23,7 @@ public class SimplexOctaveGenerator extends OctaveGenerator {
     /**
      * Creates a simplex octave generator for the given world
      *
-     * @param seed Seed to construct this generator for
+     * @param seed    Seed to construct this generator for
      * @param octaves Amount of octaves to create
      */
     public SimplexOctaveGenerator(long seed, int octaves) {
@@ -32,7 +33,7 @@ public class SimplexOctaveGenerator extends OctaveGenerator {
     /**
      * Creates a simplex octave generator for the given {@link Random}
      *
-     * @param rand Random object to construct this generator for
+     * @param rand    Random object to construct this generator for
      * @param octaves Amount of octaves to create
      */
     public SimplexOctaveGenerator(Random rand, int octaves) {
@@ -77,10 +78,10 @@ public class SimplexOctaveGenerator extends OctaveGenerator {
      * Generates noise for the 3D coordinates using the specified number of
      * octaves and parameters
      *
-     * @param x X-coordinate
-     * @param y Y-coordinate
-     * @param z Z-coordinate
-     * @param w W-coordinate
+     * @param x         X-coordinate
+     * @param y         Y-coordinate
+     * @param z         Z-coordinate
+     * @param w         W-coordinate
      * @param frequency How much to alter the frequency by each octave
      * @param amplitude How much to alter the amplitude by each octave
      * @return Resulting noise
@@ -93,12 +94,12 @@ public class SimplexOctaveGenerator extends OctaveGenerator {
      * Generates noise for the 3D coordinates using the specified number of
      * octaves and parameters
      *
-     * @param x X-coordinate
-     * @param y Y-coordinate
-     * @param z Z-coordinate
-     * @param w W-coordinate
-     * @param frequency How much to alter the frequency by each octave
-     * @param amplitude How much to alter the amplitude by each octave
+     * @param x          X-coordinate
+     * @param y          Y-coordinate
+     * @param z          Z-coordinate
+     * @param w          W-coordinate
+     * @param frequency  How much to alter the frequency by each octave
+     * @param amplitude  How much to alter the amplitude by each octave
      * @param normalized If true, normalize the value to [-1, 1]
      * @return Resulting noise
      */

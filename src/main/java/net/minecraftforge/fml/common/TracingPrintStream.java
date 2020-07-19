@@ -20,6 +20,7 @@
 package net.minecraftforge.fml.common;
 
 import java.io.PrintStream;
+
 import org.apache.logging.log4j.Logger;
 
 /**

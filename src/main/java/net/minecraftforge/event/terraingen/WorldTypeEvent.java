@@ -35,17 +35,14 @@ import net.minecraftforge.fml.common.eventhandler.Event;
  * <br>
  * All children of this event are fired on the {@link MinecraftForge#TERRAIN_GEN_BUS}.<br>
  **/
-public class WorldTypeEvent extends Event
-{
+public class WorldTypeEvent extends Event {
     private final WorldType worldType;
 
-    public WorldTypeEvent(WorldType worldType)
-    {
+    public WorldTypeEvent(WorldType worldType) {
         this.worldType = worldType;
     }
 
-    public WorldType getWorldType()
-    {
+    public WorldType getWorldType() {
         return worldType;
     }
 
@@ -64,30 +61,25 @@ public class WorldTypeEvent extends Event
      * <br>
      * This event is fired on the {@link MinecraftForge#TERRAIN_GEN_BUS}.<br>
      **/
-    public static class BiomeSize extends WorldTypeEvent
-    {
+    public static class BiomeSize extends WorldTypeEvent {
         private final int originalSize;
         private int newSize;
 
-        public BiomeSize(WorldType worldType, int original)
-        {
+        public BiomeSize(WorldType worldType, int original) {
             super(worldType);
             originalSize = original;
             setNewSize(original);
         }
 
-        public int getOriginalSize()
-        {
+        public int getOriginalSize() {
             return originalSize;
         }
 
-        public int getNewSize()
-        {
+        public int getNewSize() {
             return newSize;
         }
 
-        public void setNewSize(int newSize)
-        {
+        public void setNewSize(int newSize) {
             this.newSize = newSize;
         }
     }
@@ -108,37 +100,31 @@ public class WorldTypeEvent extends Event
      * <br>
      * This event is fired on the {@link MinecraftForge#TERRAIN_GEN_BUS}.<br>
      **/
-    public static class InitBiomeGens extends WorldTypeEvent
-    {
+    public static class InitBiomeGens extends WorldTypeEvent {
         private final long seed;
         private final GenLayer[] originalBiomeGens;
         private GenLayer[] newBiomeGens;
 
-        public InitBiomeGens(WorldType worldType, long seed, GenLayer[] original)
-        {
+        public InitBiomeGens(WorldType worldType, long seed, GenLayer[] original) {
             super(worldType);
             this.seed = seed;
             originalBiomeGens = original;
             setNewBiomeGens(original.clone());
         }
 
-        public long getSeed()
-        {
+        public long getSeed() {
             return seed;
         }
 
-        public GenLayer[] getOriginalBiomeGens()
-        {
+        public GenLayer[] getOriginalBiomeGens() {
             return originalBiomeGens;
         }
 
-        public GenLayer[] getNewBiomeGens()
-        {
+        public GenLayer[] getNewBiomeGens() {
             return newBiomeGens;
         }
 
-        public void setNewBiomeGens(GenLayer[] newBiomeGens)
-        {
+        public void setNewBiomeGens(GenLayer[] newBiomeGens) {
             this.newBiomeGens = newBiomeGens;
         }
     }

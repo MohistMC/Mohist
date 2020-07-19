@@ -1,6 +1,7 @@
 package org.bukkit.craftbukkit.v1_12_R1.scheduler;
 
 import co.aikar.timings.MinecraftTimings;
+
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Iterator;
@@ -12,6 +13,7 @@ import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.logging.Level;
+
 import org.apache.commons.lang.Validate;
 import org.bukkit.plugin.IllegalPluginAccessException;
 import org.bukkit.plugin.Plugin;
@@ -24,19 +26,19 @@ import org.bukkit.scheduler.BukkitWorker;
  * The fundamental concepts for this implementation:
  * <li>Main thread owns {@link #head} and {@link #currentTick}, but it may be read from any thread</li>
  * <li>Main thread exclusively controls {@link #temp} and {@link #pending}.
- *     They are never to be accessed outside of the main thread; alternatives exist to prevent locking.</li>
+ * They are never to be accessed outside of the main thread; alternatives exist to prevent locking.</li>
  * <li>{@link #head} to {@link #tail} act as a linked list/queue, with 1 consumer and infinite producers.
- *     Adding to the tail is atomic and very efficient; utility method is {@link #handle(CraftTask, long)} or {@link #addTask(CraftTask)}. </li>
+ * Adding to the tail is atomic and very efficient; utility method is {@link #handle(CraftTask, long)} or {@link #addTask(CraftTask)}. </li>
  * <li>Changing the period on a task is delicate.
- *     Any future task needs to notify waiting threads.
- *     Async tasks must be synchronized to make sure that any thread that's finishing will remove itself from {@link #runners}.
- *     Another utility method is provided for this, {@link #cancelTask(int)}</li>
+ * Any future task needs to notify waiting threads.
+ * Async tasks must be synchronized to make sure that any thread that's finishing will remove itself from {@link #runners}.
+ * Another utility method is provided for this, {@link #cancelTask(int)}</li>
  * <li>{@link #runners} provides a moderately up-to-date view of active tasks.
- *     If the linked head to tail set is read, all remaining tasks that were active at the time execution started will be located in runners.</li>
+ * If the linked head to tail set is read, all remaining tasks that were active at the time execution started will be located in runners.</li>
  * <li>Async tasks are responsible for removing themselves from runners</li>
  * <li>Sync tasks are only to be removed from runners on the main thread when coupled with a removal from pending and temp.</li>
  * <li>Most of the design in this scheduler relies on queuing special tasks to perform any data changes on the main thread.
- *     When executed from inside a synchronous method, the scheduler will be updated before next execution by virtue of the frequent {@link #parsePending()} calls.</li>
+ * When executed from inside a synchronous method, the scheduler will be updated before next execution by virtue of the frequent {@link #parsePending()} calls.</li>
  */
 public class CraftScheduler implements BukkitScheduler {
 
@@ -218,7 +220,9 @@ public class CraftScheduler implements BukkitScheduler {
                         }
                         return false;
                     }
-                }){{this.timings=co.aikar.timings.MinecraftTimings.getCancelTasksTimer();}}; // Paper
+                }) {{
+            this.timings = co.aikar.timings.MinecraftTimings.getCancelTasksTimer();
+        }}; // Paper
         handle(task, 0L);
         for (CraftTask taskPending = head.getNext(); taskPending != null; taskPending = taskPending.getNext()) {
             if (taskPending == task) {
@@ -257,7 +261,9 @@ public class CraftScheduler implements BukkitScheduler {
                             }
                         }
                     }
-                }){{this.timings=co.aikar.timings.MinecraftTimings.getCancelTasksTimer(plugin);}}; // Paper
+                }) {{
+            this.timings = co.aikar.timings.MinecraftTimings.getCancelTasksTimer(plugin);
+        }}; // Paper
         handle(task, 0L);
         for (CraftTask taskPending = head.getNext(); taskPending != null; taskPending = taskPending.getNext()) {
             if (taskPending == task) {
@@ -292,7 +298,9 @@ public class CraftScheduler implements BukkitScheduler {
                     }
                     CraftScheduler.this.pending.clear();
                     CraftScheduler.this.temp.clear();
-                }){{this.timings=co.aikar.timings.MinecraftTimings.getCancelTasksTimer();}}; // Paper
+                }) {{
+            this.timings = co.aikar.timings.MinecraftTimings.getCancelTasksTimer();
+        }}; // Paper
         handle(task, 0L);
         for (CraftTask taskPending = head.getNext(); taskPending != null; taskPending = taskPending.getNext()) {
             if (taskPending == task) {

@@ -24,8 +24,7 @@ import net.minecraft.util.text.TextFormatting;
 /**
  * Interface generalisation of {@link net.minecraft.item.EnumRarity}.
  */
-public interface IRarity
-{
+public interface IRarity {
     TextFormatting getColor();
 
     String getName();

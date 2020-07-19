@@ -76,6 +76,13 @@ public interface Arrow extends Projectile {
     Spigot spigot();
 
     /**
+     * Gets the ItemStack for this arrow.
+     *
+     * @return The ItemStack, as if a player picked up the arrow
+     */
+    org.bukkit.inventory.ItemStack getItemStack();
+
+    /**
      * Represents the pickup status of this arrow.
      */
     public enum PickupStatus {
@@ -92,6 +99,7 @@ public interface Arrow extends Projectile {
          */
         CREATIVE_ONLY
     }
+    // Spigot end
 
     // Spigot start
     public class Spigot extends Entity.Spigot {
@@ -104,12 +112,4 @@ public interface Arrow extends Projectile {
             throw new UnsupportedOperationException("Not supported yet.");
         }
     }
-    // Spigot end
-
-    /**
-     * Gets the ItemStack for this arrow.
-     *
-     * @return The ItemStack, as if a player picked up the arrow
-     */
-    org.bukkit.inventory.ItemStack getItemStack();
 }

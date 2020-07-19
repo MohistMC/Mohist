@@ -21,13 +21,13 @@ package net.minecraftforge.client.resource;
 
 import java.util.function.Predicate;
 import javax.annotation.Nullable;
+
 import net.minecraftforge.common.ForgeModContainer;
 
 /**
  * Handles reload parameters for selective loaders.
  */
-public enum SelectiveReloadStateHandler
-{
+public enum SelectiveReloadStateHandler {
     INSTANCE;
 
     @Nullable
@@ -40,10 +40,8 @@ public enum SelectiveReloadStateHandler
      *
      * @param resourcePredicate the resource requirement predicate for the current reload
      */
-    public void beginReload(Predicate<IResourceType> resourcePredicate)
-    {
-        if (this.currentPredicate != null)
-        {
+    public void beginReload(Predicate<IResourceType> resourcePredicate) {
+        if (this.currentPredicate != null) {
             throw new IllegalStateException("Recursive resource reloading detected");
         }
 
@@ -55,10 +53,8 @@ public enum SelectiveReloadStateHandler
      *
      * @return the active reload resource predicate, or an accepting one if none in progress
      */
-    public Predicate<IResourceType> get()
-    {
-        if (this.currentPredicate == null || !ForgeModContainer.selectiveResourceReloadEnabled)
-        {
+    public Predicate<IResourceType> get() {
+        if (this.currentPredicate == null || !ForgeModContainer.selectiveResourceReloadEnabled) {
             return ReloadRequirements.all();
         }
 
@@ -68,8 +64,7 @@ public enum SelectiveReloadStateHandler
     /**
      * Finishes the current reload and deletes the previously added reload predicate.
      */
-    public void endReload()
-    {
+    public void endReload() {
         this.currentPredicate = null;
     }
 }

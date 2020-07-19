@@ -1,6 +1,7 @@
 package red.mohist.bukkit.nms.remappers;
 
 import com.google.common.collect.BiMap;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.lang.reflect.Modifier;
@@ -11,6 +12,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.StringJoiner;
+
 import net.md_5.specialsource.InheritanceMap;
 import net.md_5.specialsource.NodeType;
 import net.md_5.specialsource.provider.InheritanceProvider;
@@ -21,7 +23,6 @@ import org.objectweb.asm.commons.Remapper;
 import red.mohist.bukkit.nms.model.ClassMapping;
 
 /**
- *
  * @author pyz
  * @date 2019/7/2 10:02 PM
  */
@@ -35,6 +36,10 @@ public class MohistJarMapping implements ClassRemapperSupplier {
     public final Map<String, String> fields = new HashMap<>();
     public final Map<String, String> methods = new HashMap<>();
     public final Map<String, String> fastMapping = new HashMap<>();
+    public final LinkedHashMap<String, String> packages = new LinkedHashMap<>();
+    protected InheritanceMap inheritanceMap = new InheritanceMap();
+    protected InheritanceProvider fallbackInheritanceProvider = null;
+    protected String currentClass = null;
 
     public MohistJarMapping() {
     }
@@ -197,12 +202,6 @@ public class MohistJarMapping implements ClassRemapperSupplier {
         return sj.toString();
     }
 
-    public final LinkedHashMap<String, String> packages = new LinkedHashMap<>();
-    protected InheritanceMap inheritanceMap = new InheritanceMap();
-    protected InheritanceProvider fallbackInheritanceProvider = null;
-    protected String currentClass = null;
-
-
     /**
      * Set the inheritance map used for caching superclass/interfaces. This call
      * be omitted to use a local cache, or set to your own global cache.
@@ -250,11 +249,11 @@ public class MohistJarMapping implements ClassRemapperSupplier {
     /**
      * Load a mapping given a .csrg file
      *
-     * @param reader Mapping file reader
-     * @param inputTransformer Transformation to apply on input
+     * @param reader            Mapping file reader
+     * @param inputTransformer  Transformation to apply on input
      * @param outputTransformer Transformation to apply on output
-     * @param reverse Swap input and output mappings (after applying any
-     * input/output transformations)
+     * @param reverse           Swap input and output mappings (after applying any
+     *                          input/output transformations)
      * @throws IOException
      */
     public void loadMappings(BufferedReader reader, MappingTransformer inputTransformer, MappingTransformer outputTransformer, boolean reverse) throws IOException {

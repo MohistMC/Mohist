@@ -1,6 +1,7 @@
 package org.bukkit.craftbukkit.v1_12_R1.entity;
 
 import java.util.UUID;
+
 import net.minecraft.entity.passive.EntityHorse;
 import org.apache.commons.lang3.Validate;
 import org.bukkit.craftbukkit.v1_12_R1.CraftServer;

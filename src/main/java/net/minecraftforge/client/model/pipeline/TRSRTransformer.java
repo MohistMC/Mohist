@@ -21,23 +21,20 @@ package net.minecraftforge.client.model.pipeline;
 
 import javax.vecmath.Vector3f;
 import javax.vecmath.Vector4f;
+
 import net.minecraftforge.common.model.TRSRTransformation;
 
-public class TRSRTransformer extends VertexTransformer
-{
+public class TRSRTransformer extends VertexTransformer {
     private final TRSRTransformation transform;
 
-    public TRSRTransformer(IVertexConsumer parent, TRSRTransformation transform)
-    {
+    public TRSRTransformer(IVertexConsumer parent, TRSRTransformation transform) {
         super(parent);
         this.transform = transform;
     }
 
     @Override
-    public void put(int element, float... data)
-    {
-        switch (getVertexFormat().getElement(element).getUsage())
-        {
+    public void put(int element, float... data) {
+        switch (getVertexFormat().getElement(element).getUsage()) {
             case POSITION:
                 Vector4f pos = new Vector4f(data);
                 transform.transformPosition(pos);

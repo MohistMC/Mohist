@@ -24,6 +24,7 @@ import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
+
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
@@ -32,6 +33,7 @@ import javax.annotation.Nullable;
 import javax.vecmath.Matrix4f;
 import javax.vecmath.Quat4f;
 import javax.vecmath.Vector3f;
+
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.BakedQuad;
@@ -48,32 +50,28 @@ import net.minecraftforge.common.model.IModelState;
 import net.minecraftforge.common.model.TRSRTransformation;
 import org.apache.commons.lang3.tuple.Pair;
 
-final class FancyMissingModel implements IModel
-{
+final class FancyMissingModel implements IModel {
     private static final ResourceLocation font = new ResourceLocation("minecraft", "textures/font/ascii.png");
     private static final ResourceLocation font2 = new ResourceLocation("minecraft", "font/ascii");
     private static final TRSRTransformation smallTransformation = TRSRTransformation.blockCenterToCorner(new TRSRTransformation(null, null, new Vector3f(.25f, .25f, .25f), null));
-    private static final LoadingCache<VertexFormat, SimpleModelFontRenderer> fontCache = CacheBuilder.newBuilder().maximumSize(3).build(new CacheLoader<VertexFormat, SimpleModelFontRenderer>()
-    {
+    private static final LoadingCache<VertexFormat, SimpleModelFontRenderer> fontCache = CacheBuilder.newBuilder().maximumSize(3).build(new CacheLoader<VertexFormat, SimpleModelFontRenderer>() {
         @Override
-        public SimpleModelFontRenderer load(VertexFormat format) throws Exception
-        {
+        public SimpleModelFontRenderer load(VertexFormat format) throws Exception {
             Matrix4f m = new Matrix4f();
             m.m20 = 1f / 128f;
             m.m01 = m.m12 = -m.m20;
             m.m33 = 1;
             m.setTranslation(new Vector3f(1, 1 + 1f / 0x100, 0));
             return new SimpleModelFontRenderer(
-                Minecraft.getMinecraft().gameSettings,
-                font,
-                Minecraft.getMinecraft().getTextureManager(),
-                false,
-                m,
-                format
+                    Minecraft.getMinecraft().gameSettings,
+                    font,
+                    Minecraft.getMinecraft().getTextureManager(),
+                    false,
+                    m,
+                    format
             ) {
                 @Override
-                protected float renderUnicodeChar(char c, boolean italic)
-                {
+                protected float renderUnicodeChar(char c, boolean italic) {
                     return super.renderDefaultChar(126, italic);
                 }
             };
@@ -83,35 +81,30 @@ final class FancyMissingModel implements IModel
     private final IModel missingModel;
     private final String message;
 
-    public FancyMissingModel(IModel missingModel, String message)
-    {
+    public FancyMissingModel(IModel missingModel, String message) {
         this.missingModel = missingModel;
         this.message = message;
     }
 
     @Override
-    public Collection<ResourceLocation> getTextures()
-    {
+    public Collection<ResourceLocation> getTextures() {
         return ImmutableList.of(font2);
     }
 
     @Override
-    public Optional<ModelBlock> asVanillaModel()
-    {
+    public Optional<ModelBlock> asVanillaModel() {
         return missingModel.asVanillaModel();
     }
 
     @Override
-    public IBakedModel bake(IModelState state, VertexFormat format, Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter)
-    {
+    public IBakedModel bake(IModelState state, VertexFormat format, Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter) {
         IBakedModel bigMissing = missingModel.bake(state, format, bakedTextureGetter);
         IModelState smallState = new ModelStateComposition(state, smallTransformation);
         IBakedModel smallMissing = missingModel.bake(smallState, format, bakedTextureGetter);
         return new BakedModel(bigMissing, smallMissing, fontCache.getUnchecked(format), message, bakedTextureGetter.apply(font2));
     }
 
-    static final class BakedModel implements IBakedModel
-    {
+    static final class BakedModel implements IBakedModel {
         private final SimpleModelFontRenderer fontRenderer;
         private final String message;
         private final TextureAtlasSprite fontTexture;
@@ -120,8 +113,7 @@ final class FancyMissingModel implements IModel
         private final boolean big;
         private ImmutableList<BakedQuad> quads;
 
-        public BakedModel(IBakedModel bigMissing, IBakedModel smallMissing, SimpleModelFontRenderer fontRenderer, String message, TextureAtlasSprite fontTexture)
-        {
+        public BakedModel(IBakedModel bigMissing, IBakedModel smallMissing, SimpleModelFontRenderer fontRenderer, String message, TextureAtlasSprite fontTexture) {
             this.missingModel = bigMissing;
             otherModel = new BakedModel(smallMissing, fontRenderer, message, fontTexture, this);
             this.big = true;
@@ -130,8 +122,7 @@ final class FancyMissingModel implements IModel
             this.fontTexture = fontTexture;
         }
 
-        public BakedModel(IBakedModel smallMissing, SimpleModelFontRenderer fontRenderer, String message, TextureAtlasSprite fontTexture, BakedModel big)
-        {
+        public BakedModel(IBakedModel smallMissing, SimpleModelFontRenderer fontRenderer, String message, TextureAtlasSprite fontTexture, BakedModel big) {
             this.missingModel = smallMissing;
             otherModel = big;
             this.big = false;
@@ -141,23 +132,18 @@ final class FancyMissingModel implements IModel
         }
 
         @Override
-        public List<BakedQuad> getQuads(@Nullable IBlockState state, @Nullable EnumFacing side, long rand)
-        {
-            if (side == null)
-            {
-                if (quads == null)
-                {
+        public List<BakedQuad> getQuads(@Nullable IBlockState state, @Nullable EnumFacing side, long rand) {
+            if (side == null) {
+                if (quads == null) {
                     fontRenderer.setSprite(fontTexture);
                     fontRenderer.setFillBlanks(true);
                     String[] lines = message.split("\\r?\\n");
                     List<String> splitLines = Lists.newArrayList();
-                    for (int y = 0; y < lines.length; y++)
-                    {
+                    for (int y = 0; y < lines.length; y++) {
                         splitLines.addAll(fontRenderer.listFormattedStringToWidth(lines[y], 0x80));
                     }
-                    for (int y = 0; y < splitLines.size(); y++)
-                    {
-                        fontRenderer.drawString(splitLines.get(y), 0, (int)((y - splitLines.size() / 2f) * fontRenderer.FONT_HEIGHT) + 0x40, 0xFF00FFFF);
+                    for (int y = 0; y < splitLines.size(); y++) {
+                        fontRenderer.drawString(splitLines.get(y), 0, (int) ((y - splitLines.size() / 2f) * fontRenderer.FONT_HEIGHT) + 0x40, 0xFF00FFFF);
                     }
                     ImmutableList.Builder<BakedQuad> builder = ImmutableList.builder();
                     builder.addAll(missingModel.getQuads(state, side, rand));
@@ -170,27 +156,35 @@ final class FancyMissingModel implements IModel
         }
 
         @Override
-        public boolean isAmbientOcclusion() { return true; }
+        public boolean isAmbientOcclusion() {
+            return true;
+        }
 
         @Override
-        public boolean isGui3d() { return false; }
+        public boolean isGui3d() {
+            return false;
+        }
 
         @Override
-        public boolean isBuiltInRenderer() { return false; }
+        public boolean isBuiltInRenderer() {
+            return false;
+        }
 
         @Override
-        public TextureAtlasSprite getParticleTexture() { return fontTexture; }
+        public TextureAtlasSprite getParticleTexture() {
+            return fontTexture;
+        }
 
         @Override
-        public ItemOverrideList getOverrides() { return ItemOverrideList.NONE; }
+        public ItemOverrideList getOverrides() {
+            return ItemOverrideList.NONE;
+        }
 
         @Override
-        public Pair<? extends IBakedModel, Matrix4f> handlePerspective(ItemCameraTransforms.TransformType cameraTransformType)
-        {
+        public Pair<? extends IBakedModel, Matrix4f> handlePerspective(ItemCameraTransforms.TransformType cameraTransformType) {
             TRSRTransformation transform = TRSRTransformation.identity();
             boolean big = true;
-            switch (cameraTransformType)
-            {
+            switch (cameraTransformType) {
 
                 case THIRD_PERSON_LEFT_HAND:
                     break;
@@ -207,13 +201,10 @@ final class FancyMissingModel implements IModel
                 case HEAD:
                     break;
                 case GUI:
-                    if (ForgeModContainer.zoomInMissingModelTextInGui)
-                    {
+                    if (ForgeModContainer.zoomInMissingModelTextInGui) {
                         transform = new TRSRTransformation(null, new Quat4f(1, 1, 1, 1), new Vector3f(4, 4, 4), null);
                         big = false;
-                    }
-                    else
-                    {
+                    } else {
                         transform = new TRSRTransformation(null, new Quat4f(1, 1, 1, 1), null, null);
                         big = true;
                     }
@@ -224,8 +215,7 @@ final class FancyMissingModel implements IModel
                 default:
                     break;
             }
-            if (big != this.big)
-            {
+            if (big != this.big) {
                 return Pair.of(otherModel, transform.getMatrix());
             }
             return Pair.of(this, transform.getMatrix());

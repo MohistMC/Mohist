@@ -20,10 +20,12 @@
 package net.minecraftforge.fluids.capability.templates;
 
 import com.google.common.collect.Lists;
+
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.IFluidHandler;
@@ -33,41 +35,34 @@ import net.minecraftforge.fluids.capability.IFluidTankProperties;
  * FluidHandlerFluidMap is a template class for concatenating multiple handlers into one,
  * where each handler is associated with a different fluid.
  */
-public class FluidHandlerFluidMap implements IFluidHandler
-{
+public class FluidHandlerFluidMap implements IFluidHandler {
     protected final Map<Fluid, IFluidHandler> handlers;
 
-    public FluidHandlerFluidMap()
-    {
+    public FluidHandlerFluidMap() {
         // LinkedHashMap to ensure iteration order is consistent.
         this(new LinkedHashMap<Fluid, IFluidHandler>());
     }
 
-    public FluidHandlerFluidMap(Map<Fluid, IFluidHandler> handlers)
-    {
+    public FluidHandlerFluidMap(Map<Fluid, IFluidHandler> handlers) {
         this.handlers = handlers;
     }
 
-    public FluidHandlerFluidMap addHandler(Fluid fluid, IFluidHandler handler)
-    {
+    public FluidHandlerFluidMap addHandler(Fluid fluid, IFluidHandler handler) {
         handlers.put(fluid, handler);
         return this;
     }
 
     @Override
-    public IFluidTankProperties[] getTankProperties()
-    {
+    public IFluidTankProperties[] getTankProperties() {
         List<IFluidTankProperties> tanks = Lists.newArrayList();
-        for (IFluidHandler iFluidHandler : handlers.values())
-        {
+        for (IFluidHandler iFluidHandler : handlers.values()) {
             Collections.addAll(tanks, iFluidHandler.getTankProperties());
         }
         return tanks.toArray(new IFluidTankProperties[tanks.size()]);
     }
 
     @Override
-    public int fill(FluidStack resource, boolean doFill)
-    {
+    public int fill(FluidStack resource, boolean doFill) {
         if (resource == null)
             return 0;
         IFluidHandler handler = handlers.get(resource.getFluid());
@@ -77,8 +72,7 @@ public class FluidHandlerFluidMap implements IFluidHandler
     }
 
     @Override
-    public FluidStack drain(FluidStack resource, boolean doDrain)
-    {
+    public FluidStack drain(FluidStack resource, boolean doDrain) {
         if (resource == null)
             return null;
         IFluidHandler handler = handlers.get(resource.getFluid());
@@ -88,10 +82,8 @@ public class FluidHandlerFluidMap implements IFluidHandler
     }
 
     @Override
-    public FluidStack drain(int maxDrain, boolean doDrain)
-    {
-        for (IFluidHandler handler : handlers.values())
-        {
+    public FluidStack drain(int maxDrain, boolean doDrain) {
+        for (IFluidHandler handler : handlers.values()) {
             FluidStack drain = handler.drain(maxDrain, doDrain);
             if (drain != null)
                 return drain;

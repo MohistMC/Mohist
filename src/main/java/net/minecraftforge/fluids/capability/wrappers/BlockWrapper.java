@@ -33,29 +33,24 @@ import net.minecraftforge.fluids.capability.templates.VoidFluidHandler;
  * If the block in question inherits from the default Vanilla or Forge implementations,
  * consider using {@link BlockLiquidWrapper} or {@link FluidBlockWrapper} respectively.
  */
-public class BlockWrapper extends VoidFluidHandler
-{
+public class BlockWrapper extends VoidFluidHandler {
     protected final Block block;
     protected final World world;
     protected final BlockPos blockPos;
 
-    public BlockWrapper(Block block, World world, BlockPos blockPos)
-    {
+    public BlockWrapper(Block block, World world, BlockPos blockPos) {
         this.block = block;
         this.world = world;
         this.blockPos = blockPos;
     }
 
     @Override
-    public int fill(FluidStack resource, boolean doFill)
-    {
+    public int fill(FluidStack resource, boolean doFill) {
         // NOTE: "Filling" means placement in this context!
-        if (resource.amount < Fluid.BUCKET_VOLUME)
-        {
+        if (resource.amount < Fluid.BUCKET_VOLUME) {
             return 0;
         }
-        if (doFill)
-        {
+        if (doFill) {
             FluidUtil.destroyBlockOnFluidPlacement(world, blockPos);
             world.setBlockState(blockPos, block.getDefaultState(), Constants.BlockFlags.DEFAULT_AND_RERENDER);
         }

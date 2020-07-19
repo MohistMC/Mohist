@@ -1,6 +1,7 @@
 package org.bukkit.event.server;
 
 import java.util.Set;
+
 import org.bukkit.command.CommandSender;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.HandlerList;

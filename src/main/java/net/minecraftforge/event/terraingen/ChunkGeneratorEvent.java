@@ -24,38 +24,35 @@ import net.minecraft.world.chunk.ChunkPrimer;
 import net.minecraft.world.gen.IChunkGenerator;
 import net.minecraftforge.fml.common.eventhandler.Event;
 
-public class ChunkGeneratorEvent extends Event
-{
+public class ChunkGeneratorEvent extends Event {
     private final IChunkGenerator gen;
 
-    public ChunkGeneratorEvent(IChunkGenerator gen)
-    {
+    public ChunkGeneratorEvent(IChunkGenerator gen) {
         this.gen = gen;
     }
 
-    public IChunkGenerator getGenerator() { return this.getGen(); }
+    public IChunkGenerator getGenerator() {
+        return this.getGen();
+    }
 
-    public IChunkGenerator getGen()
-    {
+    public IChunkGenerator getGen() {
         return gen;
     }
 
     /**
      * This event is fired when a chunks blocks are replaced by a biomes top and
      * filler blocks.
-     *
+     * <p>
      * You can set the result to DENY to prevent the default replacement.
      */
     @HasResult
-    public static class ReplaceBiomeBlocks extends ChunkGeneratorEvent
-    {
+    public static class ReplaceBiomeBlocks extends ChunkGeneratorEvent {
         private final int x;
         private final int z;
         private final ChunkPrimer primer;
         private final World world; // CAN BE NULL
 
-        public ReplaceBiomeBlocks(IChunkGenerator chunkProvider, int x, int z, ChunkPrimer primer, World world)
-        {
+        public ReplaceBiomeBlocks(IChunkGenerator chunkProvider, int x, int z, ChunkPrimer primer, World world) {
             super(chunkProvider);
             this.x = x;
             this.z = z;
@@ -63,30 +60,39 @@ public class ChunkGeneratorEvent extends Event
             this.world = world;
         }
 
-        public int getX() { return x; }
-        public int getZ() { return z; }
-        public ChunkPrimer getPrimer() { return primer; }
-        public World getWorld() { return world; }
+        public int getX() {
+            return x;
+        }
+
+        public int getZ() {
+            return z;
+        }
+
+        public ChunkPrimer getPrimer() {
+            return primer;
+        }
+
+        public World getWorld() {
+            return world;
+        }
     }
 
     /**
      * This event is fired before a chunks terrain noise field is initialized.
-     *
+     * <p>
      * You can set the result to DENY to substitute your own noise field.
      */
     @HasResult
-    public static class InitNoiseField extends ChunkGeneratorEvent
-    {
-        private double[] noisefield;
+    public static class InitNoiseField extends ChunkGeneratorEvent {
         private final int posX;
         private final int posY;
         private final int posZ;
         private final int sizeX;
         private final int sizeY;
         private final int sizeZ;
+        private double[] noisefield;
 
-        public InitNoiseField(IChunkGenerator chunkProvider, double[] noisefield, int posX, int posY, int posZ, int sizeX, int sizeY, int sizeZ)
-        {
+        public InitNoiseField(IChunkGenerator chunkProvider, double[] noisefield, int posX, int posY, int posZ, int sizeX, int sizeY, int sizeZ) {
             super(chunkProvider);
             this.setNoisefield(noisefield);
             this.posX = posX;
@@ -97,13 +103,36 @@ public class ChunkGeneratorEvent extends Event
             this.sizeZ = sizeZ;
         }
 
-        public double[] getNoisefield() { return noisefield; }
-        public void setNoisefield(double[] noisefield) { this.noisefield = noisefield; }
-        public int getPosX() { return posX; }
-        public int getPosY() { return posY; }
-        public int getPosZ() { return posZ; }
-        public int getSizeX() { return sizeX; }
-        public int getSizeY() { return sizeY; }
-        public int getSizeZ() { return sizeZ; }
+        public double[] getNoisefield() {
+            return noisefield;
+        }
+
+        public void setNoisefield(double[] noisefield) {
+            this.noisefield = noisefield;
+        }
+
+        public int getPosX() {
+            return posX;
+        }
+
+        public int getPosY() {
+            return posY;
+        }
+
+        public int getPosZ() {
+            return posZ;
+        }
+
+        public int getSizeX() {
+            return sizeX;
+        }
+
+        public int getSizeY() {
+            return sizeY;
+        }
+
+        public int getSizeZ() {
+            return sizeZ;
+        }
     }
 }

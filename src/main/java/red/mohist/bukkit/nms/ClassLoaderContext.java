@@ -3,7 +3,6 @@ package red.mohist.bukkit.nms;
 import java.util.LinkedList;
 
 /**
- *
  * @author pyz
  * @date 2019/7/4 1:30 AM
  */
@@ -19,7 +18,7 @@ public class ClassLoaderContext {
         stack.push(classLoader);
     }
 
-    public static ClassLoader remove(){
+    public static ClassLoader remove() {
         LinkedList<ClassLoader> stack = THREAD_LOCAL.get();
         if (stack == null || stack.isEmpty()) {
             return null;

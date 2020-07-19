@@ -25,7 +25,6 @@ import io.netty.buffer.ByteBuf;
  * Implement this interface for each message you wish to define.
  *
  * @author cpw
- *
  */
 public interface IMessage {
     /**
@@ -37,6 +36,7 @@ public interface IMessage {
 
     /**
      * Deconstruct your message into the supplied byte buffer
+     *
      * @param buf
      */
     void toBytes(ByteBuf buf);

@@ -39,7 +39,7 @@ public class PistonBaseMaterial extends MaterialData implements Directional, Red
      * Constructs a PistonBaseMaterial.
      *
      * @param type the material type to use
-     * @param data the raw data value 
+     * @param data the raw data value
      * @deprecated Magic value
      */
 

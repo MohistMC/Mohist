@@ -2,11 +2,13 @@ package org.bukkit.plugin.messaging;
 
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSet.Builder;
+
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
+
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
@@ -40,18 +42,18 @@ public class StandardMessenger implements Messenger {
      * valid.
      *
      * @param messenger Messenger to use for validation.
-     * @param source Source plugin of the Message.
-     * @param channel Plugin Channel to send the message by.
-     * @param message Raw message payload to send.
-     * @throws IllegalArgumentException Thrown if the source plugin is
-     *     disabled.
-     * @throws IllegalArgumentException Thrown if source, channel or message
-     *     is null.
-     * @throws MessageTooLargeException Thrown if the message is too big.
-     * @throws ChannelNameTooLongException Thrown if the channel name is too
-     *     long.
+     * @param source    Source plugin of the Message.
+     * @param channel   Plugin Channel to send the message by.
+     * @param message   Raw message payload to send.
+     * @throws IllegalArgumentException      Thrown if the source plugin is
+     *                                       disabled.
+     * @throws IllegalArgumentException      Thrown if source, channel or message
+     *                                       is null.
+     * @throws MessageTooLargeException      Thrown if the message is too big.
+     * @throws ChannelNameTooLongException   Thrown if the channel name is too
+     *                                       long.
      * @throws ChannelNotRegisteredException Thrown if the channel is not
-     *     registered for this plugin.
+     *                                       registered for this plugin.
      */
     public static void validatePluginMessage(Messenger messenger, Plugin source, String channel, byte[] message) {
         if (messenger == null) {

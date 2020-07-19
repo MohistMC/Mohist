@@ -21,6 +21,7 @@ package net.minecraftforge.fml.common;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.eventbus.EventBus;
+
 import java.io.File;
 import java.net.URL;
 import java.security.cert.Certificate;
@@ -29,208 +30,177 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import javax.annotation.Nullable;
+
 import net.minecraftforge.fml.common.versioning.ArtifactVersion;
 import net.minecraftforge.fml.common.versioning.DefaultArtifactVersion;
 import net.minecraftforge.fml.common.versioning.VersionRange;
 
-public class DummyModContainer implements ModContainer
-{
+public class DummyModContainer implements ModContainer {
     private ModMetadata md;
     private ArtifactVersion processedVersion;
     private String label;
     private int classVersion;
 
-    public DummyModContainer(ModMetadata md)
-    {
+    public DummyModContainer(ModMetadata md) {
         this.md = md;
     }
 
-    public DummyModContainer(String label)
-    {
+    public DummyModContainer(String label) {
         this.label = label;
     }
-    public DummyModContainer()
-    {
+
+    public DummyModContainer() {
     }
 
     @Override
-    public void bindMetadata(MetadataCollection mc)
-    {
+    public void bindMetadata(MetadataCollection mc) {
     }
 
     @Override
-    public List<ArtifactVersion> getDependants()
-    {
+    public List<ArtifactVersion> getDependants() {
         return Collections.emptyList();
     }
 
     @Override
-    public List<ArtifactVersion> getDependencies()
-    {
+    public List<ArtifactVersion> getDependencies() {
         return Collections.emptyList();
     }
 
     @Override
-    public Set<ArtifactVersion> getRequirements()
-    {
+    public Set<ArtifactVersion> getRequirements() {
         return Collections.emptySet();
     }
 
     @Override
-    public ModMetadata getMetadata()
-    {
+    public ModMetadata getMetadata() {
         return md;
     }
 
     @Override
-    public Object getMod()
-    {
+    public Object getMod() {
         return null;
     }
 
     @Override
-    public String getModId()
-    {
+    public String getModId() {
         return md.modId;
     }
 
     @Override
-    public String getName()
-    {
+    public String getName() {
         return md.name;
     }
 
     @Override
-    public String getSortingRules()
-    {
+    public String getSortingRules() {
         return "";
     }
 
     @Override
-    public File getSource()
-    {
+    public File getSource() {
         return null;
     }
 
     @Override
-    public String getVersion()
-    {
+    public String getVersion() {
         return md.version;
     }
 
     @Override
-    public boolean matches(Object mod)
-    {
+    public boolean matches(Object mod) {
         return false;
     }
 
     @Override
-    public void setEnabledState(boolean enabled)
-    {
+    public void setEnabledState(boolean enabled) {
     }
 
     @Override
-    public boolean registerBus(EventBus bus, LoadController controller)
-    {
+    public boolean registerBus(EventBus bus, LoadController controller) {
         return false;
     }
 
     @Override
-    public ArtifactVersion getProcessedVersion()
-    {
-        if (processedVersion == null)
-        {
+    public ArtifactVersion getProcessedVersion() {
+        if (processedVersion == null) {
             processedVersion = new DefaultArtifactVersion(getModId(), getVersion());
         }
         return processedVersion;
     }
 
     @Override
-    public boolean isImmutable()
-    {
+    public boolean isImmutable() {
         return false;
     }
 
     @Override
-    public String getDisplayVersion()
-    {
+    public String getDisplayVersion() {
         return md.version;
     }
+
     @Override
-    public VersionRange acceptableMinecraftVersionRange()
-    {
+    public VersionRange acceptableMinecraftVersionRange() {
         return Loader.instance().getMinecraftModContainer().getStaticVersionRange();
     }
 
     @Override
     @Nullable
-    public Certificate getSigningCertificate()
-    {
+    public Certificate getSigningCertificate() {
         return null;
     }
 
     @Override
-    public String toString()
-    {
-        return md != null ? getModId() : "Dummy Container ("+label+") @" + System.identityHashCode(this);
+    public String toString() {
+        return md != null ? getModId() : "Dummy Container (" + label + ") @" + System.identityHashCode(this);
     }
 
     @Override
-    public Map<String, String> getCustomModProperties()
-    {
+    public Map<String, String> getCustomModProperties() {
         return EMPTY_PROPERTIES;
     }
+
     @Override
-    public Class<?> getCustomResourcePackClass()
-    {
+    public Class<?> getCustomResourcePackClass() {
         return null;
     }
 
     @Override
-    public Map<String, String> getSharedModDescriptor()
-    {
+    public Map<String, String> getSharedModDescriptor() {
         return null;
     }
 
     @Override
-    public Disableable canBeDisabled()
-    {
+    public Disableable canBeDisabled() {
         return Disableable.NEVER;
     }
 
     @Override
-    public String getGuiClassName()
-    {
+    public String getGuiClassName() {
         return null;
     }
 
     @Override
-    public List<String> getOwnedPackages()
-    {
+    public List<String> getOwnedPackages() {
         return ImmutableList.of();
     }
 
     @Override
-    public boolean shouldLoadInEnvironment()
-    {
+    public boolean shouldLoadInEnvironment() {
         return true;
     }
 
     @Override
-    public URL getUpdateUrl()
-    {
+    public URL getUpdateUrl() {
         return null;
     }
 
     @Override
-    public void setClassVersion(int classVersion)
-    {
-        this.classVersion = classVersion;
+    public int getClassVersion() {
+        return this.classVersion;
     }
 
     @Override
-    public int getClassVersion()
-    {
-        return this.classVersion;
+    public void setClassVersion(int classVersion) {
+        this.classVersion = classVersion;
     }
 }

@@ -1,6 +1,7 @@
 package org.bukkit.inventory;
 
 import java.util.List;
+
 import org.bukkit.entity.HumanEntity;
 
 /**
@@ -38,7 +39,7 @@ public interface Merchant {
     /**
      * Set the recipe at a certain index of this merchant's trade list.
      *
-     * @param i the index
+     * @param i      the index
      * @param recipe the recipe
      * @throws IndexOutOfBoundsException
      */

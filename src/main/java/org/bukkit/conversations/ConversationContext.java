@@ -1,6 +1,7 @@
 package org.bukkit.conversations;
 
 import java.util.Map;
+
 import org.bukkit.plugin.Plugin;
 
 /**
@@ -15,10 +16,10 @@ public class ConversationContext {
     private Plugin plugin;
 
     /**
-     * @param plugin The owning plugin.
-     * @param forWhom The subject of the conversation.
+     * @param plugin             The owning plugin.
+     * @param forWhom            The subject of the conversation.
      * @param initialSessionData Any initial values to put in the sessionData
-     *     map.
+     *                           map.
      */
     public ConversationContext(Plugin plugin, Conversable forWhom, Map<Object, Object> initialSessionData) {
         this.plugin = plugin;
@@ -46,6 +47,7 @@ public class ConversationContext {
 
     /**
      * Gets the entire sessionData map.
+     *
      * @return The full sessionData map.
      */
     public Map<Object, Object> getAllSessionData() {
@@ -69,7 +71,7 @@ public class ConversationContext {
      * this as a way to pass data through each prompt as the conversation
      * develops.
      *
-     * @param key The session data key.
+     * @param key   The session data key.
      * @param value The session data value.
      */
     public void setSessionData(Object key, Object value) {

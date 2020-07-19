@@ -21,12 +21,14 @@ package net.minecraftforge.registries;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import javax.annotation.Nullable;
+
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.Mod;
@@ -39,42 +41,35 @@ import red.mohist.util.i18n.Message;
 /**
  * Internal registry for tracking {@link ObjectHolder} references
  */
-public enum ObjectHolderRegistry
-{
+public enum ObjectHolderRegistry {
     INSTANCE;
     private List<ObjectHolderRef> objectHolders = Lists.newArrayList();
 
-    public void findObjectHolders(ASMDataTable table)
-    {
+    public void findObjectHolders(ASMDataTable table) {
         FMLLog.log.info(Message.getString("forge.loader.58"));
         Set<ASMData> allObjectHolders = table.getAll(GameRegistry.ObjectHolder.class.getName());
         Map<String, String> classModIds = Maps.newHashMap();
         Map<String, Class<?>> classCache = Maps.newHashMap();
-        for (ASMData data : table.getAll(Mod.class.getName()))
-        {
-            String modid = (String)data.getAnnotationInfo().get("modid");
+        for (ASMData data : table.getAll(Mod.class.getName())) {
+            String modid = (String) data.getAnnotationInfo().get("modid");
             classModIds.put(data.getClassName(), modid);
         }
-        for (ASMData data : allObjectHolders)
-        {
+        for (ASMData data : allObjectHolders) {
             String className = data.getClassName();
             String annotationTarget = data.getObjectName();
             String value = (String) data.getAnnotationInfo().get("value");
             boolean isClass = className.equals(annotationTarget);
-            if (isClass)
-            {
+            if (isClass) {
                 scanTarget(classModIds, classCache, className, annotationTarget, value, isClass, false);
             }
         }
         // double pass - get all the class level annotations first, then the field level annotations
-        for (ASMData data : allObjectHolders)
-        {
+        for (ASMData data : allObjectHolders) {
             String className = data.getClassName();
             String annotationTarget = data.getObjectName();
             String value = (String) data.getAnnotationInfo().get("value");
             boolean isClass = className.equals(annotationTarget);
-            if (!isClass)
-            {
+            if (!isClass) {
                 scanTarget(classModIds, classCache, className, annotationTarget, value, isClass, false);
             }
         }
@@ -88,83 +83,61 @@ public enum ObjectHolderRegistry
         FMLLog.log.info(Message.getString("fml.log.5"), objectHolders.size());
     }
 
-    private void scanTarget(Map<String, String> classModIds, Map<String, Class<?>> classCache, String className, @Nullable String annotationTarget, String value, boolean isClass, boolean extractFromValue)
-    {
+    private void scanTarget(Map<String, String> classModIds, Map<String, Class<?>> classCache, String className, @Nullable String annotationTarget, String value, boolean isClass, boolean extractFromValue) {
         Class<?> clazz;
-        if (classCache.containsKey(className))
-        {
+        if (classCache.containsKey(className)) {
             clazz = classCache.get(className);
-        }
-        else
-        {
-            try
-            {
+        } else {
+            try {
                 clazz = Class.forName(className, extractFromValue, getClass().getClassLoader());
                 classCache.put(className, clazz);
-            }
-            catch (ClassNotFoundException ex)
-            {
+            } catch (ClassNotFoundException ex) {
                 // unpossible?
                 throw new RuntimeException(ex);
             }
         }
-        if (isClass)
-        {
+        if (isClass) {
             scanClassForFields(classModIds, className, value, clazz, extractFromValue);
-        }
-        else
-        {
-            if (value.indexOf(':') == -1)
-            {
+        } else {
+            if (value.indexOf(':') == -1) {
                 String prefix = classModIds.get(className);
-                if (prefix == null)
-                {
+                if (prefix == null) {
                     FMLLog.log.warn("Found an unqualified ObjectHolder annotation ({}) without a modid context at {}.{}, ignoring", value, className, annotationTarget);
                     throw new IllegalStateException(Message.getString("fml.exception.1"));
                 }
                 value = prefix + ":" + value;
             }
-            try
-            {
+            try {
                 Field f = clazz.getDeclaredField(annotationTarget);
                 addHolderReference(new ObjectHolderRef(f, new ResourceLocation(value), extractFromValue));
-            }
-            catch (NoSuchFieldException ex)
-            {
+            } catch (NoSuchFieldException ex) {
                 // unpossible?
                 throw new RuntimeException(ex);
             }
         }
     }
 
-    private void scanClassForFields(Map<String, String> classModIds, String className, String value, Class<?> clazz, boolean extractFromExistingValues)
-    {
+    private void scanClassForFields(Map<String, String> classModIds, String className, String value, Class<?> clazz, boolean extractFromExistingValues) {
         classModIds.put(className, value);
-        for (Field f : clazz.getFields())
-        {
+        for (Field f : clazz.getFields()) {
             int mods = f.getModifiers();
             boolean isMatch = Modifier.isPublic(mods) && Modifier.isStatic(mods) && Modifier.isFinal(mods);
-            if (!isMatch || f.isAnnotationPresent(ObjectHolder.class))
-            {
+            if (!isMatch || f.isAnnotationPresent(ObjectHolder.class)) {
                 continue;
             }
             addHolderReference(new ObjectHolderRef(f, new ResourceLocation(value, f.getName()), extractFromExistingValues));
         }
     }
 
-    private void addHolderReference(ObjectHolderRef ref)
-    {
-        if (ref.isValid())
-        {
+    private void addHolderReference(ObjectHolderRef ref) {
+        if (ref.isValid()) {
             objectHolders.add(ref);
         }
     }
 
-    public void applyObjectHolders()
-    {
+    public void applyObjectHolders() {
         FMLLog.log.info(Message.getString("forge.loader.59"));
-        for (ObjectHolderRef ohr : objectHolders)
-        {
+        for (ObjectHolderRef ohr : objectHolders) {
             ohr.apply();
         }
         FMLLog.log.info(Message.getString("forge.loader.60"));

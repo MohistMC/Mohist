@@ -25,8 +25,10 @@ package co.aikar.timings;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.EvictingQueue;
+
 import java.util.Queue;
 import java.util.logging.Level;
+
 import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
@@ -35,14 +37,15 @@ import org.bukkit.plugin.Plugin;
 @SuppressWarnings({"UnusedDeclaration", "WeakerAccess", "SameParameterValue"})
 public final class Timings {
 
-    private static final int MAX_HISTORY_FRAMES = 12;
     public static final Timing NULL_HANDLER = new NullTimingHandler();
+    private static final int MAX_HISTORY_FRAMES = 12;
     static boolean timingsEnabled = false;
     static boolean verboseEnabled = false;
     private static int historyInterval = -1;
     private static int historyLength = -1;
 
-    private Timings() {}
+    private Timings() {
+    }
 
     /**
      * Returns a Timing for a plugin corresponding to a name.
@@ -62,7 +65,7 @@ public final class Timings {
     /**
      * <p>Returns a handler that has a groupHandler timer handler. Parent timers should not have their
      * start/stop methods called directly, as the children will call it for you.</p>
-     *
+     * <p>
      * Parent Timers are used to group multiple subsections together and get a summary of them combined
      * Parent Handler can not be changed after first call
      *
@@ -78,7 +81,7 @@ public final class Timings {
 
     /**
      * Returns a Timing object after starting it, useful for Java7 try-with-resources.
-     *
+     * <p>
      * try (Timing ignored = Timings.ofStart(plugin, someName)) {
      * // timed section
      * }
@@ -93,7 +96,7 @@ public final class Timings {
 
     /**
      * Returns a Timing object after starting it, useful for Java7 try-with-resources.
-     *
+     * <p>
      * try (Timing ignored = Timings.ofStart(plugin, someName, groupHandler)) {
      * // timed section
      * }
@@ -120,7 +123,7 @@ public final class Timings {
 
     /**
      * <p>Sets whether or not the Spigot Timings system should be enabled</p>
-     *
+     * <p>
      * Calling this will reset timing data.
      *
      * @param enabled Should timings be reported
@@ -143,7 +146,7 @@ public final class Timings {
 
     /**
      * <p>Sets whether or not the Timings should monitor at Verbose level.</p>
-     *
+     * <p>
      * When Verbose is disabled, high-frequency timings will not be available.
      * Calling this will reset timing data.
      *
@@ -156,7 +159,7 @@ public final class Timings {
 
     /**
      * <p>Gets the interval between Timing History report generation.</p>
-     *
+     * <p>
      * Defaults to 5 minutes (6000 ticks)
      *
      * @return Interval in ticks
@@ -169,14 +172,14 @@ public final class Timings {
      * <p>Sets the interval between Timing History report generations.</p>
      *
      * <p>Defaults to 5 minutes (6000 ticks)</p>
-     *
+     * <p>
      * This will recheck your history length, so lowering this value will lower your
      * history length if you need more than 60 history windows.
      *
      * @param interval Interval in ticks
      */
     public static void setHistoryInterval(int interval) {
-        historyInterval = Math.max(20*60, interval);
+        historyInterval = Math.max(20 * 60, interval);
         // Recheck the history length with the new Interval
         if (historyLength != -1) {
             setHistoryLength(historyLength);
@@ -185,7 +188,7 @@ public final class Timings {
 
     /**
      * Gets how long in ticks Timings history is kept for the server.
-     *
+     * <p>
      * Defaults to 1 hour (72000 ticks)
      *
      * @return Duration in Ticks
@@ -196,11 +199,11 @@ public final class Timings {
 
     /**
      * Sets how long Timing History reports are kept for the server.
-     *
+     * <p>
      * Defaults to 1 hours(72000 ticks)
-     *
+     * <p>
      * This value is capped at a maximum of getHistoryInterval() * MAX_HISTORY_FRAMES (12)
-     *
+     * <p>
      * Will not reset Timing Data but may truncate old history if the new length is less than old length.
      *
      * @param length Duration in ticks
@@ -233,8 +236,9 @@ public final class Timings {
 
     /**
      * Generates a report and sends it to the specified command sender.
-     *
+     * <p>
      * If sender is null, ConsoleCommandSender will be used.
+     *
      * @param sender The sender to send to, or null to use the ConsoleCommandSender
      */
     public static void generateReport(CommandSender sender) {
@@ -247,6 +251,7 @@ public final class Timings {
     /**
      * Generates a report and sends it to the specified listener.
      * Use with {@link org.bukkit.command.BufferedCommandSender} to get full response when done!
+     *
      * @param sender The listener to send responses too.
      */
     public static void generateReport(TimingsReportListener sender) {

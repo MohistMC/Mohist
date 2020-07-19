@@ -12,7 +12,6 @@ import org.bukkit.event.HandlerList;
  * <p>
  * This event is not called for {@link org.bukkit.Statistic#PLAY_ONE_TICK} or
  * movement based statistics.
- *
  */
 public class PlayerStatisticIncrementEvent extends PlayerEvent implements Cancellable {
     private static final HandlerList handlers = new HandlerList();

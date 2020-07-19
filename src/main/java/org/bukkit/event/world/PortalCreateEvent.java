@@ -2,6 +2,7 @@ package org.bukkit.event.world;
 
 import java.util.ArrayList;
 import java.util.Collection;
+
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.event.Cancellable;

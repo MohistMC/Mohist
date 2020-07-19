@@ -11,8 +11,8 @@ public interface PotionBrewer {
      * Creates a {@link PotionEffect} from the given {@link PotionEffectType},
      * applying duration modifiers and checks.
      *
-     * @param potion The type of potion
-     * @param duration The duration in ticks
+     * @param potion    The type of potion
+     * @param duration  The duration in ticks
      * @param amplifier The amplifier of the effect
      * @return The resulting potion effect
      */

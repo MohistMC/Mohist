@@ -1,8 +1,10 @@
 package org.bukkit.craftbukkit.v1_12_R1.chunkio;
 
 import co.aikar.timings.Timing;
+
 import java.io.IOException;
 import java.util.concurrent.atomic.AtomicInteger;
+
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.world.chunk.Chunk;
@@ -37,18 +39,18 @@ class ChunkIOProvider implements AsynchronousExecutor.CallBackProvider<QueuedChu
             return;
         }
         try (Timing ignored = queuedChunk.provider.world.timings.chunkIOStage2.startTimingIfSync()) { // Paper
-        queuedChunk.loader.loadEntities(queuedChunk.world, queuedChunk.compound.getCompoundTag("Level"), chunk);
-        chunk.setLastSaveTime(queuedChunk.provider.world.getTotalWorldTime());
-        queuedChunk.provider.id2ChunkMap.put(ChunkPos.asLong(queuedChunk.x, queuedChunk.z), chunk);
-        chunk.onLoad();
+            queuedChunk.loader.loadEntities(queuedChunk.world, queuedChunk.compound.getCompoundTag("Level"), chunk);
+            chunk.setLastSaveTime(queuedChunk.provider.world.getTotalWorldTime());
+            queuedChunk.provider.id2ChunkMap.put(ChunkPos.asLong(queuedChunk.x, queuedChunk.z), chunk);
+            chunk.onLoad();
 
-        if (queuedChunk.provider.chunkGenerator != null) {
-            queuedChunk.provider.world.timings.syncChunkLoadStructuresTimer.startTiming(); // Spigot
-            queuedChunk.provider.chunkGenerator.recreateStructures(chunk, queuedChunk.x, queuedChunk.z);
-            queuedChunk.provider.world.timings.syncChunkLoadStructuresTimer.stopTiming(); // Spigot
-        }
+            if (queuedChunk.provider.chunkGenerator != null) {
+                queuedChunk.provider.world.timings.syncChunkLoadStructuresTimer.startTiming(); // Spigot
+                queuedChunk.provider.chunkGenerator.recreateStructures(chunk, queuedChunk.x, queuedChunk.z);
+                queuedChunk.provider.world.timings.syncChunkLoadStructuresTimer.stopTiming(); // Spigot
+            }
 
-        chunk.populateCB(queuedChunk.provider, queuedChunk.provider.chunkGenerator, false);
+            chunk.populateCB(queuedChunk.provider, queuedChunk.provider.chunkGenerator, false);
         } // Paper
     }
 

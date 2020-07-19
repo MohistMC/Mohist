@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import net.md_5.specialsource.transformer.MavenShade;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import org.objectweb.asm.ClassReader;
@@ -28,7 +29,6 @@ import red.mohist.bukkit.nms.remappers.ReflectRemapper;
 import red.mohist.util.JarTool;
 
 /**
- *
  * @author pyz
  * @date 2019/6/30 11:50 PM
  */
@@ -37,6 +37,7 @@ public class RemapUtils {
     public static final MohistJarMapping jarMapping;
     public static final MohistJarRemapper jarRemapper;
     private static final List<Remapper> remappers = new ArrayList<>();
+    private static final Object remapLock = new Object();
     public static Map<String, String> relocations = new HashMap<>();
 
     static {
@@ -45,8 +46,8 @@ public class RemapUtils {
         jarMapping.packages.put("org/bukkit/craftbukkit/libs/jline/", "jline/");
         jarMapping.packages.put("org/bukkit/craftbukkit/libs/joptsimple/", "joptsimple/");
         jarMapping.classes.put("catserver/api/bukkit/event/ForgeEvent", "red/mohist/api/event/BukkitHookForgeEvent");
-        jarMapping.registerFieldMapping("catserver/api/bukkit/event/ForgeEvent","handlers", "red/mohist/api/event/BukkitHookForgeEvent", "handlers");
-        jarMapping.registerFieldMapping("catserver/api/bukkit/event/ForgeEvent","forgeEvent", "red/mohist/api/event/BukkitHookForgeEvent", "event");
+        jarMapping.registerFieldMapping("catserver/api/bukkit/event/ForgeEvent", "handlers", "red/mohist/api/event/BukkitHookForgeEvent", "handlers");
+        jarMapping.registerFieldMapping("catserver/api/bukkit/event/ForgeEvent", "forgeEvent", "red/mohist/api/event/BukkitHookForgeEvent", "event");
         jarMapping.registerMethodMapping("org/bukkit/Bukkit", "getOnlinePlayers", "()[Lorg/bukkit/entity/Player;", "org/bukkit/Bukkit", "_INVALID_getOnlinePlayers", "()[Lorg/bukkit/entity/Player;");
         jarMapping.registerMethodMapping("org/bukkit/Server", "getOnlinePlayers", "()[Lorg/bukkit/entity/Player;", "org/bukkit/Server", "_INVALID_getOnlinePlayers", "()[Lorg/bukkit/entity/Player;");
         jarMapping.registerMethodMapping("org/bukkit/craftbukkit/v1_12_R1/CraftServer", "getOnlinePlayers", "()[Lorg/bukkit/entity/Player;", "org/bukkit/craftbukkit/v1_12_R1/CraftServer", "_INVALID_getOnlinePlayers", "()[Lorg/bukkit/entity/Player;");
@@ -62,8 +63,8 @@ public class RemapUtils {
                     .replace("file:/", "") // linux
                     .replace("\\red\\mohist\\util", "") // win
                     .replace("/red/mohist/util", ""); // linux
-            String jarname = f1.substring(f1.lastIndexOf("\\")+1,f1.lastIndexOf("."));
-            String jarname1 = f1.substring(f1.lastIndexOf("/")+1,f1.lastIndexOf("."));
+            String jarname = f1.substring(f1.lastIndexOf("\\") + 1, f1.lastIndexOf("."));
+            String jarname1 = f1.substring(f1.lastIndexOf("/") + 1, f1.lastIndexOf("."));
             String path = f1
                     .replace("\\" + jarname + ".jar!", "")
                     .replace("/" + jarname1 + ".jar!", "");
@@ -92,8 +93,6 @@ public class RemapUtils {
         remappers.add(new ReflectRemapper());
         jarMapping.initFastMethodMapping(jarRemapper);
     }
-
-    private static final Object remapLock = new Object();
 
     public static byte[] remapFindClass(byte[] bs) {
         synchronized (remapLock) {

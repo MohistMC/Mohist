@@ -2,6 +2,7 @@ package org.bukkit.conversations;
 
 import java.util.Arrays;
 import java.util.List;
+
 import org.apache.commons.lang.StringUtils;
 
 /**
@@ -18,7 +19,7 @@ public abstract class FixedSetPrompt extends ValidatingPrompt {
      * foo = new FixedSetPrompt("bar", "cheese", "panda");
      *
      * @param fixedSet A fixed set of strings, one of which the user must
-     *     type.
+     *                 type.
      */
     public FixedSetPrompt(String... fixedSet) {
         super();
@@ -38,7 +39,7 @@ public abstract class FixedSetPrompt extends ValidatingPrompt {
      * options declared in the constructor.
      *
      * @return the options formatted like "[bar, cheese, panda]" if bar,
-     *     cheese, and panda were the options used
+     * cheese, and panda were the options used
      */
     protected String formatFixedSet() {
         return "[" + StringUtils.join(fixedSet, ", ") + "]";

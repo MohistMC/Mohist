@@ -20,6 +20,7 @@
 package net.minecraftforge.fluids.capability;
 
 import javax.annotation.Nullable;
+
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidTank;
 
@@ -29,8 +30,7 @@ import net.minecraftforge.fluids.IFluidTank;
  * <p/>
  * A reference implementation is provided {@link TileFluidHandler}.
  */
-public interface IFluidHandler
-{
+public interface IFluidHandler {
     /**
      * Returns an array of objects which represent the internal tanks.
      * These objects cannot be used to manipulate the internal tanks.

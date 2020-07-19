@@ -1,12 +1,12 @@
 package red.mohist.bukkit.nms.remappers;
 
 import java.util.Map;
+
 import net.md_5.specialsource.CustomRemapper;
 import net.md_5.specialsource.NodeType;
 import red.mohist.bukkit.nms.model.ClassMapping;
 
 /**
- *
  * @author pyz
  * @date 2019/7/3 10:38 PM
  */
@@ -14,22 +14,8 @@ public class MohistJarRemapper extends CustomRemapper {
 
     public final MohistJarMapping jarMapping;
 
-    @Override
-    public String mapSignature(String signature, boolean typeSignature) {
-        try {
-            return super.mapSignature(signature, typeSignature);
-        } catch (Exception e) {
-            return signature;
-        }
-    }
-
     public MohistJarRemapper(MohistJarMapping jarMapping) {
         this.jarMapping = jarMapping;
-    }
-
-    @Override
-    public String map(String typeName) {
-        return mapTypeName(typeName, jarMapping.packages, jarMapping.byNMSSrcName, typeName);
     }
 
     public static String mapTypeName(String typeName, Map<String, String> packageMap, Map<String, ClassMapping> classMap, String defaultIfUnmapped) {
@@ -95,6 +81,20 @@ public class MohistJarRemapper extends CustomRemapper {
         }
 
         return className.substring(oldPackage.length());
+    }
+
+    @Override
+    public String mapSignature(String signature, boolean typeSignature) {
+        try {
+            return super.mapSignature(signature, typeSignature);
+        } catch (Exception e) {
+            return signature;
+        }
+    }
+
+    @Override
+    public String map(String typeName) {
+        return mapTypeName(typeName, jarMapping.packages, jarMapping.byNMSSrcName, typeName);
     }
 
     @Override

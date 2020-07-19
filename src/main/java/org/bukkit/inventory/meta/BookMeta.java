@@ -1,6 +1,7 @@
 package org.bukkit.inventory.meta;
 
 import java.util.List;
+
 import net.md_5.bungee.api.chat.BaseComponent;
 import org.bukkit.Material;
 

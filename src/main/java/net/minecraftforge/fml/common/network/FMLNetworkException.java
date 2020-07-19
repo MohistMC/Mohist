@@ -19,21 +19,17 @@
 
 package net.minecraftforge.fml.common.network;
 
-public class FMLNetworkException extends RuntimeException
-{
+public class FMLNetworkException extends RuntimeException {
     private static final long serialVersionUID = 1L;
 
-    public FMLNetworkException(Exception e)
-    {
+    public FMLNetworkException(Exception e) {
         super(e);
     }
 
-    public FMLNetworkException()
-    {
+    public FMLNetworkException() {
     }
 
-    public FMLNetworkException(String string)
-    {
+    public FMLNetworkException(String string) {
         super(string);
     }
 }

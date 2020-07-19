@@ -27,29 +27,27 @@ import net.minecraftforge.fml.common.eventhandler.Event.HasResult;
 /**
  * This event is fired when the game checks if players can sleep at this time.<br>
  * Failing this check will cause sleeping players to wake up and prevent awake players from sleeping.<br>
- *
+ * <p>
  * This event has a result. {@link HasResult}<br>
- *
+ * <p>
  * setResult(ALLOW) informs game that player can sleep at this time.<br>
  * setResult(DEFAULT) causes game to check !{@link World#isDaytime()} instead.
  */
 @HasResult
-public class SleepingTimeCheckEvent extends PlayerEvent
-{
+public class SleepingTimeCheckEvent extends PlayerEvent {
     private final BlockPos sleepingLocation;
 
-    public SleepingTimeCheckEvent(EntityPlayer player, BlockPos sleepingLocation)
-    {
+    public SleepingTimeCheckEvent(EntityPlayer player, BlockPos sleepingLocation) {
         super(player);
         this.sleepingLocation = sleepingLocation;
     }
 
     /**
      * Note that the sleeping location may be an approximated one.
+     *
      * @return The player's sleeping location.
      */
-    public BlockPos getSleepingLocation()
-    {
+    public BlockPos getSleepingLocation() {
         return sleepingLocation;
     }
 }

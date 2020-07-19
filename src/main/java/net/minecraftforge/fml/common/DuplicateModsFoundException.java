@@ -20,29 +20,28 @@
 package net.minecraftforge.fml.common;
 
 import com.google.common.collect.SetMultimap;
+
 import java.io.File;
 import java.util.Map.Entry;
+
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraftforge.fml.client.GuiDupesFound;
 import net.minecraftforge.fml.client.IDisplayableError;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-public class DuplicateModsFoundException extends LoaderException implements IDisplayableError
-{
+public class DuplicateModsFoundException extends LoaderException implements IDisplayableError {
     private static final long serialVersionUID = 1L;
-    public SetMultimap<ModContainer,File> dupes;
+    public SetMultimap<ModContainer, File> dupes;
 
     public DuplicateModsFoundException(SetMultimap<ModContainer, File> dupes) {
         this.dupes = dupes;
     }
 
     @Override
-    protected void printStackTrace(WrappedPrintStream stream)
-    {
+    protected void printStackTrace(WrappedPrintStream stream) {
         stream.println("Duplicate Mods:");
-        for (Entry<ModContainer, File> e : dupes.entries())
-        {
+        for (Entry<ModContainer, File> e : dupes.entries()) {
             stream.println(String.format("\t%s : %s", e.getKey().getModId(), e.getValue().getAbsolutePath()));
         }
         stream.println("");
@@ -50,8 +49,7 @@ public class DuplicateModsFoundException extends LoaderException implements IDis
 
     @Override
     @SideOnly(Side.CLIENT)
-    public GuiScreen createGui()
-    {
+    public GuiScreen createGui() {
         return new GuiDupesFound(this);
     }
 }

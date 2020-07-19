@@ -27,65 +27,55 @@ import net.minecraftforge.fml.common.eventhandler.Event;
 
 /**
  * Event that hooks into EntityRenderer, allowing any feature to customize visual attributes
- *  the player sees.
+ * the player sees.
  */
-public abstract class EntityViewRenderEvent extends Event
-{
+public abstract class EntityViewRenderEvent extends Event {
     private final EntityRenderer renderer;
     private final Entity entity;
     private final IBlockState state;
     private final double renderPartialTicks;
 
-    public EntityViewRenderEvent(EntityRenderer renderer, Entity entity, IBlockState state, double renderPartialTicks)
-    {
+    public EntityViewRenderEvent(EntityRenderer renderer, Entity entity, IBlockState state, double renderPartialTicks) {
         this.renderer = renderer;
         this.entity = entity;
         this.state = state;
         this.renderPartialTicks = renderPartialTicks;
     }
 
-    public EntityRenderer getRenderer()
-    {
-	    return renderer;
-	}
+    public EntityRenderer getRenderer() {
+        return renderer;
+    }
 
-    public Entity getEntity()
-    {
+    public Entity getEntity() {
         return entity;
     }
 
-    public IBlockState getState()
-    {
+    public IBlockState getState() {
         return state;
     }
 
-    public double getRenderPartialTicks()
-    {
+    public double getRenderPartialTicks() {
         return renderPartialTicks;
     }
 
-	/**
+    /**
      * Event that allows any feature to customize the fog density the player sees.
      * NOTE: In order to make this event have an effect, you must cancel the event
      */
     @Cancelable
-    public static class FogDensity extends EntityViewRenderEvent
-    {
+    public static class FogDensity extends EntityViewRenderEvent {
         private float density;
 
-        public FogDensity(EntityRenderer renderer, Entity entity, IBlockState state, double renderPartialTicks, float density)
-        {
+        public FogDensity(EntityRenderer renderer, Entity entity, IBlockState state, double renderPartialTicks, float density) {
             super(renderer, entity, state, renderPartialTicks);
             this.setDensity(density);
         }
 
-        public float getDensity()
-        {
+        public float getDensity() {
             return density;
         }
 
-        public void setDensity(float density)
-        {
+        public void setDensity(float density) {
             this.density = density;
         }
     }
@@ -94,25 +84,21 @@ public abstract class EntityViewRenderEvent extends Event
      * Event that allows any feature to customize the rendering of fog.
      */
     @HasResult
-    public static class RenderFogEvent extends EntityViewRenderEvent
-    {
+    public static class RenderFogEvent extends EntityViewRenderEvent {
         private final int fogMode;
         private final float farPlaneDistance;
 
-        public RenderFogEvent(EntityRenderer renderer, Entity entity, IBlockState state, double renderPartialTicks, int fogMode, float farPlaneDistance)
-        {
+        public RenderFogEvent(EntityRenderer renderer, Entity entity, IBlockState state, double renderPartialTicks, int fogMode, float farPlaneDistance) {
             super(renderer, entity, state, renderPartialTicks);
             this.fogMode = fogMode;
             this.farPlaneDistance = farPlaneDistance;
         }
 
-        public int getFogMode()
-        {
+        public int getFogMode() {
             return fogMode;
         }
 
-        public float getFarPlaneDistance()
-        {
+        public float getFarPlaneDistance() {
             return farPlaneDistance;
         }
     }
@@ -121,61 +107,90 @@ public abstract class EntityViewRenderEvent extends Event
      * Event that allows any feature to customize the color of fog the player sees.
      * NOTE: Any change made to one of the color variables will affect the result seen in-game.
      */
-    public static class FogColors extends EntityViewRenderEvent
-    {
+    public static class FogColors extends EntityViewRenderEvent {
         private float red;
         private float green;
         private float blue;
 
-        public FogColors(EntityRenderer renderer, Entity entity, IBlockState state, double renderPartialTicks, float red, float green, float blue)
-        {
+        public FogColors(EntityRenderer renderer, Entity entity, IBlockState state, double renderPartialTicks, float red, float green, float blue) {
             super(renderer, entity, state, renderPartialTicks);
             this.setRed(red);
             this.setGreen(green);
             this.setBlue(blue);
         }
 
-        public float getRed() { return red; }
-        public void setRed(float red) { this.red = red; }
-        public float getGreen() { return green; }
-        public void setGreen(float green) { this.green = green; }
-        public float getBlue() { return blue; }
-        public void setBlue(float blue) { this.blue = blue; }
+        public float getRed() {
+            return red;
+        }
+
+        public void setRed(float red) {
+            this.red = red;
+        }
+
+        public float getGreen() {
+            return green;
+        }
+
+        public void setGreen(float green) {
+            this.green = green;
+        }
+
+        public float getBlue() {
+            return blue;
+        }
+
+        public void setBlue(float blue) {
+            this.blue = blue;
+        }
     }
-    
-    /** 
+
+    /**
      * Event that allows mods to alter the angles of the player's camera. Mainly useful for applying roll.
      */
-    public static class CameraSetup extends EntityViewRenderEvent
-    {
+    public static class CameraSetup extends EntityViewRenderEvent {
         private float yaw;
         private float pitch;
         private float roll;
 
-        public CameraSetup(EntityRenderer renderer, Entity entity, IBlockState state, double renderPartialTicks, float yaw, float pitch, float roll)
-        {
+        public CameraSetup(EntityRenderer renderer, Entity entity, IBlockState state, double renderPartialTicks, float yaw, float pitch, float roll) {
             super(renderer, entity, state, renderPartialTicks);
             this.setYaw(yaw);
             this.setPitch(pitch);
             this.setRoll(roll);
         }
 
-        public float getYaw() { return yaw; }
-        public void setYaw(float yaw) { this.yaw = yaw; }
-        public float getPitch() { return pitch; }
-        public void setPitch(float pitch) { this.pitch = pitch; }
-        public float getRoll() { return roll; }
-        public void setRoll(float roll) { this.roll = roll; }
+        public float getYaw() {
+            return yaw;
+        }
+
+        public void setYaw(float yaw) {
+            this.yaw = yaw;
+        }
+
+        public float getPitch() {
+            return pitch;
+        }
+
+        public void setPitch(float pitch) {
+            this.pitch = pitch;
+        }
+
+        public float getRoll() {
+            return roll;
+        }
+
+        public void setRoll(float roll) {
+            this.roll = roll;
+        }
     }
-    
+
     /**
      * Event that allows mods to alter the raw FOV itself.
      * This directly affects to the FOV without being modified.
-     * */
-    public static class FOVModifier extends EntityViewRenderEvent
-    {
+     */
+    public static class FOVModifier extends EntityViewRenderEvent {
         private float fov;
-        
+
         public FOVModifier(EntityRenderer renderer, Entity entity, IBlockState state, double renderPartialTicks, float fov) {
             super(renderer, entity, state, renderPartialTicks);
             this.setFOV(fov);

@@ -20,20 +20,19 @@
 package net.minecraftforge.event;
 
 import javax.annotation.Nonnull;
+
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.common.eventhandler.Cancelable;
 import net.minecraftforge.fml.common.eventhandler.Event;
 
 /**
- * 
  * AnvilUpdateEvent is fired when a player places items in both the left and right slots of a anvil.
  * If the event is canceled, vanilla behavior will not run, and the output will be set to null.
  * If the event is not canceled, but the output is not null, it will set the output and not run vanilla behavior.
  * if the output is null, and the event is not canceled, vanilla behavior will execute.
  */
 @Cancelable
-public class AnvilUpdateEvent extends Event
-{
+public class AnvilUpdateEvent extends Event {
     @Nonnull
     private final ItemStack left;  // The left side of the input
     @Nonnull
@@ -44,8 +43,7 @@ public class AnvilUpdateEvent extends Event
     private int cost;              // The base cost, set this to change it if output != null
     private int materialCost; // The number of items from the right slot to be consumed during the repair. Leave as 0 to consume the entire stack.
 
-    public AnvilUpdateEvent(@Nonnull ItemStack left, @Nonnull ItemStack right, String name, int cost)
-    {
+    public AnvilUpdateEvent(@Nonnull ItemStack left, @Nonnull ItemStack right, String name, int cost) {
         this.left = left;
         this.right = right;
         this.output = ItemStack.EMPTY;
@@ -55,15 +53,41 @@ public class AnvilUpdateEvent extends Event
     }
 
     @Nonnull
-    public ItemStack getLeft() { return left; }
+    public ItemStack getLeft() {
+        return left;
+    }
+
     @Nonnull
-    public ItemStack getRight() { return right; }
-    public String getName() { return name; }
+    public ItemStack getRight() {
+        return right;
+    }
+
+    public String getName() {
+        return name;
+    }
+
     @Nonnull
-    public ItemStack getOutput() { return output; }
-    public void setOutput(@Nonnull ItemStack output) { this.output = output; }
-    public int getCost() { return cost; }
-    public void setCost(int cost) { this.cost = cost; }
-    public int getMaterialCost() { return materialCost; }
-    public void setMaterialCost(int materialCost) { this.materialCost = materialCost; }
+    public ItemStack getOutput() {
+        return output;
+    }
+
+    public void setOutput(@Nonnull ItemStack output) {
+        this.output = output;
+    }
+
+    public int getCost() {
+        return cost;
+    }
+
+    public void setCost(int cost) {
+        this.cost = cost;
+    }
+
+    public int getMaterialCost() {
+        return materialCost;
+    }
+
+    public void setMaterialCost(int materialCost) {
+        this.materialCost = materialCost;
+    }
 }

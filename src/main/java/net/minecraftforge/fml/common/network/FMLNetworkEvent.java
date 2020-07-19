@@ -20,7 +20,9 @@
 package net.minecraftforge.fml.common.network;
 
 import com.google.common.collect.ImmutableSet;
+
 import java.util.Set;
+
 import net.minecraft.network.INetHandler;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.INetHandlerPlayClient;
@@ -35,31 +37,26 @@ public class FMLNetworkEvent<T extends INetHandler> extends Event {
     private final Class<T> type;
     private final Class<T> handle;
 
-    FMLNetworkEvent(T thing, Class<T> type, NetworkManager manager)
-    {
+    FMLNetworkEvent(T thing, Class<T> type, NetworkManager manager) {
         this.handler = thing;
         this.type = type;
         this.manager = manager;
         this.handle = getType();
     }
-    
-    public Class<T> getHandlerType()
-    {
+
+    public Class<T> getHandlerType() {
         return getType();
     }
 
-    public T getHandler()
-    {
+    public T getHandler() {
         return handler;
     }
 
-    public NetworkManager getManager()
-    {
+    public NetworkManager getManager() {
         return manager;
     }
 
-    public Class<T> getType()
-    {
+    public Class<T> getType() {
         return type;
     }
 
@@ -69,20 +66,18 @@ public class FMLNetworkEvent<T extends INetHandler> extends Event {
     public static class ClientConnectedToServerEvent extends FMLNetworkEvent<INetHandlerPlayClient> {
         private final boolean isLocal;
         private final String connectionType;
-        public ClientConnectedToServerEvent(NetworkManager manager, String connectionType)
-        {
+
+        public ClientConnectedToServerEvent(NetworkManager manager, String connectionType) {
             super((INetHandlerPlayClient) manager.getNetHandler(), INetHandlerPlayClient.class, manager);
             this.isLocal = manager.isLocalChannel();
             this.connectionType = connectionType;
         }
 
-        public boolean isLocal()
-        {
+        public boolean isLocal() {
             return isLocal;
         }
 
-        public String getConnectionType()
-        {
+        public String getConnectionType() {
             return connectionType;
         }
     }
@@ -91,42 +86,38 @@ public class FMLNetworkEvent<T extends INetHandler> extends Event {
      * Fired at the server when a client connects to the server.
      *
      * @author cpw
-     *
      */
     public static class ServerConnectionFromClientEvent extends FMLNetworkEvent<INetHandlerPlayServer> {
         private final boolean isLocal;
-        public ServerConnectionFromClientEvent(NetworkManager manager)
-        {
+
+        public ServerConnectionFromClientEvent(NetworkManager manager) {
             super((INetHandlerPlayServer) manager.getNetHandler(), INetHandlerPlayServer.class, manager);
             this.isLocal = manager.isLocalChannel();
         }
 
-        public boolean isLocal()
-        {
+        public boolean isLocal() {
             return isLocal;
         }
     }
+
     /**
      * Fired at the server when a client disconnects.
      *
      * @author cpw
-     *
      */
     public static class ServerDisconnectionFromClientEvent extends FMLNetworkEvent<INetHandlerPlayServer> {
-        public ServerDisconnectionFromClientEvent(NetworkManager manager)
-        {
+        public ServerDisconnectionFromClientEvent(NetworkManager manager) {
             super((INetHandlerPlayServer) manager.getNetHandler(), INetHandlerPlayServer.class, manager);
         }
     }
+
     /**
      * Fired at the client when the client is disconnected from the server.
      *
      * @author cpw
-     *
      */
     public static class ClientDisconnectionFromServerEvent extends FMLNetworkEvent<INetHandlerPlayClient> {
-        public ClientDisconnectionFromServerEvent(NetworkManager manager)
-        {
+        public ClientDisconnectionFromServerEvent(NetworkManager manager) {
             super((INetHandlerPlayClient) manager.getNetHandler(), INetHandlerPlayClient.class, manager);
         }
     }
@@ -134,34 +125,30 @@ public class FMLNetworkEvent<T extends INetHandler> extends Event {
     /**
      * Fired when the REGISTER/UNREGISTER for custom channels is received.
      *
-     * @author cpw
-     *
      * @param <S> The side
+     * @author cpw
      */
     public static class CustomPacketRegistrationEvent<S extends INetHandler> extends FMLNetworkEvent<S> {
         private final ImmutableSet<String> registrations;
         private final String operation;
         private final Side side;
-        public CustomPacketRegistrationEvent(NetworkManager manager, Set<String> registrations, String operation, Side side, Class<S> type)
-        {
+
+        public CustomPacketRegistrationEvent(NetworkManager manager, Set<String> registrations, String operation, Side side, Class<S> type) {
             super(type.cast(manager.getNetHandler()), type, manager);
             this.registrations = ImmutableSet.copyOf(registrations);
             this.side = side;
             this.operation = operation;
         }
 
-        public ImmutableSet<String> getRegistrations()
-        {
+        public ImmutableSet<String> getRegistrations() {
             return registrations;
         }
 
-        public String getOperation()
-        {
+        public String getOperation() {
             return operation;
         }
 
-        public Side getSide()
-        {
+        public Side getSide() {
             return side;
         }
     }
@@ -170,8 +157,8 @@ public class FMLNetworkEvent<T extends INetHandler> extends Event {
         private final FMLProxyPacket packet;
 
         private FMLProxyPacket reply;
-        CustomPacketEvent(S thing, Class<S> type, NetworkManager manager, FMLProxyPacket packet)
-        {
+
+        CustomPacketEvent(S thing, Class<S> type, NetworkManager manager, FMLProxyPacket packet) {
             super(thing, type, manager);
             this.packet = packet;
         }
@@ -181,57 +168,50 @@ public class FMLNetworkEvent<T extends INetHandler> extends Event {
         /**
          * The packet that generated the event
          */
-        public FMLProxyPacket getPacket()
-        {
+        public FMLProxyPacket getPacket() {
             return packet;
         }
 
         /**
          * Set this packet to reply to the originator
          */
-        public FMLProxyPacket getReply()
-        {
+        public FMLProxyPacket getReply() {
             return reply;
         }
 
-        public void setReply(FMLProxyPacket reply)
-        {
+        public void setReply(FMLProxyPacket reply) {
             this.reply = reply;
         }
     }
 
     /**
      * Fired when a custom packet is received on the client for the channel
-     * @author cpw
      *
+     * @author cpw
      */
     public static class ClientCustomPacketEvent extends CustomPacketEvent<INetHandlerPlayClient> {
-        public ClientCustomPacketEvent(NetworkManager manager, FMLProxyPacket packet)
-        {
+        public ClientCustomPacketEvent(NetworkManager manager, FMLProxyPacket packet) {
             super((INetHandlerPlayClient) manager.getNetHandler(), INetHandlerPlayClient.class, manager, packet);
         }
 
         @Override
-        public Side side()
-        {
+        public Side side() {
             return Side.CLIENT;
         }
     }
 
     /**
      * Fired when a custom packet is received at the server for the channel
-     * @author cpw
      *
+     * @author cpw
      */
     public static class ServerCustomPacketEvent extends CustomPacketEvent<INetHandlerPlayServer> {
-        public ServerCustomPacketEvent(NetworkManager manager, FMLProxyPacket packet)
-        {
+        public ServerCustomPacketEvent(NetworkManager manager, FMLProxyPacket packet) {
             super((INetHandlerPlayServer) manager.getNetHandler(), INetHandlerPlayServer.class, manager, packet);
         }
 
         @Override
-        public Side side()
-        {
+        public Side side() {
             return Side.SERVER;
         }
     }
@@ -240,17 +220,15 @@ public class FMLNetworkEvent<T extends INetHandler> extends Event {
      * Fired when a custom event, such as {@link NetworkHandshakeEstablished} is fired for the channel
      *
      * @author cpw
-     *
      */
     public static class CustomNetworkEvent extends Event {
         private final Object wrappedEvent;
-        public CustomNetworkEvent(Object wrappedEvent)
-        {
+
+        public CustomNetworkEvent(Object wrappedEvent) {
             this.wrappedEvent = wrappedEvent;
         }
 
-        public Object getWrappedEvent()
-        {
+        public Object getWrappedEvent() {
             return wrappedEvent;
         }
     }

@@ -19,10 +19,8 @@
 
 package net.minecraftforge.fml.common.asm.transformers;
 
-public class ItemBlockSpecialTransformer extends FieldRedirectTransformer
-{
-    public ItemBlockSpecialTransformer()
-    {
+public class ItemBlockSpecialTransformer extends FieldRedirectTransformer {
+    public ItemBlockSpecialTransformer() {
         super("net.minecraft.item.ItemBlockSpecial", "Lnet/minecraft/block/Block;", "getBlockRaw");
     }
 }

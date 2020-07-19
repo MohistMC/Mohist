@@ -3,6 +3,7 @@ package org.bukkit.event.entity;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
+
 import org.apache.commons.lang.Validate;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.ThrownPotion;
@@ -56,7 +57,7 @@ public class PotionSplashEvent extends ProjectileHitEvent implements Cancellable
      *
      * @param entity Which entity to get intensity for
      * @return intensity relative to maximum effect; 0.0: not affected; 1.0:
-     *     fully hit by potion effects
+     * fully hit by potion effects
      */
     public double getIntensity(LivingEntity entity) {
         Double intensity = affectedEntities.get(entity);
@@ -66,7 +67,7 @@ public class PotionSplashEvent extends ProjectileHitEvent implements Cancellable
     /**
      * Overwrites the intensity for a given entity
      *
-     * @param entity For which entity to define a new intensity
+     * @param entity    For which entity to define a new intensity
      * @param intensity relative to maximum effect
      */
     public void setIntensity(LivingEntity entity, double intensity) {

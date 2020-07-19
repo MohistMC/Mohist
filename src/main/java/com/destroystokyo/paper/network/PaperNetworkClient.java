@@ -2,6 +2,7 @@ package com.destroystokyo.paper.network;
 
 import java.net.InetSocketAddress;
 import javax.annotation.Nullable;
+
 import net.minecraft.network.NetworkManager;
 
 public class PaperNetworkClient implements NetworkClient {

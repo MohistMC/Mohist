@@ -35,7 +35,7 @@ public class PlayerFishEvent extends PlayerEvent implements Cancellable {
      * org.bukkit.entity.Item}.
      *
      * @return Entity caught by the player, Entity if fishing, and null if
-     *     bobber has gotten stuck in the ground or nothing has been caught
+     * bobber has gotten stuck in the ground or nothing has been caught
      */
     public Entity getCaught() {
         return entity;

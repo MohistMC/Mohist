@@ -20,35 +20,32 @@
 package net.minecraftforge.items;
 
 import javax.annotation.Nonnull;
+
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.InventoryBasic;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 
-public class SlotItemHandler extends Slot
-{
+public class SlotItemHandler extends Slot {
     private static IInventory emptyInventory = new InventoryBasic("[Null]", true, 0);
     private final IItemHandler itemHandler;
     private final int index;
 
-    public SlotItemHandler(IItemHandler itemHandler, int index, int xPosition, int yPosition)
-    {
+    public SlotItemHandler(IItemHandler itemHandler, int index, int xPosition, int yPosition) {
         super(emptyInventory, index, xPosition, yPosition);
         this.itemHandler = itemHandler;
         this.index = index;
     }
 
     @Override
-    public boolean isItemValid(@Nonnull ItemStack stack)
-    {
+    public boolean isItemValid(@Nonnull ItemStack stack) {
         if (stack.isEmpty() || !itemHandler.isItemValid(index, stack))
             return false;
 
         IItemHandler handler = this.getItemHandler();
         ItemStack remainder;
-        if (handler instanceof IItemHandlerModifiable)
-        {
+        if (handler instanceof IItemHandlerModifiable) {
             IItemHandlerModifiable handlerModifiable = (IItemHandlerModifiable) handler;
             ItemStack currentStack = handlerModifiable.getStackInSlot(index);
 
@@ -57,9 +54,7 @@ public class SlotItemHandler extends Slot
             remainder = handlerModifiable.insertItem(index, stack, true);
 
             handlerModifiable.setStackInSlot(index, currentStack);
-        }
-        else
-        {
+        } else {
             remainder = handler.insertItem(index, stack, true);
         }
         return remainder.getCount() < stack.getCount();
@@ -67,34 +62,29 @@ public class SlotItemHandler extends Slot
 
     @Override
     @Nonnull
-    public ItemStack getStack()
-    {
+    public ItemStack getStack() {
         return this.getItemHandler().getStackInSlot(index);
     }
 
     // Override if your IItemHandler does not implement IItemHandlerModifiable
     @Override
-    public void putStack(@Nonnull ItemStack stack)
-    {
+    public void putStack(@Nonnull ItemStack stack) {
         ((IItemHandlerModifiable) this.getItemHandler()).setStackInSlot(index, stack);
         this.onSlotChanged();
     }
 
     @Override
-    public void onSlotChange(@Nonnull ItemStack p_75220_1_, @Nonnull ItemStack p_75220_2_)
-    {
+    public void onSlotChange(@Nonnull ItemStack p_75220_1_, @Nonnull ItemStack p_75220_2_) {
 
     }
 
     @Override
-    public int getSlotStackLimit()
-    {
+    public int getSlotStackLimit() {
         return this.itemHandler.getSlotLimit(this.index);
     }
 
     @Override
-    public int getItemStackLimit(@Nonnull ItemStack stack)
-    {
+    public int getItemStackLimit(@Nonnull ItemStack stack) {
         ItemStack maxAdd = stack.copy();
         int maxInput = stack.getMaxStackSize();
         maxAdd.setCount(maxInput);
@@ -111,9 +101,7 @@ public class SlotItemHandler extends Slot
             handlerModifiable.setStackInSlot(index, currentStack);
 
             return maxInput - remainder.getCount();
-        }
-        else
-        {
+        } else {
             ItemStack remainder = handler.insertItem(index, maxAdd, true);
 
             int current = currentStack.getCount();
@@ -123,26 +111,22 @@ public class SlotItemHandler extends Slot
     }
 
     @Override
-    public boolean canTakeStack(EntityPlayer playerIn)
-    {
+    public boolean canTakeStack(EntityPlayer playerIn) {
         return !this.getItemHandler().extractItem(index, 1, true).isEmpty();
     }
 
     @Override
     @Nonnull
-    public ItemStack decrStackSize(int amount)
-    {
+    public ItemStack decrStackSize(int amount) {
         return this.getItemHandler().extractItem(index, amount, false);
     }
 
-    public IItemHandler getItemHandler()
-    {
+    public IItemHandler getItemHandler() {
         return itemHandler;
     }
 
     @Override
-    public boolean isSameInventory(Slot other)
-    {
+    public boolean isSameInventory(Slot other) {
         return other instanceof SlotItemHandler && ((SlotItemHandler) other).getItemHandler() == this.itemHandler;
     }
 }

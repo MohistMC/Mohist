@@ -4,6 +4,7 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Arrays;
 import java.util.Map;
+
 import net.minecraft.crash.ICrashReportDetail;
 import net.minecraft.server.MinecraftServer;
 import org.bukkit.Bukkit;

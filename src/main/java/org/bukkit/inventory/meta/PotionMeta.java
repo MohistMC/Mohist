@@ -1,6 +1,7 @@
 package org.bukkit.inventory.meta;
 
 import java.util.List;
+
 import org.bukkit.Color;
 import org.bukkit.potion.PotionData;
 import org.bukkit.potion.PotionEffect;
@@ -46,9 +47,9 @@ public interface PotionMeta extends ItemMeta {
     /**
      * Adds a custom potion effect to this potion.
      *
-     * @param effect the potion effect to add
+     * @param effect    the potion effect to add
      * @param overwrite true if any existing effect of the same type should be
-     * overwritten
+     *                  overwritten
      * @return true if the potion meta changed as a result of this call
      */
     boolean addCustomEffect(PotionEffect effect, boolean overwrite);

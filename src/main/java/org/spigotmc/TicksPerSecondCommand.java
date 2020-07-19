@@ -24,6 +24,14 @@ public class TicksPerSecondCommand extends Command {
                 + ((tps > 20.0) ? "*" : "") + Math.min(Math.round(tps * 100.0) / 100.0, 20.0);
     }
 
+    private static final long mean(long[] array) {
+        if (array == null || array.length == 0) return 0L;
+        long r = 0L;
+        for (long i : array)
+            r += i;
+        return r / array.length;
+    }
+
     @Override
     public boolean execute(CommandSender sender, String currentAlias, String[] args) {
         if (!testPermission(sender)) {
@@ -84,14 +92,6 @@ public class TicksPerSecondCommand extends Command {
         sender.sendMessage(ChatColor.GOLD + "TPS from last 1m, 5m, 15m: " + org.apache.commons.lang.StringUtils.join(tpsAvg, ", "));
 
         return true;
-    }
-
-    private static final long mean(long[] array) {
-        if (array == null || array.length == 0) return 0L;
-        long r = 0L;
-        for (long i : array)
-            r += i;
-        return r / array.length;
     }
 
 }

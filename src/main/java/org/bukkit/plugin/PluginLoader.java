@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
+
 import org.bukkit.event.Event;
 import org.bukkit.event.Listener;
 
@@ -18,11 +19,11 @@ public interface PluginLoader {
      *
      * @param file File to attempt to load
      * @return Plugin that was contained in the specified file, or null if
-     *     unsuccessful
-     * @throws InvalidPluginException Thrown when the specified file is not a
-     *     plugin
+     * unsuccessful
+     * @throws InvalidPluginException     Thrown when the specified file is not a
+     *                                    plugin
      * @throws UnknownDependencyException If a required dependency could not
-     *     be found
+     *                                    be found
      */
     public Plugin loadPlugin(File file) throws InvalidPluginException, UnknownDependencyException;
 
@@ -31,9 +32,9 @@ public interface PluginLoader {
      *
      * @param file File to attempt to load from
      * @return A new PluginDescriptionFile loaded from the plugin.yml in the
-     *     specified file
+     * specified file
      * @throws InvalidDescriptionException If the plugin description file
-     *     could not be created
+     *                                     could not be created
      */
     public PluginDescriptionFile getPluginDescription(File file) throws InvalidDescriptionException;
 
@@ -49,7 +50,7 @@ public interface PluginLoader {
      * this listener
      *
      * @param listener The object that will handle the eventual call back
-     * @param plugin The plugin to use when creating registered listeners
+     * @param plugin   The plugin to use when creating registered listeners
      * @return The registered listeners.
      */
     public Map<Class<? extends Event>, Set<RegisteredListener>> createRegisteredListeners(Listener listener, Plugin plugin);
@@ -80,7 +81,7 @@ public interface PluginLoader {
      * <p>
      * Attempting to disable a plugin that is not enabled will have no effect
      *
-     * @param plugin Plugin to disable
+     * @param plugin           Plugin to disable
      * @param closeClassloader if the classloader for the Plugin should be closed
      */
     // provide default to allow other PluginLoader implementations to work

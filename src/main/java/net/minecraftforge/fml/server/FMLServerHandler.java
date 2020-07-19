@@ -20,6 +20,7 @@
 package net.minecraftforge.fml.server;
 
 import com.google.common.collect.ImmutableList;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -30,6 +31,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
+
 import net.minecraft.network.INetHandler;
 import net.minecraft.network.NetHandlerPlayServer;
 import net.minecraft.network.NetworkManager;
@@ -55,25 +57,23 @@ import red.mohist.util.i18n.Message;
 
 /**
  * Handles primary communication from hooked code into the system
- *
+ * <p>
  * The FML entry point is {@link #beginServerLoading(MinecraftServer)} called from
  * {@link net.minecraft.server.dedicated.DedicatedServer}
- *
+ * <p>
  * Obfuscated code should focus on this class and other members of the "server"
  * (or "client") code
- *
+ * <p>
  * The actual mod loading is handled at arms length by {@link Loader}
- *
+ * <p>
  * It is expected that a similar class will exist for each target environment:
  * Bukkit and Client side.
- *
+ * <p>
  * It should not be directly modified.
  *
  * @author cpw
- *
  */
-public class FMLServerHandler implements IFMLSidedHandler
-{
+public class FMLServerHandler implements IFMLSidedHandler {
     /**
      * The singleton
      */
@@ -84,10 +84,18 @@ public class FMLServerHandler implements IFMLSidedHandler
      */
     private MinecraftServer server;
     private List<String> injectedModContainers;
-    private FMLServerHandler()
-    {
+
+    private FMLServerHandler() {
         injectedModContainers = FMLCommonHandler.instance().beginLoading(this);
     }
+
+    /**
+     * @return the instance
+     */
+    public static FMLServerHandler instance() {
+        return INSTANCE;
+    }
+
     /**
      * Called to start the whole game off from
      * {@link MinecraftServer#startServer}
@@ -95,8 +103,7 @@ public class FMLServerHandler implements IFMLSidedHandler
      * @param minecraftServer server
      */
     @Override
-    public void beginServerLoading(MinecraftServer minecraftServer)
-    {
+    public void beginServerLoading(MinecraftServer minecraftServer) {
         server = minecraftServer;
         Loader.instance().loadMods(injectedModContainers);
         Loader.instance().preinitializeMods();
@@ -106,20 +113,17 @@ public class FMLServerHandler implements IFMLSidedHandler
      * Called a bit later on during server initialization to finish loading mods
      */
     @Override
-    public void finishServerLoading()
-    {
+    public void finishServerLoading() {
         Loader.instance().initializeMods();
     }
 
     @Override
-    public void haltGame(String message, Throwable exception)
-    {
+    public void haltGame(String message, Throwable exception) {
         throw new RuntimeException(message, exception);
     }
 
     @Override
-    public File getSavesDirectory()
-    {
+    public File getSavesDirectory() {
         return ((SaveFormatOld) server.getActiveAnvilConverter()).savesDirectory;
     }
 
@@ -127,25 +131,15 @@ public class FMLServerHandler implements IFMLSidedHandler
      * Get the server instance
      */
     @Override
-    public MinecraftServer getServer()
-    {
+    public MinecraftServer getServer() {
         return server;
-    }
-
-    /**
-     * @return the instance
-     */
-    public static FMLServerHandler instance()
-    {
-        return INSTANCE;
     }
 
     /* (non-Javadoc)
      * @see net.minecraftforge.fml.common.IFMLSidedHandler#getAdditionalBrandingInformation()
      */
     @Override
-    public List<String> getAdditionalBrandingInformation()
-    {
+    public List<String> getAdditionalBrandingInformation() {
         return ImmutableList.<String>of();
     }
 
@@ -153,27 +147,21 @@ public class FMLServerHandler implements IFMLSidedHandler
      * @see net.minecraftforge.fml.common.IFMLSidedHandler#getSide()
      */
     @Override
-    public Side getSide()
-    {
+    public Side getSide() {
         return Side.SERVER;
     }
 
     @Override
-    public void showGuiScreen(Object clientGuiElement)
-    {
+    public void showGuiScreen(Object clientGuiElement) {
 
     }
 
     @Override
-    public void queryUser(StartupQuery query) throws InterruptedException
-    {
-        if (query.getResult() == null)
-        {
+    public void queryUser(StartupQuery query) throws InterruptedException {
+        if (query.getResult() == null) {
             FMLLog.log.warn(query.getText());
             query.finish();
-        }
-        else
-        {
+        } else {
             String text = query.getText() +
                     "\n\n" + Message.getString("forge.fmlserverhandler.1") +
                     "\n" + Message.getString("forge.fmlserverhandler.2");
@@ -184,35 +172,27 @@ public class FMLServerHandler implements IFMLSidedHandler
 
             boolean done = false;
 
-            while (!done && server.isServerRunning())
-            {
+            while (!done && server.isServerRunning()) {
                 if (Thread.interrupted()) throw new InterruptedException();
 
                 DedicatedServer dedServer = (DedicatedServer) server;
 
                 // rudimentary command processing, check for fml confirm/cancel and stop commands
-                synchronized (dedServer.pendingCommandList)
-                {
-                    for (Iterator<PendingCommand> it = dedServer.pendingCommandList.iterator(); it.hasNext(); )
-                    {
+                synchronized (dedServer.pendingCommandList) {
+                    for (Iterator<PendingCommand> it = dedServer.pendingCommandList.iterator(); it.hasNext(); ) {
                         String cmd = it.next().command.trim().toLowerCase();
                         cmd = cmd.charAt(0) == '/' ? cmd.substring(1) : cmd; // strip the forward slash to make it optional
-                        if (cmd.equals("fml confirm"))
-                        {
+                        if (cmd.equals("fml confirm")) {
                             FMLLog.log.info(Message.getString("forge.fmlserverhandler.3"));
                             query.setResult(true);
                             done = true;
                             it.remove();
-                        }
-                        else if (cmd.equals("fml cancel"))
-                        {
+                        } else if (cmd.equals("fml cancel")) {
                             FMLLog.log.info(Message.getString("forge.fmlserverhandler.4"));
                             query.setResult(false);
                             done = true;
                             it.remove();
-                        }
-                        else if (cmd.equals("stop"))
-                        {
+                        } else if (cmd.equals("stop")) {
                             StartupQuery.abort();
                         }
                     }
@@ -226,31 +206,26 @@ public class FMLServerHandler implements IFMLSidedHandler
     }
 
     @Override
-    public boolean isDisplayCloseRequested()
-    {
+    public boolean isDisplayCloseRequested() {
         return false;
     }
 
     @Override
-    public boolean shouldServerShouldBeKilledQuietly()
-    {
+    public boolean shouldServerShouldBeKilledQuietly() {
         return false;
     }
 
     @Override
-    public void addModAsResource(ModContainer container)
-    {
-        String langFile = "assets/" + container.getModId().toLowerCase() + "/lang/"+ Message.getLocale().toLowerCase() +".lang";
-        String langFile2 = "assets/" + container.getModId().toLowerCase() + "/lang/"+ Message.getLocale() +".lang";
+    public void addModAsResource(ModContainer container) {
+        String langFile = "assets/" + container.getModId().toLowerCase() + "/lang/" + Message.getLocale().toLowerCase() + ".lang";
+        String langFile2 = "assets/" + container.getModId().toLowerCase() + "/lang/" + Message.getLocale() + ".lang";
         String langFile3 = "assets/" + container.getModId().toLowerCase() + "/lang/en_us.lang";
         String langFile4 = "assets/" + container.getModId().toLowerCase() + "/lang/en_US.lang";
         File source = container.getSource();
         InputStream stream = null;
         ZipFile zip = null;
-        try
-        {
-            if (source.isDirectory() && FMLLaunchHandler.isDeobfuscatedEnvironment())
-            {
+        try {
+            if (source.isDirectory() && FMLLaunchHandler.isDeobfuscatedEnvironment()) {
                 File f = new File(source.toURI().resolve(langFile).getPath());
                 if (!f.exists())
                     f = new File(source.toURI().resolve(langFile2).getPath());
@@ -261,8 +236,7 @@ public class FMLServerHandler implements IFMLSidedHandler
                 if (!f.exists())
                     throw new FileNotFoundException(source.toURI().resolve(langFile).getPath());
                 stream = new FileInputStream(f);
-            }
-            else if (source.exists()) //Fake sources.. Yay coremods -.-
+            } else if (source.exists()) //Fake sources.. Yay coremods -.-
             {
                 zip = new ZipFile(source);
                 ZipEntry entry = zip.getEntry(langFile);
@@ -274,57 +248,45 @@ public class FMLServerHandler implements IFMLSidedHandler
             }
             if (stream != null)
                 LanguageMap.inject(stream);
-        }
-        catch (FileNotFoundException e)
-        {
+        } catch (FileNotFoundException e) {
             FMLLog.log.debug("Missing English translation for {}: {}", container.getModId(), e.getMessage());
-        }
-        catch (IOException e)
-        {
+        } catch (IOException e) {
             // hush
-        }
-        catch(Exception e)
-        {
+        } catch (Exception e) {
             FMLLog.log.error(e);
-        }
-        finally
-        {
+        } finally {
             IOUtils.closeQuietly(stream);
             IOUtils.closeQuietly(zip);
         }
     }
 
     @Override
-    public String getCurrentLanguage()
-    {
+    public String getCurrentLanguage() {
         return Message.getLocale();
     }
 
     @Override
-    public void serverStopped()
-    {
+    public void serverStopped() {
         // NOOP
     }
+
     @Override
-    public NetworkManager getClientToServerNetworkManager()
-    {
+    public NetworkManager getClientToServerNetworkManager() {
         throw new RuntimeException("Missing");
     }
+
     @Override
-    public INetHandler getClientPlayHandler()
-    {
+    public INetHandler getClientPlayHandler() {
         return null;
     }
 
     @Override
-    public void fireNetRegistrationEvent(EventBus bus, NetworkManager manager, Set<String> channelSet, String channel, Side side)
-    {
+    public void fireNetRegistrationEvent(EventBus bus, NetworkManager manager, Set<String> channelSet, String channel, Side side) {
         bus.post(new FMLNetworkEvent.CustomPacketRegistrationEvent<NetHandlerPlayServer>(manager, channelSet, channel, side, NetHandlerPlayServer.class));
     }
 
     @Override
-    public boolean shouldAllowPlayerLogins()
-    {
+    public boolean shouldAllowPlayerLogins() {
         return DedicatedServer.allowPlayerLogins;
     }
 
@@ -334,21 +296,18 @@ public class FMLServerHandler implements IFMLSidedHandler
     }
 
     @Override
-    public IThreadListener getWorldThread(INetHandler net)
-    {
+    public IThreadListener getWorldThread(INetHandler net) {
         // Always the server on the dedicated server, eventually add Per-World if Mojang adds world stuff.
         return getServer();
     }
 
     @Override
-    public void processWindowMessages()
-    {
+    public void processWindowMessages() {
         // NOOP
     }
 
     @Override
-    public String stripSpecialChars(String message)
-    {
+    public String stripSpecialChars(String message) {
         return message;
     }
 
@@ -358,19 +317,17 @@ public class FMLServerHandler implements IFMLSidedHandler
     }
 
     @Override
-    public void fireSidedRegistryEvents()
-    {
+    public void fireSidedRegistryEvents() {
         // NOOP
-    }
-    @Override
-    public CompoundDataFixer getDataFixer()
-    {
-        return (CompoundDataFixer)this.server.getDataFixer();
     }
 
     @Override
-    public boolean isDisplayVSyncForced()
-    {
+    public CompoundDataFixer getDataFixer() {
+        return (CompoundDataFixer) this.server.getDataFixer();
+    }
+
+    @Override
+    public boolean isDisplayVSyncForced() {
         return false;
     }
 }

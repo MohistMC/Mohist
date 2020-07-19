@@ -11,9 +11,9 @@ import java.io.OutputStream;
  */
 public class JarTool {
 
-    public static String getJarPath(){
+    public static String getJarPath() {
         File file = getFile();
-        if(file==null) {
+        if (file == null) {
             return null;
         }
         return file.getAbsolutePath();
@@ -21,7 +21,7 @@ public class JarTool {
 
     public static String getJarDir() {
         File file = getFile();
-        if(file==null) {
+        if (file == null) {
             return null;
         }
         return getFile().getParent();
@@ -29,7 +29,7 @@ public class JarTool {
 
     public static String getJarName() {
         File file = getFile();
-        if(file==null) {
+        if (file == null) {
             return null;
         }
         return getFile().getName();
@@ -39,9 +39,9 @@ public class JarTool {
 
         String path = JarTool.class.getProtectionDomain().getCodeSource()
                 .getLocation().getFile();
-        try{
+        try {
             path = java.net.URLDecoder.decode(path, "UTF-8");
-        }catch (java.io.UnsupportedEncodingException e){
+        } catch (java.io.UnsupportedEncodingException e) {
             return null;
         }
         return new File(path);

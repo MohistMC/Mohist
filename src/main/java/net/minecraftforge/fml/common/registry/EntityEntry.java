@@ -20,29 +20,27 @@
 package net.minecraftforge.fml.common.registry;
 
 import java.util.function.Function;
+
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityList;
 import net.minecraft.entity.EntityList.EntityEggInfo;
 import net.minecraft.world.World;
 import net.minecraftforge.registries.IForgeRegistryEntry.Impl;
 
-public class EntityEntry extends Impl<EntityEntry>
-{
+public class EntityEntry extends Impl<EntityEntry> {
+    Function<World, ? extends Entity> factory;
     private Class<? extends Entity> cls;
     private String name;
     private EntityEggInfo egg;
-    Function<World, ? extends Entity> factory;
 
-    public EntityEntry(Class<? extends Entity> cls, String name)
-    {
+    public EntityEntry(Class<? extends Entity> cls, String name) {
         this.cls = cls;
         this.name = name;
         init();
     }
 
     //Protected method, to make this optional, in case people subclass this to have a better factory.
-    protected void init()
-    {
+    protected void init() {
         this.factory = new EntityEntryBuilder.ConstructorFactory<Entity>(this.cls) {
             @Override
             protected String describeEntity() {
@@ -51,19 +49,25 @@ public class EntityEntry extends Impl<EntityEntry>
         };
     }
 
-    public Class<? extends Entity> getEntityClass(){ return this.cls; }
-    public String getName(){ return this.name; }
-    public EntityEggInfo getEgg(){ return this.egg; }
+    public Class<? extends Entity> getEntityClass() {
+        return this.cls;
+    }
 
-    public void setEgg(EntityEggInfo egg)
-    {
+    public String getName() {
+        return this.name;
+    }
+
+    public EntityEggInfo getEgg() {
+        return this.egg;
+    }
+
+    public void setEgg(EntityEggInfo egg) {
         this.egg = egg;
         if (this.getRegistryName() != null)
             EntityList.ENTITY_EGGS.put(this.getRegistryName(), egg);
     }
 
-    public Entity newInstance(World world)
-    {
+    public Entity newInstance(World world) {
         return this.factory.apply(world);
     }
 }

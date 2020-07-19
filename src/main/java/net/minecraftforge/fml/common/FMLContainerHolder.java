@@ -19,7 +19,6 @@
 
 package net.minecraftforge.fml.common;
 
-public interface FMLContainerHolder
-{
+public interface FMLContainerHolder {
     ModContainer getFMLContainer();
 }

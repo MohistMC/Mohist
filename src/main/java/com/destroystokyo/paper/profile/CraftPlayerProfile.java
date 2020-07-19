@@ -4,6 +4,7 @@ import com.google.common.base.Charsets;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
 import com.mojang.authlib.properties.PropertyMap;
+
 import java.util.AbstractSet;
 import java.util.Collection;
 import java.util.Iterator;
@@ -12,6 +13,7 @@ import java.util.Set;
 import java.util.UUID;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.management.PlayerProfileCache;
 import org.bukkit.craftbukkit.v1_12_R1.entity.CraftPlayer;
@@ -223,8 +225,7 @@ public class CraftPlayerProfile implements PlayerProfile {
                 if (result != null) {
                     this.profile = result;
                 }
-            }
-            catch (Exception e) {
+            } catch (Exception e) {
                 if (MohistConfig.instance.FailOnUnresolvedGameProfile.getValue()) {
                     e.printStackTrace();
                     throw e;

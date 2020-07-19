@@ -58,7 +58,7 @@ public interface NoteBlock extends BlockState {
      * this will return false.
      *
      * @param instrument Instrument ID
-     * @param note Note ID
+     * @param note       Note ID
      * @return true if successful, otherwise false
      * @throws IllegalStateException if this block state is not placed
      * @deprecated Magic value
@@ -73,7 +73,7 @@ public interface NoteBlock extends BlockState {
      * this will return false.
      *
      * @param instrument The instrument
-     * @param note The note
+     * @param note       The note
      * @return true if successful, otherwise false
      * @throws IllegalStateException if this block state is not placed
      * @see Instrument Note

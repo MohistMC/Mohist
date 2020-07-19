@@ -1,8 +1,10 @@
 package org.bukkit.block.banner;
 
 import com.google.common.collect.ImmutableMap;
+
 import java.util.Map;
 import java.util.NoSuchElementException;
+
 import org.bukkit.DyeColor;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.configuration.serialization.SerializableAs;

@@ -34,25 +34,21 @@ import net.minecraftforge.fml.common.eventhandler.Cancelable;
  */
 @Deprecated // TODO: remove (1.13)
 @Cancelable
-public class ThrowableImpactEvent extends EntityEvent
-{
+public class ThrowableImpactEvent extends EntityEvent {
     private final EntityThrowable throwable;
     private final RayTraceResult ray;
 
-    public ThrowableImpactEvent(EntityThrowable throwable, RayTraceResult ray)
-    {
+    public ThrowableImpactEvent(EntityThrowable throwable, RayTraceResult ray) {
         super(throwable);
         this.throwable = throwable;
         this.ray = ray;
     }
 
-    public EntityThrowable getEntityThrowable()
-    {
+    public EntityThrowable getEntityThrowable() {
         return throwable;
     }
 
-    public RayTraceResult getRayTraceResult()
-    {
+    public RayTraceResult getRayTraceResult() {
         return ray;
     }
 

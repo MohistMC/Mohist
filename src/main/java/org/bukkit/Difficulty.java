@@ -1,6 +1,7 @@
 package org.bukkit;
 
 import com.google.common.collect.Maps;
+
 import java.util.Map;
 
 /**
@@ -51,7 +52,7 @@ public enum Difficulty {
      *
      * @param value Value to check
      * @return Associative {@link Difficulty} with the given value, or null if
-     *     it doesn't exist
+     * it doesn't exist
      * @deprecated Magic value
      */
 

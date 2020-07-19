@@ -21,8 +21,10 @@ package net.minecraftforge.fml.common.asm.transformers;
 
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
+
 import java.lang.reflect.Modifier;
 import java.util.List;
+
 import net.minecraft.launchwrapper.IClassTransformer;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
@@ -31,11 +33,13 @@ import org.objectweb.asm.tree.AnnotationNode;
 import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.MethodNode;
 
-public class EventSubscriberTransformer implements IClassTransformer
-{
+public class EventSubscriberTransformer implements IClassTransformer {
+    private static int toPublic(int access) {
+        return access & ~(Opcodes.ACC_PRIVATE | Opcodes.ACC_PROTECTED) | Opcodes.ACC_PUBLIC;
+    }
+
     @Override
-    public byte[] transform(String name, String transformedName, byte[] basicClass)
-    {
+    public byte[] transform(String name, String transformedName, byte[] basicClass) {
         if (basicClass == null) return null;
 
         ClassNode classNode = new ClassNode();
@@ -43,14 +47,11 @@ public class EventSubscriberTransformer implements IClassTransformer
 
         boolean isSubscriber = false;
 
-        for (MethodNode methodNode : classNode.methods)
-        {
+        for (MethodNode methodNode : classNode.methods) {
             List<AnnotationNode> anns = methodNode.visibleAnnotations;
 
-            if (anns != null && Iterables.any(anns, SubscribeEventPredicate.INSTANCE))
-            {
-                if (Modifier.isPrivate(methodNode.access))
-                {
+            if (anns != null && Iterables.any(anns, SubscribeEventPredicate.INSTANCE)) {
+                if (Modifier.isPrivate(methodNode.access)) {
                     String msg = "Cannot apply @SubscribeEvent to private method %s/%s%s";
                     throw new RuntimeException(String.format(msg, classNode.name, methodNode.name, methodNode.desc));
                 }
@@ -60,8 +61,7 @@ public class EventSubscriberTransformer implements IClassTransformer
             }
         }
 
-        if (isSubscriber)
-        {
+        if (isSubscriber) {
             classNode.access = toPublic(classNode.access);
 
             ClassWriter writer = new ClassWriter(ClassWriter.COMPUTE_MAXS);
@@ -72,18 +72,11 @@ public class EventSubscriberTransformer implements IClassTransformer
         return basicClass;
     }
 
-    private static int toPublic(int access)
-    {
-        return access & ~(Opcodes.ACC_PRIVATE | Opcodes.ACC_PROTECTED) | Opcodes.ACC_PUBLIC;
-    }
-
-    private static class SubscribeEventPredicate implements Predicate<AnnotationNode>
-    {
+    private static class SubscribeEventPredicate implements Predicate<AnnotationNode> {
         static final SubscribeEventPredicate INSTANCE = new SubscribeEventPredicate();
 
         @Override
-        public boolean apply(AnnotationNode input)
-        {
+        public boolean apply(AnnotationNode input) {
             return input.desc.equals("Lnet/minecraftforge/fml/common/eventhandler/SubscribeEvent;");
         }
     }

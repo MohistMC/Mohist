@@ -1,6 +1,7 @@
 package org.spigotmc;
 
 import java.util.List;
+
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.YamlConfiguration;
 import red.mohist.Mohist;

@@ -33,7 +33,7 @@ public class WoodenStep extends Wood {
      * inverted or not.
      *
      * @param species the species of the wooden step
-     * @param inv true the step is at the top of the block
+     * @param inv     true the step is at the top of the block
      */
     public WoodenStep(final TreeSpecies species, boolean inv) {
         super(DEFAULT_TYPE, species);
@@ -83,7 +83,7 @@ public class WoodenStep extends Wood {
      * Set step inverted state
      *
      * @param inv - true if step is inverted (top half), false if step is normal
-     * (bottom half)
+     *            (bottom half)
      */
     @SuppressWarnings("deprecation")
     public void setInverted(boolean inv) {

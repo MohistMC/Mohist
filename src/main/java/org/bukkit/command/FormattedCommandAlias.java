@@ -1,6 +1,7 @@
 package org.bukkit.command;
 
 import java.util.ArrayList;
+
 import org.bukkit.Bukkit;
 
 public class FormattedCommandAlias extends Command {
@@ -12,12 +13,14 @@ public class FormattedCommandAlias extends Command {
         this.formatStrings = formatStrings;
     }
 
-    @Override // Spigot
-    public String getTimingName() {return "Command Forwarder - " + super.getTimingName();} // Spigot
-
     private static boolean inRange(int i, int j, int k) {
         return i >= j && i <= k;
     }
+
+    @Override // Spigot
+    public String getTimingName() {
+        return "Command Forwarder - " + super.getTimingName();
+    } // Spigot
 
     @Override
     public boolean execute(CommandSender sender, String commandLabel, String[] args) {

@@ -1,6 +1,7 @@
 package org.bukkit.plugin.messaging;
 
 import java.util.Set;
+
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
@@ -33,7 +34,7 @@ public interface Messenger {
      * Registers the specific plugin to the requested outgoing plugin channel,
      * allowing it to send messages through that channel to any clients.
      *
-     * @param plugin Plugin that wishes to send messages through the channel.
+     * @param plugin  Plugin that wishes to send messages through the channel.
      * @param channel Channel to register.
      * @throws IllegalArgumentException Thrown if plugin or channel is null.
      */
@@ -44,8 +45,8 @@ public interface Messenger {
      * channel, no longer allowing it to send messages through that channel to
      * any clients.
      *
-     * @param plugin Plugin that no longer wishes to send messages through the
-     *     channel.
+     * @param plugin  Plugin that no longer wishes to send messages through the
+     *                channel.
      * @param channel Channel to unregister.
      * @throws IllegalArgumentException Thrown if plugin or channel is null.
      */
@@ -64,13 +65,13 @@ public interface Messenger {
      * Registers the specific plugin for listening on the requested incoming
      * plugin channel, allowing it to act upon any plugin messages.
      *
-     * @param plugin Plugin that wishes to register to this channel.
-     * @param channel Channel to register.
+     * @param plugin   Plugin that wishes to register to this channel.
+     * @param channel  Channel to register.
      * @param listener Listener to receive messages on.
      * @return The resulting registration that was made as a result of this
-     *     method.
+     * method.
      * @throws IllegalArgumentException Thrown if plugin, channel or listener
-     *     is null, or the listener is already registered for this channel.
+     *                                  is null, or the listener is already registered for this channel.
      */
     public PluginMessageListenerRegistration registerIncomingPluginChannel(Plugin plugin, String channel, PluginMessageListener listener);
 
@@ -79,11 +80,11 @@ public interface Messenger {
      * requested incoming plugin channel, no longer allowing it to act upon
      * any plugin messages.
      *
-     * @param plugin Plugin that wishes to unregister from this channel.
-     * @param channel Channel to unregister.
+     * @param plugin   Plugin that wishes to unregister from this channel.
+     * @param channel  Channel to unregister.
      * @param listener Listener to stop receiving messages on.
      * @throws IllegalArgumentException Thrown if plugin, channel or listener
-     *     is null.
+     *                                  is null.
      */
     public void unregisterIncomingPluginChannel(Plugin plugin, String channel, PluginMessageListener listener);
 
@@ -92,7 +93,7 @@ public interface Messenger {
      * incoming plugin channel, no longer allowing it to act upon any plugin
      * messages.
      *
-     * @param plugin Plugin that wishes to unregister from this channel.
+     * @param plugin  Plugin that wishes to unregister from this channel.
      * @param channel Channel to unregister.
      * @throws IllegalArgumentException Thrown if plugin or channel is null.
      */
@@ -120,7 +121,7 @@ public interface Messenger {
      *
      * @param plugin Plugin to retrieve channels for.
      * @return List of all registered outgoing plugin channels that a plugin
-     *     is registered to.
+     * is registered to.
      * @throws IllegalArgumentException Thrown if plugin is null.
      */
     public Set<String> getOutgoingChannels(Plugin plugin);
@@ -138,7 +139,7 @@ public interface Messenger {
      *
      * @param plugin Plugin to retrieve channels for.
      * @return List of all registered incoming plugin channels that the plugin
-     *     is registered for.
+     * is registered for.
      * @throws IllegalArgumentException Thrown if plugin is null.
      */
     public Set<String> getIncomingChannels(Plugin plugin);
@@ -167,7 +168,7 @@ public interface Messenger {
      * Gets a set containing all the incoming plugin channel registrations
      * that the specified plugin has on the requested channel.
      *
-     * @param plugin Plugin to retrieve registrations for.
+     * @param plugin  Plugin to retrieve registrations for.
      * @param channel Channel to filter registrations by.
      * @return List of all registrations that the plugin has.
      * @throws IllegalArgumentException Thrown if plugin or channel is null.
@@ -189,7 +190,7 @@ public interface Messenger {
      * Checks if the specified plugin has registered to receive incoming
      * messages through the requested channel.
      *
-     * @param plugin Plugin to check registration for.
+     * @param plugin  Plugin to check registration for.
      * @param channel Channel to test for.
      * @return True if the channel is registered, else false.
      */
@@ -199,7 +200,7 @@ public interface Messenger {
      * Checks if the specified plugin has registered to send outgoing messages
      * through the requested channel.
      *
-     * @param plugin Plugin to check registration for.
+     * @param plugin  Plugin to check registration for.
      * @param channel Channel to test for.
      * @return True if the channel is registered, else false.
      */
@@ -208,7 +209,7 @@ public interface Messenger {
     /**
      * Dispatches the specified incoming message to any registered listeners.
      *
-     * @param source Source of the message.
+     * @param source  Source of the message.
      * @param channel Channel that the message was sent by.
      * @param message Raw payload of the message.
      */

@@ -2,6 +2,7 @@ package org.bukkit.permissions;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
+
 import org.bukkit.plugin.Plugin;
 
 /**
@@ -79,7 +80,7 @@ public class PermissionAttachment {
     /**
      * Sets a permission to the given value, by its fully qualified name
      *
-     * @param name Name of the permission
+     * @param name  Name of the permission
      * @param value New value of the permission
      */
     public void setPermission(String name, boolean value) {
@@ -90,7 +91,7 @@ public class PermissionAttachment {
     /**
      * Sets a permission to the given value
      *
-     * @param perm Permission to set
+     * @param perm  Permission to set
      * @param value New value of the permission
      */
     public void setPermission(Permission perm, boolean value) {
@@ -126,7 +127,7 @@ public class PermissionAttachment {
      * Removes this attachment from its registered {@link Permissible}
      *
      * @return true if the permissible was removed successfully, false if it
-     *     did not exist
+     * did not exist
      */
     public boolean remove() {
         try {

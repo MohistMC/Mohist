@@ -7,6 +7,7 @@ import com.google.common.io.BaseEncoding;
 import com.mojang.authlib.GameProfile;
 import io.netty.buffer.Unpooled;
 import io.netty.util.internal.ConcurrentSet;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.lang.ref.WeakReference;
@@ -25,6 +26,7 @@ import java.util.WeakHashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.annotation.Nullable;
+
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.minecraft.advancements.AdvancementProgress;
@@ -254,8 +256,7 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
         }
 
         @Override
-        public int getPing()
-        {
+        public int getPing() {
             return getHandle().ping;
         }
     };

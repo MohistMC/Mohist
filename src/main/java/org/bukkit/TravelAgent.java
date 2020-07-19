@@ -21,7 +21,7 @@ public interface TravelAgent {
      * Set the Block radius to search in for available portals.
      *
      * @param radius the radius in which to search for a portal from the
-     *     location
+     *               location
      * @return this travel agent
      */
     public TravelAgent setSearchRadius(int radius);
@@ -46,7 +46,7 @@ public interface TravelAgent {
      * portal or not.
      *
      * @return whether the TravelAgent should create a destination portal or
-     *     not
+     * not
      */
     public boolean getCanCreatePortal();
 
@@ -55,7 +55,7 @@ public interface TravelAgent {
      * portal or not.
      *
      * @param create Sets whether the TravelAgent should create a destination
-     *     portal or not
+     *               portal or not
      */
     public void setCanCreatePortal(boolean create);
 
@@ -65,7 +65,7 @@ public interface TravelAgent {
      *
      * @param location the location where the search for a portal should begin
      * @return the location of a portal which has been found or returns the
-     *     location passed to the method if unsuccessful
+     * location passed to the method if unsuccessful
      * @see #createPortal(Location)
      */
     public Location findOrCreate(Location location);

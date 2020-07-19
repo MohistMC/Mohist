@@ -36,18 +36,15 @@ import net.minecraftforge.fml.common.eventhandler.Cancelable;
  * This event is fired on the {@link MinecraftForge#EVENT_BUS}.<br>
  **/
 @Cancelable
-public class EntityTravelToDimensionEvent extends EntityEvent
-{
+public class EntityTravelToDimensionEvent extends EntityEvent {
     private final int dimension;
 
-    public EntityTravelToDimensionEvent(Entity entity, int dimension)
-    {
+    public EntityTravelToDimensionEvent(Entity entity, int dimension) {
         super(entity);
         this.dimension = dimension;
     }
 
-    public int getDimension()
-    {
+    public int getDimension() {
         return dimension;
     }
 }

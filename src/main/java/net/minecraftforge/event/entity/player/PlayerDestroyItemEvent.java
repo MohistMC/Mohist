@@ -21,6 +21,7 @@ package net.minecraftforge.event.entity.player;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.multiplayer.PlayerControllerMP;
 import net.minecraft.client.multiplayer.WorldClient;
@@ -62,22 +63,26 @@ import net.minecraftforge.fml.common.eventhandler.Cancelable;
  * This event is fired from {@link ForgeEventFactory#onPlayerDestroyItem(EntityPlayer, ItemStack, EnumHand)}.<br>
  * This event is fired on the {@link MinecraftForge#EVENT_BUS}.
  **/
-public class PlayerDestroyItemEvent extends PlayerEvent
-{
+public class PlayerDestroyItemEvent extends PlayerEvent {
     @Nonnull
     private final ItemStack original;
     @Nullable
     private final EnumHand hand; // May be null if this player destroys the item by any use besides holding it.
-    public PlayerDestroyItemEvent(EntityPlayer player, @Nonnull ItemStack original, @Nullable EnumHand hand)
-    {
+
+    public PlayerDestroyItemEvent(EntityPlayer player, @Nonnull ItemStack original, @Nullable EnumHand hand) {
         super(player);
         this.original = original;
         this.hand = hand;
     }
 
     @Nonnull
-    public ItemStack getOriginal() { return this.original; }
+    public ItemStack getOriginal() {
+        return this.original;
+    }
+
     @Nullable
-    public EnumHand getHand() { return this.hand; }
+    public EnumHand getHand() {
+        return this.hand;
+    }
 
 }

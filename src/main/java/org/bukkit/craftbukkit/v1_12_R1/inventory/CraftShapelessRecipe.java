@@ -1,6 +1,7 @@
 package org.bukkit.craftbukkit.v1_12_R1.inventory;
 
 import java.util.List;
+
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.item.crafting.ShapelessRecipes;

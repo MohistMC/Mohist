@@ -22,8 +22,10 @@ package net.minecraftforge.fml.common.network.simpleimpl;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelPipeline;
+
 import java.lang.reflect.Method;
 import java.util.EnumMap;
+
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.network.INetHandler;
@@ -43,7 +45,7 @@ import net.minecraftforge.fml.relauncher.Side;
  * It provides a simple message driven system, based on a discriminator byte over the custom packet channel.
  * It assumes that you have a series of unique message types with each having a unique handler. Generally, context should be
  * derived at message handling time.
- *
+ * <p>
  * Usage is simple:<ul>
  * <li>construct, and store, an instance of this class. It will automatically register and configure your underlying netty channel.
  *
@@ -56,7 +58,7 @@ import net.minecraftforge.fml.relauncher.Side;
  * is suitable for returning from things like {@link TileEntity#getDescriptionPacket()} for example.
  * <li>Finally, use the sendXXX to send unsolicited messages to various classes of recipients.
  * </ul>
- *
+ * <p>
  * Example
  * <code>
  * <pre>
@@ -98,114 +100,96 @@ import net.minecraftforge.fml.relauncher.Side;
  *  wrapper.registerMessage(Message2Handler.class, Message2.class, 2, Side.SERVER);
  *  </pre>
  * </code>
- *
+ * <p>
  * Note: As of Minecraft 1.8 packets are by default handled on the network thread.
  * That means that your {@link IMessageHandler} can not interact with most game objects directly.
  * Minecraft provides a convenient way to make your code execute on the main thread instead using {@link IThreadListener#addScheduledTask(Runnable)}.
  * The way to obtain an {@link IThreadListener} is using either the {@link net.minecraft.client.Minecraft} instance (client side) or a {@link net.minecraft.world.WorldServer} instance (server side).
  *
  * @author cpw
- *
  */
 public class SimpleNetworkWrapper {
-    private EnumMap<Side, FMLEmbeddedChannel> channels;
-    private SimpleIndexedCodec packetCodec;
     private static Class<?> defaultChannelPipeline;
     private static Method generateName;
+    private EnumMap<Side, FMLEmbeddedChannel> channels;
+    private SimpleIndexedCodec packetCodec;
+
     {
-        try
-        {
+        try {
             defaultChannelPipeline = Class.forName("io.netty.channel.DefaultChannelPipeline");
             generateName = defaultChannelPipeline.getDeclaredMethod("generateName", ChannelHandler.class);
             generateName.setAccessible(true);
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             // How is this possible?
             throw new RuntimeException("What? Netty isn't installed, what magic is this?", e);
         }
     }
-    public SimpleNetworkWrapper(String channelName)
-    {
+
+    public SimpleNetworkWrapper(String channelName) {
         packetCodec = new SimpleIndexedCodec();
         channels = NetworkRegistry.INSTANCE.newChannel(channelName, packetCodec);
     }
 
-    private String generateName(ChannelPipeline pipeline, ChannelHandler handler)
-    {
-        try
-        {
-            return (String)generateName.invoke(defaultChannelPipeline.cast(pipeline), handler);
-        }
-        catch (Exception e)
-        {
-            throw new RuntimeException("It appears we somehow have a not-standard pipeline. Huh", e);
-        }
-    }
-    /**
-     * Register a message and it's associated handler. The message will have the supplied discriminator byte. The message handler will
-     * be registered on the supplied side (this is the side where you want the message to be processed and acted upon).
-     *
-     * @param messageHandler the message handler type
-     * @param requestMessageType the message type
-     * @param discriminator a discriminator byte
-     * @param side the side for the handler
-     */
-    public <REQ extends IMessage, REPLY extends IMessage> void registerMessage(Class<? extends IMessageHandler<REQ, REPLY>> messageHandler, Class<REQ> requestMessageType, int discriminator, Side side)
-    {
-        registerMessage(instantiate(messageHandler), requestMessageType, discriminator, side);
-    }
-    
-    static <REQ extends IMessage, REPLY extends IMessage> IMessageHandler<? super REQ, ? extends REPLY> instantiate(Class<? extends IMessageHandler<? super REQ, ? extends REPLY>> handler)
-    {
-        try
-        {
+    static <REQ extends IMessage, REPLY extends IMessage> IMessageHandler<? super REQ, ? extends REPLY> instantiate(Class<? extends IMessageHandler<? super REQ, ? extends REPLY>> handler) {
+        try {
             return handler.newInstance();
-        }
-        catch (ReflectiveOperationException e)
-        {
+        } catch (ReflectiveOperationException e) {
             throw new RuntimeException(e);
         }
     }
-    
+
+    private String generateName(ChannelPipeline pipeline, ChannelHandler handler) {
+        try {
+            return (String) generateName.invoke(defaultChannelPipeline.cast(pipeline), handler);
+        } catch (Exception e) {
+            throw new RuntimeException("It appears we somehow have a not-standard pipeline. Huh", e);
+        }
+    }
+
     /**
      * Register a message and it's associated handler. The message will have the supplied discriminator byte. The message handler will
      * be registered on the supplied side (this is the side where you want the message to be processed and acted upon).
      *
-     * @param messageHandler the message handler instance
+     * @param messageHandler     the message handler type
      * @param requestMessageType the message type
-     * @param discriminator a discriminator byte
-     * @param side the side for the handler
+     * @param discriminator      a discriminator byte
+     * @param side               the side for the handler
      */
-    public <REQ extends IMessage, REPLY extends IMessage> void registerMessage(IMessageHandler<? super REQ, ? extends REPLY> messageHandler, Class<REQ> requestMessageType, int discriminator, Side side)
-    {
+    public <REQ extends IMessage, REPLY extends IMessage> void registerMessage(Class<? extends IMessageHandler<REQ, REPLY>> messageHandler, Class<REQ> requestMessageType, int discriminator, Side side) {
+        registerMessage(instantiate(messageHandler), requestMessageType, discriminator, side);
+    }
+
+    /**
+     * Register a message and it's associated handler. The message will have the supplied discriminator byte. The message handler will
+     * be registered on the supplied side (this is the side where you want the message to be processed and acted upon).
+     *
+     * @param messageHandler     the message handler instance
+     * @param requestMessageType the message type
+     * @param discriminator      a discriminator byte
+     * @param side               the side for the handler
+     */
+    public <REQ extends IMessage, REPLY extends IMessage> void registerMessage(IMessageHandler<? super REQ, ? extends REPLY> messageHandler, Class<REQ> requestMessageType, int discriminator, Side side) {
         packetCodec.addDiscriminator(discriminator, requestMessageType);
         FMLEmbeddedChannel channel = channels.get(side);
         String type = channel.findChannelHandlerNameForType(SimpleIndexedCodec.class);
-        if (side == Side.SERVER)
-        {
+        if (side == Side.SERVER) {
             addServerHandlerAfter(channel, type, messageHandler, requestMessageType);
-        }
-        else
-        {
+        } else {
             addClientHandlerAfter(channel, type, messageHandler, requestMessageType);
         }
     }
 
-    private <REQ extends IMessage, REPLY extends IMessage, NH extends INetHandler> void addServerHandlerAfter(FMLEmbeddedChannel channel, String type, IMessageHandler<? super REQ, ? extends REPLY> messageHandler, Class<REQ> requestType)
-    {
+    private <REQ extends IMessage, REPLY extends IMessage, NH extends INetHandler> void addServerHandlerAfter(FMLEmbeddedChannel channel, String type, IMessageHandler<? super REQ, ? extends REPLY> messageHandler, Class<REQ> requestType) {
         SimpleChannelHandlerWrapper<REQ, REPLY> handler = getHandlerWrapper(messageHandler, Side.SERVER, requestType);
         channel.pipeline().addAfter(type, generateName(channel.pipeline(), handler), handler);
     }
 
-    private <REQ extends IMessage, REPLY extends IMessage, NH extends INetHandler> void addClientHandlerAfter(FMLEmbeddedChannel channel, String type, IMessageHandler<? super REQ, ? extends REPLY> messageHandler, Class<REQ> requestType)
-    {
+    private <REQ extends IMessage, REPLY extends IMessage, NH extends INetHandler> void addClientHandlerAfter(FMLEmbeddedChannel channel, String type, IMessageHandler<? super REQ, ? extends REPLY> messageHandler, Class<REQ> requestType) {
         SimpleChannelHandlerWrapper<REQ, REPLY> handler = getHandlerWrapper(messageHandler, Side.CLIENT, requestType);
         channel.pipeline().addAfter(type, generateName(channel.pipeline(), handler), handler);
     }
 
-    private <REPLY extends IMessage, REQ extends IMessage> SimpleChannelHandlerWrapper<REQ, REPLY> getHandlerWrapper(IMessageHandler<? super REQ, ? extends REPLY> messageHandler, Side side, Class<REQ> requestType)
-    {
+    private <REPLY extends IMessage, REQ extends IMessage> SimpleChannelHandlerWrapper<REQ, REPLY> getHandlerWrapper(IMessageHandler<? super REQ, ? extends REPLY> messageHandler, Side side, Class<REQ> requestType) {
         return new SimpleChannelHandlerWrapper<REQ, REPLY>(messageHandler, side, requestType);
     }
 
@@ -216,8 +200,7 @@ public class SimpleNetworkWrapper {
      * @param message The message to translate into packet form
      * @return A minecraft {@link Packet} suitable for use in minecraft APIs
      */
-    public Packet<?> getPacketFrom(IMessage message)
-    {
+    public Packet<?> getPacketFrom(IMessage message) {
         return channels.get(Side.SERVER).generatePacketFrom(message);
     }
 
@@ -227,8 +210,7 @@ public class SimpleNetworkWrapper {
      *
      * @param message The message to send
      */
-    public void sendToAll(IMessage message)
-    {
+    public void sendToAll(IMessage message) {
         channels.get(Side.SERVER).attr(FMLOutboundHandler.FML_MESSAGETARGET).set(FMLOutboundHandler.OutboundTarget.ALL);
         channels.get(Side.SERVER).writeAndFlush(message).addListener(ChannelFutureListener.FIRE_EXCEPTION_ON_FAILURE);
     }
@@ -238,10 +220,9 @@ public class SimpleNetworkWrapper {
      * The {@link IMessageHandler} for this message type should be on the CLIENT side.
      *
      * @param message The message to send
-     * @param player The player to send it to
+     * @param player  The player to send it to
      */
-    public void sendTo(IMessage message, EntityPlayerMP player)
-    {
+    public void sendTo(IMessage message, EntityPlayerMP player) {
         channels.get(Side.SERVER).attr(FMLOutboundHandler.FML_MESSAGETARGET).set(FMLOutboundHandler.OutboundTarget.PLAYER);
         channels.get(Side.SERVER).attr(FMLOutboundHandler.FML_MESSAGETARGETARGS).set(player);
         channels.get(Side.SERVER).writeAndFlush(message).addListener(ChannelFutureListener.FIRE_EXCEPTION_ON_FAILURE);
@@ -252,10 +233,9 @@ public class SimpleNetworkWrapper {
      * The {@link IMessageHandler} for this message type should be on the CLIENT side.
      *
      * @param message The message to send
-     * @param point The {@link TargetPoint} around which to send
+     * @param point   The {@link TargetPoint} around which to send
      */
-    public void sendToAllAround(IMessage message, NetworkRegistry.TargetPoint point)
-    {
+    public void sendToAllAround(IMessage message, NetworkRegistry.TargetPoint point) {
         channels.get(Side.SERVER).attr(FMLOutboundHandler.FML_MESSAGETARGET).set(FMLOutboundHandler.OutboundTarget.ALLAROUNDPOINT);
         channels.get(Side.SERVER).attr(FMLOutboundHandler.FML_MESSAGETARGETARGS).set(point);
         channels.get(Side.SERVER).writeAndFlush(message).addListener(ChannelFutureListener.FIRE_EXCEPTION_ON_FAILURE);
@@ -267,10 +247,9 @@ public class SimpleNetworkWrapper {
      * The {@code range} field of the {@link TargetPoint} is ignored.
      *
      * @param message The message to send
-     * @param point The tracked {@link TargetPoint} around which to send
+     * @param point   The tracked {@link TargetPoint} around which to send
      */
-    public void sendToAllTracking(IMessage message, NetworkRegistry.TargetPoint point)
-    {
+    public void sendToAllTracking(IMessage message, NetworkRegistry.TargetPoint point) {
         channels.get(Side.SERVER).attr(FMLOutboundHandler.FML_MESSAGETARGET).set(FMLOutboundHandler.OutboundTarget.TRACKING_POINT);
         channels.get(Side.SERVER).attr(FMLOutboundHandler.FML_MESSAGETARGETARGS).set(point);
         channels.get(Side.SERVER).writeAndFlush(message).addListener(ChannelFutureListener.FIRE_EXCEPTION_ON_FAILURE);
@@ -283,10 +262,9 @@ public class SimpleNetworkWrapper {
      * because entities have different tracking distances based on their type.
      *
      * @param message The message to send
-     * @param entity The tracked entity around which to send
+     * @param entity  The tracked entity around which to send
      */
-    public void sendToAllTracking(IMessage message, Entity entity)
-    {
+    public void sendToAllTracking(IMessage message, Entity entity) {
         channels.get(Side.SERVER).attr(FMLOutboundHandler.FML_MESSAGETARGET).set(FMLOutboundHandler.OutboundTarget.TRACKING_ENTITY);
         channels.get(Side.SERVER).attr(FMLOutboundHandler.FML_MESSAGETARGETARGS).set(entity);
         channels.get(Side.SERVER).writeAndFlush(message).addListener(ChannelFutureListener.FIRE_EXCEPTION_ON_FAILURE);
@@ -296,11 +274,10 @@ public class SimpleNetworkWrapper {
      * Send this message to everyone within the supplied dimension.
      * The {@link IMessageHandler} for this message type should be on the CLIENT side.
      *
-     * @param message The message to send
+     * @param message     The message to send
      * @param dimensionId The dimension id to target
      */
-    public void sendToDimension(IMessage message, int dimensionId)
-    {
+    public void sendToDimension(IMessage message, int dimensionId) {
         channels.get(Side.SERVER).attr(FMLOutboundHandler.FML_MESSAGETARGET).set(FMLOutboundHandler.OutboundTarget.DIMENSION);
         channels.get(Side.SERVER).attr(FMLOutboundHandler.FML_MESSAGETARGETARGS).set(dimensionId);
         channels.get(Side.SERVER).writeAndFlush(message).addListener(ChannelFutureListener.FIRE_EXCEPTION_ON_FAILURE);
@@ -312,8 +289,7 @@ public class SimpleNetworkWrapper {
      *
      * @param message The message to send
      */
-    public void sendToServer(IMessage message)
-    {
+    public void sendToServer(IMessage message) {
         channels.get(Side.CLIENT).attr(FMLOutboundHandler.FML_MESSAGETARGET).set(FMLOutboundHandler.OutboundTarget.TOSERVER);
         channels.get(Side.CLIENT).writeAndFlush(message).addListener(ChannelFutureListener.FIRE_EXCEPTION_ON_FAILURE);
     }

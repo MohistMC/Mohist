@@ -1,6 +1,7 @@
 package org.bukkit.help;
 
 import java.util.Collection;
+
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;

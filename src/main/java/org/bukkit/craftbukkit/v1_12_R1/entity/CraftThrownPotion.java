@@ -1,7 +1,9 @@
 package org.bukkit.craftbukkit.v1_12_R1.entity;
 
 import com.google.common.collect.ImmutableList;
+
 import java.util.Collection;
+
 import net.minecraft.entity.projectile.EntityPotion;
 import net.minecraft.potion.PotionUtils;
 import org.bukkit.craftbukkit.v1_12_R1.CraftServer;

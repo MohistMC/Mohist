@@ -24,20 +24,17 @@ import net.minecraftforge.fml.common.LoaderState.ModState;
 /**
  * Called when the server begins an orderly shutdown, before {@link FMLServerStoppedEvent}.
  *
- * @see net.minecraftforge.fml.common.Mod.EventHandler for how to subscribe to this event
  * @author cpw
+ * @see net.minecraftforge.fml.common.Mod.EventHandler for how to subscribe to this event
  */
-public class FMLServerStoppingEvent extends FMLStateEvent
-{
+public class FMLServerStoppingEvent extends FMLStateEvent {
 
-    public FMLServerStoppingEvent(Object... data)
-    {
+    public FMLServerStoppingEvent(Object... data) {
         super(data);
     }
-    
+
     @Override
-    public ModState getModState()
-    {
+    public ModState getModState() {
         return ModState.AVAILABLE;
     }
 

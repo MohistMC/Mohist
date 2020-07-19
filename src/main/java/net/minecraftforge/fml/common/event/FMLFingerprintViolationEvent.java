@@ -20,8 +20,10 @@
 package net.minecraftforge.fml.common.event;
 
 import com.google.common.collect.ImmutableSet;
+
 import java.io.File;
 import java.util.Set;
+
 import net.minecraftforge.fml.common.Mod;
 
 
@@ -36,8 +38,7 @@ public class FMLFingerprintViolationEvent extends FMLEvent {
     private final File source;
     private final String expectedFingerprint;
 
-    public FMLFingerprintViolationEvent(boolean isDirectory, File source, ImmutableSet<String> fingerprints, String expectedFingerprint)
-    {
+    public FMLFingerprintViolationEvent(boolean isDirectory, File source, ImmutableSet<String> fingerprints, String expectedFingerprint) {
         super();
         this.isDirectory = isDirectory;
         this.source = source;
@@ -45,8 +46,19 @@ public class FMLFingerprintViolationEvent extends FMLEvent {
         this.expectedFingerprint = expectedFingerprint;
     }
 
-    public boolean isDirectory() { return isDirectory; }
-    public Set<String> getFingerprints() { return fingerprints; }
-    public File getSource() { return source; }
-    public String getExpectedFingerprint() { return expectedFingerprint; }
+    public boolean isDirectory() {
+        return isDirectory;
+    }
+
+    public Set<String> getFingerprints() {
+        return fingerprints;
+    }
+
+    public File getSource() {
+        return source;
+    }
+
+    public String getExpectedFingerprint() {
+        return expectedFingerprint;
+    }
 }

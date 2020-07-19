@@ -20,6 +20,7 @@
 package net.minecraftforge.event.entity.living;
 
 import javax.annotation.Nonnull;
+
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemStack;
@@ -42,23 +43,29 @@ import net.minecraftforge.fml.common.eventhandler.Cancelable;
  * <br>
  * This event is fired on the {@link MinecraftForge#EVENT_BUS}.
  **/
-public class LivingEquipmentChangeEvent extends LivingEvent
-{
+public class LivingEquipmentChangeEvent extends LivingEvent {
     private final EntityEquipmentSlot slot;
     private final ItemStack from;
     private final ItemStack to;
 
-    public LivingEquipmentChangeEvent(EntityLivingBase entity, EntityEquipmentSlot slot, @Nonnull ItemStack from, @Nonnull ItemStack to)
-    {
+    public LivingEquipmentChangeEvent(EntityLivingBase entity, EntityEquipmentSlot slot, @Nonnull ItemStack from, @Nonnull ItemStack to) {
         super(entity);
         this.slot = slot;
         this.from = from;
         this.to = to;
     }
 
-    public EntityEquipmentSlot getSlot() { return this.slot; }
+    public EntityEquipmentSlot getSlot() {
+        return this.slot;
+    }
+
     @Nonnull
-    public ItemStack getFrom() { return this.from; }
+    public ItemStack getFrom() {
+        return this.from;
+    }
+
     @Nonnull
-    public ItemStack getTo() { return this.to; }
+    public ItemStack getTo() {
+        return this.to;
+    }
 }

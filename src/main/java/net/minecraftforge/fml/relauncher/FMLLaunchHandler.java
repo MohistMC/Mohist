@@ -20,6 +20,7 @@
 package net.minecraftforge.fml.relauncher;
 
 import java.io.File;
+
 import net.minecraft.launchwrapper.LaunchClassLoader;
 import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.TracingPrintStream;
@@ -27,36 +28,14 @@ import net.minecraftforge.fml.common.launcher.FMLTweaker;
 import net.minecraftforge.fml.relauncher.libraries.LibraryManager;
 import org.apache.logging.log4j.LogManager;
 
-public class FMLLaunchHandler
-{
-    private static FMLLaunchHandler INSTANCE;
+public class FMLLaunchHandler {
     static Side side;
+    private static FMLLaunchHandler INSTANCE;
     private LaunchClassLoader classLoader;
     private FMLTweaker tweaker;
     private File minecraftHome;
 
-    public static void configureForClientLaunch(LaunchClassLoader loader, FMLTweaker tweaker)
-    {
-        instance(loader, tweaker).setupClient();
-    }
-
-    public static void configureForServerLaunch(LaunchClassLoader loader, FMLTweaker tweaker)
-    {
-        instance(loader, tweaker).setupServer();
-    }
-
-    private static FMLLaunchHandler instance(LaunchClassLoader launchLoader, FMLTweaker tweaker)
-    {
-        if (INSTANCE == null)
-        {
-            INSTANCE = new FMLLaunchHandler(launchLoader, tweaker);
-        }
-        return INSTANCE;
-
-    }
-
-    private FMLLaunchHandler(LaunchClassLoader launchLoader, FMLTweaker tweaker)
-    {
+    private FMLLaunchHandler(LaunchClassLoader launchLoader, FMLTweaker tweaker) {
         this.classLoader = launchLoader;
         this.tweaker = tweaker;
         this.minecraftHome = tweaker.getGameDir();
@@ -74,20 +53,45 @@ public class FMLLaunchHandler
         this.classLoader.addClassLoaderExclusion("jdk.nashorn.");
     }
 
-    private void setupClient()
-    {
+    public static void configureForClientLaunch(LaunchClassLoader loader, FMLTweaker tweaker) {
+        instance(loader, tweaker).setupClient();
+    }
+
+    public static void configureForServerLaunch(LaunchClassLoader loader, FMLTweaker tweaker) {
+        instance(loader, tweaker).setupServer();
+    }
+
+    private static FMLLaunchHandler instance(LaunchClassLoader launchLoader, FMLTweaker tweaker) {
+        if (INSTANCE == null) {
+            INSTANCE = new FMLLaunchHandler(launchLoader, tweaker);
+        }
+        return INSTANCE;
+
+    }
+
+    public static Side side() {
+        return side;
+    }
+
+    public static void appendCoreMods() {
+        INSTANCE.injectPostfixTransformers();
+    }
+
+    public static boolean isDeobfuscatedEnvironment() {
+        return CoreModManager.deobfuscatedEnvironment;
+    }
+
+    private void setupClient() {
         side = Side.CLIENT;
         setupHome();
     }
 
-    private void setupServer()
-    {
+    private void setupServer() {
         side = Side.SERVER;
         setupHome();
     }
 
-    private void setupHome()
-    {
+    private void setupHome() {
         FMLInjectionData.build(minecraftHome, classLoader);
         redirectStdOutputToLog();
         FMLLog.log.info("Forge Mod Loader version {}.{}.{}.{} for Minecraft {} loading", FMLInjectionData.major, FMLInjectionData.minor,
@@ -100,42 +104,21 @@ public class FMLLaunchHandler
         for (String path : System.getProperty("java.library.path").split(File.pathSeparator))
             FMLLog.log.debug("    {}", path);
 
-        try
-        {
+        try {
             LibraryManager.setup(minecraftHome);
             CoreModManager.handleLaunch(minecraftHome, classLoader, tweaker);
-        }
-        catch (Throwable t)
-        {
+        } catch (Throwable t) {
             throw new RuntimeException("An error occurred trying to configure the Minecraft home at " + minecraftHome.getAbsolutePath() + " for Forge Mod Loader", t);
         }
     }
 
-    private void redirectStdOutputToLog()
-    {
+    private void redirectStdOutputToLog() {
         FMLLog.log.debug("Injecting tracing printstreams for STDOUT/STDERR.");
         System.setOut(new TracingPrintStream(LogManager.getLogger("STDOUT"), System.out));
         System.setErr(new TracingPrintStream(LogManager.getLogger("STDERR"), System.err));
     }
 
-    public static Side side()
-    {
-        return side;
-    }
-
-
-    private void injectPostfixTransformers()
-    {
+    private void injectPostfixTransformers() {
         CoreModManager.injectTransformers(classLoader);
-    }
-
-    public static void appendCoreMods()
-    {
-        INSTANCE.injectPostfixTransformers();
-    }
-
-    public static boolean isDeobfuscatedEnvironment()
-    {
-        return CoreModManager.deobfuscatedEnvironment;
     }
 }

@@ -2,12 +2,14 @@ package org.bukkit.craftbukkit.v1_12_R1.conversations;
 
 import java.util.LinkedList;
 import java.util.logging.Level;
+
 import org.bukkit.conversations.Conversation;
 import org.bukkit.conversations.ConversationAbandonedEvent;
 import org.bukkit.conversations.ManuallyAbandonedConversationCanceller;
 import red.mohist.Mohist;
 
 /**
+ *
  */
 public class ConversationTracker {
 

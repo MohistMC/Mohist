@@ -1,6 +1,7 @@
 package org.bukkit.inventory.meta;
 
 import java.util.Map;
+
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 
@@ -31,7 +32,7 @@ public interface EnchantmentStorageMeta extends ItemMeta {
      *
      * @param ench enchantment to check
      * @return The level that the specified stored enchantment has, or 0 if
-     *     none
+     * none
      */
     int getStoredEnchantLevel(Enchantment ench);
 
@@ -45,12 +46,12 @@ public interface EnchantmentStorageMeta extends ItemMeta {
     /**
      * Stores the specified enchantment in this item meta.
      *
-     * @param ench Enchantment to store
-     * @param level Level for the enchantment
+     * @param ench                   Enchantment to store
+     * @param level                  Level for the enchantment
      * @param ignoreLevelRestriction this indicates the enchantment should be
-     *     applied, ignoring the level limit
+     *                               applied, ignoring the level limit
      * @return true if the item meta changed as a result of this call, false
-     *     otherwise
+     * otherwise
      * @throws IllegalArgumentException if enchantment is null
      */
     boolean addStoredEnchant(Enchantment ench, int level, boolean ignoreLevelRestriction);
@@ -60,7 +61,7 @@ public interface EnchantmentStorageMeta extends ItemMeta {
      *
      * @param ench Enchantment to remove
      * @return true if the item meta changed as a result of this call, false
-     *     otherwise
+     * otherwise
      * @throws IllegalArgumentException if enchantment is null
      */
     boolean removeStoredEnchant(Enchantment ench) throws IllegalArgumentException;

@@ -24,32 +24,28 @@ import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.resources.I18n;
 import net.minecraftforge.fml.common.StartupQuery;
 
-public class GuiNotification extends GuiScreen
-{
-    public GuiNotification(StartupQuery query)
-    {
+public class GuiNotification extends GuiScreen {
+    protected final StartupQuery query;
+
+    public GuiNotification(StartupQuery query) {
         this.query = query;
     }
 
     @Override
-    public void initGui()
-    {
+    public void initGui() {
         this.buttonList.add(new GuiButton(0, this.width / 2 - 100, this.height - 38, I18n.format("gui.done")));
     }
 
     @Override
-    protected void actionPerformed(GuiButton button)
-    {
-        if (button.enabled && button.id == 0)
-        {
+    protected void actionPerformed(GuiButton button) {
+        if (button.enabled && button.id == 0) {
             FMLClientHandler.instance().showGuiScreen(null);
             query.finish();
         }
     }
 
     @Override
-    public void drawScreen(int mouseX, int mouseY, float partialTicks)
-    {
+    public void drawScreen(int mouseX, int mouseY, float partialTicks) {
         this.drawDefaultBackground();
 
         String[] lines = query.getText().split("\n");
@@ -59,15 +55,11 @@ public class GuiNotification extends GuiScreen
 
         int offset = 10 + (spaceAvailable - spaceRequired) / 2; // vertically centered
 
-        for (String line : lines)
-        {
-            if (offset >= spaceAvailable)
-            {
+        for (String line : lines) {
+            if (offset >= spaceAvailable) {
                 this.drawCenteredString(this.fontRenderer, "...", this.width / 2, offset, 0xFFFFFF);
                 break;
-            }
-            else
-            {
+            } else {
                 if (!line.isEmpty()) this.drawCenteredString(this.fontRenderer, line, this.width / 2, offset, 0xFFFFFF);
                 offset += 10;
             }
@@ -75,6 +67,4 @@ public class GuiNotification extends GuiScreen
 
         super.drawScreen(mouseX, mouseY, partialTicks);
     }
-
-    protected final StartupQuery query;
 }

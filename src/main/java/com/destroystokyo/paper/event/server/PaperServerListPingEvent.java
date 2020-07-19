@@ -3,14 +3,18 @@ package com.destroystokyo.paper.event.server;
 import com.destroystokyo.paper.network.StatusClient;
 import com.destroystokyo.paper.profile.PlayerProfile;
 import com.google.common.base.Strings;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
+
 import static java.util.Objects.requireNonNull;
+
 import java.util.UUID;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;

@@ -1,8 +1,10 @@
 package org.bukkit.inventory;
 
 import com.google.common.base.Preconditions;
+
 import java.util.HashMap;
 import java.util.Map;
+
 import org.apache.commons.lang.Validate;
 import org.bukkit.Keyed;
 import org.bukkit.Material;
@@ -28,7 +30,7 @@ public class ShapedRecipe implements Recipe, Keyed {
      * constructor merely determines the result and type; to set the actual
      * recipe, you'll need to call the appropriate methods.
      *
-     * @param key the unique recipe key
+     * @param key    the unique recipe key
      * @param result The item you want the recipe to create.
      * @see ShapedRecipe#shape(String...)
      * @see ShapedRecipe#setIngredient(char, Material)
@@ -85,7 +87,7 @@ public class ShapedRecipe implements Recipe, Keyed {
     /**
      * Sets the material that a character in the recipe shape refers to.
      *
-     * @param key The character that represents the ingredient in the shape.
+     * @param key        The character that represents the ingredient in the shape.
      * @param ingredient The ingredient.
      * @return The changed recipe, so you can chain calls.
      */
@@ -96,7 +98,7 @@ public class ShapedRecipe implements Recipe, Keyed {
     /**
      * Sets the material that a character in the recipe shape refers to.
      *
-     * @param key The character that represents the ingredient in the shape.
+     * @param key        The character that represents the ingredient in the shape.
      * @param ingredient The ingredient.
      * @return The changed recipe, so you can chain calls.
      */
@@ -107,9 +109,9 @@ public class ShapedRecipe implements Recipe, Keyed {
     /**
      * Sets the material that a character in the recipe shape refers to.
      *
-     * @param key The character that represents the ingredient in the shape.
+     * @param key        The character that represents the ingredient in the shape.
      * @param ingredient The ingredient.
-     * @param raw The raw material data as an integer.
+     * @param raw        The raw material data as an integer.
      * @return The changed recipe, so you can chain calls.
      * @deprecated Magic value
      */

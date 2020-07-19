@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
+
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
@@ -15,14 +16,14 @@ import red.mohist.util.i18n.Message;
 
 public class TileEntityCommand extends Command {
 
+    private List<String> params = Arrays.asList("reload", "dump-all", "dump-existing");
+
     public TileEntityCommand(String name) {
         super(name);
         this.description = "TileEntity tick limiting commands";
         this.usageMessage = "/tileentity [reload|dump-all|dump-existing]";
         this.setPermission("mohist.command.tileentity");
     }
-
-    private List<String> params = Arrays.asList("reload", "dump-all", "dump-existing");
 
     @Override
     public List<String> tabComplete(CommandSender sender, String alias, String[] args) throws IllegalArgumentException {
@@ -69,7 +70,7 @@ public class TileEntityCommand extends Command {
 
                     MinecraftServer.LOGGER.info(
                             "Found TileEntity with name: " + red.mohist.util.TileEntity.sanitizeClassName(
-                                    ((Class)TileEntity.getRegisteredTileEntities().getObject(rl))
+                                    ((Class) TileEntity.getRegisteredTileEntities().getObject(rl))
                             )
                     );
                 }

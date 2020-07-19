@@ -1,7 +1,9 @@
 package org.bukkit.craftbukkit.v1_12_R1.inventory;
 
 import com.google.common.collect.ImmutableMap;
+
 import java.util.Map;
+
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.item.Item;
 import net.minecraft.nbt.NBTTagCompound;
@@ -10,9 +12,11 @@ import org.apache.commons.lang3.Validate;
 import org.bukkit.Material;
 import org.bukkit.configuration.serialization.DelegateDeserialization;
 import org.bukkit.craftbukkit.v1_12_R1.enchantments.CraftEnchantment;
+
 import static org.bukkit.craftbukkit.v1_12_R1.inventory.CraftMetaItem.ENCHANTMENTS;
 import static org.bukkit.craftbukkit.v1_12_R1.inventory.CraftMetaItem.ENCHANTMENTS_ID;
 import static org.bukkit.craftbukkit.v1_12_R1.inventory.CraftMetaItem.ENCHANTMENTS_LVL;
+
 import org.bukkit.craftbukkit.v1_12_R1.util.CraftMagicNumbers;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
@@ -22,10 +26,6 @@ import org.bukkit.inventory.meta.ItemMeta;
 public final class CraftItemStack extends ItemStack {
 
     net.minecraft.item.ItemStack handle;
-
-    public net.minecraft.item.ItemStack getHandle(){
-        return handle;
-    }
 
     /**
      * Mirror
@@ -255,6 +255,10 @@ public final class CraftItemStack extends ItemStack {
 
     static boolean hasItemMeta(net.minecraft.item.ItemStack item) {
         return !(item == null || item.getTagCompound() == null || item.getTagCompound().hasNoTags());
+    }
+
+    public net.minecraft.item.ItemStack getHandle() {
+        return handle;
     }
 
     @Override

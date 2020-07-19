@@ -3,9 +3,11 @@ package org.bukkit.craftbukkit.v1_12_R1.entity;
 import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
+
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
+
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityAreaEffectCloud;
 import net.minecraft.entity.EntityCreature;
@@ -455,8 +457,8 @@ public abstract class CraftEntity implements org.bukkit.entity.Entity {
         }
         // Cauldron - used for custom entities that extend Entity directly
         else if (entity instanceof net.minecraft.entity.IProjectile) {
-                return new CustomProjectileEntity(server, entity);
-        }else if (entity instanceof net.minecraft.entity.Entity) {
+            return new CustomProjectileEntity(server, entity);
+        } else if (entity instanceof net.minecraft.entity.Entity) {
             return new CraftCustomEntity(server, (net.minecraft.entity.Entity) entity);
         }
         throw new AssertionError("Unknown entity " + (entity == null ? " is null" : entity.getClass() + ": " + entity));

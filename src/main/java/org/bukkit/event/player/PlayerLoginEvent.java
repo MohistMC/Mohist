@@ -1,6 +1,7 @@
 package org.bukkit.event.player;
 
 import java.net.InetAddress;
+
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
 
@@ -19,10 +20,10 @@ public class PlayerLoginEvent extends PlayerEvent {
      * This constructor defaults message to an empty string, and result to
      * ALLOWED
      *
-     * @param player The {@link Player} for this event
+     * @param player   The {@link Player} for this event
      * @param hostname The hostname that was used to connect to the server
-     * @param address The address the player used to connect, provided for
-     *     timing issues
+     * @param address  The address the player used to connect, provided for
+     *                 timing issues
      */
     public PlayerLoginEvent(final Player player, final String hostname, final InetAddress address, final InetAddress realAddress) { // Spigot
         super(player);
@@ -40,12 +41,12 @@ public class PlayerLoginEvent extends PlayerEvent {
     /**
      * This constructor pre-configures the event with a result and message
      *
-     * @param player The {@link Player} for this event
+     * @param player   The {@link Player} for this event
      * @param hostname The hostname that was used to connect to the server
-     * @param address The address the player used to connect, provided for
-     *     timing issues
-     * @param result The result status for this event
-     * @param message The message to be displayed if result denies login
+     * @param address  The address the player used to connect, provided for
+     *                 timing issues
+     * @param result   The result status for this event
+     * @param message  The message to be displayed if result denies login
      */
     public PlayerLoginEvent(final Player player, String hostname, final InetAddress address, final Result result, final String message, final InetAddress realAddress) { // Spigot
         this(player, hostname, address, realAddress); // Spigot
@@ -127,7 +128,7 @@ public class PlayerLoginEvent extends PlayerEvent {
     /**
      * Disallows the player from logging in, with the given reason
      *
-     * @param result New result for disallowing the player
+     * @param result  New result for disallowing the player
      * @param message Kick message to display to the user
      */
     public void disallow(final Result result, final String message) {
@@ -141,7 +142,7 @@ public class PlayerLoginEvent extends PlayerEvent {
      * returning null during PlayerLoginEvent.
      *
      * @return The address for this player. For legacy compatibility, this may
-     *     be null.
+     * be null.
      */
     public InetAddress getAddress() {
         return address;

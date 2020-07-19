@@ -26,6 +26,7 @@ package red.mohist.console.log4j;
 import java.io.File;
 import java.util.List;
 import javax.annotation.Nullable;
+
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.core.LogEvent;
 import org.apache.logging.log4j.core.config.Configuration;
@@ -59,104 +60,26 @@ public class HighlightMsgConverter extends LogEventPatternConverter {
      *
      * @param formatters The pattern formatters to generate the text to highlight
      */
-    protected HighlightMsgConverter(List<PatternFormatter> formatters)
-    {
+    protected HighlightMsgConverter(List<PatternFormatter> formatters) {
         super("highlightMsg", null);
         this.formatters = formatters;
-    }
-
-    @Override
-    public void format(LogEvent event, StringBuilder toAppendTo)
-    {
-        Level level = event.getLevel();
-        if (level.isMoreSpecificThan(Level.ERROR))
-        {
-            format(ANSI_ERROR, event, toAppendTo);
-            return;
-        }
-        else if (level.isMoreSpecificThan(Level.WARN))
-        {
-            format(ANSI_WARN, event, toAppendTo);
-            return;
-        }
-        else if (level.isMoreSpecificThan(Level.INFO))
-        {
-            format(ANSI_INFO, event, toAppendTo);
-            return;
-        }
-        else if (level.isMoreSpecificThan(Level.FATAL))
-        {
-            format(ANSI_FATAL, event, toAppendTo);
-            return;
-        }
-        else if (level.isMoreSpecificThan(Level.TRACE))
-        {
-            format(ANSI_TRACE, event, toAppendTo);
-            return;
-        }
-
-        //noinspection ForLoopReplaceableByForEach
-        for (int i = 0, size = formatters.size(); i < size; i++)
-        {
-            formatters.get(i).format(event, toAppendTo);
-        }
-    }
-
-    private void format(String style, LogEvent event, StringBuilder toAppendTo)
-    {
-        int start = toAppendTo.length();
-        toAppendTo.append(style);
-        int end = toAppendTo.length();
-
-        //noinspection ForLoopReplaceableByForEach
-        for (int i = 0, size = formatters.size(); i < size; i++)
-        {
-            formatters.get(i).format(event, toAppendTo);
-        }
-
-        if (toAppendTo.length() == end)
-        {
-            // No content so we don't need to append the ANSI escape code
-            toAppendTo.setLength(start);
-        }
-        else
-        {
-            // Append reset code after the line
-            toAppendTo.append(ANSI_RESET);
-        }
-    }
-
-    @Override
-    public boolean handlesThrowable()
-    {
-        for (final PatternFormatter formatter : formatters)
-        {
-            if (formatter.handlesThrowable())
-            {
-                return true;
-            }
-        }
-        return false;
     }
 
     /**
      * Gets a new instance of the {@link HighlightMsgConverter} with the
      * specified options.
      *
-     * @param config The current configuration
+     * @param config  The current configuration
      * @param options The pattern options
      * @return The new instance
      */
     @Nullable
-    public static HighlightMsgConverter newInstance(Configuration config, String[] options)
-    {
-        if (options.length != 1)
-        {
+    public static HighlightMsgConverter newInstance(Configuration config, String[] options) {
+        if (options.length != 1) {
             LOGGER.error("Incorrect number of options on highlightMsg. Expected 1 received " + options.length);
             return null;
         }
-        if (options[0] == null)
-        {
+        if (options[0] == null) {
             LOGGER.error("No pattern supplied on highlightMsg");
             return null;
         }
@@ -195,5 +118,60 @@ public class HighlightMsgConverter extends LogEventPatternConverter {
     public static String getTrace() {
         String cc = MohistConfig.getHighlight("consolecolor.trace-msg:", "e");
         return ANSIColorUtils.getColor(cc, "\u001B[31;1m");
+    }
+
+    @Override
+    public void format(LogEvent event, StringBuilder toAppendTo) {
+        Level level = event.getLevel();
+        if (level.isMoreSpecificThan(Level.ERROR)) {
+            format(ANSI_ERROR, event, toAppendTo);
+            return;
+        } else if (level.isMoreSpecificThan(Level.WARN)) {
+            format(ANSI_WARN, event, toAppendTo);
+            return;
+        } else if (level.isMoreSpecificThan(Level.INFO)) {
+            format(ANSI_INFO, event, toAppendTo);
+            return;
+        } else if (level.isMoreSpecificThan(Level.FATAL)) {
+            format(ANSI_FATAL, event, toAppendTo);
+            return;
+        } else if (level.isMoreSpecificThan(Level.TRACE)) {
+            format(ANSI_TRACE, event, toAppendTo);
+            return;
+        }
+
+        //noinspection ForLoopReplaceableByForEach
+        for (int i = 0, size = formatters.size(); i < size; i++) {
+            formatters.get(i).format(event, toAppendTo);
+        }
+    }
+
+    private void format(String style, LogEvent event, StringBuilder toAppendTo) {
+        int start = toAppendTo.length();
+        toAppendTo.append(style);
+        int end = toAppendTo.length();
+
+        //noinspection ForLoopReplaceableByForEach
+        for (int i = 0, size = formatters.size(); i < size; i++) {
+            formatters.get(i).format(event, toAppendTo);
+        }
+
+        if (toAppendTo.length() == end) {
+            // No content so we don't need to append the ANSI escape code
+            toAppendTo.setLength(start);
+        } else {
+            // Append reset code after the line
+            toAppendTo.append(ANSI_RESET);
+        }
+    }
+
+    @Override
+    public boolean handlesThrowable() {
+        for (final PatternFormatter formatter : formatters) {
+            if (formatter.handlesThrowable()) {
+                return true;
+            }
+        }
+        return false;
     }
 }

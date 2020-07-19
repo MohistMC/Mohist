@@ -26,8 +26,8 @@ public class ClassPatch {
     public final boolean existsAtTarget;
     public final byte[] patch;
     public final int inputChecksum;
-    public ClassPatch(String name, String sourceClassName, String targetClassName, boolean existsAtTarget, int inputChecksum, byte[] patch)
-    {
+
+    public ClassPatch(String name, String sourceClassName, String targetClassName, boolean existsAtTarget, int inputChecksum, byte[] patch) {
         this.name = name;
         this.sourceClassName = sourceClassName;
         this.targetClassName = targetClassName;
@@ -37,8 +37,7 @@ public class ClassPatch {
     }
 
     @Override
-    public String toString()
-    {
+    public String toString() {
         return String.format("%s : %s => %s (%b) size %d", name, sourceClassName, targetClassName, existsAtTarget, patch.length);
     }
 }

@@ -3,6 +3,7 @@ package org.spigotmc;
 import java.io.FilterInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+
 import net.minecraft.nbt.NBTSizeTracker;
 
 public class LimitStream extends FilterInputStream {

@@ -20,6 +20,7 @@
 package net.minecraftforge.fml.common.asm.transformers;
 
 import java.util.Iterator;
+
 import net.minecraft.launchwrapper.IClassTransformer;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
@@ -35,13 +36,10 @@ import org.objectweb.asm.tree.MethodInsnNode;
 import org.objectweb.asm.tree.MethodNode;
 import org.objectweb.asm.tree.VarInsnNode;
 
-public class SoundEngineFixTransformer implements IClassTransformer
-{
+public class SoundEngineFixTransformer implements IClassTransformer {
     @Override
-    public byte[] transform(String name, String transformedName, byte[] basicClass)
-    {
-        if (transformedName.equals("paulscode.sound.Source"))
-        {
+    public byte[] transform(String name, String transformedName, byte[] basicClass) {
+        if (transformedName.equals("paulscode.sound.Source")) {
             ClassNode classNode = new ClassNode();
             ClassReader classReader = new ClassReader(basicClass);
             classReader.accept(classNode, 0);
@@ -51,16 +49,13 @@ public class SoundEngineFixTransformer implements IClassTransformer
             ClassWriter writer = new ClassWriter(ClassWriter.COMPUTE_MAXS);
             classNode.accept(writer);
             return writer.toByteArray();
-        }
-        else if (transformedName.equals("paulscode.sound.Library"))
-        {
+        } else if (transformedName.equals("paulscode.sound.Library")) {
             ClassNode classNode = new ClassNode();
             ClassReader classReader = new ClassReader(basicClass);
             classReader.accept(classNode, 0);
 
             MethodNode method = null;
-            for (MethodNode m : classNode.methods)
-            {
+            for (MethodNode m : classNode.methods) {
                 if (m.name.equals("removeSource") && m.desc.equals("(Ljava/lang/String;)V")) // trying to find paulscode.sound.Library.removeSource(String)
                 {
                     method = m;
@@ -71,20 +66,17 @@ public class SoundEngineFixTransformer implements IClassTransformer
                 throw new RuntimeException("Error processing " + transformedName + " - no removeSource method found");
 
             AbstractInsnNode referenceNode = null;
-            
-            for (Iterator<AbstractInsnNode> iterator = method.instructions.iterator(); iterator.hasNext();)
-            {
+
+            for (Iterator<AbstractInsnNode> iterator = method.instructions.iterator(); iterator.hasNext(); ) {
                 AbstractInsnNode insn = iterator.next();
                 if (insn instanceof MethodInsnNode && ((MethodInsnNode) insn).owner.equals("paulscode/sound/Source") // searching for mySource.cleanup() node (line 1086)
-                        && ((MethodInsnNode) insn).name.equals("cleanup"))
-                {
+                        && ((MethodInsnNode) insn).name.equals("cleanup")) {
                     referenceNode = insn;
                     break;
                 }
             }
-            
-            if(referenceNode != null)
-            {
+
+            if (referenceNode != null) {
                 LabelNode after = (LabelNode) referenceNode.getNext();
 
                 AbstractInsnNode beginning = referenceNode.getPrevious();
@@ -108,16 +100,13 @@ public class SoundEngineFixTransformer implements IClassTransformer
             ClassWriter writer = new ClassWriter(ClassWriter.COMPUTE_MAXS);
             classNode.accept(writer);
             return writer.toByteArray();
-        }
-        else if (transformedName.equals("paulscode.sound.StreamThread"))
-        {
+        } else if (transformedName.equals("paulscode.sound.StreamThread")) {
             ClassNode classNode = new ClassNode();
             ClassReader classReader = new ClassReader(basicClass);
             classReader.accept(classNode, 0);
 
             MethodNode method = null;
-            for (MethodNode m : classNode.methods)
-            {
+            for (MethodNode m : classNode.methods) {
                 if (m.name.equals("run") && m.desc.equals("()V")) // trying to find paulscode.sound.StreamThread.run();
                 {
                     method = m;
@@ -126,22 +115,19 @@ public class SoundEngineFixTransformer implements IClassTransformer
             }
             if (method == null)
                 throw new RuntimeException("Error processing " + transformedName + " - no run method found");
-            
+
             AbstractInsnNode referenceNode = null;
-            
-            for (Iterator<AbstractInsnNode> iterator = method.instructions.iterator(); iterator.hasNext();)
-            {
+
+            for (Iterator<AbstractInsnNode> iterator = method.instructions.iterator(); iterator.hasNext(); ) {
                 AbstractInsnNode insn = iterator.next();
                 if (insn instanceof MethodInsnNode && ((MethodInsnNode) insn).owner.equals("java/util/ListIterator") // searching for 'src = iter.next();' node (line 110)
-                        && ((MethodInsnNode) insn).name.equals("next"))
-                {
+                        && ((MethodInsnNode) insn).name.equals("next")) {
                     referenceNode = insn.getNext().getNext();
                     break;
                 }
             }
-            
-            if(referenceNode != null)
-            {
+
+            if (referenceNode != null) {
                 int varIndex = ((VarInsnNode) referenceNode).var;
 
                 LabelNode after = (LabelNode) referenceNode.getNext();

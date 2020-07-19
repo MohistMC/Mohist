@@ -3,7 +3,9 @@ package org.bukkit.craftbukkit.v1_12_R1.scoreboard;
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
+
 import java.util.Collection;
+
 import net.minecraft.scoreboard.ScoreObjective;
 import net.minecraft.scoreboard.ScorePlayerTeam;
 import net.minecraft.scoreboard.Scoreboard;

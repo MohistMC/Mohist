@@ -20,7 +20,7 @@ public interface NetworkClient {
      *
      * @return The client's protocol version, or {@code -1} if unknown
      * @see <a href="http://wiki.vg/Protocol_version_numbers">List of protocol
-     *     version numbers</a>
+     * version numbers</a>
      */
     int getProtocolVersion();
 

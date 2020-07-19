@@ -2,6 +2,7 @@ package org.bukkit.craftbukkit.v1_12_R1.block;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;

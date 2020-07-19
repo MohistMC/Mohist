@@ -20,6 +20,7 @@
 package net.minecraftforge.client.event;
 
 import javax.annotation.Nonnull;
+
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraftforge.event.entity.player.PlayerEvent;
@@ -27,20 +28,23 @@ import net.minecraftforge.fml.common.eventhandler.Cancelable;
 
 /**
  * This event is called before the pushOutOfBlocks calls in EntityPlayerSP.
- *
+ * <p>
  * Cancelling the event will prevent pushOutOfBlocks from being called.
  */
 @Cancelable
-public class PlayerSPPushOutOfBlocksEvent extends PlayerEvent
-{
+public class PlayerSPPushOutOfBlocksEvent extends PlayerEvent {
     private AxisAlignedBB entityBoundingBox;
 
-    public PlayerSPPushOutOfBlocksEvent(EntityPlayer player, AxisAlignedBB entityBoundingBox)
-    {
+    public PlayerSPPushOutOfBlocksEvent(EntityPlayer player, AxisAlignedBB entityBoundingBox) {
         super(player);
         this.entityBoundingBox = entityBoundingBox;
     }
 
-    public AxisAlignedBB getEntityBoundingBox() { return entityBoundingBox; }
-    public void setEntityBoundingBox(@Nonnull AxisAlignedBB entityBoundingBox) { this.entityBoundingBox = entityBoundingBox; }
+    public AxisAlignedBB getEntityBoundingBox() {
+        return entityBoundingBox;
+    }
+
+    public void setEntityBoundingBox(@Nonnull AxisAlignedBB entityBoundingBox) {
+        this.entityBoundingBox = entityBoundingBox;
+    }
 }

@@ -20,29 +20,27 @@
 package net.minecraftforge.advancements.critereon;
 
 import com.google.gson.JsonObject;
+
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
+
 import net.minecraft.advancements.critereon.ItemPredicate;
 import net.minecraft.util.ResourceLocation;
 
-public class ItemPredicates
-{
+public class ItemPredicates {
     private static final Map<ResourceLocation, Function<JsonObject, ItemPredicate>> predicates = new HashMap<>();
 
-    static
-    {
+    static {
         register(new ResourceLocation("forge:ore_dict"), OredictItemPredicate::new);
     }
 
-    public static void register(ResourceLocation rl, Function<JsonObject, ItemPredicate> jsonToPredicate)
-    {
+    public static void register(ResourceLocation rl, Function<JsonObject, ItemPredicate> jsonToPredicate) {
         predicates.put(rl, jsonToPredicate);
     }
 
-    public static Map<ResourceLocation, Function<JsonObject, ItemPredicate>> getPredicates()
-    {
+    public static Map<ResourceLocation, Function<JsonObject, ItemPredicate>> getPredicates() {
         return Collections.unmodifiableMap(predicates);
     }
 }

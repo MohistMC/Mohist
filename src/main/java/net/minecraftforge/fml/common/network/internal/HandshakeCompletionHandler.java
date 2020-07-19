@@ -29,15 +29,13 @@ import net.minecraftforge.fml.common.network.internal.FMLMessage.CompleteHandsha
 @Sharable
 public class HandshakeCompletionHandler extends SimpleChannelInboundHandler<FMLMessage.CompleteHandshake> {
     @Override
-    protected void channelRead0(ChannelHandlerContext ctx, CompleteHandshake msg) throws Exception
-    {
+    protected void channelRead0(ChannelHandlerContext ctx, CompleteHandshake msg) throws Exception {
         NetworkDispatcher dispatcher = ctx.channel().attr(NetworkDispatcher.FML_DISPATCHER).getAndSet(null);
         dispatcher.completeHandshake(msg.target);
     }
 
     @Override
-    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception
-    {
+    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
         FMLLog.log.error("HandshakeCompletionHandler exception", cause);
         super.exceptionCaught(ctx, cause);
     }
