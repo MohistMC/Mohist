@@ -40,7 +40,7 @@ java -jar tonJar.jar
 Build
 ------
 * Vérification du projet
-  * Tu peux utiliser ton IDE ou cloner depuis git / invité de commande :
+  * Tu peux utiliser ton IDE ou cloner depuis git / invite de commande :
   `git clone https://github.com/Mohist-Community/Mohist.git`
 * Build
   * Build avec Linux :
