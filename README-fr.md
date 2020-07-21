@@ -32,7 +32,7 @@ Installation
 ------
 Mohist requiert Java 8.
 
-[Télécharges ce fichier](https://ci.codemc.org/job/Mohist-Community/job/Mohist-1.12.2/) et places le jar dans un dossier vide. Ensuite lances ton serveur avec la commande `java` ci dessous :
+[Télécharge ce fichier](https://ci.codemc.org/job/Mohist-Community/job/Mohist-1.12.2/) et place le jar dans un dossier vide. Ensuite lance ton serveur avec la commande `java` ci-dessous :
 ```sh
 java -jar tonJar.jar
 ```
@@ -40,7 +40,7 @@ java -jar tonJar.jar
 Build
 ------
 * Vérification du projet
-  * Tu peux utiliser ton IDE ou clone depuis git / invite de commande :
+  * Tu peux utiliser ton IDE ou le cloner depuis git / invite de commandes :
   `git clone https://github.com/Mohist-Community/Mohist.git`
 * Build
   * Build avec Linux :
