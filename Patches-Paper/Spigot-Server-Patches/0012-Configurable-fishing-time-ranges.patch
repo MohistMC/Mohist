@@ -1,0 +1,38 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Zach Brown <zach.brown@destroystokyo.com>
+Date: Tue, 1 Mar 2016 13:14:11 -0600
+Subject: [PATCH] Configurable fishing time ranges
+
+
+diff --git a/src/main/java/com/destroystokyo/paper/PaperWorldConfig.java b/src/main/java/com/destroystokyo/paper/PaperWorldConfig.java
+index 912611cf1aeccf5a82a789aab07d76723d4357cc..7d9976ce6bf86e6fdfd0c7770104cee0db363a6d 100644
+--- a/src/main/java/com/destroystokyo/paper/PaperWorldConfig.java
++++ b/src/main/java/com/destroystokyo/paper/PaperWorldConfig.java
+@@ -84,4 +84,12 @@ public class PaperWorldConfig {
+ 
+         log("Baby zombies will move at the speed of " + babyZombieMovementModifier);
+     }
++
++    public int fishingMinTicks;
++    public int fishingMaxTicks;
++    private void fishingTickRange() {
++        fishingMinTicks = getInt("fishing-time-range.MinimumTicks", 100);
++        fishingMaxTicks = getInt("fishing-time-range.MaximumTicks", 600);
++        log("Fishing time ranges are between " + fishingMinTicks +" and " + fishingMaxTicks + " ticks");
++    }
+ }
+diff --git a/src/main/java/net/minecraft/server/EntityFishingHook.java b/src/main/java/net/minecraft/server/EntityFishingHook.java
+index b0f3b30944b7741ef1d9af21e919ff2df9c510a3..ab8f67c11419cc788fc3cb814d2224e65217dd08 100644
+--- a/src/main/java/net/minecraft/server/EntityFishingHook.java
++++ b/src/main/java/net/minecraft/server/EntityFishingHook.java
+@@ -338,8 +338,9 @@ public class EntityFishingHook extends IProjectile {
+                     this.ap = MathHelper.nextInt(this.random, 20, 80);
+                 }
+             } else {
+-                this.ao = MathHelper.nextInt(this.random, 100, 600);
++                this.ao = MathHelper.nextInt(this.random, world.paperConfig.fishingMinTicks, world.paperConfig.fishingMaxTicks); // Paper
+                 this.ao -= this.av * 20 * 5;
++                this.ao = Math.max(0, this.ao); // Paper - Don't allow negative values;
+             }
+         }
+ 

@@ -1,0 +1,30 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: mrapple <tony@oc.tc>
+Date: Sun, 25 Nov 2012 13:47:27 -0600
+Subject: [PATCH] Add methods for working with arrows stuck in living entities
+
+
+diff --git a/src/main/java/org/bukkit/entity/LivingEntity.java b/src/main/java/org/bukkit/entity/LivingEntity.java
+index 8744f2e5fdf47200d433d708fcd9d9aaded56c0c..5b0c95ab7372c7accd190b9052b587637106c4af 100644
+--- a/src/main/java/org/bukkit/entity/LivingEntity.java
++++ b/src/main/java/org/bukkit/entity/LivingEntity.java
+@@ -552,4 +552,19 @@ public interface LivingEntity extends Attributable, Damageable, ProjectileSource
+      * @param <T> the type of the passed value
+      */
+     <T> void setMemory(@NotNull MemoryKey<T> memoryKey, @Nullable T memoryValue);
++
++    // Paper start
++    /**
++     * Get the number of arrows stuck in this entity
++     * @return Number of arrows stuck
++     */
++    int getArrowsStuck();
++
++    /**
++     * Set the number of arrows stuck in this entity
++     *
++     * @param arrows Number of arrows to stick in this entity
++     */
++    void setArrowsStuck(int arrows);
++    // Paper end
+ }

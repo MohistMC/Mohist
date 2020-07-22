@@ -1,0 +1,21 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Byteflux <byte@byteflux.net>
+Date: Tue, 1 Mar 2016 15:08:03 -0600
+Subject: [PATCH] Remove invalid mob spawner tile entities
+
+
+diff --git a/src/main/java/net/minecraft/server/Chunk.java b/src/main/java/net/minecraft/server/Chunk.java
+index 09b4594ae6750252b4b13ed4735dad0d00e2aeec..a803d1093dfa7c7421eda913679766224fda6dcf 100644
+--- a/src/main/java/net/minecraft/server/Chunk.java
++++ b/src/main/java/net/minecraft/server/Chunk.java
+@@ -608,6 +608,10 @@ public class Chunk implements IChunkAccess {
+             }
+ 
+             // CraftBukkit start
++            // Paper start - Remove invalid mob spawner tile entities
++        } else if (tileentity instanceof TileEntityMobSpawner && !(getBlockData(blockposition.getX(), blockposition.getY(), blockposition.getZ()).getBlock() instanceof BlockMobSpawner)) {
++            this.tileEntities.remove(blockposition);
++            // Paper end
+         } else {
+             System.out.println("Attempted to place a tile entity (" + tileentity + ") at " + tileentity.position.getX() + "," + tileentity.position.getY() + "," + tileentity.position.getZ()
+                 + " (" + getType(blockposition) + ") where there was no entity tile!");
