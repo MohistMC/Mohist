@@ -281,4 +281,12 @@ public class SpigotWorldConfig {
     private void squidSpawnRange() {
         squidSpawnRangeMin = getDouble("squid-spawn-range.min", 45.0D);
     }
+
+    public int cactusMaxHeight;
+    public int reedMaxHeight;
+    private void blockGrowthHeight() {
+        cactusMaxHeight = getInt("max-growth-height.cactus", 3);
+        reedMaxHeight = getInt("max-growth-height.reeds", 3);
+        log("Max height for cactus growth " + cactusMaxHeight + ". Max height for reed growth " + reedMaxHeight);
+    }
 }
