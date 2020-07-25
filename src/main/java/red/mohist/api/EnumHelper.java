@@ -1,4 +1,4 @@
-package io.izzel.arclight.api;
+package red.mohist.api;
 
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodType;
