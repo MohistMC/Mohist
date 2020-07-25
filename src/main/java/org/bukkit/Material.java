@@ -81,7 +81,6 @@ import org.bukkit.block.data.type.WallSign;
 import org.bukkit.material.MaterialData;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import red.mohist.util.EnumHelper;
 
 /**
  * An enum of all material IDs accepted by the official server and client
