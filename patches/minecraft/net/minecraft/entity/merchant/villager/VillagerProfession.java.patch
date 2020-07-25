@@ -9,3 +9,12 @@
     public static final VillagerProfession field_221151_a = func_226556_a_("none", PointOfInterestType.field_221054_b, (SoundEvent)null);
     public static final VillagerProfession field_221152_b = func_226556_a_("armorer", PointOfInterestType.field_221055_c, SoundEvents.field_219694_mB);
     public static final VillagerProfession field_221153_c = func_226556_a_("butcher", PointOfInterestType.field_221056_d, SoundEvents.field_219695_mC);
+@@ -35,7 +35,7 @@
+    @Nullable
+    private final SoundEvent field_226555_t_;
+ 
+-   private VillagerProfession(String p_i225734_1_, PointOfInterestType p_i225734_2_, ImmutableSet<Item> p_i225734_3_, ImmutableSet<Block> p_i225734_4_, @Nullable SoundEvent p_i225734_5_) {
++   public VillagerProfession(String p_i225734_1_, PointOfInterestType p_i225734_2_, ImmutableSet<Item> p_i225734_3_, ImmutableSet<Block> p_i225734_4_, @Nullable SoundEvent p_i225734_5_) {
+       this.field_221166_p = p_i225734_1_;
+       this.field_221167_q = p_i225734_2_;
+       this.field_221168_r = p_i225734_3_;

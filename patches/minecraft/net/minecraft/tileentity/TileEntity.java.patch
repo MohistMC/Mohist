@@ -1,15 +1,6 @@
 --- a/net/minecraft/tileentity/TileEntity.java
 +++ b/net/minecraft/tileentity/TileEntity.java
-@@ -1,6 +1,8 @@
- package net.minecraft.tileentity;
- 
- import javax.annotation.Nullable;
-+
-+import com.destroystokyo.paper.util.KeyedObject;
- import net.minecraft.block.BlockState;
- import net.minecraft.crash.CrashReportCategory;
- import net.minecraft.nbt.CompoundNBT;
-@@ -15,22 +17,55 @@
+@@ -15,20 +15,33 @@
  import net.minecraftforge.api.distmarker.OnlyIn;
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
@@ -20,7 +11,7 @@
 +import org.spigotmc.CustomTimingsHandler;
  
 -public abstract class TileEntity {
-+public abstract class TileEntity extends net.minecraftforge.common.capabilities.CapabilityProvider<TileEntity> implements net.minecraftforge.common.extensions.IForgeTileEntity, KeyedObject {
++public abstract class TileEntity extends net.minecraftforge.common.capabilities.CapabilityProvider<TileEntity> implements net.minecraftforge.common.extensions.IForgeTileEntity {
 +   public CustomTimingsHandler tickTimer = SpigotTimings.getTileEntityTimings(this); // Spigot
 +   // CraftBukkit start - data containers
 +   private static final CraftPersistentDataTypeRegistry DATA_TYPE_REGISTRY = new CraftPersistentDataTypeRegistry();
@@ -44,41 +35,8 @@
 +      this.gatherCapabilities();
     }
  
-+   // Paper start
-+   private String tileEntityKeyString = null;
-+   private ResourceLocation tileEntityKey = null;
-+
-+   @Override
-+   public ResourceLocation getMinecraftKey() {
-+      if (tileEntityKey == null) {
-+         tileEntityKey = TileEntityType.func_200969_a(this.getTileEntityType());
-+         tileEntityKeyString = tileEntityKey != null ? tileEntityKey.toString() : null;
-+      }
-+      return tileEntityKey;
-+   }
-+
-+   @Override
-+   public String getMinecraftKeyString() {
-+      getMinecraftKey(); // Try to load if it doesn't exists.
-+      return tileEntityKeyString;
-+   }
-+   // Paper end
-+
     @Nullable
-    public World func_145831_w() {
-       return this.field_145850_b;
-@@ -41,12 +76,26 @@
-       this.field_174879_c = p_226984_2_.func_185334_h();
-    }
- 
-+   public TileEntityType getTileEntityType() {
-+      return field_200663_e;
-+   }
-+   // Paper - OBFHELPER
-+
-    public boolean func_145830_o() {
-       return this.field_145850_b != null;
-    }
+@@ -47,6 +60,15 @@
  
     public void func_145839_a(CompoundNBT p_145839_1_) {
        this.field_174879_c = new BlockPos(p_145839_1_.func_74762_e("x"), p_145839_1_.func_74762_e("y"), p_145839_1_.func_74762_e("z"));
@@ -94,7 +52,7 @@
     }
  
     public CompoundNBT func_189515_b(CompoundNBT p_189515_1_) {
-@@ -62,6 +111,13 @@
+@@ -62,6 +84,13 @@
           p_189516_1_.func_74768_a("x", this.field_174879_c.func_177958_n());
           p_189516_1_.func_74768_a("y", this.field_174879_c.func_177956_o());
           p_189516_1_.func_74768_a("z", this.field_174879_c.func_177952_p());
@@ -108,7 +66,7 @@
           return p_189516_1_;
        }
     }
-@@ -94,7 +150,7 @@
+@@ -94,7 +123,7 @@
        if (this.field_145850_b != null) {
           this.field_195045_e = this.field_145850_b.func_180495_p(this.field_174879_c);
           this.field_145850_b.func_175646_b(this.field_174879_c, this);
@@ -117,7 +75,7 @@
              this.field_145850_b.func_175666_e(this.field_174879_c, this.field_195045_e.func_177230_c());
           }
        }
-@@ -140,6 +196,8 @@
+@@ -140,6 +169,8 @@
  
     public void func_145843_s() {
        this.field_145846_f = true;
@@ -126,7 +84,7 @@
     }
  
     public void func_145829_t() {
-@@ -182,6 +240,13 @@
+@@ -182,6 +213,13 @@
        return this.field_200663_e;
     }
  
@@ -140,7 +98,7 @@
     public void func_222814_r() {
        if (!this.field_222816_g) {
           this.field_222816_g = true;
-@@ -190,4 +255,24 @@
+@@ -190,4 +228,24 @@
           }, this::func_174877_v);
        }
     }

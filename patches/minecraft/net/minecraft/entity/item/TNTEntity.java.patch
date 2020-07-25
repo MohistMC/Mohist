@@ -16,7 +16,7 @@
  
     public TNTEntity(EntityType<? extends TNTEntity> p_i50216_1_, World p_i50216_2_) {
        super(p_i50216_1_, p_i50216_2_);
-@@ -53,11 +56,18 @@
+@@ -53,6 +56,7 @@
     }
  
     public void func_70071_h_() {
@@ -24,18 +24,7 @@
        if (!this.func_189652_ae()) {
           this.func_213317_d(this.func_213322_ci().func_72441_c(0.0D, -0.04D, 0.0D));
        }
- 
-       this.func_213315_a(MoverType.SELF, this.func_213322_ci());
-+      // Paper start - Configurable TNT entity height nerf
-+      if (this.field_70170_p.paperConfig.entityTNTHeightNerf != 0 && this.func_226278_cu_() > this.field_70170_p.paperConfig.entityTNTHeightNerf) {
-+         this.func_70106_y();
-+         return;
-+      }
-+      // Paper end
-       this.func_213317_d(this.func_213322_ci().func_186678_a(0.98D));
-       if (this.field_70122_E) {
-          this.func_213317_d(this.func_213322_ci().func_216372_d(0.7D, -0.5D, 0.7D));
-@@ -65,10 +75,13 @@
+@@ -65,10 +69,13 @@
  
        --this.field_70516_a;
        if (this.field_70516_a <= 0) {
@@ -50,7 +39,7 @@
        } else {
           this.func_70072_I();
           if (this.field_70170_p.field_72995_K) {
-@@ -79,8 +92,13 @@
+@@ -79,8 +86,13 @@
     }
  
     protected void func_70515_d() {

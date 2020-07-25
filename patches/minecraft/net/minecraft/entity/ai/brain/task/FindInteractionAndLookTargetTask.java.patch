@@ -9,7 +9,7 @@
  import java.util.List;
  import java.util.function.Predicate;
  import net.minecraft.entity.EntityType;
-@@ -34,20 +36,37 @@
+@@ -34,20 +36,35 @@
     }
  
     public boolean func_212832_a_(ServerWorld p_212832_1_, LivingEntity p_212832_2_) {
@@ -49,8 +49,6 @@
 +         if (this.func_220532_a(entity)) {
 +            brain.func_218205_a(MemoryModuleType.field_220952_m, entity);
 +            brain.func_218205_a(MemoryModuleType.field_220951_l, new EntityPosWrapper(entity));
-+
-+            break;
 +         }
 +      }
     }

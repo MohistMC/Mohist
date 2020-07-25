@@ -1,11 +1,6 @@
 --- a/net/minecraft/entity/ai/goal/Goal.java
 +++ b/net/minecraft/entity/ai/goal/Goal.java
-@@ -3,10 +3,15 @@
- import java.util.EnumSet;
- 
- public abstract class Goal {
-+
-    private final EnumSet<Goal.Flag> field_220687_a = EnumSet.noneOf(Goal.Flag.class);
+@@ -7,6 +7,10 @@
  
     public abstract boolean func_75250_a();
  
@@ -16,7 +11,7 @@
     public boolean func_75253_b() {
        return this.func_75250_a();
     }
-@@ -27,6 +32,7 @@
+@@ -27,6 +31,7 @@
     public void func_220684_a(EnumSet<Goal.Flag> p_220684_1_) {
        this.field_220687_a.clear();
        this.field_220687_a.addAll(p_220684_1_);
@@ -24,12 +19,3 @@
     }
  
     public String toString() {
-@@ -43,4 +49,8 @@
-       JUMP,
-       TARGET;
-    }
-+
-+   public Goal.Flag[] getRequiredControls() {
-+      return controlsArray;
-+   }
- }

@@ -1,10 +1,6 @@
 --- a/net/minecraft/network/NetworkSystem.java
 +++ b/net/minecraft/network/NetworkSystem.java
-@@ -39,14 +39,16 @@
- import net.minecraftforge.api.distmarker.OnlyIn;
- import org.apache.logging.log4j.LogManager;
- import org.apache.logging.log4j.Logger;
-+import red.mohist.api.event.AsyncClientConnectEvent;
+@@ -42,11 +42,12 @@
  
  public class NetworkSystem {
     private static final Logger field_151275_b = LogManager.getLogger();
@@ -19,7 +15,7 @@
     });
     private final MinecraftServer field_151273_d;
     public volatile boolean field_151277_a;
-@@ -59,6 +61,7 @@
+@@ -59,6 +60,7 @@
     }
  
     public void func_151265_a(@Nullable InetAddress p_151265_1_, int p_151265_2_) throws IOException {
@@ -27,7 +23,7 @@
        synchronized(this.field_151274_e) {
           Class<? extends ServerSocketChannel> oclass;
           LazyValue<? extends EventLoopGroup> lazyvalue;
-@@ -80,13 +83,15 @@
+@@ -80,13 +82,13 @@
                    ;
                 }
  
@@ -37,15 +33,13 @@
                 NetworkSystem.this.field_151272_f.add(networkmanager);
                 p_initChannel_1_.pipeline().addLast("packet_handler", networkmanager);
                 networkmanager.func_150719_a(new ServerHandshakeNetHandler(NetworkSystem.this.field_151273_d, networkmanager));
-+               AsyncClientConnectEvent event = new AsyncClientConnectEvent(p_initChannel_1_, networkmanager);
-+               event.isAsynchronous();
              }
 -         }).group(lazyvalue.func_179281_c()).localAddress(p_151265_1_, p_151265_2_).bind().syncUninterruptibly());
 +         }).group(lazyvalue.func_179281_c()).localAddress(p_151265_1_, p_151265_2_).option(ChannelOption.AUTO_READ, false).bind().syncUninterruptibly()); // CraftBukkit
        }
     }
  
-@@ -108,6 +113,16 @@
+@@ -108,6 +110,16 @@
        return channelfuture.channel().localAddress();
     }
  
@@ -62,7 +56,7 @@
     public void func_151268_b() {
        this.field_151277_a = false;
  
-@@ -123,6 +138,13 @@
+@@ -123,6 +135,13 @@
  
     public void func_151269_c() {
        synchronized(this.field_151272_f) {
@@ -76,7 +70,7 @@
           Iterator<NetworkManager> iterator = this.field_151272_f.iterator();
  
           while(iterator.hasNext()) {
-@@ -147,6 +169,10 @@
+@@ -147,6 +166,10 @@
                       networkmanager.func_150721_g();
                    }
                 } else {

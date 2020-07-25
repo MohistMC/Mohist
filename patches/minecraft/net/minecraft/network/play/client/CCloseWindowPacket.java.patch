@@ -9,17 +9,3 @@
     public CCloseWindowPacket(int p_i46881_1_) {
        this.field_149556_a = p_i46881_1_;
     }
-@@ -29,4 +29,13 @@
-    public void func_148840_b(PacketBuffer p_148840_1_) throws IOException {
-       p_148840_1_.writeByte(this.field_149556_a);
-    }
-+
-+   public void constructor() {
-+      throw new RuntimeException();
-+   }
-+
-+   public void constructor(int id) {
-+      constructor();
-+      this.field_149556_a = id;
-+   }
- }
