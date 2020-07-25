@@ -8,3 +8,12 @@
  
     public NetworkTagCollection(Registry<T> p_i49817_1_, String p_i49817_2_, String p_i49817_3_) {
        super(p_i49817_1_::func_218349_b, p_i49817_2_, false, p_i49817_3_);
+@@ -48,4 +49,8 @@
+ 
+       this.func_223507_b(map);
+    }
++
++   public void increaseTag() {
++      this.version++;
++   }
+ }

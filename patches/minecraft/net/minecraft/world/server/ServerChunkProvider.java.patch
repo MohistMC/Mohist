@@ -69,29 +69,7 @@
     }
  
     public boolean func_73149_a(int p_73149_1_, int p_73149_2_) {
-@@ -277,11 +283,21 @@
-       }
-    }
- 
-+   public final boolean isInEntityTickingChunk(Entity entity) {
-+      return this.func_217204_a(entity);
-+   }
-+   // Paper - OBFHELPER
-+
-    public boolean func_217204_a(Entity p_217204_1_) {
-       long i = ChunkPos.func_77272_a(MathHelper.func_76128_c(p_217204_1_.func_226277_ct_()) >> 4, MathHelper.func_76128_c(p_217204_1_.func_226281_cx_()) >> 4);
-       return this.func_222872_a(i, ChunkHolder::func_219297_b);
-    }
- 
-+   public final boolean isEntityTickingChunk(ChunkPos chunkcoordintpair) {
-+      return this.func_222865_a(chunkcoordintpair);
-+   }
-+   // Paper - OBFHELPER
-+
-    public boolean func_222865_a(ChunkPos p_222865_1_) {
-       return this.func_222872_a(p_222865_1_.func_201841_a(), ChunkHolder::func_219297_b);
-    }
-@@ -311,20 +327,45 @@
+@@ -311,20 +317,45 @@
        this.field_217237_a.func_219177_a(p_217210_1_);
     }
  
@@ -138,7 +116,7 @@
        this.field_73251_h.func_217381_Z().func_76319_b();
        this.func_222869_l();
     }
-@@ -335,12 +376,18 @@
+@@ -335,12 +366,18 @@
        this.field_217245_k = i;
        WorldInfo worldinfo = this.field_73251_h.func_72912_H();
        boolean flag = worldinfo.func_76067_t() == WorldType.field_180272_g;
@@ -159,7 +137,7 @@
           this.field_73251_h.func_217381_Z().func_76320_a("naturalSpawnCount");
           int l = this.field_217240_d.func_219358_b();
           EntityClassification[] aentityclassification = EntityClassification.values();
-@@ -356,22 +403,52 @@
+@@ -356,22 +393,52 @@
                 ChunkPos chunkpos = p_223434_10_.func_219277_h();
                 if (!this.field_217237_a.func_219243_d(chunkpos)) {
                    chunk.func_177415_c(chunk.func_177416_w() + j);
@@ -215,7 +193,7 @@
                 }
              }
           });
-@@ -384,7 +461,9 @@
+@@ -384,7 +451,9 @@
           this.field_73251_h.func_217381_Z().func_76319_b();
        }
  
@@ -225,7 +203,7 @@
     }
  
     public String func_73148_d() {
-@@ -505,12 +584,18 @@
+@@ -505,12 +574,18 @@
        }
  
        protected boolean func_213168_p() {

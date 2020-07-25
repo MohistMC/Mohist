@@ -4,6 +4,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.server.MinecraftServer;
 import org.bukkit.craftbukkit.v1_15_R1.entity.CraftPlayer;
 import org.bukkit.entity.Player;
@@ -22,7 +23,7 @@ public class PlayerAPI {
         return String.valueOf(getNMSPlayer(player).ping);
     }
 
-    public static PlayerEntity getNMSPlayer(Player player) {
+    public static ServerPlayerEntity getNMSPlayer(Player player) {
         return ((CraftPlayer) player).getHandle();
     }
 

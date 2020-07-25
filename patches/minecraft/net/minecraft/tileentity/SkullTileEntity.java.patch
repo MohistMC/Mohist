@@ -1,10 +1,9 @@
 --- a/net/minecraft/tileentity/SkullTileEntity.java
 +++ b/net/minecraft/tileentity/SkullTileEntity.java
-@@ -1,28 +1,91 @@
+@@ -1,28 +1,88 @@
  package net.minecraft.tileentity;
  
 +import com.google.common.base.Predicate;
-+import com.google.common.base.Throwables;
 +import com.google.common.cache.CacheBuilder;
 +import com.google.common.cache.CacheLoader;
 +import com.google.common.cache.LoadingCache;
@@ -35,8 +34,6 @@
  import net.minecraft.util.StringUtils;
  import net.minecraftforge.api.distmarker.Dist;
  import net.minecraftforge.api.distmarker.OnlyIn;
-+import org.bukkit.Bukkit;
-+import org.bukkit.craftbukkit.v1_15_R1.CraftServer;
  
  public class SkullTileEntity extends TileEntity implements ITickableTileEntity {
 -   private GameProfile field_152110_j;
@@ -44,7 +41,8 @@
     private int field_184296_h;
     private boolean field_184297_i;
     private static PlayerProfileCache field_184298_j;
-    private static MinecraftSessionService field_184299_k;
+-   private static MinecraftSessionService field_184299_k;
++   public static MinecraftSessionService field_184299_k;
  
 +   // Spigot start
 +   public static final ExecutorService executor = Executors.newFixedThreadPool(3,
@@ -93,7 +91,7 @@
     public SkullTileEntity() {
        super(TileEntityType.field_200985_p);
     }
-@@ -98,31 +161,73 @@
+@@ -98,31 +158,73 @@
     }
  
     private void func_152109_d() {

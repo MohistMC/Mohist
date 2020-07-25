@@ -1627,17 +1627,6 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
         return getHandle().language;
     }
 
-    // Paper start
-    public void setAffectsSpawning(boolean affects) {
-        this.getHandle().affectsSpawning = affects;
-    }
-
-    @Override
-    public boolean getAffectsSpawning() {
-        return this.getHandle().affectsSpawning;
-    }
-    // Paper end
-
     @Override
     public void updateCommands() {
         if (getHandle().connection == null) return;
