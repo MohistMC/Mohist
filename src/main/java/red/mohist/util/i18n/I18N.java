@@ -16,7 +16,7 @@ public class I18N {
      * @return 对应key的值
      */
     public static String get(String key) {
-        return I18N.get(key, Locale.getDefault());
+        return I18N.get(key, I18N.getLocale());
     }
 
     /**
@@ -27,7 +27,19 @@ public class I18N {
      * @return 对应key的值
      */
     public static String get(String key, String def) {
-        return I18N.get(key, Locale.getDefault(), def);
+        return I18N.get(key, I18N.getLocale(), def);
+    }
+
+    /**
+     * 获取当前的语言
+     *
+     * @return locale
+     */
+    private static Locale getLocale() {
+        if (!Message.getCountry().equalsIgnoreCase("xx") && !Message.getLanguage().equalsIgnoreCase("xx")) {
+            return new Locale(Message.getLanguage(), Message.getCountry());
+        }
+        return Locale.getDefault();
     }
 
     /**
@@ -61,7 +73,7 @@ public class I18N {
      * @return key对应的替换完毕的值
      */
     public static String get(String key, Object... formats) {
-        return I18N.get(key, Locale.getDefault(), formats);
+        return I18N.get(key, I18N.getLocale(), formats);
     }
 
     /**
@@ -72,11 +84,11 @@ public class I18N {
      * @return key对应的替换完毕的值
      */
     public static String get(String key, String def, Object... formats) {
-        return I18N.get(key, Locale.getDefault(), def, formats);
+        return I18N.get(key, I18N.getLocale(), def, formats);
     }
 
     /**
-     * 返回对应key的值，并且将其中的{}依次换为 {@param formats} 中的值
+     * 返回对应key的值，并且将其中的{序号}依次换为 {@param formats} 中的值
      * 当语言所对应的值返回null时，将用 {@param def} 中的值进行替换
      *
      * @param key     键
@@ -87,10 +99,8 @@ public class I18N {
      */
     public static String get(String key, Locale locale, String def, Object... formats) {
         String result = I18N.get(key, locale, def);
-        int count = 0;
-        while (result.contains("{}")) {
-            count++;
-            result = result.replaceFirst("\\{}", Arrays.asList(formats).get(count).toString());
+        for (int count = 0; count < formats.length; count++) {
+            result = result.replaceAll("\\{" + count + "}", String.valueOf(formats[count]));
         }
         return result;
     }

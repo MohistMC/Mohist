@@ -17,6 +17,7 @@ import com.mojang.brigadier.tree.LiteralCommandNode;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufOutputStream;
 import io.netty.buffer.Unpooled;
+
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileInputStream;
@@ -43,6 +44,7 @@ import java.util.function.Consumer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
+
 import jline.console.ConsoleReader;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.minecraft.advancements.Advancement;
@@ -201,6 +203,7 @@ import org.yaml.snakeyaml.error.MarkedYAMLException;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.world.WorldEvent;
 import red.mohist.Mohist;
+import red.mohist.util.i18n.I18N;
 
 public final class CraftServer implements Server {
     private final String serverName = "Mohist";
@@ -267,7 +270,7 @@ public final class CraftServer implements Server {
         // Ugly hack :(
 
         if (!Main.useConsole) {
-            getLogger().info("Console input is disabled due to --noconsole command argument");
+            getLogger().info(I18N.get("mohist.start.noconsole", "Console input is disabled due to --noconsole command argument"));
         }
 
         configuration = YamlConfiguration.loadConfiguration(getConfigFile());
@@ -336,7 +339,7 @@ public final class CraftServer implements Server {
         try {
             configuration.save(getConfigFile());
         } catch (IOException ex) {
-            Logger.getLogger(CraftServer.class.getName()).log(Level.SEVERE, "Could not save " + getConfigFile(), ex);
+            Logger.getLogger(CraftServer.class.getName()).log(Level.SEVERE, I18N.get("error.save", "Could not save {0}", getConfigFile().getName()), ex);
         }
     }
 
@@ -344,7 +347,7 @@ public final class CraftServer implements Server {
         try {
             commandsConfiguration.save(getCommandsConfigFile());
         } catch (IOException ex) {
-            Logger.getLogger(CraftServer.class.getName()).log(Level.SEVERE, "Could not save " + getCommandsConfigFile(), ex);
+            Logger.getLogger(CraftServer.class.getName()).log(Level.SEVERE, I18N.get("error.save", "Could not save {0}", getCommandsConfigFile().getName()), ex);
         }
     }
 
@@ -357,11 +360,11 @@ public final class CraftServer implements Server {
             Plugin[] plugins = pluginManager.loadPlugins(pluginFolder);
             for (Plugin plugin : plugins) {
                 try {
-                    String message = String.format("Loading %s", plugin.getDescription().getFullName());
+                    String message = String.format(I18N.get("mohist.start.plugin_loaded_info", "Loading %s"), plugin.getDescription().getFullName());
                     plugin.getLogger().info(message);
                     plugin.onLoad();
                 } catch (Throwable ex) {
-                    Logger.getLogger(CraftServer.class.getName()).log(Level.SEVERE, ex.getMessage() + " initializing " + plugin.getDescription().getFullName() + " (Is it up to date?)", ex);
+                    Logger.getLogger(CraftServer.class.getName()).log(Level.SEVERE, I18N.get("mohist.start.plugin.load.initializing.error", "{0} initializing {1} (Is it up to date?)", ex.getMessage(), plugin.getDescription().getFullName()), ex);
                 }
             }
         } else {
@@ -409,7 +412,7 @@ public final class CraftServer implements Server {
         for (CommandNode<CommandSource> cmd : dispatcher.getDispatcher().getRoot().getChildren()) {
             // Spigot start
             VanillaCommandWrapper wrapper = new VanillaCommandWrapper(dispatcher, cmd);
-            if (org.spigotmc.SpigotConfig.replaceCommands.contains( wrapper.getName() ) ) {
+            if (org.spigotmc.SpigotConfig.replaceCommands.contains(wrapper.getName())) {
                 if (first) {
                     commandMap.register("minecraft", wrapper);
                 }
@@ -460,14 +463,14 @@ public final class CraftServer implements Server {
                 try {
                     pluginManager.addPermission(perm, false);
                 } catch (IllegalArgumentException ex) {
-                    getLogger().log(Level.WARNING, "Plugin " + plugin.getDescription().getFullName() + " tried to register permission '" + perm.getName() + "' but it's already registered", ex);
+                    getLogger().log(Level.WARNING, I18N.get("mohist.start.plugin.load.permission.error", "Plugin {0} tried to register permission '{1}' but it's already registered", plugin.getDescription().getFullName(), perm.getName()), ex);
                 }
             }
             pluginManager.dirtyPermissibles();
 
             pluginManager.enablePlugin(plugin);
         } catch (Throwable ex) {
-            Logger.getLogger(CraftServer.class.getName()).log(Level.SEVERE, ex.getMessage() + " loading " + plugin.getDescription().getFullName() + " (Is it up to date?)", ex);
+            Logger.getLogger(CraftServer.class.getName()).log(Level.SEVERE, I18N.get("mohist.start.plugin.load.loading.error", "{0} loading {1} (Is it up to date?)", ex.getMessage(), plugin.getDescription().getFullName()), ex);
         }
     }
 
@@ -494,7 +497,7 @@ public final class CraftServer implements Server {
     @Override
     @Deprecated
     public Player getPlayer(final String name) {
-        Validate.notNull(name, "Name cannot be null");
+        Validate.notNull(name, I18N.get("player.error.name.null", "Name cannot be null"));
 
         Player found = getPlayerExact(name);
         // Try for an exact match first.
@@ -520,7 +523,7 @@ public final class CraftServer implements Server {
     @Override
     @Deprecated
     public Player getPlayerExact(String name) {
-        Validate.notNull(name, "Name cannot be null");
+        Validate.notNull(name, I18N.get("player.error.name.null", "Name cannot be null"));
 
         ServerPlayerEntity player = playerList.getPlayerByUsername(name);
         return (player != null) ? player.getBukkitEntity() : null;
@@ -549,7 +552,7 @@ public final class CraftServer implements Server {
     @Override
     @Deprecated
     public List<Player> matchPlayer(String partialName) {
-        Validate.notNull(partialName, "PartialName cannot be null");
+        Validate.notNull(partialName, I18N.get("player.error.name.null", "Name cannot be null"));
 
         List<Player> matchedPlayers = new ArrayList<Player>();
 
@@ -700,7 +703,7 @@ public final class CraftServer implements Server {
     // NOTE: Should only be called from DedicatedServer.ah()
     public boolean dispatchServerCommand(CommandSender sender, PendingCommand serverCommand) {
         if (sender instanceof Conversable) {
-            Conversable conversable = (Conversable)sender;
+            Conversable conversable = (Conversable) sender;
 
             if (conversable.isConversing()) {
                 conversable.acceptConversationInput(serverCommand.command);
@@ -711,7 +714,7 @@ public final class CraftServer implements Server {
             this.playerCommandState = true;
             return dispatchCommand(sender, serverCommand.command);
         } catch (Exception ex) {
-            getLogger().log(Level.WARNING, "Unexpected exception while parsing console command \"" + serverCommand.command + '"', ex);
+            getLogger().log(Level.WARNING, I18N.get("console.command.error", "Unexpected exception while parsing console command \"{0}\"", serverCommand.command), ex);
             return false;
         } finally {
             this.playerCommandState = false;
@@ -721,8 +724,8 @@ public final class CraftServer implements Server {
     @Override
     public boolean dispatchCommand(CommandSender sender, String commandLine) {
         org.spigotmc.AsyncCatcher.catchOp("command dispatch"); // Spigot
-        Validate.notNull(sender, "Sender cannot be null");
-        Validate.notNull(commandLine, "CommandLine cannot be null");
+        Validate.notNull(sender, I18N.get("error.null.sender", "Sender cannot be null"));
+        Validate.notNull(commandLine, I18N.get("error.null.commandline", "CommandLine cannot be null"));
 
         if (commandMap.dispatch(sender, commandLine)) {
             return true;
@@ -765,12 +768,12 @@ public final class CraftServer implements Server {
         try {
             playerList.getBannedIPs().readSavedFile();
         } catch (IOException ex) {
-            logger.log(Level.WARNING, "Failed to load banned-ips.json, " + ex.getMessage());
+            logger.log(Level.WARNING, I18N.get("load.failed", "Failed to load {0}, {1}", "banned-ips.json", ex.getMessage()));
         }
         try {
             playerList.getBannedPlayers().readSavedFile();
         } catch (IOException ex) {
-            logger.log(Level.WARNING, "Failed to load banned-players.json, " + ex.getMessage());
+            logger.log(Level.WARNING, I18N.get("load.failed", "Failed to load {0}, {1}", "banned-players.json", ex.getMessage()));
         }
         org.spigotmc.SpigotConfig.init((File) console.options.valueOf("spigot-settings")); // Spigot
 
@@ -817,7 +820,8 @@ public final class CraftServer implements Server {
         while (pollCount < 50 && getScheduler().getActiveWorkers().size() > 0) {
             try {
                 Thread.sleep(50);
-            } catch (InterruptedException e) {}
+            } catch (InterruptedException e) {
+            }
             pollCount++;
         }
 
@@ -828,11 +832,12 @@ public final class CraftServer implements Server {
             if (plugin.getDescription().getAuthors().size() > 0) {
                 author = plugin.getDescription().getAuthors().get(0);
             }
+            // not translate begin there 
             getLogger().log(Level.SEVERE, String.format(
-                "Nag author: '%s' of '%s' about the following: %s",
-                author,
-                plugin.getDescription().getName(),
-                "This plugin is not properly shutting down its async tasks when it is being reloaded.  This may cause conflicts with the newly loaded version of the plugin"
+                    "Nag author: '%s' of '%s' about the following: %s",
+                    author,
+                    plugin.getDescription().getName(),
+                    "This plugin is not properly shutting down its async tasks when it is being reloaded.  This may cause conflicts with the newly loaded version of the plugin"
             ));
         }
         loadPlugins();
@@ -858,7 +863,7 @@ public final class CraftServer implements Server {
         }
     }
 
-    @SuppressWarnings({ "unchecked", "finally" })
+    @SuppressWarnings({"unchecked", "finally"})
     private void loadCustomPermissions() {
         File file = new File(configuration.getString("settings.permissions-file"));
         FileInputStream stream;
@@ -886,7 +891,8 @@ public final class CraftServer implements Server {
         } finally {
             try {
                 stream.close();
-            } catch (IOException ex) {}
+            } catch (IOException ex) {
+            }
         }
 
         if (perms == null) {
@@ -962,7 +968,7 @@ public final class CraftServer implements Server {
                     break;
                 }
             }
-        } while(used);
+        } while (used);
         boolean hardcore = creator.hardcore();
 
         SaveHandler sdm = new SaveHandler(getWorldContainer(), name, getServer(), getHandle().getServer().dataFixer);
@@ -1368,9 +1374,8 @@ public final class CraftServer implements Server {
             // Spigot Start
             GameProfile profile = null;
             // Only fetch an online UUID in online mode
-            if ( getOnlineMode() || org.spigotmc.SpigotConfig.bungee )
-            {
-                profile = console.getPlayerProfileCache().getGameProfileForUsername( name );
+            if (getOnlineMode() || org.spigotmc.SpigotConfig.bungee) {
+                profile = console.getPlayerProfileCache().getGameProfileForUsername(name);
             }
             // Spigot end
             if (profile == null) {
@@ -1446,12 +1451,12 @@ public final class CraftServer implements Server {
     public BanList getBanList(BanList.Type type) {
         Validate.notNull(type, "Type cannot be null");
 
-        switch(type){
-        case IP:
-            return new CraftIpBanList(playerList.getBannedIPs());
-        case NAME:
-        default:
-            return new CraftProfileBanList(playerList.getBannedPlayers());
+        switch (type) {
+            case IP:
+                return new CraftIpBanList(playerList.getBannedIPs());
+            case NAME:
+            default:
+                return new CraftProfileBanList(playerList.getBannedPlayers());
         }
     }
 
@@ -1670,8 +1675,7 @@ public final class CraftServer implements Server {
 
     public List<String> tabCompleteCommand(Player player, String message, ServerWorld world, Vec3d pos) {
         // Spigot Start
-        if ( (org.spigotmc.SpigotConfig.tabComplete < 0 || message.length() <= org.spigotmc.SpigotConfig.tabComplete) && !message.contains( " " ) )
-        {
+        if ((org.spigotmc.SpigotConfig.tabComplete < 0 || message.length() <= org.spigotmc.SpigotConfig.tabComplete) && !message.contains(" ")) {
             return ImmutableList.of();
         }
         // Spigot End
@@ -1974,12 +1978,10 @@ public final class CraftServer implements Server {
         return CraftMagicNumbers.INSTANCE;
     }
 
-    private final Spigot spigot = new Spigot()
-    {
+    private final Spigot spigot = new Spigot() {
 
         @Override
-        public YamlConfiguration getConfig()
-        {
+        public YamlConfiguration getConfig() {
             return org.spigotmc.SpigotConfig.config;
         }
 
@@ -2003,8 +2005,8 @@ public final class CraftServer implements Server {
         }
 
     };
-    public Spigot spigot()
-    {
+
+    public Spigot spigot() {
         return spigot;
     }
 
