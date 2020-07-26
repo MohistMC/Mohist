@@ -9,8 +9,6 @@ import org.apache.logging.log4j.Logger;
  */
 public class Mohist {
 
-    public static final Logger LOGGER = LogManager.getLogger();
-
     public static String getVersion() {
         return Mohist.class.getPackage().getImplementationVersion() != null ? Metrics.class.getPackage().getImplementationVersion() : "0.1";
     }

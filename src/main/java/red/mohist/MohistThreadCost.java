@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
+import red.mohist.forge.MohistMod;
 import red.mohist.util.i18n.I18N;
 
 public class MohistThreadCost {
@@ -26,9 +27,9 @@ public class MohistThreadCost {
             list.add(item);
         }
         list.sort(Comparator.comparingLong(i -> i.id));
-        Mohist.LOGGER.info(I18N.get("mohist.dump.1"));
+        MohistMod.LOGGER.info(I18N.get("mohist.dump.1"));
         for (MohistThreadCost.ThreadCpuTime threadCpuTime : list) {
-            Mohist.LOGGER.info(String.format("%s %s %s %s", threadCpuTime.id, threadCpuTime.name, threadCpuTime.cpuTime, threadCpuTime.userTime));
+            MohistMod.LOGGER.info(String.format("%s %s %s %s", threadCpuTime.id, threadCpuTime.name, threadCpuTime.cpuTime, threadCpuTime.userTime));
         }
     }
 
