@@ -8,3 +8,12 @@
  
     public Advancement(ResourceLocation p_i47472_1_, @Nullable Advancement p_i47472_2_, @Nullable DisplayInfo p_i47472_3_, AdvancementRewards p_i47472_4_, Map<String, Criterion> p_i47472_5_, String[][] p_i47472_6_) {
        this.field_192079_d = p_i47472_1_;
+@@ -387,4 +388,8 @@
+          return this.field_192065_e;
+       }
+    }
++
++   public org.bukkit.advancement.Advancement getBukkit() {
++      return bukkit;
++   }
+ }

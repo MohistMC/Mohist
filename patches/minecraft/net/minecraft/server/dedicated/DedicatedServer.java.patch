@@ -23,7 +23,7 @@
  import net.minecraft.server.management.PlayerProfileCache;
  import net.minecraft.server.management.PreYggdrasilConverter;
  import net.minecraft.tileentity.SkullTileEntity;
-@@ -56,23 +53,34 @@
+@@ -56,23 +53,35 @@
  import net.minecraft.world.WorldType;
  import net.minecraft.world.chunk.listener.IChunkStatusListenerFactory;
  import net.minecraft.world.dimension.DimensionType;
@@ -38,6 +38,7 @@
 +import org.bukkit.event.server.RemoteServerCommandEvent;
 +import org.bukkit.event.server.ServerCommandEvent;
 +import org.bukkit.plugin.Plugin;
++import red.mohist.forge.registry.BukkitRegistry;
  
  public class DedicatedServer extends MinecraftServer implements IServer {
     private static final Logger field_155771_h = LogManager.getLogger();
@@ -62,7 +63,7 @@
        this.field_71340_o = p_i50720_2_;
        this.field_184115_n = new RConConsoleSource(this);
        Thread thread = new Thread("Server Infinisleeper") {
-@@ -97,12 +105,46 @@
+@@ -97,12 +106,46 @@
     public boolean func_71197_b() throws IOException {
        Thread thread = new Thread("Server console handler") {
           public void run() {
@@ -112,7 +113,7 @@
                 }
              } catch (IOException ioexception1) {
                 DedicatedServer.field_155771_h.error("Exception handling console input", (Throwable)ioexception1);
-@@ -110,6 +152,27 @@
+@@ -110,6 +153,27 @@
  
           }
        };
@@ -140,7 +141,7 @@
        thread.setDaemon(true);
        thread.setUncaughtExceptionHandler(new DefaultUncaughtExceptionHandler(field_155771_h));
        thread.start();
-@@ -118,7 +181,9 @@
+@@ -118,7 +182,9 @@
           field_155771_h.warn("To start the server with more ram, launch it as \"java -Xmx1024M -Xms1024M -jar minecraft_server.jar\"");
        }
  
@@ -150,7 +151,7 @@
        ServerProperties serverproperties = this.field_71340_o.func_219034_a();
        if (this.func_71264_H()) {
           this.func_71189_e("127.0.0.1");
-@@ -127,7 +192,11 @@
+@@ -127,7 +193,11 @@
           this.func_190517_e(serverproperties.field_219008_b);
           this.func_71189_e(serverproperties.field_219009_c);
        }
@@ -163,14 +164,16 @@
        this.func_71251_e(serverproperties.field_219010_d);
        this.func_71257_f(serverproperties.field_219011_e);
        this.func_71188_g(serverproperties.field_219012_f);
-@@ -161,10 +230,23 @@
+@@ -161,10 +231,25 @@
           return false;
        }
  
 +      // CraftBukkit start
 +     // this.setPlayerList((PlayerList) (new DedicatedPlayerList(this))); // Spigot -  moved up
++      BukkitRegistry.unlockRegistries();
 +      server.loadPlugins();
 +      server.enablePlugins(org.bukkit.plugin.PluginLoadOrder.STARTUP);
++      BukkitRegistry.lockRegistries();
 +      // CraftBukkit end
 +
        if (!this.func_71266_T()) {
@@ -188,7 +191,7 @@
           field_155771_h.warn("To change this, set \"online-mode\" to \"true\" in the server.properties file.");
        }
  
-@@ -175,7 +257,9 @@
+@@ -175,7 +260,9 @@
        if (!PreYggdrasilConverter.func_219587_e(this)) {
           return false;
        } else {
@@ -199,7 +202,7 @@
           long i = Util.func_211178_c();
           String s = serverproperties.field_219022_p;
           String s1 = serverproperties.field_219024_r;
-@@ -196,18 +280,27 @@
+@@ -196,18 +283,27 @@
           SkullTileEntity.func_184293_a(this.func_152358_ax());
           SkullTileEntity.func_184294_a(this.func_147130_as());
           PlayerProfileCache.func_187320_a(this.func_71266_T());
@@ -228,7 +231,7 @@
           if (serverproperties.field_219027_u != null) {
              this.func_200252_aR().func_223585_a(GameRules.field_223620_w).func_223570_a(serverproperties.field_219027_u, this);
           }
-@@ -222,9 +315,10 @@
+@@ -222,9 +318,10 @@
              field_155771_h.info("Starting remote control listener");
              this.field_71339_n = new MainThread(this);
              this.field_71339_n.func_72602_a();
@@ -240,7 +243,7 @@
              Thread thread1 = new Thread(new ServerHangWatchdog(this));
              thread1.setUncaughtExceptionHandler(new DefaultWithNameUncaughtExceptionHandler(field_155771_h));
              thread1.setName("Server Watchdog");
-@@ -233,7 +327,8 @@
+@@ -233,7 +330,8 @@
           }
  
           Items.field_190931_a.func_150895_a(ItemGroup.field_78027_g, NonNullList.func_191196_a());
@@ -250,7 +253,7 @@
        }
     }
  
-@@ -316,7 +411,7 @@
+@@ -316,7 +414,7 @@
        if (this.field_71342_m != null) {
           this.field_71342_m.func_219591_b();
        }
@@ -259,7 +262,7 @@
     }
  
     public void func_71190_q(BooleanSupplier p_71190_1_) {
-@@ -343,11 +438,20 @@
+@@ -343,11 +441,20 @@
     }
  
     public void func_71333_ah() {
@@ -282,7 +285,7 @@
     }
  
     public boolean func_71262_S() {
-@@ -522,13 +626,39 @@
+@@ -522,13 +629,39 @@
     }
  
     public String func_71258_A() {
@@ -324,7 +327,7 @@
        });
        return this.field_184115_n.func_70008_c();
     }
-@@ -547,4 +677,21 @@
+@@ -547,4 +680,21 @@
     public boolean func_213199_b(GameProfile p_213199_1_) {
        return false;
     }
