@@ -16,6 +16,7 @@ import org.bukkit.inventory.meta.MapMeta;
 import org.bukkit.map.MapView;
 
 @DelegateDeserialization(SerializableMeta.class)
+public
 class CraftMetaMap extends CraftMetaItem implements MapMeta {
     static final ItemMetaKey MAP_SCALING = new ItemMetaKey("map_is_scaling", "scaling");
     static final ItemMetaKey MAP_LOC_NAME = new ItemMetaKey("LocName", "display-loc-name");
@@ -30,7 +31,7 @@ class CraftMetaMap extends CraftMetaItem implements MapMeta {
     private String locName;
     private Color color;
 
-    CraftMetaMap(CraftMetaItem meta) {
+    public CraftMetaMap(CraftMetaItem meta) {
         super(meta);
 
         if (!(meta instanceof CraftMetaMap)) {

@@ -1,20 +1,19 @@
-package io.izzel.arclight.common.mod.server.event;
+package red.mohist.forge.event;
 
-import io.izzel.arclight.common.bridge.entity.EntityBridge;
-import io.izzel.arclight.common.bridge.entity.player.ServerPlayerEntityBridge;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import org.bukkit.Bukkit;
-import org.bukkit.craftbukkit.v.block.CraftBlock;
-import org.bukkit.craftbukkit.v.event.CraftEventFactory;
+import org.bukkit.craftbukkit.v1_15_R1.block.CraftBlock;
+import org.bukkit.craftbukkit.v1_15_R1.event.CraftEventFactory;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.entity.EntityInteractEvent;
-import io.izzel.arclight.common.mod.util.ArclightCaptures;
+import red.mohist.forge.util.MohistCaptures;
 
 public class BlockBreakEventDispatcher {
 
@@ -22,8 +21,8 @@ public class BlockBreakEventDispatcher {
     public void onBreakBlock(BlockEvent.BreakEvent event) {
         if (!event.getWorld().isRemote()) {
             CraftBlock craftBlock = CraftBlock.at(event.getWorld(), event.getPos());
-            BlockBreakEvent breakEvent = new BlockBreakEvent(craftBlock, ((ServerPlayerEntityBridge) event.getPlayer()).bridge$getBukkitEntity());
-            ArclightCaptures.captureBlockBreakPlayer(breakEvent);
+            BlockBreakEvent breakEvent = new BlockBreakEvent(craftBlock, ((ServerPlayerEntity) event.getPlayer()).getBukkitEntity());
+            MohistCaptures.captureBlockBreakPlayer(breakEvent);
             breakEvent.setCancelled(event.isCanceled());
             breakEvent.setExpToDrop(event.getExpToDrop());
             Bukkit.getPluginManager().callEvent(breakEvent);
@@ -39,7 +38,7 @@ public class BlockBreakEventDispatcher {
         if (entity instanceof PlayerEntity) {
             cancellable = CraftEventFactory.callPlayerInteractEvent((PlayerEntity) entity, Action.PHYSICAL, event.getPos(), null, null, null);
         } else {
-            cancellable = new EntityInteractEvent(((EntityBridge) entity).bridge$getBukkitEntity(), CraftBlock.at(event.getWorld(), event.getPos()));
+            cancellable = new EntityInteractEvent(((Entity) entity).getBukkitEntity(), CraftBlock.at(event.getWorld(), event.getPos()));
             Bukkit.getPluginManager().callEvent((EntityInteractEvent) cancellable);
         }
 

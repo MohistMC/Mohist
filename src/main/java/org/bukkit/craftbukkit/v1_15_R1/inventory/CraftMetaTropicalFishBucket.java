@@ -13,12 +13,13 @@ import org.bukkit.entity.TropicalFish;
 import org.bukkit.inventory.meta.TropicalFishBucketMeta;
 
 @DelegateDeserialization(SerializableMeta.class)
+public
 class CraftMetaTropicalFishBucket extends CraftMetaItem implements TropicalFishBucketMeta {
     static final ItemMetaKey VARIANT = new ItemMetaKey("BucketVariantTag", "fish-variant");
 
     private Integer variant;
 
-    CraftMetaTropicalFishBucket(CraftMetaItem meta) {
+    public CraftMetaTropicalFishBucket(CraftMetaItem meta) {
         super(meta);
 
         if (!(meta instanceof CraftMetaTropicalFishBucket)) {

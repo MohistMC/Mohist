@@ -1,5 +1,6 @@
 package org.bukkit;
 
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 
 import java.lang.reflect.Array;
@@ -7,7 +8,12 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.*;
+import java.util.function.BiFunction;
 import java.util.function.Consumer;
+
+import net.minecraft.block.Block;
+import net.minecraft.item.Item;
+import net.minecraft.util.ResourceLocation;
 import org.apache.commons.lang.Validate;
 import org.bukkit.block.data.Ageable;
 import org.bukkit.block.data.AnaloguePowerable;
@@ -78,6 +84,8 @@ import org.bukkit.block.data.type.Tripwire;
 import org.bukkit.block.data.type.TripwireHook;
 import org.bukkit.block.data.type.TurtleEgg;
 import org.bukkit.block.data.type.WallSign;
+import org.bukkit.craftbukkit.v1_15_R1.inventory.*;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.material.MaterialData;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -3291,6 +3299,55 @@ public enum Material implements Keyed {
     }
     // Cauldron end
 
+    private static final Map<String, BiFunction<Material, CraftMetaItem, ItemMeta>> TYPES = ImmutableMap
+            .<String, BiFunction<Material, CraftMetaItem, ItemMeta>>builder()
+            .put("ARMOR_STAND", (a, b) -> b instanceof CraftMetaArmorStand ? b : new CraftMetaArmorStand(b))
+            .put("BANNER", (a, b) -> b instanceof CraftMetaBanner ? b : new CraftMetaBanner(b))
+            .put("TILE_ENTITY", (a, b) -> new CraftMetaBlockState(b, a))
+            .put("BOOK", (a, b) -> b != null && b.getClass().equals(CraftMetaBook.class) ? b : new CraftMetaBook(b))
+            .put("BOOK_SIGNED", (a, b) -> b instanceof CraftMetaBookSigned ? b : new CraftMetaBookSigned(b))
+            .put("SKULL", (a, b) -> b instanceof CraftMetaSkull ? b : new CraftMetaSkull(b))
+            .put("LEATHER_ARMOR", (a, b) -> b instanceof CraftMetaLeatherArmor ? b : new CraftMetaLeatherArmor(b))
+            .put("MAP", (a, b) -> b instanceof CraftMetaMap ? b : new CraftMetaMap(b))
+            .put("POTION", (a, b) -> b instanceof CraftMetaPotion ? b : new CraftMetaPotion(b))
+            .put("SPAWN_EGG", (a, b) -> b instanceof CraftMetaSpawnEgg ? b : new CraftMetaSpawnEgg(b))
+            .put("ENCHANTED", (a, b) -> b instanceof CraftMetaEnchantedBook ? b : new CraftMetaEnchantedBook(b))
+            .put("FIREWORK", (a, b) -> b instanceof CraftMetaFirework ? b : new CraftMetaFirework(b))
+            .put("FIREWORK_EFFECT", (a, b) -> b instanceof CraftMetaCharge ? b : new CraftMetaCharge(b))
+            .put("KNOWLEDGE_BOOK", (a, b) -> b instanceof CraftMetaKnowledgeBook ? b : new CraftMetaKnowledgeBook(b))
+            .put("TROPICAL_FISH_BUCKET", (a, b) -> b instanceof CraftMetaTropicalFishBucket ? b : new CraftMetaTropicalFishBucket(b))
+            .put("CROSSBOW", (a, b) -> b instanceof CraftMetaCrossbow ? b : new CraftMetaCrossbow(b))
+            .put("SUSPICIOUS_STEW", (a, b) -> b instanceof CraftMetaSuspiciousStew ? b : new CraftMetaSuspiciousStew(b))
+            .put("UNSPECIFIC", (a, b) -> new CraftMetaItem(b))
+            .put("NULL", (a, b) -> null)
+            .build();
+
+    public enum MaterialType {
+        VANILLA, FORGE
+    }
+
+    private MaterialType mohist$type = MaterialType.VANILLA;
+
+    private boolean mohist$block = false, mohist$item = false;
+
+    public void setupBlock(ResourceLocation key, Block block) {
+        mohist$type = MaterialType.FORGE;
+        mohist$block = true;
+    }
+
+    public void setItem() {
+        this.mohist$item = true;
+    }
+
+    public void setupItem(ResourceLocation key, Item item) {
+        mohist$type = MaterialType.FORGE;
+        mohist$item = true;
+    }
+
+    public void setBlock() {
+        this.mohist$block = true;
+    }
+
     private Material(final int id, final int stack) {
         this(id, stack, MaterialData.class);
     }
@@ -4285,33 +4342,6 @@ public enum Material implements Keyed {
         }
 
         return BY_NAME.get(name);
-    }
-
-    /* ===============================  Cauldron START ============================= */
-    // use a normalize() function to ensure it is accessible after a round-trip
-    public static Material addMaterial(int id, boolean isBlock){
-        return addMaterial(id, "X" + String.valueOf(id), isBlock);
-    }
-
-    public static Material addMaterial(int id, String name, boolean isBlock) {
-        if (byId[id] == null) {
-            String materialName = LEGACY_PREFIX + name;
-            Material material = (Material) EnumHelper.addEnum(Material.class, materialName, new Class[]{Integer.TYPE, Boolean.TYPE}, new Object[]{Integer.valueOf(id), isBlock});
-            byId[id] = material;
-            BY_NAME.put(materialName, material);
-            BY_NAME.put("X" + String.valueOf(id), material);
-            return material;
-        }
-        return null;
-    }
-
-    public static void setMaterialName(int id, String name, boolean flag) {
-        String materialName = LEGACY_PREFIX + name;
-
-        if (byId[id] == null)
-        {
-            addMaterial(id, materialName, flag);
-        }
     }
 
     private static void setup()

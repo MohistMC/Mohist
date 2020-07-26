@@ -12,12 +12,13 @@ import org.bukkit.craftbukkit.v1_15_R1.inventory.CraftMetaItem.SerializableMeta;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
 
 @DelegateDeserialization(SerializableMeta.class)
+public
 class CraftMetaLeatherArmor extends CraftMetaItem implements LeatherArmorMeta {
     static final ItemMetaKey COLOR = new ItemMetaKey("color");
 
     private Color color = DEFAULT_LEATHER_COLOR;
 
-    CraftMetaLeatherArmor(CraftMetaItem meta) {
+    public CraftMetaLeatherArmor(CraftMetaItem meta) {
         super(meta);
         if (!(meta instanceof CraftMetaLeatherArmor)) {
             return;

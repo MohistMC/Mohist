@@ -3,12 +3,16 @@ package org.bukkit.entity;
 import com.google.common.base.Preconditions;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Function;
 
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.server.ServerWorld;
 import org.bukkit.Keyed;
 import org.bukkit.Location;
 import org.bukkit.NamespacedKey;
 import org.bukkit.World;
+import org.bukkit.craftbukkit.v1_15_R1.CraftWorld;
+import org.bukkit.craftbukkit.v1_15_R1.util.CraftNamespacedKey;
 import org.bukkit.entity.minecart.CommandMinecart;
 import org.bukkit.entity.minecart.ExplosiveMinecart;
 import org.bukkit.entity.minecart.HopperMinecart;
@@ -21,6 +25,9 @@ import org.bukkit.potion.PotionEffectType;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import red.mohist.forge.MohistMod;
+import red.mohist.util.i18n.LocalizedException;
+import red.mohist.util.i18n.Message;
 
 public enum EntityType implements Keyed {
 
@@ -279,14 +286,56 @@ public enum EntityType implements Keyed {
      */
     UNKNOWN(null, null, -1, false);
 
-    private final String name;
-    private final Class<? extends Entity> clazz;
+    private String name;
+    private Class<? extends Entity> clazz;
     private final short typeId;
     private final boolean independent, living;
-    private final NamespacedKey key;
+    private NamespacedKey key;
 
     private static final Map<String, EntityType> NAME_MAP = new HashMap<String, EntityType>();
     private static final Map<Short, EntityType> ID_MAP = new HashMap<Short, EntityType>();
+    private net.minecraft.entity.EntityType<?> handleType;
+    public String entityClass;
+    private Function<Location, ? extends net.minecraft.entity.Entity> factory;
+
+    public void setup(ResourceLocation location, net.minecraft.entity.EntityType<?> entityType) {
+        this.key = CraftNamespacedKey.fromMinecraft(location);
+        this.name = location.toString();
+        this.handleType = entityType;
+        this.setup();
+    }
+
+    @SuppressWarnings("unchecked")
+    private void setup() {
+        if (this.entityClass != null) {
+            try {
+                Class<?> cl = Class.forName(this.entityClass);
+                if (!Entity.class.isAssignableFrom(cl)) {
+                    throw LocalizedException.checked("registry.entity.not-subclass", cl, Entity.class);
+                }
+                this.clazz = (Class<? extends Entity>) cl;
+            } catch (Exception e) {
+                if (e instanceof LocalizedException) {
+                    MohistMod.LOGGER.warn(((LocalizedException) e).node(), ((LocalizedException) e).args());
+                } else {
+                    MohistMod.LOGGER.warn("registry.entity.error", this, this.entityClass, e);
+                }
+            }
+        }
+        this.factory = loc -> {
+            if (loc != null && loc.getWorld() != null) {
+                ServerWorld world = ((CraftWorld) loc.getWorld()).getHandle();
+                net.minecraft.entity.Entity entity = handleType.create(world);
+                if (entity != null) {
+                    entity.setPositionAndRotation(loc.getX(), loc.getY(), loc.getZ(), loc.getYaw(), loc.getPitch());
+                }
+                return entity;
+            } else {
+                return null;
+            }
+        };
+    }
+
 
     static {
         for (EntityType type : values()) {

@@ -22,7 +22,7 @@ public class CraftMetaSpawnEgg extends CraftMetaItem implements SpawnEggMeta {
     private EntityType spawnedType;
     private CompoundNBT entityTag;
 
-    CraftMetaSpawnEgg(CraftMetaItem meta) {
+    public CraftMetaSpawnEgg(CraftMetaItem meta) {
         super(meta);
 
         if (!(meta instanceof CraftMetaSpawnEgg)) {

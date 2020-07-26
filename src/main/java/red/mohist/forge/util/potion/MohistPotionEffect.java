@@ -1,13 +1,13 @@
-package io.izzel.arclight.common.mod.util.potion;
+package red.mohist.forge.util.potion;
 
 import net.minecraft.potion.Effect;
-import org.bukkit.craftbukkit.v.potion.CraftPotionEffectType;
+import org.bukkit.craftbukkit.v1_15_R1.potion.CraftPotionEffectType;
 
-public class ArclightPotionEffect extends CraftPotionEffectType {
+public class MohistPotionEffect extends CraftPotionEffectType {
 
     private final String name;
 
-    public ArclightPotionEffect(Effect handle, String name) {
+    public MohistPotionEffect(Effect handle, String name) {
         super(handle);
         this.name = name;
     }

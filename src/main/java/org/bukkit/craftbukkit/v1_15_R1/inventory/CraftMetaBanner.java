@@ -26,7 +26,7 @@ public class CraftMetaBanner extends CraftMetaItem implements BannerMeta {
     private DyeColor base;
     private List<Pattern> patterns = new ArrayList<Pattern>();
 
-    CraftMetaBanner(CraftMetaItem meta) {
+    public CraftMetaBanner(CraftMetaItem meta) {
         super(meta);
 
         if (!(meta instanceof CraftMetaBanner)) {

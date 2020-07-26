@@ -1,7 +1,6 @@
-package io.izzel.arclight.common.mod.server.event;
+package red.mohist.forge.event;
 
 import com.google.common.collect.Lists;
-import io.izzel.arclight.common.mod.util.ArclightCaptures;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
@@ -10,9 +9,10 @@ import net.minecraftforge.event.entity.living.AnimalTameEvent;
 import net.minecraftforge.event.entity.living.LivingDropsEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import org.bukkit.craftbukkit.v.event.CraftEventFactory;
-import org.bukkit.craftbukkit.v.inventory.CraftItemStack;
+import org.bukkit.craftbukkit.v1_15_R1.event.CraftEventFactory;
+import org.bukkit.craftbukkit.v1_15_R1.inventory.CraftItemStack;
 import org.bukkit.inventory.ItemStack;
+import red.mohist.forge.util.MohistCaptures;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -33,8 +33,8 @@ public class EntityEventDispatcher {
             drops = new ArrayList<>(drops);
         }
         List<ItemStack> itemStackList = Lists.transform((List<ItemEntity>) drops,
-            (ItemEntity entity) -> CraftItemStack.asCraftMirror(entity.getItem()));
-        ArclightEventFactory.callEntityDeathEvent(livingEntity, itemStackList);
+                (ItemEntity entity) -> CraftItemStack.asCraftMirror(entity.getItem()));
+        MohistEventFactory.callEntityDeathEvent(livingEntity, itemStackList);
         if (drops.isEmpty()) {
             event.setCanceled(true);
         }
@@ -47,6 +47,6 @@ public class EntityEventDispatcher {
 
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public void onLightningBolt(EntityStruckByLightningEvent event) {
-        ArclightCaptures.captureDamageEventEntity(event.getLightning());
+        MohistCaptures.captureDamageEventEntity(event.getLightning());
     }
 }

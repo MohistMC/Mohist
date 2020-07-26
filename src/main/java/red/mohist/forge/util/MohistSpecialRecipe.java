@@ -1,23 +1,23 @@
-package io.izzel.arclight.common.mod.util;
+package red.mohist.forge.util;
 
-import io.izzel.arclight.common.bridge.item.crafting.RecipeManagerBridge;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.item.crafting.Ingredient;
+import net.minecraft.item.crafting.RecipeManager;
 import net.minecraft.item.crafting.SpecialRecipe;
 import org.bukkit.Bukkit;
 import org.bukkit.Keyed;
 import org.bukkit.NamespacedKey;
-import org.bukkit.craftbukkit.v.CraftServer;
-import org.bukkit.craftbukkit.v.inventory.CraftItemStack;
-import org.bukkit.craftbukkit.v.inventory.CraftRecipe;
-import org.bukkit.craftbukkit.v.inventory.CraftShapedRecipe;
-import org.bukkit.craftbukkit.v.inventory.CraftShapelessRecipe;
-import org.bukkit.craftbukkit.v.util.CraftNamespacedKey;
+import org.bukkit.craftbukkit.v1_15_R1.CraftServer;
+import org.bukkit.craftbukkit.v1_15_R1.inventory.CraftItemStack;
+import org.bukkit.craftbukkit.v1_15_R1.inventory.CraftRecipe;
+import org.bukkit.craftbukkit.v1_15_R1.inventory.CraftShapedRecipe;
+import org.bukkit.craftbukkit.v1_15_R1.inventory.CraftShapelessRecipe;
+import org.bukkit.craftbukkit.v1_15_R1.util.CraftNamespacedKey;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.RecipeChoice;
 import org.jetbrains.annotations.NotNull;
 
-public class ArclightSpecialRecipe {
+public class MohistSpecialRecipe {
 
     public static class Shapeless extends CraftShapelessRecipe {
 
@@ -31,8 +31,8 @@ public class ArclightSpecialRecipe {
 
         @Override
         public void addToCraftingManager() {
-            ((RecipeManagerBridge) ((CraftServer) Bukkit.getServer()).getServer()
-                .getRecipeManager()).bridge$addRecipe(recipe);
+            ((RecipeManager) ((CraftServer) Bukkit.getServer()).getServer()
+                    .getRecipeManager()).addRecipe(recipe);
         }
     }
 
@@ -48,8 +48,8 @@ public class ArclightSpecialRecipe {
 
         @Override
         public void addToCraftingManager() {
-            ((RecipeManagerBridge) ((CraftServer) Bukkit.getServer()).getServer()
-                .getRecipeManager()).bridge$addRecipe(recipe);
+            ((RecipeManager) ((CraftServer) Bukkit.getServer()).getServer()
+                    .getRecipeManager()).addRecipe(recipe);
         }
     }
 
@@ -63,7 +63,7 @@ public class ArclightSpecialRecipe {
 
         @Override
         public void addToCraftingManager() {
-            ((RecipeManagerBridge) ((CraftServer) Bukkit.getServer()).getServer().getRecipeManager()).bridge$addRecipe(this.recipe);
+            ((RecipeManager) ((CraftServer) Bukkit.getServer()).getServer().getRecipeManager()).addRecipe(this.recipe);
         }
 
         @Override

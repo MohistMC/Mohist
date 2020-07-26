@@ -1,9 +1,9 @@
-package io.izzel.arclight.common.mod.util;
+package red.mohist.forge.util;
 
-import io.izzel.arclight.api.Unsafe;
 import net.minecraft.inventory.DoubleSidedInventory;
 import net.minecraft.inventory.container.INamedContainerProvider;
 import net.minecraft.tileentity.ChestTileEntity;
+import red.mohist.api.Unsafe;
 
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodType;

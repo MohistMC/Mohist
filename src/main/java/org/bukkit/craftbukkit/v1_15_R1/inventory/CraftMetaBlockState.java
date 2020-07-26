@@ -80,7 +80,7 @@ public class CraftMetaBlockState extends CraftMetaItem implements BlockStateMeta
     final Material material;
     CompoundNBT blockEntityTag;
 
-    CraftMetaBlockState(CraftMetaItem meta, Material material) {
+    public CraftMetaBlockState(CraftMetaItem meta, Material material) {
         super(meta);
         this.material = material;
 

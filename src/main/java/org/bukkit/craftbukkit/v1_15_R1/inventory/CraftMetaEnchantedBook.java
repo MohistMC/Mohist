@@ -12,12 +12,13 @@ import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.meta.EnchantmentStorageMeta;
 
 @DelegateDeserialization(SerializableMeta.class)
+public
 class CraftMetaEnchantedBook extends CraftMetaItem implements EnchantmentStorageMeta {
     static final ItemMetaKey STORED_ENCHANTMENTS = new ItemMetaKey("StoredEnchantments", "stored-enchants");
 
     private Map<Enchantment, Integer> enchantments;
 
-    CraftMetaEnchantedBook(CraftMetaItem meta) {
+    public CraftMetaEnchantedBook(CraftMetaItem meta) {
         super(meta);
 
         if (!(meta instanceof CraftMetaEnchantedBook)) {
