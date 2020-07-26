@@ -3,7 +3,6 @@ package red.mohist.configuration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import red.mohist.api.ServerAPI;
 import red.mohist.util.i18n.I18N;
-import red.mohist.util.i18n.Message;
 
 import java.io.File;
 import java.lang.reflect.Field;
