@@ -151,4 +151,9 @@ public class MohistConfig extends ConfigBase {
             ex.printStackTrace();
         }
     }
+
+    public boolean RealTimeTicking(){
+        return RealTimeTicking.getValue();
+    }
+
 }

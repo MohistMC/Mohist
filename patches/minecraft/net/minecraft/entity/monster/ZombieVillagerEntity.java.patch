@@ -8,7 +8,7 @@
  import net.minecraft.util.DamageSource;
  import net.minecraft.util.Hand;
  import net.minecraft.util.SoundEvent;
-@@ -43,15 +44,20 @@
+@@ -43,15 +44,22 @@
  import net.minecraft.world.server.ServerWorld;
  import net.minecraftforge.api.distmarker.Dist;
  import net.minecraftforge.api.distmarker.OnlyIn;
@@ -16,6 +16,8 @@
 +import org.bukkit.entity.ZombieVillager;
 +import org.bukkit.event.entity.EntityPotionEffectEvent.Cause;
 +import org.bukkit.event.entity.EntityTransformEvent;
++import red.mohist.common.RealTimeTicking;
++import red.mohist.configuration.MohistConfig;
  
  public class ZombieVillagerEntity extends ZombieEntity implements IVillagerDataHolder {
 -   private static final DataParameter<Boolean> field_184739_bx = EntityDataManager.func_187226_a(ZombieVillagerEntity.class, DataSerializers.field_187198_h);
@@ -32,7 +34,7 @@
  
     public ZombieVillagerEntity(EntityType<? extends ZombieVillagerEntity> p_i50186_1_, World p_i50186_2_) {
        super(p_i50186_1_, p_i50186_2_);
-@@ -110,6 +116,11 @@
+@@ -110,6 +118,11 @@
     public void func_70071_h_() {
        if (!this.field_70170_p.field_72995_K && this.func_70089_S() && this.func_82230_o()) {
           int i = this.func_190735_dq();
@@ -44,7 +46,7 @@
           this.field_82234_d -= i;
           if (this.field_82234_d <= 0) {
              this.func_213791_a((ServerWorld)this.field_70170_p);
-@@ -149,12 +160,15 @@
+@@ -149,12 +162,15 @@
        return this.func_184212_Q().func_187225_a(field_184739_bx);
     }
  
@@ -63,7 +65,7 @@
        this.field_70170_p.func_72960_a(this, (byte)16);
     }
  
-@@ -203,7 +217,7 @@
+@@ -203,7 +219,7 @@
           villagerentity.func_70873_a(-24000);
        }
  
@@ -72,7 +74,7 @@
        villagerentity.func_94061_f(this.func_175446_cd());
        if (this.func_145818_k_()) {
           villagerentity.func_200203_b(this.func_200201_e());
-@@ -215,7 +229,16 @@
+@@ -215,7 +231,16 @@
        }
  
        villagerentity.func_184224_h(this.func_190530_aW());
@@ -90,7 +92,7 @@
        if (this.field_191992_by != null) {
           PlayerEntity playerentity = p_213791_1_.func_217371_b(this.field_191992_by);
           if (playerentity instanceof ServerPlayerEntity) {
-@@ -224,7 +247,7 @@
+@@ -224,7 +249,7 @@
           }
        }
  
@@ -99,3 +101,13 @@
        p_213791_1_.func_217378_a((PlayerEntity)null, 1027, new BlockPos(this), 0);
     }
  
+@@ -250,7 +275,8 @@
+          }
+       }
+ 
+-      return i;
++      int ticks = (int) ((RealTimeTicking) this.func_130014_f_()).getRealTimeTicks();
++      return MohistConfig.instance.RealTimeTicking() ? i * ticks : i;
+    }
+ 
+    protected float func_70647_i() {

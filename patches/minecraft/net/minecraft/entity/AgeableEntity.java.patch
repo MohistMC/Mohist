@@ -1,10 +1,12 @@
 --- a/net/minecraft/entity/AgeableEntity.java
 +++ b/net/minecraft/entity/AgeableEntity.java
-@@ -14,17 +14,43 @@
+@@ -14,17 +14,55 @@
  import net.minecraft.world.DifficultyInstance;
  import net.minecraft.world.IWorld;
  import net.minecraft.world.World;
 +import org.bukkit.event.entity.CreatureSpawnEvent;
++import red.mohist.common.RealTimeTicking;
++import red.mohist.configuration.MohistConfig;
  
  public abstract class AgeableEntity extends CreatureEntity {
     private static final DataParameter<Boolean> field_184751_bv = EntityDataManager.func_187226_a(AgeableEntity.class, DataSerializers.field_187198_h);
@@ -31,11 +33,21 @@
 +         if ( i < 0 )
 +         {
 +            ++i;
-+            this.func_70873_a( i );
++            if (MohistConfig.instance.RealTimeTicking()) {
++               int diff = (int) ((RealTimeTicking) this.func_130014_f_()).getRealTimeTicks() - 1;
++               this.func_70873_a(Math.min(0, i + diff));
++            } else {
++               this.func_70873_a( i );
++            }
 +         } else if ( i > 0 )
 +         {
 +            --i;
-+            this.func_70873_a( i );
++            if (MohistConfig.instance.RealTimeTicking()) {
++               int diff = (int) ((RealTimeTicking) this.func_130014_f_()).getRealTimeTicks() - 1;
++               this.func_70873_a(Math.min(0, i - diff));
++            } else {
++               this.func_70873_a( i );
++            }
 +         }
 +      }
 +   }
@@ -44,7 +56,7 @@
     public ILivingEntityData func_213386_a(IWorld p_213386_1_, DifficultyInstance p_213386_2_, SpawnReason p_213386_3_, @Nullable ILivingEntityData p_213386_4_, @Nullable CompoundNBT p_213386_5_) {
        if (p_213386_4_ == null) {
           p_213386_4_ = new AgeableEntity.AgeableData();
-@@ -54,7 +80,7 @@
+@@ -54,7 +92,7 @@
              if (ageableentity != null) {
                 ageableentity.func_70873_a(-24000);
                 ageableentity.func_70012_b(this.func_226277_ct_(), this.func_226278_cu_(), this.func_226281_cx_(), 0.0F, 0.0F);
@@ -53,7 +65,7 @@
                 if (itemstack.func_82837_s()) {
                    ageableentity.func_200203_b(itemstack.func_200301_q());
                 }
-@@ -125,12 +151,14 @@
+@@ -125,12 +163,14 @@
        super.func_213281_b(p_213281_1_);
        p_213281_1_.func_74768_a("Age", this.func_70874_b());
        p_213281_1_.func_74768_a("ForcedAge", this.field_175502_b);
@@ -68,7 +80,7 @@
     }
  
     public void func_184206_a(DataParameter<?> p_184206_1_) {
-@@ -143,7 +171,7 @@
+@@ -143,7 +183,7 @@
  
     public void func_70636_d() {
        super.func_70636_d();
