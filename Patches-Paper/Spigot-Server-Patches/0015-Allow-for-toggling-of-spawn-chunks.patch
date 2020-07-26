@@ -1,0 +1,33 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Zach Brown <zach.brown@destroystokyo.com>
+Date: Thu, 3 Mar 2016 03:53:43 -0600
+Subject: [PATCH] Allow for toggling of spawn chunks
+
+
+diff --git a/src/main/java/com/destroystokyo/paper/PaperWorldConfig.java b/src/main/java/com/destroystokyo/paper/PaperWorldConfig.java
+index 2845686411615245137cfe1a155088a865a4d3a0..8ee2b9bb1bce698fce50ac1b3fc477fcafd0542c 100644
+--- a/src/main/java/com/destroystokyo/paper/PaperWorldConfig.java
++++ b/src/main/java/com/destroystokyo/paper/PaperWorldConfig.java
+@@ -113,4 +113,10 @@ public class PaperWorldConfig {
+         softDespawnDistance = softDespawnDistance*softDespawnDistance;
+         hardDespawnDistance = hardDespawnDistance*hardDespawnDistance;
+     }
++
++    public boolean keepSpawnInMemory;
++    private void keepSpawnInMemory() {
++        keepSpawnInMemory = getBoolean("keep-spawn-loaded", true);
++        log("Keep spawn chunk loaded: " + keepSpawnInMemory);
++    }
+ }
+diff --git a/src/main/java/net/minecraft/server/World.java b/src/main/java/net/minecraft/server/World.java
+index 740c59004514a332ebe556c4e91f84bd9bf4a11d..b69d84baf8d318968ef171232e493a315f71814b 100644
+--- a/src/main/java/net/minecraft/server/World.java
++++ b/src/main/java/net/minecraft/server/World.java
+@@ -142,6 +142,7 @@ public abstract class World implements GeneratorAccess, AutoCloseable {
+         });
+         // CraftBukkit end
+         timings = new co.aikar.timings.WorldTimingsHandler(this); // Paper - code below can generate new world and access timings
++        this.keepSpawnInMemory = this.paperConfig.keepSpawnInMemory; // Paper
+         this.entityLimiter = new org.spigotmc.TickLimiter(spigotConfig.entityMaxTickTime);
+         this.tileLimiter = new org.spigotmc.TickLimiter(spigotConfig.tileMaxTickTime);
+     }

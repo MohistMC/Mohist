@@ -157,20 +157,28 @@
        ServerProperties serverproperties = this.field_71340_o.func_219034_a();
        if (this.func_71264_H()) {
           this.func_71189_e("127.0.0.1");
-@@ -127,7 +199,11 @@
+@@ -127,6 +199,20 @@
           this.func_190517_e(serverproperties.field_219008_b);
           this.func_71189_e(serverproperties.field_219009_c);
        }
--
 +      // Spigot start
 +      this.func_184105_a((PlayerList) (new DedicatedPlayerList(this)));
 +      org.spigotmc.SpigotConfig.init((File) options.valueOf("spigot-settings"));
 +      org.spigotmc.SpigotConfig.registerCommands();
 +      // Spigot end
++      // Paper start
++      try {
++         com.destroystokyo.paper.PaperConfig.init((File) options.valueOf("paper-settings"));
++      } catch (Exception e) {
++         DedicatedServer.field_155771_h.error("Unable to load server configuration", e);
++         return false;
++      }
++      com.destroystokyo.paper.PaperConfig.registerCommands();
++      // Paper end
+ 
        this.func_71251_e(serverproperties.field_219010_d);
        this.func_71257_f(serverproperties.field_219011_e);
-       this.func_71188_g(serverproperties.field_219012_f);
-@@ -161,10 +237,25 @@
+@@ -161,10 +247,25 @@
           return false;
        }
  
@@ -197,7 +205,7 @@
           field_155771_h.warn("To change this, set \"online-mode\" to \"true\" in the server.properties file.");
        }
  
-@@ -175,7 +266,9 @@
+@@ -175,7 +276,9 @@
        if (!PreYggdrasilConverter.func_219587_e(this)) {
           return false;
        } else {
@@ -208,7 +216,7 @@
           long i = Util.func_211178_c();
           String s = serverproperties.field_219022_p;
           String s1 = serverproperties.field_219024_r;
-@@ -196,18 +289,36 @@
+@@ -196,18 +299,36 @@
           SkullTileEntity.func_184293_a(this.func_152358_ax());
           SkullTileEntity.func_184294_a(this.func_147130_as());
           PlayerProfileCache.func_187320_a(this.func_71266_T());
@@ -246,7 +254,7 @@
           if (serverproperties.field_219027_u != null) {
              this.func_200252_aR().func_223585_a(GameRules.field_223620_w).func_223570_a(serverproperties.field_219027_u, this);
           }
-@@ -222,9 +333,10 @@
+@@ -222,9 +343,10 @@
              field_155771_h.info("Starting remote control listener");
              this.field_71339_n = new MainThread(this);
              this.field_71339_n.func_72602_a();
@@ -258,7 +266,7 @@
              Thread thread1 = new Thread(new ServerHangWatchdog(this));
              thread1.setUncaughtExceptionHandler(new DefaultWithNameUncaughtExceptionHandler(field_155771_h));
              thread1.setName("Server Watchdog");
-@@ -233,7 +345,8 @@
+@@ -233,7 +355,8 @@
           }
  
           Items.field_190931_a.func_150895_a(ItemGroup.field_78027_g, NonNullList.func_191196_a());
@@ -268,7 +276,7 @@
        }
     }
  
-@@ -316,7 +429,7 @@
+@@ -316,7 +439,7 @@
        if (this.field_71342_m != null) {
           this.field_71342_m.func_219591_b();
        }
@@ -277,7 +285,7 @@
     }
  
     public void func_71190_q(BooleanSupplier p_71190_1_) {
-@@ -343,11 +456,20 @@
+@@ -343,11 +466,20 @@
     }
  
     public void func_71333_ah() {
@@ -300,7 +308,7 @@
     }
  
     public boolean func_71262_S() {
-@@ -522,13 +644,39 @@
+@@ -522,13 +654,39 @@
     }
  
     public String func_71258_A() {
@@ -342,7 +350,7 @@
        });
        return this.field_184115_n.func_70008_c();
     }
-@@ -547,4 +695,21 @@
+@@ -547,4 +705,21 @@
     public boolean func_213199_b(GameProfile p_213199_1_) {
        return false;
     }

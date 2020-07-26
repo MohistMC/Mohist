@@ -1156,7 +1156,27 @@
     }
  
     public void func_70623_bb() {
-@@ -2726,4 +3218,69 @@
+@@ -2722,8 +3214,88 @@
+       this.func_70012_b(p_225653_1_, p_225653_3_, p_225653_5_, this.field_70177_z, this.field_70125_A);
+    }
+ 
+-   @FunctionalInterface
++   public int chunkX; public int getChunkX() {
++      return chunkX;
++   }
++   // Paper - OBFHELPER
++
++   public int chunkY; public int getChunkY() {
++      return chunkY;
++   }
++   // Paper - OBFHELPER
++
++   public int chunkZ; public int getChunkZ() {
++      return chunkZ;
++   }
++   // Paper - OBFHELPER
++
++    @FunctionalInterface
     public interface IMoveCallback {
        void accept(Entity p_accept_1_, double p_accept_2_, double p_accept_4_, double p_accept_6_);
     }
