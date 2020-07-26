@@ -25,9 +25,12 @@ import org.bukkit.potion.PotionEffectType;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import red.mohist.entity.CraftCustomAbstractHorse;
+import red.mohist.entity.CraftCustomChestHorse;
+import red.mohist.entity.CraftCustomEntity;
+import red.mohist.entity.CustomProjectileEntity;
 import red.mohist.forge.MohistMod;
 import red.mohist.util.i18n.LocalizedException;
-import red.mohist.util.i18n.Message;
 
 public enum EntityType implements Keyed {
 
@@ -281,6 +284,11 @@ public enum EntityType implements Keyed {
      */
     LIGHTNING("lightning_bolt", LightningStrike.class, -1, false),
     PLAYER("player", Player.class, -1, false),
+    FORGE_MOD("forge_mod", CraftCustomEntity.class, -1, false),
+    FORGE_MOD_HORSE("forge_mod_horse", CraftCustomAbstractHorse.class, -1, false),
+    FORGE_MOD_PROJECTILE("forge_mod_projectile", CustomProjectileEntity.class, -1, false),
+    FORGE_MOD_CHEST_HORSE("forge_mod_chest_horse", CraftCustomChestHorse.class, -1, false),
+
     /**
      * An unknown entity without an Entity Class
      */
