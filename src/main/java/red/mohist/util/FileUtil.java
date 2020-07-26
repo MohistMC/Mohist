@@ -6,6 +6,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.URL;
 
 public class FileUtil {
 
@@ -106,6 +107,27 @@ public class FileUtil {
             tOStream.write(pData, pOffest, pLength);
         } finally {
             IOUtil.closeStream(tOStream);
+        }
+    }
+
+    public static InputStream read(String name) {
+        return FileUtil.class.getResourceAsStream(name);
+    }
+
+    public static boolean has(String name) {
+        try {
+            FileUtil.class.getResource(name).getFile();
+        } catch (Exception e) {
+            return false;
+        }
+        return true;
+    }
+
+    public static URL getFile(String name) {
+        if (!FileUtil.has(name)) {
+            return null;
+        } else {
+            return FileUtil.class.getResource(name);
         }
     }
 }

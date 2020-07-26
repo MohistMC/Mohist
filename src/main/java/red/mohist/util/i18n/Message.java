@@ -4,6 +4,7 @@ import java.io.File;
 import java.text.MessageFormat;
 import java.util.Locale;
 import java.util.ResourceBundle;
+
 import red.mohist.configuration.MohistConfigUtil;
 
 public class Message {
@@ -23,10 +24,10 @@ public class Message {
         if (locale.length() == 5) {
             String language = locale.substring(0, 2);
             String country = locale.substring(3, 5);
-            if(key == 1) {
+            if (key == 1) {
                 return language;
             }
-            if(key == 2) {
+            if (key == 2) {
                 return country;
             }
         }
@@ -45,7 +46,7 @@ public class Message {
         return Message.rb.getLocale().toString();
     }
 
-    public static boolean isCN(){
+    public static boolean isCN() {
         return Message.getLocale().contains("CN") || Message.getCountry().contains("CN");
     }
 }
