@@ -13,7 +13,7 @@ public class CraftMetaArmorStand extends CraftMetaItem {
     static final ItemMetaKey ENTITY_TAG = new ItemMetaKey("EntityTag", "entity-tag");
     CompoundNBT entityTag;
 
-    CraftMetaArmorStand(CraftMetaItem meta) {
+    public CraftMetaArmorStand(CraftMetaItem meta) {
         super(meta);
     }
 

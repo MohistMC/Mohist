@@ -1,9 +1,9 @@
-package io.izzel.arclight.common.mod.server.event;
+package red.mohist.forge.event;
 
-import io.izzel.arclight.common.bridge.entity.LivingEntityBridge;
+import net.minecraft.entity.LivingEntity;
 import net.minecraftforge.event.entity.living.PotionEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import org.bukkit.craftbukkit.v.event.CraftEventFactory;
+import org.bukkit.craftbukkit.v1_15_R1.event.CraftEventFactory;
 import org.bukkit.event.entity.EntityPotionEffectEvent;
 
 public class EntityPotionEffectEventDispatcher {
@@ -14,8 +14,8 @@ public class EntityPotionEffectEventDispatcher {
         if (event.getPotionEffect() == null) {
             return;
         }
-        EntityPotionEffectEvent.Cause cause = ((LivingEntityBridge) event.getEntityLiving()).bridge$getEffectCause().orElse(EntityPotionEffectEvent.Cause.UNKNOWN);
-        EntityPotionEffectEvent.Action action = ((LivingEntityBridge) event.getEntityLiving()).bridge$getAndResetAction();
+        EntityPotionEffectEvent.Cause cause = ((LivingEntity) event.getEntityLiving()).getEffectCause().orElse(EntityPotionEffectEvent.Cause.UNKNOWN);
+        EntityPotionEffectEvent.Action action = ((LivingEntity) event.getEntityLiving()).getAndResetAction();
         EntityPotionEffectEvent bukkitEvent = CraftEventFactory.callEntityPotionEffectChangeEvent(event.getEntityLiving(), event.getPotionEffect(), null, cause, action);
         event.setCanceled(bukkitEvent.isCancelled());
     }

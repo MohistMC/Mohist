@@ -25,7 +25,7 @@ public class CraftMetaSuspiciousStew extends CraftMetaItem implements Suspicious
 
     private List<PotionEffect> customEffects;
 
-    CraftMetaSuspiciousStew(CraftMetaItem meta) {
+    public CraftMetaSuspiciousStew(CraftMetaItem meta) {
         super(meta);
         if (!(meta instanceof CraftMetaSuspiciousStew)) {
             return;

@@ -23,7 +23,7 @@ public class CraftMetaKnowledgeBook extends CraftMetaItem implements KnowledgeBo
 
     protected List<NamespacedKey> recipes = new ArrayList<NamespacedKey>();
 
-    CraftMetaKnowledgeBook(CraftMetaItem meta) {
+    public CraftMetaKnowledgeBook(CraftMetaItem meta) {
         super(meta);
 
         if (meta instanceof CraftMetaKnowledgeBook) {

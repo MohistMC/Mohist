@@ -10,12 +10,13 @@ import org.bukkit.craftbukkit.v1_15_R1.inventory.CraftMetaItem.SerializableMeta;
 import org.bukkit.inventory.meta.FireworkEffectMeta;
 
 @DelegateDeserialization(SerializableMeta.class)
+public
 class CraftMetaCharge extends CraftMetaItem implements FireworkEffectMeta {
     static final ItemMetaKey EXPLOSION = new ItemMetaKey("Explosion", "firework-effect");
 
     private FireworkEffect effect;
 
-    CraftMetaCharge(CraftMetaItem meta) {
+    public CraftMetaCharge(CraftMetaItem meta) {
         super(meta);
 
         if (meta instanceof CraftMetaCharge) {

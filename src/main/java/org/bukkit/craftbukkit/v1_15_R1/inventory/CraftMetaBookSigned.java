@@ -14,9 +14,10 @@ import org.bukkit.craftbukkit.v1_15_R1.util.CraftMagicNumbers;
 import org.bukkit.inventory.meta.BookMeta;
 
 @DelegateDeserialization(SerializableMeta.class)
+public
 class CraftMetaBookSigned extends CraftMetaBook implements BookMeta {
 
-    CraftMetaBookSigned(CraftMetaItem meta) {
+    public CraftMetaBookSigned(CraftMetaItem meta) {
         super(meta);
     }
 

@@ -22,6 +22,7 @@ import org.bukkit.potion.PotionEffectType;
 import org.bukkit.potion.PotionType;
 
 @DelegateDeserialization(SerializableMeta.class)
+public
 class CraftMetaPotion extends CraftMetaItem implements PotionMeta {
     static final ItemMetaKey AMPLIFIER = new ItemMetaKey("Amplifier", "amplifier");
     static final ItemMetaKey AMBIENT = new ItemMetaKey("Ambient", "ambient");
@@ -39,7 +40,7 @@ class CraftMetaPotion extends CraftMetaItem implements PotionMeta {
     private List<PotionEffect> customEffects;
     private Color color;
 
-    CraftMetaPotion(CraftMetaItem meta) {
+    public CraftMetaPotion(CraftMetaItem meta) {
         super(meta);
         if (!(meta instanceof CraftMetaPotion)) {
             return;

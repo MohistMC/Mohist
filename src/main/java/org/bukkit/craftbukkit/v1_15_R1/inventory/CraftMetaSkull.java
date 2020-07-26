@@ -19,6 +19,7 @@ import org.bukkit.craftbukkit.v1_15_R1.util.CraftMagicNumbers;
 import org.bukkit.inventory.meta.SkullMeta;
 
 @DelegateDeserialization(SerializableMeta.class)
+public
 class CraftMetaSkull extends CraftMetaItem implements SkullMeta {
 
     @ItemMetaKey.Specific(ItemMetaKey.Specific.To.NBT)
@@ -30,7 +31,7 @@ class CraftMetaSkull extends CraftMetaItem implements SkullMeta {
     private GameProfile profile;
     private CompoundNBT serializedProfile;
 
-    CraftMetaSkull(CraftMetaItem meta) {
+    public CraftMetaSkull(CraftMetaItem meta) {
         super(meta);
         if (!(meta instanceof CraftMetaSkull)) {
             return;

@@ -39,7 +39,7 @@ public class CraftMetaBook extends CraftMetaItem implements BookMeta {
     public List<ITextComponent> pages = new ArrayList<ITextComponent>();
     protected Integer generation;
 
-    CraftMetaBook(CraftMetaItem meta) {
+    public CraftMetaBook(CraftMetaItem meta) {
         super(meta);
 
         if (meta instanceof CraftMetaBook) {

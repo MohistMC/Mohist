@@ -21,6 +21,7 @@ import org.bukkit.craftbukkit.v1_15_R1.util.CraftMagicNumbers;
 import org.bukkit.inventory.meta.FireworkMeta;
 
 @DelegateDeserialization(SerializableMeta.class)
+public
 class CraftMetaFirework extends CraftMetaItem implements FireworkMeta {
     /*
        "Fireworks", "Explosion", "Explosions", "Flight", "Type", "Trail", "Flicker", "Colors", "FadeColors";
@@ -55,7 +56,7 @@ class CraftMetaFirework extends CraftMetaItem implements FireworkMeta {
     private List<FireworkEffect> effects;
     private int power;
 
-    CraftMetaFirework(CraftMetaItem meta) {
+    public CraftMetaFirework(CraftMetaItem meta) {
         super(meta);
 
         if (!(meta instanceof CraftMetaFirework)) {

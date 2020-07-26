@@ -104,6 +104,7 @@ import org.bukkit.persistence.PersistentDataContainer;
  * <li> SerializableMeta.Deserializers deserializer()
  */
 @DelegateDeserialization(CraftMetaItem.SerializableMeta.class)
+public
 class CraftMetaItem implements ItemMeta, Damageable, Repairable, BlockDataMeta {
 
     static class ItemMetaKey {
@@ -284,7 +285,7 @@ class CraftMetaItem implements ItemMeta, Damageable, Repairable, BlockDataMeta {
 
     private int version = CraftMagicNumbers.INSTANCE.getDataVersion(); // Internal use only
 
-    CraftMetaItem(CraftMetaItem meta) {
+    public CraftMetaItem(CraftMetaItem meta) {
         if (meta == null) {
             return;
         }

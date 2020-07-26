@@ -24,7 +24,7 @@ public class CraftMetaCrossbow extends CraftMetaItem implements CrossbowMeta {
     private boolean charged;
     private List<ItemStack> chargedProjectiles;
 
-    CraftMetaCrossbow(CraftMetaItem meta) {
+    public CraftMetaCrossbow(CraftMetaItem meta) {
         super(meta);
 
         if (!(meta instanceof CraftMetaCrossbow)) {

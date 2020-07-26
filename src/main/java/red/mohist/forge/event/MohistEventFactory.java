@@ -1,9 +1,8 @@
-package io.izzel.arclight.common.mod.server.event;
+package red.mohist.forge.event;
 
-import io.izzel.arclight.common.bridge.entity.LivingEntityBridge;
 import net.minecraft.entity.LivingEntity;
 import org.bukkit.Bukkit;
-import org.bukkit.craftbukkit.v.entity.CraftLivingEntity;
+import org.bukkit.craftbukkit.v1_15_R1.entity.CraftLivingEntity;
 import org.bukkit.entity.Entity;
 import org.bukkit.event.Event;
 import org.bukkit.event.entity.EntityDeathEvent;
@@ -14,7 +13,7 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.List;
 
-public abstract class ArclightEventFactory {
+public abstract class MohistEventFactory {
 
     public static void callEvent(Event event) {
         Bukkit.getPluginManager().callEvent(event);
@@ -33,10 +32,10 @@ public abstract class ArclightEventFactory {
     }
 
     public static void callEntityDeathEvent(LivingEntity entity, List<ItemStack> drops) {
-        CraftLivingEntity craftLivingEntity = ((LivingEntityBridge) entity).bridge$getBukkitEntity();
-        EntityDeathEvent event = new EntityDeathEvent(craftLivingEntity, drops, ((LivingEntityBridge) entity).bridge$getExpReward());
+        CraftLivingEntity craftLivingEntity = (CraftLivingEntity) ((LivingEntity) entity).getBukkitEntity();
+        EntityDeathEvent event = new EntityDeathEvent(craftLivingEntity, drops, ((LivingEntity) entity).getExpReward());
         callEvent(event);
-        ((LivingEntityBridge) entity).bridge$setExpToDrop(event.getDroppedExp());
+        ((LivingEntity) entity).setExpToDrop(event.getDroppedExp());
     }
 
     public static EntityDeathEvent callEntityDeathEvent(org.bukkit.entity.LivingEntity entity, List<ItemStack> drops, int droppedExp) {

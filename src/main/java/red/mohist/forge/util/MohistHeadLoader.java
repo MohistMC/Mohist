@@ -1,4 +1,4 @@
-package io.izzel.arclight.common.mod.util;
+package red.mohist.forge.util;
 
 import com.google.common.cache.CacheLoader;
 import com.google.common.collect.Iterables;
@@ -9,11 +9,12 @@ import com.mojang.authlib.properties.Property;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.tileentity.SkullTileEntity;
 import org.bukkit.Bukkit;
-import org.bukkit.craftbukkit.v.CraftServer;
+import org.bukkit.craftbukkit.v1_15_R1.CraftServer;
 
 import java.util.UUID;
 
-public class ArclightHeadLoader extends CacheLoader<String, GameProfile> {
+
+public class MohistHeadLoader extends CacheLoader<String, GameProfile> {
 
     @Override
     public GameProfile load(String key) {
