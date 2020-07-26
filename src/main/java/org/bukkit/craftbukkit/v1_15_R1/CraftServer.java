@@ -1329,7 +1329,7 @@ public final class CraftServer implements Server {
     @Override
     public ItemStack createExplorerMap(World world, Location location, StructureType structureType, int radius, boolean findUnexplored) {
         Validate.notNull(world, I18N.get("server.error.2", "World cannot be null"));
-        Validate.notNull(structureType, I18N.get("server.error.3", "StructureType cannot be null");
+        Validate.notNull(structureType, I18N.get("server.error.3", "StructureType cannot be null"));
         Validate.notNull(structureType.getMapIcon(), I18N.get("server.error.4", "Cannot create explorer maps for StructureType {0}", structureType.getName()));
 
         ServerWorld worldServer = ((CraftWorld) world).getHandle();
