@@ -22,9 +22,10 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.potion.PotionType;
 import red.mohist.api.ServerAPI;
-import red.mohist.util.i18n.I18N;
+import red.mohist.util.i18n.Message;
 
 public class DumpCommand extends Command {
+
     public DumpCommand(String name) {
         super(name);
         this.description = "Universal Dump, which will print the information you need locally!";
@@ -51,7 +52,7 @@ public class DumpCommand extends Command {
     @Override
     public boolean execute(CommandSender sender, String commandLabel, String[] args) {
         if (!sender.isOp() || !testPermission(sender)) {
-            sender.sendMessage(I18N.get("command.nopermission"));
+            sender.sendMessage(Message.getString("command.nopermission"));
             return true;
         }
         if (args.length == 0) {
