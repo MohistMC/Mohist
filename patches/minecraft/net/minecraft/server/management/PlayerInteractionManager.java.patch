@@ -29,7 +29,7 @@
  import net.minecraft.tileentity.TileEntity;
  import net.minecraft.util.ActionResult;
  import net.minecraft.util.ActionResultType;
-@@ -26,6 +35,12 @@
+@@ -26,6 +35,14 @@
  import net.minecraft.world.server.ServerWorld;
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
@@ -39,10 +39,12 @@
 +import org.bukkit.event.block.Action;
 +import org.bukkit.event.block.BlockBreakEvent;
 +import org.bukkit.event.player.PlayerInteractEvent;
++import red.mohist.common.RealTimeTicking;
++import red.mohist.configuration.MohistConfig;
  
  public class PlayerInteractionManager {
     private static final Logger field_225418_c = LogManager.getLogger();
-@@ -49,7 +64,7 @@
+@@ -49,7 +66,7 @@
        this.field_73091_c = p_73076_1_;
        p_73076_1_.func_77147_a(this.field_73090_b.field_71075_bZ);
        this.field_73090_b.func_71016_p();
@@ -51,12 +53,17 @@
        this.field_73092_a.func_72854_c();
     }
  
-@@ -74,10 +89,10 @@
+@@ -74,10 +91,15 @@
     }
  
     public void func_73075_a() {
 -      ++this.field_73100_i;
-+      this.field_73100_i = MinecraftServer.currentTick; // CraftBukkit
++      if(MohistConfig.instance.RealTimeTicking()) {
++         int ticks = (int) ((RealTimeTicking) Objects.requireNonNull(this.field_73092_a.func_73046_m())).getRealTimeTicks();
++         this.field_73100_i += ticks;
++      } else {
++         this.field_73100_i = MinecraftServer.currentTick; // CraftBukkit
++      }
        if (this.field_73097_j) {
           BlockState blockstate = this.field_73092_a.func_180495_p(this.field_180241_i);
 -         if (blockstate.func_196958_f()) {
@@ -64,7 +71,7 @@
              this.field_73097_j = false;
           } else {
              float f = this.func_229859_a_(blockstate, this.field_180241_i, this.field_73093_n);
-@@ -88,7 +103,7 @@
+@@ -88,7 +110,7 @@
           }
        } else if (this.field_73088_d) {
           BlockState blockstate1 = this.field_73092_a.func_180495_p(this.field_180240_f);
@@ -73,7 +80,7 @@
              this.field_73092_a.func_175715_c(this.field_73090_b.func_145782_y(), this.field_180240_f, -1);
              this.field_73094_o = -1;
              this.field_73088_d = false;
-@@ -116,17 +131,45 @@
+@@ -116,17 +138,45 @@
        double d1 = this.field_73090_b.func_226278_cu_() - ((double)p_225416_1_.func_177956_o() + 0.5D) + 1.5D;
        double d2 = this.field_73090_b.func_226281_cx_() - ((double)p_225416_1_.func_177952_p() + 0.5D);
        double d3 = d0 * d0 + d1 * d1 + d2 * d2;
@@ -120,7 +127,7 @@
              if (this.func_73083_d()) {
                 if (!this.field_73092_a.func_175719_a((PlayerEntity)null, p_225416_1_, p_225416_3_)) {
                    this.func_229860_a_(p_225416_1_, p_225416_2_, "creative destroy");
-@@ -142,16 +185,49 @@
+@@ -142,16 +192,49 @@
                 return;
              }
  
@@ -173,7 +180,7 @@
                 this.func_229860_a_(p_225416_1_, p_225416_2_, "insta mine");
              } else {
                 if (this.field_73088_d) {
-@@ -191,7 +267,7 @@
+@@ -191,7 +274,7 @@
           } else if (p_225416_2_ == CPlayerDiggingPacket.Action.ABORT_DESTROY_BLOCK) {
              this.field_73088_d = false;
              if (!Objects.equals(this.field_180240_f, p_225416_1_)) {
@@ -182,7 +189,7 @@
                 this.field_73092_a.func_175715_c(this.field_73090_b.func_145782_y(), this.field_180240_f, -1);
                 this.field_73090_b.field_71135_a.func_147359_a(new SPlayerDiggingPacket(this.field_180240_f, this.field_73092_a.func_180495_p(this.field_180240_f), p_225416_2_, true, "aborted mismatched destroying"));
              }
-@@ -207,53 +283,130 @@
+@@ -207,53 +290,130 @@
        if (this.func_180237_b(p_229860_1_)) {
           this.field_73090_b.field_71135_a.func_147359_a(new SPlayerDiggingPacket(p_229860_1_, this.field_73092_a.func_180495_p(p_229860_1_), p_229860_2_, true, p_229860_3_));
        } else {
@@ -324,7 +331,7 @@
           int i = p_187250_3_.func_190916_E();
           int j = p_187250_3_.func_77952_i();
           ActionResult<ItemStack> actionresult = p_187250_3_.func_77957_a(p_187250_2_, p_187250_1_, p_187250_4_);
-@@ -284,11 +437,39 @@
+@@ -284,11 +444,39 @@
        }
     }
  
@@ -364,7 +371,7 @@
           if (inamedcontainerprovider != null) {
              p_219441_1_.func_213829_a(inamedcontainerprovider);
              return ActionResultType.SUCCESS;
-@@ -296,17 +477,25 @@
+@@ -296,17 +484,25 @@
              return ActionResultType.PASS;
           }
        } else {
@@ -396,7 +403,7 @@
              if (this.func_73083_d()) {
                 int i = p_219441_3_.func_190916_E();
                 ActionResultType actionresulttype1 = p_219441_3_.func_196084_a(itemusecontext);
-@@ -315,10 +504,10 @@
+@@ -315,10 +511,10 @@
              } else {
                 return p_219441_3_.func_196084_a(itemusecontext);
              }

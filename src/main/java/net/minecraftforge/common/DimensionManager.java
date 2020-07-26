@@ -76,6 +76,8 @@ import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 import org.bukkit.generator.ChunkGenerator;
+import red.mohist.configuration.MohistConfig;
+import red.mohist.util.NumberUtils;
 
 public class DimensionManager
 {
@@ -103,7 +105,6 @@ public class DimensionManager
      * @param type ModDimension type data
      * @param data Extra data for the ModDimension
      * @param hasSkyLight does this dimension have a skylight?
-     * @param magnifier The biome generation processor
      * @return the DimensionType for the dimension.
      */
     public static DimensionType registerOrGetDimension(ResourceLocation name, ModDimension type, PacketBuffer data, boolean hasSkyLight) {
@@ -119,16 +120,15 @@ public class DimensionManager
      * @param type Dimension Type.
      * @param data Configuration data for this dimension, passed into
      * @param hasSkyLight skylight for this dimension
-     * @param magnifier The biome generation processor
      * @return the DimensionType for the dimension.
      */
     public static DimensionType registerDimension(ResourceLocation name, ModDimension type, PacketBuffer data, boolean hasSkyLight)
     {
+        int id = REGISTRY.getNextId();
         Validate.notNull(name, "Can not register a dimension with null name");
         Validate.isTrue(!REGISTRY.containsKey(name), "Dimension: " + name + " Already registered");
         Validate.notNull(type, "Can not register a null dimension type");
 
-        int id = REGISTRY.getNextId();
         SavedEntry old = savedEntries.get(name);
         if (old != null)
         {
@@ -195,13 +195,15 @@ public class DimensionManager
             return null;
         }
 
-        if (resetUnloadDelay && unloadQueue.contains(dim.getId()))
+        if (resetUnloadDelay && unloadQueue.contains(dim.getId())) {
             getData(dim).ticksWaited = 0;
+        }
 
         @SuppressWarnings("deprecation")
         ServerWorld ret = server.forgeGetWorldMap().get(dim);
-        if (ret == null && forceLoad)
+        if (ret == null && forceLoad) {
             ret = initWorld(server, dim);
+        }
         return ret;
     }
 
@@ -318,8 +320,13 @@ public class DimensionManager
     {
         if (world == null || !canUnloadWorld(world))
             return;
-
         int id = world.getDimension().getType().getId();
+        for (String dim1 : MohistConfig.instance.autounloadWorld_whitelist) {
+            if (dim1.equals("*") || (NumberUtils.isInteger(dim1) && Integer.valueOf(dim1).intValue() == id)) {
+                return;
+            }
+        }
+
         if (unloadQueue.add(id))
             LOGGER.debug(DIMMGR,"Queueing dimension {} to unload", id);
     }
