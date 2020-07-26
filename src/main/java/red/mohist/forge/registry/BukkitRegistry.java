@@ -25,12 +25,10 @@ import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Villager;
-import org.bukkit.potion.PotionEffectType;
 import red.mohist.api.EnumHelper;
 import red.mohist.api.Unsafe;
 import red.mohist.forge.MohistMod;
 import red.mohist.forge.util.ResourceLocationUtil;
-import red.mohist.forge.util.potion.MohistPotionEffect;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -56,8 +54,6 @@ public class BukkitRegistry {
     public static void registerAll() {
         CrashReportExtender.registerCrashCallable("Arclight", () -> new CraftCrashReport().call().toString());
         loadMaterials();
-        loadPotions();
-        loadEnchantments();
         loadEntities();
         loadVillagerProfessions();
         loadBiomes();
@@ -157,33 +153,6 @@ public class BukkitRegistry {
         }
         EnumHelper.addEnums(EntityType.class, newTypes);
         MohistMod.LOGGER.info("registry.entity-type", newTypes.size());
-    }
-
-    private static void loadEnchantments() {
-        int origin = Enchantment.values().length;
-        int size = ForgeRegistries.ENCHANTMENTS.getEntries().size();
-        putBool(Enchantment.class, "acceptingNew", true);
-        for (Map.Entry<ResourceLocation, net.minecraft.enchantment.Enchantment> entry : ForgeRegistries.ENCHANTMENTS.getEntries()) {
-            Enchantment.registerEnchantment(new CraftEnchantment(entry.getValue()));
-        }
-        Enchantment.stopAcceptingRegistrations();
-        MohistMod.LOGGER.info("registry.enchantment", size - origin);
-    }
-
-    private static void loadPotions() {
-        int origin = PotionEffectType.values().length;
-        int size = ForgeRegistries.POTIONS.getEntries().size();
-        PotionEffectType[] types = new PotionEffectType[size + 1];
-        putStatic(PotionEffectType.class, "byId", types);
-        putBool(PotionEffectType.class, "acceptingNew", true);
-        for (Map.Entry<ResourceLocation, Effect> entry : ForgeRegistries.POTIONS.getEntries()) {
-            String name = ResourceLocationUtil.standardize(entry.getKey());
-            MohistPotionEffect effect = new MohistPotionEffect(entry.getValue(), name);
-            PotionEffectType.registerPotionEffectType(effect);
-            MohistMod.LOGGER.debug("Registered {} as potion {}", entry.getKey(), effect);
-        }
-        PotionEffectType.stopAcceptingRegistrations();
-        MohistMod.LOGGER.info("registry.potion", size - origin);
     }
 
     private static void loadMaterials() {
