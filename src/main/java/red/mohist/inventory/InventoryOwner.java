@@ -7,7 +7,7 @@ import net.minecraft.world.World;
 import org.bukkit.block.Block;
 import org.bukkit.craftbukkit.v1_15_R1.block.CraftBlockEntityState;
 import org.bukkit.inventory.InventoryHolder;
-import red.mohist.Mohist;
+import red.mohist.forge.MohistMod;
 
 /**
  * @author Mgazul
@@ -32,7 +32,7 @@ public class InventoryOwner {
         // Spigot start
         org.bukkit.block.Block block = (Block) world.getWorld().getBlockState(pos);
         if (block == null) {
-            Mohist.LOGGER.warn("No block for owner at %s %d %d %d", new Object[]{world.getWorld(), pos.getX(), pos.getY(), pos.getZ()});
+            MohistMod.LOGGER.warn("No block for owner at %s %d %d %d", new Object[]{world.getWorld(), pos.getX(), pos.getY(), pos.getZ()});
             return null;
         }
         // Spigot end

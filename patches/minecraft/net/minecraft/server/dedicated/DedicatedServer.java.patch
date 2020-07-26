@@ -44,7 +44,7 @@
 +import red.mohist.configuration.MohistConfig;
 +import red.mohist.forge.MohistMod;
 +import red.mohist.forge.registry.BukkitRegistry;
-+import red.mohist.util.i18n.Message;
++import red.mohist.util.i18n.I18N;
  
  public class DedicatedServer extends MinecraftServer implements IServer {
     private static final Logger field_155771_h = LogManager.getLogger();
@@ -236,7 +236,7 @@
 +         if (MohistConfig.instance.support_nocmd.getValue()) {
 +            MohistMod.LOGGER.info("Done ({})! For help, type \"help\" or \"?\"", (Object)s2);
 +         } else {
-+            MohistMod.LOGGER.info(Message.getFormatString("server.start.done", new Object[]{s2}));
++            MohistMod.LOGGER.info(I18N.get("server.start.done",s2));
 +         }
 +
 +         Bukkit.getPluginManager().callEvent(new BukkitServerStartDoneEvent());//Mohist
