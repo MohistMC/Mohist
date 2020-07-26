@@ -10,11 +10,9 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
 import org.fusesource.jansi.AnsiConsole;
-import red.mohist.util.i18n.I18N;
 
 public class Main {
     public static boolean useJline = true;
@@ -140,14 +138,6 @@ public class Main {
                         .defaultsTo(new File("paper.yml"))
                         .describedAs("Yml file");
                 // Paper end
-
-                // Mohist Start
-                acceptsAll(asList("mohist", "mohist-settings"), "File for mohist settings")
-                        .withRequiredArg()
-                        .ofType(File.class)
-                        .defaultsTo(new File("mohist-config", "mohist.yml"))
-                        .describedAs("Yml file");
-                // Mohist End
             }
         };
 
@@ -171,14 +161,14 @@ public class Main {
             // Do you love Java using + and ! as string based identifiers? I sure do!
             String path = new File(".").getAbsolutePath();
             if (path.contains("!") || path.contains("+")) {
-                System.err.println(I18N.get("error.start.directory", "Cannot run server in a directory with ! or + in the pathname. Please rename the affected folders and try again."));
+                System.err.println("Cannot run server in a directory with ! or + in the pathname. Please rename the affected folders and try again.");
                 return null;
             }
 
             try {
                 // This trick bypasses Maven Shade's clever rewriting of our getProperty call when using String literals
-                String jline_UnsupportedTerminal = new String(new char[]{'j', 'l', 'i', 'n', 'e', '.', 'U', 'n', 's', 'u', 'p', 'p', 'o', 'r', 't', 'e', 'd', 'T', 'e', 'r', 'm', 'i', 'n', 'a', 'l'});
-                String jline_terminal = new String(new char[]{'j', 'l', 'i', 'n', 'e', '.', 't', 'e', 'r', 'm', 'i', 'n', 'a', 'l'});
+                String jline_UnsupportedTerminal = new String(new char[] {'j','l','i','n','e','.','U','n','s','u','p','p','o','r','t','e','d','T','e','r','m','i','n','a','l'});
+                String jline_terminal = new String(new char[] {'j','l','i','n','e','.','t','e','r','m','i','n','a','l'});
 
                 useJline = !(jline_UnsupportedTerminal).equals(System.getProperty(jline_terminal));
 
@@ -212,7 +202,7 @@ public class Main {
                     }
                 }
 
-                System.out.println(I18N.get("load.libraries", "Loading libraries, please wait..."));
+                System.out.println("Loading libraries, please wait...");
 //                MinecraftServer.main(options);
             } catch (Throwable t) {
                 t.printStackTrace();

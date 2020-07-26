@@ -39,4 +39,3 @@ public interface LocalizedException {
         return (T) new Unchecked();
     }
 }
-
