@@ -10,6 +10,7 @@ import net.minecraftforge.registries.ForgeRegistries;
 import org.bukkit.Material;
 import org.bukkit.craftbukkit.v1_15_R1.util.CraftMagicNumbers;
 import org.bukkit.entity.EntityType;
+import red.mohist.entity.CraftCustomEntity;
 import red.mohist.forge.MohistMod;
 import red.mohist.util.MohistEnumHelper;
 
