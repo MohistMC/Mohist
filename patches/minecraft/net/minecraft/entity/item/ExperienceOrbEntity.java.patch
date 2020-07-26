@@ -8,7 +8,7 @@
  import net.minecraft.entity.MoverType;
  import net.minecraft.entity.player.PlayerEntity;
  import net.minecraft.inventory.EquipmentSlotType;
-@@ -20,6 +21,11 @@
+@@ -20,6 +21,13 @@
  import net.minecraft.world.World;
  import net.minecraftforge.api.distmarker.Dist;
  import net.minecraftforge.api.distmarker.OnlyIn;
@@ -17,18 +17,29 @@
 +import org.bukkit.event.entity.EntityTargetEvent.TargetReason;
 +import org.bukkit.event.entity.EntityTargetLivingEntityEvent;
 +import org.bukkit.event.player.PlayerItemMendEvent;
++import red.mohist.common.RealTimeTicking;
++import red.mohist.configuration.MohistConfig;
  
  public class ExperienceOrbEntity extends Entity {
     public int field_70533_a;
-@@ -51,6 +57,7 @@
+@@ -51,8 +59,15 @@
  
     public void func_70071_h_() {
        super.func_70071_h_();
 +      PlayerEntity prevTarget = this.field_80001_f; // CraftBukkit - store old target
        if (this.field_70532_c > 0) {
-          --this.field_70532_c;
+-         --this.field_70532_c;
++         if(MohistConfig.instance.RealTimeTicking()) {
++            int ticks = (int) ((RealTimeTicking) this.func_130014_f_()).getRealTimeTicks();
++            this.field_70532_c = Math.max(0, this.field_70532_c - ticks);
++         } else {
++            --this.field_70532_c;
++         }
++
        }
-@@ -86,7 +93,22 @@
+ 
+       this.field_70169_q = this.func_226277_ct_();
+@@ -86,7 +101,22 @@
           this.field_80001_f = null;
        }
  
@@ -52,7 +63,7 @@
           Vec3d vec3d = new Vec3d(this.field_80001_f.func_226277_ct_() - this.func_226277_ct_(), this.field_80001_f.func_226278_cu_() + (double)this.field_80001_f.func_70047_e() / 2.0D - this.func_226278_cu_(), this.field_80001_f.func_226281_cx_() - this.func_226281_cx_());
           double d1 = vec3d.func_189985_c();
           if (d1 < 64.0D) {
-@@ -98,7 +120,8 @@
+@@ -98,7 +128,8 @@
        this.func_213315_a(MoverType.SELF, this.func_213322_ci());
        float f = 0.98F;
        if (this.field_70122_E) {
@@ -62,7 +73,21 @@
        }
  
        this.func_213317_d(this.func_213322_ci().func_216372_d((double)f, 0.98D, (double)f));
-@@ -122,11 +145,12 @@
+@@ -107,7 +138,12 @@
+       }
+ 
+       ++this.field_70533_a;
+-      ++this.field_70531_b;
++      if (MohistConfig.instance.RealTimeTicking()) {
++         int ticks = (int) ((RealTimeTicking) this.func_130014_f_()).getRealTimeTicks();
++         this.field_70531_b += ticks;
++      } else {
++         ++this.field_70531_b;
++      }
+       if (this.field_70531_b >= 6000) {
+          this.func_70106_y();
+       }
+@@ -122,11 +158,12 @@
     protected void func_71061_d_() {
     }
  
@@ -77,7 +102,7 @@
        if (this.func_180431_b(p_70097_1_)) {
           return false;
        } else {
-@@ -155,15 +179,22 @@
+@@ -155,15 +192,22 @@
     public void func_70100_b_(PlayerEntity p_70100_1_) {
        if (!this.field_70170_p.field_72995_K) {
           if (this.field_70532_c == 0 && p_70100_1_.field_71090_bL == 0) {
@@ -103,7 +128,7 @@
                 }
              }
  
-@@ -215,6 +246,56 @@
+@@ -215,6 +259,56 @@
     }
  
     public static int func_70527_a(int p_70527_0_) {

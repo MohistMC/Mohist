@@ -1,7 +1,10 @@
 --- a/net/minecraft/tileentity/AbstractFurnaceTileEntity.java
 +++ b/net/minecraft/tileentity/AbstractFurnaceTileEntity.java
-@@ -24,22 +24,26 @@
+@@ -22,24 +22,31 @@
+ import net.minecraft.item.crafting.IRecipeType;
+ import net.minecraft.item.crafting.RecipeItemHelper;
  import net.minecraft.nbt.CompoundNBT;
++import net.minecraft.server.MinecraftServer;
  import net.minecraft.tags.ItemTags;
  import net.minecraft.tags.Tag;
 -import net.minecraft.util.Direction;
@@ -19,6 +22,8 @@
 +import org.bukkit.event.inventory.FurnaceBurnEvent;
 +import org.bukkit.event.inventory.FurnaceExtractEvent;
 +import org.bukkit.event.inventory.FurnaceSmeltEvent;
++import red.mohist.common.RealTimeTicking;
++import red.mohist.configuration.MohistConfig;
  
  public abstract class AbstractFurnaceTileEntity extends LockableTileEntity implements ISidedInventory, IRecipeHolder, IRecipeHelperPopulator, ITickableTileEntity {
     private static final int[] field_214015_g = new int[]{0};
@@ -35,11 +40,12 @@
     protected final IIntArray field_214013_b = new IIntArray() {
        public int func_221476_a(int p_221476_1_) {
           switch(p_221476_1_) {
-@@ -80,11 +84,43 @@
+@@ -80,11 +87,44 @@
     private final Map<ResourceLocation, Integer> field_214022_n = Maps.newHashMap();
     protected final IRecipeType<? extends AbstractCookingRecipe> field_214014_c;
  
 +   // CraftBukkit start - add fields and methods
++   private int lastTick = MinecraftServer.currentTick;
 +   private int maxStack = MAX_STACK;
 +   public List<HumanEntity> transaction = new java.util.ArrayList<HumanEntity>();
 +
@@ -79,7 +85,7 @@
     public static Map<Item, Integer> func_214001_f() {
        Map<Item, Integer> map = Maps.newLinkedHashMap();
        func_213996_a(map, Items.field_151129_at, 20000);
-@@ -98,18 +134,8 @@
+@@ -98,18 +138,8 @@
        func_213992_a(map, ItemTags.field_202899_i, 150);
        func_213992_a(map, ItemTags.field_212188_k, 300);
        func_213992_a(map, ItemTags.field_202900_j, 300);
@@ -100,7 +106,7 @@
        func_213996_a(map, Blocks.field_196586_al, 300);
        func_213996_a(map, Blocks.field_150342_X, 300);
        func_213996_a(map, Blocks.field_222428_lQ, 300);
-@@ -169,9 +195,9 @@
+@@ -169,9 +199,9 @@
        super.func_145839_a(p_145839_1_);
        this.field_214012_a = NonNullList.func_191197_a(this.func_70302_i_(), ItemStack.field_190927_a);
        ItemStackHelper.func_191283_b(p_145839_1_, this.field_214012_a);
@@ -113,7 +119,7 @@
        this.field_214019_k = this.func_213997_a(this.field_214012_a.get(1));
        int i = p_145839_1_.func_74765_d("RecipesUsedSize");
  
-@@ -185,9 +211,9 @@
+@@ -185,9 +215,9 @@
  
     public CompoundNBT func_189515_b(CompoundNBT p_189515_1_) {
        super.func_189515_b(p_189515_1_);
@@ -126,7 +132,23 @@
        ItemStackHelper.func_191282_a(p_189515_1_, this.field_214012_a);
        p_189515_1_.func_74777_a("RecipesUsedSize", (short)this.field_214022_n.size());
        int i = 0;
-@@ -213,16 +239,27 @@
+@@ -202,9 +232,15 @@
+    }
+ 
+    public void func_73660_a() {
++      int elapsedTicks = MinecraftServer.currentTick - this.lastTick;
++      this.lastTick = MinecraftServer.currentTick;
+       boolean flag = this.func_214006_r();
+       boolean flag1 = false;
+       if (this.func_214006_r()) {
++         if(MohistConfig.instance.RealTimeTicking()) {
++            int ticks = (int) ((RealTimeTicking) this.func_145831_w()).getRealTimeTicks();
++            this.field_214020_l = Math.min(this.field_214021_m, this.field_214020_l + ticks);
++         }
+          --this.field_214018_j;
+       }
+ 
+@@ -213,16 +249,33 @@
           if (this.func_214006_r() || !itemstack.func_190926_b() && !this.field_214012_a.get(0).func_190926_b()) {
              IRecipe<?> irecipe = this.field_145850_b.func_199532_z().func_215371_a((IRecipeType<AbstractCookingRecipe>)this.field_214014_c, this, this.field_145850_b).orElse(null);
              if (!this.func_214006_r() && this.func_214008_b(irecipe)) {
@@ -143,6 +165,12 @@
                 this.field_214019_k = this.field_214018_j;
 -               if (this.func_214006_r()) {
 +               if (this.func_214006_r() && furnaceBurnEvent.isBurning()) {
++                  if(MohistConfig.instance.RealTimeTicking()){
++                     int ticks = (int) ((RealTimeTicking) this.func_145831_w()).getRealTimeTicks();
++                     this.field_214018_j = Math.max(0, this.field_214018_j - ticks);
++                  } else {
++                     this.field_214018_j -= elapsedTicks; // CraftBukkit - use elapsedTicks in place of constant
++                  }
 +                  // CraftBukkit end
                    flag1 = true;
 +                  if (itemstack.hasContainerItem())
@@ -158,7 +186,21 @@
                       }
                    }
                 }
-@@ -266,10 +303,10 @@
+@@ -240,7 +293,12 @@
+                this.field_214020_l = 0;
+             }
+          } else if (!this.func_214006_r() && this.field_214020_l > 0) {
+-            this.field_214020_l = MathHelper.func_76125_a(this.field_214020_l - 2, 0, this.field_214021_m);
++            if(MohistConfig.instance.RealTimeTicking()) {
++               int ticks = (int) ((RealTimeTicking) this.func_145831_w()).getRealTimeTicks();
++               this.field_214020_l = MathHelper.func_76125_a(this.field_214020_l - (2 * ticks), 0, this.field_214021_m);
++            } else {
++               this.field_214020_l = MathHelper.func_76125_a(this.field_214020_l - 2, 0, this.field_214021_m);
++            }
+          }
+ 
+          if (flag != this.func_214006_r()) {
+@@ -266,10 +324,10 @@
                 return true;
              } else if (!itemstack1.func_77969_a(itemstack)) {
                 return false;
@@ -171,7 +213,7 @@
              }
           }
        } else {
-@@ -282,12 +319,36 @@
+@@ -282,12 +340,36 @@
           ItemStack itemstack = this.field_214012_a.get(0);
           ItemStack itemstack1 = p_214007_1_.func_77571_b();
           ItemStack itemstack2 = this.field_214012_a.get(2);
@@ -212,7 +254,7 @@
           if (!this.field_145850_b.field_72995_K) {
              this.func_193056_a(p_214007_1_);
           }
-@@ -305,16 +366,16 @@
+@@ -305,16 +387,16 @@
           return 0;
        } else {
           Item item = p_213997_1_.func_77973_b();
@@ -232,7 +274,7 @@
     }
  
     public int[] func_180463_a(Direction p_180463_1_) {
-@@ -422,36 +483,44 @@
+@@ -422,36 +504,44 @@
     public void func_201560_d(PlayerEntity p_201560_1_) {
     }
  
@@ -287,7 +329,7 @@
        }
  
     }
-@@ -462,4 +531,28 @@
+@@ -462,4 +552,28 @@
        }
  
     }

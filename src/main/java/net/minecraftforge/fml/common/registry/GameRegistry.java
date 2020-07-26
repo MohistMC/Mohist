@@ -19,13 +19,17 @@
 
 package net.minecraftforge.fml.common.registry;
 
+import com.google.common.collect.Maps;
 import net.minecraftforge.registries.IForgeRegistry;
 import net.minecraftforge.registries.IForgeRegistryEntry;
 import net.minecraftforge.registries.RegistryManager;
 
+import java.util.Map;
+
 
 public class GameRegistry
 {
+    public static Map<String, String> worldGenMap = Maps.newHashMap();
     /**
      * Retrieves the registry associated with this super class type.
      * If the return is non-null it is HIGHLY recommended that modders cache this

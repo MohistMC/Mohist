@@ -9,16 +9,17 @@
  import net.minecraft.entity.player.ServerPlayerEntity;
  import net.minecraft.network.play.server.SAdvancementInfoPacket;
  import net.minecraft.network.play.server.SSelectAdvancementsTabPacket;
-@@ -41,6 +43,8 @@
+@@ -41,6 +43,9 @@
  import net.minecraft.world.GameRules;
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
 +import org.bukkit.Bukkit;
 +import org.bukkit.entity.Player;
++import red.mohist.configuration.MohistConfig;
  
  public class PlayerAdvancements {
     private static final Logger field_192753_a = LogManager.getLogger();
-@@ -141,7 +145,11 @@
+@@ -141,7 +146,11 @@
              for(Entry<ResourceLocation, AdvancementProgress> entry : stream.collect(Collectors.toList())) {
                 Advancement advancement = this.field_192756_d.func_191949_aK().func_192778_a(entry.getKey());
                 if (advancement == null) {
@@ -31,7 +32,7 @@
                 } else {
                    this.func_192743_a(advancement, entry.getValue());
                 }
-@@ -154,11 +162,13 @@
+@@ -154,11 +163,13 @@
        }
  
        this.func_192748_e();
@@ -45,7 +46,7 @@
        Map<ResourceLocation, AdvancementProgress> map = Maps.newHashMap();
  
        for(Entry<Advancement, AdvancementProgress> entry : this.field_192758_f.entrySet()) {
-@@ -187,6 +197,8 @@
+@@ -187,6 +198,8 @@
     }
  
     public boolean func_192750_a(Advancement p_192750_1_, String p_192750_2_) {
@@ -54,14 +55,17 @@
        boolean flag = false;
        AdvancementProgress advancementprogress = this.func_192747_a(p_192750_1_);
        boolean flag1 = advancementprogress.func_192105_a();
-@@ -195,10 +207,12 @@
+@@ -195,10 +208,14 @@
           this.field_192761_i.add(p_192750_1_);
           flag = true;
           if (!flag1 && advancementprogress.func_192105_a()) {
 +            this.field_192762_j.field_70170_p.getServerCB().getPluginManager().callEvent(new org.bukkit.event.player.PlayerAdvancementDoneEvent(this.field_192762_j.getBukkitEntity(), p_192750_1_.bukkit)); // CraftBukkit
              p_192750_1_.func_192072_d().func_192113_a(this.field_192762_j);
              if (p_192750_1_.func_192068_c() != null && p_192750_1_.func_192068_c().func_193220_i() && this.field_192762_j.field_70170_p.func_82736_K().func_223586_b(GameRules.field_223620_w)) {
-                this.field_192756_d.func_184103_al().func_148539_a(new TranslationTextComponent("chat.type.advancement." + p_192750_1_.func_192068_c().func_192291_d().func_192307_a(), this.field_192762_j.func_145748_c_(), p_192750_1_.func_193123_j()));
+-               this.field_192756_d.func_184103_al().func_148539_a(new TranslationTextComponent("chat.type.advancement." + p_192750_1_.func_192068_c().func_192291_d().func_192307_a(), this.field_192762_j.func_145748_c_(), p_192750_1_.func_193123_j()));
++               if (!MohistConfig.instance.disableannounceAdvancements.getValue()) {
++                  this.field_192756_d.func_184103_al().func_148539_a(new TranslationTextComponent("chat.type.advancement." + p_192750_1_.func_192068_c().func_192291_d().func_192307_a(), this.field_192762_j.func_145748_c_(), p_192750_1_.func_193123_j()));
++               }
              }
 +            net.minecraftforge.common.ForgeHooks.onAdvancement(this.field_192762_j, p_192750_1_);
           }
