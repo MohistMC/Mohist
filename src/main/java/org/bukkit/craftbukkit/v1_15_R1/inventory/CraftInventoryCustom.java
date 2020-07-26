@@ -13,6 +13,7 @@ import org.bukkit.craftbukkit.v1_15_R1.entity.CraftHumanEntity;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.InventoryHolder;
+import red.mohist.inventory.CraftCustomInventory;
 
 public class CraftInventoryCustom extends CraftInventory {
     public CraftInventoryCustom(InventoryHolder owner, InventoryType type) {
