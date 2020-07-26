@@ -5,7 +5,8 @@ import java.lang.management.ThreadMXBean;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-import red.mohist.util.i18n.Message;
+
+import red.mohist.util.i18n.I18N;
 
 public class MohistThreadCost {
     static ThreadMXBean threadMXBean = ManagementFactory.getThreadMXBean();
@@ -25,7 +26,7 @@ public class MohistThreadCost {
             list.add(item);
         }
         list.sort(Comparator.comparingLong(i -> i.id));
-        Mohist.LOGGER.info(Message.getString("mohist.dump.1"));
+        Mohist.LOGGER.info(I18N.get("mohist.dump.1"));
         for (MohistThreadCost.ThreadCpuTime threadCpuTime : list) {
             Mohist.LOGGER.info(String.format("%s %s %s %s", threadCpuTime.id, threadCpuTime.name, threadCpuTime.cpuTime, threadCpuTime.userTime));
         }

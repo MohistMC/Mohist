@@ -8,15 +8,11 @@ import java.util.ResourceBundle;
 import red.mohist.configuration.MohistConfigUtil;
 
 public class Message {
-    public static ResourceBundle rb = ResourceBundle.getBundle("assets.mohist.lang.message", new Locale(getLanguage(), getCountry()), new UTF8Control());
+    //public static ResourceBundle rb = ResourceBundle.getBundle("assets.mohist.lang.message", new Locale(getLanguage(), getCountry()), new UTF8Control());
 
-    public static String getString(String key) {
-        return rb.getString(key);
-    }
+    //public static String getString(String key) {return rb.getString(key);}
 
-    public static String getFormatString(String key, Object[] f) {
-        return new MessageFormat(getString(key)).format(f);
-    }
+    //public static String getFormatString(String key, Object[] f) {return new MessageFormat(getString(key)).format(f);}
 
     public static String getLocale(int key) {
         File f = new File("mohist-config", "mohist.yml");
@@ -42,11 +38,6 @@ public class Message {
         return getLocale(2);
     }
 
-    public static String getLocale() {
-        return Message.rb.getLocale().toString();
-    }
-
-    public static boolean isCN() {
-        return Message.getLocale().contains("CN") || Message.getCountry().contains("CN");
-    }
+    // public static String getLocale() {return Message.rb.getLocale().toString();}
+    // public static boolean isCN() {return Message.getLocale().contains("CN") || Message.getCountry().contains("CN");}
 }
