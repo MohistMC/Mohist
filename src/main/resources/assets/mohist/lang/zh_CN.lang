@@ -306,3 +306,15 @@ console.command.error=在解析控制台指令 "{0}" 时出现致命错误
 error.null.sender=发送者不能为null
 error.null.commandline=命令不能为null
 load.failed=加载 {0} 失败，错误信息: {1}
+load.bukkitwoker='%s' 的插件 '%s' 有以下问题: %s
+load.bukkitwoker.1=此插件在关闭时未正确取消其异步任务，这可能会导致与新加载的插件版本发生冲突
+server.invalid.yaml=服务器权限文件 {0} 不是一个有效的YAML文件: {1}
+server.invalid.yaml.1=服务器权限文件 {0} 不是一个有效的YAML文件。
+server.invalid.permission.node=权限 '%s' 在文件 {0} 中是无效的
+server.invalid.permission.already.define=权限在文件 {0} 已经定义
+server.world.create.error=无法在启动时创建世界
+server.world.create.error.1=Creator不能为null
+server.world.create.error.2=文件'{0}'已经存在且不为文件夹
+server.world.create.error.3=世界 {0} 被阻止加载，因为其为另一个世界的副本. 如果你想继续加载这个世界，请从世界 {0} 的文件夹删除uid.dat文件.
+server.error.1=结果不能为null
+

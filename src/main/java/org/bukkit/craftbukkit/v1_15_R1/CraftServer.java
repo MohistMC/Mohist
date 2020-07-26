@@ -832,12 +832,11 @@ public final class CraftServer implements Server {
             if (plugin.getDescription().getAuthors().size() > 0) {
                 author = plugin.getDescription().getAuthors().get(0);
             }
-            // not translate begin there 
             getLogger().log(Level.SEVERE, String.format(
-                    "Nag author: '%s' of '%s' about the following: %s",
+                    I18N.get("load.bukkitwoker", "Nag author: '%s' of '%s' about the following: %s"),
                     author,
                     plugin.getDescription().getName(),
-                    "This plugin is not properly shutting down its async tasks when it is being reloaded.  This may cause conflicts with the newly loaded version of the plugin"
+                    I18N.get("load.bukkitwoker.1", "This plugin is not properly shutting down its async tasks when it is being reloaded.  This may cause conflicts with the newly loaded version of the plugin")
             ));
         }
         loadPlugins();
@@ -859,7 +858,7 @@ public final class CraftServer implements Server {
                 icon = loadServerIcon0(file);
             }
         } catch (Exception ex) {
-            getLogger().log(Level.WARNING, "Couldn't load server icon", ex);
+            getLogger().log(Level.WARNING, I18N.get("error.load.icon", "Couldn't load server icon"), ex);
         }
     }
 
@@ -883,10 +882,10 @@ public final class CraftServer implements Server {
         try {
             perms = (Map<String, Map<String, Object>>) yaml.load(stream);
         } catch (MarkedYAMLException ex) {
-            getLogger().log(Level.WARNING, "Server permissions file " + file + " is not valid YAML: " + ex.toString());
+            getLogger().log(Level.WARNING, I18N.get("server.invalid.yaml", "Server permissions file {0} is not valid YAML: {1}", file, ex.toString()));
             return;
         } catch (Throwable ex) {
-            getLogger().log(Level.WARNING, "Server permissions file " + file + " is not valid YAML.", ex);
+            getLogger().log(Level.WARNING, I18N.get("server.invalid.yaml.1", "Server permissions file {0} is not valid YAML.", file), ex);
             return;
         } finally {
             try {
@@ -896,17 +895,17 @@ public final class CraftServer implements Server {
         }
 
         if (perms == null) {
-            getLogger().log(Level.INFO, "Server permissions file " + file + " is empty, ignoring it");
+            getLogger().log(Level.INFO, I18N.get("craftbukkit.craftserver.1", "Server permissions file {0} is empty, ignoring it"));
             return;
         }
 
-        List<Permission> permsList = Permission.loadPermissions(perms, "Permission node '%s' in " + file + " is invalid", Permission.DEFAULT_PERMISSION);
+        List<Permission> permsList = Permission.loadPermissions(perms, I18N.get("server.invalid.permission.node", "Permission node '%s' in {0} is invalid", file), Permission.DEFAULT_PERMISSION);
 
         for (Permission perm : permsList) {
             try {
                 pluginManager.addPermission(perm);
             } catch (IllegalArgumentException ex) {
-                getLogger().log(Level.SEVERE, "Permission in " + file + " was already defined", ex);
+                getLogger().log(Level.SEVERE, I18N.get("server.invalid.permission.already.define", "Permission in {0} was already defined"), ex);
             }
         }
     }
@@ -934,8 +933,8 @@ public final class CraftServer implements Server {
 
     @Override
     public World createWorld(WorldCreator creator) {
-        Preconditions.checkState(!console.worlds.isEmpty(), "Cannot create additional worlds on STARTUP");
-        Validate.notNull(creator, "Creator may not be null");
+        Preconditions.checkState(!console.worlds.isEmpty(), I18N.get("server.world.create.error", "Cannot create additional worlds on STARTUP"));
+        Validate.notNull(creator, I18N.get("server.world.create.error.1", "Creator may not be null"));
 
         String name = creator.name();
         ChunkGenerator generator = creator.generator();
@@ -949,7 +948,7 @@ public final class CraftServer implements Server {
         }
 
         if ((folder.exists()) && (!folder.isDirectory())) {
-            throw new IllegalArgumentException("File exists with the name '" + name + "' and isn't a folder");
+            throw new IllegalArgumentException(I18N.get("server.world.create.error.2", "File exists with the name '{0}' and isn't a folder", name));
         }
 
         if (generator == null) {
@@ -1063,7 +1062,7 @@ public final class CraftServer implements Server {
 
     @Override
     public World getWorld(String name) {
-        Validate.notNull(name, "Name cannot be null");
+        Validate.notNull(name, I18N.get("player.error.name.null", "Name cannot be null"));
 
         return worlds.get(name.toLowerCase(java.util.Locale.ENGLISH));
     }
@@ -1081,7 +1080,7 @@ public final class CraftServer implements Server {
     public void addWorld(World world) {
         // Check if a World already exists with the UID.
         if (getWorld(world.getUID()) != null) {
-            System.out.println("World " + world.getName() + " is a duplicate of another world and has been prevented from loading. Please delete the uid.dat file from " + world.getName() + "'s world directory if you want to be able to load the duplicate world.");
+            System.out.println(I18N.get("server.world.create.error.3", "World {0} is a duplicate of another world and has been prevented from loading. Please delete the uid.dat file from {0}'s world directory if you want to be able to load the duplicate world.", world.getName()));
             return;
         }
         worlds.put(world.getName().toLowerCase(java.util.Locale.ENGLISH), world);
@@ -1145,7 +1144,7 @@ public final class CraftServer implements Server {
 
     @Override
     public List<Recipe> getRecipesFor(ItemStack result) {
-        Validate.notNull(result, "Result cannot be null");
+        Validate.notNull(result, I18N.get("server.error.1", "Result cannot be null"));
 
         List<Recipe> results = new ArrayList<Recipe>();
         Iterator<Recipe> iter = recipeIterator();
@@ -1270,17 +1269,17 @@ public final class CraftServer implements Server {
                     Plugin plugin = pluginManager.getPlugin(split[0]);
 
                     if (plugin == null) {
-                        getLogger().severe("Could not set generator for default world '" + world + "': Plugin '" + split[0] + "' does not exist");
+                        getLogger().severe(I18N.get("generator.error.1", "Could not set generator for default world '{0}': Plugin '{1}' does not exist", world, split[0]));
                     } else if (!plugin.isEnabled()) {
-                        getLogger().severe("Could not set generator for default world '" + world + "': Plugin '" + plugin.getDescription().getFullName() + "' is not enabled yet (is it load:STARTUP?)");
+                        getLogger().severe(I18N.get("generator.error.2", "Could not set generator for default world '{0}': Plugin '{1}' is not enabled yet (is it load:STARTUP?)", world, plugin.getDescription().getFullName()));
                     } else {
                         try {
                             result = plugin.getDefaultWorldGenerator(world, id);
                             if (result == null) {
-                                getLogger().severe("Could not set generator for default world '" + world + "': Plugin '" + plugin.getDescription().getFullName() + "' lacks a default world generator");
+                                getLogger().severe(I18N.get("generator.error.3", "Could not set generator for default world '{0}': Plugin '{1}' lacks a default world generator", world, plugin.getDescription().getFullName()));
                             }
                         } catch (Throwable t) {
-                            plugin.getLogger().log(Level.SEVERE, "Could not set generator for default world '" + world + "': Plugin '" + plugin.getDescription().getFullName(), t);
+                            plugin.getLogger().log(Level.SEVERE, I18N.get("generator.error.4", "Could not set generator for default world '{0}': Plugin '{1}'", world, plugin.getDescription().getFullName()), t);
                         }
                     }
                 }
@@ -1302,7 +1301,7 @@ public final class CraftServer implements Server {
 
     @Override
     public CraftMapView createMap(World world) {
-        Validate.notNull(world, "World cannot be null");
+        Validate.notNull(world, I18N.get("server.error.2", "World cannot be null"));
 
         net.minecraft.item.ItemStack stack = new net.minecraft.item.ItemStack(Items.MAP, 1);
         MapData worldmap = FilledMapItem.getMapData(stack, ((CraftWorld) world).getHandle());
@@ -1316,9 +1315,9 @@ public final class CraftServer implements Server {
 
     @Override
     public ItemStack createExplorerMap(World world, Location location, StructureType structureType, int radius, boolean findUnexplored) {
-        Validate.notNull(world, "World cannot be null");
-        Validate.notNull(structureType, "StructureType cannot be null");
-        Validate.notNull(structureType.getMapIcon(), "Cannot create explorer maps for StructureType " + structureType.getName());
+        Validate.notNull(world, I18N.get("server.error.2", "World cannot be null"));
+        Validate.notNull(structureType, I18N.get("server.error.3", "StructureType cannot be null");
+        Validate.notNull(structureType.getMapIcon(), I18N.get("server.error.4", "Cannot create explorer maps for StructureType {0}", structureType.getName()));
 
         ServerWorld worldServer = ((CraftWorld) world).getHandle();
         Location structureLocation = world.locateNearestStructure(location, structureType, radius, findUnexplored);
@@ -1366,8 +1365,8 @@ public final class CraftServer implements Server {
     @Override
     @Deprecated
     public OfflinePlayer getOfflinePlayer(String name) {
-        Validate.notNull(name, "Name cannot be null");
-        Validate.notEmpty(name, "Name cannot be empty");
+        Validate.notNull(name, I18N.get("player.error.name.null", "Name cannot be null"));
+        Validate.notEmpty(name, I18N.get("error.name.empty", "Name cannot be empty"));
 
         OfflinePlayer result = getPlayerExact(name);
         if (result == null) {
@@ -1394,7 +1393,7 @@ public final class CraftServer implements Server {
 
     @Override
     public OfflinePlayer getOfflinePlayer(UUID id) {
-        Validate.notNull(id, "UUID cannot be null");
+        Validate.notNull(id, I18N.get("error.uuid.empty", "UUID cannot be null"));
 
         OfflinePlayer result = getPlayer(id);
         if (result == null) {
@@ -1424,14 +1423,14 @@ public final class CraftServer implements Server {
 
     @Override
     public void banIP(String address) {
-        Validate.notNull(address, "Address cannot be null.");
+        Validate.notNull(address, I18N.get("error.address.empty", "Address cannot be null."));
 
         this.getBanList(org.bukkit.BanList.Type.IP).addBan(address, null, null, null);
     }
 
     @Override
     public void unbanIP(String address) {
-        Validate.notNull(address, "Address cannot be null.");
+        Validate.notNull(address, I18N.get("error.address.empty", "Address cannot be null."));
 
         this.getBanList(org.bukkit.BanList.Type.IP).pardon(address);
     }
@@ -1449,6 +1448,7 @@ public final class CraftServer implements Server {
 
     @Override
     public BanList getBanList(BanList.Type type) {
+        // 从这里开始没有搞完多语言
         Validate.notNull(type, "Type cannot be null");
 
         switch (type) {
