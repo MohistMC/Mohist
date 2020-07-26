@@ -158,6 +158,7 @@ import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 import org.apache.logging.log4j.util.TriConsumer;
+import red.mohist.forge.util.MohistCaptures;
 
 public class ForgeHooks {
     private static final Logger LOGGER = LogManager.getLogger();
@@ -542,8 +543,10 @@ public class ForgeHooks {
     }
 
     public static ActionResultType onPlaceItemIntoWorld(@Nonnull ItemUseContext context) {
+        MohistCaptures.capturePlaceEventHand(context.getHand());
         ItemStack itemstack = context.getItem();
         World world = context.getWorld();
+        MohistCaptures.getPlaceEventHand(Hand.MAIN_HAND);
 
         PlayerEntity player = context.getPlayer();
         if (player != null && !player.abilities.allowEdit && !itemstack.canPlaceOn(world.getTags(), new CachedBlockInfo(world, context.getPos(), false)))

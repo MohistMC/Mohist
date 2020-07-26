@@ -133,12 +133,14 @@ import net.minecraftforge.event.world.SleepFinishedTimeEvent;
 import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.Event.Result;
+import red.mohist.forge.util.MohistCaptures;
 
 public class ForgeEventFactory
 {
 
     public static boolean onMultiBlockPlace(@Nullable Entity entity, List<BlockSnapshot> blockSnapshots, Direction direction)
     {
+        MohistCaptures.capturePlaceEventDirection(direction);
         BlockSnapshot snap = blockSnapshots.get(0);
         BlockState placedAgainst = snap.getWorld().getBlockState(snap.getPos().offset(direction.getOpposite()));
         EntityMultiPlaceEvent event = new EntityMultiPlaceEvent(blockSnapshots, placedAgainst, entity);
@@ -147,6 +149,7 @@ public class ForgeEventFactory
 
     public static boolean onBlockPlace(@Nullable Entity entity, @Nonnull BlockSnapshot blockSnapshot, @Nonnull Direction direction)
     {
+        MohistCaptures.capturePlaceEventDirection(direction);
         BlockState placedAgainst = blockSnapshot.getWorld().getBlockState(blockSnapshot.getPos().offset(direction.getOpposite()));
         EntityPlaceEvent event = new BlockEvent.EntityPlaceEvent(blockSnapshot, placedAgainst, entity);
         return MinecraftForge.EVENT_BUS.post(event);
