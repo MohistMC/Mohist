@@ -13,6 +13,7 @@ import java.util.logging.Logger;
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
 import org.fusesource.jansi.AnsiConsole;
+import red.mohist.util.i18n.Message;
 
 public class Main {
     public static boolean useJline = true;
@@ -161,7 +162,7 @@ public class Main {
             // Do you love Java using + and ! as string based identifiers? I sure do!
             String path = new File(".").getAbsolutePath();
             if (path.contains("!") || path.contains("+")) {
-                System.err.println("Cannot run server in a directory with ! or + in the pathname. Please rename the affected folders and try again.");
+                System.err.println((Message.getString("error.start.directory")));
                 return null;
             }
 
@@ -202,7 +203,7 @@ public class Main {
                     }
                 }
 
-                System.out.println("Loading libraries, please wait...");
+                System.out.println(Message.getString("load.libraries"));
 //                MinecraftServer.main(options);
             } catch (Throwable t) {
                 t.printStackTrace();
