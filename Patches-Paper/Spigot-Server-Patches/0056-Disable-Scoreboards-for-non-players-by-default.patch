@@ -1,0 +1,50 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Aikar <aikar@aikar.co>
+Date: Tue, 8 Mar 2016 23:25:45 -0500
+Subject: [PATCH] Disable Scoreboards for non players by default
+
+Entities collision is checking for scoreboards setting.
+This is very heavy to do map lookups for every collision to check
+this setting.
+
+So avoid looking up scoreboards and short circuit to the "not on a team"
+logic which is most likely to be true.
+
+diff --git a/src/main/java/com/destroystokyo/paper/PaperWorldConfig.java b/src/main/java/com/destroystokyo/paper/PaperWorldConfig.java
+index abbf59bb91021821876a8960e8f77fac24457ec4..04430aae52205ee167662004e45c145b9d2e8bed 100644
+--- a/src/main/java/com/destroystokyo/paper/PaperWorldConfig.java
++++ b/src/main/java/com/destroystokyo/paper/PaperWorldConfig.java
+@@ -203,4 +203,9 @@ public class PaperWorldConfig {
+     private void disableTeleportationSuffocationCheck() {
+         disableTeleportationSuffocationCheck = getBoolean("disable-teleportation-suffocation-check", false);
+     }
++
++    public boolean nonPlayerEntitiesOnScoreboards = false;
++    private void nonPlayerEntitiesOnScoreboards() {
++        nonPlayerEntitiesOnScoreboards = getBoolean("allow-non-player-entities-on-scoreboards", false);
++    }
+ }
+diff --git a/src/main/java/net/minecraft/server/Entity.java b/src/main/java/net/minecraft/server/Entity.java
+index 65a421ee6f704af88ba2170930d17b46a9531c28..383805926e60f9f2f77e258e9d51ed079549713a 100644
+--- a/src/main/java/net/minecraft/server/Entity.java
++++ b/src/main/java/net/minecraft/server/Entity.java
+@@ -2271,6 +2271,7 @@ public abstract class Entity implements INamableTileEntity, ICommandListener, Ke
+ 
+     @Nullable
+     public ScoreboardTeamBase getScoreboardTeam() {
++        if (!this.world.paperConfig.nonPlayerEntitiesOnScoreboards && !(this instanceof EntityHuman)) { return null; } // Paper
+         return this.world.getScoreboard().getPlayerTeam(this.getName());
+     }
+ 
+diff --git a/src/main/java/net/minecraft/server/EntityLiving.java b/src/main/java/net/minecraft/server/EntityLiving.java
+index d4d60220efdf32ee84eef57a7155e7de513cf029..591bf14a6270a67e0bf705a90869c1223b9b36fd 100644
+--- a/src/main/java/net/minecraft/server/EntityLiving.java
++++ b/src/main/java/net/minecraft/server/EntityLiving.java
+@@ -535,6 +535,7 @@ public abstract class EntityLiving extends Entity {
+         if (nbttagcompound.hasKeyOfType("Team", 8)) {
+             String s = nbttagcompound.getString("Team");
+             ScoreboardTeam scoreboardteam = this.world.getScoreboard().getTeam(s);
++            if (!world.paperConfig.nonPlayerEntitiesOnScoreboards && !(this instanceof EntityHuman)) { scoreboardteam = null; } // Paper
+             boolean flag = scoreboardteam != null && this.world.getScoreboard().addPlayerToTeam(this.getUniqueIDString(), scoreboardteam);
+ 
+             if (!flag) {
