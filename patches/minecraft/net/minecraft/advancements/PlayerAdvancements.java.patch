@@ -1,6 +1,24 @@
 --- a/net/minecraft/advancements/PlayerAdvancements.java
 +++ b/net/minecraft/advancements/PlayerAdvancements.java
-@@ -141,7 +141,11 @@
+@@ -30,6 +30,8 @@
+ import java.util.stream.Collectors;
+ import java.util.stream.Stream;
+ import javax.annotation.Nullable;
++
++import net.minecraft.entity.Entity;
+ import net.minecraft.entity.player.ServerPlayerEntity;
+ import net.minecraft.network.play.server.SAdvancementInfoPacket;
+ import net.minecraft.network.play.server.SSelectAdvancementsTabPacket;
+@@ -41,6 +43,8 @@
+ import net.minecraft.world.GameRules;
+ import org.apache.logging.log4j.LogManager;
+ import org.apache.logging.log4j.Logger;
++import org.bukkit.Bukkit;
++import org.bukkit.entity.Player;
+ 
+ public class PlayerAdvancements {
+    private static final Logger field_192753_a = LogManager.getLogger();
+@@ -141,7 +145,11 @@
              for(Entry<ResourceLocation, AdvancementProgress> entry : stream.collect(Collectors.toList())) {
                 Advancement advancement = this.field_192756_d.func_191949_aK().func_192778_a(entry.getKey());
                 if (advancement == null) {
@@ -13,7 +31,7 @@
                 } else {
                    this.func_192743_a(advancement, entry.getValue());
                 }
-@@ -154,11 +158,13 @@
+@@ -154,11 +162,13 @@
        }
  
        this.func_192748_e();
@@ -27,7 +45,7 @@
        Map<ResourceLocation, AdvancementProgress> map = Maps.newHashMap();
  
        for(Entry<Advancement, AdvancementProgress> entry : this.field_192758_f.entrySet()) {
-@@ -187,6 +193,8 @@
+@@ -187,6 +197,8 @@
     }
  
     public boolean func_192750_a(Advancement p_192750_1_, String p_192750_2_) {
@@ -36,7 +54,7 @@
        boolean flag = false;
        AdvancementProgress advancementprogress = this.func_192747_a(p_192750_1_);
        boolean flag1 = advancementprogress.func_192105_a();
-@@ -195,10 +203,12 @@
+@@ -195,10 +207,12 @@
           this.field_192761_i.add(p_192750_1_);
           flag = true;
           if (!flag1 && advancementprogress.func_192105_a()) {

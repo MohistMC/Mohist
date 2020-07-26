@@ -1517,6 +1517,7 @@ CL: net/minecraft/server/ItemSpade net/minecraft/item/ShovelItem
 CL: net/minecraft/server/ItemSpectralArrow net/minecraft/item/SpectralArrowItem
 CL: net/minecraft/server/ItemSplashPotion net/minecraft/item/SplashPotionItem
 CL: net/minecraft/server/ItemStack net/minecraft/item/ItemStack
+CL: net/minecraft/server/v1_15_R1/ItemStack net/minecraft/item/ItemStack
 CL: net/minecraft/server/ItemSuspiciousStew net/minecraft/item/SuspiciousStewItem
 CL: net/minecraft/server/ItemSword net/minecraft/item/SwordItem
 CL: net/minecraft/server/ItemTippedArrow net/minecraft/item/TippedArrowItem
@@ -5069,6 +5070,9 @@ FD: net/minecraft/server/ItemFireworks$EffectType/STAR net/minecraft/item/Firewo
 FD: net/minecraft/server/ItemStack/count net/minecraft/item/ItemStack/field_77994_a
 FD: net/minecraft/server/ItemStack/item net/minecraft/item/ItemStack/field_151002_e
 FD: net/minecraft/server/ItemStack/tag net/minecraft/item/ItemStack/field_77990_d
+FD: net/minecraft/server/v1_15_R1/ItemStack/count net/minecraft/item/ItemStack/field_77994_a
+FD: net/minecraft/server/v1_15_R1/ItemStack/item net/minecraft/item/ItemStack/field_151002_e
+FD: net/minecraft/server/v1_15_R1/ItemStack/tag net/minecraft/item/ItemStack/field_77990_d
 FD: net/minecraft/server/Items/ACACIA_BOAT net/minecraft/item/Items/field_185153_aK
 FD: net/minecraft/server/Items/ACACIA_SIGN net/minecraft/item/Items/field_222075_kv
 FD: net/minecraft/server/Items/AIR net/minecraft/item/Items/field_190931_a
@@ -7543,7 +7547,7 @@ MD: net/minecraft/server/Block/attack (Lnet/minecraft/server/IBlockData;Lnet/min
 MD: net/minecraft/server/Block/canPlace (Lnet/minecraft/server/IBlockData;Lnet/minecraft/server/IWorldReader;Lnet/minecraft/server/BlockPosition;)Z net/minecraft/block/Block/func_196260_a (Lnet/minecraft/block/BlockState;Lnet/minecraft/world/IWorldReader;Lnet/minecraft/util/math/BlockPos;)Z
 MD: net/minecraft/server/Block/doPhysics (Lnet/minecraft/server/IBlockData;Lnet/minecraft/server/World;Lnet/minecraft/server/BlockPosition;Lnet/minecraft/server/Block;Lnet/minecraft/server/BlockPosition;Z)V net/minecraft/block/Block/func_220069_a (Lnet/minecraft/block/BlockState;Lnet/minecraft/world/World;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/block/Block;Lnet/minecraft/util/math/BlockPos;Z)V
 MD: net/minecraft/server/Block/dropExperience (Lnet/minecraft/server/World;Lnet/minecraft/server/BlockPosition;I)V net/minecraft/block/Block/func_180637_b (Lnet/minecraft/world/World;Lnet/minecraft/util/math/BlockPos;I)V
-MD: net/minecraft/server/Block/dropItems (Lnet/minecraft/server/IBlockData;Lnet/minecraft/server/World;Lnet/minecraft/server/BlockPosition;Lnet/minecraft/server/TileEntity;Lnet/minecraft/server/Entity;Lnet/minecraft/server/ItemStack;)V net/minecraft/block/Block/func_220054_a (Lnet/minecraft/block/BlockState;Lnet/minecraft/world/World;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/tileentity/TileEntity;Lnet/minecraft/entity/Entity;Lnet/minecraft/item/ItemStack;)V
+MD: net/minecraft/server/Block/dropItems (Lnet/minecraft/server/IBlockData;Lnet/minecraft/server/World;Lnet/minecraft/server/BlockPosition;Lnet/minecraft/server/TileEntity;Lnet/minecraft/server/Entity;Lnet/minecraft/server/;)V net/minecraft/block/Block/func_220054_a (Lnet/minecraft/block/BlockState;Lnet/minecraft/world/World;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/tileentity/TileEntity;Lnet/minecraft/entity/Entity;Lnet/minecraft/item/ItemStack;)V
 MD: net/minecraft/server/Block/dropNaturally (Lnet/minecraft/server/IBlockData;Lnet/minecraft/server/World;Lnet/minecraft/server/BlockPosition;Lnet/minecraft/server/ItemStack;)V net/minecraft/block/Block/func_220062_a (Lnet/minecraft/block/BlockState;Lnet/minecraft/world/World;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/item/ItemStack;)V
 MD: net/minecraft/server/Block/fallOn (Lnet/minecraft/server/World;Lnet/minecraft/server/BlockPosition;Lnet/minecraft/server/Entity;F)V net/minecraft/block/Block/func_180658_a (Lnet/minecraft/world/World;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/entity/Entity;F)V
 MD: net/minecraft/server/Block/getBlockData ()Lnet/minecraft/server/IBlockData; net/minecraft/block/Block/func_176223_P ()Lnet/minecraft/block/BlockState;

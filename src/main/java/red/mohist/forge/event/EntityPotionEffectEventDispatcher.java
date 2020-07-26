@@ -8,7 +8,6 @@ import org.bukkit.event.entity.EntityPotionEffectEvent;
 
 public class EntityPotionEffectEventDispatcher {
 
-    // todo 再检查一遍
     @SubscribeEvent(receiveCanceled = true)
     public void onPotionRemove(PotionEvent.PotionRemoveEvent event) {
         if (event.getPotionEffect() == null) {
