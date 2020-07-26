@@ -139,6 +139,14 @@ public class Main {
                         .defaultsTo(new File("paper.yml"))
                         .describedAs("Yml file");
                 // Paper end
+
+                // Mohist Start
+                acceptsAll(asList("mohist", "mohist-settings"), "File for mohist settings")
+                        .withRequiredArg()
+                        .ofType(File.class)
+                        .defaultsTo(new File("mohist-config", "mohist.yml"))
+                        .describedAs("Yml file");
+                // Mohist End
             }
         };
 

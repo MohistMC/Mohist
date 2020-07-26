@@ -82,6 +82,7 @@ import net.minecraft.world.storage.SaveHandler;
 import net.minecraft.world.storage.WorldInfo;
 import net.minecraft.world.storage.loot.LootTableManager;
 import net.minecraftforge.common.DimensionManager;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.Validate;
 import org.bukkit.BanList;
 import org.bukkit.Bukkit;
@@ -154,6 +155,7 @@ import org.bukkit.craftbukkit.v1_15_R1.util.Versioning;
 import org.bukkit.craftbukkit.v1_15_R1.util.permissions.CraftDefaultPermissions;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.bukkit.event.command.UnknownCommandEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.PlayerChatTabCompleteEvent;
 import org.bukkit.event.server.BroadcastMessageEvent;
@@ -201,6 +203,7 @@ import org.yaml.snakeyaml.error.MarkedYAMLException;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.world.WorldEvent;
 import red.mohist.Mohist;
+import red.mohist.configuration.MohistConfig;
 
 public final class CraftServer implements Server {
     private final String serverName = "Mohist";
@@ -726,6 +729,16 @@ public final class CraftServer implements Server {
 
         if (commandMap.dispatch(sender, commandLine)) {
             return true;
+        }
+
+        if (StringUtils.isNotEmpty(MohistConfig.instance.unknownCommandMessage.getValue())) {
+            // Paper start
+            UnknownCommandEvent event = new UnknownCommandEvent(sender, commandLine, MohistConfig.instance.unknownCommandMessage.getValue());
+            Bukkit.getServer().getPluginManager().callEvent(event);
+            if (StringUtils.isNotEmpty(event.getMessage())) {
+                sender.sendMessage(event.getMessage());
+            }
+            // Paper end
         }
 
         // Spigot start
