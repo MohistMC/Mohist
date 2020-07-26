@@ -6,6 +6,7 @@ import net.minecraftforge.forgespi.locating.IModFile;
 
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CancellationException;
 
 public abstract class MohistLocator extends AbstractJarFileLocator {
 
@@ -31,4 +32,5 @@ public abstract class MohistLocator extends AbstractJarFileLocator {
     @Override
     public void initArguments(Map<String, ?> arguments) {
     }
+
 }
