@@ -67,6 +67,7 @@ Thanks for the following project
 * [**Lithium**](https://github.com/jellysquid3/lithium-fabric) - performance optimizations.
 * [**Yapfa**](https://github.com/tr7zw/YAPFA) - performance optimizations.
 * [**Tuinity**](https://github.com/Spottedleaf/Tuinity) - performance optimizations.
+* [**Arclight**](https://github.com/IzzelAliz/Arclight) - Partial code source.
 
 Special Thanks To:
 -------------
