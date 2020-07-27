@@ -1,8 +1,5 @@
 package red.mohist.network.download;
 
-import red.mohist.Mohist;
-import red.mohist.util.i18n.Message;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -17,6 +14,8 @@ import java.util.Scanner;
 import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
+import red.mohist.Mohist;
+import red.mohist.util.i18n.Message;
 
 import static red.mohist.configuration.MohistConfigUtil.bMohist;
 import static red.mohist.network.download.UpdateUtils.downloadFile;

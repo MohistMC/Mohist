@@ -1,11 +1,10 @@
 package red.mohist.forge;
 
 import com.google.gson.JsonParser;
-import red.mohist.util.ClassJarUtil;
-import red.mohist.util.i18n.Message;
-
 import java.io.File;
 import java.io.InputStreamReader;
+import red.mohist.util.ClassJarUtil;
+import red.mohist.util.i18n.Message;
 
 import static red.mohist.network.download.NetworkUtil.getInput;
 

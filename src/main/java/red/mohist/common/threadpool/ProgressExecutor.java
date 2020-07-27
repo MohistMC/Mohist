@@ -2,7 +2,6 @@ package red.mohist.common.threadpool;
 
 import java.util.concurrent.Callable;
 import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
 
 /**
  * 测试类

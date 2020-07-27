@@ -1,11 +1,10 @@
 package red.mohist.command;
 
+import java.io.IOException;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.ModContainer;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
-
-import java.io.IOException;
 
 import static red.mohist.util.HasteUtils.paste;
 

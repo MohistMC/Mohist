@@ -2,10 +2,9 @@ package red.mohist.bukkit;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
-import red.mohist.util.i18n.Message;
-
 import java.io.File;
 import java.io.InputStreamReader;
+import red.mohist.util.i18n.Message;
 
 import static red.mohist.network.download.NetworkUtil.getInput;
 import static red.mohist.util.ClassJarUtil.checkOther;

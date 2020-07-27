@@ -1,10 +1,5 @@
 package red.mohist.network.download;
 
-import red.mohist.configuration.MohistConfigUtil;
-import red.mohist.util.JarLoader;
-import red.mohist.util.i18n.Message;
-
-import javax.xml.bind.DatatypeConverter;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.InputStreamReader;
@@ -13,6 +8,10 @@ import java.nio.channels.FileChannel;
 import java.nio.file.Files;
 import java.security.MessageDigest;
 import java.util.HashMap;
+import javax.xml.bind.DatatypeConverter;
+import red.mohist.configuration.MohistConfigUtil;
+import red.mohist.util.JarLoader;
+import red.mohist.util.i18n.Message;
 
 import static red.mohist.network.download.UpdateUtils.downloadFile;
 

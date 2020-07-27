@@ -1,8 +1,7 @@
 package red.mohist.forge;
 
-import red.mohist.configuration.MohistConfig;
-
 import java.util.Arrays;
+import red.mohist.configuration.MohistConfig;
 
 import static red.mohist.configuration.MohistConfigUtil.bMohist;
 

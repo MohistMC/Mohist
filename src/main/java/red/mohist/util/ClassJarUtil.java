@@ -1,7 +1,5 @@
 package red.mohist.util;
 
-import red.mohist.util.i18n.Message;
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
@@ -9,6 +7,7 @@ import java.io.InputStreamReader;
 import java.util.Scanner;
 import java.util.jar.JarFile;
 import java.util.zip.ZipEntry;
+import red.mohist.util.i18n.Message;
 
 import static red.mohist.network.download.UpdateUtils.downloadFile;
 

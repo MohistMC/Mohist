@@ -1,21 +1,18 @@
 package red.mohist;
 
+import java.util.Scanner;
 import org.apache.logging.log4j.Logger;
-
 import red.mohist.bukkit.AutoDeletePlugins;
 import red.mohist.bukkit.nms.MappingFix;
-
 import red.mohist.configuration.MohistConfigUtil;
-import static red.mohist.configuration.MohistConfigUtil.bMohist;
-import static red.mohist.forge.AutoDeleteMods.jar;
-
 import red.mohist.network.download.DownloadLibraries;
 import red.mohist.network.download.UpdateUtils;
-import static red.mohist.util.EulaUtil.hasAcceptedEULA;
-import static red.mohist.util.EulaUtil.writeInfos;
 import red.mohist.util.i18n.Message;
 
-import java.util.Scanner;
+import static red.mohist.configuration.MohistConfigUtil.bMohist;
+import static red.mohist.forge.AutoDeleteMods.jar;
+import static red.mohist.util.EulaUtil.hasAcceptedEULA;
+import static red.mohist.util.EulaUtil.writeInfos;
 
 public class Mohist {
     public static final String NAME = "Mohist";

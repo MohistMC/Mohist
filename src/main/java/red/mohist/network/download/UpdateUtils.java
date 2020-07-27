@@ -2,9 +2,6 @@ package red.mohist.network.download;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
-import red.mohist.Mohist;
-import red.mohist.util.i18n.Message;
-
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -18,9 +15,13 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Timer;
 import java.util.TimerTask;
+import red.mohist.Mohist;
+import red.mohist.util.i18n.Message;
 
 import static red.mohist.configuration.MohistConfigUtil.bMohist;
-import static red.mohist.network.download.NetworkUtil.*;
+import static red.mohist.network.download.NetworkUtil.getConn;
+import static red.mohist.network.download.NetworkUtil.getConnLength;
+import static red.mohist.network.download.NetworkUtil.getInput;
 
 public class UpdateUtils {
   static String ci_sha, jar_sha, time;

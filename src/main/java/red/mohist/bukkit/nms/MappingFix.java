@@ -1,15 +1,14 @@
 package red.mohist.bukkit.nms;
 
+import java.io.File;
+import java.util.Arrays;
+import java.util.Timer;
+import java.util.TimerTask;
 import red.mohist.bukkit.nms.utils.Decoder;
 import red.mohist.bukkit.nms.utils.Downloader;
 import red.mohist.util.JarTool;
 import red.mohist.util.MD5Util;
 import red.mohist.util.i18n.Message;
-
-import java.io.File;
-import java.util.Arrays;
-import java.util.Timer;
-import java.util.TimerTask;
 
 /**
  * @author Mgazul
