@@ -82,6 +82,7 @@ import net.minecraft.world.storage.SaveHandler;
 import net.minecraft.world.storage.WorldInfo;
 import net.minecraft.world.storage.loot.LootTableManager;
 import net.minecraftforge.common.DimensionManager;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.Validate;
 import org.bukkit.BanList;
 import org.bukkit.Bukkit;
@@ -154,6 +155,7 @@ import org.bukkit.craftbukkit.v1_15_R1.util.Versioning;
 import org.bukkit.craftbukkit.v1_15_R1.util.permissions.CraftDefaultPermissions;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.bukkit.event.command.UnknownCommandEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.PlayerChatTabCompleteEvent;
 import org.bukkit.event.server.BroadcastMessageEvent;
@@ -201,6 +203,9 @@ import org.yaml.snakeyaml.error.MarkedYAMLException;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.world.WorldEvent;
 import red.mohist.Mohist;
+import red.mohist.configuration.MohistConfig;
+import red.mohist.forge.MohistMod;
+import red.mohist.util.i18n.Message;
 
 public final class CraftServer implements Server {
     private final String serverName = "Mohist";
@@ -357,7 +362,8 @@ public final class CraftServer implements Server {
             Plugin[] plugins = pluginManager.loadPlugins(pluginFolder);
             for (Plugin plugin : plugins) {
                 try {
-                    String message = String.format("Loading %s", plugin.getDescription().getFullName());
+                    String message = String.format(Message.getString("mohist.start.plugin_loaded_info"), plugin.getDescription().getFullName());
+                    MohistMod.LOGGER.info(message);
                     plugin.getLogger().info(message);
                     plugin.onLoad();
                 } catch (Throwable ex) {
@@ -728,6 +734,16 @@ public final class CraftServer implements Server {
             return true;
         }
 
+        if (StringUtils.isNotEmpty(MohistConfig.instance.unknownCommandMessage.getValue())) {
+            // Paper start
+            UnknownCommandEvent event = new UnknownCommandEvent(sender, commandLine, MohistConfig.instance.unknownCommandMessage.getValue());
+            Bukkit.getServer().getPluginManager().callEvent(event);
+            if (StringUtils.isNotEmpty(event.getMessage())) {
+                sender.sendMessage(event.getMessage());
+            }
+            // Paper end
+        }
+
         // Spigot start
         if (!org.spigotmc.SpigotConfig.unknownCommandMessage.isEmpty()) {
             sender.sendMessage(org.spigotmc.SpigotConfig.unknownCommandMessage);
@@ -893,7 +909,7 @@ public final class CraftServer implements Server {
         }
 
         if (perms == null) {
-            getLogger().log(Level.INFO, "Server permissions file " + file + " is empty, ignoring it");
+            System.out.println(Message.getFormatString("craftbukkit.craftserver.1", new Object[]{(file)}));
             return;
         }
 
@@ -903,7 +919,7 @@ public final class CraftServer implements Server {
             try {
                 pluginManager.addPermission(perm);
             } catch (IllegalArgumentException ex) {
-                getLogger().log(Level.SEVERE, "Permission in " + file + " was already defined", ex);
+                MohistMod.LOGGER.error("Permission in " + file + " was already defined", ex);
             }
         }
     }
@@ -1078,7 +1094,7 @@ public final class CraftServer implements Server {
     public void addWorld(World world) {
         // Check if a World already exists with the UID.
         if (getWorld(world.getUID()) != null) {
-            System.out.println("World " + world.getName() + " is a duplicate of another world and has been prevented from loading. Please delete the uid.dat file from " + world.getName() + "'s world directory if you want to be able to load the duplicate world.");
+            System.out.println(Message.getFormatString("craftserver.addworld", new Object[]{world.getName()}));
             return;
         }
         worlds.put(world.getName().toLowerCase(java.util.Locale.ENGLISH), world);

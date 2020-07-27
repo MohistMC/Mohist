@@ -132,7 +132,7 @@
  import net.minecraft.world.GameRules;
  import net.minecraft.world.GameType;
  import net.minecraft.world.IWorldReader;
-@@ -131,6 +64,30 @@
+@@ -131,6 +64,31 @@
  import net.minecraft.world.server.ServerWorld;
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
@@ -160,10 +160,11 @@
 +import org.bukkit.util.NumberConversions;
 +import red.mohist.common.RealTimeTicking;
 +import red.mohist.configuration.MohistConfig;
++import red.mohist.util.i18n.Message;
  
  public class ServerPlayNetHandler implements IServerPlayNetHandler {
     private static final Logger field_147370_c = LogManager.getLogger();
-@@ -141,7 +98,10 @@
+@@ -141,7 +99,10 @@
     private long field_194402_f;
     private boolean field_194403_g;
     private long field_194404_h;
@@ -175,7 +176,7 @@
     private int field_147375_m;
     private final Int2ShortMap field_147372_n = new Int2ShortOpenHashMap();
     private double field_184349_l;
-@@ -173,9 +133,36 @@
+@@ -173,9 +134,36 @@
        p_i1530_2_.func_150719_a(this);
        this.field_147369_b = p_i1530_3_;
        p_i1530_3_.field_71135_a = this;
@@ -212,7 +213,16 @@
        this.func_184342_d();
        this.field_147369_b.field_70169_q = this.field_147369_b.func_226277_ct_();
        this.field_147369_b.field_70167_r = this.field_147369_b.func_226278_cu_();
-@@ -221,7 +208,7 @@
+@@ -205,7 +193,7 @@
+          this.field_184361_x = this.field_184355_r.func_226281_cx_();
+          if (this.field_184345_D && this.field_147369_b.func_184208_bv().func_184179_bs() == this.field_147369_b) {
+             if (++this.field_184346_E > 80) {
+-               field_147370_c.warn("{} was kicked for floating a vehicle too long!", (Object)this.field_147369_b.func_200200_C_().getString());
++               field_147370_c.warn("{} was kicked for floating too long!", (Object)this.field_147369_b.func_200200_C_().getString());
+                this.func_194028_b(new TranslationTextComponent("multiplayer.disconnect.flying"));
+                return;
+             }
+@@ -221,7 +209,7 @@
  
        this.field_147367_d.func_213185_aS().func_76320_a("keepAlive");
        long i = Util.func_211177_b();
@@ -221,7 +231,7 @@
           if (this.field_194403_g) {
              this.func_194028_b(new TranslationTextComponent("disconnect.timeout"));
           } else {
-@@ -233,18 +220,34 @@
+@@ -233,18 +221,34 @@
        }
  
        this.field_147367_d.func_213185_aS().func_76319_b();
@@ -258,7 +268,7 @@
     }
  
     public void func_184342_d() {
-@@ -264,13 +267,44 @@
+@@ -264,13 +268,44 @@
        return this.field_147367_d.func_213199_b(this.field_147369_b.func_146103_bH());
     }
  
@@ -306,7 +316,7 @@
  
     public void func_147358_a(CInputPacket p_147358_1_) {
        PacketThreadUtil.func_218796_a(p_147358_1_, this, this.field_147369_b.func_71121_q());
-@@ -310,7 +344,30 @@
+@@ -310,7 +345,30 @@
              double d8 = d5 - this.field_184358_u;
              double d9 = entity.func_213322_ci().func_189985_c();
              double d10 = d6 * d6 + d7 * d7 + d8 * d8;
@@ -338,7 +348,7 @@
                 field_147370_c.warn("{} (vehicle of {}) moved too quickly! {},{},{}", entity.func_200200_C_().getString(), this.field_147369_b.func_200200_C_().getString(), d6, d7, d8);
                 this.field_147371_a.func_179290_a(new SMoveVehiclePacket(entity));
                 return;
-@@ -330,19 +387,80 @@
+@@ -330,19 +388,80 @@
              d8 = d5 - entity.func_226281_cx_();
              d10 = d6 * d6 + d7 * d7 + d8 * d8;
              boolean flag1 = false;
@@ -420,7 +430,7 @@
              this.field_147369_b.func_71121_q().func_72863_F().func_217221_a(this.field_147369_b);
              this.field_147369_b.func_71000_j(this.field_147369_b.func_226277_ct_() - d0, this.field_147369_b.func_226278_cu_() - d1, this.field_147369_b.func_226281_cx_() - d2);
              this.field_184345_D = d7 >= -0.03125D && !this.field_147367_d.func_71231_X() && !serverworld.func_72829_c(entity.func_174813_aQ().func_186662_g(0.0625D).func_72321_a(0.0D, -0.55D, 0.0D));
-@@ -356,7 +474,7 @@
+@@ -356,7 +475,7 @@
  
     public void func_184339_a(CConfirmTeleportPacket p_184339_1_) {
        PacketThreadUtil.func_218796_a(p_184339_1_, this, this.field_147369_b.func_71121_q());
@@ -429,7 +439,7 @@
           this.field_147369_b.func_70080_a(this.field_184362_y.field_72450_a, this.field_184362_y.field_72448_b, this.field_184362_y.field_72449_c, this.field_147369_b.field_70177_z, this.field_147369_b.field_70125_A);
           this.field_184352_o = this.field_184362_y.field_72450_a;
           this.field_184353_p = this.field_184362_y.field_72448_b;
-@@ -366,6 +484,7 @@
+@@ -366,6 +485,7 @@
           }
  
           this.field_184362_y = null;
@@ -437,7 +447,7 @@
        }
  
     }
-@@ -408,6 +527,7 @@
+@@ -408,6 +528,7 @@
  
        ParseResults<CommandSource> parseresults = this.field_147367_d.func_195571_aL().func_197054_a().parse(stringreader, this.field_147369_b.func_195051_bN());
        this.field_147367_d.func_195571_aL().func_197054_a().getCompletionSuggestions(parseresults).thenAccept((p_195519_2_) -> {
@@ -445,7 +455,7 @@
           this.field_147371_a.func_179290_a(new STabCompletePacket(p_195518_1_.func_197709_a(), p_195519_2_));
        });
     }
-@@ -598,6 +718,7 @@
+@@ -598,6 +719,7 @@
        Container container = this.field_147369_b.field_71070_bA;
        if (container instanceof MerchantContainer) {
           MerchantContainer merchantcontainer = (MerchantContainer)container;
@@ -453,7 +463,7 @@
           merchantcontainer.func_75175_c(i);
           merchantcontainer.func_217046_g(i);
        }
-@@ -606,6 +727,14 @@
+@@ -606,6 +728,14 @@
  
     public void func_210156_a(CEditBookPacket p_210156_1_) {
        PacketThreadUtil.func_218796_a(p_210156_1_, this, this.field_147369_b.func_71121_q());
@@ -468,7 +478,7 @@
        ItemStack itemstack = p_210156_1_.func_210346_a();
        if (!itemstack.func_190926_b()) {
           if (WritableBookItem.func_150930_a(itemstack.func_77978_p())) {
-@@ -630,9 +759,11 @@
+@@ -630,9 +760,11 @@
                    }
  
                    itemstack2.func_77983_a("pages", listnbt);
@@ -481,7 +491,7 @@
                 }
              }
  
-@@ -667,7 +798,7 @@
+@@ -667,7 +799,7 @@
           this.func_194028_b(new TranslationTextComponent("multiplayer.disconnect.invalid_player_movement"));
        } else {
           ServerWorld serverworld = this.field_147367_d.func_71218_a(this.field_147369_b.field_71093_bK);
@@ -490,7 +500,7 @@
              if (this.field_147368_e == 0) {
                 this.func_184342_d();
              }
-@@ -678,12 +809,21 @@
+@@ -678,12 +810,21 @@
                    this.func_147364_a(this.field_184362_y.field_72450_a, this.field_184362_y.field_72448_b, this.field_184362_y.field_72449_c, this.field_147369_b.field_70177_z, this.field_147369_b.field_70125_A);
                 }
  
@@ -512,7 +522,7 @@
                    double d0 = this.field_147369_b.func_226277_ct_();
                    double d1 = this.field_147369_b.func_226278_cu_();
                    double d2 = this.field_147369_b.func_226281_cx_();
-@@ -706,14 +846,31 @@
+@@ -706,14 +847,31 @@
                    } else {
                       ++this.field_184347_F;
                       int i = this.field_184347_F - this.field_184348_G;
@@ -546,7 +556,7 @@
                             field_147370_c.warn("{} moved too quickly! {},{},{}", this.field_147369_b.func_200200_C_().getString(), d7, d8, d9);
                             this.func_147364_a(this.field_147369_b.func_226277_ct_(), this.field_147369_b.func_226278_cu_(), this.field_147369_b.func_226281_cx_(), this.field_147369_b.field_70177_z, this.field_147369_b.field_70125_A);
                             return;
-@@ -743,7 +900,7 @@
+@@ -743,7 +901,7 @@
                       d9 = d6 - this.field_147369_b.func_226281_cx_();
                       d11 = d7 * d7 + d8 * d8 + d9 * d9;
                       boolean flag = false;
@@ -555,7 +565,7 @@
                          flag = true;
                          field_147370_c.warn("{} moved wrongly!", (Object)this.field_147369_b.func_200200_C_().getString());
                       }
-@@ -758,7 +915,61 @@
+@@ -758,7 +916,61 @@
                          }
                       }
  
@@ -618,7 +628,7 @@
                       this.field_147369_b.field_70122_E = p_147347_1_.func_149465_i();
                       this.field_147369_b.func_71121_q().func_72863_F().func_217221_a(this.field_147369_b);
                       this.field_147369_b.func_71122_b(this.field_147369_b.func_226278_cu_() - d3, p_147347_1_.func_149465_i());
-@@ -780,24 +991,80 @@
+@@ -780,24 +992,80 @@
        this.func_175089_a(p_147364_1_, p_147364_3_, p_147364_5_, p_147364_7_, p_147364_8_, Collections.emptySet());
     }
  
@@ -707,7 +717,7 @@
        BlockPos blockpos = p_147345_1_.func_179715_a();
        this.field_147369_b.func_143004_u();
        CPlayerDiggingPacket.Action cplayerdiggingpacket$action = p_147345_1_.func_180762_c();
-@@ -805,13 +1072,45 @@
+@@ -805,13 +1073,45 @@
        case SWAP_HELD_ITEMS:
           if (!this.field_147369_b.func_175149_v()) {
              ItemStack itemstack = this.field_147369_b.func_184586_b(Hand.OFF_HAND);
@@ -755,7 +765,7 @@
              this.field_147369_b.func_225609_n_(false);
           }
  
-@@ -835,8 +1134,26 @@
+@@ -835,8 +1135,26 @@
        }
     }
  
@@ -782,7 +792,7 @@
        ServerWorld serverworld = this.field_147367_d.func_71218_a(this.field_147369_b.field_71093_bK);
        Hand hand = p_184337_1_.func_187022_c();
        ItemStack itemstack = this.field_147369_b.func_184586_b(hand);
-@@ -845,7 +1162,17 @@
+@@ -845,7 +1163,17 @@
        Direction direction = blockraytraceresult.func_216354_b();
        this.field_147369_b.func_143004_u();
        if (blockpos.func_177956_o() < this.field_147367_d.func_71207_Z() - 1 || direction != Direction.UP && blockpos.func_177956_o() < this.field_147367_d.func_71207_Z()) {
@@ -801,7 +811,7 @@
              ActionResultType actionresulttype = this.field_147369_b.field_71134_c.func_219441_a(this.field_147369_b, serverworld, itemstack, hand, blockraytraceresult);
              if (actionresulttype.func_226247_b_()) {
                 this.field_147369_b.func_226292_a_(hand, true);
-@@ -862,12 +1189,51 @@
+@@ -862,12 +1190,51 @@
  
     public void func_147346_a(CPlayerTryUseItemPacket p_147346_1_) {
        PacketThreadUtil.func_218796_a(p_147346_1_, this, this.field_147369_b.func_71121_q());
@@ -854,7 +864,7 @@
        }
     }
  
-@@ -877,7 +1243,7 @@
+@@ -877,7 +1244,7 @@
           for(ServerWorld serverworld : this.field_147367_d.func_212370_w()) {
              Entity entity = p_175088_1_.func_179727_a(serverworld);
              if (entity != null) {
@@ -863,7 +873,7 @@
                 return;
              }
           }
-@@ -885,8 +1251,12 @@
+@@ -885,8 +1252,12 @@
  
     }
  
@@ -876,10 +886,15 @@
  
     public void func_184340_a(CSteerBoatPacket p_184340_1_) {
        PacketThreadUtil.func_218796_a(p_184340_1_, this, this.field_147369_b.func_71121_q());
-@@ -898,11 +1268,26 @@
+@@ -898,11 +1269,26 @@
     }
  
     public void func_147231_a(ITextComponent p_147231_1_) {
+-      field_147370_c.info("{} lost connection: {}", this.field_147369_b.func_200200_C_().getString(), p_147231_1_.getString());
+-      this.field_147367_d.func_147132_au();
+-      this.field_147367_d.func_184103_al().func_148539_a((new TranslationTextComponent("multiplayer.player.left", this.field_147369_b.func_145748_c_())).func_211708_a(TextFormatting.YELLOW));
+-      this.field_147369_b.func_71123_m();
+-      this.field_147367_d.func_184103_al().func_72367_e(this.field_147369_b);
 +      // CraftBukkit start - Rarely it would send a disconnect line twice
 +      if (this.processedDisconnect) {
 +         return;
@@ -887,11 +902,7 @@
 +         this.processedDisconnect = true;
 +      }
 +      // CraftBukkit end
-       field_147370_c.info("{} lost connection: {}", this.field_147369_b.func_200200_C_().getString(), p_147231_1_.getString());
--      this.field_147367_d.func_147132_au();
--      this.field_147367_d.func_184103_al().func_148539_a((new TranslationTextComponent("multiplayer.player.left", this.field_147369_b.func_145748_c_())).func_211708_a(TextFormatting.YELLOW));
--      this.field_147369_b.func_71123_m();
--      this.field_147367_d.func_184103_al().func_72367_e(this.field_147369_b);
++      field_147370_c.info(Message.getString("server.connect.lost_connection"), this.field_147369_b.func_200200_C_().getString(), p_147231_1_.getString());
 +      // CraftBukkit start - Replace vanilla quit message handling with our own.
 +       /*
 +      this.server.refreshStatusNextTick();
@@ -907,7 +918,7 @@
        if (this.func_217264_d()) {
           field_147370_c.info("Stopping singleplayer server as player logged out");
           this.field_147367_d.func_71263_m(false);
-@@ -927,6 +1312,15 @@
+@@ -927,6 +1313,15 @@
           }
        }
  
@@ -923,7 +934,7 @@
        try {
           this.field_147371_a.func_201058_a(p_211148_1_, p_211148_2_);
        } catch (Throwable throwable) {
-@@ -941,17 +1335,38 @@
+@@ -941,17 +1336,38 @@
  
     public void func_147355_a(CHeldItemChangePacket p_147355_1_) {
        PacketThreadUtil.func_218796_a(p_147355_1_, this, this.field_147369_b.func_71121_q());
@@ -964,7 +975,7 @@
           this.func_147359_a(new SChatPacket((new TranslationTextComponent("chat.cannotSend")).func_211708_a(TextFormatting.RED)));
        } else {
           this.field_147369_b.func_143004_u();
-@@ -960,38 +1375,260 @@
+@@ -960,38 +1376,260 @@
  
           for(int i = 0; i < s.length(); ++i) {
              if (!SharedConstants.func_71566_a(s.charAt(i))) {
@@ -1153,7 +1164,7 @@
 +      SpigotTimings.playerCommandTimer.startTiming(); // Spigot
 +      // CraftBukkit start - whole method
 +      if ( org.spigotmc.SpigotConfig.logCommands ) // Spigot
-+      this.field_147370_c.info(this.field_147369_b.func_200200_C_() + " issued server command: " + p_147361_1_);
++      this.field_147370_c.info(this.field_147369_b.func_200200_C_() + Message.getString("server.command.issued_command") + p_147361_1_);
 +
 +      CraftPlayer player = this.getPlayerCB();
 +      PlayerCommandPreprocessEvent event = new PlayerCommandPreprocessEvent(player, p_147361_1_, new LazyPlayerSet(field_147367_d));
@@ -1167,7 +1178,7 @@
 +            return;
 +         }
 +      } catch (org.bukkit.command.CommandException ex) {
-+         player.sendMessage(org.bukkit.ChatColor.RED + "An internal error occurred while attempting to perform this command");
++         player.sendMessage(org.bukkit.ChatColor.RED + Message.getString("minecraft.netHandlerplayserver.handleslashcommand2"));
 +         java.util.logging.Logger.getLogger(ServerPlayNetHandler.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
 +         return;
 +      }finally {
@@ -1233,7 +1244,7 @@
        this.field_147369_b.func_143004_u();
        switch(p_147357_1_.func_180764_b()) {
        case PRESS_SHIFT_KEY:
-@@ -1045,8 +1682,18 @@
+@@ -1045,8 +1683,18 @@
  
     public void func_147340_a(CUseEntityPacket p_147340_1_) {
        PacketThreadUtil.func_218796_a(p_147340_1_, this, this.field_147369_b.func_71121_q());
@@ -1252,7 +1263,7 @@
        this.field_147369_b.func_143004_u();
        if (entity != null) {
           boolean flag = this.field_147369_b.func_70685_l(entity);
-@@ -1056,15 +1703,60 @@
+@@ -1056,15 +1704,60 @@
           }
  
           if (this.field_147369_b.func_70068_e(entity) < d0) {
@@ -1313,7 +1324,7 @@
              } else if (p_147340_1_.func_149565_c() == CUseEntityPacket.Action.ATTACK) {
                 if (entity instanceof ItemEntity || entity instanceof ExperienceOrbEntity || entity instanceof AbstractArrowEntity || entity == this.field_147369_b) {
                    this.func_194028_b(new TranslationTextComponent("multiplayer.disconnect.invalid_entity_attacked"));
-@@ -1073,6 +1765,12 @@
+@@ -1073,6 +1766,12 @@
                 }
  
                 this.field_147369_b.func_71059_n(entity);
@@ -1326,7 +1337,7 @@
              }
           }
        }
-@@ -1094,7 +1792,7 @@
+@@ -1094,7 +1793,7 @@
                 return;
              }
  
@@ -1335,7 +1346,7 @@
              if (this.field_147367_d.func_71199_h()) {
                 this.field_147369_b.func_71033_a(GameType.SPECTATOR);
                 this.field_147369_b.func_71121_q().func_82736_K().func_223585_a(GameRules.field_223613_p).func_223570_a(false, this.field_147367_d);
-@@ -1109,14 +1807,18 @@
+@@ -1109,14 +1808,18 @@
  
     public void func_147356_a(CCloseWindowPacket p_147356_1_) {
        PacketThreadUtil.func_218796_a(p_147356_1_, this, this.field_147369_b.func_71121_q());
@@ -1356,7 +1367,7 @@
              NonNullList<ItemStack> nonnulllist = NonNullList.func_191196_a();
  
              for(int i = 0; i < this.field_147369_b.field_71070_bA.field_75151_b.size(); ++i) {
-@@ -1125,8 +1827,268 @@
+@@ -1125,8 +1828,268 @@
  
              this.field_147369_b.func_71110_a(this.field_147369_b.field_71070_bA, nonnulllist);
           } else {
@@ -1627,7 +1638,7 @@
                 this.field_147369_b.field_71135_a.func_147359_a(new SConfirmTransactionPacket(p_147351_1_.func_149548_c(), p_147351_1_.func_149547_f(), true));
                 this.field_147369_b.field_71137_h = true;
                 this.field_147369_b.field_71070_bA.func_75142_b();
-@@ -1139,8 +2101,8 @@
+@@ -1139,8 +2102,8 @@
                 NonNullList<ItemStack> nonnulllist1 = NonNullList.func_191196_a();
  
                 for(int j = 0; j < this.field_147369_b.field_71070_bA.field_75151_b.size(); ++j) {
@@ -1638,7 +1649,7 @@
                 }
  
                 this.field_147369_b.func_71110_a(this.field_147369_b.field_71070_bA, nonnulllist1);
-@@ -1155,13 +2117,14 @@
+@@ -1155,13 +2118,14 @@
        this.field_147369_b.func_143004_u();
        if (!this.field_147369_b.func_175149_v() && this.field_147369_b.field_71070_bA.field_75152_c == p_194308_1_.func_194318_a() && this.field_147369_b.field_71070_bA.func_75129_b(this.field_147369_b) && this.field_147369_b.field_71070_bA instanceof RecipeBookContainer) {
           this.field_147367_d.func_199529_aN().func_215367_a(p_194308_1_.func_199618_b()).ifPresent((p_217265_2_) -> {
@@ -1654,7 +1665,7 @@
        this.field_147369_b.func_143004_u();
        if (this.field_147369_b.field_71070_bA.field_75152_c == p_147338_1_.func_149539_c() && this.field_147369_b.field_71070_bA.func_75129_b(this.field_147369_b) && !this.field_147369_b.func_175149_v()) {
           this.field_147369_b.field_71070_bA.func_75140_a(this.field_147369_b, p_147338_1_.func_149537_d());
-@@ -1176,7 +2139,7 @@
+@@ -1176,7 +2140,7 @@
           boolean flag = p_147344_1_.func_149627_c() < 0;
           ItemStack itemstack = p_147344_1_.func_149625_d();
           CompoundNBT compoundnbt = itemstack.func_179543_a("BlockEntityTag");
@@ -1663,7 +1674,7 @@
              BlockPos blockpos = new BlockPos(compoundnbt.func_74762_e("x"), compoundnbt.func_74762_e("y"), compoundnbt.func_74762_e("z"));
              TileEntity tileentity = this.field_147369_b.field_70170_p.func_175625_s(blockpos);
              if (tileentity != null) {
-@@ -1190,6 +2153,42 @@
+@@ -1190,6 +2154,42 @@
  
           boolean flag1 = p_147344_1_.func_149627_c() >= 1 && p_147344_1_.func_149627_c() <= 45;
           boolean flag2 = itemstack.func_190926_b() || itemstack.func_77952_i() >= 0 && itemstack.func_190916_E() <= 64 && !itemstack.func_190926_b();
@@ -1706,7 +1717,7 @@
           if (flag1 && flag2) {
              if (itemstack.func_190926_b()) {
                 this.field_147369_b.field_71069_bz.func_75141_a(p_147344_1_.func_149627_c(), ItemStack.field_190927_a);
-@@ -1209,6 +2208,7 @@
+@@ -1209,6 +2209,7 @@
  
     public void func_147339_a(CConfirmTransactionPacket p_147339_1_) {
        PacketThreadUtil.func_218796_a(p_147339_1_, this, this.field_147369_b.func_71121_q());
@@ -1714,7 +1725,7 @@
        int i = this.field_147369_b.field_71070_bA.field_75152_c;
        if (i == p_147339_1_.func_149532_c() && this.field_147372_n.getOrDefault(i, (short)(p_147339_1_.func_149533_d() + 1)) == p_147339_1_.func_149533_d() && !this.field_147369_b.field_71070_bA.func_75129_b(this.field_147369_b) && !this.field_147369_b.func_175149_v()) {
           this.field_147369_b.field_71070_bA.func_75128_a(this.field_147369_b, true);
-@@ -1218,6 +2218,7 @@
+@@ -1218,6 +2219,7 @@
  
     public void func_147343_a(CUpdateSignPacket p_147343_1_) {
        PacketThreadUtil.func_218796_a(p_147343_1_, this, this.field_147369_b.func_71121_q());
@@ -1722,7 +1733,7 @@
        this.field_147369_b.func_143004_u();
        ServerWorld serverworld = this.field_147367_d.func_71218_a(this.field_147369_b.field_71093_bK);
        BlockPos blockpos = p_147343_1_.func_179722_a();
-@@ -1231,15 +2232,31 @@
+@@ -1231,15 +2233,31 @@
           SignTileEntity signtileentity = (SignTileEntity)tileentity;
           if (!signtileentity.func_145914_a() || signtileentity.func_145911_b() != this.field_147369_b) {
              this.field_147367_d.func_71236_h("Player " + this.field_147369_b.func_200200_C_().getString() + " just tried to change non-editable sign");
@@ -1755,7 +1766,7 @@
           signtileentity.func_70296_d();
           serverworld.func_184138_a(blockpos, blockstate, blockstate, 3);
        }
-@@ -1247,6 +2264,7 @@
+@@ -1247,6 +2265,7 @@
     }
  
     public void func_147353_a(CKeepAlivePacket p_147353_1_) {
@@ -1763,7 +1774,7 @@
        if (this.field_194403_g && p_147353_1_.func_149460_c() == this.field_194404_h) {
           int i = (int)(Util.func_211177_b() - this.field_194402_f);
           this.field_147369_b.field_71138_i = (this.field_147369_b.field_71138_i * 3 + i) / 4;
-@@ -1259,7 +2277,17 @@
+@@ -1259,7 +2278,17 @@
  
     public void func_147348_a(CPlayerAbilitiesPacket p_147348_1_) {
        PacketThreadUtil.func_218796_a(p_147348_1_, this, this.field_147369_b.func_71121_q());
@@ -1782,7 +1793,7 @@
     }
  
     public void func_147352_a(CClientSettingsPacket p_147352_1_) {
-@@ -1267,9 +2295,6 @@
+@@ -1267,9 +2296,6 @@
        this.field_147369_b.func_147100_a(p_147352_1_);
     }
  
@@ -1792,7 +1803,7 @@
     public void func_217263_a(CSetDifficultyPacket p_217263_1_) {
        PacketThreadUtil.func_218796_a(p_217263_1_, this, this.field_147369_b.func_71121_q());
        if (this.field_147369_b.func_211513_k(2) || this.func_217264_d()) {
-@@ -1283,4 +2308,52 @@
+@@ -1283,4 +2309,52 @@
           this.field_147367_d.func_213209_d(p_217261_1_.func_218776_b());
        }
     }
