@@ -1,23 +1,46 @@
 --- a/net/minecraft/crash/CrashReport.java
 +++ b/net/minecraft/crash/CrashReport.java
-@@ -21,6 +21,7 @@
+@@ -21,6 +21,8 @@
  import org.apache.commons.lang3.ArrayUtils;
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
 +import org.bukkit.craftbukkit.v1_15_R1.CraftCrashReport;
++import red.mohist.util.i18n.Message;
  
  public class CrashReport {
     private static final Logger field_147150_a = LogManager.getLogger();
-@@ -69,6 +70,8 @@
+@@ -39,7 +41,7 @@
+    }
+ 
+    private void func_71504_g() {
+-      this.field_85061_c.func_189529_a("Minecraft Version", () -> {
++      this.field_85061_c.func_189529_a(("Minecraft Version"), () -> {
+          return SharedConstants.func_215069_a().getName();
+       });
+       this.field_85061_c.func_189529_a("Minecraft Version ID", () -> {
+@@ -69,6 +71,8 @@
           List<String> list = Util.func_211565_f().collect(Collectors.toList());
           return String.format("%d total; %s", list.size(), list.stream().collect(Collectors.joining(" ")));
        });
-+      this.field_85061_c.func_189529_a("CraftBukkit Information", (ICrashReportDetail)new CraftCrashReport()); // CraftBukkit
++      this.field_85061_c.func_189529_a(Message.getString("minecraft.crashreport9"), (ICrashReportDetail)new CraftCrashReport()); // CraftBukkit
 +      net.minecraftforge.fml.CrashReportExtender.enhanceCrashReport(this, this.field_85061_c);
     }
  
     public String func_71501_a() {
-@@ -121,23 +124,13 @@
+@@ -85,9 +89,9 @@
+       }
+ 
+       if (this.field_85060_g != null && this.field_85060_g.length > 0) {
+-         p_71506_1_.append("-- Head --\n");
+-         p_71506_1_.append("Thread: ").append(Thread.currentThread().getName()).append("\n");
+-         p_71506_1_.append("Stacktrace:\n");
++         p_71506_1_.append("-- " + Message.getString("minecraft.crashreport10") + " --\n");
++         p_71506_1_.append(Message.getString("minecraft.crashreport11") + ": ").append(Thread.currentThread().getName()).append("\n");
++         p_71506_1_.append(Message.getString("minecraft.crashreport12") + ":\n");
+ 
+          for(StackTraceElement stacktraceelement : this.field_85060_g) {
+             p_71506_1_.append("\t").append("at ").append((Object)stacktraceelement);
+@@ -121,34 +125,24 @@
           throwable.setStackTrace(this.field_71511_b.getStackTrace());
        }
  
@@ -38,8 +61,32 @@
  
     public String func_71502_e() {
        StringBuilder stringbuilder = new StringBuilder();
-       stringbuilder.append("---- Minecraft Crash Report ----\n");
+-      stringbuilder.append("---- Minecraft Crash Report ----\n");
++      stringbuilder.append(Message.getString("minecraft.crashreport13") + "\n");
 +      net.minecraftforge.fml.CrashReportExtender.addCrashReportHeader(stringbuilder, this);
        stringbuilder.append("// ");
        stringbuilder.append(func_71503_h());
        stringbuilder.append("\n\n");
+-      stringbuilder.append("Time: ");
++      stringbuilder.append(Message.getString("minecraft.crashreport14") + ": ");
+       stringbuilder.append((new SimpleDateFormat()).format(new Date()));
+       stringbuilder.append("\n");
+-      stringbuilder.append("Description: ");
++      stringbuilder.append(Message.getString("minecraft.crashreport15") + ": ");
+       stringbuilder.append(this.field_71513_a);
+       stringbuilder.append("\n\n");
+       stringbuilder.append(this.func_71498_d());
+-      stringbuilder.append("\n\nA detailed walkthrough of the error, its code path and all known details is as follows:\n");
++      stringbuilder.append("\n\n" + Message.getString("minecraft.crashreport16") + ":\n");
+ 
+       for(int i = 0; i < 87; ++i) {
+          stringbuilder.append("-");
+@@ -182,7 +176,7 @@
+             boolean lvt_3_1_ = true;
+             return lvt_3_1_;
+          } catch (Throwable throwable) {
+-            field_147150_a.error("Could not save crash report to {}", p_147149_1_, throwable);
++            field_147150_a.error(Message.getFormatString("minecraft.crashreport17", new Object[] {p_147149_1_}), throwable);
+             flag1 = false;
+          } finally {
+             IOUtils.closeQuietly(writer);

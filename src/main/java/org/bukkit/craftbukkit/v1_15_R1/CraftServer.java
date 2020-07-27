@@ -204,6 +204,8 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.world.WorldEvent;
 import red.mohist.Mohist;
 import red.mohist.configuration.MohistConfig;
+import red.mohist.forge.MohistMod;
+import red.mohist.util.i18n.Message;
 
 public final class CraftServer implements Server {
     private final String serverName = "Mohist";
@@ -360,7 +362,8 @@ public final class CraftServer implements Server {
             Plugin[] plugins = pluginManager.loadPlugins(pluginFolder);
             for (Plugin plugin : plugins) {
                 try {
-                    String message = String.format("Loading %s", plugin.getDescription().getFullName());
+                    String message = String.format(Message.getString("mohist.start.plugin_loaded_info"), plugin.getDescription().getFullName());
+                    MohistMod.LOGGER.info(message);
                     plugin.getLogger().info(message);
                     plugin.onLoad();
                 } catch (Throwable ex) {
@@ -906,7 +909,7 @@ public final class CraftServer implements Server {
         }
 
         if (perms == null) {
-            getLogger().log(Level.INFO, "Server permissions file " + file + " is empty, ignoring it");
+            System.out.println(Message.getFormatString("craftbukkit.craftserver.1", new Object[]{(file)}));
             return;
         }
 
@@ -916,7 +919,7 @@ public final class CraftServer implements Server {
             try {
                 pluginManager.addPermission(perm);
             } catch (IllegalArgumentException ex) {
-                getLogger().log(Level.SEVERE, "Permission in " + file + " was already defined", ex);
+                MohistMod.LOGGER.error("Permission in " + file + " was already defined", ex);
             }
         }
     }
@@ -1091,7 +1094,7 @@ public final class CraftServer implements Server {
     public void addWorld(World world) {
         // Check if a World already exists with the UID.
         if (getWorld(world.getUID()) != null) {
-            System.out.println("World " + world.getName() + " is a duplicate of another world and has been prevented from loading. Please delete the uid.dat file from " + world.getName() + "'s world directory if you want to be able to load the duplicate world.");
+            System.out.println(Message.getFormatString("craftserver.addworld", new Object[]{world.getName()}));
             return;
         }
         worlds.put(world.getName().toLowerCase(java.util.Locale.ENGLISH), world);

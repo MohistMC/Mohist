@@ -471,7 +471,7 @@
 -      ServerWorld serverworld = this.func_71218_a(DimensionType.field_223227_a_);
 -      field_147145_h.info("Preparing start region for dimension " + DimensionType.func_212678_a(serverworld.field_73011_w.func_186058_p()));
 +      this.forceTicks = true;
-+      field_147145_h.info("Preparing start region for dimension '{}'/{}", serverworld.func_72912_H().func_76065_j(), DimensionType.func_212678_a(serverworld.field_73011_w.func_186058_p().getType()));
++      field_147145_h.info(Message.getString("mohist.load.map.spawn"));
        BlockPos blockpos = serverworld.func_175694_M();
        p_213186_1_.func_219509_a(new ChunkPos(blockpos));
        ServerChunkProvider serverchunkprovider = serverworld.func_72863_F();
@@ -518,6 +518,15 @@
     }
  
     protected void func_175584_a(String p_175584_1_, SaveHandler p_175584_2_) {
+@@ -516,7 +664,7 @@
+ 
+       for(ServerWorld serverworld : this.func_212370_w()) {
+          if (!p_213211_1_) {
+-            field_147145_h.info("Saving chunks for level '{}'/{}", serverworld.func_72912_H().func_76065_j(), DimensionType.func_212678_a(serverworld.field_73011_w.func_186058_p()));
++            field_147145_h.info(Message.getString("mohist.save.worlds"), serverworld.func_72912_H().func_76065_j(), DimensionType.func_212678_a(serverworld.field_73011_w.func_186058_p()));
+          }
+ 
+          try {
 @@ -528,11 +676,15 @@
           flag = true;
        }
@@ -539,7 +548,7 @@
        return flag;
     }
  
-@@ -540,8 +692,29 @@
+@@ -540,19 +692,41 @@
        this.func_71260_j();
     }
  
@@ -555,6 +564,7 @@
 +   // CraftBukkit end
 +
     protected void func_71260_j() {
+-      field_147145_h.info("Stopping server");
 +      // CraftBukkit start - prevent double stopping on multiple threads
 +      synchronized (this.stopLock) {
 +         if (this.hasStopped) {
@@ -562,21 +572,27 @@
 +         }
 +         this.hasStopped = true;
 +      }
-       field_147145_h.info("Stopping server");
++      field_147145_h.info(Message.getString("mohist.stop"));
 +      if (this.server != null) {
 +         this.server.disablePlugins();
 +      }
        if (this.func_147137_ag() != null) {
           this.func_147137_ag().func_151268_b();
        }
-@@ -550,6 +723,7 @@
-          field_147145_h.info("Saving players");
+ 
+       if (this.field_71318_t != null) {
+-         field_147145_h.info("Saving players");
++         field_147145_h.info(Message.getString("mohist.save.players"));
           this.field_71318_t.func_72389_g();
           this.field_71318_t.func_72392_r();
 +         try { Thread.sleep(100); } catch (InterruptedException ex) {} // CraftBukkit - SPIGOT-625 - give server at least a chance to send packets
        }
  
-       field_147145_h.info("Saving worlds");
+-      field_147145_h.info("Saving worlds");
++      field_147145_h.info(Message.getString("save.chunks.level"));
+ 
+       for(ServerWorld serverworld : this.func_212370_w()) {
+          if (serverworld != null) {
 @@ -560,11 +734,16 @@
           }
        }
@@ -600,7 +616,7 @@
  
 +      // Spigot start
 +      if (org.spigotmc.SpigotConfig.saveUserCacheOnStopOnly) {
-+         field_147145_h.info("Saving usercache.json");
++         field_147145_h.info(Message.getFormatString("mohist.save.other",  new Object[]{ "usercache.json" }));
 +         this.field_152366_X.func_152658_c();
 +      }
 +      // Spigot end
@@ -658,7 +674,7 @@
                 this.field_211151_aa += 50L;
                 if (this.field_71295_T) {
                    this.field_71295_T = false;
-@@ -636,11 +846,23 @@
+@@ -636,33 +846,54 @@
                 this.field_71304_b.func_219897_b();
                 this.field_71296_Q = true;
              }
@@ -676,23 +692,35 @@
 +         // Spigot Start
 +         if ( throwable1.getCause() != null )
 +         {
-+            MinecraftServer.field_147145_h.error( "\tCause of unexpected exception was", throwable1.getCause() );
++            MinecraftServer.field_147145_h.error( Message.getString("crash.report"), throwable1.getCause() );
 +         }
 +         // Spigot End
           CrashReport crashreport;
           if (throwable1 instanceof ReportedException) {
              crashreport = this.func_71230_b(((ReportedException)throwable1).func_71575_a());
-@@ -655,6 +877,7 @@
-             field_147145_h.error("We were unable to save this crash report to disk.");
+          } else {
+-            crashreport = this.func_71230_b(new CrashReport("Exception in server tick loop", throwable1));
++            crashreport = this.func_71230_b(new CrashReport(Message.getString("crash.report1"), throwable1));
+          }
+ 
+          File file1 = new File(new File(this.func_71238_n(), "crash-reports"), "crash-" + (new SimpleDateFormat("yyyy-MM-dd_HH.mm.ss")).format(new Date()) + "-server.txt");
+          if (crashreport.func_147149_a(file1)) {
+-            field_147145_h.error("This crash report has been saved to: {}", (Object)file1.getAbsolutePath());
++            field_147145_h.error(Message.getFormatString("crash.report2", new Object[] { file1.getAbsolutePath()}));
+          } else {
+-            field_147145_h.error("We were unable to save this crash report to disk.");
++            field_147145_h.error(Message.getString("crash.report3"));
           }
  
 +         net.minecraftforge.fml.server.ServerLifecycleHooks.expectServerStopped(); // has to come before finalTick to avoid race conditions
           this.func_71228_a(crashreport);
        } finally {
           try {
-@@ -663,6 +886,14 @@
+             this.field_71316_v = true;
+             this.func_71260_j();
           } catch (Throwable throwable) {
-             field_147145_h.error("Exception stopping the server", throwable);
+-            field_147145_h.error("Exception stopping the server", throwable);
++            field_147145_h.error(Message.getString("crash.report4"), throwable);
           } finally {
 +            org.spigotmc.WatchdogThread.doStop(); // Spigot
 +            net.minecraftforge.fml.server.ServerLifecycleHooks.handleServerStopped(this);
@@ -730,6 +758,23 @@
        return new TickDelayedTask(this.field_71315_w, p_212875_1_);
     }
  
+@@ -727,13 +963,13 @@
+ 
+          try {
+             BufferedImage bufferedimage = ImageIO.read(file1);
+-            Validate.validState(bufferedimage.getWidth() == 64, "Must be 64 pixels wide");
+-            Validate.validState(bufferedimage.getHeight() == 64, "Must be 64 pixels high");
++            Validate.validState(bufferedimage.getWidth() == 64, Message.getFormatString("error.load.icon.wide", new Object[] {64}));
++            Validate.validState(bufferedimage.getHeight() == 64, Message.getFormatString("error.load.icon.high", new Object[] {64}));
+             ImageIO.write(bufferedimage, "PNG", new ByteBufOutputStream(bytebuf));
+             ByteBuffer bytebuffer = Base64.getEncoder().encode(bytebuf.nioBuffer());
+             p_184107_1_.func_151320_a("data:image/png;base64," + StandardCharsets.UTF_8.decode(bytebuffer));
+          } catch (Exception exception) {
+-            field_147145_h.error("Couldn't load server icon", (Throwable)exception);
++            field_147145_h.error(Message.getString("error.load.icon"), (Throwable)exception);
+          } finally {
+             bytebuf.release();
+          }
 @@ -763,7 +999,18 @@
     }
  
@@ -932,7 +977,7 @@
              field_147145_h.info("You need to agree to the EULA in order to run the server. Go to eula.txt for more info.");
              return;
           }
-@@ -904,33 +1195,47 @@
+@@ -904,35 +1195,49 @@
           CrashReport.func_230188_h_();
           Bootstrap.func_151354_b();
           Bootstrap.func_218821_c();
@@ -992,8 +1037,11 @@
 +         }
 +         dedicatedserver.field_175590_aa.start();
        } catch (Exception exception) {
-          field_147145_h.fatal("Failed to start the minecraft server", (Throwable)exception);
+-         field_147145_h.fatal("Failed to start the minecraft server", (Throwable)exception);
++         field_147145_h.fatal(Message.getString("mohist.start.fail"), (Throwable)exception);
        }
+ 
+    }
 @@ -950,7 +1255,9 @@
     }
  
