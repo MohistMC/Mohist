@@ -4,12 +4,15 @@ import java.util.Map;
 import java.util.Map.Entry;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
+import net.minecraft.potion.Effect;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.bukkit.Material;
+import org.bukkit.craftbukkit.v1_15_R1.potion.CraftPotionEffectType;
 import org.bukkit.craftbukkit.v1_15_R1.util.CraftMagicNumbers;
 import org.bukkit.entity.EntityType;
+import org.bukkit.potion.PotionEffectType;
 import red.mohist.entity.CraftCustomEntity;
 import red.mohist.forge.MohistMod;
 import red.mohist.util.MohistEnumHelper;
@@ -20,6 +23,7 @@ public class ForgeInjectBukkit {
         addForgeItems();
         addForgeBlocks();
         addForgeEntitys();
+        addForgePotion();
     }
 
     private static void addForgeItems() {
@@ -74,6 +78,15 @@ public class ForgeInjectBukkit {
             NAME_MAP.put(entityname.toLowerCase(), bukkitType);
             ID_MAP.put((short) entity.getKey().getNamespace().hashCode(), bukkitType);
         }
+    }
+
+    public static void addForgePotion() {
+        // Points
+        for (Map.Entry<ResourceLocation, Effect> entry : ForgeRegistries.POTIONS.getEntries()) {
+            PotionEffectType pet = new CraftPotionEffectType(entry.getValue());
+            PotionEffectType.registerPotionEffectType(pet);
+        }
+        PotionEffectType.stopAcceptingRegistrations();
     }
 
 }

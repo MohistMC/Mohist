@@ -20,6 +20,9 @@ import org.bukkit.command.Command;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
 
+import com.google.common.collect.Lists;
+
+
 public class PaperConfig {
 
     private static File CONFIG_FILE;
@@ -116,6 +119,7 @@ public class PaperConfig {
 
     private static final Pattern SPACE = Pattern.compile(" ");
     private static final Pattern NOT_NUMERIC = Pattern.compile("[^-\\d.]");
+
     public static int getSeconds(String str) {
         str = SPACE.matcher(str).replaceAll("");
         final char unit = str.charAt(str.length() - 1);
@@ -127,10 +131,18 @@ public class PaperConfig {
             num = 0D;
         }
         switch (unit) {
-            case 'd': num *= (double) 60*60*24; break;
-            case 'h': num *= (double) 60*60; break;
-            case 'm': num *= (double) 60; break;
-            default: case 's': break;
+            case 'd':
+                num *= (double) 60 * 60 * 24;
+                break;
+            case 'h':
+                num *= (double) 60 * 60;
+                break;
+            case 'm':
+                num *= (double) 60;
+                break;
+            default:
+            case 's':
+                break;
         }
         return (int) num;
     }

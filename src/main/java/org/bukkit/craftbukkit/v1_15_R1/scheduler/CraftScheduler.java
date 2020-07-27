@@ -397,9 +397,9 @@ public class CraftScheduler implements BukkitScheduler {
                     task.getOwner().getLogger().log(
                             Level.WARNING,
                             String.format(
-                                "Task #%s for %s generated an exception",
-                                task.getTaskId(),
-                                task.getOwner().getDescription().getFullName()),
+                                    "Task #%s for %s generated an exception",
+                                    task.getTaskId(),
+                                    task.getOwner().getDescription().getFullName()),
                             throwable);
                 } finally {
                     currentTask = null;
@@ -467,8 +467,8 @@ public class CraftScheduler implements BukkitScheduler {
         // We split this because of the way things are ordered for all of the async calls in CraftScheduler
         // (it prevents race-conditions)
         for (task = head; task != lastTask; task = head) {
-           head = task.getNext();
-           task.setNext(null);
+            head = task.getNext();
+            task.setNext(null);
         }
         this.head = lastTask;
     }

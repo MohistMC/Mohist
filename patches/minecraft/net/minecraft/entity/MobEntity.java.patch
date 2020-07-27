@@ -245,12 +245,12 @@
           if (entity != null) {
              double d0 = entity.func_70068_e(this);
 -            if (d0 > 16384.0D && this.func_213397_c(d0)) {
-+            if (d0 > 16384.0D) { // CraftBukkit - remove canDespawn() check
++            if (d0 > field_70170_p.paperConfig.hardDespawnDistance) { // CraftBukkit - remove isTypeNotPersistent() check // Paper - custom despawn distances
                 this.func_70106_y();
              }
  
 -            if (this.field_70708_bq > 600 && this.field_70146_Z.nextInt(800) == 0 && d0 > 1024.0D && this.func_213397_c(d0)) {
-+            if (this.field_70708_bq > 600 && this.field_70146_Z.nextInt(800) == 0 && d0 > 1024.0D) { // CraftBukkit - remove canDespawn() check
++            if (this.field_70708_bq > 600 && this.field_70146_Z.nextInt(800) == 0 && d0 > field_70170_p.paperConfig.softDespawnDistance) { // CraftBukkit - remove isTypeNotPersistent() check // Paper - custom despawn distances
                 this.func_70106_y();
              } else if (d0 < 1024.0D) {
                 this.field_70708_bq = 0;

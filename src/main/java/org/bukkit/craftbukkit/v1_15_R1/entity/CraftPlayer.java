@@ -1684,6 +1684,14 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
             return java.util.Collections.unmodifiableSet( ret );
         }
 
+        // Paper start
+        @Override
+        public int getPing()
+        {
+            return getHandle().ping;
+        }
+        // Paper end
+
         @Override
         public void sendMessage(BaseComponent component) {
             sendMessage( new BaseComponent[] { component } );
@@ -1717,4 +1725,5 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
         return spigot;
     }
     // Spigot end
+
 }

@@ -69,20 +69,20 @@ public class ActivationRange {
      */
     public static boolean initializeEntityActivationState(Entity entity, SpigotWorldConfig config) {
         if ((entity.activationType == ActivationType.MISC && config.miscActivationRange == 0)
-            || (entity.activationType == ActivationType.RAIDER && config.raiderActivationRange == 0)
-            || (entity.activationType == ActivationType.ANIMAL && config.animalActivationRange == 0)
-            || (entity.activationType == ActivationType.MONSTER && config.monsterActivationRange == 0)
-            || entity instanceof PlayerEntity
-            || entity instanceof ThrowableEntity
-            || entity instanceof EnderDragonEntity
-            || entity instanceof EnderDragonPartEntity
-            || entity instanceof WitherEntity
-            || entity instanceof FireballEntity
-            || entity instanceof LightningBoltEntity
-            || entity instanceof TNTEntity
-            || entity instanceof EnderCrystalEntity
-            || entity instanceof FireworkRocketEntity
-            || entity instanceof TridentEntity) {
+                || (entity.activationType == ActivationType.RAIDER && config.raiderActivationRange == 0)
+                || (entity.activationType == ActivationType.ANIMAL && config.animalActivationRange == 0)
+                || (entity.activationType == ActivationType.MONSTER && config.monsterActivationRange == 0)
+                || entity instanceof PlayerEntity
+                || entity instanceof ThrowableEntity
+                || entity instanceof EnderDragonEntity
+                || entity instanceof EnderDragonPartEntity
+                || entity instanceof WitherEntity
+                || entity instanceof FireballEntity
+                || entity instanceof LightningBoltEntity
+                || entity instanceof TNTEntity
+                || entity instanceof EnderCrystalEntity
+                || entity instanceof FireworkRocketEntity
+                || entity instanceof TridentEntity) {
             return true;
         }
 

@@ -35,6 +35,12 @@ public abstract class Command {
     private String permissionMessage;
     public org.spigotmc.CustomTimingsHandler timings; // Spigot
 
+    @NotNull
+    public String getTimingName() {
+        return getName();
+    }
+    // Paper
+
     protected Command(@NotNull String name) {
         this(name, "", "/" + name, new ArrayList<String>());
     }

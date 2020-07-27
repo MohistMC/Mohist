@@ -113,7 +113,18 @@
                 serverworld.func_195598_a(ParticleTypes.field_218422_X, d4, d5, d6, 2 + this.field_70146_Z.nextInt(2), (double)0.1F, 0.0D, (double)0.1F, 0.0D);
              }
           }
-@@ -354,26 +359,53 @@
+@@ -339,8 +344,9 @@
+             this.field_146038_az = MathHelper.func_76136_a(this.field_70146_Z, 20, 80);
+          }
+       } else {
+-         this.field_146040_ay = MathHelper.func_76136_a(this.field_70146_Z, 100, 600);
++         this.field_146040_ay = MathHelper.func_76136_a(this.field_70146_Z, field_70170_p.paperConfig.fishingMinTicks, field_70170_p.paperConfig.fishingMaxTicks); // Paper
+          this.field_146040_ay -= this.field_191519_ax * 20 * 5;
++         this.field_146040_ay = Math.max(0, this.field_146040_ay); // Paper - Don't allow negative values
+       }
+ 
+    }
+@@ -354,26 +360,53 @@
     public int func_146034_e(ItemStack p_146034_1_) {
        if (!this.field_70170_p.field_72995_K && this.field_146042_b != null) {
           int i = 0;
@@ -168,7 +179,7 @@
                 if (itemstack.func_77973_b().func_206844_a(ItemTags.field_206964_G)) {
                    this.field_146042_b.func_195067_a(Stats.field_188071_E, 1);
                 }
-@@ -383,11 +415,27 @@
+@@ -383,11 +416,27 @@
           }
  
           if (this.field_146051_au) {
@@ -197,7 +208,7 @@
        } else {
           return 0;
        }
-@@ -413,8 +461,9 @@
+@@ -413,8 +462,9 @@
        return false;
     }
  

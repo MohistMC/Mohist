@@ -11,9 +11,12 @@
     public static final IntegerProperty field_176355_a = BlockStateProperties.field_208171_X;
     protected static final VoxelShape field_196503_b = Block.func_208617_a(2.0D, 0.0D, 2.0D, 14.0D, 16.0D, 14.0D);
  
-@@ -39,12 +40,15 @@
+@@ -37,14 +38,17 @@
+             ;
+          }
  
-          if (i < 3) {
+-         if (i < 3) {
++         if (i < p_225534_2_.paperConfig.cactusMaxHeight) { // Paper - Configurable growth height
              int j = p_225534_1_.func_177229_b(field_176355_a);
 -            if (j == 15) {
 -               p_225534_2_.func_175656_a(p_225534_3_.func_177984_a(), this.func_176223_P());
