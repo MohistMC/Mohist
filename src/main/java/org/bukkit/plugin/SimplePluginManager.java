@@ -581,12 +581,11 @@ public final class SimplePluginManager implements PluginManager {
     public void addPermission(Permission perm, boolean dirty) {
         String name = perm.getName().toLowerCase(java.util.Locale.ENGLISH);
 
-        if (permissions.containsKey(name)) {
-            throw new IllegalArgumentException("The permission " + name + " is already defined!");
+        if (!permissions.containsKey(name)) {
+            //throw new IllegalArgumentException("The permission " + name + " is already defined!");
+            permissions.put(name, perm);
+            calculatePermissionDefault(perm, dirty);
         }
-
-        permissions.put(name, perm);
-        calculatePermissionDefault(perm, dirty);
     }
 
     public Set<Permission> getDefaultPermissions(boolean op) {

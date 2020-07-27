@@ -55,7 +55,7 @@ public class ForgeInjectBukkit {
                 Item item = entry.getValue();
                 Material material = Material.addMaterial(Objects.requireNonNull(EnumHelper.addEnum(Material.class, materialName, new Class[]{Integer.TYPE, Integer.TYPE}, Item.getIdFromItem(item), item.getItemStackLimit())));
                 if (material != null) {
-                    ServerAPI.injectmaterials.put(material.name(), material.getId());
+                    ServerAPI.injectmaterials.put(material.name().toLowerCase(java.util.Locale.ENGLISH), material.getId());
                     Mohist.LOGGER.debug("Save: " + Message.getFormatString("injected.item", new Object[]{material.name(), String.valueOf(material.getId()), String.valueOf(ItemAPI.getBukkit(material).getDurability())}));
                 }
             }
@@ -70,7 +70,7 @@ public class ForgeInjectBukkit {
                 Block block = entry.getValue();
                 Material material = Material.addBlockMaterial(Objects.requireNonNull(EnumHelper.addEnum(Material.class, materialName, new Class[]{Integer.TYPE}, Block.getIdFromBlock(block))));
                 if (material != null) {
-                    ServerAPI.injectblock.put(material.name(), material.getId());
+                    ServerAPI.injectblock.put(material.name().toLowerCase(java.util.Locale.ENGLISH), material.getId());
                     Mohist.LOGGER.debug("Save: " + Message.getFormatString("injected.block", new Object[]{material.name(), String.valueOf(material.getId())}));
                 }
             }
