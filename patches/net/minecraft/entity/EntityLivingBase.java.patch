@@ -1151,16 +1151,7 @@
 +                this.setFlag(7, flag);
          }
      }
- 
-@@ -2437,7 +2772,7 @@
-         Entity entity = this.getRidingEntity();
-         super.dismountRidingEntity();
- 
--        if (entity != null && entity != this.getRidingEntity() && !this.world.isRemote)
-+        if (entity != null && entity != this.getRidingEntity() && !this.world.isRemote && entity.valid)
-         {
-             this.dismountEntity(entity);
-         }
+
 @@ -2519,12 +2854,12 @@
  
      public boolean canBeCollidedWith()
