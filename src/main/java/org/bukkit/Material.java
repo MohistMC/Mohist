@@ -6141,7 +6141,7 @@ public enum Material implements Keyed {
             case YELLOW_BANNER:
             case YELLOW_CARPET:
             case YELLOW_WOOL:
-            // ----- Legacy Separator -----
+                // ----- Legacy Separator -----
             case LEGACY_LAVA_BUCKET:
             case LEGACY_COAL_BLOCK:
             case LEGACY_BLAZE_ROD:
@@ -6205,7 +6205,7 @@ public enum Material implements Keyed {
             case LEGACY_WOOL:
             case LEGACY_CARPET:
             case LEGACY_BOWL:
-            //</editor-fold>
+                //</editor-fold>
                 return true;
             default:
                 return false;
