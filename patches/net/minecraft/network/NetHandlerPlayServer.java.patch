@@ -60,10 +60,11 @@
  import net.minecraft.util.math.Vec3d;
  import net.minecraft.util.text.ChatType;
  import net.minecraft.util.text.ITextComponent;
-@@ -117,9 +124,52 @@
+@@ -117,9 +124,53 @@
  import net.minecraft.world.DimensionType;
  import net.minecraft.world.GameType;
  import net.minecraft.world.WorldServer;
++import net.minecraftforge.common.ForgeHooks;
 +import net.minecraftforge.common.MinecraftForge;
 +import net.minecraftforge.event.ServerChatEvent;
 +import net.minecraftforge.fml.relauncher.FMLLaunchHandler;
@@ -113,7 +114,7 @@
  
  public class NetHandlerPlayServer implements INetHandlerPlayServer, ITickable
  {
-@@ -131,7 +181,10 @@
+@@ -131,7 +182,10 @@
      private long field_194402_f;
      private boolean field_194403_g;
      private long field_194404_h;
@@ -125,7 +126,7 @@
      private int itemDropThreshold;
      private final IntHashMap<Short> pendingTransactions = new IntHashMap<Short>();
      private double firstGoodX;
-@@ -165,8 +218,35 @@
+@@ -165,8 +219,35 @@
          networkManagerIn.setNetHandler(this);
          this.player = playerIn;
          playerIn.connection = this;
@@ -161,7 +162,7 @@
      public void update()
      {
          this.captureCurrentPosition();
-@@ -179,8 +259,7 @@
+@@ -179,8 +260,7 @@
          {
              if (++this.floatingTickCount > 80)
              {
@@ -171,7 +172,7 @@
                  return;
              }
          }
-@@ -205,8 +284,7 @@
+@@ -205,8 +285,7 @@
              {
                  if (++this.vehicleFloatingTickCount > 80)
                  {
@@ -181,7 +182,7 @@
                      return;
                  }
              }
-@@ -226,7 +304,7 @@
+@@ -226,7 +305,7 @@
          this.serverController.profiler.startSection("keepAlive");
          long i = this.currentTimeMillis();
  
@@ -190,7 +191,7 @@
          {
              if (this.field_194403_g)
              {
-@@ -242,24 +320,33 @@
+@@ -242,24 +321,33 @@
          }
  
          this.serverController.profiler.endSection();
@@ -227,7 +228,7 @@
      {
          this.firstGoodX = this.player.posX;
          this.firstGoodY = this.player.posY;
-@@ -274,23 +361,48 @@
+@@ -274,23 +362,48 @@
          return this.netManager;
      }
  
@@ -285,7 +286,7 @@
      }
  
      public void processInput(CPacketInput packetIn)
-@@ -345,9 +457,34 @@
+@@ -345,9 +458,34 @@
                  double d9 = entity.motionX * entity.motionX + entity.motionY * entity.motionY + entity.motionZ * entity.motionZ;
                  double d10 = d6 * d6 + d7 * d7 + d8 * d8;
  
@@ -323,7 +324,7 @@
                      this.netManager.sendPacket(new SPacketMoveVehicle(entity));
                      return;
                  }
-@@ -370,22 +507,90 @@
+@@ -370,22 +508,90 @@
                  d10 = d6 * d6 + d7 * d7 + d8 * d8;
                  boolean flag1 = false;
  
@@ -417,7 +418,7 @@
                  this.serverController.getPlayerList().serverUpdateMovingPlayer(this.player);
                  this.player.addMovementStat(this.player.posX - d0, this.player.posY - d1, this.player.posZ - d2);
                  this.vehicleFloating = d11 >= -0.03125D && !this.serverController.isFlightAllowed() && !worldserver.checkBlockCollision(entity.getEntityBoundingBox().grow(0.0625D).expand(0.0D, -0.55D, 0.0D));
-@@ -400,7 +605,7 @@
+@@ -400,7 +606,7 @@
      {
          PacketThreadUtil.checkThreadAndEnqueue(packetIn, this, this.player.getServerWorld());
  
@@ -426,7 +427,7 @@
          {
              this.player.setPositionAndRotation(this.targetPos.x, this.targetPos.y, this.targetPos.z, this.player.rotationYaw, this.player.rotationPitch);
  
-@@ -459,7 +664,7 @@
+@@ -459,7 +665,7 @@
          {
              WorldServer worldserver = this.serverController.getWorld(this.player.dimension);
  
@@ -435,7 +436,7 @@
              {
                  if (this.networkTickCount == 0)
                  {
-@@ -473,6 +678,7 @@
+@@ -473,6 +679,7 @@
                          this.lastPositionUpdate = this.networkTickCount;
                          this.setPlayerLocation(this.targetPos.x, this.targetPos.y, this.targetPos.z, this.player.rotationYaw, this.player.rotationPitch);
                      }
@@ -443,7 +444,7 @@
                  }
                  else
                  {
-@@ -482,9 +688,17 @@
+@@ -482,9 +689,17 @@
                      {
                          this.player.setPositionAndRotation(this.player.posX, this.player.posY, this.player.posZ, packetIn.getYaw(this.player.rotationYaw), packetIn.getPitch(this.player.rotationPitch));
                          this.serverController.getPlayerList().serverUpdateMovingPlayer(this.player);
@@ -461,7 +462,7 @@
                          double d0 = this.player.posX;
                          double d1 = this.player.posY;
                          double d2 = this.player.posZ;
-@@ -512,19 +726,34 @@
+@@ -512,19 +727,34 @@
                              ++this.movePacketCounter;
                              int i = this.movePacketCounter - this.lastMovePacketCounter;
  
@@ -500,7 +501,7 @@
                                      this.setPlayerLocation(this.player.posX, this.player.posY, this.player.posZ, this.player.rotationYaw, this.player.rotationPitch);
                                      return;
                                  }
-@@ -537,10 +766,15 @@
+@@ -537,10 +767,15 @@
  
                              if (this.player.onGround && !packetIn.isOnGround() && d8 > 0.0D)
                              {
@@ -517,7 +518,7 @@
                              this.player.onGround = packetIn.isOnGround();
                              double d12 = d8;
                              d7 = d4 - this.player.posX;
-@@ -555,10 +789,9 @@
+@@ -555,10 +790,9 @@
                              d11 = d7 * d7 + d8 * d8 + d9 * d9;
                              boolean flag = false;
  
@@ -529,7 +530,7 @@
                              }
  
                              this.player.setPositionAndRotation(d4, d5, d6, f, f1);
-@@ -575,6 +808,69 @@
+@@ -575,6 +809,69 @@
                                  }
                              }
  
@@ -599,7 +600,7 @@
                              this.floating = d12 >= -0.03125D;
                              this.floating &= !this.serverController.isFlightAllowed() && !this.player.capabilities.allowFlying;
                              this.floating &= !this.player.isPotionActive(MobEffects.LEVITATION) && !this.player.isElytraFlying() && !worldserver.checkBlockCollision(this.player.getEntityBoundingBox().grow(0.0625D).expand(0.0D, -0.55D, 0.0D));
-@@ -596,8 +892,74 @@
+@@ -596,8 +893,74 @@
          this.setPlayerLocation(x, y, z, yaw, pitch, Collections.emptySet());
      }
  
@@ -674,7 +675,7 @@
          double d0 = relativeSet.contains(SPacketPlayerPosLook.EnumFlags.X) ? this.player.posX : 0.0D;
          double d1 = relativeSet.contains(SPacketPlayerPosLook.EnumFlags.Y) ? this.player.posY : 0.0D;
          double d2 = relativeSet.contains(SPacketPlayerPosLook.EnumFlags.Z) ? this.player.posZ : 0.0D;
-@@ -615,6 +977,14 @@
+@@ -615,6 +978,14 @@
              f1 = pitch + this.player.rotationPitch;
          }
  
@@ -689,7 +690,7 @@
          if (++this.teleportId == Integer.MAX_VALUE)
          {
              this.teleportId = 0;
-@@ -628,6 +998,7 @@
+@@ -628,6 +999,7 @@
      public void processPlayerDigging(CPacketPlayerDigging packetIn)
      {
          PacketThreadUtil.checkThreadAndEnqueue(packetIn, this, this.player.getServerWorld());
@@ -697,7 +698,7 @@
          WorldServer worldserver = this.serverController.getWorld(this.player.dimension);
          BlockPos blockpos = packetIn.getPosition();
          this.player.markPlayerActive();
-@@ -639,7 +1010,16 @@
+@@ -639,7 +1011,16 @@
                  if (!this.player.isSpectator())
                  {
                      ItemStack itemstack = this.player.getHeldItem(EnumHand.OFF_HAND);
@@ -715,7 +716,7 @@
                      this.player.setHeldItem(EnumHand.MAIN_HAND, itemstack);
                  }
  
-@@ -648,6 +1028,20 @@
+@@ -648,6 +1029,20 @@
  
                  if (!this.player.isSpectator())
                  {
@@ -736,7 +737,7 @@
                      this.player.dropItem(false);
                  }
  
-@@ -671,7 +1065,10 @@
+@@ -671,7 +1066,10 @@
                  double d2 = this.player.posZ - ((double)blockpos.getZ() + 0.5D);
                  double d3 = d0 * d0 + d1 * d1 + d2 * d2;
  
@@ -748,7 +749,7 @@
                  {
                      return;
                  }
-@@ -689,7 +1086,15 @@
+@@ -689,7 +1087,15 @@
                          }
                          else
                          {
@@ -764,7 +765,7 @@
                          }
                      }
                      else
-@@ -720,6 +1125,7 @@
+@@ -720,6 +1126,7 @@
      public void processTryUseItemOnBlock(CPacketPlayerTryUseItemOnBlock packetIn)
      {
          PacketThreadUtil.checkThreadAndEnqueue(packetIn, this, this.player.getServerWorld());
@@ -772,7 +773,7 @@
          WorldServer worldserver = this.serverController.getWorld(this.player.dimension);
          EnumHand enumhand = packetIn.getHand();
          ItemStack itemstack = this.player.getHeldItem(enumhand);
-@@ -729,8 +1135,17 @@
+@@ -729,8 +1136,17 @@
  
          if (blockpos.getY() < this.serverController.getBuildLimit() - 1 || enumfacing != EnumFacing.UP && blockpos.getY() < this.serverController.getBuildLimit())
          {
@@ -791,7 +792,7 @@
                  this.player.interactionManager.processRightClickBlock(this.player, worldserver, itemstack, enumhand, blockpos, enumfacing, packetIn.getFacingX(), packetIn.getFacingY(), packetIn.getFacingZ());
              }
          }
-@@ -748,6 +1163,7 @@
+@@ -748,6 +1164,7 @@
      public void processTryUseItem(CPacketPlayerTryUseItem packetIn)
      {
          PacketThreadUtil.checkThreadAndEnqueue(packetIn, this, this.player.getServerWorld());
@@ -799,7 +800,7 @@
          WorldServer worldserver = this.serverController.getWorld(this.player.dimension);
          EnumHand enumhand = packetIn.getHand();
          ItemStack itemstack = this.player.getHeldItem(enumhand);
-@@ -755,7 +1171,46 @@
+@@ -755,7 +1172,46 @@
  
          if (!itemstack.isEmpty())
          {
@@ -847,7 +848,7 @@
          }
      }
  
-@@ -767,7 +1222,8 @@
+@@ -767,7 +1223,8 @@
          {
              Entity entity = null;
  
@@ -857,7 +858,7 @@
              {
                  if (worldserver != null)
                  {
-@@ -784,42 +1240,17 @@
+@@ -784,42 +1241,17 @@
              {
                  this.player.setSpectatingEntity(this.player);
                  this.player.dismountRidingEntity();
@@ -905,7 +906,7 @@
      }
  
      public void processSteerBoat(CPacketSteerBoat packetIn)
-@@ -835,13 +1266,26 @@
+@@ -835,13 +1267,26 @@
  
      public void onDisconnect(ITextComponent reason)
      {
@@ -935,7 +936,7 @@
  
          if (this.serverController.isSinglePlayer() && this.player.getName().equals(this.serverController.getServerOwner()))
          {
-@@ -868,6 +1312,13 @@
+@@ -868,6 +1313,13 @@
              }
          }
  
@@ -949,7 +950,7 @@
          try
          {
              this.netManager.sendPacket(packetIn);
-@@ -890,23 +1341,42 @@
+@@ -890,23 +1342,42 @@
      public void processHeldItemChange(CPacketHeldItemChange packetIn)
      {
          PacketThreadUtil.checkThreadAndEnqueue(packetIn, this, this.player.getServerWorld());
@@ -995,7 +996,7 @@
          {
              TextComponentTranslation textcomponenttranslation = new TextComponentTranslation("chat.cannotSend", new Object[0]);
              textcomponenttranslation.getStyle().setColor(TextFormatting.RED);
-@@ -922,45 +1392,269 @@
+@@ -922,45 +1393,268 @@
              {
                  if (!ChatAllowedCharacters.isAllowedCharacter(s.charAt(i)))
                  {
@@ -1112,8 +1113,7 @@
 +            // Do nothing, this is coming from a plugin
 +        } else {
 +            ITextComponent iTextComponent = new TextComponentTranslation("chat.type.text", this.player.getDisplayName(), net.minecraftforge.common.ForgeHooks.newChatWithLinks(s));
-+            ServerChatEvent serverChatEvent = new ServerChatEvent(this.player, s, iTextComponent);
-+            MinecraftForge.EVENT_BUS.post(serverChatEvent);
++            ForgeHooks.onServerChatEvent(this, s, iTextComponent);
 +
 +            Player player = this.getPlayer();
 +            AsyncPlayerChatEvent event = new AsyncPlayerChatEvent(async, player, s, new LazyPlayerSet(serverController));
