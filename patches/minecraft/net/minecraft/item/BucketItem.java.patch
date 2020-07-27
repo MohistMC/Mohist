@@ -75,7 +75,7 @@
 -                     p_77659_2_.func_184185_a(fluid.func_207185_a(FluidTags.field_206960_b) ? SoundEvents.field_187633_N : SoundEvents.field_187630_M, 1.0F, 1.0F);
 -                     ItemStack itemstack1 = this.func_150910_a(itemstack, p_77659_2_, fluid.func_204524_b());
 +
-+                     SoundEvent soundevent = this.field_77876_a.getAttributes().getEmptySound();
++                     SoundEvent soundevent = this.field_77876_a.getAttributes().getFillSound();
 +                     if (soundevent == null) soundevent = fluid.func_207185_a(FluidTags.field_206960_b) ? SoundEvents.field_187633_N : SoundEvents.field_187630_M;
 +                     p_77659_2_.func_184185_a(soundevent, 1.0F, 1.0F);
 +                     ItemStack itemstack1 = this.fillBucket(itemstack, p_77659_2_, fluid.func_204524_b(), event.getItemStack()); // CraftBukkit
