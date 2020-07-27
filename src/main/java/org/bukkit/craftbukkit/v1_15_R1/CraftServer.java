@@ -211,7 +211,7 @@ public final class CraftServer implements Server {
     private final String serverName = "Mohist";
     private final String serverVersion;
     private final String bukkitVersion = Versioning.getBukkitVersion();
-    private final Logger logger = Logger.getLogger("CraftServer");
+    private final Logger logger = Logger.getLogger(Message.getString("server.craft.server"));
     private final ServicesManager servicesManager = new SimpleServicesManager();
     private final CraftScheduler scheduler = new CraftScheduler();
     private final CraftCommandMap commandMap = new CraftCommandMap(this);
