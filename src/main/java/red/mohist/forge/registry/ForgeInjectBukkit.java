@@ -1,7 +1,12 @@
 package red.mohist.forge.registry;
 
+import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+
+import com.google.common.collect.ImmutableList;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.potion.Effect;
@@ -9,15 +14,23 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
 import org.bukkit.craftbukkit.v1_15_R1.potion.CraftPotionEffectType;
 import org.bukkit.craftbukkit.v1_15_R1.util.CraftMagicNumbers;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.potion.PotionEffectType;
+import red.mohist.api.EnumHelper;
+import red.mohist.api.Unsafe;
 import red.mohist.entity.CraftCustomEntity;
 import red.mohist.forge.MohistMod;
+import red.mohist.forge.util.ResourceLocationUtil;
 import red.mohist.util.MohistEnumHelper;
 
 public class ForgeInjectBukkit {
+
+    private static final Map<String, EntityType> ENTITY_NAME_MAP = getStatic(EntityType.class, "NAME_MAP");
+    private static final List<Class<?>> ENTITY_CTOR = ImmutableList.of(String.class, Class.class, int.class);
 
     public static void init() {
         addForgeItems();
@@ -89,4 +102,15 @@ public class ForgeInjectBukkit {
         PotionEffectType.stopAcceptingRegistrations();
     }
 
+    private static <T> T getStatic(Class<?> cl, String name) {
+        try {
+            Unsafe.ensureClassInitialized(cl);
+            Field field = cl.getDeclaredField(name);
+            Object materialByNameBase = Unsafe.staticFieldBase(field);
+            long materialByNameOffset = Unsafe.staticFieldOffset(field);
+            return (T) Unsafe.getObject(materialByNameBase, materialByNameOffset);
+        } catch (Exception e) {
+            return null;
+        }
+    }
 }
