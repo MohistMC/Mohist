@@ -43,6 +43,11 @@ public class PluginClassLoader extends URLClassLoader {
     private IllegalStateException pluginState;
     private final Set<String> seenIllegalAccess = Collections.newSetFromMap(new ConcurrentHashMap<>());
 
+    public JavaPlugin getPlugin() {
+        return plugin;
+    }
+    // Spigot
+
     static {
         ClassLoader.registerAsParallelCapable();
     }

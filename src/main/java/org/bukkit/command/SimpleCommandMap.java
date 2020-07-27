@@ -22,6 +22,8 @@ import org.bukkit.util.StringUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import red.mohist.command.DumpCommand;
+import red.mohist.command.EntityCommand;
+import red.mohist.command.MohistCommand;
 
 public class SimpleCommandMap implements CommandMap {
     protected final Map<String, Command> knownCommands = new HashMap<String, Command>();
@@ -38,6 +40,8 @@ public class SimpleCommandMap implements CommandMap {
         register("bukkit", new PluginsCommand("plugins"));
         register("bukkit", new TimingsCommand("timings"));
         register("dump", new DumpCommand("dump"));
+        register("entity", new EntityCommand("entity"));
+        register("mohist", new MohistCommand("mohist"));
     }
 
     public void setFallbackCommands() {
