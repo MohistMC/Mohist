@@ -3,11 +3,15 @@ package org.bukkit.command.defaults;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
+
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
+import red.mohist.util.i18n.Message;
+import red.mohist.util.pluginmanager.PluginManagers;
 
 public class PluginsCommand extends BukkitCommand {
     public PluginsCommand(@NotNull String name) {
@@ -20,9 +24,30 @@ public class PluginsCommand extends BukkitCommand {
 
     @Override
     public boolean execute(@NotNull CommandSender sender, @NotNull String currentAlias, @NotNull String[] args) {
-        if (!testPermission(sender)) return true;
+        if (!testPermission(sender)) {
+            sender.sendMessage(Message.getString("command.nopermission"));
+            return true;
+        }
 
-        sender.sendMessage("Plugins " + getPluginList());
+        if (args.length == 0) {
+            sender.sendMessage("Plugins " + getPluginList());
+            return false;
+        }
+
+        switch (args[0].toLowerCase(Locale.ENGLISH)) {
+            case "load":
+                PluginManagers.loadPluginCommand(sender, currentAlias, args);
+                break;
+            case "unload":
+                PluginManagers.unloadPluginCommand(sender, currentAlias, args);
+                break;
+            case "reload":
+                PluginManagers.reloadPluginCommand(sender, currentAlias, args);
+                break;
+            default:
+                sender.sendMessage(ChatColor.RED + "Usage: " + usageMessage);
+                return false;
+        }
         return true;
     }
 
