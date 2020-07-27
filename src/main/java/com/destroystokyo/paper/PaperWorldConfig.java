@@ -72,4 +72,44 @@ public class PaperWorldConfig {
         reedMaxHeight = getInt("max-growth-height.reeds", 3);
         log("Max height for cactus growth " + cactusMaxHeight + ". Max height for reed growth " + reedMaxHeight);
     }
+
+    public double babyZombieMovementModifier;
+    private void babyZombieMovementModifier() {
+        babyZombieMovementModifier = getDouble("baby-zombie-movement-modifier", 0.5D);
+        if (PaperConfig.version < 20) {
+            babyZombieMovementModifier = getDouble("baby-zombie-movement-speed", 0.5D);
+            set("baby-zombie-movement-modifier", babyZombieMovementModifier);
+        }
+        log("Baby zombies will move at the speed of " + babyZombieMovementModifier);
+    }
+
+    public int fishingMinTicks;
+    public int fishingMaxTicks;
+    private void fishingTickRange() {
+        fishingMinTicks = getInt("fishing-time-range.MinimumTicks", 100);
+        fishingMaxTicks = getInt("fishing-time-range.MaximumTicks", 600);
+        log("Fishing time ranges are between " + fishingMinTicks +" and " + fishingMaxTicks + " ticks");
+    }
+
+    public int softDespawnDistance;
+    public int hardDespawnDistance;
+    private void despawnDistances() {
+        softDespawnDistance = getInt("despawn-ranges.soft", 32); // 32^2 = 1024, Minecraft Default
+        hardDespawnDistance = getInt("despawn-ranges.hard", 128); // 128^2 = 16384, Minecraft Default
+
+        if (softDespawnDistance > hardDespawnDistance) {
+            softDespawnDistance = hardDespawnDistance;
+        }
+
+        log("Living Entity Despawn Ranges:  Soft: " + softDespawnDistance + " Hard: " + hardDespawnDistance);
+
+        softDespawnDistance = softDespawnDistance*softDespawnDistance;
+        hardDespawnDistance = hardDespawnDistance*hardDespawnDistance;
+    }
+
+    public boolean keepSpawnInMemory;
+    private void keepSpawnInMemory() {
+        keepSpawnInMemory = getBoolean("keep-spawn-loaded", true);
+        log("Keep spawn chunk loaded: " + keepSpawnInMemory);
+    }
 }
