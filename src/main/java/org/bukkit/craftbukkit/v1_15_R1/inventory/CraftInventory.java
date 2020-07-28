@@ -444,6 +444,9 @@ public class CraftInventory implements Inventory {
 
     @Override
     public InventoryType getType() {
+        if (inventory.getClass().getDeclaringClass() == LecternTileEntity.class) {
+            return InventoryType.LECTERN;
+        }
         // Thanks to Droppers extending Dispensers, Blast Furnaces & Smokers extending Furnace, order is important.
         if (inventory instanceof CraftingInventory) {
             return inventory.getSizeInventory() >= 9 ? InventoryType.WORKBENCH : InventoryType.CRAFTING;

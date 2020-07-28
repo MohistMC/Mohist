@@ -20,6 +20,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.shapes.VoxelShape;
 import net.minecraft.world.server.ServerWorld;
+import net.minecraftforge.registries.ForgeRegistries;
 import org.apache.commons.lang.Validate;
 import org.bukkit.Chunk;
 import org.bukkit.FluidCollisionMode;
@@ -38,6 +39,7 @@ import org.bukkit.craftbukkit.v1_15_R1.block.data.CraftBlockData;
 import org.bukkit.craftbukkit.v1_15_R1.entity.CraftEntity;
 import org.bukkit.craftbukkit.v1_15_R1.inventory.CraftItemStack;
 import org.bukkit.craftbukkit.v1_15_R1.util.CraftMagicNumbers;
+import org.bukkit.craftbukkit.v1_15_R1.util.CraftNamespacedKey;
 import org.bukkit.craftbukkit.v1_15_R1.util.CraftRayTraceResult;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.metadata.MetadataValue;
@@ -46,6 +48,7 @@ import org.bukkit.util.BlockVector;
 import org.bukkit.util.BoundingBox;
 import org.bukkit.util.RayTraceResult;
 import org.bukkit.util.Vector;
+import red.mohist.forge.util.ResourceLocationUtil;
 
 public class CraftBlock implements Block {
     private final net.minecraft.world.IWorld world;
@@ -484,8 +487,7 @@ public class CraftBlock implements Block {
         if (base == null) {
             return null;
         }
-
-        return Biome.valueOf(Registry.BIOME.getKey(base).getPath().toUpperCase(java.util.Locale.ENGLISH));
+        return Biome.valueOf(ResourceLocationUtil.standardize(base.getRegistryName()));
     }
 
     public static net.minecraft.world.biome.Biome biomeToBiomeBase(Biome bio) {
@@ -493,7 +495,7 @@ public class CraftBlock implements Block {
             return null;
         }
 
-        return Registry.BIOME.getOrDefault(new ResourceLocation(bio.name().toLowerCase(java.util.Locale.ENGLISH)));
+        return ForgeRegistries.BIOMES.getValue(CraftNamespacedKey.toMinecraft(bio.getKey()));
     }
 
     @Override

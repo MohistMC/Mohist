@@ -237,7 +237,7 @@
 +         }
 +         // CraftBukkit end
 +         ServerLoginNetHandler.field_147332_c.info("UUID of player {} is {}", ServerLoginNetHandler.this.field_147337_i.getName(), ServerLoginNetHandler.this.field_147337_i.getId());
-+         ServerLoginNetHandler.this.field_147328_g = State.READY_TO_ACCEPT;
++         ServerLoginNetHandler.this.field_147328_g = State.NEGOTIATING;
 +      }
 +   }
 +   // Spigot end

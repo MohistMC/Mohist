@@ -613,7 +613,7 @@ public class CraftWorld implements World {
 
     @Override
     public UUID getUID() {
-        return world.getSaveHandler().getUUID();
+        return world.getSaveHandler().getUUID(this.world);
     }
 
     @Override

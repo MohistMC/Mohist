@@ -1,33 +1,39 @@
 --- a/net/minecraft/world/storage/SaveHandler.java
 +++ b/net/minecraft/world/storage/SaveHandler.java
-@@ -7,8 +7,10 @@
+@@ -7,8 +7,13 @@
  import java.io.FileInputStream;
  import java.io.FileOutputStream;
  import java.io.IOException;
 +import java.util.UUID;
  import javax.annotation.Nullable;
++
++import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
++import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
  import net.minecraft.entity.player.PlayerEntity;
 +import net.minecraft.entity.player.ServerPlayerEntity;
  import net.minecraft.nbt.CompoundNBT;
  import net.minecraft.nbt.CompressedStreamTools;
  import net.minecraft.nbt.NBTUtil;
-@@ -18,6 +20,7 @@
+@@ -16,8 +21,10 @@
+ import net.minecraft.util.Util;
+ import net.minecraft.util.datafix.DefaultTypeReferences;
  import net.minecraft.world.gen.feature.template.TemplateManager;
++import net.minecraft.world.server.ServerWorld;
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
 +import org.bukkit.craftbukkit.v1_15_R1.entity.CraftPlayer;
  
  public class SaveHandler implements IPlayerFileData {
     private static final Logger field_215773_b = LogManager.getLogger();
-@@ -27,6 +30,7 @@
+@@ -27,6 +34,7 @@
     private final String field_215777_f;
     private final TemplateManager field_215778_g;
     protected final DataFixer field_215772_a;
-+   private UUID uuid = null; // CraftBukkit
++   private final Int2ObjectMap<UUID> uuidMap = new Int2ObjectOpenHashMap<>();
  
     public SaveHandler(File p_i51278_1_, String p_i51278_2_, @Nullable MinecraftServer p_i51278_3_, DataFixer p_i51278_4_) {
        this.field_215772_a = p_i51278_4_;
-@@ -50,6 +54,8 @@
+@@ -50,6 +58,8 @@
        CompoundNBT compoundnbt1 = new CompoundNBT();
        compoundnbt1.func_218657_a("Data", compoundnbt);
  
@@ -36,7 +42,7 @@
        try {
           File file1 = new File(this.field_215774_c, "level.dat_new");
           File file2 = new File(this.field_215774_c, "level.dat_old");
-@@ -87,7 +93,7 @@
+@@ -87,7 +97,7 @@
  
        } catch (IOException ioexception) {
           ioexception.printStackTrace();
@@ -45,7 +51,7 @@
        }
     }
  
-@@ -102,14 +108,14 @@
+@@ -102,14 +112,14 @@
  
           try {
              if (datainputstream.readLong() != this.field_215776_e) {
@@ -62,7 +68,7 @@
        }
     }
  
-@@ -117,14 +123,14 @@
+@@ -117,14 +127,14 @@
     public WorldInfo func_75757_d() {
        File file1 = new File(this.field_215774_c, "level.dat");
        if (file1.exists()) {
@@ -79,7 +85,7 @@
     }
  
     public void func_75761_a(WorldInfo p_75761_1_) {
-@@ -142,6 +148,7 @@
+@@ -142,6 +152,7 @@
           }
  
           file1.renameTo(file2);
@@ -87,7 +93,7 @@
        } catch (Exception var5) {
           field_215773_b.warn("Failed to save player data for {}", (Object)p_75753_1_.func_200200_C_().getString());
        }
-@@ -154,21 +161,67 @@
+@@ -154,21 +165,67 @@
  
        try {
           File file1 = new File(this.field_215775_d, p_75752_1_.func_189512_bd() + ".dat");
@@ -155,7 +161,7 @@
     public String[] func_215771_d() {
        String[] astring = this.field_215775_d.list();
        if (astring == null) {
-@@ -191,4 +244,82 @@
+@@ -191,4 +248,87 @@
     public DataFixer func_197718_i() {
        return this.field_215772_a;
     }
@@ -182,16 +188,20 @@
 +
 +   // CraftBukkit start
 +   public UUID getUUID() {
-+      if (this.uuid != null) {
-+         return this.uuid;
-+      }
-+      File file1 = new File(this.field_215774_c, "uid.dat");
++      return getUUID(null);
++   }
++
++   public UUID getUUID(ServerWorld world) {
++      int dimId = world == null ? 0 : world.field_73011_w.func_186058_p().func_186068_a();
++      UUID uuid = uuidMap.get(dimId);
++      File folder = world == null ? this.field_215774_c : world.field_73011_w.func_186058_p().func_212679_a(this.field_215774_c);
++      File file1 = new File(folder, "uid.dat");
 +      if (file1.exists()) {
 +         DataInputStream dis = null;
 +         try {
 +            dis = new DataInputStream(new FileInputStream(file1));
-+            UUID uuid = new UUID(dis.readLong(), dis.readLong());
-+            this.uuid = uuid;
++            uuid = new UUID(dis.readLong(), dis.readLong());
++            uuidMap.put(dimId, uuid);
 +            return uuid;
 +         }
 +         catch (IOException ex) {
@@ -206,12 +216,12 @@
 +            }
 +         }
 +      }
-+      this.uuid = UUID.randomUUID();
++      uuid = UUID.randomUUID();
 +      DataOutputStream dos = null;
 +      try {
 +         dos = new DataOutputStream(new FileOutputStream(file1));
-+         dos.writeLong(this.uuid.getMostSignificantBits());
-+         dos.writeLong(this.uuid.getLeastSignificantBits());
++         dos.writeLong(uuid.getMostSignificantBits());
++         dos.writeLong(uuid.getLeastSignificantBits());
 +    }
 +      catch (IOException ex) {
 +         field_215773_b.warn("Failed to write " + file1, ex);
@@ -230,7 +240,8 @@
 +         }
 +         catch (IOException ex4) {}
 +      }
-+      return this.uuid;
++      uuidMap.put(dimId, uuid);
++      return getUUID(world);
 +   }
 +
 +   public File getPlayerDir() {

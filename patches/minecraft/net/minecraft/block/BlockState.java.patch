@@ -1,15 +1,17 @@
 --- a/net/minecraft/block/BlockState.java
 +++ b/net/minecraft/block/BlockState.java
-@@ -51,7 +51,7 @@
+@@ -50,8 +50,9 @@
+ import net.minecraft.world.storage.loot.LootContext;
  import net.minecraftforge.api.distmarker.Dist;
  import net.minecraftforge.api.distmarker.OnlyIn;
++import org.bukkit.craftbukkit.v1_15_R1.event.CraftEventFactory;
  
 -public class BlockState extends StateHolder<Block, BlockState> implements IStateHolder<BlockState> {
 +public class BlockState extends StateHolder<Block, BlockState> implements IStateHolder<BlockState>, net.minecraftforge.common.extensions.IForgeBlockState {
     @Nullable
     private BlockState.Cache field_215707_c;
     private final int field_215708_d;
-@@ -106,10 +106,14 @@
+@@ -106,10 +107,14 @@
        return this.field_215708_d;
     }
  
@@ -24,3 +26,13 @@
     public MaterialColor func_185909_g(IBlockReader p_185909_1_, BlockPos p_185909_2_) {
        return this.func_177230_c().func_180659_g(this, p_185909_1_, p_185909_2_);
     }
+@@ -250,7 +255,9 @@
+    }
+ 
+    public void func_196950_a(World p_196950_1_, BlockPos p_196950_2_, Entity p_196950_3_) {
++      CraftEventFactory.captureDamageEventBlock(p_196950_2_);
+       this.func_177230_c().func_196262_a(this, p_196950_1_, p_196950_2_, p_196950_3_);
++      CraftEventFactory.captureDamageEventBlock(null);
+    }
+ 
+    public void func_215706_a(World p_215706_1_, BlockPos p_215706_2_, ItemStack p_215706_3_) {

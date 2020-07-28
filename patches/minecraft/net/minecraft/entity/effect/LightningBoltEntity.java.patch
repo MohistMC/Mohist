@@ -44,8 +44,14 @@
     public SoundCategory func_184176_by() {
        return SoundCategory.WEATHER;
     }
-@@ -55,8 +68,25 @@
+@@ -53,10 +66,31 @@
+       this.field_204810_e = p_204809_1_;
+    }
  
++   private void resetEntity() {
++      CraftEventFactory.captureDamageEventEntity(null);
++   }
++
     public void func_70071_h_() {
        super.func_70071_h_();
 -      if (this.field_70262_b == 2) {
@@ -72,7 +78,7 @@
           this.field_70170_p.func_184148_a((PlayerEntity)null, this.func_226277_ct_(), this.func_226278_cu_(), this.func_226281_cx_(), SoundEvents.field_187752_dd, SoundCategory.WEATHER, 2.0F, 0.5F + this.field_70146_Z.nextFloat() * 0.2F);
        }
  
-@@ -72,7 +102,7 @@
+@@ -72,7 +106,7 @@
           }
        }
  
@@ -81,7 +87,7 @@
           if (this.field_70170_p.field_72995_K) {
              this.field_70170_p.func_225605_c_(2);
           } else if (!this.field_184529_d) {
-@@ -80,6 +110,7 @@
+@@ -80,6 +114,7 @@
              List<Entity> list = this.field_70170_p.func_175674_a(this, new AxisAlignedBB(this.func_226277_ct_() - 3.0D, this.func_226278_cu_() - 3.0D, this.func_226281_cx_() - 3.0D, this.func_226277_ct_() + 3.0D, this.func_226278_cu_() + 6.0D + 3.0D, this.func_226281_cx_() + 3.0D), Entity::func_70089_S);
  
              for(Entity entity : list) {
@@ -89,7 +95,7 @@
                 entity.func_70077_a(this);
              }
  
-@@ -96,14 +127,22 @@
+@@ -96,14 +131,22 @@
           BlockState blockstate = Blocks.field_150480_ab.func_176223_P();
           BlockPos blockpos = new BlockPos(this);
           if (this.field_70170_p.func_180495_p(blockpos).func_196958_f() && blockstate.func_196955_c(this.field_70170_p, blockpos)) {
