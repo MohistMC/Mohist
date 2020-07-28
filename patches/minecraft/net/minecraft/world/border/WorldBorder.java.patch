@@ -31,3 +31,16 @@
     public void func_177725_a(int p_177725_1_) {
        this.field_177762_h = p_177725_1_;
        this.field_212674_i.func_212652_j();
+@@ -404,4 +411,12 @@
+          return this.field_222518_g;
+       }
+    }
++
++   public ServerWorld getWorld() {
++      return this.world;
++   }
++
++   public void setWorld(ServerWorld world) {
++      this.world = world;
++   }
+ }

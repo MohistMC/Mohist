@@ -9,3 +9,13 @@
           StructureStart structurestart = istructurereader.func_201585_a(this.func_143025_a());
           if (structurestart != null) {
              list.add(structurestart);
+@@ -159,6 +159,9 @@
+       return list;
+    }
+ 
++   private IChunk notLoadChunk(IWorld iWorld, int chunkX, int chunkZ, ChunkStatus requiredStatus) {
++      return iWorld.func_217353_a(chunkX, chunkZ, requiredStatus, false);
++   }
+    protected ChunkPos func_211744_a(ChunkGenerator<?> p_211744_1_, Random p_211744_2_, int p_211744_3_, int p_211744_4_, int p_211744_5_, int p_211744_6_) {
+       return new ChunkPos(p_211744_3_ + p_211744_5_, p_211744_4_ + p_211744_6_);
+    }

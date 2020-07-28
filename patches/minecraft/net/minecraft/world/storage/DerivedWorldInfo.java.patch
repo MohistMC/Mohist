@@ -1,0 +1,29 @@
+--- a/net/minecraft/world/storage/DerivedWorldInfo.java
++++ b/net/minecraft/world/storage/DerivedWorldInfo.java
+@@ -16,6 +16,7 @@
+ 
+ public class DerivedWorldInfo extends WorldInfo {
+    private final WorldInfo field_76115_a;
++   private DimensionType type;
+ 
+    public DerivedWorldInfo(WorldInfo p_i2145_1_) {
+       this.field_76115_a = p_i2145_1_;
+@@ -54,9 +55,17 @@
+    }
+ 
+    public String func_76065_j() {
+-      return this.field_76115_a.func_76065_j();
++      if (type == null || type.func_186068_a() == 0 || type.field_212682_f.isEmpty()) {
++         return this.field_76115_a.func_76065_j();
++      } else {
++         return this.field_76115_a.func_76065_j() + "/" + type.field_212682_f;
++      }
+    }
+ 
++   public void setDimension(DimensionType dimensionType) {
++      this.type = dimensionType;
++   }
++
+    public int func_76088_k() {
+       return this.field_76115_a.func_76088_k();
+    }

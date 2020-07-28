@@ -25,7 +25,15 @@
     private int field_219317_l;
     private int field_219318_m;
     private final ChunkPos field_219319_n;
-@@ -70,6 +72,17 @@
+@@ -58,6 +60,7 @@
+    private final ChunkHolder.IListener field_219327_v;
+    private final ChunkHolder.IPlayerProvider field_219328_w;
+    private boolean field_219329_x;
++   public int getOldTicketLevel;
+ 
+    public ChunkHolder(ChunkPos p_i50716_1_, int p_i50716_2_, WorldLightManager p_i50716_3_, ChunkHolder.IListener p_i50716_4_, ChunkHolder.IPlayerProvider p_i50716_5_) {
+       this.field_219319_n = p_i50716_1_;
+@@ -70,6 +73,17 @@
        this.func_219292_a(p_i50716_2_);
     }
  
@@ -43,7 +51,7 @@
     public CompletableFuture<Either<IChunk, ChunkHolder.IChunkLoadingError>> func_219301_a(ChunkStatus p_219301_1_) {
        CompletableFuture<Either<IChunk, ChunkHolder.IChunkLoadingError>> completablefuture = this.field_219312_g.get(p_219301_1_.func_222584_c());
        return completablefuture == null ? field_219307_b : completablefuture;
-@@ -136,7 +149,7 @@
+@@ -136,7 +150,7 @@
        Chunk chunk = this.func_219298_c();
        if (chunk != null) {
           this.field_219322_q |= 1 << (p_219279_2_ >> 4);
@@ -52,7 +60,7 @@
              short short1 = (short)(p_219279_1_ << 12 | p_219279_3_ << 8 | p_219279_2_);
  
              for(int i = 0; i < this.field_219321_p; ++i) {
-@@ -145,6 +158,8 @@
+@@ -145,6 +159,8 @@
                 }
              }
  
@@ -61,7 +69,7 @@
              this.field_219320_o[this.field_219321_p++] = short1;
           }
  
-@@ -167,7 +182,7 @@
+@@ -167,7 +183,7 @@
     public void func_219274_a(Chunk p_219274_1_) {
        if (this.field_219321_p != 0 || this.field_219325_t != 0 || this.field_219324_s != 0) {
           World world = p_219274_1_.func_177412_p();
@@ -70,7 +78,7 @@
              this.field_219323_r = -1;
           }
  
-@@ -190,20 +205,19 @@
+@@ -190,20 +206,19 @@
              int k = (this.field_219320_o[0] >> 8 & 15) + this.field_219319_n.field_77275_b * 16;
              BlockPos blockpos = new BlockPos(l, j1, k);
              this.func_219293_a(new SChangeBlockPacket(world, blockpos), false);
@@ -94,7 +102,7 @@
                    this.func_219305_a(world, blockpos1);
                 }
              }
-@@ -293,6 +307,31 @@
+@@ -293,6 +308,31 @@
        boolean flag1 = this.field_219317_l <= ChunkManager.field_219249_a;
        ChunkHolder.LocationType chunkholder$locationtype = func_219286_c(this.field_219316_k);
        ChunkHolder.LocationType chunkholder$locationtype1 = func_219286_c(this.field_219317_l);
@@ -126,7 +134,7 @@
        if (flag) {
           Either<IChunk, ChunkHolder.IChunkLoadingError> either = Either.right(new ChunkHolder.IChunkLoadingError() {
              public String toString() {
-@@ -356,6 +395,24 @@
+@@ -356,6 +396,24 @@
  
        this.field_219327_v.func_219066_a(this.field_219319_n, this::func_219281_j, this.field_219317_l, this::func_219275_d);
        this.field_219316_k = this.field_219317_l;

@@ -1,25 +1,27 @@
 --- a/net/minecraft/world/TrackedEntity.java
 +++ b/net/minecraft/world/TrackedEntity.java
-@@ -36,6 +36,8 @@
+@@ -36,6 +36,10 @@
  import net.minecraft.world.storage.MapData;
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
++import org.bukkit.Bukkit;
 +import org.bukkit.entity.Player;
 +import org.bukkit.event.player.PlayerVelocityEvent;
++import org.bukkit.util.Vector;
  
  public class TrackedEntity {
     private static final Logger field_219459_a = LogManager.getLogger();
-@@ -57,33 +59,38 @@
+@@ -57,146 +61,156 @@
     private boolean field_219475_q;
     private boolean field_219476_r;
  
 -   public TrackedEntity(ServerWorld p_i50704_1_, Entity p_i50704_2_, int p_i50704_3_, boolean p_i50704_4_, Consumer<IPacket<?>> p_i50704_5_) {
 -      this.field_219460_b = p_i50704_1_;
 +   // CraftBukkit Start
-+   private final Set<ServerPlayerEntity> tackedPlayers;
++   private final Set<ServerPlayerEntity> trackedPlayers;
 +
 +   public TrackedEntity(ServerWorld serverWorldIn, Entity entityIn, int p_i50704_3_, boolean p_i50704_4_, Consumer<IPacket<?>> p_i50704_5_, Set<ServerPlayerEntity> trackedPlayers) {
-+      this.tackedPlayers = trackedPlayers;
++      this.trackedPlayers = trackedPlayers;
 +      // CraftBukkit end
 +      this.field_219460_b = serverWorldIn;
        this.field_219464_f = p_i50704_5_;
@@ -43,75 +45,169 @@
        if (!list.equals(this.field_219474_p)) {
           this.field_219474_p = list;
 -         this.field_219464_f.accept(new SSetPassengersPacket(this.field_219461_c));
-+         this.func_219451_a(new SSetPassengersPacket(this.field_219461_c)); // CraftBukkit
++         this.func_219451_a(new SSetPassengersPacket(this.field_219461_c));
        }
- 
+-
 -      if (this.field_219461_c instanceof ItemFrameEntity && this.field_219472_n % 10 == 0) {
-+      // PAIL : rename
-+      if (this.field_219461_c instanceof ItemFrameEntity /*&& this.updateCounter % 10 == 0*/) { // CraftBukkit - Moved below, should always enter this block
-          ItemFrameEntity itemframeentity = (ItemFrameEntity)this.field_219461_c;
-          ItemStack itemstack = itemframeentity.func_82335_i();
+-         ItemFrameEntity itemframeentity = (ItemFrameEntity)this.field_219461_c;
+-         ItemStack itemstack = itemframeentity.func_82335_i();
 -         if (itemstack.func_77973_b() instanceof FilledMapItem) {
 -            MapData mapdata = FilledMapItem.func_195950_a(itemstack, this.field_219460_b);
 -
 -            for(ServerPlayerEntity serverplayerentity : this.field_219460_b.func_217369_A()) {
-+         MapData mapdata = FilledMapItem.func_195950_a(itemstack, this.field_219460_b);
-+         if (this.field_219472_n % 10 == 0 && mapdata != null) { // CraftBukkit - Moved this.tickCounter % 10 logic here so item frames do not enter the other blocks
-+            for(ServerPlayerEntity serverplayerentity : this.tackedPlayers) {  // CraftBukkit
-                mapdata.func_76191_a(serverplayerentity, itemstack);
-                IPacket<?> ipacket = ((FilledMapItem)itemstack.func_77973_b()).func_150911_c(itemstack, this.field_219460_b, serverplayerentity);
-                if (ipacket != null) {
-@@ -118,6 +125,18 @@
-             IPacket<?> ipacket1 = null;
-             boolean flag4 = flag3 || this.field_219472_n % 60 == 0;
-             boolean flag = Math.abs(l - this.field_219468_j) >= 1 || Math.abs(k1 - this.field_219469_k) >= 1;
-+
-+            // CraftBukkit start - Code moved from below
-+            if (flag4) {
+-               mapdata.func_76191_a(serverplayerentity, itemstack);
+-               IPacket<?> ipacket = ((FilledMapItem)itemstack.func_77973_b()).func_150911_c(itemstack, this.field_219460_b, serverplayerentity);
+-               if (ipacket != null) {
+-                  serverplayerentity.field_71135_a.func_147359_a(ipacket);
++      if (this.field_219461_c instanceof ItemFrameEntity) {
++         ItemFrameEntity entityitemframe = (ItemFrameEntity) this.field_219461_c;
++         ItemStack itemstack = entityitemframe.func_82335_i();
++         if (this.field_219472_n % 10 == 0 && itemstack.func_77973_b() instanceof FilledMapItem) {
++            MapData worldmap = FilledMapItem.func_195950_a(itemstack, this.field_219460_b);
++            for (ServerPlayerEntity entityplayer : this.trackedPlayers) {
++               worldmap.func_76191_a(entityplayer, itemstack);
++               IPacket<?> packet = ((FilledMapItem) itemstack.func_77973_b()).func_150911_c(itemstack, this.field_219460_b, entityplayer);
++               if (packet != null) {
++                  entityplayer.field_71135_a.func_147359_a(packet);
+                }
+             }
+          }
+-
+          this.func_219457_c();
+       }
+-
+       if (this.field_219472_n % this.field_219462_d == 0 || this.field_219461_c.field_70160_al || this.field_219461_c.func_184212_Q().func_187223_a()) {
+          if (this.field_219461_c.func_184218_aH()) {
+-            int i1 = MathHelper.func_76141_d(this.field_219461_c.field_70177_z * 256.0F / 360.0F);
+-            int l1 = MathHelper.func_76141_d(this.field_219461_c.field_70125_A * 256.0F / 360.0F);
+-            boolean flag2 = Math.abs(i1 - this.field_219468_j) >= 1 || Math.abs(l1 - this.field_219469_k) >= 1;
+-            if (flag2) {
+-               this.field_219464_f.accept(new SEntityPacket.LookPacket(this.field_219461_c.func_145782_y(), (byte)i1, (byte)l1, this.field_219461_c.field_70122_E));
+-               this.field_219468_j = i1;
+-               this.field_219469_k = l1;
++            int i = MathHelper.func_76141_d(this.field_219461_c.field_70177_z * 256.0f / 360.0f);
++            int j = MathHelper.func_76141_d(this.field_219461_c.field_70125_A * 256.0f / 360.0f);
++            boolean flag = Math.abs(i - this.field_219468_j) >= 1 || Math.abs(j - this.field_219469_k) >= 1;
++            if (flag) {
++               this.field_219464_f.accept(new SEntityPacket.LookPacket(this.field_219461_c.func_145782_y(), (byte) i, (byte) j, this.field_219461_c.field_70122_E));
++               this.field_219468_j = i;
++               this.field_219469_k = j;
+             }
+-
+             this.func_219458_d();
+             this.func_219457_c();
+             this.field_219475_q = true;
+          } else {
+             ++this.field_219473_o;
+-            int l = MathHelper.func_76141_d(this.field_219461_c.field_70177_z * 256.0F / 360.0F);
+-            int k1 = MathHelper.func_76141_d(this.field_219461_c.field_70125_A * 256.0F / 360.0F);
++            int i = MathHelper.func_76141_d(this.field_219461_c.field_70177_z * 256.0f / 360.0f);
++            int j = MathHelper.func_76141_d(this.field_219461_c.field_70125_A * 256.0f / 360.0f);
+             Vec3d vec3d = this.field_219461_c.func_213303_ch().func_178788_d(SEntityPacket.func_218744_a(this.field_219465_g, this.field_219466_h, this.field_219467_i));
+-            boolean flag3 = vec3d.func_189985_c() >= (double)7.6293945E-6F;
+-            IPacket<?> ipacket1 = null;
+-            boolean flag4 = flag3 || this.field_219472_n % 60 == 0;
+-            boolean flag = Math.abs(l - this.field_219468_j) >= 1 || Math.abs(k1 - this.field_219469_k) >= 1;
++            boolean flag2 = vec3d.func_189985_c() >= 7.62939453125E-6;
++            IPacket<?> packet2 = null;
++            boolean flag3 = flag2 || this.field_219472_n % 60 == 0;
++            boolean flag4 = Math.abs(i - this.field_219468_j) >= 1 || Math.abs(j - this.field_219469_k) >= 1;
++            if (flag3) {
 +               this.func_219458_d();
 +            }
-+
-+            if (flag) {
-+               this.field_219468_j = l;
-+               this.field_219469_k = k1;
++            if (flag4) {
++               this.field_219468_j = i;
++               this.field_219469_k = j;
 +            }
-+            // CraftBukkit end
-+
              if (this.field_219472_n > 0 || this.field_219461_c instanceof AbstractArrowEntity) {
-                long i = SEntityPacket.func_218743_a(vec3d.field_72450_a);
-                long j = SEntityPacket.func_218743_a(vec3d.field_72448_b);
-@@ -154,14 +173,16 @@
+-               long i = SEntityPacket.func_218743_a(vec3d.field_72450_a);
+-               long j = SEntityPacket.func_218743_a(vec3d.field_72448_b);
+-               long k = SEntityPacket.func_218743_a(vec3d.field_72449_c);
+-               boolean flag1 = i < -32768L || i > 32767L || j < -32768L || j > 32767L || k < -32768L || k > 32767L;
+-               if (!flag1 && this.field_219473_o <= 400 && !this.field_219475_q && this.field_219476_r == this.field_219461_c.field_70122_E) {
+-                  if ((!flag4 || !flag) && !(this.field_219461_c instanceof AbstractArrowEntity)) {
+-                     if (flag4) {
+-                        ipacket1 = new SEntityPacket.RelativeMovePacket(this.field_219461_c.func_145782_y(), (short)((int)i), (short)((int)j), (short)((int)k), this.field_219461_c.field_70122_E);
+-                     } else if (flag) {
+-                        ipacket1 = new SEntityPacket.LookPacket(this.field_219461_c.func_145782_y(), (byte)l, (byte)k1, this.field_219461_c.field_70122_E);
++               long k = SEntityPacket.func_218743_a(vec3d.field_72450_a);
++               long l = SEntityPacket.func_218743_a(vec3d.field_72448_b);
++               long i2 = SEntityPacket.func_218743_a(vec3d.field_72449_c);
++               boolean flag5 = k < -32768L || k > 32767L || l < -32768L || l > 32767L || i2 < -32768L || i2 > 32767L;
++               if (!flag5 && this.field_219473_o <= 400 && !this.field_219475_q && this.field_219476_r == this.field_219461_c.field_70122_E) {
++                  if ((!flag3 || !flag4) && !(this.field_219461_c instanceof AbstractArrowEntity)) {
++                     if (flag3) {
++                        packet2 = new SEntityPacket.RelativeMovePacket(this.field_219461_c.func_145782_y(), (short) k, (short) l, (short) i2, this.field_219461_c.field_70122_E);
++                     } else if (flag4) {
++                        packet2 = new SEntityPacket.LookPacket(this.field_219461_c.func_145782_y(), (byte) i, (byte) j, this.field_219461_c.field_70122_E);
+                      }
+                   } else {
+-                     ipacket1 = new SEntityPacket.MovePacket(this.field_219461_c.func_145782_y(), (short)((int)i), (short)((int)j), (short)((int)k), (byte)l, (byte)k1, this.field_219461_c.field_70122_E);
++                     packet2 = new SEntityPacket.MovePacket(this.field_219461_c.func_145782_y(), (short) k, (short) l, (short) i2, (byte) i, (byte) j, this.field_219461_c.field_70122_E);
+                   }
+                } else {
+                   this.field_219476_r = this.field_219461_c.field_70122_E;
+                   this.field_219473_o = 0;
+-                  ipacket1 = new SEntityTeleportPacket(this.field_219461_c);
++                  packet2 = new SEntityTeleportPacket(this.field_219461_c);
+                }
              }
- 
+-
+-            if ((this.field_219463_e || this.field_219461_c.field_70160_al || this.field_219461_c instanceof LivingEntity && ((LivingEntity)this.field_219461_c).func_184613_cA()) && this.field_219472_n > 0) {
+-               Vec3d vec3d1 = this.field_219461_c.func_213322_ci();
+-               double d0 = vec3d1.func_72436_e(this.field_219471_m);
+-               if (d0 > 1.0E-7D || d0 > 0.0D && vec3d1.func_189985_c() == 0.0D) {
+-                  this.field_219471_m = vec3d1;
++            if ((this.field_219463_e || this.field_219461_c.field_70160_al || (this.field_219461_c instanceof LivingEntity && ((LivingEntity) this.field_219461_c).func_184613_cA())) && this.field_219472_n > 0) {
++               Vec3d vec3d2 = this.field_219461_c.func_213322_ci();
++               double d0 = vec3d2.func_72436_e(this.field_219471_m);
++               if (d0 > 1.0E-7 || (d0 > 0.0 && vec3d2.func_189985_c() == 0.0)) {
++                  this.field_219471_m = vec3d2;
+                   this.field_219464_f.accept(new SEntityVelocityPacket(this.field_219461_c.func_145782_y(), this.field_219471_m));
+                }
+             }
+-
+-            if (ipacket1 != null) {
+-               this.field_219464_f.accept(ipacket1);
++            if (packet2 != null) {
++               this.field_219464_f.accept(packet2);
+             }
+-
              this.func_219457_c();
-+             /* CraftBukkit start - Code moved up
-             if (flag4) {
+-            if (flag4) {
 -               this.func_219458_d();
-+               this.updateEncodedPosition();
-             }
- 
-             if (flag) {
+-            }
+-
+-            if (flag) {
 -               this.field_219468_j = l;
 -               this.field_219469_k = k1;
-+               this.encodedRotationYaw = l;
-+               this.encodedRotationPitch = k1;
-             }
-+            // CraftBukkit end */
- 
+-            }
+-
              this.field_219475_q = false;
           }
-@@ -177,7 +198,23 @@
- 
+-
+-         int j1 = MathHelper.func_76141_d(this.field_219461_c.func_70079_am() * 256.0F / 360.0F);
+-         if (Math.abs(j1 - this.field_219470_l) >= 1) {
+-            this.field_219464_f.accept(new SEntityHeadLookPacket(this.field_219461_c, (byte)j1));
+-            this.field_219470_l = j1;
++         int i = MathHelper.func_76141_d(this.field_219461_c.func_70079_am() * 256.0f / 360.0f);
++         if (Math.abs(i - this.field_219470_l) >= 1) {
++            this.field_219464_f.accept(new SEntityHeadLookPacket(this.field_219461_c, (byte) i));
++            this.field_219470_l = i;
+          }
+-
+          this.field_219461_c.field_70160_al = false;
+       }
+-
        ++this.field_219472_n;
        if (this.field_219461_c.field_70133_I) {
 -         this.func_219451_a(new SEntityVelocityPacket(this.field_219461_c));
-+         // CraftBukkit start - Create PlayerVelocity event
 +         boolean cancelled = false;
 +         if (this.field_219461_c instanceof ServerPlayerEntity) {
-+            Player player = (Player) this.field_219461_c.getBukkitEntity();
-+            org.bukkit.util.Vector velocity = player.getVelocity();
++            Player player = ((ServerPlayerEntity) this.field_219461_c).getBukkitEntity();
++            Vector velocity = player.getVelocity();
 +            PlayerVelocityEvent event = new PlayerVelocityEvent(player, velocity.clone());
-+            this.field_219461_c.field_70170_p.getServerCB().getPluginManager().callEvent(event);
++            Bukkit.getPluginManager().callEvent(event);
 +            if (event.isCancelled()) {
 +               cancelled = true;
 +            } else if (!velocity.equals(event.getVelocity())) {
@@ -121,11 +217,12 @@
 +         if (!cancelled) {
 +            this.func_219451_a(new SEntityVelocityPacket(this.field_219461_c));
 +         }
-+         // CraftBukkit end
           this.field_219461_c.field_70133_I = false;
        }
+-
+    }
  
-@@ -186,17 +223,21 @@
++
     public void func_219454_a(ServerPlayerEntity p_219454_1_) {
        this.field_219461_c.func_184203_c(p_219454_1_);
        p_219454_1_.func_152339_d(this.field_219461_c);
@@ -150,7 +247,7 @@
        }
  
        IPacket<?> ipacket = this.field_219461_c.func_213297_N();
-@@ -210,6 +251,13 @@
+@@ -210,6 +224,13 @@
        if (this.field_219461_c instanceof LivingEntity) {
           AttributeMap attributemap = (AttributeMap)((LivingEntity)this.field_219461_c).func_110140_aT();
           Collection<IAttributeInstance> collection = attributemap.func_111160_c();
@@ -164,7 +261,7 @@
           if (!collection.isEmpty()) {
              p_219452_1_.accept(new SEntityPropertiesPacket(this.field_219461_c.func_145782_y(), collection));
           }
-@@ -233,6 +281,11 @@
+@@ -233,6 +254,11 @@
           }
        }
  
@@ -176,7 +273,7 @@
        if (this.field_219461_c instanceof LivingEntity) {
           LivingEntity livingentity = (LivingEntity)this.field_219461_c;
  
-@@ -268,6 +321,11 @@
+@@ -268,6 +294,11 @@
           AttributeMap attributemap = (AttributeMap)((LivingEntity)this.field_219461_c).func_110140_aT();
           Set<IAttributeInstance> set = attributemap.func_111161_b();
           if (!set.isEmpty()) {
