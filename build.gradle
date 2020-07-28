@@ -46,6 +46,10 @@ dependencies {
 	include("org.yaml:snakeyaml:1.25")
 	include("org.jetbrains:annotations:18.0.0")
 
+	implementation("net.md-5:SpecialSource:1.8.5")
+	include("net.md-5:SpecialSource:1.8.5")
+
+
 	// Fabric API. This is technically optional, but you probably want it anyway.
 	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 
