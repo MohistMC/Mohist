@@ -1,4 +1,4 @@
-package org.bukkit.craftbukkit;
+package org.bukkit.craftbukkit.v1_16_R1;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;

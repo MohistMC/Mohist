@@ -1,4 +1,4 @@
-package org.bukkit.craftbukkit.attribute;
+package org.bukkit.craftbukkit.v1_16_R1.attribute;
 
 import com.google.common.base.Preconditions;
 import java.util.ArrayList;
@@ -7,7 +7,6 @@ import java.util.List;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.attribute.AttributeModifier;
-import red.mohist.extra.entity.ExtraEntityAttributeInstance;
 
 public class CraftAttributeInstance implements AttributeInstance {
 
@@ -47,7 +46,7 @@ public class CraftAttributeInstance implements AttributeInstance {
     @Override
     public void addModifier(AttributeModifier modifier) {
         Preconditions.checkArgument(modifier != null, "modifier");
-        ((ExtraEntityAttributeInstance) this).getAddModifier(convert(modifier));
+        handle.addModifier(convert(modifier));
     }
 
     @Override
@@ -63,14 +62,14 @@ public class CraftAttributeInstance implements AttributeInstance {
 
     @Override
     public double getDefaultValue() {
-       return handle.getAttribute().getDefaultValue();
+        return handle.getAttribute().getDefaultValue();
     }
 
     public static net.minecraft.entity.attribute.EntityAttributeModifier convert(AttributeModifier bukkit) {
         return new net.minecraft.entity.attribute.EntityAttributeModifier(bukkit.getUniqueId(), bukkit.getName(), bukkit.getAmount(), net.minecraft.entity.attribute.EntityAttributeModifier.Operation.values()[bukkit.getOperation().ordinal()]);
     }
 
-    public AttributeModifier convert(net.minecraft.entity.attribute.EntityAttributeModifier nms) {
-        return new AttributeModifier(nms.getId(), nms.getName(), ((ExtraEntityAttributeInstance) this).getAmount(), AttributeModifier.Operation.values()[nms.getOperation().ordinal()]);
+    public static AttributeModifier convert(net.minecraft.entity.attribute.EntityAttributeModifier nms) {
+        return new AttributeModifier(nms.getId(), nms.getName(), nms.getValue(), AttributeModifier.Operation.values()[nms.getOperation().ordinal()]);
     }
 }

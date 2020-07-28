@@ -1,13 +1,10 @@
-package org.bukkit.craftbukkit.util;
+package org.bukkit.craftbukkit.v1_16_R1.util;
 
 import net.minecraft.util.Identifier;
 import org.bukkit.NamespacedKey;
 
-public final class CraftNamespacedKey {
-
-    public CraftNamespacedKey() {
-    }
-
+public final class CraftNamespacedKey
+{
     public static NamespacedKey fromStringOrNull(String string) {
         if (string == null || string.isEmpty()) {
             return null;
@@ -15,6 +12,7 @@ public final class CraftNamespacedKey {
         Identifier minecraft = Identifier.tryParse(string);
         return (minecraft == null) ? null : fromMinecraft(minecraft);
     }
+
 
     public static NamespacedKey fromString(String string) {
         return fromMinecraft(new Identifier(string));
@@ -28,4 +26,3 @@ public final class CraftNamespacedKey {
         return new Identifier(key.getNamespace(), key.getKey());
     }
 }
-

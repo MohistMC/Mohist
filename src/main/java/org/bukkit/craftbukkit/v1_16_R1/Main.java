@@ -1,4 +1,4 @@
-package org.bukkit.craftbukkit;
+package org.bukkit.craftbukkit.v1_16_R1;
 
 import java.io.File;
 import java.io.IOException;
@@ -130,14 +130,14 @@ public class Main {
         try {
             options = parser.parse(args);
         } catch (joptsimple.OptionException ex) {
-            Logger.getLogger(Main.class.getName()).log(Level.SEVERE, ex.getLocalizedMessage());
+            Logger.getLogger(org.bukkit.craftbukkit.v1_16_R1.Main.class.getName()).log(Level.SEVERE, ex.getLocalizedMessage());
         }
 
         if ((options == null) || (options.has("?"))) {
             try {
                 parser.printHelpOn(System.out);
             } catch (IOException ex) {
-                Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(org.bukkit.craftbukkit.v1_16_R1.Main.class.getName()).log(Level.SEVERE, null, ex);
             }
         } else if (options.has("v")) {
         } else {
@@ -177,8 +177,8 @@ public class Main {
                     useConsole = false;
                 }
 
-                if (Main.class.getPackage().getImplementationVendor() != null && System.getProperty("IReallyKnowWhatIAmDoingISwear") == null) {
-                    Date buildDate = new Date(Integer.parseInt(Main.class.getPackage().getImplementationVendor()) * 1000L);
+                if (org.bukkit.craftbukkit.v1_16_R1.Main.class.getPackage().getImplementationVendor() != null && System.getProperty("IReallyKnowWhatIAmDoingISwear") == null) {
+                    Date buildDate = new Date(Integer.parseInt(org.bukkit.craftbukkit.v1_16_R1.Main.class.getPackage().getImplementationVendor()) * 1000L);
 
                     Calendar deadline = Calendar.getInstance();
                     deadline.add(Calendar.DAY_OF_YEAR, -7);

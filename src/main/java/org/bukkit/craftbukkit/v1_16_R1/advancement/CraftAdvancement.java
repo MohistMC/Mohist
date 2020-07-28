@@ -1,11 +1,10 @@
-package org.bukkit.craftbukkit.advancement;
+package org.bukkit.craftbukkit.v1_16_R1.advancement;
 
 import java.util.Collection;
 import java.util.Collections;
-
 import net.minecraft.advancement.Advancement;
 import org.bukkit.NamespacedKey;
-import org.bukkit.craftbukkit.util.CraftNamespacedKey;
+import org.bukkit.craftbukkit.v1_16_R1.util.CraftNamespacedKey;
 
 public class CraftAdvancement implements org.bukkit.advancement.Advancement {
 
@@ -16,16 +15,14 @@ public class CraftAdvancement implements org.bukkit.advancement.Advancement {
     }
 
     public Advancement getHandle() {
-        return handle;
+        return this.handle;
     }
 
-    @Override
     public NamespacedKey getKey() {
-        return CraftNamespacedKey.fromMinecraft(handle.getId());
+        return CraftNamespacedKey.fromMinecraft(this.handle.getId());
     }
 
-    @Override
     public Collection<String> getCriteria() {
-        return Collections.unmodifiableCollection(handle.getCriteria().keySet());
+        return Collections.unmodifiableCollection(this.handle.getCriteria().keySet());
     }
 }

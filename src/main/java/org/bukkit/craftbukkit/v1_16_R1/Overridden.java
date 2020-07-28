@@ -1,4 +1,4 @@
-package org.bukkit.craftbukkit;
+package org.bukkit.craftbukkit.v1_16_R1;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
