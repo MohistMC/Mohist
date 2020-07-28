@@ -344,6 +344,17 @@ public enum EntityType implements Keyed {
         };
     }
 
+    public net.minecraft.entity.EntityType<?> getHandle() {
+        return this.handleType;
+    }
+
+    public Function<Location, ? extends net.minecraft.entity.Entity> entityFactory() {
+        return factory;
+    }
+
+    public void setEntityFactory(Function<Location, ? extends net.minecraft.entity.Entity> function) {
+        this.factory = function;
+    }
 
     static {
         for (EntityType type : values()) {
