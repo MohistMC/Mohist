@@ -4,16 +4,8 @@
   "package": "red.mohist.mixin",
   "compatibilityLevel": "JAVA_8",
   "mixins": [
-    "advancement.MixinAdvancement",
-    "entity.MixinEntityAttributeInstance",
-    "entity.MixinAttributeContainer",
-    "server.MixinMinecraftServer"
   ],
   "server": [
-    "advancement.MixinAdvancement",
-    "entity.MixinEntityAttributeInstance",
-    "entity.MixinAttributeContainer",
-    "server.MixinMinecraftServer"
   ],
   "injectors": {
     "defaultRequire": 1
