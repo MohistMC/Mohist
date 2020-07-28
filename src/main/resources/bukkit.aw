@@ -18,7 +18,9 @@ mutable	field	net/minecraft/server/MinecraftServer	commandManager	Lnet/minecraft
 accessible	method	net/minecraft/text/Style	Style	Lnet/minecraft/text/Style;
 accessible	field	net/minecraft/entity/EnderEyeEntity	useCount	I
 accessible	method	net/minecraft/recipe/Ingredient	<init>	(Ljava/util/stream/Stream;)V
+accessible	field	net/minecraft/state/State	PROPERTY_MAP_PRINTER	Ljava/util/function/Function;
 accessible	field	net/minecraft/entity/raid/RaidManager	raids	Ljava/util/Map;
+accessible	field	net/minecraft/resource/ServerResourceManager	commandManager	Lnet/minecraft/server/command/CommandManager;
 accessible	field	net/minecraft/block/entity/SignBlockEntity	editable	Z
 accessible	field	net/minecraft/server/network/ServerPlayerEntity	syncedExperience	I
 accessible	field	net/minecraft/village/TraderInventory	recipeIndex	I
