@@ -167,7 +167,6 @@ project(':forge') {
             url 'https://repo.maven.apache.org/maven2/'
         }
         maven { url "https://hub.spigotmc.org/nexus/content/groups/public" }
-        maven { url "https://hub.spigotmc.org/nexus/content/groups/public/net/md-5/bungeecord-chat/1.15-SNAPSHOT" }
     }
 
     ext {
@@ -371,7 +370,6 @@ project(':forge') {
         installer 'org.jetbrains:annotations:18.0.0'
         installer 'commons-lang:commons-lang:2.6'
         installer 'org.yaml:snakeyaml:1.25'
-        installer 'net.md-5:bungeecord-chat:1.15-20200526.094816-73'
         installer 'net.md-5:SpecialSource:1.8.5'
 
         fmllauncherImplementation 'com.google.guava:guava:21.0'

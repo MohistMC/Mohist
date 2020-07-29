@@ -110,8 +110,24 @@ import org.bukkit.entity.Villager.Profession;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.Event.Result;
-import org.bukkit.event.block.*;
+import org.bukkit.event.block.Action;
+import org.bukkit.event.block.BlockDamageEvent;
+import org.bukkit.event.block.BlockDropItemEvent;
+import org.bukkit.event.block.BlockFadeEvent;
+import org.bukkit.event.block.BlockFormEvent;
+import org.bukkit.event.block.BlockGrowEvent;
+import org.bukkit.event.block.BlockIgniteEvent;
 import org.bukkit.event.block.BlockIgniteEvent.IgniteCause;
+import org.bukkit.event.block.BlockMultiPlaceEvent;
+import org.bukkit.event.block.BlockPhysicsEvent;
+import org.bukkit.event.block.BlockPlaceEvent;
+import org.bukkit.event.block.BlockRedstoneEvent;
+import org.bukkit.event.block.BlockShearEntityEvent;
+import org.bukkit.event.block.BlockSpreadEvent;
+import org.bukkit.event.block.EntityBlockFormEvent;
+import org.bukkit.event.block.FluidLevelChangeEvent;
+import org.bukkit.event.block.MoistureChangeEvent;
+import org.bukkit.event.block.NotePlayEvent;
 import org.bukkit.event.entity.AreaEffectCloudApplyEvent;
 import org.bukkit.event.entity.BatToggleSleepEvent;
 import org.bukkit.event.entity.CreatureSpawnEvent;
@@ -189,46 +205,6 @@ public class CraftEventFactory {
     public static final DamageSource POISON = CraftDamageSource.copyOf(DamageSource.MAGIC);
     public static org.bukkit.block.Block blockDamage; // For use in EntityDamageByBlockEvent
     public static Entity entityDamage; // For use in EntityDamageByEntityEvent
-    private static transient Entity damageEventEntity;
-    private static BlockBreakEvent blockBreakEvent;
-
-    public static void captureDamageEventEntity(Entity entity) {
-        damageEventEntity = entity;
-    }
-
-    private static void recapture(String type) {
-        throw new IllegalStateException("Recapturing " + type);
-    }
-
-    public static void captureBlockBreakPlayer(BlockBreakEvent event) {
-        if (blockBreakEvent == null) {
-            blockBreakEvent = event;
-        } else {
-            recapture("block break");
-        }
-    }
-
-    public static Entity getDamageEventEntity() {
-        try {
-            return damageEventEntity;
-        } finally {
-            damageEventEntity = null;
-        }
-    }
-
-    private static transient BlockPos damageEventBlock;
-
-    public static void captureDamageEventBlock(BlockPos blockState) {
-        damageEventBlock = blockState;
-    }
-
-    public static BlockPos getDamageEventBlock() {
-        try {
-            return damageEventBlock;
-        } finally {
-            damageEventBlock = null;
-        }
-    }
 
     // helper methods
     private static boolean canBuild(World world, Player player, int x, int z) {
@@ -782,20 +758,6 @@ public class CraftEventFactory {
     }
 
     private static EntityDamageEvent handleEntityDamageEvent(Entity entity, DamageSource source, Map<DamageModifier, Double> modifiers, Map<DamageModifier, Function<? super Double, Double>> modifierFunctions) {
-        Entity damageEventEntity = getDamageEventEntity();
-        BlockPos damageEventBlock = getDamageEventBlock();
-        if (damageEventEntity != null && entityDamage == null) {
-            if (source.damageType.equals(DamageSource.LIGHTNING_BOLT.damageType)) {
-                entityDamage = entity;
-            }
-        }
-        if (damageEventBlock != null && blockDamage == null) {
-            if (source.damageType.equals(DamageSource.CACTUS.damageType)
-                    || source.damageType.equals(DamageSource.SWEET_BERRY_BUSH.damageType)
-                    || source.damageType.equals(DamageSource.HOT_FLOOR.damageType)) {
-                blockDamage = CraftBlock.at(entity.getEntityWorld(), damageEventBlock);
-            }
-        }
         return handleEntityDamageEvent(entity, source, modifiers, modifierFunctions, false);
     }
 

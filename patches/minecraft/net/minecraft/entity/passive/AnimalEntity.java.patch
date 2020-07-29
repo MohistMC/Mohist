@@ -35,13 +35,11 @@
  
     public float func_205022_a(BlockPos p_205022_1_, IWorldReader p_205022_2_) {
        return p_205022_2_.func_180495_p(p_205022_1_.func_177977_b()).func_177230_c() == Blocks.field_196658_i ? 10.0F : p_205022_2_.func_205052_D(p_205022_1_) - 0.5F;
-@@ -144,6 +149,9 @@
+@@ -144,6 +149,7 @@
        if (p_146082_1_ != null) {
           this.field_146084_br = p_146082_1_.func_110124_au();
        }
-+      if (p_146082_1_ != null) {
-+         this.breedItem = p_146082_1_.field_71071_by.func_70448_g(); // CraftBukkit
-+      }
++      this.breedItem = p_146082_1_.field_71071_by.func_70448_g(); // CraftBukkit
  
        this.field_70170_p.func_72960_a(this, (byte)18);
     }

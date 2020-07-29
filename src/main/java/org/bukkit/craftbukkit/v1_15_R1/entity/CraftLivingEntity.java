@@ -490,12 +490,12 @@ public class CraftLivingEntity extends CraftEntity implements LivingEntity {
 
     @Override
     public void setCanPickupItems(boolean pickup) {
-        getHandle().canPickUpLootMagma = pickup;
+        getHandle().canPickUpLoot = pickup;
     }
 
     @Override
     public boolean getCanPickupItems() {
-        return getHandle().canPickUpLootMagma;
+        return getHandle().canPickUpLoot;
     }
 
     @Override

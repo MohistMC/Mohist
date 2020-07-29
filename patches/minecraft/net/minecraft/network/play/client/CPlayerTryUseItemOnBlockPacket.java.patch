@@ -8,7 +8,7 @@
  
     public CPlayerTryUseItemOnBlockPacket() {
     }
-@@ -23,10 +24,15 @@
+@@ -23,6 +24,7 @@
     }
  
     public void func_148837_a(PacketBuffer p_148837_1_) throws IOException {
@@ -16,11 +16,3 @@
        this.field_187027_c = p_148837_1_.func_179257_a(Hand.class);
        this.field_218795_a = p_148837_1_.func_218669_q();
     }
- 
-+   public long timestamp() {
-+      return timestamp;
-+   }
-+
-    public void func_148840_b(PacketBuffer p_148840_1_) throws IOException {
-       p_148840_1_.func_179249_a(this.field_187027_c);
-       p_148840_1_.func_218668_a(this.field_218795_a);

@@ -276,7 +276,6 @@ public class DimensionManager
         ServerWorld overworld = getWorld(server, DimensionType.OVERWORLD, false, false);
         Validate.notNull(overworld, "Cannot Hotload Dim: Overworld is not Loaded!");
 
-        //Magma start
         String name = "DIM" + dim;
         org.bukkit.World.Environment env = org.bukkit.World.Environment.getEnvironment(dim.getId());
 

@@ -91,7 +91,7 @@
     public SkullTileEntity() {
        super(TileEntityType.field_200985_p);
     }
-@@ -98,31 +158,73 @@
+@@ -98,31 +158,71 @@
     }
  
     private void func_152109_d() {
@@ -175,11 +175,9 @@
     }
 +   // Spigot end
 +
-+   // Magma start - compile client code
 +   public static GameProfile func_174884_b(GameProfile p_174884_0_)
 +   {
 +      return com.google.common.util.concurrent.Futures.getUnchecked(updateGameProfile(p_174884_0_, com.google.common.base.Predicates.alwaysTrue(), true));
 +   }
-+   // Magma end
 +
  }
