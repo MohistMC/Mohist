@@ -45,7 +45,7 @@ public class UpdateUtils {
       if(jar_sha.equals(ci_sha))
         System.out.println(Message.getFormatString("update.latest", new Object[]{"1.8", jar_sha, ci_sha}));
       else {
-        System.out.println(Message.getFormatString("update.detect", new Object[]{ci_sha, jar_sha, time.substring(0, 10), time.substring(11, 19)}));
+        System.out.println(Message.getFormatString("update.detect", new Object[]{ci_sha, jar_sha, time}));
         if(bMohist("check_update_auto_download"))
           downloadFile("https://ci.codemc.io/job/Mohist-Community/job/Mohist-1.12.2/lastSuccessfulBuild/artifact/build/distributions/Mohist-" + ci_sha + "-server.jar", new File(new File(Mohist.class.getProtectionDomain().getCodeSource().getLocation().getPath().substring(1)).getName()));
       }
