@@ -11,8 +11,10 @@ import java.nio.channels.FileChannel;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.Timer;
 import java.util.TimerTask;
 import red.mohist.Mohist;
@@ -32,9 +34,13 @@ public class UpdateUtils {
 
     try {
       JsonElement root = new JsonParser().parse(new InputStreamReader((InputStream) getConn("https://ci.codemc.io/job/Mohist-Community/job/Mohist-1.12.2/lastSuccessfulBuild/api/json").getContent()));
-      time = root.getAsJsonObject().get("changeSet").getAsJsonObject().get("items").getAsJsonArray().get(0).getAsJsonObject().get("date").toString().replace("+0800", "").replaceAll("\"", "");
-      ci_sha = "1.12.2-" + root.getAsJsonObject().get("artifacts").getAsJsonArray().get(0).getAsJsonObject().get("fileName").toString().replace("Mohist-1.12.2-", "").replace("-server.jar", "").replaceAll("\"", "");
+
       jar_sha = UpdateUtils.class.getPackage().getImplementationVersion();
+      String[] ci_sha_date = root.getAsJsonObject().get("artifacts").getAsJsonArray().get(0).getAsJsonObject().get("displayPath").toString().split("-");
+      ci_sha = "1.12.2-" + ci_sha_date[2];
+      String timestamp = root.getAsJsonObject().get("timestamp").toString();
+      SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+      time = sdf.format(new Date(Long.parseLong(timestamp)));
 
       if(jar_sha.equals(ci_sha))
         System.out.println(Message.getFormatString("update.latest", new Object[]{"1.8", jar_sha, ci_sha}));
