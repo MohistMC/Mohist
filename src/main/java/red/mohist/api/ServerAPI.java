@@ -16,6 +16,7 @@ public class ServerAPI {
     public static Map<String, Integer> injectmaterials = new ConcurrentHashMap();
     public static Map<String, Integer> injectblock = new ConcurrentHashMap();
     public static Map<String, String> forgecmdper = new ConcurrentHashMap();
+    public static Map<String, String> forgecmd = new ConcurrentHashMap();
 
     // Don't count the default number of mods
     public static int getModSize() {

@@ -1,12 +1,17 @@
 --- ../src-base/minecraft/net/minecraft/command/CommandHandler.java
 +++ ../src-work/minecraft/net/minecraft/command/CommandHandler.java
-@@ -16,26 +16,27 @@
+@@ -14,28 +14,32 @@
+ import net.minecraft.util.math.BlockPos;
+ import net.minecraft.util.text.TextComponentTranslation;
  import net.minecraft.util.text.TextFormatting;
++import net.minecraftforge.server.command.TextComponentHelper;
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
 +import org.bukkit.command.CommandWrapper;
 +import org.bukkit.craftbukkit.v1_12_R1.command.CraftSimpleCommandMap;
 +import org.bukkit.craftbukkit.v1_12_R1.command.ModCustomCommand;
++import org.bukkit.help.GenericCommandHelpTopic;
++import red.mohist.api.ServerAPI;
 +import red.mohist.util.i18n.Message;
  
  public abstract class CommandHandler implements ICommandManager
@@ -33,7 +38,7 @@
          int i = 0;
  
          try
-@@ -50,6 +51,17 @@
+@@ -50,6 +54,17 @@
              }
              else if (icommand.checkPermission(this.getServer(), sender))
              {
@@ -51,18 +56,13 @@
                  if (j > -1)
                  {
                      List<Entity> list = EntitySelector.<Entity>matchEntities(sender, astring[j], Entity.class);
-@@ -135,16 +147,40 @@
+@@ -135,16 +150,46 @@
  
      public ICommand registerCommand(ICommand command)
      {
--        this.commandMap.put(command.getName(), command);
--        this.commandSet.add(command);
--
--        for (String s : command.getAliases())
 +        String pre = command.getClass().getName().substring(command.getClass().getName().lastIndexOf('.')+1).toLowerCase() + "." + command.getName();
 +        if (command instanceof CommandBase)
-         {
--            ICommand icommand = this.commandMap.get(s);
++        {
 +        	if (!((CommandBase)command).permissionNode.equals("minecraft"))
 +        	{
 +        		pre = ((CommandBase)command).permissionNode;
@@ -71,10 +71,7 @@
 +        }
 +        return registerCommand(command, pre);
 +    }
- 
--            if (icommand == null || !icommand.getName().equals(s))
--            {
--                this.commandMap.put(s, command);
++
 +    public ICommand registerCommand(String permissionGroup, ICommand par1ICommand)
 +    {
 +        return registerCommand(par1ICommand, permissionGroup + "." + par1ICommand.getName());
@@ -82,14 +79,27 @@
 +
 +    public ICommand registerCommand(ICommand command, String permissionNode) {
 +        List<String> list = command.getAliases();
-+        this.commandMap.put(command.getName(), command);
-+        this.commandSet.add(command);
+         this.commandMap.put(command.getName(), command);
+         this.commandSet.add(command);
 +        // register vanilla commands with Bukkit to support permissions.
 +        CraftSimpleCommandMap commandMap = MinecraftServer.getServerInst().server.getCraftCommandMap();
-+        ModCustomCommand customCommand = new ModCustomCommand(command.getName());
+ 
+-        for (String s : command.getAliases())
+-        {
+-            ICommand icommand = this.commandMap.get(s);
+-
+-            if (icommand == null || !icommand.getName().equals(s))
+-            {
+-                this.commandMap.put(s, command);
++        String modid = ServerAPI.forgecmd.get(command.getName());
++        String description =  "A "+ modid +" provided command.";
++        String usage = TextComponentHelper.createComponentTranslation(MinecraftServer.getServerInst().server.getServer(), command.getUsage(MinecraftServer.getServerInst().server.getServer())).getFormattedText();
++        ModCustomCommand customCommand = new ModCustomCommand((CommandBase) command, description, usage);
 +        customCommand.setPermission(permissionNode);
 +        if (list != null) customCommand.setAliases(list);
 +        commandMap.register(command.getName(), customCommand);
++        // Add mods command to helps
++        getServer().server.helpMap.addTopic(new GenericCommandHelpTopic(customCommand));
 +        LogManager.getLogger().debug(Message.getFormatString("command.register", new Object[]{command.getName(), permissionNode}));
 +        if (list != null) {
 +            for (String s : list) {
@@ -100,7 +110,7 @@
              }
          }
  
-@@ -212,6 +248,11 @@
+@@ -212,6 +257,11 @@
      {
          return this.commandMap;
      }

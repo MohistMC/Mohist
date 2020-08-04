@@ -188,7 +188,7 @@ public final class CraftServer implements Server {
     private final CraftScheduler scheduler = new CraftScheduler();
     private final CraftSimpleCommandMap craftCommandMap = new CraftSimpleCommandMap(this);
     private final SimpleCommandMap commandMap = new SimpleCommandMap(this);
-    private final SimpleHelpMap helpMap = new SimpleHelpMap(this);
+    public final SimpleHelpMap helpMap = new SimpleHelpMap(this);
     private final StandardMessenger messenger = new StandardMessenger();
     private final SimplePluginManager pluginManager = new SimplePluginManager(this, commandMap);
     private final Map<String, World> worlds = new LinkedHashMap<>();
