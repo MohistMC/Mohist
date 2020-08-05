@@ -109,7 +109,7 @@
                  }
              }
          };
-+		
++
 +		// CraftBukkit start - TODO: handle command-line logging arguments
 +        java.util.logging.Logger global = java.util.logging.Logger.getLogger("");
 +        global.setUseParentHandlers(false);
@@ -219,7 +219,7 @@
                  long j = System.nanoTime();
  
                  if (this.getFolderName() == null)
-@@ -260,12 +311,21 @@
+@@ -260,12 +311,22 @@
                  TileEntitySkull.setProfileCache(this.getPlayerProfileCache());
                  TileEntitySkull.setSessionService(this.getMinecraftSessionService());
                  PlayerProfileCache.setOnlineMode(this.isServerInOnlineMode());
@@ -233,7 +233,8 @@
 +                if (MohistConfig.instance.support_nocmd.getValue()) {
 +                    Mohist.LOGGER.info("Done ({})! For help, type \"help\" or \"?\"", (Object)s3);
 +                } else {
-+                    Mohist.LOGGER.info(Message.getFormatString("server.start.done", new Object[]{s3}));
++                  Mohist.LOGGER.info("Done ({})! For help, type \"help\" or \"?\"", s3); //This will allow Minecraft hosts able to mark the server as started
++                  Mohist.LOGGER.info(Message.getFormatString("server.start.done", new Object[]{s3}));
 +                }
  
 +                Bukkit.getPluginManager().callEvent(new BukkitServerStartDoneEvent());//Mohist
@@ -243,7 +244,7 @@
                  if (this.settings.hasProperty("announce-player-achievements"))
                  {
                      this.worlds[0].getGameRules().setOrCreateGameRule("announceAdvancements", this.settings.getBooleanProperty("announce-player-achievements", true) ? "true" : "false");
-@@ -285,18 +345,35 @@
+@@ -285,18 +346,35 @@
                      LOGGER.info("Starting remote control listener");
                      this.rconThread = new RConThreadMain(this);
                      this.rconThread.startThread();
@@ -286,7 +287,7 @@
              }
          }
      }
-@@ -419,11 +496,20 @@
+@@ -419,11 +497,20 @@
  
      public void executePendingCommands()
      {
@@ -311,7 +312,7 @@
      }
  
      public boolean isDedicatedServer()
-@@ -515,7 +601,7 @@
+@@ -515,7 +602,7 @@
  
      public boolean isBlockProtected(World worldIn, BlockPos pos, EntityPlayer playerIn)
      {
@@ -320,7 +321,7 @@
          {
              return false;
          }
-@@ -584,6 +670,9 @@
+@@ -584,6 +671,9 @@
          return this.settings.getIntProperty("network-compression-threshold", super.getNetworkCompressionThreshold());
      }
  
@@ -330,7 +331,7 @@
      protected boolean convertFiles() throws IOException
      {
          boolean flag = false;
-@@ -673,13 +762,79 @@
+@@ -673,13 +763,79 @@
  
      public String getPlugins()
      {
