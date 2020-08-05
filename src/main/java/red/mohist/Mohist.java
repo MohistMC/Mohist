@@ -24,52 +24,43 @@ public class Mohist {
     }
 
     public static void main(String[] args) throws Throwable {
-        MohistConfigUtil.copyMohistConfig();
-        System.out.println("\n" + "\n" +
-                " __    __   ______   __  __   __   ______   ______  \n" +
-                "/\\ \"-./  \\ /\\  __ \\ /\\ \\_\\ \\ /\\ \\ /\\  ___\\ /\\__  _\\ \n" +
-                "\\ \\ \\-./\\ \\\\ \\ \\/\\ \\\\ \\  __ \\\\ \\ \\\\ \\___  \\\\/_/\\ \\/ \n" +
-                " \\ \\_\\ \\ \\_\\\\ \\_____\\\\ \\_\\ \\_\\\\ \\_\\\\/\\_____\\  \\ \\_\\ \n" +
-                "  \\/_/  \\/_/ \\/_____/ \\/_/\\/_/ \\/_/ \\/_____/   \\/_/ \n" +
-                "                                                    \n" + "\n");
-        System.out.println("                                      " +
-                Message.getString("forge.serverlanunchwrapper.1"));
+      if (Float.parseFloat(System.getProperty("java.class.version")) != 52.0) {
+        System.out.println(Message.getString("unsupported.java.version"));
+        System.exit(0);
+      }
 
-        if (System.getProperty("log4j.configurationFile") == null) {
-            System.setProperty("log4j.configurationFile", "log4j2_mohist.xml");
-        }
+      MohistConfigUtil.copyMohistConfig();
+      System.out.println("\n" + "\n" +
+        " __    __   ______   __  __   __   ______   ______  \n" +
+        "/\\ \"-./  \\ /\\  __ \\ /\\ \\_\\ \\ /\\ \\ /\\  ___\\ /\\__  _\\ \n" +
+        "\\ \\ \\-./\\ \\\\ \\ \\/\\ \\\\ \\  __ \\\\ \\ \\\\ \\___  \\\\/_/\\ \\/ \n" +
+        " \\ \\_\\ \\ \\_\\\\ \\_____\\\\ \\_\\ \\_\\\\ \\_\\\\/\\_____\\  \\ \\_\\ \n" +
+        "  \\/_/  \\/_/ \\/_____/ \\/_/\\/_/ \\/_/ \\/_____/   \\/_/ \n" +
+        "                                                    \n" + "\n");
+      System.out.println("                                      " +
+        Message.getString("forge.serverlanunchwrapper.1"));
 
-        if (bMohist("check_libraries")) {
-            DownloadLibraries.run();
-        }
+      if (System.getProperty("log4j.configurationFile") == null) {
+        System.setProperty("log4j.configurationFile", "log4j2_mohist.xml");
+      }
 
-        MappingFix.init();
+      if (bMohist("check_libraries")) DownloadLibraries.run();
 
-        if (!hasAcceptedEULA()) {
-            System.out.println(Message.getString("eula"));
+      MappingFix.init();
 
-            while (!"true".equals(new Scanner(System.in).next()))
-                ;
+      if (!hasAcceptedEULA()) {
+        System.out.println(Message.getString("eula"));
+        while (!"true".equals(new Scanner(System.in).next()));
+        writeInfos();
+      }
 
-            writeInfos();
-        }
+      if (bMohist("check_update")) UpdateUtils.versionCheck();
+      if (!bMohist("disable_plugins_blacklist")) AutoDeletePlugins.jar();
+      if (!bMohist("disable_mods_blacklist")) jar((byte) 1);
+      jar((byte) 2);
 
-        if (bMohist("check_update")) {
-            UpdateUtils.versionCheck();
-        }
-
-        if (!bMohist("disable_plugins_blacklist")) {
-            AutoDeletePlugins.jar();
-        }
-
-        if (!bMohist("disable_mods_blacklist")) {
-            jar((byte) 1);
-        }
-
-        jar((byte) 2);
-
-        Class.forName("net.minecraftforge.fml.relauncher.ServerLaunchWrapper")
-                .getDeclaredMethod("main", String[].class)
-                .invoke(null, new Object[] { args });
+      Class.forName("net.minecraftforge.fml.relauncher.ServerLaunchWrapper")
+        .getDeclaredMethod("main", String[].class)
+        .invoke(null, new Object[] { args });
     }
 }
