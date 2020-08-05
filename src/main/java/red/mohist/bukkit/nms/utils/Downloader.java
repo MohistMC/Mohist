@@ -27,7 +27,7 @@ public class Downloader {
         UpdateUtils.downloadFile(newurl, mcptool);
         System.out.println(Message.getString("mcp.extract"));
         ZipFile mcp = new ZipFile(mcptool);
-        Files.copy(new ZipFile(mcptool).getInputStream(mcp.getEntry("config/joined.tsrg")), partz.toPath());
+        Files.copy(mcp.getInputStream(mcp.getEntry("config/joined.tsrg")), partz.toPath());
         mcp.close();
         IMappingFile.load(partz).write(Paths.get(temppath + "/joined.srg"), IMappingFile.Format.SRG, false);
         System.gc();
