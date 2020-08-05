@@ -1,13 +1,13 @@
 package org.bukkit.craftbukkit.v1_12_R1.command;
 
-import net.minecraft.command.CommandBase;
+import java.util.List;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 
 public class ModCustomCommand extends Command {
 
-    public ModCustomCommand(CommandBase modCommand, String description, String usage) {
-        super(modCommand.getName(), description, usage, modCommand.getAliases());
+    public ModCustomCommand(String name, String description, String usage, List<String> aliases) {
+        super(name, description, usage, aliases);
     }
 
     @Override

@@ -94,7 +94,7 @@
 +        String modid = ServerAPI.forgecmd.get(command.getName());
 +        String description =  "A "+ modid +" provided command.";
 +        String usage = TextComponentHelper.createComponentTranslation(MinecraftServer.getServerInst().server.getServer(), command.getUsage(MinecraftServer.getServerInst().server.getServer())).getFormattedText();
-+        ModCustomCommand customCommand = new ModCustomCommand((CommandBase) command, description, usage);
++        ModCustomCommand customCommand = new ModCustomCommand(command.getName(), description, usage, command.getAliases());
 +        customCommand.setPermission(permissionNode);
 +        if (list != null) customCommand.setAliases(list);
 +        commandMap.register(command.getName(), customCommand);
