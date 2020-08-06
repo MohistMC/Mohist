@@ -6,6 +6,7 @@ import java.io.InputStreamReader;
 import red.mohist.util.ClassJarUtil;
 import red.mohist.util.i18n.Message;
 
+import static red.mohist.forge.AutoConfigMods.blCheck;
 import static red.mohist.network.download.NetworkUtil.getInput;
 
 public class AutoDeleteMods {
@@ -36,7 +37,8 @@ public class AutoDeleteMods {
       if(type == 1) {
         System.out.println(Message.getString("update.mods"));
         for (String classname : getInfos((byte) 1))
-          ClassJarUtil.checkOther(modsDir, classname, false);
+          if(!blCheck.contains(classname))
+            ClassJarUtil.checkOther(modsDir, classname, false);
       } else {
         System.out.println(Message.getString("update.mods.implemented"));
         for (String classname : getInfos((byte) 2))

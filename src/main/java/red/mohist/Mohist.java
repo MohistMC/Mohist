@@ -56,8 +56,8 @@ public class Mohist {
 
       if (bMohist("check_update")) UpdateUtils.versionCheck();
       if (!bMohist("disable_plugins_blacklist")) AutoDeletePlugins.jar();
+      if (!bMohist("disable_config_update", "false")) startCheck();
       if (!bMohist("disable_mods_blacklist")) jar((byte) 1);
-      if (!bMohist("disable_config_update")) startCheck();
       jar((byte) 2);
 
       Class.forName("net.minecraftforge.fml.relauncher.ServerLaunchWrapper")

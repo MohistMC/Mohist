@@ -17,7 +17,7 @@ import red.mohist.util.i18n.Message;
 public class Downloader {
 
     public void execute(String temppath) {
-      String url = "https://files.minecraftforge.net/maven/";
+      String url = "https://raw.githubusercontent.com/Shawiizz/shawiizz.github.io/master/";
       if(Message.isCN()) url = "http://bmclapi2.bangbang93.com/maven/";
       System.out.println(Message.getString("mcp.download"));
       File mcptool = new File(temppath + "/mcp.zip");
