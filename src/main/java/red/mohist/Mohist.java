@@ -5,6 +5,7 @@ import org.apache.logging.log4j.Logger;
 import red.mohist.bukkit.AutoDeletePlugins;
 import red.mohist.bukkit.nms.MappingFix;
 import red.mohist.configuration.MohistConfigUtil;
+import red.mohist.network.download.DownloadJava;
 import red.mohist.network.download.DownloadLibraries;
 import red.mohist.network.download.UpdateUtils;
 import red.mohist.util.i18n.Message;
@@ -24,10 +25,8 @@ public class Mohist {
     }
 
     public static void main(String[] args) throws Throwable {
-      if (Float.parseFloat(System.getProperty("java.class.version")) != 52.0) {
-        System.out.println(Message.getString("unsupported.java.version"));
-        System.exit(0);
-      }
+      if (Float.parseFloat(System.getProperty("java.class.version")) != 52.0 || bMohist("use_custom_java8", "false"))
+        DownloadJava.run(args);
 
       MohistConfigUtil.copyMohistConfig();
       System.out.println("\n" + "\n" +

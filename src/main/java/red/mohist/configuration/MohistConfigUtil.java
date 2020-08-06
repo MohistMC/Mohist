@@ -8,12 +8,15 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+
+import org.apache.commons.io.FileUtils;
 import org.bukkit.configuration.file.YamlConfiguration;
 import red.mohist.Mohist;
 import red.mohist.util.IOUtil;
 import red.mohist.util.NumberUtils;
 
 public class MohistConfigUtil {
+    public static File mohistyml = new File("mohist-config", "mohist.yml");
 
     public static String getString(String s, String key, String defaultreturn) {
         if(s.contains(key)) {
@@ -21,21 +24,23 @@ public class MohistConfigUtil {
             String s1 = (string.substring(string.indexOf(": ") + 2));
             String[] ss = s1.split("\n");
             return ss[0].trim().replace("'", "").replace("\"", "");
-        }
-        return defaultreturn;
+        } else return defaultreturn;
     }
 
     public static String getString(File f, String key, String defaultreturn) {
-        try {
-            return getString(IOUtil.readContent(new InputStreamReader(new FileInputStream(f), StandardCharsets.UTF_8)), key, defaultreturn);
-        } catch (IOException e) {
-            return defaultreturn;
-        }
+      StringBuilder s = new StringBuilder();
+      try {
+      for(String l : FileUtils.readLines(f, StandardCharsets.UTF_8))
+        if(!l.startsWith("#"))
+          s.append(l).append("\n");
+      return getString(s.toString(), key, defaultreturn);
+      } catch (IOException e) {
+        return defaultreturn;
+      }
     }
 
-    public static boolean getBoolean(File f, String key) {
-        return !getString(f, key, "true").equals("false");
-    }
+    public static boolean getBoolean(File f, String key) { return Boolean.parseBoolean(getString(f, key, "true")); }
+    public static boolean getBoolean(File f, String key, String b) { return Boolean.parseBoolean(getString(f, key, b)); }
 
     public static int getInt(File f, String key, String defaultreturn) {
         String s = getString(f, key, defaultreturn);
@@ -45,21 +50,21 @@ public class MohistConfigUtil {
 
   public static void copyMohistConfig() {
     try {
-      File configfile = new File("mohist-config/mohist.yml");
-      if (!configfile.exists()) {
-        configfile.mkdirs();
-        Files.copy(Mohist.class.getClassLoader().getResourceAsStream("configurations/mohist.yml"), Paths.get("mohist-config", "mohist.yml"), StandardCopyOption.REPLACE_EXISTING);
+      if (!mohistyml.exists()) {
+        mohistyml.mkdirs();
+        Files.copy(Mohist.class.getClassLoader().getResourceAsStream("configurations/mohist.yml"), mohistyml.toPath(), StandardCopyOption.REPLACE_EXISTING);
       }
     } catch (Exception e) {
       System.out.println("File copy exception!");
     }
-  //  new MohistConfig().init();
   }
 
-  public static boolean bMohist(String key) { return MohistConfigUtil.getBoolean(new File("mohist-config", "mohist.yml"), key+":"); }
+  public static boolean bMohist(String key) { return getBoolean(mohistyml, key+":"); }
+  public static boolean bMohist(String key, String defaultReturn) {
+    return getBoolean(mohistyml, key, defaultReturn);
+  }
 
   public static void setValueMohist(String oldValue, String value) {
-    File mohistyml = new File("mohist-config", "mohist.yml");
     YamlConfiguration yml = YamlConfiguration.loadConfiguration(mohistyml);
     yml.set(oldValue, value);
     try {
@@ -70,7 +75,6 @@ public class MohistConfigUtil {
   }
 
   public static void setValueMohist(String oldValue, boolean value) {
-    File mohistyml = new File("mohist-config", "mohist.yml");
     YamlConfiguration yml = YamlConfiguration.loadConfiguration(mohistyml);
     yml.set(oldValue, value);
     try {

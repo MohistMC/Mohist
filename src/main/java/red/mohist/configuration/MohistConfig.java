@@ -170,8 +170,7 @@ public class MohistConfig extends ConfigBase {
 
 
     public static String getHighlight(String key, String def) {
-        File f = new File("mohist-config", "mohist.yml");
-        YamlConfiguration yml = YamlConfiguration.loadConfiguration(f);
+        YamlConfiguration yml = YamlConfiguration.loadConfiguration(MohistConfigUtil.mohistyml);
         String color = yml.getString(key, def);
         return color;
     }
