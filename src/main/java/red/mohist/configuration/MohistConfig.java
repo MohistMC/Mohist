@@ -44,6 +44,7 @@ public class MohistConfig extends ConfigBase {
     public final BoolSetting check_libraries = new BoolSetting(this, "mohist.check_libraries", true, Message.getString("mohistsettings.check_libraries"));
     public final BoolSetting disable_plugins_blacklist = new BoolSetting(this, "mohist.disable_plugins_blacklist", false, Message.getString("mohistsettings.disable_plugins_blacklist"));
     public final BoolSetting disable_mods_blacklist = new BoolSetting(this, "mohist.disable_mods_blacklist", false, Message.getString("mohistsettings.disable_mods_blacklist"));
+    public final BoolSetting disable_config_update = new BoolSetting(this, "mohist.disable_config_update", false, Message.getString("mohistsettings.disable_config_update"));
 
     public final StringSetting ANSI_ERROR_LEVEL = new StringSetting(this, "consolecolor.error-level", "c", "consolecolor.error-level");
     public final StringSetting ANSI_WARN_LEVEL = new StringSetting(this, "consolecolor.warn-level", "e", "consolecolor.warn-level");

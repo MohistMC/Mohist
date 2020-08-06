@@ -11,6 +11,7 @@ import red.mohist.network.download.UpdateUtils;
 import red.mohist.util.i18n.Message;
 
 import static red.mohist.configuration.MohistConfigUtil.bMohist;
+import static red.mohist.forge.AutoConfigMods.startCheck;
 import static red.mohist.forge.AutoDeleteMods.jar;
 import static red.mohist.util.EulaUtil.hasAcceptedEULA;
 import static red.mohist.util.EulaUtil.writeInfos;
@@ -56,6 +57,7 @@ public class Mohist {
       if (bMohist("check_update")) UpdateUtils.versionCheck();
       if (!bMohist("disable_plugins_blacklist")) AutoDeletePlugins.jar();
       if (!bMohist("disable_mods_blacklist")) jar((byte) 1);
+      if (!bMohist("disable_config_update")) startCheck();
       jar((byte) 2);
 
       Class.forName("net.minecraftforge.fml.relauncher.ServerLaunchWrapper")

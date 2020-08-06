@@ -9,7 +9,7 @@ import red.mohist.util.i18n.Message;
 import static red.mohist.network.download.NetworkUtil.getInput;
 
 public class AutoDeleteMods {
-  private static String libDir = "mods";
+  public static String modsDir = "mods";
 
   private static String[] getInfos(byte type) {
     String[] l = null;
@@ -31,16 +31,16 @@ public class AutoDeleteMods {
   }
 
   public static void jar(byte type) {
-    if (!new File(libDir).exists()) new File(libDir).mkdir();
+    if (!new File(modsDir).exists()) new File(modsDir).mkdir();
     try {
       if(type == 1) {
         System.out.println(Message.getString("update.mods"));
         for (String classname : getInfos((byte) 1))
-          ClassJarUtil.checkOther(libDir, classname, false);
+          ClassJarUtil.checkOther(modsDir, classname, false);
       } else {
         System.out.println(Message.getString("update.mods.implemented"));
         for (String classname : getInfos((byte) 2))
-          ClassJarUtil.checkOther(libDir, classname, true);
+          ClassJarUtil.checkOther(modsDir, classname, true);
       }
     } catch (Throwable ignored) {}
   }
