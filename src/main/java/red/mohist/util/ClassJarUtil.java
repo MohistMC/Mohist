@@ -28,6 +28,18 @@ public class ClassJarUtil {
     }
   }
 
+  public static boolean isClassExist(String theDir, String classname) throws IOException {
+    for (File file : new File(theDir).listFiles((dir, name) -> name.endsWith(".jar"))) {
+      JarFile f = new JarFile(file);
+      if(f.getJarEntry(classname.replaceAll("\\.", "/") + ".class") != null) {
+        f.close();
+        System.gc();
+        return true;
+      }
+    }
+    return false;
+  }
+
   public static void checkPl(String classname, String ver, String link, String what) throws Exception {
     boolean verB = false;
     boolean classB = false;

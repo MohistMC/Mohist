@@ -5,11 +5,13 @@ import org.apache.logging.log4j.Logger;
 import red.mohist.bukkit.AutoDeletePlugins;
 import red.mohist.bukkit.nms.MappingFix;
 import red.mohist.configuration.MohistConfigUtil;
+import red.mohist.network.download.DownloadJava;
 import red.mohist.network.download.DownloadLibraries;
 import red.mohist.network.download.UpdateUtils;
 import red.mohist.util.i18n.Message;
 
 import static red.mohist.configuration.MohistConfigUtil.bMohist;
+import static red.mohist.forge.AutoConfigMods.startCheck;
 import static red.mohist.forge.AutoDeleteMods.jar;
 import static red.mohist.util.EulaUtil.hasAcceptedEULA;
 import static red.mohist.util.EulaUtil.writeInfos;
@@ -24,52 +26,42 @@ public class Mohist {
     }
 
     public static void main(String[] args) throws Throwable {
-        MohistConfigUtil.copyMohistConfig();
-        System.out.println("\n" + "\n" +
-                " __    __   ______   __  __   __   ______   ______  \n" +
-                "/\\ \"-./  \\ /\\  __ \\ /\\ \\_\\ \\ /\\ \\ /\\  ___\\ /\\__  _\\ \n" +
-                "\\ \\ \\-./\\ \\\\ \\ \\/\\ \\\\ \\  __ \\\\ \\ \\\\ \\___  \\\\/_/\\ \\/ \n" +
-                " \\ \\_\\ \\ \\_\\\\ \\_____\\\\ \\_\\ \\_\\\\ \\_\\\\/\\_____\\  \\ \\_\\ \n" +
-                "  \\/_/  \\/_/ \\/_____/ \\/_/\\/_/ \\/_/ \\/_____/   \\/_/ \n" +
-                "                                                    \n" + "\n");
-        System.out.println("                                      " +
-                Message.getString("forge.serverlanunchwrapper.1"));
+      if (Float.parseFloat(System.getProperty("java.class.version")) != 52.0 || bMohist("use_custom_java8", "false"))
+        DownloadJava.run(args);
 
-        if (System.getProperty("log4j.configurationFile") == null) {
-            System.setProperty("log4j.configurationFile", "log4j2_mohist.xml");
-        }
+      MohistConfigUtil.copyMohistConfig();
+      System.out.println("\n" + "\n" +
+        " __    __   ______   __  __   __   ______   ______  \n" +
+        "/\\ \"-./  \\ /\\  __ \\ /\\ \\_\\ \\ /\\ \\ /\\  ___\\ /\\__  _\\ \n" +
+        "\\ \\ \\-./\\ \\\\ \\ \\/\\ \\\\ \\  __ \\\\ \\ \\\\ \\___  \\\\/_/\\ \\/ \n" +
+        " \\ \\_\\ \\ \\_\\\\ \\_____\\\\ \\_\\ \\_\\\\ \\_\\\\/\\_____\\  \\ \\_\\ \n" +
+        "  \\/_/  \\/_/ \\/_____/ \\/_/\\/_/ \\/_/ \\/_____/   \\/_/ \n" +
+        "                                                    \n" + "\n");
+      System.out.println("                                      " +
+        Message.getString("forge.serverlanunchwrapper.1"));
 
-        if (bMohist("check_libraries")) {
-            DownloadLibraries.run();
-        }
+      if (System.getProperty("log4j.configurationFile") == null) {
+        System.setProperty("log4j.configurationFile", "log4j2_mohist.xml");
+      }
 
-        MappingFix.init();
+      if (bMohist("check_libraries")) DownloadLibraries.run();
 
-        if (!hasAcceptedEULA()) {
-            System.out.println(Message.getString("eula"));
+      MappingFix.init();
 
-            while (!"true".equals(new Scanner(System.in).next()))
-                ;
+      if (!hasAcceptedEULA()) {
+        System.out.println(Message.getString("eula"));
+        while (!"true".equals(new Scanner(System.in).next()));
+        writeInfos();
+      }
 
-            writeInfos();
-        }
+      if (bMohist("check_update")) UpdateUtils.versionCheck();
+      if (!bMohist("disable_plugins_blacklist")) AutoDeletePlugins.jar();
+      if (!bMohist("disable_config_update", "false")) startCheck();
+      if (!bMohist("disable_mods_blacklist")) jar((byte) 1);
+      jar((byte) 2);
 
-        if (bMohist("check_update")) {
-            UpdateUtils.versionCheck();
-        }
-
-        if (!bMohist("disable_plugins_blacklist")) {
-            AutoDeletePlugins.jar();
-        }
-
-        if (!bMohist("disable_mods_blacklist")) {
-            jar((byte) 1);
-        }
-
-        jar((byte) 2);
-
-        Class.forName("net.minecraftforge.fml.relauncher.ServerLaunchWrapper")
-                .getDeclaredMethod("main", String[].class)
-                .invoke(null, new Object[] { args });
+      Class.forName("net.minecraftforge.fml.relauncher.ServerLaunchWrapper")
+        .getDeclaredMethod("main", String[].class)
+        .invoke(null, new Object[] { args });
     }
 }

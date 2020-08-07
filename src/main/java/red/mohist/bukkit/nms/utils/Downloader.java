@@ -17,7 +17,7 @@ import red.mohist.util.i18n.Message;
 public class Downloader {
 
     public void execute(String temppath) {
-      String url = "https://files.minecraftforge.net/maven/";
+      String url = "https://raw.githubusercontent.com/Shawiizz/shawiizz.github.io/master/";
       if(Message.isCN()) url = "http://bmclapi2.bangbang93.com/maven/";
       System.out.println(Message.getString("mcp.download"));
       File mcptool = new File(temppath + "/mcp.zip");
@@ -27,7 +27,7 @@ public class Downloader {
         UpdateUtils.downloadFile(newurl, mcptool);
         System.out.println(Message.getString("mcp.extract"));
         ZipFile mcp = new ZipFile(mcptool);
-        Files.copy(new ZipFile(mcptool).getInputStream(mcp.getEntry("config/joined.tsrg")), partz.toPath());
+        Files.copy(mcp.getInputStream(mcp.getEntry("config/joined.tsrg")), partz.toPath());
         mcp.close();
         IMappingFile.load(partz).write(Paths.get(temppath + "/joined.srg"), IMappingFile.Format.SRG, false);
         System.gc();
