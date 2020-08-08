@@ -6,10 +6,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
-
-import org.apache.commons.io.FileUtils;
 import org.bukkit.configuration.file.YamlConfiguration;
 import red.mohist.Mohist;
 import red.mohist.util.IOUtil;
@@ -28,15 +25,11 @@ public class MohistConfigUtil {
     }
 
     public static String getString(File f, String key, String defaultreturn) {
-      StringBuilder s = new StringBuilder();
-      try {
-      for(String l : FileUtils.readLines(f, StandardCharsets.UTF_8))
-        if(!l.startsWith("#"))
-          s.append(l).append("\n");
-      return getString(s.toString(), key, defaultreturn);
-      } catch (IOException e) {
-        return defaultreturn;
-      }
+        try {
+            return getString(IOUtil.readContent(new InputStreamReader(new FileInputStream(f), StandardCharsets.UTF_8)), key, defaultreturn);
+        } catch (IOException e) {
+            return defaultreturn;
+        }
     }
 
     public static boolean getBoolean(File f, String key) { return Boolean.parseBoolean(getString(f, key, "true")); }
