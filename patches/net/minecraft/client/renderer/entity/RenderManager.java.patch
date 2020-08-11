@@ -1,5 +1,14 @@
 --- ../src-base/minecraft/net/minecraft/client/renderer/entity/RenderManager.java
 +++ ../src-work/minecraft/net/minecraft/client/renderer/entity/RenderManager.java
+@@ -119,7 +119,7 @@
+ public class RenderManager
+ {
+     public final Map < Class <? extends Entity > , Render <? extends Entity >> entityRenderMap = Maps. < Class <? extends Entity > , Render <? extends Entity >> newHashMap();
+-    private final Map<String, RenderPlayer> skinMap = Maps.<String, RenderPlayer>newHashMap();
++    public final Map<String, RenderPlayer> skinMap = Maps.<String, RenderPlayer>newHashMap();
+     private final RenderPlayer playerRenderer;
+     private FontRenderer textRenderer;
+     private double renderPosX;
 @@ -227,8 +227,13 @@
          this.playerRenderer = new RenderPlayer(this);
          this.skinMap.put("default", this.playerRenderer);
