@@ -27,7 +27,7 @@
              public String call()
              {
 -                return "1.12.2";
-+                return "1.12.2-" + Mohist.getVersion();
++                return Mohist.getVersion();
              }
          });
 -        this.systemDetailsCategory.addDetail("Operating System", new ICrashReportDetail<String>()
