@@ -56,7 +56,7 @@
                  if (j > -1)
                  {
                      List<Entity> list = EntitySelector.<Entity>matchEntities(sender, astring[j], Entity.class);
-@@ -135,16 +150,46 @@
+@@ -135,16 +150,47 @@
  
      public ICommand registerCommand(ICommand command)
      {
@@ -93,7 +93,8 @@
 -                this.commandMap.put(s, command);
 +        String modid = ServerAPI.forgecmd.get(command.getName());
 +        String description =  "A "+ modid +" provided command.";
-+        String usage = TextComponentHelper.createComponentTranslation(MinecraftServer.getServerInst().server.getServer(), command.getUsage(MinecraftServer.getServerInst().server.getServer())).getFormattedText();
++        net.minecraft.util.text.TextComponentBase tcb = TextComponentHelper.createComponentTranslation(MinecraftServer.getServerInst(), command.getUsage(MinecraftServer.getServerInst()));
++        String usage = command.getUsage(MinecraftServer.getServerInst()) != null ? tcb.getFormattedText() : "/" + command.getName();
 +        ModCustomCommand customCommand = new ModCustomCommand(command.getName(), description, usage, command.getAliases());
 +        customCommand.setPermission(permissionNode);
 +        if (list != null) customCommand.setAliases(list);
@@ -110,7 +111,7 @@
              }
          }
  
-@@ -212,6 +257,11 @@
+@@ -212,6 +258,11 @@
      {
          return this.commandMap;
      }
