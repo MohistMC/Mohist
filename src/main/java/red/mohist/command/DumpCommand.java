@@ -12,6 +12,7 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import org.apache.commons.io.FileUtils;
 import org.bukkit.ChatColor;
+import org.bukkit.Material;
 import org.bukkit.WorldType;
 import org.bukkit.block.Biome;
 import org.bukkit.block.banner.PatternType;
@@ -28,11 +29,11 @@ public class DumpCommand extends Command {
     public DumpCommand(String name) {
         super(name);
         this.description = "Universal Dump, which will print the information you need locally!";
-        this.usageMessage = "/dump [potions|enchants|cbcmds|modscmds|entitytypes|biomes|pattern|worldgen|worldtype]";
+        this.usageMessage = "/dump [potions|enchants|cbcmds|modscmds|entitytypes|biomes|pattern|worldgen|worldtype|material]";
         this.setPermission("mohist.command.dump");
     }
 
-    private final List<String> params = Arrays.asList("potions", "enchants", "cbcmds", "modscmds", "entitytypes", "biomes", "pattern", "worldgen", "worldtype");
+    private final List<String> params = Arrays.asList("potions", "enchants", "cbcmds", "modscmds", "entitytypes", "biomes", "pattern", "worldgen", "worldtype", "material");
 
     @Override
     public List<String> tabComplete(CommandSender sender, String alias, String[] args) throws IllegalArgumentException {
@@ -85,6 +86,9 @@ public class DumpCommand extends Command {
                 break;
             case "worldtype":
                 dumpWorldType(sender);
+                break;
+            case "material":
+                dumpMaterial(sender);
                 break;
             default:
                 sender.sendMessage(ChatColor.RED + "Usage: " + usageMessage);
@@ -196,6 +200,17 @@ public class DumpCommand extends Command {
         File file = new File("dump", "worldtype.red");
         writeByteArrayToFile(file, sb);
         dumpmsg(sender, file, "worldtype");
+    }
+
+    private void dumpMaterial(CommandSender sender){
+        StringBuilder sb = new StringBuilder();
+        for (Material material : Material.values()) {
+            String key = material.name();
+            sb.append(material).append("-").append(key).append("\n");
+        }
+        File file = new File("dump", "material.red");
+        writeByteArrayToFile(file, sb);
+        dumpmsg(sender, file, "material");
     }
 
     private void dumpmsg(CommandSender sender, File file, String type){
