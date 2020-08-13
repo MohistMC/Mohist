@@ -123,7 +123,7 @@ public class CraftStatistic {
         }
         Block block = Block.REGISTRY.getObject(new ResourceLocation(val));
         if (block != null) {
-            return Material.getBlockMaterial(Block.getIdFromBlock(block));
+            return Material.getMaterial(Block.getIdFromBlock(block));
         }
         try {
             return Material.getMaterial(Integer.parseInt(val));

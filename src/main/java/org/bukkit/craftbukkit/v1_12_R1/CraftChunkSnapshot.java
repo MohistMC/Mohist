@@ -53,7 +53,7 @@ public class CraftChunkSnapshot implements ChunkSnapshot {
 
     @Override
     public Material getBlockType(int x, int y, int z) {
-        return Material.getBlockMaterial(getBlockTypeId(x, y, z));
+        return Material.getMaterial(getBlockTypeId(x, y, z));
     }
 
     public final int getBlockTypeId(int x, int y, int z) {

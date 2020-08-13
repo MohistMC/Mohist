@@ -225,7 +225,7 @@ public class CraftBlock implements Block {
     }
 
     public Material getType() {
-        return Material.getBlockMaterial(getTypeId());
+        return Material.getMaterial(getTypeId());
     }
 
     public void setType(final Material type) {

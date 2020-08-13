@@ -334,7 +334,7 @@
 +
 +    private TileEntity fixTileEntity(BlockPos pos, Block type, TileEntity found) {
 +        this.getServer().getLogger().log(Level.SEVERE, "Block at {0},{1},{2} is {3} but has {4}" + ". "
-+                + "Bukkit will attempt to fix this, but there may be additional damage that we cannot recover.", new Object[]{pos.getX(), pos.getY(), pos.getZ(), org.bukkit.Material.getBlockMaterial(Block.getIdFromBlock(type)).toString(), found});
++                + "Bukkit will attempt to fix this, but there may be additional damage that we cannot recover.", new Object[]{pos.getX(), pos.getY(), pos.getZ(), org.bukkit.Material.getMaterial(Block.getIdFromBlock(type)), found});
 +        if (type instanceof ITileEntityProvider) {
 +            TileEntity replacement = ((ITileEntityProvider) type).createNewTileEntity(this, type.getMetaFromState(this.getBlockState(pos)));
 +            replacement.world = this;

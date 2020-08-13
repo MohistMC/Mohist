@@ -5,6 +5,7 @@ import java.lang.reflect.Constructor;
 import java.util.Arrays;
 import java.util.Map;
 import javax.annotation.Nullable;
+import net.minecraftforge.common.util.EnumHelper;
 import org.apache.commons.lang.Validate;
 import org.bukkit.map.MapView;
 import org.bukkit.material.Banner;
@@ -536,9 +537,8 @@ public enum Material {
     RECORD_12(2267, 1),;
 
     private static Material[] byId = new Material[32676];
-    private static Material[] blockById = new Material[32676];
     private static Map<String, Material> BY_NAME = Maps.newHashMap(); // Cauldron - remove final
-    public static Map<String, Material> BLOCK_BY_NAME = Maps.newHashMap();
+    private boolean isForgeBlock = false;
 
     static {
         for (Material material : values()) {
@@ -559,6 +559,12 @@ public enum Material {
 
     Material(final int id) {
         this(id, 64);
+    }
+
+    // Cauldron start - constructor used to set if the Material is a block or not
+    private Material(final int id, boolean flag) {
+        this(id, 64);
+        this.isForgeBlock = flag;
     }
     // Cauldron end
 
@@ -602,9 +608,6 @@ public enum Material {
         if (byId.length > id && id >= 0) {
             return byId[id];
         } else {
-            if (blockById.length > id && id >= 0) {
-                return blockById[id];
-            }
             return null;
         }
     }
@@ -619,7 +622,7 @@ public enum Material {
      * @return Material if found, or null
      */
     public static Material getMaterial(final String name) {
-        return BLOCK_BY_NAME.containsKey(name) ? BLOCK_BY_NAME.get(name) : BY_NAME.get(name);
+        return BY_NAME.get(name);
     }
 
     /**
@@ -648,7 +651,7 @@ public enum Material {
             // Cauldron start - extract to normalizeName()
             String filtered = normalizeName(name);
             // Mohist - use BLOCK_BY_NAME to get blocks of mods
-            result = BLOCK_BY_NAME.containsKey(filtered) ? BLOCK_BY_NAME.get(filtered) : BY_NAME.get(filtered);
+            result = BY_NAME.get(filtered);
             // Cauldron end
         }
 
@@ -660,38 +663,15 @@ public enum Material {
         return name.toUpperCase(java.util.Locale.ENGLISH).replaceAll("(:|\\s)", "_").replaceAll("\\W", "");
     }
 
-    @Nullable
-    public static Material addMaterial(Material material) {
-        if (byId[material.id] == null) {
-            byId[material.id] = material;
-            BY_NAME.put(normalizeName(material.name()), material);
-            BY_NAME.put("X" + String.valueOf(material.id), material);
+    public static Material addMaterial(int id, boolean isBlock) {
+        if (byId[id] == null) {
+            String materialName = normalizeName("X" + String.valueOf(id));
+            Material material = (Material) EnumHelper.addEnum(Material.class, materialName, new Class[]{Integer.TYPE, Boolean.TYPE}, new Object[]{Integer.valueOf(id), isBlock});
+            byId[id] = material;
+            BY_NAME.put(materialName, material);
             return material;
         }
         return null;
-    }
-
-    @Nullable
-    public static Material addBlockMaterial(Material material) {
-        if (blockById[material.id] == null) {
-            blockById[material.id] = material;
-            BLOCK_BY_NAME.put(normalizeName(material.name()), material);
-            BLOCK_BY_NAME.put("X" + String.valueOf(material.id), material);
-            return material;
-        }
-        return null;
-    }
-
-    public static Material getBlockMaterial(final int id) {
-        if (blockById.length > id && id >= 0) {
-            return blockById[id];
-        } else {
-            return null;
-        }
-    }
-
-    public static Material getBlockMaterial(final String name) {
-        return BLOCK_BY_NAME.get(name);
     }
 
     /**
@@ -766,8 +746,15 @@ public enum Material {
      * @return true if this material is a block
      */
     public boolean isBlock() {
-        return Arrays.stream(blockById).anyMatch(material -> this == material);
+        return id < 256 || isForgeBlock; // Cauldron
     }
+
+    /**
+     * Checks if the material is a forge block
+     *
+     * @return true if this material is a forge block
+     */
+    public boolean isForgeBlock() { return isForgeBlock; }
 
     /**
      * Checks if this Material is edible.
