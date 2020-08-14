@@ -1011,6 +1011,7 @@ public final class CraftServer implements Server {
             }
         }
         pluginManager.callEvent(new WorldLoadEvent(internal.getWorld()));
+        MohistForgeUtils.craftWorldLoading = false;
         return internal.getWorld();
     }
 
