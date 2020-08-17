@@ -169,7 +169,6 @@ public class MohistConfig extends ConfigBase {
         return RealTimeTicking.getValue();
     }
 
-
     public static String getHighlight(String key, String def) {
         YamlConfiguration yml = YamlConfiguration.loadConfiguration(MohistConfigUtil.mohistyml);
         String color = yml.getString(key, def);
