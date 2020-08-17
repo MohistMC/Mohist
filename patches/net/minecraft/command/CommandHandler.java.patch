@@ -56,7 +56,7 @@
                  if (j > -1)
                  {
                      List<Entity> list = EntitySelector.<Entity>matchEntities(sender, astring[j], Entity.class);
-@@ -135,16 +150,50 @@
+@@ -135,16 +150,47 @@
  
      public ICommand registerCommand(ICommand command)
      {
@@ -87,23 +87,21 @@
 -        for (String s : command.getAliases())
 -        {
 -            ICommand icommand = this.commandMap.get(s);
+-
+-            if (icommand == null || !icommand.getName().equals(s))
+-            {
+-                this.commandMap.put(s, command);
 +        String modid = ServerAPI.forgecmd.get(command.getName());
 +        String description =  "A "+ modid +" provided command.";
 +        net.minecraft.util.text.TextComponentBase tcb = TextComponentHelper.createComponentTranslation(MinecraftServer.getServerInst(), command.getUsage(MinecraftServer.getServerInst()));
 +        String usage = command.getUsage(MinecraftServer.getServerInst()) != null ? tcb.getFormattedText() : "/" + command.getName();
 +        ModCustomCommand customCommand = new ModCustomCommand(command.getName(), description, usage, command.getAliases());
-+        if (command instanceof CommandBase && ((CommandBase) command).getRequiredPermissionLevel() < 2) {
-+            customCommand.setPermission(permissionNode);
-+            LogManager.getLogger().debug(Message.getFormatString("command.register", new Object[]{command.getName(), permissionNode}));
-+        }
++        customCommand.setPermission(permissionNode);
 +        if (list != null) customCommand.setAliases(list);
 +        commandMap.register(command.getName(), customCommand);
 +        // Add mods command to helps
 +        getServer().server.helpMap.addTopic(new GenericCommandHelpTopic(customCommand));
- 
--            if (icommand == null || !icommand.getName().equals(s))
--            {
--                this.commandMap.put(s, command);
++        LogManager.getLogger().debug(Message.getFormatString("command.register", new Object[]{command.getName(), permissionNode}));
 +        if (list != null) {
 +            for (String s : list) {
 +                ICommand icommand = (ICommand)this.commandMap.get(s);
@@ -113,7 +111,7 @@
              }
          }
  
-@@ -212,6 +261,11 @@
+@@ -212,6 +258,11 @@
      {
          return this.commandMap;
      }

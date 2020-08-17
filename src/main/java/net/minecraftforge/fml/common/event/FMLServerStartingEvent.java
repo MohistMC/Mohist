@@ -59,7 +59,7 @@ public class FMLServerStartingEvent extends FMLStateEvent
     public void registerServerCommand(ICommand command)
     {
         CommandHandler ch = (CommandHandler) getServer().getCommandManager();
-        if (command instanceof CommandBase && ((CommandBase) command).getRequiredPermissionLevel() < 2) {
+        if (command instanceof CommandBase) {
             String modid = Loader.instance().activeModContainer().getModId();
             String per = modid + ".command." + command.getName();
             ((CommandBase) command).permissionNode = per;
