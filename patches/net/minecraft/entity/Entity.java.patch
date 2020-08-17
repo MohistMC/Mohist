@@ -1116,12 +1116,16 @@
          this.dataManager.set(CUSTOM_NAME, name);
      }
  
-@@ -2800,7 +3157,25 @@
+@@ -2800,7 +3157,30 @@
  
      public void setEntityBoundingBox(AxisAlignedBB bb)
      {
 -        this.boundingBox = bb;
-+//        this.boundingBox = bb;
++        // Compatible with StudentlyAdditions #https://github.com/Ellpeck/ActuallyAdditions/blob/1.12.2/src/main/java/de/ellpeck/actuallyadditions/mod/entity/EntityWorm.java#L34
++        if (bb == null) {
++            this.boundingBox = bb;
++        }
++        // CraftBukkit start - block invalid bounding boxes
 +        double a = bb.minX,
 +                b = bb.minY,
 +                c = bb.minZ,
@@ -1140,10 +1144,11 @@
 +        if (len < 0) f = c;
 +        if (len > 64) f = c + 64.0;
 +        this.boundingBox = new AxisAlignedBB(a, b, c, d, e, f);
++        // CraftBukkit end
      }
  
      public float getEyeHeight()
-@@ -2832,6 +3207,11 @@
+@@ -2832,6 +3212,11 @@
          return true;
      }
  
@@ -1155,7 +1160,7 @@
      public BlockPos getPosition()
      {
          return new BlockPos(this.posX, this.posY + 0.5D, this.posZ);
-@@ -2859,11 +3239,11 @@
+@@ -2859,11 +3244,11 @@
  
      public void setCommandStat(CommandResultStats.Type type, int amount)
      {
@@ -1171,7 +1176,7 @@
  
      @Nullable
      public MinecraftServer getServer()
-@@ -2901,6 +3281,217 @@
+@@ -2901,6 +3286,217 @@
          EnchantmentHelper.applyArthropodEnchantments(entityLivingBaseIn, entityIn);
      }
  
@@ -1389,7 +1394,7 @@
      public void addTrackingPlayer(EntityPlayerMP player)
      {
      }
-@@ -3069,7 +3660,7 @@
+@@ -3069,7 +3665,7 @@
          return SoundCategory.NEUTRAL;
      }
  
