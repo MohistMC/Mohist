@@ -6,7 +6,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 
-import static red.mohist.configuration.MohistConfigUtil.setValueMohist;
+import static red.mohist.configuration.MohistConfig.setValueMohist;
 
 public class WhitelistModsCommand extends Command {
 

@@ -1,6 +1,7 @@
 package red.mohist.configuration;
 
 import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
@@ -173,5 +174,25 @@ public class MohistConfig extends ConfigBase {
         YamlConfiguration yml = YamlConfiguration.loadConfiguration(MohistConfigUtil.mohistyml);
         String color = yml.getString(key, def);
         return color;
+    }
+
+    public static void setValueMohist(String oldValue, String value) {
+        YamlConfiguration yml = YamlConfiguration.loadConfiguration(MohistConfigUtil.mohistyml);
+        yml.set(oldValue, value);
+        try {
+            yml.save(MohistConfigUtil.mohistyml);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void setValueMohist(String oldValue, boolean value) {
+        YamlConfiguration yml = YamlConfiguration.loadConfiguration(MohistConfigUtil.mohistyml);
+        yml.set(oldValue, value);
+        try {
+            yml.save(MohistConfigUtil.mohistyml);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }
