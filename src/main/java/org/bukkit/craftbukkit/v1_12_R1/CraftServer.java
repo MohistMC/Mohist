@@ -42,6 +42,7 @@ import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandSenderWrapper;
 import net.minecraft.command.ICommand;
 import net.minecraft.command.ICommandSender;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Enchantments;
 import net.minecraft.init.Items;
@@ -547,7 +548,8 @@ public final class CraftServer implements Server {
             return player.getBukkitEntity();
         }
 
-        return null;
+        EntityPlayer fakeplayer = net.minecraftforge.common.util.FakePlayerFactory.fakePlayers.get(console.getPlayerProfileCache().getProfileByUUID(id));
+        return fakeplayer != null ? (Player)fakeplayer.getBukkitEntity() : null;
     }
 
     @Override
