@@ -10,6 +10,7 @@ import net.minecraft.block.BlockRedstoneWire;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
+import net.minecraft.inventory.IInventory;
 import net.minecraft.item.Item;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTUtil;
@@ -36,6 +37,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.metadata.MetadataValue;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.util.BlockVector;
+import red.mohist.block.CraftCustomContainer;
 
 public class CraftBlock implements Block {
     private final CraftChunk chunk;
@@ -297,7 +299,11 @@ public class CraftBlock implements Block {
         if (material == null) {
             TileEntity tileEntity = ((CraftWorld)this.getWorld()).getHandle().getTileEntity(new BlockPos(x, y, z));
             if (tileEntity != null) {
-                return new CraftBlockEntityState<TileEntity>(this, (Class<TileEntity>) tileEntity.getClass());
+                // block with IInventory
+                if (tileEntity instanceof IInventory) {
+                    return new CraftCustomContainer(this);
+                }
+                return new CraftBlockEntityState<>(this, tileEntity.getClass());
             } else {
                 return new CraftBlockState(this);
             }
@@ -379,7 +385,11 @@ public class CraftBlock implements Block {
                 // Cauldron start
                 TileEntity tileEntity = ((CraftWorld)this.getWorld()).getHandle().getTileEntity(new BlockPos(x, y, z));;
                 if (tileEntity != null) {
-                    return new CraftBlockEntityState<TileEntity>(this, (Class<TileEntity>) tileEntity.getClass());
+                    // block with IInventory
+                    if (tileEntity instanceof IInventory) {
+                        return new CraftCustomContainer(this);
+                    }
+                    return new CraftBlockEntityState<>(this, tileEntity.getClass());
                 } else {
                     return new CraftBlockState(this);
                 }
