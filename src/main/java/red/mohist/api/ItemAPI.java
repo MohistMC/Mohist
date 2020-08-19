@@ -178,4 +178,8 @@ public class ItemAPI {
         }
         return null;
     }
+
+    public static Material getBlockMaterial(final int id) {
+        return Material.getBlockMaterial(id);
+    }
 }

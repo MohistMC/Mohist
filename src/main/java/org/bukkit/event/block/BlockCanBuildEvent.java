@@ -70,7 +70,7 @@ public class BlockCanBuildEvent extends BlockEvent {
      * @return The Material that we are trying to place
      */
     public Material getMaterial() {
-        return Material.getMaterial(material);
+        return Material.getBlockMaterial(material);
     }
 
     /**

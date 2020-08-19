@@ -15,6 +15,7 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
 import org.bukkit.craftbukkit.v1_12_R1.block.CraftBlock;
 import org.bukkit.entity.Entity;
+import red.mohist.Mohist;
 
 public class CraftChunk implements Chunk {
     private static final byte[] emptyData = new byte[2048];
@@ -181,11 +182,12 @@ public class CraftChunk implements Chunk {
 
         BlockState[] entities = new BlockState[chunk.getTileEntityMap().size()];
 
-        for (BlockPos pos : chunk.getTileEntityMap().keySet()) {
-            if (pos == null) {
+        for (Object obj : chunk.getTileEntityMap().keySet().toArray()) {
+            if (!(obj instanceof BlockPos)) {
                 continue;
             }
 
+            BlockPos pos = (BlockPos) obj;
             entities[index++] = world.getWorld().getBlockAt(pos.getX(), pos.getY(), pos.getZ()).getState();
         }
 

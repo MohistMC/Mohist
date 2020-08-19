@@ -537,6 +537,7 @@ public enum Material {
     RECORD_12(2267, 1),;
 
     private static Material[] byId = new Material[32676];
+    public static Material[] blockById = new Material[32676];
     private static Map<String, Material> BY_NAME = Maps.newHashMap(); // Cauldron - remove final
     private boolean isForgeBlock = false;
 
@@ -612,6 +613,14 @@ public enum Material {
         }
     }
 
+    public static Material getBlockMaterial(final int id) {
+        if (blockById.length > id && id >= 0) {
+            return blockById[id];
+        } else {
+            return null;
+        }
+    }
+
     /**
      * Attempts to get the Material with the given name.
      * <p>
@@ -664,9 +673,16 @@ public enum Material {
     }
 
     public static Material addMaterial(int id, boolean isBlock) {
-        if (byId[id] == null) {
+        // Forge Blocks
+        if (isBlock && blockById[id] == null) {
             String materialName = normalizeName("X" + String.valueOf(id));
-            Material material = (Material) EnumHelper.addEnum(Material.class, materialName, new Class[]{Integer.TYPE, Boolean.TYPE}, new Object[]{Integer.valueOf(id), isBlock});
+            Material material = (Material) EnumHelper.addEnum(Material.class, materialName, new Class[]{Integer.TYPE, Boolean.TYPE}, new Object[]{Integer.valueOf(id), true});
+            blockById[id] = material;
+            BY_NAME.put(materialName, material);
+            return material;
+        } else if (byId[id] == null) { // Forge Items
+            String materialName = normalizeName("X" + String.valueOf(id));
+            Material material = (Material) EnumHelper.addEnum(Material.class, materialName, new Class[]{Integer.TYPE, Boolean.TYPE}, new Object[]{Integer.valueOf(id), false});
             byId[id] = material;
             BY_NAME.put(materialName, material);
             return material;

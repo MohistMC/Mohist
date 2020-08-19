@@ -75,6 +75,13 @@ public class ForgeInjectBukkit {
                 }
             }
         }
+
+        for (Material material : Material.values()) {
+            int id = material.getId();
+            if (id < 256) {
+                material.blockById[id] = material;
+            }
+        }
     }
 
     public static void addEnumEnchantment() {

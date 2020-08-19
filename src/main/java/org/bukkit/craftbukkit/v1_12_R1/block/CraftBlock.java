@@ -37,6 +37,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.metadata.MetadataValue;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.util.BlockVector;
+import red.mohist.Mohist;
 import red.mohist.block.CraftCustomContainer;
 
 public class CraftBlock implements Block {
@@ -227,7 +228,7 @@ public class CraftBlock implements Block {
     }
 
     public Material getType() {
-        return Material.getMaterial(getTypeId());
+        return Material.getBlockMaterial(getTypeId());
     }
 
     public void setType(final Material type) {
@@ -295,9 +296,9 @@ public class CraftBlock implements Block {
     @Override
     public BlockState getState() {
         Material material = getType();
-        // Cauldron start - if null, check for TE that implements IInventory
-        if (material == null) {
-            TileEntity tileEntity = ((CraftWorld)this.getWorld()).getHandle().getTileEntity(new BlockPos(x, y, z));
+        // Mohist start - check for TE that implements IInventory
+        if (material.isForgeBlock()) {
+            TileEntity tileEntity = chunk.getCraftWorld().getTileEntityAt(x, y, z);
             if (tileEntity != null) {
                 // block with IInventory
                 if (tileEntity instanceof IInventory) {
@@ -308,7 +309,7 @@ public class CraftBlock implements Block {
                 return new CraftBlockState(this);
             }
         }
-        // Cauldron end
+        // Mohist end
         switch (material) {
             case SIGN:
             case SIGN_POST:
@@ -383,7 +384,7 @@ public class CraftBlock implements Block {
                 return new CraftBed(this);
             default:
                 // Cauldron start
-                TileEntity tileEntity = ((CraftWorld)this.getWorld()).getHandle().getTileEntity(new BlockPos(x, y, z));;
+                TileEntity tileEntity = chunk.getCraftWorld().getTileEntityAt(x, y, z);
                 if (tileEntity != null) {
                     // block with IInventory
                     if (tileEntity instanceof IInventory) {

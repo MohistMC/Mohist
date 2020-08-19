@@ -143,7 +143,7 @@ public class CraftBlockState implements BlockState {
     }
 
     public Material getType() {
-        return Material.getMaterial(getTypeId());
+        return Material.getBlockMaterial(getTypeId());
     }
 
     public void setFlag(int flag) {
