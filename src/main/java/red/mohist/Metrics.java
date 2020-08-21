@@ -20,9 +20,11 @@ import javax.net.ssl.HttpsURLConnection;
 import net.minecraft.server.MinecraftServer;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.plugin.Plugin;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.spigotmc.SpigotConfig;
+import red.mohist.api.ServerAPI;
 import red.mohist.common.async.MohistThreadBox;
 
 /**
@@ -272,6 +274,30 @@ public class Metrics {
                         release = "Java " + majorVersion;
                     }
                     map.put(release, entry);
+
+                    return map;
+                }));
+
+                metrics.addCustomChart(new Metrics.DrilldownPie("mod_plugin", () -> {
+                    Map<String, Map<String, Integer>> map = new HashMap<>();
+
+                    Map<String, Integer> modslist = new HashMap<>();
+                    String[] mods = ServerAPI.getModList().replace("[", "").replace("]", "").split(", ");
+                    for(String x : mods){
+                        if (x.equals("minecraft") || x.equals("FML") || x.equals("forge") || x.equals("mcp") || x.equals("mohist")) {
+                            continue;
+                        }
+                        modslist.put(x, 1);
+                    }
+
+                    Map<String, Integer> pluginlist = new HashMap<>();
+                    for (Plugin plugin : Bukkit.getPluginManager().getPlugins()) {
+                        if (plugin.isEnabled()) {
+                            pluginlist.put(plugin.getDescription().getName(), 1);
+                        }
+                    }
+                    map.put("mods", modslist);
+                    map.put("plugins", pluginlist);
 
                     return map;
                 }));
