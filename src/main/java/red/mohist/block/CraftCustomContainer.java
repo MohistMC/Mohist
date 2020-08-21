@@ -1,7 +1,6 @@
 package red.mohist.block;
 
 import net.minecraft.inventory.IInventory;
-
 import org.bukkit.block.Block;
 import org.bukkit.craftbukkit.v1_12_R1.CraftWorld;
 import org.bukkit.craftbukkit.v1_12_R1.block.CraftBlockState;
