@@ -203,7 +203,7 @@ outputJar {
     archiveClassifier = 'server'
 
     manifest.attributes([
-            "Manifest-Version": "1.8",
+            "Manifest-Version": "1.9",
             "Implementation-Title": "Mohist",
             "Implementation-Version": project.version,
             "Main-Class": "red.mohist.Mohist",
