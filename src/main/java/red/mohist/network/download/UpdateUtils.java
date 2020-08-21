@@ -43,7 +43,7 @@ public class UpdateUtils {
       time = sdf.format(new Date(Long.parseLong(timestamp)));
 
       if(jar_sha.equals(ci_sha))
-        System.out.println(Message.getFormatString("update.latest", new Object[]{"1.8", jar_sha, ci_sha}));
+        System.out.println(Message.getFormatString("update.latest", new Object[]{"1.9", jar_sha, ci_sha}));
       else {
         System.out.println(Message.getFormatString("update.detect", new Object[]{ci_sha, jar_sha, time}));
         if(bMohist("check_update_auto_download"))

@@ -21,17 +21,6 @@
 [![Mohist Stats](https://bstats.org/signatures/bukkit/Mohist.svg)](https://bstats.org/plugin/bukkit/Mohist/3939)
 </div>
 
-注意
-------
-Mohist服务端原所有者和开发者因个人原因暂时停止参与Mohist的开发  
-现在Mohist新开发组重组近乎完成  ,开发与维护工作仍然与往常一样进行，我们并没有停更！  
-如果你有Forge+Bukkit服务端开发经验或是了解BukkitAPI或FML，并愿意参与到开发当中，欢迎联系我  
-希望大家有能力的话可以贡献出自己的力量，不只是贡献代码，做你喜欢的事都可以！  
-本项目为用爱发电，我们每个人都是因对Miencraft的热爱而参与这个项目的开发。如果你参与开发希望获取报酬的话，可联系我。
-我的邮箱 QQ:3293876954@qq.com / Carierx_Max@outlook.com
-
-我们将会努力变好，无论历史将Mohist导向何处,我们选择继续前行，与诸君共勉，让我们一起共同进步！
-
 获得帮助
 ------
    [**网站**](https://mohist.red/)
@@ -39,7 +28,6 @@ Mohist服务端原所有者和开发者因个人原因暂时停止参与Mohist�
    [**DC群**](https://discord.gg/ZgXjHGd)
    
    [**QQ群**](https://jq.qq.com/?_wv=1027&k=5YIRYnH)  
-   现在QQ群暂不可用，有issue请直接在github页面拉取即可。
    
 下载
 ------
