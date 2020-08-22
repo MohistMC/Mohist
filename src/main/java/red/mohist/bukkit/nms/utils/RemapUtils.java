@@ -24,6 +24,7 @@ import red.mohist.bukkit.nms.remappers.MohistInheritanceMap;
 import red.mohist.bukkit.nms.remappers.MohistInheritanceProvider;
 import red.mohist.bukkit.nms.remappers.MohistJarMapping;
 import red.mohist.bukkit.nms.remappers.MohistJarRemapper;
+import red.mohist.bukkit.nms.remappers.ReflectMethodRemapper;
 import red.mohist.bukkit.nms.remappers.ReflectRemapper;
 import red.mohist.util.JarTool;
 
@@ -34,12 +35,12 @@ import red.mohist.util.JarTool;
  */
 public class RemapUtils {
 
-    public static final MohistJarMapping jarMapping;
-    public static final MohistJarRemapper jarRemapper;
+    public static MohistJarMapping jarMapping;
+    public static MohistJarRemapper jarRemapper;
     private static final List<Remapper> remappers = new ArrayList<>();
     public static Map<String, String> relocations = new HashMap<>();
 
-    static {
+    public static void init() {
         jarMapping = new MohistJarMapping();
         jarMapping.packages.put("org/bukkit/craftbukkit/libs/it/unimi/dsi/fastutil/", "it/unimi/dsi/fastutil/");
         jarMapping.packages.put("org/bukkit/craftbukkit/libs/jline/", "jline/");
@@ -91,6 +92,13 @@ public class RemapUtils {
         remappers.add(jarRemapper);
         remappers.add(new ReflectRemapper());
         jarMapping.initFastMethodMapping(jarRemapper);
+        ReflectMethodRemapper.init();
+
+        try {
+            Class.forName("red.mohist.bukkit.nms.proxy.ProxyMethodHandles_Lookup");
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
     }
 
     private static final Object remapLock = new Object();

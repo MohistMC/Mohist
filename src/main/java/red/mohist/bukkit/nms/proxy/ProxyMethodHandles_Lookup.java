@@ -4,6 +4,7 @@ import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodType;
 import java.lang.reflect.Method;
+import red.mohist.bukkit.nms.remappers.ReflectMethodRemapper;
 import red.mohist.bukkit.nms.utils.RemapUtils;
 
 /**
@@ -12,24 +13,19 @@ import red.mohist.bukkit.nms.utils.RemapUtils;
  * @date 2019/7/1 7:45 PM
  */
 public class ProxyMethodHandles_Lookup {
+
     public static MethodHandle findVirtual(MethodHandles.Lookup lookup, Class<?> clazz, String name, MethodType type) throws NoSuchMethodException, IllegalAccessException {
         if (clazz.getName().startsWith("net.minecraft.")) {
             name = RemapUtils.mapMethodName(clazz, name, type);
-        } else if (clazz == Class.class) {
-            switch (name) {
-                case "getField":
-                case "getDeclaredField":
-                case "getMethod":
-                case "getDeclaredMethod":
-                    type = MethodType.methodType(type.returnType(), new Class[]{Class.class, String.class});
-                    clazz = ProxyClass.class;
-                    break;
-                default:
-            }
-        } else if (clazz == ClassLoader.class) {
-            if (name.equals("loadClass")) {
-                type = MethodType.methodType(type.returnType(), new Class[]{ClassLoader.class, String.class});
-                clazz = ProxyClass.class;
+        } else {
+            Class<?> aClass = ReflectMethodRemapper.getVirtualMethod().get((clazz.getName().replace(".", "/") + ";" + name));
+            if (aClass != null) {
+                Class<?>[] parameterArray = type.parameterArray();
+                Class<?>[] newParameterArray = new Class<?>[parameterArray.length + 1];
+                newParameterArray[0] = clazz;
+                System.arraycopy(parameterArray, 0 , newParameterArray, 1, parameterArray.length);
+                MethodType newType = MethodType.methodType(type.returnType(), newParameterArray);
+                return lookup.findStatic(aClass, name, newType);
             }
         }
         return lookup.findVirtual(clazz, name, type);
@@ -51,22 +47,18 @@ public class ProxyMethodHandles_Lookup {
         return lookup.findSpecial(clazz, name, type, specialCaller);
     }
 
-    public static MethodHandle unreflect(MethodHandles.Lookup lookup, Method m) throws IllegalAccessException, NoSuchMethodException {
-        if (m.getDeclaringClass() == Class.class) {
-            String name = m.getName();
-            switch (name) {
-                case "forName":
-                    return lookup.unreflect(ProxyClass.class.getMethod(name, new Class[]{String.class}));
-                case "getField":
-                case "getDeclaredField": {
-                    return lookup.unreflect(ProxyClass.class.getMethod(name, new Class[]{Class.class, String.class}));
-                }
-                case "getMethod":
-                case "getDeclaredMethod":
-                    return lookup.unreflect(ProxyClass.class.getMethod(name, new Class[]{Class.class, String.class, Class[].class}));
+    public static MethodHandle unreflect(MethodHandles.Lookup lookup, Method m) throws IllegalAccessException {
+        Class<?> aClass = ReflectMethodRemapper.getVirtualMethod().get((m.getDeclaringClass().getName().replace(".", "/") + ";" + m.getName()));
+        if (aClass != null) {
+            try {
+                Class<?>[] parameterTypes = m.getParameterTypes();
+                Class<?>[] newParameterTypes = new Class<?>[parameterTypes.length + 1];
+                newParameterTypes[0] = m.getDeclaringClass();
+                System.arraycopy(parameterTypes, 0 , newParameterTypes, 1, parameterTypes.length);
+                return lookup.unreflect(aClass.getMethod(m.getName(), newParameterTypes));
+            } catch (NoSuchMethodException e) {
+                e.printStackTrace();
             }
-        } else if (m.getDeclaringClass() == ClassLoader.class && m.getName().equals("loadClass")) {
-            return lookup.unreflect(ClassLoader.class.getMethod(m.getName(), new Class[]{ClassLoader.class, String.class}));
         }
         return lookup.unreflect(m);
     }

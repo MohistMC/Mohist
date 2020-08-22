@@ -1,5 +1,6 @@
 package red.mohist.bukkit.nms.remappers;
 
+import com.google.common.collect.Maps;
 import java.io.InputStream;
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodType;
@@ -29,11 +30,30 @@ import red.mohist.bukkit.nms.utils.ASMUtils;
  * @date 2019/7/2 8:51 PM
  */
 public class ReflectMethodRemapper extends MethodRemapper {
+
     private static Map<String, Map<String, Map<String, MethodRedirectRule>>> methodRedirectMapping = new HashMap<>();
 
-    static {
+    private static Map<String, Class<?>> virtualMethod = Maps.newHashMap();
+
+    public static void init() {
         registerMethodRemapper("java/lang/Class", "forName", Class.class, new Class[]{String.class}, ProxyClass.class);
         registerMethodRemapper("java/lang/Class", "forName", Class.class, new Class[]{String.class, Boolean.TYPE, ClassLoader.class}, ProxyClass.class);
+        registerMethodRemapper("java/lang/invoke/MethodType", "fromMethodDescriptorString", MethodType.class, new Class[]{String.class, ClassLoader.class}, ProxyMethodHandles_Lookup.class);
+
+        virtualMethod.put("java/lang/Class;getField", ProxyClass.class);
+        virtualMethod.put("java/lang/Class;getDeclaredField", ProxyClass.class);
+        virtualMethod.put("java/lang/Class;getMethod", ProxyClass.class);
+        virtualMethod.put("java/lang/Class;getDeclaredMethod", ProxyClass.class);
+        virtualMethod.put("java/lang/Class;getSimpleName", ProxyClass.class);
+        virtualMethod.put("java/lang/Class;getDeclaredMethods", ProxyClass.class);
+        virtualMethod.put("java/lang/reflect/Method;getName", ProxyClass.class);
+        virtualMethod.put("java/lang/reflect/Field;getName", ProxyClass.class);
+        virtualMethod.put("java/lang/invoke/MethodHandles$Lookup;unreflect", ProxyMethodHandles_Lookup.class);
+        virtualMethod.put("java/lang/invoke/MethodHandles$Lookup;findSpecial", ProxyMethodHandles_Lookup.class);
+        virtualMethod.put("java/lang/invoke/MethodHandles$Lookup;findStatic", ProxyMethodHandles_Lookup.class);
+        virtualMethod.put("java/lang/invoke/MethodHandles$Lookup;findVirtual", ProxyMethodHandles_Lookup.class);
+        virtualMethod.put("java/lang/ClassLoader;loadClass", ProxyClass.class);
+
         registerMethodRemapper("java/lang/Class", "getField", Field.class, new Class[]{String.class}, ProxyClass.class);
         registerMethodRemapper("java/lang/Class", "getDeclaredField", Field.class, new Class[]{String.class}, ProxyClass.class);
         registerMethodRemapper("java/lang/Class", "getMethod", Method.class, new Class[]{String.class, Class[].class}, ProxyClass.class);
@@ -51,6 +71,7 @@ public class ReflectMethodRemapper extends MethodRemapper {
         registerMethodRemapper("java/lang/invoke/MethodHandles$Lookup", "findVirtual", MethodHandle.class, new Class[]{Class.class, String.class, MethodType.class}, ProxyMethodHandles_Lookup.class);
 
         registerMethodRemapper("java/lang/ClassLoader", "loadClass", Class.class, new Class[]{String.class}, ProxyClass.class);
+
         registerMethodRemapper("java/net/URLClassLoader", "<init>", void.class, new Class[]{URL[].class, ClassLoader.class, URLStreamHandlerFactory.class}, DelegateURLClassLoder.class);
         registerMethodRemapper("java/net/URLClassLoader", "<init>", void.class, new Class[]{URL[].class, ClassLoader.class}, DelegateURLClassLoder.class);
         registerMethodRemapper("java/net/URLClassLoader", "<init>", void.class, new Class[]{URL[].class}, DelegateURLClassLoder.class);
@@ -71,6 +92,10 @@ public class ReflectMethodRemapper extends MethodRemapper {
         Map<String, MethodRedirectRule> byDesc = byName.computeIfAbsent(name, k -> new HashMap<>());
         String methodDescriptor = ASMUtils.toMethodDescriptor(returnType, args);
         byDesc.put(methodDescriptor, new MethodRedirectRule(owner, name, methodDescriptor, remapOwner.getName().replace('.', '/')));
+    }
+
+    public static Map<String, Class<?>> getVirtualMethod() {
+        return virtualMethod;
     }
 
     @Override
