@@ -28,7 +28,7 @@
  import net.minecraft.command.ICommandSender;
  import net.minecraft.crash.CrashReport;
  import net.minecraft.crash.ICrashReportDetail;
-@@ -43,29 +43,47 @@
+@@ -43,29 +43,48 @@
  import net.minecraft.world.World;
  import net.minecraft.world.WorldSettings;
  import net.minecraft.world.WorldType;
@@ -49,6 +49,7 @@
 +import org.spigotmc.SpigotConfig;
 +import red.mohist.Metrics;
 +import red.mohist.Mohist;
++import red.mohist.WatchMohist;
 +import red.mohist.common.async.MohistThreadBox;
 +import red.mohist.configuration.MohistConfig;
 +import red.mohist.api.event.server.BukkitServerStartDoneEvent;
@@ -82,7 +83,7 @@
          Thread thread = new Thread("Server Infinisleeper")
          {
              {
-@@ -95,14 +113,22 @@
+@@ -95,14 +114,22 @@
          {
              public void run()
              {
@@ -111,7 +112,7 @@
                      }
                  }
                  catch (IOException ioexception1)
-@@ -111,17 +137,40 @@
+@@ -111,17 +138,40 @@
                  }
              }
          };
@@ -155,7 +156,7 @@
          this.eula = new ServerEula(new File("eula.txt"));
  
          if (!this.eula.hasAcceptedEULA())
-@@ -140,7 +189,7 @@
+@@ -140,7 +190,7 @@
              {
                  this.setOnlineMode(this.settings.getBooleanProperty("online-mode", true));
                  this.setPreventProxyConnections(this.settings.getBooleanProperty("prevent-proxy-connections", false));
@@ -164,7 +165,7 @@
              }
  
              this.setCanSpawnAnimals(this.settings.getBooleanProperty("spawn-animals", true));
-@@ -164,7 +213,7 @@
+@@ -164,7 +214,7 @@
              this.canSpawnStructures = this.settings.getBooleanProperty("generate-structures", true);
              int i = this.settings.getIntProperty("gamemode", GameType.SURVIVAL.getID());
              this.gameType = WorldSettings.getGameTypeById(i);
@@ -173,7 +174,7 @@
              InetAddress inetaddress = null;
  
              if (!this.getServerHostname().isEmpty())
-@@ -177,10 +226,22 @@
+@@ -177,10 +227,22 @@
                  this.setServerPort(this.settings.getIntProperty("server-port", 25565));
              }
  
@@ -198,7 +199,7 @@
              try
              {
                  this.getNetworkSystem().addLanEndpoint(inetaddress, this.getServerPort());
-@@ -192,15 +253,7 @@
+@@ -192,15 +254,7 @@
                  LOGGER.warn("Perhaps a server is already running on that port?");
                  return false;
              }
@@ -215,7 +216,7 @@
              if (this.convertFiles())
              {
                  this.getPlayerProfileCache().save();
-@@ -212,7 +265,8 @@
+@@ -212,7 +266,8 @@
              }
              else
              {
@@ -225,7 +226,7 @@
                  long j = System.nanoTime();
  
                  if (this.getFolderName() == null)
-@@ -260,12 +314,22 @@
+@@ -260,12 +315,23 @@
                  TileEntitySkull.setProfileCache(this.getPlayerProfileCache());
                  TileEntitySkull.setSessionService(this.getMinecraftSessionService());
                  PlayerProfileCache.setOnlineMode(this.isServerInOnlineMode());
@@ -247,10 +248,11 @@
 +                Object[] p1 = {this.getServerHostname().isEmpty() ? "0.0.0.0" : this.getServerHostname(), String.valueOf(this.getServerPort())};
 +                Mohist.LOGGER.info(Message.getFormatString("server.ip", p1));
 +                Metrics.MohistMetrics.startMetrics();
++                WatchMohist.start();
                  if (this.settings.hasProperty("announce-player-achievements"))
                  {
                      this.worlds[0].getGameRules().setOrCreateGameRule("announceAdvancements", this.settings.getBooleanProperty("announce-player-achievements", true) ? "true" : "false");
-@@ -285,18 +349,35 @@
+@@ -285,18 +351,35 @@
                      LOGGER.info("Starting remote control listener");
                      this.rconThread = new RConThreadMain(this);
                      this.rconThread.startThread();
@@ -293,7 +295,7 @@
              }
          }
      }
-@@ -419,11 +500,20 @@
+@@ -419,11 +502,20 @@
  
      public void executePendingCommands()
      {
@@ -318,7 +320,7 @@
      }
  
      public boolean isDedicatedServer()
-@@ -515,7 +605,7 @@
+@@ -515,7 +607,7 @@
  
      public boolean isBlockProtected(World worldIn, BlockPos pos, EntityPlayer playerIn)
      {
@@ -327,7 +329,7 @@
          {
              return false;
          }
-@@ -584,6 +674,9 @@
+@@ -584,6 +676,9 @@
          return this.settings.getIntProperty("network-compression-threshold", super.getNetworkCompressionThreshold());
      }
  
@@ -337,7 +339,7 @@
      protected boolean convertFiles() throws IOException
      {
          boolean flag = false;
-@@ -673,13 +766,79 @@
+@@ -673,13 +768,79 @@
  
      public String getPlugins()
      {
