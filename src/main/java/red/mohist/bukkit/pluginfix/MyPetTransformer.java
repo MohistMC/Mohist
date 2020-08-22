@@ -16,7 +16,7 @@ public class MyPetTransformer implements IClassTransformer {
     @Override
     public byte[] transform(String name, String transformedName, byte[] basicClass) {
         if (basicClass == null) return null;
-        if (transformedName.equals("net.minecraft.entity.Entity")) basicClass = patchUniqueID(basicClass);
+        if (transformedName.equals("net.minecraft.entity.Entity")) return patchUniqueID(basicClass);
         return basicClass;
     }
 

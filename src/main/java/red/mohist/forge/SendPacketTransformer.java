@@ -15,8 +15,8 @@ public class SendPacketTransformer implements IClassTransformer {
 
     @Override
     public byte[] transform(String name, String transformedName, byte[] basicClass) {
-        if (basicClass == null) return basicClass;
-        if (transformedName.equals("net.minecraftforge.fml.common.network.handshake.NetworkDispatcher$1")) basicClass = transformClass(basicClass);
+        if (basicClass == null) return null;
+        if (transformedName.equals("net.minecraftforge.fml.common.network.handshake.NetworkDispatcher$1")) return transformClass(basicClass);
         return basicClass;
     }
 
