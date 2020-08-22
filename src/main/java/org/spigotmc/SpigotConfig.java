@@ -26,6 +26,7 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
 import red.mohist.Mohist;
+import red.mohist.configuration.MohistConfig;
 import red.mohist.util.i18n.Message;
 
 public class SpigotConfig {
@@ -190,7 +191,9 @@ public class SpigotConfig {
         restartScript = getString( "settings.restart-script", restartScript );
         restartMessage = transform( getString( "messages.restart", "Server is restarting" ) );
         commands.put( "restart", new RestartCommand( "restart" ) );
-        WatchdogThread.doStart( timeoutTime, restartOnCrash );
+        if (MohistConfig.instance.getBoolean("mohist.watchdog_spigot")) {
+            WatchdogThread.doStart(timeoutTime, restartOnCrash);
+        }
     }
 
     private static void bungee() {

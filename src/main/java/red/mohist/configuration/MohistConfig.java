@@ -93,6 +93,8 @@ public class MohistConfig extends ConfigBase {
     public final StringSetting libraries_black_list = new StringSetting(this, "libraries_black_list", "aaaaa;bbbbbb", Message.getString("mohistsettings.libraries_black_list"));
 
     public final BoolSetting hideJoinModsList = new BoolSetting(this, "hidejoinmodslist", false, Message.getString("mohistsettings.hideJoinModsList"));
+    public final BoolSetting watchdog_spigot = new BoolSetting(this, "mohist.watchdog_spigot", true, Message.getString("Open watchdog_spigot"));
+    public final BoolSetting watchdog_mohist = new BoolSetting(this, "mohist.watchdog_mohist", false, Message.getString("Open watchdog_mohist"));
 
     public List<Integer> dimensionsNotLoaded =new ArrayList();
     /* ======================================================================== */

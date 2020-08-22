@@ -4,6 +4,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
+import org.apache.commons.lang3.concurrent.BasicThreadFactory;
 
 public class MohistThreadBox {
 
@@ -18,6 +19,8 @@ public class MohistThreadBox {
     public static final ExecutorService TCW = Executors.newSingleThreadExecutor(new NamedThreadFactory("TerminalConsoleWriter"));
 
     public static final ExecutorService Head = Executors.newFixedThreadPool(3,  new NamedThreadFactory("Head Conversion Thread"));
+
+    public static ScheduledThreadPoolExecutor WatchMohist = new ScheduledThreadPoolExecutor(1, new NamedThreadFactory("WatchMohist"));
 
     public static class AssignableThread extends Thread {
         public AssignableThread(Runnable run) {
