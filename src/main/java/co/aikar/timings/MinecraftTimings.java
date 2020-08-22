@@ -62,12 +62,7 @@ public final class MinecraftTimings {
             plugin = TimingsManager.getPluginByClassloader(taskClass);
         }
 
-        final String taskname;
-        if (taskClass.isAnonymousClass()) {
-            taskname = taskClass.getName();
-        } else {
-            taskname = taskClass.getCanonicalName();
-        }
+        final String taskname = taskClass.getCanonicalName();
 
         StringBuilder name = new StringBuilder(64);
         name.append("Task: ").append(taskname);

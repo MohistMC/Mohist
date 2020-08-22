@@ -53,12 +53,10 @@ public class ProxyClass {
     }
 
     public static String getName(Class<?> clazz) {
-        Objects.requireNonNull(clazz);
         return RemapUtils.inverseMapName(clazz);
     }
 
     public static String getSimpleName(Class<?> clazz) {
-        Objects.requireNonNull(clazz);
         return RemapUtils.inverseMapSimpleName(clazz);
     }
 
