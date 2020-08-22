@@ -167,8 +167,7 @@ public class HighlightMsgConverter extends LogEventPatternConverter {
     }
 
     public static String geterror() {
-        File f = new File("mohist-config", "mohist.yml");
-        String cc = MohistConfigUtil.getString(f, "error-msg:", "c");
+        String cc = MohistConfig.getHighlight("consolecolor.error-msg", "c");
         return ANSIColorUtils.getColor(cc, "\u001B[31;1m");
     }
 
@@ -178,22 +177,22 @@ public class HighlightMsgConverter extends LogEventPatternConverter {
     }
 
     public static String getWarn() {
-        String cc = MohistConfig.getHighlight("consolecolor.warn-msg:", "e");
+        String cc = MohistConfig.getHighlight("consolecolor.warn-msg", "e");
         return ANSIColorUtils.getColor(cc, "\u001B[33;1m");
     }
 
     public static String getInfo() {
-        String cc = MohistConfig.getHighlight("consolecolor.info-msg:", "r");
+        String cc = MohistConfig.getHighlight("consolecolor.info-msg", "r");
         return ANSIColorUtils.getColor(cc, ANSI_RESET);
     }
 
     public static String getFatal() {
-        String cc = MohistConfig.getHighlight("consolecolor.fatal-msg:", "e");
+        String cc = MohistConfig.getHighlight("consolecolor.fatal-msg", "e");
         return ANSIColorUtils.getColor(cc, "\u001B[31;1m");
     }
 
     public static String getTrace() {
-        String cc = MohistConfig.getHighlight("consolecolor.trace-msg:", "e");
+        String cc = MohistConfig.getHighlight("consolecolor.trace-msg", "e");
         return ANSIColorUtils.getColor(cc, "\u001B[31;1m");
     }
 }

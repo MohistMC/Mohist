@@ -151,22 +151,22 @@ public class HighlightTimeConverter extends LogEventPatternConverter
     }
 
     public static String getWarn() {
-        String cc = MohistConfig.getHighlight("consolecolor.warn-time:", "b");
+        String cc = MohistConfig.getHighlight("consolecolor.warn-time", "b");
         return ANSIColorUtils.getColor(cc, "\u001B[36;1m");
     }
 
     public static String getInfo() {
-        String cc = MohistConfig.getHighlight("consolecolor.info-time:", "b");
+        String cc = MohistConfig.getHighlight("consolecolor.info-time", "b");
         return ANSIColorUtils.getColor(cc, "\u001B[36;1m");
     }
 
     public static String getFatal() {
-        String cc = MohistConfig.getHighlight("consolecolor.fatal-time:", "b");
+        String cc = MohistConfig.getHighlight("consolecolor.fatal-time", "b");
         return ANSIColorUtils.getColor(cc, "\u001B[36;1m");
     }
 
     public static String getTrace() {
-        String cc = MohistConfig.getHighlight("consolecolor.trace-time:", "b");
+        String cc = MohistConfig.getHighlight("consolecolor.trace-time", "b");
         return ANSIColorUtils.getColor(cc, "\u001B[36;1m");
     }
 }
