@@ -114,8 +114,7 @@ public class RemapUtils {
             }
             ClassWriter writer = new ClassWriter(0);
             classNode.accept(writer);
-            bs = writer.toByteArray();
-            return bs;
+            return writer.toByteArray();
         }
     }
 

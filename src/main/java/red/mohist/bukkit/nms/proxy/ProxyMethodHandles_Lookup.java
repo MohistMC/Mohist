@@ -29,7 +29,7 @@ public class ProxyMethodHandles_Lookup {
         } else if (clazz == ClassLoader.class) {
             if (name.equals("loadClass")) {
                 type = MethodType.methodType(type.returnType(), new Class[]{ClassLoader.class, String.class});
-                clazz = ProxyClassLoader.class;
+                clazz = ProxyClass.class;
             }
         }
         return lookup.findVirtual(clazz, name, type);
@@ -69,6 +69,10 @@ public class ProxyMethodHandles_Lookup {
             return lookup.unreflect(ClassLoader.class.getMethod(m.getName(), new Class[]{ClassLoader.class, String.class}));
         }
         return lookup.unreflect(m);
+    }
+
+    public static MethodType fromMethodDescriptorString(String descriptor, ClassLoader classLoader) throws IllegalArgumentException, TypeNotPresentException {
+        return MethodType.fromMethodDescriptorString(RemapUtils.remapMethodDesc(descriptor), classLoader);
     }
 
 }
