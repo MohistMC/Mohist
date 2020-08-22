@@ -131,7 +131,7 @@
 +    private net.minecraftforge.common.capabilities.CapabilityDispatcher capabilities;
 +    private net.minecraftforge.common.util.WorldCapabilityData capabilityData;
 +
-+    private final CraftWorld world;
++    private final CraftWorld craftWorld;
 +    public boolean pvpMode;
 +    public boolean keepSpawnInMemory = false;
 +    public ChunkGenerator generator;
@@ -152,7 +152,7 @@
 +    public TileEntityWorldConfig tileentityConfig;
 +
 +    public CraftWorld getWorld() {
-+        return this.world;
++        return this.craftWorld;
 +    }
 +
 +    public CraftServer getServer() {
@@ -167,7 +167,7 @@
 +    protected World(ISaveHandler saveHandlerIn, WorldInfo info, WorldProvider providerIn, Profiler profilerIn, boolean client, ChunkGenerator gen, org.bukkit.World.Environment env) {
 +        this.spigotConfig = new org.spigotmc.SpigotWorldConfig( info.getWorldName() ); // Spigot
 +        this.generator = gen;
-+        this.world = new CraftWorld((WorldServer) this, gen, env);
++        this.craftWorld = new CraftWorld((WorldServer) this, gen, env);
 +        this.ticksPerAnimalSpawns = this.getServer().getTicksPerAnimalSpawns(); // CraftBukkit
 +        this.ticksPerMonsterSpawns = this.getServer().getTicksPerMonsterSpawns(); // CraftBukkit
 +        // CraftBukkit end
@@ -232,7 +232,7 @@
 +
 +            public void onDamageBufferChanged(WorldBorder worldborder, double d0) {}
 +        });
-+        this.getServer().addWorld(this.world);
++        this.getServer().addWorld(this.craftWorld);
 +        // CraftBukkit end
 +        this.keepSpawnInMemory = MohistConfig.instance.keepSpawnInMemory.getValue(); // Paper
 +        timings = new co.aikar.timings.WorldTimingsHandler(this); // Paper - code below can generate new world and access timings
@@ -245,7 +245,7 @@
 +        this.mohistConfig = new MohistWorldConfig(info.getWorldName(), MinecraftServer.mohistConfig);
 +        this.entityConfig = new EntityWorldConfig(info.getWorldName(), MinecraftServer.entityConfig);
 +        this.tileentityConfig = new TileEntityWorldConfig(info.getWorldName(), MinecraftServer.tileEntityConfig);
-+        this.world = DimensionManager.getWorld(0) != null ? DimensionManager.getWorld(0).getWorld() : null;
++        this.craftWorld = DimensionManager.getWorld(0) != null ? DimensionManager.getWorld(0).getWorld() : null;
          this.eventListeners = Lists.newArrayList(this.pathListener);
          this.calendar = Calendar.getInstance();
          this.worldScoreboard = new Scoreboard();
