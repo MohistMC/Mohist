@@ -24,6 +24,7 @@ import red.mohist.bukkit.nms.remappers.MohistInheritanceMap;
 import red.mohist.bukkit.nms.remappers.MohistInheritanceProvider;
 import red.mohist.bukkit.nms.remappers.MohistJarMapping;
 import red.mohist.bukkit.nms.remappers.MohistJarRemapper;
+import red.mohist.bukkit.nms.remappers.MohistSuperClassRemapper;
 import red.mohist.bukkit.nms.remappers.ReflectMethodRemapper;
 import red.mohist.bukkit.nms.remappers.ReflectRemapper;
 import red.mohist.util.JarTool;
@@ -101,29 +102,28 @@ public class RemapUtils {
         }
     }
 
-    private static final Object remapLock = new Object();
 
     public static byte[] remapFindClass(byte[] bs) {
-        synchronized (remapLock) {
-            ClassReader reader = new ClassReader(bs); // Turn from bytes into visitor
-            ClassNode classNode = new ClassNode();
-            reader.accept(classNode, ClassReader.EXPAND_FRAMES);
-            for (Remapper remapper : remappers) {
+        ClassReader reader = new ClassReader(bs); // Turn from bytes into visitor
+        ClassNode classNode = new ClassNode();
+        reader.accept(classNode, ClassReader.EXPAND_FRAMES);
+        for (Remapper remapper : remappers) {
 
-                ClassNode container = new ClassNode();
-                ClassRemapper classRemapper;
-                if (remapper instanceof ClassRemapperSupplier) {
-                    classRemapper = ((ClassRemapperSupplier) remapper).getClassRemapper(container);
-                } else {
-                    classRemapper = new ClassRemapper(container, remapper);
-                }
-                classNode.accept(classRemapper);
-                classNode = container;
+            ClassNode container = new ClassNode();
+            ClassRemapper classRemapper;
+            if (remapper instanceof ClassRemapperSupplier) {
+                classRemapper = ((ClassRemapperSupplier) remapper).getClassRemapper(container);
+            } else {
+                classRemapper = new ClassRemapper(container, remapper);
             }
-            ClassWriter writer = new ClassWriter(0);
-            classNode.accept(writer);
-            return writer.toByteArray();
+            classNode.accept(classRemapper);
+            classNode = container;
         }
+        MohistSuperClassRemapper.init(classNode);
+        ClassWriter writer = new ClassWriter(0);
+        classNode.accept(writer);
+        return writer.toByteArray();
+
     }
 
     public static String map(String typeName) {

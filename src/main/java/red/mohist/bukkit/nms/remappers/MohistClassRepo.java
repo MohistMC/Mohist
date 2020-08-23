@@ -22,9 +22,6 @@ public class MohistClassRepo extends CachingRepo {
     @Override
     protected ClassNode findClass0(String internalName) {
         InputStream in = getClassLoder().getResourceAsStream(internalName + ".class");
-        if (in == null || internalName.equals("jdk/nashorn/api/scripting/NashornScriptEngineFactory")) {
-            return null;
-        }
         ClassNode classNode = new ClassNode();
         try {
             ClassReader reader = new ClassReader(in);

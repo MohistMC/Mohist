@@ -15,7 +15,6 @@ public class AutoDeleteMods {
   static {
     classlist = Arrays.asList(
             "org.spongepowered.mod.SpongeMod" /*SpongeForge*/,
-            "org.dimdev.vanillafix.VanillaFix" /*VanillaFix*/,
             "lumien.custommainmenu.CustomMainMenu" /*CustomMainMenu*/,
             "com.performant.coremod.Performant" /*Performant*/,
             "shadows.fastbench.proxy.BenchServerProxy" /*FastWorkbench*/,

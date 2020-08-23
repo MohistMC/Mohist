@@ -1,9 +1,21 @@
 package red.mohist.bukkit.nms.remappers;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Map;
 import net.md_5.specialsource.CustomRemapper;
+import net.md_5.specialsource.JarMapping;
 import net.md_5.specialsource.NodeType;
+import net.md_5.specialsource.RemapperProcessor;
+import net.md_5.specialsource.RemappingClassAdapter;
+import net.md_5.specialsource.SpecialSource;
+import net.md_5.specialsource.repo.ClassRepo;
+import org.objectweb.asm.ClassReader;
+import org.objectweb.asm.ClassWriter;
+import org.objectweb.asm.tree.ClassNode;
 import red.mohist.bukkit.nms.model.ClassMapping;
+
+import static org.objectweb.asm.ClassWriter.COMPUTE_MAXS;
 
 /**
  *
@@ -12,7 +24,12 @@ import red.mohist.bukkit.nms.model.ClassMapping;
  */
 public class MohistJarRemapper extends CustomRemapper {
 
+    private RemapperProcessor preProcessor;
     public final MohistJarMapping jarMapping;
+    private RemapperProcessor postProcessor;
+    private final int writerFlags = COMPUTE_MAXS;
+    private int readerFlags = 0;
+    private boolean copyResources = true;
 
     @Override
     public String mapSignature(String signature, boolean typeSignature) {
@@ -23,8 +40,34 @@ public class MohistJarRemapper extends CustomRemapper {
         }
     }
 
+    public MohistJarRemapper(RemapperProcessor preProcessor, MohistJarMapping jarMapping, RemapperProcessor postProcessor) {
+        this.preProcessor = preProcessor;
+        this.jarMapping = jarMapping;
+        this.postProcessor = postProcessor;
+    }
+
+    public MohistJarRemapper(RemapperProcessor remapperPreprocessor, MohistJarMapping jarMapping) {
+        this(remapperPreprocessor, jarMapping, null);
+    }
+
     public MohistJarRemapper(MohistJarMapping jarMapping) {
         this.jarMapping = jarMapping;
+    }
+
+    /**
+     * Enable or disable API-only generation.
+     *
+     * If enabled, only symbols will be output to the remapped jar, suitable for
+     * use as a library. Code and resources will be excluded.
+     */
+    public void setGenerateAPI(boolean generateAPI) {
+        if (generateAPI) {
+            readerFlags |= ClassReader.SKIP_CODE;
+            copyResources = false;
+        } else {
+            readerFlags &= ~ClassReader.SKIP_CODE;
+            copyResources = true;
+        }
     }
 
     @Override
@@ -107,6 +150,39 @@ public class MohistJarRemapper extends CustomRemapper {
     public String mapMethodName(String owner, String name, String desc, int access) {
         String mapped = jarMapping.tryClimb(jarMapping.methods, NodeType.METHOD, owner, name + " " + desc, access);
         return mapped == null ? name : mapped;
+    }
+
+    /**
+     * Remap an individual class given an InputStream to its bytecode
+     */
+    public byte[] remapClassFile(InputStream is, ClassRepo repo) throws IOException {
+        return remapClassFile(new ClassReader(is), repo);
+    }
+
+    public byte[] remapClassFile(byte[] in, ClassRepo repo) {
+        return remapClassFile(new ClassReader(in), repo);
+    }
+
+    @SuppressWarnings("unchecked")
+    private byte[] remapClassFile(ClassReader reader, final ClassRepo repo) {
+        if (preProcessor != null) {
+            byte[] pre = preProcessor.process(reader);
+            if (pre != null) {
+                reader = new ClassReader(pre);
+            }
+        }
+
+        ClassNode node = new ClassNode();
+        RemappingClassAdapter mapper = new RemappingClassAdapter(node, this, repo);
+        reader.accept(mapper, readerFlags);
+
+        ClassWriter wr = new ClassWriter(writerFlags);
+        node.accept(wr);
+        if (SpecialSource.identifier != null) {
+            wr.newUTF8(SpecialSource.identifier);
+        }
+
+        return (postProcessor != null) ? postProcessor.process(wr.toByteArray()) : wr.toByteArray();
     }
 
 }

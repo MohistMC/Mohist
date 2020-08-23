@@ -5,7 +5,6 @@ import org.objectweb.asm.FieldVisitor;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.commons.ClassRemapper;
 import org.objectweb.asm.commons.Remapper;
-import red.mohist.bukkit.nms.proxy.DelegateURLClassLoder;
 
 /**
  *
@@ -47,9 +46,6 @@ public class MohistClassRemapper extends ClassRemapper {
      */
     @Override
     public void visit(int version, int access, String name, String signature, String superName, String[] interfaces) {
-        if ("java/net/URLClassLoader".equals(superName)) {
-            superName = DelegateURLClassLoder.desc;
-        }
         super.visit(version, access, name, signature, superName, interfaces);
     }
 

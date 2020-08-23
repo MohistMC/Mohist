@@ -9,6 +9,7 @@ import java.security.CodeSigner;
 import java.security.CodeSource;
 import java.util.HashMap;
 import java.util.Map;
+import net.md_5.specialsource.repo.RuntimeRepo;
 import net.minecraft.launchwrapper.LaunchClassLoader;
 import net.minecraft.server.MinecraftServer;
 import org.apache.commons.io.IOUtils;
@@ -26,6 +27,11 @@ public class DelegateURLClassLoder extends URLClassLoader {
 
     public static final String desc = DelegateURLClassLoder.class.getName().replace('.', '/');
     private final Map<String, Class<?>> classeCache = new HashMap<>();
+    private static LaunchClassLoader launchClassLoader;
+
+    static {
+        launchClassLoader = (LaunchClassLoader) MinecraftServer.getServerInst().getClass().getClassLoader();
+    }
 
     public DelegateURLClassLoder(final URL[] urls, final ClassLoader parent) {
         super(urls, parent);
@@ -43,7 +49,7 @@ public class DelegateURLClassLoder extends URLClassLoader {
     protected Class<?> findClass(final String name) throws ClassNotFoundException {
         if (RemapUtils.isNMSClass(name)) {
             String mapName = RemapUtils.map(name.replace('.', '/')).replace('/', '.');
-            return JavaPlugin.class.getClassLoader().loadClass(mapName);
+            return launchClassLoader.findClass(mapName);
         }
         Class<?> result = this.classeCache.get(name);
         if (result != null) {
@@ -59,7 +65,7 @@ public class DelegateURLClassLoder extends URLClassLoader {
                 try {
                     result = super.findClass(name);
                 } catch (ClassNotFoundException e) {
-                    result = ((LaunchClassLoader) MinecraftServer.getServerInst().getClass().getClassLoader()).findClass(name);
+                    result = launchClassLoader.getClass().getClassLoader().loadClass(name);
                 }
             }
             if (result == null) {
@@ -78,7 +84,7 @@ public class DelegateURLClassLoder extends URLClassLoader {
             if (url != null) {
                 final InputStream stream = url.openStream();
                 if (stream != null) {
-                    byte[] bytecode = IOUtils.toByteArray(stream);
+                    byte[] bytecode = RemapUtils.jarRemapper.remapClassFile(stream, RuntimeRepo.getInstance());
                     bytecode = RemapUtils.remapFindClass(bytecode);
                     final JarURLConnection jarURLConnection = (JarURLConnection) url.openConnection();
                     final URL jarURL = jarURLConnection.getJarFileURL();

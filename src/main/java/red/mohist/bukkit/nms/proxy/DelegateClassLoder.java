@@ -1,6 +1,7 @@
 package red.mohist.bukkit.nms.proxy;
 
 import java.security.ProtectionDomain;
+import net.md_5.specialsource.repo.RuntimeRepo;
 import red.mohist.bukkit.nms.utils.RemapUtils;
 
 public class DelegateClassLoder extends ClassLoader{
@@ -41,7 +42,8 @@ public class DelegateClassLoder extends ClassLoader{
     private Class<?> remappedFindClass(String name, byte[] stream, ProtectionDomain protectionDomain) throws ClassFormatError {
         Class<?> result = null;
         try {
-            byte[] bytecode = RemapUtils.remapFindClass(stream);
+            byte[] bytecode = RemapUtils.jarRemapper.remapClassFile(stream, RuntimeRepo.getInstance());
+            bytecode = RemapUtils.remapFindClass(bytecode);
             result = this.defineClass(name, bytecode, 0, bytecode.length, protectionDomain);
         } catch (Throwable t) {
             throw new ClassFormatError("Failed to remap class " + name);

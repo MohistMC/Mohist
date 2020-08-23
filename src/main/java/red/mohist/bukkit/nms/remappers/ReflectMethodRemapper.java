@@ -6,8 +6,6 @@ import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodType;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.net.URL;
-import java.net.URLStreamHandlerFactory;
 import java.util.HashMap;
 import java.util.Map;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -17,7 +15,6 @@ import org.objectweb.asm.Type;
 import org.objectweb.asm.commons.MethodRemapper;
 import org.objectweb.asm.commons.Remapper;
 import red.mohist.bukkit.nms.model.MethodRedirectRule;
-import red.mohist.bukkit.nms.proxy.DelegateURLClassLoder;
 import red.mohist.bukkit.nms.proxy.ProxyClass;
 import red.mohist.bukkit.nms.proxy.ProxyMethodHandles_Lookup;
 import red.mohist.bukkit.nms.proxy.ProxyYamlConfiguration;
@@ -31,9 +28,8 @@ import red.mohist.bukkit.nms.utils.ASMUtils;
  */
 public class ReflectMethodRemapper extends MethodRemapper {
 
-    private static Map<String, Map<String, Map<String, MethodRedirectRule>>> methodRedirectMapping = new HashMap<>();
-
-    private static Map<String, Class<?>> virtualMethod = Maps.newHashMap();
+    private static final Map<String, Map<String, Map<String, MethodRedirectRule>>> methodRedirectMapping = new HashMap<>();
+    private static final Map<String, Class<?>> virtualMethod = Maps.newHashMap();
 
     public static void init() {
         registerMethodRemapper("java/lang/Class", "forName", Class.class, new Class[]{String.class}, ProxyClass.class);
@@ -52,7 +48,7 @@ public class ReflectMethodRemapper extends MethodRemapper {
         virtualMethod.put("java/lang/invoke/MethodHandles$Lookup;findSpecial", ProxyMethodHandles_Lookup.class);
         virtualMethod.put("java/lang/invoke/MethodHandles$Lookup;findStatic", ProxyMethodHandles_Lookup.class);
         virtualMethod.put("java/lang/invoke/MethodHandles$Lookup;findVirtual", ProxyMethodHandles_Lookup.class);
-        virtualMethod.put("java/lang/ClassLoader;loadClass", ProxyClass.class);
+        virtualMethod.put(ASMUtils.classLoaderdesc + ";loadClass", ProxyClass.class);
 
         registerMethodRemapper("java/lang/Class", "getField", Field.class, new Class[]{String.class}, ProxyClass.class);
         registerMethodRemapper("java/lang/Class", "getDeclaredField", Field.class, new Class[]{String.class}, ProxyClass.class);
@@ -69,12 +65,6 @@ public class ReflectMethodRemapper extends MethodRemapper {
         registerMethodRemapper("java/lang/invoke/MethodHandles$Lookup", "findSpecial", MethodHandle.class, new Class[]{Class.class, String.class, MethodType.class, Class.class}, ProxyMethodHandles_Lookup.class);
         registerMethodRemapper("java/lang/invoke/MethodHandles$Lookup", "findStatic", MethodHandle.class, new Class[]{Class.class, String.class, MethodType.class}, ProxyMethodHandles_Lookup.class);
         registerMethodRemapper("java/lang/invoke/MethodHandles$Lookup", "findVirtual", MethodHandle.class, new Class[]{Class.class, String.class, MethodType.class}, ProxyMethodHandles_Lookup.class);
-
-        registerMethodRemapper("java/lang/ClassLoader", "loadClass", Class.class, new Class[]{String.class}, ProxyClass.class);
-
-        registerMethodRemapper("java/net/URLClassLoader", "<init>", void.class, new Class[]{URL[].class, ClassLoader.class, URLStreamHandlerFactory.class}, DelegateURLClassLoder.class);
-        registerMethodRemapper("java/net/URLClassLoader", "<init>", void.class, new Class[]{URL[].class, ClassLoader.class}, DelegateURLClassLoder.class);
-        registerMethodRemapper("java/net/URLClassLoader", "<init>", void.class, new Class[]{URL[].class}, DelegateURLClassLoder.class);
 
         registerMethodRemapper("org/bukkit/configuration/file/YamlConfiguration", "loadConfiguration", YamlConfiguration.class, new Class[]{InputStream.class}, ProxyYamlConfiguration.class);
     }
@@ -100,9 +90,6 @@ public class ReflectMethodRemapper extends MethodRemapper {
 
     @Override
     public void visitTypeInsn(int opcode, String type) {
-        if (opcode == Opcodes.NEW && "java/net/URLClassLoader".equals(type)) {
-            type = DelegateURLClassLoder.desc;
-        }
         super.visitTypeInsn(opcode, type);
     }
 
@@ -156,11 +143,8 @@ public class ReflectMethodRemapper extends MethodRemapper {
             Type r = Type.getReturnType(desc);
             Type[] args = Type.getArgumentTypes(desc);
             Type[] newArgs = new Type[args.length + 1];
-            if ("red/mohist/bukkit/nms/proxy/ProxyClassLoader".equals(rule.getRemapOwner()) && "loadClass".equals(name)) {
-                newArgs[0] = Type.getObjectType("java/lang/ClassLoader");
-            } else {
-                newArgs[0] = Type.getObjectType(owner);
-            }
+            newArgs[0] = Type.getObjectType(owner);
+
             owner = rule.getRemapOwner();
             System.arraycopy(args, 0, newArgs, 1, args.length);
             desc = Type.getMethodDescriptor(r, newArgs);

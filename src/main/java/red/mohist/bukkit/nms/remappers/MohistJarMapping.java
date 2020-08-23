@@ -117,10 +117,7 @@ public class MohistJarMapping implements ClassRemapperSupplier {
             return mapName;
         }
         mapName = fastMapMethodName(inverse, clazz.getSuperclass(), key, name);
-        if (mapName != null) {
-            return mapName;
-        }
-        return null;
+        return mapName;
     }
 
     private String directFastMapFieldName(boolean inverse, Class<?> clazz, String name) {
