@@ -26,6 +26,7 @@ import org.json.simple.JSONObject;
 import org.spigotmc.SpigotConfig;
 import red.mohist.api.ServerAPI;
 import red.mohist.common.async.MohistThreadBox;
+import red.mohist.configuration.MohistConfig;
 
 /**
  * bStats collects some data for plugin authors.
@@ -252,7 +253,7 @@ public class Metrics {
                 metrics.addCustomChart(new Metrics.SingleLineChart("players", () -> Bukkit.getOnlinePlayers().size()));
                 metrics.addCustomChart(new Metrics.SimplePie("online_mode", () -> Bukkit.getOnlineMode() ? "online" : "offline"));
                 metrics.addCustomChart(new Metrics.SimplePie("mohist_version", Mohist::getVersion));
-                metrics.addCustomChart(new Metrics.SimplePie("bungeecord", () -> SpigotConfig.bungee ? "true" : "false"));
+                metrics.addCustomChart(new Metrics.SimplePie("bungeecord", () -> SpigotConfig.bungee || MohistConfig.isProxyOnlineMode() ? "true" : "false"));
 
                 metrics.addCustomChart(new Metrics.DrilldownPie("java_version", () -> {
                     Map<String, Map<String, Integer>> map = new HashMap<>();
