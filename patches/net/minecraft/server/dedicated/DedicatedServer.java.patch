@@ -226,7 +226,7 @@
                  long j = System.nanoTime();
  
                  if (this.getFolderName() == null)
-@@ -260,12 +315,23 @@
+@@ -260,12 +315,22 @@
                  TileEntitySkull.setProfileCache(this.getPlayerProfileCache());
                  TileEntitySkull.setSessionService(this.getMinecraftSessionService());
                  PlayerProfileCache.setOnlineMode(this.isServerInOnlineMode());
@@ -240,8 +240,7 @@
 +                if (MohistConfig.instance.support_nocmd.getValue()) {
 +                    Mohist.LOGGER.info("Done ({})! For help, type \"help\" or \"?\"", s3);
 +                } else {
-+                  Mohist.LOGGER.info("Done ({})! For help, type \"help\" or \"?\"", s3); //This will allow Minecraft hosts able to mark the server as started
-+                  if(!Locale.getDefault().getLanguage().contains("en")) Mohist.LOGGER.info(Message.getFormatString("server.start.done", new Object[]{s3}));
++                    Mohist.LOGGER.info(Message.getFormatString("server.start.done", new Object[]{s3}));
 +                }
  
 +                Bukkit.getPluginManager().callEvent(new BukkitServerStartDoneEvent());//Mohist
@@ -252,7 +251,7 @@
                  if (this.settings.hasProperty("announce-player-achievements"))
                  {
                      this.worlds[0].getGameRules().setOrCreateGameRule("announceAdvancements", this.settings.getBooleanProperty("announce-player-achievements", true) ? "true" : "false");
-@@ -285,18 +351,35 @@
+@@ -285,18 +350,35 @@
                      LOGGER.info("Starting remote control listener");
                      this.rconThread = new RConThreadMain(this);
                      this.rconThread.startThread();
@@ -295,7 +294,7 @@
              }
          }
      }
-@@ -419,11 +502,20 @@
+@@ -419,11 +501,20 @@
  
      public void executePendingCommands()
      {
@@ -320,7 +319,7 @@
      }
  
      public boolean isDedicatedServer()
-@@ -515,7 +607,7 @@
+@@ -515,7 +606,7 @@
  
      public boolean isBlockProtected(World worldIn, BlockPos pos, EntityPlayer playerIn)
      {
@@ -329,7 +328,7 @@
          {
              return false;
          }
-@@ -584,6 +676,9 @@
+@@ -584,6 +675,9 @@
          return this.settings.getIntProperty("network-compression-threshold", super.getNetworkCompressionThreshold());
      }
  
@@ -339,7 +338,7 @@
      protected boolean convertFiles() throws IOException
      {
          boolean flag = false;
-@@ -673,13 +768,79 @@
+@@ -673,13 +767,79 @@
  
      public String getPlugins()
      {

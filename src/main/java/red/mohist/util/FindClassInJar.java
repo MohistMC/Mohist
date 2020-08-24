@@ -2,9 +2,13 @@ package red.mohist.util;
 
 import java.io.File;
 import java.io.FileFilter;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.util.Enumeration;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
+
+import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 
 /**
  * @author Mgazul
@@ -35,11 +39,11 @@ public class FindClassInJar {
         }
     }
 
-    public void process() throws Exception {
+    public void process() throws IOException {
         checkDirectory(m_libDir);
     }
 
-    public void checkDirectory(String libDir) throws Exception {
+    public void checkDirectory(String libDir) throws IOException {
         File file = new File(libDir);
         if (file.exists()) {
             if (file.isFile()) {
@@ -55,6 +59,14 @@ public class FindClassInJar {
                         checkDirectory(f.getAbsolutePath());
                     } else {
                         if (checkFile(f)) {
+                            File newf = new File("delete/mods");
+                            File qnewf = new File("delete", f.getPath());
+                            if (!newf.exists()) {
+                                newf.mkdirs();
+                            } else {
+                                if (qnewf.exists()) qnewf.delete();
+                            }
+                            Files.copy(f.toPath(), qnewf.toPath(), REPLACE_EXISTING);
                             f.delete();
                         }
                     }
