@@ -18,7 +18,8 @@ public class AutoDeleteMods {
             "lumien.custommainmenu.CustomMainMenu" /*CustomMainMenu*/,
             "com.performant.coremod.Performant" /*Performant*/,
             "shadows.fastbench.proxy.BenchServerProxy" /*FastWorkbench*/,
-            "optifine.Differ" /*OptiFine*/);
+            "optifine.Differ" /*OptiFine*/,
+            "ichttt.mods.firstaid.FirstAid" /*FirstAid*/);
   }
 
   public static void jar() throws Exception {
