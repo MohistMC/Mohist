@@ -292,11 +292,12 @@ public class DimensionManager
             FMLLog.log.error("Cannot Hotload Dim: {}", dim);
             return; // If a provider hasn't been registered then we can't hotload the dim
         }
+        String name = "DIM" + dim;
         MinecraftServer mcServer = overworld.getMinecraftServer();
-        ISaveHandler savehandler = overworld.getSaveHandler();
+        // Use saved dimension from level.dat if it exists. This guarantees that after a world is created, the same dimension will be used. Fixes issues with MultiVerse
+        ISaveHandler saveHandler = new AnvilSaveHandler(mcServer.server.getWorldContainer(), name, true, mcServer.getDataFixer());
         WorldSettings worldSettings = new WorldSettings(overworld.getWorldInfo());
 
-        String name = "DIM" + dim;
         org.bukkit.World.Environment env = org.bukkit.World.Environment.getEnvironment(dim);
         if (dim >= -1 && dim <= 1)
         {
@@ -313,8 +314,8 @@ public class DimensionManager
             worldSettings.setGeneratorOptions(((DedicatedServer) mcServer).getStringProperty("generator-settings", ""));
         }
         WorldInfo worldInfo = new WorldInfo(worldSettings, name);
-        WorldServer world = (dim == 0 ? overworld : (WorldServer)(new WorldServerMulti(mcServer, new AnvilSaveHandler(mcServer.server.getWorldContainer(), name, true, mcServer.getDataFixer()), dim, overworld, mcServer.profiler, worldInfo, env, gen).init()));
-
+        WorldServer world = (dim == 0 ? overworld : (WorldServer)(new WorldServerMulti(mcServer, saveHandler, dim, overworld, mcServer.profiler, worldInfo, env, gen).init()));
+        world.initialize(worldSettings);
         mcServer.getPlayerList().setPlayerManager(mcServer.worldServerList.toArray(new WorldServer[0]));
         world.addEventListener(new ServerWorldEventHandler(mcServer, world));
         MinecraftForge.EVENT_BUS.post(new WorldEvent.Load(world));

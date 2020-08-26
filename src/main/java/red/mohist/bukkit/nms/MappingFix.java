@@ -23,7 +23,7 @@ public class MappingFix {
     //specify the dir
     String basedir = JarTool.getJarDir();
     File lib = new File(basedir + "/libraries/red/mohist/mappings/nms.srg");
-    if (!lib.exists() || lib.length() < 4000000 || !checkMD5(lib)) {
+    if (!lib.exists() || lib.length() < 4000000) {
       File joined = new File(basedir + "/joined.srg");
       File nms = new File(basedir + "/libraries/red/mohist/mappings/nms.srg");
       //start download
